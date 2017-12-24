@@ -200,11 +200,7 @@ function findconstandtail(stateChangingFuncs:set.word, f:func)func
  // finds constants,, finds tail calls, 
    and make sure"STATE"is root on state changing functions // 
   let p = findconst( codetree.f)
-  let q = if   // number.f in "Q5FZtesttypezseqZTzpseqZint " // true
-  then
-     tailcall(p,number.f,nopara.f)
-  else 
-    tailcall(p, getmaxvar.p + 1, number.f)
+  let q =    tailcall(p,number.f,nopara.f)
   replacecodetree(f, if number.f in stateChangingFuncs ∧ not(inst.label.q ="STATE"_1)
    then tree(cnode("STATE"_1,"0"_1, 0), [ q])
    else q)
@@ -264,35 +260,10 @@ Function replace(p:program, fn:func)program
   let oldarcs = @(+, arc.f, asset.empty:seq.arc.int, toseq.successors(callgraph.p, f))
   program(library.p, newall, replacearcs(callgraph.p, oldarcs, asset.getarcs.fn), fn.p)
 
-/Function replace(allfunctions:seq.func, f:func)seq.func replace(allfunctions, key.f, f)
 
 ______________
 
-Tailcall is a little bit tricky because must use tmps when a parameter is used to define another parameter to the right.For example F1(P1, P2)has tail call of F1(P1 + 1, P1)must use T1 = P1 + 1 ; P2 = P1 ; P1 = T1 ; We also handle removing the no op of assigning a parameter to itself.
-
-Function tailcall(t:tree.cnode, nextvar:int, self:word)tree.cnode 
- if inst.label.t ="if"_1 
-  then assert nosons.t = 3 report"incorrect sons"
-   tree(label.t, [ t_1, tailcall(t_2, nextvar, self), tailcall(t_3, nextvar, self)])
-  else if inst.label.t ="SET"_1 
-  then assert nosons.t = 2 report"incorrect sons 2"
-   tree(label.t, [ t_1, tailcall(t_2, nextvar, self)])
-  else if inst.label.t ="CALL"_1 ∧ arg.label.t = self 
-  then tailcall2(t, nextvar + 1, nosons.t, empty:seq.tree.cnode)
-  else t
-
-Function tailcall2(t:tree.cnode, nextvar:int, son:int, result:seq.tree.cnode)tree.cnode 
- if son = 0 
-  then tree(cnode("TAIL"_1, arg.label.t, 0), result)
-  else let thispara = t_son 
-  let var = toword.nextvar 
-  let p = cnode("PARA"_1, toword(nosons.t - son + 1), 0)
-  if @(∨, in.p, false, result)
-  then let newresult = [ thispara]+ @(+, replace(cnode("LOCAL"_1, var, 0), p), empty:seq.tree.cnode, result)
-   tree(cnode("SET"_1, var, 2), [ tree.p, tailcall2(t, nextvar + 1, son - 1, newresult)])
-  else tailcall2(t, nextvar, son - 1, [ thispara]+ result)
-
----new tail ---
+Tailcall 
 
 Function tailcall(t:tree.cnode,  self:word)boolean
  if inst.label.t ="if"_1 
@@ -350,19 +321,10 @@ function genapply(prg:program, term1:word, term2:word, ptyp:word, profile:seq.wo
     let next = getnext.library.prg 
   let p1 = nopara(allfunctions(prg)_funckey.term1) - 2 
   let p = nopara(allfunctions(prg)_funckey.term2) - 1 
-      let nopara=3 + p + p1
+      let nopara=2 + p + p1
   let newfuncmangledname = mangle("q"_1, mytype.[ next], constantseq(nopara, mytype."int"))
   assert p ≥ 0 report"illformed"+ term1 + term2 + print(allfunctions(prg)_funckey.term2)
-  // assert false:[ term1, term2]// 
-    let insttree =  if  // term2 in  "myidentZtest3ZintZintZint myidentZtest3Zint" // true then 
-     buildcodetree(template3(newfuncmangledname,term1,term2,p1,p,ptyp),1)
-    else
-    buildcodetree.@(+, template.[ @(+, tocnodepara, empty:seq.cnode, arithseq(p, -1, 3 + p)), 
-  [ cnode("CALL"_1, term2, 1 + p)], 
-  [ cnode("CALL"_1, term1, 2 + p1)], 
-  [ cnode("LIT"_1,"2"_1, 0), cnode("FREF"_1, ptyp, 1)], 
-  @(+, tocnodepara, empty:seq.cnode, arithseq(p1, -1, nopara)),
-  [ cnode("CALL"_1, newfuncmangledname, nopara)]], empty:seq.cnode, template3)
+    let insttree =   buildcodetree(template3(newfuncmangledname,term1,term2,p1,p,ptyp),1)
   let newf = func(nopara, "int", newfuncmangledname, insttree, profile)
   program(next, replace(allfunctions.prg, key.newf , newf), callgraph.prg + getarcs.newf, newf)
 
@@ -375,87 +337,24 @@ function getnext(p:word)word
   encodeword(decode.toword(((l_1 - 48)* 10 + l_2 - 48)* 10 + l_3 - 48 + 1)+ subseq(l, 4, length.l))
 
 
-function template(r:seq.seq.cnode, n:cnode)seq.cnode 
- if arg.n ="TERM2PARA"_1 
-  then r_1 
-  else if arg.n ="TERM2"_1 
-  then r_2 
-  else if arg.n ="TERM1"_1 
-  then r_3 
-  else if arg.n ="PTYP"_1 
-  then r_4 
-  else if arg.n ="TERM1PARA"_1 then r_5 
-  else if arg.n ="SELF"_1 then r_6 else [ n]
 
 
-function tocnodepara(i:int)cnode cnode("PARA"_1, toword.i, 0)
-
-
-function template3 seq.cnode 
-// template3 was created from following code.xfunction applyR2(p2:p2t, acc:resulttype, s:seq(tseqelement), i:int)resulttype ; if i > length.s then acc else iftype x:pseq(tseqelement)= s then applyR(p2, applyR(p2, acc, a.x, 1), b.x, 1)else applyR(p2, term1(acc, term2(p2, s_i)), s, i + 1)
- // 
- [ cnode("PARA"_1,"1"_1, 0), 
- cnode("PARA"_1,"2"_1, 0), 
- cnode("LIT"_1,"1"_1, 0), 
- cnode("IDXUC"_1,"X"_1, 2), 
- cnode(opGT,"X"_1, 2), 
- cnode("PARA"_1,"3"_1, 0), 
- cnode("PARA"_1,"2"_1, 0), 
- cnode("LOCAL"_1,"1"_1, 0), 
- cnode("LIT"_1,"0"_1, 0), 
- cnode("IDXUC"_1,"X"_1, 2), 
- cnode("FREF"_1,"PTYP"_1, 0), 
- cnode(opEQL,"X"_1, 2), 
- cnode("PARA"_1,"TERM1PARA"_1, 0), 
- cnode("PARA"_1,"TERM2PARA"_1, 0), 
- cnode("PARA"_1,"TERM1PARA"_1, 0), 
- cnode("PARA"_1,"TERM2PARA"_1, 0), 
- cnode("PARA"_1,"3"_1, 0), 
- cnode("LOCAL"_1,"1"_1, 0), 
- cnode("LIT"_1,"2"_1, 0), 
- cnode("IDXUC"_1,"X"_1, 2), 
- cnode("LIT"_1,"1"_1, 0), 
- cnode("CALL"_1,"SELF"_1, 4), 
- cnode("LOCAL"_1,"1"_1, 0), 
- cnode("LIT"_1,"3"_1, 0), 
- cnode("IDXUC"_1,"X"_1, 2), 
- cnode("LIT"_1,"1"_1, 0), 
- cnode("CALL"_1,"SELF"_1, 4), 
- cnode("PARA"_1,"TERM1PARA"_1, 0), 
- cnode("PARA"_1,"TERM2PARA"_1, 0), 
- cnode("PARA"_1,"TERM1PARA"_1, 0), 
- cnode("PARA"_1,"3"_1, 0), 
- cnode("PARA"_1,"TERM2PARA"_1, 0), 
- cnode("PARA"_1,"2"_1, 0), 
- cnode("PARA"_1,"1"_1, 0), 
- cnode("IDX"_1,"0"_1, 2), 
- cnode("CALL"_1,"TERM2"_1, 2), 
- cnode("CALL"_1,"TERM1"_1, 2), 
- cnode("PARA"_1,"2"_1, 0), 
- cnode("PARA"_1,"1"_1, 0), 
- cnode("LIT"_1,"1"_1, 0), 
- cnode(opADD,"X"_1, 2), 
- cnode("CALL"_1,"SELF"_1, 4), 
- cnode("if"_1,"X"_1, 3), 
- cnode("SET"_1,"1"_1, 2), 
- cnode("if"_1,"X"_1, 3)]
 
  function template3(mangledname:word,term1:word,term2:word,nopara1:int,nopara2:int,ptyp:word) seq.word
  // PARA 1 is index PARA 2 is seq PARA 3 is result 
     LOCAL 3 is index LOCAL 2 is seq LOCAL 1 is result //
 // EQL - Q3DZbuiltinZintZint  opGT =Q3EZbuiltinZintZint //
- let CALLSELF = [toword(3+nopara1+nopara2),mangledname] 
+ let CALLSELF = [toword(2+nopara1+nopara2),mangledname] 
  let CALLTERM1 = [toword(2+nopara1),term1] 
   let CALLTERM2 = [toword(1+nopara2),term2] 
- let TERM1PARA =@(+,parainst,"",arithseq(nopara1,-1,3+nopara1+nopara2))
- let TERM2PARA = @(+,parainst,"",arithseq(nopara2,-1,3+nopara2))
+ let TERM1PARA =@(+,parainst,"",arithseq(nopara1,-1,2+nopara1+nopara2))
+ let TERM2PARA = @(+,parainst,"",arithseq(nopara2,-1,2+nopara2))
  "LIT 1
  LOCAL 3  LOCAL 2   LIT 1   IDXUC  2  Q3EZbuiltinZintZint  2
  LOCAL 1 
     LOCAL 2   LIT 0  IDXUC  2 FREF"+ ptyp+"   Q3DZbuiltinZintZint 2  "+ TERM1PARA+TERM2PARA+
          "LOCAL 1  
          LOCAL 2   LIT 2  IDXUC  2  
-         LIT 1  
        CALL"+ CALLSELF +"  
        LOCAL 2  LIT 3  IDXUC  2 
        LIT 1   
@@ -468,9 +367,9 @@ function template3 seq.cnode
     EXIT 3
  if 3
  if 3
-PARA 3 
-PARA 2
+PARA 2 
 PARA 1
+LIT 1
 LOOP 5 "
 
 
@@ -500,7 +399,7 @@ function expandapply(p:program, t:tree.cnode, profile:seq.word)rexpand
    if nosons.t2 = 5 ∧ nopara.f = 1 ∧ inst.label.codetree.f ="PARA"_1 ∧ checkistypechangeonly(arg.label(t2_4), arg.label(t2_1))
    then rexpand(p.last.l, t2_2)
    else let p2 = genapply(p.last.l, arg.label(t2_(nosons.t2 - 1)), arg.label(t2_(nosons.t2 - 2)), arg.label(t2_nosons.t2), profile)
-   rexpand(p2, tree(cnode("CALL"_1, number.fn.p2, nopara.fn.p2), subseq(sons.t2, 1, nosons.t2 - 3)+ tree.cnode("LIT"_1,"1"_1, 0)))
+   rexpand(p2, tree(cnode("CALL"_1, number.fn.p2, nopara.fn.p2), subseq(sons.t2, 1, nosons.t2 - 3)))
   else rexpand(p.last.l, t2)
 
 function checkistypechangeonly(term1:word, term3:word)boolean 

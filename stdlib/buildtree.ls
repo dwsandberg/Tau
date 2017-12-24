@@ -12,19 +12,17 @@ use seq.cnode
 
 use stack.tree.cnode
 
-type cnode is record inst:word, arg:word, reg:int
+type cnode is record inst:word, arg:word
 
 Function inst(cnode)word export
 
 Function arg(cnode)word export
 
-function noargs(a:cnode)int reg.a
 
-Function reg(cnode)int export
+/Function reg(cnode)int export
 
 Function =(a:cnode, b:cnode)boolean inst.a = inst.b ∧ arg.b = arg.a
 
-/Function reg(c:tree.cnode)int reg.label.c
 
 type func is record nopara:int, symboltext:seq.word, number:word, codetree:tree.cnode, profile:seq.word
 
@@ -88,8 +86,9 @@ function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode
   else if a_i in"PARA LOCAL"
   then buildcodetree(a, push(f, tree.cnode(a_i, a_(i + 1), 0)), i + 2)
   else if a_i in"CALL"
-  then let c = cnode(a_i, a_(i + 2), toint(a_(i + 1)))
-   buildcodetree(a, push(pop(f, noargs.c), tree(c, top(f, noargs.c))), i + 3)
+  then let noargs=toint(a_(i + 1))
+    let c = cnode(a_i, a_(i + 2), 0)
+   buildcodetree(a, push(pop(f, noargs ), tree(c, top(f, noargs ))), i + 3)
   else if a_i ="SET"_1 
   then let c = cnode(a_i, a_(i + 1), 2)
    buildcodetree(a, push(pop(f, 2), tree(c, top(f, 2))), i + 2)
@@ -109,9 +108,9 @@ function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode
    let prefix = [ tree.cnode("LIT"_1,"0"_1, 0), tree.cnode("LIT"_1, a_(i + 1), 0)]
    let c = cnode("RECORD"_1,"0"_1, noelements + 2)
    buildcodetree(a, push(pop(f, noelements), tree(c, prefix + top(f, noelements))), i + 2)
-  else let c = cnode(a_i,"0"_1, toint(a_(i + 1)))
-  assert not(a_i ="if"_1)∨ noargs.c = 3 report"XXXX"
-  buildcodetree(a, push(pop(f, noargs.c), tree(c, top(f, noargs.c))), i + 2)
+  else let noargs=toint(a_(i + 1)) let c = cnode(a_i,"0"_1, noargs)
+  assert not(a_i ="if"_1)∨ noargs = 3 report"Incorrect number of args on if"
+  buildcodetree(a, push(pop(f, noargs), tree(c, top(f, noargs))), i + 2)
 
 Function removeflat(f:func)func replacecodetree(f, removeflat.codetree.f)
 
@@ -148,10 +147,6 @@ Function check(a:seq.word, count:int, i:int, ops:seq.word)seq.word
   check(a, count - args + 1, i + 2, new)
 
 
-Function buildcodetree(a:seq.cnode)tree.cnode top.@(buildtree, identity, empty:stack.tree.cnode, a)
-
-function buildtree(f:stack.tree.cnode, c:cnode)stack.tree.cnode 
- push(pop(f, noargs.c), tree(c, top(f, noargs.c)))
 
 Function print(t:tree.cnode)seq.word 
  let inst = inst.label.t 
@@ -169,10 +164,10 @@ Function print(a:func)seq.word
  {"<"+ number.a + number.a + symboltext.a +">"+ print.codetree.a }
 
 
-Function cnode(word, word, int)cnode export
+Function cnode(a:word, b:word, int)cnode 
+  cnode(a,b)  
 
 
-/Function addit(s:seq.func, t:func)seq.func replace(s, key.t, t)
 
 Function in(l:seq.word, t:tree.cnode)boolean 
  if inst.label.t in l then true else @(∨, in.l, false, sons.t)
