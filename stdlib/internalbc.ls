@@ -5,7 +5,6 @@ Module internalbc
 
 use stdlib
 
-use llvm
 
 use bitstream
 
@@ -97,15 +96,14 @@ function     subphi(slot:int,b:internalbc,s:seq.int,i:int) internalbc
           subphi(slot,addsignedaddress(slot,s_(i-1),add(s_i,b)),s,i-2)
        else b
 
-Function phiinst(slot:int,tailphi:seq.int,nopara:int,p:int)  internalbc 
-  let t=@(addpair(tailphi,slot+p,p),identity,emptyinternalbc,arithseq(length.tailphi / (nopara + 1),-nopara-1,length.tailphi -nopara ) )
-     addstartbits(INSTPHI,length.tailphi / (nopara + 1) * 2 + 3,  add(typ.i64,addsignedaddress(slot+p,-p-1,add(0,t))))
-
-Function   phiinst(tailphi:seq.int,nopara:int)  internalbc  
+/Function   phiinst(tailphi:seq.int,nopara:int)  internalbc  
    let slot=nopara+1
-@(+,phiinst(slot,tailphi,nopara),emptyinternalbc,arithseq(nopara,1,1))
+   let tailphi2=[0]+arithseq(nopara,-1,-2)+tailphi
+     phiinst(nopara+1,typ.i64,tailphi2,nopara)
 
-Function  addpair(    tailphi:seq.int,  slot:int,p:int,a:internalbc,b:int) internalbc
+phiinst(nopara+1,typ.i64,[0]+arithseq(nopara,-1,-2)+tailphi,nopara)
+
+function  addpair(    tailphi:seq.int,  slot:int,p:int,a:internalbc,b:int) internalbc
           addsignedaddress(slot,tailphi_(b+p),add(tailphi_b,a))
  
   (block1,p11,p12,p13,block2,p21,p22,p23)   phi(p11,block1,p21,block2)
@@ -153,7 +151,7 @@ function addaddress(slot:int,a:int,b:internalbc) internalbc
    if a < 0 then  add(slot+a,b)
    else   internalbc(0,0,[reloc,a-slot+1]+finish.b)
    
-function addsignedaddress(slot:int,a:int,b:internalbc) internalbc
+Function addsignedaddress(slot:int,a:int,b:internalbc) internalbc
    if a &le 0 then  
        let v = slot+a
        let c=if v &ge 0 then  2 * v   else (2 * -v + 1)
@@ -162,7 +160,7 @@ function addsignedaddress(slot:int,a:int,b:internalbc) internalbc
     internalbc(0,0,[relocsigned,a-slot+1]+finish.b)
 
 
-function add(val:int,b:internalbc) internalbc
+Function add(val:int,b:internalbc) internalbc
      if val > 31 then   internalbc(0,0,[vbr6,val]+finish.b)
      else 
      let newbitcount=6+bitcount.b
@@ -171,23 +169,27 @@ function add(val:int,b:internalbc) internalbc
      
      
 Function tobitstream(offset:int,b:internalbc) bitstream
+  processit(offset,0,0,finish.b,1,bits(0),0,empty:seq.int)
+
   processit(offset, finish.b, 1, emptyx, 0, 0)
   
 
   
-function processit(offset:int,s:seq.int,i:int,result:bitstream,val1:int,val2:int)  bitstream
+/function processit(offset:int,s:seq.int,i:int,result:bitstream,val1:int,val2:int)  bitstream
  if  i > length.s then  result
- else let val=s_i let nobits= val mod 64 let bits = val / 64
+ else let val=s_i let nobits=  toint(bits.val &and bits(63)) let bits = toint( bits.val - 6 )
    if nobits < 58 then processit(offset,s,i+1,addbits(result,bits, nobits ),val1,val2)
    else 
-   if val=reloc then 
-       processit(offset,s,i+2,addvbr6(result,offset-s_(i+1)),val1,val2)
+   let valtoadd=if val=reloc then  offset-s_(i+1) 
     else  if val=vbr6 then
-          processit(offset,s,i+2,addvbr6(result,s_(i+1)),val1,val2)
+           s_(i+1)
     else if val = sub11 then
-      processit( offset,s,i+2,addvbr6(result,offset-(val1-s_(i+1)+1)),val1,val2)
+      offset-(val1-s_(i+1)+1) 
     else if val = sub22 then
-         processit(offset,s,i+2,addvbr6(result,offset-(val2-s_(i+1)+1)),val1,val2)
+          offset-(val2-s_(i+1)+1) 
+    else -1
+    if valtoadd > -1 then
+       processit(offset,s,i+2,addvbr6(result,valtoadd),val1,val2)
     else if val = relocsigned then
           processit(offset,s,i+2,addvbrsigned6(result,offset-s_(i+1)),val1,val2) 
     else  
@@ -196,6 +198,40 @@ function processit(offset:int,s:seq.int,i:int,result:bitstream,val1:int,val2:int
           let v1 = s_(i+2)
           let v2 = s_(i+3)
         processit(offset+slot,s,i+4,result,if v1  &le   0 then  offset-v1 else v1,if v2 &le 0 then  offset-v2 else v2)
+      
+function processit(offset:int,val1:int,val2:int,s:seq.int,i:int,newbits:bits,bitcount:int,bytes:seq.int) bitstream
+if  bitcount &ge 8 then  
+         processit(offset,val1,val2,s,i, newbits >> 8 ,bitcount - 8, bytes+toint( newbits &and bits(255)))
+else if  i > length.s then bitstream(bytes,newbits,bitcount)
+else let val=s_i let nobits=  toint(bits.val &and bits(63)) let bits = bits.val >> 6  
+ if nobits < 58 then 
+    assert bitcount+nobits < 64 report "problem" +toword.nobits
+    processit(offset,val1,val2,s,i+1, newbits &or bits <<  bitcount,bitcount+nobits,bytes)
+   else 
+   let valtoadd=if val=reloc then  offset-s_(i+1) 
+    else  if val=vbr6 then
+           s_(i+1)
+    else if val = sub11 then
+      offset-(val1-s_(i+1)+1) 
+    else if val = sub22 then
+          offset-(val2-s_(i+1)+1) 
+    else -1
+    if valtoadd > -1 then
+       let r = addvbr6(bitstream(bytes,newbits,bitcount),valtoadd )
+       processit(offset,val1,val2,s,i+2,val.r,nobits.r,bytes.r)
+    else if val = relocsigned then
+       let r=addvbrsigned6(bitstream(bytes,newbits,bitcount),offset-s_(i+1)) 
+       processit(offset,val1,val2,s,i+2,val.r,nobits.r,bytes.r)
+    else 
+     assert val=setsub report "invalid code"
+          let slot=s_(i+1)
+          let v1 = s_(i+2)
+          let v2 = s_(i+3)
+        processit(offset+slot, if v1  &le   0 then  offset-v1 else v1,if v2 &le 0 then  offset-v2 else v2, s,i+4,newbits,bitcount,bytes)
+
+
+
+
       
       
 Function usetemplate(deltaoffset:int,t:internalbc,val1:int,val2:int) internalbc

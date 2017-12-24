@@ -354,7 +354,7 @@ function genapply(prg:program, term1:word, term2:word, ptyp:word, profile:seq.wo
   let newfuncmangledname = mangle("q"_1, mytype.[ next], constantseq(nopara, mytype."int"))
   assert p ≥ 0 report"illformed"+ term1 + term2 + print(allfunctions(prg)_funckey.term2)
   // assert false:[ term1, term2]// 
-    let insttree =  if  term2 in  "myidentZtest3ZintZintZint myidentZtest3Zint" then 
+    let insttree =  if  // term2 in  "myidentZtest3ZintZintZint myidentZtest3Zint" // true then 
      buildcodetree(template3(newfuncmangledname,term1,term2,p1,p,ptyp),1)
     else
     buildcodetree.@(+, template.[ @(+, tocnodepara, empty:seq.cnode, arithseq(p, -1, 3 + p)), 
