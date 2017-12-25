@@ -308,7 +308,7 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
   then let exp1 = gencode(lib, lmap, l, t_1)
    let exp2 = if nosons.t = 2 then gencode(lib, lmap, exp1, t_2)else exp1 
    usetemplate(exp2,template.template,arg.exp1,arg.exp2,-(regno.exp2 + length.template),length.template)
-  else if inst  in "TAIL EXIT" 
+  else if inst  = "CONTINUE"_1
   then let sons = processsons(lib, lmap, l, t, 1, empty:seq.int) 
     let block = noblocks.l.sons 
    Lcode5(code.l.sons + BR(regno.l.sons, loopblock.l), lst.l.sons, regno.l.sons, -1, block + 1, tailphi.l.sons+[block-1]+explist.sons,loopblock.l)

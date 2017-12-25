@@ -18,9 +18,6 @@ Function inst(cnode)word export
 
 Function arg(cnode)word export
 
-
-/Function reg(cnode)int export
-
 Function =(a:cnode, b:cnode)boolean inst.a = inst.b ∧ arg.b = arg.a
 
 
@@ -164,8 +161,10 @@ Function print(a:func)seq.word
  {"<"+ number.a + number.a + symboltext.a +">"+ print.codetree.a }
 
 
-Function cnode(a:word, b:word, int)cnode 
-  cnode(a,b)  
+function cnode(a:word, b:word, int)cnode 
+  cnode(a,b) 
+  
+Function cnode(a:word,b:word) cnode export 
 
 
 

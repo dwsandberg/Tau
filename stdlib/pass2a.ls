@@ -82,10 +82,10 @@ Function findconst(t:tree.cnode)tree.cnode
   then let z2 = asconst(l, 1,"")
    if isempty.z2 
    then tree(label.t, l)
-   else tree.cnode("CONST"_1, addconst("RECORD"+ [ toword(length.z2 / 2)]+ z2), 0)
+   else tree.cnode("CONST"_1, addconst("RECORD"+ [ toword(length.z2 / 2)]+ z2))
   else if inst in"encodeword encodewordZstdlibZintzseq"∧ inst.label(t_1)="CONST"_1 
   then let cst = constantmapping_toint.arg.label(t_1)
-   findconst.tree.cnode("WORD"_1, encodeword.@(+, toint, empty:seq.int, @(+,_.cst, empty:seq.word, arithseq(length.cst / 2 - 3, 2, 8))), 0)
+   findconst.tree.cnode("WORD"_1, encodeword.@(+, toint, empty:seq.int, @(+,_.cst, empty:seq.word, arithseq(length.cst / 2 - 3, 2, 8))))
   else if inst ="IDXUC"_1 ∧ inst.label(t_2)="LIT"_1 ∧ inst.label(t_1)="CONST"_1 
   then let cst = constantmapping_toint.arg.label(t_1)
    let idx = toint.arg.label(t_2)
@@ -105,10 +105,10 @@ Function findconst(t:tree.cnode)tree.cnode
    let b = toint.arg.label(t_2)
    if inst = opSUB 
    then if between(a, -100, 100)∧ between(b, -100, 100)
-    then tree.cnode("LIT"_1, toword(a - b), 0)
+    then tree.cnode("LIT"_1, toword(a - b))
     else tree(label.t, l)
    else // opRSUB // 
-   tree.cnode("LIT"_1, toword.representation(casttoreal.a - casttoreal.b), 0)
+   tree.cnode("LIT"_1, toword.representation(casttoreal.a - casttoreal.b))
   else tree(label.t, l)
 
 function asconst(t:tree.cnode)seq.word 
@@ -127,7 +127,7 @@ function asconst(t:seq.tree.cnode, i:int, result:seq.word)seq.word
 
 function extractith(a:seq.word, p:int, i:int)tree.cnode 
  let k = 2 * p + i 
-  tree.cnode(a_k, a_(k + 1), 0)
+  tree.cnode(a_k, a_(k + 1))
 
 Function replacelocal(v:word, with:tree.cnode, t:tree.cnode)tree.cnode 
  if nosons.t = 0 
@@ -202,7 +202,7 @@ function findconstandtail(stateChangingFuncs:set.word, f:func)func
   let p = findconst( codetree.f)
   let q =    tailcall(p,number.f,nopara.f)
   replacecodetree(f, if number.f in stateChangingFuncs ∧ not(inst.label.q ="STATE"_1)
-   then tree(cnode("STATE"_1,"0"_1, 0), [ q])
+   then tree(cnode("STATE"_1,"0"_1), [ q])
    else q)
 
 
@@ -236,7 +236,7 @@ function subinline(fn:word, p:seq.tree.cnode, adjust:int, code:tree.cnode)tree.c
    p_(length.p - toint.arg.label.code + 1)
   else let l = @(+, subinline(fn, p, adjust), empty:seq.tree.cnode, sons.code)
   if inst.label.code in"LOCAL SET"
-  then tree(cnode(inst.label.code, toword(toint.arg.label.code + adjust), 0), l)
+  then tree(cnode(inst.label.code, toword(toint.arg.label.code + adjust)), l)
   else tree(label.code, l)
 
 Function simpleinline(p:program, f:int)program 
@@ -280,12 +280,12 @@ if tailcall(t,self) then
     let m = getmaxvar.t+1
        let s =  @(leftcat, newNode("LOCAL"_1), empty:seq.tree.cnode,arithseq(nopara,1,m))
        let plist=@(leftcat, newNode("PARA"_1), empty:seq.tree.cnode,arithseq(nopara,1,1))
-       tree(cnode("LOOP"_1,toword.0,0),[newNode("LIT"_1,m),tailcall(s,self,t)]+plist)
+       tree(cnode("LOOP"_1,"0"_1),[newNode("LIT"_1,m),tailcall(s,self,t)]+plist)
 else t 
 
 function leftcat(a:seq.tree.cnode,b:tree.cnode) seq.tree.cnode [b]+a
 
-function newNode(w:word,i:int) tree.cnode tree(cnode(w,toword.i,0))
+function newNode(w:word,i:int) tree.cnode tree(cnode(w,toword.i))
 
   
 function tailcall(subs:seq.tree.cnode,self:word,t:tree.cnode ) tree.cnode
@@ -298,7 +298,7 @@ function tailcall(subs:seq.tree.cnode,self:word,t:tree.cnode ) tree.cnode
    else if inst.label.t ="LOOP"_1 then
      tree(label.t,@(+,tailcall(subs,"nomatch"_1),empty:seq.tree.cnode,  sons.t ) )
   else if inst.label.t ="CALL"_1 ∧ arg.label.t = self 
-  then  tree( cnode("EXIT"_1,self,0 ), @(+,tailcall(subs,"nomatch"_1),empty:seq.tree.cnode,  sons.t ) )
+  then  tree( cnode("CONTINUE"_1,self ), @(+,tailcall(subs,"nomatch"_1),empty:seq.tree.cnode,  sons.t ) )
   else  if inst.label.t ="PARA"_1 then   
          subs_toint.arg.label.t 
     else 
@@ -324,7 +324,7 @@ function genapply(prg:program, term1:word, term2:word, ptyp:word, profile:seq.wo
       let nopara=2 + p + p1
   let newfuncmangledname = mangle("q"_1, mytype.[ next], constantseq(nopara, mytype."int"))
   assert p ≥ 0 report"illformed"+ term1 + term2 + print(allfunctions(prg)_funckey.term2)
-    let insttree =   buildcodetree(template3(newfuncmangledname,term1,term2,p1,p,ptyp),1)
+    let insttree =  buildcodetree(template(newfuncmangledname,term1,term2,p1,p,ptyp),1)
   let newf = func(nopara, "int", newfuncmangledname, insttree, profile)
   program(next, replace(allfunctions.prg, key.newf , newf), callgraph.prg + getarcs.newf, newf)
 
@@ -340,9 +340,12 @@ function getnext(p:word)word
 
 
 
- function template3(mangledname:word,term1:word,term2:word,nopara1:int,nopara2:int,ptyp:word) seq.word
+ 
+ function template(mangledname:word,term1:word,term2:word,nopara1:int,nopara2:int,ptyp:word) seq.word
  // PARA 1 is index PARA 2 is seq PARA 3 is result 
     LOCAL 3 is index LOCAL 2 is seq LOCAL 1 is result //
+    //  Inner loop LOCAL 3 result 
+ LOCAL 4 index LOCAL 5 length of seq //
 // EQL - Q3DZbuiltinZintZint  opGT =Q3EZbuiltinZintZint //
  let CALLSELF = [toword(2+nopara1+nopara2),mangledname] 
  let CALLTERM1 = [toword(2+nopara1),term1] 
@@ -350,28 +353,31 @@ function getnext(p:word)word
  let TERM1PARA =@(+,parainst,"",arithseq(nopara1,-1,2+nopara1+nopara2))
  let TERM2PARA = @(+,parainst,"",arithseq(nopara2,-1,2+nopara2))
  "LIT 1
- LOCAL 3  LOCAL 2   LIT 1   IDXUC  2  Q3EZbuiltinZintZint  2
- LOCAL 1 
     LOCAL 2   LIT 0  IDXUC  2 FREF"+ ptyp+"   Q3DZbuiltinZintZint 2  "+ TERM1PARA+TERM2PARA+
          "LOCAL 1  
          LOCAL 2   LIT 2  IDXUC  2  
        CALL"+ CALLSELF +"  
-       LOCAL 2  LIT 3  IDXUC  2 
-       LIT 1   
-    EXIT 3 "+TERM1PARA+" 
-         LOCAL 1   
-         "+TERM2PARA+"  LOCAL 2  LOCAL 3  IDX  2 CALL"+CALLTERM2+" 
-      CALL"+CALLTERM1+" 
-       LOCAL 2    
-       LOCAL 3   LIT 1  ADD 2
-    EXIT 3
+       LOCAL 2  LIT 3  IDXUC  2   
+    CONTINUE 2  
+    LOCAL 2   LIT 1   IDXUC  2
+    LIT 3
+ LOCAL 4  LOCAL 5  Q3EZbuiltinZintZint  2
+ LOCAL 3 
+    "+TERM1PARA+" 
+         LOCAL 3   
+         "+TERM2PARA+"  LOCAL 2  LOCAL 4  IDX  2 CALL"+CALLTERM2+" 
+      CALL"+CALLTERM1+"     
+       LOCAL 4   LIT 1  ADD 2
+    CONTINUE 2
  if 3
+LOCAL 1
+LIT 1
+LOOP 4 
+SET 5
  if 3
 PARA 2 
 PARA 1
-LIT 1
-LOOP 5 "
-
+LOOP 4 "
 
 
 function expandapply(p:program, thisone:int)program 
@@ -399,7 +405,7 @@ function expandapply(p:program, t:tree.cnode, profile:seq.word)rexpand
    if nosons.t2 = 5 ∧ nopara.f = 1 ∧ inst.label.codetree.f ="PARA"_1 ∧ checkistypechangeonly(arg.label(t2_4), arg.label(t2_1))
    then rexpand(p.last.l, t2_2)
    else let p2 = genapply(p.last.l, arg.label(t2_(nosons.t2 - 1)), arg.label(t2_(nosons.t2 - 2)), arg.label(t2_nosons.t2), profile)
-   rexpand(p2, tree(cnode("CALL"_1, number.fn.p2, nopara.fn.p2), subseq(sons.t2, 1, nosons.t2 - 3)))
+   rexpand(p2, tree(cnode("CALL"_1, number.fn.p2), subseq(sons.t2, 1, nosons.t2 - 3)))
   else rexpand(p.last.l, t2)
 
 function checkistypechangeonly(term1:word, term3:word)boolean 
