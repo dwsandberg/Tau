@@ -62,7 +62,10 @@ Function locals(sizes:set.libtype, modname:mytype, libtyp:libtype)seq.syminfo
   then [ syminfo(abstracttype.typ, modname, fldtypes, typ,(if sizeoftype(sizes, typ)= offset.length.fldtypes 
    then"RECORD"
    else"BUILD")+ toword.length.fldtypes)]+ fldaccess(sizes, modname, typ, fldtypes, fldnames, offset.0, 1)
-  else [ syminfo(abstracttype.typ, modname, fldtypes, typ,"BUILDS"+ toword.length.fldtypes)]+ @(+, accessfld(modname, typ, fldtypes, fldnames), empty:seq.syminfo, arithseq(length.fldtypes, 1, 1))+ [ syminfo("toseq"_1, modname, [ typ], mytype(towords.parameter.typ +"seq"_1),"")]
+  else 
+  // assert name.libtyp in "seq pseq dseq cseq arithmeticseq blockseq seq fastsubseq packedseq" report print.libtyp //
+  [ syminfo(abstracttype.typ, modname, fldtypes, typ,"BUILDSEQ"+ toword.length.fldtypes+name.libtyp)]+ @(+, accessfld(modname, typ, fldtypes, fldnames), empty:seq.syminfo, arithseq(length.fldtypes, 1, 1))+ [ syminfo("toseq"_1, modname, [ typ], mytype(towords.parameter.typ +"seq"_1),"")]
+ 
 
 function accessfld(modname:mytype, type:mytype, fldtypes:seq.mytype, fldnames:seq.word, i:int)syminfo 
  syminfo(fldnames_i, modname, [ type], fldtypes_i,"LIT"+ toword.i +"IDXUC 2")

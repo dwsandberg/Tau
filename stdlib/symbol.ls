@@ -98,7 +98,7 @@ function gather2(s:seq.word, i:int, r:set.word)set.word
   else if s_i ="FREF"_1 
   then let x = s_(i + 1)
    gather2(s, i + 2, r + x)
-  else assert not(s_i in"BUILDS CALLB FREFB BUILD TSIZE")report"not expecting instruction"+ s_i +"in compiled code"+ s 
+  else assert not(s_i in"BUILDSEQ CALLB FREFB BUILD TSIZE")report"not expecting instruction"+ s_i +"in compiled code"+ s 
   gather2(s, i + 1, r)
 
 Function compileinstance(alltypes:set.libtype, lookup:set.syminfo, w:word)seq.syminfo 
@@ -149,6 +149,15 @@ function removeB(alltypes:set.libtype, lookup:set.syminfo, modname:mytype, w:seq
    removeB(alltypes, lookup, modname, new, i)
   else if w_i ="DEEPCOPY"_1 
   then"USECALL"+ deepcopybody(alltypes, parameter.modname)
+  else if w_i = "BUILDSEQ"_1 then
+     let name ="_"_1 let paras=[ mytype(towords(parameter.modname)+w_(i + 2)) ,mytype."int"]
+     let e = findelement2(lookup, syminfo(name,paras ))
+   assert cardinality.e = 1 report if cardinality.e = 0 
+    then"unbound not defined?"+ formatcall(name, paras)
+    else"multiple definitions of unbound"+ formatcall(name, paras)+"in"+ @(+, print,"", @(+, modname, empty:seq.mytype, toseq.e))
+     let code = ["FREF"_1,  mangled(e_1), "RECORDS"_1 , toword(toint(w_(i+1))+1)]
+     let new = subseq(w, 1, i - 1)+ code + subseq(w, i + 3, length.w)
+     removeB(alltypes, lookup, modname, new, i + length.code)
   else if w_i ="WORD"_1 
   then removeB(alltypes, lookup, modname, w, i + 2)
   else removeB(alltypes, lookup, modname, w, i + 1)

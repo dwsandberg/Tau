@@ -80,7 +80,7 @@ function setSymbols(md:seq.seq.word, i:int, modname:mytype, defines:set.syminfo,
    then setSymbols(md, i + 1, modname, defines, addnodup(exports, pre)+ pre, uses, typedefs, tocompile)
    else if subseq(instruction.pre, 1, 1)in ["UNBOUND"]
    then setSymbols(md, i + 1, modname, addnodup(defines, pre), exports, uses, typedefs, tocompile)
-   else let newtocompile = if subseq(instruction.pre, 1, 1)in ["BUILDS","USECALL","ERECORD"]
+   else let newtocompile = if subseq(instruction.pre, 1, 1)in ["BUILDSEQ","USECALL","ERECORD"]
     then tocompile + md_i 
     else tocompile 
    setSymbols(md, i + 1, modname, addnodup(defines, pre), if md_i_1 ="Function"_1 then exports + pre else exports, uses, typedefs, newtocompile)

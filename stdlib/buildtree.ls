@@ -103,9 +103,15 @@ function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode
   else if a_i in"$build $wordlist"
   then let noelements = toint(a_(i + 1))
    let prefix = [ tree.cnode("LIT"_1,"0"_1, 0), tree.cnode("LIT"_1, a_(i + 1), 0)]
-   let c = cnode("RECORD"_1,"0"_1, noelements + 2)
+   let c = cnode("RECORD"_1,"0"_1)
    buildcodetree(a, push(pop(f, noelements), tree(c, prefix + top(f, noelements))), i + 2)
-  else let noargs=toint(a_(i + 1)) let c = cnode(a_i,"0"_1, noargs)
+  else if a_i ="RECORDS"_1 then
+     //  last element in record becomes the first //
+     let noelements = toint(a_(i+1))
+     let c = cnode("RECORD"_1,"0"_1)
+       buildcodetree(a, push(pop(f, noelements), tree(c, [ top(f) ] + top(pop(f),noelements-1) )),i+2)
+ else
+  let noargs=toint(a_(i + 1)) let c = cnode(a_i,"0"_1)
   assert not(a_i ="if"_1)∨ noargs = 3 report"Incorrect number of args on if"
   buildcodetree(a, push(pop(f, noargs), tree(c, top(f, noargs))), i + 2)
 

@@ -109,7 +109,7 @@ Function find(d:symdict, w:word, l:seq.r3)r3
    toword.noparameters, 
    mangled.sym]
    r3(codesons + z, [ returntype.sym], nexttmp)
-  else if code_1 ="BUILDS"_1 
+   else if code_1 ="BUILDSEQ"_1 
   then r3(FREFcode.findseqindexfunction(d, returntype.sym)+ codesons +"RECORD"+ toword(toint(code_2)+ 1), [ returntype.sym], nexttmp)
   else if code_1 in"ERECORD PRECORD"
   then let basetype = parameter.returntype.sym 
@@ -242,7 +242,7 @@ Function checkapplyA(d:symdict, t:tree.word, nexttmp:int)r3
 Function bind(bindingonly:boolean, alltypes:set.libtype, modname:mytype, a:set.syminfo, text:seq.word)syminfo 
  let t = parse(text, tree("X"_1))
   let dict = symdict(text, a, alltypes, bindingonly)
-  // will not return instructions containing ERECORD or BUILDS.Returns augmented code // 
+  // will not return instructions containing ERECORD or BUILDSEQ. Returns augmented code // 
   // let cond = not(abstracttype.tomytype.modname in"invertedseq")∨ label.symbol.t in"= lookup ele"// 
   let sym = parsesyminfo(modname, text)
   let noparameters = length.paratypes.sym 
@@ -251,8 +251,8 @@ Function bind(bindingonly:boolean, alltypes:set.libtype, modname:mytype, a:set.s
    then changeinstruction(sym,"USECALL builtin 0")
    else if nosons.functionbody.t = 0 
    then changeinstruction(sym,"USECALL PARA 1")
-   else if instruction(sym)_1 ="BUILDS"_1 
-   then changeinstruction(sym,"USECALL"+ FREFcode.findseqindexfunction(dict, returntype.sym)+ paralistcode.noparameters +"RECORD"+ toword(toint(instruction(sym)_2)+ 1))
+  else if instruction(sym)_1 ="BUILDSEQ"_1 
+   then changeinstruction(sym,"USECALL"+ FREFcode.findseqindexfunction(dict, returntype.sym)+ paralistcode.noparameters +"RECORD"+ toword(toint(instruction(sym)_2)+ 1))   
    else if instruction(sym)_1 in"ERECORD PRECORD"
    then changeinstruction(sym,"USECALL"+ codingrecord.sym)
    else sym 
@@ -330,7 +330,8 @@ Function compileabstract(bindingonly:boolean, alltypes:set.libtype, allmods:set.
 function funcfrominstruction(alltypes:set.libtype, b:syminfo)syminfo 
  if isabstract.modname.b 
   then b 
-  else changeinstruction(b, funcfrominstruction(alltypes, instruction.b, actualreturntype.b, length.paratypes.b))
+  else 
+  changeinstruction(b, funcfrominstruction(alltypes, instruction.b, actualreturntype.b, length.paratypes.b))
 
 Function processtemplate(a:mod2desc)seq.syminfo 
  // encodes abstract syminfo and returns compiled syminfo // 

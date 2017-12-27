@@ -52,7 +52,6 @@ Function assigntypesizes(f:seq.libtype)set.libtype
   assert isempty.cyclic report"cyclic type def"
   @(sizetype, identity, asset.empty:seq.libtype, c + toseq(asset.f - asset.c))
 
-assert false report @(lines, print,"", toseq.y)y
 
 function lookup(name:word, abstract:boolean, s:set.libtype, message:seq.word)libtype 
  let e = findelement(libtype(name, abstract,"X"_1, empty:seq.mytype, offset.0,""), s)
@@ -168,7 +167,7 @@ Function funcfrominstruction(alltypes:set.libtype, instruction:seq.word, returnt
   then"USECALL PARA 1"
   else if instruction_1 ="USECALL"_1 
   then instruction 
-  else assert not(instruction_1 in"BUILDS ERECORD")report"not expecting"+ instruction 
+  else assert not(instruction_1 in"ERECORD BUILDSEQ")report"not expecting"+ instruction 
   {"USECALL"+ if instruction_1 ="BUILD"_1 
    then if sizeoftype(alltypes, returntype)= offset.nopara 
     then paralistcode.nopara +"RECORD"+ toword.nopara 
@@ -196,13 +195,10 @@ Function replaceTsyminfo(within:mytype, s:syminfo)syminfo
    syminfoinstance(with, protoname.s, protomodname.s, protoparatypes.s, protoreturntype.s,"USECALL")
   else syminfoinstance(with, name.s, modname.s, paratypes.s, returntype.s, instruction.s)
 
-let name = if length.paratypes.s > 0 then name.s else replaceT(with, name.s)syminfo(name, replaceT(with, modname.s), @(+, replaceT.with, empty:seq.mytype, paratypes.s), replaceT(with, returntype.s), s, instruction.s)
 
 function syminfoinstance(with:mytype, name:word, modname:mytype, paratypes:seq.mytype, returntype:mytype, instruction:seq.word)syminfo 
  let namex = if length.paratypes > 0 then name else replaceT(with, name)
   syminfoinstance(namex, replaceT(with, modname), @(+, replaceT.with, empty:seq.mytype, paratypes), replaceT(with, returntype), instruction, name, paratypes, returntype)
 
-let name = if length.protoparatypes.s > 0 then protoname.s else replaceT(with, protoname.s)syminfo(name, replaceT(with, protomodname.s), @(+, replaceT.with, empty:seq.mytype, protoparatypes.s), replaceT(with, returntype.proto.s), proto.s,"USECALL")
 
-__________________________________
 
