@@ -166,4 +166,20 @@ Function idxmacro internalbc
  +BR(18, 5) 
  +PHI(18, typ.i64, -9, 1, -15, 3, -17, 4) 
  +RET(19, -18)
+ 
+ Function idxmacro2 internalbc 
+ BLOCKCOUNT(1, 4) 
+ +CAST(4, -2, typ.ptr.i64, CASTINTTOPTR) 
+ +LOAD(5, -4, typ.i64, align8, 0) 
+ +CMP2(6, -5, C64.0, 32) 
+ +BR(7, 1, 2, -6) 
+ +GEP(7, 1, typ.i64, -4, C64.1) 
+ +GEP(8, 1, typ.i64, -7, -3) 
+ +LOAD(9, -8, typ.i64, align8, 0) 
+ +BR(10, 3) 
+ +CAST(10, -5, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR) 
+ +CALL(11, 0, 32768, typ.function.[ i64, i64, i64, i64], -10, -1, -2, -3) 
+ +BR(12, 3) 
+ +PHI(13, typ.i64, -9, 1, -11, 3) 
+ +RET(14, -13)
 

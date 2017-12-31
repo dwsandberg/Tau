@@ -8,19 +8,11 @@ use stdlib
 
 Function seqtype(a:seq.T)int Ttoint.valueat(address.a, 0)
 
-/Function internalidx(a:seq.T, b:int)T builtin.IDX
 
 Function allocatespace(i:int)seq.T builtin.usemangle
 
-Function setbyte(to:seq.T, from:seq.T, i:int)int builtin.SETFLDBYTE
 
-Function smallbyteseq(size:int, w1:int, w2:int, k:T)seq.T 
- let b = allocatespace.4 
-  let discard2 = setfld3(address.b, 1, 0)
-  let discard3 = setfld3(address.b, size, 1)
-  let discard4 = setfld3(address.b, w1, 2)
-  let discard5 = setfld3(address.b, w2, 3)
-  b
+
 
 type address is record toseq:seq.T
 

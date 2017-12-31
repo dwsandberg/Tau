@@ -2,13 +2,9 @@ Module fileresult
 
 use UTF8
 
-use blockseq.int
 
-use internals.int
 
-use packedseq.int
-
-use prims
+use fileio
 
 use seq.int
 
@@ -18,9 +14,6 @@ use seq.seq.seq.int
 
 use stdlib
 
-Function blockit(seq.int)seq.int export
-
-Blockit is exported so other deepcopy functions will compile
 
 Function breaklines(a:seq.int)seq.seq.int breaklines(a, 2, 1, empty:seq.seq.int)
 
@@ -130,8 +123,4 @@ Function toUTF8plus(s:seq.word)seq.int toseqint.toUTF8.s + [ 10, 10]
 
 -------------------
 
-Function createbytefile(a:seq.word, data:seq.int)int 
- createfile(packedbyte(toseqint.toUTF8.a + [ 0]), packedbyte.data)
-
-function createfile(name:seq.int, data:seq.int)int builtin.usemangle
 

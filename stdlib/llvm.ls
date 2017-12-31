@@ -11,17 +11,6 @@ Function toint(bits) int export
 Function bits(int) bits export
 
 
-type bitstream is record bytes:seq.int,val:bits,nobits:int
-
-Function emptybitstream bitstream bitstream(empty:seq.int,bits.0,0)
-
-Function emptyx bitstream bitstream(empty:seq.int,bits.0,0)
-
-Function bytes(bitstream) seq.int export
-
-Function val(bitstream) bits export
-
-Function nobits(bitstream) int export
 
 
 Function &or(a:bits,bits) bits  builtin.usemangle
@@ -32,77 +21,96 @@ Function  >>(a:bits,i:int) bits  builtin.usemangle
 
 Function <<(a:bits,i:int) bits  builtin.usemangle 
 
-/function  -(a:bits,i:int)  bits builtin.usemangle
 
-/function  +(a:bits,i:int)  bits builtin.usemangle
+            
+            
+__________________
 
-Function +(a:bitstream, b:bitstream) bitstream   bitstream ( bytes.a+bytes.b,val.b,nobits.b)
+use packedseq.bits
 
-Function bitstream(seq.int,bits,int) bitstream export
 
-Function addvbr6(b:bitstream,s:seq.int) bitstream
-  addvbr6((val.b), nobits.b     ,bits.0,s,bytes.b,1)
-  
-Function addvbr6(b:bitstream,v:int) bitstream
-   addvbr6((val.b), nobits.b     ,bits.0,[v],bytes.b,1) 
+use UTF8
 
-    
-Function addbits(b:bitstream,newbits:int,nonew:int) bitstream
-            addbits(val.b,nobits.b,newbits,nonew,bytes.b)
 
-Function addvbr(b:bitstream, newbits:int,bitcount:int) bitstream
+use blockseq.bits
+
+use seq.bit
+
+use byteseq.bit
+
+use blockseq.int
+
+
+type bit is record toint:int
+
+
+function sizeinbits(a:bit)  int   1
+
+function tobits(a:bit ) bits bits.toint.a
+
+Function addvbr(b:bitpackedseq.bit , newbits:int,bitcount:int) bitpackedseq.bit 
            let limit=toint( bits(1) << (bitcount-1))
-           if  newbits < limit then addbits(b,newbits,bitcount)
+           if  newbits < limit then add(b,bits(newbits),bitcount)
            else   
               let firstchunk =   bits(limit-1) &and bits(newbits) &or bits(limit)
               let secondchunk =  bits(newbits) >> (bitcount-1)
               assert toint.secondchunk < limit report "vbr encoding for value is not handled"+toword.newbits+toword.limit
-               addbits(b,toint(secondchunk << bitcount &or firstchunk),bitcount * 2 )
+               add(b, (secondchunk << bitcount &or firstchunk),bitcount * 2 )
 
-
-function addbits(b:bits,nobits:int, newbits:int,nonew:int,r:seq.int) bitstream
-       if nobits &ge 8 then  
-         addbits(b >> 8 ,nobits - 8,newbits,nonew,r+toint( b &and bits(255)))
-       else  
-         if nonew=0 then 
-             bitstream(r,b,nobits)
-       else let bitstomove = min(nonew,50) 
-            let mask = bits(toint(bits.1 << bitstomove)-1)
-            addbits( b &or   ( (bits.newbits &and mask )   <<  nobits), nobits+ bitstomove,toint(bits(newbits) >> bitstomove),nonew-bitstomove,r)
-        
-
-function     addvbr6(b:bits,nobits:int, leftover:bits,s:seq.int,r:seq.int,i:int) bitstream
-       if nobits &ge 8 then  
-         addvbr6(b >> 8 ,nobits - 8,leftover,s,r+toint( b &and bits(255)),i)
-       else if toint.leftover > 0 then
-          if toint.leftover < 32 then
-             addvbr6(b  &or leftover << nobits,nobits+6,bits.0,s,r,i)
+       
+         
+function addvbr6( b:bits, bitstoadd:int, leftover:bits, s:seq.int, r:bitpackedseq.bit,i:int) bitpackedseq.bit
+        if bitstoadd > 58 then   addvbr6(bits.0,0,leftover,s,add(r,b,bitstoadd),i) 
+        else
+        if toint.leftover > 0 then
+           if toint.leftover < 32 then
+             addvbr6(b  &or leftover << bitstoadd,bitstoadd+6,bits.0,s,r,i)
           else 
-             addvbr6(b   &or (( (leftover &and bits(31)) &or bits(32) ) <<  nobits),nobits+6,leftover >> 5,s,r,i)
-       else if i > length.s then bitstream(r,b,  nobits)
-       else
-         let v = s_i
+             addvbr6(b   &or (( (leftover &and bits(31)) &or bits(32) ) <<  bitstoadd),bitstoadd+6,leftover >> 5,s,r,i)
+        else if i > length.s then
+           if bitstoadd=0 then r else add(r,b,bitstoadd)
+        else
+           let v = s_i
            if v < 32 then 
-                    addvbr6(b &or bits.v << nobits,nobits+6,bits.0,s,r,i+1)
+                    addvbr6(b &or bits.v << bitstoadd,bitstoadd+6,bits.0,s,r,i+1)
             else  
-            addvbr6(b   &or (( (bits.v &and bits(31)) &or bits(32) ) << nobits),nobits+6,bits.v >> 5, s,r,i+1) 
-            
-            
-Function addvbrsigned6(b:bitstream, val:int)bitstream
+            addvbr6(b   &or (( (bits.v &and bits(31)) &or bits(32) ) << bitstoadd),bitstoadd+6,bits.v >> 5, s,r,i+1) 
+             
+  Function addvbr6(b:bitpackedseq.bit,s:seq.int) bitpackedseq.bit
+  addvbr6(bits.0, 0     ,bits.0,s,b,1)
+  
+Function addvbr6(b:bitpackedseq.bit,v:int) bitpackedseq.bit
+   addvbr6(bits.0, 0    ,bits.0,[v],b,1) 
+          
+
+Function addvbrsigned6(b:bitpackedseq.bit, val:int)bitpackedseq.bit
  if val < 0 
   then if val > -16 
    then addvbr6(b, 2 *-val + 1)
-   else let chunk = bits(32 +-val mod 16 * 2 + 1) << nobits.b
-        addvbr6( val.b &or (chunk), nobits.b+6,bits(-val) >> 4,empty:seq.int,bytes.b,1) 
+   else let chunk = bits(32 +-val mod 16 * 2 + 1) 
+        addvbr6(  chunk ,  6,bits(-val) >> 4,empty:seq.int,b,1) 
   else if val < 16 
   then addvbr6(b, 2 * val)
-  else let chunk = bits(32 + val mod 16 * 2) << nobits.b
-        addvbr6( val.b &or (chunk), nobits.b+6,bits(val) >> 4,empty:seq.int,bytes.b,1) 
+  else let chunk = bits(32 + val mod 16 * 2) 
+        addvbr6( chunk, 6,bits(val) >> 4,empty:seq.int,b,1) 
        
-Function align(a:bitstream)bitstream
- let k = ( length.bytes.a  * 8 + nobits.a )    mod 32 
+Function align32(a:bitpackedseq.bit)bitpackedseq.bit
+ let k = (length.a  )  mod 32 
   if k = 0  then a 
-  else addbits(a, 0, 32 - k  )
+  else add(a, bits.0, 32 - k  )
+  
+
+
+
+
+
+
+_____________________
+
+
+
+
+
 
 
 module llvm
@@ -139,6 +147,10 @@ use stdlib
 
 use bitstream
 
+Function typ(llvmconst) int export
+
+Function toseq(llvmconst) seq.int export
+
 
 type llvmtype is record toseq:seq.int
 
@@ -159,24 +171,42 @@ function =(a:llvmconst, b:llvmconst)boolean toseq.a = toseq.b &and typ.a=typ.b
 Function getelementptr(type:encoding.llvmtype, name:seq.word)int 
  C(ptr.i64, [ CONSTGEP, typ.type, typ.ptr.type, C.name, typ.i32, C32.0, typ.i32, C32.0])
 
+Function llvmconsts erecord.llvmconst export
 
+Function mapping(erecord.llvmconst) seq.llvmconst export
   
 use internalbc
 
 use seq.internalbc
 
-Function llvm(  deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.int 
- PROFILE.let m = addrecords(bitblock(emptyx, 3, MODULEBLOCK, 0),[ [ 1, 1]]) 
-  let m1 = addblock(m,TYPEBLOCK, 4, [ [ ENTRY, length.trecords]]+ trecords ) 
-    let m2 = addblock(m1,PARABLOCK, 4, [ [ ENTRY, 2^32 - 1, 32 + 2^14]] )
-  let m3 = addrecords(m2, deflist)
-  let constblock = addblock(m3,CONSTANTSBLOCK,4 ,constrecords(emptyx,-1,mapping.llvmconsts,1) )
+
+   Function llvm(  deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int) seq.bits
+ let  MODABBREVLEN=3 let TYPEABBREVLEN=4
   let offset = length.mapping.llvmconsts
-  let m4 = @(addbody.offset, identity, constblock, bodytxts)
-   let n = addblock(block(0, 2), addblock(m4,VALUESYMTABBLOCK,4, symentries(emptyx,mapping.llvmconsts,1)))
-  [ 66, 67, 192, 222]+ bytes.bits.n
-
-
+   let  h= addblockheader(add(add(add(add(empty:bitpackedseq.bit,bits.66,8),bits.67,8),bits.192,8),bits.222,8),  2,MODULEBLOCK,MODABBREVLEN)
+    let  a=addrecords(h,MODABBREVLEN,[ [ 1, 1]])
+   // type block //
+   let  typeheader=addblockheader(a,MODABBREVLEN,TYPEBLOCK,TYPEABBREVLEN)
+   let  a2=addrecords(typeheader,TYPEABBREVLEN,[ [ ENTRY, length.trecords]]+ trecords)
+   let  a3=finishblock(a2,typeheader,TYPEABBREVLEN)
+   // para block //
+     let   paraheader=addblockheader(a3,MODABBREVLEN,PARABLOCK,TYPEABBREVLEN)
+     let   a4=finishblock(addrecords(paraheader,TYPEABBREVLEN,[ [ ENTRY, 2^32 - 1, 32 + 2^14]]),paraheader,TYPEABBREVLEN)
+   // def list //
+     let a5= addrecords(a4,MODABBREVLEN,deflist)  
+       // const block //
+       let   constheader=addblockheader(a5,MODABBREVLEN,CONSTANTSBLOCK,TYPEABBREVLEN)
+         let a6= finishblock( constrecords(constheader,-1,mapping.llvmconsts,1) ,constheader,TYPEABBREVLEN)
+        // function bodies //
+   let a7 = @(addbody(offset,MODABBREVLEN), identity, a6, bodytxts)
+ // sym table //
+      let  symtabheader=addblockheader(a7,MODABBREVLEN,VALUESYMTABBLOCK,TYPEABBREVLEN)
+      let a8=finishblock( symentries(symtabheader,mapping.llvmconsts,1) ,symtabheader,TYPEABBREVLEN)
+  // finish module block //    
+      data2.align.finishblock(a8,h,MODABBREVLEN)
+  
+   
+ 
 
 Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int 
  if i > length.adj 
@@ -203,38 +233,7 @@ Function symbolrecords2 seq.llvmconst subsym(mapping.llvmconsts,empty:seq.llvmco
   
   
         
-function  symentries(bits:bitstream, s:seq.llvmconst,i:int) bitstream
-       if i > length.s then bits else 
-       let l = s_i
-       let bs =if typ.l=-1 then  
-         let abbrevlength = 4           
-         let a1 = addvbr6(addvbr6( addvbr6(addvbr(bits, 3, abbrevlength),ENTRY),length.toseq.l+1),i-1)
-          addvbr6(a1, toseq.l)
-        else bits
-        symentries(bs, s, i + 1)
- 
- 
- use options.bitstream
 
-function  constrecords(bits:bitstream,lasttype:int, s:seq.llvmconst,i:int) bitstream
-       if i > length.s then bits else 
-       let l = s_i
-       let bs =if typ.l=-1 then bits else 
-          let abbrevlength = 4
-         let bits2 = if lasttype=typ.l then bits else 
-                         // addvbr6(addvbr6( addvbr6(addvbr(bits, 3, abbrevlength),1),1),typ.l) //
-                         addvbr6 (addbits(bits,  ( 1 * 64 + 1) * 16 + 3, 16),typ.l)
-         let tp=(toseq.l)_1    
-         if  tp=CONSTINTEGER  then
-                // addvbrsigned6(addvbr6( addvbr6(addvbr(bits2, 3, abbrevlength),tp),1),(toseq.l)_2) //
-                  addvbrsigned6(addbits(bits2,  ( 1 * 64 + tp) * 16 + 3, 16),(toseq.l)_2)
-         else  
-         let a1 = if length.toseq.l < 32 then
-                    addbits(bits2, ((length.toseq.l-1)  * 64 + tp) * 16+ 3 ,16)
-             else addvbr6( addvbr6(addvbr(bits2, 3, abbrevlength),tp),length.toseq.l-1)
-            addvbr6(  a1, subseq(toseq.l,2,length.toseq.l))
-        constrecords(bs, lasttype,s, i + 1)
-  
   
   
   
@@ -271,18 +270,40 @@ Function ptr(base:encoding.llvmtype)encoding.llvmtype
 Function function(para:seq.encoding.llvmtype)encoding.llvmtype 
  encode(llvmtype.@(+, typ, [ TYPEFUNCTION, 0], para), llvmtypes)
 
--------------
 
 
 
-type bitblock is record bits:bitstream, abbrevlength:int, blockid:int, slot:int
+  
+  
+function ENDBLOCK int 0
+
+function ENTERBLOCK int 1 
 
 
 
-function addrecords(b:bitblock, s:seq.seq.int)bitblock 
-  bitblock(addrecords(bits.b,  abbrevlength.b, s, 1),abbrevlength.b,blockid.b,0)
 
-function addrecords(bits:bitstream, abbrevlength:int, s:seq.seq.int, i:int) bitstream
+use byteseq.bit
+
+Function addblockheader(b:bitpackedseq.bit,currentabbrelength:int,blockid:int,abbrevlength:int) bitpackedseq.bit
+  addvbr(align32.addvbr(addvbr(addvbr(b, ENTERBLOCK, currentabbrelength), blockid, 8), abbrevlength, 4),0,32)
+
+Function finishblock(  current:bitpackedseq.bit, header:bitpackedseq.bit,blockabbrevlength:int) bitpackedseq.bit
+    let bb=align32.addvbr(current, ENDBLOCK, blockabbrevlength)
+    let len = (length .bb-length.header) / 32
+    //  assert false report "X"+toword(length.header -32)+toword.len //
+     patch(bb, length.header-31   ,len)
+     
+ 
+
+Function addbody(offset:int, abbrevlen:int, m:bitpackedseq.bit, bodytxt:internalbc) bitpackedseq.bit
+     let header=addblockheader(m,abbrevlen,FUNCTIONBLOCK ,4)
+         finishblock(addtobitstream(offset,header,bodytxt),header,4)
+
+
+Function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int) bitpackedseq.bit
+ addrecords(bits, abbrevlength, s, 1)
+
+function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int, i:int) bitpackedseq.bit
    if i > length.s 
   then bits
   else let a = s_i 
@@ -291,33 +312,37 @@ function addrecords(bits:bitstream, abbrevlength:int, s:seq.seq.int, i:int) bits
   let a2 = addvbr6(addvbr6(a1, tp), length.a - 1)
   let bs =  @(addvbr6, identity, a2, subseq(a, 2, length.a))
   addrecords(bs,  abbrevlength, s, i + 1)
-
-   
-function addbody(offset:int, m:bitblock, bodytxt:internalbc)bitblock 
-   addblock(m, bitblock(tobitstream(offset,bodytxt), 4, FUNCTIONBLOCK, 0))
-
-
-
-function addblock(a:bitblock, b:bitblock)bitblock 
-   addblock(a,blockid.b,abbrevlength.b,bits.b)
-    
   
   
- function addblock(a:bitblock, blockid:int,abbrevlength:int,s:seq.seq.int) bitblock 
-   addblock(a,blockid,abbrevlength,addrecords(emptyx,abbrevlength,s,1))
-    
- function addblock(a:bitblock, blockid:int,abbrevlength:int,bits:bitstream) bitblock 
- let ENDBLOCK = 0 
-  let ENTERBLOCK = 1 
-  let bb = align.addvbr(bits, ENDBLOCK, abbrevlength)
-  let len = length.bytes.bb / 4 
-  let c = addvbr(addvbr(addvbr(bits.a, ENTERBLOCK, abbrevlength.a), blockid, 8), abbrevlength, 4)
-  bitblock(addvbr(align.c, len, 32)+ bb, abbrevlength.a, blockid.a, slot.a)
- 
-  
-  
-
-function block(kind:int, encodingsize:int)bitblock bitblock(emptyx, encodingsize, kind, 0)
+Function  constrecords(bits:bitpackedseq.bit,lasttype:int, s:seq.llvmconst,i:int) bitpackedseq.bit
+       if i > length.s then bits else 
+       let l = s_i
+       let bs =if typ.l=-1 then bits else 
+          let abbrevlength = 4
+         let bits2 = if lasttype=typ.l then bits else 
+                         // addvbr6(addvbr6( addvbr6(addvbr(bits, 3, abbrevlength),1),1),typ.l) //
+                         addvbr6 (add(bits,  bits( ( 1 * 64 + 1) * 16 + 3), 16),typ.l)
+         let tp=(toseq.l)_1    
+         if  tp=CONSTINTEGER  then
+                // addvbrsigned6(addvbr6( addvbr6(addvbr(bits2, 3, abbrevlength),tp),1),(toseq.l)_2) //
+                  addvbrsigned6(add(bits2,  bits( ( 1 * 64 + tp) * 16 + 3), 16),(toseq.l)_2)
+         else  
+         let a1 = if length.toseq.l < 32 then
+                    add(bits2, bits(((length.toseq.l-1)  * 64 + tp) * 16+ 3) ,16)
+             else addvbr6( addvbr6(addvbr(bits2, 3, abbrevlength),tp),length.toseq.l-1)
+            addvbr6(  a1, subseq(toseq.l,2,length.toseq.l))
+        constrecords(bs, lasttype,s, i + 1)
+        
+Function  symentries(bits:bitpackedseq.bit, s:seq.llvmconst,i:int) bitpackedseq.bit
+       if i > length.s then bits else 
+       let l = s_i
+       let bs =if typ.l=-1 then  
+         let abbrevlength = 4           
+         let a1 = addvbr6(addvbr6( addvbr6(addvbr(bits, 3, abbrevlength),ENTRY),length.toseq.l+1),i-1)
+          addvbr6(a1, toseq.l)
+        else bits
+        symentries(bs, s, i + 1)
+     
 
 Function STRUCTNAME int 19
 

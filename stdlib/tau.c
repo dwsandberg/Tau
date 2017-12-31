@@ -510,7 +510,7 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
      IDXUC(org,2)=data2[1];
      IDXUC(org,3)=(BT) data2;
     data2[0]=0;
-    data2[1]=(sbuf.st_size+7-16)/4;
+    data2[1]=sbuf.st_size > 16 ? (sbuf.st_size+7-16)/8 : 0;
     close(fd);
     return org;
 }
@@ -869,14 +869,12 @@ void    stepfree ( BT x)
 }
 
 
-BT randombytesZbuiltinZint(processinfo PD,BT len){
+  
+BT randomintZbuiltinZint(processinfo PD,BT len){
 int randomData = open("/dev/urandom", O_RDONLY);
-  BT org = myalloc(PD,2+(len+7/8) );
-     IDXUC(org,0)=1;
+  BT org = myalloc(PD,2+len );
+     IDXUC(org,0)=0;
      IDXUC(org,1)=len;
-     IDXUC(org,2)=0;
-     IDXUC(org,3)=0;
-
     if (len!=read(randomData, &IDXUC(org,2), len ))
     {
         // error, unable to read /dev/random 
@@ -892,20 +890,4 @@ BT arcsinZbuiltinZreal(processinfo PD, BT a)  {return asint(asin(asreal(a)));}
 BT arccosZbuiltinZreal(processinfo PD, BT a)  {return asint(acos(asreal(a)));}
 
 
-BT simplepackedbyteZbuiltinZTzseq(processinfo PD, BT a) {
-   BT (* getele) (processinfo,BT,BT)  = dlsym(RTLD_DEFAULT, "Q5FZintzseqZTzseqZint");
-    if (!getele){
-       printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }
-       BT size=IDXUC(a,1);
-       BT lengthword=(size+ 7)/ 8;  
-      BT org=myalloc(PD,lengthword+2);
-      char *p=((char *) org )+16 ;
-      BT i=0;
-     IDXUC(org,0)=1; 
-     IDXUC(org,1)=size;
-     IDXUC(org,lengthword+1)=0; // zero last word for overrun
-      for (i = 0;i<size ;i++) {    *(p+i)=(char) getele(PD,a,i+1);}
-      return org;
-}
+

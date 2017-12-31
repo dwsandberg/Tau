@@ -57,7 +57,9 @@ Function main(user:UTF8, func:UTF8, a:UTF8)UTF8
    then let b = fixup(toseqint.a, findeq(toseqint.a, 1)+ 1, empty:seq.int, empty:seq.seq.word)
     theresult.cast2cmdresult.execute(x_1, cvtto.tosession(b_1_1, user1), b_3, b_4, subseq(b, 5, length.b))
    else theresult.cast2cmdresult.execute(x_1, cvtto.tosession("0"_1, user1),"","", empty:seq.seq.word)
-  UTF8.packedbyte(HTTP200 + toseqint.toUTF8(htmlheader + result))
+  // UTF8.packedbyte(HTTP200 + toseqint.toUTF8(htmlheader + result))//
+   assert false report "removed packedbyte function so main no longer works"
+    user
 
 function cast2cmdresult(a:seq.word)cmdresult builtin
 

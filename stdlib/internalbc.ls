@@ -140,7 +140,7 @@ Function +(a:internalbc,b:internalbc ) internalbc
   if   length.done.a > 0 &or bitcount.a+bitcount.b > 56 then internalbc(bits.a,bitcount.a,done.a+finish.b)
   else   internalbc( bits.b * 2 ^ bitcount.a + bits.a,bitcount.a+bitcount.b,done.b)
 
-function finish(b:internalbc) seq.int
+Function finish(b:internalbc) seq.int
  if bitcount.b = 0 then done.b else 
   [bits.b * 64 + bitcount.b]+done.b
   
@@ -168,38 +168,8 @@ Function add(val:int,b:internalbc) internalbc
      else internalbc(  bits.b *  64 + val ,newbitcount,done.b)
      
      
-Function tobitstream(offset:int,b:internalbc) bitstream
-  processit(offset,0,0,finish.b,1,bits(0),0,empty:seq.int)
-
-  processit(offset, finish.b, 1, emptyx, 0, 0)
-  
-
-  
-/function processit(offset:int,s:seq.int,i:int,result:bitstream,val1:int,val2:int)  bitstream
- if  i > length.s then  result
- else let val=s_i let nobits=  toint(bits.val &and bits(63)) let bits = toint( bits.val - 6 )
-   if nobits < 58 then processit(offset,s,i+1,addbits(result,bits, nobits ),val1,val2)
-   else 
-   let valtoadd=if val=reloc then  offset-s_(i+1) 
-    else  if val=vbr6 then
-           s_(i+1)
-    else if val = sub11 then
-      offset-(val1-s_(i+1)+1) 
-    else if val = sub22 then
-          offset-(val2-s_(i+1)+1) 
-    else -1
-    if valtoadd > -1 then
-       processit(offset,s,i+2,addvbr6(result,valtoadd),val1,val2)
-    else if val = relocsigned then
-          processit(offset,s,i+2,addvbrsigned6(result,offset-s_(i+1)),val1,val2) 
-    else  
-      assert val=setsub report "invalid code"
-          let slot=s_(i+1)
-          let v1 = s_(i+2)
-          let v2 = s_(i+3)
-        processit(offset+slot,s,i+4,result,if v1  &le   0 then  offset-v1 else v1,if v2 &le 0 then  offset-v2 else v2)
       
-function processit(offset:int,val1:int,val2:int,s:seq.int,i:int,newbits:bits,bitcount:int,bytes:seq.int) bitstream
+/function processit(offset:int,val1:int,val2:int,s:seq.int,i:int,newbits:bits,bitcount:int,bytes:seq.int) bitstream
 if  bitcount &ge 8 then  
          processit(offset,val1,val2,s,i, newbits >> 8 ,bitcount - 8, bytes+toint( newbits &and bits(255)))
 else if  i > length.s then bitstream(bytes,newbits,bitcount)
@@ -229,8 +199,37 @@ else let val=s_i let nobits=  toint(bits.val &and bits(63)) let bits = bits.val 
           let v2 = s_(i+3)
         processit(offset+slot, if v1  &le   0 then  offset-v1 else v1,if v2 &le 0 then  offset-v2 else v2, s,i+4,newbits,bitcount,bytes)
 
+ Function addtobitstream(offset:int,bs:bitpackedseq.bit,b:internalbc) bitpackedseq.bit
+//  processit(offset,0,0,finish.b,1,bits(0),0,empty:seq.int) //
+  processit(offset, finish.b, 1, bs, 0, 0)
 
 
+function processit(offset:int,s:seq.int,i:int,result:bitpackedseq.bit,val1:int,val2:int)  bitpackedseq.bit
+ if  i > length.s then  result
+ else let val=s_i let nobits=  toint(bits.val &and bits(63)) let bits = ( bits.val >> 6 )
+   if nobits < 58 then processit(offset,s,i+1,add(result,bits, nobits ),val1,val2)
+   else 
+   let valtoadd=if val=reloc then  offset-s_(i+1) 
+    else  if val=vbr6 then
+           s_(i+1)
+    else if val = sub11 then
+      offset-(val1-s_(i+1)+1) 
+    else if val = sub22 then
+          offset-(val2-s_(i+1)+1) 
+    else -1
+    if valtoadd > -1 then
+       processit(offset,s,i+2,addvbr6(result,valtoadd),val1,val2)
+    else if val = relocsigned then
+          processit(offset,s,i+2,addvbrsigned6(result,offset-s_(i+1)),val1,val2) 
+    else  
+      assert val=setsub report "invalid code"
+          let slot=s_(i+1)
+          let v1 = s_(i+2)
+          let v2 = s_(i+3)
+        processit(offset+slot,s,i+4,result,if v1  &le   0 then  offset-v1 else v1,if v2 &le 0 then  offset-v2 else v2)
+
+
+use byteseq.bit
 
       
       

@@ -212,7 +212,10 @@ Converting func to lib symbol. Must remove CONST and FREF and CALL instructions.
 In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation. Otherwise the inst is the code that should be added after the parameters. For example ;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.
 
 function tolibsyminst(cmap:seq.seq.word, lib:word, a:func)seq.word 
- let y = if simple.a 
+ let y = 
+  if number.a in "seqZTzseqZintZT pseqZTzseqZintZTzseqZTzseq dseqZTzseqZintZTZTzseq fastsubseqZTzseqZintZTzseqZint cseqZTzseqZintZT blockseqZTzblockseqZintZintZTzseqzseq arithmeticseqZTzarithmeticseqZintZTZT"
+   then "ALWAYSCALL" else
+   if simple.a 
    then let nopara = nopara.a 
     let x = expandconst(cmap, print.codetree.a, 1,"")
     if length.x > 100 

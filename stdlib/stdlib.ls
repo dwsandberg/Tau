@@ -7,7 +7,8 @@ process prims pretty2 parse   pass2a  packedseq persistant2 processtypes
 reconstruct real stack stacktrace set symbol sid seq tree UTF8  internalbc codegen2 codetemplates2
 exports stdlib seq set process tree graph real invertedseq ipair fileresult UTF8 oseq parse pretty2 sid prims libscope stacktrace format display blockseq processtypes reconstruct
 main arithmeticseq core options persistant2 stack llvm
- buildtree constant  internals  etype libdesc definestruct2  libdescfunc passcommon internalbc bitstream packedseq
+ buildtree constant  internals  etype libdesc definestruct2  libdescfunc passcommon internalbc bitstream packedseq fileio
+ codetemplates2 byteseq
 
 
 
@@ -218,7 +219,9 @@ function addrandom(s:seq.int, i:int)seq.int s + pseudorandom(s_length.s)
 Function randomseq(seed:int, length:int)seq.int
  @(addrandom, identity, [ seed], constantseq(length - 1, 1))
 
-Function randombytes(i:int)seq.int builtin.usemangle
+/Function randombytes(i:int)seq.int builtin.usemangle
+
+Function randomint(i:int)seq.int builtin.usemangle
 
 
 Function lines(a:seq.word, b:seq.word)seq.word a + EOL + b
@@ -345,7 +348,7 @@ Function alphasort(a:seq.seq.word) seq.seq.word
 
 * usegraph  include real oseq fileresult UTF8 prims  stacktrace 
   internals libscope tree seq arithmeticseq blockseq graph ipair invertedseq process 
-  stack set oseq packedseq options format groupparagraphs 
+  stack set oseq packedseq options format groupparagraphs fileio
   
 
 * usegraph  include  

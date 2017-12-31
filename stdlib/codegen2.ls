@@ -69,7 +69,9 @@ function funcdec(proto:int, a:llvmconst)seq.int
 
 use seq.llvmconst
 
-Function codegen5(z:pass1result) seq.int
+use options.seq.bits
+
+Function codegen5(z:pass1result) seq.bits
 PROFILE.
   let thename = libname(z)_1 
   let symlist ="libname initlib4 words wordlist list liblib profcounts profclocks profspace profrefs profstat spacecount clock"+ merge(thename,"$profileresult"_1)+"init22 allocatespaceZbuiltinZint PROCESS2 HASH IDX"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
