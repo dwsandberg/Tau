@@ -64,7 +64,7 @@ Module fileio
 
 use stdlib
 
-use bitstream
+use bits
 
 Function toCformat2(s:seq.word) seq.bits 
    packed.data2.add(@(add,byte,bitpackedseq(0,empty:seq.byte,bits(0)),toseqint.toUTF8.s),byte(0))
@@ -83,11 +83,19 @@ Function getfile(name:seq.word)seq.int
   let file = getfile.toCformat2.name
   assert size.file > -1 report"Error opening file"+ name
     tointseq.toseq.bitpackedseq(size.file,tobitpackedseq([word1.file,word2.file]+data.file),bits(0))
+    
+Function getbitfile(name:seq.word) seq.bit
+   let file = getfile.toCformat2.name
+  assert size.file > -1 report"Error opening file"+ name
+   toseq.bitpackedseq(size.file * 8,tobitpackedseqbit([word1.file,word2.file]+data.file),bits(0))
 
 Function fileexists(f:seq.word)boolean 
  let file = getfile.toCformat2.f
   size.file > -1
 
+use byteseq.bit
+
+use seq.bit
 
 use packedseq.bits
 
@@ -104,6 +112,9 @@ use byteseq.byte
 type byte is record toint:int
 
 function tobitpackedseq(s:seq.int) seq.byte @(+,byte,empty:seq.byte,s)
+
+function tobitpackedseqbit(s:seq.int) seq.bit @(+,bit,empty:seq.bit,s)
+
 
 function tointseq(s:seq.byte) seq.int @(+,toint,empty:seq.int,s)
 
@@ -126,7 +137,7 @@ Module  byteseq.T
 
 use stdlib
 
-use bitstream
+use bits
 
 use seq.T
 

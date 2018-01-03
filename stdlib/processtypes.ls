@@ -76,9 +76,10 @@ function sizetype(s:set.libtype, t:libtype)set.libtype
   else s + t
 
 Function deepcopytypes2(all:set.libtype, t:mytype)seq.mytype 
- // deepcopytypes is only for structures.It returns the types of the fields.If one of the fields is a structure it returns the types of that structure to flatten out the struct into a sequence of fields of size 1.// 
+ // deepcopytypes is only for structures.It returns the types of the fields.
+ If one of the fields is a structure it returns the types of that structure to flatten out the struct into a sequence of fields of size 1.// 
   let b = lookup(abstracttype.t, iscomplex.t, all,"Unknown error in process types!")
-  if kind.b in"type sequence"
+  if kind.b in"type sequence" &or towords.t="word"
   then [ t]
   else @(+, deepcopytypes2.all, empty:seq.mytype, if isinstance.t then @(+, replaceT.parameter.t, empty:seq.mytype, subtypes.b)else subtypes.b)
 

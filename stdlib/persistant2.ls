@@ -174,7 +174,7 @@ function subfields(alltypes:set.libtype, p:partobject2, data:int, b:seq.mytype, 
    linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p)
   else if b_i in [ mytype."int", mytype."real"]
   then subfields(alltypes, p + C64.IDXUC(data, i - 1), data, b, i + 1)
-  else let newp = if b_i = mytype."int seq encoding"
+  else let newp = if b_i =mytype."word"
    then // add a word. This requires adding information for re-encoding word. // 
     let w = cast2word.IDXUC(data, i - 1)
     let e3 = linklists2(a.subobjects.p, mainplace.p, offsetthread.subobjects.p, start.subobjects.p)
@@ -191,7 +191,7 @@ function subseq(alltypes:set.libtype, p:partobject2, s:seq.int, elementtype:myty
    linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p)
   else if elementtype in [ mytype."int", mytype."real"]
   then subseq(alltypes, p + C64(s_i), s, elementtype, i + 1)
-  else let newp = if elementtype = mytype."int seq encoding"
+  else let newp = if elementtype =mytype."word"
    then // add a word. This requires adding information for re-encoding word. // 
     let w = cast2word(s_i)
     let e3 = linklists2(a.subobjects.p, mainplace.p, offsetthread.subobjects.p, start.subobjects.p)

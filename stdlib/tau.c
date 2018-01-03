@@ -159,7 +159,7 @@ BT append(processinfo PD,BT P1, BT P2);
 
 BT (*toUTF8)(struct pinfo *,BT );
 
-
+BT *byteseqencetype;
 
 
 BT initlib4(char * libname,BT * words,BT * wordlist, BT * consts,BT * libdesc) {
@@ -173,6 +173,11 @@ if (strcmp(libname,"stdlib")==0){
     }
     toUTF8 = dlsym(RTLD_DEFAULT, "toUTF8ZUTF8Zwordzseq");
     if (!toUTF8){
+       printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }
+    byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbyteseqZTzbitpackedseqZint");
+    if (!byteseqencetype){
        printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
@@ -359,7 +364,7 @@ BT assertZbuiltinZwordzseq(processinfo PD,BT message)
      
 struct str2 { BT  type;
                BT  length;
-               char data[500];
+               char data[50];
                };
                
 BT executecodeZbuiltinZUTF8Zintzseq(processinfo PD,BT funcname,BT P) {
@@ -373,9 +378,9 @@ char *name=(char *)&IDXUC(funcname,2);
      char *p2 = "Unable to get symbol to execute ";
      int l=strlen(p);
      int l2=strlen(p2);
-      struct str2 * m =(struct str2 *) myalloc( PD,(l+l2+7+16)/8) ;
-      m->type=1; m->length=l+l2;
-      char *q = m->data;
+      BT *m =(BT*) myalloc( PD,(2+l+l2 ) ) ;
+      m[0]=0; m[1]=l+l2;
+      BT *q = m+2;
       while (*p2!=0) { *(q++)=*(p2++);}
       while (*p!=0) { *(q++)=*(p++);}
       
@@ -435,15 +440,7 @@ return  loadlibrary(PD,name) ;
 
 
 
-BT createlibZbuiltinZUTF8ZUTF8(processinfo PD,BT libname,BT otherlib){
-  char *name=(char *)&IDXUC(libname,2),buff[200];
-  char *libs=(char *)&IDXUC(otherlib,2) ;
-  sprintf(buff,"/usr/bin/cc -dynamiclib %s.c %s -o %s.dylib  -undefined dynamic_lookup",name,libs,name);
-  printf("Createlib2 %s\n",buff);
-  int err=system(buff);
-  if (err ) {printf("ERROR STATUS: %d \n",err); return 0;}
-  else {loadlibZbuiltinZUTF8(PD,libname); return 1;}
-}
+
 
 BT createlib3ZbuiltinZUTF8ZUTF8(processinfo PD,BT libname,BT otherlib){
   char *name=(char *)&IDXUC(libname,2),buff[200];
@@ -455,28 +452,6 @@ BT createlib3ZbuiltinZUTF8ZUTF8(processinfo PD,BT libname,BT otherlib){
   if (err ) {printf("ERROR STATUS: %d \n",err); return 0;}
   else {loadlibZbuiltinZUTF8(PD,libname); return 1;}
 }
-
-
-
-BT createlibllvmZbuiltinZUTF8(processinfo PD,BT libname){
-  char *name=(char *)&IDXUC(libname,2),buff[200];
-  sprintf(buff,"llvm-as %s.ll;cc  -dynamiclib %s.bc -o %s.dylib -init _init22 -undefined dynamic_lookup",name,name,name);
-  printf("Createlib2 %s\n",buff);
-  int err=system(buff);
-  if (err ) { printf("ERROR STATUS: %d \n",err); return 0; }
-  else return 1; 
-}
-
-BT createlibllvmZbuiltinZUTF8ZUTF8(processinfo PD,BT libname,BT otherlib){
-  char *name=(char *)&IDXUC(libname,2),buff[200];
-    char *libs=(char *)&IDXUC(otherlib,2) ;
-  sprintf(buff,"llvm-as %s.ll;cc  -dynamiclib %s.bc %s -o %s.dylib -init _init22 -undefined dynamic_lookup",name,name,libs,name);
-  printf("Createlib2 %s\n",buff);
-  int err=system(buff);
-  if (err ) { printf("ERROR STATUS: %d \n",err); return 0; }
-  else return 1; 
-}
-
 
 
 
@@ -636,12 +611,22 @@ BT noop(BT a,BT b) {
 return b;}
 
 
-
+BT  fill(BT *a1,struct str2 *arg1) {
+arg1->type=(BT)byteseqencetype;
+      a1[0]=(BT)byteseqencetype;
+      a1[1]=arg1->length;
+      a1[2]=(BT)arg1;
+      a1[3]=((BT *) (arg1-> data))[(arg1->length+7 )/ 8-1];
+      arg1->length=(arg1->length-7) / 8 -1;
+      arg1->type=1;
+      return (BT)a1;
+    }
 
 
  BT  step (char * func,struct str2 *arg1, struct str2 *arg2,struct str2 *arg3 ) {
+ // Does not appear to allocate space correctly form pinfo as no space is given for the 3 parameters 
  processinfo PD=&sharedspace;
-    int j;
+    int j; BT a1[4],a2[4],a3[4];
     struct pinfo2 * pin =  (struct pinfo2 * )myalloc(PD,sizeof (struct pinfo2)/8+8 );
       pin->deepcopyresult=(BT)noop;  
       pin->deepcopyseqword= (BT)noop;
@@ -650,10 +635,11 @@ return b;}
        printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
+      
       pin->noargs=3;
-      pin->args[0]=(BT)arg1;
-      pin->args[1]=(BT)arg2;
-      pin->args[2]=(BT)arg3;
+      pin->args[0]=fill(a1,arg1);
+      pin->args[1]=fill(a2,arg2);
+      pin->args[2]=fill(a3,arg3);
       /* should be using myalloc below so space is reclaimed */
       processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
       initprocessinfo(p,PD,pin);
@@ -663,13 +649,13 @@ return b;}
           char *header = "Status: 500 Error\r\nContent-Type: text/html\r\n\r\n";
         BT s=toUTF8(PD,p->message);
         BT i,seqlen=IDXUC(s,1);
-        struct str2 *r=(struct str2 *)myalloc( PD,(16+strlen(header)+seqlen +7) / 8);
-        r->length=strlen(header)+seqlen;
-        r->type=1;
-        char *t=r->data;
+        BT *r=(BT *)myalloc( PD,(2+strlen(header)+seqlen ));
+        r[1]=strlen(header)+seqlen;
+        r[0]=0;
+        BT *t=r+2;
         while (*header !=0)   *(t++)=*(header++);
         for (i=1; i<=seqlen;i++)
-         { BT tmp=IDX(PD,s,i);*(t++)=(char) tmp;}
+         { BT tmp=IDX(PD,s,i);*(t++)=  tmp;}
          p->message=(BT)r;
        return (BT) p;}
       else return (BT) p;

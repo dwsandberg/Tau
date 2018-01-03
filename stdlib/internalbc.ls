@@ -6,7 +6,7 @@ Module internalbc
 use stdlib
 
 
-use bitstream
+use bits
 
 
 Function BLOCKCOUNT(slot:int, a1:int) internalbc
@@ -96,12 +96,6 @@ function     subphi(slot:int,b:internalbc,s:seq.int,i:int) internalbc
           subphi(slot,addsignedaddress(slot,s_(i-1),add(s_i,b)),s,i-2)
        else b
 
-/Function   phiinst(tailphi:seq.int,nopara:int)  internalbc  
-   let slot=nopara+1
-   let tailphi2=[0]+arithseq(nopara,-1,-2)+tailphi
-     phiinst(nopara+1,typ.i64,tailphi2,nopara)
-
-phiinst(nopara+1,typ.i64,[0]+arithseq(nopara,-1,-2)+tailphi,nopara)
 
 function  addpair(    tailphi:seq.int,  slot:int,p:int,a:internalbc,b:int) internalbc
           addsignedaddress(slot,tailphi_(b+p),add(tailphi_b,a))

@@ -131,7 +131,7 @@ PROFILE.
   0, 
   0, 
   0], 
-  [ MODULECODEGLOBALVAR, typ.wordstype, 2, C(i64, [ CONSTNULL])+ 1, 3, align8 + 1, 0], 
+  [ MODULECODEGLOBALVAR, typ.wordstype, 2, C(wordstype, [ CONSTNULL])+ 1, 3, align8 + 1, 0], 
   [ MODULECODEGLOBALVAR, 
   typ.worddatatype, 
   2, 
@@ -406,7 +406,7 @@ function profilecall(profiletype:encoding.llvmtype, sons:processsonsresult5, cal
   +BR(base+18, block + 2)
    +CALL(base+18, 0, 32768, typ.function.constantseq(length.explist.sons + 2, i64),callee, -1, explist.sons )
   +BR(base+19, block + 2) 
-  +PHI(base+19, typ.i64, -base -7, block, -base -17, block + 1) 
+  +PHI(base+19, typ.i64, -base -7, block, -base -18, block + 1) 
   +LOAD(base+20, -base -1, typ.i64, align8, 0) 
   +BINOP(base+21, -base -20, C64.1, 1, typ.i64) 
   +STORE(base+22, -base -1, -base -21, align8, 0) 

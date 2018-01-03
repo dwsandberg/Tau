@@ -143,7 +143,7 @@ Function CASTPTRTOINT int 9
 Function CASTINTTOPTR int 10
 
 
-Function idxmacro internalbc 
+Function idxmacro2 internalbc 
  BLOCKCOUNT(1, 6) 
  +CAST(4, -2, typ.ptr.i64, CASTINTTOPTR) 
  +LOAD(5, -4, typ.i64, align8, 0) 
@@ -155,7 +155,7 @@ Function idxmacro internalbc
  +BR(10, 5) 
  +CMP2(10, -5, C64.1, 32) 
  +BR(11, 3, 4, -10) 
- +BINOP(11, -2, C64.15, 0, typ.i64) 
+ +BINOP(11, -2, C64.0, 4, typ.i64) 
  +BINOP(12, -11, -3, 0, typ.i64) 
  +CAST(13, -12, typ.ptr.i8, CASTINTTOPTR) 
  +LOAD(14, -13, typ.i8, align8, 0) 
@@ -167,8 +167,8 @@ Function idxmacro internalbc
  +PHI(18, typ.i64, -9, 1, -15, 3, -17, 4) 
  +RET(19, -18)
  
- Function idxmacro2 internalbc 
- BLOCKCOUNT(1, 4) 
+ Function idxmacro internalbc 
+   BLOCKCOUNT(1, 4) 
  +CAST(4, -2, typ.ptr.i64, CASTINTTOPTR) 
  +LOAD(5, -4, typ.i64, align8, 0) 
  +CMP2(6, -5, C64.0, 32) 
@@ -177,9 +177,10 @@ Function idxmacro internalbc
  +GEP(8, 1, typ.i64, -7, -3) 
  +LOAD(9, -8, typ.i64, align8, 0) 
  +BR(10, 3) 
- +CAST(10, -5, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR) 
- +CALL(11, 0, 32768, typ.function.[ i64, i64, i64, i64], -10, -1, -2, -3) 
- +BR(12, 3) 
- +PHI(13, typ.i64, -9, 1, -11, 3) 
- +RET(14, -13)
+  + // does not compile without this instrution! Something to do with C64.15 // BINOP(10, -2, C64.15, 0, typ.i64)  
+   +CAST(11, -5, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR) 
+ +CALL(12, 0, 32768, typ.function.[ i64, i64, i64, i64], -11, -1, -2, -3) 
+ +BR(13, 3) 
+ +PHI(13, typ.i64, -9, 1, -12, 2) 
+ +RET(14, -13) 
 

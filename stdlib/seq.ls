@@ -23,10 +23,16 @@ use stdlib
 Function =(T, T)boolean unbound
 
 Function_(a:seq.T, b:int)T 
- assert getseqtype(a, 0)> 1 ∨ b > 0 ∧ b ≤ length.a report"out of bounds"+ stacktrace 
+ let typ=getseqtype(a, 0)
+  if typ=0 then 
+    assert b > 0 ∧ b ≤ length.a report"out of bounds"+ stacktrace 
+   getval(a,b+1) 
+   else
   internalidx2(a, b)
 
 function internalidx2(a:seq.T, b:int)T builtin.IDX
+
+function getval(a:seq.T, offset:int)T builtin.IDXUC
 
 function getseqtype(a:seq.T, offset:int)int builtin.IDXUC
 

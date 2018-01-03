@@ -11,9 +11,9 @@ Function message(p:process.T)seq.word
 
 Function result(p:process.T)T 
  assert not.aborted.p report"no result of aborted process"
-  subresult(p, 1)
+  subresult(p, 2)
 
-function subresult(a:process.T, b:int)T builtin.IDX
+function subresult(a:process.T, b:int)T builtin.IDXUC
 
 Note:Must access result of process with function result rather than using field resultb because if the type T is a structure of more than one element, the compile would assume the elements are store at resultb and not a pointer to the type T.
 
