@@ -65,8 +65,8 @@ use stdlib
 Function main(arg:seq.int)int 
  let args = towords(arg + 10 + 10)
   let libname = args_1 
-  // create non empty changed file to force compiling of library // 
-  let discard2 = createfile([ merge([ libname]+"/changed")], ["library src has been changed"])
+  // create non empty changed file to force compiling of library 
+  let discard2 = createfile([ merge([ libname]+"/changed")], ["library src has been changed"]) // 
   let p = process.compilelib.libname 
   let output = if aborted.p 
    then message.p 
@@ -112,11 +112,11 @@ function subcompilelib(libname:word)seq.word
   let ld = tolibdesc.libname 
   if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
   then interface([ name.ld], exports.ld, dependentlibs.ld)
-  else if not.checklibchange.libname 
+  else // if not.checklibchange.libname 
   then let discard = loadlibs(dependentlibs.ld, 1, timestamp(libs_1))
    let discard2 = loadlibrary.libname 
    {"OK"} 
-  else let b = unloadlib.[ libname]
+  else  // let b = unloadlib.[ libname]
   let discard5 = loadlibs(dependentlibs.ld, 1, timestamp(libs_1))
   let templatesin = @(asliblib.dependentlibs.ld, identity, emptyliblib, libs)
   let ptext = process.pass0.ld 
@@ -128,7 +128,7 @@ function subcompilelib(libname:word)seq.word
   then message.p 
   else let y1 = codegen5.result.p 
   let z2 = createlib(y1, libname, dependentlibs.ld)
-  let discard4 = createfile([ merge([ libname]+"/changed")], [""])
+  // let discard4 = createfile([ merge([ libname]+"/changed")], [""]) //
   {"OK"}
   
 function waitforpass2(a:pass1result) process.pass1result
@@ -160,7 +160,7 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
   assert stamp ≥ time report"library"+ dependentlibs_i +"is out of date"+ toword.time + toword.stamp 
   loadlibs(dependentlibs, i + 1, stamp)
 
-function checklibchange(libname:word)boolean 
+/function checklibchange(libname:word)boolean 
  let n = [ merge([ libname]+"/changed")]
   fileexists.n ∧ length.getfile.n > 3
 
