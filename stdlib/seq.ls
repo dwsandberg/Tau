@@ -28,9 +28,10 @@ Function_(a:seq.T, b:int)T
     assert b > 0 ∧ b ≤ length.a report"out of bounds"+ stacktrace 
    getval(a,b+1) 
    else
-  internalidx2(a, b)
+   callidx(typ,a,b) 
+  
+function callidx(func:int,a:seq.T,b:int)T builtin.CALLIDX
 
-function internalidx2(a:seq.T, b:int)T builtin.IDX
 
 function getval(a:seq.T, offset:int)T builtin.IDXUC
 

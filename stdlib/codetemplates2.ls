@@ -118,9 +118,7 @@ Including this as a template causes subtle compile errors
  CAST(1, ibcsub1, typ.double, 11) 
  +CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.cos.f64",  - 1) 
  +CAST(3,  - 2, typ.i64, 11)),
- // match5("Q2BZbuiltinZbitsZint"_1,1, BINOP(1, ibcsub1, ibcsub2,  7, typ.i64)), 
- match5("Q2DZbuiltinZbitsZint"_1,1, BINOP(1, ibcsub1, ibcsub2,  8, typ.i64)), // 
-  match5("Q3CQ3CZbuiltinZbitsZint"_1,1, BINOP(1, ibcsub1, ibcsub2, // SHL // 7, typ.i64)), 
+   match5("Q3CQ3CZbuiltinZbitsZint"_1,1, BINOP(1, ibcsub1, ibcsub2, // SHL // 7, typ.i64)), 
  match5("Q3EQ3EZbuiltinZbitsZint"_1,1, BINOP(1, ibcsub1, ibcsub2, // LSHR // 8, typ.i64)), 
 match5("QE2Q88QA7ZbuiltinZbitsZbits"_1,1, BINOP(1, ibcsub1, ibcsub2, // AND // 10, typ.i64)), 
 match5("QE2Q88QA8ZbuiltinZbitsZbits"_1,1, BINOP(1, ibcsub1, ibcsub2, // OR // 11, typ.i64))]
@@ -143,44 +141,4 @@ Function CASTPTRTOINT int 9
 Function CASTINTTOPTR int 10
 
 
-Function idxmacro2 internalbc 
- BLOCKCOUNT(1, 6) 
- +CAST(4, -2, typ.ptr.i64, CASTINTTOPTR) 
- +LOAD(5, -4, typ.i64, align8, 0) 
- +CMP2(6, -5, C64.0, 32) 
- +BR(7, 1, 2, -6) 
- +GEP(7, 1, typ.i64, -4, C64.1) 
- +GEP(8, 1, typ.i64, -7, -3) 
- +LOAD(9, -8, typ.i64, align8, 0) 
- +BR(10, 5) 
- +CMP2(10, -5, C64.1, 32) 
- +BR(11, 3, 4, -10) 
- +BINOP(11, -2, C64.0, 4, typ.i64) 
- +BINOP(12, -11, -3, 0, typ.i64) 
- +CAST(13, -12, typ.ptr.i8, CASTINTTOPTR) 
- +LOAD(14, -13, typ.i8, align8, 0) 
- +CAST(15, -14, typ.i64, 1) 
- +BR(16, 5) 
- +CAST(16, -5, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR) 
- +CALL(17, 0, 32768, typ.function.[ i64, i64, i64, i64], -16, -1, -2, -3) 
- +BR(18, 5) 
- +PHI(18, typ.i64, -9, 1, -15, 3, -17, 4) 
- +RET(19, -18)
- 
- Function idxmacro internalbc 
-   BLOCKCOUNT(1, 4) 
- +CAST(4, -2, typ.ptr.i64, CASTINTTOPTR) 
- +LOAD(5, -4, typ.i64, align8, 0) 
- +CMP2(6, -5, C64.0, 32) 
- +BR(7, 1, 2, -6) 
- +GEP(7, 1, typ.i64, -4, C64.1) 
- +GEP(8, 1, typ.i64, -7, -3) 
- +LOAD(9, -8, typ.i64, align8, 0) 
- +BR(10, 3) 
-  + // does not compile without this instrution! Something to do with C64.15 // BINOP(10, -2, C64.15, 0, typ.i64)  
-   +CAST(11, -5, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR) 
- +CALL(12, 0, 32768, typ.function.[ i64, i64, i64, i64], -11, -1, -2, -3) 
- +BR(13, 3) 
- +PHI(13, typ.i64, -9, 1, -12, 2) 
- +RET(14, -13) 
 

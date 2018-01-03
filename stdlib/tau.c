@@ -468,6 +468,7 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     char *filedata;
     struct stat sbuf;
     BT *data2,org;
+//printf("openning %s\n",name);
         org=myalloc(PD,4);
      IDXUC(org,0)=-1;
      IDXUC(org,1)=0;
@@ -613,12 +614,13 @@ return b;}
 
 BT  fill(BT *a1,struct str2 *arg1) {
 arg1->type=(BT)byteseqencetype;
+          //  printf("KL%lld %lld %lld %s\n",arg1->type,arg1->length,(arg1->length+7 )/ 8-1,arg1->data);
       a1[0]=(BT)byteseqencetype;
       a1[1]=arg1->length;
       a1[2]=(BT)arg1;
       a1[3]=((BT *) (arg1-> data))[(arg1->length+7 )/ 8-1];
-      arg1->length=(arg1->length-7) / 8 -1;
-      arg1->type=1;
+      arg1->length=(arg1->length) / 8 ;
+      arg1->type=0;
       return (BT)a1;
     }
 
@@ -627,7 +629,7 @@ arg1->type=(BT)byteseqencetype;
  // Does not appear to allocate space correctly form pinfo as no space is given for the 3 parameters 
  processinfo PD=&sharedspace;
     int j; BT a1[4],a2[4],a3[4];
-    struct pinfo2 * pin =  (struct pinfo2 * )myalloc(PD,sizeof (struct pinfo2)/8+8 );
+    struct pinfo2 * pin =  (struct pinfo2 * )myalloc(PD,sizeof (struct pinfo2)/8+8+8 );
       pin->deepcopyresult=(BT)noop;  
       pin->deepcopyseqword= (BT)noop;
       pin->func=(BT)dlsym(RTLD_DEFAULT, func);
@@ -638,8 +640,8 @@ arg1->type=(BT)byteseqencetype;
       
       pin->noargs=3;
       pin->args[0]=fill(a1,arg1);
-      pin->args[1]=fill(a2,arg2);
-      pin->args[2]=fill(a3,arg3);
+      pin->args[1]=(BT) a1;  //fill(a2,arg2);
+      pin->args[2]=(BT) a1; //fill(a3,arg3);
       /* should be using myalloc below so space is reclaimed */
       processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
       initprocessinfo(p,PD,pin);

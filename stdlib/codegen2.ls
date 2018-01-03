@@ -74,7 +74,7 @@ use options.seq.bits
 Function codegen5(z:pass1result) seq.bits
 PROFILE.
   let thename = libname(z)_1 
-  let symlist ="libname initlib4 words wordlist list liblib profcounts profclocks profspace profrefs profstat spacecount clock"+ merge(thename,"$profileresult"_1)+"init22 allocatespaceZbuiltinZint PROCESS2 HASH IDX"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
+  let symlist ="libname initlib4 words wordlist list liblib profcounts profclocks profspace profrefs profstat spacecount clock"+ merge(thename,"$profileresult"_1)+"init22 allocatespaceZbuiltinZint PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   let discard2 = @(+, C, 0, symlist + @(+, number,"", code.z))
   let discard3 = @(+, findcalls, 0, @(+, codetree, empty:seq.tree.cnode, code.z))
   let nosyms = length.symbolrecords2 
@@ -154,7 +154,6 @@ PROFILE.
    [ MODULECODEFUNCTION, typ.function.[ i64, i64, i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], 
   // PROCESS2 // [ MODULECODEFUNCTION, typ.function.[ i64, i64, i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], 
   // hash // [ MODULECODEFUNCTION, typ.function.[ i64, i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], 
-  // idx // [ MODULECODEFUNCTION, typ.function.[ i64, i64, i64, i64], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], 
   // llvm.sqrt.f64 // 
    [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0], 
   // llvm.sin.f64 // 
@@ -173,7 +172,7 @@ PROFILE.
   getelementptr(wordstype,"words"), 
   getelementptr(worddatatype,"wordlist"), 
   getelementptr(conststype,"list"), 
-  getelementptr(libdesctype,"liblib"))+RET(3)]+ idxmacro + bodies.fb 
+  getelementptr(libdesctype,"liblib"))+RET(3)]+ bodies.fb 
   assert length.symbolrecords2 = nosyms report"extra symbols2!"
   // let a =printz(bodytxts) //
    llvm( deflist, bodytxts, adjust(typerecords, adjust, 1))
@@ -191,7 +190,8 @@ function findcalls(t:tree.cnode)int
    else if inst.label.t ="CONST"_1 
    then let c = toint.arg.label.t 
     findFREF(constantmapping_c, 3)
-   else if inst.label.t in"SET RECORD LOCAL CONST LIT PARA EQL if IDX IDXUC PROCESS2 STATE WORD SETFLD3 SETFLDBYTE ADD TAIL Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint"
+   else if inst.label.t in"SET RECORD LOCAL CONST LIT PARA EQL if IDXUC PROCESS2 STATE WORD 
+   SETFLD3 SETFLDBYTE ADD TAIL Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
    then 0 
    else // assert inst.label.t in"createfileZfileresultZwordzseqZwordzseqzseq"report""+ inst.label.t // 
    C.inst.label.t 
@@ -298,6 +298,13 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
    let phi = PHI(regno.exp3+1, typ.i64, arg.exp2, noblocks.exp2 - 1, arg.exp3, noblocks.exp3 - 1)
    let newcode = code.exp1+ br + code.exp2+ br1 +code.exp3+ br1 + phi 
    Lcode5(newcode, lst.exp3, regno.exp3 + 1,-(regno.exp3 + 1), noblocks.exp3 + 1,tailphi.exp3,loopblock.exp3)
+  else if inst ="CALLIDX"_1 then
+   let exp1  = gencode(lib, lmap, l, t_1)
+   let exp2  = gencode(lib,lmap,exp1,t_2)
+   let exp3 = gencode(lib,lmap,exp2,t_3)
+    let newcode= CAST(regno.exp1+1, arg.exp1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR) 
+ +CALL(regno.exp3+2, 0, 32768, typ.function.[ i64, i64, i64, i64], -(regno.exp3+1), -1, arg.exp2, arg.exp3) 
+   addcode(exp3,newcode,-(regno.exp3+2),2)
   else if inst ="SET"_1 
   then let exp1 = gencode(lib, lmap, l, t_1)
    let newmap = lmap + localmap5(toint.arg.label.t, arg.exp1)
@@ -454,7 +461,7 @@ function maxprof int 1000
 
 function profile(caller:word, callee:word)int 
  assert length.decode.callee > 0 report"wrong"+ caller + callee 
-  if caller = callee ∨ caller ="noprofile"_1 ∨ decode(callee)_1 = decode("q"_1)_1 ∨ callee ="IDX"_1 
+  if caller = callee ∨ caller ="noprofile"_1 ∨ decode(callee)_1 = decode("q"_1)_1  
   then 0 
   else let idx = encoding.encode(stat5(caller, callee), statencoding)
   if idx > maxprof then 0 else idx + 1

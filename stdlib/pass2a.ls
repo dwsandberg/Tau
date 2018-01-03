@@ -365,7 +365,12 @@ function getnext(p:word)word
  LOCAL 3 
     "+TERM1PARA+" 
          LOCAL 3   
-         "+TERM2PARA+"  LOCAL 2  LOCAL 4  IDX  2 CALL"+CALLTERM2+" 
+           "+TERM2PARA+"  
+           LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 
+            LOCAL 2   LOCAL 4 LIT 1 ADD 2 IDXUC 2 
+            LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3
+           if 3 
+         CALL"+CALLTERM2+" 
       CALL"+CALLTERM1+"     
        LOCAL 4   LIT 1  ADD 2
     CONTINUE 2
@@ -379,6 +384,10 @@ PARA 2
 PARA 1
 LOOP 4 "
 
+            LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 
+            LOCAL 2   LOCAL 4 LIT 1 ADD 2 IDXUC 2 
+            LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3
+           if 3 
 
 function expandapply(p:program, thisone:int)program 
  let f = allfunctions(p)_thisone 
