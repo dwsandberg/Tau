@@ -16,3 +16,5 @@ cc stdlib/*.c -o taumain
 ./taumain testall testall testall
 
 will produce test.html file. 
+
+A [link](./taudoc.html)
