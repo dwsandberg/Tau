@@ -13,6 +13,6 @@ cc -dynamiclib stdlib.bc  -o stdlib.dylib  -init _init22 -undefined dynamic_look
 
 cc stdlib/*.c -o taumain
 
-./taumain testall testall 
+./taumain testall testall testall
 
 will produce test.html file. 
