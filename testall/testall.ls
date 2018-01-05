@@ -10,6 +10,7 @@ Module testall
 
 run testall testall
 
+* usegraph exclude stdlib
 
 use stdlib
 

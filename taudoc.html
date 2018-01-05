@@ -1,36 +1,32 @@
 <meta charset ="UTF-8"> <style type ="text/css"> <!--span.avoidwrap { display:inline-block ; } span.keyword { color:blue ; } span.keywords { color:blue ; } span.literal { color:red ; } span.comment { color:green ; } span.block { padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ; } form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style> 
  
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> doc </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> doc2 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> doc seq.word { <span class = literal >"OK"</span> } </span> </p> 
  <h2 id = 1 onclick ="javascript:cmd5(this)"> The Tau Programming Language </h2> 
- <p id = 1 onclick ="javascript:cmd5(this)"> John Backus Von Neuman style </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Programming language today look pretty much the same as they did 30 years ago.Today they may have few more features are not substancly better as a notation for thought.I have created another programming language in attempt to introduce a new way to think about programming which attempts to make a leap forward.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> —No assignment operator.
+ <p id = 1 onclick ="javascript:cmd5(this)"> Programming language today look pretty much the same as they did 30 years ago. Today they may have few more features are not substancaly better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming which attempts to make a leap forward.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> —No assignment operator. 
  <br> —No loop/while/do statement 
  <br> —No function type.
- <br> —Only uses program state in a very controlled way.
- <br> —Words are the basic text element instead of characters.
- <br> —heavy use of sequences.
- <br> —introduces a new control structure modeled after the simga operator in mathamatics.</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Functional program languages have no assignment operator or loop statements, but tend to be based on the lamda calculus which makes use of higher order functions. We only include the basic operations on function of declaring and calling of them and the binding of unbound function to an actual function in an instantiation of a function from a parameterized module.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Functional languages tend to use recursion to replace the control structures of loops.The full power of recursion seldom needed.We introduce a genralized version of the simga operator use in mathmatics to cover many of the simple uses of recursion.</p> 
+ <br> —Only uses program state in a very controlled way. 
+ <br> —Words are the basic text element instead of characters. 
+ <br> —heavy use of sequences. 
+ <br> —introduces a new control structure modeled after the sigma operator in mathematics.</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Functional program languages have no assignment operator or loop statements, but tend to be based on the lamada calculus which makes use of higher order functions. We only include the basic operations on function of declaring and calling of them and the binding of unbound function to an actual function in an instantiation of a function from a parameterized module.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Functional languages tend to use recursion to replace the control structures of loops. The full power of recursion seldom needed. We introduce a generalized version of the sigma operator use in mathematics to cover many of the simple uses of recursion.</p> 
  <h2 id = 1 onclick ="javascript:cmd5(this)"> Lexical level </h2> 
  <p id = 1 onclick ="javascript:cmd5(this)"> A program is represented as a sequence of characters.The character encoding is assume to be unicode represented in UTF8 format.The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> Paragraphs that do NOT start with <span class = keyword> type </span>, <span class = keyword> use </span>, <span class = keyword> Library </span>, <span class = keyword> module </span>, <span class = keyword> Function </span>, or <span class = keyword> function </span> are always treated as comments.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Each paragraph is boken into words. One or more spaces seperate the words. A single line break is treated the same as a space. The characters()+,-.:[]^_are all treated as if they have an implied space before and after them so they are words formed from a single character. For example,(a + b)is equvilent to(a + b); but(a * b)is not equivlant to(a*b). A period followed by a space is treat as a seperate word from a period followed by no space. This allows a period at the end of a sentence to be distingushed from a period in google.com.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> An integer literal is represented by a sequence of words where each word only contains digits. That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. A real number is two integer seperated by a period. For example 0.0 and 10.01 are real numbers where 0 0 and 10 01 are integer.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> For easy entry, ASCII equvalents for ≤ ≥ ≠ ∧ ∨ are &amp; le &amp; ge &amp; ne &amp; and &amp; or respectively.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. The characters()+,-.:[]^_are all treated as if they have an implied space before and after them so they are words formed from a single character. For example,(a + b)is equivalent to(a + b); but(a * b)is not equivalent to(a*b). A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinghushed from a period in google.com.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> An integer literal is represented by a sequence of words where each word only contains digits. That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 0 0 and 10 01 are integer.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ are &amp; le &amp; ge &amp; ne &amp; and &amp; or respectively.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but(8)*(9)is ok.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Occasionaly some unexpected lexical issues arise.Note that <span class = block> <span class = keyword> let </span> a ="!"
- <br> "hello world"+ a </span> is equivalent to <span class = block> <span class = keyword> let </span> a ="""hello world"+ a </span> which is illegal since the second a is used before it is defined. Adding grouping braces will change the meaning to something closer to what is intented.<span class = block> <span class = keyword> let </span> a ="!"
+ <p id = 1 onclick ="javascript:cmd5(this)"> Occasionally some unexpected lexical issues arise.Note that <span class = block> <span class = keyword> let </span> a ="!"
+ <br> "hello world"+ a </span> is equivalent to <span class = block> <span class = keyword> let </span> a ="""hello world"+ a </span> which is illegal since the second a is used before it is defined. Adding grouping braces will change the meaning to something closer to what is intended.<span class = block> <span class = keyword> let </span> a ="!"
  <br> {"hello world"+ a } </span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> A similar problem occurs in a function definition <span class = block> <span class = keyword> function </span> test int(3 + 4)* 5 </span> Here the return type becomes int(3 + 4)which is illegal.Again grouping braces resolve the difficulty <span class = block> <span class = keyword> function </span> test int {(3 + 4)* 5 } </span> </p> 
  <h2 id = 1 onclick ="javascript:cmd5(this)"> Expressions </h2> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Here is a list of infix binary operators. The operaters on the same line are the same precedence and higher precedence than those on the following line.null </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Here is a list of infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.null </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> ()or {} are used to override the default precedence.Procedure calls are of the form f1(p1, p2, …, pn).f1()is illegal and should be written f1.To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1 The precedence of.is between the_and the *.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Infix operators are simply another notation for function calls.a + 3 * b is equvalent to +(a, *(3, b))</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> The compulation unit in tau is a a library. A library contains modules. A module is a seqence of paragraphs with this first paragraph starting with the word <span class = keyword> module </span>.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Infix operators are simply another notation for function calls.a + 3 * b is equivalent to +(a, *(3, b))</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> The computation unit in tau is a a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word <span class = keyword> module </span>.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> A paragraph is a sequence of words. Paragraphs that do NOT start with type, use, module, Library, Function or function are always treated as comments.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The syntax for non-comment paragraphs is <span class = block> &lt;paragraph>::= &lt;module definition> | &lt;type definition> | <span class = keyword> use </span> &lt;type> 
  <br> &lt;module definition>::= <span class = keyword> module </span> &lt;word>(T)| <span class = keyword> module </span> &lt;word> 
@@ -61,23 +57,23 @@
  <br> &lt;exp>::= @(&lt;function call>, &lt;function call>, &lt;exp>, &lt;exp>)
  <br> &lt;exp>::= <span class = keyword> let </span> &lt;let name> = &lt;exp> exp 
  <br> &lt;exp>::= <span class = keyword> assert </span> &lt;exp> <span class = keyword> report </span> &lt;exp> exp 
- <br> &lt;exp>::= // &lt; one or more words not containg / /> // exp 
+ <br> &lt;exp>::= // &lt; one or more words not containing / /> // exp 
  <br> &lt;exp>::= process.&lt;function call> | process(&lt;function call>)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Comments are triditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.</p> 
  <h2 id = 1 onclick ="javascript:cmd5(this)"> Sequences </h2> 
  <p id = 1 onclick ="javascript:cmd5(this)"> Sequence, S, is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as [ 2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> test1 seq.int [ 2, 4, 8, 16, 32]</span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The type for a sequence of integers is seq.int. The length of the sequence can be obtained by calling the function length. In this case the length(test1)is 5. There is a subscript operator_that can obtain the elements of the list:test1_1 is 2 and test1_5 is 32.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> A sequence of characters in double quotes does not represent a sequence of characters but a sequence of words.“Hello World!” represent two words.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The code [ “Hello”_1, ”World!”_1]is equivalent to “Hello World!” </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> The word consisting of a single double qoute can be represented within double qoutes be two double qoutes. """Hello World!"""starts and ends with a double qoute.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> The word consisting of a single double quote can be represented within double quotes be two double quotes. """Hello World!"""starts and ends with a double quote.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> ""represents an empty sequence of words.An empty sequences has a length of zero. Since the type of a empty sequence can not be inferred from the type of its elements the empty sequence of int is coded as empty:seq.int.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The elements of a sequence can themselves be sequences [ [ 3, 4], [ 3, 6, 7], [ 8, 9]]. The type of this sequence is seq.seq.int. The empty sequence of this type is represented by empty:seq.seq.int.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> The conatenation operator for sequences is +, for example the expression test1 + [ 2, 3]evaluates to [ 2, 4, 8, 16, 32, 2, 3]</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T is any type. For example, the expresion subseq(test1, 3, 4)evaluates to [ 8, 16]</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> The concatenation operator for sequences is +, for example the expression test1 + [ 2, 3]evaluates to [ 2, 4, 8, 16, 32, 2, 3]</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T is any type. For example, the expression subseq(test1, 3, 4)evaluates to [ 8, 16]</p> 
  <h2 id = 1 onclick ="javascript:cmd5(this)"> Types </h2> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The type of an expression can always be infered from the sub-expression. For example, 1.0 + 5.0 is of type real, 1 * 8 is of type int, and 1.0 = 8.0 is of type boolean.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> User defined types can be either a record, a sequence, a paramterized record. Below a user defined record type is defined as an example.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> User defined types can be either a record, a sequence, a parameterized record. Below a user defined record type is defined as an example.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The following paragraph starts a new module. A module is a collection of functions and types.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> point2d </span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> Here is a simple type definition that introduces a new type with two components.</p> 
@@ -112,14 +108,14 @@
  <h2 id = 1 onclick ="javascript:cmd5(this)"> Aggregation </h2> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The Aggregation operator(@)is a generation of the sigma operator in mathematics. The motivation behind introducing this control operator is to replace the use of recursion calls in most cases.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> Consider </p> 
- <p id = 1 onclick ="javascript:cmd5(this)">   ￼ </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Equilantly this can be expressed as follows sigma(0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 1)where </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)">   </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Equivalantly this can be expressed as follows sigma(0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 1)where </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> term2(n:int)int n + 1 </span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> term1(a:int, b:int)int a + b </span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> sigma(acc:int, s:seq.int, i:int)int 
  <br> <span class = keyword> if </span> i > length.s <span class = keyword> then </span> acc <span class = keyword> else </span> sigma(term1(acc, term2(s_i)), s, i + 1)</span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> Using aggregation this can be express as @(term1, term2, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])or @(+, +.1, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> More generaly @(term1, term2, exp1, exp2)where exp1 is of type &lt;resulttype> and exp is of type seq.&lt;elementtype> is defined as </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> More generally @(term1, term2, exp1, exp2)where exp1 is of type &lt;resulttype> and exp is of type seq.&lt;elementtype> is defined as </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> apply(exp1, exp2)</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> where </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> /function apply(acc:&lt;resulttype>, s:seq(&lt;elementtype>), i:int)&lt;resulttype> if i > length.s then acc else apply(term1(acc, term2(s_i)), s, i + 1)</p> 
@@ -127,7 +123,7 @@
  <p id = 1 onclick ="javascript:cmd5(this)"> apply2(exp1, exp2)</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> where </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> /function apply2(acc:resulttype, s:seq(elementtype), i:int)resulttype if i > length.s then acc else apply2(p1, term1(acc, term2(p2, s_i)), s, i + 1)</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Using this form the example signma sum above is @(+, +.1, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Using this form the example sigma sum above is @(+, +.1, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> An expression for summing a sequence is @(+, *.1, 0, [ 1, 2, 3, 4])= 0 + 1*1 + 1*2 + 1*3 + 1*4 = 10 </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> A product for the elements in a sequence is @(*, *.1, 1, [ 1, 2, 3, 4])= 24 </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The following gives back the same sequence @(+, identity, empty:int, [ 1, 2, 3, 4])evaluates to [ 1, 2, 3, 4]. "+"is the concatenation operator.</p> 
@@ -180,7 +176,7 @@
  <p id = 1 onclick ="javascript:cmd5(this)"> A function call f1(&lt;exp1>, &lt;exp2>,...)must match exactly one visible function defintion in name, number of parameters and types of the expressions of the arguments.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The type of the expression that defines a function much match the returntype of the function.</p> 
  <h2 id = 1 onclick ="javascript:cmd5(this)"> Derived Operators </h2> 
- <p id = 1 onclick ="javascript:cmd5(this)"> The module seq.T also defines some dereived operators. If = and > are defined on T, the module defines the binary operators &lt;, &amp;le, &amp;ge, &amp;ne in terms of = or >. The operator for comparsion"?"could be defined as a derived opertor but is not because a more effeicent defintion may sometimes be coded than the derived one.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> The module seq.T also defines some derieved operators. If = and > are defined on T, the module defines the binary operators &lt;, &amp;le, &amp;ge, &amp;ne in terms of = or >. The operator for comparesion"?"could be defined as a derived operator but is not because a more effeicent definition may sometimes be coded than the derived one.</p> 
  <h2 id = 1 onclick ="javascript:cmd5(this)"> Encodings </h2> 
  <p id = 1 onclick ="javascript:cmd5(this)"> A type can be mapped to positive integers in an encoding. As an example consider implementing a cache that stores the factors of an integer.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> We need a type to encode:</p> 
@@ -191,9 +187,9 @@
  <p id = 1 onclick ="javascript:cmd5(this)"> Note that for a and b of the type factor ; a = b implies hash(a)= hash(b).This must be true for the hash to work correctly.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The declaration below with introduce a type encoding.factors with the name of myencoding.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> myencoding is <span class = keyword> encoding </span> factors </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> There can be many encodings of the type <em> factors </em>, so they have a names to distiguishe between them. Furthermore an encoding can have different life times. The encoding above is created at the first use in a process and is destroyed when the process finishes. It is available in any child process of the creating process. The declaration below creates a second encoding of factors that persists between runs of a program. Note the capial e in <span class = keyword> Encoding </span>.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> There can be many encodings of the type <em> factors </em>, so they have a names to distinguish between them. Furthermore an encoding can have different life times. The encoding above is created at the first use in a process and is destroyed when the process finishes. It is available in any child process of the creating process. The declaration below creates a second encoding of factors that persists between runs of a program. Note the capital e in <span class = keyword> Encoding </span>.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> pfactors is <span class = keyword> Encoding </span> factors </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Two parameterized types are envoled in a encoding:<em> encoding </em> and <em> erecord </em>. The first is use to represent the values of the encoding and the second the name of the encoding.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Two parameterized types are involed in a encoding:<em> encoding </em> and <em> erecord </em>. The first is use to represent the values of the encoding and the second the name of the encoding.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> The parameterized module <em> seq </em> defines the following functions for working with encodings. <span class = block> <span class = keyword> Function </span> encode(T, erecord.T)encoding.T // will return the encoding 
  <br> <span class = keyword> Function </span> decode(encoding.T, erecord.T)T // will return the value that was encoded // 
  <br> <span class = keyword> Function </span> encoding(encoding.T, erecord.T)int // will return the integer the value has been mapped to // 
@@ -213,15 +209,15 @@
  <p id = 1 onclick ="javascript:cmd5(this)"> Since the mapping is can be shared by multiple process, modification of the the mapping is a critical section.Also the mapping may contain values not assigned by the current process.</p> 
  <h2 id = 1 onclick ="javascript:cmd5(this)"> Process statement </h2> 
  <p id = 1 onclick ="javascript:cmd5(this)"> Process are included in Tau for three reasons.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Using mulitple processes on multi-core processors can be used to obtain results faster.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Process allow temporary space used to calulate the result to be reclaimed.This is the only way for heap space to be relaimed in Tau.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Using multiple processes on multi-core processors can be used to obtain results faster.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Process allow temporary space used to calculate the result to be reclaimed.This is the only way for heap space to be reclaimed in Tau.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> Process allow abnormal events to be captured and reported.The following code snippet show how to capture an abnormal event.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> process.int </span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> myprocess(a:int)int <span class = block> <span class = keyword> assert </span> a > 0 <span class = keyword> report </span> <span class = literal >"invalid"</span> 3^a </span> </span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> useprocess(i:int)int <span class = block> <span class = keyword> let </span> a = process.myprocess.i 
  <br> <span class = keyword> if </span> aborted.a 
  <br> <span class = keyword> then </span> <span class = block> <span class = keyword> assert </span> message.a = <span class = literal >"invalid"</span> <span class = keyword> report </span> <span class = literal >"new message"</span> 0 </span> <span class = keyword> else </span> result.a </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> In the use clause, the type int matches the return type of myprocess.The process function takes a expressing of the form &lt;funcname>(&lt;arg list>)evaluates the argements and then spawns a process to execute the function returning a result of type process that refers to the spawned process. The spawning process is not blocked until a call to aborted, message, or result is made at which point the spawning process waits for the spawned process to finish. The functions aborted, message, and result have a single argument of type process returning types boolean, seq.word and the return type of myprocess respectively.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> In the use clause, the type int matches the return type of myprocess. The process function takes a expressing of the form &lt;funcname>(&lt;arg list>)evaluates the arguments and then spawns a process to execute the function returning a result of type process that refers to the spawned process. The spawning process is not blocked until a call to aborted, message, or result is made at which point the spawning process waits for the spawned process to finish. The functions aborted, message, and result have a single argument of type process returning types boolean, seq.word and the return type of myprocess respectively.</p> 
  <h2 id = 1 onclick ="javascript:cmd5(this)"> Sequences </h2> 
  <p id = 1 onclick ="javascript:cmd5(this)"> We use the example of myseq which is a start on a user defined sequence to decode UTF8 sequnece of bytes.The length of the sequence is the number of characters. The i'th element of the sequence with be the i'th character in the encoding.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> myseq(T)</span> </p> 
@@ -229,7 +225,7 @@
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.T </span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> myseq is <span class = keyword> sequence </span> length:int, data:seq.T </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> All sequences must have the first element representing the length of the seqence.As with any parameterized scope any type must contain an element that uses T so that mutiple instances of the module does not produce duplicate symbols.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> All sequences must have the first element representing the length of the seqence.As with any parameterized scope any type must contain an element that uses T so that multiple instances of the module does not produce duplicate symbols.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> We need some operations on T. T will be an int in this example so all these operations are define on int in the stdlib.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> >(T, int)boolean unbound </span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> &lt;(T, int)boolean unbound </span> </p> 
@@ -245,7 +241,7 @@
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> cindex(s:seq.T, i:int, idx:int)T <span class = block> <span class = keyword> if </span> idx = 1 
  <br> <span class = keyword> then </span> <span class = keyword> if </span> s_i &lt; 128 <span class = keyword> then </span> s_i <span class = keyword> else </span> s_(i + 1) - 128 +(s_i - 128 - 64)* 64 
  <br> <span class = keyword> else </span> cindex(s, i + <span class = keyword> if </span> s_i &lt; 128 <span class = keyword> then </span> 1 <span class = keyword> else </span> 2, idx - 1)</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> We need a constructor of our sequence.Note the use of a toseq function.This is defined implicitly by the sequence type definition to change the type from myseq(T)to seq(T).</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> We need a constructor of our sequence. Note the use of a toseq function.This is defined implicitly by the sequence type definition to change the type from myseq(T)to seq(T).</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> myseq(d:seq.T)seq.T toseq.myseq(clength(d, 1), d)</span> </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> Every sequence must have a_function defined on it which is below for mseq.T </p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span>_(a:myseq.T, idx:int)T cindex(data.a, 1, idx)</span> </p> 
@@ -269,19 +265,5 @@
  <p id = 1 onclick ="javascript:cmd5(this)"> Making the function tail recursive is not the only way to reduce the stack size. The follow version uses O(ln n) instead of O(n) where n is the length of the sequence.</p> 
  <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> reverse4(l:seq.int)seq.int 
  <br> <span class = keyword> if </span> length.l &lt; 2 <span class = keyword> then </span> l <span class = keyword> else </span> reverse4.subseq(l, length.l / 2 + 1, length.l)+ reverse4.subseq(l, 1, length.l / 2)</span> </p> 
- <h2 id = 1 onclick ="javascript:cmd5(this)"> Todo </h2> 
- <p id = 1 onclick ="javascript:cmd5(this)"> flushing of empty persitant encodings. Not exporting encodings does not allow type to be found </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> PROFILE of codegen does not work. </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> 8 + 3*6 gives bad error message on compile </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> do we really need the change file to get something to compile? </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> (DONE 12/07/2017)Display of labeled graph with empty labels needs improved </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Better llvm bitcode generation </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> authorization needs improvement.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> How to set displaywidth mapping </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Get rid of SETFLD </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> (DONE 12/07/2017)Change displaywidth of seq.word so that it calculates spaces correctly </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Allow other binary operators to be defined.operator + op1 op2 </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Inner product example </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> /function xx(a:seq(int), b:seq(int), i:int)int a_i*b_i </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> /function innerproduct(a:seq(int), b:seq(int))int @(+, xx(a, b), 0, arithseq(length.a, 1, 1))</p> 
 
+ 

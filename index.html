@@ -1,3 +1,35 @@
-<h1 > hello world </h1>
+<h1 > Tau: An Experimental Programm Language </h1>
 
-A <a href="taudoc.html"> taudoc </a>.</p>
+ <p > Programming language today look pretty much the same as they did 30 years ago. 
+ Today they may have few more features are not substancaly better as a notation for thought. 
+ I have created another programming language in attempt to introduce a new way to think about 
+ programming which attempts to make a leap forward. The language has  
+ <br>  No assignment operator. 
+ <br>No loop/while/do statement 
+ <br>No function type.
+ <br>Only uses program state in a very controlled way. 
+ <br>Words are the basic text element instead of characters. 
+ <br>heavy use of sequences. 
+ <br>introduces a new control structure modeled after the sigma operator in mathematics. </p> 
+
+<p>Read more about it at 
+<a href="taudoc.html"> tau Language Reference </a>.</p>
+
+<p> Only runs on Mac OS X. To get running code:
+
+<br> move stdlib.bc to a working directory and make subdirectories in Github subdirectories of the working directory.  (Symbolic links work) 
+
+<br> cc -dynamiclib stdlib.bc  -o stdlib.dylib  -init _init22 -undefined dynamic_lookup
+
+<br> cc stdlib/*.c -o taumain
+
+<br> ./taumain testall testall testall
+
+<br> will produce test.html file. 
+
+<h2> Pretty source code </h2>
+
+<a href="testall.html"> testall </a>.</p>
+
+<a href="tools.html"> tools </a>.</p>
+
