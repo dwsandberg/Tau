@@ -45,7 +45,6 @@ Function print(syminfo)seq.word export
 
 Function actualreturntype(syminfo)mytype export
 
-/Function parsesyminfo(mytype, seq.word)syminfo export
 
 Function funcfrominstruction(set.libtype, seq.word, mytype, int)seq.word export
 

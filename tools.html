@@ -1,0 +1,1403 @@
+<meta charset ="UTF-8"> <style type ="text/css"> <!--span.avoidwrap { display:inline-block ; } span.keyword { color:blue ; } span.keywords { color:blue ; } span.literal { color:red ; } span.comment { color:green ; } span.block { padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ; } form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style> 
+ <h1> Source code for Library tools </h1> <a href ="#tools"> tools </a> <a href ="#bandeskopf"> bandeskopf </a> <a href ="#barycenter"> barycenter </a> <a href ="#displaygraph"> displaygraph </a> <a href ="#displaytextgraph"> displaytextgraph </a> <a href ="#layergraph"> layergraph </a> <a href ="#makeDAG"> makeDAG </a> <a href ="#prettylib"> prettylib </a> <a href ="#svg"> svg </a> <a href ="#svggraph"> svggraph </a> <a href ="#doc"> doc </a> <a href ="#profile"> profile </a> <a href ="#labeledgraph"> labeledgraph </a> <a href ="#printbitcodes"> printbitcodes </a> <hr id ="tools"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> tools </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> run doc createdoc </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> run tools testprintBitCodes </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> run tools test </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> run tools checkdoclib </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> run tools test1 </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> run doc createdoc </p> <h2> Use graph</h2> 
+ <svg height = 1274 width = 926 > <defs> <marker id ="markerArrow2"markerWidth ="13"markerHeight ="13"refX ="2"refY ="7"orient ="auto"> <path d ="M8, 13 L8, 2 L2, 7 L8, 13"style ="fill:#000000 ;"/> </marker> <marker id ="markerArrow"markerWidth ="13"markerHeight ="13"refX ="8"refY ="7"orient ="auto"> <path d ="M2, 2 L2, 13 L8, 7 L2, 2"style ="fill:#000000 ;"/> </marker> </defs> <text id ="llvm"x ="250"y ="1162"fill ="black"onclick ="javascript:cmd5(this)"> llvm </text> 
+ <path d ="M 197 1210 L 250 1162"stroke ="black"fill ="none"/> 
+ 
+ <text id ="profile"x ="103"y ="282"fill ="black"onclick ="javascript:cmd5(this)"> profile </text> 
+ <path d ="M 51 666 L 103 282"stroke ="black"fill ="none"/> 
+ 
+ <text id ="real"x ="873"y ="234"fill ="black"onclick ="javascript:cmd5(this)"> real </text> 
+ <path d ="M 820 394 L 873 234"stroke ="black"fill ="none"/> 
+ 
+ <text id ="display"x ="419"y ="1082"fill ="black"onclick ="javascript:cmd5(this)"> display </text> 
+ <path d ="M 367 330 L 419 1082"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 586 L 419 1082"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 1002 L 419 1082"stroke ="black"fill ="none"/> 
+ 
+ <text id ="format"x ="250"y ="650"fill ="black"onclick ="javascript:cmd5(this)"> format </text> 
+ <path d ="M 136 746 L 250 650"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 650"stroke ="black"fill ="none"/> 
+ 
+ <text id ="main"x ="250"y ="1098"fill ="black"onclick ="javascript:cmd5(this)"> main </text> 
+ <path d ="M 136 746 L 250 1098"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 1098"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 103 1242 L 250 1098"stroke ="black"fill ="none"/> 
+ 
+ <text id ="UTF8"x ="250"y ="842"fill ="black"onclick ="javascript:cmd5(this)"> UTF8 </text> 
+ <path d ="M 167 954 L 250 842"stroke ="black"fill ="none"/> 
+ 
+ <text id ="libdesc"x ="250"y ="682"fill ="black"onclick ="javascript:cmd5(this)"> libdesc </text> 
+ <path d ="M 136 746 L 250 682"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 682"stroke ="black"fill ="none"/> 
+ 
+ <text id ="bits"x ="250"y ="1194"fill ="black"onclick ="javascript:cmd5(this)"> bits </text> 
+ <path d ="M 197 1210 L 250 1194"stroke ="black"fill ="none"/> 
+ 
+ <text id ="internalbc"x ="250"y ="1226"fill ="black"onclick ="javascript:cmd5(this)"> internalbc </text> 
+ <path d ="M 197 1210 L 250 1226"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 618 L 579 618"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 367 330 L 419 426"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 367 330 L 419 458"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 197 1210 L 250 1258"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 122 L 579 122"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 1274 L 579 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 554 L 579 554"stroke ="black"fill ="none"/> 
+ 
+ <text id ="fileresult"x ="250"y ="714"fill ="black"onclick ="javascript:cmd5(this)"> fileresult </text> 
+ <path d ="M 136 746 L 250 714"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 714"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 367 330 L 419 490"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 136 746 L 250 554"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 1002"stroke ="black"fill ="none"/> 
+ 
+ <text id ="libscope"x ="873"y ="314"fill ="black"onclick ="javascript:cmd5(this)"> libscope </text> 
+ <path d ="M 729 90 L 873 314"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 811 330 L 873 314"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 618 L 873 314"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 1146 L 873 314"stroke ="black"fill ="none"/> 
+ 
+ <text id ="pretty2"x ="250"y ="746"fill ="black"onclick ="javascript:cmd5(this)"> pretty2 </text> 
+ <path d ="M 136 746 L 250 746"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 746"stroke ="black"fill ="none"/> 
+ 
+ <text id ="parse"x ="250"y ="778"fill ="black"onclick ="javascript:cmd5(this)"> parse </text> 
+ <path d ="M 136 746 L 250 778"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 778"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 426 L 579 426"stroke ="black"fill ="none"/> 
+ 
+ <text id ="definestruct2"x ="250"y ="874"fill ="black"onclick ="javascript:cmd5(this)"> definestruct2 </text> 
+ <path d ="M 167 954 L 250 874"stroke ="black"fill ="none"/> 
+ 
+ <text id ="passcommon"x ="250"y ="906"fill ="black"onclick ="javascript:cmd5(this)"> passcommon </text> 
+ <path d ="M 167 954 L 250 906"stroke ="black"fill ="none"/> 
+ 
+ <text id ="fileio"x ="250"y ="938"fill ="black"onclick ="javascript:cmd5(this)"> fileio </text> 
+ <path d ="M 136 746 L 250 938"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 197 1210 L 250 938"stroke ="black"fill ="none"/> 
+ 
+ <text id ="tools"x ="10"y ="666"fill ="black"onclick ="javascript:cmd5(this)"> tools </text> 
+ <text id ="doc"x ="103"y ="746"fill ="black"onclick ="javascript:cmd5(this)"> doc </text> 
+ <path d ="M 51 666 L 103 746"stroke ="black"fill ="none"/> 
+ 
+ <text id ="displaytextgraph"x ="250"y ="330"fill ="black"onclick ="javascript:cmd5(this)"> displaytextgraph </text> 
+ <path d ="M 155 282 L 250 330"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 136 746 L 250 330"stroke ="black"fill ="none"/> 
+ 
+ <text id ="prettylib"x ="103"y ="954"fill ="black"onclick ="javascript:cmd5(this)"> prettylib </text> 
+ <path d ="M 51 666 L 103 954"stroke ="black"fill ="none"/> 
+ 
+ <text id ="svg"x ="873"y ="202"fill ="black"onclick ="javascript:cmd5(this)"> svg </text> 
+ <path d ="M 811 330 L 873 202"stroke ="black"fill ="none"/> 
+ 
+ <text id ="printbitcodes"x ="103"y ="1210"fill ="black"onclick ="javascript:cmd5(this)"> printbitcodes </text> 
+ <path d ="M 51 666 L 103 1210"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 676 170 L 729 170"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 671 202 L 729 202"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 51 666 L 103 1242"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 155 282 L 250 90"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 155 282 L 250 122"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 136 746 L 250 586"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 136 746 L 250 618"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 1034"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 554 L 729 554"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 367 330 L 419 522"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 1258 L 419 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 554 L 419 554"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 90 L 419 90"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 122 L 419 122"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 618 L 419 618"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 1034 L 419 1146"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 525 234 L 579 266"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 525 234 L 579 330"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 458 L 579 458"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 490 L 579 490"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 522 L 579 522"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 90 L 579 90"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 1146 L 579 1146"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 672 234 L 729 234"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 618 L 729 618"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 122 L 729 122"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 1274 L 729 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 426 L 729 426"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 266 L 729 266"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 458 L 729 458"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 90 L 729 90"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 1146 L 729 1146"stroke ="black"fill ="none"/> 
+ 
+ <text id ="oseq.T"x ="873"y ="1274"fill ="black"onclick ="javascript:cmd5(this)"> oseq.T </text> 
+ <path d ="M 729 122 L 873 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 820 394 L 873 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 426 L 873 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 1274 L 873 1274"stroke ="black"fill ="none"/> 
+ 
+ <text id ="ipair.T"x ="419"y ="202"fill ="black"onclick ="javascript:cmd5(this)"> ipair.T </text> 
+ <path d ="M 367 330 L 419 202"stroke ="black"fill ="none"/> 
+ 
+ <text id ="graph.T"x ="873"y ="10"fill ="black"onclick ="javascript:cmd5(this)"> graph.T </text> 
+ <path d ="M 729 170 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 202 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 234 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 266 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 811 330 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 820 394 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 458 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 554 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <text id ="tree.T"x ="250"y ="810"fill ="black"onclick ="javascript:cmd5(this)"> tree.T </text> 
+ <path d ="M 136 746 L 250 810"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 810"stroke ="black"fill ="none"/> 
+ 
+ <text id ="bandeskopf.T"x ="579"y ="170"fill ="black"onclick ="javascript:cmd5(this)"> bandeskopf.T </text> 
+ <path d ="M 525 234 L 579 170"stroke ="black"fill ="none"/> 
+ 
+ <text id ="svggraph.T"x ="729"y ="330"fill ="black"onclick ="javascript:cmd5(this)"> svggraph.T </text> 
+ <path d ="M 676 170 L 729 330"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 330 L 729 330"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 490 L 729 330"stroke ="black"fill ="none"/> 
+ 
+ <text id ="barycenter.T"x ="729"y ="394"fill ="black"onclick ="javascript:cmd5(this)"> barycenter.T </text> 
+ <path d ="M 671 202 L 729 394"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 522 L 729 394"stroke ="black"fill ="none"/> 
+ 
+ <text id ="displaygraph.T"x ="419"y ="234"fill ="black"onclick ="javascript:cmd5(this)"> displaygraph.T </text> 
+ <path d ="M 367 330 L 419 234"stroke ="black"fill ="none"/> 
+ 
+ <text id ="layergraph.T"x ="579"y ="202"fill ="black"onclick ="javascript:cmd5(this)"> layergraph.T </text> 
+ <path d ="M 525 234 L 579 202"stroke ="black"fill ="none"/> 
+ 
+ <text id ="makeDAG.T"x ="579"y ="234"fill ="black"onclick ="javascript:cmd5(this)"> makeDAG.T </text> 
+ <path d ="M 525 234 L 579 234"stroke ="black"fill ="none"/> 
+ 
+ <text id ="stack.T"x ="250"y ="970"fill ="black"onclick ="javascript:cmd5(this)"> stack.T </text> 
+ <path d ="M 167 954 L 250 970"stroke ="black"fill ="none"/> 
+ 
+ <text id ="labeledgraph.T"x ="250"y ="58"fill ="black"onclick ="javascript:cmd5(this)"> labeledgraph.T </text> 
+ <path d ="M 155 282 L 250 58"stroke ="black"fill ="none"/> 
+ 
+ Your browser does not support inline SVG.</svg> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> doc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> prettylib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> profile </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> main </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> printbitcodes </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test1 seq.word htmlcode.<span class = literal >"tools"</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> checkbind seq.word checkbind.<span class = literal >"tools"</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> prettytest seq.word prettylib.<span class = literal >"tools"</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> checkdoclib seq.word doclibrary.<span class = literal >"tools"</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test seq.word <span class = block> <span class = keyword> let </span> a = compilelib(<span class = literal >"solardataall"</span> _1)
+ <br> a + profileresults.<span class = literal >"time"</span> </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> testprintBitCodes seq.word printBitCodes.<span class = literal >"test3.bc"</span> </span> </p> <hr> <hr id ="bandeskopf"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> bandeskopf(T)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.nodeinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.nodeinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> svggraph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(T, T)boolean unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Based on:Fast and Simple Horizontal Coordinate Assignment Ulrik Brandes and Boris Kopf, 2002 </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> step one is to find type1 conflicts </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> contains(a:set.T, w:T)set.T findelement(w, a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> iis(g:graph.T, dummy:set.T, node:T)seq.T <span class = block> // <span class = comment > returns upper nieghbor of inner segment ending at node </span> // 
+ <br> <span class = keyword> if </span> not(node in dummy)
+ <br> <span class = keyword> then </span> empty:seq.T 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> p = @(∪, contains.dummy, empty:set.T, toseq.predecessors(g, node))
+ <br> <span class = keyword> if </span> isempty.p <span class = keyword> then </span> empty:seq.T <span class = keyword> else </span> [ p_1]</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> type1conflicts(g:graph.T, dummy:set.T, layers:seq.seq.T)seq.arc.T <span class = block> // <span class = comment > find type 1 conflicts, that is arcs that cross a inner arc </span> // 
+ <br> @(+, marklayer(g, dummy, layers), empty:seq.arc.T, arithseq(length.layers - 2, 1, 2))</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> marklayer(g:graph.T, dummy:set.T, layers:seq.seq.T, l:int)seq.arc.T 
+ <br> marklayer(g, dummy, layers_l, layers_(l + 1), 0, 0, 1)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> marklayer(g:graph.T, dummy:set.T, upperlayer:seq.T, currentlayer:seq.T, k0:int, l:int, l1:int)seq.arc.T <span class = block> <span class = keyword> if </span> l1 > length.currentlayer 
+ <br> <span class = keyword> then </span> crossings(g, upperlayer, k0, length.upperlayer + 1, currentlayer, l, l1)
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> x = iis(g, dummy, currentlayer_l1)
+ <br> <span class = keyword> if </span> isempty.x 
+ <br> <span class = keyword> then </span> marklayer(g, dummy, upperlayer, currentlayer, k0, l, l1 + 1)
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> k1 = findindex(x_1, upperlayer)
+ <br> crossings(g, upperlayer, k0, k1, currentlayer, l, l1)+ marklayer(g, dummy, upperlayer, currentlayer, k1, l1, l1 + 1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> crossings(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l:int, l1:int)seq.arc.T <span class = block> // <span class = comment >(k0, l)and(k1, l1)both inner.crossings of(k0, l)have been found for(?, j)for j&lt; k0.find arcs(?, n)where n > l and n &lt; l1 that cross(k0, l)or(k1, l1)</span> // 
+ <br> @(+, w1(g, upperlayer, k0, k1, currentlayer), empty:seq.arc.T, arithseq(l1 - 1 - (l + 1)+ 1, 1, l + 1))</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> w1(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l0:int)seq.arc.T <span class = block> // <span class = comment > crossings of cross(k0, l)or(k1, l1)for arcs incident to l0 where l0 is between l and l1 </span> // 
+ <br> @(+, w1(upperlayer, k0, k1, currentlayer_l0), empty:seq.arc.T, toseq.predecessors(g, currentlayer_l0))</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> w1(upperlayer:seq.T, k0:int, k1:int, end:T, start:T)seq.arc.T <span class = block> <span class = keyword> let </span> k = findindex(start, upperlayer)
+ <br> <span class = keyword> if </span> k &lt; k0 ∨ k > k1 <span class = keyword> then </span> [ arc(start, end)]<span class = keyword> else </span> empty:seq.arc.T </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> ______________</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Step 2 is to find vertical alignments.This will return arcs that will have the two nodes with the same x value.Inner arcs are are prim canidates for this vertial alignment.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> findvertarcsUL(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x:int, assigned:seq.T)seq.arc.T <span class = block> <span class = keyword> if </span> x > length.currentlayer 
+ <br> <span class = keyword> then </span> empty:seq.arc.T 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> node = currentlayer_x 
+ <br> <span class = keyword> let </span> preds = toseq.predecessors(g, node)
+ <br> <span class = keyword> if </span> length.preds > 0 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> upperidx = @(+, findidx.lastlayer, empty:seq.int, preds)
+ <br> <span class = keyword> let </span> medianleft = upperidx_((length.upperidx + 1)/ 2)
+ <br> <span class = keyword> let </span> medianright = upperidx_((length.upperidx + 1)/ 2)
+ <br> <span class = keyword> if </span> r &lt; medianleft ∧ not(lastlayer_medianleft in assigned)
+ <br> <span class = keyword> then </span> findvertarcsUL(g, currentlayer, lastlayer, medianleft, x + 1, assigned + lastlayer_medianleft)+ arc(lastlayer_medianleft, node)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> r &lt; medianright ∧ not(lastlayer_medianright in assigned)
+ <br> <span class = keyword> then </span> findvertarcsUL(g, currentlayer, lastlayer, medianright, x + 1, assigned + lastlayer_medianright)+ arc(lastlayer_medianright, node)
+ <br> <span class = keyword> else </span> findvertarcsUL(g, currentlayer, lastlayer, r, x + 1, assigned)</span> <span class = keyword> else </span> findvertarcsUL(g, currentlayer, lastlayer, r, x + 1, assigned)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> findvertarcsUL(g:graph.T, layers:seq.seq.T, l:int)seq.arc.T 
+ <br> findvertarcsUL(g, layers_l, layers_(l - 1), 0, 1, empty:seq.T)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> findvertarcsUL(g:graph.T, layers:seq.seq.T)seq.arc.T 
+ <br> @(+, findvertarcsUL(g, layers), empty:seq.arc.T, arithseq(length.layers - 1, 1, 2))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> findvertarcsUR(g:graph.T, layers:seq.seq.T)seq.arc.T 
+ <br> @(+, findvertarcsUR(g, layers), empty:seq.arc.T, arithseq(length.layers - 1, 1, 2))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> findvertarcsUR(g:graph.T, layers:seq.seq.T, l:int)seq.arc.T 
+ <br> findvertarcsUR(g, layers_l, layers_(l - 1), length(layers_l)+ 1, length(layers_l), empty:seq.T)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> findvertarcsUR(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x:int, assigned:seq.T)seq.arc.T <span class = block> <span class = keyword> if </span> x = 0 
+ <br> <span class = keyword> then </span> empty:seq.arc.T 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> node = currentlayer_x 
+ <br> <span class = keyword> let </span> preds = toseq.predecessors(g, node)
+ <br> <span class = keyword> if </span> length.preds > 0 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> upperidx = @(+, findidx.lastlayer, empty:seq.int, preds)
+ <br> <span class = keyword> let </span> medianleft = upperidx_((length.upperidx + 1)/ 2)
+ <br> <span class = keyword> let </span> medianright = upperidx_((length.upperidx + 1)/ 2)
+ <br> <span class = keyword> if </span> r > medianright ∧ not(lastlayer_medianright in assigned)
+ <br> <span class = keyword> then </span> findvertarcsUR(g, currentlayer, lastlayer, medianright, x - 1, assigned + lastlayer_medianright)+ arc(lastlayer_medianright, node)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> r > medianleft ∧ not(lastlayer_medianleft in assigned)
+ <br> <span class = keyword> then </span> findvertarcsUR(g, currentlayer, lastlayer, medianleft, x - 1, assigned + lastlayer_medianleft)+ arc(lastlayer_medianleft, node)
+ <br> <span class = keyword> else </span> findvertarcsUR(g, currentlayer, lastlayer, r, x - 1, assigned)</span> <span class = keyword> else </span> findvertarcsUR(g, currentlayer, lastlayer, r, x - 1, assigned)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> findidx(s:seq.T, a:T)int findindex(a, s)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> _________________</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> assignvert(RtoL:boolean, layers:set.nodeinfo.T, vertarcs:seq.arc.T, assigned:set.nodeinfo.T, q:nodeinfo.T, x:int, result:seq.nodeinfo.T)set.nodeinfo.T <span class = block> // <span class = comment > look for other nodes in vertical assignment.Do this recursively to assign all nodes in vertical assignmentnodes collecting the max value of x in each layer Vertarcs always increate level by 1.The final value of x is assigned to all nodes in the vertical assignment </span> // 
+ <br> <span class = keyword> let </span> lastassignedx = <span class = keyword> if </span> RtoL <span class = keyword> then </span> @(min, findx(RtoL, q), x, toseq.assigned)<span class = keyword> else </span> @(max, findx(RtoL, q), x, toseq.assigned)
+ <br> <span class = keyword> let </span> newq = @(+, findy.q, empty:seq.nodeinfo.T, vertarcs)
+ <br> <span class = keyword> if </span> isempty.newq 
+ <br> <span class = keyword> then </span> @(+, setx.lastassignedx, assigned, result + q)
+ <br> <span class = keyword> else </span> assignvert(RtoL, layers, vertarcs, assigned, findelement(newq_1, layers)_1, lastassignedx, result + q)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> setx(x:int, q:nodeinfo.T)nodeinfo.T nodeinfo(n.q, x, y.q)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> findy(q:nodeinfo.T, a:arc.T)seq.nodeinfo.T 
+ <br> <span class = keyword> if </span> n.q = tail.a <span class = keyword> then </span> [ nodeinfo(head.a, x.q, y.q + 1)]<span class = keyword> else </span> empty:seq.nodeinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> findx(RtoL:boolean, q:nodeinfo.T, a:nodeinfo.T)int <span class = block> <span class = keyword> if </span> y.a = y.q 
+ <br> <span class = keyword> then </span> <span class = keyword> if </span> RtoL <span class = keyword> then </span> x.a - seperation.q <span class = keyword> else </span> x.a + seperation.q 
+ <br> <span class = keyword> else </span> 0 </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> ------------Helper functions for adding arcs for block graph in hrizontal alignment </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> isroot(g:graph.T, n:T)seq.arc.T 
+ <br> <span class = keyword> if </span> isempty.predecessors(g, n)<span class = keyword> then </span> arcsfromsuccesors(n, g, n)<span class = keyword> else </span> empty:seq.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> arcsfromsuccesors(root:T, g:graph.T, n:T)seq.arc.T <span class = block> <span class = keyword> let </span> s = successors(g, n)
+ <br> <span class = keyword> if </span> isempty.s <span class = keyword> then </span> empty:seq.arc.T <span class = keyword> else </span> [ arc(s_1, root)]+ arcsfromsuccesors(root, g, s_1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> layerarcsR(arcstoroots:set.arc.T, layer:seq.T)seq.arc.T 
+ <br> @(+, layerarcsR(arcstoroots, layer), empty:seq.arc.T, arithseq(length.layer - 1, -1, length.layer))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> layerarcsR(arcstoroot:set.arc.T, layer:seq.T, i:int)seq.arc.T <span class = block> <span class = keyword> let </span> arc1 = arc(layer_i, layer_(i - 1))
+ <br> <span class = keyword> let </span> e = findelement2(arcstoroot, arc1)
+ <br> <span class = keyword> if </span> isempty.e <span class = keyword> then </span> [ arc1]<span class = keyword> else </span> [ arc(head(e_1), head.arc1), arc1]</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> layerarcs(arcstoroots:set.arc.T, layer:seq.T)seq.arc.T 
+ <br> @(+, layerarcs(arcstoroots, layer), empty:seq.arc.T, arithseq(length.layer - 1, 1, 2))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> layerarcs(arcstoroot:set.arc.T, layer:seq.T, i:int)seq.arc.T <span class = block> <span class = keyword> let </span> arc1 = arc(layer_(i - 1), layer_i)
+ <br> <span class = keyword> let </span> e = findelement2(arcstoroot, arc1)
+ <br> <span class = keyword> if </span> isempty.e <span class = keyword> then </span> [ arc1]<span class = keyword> else </span> [ arc(head(e_1), head.arc1), arc1]</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> -----------</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> For providing horizontal alignment.There is one for left and right directions.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> alignUL(g:graph.T, layers:seq.seq.T, marked:set.arc.T, layerX:set.nodeinfo.T)set.nodeinfo.T <span class = block> <span class = keyword> let </span> vertarcs = findvertarcsUL(deletearcs(g, marked), layers)
+ <br> <span class = keyword> let </span> g3 = newgraph.vertarcs 
+ <br> <span class = keyword> let </span> arcstoroots = asset.@(+, isroot.g3, empty:seq.arc.T, toseq.nodes.g3)
+ <br> <span class = keyword> let </span> layerarcs = asset.@(+, layerarcsR.arcstoroots, toseq.arcstoroots, layers)
+ <br> <span class = keyword> let </span> a = newgraph.toseq.layerarcs 
+ <br> <span class = keyword> let </span> b = sinksfirst.a + singlenodelayers.layers 
+ <br> assignx(false, layerX, b, empty:set.nodeinfo.T, vertarcs, 1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> alignUR(g:graph.T, layers:seq.seq.T, marked:set.arc.T, layerX:set.nodeinfo.T)set.nodeinfo.T <span class = block> <span class = keyword> let </span> vertarcs = findvertarcsUR(deletearcs(g, marked), layers)
+ <br> <span class = keyword> let </span> g3 = newgraph.vertarcs 
+ <br> <span class = keyword> let </span> arcstoroots = asset.@(+, isroot.g3, empty:seq.arc.T, toseq.nodes.g3)
+ <br> <span class = keyword> let </span> layerarcs = asset.@(+, layerarcs.arcstoroots, toseq.arcstoroots, layers)
+ <br> <span class = keyword> let </span> a = newgraph.toseq.layerarcs 
+ <br> <span class = keyword> let </span> b = sinksfirst.a + singlenodelayers.layers 
+ <br> assignx(true, layerX, b, empty:set.nodeinfo.T, vertarcs, 1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> singlenodelayers(a:seq.T)seq.T 
+ <br> <span class = keyword> if </span> length.a = 1 <span class = keyword> then </span> a <span class = keyword> else </span> empty:seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> singlenodelayers(a:seq.seq.T)seq.T @(+, singlenodelayers, empty:seq.T, a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> assignx(RtoL:boolean, layers:set.nodeinfo.T, list:seq.T, assigned:set.nodeinfo.T, vertarcs:seq.arc.T, i:int)set.nodeinfo.T <span class = block> // <span class = comment > assign x values.Direction can either be Right to left or left to Right.Negative x's are assign when RtoL </span> // 
+ <br> <span class = keyword> if </span> i > length.list 
+ <br> <span class = keyword> then </span> assigned 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> node = list_i 
+ <br> <span class = keyword> if </span> nodeinfo(node, 0, 0)in assigned 
+ <br> <span class = keyword> then </span> assignx(RtoL, layers, list, assigned, vertarcs, i + 1)
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> q = findelement(nodeinfo(node, 0, 0), layers)_1 
+ <br> assignx(RtoL, layers, list, assignvert(RtoL, layers, vertarcs, assigned, q, <span class = keyword> if </span> RtoL <span class = keyword> then </span> -1 <span class = keyword> else </span> 1, empty:seq.nodeinfo.T), vertarcs, i + 1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> ----------------------</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Final step is to merge multiple layouts into one.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> assignx(g:graph.T, dummy:set.T, layers:seq.seq.T)set.nodeinfo.T <span class = block> <span class = keyword> let </span> marked = asset.type1conflicts(g, dummy, layers)
+ <br> // <span class = comment > let layerX = @(+, pos(layers), empty:set.nodeinfo.T, @(+, identity, empty:seq.T, layers))</span> // 
+ <br> <span class = keyword> let </span> layerX = posindegree(g, layers)
+ <br> <span class = keyword> let </span> UL = alignUL(g, layers, marked, layerX)
+ <br> <span class = keyword> let </span> UR = alignUR(g, layers, marked, layerX)
+ <br> <span class = keyword> let </span> m = @(min, x, 0, toseq.UR)
+ <br> asset.@(+, merge(UL, UR, m), empty:seq.nodeinfo.T, arithseq(cardinality.UL, 1, 1))</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> merge(UL:set.nodeinfo.T, UR:set.nodeinfo.T, m:int, i:int)nodeinfo.T <span class = block> <span class = keyword> let </span> ul = UL_i 
+ <br> nodeinfo(n.ul,(x.ul + x(UR_i) - m + 1)* 2 / 2, y.ul)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> __________________________</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)">       </p> <hr> <hr id ="barycenter"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> barycenter(T)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> oseq.baryinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> real </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.baryinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(T, T)boolean unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> baryinfo is <span class = keyword> record </span> avg:real, node:T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(a:baryinfo.T, b:baryinfo.T)boolean node.a = node.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?(a:baryinfo.T, b:baryinfo.T)ordering avg.a ? avg.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> findindex(s:seq.T, a:T)int findindex(a, s)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> averagepred(g:graph.T, layer1:seq.T, node:T)baryinfo.T <span class = block> <span class = keyword> let </span> pred = toseq.predecessors(g, node)
+ <br> baryinfo(int2real.@(+, findindex.layer1, 0, pred)/ int2real.length.pred, node)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> baryinfo(g:graph.T, layer1:seq.T, layer2:seq.T)seq.T 
+ <br> @(+, node, empty:seq.T, sort.@(+, averagepred(g, layer1), empty:seq.baryinfo.T, layer2))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> baryinfo(g:graph.T, layers:seq.seq.T, i:int, result:seq.seq.T)seq.seq.T <span class = block> <span class = keyword> if </span> i &lt; length.layers 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> new = baryinfo(g, result_i, layers_(i + 1))
+ <br> baryinfo(g, layers, i + 1, result + new)</span> <span class = keyword> else </span> result </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> decreasecrosses(g:graph.T, layers:seq.seq.T)seq.seq.T baryinfo(g, layers, 1, [ layers_1])</span> </p> <hr> <hr id ="displaygraph"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> displaygraph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> bandeskopf.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> layergraph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> makeDAG.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arcinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.nodeinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arcinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.nodeinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> svggraph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> assignwidths(control:prettycontrol, p:nodeinfo.T)nodeinfo.T unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> nodetotext(a:T)seq.word unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> restoredirection(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T, a:arc.T)seq.arcinfo.T <span class = block> <span class = keyword> let </span> other = <span class = keyword> if </span> head.a in nodes.org ∧ not(tail.a in nodes.org)<span class = keyword> then </span> expandback(org, modified, tail.a)<span class = keyword> else </span> tail.a 
+ <br> <span class = keyword> let </span> for = findelement(arcinfo.arc(other, head.a), orgarc)
+ <br> <span class = keyword> let </span> back = findelement(arcinfo.arc(head.a, other), orgarc)
+ <br> <span class = keyword> let </span> both =(<span class = keyword> if </span> not.isempty.for <span class = keyword> then </span> [ setarc(for_1, a, false)]<span class = keyword> else </span> empty:seq.arcinfo.T)+ <span class = keyword> if </span> not.isempty.back <span class = keyword> then </span> [ setarc(back_1, a, true)]<span class = keyword> else </span> empty:seq.arcinfo.T 
+ <br> <span class = keyword> if </span> isempty.both <span class = keyword> then </span> [ arcinfo.a]<span class = keyword> else </span> both </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> restorearcs(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T)seq.arcinfo.T 
+ <br> @(+, restoredirection(orgarc, org, modified), empty:seq.arcinfo.T, toseq.arcs.modified)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> displaygraph(control:prettycontrol, arci:seq.arcinfo.T)seq.word <span class = block> <span class = keyword> let </span> g = newgraph.@(+, a, empty:seq.arc.T, arci)
+ <br> <span class = keyword> let </span> lg = layer.makeDAG.g 
+ <br> <span class = keyword> let </span> posistion = assignx(g.lg, nodes.g.lg - nodes.g, layers.lg)
+ <br> <span class = keyword> let </span> p1 = @(+, assignwidths.control, empty:seq.nodeinfo.T, toseq.posistion)
+ <br> <span class = keyword> let </span> p3 = restorearcs(asset.arci, g, g.lg)
+ <br> // <span class = comment > assert false report @(+, print,"", p3)</span> // tosvg(p3, toseq.nodes.g, asset.p1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> displaygraph(control:prettycontrol, g:graph.T)seq.word <span class = block> <span class = keyword> let </span> arci = @(+, arcinfo, empty:seq.arcinfo.T, toseq.arcs.g)
+ <br> <span class = keyword> let </span> lg = layer.makeDAG.g 
+ <br> <span class = keyword> let </span> posistion = assignx(g.lg, nodes.g.lg - nodes.g, layers.lg)
+ <br> <span class = keyword> let </span> p1 = @(+, assignwidths.control, empty:seq.nodeinfo.T, toseq.posistion)
+ <br> <span class = keyword> let </span> p3 = restorearcs(asset.arci, g, g.lg)
+ <br> // <span class = comment > assert false report @(+, print,"", p3)</span> // tosvg(p3, toseq.nodes.g, asset.p1)</span> </span> </p> <hr> <hr id ="displaytextgraph"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> displaytextgraph </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> barycenter.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> display </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> displaygraph.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> ipair.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> oseq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> svggraph.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> display(z2:seq.arcinfo.seq.word)seq.word 
+ <br> { <span class = literal >"&amp;{ noformat"</span> + displaygraph(defaultcontrol, z2)+ <span class = literal >"&amp;}"</span> } </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> arcinfo(tail:seq.word, head:seq.word, arclabel:seq.word)arcinfo.seq.word 
+ <br> arcinfo(arc(tail, head), arclabel, displaywidth(chrwidths.defaultcontrol, arclabel))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> assignwidths(control:prettycontrol, p:nodeinfo.seq.word)nodeinfo.seq.word 
+ <br> nodeinfo(n.p, x.p, y.p, displaywidth(chrwidths.control, n.p), seperation.p)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?(a:ipair.seq.word, b:ipair.seq.word)ordering index.b ? index.a </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> generatenode(s:set.seq.word)seq.word [ toword.cardinality.s]</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?(a:nodeinfo.seq.word, b:nodeinfo.seq.word)ordering n.a ? n.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> nodetotext(a:seq.word)seq.word a </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)">        </p> <hr> <hr id ="layergraph"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> layergraph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> barycenter.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> layeredgraph is <span class = keyword> record </span> g:graph.T, layers:seq.seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> g(layeredgraph.T)graph.T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> layers(layeredgraph.T)seq.seq.T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> layeredgraph(g:graph.T, layers:seq.seq.T)layeredgraph.T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> layer(g:graph.T)layeredgraph.T <span class = block> // <span class = comment > expect DAG as input </span> // 
+ <br> <span class = keyword> let </span> a = layeredgraph(g, sublayer.g)
+ <br> <span class = keyword> assert </span> not.isempty.layers.a <span class = keyword> report </span> <span class = literal >"empty graph"</span> <span class = keyword> let </span> lg = adddummynodes.a 
+ <br> layeredgraph(g.lg, decreasecrosses(g.lg, layers.lg))</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> sublayer(g:graph.T)seq.seq.T <span class = block> <span class = keyword> if </span> isempty.nodes.g 
+ <br> <span class = keyword> then </span> empty:seq.seq.T 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> r = sources.g 
+ <br> <span class = keyword> assert </span> not.isempty.r <span class = keyword> report </span> <span class = literal >"NOT A DAG"</span> [ r]+ sublayer.@(deletenode, identity, g, r)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> issource(g:graph.T, n:T)seq.T 
+ <br> <span class = keyword> if </span> cardinality.predecessors(g, n)= 0 <span class = keyword> then </span> [ n]<span class = keyword> else </span> empty:seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> sources(g:graph.T)seq.T @(+, issource.g, empty:seq.T, toseq.nodes.g)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> ----adddummy nodes---</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> add nodes so that arcs never cross layers.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> adddummynodes(y2:layeredgraph.T)layeredgraph.T 
+ <br> d2(y2, g.y2, 2, asset(layers(y2)_1), [ layers(y2)_1])</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> d2(org:layeredgraph.T, g:graph.T, i:int, ok:set.T, layerout:seq.seq.T)layeredgraph.T <span class = block> <span class = keyword> let </span> ok1 = ok ∪ asset(layers(org)_i)
+ <br> <span class = keyword> let </span> gnew = @(splitarc, identity, g, @(+, splitarcs(g, ok1), empty:seq.arc.T, layerout_(i - 1)))
+ <br> <span class = keyword> let </span> newnodes = nodes.gnew - nodes.g 
+ <br> <span class = keyword> let </span> newout = layerout + [ layers(org)_i + toseq.newnodes]
+ <br> <span class = keyword> if </span> i &lt; length.layers.org 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> x = ok1 ∪ newnodes ∪ asset(layers(org)_(i + 1))
+ <br> d2(org, gnew, i + 1, x, newout)</span> <span class = keyword> else </span> layeredgraph(gnew, newout)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> splitarcs(g:graph.T, ok:set.T, n:T)seq.arc.T toarcs(n, toseq(successors(g, n) - ok))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> splitarc(g:graph.T, a:arc.T)graph.T <span class = block> <span class = keyword> let </span> new = generatenode.nodes.g 
+ <br> replacearcs(g, asset.[ a], asset.[ arc(tail.a, new), arc(new, head.a)])</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> generatenode(s:set.T)T unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)">        </p> <hr> <hr id ="makeDAG"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> makeDAG.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> reverse(s:seq.T)seq.T @(+,_.s, empty:seq.T, arithseq(length.s, 0 - 1, length.s))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> makeDAG(g:graph.T)graph.T <span class = block> // <span class = comment > Turn directed graph into DAG by reversing arcs </span> // 
+ <br> make(g, empty:seq.arc.T, ordernodes(g, empty:set.T, empty:seq.T, empty:seq.T), empty:set.T, 1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> make(g:graph.T, reversed:seq.arc.T, l:seq.T, nodes:set.T, i:int)graph.T <span class = block> <span class = keyword> if </span> i > length.l 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> r = @(+, backarc, asset.empty:seq.arc.T, reversed)
+ <br> replacearcs(g, asset.reversed, r)</span> <span class = keyword> else </span> <span class = keyword> let </span> n = l_i 
+ <br> <span class = keyword> let </span> succs = successors(g, n)
+ <br> make(g, @(+, filter.nodes, reversed, toseq.arcstosuccessors(g, n)), l, nodes + n, i + 1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> filter(n:set.T, a:arc.T)seq.arc.T 
+ <br> <span class = keyword> if </span> head.a in n <span class = keyword> then </span> [ a]<span class = keyword> else </span> empty:seq.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> expandback(org:graph.T, modified:graph.T, n:T)T 
+ <br> <span class = keyword> if </span> n in nodes.org <span class = keyword> then </span> n <span class = keyword> else </span> expandback(org, modified, toseq(predecessors(modified, n))_1)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> sinks2(g:graph.T, b:set.T, n:T)set.T 
+ <br> <span class = keyword> if </span> cardinality(successors(g, n) - b)= 0 <span class = keyword> then </span> asset.[ n]<span class = keyword> else </span> empty:set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> sources2(g:graph.T, b:set.T, n:T)set.T 
+ <br> <span class = keyword> if </span> cardinality(predecessors(g, n) - b)= 0 <span class = keyword> then </span> asset.[ n]<span class = keyword> else </span> empty:set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ordernodes(g:graph.T, b:set.T, first:seq.T, last:seq.T)seq.T <span class = block> <span class = keyword> let </span> a = @(∪, sources2(g, b), empty:set.T, toseq(nodes.g - b))
+ <br> <span class = keyword> let </span> d = @(∪, sinks2(g, b), empty:set.T, toseq(nodes.g - b))
+ <br> <span class = keyword> if </span> cardinality.a + cardinality.d = 0 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> u = nodes.g - b 
+ <br> <span class = keyword> if </span> isempty.u <span class = keyword> then </span> first + last <span class = keyword> else </span> ordernodes(g, b + u_1, first + u_1, last)</span> <span class = keyword> else </span> ordernodes(g, b ∪ a ∪ d, first + toseq.a, toseq.d + last)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> ________</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)">       </p> <hr> <hr id ="prettylib"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> prettylib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> UTF8 </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> display </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> fileresult </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> format </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> libdesc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> parse </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> pretty2 </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.moddesc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> tree.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> main </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.ptree </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.syminfo </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> libscope </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> passcommon </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> definestruct2 </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.mytype </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stack.tree.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.tree.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> reverse2(l:seq.word)seq.word 
+ <br> <span class = keyword> if </span> isempty.l <span class = keyword> then </span> l <span class = keyword> else </span> reverse2.subseq(l, 2, length.l)+ l_1 </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> prettylib(libname:seq.word)seq.word <span class = block> // <span class = comment > Pretty prints lib source. Does not create files for modules where the pretty printed version does not give the same parse tree. </span> // 
+ <br> // <span class = comment > Warning:Discards text before first module. Multiple modules in the same file are broken into multiple files. </span> // 
+ <br> // <span class = comment > Will move a beginning comment inside parentheses and fail on(a + b)* b. </span> // 
+ <br> <span class = keyword> let </span> lib = tolibdesc(libname_1)
+ <br> <span class = keyword> let </span> libheader = [ <span class = literal >"#!/usr/local/bin/tau"</span> , 
+ <br> <span class = literal >"Library"</span> + libname + alphasort.@(+, modname, <span class = literal >""</span> , subseq(modules.lib, 2, length.modules.lib))+ EOL + <span class = literal >"uses"</span> + dependentlibs.lib + EOL + <span class = literal >"exports"</span> + alphasort.exports.lib]
+ <br> <span class = keyword> assert </span> @(∧, checkpretty.libheader, true, modules.lib)<span class = keyword> report </span> <span class = literal >"failed"</span> { <span class = literal >"PASSED"</span> } </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> checkpretty(libheader:seq.seq.word, mod:moddesc)boolean <span class = block> <span class = keyword> let </span> x = checkpretty(src(mod), 1, empty:set.seq.word, empty:seq.seq.word, empty:seq.seq.word)
+ <br> <span class = keyword> let </span> z = createfile([ merge([ libname(mod)]+ <span class = literal >"/"</span> + [ modname(mod)]+ <span class = literal >".ls"</span> )], <span class = keyword> if </span> modname(mod)= libname(mod)<span class = keyword> then </span> libheader + x <span class = keyword> else </span> x)
+ <br> true </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> checkpretty(s:seq.seq.word, i:int, use:set.seq.word, before:seq.seq.word, after:seq.seq.word)seq.seq.word <span class = block> <span class = keyword> if </span> i > length.s 
+ <br> <span class = keyword> then </span> before + alphasort.toseq.use + after 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> p = s_i 
+ <br> <span class = keyword> if </span> length.p = 0 
+ <br> <span class = keyword> then </span> checkpretty(s, i + 1, use, before, after)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> not(p_1 in <span class = literal >"function Function type use"</span> )
+ <br> <span class = keyword> then </span> <span class = keyword> if </span> isempty.use <span class = keyword> then </span> checkpretty(s, i + 1, use, before + p, after)<span class = keyword> else </span> checkpretty(s, i + 1, use, before, after + p)
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> orgtree = parse(p, tree(<span class = literal >"xxx"</span> _1))
+ <br> <span class = keyword> let </span> formatedtext = processtotext.prettytree(defaultcontrol, orgtree)
+ <br> <span class = keyword> let </span> newtext = towords.toseqint.toUTF8.formatedtext 
+ <br> <span class = keyword> let </span> newtree = parse(newtext, tree(<span class = literal >"xxx"</span> _1))
+ <br> <span class = keyword> assert </span> newtree = orgtree <span class = keyword> report </span> <span class = literal >"FAILED on"</span> + formatedtext 
+ <br> <span class = keyword> if </span> p_1 = <span class = literal >"use"</span> _1 
+ <br> <span class = keyword> then </span> checkpretty(s, i + 1, use + formatedtext, before, after)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> isempty.use 
+ <br> <span class = keyword> then </span> checkpretty(s, i + 1, use, before + formatedtext, after)
+ <br> <span class = keyword> else </span> checkpretty(s, i + 1, use, before, after + formatedtext)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> checkbind(libname:seq.word)seq.word <span class = block> // <span class = comment > Verifies that that same parse tree can be created from the binding form of functions as from source txt. Does not check abstract type functions. </span> // 
+ <br> <span class = keyword> let </span> lib = tolibdesc(libname_1)
+ <br> <span class = keyword> let </span> x = newcode.bindings(libname_1)
+ <br> <span class = keyword> let </span> ptrees = @(+, getparsetrees, empty:seq.ptree, modules.lib)
+ <br> <span class = keyword> let </span> a = @(+, checkbind.ptrees, <span class = literal >""</span> , subseq(x, 1, 40000))
+ <br> <span class = keyword> if </span> a = <span class = literal >""</span> <span class = keyword> then </span> <span class = literal >"PASSED BINDING CHECK for"</span> + libname 
+ <br> <span class = keyword> else </span> <span class = literal >"FAILED BINDING CHECK for"</span> + libname + <span class = literal >". Detail:"</span> + a </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> ptree is <span class = keyword> record </span> symbol:syminfo, parsetree:tree.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> getparsetrees(s:moddesc)seq.ptree @(+, getparsetree.modname.s, empty:seq.ptree, src.s)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> getparsetree(modname:word, s:seq.word)seq.ptree <span class = block> <span class = keyword> if </span> length.s = 0 ∨ not(s_1 in <span class = literal >"function Function"</span> )
+ <br> <span class = keyword> then </span> empty:seq.ptree 
+ <br> <span class = keyword> else </span> [ ptree(parsesyminfo(mytype.[ modname], s), parse(s, tree(<span class = literal >"xxx"</span> _1)))]</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> checkbind(p:seq.ptree, s:syminfo)seq.word <span class = block> <span class = keyword> let </span> t = @(+, checkbind.s, <span class = literal >""</span> , p)
+ <br> <span class = keyword> if </span> t = <span class = literal >"OK"</span> <span class = keyword> then </span> <span class = literal >""</span> <span class = keyword> else </span> // <span class = comment > if length.t = 0 then"&amp;br"+ [ name.s]+":"+ print.modname.s + instruction.s else </span> // t </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> checkbind(sym:syminfo, p:ptree)seq.word <span class = block> // <span class = comment > if iscomplex.modname.sym then""else </span> // 
+ <br> <span class = keyword> if </span> name.sym = name.symbol.p ∧ paratypes.sym = paratypes.symbol.p ∧ modname.sym = modname.symbol.p 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> if </span> label(parsetree(p)_2)in <span class = literal >"builtin export"</span> <span class = keyword> then </span> <span class = literal >"OK"</span> <span class = keyword> else </span> <span class = keyword> let </span> b = toparse(instruction.sym, 2, empty:stack.tree.word)
+ <br> <span class = keyword> if </span> b = parsetree(p)_2 
+ <br> <span class = keyword> then </span> <span class = literal >"OK"</span> <span class = keyword> else </span> <span class = literal >"&amp;br"</span> + name.sym + print.modname.sym + <span class = literal >"&amp;br"</span> + print.parsetree.p + <span class = literal >"&amp;br"</span> + print.b + <span class = literal >"&amp;br"</span> + instruction.sym </span> <span class = keyword> else </span> <span class = literal >""</span> </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> toparse(s:seq.word, i:int, r:stack.tree.word)tree.word <span class = block> <span class = keyword> if </span> i > length.s 
+ <br> <span class = keyword> then </span> top.r 
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> s_i in <span class = literal >"LIT WORD"</span> <span class = keyword> then </span> toparse(s, i + 2, push(r, tree(s_(i + 1))))
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> nosons = toint(s_(i + 1))
+ <br> <span class = keyword> let </span> cd = codedown(s_i)
+ <br> <span class = keyword> let </span> name = <span class = block> <span class = keyword> if </span> length.cd = 2 ∧ length(cd_2)> 1 ∧ length.cd = 2 
+ <br> <span class = keyword> then </span> <span class = block> // <span class = comment > assert false report cd_1 +"mod"+ cd_2 + towords.decode.(cd_1_1)</span> // 
+ <br> <span class = keyword> let </span> a = towords.decode(cd_1_1)
+ <br> <span class = keyword> if </span> a_length.a = <span class = literal >"T"</span> _1 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> z = merge(subseq(a, 1, length.a - 1)+ @(seperator.<span class = literal >"."</span> , identity, <span class = literal >""</span> , reverse2.subseq(cd_2, 1, length(cd_2) - 1)))
+ <br> // <span class = comment > assert z = merge."empty:seq.word"report [ z, cd_1_1]</span> // z </span> <span class = keyword> else </span> cd_1_1 </span> <span class = keyword> else </span> cd_1_1 </span> <span class = keyword> let </span> t = tree(name, top(r, nosons))
+ <br> toparse(s, i + 2, push(pop(r, nosons), t))</span> </span> </p> <hr> <hr id ="svg"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> svg </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> -----------------draw as svg </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> svg(body:seq.word, width:int, length:int)seq.word 
+ <br> [ EOL]+ <span class = literal >"&lt;svg height ="</span> + toword.length + <span class = literal >"width ="</span> + toword.width + <span class = literal >"> &lt;defs> &lt;marker id =""markerArrow2""markerWidth =""13""markerHeight =""13""refX =""2""refY =""7""orient =""auto""> &lt;path d =""M8, 13 L8, 2 L2, 7 L8, 13""style =""fill:#000000 ;""/> &lt;/marker> &lt;marker id =""markerArrow""markerWidth =""13""markerHeight =""13""refX =""8""refY =""7""orient =""auto""> &lt;path d =""M2, 2 L2, 13 L8, 7 L2, 2""style =""fill:#000000 ;""/> &lt;/marker> &lt;/defs>"</span> + body + <span class = literal >"Your browser does not support inline SVG.&lt;/svg>"</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> line(x:int, y:int, x2:int, y2:int, arrowstart:boolean, arrowend:boolean)seq.word <span class = block> <span class = keyword> let </span> style =(<span class = keyword> if </span> arrowend <span class = keyword> then </span> <span class = literal >"marker-end:url(#markerArrow);"</span> <span class = keyword> else </span> <span class = literal >""</span> )+ <span class = keyword> if </span> arrowstart <span class = keyword> then </span> <span class = literal >"marker-start:url(#markerArrow2);"</span> <span class = keyword> else </span> <span class = literal >""</span> { <span class = literal >"&lt;path d =""M"</span> + toword.x + toword.y + <span class = literal >"L"</span> + toword.x2 + toword.y2 + <span class = literal >"""stroke =""black""fill =""none"""</span> +(<span class = block> <span class = keyword> if </span> style = <span class = literal >""</span> <span class = keyword> then </span> <span class = literal >"/>"</span> <span class = keyword> else </span> <span class = literal >"style ="""</span> + style + <span class = literal >"""/>"</span> </span> )+ EOL } </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> text(x:int, y:int, w:seq.word)seq.word <span class = block> <span class = keyword> if </span> length.w = 0 
+ <br> <span class = keyword> then </span> w 
+ <br> <span class = keyword> else </span> <span class = literal >"&lt;text id ="""</span> + w_1 + <span class = literal >"""x ="""</span> + toword.x + <span class = literal >"""y ="""</span> + toword.y + <span class = literal >"""fill =""black""onclick =""javascript:cmd5(this)"">"</span> + w + <span class = literal >"&lt;/text>"</span> + EOL </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> nodetotext(w:word)seq.word [ w]</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)">       </p> <hr> <hr id ="svggraph"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> svggraph(T)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> libscope </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arcinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.int </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.nodeinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arc.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arcinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.nodeinfo.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> svg </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> svgdraw is <span class = keyword> record </span> width:int, height:int, a:seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> nodeinfo is <span class = keyword> record </span> n:T, x:int, y:int, width:int, seperation:int </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> seperation is"width"of node in layer.y is the layer value, x is the posistion within the layer.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n(nodeinfo.T)T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> x(nodeinfo.T)int export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> y(nodeinfo.T)int export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> width(a:nodeinfo.T)int export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> seperation(nodeinfo.T)int export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> nodeinfo(n:T, x:int, y:int)nodeinfo.T nodeinfo(n, x, y, 0, 1)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> nodeinfo(n:T, x:int, y:int, width:int, seperation:int)nodeinfo.T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(T, T)boolean unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(a:nodeinfo.T, b:nodeinfo.T)boolean n.a = n.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> maxx(a:seq.nodeinfo.T)int @(max, rightedge, 0, a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> rightedge(a:nodeinfo.T)int x.a + width.a </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> maxy(a:seq.nodeinfo.T)int @(max, y, 0, a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> zerowidth(a:seq.T, b:nodeinfo.T)nodeinfo.T 
+ <br> <span class = keyword> if </span> n.b in a <span class = keyword> then </span> b <span class = keyword> else </span> nodeinfo(n.b, x.b, y.b, 0, seperation.b)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> zerowidth(a:seq.T, b:set.nodeinfo.T)set.nodeinfo.T 
+ <br> @(+, zerowidth.a, empty:set.nodeinfo.T, toseq.b)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> posindegree(g:graph.T, layers:seq.seq.T, layer:int, node:T)nodeinfo.T <span class = block> <span class = keyword> let </span> x = findindex(node, layers_layer)
+ <br> <span class = keyword> if </span> x > length(layers_layer)
+ <br> <span class = keyword> then </span> posindegree(g, layers, layer + 1, node)
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> d = length.toseq.predecessors(g, node)
+ <br> nodeinfo(node, x, layer, 0, <span class = keyword> if </span> d > 2 <span class = keyword> then </span> d <span class = keyword> else </span> 1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> pos(layers:seq.seq.T, layer:int, node:T)nodeinfo.T <span class = block> <span class = keyword> let </span> x = findindex(node, layers_layer)
+ <br> <span class = keyword> if </span> x > length(layers_layer)<span class = keyword> then </span> pos(layers, layer + 1, node)<span class = keyword> else </span> nodeinfo(node, x, layer)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> defaultpos(g:graph.T, layers:seq.seq.T)set.nodeinfo.T 
+ <br> @(+, pos(layers, 1), empty:set.nodeinfo.T, @(+, identity, empty:seq.T, layers))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> posindegree(g:graph.T, layers:seq.seq.T)set.nodeinfo.T 
+ <br> @(+, posindegree(g, layers, 1), empty:set.nodeinfo.T, @(+, identity, empty:seq.T, layers))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> tosvg(arcs:seq.arc.T, nodes:seq.T, positions:set.nodeinfo.T)seq.word <span class = block> <span class = keyword> let </span> arci = @(+, arcinfo, empty:seq.arcinfo.T, arcs)
+ <br> tosvg(arci, nodes, positions)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> tosvg(arci:seq.arcinfo.T, nodes:seq.T, positions:set.nodeinfo.T)seq.word <span class = block> <span class = keyword> let </span> r = zerowidth(nodes, positions)
+ <br> <span class = keyword> let </span> minx = @(min, x, x(r_1), toseq.r)
+ <br> <span class = keyword> let </span> vertnodesize = 16 
+ <br> <span class = keyword> let </span> p2 = @(+, adjust(vertnodesize, minx, @(layerwidths, identity, dseq.1, toseq.r)), empty:set.nodeinfo.T, toseq.r)
+ <br> <span class = keyword> let </span> g = @(+, toarcinfo.p2, empty:set.arcinfo.T, arci)
+ <br> svg(@(+, svgnode(vertnodesize, g, p2), <span class = literal >""</span> , toseq.p2), maxx.toseq.p2, maxy.toseq.p2)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> svgnode(vertnodesize:int, info:set.arcinfo.T, s:set.nodeinfo.T, p:nodeinfo.T)seq.word <span class = block> <span class = keyword> let </span> arcstonode = findelement2(info, arcinfo(arc(n.p, n.p), <span class = literal >""</span> , 0))
+ <br> {(<span class = keyword> if </span> width.p > 0 <span class = keyword> then </span> text(x.p, y.p, nodetotext.n.p)<span class = keyword> else </span> <span class = literal >""</span> )+ @(+, drawarc(vertnodesize, p, toseq.arcstonode), <span class = literal >""</span> , arithseq(length.toseq.arcstonode, 1, 1))} </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> drawarc(vertnodesize:int, stop:nodeinfo.T, s:seq.arcinfo.T, i:int)seq.word <span class = block> <span class = keyword> let </span> a = s_i 
+ <br> <span class = keyword> let </span> xstop = <span class = keyword> if </span> width.a = 0 <span class = keyword> then </span> x.stop <span class = keyword> else </span> x.stop - width.a / 8 - 5 
+ <br> line(x.a, y.a, xstop, y.stop +(i - 1)* <span class = keyword> if </span> width.a = 0 <span class = keyword> then </span> 0 <span class = keyword> else </span> vertnodesize, backarc.a, false)+ EOL + text(xstop, y.stop +(i - 1)* vertnodesize, label.a)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> toarcinfo(s:set.nodeinfo.T, a:arcinfo.T)arcinfo.T <span class = block> <span class = keyword> let </span> y = findelement(nodeinfo(tail.a.a, 0, 0), s)
+ <br> <span class = keyword> assert </span> not.isempty.y <span class = keyword> report </span> <span class = literal >"node not found"</span> + nodetotext.tail.a.a 
+ <br> <span class = keyword> let </span> start = y_1 
+ <br> arcinfo(a.a, x.start + <span class = keyword> if </span> width.start = 0 <span class = keyword> then </span> 0 <span class = keyword> else </span> width.start + 10, y.start, label.a, width.a, backarc.a)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> arcinfo is <span class = keyword> record </span> a:arc.T, x:int, y:int, label:seq.word, width:int, backarc:boolean </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> arcinfo(a:arc.T, label:seq.word, width:int)arcinfo.T arcinfo(a, 0, 0, label, width, false)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> arcinfo(a:arc.T)arcinfo.T arcinfo(a, <span class = literal >""</span> , 0)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> setarc(a:arcinfo.T, b:arc.T, backarc:boolean)arcinfo.T 
+ <br> arcinfo(b, x.a, y.a, label.a, width.a, backarc)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> a(arcinfo.T)arc.T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> label(arcinfo.T)arc.T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> /Function b(a:arc.T)T head.a </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> /Function a(a:arc.T)T tail.a </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(a:arcinfo.T, b:arcinfo.T)boolean a.a = a.b ∧ backarc.a = backarc.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?(a:arcinfo.T, b:arcinfo.T)ordering 
+ <br> head.a.a ? head.a.b ∧ y.a ? y.b ∧ tail.a.a ? tail.a.b ∧ backarc.a ? backarc.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?2(a:arcinfo.T, b:arcinfo.T)ordering head.a.a ? head.a.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?(a:T, b:T)ordering unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> nodetotext(T)seq.word unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> layerwidths(ws:seq.int, p:nodeinfo.T)seq.int <span class = block> <span class = keyword> let </span> w = width.p 
+ <br> <span class = keyword> if </span> w > ws_y.p <span class = keyword> then </span> replace(ws, y.p, w)<span class = keyword> else </span> ws </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> adjust(vertnodesize:int, minx:int, layerwidths:seq.int, p:nodeinfo.T)nodeinfo.T <span class = block> <span class = keyword> assert </span> true <span class = keyword> report </span> <span class = literal >"layer width"</span> + @(+, toword, <span class = literal >""</span> , layerwidths)
+ <br> <span class = keyword> let </span> interlayerspace = 500 
+ <br> <span class = keyword> let </span> y = <span class = keyword> if </span> y.p = 1 <span class = keyword> then </span> 0 <span class = keyword> else </span> @(+, identity, interlayerspace *(y.p - 1), subseq(layerwidths, 1, y.p - 1))
+ <br> nodeinfo(n.p, 10 + y / 8, 10 +(x.p - minx)* vertnodesize, width.p / 8, seperation.p)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> ____________________________________</p> <hr> <hr id ="doc"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> doc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> run tools createdoc </p> <h2> Use graph</h2> 
+ <svg height = 1274 width = 926 > <defs> <marker id ="markerArrow2"markerWidth ="13"markerHeight ="13"refX ="2"refY ="7"orient ="auto"> <path d ="M8, 13 L8, 2 L2, 7 L8, 13"style ="fill:#000000 ;"/> </marker> <marker id ="markerArrow"markerWidth ="13"markerHeight ="13"refX ="8"refY ="7"orient ="auto"> <path d ="M2, 2 L2, 13 L8, 7 L2, 2"style ="fill:#000000 ;"/> </marker> </defs> <text id ="llvm"x ="250"y ="1162"fill ="black"onclick ="javascript:cmd5(this)"> llvm </text> 
+ <path d ="M 197 1210 L 250 1162"stroke ="black"fill ="none"/> 
+ 
+ <text id ="profile"x ="103"y ="282"fill ="black"onclick ="javascript:cmd5(this)"> profile </text> 
+ <path d ="M 51 666 L 103 282"stroke ="black"fill ="none"/> 
+ 
+ <text id ="real"x ="873"y ="234"fill ="black"onclick ="javascript:cmd5(this)"> real </text> 
+ <path d ="M 820 394 L 873 234"stroke ="black"fill ="none"/> 
+ 
+ <text id ="display"x ="419"y ="1082"fill ="black"onclick ="javascript:cmd5(this)"> display </text> 
+ <path d ="M 367 330 L 419 1082"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 586 L 419 1082"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 1002 L 419 1082"stroke ="black"fill ="none"/> 
+ 
+ <text id ="format"x ="250"y ="650"fill ="black"onclick ="javascript:cmd5(this)"> format </text> 
+ <path d ="M 136 746 L 250 650"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 650"stroke ="black"fill ="none"/> 
+ 
+ <text id ="main"x ="250"y ="1098"fill ="black"onclick ="javascript:cmd5(this)"> main </text> 
+ <path d ="M 136 746 L 250 1098"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 1098"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 103 1242 L 250 1098"stroke ="black"fill ="none"/> 
+ 
+ <text id ="UTF8"x ="250"y ="842"fill ="black"onclick ="javascript:cmd5(this)"> UTF8 </text> 
+ <path d ="M 167 954 L 250 842"stroke ="black"fill ="none"/> 
+ 
+ <text id ="libdesc"x ="250"y ="682"fill ="black"onclick ="javascript:cmd5(this)"> libdesc </text> 
+ <path d ="M 136 746 L 250 682"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 682"stroke ="black"fill ="none"/> 
+ 
+ <text id ="bits"x ="250"y ="1194"fill ="black"onclick ="javascript:cmd5(this)"> bits </text> 
+ <path d ="M 197 1210 L 250 1194"stroke ="black"fill ="none"/> 
+ 
+ <text id ="internalbc"x ="250"y ="1226"fill ="black"onclick ="javascript:cmd5(this)"> internalbc </text> 
+ <path d ="M 197 1210 L 250 1226"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 618 L 579 618"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 367 330 L 419 426"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 367 330 L 419 458"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 197 1210 L 250 1258"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 122 L 579 122"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 1274 L 579 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 554 L 579 554"stroke ="black"fill ="none"/> 
+ 
+ <text id ="fileresult"x ="250"y ="714"fill ="black"onclick ="javascript:cmd5(this)"> fileresult </text> 
+ <path d ="M 136 746 L 250 714"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 714"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 367 330 L 419 490"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 136 746 L 250 554"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 1002"stroke ="black"fill ="none"/> 
+ 
+ <text id ="libscope"x ="873"y ="314"fill ="black"onclick ="javascript:cmd5(this)"> libscope </text> 
+ <path d ="M 729 90 L 873 314"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 811 330 L 873 314"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 618 L 873 314"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 1146 L 873 314"stroke ="black"fill ="none"/> 
+ 
+ <text id ="pretty2"x ="250"y ="746"fill ="black"onclick ="javascript:cmd5(this)"> pretty2 </text> 
+ <path d ="M 136 746 L 250 746"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 746"stroke ="black"fill ="none"/> 
+ 
+ <text id ="parse"x ="250"y ="778"fill ="black"onclick ="javascript:cmd5(this)"> parse </text> 
+ <path d ="M 136 746 L 250 778"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 778"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 426 L 579 426"stroke ="black"fill ="none"/> 
+ 
+ <text id ="definestruct2"x ="250"y ="874"fill ="black"onclick ="javascript:cmd5(this)"> definestruct2 </text> 
+ <path d ="M 167 954 L 250 874"stroke ="black"fill ="none"/> 
+ 
+ <text id ="passcommon"x ="250"y ="906"fill ="black"onclick ="javascript:cmd5(this)"> passcommon </text> 
+ <path d ="M 167 954 L 250 906"stroke ="black"fill ="none"/> 
+ 
+ <text id ="fileio"x ="250"y ="938"fill ="black"onclick ="javascript:cmd5(this)"> fileio </text> 
+ <path d ="M 136 746 L 250 938"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 197 1210 L 250 938"stroke ="black"fill ="none"/> 
+ 
+ <text id ="tools"x ="10"y ="666"fill ="black"onclick ="javascript:cmd5(this)"> tools </text> 
+ <text id ="doc"x ="103"y ="746"fill ="black"onclick ="javascript:cmd5(this)"> doc </text> 
+ <path d ="M 51 666 L 103 746"stroke ="black"fill ="none"/> 
+ 
+ <text id ="displaytextgraph"x ="250"y ="330"fill ="black"onclick ="javascript:cmd5(this)"> displaytextgraph </text> 
+ <path d ="M 155 282 L 250 330"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 136 746 L 250 330"stroke ="black"fill ="none"/> 
+ 
+ <text id ="prettylib"x ="103"y ="954"fill ="black"onclick ="javascript:cmd5(this)"> prettylib </text> 
+ <path d ="M 51 666 L 103 954"stroke ="black"fill ="none"/> 
+ 
+ <text id ="svg"x ="873"y ="202"fill ="black"onclick ="javascript:cmd5(this)"> svg </text> 
+ <path d ="M 811 330 L 873 202"stroke ="black"fill ="none"/> 
+ 
+ <text id ="printbitcodes"x ="103"y ="1210"fill ="black"onclick ="javascript:cmd5(this)"> printbitcodes </text> 
+ <path d ="M 51 666 L 103 1210"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 676 170 L 729 170"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 671 202 L 729 202"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 51 666 L 103 1242"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 155 282 L 250 90"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 155 282 L 250 122"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 136 746 L 250 586"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 136 746 L 250 618"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 1034"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 554 L 729 554"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 367 330 L 419 522"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 1258 L 419 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 554 L 419 554"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 90 L 419 90"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 122 L 419 122"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 618 L 419 618"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 250 1034 L 419 1146"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 525 234 L 579 266"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 525 234 L 579 330"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 458 L 579 458"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 490 L 579 490"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 522 L 579 522"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 90 L 579 90"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 419 1146 L 579 1146"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 672 234 L 729 234"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 618 L 729 618"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 122 L 729 122"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 1274 L 729 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 426 L 729 426"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 266 L 729 266"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 458 L 729 458"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 90 L 729 90"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 1146 L 729 1146"stroke ="black"fill ="none"/> 
+ 
+ <text id ="oseq.T"x ="873"y ="1274"fill ="black"onclick ="javascript:cmd5(this)"> oseq.T </text> 
+ <path d ="M 729 122 L 873 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 820 394 L 873 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 426 L 873 1274"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 1274 L 873 1274"stroke ="black"fill ="none"/> 
+ 
+ <text id ="ipair.T"x ="419"y ="202"fill ="black"onclick ="javascript:cmd5(this)"> ipair.T </text> 
+ <path d ="M 367 330 L 419 202"stroke ="black"fill ="none"/> 
+ 
+ <text id ="graph.T"x ="873"y ="10"fill ="black"onclick ="javascript:cmd5(this)"> graph.T </text> 
+ <path d ="M 729 170 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 202 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 234 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 266 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 811 330 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 820 394 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 458 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 729 554 L 873 10"stroke ="black"fill ="none"/> 
+ 
+ <text id ="tree.T"x ="250"y ="810"fill ="black"onclick ="javascript:cmd5(this)"> tree.T </text> 
+ <path d ="M 136 746 L 250 810"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 167 954 L 250 810"stroke ="black"fill ="none"/> 
+ 
+ <text id ="bandeskopf.T"x ="579"y ="170"fill ="black"onclick ="javascript:cmd5(this)"> bandeskopf.T </text> 
+ <path d ="M 525 234 L 579 170"stroke ="black"fill ="none"/> 
+ 
+ <text id ="svggraph.T"x ="729"y ="330"fill ="black"onclick ="javascript:cmd5(this)"> svggraph.T </text> 
+ <path d ="M 676 170 L 729 330"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 330 L 729 330"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 490 L 729 330"stroke ="black"fill ="none"/> 
+ 
+ <text id ="barycenter.T"x ="729"y ="394"fill ="black"onclick ="javascript:cmd5(this)"> barycenter.T </text> 
+ <path d ="M 671 202 L 729 394"stroke ="black"fill ="none"/> 
+ 
+ <path d ="M 579 522 L 729 394"stroke ="black"fill ="none"/> 
+ 
+ <text id ="displaygraph.T"x ="419"y ="234"fill ="black"onclick ="javascript:cmd5(this)"> displaygraph.T </text> 
+ <path d ="M 367 330 L 419 234"stroke ="black"fill ="none"/> 
+ 
+ <text id ="layergraph.T"x ="579"y ="202"fill ="black"onclick ="javascript:cmd5(this)"> layergraph.T </text> 
+ <path d ="M 525 234 L 579 202"stroke ="black"fill ="none"/> 
+ 
+ <text id ="makeDAG.T"x ="579"y ="234"fill ="black"onclick ="javascript:cmd5(this)"> makeDAG.T </text> 
+ <path d ="M 525 234 L 579 234"stroke ="black"fill ="none"/> 
+ 
+ <text id ="stack.T"x ="250"y ="970"fill ="black"onclick ="javascript:cmd5(this)"> stack.T </text> 
+ <path d ="M 167 954 L 250 970"stroke ="black"fill ="none"/> 
+ 
+ <text id ="labeledgraph.T"x ="250"y ="58"fill ="black"onclick ="javascript:cmd5(this)"> labeledgraph.T </text> 
+ <path d ="M 155 282 L 250 58"stroke ="black"fill ="none"/> 
+ 
+ Your browser does not support inline SVG.</svg> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> display </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> displaytextgraph </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> fileio </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> fileresult </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> format </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> libdesc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> libscope </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> main </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> parse </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> pretty2 </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arc.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arcinfo.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.moddesc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.mytype </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.syminfo </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.tree.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arc.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> tree.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> createdoc seq.word <span class = block> // <span class = comment > Creates html tau html documentation. Creates file taudocs.html </span> // 
+ <br> <span class = keyword> let </span> d = @(+, prettyit.newgraph.empty:seq.arc.word, <span class = literal >""</span> , gettext.<span class = literal >"tools/doc.txt"</span> )
+ <br> <span class = keyword> let </span> x = createfile(<span class = literal >"taudoc.html"</span> , [ htmlheader + processpara.d])
+ <br> <span class = keyword> let </span> y = createfile(<span class = literal >"testall.html"</span> , [ htmlheader + processpara.htmlcode.<span class = literal >"testall"</span> ])
+ <br> <span class = keyword> let </span> z = createfile(<span class = literal >"tools.html"</span> , [ htmlheader + processpara.htmlcode.<span class = literal >"tools"</span> ])
+ <br> d </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> prettyit(usegraph:graph.word, s:seq.word)seq.word <span class = block> <span class = keyword> if </span> subseq(s, 1, 2)= <span class = literal >"* usegraph"</span> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> l = findindex(<span class = literal >"include"</span> _1, s)
+ <br> <span class = keyword> let </span> k = findindex(<span class = literal >"exclude"</span> _1, s)
+ <br> { <span class = literal >"&amp;{ noformat &lt;h2> Use graph&lt;/h2> &amp;}"</span> + <span class = block> <span class = keyword> if </span> k > l 
+ <br> <span class = keyword> then </span> usegraph(usegraph, subseq(s, l + 1, k), subseq(s, k + 1, length.s))
+ <br> <span class = keyword> else </span> usegraph(usegraph, subseq(s, l + 1, length.s), subseq(s, k + 1, l))</span> } </span> <span class = keyword> else </span> <span class = literal >"&amp;{ select 1"</span> + prettyparagraph(defaultcontrol, s)+ <span class = literal >"&amp;}"</span> </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> htmlcode(libname:seq.word)seq.word <span class = block> <span class = keyword> let </span> l = tolibdesc(libname_1)
+ <br> <span class = keyword> let </span> g = newgraph.usegraph(<span class = literal >"mod"</span> , l)
+ <br> { <span class = literal >"&amp;{ noformat &lt;h1> Source code for Library"</span> + libname + <span class = literal >"&lt;/h1> &amp;}"</span> + @(+, ref, <span class = literal >""</span> , modules.l)+ @(seperator.<span class = literal >"&amp;{ noformat &lt;hr> &amp;}"</span> , prettymod.g, <span class = literal >""</span> , modules.l)} </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ref(m:moddesc)seq.word 
+ <br> { <span class = literal >"&amp;{ noformat &lt;a href ="""</span> + merge(<span class = literal >"#"</span> _1, modname.m)+ <span class = literal >""">"</span> + modname.m + <span class = literal >"&lt;/a> &amp;}"</span> } </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> prettymod(usegraph:graph.word, m:moddesc)seq.word 
+ <br> { <span class = literal >"&amp;{ noformat &lt;hr id ="""</span> + modname.m + <span class = literal >"""> &amp;}"</span> + @(+, prettyit.usegraph, <span class = literal >""</span> , src.m)} </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word <span class = block> // <span class = comment > Calls between modules in list of modules. </span> // 
+ <br> <span class = keyword> let </span> x = bindings(libname_1)
+ <br> <span class = keyword> let </span> z = @(+, formcallgraph, empty:seq.arc.word, newcode.x)
+ <br> <span class = keyword> let </span> g = newgraph.@(+, modarc.@(+, mytype, empty:seq.mytype, modulelist), empty:seq.arc.word, z)
+ <br> display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> formcallgraph(sym:syminfo)seq.arc.word 
+ <br> formcallgraph(mangled.sym, instruction.sym, 2, empty:seq.arc.word)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> formcallgraph(func:word, s:seq.word, i:int, result:seq.arc.word)seq.arc.word <span class = block> <span class = keyword> if </span> i > length.s 
+ <br> <span class = keyword> then </span> result 
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> s_i in <span class = literal >"PARA LIT CONST WORD LOCAL FLAT if IDX IDXUC $wordlist FLD RECORD APPLY ADD SET EQL $build comment let assert builtin @"</span> <span class = keyword> then </span> formcallgraph(func, s, i + 2, result)
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> target = <span class = block> <span class = keyword> if </span> s_i in <span class = literal >"CALL CALLB"</span> <span class = keyword> then </span> s_(i + 2)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> s_i = <span class = literal >"FREF"</span> _1 <span class = keyword> then </span> s_(i + 1)<span class = keyword> else </span> s_i </span> <span class = keyword> let </span> bump = <span class = keyword> if </span> s_i in <span class = literal >"CALL CALLB"</span> <span class = keyword> then </span> 3 <span class = keyword> else </span> 2 
+ <br> <span class = keyword> if </span> func = target 
+ <br> <span class = keyword> then </span> formcallgraph(func, s, i + 2, result)
+ <br> <span class = keyword> else </span> formcallgraph(func, s, i + bump, result + arc(func, target))</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> mytype(w:word)mytype mytype.[ w]</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> modarc(s:seq.mytype, a:arc.word)seq.arc.word <span class = block> <span class = keyword> let </span> t1 = codedown.tail.a 
+ <br> <span class = keyword> let </span> h1 = codedown.head.a 
+ <br> <span class = keyword> if </span> length.t1 &lt; 2 ∨ length.h1 &lt; 2 ∨ t1_2 = h1_2 ∨ not(mytype(h1_2)in s ∧ mytype(t1_2)in s)
+ <br> <span class = keyword> then </span> empty:seq.arc.word 
+ <br> <span class = keyword> else </span> [ arc(merge.readable.tail.a, merge.readable.head.a)]</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> toarcinfo(a:arc.word)arcinfo.seq.word arcinfo(readable.tail.a, readable.head.a, <span class = literal >""</span> )</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> readable(fsig:word)seq.word <span class = block> <span class = keyword> let </span> p = codedown.fsig 
+ <br> <span class = keyword> if </span> length.p = 1 
+ <br> <span class = keyword> then </span> p_1 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> plist = @(+, mytype, empty:seq.mytype, subseq(p, 3, length.p))
+ <br> p_1 + <span class = literal >":"</span> + print.mytype(p_2)+ <span class = literal >"("</span> + @(seperator.<span class = literal >","</span> , print, <span class = literal >""</span> , plist)+ <span class = literal >")"</span> </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word <span class = block> <span class = keyword> let </span> g2 = @(deletenode, identity, g, exclude + @(+, addabstractpara, <span class = literal >""</span> , exclude))
+ <br> <span class = keyword> let </span> g3 = <span class = block> <span class = keyword> if </span> include = <span class = literal >""</span> <span class = keyword> then </span> g2 
+ <br> <span class = keyword> else </span> newgraph.toseq.@(∪, arcstosuccessors.g2, empty:set.arc.word, include + @(+, addabstractpara, <span class = literal >""</span> , include))</span> display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g3)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> addabstractpara(w:word)word merge([ w]+ <span class = literal >".T"</span> )</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> usegraph(kind:seq.word, lib:libdesc)seq.arc.word <span class = block> // <span class = comment > for graph of how modules are linked with use clauses. kind ="mod"will use nodes like seq.T, otherwise node names like seq.seq.int will be used. </span> // 
+ <br> @(+, usegraph(kind_1), empty:seq.arc.word, modules.lib)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> usegraph(kind:word, m:moddesc)seq.arc.word <span class = block> <span class = keyword> let </span> name = <span class = keyword> if </span> length(src(m)_1)> 2 <span class = keyword> then </span> merge([ modname.m]+ <span class = literal >".T"</span> )<span class = keyword> else </span> modname.m 
+ <br> @(+, usegraph(kind, name), empty:seq.arc.word, uses.m)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> usegraph(kind:word, modname:word, t:mytype)seq.arc.word <span class = block> <span class = keyword> let </span> a = arc(modname, <span class = block> <span class = keyword> if </span> kind = <span class = literal >"mod"</span> _1 
+ <br> <span class = keyword> then </span> <span class = keyword> if </span> iscomplex.t <span class = keyword> then </span> merge([ abstracttype.t]+ <span class = literal >".T"</span> )<span class = keyword> else </span> abstracttype.t 
+ <br> <span class = keyword> else </span> merge.print.t </span> )
+ <br> <span class = keyword> if </span> tail.a = head.a <span class = keyword> then </span> empty:seq.arc.word <span class = keyword> else </span> [ a]</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> doclibrary(libname:seq.word)seq.word <span class = block> // <span class = comment > create summary documentation for libraray. Paragraphs beginning with * are included in documentation. </span> // 
+ <br> <span class = keyword> let </span> lib = tolibdesc(libname_1)
+ <br> <span class = keyword> let </span> g = newgraph.usegraph(<span class = literal >"mod"</span> , lib)
+ <br> @(+, docmodule(g, exports.lib), <span class = literal >""</span> , modules.lib)+ <span class = literal >"&amp;{ select x &amp;section Possibly Unused Functions &amp;} &amp;{ select x"</span> + uncalledfunctions.libname + <span class = literal >"&amp;}"</span> </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> docmodule(usegraph:graph.word, exports:seq.word, md:moddesc)seq.word <span class = block> <span class = keyword> let </span> name = [ modname.md]+ <span class = keyword> if </span> length(src(md)_1)> 2 <span class = keyword> then </span> <span class = literal >".T"</span> <span class = keyword> else </span> <span class = literal >""</span> { <span class = literal >"&amp;{ select x &amp;section &amp;keyword module"</span> + name + <span class = literal >"&amp;}"</span> +(<span class = block> <span class = keyword> if </span> modname.md in exports 
+ <br> <span class = keyword> then </span> <span class = literal >"Module"</span> + name + <span class = literal >"is exported from library. "</span> <span class = keyword> else </span> <span class = literal >""</span> </span> )+ <span class = literal >"Module"</span> + name + <span class = literal >"is used in modules:"</span> + alphasort.@(+, tail, <span class = literal >""</span> , toseq.arcstopredecessors(usegraph, merge.name))+ docfunction(usegraph, src.md, 1, <span class = literal >""</span> , <span class = literal >""</span> )} </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> docfunction(usegraph:graph.word, s:seq.seq.word, i:int, funcs:seq.word, types:seq.word)seq.word <span class = block> // <span class = comment > this is a comment </span> // 
+ <br> <span class = keyword> if </span> i > length.s 
+ <br> <span class = keyword> then </span> <span class = literal >"&amp;br defines types:"</span> + types + funcs 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> a = s_i 
+ <br> <span class = keyword> if </span> length.a = 0 
+ <br> <span class = keyword> then </span> docfunction(usegraph, s, i + 1, funcs, types)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> a_1 = <span class = literal >"*"</span> _1 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> newfuncs = funcs + <span class = literal >"&amp;{ select x"</span> +(<span class = block> <span class = keyword> if </span> a_2 = <span class = literal >"usegraph"</span> _1 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> l = findindex(<span class = literal >"include"</span> _1, a)
+ <br> <span class = keyword> let </span> k = findindex(<span class = literal >"exclude"</span> _1, a)
+ <br> usegraph(usegraph, subseq(a, l + 1, k), subseq(a, k + 1, length.a))</span> <span class = keyword> else </span> subseq(a, 2, length.a)</span> )+ <span class = literal >"&amp;}"</span> docfunction(usegraph, s, i + 1, newfuncs, types)</span> <span class = keyword> else </span> <span class = keyword> if </span> a_1 = <span class = literal >"Function"</span> _1 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> t = parse(a, tree(<span class = literal >"xxx"</span> _1))
+ <br> <span class = keyword> let </span> txt = collectcomments(t_2)
+ <br> <span class = keyword> let </span> t2 = <span class = keyword> if </span> nosons(t_2)= 0 <span class = keyword> then </span> t <span class = keyword> else </span> tree(label.t, [ t_1, tree(<span class = literal >"stub"</span> _1)]+ subseq(sons.t, 3, nosons.t))
+ <br> <span class = keyword> let </span> b = prettytree(defaultcontrol, t2)
+ <br> <span class = keyword> let </span> idx = findindex(<span class = literal >"stub"</span> _1, b)
+ <br> docfunction(usegraph, s, i + 1, funcs + <span class = literal >"&amp;{ select x"</span> + subseq(b, 1, idx - 1)+(<span class = keyword> if </span> length.txt > 0 <span class = keyword> then </span> <span class = literal >". "</span> + txt <span class = keyword> else </span> <span class = literal >""</span> )+ subseq(b, idx + 1, length.b)+ <span class = literal >"&amp;}"</span> , types)</span> <span class = keyword> else </span> <span class = keyword> if </span> a_1 = <span class = literal >"type"</span> _1 
+ <br> <span class = keyword> then </span> docfunction(usegraph, s, i + 1, funcs + prettyparagraph(defaultcontrol, a), types + a_2)
+ <br> <span class = keyword> else </span> docfunction(usegraph, s, i + 1, funcs, types)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> collectcomments(t:tree.word)seq.word <span class = block> <span class = keyword> if </span> label.t = <span class = literal >"comment"</span> _1 
+ <br> <span class = keyword> then </span> @(+, label, <span class = literal >""</span> , subseq(sons.t, 2, nosons.t))+ collectcomments(t_1)
+ <br> <span class = keyword> else </span> <span class = literal >""</span> </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> uncalledfunctions(libname:seq.word)seq.word <span class = block> // <span class = comment > List of functions may include indirectly called functions. </span> // 
+ <br> <span class = keyword> let </span> x = bindings(libname_1)
+ <br> <span class = keyword> let </span> g = newgraph.@(+, formcallgraph, empty:seq.arc.word, newcode.x)
+ <br> <span class = keyword> let </span> sources = @(+, sources(g, empty:set.word), <span class = literal >""</span> , toseq.nodes.g)
+ <br> @(seperator.<span class = literal >"&amp;br"</span> , readable, <span class = literal >""</span> , alphasort.sources)</span> </span> </p> <hr> <hr id ="profile"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> profile </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Problems:Junk at top of graph </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> Max space seems to be on node with head and tail blank! </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> profileresult could return a sequence of packed parcs instead of four sequence.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> @(-, does not parse.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> displaytextgraph </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> labeledgraph.parc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> libscope </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> oseq.alphaword </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.alphaword </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arcinfo.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.int </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.parc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.profileresult </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.seq.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.parc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> * To profile a function add a use clause <span class = block> "use options.&lt;return type of function >"</span> and change function so body is wrap by a call to PROFILE(&lt;body>). Multiple procedures can be profiled at the same time.After the part of code of interest add a call to profileresults("time")to optain the result.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> * Profiling is accomplished by adding code to perform measurements before and after each procedure call and recording the difference.</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.word <span class = block> <span class = keyword> let </span> label = toword((<span class = block> <span class = keyword> if </span> measure = <span class = literal >"time"</span> <span class = keyword> then </span> clocks.a 
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> measure = <span class = literal >"count"</span> <span class = keyword> then </span> counts.a <span class = keyword> else </span> space.a </span> )* 100 / max)
+ <br> arcinfo(shorten(map, head.a), shorten(map, tail.a), [ label])</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> profileresults(measure:seq.word)seq.word <span class = block> // <span class = comment > Returns label graph of profile results. Measure is time, count, or space. </span> // 
+ <br> <span class = keyword> let </span> g = profileresults 
+ <br> <span class = keyword> let </span> m = <span class = block> <span class = keyword> if </span> measure = <span class = literal >"time"</span> <span class = keyword> then </span> @(max, clocks, 0, toseq.arcs.g)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> measure = <span class = literal >"count"</span> <span class = keyword> then </span> @(max, counts, 0, toseq.arcs.g)
+ <br> <span class = keyword> else </span> <span class = keyword> assert </span> measure = <span class = literal >"space"</span> <span class = keyword> report </span> <span class = literal >"unknown profile measure"</span> @(max, space, 0, toseq.arcs.g)</span> <span class = keyword> let </span> g3 = removesmall(g, measure, m)
+ <br> // <span class = comment > shorten the names of the functions and then build and display labeled graph </span> // 
+ <br> <span class = keyword> let </span> nodemap = shorten.@(+, head, <span class = literal >""</span> , toseq.nodes.g3)
+ <br> <span class = keyword> let </span> z2 = @(+, toarcinfo(measure, m, nodemap), empty:seq.arcinfo.seq.word, toseq.arcs.g3)
+ <br> { <span class = literal >"&amp;br"</span> + measure + toword.m + <span class = literal >"&amp;br"</span> + display.z2 + <span class = literal >"&amp;br"</span> + measure + toword.m } </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> removesmall(g:labeledgraph.parc, measure:seq.word, m:int)labeledgraph.parc <span class = block> <span class = keyword> let </span> g2 = <span class = block> <span class = keyword> if </span> measure = <span class = literal >"time"</span> <span class = keyword> then </span> @(removesmallclocks(m / 100), identity, g, toseq.nodes.g)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> measure = <span class = literal >"space"</span> <span class = keyword> then </span> @(removesmallspace(m / 100), identity, g, toseq.nodes.g)
+ <br> <span class = keyword> else </span> @(removesmallcount(m / 100), identity, g, toseq.nodes.g)</span> <span class = keyword> if </span> cardinality.arcs.g = cardinality.arcs.g2 <span class = keyword> then </span> g2 <span class = keyword> else </span> removesmall(g2, measure, m)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> removesmallclocks(limit:int, g:labeledgraph.parc, node:parc)labeledgraph.parc <span class = block> <span class = keyword> if </span> cardinality.arcstosuccessors(g, node)= 0 
+ <br> <span class = keyword> then </span> <span class = keyword> if </span> @(+, clocks, 0, toseq.backarcstopredecessors(g, node))&lt; limit <span class = keyword> then </span> deletenode(g, node)<span class = keyword> else </span> g 
+ <br> <span class = keyword> else </span> g </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> removesmallspace(limit:int, g:labeledgraph.parc, node:parc)labeledgraph.parc <span class = block> <span class = keyword> if </span> cardinality.arcstosuccessors(g, node)= 0 
+ <br> <span class = keyword> then </span> <span class = keyword> if </span> @(+, space, 0, toseq.backarcstopredecessors(g, node))&lt; limit <span class = keyword> then </span> deletenode(g, node)<span class = keyword> else </span> g 
+ <br> <span class = keyword> else </span> g </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> removesmallcount(limit:int, g:labeledgraph.parc, node:parc)labeledgraph.parc <span class = block> <span class = keyword> if </span> cardinality.arcstosuccessors(g, node)= 0 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> if </span> @(+, counts, 0, toseq.backarcstopredecessors(g, node))&lt; limit 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> assert </span> false <span class = keyword> report </span> [ head.node]
+ <br> deletenode(g, node)</span> <span class = keyword> else </span> g </span> <span class = keyword> else </span> g </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> shorten(pnodes:seq.word)nodemap <span class = block> // <span class = comment > This procedure produces a map that takes fsigs and shortens them keeping them distinct. The following procedure uses this result to map the figs to the new ones. </span> // 
+ <br> <span class = keyword> let </span> nodes = sort.toalphaseq.pnodes 
+ <br> <span class = keyword> let </span> c = @(+, codedown, [ empty:seq.seq.word], towordseq.nodes)+ [ empty:seq.seq.word]
+ <br> <span class = keyword> let </span> short = @(+, shorten.c, empty:seq.seq.word, arithseq(length.c - 2, 1, 2))
+ <br> nodemap(nodes, short)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> shorten(map:nodemap, w:word)seq.word short(map)_binarysearch(org.map, alphaword.w)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> nodemap is <span class = keyword> record </span> org:seq.alphaword, short:seq.seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> shorten(a:seq.seq.seq.word, i:int)seq.word <span class = block> <span class = keyword> let </span> j = max(differ(a_(i - 1), a_i, 1), differ(a_i, a_(i + 1), 1))
+ <br> <span class = keyword> if </span> j = 1 
+ <br> <span class = keyword> then </span> a_i_1 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> z = @(+, formattype, empty:seq.seq.word, subseq(a_i, 1, j))
+ <br> z_1 + <span class = literal >":"</span> + z_2 + <span class = literal >"("</span> + @(seperator.<span class = literal >","</span> , identity, <span class = literal >""</span> , subseq(z, 2, length.z))+ <span class = literal >")"</span> </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> formattype(a:seq.word)seq.word 
+ <br> reverse.@(seperator.<span class = literal >"."</span> , identity, empty:seq.word, a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> reverse(s:seq.word)seq.word @(+,_.s, empty:seq.word, arithseq(length.s, 0 - 1, length.s))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> differ(a:seq.seq.word, b:seq.seq.word, i:int)int <span class = block> <span class = keyword> if </span> i > length.a ∨ i > length.b 
+ <br> <span class = keyword> then </span> i 
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> a_i = b_i <span class = keyword> then </span> differ(a, b, i + 1)<span class = keyword> else </span> i </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> parc is <span class = keyword> record </span> head:word, tail:word, counts:int, clocks:int, space:int </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> head(parc)word export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> tail(parc)word export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> counts(parc)int export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> clocks(parc)int export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> space(parc)int export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?(a:parc, b:parc)ordering head.a ? head.b ∧ tail.a ? tail.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?2(a:parc, b:parc)ordering head.a ? head.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> reverse(a:parc)parc parc(tail.a, head.a, counts.a, clocks.a, space.a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> tonode(a:parc)parc parc(head.a, head.a, counts.a, clocks.a, space.a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> toarc(p:profileresult, i:int)parc 
+ <br> parc(arcs(p)_(2 * i - 1), arcs(p)_(2 * i), counts(p)_i, clocks(p)_i, space(p)_i)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> +(g:labeledgraph.parc, p:profileresult)labeledgraph.parc 
+ <br> @(+, toarc.p, g, arithseq(length.counts.p, 1, 1))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> profileresult is <span class = keyword> record </span> arcs:seq.word, counts:seq.int, clocks:seq.int, space:seq.int </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> rawprofileresults seq.profileresult builtin.profileinfoZbuiltin </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> profileresults labeledgraph.parc 
+ <br> // <span class = comment > raw profile data </span> // @(+, identity, empty:labeledgraph.parc, rawprofileresults)</span> </p> <hr> <hr id ="labeledgraph"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> labeledgraph.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?(a:T, b:T)ordering unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?2(a:T, b:T)ordering unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> reverse(a:T)T unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> labeledgraph is <span class = keyword> record </span> arcs:set.T, backarcs:set.T, nodes:set.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> arcs(labeledgraph.T)T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> backarcs(labeledgraph.T)T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> nodes(labeledgraph.T)T export </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> empty labeledgraph.T labeledgraph(empty:set.T, empty:set.T, empty:set.T)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> +(g:labeledgraph.T, a:T)labeledgraph.T 
+ <br> labeledgraph(arcs.g + a, backarcs.g + reverse.a, nodes.g + tonode.a + tonode.reverse.a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> tonode(a:T)T unbound </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> arcstosuccessors(g:labeledgraph.T, node:T)set.T findelement2(arcs.g, node)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> backarcstopredecessors(g:labeledgraph.T, node:T)set.T findelement2(backarcs.g, node)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> sinks(g:labeledgraph.T)seq.T @(+, sinks.g, empty:seq.T, toseq.nodes.g)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> sinks(g:labeledgraph.T, n:T)seq.T 
+ <br> <span class = keyword> if </span> cardinality.arcstosuccessors(g, n)= 0 <span class = keyword> then </span> [ n]<span class = keyword> else </span> empty:seq.T </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> subdelete(a:set.T, b:T)set.T a - b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> deletenode(g:labeledgraph.T, n:T)labeledgraph.T <span class = block> <span class = keyword> let </span> b = backarcstopredecessors(g, n)
+ <br> <span class = keyword> let </span> a = @(subdelete, reverse, arcs.g, toseq.b)
+ <br> // <span class = comment > assert false report @(+, print,"", toseq.backarcstopredecessors(g, n))</span> // 
+ <br> labeledgraph(a, backarcs.g - b, nodes.g - n)</span> </span> </p> <hr> <hr id ="printbitcodes"> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> printbitcodes </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> run printbitcodes test1 </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.seq.int </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> bits </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.bit </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> fileio </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.block </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test1 seq.word printBitCodes.<span class = literal >"test3.bc"</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> printBitCodes(file:seq.word)seq.word <span class = block> <span class = keyword> let </span> discard = initnames 
+ <br> <span class = keyword> let </span> d = getbitfile.file 
+ <br> <span class = keyword> assert </span> print.subseq(d, 1, 64)= <span class = literal >"66 67 192 222 33 12 0 0"</span> <span class = keyword> report </span> <span class = literal >"incorrect magic"</span> + print.subseq(d, 1, 64)
+ <br> <span class = keyword> let </span> m = block(subseq(d, 97, length.d), 3, MODULEBLOCK)
+ <br> <span class = keyword> let </span> z = getinfo.m 
+ <br> <span class = keyword> let </span> types = recs.getinfo(findblock(TYPEBLOCK, blocks.z)_1)
+ <br> <span class = keyword> let </span> symbols = findblock(VALUESYMTABBLOCK, blocks.z)_1 
+ <br> <span class = keyword> let </span> constants = findblock(CONSTANTSBLOCK, blocks.z)_1 
+ <br> <span class = keyword> let </span> deflist = subseq(recs.z, 2, length.recs.z)
+ <br> <span class = keyword> let </span> symlist = print3.symbols 
+ <br> <span class = keyword> let </span> constlist = printconstant(recs.getinfo.constants, -1, length.deflist, 1, empty:seq.seq.word)
+ <br> { <span class = literal >"let TYPES = ["</span> + printtypes.types + <span class = literal >"]"</span> + <span class = literal >"&amp;br let DEFLIST = ["</span> + label(<span class = literal >"&amp;br"</span> , symlist, @(+, print.MODULEBLOCK, empty:seq.seq.word, deflist), 1, <span class = literal >""</span> )+ <span class = literal >"]"</span> + <span class = literal >"&amp;br let CONSTANTS = ["</span> + @(seperator.<span class = literal >","</span> , identity, <span class = literal >""</span> , constlist)+ <span class = literal >"]"</span> + <span class = literal >"&amp;br let bodies = ["</span> + printfuncs(length.deflist + length.constlist, types, deflist, symlist, 1, findblock(FUNCTIONBLOCK, blocks.z), 1, <span class = literal >""</span> )+ <span class = literal >"]"</span> } </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> printtypes(r:seq.seq.int)seq.word 
+ <br> label(<span class = literal >"&amp;br"</span> , [ <span class = literal >"X"</span> ]+ printtypes(r, 2, empty:seq.seq.word), @(+, print.TYPEBLOCK, empty:seq.seq.word, r), 1, <span class = literal >""</span> )</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> label("
+ <br> ", print3.symbols, print3.deflist, 1, 0)</p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> printfuncs(offset:int, types:seq.seq.int, deflist:seq.seq.int, symlist:seq.seq.word, i:int, defs:seq.block, j:int, result:seq.word)seq.word <span class = block> <span class = keyword> if </span> i > length.deflist 
+ <br> <span class = keyword> then </span> result + <span class = keyword> if </span> j &lt; length.defs <span class = keyword> then </span> <span class = literal >"&amp;br + extra bodies"</span> <span class = keyword> else </span> <span class = literal >""</span> <span class = keyword> else </span> <span class = keyword> if </span> deflist_i_1 = MODULECODEFUNCTION ∧ deflist_i_4 = 0 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> nopara = length(types_(deflist_i_2 + 2)) - 3 
+ <br> <span class = keyword> let </span> a =(<span class = keyword> if </span> length.result = 0 <span class = keyword> then </span> <span class = literal >""</span> <span class = keyword> else </span> <span class = literal >","</span> )+ <span class = literal >"&amp;br //"</span> + symlist_i + <span class = literal >"nopara:"</span> + toword.nopara + <span class = literal >"//"</span> + <span class = block> <span class = keyword> if </span> j > length.defs 
+ <br> <span class = keyword> then </span> <span class = literal >"missing body"</span> <span class = keyword> else </span> // <span class = comment > print2(defs_j)</span> // yy(recs.getinfo(defs_j), 1, offset + nopara + 1, <span class = literal >""</span> , offset)</span> printfuncs(offset, types, deflist, symlist, i + 1, defs, j + 1, result + a)</span> <span class = keyword> else </span> printfuncs(offset, types, deflist, symlist, i + 1, defs, j, result)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print2(a:block)seq.word <span class = block> <span class = keyword> let </span> r = recs.getinfo.a 
+ <br> @(seperator.<span class = literal >","</span> , print.blockid.a, <span class = literal >""</span> , r)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print3(a:block)seq.seq.word <span class = block> <span class = keyword> let </span> r = recs.getinfo.a 
+ <br> @(+, print.blockid.a, empty:seq.seq.word, r)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> label(prefix:seq.word, labels:seq.seq.word, items:seq.seq.word, i:int, result:seq.word)seq.word <span class = block> <span class = keyword> if </span> i > length.items 
+ <br> <span class = keyword> then </span> result 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> a = <span class = block> <span class = keyword> if </span> i > length.labels 
+ <br> <span class = keyword> then </span> prefix + items_i 
+ <br> <span class = keyword> else </span>(<span class = keyword> if </span> i > 1 <span class = keyword> then </span> <span class = literal >","</span> <span class = keyword> else </span> <span class = literal >""</span> )+ prefix + <span class = literal >"//"</span> + labels_i + <span class = literal >"//"</span> + items_i </span> label(prefix, labels, items, i + 1, result + a)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> printconstant(s:seq.seq.int, lasttype:int, number:int, i:int, result:seq.seq.word)seq.seq.word <span class = block> <span class = keyword> if </span> i > length.s 
+ <br> <span class = keyword> then </span> result 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> a = s_i 
+ <br> <span class = keyword> if </span> a_1 = CONSTSETTYPE 
+ <br> <span class = keyword> then </span> printconstant(s, a_2, number, i + 1, result)
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> b = <span class = literal >"&amp;br //"</span> + toword.number + <span class = literal >"// C("</span> + toword.lasttype + <span class = literal >","</span> + print(CONSTANTSBLOCK, a)+ <span class = literal >")"</span> printconstant(s, lasttype, number + 1, i + 1, result + b)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(blockid:int, a:seq.int)seq.word <span class = block> <span class = keyword> if </span> blockid = VALUESYMTABBLOCK 
+ <br> <span class = keyword> then </span> [ toword(a_2), encodeword.subseq(a, 3, length.a)]
+ <br> <span class = keyword> else </span> @(xx.blockid, identity, <span class = literal >""</span> , a)+ <span class = literal >"]"</span> </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> xx(blockid:int, a:seq.word, v:int)seq.word 
+ <br> a + <span class = block> <span class = keyword> if </span> length.a = 0 
+ <br> <span class = keyword> then </span>(<span class = block> <span class = keyword> if </span> blockid in [ TYPEBLOCK, MODULEBLOCK, CONSTANTSBLOCK]
+ <br> <span class = keyword> then </span> <span class = literal >"["</span> <span class = keyword> else </span> <span class = literal >"&amp;br ["</span> </span> )+ lookup(blockid, v)
+ <br> <span class = keyword> else </span> <span class = literal >","</span> + toword.v </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(a:seq.bit)seq.word @(+, asbyte.a, <span class = literal >""</span> , arithseq(length.a / 8, 8, 1))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> asbyte(a:seq.bit, i:int)seq.word [ toword.toint.@(formval.a, identity, bits.0, arithseq(8, -1, i + 7))]</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> formval(a:seq.bit, val:bits, i:int)bits val &lt;&lt; 1 ∨ bits.toint(a_i)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> pp is <span class = keyword> record </span> idx:int, val:int </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> getvbr(a:seq.bit, idx:int, size:int)pp getvbr(a, size, bits.0, 0, idx, 0)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp <span class = block> <span class = keyword> let </span> b = toint(a_(idx + i))
+ <br> <span class = keyword> if </span> i = size - 1 
+ <br> <span class = keyword> then </span> <span class = keyword> if </span> b = 0 <span class = keyword> then </span> pp(idx + size, toint.val)<span class = keyword> else </span> getvbr(a, size, val, nobits, idx + size, 0)
+ <br> <span class = keyword> else </span> getvbr(a, size, bits.b &lt;&lt; nobits ∨ val, nobits + 1, idx, i + 1)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> align32(p:pp)pp <span class = block> <span class = keyword> let </span> m =(idx.p - 1)mod 32 
+ <br> <span class = keyword> if </span> m = 0 <span class = keyword> then </span> p <span class = keyword> else </span> pp(idx.p + 32 - m, 0)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> filter(blockid:int, a:block)seq.block 
+ <br> <span class = keyword> if </span> blockid = blockid.a <span class = keyword> then </span> [ a]<span class = keyword> else </span> empty:seq.block </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> findblock(blockid:int, a:seq.block)seq.block @(+, filter.blockid, empty:seq.block, a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> content is <span class = keyword> record </span> recs:seq.seq.int, blocks:seq.block </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> block is <span class = keyword> record </span> bits:seq.bit, abbrevlen:int, blockid:int </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(a:block)seq.word 
+ <br> { <span class = literal >"abbrvlen:"</span> + toword.abbrevlen.a + <span class = literal >"blockid:"</span> + toword.blockid.a + <span class = literal >"len"</span> + toword.length.bits.a } </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> getinfo(a:block)content 
+ <br> getinfo(bits.a, 0, empty:seq.int, 1, empty:seq.seq.int, empty:seq.block, abbrevlen.a, blockid.a)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, blocks:seq.block, abbrvlen:int, blockid:int)content <span class = block> <span class = keyword> if </span> length.r > 0 
+ <br> <span class = keyword> then </span> <span class = block> // <span class = comment > working on record </span> // 
+ <br> <span class = keyword> if </span> noargs = 0 
+ <br> <span class = keyword> then </span> getinfo(b, 0, empty:seq.int, idx, recs + r, blocks, abbrvlen, blockid)
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> next = getvbr(b, idx, 6)
+ <br> getinfo(b, noargs - 1, r + val.next, idx.next, recs, blocks, abbrvlen, blockid)</span> <span class = keyword> else </span> <span class = keyword> let </span> t = getvbr(b, abbrvlen, bits.0, 0, idx, 0)
+ <br> <span class = keyword> if </span> val.t = 3 
+ <br> <span class = keyword> then </span> <span class = block> // <span class = comment > record </span> // 
+ <br> <span class = keyword> let </span> inst = getvbr(b, idx.t, 6)
+ <br> <span class = keyword> let </span> args = getvbr(b, idx.inst, 6)
+ <br> getinfo(b, val.args, [ val.inst], idx.args, recs, blocks, abbrvlen, blockid)</span> <span class = keyword> else </span> <span class = keyword> if </span> val.t = 1 
+ <br> <span class = keyword> then </span> <span class = block> // <span class = comment > block </span> // 
+ <br> <span class = keyword> let </span> newblockid = getvbr(b, idx.t, 8)
+ <br> <span class = keyword> let </span> abbrlen = getvbr(b, idx.newblockid, 4)
+ <br> <span class = keyword> let </span> alg = align32.abbrlen 
+ <br> <span class = keyword> let </span> len = getvbr(b, idx.alg, 32)
+ <br> <span class = keyword> let </span> end = idx.len + val.len * 32 
+ <br> getinfo(b, 0, empty:seq.int, end, recs, blocks + block(subseq(b, idx.len, end - 1), val.abbrlen, val.newblockid), abbrvlen, blockid)</span> <span class = keyword> else </span> content(recs, blocks)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.decodename </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> llvm </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> internalbc </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> decodename is <span class = keyword> record </span> block:int, code:int, name:seq.word </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> nameencoding is <span class = keyword> encoding </span> decodename </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(a:decodename, b:decodename)boolean block.a = block.b ∧ code.a = code.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> hash(a:decodename)int {(block.a + 2)*(code.a + 2)} </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> lookup(block:int, code:int)seq.word <span class = block> <span class = keyword> let </span> a = encode(decodename(block, code, <span class = literal >"// unknown //"</span> + toword.code), nameencoding)
+ <br> name.decode(a, nameencoding)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> I(block:int, code:int, name:seq.word)int <span class = block> <span class = keyword> let </span> a = encode(decodename(block, code, name), nameencoding)
+ <br> 0 </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> initnames int <span class = block> <span class = keyword> let </span> z = [ I(MODULEBLOCK, 1, <span class = literal >"Version"</span> ), 
+ <br> I(MODULEBLOCK, MODULECODEGLOBALVAR, <span class = literal >"MODULECODEGLOBALVAR"</span> ), 
+ <br> I(MODULEBLOCK, MODULECODEFUNCTION, <span class = literal >"MODULECODEFUNCTION"</span> ), 
+ <br> I(TYPEBLOCK, TYPEARRAY, <span class = literal >"TYPEARRAY"</span> ), 
+ <br> I(TYPEBLOCK, TYPEPOINTER, <span class = literal >"TYPEPOINTER"</span> ), 
+ <br> I(TYPEBLOCK, TYPEINTEGER, <span class = literal >"TYPEINTEGER"</span> ), 
+ <br> I(TYPEBLOCK, TYPEFUNCTION, <span class = literal >"TYPEFUNCTION"</span> ), 
+ <br> I(TYPEBLOCK, TYPEVOID, <span class = literal >"TYPEVOID"</span> ), 
+ <br> I(TYPEBLOCK, OPAQUE, <span class = literal >"OPAQUE"</span> ), 
+ <br> I(TYPEBLOCK, 1, <span class = literal >"NumEle"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTBLOCK, <span class = literal >"BLOCKCOUNT"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTNOPARA, <span class = literal >"NO PARAMETERS"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTBR, <span class = literal >"BR"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTRET, <span class = literal >"RET"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTCAST, <span class = literal >"CAST"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTCMP2, <span class = literal >"CMP2"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTCALL, <span class = literal >"CALL"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTGEP, <span class = literal >"GEP"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTPHI, <span class = literal >"PHI"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTBINOP, <span class = literal >"BINOP"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTLOAD, <span class = literal >"LOAD"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTSTORE, <span class = literal >"STORE"</span> ), 
+ <br> I(FUNCTIONBLOCK, INSTALLOCA, <span class = literal >"ALLOCA"</span> ), 
+ <br> I(CONSTANTSBLOCK, CONSTSETTYPE, <span class = literal >"CONSTSETTYPE"</span> ), 
+ <br> I(CONSTANTSBLOCK, CONSTGEP, <span class = literal >"CONSTGEP"</span> ), 
+ <br> I(CONSTANTSBLOCK, CONSTDATA, <span class = literal >"CONSTDATA"</span> ), 
+ <br> I(CONSTANTSBLOCK, AGGREGATE, <span class = literal >"AGGREGATE"</span> ), 
+ <br> I(CONSTANTSBLOCK, CSTRING, <span class = literal >"CSTRING"</span> ), 
+ <br> I(CONSTANTSBLOCK, CONSTNULL, <span class = literal >"CONSTNULL"</span> ), 
+ <br> I(CONSTANTSBLOCK, CONSTCECAST, <span class = literal >"CONSTCECAST"</span> ), 
+ <br> I(CONSTANTSBLOCK, CONSTINTEGER, <span class = literal >"CONSTINTEGER"</span> ), 
+ <br> I(VALUESYMTABBLOCK, ENTRY, <span class = literal >"ENTRY"</span> )]
+ <br> 3 </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> printtypes(t:seq.seq.int, i:int, result:seq.seq.word)seq.seq.word <span class = block> <span class = keyword> if </span> i > length.t 
+ <br> <span class = keyword> then </span> @(+, number.result, empty:seq.seq.word, arithseq(length.result, 1, 1))
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> a = t_i 
+ <br> <span class = keyword> let </span> tp = a_1 
+ <br> <span class = keyword> let </span> str = <span class = block> <span class = keyword> if </span> tp = TYPEINTEGER 
+ <br> <span class = keyword> then </span> [ merge(<span class = literal >"i"</span> + toword(a_2))]
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> tp = TYPEARRAY 
+ <br> <span class = keyword> then </span> <span class = literal >"["</span> + toword(a_2)+ <span class = literal >"x"</span> + lookuptype(result, a_3)+ <span class = literal >"]"</span> <span class = keyword> else </span> <span class = keyword> if </span> tp = TYPEPOINTER 
+ <br> <span class = keyword> then </span> lookuptype(result, a_2)+ <span class = literal >"*"</span> <span class = keyword> else </span> <span class = keyword> if </span> tp = TYPEFUNCTION 
+ <br> <span class = keyword> then </span> <span class = literal >"("</span> + @(seperator.<span class = literal >","</span> , lookuptype.result, <span class = literal >""</span> , subseq(a, 3, length.a))+ <span class = literal >")"</span> <span class = keyword> else </span> <span class = keyword> if </span> tp = TYPEVOID <span class = keyword> then </span> <span class = literal >"VOID"</span> <span class = keyword> else </span> <span class = literal >"?"</span> </span> printtypes(t, i + 1, result + str)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> lookuptype(s:seq.seq.word, i:int)seq.word s_(i + 1)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> number(s:seq.seq.word, i:int)seq.word [ toword(i - 1)]+ <span class = literal >":"</span> + s_i </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> yy(s:seq.seq.int, i:int, slot:int, result:seq.word, offset:int)seq.word <span class = block> <span class = keyword> if </span> i > length.s 
+ <br> <span class = keyword> then </span> result 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> d = s_i 
+ <br> <span class = keyword> let </span> tp = d_1 
+ <br> <span class = keyword> let </span> relocmask = <span class = block> <span class = keyword> if </span> tp in [ INSTBINOP, INSTSTORE, INSTCMP2]
+ <br> <span class = keyword> then </span> [ false, true, true, false, false]
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> tp in [ INSTLOAD, INSTRET, INSTCAST]
+ <br> <span class = keyword> then </span> [ false, true, false, false, false]
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> tp in [ INSTBR, INSTALLOCA]
+ <br> <span class = keyword> then </span> [ false, false, false, true, false]
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> tp = INSTCALL 
+ <br> <span class = keyword> then </span> [ false, false, false, false]+ constantseq(length.d - 4, true)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> tp = INSTGEP 
+ <br> <span class = keyword> then </span> [ false, false, false]+ constantseq(length.d - 3, true)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> tp = INSTPHI 
+ <br> <span class = keyword> then </span> <span class = keyword> if </span> length.d &lt; 8 <span class = keyword> then </span> [ false, false, true, false, true, false, true, false, true]<span class = keyword> else </span> [ false]+ big(length.d / 2)
+ <br> <span class = keyword> else </span> <span class = keyword> if </span> tp = 1 
+ <br> <span class = keyword> then </span> [ false, false]
+ <br> <span class = keyword> else </span> <span class = keyword> assert </span> false <span class = keyword> report </span> <span class = literal >"unknown"</span> + lookup(FUNCTIONBLOCK, d_1)
+ <br> empty:seq.boolean </span> <span class = keyword> let </span> slotinc = <span class = block> <span class = keyword> if </span> tp in [ INSTLOAD, INSTALLOCA, INSTCALL, INSTGEP, INSTCAST, INSTCMP2, INSTBINOP, INSTPHI]
+ <br> <span class = keyword> then </span> 1 
+ <br> <span class = keyword> else </span> 0 </span> yy(s, i + 1, slot + slotinc, result +(<span class = keyword> if </span> length.result = 0 <span class = keyword> then </span> <span class = literal >"&amp;br"</span> <span class = keyword> else </span> <span class = literal >"+ &amp;br"</span> )+ lookup(FUNCTIONBLOCK, d_1)+ <span class = literal >"("</span> + toword(slot - offset)+ yy(relocmask, d, length.d, offset, slot)+ <span class = literal >")"</span> , offset)</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> big(i:int)seq.boolean <span class = block> <span class = keyword> if </span> i &lt; 4 
+ <br> <span class = keyword> then </span> [ false, true, false, true, false, true, false, true]
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> t = big(i / 2)
+ <br> t + t </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> yy(relocmask:seq.boolean, s:seq.int, i:int, offset:int, slot:int)seq.word 
+ <br> {(<span class = keyword> if </span> i &lt; 3 <span class = keyword> then </span> <span class = literal >""</span> <span class = keyword> else </span> yy(relocmask, s, i - 1, offset, slot))+ <span class = literal >","</span> + <span class = block> <span class = keyword> if </span> relocmask_i 
+ <br> <span class = keyword> then </span> <span class = block> <span class = keyword> let </span> arg = s_i 
+ <br> { <span class = literal >"("</span> + toword.(<span class = keyword> if </span> slot - arg > offset <span class = keyword> then </span> offset + arg - slot <span class = keyword> else </span> slot - arg - 1)+ <span class = literal >")"</span> } </span> <span class = keyword> else </span> [ toword(s_i)]</span> } </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.boolean </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.codefreq </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> oseq.codefreq </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> codefreq is <span class = keyword> record </span> count:int, w:int </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(a:codefreq, b:codefreq)boolean false </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?(a:codefreq, b:codefreq)ordering count.a ? count.b </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> count(s:seq.codefreq, w:int)seq.codefreq replace(s, w, codefreq(count(s_w)+ 1, w))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(block:int, p:codefreq)seq.word <span class = block> <span class = keyword> if </span> count.p = 0 
+ <br> <span class = keyword> then </span> empty:seq.word 
+ <br> <span class = keyword> else </span> <span class = literal >"&amp;br the code"</span> + lookup(block, w.p)+ <span class = literal >"occurs"</span> + toword.count.p + <span class = literal >"times."</span> + EOL </span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> removelowcount(mincount:int, p:codefreq)seq.codefreq 
+ <br> <span class = keyword> if </span> count.p &lt; mincount <span class = keyword> then </span> empty:seq.codefreq <span class = keyword> else </span> [ p]</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> codefreq(mincount:int, a:seq.seq.int)seq.codefreq 
+ <br> sort.@(+, removelowcount.mincount, empty:seq.codefreq, @(count, identity, dseq.codefreq(0, 1), a))</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> count(s:seq.codefreq, w:seq.int)seq.codefreq count(s, w_1)</span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test2 seq.word stats.<span class = literal >"test2.bc"</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> stats(file:seq.word)seq.word <span class = block> <span class = keyword> let </span> discard = initnames 
+ <br> <span class = keyword> let </span> d = getbitfile.file 
+ <br> <span class = keyword> assert </span> print.subseq(d, 1, 64)= <span class = literal >"66 67 192 222 33 12 0 0"</span> <span class = keyword> report </span> <span class = literal >"incorrect magic"</span> + print.subseq(d, 1, 64)
+ <br> <span class = keyword> let </span> m = block(subseq(d, 97, length.d), 3, MODULEBLOCK)
+ <br> <span class = keyword> let </span> z = getinfo.m 
+ <br> <span class = keyword> let </span> insts = @(+, recs, empty:seq.seq.int, @(+, getinfo, empty:seq.content, findblock(FUNCTIONBLOCK, blocks.z)))
+ <br> <span class = keyword> let </span> constants = findblock(CONSTANTSBLOCK, blocks.z)_1 
+ <br> @(+, print.CONSTANTSBLOCK, <span class = literal >""</span> , codefreq(0, recs.getinfo.constants))+ @(+, print.FUNCTIONBLOCK, <span class = literal >""</span> , codefreq(0, insts))</span> </span> </p> 
+ <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.content </span> </p> 
+
+      
