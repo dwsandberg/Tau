@@ -32,7 +32,6 @@
 
 #include <stdlib.h>
 
-#include  "tau.h"
 
 #define HELLOWORLDPORT 8000
 
@@ -51,18 +50,25 @@
 
 #define  BT long long int
 
-
+struct str2 { BT  type;
+               BT  length;
+               char data[500];
+               };
 
 typedef  struct str2 *pstr2;
 
 struct strblock{ BT type; BT length; BT blocksz;   pstr2 *data; };
 
+BT  step ( char * func,struct str2 *rname,struct str2 *func2,struct str2 *buff ) ; /* defined in tau.c */
+struct str2  *   stepresult( BT x);  /* defined in tau.c */
+void    stepfree ( BT x); /* defined in tau.c */
+void inittau(int additional); /* defined in tau.c */
 
 
 
-int scgi_sendtau( scgi_request *req, processinfo process)
+int scgi_sendtau( scgi_request *req, BT process)
 { 
-  struct str2 *txt = stepresult((BT)process);
+  struct str2 *txt = stepresult(process);
   int len = txt->length;
   scgi_desc *d = req->descriptor;
  
@@ -106,7 +112,7 @@ int scgi_sendtau( scgi_request *req, processinfo process)
    * once the socket is ready to receive it.
    */
 
- stepfree ((BT) process);
+ stepfree ( process);
   return 1;
 }
 
@@ -234,7 +240,7 @@ int serverloop(void)
 
 
 int main(int argc, char **argv)    {   int i=0; 
-       struct str2 myarg,myarg2,myarg3;
+       struct str2 myarg;
        // printf("argc %d\n",argc);
        if (argc ==1)  {
           // if no argument is supplied run the server
@@ -253,14 +259,7 @@ int main(int argc, char **argv)    {   int i=0;
     
        myarg.length=i;
        myarg.type =1;
-              myarg2.length=0;
-       myarg2.type =1;
-                   myarg3.length=0;
-       myarg3.type =1;
-        processinfo p = step("mainZmainZintzseq",&myarg,&myarg2,&myarg3);
-        fflush(stdout); 
-        createfilefromoutput( output(p ),/* stdout */ 1);
-       return 0;
+       return step("mainZmainZintzseq",&myarg,&myarg,&myarg);
      }
 
 

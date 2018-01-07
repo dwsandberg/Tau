@@ -21,11 +21,18 @@ Function execute(name:word, arg1:seq.word, arg2:word, arg3:word)seq.word
 Function execute(name:word, state:seq.word, arg:seq.word, arg2:seq.word, b:seq.seq.word)seq.word 
  executecode(toCformat2.[ name], cvt.argblock4(0, 4, state, arg, arg2, b))
 
+function addsuffix(suffix:seq.word, a:word)seq.word [ a]+ suffix
+
+Function createlib(b:seq.int, libname:word, dependlibs:seq.word)int 
+ let z2 = createbytefile([ libname]+".bc", b)
+  createlib3(toCformat2.[ libname], toCformat2.@(+, addsuffix.".dylib","", dependlibs))
   
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int 
-createlibX(b,libname,dependlibs)
+ let z2 = createfile(toCformat2([ libname]+".bc"), blockit.b)
+  createlib3(toCformat2.[ libname], toCformat2.@(+, addsuffix.".dylib","", dependlibs))
+  
 
- 
+function createlib3(name:seq.bits, libs:seq.bits)int builtin.createlib3ZbuiltinZUTF8ZUTF8
 
 Function unloadlib(a:seq.word)int unloadlib.toCformat2.a
 
@@ -59,44 +66,13 @@ use stdlib
 
 use bits
 
-use seq.int
-
 Function toCformat2(s:seq.word) seq.bits 
    packed.data2.add(@(add,byte,bitpackedseq(0,empty:seq.byte,bits(0)),toseqint.toUTF8.s),byte(0))
-   
-/Function packedbyte( a:seq.int) seq.int
-    let d=data2.@(add,byte, empty:bitpackedseq.byte ,a)
-    @(+,toint,empty:seq.int,d)
-    
-type outputformat is record length:int,data:seq(bits)
-
-Function   outputformat(  a:seq.int)   outputformat
-  outputformat(length.a,blockit.data2.@(add,byte, empty:bitpackedseq.byte ,a))
-
 
 Function createbytefile(name:seq.word,a:seq.int) int
-    createfile(toCformat2.name,outputformat(a))
+   createfile(toCformat2.name, blockit.data2.@(add,byte, empty:bitpackedseq.byte ,a))
 
-  createfile(toCformat2.name, blockit.data2.@(add,byte, empty:bitpackedseq.byte ,a))
-
-    createfile(toCformat2.name,outputformat(a))
-
-  createfile(toCformat2.name, blockit.data2.@(add,byte, empty:bitpackedseq.byte ,a))
-
-     createfile(toCformat2.name,outputformat(a))
-     
-Function createlibX(b:seq.bits, libname:word, dependlibs:seq.word)int 
-  createlib(toCformat2.[ libname], toCformat2.@(+, addsuffix.".dylib","", dependlibs),
-   outputformat(length.b * 8, blockit.b))
-   
-function addsuffix(suffix:seq.word, a:word)seq.word [ a]+ suffix
-
-use seq.bits
-
-function createlib(name:seq.bits, libs:seq.bits,t:outputformat)int 
-builtin.usemangle 
-
-Function createfile(name:seq.bits, data:outputformat)int builtin.usemangle
+Function createfile(name:seq.bits, data:seq.bits)int builtin.createfileZbuiltinZintzseqZintzseq
 
 function getfile(f:seq.bits) fileresult2 builtin.getfileZbuiltinZUTF8.STATE
 
