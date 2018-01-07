@@ -10,9 +10,9 @@ Module tools
 
 run tools stdlibdoc
 
-run doc createdoc
+/run doc createdoc
 
-run tools testprintBitCodes
+/run tools testprintBitCodes
 
 run tools test
 

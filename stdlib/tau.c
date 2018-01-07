@@ -447,7 +447,8 @@ BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT
     /* create the .bc file */
      int f;
      sprintf(buff,"%s.bc",name);
-      f=open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
+     fprintf(stderr,"create %s\n",buff);
+      f=open(buff,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
     createfilefromoutput( t,f);
      close(f);
    /* compile to .bc file */ 
