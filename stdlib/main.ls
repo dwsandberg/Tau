@@ -62,12 +62,11 @@ use set.syminfo
 
 use stdlib
 
-Function main(arg:seq.int)int 
+
+Function main(arg:seq.int) outputformat
  let args = towords(arg + 10 + 10)
   let libname = args_1 
-  // create non empty changed file to force compiling of library 
-  let discard2 = createfile([ merge([ libname]+"/changed")], ["library src has been changed"]) // 
-  let p = process.compilelib.libname 
+   let p = process.compilelib.libname 
   let output = if aborted.p 
    then message.p 
    else if subseq(result.p, 1, 1)="OK"∧ length.args = 3 
@@ -77,8 +76,11 @@ Function main(arg:seq.int)int
    else if subseq(result.p, 1, 1)="OK"∧ not(length.args = 1)
    then"not correct number of args:"+ args 
    else result.p 
-  let z = createfile("test.html", [ htmlheader + processpara.output])
-  0
+   outputformat(  toUTF8plus( htmlheader + processpara.output ) )
+   
+   use fileio
+   
+   
 
 Function loadlibrary(libname:word)int loadlib([ libname], 0)
 
