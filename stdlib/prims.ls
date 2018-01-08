@@ -80,9 +80,31 @@ type outputformat is record length:int,data:seq(bits)
 Function   outputformat(  a:seq.int)   outputformat
   outputformat(length.a,blockit.data2.@(add,byte, empty:bitpackedseq.byte ,a))
 
+Function createbytefile2(name:seq.word,a:seq.int) int
+    createfile(toCformat2.name,outputformat(a))
+
 
 Function createbytefile(name:seq.word,a:seq.int) int
    createfile(toCformat2.name, blockit.data2.@(add,byte, empty:bitpackedseq.byte ,a))
+
+    createfile(toCformat2.name,outputformat(a))
+
+  createfile(toCformat2.name, blockit.data2.@(add,byte, empty:bitpackedseq.byte ,a))
+
+     createfile(toCformat2.name,outputformat(a))
+     
+Function createlibX(b:seq.bits, libname:word, dependlibs:seq.word)int 
+  createlib(toCformat2.[ libname], toCformat2.@(+, addsuffix.".dylib","", dependlibs),
+   outputformat(length.b * 8, blockit.b))
+   
+function addsuffix(suffix:seq.word, a:word)seq.word [ a]+ suffix
+
+use seq.bits
+
+function createlib(name:seq.bits, libs:seq.bits,t:outputformat)int 
+builtin.usemangle 
+
+Function createfile(name:seq.bits, data:outputformat)int builtin.usemangle
 
 Function createfile(name:seq.bits, data:seq.bits)int builtin.createfileZbuiltinZintzseqZintzseq
 

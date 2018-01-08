@@ -39,8 +39,6 @@ use stdlib
 use fileio
 
 /Function main(user:UTF8, func:UTF8, a:UTF8)outputformat 
-
-/Function main(user:UTF8, func:UTF8, a:UTF8)UTF8 
  let HTTP200 = [ 83, 116, 97, 116, 117, 115, 58, 32, 50, 48, 
   48, 32, 79, 75, 13, 10, 67, 111, 110, 116, 
   101, 110, 116, 45, 84, 121, 112, 101, 58, 32, 
@@ -61,21 +59,11 @@ use fileio
    then let b = fixup(toseqint.a, findeq(toseqint.a, 1)+ 1, empty:seq.int, empty:seq.seq.word)
     theresult.cast2cmdresult.execute(x_1, cvtto.tosession(b_1_1, user1), b_3, b_4, subseq(b, 5, length.b))
    else theresult.cast2cmdresult.execute(x_1, cvtto.tosession("0"_1, user1),"","", empty:seq.seq.word)
-<<<<<<< HEAD
    outputformat(HTTP200 + toseqint.toUTF8(htmlheader + result))
 
 use fileio
  
- user
- 
-   UTF8.packedbyte(HTTP200 + toseqint.toUTF8(htmlheader + result))
-  
-   // assert false report "removed packedbyte function so main no longer works" //
-=======
-  // UTF8.packedbyte(HTTP200 + toseqint.toUTF8(htmlheader + result))//
-   assert false report "removed packedbyte function so main no longer works"
->>>>>>> parent of 874daae... Remove use of test.html
-    user
+
 
 function cast2cmdresult(a:seq.word)cmdresult builtin
 

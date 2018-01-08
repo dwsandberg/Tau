@@ -438,6 +438,23 @@ return  loadlibrary(PD,name) ;
 
 
 
+BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT otherlib,struct outputformat *t){
+  char *name=(char *)&IDXUC(libname,2),buff[200];
+     char *libs=(char *)&IDXUC(otherlib,2) ;
+    /* create the .bc file */
+     int f;
+     sprintf(buff,"%s.bc",name);
+     fprintf(stderr,"create %s\n",buff);
+      f=open(buff,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
+    createfilefromoutput( t,f);
+     close(f);
+   /* compile to .bc file */ 
+  sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",name,libs,name);
+   fprintf(stderr,"Createlib3 %s\n",buff);
+  int err=system(buff);
+  if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
+  else {loadlibZbuiltinZUTF8(PD,libname); return 1;}
+}
 
 
 BT createlib3ZbuiltinZUTF8ZUTF8(processinfo PD,BT libname,BT otherlib){
@@ -489,7 +506,15 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     return org;
 }
 
-
+BT createfileZbuiltinZbitszseqZoutputformat(processinfo PD,BT filename,struct outputformat * t){ 
+int f;
+char *name=(char *)&IDXUC(filename,2);
+  fprintf(stderr,"createfile %s\n",name);
+ f=open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
+  createfilefromoutput( t,f);
+  close(f);
+return 0;
+}
 
 
 BT createfileZbuiltinZintzseqZintzseq(processinfo PD,BT filename,BT t){ 

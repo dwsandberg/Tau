@@ -138,9 +138,11 @@ The Aggregation operator(@)is a generation of the sigma operator in mathematics.
 
 Consider
 
-  
+  &{ noformat   <img src="sigmaexample.png"> &}
 
-Equivalantly this can be expressed as follows sigma(0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 1)where
+We can use arithseq(n, 1, 1) to represent the sequence 1 to n.   The arguments of arithseq represent the number of elements, the incremant, and start value.  
+
+The sum above can equivalantly t  be expressed as follows sigma(0, arithseq(n,1,1), 1)where
 
 function term2(n:int)int n + 1
 
@@ -149,7 +151,8 @@ function term1(a:int, b:int)int a + b
 function sigma(acc:int, s:seq.int, i:int)int 
  if i > length.s then acc else sigma(term1(acc, term2(s_i)), s, i + 1)
 
-Using aggregation this can be express as @(term1, term2, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])or @(+, +.1, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+Using aggregation this can be express as @(term1, term2, 0, arithseq(n,1,1))or
+ @(+, +.1, 0, arithseq(n,1,1))
 
 More generally @(term1, term2, exp1, exp2)where exp1 is of type <resulttype> and exp is of type seq.<elementtype> is defined as
 
@@ -157,7 +160,7 @@ apply(exp1, exp2)
 
 where
 
-/function apply(acc:<resulttype>, s:seq(<elementtype>), i:int)<resulttype> if i > length.s then acc else apply(term1(acc, term2(s_i)), s, i + 1)
+ function apply(acc:<resulttype>, s:seq(<elementtype>), i:int)<resulttype> if i > length.s then acc else apply(term1(acc, term2(s_i)), s, i + 1)
 
 Term1 and term2 can have parameters.@(term1(p1), term2(p2), exp1, exp2)is defined as
 
@@ -165,9 +168,9 @@ apply2(exp1, exp2)
 
 where
 
-/function apply2(acc:resulttype, s:seq(elementtype), i:int)resulttype if i > length.s then acc else apply2(p1, term1(acc, term2(p2, s_i)), s, i + 1)
+function apply2(acc:resulttype, s:seq(elementtype), i:int)resulttype if i > length.s then acc else apply2(p1, term1(acc, term2(p2, s_i)), s, i + 1)
 
-Using this form the example sigma sum above is @(+, +.1, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+Using this form the example sigma sum above where n=10 is @(+, +.1, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
 An expression for summing a sequence is @(+, *.1, 0, [ 1, 2, 3, 4])= 0 + 1*1 + 1*2 + 1*3 + 1*4 = 10
 
@@ -178,10 +181,10 @@ The following gives back the same sequence @(+, identity, empty:int, [ 1, 2, 3, 
 One can print a sequence of integers with
 
 function print(a:seq.int)seq.word 
- {"["+ @(addcomma, print,"", a)+"]"}
+ {"["+ @(separator.",", print,"", a)+"]"}
 
-function addcomma(a:seq.word, b:seq.word)seq.word 
- if length.a = 0 then b else a +","+ b
+function separator(sep:seq.word, a:seq.word, b:seq.word)seq.word 
+ if length.a = 0 then b else a +sep+ b
 
 &section Parameterized Module
 
