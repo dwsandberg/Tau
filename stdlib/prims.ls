@@ -66,8 +66,20 @@ use stdlib
 
 use bits
 
+use seq.int
+
 Function toCformat2(s:seq.word) seq.bits 
    packed.data2.add(@(add,byte,bitpackedseq(0,empty:seq.byte,bits(0)),toseqint.toUTF8.s),byte(0))
+
+/Function packedbyte( a:seq.int) seq.int
+    let d=data2.@(add,byte, empty:bitpackedseq.byte ,a)
+    @(+,toint,empty:seq.int,d)
+    
+type outputformat is record length:int,data:seq(bits)
+
+Function   outputformat(  a:seq.int)   outputformat
+  outputformat(length.a,blockit.data2.@(add,byte, empty:bitpackedseq.byte ,a))
+
 
 Function createbytefile(name:seq.word,a:seq.int) int
    createfile(toCformat2.name, blockit.data2.@(add,byte, empty:bitpackedseq.byte ,a))

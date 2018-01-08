@@ -55,6 +55,23 @@ union cvt {BRT r;BT i;};
 //BT  arccosZbuiltinZreal(processinfo PD,BT P3);
 
 
+struct str2 { BT  type;
+               BT  length;
+               char data[500];
+               };
+               
 
+struct pinfo *   step ( char * func,struct str2 *rname,struct str2 *func2,struct str2 *buff ) ; /* defined in tau.c */
+struct str2  *   stepresult( BT x);  /* defined in tau.c */
+void    stepfree ( BT x); /* defined in tau.c */
+void inittau(int additional); /* defined in tau.c */
 
+struct outputformat { BT bytelength; struct bitsseq *data;};
 
+struct bitsseq  { BT type; BT length; BT  data[50]; };
+
+struct  blockseq  {BT type; BT length; BT blksize; struct bitsseq * seqseq;};
+
+void createfilefromoutput(struct outputformat *t,int file);
+
+struct outputformat *output(processinfo p);

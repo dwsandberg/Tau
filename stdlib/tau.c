@@ -440,24 +440,18 @@ return  loadlibrary(PD,name) ;
 
 
 
-
-BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT otherlib,struct outputformat *t){
+BT createlib3ZbuiltinZUTF8ZUTF8(processinfo PD,BT libname,BT otherlib){
   char *name=(char *)&IDXUC(libname,2),buff[200];
      char *libs=(char *)&IDXUC(otherlib,2) ;
-    /* create the .bc file */
-     int f;
-     sprintf(buff,"%s.bc",name);
-     fprintf(stderr,"create %s\n",buff);
-      f=open(buff,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
-    createfilefromoutput( t,f);
-     close(f);
-   /* compile to .bc file */ 
+ 
   sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",name,libs,name);
    fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
   else {loadlibZbuiltinZUTF8(PD,libname); return 1;}
 }
+
+
 
 // start of file io
 
@@ -498,18 +492,37 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
 
 
 
-
-
-BT createfileZbuiltinZbitszseqZoutputformat(processinfo PD,BT filename,struct outputformat * t){ 
+BT createfileZbuiltinZintzseqZintzseq(processinfo PD,BT filename,BT t){ 
+//format of filename is  {struct  BT type=1; BT length;  char name[length]; char term=0; } 
+//format of t is either {struct  BT type=1; BT length;  char t[length];  }
+//{struct  BT type=0; BT length;  BT t[length];  }
+//{struct  BT type=other; BT length, BT blocksz;   BB *data[length/blocksz] }
+// where BB is on of the previous formats
 int f;
 char *name=(char *)&IDXUC(filename,2);
   fprintf(stderr,"createfile %s\n",name);
  f=open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
-  createfilefromoutput( t,f);
+  //printf("%lld type: %lld\n",SEQLEN(t),IDXUC(t,0));
+  if (IDXUC(t,0)==0) write(f, &IDXUC(t,2),8*SEQLEN(t) );
+  else  if (IDXUC(t,0)==1) write(f, &IDXUC(t,2), SEQLEN(t) );
+  else
+   { BT l=IDXUC(t,1);
+    BT  blocksz=IDXUC(t,2);
+    BT  b=IDXUC(t,3);
+    int  i=1;
+        assert (SEQTYPE(b)==0,"FORMAT PROBLEM");
+     while (l >0) {
+       int sz=SEQTYPE(IDXUC(b,i+1))==0?8:1;
+       //printf(" %lld %d %lld %lld\n",l,i,SEQLEN(b),SEQLEN(IDXUC(b,i+1)));
+       write(f, &IDXUC(IDXUC(b,i+1),2),sz*(l>blocksz?blocksz:l ));
+       l=l-blocksz; i=i+1;
+     }
+     }
   close(f);
 return 0;
 }
 
+BT createfileZbuiltinZUTF8Zintzseq(processinfo PD,BT filename,BT t){ return createfileZbuiltinZintzseqZintzseq(PD,filename,t);}
 
 // end of file io
 
