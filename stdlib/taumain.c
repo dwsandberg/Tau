@@ -61,9 +61,9 @@ struct strblock{ BT type; BT length; BT blocksz;   pstr2 *data; };
 
 
 int scgi_sendtau( scgi_request *req, processinfo process)
-{ 
-  struct str2 *txt = stepresult((BT)process);
-  int len = txt->length;
+{  struct outputformat * t= output(process);
+
+  int len = t->bytelength;
   scgi_desc *d = req->descriptor;
  
   /*
@@ -79,23 +79,23 @@ int scgi_sendtau( scgi_request *req, processinfo process)
   }
   /* copy the data */
   
-  if  (txt->type==1) {
-    memcpy(d->outbuf,txt->data,len);
-  } else{
-     struct strblock *d2 = (struct strblock *) txt;
-     
-   //  printf("XX %lld\n",d2->blocksz );
- pstr2 *data2 = (d2->data)+2;
-// printf("complex send %lld %lld\n", data2[0]->length,data2[1]->length);
-  int remaining = len;
-  int blocksz= d2->blocksz;
-  char *p=d->outbuf;
-  while (remaining > 0 ) {
-   // printf("remaining %d %lld\n",remaining,(*data2)->length );
-     memcpy( p,(*data2)->data, remaining > blocksz ? blocksz: remaining );
-     remaining-=blocksz; data2++; p+=blocksz;
-    }
- }
+            if (t->data->type == 0) {
+                   memcpy(d->outbuf,t->data->data,len);
+                    }
+                else {  
+                    int j; int length=t->bytelength;
+                           struct blockseq * blkseq=( struct blockseq *   )t->data ;
+                            struct bitsseq * blks=   blkseq->seqseq;
+                           int blockcount=blks->length; 
+                           int count = blkseq->blksize * 8;
+                           char *p=d->outbuf;
+                        for(j=0; j < blockcount; j++)  { 
+                             memcpy( p,(char *)(blks->data[j])+16, length < count ? length:count  );
+                           length=length-count;p+=count;
+                      }
+                    
+                }
+  
 // { int jj;
 // for (jj=0;jj<len; jj++) printf("%c",d->outbuf[jj]); 
  //         printf("\n" );}

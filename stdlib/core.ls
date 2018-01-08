@@ -38,7 +38,7 @@ use stdlib
 
 use fileio
 
-/Function main(user:UTF8, func:UTF8, a:UTF8)outputformat 
+Function main(user:UTF8, func:UTF8, a:UTF8)outputformat 
  let HTTP200 = [ 83, 116, 97, 116, 117, 115, 58, 32, 50, 48, 
   48, 32, 79, 75, 13, 10, 67, 111, 110, 116, 
   101, 110, 116, 45, 84, 121, 112, 101, 58, 32, 
