@@ -437,17 +437,20 @@ return  loadlibrary(PD,name) ;
 }
 
 
+BT createfileZbuiltinZintzseqZintzseq(processinfo PD,BT filename,BT t) 
+;
 
 BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT otherlib,struct outputformat *t){
   char *name=(char *)&IDXUC(libname,2),buff[200];
      char *libs=(char *)&IDXUC(otherlib,2) ;
     /* create the .bc file */
      int f;
-     sprintf(buff,"%s.bc",name);
+    sprintf(buff,"%s.bc",name);
      fprintf(stderr,"create %s\n",buff);
       f=open(buff,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
     createfilefromoutput( t,f);
      close(f);
+     
    /* compile to .bc file */ 
   sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",name,libs,name);
    fprintf(stderr,"Createlib3 %s\n",buff);
@@ -662,7 +665,7 @@ void createfilefromoutput(struct outputformat *t,int file)
                            int blockcount=blks->length; 
                            int count = blkseq->blksize * 8;
                         for(j=0; j < blockcount; j++)  { 
-                         write( file,(char *)(blks->data[j]+2),  length < count ? length:count );
+                          write( file,(char *)(blks->data[j])+16,  length < count ? length:count );
                           length=length-count;
                       }
                     
