@@ -83,11 +83,11 @@ BT allocatespaceZbuiltinZint(processinfo PD, BT i)   { struct  spaceinfo *sp =&P
     spacecount+=i;
     if ((sp->nextone)>(sp->lastone) ){int k,x;   BT *b;
         assert (i*8<blocksize,"too big an object");
-       // printf("mem lock\n");
+       //  fprintf(stderr,"mem lock\n");
         assert(pthread_mutex_lock (&memmutex)==0,"lock fail");
         assert(alloccount++<noblocks,"OUT OF SPACE");
         b=malloc(blocksize);
-        //printf(" allocate %llx\n",(BT)b);
+        // fprintf(stderr," allocate %llx\n",(BT)b);
         b[0] =(BT) sp->blocklist;
         sp->blocklist=b;
         sp->nextone=  (char *) (b+1);
@@ -102,7 +102,7 @@ BT allocatespaceZbuiltinZint(processinfo PD, BT i)   { struct  spaceinfo *sp =&P
 void myfree(struct spaceinfo *sp) {int i; i =0; 
    BT *b = sp->blocklist;
    while (b!=0) {BT *next=(BT *) b[0];
-    //   printf(" free %llx\n",(BT)b);
+    //    fprintf(stderr," free %llx\n",(BT)b);
      free(b); b=next; alloccount--;
     }
 }
@@ -124,7 +124,7 @@ char libnames[20][100];
 
 int looklibraryname(char* name) { int i;
   for(  i=0;i<loaded[1];i++){
-    //printf("match %d %s %s\n",i,name,libnames[i+2]);
+    // fprintf(stderr,"match %d %s %s\n",i,name,libnames[i+2]);
     if (strcmp(libnames[i+2],name)==0) return i  ;
     }
    return -1;}
@@ -133,14 +133,14 @@ void closelibs ( int libidx) { int i;
   for(  i=loaded[1]-1; i>=libidx;i--){ char lib_name[100];
    sprintf(lib_name,"%s.dylib",libnames[i+2]);
     void *lib_handle =dlopen(lib_name,RTLD_NOW);dlclose(lib_handle);
-    printf("close %s %d\n",libnames[i+2], dlclose(lib_handle) );
+     fprintf(stderr,"close %s %d\n",libnames[i+2], dlclose(lib_handle) );
   }
   loaded[1]=libidx;
 }
 
 BT unloadlibZbuiltinZUTF8(processinfo PD,BT p_libname){char *libname=(char *)&IDXUC(p_libname,2);
 int libidx = looklibraryname(libname);
-//printf("unload library %s %d\n",libname,libidx);
+// fprintf(stderr,"unload library %s %d\n",libname,libidx);
 if (libidx > 0 ) {
   closelibs(libidx);
    } 
@@ -163,34 +163,34 @@ BT *byteseqencetype;
 
 
 BT initlib4(char * libname,BT * words,BT * wordlist, BT * consts,BT * libdesc) {
-  printf("starting initlib4\n");
+   fprintf(stderr,"starting initlib4\n");
 if (strcmp(libname,"stdlib")==0){
   /* only needed when initializing stdlib */
     append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");
     if (!append){
-          printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+           fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
           exit(EXIT_FAILURE);
     }
     toUTF8 = dlsym(RTLD_DEFAULT, "toUTF8ZUTF8Zwordzseq");
     if (!toUTF8){
-       printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
     byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbyteseqZTzbitpackedseqZint");
     if (!byteseqencetype){
-       printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
 }
 
    BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
    if (!relocate) {
-       printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }    
    BT (* encodeword)(struct pinfo *,BT *) = dlsym(RTLD_DEFAULT, "encodewordZstdlibZintzseq");
    if (!encodeword) {
-       printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }    
 
@@ -199,52 +199,52 @@ if (strcmp(libname,"stdlib")==0){
  int i,k;
   words[0]=0;
   words[1]=nowords;
- // printf("nowords %d\n",nowords);
+ //  fprintf(stderr,"nowords %d\n",nowords);
  for ( k=0;k<nowords;k++) {
   int wordlength=wordlist[j+1];
-  //printf("%d:",k+1);
-  //for(i=0;i<wordlength;i++) { printf("%c",(char)wordlist[i+j+2]);}
+  // fprintf(stderr,"%d:",k+1);
+  //for(i=0;i<wordlength;i++) {  fprintf(stderr,"%c",(char)wordlist[i+j+2]);}
    words[k+2]=encodeword(&sharedspace,(wordlist+j) );
   j=j+2+wordlength;
-  //printf("\n");
+  // fprintf(stderr,"\n");
   }
-  //printf("relocating const\n");
+  // fprintf(stderr,"relocating const\n");
   BT * elementlist = (BT *) relocate(&sharedspace, words,consts);
   
   if ( libname[0] =='Q')
     { 
       BT (* erecordproc)(struct pinfo *)  = dlsym(RTLD_DEFAULT,libname+1);
    if (erecordproc) { 
-      printf("loading encoding\n");
+       fprintf(stderr,"loading encoding\n");
       int i,len = elementlist[1];
       BT erec = erecordproc(&sharedspace);
-      printf("start build list %d\n",len);
+       fprintf(stderr,"start build list %d\n",len);
       for(i=2; i < len+2; i++){
          BT ele = elementlist[i];
-        //printf(" %d %lld %lld\n",i,ele,erec);
+        // fprintf(stderr," %d %lld %lld\n",i,ele,erec);
          ENCODE(&sharedspace,ele,erec);
       }
-      printf("finish build list\n");
+       fprintf(stderr,"finish build list\n");
     } else
-        printf("[%s] Unable to get symbol for erec: library is not encoding %s\n",__FILE__, dlerror());
+         fprintf(stderr,"[%s] Unable to get symbol for erec: library is not encoding %s\n",__FILE__, dlerror());
  
     }
-  // for(i=0;i < consts[1]+2; i++) {  printf("%lld: %lld %llx \n",  (BT)( consts+i) ,consts[i],consts[i]);}
-  // printf("HI2\n");
+  // for(i=0;i < consts[1]+2; i++) {   fprintf(stderr,"%lld: %lld %llx \n",  (BT)( consts+i) ,consts[i],consts[i]);}
+  //  fprintf(stderr,"HI2\n");
   
- //for ( k=0;k<nowords;k++) printf("KK %d %lld\n",k,words[2+k]);
- // printf("HHH %s %d %d %lld\n",libname,nowords,j,wordlist[1]+2);
+ //for ( k=0;k<nowords;k++)  fprintf(stderr,"KK %d %lld\n",k,words[2+k]);
+ //  fprintf(stderr,"HHH %s %d %d %lld\n",libname,nowords,j,wordlist[1]+2);
     { int i =loaded[1]++;
       char name[100];
      struct stat sbuf;
     sprintf(name,"%s.dylib",libname);
      stat(name, &sbuf);
-    //  printf("relocating libdesc\n");
+    //   fprintf(stderr,"relocating libdesc\n");
     loaded[i+2]= relocate(&sharedspace, words,libdesc);
     ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
     strcpy(libnames[i+2],libname);
     }
-//  printf("finish initlib4  \n");
+//   fprintf(stderr,"finish initlib4  \n");
  return 0;
   
 }
@@ -256,16 +256,16 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
    char lib_name[200],name[100];
    struct stat sbuf;
    BT liblib;
-  // printf("check %s,%d\n",lib_name_root,strlen(lib_name_root));
+  //  fprintf(stderr,"check %s,%d\n",lib_name_root,strlen(lib_name_root));
    sprintf(lib_name,"%s.dylib",lib_name_root);
-   printf("Loading %s\n",lib_name);
+    fprintf(stderr,"Loading %s\n",lib_name);
    void *lib_handle = dlopen(lib_name, RTLD_NOW);
     if (lib_handle==0) {
-     printf("[%s] Unable to open library: %s\n",__FILE__, dlerror());
+      fprintf(stderr,"[%s] Unable to open library: %s\n",__FILE__, dlerror());
      return -1;
     }  
   stat(lib_name, &sbuf) ;  
-  printf("using lib %s  time: %ld\n",lib_name,sbuf.st_mtimespec.tv_sec );          
+   fprintf(stderr,"using lib %s  time: %ld\n",lib_name,sbuf.st_mtimespec.tv_sec );          
   return sbuf.st_mtimespec.tv_sec;
       
 }
@@ -308,7 +308,7 @@ void dumpstack()
     for (i = 0; i < frames; ++i) {char *t=strs[i]+59,*p=t;
         while(*p!='+') p++;
         p[-1]=0;
-        printf("\n%lld %s",(BT)callstack[i],t);
+         fprintf(stderr,"\n%lld %s",(BT)callstack[i],t);
     }
     free(strs);
     exit(-1);
@@ -318,7 +318,7 @@ void dumpstack()
 
 void assert(int b,char *message){
     if (b ) return;
-    printf("\n%s\n",message);
+     fprintf(stderr,"\n%s\n",message);
     dumpstack();}
 
 
@@ -346,12 +346,12 @@ return 55;}
 
 BT   symboltoaddressZbuiltinZUTF8(processinfo PD,BT symname){
    char *sym_name=(char *)&IDXUC(symname,2);
-   //printf("datalib %s\n",sym_name);
+   // fprintf(stderr,"datalib %s\n",sym_name);
   
    BT F = (BT) dlsym(RTLD_DEFAULT, sym_name);
    if (F)     return F;
    else {
-      printf("[%s] Unable to get symbol in symboltoaddress  primitive: %s\n",__FILE__, dlerror());
+       fprintf(stderr,"[%s] Unable to get symbol in symboltoaddress  primitive: %s\n",__FILE__, dlerror());
       exit(EXIT_FAILURE); return 1;
     }
 }  
@@ -362,10 +362,8 @@ BT assertZbuiltinZwordzseq(processinfo PD,BT message)
     longjmp(PD->env,1);
      return 1; }
      
-struct str2 { BT  type;
-               BT  length;
-               char data[50];
-               };
+
+
                
 BT executecodeZbuiltinZUTF8Zintzseq(processinfo PD,BT funcname,BT P) {
 char *name=(char *)&IDXUC(funcname,2);
@@ -384,11 +382,11 @@ char *name=(char *)&IDXUC(funcname,2);
       while (*p2!=0) { *(q++)=*(p2++);}
       while (*p!=0) { *(q++)=*(p++);}
       
-     printf("[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
+      fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
      
        BT (*towords)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"towordsZfileresultZintzseq"); 
        if (!towords) {
-         printf("[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
+          fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
           exit(EXIT_FAILURE); return 1;
          }
       assertZbuiltinZwordzseq(PD,towords(PD,(BT) m));
@@ -420,11 +418,11 @@ BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
   for(i=2;  i<= loaded[1]+1; i++)
    {  sprintf(buff,"%s$profileresult",libnames[i]);
       BT (*pinfo)(processinfo PD) = dlsym(RTLD_DEFAULT, buff);
-      printf("testing %s %lld\n",buff,(BT)pinfo);
+       fprintf(stderr,"testing %s %lld\n",buff,(BT)pinfo);
       if (pinfo) { int k;
         BT z = pinfo(PD);
          for(k=0; k<4;k++)
-         printf("XX %lld %lld \n",  ((BT *)  (((BT *) z) [k]))[0],((BT *)  (((BT *) z) [k]))[1]);
+          fprintf(stderr,"XX %lld %lld \n",  ((BT *)  (((BT *) z) [k]))[0],((BT *)  (((BT *) z) [k]))[1]);
         infoarray[2+infoarray[1]++]=z;
       }
     }
@@ -434,12 +432,30 @@ BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
 BT loadlibZbuiltinZUTF8(processinfo PD,BT p_libname){char *name=(char *)&IDXUC(p_libname,2);
 int i = looklibraryname(name) ;
 if (i >= 0)
-{ printf("did not load %s as it was loaded\n",name) ; return ((BT*)loaded[i+2])[3];}
+{  fprintf(stderr,"did not load %s as it was loaded\n",name) ; return ((BT*)loaded[i+2])[3];}
 return  loadlibrary(PD,name) ;  
 }
 
 
 
+BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT otherlib,struct outputformat *t){
+  char *name=(char *)&IDXUC(libname,2),buff[200];
+     char *libs=(char *)&IDXUC(otherlib,2) ;
+    /* create the .bc file */
+     int f;
+    sprintf(buff,"%s.bc",name);
+     fprintf(stderr,"create %s\n",buff);
+      f=open(buff,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
+    createfilefromoutput( t,f);
+     close(f);
+     
+   /* compile to .bc file */ 
+  sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",name,libs,name);
+   fprintf(stderr,"Createlib3 %s\n",buff);
+  int err=system(buff);
+  if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
+  else {loadlibZbuiltinZUTF8(PD,libname); return 1;}
+}
 
 
 BT createlib3ZbuiltinZUTF8ZUTF8(processinfo PD,BT libname,BT otherlib){
@@ -447,9 +463,9 @@ BT createlib3ZbuiltinZUTF8ZUTF8(processinfo PD,BT libname,BT otherlib){
      char *libs=(char *)&IDXUC(otherlib,2) ;
  
   sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",name,libs,name);
-  printf("Createlib3 %s\n",buff);
+   fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
-  if (err ) {printf("ERROR STATUS: %d \n",err); return 0;}
+  if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
   else {loadlibZbuiltinZUTF8(PD,libname); return 1;}
 }
 
@@ -468,7 +484,7 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     char *filedata;
     struct stat sbuf;
     BT *data2,org;
-//printf("openning %s\n",name);
+// fprintf(stderr,"openning %s\n",name);
         org=myalloc(PD,4);
      IDXUC(org,0)=-1;
      IDXUC(org,1)=0;
@@ -491,7 +507,15 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     return org;
 }
 
-
+BT createfileZbuiltinZbitszseqZoutputformat(processinfo PD,BT filename,struct outputformat * t){ 
+int f;
+char *name=(char *)&IDXUC(filename,2);
+  fprintf(stderr,"createfile %s\n",name);
+ f=open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
+  createfilefromoutput( t,f);
+  close(f);
+return 0;
+}
 
 
 BT createfileZbuiltinZintzseqZintzseq(processinfo PD,BT filename,BT t){ 
@@ -502,7 +526,7 @@ BT createfileZbuiltinZintzseqZintzseq(processinfo PD,BT filename,BT t){
 // where BB is on of the previous formats
 int f;
 char *name=(char *)&IDXUC(filename,2);
- printf("createfile %s\n",name);
+  fprintf(stderr,"createfile %s\n",name);
  f=open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
   //printf("%lld type: %lld\n",SEQLEN(t),IDXUC(t,0));
   if (IDXUC(t,0)==0) write(f, &IDXUC(t,2),8*SEQLEN(t) );
@@ -533,7 +557,7 @@ BT callstackZbuiltinZint(processinfo PD,BT maxsize){
       BT frames=backtrace(  (void*)(r+16) ,(int)maxsize);
        IDXUC(r,0)=0;
        IDXUC(r,1)=frames;
-      // printf("CALLStACK %d\n",frames);
+      //  fprintf(stderr,"CALLStACK %d\n",frames);
      return r;}
 
 
@@ -548,7 +572,7 @@ if (setjmp(q->env)!=0) {
        q->message= ((BT (*) (processinfo,BT))(q->d->deepcopyseqword) ) (q->spawningprocess,q->error);
         q->kind = 1;}
     else {BT result;
-     //printf("start processfunction\n");
+     // fprintf(stderr,"start processfunction\n");
      q->kind = 0;
      switch( q->d->noargs){
          case 0:
@@ -565,11 +589,11 @@ if (setjmp(q->env)!=0) {
      default: assert(0,"only 1 ,2,3 or 4 arguments to process are handled");
         
      }
-     //printf("start result copy \n");
+     // fprintf(stderr,"start result copy \n");
      assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
      q->result= ((BT (*) (processinfo,BT))(q->d->deepcopyresult) ) ( q->spawningprocess,result);
      assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-     //printf("finish result copy\n");
+     // fprintf(stderr,"finish result copy\n");
 
     }
     if (q->freespace )  myfree(&q->space); 
@@ -608,13 +632,13 @@ BT PROCESS2(processinfo PD,BT pin){
 }
 
 BT noop(BT a,BT b) { 
-  //printf( "noop %lld %lld\n",((BT *)a)[0],((BT *)a)[1]);
+  // fprintf(stderr, "noop %lld %lld\n",((BT *)a)[0],((BT *)a)[1]);
 return b;}
 
 
 BT  fill(BT *a1,struct str2 *arg1) {
 arg1->type=(BT)byteseqencetype;
-          //  printf("KL%lld %lld %lld %s\n",arg1->type,arg1->length,(arg1->length+7 )/ 8-1,arg1->data);
+          //   fprintf(stderr,"KL%lld %lld %lld %s\n",arg1->type,arg1->length,(arg1->length+7 )/ 8-1,arg1->data);
       a1[0]=(BT)byteseqencetype;
       a1[1]=arg1->length;
       a1[2]=(BT)arg1;
@@ -625,7 +649,32 @@ arg1->type=(BT)byteseqencetype;
     }
 
 
- BT  step (char * func,struct str2 *arg1, struct str2 *arg2,struct str2 *arg3 ) {
+struct outputformat *output(processinfo p) {return(struct outputformat *) (p->result);}
+
+
+void createfilefromoutput(struct outputformat *t,int file)
+              {       if (t->data->type == 0) {
+                    write(file, (char *)  t->data->data, t->bytelength);
+                   }
+                else {  
+                    int j; int length=t->bytelength;
+                           struct blockseq * blkseq=( struct blockseq *   )t->data ;
+                            struct bitsseq * blks=   blkseq->seqseq;
+                           int blockcount=blks->length; 
+                           int count = blkseq->blksize * 8;
+                        for(j=0; j < blockcount; j++)  { 
+                          write( file,(char *)(blks->data[j])+16,  length < count ? length:count );
+                          length=length-count;
+                      }
+                    
+                }}
+                
+
+                            
+
+
+
+ processinfo  step (char * func,struct str2 *arg1, struct str2 *arg2,struct str2 *arg3 ) {
  // Does not appear to allocate space correctly form pinfo as no space is given for the 3 parameters 
  processinfo PD=&sharedspace;
     int j; BT a1[4],a2[4],a3[4];
@@ -634,19 +683,21 @@ arg1->type=(BT)byteseqencetype;
       pin->deepcopyseqword= (BT)noop;
       pin->func=(BT)dlsym(RTLD_DEFAULT, func);
       if (!pin->func) {
-       printf("[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
       
       pin->noargs=3;
       pin->args[0]=fill(a1,arg1);
-      pin->args[1]=(BT) a1;  //fill(a2,arg2);
-      pin->args[2]=(BT) a1; //fill(a3,arg3);
+      pin->args[1]= fill(a2,arg2);
+      pin->args[2]= fill(a3,arg3);
       /* should be using myalloc below so space is reclaimed */
       processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
       initprocessinfo(p,PD,pin);
       p->freespace=0;
+      fprintf(stderr,"got here\n");
       processfunction(p);  
+                 fprintf(stderr,"finished process here\n");
       if (p->kind==1 )   { 
           char *header = "Status: 500 Error\r\nContent-Type: text/html\r\n\r\n";
         BT s=toUTF8(PD,p->message);
@@ -659,8 +710,13 @@ arg1->type=(BT)byteseqencetype;
         for (i=1; i<=seqlen;i++)
          { BT tmp=IDX(PD,s,i);*(t++)=  tmp;}
          p->message=(BT)r;
-       return (BT) p;}
-      else return (BT) p;
+       return  p;}
+      else 
+        {  
+                  
+  
+        return  p;
+        }
 }   
 
 // end of thread creation.
@@ -736,7 +792,6 @@ if (ee->no==0){
          cpy[i]=PD->encodings[i];
        PD->encodings = cpy;
        PD->newencodings=1;  
-       printf("copied!");
        }
   e = neweinfo(PD);
   PD->encodings[ee->no]=e;
@@ -840,6 +895,7 @@ void inittau(int additional) {
    // signal(SIGBUS,fatal_error_signal);
    // signal(SIGILL,fatal_error_signal);
     loadlibrary(&sharedspace,"stdlib");
+ if (additional==1)  loadlibrary(&sharedspace,"basic");
  
 }
 
@@ -848,12 +904,14 @@ struct str2  *   stepresult( BT x)
     { processinfo p = (processinfo) x; 
       return (struct str2 *)(p->kind==0?p->result:p->message);
     }
+    
+
 void    stepfree ( BT x)
     { processinfo p = (processinfo) x; 
-      printf("space before %d\n",alloccount);
+       fprintf(stderr,"space before %d\n",alloccount);
       myfree(&p->space);
-      printf("freed %lld\n",(BT)p->pid);
-      printf("space used %d\n",alloccount);
+       fprintf(stderr,"freed %lld\n",(BT)p->pid);
+       fprintf(stderr,"space used %d\n",alloccount);
 }
 
 

@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 
+#include  "tau.h"
 
 #define HELLOWORLDPORT 8000
 
@@ -50,26 +51,19 @@
 
 #define  BT long long int
 
-struct str2 { BT  type;
-               BT  length;
-               char data[500];
-               };
+
 
 typedef  struct str2 *pstr2;
 
 struct strblock{ BT type; BT length; BT blocksz;   pstr2 *data; };
 
-BT  step ( char * func,struct str2 *rname,struct str2 *func2,struct str2 *buff ) ; /* defined in tau.c */
-struct str2  *   stepresult( BT x);  /* defined in tau.c */
-void    stepfree ( BT x); /* defined in tau.c */
-void inittau(int additional); /* defined in tau.c */
 
 
 
-int scgi_sendtau( scgi_request *req, BT process)
-{ 
-  struct str2 *txt = stepresult(process);
-  int len = txt->length;
+int scgi_sendtau( scgi_request *req, processinfo process)
+{  struct outputformat * t= output(process);
+
+  int len = t->bytelength;
   scgi_desc *d = req->descriptor;
  
   /*
@@ -85,23 +79,23 @@ int scgi_sendtau( scgi_request *req, BT process)
   }
   /* copy the data */
   
-  if  (txt->type==1) {
-    memcpy(d->outbuf,txt->data,len);
-  } else{
-     struct strblock *d2 = (struct strblock *) txt;
-     
-   //  printf("XX %lld\n",d2->blocksz );
- pstr2 *data2 = (d2->data)+2;
-// printf("complex send %lld %lld\n", data2[0]->length,data2[1]->length);
-  int remaining = len;
-  int blocksz= d2->blocksz;
-  char *p=d->outbuf;
-  while (remaining > 0 ) {
-   // printf("remaining %d %lld\n",remaining,(*data2)->length );
-     memcpy( p,(*data2)->data, remaining > blocksz ? blocksz: remaining );
-     remaining-=blocksz; data2++; p+=blocksz;
-    }
- }
+            if (t->data->type == 0) {
+                   memcpy(d->outbuf,t->data->data,len);
+                    }
+                else {  
+                    int j; int length=t->bytelength;
+                           struct blockseq * blkseq=( struct blockseq *   )t->data ;
+                            struct bitsseq * blks=   blkseq->seqseq;
+                           int blockcount=blks->length; 
+                           int count = blkseq->blksize * 8;
+                           char *p=d->outbuf;
+                        for(j=0; j < blockcount; j++)  { 
+                             memcpy( p,(char *)(blks->data[j])+16, length < count ? length:count  );
+                           length=length-count;p+=count;
+                      }
+                    
+                }
+  
 // { int jj;
 // for (jj=0;jj<len; jj++) printf("%c",d->outbuf[jj]); 
  //         printf("\n" );}
@@ -112,7 +106,7 @@ int scgi_sendtau( scgi_request *req, BT process)
    * once the socket is ready to receive it.
    */
 
- stepfree ( process);
+ stepfree ((BT) process);
   return 1;
 }
 
@@ -240,7 +234,7 @@ int serverloop(void)
 
 
 int main(int argc, char **argv)    {   int i=0; 
-       struct str2 myarg;
+       struct str2 myarg,myarg2,myarg3;
        // printf("argc %d\n",argc);
        if (argc ==1)  {
           // if no argument is supplied run the server
@@ -259,7 +253,14 @@ int main(int argc, char **argv)    {   int i=0;
     
        myarg.length=i;
        myarg.type =1;
-       return step("mainZmainZintzseq",&myarg,&myarg,&myarg);
+              myarg2.length=0;
+       myarg2.type =1;
+                   myarg3.length=0;
+       myarg3.type =1;
+        processinfo p = step("mainZmainZintzseq",&myarg,&myarg2,&myarg3);
+        fflush(stdout); 
+        createfilefromoutput( output(p ),/* stdout */ 1);
+       return 0;
      }
 
 

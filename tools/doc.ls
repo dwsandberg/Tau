@@ -52,6 +52,8 @@ Function createdoc seq.word
  // Creates html tau html documentation. Creates file taudocs.html // 
   let d = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/doc.txt")
   let x = createfile("taudoc.html", [ htmlheader + processpara.d])
+    let e= @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/appdoc.txt")
+  let x2 = createfile("appdoc.html", [ htmlheader + processpara.e])
   let y = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])
   let z = createfile("tools.html", [ htmlheader + processpara.htmlcode."tools"])
   d
