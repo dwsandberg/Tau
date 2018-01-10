@@ -1,3 +1,7 @@
+#!/usr/local/bin/tau
+
+run test11a test11a
+
 Module test11a
 
 use stdlib
@@ -84,6 +88,21 @@ Function test24 seq.seq.word ["k"]
 
 @(+, prettyparagraph, empty:seq.seq.word, ["Function space seq(word)[ encodeword.[ 32]]","function f1(u:int, y:seq(real))int 1","type r1 is struct input:seq(word), n:int, tr:seq(tree(word))","type bb is encoding seq(int)","Function f3(int, b:real)seq(word)export"])
 
+Function t414 boolean 
+ @(&and,filetest, true,arithseq(9,1,4))
+  
+use fileresult
+
+use fileio
+
+function filetest( i:int) boolean
+   let name="test"+toword.i+".txt"
+  let a=createbytefile(name,arithseq(i,1,48))
+   fileexists(name) &and 
+     i = length(getfile.name)  
+   
+  
+
 Function test11a seq.word 
  let z = [ t401, 
   t402, 
@@ -98,6 +117,7 @@ Function test11a seq.word
   t411, 
   t412, 
   t413, 
+  t414,
   "EXPECTED):function a boolean(a #"= message.process.parse."function a boolean(a", 
   "EXPECTED]:function a boolean [ a)"= message.process.parse."function a boolean [ a)", 
   "EXPECTED):function a boolean(a +"= message.process.parse."function a boolean(a +", 

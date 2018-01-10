@@ -32,7 +32,7 @@ function removelowcount(mincount:int, p:wordfreq)seq.wordfreq
 function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq 
  sort.@(+, removelowcount.mincount, empty:seq.wordfreq, @(count, identity, dseq.wordfreq(0,"A"_1), a))
 
-Function test2 seq.word @(+, print, empty:seq.word, wordfreq(300, gettext."input"))
+Function test2 seq.word @(+, print, empty:seq.word, wordfreq(300, gettext."testall/input"))
 
 function count(s:seq.wordfreq, w:seq.word)seq.wordfreq @(count, identity, s, w)
 

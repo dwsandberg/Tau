@@ -64,12 +64,18 @@ use internalbc
 
 use seq.internalbc
 
+type machineinfo is record triple:seq.int,datalayout:seq.int
+
+function getmachineinfo   machineinfo builtin.usemangle
+
 
    Function llvm(  deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int) seq.bits
  let  MODABBREVLEN=3 let TYPEABBREVLEN=4
   let offset = length.mapping.llvmconsts
    let  h= addblockheader(add(add(add(add(empty:bitpackedseq.bit,bits.66,8),bits.67,8),bits.192,8),bits.222,8),  2,MODULEBLOCK,MODABBREVLEN)
-    let  a=addrecords(h,MODABBREVLEN,[ [ 1, 1]])
+   let info = getmachineinfo  
+    let  a=addrecords(h,MODABBREVLEN,[ [ 1, 1],[MODULETRIPLE ]+triple.info
+    ,[MODULELAYOUT ]+datalayout.info]) 
    // type block //
    let  typeheader=addblockheader(a,MODABBREVLEN,TYPEBLOCK,TYPEABBREVLEN)
    let  a2=addrecords(typeheader,TYPEABBREVLEN,[ [ ENTRY, length.trecords]]+ trecords)
@@ -202,21 +208,19 @@ function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int, i:in
 Function  constrecords(bits:bitpackedseq.bit,lasttype:int, s:seq.llvmconst,i:int) bitpackedseq.bit
        if i > length.s then bits else 
        let l = s_i
-       let bs =if typ.l=-1 then bits else 
+        if typ.l=-1 then constrecords(bits, lasttype,s, i + 1) else 
           let abbrevlength = 4
          let bits2 = if lasttype=typ.l then bits else 
-                         // addvbr6(addvbr6( addvbr6(addvbr(bits, 3, abbrevlength),1),1),typ.l) //
                          addvbr6 (add(bits,  bits( ( 1 * 64 + 1) * 16 + 3), 16),typ.l)
          let tp=(toseq.l)_1    
-         if  tp=CONSTINTEGER  then
-                // addvbrsigned6(addvbr6( addvbr6(addvbr(bits2, 3, abbrevlength),tp),1),(toseq.l)_2) //
-                  addvbrsigned6(add(bits2,  bits( ( 1 * 64 + tp) * 16 + 3), 16),(toseq.l)_2)
+        let bs= if  tp=CONSTINTEGER  then
+                   addvbrsigned6(add(bits2,  bits( ( 1 * 64 + CONSTINTEGER) * 16 + 3), 16),(toseq.l)_2)
          else  
          let a1 = if length.toseq.l < 32 then
                     add(bits2, bits(((length.toseq.l-1)  * 64 + tp) * 16+ 3) ,16)
              else addvbr6( addvbr6(addvbr(bits2, 3, abbrevlength),tp),length.toseq.l-1)
             addvbr6(  a1, subseq(toseq.l,2,length.toseq.l))
-        constrecords(bs, lasttype,s, i + 1)
+        constrecords(bs, typ.l,s, i + 1)
         
 Function  symentries(bits:bitpackedseq.bit, s:seq.llvmconst,i:int) bitpackedseq.bit
        if i > length.s then bits else 
@@ -244,6 +248,10 @@ Function CONSTANTSBLOCK int 11
 Function FUNCTIONBLOCK int 12
 
 Function TYPEBLOCK int 17
+
+Function MODULETRIPLE int 2
+
+Function MODULELAYOUT int 3
 
 
 Function MODULECODEGLOBALVAR int 7

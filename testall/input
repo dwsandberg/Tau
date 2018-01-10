@@ -1,0 +1,4607 @@
+------------------------------------------------
+
+Module stdlib
+
+use stdlib
+
+use seq(int)
+
+use seq(word)
+
+use seq(seq(word))
+
+use aseq(int)
+
+use seq(seq(int))
+
+use oseq(int)
+
+use fileresult
+
+type int
+
+Function arithseq(int, int, int)seq(int); export
+
+Function constantseq(len:int, element:int)seq(int); export
+
+Function_(seq(word), int)word; export
+
+Function_(seq(seq(word)), int)seq(word); export
+
+Function_(seq(int), int)int; export
+
+Function length(seq(word))int; export
+
+Function length(seq(seq(word)))int; export
+
+Function length(seq(int))int; export
+
+Function findelement(word, seq(word))int; export
+
+Function findelement(word, seq(word), int)int; export
+
+Function identity(seq(word))seq(word); export
+
+Function identity(word)word; export
+
+Function identity(int)int; export
+
+Function substring(seq(seq(word)), int, int)seq(seq(word)); export
+
+Function substring(seq(word), int, int)seq(word); export
+
+Function substring(seq(int), int, int)seq(int); export
+
+Function in(word, seq(word))boolean; export
+
+Function in(seq(word), seq(seq(word)))boolean; export
+
+Function in(int, seq(int))boolean; export
+
+Function =(seq(word), seq(word))boolean; export
+
+Function =(seq(int), seq(int))boolean; export
+
+Function +(seq(word), word)seq(word); export
+
+Function +(seq(int), seq(int))seq(int); export
+
+Function +(seq(int), int)seq(int); export
+
+Function +(seq(seq(word)), seq(word))seq(seq(word)); export
+
+Function +(seq(seq(word)), seq(seq(word)))seq(seq(word)); export
+
+Function +(a:seq(word), b:seq(word))seq(word); export
+
+
+Function toint(boolean)int; export
+
+Function towords(a:seq(int))seq(word); export
+
+Function-(i:int)int; 0 - i
+
+Function nextpower(i:int, base:int, start:int)int;
+if i > start then nextpower(i, base, start * base)else start
+
+Function openpara word; "("_1
+
+Function closepara word; ")"_1
+
+Function comma word; ","_1
+
+Function openbracket word; "["_1
+
+Function closebracket word; "]"_1
+
+Function colon word; ":"_1
+
+Function space word; encodeword.[32]
+
+Function EOL  word;  encodeword.[10]
+
+Function createfile(filename:seq(word), s:seq(seq(word)))int; export
+
+Function gettext(filename:seq(word))seq(seq(word)); export
+
+Function commachar int; 44
+
+Function hyphenchar int; 45
+
+-----------------
+
+type ordering is struct toint:int
+
+type boolean is struct toint:int
+
+Function ?(a:int, b:int)ordering; builtin.CMP
+
+Function ?(a:ordering, b:ordering)ordering; builtin.CMP
+
+Function +(a:int, b:int)int; builtin.ADD
+
+Function-(a:int, b:int)int; builtin.SUB
+
+Function *(a:int, b:int)int; builtin.MULTIPLY
+
+Function /(a:int, b:int)int; builtin.DIVIDE
+
+Function hash(i:int)int; builtin.HASH
+
+Function =(a:int, b:int)boolean; builtin.EQL
+
+Function =(a:ordering, b:ordering)boolean; builtin.EQL
+
+Function =(a:boolean, b:boolean)boolean; builtin.EQL
+
+EQ GT and LT are the possible results of ? operator
+
+Function EQ ordering; ordering.1
+
+Function GT ordering; ordering.2
+
+Function LT ordering; ordering.0
+
+Function print(o:ordering)seq(word); ["LT EQ GT"_(toint.o + 1)]
+
+--------------------
+
+Function true boolean; boolean.1
+
+Function false boolean; boolean.0
+
+Function ?(a:boolean, b:boolean)ordering; toint.a ? toint.b
+
+Function and(a:boolean, b:boolean)boolean; if a then b else false
+
+Function or(a:boolean, b:boolean)boolean; if a then true else b
+
+Function ∧(a:boolean, b:boolean)boolean; if a then b else false
+
+Function ∨(a:boolean, b:boolean)boolean; if a then true else b
+
+Function not(a:boolean)boolean; builtin.NOT
+
+Function abs(x:int)int; if x < 0 then 0 - x else x
+
+Function mod(x:int, y:int)int;
+if x < 0 then x - x / y * y + y else x - x / y * y
+
+Function >(a:int, b:int)boolean; builtin.GT
+
+Function <(a:int, b:int)boolean; builtin.LT
+
+Function ≤(a:int, b:int)boolean; not(a > b)
+
+Function ≥(a:int, b:int)boolean; not(a < b)
+
+Function max(a:int, b:int)int; if a > b then a else b
+
+Function min(a:int, b:int)int; if a < b then a else b
+
+Function between(i:int, lower:int, upper:int)boolean; i ≥ lower ∧ i ≤ upper
+
+---------------------------
+
+use encoding.seq.int
+
+
+type word is struct bb:encoding.seq.int
+
+Function encodeword(a:seq.int) word;  word.encode.a
+
+Function encoding(w:word)int;  encoding.bb.w
+
+Function decode(w:word)seq(int);  decode.bb.w
+
+
+Function hash(a:seq(int))int; @(+, hash, 0, a)
+
+Function hash(a:seq(word))int; @(+, hash, 0, a)
+
+Function hash(a:word)int; hash.encoding.a
+
+
+Function ?(a:word, b:word)ordering; if encoding.a = encoding.b then EQ else decode.a ? decode.b
+
+Function =(a:word, b:word)boolean; encoding.a = encoding.b
+
+Function hasdigit(w:word)boolean; between(decode(w)_1, 48, 57)
+
+covert integer to sequence of characters
+
+Function toword(n:int)word; encodeword.toUTF8.n
+
+Function toUTF8(n:int)seq(int);
+if n < 0
+then [hyphenchar] + toUTF8(n, 10)
+else toUTF8(-n, 10)
+
+function toUTF8(n:int, base:int)seq(int);
+comment n should always be negative.This is to handle the smallest integer in the twos complement representation of integers;
+if base + n > 0
+then [48 - n]
+else toUTF8(n / base, base)+ [48 + n / base * base - n]
+
+use libscope
+
+Function todigit(i:int)int; 
+assert between(i, 48, 57):"invalid digit";
+i - 48
+
+Function adddigit(val:int, digit:int)int; val * 10 + digit
+
+Function toint(w:word)int; @(adddigit, todigit, 0, decode.w)
+
+Function merge(a:seq(word))word; encodeword.@(+, decode, empty.int, a)
+
+Function merge(a:word, b:word)word; encodeword(decode.a + decode.b)
+
+Function addspace(s:seq(word), i:int)seq(int);
+let this = s_i;
+let next = if i = length.s then EOL else s_(i + 1);
+let d = decode.this;
+if next = EOL
+then d
+else if this = EOL
+then d
+else if next in("()-].,:;""_^"+ space)
+then d
+else if this in("()-[.:""_^"+ space)
+then d
+else d + [32]
+
+
+
+Function UTF8(i:int)seq(int);
+if i < 128 then [i] else subUTF8(2, i / 64)+ [128 + i mod 64]
+
+Function subUTF8(n:int, c:int)seq(int);
+if c < 2^(7 - n)
+then [256 - 2^(8 - n)+ c]
+else subUTF8(n + 1, c / 64)+ [128 + c mod 64]
+
+Function^(i:int, n:int)int; @(*, identity, 1, constantseq(n, i))
+
+Function toUTF8(a:seq(word))seq(int);
+@(+, addspace( a), empty.int, arithseq(length.a, 1, 1))
+
+
+------------------------------------
+
+Module seq(T)
+
+Function _(dseq.T, int) T; export
+
+
+type seq is sequence length:int, x:T
+
+type pseq is sequence length:int, a:seq(T), b:seq(T)
+
+use stdlib
+
+use aseq(int)
+
+use seq(int)
+
+Function =(T, T)boolean; unbound
+
+
+Function_(a:seq(T), b:int)T; builtin.IDX2
+
+
+
+Function length(a:seq(T))int; export
+
+Function =(a:seq(T), b:seq(T))boolean;
+if length.a = length.b then subequal(a, b, length.a)else false
+
+Function subequal(a:seq(T), b:seq(T), i:int)boolean;
+if i = 0
+then true
+else if a_i = b_i
+then subequal(a, b, i - 1)
+else false
+
+subin is helper function
+
+Function subin(a:T, s:seq(T), i:int)boolean;
+if i = 0
+then false
+else if a = s_i
+then true
+else subin(a, s, i - 1)
+
+Function in(a:T, s:seq(T))boolean; subin(a, s, length.s)
+
+Function identity(a:T)T; a
+
+Function findelement(w:T, s:seq(T))int;
+comment result   > length.s when element is not found. Otherwise results is location in sequence;
+findelement(w, s, 1)
+
+Function findelement(w:T, s:seq(T), i:int)int;
+if i > length.s
+then i
+else if s_i = w
+then i
+else findelement(w, s, i + 1)
+
+-------------------------
+
+Function length(c:pseq(T))int; export
+
+Function a(pseq(T))seq(T); export
+
+Function b(pseq(T))seq(T); export
+
+Function_(s:pseq(T), i:int)T;
+let len = length.a.s;
+if i > len
+then
+ iftype x:pseq.T = b.s
+ then x_(i - len)
+ else b(s)_(i - len)
+else iftype x:pseq.T = a.s then x_i else a(s)_i
+
+Function +(a:seq(T), b:seq(T))seq(T);
+let la = length.a;
+if la = 0
+then b
+else
+ let lb = length.b;
+ if lb = 0
+ then a
+ else
+  let totallength = la + lb;
+  if totallength = 2
+  then [a_1, b_1]
+  else
+   iftype ta:pseq.T = a
+   then cat3(totallength, a.ta, b.ta, b)
+   else
+    iftype tb:pseq.T = b
+    then cat3(totallength, a, a.tb, b.tb)
+    else toseq.pseq(totallength, a, b)
+
+Function cat3(totallength:int, a:seq(T), b:seq(T), c:seq(T))seq(T);
+if length.a > length.b
+then toseq.pseq(totallength, a, b + c)
+else if length.b < length.c
+then toseq.pseq(totallength, a + b, c)
+else toseq.pseq(totallength, toseq.pseq(length.a + length.b, a, b), c)
+
+Function largeseq(s:seq(T))seq(T);
+let length = length.s;
+if length < 64
+then
+ if length > 16
+ then s
+ else if length > 8
+ then
+  if length = 16
+  then [s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_10, s_11, s_12, s_13, s_14, s_15, s_16]
+  else s
+ else if length = 8
+ then [s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8]
+ else if length = 4
+ then [s_1, s_2, s_3, s_4]
+ else s
+else s
+
+Function +(l:seq(T), a:T)seq(T); l + [a]
+
+/ Function suball(c:T, s:seq(T), i:int)seq(int); if i = length.s + 1 then empty.int else if s_i = c then [i] + suball(c, s, i + 1)else suball(c, s, i + 1)
+
+/ Function all(c:T, s:seq(T))seq(int); suball(c, s, 1)
+
+Function substring(s:seq(T), start:int, end:int)seq(T);
+if start > end
+then empty.T
+else if start < 1
+then substring(s, 1, end)
+else if end > length.s
+then substring(s, start, length.s)
+else if start = 1 ∧ length.s = end
+then s
+else
+ iftype x:pseq.T = s
+ then substring(x, start, end)
+ else @(+,_.s, empty.T, arithseq(end - start + 1, 1, start))
+
+Function substring(p:pseq(T), start:int, end:int)seq(T);
+if start > length.a.p
+then substring(b.p, start - length.a.p, end - length.a.p)
+else if end > length.a.p
+then substring(a.p, start, length.a.p)+ substring(b.p, 1, end - length.a.p)
+else substring(a.p, start, end)
+
+Function removedups(a:seq(T), b:seq(T), c:int)seq(T);
+if c = 0
+then b
+else if a_c in b
+then removedups(a, b, c - 1)
+else removedups(a, b + a_c, c - 1)
+
+Function removedups(a:seq(T))seq(T); removedups(a, empty.T, length.a)
+
+function replace2(s:seq(T), index:int, value:T)seq(T);
+iftype p:pseq.T = s
+then
+ if index > length.a.p
+ then a.p + replace2(b.p, index - length.a.p, value)
+ else replace2(a.p, index, value)+ b.p
+else @(+,_.s, @(+,_.s, empty.T, arithseq(index - 1, 1, 1))+ value, arithseq(length.s - index, 1, index + 1))
+
+Function last(a:seq.T) T; a_length.a
+
+--------------------------
+
+type cseq is sequence len:int, element:T
+
+Function length(c:cseq(T))int; len.c
+
+Function_(s:cseq(T), i:int)T; element.s
+
+Function constantseq(len:int, element:T)seq(T); toseq.cseq(len, element)
+
+--------------------
+
+dseq lets a sequence have a default value even beyond the length of the seq.
+
+type dseq is sequence length:int, default:T, data:seq(T)
+
+Function_(d:dseq(T), i:int)T;
+if i > length.data.d then default.d else data(d)_i
+
+Function replace(a:seq(T), b:int, v:T)seq(T);
+iftype d:dseq.T = a
+then
+ let s =
+  if b > length.a
+  then replace2(data.d + constantseq(b - length.a, default.d), b, v)
+  else replace2(data.d, b, v);
+ toseq.dseq(length.s, default.d, s)
+else replace2(a, b, v)
+
+Function dseq(d:T)seq(T); toseq.dseq(0, d, empty.T)
+
+_________________________________
+
+Module oseq(T)
+
+use stdlib
+
+use seq(T)
+
+Function ?(T, T)ordering; unbound
+
+Function =(T, T)boolean; unbound
+
+Function subcmp(a:seq(T), b:seq(T), i:int)ordering;
+let lengtha = length.a;
+let lengthb = length.b;
+if i = lengtha + 1
+then lengtha ? lengthb
+else if i ? lengthb = GT
+then GT
+else
+ let c = a_i ? b_i;
+ if c = EQ then subcmp(a, b, i + 1)else c
+
+Function ?(a:seq(T), b:seq(T))ordering; subcmp(a, b, 1)
+
+Function sort(a:seq(T))seq(T);
+if length.a < 2
+then a
+else merge(sort.substring(a, 1, length.a / 2), sort.substring(a, length.a / 2 + 1, length.a))
+
+Function merge(a:seq(T), b:seq(T))seq(T);
+if length.a = 0
+then b
+else if length.b = 0
+then a
+else if b_1 ? a_length.a = GT
+then a + b
+else if a_1 ? b_length.b = GT
+then b + a
+else submerge(a, b, 1, 1)
+
+Function submerge(a:seq(T), b:seq(T), i:int, j:int)seq(T);
+if i > length.a
+then substring(b, j, length.b)
+else if j > length.b
+then substring(a, i, length.a)
+else if b_j ? a_i = LT
+then [b_j] + submerge(a, b, i, j + 1)
+else [a_i] + submerge(a, b, i + 1, j)
+
+binarysearch returns position in seq if found and the negation of the posistion if not found
+
+Function binarysearch(s:seq(T), val:T)int; binarysearch(s, 1, length.s, val)
+
+Function binarysearch(s:seq(T), b:int, a:int, val:T)int;
+if a < b
+then-(a + 1)
+else
+ let p =(a + b)/ 2;
+ let c = s_p ? val;
+ if c = EQ
+ then p
+ else if c = GT
+ then binarysearch(s, b, p - 1, val)
+ else binarysearch(s, p + 1, a, val)
+
+Function setinsert(s:seq(T), val:T)seq(T);
+let i = binarysearch(s, val);
+if i > 0
+then s
+else substring(s, 1,-i - 1)+ [val] + substring(s,-i, length.s)
+
+Function setdelete(s:seq(T), val:T)seq(T);
+let i = binarysearch(s, val);
+if i > 0
+then substring(s, 1, i - 1)+ substring(s, i + 1, length.s)
+else s
+
+--------------------
+
+Module aseq(T)
+
+type aseq is sequence length:int, step:T, start:T
+
+use stdlib
+
+use seq.T
+
+Function +(T, T)T; unbound
+
+Function *(int, T)T; unbound
+
+Function length(s:aseq(T))int; export
+
+Function_(s:aseq(T), i:int)T; start.s +(i - 1)* step.s
+
+Function arithseq(a:int, b:T, c:T)seq(T); toseq.aseq(a, b, c)
+
+-----------------
+
+Module tree(T)
+
+type tree is struct label:T, sons:seq(tree(T))
+
+use stdlib
+
+use seq(tree(T))
+
+Function =(T, T)boolean; unbound
+
+
+Function =(a:tree(T), b:tree(T))boolean;
+if label.a = label.b then sons.a = sons.b else false
+
+Function tree(l:T)tree(T); tree(l, empty.tree.T)
+
+Function label(t:tree(T))T; export
+
+Function sons(t:tree(T))seq(tree(T)); export
+
+Function tree(l:T, s:seq(tree(T)))tree(T); export
+
+Function_(t:tree(T), i:int)tree(T); sons(t)_i
+
+Function nosons(t:tree(T))int; length.sons.t
+
+Function postorder(a:tree(T))seq(tree(T));
+@(+, postorder, empty.tree.T, sons.a)+ a
+
+Function replace(with:T, a:T,t:tree(T) )tree(T);
+let newlabel = if label.t = a then with else label.t;
+   tree(newlabel,@(+,replace(with,a),empty.tree.T,sons.t))
+
+
+------------------
+
+Module ipair(T)
+
+type ipair is struct index:int, value:T
+
+use stdlib
+
+Function index(ipair(T))int; export
+
+Function value(ipair(T))T; export
+
+Function ipair(i:int, t:T)ipair(T); export
+
+------------------------------
+
+Module invertedseq(T)
+
+type invertedseq is struct hashtable:seq(seq(ipair(T))), elecount:int
+
+use stdlib
+
+use ipair(T)
+
+use seq(seq(ipair(T)))
+
+use seq(ipair(T))
+
+Function hashtable(invertedseq(T))seq(seq(ipair(T))); export
+
+Function hash(T)int; unbound
+
+Function =(T, T)boolean; unbound
+
+Function =(a:ipair(T), b:ipair(T))boolean;
+index.a = index.b ∧ value.a = value.b
+
+Function lookup(value:T, h:invertedseq(T))int;
+@(max, ele.value, 0, hashtable(h)_(hash.value mod length.hashtable.h + 1))
+
+Function ele(v:T, a:ipair(T))int; if v = value.a then index.a else 0
+
+Function invertedseq(v:T)invertedseq(T); invertedseq(constantseq(4, empty.ipair.T), 0)
+
+Function add(h:invertedseq(T), i:int, v:T)invertedseq(T);
+add(h, ipair(i, v))
+
+
+Function replicatefourseq2(a:seq(seq(ipair(T))))seq(seq(ipair(T)));
+a + a +(a + a)
+
+Function add(h:invertedseq(T), p:ipair(T))invertedseq(T);
+if 3 * elecount.h > 2 * length.hashtable.h
+then add(invertedseq(replicatefourseq2.hashtable.h, elecount.h), p)
+else subadd(h, p, hash.value.p mod length.hashtable.h + 1)
+
+Function ele2(e:T, len:int, a:ipair(T))seq(ipair(T));
+if value.a = e ∨ not(hash.e mod len = hash.value.a mod len)
+then empty.ipair.T
+else [a]
+
+Function subadd(m:invertedseq(T), p:ipair(T), hashofvalue:int)invertedseq(T);
+invertedseq(replace(hashtable.m, hashofvalue, @(+, ele2(value.p, length.hashtable.m), [p], hashtable(m)_hashofvalue)), elecount.m + 1)
+
+Function toipair(m:invertedseq(T))seq(ipair(T));
+removedups.@(+, identity, empty.ipair.T, hashtable.m)
+
+-----------------------------------------
+
+Module real
+
+type real
+
+use stdlib
+
+use seq(real)
+
+
+Function-(r:real)real; 0.0 - r
+
+Function int2real(i:int)real; builtin.INT2REAL
+
+Function intpart(a:real)int; builtin.INTPART
+
+Function decpart(a:real)real; a - int2real.intpart.a
+
+Function sqrt(a:real)real; builtin.RSQRT
+
+Function sin(a:real)real; builtin.SIN
+
+Function arccos(a:real)real; builtin.ARCCOS
+
+Function arcsin(a:real)real; builtin.ARCSIN
+
+Function cos(a:real)real; builtin.COS
+
+Function tan(a:real)real; builtin.TAN
+
+Function ?(a:real, b:real)ordering; builtin.RCMP
+
+Function =(a:real, b:real)boolean; a ? b = EQ
+
+Function >(a:real, b:real)boolean; a ? b = GT
+
+Function <(a:real, b:real)boolean; a ? b = LT
+
+Function max(a:real, b:real)real; if a ? b = GT then a else b
+
+Function min(a:real, b:real)real; if a ? b = LT then a else b
+
+Function +(a:real, b:real)real; builtin.RADD
+
+Function-(a:real, b:real)real; builtin.RSUB
+
+Function *(a:real, b:real)real; builtin.RMULT
+
+Function /(a:real, b:real)real; builtin.RDIV
+
+Function representation(a:real) int; builtin
+
+Function   casttoreal(i:int)  real; builtin
+
+Function^(i:real, n:int)real; @(*, identity, 1.0, constantseq(n, i))
+
+Function makereal(whole:int, digits:int)real;
+if digits < 7
+then int2real.whole / int2real([10, 100, 1000, 10000, 100000, 1000000]_digits)
+else int2real.whole / int2real(10^digits)
+
+
+Function print(rin:real, decimals:int)seq(word);
+(if rin < 0.0 then [space] else empty.word)+towords.toUTF8(rin, decimals)
+
+Function toUTF8(rin:real, decimals:int)seq(int);
+if rin ? int2real.0 = LT
+then [hyphenchar] + toUTF8(int2real.0 - rin, decimals)
+else
+ let a = 10^decimals;
+ let r = rin + 1.0 / int2real(a * 2);
+ toUTF8.intpart.r + [decode("."_1)_1] + lpad(toUTF8.intpart((r - int2real.intpart.r)* int2real.a), decimals)
+
+Function lpad(l:seq(int), n:int)seq(int);
+constantseq(n - length.l, 48)+ l
+
+Function reallit(s:seq(int))real; reallit(s,-1, 1, 0, 1)
+
+Function reallit(s:seq(int), decimals:int, i:int, val:int, neg:int)real;
+if i > length.s
+then
+ let r =
+  if decimals < 1
+  then int2real.val
+  else if decimals < 7
+  then int2real.val / int2real([10, 100, 1000, 10000, 100000, 1000000]_decimals)
+  else int2real.val / int2real(10^decimals);
+ if neg < 1 then-1.0 * r else r
+else if between(s_i, 48, 57)
+then reallit(s, if decimals =-1 then-1 else decimals + 1, i + 1, 10 * val + s_i - 48, neg)
+else if s_i = 32 ∨ s_i = commachar
+then reallit(s, decimals, i + 1, val, neg)
+else if i < 3 ∧ s_i = hyphenchar
+then reallit(s, decimals, i + 1, val,-1)
+else
+ assert s_i = decode("."_1)_1:"unexpected character in real literal"+ encodeword.s;
+ reallit(s, decimals + 1, i + 1, val, neg)
+
+-------------
+
+scope bytesupport
+
+use stdlib
+
+use libscope
+
+
+Function bytesinword int; 8
+
+byteno values run from 0 to bytesinword-1
+
+Function getbytefromword(cpuword:int, byteno:int)int;
+(if byteno = 0 then cpuword else cpuword / 256^byteno - if cpuword < 0 then 1 else 0)mod 256
+
+Function shiftleft(i:int, j:int)int; 256 * i + j
+
+Function IDX2(a:seq.int,b:int) int;
+if internalidxuc(a,0) = 0 then assert b > 0 ∧ b ≤ internalidxuc(a,1):"out of bounds"+stacktrace; internalidxuc(a, b + 1)else internalidx(a, b)
+
+function internalidx(a:seq.int, b:int) int; builtin.IDX
+
+Function internalidxuc(a:seq.int, b:int) int; builtin.IDXUC
+
+
+Module byteseq(T)
+
+type byteseq is sequence length:int, b:seq(int), a:T
+
+use stdlib
+
+use seq(T)
+
+use bytesupport
+
+function tobyte(T)int; unbound
+
+function frombyte(int, byteseq(T))T; unbound
+
+
+Length is only export so type byteseq is exported.
+
+Function length(byteseq.T) int; export
+
+function subbyteseq(s:seq(T), i:int)seq(int);
+let b = index(s, i);
+if i / bytesinword * bytesinword = i
+then [@(shiftleft, index.s, if b > 127 then b - 256 else b, arithseq(bytesinword - 1,-1, i - 1))]
+else empty.int
+
+function index(s:seq(T), i:int)int;
+let b = tobyte(s_i);
+assert not(b < 0 ∨ b > 255):"not a sequence of bytes"+ toword.b;
+b
+
+function length(seq(T))int; export
+
+Function bytepacked(s:seq(T), fill:T)seq(int);
+@(+, subbyteseq(s + constantseq((0 - length.s)mod bytesinword, fill)), empty.int, arithseq((length.s + bytesinword - 1)/ bytesinword, bytesinword, bytesinword))
+
+Function byteseq(s:seq(T), fill:T)seq(T);
+toseq.byteseq(length.s, bytepacked(s, fill), fill)
+
+function_(a:byteseq(T), i:int)T;
+frombyte(getbytefromword(b(a)_((i +(bytesinword - 1))/ bytesinword),(i - 1)mod bytesinword), a)
+
+Function cbyteseq(a:int, b:seq(int), c:T)seq(T);
+toseq.byteseq(a, b, c)
+
+---------------------------
+
+Module fileresult
+
+type fileresult is struct size:int, word1:int, word2:int, data:seq(int)
+
+use stdlib
+
+use byteseq(int)
+
+use seq(seq(int))
+
+use seq(seq(seq(int)))
+
+use packedseq.int
+
+use blockseq(int)
+
+use seq.int
+
+Function tobyte(i:int)int; i
+
+function frombyte(i:int, j:byteseq(int))int; i
+
+Function getfile(f:seq(int))fileresult; builtin.MAPFILE.STATE
+
+Function blockit(seq.int)seq.int ; export
+
+Blockit is exported so other deepcopy functions will compile
+
+Function createfile(filename:seq(int), filewords: seq(int))int; builtin.OUTPUT2
+
+Function createfile(filename:seq(word), filewords:seq(int))int;
+createfile(@(+, decode, empty.int, filename),  blockit.filewords)
+
+Function getfile(f:seq(word))seq(int);
+let file = getfile.@(+, decode, empty.int, f);
+cbyteseq(size.file, [word1.file, word2.file] + data.file, 1)
+
+Function readfile(f:seq(word))seq(int);
+let file = getfile.@(+, decode, empty.int, f);
+comment assert size.file / 8 = length.data.file:"JJJ"+ toword.size.file + toword.length.data.file;
+[word1.file, word2.file] + data.file
+
+Function breaklines(a:seq(int))seq(seq(int));
+breaklines(a, 2, 1, empty.seq.int)
+
+function breaklines(a:seq(int), i:int, last:int, result:seq(seq(int)))seq(seq(int));
+if i > length.a
+then result
+else if a_i = 10
+then breaklines(a, i + 1, i + 1, result + substring(a, last, i - if a_(i - 1)= 13 then 2 else 1))
+else breaklines(a, i + 1, last, result)
+
+Function breakcommas(a:seq(int))seq(seq(int));
+breakcommas(a, 1, 1, empty.seq.int)
+
+function breakcommas(a:seq(int), i:int, last:int, result:seq(seq(int)))seq(seq(int));
+if i > length.a
+then result + substring(a, last, i - 1)
+else if a_i = commachar
+then breakcommas(a, i + 1, i + 1, result + substring(a, last, i - 1))
+else if a_i = decode(""""_1)_1
+then
+ let d = findelement(decode(""""_1)_1, a, i + 2);
+ breakcommas(a, d + 2, d + 2, result + substring(a, i + 1, d - 1))
+else breakcommas(a, i + 1, last, result)
+
+
+
+--------
+
+handle files of paragraphs
+
+Function breakparagraph(a:seq(int))seq(seq(int));
+breakparagraph(a, 1, 1, empty.seq.int)
+
+Function breakparagraph(a:seq(int), i:int, last:int, result:seq(seq(int)))seq(seq(int));
+if i &ge length.a
+then if last < length.a then result + [substring(a, last, length.a)] else result
+else if a_i = 10 ∧ a_(i + 1)= 10
+then
+ let l = substring(a, last, i - 1);
+ if length.l = 0
+ then breakparagraph(a, i + 2, i + 2, result)
+ else breakparagraph(a, i + 2, i + 2, result + substring(a, last, i - 1))
+else breakparagraph(a, i + 1, last, result)
+
+clasify charactor as standalone(1)whitespace(3)or other(0)
+
+Function classify(c:int)int;
+if c > 127
+then 0
+else [
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+3, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]_(c + 1)
+
+
+Function towords(a:seq(int))seq(word); towords2(a, 1, 1,empty.word)
+
+Function gettext(filename:seq(word))seq(seq(word));
+@(+, towords, empty.seq.word, breakparagraph.getfile.filename)
+
+
+
+Function towords2(a:seq(int), i:int, last:int,result:seq.word)seq(word);
+if i > length.a
+then if last > length.a then result else result+[encodeword.substring(a, last, length.a)]
+else
+ let class = classify(a_i);
+ if class = 0
+ then towords2(a, i + 1, last,result)
+ else
+  let newresult = result+
+    (if last = i
+      then  ""
+      else   [encodeword.substring(a, last, i - 1)])
+    + if class = 3 then ""
+      else [encodeword.[a_i]];
+  towords2(a,i+1,i+1,newresult)
+
+________
+
+Function createfile(filename:seq(word), s:seq(seq(word)))int;
+createfile(filename, bytepacked(@(+, toUTF8plus, empty.int, s), 32))
+
+Function toUTF8plus(s:seq(word))seq(int); toUTF8.s + [10, 10]
+
+Function createfile2(filename:seq(word), s:seq(word))int;
+createfile(filename, bytepacked(@(+, decode, empty.int, s), 32))
+
+Function createfile3(filename:seq(word), s:seq(int))int;
+createfile(filename, bytepacked(s, 32))
+
+-------------------
+
+scope packedseqsupport
+
+Function alloc(i:int)int; builtin.myalloc
+
+use stdlib
+
+Module packedseq(T)
+
+use stdlib
+
+use packedseqsupport
+
+use seq(T)
+
+x is included in packedseq so the procedure to access the type with be different between instances of the scope.
+
+type packedseq is sequence length:int, x:seq(T)
+
+function_(a:packedseq(T), i:int)T;
+let ds = sizeoftype.T;
+subidx(a, 16 + 8 * ds *(i - 1))
+
+function subidx(x:packedseq(T), i:int)T; builtin.ADD
+
+
+
+Function packed(s:seq(T))seq(T);
+let ds = sizeoftype.T;
+let p = packedseq(length.s, empty.T);
+let b = cvt2packed(s, alloc(ds * length.s + 2));
+let c = setfld(b, p, 1);
+let d =
+ if ds = 1
+ then
+  let e = setfldzero(b,[0],0);
+    @(+, setfld2(b + 8, s), 0, arithseq(length.s, 1, 1))
+ else
+  let e = setfld(b, p, 0);
+  @(+, setelement(ds, s, b), 0, arithseq(length.s, 1, 1));
+toseq.b
+
+function setfld2(a:packedseq(T), s:seq(T), i:int)int; builtin.SETFLD2
+
+function setelement(ds:int, s:seq(T), a:packedseq(T), i:int)int;
+let d = @(+, setfld(a + 16 + 8 * ds *(i - 1), s_i), 0, arithseq(ds, 1, 0));
+0
+
+function setfldzero(a:packedseq(T), x:seq(int), i:int)int; builtin.SETFLD
+
+function setfld(a:packedseq(T), x:T, i:int)int; builtin.SETFLD
+
+function setfld(a:packedseq(T), x:packedseq(T), i:int)int; builtin.SETFLD
+
+function cvt2packed(s:seq(T), a:int)packedseq(T); builtin
+
+function +(p:packedseq(T), i:int)packedseq(T); builtin.ADD
+
+
+This pstruct function is tacked on here for printing structure of seq.
+
+use libscope
+
+Function pstruct(a:seq(T))seq(word);
+iftype x:pseq.T = a
+then"["+ toword.length.x + pstruct.a.x +"/"+ pstruct.b.x +"]"
+else"^"+ toword.length.a +decodeaddress.typetest2(a,0)
+
+function typetest(a:seq.T, b:int) int; builtin.EQL
+
+function typetest2(a:seq.T, b:int) int; builtin.IDXUC
+
+
+Module blockseq(T)
+
+use packedseqsupport
+
+use packedseq(T)
+
+use packedseq(seq.T)
+
+use stdlib
+
+use seq.T
+
+use seq.seq.T
+
+
+type blockseq is sequence length:int, blocksize:int,data:seq.seq.T
+
+
+Function blockit(s:seq.T) seq.T;
+let blocksize = 10000 / sizeoftype.T
+if  length.s &le blocksize then packed.s
+else toseq.blockseq(length.s,blocksize,packed.@(+,subblock(s,blocksize), empty.seq.T,arithseq( (length.s +blocksize-1) / blocksize, blocksize,1)))
+
+function subblock(s:seq.T,blocksize:int,i:int) seq.T ; packed.substring(s,i,i+blocksize-1)
+
+function_(a:blockseq.T,i:int) T;
+      (data.a)_( ( i-1 ) / blocksize.a + 1 ) _ (      (i-1)  mod blocksize.a + 1)
+
+
+Function pstruct2(a:seq(T))seq(word);
+iftype x:pseq.T = a
+then"["+ toword.length.x + pstruct2.a.x +"/"+ pstruct2.b.x +"]"
+else iftype y:blockseq.T = a then
+ "("+toword.length.y+toword.blocksize.y+toword.length.data.y +")"
+else"^"+ toword.length.a
+
+
+
+Module process(T)
+
+use stdlib
+
+
+type process is struct abortedx:boolean, a:seq.word, resultb:T
+
+
+Function aborted(p:process(T)) boolean; builtin.aborted
+
+Function message(p:process(T)) seq.word; if aborted.p then a.p else "normal exit"
+
+Function result(p:process(T)) T;  assert not.aborted.p: "no result of aborted process";
+ subresult(p,2)
+
+function subresult(a:process.T, b:int) T; builtin.IDXUC
+
+Note: Must access  result of process with function  result rather than using field resultb because if the type T is a structure of more than one element, the compile would assume the elements are store at resultb and not a pointer to the type T.
+
+______________
+
+Module stack(T)
+
+type stack is struct toseq:seq(T)
+
+use seq(T)
+
+use stdlib
+
+use libscope
+
+Function top(f:stack(T), n:int)seq(T);
+substring(toseq.f, length.toseq.f -n + 1, length.toseq.f)
+
+Function top(f:stack(T))T;   toseq(f)_length.toseq.f
+
+Function push(f:stack(T), t:T)stack(T);   stack(toseq.f + t)
+
+Function pop(f:stack(T), n:int)stack(T);
+assert length.toseq.f &ge n : "stack underflow" ;
+stack.substring(toseq.f, 1, length.toseq.f -n)
+
+Function pop(f:stack(T))stack(T);
+assert length.toseq.f > 0 : "stack underflow";
+stack.substring(toseq.f, 1, length.toseq.f -1)
+
+Function emptystack(t:seq(T))stack(T);   stack.empty.T
+
+Function stack(t:T)stack(T);   stack.[t]
+
+Function isempty(f:stack(T))boolean;   length.toseq.f = 0
+
+Function undertop(f:stack(T), n:int)T;   toseq(f)_(length.toseq.f -n)
+
+
+___________________
+
+Module encoding(T)
+
+use invertedseq.T
+
+use seq.T
+
+use stdlib
+
+Function   encode(t:T)  encoding(T);  $encode(t,erecord(t))
+
+Function  decode(t:encoding(T)) T ; $decode(t,erecord($castencode(t)))
+
+Function  encoding(encoding(T)) int; builtin
+
+Function  mapping(t:T) seq.T; $mapencode(t,erecord(t))
+
+Function  localencoding(t:T) int; $localencode(t,erecord(t))
+
+type encoding
+
+type erecord
+
+function erecord(T) erecord(T); builtin.ERECORD.NOINLINE
+
+function $castencode(encoding(T)) T; builtin
+
+function $encode(t:T,erec:erecord(T)) encoding(T); builtin.ENCODE.STATE
+
+function $decode(t:encoding(T),erec:erecord(T)) T; builtin.DECODE.STATE
+
+function $mapencode(t:T,erec:erecord(T)) seq.T; builtin.MAPENCODE.STATE
+
+function $localencode(t:T,erec:erecord(T)) int; builtin.LOCALENCODE.STATE
+
+
+-----------------------------
+
+Module libscope
+
+use stdlib
+
+use seq.libsym
+
+use seq.libmod
+
+use seq.libtype
+
+use seq.mytype
+
+use seq.liblib
+
+
+type findresult is struct bounded:boolean, c:libsym, address:int
+
+ Function  toint(symbolref) int; builtin
+
+Function libs seq.liblib  ; builtin.LOADEDLIBS
+
+Function callstack(n:int) seq.int; builtin.CALLSTACK
+
+Function stacktrace seq.word;
+ @(+,callstacktrace.allsymbols.libs,"",callstack.30)
+
+Function callstacktrace(s:seq.libsym,address:int) seq.word;
+  let r =  @(+,identity,findresult(false, (s)_1,address),s);
+  [EOL]+if not.bounded.r &or address < toint.address.c.r then "unknown" else
+   symname.c.r
+
+function allsymbols(s:seq.liblib) seq.libsym; @(+,syms,empty.libsym,s)
+
+Function decodeaddress(address:int) seq.word; callstacktrace(allsymbols.libs,address)
+
+
+function  +(c:findresult,s:seq.libsym) findresult;
+      @(+,identity,c,s)
+
+function +(  c:findresult,n:libsym) findresult;
+           if  toint.address(n) > address.c then
+      if bounded.c then c else findresult(true,c.c,address.c)
+    else if toint.address(n) < toint.address.c.c then c
+    else findresult(bounded.c,n,address.c)
+
+
+type   symbolref
+
+type libsym  is  struct address:symbolref, symname:seq.word
+, addressname:word
+,inst:seq.word
+
+type liblib is struct libname:seq.word, syms:seq.libsym,types:seq.libtype,
+mods:seq.libmod
+
+Function liblib(seq.word,seq.libsym,seq.libtype,seq.libmod) liblib; export
+
+Function libname(liblib) seq.word; export
+
+Function syms(liblib) seq.libsym; export
+
+Function mods(liblib) seq.libmod; export
+
+Function types(liblib) seq.libtype; export
+
+function =(a:libsym,b:libsym) boolean; false
+
+function =(a:libmod,b:libmod) boolean; false
+
+Function =(a:libtype,b:libtype) boolean; towords.fortype.a = towords.fortype.b
+
+Function =(t:mytype,b:mytype) boolean; towords.t = towords. b
+
+Function abstracttype(m:mytype) word;   (towords.m)_length.towords.m
+
+Function parameter(m:mytype) mytype;  mytype.substring(towords.m,1,length.towords.m-1)
+
+Function libsym(address:symbolref, symname:seq.word, name:word,inst:seq.word)libsym;
+export
+
+Function  address(libsym) symbolref; export
+
+Function  symname(libsym) seq.word; export
+
+Function  inst(libsym) seq.word; export
+
+/Function  org(libsym) seq.word; export
+
+
+Function  addressname(libsym) word; export
+
+Function  symbolref(int) symbolref; builtin
+
+type libtype is struct  fortype:mytype, kind:word,subtypes: seq.mytype
+
+
+Function fortype(libtype) mytype; export
+
+Function subtypes(libtype) seq.mytype; export
+
+Function kind(libtype) word; export
+
+Function libtype( mytype,word,seq.mytype) libtype; export
+
+
+
+
+
+type mytype is struct towords:seq.word
+
+Function mytype ( seq.word) mytype; export
+
+Function towords (mytype) seq.word; export
+
+
+ type libmod is struct parameterized:boolean,modname: word,defines:seq.int,exports:seq.int,
+ unbound: seq.seq.word
+
+ Function libmod(parameterized:boolean,modname: word,defines:seq.int,exports:seq.int, unbound: seq.seq.word)
+ libmod; export
+
+ Function parameterized(libmod) boolean; export
+
+ Function modname(libmod) word; export
+
+ Function defines(libmod) seq.int; export
+
+ Function exports(libmod) seq.int; export
+
+ Function unbound(libmod) seq.seq.word; export
+
+
+
+Module graph(T)
+
+use stdlib
+
+use graph(T)
+
+use seq(arc(T))
+
+use seq(T)
+
+use oseq(T)
+
+use oseq(arc(T))
+
+use set(T)
+
+use set(arc.T)
+
+type arc is struct a:T, b:T
+
+type graph is struct arcs:seq.arc.T, backarcs:seq.arc.T
+
+Function newgraph(a:seq.arc.T)graph.T;
+@(+, identity, graph(empty.arc.T, empty.arc.T), a)
+
+Function =(a:arc.T, b:arc.T)boolean;
+a.a = b.a ∧ a.b = b.b
+
+Function ?(a:arc.T, b:arc.T)ordering;
+let y = a.a ? a.b;
+if y = EQ then b.a ? b.b else y
+
+Function order2(a:arc.T, b:T)ordering; a.a ? b
+
+Function =(a:T, b:T)boolean; unbound
+
+Function ?(a:T, b:T)ordering; unbound
+
+Function a(arc.T)T; export
+
+Function b(arc.T)T; export
+
+Function arcs(graph.T)seq.arc.T; export
+
+Function filtera(f:seq.T, a:arc.T)seq.arc.T;
+if a.a in f then empty.arc.T else [a]
+
+Function filterb(f:seq.T, a:arc.T)seq.arc.T;
+if b.a in f then empty.arc.T else [a]
+
+Function filterc(f:set.T, a:arc.T)seq.arc.T;
+if b.a in f then if a.a in f then [a] else empty.arc.T else empty.arc.T
+
+Function subgraph(g:graph.T, nodes:set.T)graph.T;
+@(+, subgraph1(g, nodes), newgraph.empty.arc.T, toseq.nodes)
+
+graph(@(+, filterc(nodes), empty.arc.T, arcs.g), @(+, filterc(nodes), empty.arc.T, backarcs.g))
+
+function subgraph1(g:graph.T, nodes:set.T, n:T)seq.arc.T;
+@(+, arc.n, empty.arc.T, toseq.intersect(successors(g, n), nodes))
+
+Function nodes(g:graph.T)seq.T;
+@(setinsert, b, @(setinsert, a, empty.T, arcs.g), arcs.g)
+
+Function arc(a:T, b:T)arc.T; export
+
+Function successors(g:graph.T, a:T)set.T; findarcs(arcs.g, a)
+
+Function predecessors(a:T, g:graph.T)seq.T; toseq.findarcs(backarcs.g, a)
+
+function cross(g:graph.T, a:seq.T, b:seq.T)graph.T;
+@(+, subcross.b, g, a)
+
+function subcross(b:seq.T, a:T)seq.arc.T;
+@(+, arc.a, empty.arc.T, b)
+
+function closurestep(g:graph.T, n:seq.T, i:int)graph.T;
+if i > length.n
+then g
+else closurestep(cross(g, predecessors(n_i, g), toseq.successors(g, n_i)), n, i + 1)
+
+Function deletearc(g:graph.T, a:arc.T)graph.T;
+graph(setdelete(arcs.g, a), setdelete(backarcs.g, arc(b.a, a.a)))
+
+Function replacearcs(g:graph.T, oldarcs:set.arc.T, newarcs:set.arc.T)graph.T;
+@(+, identity, @(deletearc, identity, g, toseq(oldarcs - newarcs)), toseq(newarcs - oldarcs))
+
+Function +(g:graph.T, a:arc.T)graph.T;
+graph(setinsert(arcs.g, a), setinsert(backarcs.g, arc(b.a, a.a)))
+
+Function +(g:graph.T, a:seq.arc.T)graph.T; @(+, identity, g, a)
+
+Function closure(g:graph.T)graph.T; closurestep(g, nodes.g, 1)
+
+function findarcs(a:seq.arc.T, n:T)set.T;
+let i = binarysearch2(a, 1, length.a, n);
+if i < 0
+then asset.empty.T
+else asset.@(+, b, empty.T, substring(a, expandrangedown(a, n, i), expandrangeup(a, n, i)))
+
+function expandrangedown(a:seq.arc.T, n:T, l:int)int;
+if l > 1
+then
+ if a(a_(l - 1))= n
+ then expandrangedown(a, n, l - 1)
+ else l
+else l
+
+function expandrangeup(a:seq.arc.T, n:T, u:int)int;
+if u < length.a
+then if a(a_(u + 1))= n then expandrangeup(a, n, u + 1)else u
+else u
+
+function binarysearch2(s:seq.arc.T, b:int, a:int, val:T)int;
+if a < b
+then-(a + 1)
+else
+ let p =(a + b)/ 2;
+ let c = order2(s_p, val);
+ if c = EQ
+ then p
+ else if c = GT
+ then binarysearch2(s, b, p - 1, val)
+ else binarysearch2(s, p + 1, a, val)
+
+Function reachable(g:graph.T, a:seq.T)set.T; reachable(g, asset.a, asset.a)
+
+function successorsseq(g:graph.T, n:T)seq.T; toseq.successors(g, n)
+
+function reachable(g:graph.T, old:set.T, new:set.T)set.T;
+if isempty.new
+then old
+else
+ let a = asset.@(+, successorsseq.g, empty.T, toseq.new);
+ let b = union(old, new);
+ reachable(g, b, a - b)
+
+Function complement(g:graph.T)graph.T; graph(sort.backarcs.g, sort.arcs.g)
+
+Module set(T)
+
+type set is struct toseq:seq.T
+
+use stdlib
+
+use seq(T)
+
+use oseq(T)
+
+function ?(T, T)ordering; unbound
+
+Function asset(s:seq.T)set.T; set.@(setinsert, identity, empty.T, s)
+
+Function +(s:set.T, val:T)set.T; set.setinsert(toseq.s, val)
+
+set.sort.removedups.s
+
+Function intersect(a:set.T, b:set.T)set.T;
+set.intersect(toseq.a, toseq.b, 1, 1)
+
+Function intersect(a:seq.T, b:seq.T, i:int, j:int)seq.T;
+if i > length.a
+then empty.T
+else if j > length.b
+then empty.T
+else
+ let c = a_i ? b_j;
+ if c = EQ
+ then [a_i] + intersect(a, b, i + 1, j + 1)
+ else if c = GT
+ then intersect(a, b, i, j + 1)
+ else intersect(a, b, i + 1, j)
+
+Function union(a:set.T, b:set.T)set.T;
+set.union(toseq.a, toseq.b, 1, 1)
+
+if length.toseq.b = 1 then let i = binarysearch(toseq.a, toseq(b)_1); if i > 0 then a else set(substring(toseq(a), 1,-i-1)+ toseq.b + substring(toseq(b),-i, length.toseq.b))else
+
+Function union(a:seq.T, b:seq.T, i:int, j:int)seq.T;
+if i > length.a
+then substring(b, j, length.b)
+else if j > length.b
+then substring(a, i, length.a)
+else if a_i ? b_j = GT
+then [b_j] + union(a, b, i, j + 1)
+else if a_i ? b_j = EQ
+then [b_j] + union(a, b, i + 1, j + 1)
+else
+ let p = binarysearch(a, i + 1, length.a, b_j);
+ if p > 0
+ then substring(a, i, p)+ union(a, b, p + 1, j + 1)
+ else substring(a, i,-p - 1)+ [b_j] + union(a, b,-p, j + 1)
+
+else [a_i] + union(a, b, i + 1, j)
+
+elements in a but not in b
+
+Function-(a:set.T, b:set.T)set.T;
+set.diff(toseq.a, toseq.b, 1, 1)
+
+Function diff(a:seq.T, b:seq.T, i:int, j:int)seq.T;
+if i > length.a
+then empty.T
+else if j > length.b
+then substring(a, i, length.a)
+else if a_i ? b_j = EQ
+then diff(a, b, i + 1, j + 1)
+else if a_i ? b_j = LT
+then [a_i] + diff(a, b, i + 1, j)
+else diff(a, b, i, j + 1)
+
+Function toseq(set.T)seq.T; export
+
+Function isempty(a:set.T)boolean; length.toseq.a = 0
+
+Function in(val:T, a:set.T)boolean; binarysearch(toseq.a, val)> 0
+
+Function cardinality(a:set.T)int; length.toseq.a
+
+scope r1
+
+type r1 is struct preclist:seq.seq.word, input:seq.word, n:int, tr:seq.tree.word
+
+use stdlib
+
+use tree(word)
+
+use seq(tree(word))
+
+use seq.word
+
+Function addcomma(s:seq.word, a:seq.word)seq.word;
+if length.s = 0 then a else s +","+ a
+
+Function typeint tree.word; tree("int"_1)
+
+Function print(t:tree.word)seq.word;
+if nosons.t = 0
+then [label.t]
+else if nosons.t = 1
+then [label.t] +"."+ print(t_1)
+else [label.t, openpara] + @(addcomma, print,"", sons.t)+ [closepara]
+
+Function tr(r1)seq.tree.word; export
+
+Function check(r:r1, w:word)r1;
+assert this.r = w:"EXPECTED"+ [w] +":"+ substring(input.r, 1, n.r);
+advance.r
+
+Function checksemi(r:r1)r1;
+if this.r =";"_1
+then advance.r
+else
+ assert this.r in"let if comment assert":"EXPECTED;:"+ substring(input.r, 1, n.r);
+ r
+
+Function wrap(label:word, r:r1)r1;
+r1(preclist.r, input.r, n.r, [tree(label, tr.r)])
+
+Function +(a:r1, b:r1)r1;
+r1(preclist.b, input.b, n.b, tr.a + tr.b)
+
+Function this(r:r1)word; input(r)_n.r
+
+Function next(r:r1)word; input(r)_(n.r + 1)
+
+build constructs new r1 and advance
+
+Function build(r:r1, s:seq.tree.word)r1;
+r1(preclist.r, input.r, n.r + 1, s)
+
+Function advance(r:r1)r1; build(r, tr.r)
+
+Function valid(r:r1)r1;
+assert not(this.r in"#,)]"):"DID NOT EXPECTED"+ [this.r] +":"+ substring(input.r, 1, n.r);
+r
+
+Function prec(w:word, preclist:seq.seq.word)int; prec(w, preclist, 1)
+
+Function defaultprec seq.seq.word;
+["_^",
+"",
+"* / mod",
+"in +-",
+"= < > ? ≤ ≥ ≠",
+"∧",
+"∨"]
+
+Function prec(w:word, p:seq.seq.word, i:int)int;
+if i > length.p
+then if w ="#"_1 then length.p + 1 else 0
+else if w in p_i
+then i
+else prec(w, p, i + 1)
+
+-----------procedures to implement expression----------
+
+function exp(r:r1)r1; term(r, length.preclist.r)
+
+Function termlist(r:r1, p:int)r1;
+if prec(this.r, preclist.r)= p
+then termlist(wrap(this.r, r + term(advance.r, p - 1)), p)
+else r
+
+Function doublequote word; encodeword.[34]
+
+Function term(r:r1, p:int)r1;
+if p > 0
+then termlist(term(r, p - 1), p)
+else if this.r = openpara
+then check(exp.advance.r, closepara)
+else if this.r = openbracket
+then wrap("$build"_1, check(seqlist.exp.advance.r, closebracket))
+else if this.r ="-"_1
+then wrap(this.r, term(advance.r, 1))
+else if this.r = doublequote
+then wrap("$wordlist"_1, wordlist2.build(r, empty.tree.word))
+else if this.r ="let"_1
+then
+ let def = checksemi.exp.check(advance.advance.r,"="_1);
+ wrap(this.r, build(r, [tree.next.r])+ def + exp.def)
+else if this.r in"if"
+then
+ let ifpart = check(exp.advance.r,"then"_1);
+ let thenpart = check(exp.ifpart,"else"_1);
+ wrap(this.r, ifpart + thenpart + exp.thenpart)
+else if this.r in"iftype"
+then
+ let typ = check(ttype.check(advance.advance.r,":"_1),"="_1);
+ let ifpart = check(exp.typ,"then"_1);
+ let thenpart = check(exp.ifpart,"else"_1);
+ wrap(this.r, build(r, [tree.next.r])+ typ + ifpart + thenpart + exp.thenpart)
+else if this.r ="comment"_1
+then
+ let i = findelement(";"_1, input.r, n.r);
+ assert i < length.input.r:"expected; before end of paragraph to end comment"+ input.r;
+ let e = exp.r1(preclist.r, input.r, i + 1, empty.tree.word);
+ r1(preclist.r, input.r, n.e, [tree(this.r, @(+, tree, tr.e, substring(input.r, n.r + 1, i - 1)))])
+else if this.r in"assert"
+then
+ let cond = exp.advance.r;
+ let message = checksemi.exp.check(cond,":"_1);
+ let e = exp.message;
+ r1(preclist.r, input.r, n.e, [tree(this.r, [tr(cond)_1, tr(e)_1, tr(message)_1])])
+else if hasdigit.this.r
+then intlit(advance.r, decode.this.r)
+else if next.r = openpara
+then wrap(this.r, check(explist.exp.advance.advance.r, closepara))
+else if next.r ="."_1
+then wrap(this.r, term(advance.advance.r, 1))
+else build(r, [tree.this.valid.r])
+
+Function intlit(r:r1, s:seq.int)r1;
+if hasdigit.this.r
+then intlit(advance.r, s + decode.this.r)
+else if this.r ="."_1
+then reallit(advance.r, s, 0)
+else r1(preclist.r, input.r, n.r, [tree.encodeword.substring(s, firstnonzero(s, 1), length.s)])
+
+Function reallit(r:r1, s:seq.int, decimalplaces:int)r1;
+if hasdigit.this.r
+then
+ let d = decode.this.r;
+ reallit(advance.r, s + d, decimalplaces + length.d)
+else r1(preclist.r, input.r, n.r, [tree("makereal"_1, [tree.encodeword.substring(s, firstnonzero(s, 1), length.s), tree.toword.decimalplaces])])
+
+Function firstnonzero(s:seq.int, i:int)int;
+if length.s = i then i
+else if s_i = 48
+then firstnonzero(s, i + 1)
+else i
+
+Function wordlist2(r:r1)r1;
+if this.r = doublequote
+then if next.r = doublequote then r + wordlist2.build(advance.r, [tree.doublequote])else advance.r
+else
+ assert n.r + 2 < length.input.r:"ERROR:expected""before end of paragraph"+ substring(input.r, 1, n.r);
+ r + wordlist2.build(r, [tree.this.r])
+
+Function seqlist(r:r1)r1;
+if this.r = closebracket
+then r
+else if this.r = comma
+then seqlist(r + exp.advance.r)
+else r
+
+Function explist(r:r1)r1; if this.r = comma then explist(r + exp.advance.r)else r
+
+------------------------
+
+Function newr1(s:seq.word)r1; r1(defaultprec, s +"# #", 1, empty.tree.word)
+
+Function totree(r:r1)tree.word; tr(r)_1
+
+Function expression(s:seq.word)tree.word; totree.exp.newr1.s
+
+Function print(r:r1)seq.word; print.tree("root"_1, tr.r)
+
+Function checkend(r:r1)r1; check(r,"#"_1)
+
+----------------------
+
+Function parsefunc2(r:r1)tree.word;
+let beforeformal = advance.advance.r;
+let paralist = if this.beforeformal = openpara then check(labeltypelist.addPara.advance.beforeformal, closepara)else beforeformal;
+let beforedef = checksemi.ttype.paralist;
+tree(this.r, [tree(next.r, stripname.tr.paralist + tr(beforedef)_1), tr(checkend.exp.beforedef)_1] + tr.paralist)
+
+Function labeltypelist(r:r1)r1; if this.r = comma then r + labeltypelist.addPara.advance.r else r
+
+Function addPara(r:r1)r1;
+if next.r = colon
+then wrap(this.r, ttype.advance.advance.r)
+else wrap(colon, ttype.r)
+
+Function stripname(a:seq.tree.word)seq.tree.word; @(+, lastson, empty.tree.word, a)
+
+Function lastson(s:tree.word)tree.word; s_nosons.s
+
+Function ttype(r:r1)r1;
+if next.r = openpara
+then wrap(this.r, check(ttype.advance.advance.r, closepara))
+else if next.r ="."_1
+then wrap(this.r, ttype.advance.advance.r)
+else build(r, [tree.this.r])
+
+--------
+
+Function isabstract2(type:tree.word)boolean;
+if nosons.type = 0 then label.type ="T"_1 else isabstract2(type_1)
+
+Function subsub(a:word, b:seq.word, c:word)seq.word; if a = c then b else [c]
+
+Function replace(a:word, b:seq.word, inc:seq.word)seq.word;
+@(+, subsub(a, b),"", inc)
+
+Function structele(rx:r1, typ:tree.word)r1;
+let r = ttype.check(advance.rx, colon);
+let fldname = this.rx;
+r1(preclist.r, input.r, n.r, [tree(fldname, if typ = typeint then [tr(r)_1] else [typ, tr(r)_1])])
+
+Function elelist(r:r1, typ:tree.word)r1;
+if this.r = comma then r + elelist(structele(check(r, comma), typ), typ)else r
+
+Function getusetype(text:seq.word)tree.word; totree.ttype.advance.newr1.text
+
+Function parsetypefunction(text:seq.word, scope:tree.word)tree.word;
+if text_1 ="type"_1
+then
+ let type = if nosons.scope > 0 then tree(text_2, [scope_1])else tree(text_2);
+ let r = advance.advance.newr1.text;
+ if this.r ="#"_1
+ then tree("type"_1, [type])
+ else
+  let r2 = check(r,"is"_1);
+  assert this.r2 in"struct sequence":"expected struct or sequence"+":"+ substring(input.r2, 1, n.r2);
+  tree(this.r2, [type] + tr.checkend.elelist(structele(advance.r2, type), type))
+else if text_1 ="use"_1
+then tree("use"_1, [totree.ttype.advance.newr1.text])
+else parsefunc2.newr1.replacements.text
+
+function replacements seq.word;
+let l ="le ≤ ge ≥ ne ≠ and ∧ or ∨";
+@(+, prep.l, empty.word, arithseq(length.l / 2, 2, 1))+ @(+,_.l, empty.word, arithseq(length.l / 2, 2, 2))
+
+Function prep(s:seq.word, i:int)word; merge("&"+ s_i)
+
+function sub(m:seq.word, a:word)word;
+let i = findelement(a, m);
+if i > length.m / 2 then a else m_(i + length.m / 2)
+
+function replacements(t:seq.word)seq.word; @(+, sub.replacements, empty.word, t)
+
+----------------------
+
+scope pretty
+
+use stdlib
+
+use pass0
+
+use seq.tree.word
+
+use tree(word)
+
+use seq(seq(int))
+
+use seq(seq(seq(word)))
+
+use seq.word
+
+use seq.seq.word
+
+/ Function space seq(word); [encodeword.[32]]
+
+Function linebreak seq.word; [encodeword.[10]]
+
+---------------------
+
+Function escapequote(t:tree.word)seq.word;
+if label.t =""""_1 then""""""else [label.t]
+
+Function pretty(preclist:seq.seq.word, t:tree.word)seq.word;
+pretty(length.preclist + 1, t, preclist)
+
+Function prec(preclist:seq.seq.word, t:tree.word)int;
+if nosons.t = 1 ∧ label.t in"-"then 2 else prec(label.t, defaultprec)
+
+Function addcomma2(s:seq.word, a:seq.word)seq.word;
+if length.s = 0 then a else s +","+ EOL + a
+
+Function pretty(rprec:int, t:tree.word, preclist:seq.seq.word)seq.word;
+if label.t ="$wordlist"_1
+then""""+ @(+, escapequote,"", sons.t)+""""
+else if nosons.t = 0
+then [label.t]
+else if nosons.t = 2 ∧ @(or, in.label.t, false, preclist)
+then(
+ if prec(preclist, t_1)> prec(preclist, t)
+ then"("+ pretty(preclist, t_1)+")"
+ else pretty(prec(preclist, t), t_1, preclist))+(if label.t ="-"_1 then [space, label.t, space] else [label.t])+
+ if prec(preclist, t_2)< prec(preclist, t)
+ then pretty(rprec, t_2, defaultprec)
+ else"("+ pretty(preclist, t_2)+")"
+else if label.t ="let"_1
+then
+ let exp = pretty(preclist, t_3);
+ breakline("let"+ [label(t_1)] +"="+ pretty(preclist, t_2))+";"+ if exp_1 = linebreak_1 then exp else breakline.exp
+else if label.t ="$build"_1
+then"["+(
+ if nosons.t > 3
+ then @(addcomma2, pretty.preclist,"", sons.t)
+ else @(addcomma, pretty.preclist,"", sons.t))+"]"
+else if label.t ="assert"_1
+then
+ let exp = pretty(preclist, t_2);
+ breakline("assert"+ pretty(preclist, t_1)+":"+ pretty(preclist, t_3)+";")+ if exp_1 = linebreak_1 then exp else breakline.exp
+else if label.t in"if"
+then prettyif(preclist, [label.t] + pretty(preclist, t_1),"then"+ pretty(preclist, t_2), prettyelse(preclist, t_3), rprec)
+else if label.t in"iftype"
+then prettyif(preclist, [label.t] + label(t_1)+":"+ pretty(preclist, t_2)+"="+ pretty(preclist, t_3),"then"+ pretty(preclist, t_4), prettyelse(preclist, t_5), rprec)
+else if label.t in"comment"
+then
+ let exp = pretty(preclist, t_1);
+ breakline.@(+, label,"comment", substring(sons.t, 2, nosons.t))+";"+ if exp_1 = linebreak_1 then exp else breakline.exp
+else if label.t ="makereal"_1 ∧ nosons.t = 2 ∧ nosons(t_1)= 0 ∧ nosons(t_2)= 0
+then
+ let decimals = toint.label(t_2);
+ let number = zeropad(decode.label(t_1), decimals + 1);
+ [encodeword.substring(number, 1, length.number - decimals)] +"."+ [encodeword.substring(number, length.number - decimals + 1, length.number)]
+else if nosons.t = 1
+then
+ if label.t ="-"_1
+ then
+  if prec(preclist, t_1)> prec(preclist, t)
+  then"-("+ pretty(preclist, t_1)+")"
+  else"-"+ pretty(preclist, t_1)
+ else if rprec > 1 ∧ prec(preclist, t_1)= 0
+ then [label.t] +"."+ pretty(rprec, t_1, preclist)
+ else [label.t] +"("+ pretty(preclist, t_1)+")"
+else [label.t] +"("+ @(addcomma, pretty.preclist,"", sons.t)+")"
+
+function prettyif(preclist:seq.seq.word, ifpart:seq.word, thenpart:seq.word, elsepart:seq.word, rprec:int)seq.word;
+let ifexp =
+ if length(ifpart + thenpart + elsepart)< 30
+ then ifpart + thenpart + elsepart
+ else breakline.ifpart + breakline.thenpart + if elsepart_1 = linebreak_1 then elsepart else breakline.elsepart;
+if rprec < length.preclist + 1 then"("+ ifexp +")"else ifexp
+
+Function prettyelse(preclist:seq.seq.word, t:tree.word)seq.word;
+if label.t ="if"_1
+then
+ let elsepart = prettyelse(preclist, t_3);
+ breakline("else if"+ pretty(preclist, t_1))+ breakline("then"+ pretty(preclist, t_2))+ if elsepart_1 = linebreak_1 then elsepart else breakline.elsepart
+else"else"+ pretty(preclist, t)
+
+Function zeropad(l:seq.int, n:int)seq.int;
+if length.l < n then constantseq(n - length.l, 48)+ l else l
+
+Function breakline(a:seq.word)seq.word; linebreak + replace(linebreak_1, linebreak + space, a)
+
+Function printnameandtype(t:tree.word, i:int)seq.word;
+(if label(t_i)=":"_1 then""else [label(t_i)] +":")+ print.lastson(t_i)+ if i = nosons.t then""else","
+
+Function prettytypefunction(t:tree.word)seq.word;
+if label.t in"Function function"
+then
+ let head = [label.t] + label(t_1)+(
+  if nosons(t_1)= 1
+  then""
+  else"("+ @(+, printnameandtype.t,"", arithseq(nosons.t - 2, 1, 3))+")")+ print(t_1_nosons(t_1));
+ let def = pretty(defaultprec, t_2);
+ head +";"+
+  if length(head + def)> 30
+  then if def_1 = linebreak_1 then def else linebreak + def
+  else [space] + def
+else if label.t in"struct sequence"
+then"type"+ label(t_1)+"is"+ label.t + @(+, printnameandtype.t,"", arithseq(nosons.t - 1, 1, 2))
+else if label.t in"use"
+then"use"+ print(t_1)
+else [label.t] + label(t_1)
+
+Function pretty(t:tree.word)seq.word; pretty(defaultprec, t)
+
+Function prettyparagraph(p:seq.word)seq.word;
+if length.p = 0
+then p
+else if p_1 in"function Function type"
+then prettyPrint.parse(p, tree("xxx"_1))
+else p
+
+------------------
+
+Module pass0
+
+use r1
+
+use pretty
+
+use stdlib
+
+use tree(word)
+
+use seq.parsetree
+
+use seq.tree.word
+
+type parsetree is struct towordtree:tree.word
+
+Function body(p:parsetree)tree.word; towordtree(p)_2
+
+Function symbol(p:parsetree)tree.word; towordtree(p)_1
+
+Function kind(p:parsetree)word; label.towordtree.p
+
+Function lastson(s:tree.word)tree.word; export
+
+Function getusetype(text:seq.word)tree.word; export
+
+Function getusetype(p:parsetree)tree.word; towordtree(p)_1_1
+
+Function getusemodule(p:parsetree)tree.word; towordtree(p)_1
+
+Function type(p:parsetree)tree.word; towordtree(p)_1
+
+Function print(tree.word)seq.word; export
+
+Function replace(a:word, b:seq.word, inc:seq.word)seq.word; export
+
+Function typeint tree.word; export
+
+Function isabstract2(type:tree.word)boolean; export
+
+Function prec(word, seq.seq.word)int; export
+
+Function defaultprec seq.seq.word; export
+
+Function addcomma(s:seq.word, a:seq.word)seq.word; export
+
+Function expression(s:seq.word)tree.word; export
+
+Function replaceT(with:tree.word, p:seq.parsetree)seq.parsetree;
+@(+, replaceT.with, empty.parsetree, p)
+
+Function replaceT(with:tree.word, p:parsetree)parsetree; parsetree.replaceT(with, towordtree.p)
+
+Function replaceT(with:tree.word, s:tree.word)tree.word;
+if label.with ="T"_1 ∧ nosons.with = 0
+then s
+else if nosons.s = 0
+then if label.s ="T"_1 then with else s
+else tree(label.s, replaceT(with, sons.s))
+
+Function replaceT(with:tree.word, s:seq.tree.word)seq.tree.word;
+@(+, replaceT.with, empty.tree.word, s)
+
+Function checktypes2(with:tree.word, types:seq.tree.word, p:parsetree)int;
+let parsetree = towordtree.p;
+let t =
+ if label.parsetree in"struct sequence"
+ then @(+, checktypesymbol.types,"", sons.parsetree)
+ else if label.parsetree in"function Function"
+ then
+  if label(parsetree_2)in"unbound export"
+  then checktypesymbol(types, parsetree_1)
+  else checktypesymbol(types, replaceT(with, parsetree_1))
+ else if label.parsetree in"use"∧ nosons(parsetree_1)= 1
+ then checktype(types, parsetree_1_1)
+ else"";
+assert length.t = 0:"ERROR:invalid type"+ t +"in:"+ prettyPrint.p + @(+, print,"", types);
+0
+
+Function =(a:parsetree, b:parsetree)boolean; towordtree.a = towordtree.b
+
+Function checktypesymbol(types:seq.tree.word, treesym:tree.word)seq.word;
+@(+, checktype.types,"", sons.treesym)
+
+Function checktype(types:seq.tree.word, t:tree.word)seq.word;
+if t in types then""else print.t
+
+Function parse(text:seq.word, scope:tree.word)parsetree; parsetree.parsetypefunction(text, scope)
+
+Function towordtree(parsetree)tree.word; export
+
+Function parsetree(a:tree.word)parsetree; export
+
+Function prettyPrint(t:parsetree)seq.word; prettytypefunction.towordtree.t
+
+Function pretty(t:tree.word)seq.word; export
+
+Function prettyparagraph(p:seq.word)seq.word; export
+
+module buildtree
+
+use stdlib
+
+use seq.func
+
+use tree(cnode)
+
+use seq(tree(cnode))
+
+use seq(cnode)
+
+use stack.tree.cnode
+
+type pass1result is struct code:seq.func, libname:seq.word, syms:seq.libsym, mods:seq.libmod
+
+Function pass1result(code:seq.func, libname:seq.word, syms:seq.libsym, mods:seq.libmod)pass1result; export
+
+Function code(pass1result)seq.func; export
+
+Function libname(pass1result)seq.word; export
+
+Function syms(pass1result)seq.libsym; export
+
+Function mods(pass1result)seq.libmod; export
+
+type cnode is struct inst:word, arg:word, reg:int
+
+Function inst(cnode)word; export
+
+Function arg(cnode)word; export
+
+Function noargs(a:cnode)int; reg.a
+
+Function reg(cnode)int; export
+
+Function =(a:cnode, b:cnode)boolean; inst.a = inst.b ∧ arg.b = arg.a
+
+Function reg(c:tree.cnode)int; reg.label.c
+
+type func is struct nopara:int, symboltext:seq.word, number:word, codetree:tree.cnode
+
+Function dummyfunc func; func(0,"dummyfunc","0"_1, buildcodetree("LIT 1", 1))
+
+Function symboltext(f:func)seq.word; export
+
+Function number(s:func)word; export
+
+Function func(nopara:int, symboltext:seq.word, number:int, codetree:tree.cnode)func;
+func(nopara, symboltext, toword.number, codetree)
+
+Function symboltext(f:func)seq.word; export
+
+Function nopara(func)int; export
+
+Function number(s:func)word; export
+
+Function codetree(f:func)tree.cnode; export
+
+Function replacecodetree(f:func, new:tree.cnode)func; func(nopara.f, symboltext.f, number.f, new)
+
+function =(a:func, b:func)boolean; number.a = number.b
+
+Function hasabstractref(a:seq.word)boolean; hasabstractref(a, 1)
+
+function hasabstractref(s:seq.word, i:int)boolean;
+if i > length.s
+then false
+else if s_i in"PARA LIT CONST LOCAL WORD SET"
+then if i = length.s then true else hasabstractref(s, i + 2)
+else if s_i in"CALL"
+then
+ assert toint(s_(i + 1))< 10:"too many parameters?";
+ hasabstractref(s, i + 3)
+else if s_i in"CALLB"
+then
+ assert toint(s_(i + 1))< 10:"too many parameters?";
+ let a = hasabstractref(s, i + 3);
+ true
+else if s_i in"FREFX"
+then hasabstractref(s, i + 3)
+else if i = length.s
+then true
+else if not.isdigits(s_(i + 1))
+then true
+else hasabstractref(s, i + 2)
+
+Function iscommax(a:word)int; if a in",("then 1 else 0
+
+Function buildcodetree(a:seq.word, i:int)tree.cnode; buildcodetree(a, emptystack.empty.tree.cnode, i)
+
+function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode;
+if i > length.a
+then top.f
+else
+ assert not(a_i in"FREF FREFB CALLB FREFBX"):"XXX";
+ if a_i in"PARA LIT CONST LOCAL WORD"
+ then buildcodetree(a, push(f, tree.cnode(a_i, a_(i + 1), 0)), i + 2)
+ else if a_i in"FREFX"
+ then buildcodetree(a, push(f, tree(cnode(a_i, a_(i + 1), 0), [tree.cnode("LIT"_1, a_(i + 2), 0)])), i + 3)
+ else if a_i in"CALL"
+ then
+  let c = cnode(a_i, a_(i + 2), toint(a_(i + 1)));
+  buildcodetree(a, push(pop(f, noargs.c), tree(c, top(f, noargs.c))), i + 3)
+ else if a_i ="SET"_1
+ then
+  let c = cnode(a_i, a_(i + 1), 2);
+  buildcodetree(a, push(pop(f, 2), tree(c, top(f, 2))), i + 2)
+ else if a_i ="FLD"_1
+ then
+  let args = top(f, 2);
+  let tr =
+   if a_(i + 1)="1"_1
+   then tree(cnode("IDXUC"_1,"0"_1, 2), args)
+   else
+    comment 8 is number of bytes in word;
+    tree(cnode("ADD"_1,"0"_1, 2), [args_1, tree.cnode("LIT"_1, toword(toint.arg.label(args_2)* 8), 0)]);
+  buildcodetree(a, push(pop(f, 2), tr), i + 2)
+ else if a_i ="FLAT"_1
+ then
+  if a_(i + 1)="1"_1
+  then buildcodetree(a, f, i + 2)
+  else buildcodetree(a, @(push, fixup2.top.f, pop.f, arithseq(toint(a_(i + 1)), 1, 0)), i + 2)
+ else if a_i ="NOOP"_1
+ then buildcodetree(a, f, i + 1)
+ else
+  let c = cnode(a_i,"0"_1, toint(a_(i + 1)));
+  assert not(a_i ="if"_1)∨ noargs.c = 3:"XXXX";
+  buildcodetree(a, push(pop(f, noargs.c), tree(c, top(f, noargs.c))), i + 2)
+
+function fixup2(x:tree.cnode, i:int)tree.cnode;
+tree(cnode("IDXUC"_1,"0"_1, 2), [x, tree.cnode("LIT"_1, toword.i, 0)])
+
+Function contains(s:seq.word, i:cnode)boolean; inst.i in s
+
+Function buildcodetree(a:seq.cnode)tree.cnode; top.@(buildtree, identity, emptystack.empty.tree.cnode, a)
+
+Function buildtree(f:stack.tree.cnode, c:cnode)stack.tree.cnode;
+push(pop(f, noargs.c), tree(c, top(f, noargs.c)))
+
+Function print(t:tree.cnode)seq.word;
+let inst = inst.label.t;
+if inst in"FREFX"
+then [inst, arg.label.t, arg.label(t_1)]
+else @(+, print,"", sons.t)+
+ if inst in"PARA LIT CONST LOCAL FREF WORD"
+ then [inst, arg.label.t]
+ else if inst in"CALL CALLB"
+ then [inst, toword.nosons.t, arg.label.t]
+ else if inst ="SET"_1
+ then [inst, arg.label.t]
+ else [inst, toword.nosons.t]
+
+Function print(a:func)seq.word;
+"<"+ Cname(toint.number.a,"??"_1)+ number.a + symboltext.a +">"+ print.codetree.a
+
+Function print(s:seq.func)seq.seq.word; @(+, print, empty.seq.word, s)
+
+Function cnode(word, word, int)cnode; export
+
+Function asmap(code:seq.func)seq.func; @(addit, identity, dseq.dummyfunc, code)
+
+Function addit(s:seq.func, t:func)seq.func; replace(s, toint.number.t, t)
+
+Function in(l:seq.word, t:tree.cnode)boolean;
+if inst.label.t in l then true else @(∨, in.l, false, sons.t)
+
+--------
+
+Check to see if simple inline expansion is possible for function.All parameters must occur exactly once in order.It also must be short.
+
+type ch1result is struct node:int, para:int
+
+function ch1(t:tree.cnode, a:ch1result, son:int)ch1result;
+if son ≤ nosons.t
+then ch1(t, ch1(t_son, a, 1), son + 1)
+else if inst.label.t ="PARA"_1
+then
+ if arg.label.t = toword.para.a
+ then ch1result(node.a + 1, para.a - 1)
+ else ch1result(node.a + 1,-1)
+else ch1result(node.a + 1, para.a)
+
+Function simple(s:func)boolean;
+let a = ch1(codetree.s, ch1result(0, nopara.s), 1);
+between(node.a, 0, nopara.s + 10)∧ para.a = 0 ∧ not("NOINLINE CALL FREF CALLB FREFBX"in codetree.s)
+
+_____________________
+
+use libscope
+
+Converting func to lib symbol.Must remove CONST and FREF and CALL instructions.Conversion would be simpler if constants had RECORD as suffix instead of prefix.
+
+In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation.Otherwise the inst is the code that should be added after the parameters.For example;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.
+
+Function tolibsyminst(cmap:seq.seq.word, lib:word, a:func)seq.word;
+if simple.a
+then asfrag(nopara.a, expandconst(a, cmap, lib, print.codetree.a, 1))
+else [Cname(toint.number.a, lib)] + toword.nopara.a + if"STATE"in codetree.a then"STATE 1"else""
+
+Function asfrag(nopara:int, x:seq.word)seq.word;
+if nopara = 0 ∨ nopara = 1 ∧ substring(x, 1, 2)="PARA 1"∨ nopara = 2 ∧ substring(x, 1, 4)="PARA 2 PARA 1"∨ nopara = 3 ∧ substring(x, 1, 6)="PARA 3 PARA 2 PARA 1"∨ nopara = 4 ∧ substring(x, 1, 8)="PARA 4 PARA 3 PARA 2 PARA 1"
+then
+ if"PARA"_1 in substring(x, nopara * 2 + 1, length.x)∨"SET"_1 in x
+ then"USECALL"+ x
+ else substring(x, nopara * 2 + 1, length.x)
+else"USECALL"+ x
+
+Function useCnames(lib:word, s:seq.word)seq.word;
+if length.s = 0
+then s
+else if s_1 ="USECALL"_1
+then"USECALL"+ expandconst(dummyfunc, empty.seq.word, lib, substring(s, 2, length.s), 1)
+else expandconst(dummyfunc, empty.seq.word, lib, s, 1)
+
+function expandconst(f:func, cmap:seq.seq.word, lib:word, s:seq.word, i:int)seq.word;
+if i + 1 > length.s
+then
+ assert i - 1 = length.s:"premature end"+ toword.i + toword.length.s + s;
+ ""
+else if s_i in"FREFX FREFBX"
+then(if s_i ="FREFX"_1 then"FREFC"else"FREFBC")+ Cname(toint(s_(i + 1)), lib)+ s_(i + 2)+ expandconst(f, cmap, lib, s, i + 3)
+else if s_i ="CONST"_1
+then decodeconst(f, cmap, lib, toint(s_(i + 1)))+ expandconst(f, cmap, lib, s, i + 2)
+else if s_i in"CALL"
+then [Cname(toint(s_(i + 2)), lib)] + s_(i + 1)+ expandconst(f, cmap, lib, s, i + 3)
+else if s_i in"CALLB"
+then ["CALLC"_1, s_(i + 1), Cname(toint(s_(i + 2)), lib)] + expandconst(f, cmap, lib, s, i + 3)
+else if s_i in"FREFBC CALLC FREFC"
+then [s_i, s_(i + 1), s_(i + 2)] + expandconst(f, cmap, lib, s, i + 3)
+else [s_i] + s_(i + 1)+ expandconst(f, cmap, lib, s, i + 2)
+
+function decodeconst(f:func, cmap:seq.seq.word, lib:word, i:int)seq.word;
+let s = cmap_i;
+if s_1 ="RECORD"_1
+then expandconst(f, cmap, lib, s, 3)+ [s_1, s_2]
+else expandconst(f, cmap, lib, s, 1)
+
+function isdigits(w:word)boolean; @(and, isdigit, true, decode.w)
+
+function isdigit(i:int)boolean; between(i, 48, 57)
+
+use Cname
+
+Function setCname(i:int, w:word)int; export
+
+Function Cnamevalue(w:word)int; export
+
+Function Cname(a:int, library:word)word; export
+
+Function localaname int; export
+
+Function  maxaname      int; export
+
+Function tolibsym(constmapping:seq.seq.word, lib:word, f:func)libsym;
+libsym(symbolref.toint.number.f, symboltext.f, Cname(toint.number.f, lib), tolibsyminst(constmapping, lib, f))
+
+module Cname
+
+use stdlib
+
+use encoding.aname
+
+use invertedseq.aname
+
+use seq.aname
+
+type aname is struct value:int, name:word
+
+function hash(a:aname)int; value.a
+
+function =(a:aname, b:aname)boolean; value.a = value.b
+
+Function setCname(i:int, w:word)int; encoding.encode.aname(i, w)
+
+Function Cnamevalue(w:word)int; find(mapping.aname(0,"0"_1), w, 1)
+
+function   max( i:int,a:aname) int; max(i,value.a)
+
+Function  maxaname      int; @(max,identity  , 0 ,mapping.aname(0,"0"_1))
+
+function find(a:seq.aname, w:word, i:int)int;
+if i > length.a
+then 0
+else if name(a_i)= w
+then value(a_i)
+else find(a, w, i + 1)
+
+Function Cname(a:int, library:word)word;
+name.decode.encode.aname(a, merge.[library, toword.a])
+
+Function localaname int; localencoding.aname(0,"A"_1)
+
+module libscopeextension
+
+use stdlib
+
+use libscope
+
+use seq.mytype
+
+use encoding.libtype
+
+use invertedseq.libtype
+
+Function deepcopytypes(a:mytype)seq.mytype;
+let st = subtypes.a;
+if length.st = 0 then [a] else @(+, deepcopytypes, empty.mytype, st)
+
+deepcopytypes is only for structures.It returns the types of the fields.If one of the fields is a structure it returns the types of that structure to flatten out the struct into a sequence of fields of size 1.
+
+Function subtypes(a:mytype)seq.mytype;
+if length.towords.a > 1 ∧ not(parameter.a = mytype."T")
+then
+ let b = tolibtype.mytype("T"+ abstracttype.a);
+ if kind.b ="sequence"_1
+ then empty.mytype
+ else @(+, replaceT.parameter.a, empty.mytype, subtypes.b)
+else subtypes.tolibtype.a
+
+Function tolibtype(m:mytype)libtype; decode.encode.libtype(m,"undefined"_1, empty.mytype)
+
+Function replaceT(with:mytype, m:mytype)mytype;
+if towords(m)_1 ="T"_1
+then mytype(towords.with + substring(towords.m, 2, length.towords.m))
+else m
+
+Function hash(a:libtype)int; hash.towords.fortype.a
+
+Function encode(libtype)encoding.libtype; export
+
+Function decode(encoding.libtype)libtype; export
+
+Function mapping(libtype)seq.libtype; export
+
+Function encoding(encoding.libtype)int; export
+
+Function ?(a:libsym, b:libsym)ordering; toint.address.a ? toint.address.b
+
+Function types(l:libsym)seq.mytype; tomytypes(symname.l, 1)
+
+let s = symname.l; let a = findelement(":"_1, s)+ 1; let b = substring(s, a, findelement(":"_1, s, a + 1)-1); comment assert false:towords(breakoncommaxx(b, 2)_1); breakoncommaxx(b, 2)
+
+Function tomytypes(s:seq.word, start:int)seq.mytype;
+let a = findelement(":"_1, s, start)+ 1;
+let b = substring(s, a, findelement(":"_1, s, a + 1) - 1);
+comment assert false:towords(breakoncommaxx(b, 2)_1);
+breakoncommaxx(b, 2)
+
+Function isabstract(l:libsym)boolean;
+findelement("T"_1, symname.l, findelement(":"_1, symname.l)+ 2)≤ length.symname.l
+
+function breakoncommaxx(s:seq.word, start:int)seq.mytype;
+if start > length.s
+then empty.mytype
+else
+ let a = findelement(","_1, s, start);
+ [mytype.substring(s, start, a - 1)] + breakoncommaxx(s, a + 1)
+
+       scope offsets
+
+use stdlib
+
+type offset is struct TSIZE:int, LIT:int
+
+Function LIT(offset)int; export
+
+Function Tsize offset; offset(1, 0)
+
+Function offset(i:int)offset; offset(0, i)
+
+Function =(a:offset, b:offset)boolean; TSIZE.a = TSIZE.b ∧ LIT.a = LIT.b
+
+Function print(a:offset)seq.word;
+[toword.LIT.a] + if TSIZE.a = 0 then""else"TSIZE"+ toword.TSIZE.a
+
+Function +(a:offset, b:offset)offset; offset(TSIZE.a + TSIZE.b, LIT.a + LIT.b)
+
+Function +(s:seq.int, b:offset)seq.int; s + LIT.b
+
+scope etype
+
+use stdlib
+
+use tree.word
+
+use seq.mytype
+
+use invertedseq.libtype
+
+use seq.tree.word
+
+use seq.libtype
+
+use pass0
+
+use seq.parsetree
+
+use libscope
+
+use libscopeextension
+
+use seq.encoding.libtype
+
+Function print2(a:mytype)seq.word;
+print.a +"{"+ @(+, print,"", subtypes.a)+"}"
+
+Function mytype(seq.word)mytype; export
+
+Function abstracttype(m:mytype)word; export
+
+Function parameter(m:mytype)mytype; export
+
+function mytypeb(t:tree.word)seq.word;
+if nosons.t = 0 then [label.t] else mytypeb(t_1)+ [label.t]
+
+Function +(a:mytype, w:word)mytype; mytype(towords.a + w)
+
+Function mytype(t:tree.word)mytype; mytype.mytypeb.t
+
+Function tomytype(t:seq.tree.word)seq.mytype; @(+, mytype, empty.mytype, t)
+
+function buildit(t:seq.tree.word, w:word)seq.tree.word; [tree(w, t)]
+
+Function totreetype(a:mytype)tree.word; @(buildit, identity, empty.tree.word, towords.a)_1
+
+Function hash(a:mytype)int; hash.towords.a
+
+Function =(a:mytype, b:mytype)boolean; export
+
+Function deepcopytypes(a:mytype)seq.mytype; export
+
+deepcopytypes is only for structures.It returns the types of the fields.If one of the fields is a structure it returns the types of that structure to flatten out the struct into a sequence of fields of size 1.
+
+Function fortype(libtype)mytype; export
+
+Function =(a:libtype, b:libtype)boolean; export
+
+Function encodetypes(l:liblib)int;
+let a = @(+, encode, empty.encoding.libtype, types.l);
+0
+
+Function tolibtype(m:mytype)libtype; export
+
+Function print(p:mytype)seq.word; prt(towords.p, length.towords.p)
+
+function prt(s:seq.word, i:int)seq.word;
+if i = 1
+then [s_1]
+else [s_i] +"."+ prt(s, i - 1)
+
+Function printparameters(s:seq.mytype)seq.word;
+if length.s = 0 then""else"("+ @(addcomma, print,"", s)+")"
+
+Function print5(e:libtype)seq.word;
+[EOL] + print.fortype.e + @(+, print,"", subtypes.e)
+
+Function dumptypes seq.word;
+@(+, print5,"", mapping.libtype(mytype."X","X"_1, empty.mytype))
+
+------------------
+
+type modinstance is struct tomytype:mytype
+
+Function isparameterized(a:modinstance)boolean; length.towords.tomytype.a > 1
+
+Function parameter(a:modinstance)mytype; parameter.tomytype.a
+
+Function name(a:modinstance)word; abstracttype.tomytype.a
+
+Function =(a:modinstance, b:modinstance)boolean; tomytype.a = tomytype.b
+
+Function ?(a:modinstance, b:modinstance)ordering; tomytype.a ? tomytype.b
+
+Function ?(a:mytype, b:mytype)ordering;
+let y = towords(a)_length.towords.a ? towords(b)_length.towords.b;
+if y = EQ
+then
+ let x = length.towords.a ? length.towords.b;
+ if x = EQ
+ then
+  if length.towords.a = 2 ∧ towords(a)_1 ="T"_1 ∧ not(towords(b)_1 ="T"_1)
+  then LT
+  else if length.towords.a = 2 ∧ towords(b)_1 ="T"_1 ∧ not(towords(a)_1 ="T"_1)
+  then GT
+  else orderm(towords.a, towords.b, length.towords.a)
+ else x
+else y
+
+function orderm(a:seq.word, b:seq.word, i:int)ordering;
+if i = 1
+then encoding(a_1)? encoding(b_1)
+else
+ let x = encoding(a_i)? encoding(b_i);
+ if x = EQ then orderm(a, b, i - 1)else x
+
+Function tomytype(modinstance)mytype; export
+
+Function modinstance(m:mytype)modinstance; export
+
+type presym is struct modname:modinstance, name:word, parameters:seq.mytype, returntype:mytype, instruction:seq.word
+
+Function presym(modinstance, word, seq.mytype, mytype, seq.word)presym; export
+
+Function print(a:presym)seq.word;
+(
+if length.parameters.a = 0
+then [name.a]
+else [name.a] +"("+ @(addcomma, print,"", parameters.a)+")")+ print.returntype.a
+
+Function print5(a:presym)seq.word; [EOL] + print.tomytype.modname.a + print.a + instruction.a
+
+Function name(presym)word; export
+
+Function modname(presym)modinstance; export
+
+Function parameters(presym)seq.mytype; export
+
+Function returntype(presym)mytype; export
+
+Function instruction(presym)seq.word; export
+
+Function noparameters(a:presym)int; length.parameters.a
+
+Function replaceT(with:mytype, m:mytype)mytype; export
+
+Function presym(modname:modinstance, t:parsetree)presym;
+let s = symbol.t;
+let returntype = lastson.s;
+let paras = substring(sons.s, 1, nosons.s - 1);
+let inst =
+ if nosons.towordtree.t > 1 ∧ label.body.t in"builtin"
+ then
+  if nosons.body.t = 1
+  then
+   let arg = label(body(t)_1);
+   [arg] + toword(nosons.s - 1)+
+    if nosons(body(t)_1)= 1
+    then [label(body(t)_1_1)] +"1"
+    else""
+  else if nosons.body.t = 0 ∧ not(length.paras = 1)
+  then"USECALL"
+  else @(+, label,"", sons.body.t)
+ else"USECALL";
+presym(modname, label.s, @(+, mytype, empty.mytype, substring(sons.s, 1, nosons.s - 1)), mytype.lastson.s, inst)
+
+Function dummypresym presym;
+presym(modinstance.mytype."?","."_1, empty.mytype, mytype.".","USECALL")
+
+module checktypes
+
+use stdlib
+
+use etype
+
+use graph(mytype)
+
+use set(mytype)
+
+use seq.arc.mytype
+
+use libscope
+
+use libscopeextension
+
+use seq.mytype
+
+use pass0
+
+use tree.word
+
+use seq.tree.word
+
+Function print(a:arc.mytype)seq.word; [EOL] + print.a.a + print.b.a
+
+Function checkforrecusivetypes seq.libtype;
+let all = mapping.decode.encode.libtype(mytype."T","type"_1, empty.mytype);
+let g = cycliccore.newgraph.@(+, checksubtypes, empty.arc.mytype, all);
+assert length.nodes.g = 0:"ERROR:recursive type definition"+ @(+, print,"", arcs.g);
+all
+
+Function nodeswithsuccessors(g:graph.mytype, m:mytype)seq.mytype;
+if length.toseq.successors(g, m)> 0 then [m] else empty.mytype
+
+Function cycliccore(g:graph.mytype)graph.mytype;
+let g2 = subgraph(g, asset.@(+, nodeswithsuccessors.g, empty.mytype, nodes.g));
+if length.nodes.g2 = length.nodes.g then g else cycliccore.g2
+
+Function tolibtype(s:parsetree)libtype;
+let flds = @(+, lastson, empty.tree.word, substring(sons.towordtree.s, 2, nosons.towordtree.s));
+decode.encode.libtype(mytype.type.s, kind.s, @(+, mytype, empty.mytype, flds))
+
+function checksubtypes(m:libtype)seq.arc.mytype;
+comment both checks to see that all types are defined and returns a list or arcs of graph needed to determine the size of types.This edge set must be an acyclic graph;
+@(+, checktypefld.fortype.m, empty.arc.mytype, subtypes.m)
+
+function checktypefld(m:mytype, t:mytype)seq.arc.mytype;
+if length.print.t = 1 ∨ parameter.t = mytype."T"
+then
+ let l = tolibtype.t;
+ assert kind.l in"type sequence struct":"ERROR:"+ print.t +"is not a type in definition of type"+ print.m;
+ if kind.l ="struct"_1 then [arc(m, t)] else empty.arc.mytype
+else
+ let l = tolibtype.mytype("T"+ abstracttype.t);
+ assert kind.l in"type sequence struct":"ERROR:"+ abstracttype.t +"is not a type in definition of type"+ abstracttype.m;
+ if kind.l ="struct"_1
+ then [arc(m, fortype.l)] + checktypefld(m, parameter.t)
+ else empty.arc.mytype
+
+scope symbol
+
+use stdlib
+
+use tree(word)
+
+use seq.tree.word
+
+use seq(symbol)
+
+use pass0
+
+use etype
+
+use libscope
+
+use seq.mytype
+
+use seq.presym
+
+use encoding.sym1
+
+use invertedseq.sym1
+
+use buildtree
+
+type sym1 is struct topresym:presym, org:int
+
+type symbol is struct coding:encoding.sym1
+
+Function tosymbol(b:presym, i:int)symbol;
+comment assert isabstract2.b ∨ not(hasabstractref.instruction.b):"DEBUG1"+ print5.b;
+symbol.encode.sym1(b, i)
+
+function =(a:sym1, b:sym1)boolean; topresym.a = topresym.b
+
+function hash(a:sym1)int; hash.topresym.a
+
+Function tosymbol(w:word)symbol;
+let i = toint.w;
+let m = mapping.sym1(dummypresym, 0);
+assert i > 0 ∧ i ≤ length.m:"out of rangex"+ w + stacktrace;
+symbol.encode(m_toint.w)
+
+Function tosymbol(p:presym)symbol; tosymbol(p, 0)
+
+Function print(a:modinstance)seq.word; print.tomytype.a
+
+Function localsym1 int; localencoding.sym1(dummypresym, 0)
+
+Function symbolcount int; 
+let b = encode.sym1(dummypresym, 0);
+length.mapping.decode.b
+
+Function dumpsymbols seq.word; @(+, ZY,"", mapping.sym1(dummypresym, 0))
+
+Function print(a:sym1)seq.word;
+[EOL] + print.modname.topresym.a + print.topresym.a + if org.a > 0 then"from"+ print.topresym(mapping(a)_org.a)else""
+
+Function ZY(a:sym1)seq.word;
+let inst = instruction.topresym.a;
+if instruction.topresym.a in ["USECALL"] ∨ length.inst = 2 ∧ inst_1 in"RECORD BUILDS IDX2 SETFLD SETFLD2 IDXUC EQL"∨ length.inst = 0 ∨ length.inst = 4 ∧ inst_1 ="LIT"_1 ∧ inst_3 in"IDXUC FLD"
+then""
+else print.a +"CC"+ instruction.topresym.a
+
+---------------
+
+Function print(tree.word)seq.word; export
+
+Function changeinstruction(s:presym, new:seq.word)presym;
+presym(modname.s, name.s, parameters.s, returntype.s, new)
+
+Function isabstract2(a:mytype)boolean; towords(a)_1 ="T"_1
+
+Function isabstract2(a:modinstance)boolean; isabstract2.tomytype.a
+
+Function isabstract2(p:presym)boolean; isabstract2.returntype.p ∨ @(or, isabstract2, false, parameters.p)
+
+Function isabstract2(s:symbol)boolean; isabstract2.decode.s
+
+use seq.sym1
+
+use offsets
+
+Function print5(s:symbol)seq.word;
+let a = decode.coding.s;
+[EOL] + print.modname.topresym.a + print.topresym.a +(if org.a > 0 then"from"+ print.topresym(mapping(a)_org.a)else"")+"inst:"+ instruction.topresym.a
+
+Function replaceT(with:mytype, m:modinstance)modinstance; modinstance.replaceT(with, tomytype.m)
+
+Function replaceTpresym(with:mytype, p:presym)presym;
+presym(replaceT(with, modname.p), name.p, @(+, replaceT.with, empty.mytype, parameters.p), replaceT(with, returntype.p), removeC(with, instruction.p, 1))
+
+Function replaceTsymbol(with:mytype, s:symbol)symbol;
+if not.isabstract2.s
+then s
+else if not(org.s = 0)
+then
+ comment handle abstract symbol base on abstract symbol:replacing T in seq(pair(T))with seq(int);
+ replaceTsymbol(replaceT(with, parameter.modname.s), tosymbol.toword.org.s)
+else tosymbol(replaceTpresym(with, decode.s), encoding.s)
+
+Function removeC(with:mytype, w:seq.word, i:int)seq.word;
+if i > length.w
+then w
+else if w_i in"CALLB FREFBX DEEPCOPY USECALL"
+then"USECALL"
+else if w_i ="TSIZE"_1
+then
+ let k = toword(LIT.typesize.with * toint(w_(i + 1))+ toint(w_(i - 1)));
+ let new = substring(w, 1, i - 2)+ k + substring(w, i + 2, length.w);
+ removeC(with, new, i)
+else if w_i ="WORD"_1
+then removeC(with, w, i + 2)
+else removeC(with, w, i + 1)
+
+Function typesize(a:mytype)offset;
+if a = mytype."T"
+then Tsize
+else
+ let l = tolibtype.a;
+ let st = subtypes.l;
+ if length.st = 0 then offset.1 else @(+, typesize, offset.0, st)
+
+Function addnodup(s:seq.symbol, a:symbol)seq.symbol;
+assert not(a in s):"dup symbol 2"+ print0.a + stacktrace;
+s + a
+
+Function checkmod(modname:modinstance, s:symbol)symbol;
+assert modname.decode.s = modname:"duplicate symbol"+ print.decode.s +"in module"+ print.modname.s +"and"+ print.modname;
+s
+
+Function checkdups(modname:modinstance, s:seq.symbol)seq.symbol; @(addnodup, checkmod.modname, empty.symbol, s)
+
+Function lookupsymbol(message:seq.word, p:presym)symbol;
+if not.isabstract2.p
+then
+ let sym = lookup(name.p, parameters.p);
+ assert returntype.sym = returntype.p:"symbol not found"+ message + print.modname.p +":"+ print.p;
+ sym
+else tosymbol(p, 0)
+
+Function lookup(name:word, paras:seq.mytype)symbol;
+tosymbol(presym(modinstance.mytype."X", name, paras, mytype."+",""), 0)
+
+Function lookup(b:parsetree)symbol;
+let s = towordtree(b)_1;
+lookup(label.s, tomytype.substring(sons.s, 1, nosons.s - 1))
+
+Function filtermod(m:modinstance, s:symbol)seq.symbol;
+if tomytype.m = tomytype.modname.s then [s] else empty.symbol
+
+Function filtermod(m:modinstance, s:presym)seq.presym;
+if tomytype.m = tomytype.modname.s then [s] else empty.presym
+
+Function =(a:presym, b:presym)boolean; name.a = name.b ∧ parameters.a = parameters.b
+
+Function hash(a:presym)int; hash.name.a + @(+, hash, 0, parameters.a)
+
+Function makepara(i:int)seq.word; "PARA"+ toword.i
+
+Function paralistcode(nopara:int)seq.word;
+@(+, makepara,"", arithseq(nopara, 0 - 1, nopara))
+
+Function ?(a:symbol, b:symbol)ordering; encoding.a ? encoding.b
+
+Function =(a:symbol, b:symbol)boolean; encoding.a = encoding.b
+
+Function name(s:symbol)word; name.decode.s
+
+Function parameters(s:symbol)seq.mytype; parameters.decode.s
+
+Function instruction(s:symbol)seq.word; instruction.decode.s
+
+Function returntype(s:symbol)mytype; returntype.decode.s
+
+Function modname(s:symbol)modinstance; modname.decode.s
+
+Function noparameters(s:symbol)int; length.parameters.decode.s
+
+Function decode(a:symbol)presym; topresym.decode.coding.a
+
+Function encoding(a:symbol)int; encoding.coding.a
+
+Function org(s:symbol)int; org.decode.coding.s
+
+Function print0(s:symbol)seq.word;
+let d = decode.s;
+"<"+ toword.encoding.s + print.modname.d +":"+ print.d +">"
+
+Function print4(s:symbol)seq.word;
+let d = decode.s;
+[EOL] +"<"+ toword.encoding.s + print.modname.d +":"+ print.d +">"+ instruction.s
+
+Function FREFcode(s:symbol)seq.word;
+[if isabstract2.s then"FREFBX"_1 else"FREFX"_1, toword.encoding.s, toword.length.parameters.s]
+
+Function CALLcode(s:symbol)seq.word;
+if name.s ="encodeword"_1 ∧ returntype.s = mytype."word"
+then"encodeword 1"
+else
+ let code = instruction.s;
+ if length.code = 0
+ then""
+ else if code_1 ="USECALL"_1 ∨ code_1 ="ERECORD"_1
+ then [if isabstract2.s then"CALLB"_1 else"CALL"_1, toword.noparameters.s, toword.encoding.s]
+ else code
+
+Function findsymbolX(name:seq.word, paras:seq.mytype, returntype:mytype)symbol;
+comment will create the symbol if it does not exist;
+let sym = tosymbol(presym(modinstance.mytype."X", name_1, paras, returntype,""), 0);
+assert returntype.sym = returntype:"return type wrong when looking for"+ print0.sym;
+sym
+
+Function findseqindexfunction(type:mytype)seq.symbol;
+let sym = lookup("_"_1, [type, mytype."int"]);
+if returntype.sym = parameter.type then [sym] else empty.symbol
+
+Function isfound(a:seq.symbol)boolean; length.a > 0
+
+Function finddeepcopyfunction(type:mytype)symbol;
+let a = encoding.tosymbol(presym(modinstance.mytype."T deepcopy","deepcopy"_1, [mytype."T"], mytype."T","DEEPCOPY"), 0);
+tosymbol(presym(modinstance(type +"deepcopy"_1),"deepcopy"_1, [type], type,"USECALL"), a)
+
+Function deepcopybody(type:mytype)seq.word;
+if type = mytype."int"∨ abstracttype.type ="encoding"_1
+then"PARA 1"
+else if abstracttype.type ="seq"_1
+then
+ let typepara = parameter.type;
+ let dc = finddeepcopyfunction.typepara;
+ let xx = FREFcode.tosymbol(presym(modinstance(typepara +"seq"_1),"_"_1, [typepara +"pseq"_1, mytype."int"], typepara,"USECALL"), 0);
+ let cat = FREFcode.findsymbolX("+", [type, typepara], type);
+ let blockit = toword.encoding.findsymbolX("blockit", [mytype."int seq"], mytype."int seq");
+ "LIT 0 LIT 0 RECORD 2 PARA 1"+ FREFcode.dc + cat + xx +"APPLY 5"+"CALL 1"+ blockit
+else
+ let subs = deepcopytypes.type;
+ if length.subs = 0
+ then"PARA 1"
+ else if length.subs = 1
+ then if subs_1 = type then"PARA 1"else"PARA 1"+ CALLcode.finddeepcopyfunction(subs_1)
+ else @(+, subfld.subs, empty.word, arithseq(length.subs, 1, 1))+"RECORD"+ toword.length.subs
+
+Function subfld(subs:seq.mytype, i:int)seq.word;
+"PARA 1 LIT"+ toword(i - 1)+"IDXUC 2"+ CALLcode.finddeepcopyfunction(subs_i)
+
+Function codingrecord(encodingtype:mytype)seq.word;
+FREFcode.finddeepcopyfunction.encodingtype + FREFcode.findsymbolX("lookup", [encodingtype, encodingtype +"invertedseq"_1], mytype."int")+ FREFcode.findsymbolX("add", [encodingtype +"invertedseq"_1, mytype."int", encodingtype], encodingtype +"invertedseq"_1)+
+ if encodingtype = mytype."int seq" then "LIT 1 RECORD 4" else "LIT 0 RECORD 4"
+
+Function usestypes(p:presym)seq.mytype; parameters.p + returntype.p
+
+Function usestypes(s:symbol)seq.mytype; usestypes.decode.s
+
+-------------
+
+scope definestruct
+
+use stdlib
+
+use tree(word)
+
+use seq(tree(word))
+
+use symbol
+
+use pass0
+
+use seq(word)
+
+use seq(parsetree)
+
+use seq.mytype
+
+use etype
+
+use seq.symbol
+
+use seq.presym
+
+use offsets
+
+use libscope
+
+locals returns list of symbols needed to create and access components of structure
+
+Function locals(modname:modinstance, p:parsetree)seq.presym;
+let typ = mytype.type.p;
+let fldtypes = subtypes.tolibtype.typ;
+if nosons.towordtree.p < 2
+then empty.presym
+else
+ let pt = substring(sons.towordtree.p, 2, nosons.towordtree.p);
+ if length.pt = 1
+ then [presym(modname, label(pt_1), [typ], mytype(pt_1_2),""), presym(modname, abstracttype.typ, [mytype(pt_1_2)], typ,"")]
+ else if label.towordtree.p ="struct"_1
+ then [presym(modname, abstracttype.typ, fldtypes, typ,"RECORD"+ toword.length.pt)] + fldaccess(modname, typ, pt, offset.0, 1)
+ else [presym(modname, abstracttype.typ, fldtypes, typ,"BUILDS"+ toword.length.pt)] + @(+, accessfld(modname, typ, pt), empty.presym, arithseq(length.pt, 1, 1))+ [presym(modname,"toseq"_1, [typ], parameter.typ +"seq"_1,"")]
+
+function accessfld(modname:modinstance, type:mytype, fldlist:seq.tree.word, i:int)presym;
+let fld = fldlist_i;
+presym(modname, label.fld, [type], mytype(fld_2),"LIT"+ toword.i +"IDXUC 2")
+
+function fldaccess(modname:modinstance, type:mytype, fldlist:seq.tree.word, offset:offset, i:int)seq.presym;
+if i > length.fldlist
+then empty.presym
+else
+ let fld = fldlist_i;
+ let sz = typesize.mytype(fld_2);
+ fldaccess(modname, type, fldlist, offset + sz, i + 1)+ presym(modname, label.fld, [type], mytype(fld_2),"LIT"+ print.offset +"FLD"+ print.sz)
+
+---------------------------
+
+scope moddesc
+
+use etype
+
+type r3 is struct code:seq.word, types:seq.mytype, nexttemp:int
+
+type a2 is struct a:int, b:int
+
+use stdlib
+
+use symbol
+
+use set(symbol)
+
+use tree(word)
+
+use seq(symbol)
+
+use seq(tree(word))
+
+use seq(seq(symbol))
+
+use definestruct
+
+use pass0
+
+use seq(seq(seq(word)))
+
+use oseq(symbol)
+
+use module
+
+use seq.mytype
+
+use seq.r3
+
+Function =(a:r3, b:r3)boolean; false
+
+type symdict is struct symbols:set.symbol, text:parsetree, replacement:tree.word, noparameters:int, localnames:seq.word, localtypes:seq.mytype, localargs:seq.word
+
+Function fortext(d:symdict)seq.word; prettyPrint.text.d
+
+Function changelocals(d:symdict, localnames:seq.word, localtypes:seq.mytype, localargs:seq.word)symdict;
+symdict(symbols.d, text.d, replacement.d, noparameters.d, localnames, localtypes, localargs)
+
+Function findsymbol(d:symdict, w:word, types:seq.mytype)symbol;
+let s = symbols.d;
+let sym = lookup(w, types);
+assert sym in s:[name.sym] + printparameters.parameters.sym +"SYMBOL NOT FOUND in:"+ fortext.d;
+sym
+
+Function exportisdefined(symbols:set.symbol, p:presym)presym;
+let sym = lookupsymbol("", p);
+assert sym in symbols:print0.sym +"NOT FOUND FOR EXPORT in"+ print.modname.p;
+p
+
+use offsets
+
+function subfind(d:symdict, w:word, l:seq.r3)symbol;
+let types = @(+, types, empty.mytype, l);
+let sym = lookup(w, types);
+assert not(returntype.sym = mytype."+")∧ sym in symbols.d:
+ let tmp = print.decode.sym;
+ "SYMBOL"+ substring(tmp, 1, length.tmp - 1)+"NOT FOUND in:"+ fortext.d;
+sym
+
+Function find(d:symdict, w:word, l:seq.r3)r3;
+let sym = subfind(d, w, l);
+let nexttmp = nexttemp(l_length.l);
+let codesons = @(+, code,"", l);
+let code = instruction.sym;
+if length.code = 0
+then r3(codesons, [returntype.sym], nexttmp)
+else if code_1 ="USECALL"_1
+then r3(codesons + CALLcode.sym, [returntype.sym], nexttmp)
+else if code_1 ="BUILDS"_1
+then
+ let n = findseqindexfunction.returntype.sym;
+ r3(FREFcode(n_1)+ codesons +"RECORD"+ toword(toint(code_2)+ 1), [returntype.sym], nexttmp)
+else if code_1 in"ERECORD"
+then
+ comment assert false:"KKKK"+ CALLcode.sym;
+ r3(codesons +
+  if isabstract2(types(l_1)_1)
+  then"CALLB 1"+ toword.encoding.sym
+  else codingrecord(types(l_1)_1), [returntype.sym], nexttmp)
+else if code_1 ="RECORD"_1
+then
+ let r = fixuprecord(l, noparameters.sym, nexttmp, 1,"", offset.0);
+ r3(code.r, [returntype.sym], nexttemp.r)
+else r3(codesons + code, [returntype.sym], nexttmp)
+
+function fixuprecord(l:seq.r3, nopara:int, nextvar:int, i:int, result:seq.word, total:offset)r3;
+comment make sure all parameters to RECORD are LIT LOCAL PARA FREF and then expand records to single words before building the record;
+comment may change order of eval?;
+if i > nopara
+then r3(result +"RECORD"+ print.total, empty.mytype, nextvar)
+else
+ let r = l_i;
+ let sz = typesize(types(r)_1);
+ if length.code.r = 2 ∧ code(r)_1 in"LIT LOCAL PARA"∨ length.code.r = 3 ∧ code(r)_1 in"FREFX FREFBX"
+ then fixuprecord(l, nopara, nextvar, i + 1, result + code.r +"FLAT"+ print.sz, total + sz)
+ else
+  let f = fixuprecord(l, nopara, nextvar + 1, i + 1, result +"LOCAL"+ toword.nextvar +"FLAT"+ print.sz, total + sz);
+  r3(code.r + code.f +"SET"+ toword.nextvar, types.f, nexttemp.f)
+
+Function wordcode(t:tree.word)seq.word; "WORD"+ label.t
+
+Function checkassert(d:symdict, c:r3, t:r3, e:r3)r3;
+assert types(c)_1 = mytype."boolean":"condition in assert must be boolean in:"+ fortext.d;
+assert types(e)_1 = mytype."word seq":"else in assert must be seq of word in:"+ fortext.d;
+r3(code.c + code.t + code.e +"assert2 1 if 3", types.t, nexttemp.e)
+
+Function addlocal(d:symdict, name:word, exp:r3, t:tree.word)r3;
+let nexttmp = nexttemp.exp;
+let arg = toword.nexttmp;
+let newdict = changelocals(d, localnames.d + name, localtypes.d + types(exp)_1, localargs.d + arg);
+let r = bind(newdict, t, nexttmp + 1);
+r3(code.exp + code.r +"SET"+ arg, types.r, nexttemp.r)
+
+function bindsons(d:symdict, t:tree.word, nexttmp:int)r3;
+let l = bindsonslist(d, t, nexttmp);
+let last = nexttemp(l_length.l);
+let codesons = @(+, code,"", l);
+let types = @(+, types, empty.mytype, l);
+r3(codesons, types, last)
+
+function bindsonslist(d:symdict, t:tree.word, nexttmp:int)seq.r3; bindsonslist(d, t, nexttmp, 1)
+
+function bindsonslist(d:symdict, t:tree.word, nexttmp:int, i:int)seq.r3;
+if i > nosons.t
+then
+ comment if there are no sons then return"empty"r3 with nexttemp set correctly;
+ [r3("", empty.mytype, nexttmp)]
+else
+ let r = bind(d, t_i, nexttmp);
+ [r] + bindsonslist(d, t, nexttemp.r, i + 1)
+
+Function bind(d:symdict, t:tree.word, nexttmp:int)r3;
+if hasdigit.label.t
+then r3(["LIT"_1, label.t], [mytype."int"], nexttmp)
+else if nosons.t = 3 ∧ label.t ="if"_1
+then
+ let c = bind(d, t_1, nexttmp);
+ assert types(c)_1 = mytype."boolean":"condition in if must be boolean in:"+ fortext.d;
+ let th = bind(d, t_2, nexttemp.c);
+ let el = bind(d, t_3, nexttemp.th);
+ assert types(th)_1 = types(el)_1:"then and else clause must have same type in:"+ fortext.d;
+ r3(code.c + code.th + code.el +"if 3", types.el, nexttemp.el)
+else if nosons.t = 3 ∧ label.t ="assert"_1
+then
+ let c = bind(d, t_1, nexttmp);
+ assert types(c)_1 = mytype."boolean":"condition in assert must be boolean in:"+ fortext.d;
+ let th = bind(d, t_2, nexttemp.c);
+ let el = bind(d, t_3, nexttemp.th);
+ checkassert(d, c, th, el)
+else if nosons.t = 3 ∧ label.t ="let"_1
+then addlocal(d, label(t_1), bind(d, t_2, nexttmp), t_3)
+else if label.t ="$build"_1
+then checkbuild(d, bindsons(d, t, nexttmp), nosons.t)
+else if label.t ="$wordlist"_1
+then r3("LIT 0 LIT"+ toword.nosons.t + @(+, wordcode,"", sons.t)+"RECORD"+ toword(nosons.t + 2), [mytype."word seq"], nexttmp)
+else if label.t ="@"_1
+then checkapplyA(d, t, nexttmp)
+else if label.t ="empty"_1 ∧ nosons.t = 1
+then buildempty(d, tree("seq"_1, [t_1]), nexttmp)
+else if label.t ="sizeoftype"_1 ∧ nosons.t = 1
+then
+ let typ = mytype.replaceT(replacement.d, t_1);
+ r3("LIT"+ print.typesize.typ, [mytype."int"], nexttmp)
+else if nosons.t = 5 ∧ label.t ="iftype"_1
+then bindiftype(d, t, nexttmp)
+else if label.t ="comment"_1
+then bind(d, t_1, nexttmp)
+else if label.t in"process"
+then
+ assert nosons.t = 1:"process must have one arg";
+ let l = bindsonslist(d, t_1, nexttmp);
+ let sym = subfind(d, label(t_1), l);
+ let noargs = noparameters.sym;
+ r3(FREFcode.finddeepcopyfunction.returntype.sym + FREFcode.finddeepcopyfunction.mytype."word seq"+ FREFcode.sym +"LIT"+ toword.noargs + @(+, code,"", l)+"RECORD"+ toword(noargs + 4)+"PROCESS2 1", [returntype.sym +"process"_1], nexttemp(l_length.l))
+else if nosons.t = 0
+then
+ let i = findelement(label.t, localnames.d);
+ if i < length.localnames.d + 1
+ then
+  if i < noparameters.d + 1
+  then r3("PARA"+ localargs(d)_i, [localtypes(d)_i], nexttmp)
+  else r3("LOCAL"+ localargs(d)_i, [localtypes(d)_i], nexttmp)
+ else find(d, label.t, bindsonslist(d, t, nexttmp))
+else if label.t ="makereal"_1 ∧ nosons.t = 2 ∧ hasdigit.label(t_1)∧ hasdigit.label(t_2)
+then r3("LIT"+ toword.representation.makereal(toint.label(t_1), toint.label(t_2)), [mytype."real"], nexttmp)
+else
+ let l = bindsonslist(d, t, nexttmp);
+ find(d, label.t, l)
+
+use real
+
+Function bindiftype(d:symdict, t:tree.word, nexttmp:int)r3;
+let exp = bind(d, t_3, nexttmp);
+let ptyp = replaceT(replacement.d, t_2);
+let varname = label(t_1);
+let arg = toword.nexttemp.exp;
+let newdict = changelocals(d, localnames.d + varname, localtypes.d + mytype.ptyp, localargs.d + arg);
+let th = bind(newdict, t_4, nexttemp.exp + 1);
+let el = bind(d, t_5, nexttemp.th);
+assert abstracttype(types(exp)_1)="seq"_1:"type must be sequence in istype in:"+ fortext.d;
+assert types(th)_1 = types(el)_1:print(types(th)_1)+ print(types(el)_1)+"then and else clause must have same type in:"+ fortext.d;
+let n = findseqindexfunction.mytype.ptyp;
+assert isfound.n:"ERROR:type not found:"+ print.ptyp +"in:"+ fortext.d;
+r3(code.exp +"LOCAL"+ arg +"LIT 0 IDXUC 2"+ FREFcode(n_1)+"EQL 2"+ code.th + code.el +"if 3 SET"+ arg, types.el, nexttemp.el)
+
+Function buildempty(d:symdict, ptyp:tree.word, nexttmp:int)r3;
+let typ = mytype.replaceT(replacement.d, ptyp);
+assert isfound.findseqindexfunction.mytype.ptyp:"ERROR:type not found:"+ print.typ +"in:"+ fortext.d;
+r3("LIT 0 LIT 0 RECORD 2", [typ], nexttmp)
+
+Function checkbuild(d:symdict, r:r3, nosons:int)r3;
+assert @(and, =(types(r)_1), true, types.r):"types do not match in build"+ fortext.d;
+r3("LIT 0 LIT"+ toword.nosons + code.r +"RECORD"+ toword(nosons + 2), [types(r)_1 +"seq"_1], nexttemp.r)
+
+Function checkapplyA(d:symdict, t:tree.word, nexttmp:int)r3;
+assert nosons.t = 4:"apply must have 4 terms"+ fortext.d;
+let term1 = t_1;
+let term2 = t_2;
+let term2sons = bindsons(d, t_2, nexttmp);
+let term3 = bind(d, t_3, nexttemp.term2sons);
+let term4 = bind(d, t_4, nexttemp.term3);
+let sym2 = findsymbol(d, label.term2, types.term2sons + [parameter(types(term4)_1)]);
+let sym1 = findsymbol(d, label.term1, types.term3 + [returntype.sym2]);
+assert types(term3)_1 = returntype.sym1:"term3 not same as init";
+assert abstracttype(types(term4)_1)="seq"_1:"last argument of apply must be seq"+ fortext.d;
+let nopara = nosons.term2 + 3;
+let pseqtype = parameter(types(term4)_1)+"pseq"_1;
+let xx = findseqindexfunction.pseqtype;
+assert isfound.xx:"pseq type not found"+ print.pseqtype +"in:"+ fortext.d;
+r3(code.term2sons + code.term3 + code.term4 + FREFcode.sym2 + FREFcode.sym1 + FREFcode(xx_1)+"APPLY"+ toword(nopara + 2), types.term3, nexttemp.term4)
+
+function paraarg(i:int)word; makepara(i)_2
+
+use buildtree
+
+use seq.func
+
+Function bind(modtype:modinstance, symbols:set.symbol, t:parsetree)presym;
+let sym = if not.isparameterized.modtype then presym(modtype, t)else replaceTpresym(parameter.modtype, presym(modtype, t));
+if label.body.t ="builtin"_1
+then if nosons.body.t = 0 then changeinstruction(sym,"USECALL PARA 1")else funcfrominstruction.sym
+else
+ let n = noparameters.sym;
+ let args = @(+, paraarg,"", arithseq(n, 0 - 1, n));
+ let dwithparameters = symdict(symbols, t, if not.isparameterized.modtype then tree("T"_1)else totreetype.parameter.modtype, noparameters.sym, paranames.t, parameters.sym, args);
+ let r = bind(dwithparameters, body.t, 1);
+ assert types(r)_1 = returntype.sym:"returntype does not match expression type for"+ print.sym;
+ changeinstruction(sym,"USECALL"+ code.r)
+
+Function funcfrominstruction(sym:presym)presym;
+if isabstract2.sym
+then sym
+else if length.instruction.sym = 0
+then changeinstruction(sym,"USECALL PARA 1")
+else if instruction(sym)_1 ="USECALL"_1
+then sym
+else
+ let n = noparameters.sym;
+ let code =
+  if instruction(sym)_1 ="BUILDS"_1
+  then
+   let fn = findseqindexfunction.returntype.sym;
+   FREFcode(fn_1)+ paralistcode.n +"RECORD"+ toword(toint(instruction(sym)_2)+ 1)
+  else if instruction(sym)_1 in"ERECORD"
+  then codingrecord(parameters(sym)_1)
+  else paralistcode.n + instruction.sym;
+ changeinstruction(sym,"USECALL"+ code)
+
+Function paranames(p:parsetree)seq.word;
+@(+, label,"", substring(sons.towordtree.p, 3, nosons.towordtree.p))
+
+use seq.parsetree
+
+----------------------------
+
+use seq.mytype
+
+use seq.libtype
+
+use seq(moddesc)
+
+use seq.libmod
+
+use seq.libsym
+
+use seq.int
+
+use libscope
+
+----------------
+
+use seq.symbol
+
+Function createlocals(s:modinstances)seq.presym;
+comment returns locals symbols for primitive modules for use in compiling them later.As a side effect create all symbols that will be used including functions to access type fields and both private and public symbols in modules.;
+let m = template.s;
+let locals = @(+, locals.modname.m, empty.presym, typedefs.m);
+let all = checkdups(modname.m, @(+, tosymbol, empty.symbol, locals + defines.m));
+let discard = @(+, createlocals.all, empty.symbol, list.s);
+locals
+
+Function createlocals(all:seq.symbol, modname:modinstance)seq.symbol;
+checkdups(modname, @(+, replaceTsymbol.parameter.modname, empty.symbol, all))
+
+function abstractonly(a:moddesc)seq.presym; if isparameterized.modname.a then defines.a + unbound.a else empty.presym
+
+function compiledonly(a:moddesc)seq.presym; if not.isparameterized.modname.a then defines.a + export.a else empty.presym
+
+use breakscopes
+
+use checktypes
+
+Function pass1(input:seq.seq.word, templates:seq.moddesc, libname:seq.word)pass1result;
+let discard1 = localaname + localsym1 + localchacedmod;
+let P = primitivemods.breakscopes.input;
+let typesx = @(+, tolibtype, empty.libtype, @(+, typedefs, empty.parsetree, P));
+let a = checkforrecusivetypes;
+let Q = usesmods(templates + P);
+let alllocals = @(+, createlocals, empty.presym, Q);
+let alllocals2 = @(+, funcfrominstruction, empty.presym, alllocals);
+let a = @(+, preprocess, 0, Q);
+let dpint = finddeepcopyfunction.mytype."int";
+let discard3 = initaname;
+let abstract1 = @(+, compilemodule("abstract", alllocals2), empty.presym, P);
+comment assert false:@(+, print5,"", @(+, findcomplexabstract, empty.presym, abstract1));
+let abstract = asmap([decode.findsymbolX("deepcopy", [mytype."T"], mytype."T")] + abstract1 + @(+, abstractonly, empty.presym, templates));
+let simplepairs = @(+, compilemodule("simple", alllocals2), empty.presym, P)+ complexexports(abstract, P);
+let alreadycompiled = @(+, compiledonly, empty.presym, templates);
+let compiled = asset.@(+, aswordref, empty.word, simplepairs + alreadycompiled);
+comment assert false:@(+, print5,"", simplepairs);
+let codepairs = jjj(simplepairs, compiled, abstract);
+let libmods = @(+, tolibmod.alllocals2, empty.libmod, P);
+comment assert false:dumpsymbols;
+comment assert false:@(+, print5,"", substring(codepairs + abstract1, 225, 225));
+@(+, identity, pass1result(empty.func, libname, empty.libsym, libmods), codepairs + alreadycompiled + abstract1 + @(+, findcomplexabstract, empty.presym, abstract1))
+
+function findcomplexabstract(p:presym)seq.presym; findcomplexabstract(instruction.p, 1)
+
+function findcomplexabstract(s:seq.word, i:int)seq.presym;
+if i > length.s
+then empty.presym
+else if s_i ="WORD"_1
+then findcomplexabstract(s, i + 2)
+else if s_i ="CALLB"_1
+then
+ let sym = tosymbol(s_(i + 2));
+ if isabstract2.sym ∧ not(parameter.modname.sym = mytype."T")
+ then [decode.sym] + findcomplexabstract(s, i + 3)
+ else findcomplexabstract(s, i + 3)
+else if s_i ="FREFBX"_1
+then
+ let sym = tosymbol(s_(i + 1));
+ if isabstract2.sym ∧ not(parameter.modname.sym = mytype."T")
+ then [decode.sym] + findcomplexabstract(s, i + 3)
+ else findcomplexabstract(s, i + 3)
+else findcomplexabstract(s, i + 1)
+
+function libsymname(a:presym)seq.word;
+":"+ name.a + towords.returntype.a + @(+, sublibsymname,"", parameters.a)
+
+function tolibsym2(lib:word, p:presym)libsym;
+let sym = tosymbol.p;
+libsym(symbolref.encoding.sym, print.modname.p + libsymname.p + if org.sym > 0 ∧ isabstract2.p then libsymname.decode.tosymbol.toword.org.sym else"", Cname(encoding.sym, lib), instruction.p)
+
+function sublibsymname(p:mytype)seq.word; ","+ towords.p
+
+use libscopeextension
+
+function tofunc(q:libsym)func;
+let k = substring(inst.q, 2, length.inst.q);
+func(length.types.q - 1, symname.q, toint.address.q, buildcodetree(k, 1))
+
+use oseq(libsym)
+
+function +(b:pass1result, p:presym)pass1result;
+let v = tolibsym2(libname(b)_1, funcfrominstruction.p);
+if isabstract.v
+then pass1result(code.b, libname.b, setinsert(syms.b, v), mods.b)
+else pass1result(code.b + tofunc.v, libname.b, syms.b, mods.b)
+
+the code for type func is never a code fragment and never abstract.
+
+instructions for symbols are"USECALL"or a simple code fragment that can be turned into code by listing the code for the parameters and then appending the fragment.For abstract fragments appending is not enough to handle all fragments.
+
+instructions for libsyms are a frag or begin with"USECALL"followed by the definition of the function"
+
+use set.word
+
+Function complexexports(abstract:seq.presym, s:seq.moddesc)seq.presym;
+comment compiles all complex exports from modules;
+let a = removedups.@(+, complexexports,"", s);
+@(+, compilesymbol.abstract, empty.presym, a)
+
+Function complexexports(m:moddesc)seq.word;
+if isprivate.m then empty.word else @(+, iscomplex,"", export.m)
+
+function iscomplex(p:presym)seq.word;
+let s = lookupsymbol("", p);
+if org.s > 0 ∧ not.isabstract2.s then [toword.encoding.s] else""
+
+Function tolibmod(alllocals:seq.presym, m:moddesc)seq.libmod;
+if isprivate.m
+then empty.libmod
+else
+ let defines = lookup(@(+, filtermod.modname.m, empty.presym, alllocals)+ defines.m);
+ let exports = @(+, lookupsymbol."", empty.symbol, export.m);
+ let unbound = @(+, print, empty.seq.word, unbound.m);
+ [libmod(isparameterized.modname.m, abstracttype.tomytype.modname.m, @(+, encoding, empty.int, defines), @(+, encoding, empty.int, exports), unbound)]
+
+Function compilemodule(kind:seq.word, alllocals:seq.presym, thistype:moddesc)seq.presym;
+if kind ="simple"∧ not.isparameterized.modname.thistype ∨ kind ="abstract"∧ isparameterized.modname.thistype ∧ parameter.modname.thistype = mytype."T"
+then
+ comment check to make sure all types are defined;
+ let locals = @(+, filtermod.modname.thistype, empty.presym, alllocals);
+ let localsassymbols = lookup.locals;
+ let usp = uspSymbols.thistype;
+ let discard = @(+, checktypes.usestypes.thistype, 0, usp + localsassymbols);
+ let syms = asset(localsassymbols + expandUses.thistype + usp);
+ let exports = @(+, exportisdefined.syms, empty.presym, export.thistype);
+ @(+, bind(modname.thistype, syms), empty.presym, tocompile.thistype)+ unbound.thistype + locals
+else empty.presym
+
+function lookup(s:seq.presym)seq.symbol; @(+, lookupsymbol."", empty.symbol, s)
+
+function checktypes(types:seq.mytype, sym:presym, t:mytype)int;
+assert t in types:"unknown type"+ print.t +"in"+ print.sym;
+0
+
+function checktypes(types:seq.mytype, sym:symbol)int;
+let p = decode.sym;
+checktypes(types, p, returntype.p)+ @(+, checktypes(types, p), 0, parameters.p)
+
+function jjj(s:seq.presym, compiled:set.word, abstract:seq.presym)seq.presym;
+comment Gather uncompiled functions and then compile them.This must be done recursively;
+if length.s = 0
+then s
+else
+ let new = removedups.@(+, gather.compiled, empty.word, s);
+ s + jjj(@(+, compilesymbol.abstract, empty.presym, new), union(compiled, asset.new), abstract)
+
+function gather(compiled:set.word, p:presym)seq.word;
+comment gather uncompiled abstract functions;
+gather(compiled, instruction.p, 1, empty.word)
+
+function gather(compiled:set.word, s:seq.word, i:int, r:seq.word)seq.word;
+if i > length.s
+then r
+else if s_i ="WORD"_1
+then gather(compiled, s, i + 2, r)
+else if s_i ="CALL"_1
+then
+ let x = s_(i + 2);
+ if x in compiled
+ then gather(compiled, s, i + 3, r)
+ else gather(compiled, s, i + 3, r + x)
+else if s_i ="FREFX"_1
+then
+ let x = s_(i + 1);
+ if x in compiled
+ then gather(compiled, s, i + 3, r)
+ else gather(compiled, s, i + 3, r + x)
+else gather(compiled, s, i + 1, r)
+
+Function asmap(code:seq.presym)seq.presym; @(addit, identity, dseq.dummypresym, code)
+
+Function addit(s:seq.presym, t:presym)seq.presym;
+let i = encoding.tosymbol(t, 0);
+assert isabstract2.t:"DEBUG10"+ print.t;
+replace(s, i, t)
+
+Function aswordref(s:presym)word; toword.encoding.tosymbol(s, 0)
+
+use seq.presym
+
+use seq.word
+
+Function compilesymbol(abstract:seq.presym, w:word)presym;
+let a = tosymbol.w;
+let p = decode.a;
+assert not.isabstract2.p:"cannot be abstract"+ print5.p;
+assert org.a > 0 ∧ org.a ≤ length.abstract:"JKL"+ toword.org.a + print.p;
+let q = funcfrominstruction.changeinstruction(p, removeB(parameter.modname.p, instruction(abstract_org.a), 1));
+assert not.hasabstractref.substring(instruction.q, 2, length.instruction.q):"DEBUG8"+ print5.q;
+q
+
+function removeB(with:mytype, w:seq.word, i:int)seq.word;
+comment remove abstract calls from code;
+comment assert not(with = mytype."T"):"with must not contain T in call to removeB";
+if i > length.w
+then w
+else if w_i ="CALLB"_1
+then
+ assert not(w_(i + 2)="0"_1):"DEBUG7"+ w;
+ let code = CALLcode.replaceTsymbol(with, tosymbol(w_(i + 2)));
+ let new = substring(w, 1, i - 1)+ code + substring(w, i + 3, length.w);
+ removeB(with, new, i + length.code)
+else if w_i ="FREFBX"_1
+then
+ assert not(w_(i + 1)="0"_1):"DEBUG6"+ toword(i + 1);
+ let new = substring(w, 1, i - 1)+ FREFcode.replaceTsymbol(with, tosymbol(w_(i + 1)))+ substring(w, i + 3, length.w);
+ removeB(with, new, i + 3)
+else if w_i ="TSIZE"_1
+then
+ let k = toword(LIT.typesize.with * toint(w_(i + 1))+ toint(w_(i - 1)));
+ let new = substring(w, 1, i - 2)+ k + substring(w, i + 2, length.w);
+ removeB(with, new, i)
+else if w_i ="DEEPCOPY"_1
+then deepcopybody.with
+else if w_i ="WORD"_1
+then removeB(with, w, i + 2)
+else removeB(with, w, i + 1)
+
+function initaname int;
+length.[setCname(encoding.lookup("toUTF8"_1, [mytype."word seq"]),"toUTF8"_1),
+setCname(encoding.lookup("IDX2"_1, [mytype."int seq", mytype."int"]),"IDX2"_1),
+setCname(encoding.lookup("+"_1, [mytype."int seq", mytype."int"]),"append"_1),
+setCname(encoding.lookup("encodeword"_1, [mytype."int seq"]),"encodeword"_1),
+setCname(encoding.lookup("main"_1, empty.mytype),"entrypoint"_1)]
+
+--------------
+
+scope module
+
+type moddesc is struct modname:modinstance, export:seq.presym, unbound:seq.presym, uses:seq.modinstance, typedefs:seq.parsetree, defines:seq.presym, tocompile:seq.parsetree, isprivate:boolean
+
+Function modname(m:moddesc)modinstance; export
+
+Function template(name:modinstance, s:seq.presym, exports:seq.presym, unbound:seq.presym)moddesc;
+moddesc(name, exports, unbound, empty.modinstance, empty.parsetree, s, empty.parsetree, false)
+
+Function tocompile(moddesc)seq.parsetree; export
+
+Function export(s:moddesc)seq.presym; export
+
+Function defines(s:moddesc)seq.presym; export
+
+Function unbound(moddesc)seq.presym; export
+
+Function typedefs(moddesc)seq.parsetree; export
+
+Function uses(moddesc)seq.modinstance; export
+
+Function isprivate(moddesc)boolean; export
+
+Function =(a:moddesc, b:moddesc)boolean; modname.a = modname.b
+
+use etype
+
+use stdlib
+
+use seq(seq(int))
+
+use pass0
+
+use symbol
+
+use seq(symbol)
+
+use tree(word)
+
+use seq.tree.word
+
+use seq(seq(tree(word)))
+
+use seq.mytype
+
+use seq.seq.seq.word
+
+use encoding.cachedmod
+
+use invertedseq.cachedmod
+
+Function hash(a:cachedmod)int; hash.print.m.a
+
+function =(a:cachedmod, b:cachedmod)boolean; m.a = m.b
+
+type cachedmod is struct m:modinstance, symbols:seq.symbol, types:seq.mytype
+
+Function localchacedmod int; localencoding.cachedmod(modinstance.mytype."T", empty.symbol, empty.mytype)
+
+Function preprocess(a:modinstances)int;
+let syms = @(+, tosymbol, empty.symbol, defines.template.a)+ @(+, lookupsymbol."for export", empty.symbol, export.template.a);
+let types = removedups.@(+, usestypes, empty.mytype, syms);
+let b = encode.cachedmod(modname.template.a, syms, types);
+@(+, preprocess(syms, types), 0, list.a)
+
+function preprocess(s:seq.symbol, t:seq.mytype, a:modinstance)int;
+let b = encode.cachedmod(a, @(+, replaceTsymbol.parameter.a, empty.symbol, s), @(+, replaceT.parameter.a, empty.mytype, t));
+0
+
+function isparameterized(s:symbol)seq.symbol; if isparameterized.modname.decode.s then [s] else empty.symbol
+
+use set.modinstance
+
+use seq.parsetree
+
+use seq.modinstance
+
+use seq.moddesc
+
+use oseq.modinstance
+
+Function primitivemods(s:seq.seq.seq.word)seq.moddesc; @(+, tomodule2, empty.moddesc, s)
+
+Function usesmods(p:seq.moddesc)seq.modinstances;
+let a = createinstance3(p, empty.modinstance);
+let b = @(+, modname, empty.modinstance, p);
+break(p, sort(b + a), 1, 1)
+
+Function typedefs(a:modinstances)seq.parsetree;
+let t = typedefs.template.a;
+if isparameterized.modname.template.a then @(+, typedefs.t, t, list.a)else t
+
+function typedefs(p:seq.parsetree, m:modinstance)seq.parsetree;
+@(+, replaceT.totreetype.parameter.m, empty.parsetree, p)
+
+type modinstances is struct list:seq.modinstance, template:moddesc
+
+Function list(modinstances)seq.modinstance; export
+
+Function template(modinstances)moddesc; export
+
+use seq.modinstances
+
+function =(a:modinstances, b:modinstances)boolean; false
+
+function break(prim:seq.moddesc, m:seq.modinstance, last:int, i:int)seq.modinstances;
+if i > length.m
+then [modinstances(substring(m, last, i - 1), findtemplate(prim, m_last))]
+else if name(m_last)= name(m_i)
+then break(prim, m, last, i + 1)
+else [modinstances(substring(m, last, i - 1), findtemplate(prim, m_last))] + break(prim, m, i, i)
+
+Function findtemplate(prim:seq.moddesc, m:modinstance)moddesc;
+let tname = if not.isparameterized.m then m else modinstance.mytype("T"+ name.m);
+let e = moddesc(tname, empty.presym, empty.presym, empty.modinstance, empty.parsetree, empty.presym, empty.parsetree, false);
+let i = findelement(e, prim);
+assert i ≤ length.prim:"ERROR:module"+ print.tname +"NOT FOUND"+ print.m +"{"+ @(+, print,"", @(+, modname, empty.modinstance, prim))+"}";
+prim_i
+
+function uses(prim:seq.moddesc, m:modinstance)seq.modinstance;
+@(+, replaceT.parameter.m, empty.modinstance, uses.findtemplate(prim, m))
+
+function createinstance3(p:seq.moddesc, m:seq.modinstance)seq.modinstance;
+let existing = asset.@(+, modname, m, p);
+let uses = asset.@(+, uses.p, empty.modinstance, toseq.existing);
+let new = uses - existing;
+if isempty.new then m else createinstance3(p, m + toseq.new)
+
+function tomodule2(text:seq.seq.word)moddesc;
+let isparameterized = length(text_1)> 2;
+let type =
+ if not.isparameterized
+ then tree(text_1_2)
+ else tree(text_1_2, [tree("T"_1)]);
+setSymbols(text, 1, type, empty.parsetree, empty.parsetree, empty.parsetree, empty.modinstance, empty.parsetree, empty.parsetree)
+
+function setSymbols(md:seq.seq.word, i:int, type:tree.word, sym:seq.parsetree, export:seq.parsetree, unbound:seq.parsetree, uses:seq.modinstance, typedefs:seq.parsetree, private:seq.parsetree)moddesc;
+if i > length.md
+then moddesc(modinstance.mytype.type, @(+, presym.modinstance.mytype.type, empty.presym, export + sym), @(+, presym.modinstance.mytype.type, empty.presym, unbound), uses, typedefs, @(+, presym.modinstance.mytype.type, empty.presym, private + sym), private + sym, not("Module"_1 = md_1_1))
+else
+  if length(md_i) > 0 &and md_i_1 in"Function function type use"
+then
+ let pt = parse(md_i, type);
+ if md_i_1 ="type"_1
+ then setSymbols(md, i + 1, type, sym, export, unbound, uses, typedefs + pt, private)
+ else if md_i_1 ="use"_1
+ then setSymbols(md, i + 1, type, sym, export, unbound, uses + modinstance.mytype.getusemodule.pt, typedefs, private)
+ else if body.pt = tree("export"_1)
+ then setSymbols(md, i + 1, type, sym, export + pt, unbound, uses, typedefs, private)
+ else if body.pt = tree("unbound"_1)
+ then setSymbols(md, i + 1, type, sym, export, unbound + pt, uses, typedefs, private)
+ else if md_i_1 ="Function"_1
+ then setSymbols(md, i + 1, type, sym + pt, export, unbound, uses, typedefs, private)
+ else setSymbols(md, i + 1, type, sym, export, unbound, uses, typedefs, private + pt)
+else setSymbols(md, i + 1, type, sym, export, unbound, uses, typedefs, private)
+
+-----------
+
+use seq.presym
+
+Function expandUses(t:moddesc)seq.symbol; @(+, usesymbols, empty.symbol, uses.t)
+
+Function uspSymbols(t:moddesc)seq.symbol;
+let defines = checkdups(modname.t, @(+, tosymbol, empty.symbol, defines.t));
+@(addnodup, lookupsymbol."for binding", defines, unbound.t)
+
+function usesymbols(use:modinstance)seq.symbol; symbols.decode.encode.cachedmod(use, empty.symbol, empty.mytype)
+
+Function usestypes(t:moddesc)seq.mytype;
+removedups(@(+, usestypes, empty.mytype, uses.t)+ @(+, mytype, empty.mytype, @(+, type, empty.tree.word, typedefs.t))+ if isparameterized.modname.t then [mytype."T"] else empty.mytype)
+
+Function usestypes(use:modinstance)seq.mytype; types.decode.encode.cachedmod(use, empty.symbol, empty.mytype)
+
+scope breakscopes
+
+use seq(seq(int))
+
+use stdlib
+
+use seq.seq.seq.word
+
+breaktypes looks for paragraphs beginning with module and returns seq of subsequences of paragraphs making up each type.In does this by creating a sequence of pairs of integers.each pair contains beginning and end of a subsequence making up the paragraph.
+
+function findscope(a:seq.seq.word, i:int)int;
+if length(a_i) > 0 &and a_i_1 in"module scope Module"then i else 0
+
+function addpair(a:seq.seq.int, i:int)seq.seq.int;
+if i = 0
+then a
+else if length.a = 0
+then [[1, i - 1]]
+else a + [[a_length(a)_2 + 1, i - 1]]
+
+function finishpair(p:seq.seq.int, len:int)seq.seq.int;
+substring(p, 2, length.p)+ [[p_length(p)_2 + 1, len]]
+
+function extractscope(a:seq.seq.word, p:seq.int)seq.seq.word;
+substring(a, p_1, p_2)
+
+Function breakscopes(a:seq.seq.word)seq.seq.seq.word;
+@(+, extractscope.a, empty.seq.seq.word, finishpair(@(addpair, findscope.a, empty.seq.int, arithseq(length.a, 1, 1)), length.a))
+
+scope pass1
+
+use moddesc
+
+use stdlib
+
+Function pass1(input:seq.seq.word, templates:seq.moddesc, libname:seq.word)pass1result; export
+
+Function pass1(input:seq.seq.word)pass1result; pass1(input, empty.moddesc,"all")
+
+    ______________________________
+
+scope constant
+
+use encoding(seq.word)
+
+use invertedseq.seq.word
+
+use stdlib
+
+type constant is struct tocoding:encoding.seq.word
+
+Function constantmapping seq.seq.word; mapping."the"
+
+Function encodeconstant(s:seq.word)constant; constant.encode.s
+
+Function decode(c:constant)seq.word; decode.tocoding.c
+
+Function encoding(c:constant)int; encoding.tocoding.c
+
+Function =(a:constant, b:constant)boolean; encoding.a = encoding.b
+
+Function addconst(w:seq.word)word; toword.encoding.encodeconstant.w
+
+Function getFREFinconstants seq.int; @(+, getFREF(1, empty.int), empty.int, constantmapping)
+
+Function getFREF(i:int, r:seq.int, d:seq.word)seq.int;
+if i > length.d
+then r
+else
+ let t = d_i;
+ if t in"LIT RECORD WORD CONST"
+ then getFREF(i + 2, r, d)
+ else
+  assert t ="FREFX"_1:"UNEXPECTED CODE IN CONSTANT"+ t;
+  getFREF(i + 3, r + toint(d_(i + 1)), d)
+
+Function localencoding(seq.word)int; export
+
+______________________
+
+scope pass2a
+
+use stdlib
+
+use graph(int)
+
+use seq(int)
+
+use oseq(int)
+
+use seq(arc(int))
+
+use fileresult
+
+use seq(seq.word)
+
+use seq(arc(int))
+
+use set(int)
+
+use seq(func)
+
+use pass2
+
+use constant
+
+use real
+
+Function findconst(f:func)func; replacecodetree(f, findconst.codetree.f)
+
+Function findconst(t:tree.cnode)tree.cnode;
+comment We assume that ENCODE 1 is the word encodings.THIS IS NO LONGER TRUE!;
+if nosons.t = 0
+then if inst.label.t ="WORD"_1 then
+ let a = addconst.print.t;
+ t else t
+else
+ let l = @(+, findconst, empty.tree.cnode, sons.t);
+ let inst = inst.label.t;
+ if inst ="RECORD"_1
+ then
+  if @(and, isconst, true, l)
+  then tree.cnode("CONST"_1, addconst.@(+, print,"RECORD"+ toword.nosons.t, l), 0)
+  else tree(label.t, l)
+ else if inst ="encodeword"_1 ∧ inst.label(t_1)="CONST"_1
+ then
+  let cst = constantmapping_toint.arg.label(t_1);
+  findconst.tree.cnode("WORD"_1, encodeword.@(+, toint, empty.int, @(+,_.cst, empty.word, arithseq(length.cst / 2 - 3, 2, 8))), 0)
+ else if inst ="IDX2"_1 ∧ inst.label(t_2)="LIT"_1 ∧ inst.label(t_1)="CONST"_1
+ then
+  let cst = constantmapping_toint.arg.label(t_1);
+  let idx = toint.arg.label(t_2);
+  let k = 7 + 2 *(idx - 1);
+  if idx > 0 ∧ k < length.cst
+  then tree.cnode(cst_k, cst_(k + 1), 0)
+  else tree(label.t, l)
+ else if inst in"SUB RSUB"∧ inst.label(t_1)="LIT"_1 ∧ inst.label(t_2)="LIT"_1
+ then
+  let a = toint.arg.label(t_1);
+  let b = toint.arg.label(t_2);
+  if inst ="SUB"_1
+  then
+   if between(a,-100, 100)∧ between(b,-100, 100)
+   then tree.cnode("LIT"_1, toword(a - b), 0)
+   else tree(label.t, l)
+  else
+   comment"RSUB"_1;
+   tree.cnode("LIT"_1, toword.representation(casttoreal.a - casttoreal.b), 0)
+ else tree(label.t, l)
+
+Function isconst(t:tree.cnode)boolean; inst.label.t in"LIT CONST WORD FREFX"
+
+/Function print(a:seq.int)seq.word; [toword.length.a]
+
+use libdescfunc
+
+use libscope
+
+function prt(f:seq.func, i:int)seq.word;
+[EOL] + number(f_i)+ symboltext(f_i)+ print.codetree(f_i)
+
+function filterlib(lib:word, f:func)seq.func;
+if lib in"stdlib stdlibB"∨ substring(symboltext.f, length.symboltext.f - 1, length.symboltext.f)="main int"
+then [f]
+else
+ let a = decode.Cname(toint.number.f, lib);
+ let b = decode.lib;
+ if substring(a, 1, length.b)= b then [f] else empty.func
+
+Function pass2(r:pass1result)pass1result;
+let discard = localencoding."";
+let infunc = code.r;
+let z = checktree.infunc;
+comment assert false:@(+, print,"", infunc);
+comment make sure func is created for max cname value so any new function created will not collid with cname;
+let startfuncs = addit(dseq.dummyfunc,func(0,"dummyfunc2",maxaname, buildcodetree("LIT 1", 1)) );
+let funcs = @(addit, findconst, startfuncs, infunc);
+let roots = @(+, getroot, empty.int, infunc);
+comment assert length.roots = 3:"ERROR"+ if length.roots > 2 then"too many main programs"else"to few main programs";
+let callgraph = @(+, getarcs, newgraph.empty.arc.int, funcs);
+let reachable = reachable(callgraph, roots + getFREFinconstants);
+let p = program(funcs, callgraph, dummyfunc);
+let s = @(expandapply, identity, p, toseq.reachable);
+comment assert false:@(+, prt(allfunctions.s),"", toseq.reachable);
+let s1 = @(simpleinline, identity, s, toseq.reachable);
+let s2 = @(simpleinline, identity, s1, toseq.reachable);
+let reachable2 = reachable(callgraph.s2, roots + getFREFinconstants);
+comment assert false:@(+, prt(allfunctions.s),"", toseq.reachable2);
+comment now find places where order of evaluation depends on state since C does not enforce order of evaluation of arguments to functions;
+let f = @(+,_.allfunctions.s2, empty.func, toseq.reachable2);
+comment assert false:@(+, prt(allfunctions.s2),"", f);
+let y = @(+, readwritestate, empty.int, f);
+let state = reachable(complement.callgraph.s2, y);
+comment only pass on functions that can be reached from roots;
+comment assert false:"KL"+ print(f_117);
+let g = @(+, filterlib(libname(r)_1), empty.func, f);
+comment assert false:print.(g_1);
+let rr = @(+, fixup.@(+, toword, asset.empty.word, toseq.state), empty.func, g);
+let desc = libdesc.pass1result(rr, libname.r, syms.r, mods.r);
+comment let b = addMODDESC(libname.r, s2,"LIT 0 LIT 0 RECORD 2");
+let b = addMODDESC(libname.r, s2, tocode.desc);
+pass1result(rr + b, libname.r, syms.r, mods.r)
+
+function checktree(s:seq.func)boolean; @(and, checktree, true, s)
+
+function checktree(f:func)boolean; 
+assert checktree.codetree.f:"invalid tree"+ print.f;
+true
+
+function checktree(t:tree.cnode)boolean;
+if inst.label.t ="SET"_1 ∧ not(nosons.t = 2)
+then false
+else if inst.label.t ="if"_1 ∧ not(nosons.t = 3)
+then false
+else @(and, checktree, true, sons.t)
+
+function addMODDESC(name:seq.word, p:program, code:seq.word)func;
+let a = allfunctions.p;
+let discard = setCname(length.a + 1, merge(name +"$desc"));
+comment assert discard=length.a + 1 : "Problem with assigin cname to "+merge(name +"$desc");
+func(0,"moddesc liblib", length.a + 1, findconst.buildcodetree(code, 1))
+
+function readwritestate(f:func)seq.int; if"STATE"in codetree.f then [toint.number.f] else empty.int
+
+function fixup(l:set.word, f:func)func;
+let p = fixup(l, getmaxvar.codetree.f + 1, codetree.f);
+let q = tailcall(findconst.p, getmaxvar.p + 1, number.f);
+replacecodetree(f,
+ if number.f in l ∧ not(inst.label.q ="STATE"_1)
+ then tree(cnode("STATE"_1,"0"_1, 0), [q])
+ else q)
+
+Function getroot(f:func)seq.int;
+if number.f ="0"_1 then empty.int else [toint.number.f]
+
+if symboltext.f in ["main(seq(seq(word)))","main(int)","toUTF8(seq(word), seq(int))","IDX2(seq(int), int, int)"] then [toint.number.f] else empty.int
+
+function print(g:graph.int)seq.word; @(+, p,"", arcs.g)
+
+function p(a:arc.int)seq.word; [toword.a.a] +":"+ toword.b.a
+
+use buildtree
+
+Function getarcs(f:func)seq.arc.int; calls(toint.number.f, codetree.f)
+
+Function calls(self:int, t:tree.cnode)seq.arc.int;
+@(+, calls.self, empty.arc.int, sons.t)+
+if inst.label.t in"CALL FREFX"
+then [arc(self, toint.arg.label.t)]
+else empty.arc.int
+
+type program is struct allfunctions:seq.func, callgraph:graph.int, fn:func
+
+__________________________
+
+Simple inline expansion
+
+use seq(cnode)
+
+use set.arc.int
+
+function inline(fn:word, replacement:tree.cnode, adjust:int, code:tree.cnode)tree.cnode;
+let l = @(+, inline(fn, replacement, adjust), empty.tree.cnode, sons.code);
+if inst.label.code ="CALL"_1 ∧ arg.label.code = fn
+then subinline(fn, l, adjust, replacement)
+else tree(label.code, l)
+
+function subinline(fn:word, p:seq.tree.cnode, adjust:int, code:tree.cnode)tree.cnode;
+if inst.label.code ="PARA"_1
+then
+ assert between(toint.arg.label.code, 1, length.p):"inline problem"+ fn + arg.label.code + toword.length.p;
+ p_(length.p - toint.arg.label.code + 1)
+else
+ let l = @(+, subinline(fn, p, adjust), empty.tree.cnode, sons.code);
+ if inst.label.code in"LOCAL SET"
+ then tree(cnode(inst.label.code, toword(toint.arg.label.code + adjust), 0), l)
+ else tree(label.code, l)
+
+Function simpleinline(p:program, f:int)program;
+let fn = allfunctions(p)_f;
+if not.simple.fn
+then p
+else
+ let pred = predecessors(f, callgraph.p);
+ @(replacecall, identity, program(allfunctions.p, callgraph.p, fn), pred)
+
+function replacecall(p:program, f:int)program;
+if toint.number.fn.p = f
+then p
+else
+ let simple = fn.p;
+ let infunc = allfunctions(p)_f;
+ let t = inline(number.simple, codetree.simple, getmaxvar.codetree.infunc, codetree.infunc);
+ replace(p, replacecodetree(infunc, t))
+
+Function replace(p:program, fn:func)program;
+let f = toint.number.fn;
+let newall = replace(allfunctions.p, f, fn);
+let oldarcs = @(+, arc.f, asset.empty.arc.int, toseq.successors(callgraph.p, f));
+program(newall, replacearcs(callgraph.p, oldarcs, asset.getarcs.fn), fn.p)
+
+Function replace(allfunctions:seq.func, f:func)seq.func; replace(allfunctions, toint.number.f, f)
+
+______________
+
+use tree(cnode)
+
+use seq.tree.cnode
+
+Tailcall is a little bit tricky because must use tmps when a parameter is used to define another parameter to the right.For example F1(P1, P2)has tail call of F1(P1 + 1, P1)must use T1 = P1 + 1; P2 = P1; P1 = T1; We also handle removing the no op of assigning a parameter to itself.
+
+Function tailcall(t:tree.cnode, nextvar:int, self:word)tree.cnode;
+if inst.label.t ="if"_1
+then
+ assert nosons.t = 3:"incorrect sons";
+ tree(label.t, [t_1, tailcall(t_2, nextvar, self), tailcall(t_3, nextvar, self)])
+else if inst.label.t ="SET"_1
+then
+ assert nosons.t = 2:"incorrect sons 2";
+ tree(label.t, [t_1, tailcall(t_2, nextvar, self)])
+else if inst.label.t ="CALL"_1 ∧ arg.label.t = self
+then tailcall2(t, nextvar + 1, nosons.t, empty.tree.cnode)
+else t
+
+Function tailcall2(t:tree.cnode, nextvar:int, son:int, result:seq.tree.cnode)tree.cnode;
+if son = 0
+then tree(cnode("TAIL"_1, arg.label.t, 0), result)
+else
+ let thispara = t_son;
+ let var = toword.nextvar;
+ let p = cnode("PARA"_1, toword(nosons.t - son + 1), 0);
+ if @(∨, in.p, false, result)
+ then
+  let newresult = [thispara] + @(+, replace(cnode("LOCAL"_1, var, 0), p), empty.tree.cnode, result);
+  tree(cnode("SET"_1, var, 2), [tree.p, tailcall2(t, nextvar + 1, son - 1, newresult)])
+ else tailcall2(t, nextvar, son - 1, [thispara] + result)
+
+Function in(c:cnode, t:tree.cnode)boolean;
+if c = label.t then true else @(∨, in.c, false, sons.t)
+
+_____________
+
+use set.word
+
+/Function print(g:graph(int), a:func)seq(word);"<"+ number.a + symboltext.a +(if simple.a then"SIMPLE"else"COMPLEX")+">"+ @(+, toword,"", predecessors(toint.number.a, g))+ @(+, print,"", instructions.a)
+
+Function getmaxvar(t:tree.cnode)int;
+@(max, getmaxvar, if inst.label.t ="SET"_1 then toint.arg.label.t else 0, sons.t)
+
+function sideeffect(t:tree.cnode)int; reg.label.t
+
+function fixup(l:set.word, varno:int, t:tree.cnode)tree.cnode;
+let s = @(+, fixup(l, varno), empty.tree.cnode, sons.t);
+let k = @(+, sideeffect, 0, s);
+let hassideeffect = toint(inst.label.t in"MAPFILE"∨ inst.label.t in"CALL"∨ k > 0);
+let a = tree(cnode(inst.label.t, arg.label.t, hassideeffect), s);
+if k > 1 ∧ inst.label.t ="CALL"_1
+then fix2(t, 1, empty.tree.cnode, false, varno)
+else a
+
+function fix2(t:tree.cnode, i:int, result:seq.tree.cnode, skip:boolean, varno:int)tree.cnode;
+if i > nosons.t
+then tree(label.t, result)
+else
+ let thisson = t_i;
+ if reg.label.thisson > 0
+ then
+  if skip
+  then fix2(t, i + 1, result + thisson, false, varno)
+  else
+   let x = max(getmaxvar.t + 1, varno);
+   let v = toword.x;
+   tree(cnode("SET"_1, v, 1), [t_i, fix2(t, i + 1, result + tree.cnode("LOCAL"_1, v, 0), false, x + 1)])
+ else fix2(t, i + 1, result + thisson, skip, varno)
+
+-------------
+
+function addfunc(p:program, nopara:int, name:seq.word, inst:seq.cnode)program;
+let a = allfunctions.p;
+let num = length.a + 1;
+let insts = @(+, rrr([cnode("CALL"_1, toword.num, nopara)],"SELF"_1), empty.cnode, inst);
+let newf = func(nopara, name, num, buildcodetree.insts);
+program(replace(a, length.a + 1, newf), callgraph.p + getarcs.newf, newf)
+
+function rrr(replacement:seq.cnode, simplenumber:word, this:cnode)seq.cnode;
+if inst.this ="CALL"_1 ∧ simplenumber = arg.this then replacement else [this]
+
+function template(r:seq.seq.cnode, n:cnode)seq.cnode;
+if arg.n ="TERM2PARA"_1
+then r_1
+else if arg.n ="TERM2"_1
+then r_2
+else if arg.n ="TERM1"_1
+then r_3
+else if arg.n ="PTYP"_1
+then r_4
+else [n]
+
+use seq.word
+
+function genapply(prg:program, term1:word, term2:word, ptyp:word)program;
+let p = nopara(allfunctions(prg)_toint.term2) - 1;
+assert p ≥ 0:"illformed"+ term1 + term2 + print(allfunctions(prg)_toint.term2);
+comment assert false:[term1, term2];
+let inst = @(+, template.[@(+, tocnodepara, empty.cnode, arithseq(p,-1, 3 + p)),
+ [cnode("CALL"_1, term2, 1 + p)],
+ [cnode("CALL"_1, term1, 2)],
+ [cnode("LIT"_1,"2"_1, 0), cnode("FREFX"_1, ptyp, 1)]], empty.cnode, template2);
+addfunc(prg, 3 + p,"generated:"+ merge.[term1,"Z"_1, term2] +"int"+ @(+, identity,"", constantseq(3 + p,", int")), inst)
+
+function tocnodepara(i:int)cnode; cnode("PARA"_1, toword.i, 0)
+
+function template seq.cnode;
+[cnode("PARA"_1,"1"_1, 0),
+cnode("PARA"_1,"2"_1, 0),
+cnode("LIT"_1,"1"_1, 0),
+cnode("IDXUC"_1,"X"_1, 2),
+cnode("GT"_1,"X"_1, 2),
+cnode("PARA"_1,"3"_1, 0),
+cnode("PARA"_1,"TERM2PARA"_1, 0),
+cnode("PARA"_1,"3"_1, 0),
+cnode("PARA"_1,"TERM2PARA"_1, 0),
+cnode("PARA"_1,"2"_1, 0),
+cnode("PARA"_1,"1"_1, 0),
+cnode("IDX"_1,"0"_1, 2),
+cnode("CALL"_1,"TERM2"_1, 2),
+cnode("CALL"_1,"TERM1"_1, 2),
+cnode("PARA"_1,"2"_1, 0),
+cnode("PARA"_1,"1"_1, 0),
+cnode("LIT"_1,"1"_1, 0),
+cnode("ADD"_1,"X"_1, 2),
+cnode("CALL"_1,"SELF"_1, 4),
+cnode("if"_1,"X"_1, 3)]
+
+template2 was created from following code.xfunction applyR2(p2:p2t, acc:resulttype, s:seq(tseqelement), i:int)resulttype; if i > length.s then acc else iftype x:pseq(tseqelement)= s then applyR(p2, applyR(p2, acc, a.x, 1), b.x, 1)else applyR(p2, term1(acc, term2(p2, s_i)), s, i + 1)
+
+function template2 seq.cnode;
+[cnode("PARA"_1,"1"_1, 0),
+cnode("PARA"_1,"2"_1, 0),
+cnode("LIT"_1,"1"_1, 0),
+cnode("IDXUC"_1,"X"_1, 2),
+cnode("GT"_1,"X"_1, 2),
+cnode("PARA"_1,"3"_1, 0),
+cnode("PARA"_1,"2"_1, 0),
+cnode("LOCAL"_1,"1"_1, 0),
+cnode("LIT"_1,"0"_1, 0),
+cnode("IDXUC"_1,"X"_1, 2),
+cnode("FREFX"_1,"PTYP"_1, 0),
+cnode("EQL"_1,"X"_1, 2),
+cnode("PARA"_1,"TERM2PARA"_1, 0),
+cnode("PARA"_1,"TERM2PARA"_1, 0),
+cnode("PARA"_1,"3"_1, 0),
+cnode("LOCAL"_1,"1"_1, 0),
+cnode("LIT"_1,"2"_1, 0),
+cnode("IDXUC"_1,"X"_1, 2),
+cnode("LIT"_1,"1"_1, 0),
+cnode("CALL"_1,"SELF"_1, 4),
+cnode("LOCAL"_1,"1"_1, 0),
+cnode("LIT"_1,"3"_1, 0),
+cnode("IDXUC"_1,"X"_1, 2),
+cnode("LIT"_1,"1"_1, 0),
+cnode("CALL"_1,"SELF"_1, 4),
+cnode("PARA"_1,"TERM2PARA"_1, 0),
+cnode("PARA"_1,"3"_1, 0),
+cnode("PARA"_1,"TERM2PARA"_1, 0),
+cnode("PARA"_1,"2"_1, 0),
+cnode("PARA"_1,"1"_1, 0),
+cnode("IDX"_1,"0"_1, 2),
+cnode("CALL"_1,"TERM2"_1, 2),
+cnode("CALL"_1,"TERM1"_1, 2),
+cnode("PARA"_1,"2"_1, 0),
+cnode("PARA"_1,"1"_1, 0),
+cnode("LIT"_1,"1"_1, 0),
+cnode("ADD"_1,"X"_1, 2),
+cnode("CALL"_1,"SELF"_1, 4),
+cnode("if"_1,"X"_1, 3),
+cnode("SET"_1,"1"_1, 2),
+cnode("if"_1,"X"_1, 3)]
+
+function expandapply(p:program, thisone:int)program;
+let f = allfunctions(p)_thisone;
+let x = expandapply(p, codetree.f);
+if codetree.f = c.x
+then p
+else
+ comment assert codetree.f = c.x:print.codetree.f +"<>>>"+ print.c.x;
+ replace(p.x, replacecodetree(f, c.x))
+
+type rexpand is struct p:program, c:tree.cnode
+
+function =(a:rexpand, b:rexpand)boolean; false
+
+use seq.rexpand
+
+use seq.seq.cnode
+
+function merge(s:seq.rexpand, t:tree.cnode)seq.rexpand; s + expandapply(p.last.s, t)
+
+function expandapply(p:program, t:tree.cnode)rexpand;
+if nosons.t = 0
+then rexpand(p, t)
+else
+ let l = @(merge,_.t, [expandapply(p, t_1)], arithseq(nosons.t - 1, 1, 2));
+ let t2 = tree(label.t, @(+, c, empty.tree.cnode, l));
+ if inst.label.t ="APPLY"_1
+ then
+  let p2 = genapply(p.last.l, arg.label(t2_(nosons.t2 - 1)), arg.label(t2_(nosons.t2 - 2)), arg.label(t2_nosons.t2));
+  rexpand(p2, tree(cnode("CALL"_1, number.fn.p2, nopara.fn.p2), substring(sons.t2, 1, nosons.t2 - 3)+ tree.cnode("LIT"_1,"1"_1, 0)))
+ else rexpand(p.last.l, t2)
+
+scope pass2
+
+use pass2a
+
+use stdlib
+
+use buildtree
+
+use tree.cnode
+
+use seq.func
+
+use stack(tree(cnode))
+
+use seq.tree.cnode
+
+Function pass2(pass1result)pass1result; export
+
+Function allocatereg(a:tree.cnode)tree.cnode;
+top.@(allocate, identity, emptystack.empty.tree.cnode, postorder.a)
+
+Function allocate(f:stack.tree.cnode, b:tree.cnode)stack.tree.cnode;
+let label = label.b;
+let n = nosons.b;
+let below = if isempty.f then 0 else reg.label.top.f;
+let a = pop(f, n);
+let left = if isempty.a then 0 else reg.label.top.a;
+if inst.label ="SET"_1
+then
+ let varno = arg.label;
+ let this = max(below + 1, left + 1);
+ let exp1 = undertop(f, 1);
+ let exp2 = replace(cnode("LOCAL"_1, varno, this), cnode("LOCAL"_1, varno, 0), top.f);
+ push(a, tree(cnode("SET"_1, varno, this), [exp1, exp2]))
+else
+ let this = max(if inst.label in"RECORD"then below + 1 else below, left + 1);
+ let l = if this = reg.label then label else cnode(inst.label, arg.label, this);
+ push(a, tree(l, top(f, n)))
+
+Function Cname(i:int, lib:word)word; export
+
+Function asmap(code:seq.func)seq.func; export
+
+Function print(s:seq.func)seq.seq.word; export
+
+scope libdescfunc
+
+use stdlib
+
+use libscope
+
+use seq.libsym
+
+use tree.word
+
+use libscopeextension
+
+use seq.mytype
+
+use buildtree
+
+use seq.func
+
+use seq.libmod
+
+use constant
+
+use seq.int
+
+use blockseq.word
+
+use seq.libtype
+
+Function useCnames(lib:word, f:libsym)libsym;
+libsym(symbolref.0, symname.f, addressname.f, useCnames(lib, inst.f))
+
+Function libdesc(r:pass1result)liblib;
+let lib = libname(r)_1;
+let funcs = @(+, tolibsym(constantmapping, lib), empty.libsym, code.r);
+let map = createmap(syms.r + funcs, dseq.0, 1);
+let syms = @(+, useCnames.lib, empty.libsym, syms.r)+ funcs;
+let types = @(+, tolibtype, empty.libtype, removedups.@(+, types, empty.mytype, syms));
+let mods = @(+, map.map, empty.libmod, mods.r);
+liblib(libname.r, syms, types, mods)
+
+comment assert false:@(+, print.syms.l,"", mods.l); comment assert false:@(+, print,"", syms.l); l
+
+Function map(map:seq.int, a:libmod)libmod;
+libmod(parameterized.a, modname.a, @(+,_.map, empty.int, defines.a), @(+,_.map, empty.int, exports.a), unbound.a)
+
+Function createmap(s:seq.libsym, map:seq.int, i:int)seq.int;
+if i > length.s
+then map
+else createmap(s, replace(map, toint.address(s_i), i), i + 1)
+
+Function print(l:liblib)seq.word; @(+, print.syms.l,"", mods.l)
+
+Function print(a:libsym)seq.word; [EOL] + symname.a
+
+function print(syms:seq.libsym, a:libmod)seq.word;
+[EOL] +"MODNAME:"+ modname.a + [EOL] +"EXPORTS"+ @(+, print,"", @(+,_.syms, empty.libsym, exports.a))+ [EOL] +"DEFINES"+ @(+, print,"", @(+,_.syms, empty.libsym, defines.a))
+
+function U(l:libsym)seq.word; if addressname.l ="all2430"_1 then symname.l else""
+
+Function cast2int(liblib)int; builtin
+
+Function tocode(a:liblib)seq.word; code(mytype."liblib", cast2int.a)
+
+Function cast2int(seq.int)int; builtin
+
+Function cast2word(int)word; builtin
+
+Function cast2intseq(int)seq.int; builtin
+
+Function cast2wordseq(int)seq.word; builtin
+
+Function cast2libsym(int)libsym; builtin
+
+Function code(typ:mytype, data:int)seq.word;
+if typ = mytype."int"
+then"LIT"+ toword.data
+else if typ = mytype."word"∨ typ = mytype."int seq encoding"
+then"WORD"+ cast2word.data
+else if typ = mytype."libsym"
+then
+ let b = deepcopytypes.typ;
+ let nopara = toword(length.types.cast2libsym.data - 1);
+ (if IDXUC(data, 0)= 0 then"LIT 0"else"FREFX"+ toword.IDXUC(data, 0)+ nopara)+ @(+, subcode(b, data),"", arithseq(length.b - 1, 1, 2))+"RECORD"+ toword.length.b
+else if typ = mytype."symbolref"
+then if data = 0 then"LIT 0"else"FREFX"+ toword.data +"0"
+else if typ = mytype."word seq"
+then"LIT 0 LIT"+ toword.length.cast2wordseq.data + @(+, +."WORD","", cast2wordseq.data)+"RECORD"+ toword(length.cast2wordseq.data + 2)
+else if abstracttype.typ ="seq"_1
+then
+ let s = cast2intseq.data;
+ "LIT 0 LIT"+ toword.length.s + @(+, code.parameter.typ,"", s)+"RECORD"+ toword(length.s + 2)
+else
+ let b = deepcopytypes.typ;
+ if length.b = 1
+ then code(b_1, data)
+ else @(+, subcode(b, data),"", arithseq(length.b, 1, 1))+"RECORD"+ toword.length.b
+
+Function subcode(b:seq.mytype, data:int, i:int)seq.word;
+code(b_i, IDXUC(data, i - 1))
+
+Function IDXUC(int, int)int; builtin.IDXUC
+
+     -----------------------------------------------
+
+scope Ccode
+
+type Ccode is struct statement:seq.word, expression:seq.word
+
+use tree(cnode)
+
+use seq(tree(cnode))
+
+use stdlib
+
+use constant
+
+use seq(ipair(seq(word)))
+
+use ipair(seq(word))
+
+use seq(word)
+
+use seq(cnode)
+
+use seq(constant)
+
+use buildtree
+
+use seq(int)
+
+-----------------
+
+functions for extracting constants
+
+Function constdefs(lib:word)seq.word;
+let fst = constantmapping;
+let words = @(+, wordconstant.fst,"", arithseq(length.fst, 1, 1));
+let x = f232(lib, constantmapping, 1,"","");
+x_1 + EOL + EOL + EOL +"void"+ space + lib +"$constinit(processinfo"+ space +"PD){"+ words + x_2 +"}"+ EOL + EOL
+
+Function wordconstant(l:seq.seq.word, i:int)seq.word;
+let g = l_i;
+if g_1 ="WORD"_1
+then
+ let chars = decode(g_2);
+ let a = addconst("RECORD"+ toword(length.chars + 2)+ @(+, tolit2,"LIT 0 LIT"+ toword.length.chars, chars));
+ [EOL] +"C"+ toword.i +"="+"encodeword(PD,(BT)C"+ a +")"+";"
+else""
+
+Function tolit2(a:int)seq.word; "LIT"+ toword.a
+
+Function f232(lib:word, l:seq.seq.word, i:int, result:seq.word, resulte:seq.word)seq.seq.word;
+if i > length.l
+then [result, resulte]
+else
+ let g = l_i;
+ let const ="C"+ toword.i;
+ if g_1 ="WORD"_1
+ then f232(lib, l, i + 1, result + EOL +"static"+ space +"BT"+ space + const +";", resulte)
+ else
+  assert g_1 ="RECORD"_1:"UNEXPECTED CODE"+ g_1;
+  let patch = patchconst(const +"[", g, 3, 0);
+  let s = constToC(lib, g, 3,"");
+  let record = [EOL] +"static"+ space +"BT"+ space + const +"[] = {"+ substring(s, 1, length.s - 1)+"};";
+  f232(lib, l, i + 1, result + record, resulte + patch)
+
+function constToC(lib:word, s:seq.word, i:int, r:seq.word)seq.word;
+if i > length.s
+then r
+else if s_i in"LIT"
+then constToC(lib, s, i + 2, r + [s_(i + 1)] +",")
+else if s_i in"CONST"
+then constToC(lib, s, i + 2, r +"(BT)C"+ [s_(i + 1)] +",")
+else if s_i in"WORD"
+then constToC(lib, s, i + 2, r +"0,")
+else if s_i in"FREFX"
+then
+ let idx = toint(s_(i + 1));
+ constToC(lib, s, i + 3, r +"(BT)"+ useCname(toint(s_(i + 1)), lib, toint(s_(i + 2)))+",")
+else constToC(lib, s, i + 2, r +"??")
+
+Function patchconst(pre:seq.word, s:seq.word, i:int, idx:int)seq.word;
+if i > length.s
+then""
+else if s_i in"WORD"
+then pre + toword.idx +"] = C"+ addconst("WORD"+ s_(i + 1))+";"+ patchconst(pre, s, i + 2, idx + 1)
+else if s_i in"FREFX"
+then patchconst(pre, s, i + 3, idx + 1)
+else patchconst(pre, s, i + 2, idx + 1)
+
+--------------------------------------
+
+function toparaname(i:int)seq.word; "BT"+ space +"P"+ toword.i
+
+use pass0
+
+Function declareproc(lib:word, f:func)seq.word;
+let para = @(addcomma, toparaname,"", arithseq(nopara.f,-1, nopara.f));
+[EOL] +"BT"+ space + defineCname(toint.number.f, lib)+"(processinfo"+ space +(if length.para > 0 then"PD,"else"PD")+ para +")"
+
+Function procdef(lib:word, f:func)seq.word;
+let t = allocatereg.codetree.f;
+let c = genCcode(lib, t);
+let varlist = @(addvar, identity,"", statement.c);
+let decs = if length.varlist = 0 then""else"BT"+ space + varlist +";";
+"/ /"+ symboltext.f + declareproc(lib, f)+"{"+ decs +"tail:"+ statement.c +"return"+ space + expression.c +"; }"+ EOL + EOL
+
+Function replace(s:seq.word, w:word, r:seq.word, i:int)seq.word;
+if i > length.s
+then""
+else(if s_i = w then r else [s_i])+ replace(s, w, r, i + 1)
+
+Function wrap(pre:seq.word, c:Ccode, post:seq.word)Ccode;
+Ccode(statement.c, pre + expression.c + post)
+
+---------------------
+
+Function addspaceX(s:seq.word)seq.word;
+@(+, addspaceX.s,"", arithseq(length.s, 1, 1))
+
+Function addspaceX(s:seq.word, i:int)seq.word;
+let this = s_i;
+let next = if i = length.s then EOL else s_(i + 1);
+if next = EOL
+then [this]
+else if this = EOL
+then [this]
+else if next in("()-].,:;""_^"+ space)
+then [this]
+else if this in("()-[.:""_^"+ space)
+then [this]
+else [this] + space
+
+use pass2
+
+use libscope
+
+Function pass3(r:pass1result)seq.word;
+let discard = localencoding.dec(space, 0);
+let fs = code.r;
+let lib = libname(r)_1;
+let x = addconst."RECORD 2 LIT 0 LIT 0";
+let cdefs = constdefs.lib;
+let pdef = @(+, procdef.lib, empty.word, fs);
+"#include""toc.h"""+ decs + cdefs + pdef
+
+-----
+
+Function addvar(s:seq.word, w:word)seq.word;
+let t = decode.w;
+if t_1 = 82
+then
+ if not.between(t_2, 48, 57)
+ then s
+ else if w in s
+ then s
+ else if length.s = 0
+ then [w]
+ else s +","+ w
+else s
+
+Function genbuild3(lib:word, t:tree.cnode, v:seq.word, i:int)seq.word;
+let a = genCcode(lib, t_i);
+statement.a +"IDXUC("+ v +","+ toword(i - 1)+")="+ expression.a +";"+ EOL
+
+Function merge(a:Ccode, b:Ccode)Ccode;
+Ccode(statement.a + statement.b, expression.a +","+ expression.b)
+
+Function paras(lib:word, t:tree.cnode)Ccode;
+if nosons.t = 0
+then Ccode("","")
+else
+ let firstson = genCcode(lib, t_1);
+ if nosons.t = 1
+ then firstson
+ else @(merge, genCcode.lib, firstson, substring(sons.t, 2, nosons.t))
+
+use seq.func
+
+type dec is struct name:word, noargs:int
+
+function hash(a:dec)int; hash.name.a
+
+function =(a:dec, b:dec)boolean; name.a = name.b
+
+use encoding(dec)
+
+use invertedseq.dec
+
+use seq(dec)
+
+function defineCname(number:int, lib:word)word; useCname(number, lib, DEFINE)
+
+function DEFINE int; -1
+
+function useCname(number:int, lib:word, noarg:int)word;
+let n = Cname(number, lib);
+let i = encode.dec(n, noarg);
+n
+
+function useCname(w:word, noarg:int)word;
+if w in"IDX SETFLD2"then w else
+let i = encode.dec(w, noarg);
+w
+
+function declare(d:dec)seq.word;
+if noargs.d = DEFINE
+then empty.word
+else
+ comment this generates a forward declaration;
+ let para = @(addcomma, toparaname,"", arithseq(noargs.d,-1, noargs.d));
+ [EOL] +"BT"+ space + name.d +"(processinfo"+ space +(if length.para > 0 then"PD,"else"PD")+ para +");"
+
+Function decs seq.word; @(+, declare,"", mapping.dec("."_1, 0))
+
+Function genCcode(lib:word, t:tree.cnode)Ccode;
+let inst = inst.label.t;
+let arg = arg.label.t;
+if inst ="PARA"_1
+then Ccode(empty.word,"P"+ arg)
+else if inst ="LOCAL"_1
+then Ccode(empty.word, [merge("R"+ toword.reg.label.t)])
+else if inst in"LIT"
+then Ccode(empty.word, [arg,"ll"_1])
+else if inst in"CONST"
+then Ccode(empty.word,"(BT)C"+ [arg])
+else if inst in"WORD"
+then Ccode(empty.word,"(BT)C"+ addconst.print.t)
+else if inst ="TAIL"_1
+then
+ let c = tailcall2(lib, t, 1);
+ Ccode(statement.c +"goto"+ space +"tail;","0")
+else if inst ="CALL"_1
+then wrap([useCname(toint.arg, lib, nosons.t)] + if nosons.t > 0 then"(PD,"else"(PD", paras(lib, t),")")
+else if inst in"FREFX"
+then
+ let idx = toint.arg;
+ Ccode(empty.word,"((BT)&"+ useCname(idx, lib, toint.arg.label(t_1))+")")
+else if inst in"RECORD"
+then
+ let v = [merge("R"+ toword.reg.label.t)];
+ Ccode(v +"= myalloc(PD,"+ toword.nosons.t +");"+ @(+, genbuild3(lib, t, v),"", arithseq(nosons.t, 1, 1)), v)
+else if inst ="if"_1
+then
+ let ifpart = genCcode(lib, t_1);
+ let thenpart = genCcode(lib, t_2);
+ let elsepart = genCcode(lib, t_3);
+ let v = [merge("R"+ toword.reg.label.t)];
+ Ccode(statement.ifpart + EOL +"if("+ expression.ifpart +")"+"{"+ statement.thenpart + assignment(v, expression.thenpart)+"}"+ EOL +"else {"+ statement.elsepart + assignment(v, expression.elsepart)+"}", v)
+else if inst in"STATE NOINLINE"
+then genCcode(lib, t_1)
+else if inst ="SET"_1
+then
+ let exp1 = genCcode(lib, t_1);
+ let exp2 = genCcode(lib, t_2);
+ let v = [merge("R"+ toword.reg.label.t)];
+ Ccode(statement.exp1 + v +"="+ expression.exp1 +";"+ statement.exp2 + v +"="+ expression.exp2 +";", v)
+else if inst in"IDXUC ADD SUB GT LT EQL MULTIPLY DIVIDE CMP HASH NOT RCMP INTPART INT2REAL RSQRT SIN COS TAN ARCCOS ARCSIN RSUB RADD RMULT RDIV SETFLD aborted"
+then wrap([inst] +"(", paras(lib, t),")")
+else
+ let w = useCname(inst, nosons.t);
+ if nosons.t = 0
+ then Ccode("", [inst] +"(PD)")
+ else wrap([inst] +"(PD,", paras(lib, t),")")
+
+function assignment(name:seq.word, expression:seq.word)seq.word;
+if name = expression then empty.word else name +"="+ expression +";"
+
+_________________
+
+Function tailcall2(lib:word, t:tree.cnode, son:int)Ccode;
+if son > nosons.t
+then Ccode("","")
+else
+ let restofpara = tailcall2(lib, t, son + 1);
+ let name ="P"+ toword(nosons.t - son + 1);
+ let c = genCcode(lib, t_son);
+ Ccode(statement.c + assignment(name, expression.c)+ statement.restofpara,"")
+
+scope pass3
+
+use Ccode
+
+Function pass3(r:pass1result)seq.word; export
+
+scope main
+
+use pass1
+
+use pass2
+
+use pass3
+
+use stdlib
+
+use fileresult
+
+Function main int;   createfile2("output", pass3.pass2.pass1(gettext."./ input",empty.moddesc,"stdlib"))
+
+

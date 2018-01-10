@@ -230,10 +230,10 @@ Function checkapplyA(d:symdict, t:tree.word, nexttmp:int)r3
   let term2sons = bindsons(d, t_2, nexttemp.term1sons)
   let term3 = bind(d, t_3, nexttemp.term2sons)
   let term4 = bind(d, t_4, nexttemp.term3)
+   assert abstracttype(types(term4)_1)="seq"_1 report"last argument of apply must be seq"+ fortext.d 
   let sym2 = findsymbol(d, label.term2, types.term2sons + [ parameter(types(term4)_1)])
   let sym1 = findsymbol(d, label.term1, types.term1sons + types.term3 + [ returntype.sym2])
   assert types(term3)_1 = returntype.sym1 report"term3 not same as init"
-  assert abstracttype(types(term4)_1)="seq"_1 report"last argument of apply must be seq"+ fortext.d 
   let pseqtype = parameter(types(term4)_1)+"pseq"_1 
   if bindingonly.d 
   then r3(code.term1sons + mangled.sym1 + toword.nosons.term1 + code.term2sons + mangled.sym2 + toword.nosons.term2 + code.term3 + code.term4 +"@ 4", types.term3, nexttemp.term4)

@@ -163,7 +163,7 @@ BT *byteseqencetype;
 
 
 BT initlib4(char * libname,BT * words,BT * wordlist, BT * consts,BT * libdesc) {
-   fprintf(stderr,"starting initlib4\n");
+  // fprintf(stderr,"starting initlib4\n");
 if (strcmp(libname,"stdlib")==0){
   /* only needed when initializing stdlib */
     append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");
@@ -432,7 +432,8 @@ BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
 BT loadlibZbuiltinZUTF8(processinfo PD,BT p_libname){char *name=(char *)&IDXUC(p_libname,2);
 int i = looklibraryname(name) ;
 if (i >= 0)
-{  fprintf(stderr,"did not load %s as it was loaded\n",name) ; return ((BT*)loaded[i+2])[3];}
+{  // fprintf(stderr,"did not load %s as it was loaded\n",name) ; 
+  return ((BT*)loaded[i+2])[3];}
 return  loadlibrary(PD,name) ;  
 }
 
@@ -695,10 +696,8 @@ void createfilefromoutput(struct outputformat *t,int file)
       processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
       initprocessinfo(p,PD,pin);
       p->freespace=0;
-      fprintf(stderr,"got here\n");
-      processfunction(p);  
-                 fprintf(stderr,"finished process here\n");
-      if (p->kind==1 )   { 
+        processfunction(p);  
+       if (p->kind==1 )   { 
           char *header = "Status: 500 Error\r\nContent-Type: text/html\r\n\r\n";
         BT s=toUTF8(PD,p->message);
         BT i,seqlen=IDXUC(s,1);
@@ -934,6 +933,33 @@ close(randomData);
 BT tanZbuiltinZreal(processinfo PD, BT a)  {return asint(tan(asreal(a)));}
 BT arcsinZbuiltinZreal(processinfo PD, BT a)  {return asint(asin(asreal(a)));}
 BT arccosZbuiltinZreal(processinfo PD, BT a)  {return asint(acos(asreal(a)));}
+
+
+
+struct byteseq { BT type,length,*seq,type2,length2; char data[8];};
+
+BT  tobyteseq ( processinfo PD,char *str) {
+   int len=strlen(str);
+   struct byteseq   *b=(struct byteseq   *)myalloc(PD,5+(len+7)/8);
+     b->type=(BT)byteseqencetype;
+     b->length=len;
+     b->seq =(BT *) &(b->type2);
+     b->type2=0;
+     b->length2=(len+7)/8;
+     memcpy(b->data,str,len);
+     return (BT) b;
+
+}
+
+
+BT getmachineinfoZbuiltin(processinfo PD) 
+{  BT a = myalloc(PD,2);
+   IDXUC(a,0)=tobyteseq(PD,"x86_64-apple-macosx10.12.0");
+   IDXUC(a,1)=tobyteseq(PD,"e-m:o-i64:64-f80:128-n8:16:32:64-S128");
+   return a;
+ }
+
+
 
 
 
