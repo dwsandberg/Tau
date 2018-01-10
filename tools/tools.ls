@@ -3,14 +3,17 @@
 Library tools bandeskopf barycenter displaygraph displaytextgraph layergraph makeDAG prettylib svg svggraph doc
 profile labeledgraph printbitcodes
  uses stdlib 
- exports prettylib tools doc profile printbitcodes prettylib
+ exports prettylib tools doc profile printbitcodes prettylib displaygraph 
+ displaytextgraph svg svggraph bandeskopf barycenter makeDAG layergraph
  
 
 Module tools
 
-run tools stdlibdoc
+run tools test2
 
-/run doc createdoc
+/run tools stdlibdoc
+
+run doc createdoc
 
 /run tools testprintBitCodes
 
@@ -54,4 +57,6 @@ Function stdlibdoc seq.word       callgraphbetween("stdlib","llvm internalbc")  
 // callgraphwithin("stdlib","llvm")
 + //
 doclibrary("stdlib")
+
+Function test2 seq.word doclibrary("basic")
 

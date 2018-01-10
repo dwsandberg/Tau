@@ -1,12 +1,12 @@
 #!/usr/local/bin/tau
 
-Library stdlib arithmeticseq bits blockseq buildtree  core constant definestruct2 display etype format fileresult  graph 
+Library stdlib arithmeticseq bits blockseq buildtree   constant definestruct2 display etype format fileresult  graph 
 groupparagraphs ipair invertedseq internals libdescfunc libscope llvm  options  pass1a 
 pass0 main oseq  passcommon libdesc
 process prims pretty2 parse   pass2a  packedseq persistant2 processtypes
-reconstruct real stack stacktrace set symbol sid seq tree UTF8  internalbc codegen2 codetemplates2
-exports stdlib seq set process tree graph real invertedseq ipair fileresult UTF8 oseq parse pretty2 sid prims libscope stacktrace format display blockseq processtypes reconstruct
-main arithmeticseq core options persistant2 stack llvm
+reconstruct real stack stacktrace set symbol  seq tree UTF8  internalbc codegen2 codetemplates2
+exports stdlib seq set process tree graph real invertedseq ipair fileresult UTF8 oseq parse pretty2   prims libscope stacktrace format display blockseq processtypes reconstruct
+main arithmeticseq   options persistant2 stack llvm
  buildtree constant  internals  etype libdesc definestruct2  libdescfunc passcommon internalbc bits packedseq fileio
  codetemplates2 byteseq
 
@@ -353,6 +353,6 @@ Function alphasort(a:seq.seq.word) seq.seq.word
 
 * usegraph  include  
  libscope display constant codegen2 parse 
-   pass1a pass0 buildtree processtypes definestruct2 symbol libdescfunc  groupparagraphs etype codetemplates core 
+   pass1a pass0 buildtree processtypes definestruct2 symbol libdescfunc  groupparagraphs etype codetemplates core sid
   pretty2 pass2a persistant2 libdesc passcommon main parts llvm reconstruct
-  exclude seq set oseq options stdlib tree graph UTF8 stack stacktrace real process libscope ipair
+  exclude seq set oseq options stdlib tree graph UTF8 stack stacktrace real process libscope ipair 

@@ -437,8 +437,6 @@ return  loadlibrary(PD,name) ;
 }
 
 
-BT createfileZbuiltinZintzseqZintzseq(processinfo PD,BT filename,BT t) 
-;
 
 BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT otherlib,struct outputformat *t){
   char *name=(char *)&IDXUC(libname,2),buff[200];
@@ -897,6 +895,7 @@ void inittau(int additional) {
    // signal(SIGBUS,fatal_error_signal);
    // signal(SIGILL,fatal_error_signal);
     loadlibrary(&sharedspace,"stdlib");
+ if (additional==1)  loadlibrary(&sharedspace,"basic");
  
 }
 
