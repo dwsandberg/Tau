@@ -418,11 +418,11 @@ BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
   for(i=2;  i<= loaded[1]+1; i++)
    {  sprintf(buff,"%s$profileresult",libnames[i]);
       BT (*pinfo)(processinfo PD) = dlsym(RTLD_DEFAULT, buff);
-       fprintf(stderr,"testing %s %lld\n",buff,(BT)pinfo);
+      // fprintf(stderr,"testing %s %lld\n",buff,(BT)pinfo);
       if (pinfo) { int k;
         BT z = pinfo(PD);
          for(k=0; k<4;k++)
-          fprintf(stderr,"XX %lld %lld \n",  ((BT *)  (((BT *) z) [k]))[0],((BT *)  (((BT *) z) [k]))[1]);
+        //  fprintf(stderr,"XX %lld %lld \n",  ((BT *)  (((BT *) z) [k]))[0],((BT *)  (((BT *) z) [k]))[1]);
         infoarray[2+infoarray[1]++]=z;
       }
     }

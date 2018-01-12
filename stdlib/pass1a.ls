@@ -171,9 +171,21 @@ function bindsonslist(d:symdict, t:tree.word, nexttmp:int, i:int)seq.r3
    [ r3("", empty:seq.mytype, nexttmp)]
   else let r = bind(d, t_i, nexttmp)
   [ r]+ bindsonslist(d, t, nexttemp.r, i + 1)
+  
+function isnumber(w:word) boolean
+  isnumber(decode.w,1)  
+  
+ function isnumber(l:seq.int,i:int)boolean 
+   if length.l=0 then false
+   else if i > length.l then true
+   else 
+    if i=1 &and l_1=hyphenchar &and length.l > 1 then isnumber(l,2)
+    else if between(l_i, 48, 57) then isnumber(l,i+1)
+    else false
+   
 
 Function bind(d:symdict, t:tree.word, nexttmp:int)r3 
- if hasdigit.label.t 
+ if isnumber.label.t 
   then r3(["LIT"_1, label.t], [ mytype."int"], nexttmp)
   else if nosons.t = 3 ∧ label.t ="if"_1 
   then let c = bind(d, t_1, nexttmp)
@@ -215,7 +227,7 @@ Function bind(d:symdict, t:tree.word, nexttmp:int)r3
    r3(FREFcode.finddeepcopyfunction.returntype.sym + FREFcode.finddeepcopyfunction.mytype."word seq"+ FREFcode.sym +"LIT"+ toword.noargs + @(+, code,"", l)+"RECORD"+ toword(noargs + 4)+"PROCESS2 1", [ returntype.sym +"process"_1], nexttemp(l_length.l))
   else if nosons.t = 0 
   then find(d, label.t, bindsonslist(d, t, nexttmp))
-  else if label.t ="makereal"_1 ∧ nosons.t = 2 ∧ hasdigit.label(t_1)∧ hasdigit.label(t_2)
+  else if label.t ="makereal"_1 ∧ nosons.t = 2 ∧ isnumber.label(t_1)∧ isnumber.label(t_2)
   then if bindingonly.d 
    then r3("LIT"+ label(t_1)+"LIT"+ label(t_2)+"makereal 2", [ mytype."real"], nexttmp)
    else r3("LIT"+ toword.representation.makereal(toint.label(t_1), toint.label(t_2)), [ mytype."real"], nexttmp)

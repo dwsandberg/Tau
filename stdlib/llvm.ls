@@ -80,9 +80,12 @@ function getmachineinfo   machineinfo builtin.usemangle
    let  typeheader=addblockheader(a,MODABBREVLEN,TYPEBLOCK,TYPEABBREVLEN)
    let  a2=addrecords(typeheader,TYPEABBREVLEN,[ [ ENTRY, length.trecords]]+ trecords)
    let  a3=finishblock(a2,typeheader,TYPEABBREVLEN)
+   // PARAGRPBLOCK //
+    let pgh=addblockheader(a3,MODABBREVLEN,PARAGRPBLOCK,TYPEABBREVLEN)
+    let  pge= finishblock(  addrecords(pgh,TYPEABBREVLEN,[[ 3, 0,2^32 - 1,0,14,0,26,0,18]+@(+,decode,[3],"no-frame-pointer-elim-non-leaf")+[0]] ),pgh,TYPEABBREVLEN )
    // para block //
-     let   paraheader=addblockheader(a3,MODABBREVLEN,PARABLOCK,TYPEABBREVLEN)
-     let   a4=finishblock(addrecords(paraheader,TYPEABBREVLEN,[ [ ENTRY, 2^32 - 1, 32 + 2^14]]),paraheader,TYPEABBREVLEN)
+     let   paraheader=addblockheader(pge,MODABBREVLEN,PARABLOCK,TYPEABBREVLEN)
+     let   a4=finishblock(addrecords(paraheader,TYPEABBREVLEN,[[2,0]]),paraheader,TYPEABBREVLEN)
    // def list //
      let a5= addrecords(a4,MODABBREVLEN,deflist)  
        // const block //

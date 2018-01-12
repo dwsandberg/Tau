@@ -9,15 +9,15 @@ profile labeledgraph printbitcodes
 
 Module tools
 
-run printbitcodes test2
+/run printbitcodes test2
 
 /run tools test2
 
-/run tools stdlibdoc
+run tools stdlibdoc
 
 /run doc createdoc
 
-run tools testprintBitCodes
+/run tools testprintBitCodes
 
 run tools test
 

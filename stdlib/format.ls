@@ -16,54 +16,58 @@ Function processpara(t:seq.word)seq.word
 function processpara(a:seq.word, j:int, i:int, result:seq.word, stk:stack.seq.word)seq.word 
  if i > length.a 
   then result 
-  else if top.stk =""""
+  else 
+    let this=a_i
+    if  not.isempty.stk &and top.stk =""""
   then // handle escaping in literals // 
-   if a_i =""""_1 
+   if this =""""_1 
    then processpara(a, j, i + 1, result +"""", pop.stk)
-   else processpara(a, j, i + 1, result + addamp(a_i), stk)
-  else if a_i ="&}"_1 ∧ not.isempty.stk 
+   else processpara(a, j, i + 1, result + addamp(this), stk)
+  else if this ="&}"_1 ∧ not.isempty.stk 
   then processpara(a, j, i + 1, result + top.stk + space, pop.stk)
   else if subseq(a, i, i + 1)="&{ error"
   then let end = findindex("&}"_1, a, i + 2)
    processpara(a, j, end + 1, result + subseq(a, i + 2, end - 1), stk)
-  else if i < length.a 
-  then if a_i ="&keyword"_1 
-   then processpara(a, j, i + 2, result +"<span class = keyword>"+ a_(i + 1)+"</span>", stk)
-   else if a_i ="&em"_1 
-   then processpara(a, j, i + 2, result +"<em>"+ a_(i + 1)+"</em>", stk)
-   else if a_i ="&strong"_1 
-   then processpara(a, j, i + 2, result +"<strong>"+ a_(i + 1)+"</strong>", stk)
-   else if a_i ="&row"_1 
-   then if top.stk ="</caption>"
-    then processpara(a, j + 1, i + 1, result + EOL +"</caption> <tr id ="""+ toword.j +"""onclick =""cmd5(this)""><td>", pop.stk)
-    else processpara(a, j + 1, i + 1, result + EOL +"<tr id ="""+ toword.j +"""onclick =""cmd5(this)""><td>", stk)
-   else if a_i ="&cell"_1 
-   then processpara(a, j, i + 1, result + EOL +"<td>", stk)
-   else if top.stk ="</span>"∧ a_i =""""_1 
-   then processpara(a, j, i + 1, result +"""", push(stk,""""))
-   else if a_i ="&br"_1 
-   then if subseq(a, i + 1, i + 2)="&{ block"∨ i > 1 ∧ a_(i - 1)="&}"_1 
-    then processpara(a, j, i + 1, result, stk)
-    else processpara(a, j, i + 1, result + EOL +"<br>"+ space, stk)
-   else if a_i ="&{"_1 
-   then if a_(i + 1)="block"_1 
-    then processpara(a, j, i + 2, result +"<span class = block>"+ space, push(stk,"</span>"))
-    else if a_(i + 1)="keyword"_1 
-    then processpara(a, j, i + 2, result +"<span class = keywords>"+ space, push(stk,"</span>"))
-    else if a_(i + 1)="noformat"_1 
-    then let t = findindex("&}"_1, a, i + 2)
-     processpara(a, j, t + 1, result + subseq(a, i + 2, t - 1), stk)
-    else if a_(i + 1)="select"_1 
-    then if i + 4 < length.a ∧ a_(i + 3)="&section"_1 
-     then processpara(a, j, i + 4, result + EOL +"<h2 id ="+ a_(i + 2)+"onclick =""javascript:cmd5(this)"">"+ space, push(stk,"</h2>"))
-     else processpara(a, j, i + 3, result + EOL +"<p id ="+ a_(i + 2)+"onclick =""javascript:cmd5(this)"">"+ space, push(stk,"</p>"))
-    else if a_(i + 1)="table"_1 
-    then processpara(a, j, i + 2, result +"<table>"+ space +"<caption>", push(push(stk,"</table>"),"</caption>"))
-    else processpara(a, j, i + 2, result +"<span class ="+ a_(i + 1)+">", push(stk,"</span>"))
-   else if a_i = space 
-   then processpara(a, j, i + 1, result + space, stk)
-   else processpara(a, j, i + 1, result + addamp(a_i), stk)
-  else processpara(a, j, i + 1, result + addamp(a_i), stk)
+  else  if this ="&keyword"_1 
+       then processpara(a, j, i + 2, result +"<span class = keyword>"+ subseq(a,i+1,i+1)+"</span>", stk)
+       else if this ="&em"_1 
+       then processpara(a, j, i + 2, result +"<em>"+ subseq(a,i+1,i+1)+"</em>", stk)
+       else if this ="&strong"_1 
+       then processpara(a, j, i + 2, result +"<strong>"+ subseq(a,i+1,i+1)+"</strong>", stk)
+       else if this ="&row"_1 
+       then if not.isempty.stk &and top.stk ="</caption>"
+           then processpara(a, j + 1, i + 1, result + EOL +"</caption> <tr id ="""+ toword.j +"""onclick =""cmd5(this)""><td>", pop.stk)
+           else processpara(a, j + 1, i + 1, result + EOL +"<tr id ="""+ toword.j +"""onclick =""cmd5(this)""><td>", stk)
+       else if this ="&cell"_1 
+       then processpara(a, j, i + 1, result + EOL +"<td>", stk)
+       else if not.isempty.stk &and top.stk ="</span>"∧ this =""""_1 
+       then processpara(a, j, i + 1, result +"""", push(stk,""""))
+       else if this ="&br"_1 
+       then if subseq(a, i + 1, i + 2)="&{ block"∨ i > 1 ∧ subseq(a,i-1,i-1)="&}" 
+            then processpara(a, j, i + 1, result, stk)
+            else processpara(a, j, i + 1, result + EOL +"<br>"+ space, stk)
+       else if this ="&{"_1 &and i+2 < length.a
+       then    
+          let next = a_(i+1)
+          if next="block"_1 
+          then processpara(a, j, i + 2, result +"<span class = block>"+ space, push(stk,"</span>"))
+          else if next="keyword"_1 
+          then processpara(a, j, i + 2, result +"<span class = keywords>"+ space, push(stk,"</span>"))
+          else if next="noformat"_1 
+          then let t = findindex("&}"_1, a, i + 2)
+                processpara(a, j, t + 1, result + subseq(a, i + 2, t - 1), stk)
+          else if next="select"_1 
+          then if i + 4 < length.a ∧ a_(i + 3)="&section"_1 
+              then processpara(a, j, i + 4, result + EOL +"<h2 id ="+ a_(i + 2)+"onclick =""javascript:cmd5(this)"">"+ space, push(stk,"</h2>"))
+              else processpara(a, j, i + 3, result + EOL +"<p id ="+ a_(i + 2)+"onclick =""javascript:cmd5(this)"">"+ space, push(stk,"</p>"))
+          else if next="table"_1 
+          then processpara(a, j, i + 2, result +"<table>"+ space +"<caption>", push(push(stk,"</table>"),"</caption>"))
+          else processpara(a, j, i + 2, result +"<span class ="+ next+">", push(stk,"</span>"))
+        else if this = space 
+        then processpara(a, j, i + 1, result + space, stk)
+  else processpara(a, j, i + 1, result + addamp(this), stk)
+
+
 
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 

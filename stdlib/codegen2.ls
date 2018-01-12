@@ -84,7 +84,6 @@ PROFILE.
   let fb = funcdef(code.z, geninfo5(thename, wordstype, conststype, profiletype,"X"_1, 0, table,"noprofile"_1), 
   linklists2(empty:seq.int, 0, 0, 3), 1, empty:seq.internalbc)
   let noprofileslots = length.see / 2 
-  let profileinit = C(profiletype, [ CONSTDATA, 0, noprofileslots]+ constantseq(noprofileslots, 0))
   let arcs = addseqword(consts.fb, see)
   let arcs2 = C(i64, [ CONSTGEP, 
   typ.conststype, 
@@ -141,9 +140,9 @@ PROFILE.
   0], 
   [ MODULECODEGLOBALVAR, typ.conststype, 2, initializer(conststype, data), 3, align8 + 1, 0], 
   [ MODULECODEGLOBALVAR, typ.libdesctype, 2, initializer(libdesctype, lib), 3, align8 + 1, 0], 
-  // profcounts // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL])+ 1, 3, align8 + 1, 0], 
-  // profclocks // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0], 
-  // profspace // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0], 
+  // profcounts // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL])+1, 3, align8 + 1, 0], 
+  // profclocks // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL])+ 1, 3, align8 + 1, 0], 
+  // profspace // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL])+ 1, 3, align8 + 1, 0], 
   // profrefs // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0], 
   // profstat // [ MODULECODEGLOBALVAR, typ.array(4, i64), 2, x + 1, 3, align8 + 1, 0], 
   // spacecount // [ MODULECODEGLOBALVAR, typ.i64, 2, 0, 0, align8 + 1, 0], 
@@ -172,7 +171,16 @@ PROFILE.
   getelementptr(wordstype,"words"), 
   getelementptr(worddatatype,"wordlist"), 
   getelementptr(conststype,"list"), 
-  getelementptr(libdesctype,"liblib"))+RET(3)]+ bodies.fb 
+  getelementptr(libdesctype,"liblib"))
+   +GEP(2, 1, typ.profiletype, C."profclocks", C64.0, C64.1) 
+   +STORE(3, -2, C64.noprofileslots, align8, 0) 
+     +GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1) 
+   +STORE(4, -3, C64.noprofileslots, align8, 0) 
+        +GEP(4, 1, typ.profiletype, C."profcounts", C64.0, C64.1) 
+   +STORE(5, -4, C64.noprofileslots, align8, 0) 
+     +GEP(5, 1, typ.profiletype, C."profrefs", C64.0, C64.1) 
+   +STORE(6, -5, C64.noprofileslots, align8, 0) 
+  +RET(6)]+ bodies.fb 
   assert length.symbolrecords2 = nosyms report"extra symbols2!"
   // let a =printz(bodytxts) //
    llvm( deflist, bodytxts, adjust(typerecords, adjust, 1))
@@ -248,6 +256,7 @@ function xprint(t:tree.cnode)seq.word
   
 function loopmapentry(baselocal:int,regbase:int,i:int) localmap5
   localmap5(baselocal+i-1, -regbase-i)
+  
 
 function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5 
   let inst = inst.label.t 
