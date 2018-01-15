@@ -231,15 +231,20 @@ Function findencode(t:T, erec:erecord.T)seq.T builtin.usemangle.STATE
 
 type encoding
 
-type erecord
+type erecord is record
+     deepcopy:int, invertedseqlookup:int, invertedseq:int,
+     number:int,name:word,ispersistant:boolean,encodingtype:seq.word
 
-function subname(erecord.T, int)word builtin.IDXUC
 
-function subpersistant(erecord.T, int)boolean builtin.IDXUC
+/function subname(erecord.T, int)word builtin.IDXUC
 
-Function name(a:erecord.T)word subname(a, 4)
+/function subpersistant(erecord.T, int)boolean builtin.IDXUC
 
-Function ispersistant(a:erecord.T)boolean subpersistant(a, 5)
+/Function name(a:erecord.T)word subname(a, 4)
+
+/Function ispersistant(a:erecord.T)boolean subpersistant(a, 5)
+
+/function subtype(erecord.T, int)seq.word builtin.IDXUC
 
 ___________
 
@@ -249,12 +254,8 @@ function identityf(s:seq.T)seq.T s
 
 Function flush(s:erecord.T)seq.word 
  if ispersistant.s 
-  then let map = mapping.s 
-   let seqindexfunctionaddress = getseqtype(map + map + map, 0)
-   if seqindexfunctionaddress = 0 
-   then"unable to get type for encoding"
-   else let thedata = cast2int.result.process.identityf.map 
-   let b = createlib2(thedata, seqindexfunctionaddress, merge("Q"+ name.s),"")
+  then let thedata = cast2int.result.process.identityf.mapping.s 
+   let b = createlib2(thedata, encodingtype.s, merge("Q"+ name.s),"")
    {"OK"} 
   else"Encoding is not persistant."
 

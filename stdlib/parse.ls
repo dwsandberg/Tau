@@ -133,8 +133,11 @@ function firstnonzero(s:seq.int, i:int)int
  if length.s = i then i else if s_i = 48 then firstnonzero(s, i + 1)else i
 
 function wordlist2(r:r1)r1 
+// if this.r = "&quot"_1 then r+wordlist2.build( r,[tree.doublequote]) else // 
  if this.r = doublequote 
-  then if next.r = doublequote then r + wordlist2.build(advance.r, [ tree.doublequote])else advance.r 
+  then 
+    if next.r = doublequote then r + wordlist2.build(advance.r, [ tree.doublequote])
+    else advance.r 
   else assert n.r + 2 < length.input.r report
     parseerror(r,"ERROR:expected""before end of paragraph")  
   r + wordlist2.build(r, [ tree.this.r])

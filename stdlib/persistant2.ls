@@ -236,11 +236,10 @@ function findmod(keep:seq.word, m:libmod)seq.libmod
 function libtypes(s:set.libtype, a:libmod)set.libtype 
  @(∪, libtypes.s, empty:set.libtype, exports.a + defines.a)
 
-Function createlib2(thedata:int, typeindexfunction:int, libname:word, dependlibs:seq.word)int 
- let thetype = towords.parameter.modname.tosyminfo.addresstosymbol.typeindexfunction 
+Function createlib2(thedata:int, encodetype:seq.word, libname:word, dependlibs:seq.word)int 
   let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, libname)
   let mylib = liblib([ libname], empty:seq.libtype, [ mymod])
-  createlib(thedata, thetype, mylib,"")
+  createlib(thedata, encodetype, mylib,"")
 
 function createlib(thedata:int, thetype:seq.word, mylib:liblib, dependlibs:seq.word)int 
  // must call as process so that the encodings start out empty // 

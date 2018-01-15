@@ -6,6 +6,7 @@ randomphrase
 
 Module testall
 
+
 /run randomphrase randomphrase
 
 run testall testall
@@ -74,6 +75,10 @@ type mydata2 is Encoding testrecord
 
 type mydata3 is encoding testrecord
 
+type mydata4 is encoding testrecord
+
+type mydata5 is Encoding testrecord
+
 function add(z:erecord.testrecord, b:seq.word) int
 let d = mapping.z 
 encoding.encode(testrecord(length.d + 1, b), z) 
@@ -83,7 +88,6 @@ type testrecord is record key:int, body:seq.word
 use process.int
 
 Function testencoding seq.word
-  // not sure how should behavior of temp encoding and processes should interact. //
   // must export this module so encoding type can be figured out //
   let start=length.mapping.mydata
   let start2=length.mapping.mydata2
@@ -96,14 +100,18 @@ Function testencoding seq.word
   let plen=result.p
   let status=flush.mydata2  
    +flush.mydata+flush.mydata3
-  let final=length.mapping.mydata
+  +flush.mydata5
+   let final=length.mapping.mydata
   let final2=length.mapping.mydata2
   let final3=length.mapping.mydata3
-  check([start3=0 , start > 0, start2 > 0,final=start+2, final2=start2+3 ,final3=4
-   ,  status="OK OK Encoding is not persistant." , plen=4 ],"encoding")
+  let final4=length.mapping.mydata4
+  check([start3=0 , start > 0, start2 > 0,final=start+2, final2=start2+3 ,final3=4,final4=0
+   ,  status="OK OK Encoding is not persistant.OK" , plen=54 ],"encoding")
 
 Function process1  int
-   let z3 =  @(+,add.mydata3,0,  ["A","B","C"]) length.mapping.mydata3
+   let z3 =  @(+,add.mydata3,0,  ["A","B","C"]) 
+   let z4=  @(+,add.mydata4,0,  ["A1","B2","C3","D4","E5"]) 
+   length.mapping.mydata4 * 10+length.mapping.mydata3
 
 Function nextpower(i:int, base:int, start:int)int
  if i > start then nextpower(i, base, start * base)else start

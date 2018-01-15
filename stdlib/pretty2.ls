@@ -21,7 +21,7 @@ use stdlib
 use tree.word
 
 Function escapequote(t:tree.word)seq.word 
- if label.t =""""_1 then""""""else [ label.t]
+ if label.t =""""_1 then  """""" else [ label.t]
 
 Function addamp(w:word)word encodeword.@(+, addamp, empty:seq.int, decode.w)
 

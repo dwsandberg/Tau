@@ -77,12 +77,14 @@ Function subfld(subs:seq.mytype, i:int)seq.word
 
 Function codingrecord(sym:syminfo)seq.word 
  let encodingtype = parameter.returntype.sym 
-  FREFcode.finddeepcopyfunction.encodingtype + FREFcode.invertedseqlookup.encodingtype + FREFcode.invertedseqadd.encodingtype + if encodingtype = mytype."int seq"
-   then"LIT 1 WORD word LIT 0 RECORD 6 NOINLINE 1"
-   else"LIT 0 WORD"+ mangled.sym +(if instruction(sym)_1 ="ERECORD"_1 
+ let l2 = length.towords.encodingtype 
+  let codefortype=  @(+,  +("WORD"),"LIT 0 LIT"+toword.l2,towords.encodingtype ) +"RECORD"+toword(l2+2)
+  FREFcode.finddeepcopyfunction.encodingtype + FREFcode.invertedseqlookup.encodingtype + FREFcode.invertedseqadd.encodingtype 
+  +  (if name.sym="wordencoding"_1 then "LIT 1" else "LIT 0" )+
+   "WORD"+ mangled.sym +(if instruction(sym)_1 ="ERECORD"_1 
     then"LIT 0"
-    else"LIT 1")+"RECORD 6 NOINLINE 1"
-
+    else"LIT 1")+codefortype+" RECORD 7 NOINLINE 1"
+    
 Function calls(l:syminfo)set.word 
  // returns all functions that are called directly called by l // 
   gather2(instruction.l, 1, empty:set.word)
