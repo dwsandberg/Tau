@@ -18,11 +18,6 @@ use set.libtype
 
 use stdlib
 
-
-
-
-
-
 Function print(a:libtype)seq.word 
  [ name.a]+(if abstract.a then".T"else"")+"size"+ print.size.a +"kind"+ kind.a + @(+, print,"", subtypes.a)
 
@@ -52,7 +47,6 @@ Function assigntypesizes(f:seq.libtype)set.libtype
   assert isempty.cyclic report"cyclic type def"
   @(sizetype, identity, asset.empty:seq.libtype, c + toseq(asset.f - asset.c))
 
-
 function lookup(name:word, abstract:boolean, s:set.libtype, message:seq.word)libtype 
  let e = findelement(libtype(name, abstract,"X"_1, empty:seq.mytype, offset.0,""), s)
   assert not.isempty.e report"type"+ name +"not defined"+ message 
@@ -76,10 +70,9 @@ function sizetype(s:set.libtype, t:libtype)set.libtype
   else s + t
 
 Function deepcopytypes2(all:set.libtype, t:mytype)seq.mytype 
- // deepcopytypes is only for structures.It returns the types of the fields.
- If one of the fields is a structure it returns the types of that structure to flatten out the struct into a sequence of fields of size 1.// 
+ // deepcopytypes is only for structures.It returns the types of the fields.If one of the fields is a structure it returns the types of that structure to flatten out the struct into a sequence of fields of size 1.// 
   let b = lookup(abstracttype.t, iscomplex.t, all,"Unknown error in process types!")
-  if kind.b in"type sequence" &or towords.t="word"
+  if kind.b in"type sequence"∨ towords.t ="word"
   then [ t]
   else @(+, deepcopytypes2.all, empty:seq.mytype, if isinstance.t then @(+, replaceT.parameter.t, empty:seq.mytype, subtypes.b)else subtypes.b)
 
@@ -107,7 +100,6 @@ Function lookuptypes(message:seq.word, s:set.libtype, d:syminfo)set.libtype
 
 Function libtypes(s:set.libtype, a:seq.libsym)set.libtype 
  @(∪, libtypes.s, empty:set.libtype, a) - libtypes("T type not found", s, mytype."T")
-
 
 Function noparameters(l:libsym)int length.paratypes.syminfo.l
 
@@ -161,7 +153,6 @@ Function print(a:syminfo)seq.word formatcall(modname.a, name.a, paratypes.a)+ pr
 
 Function print0(a:syminfo)seq.word formatcall(name.a, paratypes.a)+ print.returntype.a
 
-
 Function funcfrominstruction(alltypes:set.libtype, instruction:seq.word, returntype:mytype, nopara:int)seq.word 
  // assumes not for abstract symbol // 
   if length.instruction = 0 
@@ -196,10 +187,7 @@ Function replaceTsyminfo(within:mytype, s:syminfo)syminfo
    syminfoinstance(with, protoname.s, protomodname.s, protoparatypes.s, protoreturntype.s,"USECALL")
   else syminfoinstance(with, name.s, modname.s, paratypes.s, returntype.s, instruction.s)
 
-
 function syminfoinstance(with:mytype, name:word, modname:mytype, paratypes:seq.mytype, returntype:mytype, instruction:seq.word)syminfo 
  let namex = if length.paratypes > 0 then name else replaceT(with, name)
   syminfoinstance(namex, replaceT(with, modname), @(+, replaceT.with, empty:seq.mytype, paratypes), replaceT(with, returntype), instruction, name, paratypes, returntype)
-
-
 

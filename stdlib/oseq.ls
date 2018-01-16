@@ -10,7 +10,6 @@ Function =(T, T)boolean unbound
 
 Function ?(a:seq.T, b:seq.T)ordering subcmp(a, b, 1)
 
-
 function subcmp(a:seq.T, b:seq.T, i:int)ordering 
  let lengtha = length.a 
   let lengthb = length.b 
@@ -20,8 +19,6 @@ function subcmp(a:seq.T, b:seq.T, i:int)ordering
   then GT 
   else let c = a_i ? b_i 
   if c = EQ then subcmp(a, b, i + 1)else c
-
-
 
 Function sort(a:seq.T)seq.T 
  if length.a < 2 then a else merge(sort.subseq(a, 1, length.a / 2), sort.subseq(a, length.a / 2 + 1, length.a))

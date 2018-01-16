@@ -37,8 +37,6 @@ function setfldx(a:address.T, value:T)address.T
 
 Function setfld4(a:address.T, x:T, i:int)int builtin.SETFLD3
 
-
-
 function setelement(ds:int, s:seq.T, a:seq.T, i:int)int 
  let d = @(setfldx, valueat.ggg(s_i), address.a +(2 + ds *(i - 1)), arithseq(ds, 1, 0))
   0

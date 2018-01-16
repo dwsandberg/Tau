@@ -2,4 +2,3 @@ module etype
 
 use stdlib
 
-

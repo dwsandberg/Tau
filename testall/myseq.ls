@@ -2,9 +2,9 @@ module myseq(T)
 
 All sequences must be in parameterized scopes.
 
-use stdlib
-
 use seq.T
+
+use stdlib
 
 type myseq is sequence length:int, data:seq.T
 

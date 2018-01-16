@@ -6,9 +6,9 @@ type point2d is record x:int, y:int
 
 The follow paragraph that begins with use allows reference to functions defined in another type.In this case, the standard build it funcitons.
 
-use stdlib
-
 use seq.word
+
+use stdlib
 
 The follow three paragraphs all access to the function automaticaly defined by the struct defintion in other types that “use” this package.If these paragraphs are omitted the functions would not be available outside of this type.
 

@@ -1,10 +1,6 @@
 Module passcommon
 
-
-
-
 use libscope
-
 
 use processtypes
 
@@ -20,8 +16,7 @@ use stdlib
 
 use symbol
 
-
-Function mytype(seq.word) mytype export
+Function mytype(seq.word)mytype export
 
 Function assigntypesizes(seq.libtype)set.libtype export
 
@@ -45,7 +40,6 @@ Function print(syminfo)seq.word export
 
 Function actualreturntype(syminfo)mytype export
 
-
 Function funcfrominstruction(set.libtype, seq.word, mytype, int)seq.word export
 
 Function paralistcode(int)seq.word export
@@ -63,7 +57,6 @@ Function codingrecord(syminfo)seq.word export
 Function calls(syminfo)set.word export
 
 Function compileinstance(set.libtype, set.syminfo, word)seq.syminfo export
-
 
 type mod2desc is record modname:mytype, export:set.syminfo, uses:seq.mytype, typedefs:seq.libtype, defines:set.syminfo, tocompile:seq.seq.word, isprivate:boolean
 

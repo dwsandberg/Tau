@@ -8,8 +8,8 @@ Function testrandomphrase seq.word
   else"FAIL randomphrase"
 
 Function randomphrase seq.word 
-  let a = randomint.1 
-  let seed = if a_1 < 0 then -(a_1+1) else a_1
+ let a = randomint.1 
+  let seed = if a_1 < 0 then-(a_1 + 1)else a_1 
   getphrase.seed
 
 Function getphrase(seed:int)seq.word 

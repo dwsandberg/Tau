@@ -79,9 +79,7 @@ Function findlibclause(a:seq.seq.word, i:int)seq.word
 function gettext2(libname:word, e:seq.word, a:word)seq.moddesc 
  @(+, moddesc(libname, e), empty:seq.moddesc, groupparagraphs("module Module", gettext.[ merge([ libname]+"/"+ a +".ls")]))
 
-
-
-Function parseUse(a:seq.word)mytype mytype.parse(a, tree("X"_1))_1
+Function parseUse(a:seq.word)mytype mytype(parse(a, tree("X"_1))_1)
 
 function mytypeb(t:tree.word)seq.word 
  if nosons.t = 0 then [ label.t]else mytypeb(t_1)+ [ label.t]

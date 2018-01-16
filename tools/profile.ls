@@ -4,7 +4,7 @@ Problems:Junk at top of graph
 
 Max space seems to be on node with head and tail blank!
 
-profileresult could return a sequence of packed parcs instead of  four sequence.
+profileresult could return a sequence of packed parcs instead of four sequence.
 
 @(-, does not parse.
 

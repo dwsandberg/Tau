@@ -4,6 +4,8 @@ use codegen2
 
 use constant
 
+use fileio
+
 use fileresult
 
 use format
@@ -11,6 +13,8 @@ use format
 use libdesc
 
 use libscope
+
+use options.process.pass1result
 
 use options.seq.word
 
@@ -62,8 +66,7 @@ use set.syminfo
 
 use stdlib
 
-
-Function main(arg:seq.int) outputformat
+Function main(arg:seq.int)outputformat 
  let args = towords(arg + 10 + 10)
   let libname = args_1 
   let p = process.compilelib.libname 
@@ -76,11 +79,7 @@ Function main(arg:seq.int) outputformat
    else if subseq(result.p, 1, 1)="OK"∧ not(length.args = 1)
    then"not correct number of args:"+ args 
    else result.p 
-   outputformat(  toUTF8plus( htmlheader + processpara.output ) )
-   
-   use fileio
-   
-   
+  outputformat.toUTF8plus(htmlheader + processpara.output)
 
 Function loadlibrary(libname:word)int loadlib([ libname], 0)
 
@@ -94,31 +93,26 @@ Function bindings(libname:word)pass1result
   assert not.aborted.ptext report message.ptext 
   pass1a(true, result.ptext, YYY.templatesin, [ libname])
 
-Function pass(passno:int,libname:word) pass1result
-   let ld = tolibdesc.libname 
+Function pass(passno:int, libname:word)pass1result 
+ let ld = tolibdesc.libname 
   // let b = unloadlib.[ libname]// 
   let discard5 = loadlibs(dependentlibs.ld, 1, timestamp(libs_1))
   let templatesin = @(asliblib.dependentlibs.ld, identity, emptyliblib, libs)
   let ptext = process.pass0.ld 
   assert not.aborted.ptext report message.ptext 
   let p1a = pass1a(false, result.ptext, YYY.templatesin, [ libname])
-  if passno=1 then p1a
-  else 
-  let p = waitforpass2.setprivate(exports.ld, p1a)
-  assert not.aborted.p report message.p
-    result.p
-
+  if passno = 1 
+  then p1a 
+  else let p = waitforpass2.setprivate(exports.ld, p1a)
+  assert not.aborted.p report message.p 
+  result.p
 
 function subcompilelib(libname:word)seq.word 
  PROFILE.let discard3 = length.mapping.libsymencoding + length.constantmapping 
   let ld = tolibdesc.libname 
   if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
   then interface([ name.ld], exports.ld, dependentlibs.ld)
-  else // if not.checklibchange.libname 
-  then let discard = loadlibs(dependentlibs.ld, 1, timestamp(libs_1))
-   let discard2 = loadlibrary.libname 
-   {"OK"} 
-  else  // let b = unloadlib.[ libname]
+  else let b = unloadlib.[ libname]
   let discard5 = loadlibs(dependentlibs.ld, 1, timestamp(libs_1))
   let templatesin = @(asliblib.dependentlibs.ld, identity, emptyliblib, libs)
   let ptext = process.pass0.ld 
@@ -130,30 +124,23 @@ function subcompilelib(libname:word)seq.word
   then message.p 
   else let y1 = codegen5.result.p 
   let z2 = createlib(y1, libname, dependentlibs.ld)
-  // let discard4 = createfile([ merge([ libname]+"/changed")], [""]) //
-  {"OK"}
-  
-function waitforpass2(a:pass1result) process.pass1result
-PROFILE.let p = process.pass2.a
-  if aborted.p then p else p 
-  
-use options.process.pass1result
+  // let discard4 = createfile([ merge([ libname]+"/changed")], [""])//"OK"
 
-
-use codegen2
+function waitforpass2(a:pass1result)process.pass1result 
+ PROFILE.let p = process.pass2.a 
+  if aborted.p then p else p
 
 function asliblib(s:seq.word, a:liblib, l:liblib)liblib 
  if libname(l)_1 in s then a + l else a
 
 Function compilelib(libname:word)seq.word 
-  PROFILE.let p1 = process.subcompilelib.libname 
+ PROFILE.let p1 = process.subcompilelib.libname 
   if aborted.p1 
   then"COMPILATION ERROR:"+ space + message.p1 
   else let aa = result.p1 
   if subseq(aa, 1, 1)="OK"
   then aa 
   else"COMPILATION ERROR:"+ space + aa
-  
 
 function loadlibs(dependentlibs:seq.word, i:int, time:int)int 
  if i > length.dependentlibs 
@@ -162,9 +149,7 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
   assert stamp ≥ time report"library"+ dependentlibs_i +"is out of date"+ toword.time + toword.stamp 
   loadlibs(dependentlibs, i + 1, stamp)
 
-/function checklibchange(libname:word)boolean 
- let n = [ merge([ libname]+"/changed")]
-  fileexists.n ∧ length.getfile.n > 3
+/function checklibchange(libname:word)boolean let n = [ merge([ libname]+"/changed")]fileexists.n ∧ length.getfile.n > 3
 
 Function run(libname:word, modname:word, funcname:word)seq.word 
  let aa = compilelib.libname 

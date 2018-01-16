@@ -2,8 +2,6 @@ Module fileresult
 
 use UTF8
 
-
-
 use fileio
 
 use seq.int
@@ -13,7 +11,6 @@ use seq.seq.int
 use seq.seq.seq.int
 
 use stdlib
-
 
 Function breaklines(a:seq.int)seq.seq.int breaklines(a, 2, 1, empty:seq.seq.int)
 
@@ -31,8 +28,8 @@ function breakcommas(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int
   then result + subseq(a, last, i - 1)
   else if a_i = commachar 
   then breakcommas(a, i + 1, i + 1, result + subseq(a, last, i - 1))
-  else if a_i = decode(""""_1)_1 
-  then let d = findindex(decode(""""_1)_1, a, i + 2)
+  else if a_i = decode("&quot"_1)_1 
+  then let d = findindex(decode("&quot"_1)_1, a, i + 2)
    breakcommas(a, d + 2, d + 2, result + subseq(a, i + 1, d - 1))
   else breakcommas(a, i + 1, last, result)
 
@@ -122,5 +119,4 @@ Function createfile(filename:seq.word, s:seq.seq.word)int
 Function toUTF8plus(s:seq.word)seq.int toseqint.toUTF8.s + [ 10, 10]
 
 -------------------
-
 

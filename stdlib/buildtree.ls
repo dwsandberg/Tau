@@ -1,16 +1,22 @@
 module buildtree
 
-use stdlib
+use constant
 
-use seq.func
-
-use tree.cnode
-
-use seq.tree.cnode
+use libscope
 
 use seq.cnode
 
+use seq.func
+
+use seq.seq.word
+
+use seq.tree.cnode
+
 use stack.tree.cnode
+
+use stdlib
+
+use tree.cnode
 
 type cnode is record inst:word, arg:word
 
@@ -19,7 +25,6 @@ Function inst(cnode)word export
 Function arg(cnode)word export
 
 Function =(a:cnode, b:cnode)boolean inst.a = inst.b ∧ arg.b = arg.a
-
 
 type func is record nopara:int, symboltext:seq.word, number:word, codetree:tree.cnode, profile:seq.word
 
@@ -52,8 +57,6 @@ Function buildcodetree(a:seq.word, i:int)tree.cnode
  let b = check(a, 0, 1,"")
   buildcodetree(a, empty:stack.tree.cnode, i)
 
-use constant
-
 function pushconst(a:seq.word, f:stack.tree.cnode, i:int)stack.tree.cnode 
  push(f, tree.cnode(a_i, a_(i + 1), 0))
 
@@ -83,9 +86,9 @@ function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode
   else if a_i in"PARA LOCAL"
   then buildcodetree(a, push(f, tree.cnode(a_i, a_(i + 1), 0)), i + 2)
   else if a_i in"CALL"
-  then let noargs=toint(a_(i + 1))
-    let c = cnode(a_i, a_(i + 2), 0)
-   buildcodetree(a, push(pop(f, noargs ), tree(c, top(f, noargs ))), i + 3)
+  then let noargs = toint(a_(i + 1))
+   let c = cnode(a_i, a_(i + 2), 0)
+   buildcodetree(a, push(pop(f, noargs), tree(c, top(f, noargs))), i + 3)
   else if a_i ="SET"_1 
   then let c = cnode(a_i, a_(i + 1), 2)
    buildcodetree(a, push(pop(f, 2), tree(c, top(f, 2))), i + 2)
@@ -105,13 +108,13 @@ function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode
    let prefix = [ tree.cnode("LIT"_1,"0"_1, 0), tree.cnode("LIT"_1, a_(i + 1), 0)]
    let c = cnode("RECORD"_1,"0"_1)
    buildcodetree(a, push(pop(f, noelements), tree(c, prefix + top(f, noelements))), i + 2)
-  else if a_i ="RECORDS"_1 then
-     //  last element in record becomes the first //
-     let noelements = toint(a_(i+1))
-     let c = cnode("RECORD"_1,"0"_1)
-       buildcodetree(a, push(pop(f, noelements), tree(c, [ top(f) ] + top(pop(f),noelements-1) )),i+2)
- else
-  let noargs=toint(a_(i + 1)) let c = cnode(a_i,"0"_1)
+  else if a_i ="RECORDS"_1 
+  then // last element in record becomes the first // 
+   let noelements = toint(a_(i + 1))
+   let c = cnode("RECORD"_1,"0"_1)
+   buildcodetree(a, push(pop(f, noelements), tree(c, [ top.f]+ top(pop.f, noelements - 1))), i + 2)
+  else let noargs = toint(a_(i + 1))
+  let c = cnode(a_i,"0"_1)
   assert not(a_i ="if"_1)∨ noargs = 3 report"Incorrect number of args on if"
   buildcodetree(a, push(pop(f, noargs), tree(c, top(f, noargs))), i + 2)
 
@@ -149,8 +152,6 @@ Function check(a:seq.word, count:int, i:int, ops:seq.word)seq.word
   else let new = if a_i in ops then ops else ops + a_i 
   check(a, count - args + 1, i + 2, new)
 
-
-
 Function print(t:tree.cnode)seq.word 
  let inst = inst.label.t 
   @(+, print,"", sons.t)+ if inst in"PARA LIT CONST LOCAL FREF WORD FLAT"
@@ -159,26 +160,17 @@ Function print(t:tree.cnode)seq.word
    then [ inst, toword.nosons.t, arg.label.t]
    else if inst ="SET"_1 then [ inst, arg.label.t]else [ inst, toword.nosons.t]
 
-use libscope
-
-use seq.seq.word
-
 Function print(a:func)seq.word 
  {"<"+ number.a + number.a + symboltext.a +">"+ print.codetree.a }
 
+function cnode(a:word, b:word, int)cnode cnode(a, b)
 
-function cnode(a:word, b:word, int)cnode 
-  cnode(a,b) 
-  
-Function cnode(a:word,b:word) cnode export 
-
-
+Function cnode(a:word, b:word)cnode export
 
 Function in(l:seq.word, t:tree.cnode)boolean 
  if inst.label.t in l then true else @(∨, in.l, false, sons.t)
 
 --------
-
 
 type ch1result is record nodecount:int, para:int
 
@@ -196,26 +188,20 @@ function ch1(t:tree.cnode, a:ch1result, son:int)ch1result
   else ch1result(nodecount.a + 1, para.a)
 
 Function simple(s:func)boolean 
-// Check to see if simple inline expansion is possible for function. All parameters must occur exactly once in order 
-without any function occuring before the last parameter that may cause a side-effect making the order of evaluation important. 
-It also must be short.
-//
- let a = ch1(codetree.s, ch1result(0, nopara.s), 1)
+ // Check to see if simple inline expansion is possible for function. All parameters must occur exactly once in order without any function occuring before the last parameter that may cause a side-effect making the order of evaluation important. It also must be short.// 
+  let a = ch1(codetree.s, ch1result(0, nopara.s), 1)
   nodecount.a < 30 ∧ para.a = 0
 
 _____________________
-
-use libscope
 
 Converting func to lib symbol. Must remove CONST and FREF and CALL instructions. Conversion would be simpler if constants had RECORD as suffix instead of prefix.
 
 In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation. Otherwise the inst is the code that should be added after the parameters. For example ;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.
 
 function tolibsyminst(cmap:seq.seq.word, lib:word, a:func)seq.word 
- let y = 
-  if number.a in "seqZTzseqZintZT pseqZTzseqZintZTzseqZTzseq dseqZTzseqZintZTZTzseq fastsubseqZTzseqZintZTzseqZint cseqZTzseqZintZT blockseqZTzblockseqZintZintZTzseqzseq arithmeticseqZTzarithmeticseqZintZTZT"
-   then "ALWAYSCALL" else
-   if simple.a 
+ let y = if number.a in"seqZTzseqZintZT pseqZTzseqZintZTzseqZTzseq dseqZTzseqZintZTZTzseq fastsubseqZTzseqZintZTzseqZint cseqZTzseqZintZT blockseqZTzblockseqZintZintZTzseqzseq arithmeticseqZTzarithmeticseqZintZTZT"
+   then"ALWAYSCALL"
+   else if simple.a 
    then let nopara = nopara.a 
     let x = expandconst(cmap, print.codetree.a, 1,"")
     if length.x > 100 

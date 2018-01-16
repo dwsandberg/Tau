@@ -2,6 +2,7 @@ module pass1a
 
 type r3 is record code:seq.word, types:seq.mytype, nexttemp:int
 
+use definestruct2
 
 use libscope
 
@@ -14,7 +15,6 @@ use options.seq.syminfo
 use options.syminfo
 
 use oseq.libsym
-
 
 use pass0
 
@@ -58,13 +58,11 @@ use stdlib
 
 use tree.word
 
-use definestruct2
-
 Function =(a:r3, b:r3)boolean false
 
 type symdict is record text:seq.word, syminfos:set.syminfo, alltypes:set.libtype, bindingonly:boolean
 
-Function fortext(d:symdict)seq.word prettytext.text.d 
+Function fortext(d:symdict)seq.word prettytext.text.d
 
 prettytree(defaultcontrol, parse(text.d, tree("X"_1)))
 
@@ -109,7 +107,7 @@ Function find(d:symdict, w:word, l:seq.r3)r3
    toword.noparameters, 
    mangled.sym]
    r3(codesons + z, [ returntype.sym], nexttmp)
-   else if code_1 ="BUILDSEQ"_1 
+  else if code_1 ="BUILDSEQ"_1 
   then r3(FREFcode.findseqindexfunction(d, returntype.sym)+ codesons +"RECORD"+ toword(toint(code_2)+ 1), [ returntype.sym], nexttmp)
   else if code_1 in"ERECORD PRECORD"
   then let basetype = parameter.returntype.sym 
@@ -171,18 +169,17 @@ function bindsonslist(d:symdict, t:tree.word, nexttmp:int, i:int)seq.r3
    [ r3("", empty:seq.mytype, nexttmp)]
   else let r = bind(d, t_i, nexttmp)
   [ r]+ bindsonslist(d, t, nexttemp.r, i + 1)
-  
-function isnumber(w:word) boolean
-  isnumber(decode.w,1)  
-  
- function isnumber(l:seq.int,i:int)boolean 
-   if length.l=0 then false
-   else if i > length.l then true
-   else 
-    if i=1 &and l_1=hyphenchar &and length.l > 1 then isnumber(l,2)
-    else if between(l_i, 48, 57) then isnumber(l,i+1)
-    else false
-   
+
+function isnumber(w:word)boolean isnumber(decode.w, 1)
+
+function isnumber(l:seq.int, i:int)boolean 
+ if length.l = 0 
+  then false 
+  else if i > length.l 
+  then true 
+  else if i = 1 ∧ l_1 = hyphenchar ∧ length.l > 1 
+  then isnumber(l, 2)
+  else if between(l_i, 48, 57)then isnumber(l, i + 1)else false
 
 Function bind(d:symdict, t:tree.word, nexttmp:int)r3 
  if isnumber.label.t 
@@ -242,7 +239,7 @@ Function checkapplyA(d:symdict, t:tree.word, nexttmp:int)r3
   let term2sons = bindsons(d, t_2, nexttemp.term1sons)
   let term3 = bind(d, t_3, nexttemp.term2sons)
   let term4 = bind(d, t_4, nexttemp.term3)
-   assert abstracttype(types(term4)_1)="seq"_1 report"last argument of apply must be seq"+ fortext.d 
+  assert abstracttype(types(term4)_1)="seq"_1 report"last argument of apply must be seq"+ fortext.d 
   let sym2 = findsymbol(d, label.term2, types.term2sons + [ parameter(types(term4)_1)])
   let sym1 = findsymbol(d, label.term1, types.term1sons + types.term3 + [ returntype.sym2])
   assert types(term3)_1 = returntype.sym1 report"term3 not same as init"
@@ -263,8 +260,8 @@ Function bind(bindingonly:boolean, alltypes:set.libtype, modname:mytype, a:set.s
    then changeinstruction(sym,"USECALL builtin 0")
    else if nosons.functionbody.t = 0 
    then changeinstruction(sym,"USECALL PARA 1")
-  else if instruction(sym)_1 ="BUILDSEQ"_1 
-   then changeinstruction(sym,"USECALL"+ FREFcode.findseqindexfunction(dict, returntype.sym)+ paralistcode.noparameters +"RECORD"+ toword(toint(instruction(sym)_2)+ 1))   
+   else if instruction(sym)_1 ="BUILDSEQ"_1 
+   then changeinstruction(sym,"USECALL"+ FREFcode.findseqindexfunction(dict, returntype.sym)+ paralistcode.noparameters +"RECORD"+ toword(toint(instruction(sym)_2)+ 1))
    else if instruction(sym)_1 in"ERECORD PRECORD"
    then changeinstruction(sym,"USECALL"+ codingrecord.sym)
    else sym 
@@ -342,8 +339,7 @@ Function compileabstract(bindingonly:boolean, alltypes:set.libtype, allmods:set.
 function funcfrominstruction(alltypes:set.libtype, b:syminfo)syminfo 
  if isabstract.modname.b 
   then b 
-  else 
-  changeinstruction(b, funcfrominstruction(alltypes, instruction.b, actualreturntype.b, length.paratypes.b))
+  else changeinstruction(b, funcfrominstruction(alltypes, instruction.b, actualreturntype.b, length.paratypes.b))
 
 Function processtemplate(a:mod2desc)seq.syminfo 
  // encodes abstract syminfo and returns compiled syminfo // 
