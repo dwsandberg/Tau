@@ -8,11 +8,7 @@ use stdlib
 
 Function seqtype(a:seq.T)int Ttoint.valueat(address.a, 0)
 
-
 Function allocatespace(i:int)seq.T builtin.usemangle
-
-
-
 
 type address is record toseq:seq.T
 

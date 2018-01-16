@@ -1,28 +1,8 @@
-#!/usr/local/bin/tau
-
-run test11a test11a
-
 Module test11a
 
-use stdlib
+use fileio
 
-use seq.int
-
-use tree.int
-
-use seq.tree.int
-
-use seq.tree.word
-
-use seq.ordering
-
-use seq.word
-
-use tree.word
-
-use seq.seq.seq.word
-
-use seq.boolean
+use fileresult
 
 use parse
 
@@ -30,6 +10,25 @@ use pretty2
 
 use process.tree.word
 
+use seq.boolean
+
+use seq.int
+
+use seq.ordering
+
+use seq.seq.seq.word
+
+use seq.tree.int
+
+use seq.tree.word
+
+use seq.word
+
+use stdlib
+
+use tree.int
+
+use tree.word
 
 function tr1 tree.int tree(56, [ tree.200, tree.1, tree(5, [ tree.4])])
 
@@ -43,14 +42,11 @@ Function t402 boolean true
 
 Function t403 boolean {"a"= print.tree("a"_1)}
 
-Function t404 boolean 
- {"a.b"= print.tree("a"_1, [ tree("b"_1)])}
+Function t404 boolean {"a.b"= print.tree("a"_1, [ tree("b"_1)])}
 
-Function t405 boolean 
- {"a(ab, b)"= print.expression."a(ab, b)#"}
+Function t405 boolean {"a(ab, b)"= print.expression."a(ab, b)#"}
 
-Function t406 boolean 
- {"*(*(3, 5), 8)"= print.expression."3 * 5 * 8 #"}
+Function t406 boolean {"*(*(3, 5), 8)"= print.expression."3 * 5 * 8 #"}
 
 Function t407 boolean 
  {"+(+(a, *(*(4, b(c, b)), 5)), 8)"= print.expression."a + 4 * b(c, b)* 5 + 8 #"}
@@ -72,7 +68,7 @@ Function t413 boolean
  {"let(a, makereal(45, 1), let(b, *(a, a), +(b, 3)))"= print.expression."let a = 4.5 let b = a * a b + 3"}
 
 Function t412 boolean 
- {"+(comment( 4, this, is, a, comment), 8)"= print.expression."// this is a comment // 4 + 8"}
+ {"+(comment(4, this, is, a, comment), 8)"= print.expression."// this is a comment // 4 + 8"}
 
 Function prefix(p:seq.word, d:seq.word)boolean subseq(d, 1, length.p)= p
 
@@ -88,20 +84,14 @@ Function test24 seq.seq.word ["k"]
 
 @(+, prettyparagraph, empty:seq.seq.word, ["Function space seq(word)[ encodeword.[ 32]]","function f1(u:int, y:seq(real))int 1","type r1 is struct input:seq(word), n:int, tr:seq(tree(word))","type bb is encoding seq(int)","Function f3(int, b:real)seq(word)export"])
 
-Function t414 boolean 
- @(&and,filetest, true,arithseq(9,1,4))
-  
-use fileresult
+Function t414 boolean @(∧, filetest, true, arithseq(9, 1, 4))
 
-use fileio
+Function t415 boolean @(-,identity,100,[1,2])=97
 
-function filetest( i:int) boolean
-   let name="test"+toword.i+".txt"
-  let a=createbytefile(name,arithseq(i,1,48))
-   fileexists(name) &and 
-     i = length(getfile.name)  
-   
-  
+function filetest(i:int)boolean 
+ let name ="test"+ toword.i +".txt"
+  let a = createbytefile(name, arithseq(i, 1, 48))
+  fileexists.name ∧ i = length.getfile.name
 
 Function test11a seq.word 
  let z = [ t401, 
@@ -117,13 +107,14 @@ Function test11a seq.word
   t411, 
   t412, 
   t413, 
-  t414,
-  "EXPECTED):function a boolean(a #"= message.process.parse."function a boolean(a", 
-  "EXPECTED]:function a boolean [ a)"= message.process.parse."function a boolean [ a)", 
-  "EXPECTED):function a boolean(a +"= message.process.parse."function a boolean(a +", 
-  "EXPECTED):function a boolean(a +"= message.process.parse."function a boolean(a +,", 
-  "EXPECTED):function a boolean(a +"= message.process.parse."function a boolean(a +)", 
-  "EXPECTED):function a boolean(a +"= message.process.parse."function a boolean(a +]"]
+  t414, 
+  t415,
+  "EXPECTED) &br &keyword  function  a boolean(a #"= message.process.parse."function a boolean(a", 
+  "EXPECTED] &br &keyword  function a boolean [ a)"= message.process.parse."function a boolean [ a)", 
+  "EXPECTED) &br &keyword  function a boolean(a +"= message.process.parse."function a boolean(a +", 
+  "EXPECTED) &br &keyword  function a boolean(a +"= message.process.parse."function a boolean(a +,", 
+  "EXPECTED) &br &keyword  function a boolean(a +"= message.process.parse."function a boolean(a +)", 
+  "EXPECTED) &br &keyword  function a boolean(a +"= message.process.parse."function a boolean(a +]"]
   let a = @(+, check.z,"", arithseq(length.z, 1, 1))
   if a =""then"PASS test11a"else"FAIL test11a"+ a
 

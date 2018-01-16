@@ -18,6 +18,8 @@
 
 void assert(int b,char *message);
 
+BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2);
+
 
 #define DYNLIB
 
@@ -222,7 +224,7 @@ if (strcmp(libname,"stdlib")==0){
       for(i=2; i < len+2; i++){
          BT ele = elementlist[i];
         // fprintf(stderr," %d %lld %lld\n",i,ele,erec);
-         ENCODE(&sharedspace,ele,erec);
+         encodeZbuiltinZTZTzerecord(&sharedspace,ele,erec);
       }
        fprintf(stderr,"finish build list\n");
     } else
@@ -418,11 +420,11 @@ BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
   for(i=2;  i<= loaded[1]+1; i++)
    {  sprintf(buff,"%s$profileresult",libnames[i]);
       BT (*pinfo)(processinfo PD) = dlsym(RTLD_DEFAULT, buff);
-       fprintf(stderr,"testing %s %lld\n",buff,(BT)pinfo);
+      // fprintf(stderr,"testing %s %lld\n",buff,(BT)pinfo);
       if (pinfo) { int k;
         BT z = pinfo(PD);
          for(k=0; k<4;k++)
-          fprintf(stderr,"XX %lld %lld \n",  ((BT *)  (((BT *) z) [k]))[0],((BT *)  (((BT *) z) [k]))[1]);
+        //  fprintf(stderr,"XX %lld %lld \n",  ((BT *)  (((BT *) z) [k]))[0],((BT *)  (((BT *) z) [k]))[1]);
         infoarray[2+infoarray[1]++]=z;
       }
     }
@@ -748,7 +750,8 @@ struct cinfo{ BT (* copy) (processinfo,BT) ;
              BT (* look)(processinfo,BT,BT);
              BT (*add)(processinfo,BT,BT,BT);
              BT no; 
-             BT nameasword; BT persitant;};
+             BT nameasword; BT persitant;
+             BT typeaswords;};
              
 struct einfo *staticencodings[noencodings];
 
@@ -798,9 +801,7 @@ if (ee->no==0){
  return e;
  }
 
- BT decodeZbuiltinZTzencodingZTzerecord (processinfo PD,BT P1,BT P2) { return DECODE(PD,P1,P2);}
-
- BT DECODE(processinfo PD,BT P1,BT P2) {
+ BT decodeZbuiltinZTzencodingZTzerecord (processinfo PD,BT P1,BT P2) { 
   BT map=startencoding(PD,P2)->encoded;
   assert ( P1>0&& P1<=SEQLEN(map), "out of range decode");
   return IDX(NULL,map,P1);
@@ -812,9 +813,8 @@ BT mappingZbuiltinZTzerecord(processinfo PD,BT P2){
 
 
 
-
-
-BT FINDENCODE(processinfo PD,BT P1,BT P2){BT r;
+BT findencodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){ 
+  BT r;
   struct cinfo *ee = (struct cinfo *) P2;
   struct einfo *e=startencoding(PD,P2)  ;
   r= (ee->look) (PD,P1,e->hashtable);
@@ -827,12 +827,9 @@ BT FINDENCODE(processinfo PD,BT P1,BT P2){BT r;
   return (BT)x1;
 }
 
-BT findencodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){ return FINDENCODE(PD,P1,P2);}
 
-BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){ return ENCODE(PD,P1,P2);}
-
-
-BT ENCODE(processinfo PD,BT P1,BT P2){BT r;
+BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){  
+ BT r;
  struct einfo *e=startencoding(PD,P2)  ;
   struct cinfo *ee = (struct cinfo *) P2;
   assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");

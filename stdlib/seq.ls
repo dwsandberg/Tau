@@ -6,13 +6,13 @@ type seq is sequence length:int, x:T
 
 type pseq is sequence length:int, a:seq.T, b:seq.T
 
-use arithmeticseq.int
-
 use internals.T
 
 use persistant2
 
 use process.seq.T
+
+use seq.T
 
 use seq.int
 
@@ -23,15 +23,13 @@ use stdlib
 Function =(T, T)boolean unbound
 
 Function_(a:seq.T, b:int)T 
- let typ=getseqtype(a, 0)
-  if typ=0 then 
-    assert b > 0 ∧ b ≤ length.a report"out of bounds"+ stacktrace 
-   getval(a,b+1) 
-   else
-   callidx(typ,a,b) 
-  
-function callidx(func:int,a:seq.T,b:int)T builtin.CALLIDX
+ let typ = getseqtype(a, 0)
+  if typ = 0 
+  then assert b > 0 ∧ b ≤ length.a report"out of bounds"+ stacktrace 
+   getval(a, b + 1)
+  else callidx(typ, a, b)
 
+function callidx(func:int, a:seq.T, b:int)T builtin.CALLIDX
 
 function getval(a:seq.T, offset:int)T builtin.IDXUC
 
@@ -231,17 +229,9 @@ Function findencode(t:T, erec:erecord.T)seq.T builtin.usemangle.STATE
 
 type encoding
 
-type erecord
+type erecord is record deepcopy:int, invertedseqlookup:int, invertedseq:int, number:int, name:word, ispersistant:boolean, encodingtype:seq.word
 
-function subname(erecord.T, int)word builtin.IDXUC
-
-function subpersistant(erecord.T, int)boolean builtin.IDXUC
-
-Function name(a:erecord.T)word subname(a, 4)
-
-Function ispersistant(a:erecord.T)boolean subpersistant(a, 5)
-
-___________
+`___________
 
 function cast2int(s:seq.T)int builtin
 
@@ -249,12 +239,22 @@ function identityf(s:seq.T)seq.T s
 
 Function flush(s:erecord.T)seq.word 
  if ispersistant.s 
-  then let map = mapping.s 
-   let seqindexfunctionaddress = getseqtype(map + map + map, 0)
-   if seqindexfunctionaddress = 0 
-   then"unable to get type for encoding"
-   else let thedata = cast2int.result.process.identityf.map 
-   let b = createlib2(thedata, seqindexfunctionaddress, merge("Q"+ name.s),"")
+  then let thedata = cast2int.result.process.identityf.mapping.s 
+   let b = createlib2(thedata, encodingtype.s, merge("Q"+ name.s),"")
    {"OK"} 
   else"Encoding is not persistant."
+  
+_____________-
 
+type arithmeticseq is sequence length:int, step:T, start:T
+
+
+Function +(T, T)T unbound
+
+Function *(int, T)T unbound
+
+Function length(s:arithmeticseq.T)int export
+
+Function_(s:arithmeticseq.T, i:int)T start.s +(i - 1)* step.s
+
+Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)

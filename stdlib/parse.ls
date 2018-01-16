@@ -17,13 +17,12 @@ Function print(t:tree.word)seq.word
   then [ label.t]+"."+ print(t_1)
   else [ label.t, openpara]+ @(seperator.",", print,"", sons.t)+ [ closepara]
 
-
 function check(r:r1, w:word)r1 
- assert this.r = w report"EXPECTED"+ [ w]+":"+ subseq(input.r, 1, n.r)
+ assert this.r = w report parseerror(r,"EXPECTED"+ [ w])
   advance.r
 
 function check(r:r1, w:seq.word)r1 
- assert this.r in w report"EXPECTED"+ w +":"+ subseq(input.r, 1, n.r)
+ assert this.r in w report parseerror(r,"EXPECTED"+ w)
   advance.r
 
 function wrap(label:word, r:r1)r1 r1(preclist.r, input.r, n.r, [ tree(label, tr.r)])
@@ -41,7 +40,7 @@ function build(r:r1, s:seq.tree.word)r1 r1(preclist.r, input.r, n.r + 1, s)
 function advance(r:r1)r1 build(r, tr.r)
 
 function valid(r:r1)r1 
- assert not(this.r in"#,)]")report"DID NOT EXPECTED"+ [ this.r]+":"+ subseq(input.r, 1, n.r)
+ assert not(this.r in"#,)]")report parseerror(r,"DID NOT EXPECTED"+ [ this.r])
   r
 
 Function prec(w:word, preclist:seq.seq.word)int prec(w, preclist, 1)
@@ -82,7 +81,11 @@ function term(r:r1, p:int)r1
   then if hasdigit.next.r 
    then // minus sign in front of integer or real literal // 
     intlit([ hyphenchar], advance.advance.r, decode.next.r)
-   else wrap(this.r, term(advance.r, 1))
+   else 
+     if next.r =","_1 then // so @(-, with parse //
+     build(r, [ tree.this.valid.r])
+     else 
+    wrap(this.r, term(advance.r, 1))
   else if this.r = doublequote 
   then wrap("$wordlist"_1, wordlist2.build(r, empty:seq.tree.word))
   else if this.r ="let"_1 
@@ -94,7 +97,7 @@ function term(r:r1, p:int)r1
    wrap(this.r, ifpart + thenpart + exp.thenpart)
   else if this.r ="//"_1 
   then let i = findindex("//"_1, input.r, n.r + 1)
-   assert i < length.input.r report"expected // before end of paragraph to end comment"+ input.r 
+   assert i < length.input.r report parseerror(r,"expected // before end of paragraph to end comment")
    let e = term(r1(preclist.r, input.r, i + 1, empty:seq.tree.word), p)
    r1(preclist.r, input.r, n.e, [ tree("comment"_1, @(+, tree, tr.e, subseq(input.r, n.r + 1, i - 1)))])
   else if this.r in"assert"
@@ -133,9 +136,11 @@ function firstnonzero(s:seq.int, i:int)int
  if length.s = i then i else if s_i = 48 then firstnonzero(s, i + 1)else i
 
 function wordlist2(r:r1)r1 
- if this.r = doublequote 
-  then if next.r = doublequote then r + wordlist2.build(advance.r, [ tree.doublequote])else advance.r 
-  else assert n.r + 2 < length.input.r report"ERROR:expected""before end of paragraph"+ subseq(input.r, 1, n.r)
+ if this.r = merge("&"+"quot")
+  then r + wordlist2.build(r, [ tree.doublequote])
+  else if this.r = doublequote 
+  then  advance.r 
+  else assert n.r + 2 < length.input.r report parseerror(r,"ERROR:expected &quot before end of paragraph")
   r + wordlist2.build(r, [ tree.this.r])
 
 function seqlist(r:r1)r1 
@@ -203,7 +208,6 @@ function ttype(r:r1)r1
 
 --------
 
-
 function structele(rx:r1, typ:tree.word)r1 
  let r = ttype.check(advance.rx, colon)
   let fldname = this.rx 
@@ -211,7 +215,6 @@ function structele(rx:r1, typ:tree.word)r1
 
 function elelist(r:r1, typ:tree.word)r1 
  if this.r = comma then r + elelist(structele(check(r, comma), typ), typ)else r
-
 
 Function parse(text:seq.word, scope:tree.word)tree.word 
  if text_1 ="type"_1 
@@ -222,7 +225,7 @@ Function parse(text:seq.word, scope:tree.word)tree.word
    else let r2 = check(r,"is"_1)
    if this.r2 in"encoding Encoding"
    then tree(this.r2, [ type]+ tr.checkend.ttype.advance.r2)
-   else assert this.r2 in"record struct sequence"report"expected struct or sequence"+":"+ subseq(input.r2, 1, n.r2)
+   else assert this.r2 in"record struct sequence"report parseerror(r2,"expected struct or sequence")
    tree(if this.r2 ="record"_1 then"struct"_1 else this.r2, [ type]+ tr.checkend.elelist(structele(advance.r2, type), type))
   else if text_1 in"use Use"
   then tree(text_1, [ totree.ttype.advance.newr1.text])
@@ -240,4 +243,25 @@ function sub(m:seq.word, a:word)word
 
 function replacements(t:seq.word)seq.word @(+, sub.replacements, empty:seq.word, t)
 
+Function parseerror(r:r1, message:seq.word)seq.word message + prettynoparse(subseq(input.r, 1, n.r), 1, 0)
+
+Function prettynoparse(s:seq.word, i:int, lastbreak:int)seq.word 
+ if i > length.s 
+  then""
+  else let x = s_i 
+  if x ="&quot"_1 
+  then let t = findindex("&quot"_1, s, i + 1)
+   {"&{ literal"+ subseq(s, i, t)+"&}"+ prettynoparse(s, t + 1, lastbreak + t - i)} 
+  else if x ="//"_1 
+  then let t = findindex("//"_1, s, i + 1)
+   {"&br &{ comment"+ subseq(s, i, t)+"&}"+ prettynoparse(s, t + 1, t - i)} 
+  else if x in"if then else let assert function Function type"
+  then"&br &keyword"+ x + prettynoparse(s, i + 1, 0)
+  else if x in"report"
+  then"&keyword"+ x + prettynoparse(s, i + 1, lastbreak + 1)
+  else if lastbreak > 20 ∧ x in")]"∨ lastbreak > 40 ∧ x in","
+  then [ x]+"&br"+ prettynoparse(s, i + 1, 0)
+  else if lastbreak > 20 ∧ x in"["
+  then"&br"+ x + prettynoparse(s, i + 1, 0)
+  else [ x]+ prettynoparse(s, i + 1, lastbreak + 1)
 

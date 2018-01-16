@@ -1,5 +1,7 @@
 module persistant2
 
+use internalbc
+
 use ipair.linklists2
 
 use libscope
@@ -45,8 +47,6 @@ use set.word
 use stacktrace
 
 use stdlib
-
-use internalbc
 
 type word3encoding is encoding word3
 
@@ -174,7 +174,7 @@ function subfields(alltypes:set.libtype, p:partobject2, data:int, b:seq.mytype, 
    linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p)
   else if b_i in [ mytype."int", mytype."real"]
   then subfields(alltypes, p + C64.IDXUC(data, i - 1), data, b, i + 1)
-  else let newp = if b_i =mytype."word"
+  else let newp = if b_i = mytype."word"
    then // add a word. This requires adding information for re-encoding word. // 
     let w = cast2word.IDXUC(data, i - 1)
     let e3 = linklists2(a.subobjects.p, mainplace.p, offsetthread.subobjects.p, start.subobjects.p)
@@ -191,7 +191,7 @@ function subseq(alltypes:set.libtype, p:partobject2, s:seq.int, elementtype:myty
    linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p)
   else if elementtype in [ mytype."int", mytype."real"]
   then subseq(alltypes, p + C64(s_i), s, elementtype, i + 1)
-  else let newp = if elementtype =mytype."word"
+  else let newp = if elementtype = mytype."word"
    then // add a word. This requires adding information for re-encoding word. // 
     let w = cast2word(s_i)
     let e3 = linklists2(a.subobjects.p, mainplace.p, offsetthread.subobjects.p, start.subobjects.p)
@@ -236,11 +236,10 @@ function findmod(keep:seq.word, m:libmod)seq.libmod
 function libtypes(s:set.libtype, a:libmod)set.libtype 
  @(∪, libtypes.s, empty:set.libtype, exports.a + defines.a)
 
-Function createlib2(thedata:int, typeindexfunction:int, libname:word, dependlibs:seq.word)int 
- let thetype = towords.parameter.modname.tosyminfo.addresstosymbol.typeindexfunction 
-  let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, libname)
+Function createlib2(thedata:int, encodetype:seq.word, libname:word, dependlibs:seq.word)int 
+ let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, libname)
   let mylib = liblib([ libname], empty:seq.libtype, [ mymod])
-  createlib(thedata, thetype, mylib,"")
+  createlib(thedata, encodetype, mylib,"")
 
 function createlib(thedata:int, thetype:seq.word, mylib:liblib, dependlibs:seq.word)int 
  // must call as process so that the encodings start out empty // 
@@ -305,15 +304,6 @@ function createlibp(thedata:int, thetype:seq.word, mylib:liblib, dependlibs:seq.
   align8 + 1, 
   0], 
   // init22 // [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
-  let bodytxts = [BLOCKCOUNT(1, 1)+CALL(1, 
-  0, 
-  32768, 
-  typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], 
-  C."initlib4", 
-  libnameptr, 
-  getelementptr(wordstype,"words"), 
-  getelementptr(worddatatype,"wordlist"), 
-  getelementptr(conststype,"list"), 
-  getelementptr(libdesctype,"liblib"))+RET(3)]
-   createlib(llvm( deflist, bodytxts, typerecords), libname,"")
+  let bodytxts = [ BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib4", libnameptr, getelementptr(wordstype,"words"), getelementptr(worddatatype,"wordlist"), getelementptr(conststype,"list"), getelementptr(libdesctype,"liblib"))+ RET.3]
+  createlib(llvm(deflist, bodytxts, typerecords), libname,"")
 

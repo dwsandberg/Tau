@@ -1,23 +1,22 @@
 #!/usr/local/bin/tau
 
-Library tools bandeskopf barycenter displaygraph displaytextgraph layergraph makeDAG prettylib svg svggraph doc
-profile labeledgraph printbitcodes
+Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgraph layergraph makeDAG prettylib printbitcodes profile svg svggraph 
  uses stdlib 
- exports prettylib tools doc profile printbitcodes prettylib displaygraph 
- displaytextgraph svg svggraph bandeskopf barycenter makeDAG layergraph
- 
+ exports bandeskopf barycenter displaygraph displaytextgraph doc layergraph makeDAG prettylib prettylib printbitcodes profile svg svggraph tools
 
 Module tools
 
-run printbitcodes test2
+/run tools prettytest
 
-/run tools test2
+/run printbitcodes test2
 
-/run tools stdlibdoc
+run tools test2
+
+run tools stdlibdoc
 
 /run doc createdoc
 
-run tools testprintBitCodes
+/run tools testprintBitCodes
 
 run tools test
 
@@ -31,15 +30,15 @@ run doc createdoc
 
 use doc
 
+use main
+
 use prettylib
+
+use printbitcodes
 
 use profile
 
-use main
-
 use seq.word
-
-use printbitcodes
 
 Function test1 seq.word htmlcode."tools"
 
@@ -55,10 +54,8 @@ Function test seq.word
 
 Function testprintBitCodes seq.word printBitCodes."test2.bc"
 
-Function stdlibdoc seq.word       callgraphbetween("stdlib","llvm internalbc")   +
-// callgraphwithin("stdlib","llvm")
-+ //
-doclibrary("stdlib")
+Function stdlibdoc seq.word 
+ callgraphbetween("stdlib","llvm internalbc")+ // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
 
-Function test2 seq.word doclibrary("basic")
+Function test2 seq.word doclibrary."basic"
 

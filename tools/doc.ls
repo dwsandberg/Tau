@@ -1,5 +1,3 @@
-
-
 Module doc
 
 run tools createdoc
@@ -52,7 +50,7 @@ Function createdoc seq.word
  // Creates html tau html documentation. Creates file taudocs.html // 
   let d = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/doc.txt")
   let x = createfile("taudoc.html", [ htmlheader + processpara.d])
-    let e= @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/appdoc.txt")
+  let e = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/appdoc.txt")
   let x2 = createfile("appdoc.html", [ htmlheader + processpara.e])
   let y = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])
   let z = createfile("tools.html", [ htmlheader + processpara.htmlcode."tools"])
@@ -67,18 +65,16 @@ function prettyit(usegraph:graph.word, s:seq.word)seq.word
     else usegraph(usegraph, subseq(s, l + 1, length.s), subseq(s, k + 1, l))} 
   else"&{ select 1"+ prettyparagraph(defaultcontrol, s)+"&}"
 
-
-
 Function htmlcode(libname:seq.word)seq.word 
  let l = tolibdesc(libname_1)
   let g = newgraph.usegraph("mod", l)
   {"&{ noformat <h1> Source code for Library"+ libname +"</h1> &}"+ @(+, ref,"", modules.l)+ @(seperator."&{ noformat <hr> &}", prettymod.g,"", modules.l)}
 
 function ref(m:moddesc)seq.word 
- {"&{ noformat <a href ="""+ merge("#"_1, modname.m)+""">"+ modname.m +"</a> &}"}
+ {"&{ noformat <a href = &quot"+ merge("#"_1, modname.m)+"&quot >"+ modname.m +"</a> &}"}
 
 function prettymod(usegraph:graph.word, m:moddesc)seq.word 
- {"&{ noformat <hr id ="""+ modname.m +"""> &}"+ @(+, prettyit.usegraph,"", src.m)}
+ {"&{ noformat <hr id = &quot"+ modname.m +"&quot > &}"+ @(+, prettyit.usegraph,"", src.m)}
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word 
  // Calls between modules in list of modules. // 
@@ -86,7 +82,7 @@ Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
   let z = @(+, formcallgraph, empty:seq.arc.word, newcode.x)
   let g = newgraph.@(+, modarc.@(+, mytype, empty:seq.mytype, modulelist), empty:seq.arc.word, z)
   display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g)
-  
+
 Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word 
  // Callgraph within modules. // 
   let x = bindings(libname_1)
@@ -100,7 +96,6 @@ function filterx(include:seq.word, w:word)set.word
   if length.p < 2 
   then empty:set.word 
   else if last(p_2)in include then empty:set.word else asset.[ w]
-
 
 function formcallgraph(sym:syminfo)seq.arc.word 
  formcallgraph(mangled.sym, instruction.sym, 2, empty:seq.arc.word)
@@ -207,3 +202,4 @@ Function uncalledfunctions(libname:seq.word)seq.word
   let g = newgraph.@(+, formcallgraph, empty:seq.arc.word, newcode.x)
   let sources = @(+, sources(g, empty:set.word),"", toseq.nodes.g)
   @(seperator."&br", readable,"", alphasort.sources)
+

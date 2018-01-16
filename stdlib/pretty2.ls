@@ -21,7 +21,7 @@ use stdlib
 use tree.word
 
 Function escapequote(t:tree.word)seq.word 
- if label.t =""""_1 then""""""else [ label.t]
+ if label.t ="&quot"_1 then [ merge."& quot"]else [ label.t]
 
 Function addamp(w:word)word encodeword.@(+, addamp, empty:seq.int, decode.w)
 
@@ -41,7 +41,7 @@ function stripcomment(t:tree.word)tree.word
 
 function checkbraces(control:prettycontrol, expb:prettyresult)prettyresult 
  let f = firstnonblank(text.expb, 1)
-  if f ="("_1 ∨ f =""""_1 
+  if f ="("_1 ∨ f ="&quot"_1 
   then wrap(control,"{", expb,"}")
   else expb
 
@@ -77,7 +77,7 @@ function blank prettyresult prettyresult(0, false,"")
 
 function pretty(rprec:int, t:tree.word, control:prettycontrol)prettyresult 
  if label.t ="$wordlist"_1 
-  then prettyresult(control,"&{ literal"+""""+ @(+, escapequote,"", sons.t)+""""+"&}")
+  then prettyresult(control,"&{ literal"+"&quot"+ @(+, escapequote,"", sons.t)+"&quot"+"&}")
   else if nosons.t = 0 
   then prettyresult(control, label.t)
   else if nosons.t = 2 ∧ @(∨, in.label.t, false, preclist.control)

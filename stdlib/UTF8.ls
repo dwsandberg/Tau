@@ -66,7 +66,7 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:seq.int)UTF8
  if i > length.s 
   then UTF8.result 
   else let this = s_i 
-  let single = this in("()-].:""_^. "+ space)
+  let single = this in("()-].:&quot_^. "+ space)
   let d = decode.this 
   addspace(s, i + 1, single, if nospace ∨ single ∨ this =","_1 then result + d else result + [ 32]+ d)
 

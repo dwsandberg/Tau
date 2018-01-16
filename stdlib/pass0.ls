@@ -1,10 +1,10 @@
 module pass0
 
+use definestruct2
+
 use libdesc
 
 use libscope
-
-/use parse
 
 use passcommon
 
@@ -32,7 +32,7 @@ use stdlib
 
 use tree.word
 
-use definestruct2
+/use parse
 
 Function ?(a:mod2desc, b:mod2desc)ordering 
  encoding.last.towords.modname.a ? encoding.last.towords.modname.b

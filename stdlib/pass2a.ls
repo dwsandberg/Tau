@@ -107,8 +107,7 @@ Function findconst(t:tree.cnode)tree.cnode
    then if between(a, -100, 100)∧ between(b, -100, 100)
     then tree.cnode("LIT"_1, toword(a - b))
     else tree(label.t, l)
-   else // opRSUB // 
-   tree.cnode("LIT"_1, toword.representation(casttoreal.a - casttoreal.b))
+   else // opRSUB // tree.cnode("LIT"_1, toword.representation(casttoreal.a - casttoreal.b))
   else tree(label.t, l)
 
 function asconst(t:tree.cnode)seq.word 
@@ -158,27 +157,24 @@ function roots(m:mod2desc)set.int
 
 Function pass2(r:pass1result)pass1result 
  // does inline expansion, finds consts, removes unreaachable functions // 
- PROFILE.
-   let funcs = @(addlibsym.alltypes.r, identity, dseq.dummyfunc, newcode.r + compiled.r)
+  PROFILE.let funcs = @(addlibsym.alltypes.r, identity, dseq.dummyfunc, newcode.r + compiled.r)
    let roots = toseq.@(∪, roots, empty:set.int, mods.r)
-  let callgraph = @(+, getarcs, newgraph.empty:seq.arc.int, funcs)
-  let reachable = reachable(callgraph, roots + getFREFinconstants)
-  let p = program(libname(r)_1, funcs, callgraph, dummyfunc)
-  let s = @(expandapply, identity, p, toseq.reachable)
-  // assert false:@(+, prt(allfunctions.s),"", toseq.reachable)// 
-  let s1 = @(simpleinline, identity, s, toseq.reachable)
-  let s2 = @(simpleinline, identity, s1, toseq.reachable)
-  let reachable2 = reachable(callgraph.s2, roots + getFREFinconstants)
-  let f = @(+,_.allfunctions.s2, empty:seq.func, toseq.reachable2)
-  let y = @(+, readwritestate, empty:seq.int, f)
-  let state = reachable(complement.callgraph.s2, y)
-  // only pass on functions that can be reached from roots and are in this library // 
-  let g = @(+, filterlib.asset.@(+, mangled, empty:seq.word, compiled.r), empty:seq.func, f)
-  // find tail calls and constants // 
-  let rr = @(+, findconstandtail.@(+, toword, asset.empty:seq.word, toseq.state), empty:seq.func, g)
-  pass1result(rr, libname.r, newcode.r, compiled.r, mods.r, existingtypes.r, alltypes.r)
-
-
+   let callgraph = @(+, getarcs, newgraph.empty:seq.arc.int, funcs)
+   let reachable = reachable(callgraph, roots + getFREFinconstants)
+   let p = program(libname(r)_1, funcs, callgraph, dummyfunc)
+   let s = @(expandapply, identity, p, toseq.reachable)
+   // assert false:@(+, prt(allfunctions.s),"", toseq.reachable)// 
+   let s1 = @(simpleinline, identity, s, toseq.reachable)
+   let s2 = @(simpleinline, identity, s1, toseq.reachable)
+   let reachable2 = reachable(callgraph.s2, roots + getFREFinconstants)
+   let f = @(+,_.allfunctions.s2, empty:seq.func, toseq.reachable2)
+   let y = @(+, readwritestate, empty:seq.int, f)
+   let state = reachable(complement.callgraph.s2, y)
+   // only pass on functions that can be reached from roots and are in this library // 
+   let g = @(+, filterlib.asset.@(+, mangled, empty:seq.word, compiled.r), empty:seq.func, f)
+   // find tail calls and constants // 
+   let rr = @(+, findconstandtail.@(+, toword, asset.empty:seq.word, toseq.state), empty:seq.func, g)
+   pass1result(rr, libname.r, newcode.r, compiled.r, mods.r, existingtypes.r, alltypes.r)
 
 function checktree(s:seq.func)boolean @(∧, checktree, true, s)
 
@@ -197,14 +193,12 @@ function readwritestate(f:func)seq.int
  if"STATE"in codetree.f then [ key.f]else empty:seq.int
 
 function findconstandtail(stateChangingFuncs:set.word, f:func)func 
- // finds constants,, finds tail calls, 
-   and make sure"STATE"is root on state changing functions // 
-  let p = findconst( codetree.f)
-  let q =    tailcall(p,number.f,nopara.f)
+ // finds constants,, finds tail calls, and make sure"STATE"is root on state changing functions // 
+  let p = findconst.codetree.f 
+  let q = tailcall(p, number.f, nopara.f)
   replacecodetree(f, if number.f in stateChangingFuncs ∧ not(inst.label.q ="STATE"_1)
    then tree(cnode("STATE"_1,"0"_1), [ q])
    else q)
-
 
 function print(g:graph.int)seq.word @(+, p,"", toseq.arcs.g)
 
@@ -260,53 +254,45 @@ Function replace(p:program, fn:func)program
   let oldarcs = @(+, arc.f, asset.empty:seq.arc.int, toseq.successors(callgraph.p, f))
   program(library.p, newall, replacearcs(callgraph.p, oldarcs, asset.getarcs.fn), fn.p)
 
-
 ______________
 
-Tailcall 
+Tailcall
 
-Function tailcall(t:tree.cnode,  self:word)boolean
+Function tailcall(t:tree.cnode, self:word)boolean 
  if inst.label.t ="if"_1 
-  then  
-    if  tailcall(t_2, self) then true else  tailcall(t_3, self)
-  else if inst.label.t ="SET"_1  then    tailcall(t_2, self)
-  else if inst.label.t ="LOOP"_1 then false 
-  else if inst.label.t ="CALL"_1 ∧ arg.label.t = self 
-  then true
-  else false
+  then if tailcall(t_2, self)then true else tailcall(t_3, self)
+  else if inst.label.t ="SET"_1 
+  then tailcall(t_2, self)
+  else if inst.label.t ="LOOP"_1 
+  then false 
+  else if inst.label.t ="CALL"_1 ∧ arg.label.t = self then true else false
 
-Function tailcall(t:tree.cnode,self:word,nopara:int) tree.cnode
-if tailcall(t,self) then
-    let m = getmaxvar.t+1
-       let s =  @(leftcat, newNode("LOCAL"_1), empty:seq.tree.cnode,arithseq(nopara,1,m))
-       let plist=@(leftcat, newNode("PARA"_1), empty:seq.tree.cnode,arithseq(nopara,1,1))
-       tree(cnode("LOOP"_1,"0"_1),[newNode("LIT"_1,m),tailcall(s,self,t)]+plist)
-else t 
+Function tailcall(t:tree.cnode, self:word, nopara:int)tree.cnode 
+ if tailcall(t, self)
+  then let m = getmaxvar.t + 1 
+   let s = @(leftcat, newNode("LOCAL"_1), empty:seq.tree.cnode, arithseq(nopara, 1, m))
+   let plist = @(leftcat, newNode("PARA"_1), empty:seq.tree.cnode, arithseq(nopara, 1, 1))
+   tree(cnode("LOOP"_1,"0"_1), [ newNode("LIT"_1, m), tailcall(s, self, t)]+ plist)
+  else t
 
-function leftcat(a:seq.tree.cnode,b:tree.cnode) seq.tree.cnode [b]+a
+function leftcat(a:seq.tree.cnode, b:tree.cnode)seq.tree.cnode [ b]+ a
 
-function newNode(w:word,i:int) tree.cnode tree(cnode(w,toword.i))
+function newNode(w:word, i:int)tree.cnode tree.cnode(w, toword.i)
 
-  
-function tailcall(subs:seq.tree.cnode,self:word,t:tree.cnode ) tree.cnode
+function tailcall(subs:seq.tree.cnode, self:word, t:tree.cnode)tree.cnode 
  if inst.label.t ="if"_1 
-  then  
-  tree(label.t, [ tailcall(subs,"nomatch"_1,t_1), tailcall(subs,self,t_2), tailcall(subs,self,t_3)])
-   else if inst.label.t ="SET"_1 
-  then 
-   tree(label.t, [ tailcall(subs,"nomatch"_1,t_1), tailcall(subs,self,t_2)])
-   else if inst.label.t ="LOOP"_1 then
-     tree(label.t,@(+,tailcall(subs,"nomatch"_1),empty:seq.tree.cnode,  sons.t ) )
+  then tree(label.t, [ tailcall(subs,"nomatch"_1, t_1), tailcall(subs, self, t_2), tailcall(subs, self, t_3)])
+  else if inst.label.t ="SET"_1 
+  then tree(label.t, [ tailcall(subs,"nomatch"_1, t_1), tailcall(subs, self, t_2)])
+  else if inst.label.t ="LOOP"_1 
+  then tree(label.t, @(+, tailcall(subs,"nomatch"_1), empty:seq.tree.cnode, sons.t))
   else if inst.label.t ="CALL"_1 ∧ arg.label.t = self 
-  then  tree( cnode("CONTINUE"_1,self ), @(+,tailcall(subs,"nomatch"_1),empty:seq.tree.cnode,  sons.t ) )
-  else  if inst.label.t ="PARA"_1 then   
-         subs_toint.arg.label.t 
-    else 
-      tree(label.t,@(+,tailcall(subs,"nomatch"_1),empty:seq.tree.cnode,  sons.t ) )
-  
-       
+  then tree(cnode("CONTINUE"_1, self), @(+, tailcall(subs,"nomatch"_1), empty:seq.tree.cnode, sons.t))
+  else if inst.label.t ="PARA"_1 
+  then subs_toint.arg.label.t 
+  else tree(label.t, @(+, tailcall(subs,"nomatch"_1), empty:seq.tree.cnode, sons.t))
+
 ------
-
 
 Function in(c:cnode, t:tree.cnode)boolean 
  if c = label.t then true else @(∨, in.c, false, sons.t)
@@ -316,78 +302,36 @@ Function getmaxvar(t:tree.cnode)int
 
 _____________
 
-
 function genapply(prg:program, term1:word, term2:word, ptyp:word, profile:seq.word)program 
-    let next = getnext.library.prg 
+ let next = getnext.library.prg 
   let p1 = nopara(allfunctions(prg)_funckey.term1) - 2 
   let p = nopara(allfunctions(prg)_funckey.term2) - 1 
-      let nopara=2 + p + p1
+  let nopara = 2 + p + p1 
   let newfuncmangledname = mangle("q"_1, mytype.[ next], constantseq(nopara, mytype."int"))
   assert p ≥ 0 report"illformed"+ term1 + term2 + print(allfunctions(prg)_funckey.term2)
-    let insttree =  buildcodetree(template(newfuncmangledname,term1,term2,p1,p,ptyp),1)
-  let newf = func(nopara, "int", newfuncmangledname, insttree, profile)
-  program(next, replace(allfunctions.prg, key.newf , newf), callgraph.prg + getarcs.newf, newf)
+  let insttree = buildcodetree(template(newfuncmangledname, term1, term2, p1, p, ptyp), 1)
+  let newf = func(nopara,"int", newfuncmangledname, insttree, profile)
+  program(next, replace(allfunctions.prg, key.newf, newf), callgraph.prg + getarcs.newf, newf)
 
- function parainst(i:int) seq.word "PARA"+toword.i
+function parainst(i:int)seq.word {"PARA"+ toword.i }
 
- 
 function getnext(p:word)word 
  let q = decode.p 
   let l = if between(q_1, 48, 57)then q else [ 49, 48, 48]+ q 
   encodeword(decode.toword(((l_1 - 48)* 10 + l_2 - 48)* 10 + l_3 - 48 + 1)+ subseq(l, 4, length.l))
 
+function template(mangledname:word, term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)seq.word 
+ // PARA 1 is index PARA 2 is seq PARA 3 is result LOCAL 3 is index LOCAL 2 is seq LOCAL 1 is result // 
+  // Inner loop LOCAL 3 result LOCAL 4 index LOCAL 5 length of seq // 
+  // EQL-Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint // 
+  let CALLSELF = [ toword(2 + nopara1 + nopara2), mangledname]
+  let CALLTERM1 = [ toword(2 + nopara1), term1]
+  let CALLTERM2 = [ toword(1 + nopara2), term2]
+  let TERM1PARA = @(+, parainst,"", arithseq(nopara1, -1, 2 + nopara1 + nopara2))
+  let TERM2PARA = @(+, parainst,"", arithseq(nopara2, -1, 2 + nopara2))
+  {"LIT 1 LOCAL 2 LIT 0 IDXUC 2 FREF"+ ptyp +"Q3DZbuiltinZintZint 2"+ TERM1PARA + TERM2PARA +"LOCAL 1 LOCAL 2 LIT 2 IDXUC 2 CALL"+ CALLSELF +"LOCAL 2 LIT 3 IDXUC 2 CONTINUE 2 LOCAL 2 LIT 1 IDXUC 2 LIT 3 LOCAL 4 LOCAL 5 Q3EZbuiltinZintZint 2 LOCAL 3"+ TERM1PARA +"LOCAL 3"+ TERM2PARA +"LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 LOCAL 2 LOCAL 4 LIT 1 ADD 2 IDXUC 2 LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3 if 3 CALL"+ CALLTERM2 +"CALL"+ CALLTERM1 +"LOCAL 4 LIT 1 ADD 2 CONTINUE 2 if 3 LOCAL 1 LIT 1 LOOP 4 SET 5 if 3 PARA 2 PARA 1 LOOP 4"}
 
-
-
-
- 
- function template(mangledname:word,term1:word,term2:word,nopara1:int,nopara2:int,ptyp:word) seq.word
- // PARA 1 is index PARA 2 is seq PARA 3 is result 
-    LOCAL 3 is index LOCAL 2 is seq LOCAL 1 is result //
-    //  Inner loop LOCAL 3 result 
- LOCAL 4 index LOCAL 5 length of seq //
-// EQL - Q3DZbuiltinZintZint  opGT =Q3EZbuiltinZintZint //
- let CALLSELF = [toword(2+nopara1+nopara2),mangledname] 
- let CALLTERM1 = [toword(2+nopara1),term1] 
-  let CALLTERM2 = [toword(1+nopara2),term2] 
- let TERM1PARA =@(+,parainst,"",arithseq(nopara1,-1,2+nopara1+nopara2))
- let TERM2PARA = @(+,parainst,"",arithseq(nopara2,-1,2+nopara2))
- "LIT 1
-    LOCAL 2   LIT 0  IDXUC  2 FREF"+ ptyp+"   Q3DZbuiltinZintZint 2  "+ TERM1PARA+TERM2PARA+
-         "LOCAL 1  
-         LOCAL 2   LIT 2  IDXUC  2  
-       CALL"+ CALLSELF +"  
-       LOCAL 2  LIT 3  IDXUC  2   
-    CONTINUE 2  
-    LOCAL 2   LIT 1   IDXUC  2
-    LIT 3
- LOCAL 4  LOCAL 5  Q3EZbuiltinZintZint  2
- LOCAL 3 
-    "+TERM1PARA+" 
-         LOCAL 3   
-           "+TERM2PARA+"  
-           LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 
-            LOCAL 2   LOCAL 4 LIT 1 ADD 2 IDXUC 2 
-            LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3
-           if 3 
-         CALL"+CALLTERM2+" 
-      CALL"+CALLTERM1+"     
-       LOCAL 4   LIT 1  ADD 2
-    CONTINUE 2
- if 3
-LOCAL 1
-LIT 1
-LOOP 4 
-SET 5
- if 3
-PARA 2 
-PARA 1
-LOOP 4 "
-
-            LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 
-            LOCAL 2   LOCAL 4 LIT 1 ADD 2 IDXUC 2 
-            LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3
-           if 3 
+LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 LOCAL 2 LOCAL 4 LIT 1 ADD 2 IDXUC 2 LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3 if 3
 
 function expandapply(p:program, thisone:int)program 
  let f = allfunctions(p)_thisone 
@@ -423,5 +367,5 @@ function checkistypechangeonly(term1:word, term3:word)boolean
   if length.p ≠ 2 ∨ last(p_2)≠"seq"_1 ∨ p_1_1 ≠ merge."empty:seq.T"
   then false 
   else let q = codedown.term1 
-    length.q = 4 ∧ last(q_2)="seq"_1 ∧ q_1_1 ="+"_1 &and subseq(q,3,length.q)=["T seq","T"] 
+  length.q = 4 ∧ last(q_2)="seq"_1 ∧ q_1_1 ="+"_1 ∧ subseq(q, 3, length.q)= ["T seq","T"]
 

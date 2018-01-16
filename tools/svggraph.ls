@@ -93,7 +93,6 @@ Function tosvg(arci:seq.arcinfo.T, nodes:seq.T, positions:set.nodeinfo.T)seq.wor
   let g = @(+, toarcinfo.p2, empty:set.arcinfo.T, arci)
   svg(@(+, svgnode(vertnodesize, g, p2),"", toseq.p2), maxx.toseq.p2, maxy.toseq.p2)
 
-
 Function svgnode(vertnodesize:int, info:set.arcinfo.T, s:set.nodeinfo.T, p:nodeinfo.T)seq.word 
  let arcstonode = findelement2(info, arcinfo(arc(n.p, n.p),"", 0))
   {(if width.p > 0 then text(x.p, y.p, nodetotext.n.p)else"")+ @(+, drawarc(vertnodesize, p, toseq.arcstonode),"", arithseq(length.toseq.arcstonode, 1, 1))}

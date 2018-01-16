@@ -1,7 +1,16 @@
 module definestruct2
 
+use display
+
+use libdesc
+
+use libscope
+
+use parse
+
 use passcommon
 
+use pretty2
 
 use seq.mytype
 
@@ -15,19 +24,6 @@ use stdlib
 
 use tree.word
 
-use libscope
-
-use  parse
-
-
-use libdesc
-
-use display
-
-use pretty2
-
-
-
 Function parse(text:seq.word, scope:tree.word)tree.word export
 
 function mytypec(t:tree.word)seq.word 
@@ -37,19 +33,15 @@ Function mytypex(t:tree.word)mytype mytype.mytypec.t
 
 Function functionbody(p:tree.word)tree.word p_2
 
-
-
 Function tolibtype2(s:tree.word)libtype 
- let kind= label.s
- let type= s_1
- let flds = @(+, lastson, empty:seq.tree.word, subseq(sons.s, 2, nosons.s))
-  libtype(label.type, nosons.type = 1, kind, @(+, mytypex, empty:seq.mytype, flds), 
-  if kind in"sequence type"then offset.1 else offset.0, @(+, label,"", subseq(sons.s, 2, nosons.s)))
-
+ let kind = label.s 
+  let type = s_1 
+  let flds = @(+, lastson, empty:seq.tree.word, subseq(sons.s, 2, nosons.s))
+  libtype(label.type, nosons.type = 1, kind, @(+, mytypex, empty:seq.mytype, flds), if kind in"sequence type"then offset.1 else offset.0, @(+, label,"", subseq(sons.s, 2, nosons.s)))
 
 Function locals(sizes:set.libtype, modname:mytype, libtyp:libtype)seq.syminfo 
-// locals returns list of symbols needed to create and access components of structure //
- let typ = fortype.libtyp 
+ // locals returns list of symbols needed to create and access components of structure // 
+  let typ = fortype.libtyp 
   let fldtypes = subtypes.libtyp 
   let fldnames = fldnames.libtyp 
   let kind = kind.libtyp 
@@ -62,10 +54,8 @@ Function locals(sizes:set.libtype, modname:mytype, libtyp:libtype)seq.syminfo
   then [ syminfo(abstracttype.typ, modname, fldtypes, typ,(if sizeoftype(sizes, typ)= offset.length.fldtypes 
    then"RECORD"
    else"BUILD")+ toword.length.fldtypes)]+ fldaccess(sizes, modname, typ, fldtypes, fldnames, offset.0, 1)
-  else 
-  // assert name.libtyp in "seq pseq dseq cseq arithmeticseq blockseq seq fastsubseq packedseq" report print.libtyp //
-  [ syminfo(abstracttype.typ, modname, fldtypes, typ,"BUILDSEQ"+ toword.length.fldtypes+name.libtyp)]+ @(+, accessfld(modname, typ, fldtypes, fldnames), empty:seq.syminfo, arithseq(length.fldtypes, 1, 1))+ [ syminfo("toseq"_1, modname, [ typ], mytype(towords.parameter.typ +"seq"_1),"")]
- 
+  else // assert name.libtyp in"seq pseq dseq cseq arithmeticseq blockseq seq fastsubseq packedseq"report print.libtyp // 
+   [ syminfo(abstracttype.typ, modname, fldtypes, typ,"BUILDSEQ"+ toword.length.fldtypes + name.libtyp)]+ @(+, accessfld(modname, typ, fldtypes, fldnames), empty:seq.syminfo, arithseq(length.fldtypes, 1, 1))+ [ syminfo("toseq"_1, modname, [ typ], mytype(towords.parameter.typ +"seq"_1),"")]
 
 function accessfld(modname:mytype, type:mytype, fldtypes:seq.mytype, fldnames:seq.word, i:int)syminfo 
  syminfo(fldnames_i, modname, [ type], fldtypes_i,"LIT"+ toword.i +"IDXUC 2")
@@ -80,22 +70,18 @@ function fldaccess(sizes:set.libtype, modname:mytype, type:mytype, fldtypes:seq.
 
 /function functionreturn(p:tree.word)tree.word lastson(p_1)
 
-/function functionparas(p:tree.word)seq.tree.word 
- let s = p_1 
-  subseq(sons.s, 1, nosons.s - 1)
-
-
+/function functionparas(p:tree.word)seq.tree.word let s = p_1 subseq(sons.s, 1, nosons.s-1)
 
 Function parsesyminfo(modname:mytype, text:seq.word)syminfo 
-  //  parse funcheader to obtain syminfo //
- let t = parsefuncheader.text 
-  let p = t_1
-  let functionname = label(p)
-  let functionreturn = lastson(p)
+ // parse funcheader to obtain syminfo // 
+  let t = parsefuncheader.text 
+  let p = t_1 
+  let functionname = label.p 
+  let functionreturn = lastson.p 
   let paras = subseq(sons.p, 1, nosons.p - 1)
   let funcname = if length.paras = 0 ∧ isabstract.modname 
    then merge([ functionname]+":"+ print.functionreturn)
-   else functionname
+   else functionname 
   let inst = if label.functionbody.t ="export"_1 
    then"EXPORT"+ toword.length.paras 
    else if label.functionbody.t ="unbound"_1 
@@ -117,6 +103,6 @@ Function parsesyminfo(modname:mytype, text:seq.word)syminfo
    then mytype."T unbound"
    else modname, @(+, mytype, empty:seq.mytype, paras), mytype.functionreturn, inst)
 
-Function prettytext(d:seq.word) seq.word 
-// for prettying up error messages //
-prettytree(defaultcontrol, parse(d, tree("X"_1)))
+Function prettytext(d:seq.word)seq.word 
+ // for prettying up error messages // prettytree(defaultcontrol, parse(d, tree("X"_1)))
+

@@ -1,8 +1,6 @@
 module symbol
 
-
 use libscope
-
 
 use processtypes
 
@@ -77,11 +75,11 @@ Function subfld(subs:seq.mytype, i:int)seq.word
 
 Function codingrecord(sym:syminfo)seq.word 
  let encodingtype = parameter.returntype.sym 
-  FREFcode.finddeepcopyfunction.encodingtype + FREFcode.invertedseqlookup.encodingtype + FREFcode.invertedseqadd.encodingtype + if encodingtype = mytype."int seq"
-   then"LIT 1 WORD word LIT 0 RECORD 6 NOINLINE 1"
-   else"LIT 0 WORD"+ mangled.sym +(if instruction(sym)_1 ="ERECORD"_1 
-    then"LIT 0"
-    else"LIT 1")+"RECORD 6 NOINLINE 1"
+  let l2 = length.towords.encodingtype 
+  let codefortype = @(+, +."WORD","LIT 0 LIT"+ toword.l2, towords.encodingtype)+"RECORD"+ toword(l2 + 2)
+  FREFcode.finddeepcopyfunction.encodingtype + FREFcode.invertedseqlookup.encodingtype + FREFcode.invertedseqadd.encodingtype +(if name.sym ="wordencoding"_1 then"LIT 1"else"LIT 0")+"WORD"+ mangled.sym +(if instruction(sym)_1 ="ERECORD"_1 
+   then"LIT 0"
+   else"LIT 1")+ codefortype +"RECORD 7 NOINLINE 1"
 
 Function calls(l:syminfo)set.word 
  // returns all functions that are called directly called by l // 
@@ -149,15 +147,16 @@ function removeB(alltypes:set.libtype, lookup:set.syminfo, modname:mytype, w:seq
    removeB(alltypes, lookup, modname, new, i)
   else if w_i ="DEEPCOPY"_1 
   then"USECALL"+ deepcopybody(alltypes, parameter.modname)
-  else if w_i = "BUILDSEQ"_1 then
-     let name ="_"_1 let paras=[ mytype(towords(parameter.modname)+w_(i + 2)) ,mytype."int"]
-     let e = findelement2(lookup, syminfo(name,paras ))
+  else if w_i ="BUILDSEQ"_1 
+  then let name ="_"_1 
+   let paras = [ mytype(towords.parameter.modname + w_(i + 2)), mytype."int"]
+   let e = findelement2(lookup, syminfo(name, paras))
    assert cardinality.e = 1 report if cardinality.e = 0 
     then"unbound not defined?"+ formatcall(name, paras)
     else"multiple definitions of unbound"+ formatcall(name, paras)+"in"+ @(+, print,"", @(+, modname, empty:seq.mytype, toseq.e))
-     let code = ["FREF"_1,  mangled(e_1), "RECORDS"_1 , toword(toint(w_(i+1))+1)]
-     let new = subseq(w, 1, i - 1)+ code + subseq(w, i + 3, length.w)
-     removeB(alltypes, lookup, modname, new, i + length.code)
+   let code = ["FREF"_1, mangled(e_1),"RECORDS"_1, toword(toint(w_(i + 1))+ 1)]
+   let new = subseq(w, 1, i - 1)+ code + subseq(w, i + 3, length.w)
+   removeB(alltypes, lookup, modname, new, i + length.code)
   else if w_i ="WORD"_1 
   then removeB(alltypes, lookup, modname, w, i + 2)
   else removeB(alltypes, lookup, modname, w, i + 1)

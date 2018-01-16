@@ -1,6 +1,5 @@
 Module libscope
 
-
 use seq.int
 
 use seq.liblib
@@ -125,9 +124,7 @@ Function print(p:mytype)seq.word prt(towords.p, length.towords.p)
 function prt(s:seq.word, i:int)seq.word 
  if i = 1 then [ s_1]else [ s_i]+"."+ prt(s, i - 1)
 
-/Function isabstract(s:libsym)boolean 
- let l = codedown.fsig.s 
-  length.l > 2 ∧ l_2_1 ="T"_1
+/Function isabstract(s:libsym)boolean let l = codedown.fsig.s length.l > 2 ∧ l_2_1 ="T"_1
 
 Function codedown(w:word)seq.seq.word 
  codedown(decode.w, 1, empty:seq.int,"", empty:seq.seq.word)

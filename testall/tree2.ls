@@ -4,13 +4,13 @@ type tree2 is record nodes:seq.treenode.T, subtree:int
 
 type treenode is record label:T, nosons:int, nonodes:int
 
-use stdlib
+use seq.T
 
 use seq.tree2.T
 
 use seq.treenode.T
 
-use seq.T
+use stdlib
 
 Function =(T, T)boolean unbound
 
@@ -33,8 +33,7 @@ Function tree2(l:T, s:seq.tree2.T)tree2.T
  let n = @(+, intreenodes, empty:seq.treenode.T, s)
   tree2(n + [ treenode(l, length.s, length.n + 1)], length.n + 1)
 
-function intreenodes(t:tree2.T)seq.treenode.T 
- subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)
+function intreenodes(t:tree2.T)seq.treenode.T subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)
 
 Function_(t:tree2.T, i:int)tree2.T 
  assert between(i, 1, nosons.t)report"no such son"+ toword.i + toword.nosons.t 

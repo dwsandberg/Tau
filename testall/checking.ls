@@ -1,8 +1,8 @@
 Module checking
 
-use stdlib
-
 use seq.boolean
+
+use stdlib
 
 function check2(l:seq.boolean, i:int)seq.word 
  if l_i then""else [ toword.i]
