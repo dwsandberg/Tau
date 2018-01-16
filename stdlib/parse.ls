@@ -81,7 +81,11 @@ function term(r:r1, p:int)r1
   then if hasdigit.next.r 
    then // minus sign in front of integer or real literal // 
     intlit([ hyphenchar], advance.advance.r, decode.next.r)
-   else wrap(this.r, term(advance.r, 1))
+   else 
+     if next.r =","_1 then // so @(-, with parse //
+     build(r, [ tree.this.valid.r])
+     else 
+    wrap(this.r, term(advance.r, 1))
   else if this.r = doublequote 
   then wrap("$wordlist"_1, wordlist2.build(r, empty:seq.tree.word))
   else if this.r ="let"_1 

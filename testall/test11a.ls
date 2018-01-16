@@ -86,6 +86,8 @@ Function test24 seq.seq.word ["k"]
 
 Function t414 boolean @(∧, filetest, true, arithseq(9, 1, 4))
 
+Function t415 boolean @(-,identity,100,[1,2])=97
+
 function filetest(i:int)boolean 
  let name ="test"+ toword.i +".txt"
   let a = createbytefile(name, arithseq(i, 1, 48))
@@ -106,6 +108,7 @@ Function test11a seq.word
   t412, 
   t413, 
   t414, 
+  t415,
   "EXPECTED) &br &keyword  function  a boolean(a #"= message.process.parse."function a boolean(a", 
   "EXPECTED] &br &keyword  function a boolean [ a)"= message.process.parse."function a boolean [ a)", 
   "EXPECTED) &br &keyword  function a boolean(a +"= message.process.parse."function a boolean(a +", 
