@@ -81,11 +81,9 @@ function term(r:r1, p:int)r1
   then if hasdigit.next.r 
    then // minus sign in front of integer or real literal // 
     intlit([ hyphenchar], advance.advance.r, decode.next.r)
-   else 
-     if next.r =","_1 then // so @(-, with parse //
-     build(r, [ tree.this.valid.r])
-     else 
-    wrap(this.r, term(advance.r, 1))
+   else if next.r =","_1 
+   then // so @(-, with parse // build(r, [ tree.this.valid.r])
+   else wrap(this.r, term(advance.r, 1))
   else if this.r = doublequote 
   then wrap("$wordlist"_1, wordlist2.build(r, empty:seq.tree.word))
   else if this.r ="let"_1 
@@ -139,7 +137,7 @@ function wordlist2(r:r1)r1
  if this.r = merge("&"+"quot")
   then r + wordlist2.build(r, [ tree.doublequote])
   else if this.r = doublequote 
-  then  advance.r 
+  then advance.r 
   else assert n.r + 2 < length.input.r report parseerror(r,"ERROR:expected &quot before end of paragraph")
   r + wordlist2.build(r, [ tree.this.r])
 
@@ -165,13 +163,11 @@ function checkend(r:r1)r1 check(r,"#"_1)
 
 ----------------------
 
-function skipcomments( r:r1) r1
-  if this.r ="//"_1 
+function skipcomments(r:r1)r1 
+ if this.r ="//"_1 
   then let i = findindex("//"_1, input.r, n.r + 1)
-    if i > length.input.r then r else 
-       skipcomments.r1(preclist.r,input.r,i+1,tr.r)
-    else  r
- 
+   if i > length.input.r then r else skipcomments.r1(preclist.r, input.r, i + 1, tr.r)
+  else r
 
 Function parsefuncheader(text:seq.word)tree.word 
  let r = newr1.replacements.text 

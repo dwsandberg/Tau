@@ -10,7 +10,7 @@ use displaytextgraph
 
 use fileio
 
-use fileresult
+use textio
 
 use format
 
@@ -24,7 +24,7 @@ use main
 
 use parse
 
-use pretty2
+use pretty
 
 use seq.arc.word
 

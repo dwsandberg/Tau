@@ -2,9 +2,9 @@ module llvm
 
 In addition to the llvm bicode format documentation, an useful file for reference is LLVMBitCodes.h
 
-use bits
+use bitpackedseq.bit
 
-use byteseq.bit
+use bits
 
 use internalbc
 

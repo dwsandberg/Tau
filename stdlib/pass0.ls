@@ -1,6 +1,6 @@
 module pass0
 
-use definestruct2
+use definestruct
 
 use libdesc
 

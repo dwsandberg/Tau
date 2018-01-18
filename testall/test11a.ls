@@ -2,11 +2,9 @@ Module test11a
 
 use fileio
 
-use fileresult
-
 use parse
 
-use pretty2
+use pretty
 
 use process.tree.word
 
@@ -25,6 +23,8 @@ use seq.tree.word
 use seq.word
 
 use stdlib
+
+use textio
 
 use tree.int
 
@@ -86,7 +86,7 @@ Function test24 seq.seq.word ["k"]
 
 Function t414 boolean @(∧, filetest, true, arithseq(9, 1, 4))
 
-Function t415 boolean @(-,identity,100,[1,2])=97
+Function t415 boolean @(-, identity, 100, [ 1, 2])= 97
 
 function filetest(i:int)boolean 
  let name ="test"+ toword.i +".txt"
@@ -108,13 +108,13 @@ Function test11a seq.word
   t412, 
   t413, 
   t414, 
-  t415,
-  "EXPECTED) &br &keyword  function  a boolean(a #"= message.process.parse."function a boolean(a", 
-  "EXPECTED] &br &keyword  function a boolean [ a)"= message.process.parse."function a boolean [ a)", 
-  "EXPECTED) &br &keyword  function a boolean(a +"= message.process.parse."function a boolean(a +", 
-  "EXPECTED) &br &keyword  function a boolean(a +"= message.process.parse."function a boolean(a +,", 
-  "EXPECTED) &br &keyword  function a boolean(a +"= message.process.parse."function a boolean(a +)", 
-  "EXPECTED) &br &keyword  function a boolean(a +"= message.process.parse."function a boolean(a +]"]
+  t415, 
+  "EXPECTED)&br &keyword function a boolean(a #"= message.process.parse."function a boolean(a", 
+  "EXPECTED]&br &keyword function a boolean [ a)"= message.process.parse."function a boolean [ a)", 
+  "EXPECTED)&br &keyword function a boolean(a +"= message.process.parse."function a boolean(a +", 
+  "EXPECTED)&br &keyword function a boolean(a +"= message.process.parse."function a boolean(a +,", 
+  "EXPECTED)&br &keyword function a boolean(a +"= message.process.parse."function a boolean(a +)", 
+  "EXPECTED)&br &keyword function a boolean(a +"= message.process.parse."function a boolean(a +]"]
   let a = @(+, check.z,"", arithseq(length.z, 1, 1))
   if a =""then"PASS test11a"else"FAIL test11a"+ a
 

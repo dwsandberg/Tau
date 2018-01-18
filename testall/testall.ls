@@ -6,7 +6,6 @@ Library testall checking myseq point point2d randomphrase test11 test11a test2 t
 
 Module testall
 
-
 /run randomphrase randomphrase
 
 run testall testall

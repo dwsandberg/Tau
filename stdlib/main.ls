@@ -1,12 +1,10 @@
 Module main
 
-use codegen2
+use codegen
 
 use constant
 
 use fileio
-
-use fileresult
 
 use format
 
@@ -26,7 +24,7 @@ use pass2a
 
 use passcommon
 
-use persistant2
+use persistant
 
 use prims
 
@@ -65,6 +63,8 @@ use set.mod2desc
 use set.syminfo
 
 use stdlib
+
+use textio
 
 Function main(arg:seq.int)outputformat 
  let args = towords(arg + 10 + 10)

@@ -4,8 +4,6 @@ use UTF8
 
 use checking
 
-use fileresult
-
 use graph.word
 
 use invertedseq.word
@@ -41,6 +39,8 @@ use set.int
 use set.word
 
 use stdlib
+
+use textio
 
 Function test5 seq.word 
  PROFILE.let y = [ test501, t502, t503, t504, t505, t506, t507, t508, t509, t510, 

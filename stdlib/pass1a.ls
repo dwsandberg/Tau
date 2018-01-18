@@ -2,7 +2,7 @@ module pass1a
 
 type r3 is record code:seq.word, types:seq.mytype, nexttemp:int
 
-use definestruct2
+use definestruct
 
 use libscope
 

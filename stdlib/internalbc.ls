@@ -2,9 +2,9 @@ Module internalbc
 
 * 64 + 2*3 instead of 64 + 2 * 3 does not give reasonable error message!
 
-use bits
+use bitpackedseq.bit
 
-use byteseq.bit
+use bits
 
 use stdlib
 

@@ -8,7 +8,7 @@ type pseq is sequence length:int, a:seq.T, b:seq.T
 
 use internals.T
 
-use persistant2
+use persistant
 
 use process.seq.T
 
@@ -243,11 +243,10 @@ Function flush(s:erecord.T)seq.word
    let b = createlib2(thedata, encodingtype.s, merge("Q"+ name.s),"")
    {"OK"} 
   else"Encoding is not persistant."
-  
+
 _____________-
 
 type arithmeticseq is sequence length:int, step:T, start:T
-
 
 Function +(T, T)T unbound
 
@@ -258,3 +257,4 @@ Function length(s:arithmeticseq.T)int export
 Function_(s:arithmeticseq.T, i:int)T start.s +(i - 1)* step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
+

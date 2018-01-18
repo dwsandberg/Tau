@@ -2,11 +2,11 @@ module bits
 
 use UTF8
 
+use bitpackedseq.bit
+
 use blockseq.bits
 
 use blockseq.int
-
-use byteseq.bit
 
 use packedseq.bits
 

@@ -178,7 +178,7 @@ if (strcmp(libname,"stdlib")==0){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
-    byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbyteseqZTzbitpackedseqZint");
+    byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZTzbitpackedseqZint");
     if (!byteseqencetype){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);

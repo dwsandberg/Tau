@@ -1,15 +1,12 @@
 #!/usr/local/bin/tau
 
-Library stdlib UTF8 bits blockseq buildtree byteseq codegen2 codetemplates2 constant definestruct2 display etype fileio fileresult format graph groupparagraphs internalbc internals invertedseq ipair libdesc libdescfunc libscope llvm main options oseq packedseq parse pass0 pass1a pass2a passcommon persistant2 pretty2 prims process processtypes real reconstruct seq set stack stacktrace symbol tree 
+Library stdlib UTF8 bitpackedseq bits blockseq buildtree codegen codetemplates constant definestruct display etype fileio format graph groupparagraphs internalbc internals invertedseq ipair libdesc libdescfunc libscope llvm main options oseq packedseq parse pass0 pass1a pass2a passcommon persistant pretty prims process processtypes real reconstruct seq set stack stacktrace symbol textio tree 
  uses 
- exports UTF8  bits blockseq buildtree byteseq codetemplates2 constant definestruct2 display etype fileio fileresult format graph internalbc internals invertedseq ipair libdesc libdescfunc libscope llvm main options oseq packedseq parse passcommon persistant2 pretty2 prims process processtypes real reconstruct seq set stack stacktrace stdlib tree
+ exports UTF8 bitpackedseq bits blockseq buildtree codetemplates constant definestruct display etype fileio format graph internalbc internals invertedseq ipair libdesc libdescfunc libscope llvm main options oseq packedseq parse passcommon persistant pretty prims process processtypes real reconstruct seq set stack stacktrace stdlib textio tree
 
 module stdlib
 
 use UTF8
-
-
-use fileresult
 
 use oseq.alphaword
 
@@ -34,6 +31,8 @@ use seq.word
 use stacktrace
 
 use stdlib
+
+use textio
 
 type int
 
@@ -316,7 +315,7 @@ Function alphasort(a:seq.seq.word)seq.seq.word
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
   @(+, towordseq, empty:seq.seq.word, sort.b)
 
-* usegraph include real oseq fileresult UTF8 prims stacktrace internals libscope tree seq  blockseq graph ipair invertedseq process stack set oseq packedseq options format groupparagraphs fileio
+* usegraph include real oseq textio UTF8 prims stacktrace internals libscope tree seq blockseq graph ipair invertedseq process stack set oseq packedseq options format groupparagraphs fileio
 
-* usegraph include libscope display constant codegen2 parse pass1a pass0 buildtree processtypes definestruct2 symbol libdescfunc groupparagraphs etype codetemplates core sid pretty2 pass2a persistant2 libdesc passcommon main parts llvm reconstruct exclude seq set oseq options stdlib tree graph UTF8 stack stacktrace real process libscope ipair
+* usegraph include libscope display constant codegen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs etype codetemplates core sid pretty pass2a persistant libdesc passcommon main parts llvm reconstruct exclude seq set oseq options stdlib tree graph UTF8 stack stacktrace real process libscope ipair
 

@@ -7,7 +7,7 @@ prettylib printbitcodes profile svg svggraph  renamemodule
 
 Module tools
 
-/run tools prettytest
+run tools prettytest
 
 /run printbitcodes test2
 
@@ -45,7 +45,14 @@ Function test1 seq.word htmlcode."tools"
 
 Function checkbind seq.word checkbind."tools"
 
-Function prettytest seq.word prettylib("tools","")
+Function prettytest seq.word prettylib("solardataall","byteseq bitpackedseq
+codegen2 codegen codetemplates2 codetemplates  definestruct2 definestruct   fileresult textio
+persistant2 persistant pretty2 pretty 
+")
+
+byteseq bitpackedseq
+codegen2 codegen codetemplates2 codetemplates  definestruct2 definestruct   fileresult textio
+persistant2 persistant pretty2 pretty 
 
 Function checkdoclib seq.word doclibrary."tools"
 

@@ -2,15 +2,15 @@ Module fileio
 
 use UTF8
 
+use bitpackedseq.bit
+
+use bitpackedseq.byte
+
 use bits
 
 use blockseq.bits
 
 use blockseq.int
-
-use byteseq.bit
-
-use byteseq.byte
 
 use packedseq.bits
 

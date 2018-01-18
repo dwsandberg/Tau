@@ -2,11 +2,11 @@ Module prettylib
 
 use UTF8
 
-use definestruct2
+use definestruct
 
 use display
 
-use fileresult
+use textio
 
 use format
 
@@ -20,7 +20,7 @@ use parse
 
 use passcommon
 
-use pretty2
+use pretty
 
 use seq.moddesc
 

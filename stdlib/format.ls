@@ -1,6 +1,6 @@
 Module format
 
-use pretty2
+use pretty
 
 use set.int
 
