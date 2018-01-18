@@ -162,24 +162,12 @@ Should have visual representation of previous selected item.
 A single Double quote within // // messes up web display of source
 
 &section  Todo
-
-
-flushing of empty persistent encodings.  Not exporting encodings does not allow type to be found
-
-PROFILE of codegen does not work.  
-
- 8+3*6 gives bad error message on compile
  
 
 Better llvm bitcode generation
 
 authorization needs improvement.
 
-How to set displaywidth mapping 
-
-Get rid of SETFLD
-
-(DONE 12/07/2017) Change displaywidth of seq.word so that it calculates spaces correctly
 
 Allow other binary operators to be defined.operator + op1 op2
 

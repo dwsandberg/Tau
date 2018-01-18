@@ -165,6 +165,14 @@ function checkend(r:r1)r1 check(r,"#"_1)
 
 ----------------------
 
+function skipcomments( r:r1) r1
+  if this.r ="//"_1 
+  then let i = findindex("//"_1, input.r, n.r + 1)
+    if i > length.input.r then r else 
+       skipcomments.r1(preclist.r,input.r,i+1,tr.r)
+    else  r
+ 
+
 Function parsefuncheader(text:seq.word)tree.word 
  let r = newr1.replacements.text 
   let beforeformal = advance.advance.r 
@@ -174,7 +182,7 @@ Function parsefuncheader(text:seq.word)tree.word
   else let paralist = if this.beforeformal = openpara 
    then check(labeltypelist.addPara.advance.beforeformal, closepara)
    else beforeformal 
-  let beforedef = ttype.paralist 
+  let beforedef = skipcomments.ttype.paralist 
   let body = if this.beforedef in"export builtin unbound"
    then tr(checkend.exp.beforedef)_1 
    else tree("omitted"_1)

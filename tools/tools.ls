@@ -1,6 +1,7 @@
 #!/usr/local/bin/tau
 
-Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgraph layergraph makeDAG prettylib printbitcodes profile svg svggraph 
+Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgraph layergraph makeDAG 
+prettylib printbitcodes profile svg svggraph  renamemodule
  uses stdlib 
  exports bandeskopf barycenter displaygraph displaytextgraph doc layergraph makeDAG prettylib prettylib printbitcodes profile svg svggraph tools
 
@@ -10,7 +11,7 @@ Module tools
 
 /run printbitcodes test2
 
-run tools test2
+/run tools test2
 
 run tools stdlibdoc
 
@@ -44,7 +45,7 @@ Function test1 seq.word htmlcode."tools"
 
 Function checkbind seq.word checkbind."tools"
 
-Function prettytest seq.word prettylib."tools"
+Function prettytest seq.word prettylib("tools","")
 
 Function checkdoclib seq.word doclibrary."tools"
 

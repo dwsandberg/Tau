@@ -42,6 +42,8 @@ Function dependentlibs(libdesc)seq.word export
 
 Function exports(libdesc)seq.word export
 
+Function libdesc(name:word, dependentlibs:seq.word, modules:seq.moddesc, exports:seq.word) libdesc export
+
 Function moddesc(libname:word, exports:seq.word, a:seq.seq.word)moddesc 
  let name = if length.a = 0 then""else subseq(a_1, 2, 2)
   moddesc(name_1, libname, a, @(+, finduseclause, empty:seq.mytype, a), not(name_1 in exports))
