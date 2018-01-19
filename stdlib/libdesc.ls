@@ -1,6 +1,5 @@
 module libdesc
 
-use etype
 
 use groupparagraphs
 

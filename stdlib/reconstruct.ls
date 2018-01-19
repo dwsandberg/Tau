@@ -2,6 +2,9 @@ Module reconstruct
 
 use stdlib
 
+
+use persistant
+
 Decode Functions
 
 Function relocate(ws:seq.word, d2:seq.int)int 
@@ -34,23 +37,11 @@ function setfld5(a:seq.int, x:word, i:int)int builtin.SETFLD3
 
 function setfld5(a:seq.int, x:int, i:int)int builtin.SETFLD3
 
-function setfld5(a:int, x:int, i:int)int builtin.SETFLD3
 
-Function IDXUC(int, int)int builtin.IDXUC
-
-Function cast2wordseq(int)seq.word builtin
 
 Function cast2int(s:seq.word)int builtin
 
-_______________________________
 
-Three Functions to pack two ints into 64 bits
 
-function halfsize int // 2^31 // 2147483648
 
-Function packit(link:int, b:int)int {(halfsize + link)* halfsize + b }
-
-Function getb(a:int)int a mod halfsize
-
-Function getlink(a:int)int a / halfsize - halfsize
 

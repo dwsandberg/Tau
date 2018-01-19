@@ -7,7 +7,9 @@ prettylib printbitcodes profile svg svggraph  renamemodule
 
 Module tools
 
-run tools prettytest
+/run tools test2
+
+/run tools prettytest
 
 /run printbitcodes test2
 
@@ -50,9 +52,6 @@ codegen2 codegen codetemplates2 codetemplates  definestruct2 definestruct   file
 persistant2 persistant pretty2 pretty 
 ")
 
-byteseq bitpackedseq
-codegen2 codegen codetemplates2 codetemplates  definestruct2 definestruct   fileresult textio
-persistant2 persistant pretty2 pretty 
 
 Function checkdoclib seq.word doclibrary."tools"
 
@@ -63,7 +62,8 @@ Function test seq.word
 Function testprintBitCodes seq.word printBitCodes."test2.bc"
 
 Function stdlibdoc seq.word 
- callgraphbetween("stdlib","llvm internalbc")+ // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
+ callgraphbetween("stdlib","persistant reconstruct")+ // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
 
-Function test2 seq.word doclibrary."basic"
+Function test2 seq.word callgraphbetween("useful"," useful processtypes")+doclibrary."tools"
+
 

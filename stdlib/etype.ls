@@ -1,4 +1,0 @@
-module etype
-
-use stdlib
-

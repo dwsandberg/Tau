@@ -2,9 +2,8 @@ Module test11a
 
 use fileio
 
-use parse
+use passcommon
 
-use pretty
 
 use process.tree.word
 

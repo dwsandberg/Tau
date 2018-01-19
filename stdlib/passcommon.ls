@@ -106,3 +106,24 @@ function setprivate(exports:seq.word, m:mod2desc)mod2desc
 Function setprivate(exports:seq.word, a:pass1result)pass1result 
  pass1result(code.a, libname.a, newcode.a, compiled.a, @(+, setprivate.exports, empty:seq.mod2desc, mods.a), existingtypes.a, alltypes.a)
 
+
+use parse
+
+use pretty
+
+
+
+Function parse(seq.word,tree.word) tree.word export
+
+Function prettyparagraph(control:prettycontrol, p:seq.word)seq.word export
+
+Function prettytree(control:prettycontrol, t:tree.word)seq.word export
+
+Function print(t:tree.word)seq.word export
+
+
+Function parsefuncheader(text:seq.word)tree.word export
+
+
+Function expression(s:seq.word)tree.word export
+

@@ -1,5 +1,7 @@
 module persistant
 
+use bits
+
 use internalbc
 
 use ipair.linklists2
@@ -10,7 +12,7 @@ use llvm
 
 use oseq.word
 
-use prims
+use fileio
 
 use process.int
 
@@ -18,7 +20,6 @@ use process.liblib
 
 use processtypes
 
-use reconstruct
 
 use seq.constmap
 
@@ -307,3 +308,19 @@ function createlibp(thedata:int, thetype:seq.word, mylib:liblib, dependlibs:seq.
   let bodytxts = [ BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib4", libnameptr, getelementptr(wordstype,"words"), getelementptr(worddatatype,"wordlist"), getelementptr(conststype,"list"), getelementptr(libdesctype,"liblib"))+ RET.3]
   createlib(llvm(deflist, bodytxts, typerecords), libname,"")
 
+_______________________________
+
+Three Functions to pack two ints into 64 bits
+
+function halfsize int // 2^31 // 2147483648
+
+
+Function getlink(a:int)int  toint(bits(a) >> 31 )- halfsize
+
+Function packit(link:int, b:int)int toint ( bits(halfsize + link) << 31 &or bits(b) ) 
+
+Function getb(a:int)int toint(bits(a) &and bits( halfsize  - 1))
+
+Function IDXUC(int, int)int builtin.IDXUC
+
+Function cast2wordseq(int)seq.word builtin

@@ -6,11 +6,11 @@ use libdesc
 
 use libscope
 
-use parse
+/use parse
 
 use passcommon
 
-use pretty
+/use pretty
 
 use seq.mytype
 
@@ -24,7 +24,9 @@ use stdlib
 
 use tree.word
 
-Function parse(text:seq.word, scope:tree.word)tree.word export
+function lastson(s:tree.word)tree.word s_nosons.s
+
+/Function parse(text:seq.word, scope:tree.word)tree.word export
 
 function mytypec(t:tree.word)seq.word 
  if nosons.t = 0 then [ label.t]else mytypec(t_1)+ [ label.t]
@@ -66,11 +68,6 @@ function fldaccess(sizes:set.libtype, modname:mytype, type:mytype, fldtypes:seq.
   else let sz = sizeoftype(sizes, fldtypes_i)
   fldaccess(sizes, modname, type, fldtypes, fldnames, offset + sz, i + 1)+ syminfo(fldnames_i, modname, [ type], fldtypes_i,"LIT"+ print.offset +"FLD"+ print.sz)
 
-/function functionname(p:tree.word)word label(p_1)
-
-/function functionreturn(p:tree.word)tree.word lastson(p_1)
-
-/function functionparas(p:tree.word)seq.tree.word let s = p_1 subseq(sons.s, 1, nosons.s-1)
 
 Function parsesyminfo(modname:mytype, text:seq.word)syminfo 
  // parse funcheader to obtain syminfo // 

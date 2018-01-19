@@ -2,7 +2,6 @@ Module prettylib
 
 use UTF8
 
-use definestruct
 
 use display
 
@@ -16,11 +15,9 @@ use libscope
 
 use main
 
-use parse
 
 use passcommon
 
-use pretty
 
 use seq.moddesc
 

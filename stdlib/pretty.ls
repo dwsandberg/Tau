@@ -23,12 +23,6 @@ use tree.word
 Function escapequote(t:tree.word)seq.word 
  if label.t ="&quot"_1 then [ merge."& quot"]else [ label.t]
 
-Function addamp(w:word)word encodeword.@(+, addamp, empty:seq.int, decode.w)
-
-Function addamp(ch:int)seq.int 
- if ch = 60 
-  then @(+, decode, empty:seq.int,"&lt ;")
-  else if ch = 38 then @(+, decode, empty:seq.int,"&amp ;")else [ ch]
 
 function pretty(control:prettycontrol, t:tree.word)prettyresult pretty(length.preclist.control + 1, t, control)
 

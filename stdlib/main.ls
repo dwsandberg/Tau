@@ -124,7 +124,7 @@ function subcompilelib(libname:word)seq.word
   then message.p 
   else let y1 = codegen5.result.p 
   let z2 = createlib(y1, libname, dependentlibs.ld)
-  // let discard4 = createfile([ merge([ libname]+"/changed")], [""])//"OK"
+  "OK"
 
 function waitforpass2(a:pass1result)process.pass1result 
  PROFILE.let p = process.pass2.a 
@@ -149,7 +149,6 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
   assert stamp ≥ time report"library"+ dependentlibs_i +"is out of date"+ toword.time + toword.stamp 
   loadlibs(dependentlibs, i + 1, stamp)
 
-/function checklibchange(libname:word)boolean let n = [ merge([ libname]+"/changed")]fileexists.n ∧ length.getfile.n > 3
 
 Function run(libname:word, modname:word, funcname:word)seq.word 
  let aa = compilelib.libname 
@@ -158,13 +157,12 @@ Function run(libname:word, modname:word, funcname:word)seq.word
    if aborted.p2 then message.p2 else result.p2 
   else aa
 
-/Function reverse(s:seq.seq.word)seq.seq.word @(+,_.s, empty:seq.seq.word, arithseq(length.s, 0-1, length.s))
 
 function +(a:liblib, b:liblib)liblib liblib(libname.a + libname.b, types.a + types.b, mods.a + mods.b)
 
-Function emptyliblib liblib liblib("empty", empty:seq.libtype, empty:seq.libmod)
+function emptyliblib liblib liblib("empty", empty:seq.libtype, empty:seq.libmod)
 
-Function YYY(a:liblib)seq.mod2desc 
+function YYY(a:liblib)seq.mod2desc 
  let z2 = template(mytype."x$types", empty:seq.syminfo, empty:seq.syminfo, types.a)
   @(+, totemplate, empty:seq.mod2desc, mods.a)+ z2
 
@@ -174,3 +172,6 @@ function totemplate(s:libmod)mod2desc
 
 Function newcode(pass1result)seq.syminfo export
 
+Function parsesyminfo(modname:mytype, text:seq.word)syminfo export
+
+use definestruct

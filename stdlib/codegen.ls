@@ -162,7 +162,7 @@ Function codegen5(z:pass1result)seq.bits
   let bodytxts = [ BLOCKCOUNT(1, 1)+ RET(1, C(i64, [ CONSTCECAST, 9, typ.ptr.array(4, i64), C."profstat"])), 
   BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib4", libnameptr, getelementptr(wordstype,"words"), getelementptr(worddatatype,"wordlist"), getelementptr(conststype,"list"), getelementptr(libdesctype,"liblib"))+ GEP(2, 1, typ.profiletype, C."profclocks", C64.0, C64.1)+ STORE(3, -2, C64.noprofileslots, align8, 0)+ GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1)+ STORE(4, -3, C64.noprofileslots, align8, 0)+ GEP(4, 1, typ.profiletype, C."profcounts", C64.0, C64.1)+ STORE(5, -4, C64.noprofileslots, align8, 0)+ GEP(5, 1, typ.profiletype, C."profrefs", C64.0, C64.1)+ STORE(6, -5, C64.noprofileslots, align8, 0)+ RET.6]+ bodies.fb 
   assert length.symbolrecords2 = nosyms report"extra symbols2!"
-  // let a = printz(bodytxts)// llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
+  llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 
 type localmap5 is record localno:int, regno:int
 
@@ -179,7 +179,7 @@ function findcalls(t:tree.cnode)int
     findFREF(constantmapping_c, 3)
    else if inst.label.t in"SET RECORD LOCAL CONST LIT PARA EQL if IDXUC PROCESS2 STATE WORD SETFLD3 SETFLDBYTE ADD TAIL Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
    then 0 
-   else // assert inst.label.t in"createfileZfileresultZwordzseqZwordzseqzseq"report""+ inst.label.t // 
+   else 
    C.inst.label.t 
   @(+, findcalls, 0, sons.t)
 
@@ -211,21 +211,6 @@ function funcdef(fl:seq.func, info:geninfo5, consts:linklists2, i:int, result:se
    else code.r)+ RET(regno.r + 1, arg.r)
   funcdef(fl, info, lst.r, i + 1, result + [ newbody])
 
-function printz(s:seq.seq.seq.int)seq.word 
- let a = @(seperator(","+ EOL), printz,"", s)
-  let b = createfile("code.ls", [ a])
-  a
-
-function printz(s:seq.seq.int)seq.word 
- {"["+ @(seperator(","+ EOL), printz,"", s)+"]"}
-
-function printz(s:seq.int)seq.word 
- {"["+ @(seperator.",", toword,"", s)+"]"}
-
-function xprint(t:tree.cnode)seq.word 
- if nosons.t = 0 
-  then [ inst.label.t, arg.label.t]
-  else"&br ["+ inst.label.t + arg.label.t + @(+, xprint,"", sons.t)+"]"
 
 function loopmapentry(baselocal:int, regbase:int, i:int)localmap5 
  localmap5(baselocal + i - 1,-regbase - i)

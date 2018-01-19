@@ -16,17 +16,24 @@ A program is represented as a sequence of characters. The character encoding is 
 
 Paragraphs that do NOT start with &keyword type, &keyword use, &keyword Library, &keyword module, &keyword Function, or &keyword function are always treated as comments.
 
-Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. The characters()+,-.:[]^_are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, (a + b)is equivalent to (a + b); but (a * b) is not equivalent to(a*b). A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinghushed from a period in google.com.
+Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. 
+The characters ()+,-.:=[]^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com.
+A word sequence literal is quoted like "This is a string Literal."   &quot is used to represent a double quote within a word sequence literal. 
 
 An integer literal is represented by a sequence of words where each word only contains digits. That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 0 0 and 10 01 are integer.
 
-For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ are & le & ge & ne & and & or respectively.
+For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ are  &le  &ge  &ne  &and  &or respectively.
 
-Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but(8)*(9)is ok.
+Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.
 
-Occasionally some unexpected lexical issues arise.Note that &{ block &keyword let a ="!"&br"hello world"+ a &} is equivalent to &{ block &keyword let a ="""hello world"+ a &} which is illegal since the second a is used before it is defined. Adding grouping braces will change the meaning to something closer to what is intended.&{ block &keyword let a ="!"&br {"hello world"+ a } &}
+Occasionally some unexpected lexical issues arise.
+Consider the  function definition &{ block &keyword function test int  (3 + 4)* 5 &} Here the return type becomes int(3 + 4)which is illegal. Grouping braces resolve the difficulty &{ block &keyword function test int {(3 + 4)* 5 } &}
 
-A similar problem occurs in a function definition &{ block &keyword function test int(3 + 4)* 5 &} Here the return type becomes int(3 + 4)which is illegal.Again grouping braces resolve the difficulty &{ block &keyword function test int {(3 + 4)* 5 } &}
+When converting a sequence of words back to characters for output, an space is unusual added after each word with the exceptions:
+&br 1. The word is  "()-].:^  or is a space or a period followed by a space then the space before and after the word is not added. 
+&br 2. The word is a comma then the space before the comma is suppressed.
+
+These rules are sometimes do not produce the desired result.  To improve the result, no-break spaces can be added.  On the Mac keyboard pressing the option key and then space bar will insert a no-break space. 
 
 &section Expressions
 
@@ -63,7 +70,7 @@ A sequence of characters in double quotes does not represent a sequence of chara
 
 The code [ “Hello”_1, ”World!”_1]is equivalent to “Hello World!”
 
-The word consisting of a single double quote can be represented within double quotes be two double quotes. """Hello World!"""starts and ends with a double quote.
+The word consisting of a single double quote can be represented within double quotes by &quot. "&quot Hello World! &quot"starts and ends with a double quote.
 
 ""represents an empty sequence of words. An empty sequences has a length of zero. Since the type of a empty sequence can not be inferred from the type of its elements the empty sequence of int is coded as empty:seq.int.
 
@@ -75,7 +82,7 @@ Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T 
 
 &section Types
 
-The type of an expression can always be infered from the sub-expression. For example, 1.0 + 5.0 is of type real, 1 * 8 is of type int, and 1.0 = 8.0 is of type boolean.
+The type of an expression can always be inffered from the sub-expression. For example, 1.0 + 5.0 is of type real, 1 * 8 is of type int, and 1.0 = 8.0 is of type boolean.
 
 User defined types can be either a record, a sequence, a parameterized record or an encoding. Below a user defined record type is defined as an example.
 
@@ -108,22 +115,15 @@ Function-(a:point2d, b:point2d)point2d point2d(x.a - x.b, y.a - y.b)
 Function print(p:point2d)seq.word 
  {"("+ toword.x.p +","+ toword.y.p +")"}
 
-The following paragraphs introduces a new module and ends the previous module.
 
-module testpoint
-
-use point2d
-
-use stdlib
-
-function testpoint seq.word print(point2d(2, 3)+ point2d(4, 5))
+Function testpoint seq.word print(point2d(2, 3)+ point2d(4, 5))
 
 Since a program is sequence of paragraphs.The above text can be placed in a file and 
 turned into a running program.  A module lives with in the context of a library.  So a file name point2d.ls  is required with the first   paragraphs  being:
 
-Library point2d uses sodlib exports point2d
+Library point2d uses sodlib exports point2d 
 
-The remainder  of the file is the above text.  The run line defines the entry point for the program.  This file can then be place in a subdirectory named point2d.  Then the program can be compile and executed with  &{ block ./taumain “point2d point2d testpoint” &}
+The remainder  of the file is the above text.    This file can then be place in a subdirectory named point2d.  Then the program can be compile and executed with  &{ block ./taumain “point2d point2d testpoint” &}
 
 
 &section stdlib
@@ -142,7 +142,9 @@ Function ∧(a:ordering, b:ordering)ordering
 
 &section Let
 
-A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows. This can make code easier to read or improve efficiency by evaluating the expression only once. One can always remove a let statement from a program by defining an additional function. For example the function above can be replaced with
+A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows. This can make code easier to read or improve efficiency by evaluating the expression only once. 
+
+One can always remove a let statement from a program by defining an additional function. For example the function above can be replaced with
 
 function f1(a:ordering,b:ordering,x:ordering) ordering
  if x = EQ then b else x
@@ -153,7 +155,7 @@ function ∧(a:ordering, b:ordering)ordering
 
 &section Aggregation
 
-The Aggregation operator(@)is a generalization of the sigma operator in mathematics. The motivation behind introducing this control operator is to replace the use of recursion calls in most cases.
+The Aggregation operator(@)is a generalization of the sigma operator in mathematics. The motivation behind introducing this control operator is to replace the use of recursive calls in many cases.
 
 Consider
 
@@ -334,14 +336,14 @@ Function encode(T, erecord.T)encoding.T // will return the encoding // ;
 
  Function decode(encoding.T, erecord.T)T // will return the value that was encoded // ;
 
-Function encoding(encoding.T, erecord.T)int // will return the integer the value has been mapped to //;
+Function encoding(encoding.T, erecord.T)int // will return the integer the value has been mapped to // ;
 
 Function findencode(t:T, erecord.T)seq.T // will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.// ;
 
  Function mapping(erecord.T)seq.T // list of values that have been encoded.// ; 
 
 Function flush(erecord.T) seq.word // Writes a persistant encoding to a file that will be
-load next time the program runs. //;
+load next time the program runs. // ;
 
 The following two function are used to calculate the factors of an integer
 
@@ -393,11 +395,11 @@ In the use clause, the type int matches the return type of myprocess. The proces
 
 The follow function interact with the spawned process and blocks to wait for the spawned process to finish.
 
-function aborted(process(T)) boolean // true if the process was aborted as with an assert statement //;
+function aborted(process(T)) boolean // true if the process was aborted as with an assert statement // ;
 
-function message(process(T)) seq.word  // message return when process was aborted //;
+function message(process(T)) seq.word  // message return when process was aborted // ;
 
-function result(process(T)) T // result return upon successful completion. //;
+function result(process(T)) T // result return upon successful completion. // ;
 
 The spawning process cannot terminate until all of it child process complete, because it may have allocated space and passed it to a child process as parameter. 
 

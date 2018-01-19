@@ -22,9 +22,7 @@ use libscope
 
 use main
 
-use parse
-
-use pretty
+use passcommon
 
 use seq.arc.word
 
@@ -158,11 +156,15 @@ Function doclibrary(libname:seq.word)seq.word
  // create summary documentation for libraray. Paragraphs beginning with * are included in documentation. // 
   let lib = tolibdesc(libname_1)
   let g = newgraph.usegraph("mod", lib)
-  @(+, docmodule(g, exports.lib),"", modules.lib)+"&{ select x &section Possibly Unused Functions &} &{ select x"+ uncalledfunctions.libname +"&}"
+  @(+, docmodule(g, exports.lib),"", modules.lib)
+  +"&{ select x &section Possibly Unused Functions &} &{ select x"+ uncalledfunctions.libname +"&}"
 
 function docmodule(usegraph:graph.word, exports:seq.word, md:moddesc)seq.word 
+ let isexported =modname.md in exports 
+ if not.isexported  then ""
+ else 
  let name = [ modname.md]+ if length(src(md)_1)> 2 then".T"else""
-  {"&{ select x &section &keyword module"+ name +"&}"+(if modname.md in exports 
+  {"&{ select x &section &keyword module"+ name +"&}"+(if isexported
    then"Module"+ name +"is exported from library. "
    else"")+"Module"+ name +"is used in modules:"+ alphasort.@(+, tail,"", toseq.arcstopredecessors(usegraph, merge.name))+ docfunction(usegraph, src.md, 1,"","")}
 

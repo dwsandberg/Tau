@@ -58,17 +58,10 @@ use stdlib
 
 use tree.cnode
 
-function opADD word {"ADD"_1 }
 
 function opSUB word {"Q2DZbuiltinZintZint"_1 }
 
 function opRSUB word {"Q2DZbuiltinZrealZreal"_1 }
-
-function opGT word {"Q3EZbuiltinZintZint"_1 }
-
-function opEQL word {"Q3DZbuiltinZintZint"_1 }
-
-/Function findconst(f:func)func replacecodetree(f, findconst.codetree.f)
 
 Function findconst(t:tree.cnode)tree.cnode 
  // We assume that ENCODE 1 is the word encodings.THIS IS NO LONGER TRUE! // 
@@ -331,7 +324,6 @@ function template(mangledname:word, term1:word, term2:word, nopara1:int, nopara2
   let TERM2PARA = @(+, parainst,"", arithseq(nopara2, -1, 2 + nopara2))
   {"LIT 1 LOCAL 2 LIT 0 IDXUC 2 FREF"+ ptyp +"Q3DZbuiltinZintZint 2"+ TERM1PARA + TERM2PARA +"LOCAL 1 LOCAL 2 LIT 2 IDXUC 2 CALL"+ CALLSELF +"LOCAL 2 LIT 3 IDXUC 2 CONTINUE 2 LOCAL 2 LIT 1 IDXUC 2 LIT 3 LOCAL 4 LOCAL 5 Q3EZbuiltinZintZint 2 LOCAL 3"+ TERM1PARA +"LOCAL 3"+ TERM2PARA +"LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 LOCAL 2 LOCAL 4 LIT 1 ADD 2 IDXUC 2 LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3 if 3 CALL"+ CALLTERM2 +"CALL"+ CALLTERM1 +"LOCAL 4 LIT 1 ADD 2 CONTINUE 2 if 3 LOCAL 1 LIT 1 LOOP 4 SET 5 if 3 PARA 2 PARA 1 LOOP 4"}
 
-LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 LOCAL 2 LOCAL 4 LIT 1 ADD 2 IDXUC 2 LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3 if 3
 
 function expandapply(p:program, thisone:int)program 
  let f = allfunctions(p)_thisone 
