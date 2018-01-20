@@ -98,7 +98,7 @@ _________________
 
 Secondary ordering that allows a secondary search on a partial key.
 
-The following must be true ?2(a, b)&ne EQ implies ?(a, b)= ?2(a, b)
+The following must be true ?2(a, b)≠ EQ implies ?(a, b)= ?2(a, b)
 
 function ?2(T, T)ordering unbound
 

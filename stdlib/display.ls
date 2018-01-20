@@ -10,7 +10,6 @@ use seq.word
 
 use stdlib
 
-/use fileresult
 
 type prettycontrol is record preclist:seq.seq.word, chrwidths:seq.int
 
@@ -22,7 +21,7 @@ Function defaultcontrol prettycontrol prettycontrol(defaultprec, charwidths)
 
 Function displaywidth(cw:seq.int, s:seq.word)int @(+,_.cw, 0, toseqint.toUTF8.s)
 
-Function displaywidth(cw:seq.int, w:word)int @(+,_.cw, 0, decodeUTF8.UTF8.decode.w)
+Function displaywidth(cw:seq.int, w:word)int @(+,_.cw, 0, decode.w)
 
 function charwidths seq.int 
  dseq(60, [ 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 

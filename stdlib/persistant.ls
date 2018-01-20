@@ -317,9 +317,9 @@ function halfsize int // 2^31 // 2147483648
 
 Function getlink(a:int)int  toint(bits(a) >> 31 )- halfsize
 
-Function packit(link:int, b:int)int toint ( bits(halfsize + link) << 31 &or bits(b) ) 
+Function packit(link:int, b:int)int toint ( bits(halfsize + link) << 31 ∨ bits(b) ) 
 
-Function getb(a:int)int toint(bits(a) &and bits( halfsize  - 1))
+Function getb(a:int)int toint(bits(a) ∧ bits( halfsize  - 1))
 
 Function IDXUC(int, int)int builtin.IDXUC
 

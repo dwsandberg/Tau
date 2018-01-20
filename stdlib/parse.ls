@@ -48,12 +48,12 @@ Function prec(w:word, preclist:seq.seq.word)int prec(w, preclist, 1)
 Function defaultprec seq.seq.word 
  ["_^", 
  "", 
- "* / mod ∪ ∩", 
+ "* / mod ∪ ∩" , 
  "in +-∈ ∋", 
- "= < > ? ≤ ≥ ≠ >> <<", 
+ "= < > ?  ≤ ≠ ≥ >> <<", 
  "∧", 
- "∨"]
-
+ "∨" ]
+ 
 Function prec(w:word, p:seq.seq.word, i:int)int 
  if i > length.p 
   then if w ="#"_1 then length.p + 1 else 0 
@@ -80,7 +80,7 @@ function term(r:r1, p:int)r1
   else if this.r ="-"_1 
   then if hasdigit.next.r 
    then // minus sign in front of integer or real literal // 
-    intlit([ hyphenchar], advance.advance.r, decode.next.r)
+    numberlit(true,advance.advance.r,next.r)
    else if next.r =","_1 
    then // so @(-, with parse // build(r, [ tree.this.valid.r])
    else wrap(this.r, term(advance.r, 1))
@@ -104,7 +104,7 @@ function term(r:r1, p:int)r1
    let e = exp.message 
    r1(preclist.r, input.r, n.e, [ tree(this.r, [ tr(cond)_1, tr(e)_1, tr(message)_1])])
   else if hasdigit.this.r 
-  then intlit(empty:seq.int, advance.r, decode.this.r)
+  then  numberlit(false,advance.r,this.r)
   else if next.r = openpara 
   then wrap(this.r, check(explist.exp.advance.advance.r, closepara))
   else if next.r ="."_1 
@@ -117,21 +117,22 @@ function term(r:r1, p:int)r1
 function astype(t:tree.word)seq.word 
  if nosons.t = 0 then [ label.t]else [ label.t]+"."+ astype(t_1)
 
-function intlit(prefix:seq.int, r:r1, s:seq.int)r1 
- if hasdigit.this.r 
-  then intlit(prefix, advance.r, s + decode.this.r)
-  else if this.r ="."_1 
-  then reallit(prefix, advance.r, s, 0)
-  else r1(preclist.r, input.r, n.r, [ tree.encodeword(prefix + subseq(s, firstnonzero(s, 1), length.s))])
+  function numberlit(negative:boolean,r:r1,x:word) r1
+    if this.r = "."_1 ∧ hasdigit.next.r then
+     let d = decode.next.r 
+     r1(preclist.r, input.r, n.r+2, [ tree("makereal"_1, 
+     [ tree.encodeword( if negative then [hyphenchar] +decode.x+d else decode.x+d ) , tree.countdigits(d,1,0)] )])
+    else
+      if negative then 
+      r1(preclist.r, input.r, n.r, [ tree.encodeword([hyphenchar] + decode.x)])
+      else r1(preclist.r, input.r, n.r, [ tree.x])
 
-function reallit(prefix:seq.int, r:r1, s:seq.int, decimalplaces:int)r1 
- if hasdigit.this.r 
-  then let d = decode.this.r 
-   reallit(prefix, advance.r, s + d, decimalplaces + length.d)
-  else r1(preclist.r, input.r, n.r, [ tree("makereal"_1, [ tree.encodeword(prefix + subseq(s, firstnonzero(s, 1), length.s)), tree.toword.decimalplaces])])
+function countdigits(s:seq.int,i:int,result:int) word
+// does not count no-break spaces //
+ if i > length.s then toword.result else 
+  countdigits(s,i+1, result+if s_i=nbspchar then 0 else 1)   
 
-function firstnonzero(s:seq.int, i:int)int 
- if length.s = i then i else if s_i = 48 then firstnonzero(s, i + 1)else i
+
 
 function wordlist2(r:r1)r1 
  if this.r = merge("&"+"quot")
@@ -238,6 +239,7 @@ Function parse(text:seq.word, scope:tree.word)tree.word
 function replacements seq.word 
  let l ="le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ contains ∋"
   @(+, prep.l, empty:seq.word, arithseq(length.l / 2, 2, 1))+ @(+,_.l, empty:seq.word, arithseq(length.l / 2, 2, 2))
+  
 
 function prep(s:seq.word, i:int)word merge("&"+ s_i)
 
@@ -263,7 +265,7 @@ Function prettynoparse(s:seq.word, i:int, lastbreak:int)seq.word
   then"&br &keyword"+ x + prettynoparse(s, i + 1, 0)
   else if x in"report"
   then"&keyword"+ x + prettynoparse(s, i + 1, lastbreak + 1)
-  else if lastbreak > 20 ∧ x in")]"∨ lastbreak > 40 ∧ x in","
+  else if lastbreak > 20 ∧ x in")]" ∨ lastbreak > 40 ∧ x in","
   then [ x]+"&br"+ prettynoparse(s, i + 1, 0)
   else if lastbreak > 20 ∧ x in"["
   then"&br"+ x + prettynoparse(s, i + 1, 0)

@@ -96,7 +96,7 @@ Function t512 boolean
 
 function testset set.int asset.[ 2, 5, 6, 9, 12, 15, 35, 36]
 
-function print(a:set.int)seq.word @(+, print,"", toseq.a)
+function print(a:set.int)seq.word @(+, toword,"", toseq.a)
 
 function ?2(a:int, b:int)ordering a / 10 ? b / 10
 

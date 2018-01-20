@@ -87,6 +87,9 @@ Function t414 boolean @(∧, filetest, true, arithseq(9, 1, 4))
 
 Function t415 boolean @(-, identity, 100, [ 1, 2])= 97
 
+Function t416 boolean // testing UNICODE to word conversion and no-break space in integer 8746 //
+decode("1 2∪"_1) = [49, 160 ,50, 87 46 ] 
+
 function filetest(i:int)boolean 
  let name ="test"+ toword.i +".txt"
   let a = createbytefile(name, arithseq(i, 1, 48))

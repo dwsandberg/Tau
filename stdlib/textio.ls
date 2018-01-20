@@ -74,7 +74,13 @@ Function classify(c:int)int
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
   0, 0, 0, 0, 0, 0, 0, 0]_(c + 1)
 
-Function towords(a:seq.int)seq.word towords2(a, 1, 1, empty:seq.word)
+Function towords(a:seq.int)seq.word towords2(decodeUTF8.UTF8.a, 1, 1, empty:seq.word)
+
+Function towordsX(a:seq.int)seq.word towords2(a, 1, 1, empty:seq.word)
+
+Function gettextX(filename:seq.word)seq.seq.word 
+ @(+, towordsX, empty:seq.seq.word, breakparagraph.getfile.filename)
+
 
 Function gettext(filename:seq.word)seq.seq.word 
  @(+, towords, empty:seq.seq.word, breakparagraph.getfile.filename)

@@ -100,7 +100,7 @@ Function reachable(g:graph.T, a:seq.T)set.T
   reachable(g, d, d, 1)
 
 function reachable(g:graph.T, old:set.T, new:set.T, count:int)set.T 
- assert count < 1000 report"fal"+ print.cardinality.old + print.cardinality.new 
+ assert count < 1000 report"fal"+ toword.cardinality.old + toword.cardinality.new 
   if isempty.new 
   then old 
   else let a = @(∪, successors.g, empty:set.T, toseq.new)

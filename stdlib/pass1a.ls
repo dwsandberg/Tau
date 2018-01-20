@@ -179,7 +179,7 @@ function isnumber(l:seq.int, i:int)boolean
   then true 
   else if i = 1 ∧ l_1 = hyphenchar ∧ length.l > 1 
   then isnumber(l, 2)
-  else if between(l_i, 48, 57)then isnumber(l, i + 1)else false
+  else if between(l_i, 48, 57) &or l_i=nbspchar then isnumber(l, i + 1) else false
 
 Function bind(d:symdict, t:tree.word, nexttmp:int)r3 
  if isnumber.label.t 

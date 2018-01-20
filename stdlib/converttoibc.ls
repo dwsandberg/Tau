@@ -57,7 +57,7 @@ Function cvttoibc(
         else if tp=INSTPHI  then
           PHI(slot,d_2,subseq(d,3,len))
         else 
-        if tp=INSTRET &and len=1 then
+        if tp=INSTRET ∧ len=1 then
           RET(slot)
         else
            assert false report "NOT HANDLED"+ @(+,toword,"",d)

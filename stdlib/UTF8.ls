@@ -37,6 +37,11 @@ Function UTF8(i:int)UTF8
  // convert to UTF8 byte encoding of unicode character // 
   UTF8.if i < 128 then [ i]else subUTF8(2, i / 64)+ [ 128 + i mod 64]
 
+function UTF8x(i:int) seq.int
+ // convert to UTF8 byte encoding of unicode character // 
+  if i < 128 then [ i]else subUTF8(2, i / 64)+ [ 128 + i mod 64]
+
+
 Function subUTF8(n:int, c:int)seq.int 
  if c < 2^(7 - n)then [ 256 - 2^(8 - n)+ c]else subUTF8(n + 1, c / 64)+ [ 128 + c mod 64]
 
@@ -67,6 +72,6 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:seq.int)UTF8
   then UTF8.result 
   else let this = s_i 
   let single = this in("()-].:&quot_^. "+ space)
-  let d = decode.this 
+  let d = @(+,UTF8x,empty:seq.int,decode.this )
   addspace(s, i + 1, single, if nospace ∨ single ∨ this =","_1 then result + d else result + [ 32]+ d)
 

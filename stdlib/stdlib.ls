@@ -64,6 +64,8 @@ Function commachar int 44
 
 Function hyphenchar int 45
 
+Function nbspchar int // no break space character // 160 
+
 * EQ GT and LT are the possible results of ? operator
 
 Function EQ ordering ordering.1
@@ -132,11 +134,14 @@ Function ≤(a:int, b:int)boolean export
 
 Function ≥(a:int, b:int)boolean export
 
+
+
 Function max(a:int, b:int)int if a > b then a else b
 
 Function min(a:int, b:int)int if a < b then a else b
 
-Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
+Function between(i:int, lower:int, upper:int)boolean 
+i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
@@ -172,9 +177,9 @@ Function toword(n:int)word
  // Covert integer to sequence of characters represented as a single word. // 
   encodeword.toseqint.toUTF8.n
 
-Function print(i:int)seq.word groupdigits.toUTF8.i
+/Function print(i:int)seq.word groupdigits.toUTF8.i
 
-function groupdigits(u:UTF8)seq.word 
+/function groupdigits(u:UTF8)seq.word 
  let s = toseqint.u 
   if length.s < 5 ∧(length.s < 4 ∨ s_1 = hyphenchar)
   then [ encodeword.s]
@@ -184,12 +189,12 @@ Function toint(w:word)int
  // Convert an integer represented as a word to and int // cvttoint(decode.w, 1, 0)
 
 function cvttoint(s:seq.int, i:int, val:int)int 
- if i = 1 ∧ s_1 = hyphenchar 
+  if i = 1 ∧ s_1 = hyphenchar 
   then cvttoint(s, i + 1, val)
+  else   if i > length.s then if s_1 = hyphenchar then - val else val   
+  else if s_i=nbspchar then cvttoint(s,i+1,val)
   else assert between(s_i, 48, 57)report"invalid digit"+ stacktrace 
-  if i = length.s 
-  then if s_1 = hyphenchar then 48 - s_i - val * 10 else val * 10 + s_i - 48 
-  else cvttoint(s, i + 1, val * 10 + s_i - 48)
+  cvttoint(s, i + 1, val * 10 + s_i - 48)
 
 Function merge(a:seq.word)word 
  // make multiple words into a single word. // encodeword.@(+, decode, empty:seq.int, a)
