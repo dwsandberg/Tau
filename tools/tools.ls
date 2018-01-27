@@ -1,7 +1,6 @@
 #!/usr/local/bin/tau
 
-Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgraph layergraph makeDAG 
-prettylib printbitcodes profile svg svggraph  renamemodule
+Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgraph layergraph makeDAG prettylib printbitcodes profile renamemodule svg svggraph 
  uses stdlib 
  exports bandeskopf barycenter displaygraph displaytextgraph doc layergraph makeDAG prettylib prettylib printbitcodes profile svg svggraph tools
 
@@ -21,13 +20,15 @@ run tools stdlibdoc
 
 /run tools testprintBitCodes
 
-run tools test
+/run tools test
 
 run tools checkdoclib
 
 run tools test1
 
 run doc createdoc
+
+* only document  printbitcodes profile prettylib doc
 
 * usegraph exclude stdlib seq set
 
@@ -47,11 +48,9 @@ Function test1 seq.word htmlcode."tools"
 
 Function checkbind seq.word checkbind."tools"
 
-Function prettytest seq.word prettylib("solardataall","byteseq bitpackedseq
-codegen2 codegen codetemplates2 codetemplates  definestruct2 definestruct   fileresult textio
-persistant2 persistant pretty2 pretty 
-")
+Function prettytest seq.word prettylib("tools","")
 
+"byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 
 Function checkdoclib seq.word doclibrary."tools"
 
@@ -64,6 +63,6 @@ Function testprintBitCodes seq.word printBitCodes."test2.bc"
 Function stdlibdoc seq.word 
  callgraphbetween("stdlib","persistant reconstruct")+ // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
 
-Function test2 seq.word callgraphbetween("useful"," useful processtypes")+doclibrary."tools"
-
+Function test2 seq.word 
+ callgraphbetween("useful","useful processtypes")+ doclibrary."tools"
 

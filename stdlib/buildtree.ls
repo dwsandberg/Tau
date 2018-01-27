@@ -172,25 +172,30 @@ Function in(l:seq.word, t:tree.cnode)boolean
 
 --------
 
-type ch1result is record nodecount:int, para:int
+type ch1result is record nodecount:int, para:seq.word
 
-function ch1(t:tree.cnode, a:ch1result, son:int)ch1result 
- if nodecount.a > 30 
-  then a 
-  else if son ≤ nosons.t 
-  then ch1(t, ch1(t_son, a, 1), son + 1)
-  else if inst.label.t ="PARA"_1 
-  then if arg.label.t = toword.para.a 
-   then ch1result(nodecount.a + 1, para.a - 1)
-   else ch1result(nodecount.a + 1, -1)
-  else if inst.label.t in"CALL NOINLINE FREF"
-  then ch1result(nodecount.a + 1, -1)
-  else ch1result(nodecount.a + 1, para.a)
+use seq.ch1result
 
-Function simple(s:func)boolean 
+function +(a:ch1result,t:tree.cnode)  ch1result 
+if nodecount.a > 30 then  ch1result(1000,"fail") else
+let b = ch1(t)
+ch1result(nodecount.a+nodecount.b,para.a+para.b)
+
+function ch1(t:tree.cnode)ch1result 
+   if inst.label.t ="PARA"_1 then ch1result(1,[arg.label.t])
+  else  if inst.label.t ="NOINLINE"_1 then ch1result(1000,"fail")
+   else @(+,identity,ch1result(1, if inst.label.t in "CALL FREF"  then "NOT SIMPLE" else ""),sons.t)
+   
+Function functype(s:func) word
+  let a = ch1(codetree.s)
+   if nodecount.a > 30 then "COMPLEX"_1
+   else  if para.a = @(+,toword,"",arithseq(nopara.s,-1,nopara.s)) then "SIMPLE"_1
+   else "INLINE"_1
+
+/Function simple(s:func)boolean 
  // Check to see if simple inline expansion is possible for function. All parameters must occur exactly once in order without any function occuring before the last parameter that may cause a side-effect making the order of evaluation important. It also must be short.// 
-  let a = ch1(codetree.s, ch1result(0, nopara.s), 1)
-  nodecount.a < 30 ∧ para.a = 0
+  let a = ch1(codetree.s)
+  nodecount.a < 30 ∧  para.a = @(+,toword,"",arithseq(nopara.s,-1,nopara.s))
 
 _____________________
 
@@ -201,7 +206,7 @@ In the libsym, if the inst field begins with"USECALL"then the rest of inst the i
 function tolibsyminst(cmap:seq.seq.word, lib:word, a:func)seq.word 
  let y = if number.a in"seqZTzseqZintZT pseqZTzseqZintZTzseqZTzseq dseqZTzseqZintZTZTzseq fastsubseqZTzseqZintZTzseqZint cseqZTzseqZintZT blockseqZTzblockseqZintZintZTzseqzseq arithmeticseqZTzarithmeticseqZintZTZT"
    then"ALWAYSCALL"
-   else if simple.a 
+   else if functype.a="SIMPLE"_1
    then let nopara = nopara.a 
     let x = expandconst(cmap, print.codetree.a, 1,"")
     if length.x > 100 

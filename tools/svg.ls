@@ -18,5 +18,3 @@ Function text(x:int, y:int, w:seq.word)seq.word
 
 function nodetotext(w:word)seq.word [ w]
 
-
-

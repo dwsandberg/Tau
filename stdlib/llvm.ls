@@ -114,6 +114,11 @@ Function C32(i:int)int encoding.encode(llvmconst(typ.i32, [ CONSTINTEGER, i]), l
 
 Function C(t:encoding.llvmtype, s:seq.int)int encoding.encode(llvmconst(typ.t, s), llvmconsts) - 1
 
+Function Cprt(t:int, s:seq.int)int 
+// used in print bitcodes tool //
+encoding.encode(llvmconst(t, s), llvmconsts) - 1
+
+
 -----------------------
 
 Function funcname(a:llvmconst)word encodeword.toseq.a

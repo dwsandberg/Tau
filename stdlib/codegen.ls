@@ -68,6 +68,7 @@ function funcdec(proto:int, a:seq.int)seq.int
 function funcdec(proto:int, a:llvmconst)seq.int 
  // first two elements of llvm symbol record must be discarded to form funcname // 
   [ MODULECODEFUNCTION, typ.getftype.funcname.a, 0, proto, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+  
 
 Function codegen5(z:pass1result)seq.bits 
  PROFILE.let thename = libname(z)_1 
@@ -160,7 +161,11 @@ Function codegen5(z:pass1result)seq.bits
   // llvm.cos.f64 // 
    [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]+ @(+, funcdec.0, empty:seq.seq.int, subseq(syms, length.symlist + 1, length.code.z + length.symlist))+ @(+, funcdec.1, empty:seq.seq.int, subseq(syms, length.symlist + 1 + length.code.z, length.syms))
   let bodytxts = [ BLOCKCOUNT(1, 1)+ RET(1, C(i64, [ CONSTCECAST, 9, typ.ptr.array(4, i64), C."profstat"])), 
-  BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib4", libnameptr, getelementptr(wordstype,"words"), getelementptr(worddatatype,"wordlist"), getelementptr(conststype,"list"), getelementptr(libdesctype,"liblib"))+ GEP(2, 1, typ.profiletype, C."profclocks", C64.0, C64.1)+ STORE(3, -2, C64.noprofileslots, align8, 0)+ GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1)+ STORE(4, -3, C64.noprofileslots, align8, 0)+ GEP(4, 1, typ.profiletype, C."profcounts", C64.0, C64.1)+ STORE(5, -4, C64.noprofileslots, align8, 0)+ GEP(5, 1, typ.profiletype, C."profrefs", C64.0, C64.1)+ STORE(6, -5, C64.noprofileslots, align8, 0)+ RET.6]+ bodies.fb 
+  BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib4", libnameptr, getelementptr(wordstype,"words"), getelementptr(worddatatype,"wordlist"), getelementptr(conststype,"list"), getelementptr(libdesctype,"liblib"))+ GEP(2, 1, typ.profiletype, C."profclocks", C64.0, C64.1)
+  + STORE(3, -2, C64.noprofileslots, align8, 0)+ GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1)
+  + STORE(4, -3, C64.noprofileslots, align8, 0)+ GEP(4, 1, typ.profiletype, C."profcounts", C64.0, C64.1)
+  + STORE(5, -4, C64.noprofileslots, align8, 0)+ GEP(5, 1, typ.profiletype, C."profrefs", C64.0, C64.1)
+  + STORE(6, -5, C64.noprofileslots, align8, 0)+ RET.6]+ bodies.fb 
   assert length.symbolrecords2 = nosyms report"extra symbols2!"
   llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 
@@ -177,14 +182,12 @@ function findcalls(t:tree.cnode)int
    else if inst.label.t ="CONST"_1 
    then let c = toint.arg.label.t 
     findFREF(constantmapping_c, 3)
-   else if inst.label.t in"SET RECORD LOCAL CONST LIT PARA EQL if IDXUC PROCESS2 STATE WORD SETFLD3 SETFLDBYTE ADD TAIL Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
+   else if inst.label.t in"SET RECORD LOCAL CONST LIT PARA EQL if IDXUC PROCESS2 STATE WORD SETFLD3 SETFLDBYTE ADD  Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
    then 0 
    else 
    C.inst.label.t 
   @(+, findcalls, 0, sons.t)
 
-function hastail(t:tree.cnode)boolean 
- if inst.label.t ="TAIL"_1 then true else @(∨, hastail, false, sons.t)
 
 function findFREF(s:seq.word, i:int)int 
  if i > length.s 
@@ -200,15 +203,10 @@ function funcdef(fl:seq.func, info:geninfo5, consts:linklists2, i:int, result:se
  if i > length.fl 
   then funcdefresult5(result, consts)
   else let f = removeflat(fl_i)
-  let tail = hastail.codetree.f 
-  let paraadj = if tail then -2 * nopara.f - 2 else-nopara.f - 2 
-  let l = if tail 
-   then Lcode5(emptyinternalbc, consts, 2 * nopara.f + 1, 0, 2, empty:seq.int, 1)
-   else Lcode5(emptyinternalbc, consts, nopara.f + 1, 0, 1, empty:seq.int, 0)
+   let paraadj = -nopara.f - 2 
+  let l = Lcode5(emptyinternalbc, consts, nopara.f + 1, 0, 1, empty:seq.int, 0)
   let r = gencode(geninfo5(lib.info, wordstype.info, conststype.info, profiletype.info, number.f, paraadj, tab.info, if"profile"_1 in profile.f then profile(f)_2 else"noprofile"_1), empty:seq.localmap5, l, codetree.f)
-  let newbody = BLOCKCOUNT(1, noblocks.r)+(if tail 
-   then BR(1, 1)+ phiinst(nopara.f + 1, typ.i64, [ 0]+ arithseq(nopara.f, -1, -2)+ tailphi.r, nopara.f)+ code.r 
-   else code.r)+ RET(regno.r + 1, arg.r)
+  let newbody = BLOCKCOUNT(1, noblocks.r)+(code.r)+ RET(regno.r + 1, arg.r)
   funcdef(fl, info, lst.r, i + 1, result + [ newbody])
 
 
@@ -280,7 +278,7 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
    let block = noblocks.l.sons 
    Lcode5(code.l.sons + BR(regno.l.sons, loopblock.l), lst.l.sons, regno.l.sons, -1, block + 1, tailphi.l.sons + [ block - 1]+ explist.sons, loopblock.l)
   else if inst ="LOOP"_1 
-  then // Sons of loop <start of # of loop variables>, <loopbody> < entering values of loop variables // 
+  then // Sons of loop <start # of loop variables>, <loopbody> < entering values of loop variables> // 
    let sons = processsons(lib, lmap, l, t, 3, empty:seq.int)
    let varcount = nosons.t - 2 
    let loopblock = noblocks.l.sons 

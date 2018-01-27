@@ -2,15 +2,12 @@ Module doc
 
 run tools createdoc
 
-* usegraph exclude stdlib seq set
 
 use display
 
 use displaytextgraph
 
 use fileio
-
-use textio
 
 use format
 
@@ -41,6 +38,8 @@ use set.arc.word
 use set.word
 
 use stdlib
+
+use textio
 
 use tree.word
 
@@ -153,25 +152,37 @@ function usegraph(kind:word, modname:word, t:mytype)seq.arc.word
   if tail.a = head.a then empty:seq.arc.word else [ a]
 
 Function doclibrary(libname:seq.word)seq.word 
- // create summary documentation for libraray. Paragraphs beginning with * are included in documentation. // 
+ // create summary documentation for libraray.  // 
   let lib = tolibdesc(libname_1)
+  let r = @(+,findrestrict,"",src.(modules.lib)_1)  
   let g = newgraph.usegraph("mod", lib)
-  @(+, docmodule(g, exports.lib),"", modules.lib)
-  +"&{ select x &section Possibly Unused Functions &} &{ select x"+ uncalledfunctions.libname +"&}"
+  @(+, docmodule(g, exports.lib,r ),"", modules.lib )+ if length.r > 0 then "" else 
+  "&{ select x &section Possibly Unused Functions &} &{ select x"+ uncalledfunctions.libname +"&}"
 
-function docmodule(usegraph:graph.word, exports:seq.word, md:moddesc)seq.word 
- let isexported =modname.md in exports 
- if not.isexported  then ""
- else 
- let name = [ modname.md]+ if length(src(md)_1)> 2 then".T"else""
-  {"&{ select x &section &keyword module"+ name +"&}"+(if isexported
+* Paragraphs beginning with * are included in documentation.
+
+* If a paragraph in the library module if of the form:&{ block * only document <module1 name> <module2 name> ... &} then only those modules named will be documented.
+
+* If a paragraph in the library is of the form:&{ block * usegraph exclude  <list of modules> include <list of modules> &} then a use
+graph will be construction including and excluding the modules listed.   Both the exclude and include are optional, but for a large library should be used to restrict
+the size of the graph.  An example of a use graph is included at the end of this module.
+
+function findrestrict(s:seq.word) seq.word
+ if subseq(s,1,3)="* only document" then subseq(s,4,length.s)
+  else ""
+  
+function docmodule(usegraph:graph.word, exports:seq.word,todoc:seq.word, md:moddesc)seq.word 
+   if not(modname.md in todoc &or length.todoc = 0) then "" else 
+    let isexported = modname.md in exports 
+    let name = [ modname.md]+ if length(src(md)_1)> 2 then".T"else""
+  {"&{ select x &section &keyword module"+ name +"&}"+(if isexported 
    then"Module"+ name +"is exported from library. "
-   else"")+"Module"+ name +"is used in modules:"+ alphasort.@(+, tail,"", toseq.arcstopredecessors(usegraph, merge.name))+ docfunction(usegraph, src.md, 1,"","")}
+   else"")+"&br Module"+ name +"is used in modules: "+ alphasort.@(+, tail,"", toseq.arcstopredecessors(usegraph, merge.name))+ docfunction(usegraph, src.md, 1,"","")}
 
 function docfunction(usegraph:graph.word, s:seq.seq.word, i:int, funcs:seq.word, types:seq.word)seq.word 
  // this is a comment // 
   if i > length.s 
-  then"&br defines types:"+ types + funcs 
+  then"&br defines types: "+ types + funcs 
   else let a = s_i 
   if length.a = 0 
   then docfunction(usegraph, s, i + 1, funcs, types)
@@ -188,7 +199,8 @@ function docfunction(usegraph:graph.word, s:seq.seq.word, i:int, funcs:seq.word,
    let t2 = if nosons(t_2)= 0 then t else tree(label.t, [ t_1, tree("stub"_1)]+ subseq(sons.t, 3, nosons.t))
    let b = prettytree(defaultcontrol, t2)
    let idx = findindex("stub"_1, b)
-   docfunction(usegraph, s, i + 1, funcs +"&{ select x"+ subseq(b, 1, idx - 1)+(if length.txt > 0 then". "+ txt else"")+ subseq(b, idx + 1, length.b)+"&}", types)
+   docfunction(usegraph, s, i + 1, funcs +"&{ select x"+ subseq(b, 1, idx - 1)+(if length.txt > 0 then
+    (if length.txt > 10 then "&br" else ". ")+ txt else"")+ subseq(b, idx + 1, length.b)+"&}", types)
   else if a_1 ="type"_1 
   then docfunction(usegraph, s, i + 1, funcs + prettyparagraph(defaultcontrol, a), types + a_2)
   else docfunction(usegraph, s, i + 1, funcs, types)
@@ -205,3 +217,4 @@ Function uncalledfunctions(libname:seq.word)seq.word
   let sources = @(+, sources(g, empty:set.word),"", toseq.nodes.g)
   @(seperator."&br", readable,"", alphasort.sources)
 
+* usegraph exclude stdlib seq set

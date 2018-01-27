@@ -205,47 +205,126 @@ Function calls(self:int, t:tree.cnode)seq.arc.int
   else // if inst.label(t)="CONST"_1 then let constnumber = toint.arg.label(t)@(+, arc.self, empty:seq.arc.int, getFREF(1, empty:seq.int, constantmapping_constnumber))else // 
   empty:seq.arc.int
 
-type program is record library:word, allfunctions:seq.func, callgraph:graph.int, fn:func
+type program is record library:word, allfunctions:seq.func, callgraph:graph.int, fnx:func
 
 __________________________
 
 Simple inline expansion
 
-function inline(fn:word, replacement:tree.cnode, adjust:int, code:tree.cnode)tree.cnode 
- let l = @(+, inline(fn, replacement, adjust), empty:seq.tree.cnode, sons.code)
-  if inst.label.code ="CALL"_1 ∧ arg.label.code = fn 
-  then subinline(fn, l, adjust, replacement)
-  else tree(label.code, l)
 
-function subinline(fn:word, p:seq.tree.cnode, adjust:int, code:tree.cnode)tree.cnode 
- if inst.label.code ="PARA"_1 
-  then assert between(toint.arg.label.code, 1, length.p)report"inline problem"+ fn + arg.label.code + toword.length.p 
-   p_(length.p - toint.arg.label.code + 1)
-  else let l = @(+, subinline(fn, p, adjust), empty:seq.tree.cnode, sons.code)
-  if inst.label.code in"LOCAL SET"
-  then tree(cnode(inst.label.code, toword(toint.arg.label.code + adjust)), l)
-  else tree(label.code, l)
+
 
 Function simpleinline(p:program, f:int)program 
  let fn = allfunctions(p)_f 
-  if not.simple.fn 
+  if not(functype.fn in "SIMPLE" )
   then p 
   else let pred = toseq.predecessors(callgraph.p, f)
   @(replacecall, identity, program(library.p, allfunctions.p, callgraph.p, fn), pred)
 
 function replacecall(p:program, f:int)program 
- if key.fn.p = f 
+ if key.fnx.p = f 
   then p 
-  else let simple = fn.p 
+  else let simple = fnx.p 
   let infunc = allfunctions(p)_f 
-  let t = inline(number.simple, codetree.simple, getmaxvar.codetree.infunc, codetree.infunc)
-  replace(p, replacecodetree(infunc, findconst.t))
+   let t =  newinline(number.simple, codetree.simple, dseq(tree.cnode("UNASIGNED"_1,"1"_1)),1,codetree.infunc)
+   replace(p, replacecodetree(infunc, findconst.t))
+  
+/function diff(a:tree.cnode,b:tree.cnode,i:int) seq.word
+    if i = 0 then if label.a=label.b then
+       if nosons.a=nosons.b then
+       diff(a,b,1) 
+       else "diff sons"
+    else "diff label"+inst.label.a+inst.label.b
+    else if i > nosons.a then ""
+    else   
+      let z=diff(a_i,b_i,0)
+      if z="" then diff(a,b,i+1) else z
+      
+    
+  
+/function  diff(a:seq.word,b:seq.word,i:int) seq.word
+   if i > length.a then "SAME"
+   else if a_i=b_i then diff(a,b,i+1)
+   else "DIFF"+"&br"+subseq(a,i-1,i)+"&br"+subseq(b,i-1,i)+ diff(a,b,i+1)
 
 Function replace(p:program, fn:func)program 
  let f = key.fn 
   let newall = replace(allfunctions.p, f, fn)
   let oldarcs = @(+, arc.f, asset.empty:seq.arc.int, toseq.successors(callgraph.p, f))
-  program(library.p, newall, replacearcs(callgraph.p, oldarcs, asset.getarcs.fn), fn.p)
+  program(library.p, newall, replacearcs(callgraph.p, oldarcs, asset.getarcs.fn), fnx.p)
+  
+
+function checksets( s:set.word,t:tree.cnode) seq.word
+  if inst.label.t="SET"_1 then
+     checksets(s, t_1)+ checksets(s+arg.label.t ,t_2)
+  else if inst.label.t="LOCAL"_1 then
+    if arg.label.t in s then "" else [arg.label.t]
+ else if inst.label.t="LOOP"_1 then
+   let a= toint.arg.label(t_1) 
+     @(+,checksets( @(+,   toword,   s, arithseq(nosons.t-2,1,a))),"",sons.t)
+ else    @(+,checksets(s+arg.label.t),"",sons.t)
+     
+function processpara(fn:word, replacement:tree.cnode, sets:seq(tree.cnode), nextset:int, sons:seq.tree.cnode,paramap:seq.tree.cnode)
+ tree.cnode // add sets for complex parameters and then does inline expansion. //
+ if length.paramap= length.sons then
+  subinline(fn, paramap, dseq(tree.cnode("UNASIGNED"_1,"1"_1)),nextset, replacement)
+ else
+   let i = length.paramap+1
+   if inst.label(sons_i) in  "LIT LOCAL PARA FREF FREFB CONST" then 
+     let p = newinline(fn, replacement, sets,nextset,sons_i)
+     processpara(fn,replacement, sets, nextset, sons,paramap+p)
+   else   
+     let p = newinline(fn, replacement, sets,nextset+1,sons_i)
+     let t =processpara(fn,replacement,sets, nextset+1, sons,paramap+tree(cnode("LOCAL"_1,toword.nextset)))
+        tree(cnode("SET"_1,toword.nextset),[p,t])
+
+function addtosetmap(sets:seq.tree.cnode,old:int,new:int,numbertoadd:int) seq.tree.cnode 
+ if numbertoadd=0 then sets else 
+ let i = numbertoadd-1
+ addtosetmap(replace(sets,old+i,tree(cnode("LOCAL"_1,toword(new+i)) )),old,new,i)
+
+function newinline(fn:word, replacement:tree.cnode, sets:seq(tree.cnode), nextset:int, code:tree.cnode)tree.cnode 
+   if inst.label.code="SET"_1 then 
+     let s1=newinline(fn, replacement, sets,nextset,code_1)
+       if inst.label.s1 in "LIT LOCAL PARA FREF FREFB CONST"   then  
+          newinline(fn, replacement, replace(sets,toint(arg.label.code),s1),nextset,code_2)
+        else 
+        let s2=newinline(fn, replacement, addtosetmap(sets,toint(arg.label.code),nextset,1),nextset+1,code_2)
+     tree(cnode("SET"_1,toword.nextset),[s1,s2])
+   else if inst.label.code="LOCAL"_1 then
+       sets_toint(arg.label.code)
+   else  if inst.label.code="LOOP"_1 then
+      let firstvar=toint.arg.label(code_1)
+      let  l = @(+, newinline(fn, replacement, addtosetmap(sets,firstvar,nextset,nosons.code-2),nextset+nosons.code-2), empty:seq.tree.cnode, sons.code)
+      tree(label.code,[tree.cnode("LIT"_1,toword.nextset)]+subseq(l,2,length.l))
+   else
+    let l = @(+, newinline(fn, replacement, sets,nextset), empty:seq.tree.cnode, sons.code)
+  if inst.label.code ="CALL"_1 ∧ arg.label.code = fn 
+  then 
+    if fn in "Q02228ZstdlibZbooleanZboolean  Q02227ZstdlibZbooleanZboolean" then
+    subinline(fn, l,dseq(tree.cnode("UNASIGNED"_1,"1"_1)), nextset, replacement)
+    else
+    processpara(fn,replacement,sets,nextset,sons.code,empty:seq.tree.cnode) 
+   else 
+    tree(label.code, l)
+
+
+function subinline(fn:word, p:seq.tree.cnode, sets:seq.tree.cnode,nextset:int, code:tree.cnode)tree.cnode 
+ if inst.label.code ="PARA"_1 
+  then assert between(toint.arg.label.code, 1, length.p)report"inline problem"+ fn + arg.label.code + toword.length.p 
+   p_(length.p - toint.arg.label.code + 1)
+  else  if inst.label.code="SET"_1 then 
+      let s1=subinline(fn, p, sets ,  nextset,code_1)
+         if inst.label.s1 in "LIT LOCAL PARA FREF FREFB CONST"  then  
+         subinline(fn, p, replace(sets,toint(arg.label.code),s1),  nextset,code_2)   else  
+      let s2=subinline(fn, p, addtosetmap(sets,toint(arg.label.code),nextset,1) ,  nextset+1,code_2)
+      tree(cnode("SET"_1,toword.nextset),[s1,s2])
+   else if inst.label.code="LOCAL"_1 then
+       sets_toint(arg.label.code)
+   else
+  let l = @(+, subinline(fn, p, sets,nextset), empty:seq.tree.cnode, sons.code)
+   assert not(inst.label.code in "LOOP") report "FOUND LOOP in inline expansion"
+   tree(label.code, l)
 
 ______________
 
@@ -290,8 +369,11 @@ function tailcall(subs:seq.tree.cnode, self:word, t:tree.cnode)tree.cnode
 Function in(c:cnode, t:tree.cnode)boolean 
  if c = label.t then true else @(∨, in.c, false, sons.t)
 
-Function getmaxvar(t:tree.cnode)int 
- @(max, getmaxvar, if inst.label.t ="SET"_1 then toint.arg.label.t else 0, sons.t)
+function getmaxvar(t:tree.cnode)int 
+ @(max, getmaxvar, if inst.label.t ="SET"_1 then toint.arg.label.t else 
+   if inst.label.t = "LOOP"_1 then
+      toint.arg.label(t_1)+nosons.t-3
+   else 0, sons.t)
 
 _____________
 
@@ -350,7 +432,7 @@ function expandapply(p:program, t:tree.cnode, profile:seq.word)rexpand
    if nosons.t2 = 5 ∧ nopara.f = 1 ∧ inst.label.codetree.f ="PARA"_1 ∧ checkistypechangeonly(arg.label(t2_4), arg.label(t2_1))
    then rexpand(p.last.l, t2_2)
    else let p2 = genapply(p.last.l, arg.label(t2_(nosons.t2 - 1)), arg.label(t2_(nosons.t2 - 2)), arg.label(t2_nosons.t2), profile)
-   rexpand(p2, tree(cnode("CALL"_1, number.fn.p2), subseq(sons.t2, 1, nosons.t2 - 3)))
+   rexpand(p2, tree(cnode("CALL"_1, number.fnx.p2), subseq(sons.t2, 1, nosons.t2 - 3)))
   else rexpand(p.last.l, t2)
 
 function checkistypechangeonly(term1:word, term3:word)boolean 

@@ -2,10 +2,7 @@ Module prettylib
 
 use UTF8
 
-
 use display
-
-use textio
 
 use format
 
@@ -15,9 +12,9 @@ use libscope
 
 use main
 
-
 use passcommon
 
+use renamemodule
 
 use seq.moddesc
 
@@ -37,22 +34,21 @@ use stack.tree.word
 
 use stdlib
 
-use tree.word
+use textio
 
-use renamemodule
+use tree.word
 
 function reverse2(l:seq.word)seq.word 
  if isempty.l then l else reverse2.subseq(l, 2, length.l)+ l_1
 
-Function prettylib(libname:seq.word,namemap:seq.word)seq.word 
+Function prettylib(libname:seq.word, namemap:seq.word)seq.word 
  // Pretty prints lib source. Does not create files for modules where the pretty printed version does not give the same parse tree. // 
   // Warning:Discards text before first module. Multiple modules in the same file are broken into multiple files. // 
   // Will move a beginning comment inside parentheses and fail on(a + b)* b. // 
-  // namemap is form changing module names in form "oldname1 newname1 oldname2 newname2 ..." //
-  let lib = if length.namemap > 0 then maplib(tolibdesc(libname_1),namemap) else tolibdesc(libname_1)
+  // namemap is form changing module names in form"oldname1 newname1 oldname2 newname2..."// 
+  let lib = if length.namemap > 0 then maplib(tolibdesc(libname_1), namemap)else tolibdesc(libname_1)
   let libheader = ["#!/usr/local/bin/tau", 
-  "Library"+ libname + alphasort.@(+, modname,"", subseq(modules.lib, 2, length.modules.lib))+ EOL +
-  "uses"+ dependentlibs.lib + EOL +"exports"+ alphasort.exports.lib]
+  "Library"+ libname + alphasort.@(+, modname,"", subseq(modules.lib, 2, length.modules.lib))+ EOL +"uses"+ dependentlibs.lib + EOL +"exports"+ alphasort.exports.lib]
   assert @(∧, checkpretty.libheader, true, modules.lib)report"failed"
   {"PASSED"}
 
