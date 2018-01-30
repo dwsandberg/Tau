@@ -116,9 +116,9 @@ Function ∧(a:ordering, b:ordering)ordering
 
 Function ?(a:boolean, b:boolean)ordering toint.a ? toint.b
 
-Function ∧(a:boolean, b:boolean)boolean if a then b else false
+Function ∧(a:boolean, b:boolean)boolean if a then b else // false // boolean.0
 
-Function ∨(a:boolean, b:boolean)boolean if a then true else b
+Function ∨(a:boolean, b:boolean)boolean if a then // true is not use so simple inline expansion is used to produce short circuit evaluation // boolean.1 else b
 
 Function not(a:boolean)boolean builtin.usemangle
 

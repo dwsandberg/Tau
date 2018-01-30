@@ -1,6 +1,6 @@
 module buildtree
 
-use constant
+/use constant
 
 use libscope
 
@@ -57,33 +57,11 @@ Function buildcodetree(a:seq.word, i:int)tree.cnode
  let b = check(a, 0, 1,"")
   buildcodetree(a, empty:stack.tree.cnode, i)
 
-function pushconst(a:seq.word, f:stack.tree.cnode, i:int)stack.tree.cnode 
- push(f, tree.cnode(a_i, a_(i + 1), 0))
-
-function scanconst(a:seq.word, i:int)int 
- if i + 2 > length.a 
-  then i 
-  else if a_(i + 2)in"LIT CONST WORD FREF"then scanconst(a, i + 2)else i
 
 function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode 
  if i > length.a 
   then top.f 
-  else if a_i in"LIT CONST WORD FREF"
-  then // we look for a const here by scanning forward // 
-   let j = scanconst(a, i)
-   if j + 1 < length.a ∧ a_(j + 2)in"$build $wordlist RECORD"
-   then let len = toint(a_(j + 3))
-    if len * 2 > j - i + 2 
-    then // len of record is greater than length of constants // 
-     buildcodetree(a, @(pushconst.a, identity, f, arithseq((j - i + 2)/ 2, 2, i)), j + 2)
-    else // not all constants may be part of record so must calculate prefix // 
-    let prefix = @(pushconst.a, identity, f, arithseq((j - i)/ 2 + 1 - len, 2, i))
-    let const =(if a_(j + 2)="RECORD"_1 
-     then"RECORD"+ a_(j + 3)
-     else"RECORD"+ toword(len + 2)+"LIT 0 LIT"+ a_(j + 3))+ subseq(a, j - 2 * len + 2, j + 1)
-    buildcodetree(a, push(prefix, tree.cnode("CONST"_1, addconst.const, 0)), j + 4)
-   else buildcodetree(a, @(pushconst.a, identity, f, arithseq((j - i + 2)/ 2, 2, i)), j + 2)
-  else if a_i in"PARA LOCAL"
+  else if a_i in"LIT CONST WORD FREF PARA LOCAL"
   then buildcodetree(a, push(f, tree.cnode(a_i, a_(i + 1), 0)), i + 2)
   else if a_i in"CALL"
   then let noargs = toint(a_(i + 1))
@@ -102,35 +80,39 @@ function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode
   else if a_i ="FLAT"_1 
   then if a_(i + 1)="1"_1 
    then buildcodetree(a, f, i + 2)
-   else buildcodetree(a, push(pop.f, tree(cnode(a_i, a_(i + 1), 0), [ top.f])), i + 2)
-  else if a_i in"$build $wordlist"
+   else 
+   //    buildcodetree(a,@(push, fixup2.top.f, pop.f, arithseq(toint.a_(i + 1), 1, 0)),i+2)
+  //
+    buildcodetree(a, push(pop.f, tree(cnode(a_i, a_(i + 1), 0), [ top.f])), i + 2)
+    else if a_i in"$build $wordlist"
   then let noelements = toint(a_(i + 1))
    let prefix = [ tree.cnode("LIT"_1,"0"_1, 0), tree.cnode("LIT"_1, a_(i + 1), 0)]
    let c = cnode("RECORD"_1,"0"_1)
-   buildcodetree(a, push(pop(f, noelements), tree(c, prefix + top(f, noelements))), i + 2)
+   buildcodetree(a, push(pop(f, noelements), tree(c, prefix + removeflat(top(f, noelements)))), i + 2)
   else if a_i ="RECORDS"_1 
   then // last element in record becomes the first // 
    let noelements = toint(a_(i + 1))
    let c = cnode("RECORD"_1,"0"_1)
-   buildcodetree(a, push(pop(f, noelements), tree(c, [ top.f]+ top(pop.f, noelements - 1))), i + 2)
+   buildcodetree(a, push(pop(f, noelements), tree(c, removeflat([ top.f]+ top(pop.f, noelements - 1)))), i + 2)
   else let noargs = toint(a_(i + 1))
   let c = cnode(a_i,"0"_1)
-  assert not(a_i ="if"_1)∨ noargs = 3 report"Incorrect number of args on if"
-  buildcodetree(a, push(pop(f, noargs), tree(c, top(f, noargs))), i + 2)
+  // assert not(a_i ="if"_1)∨ noargs = 3 report"Incorrect number of args on if" //
+  let sons=if inst.c="RECORD"_1 then removeflat.top(f, noargs) else top(f, noargs)
+  buildcodetree(a, push(pop(f, noargs), tree(c, sons)), i + 2)
+  
+function removeflat(s:seq.tree.cnode) seq.tree.cnode
+ @(+,processson,empty:seq.tree.cnode,s)
 
-Function removeflat(f:func)func replacecodetree(f, removeflat.codetree.f)
-
-Function removeflat(t:tree.cnode)tree.cnode 
- if nosons.t = 0 then t else tree(label.t, @(addflat, removeflat, empty:seq.tree.cnode, sons.t))
-
-function addflat(s:seq.tree.cnode, t:tree.cnode)seq.tree.cnode 
- if inst.label.t ="FLAT"_1 
-  then let firstson = t_1 
-   s + @(+, fixup2.firstson, empty:seq.tree.cnode, arithseq(toint.arg.label.t, 1, 0))
-  else s + t
+function processson(t:tree.cnode) seq.tree.cnode
+     if inst.label.t="FLAT"_1  then
+       let firstson = t_1 
+       @(+, fixup2.firstson, empty:seq.tree.cnode, arithseq(toint.arg.label.t, 1, 0))
+       else [t]
+       
 
 function fixup2(x:tree.cnode, i:int)tree.cnode 
- tree(cnode("IDXUC"_1,"0"_1, 2), [ x, tree.cnode("LIT"_1, toword.i, 0)])
+ tree(cnode("IDXUC"_1,"0"_1), [ x, tree.cnode("LIT"_1, toword.i)])
+
 
 Function check(a:seq.word, count:int, i:int, ops:seq.word)seq.word 
  if i > length.a 
@@ -203,12 +185,12 @@ Converting func to lib symbol. Must remove CONST and FREF and CALL instructions.
 
 In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation. Otherwise the inst is the code that should be added after the parameters. For example ;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.
 
-function tolibsyminst(cmap:seq.seq.word, lib:word, a:func)seq.word 
+function tolibsyminst( lib:word, a:func)seq.word 
  let y = if number.a in"seqZTzseqZintZT pseqZTzseqZintZTzseqZTzseq dseqZTzseqZintZTZTzseq fastsubseqZTzseqZintZTzseqZint cseqZTzseqZintZT blockseqZTzblockseqZintZintZTzseqzseq arithmeticseqZTzarithmeticseqZintZTZT"
    then"ALWAYSCALL"
    else if functype.a="SIMPLE"_1
    then let nopara = nopara.a 
-    let x = expandconst(cmap, print.codetree.a, 1,"")
+    let x = print.codetree.a
     if length.x > 100 
     then"ALWAYSCALL"
     else let verysimple = nopara = 0 ∨ nopara = 1 ∧ subseq(x, 1, 2)="PARA 1"∨ nopara = 2 ∧ subseq(x, 1, 4)="PARA 2 PARA 1"∨ nopara = 3 ∧ subseq(x, 1, 6)="PARA 3 PARA 2 PARA 1"∨ nopara = 4 ∧ subseq(x, 1, 8)="PARA 4 PARA 3 PARA 2 PARA 1"
@@ -222,27 +204,12 @@ function tolibsyminst(cmap:seq.seq.word, lib:word, a:func)seq.word
    else [ number.a, toword.nopara.a]
   else y
 
-function expandconst(cmap:seq.seq.word, s:seq.word, i:int, result:seq.word)seq.word 
- if length.result > 100 ∧ length.cmap > 0 
-  then result 
-  else if i + 1 > length.s 
-  then assert i - 1 = length.s report"premature end"+ toword.i + toword.length.s + s 
-   result 
-  else if s_i in"CALL CALLB"
-  then expandconst(cmap, s, i + 3, result + s_i + s_(i + 1)+ s_(i + 2))
-  else if s_i ="CONST"_1 
-  then let c = cmap_toint(s_(i + 1))
-   let expanded = if c_1 ="RECORD"_1 
-    then expandconst(cmap, c, 3,"")+ [ c_1, c_2]
-    else expandconst(cmap, c, 1,"")
-   expandconst(cmap, s, i + 2, result + expanded)
-  else expandconst(cmap, s, i + 2, result + [ s_i]+ s_(i + 1))
 
 function isdigits(w:word)boolean @(∧, isdigit, true, decode.w)
 
 function isdigit(i:int)boolean between(i, 48, 57)
 
-Function tolibsym(constmapping:seq.seq.word, lib:word, f:func)libsym 
- let p = libsym(mytype.symboltext.f, number.f, tolibsyminst(constmapping, lib, f))
-  p
+Function tolibsym( lib:word, f:func)libsym 
+ libsym(mytype.symboltext.f, number.f, tolibsyminst( lib, f))
+ 
 

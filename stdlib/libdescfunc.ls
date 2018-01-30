@@ -4,7 +4,7 @@ use blockseq.word
 
 use buildtree
 
-use constant
+/use constant
 
 use graph.word
 
@@ -64,7 +64,7 @@ function findelement(syms:set.libsym, l:libsym)seq.libsym toseq.findelement(l, s
 
 Function libdesc(r:pass1result)liblib 
  let lib = libname(r)_1 
-  let funcs = @(+, tolibsym(constantmapping, lib), empty:seq.libsym, code.r)
+  let funcs = @(+, tolibsym(lib), empty:seq.libsym, code.r)
   let syms = funcs 
   let roots = @(∪, roots2, empty:set.word, mods.r)
   let reach = reachable(newgraph.@(+, findrefarcs, empty:seq.arc.word, syms), toseq.roots)

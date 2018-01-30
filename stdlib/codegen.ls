@@ -202,12 +202,14 @@ type geninfo5 is record lib:word, wordstype:encoding.llvmtype, conststype:encodi
 function funcdef(fl:seq.func, info:geninfo5, consts:linklists2, i:int, result:seq.internalbc)funcdefresult5 
  if i > length.fl 
   then funcdefresult5(result, consts)
-  else let f = removeflat(fl_i)
+  else let f =  fl_i 
    let paraadj = -nopara.f - 2 
   let l = Lcode5(emptyinternalbc, consts, nopara.f + 1, 0, 1, empty:seq.int, 0)
-  let r = gencode(geninfo5(lib.info, wordstype.info, conststype.info, profiletype.info, number.f, paraadj, tab.info, if"profile"_1 in profile.f then profile(f)_2 else"noprofile"_1), empty:seq.localmap5, l, codetree.f)
+  let r = gencode(geninfo5(lib.info, wordstype.info, conststype.info, profiletype.info, number.f, paraadj, tab.info, if"profile"_1 in profile.f then profile(f)_2 else"noprofile"_1), empty:seq.localmap5, l, oldfindconst.codetree.f)
   let newbody = BLOCKCOUNT(1, noblocks.r)+(code.r)+ RET(regno.r + 1, arg.r)
   funcdef(fl, info, lst.r, i + 1, result + [ newbody])
+
+use pass2a
 
 
 function loopmapentry(baselocal:int, regbase:int, i:int)localmap5 
@@ -391,3 +393,15 @@ function see seq.word
  let map = subseq(mapping.statencoding, 1, maxprof)
   @(+, xx,"", map)
 
+Function oldfindconst(t:tree.cnode)tree.cnode 
+   if nosons.t = 0 
+  then t 
+  else let l = @(+, oldfindconst, empty:seq.tree.cnode, sons.t)
+   if inst.label.t  ="CRECORD"_1
+  then 
+  tree.cnode("CONST"_1, addconst("RECORD"+ [ toword(nosons.t)]+ @( +,asconst,"",l)))
+   else tree(label.t, l)
+   
+
+function asconst(t:tree.cnode)seq.word 
+  [ inst.label.t, arg.label.t]
