@@ -110,6 +110,8 @@ Function C(w:word)int encoding.encode(llvmconst(-1, decode.w), llvmconsts) - 1
 
 Function C64(i:int)int encoding.encode(llvmconst(typ.i64, [ CONSTINTEGER, i]), llvmconsts) - 1
 
+Function getllvmconst(i:int) seq.int   { toseq((mapping.llvmconsts)_(i+1)) }
+
 Function C32(i:int)int encoding.encode(llvmconst(typ.i32, [ CONSTINTEGER, i]), llvmconsts) - 1
 
 Function C(t:encoding.llvmtype, s:seq.int)int encoding.encode(llvmconst(typ.t, s), llvmconsts) - 1

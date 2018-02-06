@@ -4,7 +4,7 @@ use UTF8
 
 use checking
 
-use graph.word
+use graph.int
 
 use invertedseq.word
 
@@ -24,7 +24,7 @@ use randomphrase
 
 use real
 
-use seq.arc.word
+use seq.arc.int
 
 use seq.int
 
@@ -32,7 +32,7 @@ use seq.ipair.word
 
 use seq.word
 
-use set.arc.word
+use set.arc.int
 
 use set.int
 
@@ -148,7 +148,7 @@ function t517 boolean
 
 function t518 boolean isprefex("invalid digit", message.process.toint("0A"_1))
 
-function t519 boolean {"&quot()+,-.:; = []^_"= standalonechars }
+function t519 boolean {"&quot()+,-.: = []^_"= standalonechars }
 
 function ttt(c:int)seq.word 
  if classify.c = 1 then [ encodeword.[ c]]else""
@@ -169,34 +169,35 @@ ____________
 
 graphs
 
-Function n1 word {"1"_1 }
+Function n1 int 1
 
-Function n2 word {"2"_1 }
+Function n2 int 2
 
-Function n3 word {"3"_1 }
+Function n3 int 3
 
-Function n4 word {"4"_1 }
+Function n4 int 4
 
-Function n5 word {"5"_1 }
+Function n5 int 5
 
-Function n6 word {"6"_1 }
+Function n6 int 6
 
-Function n7 word {"7"_1 }
+Function n7 int 7
 
-Function n8 word {"8"_1 }
+Function n8 int 8
 
 function t522 boolean 
  let g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6), arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
-  let r = print.g +"transversal"+ sinksfirst.g +"Suc"+ toseq.successors(g, n2)+"sinks"+ sinks(g, asset.[ n4], n2)
-  r ="GRAPH:(1 2)(1 4)(2 4)(3 2)(5 1)(5 6)(6 8)(6 7)(7 5)transversal 8 4 2 1 3 Suc 4 sinks 2"
+  let r = print.g +"transversal"+ print.sinksfirst.g +"Suc"+ print.toseq.successors(g, n2)+"sinks"+ print.sinks(g, asset.[ n4], n2)
+  r ="GRAPH:(1 2)(1 4)(2 4)(3 2)(5 1)(5 6)(6 7)(6 8)(7 5)transversal [ 4, 8, 2, 1, 3]Suc [ 4]sinks [ 2]"
 
 function t523 boolean 
  let g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4)]
   let closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
   closure = toseq.arcs.transitiveClosure.g
 
-function print(g:graph.word)seq.word 
+function print(g:graph.int)seq.word 
  {"GRAPH:"+ @(+, print,"", toseq.arcs.g)}
+ 
 
-function print(a:arc.word)seq.word {"("+ tail.a + head.a +")"}
+function print(a:arc.int)seq.word {"("+ toword.tail.a + toword.head.a +")"}
 

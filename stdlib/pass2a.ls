@@ -79,11 +79,11 @@ Function findconst(t:tree.cnode)tree.cnode
    if inst ="RECORD"_1 
   then 
        tree(if @(&and,isconst,true,l) then cnode("CRECORD"_1,"0"_1) else label.t,l)
-  else if inst ="IDXUC"_1 ∧ inst.label(t_2)="LIT"_1 ∧ inst.label(t_1)="CRECORD"_1 
+  else  if inst ="IDXUC"_1 ∧ inst.label(l_2)="LIT"_1 ∧ inst.label(l_1)="CRECORD"_1 
   then  
-     let idx = toint.arg.label(t_2)
-     l_(idx+1)
-   else if inst in"Q5FZwordzseqZTzseqZint"∧ inst.label(t_2)="LIT"_1 ∧ inst.label(t_1)="CRECORD"_1 
+     let idx = toint.arg.label(l_2)
+     (l_1)_(idx+1)
+   else  if inst in"Q5FZwordzseqZTzseqZint"∧ inst.label(t_2)="LIT"_1 ∧ inst.label(t_1)="CRECORD"_1 
   then // only expand when is standard sequence:that is 0 is in first field of record // 
    let cst = t_1
    let idx = toint.arg.label(t_2)
@@ -109,7 +109,10 @@ function prt(f:seq.func, i:int)seq.word [ EOL]+ number(f_i)+ symboltext(f_i)+ pr
 function filterlib(existing:set.word, f:func)seq.func 
  if number.f in existing then empty:seq.func else [ f]
 
+use options.seq.func
+
 function addlibsym(alltypes:set.libtype, s:seq.func, q:syminfo)seq.func 
+// PROFILE. //
  let myinst = funcfrominstruction(alltypes, instruction.q, replaceT(parameter.modname.q, returntype.q), length.paratypes.q)
   let tr = findconst.buildcodetree(subseq(myinst, 2, length.myinst), 1)
   let rt = if hasproto.q then towords.protoreturntype.q else towords.returntype.q 

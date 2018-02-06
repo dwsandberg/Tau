@@ -4,8 +4,6 @@ use buildtree
 
 use codetemplates
 
-use constant
-
 use internalbc
 
 use ipair.linklists2
@@ -71,7 +69,7 @@ function funcdec(proto:int, a:llvmconst)seq.int
   
 
 Function codegen5(z:pass1result)seq.bits 
- PROFILE.let thename = libname(z)_1 
+ let thename = libname(z)_1 
   let symlist ="libname initlib4 words wordlist list liblib profcounts profclocks profspace profrefs profstat spacecount clock"+ merge(thename,"$profileresult"_1)+"init22 allocatespaceZbuiltinZint PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   let discard2 = @(+, C, 0, symlist + @(+, number,"", code.z))
   let discard3 = @(+, findcalls, 0, @(+, codetree, empty:seq.tree.cnode, code.z))
@@ -179,21 +177,14 @@ function print(m:localmap5)seq.word
 function findcalls(t:tree.cnode)int 
  let discard = if inst.label.t in"CALL FREF"
    then C.arg.label.t 
-   else if inst.label.t ="CONST"_1 
-   then let c = toint.arg.label.t 
-    findFREF(constantmapping_c, 3)
-   else if inst.label.t in"SET RECORD LOCAL CONST LIT PARA EQL if IDXUC PROCESS2 STATE WORD SETFLD3 SETFLDBYTE ADD  Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
+   else  if inst.label.t in"SET RECORD LOCAL CONST LIT PARA EQL if IDXUC PROCESS2 STATE WORD SETFLD3 SETFLDBYTE ADD  Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
    then 0 
    else 
    C.inst.label.t 
   @(+, findcalls, 0, sons.t)
 
 
-function findFREF(s:seq.word, i:int)int 
- if i > length.s 
-  then 0 
-  else let discard = if s_i ="FREF"_1 then // assert false report s // C(s_(i + 1))else 0 
-  findFREF(s, i + 2)
+
 
 type funcdefresult5 is record bodies:seq.internalbc, consts:linklists2
 
@@ -205,15 +196,18 @@ function funcdef(fl:seq.func, info:geninfo5, consts:linklists2, i:int, result:se
   else let f =  fl_i 
    let paraadj = -nopara.f - 2 
   let l = Lcode5(emptyinternalbc, consts, nopara.f + 1, 0, 1, empty:seq.int, 0)
-  let r = gencode(geninfo5(lib.info, wordstype.info, conststype.info, profiletype.info, number.f, paraadj, tab.info, if"profile"_1 in profile.f then profile(f)_2 else"noprofile"_1), empty:seq.localmap5, l, oldfindconst.codetree.f)
+  let r = gencode(geninfo5(lib.info, wordstype.info, conststype.info, profiletype.info, number.f, paraadj, tab.info, if"profile"_1 in profile.f then profile(f)_2 else"noprofile"_1), empty:seq.localmap5, l, codetree.f)
   let newbody = BLOCKCOUNT(1, noblocks.r)+(code.r)+ RET(regno.r + 1, arg.r)
   funcdef(fl, info, lst.r, i + 1, result + [ newbody])
 
-use pass2a
 
 
 function loopmapentry(baselocal:int, regbase:int, i:int)localmap5 
  localmap5(baselocal + i - 1,-regbase - i)
+ 
+use set.word
+
+use seq.set.word
 
 function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5 
  let inst = inst.label.t 
@@ -226,10 +220,11 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
   then setarg(l, C64.toint.arg)
   else if inst ="FREF"_1 
   then setarg(l, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.arg, C.arg]))
-  else if inst ="CONST"_1 
-  then let tt = addconst(constantmapping, lst.l, toint.arg)
-   setlist(usetemplate(l, CONSTtemplate, C64(index.tt + 1), 0,-(regno.l + 2), 2), value.tt)
-  else if inst ="WORD"_1 
+  else if inst="CRECORD"_1 then
+    let pre=preorder(t) 
+    let tt =addconst2(lst.l,pre)
+      setlist(usetemplate(l, CONSTtemplate, C64(index.tt + 1), 0,-(regno.l + 2), 2), value.tt)
+  else  if inst ="WORD"_1 
   then let a = C(ptr.i64, [ CONSTGEP, 
    typ.wordstype.lib, 
    typ.ptr.wordstype.lib, 
@@ -393,15 +388,14 @@ function see seq.word
  let map = subseq(mapping.statencoding, 1, maxprof)
   @(+, xx,"", map)
 
-Function oldfindconst(t:tree.cnode)tree.cnode 
-   if nosons.t = 0 
-  then t 
-  else let l = @(+, oldfindconst, empty:seq.tree.cnode, sons.t)
-   if inst.label.t  ="CRECORD"_1
-  then 
-  tree.cnode("CONST"_1, addconst("RECORD"+ [ toword(nosons.t)]+ @( +,asconst,"",l)))
-   else tree(label.t, l)
-   
+  
+_____________________
 
-function asconst(t:tree.cnode)seq.word 
-  [ inst.label.t, arg.label.t]
+function preorder(t:tree.cnode) seq.word
+    assert inst.label.t in "CRECORD LIT WORD FREF" report "preorder"+inst.label.t
+     if inst.label.t ="CRECORD"_1 then
+     @(+,preorder, [ inst.label.t, toword.nosons.t],sons.t)
+     else [ inst.label.t, arg.label.t]
+  
+
+  

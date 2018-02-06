@@ -2,7 +2,7 @@ Module main
 
 use codegen
 
-use constant
+/use constant
 
 use fileio
 
@@ -84,7 +84,7 @@ Function main(arg:seq.int)outputformat
 Function loadlibrary(libname:word)int loadlib([ libname], 0)
 
 Function bindings(libname:word)pass1result 
- let discard3 = length.mapping.libsymencoding + length.constantmapping 
+ let discard3 = length.mapping.libsymencoding 
   let ld = tolibdesc.libname 
   // let b = unloadlib.[ libname]// 
   let discard5 = loadlibs(dependentlibs.ld, 1, timestamp(libs_1))
@@ -108,7 +108,7 @@ Function pass(passno:int, libname:word)pass1result
   result.p
 
 function subcompilelib(libname:word)seq.word 
- PROFILE.let discard3 = length.mapping.libsymencoding + length.constantmapping 
+ PROFILE.let discard3 = length.mapping.libsymencoding 
   let ld = tolibdesc.libname 
   if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
   then interface([ name.ld], exports.ld, dependentlibs.ld)

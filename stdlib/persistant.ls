@@ -61,9 +61,28 @@ _________________
 
 encode Functions
 
-The linklists2 type contains a seq of integers that represents the memory. Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq.One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
+The linklists2 type contains a seq of integers that represents the memory.
+ Any memory locations that store the type word are linked into a linked list begining with wordthread. 
+ Two values are packed into the integer is store in the seq. 
+ One is the word3 encoding and the other the next value in the linked list. 
+ Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. 
+ In this case the element in the seq is represents two interger values. 
+ One is the next value in the linked list and the other is the index of the refrenced memory location.
 
 type linklists2 is record a:seq.int, wordthread:int, offsetthread:int, start:int
+
+ 
+function print(l:linklists2) seq.word
+  "wordthread"+toword.wordthread.l+"offsetthread"+toword.offsetthread.l+"start"+ toword.start.l+ 
+   @(+,pr3(start.l,a.l),"",arithseq(length.a.l,1,1))
+   
+function pr3(start:int,a:seq.int,i:int) seq.word
+  let b = getllvmconst(a_i)
+  "&br"+toword(start+i)+
+    if b_1=CONSTINTEGER then "INT"+toword.getlink.b_2+toword.getb.b_2
+    else @(+,toword,"",b)
+  
+  +toword.getlink.a_i+toword.getb.a_i
 
 Function a(linklists2)seq.int export
 
@@ -90,7 +109,8 @@ function addref(p:partobject2, e3:linklists2, location:int)partobject2
  let e4 = linklists2(a.e3, wordthread.e3, mainplace.p, start.e3)
   partobject2(mainobj.p + [ C64.packit(offsetthread.e3, location)], mainstart.p, e4)
 
-Type build object is used to construct object. First the space is allocated for it.Then for each field if the next field of object is pointer then the subobject is created.A value for the field or relocation information is place in the field before going on to the next fld.
+Type build object is used to construct object. First the space is allocated for it.Then for each field if the next field of object is pointer then the subobject is created.
+A value for the field or relocation information is place in the field before going on to the next fld.
 
 type partobject2 is record mainobj:seq.int, mainstart:int, subobjects:linklists2
 
@@ -105,43 +125,68 @@ function eword(w:word3)seq.int
  let a = decode.toword.w 
   @(+, C64, [ C64.0, C64.length.a], a)
 
-Function addconst(constants:seq.seq.word, t:linklists2, constnumber:int)ipair.linklists2 
- let d = constants_constnumber 
-  let loc = place.t 
-  let a = decode(encode(constmap(constnumber, loc), cmap), cmap)
-  if offset.a < loc 
-  then ipair(offset.a, t)
-  else let len = toint(d_2)
-  // assert len = toint.d_6 + 2 report"CONST FORMAT?"+ d // 
-  ipair(loc, subfields(constants, allocate(t, len), d, 3))
+type resultaddconst is record  offset:int,list:linklists2,next:int
 
-function subfields(constants:seq.seq.word, p:partobject2, d:seq.word, i:int)linklists2 
- if i > length.d 
+use seq.constmap2
+
+Function addconst2(  t:linklists2, const :seq.word) ipair.linklists2
+  let a = addconst2(t,const,1) 
+  // assert  next.a = length.const+1 report "X" +toword.next.a+const //
+  // assert false report print.t +"&br &br"+print.list.a+printmap //
+   ipair(offset.a,list.a)
+
+function addconst2(  t:linklists2, const :seq.word,next:int) resultaddconst 
+// const is preorder transversal of tree //
+  let loc = place.t 
+    let len = toint( const_(next+1))
+  let end = skip(const,next+2,len)
+  let a = decode(encode(constmap2(subseq(const,next,end-1), loc), cmap2), cmap2)
+  if offset.a < loc 
+  then resultaddconst(offset.a, t,end)
+  else 
+   let cst = subfields2(allocate(t, len), const, next+2,len)
+  resultaddconst(loc, value.cst, index.cst)
+  
+ function  skip(const: seq.word,next:int,no:int) int
+   // skip no sons in const. A CRECORD and its sons is counted as single son. //
+   if no = 0 then next else 
+   if const_next in "WORD FREF LIT" then 
+    skip(const,next+2,no-1)
+   else 
+     skip(const,skip(const,next+2,toint.const_(next+1)),no-1)
+  
+function subfields2(p:partobject2, d:seq.word, i:int,left:int)ipair.linklists2 
+// returns next index into d and linklist pair //
+ if left = 0 
   then // finish the object by combining mainobj with subobjects // 
-   linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p)
+   ipair(i,linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p))
   else if d_i ="LIT"_1 
-  then subfields(constants, p + C64.toint(d_(i + 1)), d, i + 2)
+  then subfields2( p + C64.toint(d_(i + 1)), d, i + 2,left-1)
   else if d_i ="FREF"_1 
   then let arg = d_(i + 1)
-   // assert false report [ arg]// 
-   subfields(constants, p + C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.arg, C.[ arg]]), d, i + 2)
-  else let newp = if d_i ="WORD"_1 
-   then // add a word. This requires adding information for re-encoding word. // addword(p, d_(i + 1))
-   else assert d_i ="CONST"_1 report [ d_i]
-   // add object of type b_i. This requires adding information for relocation.// 
-   let cst = addconst(constants, subobjects.p, toint(d_(i + 1)))
-   addref(p, value.cst, index.cst)
-  // now process remaining fields // subfields(constants, newp, d, i + 2)
+   subfields2( p + C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.arg, C.[ arg]]), d, i + 2,left-1)
+  else if d_i ="WORD"_1 
+   then // add a word. This requires adding information for re-encoding word. // subfields2(addword(p, d_(i + 1)),d,i+2,left-1)
+   else assert d_i ="CRECORD"_1 report "Failed subfields"+  d_i 
+    // add object of type b_i. This requires adding information for relocation.// 
+   let cst = addconst2(subobjects.p, d,i)
+    subfields2( addref(p, list.cst, offset.cst), d, next.cst,left-1)
 
-type constmap is record constnumber:int, offset:int
 
-type cmap is encoding constmap
 
-function =(a:constmap, b:constmap)boolean constnumber.a = constnumber.b
+type constmap2 is record instuctions:seq.word, offset:int
 
-function hash(a:constmap)int hash.constnumber.a
+type cmap2 is encoding constmap2
 
-function print(a:constmap)seq.word [ toword.constnumber.a, toword.offset.a]+"&br"
+function =(a:constmap2, b:constmap2)boolean instuctions.a = instuctions.b
+
+function hash(a:constmap2)int hash.instuctions.a
+
+
+function print(a:constmap2)seq.word [ toword.offset.a] +instuctions.a+"&br"
+
+function printmap seq.word
+  @(+,print,"",mapping(cmap2))
 
 Function getftype(w:word)encoding.llvmtype 
  let a = @(+, count.90, 1, decode.w)
@@ -324,3 +369,7 @@ Function getb(a:int)int toint(bits(a) ∧ bits( halfsize  - 1))
 Function IDXUC(int, int)int builtin.IDXUC
 
 Function cast2wordseq(int)seq.word builtin
+
+
+
+  
