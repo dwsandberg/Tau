@@ -42,7 +42,7 @@ Function symboltext(f:func)seq.word export
 
 Function nopara(func)int export
 
-Function number(s:func)word export
+Function mangledname(s:func)word  number.s
 
 Function profile(s:func)seq.word export
 

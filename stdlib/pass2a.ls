@@ -104,14 +104,15 @@ Function findconst(t:tree.cnode)tree.cnode
 
 
 
-function prt(f:seq.func, i:int)seq.word [ EOL]+ number(f_i)+ symboltext(f_i)+ print.codetree(f_i)
+function prt(f:seq.func, i:int)seq.word [ EOL]+ mangledname(f_i)+ symboltext(f_i)+ print.codetree(f_i)
 
 function filterlib(existing:set.word, f:func)seq.func 
- if number.f in existing then empty:seq.func else [ f]
+ if mangledname.f in existing then empty:seq.func else [ f]
 
 use options.seq.func
 
-function addlibsym(alltypes:set.libtype, s:seq.func, q:syminfo)seq.func 
+  
+function addlibsym(alltypes:set.libtype,p:program, q:syminfo) program 
 // PROFILE. //
  let myinst = funcfrominstruction(alltypes, instruction.q, replaceT(parameter.modname.q, returntype.q), length.paratypes.q)
   let tr = findconst.buildcodetree(subseq(myinst, 2, length.myinst), 1)
@@ -122,25 +123,28 @@ function addlibsym(alltypes:set.libtype, s:seq.func, q:syminfo)seq.func
     then func(length.paratypes.q, rt, mangled.q, tr_1,"profile"+ mangled.q)
     else func(length.paratypes.q, rt, mangled.q, tr,"")
    else func(length.paratypes.q, rt, mangled.q, tr,"")
-  replace(s, key.t, t)
+  replacefunc(p,t)
+
 
 function roots(m:mod2desc)set.int 
  if isabstract.modname.m ∨ isprivate.m 
   then empty:set.int 
   else @(+, encoding, empty:set.int, @(+, mangled, empty:seq.word, toseq.export.m + toseq.defines.m))
+  
+function reachablefunc(p:program,roots:seq.int) seq.func
+ let reachable = reachable(callgraph.p, roots)
+   @(+,_.allfunctions.p, empty:seq.func, toseq.reachable)
+
 
 Function pass2(r:pass1result)pass1result 
  // does inline expansion, finds consts, removes unreaachable functions // 
-  PROFILE.let funcs = @(addlibsym.alltypes.r, identity, dseq.dummyfunc, newcode.r + compiled.r)
+  PROFILE.let p=@(addlibsym.alltypes.r,identity,program(libname(r)_1,dseq.dummyfunc,newgraph.empty:seq.arc.int),newcode.r + compiled.r )
    let roots = toseq.@(∪, roots, empty:set.int, mods.r)
-   let callgraph = @(+, getarcs, newgraph.empty:seq.arc.int, funcs)
-   // assert false report @(+,number, "",@(+, _(funcs),empty:seq.func,     toseq.nodes.callgraph)) //
-   let reachable = reachable(callgraph, roots)
-   let p = program(libname(r)_1, funcs, callgraph, dummyfunc)
+   let reachable = reachable(callgraph.p, roots)
    let s = @(expandapply, identity, p, toseq.reachable)
    // assert false:@(+, prt(allfunctions.s),"", toseq.reachable)// 
-   let s1 = @(simpleinline, identity, s, toseq.reachable)
-   let s2 = @(simpleinline, identity, s1, toseq.reachable)
+   let s1 = @(simpleinline, identity, s, reachablefunc(s, roots))
+   let s2 = @(simpleinline, identity, s1, reachablefunc(s1, roots))
    let reachable2 = reachable(callgraph.s2, roots )
    let f = @(+,_.allfunctions.s2, empty:seq.func, toseq.reachable2)
    let y = @(+, readwritestate, empty:seq.int, f)
@@ -170,8 +174,8 @@ function readwritestate(f:func)seq.int
 function findconstandtail(stateChangingFuncs:set.word, f:func)func 
  // finds constants,, finds tail calls, and make sure"STATE"is root on state changing functions // 
   let p = findconst.codetree.f 
-  let q =  tailcall(p, number.f, nopara.f)
-  replacecodetree(f, if number.f in stateChangingFuncs ∧ not(inst.label.q ="STATE"_1)
+  let q =  tailcall(p, mangledname.f, nopara.f)
+  replacecodetree(f, if mangledname.f in stateChangingFuncs ∧ not(inst.label.q ="STATE"_1)
    then tree(cnode("STATE"_1,"0"_1), [ q])
    else q)
 
@@ -195,7 +199,7 @@ Function calls(self:int, t:tree.cnode)seq.arc.int
   
  
 
-type program is record library:word, allfunctions:seq.func, callgraph:graph.int, fnx:func
+type program is record library:word, allfunctions:seq.func, callgraph:graph.int
 
 __________________________
 
@@ -204,13 +208,12 @@ Simple inline expansion
 
 
 
-Function simpleinline(p:program, f:int)program 
- let fn = allfunctions(p)_f 
+Function simpleinline(p:program, fn:func)program 
  let typ=functype.fn
   if not(functype.fn in "SIMPLE INLINE" )
   then p 
-  else let pred = toseq.predecessors(callgraph.p, f)
-  @(replacecall(typ,fn), identity, program(library.p, allfunctions.p, callgraph.p, fn), pred)
+  else let pred = toseq.predecessors(callgraph.p, key.fn)
+  @(replacecall(typ,fn), identity, p, pred)
 
 function replacecall(functype:word,simple:func,p:program, f:int)program 
  if key.simple = f 
@@ -218,7 +221,7 @@ function replacecall(functype:word,simple:func,p:program, f:int)program
   else 
   let infunc = allfunctions(p)_f 
    let t =  newinline(functype,simple, dseq(tree.cnode("UNASIGNED"_1,"1"_1)),1,codetree.infunc)
-   replace(p, replacecodetree(infunc, findconst.t))
+   replacefunc(p, replacecodetree(infunc, findconst.t))
   
 /function diff(a:tree.cnode,b:tree.cnode,i:int) seq.word
     if i = 0 then if label.a=label.b then
@@ -238,11 +241,11 @@ function replacecall(functype:word,simple:func,p:program, f:int)program
    else if a_i=b_i then diff(a,b,i+1)
    else "DIFF"+"&br"+subseq(a,i-1,i)+"&br"+subseq(b,i-1,i)+ diff(a,b,i+1)
 
-Function replace(p:program, fn:func)program 
+Function replacefunc(p:program, fn:func)program 
  let f = key.fn 
   let newall = replace(allfunctions.p, f, fn)
   let oldarcs = @(+, arc.f, asset.empty:seq.arc.int, toseq.successors(callgraph.p, f))
-  program(library.p, newall, replacearcs(callgraph.p, oldarcs, asset.getarcs.fn), fnx.p)
+  program(library.p, newall, replacearcs(callgraph.p, oldarcs, asset.getarcs.fn))
   
 
 function checksets( s:set.word,t:tree.cnode) seq.word
@@ -258,7 +261,7 @@ function checksets( s:set.word,t:tree.cnode) seq.word
 function processpara(functype:word,simple:func, sets:seq(tree.cnode), nextset:int, sons:seq.tree.cnode,paramap:seq.tree.cnode)
  tree.cnode // add sets for complex parameters and then does inline expansion. //
  if length.paramap= length.sons then
-  subinline(number.simple, paramap, dseq(tree.cnode("UNASIGNED"_1,"1"_1)),nextset,codetree.simple)
+  subinline(mangledname.simple, paramap, dseq(tree.cnode("UNASIGNED"_1,"1"_1)),nextset,codetree.simple)
  else
    let i = length.paramap+1
    if inst.label(sons_i) in  "LIT LOCAL PARA FREF FREFB " then 
@@ -290,10 +293,10 @@ function newinline( functype:word,simple:func, sets:seq(tree.cnode), nextset:int
       tree(label.code,[tree.cnode("LIT"_1,toword.nextset)]+subseq(l,2,length.l))
    else
     let l = @(+, newinline(functype,simple, sets,nextset), empty:seq.tree.cnode, sons.code)
-  if inst.label.code ="CALL"_1 ∧ arg.label.code = number.simple 
+  if inst.label.code ="CALL"_1 ∧ arg.label.code = mangledname.simple 
   then 
     if  functype="SIMPLE"_1 then
-     subinline(number.simple, l,dseq(tree.cnode("UNASIGNED"_1,"1"_1)), nextset, codetree.simple)
+     subinline(mangledname.simple, l,dseq(tree.cnode("UNASIGNED"_1,"1"_1)), nextset, codetree.simple)
     else
     processpara(functype,simple,sets,nextset,sons.code,empty:seq.tree.cnode) 
    else 
@@ -368,17 +371,15 @@ function getmaxvar(t:tree.cnode)int
 
 _____________
 
-function genapply(prg:program, term1:word, term2:word, ptyp:word, profile:seq.word)program 
- let next = getnext.library.prg 
+function genapply(prg:program, term1:word, term2:word, ptyp:word, profile:seq.word,next:word) func
   let p1 = nopara(allfunctions(prg)_funckey.term1) - 2 
   let p = nopara(allfunctions(prg)_funckey.term2) - 1 
   let nopara = 2 + p + p1 
   let newfuncmangledname = mangle("q"_1, mytype.[ next], constantseq(nopara, mytype."int"))
   assert p ≥ 0 report"illformed"+ term1 + term2 + print(allfunctions(prg)_funckey.term2)
   let insttree = buildcodetree(template(newfuncmangledname, term1, term2, p1, p, ptyp), 1)
-  let newf = func(nopara,"int", newfuncmangledname, insttree, profile)
-  program(next, replace(allfunctions.prg, key.newf, newf), callgraph.prg + getarcs.newf, newf)
-
+   func(nopara,"int", newfuncmangledname, insttree, profile)
+ 
 function parainst(i:int)seq.word {"PARA"+ toword.i }
 
 function getnext(p:word)word 
@@ -404,7 +405,7 @@ function expandapply(p:program, thisone:int)program
   if codetree.f = c.x 
   then p 
   else // assert codetree.f = c.x:print.codetree.f +"<>>>"+ print.c.x // 
-  replace(p.x, replacecodetree(f, c.x))
+  replacefunc(p.x, replacecodetree(f, c.x))
 
 type rexpand is record p:program, c:tree.cnode
 
@@ -422,8 +423,16 @@ function expandapply(p:program, t:tree.cnode, profile:seq.word)rexpand
   then let f = allfunctions(p)_funckey.arg.label(t2_3)
    if nosons.t2 = 5 ∧ nopara.f = 1 ∧ inst.label.codetree.f ="PARA"_1 ∧ checkistypechangeonly(arg.label(t2_4), arg.label(t2_1))
    then rexpand(p.last.l, t2_2)
-   else let p2 = genapply(p.last.l, arg.label(t2_(nosons.t2 - 1)), arg.label(t2_(nosons.t2 - 2)), arg.label(t2_nosons.t2), profile)
-   rexpand(p2, tree(cnode("CALL"_1, number.fnx.p2), subseq(sons.t2, 1, nosons.t2 - 3)))
+   else 
+     let prg = p.last.l
+     let term1=arg.label(t2_(nosons.t2 - 1))
+     let term2=arg.label(t2_(nosons.t2 - 2))
+     let ptyp= arg.label(t2_nosons.t2)  
+     let next = getnext.library.prg 
+     let newf = genapply(prg, term1, term2, ptyp, profile,next)
+     let p2 = replacefunc(program(next,allfunctions.prg,callgraph.prg),newf)
+     // let p2 =  program(next, replace(allfunctions.prg, key.newf, newf), callgraph.prg + getarcs.newf) //
+   rexpand(p2, tree(cnode("CALL"_1, mangledname.newf), subseq(sons.t2, 1, nosons.t2 - 3)))
   else rexpand(p.last.l, t2)
 
 function checkistypechangeonly(term1:word, term3:word)boolean 
