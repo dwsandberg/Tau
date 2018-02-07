@@ -249,25 +249,27 @@ function sub(m:seq.word, a:word)word
 
 function replacements(t:seq.word)seq.word @(+, sub.replacements, empty:seq.word, t)
 
-Function parseerror(r:r1, message:seq.word)seq.word message + prettynoparse(subseq(input.r, 1, n.r), 1, 0)
+Function parseerror(r:r1, message:seq.word)seq.word message +prettynoparse(subseq(input.r, 1, n.r),1,0,"")
 
-Function prettynoparse(s:seq.word, i:int, lastbreak:int)seq.word 
+  
+Function prettynoparse(s:seq.word, i:int, lastbreak:int, result:seq.word)seq.word 
  if i > length.s 
-  then""
+  then result
   else let x = s_i 
   if x ="&quot"_1 
   then let t = findindex("&quot"_1, s, i + 1)
-   {"&{ literal"+ subseq(s, i, t)+"&}"+ prettynoparse(s, t + 1, lastbreak + t - i)} 
+   { prettynoparse(s, t + 1, lastbreak + t - i,result+"&{ literal"+ subseq(s, i, t)+"&}")} 
   else if x ="//"_1 
   then let t = findindex("//"_1, s, i + 1)
-   {"&br &{ comment"+ subseq(s, i, t)+"&}"+ prettynoparse(s, t + 1, t - i)} 
+   { prettynoparse(s, t + 1, t - i,result+"&br &{ comment"+ subseq(s, i, t)+"&}" )} 
   else if x in"if then else let assert function Function type"
-  then"&br &keyword"+ x + prettynoparse(s, i + 1, 0)
+  then prettynoparse(s, i + 1, 0,result+ "&br &keyword"+ x)
   else if x in"report"
-  then"&keyword"+ x + prettynoparse(s, i + 1, lastbreak + 1)
-  else if lastbreak > 20 ∧ x in")]" ∨ lastbreak > 40 ∧ x in","
-  then [ x]+"&br"+ prettynoparse(s, i + 1, 0)
+  then prettynoparse(s, i + 1, lastbreak + 1,result+"&keyword"+ x )
+  else if ( lastbreak > 20 ∧ x in")]") ∨ (lastbreak > 40 ∧ x in",")
+  then   prettynoparse(s, i + 1, 0, result+x+"&br")
   else if lastbreak > 20 ∧ x in"["
-  then"&br"+ x + prettynoparse(s, i + 1, 0)
-  else [ x]+ prettynoparse(s, i + 1, lastbreak + 1)
+  then   prettynoparse(s, i + 1, 0,result+"&br"+ x)
+  else  prettynoparse(s, i + 1, lastbreak + 1,result+x)
+
 

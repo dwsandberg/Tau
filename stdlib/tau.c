@@ -622,11 +622,17 @@ void initprocessinfo(processinfo p,processinfo PD,struct pinfo2 * pin){
 }
 
 BT PROCESS3(processinfo PD,BT pin,BT profileidx, BT (*finishprof)(BT idx,BT x)){
+ pthread_attr_t 	stackSizeAttribute;
+    size_t			stackSize = 0;
+  pthread_attr_init (&stackSizeAttribute);
+  pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024);
+    pthread_attr_getstacksize(&stackSizeAttribute, &stackSize); 
+  /*  fprintf(stderr,"Stack size %d\n", stackSize);*/
   processinfo p=(processinfo)  myalloc(PD,sizeof (struct pinfo)/8);
   initprocessinfo(p,PD,(struct pinfo2 *) pin);
   p->profileindex = profileidx; 
   p->finishprof=finishprof;
-  assert(0==pthread_create(&p->pid, NULL, (void *(*)(void *) )processfunction,(void *) p),"ERROR");
+  assert(0==pthread_create(&p->pid, &stackSizeAttribute, (void *(*)(void *) )processfunction,(void *) p),"ERROR");
   return (BT)p;
 }
 
