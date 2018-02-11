@@ -93,7 +93,12 @@ Function find(d:symdict, w:word, l:seq.r3)r3
    then r3("TYPESIZE 0", [ mytype."int"], nexttemp(l_length.l))
    else r3(@(+, code,"", l)+ mangled.sym + toword.noparameters, [ returntype.sym], nexttemp(l_length.l))
   else let code = if isinstance.modname.sym 
-   then"USECALL"
+   then 
+     if length.instruction.sym = 0 then "" else  if // (instruction.sym)_1 in "USECALL BUILD BUILDSEQ" &or // "TSIZE"_1 in instruction.sym then "USECALL" else 
+     // if instruction .sym in ["LIT 0 LIT 0 RECORD 2 ","LIT 1 IDXUC 2","LIT 0 FLD 1","LIT 2 FLD 1"] then  instruction.sym else 
+     assert  (instruction.sym)_1 in "mappingZbuiltinZTzerecord encodeZbuiltinZTZTzerecord findencodeZbuiltinZTZTzerecord
+     decodeZbuiltinZTzencodingZTzerecord abortedZbuiltinZTzprocess" report  instruction.sym //
+     instruction.sym
    else if not.isabstract.modname.sym ∧ subseq(instruction.sym, 1, 1)="BUILD"
    then"USECALL"
    else instruction.sym 
@@ -287,7 +292,7 @@ function isinstance(s:syminfo)set.word
   else empty:set.word
 
 Function pass1a(bindingonly:boolean, primitivemods:set.mod2desc, intemplates:seq.mod2desc, libname:seq.word)pass1result 
- PROFILE.let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
+   PROFILE.let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
   let P1 = toseq.primitivemods 
   let alltypes = assigntypesizes(@(+, typedefs, empty:seq.libtype, P1)+ templatetypes)
   let discard = @(+, checktypes.alltypes, 0, P1)

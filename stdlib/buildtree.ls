@@ -26,67 +26,62 @@ Function arg(cnode)word export
 
 Function =(a:cnode, b:cnode)boolean inst.a = inst.b ∧ arg.b = arg.a
 
-type func is record nopara:int, symboltext:seq.word, number:word, codetree:tree.cnode, profile:seq.word
+type func is record nopara:int, symboltext:seq.word, mangledname:word, codetree:tree.cnode, profile:seq.word
 
-Function funckey(w:word)int encoding.w
-
-Function key(f:func)int funckey.number.f
 
 Function dummyfunc func 
  func(0,"dummyfunc","0"_1, buildcodetree("LIT 1", 1),"")
 
-Function func(nopara:int, symboltext:seq.word, number:word, codetree:tree.cnode, profile:seq.word)func 
+Function func(nopara:int, symboltext:seq.word, mangledname:word, codetree:tree.cnode, profile:seq.word)func 
  export
 
 Function symboltext(f:func)seq.word export
 
 Function nopara(func)int export
 
-Function mangledname(s:func)word  number.s
+Function mangledname(s:func)word  export
 
 Function profile(s:func)seq.word export
 
 Function codetree(f:func)tree.cnode export
 
 Function replacecodetree(f:func, new:tree.cnode)func 
- func(nopara.f, symboltext.f, number.f, new, profile.f)
+ func(nopara.f, symboltext.f, mangledname.f, new, profile.f)
 
-function =(a:func, b:func)boolean number.a = number.b
+function =(a:func, b:func)boolean mangledname.a = mangledname.b
 
 Function buildcodetree(a:seq.word, i:int)tree.cnode 
- let b = check(a, 0, 1,"")
+ // let b = check(a, 0, 1,"") //
   buildcodetree(a, empty:stack.tree.cnode, i)
 
 
 function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode 
  if i > length.a 
   then top.f 
-  else if a_i in"LIT CONST WORD FREF PARA LOCAL"
-  then buildcodetree(a, push(f, tree.cnode(a_i, a_(i + 1), 0)), i + 2)
+  else if a_i in"LIT  WORD FREF PARA LOCAL"
+  then buildcodetree(a, push(f, tree.cnode(a_i, a_(i + 1))), i + 2)
   else if a_i in"CALL"
   then let noargs = toint(a_(i + 1))
-   let c = cnode(a_i, a_(i + 2), 0)
+   let c =//  cnode(a_i, a_(i + 2)) // cnode(a_(i + 2),"0"_1)
    buildcodetree(a, push(pop(f, noargs), tree(c, top(f, noargs))), i + 3)
   else if a_i ="SET"_1 
-  then let c = cnode(a_i, a_(i + 1), 2)
+  then let c = cnode(a_i, a_(i + 1))
    buildcodetree(a, push(pop(f, 2), tree(c, top(f, 2))), i + 2)
   else if a_i ="FLD"_1 
   then let args = top(f, 2)
    let tr = if a_(i + 1)="1"_1 
-    then tree(cnode("IDXUC"_1,"0"_1, 2), args)
+    then tree(cnode("IDXUC"_1,"0"_1), args)
     else // 8 is number of bytes in word // 
-    tree(cnode("ADD"_1,"0"_1, 2), [ args_1, tree.cnode("LIT"_1, toword(toint.arg.label(args_2)* 8), 0)])
+    tree(cnode("ADD"_1,"0"_1), [ args_1, tree.cnode("LIT"_1, toword(toint.arg.label(args_2)* 8))])
    buildcodetree(a, push(pop(f, 2), tr), i + 2)
   else if a_i ="FLAT"_1 
   then if a_(i + 1)="1"_1 
    then buildcodetree(a, f, i + 2)
    else 
-   //    buildcodetree(a,@(push, fixup2.top.f, pop.f, arithseq(toint.a_(i + 1), 1, 0)),i+2)
-  //
-    buildcodetree(a, push(pop.f, tree(cnode(a_i, a_(i + 1), 0), [ top.f])), i + 2)
+    buildcodetree(a, push(pop.f, tree(cnode(a_i, a_(i + 1)), [ top.f])), i + 2)
     else if a_i in"$build $wordlist"
   then let noelements = toint(a_(i + 1))
-   let prefix = [ tree.cnode("LIT"_1,"0"_1, 0), tree.cnode("LIT"_1, a_(i + 1), 0)]
+   let prefix = [ tree.cnode("LIT"_1,"0"_1), tree.cnode("LIT"_1, a_(i + 1))]
    let c = cnode("RECORD"_1,"0"_1)
    buildcodetree(a, push(pop(f, noelements), tree(c, prefix + removeflat(top(f, noelements)))), i + 2)
   else if a_i ="RECORDS"_1 
@@ -136,16 +131,15 @@ Function check(a:seq.word, count:int, i:int, ops:seq.word)seq.word
 
 Function print(t:tree.cnode)seq.word 
  let inst = inst.label.t 
-  @(+, print,"", sons.t)+ if inst in"PARA LIT CONST LOCAL FREF WORD FLAT"
+  @(+, print,"", sons.t)+ if inst in"PARA LIT LOCAL FREF WORD FLAT"
    then [ inst, arg.label.t]
-   else if inst in"CALL CALLB"
+   else if inst in"CALLB"
    then [ inst, toword.nosons.t, arg.label.t]
    else if inst ="SET"_1 then [ inst, arg.label.t]else [ inst, toword.nosons.t]
 
 Function print(a:func)seq.word 
- {"<"+ number.a + number.a + symboltext.a +">"+ print.codetree.a }
+ {"<"+ mangledname.a +  symboltext.a +">"+ print.codetree.a }
 
-function cnode(a:word, b:word, int)cnode cnode(a, b)
 
 Function cnode(a:word, b:word)cnode export
 
@@ -159,25 +153,21 @@ type ch1result is record nodecount:int, para:seq.word
 use seq.ch1result
 
 function +(a:ch1result,t:tree.cnode)  ch1result 
-if nodecount.a > 30 then  ch1result(1000,"fail") else
+if nodecount.a > 15 then  ch1result(1000,"fail") else
 let b = ch1(t)
 ch1result(nodecount.a+nodecount.b,para.a+para.b)
 
 function ch1(t:tree.cnode)ch1result 
    if inst.label.t ="PARA"_1 then ch1result(1,[arg.label.t])
-  else  if inst.label.t ="NOINLINE"_1 then ch1result(1000,"fail")
-   else @(+,identity,ch1result(1, if inst.label.t in "CALL FREF"  then "NOT SIMPLE" else ""),sons.t)
+  else  if inst.label.t  in "NOINLINE LOOP STATE" then ch1result(1000,"fail")
+   else @(+,identity,ch1result(1,   ""),sons.t)
    
-Function functype(s:func) word
-  let a = ch1(codetree.s)
-   if nodecount.a > 30 then "COMPLEX"_1
-   else  if para.a = @(+,toword,"",arithseq(nopara.s,-1,nopara.s)) then "SIMPLE"_1
+Function functype(t:tree.cnode,nopara:int) word
+  let a = ch1(t)
+   if nodecount.a > 15 then "COMPLEX"_1
+   else  if para.a = @(+,toword,"",arithseq(nopara,-1,nopara)) then "SIMPLE"_1
    else "INLINE"_1
 
-/Function simple(s:func)boolean 
- // Check to see if simple inline expansion is possible for function. All parameters must occur exactly once in order without any function occuring before the last parameter that may cause a side-effect making the order of evaluation important. It also must be short.// 
-  let a = ch1(codetree.s)
-  nodecount.a < 30 ∧  para.a = @(+,toword,"",arithseq(nopara.s,-1,nopara.s))
 
 _____________________
 
@@ -186,9 +176,9 @@ Converting func to lib symbol. Must remove CONST and FREF and CALL instructions.
 In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation. Otherwise the inst is the code that should be added after the parameters. For example ;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.
 
 function tolibsyminst( lib:word, a:func)seq.word 
- let y = if number.a in"seqZTzseqZintZT pseqZTzseqZintZTzseqZTzseq dseqZTzseqZintZTZTzseq fastsubseqZTzseqZintZTzseqZint cseqZTzseqZintZT blockseqZTzblockseqZintZintZTzseqzseq arithmeticseqZTzarithmeticseqZintZTZT"
+ let y = if mangledname.a in"seqZTzseqZintZT pseqZTzseqZintZTzseqZTzseq dseqZTzseqZintZTZTzseq fastsubseqZTzseqZintZTzseqZint cseqZTzseqZintZT blockseqZTzblockseqZintZintZTzseqzseq arithmeticseqZTzarithmeticseqZintZTZT"
    then"ALWAYSCALL"
-   else if functype.a="SIMPLE"_1
+   else if functype(codetree.a,nopara.a)="SIMPLE"_1
    then let nopara = nopara.a 
     let x = print.codetree.a
     if length.x > 100 
@@ -200,8 +190,8 @@ function tolibsyminst( lib:word, a:func)seq.word
    else"ALWAYSCALL"
   if y ="ALWAYSCALL"
   then if"STATE"in codetree.a 
-   then [ number.a, toword.nopara.a,"STATE"_1,"1"_1]
-   else [ number.a, toword.nopara.a]
+   then [ mangledname.a, toword.nopara.a,"STATE"_1,"1"_1]
+   else [ mangledname.a, toword.nopara.a]
   else y
 
 
@@ -210,6 +200,6 @@ function isdigits(w:word)boolean @(∧, isdigit, true, decode.w)
 function isdigit(i:int)boolean between(i, 48, 57)
 
 Function tolibsym( lib:word, f:func)libsym 
- libsym(mytype.symboltext.f, number.f, tolibsyminst( lib, f))
+ libsym(mytype.symboltext.f, mangledname.f, tolibsyminst( lib, f))
  
 

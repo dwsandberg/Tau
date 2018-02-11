@@ -177,7 +177,7 @@ function print(m:localmap5)seq.word
 function findcalls(t:tree.cnode)int 
  let discard = if inst.label.t in"CALL FREF"
    then C.arg.label.t 
-   else  if inst.label.t in"SET RECORD LOCAL CONST LIT PARA EQL if IDXUC PROCESS2 STATE WORD SETFLD3 SETFLDBYTE ADD  Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
+   else  if inst.label.t in"SET RECORD LOCAL  LIT PARA EQL if IDXUC PROCESS2 STATE WORD SETFLD3  ADD  Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
    then 0 
    else 
    C.inst.label.t 
@@ -196,7 +196,8 @@ function funcdef(fl:seq.func, info:geninfo5, consts:linklists2, i:int, result:se
   else let f =  fl_i 
    let paraadj = -nopara.f - 2 
   let l = Lcode5(emptyinternalbc, consts, nopara.f + 1, 0, 1, empty:seq.int, 0)
-  let r = gencode(geninfo5(lib.info, wordstype.info, conststype.info, profiletype.info, mangledname.f, paraadj, tab.info, if"profile"_1 in profile.f then profile(f)_2 else"noprofile"_1), empty:seq.localmap5, l, codetree.f)
+  let r = gencode(geninfo5(lib.info, wordstype.info, conststype.info, profiletype.info, mangledname.f, paraadj, tab.info, 
+    profile(f)_1 ), empty:seq.localmap5, l, codetree.f)
   let newbody = BLOCKCOUNT(1, noblocks.r)+(code.r)+ RET(regno.r + 1, arg.r)
   funcdef(fl, info, lst.r, i + 1, result + [ newbody])
 
