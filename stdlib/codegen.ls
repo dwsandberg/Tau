@@ -69,7 +69,7 @@ function funcdec(proto:int, a:llvmconst)seq.int
   
 
 Function codegen5(z:pass1result)seq.bits 
- let thename = libname(z)_1 
+ PROFILE.let thename = libname(z)_1 
   let symlist ="libname initlib4 words wordlist list liblib profcounts profclocks profspace profrefs profstat spacecount clock"+ merge(thename,"$profileresult"_1)+"init22 allocatespaceZbuiltinZint PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   let discard2 = @(+, C, 0, symlist + @(+, mangledname,"", code.z))
   let discard3 = @(+, findcalls, 0, @(+, codetree, empty:seq.tree.cnode, code.z))
@@ -197,7 +197,7 @@ function funcdef(fl:seq.func, info:geninfo5, consts:linklists2, i:int, result:se
    let paraadj = -nopara.f - 2 
   let l = Lcode5(emptyinternalbc, consts, nopara.f + 1, 0, 1, empty:seq.int, 0)
   let r = gencode(geninfo5(lib.info, wordstype.info, conststype.info, profiletype.info, mangledname.f, paraadj, tab.info, 
-    profile(f)_1 ), empty:seq.localmap5, l, codetree.f)
+    flags(f)_1 ), empty:seq.localmap5, l, codetree.f)
   let newbody = BLOCKCOUNT(1, noblocks.r)+(code.r)+ RET(regno.r + 1, arg.r)
   funcdef(fl, info, lst.r, i + 1, result + [ newbody])
 

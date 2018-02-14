@@ -1,6 +1,5 @@
 module buildtree
 
-/use constant
 
 use libscope
 
@@ -24,29 +23,32 @@ Function inst(cnode)word export
 
 Function arg(cnode)word export
 
+Function cnode(a:word, b:word)cnode export
+
+
 Function =(a:cnode, b:cnode)boolean inst.a = inst.b ∧ arg.b = arg.a
 
-type func is record nopara:int, symboltext:seq.word, mangledname:word, codetree:tree.cnode, profile:seq.word
+type func is record nopara:int, returntype:mytype, mangledname:word, codetree:tree.cnode, flags:seq.word
 
 
 Function dummyfunc func 
- func(0,"dummyfunc","0"_1, buildcodetree("LIT 1", 1),"")
+ func(0,mytype."int","dummyfunc"_1, buildcodetree("LIT 1", 1),"noprofile")
 
-Function func(nopara:int, symboltext:seq.word, mangledname:word, codetree:tree.cnode, profile:seq.word)func 
+Function func(nopara:int, returntype:mytype, mangledname:word, codetree:tree.cnode, flags:seq.word)func 
  export
 
-Function symboltext(f:func)seq.word export
+Function returntype(f:func) mytype export
 
 Function nopara(func)int export
 
 Function mangledname(s:func)word  export
 
-Function profile(s:func)seq.word export
+Function flags(s:func)seq.word export
 
 Function codetree(f:func)tree.cnode export
 
 Function replacecodetree(f:func, new:tree.cnode)func 
- func(nopara.f, symboltext.f, mangledname.f, new, profile.f)
+ func(nopara.f, returntype.f, mangledname.f, new, flags.f)
 
 function =(a:func, b:func)boolean mangledname.a = mangledname.b
 
@@ -128,6 +130,11 @@ Function check(a:seq.word, count:int, i:int, ops:seq.word)seq.word
   then check(a, count - args + 1, i + 3, ops)
   else let new = if a_i in ops then ops else ops + a_i 
   check(a, count - args + 1, i + 2, new)
+  
+function isdigits(w:word)boolean @(∧, isdigit, true, decode.w)
+
+function isdigit(i:int)boolean between(i, 48, 57)
+
 
 Function print(t:tree.cnode)seq.word 
  let inst = inst.label.t 
@@ -138,10 +145,9 @@ Function print(t:tree.cnode)seq.word
    else if inst ="SET"_1 then [ inst, arg.label.t]else [ inst, toword.nosons.t]
 
 Function print(a:func)seq.word 
- {"<"+ mangledname.a +  symboltext.a +">"+ print.codetree.a }
+ {"<"+ mangledname.a +  towords.returntype.a +">"+ print.codetree.a }
 
 
-Function cnode(a:word, b:word)cnode export
 
 Function in(l:seq.word, t:tree.cnode)boolean 
  if inst.label.t in l then true else @(∨, in.l, false, sons.t)
@@ -171,35 +177,26 @@ Function functype(t:tree.cnode,nopara:int) word
 
 _____________________
 
-Converting func to lib symbol. Must remove CONST and FREF and CALL instructions. Conversion would be simpler if constants had RECORD as suffix instead of prefix.
 
-In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation. Otherwise the inst is the code that should be added after the parameters. For example ;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.
-
-function tolibsyminst( lib:word, a:func)seq.word 
- let y = if mangledname.a in"seqZTzseqZintZT pseqZTzseqZintZTzseqZTzseq dseqZTzseqZintZTZTzseq fastsubseqZTzseqZintZTzseqZint cseqZTzseqZintZT blockseqZTzblockseqZintZintZTzseqzseq arithmeticseqZTzarithmeticseqZintZTZT"
-   then"ALWAYSCALL"
-   else if functype(codetree.a,nopara.a)="SIMPLE"_1
-   then let nopara = nopara.a 
+Function tolibsym( lib:word, a:func)libsym 
+ // Converting func to lib symbol.
+ In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation. Otherwise the inst is the code that should be added after the parameters. For example ;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.
+ //
+  let inst = if inst.label.codetree.a ="STATE"_1 then
+    [ mangledname.a, toword.nopara.a]
+else  if ("SIMPLE"_1 in flags.a )
+   then 
+      let nopara = nopara.a 
     let x = print.codetree.a
-    if length.x > 100 
-    then"ALWAYSCALL"
-    else let verysimple = nopara = 0 ∨ nopara = 1 ∧ subseq(x, 1, 2)="PARA 1"∨ nopara = 2 ∧ subseq(x, 1, 4)="PARA 2 PARA 1"∨ nopara = 3 ∧ subseq(x, 1, 6)="PARA 3 PARA 2 PARA 1"∨ nopara = 4 ∧ subseq(x, 1, 8)="PARA 4 PARA 3 PARA 2 PARA 1"
+    let verysimple = nopara = 0 ∨ nopara = 1 ∧ subseq(x, 1, 2)="PARA 1"∨ nopara = 2 ∧ subseq(x, 1, 4)="PARA 2 PARA 1"∨ nopara = 3 ∧ subseq(x, 1, 6)="PARA 3 PARA 2 PARA 1"∨ nopara = 4 ∧ subseq(x, 1, 8)="PARA 4 PARA 3 PARA 2 PARA 1"
     if verysimple ∧ not("PARA"_1 in subseq(x, nopara * 2 + 1, length.x))∧ not("SET"_1 in x)
     then subseq(x, nopara * 2 + 1, length.x)
     else"USECALL"+ x 
-   else"ALWAYSCALL"
-  if y ="ALWAYSCALL"
-  then if"STATE"in codetree.a 
-   then [ mangledname.a, toword.nopara.a,"STATE"_1,"1"_1]
-   else [ mangledname.a, toword.nopara.a]
-  else y
+   else 
+   [ mangledname.a, toword.nopara.a]
+libsym(returntype.a, mangledname.a, inst)
 
 
-function isdigits(w:word)boolean @(∧, isdigit, true, decode.w)
 
-function isdigit(i:int)boolean between(i, 48, 57)
-
-Function tolibsym( lib:word, f:func)libsym 
- libsym(mytype.symboltext.f, mangledname.f, tolibsyminst( lib, f))
  
 

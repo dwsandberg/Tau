@@ -182,6 +182,11 @@ function hexdigit( val:bits,digit:int)  int
 
 type syminfo is record name:word, returntype:mytype, paratypes:seq.mytype, modname:mytype, instruction:seq.word, protoname:word, protoreturntype:mytype, protoparatypes:seq.mytype, mangled:word
 
+Function syminfoX(mangled:word) syminfo
+syminfo(
+ mangled, mytype(""), empty:seq.mytype, mytype(""), "", mangled, mytype(""), empty:seq.mytype, mangled)
+
+
 Function syminfoinstance(name:word, modname:mytype, paratypes:seq.mytype, returntype:mytype, instruction:seq.word, pname:word, pparatypes:seq.mytype, preturntype:mytype)syminfo 
  syminfo(name, returntype, paratypes, modname, instruction, pname, preturntype, pparatypes, mangle(pname, modname, pparatypes))
 

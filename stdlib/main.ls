@@ -108,7 +108,7 @@ Function pass(passno:int, libname:word)pass1result
   result.p
 
 function subcompilelib(libname:word)seq.word 
- // PROFILE. // let discard3 = length.mapping.libsymencoding 
+  PROFILE.let discard3 = length.mapping.libsymencoding 
   let ld = tolibdesc.libname 
   if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
   then interface([ name.ld], exports.ld, dependentlibs.ld)

@@ -102,43 +102,62 @@ Function findconst(t:tree.cnode)tree.cnode
 
 
 
-function prt(f:seq.func, i:int)seq.word [ EOL]+ mangledname(f_i)+ symboltext(f_i)+ print.codetree(f_i)
+function prt(f:seq.func, i:int)seq.word [ EOL]+ mangledname(f_i)+ towords.returntype(f_i)+ print.codetree(f_i)
 
 function filterlib(existing:set.word, f:func)seq.func 
  if mangledname.f in existing then empty:seq.func else [ f]
 
 use options.program
 
+
+type track is record  tosyminfo: syminfo
+
+function  ?(a:track,b:track) ordering mangled.tosyminfo.a ? mangled.tosyminfo.b
+
+function  =(a:track,b:track) boolean mangled.tosyminfo.a=mangled.tosyminfo.b
+
+use set.track
   
-function addlibsym(alltypes:set.libtype,p:program, q:syminfo) program 
-  let myinst = // if length.instruction.q > 0 &and (instruction.q)_1="USECALL"_1 then instruction.q
+function addtoprogram(alltypes:set.libtype,map:set.track,p:program, f:word) program
+   let z = find(allfunctions.p, func( 0, mytype."", f,  tree.cnode("X"_1,"X"_1), ""))
+    if length.z = 1 then p else 
+   let a= findelement( track(syminfoX(f)),map)
+    if isempty.a then p
+    else 
+    addlibsym(alltypes,map,p,tosyminfo.a_1)
+   
+
+
+function addlibsym(alltypes:set.libtype,map:set.track,p:program, q:syminfo) program 
+   let myinst = // if length.instruction.q > 0 &and (instruction.q)_1="USECALL"_1 then instruction.q
        else // funcfrominstruction(alltypes, instruction.q, replaceT(parameter.modname.q, returntype.q), length.paratypes.q)
   let tr = findconst.buildcodetree( myinst, 2)
-  let rt = if hasproto.q then towords.protoreturntype.q else towords.returntype.q 
+  let rt = if hasproto.q then  protoreturntype.q else  returntype.q 
    let  profile= if nosons.tr &ne 1 then "noprofile" else
        if (inst.label.tr="PROFILEZoptionsZT"_1) 
        then [mangled.q ] else "noprofile"
   let tr1 = if  profile="noprofile" then tr else tr_1
-      let arcs = asset.calls(mangled.q, tr1)
+  let arcs = asset.calls(mangled.q, tr1)
       let isrecusive=arc(mangled.q,mangled.q) in arcs
       let hasapply =  arc(mangled.q,"APPLY"_1) in arcs
      let tr2= if isrecusive then
           tailcall(tr1, mangled.q,length.paratypes.q)
       else tr1
      let e = if hasapply then 
-        expandapply(p,tr2,profile)  
+        expandapply(p,tr2,subseq(profile,1,1))  
     else rexpand(p,tr2) 
+  let arcs2=if hasapply &or isrecusive then  asset.calls(mangled.q, c.e) else arcs 
    let functyp=functype(c.e,length.paratypes.q)
-    if isrecusive &or hasapply  &or not( functyp in "SIMPLE INLINE") then 
-      newfunc(p.e,func(length.paratypes.q, rt, mangled.q, c.e,profile) , 
-       if hasapply &or isrecusive then  calls(mangled.q, c.e) else toseq.arcs) 
+   let prg= if isrecusive &or hasapply  &or not( functyp in "SIMPLE INLINE") then 
+      newfunc(p.e,func(length.paratypes.q, rt, mangled.q, c.e,profile) , toseq.arcs2) 
       else
           let fn = func(length.paratypes.q, rt, mangled.q, c.e,profile+functyp) 
-          let newp=
-         program(library.p, allfunctions.p, callgraph.p ,inline.p+fn)
-          newfunc(newp,fn, if hasapply &or isrecusive then  calls(mangled.q, c.e) else toseq.arcs) 
+          let newp= program(library.p, allfunctions.p, callgraph.p ,inline.p+fn)
+          newfunc(newp,fn,   toseq.arcs2) 
+   @(addtoprogram(alltypes,map),head,prg,toseq(arcs2 &cup arcs))
+   
 
- 
+  
 
 
 
@@ -147,26 +166,20 @@ function roots(m:mod2desc)set.word
   then empty:set.word 
   else  @(+, mangled, empty:set.word, toseq.export.m + toseq.defines.m)
   
-    
-function isbuiltin(f:word) seq.word    let a=codedown.f
-    if length.a > 1 &and  ( a_2 = "builtin"  ) then [f] else ""
-   
+       
+
 
 Function pass2(r:pass1result)pass1result 
  // does inline expansion, finds consts, removes unreaachable functions // 
-   PROFILE.let p=@(addlibsym.alltypes.r,identity,program(libname(r)_1, invertedseq.dummyfunc,newgraph.empty:seq.arc.word,empty:seq.func),newcode.r + compiled.r )
-   let roots = toseq.@(∪, roots, empty:set.word, mods.r)
-   let s2 = expandinline.p
-   let rch = reachable(callgraph.s2,roots) 
-   let builtins=asset.@(+, isbuiltin, empty:seq.word, toseq.rch)
-   let reachable2 = toseq(rch-builtins)
-   let f = @(+,lookupfunc.s2, empty:seq.func, reachable2)
-   let y = @(+, readwritestate, empty:seq.word, f)
-   let state = reachable(complement.callgraph.s2, y)
+   PROFILE.let p1=program(libname(r)_1, invertedseq.dummyfunc,newgraph.empty:seq.arc.word,empty:seq.func)
+     let roots = toseq.@(∪, roots, empty:set.word, mods.r)
+      let p=@(addtoprogram(alltypes.r,@(+,track,empty:set.track,newcode.r + compiled.r)),identity,p1,roots) 
+     let s2 = expandinline.p
+     let statechangingfuncs = reachable(complement.callgraph.s2, toseq.predecessors(callgraph.s2,"STATE"_1))
    // only pass on functions that can be reached from roots and are in this library // 
-   let g = @(+, filterlib.asset.@(+, mangled, empty:seq.word, compiled.r), empty:seq.func, f)
+   let g=    reachable(callgraph.s2,roots)  - asset.@(+, mangled, empty:seq.word, compiled.r) 
    // find tail calls and constants // 
-   let rr = @(+, findconstandtail.state, empty:seq.func, g)
+   let rr = @(+, findconstandtail(s2,statechangingfuncs), empty:seq.func, toseq.g)
    pass1result(rr, libname.r, newcode.r, compiled.r, mods.r, existingtypes.r, alltypes.r)
 
 function checktree(s:seq.func)boolean @(∧, checktree, true, s)
@@ -182,15 +195,16 @@ function checktree(t:tree.cnode)boolean
   then false 
   else if inst.label.t ="if"_1 ∧ not(nosons.t = 3)then false else @(∧, checktree, true, sons.t)
 
-function readwritestate(f:func)seq.word 
- if"STATE"in codetree.f then [ mangledname.f]else empty:seq.word
 
-function findconstandtail(stateChangingFuncs:set.word, f:func)func 
- // finds constants,, finds tail calls, and make sure"STATE"is root on state changing functions // 
+function findconstandtail(p:program,stateChangingFuncs:set.word, mangledname:word)seq.func 
+ // finds constants, discards builtins, and make sure"STATE"is root on state changing functions //
+  let a=codedown.mangledname
+    if length.a > 1 &and  ( a_2 = "builtin"  ) then empty:seq.func else 
+  let f=lookupfunc(p,mangledname)
   let q = findconst.codetree.f 
-    replacecodetree(f, if mangledname.f in stateChangingFuncs ∧ not(inst.label.q ="STATE"_1)
+    [replacecodetree(f, if mangledname.f in stateChangingFuncs ∧ not(inst.label.q ="STATE"_1)
    then tree(cnode("STATE"_1,"0"_1), [ q])
-   else q)
+   else q)]
 
 function print(g:graph.word)seq.word @(+, p,"", toseq.arcs.g)
 
@@ -202,7 +216,7 @@ Function calls(self:word, t:tree.cnode)seq.arc.word
  @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.label.t="FREF"_1
   then 
      [ arc(self, arg.label.t)]
-  else  if inst.label.t in " WORD RECORD IDXUC LIT LOCAL PARA SET LOOP CONTINUE  NOINLINE EQL ADD if CALLIDX PROCESS2 CRECORD SETFLD3 STATE"
+  else  if inst.label.t in " WORD RECORD IDXUC LIT LOCAL PARA SET LOOP CONTINUE  NOINLINE EQL ADD if CALLIDX PROCESS2 CRECORD SETFLD3 "
   then  empty:seq.arc.word
   else  //
     let  a=codedown.inst.label.t
@@ -242,10 +256,10 @@ function replacecall(simple:func,p:program, f:word)program
    else 
      let functyp=functype(t,nopara.infunc)
      if functyp in "SIMPLE INLINE" then 
-       let newfn = func(nopara.infunc, symboltext.infunc, mangledname.infunc, t, subseq(profile.infunc,1,1)+functyp)
+       let newfn = func(nopara.infunc, returntype.infunc, mangledname.infunc, t, subseq(flags.infunc,1,1)+functyp)
          replacefunc(program(library.p,allfunctions.p,callgraph.p,inline.p+newfn),newfn) 
      else  
-      replacefunc(p, func(nopara.infunc, symboltext.infunc, mangledname.infunc, t, subseq(profile.infunc,1,1)))
+      replacefunc(p, func(nopara.infunc, returntype.infunc, mangledname.infunc, t, subseq(flags.infunc,1,1)))
   
 /function diff(a:tree.cnode,b:tree.cnode,i:int) seq.word
     if i = 0 then if label.a=label.b then
@@ -275,7 +289,7 @@ function newfunc(p:program, fn:func,arcs:seq.arc.word)program
 
 
 function lookupfunc(p:program,f:word) func
-  let z = find(allfunctions.p, func( 0, "", f,  tree.cnode("X"_1,"X"_1), ""))
+  let z = find(allfunctions.p, func( 0, mytype."", f,  tree.cnode("X"_1,"X"_1), ""))
   if length.z = 0 then dummyfunc else 
   value.z_1
 
@@ -332,7 +346,7 @@ function newinline( simple:func, sets:seq(tree.cnode), nextset:int, code:tree.cn
     let l = @(+, newinline(simple, sets,nextset), empty:seq.tree.cnode, sons.code)
   if iscallto(code , mangledname.simple )
   then 
-    if "SIMPLE"_1 in profile.simple then
+    if "SIMPLE"_1 in flags.simple then
      subinline(mangledname.simple, l,dseq(tree.cnode("UNASIGNED"_1,"1"_1)), nextset, codetree.simple)
     else
     processpara(simple,sets,nextset,sons.code,empty:seq.tree.cnode) 
@@ -419,7 +433,7 @@ function genapply(prg:program, term1:word, term2:word, ptyp:word, profile:seq.wo
   let newfuncmangledname = mangle("q"_1, mytype.[ next], constantseq(nopara, mytype."int"))
   assert p ≥ 0 report"illformed"+ term1 + term2 + print(lookupfunc(prg,term2))
   let insttree = buildcodetree(template(newfuncmangledname, term1, term2, p1, p, ptyp), 1)
-   func(nopara,"int", newfuncmangledname, insttree, profile)
+   func(nopara,mytype."int", newfuncmangledname, insttree, profile)
  
 function parainst(i:int)seq.word {"PARA"+ toword.i }
 
