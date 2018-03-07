@@ -25,7 +25,6 @@ BT aborted(BT p);
 #define IDXUC(a,b)  (*(BT *)((a)+8*(b)))
 #define  IDX(PD,P2,P1)   (*(BT*)(P2)== 0) ? IDXUC(P2,P1 + 1): ((*(BT *) (P2) )==1) ? *((unsigned char *) ((P2)+15+ (P1)  ) ) :    ((BT(*)(processinfo,BT, BT))IDXUC(P2,0))(PD,P2,P1)
 
-//#define SETFLD3(a,x,i)       (*(BT *)((a)+8*(i))=x )
 
 BT DECODE(processinfo PD,BT P1,BT P2);
 BT ENCODE(processinfo PD,BT P1,BT P2);

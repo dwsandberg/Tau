@@ -12,7 +12,6 @@ use ipair.word
 
 use myseq.int
 
-use options.seq.word
 
 use point2d
 
@@ -43,7 +42,7 @@ use stdlib
 use textio
 
 Function test5 seq.word 
- PROFILE.let y = [ test501, t502, t503, t504, t505, t506, t507, t508, t509, t510, 
+  let y = [ test501, t502, t503, t504, t505, t506, t507, t508, t509, t510, 
   t511, t512, t513, t514, t515, t516, t517, t518, t519, t520, 
   t521, t522, t523]
   check(y,"test5")

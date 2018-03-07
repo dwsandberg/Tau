@@ -12,9 +12,6 @@ use libdesc
 
 use libscope
 
-use options.process.pass1result
-
-use options.seq.word
 
 use pass0
 
@@ -107,8 +104,12 @@ Function pass(passno:int, libname:word)pass1result
   assert not.aborted.p report message.p 
   result.p
 
+use seq.seq.word
+
+use seq.process.pass1result
+
 function subcompilelib(libname:word)seq.word 
-  PROFILE.let discard3 = length.mapping.libsymencoding 
+  OPTIONS("PROFILE",let discard3 = length.mapping.libsymencoding 
   let ld = tolibdesc.libname 
   if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
   then interface([ name.ld], exports.ld, dependentlibs.ld)
@@ -124,11 +125,11 @@ function subcompilelib(libname:word)seq.word
   then message.p 
   else let y1 = codegen5.result.p 
   let z2 = createlib(y1, libname, dependentlibs.ld)
-  "OK"
+  "OK")
 
 function waitforpass2(a:pass1result)process.pass1result 
- // PROFILE. // let p = process.pass2.a 
-  if aborted.p then p else p
+ OPTIONS("PROFILE NOINLINE" , let p = process.pass2.a 
+  if aborted.p then p else p)
 
 function asliblib(s:seq.word, a:liblib, l:liblib)liblib 
  if libname(l)_1 in s then a + l else a

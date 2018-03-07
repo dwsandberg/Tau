@@ -41,7 +41,7 @@ Function RECORDtemplate internalbc
 function subtable seq.match5 
  sort.[ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64, -1, ibcsub2)+ LOAD(3, -2, typ.i64, align8, 0)), 
  match5(// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(1, ibcsub1, ibcsub2, 39)+ CAST(2, -1, typ.i64, CASTZEXT)+ CMP2(3, ibcsub1, ibcsub2, 38)+ CAST(4, -3, typ.i64, CASTZEXT)+ BINOP(5, -2, -4, 0, typ.i64)), 
- match5("Q2BZbuiltinZTzaddressZint"_1, 2, // Q2BZbuiltinZTzaddressZint(a, b)((a)+((b)<<3))// 
+  match5("getaddressZbuiltinZTzseqZint"_1, 2,  
   BINOP(1, ibcsub2, C64.3, // shift left // 7)+ BINOP(2, ibcsub1, -1, 0, typ.i64)), 
  match5("Q3EZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 38)+ CAST(2, -1, typ.i64, CASTZEXT)), 
  match5("notZbuiltinZboolean"_1, 1, BINOP(1, ibcsub1, C64.1, 12, typ.i64)), 
@@ -67,7 +67,13 @@ function subtable seq.match5
  match5("Q3CQ3CZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // SHL // 7, typ.i64)), 
  match5("Q3EQ3EZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // LSHR // 8, typ.i64)), 
  match5("Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // AND // 10, typ.i64)), 
- match5("Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // OR // 11, typ.i64))]
+ match5("Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // OR // 11, typ.i64)),
+ match5("setfldZbuiltinZTzaddressZT"_1,3, CAST( 1, ibcsub1, typ.ptr.i64, 10)+ 
+ STORE(2, -1, ibcsub2,align8,0)+
+ GEP(2,1,typ.i64,-1,C64.1)+
+  CAST(3, -2, typ.i64, 9))]
+ 
+        
  
  
 

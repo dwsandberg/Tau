@@ -14,7 +14,6 @@ run testall testall
 
 use checking
 
-use options.seq.word
 
 use real
 

@@ -7,11 +7,7 @@ use graph.word
 
 use libscope
 
-use options.pass1result
 
-use options.seq.func
-
-use options.tree.cnode
 
 use oseq.int
 
@@ -67,30 +63,38 @@ function isconst(t:tree.cnode) boolean
    
 
 Function findconst(t:tree.cnode)tree.cnode 
-  if nosons.t = 0 
-  then t 
-  else  
-     let inst =  inst.label.t 
+  if nosons.t = 0  then t  else  
+   let inst =  inst.label.t 
    if inst ="CRECORD"_1 then t
    else 
    let l = @(+, findconst, empty:seq.tree.cnode, sons.t)
-   if inst ="RECORD"_1 
+  if inst ="RECORD"_1 
   then 
        tree(if @(&and,isconst,true,l) then cnode("CRECORD"_1,"0"_1) else label.t,l)
   else  if inst ="IDXUC"_1 ∧ inst.label(l_2)="LIT"_1 ∧ inst.label(l_1)="CRECORD"_1 
   then  
      let idx = toint.arg.label(l_2)
-     (l_1)_(idx+1)
-   else  if inst in"Q5FZwordzseqZTzseqZint"∧ inst.label(t_2)="LIT"_1 ∧ inst.label(t_1)="CRECORD"_1 
+      if between(idx,0,nosons(l_1)-1) then
+       (l_1)_(idx+1)
+       else tree(label.t, l)
+   else  if inst="if"_1 then
+       let i2=inst.label(l_1)
+       if i2=  "LIT"_1 then
+        if arg.label(l_1) ="1"_1 then l_2 else l_3
+       else if i2="notZbuiltinZboolean"_1 then
+          tree(label.t, [l_1_1,l_3,l_2])
+       else tree(label.t, l)
+   else 
+   if inst in"Q5FZwordzseqZTzseqZint"∧ inst.label(l_2)="LIT"_1 ∧ inst.label(l_1)="CRECORD"_1 
   then // only expand when is standard sequence:that is 0 is in first field of record // 
-   let cst = t_1
-   let idx = toint.arg.label(t_2)
-   if idx > 0 ∧  inst.label(cst_1)  ="LIT"_1 ∧ arg.label(cst_1)   ="0"_1 
+   let cst = l_1
+   let idx = toint.arg.label(l_2)
+   if idx > 0 ∧  idx &le nosons(cst)-2 &and inst.label(cst_1)  ="LIT"_1 ∧ arg.label(cst_1)   ="0"_1 
    then cst_( idx + 2)
    else tree(label.t, l)
-  else   if inst in [ opSUB, opRSUB]∧ inst.label(t_1)="LIT"_1 ∧ inst.label(t_2)="LIT"_1 
-  then let a = toint.arg.label(t_1)
-   let b = toint.arg.label(t_2)
+  else   if inst in [ opSUB, opRSUB]∧ inst.label(l_1)="LIT"_1 ∧ inst.label(l_2)="LIT"_1 
+  then let a = toint.arg.label(l_1)
+   let b = toint.arg.label(l_2)
    if inst = opSUB 
    then if between(a, -100, 100)∧ between(b, -100, 100)
     then tree.cnode("LIT"_1, toword(a - b))
@@ -107,7 +111,7 @@ function prt(f:seq.func, i:int)seq.word [ EOL]+ mangledname(f_i)+ towords.return
 function filterlib(existing:set.word, f:func)seq.func 
  if mangledname.f in existing then empty:seq.func else [ f]
 
-use options.program
+
 
 
 type track is record  tosyminfo: syminfo
@@ -131,12 +135,15 @@ function addtoprogram(alltypes:set.libtype,map:set.track,p:program, f:word) prog
 function addlibsym(alltypes:set.libtype,map:set.track,p:program, q:syminfo) program 
    let myinst = // if length.instruction.q > 0 &and (instruction.q)_1="USECALL"_1 then instruction.q
        else // funcfrominstruction(alltypes, instruction.q, replaceT(parameter.modname.q, returntype.q), length.paratypes.q)
-  let tr = findconst.buildcodetree( myinst, 2)
+  let trz = findconst.buildcodetree( myinst, 2)
+  // remove unnneed sets // 
+  let tr=newinline(  dummyfunc, dseq(tree.cnode("UNASIGNED"_1,"1"_1)),1,trz)
   let rt = if hasproto.q then  protoreturntype.q else  returntype.q 
-   let  profile= if nosons.tr &ne 1 then "noprofile" else
-       if (inst.label.tr="PROFILEZoptionsZT"_1) 
-       then [mangled.q ] else "noprofile"
-  let tr1 = if  profile="noprofile" then tr else tr_1
+   let options = if nosons.tr = 2 &and inst.label.tr = "OPTIONSZoptionsZwordzseqZT"_1  then 
+         @(+,arg,"",@(+, label, empty:seq.cnode,  sons.(tr_1)))
+        else ""
+   let  profile= if "PROFILE"_1 in options then    [mangled.q ] else "noprofile"
+  let tr1 = if  options="" then tr else tr_2
   let arcs = asset.calls(mangled.q, tr1)
       let isrecusive=arc(mangled.q,mangled.q) in arcs
       let hasapply =  arc(mangled.q,"APPLY"_1) in arcs
@@ -147,17 +154,20 @@ function addlibsym(alltypes:set.libtype,map:set.track,p:program, q:syminfo) prog
         expandapply(p,tr2,subseq(profile,1,1))  
     else rexpand(p,tr2) 
   let arcs2=if hasapply &or isrecusive then  asset.calls(mangled.q, c.e) else arcs 
-   let functyp=functype(c.e,length.paratypes.q)
-   let prg= if isrecusive &or hasapply  &or not( functyp in "SIMPLE INLINE") then 
-      newfunc(p.e,func(length.paratypes.q, rt, mangled.q, c.e,profile) , toseq.arcs2) 
+   let flags=fixflags(c.e,length.paratypes.q,profile+options)
+    let prg= if isrecusive &or hasapply  &or not( "SIMPLE"_1 in flags &or "INLINE"_1 in flags) then 
+       newfunc(p.e,func(length.paratypes.q, rt, mangled.q, c.e,flags) , toseq.arcs2) 
       else
-          let fn = func(length.paratypes.q, rt, mangled.q, c.e,profile+functyp) 
+           let fn = func(length.paratypes.q, rt, mangled.q, c.e,flags) 
           let newp= program(library.p, allfunctions.p, callgraph.p ,inline.p+fn)
           newfunc(newp,fn,   toseq.arcs2) 
    @(addtoprogram(alltypes,map),head,prg,toseq(arcs2 &cup arcs))
    
-
-  
+function fixflags(t:tree.cnode,nopara:int,oldflags:seq.word)  seq.word
+      let functyp=  if "NOINLINE"_1 in oldflags then "NOINLINE"_1 else    functype(t,nopara)
+      subseq(oldflags,1,1) +toseq( asset.subseq(oldflags,2,100)-asset."SIMPLE INLINE" + functyp )
+      
+ 
 
 
 
@@ -167,20 +177,25 @@ function roots(m:mod2desc)set.word
   else  @(+, mangled, empty:set.word, toseq.export.m + toseq.defines.m)
   
        
-
+use seq.pass1result
 
 Function pass2(r:pass1result)pass1result 
+ OPTIONS("PROFILE",
  // does inline expansion, finds consts, removes unreaachable functions // 
-   PROFILE.let p1=program(libname(r)_1, invertedseq.dummyfunc,newgraph.empty:seq.arc.word,empty:seq.func)
+    let p1=program(libname(r)_1, invertedseq.dummyfunc,newgraph.empty:seq.arc.word,empty:seq.func)
      let roots = toseq.@(∪, roots, empty:set.word, mods.r)
       let p=@(addtoprogram(alltypes.r,@(+,track,empty:set.track,newcode.r + compiled.r)),identity,p1,roots) 
      let s2 = expandinline.p
      let statechangingfuncs = reachable(complement.callgraph.s2, toseq.predecessors(callgraph.s2,"STATE"_1))
    // only pass on functions that can be reached from roots and are in this library // 
-   let g=    reachable(callgraph.s2,roots)  - asset.@(+, mangled, empty:seq.word, compiled.r) 
+   let g=    reachable(callgraph.s2,roots)  - asset.@(+, mangled, empty:seq.word, compiled.r)
+            - asset."STATE"
    // find tail calls and constants // 
+   // assert not( "qZ107toolsZintZint"_1 in g) report "P"+toseq.predecessors(callgraph.s2,"qZ107toolsZintZint"_1) //
    let rr = @(+, findconstandtail(s2,statechangingfuncs), empty:seq.func, toseq.g)
-   pass1result(rr, libname.r, newcode.r, compiled.r, mods.r, existingtypes.r, alltypes.r)
+   // let rrr=if  mangledname(rr_1)="dummyfunc"_1 then subseq(rr,2,length.rr)
+    else  rr //
+   pass1result(rr, libname.r, newcode.r, compiled.r, mods.r, existingtypes.r, alltypes.r))
 
 function checktree(s:seq.func)boolean @(∧, checktree, true, s)
 
@@ -201,6 +216,7 @@ function findconstandtail(p:program,stateChangingFuncs:set.word, mangledname:wor
   let a=codedown.mangledname
     if length.a > 1 &and  ( a_2 = "builtin"  ) then empty:seq.func else 
   let f=lookupfunc(p,mangledname)
+  // assert not(mangledname.f="dummyfunc"_1) report "XXX"+mangledname //
   let q = findconst.codetree.f 
     [replacecodetree(f, if mangledname.f in stateChangingFuncs ∧ not(inst.label.q ="STATE"_1)
    then tree(cnode("STATE"_1,"0"_1), [ q])
@@ -216,7 +232,7 @@ Function calls(self:word, t:tree.cnode)seq.arc.word
  @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.label.t="FREF"_1
   then 
      [ arc(self, arg.label.t)]
-  else  if inst.label.t in " WORD RECORD IDXUC LIT LOCAL PARA SET LOOP CONTINUE  NOINLINE EQL ADD if CALLIDX PROCESS2 CRECORD SETFLD3 "
+  else  if inst.label.t in " WORD RECORD IDXUC LIT LOCAL PARA SET LOOP CONTINUE  NOINLINE EQL ADD if CALLIDX PROCESS2 CRECORD  "
   then  empty:seq.arc.word
   else  //
     let  a=codedown.inst.label.t
@@ -246,6 +262,7 @@ Simple inline expansion
           let pred = predecessors(callgraph.p, mangledname.simple) - mangledname.simple
            if isempty.pred  then p else  
              // inline expands may have happen in simple so we r lookup the current version //
+             assert not(mangledname.simple =" authencodingZtest3"_1) report "OOPS567"
              let s = lookupfunc(p,mangledname.simple )
              @(replacecall(s), identity, p,toseq.pred )
 
@@ -254,12 +271,12 @@ function replacecall(simple:func,p:program, f:word)program
    let t =  findconst.newinline(simple, dseq(tree.cnode("UNASIGNED"_1,"1"_1)),1,codetree.infunc)
    if codetree.infunc=t then p 
    else 
-     let functyp=functype(t,nopara.infunc)
-     if functyp in "SIMPLE INLINE" then 
-       let newfn = func(nopara.infunc, returntype.infunc, mangledname.infunc, t, subseq(flags.infunc,1,1)+functyp)
+     let flags=fixflags(t,nopara.infunc,flags.infunc)
+     if   "SIMPLE"_1 in flags &or "INLINE"_1 in flags  then 
+       let newfn = func(nopara.infunc, returntype.infunc, mangledname.infunc, t, flags)
          replacefunc(program(library.p,allfunctions.p,callgraph.p,inline.p+newfn),newfn) 
      else  
-      replacefunc(p, func(nopara.infunc, returntype.infunc, mangledname.infunc, t, subseq(flags.infunc,1,1)))
+      replacefunc(p, func(nopara.infunc, returntype.infunc, mangledname.infunc, t, flags))
   
 /function diff(a:tree.cnode,b:tree.cnode,i:int) seq.word
     if i = 0 then if label.a=label.b then
@@ -447,9 +464,23 @@ function template(mangledname:word, term1:word, term2:word, nopara1:int, nopara2
   // Inner loop LOCAL 3 result LOCAL 4 index LOCAL 5 length of seq // 
   // EQL-Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint // 
   let CALLSELF = [ mangledname,toword(2 + nopara1 + nopara2)]
-  let CALLTERMS = [term2, toword(1 + nopara2),term1, toword(2 + nopara1)]
+  let CALLTERM1 = [term1, toword(2 + nopara1)]
+    let CALLTERM2 = [term2, toword(1 + nopara2)]
    let TERM1PARA = @(+, parainst,"", arithseq(nopara1, -1, 2 + nopara1 + nopara2))
   let TERM2PARA = @(+, parainst,"", arithseq(nopara2, -1, 2 + nopara2))
+   {"LIT 1 LOCAL 2 LIT 0 IDXUC 2 FREF"+ ptyp +"Q3DZbuiltinZintZint 2"+ TERM1PARA + TERM2PARA +"LOCAL 1 LOCAL 2 LIT 2 IDXUC 2 "
+  + CALLSELF +"LOCAL 2 LIT 3 IDXUC 2 CONTINUE 2 LOCAL 2 LIT 1 IDXUC 2 LIT 3 LOCAL 4 LOCAL 5 Q3EZbuiltinZintZint 2 
+     LOCAL 3"+
+     TERM2PARA 
+    +"LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 LOCAL 2 LOCAL 4 LIT 1 ADD 2 IDXUC 2 LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3 if 3 "
+    + CALLTERM2 
+  + TERM1PARA 
+    +"LOCAL 3 LOCAL 6" 
+  +CALLTERM1 +
+  "LOCAL 4 LIT 1 ADD 2 
+  CONTINUE 2 SET 6 if 3 LOCAL 1 LIT 1 LOOP 4 SET 5 if 3 PARA 2 PARA 1 LOOP 4"}
+
+  
   {"LIT 1 LOCAL 2 LIT 0 IDXUC 2 FREF"+ ptyp +"Q3DZbuiltinZintZint 2"+ TERM1PARA + TERM2PARA +"LOCAL 1 LOCAL 2 LIT 2 IDXUC 2 "
   + CALLSELF +"LOCAL 2 LIT 3 IDXUC 2 CONTINUE 2 LOCAL 2 LIT 1 IDXUC 2 LIT 3 LOCAL 4 LOCAL 5 Q3EZbuiltinZintZint 2 LOCAL 3"
   + TERM1PARA +"LOCAL 3"+ TERM2PARA 

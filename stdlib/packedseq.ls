@@ -1,10 +1,32 @@
 Module packedseq(T)
 
-use internals.T
 
 use seq.T
 
 use stdlib
+
+setfld set value at a to x and return next address 
+
+Function setfld(a:address.T,x:T) address.T builtin.usemangle.STATE
+
+
+function allocatespace(i:int)seq.T builtin.usemangle
+
+type address is record toseq:seq.T
+
+Function getaddress(s:seq.T,i:int) address.T  builtin.usemangle
+
+Function toT(a:address.T)T builtin
+
+
+function inttoT(int) T builtin
+
+
+function fldof(T, offset:int)T builtin.IDXUC
+
+function getfld(packedseq.T,i:int) int builtin.IDXUC
+
+
 
 x is included in packedseq so the procedure to access the type with be different between instances of the scope.
 
@@ -14,32 +36,28 @@ Function length(packedseq.T)int export
 
 Function_(a:packedseq.T, i:int)T 
  let ds = sizeoftype:T 
-  toT(address.toseq.a +(2 + ds *(i - 1)))
+  toT(getaddress(toseq.a ,(2 + ds *(i - 1))))
 
 Function sizeoftype T builtin.TYPESIZE
 
 Function packed(s:seq.T)seq.T 
  let ds = sizeoftype:T 
-  let p = packedseq(length.s, empty:seq.T)
+  let typ = if ds= 1 then 0 else getfld(packedseq(length.s, empty:seq.T),0)  
   let b = allocatespace(ds * length.s + 2)
-  let c = setfld3(address.b, length.s, 1)
+  let address1stelement=setfld(setfld(getaddress(b,0),inttoT.typ),inttoT.length.s)
   let d = if ds = 1 
-   then let e = setfld3(address.b, 0, 0)
-    let g = @(setfldx, identity, address.b + 2, s)
-    0 
-   else let e = setfld3T(address.b, valueat(address.toseq.p, 0), 0)
+   then 
+     let g= @(setfld, identity, address1stelement, s)
+     0
+   else 
    @(+, setelement(ds, s, b), 0, arithseq(length.s, 1, 1))
   b
 
-function setfldx(a:address.T, value:T)address.T 
- let x = setfld4(a, value, 0)
-  a + 1
 
-Function setfld4(a:address.T, x:T, i:int)int builtin.SETFLD3
-
-function setelement(ds:int, s:seq.T, a:seq.T, i:int)int 
- let d = @(setfldx, valueat.ggg(s_i), address.a +(2 + ds *(i - 1)), arithseq(ds, 1, 0))
+function setelement(ds:int, s:seq.T, a:seq.T, i:int) int
+ let d = @(setfld, fldof(s_i), getaddress(a,(2 + ds *(i - 1))), arithseq(ds, 1, 0))
   0
 
-function ggg(T)address.T builtin
+
+
 

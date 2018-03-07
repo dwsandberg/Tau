@@ -6,13 +6,6 @@ use definestruct
 
 use libscope
 
-use options.pass1result
-
-use options.seq.mod2desc
-
-use options.seq.syminfo
-
-use options.syminfo
 
 use oseq.libsym
 
@@ -292,7 +285,7 @@ function isinstance(s:syminfo)set.word
   else empty:set.word
 
 Function pass1a(bindingonly:boolean, primitivemods:set.mod2desc, intemplates:seq.mod2desc, libname:seq.word)pass1result 
-   PROFILE.let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
+  //  PROFILE. // let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
   let P1 = toseq.primitivemods 
   let alltypes = assigntypesizes(@(+, typedefs, empty:seq.libtype, P1)+ templatetypes)
   let discard = @(+, checktypes.alltypes, 0, P1)

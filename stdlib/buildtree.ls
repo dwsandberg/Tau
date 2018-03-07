@@ -170,7 +170,7 @@ function ch1(t:tree.cnode)ch1result
    
 Function functype(t:tree.cnode,nopara:int) word
   let a = ch1(t)
-   if nodecount.a > 15 then "COMPLEX"_1
+   if nodecount.a > 15 &or "fail"_1 in para.a then "COMPLEX"_1
    else  if para.a = @(+,toword,"",arithseq(nopara,-1,nopara)) then "SIMPLE"_1
    else "INLINE"_1
 

@@ -8,11 +8,7 @@ use bits
 
 use internalbc
 
-use options.bitblock
 
-use options.bitstream
-
-use options.seq.int
 
 use seq.bitblock
 

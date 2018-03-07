@@ -14,11 +14,11 @@ Module tools
 
 /run tools test2
 
-run tools stdlibdoc
+/run tools stdlibdoc
 
 /run doc createdoc
 
-/run tools testprintBitCodes
+run tools testprintBitCodes
 
 /run tools test
 
@@ -58,7 +58,7 @@ Function test seq.word
  let a = compilelib("solardataall"_1)
   a + profileresults."time"
 
-Function testprintBitCodes seq.word printBitCodes."test2.bc"
+Function testprintBitCodes seq.word printBitCodes."test3.bc"
 
 Function stdlibdoc seq.word 
  callgraphbetween("stdlib","persistant reconstruct")+ // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"

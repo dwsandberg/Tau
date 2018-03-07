@@ -14,13 +14,7 @@ use libscope
 
 use llvm
 
-use options.Lcode5
 
-use options.funcdefresult5
-
-use options.seq.bits
-
-use options.seq.int
 
 use passcommon
 
@@ -69,7 +63,7 @@ function funcdec(proto:int, a:llvmconst)seq.int
   
 
 Function codegen5(z:pass1result)seq.bits 
- PROFILE.let thename = libname(z)_1 
+ // PROFILE. // let thename = libname(z)_1 
   let symlist ="libname initlib4 words wordlist list liblib profcounts profclocks profspace profrefs profstat spacecount clock"+ merge(thename,"$profileresult"_1)+"init22 allocatespaceZbuiltinZint PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   let discard2 = @(+, C, 0, symlist + @(+, mangledname,"", code.z))
   let discard3 = @(+, findcalls, 0, @(+, codetree, empty:seq.tree.cnode, code.z))
@@ -177,7 +171,7 @@ function print(m:localmap5)seq.word
 function findcalls(t:tree.cnode)int 
  let discard = if inst.label.t in"CALL FREF"
    then C.arg.label.t 
-   else  if inst.label.t in"SET RECORD LOCAL  LIT PARA EQL if IDXUC PROCESS2 STATE WORD SETFLD3  ADD  Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
+   else  if inst.label.t in"SET RECORD LOCAL  LIT PARA EQL if IDXUC PROCESS2 STATE WORD ADD  Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
    then 0 
    else 
    C.inst.label.t 
@@ -235,13 +229,7 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
    typ.i64, 
    C64(word33.arg + 1)])
    usetemplate(l, WORDtemplate, a, 0,-(regno.l + 1), 1)
-  else if inst ="SETFLD3"_1 
-  then let exp1 = gencode(lib, lmap, l, t_1)
-   let exp2 = gencode(lib, lmap, exp1, t_2)
-   let exp3 = gencode(lib, lmap, exp2, t_3)
-   let c = CAST(regno.exp3 + 1, arg.exp1, typ.ptr.i64, 10)+ GEP(regno.exp3 + 2, 1, typ.i64,-(regno.exp3 + 1), arg.exp3)+ STORE(regno.exp3 + 3,-(regno.exp3 + 2), arg.exp2, align8, 0)
-   addcode(exp3, c, arg.exp2, 2)
-  else if inst ="RECORD"_1 
+  else  if inst ="RECORD"_1 
   then genbuild3(lib, lmap, usetemplate(l, RECORDtemplate, C64.nosons.t, -1,-(regno.l + 1), 2), t,-(regno.l + 2), 1)
   else if inst ="if"_1 
   then let exp1a = gencode(lib, lmap, l, t_1)
