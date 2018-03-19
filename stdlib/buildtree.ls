@@ -26,13 +26,14 @@ Function arg(cnode)word export
 Function cnode(a:word, b:word)cnode export
 
 
-Function =(a:cnode, b:cnode)boolean inst.a = inst.b ∧ arg.b = arg.a
+Function =(a:cnode, b:cnode)boolean inst.a = inst.b ∧ 
+ if inst.a in "SET FLAT FLD LIT LOCAL FREF PARA WORD" then arg.b = arg.a else true
 
 type func is record nopara:int, returntype:mytype, mangledname:word, codetree:tree.cnode, flags:seq.word
 
 
 Function dummyfunc func 
- func(0,mytype."int","dummyfunc"_1, buildcodetree("LIT 1", 1),"noprofile")
+ func(0,mytype."int","dummyfunc"_1, buildcodetree("X LIT 1"),"noprofile")
 
 Function func(nopara:int, returntype:mytype, mangledname:word, codetree:tree.cnode, flags:seq.word)func 
  export
@@ -52,9 +53,48 @@ Function replacecodetree(f:func, new:tree.cnode)func
 
 function =(a:func, b:func)boolean mangledname.a = mangledname.b
 
-Function buildcodetree(a:seq.word, i:int)tree.cnode 
+type bld is record state:int,last:word,stk:stack.tree.cnode 
+
+use seq.bld
+
+use seq.word
+
+
+function  addinstruction(b:bld,w:word) bld
+// state :0  initial ,1  found CALL, 2 at noargs, 4 at funcname in CALL //
+OPTIONS("FORCEINLINE",
+  let newstk=if state.b < 2  &or ( last.b ="FLAT"_1 &and w="1"_1 )  then
+    stk.b else 
+    assert  last.b &ne "RECORDS"_1 report "X"
+    let z = if last.b in " LIT LOCAL FREF PARA WORD" then 
+           tree.cnode(last.b,w) 
+           else if last.b in "FLD" then
+            tree(if w="1"_1 then cnode("IDXUC"_1,"0"_1) else cnode( "getaddressZbuiltinZTzseqZint"_1,"0"_1), top(stk.b, 2))
+          else  if last.b in "SET" then    tree(cnode(last.b,w),top(stk.b,2))
+          else if  last.b in"$build $wordlist"
+              then let noelements = toint(w)
+                   let prefix = [ tree.cnode("LIT"_1,"0"_1), tree.cnode("LIT"_1, w)]
+            tree(cnode("RECORD"_1,"0"_1), prefix + removeflat(top(stk.b, noelements)))
+             else if last.b="RECORDS"_1 
+  then // last element in record becomes the first // 
+    tree(cnode("RECORD"_1,"0"_1), removeflat([ top.stk.b]+ top(pop.stk.b, toint(w) - 1)))
+          else  if last.b ="FLAT"_1 
+          then   tree(cnode(last.b, w), [ top.stk.b])
+          else  
+            let sons = top( stk.b, toint(if state.b=4 then  last.b else w))
+           tree(cnode( if state.b=4 then w else last.b,if state.b=4 then last.b else w),   
+            if last.b = "RECORD"_1 then          removeflat.sons else sons )
+     push(pop(stk.b, if last.b in "$build $wordlist RECORD RECORDS" then toint(w) else  nosons.z),z)
+  bld(  if state.b=0 then if w="CALL"_1 then 1 else 2  
+        else if state.b=1 then 4 else 0 ,  w , newstk))
+ 
+Function buildcodetree(data:seq.word) tree.cnode OPTIONS("special",top.stk.@(addinstruction,identity,bld(0,"START"_1,empty:stack.tree.cnode),
+subseq(data,2,length.data)))
+ 
+
+Function oldbuildcodetree(a:seq.word)tree.cnode 
  // let b = check(a, 0, 1,"") //
-  buildcodetree(a, empty:stack.tree.cnode, i)
+  buildcodetree(a, empty:stack.tree.cnode, 2)
 
 
 function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode 
@@ -71,16 +111,13 @@ function buildcodetree(a:seq.word, f:stack.tree.cnode, i:int)tree.cnode
    buildcodetree(a, push(pop(f, 2), tree(c, top(f, 2))), i + 2)
   else if a_i ="FLD"_1 
   then let args = top(f, 2)
-   let tr = if a_(i + 1)="1"_1 
-    then tree(cnode("IDXUC"_1,"0"_1), args)
-    else // 8 is number of bytes in word // 
-    tree(cnode("ADD"_1,"0"_1), [ args_1, tree.cnode("LIT"_1, toword(toint.arg.label(args_2)* 8))])
+   let tr =   tree(if a_(i + 1)="1"_1 then cnode("IDXUC"_1,"0"_1) else cnode( "getaddressZbuiltinZTzseqZint"_1,"0"_1), args)
    buildcodetree(a, push(pop(f, 2), tr), i + 2)
   else if a_i ="FLAT"_1 
   then if a_(i + 1)="1"_1 
    then buildcodetree(a, f, i + 2)
    else 
-    buildcodetree(a, push(pop.f, tree(cnode(a_i, a_(i + 1)), [ top.f])), i + 2)
+    buildcodetree(a, push(pop.f, tree(cnode( a_i, a_(i + 1)), [ top.f])), i + 2)
     else if a_i in"$build $wordlist"
   then let noelements = toint(a_(i + 1))
    let prefix = [ tree.cnode("LIT"_1,"0"_1), tree.cnode("LIT"_1, a_(i + 1))]

@@ -71,7 +71,8 @@ Function findconst(t:tree.cnode)tree.cnode
   if inst ="RECORD"_1 
   then 
        tree(if @(&and,isconst,true,l) then cnode("CRECORD"_1,"0"_1) else label.t,l)
-  else  if inst ="IDXUC"_1 ∧ inst.label(l_2)="LIT"_1 ∧ inst.label(l_1)="CRECORD"_1 
+  else  
+  if inst ="IDXUC"_1 ∧ inst.label(l_2)="LIT"_1 ∧ inst.label(l_1)="CRECORD"_1 
   then  
      let idx = toint.arg.label(l_2)
       if between(idx,0,nosons(l_1)-1) then
@@ -92,18 +93,32 @@ Function findconst(t:tree.cnode)tree.cnode
    if idx > 0 ∧  idx &le nosons(cst)-2 &and inst.label(cst_1)  ="LIT"_1 ∧ arg.label(cst_1)   ="0"_1 
    then cst_( idx + 2)
    else tree(label.t, l)
-  else   if inst in [ opSUB, opRSUB]∧ inst.label(l_1)="LIT"_1 ∧ inst.label(l_2)="LIT"_1 
-  then let a = toint.arg.label(l_1)
-   let b = toint.arg.label(l_2)
-   if inst = opSUB 
-   then if between(a, -100, 100)∧ between(b, -100, 100)
-    then tree.cnode("LIT"_1, toword(a - b))
-    else tree(label.t, l)
-   else // opRSUB // tree.cnode("LIT"_1, toword.representation(casttoreal.a - casttoreal.b))
+  else  
+      if length.l = 2 &and inst.label(l_1)="LIT"_1 ∧ inst.label(l_2)="LIT"_1 then
+       simplecalcs(label.t,toint.arg.label(l_1),toint.arg.label(l_2),l)
   else tree(label.t, l)
 
- 
+function simplecalcs( label:cnode, a:int,b:int, l:seq.tree.cnode) tree.cnode
+    let inst=inst.label
+      if inst=  opRSUB  then  tree.cnode("LIT"_1, toword.representation(casttoreal.a - casttoreal.b)) 
+     else  if not( between(a, -2147483648, 2147483648)∧ between(b, -2147483648, 2147483648)) then   tree(label,l)
+      else   if inst = opSUB then tree.cnode("LIT"_1, toword(a - b))
+      else   if inst = "Q2BZbuiltinZintZint"_1 then tree.cnode("LIT"_1, toword(a + b))
+      else   if inst = "Q2FZbuiltinZintZint"_1 &and b &ne 0 then tree.cnode("LIT"_1, toword(a / b))
+      else   if inst = "Q2AZbuiltinZintZint"_1 then tree.cnode("LIT"_1, toword(a * b))
+      else   if inst = "EQL"_1 then  tree.cnode("LIT"_1, if a = b then "1"_1 else "0"_1)
+      else   if inst = "Q3CQ3CZbuiltinZbitsZint"_1 then tree.cnode("LIT"_1, toword(toint(bits(a) << b)))
+            else   if inst = "Q3EQ3EZbuiltinZbitsZint"_1 then tree.cnode("LIT"_1, toword(toint(bits(a) >> b)))
+      else 
+           //  assert inst in "Q5EZstdlibZintZint BLOCKCOUNTZinternalbcZintZint  " report "XY" +inst  //
+         tree(label,l)
 
+use bits
+    
+    5E ^
+2A *
+2B +
+2F /
 
 
 function prt(f:seq.func, i:int)seq.word [ EOL]+ mangledname(f_i)+ towords.returntype(f_i)+ print.codetree(f_i)
@@ -135,8 +150,8 @@ function addtoprogram(alltypes:set.libtype,map:set.track,p:program, f:word) prog
 function addlibsym(alltypes:set.libtype,map:set.track,p:program, q:syminfo) program 
    let myinst = // if length.instruction.q > 0 &and (instruction.q)_1="USECALL"_1 then instruction.q
        else // funcfrominstruction(alltypes, instruction.q, replaceT(parameter.modname.q, returntype.q), length.paratypes.q)
-  let trz = findconst.buildcodetree( myinst, 2)
-  // remove unnneed sets // 
+  let trz = findconst.buildcodetree( myinst)
+  // remove unneed sets // 
   let tr=newinline(  dummyfunc, dseq(tree.cnode("UNASIGNED"_1,"1"_1)),1,trz)
   let rt = if hasproto.q then  protoreturntype.q else  returntype.q 
    let options = if nosons.tr = 2 &and inst.label.tr = "OPTIONSZoptionsZwordzseqZT"_1  then 
@@ -164,8 +179,9 @@ function addlibsym(alltypes:set.libtype,map:set.track,p:program, q:syminfo) prog
    @(addtoprogram(alltypes,map),head,prg,toseq(arcs2 &cup arcs))
    
 function fixflags(t:tree.cnode,nopara:int,oldflags:seq.word)  seq.word
-      let functyp=  if "NOINLINE"_1 in oldflags then "NOINLINE"_1 else    functype(t,nopara)
-      subseq(oldflags,1,1) +toseq( asset.subseq(oldflags,2,100)-asset."SIMPLE INLINE" + functyp )
+      subseq(oldflags,1,1) + let functyp=  if "FORCEINLINE"_1 in oldflags then "INLINE"_1 else 
+          if "NOINLINE"_1 in oldflags then "NOINLINE"_1 else    functype(t,nopara)
+      toseq( asset.subseq(oldflags,2,100)-asset."SIMPLE INLINE" + functyp )
       
  
 
@@ -210,14 +226,17 @@ function checktree(t:tree.cnode)boolean
   then false 
   else if inst.label.t ="if"_1 ∧ not(nosons.t = 3)then false else @(∧, checktree, true, sons.t)
 
+use opt2
 
 function findconstandtail(p:program,stateChangingFuncs:set.word, mangledname:word)seq.func 
  // finds constants, discards builtins, and make sure"STATE"is root on state changing functions //
   let a=codedown.mangledname
     if length.a > 1 &and  ( a_2 = "builtin"  ) then empty:seq.func else 
   let f=lookupfunc(p,mangledname)
-  // assert not(mangledname.f="dummyfunc"_1) report "XXX"+mangledname //
-  let q = findconst.codetree.f 
+  let o = if "special"_1 in flags.f then 
+    // assert mangledname in "addtobitstreamZinternalbcZintZbitzbitpackedseqZinternalbc" report "Z"+mangledname+ print.opt2.codetree.f //
+    opt2.codetree.f else codetree.f
+  let q = findconst.o 
     [replacecodetree(f, if mangledname.f in stateChangingFuncs ∧ not(inst.label.q ="STATE"_1)
    then tree(cnode("STATE"_1,"0"_1), [ q])
    else q)]
@@ -232,7 +251,7 @@ Function calls(self:word, t:tree.cnode)seq.arc.word
  @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.label.t="FREF"_1
   then 
      [ arc(self, arg.label.t)]
-  else  if inst.label.t in " WORD RECORD IDXUC LIT LOCAL PARA SET LOOP CONTINUE  NOINLINE EQL ADD if CALLIDX PROCESS2 CRECORD  "
+  else  if inst.label.t in " WORD RECORD IDXUC LIT LOCAL PARA SET LOOP CONTINUE  NOINLINE EQL if CALLIDX PROCESS2 CRECORD  "
   then  empty:seq.arc.word
   else  //
     let  a=codedown.inst.label.t
@@ -449,7 +468,7 @@ function genapply(prg:program, term1:word, term2:word, ptyp:word, profile:seq.wo
   let nopara = 2 + p + p1 
   let newfuncmangledname = mangle("q"_1, mytype.[ next], constantseq(nopara, mytype."int"))
   assert p ≥ 0 report"illformed"+ term1 + term2 + print(lookupfunc(prg,term2))
-  let insttree = buildcodetree(template(newfuncmangledname, term1, term2, p1, p, ptyp), 1)
+  let insttree = buildcodetree(template(newfuncmangledname, term1, term2, p1, p, ptyp))
    func(nopara,mytype."int", newfuncmangledname, insttree, profile)
  
 function parainst(i:int)seq.word {"PARA"+ toword.i }
@@ -462,30 +481,26 @@ function getnext(p:word)word
 function template(mangledname:word, term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)seq.word 
  // PARA 1 is index PARA 2 is seq PARA 3 is result LOCAL 3 is index LOCAL 2 is seq LOCAL 1 is result // 
   // Inner loop LOCAL 3 result LOCAL 4 index LOCAL 5 length of seq // 
-  // EQL-Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint // 
+  // EQL-Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint ADD = Q2BZbuiltinZintZint // 
   let CALLSELF = [ mangledname,toword(2 + nopara1 + nopara2)]
   let CALLTERM1 = [term1, toword(2 + nopara1)]
     let CALLTERM2 = [term2, toword(1 + nopara2)]
    let TERM1PARA = @(+, parainst,"", arithseq(nopara1, -1, 2 + nopara1 + nopara2))
   let TERM2PARA = @(+, parainst,"", arithseq(nopara2, -1, 2 + nopara2))
-   {"LIT 1 LOCAL 2 LIT 0 IDXUC 2 FREF"+ ptyp +"Q3DZbuiltinZintZint 2"+ TERM1PARA + TERM2PARA +"LOCAL 1 LOCAL 2 LIT 2 IDXUC 2 "
+   {"X LIT 1 LOCAL 2 LIT 0 IDXUC 2 FREF"+ ptyp +"Q3DZbuiltinZintZint 2"+ TERM1PARA + TERM2PARA +"LOCAL 1 LOCAL 2 LIT 2 IDXUC 2 "
   + CALLSELF +"LOCAL 2 LIT 3 IDXUC 2 CONTINUE 2 LOCAL 2 LIT 1 IDXUC 2 LIT 3 LOCAL 4 LOCAL 5 Q3EZbuiltinZintZint 2 
      LOCAL 3"+
      TERM2PARA 
-    +"LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 LOCAL 2 LOCAL 4 LIT 1 ADD 2 IDXUC 2 LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3 if 3 "
+    +"LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 LOCAL 2 LOCAL 4 LIT 1 Q2BZbuiltinZintZint 2 IDXUC 2 LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3 if 3 "
     + CALLTERM2 
   + TERM1PARA 
     +"LOCAL 3 LOCAL 6" 
   +CALLTERM1 +
-  "LOCAL 4 LIT 1 ADD 2 
+  "LOCAL 4 LIT 1 Q2BZbuiltinZintZint 2 
   CONTINUE 2 SET 6 if 3 LOCAL 1 LIT 1 LOOP 4 SET 5 if 3 PARA 2 PARA 1 LOOP 4"}
 
   
-  {"LIT 1 LOCAL 2 LIT 0 IDXUC 2 FREF"+ ptyp +"Q3DZbuiltinZintZint 2"+ TERM1PARA + TERM2PARA +"LOCAL 1 LOCAL 2 LIT 2 IDXUC 2 "
-  + CALLSELF +"LOCAL 2 LIT 3 IDXUC 2 CONTINUE 2 LOCAL 2 LIT 1 IDXUC 2 LIT 3 LOCAL 4 LOCAL 5 Q3EZbuiltinZintZint 2 LOCAL 3"
-  + TERM1PARA +"LOCAL 3"+ TERM2PARA 
-  +"LOCAL 2 LIT 0 IDXUC 2 LIT 0 Q3DZbuiltinZintZint 2 LOCAL 2 LOCAL 4 LIT 1 ADD 2 IDXUC 2 LOCAL 2 LIT 0 IDXUC 2 LOCAL 2 LOCAL 4 CALLIDX 3 if 3 "
-  + CALLTERMS +"LOCAL 4 LIT 1 ADD 2 CONTINUE 2 if 3 LOCAL 1 LIT 1 LOOP 4 SET 5 if 3 PARA 2 PARA 1 LOOP 4"}
+
 
 
 
@@ -525,3 +540,108 @@ function checkistypechangeonly(term1:word, term3:word)boolean
   length.q = 4 ∧ last(q_2)="seq"_1 ∧ q_1_1 ="+"_1 ∧ subseq(q, 3, length.q)= ["T seq","T"]
 
 
+module opt2
+
+use buildtree
+
+use stdlib
+
+use passcommon
+
+use tree.cnode
+
+use seq.word
+
+use seq.tree.cnode
+
+use set.word
+
+use seq.int
+   
+Function opt2(t:tree.cnode) tree.cnode
+ if inst.label.t &ne "LOOP"_1 then  t else
+  let newloop=
+    if  inst.label.t_2="if"_1 &and inst.label.t_2_3="SET"_1 &and inst.label.t_2_3_2="LOOP"_1  then
+            let innerloop=removeRECORD(t_2_3_2)
+                 //  assert false report "JK"+printb(0,t_2_3_2) //
+            if inst.label.innerloop="nogo"_1 then innerloop else 
+            let set=t_2_3 
+            let oldif = t_2
+             let newset=tree(label.set,[set_1,   removeRECORD(t_2_3_2) ])
+             let newif=tree(label.oldif,[oldif_1,oldif_2,newset])
+              tree(label.t,[t_1,newif]+subseq(sons.t,3,nosons.t))
+    else   removeRECORD(t) 
+  if inst.label.newloop="nogo"_1 then t else  newloop 
+    
+function nogo tree.cnode tree(cnode("nogo"_1,"0"_1))
+
+function removeRECORD(loop:tree.cnode) tree.cnode
+ let first=toint.arg.label(loop_1)
+         if  not (inst.label.loop_2 = "if"_1 ) then nogo else 
+        let checked=asset(look(loop_2_3)+look(loop_2_1))
+        let a= toseq( @(+,toword,empty:set.word,arithseq(nosons.loop-2,1,first))-checked)
+        let b = toseq(checked-asset."1 2 3 4 5 6 7 8 9 10 11 12")
+         // assert false report a+"/"+b // 
+      if length.a &ne 1 &or length.b &ne 1   &or    not(cnode("LOCAL"_1,a_1) = label.loop_2_2 )     then nogo
+    else 
+        let z=decode(b_1)
+        let x=decode("X"_1)_1
+        let i= findindex(x,z)
+        let expand=[toint.encodeword(subseq(z,1,i-1))]
+        let size=toint.encodeword(subseq(z,i+1,100 ))
+        let map = constantseq(expand_1,0)+1 
+           let if1=ghj(map,expand,loop_2_1)
+            let if2=     tree(cnode("RECORD"_1,"0"_1),   @(+,makelocal,empty:seq.tree.cnode,arithseq(size,1,first)))
+            let if3=ghj(map,expand,loop_2_3)
+            let init=  @(+,fix3(loop_3),empty:seq.tree.cnode,arithseq(2,1,0))+loop_4
+           let newloop=tree(label.loop, [loop_1,tree(label.loop_2,[if1,if2,if3])]+init)
+            newloop 
+
+function   makelocal(i:int) tree.cnode tree.cnode("LOCAL"_1,toword.i)
+ 
+
+function look(t:tree.cnode) seq.word
+  // returns all local variables that are not accessed like " IDXUC(LOCAL x,LIT y) ".
+     Also returns   "jXi" where j is loop variable of form RECORD(s1,s2, ... ,si) //
+      if inst.label.t="CONTINUE"_1 then 
+          @( aaa, checkrecord,"",sons.t ) +  @( +,look,"",sons.t )
+          else
+      if  inst.label.t="LOCAL"_1 then [arg.label.t]
+      else if inst.label.t="IDXUC"_1 &and inst.label.t_2="LIT"_1
+          &and inst.label.t_1="LOCAL"_1 then ""
+      else @(+,look,"",sons.t)
+
+function checkrecord(t:tree.cnode) word
+    if  inst.label.t="SET"_1 then checkrecord(t_2)
+    else   
+      if inst.label.t="RECORD"_1 then toword.nosons.t
+      else "X"_1
+    
+function  aaa(s:seq.word,t:word) seq.word
+       if t="X"_1 then s+[toword(length(s)+1)] else s+merge([toword(length(s)+1)]+"X"+t)
+ 
+function ghj(map:seq.int, expand:seq.int ,   t:tree.cnode) tree.cnode
+     let inst=inst.label.t
+    if inst = "LOCAL"_1  then  
+       tree.cnode(inst,toword.mapit(map,arg.label.t))
+    else if inst = "SET"_1  then 
+      tree(cnode(inst,toword.mapit(map, arg.label.t)),[ghj(map,expand,t_1),ghj(map,expand,t_2)])
+    else if inst="IDXUC"_1 &and inst.label.t_2="LIT"_1 
+          &and inst.label.t_1="LOCAL"_1 &and toint.arg.label.t_1 in expand then
+           tree.cnode("LOCAL"_1, toword( mapit(map,arg.label.t_1)+toint.arg.label.t_2)) 
+    else if   inst="CONTINUE"_1 then
+     tree(label.t,@(+,handlecontinue(map,expand,t),empty:seq.tree.cnode,arithseq(nosons.t,1,1)))  
+    else  tree(label.t,@(+,ghj(map,expand),empty:seq.tree.cnode,sons.t))
+         
+function handlecontinue(map:seq.int,expand:seq.int,t:tree.cnode,son:int)   seq.tree.cnode
+       if son in expand then 
+         @(+,ghj(map,expand),empty:seq.tree.cnode,sons.t_son) 
+        else [ghj(map,expand,t_son)]
+        
+ function fix3(t:tree.cnode, i:int) tree.cnode
+        tree(cnode("IDXUC"_1,"0"_1),
+           [t,tree.cnode("LIT"_1,toword.i)])
+
+function mapit  ( map:seq.int,arg:word) int
+  let i = toint.arg
+   if i > length.map then last.map+i else i+map_i

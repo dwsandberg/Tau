@@ -91,7 +91,7 @@ Function ?(a:int, b:int)ordering builtin.usemangle
 
 Function ?(a:ordering, b:ordering)ordering toint.a ? toint.b
 
-Function +(a:int, b:int)int builtin.ADD
+Function +(a:int, b:int)int builtin.usemangle
 
 Function-(a:int, b:int)int builtin.usemangle
 

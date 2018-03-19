@@ -171,7 +171,7 @@ function print(m:localmap5)seq.word
 function findcalls(t:tree.cnode)int 
  let discard = if inst.label.t in"CALL FREF"
    then C.arg.label.t 
-   else  if inst.label.t in"SET RECORD LOCAL  LIT PARA EQL if IDXUC PROCESS2 STATE WORD ADD  Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
+   else  if inst.label.t in"SET RECORD LOCAL  LIT PARA EQL if IDXUC PROCESS2 STATE WORD   Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
    then 0 
    else 
    C.inst.label.t 

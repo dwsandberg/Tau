@@ -31,8 +31,6 @@ function offsetthread(a:seq.int, i:int)int
   offsetthread(a, getlink.d)
 
 
-/function cast2int(address.int)int builtin
-
 
 
 
