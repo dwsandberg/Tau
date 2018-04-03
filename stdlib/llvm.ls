@@ -1,6 +1,6 @@
 module llvm
 
-In addition to the llvm bicode format documentation, an useful file for reference is LLVMBitCodes.h
+In addition to the llvm bitcode format documentation, an useful file for reference is LLVMBitCodes.h
 
 use bitpackedseq.bit
 

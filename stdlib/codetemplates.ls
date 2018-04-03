@@ -38,6 +38,9 @@ Function WORDtemplate internalbc LOAD(1, ibcsub1, typ.i64, align8, 0)
 Function RECORDtemplate internalbc 
  CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceZbuiltinZint", ibcsub2, ibcsub1)+ CAST(2, -1, typ.ptr.i64, CASTINTTOPTR)
 
+Function STKRECORDtemplate(size:int) internalbc 
+ ALLOCA(1,typ.ptr.i64,typ.i64,size,0)+CAST(2, -1, typ.i64, CASTPTRTOINT)
+
 function subtable seq.match5 
  sort.[ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64, -1, ibcsub2)+ LOAD(3, -2, typ.i64, align8, 0)), 
  match5(// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(1, ibcsub1, ibcsub2, 39)+ CAST(2, -1, typ.i64, CASTZEXT)+ CMP2(3, ibcsub1, ibcsub2, 38)+ CAST(4, -3, typ.i64, CASTZEXT)+ BINOP(5, -2, -4, 0, typ.i64)), 
@@ -70,9 +73,11 @@ function subtable seq.match5
  match5("setfldZbuiltinZTzaddressZT"_1,3, CAST( 1, ibcsub1, typ.ptr.i64, 10)+ 
  STORE(2, -1, ibcsub2,align8,0)+
  GEP(2,1,typ.i64,-1,C64.1)+
-  CAST(3, -2, typ.i64, 9))]
+  CAST(3, -2, typ.i64, 9) )]
  
-        
+
+
+
  
  
 

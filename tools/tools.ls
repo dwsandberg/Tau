@@ -14,13 +14,13 @@ run tools test
 
 /run tools test2
 
-run tools stdlibdoc
+/run tools stdlibdoc
 
 /run doc createdoc
 
 run tools testprintBitCodes
 
-/run tools test
+run tools test
 
 run tools checkdoclib
 
@@ -55,7 +55,7 @@ Function prettytest seq.word prettylib("tools","")
 Function checkdoclib seq.word doclibrary."tools"
 
 Function test seq.word 
- let a = compilelib("stdlib"_1)
+ let a = compilelib("solardataall"_1)
   a + profileresults."time"
 
 Function testprintBitCodes seq.word printBitCodes."test3.bc"

@@ -171,7 +171,7 @@ function print(m:localmap5)seq.word
 function findcalls(t:tree.cnode)int 
  let discard = if inst.label.t in"CALL FREF"
    then C.arg.label.t 
-   else  if inst.label.t in"SET RECORD LOCAL  LIT PARA EQL if IDXUC PROCESS2 STATE WORD   Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
+   else  if inst.label.t in"SET RECORD CRECORD STKRECORD LOCAL  LIT PARA EQL if IDXUC PROCESS2 STATE WORD   Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
    then 0 
    else 
    C.inst.label.t 
@@ -229,9 +229,11 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
    typ.i64, 
    C64(word33.arg + 1)])
    usetemplate(l, WORDtemplate, a, 0,-(regno.l + 1), 1)
-  else  if inst ="RECORD"_1 
+  else  if inst ="RECORD"_1  
   then genbuild3(lib, lmap, usetemplate(l, RECORDtemplate, C64.nosons.t, -1,-(regno.l + 1), 2), t,-(regno.l + 2), 1)
-  else if inst ="if"_1 
+  else  if inst ="STKRECORD"_1  
+  then genbuild3(lib, lmap, usetemplate(l, STKRECORDtemplate( C64.nosons.t),-1, -1,-(regno.l + 2), 2), t,-(regno.l + 1), 1)
+  else  if inst ="if"_1 
   then let exp1a = gencode(lib, lmap, l, t_1)
    let c2 = CAST(regno.exp1a + 1, arg.exp1a, typ.i1, CASTTRUNC)
    let exp1 = addcode(exp1a, c2,-(regno.exp1a + 1), 1)
