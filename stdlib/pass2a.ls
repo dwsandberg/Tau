@@ -72,12 +72,16 @@ Function findconst(t:tree.cnode)tree.cnode
   then 
        tree(if @(&and,isconst,true,l) then cnode("CRECORD"_1,"0"_1) else label.t,l)
   else  
-  if inst ="IDXUC"_1 ∧ inst.label(l_2)="LIT"_1 ∧ inst.label(l_1)="CRECORD"_1 
-  then  
+  if inst ="IDXUC"_1 ∧ inst.label(l_2)="LIT"_1  then 
      let idx = toint.arg.label(l_2)
+     if   inst.label(l_1)="CRECORD"_1   then  
       if between(idx,0,nosons(l_1)-1) then
        (l_1)_(idx+1)
        else tree(label.t, l)
+     else if inst.label(l_1)="getaddressZbuiltinZTzseqZint"_1
+       &and inst.label(l_1_2)="LIT"_1 then 
+       tree(label.t, [ l_1_1,tree(cnode("LIT"_1,toword(idx+toint.arg.label(l_1_2))))])
+     else tree(label.t, l)  
    else  if inst="if"_1 then
        let i2=inst.label(l_1)
        if i2=  "LIT"_1 then

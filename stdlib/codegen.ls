@@ -61,9 +61,10 @@ function funcdec(proto:int, a:llvmconst)seq.int
  // first two elements of llvm symbol record must be discarded to form funcname // 
   [ MODULECODEFUNCTION, typ.getftype.funcname.a, 0, proto, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
   
+use seq.seq.bits
 
 Function codegen5(z:pass1result)seq.bits 
- // PROFILE. // let thename = libname(z)_1 
+  // OPTIONS("PROFILE", // let thename = libname(z)_1 
   let symlist ="libname initlib4 words wordlist list liblib profcounts profclocks profspace profrefs profstat spacecount clock"+ merge(thename,"$profileresult"_1)+"init22 allocatespaceZbuiltinZint PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   let discard2 = @(+, C, 0, symlist + @(+, mangledname,"", code.z))
   let discard3 = @(+, findcalls, 0, @(+, codetree, empty:seq.tree.cnode, code.z))
@@ -160,6 +161,8 @@ Function codegen5(z:pass1result)seq.bits
   + STORE(6, -5, C64.noprofileslots, align8, 0)+ RET.6]+ bodies.fb 
   assert length.symbolrecords2 = nosyms report"extra symbols2!"
   llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
+  
+  )
 
 type localmap5 is record localno:int, regno:int
 

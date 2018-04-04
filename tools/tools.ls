@@ -55,7 +55,7 @@ Function prettytest seq.word prettylib("tools","")
 Function checkdoclib seq.word doclibrary."tools"
 
 Function test seq.word 
- let a = compilelib("solardataall"_1)
+ let a = compilelib("stdlib"_1)
   a + profileresults."time"
 
 Function testprintBitCodes seq.word printBitCodes."test3.bc"

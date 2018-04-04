@@ -200,11 +200,16 @@ function cast2intseq(int)seq.int builtin
 
 function cast2word(int)word builtin
 
+use seq.linklists2
+
+
 Function prepareliblib(mylib:liblib)linklists2 
+OPTIONS("PROFILE",
  let alltypes = asset.@(+, types, empty:seq.libtype, libs)
-  addobject(alltypes, mytype."liblib", linklists2(empty:seq.int, 0, 0, 3), cast2int.result.process.identity.mylib)
+  addobject(alltypes, mytype."liblib", linklists2(empty:seq.int, 0, 0, 3), cast2int.result.process.identity.mylib))
 
 function addobject(alltypes:set.libtype, a:mytype, t:linklists2, d:int)linklists2 
+// OPTIONS("PROFILE", //
  // assert a in [ mytype."int", mytype."word", mytype."word seq", mytype."int seq seq", mytype."liblib", mytype."libtype seq", mytype."libtype", mytype."mytype seq", mytype."mytype"]report"??"+ towords.a // 
   if a in [ mytype."word seq", mytype."mytype"]
   then t + cast2wordseq.d 
@@ -213,15 +218,17 @@ function addobject(alltypes:set.libtype, a:mytype, t:linklists2, d:int)linklists
    subseq(alltypes, allocate(t, length.s + 2)+ C64.0 + C64.length.s, s, parameter.a, 1)
   else let b = deepcopytypes2(alltypes, a)
   subfields(alltypes, allocate(t, length.b), d, b, 1)
+  
+  )
 
 function subfields(alltypes:set.libtype, p:partobject2, data:int, b:seq.mytype, i:int)linklists2 
  if i > length.b 
   then // finish the object by combining mainobj with subobjects // 
    linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p)
-  else if b_i in [ mytype."int", mytype."real"]
-  then subfields(alltypes, p + C64.IDXUC(data, i - 1), data, b, i + 1)
-  else let newp = if b_i = mytype."word"
-   then // add a word. This requires adding information for re-encoding word. // 
+  else let newp = if b_i in [ mytype."int", mytype."real"] then
+    p + C64.IDXUC(data, i - 1)
+   else if b_i = mytype."word" then 
+   // add a word. This requires adding information for re-encoding word. // 
     let w = cast2word.IDXUC(data, i - 1)
     let e3 = linklists2(a.subobjects.p, mainplace.p, offsetthread.subobjects.p, start.subobjects.p)
     partobject2(mainobj.p + C64.packit(wordthread.subobjects.p, word33.w), mainstart.p, e3)
