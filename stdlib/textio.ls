@@ -82,6 +82,8 @@ Function gettextX(filename:seq.word)seq.seq.word
  @(+, towordsX, empty:seq.seq.word, breakparagraph.getfile.filename)
 
 
+use seq.seq.seq.word
+
 Function gettext(filename:seq.word)seq.seq.word 
  @(+, towords, empty:seq.seq.word, breakparagraph.getfile.filename)
 

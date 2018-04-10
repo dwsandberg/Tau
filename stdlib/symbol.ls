@@ -80,24 +80,35 @@ Function codingrecord(sym:syminfo)seq.word
   FREFcode.finddeepcopyfunction.encodingtype + FREFcode.invertedseqlookup.encodingtype + FREFcode.invertedseqadd.encodingtype +(if name.sym ="wordencoding"_1 then"LIT 1"else"LIT 0")+"WORD"+ mangled.sym +(if instruction(sym)_1 ="ERECORD"_1 
    then"LIT 0"
    else"LIT 1")+ codefortype +"RECORD 7 NOINLINE 1"
+   
+   
+type callsresult is  record   state:int,  result: set.word
+
+use seq.callsresult
+    
+          
+
+
+function       callsadd(c:callsresult,w:word) callsresult
+FORCEINLINE.
+        let state=state.c
+         let newstate= if state= // base state // 0 then  if w = "WORD"_1 then   1 
+          else if w="FREF"_1 then  4 
+          else if w="CALL"_1 then  3 
+          else  
+          // assert not(w in"BUILDSEQ CALLB FREFB BUILD TSIZE")report"not expecting instruction"+ w +"in compiled code" // 
+            0  
+          else if state= // CALL arg // 3 then  4 else // state = 1 // 0 
+         callsresult(newstate,if state= // func arg of CALL or FREF //  4 then  result.c+w else result.c)
+
+
+
 
 Function calls(l:syminfo)set.word 
  // returns all functions that are called directly called by l // 
-  gather2(instruction.l, 1, empty:set.word)
+  result.@(callsadd,identity,callsresult(0,empty:set.word),instruction.l)
 
-function gather2(s:seq.word, i:int, r:set.word)set.word 
- if i > length.s 
-  then r 
-  else if s_i ="WORD"_1 
-  then gather2(s, i + 2, r)
-  else if s_i ="CALL"_1 
-  then let x = s_(i + 2)
-   gather2(s, i + 3, r + x)
-  else if s_i ="FREF"_1 
-  then let x = s_(i + 1)
-   gather2(s, i + 2, r + x)
-  else assert not(s_i in"BUILDSEQ CALLB FREFB BUILD TSIZE")report"not expecting instruction"+ s_i +"in compiled code"+ s 
-  gather2(s, i + 1, r)
+
 
 Function compileinstance(alltypes:set.libtype, lookup:set.syminfo, w:word)seq.syminfo 
  let info = tosyminfo.w 

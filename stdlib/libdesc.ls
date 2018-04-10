@@ -66,8 +66,8 @@ Function tolibdesc(libname:word)libdesc
   let filelist = subseq(s, 2, min(u - 1, e - 1))
   let exports = subseq(s, e + 1, length.s)
   let src = @(+, gettext2(s_2, exports), empty:seq.moddesc, filelist)
-  let l = libdesc(libname, uses, src, exports)
-  l
+    libdesc(libname, uses, src, exports)
+  
 
 Function =(a:moddesc, b:moddesc)boolean modname.a = modname.b
 

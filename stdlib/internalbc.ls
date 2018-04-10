@@ -141,13 +141,12 @@ use seq.bitpackedseq.bit
 
 
 Function  addtobitstream(offset:int,bs:bitpackedseq.bit,b:internalbc) bitpackedseq.bit  
-OPTIONS("special",
-result.@(add2,identity,internal2(0,0,0,offset,bs),finish.b))
+result.@(add2,identity,internal2(0,0,0,offset,bs),finish.b)
 
 use  seq.internal2
 
 function   add2(r:internal2,val:int) internal2
-OPTIONS("FORCEINLINE",
+FORCEINLINE.
    let nobits = toint(bits.val ∧ bits.63)
    let bits = bits.val >> 6
    let newstate =  if state.r=0 then  if nobits < 58 then 0 else   toint.bits
@@ -167,7 +166,7 @@ OPTIONS("FORCEINLINE",
    then offset.r - (val1.r - val+ 1)
    else assert state.r = tocode.sub22 report"invalid code" offset.r - (val2.r - val+ 1) )
       internal2(newstate, newval1, newval2,newoffset, newresult)
-  )
+  
 
 2 - 9  8
 8 - 8  7

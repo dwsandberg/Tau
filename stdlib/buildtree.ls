@@ -53,7 +53,7 @@ Function replacecodetree(f:func, new:tree.cnode)func
 
 function =(a:func, b:func)boolean mangledname.a = mangledname.b
 
-type bld is record state:int,last:word,stk:stack.tree.cnode 
+type bld is record state:int,last:word,stk:stack.tree.cnode ,hasstate:boolean
 
 use seq.bld
 
@@ -62,20 +62,20 @@ use seq.word
 
 function  addinstruction(b:bld,w:word) bld
 // state :0  initial ,1  found CALL, 2 at noargs, 4 at funcname in CALL //
-OPTIONS("FORCEINLINE",
-  let newstk=if state.b < 2  &or ( last.b ="FLAT"_1 &and w="1"_1 )  then
+FORCEINLINE.
+  let newstk=if state.b < 2  &or ( last.b in "FLAT NOINLINE STATE" &and w="1"_1 )  then
     stk.b else 
     assert  last.b &ne "RECORDS"_1 report "X"
     let z = if last.b in " LIT LOCAL FREF PARA WORD" then 
            tree.cnode(last.b,w) 
            else if last.b in "FLD" then
             tree(if w="1"_1 then cnode("IDXUC"_1,"0"_1) else cnode( "getaddressZbuiltinZTzseqZint"_1,"0"_1), top(stk.b, 2))
-          else  if last.b in "SET" then    tree(cnode(last.b,w),top(stk.b,2))
-          else if  last.b in"$build $wordlist"
+           else if last.b in "SET" then    tree(cnode(last.b,w),top(stk.b,2))
+           else if  last.b in"$build $wordlist"
               then let noelements = toint(w)
                    let prefix = [ tree.cnode("LIT"_1,"0"_1), tree.cnode("LIT"_1, w)]
             tree(cnode("RECORD"_1,"0"_1), prefix + removeflat(top(stk.b, noelements)))
-             else if last.b="RECORDS"_1 
+            else if last.b="RECORDS"_1 
   then // last element in record becomes the first // 
     tree(cnode("RECORD"_1,"0"_1), removeflat([ top.stk.b]+ top(pop.stk.b, toint(w) - 1)))
           else  if last.b ="FLAT"_1 
@@ -86,10 +86,12 @@ OPTIONS("FORCEINLINE",
             if last.b = "RECORD"_1 then          removeflat.sons else sons )
      push(pop(stk.b, if last.b in "$build $wordlist RECORD RECORDS" then toint(w) else  nosons.z),z)
   bld(  if state.b=0 then if w="CALL"_1 then 1 else 2  
-        else if state.b=1 then 4 else 0 ,  w , newstk))
+        else if state.b=1 then 4 else 0 ,  w , newstk, hasstate.b &or ( last.b = "STATE"_1  &and w="1"_1 ))
  
-Function buildcodetree(data:seq.word) tree.cnode OPTIONS("special",top.stk.@(addinstruction,identity,bld(0,"START"_1,empty:stack.tree.cnode),
-subseq(data,2,length.data)))
+Function buildcodetree(data:seq.word) tree.cnode 
+let a = @(addinstruction,identity,bld(0,"START"_1,empty:stack.tree.cnode,false),
+subseq(data,2,length.data))
+ if hasstate.a then tree(cnode("STATE"_1,"0"_1),[top.stk.a]) else top.stk.a
  
 
 Function oldbuildcodetree(a:seq.word)tree.cnode 
@@ -219,8 +221,8 @@ Function tolibsym( lib:word, a:func)libsym
  // Converting func to lib symbol.
  In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation. Otherwise the inst is the code that should be added after the parameters. For example ;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.
  //
-  let inst = if inst.label.codetree.a ="STATE"_1 then
-    [ mangledname.a, toword.nopara.a]
+  let inst = if "STATE"_1 in flags.a then
+    [ mangledname.a, toword.nopara.a,"STATE"_1,"1"_1]
 else  if ("SIMPLE"_1 in flags.a )
    then 
       let nopara = nopara.a 
@@ -232,6 +234,22 @@ else  if ("SIMPLE"_1 in flags.a )
    else 
    [ mangledname.a, toword.nopara.a]
 libsym(returntype.a, mangledname.a, inst)
+
+/Function tolibsym( lib:word, a:func)libsym 
+ // Converting func to lib symbol.
+ In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation. Otherwise the inst is the code that should be added after the parameters. For example ;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.
+ //
+ let inst= if ("SIMPLE"_1 in flags.a )
+   then 
+      let nopara = nopara.a 
+    let x = print.codetree.a
+    let verysimple = nopara = 0 ∨ nopara = 1 ∧ subseq(x, 1, 2)="PARA 1"∨ nopara = 2 ∧ subseq(x, 1, 4)="PARA 2 PARA 1"∨ nopara = 3 ∧ subseq(x, 1, 6)="PARA 3 PARA 2 PARA 1"∨ nopara = 4 ∧ subseq(x, 1, 8)="PARA 4 PARA 3 PARA 2 PARA 1"
+    if verysimple ∧ not("PARA"_1 in subseq(x, nopara * 2 + 1, length.x))∧ not("SET"_1 in x)
+    then subseq(x, nopara * 2 + 1, length.x)
+    else"USECALL"+ x 
+   else 
+   [ mangledname.a, toword.nopara.a]
+libsym(returntype.a, mangledname.a, if "STATE"_1 in flags.a then inst+"STATE 1" else inst)
 
 
 

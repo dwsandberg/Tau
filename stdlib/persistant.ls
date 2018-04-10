@@ -116,10 +116,15 @@ type partobject2 is record mainobj:seq.int, mainstart:int, subobjects:linklists2
 
 function mainplace(t:partobject2)int length.mainobj.t + 1 + mainstart.t
 
-function +(a:partobject2, x:int)partobject2 partobject2(mainobj.a + [ x], mainstart.a, subobjects.a)
+/function +(a:partobject2, x:int)partobject2 partobject2(mainobj.a + [ x], mainstart.a, subobjects.a)
 
 function allocate(t:linklists2, size:int)partobject2 
  partobject2(a.t, start.t, linklists2(empty:seq.int, wordthread.t, offsetthread.t, size + start.t + length.a.t))
+
+function allocateseq(t:linklists2,s:seq.int) partobject2
+  let a = allocate(t,length.s+2)
+   partobject2(mainobj.a + [C64.0 ,C64.length.s], mainstart.a, subobjects.a)
+  
 
 function eword(w:word3)seq.int 
  let a = decode.toword.w 
@@ -160,18 +165,22 @@ function subfields2(p:partobject2, d:seq.word, i:int,left:int)ipair.linklists2
  if left = 0 
   then // finish the object by combining mainobj with subobjects // 
    ipair(i,linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p))
-  else if d_i ="LIT"_1 
-  then subfields2( p + C64.toint(d_(i + 1)), d, i + 2,left-1)
-  else if d_i ="FREF"_1 
-  then let arg = d_(i + 1)
-   subfields2( p + C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.arg, C.[ arg]]), d, i + 2,left-1)
-  else if d_i ="WORD"_1 
-   then // add a word. This requires adding information for re-encoding word. // subfields2(addword(p, d_(i + 1)),d,i+2,left-1)
-   else assert d_i ="CRECORD"_1 report "Failed subfields"+  d_i 
-    // add object of type b_i. This requires adding information for relocation.// 
+  else 
+    let inst = d_i
+    if inst="CRECORD"_1 then
+     // add object of type b_i. This requires adding information for relocation.// 
    let cst = addconst2(subobjects.p, d,i)
     subfields2( addref(p, list.cst, offset.cst), d, next.cst,left-1)
-
+   else 
+    let newp=if inst ="WORD"_1  then
+    addword(p, d_(i + 1))
+   else 
+    partobject2(mainobj.p + [ if  inst ="LIT"_1 
+        then   C64.toint(d_(i + 1))
+      else assert inst ="FREF"_1 report "invalid constant"+inst
+   let arg = d_(i + 1)
+     C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.arg, C.[ arg]])  ], mainstart.p, subobjects.p) 
+    subfields2(newp, d, i + 2,left-1)
 
 
 type constmap2 is record instuctions:seq.word, offset:int
@@ -203,65 +212,65 @@ function cast2word(int)word builtin
 use seq.linklists2
 
 
-Function prepareliblib(mylib:liblib)linklists2 
-OPTIONS("PROFILE",
- let alltypes = asset.@(+, types, empty:seq.libtype, libs)
-  addobject(alltypes, mytype."liblib", linklists2(empty:seq.int, 0, 0, 3), cast2int.result.process.identity.mylib))
+Function prepareliblib(alltypes:set.libtype,mylib:liblib)linklists2 
+  addobject(alltypes, mytype."liblib", linklists2(empty:seq.int, 0, 0, 3), cast2int.result.process.identity.mylib)
+  
+  
 
 function addobject(alltypes:set.libtype, a:mytype, t:linklists2, d:int)linklists2 
-// OPTIONS("PROFILE", //
  // assert a in [ mytype."int", mytype."word", mytype."word seq", mytype."int seq seq", mytype."liblib", mytype."libtype seq", mytype."libtype", mytype."mytype seq", mytype."mytype"]report"??"+ towords.a // 
-  if a in [ mytype."word seq", mytype."mytype"]
-  then t + cast2wordseq.d 
-  else if abstracttype.a ="seq"_1 
+  if a = mytype."word seq" &or  a= mytype."mytype" 
+  then addwordseq(t , cast2wordseq.d )
+  else 
+   let p = if abstracttype.a ="seq"_1 
   then let s = cast2intseq.d 
-   subseq(alltypes, allocate(t, length.s + 2)+ C64.0 + C64.length.s, s, parameter.a, 1)
+      @(addobj2(alltypes),getfldseq(parameter.a),allocateseq(t,s),s)
   else let b = deepcopytypes2(alltypes, a)
-  subfields(alltypes, allocate(t, length.b), d, b, 1)
-  
-  )
+   @(addobj2(alltypes),getfld(b,d),allocate(t, length.b),arithseq(length.b,1,1))
+   // finish the object by combining mainobj with subobjects // 
+   linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p) 
+    
+use seq.partobject2
 
-function subfields(alltypes:set.libtype, p:partobject2, data:int, b:seq.mytype, i:int)linklists2 
- if i > length.b 
-  then // finish the object by combining mainobj with subobjects // 
-   linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p)
-  else let newp = if b_i in [ mytype."int", mytype."real"] then
-    p + C64.IDXUC(data, i - 1)
-   else if b_i = mytype."word" then 
-   // add a word. This requires adding information for re-encoding word. // 
-    let w = cast2word.IDXUC(data, i - 1)
-    let e3 = linklists2(a.subobjects.p, mainplace.p, offsetthread.subobjects.p, start.subobjects.p)
-    partobject2(mainobj.p + C64.packit(wordthread.subobjects.p, word33.w), mainstart.p, e3)
-   else // add object of type b_i. This requires adding information for relocation.// 
-   let e3 = addobject(alltypes, b_i, subobjects.p, IDXUC(data, i - 1))
-   let e4 = linklists2(a.e3, wordthread.e3, mainplace.p, start.e3)
-   partobject2(mainobj.p + [ C64.packit(offsetthread.e3, place.subobjects.p)], mainstart.p, e4)
-  // now process remaining fields // subfields(alltypes, newp, data, b, i + 1)
+use ipair(mytype)
 
-function subseq(alltypes:set.libtype, p:partobject2, s:seq.int, elementtype:mytype, i:int)linklists2 
- if i > length.s 
-  then // finish the object by combining mainobj with subobjects // 
-   linklists2(mainobj.p + a.subobjects.p, wordthread.subobjects.p, offsetthread.subobjects.p, mainstart.p)
-  else if elementtype in [ mytype."int", mytype."real"]
-  then subseq(alltypes, p + C64(s_i), s, elementtype, i + 1)
-  else let newp = if elementtype = mytype."word"
+
+
+function getfld(b:seq.mytype,data:int, i:int) ipair(mytype)
+   ipair(IDXUC(data,i-1),b_i)
+
+function getfldseq(elementtype:mytype,data:int) ipair(mytype)
+ipair(data,elementtype)
+
+
+function  addobj2(  alltypes:set.libtype,p:partobject2 ,dataandtype:ipair(mytype))  partobject2
+FORCEINLINE.
+ let elementtype=value.dataandtype
+ let thiselement=index.dataandtype
+  if elementtype = mytype."int" then
+    partobject2(mainobj.p + C64.thiselement, mainstart.p, subobjects.p)
+  else if elementtype = mytype."real" then
+    partobject2(mainobj.p + C64.thiselement, mainstart.p, subobjects.p)
+   else 
+       if elementtype = mytype."word"
    then // add a word. This requires adding information for re-encoding word. // 
-    let w = cast2word(s_i)
+    let w = cast2word(thiselement)
     let e3 = linklists2(a.subobjects.p, mainplace.p, offsetthread.subobjects.p, start.subobjects.p)
     partobject2(mainobj.p + C64.packit(wordthread.subobjects.p, word33.w), mainstart.p, e3)
    else // add object of elementtype. This requires adding information for relocation.// 
-   let e3 = addobject(alltypes, elementtype, subobjects.p, s_i)
+   let e3 = addobject(alltypes, elementtype, subobjects.p, thiselement)
    let e4 = linklists2(a.e3, wordthread.e3, mainplace.p, start.e3)
-   partobject2(mainobj.p + [ C64.packit(offsetthread.e3, place.subobjects.p)], mainstart.p, e4)
-  // now process remaining elements // subseq(alltypes, newp, s, elementtype, i + 1)
+   partobject2(mainobj.p +  C64.packit(offsetthread.e3, place.subobjects.p), mainstart.p, e4)
+
+  
 
 function +(t:linklists2, a:word)linklists2 
+ FORCEINLINE.
  linklists2(a.t + [ C64.packit(wordthread.t, word33.a)], place.t, offsetthread.t, start.t)
 
-function +(t:linklists2, a:seq.word)linklists2 
+Function addwordseq(t:linklists2, a:seq.word)linklists2 
  @(+, identity, linklists2(a.t + [ C64.0, C64.length.a], wordthread.t, offsetthread.t, start.t), a)
-
-Function addseqword(t:linklists2, a:seq.word)ipair.linklists2 ipair(place.t, t + a)
+ 
 
 function cast2int(s:seq.int)int builtin
 

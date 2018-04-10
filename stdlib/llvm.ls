@@ -65,8 +65,10 @@ type machineinfo is record triple:seq.int, datalayout:seq.int
 
 function getmachineinfo machineinfo builtin.usemangle
 
-Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits 
- let MODABBREVLEN = 3 
+use seq.seq.bits
+
+Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits
+PROFILE.let MODABBREVLEN = 3 
   let TYPEABBREVLEN = 4 
   let offset = length.mapping.llvmconsts 
   let h = addblockheader(add(add(add(add(empty:bitpackedseq.bit, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8), 2, MODULEBLOCK, MODABBREVLEN)
@@ -86,7 +88,7 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
   let a5 = addrecords(a4, MODABBREVLEN, deflist)
   // const block // 
   let constheader = addblockheader(a5, MODABBREVLEN, CONSTANTSBLOCK, TYPEABBREVLEN)
-  let a6 = finishblock(constrecords(constheader, -1, mapping.llvmconsts, 1), constheader, TYPEABBREVLEN)
+   let a6 = finishblock(bits.@(constrecords,identity,trackconst(constheader,-1),mapping.llvmconsts) , constheader, TYPEABBREVLEN)
   // function bodies // 
   let a7 = @(addbody(offset, MODABBREVLEN), identity, a6, bodytxts)
   // sym table // 
@@ -184,22 +186,31 @@ function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int, i:in
   let bs = @(addvbr6, identity, a2, subseq(a, 2, length.a))
   addrecords(bs, abbrevlength, s, i + 1)
 
-Function constrecords(bits:bitpackedseq.bit, lasttype:int, s:seq.llvmconst, i:int)bitpackedseq.bit 
- if i > length.s 
-  then bits 
-  else let l = s_i 
-  if typ.l = -1 
-  then constrecords(bits, lasttype, s, i + 1)
-  else let abbrevlength = 4 
-  let bits2 = if lasttype = typ.l then bits else addvbr6(add(bits, bits((1 * 64 + 1)* 16 + 3), 16), typ.l)
-  let tp = toseq(l)_1 
-  let bs = if tp = CONSTINTEGER 
+use seq.bitpackedseq.bit
+
+type trackconst is record bits: bitpackedseq.bit, lasttype:int
+
+use seq.trackconst
+
+function constrecords(z:trackconst,l:llvmconst) trackconst
+// keep track of type of last const processed and add record when type changes //
+  FORCEINLINE.let bs = if typ.l = -1 then bits.z
+  else 
+      let bits=bits.z
+      let abbrevlength = 4 
+     let bits2 = if lasttype.z = typ.l then bits else addvbr6(add(bits, bits((1 * 64 + 1)* 16 + 3), 16), typ.l)
+let tp = toseq(l)_1
+  if tp = CONSTINTEGER 
    then addvbrsigned6(add(bits2, bits((1 * 64 + CONSTINTEGER)* 16 + 3), 16), toseq(l)_2)
    else let a1 = if length.toseq.l < 32 
     then add(bits2, bits(((length.toseq.l - 1)* 64 + tp)* 16 + 3), 16)
     else addvbr6(addvbr6(addvbr(bits2, 3, abbrevlength), tp), length.toseq.l - 1)
-   addvbr6(a1, subseq(toseq.l, 2, length.toseq.l))
-  constrecords(bs, typ.l, s, i + 1)
+      addvbr6(a1, subseq(toseq.l, 2, length.toseq.l))
+    trackconst(bs, typ.l)
+    
+
+
+
 
 Function symentries(bits:bitpackedseq.bit, s:seq.llvmconst, i:int)bitpackedseq.bit 
  if i > length.s 

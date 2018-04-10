@@ -6,7 +6,6 @@ use definestruct
 
 use libscope
 
-
 use oseq.libsym
 
 use pass0
@@ -283,9 +282,12 @@ function isinstance(s:syminfo)set.word
   then let a = encode(libsym(returntype.s, mangled.s, instruction.s), libsymencoding)
    asset.[ mangled.s]
   else empty:set.word
+  
+
+use seq.pass1result
 
 Function pass1a(bindingonly:boolean, primitivemods:set.mod2desc, intemplates:seq.mod2desc, libname:seq.word)pass1result 
-  //  PROFILE. // let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
+  // PROFILE. // let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
   let P1 = toseq.primitivemods 
   let alltypes = assigntypesizes(@(+, typedefs, empty:seq.libtype, P1)+ templatetypes)
   let discard = @(+, checktypes.alltypes, 0, P1)
@@ -312,6 +314,8 @@ Function iscomplex(p:syminfo)seq.word
 
 Function complexexports(m:mod2desc)seq.word 
  // if isprivate.m then empty:seq.word else // @(+, iscomplex,"", toseq.export.m)
+ 
+use seq.seq.mod2desc
 
 Function compilesimple(bindingonly:boolean, alltypes:set.libtype, allsyms:set.syminfo, allmods:set.mod2desc, thistype:mod2desc)seq.mod2desc 
  if isabstract.modname.thistype 
@@ -323,6 +327,7 @@ Function compilesimple(bindingonly:boolean, alltypes:set.libtype, allsyms:set.sy
   let functionsreferenced = @(∪, calls, asset.complexexports.thistype, toseq.def)
   let def2 = asset.@(+, compileinstance(alltypes, allsyms), empty:seq.syminfo, toseq.functionsreferenced)
   [ mod2desc(modname.thistype, export.thistype, empty:seq.mytype, typedefs.thistype, def ∪ def2, ["current"], isprivate.thistype)]
+
 
 Function compileabstract(bindingonly:boolean, alltypes:set.libtype, allmods:set.mod2desc, thistype:mod2desc)seq.mod2desc 
  if not.isabstract.modname.thistype 
