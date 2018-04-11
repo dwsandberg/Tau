@@ -68,7 +68,7 @@ function getmachineinfo machineinfo builtin.usemangle
 use seq.seq.bits
 
 Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits
-PROFILE.let MODABBREVLEN = 3 
+let MODABBREVLEN = 3 
   let TYPEABBREVLEN = 4 
   let offset = length.mapping.llvmconsts 
   let h = addblockheader(add(add(add(add(empty:bitpackedseq.bit, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8), 2, MODULEBLOCK, MODABBREVLEN)

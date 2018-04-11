@@ -204,7 +204,7 @@ ch1result(nodecount.a+nodecount.b,para.a+para.b)
 
 function ch1(t:tree.cnode)ch1result 
    if inst.label.t ="PARA"_1 then ch1result(1,[arg.label.t])
-  else  if inst.label.t  in "NOINLINE LOOP STATE" then ch1result(1000,"fail")
+  else  if inst.label.t  in "NOINLINE LOOP STATE APPLY" then ch1result(1000,"fail")
    else @(+,identity,ch1result(1,   ""),sons.t)
    
 Function functype(t:tree.cnode,nopara:int) word
