@@ -251,13 +251,13 @@ use seq.program
 
 
    Function expandinline(p:program) program
-       if isempty.inline.p then  p else 
        let canidates= @(&cup,  predecessors(callgraph.p ), asset."",toseq.inline.p)
            // canidates will contain functions with just FREF's //
            let s0=program(library.p,allfunctions.p, callgraph.p , asset."" ,hasstate.p) 
            let s1=@(simple3.inline.p,identity,s0,toseq.canidates)
            let  usesapply=predecessors(callgraph.s1,"APPLY"_1 )
-           expandinline.@(simple3(inline.p &cup asset."APPLY"),identity,s1,toseq.usesapply)
+           let s2=@(simple3(inline.p &cup asset."APPLY"),identity,s1,toseq.usesapply)
+           if isempty.inline.s2 then s2 else expandinline.s2
          
      
 
@@ -482,8 +482,6 @@ function tailcall(subs:seq.tree.cnode, self:word, t:tree.cnode)tree.cnode
 
 ------
 
-Function in(c:cnode, t:tree.cnode)boolean 
- if c = label.t then true else @(∨, in.c, false, sons.t)
 
 function getmaxvar(t:tree.cnode)int 
  @(max, getmaxvar, if inst.label.t ="SET"_1 then toint.arg.label.t else 

@@ -49,13 +49,16 @@ function =(a:llvmtype, b:llvmtype)boolean toseq.a = toseq.b
 type llvmconst is record typ:int, toseq:seq.int
 
 type llvmconsts is encoding llvmconst
+    
+Function listconsts seq.seq.int   @(+,toseq,empty:seq.seq.int, mapping(llvmconsts))
 
 function hash(a:llvmconst)int hash.toseq.a
 
 function =(a:llvmconst, b:llvmconst)boolean toseq.a = toseq.b ∧ typ.a = typ.b
 
-Function getelementptr(type:encoding.llvmtype, name:seq.word)int 
- C(ptr.i64, [ CONSTGEP, typ.type, typ.ptr.type, C.name, typ.i32, C32.0, typ.i32, C32.0])
+Function getelementptr(type:encoding.llvmtype, name:seq.word,i:int)int 
+ C(ptr.i64, [ CONSTGEP, typ.type, typ.ptr.type, C.name, typ.i32, C32.0, typ.i64, C64.i])
+ 
 
 Function llvmconsts erecord.llvmconst export
 

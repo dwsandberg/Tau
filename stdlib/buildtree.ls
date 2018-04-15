@@ -17,16 +17,21 @@ use stdlib
 
 use tree.cnode
 
-type cnode is record inst:word, arg:word
+/type cnode is record inst:word, arg:word
 
-Function inst(cnode)word export
+type cnode is  record towordseq:seq.word
 
-Function arg(cnode)word export
+Function inst(a:cnode)word { (towordseq.a)_1 }
 
-Function cnode(a:word, b:word)cnode export
+Function arg(a:cnode)word {   if length(towordseq.a) < 2 then "0"_1 else  (towordseq.a)_2 }
+
+Function cnode(a:word, b:word)cnode  
+cnode.if a in "SET FLAT FLD LIT LOCAL FREF PARA WORD" then [a,b] else [a]
 
 
-Function =(a:cnode, b:cnode)boolean inst.a = inst.b ∧ 
+Function =(a:cnode, b:cnode)boolean towordseq.a=towordseq.b
+
+inst.a = inst.b ∧ 
  if inst.a in "SET FLAT FLD LIT LOCAL FREF PARA WORD" then arg.b = arg.a else true
 
 type func is record nopara:int, returntype:mytype, mangledname:word, codetree:tree.cnode, flags:seq.word
@@ -48,8 +53,6 @@ Function flags(s:func)seq.word export
 
 Function codetree(f:func)tree.cnode export
 
-Function replacecodetree(f:func, new:tree.cnode)func 
- func(nopara.f, returntype.f, mangledname.f, new, flags.f)
 
 function =(a:func, b:func)boolean mangledname.a = mangledname.b
 
@@ -65,19 +68,18 @@ function  addinstruction(b:bld,w:word) bld
 FORCEINLINE.
   let newstk=if state.b < 2  &or ( last.b in "FLAT NOINLINE STATE" &and w="1"_1 )  then
     stk.b else 
-    assert  last.b &ne "RECORDS"_1 report "X"
     let z = if last.b in " LIT LOCAL FREF PARA WORD" then 
            tree.cnode(last.b,w) 
            else if last.b in "FLD" then
-            tree(if w="1"_1 then cnode("IDXUC"_1,"0"_1) else cnode( "getaddressZbuiltinZTzseqZint"_1,"0"_1), top(stk.b, 2))
+            tree(if w="1"_1 then cnode("IDXUC 0") else cnode( "getaddressZbuiltinZTzseqZint 0 "), top(stk.b, 2))
            else if last.b in "SET" then    tree(cnode(last.b,w),top(stk.b,2))
            else if  last.b in"$build $wordlist"
               then let noelements = toint(w)
-                   let prefix = [ tree.cnode("LIT"_1,"0"_1), tree.cnode("LIT"_1, w)]
-            tree(cnode("RECORD"_1,"0"_1), prefix + removeflat(top(stk.b, noelements)))
+                   let prefix = [ tree.cnode("LIT 0"), tree.cnode("LIT"_1, w)]
+            tree(cnode("RECORD"), prefix + removeflat(top(stk.b, noelements)))
             else if last.b="RECORDS"_1 
   then // last element in record becomes the first // 
-    tree(cnode("RECORD"_1,"0"_1), removeflat([ top.stk.b]+ top(pop.stk.b, toint(w) - 1)))
+    tree(cnode("RECORD"), removeflat([ top.stk.b]+ top(pop.stk.b, toint(w) - 1)))
           else  if last.b ="FLAT"_1 
           then   tree(cnode(last.b, w), [ top.stk.b])
           else  
@@ -91,7 +93,7 @@ FORCEINLINE.
 Function buildcodetree(data:seq.word) tree.cnode 
 let a = @(addinstruction,identity,bld(0,"START"_1,empty:stack.tree.cnode,false),
 subseq(data,2,length.data))
- if hasstate.a then tree(cnode("STATE"_1,"0"_1),[top.stk.a]) else top.stk.a
+ if hasstate.a then tree(cnode("STATE 0"),[top.stk.a]) else top.stk.a
  
 
 Function oldbuildcodetree(a:seq.word)tree.cnode 
@@ -188,8 +190,6 @@ Function print(a:func)seq.word
 
 
 
-Function in(l:seq.word, t:tree.cnode)boolean 
- if inst.label.t in l then true else @(∨, in.l, false, sons.t)
 
 --------
 

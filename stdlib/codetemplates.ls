@@ -16,7 +16,7 @@ use stdlib
 
 function wordstype encoding.llvmtype array(-1, i64)
 
-function conststype encoding.llvmtype array(-2, i64)
+Function conststype encoding.llvmtype array(-2, i64)
 
 type match5 is record inst:word, length:int, template:internalbc
 
