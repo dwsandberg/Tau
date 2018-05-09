@@ -77,6 +77,15 @@ Function findlibclause(a:seq.seq.word, i:int)seq.word
  assert i < length.a report"No Library clause found"
   let s = a_i 
   if s_1 ="Library"_1 then s else findlibclause(a, i + 1)
+  
+use seq.seq.word
+  
+Function findlibclause2(a:seq.seq.word, i:int)seq.word 
+ TESTOPT.assert i < length.a report"No Library clause found"
+  let s = a_i 
+  if s_1 ="Library"_1 then s else findlibclause2(a, i + 1)
+
+
 
 function gettext2(libname:word, e:seq.word, a:word)seq.moddesc 
  @(+, moddesc(libname, e), empty:seq.moddesc, groupparagraphs("module Module", gettext.[ merge([ libname]+"/"+ a +".ls")]))

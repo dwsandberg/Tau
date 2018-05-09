@@ -168,8 +168,8 @@ function hhh(g:graph.word,node:word) seq.word
      let a=codedown.node
     if length.a > 1 &and  ( last(a_2) in "builtin set seq"  )  then ""  else 
       [ node ]  else ""
-  
 
+  
 
 Function pass2(r:pass1result)pass1result 
  PROFILE.
@@ -177,9 +177,9 @@ Function pass2(r:pass1result)pass1result
     let p1=program(libname(r)_1, invertedseq.dummyfunc,newgraph.empty:seq.arc.word,asset."","")
      let roots = toseq.@(∪, roots(asset.@(+,hasErecord,empty:seq.syminfo,newcode.r)), empty:set.word, mods.r)
       let p=@(addtoprogram(alltypes.r,@(+,track,empty:set.track,newcode.r + compiled.r)),identity,p1,roots)
-         let calledonce=asset.@(+,hhh.callgraph.p,"",toseq.nodes.callgraph.p)-asset.roots
-      let s1=program(library.p,allfunctions.p,callgraph.p,inline.p &cup calledonce,hasstate.p) 
-      let s2 = expandinline.p
+        // let calledonce=asset.@(+,hhh.callgraph.p,"",toseq.nodes.callgraph.p)-asset.roots
+      let s1=program(library.p,allfunctions.p,callgraph.p,inline.p &cup calledonce,hasstate.p) //
+     let s2 = expandinline.p
      let statechangingfuncs =  reachable(complement.callgraph.s2, hasstate.p) &cap nodes.callgraph.s2
     // only pass on functions that can be reached from roots and are in this library // 
    let g=    reachable(callgraph.s2,roots)  - asset.@(+, mangled, empty:seq.word, compiled.r)
@@ -188,7 +188,6 @@ Function pass2(r:pass1result)pass1result
    let rr = @(+, findconstandtail(s2,statechangingfuncs), empty:seq.func, toseq.g)
    // let rrr=if  mangledname(rr_1)="dummyfunc"_1 then subseq(rr,2,length.rr)
     else  rr //
-    // assert false report @(+,toword,"",mapping.debuginfoencoding) //
    pass1result(rr, libname.r, newcode.r, compiled.r, mods.r, existingtypes.r, alltypes.r)
    
    1299 957
@@ -211,48 +210,32 @@ use opt2
 use seq.seq.func
 
 
- 
+
 function xor(a:boolean , b:boolean) boolean if a then not.b else   b  
+
+function oktoE seq.word " addtobitstreamZinternalbcZintZbitzbitpackedseqZinternalbc 
+     buildcodetreeZbuildtreeZwordzseq
+     siQ7AetypeZprocesstypesZlibtypezsetZlibtype
+      assigntypesiQ7AesZprocesstypesZlibtypezseq
+     callsZsymbolZsyminfo 
+     addconstZpersistantZlinklists2Zwordzseqztree 
+     addobject2ZpersistantZlibtypezsetZmytypeZlinklists2Zint 
+"
 
 function findconstandtail(p:program,stateChangingFuncs:set.word, mangledname:word)seq.func 
  // finds constants, discards builtins, and make sure"STATE"is root on state changing functions //
   let a=codedown.mangledname
     if length.a > 1 &and  ( a_2 = "builtin"  ) then empty:seq.func else 
   let f=lookupfunc(p,mangledname)
-  let code1=  // hoistRecord.codetree.f // codetree.f
-  let code2=  // opt2.code1  // code1
-  let code3= // removerecords.code2 // code2
-   let q=  // if (mangledname in 
-   "syminfoinstanceZprocesstypesZmytypeZwordZmytypeZmytypezseqZmytypeZwordzseq ")
-   then //
-   inline(  p,empty:set.word,dseq(tree.cnode("UNASIGNED"_1,"1"_1)),empty:seq.tree.cnode,1,code3) 
-   // else code3 //
-     // assert not(mangledname=xx_195) report  [mangledname]+ printb(0,code3)+"<<<"+printb(0,q)
-     > 130 ok
-     let discard=if q = code3 then 0 else encoding.encode(debuginfo.mangledname,debuginfoencoding) //
-     // assert q=code3 &or mangledname in "stacktraceZstacktrace" report "inline"+mangledname //
-        //  assert xor(code1=code2 ,  mangledname in "
-     addtobitstreamZinternalbcZintZbitzbitpackedseqZinternalbc 
-     buildcodetreeZbuildtreeZwordzseq
-     siQ7AetypeZprocesstypesZlibtypezsetZlibtype
-     xaddwordseqZpersistantZlinklists2Zwordzseq
-     assigntypesiQ7AesZprocesstypesZlibtypezseq
-     callsZsymbolZsyminfo addconstZpersistantZlinklists2Zwordzseqztree addobject2ZpersistantZlibtypezsetZmytypeZlinklists2Zint" )
-     report "X"+mangledname  //
+  let code1= opt7.codetree.f
+  let code2=  if not (mangledname in oktoE ) then code1 else   opt2.code1  
+  let code3=removerecords.code2
+  let q= inline(  p,empty:set.word,dseq(tree.cnode("UNASIGNED"_1,"1"_1)),empty:seq.tree.cnode,1,code3)
+          // assert &or(code1=code2 ,  mangledname in oktoE )
+     report "X"+mangledname //  
       let newflags=if "STATE"_1 in flags.f  &or not ( mangledname.f in stateChangingFuncs)
        then flags.f  else flags.f+"STATE" 
      [func(nopara.f, returntype.f, mangledname.f, q, newflags)]
-     
-/use seq.debuginfo
-
-/type debuginfoencoding is encoding debuginfo 
-
-/function hash(a:debuginfo) int hash.toword.a
-
-/type debuginfo is record toword:word
-
-
-/function =(a:debuginfo,b:debuginfo) boolean toword.a=toword.b
 
 
 function print(g:graph.word)seq.word @(+, p,"", toseq.arcs.g)
@@ -356,7 +339,7 @@ function hash(f:func) int hash.mangledname.f
      
         
 function explodeinline(prg:program,inlinename:set.word,inlinetree:tree.cnode ,simple:boolean,  nextset:int, paras:seq.tree.cnode)
- tree.cnode // add sets for complex parameters and then does inline expansion. //
+ tree.cnode NOINLINE.// add sets for complex parameters and then does inline expansion. //
     if simple then
       inline(prg,inlinename,dseq(tree.cnode("UNASIGNED"_1,"1"_1)),paras,nextset,inlinetree)
     else 
@@ -371,9 +354,10 @@ function explodeinline(prg:program,inlinename:set.word,inlinetree:tree.cnode ,si
   
   use  ipair.tree.cnode
   
-  use seq.parametermap
+ use seq.parametermap
  
  function addtoparamatermap(p:parametermap,t:tree.cnode) parametermap
+ NOINLINE.
     if inst.label.t in "LIT LOCAL PARA FREF FREFB WORD"  then  parametermap(paramap.p+t,nextset.p,addnodes.p)
     else parametermap(paramap.p+tree(cnode("LOCAL"_1,toword.nextset.p)),nextset.p+1,addnodes.p+ipair(nextset.p,t))
 
@@ -455,7 +439,16 @@ function inline(pp:program,inlinename:set.word, sets:seq(tree.cnode),paramap:seq
    then 
       inline(pp,inlinename,sets,paramap,nextset, l_2)
    else 
-         expandapply(pp,inlinename,nextset,code,l)
+     // let term1=arg.label(code_(nosons.code - 1))
+     let term2=arg.label(code_(nosons.code - 2))
+     let ptyp= arg.label(code_nosons.code)  
+     let p1 = noparamangled.term1  - 2 
+     let p2 = noparamangled.term2 - 1 
+     let nopara = 2 + p2 + p1 
+     assert p2 ≥ 0 report"illformed"+ term1 + term2 + print(lookupfunc(pp,term2))
+     let thetree=buildcodetree(   template2( term1, term2, p1, p2, ptyp) )
+      explodeinline(pp,empty:set.word,thetree,false,nextset,subseq(l, 1,length.l - 3)) //
+      expandapply(pp,inlinename,nextset,code,l)
     else 
         let  f=lookupfunc(pp,inst)
     explodeinline(pp,inlinename,codetree.f,"SIMPLE"_1 in flags.f,nextset,l) 
@@ -779,6 +772,15 @@ function mapit  ( map:seq.int,arg:word) int
    
 _____________
 
+function check(var:word,parent:boolean,t:tree.cnode) int
+ // returns 10000 if does not check. Returns max var used in tree if does checkout. parent indicates if the parent is IDXUC //
+  if inst.label.t="LOCAL"_1 &and (arg.label.t = var) then 
+   if parent then toint(arg.label.t) else 10000 
+  else 
+   @(max, check(var,inst.label.t="IDXUC"_1),if inst.label.t ="SET"_1 then toint.arg.label.t else 
+   if inst.label.t = "LOOP"_1 then
+      toint.arg.label(t_1)+nosons.t-3
+   else 0,sons.t)
   
    
     
@@ -791,17 +793,6 @@ Function  removerecords(x:tree.cnode) tree.cnode
       if chk=10000 then t else 
              fix2(t,empty:seq.tree.cnode,1,chk+1)
 else t
-
-function check(var:word,parent:boolean,t:tree.cnode) int
- // returns 10000 if does not check. Returns max var used in tree if does checkout. parent indicates if the parent is IDXUC //
-  if inst.label.t="LOCAL"_1 &and (arg.label.t = var) then 
-   if parent then toint(arg.label.t) else 10000 
-  else 
-   @(max, check(var,inst.label.t="IDXUC"_1),if inst.label.t ="SET"_1 then toint.arg.label.t else 
-   if inst.label.t = "LOOP"_1 then
-      toint.arg.label(t_1)+nosons.t-3
-   else 0,sons.t)
-
 
 function fix2(   t:tree.cnode, replacements:seq.tree.cnode ,i:int,varbase:int) tree.cnode
  // replaces " fld1 fld2 RECORD 2 exp SET y "  with  " fld1 fld2 exp SET v2  SET v1 " //
@@ -843,14 +834,14 @@ function returnsrecord(t:tree.cnode)int
    if a = 0 then 0 else if a = returnsrecord(t_3)then a else 0 
   else 0
 
-Function hoistRecord (t:tree.cnode) tree.cnode
+Function opt7(t:tree.cnode)tree.cnode 
  if nosons.t = 0 
   then t 
-  else let sons = @(+,  hoistRecord, empty:seq.tree.cnode, sons.t)
+  else let sons = @(+, opt7, empty:seq.tree.cnode, sons.t)
   if inst.t ="if"_1 
   then let a = returnsrecord.t 
    if a > 0 
-   then 
+   then let nextvar = 10 
     tree(cnode."MRECORD", [ tree(cnode("LIT"_1, toword.a)), replacerecord.t])
    else tree(cnode."if", sons)
   else tree(label.t, sons)

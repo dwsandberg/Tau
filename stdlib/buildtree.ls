@@ -17,7 +17,6 @@ use stdlib
 
 use tree.cnode
 
-/type cnode is record inst:word, arg:word
 
 type cnode is  record towordseq:seq.word
 
@@ -27,6 +26,8 @@ Function arg(a:cnode)word {   if length(towordseq.a) < 2 then "0"_1 else  (towor
 
 Function cnode(a:word, b:word)cnode  
 cnode.if a in "SET FLAT FLD LIT LOCAL FREF PARA WORD" then [a,b] else [a]
+
+Function cnode(seq.word) cnode export
 
 
 Function =(a:cnode, b:cnode)boolean towordseq.a=towordseq.b

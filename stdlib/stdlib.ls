@@ -1,6 +1,6 @@
 #!/usr/local/bin/tau
 
-Library stdlib UTF8 bitpackedseq bits blockseq buildtree codegen codetemplates  definestruct display  
+Library stdlib UTF8 altgen bitpackedseq bits blockseq buildtree codegen codetemplates  definestruct display  
 fileio format graph groupparagraphs internalbc   invertedseq ipair libdesc libdescfunc libscope llvm main  oseq packedseq parse pass0 pass1a pass2a passcommon persistant pretty prims process processtypes real reconstruct seq set stack stacktrace symbol textio tree 
  uses 
  exports UTF8 bitpackedseq bits blockseq buildtree codetemplates    display   fileio format 

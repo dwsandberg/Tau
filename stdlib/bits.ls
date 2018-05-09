@@ -40,7 +40,7 @@ Function bit(int)bit export
 
 function sizeinbits(a:bit)int 1
 
-function tobits(a:bit)bits bits.toint.a
+Function tobits(a:bit)bits bits.toint.a
 
 Function addvbr(b:bitpackedseq.bit, newbits:int, bitcount:int)bitpackedseq.bit 
  let limit = toint(bits.1 << bitcount - 1)

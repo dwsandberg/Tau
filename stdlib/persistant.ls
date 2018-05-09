@@ -215,12 +215,13 @@ function addobject2(alltypes:set.libtype,a:mytype,l:linklists2,data:int) ipair.l
      let x=@(getindex(alltypes,b,data),identity,trackflds(l,empty:seq.flddesc,1),arithseq(length.b,1,1))
   ipair(place.l.x,@(buildtheobject(place.l.x),identity,l.x,flds.x))
 
+
 function getindexseq( alltypes:set.libtype,elementtype:mytype,f:trackflds,dataelement:int) trackflds
-     let k= addobject2(alltypes,elementtype,l.f,dataelement)
+    // assert towords.elementtype in ["libtype", "mytype","libmod","libsym"] report towords.elementtype //
+   let k= addobject2(alltypes,elementtype,l.f,dataelement)
     trackflds(value.k,flds.f+flddesc(index.k, "CRECORD"_1),0)
    
  
-
 function getindex(alltypes:set.libtype,b:seq.mytype,data:int,f:trackflds,i:int) trackflds
  let elementtype=b_i
  let dataelement=IDXUC(data,i-1)
@@ -232,15 +233,6 @@ function getindex(alltypes:set.libtype,b:seq.mytype,data:int,f:trackflds,i:int) 
    let k= addobject2(alltypes,elementtype,l.f,dataelement)
     trackflds(value.k,flds.f+flddesc(index.k, "CRECORD"_1),0)
     
-
-/function getfld(b:seq.mytype,data:int, i:int) ipair(mytype)
-   ipair(IDXUC(data,i-1),b_i)
-
-/function getfldseq(elementtype:mytype,data:int) ipair(mytype)
-ipair(data,elementtype)
-
-
-
 
 Function addwordseq(t:linklists2, a:seq.word)linklists2 
     linklists2(a.t + @(+,C64word33,[ C64.wordseqthread.t, C64.length.a],a), wordthread.t, offsetthread.t,place.t)

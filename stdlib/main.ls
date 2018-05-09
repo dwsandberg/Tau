@@ -128,7 +128,7 @@ function subcompilelib(libname:word)seq.word
   "OK"
 
 function waitforpass2(a:pass1result)process.pass1result 
- PROFILE.NOINLINE.let p = process.pass2.a 
+  NOINLINE.let p = process.pass2.a 
   if aborted.p then p else p
 
 function asliblib(s:seq.word, a:liblib, l:liblib)liblib 

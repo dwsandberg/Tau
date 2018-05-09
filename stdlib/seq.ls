@@ -263,6 +263,8 @@ Function FORCEINLINE(T) T builtin.FORCEINLINE
 
 Function NOINLINE(T) T builtin.NOINLINE
 
+Function TESTOPT(T) T builtin.TESTOPT
+
 
 
 

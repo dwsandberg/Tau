@@ -74,7 +74,7 @@ function tointseq(s:seq.byte)seq.int @(+, toint, empty:seq.int, s)
 
 function sizeinbits(a:byte)int 8
 
-function tobits(a:byte)bits bits.toint.a
+Function tobits(a:byte)bits bits.toint.a
 
 function frombits(a:bits)byte byte.toint.a
 

@@ -6,15 +6,15 @@ Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgra
 
 Module tools
 
-/run tools test
+run tools test
 
 /run tools prettytest
 
-/run printbitcodes test2
+/run printbitcodes test1
 
 /run tools test2
 
-run tools stdlibdoc
+/run tools stdlibdoc
 
 /run doc createdoc
 
@@ -48,7 +48,7 @@ Function test1 seq.word htmlcode."tools"
 
 Function checkbind seq.word checkbind."tools"
 
-Function prettytest seq.word prettylib("tools","")
+Function prettytest seq.word prettylib("test3","")
 
 "byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 
@@ -58,7 +58,7 @@ Function test seq.word
  let a = compilelib("stdlib"_1)
   a + profileresults."time"
 
-Function testprintBitCodes seq.word printBitCodes."test3.bc"
+Function testprintBitCodes seq.word printBitCodes."test2.bc"
 
 Function stdlibdoc seq.word 
  callgraphbetween("stdlib","persistant reconstruct")+ // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"

@@ -162,7 +162,10 @@ Function codegen5(z:pass1result)seq.bits
 
 type localmap5 is record localno:int, regno:int
 
-type Lcode5 is record code:internalbc, lst:linklists2, regno:int, arg:int, noblocks:int, tailphi:seq.int, loopblock:int
+type Lcode5 is record code:internalbc, lst:linklists2, regno:int, arg:int, noblocks:int, tailphi:seq.int, loopblock:int,
+multival:seq.int
+
+Lcode5(internalbc, linklists2, int, int, int, seq.int, seq.int, int, seq.int)NOT FOUND 
 
 function print(m:localmap5)seq.word 
  {"local"+ toword.localno.m +"ref"+ toword.regno.m }
@@ -170,7 +173,8 @@ function print(m:localmap5)seq.word
 function findcalls(t:tree.cnode)int 
  let discard = if inst.label.t =" FREF"_1
    then C.arg.label.t 
-   else  if inst.label.t in"SET RECORD CRECORD STKRECORD LOCAL  LIT PARA EQL if IDXUC PROCESS2  WORD   Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE"
+   else  if inst.label.t in"SET RECORD CRECORD STKRECORD LOCAL  LIT PARA EQL if IDXUC PROCESS2  WORD  
+   Q3EZbuiltinZintZint hashZbuiltinZint allocatespaceZbuiltinZint CALLIDX LOOP CONTINUE MSET MRECORD"
    then 0 
    else 
    C.inst.label.t 
@@ -185,22 +189,29 @@ type geninfo5 is record lib:word, wordstype:encoding.llvmtype, conststype:encodi
 
 use seq.funcdefresult5 
 
-function funcdef(fl:seq.func, info:geninfo5, consts:linklists2, i:int, result:seq.internalbc)funcdefresult5 
- if i > length.fl 
-  then funcdefresult5(result, consts)
-  else let f =  fl_i 
-   let paraadj = -nopara.f - 2 
-  let l = Lcode5(emptyinternalbc, consts, nopara.f + 1, 0, 1, empty:seq.int, 0)
-  let r = gencode(geninfo5(lib.info, wordstype.info, conststype.info, profiletype.info, 
-   mangledname.f, paraadj, tab.info, 
-    if "PROFILE"_1 in flags.f then mangledname.f else "noprofile"_1 ), empty:seq.localmap5, l, codetree.f)
-  let newbody = BLOCKCOUNT(1, noblocks.r)+(code.r)+ RET(regno.r + 1, arg.r)
-  funcdef(fl, info, lst.r, i + 1, result + [ newbody])
+use altgen
 
+/use process.altresult
+
+/function xxx(f:func, consts:linklists2 ,info:geninfo5) altresult
+altgen(f,consts,lib.info, wordstype.info, conststype.info, profiletype.info, tab.info)
+
+
+function funcdef(fl:seq.func, info:geninfo5, consts:linklists2, i:int, result:seq.internalbc)funcdefresult5 
+if i > length.fl 
+  then funcdefresult5(result, consts)
+  else 
+   let f =  fl_i 
+              let x=altgen(f,consts,lib.info, wordstype.info, conststype.info, profiletype.info, tab.info)
+       funcdef(fl, info, l.x, i + 1, result + [ body.x])
+    
 
 
 function loopmapentry(baselocal:int, regbase:int, i:int)localmap5 
  localmap5(baselocal + i - 1,-regbase - i)
+ 
+function mgetmapentry(baselocal:int,explist:seq.int,i:int) localmap5
+   localmap5(baselocal + i - 1,explist_i)
  
 use set.word
 
@@ -222,13 +233,12 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
   else if inst ="FREF"_1 
   then setarg(l, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.arg.label.t , C.arg.label.t ]))
   else if inst="CRECORD"_1 then
-    if nosons.t =10 &and  inst.label.t_5="LIT"_1 &and arg.label.t_5="23456"_1 then
-        let tt=addconst(lst.l,casttree.t)
-        setlist(usetemplate(l, CONSTtemplate, C64(index.tt +1 ), 0,-(regno.l + 2), 2), value.tt) 
-    else 
-    let tt =addconst(lst.l,casttree.t)
-     setlist(usetemplate(l, CONSTtemplate, C64(index.tt + 1), 0,-(regno.l + 2), 2), value.tt) 
-  else  if inst ="WORD"_1 
+      let tt =addconst(lst.l,casttree.t)
+         let newcode= GEP(regno.l+1, 1, typ.conststype, C."list", C64.0,  C64(index.tt + 1))
+        + CAST(regno.l+2, -(regno.l+1), typ.i64, 9)
+        // setlist(usetemplate(l, CONSTtemplate, C64(index.tt +1 ), 0,-(regno.l + 2), 2), value.tt) //
+         Lcode5(code.l + newcode, value.tt, regno.l + 2, -(regno.l + 2), noblocks.l, tailphi.l, loopblock.l,multival.l)        
+    else  if inst ="WORD"_1 
   then let a = C(ptr.i64, [ CONSTGEP, 
    typ.wordstype.lib, 
    typ.ptr.wordstype.lib, 
@@ -246,14 +256,20 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
    let exp3 = gencode(lib, lmap, addblockreset.exp2, t_3)
    let br = BR(regno.exp1 + 1, noblocks.exp1, noblocks.exp2, arg.exp1)
    let br1 = BR(regno.exp3, noblocks.exp3)
-   let phi = PHI(regno.exp3 + 1, typ.i64, arg.exp2, noblocks.exp2 - 1, arg.exp3, noblocks.exp3 - 1)
-   let newcode = code.exp1 + br + code.exp2 + br1 + code.exp3 + br1 + phi 
-   Lcode5(newcode, lst.exp3, regno.exp3 + 1,-(regno.exp3 + 1), noblocks.exp3 + 1, tailphi.exp3, loopblock.exp3)
+   let nophiinst=max(length.multival.exp2,1)
+   let phi = if length.multival.exp2=0 then
+      PHI(regno.exp3 + 1, typ.i64, arg.exp2, noblocks.exp2 - 1, arg.exp3, noblocks.exp3 - 1)
+    else 
+     @(+,  ifphi(regno.exp3,noblocks.exp2 - 1,noblocks.exp3 - 1,multival.exp2,multival.exp3) ,emptyinternalbc,arithseq(nophiinst,1,1))
+    let newcode = code.exp1 + br + code.exp2 + br1 + code.exp3 + br1 + phi 
+   Lcode5(newcode, lst.exp3, regno.exp3 + nophiinst,-(regno.exp3 + 1), noblocks.exp3 + 1, tailphi.exp3, loopblock.exp3,
+    if length.multival.exp2=0 then empty:seq.int else  arithseq(nophiinst,-1,-(regno.exp3+1) ))
   else if inst ="CALLIDX"_1 
   then let exp1 = gencode(lib, lmap, l, t_1)
    let exp2 = gencode(lib, lmap, exp1, t_2)
    let exp3 = gencode(lib, lmap, exp2, t_3)
-   let newcode = CAST(regno.exp1 + 1, arg.exp1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)+ CALL(regno.exp3 + 2, 0, 32768, typ.function.[ i64, i64, i64, i64],-(regno.exp3 + 1), -1, arg.exp2, arg.exp3)
+   let newcode = CAST(regno.exp3 + 1, arg.exp1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)
+               + CALL(regno.exp3 + 2, 0, 32768, typ.function.[ i64, i64, i64, i64],-(regno.exp3 + 1), -1, arg.exp2, arg.exp3)
    addcode(exp3, newcode,-(regno.exp3 + 2), 2)
   else if inst ="SET"_1 
   then let exp1 = gencode(lib, lmap, l, t_1)
@@ -267,26 +283,38 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
    usetemplate(exp2, template.template, arg.exp1, arg.exp2,-(regno.exp2 + length.template), length.template)
   else  if inst ="LOOP"_1 
   then // Sons of loop <start # of loop variables>, <loopbody> < entering values of loop variables> // 
-     let sons=@(addson(lib,lmap),identity,processsonsresult5(l,empty:seq.int    ), subseq(sons.t,3,nosons.t))
+     let sons=@(addson(lib,false,lmap),identity,processsonsresult5(l,empty:seq.int    ), subseq(sons.t,3,nosons.t))
    let varcount = nosons.t - 2 
    let loopblock = noblocks.l.sons 
    let bodymap = @(+, loopmapentry(toint.arg.label(t_1), regno.l.sons), lmap, arithseq(varcount, 1, 1))
    assert true report @(+, print,"bodymap", bodymap)+ @(+, toword,"explist", explist.sons)+"regno"+ toword.regno.l.sons + toword.paraAdjustment.lib 
-   let bodyl = Lcode5(emptyinternalbc, lst.l, regno.l.sons + varcount, -1, noblocks.l.sons + 1, empty:seq.int, loopblock)
+   let bodyl = Lcode5(emptyinternalbc, lst.l, regno.l.sons + varcount, -1, noblocks.l.sons + 1, empty:seq.int, loopblock,empty:seq.int)
    let body = gencode(lib, bodymap, bodyl, t_2)
-   Lcode5(code.l.sons + BR(regno.l.sons + 1, loopblock)+ phiinst(regno.l.sons, typ.i64, [ loopblock - 1]+ explist.sons + tailphi.body, varcount)+ code.body, lst.body, regno.body, arg.body, noblocks.body, tailphi.l, loopblock.l)
+   Lcode5(code.l.sons + BR(regno.l.sons + 1, loopblock)+ phiinst(regno.l.sons, typ.i64, [ loopblock - 1]+ explist.sons + tailphi.body, varcount)+ code.body, lst.body, regno.body, arg.body, noblocks.body, tailphi.l, loopblock.l
+   ,multival.l)
   else  
-       let sons=@(addson(lib,lmap),identity,processsonsresult5(l,empty:seq.int    ), sons.t )
-  if inst ="CONTINUE"_1 
-  then  
+   let sons=@(addson(lib,inst ="CONTINUE"_1 ,lmap),identity,processsonsresult5(l,empty:seq.int    ), sons.t )
+   if inst = "MRECORD"_1 then
+        let size=length.multival.l.sons
+        let l2=usetemplate(l.sons, RECORDtemplate, C64.size, -1,-(regno.l.sons + 2), 2)
+        setarg(@(setnextfld,identity,l2,multival.l.sons ),-(regno.l.sons + 1))
+   else if inst ="MSET"_1 then
+    Lcode5(code.l.sons,lst.l.sons,regno.l.sons,-1,noblocks.l.sons, tailphi.l.sons, loopblock.l.sons,explist.sons)
+   else if inst ="CONTINUE"_1  then  
    let block = noblocks.l.sons 
-   Lcode5(code.l.sons + BR(regno.l.sons, loopblock.l), lst.l.sons, regno.l.sons, -1, block + 1, tailphi.l.sons + [ block - 1]+ explist.sons, loopblock.l)
+   Lcode5(code.l.sons + BR(regno.l.sons, loopblock.l), lst.l.sons, regno.l.sons, -1, block + 1, tailphi.l.sons + [ block - 1]+ 
+   explist.sons, loopblock.l,empty:seq.int)
   else
    if inst ="RECORD"_1  
   then 
-       let l2=usetemplate(l.sons, RECORDtemplate, C64.nosons.t, -1,-(regno.l.sons + 2), 2)
-    setarg(@(setnextfld,identity,l2,explist.sons ),-(regno.l.sons + 1))
-   else  if inst ="STKRECORD"_1  
+         let l2=usetemplate(l.sons, RECORDtemplate, C64.nosons.t, -1,-(regno.l.sons + 2), 2)
+                 setarg(@(setnextfld,identity,l2,explist.sons ),-(regno.l.sons + 1)) 
+                 else if
+      //
+         let newcode = usetemplate(regno.l.sons, RECORDtemplate, C64.nosons.t, -1)
+         let x= value.@(setnextfld, identity, ipair(regno.l + 2, code.l.sons + newcode), explist.sons)
+       Lcode5(x, lst.l.sons,regno.l + 2 + nosons.t, -(regno.l + 1), noblocks.l.sons, tailphi.l.sons , loopblock.l,multival.l)           
+    else  if // inst ="STKRECORD"_1  
   then 
        let l2=usetemplate(l.sons, STKRECORDtemplate( C64.nosons.t),-1, -1,-(regno.l.sons + 1), 2) 
       setarg(@(setnextfld,identity,l2,explist.sons ),-(regno.l.sons + 2))
@@ -302,6 +330,11 @@ function gencode(lib:geninfo5, lmap:seq.localmap5, l:Lcode5, t:tree.cnode)Lcode5
     else // Case of CONST insteand of record as arg // 0 
    addcode(l.sons, c,-(regno.l.sons + 1), 1)
   else profilecall(profiletype.lib, sons, C.[ callee], prof)
+  
+  
+use ipair.internalbc
+
+
 
 function getloc(l:seq.localmap5, localno:int, i:int)int 
  if localno(l_i)= localno then regno(l_i)else getloc(l, localno, i + 1)
@@ -310,16 +343,17 @@ type processsonsresult5 is record l:Lcode5, explist:seq.int
 
 use seq.processsonsresult5
 
-function addson(info:geninfo5, lmap:seq.localmap5,p:processsonsresult5,t:tree.cnode) processsonsresult5 
+function addson(info:geninfo5, continue:boolean, lmap:seq.localmap5,p:processsonsresult5,t:tree.cnode) processsonsresult5 
 FORCEINLINE.
      let  exp = gencode(info, lmap, l.p, t)
-     processsonsresult5(exp, explist.p + arg.exp)
+     processsonsresult5(exp, explist.p +  if continue &and length.multival.exp > 0 then multival.exp else [arg.exp])
 
 
 
 
 function profilecall(profiletype:encoding.llvmtype, sons:processsonsresult5, callee:int, idx:int)Lcode5 
  let l = l.sons 
+ let args = explist.sons
   let base = regno.l 
   let block = noblocks.l 
   let p1 = C(ptr.i64, [ CONSTGEP, 
@@ -346,63 +380,63 @@ function profilecall(profiletype:encoding.llvmtype, sons:processsonsresult5, cal
   C32.0, 
   typ.i64, 
   C64.idx])
-  let c = GEP(base + 1, 1, typ.profiletype, C."profrefs", C64.0, C64.idx)+ LOAD(base + 2,-base - 1, typ.i64, align8, 0)+ BINOP(base + 3,-base - 2, C64.1, 0, typ.i64)+ STORE(base + 4,-base - 1,-base - 3, align8, 0)+ CMP2(base + 4,-base - 2, C64.0, 32)+ BR(base + 5, block, block + 1,-base - 4)+ CALL(base + 5, 0, 32768, typ.function.[ i64], C."clock")+ LOAD(base + 6, C."spacecount", typ.i64, align8, 0)+ CALL(base + 7, 0, 32768, typ.function.constantseq(length.explist.sons + 2, i64), callee, -1, explist.sons)+ CALL(base + 8, 0, 32768, typ.function.[ i64], C."clock")+ LOAD(base + 9, C."spacecount", typ.i64, align8, 0)+ BINOP(base + 10,-base - 8,-base - 5, 1, typ.i64)+ BINOP(base + 11,-base - 9,-base - 6, 1, typ.i64)+ LOAD(base + 12, p1, typ.i64, align8, 0)+ BINOP(base + 13,-base - 12,-base - 10, 0, typ.i64)+ STORE(base + 14, p1,-base - 13, align8, 0)+ LOAD(base + 14, pspace, typ.i64, align8, 0)+ BINOP(base + 15,-base - 14,-base - 11, 0, typ.i64)+ STORE(base + 16, pspace,-base - 15, align8, 0)+ LOAD(base + 16, pcount, typ.i64, align8, 0)+ BINOP(base + 17,-base - 16, C64.1, 0, typ.i64)+ STORE(base + 18, pcount,-base - 17, align8, 0)+ BR(base + 18, block + 2)+ CALL(base + 18, 0, 32768, typ.function.constantseq(length.explist.sons + 2, i64), callee, -1, explist.sons)+ BR(base + 19, block + 2)+ PHI(base + 19, typ.i64,-base - 7, block,-base - 18, block + 1)+ LOAD(base + 20,-base - 1, typ.i64, align8, 0)+ BINOP(base + 21,-base - 20, C64.1, 1, typ.i64)+ STORE(base + 22,-base - 1,-base - 21, align8, 0)
+  let c = GEP(base + 1, 1, typ.profiletype, C."profrefs", C64.0, C64.idx)
+  + LOAD(base + 2,-base - 1, typ.i64, align8, 0)
+  + BINOP(base + 3,-base - 2, C64.1, 0, typ.i64)
+  + STORE(base + 4,-base - 1,-base - 3, align8, 0)
+  + CMP2(base + 4,-base - 2, C64.0, 32)+ BR(base + 5, block, block + 1,-base - 4)
+  + CALL(base + 5, 0, 32768, typ.function.[ i64], C."clock")
+  + LOAD(base + 6, C."spacecount", typ.i64, align8, 0)
+  + CALL(base + 7, 0, 32768, typ.function.constantseq(length.args + 2, i64), callee, -1, args)
+  + CALL(base + 8, 0, 32768, typ.function.[ i64], C."clock")
+  + LOAD(base + 9, C."spacecount", typ.i64, align8, 0)
+  + BINOP(base + 10,-base - 8,-base - 5, 1, typ.i64)
+  + BINOP(base + 11,-base - 9,-base - 6, 1, typ.i64)
+  + LOAD(base + 12, p1, typ.i64, align8, 0)
+  + BINOP(base + 13,-base - 12,-base - 10, 0, typ.i64)
+  + STORE(base + 14, p1,-base - 13, align8, 0)
+  + LOAD(base + 14, pspace, typ.i64, align8, 0)
+  + BINOP(base + 15,-base - 14,-base - 11, 0, typ.i64)
+  + STORE(base + 16, pspace,-base - 15, align8, 0)
+  + LOAD(base + 16, pcount, typ.i64, align8, 0)
+  + BINOP(base + 17,-base - 16, C64.1, 0, typ.i64)+ STORE(base + 18, pcount,-base - 17, align8, 0)
+  + BR(base + 18, block + 2)
+  + CALL(base + 18, 0, 32768, typ.function.constantseq(length.args + 2, i64), callee, -1, args)
+  + BR(base + 19, block + 2)+ PHI(base + 19, typ.i64,-base - 7, block,-base - 18, block + 1)+ LOAD(base + 20,-base - 1, typ.i64, align8, 0)
+  + BINOP(base + 21,-base - 20, C64.1, 1, typ.i64)+ STORE(base + 22,-base - 1,-base - 21, align8, 0)
   addblock.addblock.addblock.addcode(l, c,-base - 19, 21)
-  
+
+/function setnextfld(p:ipair.internalbc, arg:int)ipair.internalbc 
+ let regno = index.p 
+  ipair(regno + 1, value.p + STORE(regno + 1,-regno, arg, align8, 0)+ GEP(regno + 1, 1, typ.i64,-regno, C64.1))
 
 Function setnextfld(l:Lcode5,arg:int) Lcode5
     let c=STORE(regno.l + 1,arg.l, arg, align8, 0)+GEP(regno.l + 1, 1, typ.i64, arg.l, C64(1) )
     addcode(l,c,-(regno.l + 1),1) 
  
-function addblock(l:Lcode5)Lcode5 Lcode5(code.l, lst.l, regno.l, arg.l, noblocks.l + 1, tailphi.l, loopblock.l)
+function addblock(l:Lcode5)Lcode5 Lcode5(code.l, lst.l, regno.l, arg.l, noblocks.l + 1, tailphi.l, loopblock.l,multival.l)
 
 function addblockreset(l:Lcode5)Lcode5 
- Lcode5(emptyinternalbc, lst.l, regno.l, arg.l, noblocks.l + 1, tailphi.l, loopblock.l)
+ Lcode5(emptyinternalbc, lst.l, regno.l, arg.l, noblocks.l + 1, tailphi.l, loopblock.l,multival.l)
 
-function setarg(l:Lcode5, arg:int)Lcode5 Lcode5(code.l, lst.l, regno.l, arg, noblocks.l, tailphi.l, loopblock.l)
+function setarg(l:Lcode5, arg:int)Lcode5 Lcode5(code.l, lst.l, regno.l, arg, noblocks.l, tailphi.l, loopblock.l,empty:seq.int)
 
 function setlist(l:Lcode5, list:linklists2)Lcode5 
- Lcode5(code.l, list, regno.l, arg.l, noblocks.l, tailphi.l, loopblock.l)
+ Lcode5(code.l, list, regno.l, arg.l, noblocks.l, tailphi.l, loopblock.l,multival.l)
 
 function addcode(l:Lcode5, c:internalbc, arg:int, reginc:int)Lcode5 
- Lcode5(code.l + c, lst.l, regno.l + reginc, arg, noblocks.l, tailphi.l, loopblock.l)
+ Lcode5(code.l + c, lst.l, regno.l + reginc, arg, noblocks.l, tailphi.l, loopblock.l,multival.l)
 
 function usetemplate(l:Lcode5, c:internalbc, val1:int, val2:int, arg:int, reginc:int)Lcode5 
- Lcode5(code.l + usetemplate(regno.l, c, val1, val2), lst.l, regno.l + reginc, arg, noblocks.l, tailphi.l, loopblock.l)
+ Lcode5(code.l + usetemplate(regno.l, c, val1, val2), lst.l, regno.l + reginc, arg, noblocks.l, tailphi.l, loopblock.l,multival.l)
 
 ------------------------
 
-type statencoding is encoding stat5
 
-type stat5 is record caller:word, callee:word
-
-function hash(s:stat5)int hash.caller.s + hash.callee.s
-
-function =(a:stat5, b:stat5)boolean caller.a = caller.b ∧ callee.a = callee.b
-
-function maxprof int 1000
-
-function profile(caller:word, callee:word)int 
- assert length.decode.callee > 0 report"wrong"+ caller + callee 
-  if caller = callee ∨ caller ="noprofile"_1 ∨ decode(callee)_1 = decode("q"_1)_1 
-  then 0 
-  else let idx = encoding.encode(stat5(caller, callee), statencoding)
-  if idx > maxprof then 0 else idx + 1
-
-function xx(a:stat5)seq.word [ caller.a, callee.a]
-
-function see seq.word 
- let map = subseq(mapping.statencoding, 1, maxprof)
-  @(+, xx,"", map)
-
-  
+function  ifphi (lastreg:int,thenblock:int,elseblock:int,thenmultival:seq.int,elsemultival:seq.int,i:int)internalbc
+ PHI(lastreg+i, typ.i64, thenmultival_i, thenblock, elsemultival_i, elseblock)
+ 
 _____________________
 
-function preorder(t:tree.cnode) seq.word
-    assert inst.label.t in "CRECORD LIT WORD FREF" report "preorder"+inst.label.t
-     if inst.label.t ="CRECORD"_1 then
-     @(+,preorder, [ inst.label.t, toword.nosons.t],sons.t)
-     else [ inst.label.t, arg.label.t]
-  
 
-  
+

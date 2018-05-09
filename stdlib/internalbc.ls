@@ -39,7 +39,7 @@ Function BINOP(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
  addstartbits(INSTBINOP, 4, addaddress(slot, a1, addaddress(slot, a2, add(a3, add(a4, emptyinternalbc)))))
 
 Function BINOP(slot:int, a1:int, a2:int, a3:int)internalbc 
- addstartbits(INSTBINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
+ // TESTOPT. // addstartbits(INSTBINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
 
 Function LOAD(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc 
  addstartbits(INSTLOAD, 4, addaddress(slot, a1, add(a2, add(a3, add(a4, emptyinternalbc)))))
@@ -59,8 +59,10 @@ Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int)i
 Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, a8:int)internalbc 
  addstartbits(INSTCALL, 8, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, emptyinternalbc)))))))))
 
+use seq.internalbc
+
 Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, a8:int, a9:int)internalbc 
- addstartbits(INSTCALL, 9, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, addaddress(slot, a9, emptyinternalbc))))))))))
+ // TESTOPT.// addstartbits(INSTCALL, 9, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, addaddress(slot, a9, emptyinternalbc))))))))))
 
 Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, a8:int, a9:int,a10:int)internalbc 
  addstartbits(INSTCALL, 10, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, addaddress(slot, a9, addaddress(slot, a10,emptyinternalbc)))))))))))
@@ -109,6 +111,21 @@ Function addstartbits(inst:int, noargs:int, c:internalbc)internalbc
 
 type internalbc is record bits:int, bitcount:int, done:seq.int
 
+Function print(a:internalbc) seq.word
+ print1(  finish.a,1,"") 
+ 
+function print1(a:seq.int,i:int,result:seq.word) seq.word
+  if i > length.a then result else 
+   let val=a_i
+   if val = vbr6 then  print1(a,i+2,result+"vbr6"+toword(a_(i+1) ))
+   else if val=reloc then print1(a,i+2,result+"reloc"+toword(a_(i+1) ))
+   else if val=setsub then print1(a,i+4,result+"setsub"+toword(a_(i+1))+toword(a_(i+2))+toword(a_(i+3)))
+   else if val=sub11 then print1(a,i+1,result+"sub11")
+   else if val=sub22 then  print1(a,i+1,result+"sub22") 
+   else let  nobits =toint(bits.val ∧ bits.63)
+   let bits = toint(bits.val >> 6 )
+   print1(a,i+1,result+[toword.bits,":"_1,toword.nobits])
+
 Function emptyinternalbc internalbc internalbc(0, 0, empty:seq.int)
 
 Function +(a:internalbc, b:internalbc)internalbc 
@@ -119,7 +136,7 @@ Function +(a:internalbc, b:internalbc)internalbc
 Function finish(b:internalbc)seq.int 
  if bitcount.b = 0 then done.b else [ bits.b * 64 + bitcount.b]+ done.b
 
-function addaddress(slot:int, a:int, b:internalbc)internalbc 
+Function addaddress(slot:int, a:int, b:internalbc)internalbc 
  if-a > slot 
   then internalbc(0, 0, [-a, slot]+ finish.b)
   else if a < 0 then add(slot + a, b)else internalbc(0, 0, [ reloc, a - slot + 1]+ finish.b)
@@ -151,13 +168,40 @@ use  seq.internal2
 function   add2(r:internal2,val:int) internal2
 FORCEINLINE.
    let nobits = toint(bits.val ∧ bits.63)
-   let bits = bits.val >> 6
+   let bits = bits.val >> 6 
    let newstate =  if state.r=0 then  if nobits < 58 then 0 else   toint.bits
     else    if state.r > 8 then  state.r-1 else 0 
    let newval1 = if state.r=tocode.setsub then if val ≤ 0 then offset.r - val else val else val1.r
    let newval2 = if state.r=9 then if val ≤ 0 then offset.r - val else val else val2.r
    let newoffset = if state.r=8 then offset.r+val else offset.r
-   let newresult = if state.r=0 then if nobits < 58 then add(result.r, bits , nobits) else result.r else 
+   let newresult =  
+ if state.r=0 then if nobits < 58 then add(result.r, bits , nobits) else result.r else      if state.r  > 7 then result.r
+       else if state.r = tocode.relocsigned then addvbrsigned6(result.r, offset.r - val)
+  else
+     addvbr6(result.r, if state.r= tocode.reloc 
+   then offset.r - val
+   else if state.r = tocode.vbr6 
+   then val
+   else if state.r = tocode.sub11 
+   then offset.r - (val1.r - val+ 1)
+   else assert state.r = tocode.sub22 report"invalid code" offset.r - (val2.r - val+ 1) )
+      internal2(newstate, newval1, newval2,newoffset, newresult)
+      
+/function   add2(r:internal2,val:int) internal2
+FORCEINLINE.
+   let nobits = toint(bits.val ∧ bits.63)
+   let bits = bits.val >> 6
+   if state.r=0 then 
+     if nobits < 58 then
+       internal2( 0 , val1.r, val2.r ,offset.r, add(result.r, bits , nobits) )
+    else
+       internal2(   toint.bits, val1.r, val2.r ,offset.r,  result.r)
+   else 
+   let newstate =  if state.r > 8 then  state.r-1 else 0 
+   let newval1 = if state.r=tocode.setsub then if val ≤ 0 then offset.r - val else val else val1.r
+   let newval2 = if state.r=9 then if val ≤ 0 then offset.r - val else val else val2.r
+   let newoffset = if state.r=8 then offset.r+val else offset.r
+   let newresult =  
        if state.r  > 7 then result.r
        else if state.r = tocode.relocsigned then addvbrsigned6(result.r, offset.r - val)
   else
@@ -169,7 +213,7 @@ FORCEINLINE.
    then offset.r - (val1.r - val+ 1)
    else assert state.r = tocode.sub22 report"invalid code" offset.r - (val2.r - val+ 1) )
       internal2(newstate, newval1, newval2,newoffset, newresult)
-  
+ 
 
 2 - 9  8
 8 - 8  7
