@@ -111,6 +111,13 @@ Function addstartbits(inst:int, noargs:int, c:internalbc)internalbc
 
 type internalbc is record bits:int, bitcount:int, done:seq.int
 
+Function done(internalbc) seq.int export
+
+Function bitcount(internalbc) int export
+
+Function bits(internalbc) int export
+
+
 Function print(a:internalbc) seq.word
  print1(  finish.a,1,"") 
  
@@ -119,13 +126,26 @@ function print1(a:seq.int,i:int,result:seq.word) seq.word
    let val=a_i
    if val = vbr6 then  print1(a,i+2,result+"vbr6"+toword(a_(i+1) ))
    else if val=reloc then print1(a,i+2,result+"reloc"+toword(a_(i+1) ))
-   else if val=setsub then print1(a,i+4,result+"setsub"+toword(a_(i+1))+toword(a_(i+2))+toword(a_(i+3)))
-   else if val=sub11 then print1(a,i+1,result+"sub11")
-   else if val=sub22 then  print1(a,i+1,result+"sub22") 
+   else if val=setsub then print1(a,i+2,result+"setsub"+toword(a_(i+1)))
+   else if val=sub11 then print1(a,i+2,result+"sub11"+toword(a_(i+1) ))
+   else if val=sub22 then  print1(a,i+2,result+"sub22"+toword(a_(i+1) ) )
    else let  nobits =toint(bits.val ∧ bits.63)
    let bits = toint(bits.val >> 6 )
    print1(a,i+1,result+[toword.bits,":"_1,toword.nobits])
-
+   
+use seq.int
+   
+   reloc, a - slot + 1                              offset.r - a - slot + 1
+                                                    offset.r 
+                                                    
+                                                           
+   
+   
+    if a < 0 then a+1 else a                        offset.r -( val1.r +(templateslot+ 1) )   
+    
+    
+   
+ 
 Function emptyinternalbc internalbc internalbc(0, 0, empty:seq.int)
 
 Function +(a:internalbc, b:internalbc)internalbc 
@@ -155,13 +175,13 @@ Function add(val:int, b:internalbc)internalbc
   if newbitcount > 56 then internalbc(val, 6, finish.b)else internalbc(bits.b * 64 + val, newbitcount, done.b)
 
 
-type  internal2 is record state:int,val1:int,val2:int,offset:int,result:bitpackedseq.bit 
+type  internal2 is record state:int,offset:int,result:bitpackedseq.bit 
 
 use seq.bitpackedseq.bit
 
 
 Function  addtobitstream(offset:int,bs:bitpackedseq.bit,b:internalbc) bitpackedseq.bit  
-result.@(add2,identity,internal2(0,0,0,offset,bs),finish.b)
+result.@(add2,identity,internal2(0,offset,bs),finish.b)
 
 use  seq.internal2
 
@@ -170,77 +190,42 @@ FORCEINLINE.
    let nobits = toint(bits.val ∧ bits.63)
    let bits = bits.val >> 6 
    let newstate =  if state.r=0 then  if nobits < 58 then 0 else   toint.bits
-    else    if state.r > 8 then  state.r-1 else 0 
-   let newval1 = if state.r=tocode.setsub then if val ≤ 0 then offset.r - val else val else val1.r
-   let newval2 = if state.r=9 then if val ≤ 0 then offset.r - val else val else val2.r
-   let newoffset = if state.r=8 then offset.r+val else offset.r
+    else     0 
+   let newoffset = if state.r=tocode.setsub then offset.r+val else offset.r
    let newresult =  
- if state.r=0 then if nobits < 58 then add(result.r, bits , nobits) else result.r else      if state.r  > 7 then result.r
+ if state.r=0 then if nobits < 58 then add(result.r, bits , nobits) else result.r 
+    else      if state.r  > 7 then result.r
        else if state.r = tocode.relocsigned then addvbrsigned6(result.r, offset.r - val)
   else
      addvbr6(result.r, if state.r= tocode.reloc 
-   then offset.r - val
-   else if state.r = tocode.vbr6 
-   then val
-   else if state.r = tocode.sub11 
-   then offset.r - (val1.r - val+ 1)
-   else assert state.r = tocode.sub22 report"invalid code" offset.r - (val2.r - val+ 1) )
-      internal2(newstate, newval1, newval2,newoffset, newresult)
+   then  offset.r - val 
+   else assert state.r = tocode.vbr6 report"invalid code" 
+     val
+    )
+      internal2(newstate, newoffset, newresult)
       
-/function   add2(r:internal2,val:int) internal2
-FORCEINLINE.
-   let nobits = toint(bits.val ∧ bits.63)
-   let bits = bits.val >> 6
-   if state.r=0 then 
-     if nobits < 58 then
-       internal2( 0 , val1.r, val2.r ,offset.r, add(result.r, bits , nobits) )
-    else
-       internal2(   toint.bits, val1.r, val2.r ,offset.r,  result.r)
-   else 
-   let newstate =  if state.r > 8 then  state.r-1 else 0 
-   let newval1 = if state.r=tocode.setsub then if val ≤ 0 then offset.r - val else val else val1.r
-   let newval2 = if state.r=9 then if val ≤ 0 then offset.r - val else val else val2.r
-   let newoffset = if state.r=8 then offset.r+val else offset.r
-   let newresult =  
-       if state.r  > 7 then result.r
-       else if state.r = tocode.relocsigned then addvbrsigned6(result.r, offset.r - val)
-  else
-     addvbr6(result.r, if state.r= tocode.reloc 
-   then offset.r - val
-   else if state.r = tocode.vbr6 
-   then val
-   else if state.r = tocode.sub11 
-   then offset.r - (val1.r - val+ 1)
-   else assert state.r = tocode.sub22 report"invalid code" offset.r - (val2.r - val+ 1) )
-      internal2(newstate, newval1, newval2,newoffset, newresult)
- 
 
-2 - 9  8
-8 - 8  7
-9 - 7  0
 
-Function usetemplate(deltaoffset:int, t:internalbc, val1:int, val2:int)internalbc 
- internalbc(0, 0, [ setsub, 
- if val1 < 0 then val1 + 1 else val1, 
- if val2 < 0 then val2 + 1 else val2,  deltaoffset]+ finish.t + [ setsub,0,0,-deltaoffset]
-)
 
+Function internalbc( bits:int, bitcount:int, done:seq.int  ) internalbc export 
+
+Function isempty(a:internalbc) boolean   bitcount.a=0 &and length.done.a=0  
 
 function tocode(i:int) int  { (i - 63) / 64 }
 
-function reloc int 63+7 * 64
+Function reloc int 63+7 * 64
 
-function vbr6 int 63 + 64
+Function vbr6 int 63 + 64
 
 Function ibcsub1 int -sub11
 
 Function ibcsub2 int -sub22
 
-function sub11 int 63 + 64 * 5
+Function sub11 int 63 + 64 * 5
 
-function sub22 int 63 + 64 * 6
+Function sub22 int 63 + 64 * 6
 
-function setsub int 63 + 64 * 10
+Function setsub int 63 + 64 * 8
 
 function relocsigned int 63 + 64 * 3
 

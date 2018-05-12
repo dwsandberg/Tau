@@ -18,11 +18,10 @@ function wordstype encoding.llvmtype array(-1, i64)
 
 Function conststype encoding.llvmtype array(-2, i64)
 
-type match5 is record inst:word, length:int, template:internalbc
 
 Function length(match5)int export
 
-Function template(match5)internalbc export
+/Function template(match5)internalbc export
 
 function ?(a:match5, b:match5)ordering encoding.inst.a ? encoding.inst.b
 
@@ -30,16 +29,8 @@ function =(a:match5, b:match5)boolean encoding.inst.a = encoding.inst.b
 
 Function table seq.match5 result.process.subtable
 
-Function CONSTtemplate internalbc 
- GEP(1, 1, typ.conststype, C."list", C64.0, ibcsub1)+ CAST(2, -1, typ.i64, 9)
 
-Function WORDtemplate internalbc LOAD(1, ibcsub1, typ.i64, align8, 0)
 
-Function RECORDtemplate internalbc 
- CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceZbuiltinZint", ibcsub2, ibcsub1)+ CAST(2, -1, typ.ptr.i64, CASTINTTOPTR)
-
-Function STKRECORDtemplate(size:int) internalbc 
- ALLOCA(1,typ.ptr.i64,typ.i64,size,0)+CAST(2, -1, typ.i64, CASTPTRTOINT)
 
 function subtable seq.match5 
  sort.[ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64, -1, ibcsub2)+ LOAD(3, -2, typ.i64, align8, 0)), 
@@ -76,15 +67,73 @@ function subtable seq.match5
   CAST(3, -2, typ.i64, 9) )]
  
 
-
-
+Function usetemplate(tab:seq.match5, inst:word,deltaoffset:int,inargs:seq.int) templateresult
+   let noargs=length.inargs
+   if noargs > 2 then templateresult( 0,emptyinternalbc)
+  else 
+    let a = match5(inst, 0, false,empty:seq.templatepart,empty:seq.int)
+    let i = binarysearch(tab, a)
+    if i < 0 then templateresult( 0,emptyinternalbc)
+    else 
+     let t = tab_i
+       let args = if switchargs.t then [inargs_2,inargs_1] else 
+       if length.parts.t > 3 then inargs+inargs      else inargs 
+     let b = if noargs=0 then part0.t
+    else  
+      ggh(deltaoffset, args,parts.t,1,part0.t)
+     templateresult(length.t,internalbc(0,0,[setsub, deltaoffset]+ b+[setsub, -deltaoffset]  ))
+         
+     
+ type  templatepart is record        part:seq.int,loc:int
  
+ use seq.templatepart
  
+ type match5 is record inst:word, length:int, switchargs:boolean,parts:seq.templatepart,part0:seq.int
 
-Function lookup(t:seq.match5, inst:word)match5 
- let a = match5(inst, 0, emptyinternalbc)
-  let i = binarysearch(t, a)
-  if i < 0 then a else t_i
+     
+function match5 (  inst:word, length:int, b:internalbc) match5
+let a = finish.b
+   let i =findindex(sub11,a)
+    let j=  findindex(sub22,a) 
+     let  jj=max(i,j)
+    let  ii=min(i,j)
+     let rest=subseq(a,jj+2,length.a)
+    let k = findindex(sub11,a,jj+1)
+    let l= findindex(sub22,a,jj+1) 
+    let parts = if ii < length.a then [ templatepart(subseq(a,ii+2,jj-1),a_(ii+1))]
+     +   if jj < length.a then [ templatepart(subseq(a,jj+2,k-1),a_(jj+1))]
+     +   if k < length.a then [ templatepart(subseq(a,k+2,l-1),a_(k+1))]
+     +   if l < length.a then [ templatepart(subseq(a,l+2,length.a),a_(l+1))]
+        else empty:seq.templatepart
+        else empty:seq.templatepart
+        else empty:seq.templatepart
+      else empty:seq.templatepart
+    let part0=subseq(a,1,ii-1)
+          let swithargs= i > j 
+  match5(inst,length,swithargs,parts,part0)
+     
+
+     
+function ggh(deltaoffset:int,args:seq.int,parts:seq.templatepart,i:int,result:seq.int) seq.int
+     if i > length.args then result
+     else 
+     let arg= args_i 
+       let newpart =  
+          if arg < 0 then [ vbr6 ,deltaoffset+loc(parts_i)+ arg ] else [reloc,arg-loc(parts_i)+1]
+      ggh(deltaoffset,args,parts,i+1,result+newpart+  part.(parts_i))
+     
+     
+     
+          
+use seq.int
+     
+type templateresult is record   length:int,code:internalbc
+
+
+Function length(templateresult) int export
+
+Function code(templateresult) internalbc export
+
 
 Function CASTZEXT int 1
 
@@ -94,3 +143,42 @@ Function CASTPTRTOINT int 9
 
 Function CASTINTTOPTR int 10
 
+use bitpackedseq.bit
+
+
+use seq.bit
+
+use bits
+
+type pp is record idx:int, val:int
+
+function getvbr(a:seq.bit, idx:int, size:int)pp getvbr(a, size, bits.0, 0, idx, 0)
+
+function getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp 
+ let b = toint(a_(idx + i))
+  if i = size - 1 
+  then if b = 0 then pp(idx + size, toint.val)else getvbr(a, size, val, nobits, idx + size, 0)
+  else getvbr(a, size, bits.b << nobits ∨ val, nobits + 1, idx, i + 1)
+  
+function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, abbrvlen:int) seq.seq.int 
+ if length.r > 0 
+  then // working on record // 
+   if noargs = 0 
+   then getinfo(b, 0, empty:seq.int, idx, recs + r, abbrvlen)
+   else let next = getvbr(b, idx, 6)
+   getinfo(b, noargs - 1, r + val.next, idx.next, recs, abbrvlen)
+  else let t = getvbr(b, abbrvlen, bits.0, 0, idx, 0)
+  if val.t = 3 
+  then // record // 
+   let inst = getvbr(b, idx.t, 6)
+   let args = getvbr(b, idx.inst, 6)
+   getinfo(b, val.args, [ val.inst], idx.args, recs, abbrvlen)
+  else  recs 
+
+function astext2(a:seq.int) seq.word "["+@(+,toword,"",a)+"]"
+
+function astext(a:bitpackedseq.bit) seq.word
+  // @(+,toword,"",@(+,toint,empty:seq.int,toseq.a))
++"&br"+ //
+ let recs=getinfo( toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)
+@(seperator("&br"),astext2,"",recs)

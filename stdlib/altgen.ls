@@ -42,27 +42,35 @@ use tree.seq.word
 
 use ipair.linklists2
 
-type altresult is record body:internalbc, l:linklists2
+type altresult is record bodies:seq.internalbc, l:linklists2
 
-Function body(altresult)internalbc export
+Function altresult ( bodies:seq.internalbc, l:linklists2) altresult export
+
+Function bodies(altresult) seq.internalbc export
 
 Function l(altresult)linklists2 export
 
-Function altgen(f:func, consts:linklists2, lib:word, pwordstype:encoding.llvmtype, pconststype:encoding.llvmtype, pprofiletype:encoding.llvmtype, tab:seq.match5)altresult 
- let paraadj =-nopara.f - 2 
+use seq.altresult
+
+Function  addfuncdef(info:geninfo6,  a: altresult, f:func)  altresult
+  let consts=l.a
   let l = Lcode("0"_1, emptyinternalbc, consts, empty:seq.localmap, 1, nopara.f + 1, empty:seq.int, 
   empty:seq.Lcode, empty:seq.int, 0,empty:seq.tree(seq.word))
-  let g5 = geninfo6(lib, pwordstype, pconststype, pprofiletype, mangledname.f, paraadj, tab,if "PROFILE"_1 in flags.f then mangledname.f else "noprofile"_1 )
+  let g5 = geninfo6(f, wordstype.info, conststype.info, profiletype.info,   tab.info,if "PROFILE"_1 in flags.f then mangledname.f else "noprofile"_1 )
   // assert false report prep(codetree.f)+"^^"+ print.codetree.f // 
   let r = @(processnext.g5, identity, l, prep.codetree.f)
-  altresult(BLOCKCOUNT(1, noblocks.r)+ code.r + RET(regno.r + 1, last.args.r), lst.r)
+  altresult(bodies.a+[BLOCKCOUNT(1, noblocks.r)+ code.r + RET(regno.r + 1, last.args.r)], lst.r)
  
 
 type Lcode is record state:word, code:internalbc, lst:linklists2, lmap:seq.localmap, noblocks:int, regno:int, args:seq.int, blocks:seq.Lcode, tailphi:seq.int, loopblock:int, const:seq.tree(seq.word)
 
 type localmap is record localno:int, regno:int
 
-type geninfo6 is record lib:word, wordstype:encoding.llvmtype, conststype:encoding.llvmtype, profiletype:encoding.llvmtype, funcname:word, paraAdjustment:int, tab:seq.match5, profile:word
+type geninfo6 is record f:func, wordstype:encoding.llvmtype, conststype:encoding.llvmtype, profiletype:encoding.llvmtype,    tab:seq.match5, profile:word
+
+Function geninfo6 (f:func, wordstype:encoding.llvmtype, conststype:encoding.llvmtype, profiletype:encoding.llvmtype,    tab:seq.match5, profile:word
+) geninfo6 export
+
 
 function push(l:Lcode, code:internalbc, regno:int, arg:int)Lcode 
  Lcode("0"_1, code, lst.l, lmap.l, noblocks.l, regno, args.l + [ arg], blocks.l, tailphi.l, loopblock.l,const.l)
@@ -97,15 +105,14 @@ function processnext(lib:geninfo6, l:Lcode, next:word)Lcode
        Lcode("0"_1, code.l+newcode, value.tt, lmap.l, noblocks.l, regno.l+2, args.l+[-(regno.l + 2)], blocks.l, tailphi.l,
         loopblock.l,empty:seq.tree(seq.word))
   else if state ="PARA"_1 
-  then push(l, toint.instarg + paraAdjustment.lib)
+  then push(l, toint.instarg -nopara.f.lib - 2  )
   else if state ="LOCAL"_1 
   then push(l, getloc(lmap.l, toint.instarg, 1))
   else if state ="LIT"_1 
   then push(l, C64.toint.instarg)
   else if state ="FREF"_1 
   then push(l, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.next, C.next]))
-  else // if state ="CRECORD"_1 then let tt = addconst(lst.l, casttree.t)let newcode = usetemplate(regno.l, CONSTtemplate, C64(index.tt + 1), 0)Lcode("0"_1, code.l + newcode, lst.value.tt, lmap.l, noblocks.l, regno.l + 2, [-(regno.l + 2)]+ args.l, blocks.l)else // 
-  if state ="WORD"_1 
+  else if state ="WORD"_1 
   then let a = C(ptr.i64, [ CONSTGEP, 
    typ.wordstype.lib, 
    typ.ptr.wordstype.lib, 
@@ -114,8 +121,8 @@ function processnext(lib:geninfo6, l:Lcode, next:word)Lcode
    C32.0, 
    typ.i64, 
    C64(word33.next + 1)])
-   let newcode = usetemplate(regno.l, WORDtemplate, a, 0)
-   push(l, code.l + newcode, regno.l + 1,-(regno.l + 1))
+   let newcode=LOAD(regno.l+1, a, typ.i64, align8, 0)
+    push(l, code.l + newcode, regno.l + 1,-(regno.l + 1))
   else if state ="DEFINE"_1 
   then Lcode("0"_1, code.l, lst.l, lmap.l + localmap(toint.instarg, last.args.l), noblocks.l, regno.l, subseq(args.l, 1, length.args.l - 1), [l]+blocks.l, tailphi.l, loopblock.l,const.l)
   else if state ="SET"_1 
@@ -168,18 +175,17 @@ function processnext(lib:geninfo6, l:Lcode, next:word)Lcode
    let block = noblocks.l 
    let tailphi = tailphi.l + [ block - 1]+ subseq(args.l, length.args.l - noargs + 1, length.args.l)
    Lcode("0"_1, code.l + BR(regno.l, loopblock.l), lst.l, lmap.l, block + 1, regno.l, poppush(args.l, noargs, -1), blocks.l, tailphi, loopblock.l,const.l)
-  else let noargs = toint.instarg 
-  let template = lookup(tab.lib, state)
-  if length.template > 0 
-  then 
-     let e1 = if noargs > 0 then args(l)_(length.args.l + 1 - noargs)else 0
-     let newcode = usetemplate(regno.l, template.template, e1, if noargs > 1 then args(l)_length.args.l else e1)
-   Lcode("0"_1, code.l + newcode, lst.l, lmap.l, noblocks.l, regno.l + length.template, poppush(args.l, noargs,-(regno.l + length.template)), blocks.l, tailphi.l, loopblock.l,const.l)
-  else  
+  else 
+    let noargs = toint.instarg 
+    let template=usetemplate(tab.lib,state,regno.l,top(args.l, noargs))
+    if not.isempty.code.template  then 
+        Lcode("0"_1, code.l + code.template, lst.l, lmap.l, noblocks.l, regno.l + length.template, poppush(args.l, noargs,-(regno.l + length.template)), blocks.l, tailphi.l, loopblock.l,const.l)
+else 
   if state in"RECORD"
   then let nosons = toint.next 
-   let newcode = usetemplate(regno.l, RECORDtemplate, C64.nosons, -1)
-   assert length.top(args.l, nosons)= nosons report"RECORD PROBLEM"+ next 
+  let newcode =CALL(regno.l+1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceZbuiltinZint", -1,  C64.nosons)
+  + CAST(regno.l+2, -(regno.l+1), typ.ptr.i64, CASTINTTOPTR)
+    assert length.top(args.l, nosons)= nosons report"RECORD PROBLEM"+ next 
    Lcode("0"_1, value.@(setnextfld, identity, ipair(regno.l + 2, code.l + newcode), top(args.l, nosons)), lst.l, lmap.l, noblocks.l, regno.l + 2 + nosons, poppush(args.l, nosons,-(regno.l + 1)), blocks.l, tailphi.l, loopblock.l,const.l)
   else if state in"STKRECORD"
   then let nosons = toint.next 
@@ -204,8 +210,7 @@ function processnext(lib:geninfo6, l:Lcode, next:word)Lcode
    addcode(l.sons, c,-(regno.l.sons + 1), 1) 
   else // profilecall(profiletype.lib, l,top(args.l, noargs) , C.[ callee], prof)
 
-  Lcode("0"_1, code.l + c, lst.l, lmap.l, noblocks.l, regno.l + 1, poppush(args.l, noargs,-(regno.l + 1)), blocks.l, tailphi.l, loopblock.l,const.l)
-
+ 
 exp1 exp2 exp2 FIRSTVAR <firstvar> LOOPBLOCK 4 <loop body> FINISHLOOP 2
 
 Function setnextfld(p:ipair.internalbc, arg:int)ipair.internalbc 

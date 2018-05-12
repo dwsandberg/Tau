@@ -70,6 +70,7 @@ function getmachineinfo machineinfo builtin.usemangle
 
 use seq.seq.bits
 
+
 Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits
 let MODABBREVLEN = 3 
   let TYPEABBREVLEN = 4 
@@ -80,24 +81,26 @@ let MODABBREVLEN = 3
   // type block // 
   let typeheader = addblockheader(a, MODABBREVLEN, TYPEBLOCK, TYPEABBREVLEN)
   let a2 = addrecords(typeheader, TYPEABBREVLEN, [ [ ENTRY, length.trecords]]+ trecords)
-  let a3 = finishblock(a2, typeheader, TYPEABBREVLEN)
+  let a3 = finishblock(a2, length.typeheader, TYPEABBREVLEN)
   // PARAGRPBLOCK // 
   let pgh = addblockheader(a3, MODABBREVLEN, PARAGRPBLOCK, TYPEABBREVLEN)
-  let pge = finishblock(addrecords(pgh, TYPEABBREVLEN, [ [ 3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18]+ @(+, decode, [ 3],"no-frame-pointer-elim-non-leaf")+ [ 0]]), pgh, TYPEABBREVLEN)
+  let pge = finishblock(addrecords(pgh, TYPEABBREVLEN, [ [ 3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18]+ @(+, decode, [ 3],
+  "no-frame-pointer-elim-non-leaf")+ [ 0]]), length.pgh, TYPEABBREVLEN)
   // para block // 
   let paraheader = addblockheader(pge, MODABBREVLEN, PARABLOCK, TYPEABBREVLEN)
-  let a4 = finishblock(addrecords(paraheader, TYPEABBREVLEN, [ [ 2, 0]]), paraheader, TYPEABBREVLEN)
+  let a4 = finishblock(addrecords(paraheader, TYPEABBREVLEN, [ [ 2, 0]]), length.paraheader, TYPEABBREVLEN)
   // def list // 
   let a5 = addrecords(a4, MODABBREVLEN, deflist)
   // const block // 
-  let constheader = addblockheader(a5, MODABBREVLEN, CONSTANTSBLOCK, TYPEABBREVLEN)
-   let a6 = finishblock(bits.@(constrecords,identity,trackconst(constheader,-1),mapping.llvmconsts) , constheader, TYPEABBREVLEN)
+   let g=@(constrecords,identity,trackconst(a5,-1,0),subseq(mapping.llvmconsts,length.deflist+1,offset)) 
+   let a6 = finishblock(bits.g , blockstart.g, TYPEABBREVLEN)
   // function bodies // 
+  assert length.trecords=length.typerecords report "X"
   let a7 = @(addbody(offset, MODABBREVLEN), identity, a6, bodytxts)
   // sym table // 
   let symtabheader = addblockheader(a7, MODABBREVLEN, VALUESYMTABBLOCK, TYPEABBREVLEN)
-  let a8 = finishblock(symentries(symtabheader, mapping.llvmconsts, 1), symtabheader, TYPEABBREVLEN)
-  // finish module block // data2.align.finishblock(a8, h, MODABBREVLEN)
+  let a8 = finishblock(symentries(symtabheader, mapping.llvmconsts, 1), length.symtabheader, TYPEABBREVLEN)
+  // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN)
 
 Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int 
  if i > length.adj 
@@ -126,13 +129,6 @@ encoding.encode(llvmconst(t, s), llvmconsts) - 1
 
 Function funcname(a:llvmconst)word encodeword.toseq.a
 
-Function symbolrecords2 seq.llvmconst subsym(mapping.llvmconsts, empty:seq.llvmconst, 1)
-
-function subsym(s:seq.llvmconst, result:seq.llvmconst, i:int)seq.llvmconst 
- if i > length.s 
-  then result 
-  else let l = s_i 
-  if typ.l = -1 then subsym(s, result + l, i + 1)else result
 
 Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, mapping.llvmtypes)
 
@@ -166,52 +162,58 @@ function ENTERBLOCK int 1
 Function addblockheader(b:bitpackedseq.bit, currentabbrelength:int, blockid:int, abbrevlength:int)bitpackedseq.bit 
  addvbr(align32.addvbr(addvbr(addvbr(b, ENTERBLOCK, currentabbrelength), blockid, 8), abbrevlength, 4), 0, 32)
 
-Function finishblock(current:bitpackedseq.bit, header:bitpackedseq.bit, blockabbrevlength:int)bitpackedseq.bit 
+  
+Function finishblock(current:bitpackedseq.bit, headerplace:int, blockabbrevlength:int)bitpackedseq.bit 
+ if headerplace=0 then current else 
  let bb = align32.addvbr(current, ENDBLOCK, blockabbrevlength)
-  let len =(length.bb - length.header)/ 32 
+  let len =(length.bb - headerplace)/ 32 
   // assert false report"X"+ toword(length.header-32)+ toword.len // 
-  patch(bb, length.header - 31, len)
+  patch(bb, headerplace - 31, len)
 
 Function addbody(offset:int, abbrevlen:int, m:bitpackedseq.bit, bodytxt:internalbc)bitpackedseq.bit 
  let header = addblockheader(m, abbrevlen, FUNCTIONBLOCK, 4)
-  finishblock(addtobitstream(offset, header, bodytxt), header, 4)
+  finishblock(addtobitstream(offset, header, bodytxt), length.header, 4)
 
 Function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int)bitpackedseq.bit 
- addrecords(bits, abbrevlength, s, 1)
+@(addrecord(abbrevlength),identity,bits,s)
 
-function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int, i:int)bitpackedseq.bit 
- if i > length.s 
-  then bits 
-  else let a = s_i 
+  function  addrecord(abbrevlength:int,bits:bitpackedseq.bit, a:seq.int) bitpackedseq.bit
   let a1 = addvbr(bits, 3, abbrevlength)
-  let tp = a_1 
-  let a2 = addvbr6(addvbr6(a1, tp), length.a - 1)
-  let bs = @(addvbr6, identity, a2, subseq(a, 2, length.a))
-  addrecords(bs, abbrevlength, s, i + 1)
+  let a2 = addvbr6(addvbr6(a1, a_1), length.a - 1)
+   @(addvbr6, identity, a2, subseq(a, 2, length.a))
+
 
 use seq.bitpackedseq.bit
 
-type trackconst is record bits: bitpackedseq.bit, lasttype:int
+type trackconst is record bits: bitpackedseq.bit, lasttype:int,blockstart:int
 
 use seq.trackconst
 
 function constrecords(z:trackconst,l:llvmconst) trackconst
 // keep track of type of last const processed and add record when type changes //
-  FORCEINLINE.let bs = if typ.l = -1 then bits.z
+  FORCEINLINE.let MODABBREVLEN = 3
+     let TYPEABBREVLEN = 4 
+     if typ.l = -1 then 
+        let bits = if lasttype.z &ne -1 then
+          finishblock(bits.z , blockstart.z, TYPEABBREVLEN)
+           else bits.z
+ trackconst(addrecord(MODABBREVLEN,bits,    [ MODULECODEFUNCTION, typ.getftype.funcname.l, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0] )
+   , typ.l,  0 )
   else 
-      let bits=bits.z
-      let abbrevlength = 4 
-     let bits2 = if lasttype.z = typ.l then bits else addvbr6(add(bits, bits((1 * 64 + 1)* 16 + 3), 16), typ.l)
-let tp = toseq(l)_1
-  if tp = CONSTINTEGER 
+      let newblock=lasttype.z=-1 &and typ.l &ne -1 
+      let bits =
+      if  newblock then addblockheader(bits.z, MODABBREVLEN, CONSTANTSBLOCK, TYPEABBREVLEN) else bits.z
+      let bits2 = if lasttype.z = typ.l then bits else  addvbr6(add(bits, bits((1 * 64 + 1)* 16 + 3), 16), typ.l)
+      let tp = toseq(l)_1
+  let bs=if tp = CONSTINTEGER 
    then addvbrsigned6(add(bits2, bits((1 * 64 + CONSTINTEGER)* 16 + 3), 16), toseq(l)_2)
    else let a1 = if length.toseq.l < 32 
     then add(bits2, bits(((length.toseq.l - 1)* 64 + tp)* 16 + 3), 16)
-    else addvbr6(addvbr6(addvbr(bits2, 3, abbrevlength), tp), length.toseq.l - 1)
+    else addvbr6(addvbr6(addvbr(bits2, 3, TYPEABBREVLEN ), tp), length.toseq.l - 1)
       addvbr6(a1, subseq(toseq.l, 2, length.toseq.l))
-    trackconst(bs, typ.l)
+    trackconst(bs, typ.l,if newblock then length.bits else blockstart.z )
     
-
+use persistant
 
 
 
