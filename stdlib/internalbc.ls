@@ -70,6 +70,12 @@ Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, 
 Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, rest:seq.int)internalbc 
  addstartbits(INSTCALL, 5 + length.rest, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, args(slot, emptyinternalbc, rest, length.rest)))))))
 
+Function CALLSTART( slot:int, a1:int, a2:int, a3:int, a4:int,noargs:int) internalbc
+ addstartbits(INSTCALL, 4 + noargs, add(a1, add(a2, add(a3, addaddress(slot, a4,emptyinternalbc)))))
+
+Function CALLFINISH(slot:int,rest:seq.int) internalbc
+  args(slot, emptyinternalbc, rest, length.rest)
+  
 function args(slot:int, t:internalbc, rest:seq.int, i:int)internalbc 
  if i = 0 then t else args(slot, addaddress(slot, rest_i, t), rest, i - 1)
 
@@ -126,24 +132,14 @@ function print1(a:seq.int,i:int,result:seq.word) seq.word
    let val=a_i
    if val = vbr6 then  print1(a,i+2,result+"vbr6"+toword(a_(i+1) ))
    else if val=reloc then print1(a,i+2,result+"reloc"+toword(a_(i+1) ))
-   else if val=setsub then print1(a,i+2,result+"setsub"+toword(a_(i+1)))
-   else if val=sub11 then print1(a,i+2,result+"sub11"+toword(a_(i+1) ))
-   else if val=sub22 then  print1(a,i+2,result+"sub22"+toword(a_(i+1) ) )
+   else if val=-ibcsub1 then print1(a,i+2,result+"sub11"+toword(a_(i+1) ))
+   else if val=-ibcsub2 then  print1(a,i+2,result+"sub22"+toword(a_(i+1) ) )
    else let  nobits =toint(bits.val ∧ bits.63)
    let bits = toint(bits.val >> 6 )
    print1(a,i+1,result+[toword.bits,":"_1,toword.nobits])
    
 use seq.int
    
-   reloc, a - slot + 1                              offset.r - a - slot + 1
-                                                    offset.r 
-                                                    
-                                                           
-   
-   
-    if a < 0 then a+1 else a                        offset.r -( val1.r +(templateslot+ 1) )   
-    
-    
    
  
 Function emptyinternalbc internalbc internalbc(0, 0, empty:seq.int)
@@ -158,7 +154,11 @@ Function finish(b:internalbc)seq.int
 
 Function addaddress(slot:int, a:int, b:internalbc)internalbc 
  if-a > slot 
-  then internalbc(0, 0, [-a, slot]+ finish.b)
+  then 
+    // assert a in [ibcsub1,ibcsub2,ibcsub3] report "HERE"+toword.a+toword.ibcsub1+toword.ibcsub2+toword.ibcsub3 //
+   if a=ibcfirstpara2 then  internalbc(0, 0, [firstpara2]+ finish.b) else
+  internalbc(0, 0, [if a=ibcsub1 then sub1 else if a=ibcsub2 then sub2 else assert a=ibcsub3 
+   report "unknown code in addaddress"   sub3 , slot]+ finish.b)
   else if a < 0 then add(slot + a, b)else internalbc(0, 0, [ reloc, a - slot + 1]+ finish.b)
 
 Function addsignedaddress(slot:int, a:int, b:internalbc)internalbc 
@@ -181,53 +181,84 @@ use seq.bitpackedseq.bit
 
 
 Function  addtobitstream(offset:int,bs:bitpackedseq.bit,b:internalbc) bitpackedseq.bit  
-result.@(add2,identity,internal2(0,offset,bs),finish.b)
+result.@(add2.offset,identity,internal2(0,offset,bs),finish.b)
 
 use  seq.internal2
 
-function   add2(r:internal2,val:int) internal2
+function   add2(offset:int,r:internal2,val:int) internal2
 FORCEINLINE.
    let nobits = toint(bits.val ∧ bits.63)
+   // assert nobits=63 &or nobits < 59 &or state.r &ne 0 report "XJ"+toword.nobits+toword.state.r //
    let bits = bits.val >> 6 
-   let newstate =  if state.r=0 then  if nobits < 58 then 0 else   toint.bits
+   let newstate =  if state.r=0 then  if nobits < 60 then 0 else   val
     else     0 
-   let newoffset = if state.r=tocode.setsub then offset.r+val else offset.r
+   let newoffset =  if nobits=setoffset &and state.r=0 then offset+toint.bits else   offset.r
    let newresult =  
- if state.r=0 then if nobits < 58 then add(result.r, bits , nobits) else result.r 
-    else      if state.r  > 7 then result.r
-       else if state.r = tocode.relocsigned then addvbrsigned6(result.r, offset.r - val)
+ if state.r=0 then if nobits < 58 then add(result.r, bits , nobits) else 
+   if val=firstpara2 then addvbr6(result.r,offset.r-offset+1) else result.r 
+    else      if state.r = relocsigned then addvbrsigned6(result.r, offset.r - val)
   else
-     addvbr6(result.r, if state.r= tocode.reloc 
+     addvbr6(result.r, if state.r= reloc 
    then  offset.r - val 
-   else assert state.r = tocode.vbr6 report"invalid code" 
+   else   // if state.r=firstpara2 then
+        offset.r-offset+1
+   else  //
+     assert state.r = vbr6 report"invalid code" + toword.state.r
      val
     )
       internal2(newstate, newoffset, newresult)
       
-
+Function addoffset(b:seq.int,deltaoffset:int) seq.int
+  [setoffset+64 * deltaoffset]+ b+[setoffset] 
 
 
 Function internalbc( bits:int, bitcount:int, done:seq.int  ) internalbc export 
 
 Function isempty(a:internalbc) boolean   bitcount.a=0 &and length.done.a=0  
 
-function tocode(i:int) int  { (i - 63) / 64 }
-
-Function reloc int 63+7 * 64
 
 Function vbr6 int 63 + 64
 
-Function ibcsub1 int -sub11
-
-Function ibcsub2 int -sub22
-
-Function sub11 int 63 + 64 * 5
-
-Function sub22 int 63 + 64 * 6
-
-Function setsub int 63 + 64 * 8
-
 function relocsigned int 63 + 64 * 3
+
+function newway boolean true
+
+Function reloc int 63  +64 * 7
+
+Function ibcfirstpara2 int // must be big enough value so -ibcirstpart2 > max slot number in function // -(6400000)
+
+Function  sub1 int 60 + 64 * 5001
+
+Function  sub2 int 60 + 64 * 5002
+
+Function  sub3 int 60 + 64 * 5003
+
+Function ibcsub1 int -(6400001)
+
+Function ibcsub2 int -(6400002)
+
+Function ibcsub3 int -(6400003)
+
+
+
+
+function firstpara2 int 58 
+
+function setoffset int 59
+
+
+
+// Function ibcsub1 int -(60 + 64 * 5001)
+
+/Function ibcsub2 int -(60 + 64 * 5002)
+
+/Function ibcsub3 int -(60 + 64 * 5003)//
+
+Function ibcsubpara(i:int) int  { (i-60 ) / 64  -5000 }
+
+
+
+
 
 Function INSTCALL int 34
 

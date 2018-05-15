@@ -168,6 +168,8 @@ Function ?(a:word, b:word)ordering encoding.a ? encoding.b
 
 Function =(a:word, b:word)boolean encoding.a = encoding.b
 
+Function &ne(a:word, b:word)boolean export
+
 Function hasdigit(w:word)boolean 
  let l = decode.w 
   between(l_1, 48, 57)∨ l_1 = hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)

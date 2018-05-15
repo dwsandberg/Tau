@@ -149,6 +149,21 @@ function =(a:const3,b:const3) boolean flds.a=flds.b
 use seq.const3
 
 function hash(a:const3) int length.flds.a+@(+,index,0,flds.a)
+
+Function addconst(l:linklists2, fullinst:seq.word) ipair(linklists2)
+   addconst(l,buildconsttree(fullinst ,2,empty:stack.tree.seq.word))
+   
+use stack.tree.seq.word
+
+ function buildconsttree( s:seq.word,  i:int, result:stack.tree.seq.word) tree.seq.word 
+   if i+1 > length.s then top(result)
+   else let c=subseq(s,i,i+1) 
+    if c_1="CRECORD"_1 then 
+       let nosons=toint.c_2
+        buildconsttree(s, i+2,push(pop(result,nosons),tree(c,top(result,nosons))))
+    else
+     buildconsttree(s, i+2,push(result, tree.c))
+
      
 Function addconst(l:linklists2,t:tree.seq.word) ipair(linklists2)
 // First build description of record. This may add other const records to l //

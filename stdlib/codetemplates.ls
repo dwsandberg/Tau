@@ -4,7 +4,6 @@ use internalbc
 
 use llvm
 
-use oseq.match5
 
 use process.seq.match5
 
@@ -18,22 +17,37 @@ function wordstype encoding.llvmtype array(-1, i64)
 
 Function conststype encoding.llvmtype array(-2, i64)
 
+type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart,action:word,arg:int
+
 
 Function length(match5)int export
 
-/Function template(match5)internalbc export
+Function action(match5)word export
 
-function ?(a:match5, b:match5)ordering encoding.inst.a ? encoding.inst.b
+Function arg(match5) int export
 
-function =(a:match5, b:match5)boolean encoding.inst.a = encoding.inst.b
+Function fullinst(m:match5) seq.word  export
 
-Function table seq.match5 result.process.subtable
+Function inst(m:match5) word  { (fullinst.m)_1 }
+
+Function instarg(m:match5) word  { (fullinst.m)_2 }
+
+/function ?(a:match5, b:match5)ordering  
+  let c=encoding.inst.a ? encoding.inst.b if c=EQ then encoding.instarg.a ? encoding.instarg.b else c
+
+function =(a:match5, b:match5)boolean fullinst.a=fullinst.b
+
+function hash(a:match5) int  hash.fullinst.a
+
+use seq.match5
+
+type ematch5 is  encoding match5
 
 
 
 
-function subtable seq.match5 
- sort.[ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64, -1, ibcsub2)+ LOAD(3, -2, typ.i64, align8, 0)), 
+Function table seq.match5 
+ let t=[ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64, -1, ibcsub2)+ LOAD(3, -2, typ.i64, align8, 0)), 
  match5(// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(1, ibcsub1, ibcsub2, 39)+ CAST(2, -1, typ.i64, CASTZEXT)+ CMP2(3, ibcsub1, ibcsub2, 38)+ CAST(4, -3, typ.i64, CASTZEXT)+ BINOP(5, -2, -4, 0, typ.i64)), 
   match5("getaddressZbuiltinZTzseqZint"_1, 2,  
   BINOP(1, ibcsub2, C64.3, // shift left // 7)+ BINOP(2, ibcsub1, -1, 0, typ.i64)), 
@@ -64,75 +78,120 @@ function subtable seq.match5
  match5("setfldZbuiltinZTzaddressZT"_1,3, CAST( 1, ibcsub1, typ.ptr.i64, 10)+ 
  STORE(2, -1, ibcsub2,align8,0)+
  GEP(2,1,typ.i64,-1,C64.1)+
-  CAST(3, -2, typ.i64, 9) )]
+  CAST(3, -2, typ.i64, 9) ),
+  match5("STKRECORD"_1,3,ALLOCA(1,typ.ptr.i64,typ.i64,C64.2,0)
+  +STORE(2,-1, ibcsub1, align8, 0)+ GEP(2, 1, typ.i64,-1, C64.1)
+  +STORE(3,-2, ibcsub2, align8, 0)+CAST(3, -1, typ.i64, CASTPTRTOINT)) 
+   ,
+   match5("CALLIDX"_1,2,
+   CAST(1, ibcsub1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)+ 
+                 CALL(2, 0, 32768, typ.function.[ i64, i64, i64, i64],-1, ibcfirstpara2, ibcsub2, ibcsub3) ),
+                    match5("if 3" ,0,empty:seq.templatepart,"SPECIAL"_1,0),
+                    match5("THENBLOCK 1" ,0,empty:seq.templatepart,"SPECIAL"_1,0),
+                    match5("ELSEBLOCK 1" ,0,empty:seq.templatepart,"SPECIAL"_1,0)
+    ]
+ let discard=@(+,addit ,0,t) 
+    t
  
-
-Function usetemplate(tab:seq.match5, inst:word,deltaoffset:int,inargs:seq.int) templateresult
-   let noargs=length.inargs
-   if noargs > 2 then templateresult( 0,emptyinternalbc)
-  else 
-    let a = match5(inst, 0, false,empty:seq.templatepart,empty:seq.int)
-    let i = binarysearch(tab, a)
-    if i < 0 then templateresult( 0,emptyinternalbc)
-    else 
-     let t = tab_i
-       let args = if switchargs.t then [inargs_2,inargs_1] else 
-       if length.parts.t > 3 then inargs+inargs      else inargs 
-     let b = if noargs=0 then part0.t
-    else  
-      ggh(deltaoffset, args,parts.t,1,part0.t)
-     templateresult(length.t,internalbc(0,0,[setsub, deltaoffset]+ b+[setsub, -deltaoffset]  ))
+function  addit(m:match5) int
+  encoding.encode(m,ematch5)
+ 
          
-     
- type  templatepart is record        part:seq.int,loc:int
+use persistant
+
+
+ type  templatepart is record        part:seq.int,loc:int,parano:int
  
  use seq.templatepart
  
- type match5 is record inst:word, length:int, switchargs:boolean,parts:seq.templatepart,part0:seq.int
+   
+/function astext(a:templatepart) seq.word
+      [toword.loc.a,toword.parano.a] +astext2.part.a
+ 
+/ function =(a:templatepart,b:templatepart) boolean
+     part.a=part.b &and loc.a=loc.b &and parano.a=parano.b
+ 
+function getparts(a:internalbc) seq.templatepart subgetparts(finish.a,0,0,1,1)
 
+    
+function subgetparts(a:seq.int,lastloc:int,lastparano:int, lastindex:int, i:int) seq.templatepart
+ // finds template parameters and breaks template into parts. //
+  if i > length.a then  [templatepart(subseq(a,lastindex,i-1),lastloc,lastparano)]
+           else 
+  let val=a_i 
+   if  toint(bits.val ∧ bits.63)=60 then
+      let p= ibcsubpara(val)  
+       if p in [1,2,3] then
+           [templatepart(subseq(a,lastindex,i-1),lastloc,lastparano)]
+            +subgetparts(a,a_(i+1),p,i+2,i+2)
+       else subgetparts(a,lastloc,lastparano,lastindex,i+2)
+    else subgetparts(a,lastloc,lastparano,lastindex,i+1)
+     
      
 function match5 (  inst:word, length:int, b:internalbc) match5
-let a = finish.b
-   let i =findindex(sub11,a)
-    let j=  findindex(sub22,a) 
-     let  jj=max(i,j)
-    let  ii=min(i,j)
-     let rest=subseq(a,jj+2,length.a)
-    let k = findindex(sub11,a,jj+1)
-    let l= findindex(sub22,a,jj+1) 
-    let parts = if ii < length.a then [ templatepart(subseq(a,ii+2,jj-1),a_(ii+1))]
-     +   if jj < length.a then [ templatepart(subseq(a,jj+2,k-1),a_(jj+1))]
-     +   if k < length.a then [ templatepart(subseq(a,k+2,l-1),a_(k+1))]
-     +   if l < length.a then [ templatepart(subseq(a,l+2,length.a),a_(l+1))]
-        else empty:seq.templatepart
-        else empty:seq.templatepart
-        else empty:seq.templatepart
-      else empty:seq.templatepart
-    let part0=subseq(a,1,ii-1)
-          let swithargs= i > j 
-  match5(inst,length,swithargs,parts,part0)
+      let parts=getparts.b
+     let nopara= @(max,parano,0,parts)
+    match5([inst,toword.nopara],length,parts,"TEMPLATE"_1,nopara)
+    
      
+    
+use seq.encoding.llvmtype
+  
 
+    
+Function lookuptemplate(fullinst:seq.word ) match5
+      let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1,0)
+      let b=  findencode(a,ematch5)
+      if length.b=0 then 
+        let inst=fullinst_1
+        let instarg=fullinst_2
+        let m=    
+          if inst="FREF"_1 then
+           match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]) )
+          else if inst="LIT"_1 then
+           match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,C64.toint.instarg)  
+          else if inst  = "LOCAL "_1  then 
+           match5(fullinst,0,empty:seq.templatepart,"LOCAL"_1,toint.instarg)
+          else if inst  in "PARAM FIRSTVAR"  then 
+           match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,toint.instarg)
+          else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE " then 
+            match5(fullinst,0,empty:seq.templatepart,"SPECIAL"_1,0)
+          else if inst in "CLIT CWORD CFREF CRECORD CONSTANT" then 
+            match5(fullinst,0,empty:seq.templatepart,"CONSTGROUP"_1,0)
+          else if inst in "WORD" then
+            let aa = C(ptr.i64, [ CONSTGEP, 
+            typ.wordstype,  typ.ptr.wordstype,   C."words",   typ.i32,  C32.0,     typ.i64,    C64(word33.instarg + 1)])
+             match5(fullinst, 1, getparts.LOAD(1, aa, typ.i64, align8, 0),"TEMPLATE"_1 ,0)
+          else let noargs=toint.instarg
+  let newcode= CALLSTART(1,0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst],noargs+1)
+     match5(fullinst,1,getparts.newcode,"CALL"_1,noargs)
+          decode(encode(m,ematch5),ematch5) 
+         else b_1
+
+Function ematch5 erecord.match5 export
+   
+Function usetemplate(t:match5,deltaoffset:int,argstack:seq.int) internalbc
+     let args=if inst.t="WORD"_1 &or action.t="CALL"_1 then empty:seq.int else subseq(argstack, length.argstack - toint.instarg.t + 1, length.argstack)
+     let b =  @(+,processtemplatepart(deltaoffset, args), empty:seq.int,parts.t)
+    internalbc(0,0,addoffset(b,deltaoffset) )
+   
+
+function processtemplatepart(deltaoffset:int,args:seq.int,t:templatepart) seq.int
+       if parano.t=0 then  part.t
+     else
+     let arg= args_parano.t   
+          { if arg < 0 then [ vbr6 ,deltaoffset+loc(t)+ arg ] else [reloc,arg-loc(t)+1] }+
+      part.t
      
-function ggh(deltaoffset:int,args:seq.int,parts:seq.templatepart,i:int,result:seq.int) seq.int
-     if i > length.args then result
-     else 
-     let arg= args_i 
-       let newpart =  
-          if arg < 0 then [ vbr6 ,deltaoffset+loc(parts_i)+ arg ] else [reloc,arg-loc(parts_i)+1]
-      ggh(deltaoffset,args,parts,i+1,result+newpart+  part.(parts_i))
      
-     
+  
+
      
           
 use seq.int
      
-type templateresult is record   length:int,code:internalbc
 
 
-Function length(templateresult) int export
-
-Function code(templateresult) internalbc export
 
 
 Function CASTZEXT int 1
@@ -177,7 +236,7 @@ function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, ab
 
 function astext2(a:seq.int) seq.word "["+@(+,toword,"",a)+"]"
 
-function astext(a:bitpackedseq.bit) seq.word
+Function astext(a:bitpackedseq.bit) seq.word
   // @(+,toword,"",@(+,toint,empty:seq.int,toseq.a))
 +"&br"+ //
  let recs=getinfo( toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)

@@ -71,11 +71,12 @@ Function codegen5(z:pass1result)seq.bits
   let fb =  
   @(addfuncdef.geninfo6(dummyfunc , wordstype, conststype, profiletype,table,"noprofile"_1),identity,
   altresult(empty:seq.internalbc,createlinkedlists),code.z)
-  let noprofileslots = length.see / 2 
+  let profilearcs2=profilearcs
+  let noprofileslots = length.profilearcs2 / 2 
     let liblib = prepareliblib2(alltypes.z,l.fb,libdesc.z)
     let beforearcs =   value.liblib
   let arcs = place.beforearcs
-  let data =   addwordseq(beforearcs,see) 
+  let data =   addwordseq(beforearcs,profilearcs2) 
   let x = C(array(4, i64), [ AGGREGATE, 
   C(i64, [ CONSTCECAST, 9, typ.ptr.i64, getelementptr(conststype,"list",arcs+1) ] ), 
   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), 
