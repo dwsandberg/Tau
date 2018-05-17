@@ -265,7 +265,7 @@ Function calls(self:word, t:tree.cnode)seq.arc.word
  @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.label.t="FREF"_1
   then 
      [ arc(self, arg.label.t)]
-  else  if inst.label.t in " WORD RECORD IDXUC LIT LOCAL PARA SET LOOP CONTINUE  NOINLINE EQL if CALLIDX PROCESS2 CRECORD  "
+  else  if inst.label.t in " WORD RECORD IDXUC LIT LOCAL PARA SET LOOP FINISHLOOP LOOPBLOCK CONTINUE  NOINLINE EQL if CALLIDX PROCESS2 CRECORD  "
   then  empty:seq.arc.word
   else  //
     let  a=codedown.inst.label.t
@@ -405,7 +405,7 @@ function inline(pp:program,inlinename:set.word, sets:seq(tree.cnode),paramap:seq
         else 
         let s2=inline(pp,inlinename,addtosetmap(sets,toint(arg.label.code),nextset,1),paramap,nextset+1,code_2)
      tree(cnode("SET"_1,toword.nextset),[s1,s2])
-   else  if inst.label.code="LOOP"_1 then
+   else  if // Fix loop // inst.label.code="LOOP"_1 then
       let firstvar=toint.arg.label(code_1)
       let  l = @(+, inline(pp,inlinename,addtosetmap(sets,firstvar,nextset,nosons.code-2),paramap,nextset+nosons.code-2), empty:seq.tree.cnode, sons.code)
       tree(label.code,[tree.cnode("LIT"_1,toword.nextset)]+subseq(l,2,length.l))
@@ -482,7 +482,7 @@ Function tailcall(t:tree.cnode, self:word)boolean
   then if tailcall(t_2, self)then true else tailcall(t_3, self)
   else if inst.label.t ="SET"_1 
   then tailcall(t_2, self)
-  else if inst.label.t ="LOOP"_1 
+  else if inst.label.t in "LOOP FINISHLOOP"  
   then false 
   else   inst.label.t= self 
 
@@ -503,7 +503,7 @@ function tailcall(subs:seq.tree.cnode, self:word, t:tree.cnode)tree.cnode
   then tree(label.t, [ tailcall(subs,"nomatch"_1, t_1), tailcall(subs, self, t_2), tailcall(subs, self, t_3)])
   else if inst.label.t ="SET"_1 
   then tree(label.t, [ tailcall(subs,"nomatch"_1, t_1), tailcall(subs, self, t_2)])
-  else if inst.label.t ="LOOP"_1 
+  else if inst.label.t in "LOOP FINISHLOOP"  
   then tree(label.t, @(+, tailcall(subs,"nomatch"_1), empty:seq.tree.cnode, sons.t))
   else if  inst.label.t= self  
   then tree(cnode("CONTINUE"_1, self), @(+, tailcall(subs,"nomatch"_1), empty:seq.tree.cnode, sons.t))
@@ -518,6 +518,8 @@ function getmaxvar(t:tree.cnode)int
  @(max, getmaxvar, if inst.label.t ="SET"_1 then toint.arg.label.t else 
    if inst.label.t = "LOOP"_1 then
       toint.arg.label(t_1)+nosons.t-3
+    else if inst.label.t="LOOPBLOCK"_1 then
+      toint.arg.label(t_(nosons.t-1))+nosons.t-1
    else 0, sons.t)
 
 _____________

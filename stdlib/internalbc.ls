@@ -106,14 +106,24 @@ function phiinst(slot:int, typ:int, tailphi:seq.int, nopara:int, p:int)internalb
 Function phiinst(slot:int, typ:int, tailphi:seq.int, nopara:int)internalbc 
  @(+, phiinst(slot, typ, tailphi, nopara), emptyinternalbc, arithseq(nopara, 1, 1))
 
-Function addstartbits(inst:int, noargs:int, c:internalbc)internalbc 
- if noargs > 31 ∨ inst > 31 * 31 
-  then internalbc(3, 4, [ vbr6, inst, vbr6, noargs]+ finish.c)
-  else if inst < 32 
-  then let b = if bitcount.c > 40 then internalbc(0, 0, finish.c)else c 
+Function addstartbits(inst:int, noargs:int, b:internalbc)internalbc 
+ if noargs > 31 ∨ inst > 31 ∨ bitcount.b > 56 - 16
+  then  
+    let c = add(inst,add (noargs,b))
+    if bitcount.c > 56-4 then  internalbc(3,4,finish.c) 
+       else     internalbc(bits.c * 16 + 3 ,bitcount.c+4,done.c)
+  else   
    internalbc(((bits.b * 64 + noargs)* 64 + inst)* 16 + 3, bitcount.b +(6 + 6 + 4), done.b)
-  else let b = if bitcount.c > 34 then internalbc(0, 0, finish.c)else c 
-  internalbc((((bits.b * 64 + noargs)* 64 + inst / 32)* 64 + inst mod 32 + 32)* 16 + 3, bitcount.b +(6 + 6 + 6 + 4), done.b)
+  
+  / function  asbits(k:internalbc) seq.word
+      let s= toseq.addtobitstream(10000, empty:bitpackedseq.bit, k)
+          @(+,toword,"",@(+,toint,empty:seq.int,s))
+  
+  /use seq.bit   
+  
+  /use bits 
+  
+  use seq.bits
 
 type internalbc is record bits:int, bitcount:int, done:seq.int
 
@@ -130,11 +140,12 @@ Function print(a:internalbc) seq.word
 function print1(a:seq.int,i:int,result:seq.word) seq.word
   if i > length.a then result else 
    let val=a_i
-   if val = vbr6 then  print1(a,i+2,result+"vbr6"+toword(a_(i+1) ))
-   else if val=reloc then print1(a,i+2,result+"reloc"+toword(a_(i+1) ))
-   else if val=-ibcsub1 then print1(a,i+2,result+"sub11"+toword(a_(i+1) ))
-   else if val=-ibcsub2 then  print1(a,i+2,result+"sub22"+toword(a_(i+1) ) )
-   else let  nobits =toint(bits.val ∧ bits.63)
+   let  nobits =toint(bits.val ∧ bits.63)
+   if nobits=reloc then print1(a,i+1,result+"&br reloc"+toword( toint(bits.val >> 6) -relocoffset) )
+    else // if val = vbr6 then  print1(a,i+2,result+"vbr6"+toword(a_(i+1) )) 
+   else // if val=sub1 then print1(a,i+2,result+"sub11"+toword(a_(i+1) ))
+   else if val=sub2 then  print1(a,i+2,result+"sub22"+toword(a_(i+1) ) )
+   else 
    let bits = toint(bits.val >> 6 )
    print1(a,i+1,result+[toword.bits,":"_1,toword.nobits])
    
@@ -155,11 +166,11 @@ Function finish(b:internalbc)seq.int
 Function addaddress(slot:int, a:int, b:internalbc)internalbc 
  if-a > slot 
   then 
-    // assert a in [ibcsub1,ibcsub2,ibcsub3] report "HERE"+toword.a+toword.ibcsub1+toword.ibcsub2+toword.ibcsub3 //
    if a=ibcfirstpara2 then  internalbc(0, 0, [firstpara2]+ finish.b) else
   internalbc(0, 0, [if a=ibcsub1 then sub1 else if a=ibcsub2 then sub2 else assert a=ibcsub3 
    report "unknown code in addaddress"   sub3 , slot]+ finish.b)
-  else if a < 0 then add(slot + a, b)else internalbc(0, 0, [ reloc, a - slot + 1]+ finish.b)
+  else if a < 0 then add(slot + a, b)else 
+  internalbc(0, 0,( [reloc+64 * (relocoffset+a - slot + 1)]  )+ finish.b)
 
 Function addsignedaddress(slot:int, a:int, b:internalbc)internalbc 
  if a ≤ 0 
@@ -169,10 +180,23 @@ Function addsignedaddress(slot:int, a:int, b:internalbc)internalbc
   else internalbc(0, 0, [ relocsigned, a - slot + 1]+ finish.b)
 
 Function add(val:int, b:internalbc)internalbc 
- if val > 31 
-  then internalbc(0, 0, [ vbr6, val]+ finish.b)
-  else let newbitcount = 6 + bitcount.b 
-  if newbitcount > 56 then internalbc(val, 6, finish.b)else internalbc(bits.b * 64 + val, newbitcount, done.b)
+  if val < 32 &and bitcount.b < 51 then internalbc(bits.b * 64 + val, bitcount.b+6, done.b)
+  else
+  let c = chunks(bits.val)
+  addvbr6help(bits.b,bitcount.b,done.b,c,length.c) 
+   
+  
+   use seq.bits
+  
+  function  chunks(val:bits) seq.bits
+         if toint.val < 32 then  [val]
+         else     [((val &and bits.31) &or bits.32)]+chunks( val >> 5 )
+         
+ function addvbr6help( bits:int,bitcount:int,done:seq.int,   c:seq.bits,i:int) internalbc
+   let newbitcount = 6 + bitcount 
+   if newbitcount > 56 then addvbr6help(0, 0, [ bits * 64 + bitcount]+ done,c,i)
+   else if i=1  then   internalbc(bits * 64 + toint(c_1), newbitcount, done)
+   else   addvbr6help(bits * 64 +  toint(c_i), newbitcount, done, c,i-1)
 
 
 type  internal2 is record state:int,offset:int,result:bitpackedseq.bit 
@@ -188,28 +212,20 @@ use  seq.internal2
 function   add2(offset:int,r:internal2,val:int) internal2
 FORCEINLINE.
    let nobits = toint(bits.val ∧ bits.63)
-   // assert nobits=63 &or nobits < 59 &or state.r &ne 0 report "XJ"+toword.nobits+toword.state.r //
-   let bits = bits.val >> 6 
-   let newstate =  if state.r=0 then  if nobits < 60 then 0 else   val
-    else     0 
+    let bits = bits.val >> 6 
+   let newstate =  if state.r=0 &and nobits = 63 then val else   0
    let newoffset =  if nobits=setoffset &and state.r=0 then offset+toint.bits else   offset.r
    let newresult =  
- if state.r=0 then if nobits < 58 then add(result.r, bits , nobits) else 
-   if val=firstpara2 then addvbr6(result.r,offset.r-offset+1) else result.r 
-    else      if state.r = relocsigned then addvbrsigned6(result.r, offset.r - val)
-  else
-     addvbr6(result.r, if state.r= reloc 
-   then  offset.r - val 
-   else   // if state.r=firstpara2 then
-        offset.r-offset+1
-   else  //
-     assert state.r = vbr6 report"invalid code" + toword.state.r
-     val
-    )
+    if state.r=0 then 
+        if nobits < 58 then add(result.r, bits , nobits) 
+        else if nobits=reloc then addvbr6(result.r,offset.r - (toint.bits -relocoffset)) 
+        else if val=firstpara2 then addvbr6(result.r,offset.r-offset+1) 
+        else result.r 
+    else // if state.r = vbr6 then addvbr6(result.r, val)
+    else  // assert state.r = relocsigned report"invalid code" + toword.state.r
+     addvbrsigned6(result.r, offset.r - val)  
       internal2(newstate, newoffset, newresult)
       
-Function addoffset(b:seq.int,deltaoffset:int) seq.int
-  [setoffset+64 * deltaoffset]+ b+[setoffset] 
 
 
 Function internalbc( bits:int, bitcount:int, done:seq.int  ) internalbc export 
@@ -217,21 +233,22 @@ Function internalbc( bits:int, bitcount:int, done:seq.int  ) internalbc export
 Function isempty(a:internalbc) boolean   bitcount.a=0 &and length.done.a=0  
 
 
-Function vbr6 int 63 + 64
+// Function vbr6 int 63 + 64 //
 
 function relocsigned int 63 + 64 * 3
 
-function newway boolean true
 
-Function reloc int 63  +64 * 7
+function reloc int   60  
 
 Function ibcfirstpara2 int // must be big enough value so -ibcirstpart2 > max slot number in function // -(6400000)
 
-Function  sub1 int 60 + 64 * 5001
+function  relocoffset int 1024 * 1024 * 1024 * 1024 
 
-Function  sub2 int 60 + 64 * 5002
+Function  sub1 int 61+ 64 * 5001
 
-Function  sub3 int 60 + 64 * 5003
+Function  sub2 int 61 + 64 * 5002
+
+Function  sub3 int 61 + 64 * 5003
 
 Function ibcsub1 int -(6400001)
 
@@ -239,22 +256,11 @@ Function ibcsub2 int -(6400002)
 
 Function ibcsub3 int -(6400003)
 
-
-
-
 function firstpara2 int 58 
 
 function setoffset int 59
 
-
-
-// Function ibcsub1 int -(60 + 64 * 5001)
-
-/Function ibcsub2 int -(60 + 64 * 5002)
-
-/Function ibcsub3 int -(60 + 64 * 5003)//
-
-Function ibcsubpara(i:int) int  { (i-60 ) / 64  -5000 }
+Function ibcsubpara(i:int) int  { (i-61 ) / 64  -5000 }
 
 
 
@@ -288,3 +294,46 @@ Function INSTSTORE int 44
 
 Function INSTGEP int 43
 
+use seq.templatepart
+
+type  templatepart is record        part:seq.int,loc:int,parano:int
+
+Function parano(templatepart) int export
+
+Function getparts(a:internalbc) seq.templatepart subgetparts(finish.a,0,0,1,1)
+
+    
+function subgetparts(a:seq.int,lastloc:int,lastparano:int, lastindex:int, i:int) seq.templatepart
+ // finds template parameters and breaks template into parts. //
+  if i > length.a then  [templatepart(subseq(a,lastindex,i-1),lastloc,lastparano)]
+           else 
+  let val=a_i 
+  let bits=toint(bits.val ∧ bits.63)
+   if  bits=61 then
+      let p= ibcsubpara(val)  
+       if p in [1,2,3] then
+           [templatepart(subseq(a,lastindex,i-1),lastloc,lastparano)]
+            +subgetparts(a,a_(i+1),p,i+2,i+2)
+       else subgetparts(a,lastloc,lastparano,lastindex,i+2)
+    else if   bits=63 then subgetparts(a,lastloc,lastparano,lastindex,i+2)
+     else  
+      subgetparts(a,lastloc,lastparano,lastindex,i+1)
+    
+function processtemplatepart(deltaoffset:int,args:seq.int,t:templatepart) seq.int
+       if parano.t=0 then  part.t
+     else
+     let arg= args_parano.t   
+          { if arg < 0 then // [ vbr6 ,deltaoffset+loc(t)+ arg ] //
+             finish.add(deltaoffset+loc(t)+ arg, emptyinternalbc)
+              else 
+           [reloc+64 * (relocoffset+arg-loc(t)+1)]    } +
+      part.t
+
+
+
+Function processtemplate(  s: seq.templatepart, deltaoffset:int,args:seq.int)internalbc
+internalbc( 0,0,[setoffset+64 * deltaoffset]+@(+,processtemplatepart(deltaoffset, args), empty:seq.int,s)+[setoffset] ) 
+
+
+
+ 

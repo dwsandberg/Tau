@@ -17,8 +17,10 @@ function wordstype encoding.llvmtype array(-1, i64)
 
 Function conststype encoding.llvmtype array(-2, i64)
 
-type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart,action:word,arg:int
+type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart,action:word,arg:int,consts:linklists2
 
+
+Function consts(match5) linklists2 export
 
 Function length(match5)int export
 
@@ -86,9 +88,9 @@ Function table seq.match5
    match5("CALLIDX"_1,2,
    CAST(1, ibcsub1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)+ 
                  CALL(2, 0, 32768, typ.function.[ i64, i64, i64, i64],-1, ibcfirstpara2, ibcsub2, ibcsub3) ),
-                    match5("if 3" ,0,empty:seq.templatepart,"SPECIAL"_1,0),
-                    match5("THENBLOCK 1" ,0,empty:seq.templatepart,"SPECIAL"_1,0),
-                    match5("ELSEBLOCK 1" ,0,empty:seq.templatepart,"SPECIAL"_1,0)
+                    match5("if 3" ,0,empty:seq.templatepart,"SPECIAL"_1,0,createlinkedlists),
+                    match5("THENBLOCK 1" ,0,empty:seq.templatepart,"SPECIAL"_1,0,createlinkedlists),
+                    match5("ELSEBLOCK 1" ,0,empty:seq.templatepart,"SPECIAL"_1,0,createlinkedlists)
     ]
  let discard=@(+,addit ,0,t) 
     t
@@ -100,8 +102,7 @@ function  addit(m:match5) int
 use persistant
 
 
- type  templatepart is record        part:seq.int,loc:int,parano:int
- 
+  
  use seq.templatepart
  
    
@@ -111,77 +112,65 @@ use persistant
 / function =(a:templatepart,b:templatepart) boolean
      part.a=part.b &and loc.a=loc.b &and parano.a=parano.b
  
-function getparts(a:internalbc) seq.templatepart subgetparts(finish.a,0,0,1,1)
-
     
-function subgetparts(a:seq.int,lastloc:int,lastparano:int, lastindex:int, i:int) seq.templatepart
- // finds template parameters and breaks template into parts. //
-  if i > length.a then  [templatepart(subseq(a,lastindex,i-1),lastloc,lastparano)]
-           else 
-  let val=a_i 
-   if  toint(bits.val ∧ bits.63)=60 then
-      let p= ibcsubpara(val)  
-       if p in [1,2,3] then
-           [templatepart(subseq(a,lastindex,i-1),lastloc,lastparano)]
-            +subgetparts(a,a_(i+1),p,i+2,i+2)
-       else subgetparts(a,lastloc,lastparano,lastindex,i+2)
-    else subgetparts(a,lastloc,lastparano,lastindex,i+1)
-     
      
 function match5 (  inst:word, length:int, b:internalbc) match5
       let parts=getparts.b
      let nopara= @(max,parano,0,parts)
-    match5([inst,toword.nopara],length,parts,"TEMPLATE"_1,nopara)
+    match5([inst,toword.nopara],length,parts,"TEMPLATE"_1,nopara,createlinkedlists)
     
      
     
 use seq.encoding.llvmtype
   
-
     
-Function lookuptemplate(fullinst:seq.word ) match5
-      let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1,0)
+Function buildtemplates(s:seq.match5, fullinst:seq.word ) seq.match5
+      let lastconsts=if length.s=0 then createlinkedlists else  consts.last.s
+      let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1,0,lastconsts)
       let b=  findencode(a,ematch5)
-      if length.b=0 then 
+     s+ if length.b=0 then 
         let inst=fullinst_1
         let instarg=fullinst_2
         let m=    
           if inst="FREF"_1 then
-           match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]) )
+           match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]),lastconsts )
           else if inst="LIT"_1 then
-           match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,C64.toint.instarg)  
+           match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,C64.toint.instarg,lastconsts)  
           else if inst  = "LOCAL "_1  then 
-           match5(fullinst,0,empty:seq.templatepart,"LOCAL"_1,toint.instarg)
+           match5(fullinst,0,empty:seq.templatepart,"LOCAL"_1,toint.instarg,lastconsts)
           else if inst  in "PARAM FIRSTVAR"  then 
-           match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,toint.instarg)
+           match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,toint.instarg,lastconsts)
           else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE " then 
-            match5(fullinst,0,empty:seq.templatepart,"SPECIAL"_1,0)
-          else if inst in "CLIT CWORD CFREF CRECORD CONSTANT" then 
-            match5(fullinst,0,empty:seq.templatepart,"CONSTGROUP"_1,0)
-          else if inst in "WORD" then
+            match5(fullinst,0,empty:seq.templatepart,"SPECIAL"_1,0,lastconsts)
+          else if inst = "CONSTANT"_1 then       
+               let tt = addconst(lastconsts,fullinst)  
+             let newcode = GEP(1, 1, typ.conststype, C."list", C64.0, C64(index.tt + 1))+ CAST(2,-1, typ.i64, 9)  
+             match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1 ,0,value.tt) 
+            else   if inst = "WORD"_1 then
             let aa = C(ptr.i64, [ CONSTGEP, 
             typ.wordstype,  typ.ptr.wordstype,   C."words",   typ.i32,  C32.0,     typ.i64,    C64(word33.instarg + 1)])
-             match5(fullinst, 1, getparts.LOAD(1, aa, typ.i64, align8, 0),"TEMPLATE"_1 ,0)
+             match5(fullinst, 1, getparts.LOAD(1, aa, typ.i64, align8, 0),"TEMPLATE"_1 ,0,lastconsts)
           else let noargs=toint.instarg
   let newcode= CALLSTART(1,0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst],noargs+1)
-     match5(fullinst,1,getparts.newcode,"CALL"_1,noargs)
-          decode(encode(m,ematch5),ematch5) 
-         else b_1
+     match5(fullinst,1,getparts.newcode,"CALL"_1,noargs,lastconsts)
+          let discard=encode(m,ematch5) 
+          m 
+         else 
+           let t=b_1
+           match5(fullinst.t, length.t, parts.t,action.t,arg.t,lastconsts)
+
+Function checkmap(s:seq.match5) seq.word @(+,hjk,"",s)
+
+function hjk(m:match5) seq.word [inst.m,toword.length.a.consts.m]
 
 Function ematch5 erecord.match5 export
+
+use ipair.linklists2
    
 Function usetemplate(t:match5,deltaoffset:int,argstack:seq.int) internalbc
-     let args=if inst.t="WORD"_1 &or action.t="CALL"_1 then empty:seq.int else subseq(argstack, length.argstack - toint.instarg.t + 1, length.argstack)
-     let b =  @(+,processtemplatepart(deltaoffset, args), empty:seq.int,parts.t)
-    internalbc(0,0,addoffset(b,deltaoffset) )
-   
-
-function processtemplatepart(deltaoffset:int,args:seq.int,t:templatepart) seq.int
-       if parano.t=0 then  part.t
-     else
-     let arg= args_parano.t   
-          { if arg < 0 then [ vbr6 ,deltaoffset+loc(t)+ arg ] else [reloc,arg-loc(t)+1] }+
-      part.t
+     let args=if inst.t in "WORD CONSTANT" &or action.t="CALL"_1 then empty:seq.int else subseq(argstack, length.argstack - toint.instarg.t + 1, length.argstack)
+     processtemplate ( parts.t,deltaoffset, args) 
+    
      
      
   
@@ -209,17 +198,17 @@ use seq.bit
 
 use bits
 
-type pp is record idx:int, val:int
+/type pp is record idx:int, val:int
 
-function getvbr(a:seq.bit, idx:int, size:int)pp getvbr(a, size, bits.0, 0, idx, 0)
+/function getvbr(a:seq.bit, idx:int, size:int)pp getvbr(a, size, bits.0, 0, idx, 0)
 
-function getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp 
+/function getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp 
  let b = toint(a_(idx + i))
   if i = size - 1 
   then if b = 0 then pp(idx + size, toint.val)else getvbr(a, size, val, nobits, idx + size, 0)
   else getvbr(a, size, bits.b << nobits ∨ val, nobits + 1, idx, i + 1)
   
-function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, abbrvlen:int) seq.seq.int 
+/function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, abbrvlen:int) seq.seq.int 
  if length.r > 0 
   then // working on record // 
    if noargs = 0 
@@ -234,9 +223,9 @@ function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, ab
    getinfo(b, val.args, [ val.inst], idx.args, recs, abbrvlen)
   else  recs 
 
-function astext2(a:seq.int) seq.word "["+@(+,toword,"",a)+"]"
+/function astext2(a:seq.int) seq.word "["+@(+,toword,"",a)+"]"
 
-Function astext(a:bitpackedseq.bit) seq.word
+/Function astext(a:bitpackedseq.bit) seq.word
   // @(+,toword,"",@(+,toint,empty:seq.int,toseq.a))
 +"&br"+ //
  let recs=getinfo( toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)
