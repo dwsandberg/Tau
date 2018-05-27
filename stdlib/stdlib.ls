@@ -3,9 +3,11 @@
 Library stdlib UTF8 altgen bitpackedseq bits blockseq buildtree codegen codetemplates  definestruct display  
 fileio format graph groupparagraphs internalbc   invertedseq ipair libdesc libdescfunc libscope llvm main  oseq packedseq parse pass0 pass1a pass2a passcommon persistant pretty prims process processtypes real reconstruct seq set stack stacktrace symbol textio tree 
   uses  
- exports UTF8 bitpackedseq bits blockseq buildtree codetemplates    display   fileio format 
+ exports UTF8 bitpackedseq bits blockseq      display   fileio format 
        graph internalbc   invertedseq ipair libdesc   libscope llvm main  oseq    passcommon persistant 
         prims process  real reconstruct seq set stack stacktrace stdlib textio tree 
+        
+
 
 module stdlib
 
@@ -327,5 +329,5 @@ Function alphasort(a:seq.seq.word)seq.seq.word
 
 * usegraph include real oseq textio UTF8 prims stacktrace  libscope tree seq blockseq graph ipair invertedseq process stack set oseq packedseq  format groupparagraphs fileio
 
-* usegraph include libscope display constant codegen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs etype codetemplates core sid pretty pass2a persistant libdesc passcommon main parts llvm reconstruct exclude seq set oseq  stdlib tree graph UTF8 stack stacktrace real process libscope ipair
+* usegraph include libscope display constant codegen convert altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs etype codetemplates core sid pretty pass2a persistant libdesc passcommon main parts llvm reconstruct exclude seq set oseq  stdlib tree graph UTF8 stack stacktrace real process libscope ipair
 

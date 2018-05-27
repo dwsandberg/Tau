@@ -59,7 +59,7 @@ function opSUB word {"Q2DZbuiltinZintZint"_1 }
 function opRSUB word {"Q2DZbuiltinZrealZreal"_1 }
 
 function isconst(t:tree.cnode) boolean 
-   inst.label.t in"LIT CRECORD WORD FREF" 
+   inst.t in"LIT CRECORD WORD FREF" 
    
 
 
@@ -115,7 +115,7 @@ function optdivide(inst:seq.word,i:int) int
     
 function addtoprogram(alltypes:set.libtype,map:set.track,p:program, f:word) program
 if isoption.f then // ignore options // p else 
-      let asfunc = find(allfunctions.p, func( 0, mytype."", f,  tree.cnode("X"_1,"X"_1), ""))
+      let asfunc = find(allfunctions.p, func( 0, mytype."", f,  tree.cnode("X X" ), ""))
     if length.asfunc = 1 then // already added // p else 
    let a= findelement( track(syminfoX(f)),map)
     if isempty.a then p
@@ -124,10 +124,10 @@ if isoption.f then // ignore options // p else
      let myinst =  funcfrominstruction(alltypes, instruction.q, replaceT(parameter.modname.q, returntype.q), length.paratypes.q)
     let instend = optdivide(myinst,length.myinst)
    let options =  subseq(myinst,instend,length.myinst)
-  let trz = buildcodetree( subseq(myinst,1,instend))
+  let trz = buildcodetree(  length.paratypes.q,subseq(myinst,1,instend))
   // remove APPLY and unneeded sets // 
   let tr=inline(  p,inline.p ,dseq(tree.cnode("UNASIGNED"_1,"1"_1)),empty:seq.tree.cnode,1,trz)
-  let tr1=if inst.label.tr="STATE"_1 then tr_1 else tr
+  let tr1=if inst.tr="STATE"_1 then tr_1 else tr
   let rt = if hasproto.q then  protoreturntype.q else  returntype.q 
   let arcs = asset.calls(mangled.q, tr1)
   // assert not (arc(mangled.q,"APPLY"_1) in arcs )report [f] //
@@ -136,7 +136,7 @@ if isoption.f then // ignore options // p else
           tailcall(tr1, mangled.q,length.paratypes.q)
       else tr1
   let arcs2=if  isrecusive then  asset.calls(mangled.q, tr2) else arcs 
-  let flags=fixflags(tr2,length.paratypes.q,if inst.label.tr="STATE"_1 then options+"STATE" else options)
+  let flags=fixflags(tr2,length.paratypes.q,if inst.tr="STATE"_1 then options+"STATE" else options)
    // assert not (" NOINLINE"_1 in flags) &or f in "libsymencodingZlibscope llvmconstsZllvm const3eZpersistant
    wordencodingZstdlib llvmtypesZllvm word3encodingZpersistant
    waitforpass2ZmainZpass1result explodeinlineZpass2aZprogramZwordzsetZcnodeztreeZbooleanZintZcnodeztreezseq
@@ -170,7 +170,6 @@ function hhh(g:graph.word,node:word) seq.word
       [ node ]  else ""
   
 
-
 Function pass2(r:pass1result)pass1result 
  PROFILE.
  // does inline expansion, finds consts, removes unreaachable functions // 
@@ -184,14 +183,11 @@ Function pass2(r:pass1result)pass1result
     // only pass on functions that can be reached from roots and are in this library // 
    let g=    reachable(callgraph.s2,roots)  - asset.@(+, mangled, empty:seq.word, compiled.r)
    // find tail calls and constants // 
-   // assert not( "qZ107toolsZintZint"_1 in g) report "P"+toseq.predecessors(callgraph.s2,"qZ107toolsZintZint"_1) //
-   let rr = @(+, findconstandtail(s2,statechangingfuncs), empty:seq.func, toseq.g)
-   // let rrr=if  mangledname(rr_1)="dummyfunc"_1 then subseq(rr,2,length.rr)
-    else  rr //
+    let rr = @(+, findconstandtail(s2,statechangingfuncs), empty:seq.func, toseq.g)
     // assert false report @(+,toword,"",mapping.debuginfoencoding) //
-   pass1result(rr, libname.r, newcode.r, compiled.r, mods.r, existingtypes.r, alltypes.r)
+   pass1result(convert2(allfunctions.p,rr), libname.r, newcode.r, compiled.r, mods.r, existingtypes.r, alltypes.r)
    
-   1299 957
+
 
 function checktree(s:seq.func)boolean @(∧, checktree, true, s)
 
@@ -200,13 +196,12 @@ function checktree(f:func)boolean
   true
 
 function checktree(t:tree.cnode)boolean 
- if inst.label.t in"CALLB FREFB"
+ if inst.t in"CALLB FREFB"
   then false 
-  else if inst.label.t ="SET"_1 ∧ not(nosons.t = 2)
+  else if inst.t ="SET"_1 ∧ not(nosons.t = 2)
   then false 
-  else if inst.label.t ="if"_1 ∧ not(nosons.t = 3)then false else @(∧, checktree, true, sons.t)
+  else if inst.t ="if"_1 ∧ not(nosons.t = 3)then false else @(∧, checktree, true, sons.t)
 
-use opt2
 
 use seq.seq.func
 
@@ -214,19 +209,20 @@ use seq.seq.func
  
 function xor(a:boolean , b:boolean) boolean if a then not.b else   b  
 
+
 function findconstandtail(p:program,stateChangingFuncs:set.word, mangledname:word)seq.func 
  // finds constants, discards builtins, and make sure"STATE"is root on state changing functions //
   let a=codedown.mangledname
-    if length.a > 1 &and  ( a_2 = "builtin"  ) then empty:seq.func else 
-  let f=lookupfunc(p,mangledname)
+    if length.a > 1 &and  ( a_2 = "builtin"  ) then empty:seq.func else
+  let f=lookupfunc(allfunctions.p,mangledname)
   let code1=  // hoistRecord.codetree.f // codetree.f
   let code2=  // opt2.code1  // code1
   let code3= // removerecords.code2 // code2
    let q=  // if (mangledname in 
    "syminfoinstanceZprocesstypesZmytypeZwordZmytypeZmytypezseqZmytypeZwordzseq ")
    then //
-   inline(  p,empty:set.word,dseq(tree.cnode("UNASIGNED"_1,"1"_1)),empty:seq.tree.cnode,1,code3) 
-   // else code3 //
+      inline(  p,empty:set.word,dseq(tree.cnode("UNASIGNED"_1,"1"_1)),empty:seq.tree.cnode,1, code3) 
+     // else code3 //
      // assert not(mangledname=xx_195) report  [mangledname]+ printb(0,code3)+"<<<"+printb(0,q)
      > 130 ok
      let discard=if q = code3 then 0 else encoding.encode(debuginfo.mangledname,debuginfoencoding) //
@@ -242,6 +238,7 @@ function findconstandtail(p:program,stateChangingFuncs:set.word, mangledname:wor
       let newflags=if "STATE"_1 in flags.f  &or not ( mangledname.f in stateChangingFuncs)
        then flags.f  else flags.f+"STATE" 
      [func(nopara.f, returntype.f, mangledname.f, q, newflags)]
+     
      
 /use seq.debuginfo
 
@@ -262,15 +259,15 @@ function p(a:arc.word)seq.word [  tail.a]+":"+ head.a
 Function getarcs(f:func)seq.arc.word calls(mangledname.f, codetree.f)
 
 Function calls(self:word, t:tree.cnode)seq.arc.word 
- @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.label.t="FREF"_1
+ @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.t="FREF"_1
   then 
-     [ arc(self, arg.label.t)]
-  else  if inst.label.t in " WORD RECORD IDXUC LIT LOCAL PARA SET LOOP FINISHLOOP LOOPBLOCK CONTINUE  NOINLINE EQL if CALLIDX PROCESS2 CRECORD  "
+     [ arc(self, arg.t)]
+  else  if inst.t in " WORD RECORD IDXUC LIT LOCAL  PARAM SET LOOP FINISHLOOP LOOPBLOCK CONTINUE  NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD "
   then  empty:seq.arc.word
   else  //
-    let  a=codedown.inst.label.t
+    let  a=codedown.inst.t
     if length.a > 1 &and  ( a_2 = "builtin"  ) then empty:seq.arc.word
-   else // [arc(self,inst.label.t)]
+   else // [arc(self,inst.t)]
   
    
 use invertedseq.func
@@ -300,14 +297,14 @@ use seq.program
      
 
    Function simple3(inline:set.word,p:program,f:word) program
-    let infunc = lookupfunc(p,f) 
+    let infunc = lookupfunc(allfunctions.p,f) 
          let oldarcs = arcstosuccessors(callgraph.p,f)
      let z= (@(+,head,empty:set.word,toseq.oldarcs) &cap inline ) -f
       if isempty.z &or "NOINLINE"_1 in flags.infunc then p else 
        // inline may introduce new calls that are not in z so pass full set of possible inline expansions //
    let t =  inline(p,inline, dseq(tree.cnode("UNASIGNED"_1,"1"_1)),empty:seq.tree.cnode,1,codetree.infunc)
        let flags=fixflags(t,nopara.infunc,flags.infunc)
-       let newfn =func(nopara.infunc, returntype.infunc, f, t, flags)
+        let newfn =func(nopara.infunc, returntype.infunc, f, t, flags)
        let newall =   add(allfunctions.p,encoding.f,newfn)
         program(library.p, newall, replacearcs(callgraph.p, oldarcs, asset.getarcs.newfn),
     if   "SIMPLE"_1 in flags &or "INLINE"_1 in flags  then  inline.p+f else inline.p ,"")
@@ -320,7 +317,7 @@ use seq.program
        if nosons.a=nosons.b then
        diff(a,b,1) 
        else "diff sons"
-    else "diff label"+inst.label.a+inst.label.b
+    else "diff label"+inst.a+inst.b
     else if i > nosons.a then ""
     else   
       let z=diff(a_i,b_i,0)
@@ -336,23 +333,19 @@ use seq.program
   
 
 
-function lookupfunc(p:program,f:word) func
-  let z = find(allfunctions.p, func( 0, mytype."", f,  tree.cnode("X"_1,"X"_1), ""))
-  if length.z = 0 then dummyfunc else 
-  value.z_1
 
 
 function hash(f:func) int hash.mangledname.f
 
 /function checksets( s:set.word,t:tree.cnode) seq.word
-  if inst.label.t="SET"_1 then
-     checksets(s, t_1)+ checksets(s+arg.label.t ,t_2)
-  else if inst.label.t="LOCAL"_1 then
-    if arg.label.t in s then "" else [arg.label.t]
- else if inst.label.t="LOOP"_1 then
-   let a= toint.arg.label(t_1) 
+  if inst.t="SET"_1 then
+     checksets(s, t_1)+ checksets(s+arg.t ,t_2)
+  else if inst.t="LOCAL"_1 then
+    if arg.t in s then "" else [arg.t]
+ else if inst.t="LOOP"_1 then
+   let a= toint.arg(t_1) 
      @(+,checksets( @(+,   toword,   s, arithseq(nosons.t-2,1,a))),"",sons.t)
- else    @(+,checksets(s+arg.label.t),"",sons.t)
+ else    @(+,checksets(s+arg.t),"",sons.t)
      
         
 function explodeinline(prg:program,inlinename:set.word,inlinetree:tree.cnode ,simple:boolean,  nextset:int, paras:seq.tree.cnode)
@@ -374,7 +367,7 @@ function explodeinline(prg:program,inlinename:set.word,inlinetree:tree.cnode ,si
   use seq.parametermap
  
  function addtoparamatermap(p:parametermap,t:tree.cnode) parametermap
-    if inst.label.t in "LIT LOCAL PARA FREF FREFB WORD"  then  parametermap(paramap.p+t,nextset.p,addnodes.p)
+    if inst.t in  "LIT LOCAL PARAM FREF FREFB WORD"  then  parametermap(paramap.p+t,nextset.p,addnodes.p)
     else parametermap(paramap.p+tree(cnode("LOCAL"_1,toword.nextset.p)),nextset.p+1,addnodes.p+ipair(nextset.p,t))
 
  function addsets(t:tree.cnode,a:ipair(tree.cnode)) tree.cnode
@@ -387,28 +380,39 @@ function addtosetmap(sets:seq.tree.cnode,old:int,new:int,numbertoadd:int) seq.tr
  addtosetmap(replace(sets,old+i,tree(cnode("LOCAL"_1,toword(new+i)) )),old,new,i)
  
    
+   
 function inline(pp:program,inlinename:set.word, sets:seq(tree.cnode),paramap:seq.tree.cnode, nextset:int, code:tree.cnode)tree.cnode 
-   let inst=inst.label.code   
-    if nosons.code=0 &and inst in "LIT LOCAL PARA FREF FREFB WORD" then
+   let inst=inst.code   
+    if nosons.code=0 &and inst in "LIT LOCAL  FREF FREFB WORD PARAM" then
      if inst="LOCAL"_1 then
-       sets_toint(arg.label.code)
-     else  if inst ="PARA"_1 &and toint.arg.label.code &le length.paramap
-      then     paramap_(length.paramap - toint.arg.label.code + 1)
-  else code
+       sets_toint(arg.code)
+     else  if inst="PARAM"_1 then
+            let i=(-1-toint.arg.code)
+            if i &le length.paramap then 
+            paramap_i 
+            else code
+      else code
     else if inst="CRECORD"_1 then code
     else if inst="SET"_1 then 
      let s1=inline(pp,inlinename, sets,paramap,nextset+1,code_1)
-       if inst.label.s1 in "LIT LOCAL PARA FREF FREFB WORD" 
-       &or  (inst.label.s1 = "getaddressZbuiltinZTzseqZint"_1 
-           &and inst.label.s1_1="LOCAL"_1 &and inst.label.s1_2="LIT"_1 ) then  
-          inline(pp,inlinename,replace(sets,toint(arg.label.code),s1),paramap,nextset,code_2)
+       if inst.s1 in "LIT LOCAL  PARAM FREF FREFB WORD" 
+       &or  (inst.s1 = "getaddressZbuiltinZTzseqZint"_1 
+           &and inst.s1_1="LOCAL"_1 &and inst.s1_2="LIT"_1 ) then  
+          inline(pp,inlinename,replace(sets,toint(arg.code),s1),paramap,nextset,code_2)
         else 
-        let s2=inline(pp,inlinename,addtosetmap(sets,toint(arg.label.code),nextset,1),paramap,nextset+1,code_2)
+        let s2=inline(pp,inlinename,addtosetmap(sets,toint(arg.code),nextset,1),paramap,nextset+1,code_2)
      tree(cnode("SET"_1,toword.nextset),[s1,s2])
-   else  if // Fix loop // inst.label.code="LOOP"_1 then
-      let firstvar=toint.arg.label(code_1)
+   else  if // Fix loop // inst.code="LOOP"_1 then
+      let firstvar=toint.arg(code_1)
       let  l = @(+, inline(pp,inlinename,addtosetmap(sets,firstvar,nextset,nosons.code-2),paramap,nextset+nosons.code-2), empty:seq.tree.cnode, sons.code)
       tree(label.code,[tree.cnode("LIT"_1,toword.nextset)]+subseq(l,2,length.l))
+   else if inst.code="FINISHLOOP"_1 then
+        let lb=code_1
+        let firstvar=toint.arg(lb_(nosons.lb-1))
+        let newmap=addtosetmap(sets,firstvar,nextset,nosons.lb-1)
+          let newlb=tree(label.lb,  @(+,inline(pp,inlinename,sets,paramap,nextset),empty:seq.tree.cnode,subseq(sons.lb,1,nosons.lb-1)
+            )+ tree(label.code,[tree.cnode("LIT"_1,toword.nextset)] ))
+            tree(  label.code,[lb,inline(pp,inlinename,sets,newmap,nextset,code_2) ] )
    else 
        let l = @(+, inline(pp,inlinename, sets,paramap,nextset), empty:seq.tree.cnode, sons.code)
      // look for simplifications //
@@ -416,61 +420,61 @@ function inline(pp:program,inlinename:set.word, sets:seq(tree.cnode),paramap:seq
   then 
        tree(if @(&and,isconst,true,l) then cnode("CRECORD"_1,"0"_1) else label.code,l)
   else  
-  if inst ="IDXUC"_1 ∧ inst.label(l_2)="LIT"_1  then 
-     let idx = toint.arg.label(l_2)
-     if   inst.label(l_1)="CRECORD"_1   then  
+  if inst ="IDXUC"_1 ∧ inst(l_2)="LIT"_1  then 
+     let idx = toint.arg(l_2)
+     if   inst(l_1)="CRECORD"_1   then  
       if between(idx,0,nosons(l_1)-1) then
        (l_1)_(idx+1)
        else tree(label.code, l)
-     else if inst.label(l_1)="getaddressZbuiltinZTzseqZint"_1
-       &and inst.label(l_1_2)="LIT"_1 then 
-       tree(label.code, [ l_1_1,tree(cnode("LIT"_1,toword(idx+toint.arg.label(l_1_2))))])
+     else if inst(l_1)="getaddressZbuiltinZTzseqZint"_1
+       &and inst(l_1_2)="LIT"_1 then 
+       tree(label.code, [ l_1_1,tree(cnode("LIT"_1,toword(idx+toint.arg(l_1_2))))])
      else tree(label.code, l)  
    else  if inst="if"_1 then
-       let i2=inst.label(l_1)
+       let i2=inst(l_1)
        if i2=  "LIT"_1 then
-        if arg.label(l_1) ="1"_1 then l_2 else l_3
+        if arg(l_1) ="1"_1 then l_2 else l_3
        else if i2="notZbuiltinZboolean"_1 then
           tree(label.code, [l_1_1,l_3,l_2])
        else tree(label.code, l)
    else 
-   if inst in"Q5FZwordzseqZTzseqZint"∧ inst.label(l_2)="LIT"_1 ∧ inst.label(l_1)="CRECORD"_1 
+   if inst in"Q5FZwordzseqZTzseqZint"∧ inst(l_2)="LIT"_1 ∧ inst(l_1)="CRECORD"_1 
   then // only expand when is standard sequence:that is 0 is in first field of record // 
    let cst = l_1
-   let idx = toint.arg.label(l_2)
-   if idx > 0 ∧  idx &le nosons(cst)-2 &and inst.label(cst_1)  ="LIT"_1 ∧ arg.label(cst_1)   ="0"_1 
+   let idx = toint.arg(l_2)
+   if idx > 0 ∧  idx &le nosons(cst)-2 &and inst(cst_1)  ="LIT"_1 ∧ arg(cst_1)   ="0"_1 
    then cst_( idx + 2)
    else tree(label.code, l)
-  else if length.l=2 &and inst.label(l_2)="LIT"_1 &and inst.label.code ="getaddressZbuiltinZTzseqZint"_1
-        &and arg.label(l_2)="0"_1 then l_1
-  else  if length.l = 2 &and inst.label(l_1)="LIT"_1 ∧ inst.label(l_2)="LIT"_1 then
-       simplecalcs(label.code,toint.arg.label(l_1),toint.arg.label(l_2),l)
+  else if length.l=2 &and inst(l_2)="LIT"_1 &and inst.code ="getaddressZbuiltinZTzseqZint"_1
+        &and arg(l_2)="0"_1 then l_1
+  else  if length.l = 2 &and inst(l_1)="LIT"_1 ∧ inst(l_2)="LIT"_1 then
+       simplecalcs(label.code,toint.arg(l_1),toint.arg(l_2),l)
   else if  inst ="APPLY"_1  &and ( nosons.code &ne 5 &or nosons(l_1) > 2 )then
    expandapply(pp,inlinename,nextset,code,l)
   else    if inst in inlinename
   then // inline expansion //
    if inst ="APPLY"_1 
   then 
-    if nosons.code = 5  ∧ checkistypechangeonly(pp,inlinename,arg.label(l_4),arg.label(l_3), l_1)
+    if nosons.code = 5  ∧ checkistypechangeonly(pp,inlinename,arg(l_4),arg(l_3), l_1)
    then 
       inline(pp,inlinename,sets,paramap,nextset, l_2)
    else 
          expandapply(pp,inlinename,nextset,code,l)
     else 
-        let  f=lookupfunc(pp,inst)
+        let  f=lookupfunc(allfunctions.pp,inst)
     explodeinline(pp,inlinename,codetree.f,"SIMPLE"_1 in flags.f,nextset,l) 
   else   
   tree(label.code, l)
 
  function expandapply(pp:program,inlinename:set.word, nextset:int, code:tree.cnode,l:seq.tree.cnode)tree.cnode 
-     let term1=arg.label(code_(nosons.code - 1))
-     let term2=arg.label(code_(nosons.code - 2))
-     let ptyp= arg.label(code_nosons.code)  
+     let term1=arg(code_(nosons.code - 1))
+     let term2=arg(code_(nosons.code - 2))
+     let ptyp= arg(code_nosons.code)  
      let p1 = noparamangled.term1  - 2 
      let p2 = noparamangled.term2 - 1 
      let nopara = 2 + p2 + p1 
-     assert p2 ≥ 0 report"illformed"+ term1 + term2 + print(lookupfunc(pp,term2))
-     let thetree=buildcodetree(   template2( term1, term2, p1, p2, ptyp) )
+     assert p2 ≥ 0 report"illformed"+ term1 + term2 + print(lookupfunc(allfunctions.pp,term2))
+     let thetree=buildcodetree(nopara,   template2( term1, term2, p1, p2, ptyp) )
       explodeinline(pp,inlinename,thetree,false,nextset,subseq(l, 1,length.l - 3)) 
 
 ______________
@@ -478,48 +482,51 @@ ______________
 Tailcall
 
 Function tailcall(t:tree.cnode, self:word)boolean 
- if inst.label.t ="if"_1 
+ if inst.t ="if"_1 
   then if tailcall(t_2, self)then true else tailcall(t_3, self)
-  else if inst.label.t ="SET"_1 
+  else if inst.t ="SET"_1 
   then tailcall(t_2, self)
-  else if inst.label.t in "LOOP FINISHLOOP"  
+  else if inst.t in "LOOP FINISHLOOP"  
   then false 
-  else   inst.label.t= self 
+  else   inst.t= self 
 
 Function tailcall(t:tree.cnode, self:word, nopara:int)tree.cnode 
  if tailcall(t, self)
   then let m = getmaxvar.t + 1 
-   let s = @(leftcat, newNode("LOCAL"_1), empty:seq.tree.cnode, arithseq(nopara, 1, m))
-   let plist = @(leftcat, newNode("PARA"_1), empty:seq.tree.cnode, arithseq(nopara, 1, 1))
-   tree(cnode("LOOP"_1,"0"_1), [ newNode("LIT"_1, m), tailcall(s, self, t)]+ plist)
-  else t
+   let s = @(+, newNode("LOCAL"_1), empty:seq.tree.cnode, arithseq(nopara, 1, m))
+        let plist = @(+,newNode("PARAM"_1), empty:seq.tree.cnode, arithseq(nopara, -1, -2))  
+     tree(cnode("LOOP"_1,"0"_1), [ newNode("LIT"_1, m), tailcall(s, self, t)]+ plist)  else
+   //  tree(cnode("FINISHLOOP"_1,"2"_1),[tree(cnode(" LOOPBLOCK"_1,"2"_1),plist+newNode("LIT"_1, m)),tailcall(s, self, t)])  
+  else // t
+  
+  1=(-1-m)  nopara=(-1-m)   -2
 
 function leftcat(a:seq.tree.cnode, b:tree.cnode)seq.tree.cnode [ b]+ a
 
 function newNode(w:word, i:int)tree.cnode tree.cnode(w, toword.i)
 
-function tailcall(subs:seq.tree.cnode, self:word, t:tree.cnode)tree.cnode 
- if inst.label.t ="if"_1 
-  then tree(label.t, [ tailcall(subs,"nomatch"_1, t_1), tailcall(subs, self, t_2), tailcall(subs, self, t_3)])
-  else if inst.label.t ="SET"_1 
-  then tree(label.t, [ tailcall(subs,"nomatch"_1, t_1), tailcall(subs, self, t_2)])
-  else if inst.label.t in "LOOP FINISHLOOP"  
-  then tree(label.t, @(+, tailcall(subs,"nomatch"_1), empty:seq.tree.cnode, sons.t))
-  else if  inst.label.t= self  
-  then tree(cnode("CONTINUE"_1, self), @(+, tailcall(subs,"nomatch"_1), empty:seq.tree.cnode, sons.t))
-  else if inst.label.t ="PARA"_1 
-  then subs_toint.arg.label.t 
-  else tree(label.t, @(+, tailcall(subs,"nomatch"_1), empty:seq.tree.cnode, sons.t))
+function tailcall(paramap:seq.tree.cnode, self:word, t:tree.cnode)tree.cnode 
+ if inst.t ="if"_1 
+  then tree(label.t, [ tailcall(paramap,"nomatch"_1, t_1), tailcall(paramap, self, t_2), tailcall(paramap, self, t_3)])
+  else if inst.t ="SET"_1 
+  then tree(label.t, [ tailcall(paramap,"nomatch"_1, t_1), tailcall(paramap, self, t_2)])
+  else if inst.t in "LOOP FINISHLOOP"  
+  then tree(label.t, @(+, tailcall(paramap,"nomatch"_1), empty:seq.tree.cnode, sons.t))
+  else if  inst.t= self  
+  then tree(cnode("CONTINUE"_1, self), @(+, tailcall(paramap,"nomatch"_1), empty:seq.tree.cnode, sons.t))
+   else if inst.t ="PARAM"_1 then
+           paramap_  (-1-toint.arg.t)
+  else tree(label.t, @(+, tailcall(paramap,"nomatch"_1), empty:seq.tree.cnode, sons.t))
 
-------
+------paramap_(length.paramap - toint.arg.code + 1)
 
 
 function getmaxvar(t:tree.cnode)int 
- @(max, getmaxvar, if inst.label.t ="SET"_1 then toint.arg.label.t else 
-   if inst.label.t = "LOOP"_1 then
-      toint.arg.label(t_1)+nosons.t-3
-    else if inst.label.t="LOOPBLOCK"_1 then
-      toint.arg.label(t_(nosons.t-1))+nosons.t-1
+ @(max, getmaxvar, if inst.t ="SET"_1 then toint.arg.t else 
+   if inst.t = "LOOP"_1 then
+      toint.arg(t_1)+nosons.t-3
+    else if inst.t="LOOPBLOCK"_1 then
+      toint.arg(t_(nosons.t-1))+nosons.t-1
    else 0, sons.t)
 
 _____________
@@ -534,7 +541,9 @@ function noparamangled(a:word) int
    
    
  
-function parainst(i:int)seq.word {"PARA"+ toword.i }
+
+function parainst(i:int)seq.word {"PARAM"+ toword.(-1-i) }
+
 
  
   function template2( term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)seq.word 
@@ -543,8 +552,8 @@ function parainst(i:int)seq.word {"PARA"+ toword.i }
   // EQL-Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint ADD = Q2BZbuiltinZintZint // 
   let CALLTERM1 = [term1, toword(2 + nopara1)]
     let CALLTERM2 = [term2, toword(1 + nopara2)]
-   let TERM1PARA = @(+, parainst,"", arithseq(nopara1, -1, 2 + nopara1 + nopara2))
-  let TERM2PARA = @(+, parainst,"", arithseq(nopara2, -1, 2 + nopara2))
+   let TERM1PARA = @(+, parainst,"", arithseq(nopara1, 1, 1))
+  let TERM2PARA = @(+, parainst,"", arithseq(nopara2, 1, nopara1+1))
 "X"+ " LIT 1
          LOCAL 3 LIT 0 IDXUC 2 FREF"+ ptyp + "Q3DZbuiltinZintZint 2
           LOCAL 1 LOCAL 2 LOCAL 3 LIT 3 IDXUC 2 STKRECORD 2 LOCAL 3 LIT 2 IDXUC 2   CONTINUE 3    
@@ -579,9 +588,8 @@ function parainst(i:int)seq.word {"PARA"+ toword.i }
         if 3 
        SET 10 
       if 3 
- PARA 2
- LIT 0 
- PARA 1
+ "+parainst(nopara1+nopara2+1)+
+ "LIT 0 "+parainst(nopara1+nopara2+2) +" 
  LOOP 5 "  
  
   
@@ -589,11 +597,11 @@ function checkistypechangeonly(prg:program,inlinename:set.word,term1:word,term2:
  // check to see if APPLY just does a type change // 
   let q =  codedown.term1
   if length.q = 4 ∧ last(q_2)="seq"_1 ∧ q_1_1 ="+"_1 ∧ subseq(q, 3, length.q)= ["T seq","T"] then
-     let f = lookupfunc(prg,term2)
+     let f = lookupfunc(allfunctions.prg,term2)
        // let k=   inline(prg,inlinename,dseq(tree.cnode("UNASIGNED"_1,"1"_1)),empty:seq.tree.cnode,1, codetree.f)
         assert k=codetree.f report print.k+">>>>"+print.codetree.f //
-     if  nopara.f = 1 ∧ inst.label.codetree.f ="PARA"_1 then
-       if inst.label.term3="CRECORD"_1 &and nosons.term3=2   
+     if  nopara.f = 1 ∧ inst.codetree.f  in "PARAM" then
+       if inst.term3="CRECORD"_1 &and nosons.term3=2   
           &and cnode("LIT"_1,"0"_1)=label.term3_1 &and cnode("LIT"_1,"0"_1)=label.term3_1
           then 
           // let z = [term1,term2]+print(term3)
@@ -645,9 +653,9 @@ use set.word
 use seq.int
    
 Function opt2(t:tree.cnode) tree.cnode
-   if inst.label.t="LOOP"_1 then
+   if inst.t="LOOP"_1 then
      let x=removeRECORD.t
-       if inst.label.x="nogo"_1 then 
+       if inst.x="nogo"_1 then 
        tree(label.t,@(+,opt2,empty:seq.tree.cnode,sons.t))
        else x
     else
@@ -658,8 +666,8 @@ Function opt2(t:tree.cnode) tree.cnode
     
 
 function removeRECORD(loop:tree.cnode) tree.cnode
- let first=toint.arg.label(loop_1)
-         if  not (inst.label.loop_2 = "if"_1 ) then nogo else 
+ let first=toint.arg(loop_1)
+         if  not (inst.loop_2 = "if"_1 ) then nogo else 
         let checked=asset(look(first,loop_2_3)+look(first,loop_2_1))
           // assert nosons.loop=5 report toseq.checked+"FIRST"+toword.first+printb(0,loop) //
         let b = toseq(checked-asset."1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25")
@@ -694,40 +702,40 @@ function nogo tree.cnode tree(cnode("nogo"_1,"0"_1))
 function look(first:int,t:tree.cnode) seq.word
   // returns all local variables that are not accessed like " IDXUC(LOCAL x,LIT y) ".
      Also returns   "jXi" where j is loop variable of form RECORD(s1,s2, ... ,si) //
-      if inst.label.t="CONTINUE"_1 then 
+      if inst.t="CONTINUE"_1 then 
           @( mergecheckrecord.first, checkrecord,"",sons.t ) +  @( +,look.first,"",sons.t )
           else
-      if  inst.label.t="LOCAL"_1 then [arg.label.t]
-      else if inst.label.t="IDXUC"_1 &and inst.label.t_2="LIT"_1
-          &and inst.label.t_1="LOCAL"_1 then ""
+      if  inst.t="LOCAL"_1 then [arg.t]
+      else if inst.t="IDXUC"_1 &and inst.t_2="LIT"_1
+          &and inst.t_1="LOCAL"_1 then ""
       else @(+,look.first,"",sons.t)
 
 function checkrecord(t:tree.cnode) word
-    if  inst.label.t="SET"_1 then checkrecord(t_2)
+    if  inst.t="SET"_1 then checkrecord(t_2)
     else   
-      if inst.label.t in "RECORD MRECORD"  then toword.nosons.t
+      if inst.t in "RECORD MRECORD"  then toword.nosons.t
       else "X"_1
     
 function  mergecheckrecord(first:int,s:seq.word,t:word) seq.word
        if t="X"_1 then s+toword(first+length(s)) else s+merge([toword(first+length(s))]+"X"+t)
  
 function splitrecord(first:int,map:seq.int, expand:seq.int ,   t:tree.cnode) tree.cnode
-     let inst=inst.label.t
+     let inst=inst.t
     if inst = "LOCAL"_1  then  
-       tree.cnode(inst,toword.mapit(map,arg.label.t))
+       tree.cnode(inst,toword.mapit(map,arg.t))
     else if inst = "SET"_1  then 
-      tree(cnode(inst,toword.mapit(map, arg.label.t)),[splitrecord(first,map,expand,t_1),splitrecord(first,map,expand,t_2)])
+      tree(cnode(inst,toword.mapit(map, arg.t)),[splitrecord(first,map,expand,t_1),splitrecord(first,map,expand,t_2)])
     else  
-      if inst="IDXUC"_1 &and inst.label.t_2="LIT"_1 
-          &and inst.label.t_1="LOCAL"_1 &and toint.arg.label.t_1  in expand then
-           tree.cnode("LOCAL"_1, toword( mapit(map,arg.label.t_1)+toint.arg.label.t_2)) 
+      if inst="IDXUC"_1 &and inst.t_2="LIT"_1 
+          &and inst.t_1="LOCAL"_1 &and toint.arg.t_1  in expand then
+           tree.cnode("LOCAL"_1, toword( mapit(map,arg.t_1)+toint.arg.t_2)) 
     else if   inst="CONTINUE"_1 then
-         if inst.label(t_1)="SET"_1 then    
+         if inst(t_1)="SET"_1 then    
           // push CONTINUE down the tree //
           let newt = tree(label.t_1 ,[ t_1_1,tree(  label.t,   [t_1_2]+subseq(sons.t,2,nosons.t)  )])
           splitrecord(first,map,expand,newt)
          else  
-           assert inst.label.(t_1 ) in "RECORD MRECORD" report "CONT"+printb(0,t)
+           assert inst.(t_1 ) in "RECORD MRECORD" report "CONT"+printb(0,t)
           tree(label.t,@(+,handlecontinue(first,map,expand,t),empty:seq.tree.cnode,arithseq(nosons.t,1,1)))  
     else  tree(label.t,@(+,splitrecord(first,map,expand),empty:seq.tree.cnode,sons.t))
          
@@ -735,7 +743,7 @@ function splitrecord(first:int,map:seq.int, expand:seq.int ,   t:tree.cnode) tre
          
 function handlecontinue(first:int,map:seq.int,expand:seq.int,t:tree.cnode,son:int)   seq.tree.cnode
        if son+first-1 in expand then 
-          if inst.label.(t_son ) = "MRECORD"_1  then [splitrecord(first,map,expand,t_son_2)]
+          if inst.(t_son ) = "MRECORD"_1  then [splitrecord(first,map,expand,t_son_2)]
           else
          @(+,splitrecord(first,map,expand),empty:seq.tree.cnode,sons.t_son) 
         else [splitrecord(first,map,expand,t_son)]
@@ -744,7 +752,7 @@ function handlecontinue(first:int,map:seq.int,expand:seq.int,t:tree.cnode,son:in
  function  fixloopinit(loopsons:seq.tree.cnode, size:int, expand:seq.int, first:int, i:int) seq.tree.cnode
     let son=loopsons_i
     if first+i-3 in expand then 
-      assert inst.label.son in "PARA LOCAL RECORD CRECORD" report "opt2 problem"+printb(0,son)
+      assert inst.son in "PARAM LOCAL RECORD CRECORD" report "opt2 problem"+printb(0,son)
       @(+,fixloopinit(son),empty:seq.tree.cnode,arithseq(size,1,0))
       else [son]
 
@@ -760,7 +768,7 @@ function mapit  ( map:seq.int,arg:word) int
     
  Function printb(level:int, t:tree.cnode)seq.word 
  // for printing code tree // 
-  let inst = inst.label.t 
+  let inst = inst.t 
   {"&br"+ constantseq(level,"_"_1)+
    if inst="if"_1 then
      "if"+printb(level + 1,t_1)
@@ -769,11 +777,11 @@ function mapit  ( map:seq.int,arg:word) int
      +"&br"+ constantseq(level,"_"_1)+"else"
      +printb(level + 1,t_3)
    else 
-   (if inst in"PARA LIT CONST LOCAL FREF WORD FLAT"
-   then [ inst, arg.label.t]
+   (if inst in"PARA PARAM LIT CONST LOCAL FREF WORD FLAT"
+   then [ inst, arg.t]
    else if inst in"CALL CALLB"
-   then [ inst, toword.nosons.t, arg.label.t]
-   else if inst ="SET"_1 then [ inst, arg.label.t]
+   then [ inst, toword.nosons.t, arg.t]
+   else if inst ="SET"_1 then [ inst, arg.t]
    else [ inst,toword.nosons.t])+ @(+, printb(level + 1),"", sons.t)}
 
   
@@ -786,31 +794,31 @@ _____________
     
 Function  removerecords(x:tree.cnode) tree.cnode
  let t = tree(label.x,@(+,removerecords,empty:seq.tree.cnode,sons.x))
-   // assert not (inst.label.t="SET"_1 &and inst.label.t_1 in "CRECORD RECORD" &and label.t_1_1=label.t_1_2)
-     report (if  check( arg.label.t,false,t_2)  then "check"else "" )+printb(0,t_2) +"VAR"+arg.label.t //
-   if inst.label.t="SET"_1 &and inst.label.t_1 in "CRECORD RECORD"  
-    then let chk=   check( arg.label.t,false,t_2) 
+   // assert not (inst.t="SET"_1 &and inst.t_1 in "CRECORD RECORD" &and label.t_1_1=label.t_1_2)
+     report (if  check( arg.t,false,t_2)  then "check"else "" )+printb(0,t_2) +"VAR"+arg.t //
+   if inst.t="SET"_1 &and inst.t_1 in "CRECORD RECORD"  
+    then let chk=   check( arg.t,false,t_2) 
       if chk=10000 then t else 
              fix2(t,empty:seq.tree.cnode,1,chk+1)
 else t
 
 function check(var:word,parent:boolean,t:tree.cnode) int
  // returns 10000 if does not check. Returns max var used in tree if does checkout. parent indicates if the parent is IDXUC //
-  if inst.label.t="LOCAL"_1 &and (arg.label.t = var) then 
-   if parent then toint(arg.label.t) else 10000 
+  if inst.t="LOCAL"_1 &and (arg.t = var) then 
+   if parent then toint(arg.t) else 10000 
   else 
-   @(max, check(var,inst.label.t="IDXUC"_1),if inst.label.t ="SET"_1 then toint.arg.label.t else 
-   if inst.label.t = "LOOP"_1 then
-      toint.arg.label(t_1)+nosons.t-3
+   @(max, check(var,inst.t="IDXUC"_1),if inst.t ="SET"_1 then toint.arg.t else 
+   if inst.t = "LOOP"_1 then
+      toint.arg(t_1)+nosons.t-3
    else 0,sons.t)
 
 
 function fix2(   t:tree.cnode, replacements:seq.tree.cnode ,i:int,varbase:int) tree.cnode
  // replaces " fld1 fld2 RECORD 2 exp SET y "  with  " fld1 fld2 exp SET v2  SET v1 " //
-   if i > nosons.(t_1) then  fix3(arg.label.t,replacements, t_2)
+   if i > nosons.(t_1) then  fix3(arg.t,replacements, t_2)
    else 
    let s=t_1_i
-   if inst.label.s in "LIT LOCAL PARA FREF" then fix2(t,replacements+s,i+1,varbase)
+   if inst.s in "LIT LOCAL  PARAM FREF" then fix2(t,replacements+s,i+1,varbase)
    else 
      let var = toword(varbase+ i)
          tree(cnode("SET"_1, var) ,[ s ,fix2(t,replacements+tree(cnode("LOCAL"_1, var)),i+1,varbase)])
@@ -819,18 +827,15 @@ function fix2(   t:tree.cnode, replacements:seq.tree.cnode ,i:int,varbase:int) t
 
 function fix3(var:word,replacements:seq.tree.cnode,t:tree.cnode) tree.cnode
 // replaces IDXUC(LOCAL var,LIT i ) with replacements_(i+1) //
-   if inst.label.t="IDXUC"_1 &and inst.label.t_2="LIT"_1 
-          &and inst.label.t_1="LOCAL"_1 &and arg.label.t_1  = var then
-            replacements_(toint.arg.label.t_2  + 1)
+   if inst.t="IDXUC"_1 &and inst.t_2="LIT"_1 
+          &and inst.t_1="LOCAL"_1 &and arg.t_1  = var then
+            replacements_(toint.arg.t_2  + 1)
     else
-     if inst.label.t="SET"_1 &and inst.label.t=var then t else 
+     if inst.t="SET"_1 &and inst.t=var then t else 
      tree(label.t,@(+,fix3(var,replacements),empty:seq.tree.cnode,sons.t))
      
 ___________________
 
-function inst(t:tree.cnode)word inst.label(t)
-
-function arg(t:tree.cnode)word arg.label(t)
 
 
 function returnsrecord(t:tree.cnode)int 

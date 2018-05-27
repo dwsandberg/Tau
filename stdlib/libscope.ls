@@ -140,7 +140,7 @@ function codedown(l:seq.int, i:int, w:seq.int, words:seq.word, result:seq.seq.wo
   else if l_i = charmajorseparator 
   then codedown(l, i + 1, empty:seq.int, empty:seq.word, result +(words + encodeword.w))
   else if l_i = charQ 
-  then assert i + 2 ≤ length.l report"JKLJ"+ encodeword.l 
+  then assert i + 2 ≤ length.l report"format problem with codedown for"+ encodeword.l 
    let first=hexvalue(l_(i + 1))
    let t = first * 16 + hexvalue(l_(i + 2))
     if first > 0 then

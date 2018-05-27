@@ -21,7 +21,7 @@ use stdlib
 Function print(a:libtype)seq.word 
  [ name.a]+(if abstract.a then".T"else"")+"size"+ print.size.a +"kind"+ kind.a + @(+, print,"", subtypes.a)
 
-function ?(a:libtype, b:libtype)ordering 
+Function ?(a:libtype, b:libtype)ordering 
  let t = name.a ? name.b 
   if t = EQ then abstract.a ? abstract.b else t
 

@@ -120,10 +120,11 @@ function subcompilelib(libname:word)seq.word
   if aborted.ptext 
   then message.ptext 
   else let p1a = pass1a(false, result.ptext, YYY.templatesin, [ libname])
-  let p = waitforpass2.setprivate(exports.ld, p1a)
+  // let p = waitforpass2.setprivate(exports.ld, p1a)
   if aborted.p 
   then message.p 
-  else let y1 = codegen5.result.p 
+  else let y1 = codegen5.result.p //
+  let y1 = codegen5.pass2.setprivate(exports.ld, p1a)
   let z2 = createlib(y1, libname, dependentlibs.ld)
   "OK"
 

@@ -14,7 +14,7 @@ run tools test
 
 /run tools test2
 
-/run tools stdlibdoc
+run tools stdlibdoc
 
 /run doc createdoc
 
@@ -48,7 +48,7 @@ Function test1 seq.word htmlcode."tools"
 
 Function checkbind seq.word checkbind."tools"
 
-Function prettytest seq.word prettylib("test3","")
+Function prettytest seq.word prettylib("test4","")
 
 "byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 

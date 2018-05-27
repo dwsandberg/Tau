@@ -1,3 +1,7 @@
+#!/usr/local/bin/tau
+
+run testencoding testencoding
+
 module testencoding
 
 use checking
@@ -10,9 +14,10 @@ use seq.testrecord
 
 use stdlib
 
+
 function =(a:testrecord, b:testrecord)boolean key.a = key.b
 
-function print(a:testrecord)seq.word [ toword.key.a]+ body.a
+Function print(a:testrecord)seq.word [ toword.key.a]+ body.a
 
 function hash(a:testrecord)int key.a
 
@@ -39,12 +44,12 @@ Function testencoding seq.word
   let start3 = length.mapping.mydata3 
   let z = @(+, add.mydata, 0, ["firstadd","secondadd"])
   let z2 = @(+, add.mydata2, 0, ["one","two","three"])
-  let z3 = @(+, add.mydata3, 0, ["temp"])
+  let z3 = @(+, add.mydata3, 0, ["temp"])  
   let p = process.process1 
   if aborted.p 
   then"Failed encoding"+ message.p 
   else let plen = result.p 
-  let status = flush.mydata2 + flush.mydata + flush.mydata3 + flush.mydata5 
+   let status = flush.mydata2 + flush.mydata + flush.mydata3 + flush.mydata5 
   let final = length.mapping.mydata 
   let final2 = length.mapping.mydata2 
   let final3 = length.mapping.mydata3 
