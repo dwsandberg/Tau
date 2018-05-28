@@ -203,7 +203,7 @@ Function prepb(allfunctions:invertedseq.func,nopara:int, t:tree.cnode)seq.int
   else if inst ="CRECORD"_1 
   then [aseinst("CONSTANT"+prep3.t)] 
   else  
-  @(+, prepb(allfunctions,nopara), empty:seq.int, sons.t)+ if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2" then
+  @(+, prepb(allfunctions,nopara), empty:seq.int, sons.t)+ if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP" then
    aseinst([inst, toword.nosons.t]) else
     let s=findencode(inst([inst, toword.nosons.t]),einst)
     if length.s=0 then
