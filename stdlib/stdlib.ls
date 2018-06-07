@@ -1,14 +1,8 @@
 #!/usr/local/bin/tau
 
-Library stdlib UTF8 altgen bitpackedseq bits blockseq buildtree codegen codetemplates  definestruct display  
-fileio format graph groupparagraphs internalbc   invertedseq ipair libdesc libdescfunc libscope llvm main  oseq packedseq parse pass0 pass1a pass2a passcommon persistant pretty prims process processtypes real reconstruct seq set stack stacktrace symbol textio tree 
-  uses  
- exports UTF8 bitpackedseq bits blockseq      display   fileio format 
-       graph internalbc   invertedseq ipair libdesc   libscope llvm main  oseq    passcommon persistant 
-        prims process  real reconstruct seq set stack stacktrace stdlib textio tree 
-        codetemplates  
-        
-
+Library stdlib UTF8 altgen bitpackedseq bits blockseq buildtree codegen codetemplates definestruct display fileio format graph groupparagraphs internalbc invertedseq ipair libdesc libdescfunc libscope llvm main opt2 oseq packedseq parse pass0 pass1a pass2a passcommon persistant pretty prims process processtypes real reconstruct seq set stack stacktrace symbol textio tree 
+ uses 
+ exports UTF8 bitpackedseq bits blockseq codetemplates display fileio format graph internalbc invertedseq ipair libdesc libscope llvm main oseq passcommon persistant prims process real reconstruct seq set stack stacktrace stdlib textio tree
 
 module stdlib
 
@@ -68,7 +62,7 @@ Function commachar int 44
 
 Function hyphenchar int 45
 
-Function nbspchar int // no break space character // 160 
+Function nbspchar int // no break space character // 160
 
 * EQ GT and LT are the possible results of ? operator
 
@@ -120,9 +114,14 @@ Function ∧(a:ordering, b:ordering)ordering
 
 Function ?(a:boolean, b:boolean)ordering toint.a ? toint.b
 
-Function ∧(a:boolean, b:boolean)boolean if a then b else // false // boolean.0
+Function ∧(a:boolean, b:boolean)boolean 
+ if a then b else // false // boolean.0
 
-Function ∨(a:boolean, b:boolean)boolean if a then // true is not use so simple inline expansion is used to produce short circuit evaluation // boolean.1 else b
+Function ∨(a:boolean, b:boolean)boolean 
+ if a 
+  then // true is not use so simple inline expansion is used to produce short circuit evaluation // 
+   boolean.1 
+  else b
 
 Function not(a:boolean)boolean builtin.usemangle
 
@@ -138,14 +137,11 @@ Function ≤(a:int, b:int)boolean export
 
 Function ≥(a:int, b:int)boolean export
 
-
-
 Function max(a:int, b:int)int if a > b then a else b
 
 Function min(a:int, b:int)int if a < b then a else b
 
-Function between(i:int, lower:int, upper:int)boolean 
-i ≥ lower ∧ i ≤ upper
+Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
@@ -171,7 +167,7 @@ Function ?(a:word, b:word)ordering encoding.a ? encoding.b
 
 Function =(a:word, b:word)boolean encoding.a = encoding.b
 
-Function &ne(a:word, b:word)boolean export
+Function ≠(a:word, b:word)boolean export
 
 Function hasdigit(w:word)boolean 
  let l = decode.w 
@@ -185,20 +181,18 @@ Function toword(n:int)word
 
 /Function print(i:int)seq.word groupdigits.toUTF8.i
 
-/function groupdigits(u:UTF8)seq.word 
- let s = toseqint.u 
-  if length.s < 5 ∧(length.s < 4 ∨ s_1 = hyphenchar)
-  then [ encodeword.s]
-  else groupdigits.UTF8.subseq(s, 1, length.s - 3)+ [ encodeword.subseq(s, length.s - 2, length.s)]
+/function groupdigits(u:UTF8)seq.word let s = toseqint.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s-3)+ [ encodeword.subseq(s, length.s-2, length.s)]
 
 Function toint(w:word)int 
  // Convert an integer represented as a word to and int // cvttoint(decode.w, 1, 0)
 
 function cvttoint(s:seq.int, i:int, val:int)int 
-  if i = 1 ∧ s_1 = hyphenchar 
+ if i = 1 ∧ s_1 = hyphenchar 
   then cvttoint(s, i + 1, val)
-  else   if i > length.s then if s_1 = hyphenchar then - val else val   
-  else if s_i=nbspchar then cvttoint(s,i+1,val)
+  else if i > length.s 
+  then if s_1 = hyphenchar then-val else val 
+  else if s_i = nbspchar 
+  then cvttoint(s, i + 1, val)
   else assert between(s_i, 48, 57)report"invalid digit"+ stacktrace 
   cvttoint(s, i + 1, val * 10 + s_i - 48)
 
@@ -328,7 +322,7 @@ Function alphasort(a:seq.seq.word)seq.seq.word
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
   @(+, towordseq, empty:seq.seq.word, sort.b)
 
-* usegraph include real oseq textio UTF8 prims stacktrace  libscope tree seq blockseq graph ipair invertedseq process stack set oseq packedseq  format groupparagraphs fileio
+* usegraph include real oseq textio UTF8 prims stacktrace libscope tree seq blockseq graph ipair invertedseq process stack set oseq packedseq format groupparagraphs fileio
 
-* usegraph include libscope display constant codegen convert altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs etype codetemplates core sid pretty pass2a persistant libdesc passcommon main parts llvm reconstruct exclude seq set oseq  stdlib tree graph UTF8 stack stacktrace real process libscope ipair
+* usegraph include libscope display constant codegen convert altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs etype codetemplates core sid pretty pass2a persistant libdesc passcommon main parts llvm reconstruct exclude seq set oseq stdlib tree graph UTF8 stack stacktrace real process libscope ipair
 

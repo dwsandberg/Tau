@@ -256,16 +256,11 @@ Function_(s:arithmeticseq.T, i:int)T start.s +(i - 1)* step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 
+Function PROFILE(T)T builtin.PROFILE
 
-Function PROFILE(T) T builtin.PROFILE
+Function FORCEINLINE(T)T builtin.FORCEINLINE
 
-Function FORCEINLINE(T) T builtin.FORCEINLINE
+Function NOINLINE(T)T builtin.NOINLINE
 
-Function NOINLINE(T) T builtin.NOINLINE
-
-Function TESTOPT(T) T builtin.TESTOPT
-
-
-
-
+Function TESTOPT(T)T builtin.TESTOPT
 

@@ -10,6 +10,8 @@ use seq.seq.int
 
 use seq.seq.seq.int
 
+use seq.seq.seq.word
+
 use stdlib
 
 Function breaklines(a:seq.int)seq.seq.int breaklines(a, 2, 1, empty:seq.seq.int)
@@ -80,9 +82,6 @@ Function towordsX(a:seq.int)seq.word towords2(a, 1, 1, empty:seq.word)
 
 Function gettextX(filename:seq.word)seq.seq.word 
  @(+, towordsX, empty:seq.seq.word, breakparagraph.getfile.filename)
-
-
-use seq.seq.seq.word
 
 Function gettext(filename:seq.word)seq.seq.word 
  @(+, towords, empty:seq.seq.word, breakparagraph.getfile.filename)

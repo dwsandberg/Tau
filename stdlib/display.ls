@@ -10,7 +10,6 @@ use seq.word
 
 use stdlib
 
-
 type prettycontrol is record preclist:seq.seq.word, chrwidths:seq.int
 
 Function preclist(prettycontrol)seq.seq.word export

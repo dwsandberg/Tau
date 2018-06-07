@@ -27,14 +27,12 @@ use stdlib
 Function toCformat(s:seq.word)seq.bits 
  packed.data2.add(@(add, byte, bitpackedseq(0, empty:seq.byte, bits.0), toseqint.toUTF8.s), byte.0)
 
-
 type outputformat is record length:int, data:seq.bits
 
 Function outputformat(a:seq.int)outputformat 
  outputformat(length.a, blockit.data2.@(add, byte, empty:bitpackedseq.byte, a))
 
 Function createbytefile(name:seq.word, a:seq.int)int createfile(toCformat.name, outputformat.a)
-
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int 
  createlib(toCformat.[ libname], toCformat.@(+, addsuffix.".dylib","", dependlibs), outputformat(length.b * 8, blockit.b))

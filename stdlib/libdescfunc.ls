@@ -30,17 +30,17 @@ use set.libsym
 
 use set.libtype
 
-/use set.mytype
-
 use set.syminfo
 
 use set.word
 
 use stdlib
 
+/use set.mytype
+
 function astext(nopara:int, s:seq.inst, i:int)seq.word 
  let f = towords(s_i)
-   if f_1 ="CONSTANT"_1 
+  if f_1 ="CONSTANT"_1 
   then subseq(f, 2, length.f)
   else if f_1 ="PARAM"_1 then"PARA"+ toword(toint(f_2)+ nopara + 2)else f
 
@@ -60,9 +60,9 @@ function tolibsym(coding:seq.inst, codes:seq.seq.int, i:int)seq.libsym
     if verysimple ∧ not("PARA"_1 in subseq(x, nopara * 2 + 1, length.x))∧ not("SET"_1 in x)
     then subseq(x, nopara * 2 + 1, length.x)
     else"USECALL"+ x 
-   else if "INLINE"_1 in flags.a  &and length.codes_i < 10 then
-      "USECALL"+astext5(nopara.a, coding, codes_i)
-    else [ mangledname.a, toword.nopara.a]
+   else if"INLINE"_1 in flags.a ∧ length(codes_i)< 10 
+   then"USECALL"+ astext5(nopara.a, coding, codes_i)
+   else [ mangledname.a, toword.nopara.a]
   [ libsym(returntype.a, mangledname.a, inst)]
 
 function roots2(m:mod2desc)set.word 
@@ -70,7 +70,6 @@ function roots2(m:mod2desc)set.word
 
 function toinstindex(a:set.word, d:intercode2, i:int)seq.int 
  if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
-
 
 Function libdesc(r:pass1result)liblib 
  let roots = @(∪, roots2, empty:set.word, mods.r)
@@ -81,7 +80,6 @@ Function libdesc(r:pass1result)liblib
   let othermod = libmod(false,"$other"_1, syms, empty:seq.libsym, lib)
   let allmods = @(+, map(lib, asset.syms), empty:seq.libmod, mods.r)+ othermod 
   liblib(libname.r, toseq(@(∪, libtypes.alltypes.r, empty:set.libtype, allmods) - existingtypes.r), allmods)
-
 
 function simpleonly(d:intercode2, i:int)seq.int 
  let inst = coding(d)_i 

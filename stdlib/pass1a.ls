@@ -28,7 +28,11 @@ use seq.mod2desc
 
 use seq.mytype
 
+use seq.pass1result
+
 use seq.r3
+
+use seq.seq.mod2desc
 
 use seq.seq.word
 
@@ -76,7 +80,7 @@ Function findseqindexfunction(d:symdict, type:mytype)syminfo
   sym
 
 Function find(d:symdict, w:word, l:seq.r3)r3 
-  let typelist = @(+, types, empty:seq.mytype, l)
+ let typelist = @(+, types, empty:seq.mytype, l)
   let sym = findsymbol(d, w, typelist)
   let noparameters = length.paratypes.sym 
   if bindingonly.d 
@@ -85,7 +89,7 @@ Function find(d:symdict, w:word, l:seq.r3)r3
    then r3("TYPESIZE 0", [ mytype."int"], nexttemp(l_length.l))
    else r3(@(+, code,"", l)+ mangled.sym + toword.noparameters, [ returntype.sym], nexttemp(l_length.l))
   else let code = if isinstance.modname.sym 
-   then  if  "TSIZE"_1 in instruction.sym then "USECALL" else   instruction.sym
+   then if"TSIZE"_1 in instruction.sym then"USECALL"else instruction.sym 
    else if not.isabstract.modname.sym ∧ subseq(instruction.sym, 1, 1)="BUILD"
    then"USECALL"
    else instruction.sym 
@@ -171,9 +175,7 @@ function isnumber(l:seq.int, i:int)boolean
   then true 
   else if i = 1 ∧ l_1 = hyphenchar ∧ length.l > 1 
   then isnumber(l, 2)
-  else if between(l_i, 48, 57) &or l_i=nbspchar then isnumber(l, i + 1) else false
-
-use seq.r3
+  else if between(l_i, 48, 57)∨ l_i = nbspchar then isnumber(l, i + 1)else false
 
 Function bind(d:symdict, t:tree.word, nexttmp:int)r3 
  if isnumber.label.t 
@@ -242,10 +244,8 @@ Function checkapplyA(d:symdict, t:tree.word, nexttmp:int)r3
   then r3(code.term1sons + mangled.sym1 + toword.nosons.term1 + code.term2sons + mangled.sym2 + toword.nosons.term2 + code.term3 + code.term4 +"@ 4", types.term3, nexttemp.term4)
   else r3(code.term1sons + code.term2sons + code.term3 + code.term4 + FREFcode.sym2 + FREFcode.sym1 + FREFcode.findseqindexfunction(d, pseqtype)+"APPLY"+ toword(nosons.term1 + nosons.term2 + 5), types.term3, nexttemp.term4)
 
-use seq.syminfo
-
 Function bind(bindingonly:boolean, alltypes:set.libtype, modname:mytype, a:set.syminfo, text:seq.word)syminfo 
-  let t = parse(text, tree("X"_1))
+ let t = parse(text, tree("X"_1))
   let dict = symdict(text, a, alltypes, bindingonly)
   // will not return instructions containing ERECORD or BUILDSEQ. Returns augmented code // 
   // let cond = not(abstracttype.tomytype.modname in"invertedseq")∨ label.symbol.t in"= lookup ele"// 
@@ -281,12 +281,9 @@ function isinstance(s:syminfo)set.word
   then let a = encode(libsym(returntype.s, mangled.s, instruction.s), libsymencoding)
    asset.[ mangled.s]
   else empty:set.word
-  
-
-use seq.pass1result
 
 Function pass1a(bindingonly:boolean, primitivemods:set.mod2desc, intemplates:seq.mod2desc, libname:seq.word)pass1result 
-    let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
+ let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
   let P1 = toseq.primitivemods 
   let alltypes = assigntypesizes(@(+, typedefs, empty:seq.libtype, P1)+ templatetypes)
   let discard = @(+, checktypes.alltypes, 0, P1)
@@ -313,8 +310,6 @@ Function iscomplex(p:syminfo)seq.word
 
 Function complexexports(m:mod2desc)seq.word 
  // if isprivate.m then empty:seq.word else // @(+, iscomplex,"", toseq.export.m)
- 
-use seq.seq.mod2desc
 
 Function compilesimple(bindingonly:boolean, alltypes:set.libtype, allsyms:set.syminfo, allmods:set.mod2desc, thistype:mod2desc)seq.mod2desc 
  if isabstract.modname.thistype 
@@ -326,7 +321,6 @@ Function compilesimple(bindingonly:boolean, alltypes:set.libtype, allsyms:set.sy
   let functionsreferenced = @(∪, calls, asset.complexexports.thistype, toseq.def)
   let def2 = asset.@(+, compileinstance(alltypes, allsyms), empty:seq.syminfo, toseq.functionsreferenced)
   [ mod2desc(modname.thistype, export.thistype, empty:seq.mytype, typedefs.thistype, def ∪ def2, ["current"], isprivate.thistype)]
-
 
 Function compileabstract(bindingonly:boolean, alltypes:set.libtype, allmods:set.mod2desc, thistype:mod2desc)seq.mod2desc 
  if not.isabstract.modname.thistype 

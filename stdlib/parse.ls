@@ -48,12 +48,12 @@ Function prec(w:word, preclist:seq.seq.word)int prec(w, preclist, 1)
 Function defaultprec seq.seq.word 
  ["_^", 
  "", 
- "* / mod ∪ ∩" , 
+ "* / mod ∪ ∩", 
  "in +-∈ ∋", 
- "= < > ?  ≤ ≠ ≥ >> <<", 
+ "= < > ? ≤ ≠ ≥ >> <<", 
  "∧", 
- "∨" ]
- 
+ "∨"]
+
 Function prec(w:word, p:seq.seq.word, i:int)int 
  if i > length.p 
   then if w ="#"_1 then length.p + 1 else 0 
@@ -79,8 +79,7 @@ function term(r:r1, p:int)r1
   then wrap("$build"_1, check(seqlist.exp.advance.r, closebracket))
   else if this.r ="-"_1 
   then if hasdigit.next.r 
-   then // minus sign in front of integer or real literal // 
-    numberlit(true,advance.advance.r,next.r)
+   then // minus sign in front of integer or real literal // numberlit(true, advance.advance.r, next.r)
    else if next.r =","_1 
    then // so @(-, with parse // build(r, [ tree.this.valid.r])
    else wrap(this.r, term(advance.r, 1))
@@ -104,7 +103,7 @@ function term(r:r1, p:int)r1
    let e = exp.message 
    r1(preclist.r, input.r, n.e, [ tree(this.r, [ tr(cond)_1, tr(e)_1, tr(message)_1])])
   else if hasdigit.this.r 
-  then  numberlit(false,advance.r,this.r)
+  then numberlit(false, advance.r, this.r)
   else if next.r = openpara 
   then wrap(this.r, check(explist.exp.advance.advance.r, closepara))
   else if next.r ="."_1 
@@ -117,22 +116,20 @@ function term(r:r1, p:int)r1
 function astype(t:tree.word)seq.word 
  if nosons.t = 0 then [ label.t]else [ label.t]+"."+ astype(t_1)
 
-  function numberlit(negative:boolean,r:r1,x:word) r1
-    if this.r = "."_1 ∧ hasdigit.next.r then
-     let d = decode.next.r 
-     r1(preclist.r, input.r, n.r+2, [ tree("makereal"_1, 
-     [ tree.encodeword( if negative then [hyphenchar] +decode.x+d else decode.x+d ) , tree.countdigits(d,1,0)] )])
-    else
-      if negative then 
-      r1(preclist.r, input.r, n.r, [ tree.encodeword([hyphenchar] + decode.x)])
-      else r1(preclist.r, input.r, n.r, [ tree.x])
+function numberlit(negative:boolean, r:r1, x:word)r1 
+ if this.r ="."_1 ∧ hasdigit.next.r 
+  then let d = decode.next.r 
+   r1(preclist.r, input.r, n.r + 2, [ tree("makereal"_1, [ tree.encodeword.if negative then [ hyphenchar]+ decode.x + d else decode.x + d, 
+   tree.countdigits(d, 1, 0)])])
+  else if negative 
+  then r1(preclist.r, input.r, n.r, [ tree.encodeword([ hyphenchar]+ decode.x)])
+  else r1(preclist.r, input.r, n.r, [ tree.x])
 
-function countdigits(s:seq.int,i:int,result:int) word
-// does not count no-break spaces //
- if i > length.s then toword.result else 
-  countdigits(s,i+1, result+if s_i=nbspchar then 0 else 1)   
-
-
+function countdigits(s:seq.int, i:int, result:int)word 
+ // does not count no-break spaces // 
+  if i > length.s 
+  then toword.result 
+  else countdigits(s, i + 1, result + if s_i = nbspchar then 0 else 1)
 
 function wordlist2(r:r1)r1 
  if this.r = merge("&"+"quot")
@@ -170,7 +167,6 @@ function skipcomments(r:r1)r1
    if i > length.input.r then r else skipcomments.r1(preclist.r, input.r, i + 1, tr.r)
   else r
 
-
 Function parsefuncheader(text:seq.word)tree.word 
  let r = newr1.text 
   let beforeformal = advance.advance.r 
@@ -185,7 +181,6 @@ Function parsefuncheader(text:seq.word)tree.word
    then tr(checkend.exp.beforedef)_1 
    else tree("omitted"_1)
   tree(this.r, [ tree(next.r, stripname.tr.paralist + tr(beforedef)_1), body]+ tr.paralist)
-
 
 function labeltypelist(r:r1)r1 
  if this.r = comma then r + labeltypelist.addPara.advance.r else r
@@ -214,7 +209,7 @@ function elelist(r:r1, typ:tree.word)r1
 
 Function parse(text:seq.word, scope:tree.word)tree.word 
  if text_1 ="type"_1 
-  then let type = if nosons.scope > 0 then  tree(text_2, [ scope_1])else tree(text_2)
+  then let type = if nosons.scope > 0 then tree(text_2, [ scope_1])else tree(text_2)
    let r = advance.advance.newr1.text 
    if this.r ="#"_1 
    then tree("type"_1, [ type])
@@ -225,9 +220,9 @@ Function parse(text:seq.word, scope:tree.word)tree.word
    tree(if this.r2 ="record"_1 then"struct"_1 else this.r2, [ type]+ tr.checkend.elelist(structele(advance.r2, type), type))
   else if text_1 in"use Use"
   then tree(text_1, [ totree.ttype.advance.newr1.text])
-  else  // function //
-   let r =newr1.text
- let beforeformal = advance.advance.r 
+  else // function // 
+  let r = newr1.text 
+  let beforeformal = advance.advance.r 
   if this.beforeformal =":"_1 
   then let returntype = tr(check(ttype.advance.beforeformal,"export"_1))_1 
    tree(this.r, [ tree(merge([ next.r]+":"+ print.returntype), [ returntype]), tree("export"_1)])
@@ -237,28 +232,26 @@ Function parse(text:seq.word, scope:tree.word)tree.word
   let beforedef = ttype.paralist 
   tree(this.r, [ tree(next.r, stripname.tr.paralist + tr(beforedef)_1), tr(checkend.exp.beforedef)_1]+ tr.paralist)
 
+Function parseerror(r:r1, message:seq.word)seq.word 
+ message + prettynoparse(subseq(input.r, 1, n.r), 1, 0,"")
 
-Function parseerror(r:r1, message:seq.word)seq.word message +prettynoparse(subseq(input.r, 1, n.r),1,0,"")
-
-  
 Function prettynoparse(s:seq.word, i:int, lastbreak:int, result:seq.word)seq.word 
  if i > length.s 
-  then result
+  then result 
   else let x = s_i 
   if x ="&quot"_1 
   then let t = findindex("&quot"_1, s, i + 1)
-   { prettynoparse(s, t + 1, lastbreak + t - i,result+"&{ literal"+ subseq(s, i, t)+"&}")} 
+   prettynoparse(s, t + 1, lastbreak + t - i, result +"&{ literal"+ subseq(s, i, t)+"&}")
   else if x ="//"_1 
   then let t = findindex("//"_1, s, i + 1)
-   { prettynoparse(s, t + 1, t - i,result+"&br &{ comment"+ subseq(s, i, t)+"&}" )} 
+   prettynoparse(s, t + 1, t - i, result +"&br &{ comment"+ subseq(s, i, t)+"&}")
   else if x in"if then else let assert function Function type"
-  then prettynoparse(s, i + 1, 0,result+ "&br &keyword"+ x)
+  then prettynoparse(s, i + 1, 0, result +"&br &keyword"+ x)
   else if x in"report"
-  then prettynoparse(s, i + 1, lastbreak + 1,result+"&keyword"+ x )
-  else if ( lastbreak > 20 ∧ x in")]") ∨ (lastbreak > 40 ∧ x in",")
-  then   prettynoparse(s, i + 1, 0, result+x+"&br")
+  then prettynoparse(s, i + 1, lastbreak + 1, result +"&keyword"+ x)
+  else if lastbreak > 20 ∧ x in")]"∨ lastbreak > 40 ∧ x in","
+  then prettynoparse(s, i + 1, 0, result + x +"&br")
   else if lastbreak > 20 ∧ x in"["
-  then   prettynoparse(s, i + 1, 0,result+"&br"+ x)
-  else  prettynoparse(s, i + 1, lastbreak + 1,result+x)
-
+  then prettynoparse(s, i + 1, 0, result +"&br"+ x)
+  else prettynoparse(s, i + 1, lastbreak + 1, result + x)
 

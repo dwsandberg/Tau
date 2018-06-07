@@ -1,6 +1,5 @@
 Module format
 
-
 use set.int
 
 use stack.seq.word
@@ -97,7 +96,6 @@ Function addamp(w:word)word encodeword.@(+, addamp, empty:seq.int, decode.w)
 
 Function addamp(ch:int)seq.int 
  if ch = 60 
-  then  decode."&lt;"_1
-  else if ch = 38 then  decode."&amp;"_1 else [ ch]
-
+  then decode("&lt;"_1)
+  else if ch = 38 then decode("&amp;"_1)else [ ch]
 

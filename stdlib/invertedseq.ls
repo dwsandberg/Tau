@@ -41,17 +41,17 @@ Function subadd(m:invertedseq.T, p:ipair.T, hashofvalue:int)invertedseq.T
  invertedseq(replace(hashtable.m, hashofvalue, @(+, ele2(value.p, length.hashtable.m), [ p], hashtable(m)_hashofvalue)), elecount.m + 1)
 
 Function toipair(a:invertedseq.T)seq.ipair.T 
-@(+,data(hashtable.a),empty:seq.ipair.T, arithseq(length.hashtable.a,1,1))
+ @(+, data.hashtable.a, empty:seq.ipair.T, arithseq(length.hashtable.a, 1, 1))
 
-function data(len:int,i:int,m:ipair(T)) seq.ipair.T 
-    if hash.value.m mod len = i then [m] else empty:seq.ipair.T
+function data(len:int, i:int, m:ipair.T)seq.ipair.T 
+ if hash.value.m mod len = i then [ m]else empty:seq.ipair.T
 
-function data(s:seq.seq.ipair.T,i:int) seq.ipair.T @(+,data(length.s,i-1),empty:seq.ipair.T,s_i)
+function data(s:seq.seq.ipair.T, i:int)seq.ipair.T @(+, data(length.s, i - 1), empty:seq.ipair.T, s_i)
 
+Function find(h:invertedseq.T, value:T)seq.ipair.T 
+ // return list of ipairs matching value // 
+  @(+, find.value, empty:seq.ipair.T, hashtable(h)_(hash.value mod length.hashtable.h + 1))
 
-Function find( h:invertedseq.T,value:T) seq.ipair.T 
-//  return list of ipairs matching value //
- @(+, find.value, empty:seq.ipair.T, hashtable(h)_(hash.value mod length.hashtable.h + 1))
-
-function find(v:T, a:ipair.T) seq.ipair.T if v = value.a then [a] else empty:seq.ipair.T
+function find(v:T, a:ipair.T)seq.ipair.T 
+ if v = value.a then [ a]else empty:seq.ipair.T
 

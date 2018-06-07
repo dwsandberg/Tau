@@ -69,7 +69,6 @@ Function parameter(m:mytype)mytype mytype.subseq(towords.m, 1, length.towords.m 
 Function libsym(returntype:mytype, manglename:word, inst:seq.word)libsym 
  libsym(manglename, towords.returntype, inst)
 
-
 Function returntypeold(s:libsym)mytype mytype.returntype.s
 
 Function instruction(libsym)seq.word export
@@ -125,7 +124,6 @@ Function print(p:mytype)seq.word prt(towords.p, length.towords.p)
 function prt(s:seq.word, i:int)seq.word 
  if i = 1 then [ s_1]else [ s_i]+"."+ prt(s, i - 1)
 
-
 Function codedown(w:word)seq.seq.word 
  codedown(decode.w, 1, empty:seq.int,"", empty:seq.seq.word)
 
@@ -141,15 +139,13 @@ function codedown(l:seq.int, i:int, w:seq.int, words:seq.word, result:seq.seq.wo
   then codedown(l, i + 1, empty:seq.int, empty:seq.word, result +(words + encodeword.w))
   else if l_i = charQ 
   then assert i + 2 ≤ length.l report"format problem with codedown for"+ encodeword.l 
-   let first=hexvalue(l_(i + 1))
+   let first = hexvalue(l_(i + 1))
    let t = first * 16 + hexvalue(l_(i + 2))
-    if first > 0 then
-    codedown(l, i + 3, w + t, words, result)
-    else 
-      let t1 =  ( ( t * 16 + hexvalue(l_(i + 3))) * 16  + hexvalue(l_(i + 4)))* 16  + hexvalue(l_(i + 5)) 
-      codedown(l,i + 6,w +  t1,words,result)
+   if first > 0 
+   then codedown(l, i + 3, w + t, words, result)
+   else let t1 =((t * 16 + hexvalue(l_(i + 3)))* 16 + hexvalue(l_(i + 4)))* 16 + hexvalue(l_(i + 5))
+   codedown(l, i + 6, w + t1, words, result)
   else codedown(l, i + 1, w + l_i, words, result)
-
 
 function legal seq.int 
  decode("0123456789ABCDEFGHIJKLMNOPRSTUVWXYabcdefghijklmnopqrstuvwxy"_1)
@@ -174,18 +170,18 @@ function charminorseparator int // z // 122
 function codeup(l:seq.int, char:int)seq.int 
  // represent legal characters as themselves, and others as Qxx where xx is hexadecimal of byte or Q0xxxx // 
   let charQ = 81 
-  if char in legal then l + char else 
-if char < 256 then @(+,hexdigit.bits.char,l+charQ,[1,0]) else @(+,hexdigit.bits.char,l+charQ,[4,3,2,1,0])    
-    
-function hexdigit( val:bits,digit:int)  int
-    legal_(toint( val >> (4 * digit) ∧ bits.15 )+1)
+  if char in legal 
+  then l + char 
+  else if char < 256 
+  then @(+, hexdigit.bits.char, l + charQ, [ 1, 0])
+  else @(+, hexdigit.bits.char, l + charQ, [ 4, 3, 2, 1, 0])
+
+function hexdigit(val:bits, digit:int)int legal_(toint(val >> 4 * digit ∧ bits.15)+ 1)
 
 type syminfo is record name:word, returntype:mytype, paratypes:seq.mytype, modname:mytype, instruction:seq.word, protoname:word, protoreturntype:mytype, protoparatypes:seq.mytype, mangled:word
 
-Function syminfoX(mangled:word) syminfo
-syminfo(
- mangled, mytype(""), empty:seq.mytype, mytype(""), "", mangled, mytype(""), empty:seq.mytype, mangled)
-
+Function syminfoX(mangled:word)syminfo 
+ syminfo(mangled, mytype."", empty:seq.mytype, mytype."","", mangled, mytype."", empty:seq.mytype, mangled)
 
 Function syminfoinstance(name:word, modname:mytype, paratypes:seq.mytype, returntype:mytype, instruction:seq.word, pname:word, pparatypes:seq.mytype, preturntype:mytype)syminfo 
  syminfo(name, returntype, paratypes, modname, instruction, pname, preturntype, pparatypes, mangle(pname, modname, pparatypes))

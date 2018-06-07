@@ -23,7 +23,6 @@ use tree.word
 Function escapequote(t:tree.word)seq.word 
  if label.t ="&quot"_1 then [ merge."& quot"]else [ label.t]
 
-
 function pretty(control:prettycontrol, t:tree.word)prettyresult pretty(length.preclist.control + 1, t, control)
 
 function prec(preclist:seq.seq.word, pt:tree.word)int 

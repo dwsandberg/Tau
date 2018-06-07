@@ -2,7 +2,7 @@ Module main
 
 use codegen
 
-/use constant
+use definestruct
 
 use fileio
 
@@ -11,7 +11,6 @@ use format
 use libdesc
 
 use libscope
-
 
 use pass0
 
@@ -51,7 +50,11 @@ use seq.moddesc
 
 use seq.mytype
 
+use seq.process.pass1result
+
 use seq.seq.seq.word
+
+use seq.seq.word
 
 use seq.syminfo
 
@@ -62,6 +65,8 @@ use set.syminfo
 use stdlib
 
 use textio
+
+/use constant
 
 Function main(arg:seq.int)outputformat 
  let args = towords(arg + 10 + 10)
@@ -97,19 +102,15 @@ Function pass(passno:int, libname:word)pass1result
   let templatesin = @(asliblib.dependentlibs.ld, identity, emptyliblib, libs)
   let ptext = process.pass0.ld 
   assert not.aborted.ptext report message.ptext 
-  let p1a = setprivate(exports.ld,pass1a(false, result.ptext, YYY.templatesin, [ libname]))
+  let p1a = setprivate(exports.ld, pass1a(false, result.ptext, YYY.templatesin, [ libname]))
   if passno = 1 
   then p1a 
-  else let p = waitforpass2.p1a
+  else let p = waitforpass2.p1a 
   assert not.aborted.p report message.p 
   result.p
 
-use seq.seq.word
-
-use seq.process.pass1result
-
 function subcompilelib(libname:word)seq.word 
-   PROFILE.let discard3 = length.mapping.libsymencoding 
+ PROFILE.let discard3 = length.mapping.libsymencoding 
   let ld = tolibdesc.libname 
   if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
   then interface([ name.ld], exports.ld, dependentlibs.ld)
@@ -119,17 +120,14 @@ function subcompilelib(libname:word)seq.word
   let ptext = process.pass0.ld 
   if aborted.ptext 
   then message.ptext 
-  else let p1a = setprivate(exports.ld,pass1a(false, result.ptext, YYY.templatesin, [ libname]))
-  // let p = waitforpass2.p1a
-  if aborted.p 
-  then message.p 
-  else let y1 = codegen5.result.p //
-  let y1 = codegen5.pass2.p1a
+  else let p1a = setprivate(exports.ld, pass1a(false, result.ptext, YYY.templatesin, [ libname]))
+  // let p = waitforpass2.p1a if aborted.p then message.p else let y1 = codegen5.result.p // 
+  let y1 = codegen5.pass2.p1a 
   let z2 = createlib(y1, libname, dependentlibs.ld)
-  "OK"
+  {"OK"}
 
 function waitforpass2(a:pass1result)process.pass1result 
-  NOINLINE.let p = process.pass2.a 
+ NOINLINE.let p = process.pass2.a 
   if aborted.p then p else p
 
 function asliblib(s:seq.word, a:liblib, l:liblib)liblib 
@@ -151,14 +149,12 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
   assert stamp ≥ time report"library"+ dependentlibs_i +"is out of date"+ toword.time + toword.stamp 
   loadlibs(dependentlibs, i + 1, stamp)
 
-
 Function run(libname:word, modname:word, funcname:word)seq.word 
  let aa = compilelib.libname 
   if subseq(aa, 1, 1)="OK"
   then let p2 = process.execute.mangle(funcname, mytype.[ modname], empty:seq.mytype)
    if aborted.p2 then message.p2 else result.p2 
   else aa
-
 
 function +(a:liblib, b:liblib)liblib liblib(libname.a + libname.b, types.a + types.b, mods.a + mods.b)
 
@@ -176,4 +172,3 @@ Function newcode(pass1result)seq.syminfo export
 
 Function parsesyminfo(modname:mytype, text:seq.word)syminfo export
 
-use definestruct

@@ -34,7 +34,7 @@ __________________
 
 type bit is record toint:int
 
-Function =(a:bit,b:bit) boolean  toint.a=toint.b
+Function =(a:bit, b:bit)boolean toint.a = toint.b
 
 Function toint(bit)int export
 

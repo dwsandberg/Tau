@@ -173,7 +173,6 @@ function flattenrecord(alltypes:set.libtype, ptypes:seq.mytype, i:int, result:se
   else let sz = sizeoftype(alltypes, ptypes_i)
   let flatinst = if sz = offset.1 then""else"FLAT"+ print.sz 
   flattenrecord(alltypes, ptypes, i + 1, result +"PARA"+ toword(length.ptypes - i + 1)+ flatinst, total + sz)
-  
 
 Function paralistcode(nopara:int)seq.word @(+, makepara,"", arithseq(nopara, 0 - 1, nopara))
 
