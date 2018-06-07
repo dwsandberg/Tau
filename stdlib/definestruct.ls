@@ -26,7 +26,6 @@ use tree.word
 
 function lastson(s:tree.word)tree.word s_nosons.s
 
-/Function parse(text:seq.word, scope:tree.word)tree.word export
 
 function mytypec(t:tree.word)seq.word 
  if nosons.t = 0 then [ label.t]else mytypec(t_1)+ [ label.t]

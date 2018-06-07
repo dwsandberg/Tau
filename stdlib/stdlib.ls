@@ -6,6 +6,7 @@ fileio format graph groupparagraphs internalbc   invertedseq ipair libdesc libde
  exports UTF8 bitpackedseq bits blockseq      display   fileio format 
        graph internalbc   invertedseq ipair libdesc   libscope llvm main  oseq    passcommon persistant 
         prims process  real reconstruct seq set stack stacktrace stdlib textio tree 
+        codetemplates  
         
 
 

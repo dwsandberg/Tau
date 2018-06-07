@@ -46,7 +46,33 @@ Function libdesc(name:word, dependentlibs:seq.word, modules:seq.moddesc, exports
 
 Function moddesc(libname:word, exports:seq.word, a:seq.seq.word)moddesc 
  let name = if length.a = 0 then""else subseq(a_1, 2, 2)
-  moddesc(name_1, libname, a, @(+, finduseclause, empty:seq.mytype, a), not(name_1 in exports))
+  let rs2=prepreplacements("","","le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ contains ∋",1)
+ let b=@(+,replacements(subseq(rs2,1,length.rs2 / 2),subseq(rs2,length.rs2 / 2 +1,length.rs2)),empty:seq.seq.word,a)
+   moddesc(name_1, libname, b, @(+, finduseclause, empty:seq.mytype, b), not(name_1 in exports))
+  
+
+
+use oseq.word
+
+function replacements(a:seq.word,b:seq.word,t:seq.word)seq.word  @(+,replace(a,b),"",t)
+
+
+function replace(a:seq.word,b:seq.word,c:word) word
+ let i=binarysearch(a, c) 
+ if i > 0 then b_i else c
+ 
+function prepreplacements(old:seq.word,new:seq.word,pairs:seq.word,i:int)seq.word 
+// the pair elements in pair are one after the other.  The first element will be merged with a "&".
+  The result is the first elements sorted followed by the second elements rearranged to match the sort. //
+ if i > length.pairs  then old+new
+ else 
+ let val=merge("&"+pairs_i)
+ let j = binarysearch(old, val)
+  prepreplacements(subseq(old, 1,-j - 1)+ [ val]+ subseq(old,-j, length.old),
+  subseq(new, 1,-j - 1)+ [ pairs_(i+1)]+ subseq(new,-j, length.new),pairs,i+2)
+  
+
+
 
 function finduseclause(s:seq.word)seq.mytype 
  if subseq(s, 1, 1)="use"then [ parseUse.s]else empty:seq.mytype
@@ -81,7 +107,7 @@ Function findlibclause(a:seq.seq.word, i:int)seq.word
 use seq.seq.word
   
 Function findlibclause2(a:seq.seq.word, i:int)seq.word 
- TESTOPT.assert i < length.a report"No Library clause found"
+   assert i < length.a report"No Library clause found"
   let s = a_i 
   if s_1 ="Library"_1 then s else findlibclause2(a, i + 1)
 

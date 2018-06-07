@@ -143,7 +143,7 @@ function isdigit(i:int)boolean between(i, 48, 57)
 
 Function print(t:tree.cnode)seq.word 
  let inst = inst.t 
-  @(+, print,"", sons.t)+ if inst in"PARA LIT LOCAL FREF WORD FLAT PARAM"
+  @(+, print,"", sons.t)+ if inst in"PARA LIT LOCAL FREF WORD FLAT PARAM FIRSTVAR"
    then [ inst, arg.t]
    else if inst in"CALLB"
    then [ inst, toword.nosons.t, arg.t]
@@ -184,26 +184,23 @@ _____________________
 
 
 
-Function prepb(allfunctions:invertedseq.func,nopara:int, t:tree.cnode)seq.int
+Function prepb(allfunctions:invertedseq.func, t:tree.cnode)seq.int
   let inst = inst.t 
-  if inst in"LIT LOCAL FREF WORD PARAM"
+  if inst in"LIT LOCAL FREF WORD PARAM FIRSTVAR"
   then [ aseinst([inst, arg.t])]
   else if inst ="if"_1 
-  then prepb(allfunctions,nopara, t_1)+ aseinst("THENBLOCK 1")+ prepb(allfunctions,nopara, t_2)+ aseinst("ELSEBLOCK 1")+ prepb(allfunctions,nopara, t_3)+ aseinst("if 3")
+  then prepb(allfunctions, t_1)+ aseinst("THENBLOCK 1")+ prepb(allfunctions, t_2)+ aseinst("ELSEBLOCK 1")+ prepb(allfunctions, t_3)+ 
+  if nosons.t=3 then [aseinst("if 3")] else prepb(allfunctions,t_4)+aseinst("if 4")
   else if inst ="SET"_1 
-  then prepb(allfunctions,nopara, t_1)+ aseinst("DEFINE"+ arg.t)+ prepb(allfunctions,nopara, t_2)+ aseinst([inst, arg.t])
+  then prepb(allfunctions, t_1)+ aseinst("DEFINE"+ arg.t)+ prepb(allfunctions, t_2)+ aseinst([inst, arg.t])
   else if inst = "LOOPBLOCK"_1 then 
+    // number of sons of loop block may have change with optimization //
     let firstvar= arg.last.sons.t
-      @(+, prepb(allfunctions,nopara), empty:seq.int, subseq(sons.t, 1, nosons.t-1))+ aseinst("FIRSTVAR"+firstvar)+aseinst([inst, arg.t])
-  else if inst ="LOOP"_1 
-  then @(+, prepb(allfunctions,nopara), empty:seq.int, subseq(sons.t, 3, nosons.t))+ aseinst("FIRSTVAR"+ arg(t_1))+ aseinst("LOOPBLOCK"+toword(nosons.t - 1))+ prepb(allfunctions,nopara, t_2)+ aseinst("FINISHLOOP 2")
-  else if inst ="PARA"_1 
-  then assert false report "did not expect PARA"
-      [ aseinst("PARAM"+ toword(toint.arg.t - nopara - 2))]
+      @(+, prepb(allfunctions), empty:seq.int, subseq(sons.t, 1, nosons.t-1))+ aseinst("FIRSTVAR"+firstvar)+aseinst([inst, toword.nosons.t])
   else if inst ="CRECORD"_1 
   then [aseinst("CONSTANT"+prep3.t)] 
   else  
-  @(+, prepb(allfunctions,nopara), empty:seq.int, sons.t)+ if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP" then
+  @(+, prepb(allfunctions), empty:seq.int, sons.t)+ if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD" then
    aseinst([inst, toword.nosons.t]) else
     let s=findencode(inst([inst, toword.nosons.t]),einst)
     if length.s=0 then
@@ -296,7 +293,7 @@ intercode2(  @(addcodes.allfunctions,identity,dseq(empty:seq.int),s),mapping.ein
 
 function addcodes(allfunctions:invertedseq.func,a:seq.seq.int,f:func) seq.seq.int
    let j=encode.toinst.f
-  replace(a,j, prepb(allfunctions,nopara.f,codetree.f))
+  replace(a,j, prepb(allfunctions,codetree.f))
 
 use invertedseq.func
 

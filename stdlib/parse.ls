@@ -170,8 +170,9 @@ function skipcomments(r:r1)r1
    if i > length.input.r then r else skipcomments.r1(preclist.r, input.r, i + 1, tr.r)
   else r
 
+
 Function parsefuncheader(text:seq.word)tree.word 
- let r = newr1.replacements.text 
+ let r = newr1.text 
   let beforeformal = advance.advance.r 
   if this.beforeformal =":"_1 
   then let returntype = tr(check(ttype.advance.beforeformal,"export"_1))_1 
@@ -185,16 +186,6 @@ Function parsefuncheader(text:seq.word)tree.word
    else tree("omitted"_1)
   tree(this.r, [ tree(next.r, stripname.tr.paralist + tr(beforedef)_1), body]+ tr.paralist)
 
-function parsefunc2(r:r1)tree.word 
- let beforeformal = advance.advance.r 
-  if this.beforeformal =":"_1 
-  then let returntype = tr(check(ttype.advance.beforeformal,"export"_1))_1 
-   tree(this.r, [ tree(merge([ next.r]+":"+ print.returntype), [ returntype]), tree("export"_1)])
-  else let paralist = if this.beforeformal = openpara 
-   then check(labeltypelist.addPara.advance.beforeformal, closepara)
-   else beforeformal 
-  let beforedef = ttype.paralist 
-  tree(this.r, [ tree(next.r, stripname.tr.paralist + tr(beforedef)_1), tr(checkend.exp.beforedef)_1]+ tr.paralist)
 
 function labeltypelist(r:r1)r1 
  if this.r = comma then r + labeltypelist.addPara.advance.r else r
@@ -223,7 +214,7 @@ function elelist(r:r1, typ:tree.word)r1
 
 Function parse(text:seq.word, scope:tree.word)tree.word 
  if text_1 ="type"_1 
-  then let type = if nosons.scope > 0 then tree(text_2, [ scope_1])else tree(text_2)
+  then let type = if nosons.scope > 0 then  tree(text_2, [ scope_1])else tree(text_2)
    let r = advance.advance.newr1.text 
    if this.r ="#"_1 
    then tree("type"_1, [ type])
@@ -234,20 +225,18 @@ Function parse(text:seq.word, scope:tree.word)tree.word
    tree(if this.r2 ="record"_1 then"struct"_1 else this.r2, [ type]+ tr.checkend.elelist(structele(advance.r2, type), type))
   else if text_1 in"use Use"
   then tree(text_1, [ totree.ttype.advance.newr1.text])
-  else parsefunc2.newr1.replacements.text
+  else  // function //
+   let r =newr1.text
+ let beforeformal = advance.advance.r 
+  if this.beforeformal =":"_1 
+  then let returntype = tr(check(ttype.advance.beforeformal,"export"_1))_1 
+   tree(this.r, [ tree(merge([ next.r]+":"+ print.returntype), [ returntype]), tree("export"_1)])
+  else let paralist = if this.beforeformal = openpara 
+   then check(labeltypelist.addPara.advance.beforeformal, closepara)
+   else beforeformal 
+  let beforedef = ttype.paralist 
+  tree(this.r, [ tree(next.r, stripname.tr.paralist + tr(beforedef)_1), tr(checkend.exp.beforedef)_1]+ tr.paralist)
 
-function replacements seq.word 
- let l ="le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ contains ∋"
-  @(+, prep.l, empty:seq.word, arithseq(length.l / 2, 2, 1))+ @(+,_.l, empty:seq.word, arithseq(length.l / 2, 2, 2))
-  
-
-function prep(s:seq.word, i:int)word merge("&"+ s_i)
-
-function sub(m:seq.word, a:word)word 
- let i = findindex(a, m)
-  if i > length.m / 2 then a else m_(i + length.m / 2)
-
-function replacements(t:seq.word)seq.word @(+, sub.replacements, empty:seq.word, t)
 
 Function parseerror(r:r1, message:seq.word)seq.word message +prettynoparse(subseq(input.r, 1, n.r),1,0,"")
 

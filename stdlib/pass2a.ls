@@ -164,22 +164,13 @@ use seq.pass1result
 
 function  hasErecord(s:syminfo) seq.syminfo
   if  "erecord"_1 in towords.returntype.s then  [s] else empty:seq.syminfo
-  
-function hhh(g:graph.word,node:word) seq.word
-  if indegree(g,node)=1 &and node &ne "tointseqZfileioZbytezseq"_1  then 
-     let a=codedown.node
-    if length.a > 1 &and  ( last(a_2) in "builtin set seq"  )  then ""  else 
-      [ node ]  else ""
-  
+    
 
 Function pass2(r:pass1result)pass1result 
- PROFILE.
- // does inline expansion, finds consts, removes unreaachable functions // 
+  // does inline expansion, finds consts, removes unreaachable functions // 
     let p1=program(libname(r)_1, invertedseq.dummyfunc,newgraph.empty:seq.arc.word,asset."","")
      let roots = toseq.@(∪, roots(asset.@(+,hasErecord,empty:seq.syminfo,newcode.r)), empty:set.word, mods.r)
       let p=@(addtoprogram(alltypes.r,@(+,track,empty:set.track,newcode.r + compiled.r)),identity,p1,roots)
-         let calledonce=asset.@(+,hhh.callgraph.p,"",toseq.nodes.callgraph.p)-asset.roots
-      let s1=program(library.p,allfunctions.p,callgraph.p,inline.p &cup calledonce,hasstate.p) 
       let s2 = expandinline.p
      let statechangingfuncs =  reachable(complement.callgraph.s2, hasstate.p) &cap nodes.callgraph.s2
     // only pass on functions that can be reached from roots and are in this library // 
@@ -211,15 +202,16 @@ use seq.seq.func
  
 function xor(a:boolean , b:boolean) boolean if a then not.b else   b  
 
+use opt2
 
 function findconstandtail(p:program,stateChangingFuncs:set.word, mangledname:word)seq.func 
  // finds constants, discards builtins, and make sure"STATE"is root on state changing functions //
   let a=codedown.mangledname
     if length.a > 1 &and  ( a_2 = "builtin"  ) then empty:seq.func else
   let f=lookupfunc(allfunctions.p,mangledname)
-  let code1=  // hoistRecord.codetree.f // codetree.f
-  let code2=  // opt2.code1  // code1
-  let code3= // removerecords.code2 // code2
+  let code1=  if "TESTOPT"_1 in flags.f then  hoistRecord.codetree.f  else  hoistRecord.codetree.f
+  let code2=  // remove result record in loop // opt2.code1   
+  let code3=   removerecords.code2  
    let q=  // if (mangledname in 
    "syminfoinstanceZprocesstypesZmytypeZwordZmytypeZmytypezseqZmytypeZwordzseq ")
    then //
@@ -313,25 +305,6 @@ use seq.program
 
 
    
-  
-/function diff(a:tree.cnode,b:tree.cnode,i:int) seq.word
-    if i = 0 then if label.a=label.b then
-       if nosons.a=nosons.b then
-       diff(a,b,1) 
-       else "diff sons"
-    else "diff label"+inst.a+inst.b
-    else if i > nosons.a then ""
-    else   
-      let z=diff(a_i,b_i,0)
-      if z="" then diff(a,b,i+1) else z
-      
-    
-  
-/function  diff(a:seq.word,b:seq.word,i:int) seq.word
-   if i > length.a then "SAME"
-   else if a_i=b_i then diff(a,b,i+1)
-   else "DIFF"+"&br"+subseq(a,i-1,i)+"&br"+subseq(b,i-1,i)+ diff(a,b,i+1)
-
   
 
 
@@ -446,8 +419,6 @@ function inline(pp:program,inlinename:set.word, sets:seq(tree.cnode),paramap:seq
    else tree(label.code, l)
   else if length.l=2 &and inst(l_2)="LIT"_1 &and inst.code ="getaddressZbuiltinZTzseqZint"_1
         &and arg(l_2)="0"_1 then l_1
-  else  if length.l = 2 &and inst(l_1)="LIT"_1 ∧ inst(l_2)="LIT"_1 then
-       simplecalcs(label.code,toint.arg(l_1),toint.arg(l_2),l)
   else if  inst ="APPLY"_1  &and ( nosons.code &ne 5 &or nosons(l_1) > 2 )then
    expandapply(pp,inlinename,nextset,code,l)
   else    if inst in inlinename
@@ -462,6 +433,9 @@ function inline(pp:program,inlinename:set.word, sets:seq(tree.cnode),paramap:seq
     else 
         let  f=lookupfunc(allfunctions.pp,inst)
     explodeinline(pp,inlinename,codetree.f,"SIMPLE"_1 in flags.f,nextset,l) 
+  else  if length.l = 2 &and inst(l_1)="LIT"_1 ∧ inst(l_2)="LIT"_1 then
+       // location after inline expansion so inlining will happen if both sons happen to be LIT's //
+       simplecalcs(label.code,toint.arg(l_1),toint.arg(l_2),l)
   else   
   tree(label.code, l)
 
@@ -637,7 +611,7 @@ use set.word
 use seq.int
    
 Function opt2(t:tree.cnode) tree.cnode
-   if inst.t="LOOP"_1 then
+   if inst.t="FINISHLOOP"_1 then
      let x=removeRECORD.t
        if inst.x="nogo"_1 then 
        tree(label.t,@(+,opt2,empty:seq.tree.cnode,sons.t))
@@ -650,7 +624,8 @@ Function opt2(t:tree.cnode) tree.cnode
     
 
 function removeRECORD(loop:tree.cnode) tree.cnode
- let first=toint.arg(loop_1)
+ let lb=loop_1
+ let first=toint.arg( lb_nosons.lb)
          if  not (inst.loop_2 = "if"_1 ) then nogo else 
         let checked=asset(look(first,loop_2_3)+look(first,loop_2_1))
           // assert nosons.loop=5 report toseq.checked+"FIRST"+toword.first+printb(0,loop) //
@@ -672,11 +647,10 @@ function removeRECORD(loop:tree.cnode) tree.cnode
              let if2=     tree(cnode("RECORD"_1,"0"_1),   @(+,makelocal,empty:seq.tree.cnode,arithseq(size,1,first)))
             let if3=splitrecord(first,map,expand,loop_2_3 )
                      // assert false report a+"/"+b + printb(0, loop) //
-            let init= @(+,fixloopinit(sons.loop, size , expand , first  )
-              ,empty:seq.tree.cnode,arithseq(nosons.loop-2,1,3))
-            // let init=  @(+,fixloopinit(loop_3),empty:seq.tree.cnode,arithseq(size,1,0))+loop_4 //
-           let newloop=tree(label.loop, [loop_1,tree(label.loop_2,[if1,if2,if3])]+init)
-            assert true report "B"+printb(0,newloop)
+            let newloopblock= tree(label.lb,@(+,fixloopinit(sons.lb, size , expand , first  )
+              ,empty:seq.tree.cnode,arithseq(nosons.lb-1,1,1) )+lb_nosons.lb)
+           let newloop=tree(label.loop, [newloopblock,tree(label.loop_2,[if1,if2,if3])])
+            assert true report "B"+printb(0,newloop)+">>>"+printb(0,loop)
             newloop 
 
 function   makelocal(i:int) tree.cnode tree.cnode("LOCAL"_1,toword.i)
@@ -735,7 +709,7 @@ function handlecontinue(first:int,map:seq.int,expand:seq.int,t:tree.cnode,son:in
 
  function  fixloopinit(loopsons:seq.tree.cnode, size:int, expand:seq.int, first:int, i:int) seq.tree.cnode
     let son=loopsons_i
-    if first+i-3 in expand then 
+    if first+i-1 in expand then 
       assert inst.son in "PARAM LOCAL RECORD CRECORD" report "opt2 problem"+printb(0,son)
       @(+,fixloopinit(son),empty:seq.tree.cnode,arithseq(size,1,0))
       else [son]
@@ -792,8 +766,8 @@ function check(var:word,parent:boolean,t:tree.cnode) int
    if parent then toint(arg.t) else 10000 
   else 
    @(max, check(var,inst.t="IDXUC"_1),if inst.t ="SET"_1 then toint.arg.t else 
-   if inst.t = "LOOP"_1 then
-      toint.arg(t_1)+nosons.t-3
+   if inst.t = "LOOPBLOCK"_1 then
+      toint.arg(t_nosons.t)+nosons.t-2
    else 0,sons.t)
 
 
@@ -826,7 +800,7 @@ function returnsrecord(t:tree.cnode)int
  if inst.t ="RECORD"_1 
   then nosons.t 
   else if inst.t ="MRECORD"_1 
-  then toint.arg(t_1)
+  then toint.arg(t_2)
   else if inst.t ="SET"_1 
   then returnsrecord(t_2)
   else if inst.t ="if"_1 
@@ -842,18 +816,19 @@ Function hoistRecord (t:tree.cnode) tree.cnode
   then let a = returnsrecord.t 
    if a > 0 
    then 
-    tree(cnode."MRECORD", [ tree(cnode("LIT"_1, toword.a)), replacerecord.t])
+    tree(cnode."MRECORD", [  replacerecord(a,t),tree(cnode("FIRSTVAR"_1, toword.a))])
    else tree(cnode."if", sons)
   else tree(label.t, sons)
 
 function localtree(i:int)tree.cnode tree(cnode("LOCAL"_1, toword.i))
 
-function replacerecord(t:tree.cnode)tree.cnode 
- if inst.t in"RECORD MRECORD"
+function replacerecord(size:int,t:tree.cnode)tree.cnode 
+ if inst.t in"RECORD"
   then tree(cnode."MSET", sons.t)
+  else if inst.t="MRECORD"_1 then t_1
   else if inst.t ="if"_1 
-  then tree(cnode."if", [ t_1, replacerecord(t_2), replacerecord(t_3)])
+  then tree(cnode."if 4", [ t_1, replacerecord(size,t_2), replacerecord(size,t_3),tree( cnode("FIRSTVAR"_1,toword.size))] )
   else assert inst.t ="SET"_1 report"replacerecord"+ inst.t 
-  tree(label.t, [ t_1, replacerecord(t_2)])
+  tree(label.t, [ t_1, replacerecord(size,t_2)])
 
 

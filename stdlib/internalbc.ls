@@ -39,7 +39,7 @@ Function BINOP(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
  addstartbits(INSTBINOP, 4, addaddress(slot, a1, addaddress(slot, a2, add(a3, add(a4, emptyinternalbc)))))
 
 Function BINOP(slot:int, a1:int, a2:int, a3:int)internalbc 
- // TESTOPT. // addstartbits(INSTBINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
+   addstartbits(INSTBINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
 
 Function LOAD(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc 
  addstartbits(INSTLOAD, 4, addaddress(slot, a1, add(a2, add(a3, add(a4, emptyinternalbc)))))
@@ -62,7 +62,7 @@ Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, 
 use seq.internalbc
 
 Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, a8:int, a9:int)internalbc 
- // TESTOPT.// addstartbits(INSTCALL, 9, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, addaddress(slot, a9, emptyinternalbc))))))))))
+  addstartbits(INSTCALL, 9, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, addaddress(slot, a9, emptyinternalbc))))))))))
 
 Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, a8:int, a9:int,a10:int)internalbc 
  addstartbits(INSTCALL, 10, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, addaddress(slot, a9, addaddress(slot, a10,emptyinternalbc)))))))))))
@@ -221,8 +221,7 @@ FORCEINLINE.
         else if nobits=reloc then addvbr6(result.r,offset.r - (toint.bits -relocoffset)) 
         else if val=firstpara2 then addvbr6(result.r,offset.r-offset+1) 
         else result.r 
-    else // if state.r = vbr6 then addvbr6(result.r, val)
-    else  // assert state.r = relocsigned report"invalid code" + toword.state.r
+    else  assert state.r = relocsigned report"invalid code" + toword.state.r
      addvbrsigned6(result.r, offset.r - val)  
       internal2(newstate, newoffset, newresult)
       

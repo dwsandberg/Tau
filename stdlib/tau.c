@@ -710,7 +710,7 @@ BT PROCESS3(processinfo PD,BT pin,BT profileidx, BT (*finishprof)(BT idx,BT x)){
  pthread_attr_t 	stackSizeAttribute;
     size_t			stackSize = 0;
   pthread_attr_init (&stackSizeAttribute);
-  pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024 * 2 );
+  pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024 * 4 );
     pthread_attr_getstacksize(&stackSizeAttribute, &stackSize); 
   /*  fprintf(stderr,"Stack size %d\n", stackSize);*/
   processinfo p=(processinfo)  myalloc(PD,sizeof (struct pinfo)/8);

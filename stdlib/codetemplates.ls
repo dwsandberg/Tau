@@ -89,6 +89,8 @@ Function table seq.match5
    CAST(1, ibcsub1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)+ 
                  CALL(2, 0, 32768, typ.function.[ i64, i64, i64, i64],-1, ibcfirstpara2, ibcsub2, ibcsub3) ),
                     match5("if 3" ,0,empty:seq.templatepart,"SPECIAL"_1,0,createlinkedlists),
+                    match5("if 4" ,0,empty:seq.templatepart,"SPECIAL"_1,0,createlinkedlists),
+                    match5("MRECORD 2" ,0,empty:seq.templatepart,"SPECIAL"_1,0,createlinkedlists),
                     match5("THENBLOCK 1" ,0,empty:seq.templatepart,"SPECIAL"_1,0,createlinkedlists),
                     match5("ELSEBLOCK 1" ,0,empty:seq.templatepart,"SPECIAL"_1,0,createlinkedlists)
     ]
@@ -140,7 +142,7 @@ Function buildtemplates(s:seq.match5, fullinst:seq.word ) seq.match5
            match5(fullinst,0,empty:seq.templatepart,"LOCAL"_1,toint.instarg,lastconsts)
           else if inst  in "PARAM FIRSTVAR"  then 
            match5(fullinst,0,empty:seq.templatepart,"ACTARG"_1,toint.instarg,lastconsts)
-          else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE " then 
+          else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE MSET" then 
             match5(fullinst,0,empty:seq.templatepart,"SPECIAL"_1,0,lastconsts)
           else if inst = "CONSTANT"_1 then       
                let tt = addconst(lastconsts,fullinst)  

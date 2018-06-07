@@ -76,7 +76,7 @@ Function findseqindexfunction(d:symdict, type:mytype)syminfo
   sym
 
 Function find(d:symdict, w:word, l:seq.r3)r3 
- let typelist = @(+, types, empty:seq.mytype, l)
+  let typelist = @(+, types, empty:seq.mytype, l)
   let sym = findsymbol(d, w, typelist)
   let noparameters = length.paratypes.sym 
   if bindingonly.d 
@@ -85,12 +85,7 @@ Function find(d:symdict, w:word, l:seq.r3)r3
    then r3("TYPESIZE 0", [ mytype."int"], nexttemp(l_length.l))
    else r3(@(+, code,"", l)+ mangled.sym + toword.noparameters, [ returntype.sym], nexttemp(l_length.l))
   else let code = if isinstance.modname.sym 
-   then 
-     if length.instruction.sym = 0 then "" else  if // (instruction.sym)_1 in "USECALL BUILD BUILDSEQ" &or // "TSIZE"_1 in instruction.sym then "USECALL" else 
-     // if instruction .sym in ["LIT 0 LIT 0 RECORD 2 ","LIT 1 IDXUC 2","LIT 0 FLD 1","LIT 2 FLD 1"] then  instruction.sym else 
-     assert  (instruction.sym)_1 in "mappingZbuiltinZTzerecord encodeZbuiltinZTZTzerecord findencodeZbuiltinZTZTzerecord
-     decodeZbuiltinZTzencodingZTzerecord abortedZbuiltinZTzprocess" report  instruction.sym //
-     instruction.sym
+   then  if  "TSIZE"_1 in instruction.sym then "USECALL" else   instruction.sym
    else if not.isabstract.modname.sym ∧ subseq(instruction.sym, 1, 1)="BUILD"
    then"USECALL"
    else instruction.sym 
@@ -140,8 +135,8 @@ Function checkassert(d:symdict, c:r3, t:r3, e:r3)r3
   assert types(e)_1 = mytype."word seq"report"else in assert must be seq of word in:"+ fortext.d 
   r3(code.c + code.t + code.e + if bindingonly.d then"assert 3"else"assertZbuiltinZwordzseq 1 if 3", types.t, nexttemp.e)
 
-Function addlocal(d:symdict, name:word, exp:r3, t:tree.word)r3 
- let nexttmp = nexttemp.exp 
+function addlocal(d:symdict, name:word, exp:r3, t:tree.word)r3 
+ FORCEINLINE.let nexttmp = nexttemp.exp 
   let arg = toword.nexttmp 
   let e = syminfo(name, mytype."local", empty:seq.mytype, types(exp)_1,"LOCAL"+ arg)
   assert not(e in syminfos.d)report"local"+ name +"conflicts with previous declaration in:"+ fortext.d 
@@ -177,6 +172,8 @@ function isnumber(l:seq.int, i:int)boolean
   else if i = 1 ∧ l_1 = hyphenchar ∧ length.l > 1 
   then isnumber(l, 2)
   else if between(l_i, 48, 57) &or l_i=nbspchar then isnumber(l, i + 1) else false
+
+use seq.r3
 
 Function bind(d:symdict, t:tree.word, nexttmp:int)r3 
  if isnumber.label.t 
@@ -229,7 +226,7 @@ Function bind(d:symdict, t:tree.word, nexttmp:int)r3
   find(d, label.t, l)
 
 Function checkapplyA(d:symdict, t:tree.word, nexttmp:int)r3 
- assert nosons.t = 4 report"apply must have 4 terms"+ fortext.d 
+ FORCEINLINE.assert nosons.t = 4 report"apply must have 4 terms"+ fortext.d 
   let term1 = t_1 
   let term1sons = bindsons(d, t_1, nexttmp)
   let term2 = t_2 
@@ -245,8 +242,10 @@ Function checkapplyA(d:symdict, t:tree.word, nexttmp:int)r3
   then r3(code.term1sons + mangled.sym1 + toword.nosons.term1 + code.term2sons + mangled.sym2 + toword.nosons.term2 + code.term3 + code.term4 +"@ 4", types.term3, nexttemp.term4)
   else r3(code.term1sons + code.term2sons + code.term3 + code.term4 + FREFcode.sym2 + FREFcode.sym1 + FREFcode.findseqindexfunction(d, pseqtype)+"APPLY"+ toword(nosons.term1 + nosons.term2 + 5), types.term3, nexttemp.term4)
 
+use seq.syminfo
+
 Function bind(bindingonly:boolean, alltypes:set.libtype, modname:mytype, a:set.syminfo, text:seq.word)syminfo 
- let t = parse(text, tree("X"_1))
+  let t = parse(text, tree("X"_1))
   let dict = symdict(text, a, alltypes, bindingonly)
   // will not return instructions containing ERECORD or BUILDSEQ. Returns augmented code // 
   // let cond = not(abstracttype.tomytype.modname in"invertedseq")∨ label.symbol.t in"= lookup ele"// 
@@ -287,7 +286,7 @@ function isinstance(s:syminfo)set.word
 use seq.pass1result
 
 Function pass1a(bindingonly:boolean, primitivemods:set.mod2desc, intemplates:seq.mod2desc, libname:seq.word)pass1result 
-  // PROFILE. // let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
+    let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
   let P1 = toseq.primitivemods 
   let alltypes = assigntypesizes(@(+, typedefs, empty:seq.libtype, P1)+ templatetypes)
   let discard = @(+, checktypes.alltypes, 0, P1)

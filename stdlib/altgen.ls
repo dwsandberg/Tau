@@ -44,10 +44,6 @@ use stdlib
 
 function  profiletype  encoding.llvmtype array(-3, i64)
 
-
-
-/use convert
-
 use passcommon
 
 use seq.inst
@@ -107,14 +103,19 @@ function processnext(profile:word, l:Lcode, m:match5)Lcode
     let cond = Lcode( code.l + newcode,  lmap.l, noblocks.l, regno.l + 1, poppush(args.l, 1,-(regno.l + 1)), blocks.l, tailphi.l, loopblock.l)
     Lcode( emptyinternalbc,  lmap.l, noblocks.l + 1, regno.l + 1, empty:seq.int, [ cond]+ blocks.l, tailphi.l, loopblock.l)
    else if inst ="if"_1 
-   then let exp3 = l 
+   then 
+     let  varcount= if instarg="3"_1 then 1 else last.args.l
+     let exp3 = l 
     let exp1 = blocks(l)_2 
     let exp2 = blocks(l)_1 
     let br = BR(regno.exp1 + 1, noblocks.exp1, noblocks.exp2, last.args.exp1)
     let br1 = BR(regno.exp3, noblocks.exp3)
-    let phi = PHI(regno.exp3 + 1, typ.i64, last.args.exp2, noblocks.exp2 - 1, last.args.exp3, noblocks.exp3 - 1)
+    let phi=        phiinst(regno.exp3, typ.i64, [noblocks.exp2 - 1]+top(args.exp2,varcount)+[noblocks.exp3 - 1]
+                                 +if varcount=1 then [last.args.exp3] else 
+                                  subseq( top(args.exp3,varcount+1),1,varcount)      , varcount)
     let newcode = code.exp1 + br + code.exp2 + br1 + code.exp3 + br1 + phi 
-    Lcode( newcode,  lmap.l, noblocks.l + 1, regno.exp3 + 1, poppush(args.exp1, 1,-(regno.exp3 + 1)), subseq(blocks.l, 3, length.blocks.l), tailphi.l, loopblock.l)
+    let newstack=subseq(args.exp1, 1, length.args.exp1 - 1)+ arithseq(varcount,-1,-(regno.exp3+1))
+    Lcode( newcode,  lmap.l, noblocks.l + 1, regno.exp3 + varcount,// poppush(args.exp1, 1,-(regno.exp3 + 1)) // newstack, subseq(blocks.l, 3, length.blocks.l), tailphi.l, loopblock.l)
    else if inst ="DEFINE"_1 
    then Lcode( code.l,  lmap.l + localmap(toint.instarg, last.args.l), noblocks.l, regno.l, subseq(args.l, 1, length.args.l - 1), [ l]+ blocks.l, tailphi.l, loopblock.l)
    else if inst ="SET"_1 
@@ -136,13 +137,21 @@ function processnext(profile:word, l:Lcode, m:match5)Lcode
     let block = noblocks.l 
     let tailphi = tailphi.l + [ block - 1]+ subseq(args.l, length.args.l - noargs + 1, length.args.l)
     Lcode( code.l + BR(regno.l, loopblock.l),  lmap.l, block + 1, regno.l, poppush(args.l, noargs, -1), blocks.l, tailphi, loopblock.l)
-   else assert inst ="RECORD"_1 report"SPECIAL"+ inst 
+   else if inst = "MRECORD"_1 then
+    let  noargs = last.args.l 
+    let args = subseq(top(args.l,noargs+1),1,noargs)
+    let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceZbuiltinZint", -1, C64.noargs)+ CAST(regno.l + 2,-(regno.l + 1), typ.ptr.i64, CASTINTTOPTR)
+    Lcode( value.@(setnextfld, identity, ipair(regno.l + 2, code.l + newcode), args),  lmap.l, noblocks.l, regno.l + 2 + noargs, poppush(args.l, noargs+1,-(regno.l + 1)), blocks.l, tailphi.l, loopblock.l)
+   else if inst = "MSET"_1 then l
+    else assert inst ="RECORD"_1 report"SPECIAL"+ inst 
    let noargs = toint.instarg 
    let args = top(args.l, noargs)
    let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceZbuiltinZint", -1, C64.noargs)+ CAST(regno.l + 2,-(regno.l + 1), typ.ptr.i64, CASTINTTOPTR)
    Lcode( value.@(setnextfld, identity, ipair(regno.l + 2, code.l + newcode), args),  lmap.l, noblocks.l, regno.l + 2 + noargs, poppush(args.l, noargs,-(regno.l + 1)), blocks.l, tailphi.l, loopblock.l)
   
 exp1 exp2 exp2 FIRSTVAR <firstvar> LOOPBLOCK 4 <loop body> FINISHLOOP 2
+
+cegiczCyJqp6EKTm
 
 
 

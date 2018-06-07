@@ -60,7 +60,9 @@ function tolibsym(coding:seq.inst, codes:seq.seq.int, i:int)seq.libsym
     if verysimple ∧ not("PARA"_1 in subseq(x, nopara * 2 + 1, length.x))∧ not("SET"_1 in x)
     then subseq(x, nopara * 2 + 1, length.x)
     else"USECALL"+ x 
-   else [ mangledname.a, toword.nopara.a]
+   else if "INLINE"_1 in flags.a  &and length.codes_i < 10 then
+      "USECALL"+astext5(nopara.a, coding, codes_i)
+    else [ mangledname.a, toword.nopara.a]
   [ libsym(returntype.a, mangledname.a, inst)]
 
 function roots2(m:mod2desc)set.word 

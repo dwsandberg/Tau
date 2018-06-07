@@ -95,7 +95,7 @@ let MODABBREVLEN = 3
    let g=@(constrecords,identity,trackconst(a5,-1,0),subseq(mapping.llvmconsts,length.deflist+1,offset)) 
    let a6 = finishblock(bits.g , blockstart.g, TYPEABBREVLEN)
   // function bodies // 
-  assert length.trecords=length.typerecords report "X"
+  // assert length.trecords=length.typerecords report "X" //
   let a7 = @(addbody(offset, MODABBREVLEN), identity, a6, bodytxts)
   // sym table // 
   let symtabheader = addblockheader(a7, MODABBREVLEN, VALUESYMTABBLOCK, TYPEABBREVLEN)
@@ -133,6 +133,8 @@ Function funcname(a:llvmconst)word encodeword.toseq.a
 Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, mapping.llvmtypes)
 
 Function typ(a:encoding.llvmtype)int encoding.a - 1
+
+Function typerecord(s:seq.int) encoding.llvmtype encode(llvmtype.s, llvmtypes)
 
 Function double encoding.llvmtype encode(llvmtype.[ TYPEDOUBLE], llvmtypes)
 

@@ -97,10 +97,10 @@ Function pass(passno:int, libname:word)pass1result
   let templatesin = @(asliblib.dependentlibs.ld, identity, emptyliblib, libs)
   let ptext = process.pass0.ld 
   assert not.aborted.ptext report message.ptext 
-  let p1a = pass1a(false, result.ptext, YYY.templatesin, [ libname])
+  let p1a = setprivate(exports.ld,pass1a(false, result.ptext, YYY.templatesin, [ libname]))
   if passno = 1 
   then p1a 
-  else let p = waitforpass2.setprivate(exports.ld, p1a)
+  else let p = waitforpass2.p1a
   assert not.aborted.p report message.p 
   result.p
 
@@ -119,12 +119,12 @@ function subcompilelib(libname:word)seq.word
   let ptext = process.pass0.ld 
   if aborted.ptext 
   then message.ptext 
-  else let p1a = pass1a(false, result.ptext, YYY.templatesin, [ libname])
-  // let p = waitforpass2.setprivate(exports.ld, p1a)
+  else let p1a = setprivate(exports.ld,pass1a(false, result.ptext, YYY.templatesin, [ libname]))
+  // let p = waitforpass2.p1a
   if aborted.p 
   then message.p 
   else let y1 = codegen5.result.p //
-  let y1 = codegen5.pass2.setprivate(exports.ld, p1a)
+  let y1 = codegen5.pass2.p1a
   let z2 = createlib(y1, libname, dependentlibs.ld)
   "OK"
 

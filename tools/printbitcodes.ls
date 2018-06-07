@@ -43,14 +43,69 @@ Function printBitCodes(file:seq.word)seq.word
   assert print.subseq(d, 1, 64)="66 67 192 222 33 12 0 0"report"incorrect magic"+ print.subseq(d, 1, 64)
   let m = block(subseq(d, 97, length.d), 3, MODULEBLOCK)
   let z = getinfo.m 
-  let types = recs.getinfo(findblock(TYPEBLOCK, blocks.z)_1)
-  let symbols = findblock(VALUESYMTABBLOCK, blocks.z)_1 
-  let constants = findblock(CONSTANTSBLOCK, blocks.z)_1 
-  let deflist = subseq(recs.z, 4, length.recs.z)
-  let symlist = print3.symbols 
-  let constlist = printconstant(recs.getinfo.constants, -1, length.deflist, 1, empty:seq.seq.word)
-  {"let NumEle = 1 let discard = @(+, C, 0, &quot"+ @(+, second,"", symlist)+"&quot)"+"&br let TYPES = ["+ printtypes.types +"]"+"&br let DEFLIST = ["+ label("&br", symlist, @(+, print.MODULEBLOCK, empty:seq.seq.word, deflist), 1,"")+"]"+"&br let CONSTANTS = ["+ @(seperator.",", identity,"", constlist)+"]"+"&br let bodies = ["+ printfuncs(length.deflist + length.constlist, types, deflist, symlist, 1, findblock(FUNCTIONBLOCK, blocks.z), 1,"")+"]&br llvm(DEFLIST, bodies, subseq(TYPES, 2, length.TYPES))"}
+ // @(seperator("&br"),printrecord(MODULEBLOCK),"",recs.z) //
+   let firstconst = firstconst(recs.z, 7 )-6
+   let symbols = last.blocks.z 
+   assert blockid.(blocks.z)_1=TYPEBLOCK report "Expected TYPE Table as first block"
+   assert blockid.symbols=VALUESYMTABBLOCK report "EXPECTED SYMBOL Table as last block"
+    let types = recs.getinfo( (blocks.z)_1)
+   let names=@(  processsymentry,identity,dseq("**"_1),recs.getinfo.symbols)
+   let constanddefs=ggh(z,names,4,0,empty:seq.seq.word)
+   let functionblocks=findblock(FUNCTIONBLOCK, blocks.z)
+   let functiondefs=@(+, filterm.types,empty:seq.seq.word,constanddefs)
+   assert length.functionblocks=length.functiondefs report "number of function declarations does not match number of bodies"
+   {"function rebuild seq.bits
+  &br let NumEle = 1  &br let TYPES = ["+ 
+   printtypes.types + "] let discard=@(+,typerecord,empty:seq.encoding.llvmtype,subseq(TYPES, 2, length.TYPES))
+ &br let DEFLIST=" + @(seperator."+", identity,"",subseq(constanddefs,1,firstconst-1)) +
+  "&br let discard2=" + @(seperator."+", identity,"",subseq(constanddefs,firstconst,length.constanddefs)) +
+  "&br let bodies = ["+ printfuncs(length.constanddefs,functiondefs,functionblocks , 1,"")+"] 
+  &br llvm(DEFLIST, bodies, subseq(TYPES, 2, length.TYPES))
+  &br &br function Cdef(l:int, name:seq.word, rec:seq.int) seq.seq.int  let discard= C.merge(name) 
+  [rec]
+&br &br
+function Cdef(l:int, type:int, rec:seq.int) seq.seq.int  
+let discard=Cprt(type,rec) 
+empty:seq.seq.int
+"
+  }
+  
+function  firstconst(s:seq.seq.int,i:int) int
+   if s_i_1=-1 then i else firstconst(s,i+1)
 
+function filterm(types:seq.seq.int,s:seq.word) seq.seq.word   if length.s > 10 &and s_11="MODULECODEFUNCTION"_1  
+    &and  s_17="0"_1 then 
+      let typeno=toint.s_13
+      let nopara=length(types_(typeno + 2)) - 3 
+        [[s_7,s_13,toword.nopara]] else empty:seq.seq.word
+
+
+  
+  use seq.word
+  
+
+
+function ggh(z:content,names:seq.word,j:int,number:int,result:seq.seq.word) seq.seq.word
+ if j > length.recs.z then result
+ else 
+ //  assert max(number+1,0)=length.result report "L"+toword.number+toword.length.result+@(+,identity,"",result) //
+  let i = (recs.z)_j
+  if i_1=-1 then 
+     let blocks=blocks.z
+    if blockid.blocks_(i_3)=CONSTANTSBLOCK then
+      let x = printconstant(recs.getinfo(blocks_(i_3)), -1, number, 1, empty:seq.seq.word)
+      ggh(z,names,j+1,number+length.x,result+x)
+   else ggh(z,names,j+1,number,result)
+     else ggh(z,names,j+1,number+1,result+[ " &br Cdef("+toword.number+", &quot"+
+         names_(number+1)+"&quot"+","+printrecord(MODULEBLOCK,i)+")"])
+
+
+
+
+function processsymentry(t:seq.word,a:seq.int) seq.word
+   replace(t,(a_2)+1,encodeword.subseq(a, 3, length.a) )
+ 
+ 
 function second(s:seq.word)seq.word 
  let x = s_2 
   if length.towords.decode.x > 1 
@@ -58,24 +113,21 @@ function second(s:seq.word)seq.word
   else [ x]
 
 function printtypes(r:seq.seq.int)seq.word 
- label("&br", ["X"]+ printtypes(r, 2, empty:seq.seq.word), @(+, print.TYPEBLOCK, empty:seq.seq.word, r), 1,"")
+ label("&br", ["X"]+ printtypes(r, 2, empty:seq.seq.word), @(+, printrecord.TYPEBLOCK, empty:seq.seq.word, r), 1,"")
 
 
-function printfuncs(offset:int, types:seq.seq.int, deflist:seq.seq.int, symlist:seq.seq.word, i:int, defs:seq.block, j:int, result:seq.word)seq.word 
- if i > length.deflist 
-  then result + if j < length.defs then"&br + extra bodies"else""
-  else if deflist_i_1 = MODULECODEFUNCTION ∧ deflist_i_4 = 0 
-  then let nopara = length(types_(deflist_i_2 + 2)) - 3 
-   let a =(if length.result = 0 then""else",")+"&br //"+ symlist_i +"nopara:"+ toword.nopara +"//"+ if j > length.defs 
-    then"missing body"
-    else  yy(recs.getinfo(defs_j), 1, offset + nopara + 1,"", offset)
-   printfuncs(offset, types, deflist, symlist, i + 1, defs, j + 1, result + a)
-  else printfuncs(offset, types, deflist, symlist, i + 1, defs, j, result)
-
+function printfuncs(offset:int, decs:seq.seq.word, defs:seq.block, j:int, result:seq.word)seq.word 
+ if j > length.defs  
+  then result 
+  else let nopara = toint.last.decs_j 
+   let a =(if length.result = 0 then""else",")+"&br //"+ decs_j_1 +"nopara:"+ toword.nopara +"//"+
+   yy(recs.getinfo(defs_j), 1, offset + nopara + 1,"", offset)
+   printfuncs(offset, decs, defs, j + 1, result + a)
+ 
 
 function print3(a:block)seq.seq.word 
  let r = recs.getinfo.a 
-  @(+, print.blockid.a, empty:seq.seq.word, r)
+  @(+, printrecord.blockid.a, empty:seq.seq.word, r)
 
 function label(prefix:seq.word, labels:seq.seq.word, items:seq.seq.word, i:int, result:seq.word)seq.word 
  if i > length.items 
@@ -91,10 +143,10 @@ function printconstant(s:seq.seq.int, lasttype:int, number:int, i:int, result:se
   else let a = s_i 
   if a_1 = CONSTSETTYPE 
   then printconstant(s, a_2, number, i + 1, result)
-  else let b ="&br //"+ toword.number +"// Cprt("+ toword.lasttype +","+ print(CONSTANTSBLOCK, a)+")"
+  else let b ="&br Cdef("+ toword.number +","+ toword.lasttype +","+ printrecord(CONSTANTSBLOCK, a)+")"
   printconstant(s, lasttype, number + 1, i + 1, result + b)
 
-function print(blockid:int, a:seq.int)seq.word 
+function printrecord(blockid:int, a:seq.int)seq.word 
  if blockid = VALUESYMTABBLOCK 
   then [ toword(a_2), encodeword.subseq(a, 3, length.a)]
   else @(xx.blockid, identity,"", a)+"]"
@@ -169,7 +221,7 @@ function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, bl
    let alg = align32.abbrlen 
    let len = getvbr(b, idx.alg, 32)
    let end = idx.len + val.len * 32 
-   getinfo(b, 0, empty:seq.int, end, recs, blocks + block(subseq(b, idx.len, end - 1), val.abbrlen, val.newblockid), abbrvlen, blockid)
+   getinfo(b, 0, empty:seq.int, end, recs+[-1,val.newblockid,length.blocks+1], blocks + block(subseq(b, idx.len, end - 1), val.abbrlen, val.newblockid), abbrvlen, blockid)
   else content(recs, blocks)
 
 type decodename is record block:int, code:int, name:seq.word
@@ -223,6 +275,15 @@ function initnames int
   I(VALUESYMTABBLOCK, ENTRY,"ENTRY")]
   3
 
+function decodeblock(i:int) seq.word
+  if TYPEBLOCK=i then "TYPEBLOCK"
+  else if VALUESYMTABBLOCK=i then "VALUESYMTABBLOCK"
+  else if FUNCTIONBLOCK=i then "FUNCTIONBLOCK"
+  else if CONSTANTSBLOCK=i then "CONSTANTSBLOCK"
+  else if PARABLOCK=i then "PARABLOCK"
+  else if PARAGRPBLOCK=i then "PARAGRPBLOCK"
+  else "BLOCK "+toword.i
+  
 function printtypes(t:seq.seq.int, i:int, result:seq.seq.word)seq.seq.word 
  if i > length.t 
   then @(+, number.result, empty:seq.seq.word, arithseq(length.result, 1, 1))

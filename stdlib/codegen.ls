@@ -60,7 +60,7 @@ function funcdec(f:inst) seq.int
 use seq.seq.bits
 
 Function codegen5(z:pass1result)seq.bits 
-    PROFILE.let thename = libname(z)_1 
+    let thename = libname(z)_1 
   let symlist = "libname initlib5 words wordlist list  profcounts profclocks profspace profrefs profstat spacecount"+ merge(thename,"$profileresult"_1)+"init22  PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   let wordstype = array(-1, i64)
    // let conststype = array(-2, i64) //
