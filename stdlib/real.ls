@@ -86,7 +86,7 @@ Function reallit(s:seq.int, decimals:int, i:int, val:int, neg:int)real
     else if decimals < 7 
     then int2real.val / int2real([ 10, 100, 1000, 10000, 100000, 1000000]_decimals)
     else int2real.val / int2real(10^decimals)
-   if neg < 1 then -1.0 * r else r 
+   if neg < 1 then -(1.0 * r) else r 
   else if between(s_i, 48, 57)
   then reallit(s, if decimals = -1 then -1 else decimals + 1, i + 1, 10 * val + s_i - 48, neg)
   else if s_i = 32 ∨ s_i = commachar 

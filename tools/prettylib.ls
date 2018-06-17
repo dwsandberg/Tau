@@ -52,9 +52,9 @@ Function prettylib(libname:seq.word, namemap:seq.word)seq.word
   assert @(∧, checkpretty.libheader, true, modules.lib)report"failed"
   {"PASSED"}
 
-function checkpretty(libheader:seq.seq.word, mod:moddesc)boolean 
- let x = checkpretty(src(mod), 1, empty:set.seq.word, empty:seq.seq.word, empty:seq.seq.word)
-  let z = createfile([ merge([ libname(mod)]+"/"+ [ modname(mod)]+".ls")], if modname(mod)= libname(mod)then libheader + x else x)
+function checkpretty(libheader:seq.seq.word, m:moddesc)boolean 
+ let x = checkpretty(src(m), 1, empty:set.seq.word, empty:seq.seq.word, empty:seq.seq.word)
+  let z = createfile([ merge([ libname(m)]+"/"+ [ modname(m)]+".ls")], if modname(m)= libname(m)then libheader + x else x)
   true
 
 function checkpretty(s:seq.seq.word, i:int, use:set.seq.word, before:seq.seq.word, after:seq.seq.word)seq.seq.word 

@@ -6,9 +6,9 @@ Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgra
 
 Module tools
 
-/run tools test
+run tools test
 
-run tools prettytest
+/run tools prettytest
 
 /run printbitcodes test1
 

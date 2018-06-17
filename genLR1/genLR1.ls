@@ -1,6 +1,6 @@
 #!/usr/local/bin/tau
 
-Library genLR1  tauparser genlex  testparser
+Library genLR1  tauparser genlex  testparser parse
  uses stdlib tools 
  exports tauparser genLR1 genlex testparser
 
@@ -198,7 +198,13 @@ function closestate(graminfo:grammarinfo, stateno:int, result:seq.action)seq.act
   closestate(graminfo, stateno + 1, newresult)
 
 Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word)seq.word 
- {"function reduce(stk:stack.stkele, ruleno:int)stack.stkele // generated function // &br let rulelen = ["+ @(seperator.",", rulelength,"", grammarandact)+"]_ruleno &br let newstk = pop(stk, rulelen)&br let subtrees = top(stk, rulelen)&br let newtree ="+ @(+, reduceline.grammarandact,"", arithseq(length.grammarandact, 1, 1))+"&br let leftsidetoken = ["+ @(seperator.",", leftside.alphabet,"", grammarandact)+"]_ruleno &br let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)&br assert actioncode > 0 report &quot ?? &quot &br push(newstk, stkele(actioncode, newtree))"}
+ {"function reduce(stk:stack.stkele, ruleno:int)stack.stkele // generated function // 
+ &br let rulelen = ["+ @(seperator.",", rulelength,"", grammarandact)+"]_ruleno 
+ &br let newstk = pop(stk, rulelen)&br let subtrees = top(stk, rulelen)
+ &br let newtree ="+ @(+, reduceline.grammarandact,"", arithseq(length.grammarandact, 1, 1))+
+ "&br let leftsidetoken = ["+ @(seperator.",", leftside.alphabet,"", grammarandact)+"]_ruleno 
+ &br let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)&br assert actioncode > 0 report &quot ?? &quot 
+ &br push(newstk, stkele(actioncode, newtree))"}
 
 function rulelength(a:seq.seq.word)word toword(length(a_1) - 1)
 
