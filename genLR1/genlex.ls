@@ -2,9 +2,9 @@
 
 Module genlex
 
-run genlex gennohash
+run genlex genhash
 
-/run genlex findhash
+run genlex findhash
 
 use oseq.seq.word
 
@@ -34,11 +34,12 @@ type lexaction1 is record w:word, tokenno:int, label:word
 
 function tokenlist seq.word 
  // tokenlist is from parser generator // 
-  ".-)]= {:} comment,([_^∧ ∨ T # if * $wordlist then else let assert report @ F E W N G P L I K"
+".-is)]= > {:} comment,([_^∧ ∨ T # if * $wordlist then else let assert report @ A E G F W P N L I K" 
+
 
 function actionlist seq.lexaction1 
  // most frequently used words in programs // 
-  let mostfrequentwords ="// &quot,(). :+_seq = a int if-then else Function let word 0 i T t b s][ 2 use function mytype @ empty inst r"
+  let mostfrequentwords ="// &quot,(). :+_seq = a int if-then else Function let word 0 i T ][ 2 use function mytype @ empty inst "
   let wordstoinclude = mostfrequentwords + toseq(asset(tokenlist +"= < > ? ≤ ≠ ≥ >> << in +-∈ ∋ * / mod ∪ ∩_^") - asset.mostfrequentwords)
   @(+, tolexaction, empty:seq.lexaction1, wordstoinclude)
 
@@ -48,15 +49,15 @@ function tolexaction(next:word)lexaction1
   then lexaction1(next, 0, next)
   else let token = if next in". ,():"
    then next 
-   else if next in"= < > ? ≤ ≠ ≥ >> <<"
-   then"="_1 
+   else if next in" < > ? ≤ ≠ ≥ >> <<"
+   then">"_1 
    else if next in"in +-∈ ∋"
    then"-"_1 
    else if next in"* / mod ∪ ∩"
    then"*"_1 
    else if next in"_^"
    then"_"_1 
-   else if next in".)]= {:},([ ∧ ∨ # if then else let assert report @"
+   else if next in".)]= {:},([ ∧ ∨ # if then else let assert report @ is"
    then next 
    else if hasdigit.next then"I"_1 else"W"_1 
   lexaction1(next, findindex(token, tokenlist), next)
@@ -80,7 +81,7 @@ Function totext(l:lexaction1)seq.word
   let label = if label.l ="&quot"_1 then merge("&"+"quot")else label.l 
   {"lexaction(&quot"+ w +"&quot_1,"+ toword.tokenno.l +", &quot"+ label +"&quot_1)"}
 
-Function gennohash seq.word gen.true
+Function genhash seq.word gen.true
 
 
 Function gen(hash:boolean)seq.word 
@@ -102,9 +103,13 @@ Function gen(hash:boolean)seq.word
   &br else BB(tokenno.act, tree.label.act,  stk.b,place.b,input.b)"
   firstpart +(if hash 
    then assert hashsemiperfect("let"_1)= hashsemiperfect("."_1)report"we expect one collision"
-    let j = find("."_1, alist, 1)
-    let tab = @(item, identity, constantseq(106, defaultaction), subseq(alist, 1, j - 1)+ subseq(alist, j + 1, length.alist))
-    {"let act = if next = &quot.&quot_1 then"+ totext(alist_j)+"&br else let x = decode(next)&br ["+ @(seperator."&br,", identity,"", tab)+"]_(1 +(length.x * 131 + 1999 * x_1 + 164 * last.x)mod 106)"} 
+    let j = find("."_1, alist, 1) let k = find("//"_1, alist, 1)
+    let jj=subseq(alist, 1, j - 1)+ subseq(alist, j + 1, length.alist)
+    let kk=subseq(jj, 1, k - 1)+ subseq(jj, k + 1, length.jj)
+    let tab = @(item, identity, constantseq(106, defaultaction), kk)
+    {"let act = if next = &quot.&quot_1 then"+ totext(alist_j)+
+      "&br else if next = &quot // &quot_1 then" + totext(alist_k)+
+     "&br else let x = decode(next)&br ["+ @(seperator."&br,", identity,"", tab)+"]_(1 +(length.x * 131 + 1999 * x_1 + 164 * last.x)mod 106)"} 
    else"let act ="+ @(+, tonohash,"", actionlist)+ defaultaction)+ lastpart
 
 function find(w:word, s:seq.lexaction1, i:int)int 

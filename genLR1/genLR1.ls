@@ -10,7 +10,7 @@ A paragraph of just a single word function crashes the compiler
 
 /run genLR1 gentestgrammer
 
-/run genLR1 gentau
+run genLR1 gentau
 
 
 run tauparser test2
@@ -179,8 +179,16 @@ function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word)seq.wor
   let alphabet = alphabet.grammar2 
   let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
   let actions = closestate(graminfo, 1, empty:seq.action)
-  {"??"+ @(+, isambiguous,"", actions)+"&br noactions"+ toword.length.actions +"&br nosymbols:"+ toword.length.alphabet +"alphabet:"+ alphabet +"&br norules"+ toword.length.grammarandact +"&br nostate"+ toword.length.mapping.estate +"&br follow"+ @(+, print,"", toseq.arcs.follow.graminfo)+ let a = @(addaction.alphabet, identity, dseq.0, actions)
-   {"&br &br function tokenlist seq.word &quot"+ alphabet +"&quot"+"&br &br function startstate int"+ toword.initialstateno +"&br &br function actiontable seq.int ["+ @(seperator.",", toword,"", a)+"]"+"&br &br"+ generatereduce(grammarandact, alphabet)+"&br function printstate(stateno:int)seq.word &br ["+ @(seperator.",", print,"", mapping.estate)+"]_stateno"} }
+  let amb=@(+, isambiguous,"", actions)
+    { if length.amb > 0 then "ambiguous actions:"+amb else "" }
+   +"&br noactions"+ toword.length.actions +"&br nosymbols:"+ toword.length.alphabet +"alphabet:"+ alphabet +
+   "&br norules"+ toword.length.grammarandact +"&br nostate"+ toword.length.mapping.estate +
+   "&br follow"+ @(+, print,"", toseq.arcs.follow.graminfo)+ let a = @(addaction.alphabet, identity, dseq.0, actions)
+   {"&br &br function tokenlist seq.word &quot"+ alphabet +"&quot"+"&br
+    &br function startstate int"+ toword.initialstateno +"&br 
+    &br function actiontable seq.int ["+ @(seperator.",", toword,"", a)+"]"+
+    "&br &br"+ generatereduce(grammarandact, alphabet)+"&br &br function printstate(stateno:int)seq.word 
+    &br ["+ @(seperator.",", print,"", mapping.estate)+"]_stateno"} 
 
 function isambiguous(a:action)seq.word 
  if codedaction.a = 0 then"&br"+ toword.stateno.a + lookahead.a else""
@@ -231,6 +239,8 @@ Function testgrammar seq.seq.seq.word
 
 Function gentau seq.word lr1parser(taurules, tauruleprec)
 
+
+
 Function taurules seq.seq.seq.word 
  [ ["G F #","$_1"], 
  // Instead of making function a key word with rule"F function W T E"we use"F W W T E"// 
@@ -238,9 +248,13 @@ Function taurules seq.seq.seq.word
   "let P = sons.$_4 tree(label.$_1, [ tree(label.$_2, @(+, firstson, empty:seq.tree.word, P)+ $_6)]+ $_7 + P)"], 
  ["F W N(P)T E", 
  "let P = sons.$_4 tree(label.$_1, [ tree(label.$_2, @(+, firstson, empty:seq.tree.word, P)+ $_6)]+ $_7 + P)"], 
- ["F W W T E","tree(label.$_1, [ tree(label.$_2, [ $_3])]+ $_4)"], 
- ["F W W:T E", 
- "tree(label.$_1, [ tree(merge([ label.$_2]+ &quot:&quot + print.$_4), [ $_4]), $_5])"], 
+ ["F W W T E", "tree(label.$_1, [ tree(label.$_2, [ $_3])]+ $_4)"], 
+ ["F W W:T E", "tree(label.$_1, [ tree(merge([ label.$_2]+&quot : &quot+ print.$_4), [ $_4]), $_5]) "],
+ ["F W W is W P",
+ "let s=sons.result.subtrees_5 let kind=label.result.subtrees_4
+ let q=if kind= &quot encoding &quot_1 then    [s_1_1] else @(+,insertson.[result.subtrees_2],empty:seq.tree.word,s)
+tree(if kind=&quot record &quot_1 then &quot struct &quot_1 else kind, [result.subtrees_2]+q)"],
+ [ "F W T" , "tree(label.$_1, [$_2])"],
  ["P T","tree(&quot P &quot_1, [ tree(&quot:&quot_1, [ $_1])])"], 
  ["P P, T","tree(&quot P &quot_1, sons.$_1 + tree(&quot:&quot_1, [ $_3]))"], 
  ["P W:T","tree(&quot P &quot_1, [ tree(label.$_1, [ $_3])])"], 
@@ -260,12 +274,14 @@ Function taurules seq.seq.seq.word
  ["E E * E","tree(label.$_2, [ $_1, $_3])"], 
  ["E E-E","tree(label.$_2, [ $_1, $_3])"], 
  ["E E = E","tree(label.$_2, [ $_1, $_3])"], 
+ ["E E > E","tree(label.$_2, [ $_1, $_3])"], 
  ["E E ∧ E","tree(label.$_2, [ $_1, $_3])"], 
  ["E E ∨ E","tree(label.$_2, [ $_1, $_3])"], 
  ["L E","tree(&quot L &quot_1, [ $_1])"], 
  ["L L, E","tree(&quot L &quot_1, sons.$_1 + $_3)"], 
  ["E [ L]","tree(&quot $build &quot_1, sons.$_2)"], 
- ["E let W = E E","tree(&quot let &quot_1, [ $_2, $_4, $_5])"], 
+ [ "A let W = E"  ,"tree(&quot let &quot_1,[ $_2, $_4])"],
+ ["E A E", "let a = $_1 tree(&quot let &quot_1, [ a_1, a_2, $_2])"], 
  ["E assert E report E E","tree(&quot assert &quot_1, [ $_2, $_5, $_4])"], 
  ["E I","$_1"], 
  ["E I.I", 
@@ -278,6 +294,7 @@ Function taurules seq.seq.seq.word
  ["N_","$_1"], 
  ["N-","$_1"], 
  ["N =","$_1"], 
+ ["N >","$_1"], 
  ["N *","$_1"], 
  ["N ∧","$_1"], 
  ["N ∨","$_1"], 
@@ -297,8 +314,9 @@ function tauruleprec seq.seq.word
  "E-E", 
  "E E-E", 
  "-", 
+ "E E > E",
  "E E = E", 
- "=", 
+ "=", ">",
  "E E ∧ E", 
  "∧", 
  "E E ∨ E", 
