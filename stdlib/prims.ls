@@ -10,9 +10,9 @@ type argblock3 is record a:int, length:int, arg1:seq.word, arg2:word, arg3:word
 
 type argblock4 is record a:int, length:int, state:seq.word, arg:seq.word, arg2:seq.word, b:seq.seq.word
 
-function cvt(a:argblock3)seq.int builtin
+function cvt(a:argblock3)seq.int builtin.NOOP
 
-function cvt(a:argblock4)seq.int builtin
+function cvt(a:argblock4)seq.int builtin.NOOP
 
 Function execute(name:word, arg1:seq.word, arg2:word, arg3:word)seq.word 
  executecode(toCformat.[ name], cvt.argblock3(0, 3, arg1, arg2, arg3))

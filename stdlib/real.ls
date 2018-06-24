@@ -52,9 +52,9 @@ Function *(a:real, b:real)real builtin.usemangle
 
 Function /(a:real, b:real)real builtin.usemangle
 
-Function representation(a:real)int builtin
+Function representation(a:real)int builtin.NOOP
 
-Function casttoreal(i:int)real builtin
+Function casttoreal(i:int)real builtin.NOOP
 
 Function^(i:real, n:int)real @(*, identity, 1.0, constantseq(n, i))
 

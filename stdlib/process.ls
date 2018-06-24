@@ -17,5 +17,7 @@ function subresult(a:process.T, b:int)T builtin.IDXUC
 
 Note:Must access result of process with function result rather than using field resultb because if the type T is a structure of more than one element, the compile would assume the elements are store at resultb and not a pointer to the type T.
 
+Function process(T) process.T builtin.usemangle
+
 ______________
 

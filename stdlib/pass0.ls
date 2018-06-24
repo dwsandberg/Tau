@@ -20,6 +20,8 @@ use seq.mytype
 
 use seq.seq.seq.word
 
+use seq.seq.word
+
 use seq.syminfo
 
 use set.mod2desc
@@ -69,8 +71,8 @@ function setSymbols(md:seq.seq.word, i:int, modname:mytype, defines:set.syminfo,
    let pt = parse(md_i, type)
    if label.pt in"encoding Encoding"
    then let asfunc ="function"+ label(pt_1)+"erecord."+ typeastext(pt_2)+ if label.pt in"Encoding"
-     then"builtin.PRECORD.NOINLINE"
-     else"builtin.ERECORD.NOINLINE"
+     then"builtin.NOINLINE.PRECORD"
+     else"builtin.NOINLINE.ERECORD"
     let pre = parsesyminfo(modname, asfunc)
     setSymbols(md, i + 1, modname, addnodup(defines, pre), exports, uses, typedefs, tocompile + asfunc)
    else setSymbols(md, i + 1, modname, defines, exports, uses, typedefs + tolibtype2.pt, tocompile)

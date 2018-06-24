@@ -126,6 +126,7 @@ function orderm(a:seq.word, b:seq.word, i:int)ordering
   else let x = encoding(a_i)? encoding(b_i)
   if x = EQ then orderm(a, b, i - 1)else x
 
+
 Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering 
  let o1 = length.a ? length.b 
   if o1 = EQ ∧ length.a ≥ i 

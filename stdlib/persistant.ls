@@ -108,11 +108,11 @@ Function getftype(w:word)encoding.llvmtype
 
 function count(val:int, i:int)int if val = i then 1 else 0
 
-function cast2int(liblib)int builtin
+function cast2int(liblib)int builtin.NOOP
 
-function cast2intseq(int)seq.int builtin
+function cast2intseq(int)seq.int builtin.NOOP
 
-function cast2word(int)word builtin
+function cast2word(int)word builtin.NOOP
 
 Function prepareliblib2(alltypes:set.libtype, x:linklists2, mylib:liblib)ipair.linklists2 
  addobject2(alltypes, mytype."liblib", x, cast2int.// result.process.identity.// mylib)
@@ -217,7 +217,7 @@ Function addwordseq(t:linklists2, a:seq.word)linklists2
 
 function C64word33(a:word)int C64.word33.a
 
-function cast2int(s:seq.int)int builtin
+function cast2int(s:seq.int)int builtin.NOOP
 
 function interface(l:liblib, dependlibs:seq.word)seq.word 
  let a = createlib(cast2int.empty:seq.int,"int seq", l, dependlibs)
@@ -326,5 +326,5 @@ Function getb(a:int)int toint(bits.a ∧ bits(halfsize - 1))
 
 Function IDXUC(int, int)int builtin.IDXUC
 
-Function cast2wordseq(int)seq.word builtin
+Function cast2wordseq(int)seq.word builtin.NOOP
 

@@ -43,7 +43,7 @@ function createlib(name:seq.bits, libs:seq.bits, t:outputformat)int builtin.usem
 
 function createfile(name:seq.bits, data:outputformat)int builtin.usemangle
 
-function getfile(f:seq.bits)fileresult builtin.getfileZbuiltinZUTF8.STATE
+function getfile(f:seq.bits)fileresult builtin.STATE.getfileZbuiltinZUTF8
 
 type fileresult is record size:int, word1:int, word2:int, data:seq.int
 

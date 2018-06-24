@@ -8,9 +8,9 @@ Module genLR1
 
 A paragraph of just a single word function crashes the compiler
 
-/run genLR1 gentestgrammer
+/run genLR1 gentestgrammar2
 
-run genLR1 gentau
+run genLR1 gentau2
 
 
 run tauparser test2
@@ -138,7 +138,7 @@ function print(p:ipair.seq.word)seq.word
  subseq(value.p, 1, index.p - 1)+"'"+ subseq(value.p, index.p, length.value.p)
 
 function print(s:set.ipair.seq.word)seq.word 
- {"&br &quot"+ @(seperator."|", print,"", toseq.s)+"&br &quot"}
+ {"&br  &quot "+ @(seperator."|", print,"", toseq.s)+"&br  &quot "}
 
 Function initialstate(grammar:seq.seq.word)set.ipair.seq.word 
  close(grammar, asset.[ ipair(2,"G F #")])
@@ -184,7 +184,7 @@ function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word)seq.wor
    +"&br noactions"+ toword.length.actions +"&br nosymbols:"+ toword.length.alphabet +"alphabet:"+ alphabet +
    "&br norules"+ toword.length.grammarandact +"&br nostate"+ toword.length.mapping.estate +
    "&br follow"+ @(+, print,"", toseq.arcs.follow.graminfo)+ let a = @(addaction.alphabet, identity, dseq.0, actions)
-   {"&br &br function tokenlist seq.word &quot"+ alphabet +"&quot"+"&br
+   {"&br &br function tokenlist seq.word  &quot "+ alphabet +" &quot "+"&br
     &br function startstate int"+ toword.initialstateno +"&br 
     &br function actiontable seq.int ["+ @(seperator.",", toword,"", a)+"]"+
     "&br &br"+ generatereduce(grammarandact, alphabet)+"&br &br function printstate(stateno:int)seq.word 
@@ -206,12 +206,13 @@ function closestate(graminfo:grammarinfo, stateno:int, result:seq.action)seq.act
   closestate(graminfo, stateno + 1, newresult)
 
 Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word)seq.word 
- {"function reduce(stk:stack.stkele, ruleno:int)stack.stkele // generated function // 
+ {"function reduce(stk:stack.stkele, ruleno:int,place:int,input:seq.word)stack.stkele // generated function // 
  &br let rulelen = ["+ @(seperator.",", rulelength,"", grammarandact)+"]_ruleno 
  &br let newstk = pop(stk, rulelen)&br let subtrees = top(stk, rulelen)
+ &br let dict = dict.result.top.stk
  &br let newtree ="+ @(+, reduceline.grammarandact,"", arithseq(length.grammarandact, 1, 1))+
  "&br let leftsidetoken = ["+ @(seperator.",", leftside.alphabet,"", grammarandact)+"]_ruleno 
- &br let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)&br assert actioncode > 0 report &quot ?? &quot 
+ &br let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)&br assert actioncode > 0 report  &quot  ??  &quot  
  &br push(newstk, stkele(actioncode, newtree))"}
 
 function rulelength(a:seq.seq.word)word toword(length(a_1) - 1)
@@ -224,10 +225,13 @@ function replace$(w:word)seq.word
 function reduceline(grammerandact:seq.seq.seq.word, i:int)seq.word 
  let s = grammerandact_i 
   if i = length.grammerandact 
-  then"&br assert ruleno = //"+ s_1 +"//"+ toword.i +"report &quot invalid rule number &quot + toword.ruleno &br"+ @(+, replace$,"", s_2)
+  then"&br assert ruleno = //"+ s_1 +"//"+ toword.i +"report  &quot  invalid rule number  &quot  + toword.ruleno &br"+ @(+, replace$,"", s_2)
   else"&br if ruleno = //"+ s_1 +"//"+ toword.i +"then"+ @(+, replace$,"", s_2)+"else"
 
 Function gentestgrammar seq.word lr1parser(testgrammar, empty:seq.seq.word)
+
+Function gentestgrammar2 seq.word lr1parser(testgrammar2, empty:seq.seq.word)
+
 
 Function testgrammar seq.seq.seq.word 
  [ ["G F #","$_1"], 
@@ -236,6 +240,34 @@ Function testgrammar seq.seq.seq.word
  ["E 2","2"], 
  ["E 3","3"], 
  ["E E + E","$_1 + $_3"]]
+ 
+ 
+Function testgrammar2 seq.seq.seq.word 
+ [ ["G F #","$_1"], 
+ ["F E","$_1"], 
+ [" E W "," 
+let id=code.$_1
+if hasdigit.id_1 then bindinfo(dict.$_1, id, [mytype(  &quot  int  &quot  )])
+else let f = lookup(dict.$_1,  id_1 ,empty:seq.mytype ) assert not.isempty.f report  &quot  cannot find   &quot  +id
+bindinfo(dict.$_1,  [mangledname.f_1], [resulttype.f_1]) 
+"],
+[" A let W = E ","  
+let e = $_4 let name= (code.$_2)_1
+let newdict=dict.$_1 +symbol(name,mytype(  &quot  local  &quot  ),empty:seq.mytype,(types.e)_1)
+     bindinfo(newdict,code.e +   &quot  define  &quot  +name,types.e)
+"],
+[" E A E "," 
+let dict=dict.$_1
+  let f=lookup( dict,last.code.$_1,empty:seq.mytype)
+  assert not.isempty.f report   &quot  error  &quot  
+bindinfo(dict.$_1 - f,code.$_1 + code.$_2 +   &quot  undefine  &quot  , types.$_2 )
+"],
+[" E E + E "," 
+let types = types.$_1 + types.$_3 
+let f = lookup(dict.$_1,    &quot  +  &quot  _1 ,types )assert not.isempty.f report  &quot  cannot find +  &quot  
+bindinfo(dict.$_1, code.$_1 + code.$_3 + mangledname.f_1, [resulttype.f_1]) 
+"]]
+
 
 Function gentau seq.word lr1parser(taurules, tauruleprec)
 
@@ -249,26 +281,26 @@ Function taurules seq.seq.seq.word
  ["F W N(P)T E", 
  "let P = sons.$_4 tree(label.$_1, [ tree(label.$_2, @(+, firstson, empty:seq.tree.word, P)+ $_6)]+ $_7 + P)"], 
  ["F W W T E", "tree(label.$_1, [ tree(label.$_2, [ $_3])]+ $_4)"], 
- ["F W W:T E", "tree(label.$_1, [ tree(merge([ label.$_2]+&quot : &quot+ print.$_4), [ $_4]), $_5]) "],
+ ["F W W:T E", "tree(label.$_1, [ tree(merge([ label.$_2]+ &quot  :  &quot + print.$_4), [ $_4]), $_5]) "],
  ["F W W is W P",
  "let s=sons.result.subtrees_5 let kind=label.result.subtrees_4
- let q=if kind= &quot encoding &quot_1 then    [s_1_1] else @(+,insertson.[result.subtrees_2],empty:seq.tree.word,s)
-tree(if kind=&quot record &quot_1 then &quot struct &quot_1 else kind, [result.subtrees_2]+q)"],
+ let q=if kind=  &quot  encoding  &quot _1 then    [s_1_1] else @(+,insertson.[result.subtrees_2],empty:seq.tree.word,s)
+tree(if kind= &quot  record  &quot _1 then  &quot  struct  &quot _1 else kind, [result.subtrees_2]+q)"],
  [ "F W T" , "tree(label.$_1, [$_2])"],
- ["P T","tree(&quot P &quot_1, [ tree(&quot:&quot_1, [ $_1])])"], 
- ["P P, T","tree(&quot P &quot_1, sons.$_1 + tree(&quot:&quot_1, [ $_3]))"], 
- ["P W:T","tree(&quot P &quot_1, [ tree(label.$_1, [ $_3])])"], 
- ["P P, W:T","tree(&quot P &quot_1, sons.$_1 + tree(label.$_3, [ $_5]))"], 
+ ["P T","tree( &quot  P  &quot _1, [ tree( &quot : &quot _1, [ $_1])])"], 
+ ["P P, T","tree( &quot  P  &quot _1, sons.$_1 + tree( &quot : &quot _1, [ $_3]))"], 
+ ["P W:T","tree( &quot  P  &quot _1, [ tree(label.$_1, [ $_3])])"], 
+ ["P P, W:T","tree( &quot  P  &quot _1, sons.$_1 + tree(label.$_3, [ $_5]))"], 
  ["E W","$_1"], 
  ["E N(L)","tree(label.$_1, sons.$_3)"], 
  ["E W(L)","tree(label.$_1, sons.$_3)"], 
  ["E(E)","$_2"], 
  ["E { E }","$_2"], 
- ["E if E then E else E","tree(&quot if &quot_1, [ $_2, $_4, $_6])"], 
+ ["E if E then E else E","tree( &quot  if  &quot _1, [ $_2, $_4, $_6])"], 
  ["E E^E","tree(label.$_2, [ $_1, $_3])"], 
  ["E E_E","tree(label.$_2, [ $_1, $_3])"], 
  ["E-E", 
- "let t = $_2 if nosons.t = 0 ∧ hasdigit(label.t)then tree(merge(&quot-&quot + label.t))else if nosons.t = 2 ∧ label.t = &quot makereal &quot_1 ∧ nosons.t_1 = 0 ∧ hasdigit(label.t_1)then tree(label.t, [ tree(merge(&quot-&quot + label.t_1)), t_2])else tree(&quot-&quot_1, [ $_2])"], 
+ "let t = $_2 if nosons.t = 0 ∧ hasdigit(label.t)then tree(merge( &quot - &quot  + label.t))else if nosons.t = 2 ∧ label.t =  &quot  makereal  &quot _1 ∧ nosons.t_1 = 0 ∧ hasdigit(label.t_1)then tree(label.t, [ tree(merge( &quot - &quot  + label.t_1)), t_2])else tree( &quot - &quot _1, [ $_2])"], 
  ["E W.E","tree(label.$_1, [ $_3])"], 
  ["E N.E","tree(label.$_1, [ $_3])"], 
  ["E E * E","tree(label.$_2, [ $_1, $_3])"], 
@@ -277,20 +309,20 @@ tree(if kind=&quot record &quot_1 then &quot struct &quot_1 else kind, [result.s
  ["E E > E","tree(label.$_2, [ $_1, $_3])"], 
  ["E E ∧ E","tree(label.$_2, [ $_1, $_3])"], 
  ["E E ∨ E","tree(label.$_2, [ $_1, $_3])"], 
- ["L E","tree(&quot L &quot_1, [ $_1])"], 
- ["L L, E","tree(&quot L &quot_1, sons.$_1 + $_3)"], 
- ["E [ L]","tree(&quot $build &quot_1, sons.$_2)"], 
- [ "A let W = E"  ,"tree(&quot let &quot_1,[ $_2, $_4])"],
- ["E A E", "let a = $_1 tree(&quot let &quot_1, [ a_1, a_2, $_2])"], 
- ["E assert E report E E","tree(&quot assert &quot_1, [ $_2, $_5, $_4])"], 
+ ["L E","tree( &quot  L  &quot _1, [ $_1])"], 
+ ["L L, E","tree( &quot  L  &quot _1, sons.$_1 + $_3)"], 
+ ["E [ L]","tree( &quot  $build  &quot _1, sons.$_2)"], 
+ [ "A let W = E"  ,"tree( &quot  let  &quot _1,[ $_2, $_4])"],
+ ["E A E", "let a = $_1 tree( &quot  let  &quot _1, [ a_1, a_2, $_2])"], 
+ ["E assert E report E E","tree( &quot  assert  &quot _1, [ $_2, $_5, $_4])"], 
  ["E I","$_1"], 
  ["E I.I", 
- "let d = decode.label.$_3 tree(&quot makereal &quot_1, [ tree.encodeword(decode.label.$_1 + d), tree.countdigits(d, 1, 0)])"], 
+ "let d = decode.label.$_3 tree( &quot  makereal  &quot _1, [ tree.encodeword(decode.label.$_1 + d), tree.countdigits(d, 1, 0)])"], 
  ["T W","$_1"], 
  ["T W.T","tree(label.$_1, [ $_3])"], 
- ["E W:T","tree(merge([ label.$_1, &quot:&quot_1]+ print.$_3))"], 
+ ["E W:T","tree(merge([ label.$_1,  &quot : &quot _1]+ print.$_3))"], 
  ["E $wordlist","$_1"], 
- ["E comment E","tree(&quot comment &quot_1, [ $_2]+ sons.$_1)"], 
+ ["E comment E","tree( &quot  comment  &quot _1, [ $_2]+ sons.$_1)"], 
  ["N_","$_1"], 
  ["N-","$_1"], 
  ["N =","$_1"], 
@@ -300,7 +332,7 @@ tree(if kind=&quot record &quot_1 then &quot struct &quot_1 else kind, [result.s
  ["N ∨","$_1"], 
  ["K E","$_1"], 
  ["K N","$_1"], 
- ["E @(K, K, E, E)","tree(&quot @ &quot_1, [ $_3, $_5, $_7, $_9])"]]
+ ["E @(K, K, E, E)","tree( &quot  @  &quot _1, [ $_3, $_5, $_7, $_9])"]]
 
 function tauruleprec seq.seq.word 
  ["E E_E", 
@@ -321,4 +353,112 @@ function tauruleprec seq.seq.word
  "∧", 
  "E E ∨ E", 
  "∨"]
+
+function hh(a:seq.seq.word) seq.word "[  &quot "+a_1+" &quot  ,  &quot  assert false report"+merge("&"+"quot")+" not handled+"+a_1+merge("&"+"quot")+" $_1  &quot  ]," 
+
+Function gentau2 seq.word     lr1parser(taurules2, tauruleprec)
+
+
+
+
+
+function taurules2 seq.seq.seq.word
+[[" G F # ","assert false report  &quot  not handled + G F #  &quot  $_1  
+"],[" F W W(P)T E ","let functype=code.$_6
+   let exptype=types.$_7
+   assert mytype.functype=exptype_1 &or exptype_1=mytype.&quot  internal &quot   report  &quot  function type of &quot  +print.mytype.functype+ &quot  does not match expression type  &quot  +print.exptype_1
+    bindinfo(dict,code.$_7,[ mytype.code.$_2,mytype.functype]+types.$_4)    
+"],[" F W N(P)T E ","let functype=code.$_6
+   let exptype=types.$_7
+   assert mytype.functype=exptype_1 &or exptype_1=mytype.&quot  internal &quot   report  &quot  function type of &quot  +print.mytype.functype+ &quot  does not match expression type  &quot  +print.exptype_1
+    bindinfo(dict,code.$_7,[ mytype.code.$_2,mytype.functype]+types.$_4)    
+"],[" F W W T E ","
+   let functype=code.$_3
+   let exptype=types.$_4
+   assert mytype.functype=exptype_1 &or exptype_1=mytype.&quot  internal &quot   report  &quot  function type of  &quot  +print.mytype.functype+ &quot  does not match expression type  &quot  +print.exptype_1
+    bindinfo(dict,code.$_4,[ mytype.code.$_2,mytype.functype])     
+"],[" F W W:T E ","
+  let functype=code.$_4
+   let exptype=types.$_5
+   assert mytype.functype=exptype_1 &or exptype_1=mytype.&quot  internal &quot   report  &quot  function type of &quot  +print.mytype.functype+ &quot  does not match expression type &quot  +print.exptype_1
+   // bindinfo(dict,code.$_5,[ mytype.[merge(code.$_2+ &quot  : &quot  +print.mytype.functype)],mytype.functype]) //
+   bindinfo(dict,code.$_5,[ mytype.code.$_2 ,mytype.functype ])   
+"],[" F W W is W P ","bindinfo(dict,code.$_4+code.$_2,types.$_5)  
+"],[" F W T "," $_2  
+"],[" P T "," bindinfo(dict, &quot   &quot  ,[ mytype(code.$_1)])   
+"],[" P P, T "," bindinfo(dict, &quot   &quot  ,types.$_1+[ mytype(code.$_3)])  
+"],[" P W:T "," 
+let newdict = dict + symbol((code.$_1)_1, mytype( &quot  1 para &quot  ), empty:seq.mytype,mytype(code.$_3))
+   bindinfo(newdict, &quot   &quot  ,[ mytype(code.$_3)])   
+"],[" P P, W:T "," 
+let newdict = dict + symbol((code.$_3)_1, mytype([toword(length.types.$_1+1)]+ &quot  para &quot  ), empty:seq.mytype,mytype(code.$_5))
+bindinfo(newdict, &quot   &quot  ,types.$_1+[ mytype(code.$_5)])  
+"],[" E W ","let id = code.$_1 
+let f = lookup(dict, id_1, empty:seq.mytype)
+assert not.isempty.f report  &quot  cannot find &quot  + id 
+bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1]) 
+"],[" E N(L) ","unaryop( $_1,$_3)  
+"],[" E W(L) ","unaryop( $_1,$_3)  
+"],[" E(E) ","$_2  
+"],[" E { E } ","$_2  
+"],[" E if E then E else E ","
+let thenpart=$_4
+assert (types.$_2)_1 =mytype.&quot  boolean &quot   report  &quot  cond of if must be boolean &quot  
+assert (types.$_4) =(types.$_6) report  &quot  then and else types are different &quot  
+  let newcode= code.$_2 + code.$_4 + code.$_6 
+   bindinfo(dict,newcode+  &quot  if &quot  ,types.thenpart)
+"],[" E E^E ","opaction(subtrees)  
+"],[" E E_E ","opaction(subtrees)  
+"],[" E-E ","unaryop( $_1,$_2)  
+"],[" E W.E ","unaryop( $_1,$_3)  
+"],[" E N.E ","unaryop( $_1,$_3)  
+"],[" E E * E ","opaction(subtrees)  
+"],[" E E-E ","opaction(subtrees)
+"],[" E E = E ","opaction(subtrees)  
+"],[" E E > E ","opaction(subtrees) 
+"],[" E E ∧ E ","opaction(subtrees)  
+"],[" E E ∨ E "," opaction(subtrees)  
+"],[" L E ","$_1  
+"],[" L L, E ","
+bindinfo(dict,code.$_1+code.$_3,types.$_1+types.$_3)
+"],[" E [ L]","
+ let types=types($_2)
+ assert @(∧, =(types_1), true, types )report  &quot  types do not match in build &quot   
+    bindinfo( dict, code.$_2+ &quot  $build &quot  +toword.length.types, [mytype(towords(types_1)+ &quot  seq &quot   )])
+ "],[" A let W = E "," let e = $_4 let name =(code.$_2)_1 
+let newdict = dict + symbol(name, mytype( &quot  local &quot  ), empty:seq.mytype,(types.e)_1)
+bindinfo(newdict, code.e + &quot  define &quot  + name, types.e)
+"],[" E A E ","let f = lookup(dict, last.code.$_1, empty:seq.mytype)
+assert not.isempty.f report  &quot  error &quot  bindinfo(dict.$_1-f, code.$_1 + code.$_2 + &quot  undefine &quot  , types.$_2)
+"],[" E assert E report E E ","
+assert types($_2)_1 = mytype.&quot  boolean &quot  report  &quot  condition in assert must be boolean in: &quot    
+  assert types($_4)_1 = mytype.&quot  word seq &quot  report  &quot  report in assert must be seq of word in: &quot   
+  let newcode=code.$_2 + code.$_4 + code.$_5 +   &quot  assertZbuiltinZwordzseq   if  &quot   
+  bindinfo(dict,newcode,types.$_5)
+"],[" E I ","$_1  
+"],[" E I.I "," let d = decode.(code.$_3)_1 
+bindinfo(dict, [ encodeword(decode.(code.$_1)_1 + d)]+countdigits(d, 1, 0)+&quot  makereal  &quot ,[mytype.&quot  real  &quot] )
+"],[" T W ","$_1  
+"],[" T W.T ","bindinfo(dict,code.$_3+code.$_1,types.$_1)  
+"],[" E W:T ","
+let funcname=merge(code.$_1+ &quot  : &quot  +print.mytype.code.$_3)
+bindinfo(dict,[funcname],[mytype.if code.$_1=&quot sizeoftype &quot then &quot int &quot else  code.$_3]) 
+"],[" E $wordlist ","let s = code.$_1
+   bindinfo(dict,  &quot  $wordlist &quot  +toword.length.s+s,[mytype.&quot  word seq &quot  ])
+"],[" E comment E "," $_2  
+"],[" N_","$_1  
+"],[" N-","$_1  
+"],[" N = "," $_1  
+"],[" N > "," $_1  
+"],[" N * "," $_1  
+"],[" N ∧ "," $_1  
+"],[" N ∨ ","  $_1  
+"],[" K W.E "," bindinfo(dict, code.$_1+code.$_3,types.$_3) 
+"],[" K N.E "," bindinfo(dict, code.$_1+code.$_3,types.$_3) 
+"],[" K N(L) "," bindinfo(dict, code.$_1+code.$_3,types.$_3)   
+"],[" K W(L) "," bindinfo(dict, code.$_1+code.$_3,types.$_3)  
+"],[" K N "," bindinfo(dict, code.$_1,empty:seq.mytype) 
+"],[" K W "," bindinfo(dict, code.$_1,empty:seq.mytype)     
+"],[" E @(K, K, E, E) ","apply($_3,$_5,$_7,$_9)"]
+]
 

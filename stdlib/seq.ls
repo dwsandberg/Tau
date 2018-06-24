@@ -35,7 +35,7 @@ function getseqtype(a:seq.T, offset:int)int builtin.IDXUC
 
 Function length(a:seq.T)int export
 
-Function empty seq.T builtin(LIT, 0, LIT, 0, RECORD, 2)
+Function empty seq.T builtin.EMPTYSEQ
 
 Function =(a:seq.T, b:seq.T)boolean 
  if length.a = length.b then subequal(a, b, length.a)else false
@@ -215,15 +215,15 @@ Function fastsubseq(s:seq.T, from:int, to:int)seq.T
 
 _________________________________
 
-Function mapping(erec:erecord.T)seq.T builtin.usemangle.STATE
+Function mapping(erec:erecord.T)seq.T builtin.STATE.usemangle 
 
-Function encoding(encoding.T)int builtin
+Function encoding(encoding.T)int builtin.NOOP
 
-Function encode(t:T, erec:erecord.T)encoding.T builtin.usemangle.STATE
+Function encode(t:T, erec:erecord.T)encoding.T builtin.STATE.usemangle 
 
-Function decode(t:encoding.T, erec:erecord.T)T builtin.usemangle.STATE
+Function decode(t:encoding.T, erec:erecord.T)T builtin.STATE.usemangle 
 
-Function findencode(t:T, erec:erecord.T)seq.T builtin.usemangle.STATE
+Function findencode(t:T, erec:erecord.T)seq.T builtin.STATE.usemangle 
 
 type encoding
 
@@ -231,7 +231,7 @@ type erecord is record deepcopy:int, invertedseqlookup:int, invertedseq:int, num
 
 `___________
 
-function cast2int(s:seq.T)int builtin
+function cast2int(s:seq.T)int builtin.NOOP
 
 function identityf(s:seq.T)seq.T s
 

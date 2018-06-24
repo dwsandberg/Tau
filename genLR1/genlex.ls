@@ -2,7 +2,7 @@
 
 Module genlex
 
-run genlex genhash
+/run genlex genhash
 
 run genlex findhash
 
@@ -40,8 +40,9 @@ function tokenlist seq.word
 function actionlist seq.lexaction1 
  // most frequently used words in programs // 
   let mostfrequentwords ="// &quot,(). :+_seq = a int if-then else Function let word 0 i T ][ 2 use function mytype @ empty inst "
-  let wordstoinclude = mostfrequentwords + toseq(asset(tokenlist +"= < > ? ≤ ≠ ≥ >> << in +-∈ ∋ * / mod ∪ ∩_^") - asset.mostfrequentwords)
-  @(+, tolexaction, empty:seq.lexaction1, wordstoinclude)
+  let wordstoinclude = mostfrequentwords + tokenlist +"= < > ? ≤ ≠ ≥ >> << in +-∈ ∋ * / mod ∪ ∩_^"
+  +prepreplacements("","","le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ contains ∋", 1)
+  @(+, tolexaction, empty:seq.lexaction1, toseq.asset.wordstoinclude)
 
 function tolexaction(next:word)lexaction1 
  // use supplied procedure to convert a word into a lex action // 
@@ -64,14 +65,11 @@ function tolexaction(next:word)lexaction1
 
 function hashsemiperfect(w:word)int 
  let x = decode.w 
-  1 +(length.x * 131 + 1999 * x_1 + 164 * last.x)mod 106
-
-106 131 197 164 1
-
-function hashsemiperfect2(w:word)int 
- let x = decode.w 
-  1 +(length.x * 131 + 197 * x_1 + 164 * last.x)mod 106
-
+ 1+( if length.x > 2 then 23 * (x_1 + 2 * x_2)+ 4 * x_3 
+  else if length.x=1 then 23 * x_1
+  else 23 * (x_1 + 2 * x_2) ) mod 209
+  
+ 
 function tonohash(l:lexaction1)seq.word 
  let a = totext.l 
   {"&br if next = &quot"+ a_4 +"&quot_1 then"+ a +"else"}
@@ -102,56 +100,94 @@ Function gen(hash:boolean)seq.word
   &br else // start comment // stepresult(stk.b, place.b + 1, input.b, commenttoken, &quot &quot)
   &br else BB(tokenno.act, tree.label.act,  stk.b,place.b,input.b)"
   firstpart +(if hash 
-   then assert hashsemiperfect("let"_1)= hashsemiperfect("."_1)report"we expect one collision"
-    let j = find("."_1, alist, 1) let k = find("//"_1, alist, 1)
-    let jj=subseq(alist, 1, j - 1)+ subseq(alist, j + 1, length.alist)
-    let kk=subseq(jj, 1, k - 1)+ subseq(jj, k + 1, length.jj)
-    let tab = @(item, identity, constantseq(106, defaultaction), kk)
-    {"let act = if next = &quot.&quot_1 then"+ totext(alist_j)+
-      "&br else if next = &quot // &quot_1 then" + totext(alist_k)+
-     "&br else let x = decode(next)&br ["+ @(seperator."&br,", identity,"", tab)+"]_(1 +(length.x * 131 + 1999 * x_1 + 164 * last.x)mod 106)"} 
+   then 
+    let tab = @(item, identity, constantseq(209, defaultaction), alist)
+    {"let act =  let x = decode(next)&br ["+ @(seperator."&br,", identity,"", tab)+"]_( 1+( if length.x > 2 then 23 * (x_1 + 2 * x_2)+ 4 * x_3 
+  else if length.x=1 then 23 * x_1
+  else 23 * (x_1 + 2 * x_2) ) mod 209
+)"} 
    else"let act ="+ @(+, tonohash,"", actionlist)+ defaultaction)+ lastpart
 
 function find(w:word, s:seq.lexaction1, i:int)int 
  if w(s_i)= w then i else find(w, s, i + 1)
 
 function item(tab:seq.seq.word, l:lexaction1)seq.seq.word 
- if w.l ="."_1 
-  then tab 
-  else assert tab_hashsemiperfect.w.l = defaultaction report"unexpected collision between"+ w.l +"and"+ tab_hashsemiperfect.w.l 
+assert tab_hashsemiperfect.w.l = defaultaction report"unexpected collision between"+ w.l +"and"+ tab_hashsemiperfect.w.l 
   replace(tab, hashsemiperfect.w.l, totext.l)
 
 function xx(w:word)seq.word [ toword.hashsemiperfect.w, w]
 
-function defaultaction seq.word {"lexaction(&quot. &quot_1, 0, &quot. &quot_1)"}
+function defaultaction seq.word {"lexaction(&quot ` &quot_1, 0, &quot ` &quot_1)"}
+
 
 Function findhash seq.word 
  // look for a semiperfect hash function // 
   // crashes when search larger range of primes // 
   let b = @(+, w,"", actionlist)
-  let t = @(+, astriple, empty:seq.triple, actionlist)
+   let t = @(+, astriple, empty:seq.triple, actionlist)
   let y = sort.@(+, xx, empty:seq.seq.word, b)
-  {"actual hash values &br"+ @(seperator.", &br", identity,"", y)+"&br size of table, x, y, z, number of collisions"+ @(+, searchhash(subseq(findprimes(3, 220), 30, 400)+ [ 164, 1999], t, 0,""),"", arithseq(20, 1, 101))}
+  { "actual hash values &br"+ @(seperator.", &br", identity,"", y)+  "&br size of table, x, y, z, number of collisions"
+  + @(+, searchhash(// subseq(findprimes(3, 400), 60, 4000) // arithseq(50,1,2), t, 0,"")  ,"", arithseq(10, 1, 200))}
 
 type triple is record a:int, b:int, c:int
 
 function astriple(l:lexaction1)triple 
  let x = decode.w.l 
-  triple(length.x, x_1, last.x)
+  if length.x = 1 then triple(x_1,0,0)
+  else if length.x=2 then triple(x_1,x_2,0)
+  else triple(x_1,x_2,x_3)
 
-function try(x:int, y:int, z:int, m:int, t:triple)int {(a.t * x + y * b.t + z * c.t)mod m }
+function try(x:int, y:int, m:int, t:triple)int {( x *  (a.t + 2 * b.t) + y  * c.t) mod m }
+  
+{( x *  (a.t + 2 * b.t) + y  * c.t) mod m }
+
+209 23 46 4
+
+function check(nocollision:int, b:seq.triple, x:int,y:int,m:int,i:int,j:int) seq.word
+      if i &ne j &and  try (x,y,m,b_i) = try (x,y,m,b_j)  then 
+           if nocollision >  1 then "fail" else 
+              let more= 
+            if i < j then check(nocollision+1,b,x,y,m,i+1,j) else
+            if j = length.b then "success"
+            else check(nocollision+1,b,x,y,m,1,j+1)
+            if more="fail" then more
+            else    let newcol=[reconstruct.b_i , reconstruct.b_j   ]
+              if more="success" then
+                 newcol
+            else  more+newcol
+      else  if i < j then check(nocollision,b,x,y,m,i+1,j) else
+            if j = length.b then "success"
+            else check(nocollision,b,x,y,m,1,j+1) 
+            
+   
+
+function prepreplacements(old:seq.word, new:seq.word, pairs:seq.word, i:int)seq.word 
+ // the pair elements in pair are one after the other. The first element will be merged with a"&".The result is the first elements sorted followed by the second elements rearranged to match the sort. // 
+  if i > length.pairs 
+  then old + new 
+  else let val = merge("&"+ pairs_i)
+  let j = binarysearch(old, val)
+  prepreplacements(subseq(old, 1,-j - 1)+ [ val]+ subseq(old,-j, length.old), subseq(new, 1,-j - 1)+ [ pairs_(i + 1)]+ subseq(new,-j, length.new), pairs, i + 2)
+
+
+function reconstruct(t:triple) word if c.t > 0 then  encodeword([a.t,b.t,c.t]) else 
+                                    if b.t > 0 then encodeword([a.t,b.t]) else encodeword([a.t]) 
 
 Function searchhash(p:seq.int, b:seq.triple, i:int, result:seq.word, m:int)seq.word 
  let base = length.p 
   let x = p_(i mod base + 1)
-  let y = p_(i / base mod base + 1)
-  let tmp = i / base / base 
-  if tmp ≥ base 
+  let tmp =  i / base
+   if tmp ≥ base 
   then result 
-  else let z = p_(tmp + 1)
-  let l = length.b - length.toseq.@(+, try(x, y, z, m), empty:set.int, b)
-  if l < 6 
-  then searchhash(p, b, i + 1, result +"&br"+ @(+, toword,"", [ m, x, y, z, l]), m)
+  else let y = p_(tmp + 1)
+  // let l = length.b - length.toseq.@(+, try(x, y,  m), empty:set.int, b)
+   if l < 4 
+    then searchhash(p, b, i + 1, result +"&br"+ @(+, toword,"", [ m, x, y,  l]), m)
+  else searchhash(p, b, i + 1, result, m)
+//  
+  let l =check(0,b,x,y,m,1,2)
+  if not(l="fail")  
+  then searchhash(p, b, i + 1, result +"&br"+ @(+, toword,"", [ m, x, y])+l, m)
   else searchhash(p, b, i + 1, result, m)
 
 function findprimes(start:int, end:int)seq.int 

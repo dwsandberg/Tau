@@ -18,6 +18,8 @@ use seq.syminfo
 
 use seq.word
 
+use seq.seq.word
+
 use stacktrace
 
 use stdlib
@@ -256,7 +258,7 @@ Function replaceT(with:mytype, name:word)word
   assert subseq(d, length.d, length.d)= [ 84]report"PROBLEM replacing T in word"+ name +"with"+ print.with 
   merge([ encodeword.subseq(d, 1, length.d - 1)]+ print.with)
 
-Function libsymencoding erecord.libsym builtin.ERECORD.NOINLINE
+Function libsymencoding erecord.libsym builtin.NOINLINE.ERECORD
 
 function f42(mangledname:word, types:seq.mytype, l:libsym)seq.word 
  let info = syminfo.l 

@@ -6,7 +6,7 @@ use stdlib
 
 setfld set value at a to x and return next address
 
-Function setfld(a:address.T, x:T)address.T builtin.usemangle.STATE
+Function setfld(a:address.T, x:T)address.T builtin.STATE.usemangle
 
 function allocatespace(i:int)seq.T builtin.usemangle
 
@@ -14,9 +14,9 @@ type address is record toseq:seq.T
 
 Function getaddress(s:seq.T, i:int)address.T builtin.usemangle
 
-Function toT(a:address.T)T builtin
+Function toT(a:address.T)T builtin.NOOP
 
-function inttoT(int)T builtin
+function inttoT(int)T builtin.NOOP
 
 function fldof(T, offset:int)T builtin.IDXUC
 

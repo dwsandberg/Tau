@@ -80,18 +80,25 @@ Function parsesyminfo(modname:mytype, text:seq.word)syminfo
    then"EXPORT"+ toword.length.paras 
    else if label.functionbody.t ="unbound"_1 
    then"UNBOUND"+ toword.length.paras 
-   else if label.functionbody.t in"builtin"
-   then if nosons.functionbody.t = 1 
-    then let arg1 = label(functionbody(t)_1)
-     let arg = if arg1 ="usemangle"_1 
+   else if label.functionbody.t ="builtin"_1
+   then 
+   assert nosons.functionbody.t = 1 report "builtin must have one argument:"+ text
+      let first= label(functionbody(t)_1)
+        // assert  nosons(functionbody(t)_1) =0 &or first in "STATE NOINLINE" report text //
+     let second=if nosons(functionbody(t)_1) =0 then "" else [label(functionbody(t)_1_1)]
+     let arg1 =if first in "STATE NOINLINE" &and nosons(functionbody(t)_1) =1 then 
+      second_1 else first
+    let r= if arg1 = "EMPTYSEQ"_1 then
+        "LIT 0 LIT 0 RECORD 2"
+    else if arg1 = "NOOP"_1 then ""
+    else 
+       [if arg1 ="usemangle"_1 
       then mangle(funcname, mytype."builtin", @(+, mytype, empty:seq.mytype, paras))
-      else arg1 
-     [ arg]+ toword.length.paras + if nosons(functionbody(t)_1)= 1 
-      then [ label(functionbody(t)_1_1)]+"1"
-      else""
-    else if nosons.functionbody.t = 0 ∧ not(length.paras = 1)
-    then"USECALL"
-    else @(+, label,"", sons.functionbody.t)
+      else arg1]+  toword.length.paras 
+      if nosons(functionbody(t)_1)= 1 
+      then 
+        r+ ( if first in "STATE NOINLINE" then [first] else second) +"1"
+      else r 
    else"USECALL"
   syminfo(funcname, if subseq(inst, 1, 1)="UNBOUND"
    then mytype."T unbound"
