@@ -6,7 +6,7 @@ use passcommon
 
 use seq.int
 
-use seq.tree.cnode
+use seq.tree.seq.word
 
 use seq.word
 
@@ -14,18 +14,18 @@ use set.word
 
 use stdlib
 
-use tree.cnode
+use tree.seq.word
 
-use seq.seq.tree.cnode
+use seq.seq.tree.seq.word
 
-Function opt2(t:tree.cnode)tree.cnode 
+Function opt2(t:tree.seq.word)tree.seq.word 
  if inst.t ="FINISHLOOP"_1 
   then let x = removeRECORD.t 
-   if inst.x ="nogo"_1 then tree(label.t, @(+, opt2, empty:seq.tree.cnode, sons.t))else x 
-  else tree(label.t, @(+, opt2, empty:seq.tree.cnode, sons.t))
+   if inst.x ="nogo"_1 then tree(label.t, @(+, opt2, empty:seq.tree.seq.word, sons.t))else x 
+  else tree(label.t, @(+, opt2, empty:seq.tree.seq.word, sons.t))
   
 
-function removeRECORD(loop:tree.cnode)tree.cnode 
+function removeRECORD(loop:tree.seq.word)tree.seq.word 
  let lb = loop_1 
   let first = toint.arg(lb_nosons.lb)
   if not(inst(loop_2)="if"_1)
@@ -46,19 +46,19 @@ function removeRECORD(loop:tree.cnode)tree.cnode
   let size = toint.encodeword.subseq(z, i + 1, 100)
   let map = constantseq(first, 0)+(size - 1)
   let if1 = splitrecord(first, map, expand, loop_2_1)
-  let if2 = tree(cnode("RECORD"_1,"0"_1), @(+, makelocal, empty:seq.tree.cnode, arithseq(size, 1, first)))
+  let if2 = tree(cnode("RECORD"_1,"0"_1), @(+, makelocal, empty:seq.tree.seq.word, arithseq(size, 1, first)))
   let if3 = splitrecord(first, map, expand, loop_2_3)
   // assert false report a +"/"+ b + printb(0, loop)// 
-  let newloopblock = tree(label.lb, @(+, fixloopinit(sons.lb, size, expand, first), empty:seq.tree.cnode, arithseq(nosons.lb - 1, 1, 1))+ lb_nosons.lb)
+  let newloopblock = tree(label.lb, @(+, fixloopinit(sons.lb, size, expand, first), empty:seq.tree.seq.word, arithseq(nosons.lb - 1, 1, 1))+ lb_nosons.lb)
   let newloop = tree(label.loop, [ newloopblock, tree(label(loop_2), [ if1, if2, if3])])
   assert true report"B"+ printb(0, newloop)+">>>"+ printb(0, loop)
   newloop
 
-function makelocal(i:int)tree.cnode tree.cnode("LOCAL"_1, toword.i)
+function makelocal(i:int)tree.seq.word    tree.[ "LOCAL"_1, toword.i]
 
-function nogo tree.cnode tree.cnode("nogo"_1,"0"_1)
+function nogo tree.seq.word tree."nogo 0" 
 
-function look(first:int, t:tree.cnode)seq.word 
+function look(first:int, t:tree.seq.word)seq.word 
  // returns all local variables that are not accessed like"IDXUC(LOCAL x, LIT y)".Also returns"jXi"where j is loop variable of form RECORD(s1, s2,... , si)// 
   if inst.t ="CONTINUE"_1 
   then @(mergecheckrecord.first, checkrecord,"", sons.t)+ @(+, look.first,"", sons.t)
@@ -68,7 +68,7 @@ function look(first:int, t:tree.cnode)seq.word
   then""
   else @(+, look.first,"", sons.t)
 
-function checkrecord(t:tree.cnode)word 
+function checkrecord(t:tree.seq.word)word 
  if inst.t ="SET"_1 
   then checkrecord(t_2)
   else if inst.t in"RECORD MRECORD"then toword.nosons.t else"X"_1
@@ -78,45 +78,45 @@ function mergecheckrecord(first:int, s:seq.word, t:word)seq.word
   then s + toword(first + length.s)
   else s + merge([ toword(first + length.s)]+"X"+ t)
 
-function splitrecord(first:int, map:seq.int, expand:seq.int, t:tree.cnode)tree.cnode 
+function splitrecord(first:int, map:seq.int, expand:seq.int, t:tree.seq.word)tree.seq.word 
  let inst = inst.t 
   if inst ="LOCAL"_1 
-  then tree.cnode(inst, toword.mapit(map, arg.t))
+  then tree.[inst, toword.mapit(map, arg.t)]
   else if inst ="SET"_1 
   then tree(cnode(inst, toword.mapit(map, arg.t)), [ splitrecord(first, map, expand, t_1), splitrecord(first, map, expand, t_2)])
   else if inst ="IDXUC"_1 ∧ inst(t_2)="LIT"_1 ∧ inst(t_1)="LOCAL"_1 ∧ toint.arg(t_1)in expand 
-  then tree.cnode("LOCAL"_1, toword(mapit(map, arg(t_1))+ toint.arg(t_2)))
+  then tree.["LOCAL"_1, toword(mapit(map, arg(t_1))+ toint.arg(t_2))]
   else if inst ="CONTINUE"_1 
   then if inst(t_1)="SET"_1 
    then // push CONTINUE down the tree // 
     let newt = tree(label(t_1), [ t_1_1, tree(label.t, [ t_1_2]+ subseq(sons.t, 2, nosons.t))])
     splitrecord(first, map, expand, newt)
    else assert inst(t_1)in"RECORD MRECORD"report"CONT"+ printb(0, t)
-   tree(label.t, @(+, handlecontinue(first, map, expand, t), empty:seq.tree.cnode, arithseq(nosons.t, 1, 1)))
-  else tree(label.t, @(+, splitrecord(first, map, expand), empty:seq.tree.cnode, sons.t))
+   tree(label.t, @(+, handlecontinue(first, map, expand, t), empty:seq.tree.seq.word, arithseq(nosons.t, 1, 1)))
+  else tree(label.t, @(+, splitrecord(first, map, expand), empty:seq.tree.seq.word, sons.t))
 
-function handlecontinue(first:int, map:seq.int, expand:seq.int, t:tree.cnode, son:int)seq.tree.cnode 
+function handlecontinue(first:int, map:seq.int, expand:seq.int, t:tree.seq.word, son:int)seq.tree.seq.word 
  if son + first - 1 in expand 
   then if inst(t_son)="MRECORD"_1 
    then [ splitrecord(first, map, expand, t_son_2)]
-   else @(+, splitrecord(first, map, expand), empty:seq.tree.cnode, sons(t_son))
+   else @(+, splitrecord(first, map, expand), empty:seq.tree.seq.word, sons(t_son))
   else [ splitrecord(first, map, expand, t_son)]
 
-function fixloopinit(loopsons:seq.tree.cnode, size:int, expand:seq.int, first:int, i:int)seq.tree.cnode 
+function fixloopinit(loopsons:seq.tree.seq.word, size:int, expand:seq.int, first:int, i:int)seq.tree.seq.word 
  let son = loopsons_i 
   if first + i - 1 in expand 
   then assert inst.son in"PARAM LOCAL RECORD CRECORD"report"opt2 problem"+ printb(0, son)
-   @(+, fixloopinit.son, empty:seq.tree.cnode, arithseq(size, 1, 0))
+   @(+, fixloopinit.son, empty:seq.tree.seq.word, arithseq(size, 1, 0))
   else [ son]
 
-function fixloopinit(t:tree.cnode, i:int)tree.cnode 
- tree(cnode("IDXUC"_1,"0"_1), [ t, tree.cnode("LIT"_1, toword.i)])
+function fixloopinit(t:tree.seq.word, i:int)tree.seq.word 
+ tree(cnode("IDXUC"_1,"0"_1), [ t, tree.["LIT"_1, toword.i]])
 
 function mapit(map:seq.int, arg:word)int 
  let i = toint.arg 
   if i > length.map then last.map + i else i + map_i
 
-Function printb(level:int, t:tree.cnode)seq.word 
+Function printb(level:int, t:tree.seq.word)seq.word 
  // for printing code tree // 
   let inst = inst.t 
   {"&br"+ constantseq(level,"_"_1)+ if inst ="if"_1 
@@ -129,15 +129,15 @@ Function printb(level:int, t:tree.cnode)seq.word
 
 _____________
 
-Function removerecords(x:tree.cnode)tree.cnode 
- let t = tree(label.x, @(+, removerecords, empty:seq.tree.cnode, sons.x))
+Function removerecords(x:tree.seq.word)tree.seq.word 
+ let t = tree(label.x, @(+, removerecords, empty:seq.tree.seq.word, sons.x))
   // assert not(inst.t ="SET"_1 ∧ inst.t_1 in"CRECORD RECORD"∧ label.t_1_1 = label.t_1_2)report(if check(arg.t, false, t_2)then"check"else"")+ printb(0, t_2)+"VAR"+ arg.t // 
   if inst.t ="SET"_1 ∧ inst(t_1)in"CRECORD RECORD"
   then let chk = check(arg.t, false, t_2)
-   if chk = 10000 then t else fix2(t, empty:seq.tree.cnode, 1, chk + 1)
+   if chk = 10000 then t else fix2(t, empty:seq.tree.seq.word, 1, chk + 1)
   else t
 
-function check(var:word, parent:boolean, t:tree.cnode)int 
+function check(var:word, parent:boolean, t:tree.seq.word)int 
  // returns 10000 if does not check. Returns max var used in tree if does checkout. parent indicates if the parent is IDXUC // 
   if inst.t ="LOCAL"_1 ∧ arg.t = var 
   then if parent then toint.arg.t else 10000 
@@ -145,7 +145,7 @@ function check(var:word, parent:boolean, t:tree.cnode)int
    then toint.arg.t 
    else if inst.t ="LOOPBLOCK"_1 then toint.arg(t_nosons.t)+ nosons.t - 2 else 0, sons.t)
 
-function fix2(t:tree.cnode, replacements:seq.tree.cnode, i:int, varbase:int)tree.cnode 
+function fix2(t:tree.seq.word, replacements:seq.tree.seq.word, i:int, varbase:int)tree.seq.word 
  // replaces"fld1 fld2 RECORD 2 exp SET y"with"fld1 fld2 exp SET v2 SET v1"// 
   if i > nosons(t_1)
   then fix3(arg.t, replacements, t_2)
@@ -153,19 +153,19 @@ function fix2(t:tree.cnode, replacements:seq.tree.cnode, i:int, varbase:int)tree
   if inst.s in"LIT LOCAL PARAM FREF"
   then fix2(t, replacements + s, i + 1, varbase)
   else let var = toword(varbase + i)
-  tree(cnode("SET"_1, var), [ s, fix2(t, replacements + tree.cnode("LOCAL"_1, var), i + 1, varbase)])
+  tree(cnode("SET"_1, var), [ s, fix2(t, replacements + tree.["LOCAL"_1, var], i + 1, varbase)])
 
-function fix3(var:word, replacements:seq.tree.cnode, t:tree.cnode)tree.cnode 
+function fix3(var:word, replacements:seq.tree.seq.word, t:tree.seq.word)tree.seq.word 
  // replaces IDXUC(LOCAL var, LIT i)with replacements_(i + 1)// 
   if inst.t ="IDXUC"_1 ∧ inst(t_2)="LIT"_1 ∧ inst(t_1)="LOCAL"_1 ∧ arg(t_1)= var 
   then replacements_(toint.arg(t_2)+ 1)
   else if inst.t ="SET"_1 ∧ inst.t = var 
   then t 
-  else tree(label.t, @(+, fix3(var, replacements), empty:seq.tree.cnode, sons.t))
+  else tree(label.t, @(+, fix3(var, replacements), empty:seq.tree.seq.word, sons.t))
 
 ___________________
 
-function returnsrecord(t:tree.cnode)int 
+function returnsrecord(t:tree.seq.word)int 
  if inst.t ="RECORD"_1 
   then nosons.t 
   else if inst.t ="MRECORD"_1 
@@ -177,26 +177,26 @@ function returnsrecord(t:tree.cnode)int
    if a = 0 then 0 else if a = returnsrecord(t_3)then a else 0 
   else 0
 
-Function hoistRecord(t:tree.cnode)tree.cnode 
+Function hoistRecord(t:tree.seq.word)tree.seq.word 
  if nosons.t = 0 
   then t 
-  else let sons = @(+, hoistRecord, empty:seq.tree.cnode, sons.t)
+  else let sons = @(+, hoistRecord, empty:seq.tree.seq.word, sons.t)
   if inst.t ="if"_1 
   then let a = returnsrecord.t 
    if a > 0 
-   then tree(cnode."MRECORD", [ replacerecord(a, t), tree.cnode("FIRSTVAR"_1, toword.a)])
-   else tree(cnode."if", sons)
+   then tree("MRECORD", [ replacerecord(a, t), tree.["FIRSTVAR"_1, toword.a]])
+   else tree("if", sons)
   else tree(label.t, sons)
 
-function localtree(i:int)tree.cnode tree.cnode("LOCAL"_1, toword.i)
+function localtree(i:int)tree.seq.word tree.["LOCAL"_1, toword.i]
 
-function replacerecord(size:int, t:tree.cnode)tree.cnode 
+function replacerecord(size:int, t:tree.seq.word)tree.seq.word 
  if inst.t in"RECORD"
-  then tree(cnode."MSET", sons.t)
+  then tree("MSET", sons.t)
   else if inst.t ="MRECORD"_1 
   then t_1 
   else if inst.t ="if"_1 
-  then tree(cnode."if 4", [ t_1, replacerecord(size, t_2), replacerecord(size, t_3), tree.cnode("FIRSTVAR"_1, toword.size)])
+  then tree("if 4", [ t_1, replacerecord(size, t_2), replacerecord(size, t_3), tree.["FIRSTVAR"_1, toword.size]])
   else assert inst.t ="SET"_1 report"replacerecord"+ inst.t 
   tree(label.t, [ t_1, replacerecord(size, t_2)])
 

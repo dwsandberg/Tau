@@ -26,45 +26,37 @@ use seq.seq.int
 
 use seq.seq.word
 
-use seq.tree.cnode
+use seq.tree.seq.word
 
 use seq.word
 
-use stack.tree.cnode
+use stack.tree.seq.word
 
 use stdlib
 
-use tree.cnode
+use tree.seq.word
 
 use seq.int
 
 use seq.seq.ipair.func
 
-type cnode is record towordseq:seq.word
 
-Function inst(t:tree.cnode)word towordseq(label.t)_1
+Function inst(t:tree.seq.word)word  { (label.t)_1 }
 
-Function arg(t:tree.cnode)word 
- let a = towordseq.label.t 
+Function arg(t:tree.seq.word)word 
+ let a =  label.t 
   if length.a < 2 then"0"_1 else a_2
 
-Function inst(a:cnode)word towordseq(a)_1
 
-Function arg(a:cnode)word 
- if length.towordseq.a < 2 then"0"_1 else towordseq(a)_2
+Function cnode(a:word, b:word) seq.word [ a, b]
 
-Function cnode(a:word, b:word)cnode cnode.[ a, b]
 
-Function cnode(seq.word)cnode export
-
-Function =(a:cnode, b:cnode)boolean towordseq.a = towordseq.b
-
-type func is record nopara:int, returntype:mytype, mangledname:word, codetree:tree.cnode, flags:seq.word
+type func is record nopara:int, returntype:mytype, mangledname:word, codetree:tree.seq.word, flags:seq.word
 
 Function dummyfunc func 
  func(0, mytype."int","dummyfunc"_1, buildcodetree(0,"X LIT 1"),"noprofile")
 
-Function func(nopara:int, returntype:mytype, mangledname:word, codetree:tree.cnode, flags:seq.word)func 
+Function func(nopara:int, returntype:mytype, mangledname:word, codetree:tree.seq.word, flags:seq.word)func 
  export
 
 Function returntype(f:func)mytype export
@@ -75,33 +67,33 @@ Function mangledname(s:func)word export
 
 Function flags(s:func)seq.word export
 
-Function codetree(f:func)tree.cnode export
+Function codetree(f:func)tree.seq.word export
 
 Function =(a:func, b:func)boolean mangledname.a = mangledname.b
 
-type bld is record state:int, last:word, stk:stack.tree.cnode, hasstate:boolean
+type bld is record state:int, last:word, stk:stack.tree.seq.word, hasstate:boolean
 
 function addinstruction(nopara:int, b:bld, w:word)bld 
  // state:0 initial, 1 found CALL, 2 at noargs, 4 at funcname in CALL // 
   FORCEINLINE.let newstk = if state.b < 2 ∨ last.b in"FLAT NOINLINE STATE"∧ w ="1"_1 ∨ last.b in"THENBLOCK ELSEBLOCK DEFINE"
     then stk.b 
     else let z = if last.b in"LIT LOCAL FREF WORD"
-     then tree.cnode(last.b, w)
+     then tree.[last.b, w]
      else if last.b ="PARA"_1 
-     then tree.cnode("PARAM"_1, toword(toint.w - nopara - 2))
+     then tree.["PARAM"_1, toword(toint.w - nopara - 2)]
      else if last.b in"FLD"
      then tree(if w ="1"_1 
-      then cnode."IDXUC 0"
-      else cnode."getaddressZbuiltinZTzseqZint 0", top(stk.b, 2))
+      then "IDXUC 0"
+      else "getaddressZbuiltinZTzseqZint 0", top(stk.b, 2))
      else if last.b in"SET"
      then tree(cnode(last.b, w), top(stk.b, 2))
      else if last.b in"$build $wordlist"
      then let noelements = toint.w 
-      let prefix = [ tree.cnode."LIT 0", tree.cnode("LIT"_1, w)]
-      tree(cnode."RECORD", prefix + removeflat.top(stk.b, noelements))
+      let prefix = [ tree."LIT 0", tree.["LIT"_1, w]]
+      tree("RECORD", prefix + removeflat.top(stk.b, noelements))
      else if last.b ="RECORDS"_1 
      then // last element in record becomes the first // 
-      tree(cnode."RECORD", removeflat([ top.stk.b]+ top(pop.stk.b, toint.w - 1)))
+      tree("RECORD", removeflat([ top.stk.b]+ top(pop.stk.b, toint.w - 1)))
      else if last.b ="FLAT"_1 
      then tree(cnode(last.b, w), [ top.stk.b])
      else let sons = top(stk.b, toint.if state.b = 4 then last.b else w)
@@ -111,20 +103,20 @@ function addinstruction(nopara:int, b:bld, w:word)bld
     then if w ="CALL"_1 then 1 else 2 
     else if state.b = 1 then 4 else 0, w, newstk, hasstate.b ∨ last.b ="STATE"_1 ∧ w ="1"_1)
 
-Function buildcodetree(nopara:int, data:seq.word)tree.cnode 
- let a = @(addinstruction.nopara, identity, bld(0,"START"_1, empty:stack.tree.cnode, false), subseq(data, 2, length.data))
-  if hasstate.a then tree(cnode."STATE 0", [ top.stk.a])else top.stk.a
+Function buildcodetree(nopara:int, data:seq.word)tree.seq.word 
+ let a = @(addinstruction.nopara, identity, bld(0,"START"_1, empty:stack.tree.seq.word, false), subseq(data, 2, length.data))
+  if hasstate.a then tree("STATE 0", [ top.stk.a])else top.stk.a
 
-function removeflat(s:seq.tree.cnode)seq.tree.cnode @(+, processson, empty:seq.tree.cnode, s)
+function removeflat(s:seq.tree.seq.word)seq.tree.seq.word @(+, processson, empty:seq.tree.seq.word, s)
 
-function processson(t:tree.cnode)seq.tree.cnode 
+function processson(t:tree.seq.word)seq.tree.seq.word 
  if inst.t ="FLAT"_1 
   then let firstson = t_1 
-   @(+, fixup2.firstson, empty:seq.tree.cnode, arithseq(toint.arg.t, 1, 0))
+   @(+, fixup2.firstson, empty:seq.tree.seq.word, arithseq(toint.arg.t, 1, 0))
   else [ t]
 
-function fixup2(x:tree.cnode, i:int)tree.cnode 
- tree(cnode("IDXUC"_1,"0"_1), [ x, tree.cnode("LIT"_1, toword.i)])
+function fixup2(x:tree.seq.word, i:int)tree.seq.word 
+ tree( "IDXUC 0", [ x, tree.["LIT"_1, toword.i]])
 
 Function check(a:seq.word, count:int, i:int, ops:seq.word)seq.word 
  if i > length.a 
@@ -150,7 +142,7 @@ function isdigits(w:word)boolean @(∧, isdigit, true, decode.w)
 
 function isdigit(i:int)boolean between(i, 48, 57)
 
-Function print(t:tree.cnode)seq.word 
+Function print(t:tree.seq.word)seq.word 
  let inst = inst.t 
   @(+, print,"", sons.t)+ if inst in"PARA LIT LOCAL FREF WORD FLAT PARAM FIRSTVAR"
    then [ inst, arg.t]
@@ -165,13 +157,13 @@ Function print(a:func)seq.word
 
 type ch1result is record nodecount:int, para:seq.int
 
-function combine(nopara:int, a:ch1result, t:tree.cnode)ch1result 
+function combine(nopara:int, a:ch1result, t:tree.seq.word)ch1result 
  if nodecount.a > 15 
   then ch1result(1000, empty:seq.int)
   else let b = ch1(nopara, t)
   ch1result(nodecount.a + nodecount.b, para.a + para.b)
 
-function ch1(nopara:int, t:tree.cnode)ch1result 
+function ch1(nopara:int, t:tree.seq.word)ch1result 
  if inst.t ="PARA"_1 
   then ch1result(1, [ toint.arg.t - nopara - 2])
   else if inst.t ="PARAM"_1 
@@ -180,7 +172,7 @@ function ch1(nopara:int, t:tree.cnode)ch1result
   then ch1result(1000, empty:seq.int)
   else @(combine.nopara, identity, ch1result(1, empty:seq.int), sons.t)
 
-Function functype(t:tree.cnode, nopara:int)word 
+Function functype(t:tree.seq.word, nopara:int)word 
  let a = ch1(nopara, t)
   if nodecount.a > 15 
   then"COMPLEX"_1 
@@ -190,7 +182,7 @@ Function functype(t:tree.cnode, nopara:int)word
 
 _____________________
 
-Function prepb(allfunctions:invertedseq.func, t:tree.cnode)seq.int 
+Function prepb(allfunctions:invertedseq.func, t:tree.seq.word)seq.int 
  let inst = inst.t 
   if inst in"LIT LOCAL FREF WORD PARAM FIRSTVAR"
   then [ aseinst.[ inst, arg.t]]
@@ -286,7 +278,7 @@ function initinst seq.inst
 
 setfldZbuiltinZTzaddressZT
 
-function prep3(t:tree.cnode)seq.word 
+function prep3(t:tree.seq.word)seq.word 
  @(+, prep3,"", sons.t)+ [ inst.t, if nosons.t > 0 then toword.nosons.t else arg.t]
 
 type einst is encoding inst
@@ -323,7 +315,7 @@ function encode(x:inst)int encoding.encode(x, einst)
 function toinst(f:func)inst inst([ mangledname.f, toword.nopara.f], flags.f, returntype.f)
 
 Function lookupfunc(allfunctions:invertedseq.func, f:word)func 
- let z = find(allfunctions, func(0, mytype."", f, tree.cnode("X"_1,"X"_1),""))
+ let z = find(allfunctions, func(0, mytype."", f, tree."X X",""))
   assert length.z > 0 report"cannot locate"+ f 
   value(z_1)
 
