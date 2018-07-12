@@ -6,6 +6,8 @@ use seq.tree.word
 
 use seq.word
 
+use seq.seq.word
+
 use stdlib
 
 use tree.word

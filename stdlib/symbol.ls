@@ -16,6 +16,8 @@ use set.syminfo
 
 use set.word
 
+use seq.word
+
 use stdlib
 
 Function CALLcode(info:syminfo)seq.word 

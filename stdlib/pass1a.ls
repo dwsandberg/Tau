@@ -52,6 +52,8 @@ use set.word
 
 use stdlib
 
+use processtypes
+
 use tree.word
 
 Function =(a:r3, b:r3)boolean false

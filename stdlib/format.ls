@@ -4,6 +4,10 @@ use set.int
 
 use stack.seq.word
 
+use  seq.seq.word
+
+use seq.word
+
 use stack.word
 
 use stdlib

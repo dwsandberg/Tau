@@ -54,6 +54,8 @@ Function prettytest seq.word prettylib("test1","")
 
 Function checkdoclib seq.word doclibrary."tools"
 
+use seq.word
+
 Function test seq.word 
  let a = compilelib("stdlib"_1)
   a + profileresults."time"

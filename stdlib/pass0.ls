@@ -34,6 +34,8 @@ use stdlib
 
 use tree.word
 
+use processtypes
+
 /use parse
 
 Function ?(a:mod2desc, b:mod2desc)ordering 

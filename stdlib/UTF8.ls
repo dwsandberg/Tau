@@ -2,6 +2,8 @@ Module UTF8
 
 use stdlib
 
+use seq.int
+
 type UTF8 is record toseqint:seq.int
 
 Function UTF8x(s:seq.word)UTF8 UTF8.@(+, decode, empty:seq.int, s)

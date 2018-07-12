@@ -354,7 +354,6 @@ function tauruleprec seq.seq.word
  "E E ∨ E", 
  "∨"]
 
-function hh(a:seq.seq.word) seq.word "[  &quot "+a_1+" &quot  ,  &quot  assert false report"+merge("&"+"quot")+" not handled+"+a_1+merge("&"+"quot")+" $_1  &quot  ]," 
 
 Function gentau2 seq.word     lr1parser(taurules2, tauruleprec)
 
@@ -363,12 +362,12 @@ Function gentau2 seq.word     lr1parser(taurules2, tauruleprec)
 
 
 function taurules2 seq.seq.seq.word
-[[" G F # ","assert false report  &quot  not handled + G F #  &quot  $_1  
-"],[" F W W(P)T E ","let functype=code.$_6
+[[" G F # ","  $_1  
+"],[" F W W(FP)T E ","let functype=code.$_6
    let exptype=types.$_7
    assert mytype.functype=exptype_1 &or exptype_1=mytype.&quot  internal &quot   report  &quot  function type of &quot  +print.mytype.functype+ &quot  does not match expression type  &quot  +print.exptype_1
     bindinfo(dict,code.$_7,[ mytype.code.$_2,mytype.functype]+types.$_4)    
-"],[" F W N(P)T E ","let functype=code.$_6
+"],[" F W N(FP)T E ","let functype=code.$_6
    let exptype=types.$_7
    assert mytype.functype=exptype_1 &or exptype_1=mytype.&quot  internal &quot   report  &quot  function type of &quot  +print.mytype.functype+ &quot  does not match expression type  &quot  +print.exptype_1
     bindinfo(dict,code.$_7,[ mytype.code.$_2,mytype.functype]+types.$_4)    
@@ -378,20 +377,20 @@ function taurules2 seq.seq.seq.word
    assert mytype.functype=exptype_1 &or exptype_1=mytype.&quot  internal &quot   report  &quot  function type of  &quot  +print.mytype.functype+ &quot  does not match expression type  &quot  +print.exptype_1
     bindinfo(dict,code.$_4,[ mytype.code.$_2,mytype.functype])     
 "],[" F W W:T E ","
-  let functype=code.$_4
+let functype=code.$_4
    let exptype=types.$_5
    assert mytype.functype=exptype_1 &or exptype_1=mytype.&quot  internal &quot   report  &quot  function type of &quot  +print.mytype.functype+ &quot  does not match expression type &quot  +print.exptype_1
-   // bindinfo(dict,code.$_5,[ mytype.[merge(code.$_2+ &quot  : &quot  +print.mytype.functype)],mytype.functype]) //
-   bindinfo(dict,code.$_5,[ mytype.code.$_2 ,mytype.functype ])   
-"],[" F W W is W P ","bindinfo(dict,code.$_4+code.$_2,types.$_5)  
+bindinfo(dict,code.$_5,[ mytype.[merge(code.$_2+ &quot  : &quot  +print.mytype.functype)],mytype.functype])
+ "],[" F W W is W P ","bindinfo(dict,code.$_4+code.$_2,types.$_5)  
 "],[" F W T "," $_2  
-"],[" P T "," bindinfo(dict, &quot   &quot  ,[ mytype(code.$_1)])   
+"],[" FP  P ","$_1"],
+[" P T "," bindinfo(dict, &quot   &quot  ,[ mytype(code.$_1)])   
 "],[" P P, T "," bindinfo(dict, &quot   &quot  ,types.$_1+[ mytype(code.$_3)])  
 "],[" P W:T "," 
-let newdict = dict + symbol((code.$_1)_1, mytype( &quot  1 para &quot  ), empty:seq.mytype,mytype(code.$_3))
+let newdict = dict + symbol((code.$_1)_1, mytype( &quot  1 para &quot  ), empty:seq.mytype,mytype(code.$_3),&quot &quot)
    bindinfo(newdict, &quot   &quot  ,[ mytype(code.$_3)])   
 "],[" P P, W:T "," 
-let newdict = dict + symbol((code.$_3)_1, mytype([toword(length.types.$_1+1)]+ &quot  para &quot  ), empty:seq.mytype,mytype(code.$_5))
+let newdict = dict + symbol((code.$_3)_1, mytype([toword(length.types.$_1+1)]+ &quot  para &quot  ), empty:seq.mytype,mytype(code.$_5),&quot &quot)
 bindinfo(newdict, &quot   &quot  ,types.$_1+[ mytype(code.$_5)])  
 "],[" E W ","let id = code.$_1 
 let f = lookup(dict, id_1, empty:seq.mytype)
@@ -407,26 +406,26 @@ assert (types.$_2)_1 =mytype.&quot  boolean &quot   report  &quot  cond of if mu
 assert (types.$_4) =(types.$_6) report  &quot  then and else types are different &quot  
   let newcode= code.$_2 + code.$_4 + code.$_6 
    bindinfo(dict,newcode+  &quot  if &quot  ,types.thenpart)
-"],[" E E^E ","opaction(subtrees)  
-"],[" E E_E ","opaction(subtrees)  
+"],[" E E^E ","opaction(subtrees,input,place)  
+"],[" E E_E ","opaction(subtrees,input,place)  
 "],[" E-E ","unaryop( $_1,$_2)  
 "],[" E W.E ","unaryop( $_1,$_3)  
 "],[" E N.E ","unaryop( $_1,$_3)  
-"],[" E E * E ","opaction(subtrees)  
-"],[" E E-E ","opaction(subtrees)
-"],[" E E = E ","opaction(subtrees)  
-"],[" E E > E ","opaction(subtrees) 
-"],[" E E ∧ E ","opaction(subtrees)  
-"],[" E E ∨ E "," opaction(subtrees)  
+"],[" E E * E ","opaction(subtrees,input,place)  
+"],[" E E-E ","opaction(subtrees,input,place)
+"],[" E E = E ","opaction(subtrees,input,place)  
+"],[" E E > E ","opaction(subtrees,input,place) 
+"],[" E E ∧ E ","opaction(subtrees,input,place)  
+"],[" E E ∨ E "," opaction(subtrees,input,place)  
 "],[" L E ","$_1  
 "],[" L L, E ","
 bindinfo(dict,code.$_1+code.$_3,types.$_1+types.$_3)
 "],[" E [ L]","
  let types=types($_2)
  assert @(∧, =(types_1), true, types )report  &quot  types do not match in build &quot   
-    bindinfo( dict, code.$_2+ &quot  $build &quot  +toword.length.types, [mytype(towords(types_1)+ &quot  seq &quot   )])
+    bindinfo( dict,&quot 0 &quot+toword.(length.types)+ code.$_2+ &quot  RECORD &quot  +toword.(length.types+2), [mytype(towords(types_1)+ &quot  seq &quot   )])
  "],[" A let W = E "," let e = $_4 let name =(code.$_2)_1 
-let newdict = dict + symbol(name, mytype( &quot  local &quot  ), empty:seq.mytype,(types.e)_1)
+let newdict = dict + symbol(name, mytype( &quot  local &quot  ), empty:seq.mytype,(types.e)_1,&quot &quot)
 bindinfo(newdict, code.e + &quot  define &quot  + name, types.e)
 "],[" E A E ","let f = lookup(dict, last.code.$_1, empty:seq.mytype)
 assert not.isempty.f report  &quot  error &quot  bindinfo(dict.$_1-f, code.$_1 + code.$_2 + &quot  undefine &quot  , types.$_2)
@@ -437,12 +436,13 @@ assert types($_2)_1 = mytype.&quot  boolean &quot  report  &quot  condition in a
   bindinfo(dict,newcode,types.$_5)
 "],[" E I ","$_1  
 "],[" E I.I "," let d = decode.(code.$_3)_1 
-bindinfo(dict, [ encodeword(decode.(code.$_1)_1 + d)]+countdigits(d, 1, 0)+&quot  makereal  &quot ,[mytype.&quot  real  &quot] )
+bindinfo(dict, [ encodeword(decode.(code.$_1)_1 + d)]+countdigits(d, 1, 0)+&quot  makerealZrealZintZint  &quot ,[mytype.&quot  real  &quot] )
 "],[" T W ","$_1  
 "],[" T W.T ","bindinfo(dict,code.$_3+code.$_1,types.$_1)  
 "],[" E W:T ","
-let funcname=merge(code.$_1+ &quot  : &quot  +print.mytype.code.$_3)
-bindinfo(dict,[funcname],[mytype.if code.$_1=&quot sizeoftype &quot then &quot int &quot else  code.$_3]) 
+let f = lookup(dict,  merge(code.$_1 + &quot :  &quot+ print.mytype.code.$_3), empty:seq.mytype)
+assert not.isempty.f report errormessage( &quot cannot find  &quot+ code.$_1 + &quot: &quot+ print.mytype.code.$_3,input,place)
+bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])
 "],[" E $wordlist ","let s = code.$_1
    bindinfo(dict,  &quot  $wordlist &quot  +toword.length.s+s,[mytype.&quot  word seq &quot  ])
 "],[" E comment E "," $_2  

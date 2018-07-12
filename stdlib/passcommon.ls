@@ -22,9 +22,21 @@ use seq.seq.int
 
 use set.word
 
+use set.syminfo
+
+use set.libtype
+
 use stdlib
 
 use symbol
+
+use seq.mytype
+
+use seq.seq.word
+
+use seq.word
+
+use seq.syminfo
 
 Function mytype(seq.word)mytype export
 
@@ -133,6 +145,8 @@ Function parsefuncheader(text:seq.word)tree.word export
 Function expression(s:seq.word)tree.word export
 
 type inst is record towords:seq.word, flags:seq.word, returntype:mytype
+
+Function dcopy(a:inst) inst a 
 
 Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst export
 

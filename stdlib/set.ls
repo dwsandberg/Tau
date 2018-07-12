@@ -26,6 +26,8 @@ Function empty set.T set.empty:seq.T
 
 Function +(s:set.T, val:T)set.T set.setinsert(toseq.s, val)
 
+Function replace(s:set.T,val:T ) set.T set.setreplaceorinsert(toseq.s, val )
+
 Function_(s:set.T, i:int)T toseq(s)_i
 
 Function findelement(val:T, s:set.T)set.T 

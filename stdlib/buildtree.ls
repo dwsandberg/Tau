@@ -36,6 +36,10 @@ use stdlib
 
 use tree.cnode
 
+use seq.int
+
+use seq.seq.ipair.func
+
 type cnode is record towordseq:seq.word
 
 Function inst(t:tree.cnode)word towordseq(label.t)_1
@@ -73,7 +77,7 @@ Function flags(s:func)seq.word export
 
 Function codetree(f:func)tree.cnode export
 
-function =(a:func, b:func)boolean mangledname.a = mangledname.b
+Function =(a:func, b:func)boolean mangledname.a = mangledname.b
 
 type bld is record state:int, last:word, stk:stack.tree.cnode, hasstate:boolean
 
@@ -268,9 +272,13 @@ function initinst seq.inst
  inst("createfileZbuiltinZbitszseqZoutputformat 2","builtin", mytype."int"), 
  inst("createlibZbuiltinZbitszseqZbitszseqZoutputformat 3","builtin", mytype."int"), 
  inst("getfileZbuiltinZUTF8 1","builtin", mytype."int"), 
+ inst("getfileZbuiltinZbitszseq 1","builtin", mytype."int"), 
  inst("loadlibZbuiltinZUTF8 1","builtin", mytype."int"), 
+  inst("loadlibZbuiltinZbitszseq 1","builtin", mytype."int"), 
  inst("unloadlibZbuiltinZUTF8 1","builtin", mytype."int"), 
+ inst("unloadlibZbuiltinZbitszseq 1","builtin", mytype."int"), 
  inst("executecodeZbuiltinZUTF8Zintzseq 2","builtin", mytype."int"), 
+ inst("executecodeZbuiltinZbitszseqZintzseq 2","builtin", mytype."int"), 
  inst("abortedZbuiltinZTzprocess 1","builtin", mytype."int"), 
  inst("assertZbuiltinZwordzseq 1","builtin", mytype."int"), 
  inst("getmachineinfoZbuiltin 0","builtin", mytype."int"), 
@@ -283,7 +291,16 @@ function prep3(t:tree.cnode)seq.word
 
 type einst is encoding inst
 
+use seq.seq.ipair.inst
+
+use seq.ipair.inst
+
+use ipair.inst
+
 function hash(a:inst)int hash.towords.a
+
+Function hash(f:func)int hash.mangledname.f
+
 
 function =(a:inst, b:inst)boolean towords.a = towords.b
 

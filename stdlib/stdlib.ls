@@ -34,6 +34,12 @@ use stdlib
 
 use textio
 
+use seq.seq.ipair.seq.int
+
+use  seq.ipair.seq.int
+
+use  ipair.seq.int
+
 type int
 
 type ordering is record toint:int
@@ -41,6 +47,8 @@ type ordering is record toint:int
 type boolean is record toint:int
 
 * Useful constants
+
+Function dcopy(i:int) int i 
 
 Function openpara word {"("_1 }
 
@@ -98,7 +106,7 @@ Function /(a:int, b:int)int builtin.usemangle
 
 Function hash(i:int)int builtin.usemangle
 
-Function =(a:int, b:int)boolean builtin.EQL
+Function =(a:int, b:int)boolean builtin.usemangle
 
 Function =(a:ordering, b:ordering)boolean toint.a = toint.b
 
@@ -146,6 +154,10 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 ---------------------------
 
 type wordencoding is encoding seq.int
+
+use blockseq.seq.int
+
+/Function dcopy (w:wordencoding) wordencoding w
 
 type word is record bb:encoding.seq.int
 

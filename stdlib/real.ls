@@ -6,6 +6,12 @@ use UTF8
 
 use seq.real
 
+use seq.seq.real 
+
+use seq.word
+
+use seq.int
+
 use stdlib
 
 Function-(r:real)real 0.0 - r

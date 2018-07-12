@@ -2,7 +2,7 @@
 
 Module genlex
 
-/run genlex genhash
+run genlex genhash
 
 run genlex findhash
 
@@ -34,7 +34,7 @@ type lexaction1 is record w:word, tokenno:int, label:word
 
 function tokenlist seq.word 
  // tokenlist is from parser generator // 
-".-is)]= > {:} comment,([_^∧ ∨ T # if * $wordlist then else let assert report @ A E G F W P N L I K" 
+".-is)]= > {:} comment,([_^∧ ∨ T # if * $wordlist then else let assert report @ A E G F W P N L I K FP" 
 
 
 function actionlist seq.lexaction1 

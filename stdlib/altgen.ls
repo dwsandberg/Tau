@@ -36,6 +36,10 @@ use seq.seq.int
 
 use seq.stat5
 
+use seq.word
+
+use libscope
+
 use stdlib
 
 function profiletype encoding.llvmtype array(-3, i64)
@@ -184,7 +188,15 @@ Function encode(stat5, erecord.stat5)encoding.stat5 export
 
 type statencoding is encoding stat5
 
+use seq.seq.ipair.stat5
+
+use seq.ipair.stat5
+
+use ipair.stat5
+
 type stat5 is record caller:word, callee:word
+
+function dcopy(a:stat5) stat5 stat5(caller.a,callee.a)
 
 function hash(s:stat5)int hash.caller.s + hash.callee.s
 

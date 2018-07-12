@@ -68,11 +68,15 @@ use set.syminfo
 
 use set.track
 
+use seq.track
+
 use set.word
 
 use stdlib
 
 use tree.cnode
+
+use seq.seq.ipair.func
 
 function opSUB word {"Q2DZbuiltinZintZint"_1 }
 
@@ -274,7 +278,6 @@ Function simple3(inline:set.word, p:program, f:word)program
   let newall = add(allfunctions.p, encoding.f, newfn)
   program(library.p, newall, replacearcs(callgraph.p, oldarcs, asset.getarcs.newfn), if"SIMPLE"_1 in flags ∨"INLINE"_1 in flags then inline.p + f else inline.p,"")
 
-function hash(f:func)int hash.mangledname.f
 
 function checksets(s:set.word, t:tree.cnode)seq.word 
  if inst.t ="SET"_1 

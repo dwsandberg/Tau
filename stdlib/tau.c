@@ -140,6 +140,7 @@ void closelibs ( int libidx) { int i;
   loaded[1]=libidx;
 }
 
+
 BT unloadlibZbuiltinZUTF8(processinfo PD,BT p_libname){char *libname=(char *)&IDXUC(p_libname,2);
 int libidx = looklibraryname(libname);
 // fprintf(stderr,"unload library %s %d\n",libname,libidx);
@@ -148,6 +149,9 @@ if (libidx > 0 ) {
    } 
 return 0; 
 }
+
+BT unloadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){ return unloadlibZbuiltinZUTF8( PD, p_libname);}
+
 
 #ifdef DYNLIB
 
@@ -481,6 +485,9 @@ char *name=(char *)&IDXUC(funcname,2);
     }
 }
 
+BT executecodeZbuiltinZbitszseqZintzseq(processinfo PD,BT funcname,BT P) {return executecodeZbuiltinZUTF8Zintzseq(PD,funcname,P)
+;}
+
 
 BT abortedZbuiltinZTzprocess(processinfo PD,BT pin){
      processinfo q = ( processinfo)  pin;
@@ -516,6 +523,8 @@ BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
     return (BT) infoarray;
     }
 
+
+
 BT loadlibZbuiltinZUTF8(processinfo PD,BT p_libname){char *name=(char *)&IDXUC(p_libname,2);
 int i = looklibraryname(name) ;
 if (i >= 0)
@@ -524,6 +533,7 @@ if (i >= 0)
 return  loadlibrary(PD,name) ;  
 }
 
+BT loadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){  return loadlibZbuiltinZUTF8( PD, p_libname);}
 
 
 BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT otherlib,struct outputformat *t){
@@ -594,6 +604,8 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     close(fd);
     return org;
 }
+
+BT getfileZbuiltinZbitszseq(processinfo PD,BT filename){return getfileZbuiltinZUTF8(PD,filename);}
 
 BT createfileZbuiltinZbitszseqZoutputformat(processinfo PD,BT filename,struct outputformat * t){ 
 int f;
@@ -710,7 +722,7 @@ BT PROCESS3(processinfo PD,BT pin,BT profileidx, BT (*finishprof)(BT idx,BT x)){
  pthread_attr_t 	stackSizeAttribute;
     size_t			stackSize = 0;
   pthread_attr_init (&stackSizeAttribute);
-  pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024 * 4 );
+  pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024 * 12 );
     pthread_attr_getstacksize(&stackSizeAttribute, &stackSize); 
   /*  fprintf(stderr,"Stack size %d\n", stackSize);*/
   processinfo p=(processinfo)  myalloc(PD,sizeof (struct pinfo)/8);

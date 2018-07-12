@@ -8,6 +8,8 @@ use oseq.libtype
 
 use seq.arc.libtype
 
+use set.arc.libtype
+
 use seq.libsym
 
 use seq.libtype
@@ -15,6 +17,8 @@ use seq.libtype
 use seq.mytype
 
 use set.libtype
+
+use seq.word
 
 use stdlib
 

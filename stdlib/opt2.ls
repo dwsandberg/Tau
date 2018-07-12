@@ -16,11 +16,14 @@ use stdlib
 
 use tree.cnode
 
+use seq.seq.tree.cnode
+
 Function opt2(t:tree.cnode)tree.cnode 
  if inst.t ="FINISHLOOP"_1 
   then let x = removeRECORD.t 
    if inst.x ="nogo"_1 then tree(label.t, @(+, opt2, empty:seq.tree.cnode, sons.t))else x 
   else tree(label.t, @(+, opt2, empty:seq.tree.cnode, sons.t))
+  
 
 function removeRECORD(loop:tree.cnode)tree.cnode 
  let lb = loop_1 

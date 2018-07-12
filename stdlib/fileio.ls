@@ -14,9 +14,14 @@ use blockseq.int
 
 use packedseq.bits
 
+use packedseq.seq.bits
+
+
 use seq.bit
 
 use seq.bits
+
+use seq.seq.bits 
 
 use seq.byte
 
@@ -43,7 +48,7 @@ function createlib(name:seq.bits, libs:seq.bits, t:outputformat)int builtin.usem
 
 function createfile(name:seq.bits, data:outputformat)int builtin.usemangle
 
-function getfile(f:seq.bits)fileresult builtin.STATE.getfileZbuiltinZUTF8
+function getfile(f:seq.bits)fileresult builtin.STATE.usemangle
 
 type fileresult is record size:int, word1:int, word2:int, data:seq.int
 
@@ -70,11 +75,11 @@ function tobitpackedseqbit(s:seq.int)seq.bit @(+, bit, empty:seq.bit, s)
 
 function tointseq(s:seq.byte)seq.int @(+, toint, empty:seq.int, s)
 
-function sizeinbits(a:byte)int 8
+Function sizeinbits(a:byte)int 8
 
 Function tobits(a:byte)bits bits.toint.a
 
-function frombits(a:bits)byte byte.toint.a
+Function frombits(a:bits)byte byte.toint.a
 
 Function blockit(seq.int)seq.int export
 

@@ -38,7 +38,6 @@ use seq.libsym
 
 use seq.libtype
 
-use seq.linklist2
 
 use seq.linklists2
 
@@ -52,6 +51,8 @@ use set.libtype
 
 use set.word
 
+use seq.word
+
 use stack.tree.seq.word
 
 use stacktrace
@@ -60,7 +61,21 @@ use stdlib
 
 use tree.seq.word
 
+use seq.seq.ipair.word3
+
+use seq.ipair.word3
+
+use ipair.word3
+
+use seq.seq.ipair.const3
+
+use seq.ipair.const3
+
+use ipair.const3
+
 type word3encoding is encoding word3
+
+function dcopy(w:word3) word3 w
 
 Function wordcount int length.mapping.word3encoding
 
@@ -75,6 +90,10 @@ encode Functions
 The linklists2 type contains a seq of integers that represents the memory.Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq. One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
 
 type linklists2 is record a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int
+
+Function dcopy(l:linklists2) linklists2 linklists2(dcopy.a.l,wordthread.l,offsetthread.l, wordseqthread.l)
+
+use blockseq.int
 
 Function createlinkedlists linklists2 linklists2(empty:seq.int, 0, 0, 0)
 
@@ -126,6 +145,18 @@ type const3 is record place:int, flds:seq.flddesc
 function =(a:flddesc, b:flddesc)boolean index.a = index.b ∧ kind.a = kind.b
 
 type const3e is encoding const3
+
+function dcopy(c:const3) const3 const3(place.c,dcopy(flds.c))
+
+use blockseq.flddesc
+
+use packedseq.flddesc
+
+use seq.seq.flddesc
+
+use packedseq.seq.flddesc
+
+function dcopy(f:flddesc) flddesc flddesc(index.f,kind.f)
 
 function =(a:const3, b:const3)boolean flds.a = flds.b
 

@@ -18,6 +18,9 @@ use stacktrace
 
 use stdlib
 
+use seq.word
+
+
 Function =(T, T)boolean unbound
 
 Function_(a:seq.T, b:int)T 
@@ -204,7 +207,7 @@ ______________________________________
 
 type fastsubseq is sequence length:int, data:seq.T, begin:int
 
-function_(a:fastsubseq.T, i:int)T data(a)_(i + begin.a)
+Function_(a:fastsubseq.T, i:int)T data(a)_(i + begin.a)
 
 Function fastsubseq(s:seq.T, from:int, to:int)seq.T 
  if to < from 

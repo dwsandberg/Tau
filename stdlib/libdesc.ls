@@ -18,6 +18,10 @@ use seq.seq.seq.word
 
 use seq.seq.word
 
+use seq.word
+
+use seq.tree.word
+
 use stdlib
 
 use textio

@@ -26,6 +26,8 @@ use seq.seq.int
 
 use seq.templatepart
 
+use seq.word
+
 use stdlib
 
 function wordstype encoding.llvmtype array(-1, i64)
@@ -33,6 +35,12 @@ function wordstype encoding.llvmtype array(-1, i64)
 Function conststype encoding.llvmtype array(-2, i64)
 
 type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, consts:linklists2
+
+function dcopy(m:match5) match5  // match5(dcopy.fullinst.m,length.m,dcopy.parts.m,action.m,arg.m,dcopy(consts.m)) // m
+
+use blockseq.word
+
+use blockseq.templatepart
 
 Function consts(match5)linklists2 export
 
@@ -48,13 +56,18 @@ Function inst(m:match5)word fullinst(m)_1
 
 Function instarg(m:match5)word fullinst(m)_2
 
-/function ?(a:match5, b:match5)ordering let c = encoding.inst.a ? encoding.inst.b if c = EQ then encoding.instarg.a ? encoding.instarg.b else c
 
 function =(a:match5, b:match5)boolean fullinst.a = fullinst.b
 
 function hash(a:match5)int hash.fullinst.a
 
 type ematch5 is encoding match5
+
+use seq.seq.ipair.match5
+
+use seq.ipair.match5
+
+use ipair.match5
 
 Function table seq.match5 
  let t = [ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64, -1, ibcsub2)+ LOAD(3, -2, typ.i64, align8, 0)), 
@@ -97,9 +110,6 @@ Function table seq.match5
 
 function addit(m:match5)int encoding.encode(m, ematch5)
 
-/function astext(a:templatepart)seq.word [ toword.loc.a, toword.parano.a]+ astext2.part.a
-
-/ function =(a:templatepart, b:templatepart)boolean part.a = part.b ∧ loc.a = loc.b ∧ parano.a = parano.b
 
 function match5(inst:word, length:int, b:internalbc)match5 
  let parts = getparts.b 

@@ -4,6 +4,10 @@ use fileio
 
 use stdlib
 
+use seq.word
+
+use seq.seq.word
+
 Function execute(name:word)seq.word executecode(toCformat.[ name], empty:seq.int)
 
 type argblock3 is record a:int, length:int, arg1:seq.word, arg2:word, arg3:word
@@ -22,11 +26,11 @@ Function execute(name:word, state:seq.word, arg:seq.word, arg2:seq.word, b:seq.s
 
 Function unloadlib(a:seq.word)int unloadlib.toCformat.a
 
-function unloadlib(seq.bits)int builtin.unloadlibZbuiltinZUTF8
+function unloadlib(seq.bits)int builtin.usemangle
 
 Function loadlib(a:seq.word, timestamp:int)int loadlib.toCformat.a
 
-function loadlib(seq.bits)int builtin.loadlibZbuiltinZUTF8
+function loadlib(seq.bits)int builtin.usemangle
 
-function executecode(seq.bits, para:seq.int)seq.word builtin.executecodeZbuiltinZUTF8Zintzseq
+function executecode(seq.bits, para:seq.int)seq.word builtin.usemangle
 

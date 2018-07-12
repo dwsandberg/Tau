@@ -8,6 +8,10 @@ use seq.int
 
 use seq.word
 
+use seq.seq.word
+
+use seq.seq.seq.word
+
 use stdlib
 
 type prettycontrol is record preclist:seq.seq.word, chrwidths:seq.int

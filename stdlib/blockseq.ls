@@ -14,6 +14,10 @@ type blockseq is sequence length:int, blocksize:int, data:seq.seq.T
 
 Function deepcopy(T)T builtin.DEEPCOPY
 
+function dcopy(T)T unbound
+
+Function dcopy(s:seq.T) seq.T  blockit.@(+,dcopy,empty:seq.T,s)
+
 Function blockit(s:seq.T)seq.T 
  let blocksize = 10000 / sizeoftype:T 
   if length.s ≤ blocksize 
@@ -24,7 +28,7 @@ function newblockseq(length:int, s:seq.seq.T)seq.T toseq.blockseq(length, length
 
 function subblock(s:seq.T, blocksize:int, i:int)seq.T packed.subseq(s, i, i + blocksize - 1)
 
-function_(a:blockseq.T, i:int)T data(a)_((i - 1)/ blocksize.a + 1)_((i - 1)mod blocksize.a + 1)
+Function_(a:blockseq.T, i:int)T data(a)_((i - 1)/ blocksize.a + 1)_((i - 1)mod blocksize.a + 1)
 
 /Function pstruct2(a:seq.T)seq.word iftype x:pseq.T = a then"["+ toword.length.x + pstruct2.a.x +"/"+ pstruct2.b.x +"]"else iftype y:blockseq.T = a then"("+ toword.length.y + toword.blocksize.y + toword.length.data.y +")"else"^"+ toword.length.a
 

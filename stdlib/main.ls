@@ -62,11 +62,19 @@ use set.mod2desc
 
 use set.syminfo
 
+use set.libtype
+
 use stdlib
 
 use textio
 
-/use constant
+use seq.word
+
+use seq.seq.int
+
+use seq.inst
+
+use seq.int
 
 Function main(arg:seq.int)outputformat 
  let args = towords(arg + 10 + 10)

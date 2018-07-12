@@ -16,6 +16,8 @@ use seq.int
 
 use stdlib
 
+use fileio
+
 type bits is record toint:int
 
 Function toint(bits)int export
@@ -40,7 +42,7 @@ Function toint(bit)int export
 
 Function bit(int)bit export
 
-function sizeinbits(a:bit)int 1
+Function sizeinbits(a:bit)int 1
 
 Function tobits(a:bit)bits bits.toint.a
 

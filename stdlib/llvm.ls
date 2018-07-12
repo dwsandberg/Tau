@@ -28,11 +28,21 @@ use seq.llvmconst
 
 use seq.llvmtype
 
+use seq.bits
+
+use seq.bit
+
+use seq.seq.bit
+
 use seq.seq.bits
 
 use seq.seq.int
 
 use seq.seq.seq.int
+
+use seq.seq.internalbc
+
+use seq.seq.llvmtype
 
 use seq.trackconst
 
@@ -40,11 +50,44 @@ use stacktrace
 
 use stdlib
 
+use fileio
+
+use seq.seq.encoding.llvmtype
+
+use seq.seq.ipair.llvmtype
+
+use seq.ipair.llvmtype
+
+use ipair.llvmtype
+
+use seq.seq.ipair.llvmconst
+
+use seq.ipair.llvmconst
+
+use ipair.llvmconst
+
+
+use seq.seq.ipair.seq.int
+
+use seq.ipair.seq.int
+
+use ipair.seq.int
+
 Function typ(llvmconst)int export
 
 Function toseq(llvmconst)seq.int export
 
 type llvmtype is record toseq:seq.int
+
+function dcopy(a:llvmtype) llvmtype llvmtype.dcopy(toseq.a)
+
+function dcopy(a:llvmconst) llvmconst llvmconst(typ.a,dcopy.toseq.a)
+
+use blockseq.int
+
+use packedseq.seq.int
+
+use packedseq.int
 
 type llvmtypes is encoding llvmtype
 
