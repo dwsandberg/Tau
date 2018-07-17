@@ -196,7 +196,6 @@ use ipair.stat5
 
 type stat5 is record caller:word, callee:word
 
-function dcopy(a:stat5) stat5 stat5(caller.a,callee.a)
 
 function hash(s:stat5)int hash.caller.s + hash.callee.s
 

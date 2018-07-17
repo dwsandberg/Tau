@@ -6,7 +6,7 @@ type seq is sequence length:int, x:T
 
 type pseq is sequence length:int, a:seq.T, b:seq.T
 
-use persistant
+use saveencoding
 
 use process.seq.T
 

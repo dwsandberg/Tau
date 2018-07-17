@@ -36,7 +36,6 @@ Function conststype encoding.llvmtype array(-2, i64)
 
 type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, consts:linklists2
 
-function dcopy(m:match5) match5  // match5(dcopy.fullinst.m,length.m,dcopy.parts.m,action.m,arg.m,dcopy(consts.m)) // m
 
 use blockseq.word
 
@@ -133,8 +132,8 @@ Function buildtemplates(s:seq.match5, fullinst:seq.word)seq.match5
      then match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg, lastconsts)
      else if inst in"CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE MSET"
      then match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0, lastconsts)
-     else if inst ="CONSTANT"_1 
-     then let tt = addconst(lastconsts, fullinst)
+     else if inst  in "CONSTANT WORDS"  
+     then let tt =if inst="CONSTANT"_1 then  addconst(lastconsts, fullinst) else addwordseq(lastconsts,subseq(fullinst,3,length.fullinst))
       let newcode = GEP(1, 1, typ.conststype, C."list", C64.0, C64(index.tt + 1))+ CAST(2, -1, typ.i64, 9)
       match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1, 0, value.tt)
      else if inst ="WORD"_1 

@@ -6,7 +6,7 @@ Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgra
 
 Module tools
 
-run tools test
+/run tools test
 
 /run tools prettytest
 
@@ -14,7 +14,7 @@ run tools test
 
 /run tools test2
 
-/run tools stdlibdoc
+run tools stdlibdoc
 
 /run doc createdoc
 

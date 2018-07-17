@@ -73,6 +73,9 @@ Function libsym(returntype:mytype, manglename:word, inst:seq.word)libsym
 
 Function returntypeold(s:libsym)mytype mytype.returntype.s
 
+Function returntype(libsym)seq.word export
+
+
 Function instruction(libsym)seq.word export
 
 Function fsig(libsym)word export
@@ -279,11 +282,19 @@ function f44(libname:word, modname:word, mangledname:word, types:seq.mytype, l:l
 Function findFunction(libname:word, modname:word, funcname:word, types:seq.mytype)seq.word 
  @(+, f44(libname, modname, funcname, types),"", libs)
 
+Function emptyliblib(libname:word) liblib
+let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, libname)
+  liblib([ libname], empty:seq.libtype, [ mymod])
+
 ______________________
+
 
 type offset is record TSIZE:int, LIT:int
 
 Function LIT(offset)int export
+
+Function TSIZE(offset)int export
+
 
 Function Tsize offset offset(1, 0)
 

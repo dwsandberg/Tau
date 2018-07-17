@@ -8,8 +8,6 @@ use internalbc
 
 use ipair.linklists2
 
-use libdescfunc
-
 use libscope
 
 use llvm
@@ -52,18 +50,19 @@ use stdlib
 
 use textio
 
+
 function funcdec(f:inst)seq.int 
  let discard = C.mangledname.f 
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+  
 
-Function codegen5(z:pass1result)seq.bits 
- let thename = libname(z)_1 
+ 
+Function codegen5(fs:intercode2,thename:word,libdesc:liblib)seq.bits 
   let symlist ="libname initlib5 words wordlist list profcounts profclocks profspace profrefs profstat spacecount"+ merge(thename,"$profileresult"_1)+"init22 PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   let wordstype = array(-1, i64)
   // let conststype = array(-2, i64)// 
   let cxx = conststype 
   let profiletype = array(-3, i64)
-  let fs = code.z 
   let declist = @(+,_.coding.fs, empty:seq.inst, defines.fs)
   let discard2 = @(+, C, 0, @(+, mangledname, symlist, declist))
   let xy = table 
@@ -73,10 +72,10 @@ Function codegen5(z:pass1result)seq.bits
   let profilearcs2 = profilearcs 
   let noprofileslots = length.profilearcs2 / 2 
   // let libsyms = @(+, tolibsym(coding.fs, codes.fs), empty:seq.libsym, defines.fs)// 
-  let liblib = prepareliblib2(alltypes.z, consts.last.match5map, libdesc.z)
-  let beforearcs = value.liblib 
-  let arcs = place.beforearcs 
-  let data = addwordseq(beforearcs, profilearcs2)
+  let liblib = addliblib( consts.last.match5map, libdesc)
+   let tmp1 = addwordseq( value.liblib , profilearcs2)
+  let data= value.tmp1
+  let arcs=index.tmp1
   let x = C(array(4, i64), [ AGGREGATE, 
   C(i64, [ CONSTCECAST, 9, typ.ptr.i64, getelementptr(conststype,"list", arcs + 1)]), 
   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), 
@@ -138,6 +137,11 @@ Function codegen5(z:pass1result)seq.bits
   // llvm.cos.f64 // 
    [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]+ @(+, funcdec, empty:seq.seq.int, declist)
   let bodytxts = [ BLOCKCOUNT(1, 1)+ RET(1, C(i64, [ CONSTCECAST, 9, typ.ptr.array(4, i64), C."profstat"])), 
-  BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib5", libnameptr, getelementptr(wordstype,"words", 0), getelementptr(worddatatype,"wordlist", 0), getelementptr(conststype,"list", 0), getelementptr(conststype,"list", index.liblib + 1))+ GEP(2, 1, typ.profiletype, C."profclocks", C64.0, C64.1)+ STORE(3, -2, C64.noprofileslots, align8, 0)+ GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1)+ STORE(4, -3, C64.noprofileslots, align8, 0)+ GEP(4, 1, typ.profiletype, C."profcounts", C64.0, C64.1)+ STORE(5, -4, C64.noprofileslots, align8, 0)+ GEP(5, 1, typ.profiletype, C."profrefs", C64.0, C64.1)+ STORE(6, -5, C64.noprofileslots, align8, 0)+ RET.6]+ bodies 
+  BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib5", 
+  libnameptr, 
+  getelementptr(wordstype,"words", 0), getelementptr(worddatatype,"wordlist", 0), 
+  getelementptr(conststype,"list", 0), 
+  getelementptr(conststype,"list", index.liblib + 1))+ GEP(2, 1, typ.profiletype,
+   C."profclocks", C64.0, C64.1)+ STORE(3, -2, C64.noprofileslots, align8, 0)+ GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1)+ STORE(4, -3, C64.noprofileslots, align8, 0)+ GEP(4, 1, typ.profiletype, C."profcounts", C64.0, C64.1)+ STORE(5, -4, C64.noprofileslots, align8, 0)+ GEP(5, 1, typ.profiletype, C."profrefs", C64.0, C64.1)+ STORE(6, -5, C64.noprofileslots, align8, 0)+ RET.6]+ bodies 
   llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 

@@ -14,9 +14,6 @@ type blockseq is sequence length:int, blocksize:int, data:seq.seq.T
 
 Function deepcopy(T)T builtin.DEEPCOPY
 
-function dcopy(T)T unbound
-
-Function dcopy(s:seq.T) seq.T  blockit.@(+,dcopy,empty:seq.T,s)
 
 Function blockit(s:seq.T)seq.T 
  let blocksize = 10000 / sizeoftype:T 

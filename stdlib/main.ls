@@ -10,6 +10,9 @@ use format
 
 use libdesc
 
+use libdescfunc
+
+
 use libscope
 
 use pass0
@@ -103,7 +106,7 @@ Function bindings(libname:word)pass1result
   assert not.aborted.ptext report message.ptext 
   pass1a(true, result.ptext, YYY.templatesin, [ libname])
 
-Function pass(passno:int, libname:word)pass1result 
+/Function pass(passno:int, libname:word)pass1result 
  let ld = tolibdesc.libname 
   // let b = unloadlib.[ libname]// 
   let discard5 = loadlibs(dependentlibs.ld, 1, timestamp(libs_1))
@@ -117,12 +120,16 @@ Function pass(passno:int, libname:word)pass1result
   assert not.aborted.p report message.p 
   result.p
 
+/use process.intercode2
+
+/use seq.intercode2
+
 function subcompilelib(libname:word)seq.word 
  PROFILE.let discard3 = length.mapping.libsymencoding 
   let ld = tolibdesc.libname 
-  if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
+  // if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
   then interface([ name.ld], exports.ld, dependentlibs.ld)
-  else let b = unloadlib.[ libname]
+  else // let b = unloadlib.[ libname]
   let discard5 = loadlibs(dependentlibs.ld, 1, timestamp(libs_1))
   let templatesin = @(asliblib.dependentlibs.ld, identity, emptyliblib, libs)
   let ptext = process.pass0.ld 
@@ -130,11 +137,12 @@ function subcompilelib(libname:word)seq.word
   then message.ptext 
   else let p1a = setprivate(exports.ld, pass1a(false, result.ptext, YYY.templatesin, [ libname]))
   // let p = waitforpass2.p1a if aborted.p then message.p else let y1 = codegen5.result.p // 
-  let y1 = codegen5.pass2.p1a 
+  let intercode =pass2.p1a
+  let y1 = codegen5(intercode,libname ,libdesc(p1a,intercode))
   let z2 = createlib(y1, libname, dependentlibs.ld)
   {"OK"}
 
-function waitforpass2(a:pass1result)process.pass1result 
+/function waitforpass2(a:pass1result)process.pass1result 
  NOINLINE.let p = process.pass2.a 
   if aborted.p then p else p
 

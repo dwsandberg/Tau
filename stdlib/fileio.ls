@@ -16,6 +16,12 @@ use packedseq.bits
 
 use packedseq.seq.bits
 
+use packedseq.int
+
+use seq.seq.int
+
+use packedseq.seq.int
+
 
 use seq.bit
 

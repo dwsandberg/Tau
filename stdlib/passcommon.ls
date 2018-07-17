@@ -146,7 +146,6 @@ Function expression(s:seq.word)tree.word export
 
 type inst is record towords:seq.word, flags:seq.word, returntype:mytype
 
-Function dcopy(a:inst) inst a 
 
 Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst export
 

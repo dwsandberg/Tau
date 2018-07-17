@@ -8,19 +8,9 @@ use internalbc
 
 use ipair.linklists2
 
-use ipair.mytype
-
 use libscope
 
 use llvm
-
-use oseq.word
-
-use process.int
-
-use process.liblib
-
-use processtypes
 
 use seq.const3
 
@@ -38,7 +28,6 @@ use seq.libsym
 
 use seq.libtype
 
-
 use seq.linklists2
 
 use seq.mytype
@@ -47,35 +36,13 @@ use seq.tree.seq.word
 
 use seq.word3
 
-use set.libtype
-
-use set.word
-
-use seq.word
-
 use stack.tree.seq.word
-
-use stacktrace
 
 use stdlib
 
 use tree.seq.word
 
-use seq.seq.ipair.word3
-
-use seq.ipair.word3
-
-use ipair.word3
-
-use seq.seq.ipair.const3
-
-use seq.ipair.const3
-
-use ipair.const3
-
 type word3encoding is encoding word3
-
-function dcopy(w:word3) word3 w
 
 Function wordcount int length.mapping.word3encoding
 
@@ -91,13 +58,17 @@ The linklists2 type contains a seq of integers that represents the memory.Any me
 
 type linklists2 is record a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int
 
-Function dcopy(l:linklists2) linklists2 linklists2(dcopy.a.l,wordthread.l,offsetthread.l, wordseqthread.l)
-
-use blockseq.int
-
 Function createlinkedlists linklists2 linklists2(empty:seq.int, 0, 0, 0)
 
 Function a(linklists2)seq.int export
+
+Function wordthread(linklists2)int export
+
+Function offsetthread(linklists2)int export
+
+Function wordseqthread(linklists2)int export
+
+Function linklists2(a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int) linklists2 export
 
 Function initializer(conststypex:encoding.llvmtype, data:linklists2)int 
  C(conststypex, [ AGGREGATE, 
@@ -129,16 +100,16 @@ function count(val:int, i:int)int if val = i then 1 else 0
 
 function cast2int(liblib)int builtin.NOOP
 
-function cast2intseq(int)seq.int builtin.NOOP
+Function cast2intseq(int)seq.int builtin.NOOP
 
-function cast2word(int)word builtin.NOOP
+Function cast2word(int)word builtin.NOOP
 
-Function prepareliblib2(alltypes:set.libtype, x:linklists2, mylib:liblib)ipair.linklists2 
- addobject2(alltypes, mytype."liblib", x, cast2int.// result.process.identity.// mylib)
 
 type trackflds is record l:linklists2, flds:seq.flddesc, state:int
 
 type flddesc is record index:int, kind:word
+
+function flddesc(int,word) flddesc export
 
 type const3 is record place:int, flds:seq.flddesc
 
@@ -146,7 +117,14 @@ function =(a:flddesc, b:flddesc)boolean index.a = index.b ∧ kind.a = kind.b
 
 type const3e is encoding const3
 
-function dcopy(c:const3) const3 const3(place.c,dcopy(flds.c))
+Function trackflds(l:linklists2, flds:seq.flddesc, state:int) trackflds export
+
+Function  l(trackflds) linklists2 export
+
+Function  flds(trackflds) seq.flddesc export
+
+Function state(trackflds) int export
+
 
 use blockseq.flddesc
 
@@ -156,7 +134,6 @@ use seq.seq.flddesc
 
 use packedseq.seq.flddesc
 
-function dcopy(f:flddesc) flddesc flddesc(index.f,kind.f)
 
 function =(a:const3, b:const3)boolean flds.a = flds.b
 
@@ -174,7 +151,7 @@ function buildconsttree(s:seq.word, i:int, result:stack.tree.seq.word)tree.seq.w
    buildconsttree(s, i + 2, push(pop(result, nosons), tree(c, top(result, nosons))))
   else buildconsttree(s, i + 2, push(result, tree.c))
 
-Function addconst(l:linklists2, t:tree.seq.word)ipair.linklists2 
+function addconst(l:linklists2, t:tree.seq.word)ipair.linklists2 
  // First build description of record. This may add other const records to l // 
   let y = @(getindex, identity, trackflds(l, empty:seq.flddesc, 1), sons.t)
   // look up CRECORD to see if we have already used it. // 
@@ -203,7 +180,7 @@ function getindex(f:trackflds, t:tree.seq.word)trackflds
   let k = addconst(l.f, t)
   trackflds(value.k, flds.f + flddesc(index.k,"CRECORD"_1), 0)
 
-function buildtheobject(objectstart:int, l:linklists2, d:flddesc)linklists2 
+Function buildtheobject(objectstart:int, l:linklists2, d:flddesc)linklists2 
  FORCEINLINE.let typ = kind.d 
   let newwordthread = if typ ="WORD"_1 then place.l else wordthread.l 
   let newoffsetthread = if typ ="CRECORD"_1 then place.l else offsetthread.l 
@@ -212,137 +189,95 @@ function buildtheobject(objectstart:int, l:linklists2, d:flddesc)linklists2
    else if typ ="WORD"_1 
    then C64.packit(wordthread.l, index.d)
    else C64.packit(offsetthread.l, index.d), newwordthread, newoffsetthread, wordseqthread.l)
+   
 
-function addobject2(alltypes:set.libtype, a:mytype, l:linklists2, data:int)ipair.linklists2 
- // assert a in [ mytype."int", mytype."word", mytype."word seq", mytype."int seq seq", mytype."liblib", mytype."libtype seq", mytype."libtype", mytype."mytype seq", mytype."mytype", mytype."libmod seq"]report"??"+ towords.a // 
-  if a = mytype."word seq"∨ a = mytype."mytype"
-  then ipair(place.l, addwordseq(l, cast2wordseq.data))
-  else if abstracttype.a ="seq"_1 
-  then let s = cast2intseq.data 
-   if a = mytype."int seq"∨ a = mytype."real seq"
-   then ipair(place.l, linklists2(@(+, C64, a.l + C64.0 + length.s, s), wordthread.l, offsetthread.l, wordseqthread.l))
-   else let x = @(getindexseq(alltypes, parameter.a), identity, trackflds(l, empty:seq.flddesc, 0), s)
-   let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
-   ipair(place.l.x, @(buildtheobject.place.l.x, identity, t, flds.x))
-  else let b = deepcopytypes2(alltypes, a)
-  let x = @(getindex(alltypes, b, data), identity, trackflds(l, empty:seq.flddesc, 1), arithseq(length.b, 1, 1))
-  ipair(place.l.x, @(buildtheobject.place.l.x, identity, l.x, flds.x))
+type   trackele is record l:linklists2,places:seq.int
 
-function getindexseq(alltypes:set.libtype, elementtype:mytype, f:trackflds, dataelement:int)trackflds 
- // assert towords.elementtype in ["libtype","mytype","libmod","libsym"]report towords.elementtype // 
-  let k = addobject2(alltypes, elementtype, l.f, dataelement)
-  trackflds(value.k, flds.f + flddesc(index.k,"CRECORD"_1), 0)
+function       addele(t:trackele,s:libsym) trackele
+    let a = addlibsym(l.t,s)
+    trackele(value.a,places.t+index.a)
 
-function getindex(alltypes:set.libtype, b:seq.mytype, data:int, f:trackflds, i:int)trackflds 
- let elementtype = b_i 
-  let dataelement = IDXUC(data, i - 1)
-  if elementtype = mytype."int"∨ elementtype = mytype."real"
-  then trackflds(l.f, flds.f + flddesc(C64.dataelement,"LIT"_1), 0)
-  else if elementtype = mytype."word"
-  then trackflds(l.f, flds.f + flddesc(word33.cast2word.dataelement,"WORD"_1), 0)
-  else let k = addobject2(alltypes, elementtype, l.f, dataelement)
-  trackflds(value.k, flds.f + flddesc(index.k,"CRECORD"_1), 0)
+function       addele(t:trackele,s:libmod) trackele
+    let a = addlibmod(l.t,s)
+    trackele(value.a,places.t+index.a)
+    
+function       addele(t:trackele,s:libtype) trackele
+    let a = addlibtype(l.t,s)
+    trackele(value.a,places.t+index.a)
+    
+function       addele(t:trackele,s:mytype) trackele
+    let a = addwordseq(l.t,towords.s)
+    trackele(value.a,places.t+index.a)
 
-Function addwordseq(t:linklists2, a:seq.word)linklists2 
- linklists2(a.t + @(+, C64word33, [ C64.wordseqthread.t, C64.length.a], a), wordthread.t, offsetthread.t, place.t)
+function addlibtypeseq(l:linklists2,s:seq.libtype) ipair(linklists2)
+let x =@(addele,identity,trackele(l,empty:seq.int),s)
+    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
+    ipair(place.l.x,@(addoffset,identity,t,places.x) )
+
+function addmytypeseq(l:linklists2,s:seq.mytype) ipair(linklists2)
+let x =@(addele,identity,trackele(l,empty:seq.int),s)
+    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
+    ipair(place.l.x,@(addoffset,identity,t,places.x) )
+
+function addlibmodseq(l:linklists2,s:seq.libmod) ipair(linklists2)
+let x =@(addele,identity,trackele(l,empty:seq.int),s)
+    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
+    ipair(place.l.x,@(addoffset,identity,t,places.x) )
+
+function addlibsymseq(l:linklists2,s:seq.libsym) ipair(linklists2)
+let x =@(addele,identity,trackele(l,empty:seq.int),s)
+    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
+    ipair(place.l.x,@(addoffset,identity,t,places.x) )
+
+function addoffset(l:linklists2,index:int) linklists2
+linklists2(a.l+C64.packit(offsetthread.l, index),wordthread.l,place.l,wordseqthread.l)
+  
+function addlibsym(l1:linklists2,sym:libsym) ipair(linklists2)
+    let a = addwordseq(l1,returntype.sym)
+   let b =addwordseq(value.a,instruction.sym)
+   let l=value.b
+   let l2=linklists2(a.l+C64.packit(wordthread.l,word33.fsig.sym),place.l,offsetthread.l,wordseqthread.l)
+   let l3=linklists2(a.l2+C64.packit(offsetthread.l2, index.a),wordthread.l2,place.l2,wordseqthread.l2)
+   let l4=linklists2(a.l3+C64.packit(offsetthread.l3, index.b),wordthread.l3,place.l3,wordseqthread.l3)
+   ipair(place.l,l4)
+   
+Function addliblib(lin:linklists2,t:liblib) ipair(linklists2)
+   let a = addwordseq(lin,libname.t)
+   let b =addlibtypeseq(value.a,types.t)
+      let c =addlibmodseq(value.b,mods.t)
+   let l=value.c
+     let l5=l+a+b+c+timestamp.t+toint.readonly.t 
+   ipair(place.l,l5)
+
+function addlibtype(lin:linklists2,t:libtype) ipair(linklists2)
+   let a = addmytypeseq(lin,subtypes.t)
+   let b =addwordseq(value.a,fldnames.t)
+   let l=value.b
+     let l5=l+name.t+toint.abstract.t+kind.t+a+TSIZE.size.t+LIT.size.t+b  
+   ipair(place.l,l5)
+   
+function addlibmod(lin:linklists2,mod:libmod) ipair(linklists2)
+   let a = addlibsymseq(lin,defines.mod)
+   let b =addlibsymseq(value.a,exports.mod)
+   let l=value.b
+     let l5=l+toint.parameterized.mod+modname.mod+a+b+library.mod   
+   ipair(place.l,l5)
+
+function +(l:linklists2,i:int) linklists2 
+   linklists2(a.l+C64.i,wordthread.l,offsetthread.l,wordseqthread.l)   
+
+function +(l:linklists2,w:word) linklists2 
+   linklists2(a.l+C64.packit(wordthread.l,word33.w),place.l,offsetthread.l,wordseqthread.l)   
+
+function +(l:linklists2,b:ipair.linklists2) linklists2 
+  linklists2(a.l+C64.packit(offsetthread.l, index.b),wordthread.l,place.l,wordseqthread.l)
+ 
+Function addwordseq(t:linklists2, a:seq.word) ipair(linklists2)
+ipair(place.t, linklists2(a.t + @(+, C64word33, [ C64.wordseqthread.t, C64.length.a], a), wordthread.t, offsetthread.t, place.t))
 
 function C64word33(a:word)int C64.word33.a
 
 function cast2int(s:seq.int)int builtin.NOOP
-
-function interface(l:liblib, dependlibs:seq.word)seq.word 
- let a = createlib(cast2int.empty:seq.int,"int seq", l, dependlibs)
-  {"OK"}
-
-Function interface(name:seq.word, modlist:seq.word, deplibs:seq.word)seq.word 
- let mods = @(+, findmods.modlist, empty:seq.libmod, libs)
-  let alltypes = asset.@(+, types, empty:seq.libtype, libs)
-  let llplus = @(∪, libtypes("cannot find type", alltypes), empty:set.libtype, [ mytype."liblib", 
-  mytype."libtype", 
-  mytype."libmod", 
-  mytype."offset", 
-  mytype."mytype", 
-  mytype."libsym"])
-  let types = @(∪, libtypes.alltypes, llplus, mods)
-  interface(liblib(name, toseq.types, mods, true), deplibs)+ @(seperator."&br", print,"", toseq.types)
-
-function findmods(keep:seq.word, l:liblib)seq.libmod @(+, findmod.keep, empty:seq.libmod, mods.l)
-
-function findmod(keep:seq.word, m:libmod)seq.libmod 
- if modname.m in keep then [ m]else empty:seq.libmod
-
-function libtypes(s:set.libtype, a:libmod)set.libtype 
- @(∪, libtypes.s, empty:set.libtype, exports.a + defines.a)
-
-Function createlib2(thedata:int, encodetype:seq.word, libname:word, dependlibs:seq.word)int 
- let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, libname)
-  let mylib = liblib([ libname], empty:seq.libtype, [ mymod])
-  createlib(thedata, encodetype, mylib,"")
-
-function createlib(thedata:int, thetype:seq.word, mylib:liblib, dependlibs:seq.word)int 
- // must call as process so that the encodings start out empty // 
-  result.process.createlibp(thedata, thetype, mylib, dependlibs)
-
-function createlibp(thedata:int, thetype:seq.word, mylib:liblib, dependlibs:seq.word)int 
- let libname = libname(mylib)_1 
-  let symtab ="libname initlib5 words wordlist list init22"
-  let discard = @(+, C, 0, symtab)
-  let alltypes = asset.@(+, types, empty:seq.libtype, libs)
-  let data1 = addobject2(alltypes, mytype(thetype +"seq"), createlinkedlists, thedata)
-  let liblib = prepareliblib2(alltypes, value.data1, mylib)
-  let data = value.liblib 
-  let words = worddata 
-  let worddatatype = array(length.words + 2, i64)
-  let wordstype = array(2 + wordcount, i64)
-  let conststype2 = array(length.a.data + 5, i64)
-  let libnametype = array(length.decode.libname + 1, i8)
-  let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])
-  let deflist = [ // libname // 
-   [ MODULECODEGLOBALVAR, 
-   typ.libnametype, 
-   2, 
-   C(libnametype, [ CONSTDATA]+ decode.libname + 0)+ 1, 
-   3, 
-   align4, 
-   0], 
-  [ MODULECODEFUNCTION, 
-  typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64, ptr.i64], 
-  0, 
-  1, 
-  0, 
-  1, 
-  0, 
-  0, 
-  0, 
-  0, 
-  0, 
-  0, 
-  0, 
-  0], 
-  [ MODULECODEGLOBALVAR, typ.wordstype, 2, C(i64, [ CONSTNULL])+ 1, 3, align8 + 1, 0], 
-  [ MODULECODEGLOBALVAR, 
-  typ.worddatatype, 
-  2, 
-  1 + C(worddatatype, [ AGGREGATE, C64.0, C64.length.words]+ words), 
-  3, 
-  align8 + 1, 
-  0], 
-  [ MODULECODEGLOBALVAR, 
-  typ.conststype2, 
-  2, 
-  C(conststype2, [ AGGREGATE, 
-  C64.0, 
-  C64(length.a.data + 3), 
-  C64.wordthread.data, 
-  C64.offsetthread.data, 
-  C64.wordseqthread.data]+ a.data)+ 1, 
-  3, 
-  align8 + 1, 
-  0], 
-  // init22 // [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
-  let bodytxts = [ BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib5", libnameptr, getelementptr(wordstype,"words", 0), getelementptr(worddatatype,"wordlist", 0), getelementptr(conststype2,"list", 0), getelementptr(conststype2,"list", index.liblib + 1), getelementptr(conststype2,"list", index.data1 + 1))+ RET.3]
-  createlib(llvm(deflist, bodytxts, typerecords), libname,"")
-
 ______________________________
 
 Three Functions to pack two ints into 64 bits

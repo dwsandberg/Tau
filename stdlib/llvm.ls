@@ -79,9 +79,6 @@ Function toseq(llvmconst)seq.int export
 
 type llvmtype is record toseq:seq.int
 
-function dcopy(a:llvmtype) llvmtype llvmtype.dcopy(toseq.a)
-
-function dcopy(a:llvmconst) llvmconst llvmconst(typ.a,dcopy.toseq.a)
 
 use blockseq.int
 

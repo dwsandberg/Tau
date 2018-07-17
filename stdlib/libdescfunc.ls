@@ -71,11 +71,11 @@ function roots2(m:mod2desc)set.word
 function toinstindex(a:set.word, d:intercode2, i:int)seq.int 
  if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
 
-Function libdesc(r:pass1result)liblib 
+Function libdesc(r:pass1result,intercode:intercode2)liblib 
  let roots = @(∪, roots2, empty:set.word, mods.r)
-  let rootindices = asset.@(+, toinstindex(roots, code.r), empty:seq.int, defines.code.r)
-  let a = close(code.r, rootindices, rootindices)
-  let syms = @(+, tolibsym(coding.code.r, codes.code.r), empty:seq.libsym, toseq.a)
+  let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
+  let a = close(intercode, rootindices, rootindices)
+  let syms = @(+, tolibsym(coding.intercode, codes.intercode), empty:seq.libsym, toseq.a)
   let lib = libname(r)_1 
   let othermod = libmod(false,"$other"_1, syms, empty:seq.libsym, lib)
   let allmods = @(+, map(lib, asset.syms), empty:seq.libmod, mods.r)+ othermod 

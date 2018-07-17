@@ -2,11 +2,23 @@ Module reconstruct
 
 use packedseq.int
 
-use persistant
+use bits
+
+
+
 
 use stdlib
 
-Decode Functions
+These Decode Functions, getlink,getb,halfsize must match those in persistant module
+
+function getlink(a:int)int toint(bits.a >> 31) - halfsize
+
+
+function getb(a:int)int toint(bits.a ∧ bits(halfsize - 1))
+
+function halfsize int // 2^31 // 2147483648
+
+
 
 Function relocate(ws:seq.word, d2:seq.int)address.int 
  // d2 format is [ wordthread start, offsetthread start, unused]+ actual data]// 

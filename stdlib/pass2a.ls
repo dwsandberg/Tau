@@ -78,34 +78,6 @@ use tree.seq.word
 
 use seq.seq.ipair.func
 
-function opSUB word {"Q2DZbuiltinZintZint"_1 }
-
-function opRSUB word {"Q2DZbuiltinZrealZreal"_1 }
-
-function isconst(t:tree.seq.word)boolean inst.t in"LIT CRECORD WORD FREF"
-
-function simplecalcs(label:seq.word, a:int, b:int, l:seq.tree.seq.word)tree.seq.word 
- let inst =  label_1 
-  if inst = opRSUB 
-  then tree.["LIT"_1, toword.representation(casttoreal.a - casttoreal.b)]
-  else if not(between(a, -2147483648, 2147483648)∧ between(b, -2147483648, 2147483648))
-  then tree(label, l)
-  else if inst = opSUB 
-  then tree.["LIT"_1, toword(a - b)]
-  else if inst ="Q2BZbuiltinZintZint"_1 
-  then tree.["LIT"_1, toword(a + b)]
-  else if inst ="Q2FZbuiltinZintZint"_1 ∧ b ≠ 0 
-  then tree.["LIT"_1, toword(a / b)]
-  else if inst ="Q2AZbuiltinZintZint"_1 
-  then tree.["LIT"_1, toword(a * b)]
-  else if inst ="EQL"_1 
-  then tree.["LIT"_1, if a = b then"1"_1 else"0"_1]
-  else if inst ="Q3CQ3CZbuiltinZbitsZint"_1 
-  then tree.["LIT"_1, toword.toint(bits.a << b)]
-  else if inst ="Q3EQ3EZbuiltinZbitsZint"_1 
-  then tree.["LIT"_1, toword.toint(bits.a >> b)]
-  else // assert inst in"Q5EZstdlibZintZint BLOCKCOUNTZinternalbcZintZint"report"XY"+ inst // 
-  tree(label, l)
 
 5E^2A * 2B + 2F /
 
@@ -177,8 +149,11 @@ function roots(isencoding:set.syminfo, m:mod2desc)set.word
 
 function hasErecord(s:syminfo)seq.syminfo 
  if"erecord"_1 in towords.returntype.s then [ s]else empty:seq.syminfo
+ 
+ function lookupfunc(p:program,name:word) func
+   lookupfunc(allfunctions.p,name)
 
-Function pass2(r:pass1result)pass1result 
+Function pass2(r:pass1result) intercode2
  // does inline expansion, finds consts, removes unreaachable functions // 
   let p1 = program(libname(r)_1, invertedseq.dummyfunc, newgraph.empty:seq.arc.word, asset."","")
   let roots = toseq.@(∪, roots.asset.@(+, hasErecord, empty:seq.syminfo, newcode.r), empty:set.word, mods.r)
@@ -190,20 +165,7 @@ Function pass2(r:pass1result)pass1result
   // find tail calls and constants // 
   let rr = @(+, findconstandtail(s2, statechangingfuncs), empty:seq.func, toseq.g)
   // assert false report @(+, toword,"", mapping.debuginfoencoding)// 
-  pass1result(convert2(allfunctions.p, rr), libname.r, newcode.r, compiled.r, mods.r, existingtypes.r, alltypes.r)
-
-function checktree(s:seq.func)boolean @(∧, checktree, true, s)
-
-function checktree(f:func)boolean 
- assert checktree.codetree.f report"invalid tree"+ print.f 
-  true
-
-function checktree(t:tree.seq.word)boolean 
- if inst.t in"CALLB FREFB"
-  then false 
-  else if inst.t ="SET"_1 ∧ not(nosons.t = 2)
-  then false 
-  else if inst.t ="if"_1 ∧ not(nosons.t = 3)then false else @(∧, checktree, true, sons.t)
+   convert2(allfunctions.p, rr)
 
 function xor(a:boolean, b:boolean)boolean if a then not.b else b
 
@@ -243,10 +205,41 @@ function p(a:arc.word)seq.word [ tail.a]+":"+ head.a
 
 Function getarcs(f:func)seq.arc.word calls(mangledname.f, codetree.f)
 
+
+function opSUB word {"Q2DZbuiltinZintZint"_1 }
+
+function opRSUB word {"Q2DZbuiltinZrealZreal"_1 }
+
+function isconst(t:tree.seq.word)boolean inst.t in"LIT CRECORD WORD WORDS FREF"
+
+function simplecalcs(label:seq.word, a:int, b:int, l:seq.tree.seq.word)tree.seq.word 
+ let inst =  label_1 
+  if inst = opRSUB 
+  then tree.["LIT"_1, toword.representation(casttoreal.a - casttoreal.b)]
+  else if not(between(a, -2147483648, 2147483648)∧ between(b, -2147483648, 2147483648))
+  then tree(label, l)
+  else if inst = opSUB 
+  then tree.["LIT"_1, toword(a - b)]
+  else if inst ="Q2BZbuiltinZintZint"_1 
+  then tree.["LIT"_1, toword(a + b)]
+  else if inst ="Q2FZbuiltinZintZint"_1 ∧ b ≠ 0 
+  then tree.["LIT"_1, toword(a / b)]
+  else if inst ="Q2AZbuiltinZintZint"_1 
+  then tree.["LIT"_1, toword(a * b)]
+  else if inst ="EQL"_1 
+  then tree.["LIT"_1, if a = b then"1"_1 else"0"_1]
+  else if inst ="Q3CQ3CZbuiltinZbitsZint"_1 
+  then tree.["LIT"_1, toword.toint(bits.a << b)]
+  else if inst ="Q3EQ3EZbuiltinZbitsZint"_1 
+  then tree.["LIT"_1, toword.toint(bits.a >> b)]
+  else // assert inst in"Q5EZstdlibZintZint BLOCKCOUNTZinternalbcZintZint"report"XY"+ inst // 
+  tree(label, l)
+
+
 Function calls(self:word, t:tree.seq.word)seq.arc.word 
  @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.t ="FREF"_1 
   then [ arc(self, arg.t)]
-  else if inst.t in"WORD RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD"
+  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD"
   then empty:seq.arc.word 
   else // let a = codedown.inst.t if length.a > 1 ∧(a_2 ="builtin")then empty:seq.arc.word else // 
   [ arc(self, inst.t)]
@@ -267,7 +260,7 @@ Function expandinline(p:program)program
   if isempty.inline.s2 then s2 else expandinline.s2
 
 Function simple3(inline:set.word, p:program, f:word)program 
- let infunc = lookupfunc(allfunctions.p, f)
+ let infunc = lookupfunc(p, f)
   let oldarcs = arcstosuccessors(callgraph.p, f)
   let z = @(+, head, empty:set.word, toseq.oldarcs)∩ inline - f 
   if isempty.z ∨"NOINLINE"_1 in flags.infunc 
@@ -324,7 +317,7 @@ function paraorder boolean true
 
 function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap:seq.tree.seq.word, nextset:int, code:tree.seq.word)tree.seq.word 
  let inst = inst.code 
-  if nosons.code = 0 ∧ inst in"LIT FREF FREFB WORD"
+  if nosons.code = 0 ∧ inst in"LIT FREF FREFB WORD WORDS"
   then code 
   else if inst ="LOCAL"_1 
   then sets_setvarmapping.arg.code 
@@ -381,7 +374,7 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
    then if nosons.code = 5 ∧ checkistypechangeonly(pp, inlinename, arg(l_4), arg(l_3), l_1)
     then inline(pp, inlinename, sets, paramap, nextset, l_2)
     else expandapply(pp, inlinename, nextset, code, l)
-   else let f = lookupfunc(allfunctions.pp, inst)
+   else let f = lookupfunc(pp, inst)
    explodeinline(pp, inlinename, codetree.f,"SIMPLE"_1 in flags.f, nextset, l)
   else if length.l = 2 ∧ inst(l_1)="LIT"_1 ∧ inst(l_2)="LIT"_1 
   then // location after inline expansion so inlining will happen if both sons happen to be LIT's // 
@@ -461,7 +454,7 @@ function checkistypechangeonly(prg:program, inlinename:set.word, term1:word, ter
  // check to see if APPLY just does a type change // 
   let q = codedown.term1 
   if length.q = 4 ∧ last(q_2)="seq"_1 ∧ q_1_1 ="+"_1 ∧ subseq(q, 3, length.q)= ["T seq","T"]
-  then let f = lookupfunc(allfunctions.prg, term2)
+  then let f = lookupfunc(prg, term2)
    if nopara.f = 1 ∧ inst.codetree.f in"PARAM"
    then if inst.term3 ="CRECORD"_1 ∧ nosons.term3 = 2 ∧ "LIT 0"= label(term3_1)∧ "LIT 0"= label(term3_1)
     then // let z = [ term1, term2]+ print(term3)assert z in ["Q2BZbitszseqZTzseqZT tobitsZbitsZbit LIT 0 LIT 0 CRECORD 2","Q2BZbitszseqZTzseqZT tobitsZfileioZbyte LIT 0 LIT 0 CRECORD 2","Q2BZalphawordzseqZTzseqZT alphawordZstdlibZword LIT 0 LIT 0 CRECORD 2","Q2BZwordzseqZTzseqZT towordZstdlibZalphaword LIT 0 LIT 0 CRECORD 2","Q2BZalphawordzseqzseqZTzseqZT toalphaseqZstdlibZwordzseq LIT 0 LIT 0 CRECORD 2","Q2BZwordzseqzseqZTzseqZT towordseqZstdlibZalphawordzseq LIT 0 LIT 0 CRECORD 2","Q2BZbytezseqZTzseqZT byteZfileioZint LIT 0 LIT 0 CRECORD 2","Q2BZmytypezseqZTzseqZT mytypeZlibscopeZwordzseq LIT 0 LIT 0 CRECORD 2","Q2BZwordzarczseqZTzseqZT identityZwordzarczseqZT LIT 0 LIT 0 CRECORD 2","Q2BZsyminfozseqZTzseqZT identityZsyminfozseqZT LIT 0 LIT 0 CRECORD 2","Q2BZlibtypezarczseqZTzseqZT identityZlibtypezarczseqZT LIT 0 LIT 0 CRECORD 2","Q2BZbitzseqZTzseqZT bitZbitsZint LIT 0 LIT 0 CRECORD 2"]report"V"+ z // 

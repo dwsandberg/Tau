@@ -182,10 +182,38 @@ Function functype(t:tree.seq.word, nopara:int)word
 
 _____________________
 
+Function hash(f:func)int hash.mangledname.f
+
+type einst is encoding inst
+
+function hash(a:inst)int hash.towords.a
+
+function =(a:inst, b:inst)boolean towords.a = towords.b
+
+function aseinst(w:seq.word)int encoding.encode(inst.w, einst)
+
+function inst(x:seq.word)inst inst(x,"", mytype."?")
+
+function toinst(f:func)inst inst([ mangledname.f, toword.nopara.f], flags.f, returntype.f)
+
+function encode(x:inst)int encoding.encode(x, einst)
+
+function addcodes(allfunctions:invertedseq.func, a:seq.seq.int, f:func)seq.seq.int 
+ let j = encode.toinst.f 
+  replace(a, j, prepb(allfunctions, codetree.f))
+
+Function convert2(allfunctions:invertedseq.func, s:seq.func)intercode2 
+ let discard = @(+, encode, empty:seq.int, initinst)
+  let a = @(+, toinst, empty:seq.inst, s)
+  let defines = @(+, encode, empty:seq.int, a)
+  intercode2(@(addcodes.allfunctions, identity, dseq.empty:seq.int, s), mapping.einst, defines)
+
+
+
 Function prepb(allfunctions:invertedseq.func, t:tree.seq.word)seq.int 
  let inst = inst.t 
   if inst in"LIT LOCAL FREF WORD PARAM FIRSTVAR"
-  then [ aseinst.[ inst, arg.t]]
+  then [ aseinst.label.t]
   else if inst ="if"_1 
   then prepb(allfunctions, t_1)+ aseinst."THENBLOCK 1"+ prepb(allfunctions, t_2)+ aseinst."ELSEBLOCK 1"+ prepb(allfunctions, t_3)+ if nosons.t = 3 
    then [ aseinst."if 3"]
@@ -276,12 +304,10 @@ function initinst seq.inst
  inst("getmachineinfoZbuiltin 0","builtin", mytype."int"), 
  inst("profileinfoZbuiltin 0","builtin", mytype."int")]
 
-setfldZbuiltinZTzaddressZT
 
 function prep3(t:tree.seq.word)seq.word 
  @(+, prep3,"", sons.t)+ [ inst.t, if nosons.t > 0 then toword.nosons.t else arg.t]
 
-type einst is encoding inst
 
 use seq.seq.ipair.inst
 
@@ -289,30 +315,8 @@ use seq.ipair.inst
 
 use ipair.inst
 
-function hash(a:inst)int hash.towords.a
-
-Function hash(f:func)int hash.mangledname.f
 
 
-function =(a:inst, b:inst)boolean towords.a = towords.b
-
-function aseinst(w:seq.word)int encoding.encode(inst.w, einst)
-
-function inst(x:seq.word)inst inst(x,"", mytype."?")
-
-Function convert2(allfunctions:invertedseq.func, s:seq.func)intercode2 
- let discard = @(+, encode, empty:seq.int, initinst)
-  let a = @(+, toinst, empty:seq.inst, s)
-  let defines = @(+, encode, empty:seq.int, a)
-  intercode2(@(addcodes.allfunctions, identity, dseq.empty:seq.int, s), mapping.einst, defines)
-
-function addcodes(allfunctions:invertedseq.func, a:seq.seq.int, f:func)seq.seq.int 
- let j = encode.toinst.f 
-  replace(a, j, prepb(allfunctions, codetree.f))
-
-function encode(x:inst)int encoding.encode(x, einst)
-
-function toinst(f:func)inst inst([ mangledname.f, toword.nopara.f], flags.f, returntype.f)
 
 Function lookupfunc(allfunctions:invertedseq.func, f:word)func 
  let z = find(allfunctions, func(0, mytype."", f, tree."X X",""))
