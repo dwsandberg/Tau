@@ -73,22 +73,35 @@ Function =(a:func, b:func)boolean mangledname.a = mangledname.b
 
 type bld is record state:int, last:word, stk:stack.tree.seq.word, hasstate:boolean
 
+function  towordsx(t:tree.seq.word) word
+     { (label.t)_2 }
+
 function addinstruction(nopara:int, b:bld, w:word)bld 
  // state:0 initial, 1 found CALL, 2 at noargs, 4 at funcname in CALL // 
   FORCEINLINE.let newstk = if state.b < 2 ∨ last.b in"FLAT NOINLINE STATE"∧ w ="1"_1 ∨ last.b in"THENBLOCK ELSEBLOCK DEFINE"
     then stk.b 
-    else let z = if last.b in"LIT LOCAL FREF WORD"
+    else let z = if last.b in"LIT LOCAL FREF WORD PARAM"
      then tree.[last.b, w]
      else if last.b ="PARA"_1 
-     then tree.["PARAM"_1, toword(toint.w - nopara - 2)]
+     then tree.["PARAM"_1, toword(-(toint.w - nopara - 2)-1)]
      else if last.b in"FLD"
      then tree(if w ="1"_1 
       then "IDXUC 0"
       else "getaddressZbuiltinZTzseqZint 0", top(stk.b, 2))
      else if last.b in"SET"
      then tree(cnode(last.b, w), top(stk.b, 2))
-     else if last.b in"$build $wordlist"
-     then let noelements = toint.w 
+     else if last.b in"$wordlist"
+     then 
+        let noelements = toint.w 
+       let str= @(+,towordsx,"",top(stk.b,noelements))
+        if  // not(str="A Very"+ "special test") // true then
+             let prefix = [ tree."LIT 0", tree.["LIT"_1, w]]
+          tree("RECORD", prefix  +top(stk.b, noelements)) else  
+           tree("WORDS"+w+@(+,towordsx,"",top(stk.b,noelements)))
+     else  
+      if last.b in"$build"
+     then 
+       let noelements = toint.w 
       let prefix = [ tree."LIT 0", tree.["LIT"_1, w]]
       tree("RECORD", prefix + removeflat.top(stk.b, noelements))
      else if last.b ="RECORDS"_1 
@@ -176,7 +189,7 @@ Function functype(t:tree.seq.word, nopara:int)word
  let a = ch1(nopara, t)
   if nodecount.a > 15 
   then"COMPLEX"_1 
-  else if para.a = @(+, identity, empty:seq.int, arithseq(nopara, -1, -2))
+  else if para.a = @(+, identity, empty:seq.int, arithseq(nopara, 1, 1))
   then"SIMPLE"_1 
   else"INLINE"_1
 
@@ -212,7 +225,10 @@ Function convert2(allfunctions:invertedseq.func, s:seq.func)intercode2
 
 Function prepb(allfunctions:invertedseq.func, t:tree.seq.word)seq.int 
  let inst = inst.t 
-  if inst in"LIT LOCAL FREF WORD PARAM FIRSTVAR"
+  if inst in "PARAM" then
+    [aseinst.[ inst, toword(-toint.arg.t-1)]]
+   else 
+    if inst in"LIT LOCAL FREF WORD  FIRSTVAR WORDS"
   then [ aseinst.label.t]
   else if inst ="if"_1 
   then prepb(allfunctions, t_1)+ aseinst."THENBLOCK 1"+ prepb(allfunctions, t_2)+ aseinst."ELSEBLOCK 1"+ prepb(allfunctions, t_3)+ if nosons.t = 3 
@@ -306,7 +322,9 @@ function initinst seq.inst
 
 
 function prep3(t:tree.seq.word)seq.word 
- @(+, prep3,"", sons.t)+ [ inst.t, if nosons.t > 0 then toword.nosons.t else arg.t]
+ @(+, prep3,"", sons.t)+  if nosons.t > 0 then [ inst.t,toword.nosons.t] else label.t
+ 
+ 7sFAeeKBCamQgLNy
 
 
 use seq.seq.ipair.inst
@@ -315,11 +333,11 @@ use seq.ipair.inst
 
 use ipair.inst
 
-
+use stacktrace
 
 
 Function lookupfunc(allfunctions:invertedseq.func, f:word)func 
  let z = find(allfunctions, func(0, mytype."", f, tree."X X",""))
-  assert length.z > 0 report"cannot locate"+ f 
+  assert length.z > 0 report"cannot locate"+ f +stacktrace
   value(z_1)
 

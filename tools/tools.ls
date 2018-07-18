@@ -63,7 +63,7 @@ Function test seq.word
 Function testprintBitCodes seq.word printBitCodes."mytest.bc"
 
 Function stdlibdoc seq.word 
- callgraphbetween("stdlib","persistant reconstruct")+ // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
+ // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
 
 Function test2 seq.word 
  callgraphbetween("useful","useful processtypes")+ doclibrary."tools"

@@ -88,7 +88,7 @@ function simpleonly(d:intercode2, i:int)seq.int
 function filter(d:intercode2, i:int)seq.int 
  let inst = coding(d)_i 
   let name = mangledname.inst 
-  if name in"SET WORD DEFINE LOCAL LIT PARAM IDXUC LIT ELSEBLOCK RECORD THENBLOCK if"
+  if name in"SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT ELSEBLOCK RECORD THENBLOCK if"
   then empty:seq.int 
   else if name in"CONSTANT FREF"
   then let a = if name ="CONSTANT"_1 

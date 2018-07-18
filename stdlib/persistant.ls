@@ -149,6 +149,10 @@ function buildconsttree(s:seq.word, i:int, result:stack.tree.seq.word)tree.seq.w
   if c_1 ="CRECORD"_1 
   then let nosons = toint(c_2)
    buildconsttree(s, i + 2, push(pop(result, nosons), tree(c, top(result, nosons))))
+  else if c_1="WORDS"_1 then
+          let len=toint.c_2
+    // assert false report subseq(s,i,len+1) //
+    buildconsttree(s, i + len+2, push(result, tree.subseq(s,i,i+len+1)))
   else buildconsttree(s, i + 2, push(result, tree.c))
 
 function addconst(l:linklists2, t:tree.seq.word)ipair.linklists2 
@@ -174,6 +178,10 @@ function getindex(f:trackflds, t:tree.seq.word)trackflds
    else if state.f = 2 then 3 else 0)
   else if typ ="WORD"_1 
   then trackflds(l.f, flds.f + flddesc(word33(label(t)_2),"WORD"_1), if state.f = 3 then 3 else 0)
+  else if typ="WORDS"_1 then
+   // assert false report "in get index" + subseq(label.t,3,length.label.t) //
+   let k = addwordseq(l.f, subseq(label.t,3,length.label.t))
+    trackflds(value.k, flds.f + flddesc(index.k,"CRECORD"_1), 0) 
   else if typ ="FREF"_1 
   then trackflds(l.f, flds.f + flddesc(C(i64, [ CONSTCECAST, 9, typ.ptr.getftype(label(t)_2), C.[ label(t)_2]]),"LIT"_1), 0)
   else assert label(t)_1 ="CRECORD"_1 report"PROBLEM"
