@@ -2,6 +2,8 @@
 
 module libdescfunc
 
+run newimp test1
+
 use stdlib
 
 use libscope
@@ -39,7 +41,7 @@ use seq.firstpass
 Function libdesc(roots:set.word,intercode:intercode2,lib:word,mods:seq.firstpass)liblib 
   let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
    let a = close(intercode, rootindices, rootindices)
-   let syms = @(+, tolibsym(coding.intercode, codes.intercode), empty:seq.libsym, toseq.a)
+   let syms = @(+, tolibsym(intercode), empty:seq.libsym, toseq.a)
   let othermod = libmod(false,"$other"_1, syms, empty:seq.libsym, lib)
   let allmods = @(+, map(lib, asset.syms), empty:seq.libmod, mods)+ othermod 
   liblib([lib],  empty:seq.libtype , allmods)
@@ -55,13 +57,17 @@ function close(d:intercode2, toprocess:set.int, old:set.int)set.int
   if isempty.new then old else close(d, new, old ∪ new)
 
 function simpleonly(d:intercode2, i:int)seq.int 
+  // returns body for simple function otherwise and empty sequence //
  let body = codes(d)_i
-  if length.body < 30  then body else empty:seq.int
+  if length.body > 30  then   empty:seq.int
+  else 
+   let flags=flags.(coding.d)_i
+   if    ("SIMPLE"_1 in flags &or  "INLINE"_1 in flags)  then body else empty:seq.int
   
 function filter(d:intercode2, i:int)seq.int 
  let inst = coding(d)_i 
   let name = mangledname.inst 
-  if name in"SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT ELSEBLOCK RECORD THENBLOCK if"
+  if name in"SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT ELSEBLOCK RECORD THENBLOCK if CONTINUE LOOPBLOCK FINISHLOOP FIRSTVAR"
   then empty:seq.int 
   else if name in"CONSTANT FREF"
   then let a = if name ="CONSTANT"_1 
@@ -80,31 +86,30 @@ function filter(d:intercode2, i:int)seq.int
   else findcalls(a, i + 2, result + if a_i ="FREF"_1 then [ a_(i + 1)]else"")
 
 
-function astext(nopara:int, s:seq.inst, i:int)seq.word 
+function astext(s:seq.inst, i:int)seq.word 
  let f = towords(s_i)
   if f_1 ="CONSTANT"_1 
   then subseq(f, 2, length.f)
-  else if f_1 ="PARAM"_1 then"PARA"+ toword(toint(f_2)+ nopara + 2)else f
+  else if f_1 ="PARAM"_1 then"PARAM"+ toword(-toint(f_2)- 1)else 
+  if f_1 in "ELSEBLOCK THENBLOCK DEFINE" then ""
+  else 
+  if f_1 in"SET WORD WORDS LOCAL LIT PARAM  RECORD " then f
+  else [f_1]
+ 
 
-function astext5(nopara:int, s:seq.inst, d:seq.int)seq.word @(+, astext(nopara, s),"", d)
+function astext5( s:seq.inst, d:seq.int)seq.word @(+, astext( s),"", d)
 
-function tolibsym(coding:seq.inst, codes:seq.seq.int, i:int)seq.libsym 
- // Converting func to lib symbol.In the libsym, if the inst field begins with"USECALL"then the rest of inst the intermediate representation. Otherwise the inst is the code that should be added after the parameters. For example ;"USECALL PARA 2 PARA 1 ADD 2"and"ADD 2"are equivalent representations of a function.// 
-  let a = coding_i 
+function tolibsym(d:intercode2, i:int)seq.libsym 
+  let a = (coding.d)_i 
   if mangledname.a in"CONSTANT EQL RECORD"∨"builtin"_1 in flags.a 
   then empty:seq.libsym 
   else let inst = if"STATE"_1 in flags.a 
-   then [ mangledname.a, toword.nopara.a,"STATE"_1,"1"_1]
-   else if"SIMPLE"_1 in flags.a 
-   then let nopara = nopara.a 
-    let x = astext5(nopara, coding, codes_i)
-    let verysimple = nopara = 0 ∨ nopara = 1 ∧ subseq(x, 1, 2)="PARA 1"∨ nopara = 2 ∧ subseq(x, 1, 4)="PARA 2 PARA 1"∨ nopara = 3 ∧ subseq(x, 1, 6)="PARA 3 PARA 2 PARA 1"∨ nopara = 4 ∧ subseq(x, 1, 8)="PARA 4 PARA 3 PARA 2 PARA 1"
-    if verysimple ∧ not("PARA"_1 in subseq(x, nopara * 2 + 1, length.x))∧ not("SET"_1 in x)
-    then subseq(x, nopara * 2 + 1, length.x)
-    else"USECALL"+ x 
-   else if"INLINE"_1 in flags.a ∧ length(codes_i)< 10 
-   then"USECALL"+ astext5(nopara.a, coding, codes_i)
-   else [ mangledname.a, toword.nopara.a]
+   then [ mangledname.a,"STATE"_1,"1"_1]
+   else 
+    let body=simpleonly(d,i)
+    if length.body > 0  
+     then astext5(coding.d, (codes.d)_i)+flags.a  
+   else "EXTERNAL"
   [ libsym(returntype.a, mangledname.a, inst)]
   
 
@@ -113,8 +118,8 @@ function map(lib:word, syms:set.libsym, l:firstpass)seq.libmod
  if not.exportmodule.l  
   then empty:seq.libmod 
   else if isabstract.modname.l 
-  then [ libmod(isabstract.modname.l, abstracttype.modname.l, @(+, tolibsym4, empty:seq.libsym, toseq.defines.l), @(+, tolibsym4, empty:seq.libsym, toseq.exports.l), lib)]
-  else [ libmod(isabstract.modname.l, abstracttype.modname.l, @(+, findelement.syms, empty:seq.libsym, toseq.defines.l), @(+, findelement.syms, empty:seq.libsym, toseq.exports.l), lib)]
+  then [ libmod(true, abstracttype.modname.l, @(+, tolibsym4, empty:seq.libsym, toseq.defines.l), @(+, tolibsym4, empty:seq.libsym, toseq.exports.l), lib)]
+  else [ libmod(false, abstracttype.modname.l, @(+, findelement.syms, empty:seq.libsym, toseq.defines.l), @(+, findelement.syms, empty:seq.libsym, toseq.exports.l), lib)]
 
 function tolibsym4(s:symbol)libsym 
   libsym(resulttype.s, mangledname.s, src.s) 

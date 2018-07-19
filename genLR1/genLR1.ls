@@ -381,23 +381,23 @@ let functype=code.$_4
    let exptype=types.$_5
    assert mytype.functype=exptype_1 &or exptype_1=mytype.&quot  internal &quot   report  &quot  function type of &quot  +print.mytype.functype+ &quot  does not match expression type &quot  +print.exptype_1
 bindinfo(dict,code.$_5,[ mytype.[merge(code.$_2+ &quot  : &quot  +print.mytype.functype)],mytype.functype])
- "],[" F W W is W P ","bindinfo(dict,code.$_4+code.$_2,types.$_5)  
+ "],[" F W W is W P ","bindinfo(dict,code.$_4+code.$_2+@(+,cvttotext,&quot &quot,types.$_5)
+,types.$_5)  
 "],[" F W T "," $_2  
-"],[" FP  P ","$_1"],
-[" P T "," bindinfo(dict, &quot   &quot  ,[ mytype(code.$_1)])   
-"],[" P P, T "," bindinfo(dict, &quot   &quot  ,types.$_1+[ mytype(code.$_3)])  
+"],[" FP  P ","bindinfo(@(addparameter.cardinality.dict,identity,dict,types.$_1 ), &quot &quot,
+   @(+,parameter,empty:seq.mytype,types.$_1))  "],
+[" P T "," bindinfo(dict, &quot   &quot  ,[ mytype(code.$_1+&quot : &quot)])   
+"],[" P P, T "," bindinfo(dict, &quot   &quot  ,types.$_1+[ mytype(code.$_3+&quot : &quot)])  
 "],[" P W:T "," 
-let newdict = dict + symbol((code.$_1)_1, mytype( &quot  1 para &quot  ), empty:seq.mytype,mytype(code.$_3),&quot &quot)
-   bindinfo(newdict, &quot   &quot  ,[ mytype(code.$_3)])   
+    bindinfo(dict, &quot   &quot  ,[ mytype(code.$_3+code.$_1)])   
 "],[" P P, W:T "," 
-let newdict = dict + symbol((code.$_3)_1, mytype([toword(length.types.$_1+1)]+ &quot  para &quot  ), empty:seq.mytype,mytype(code.$_5),&quot &quot)
-bindinfo(newdict, &quot   &quot  ,types.$_1+[ mytype(code.$_5)])  
+bindinfo(dict, &quot   &quot  ,types.$_1+[ mytype(code.$_5+code.$_3)])  
 "],[" E W ","let id = code.$_1 
 let f = lookup(dict, id_1, empty:seq.mytype)
-assert not.isempty.f report  &quot  cannot find &quot  + id 
+assert not.isempty.f report  &quot  cannot find id &quot  + id 
 bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1]) 
-"],[" E N(L) ","unaryop( $_1,$_3)  
-"],[" E W(L) ","unaryop( $_1,$_3)  
+"],[" E N(L) ","unaryop( $_1,$_3,input,place)  
+"],[" E W(L) ","unaryop( $_1,$_3,input,place)  
 "],[" E(E) ","$_2  
 "],[" E { E } ","$_2  
 "],[" E if E then E else E ","
@@ -408,9 +408,9 @@ assert (types.$_4) =(types.$_6) report  &quot  then and else types are different
    bindinfo(dict,newcode+  &quot  if &quot  ,types.thenpart)
 "],[" E E^E ","opaction(subtrees,input,place)  
 "],[" E E_E ","opaction(subtrees,input,place)  
-"],[" E-E ","unaryop( $_1,$_2)  
-"],[" E W.E ","unaryop( $_1,$_3)  
-"],[" E N.E ","unaryop( $_1,$_3)  
+"],[" E-E ","unaryop( $_1,$_2,input,place)  
+"],[" E W.E ","unaryop( $_1,$_3,input,place)  
+"],[" E N.E ","unaryop( $_1,$_3,input,place)  
 "],[" E E * E ","opaction(subtrees,input,place)  
 "],[" E E-E ","opaction(subtrees,input,place)
 "],[" E E = E ","opaction(subtrees,input,place)  
@@ -423,20 +423,20 @@ bindinfo(dict,code.$_1+code.$_3,types.$_1+types.$_3)
 "],[" E [ L]","
  let types=types($_2)
  assert @(∧, =(types_1), true, types )report  &quot  types do not match in build &quot   
-    bindinfo( dict,&quot 0 &quot+toword.(length.types)+ code.$_2+ &quot  RECORD &quot  +toword.(length.types+2), [mytype(towords(types_1)+ &quot  seq &quot   )])
+    bindinfo( dict,&quot LIT 0 LIT  &quot+toword.(length.types)+ code.$_2+ &quot  RECORD &quot  +toword.(length.types+2), [mytype(towords(types_1)+ &quot  seq &quot   )])
  "],[" A let W = E "," let e = $_4 let name =(code.$_2)_1 
 let newdict = dict + symbol(name, mytype( &quot  local &quot  ), empty:seq.mytype,(types.e)_1,&quot &quot)
 bindinfo(newdict, code.e + &quot  define &quot  + name, types.e)
 "],[" E A E ","let f = lookup(dict, last.code.$_1, empty:seq.mytype)
-assert not.isempty.f report  &quot  error &quot  bindinfo(dict.$_1-f, code.$_1 + code.$_2 + &quot  undefine &quot  , types.$_2)
+assert not.isempty.f report  &quot  error &quot  bindinfo(dict.$_1-f_1, code.$_1 + code.$_2 + &quot  SET &quot +last.code.$_1 , types.$_2)
 "],[" E assert E report E E ","
 assert types($_2)_1 = mytype.&quot  boolean &quot  report  &quot  condition in assert must be boolean in: &quot    
   assert types($_4)_1 = mytype.&quot  word seq &quot  report  &quot  report in assert must be seq of word in: &quot   
   let newcode=code.$_2 + code.$_4 + code.$_5 +   &quot  assertZbuiltinZwordzseq   if  &quot   
   bindinfo(dict,newcode,types.$_5)
 "],[" E I ","$_1  
-"],[" E I.I "," let d = decode.(code.$_3)_1 
-bindinfo(dict, [ encodeword(decode.(code.$_1)_1 + d)]+countdigits(d, 1, 0)+&quot  makerealZrealZintZint  &quot ,[mytype.&quot  real  &quot] )
+"],[" E I.I "," let d = decode.(code.$_3)_2 
+bindinfo(dict, &quot LIT &quot +[ encodeword(decode.(code.$_1)_2 + d)]+&quot LIT &quot +countdigits(d, 1, 0)+&quot  makerealZrealZintZint  &quot ,[mytype.&quot  real  &quot] )
 "],[" T W ","$_1  
 "],[" T W.T ","bindinfo(dict,code.$_3+code.$_1,types.$_1)  
 "],[" E W:T ","
@@ -444,7 +444,7 @@ let f = lookup(dict,  merge(code.$_1 + &quot :  &quot+ print.mytype.code.$_3), e
 assert not.isempty.f report errormessage( &quot cannot find  &quot+ code.$_1 + &quot: &quot+ print.mytype.code.$_3,input,place)
 bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])
 "],[" E $wordlist ","let s = code.$_1
-   bindinfo(dict,  &quot  $wordlist &quot  +toword.length.s+s,[mytype.&quot  word seq &quot  ])
+   bindinfo(dict,  &quot  WORDS &quot  +toword.length.s+s,[mytype.&quot  word seq &quot  ])
 "],[" E comment E "," $_2  
 "],[" N_","$_1  
 "],[" N-","$_1  

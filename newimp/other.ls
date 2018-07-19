@@ -3,7 +3,7 @@
  
 Module other
 
-run other test1
+run newimp test1
 
 use stdlib
 
@@ -26,9 +26,8 @@ use seq.moddesc
 
 use  process.bindinfo
 
-use newimp
+use newparse
 
-use pass2
 
 use set.symbol
 
@@ -43,11 +42,13 @@ use seq.firstpass
  use seq.seq.word
  
  use blockseq.int
+ 
+use seq.symbol
+
   
 function dcopy(i:int) int i
 
-Function test1 seq.word
-  X("small")
+
  
 
 type   firstpass is record modname:mytype, uses:seq.mytype,defines:set.symbol,exports:set.symbol,unboundexports:seq.symbol,
@@ -83,11 +84,18 @@ function find(modset:set.firstpass, name:mytype) set.firstpass
 
 
 
-use seq.symbol
 
 
 
-function X(libname:seq.word)seq.word 
+type linkage is record  symset:symbolset,mods:seq.firstpass,roots:set.word
+
+function symset(linkage) symbolset export
+
+function mods(linkage) seq.firstpass export
+
+function roots(linkage) set.word export
+
+Function pass1(libname:seq.word) linkage 
  let ld=tolibdesc(libname_1)
  let a = @(+, gathersymbols(exports.ld), empty:set.firstpass, modules.ld)
  let d2=resolveunboundexports.expanduse.a 
@@ -97,15 +105,8 @@ function X(libname:seq.word)seq.word
   let templates= @(+,identity,  emptysymbolset,toseq.@(&cup,defines,empty:set.symbol,abstractmods))
  let knownsymbols=@(+,identity,emptysymbolset,toseq.@(&cup,defines,empty:set.symbol,simple)) 
  let X=@(bind(templates,d2),identity,  knownsymbols ,simple )
-      testrt(X,roots) 
-   
- PARAM 1 lengthZalphawordzseqzseqZTzseq LIT 0 
- Q3DZbuiltinZintZint PARAM 1 PARAM 1 lengthZalphawordzseqzseqZTzseq LIT 0 
- Q3DZbuiltinZintZint PARAM 1 PARAM 1 LIT 1 Q5FZalphawordzseqzseqZTzseqZint PARAM 1 PARAM 1 lengthZalphawordzseqzseqZTzseq Q5FZalphawordzseqzseqZTzseqZint 
- Q3FZalphawordzoseqZTzseqZTzseq GTZstdlib 
- Q3DZstdlibZorderingZordering PARAM 1 PARAM 1 Q2BZalphawordzseqzseqZTzseqZTzseq PARAM 1 LIT 1 Q5FZalphawordzseqzseqZTzseqZint PARAM 1 PARAM 1 lengthZalphawordzseqzseqZTzseq Q5FZalphawordzseqzseqZTzseqZint 
- Q3FZalphawordzoseqZTzseqZTzseq GTZstdlib 
- Q3DZstdlibZorderingZordering PARAM 1 PARAM 1 Q2BZalphawordzseqzseqZTzseqZTzseq PARAM 1 PARAM 1 LIT 1 LIT 1 submergeZalphawordzseqzoseqZTzseqZTzseqZintZint if if if if
+ linkage (X,simple+abstractmods,asset.roots)
+ 
 
  
 function recordsize( src:seq.word, i:int) int

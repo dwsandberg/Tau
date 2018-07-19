@@ -2,7 +2,7 @@
 
 Module cvttoinst
 
-run other test1
+run newimp test1
 
 
 use stdlib
@@ -157,6 +157,7 @@ function prep3(t:tree.seq.word)seq.word
 function   astext(  coding:seq.inst,i:int) seq.word  towords(coding_i)
 
 function        ithfunc(a:intercode2,i:int) seq.word towords.(coding.a)_i +  @(+,astext.coding.a,"",(codes.a)_i)
++ "flags:"+flags.(coding.a)_i
 
 Function print(a: intercode2)  seq.word @(seperator("&br &br"),ithfunc.a,"",defines.a)
    

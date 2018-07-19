@@ -3,7 +3,7 @@
  
 module pass2
 
-run other test1
+run newimp test1
 
 
 use other
@@ -86,7 +86,7 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
 
 type program is record  knownsymbols:symbolset, callgraph:graph.word, inline:set.word, hasstate:seq.word
 
-Function testrt(knownsymbols:symbolset,roots:seq.word) seq.word
+Function pass2(knownsymbols:symbolset,roots:seq.word) intercode2
  let p = program(knownsymbols,newgraph.empty:seq.arc.word,empty:set.word,"")
    let x= @(addsymbol,identity,p,roots)
    let s2 = expandinline.x 
@@ -95,13 +95,10 @@ Function testrt(knownsymbols:symbolset,roots:seq.word) seq.word
   let g = reachable(callgraph.s2, roots) //- asset.@(+, mangled, empty:seq.word, compiled.r) //
   // find tail calls and constants // 
    let rr = @(+, findconstandtail(s2, statechangingfuncs), empty:seq.symbol, toseq.g)
-   let intercode =convert2(knownsymbols.x, subseq(rr,1,500))
-  //  let bc=codegen5(intercode,"testx"_1)
-   let z2 = createlib(bc, "testx"_1, "") //
-   [toword.length.toseq.g]+print.intercode
-   
-   printcode(knownsymbols.s2)
-   
+   assert false report @(seperator.
+   "&br &br",print2,"",rr)
+   convert2(knownsymbols.x, subseq(rr,1,500))
+     
 
 
 function buildcodetree(knownsymbols:symbolset, src:seq.word) tree.seq.word 
