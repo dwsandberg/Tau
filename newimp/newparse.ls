@@ -454,7 +454,10 @@ let subtrees = top(stk, rulelen)
 let dict = dict.result.top.stk 
 let newtree = 
 if ruleno = // G F # // 1 then result.subtrees_1 else 
-if ruleno = // F W W(FP)T E // 2 then let functype = code.result.subtrees_6 let exptype = types.result.subtrees_7 assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report"function type of"+ print.mytype.functype +"does not match expression type"+ print.exptype_1 bindinfo(dict, code.result.subtrees_7, [ mytype.code.result.subtrees_2, mytype.functype]+ types.result.subtrees_4)else 
+if ruleno = // F W W(FP)T E // 2 then let functype = code.result.subtrees_6 let exptype = types.result.subtrees_7 
+assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report"function type of"+ print.mytype.functype 
++"does not match expression type"+ print.exptype_1 
+bindinfo(dict, code.result.subtrees_7, [ mytype.code.result.subtrees_2, mytype.functype]+ types.result.subtrees_4)else 
 if ruleno = // F W N(FP)T E // 3 then let functype = code.result.subtrees_6 let exptype = types.result.subtrees_7 assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report"function type of"+ print.mytype.functype +"does not match expression type"+ print.exptype_1 bindinfo(dict, code.result.subtrees_7, [ mytype.code.result.subtrees_2, mytype.functype]+ types.result.subtrees_4)else 
 if ruleno = // F W W T E // 4 then let functype = code.result.subtrees_3 let exptype = types.result.subtrees_4 assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report"function type of"+ print.mytype.functype +"does not match expression type"+ print.exptype_1 bindinfo(dict, code.result.subtrees_4, [ mytype.code.result.subtrees_2, mytype.functype])else 
 if ruleno = // F W W:T E // 5 then let functype = code.result.subtrees_4 let exptype = types.result.subtrees_5 assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report"function type of"+ print.mytype.functype +"does not match expression type"+ print.exptype_1 bindinfo(dict, code.result.subtrees_5, [ mytype.[ merge(code.result.subtrees_2 +":"+ print.mytype.functype)], mytype.functype])else 
@@ -465,7 +468,8 @@ if ruleno = // P T // 9 then bindinfo(dict,"", [ mytype(code.result.subtrees_1 +
 if ruleno = // P P, T // 10 then bindinfo(dict,"", types.result.subtrees_1 + [ mytype(code.result.subtrees_3 +":")])else 
 if ruleno = // P W:T // 11 then bindinfo(dict,"", [ mytype(code.result.subtrees_3 + code.result.subtrees_1)])else 
 if ruleno = // P P, W:T // 12 then bindinfo(dict,"", types.result.subtrees_1 + [ mytype(code.result.subtrees_5 + code.result.subtrees_3)])else 
-if ruleno = // E W // 13 then let id = code.result.subtrees_1 let f = lookup(dict, id_1, empty:seq.mytype)assert not.isempty.f report"cannot find id"+ id bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])else 
+if ruleno = // E W // 13 then let id = code.result.subtrees_1 let f = lookup(dict, id_1, empty:seq.mytype)assert not.isempty.f 
+report errormessage("cannot find id"+ id,input,place ) bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1]) else 
 if ruleno = // E N(L)// 14 then unaryop(result.subtrees_1, result.subtrees_3, input, place)else 
 if ruleno = // E W(L)// 15 then unaryop(result.subtrees_1, result.subtrees_3, input, place)else 
 if ruleno = // E(E)// 16 then result.subtrees_2 else 
@@ -485,8 +489,13 @@ if ruleno = // E E ∨ E // 29 then opaction(subtrees, input, place)else
 if ruleno = // L E // 30 then result.subtrees_1 else 
 if ruleno = // L L, E // 31 then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_1 + types.result.subtrees_3)else 
 if ruleno = // E [ L]// 32 then let types = types(result.subtrees_2)assert @(∧, =(types_1), true, types)report"types do not match in build"bindinfo(dict,"LIT 0 LIT"+ toword.(length.types)+ code.result.subtrees_2 +"RECORD"+ toword.(length.types + 2), [ mytype(towords(types_1)+"seq")])else 
-if ruleno = // A let W = E // 33 then let e = result.subtrees_4 let name =(code.result.subtrees_2)_1 let newdict = dict + symbol(name, mytype("local"), empty:seq.mytype,(types.e)_1,"")bindinfo(newdict, code.e +"define"+ name, types.e)else 
-if ruleno = // E A E // 34 then let f = lookup(dict, last.code.result.subtrees_1, empty:seq.mytype)assert not.isempty.f report"error"bindinfo(dict.result.subtrees_1-f_1, code.result.subtrees_1 + code.result.subtrees_2 +"SET"+ last.code.result.subtrees_1, types.result.subtrees_2)else 
+if ruleno = // A let W = E // 33 then let e = result.subtrees_4 let name =(code.result.subtrees_2)_1 
+let newdict = dict + symbol(name, mytype("local"), empty:seq.mytype,(types.e)_1,"")bindinfo(newdict, code.e +"define"+ name, types.e)else 
+if ruleno = // E A E // 34 then
+let t=code.result.subtrees_1   let f = lookup(dict, last.t, empty:seq.mytype)
+assert not.isempty.f report"error"
+bindinfo(dict.result.subtrees_1-f_1,  subseq(t,1,length.t-2) + code.result.subtrees_2 
++"SET"+ last.t, types.result.subtrees_2)else 
 if ruleno = // E assert E report E E // 35 then assert types(result.subtrees_2)_1 = mytype."boolean"report"condition in assert must be boolean in:"assert types(result.subtrees_4)_1 = mytype."word seq"report"report in assert must be seq of word in:"let newcode = code.result.subtrees_2 + code.result.subtrees_4 + code.result.subtrees_5 +"assertZbuiltinZwordzseq if"bindinfo(dict, newcode, types.result.subtrees_5)else 
 if ruleno = // E I // 36 then result.subtrees_1 else 
 if ruleno = // E I.I // 37 then let d = decode.(code.result.subtrees_3)_2 bindinfo(dict,"LIT"+ [ encodeword(decode.(code.result.subtrees_1)_2 + d)]+"LIT"+ countdigits(d, 1, 0)+"makerealZrealZintZint", [ mytype."real"])else 

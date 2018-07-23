@@ -261,7 +261,14 @@ Function replaceT(with:mytype, name:word)word
   assert subseq(d, length.d, length.d)= [ 84]report"PROBLEM replacing T in word"+ name +"with"+ print.with 
   merge([ encodeword.subseq(d, 1, length.d - 1)]+ print.with)
 
-Function libsymencoding erecord.libsym builtin.NOINLINE.ERECORD
+Function libsymencoding erecord.libsym libsymencodingx
+
+function hash(a:libsym)int encoding.fsig.a
+
+
+use seq.libsym
+
+type libsymencodingx is encoding libsym
 
 function f42(mangledname:word, types:seq.mytype, l:libsym)seq.word 
  let info = syminfo.l 

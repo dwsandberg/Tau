@@ -18,7 +18,7 @@ use stacktrace
 
 use stdlib
 
-use seq.word
+/use seq.word
 
 
 Function =(T, T)boolean unbound

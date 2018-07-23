@@ -6,11 +6,11 @@ use UTF8
 
 use seq.real
 
-use seq.seq.real 
+/use seq.seq.real 
 
-use seq.word
+/use seq.word
 
-use seq.int
+/use seq.int
 
 use stdlib
 

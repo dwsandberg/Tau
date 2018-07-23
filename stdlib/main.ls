@@ -79,6 +79,8 @@ use seq.inst
 
 use seq.int
 
+use invertedseq.libsym
+
 Function main(arg:seq.int)outputformat 
  let args = towords(arg + 10 + 10)
   let libname = args_1 

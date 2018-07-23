@@ -276,7 +276,6 @@ Function makepara(paranames:seq.word, paratypes:seq.mytype, args:seq.word, i:int
 
 Function paranames(p:tree.word)seq.word @(+, label,"", subseq(sons.p, 3, nosons.p))
 
-function hash(a:libsym)int encoding.fsig.a
 
 function isinstance(s:syminfo)set.word 
  if isinstance.modname.s 

@@ -138,8 +138,11 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
     else 
       let name=src_i  
        let specialnopara= if name in "if CALLIDX" then 3
-     else if name in "IDXUC setfldZbuiltinZTzaddressZT decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint" then 2
-     else if name in "assertZbuiltinZwordzseq mappingZbuiltinZTzerecord allocatespaceZbuiltinZint" then 1
+     else if name in "IDXUC setfldZbuiltinZTzaddressZT decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord 
+     findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint  " then 2
+     else if name in "assertZbuiltinZwordzseq mappingZbuiltinZTzerecord allocatespaceZbuiltinZint  builtinZtestZinternal1
+     abortedZbuiltinZTzprocess processZbuiltinZT " then 1
+     else if name in " FORCEINLINEZtest PROFILEZtest" then 0
      else -1 
        assert length.toseq.stk &ge specialnopara report "STACK ISSUE"+name+mangledname.caller+src
     if specialnopara > -1 then
@@ -148,7 +151,7 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
       else if name in "LIT PARAM LOCAL WORD"  then buildcodetreeX(knownsymbols,hasstate,caller,push(stk,tree(subseq(src,i,i+1))),i+2,src)
       else if name = "FREF"_1 then 
        let sym=(knownsymbols)_(src_(i+1))
-       assert isdefined.sym report "UNDEFINED"+src_(i+1)+src
+        assert isdefined.sym   report "UNDEFINED"+src_(i+1)+src
        buildcodetreeX(knownsymbols,hasstate,caller,push(stk,tree(subseq(src,i,i+1))),i+2,src)
       else if name = "define"_1 then buildcodetreeX(knownsymbols,hasstate,caller,stk,i+2,src)
            else if name in "RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP" then
@@ -160,7 +163,7 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
          buildcodetreeX(knownsymbols,hasstate,caller,push(stk,tree(subseq(src,i,i+size+1))),i+size+2,src)
       else 
          let sym=(knownsymbols)_name
-           assert not(mangledname.sym= "undefinedsym"_1 )report "MM3"+name+subseq(src,0,i-1)+"<<<>>>"+ subseq(src,i,length.src)
+           assert not(mangledname.sym= "undefinedsym"_1 )report print.caller+"MM3"+name+subseq(src,0,i-1)+"<<<>>>"+ subseq(src,i,length.src)
            assert not((src.sym)_1 in "sequence record encoding") report "MM4"+name+ mangledname.caller
           assert length.toseq.stk &ge nopara.sym report "stack problem"
           if last.src.sym="EXTERNAL"_1 then 
@@ -180,8 +183,9 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
  @(+, calls.knownsymbols, empty:seq.word, sons.t)+ if inst.t ="FREF"_1 
   then [  arg.t]
   else if inst.t in"assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint
-  decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord getaddressZbuiltinZTzseqZint
-  WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD"
+  decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint
+  WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD
+   FORCEINLINEZtest  builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT  PROFILEZtest"
   then empty:seq.word 
   else  
     let sym=(knownsymbols)_inst.t

@@ -50,7 +50,7 @@ type boolean is record toint:int
 
 * Useful constants
 
-Function dcopy(i:int) int i 
+
 
 Function openpara word {"("_1 }
 
@@ -157,7 +157,7 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 type wordencoding is encoding seq.int
 
-use blockseq.seq.int
+/use blockseq.seq.int
 
 
 type word is record bb:encoding.seq.int

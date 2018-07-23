@@ -4,7 +4,6 @@ use graph.libtype
 
 use libscope
 
-use oseq.libtype
 
 use seq.arc.libtype
 
@@ -18,9 +17,12 @@ use seq.mytype
 
 use set.libtype
 
-use seq.word
+/use seq.word
 
 use stdlib
+
+Function ?(a:arc.libtype, b:arc.libtype)ordering export
+
 
 Function print(a:libtype)seq.word 
  [ name.a]+(if abstract.a then".T"else"")+"size"+ print.size.a +"kind"+ kind.a + @(+, print,"", subtypes.a)
@@ -44,6 +46,7 @@ Function assigntypesizes(f:seq.libtype)set.libtype
   let a = @(addnodup, identity, asset.init, f)+ libtype("T"_1, false,"struct"_1, empty:seq.mytype, offset.0,"")
   // assert false report @(lines, print,"", toseq.a)// 
   // build dependence graph for types.It should be acyclic // 
+ //  let discard = if false then arc(f_1,f_1) ? arc(f_1,f_1) else EQ //
   let g = newgraph.@(+, getarcs.a, empty:seq.arc.libtype, toseq.a)
   let c = sinksfirst.g 
   // assert false report @(lines, print,"", c)// 

@@ -98,7 +98,7 @@ Function uses(s:mod2desc)seq.mytype export
 
 Function isprivate(a:mod2desc)boolean export
 
-Function mod2desc(modname:mytype, export:set.syminfo, uses:seq.mytype, typedefs:seq.libtype, defines:set.syminfo, tocompile:seq.seq.word, isprivate:boolean)mod2desc 
+Function mod2desc(modname:mytype, exportx:set.syminfo, uses:seq.mytype, typedefs:seq.libtype, defines:set.syminfo, tocompile:seq.seq.word, isprivate:boolean)mod2desc 
  export
 
 type pass1result is record code:intercode2, libname:seq.word, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype

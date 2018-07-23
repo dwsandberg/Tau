@@ -56,6 +56,7 @@ Function symbol( name:word,modname:mytype,paratypes:seq.mytype,resulttype:mytype
      symbol(mangle(name,modname,paratypes),resulttype,paratypes,name,modname,src,tree("default"))
      
 Function changesrc(s:symbol,src:seq.word) symbol
+// assert not ("Q3F2ZlibtypezgraphZTzarcZTzarc"_1 in src) report "LP2"+print2.s+stacktrace //
    symbol( mangledname.s, resulttype.s, paratypes.s,name.s, modname.s,src,codetree.s)
 
 Function changecodetree(old:symbol  ,t:tree.seq.word ) symbol 
@@ -71,6 +72,8 @@ Function changecodetree(old:symbol  ,t:tree.seq.word ) symbol
     
     
 use set.word
+
+use stacktrace
     
 Function src(symbol) seq.word export
 

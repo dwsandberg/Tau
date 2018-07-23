@@ -217,22 +217,22 @@ function       addele(t:trackele,s:mytype) trackele
     let a = addwordseq(l.t,towords.s)
     trackele(value.a,places.t+index.a)
 
-function addlibtypeseq(l:linklists2,s:seq.libtype) ipair(linklists2)
+function addlibtypeseq(l:linklists2,s:seq.libtype) ipair.linklists2
 let x =@(addele,identity,trackele(l,empty:seq.int),s)
     let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
     ipair(place.l.x,@(addoffset,identity,t,places.x) )
 
-function addmytypeseq(l:linklists2,s:seq.mytype) ipair(linklists2)
+function addmytypeseq(l:linklists2,s:seq.mytype) ipair.linklists2
 let x =@(addele,identity,trackele(l,empty:seq.int),s)
     let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
     ipair(place.l.x,@(addoffset,identity,t,places.x) )
 
-function addlibmodseq(l:linklists2,s:seq.libmod) ipair(linklists2)
+function addlibmodseq(l:linklists2,s:seq.libmod) ipair.linklists2
 let x =@(addele,identity,trackele(l,empty:seq.int),s)
     let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
     ipair(place.l.x,@(addoffset,identity,t,places.x) )
 
-function addlibsymseq(l:linklists2,s:seq.libsym) ipair(linklists2)
+function addlibsymseq(l:linklists2,s:seq.libsym) ipair.linklists2
 let x =@(addele,identity,trackele(l,empty:seq.int),s)
     let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
     ipair(place.l.x,@(addoffset,identity,t,places.x) )
@@ -240,7 +240,7 @@ let x =@(addele,identity,trackele(l,empty:seq.int),s)
 function addoffset(l:linklists2,index:int) linklists2
 linklists2(a.l+C64.packit(offsetthread.l, index),wordthread.l,place.l,wordseqthread.l)
   
-function addlibsym(l1:linklists2,sym:libsym) ipair(linklists2)
+function addlibsym(l1:linklists2,sym:libsym) ipair.linklists2
     let a = addwordseq(l1,returntype.sym)
    let b =addwordseq(value.a,instruction.sym)
    let l=value.b
@@ -249,7 +249,7 @@ function addlibsym(l1:linklists2,sym:libsym) ipair(linklists2)
    let l4=linklists2(a.l3+C64.packit(offsetthread.l3, index.b),wordthread.l3,place.l3,wordseqthread.l3)
    ipair(place.l,l4)
    
-Function addliblib(lin:linklists2,t:liblib) ipair(linklists2)
+Function addliblib(lin:linklists2,t:liblib) ipair.linklists2
    let a = addwordseq(lin,libname.t)
    let b =addlibtypeseq(value.a,types.t)
       let c =addlibmodseq(value.b,mods.t)
@@ -257,18 +257,18 @@ Function addliblib(lin:linklists2,t:liblib) ipair(linklists2)
      let l5=l+a+b+c+timestamp.t+toint.readonly.t 
    ipair(place.l,l5)
 
-function addlibtype(lin:linklists2,t:libtype) ipair(linklists2)
+function addlibtype(lin:linklists2,t:libtype) ipair.linklists2
    let a = addmytypeseq(lin,subtypes.t)
    let b =addwordseq(value.a,fldnames.t)
    let l=value.b
      let l5=l+name.t+toint.abstract.t+kind.t+a+TSIZE.size.t+LIT.size.t+b  
    ipair(place.l,l5)
    
-function addlibmod(lin:linklists2,mod:libmod) ipair(linklists2)
-   let a = addlibsymseq(lin,defines.mod)
-   let b =addlibsymseq(value.a,exports.mod)
+function addlibmod(lin:linklists2,modx:libmod) ipair.linklists2
+   let a = addlibsymseq(lin,defines.modx)
+   let b =addlibsymseq(value.a,exports.modx)
    let l=value.b
-     let l5=l+toint.parameterized.mod+modname.mod+a+b+library.mod   
+     let l5=l+toint.parameterized.modx+modname.modx+a+b+library.modx   
    ipair(place.l,l5)
 
 function +(l:linklists2,i:int) linklists2 
@@ -280,12 +280,13 @@ function +(l:linklists2,w:word) linklists2
 function +(l:linklists2,b:ipair.linklists2) linklists2 
   linklists2(a.l+C64.packit(offsetthread.l, index.b),wordthread.l,place.l,wordseqthread.l)
  
-Function addwordseq(t:linklists2, a:seq.word) ipair(linklists2)
+Function addwordseq(t:linklists2, a:seq.word) ipair.linklists2
 ipair(place.t, linklists2(a.t + @(+, C64word33, [ C64.wordseqthread.t, C64.length.a], a), wordthread.t, offsetthread.t, place.t))
 
 function C64word33(a:word)int C64.word33.a
 
 function cast2int(s:seq.int)int builtin.NOOP
+
 ______________________________
 
 Three Functions to pack two ints into 64 bits

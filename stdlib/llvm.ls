@@ -52,26 +52,7 @@ use stdlib
 
 use fileio
 
-use seq.seq.encoding.llvmtype
 
-use seq.seq.ipair.llvmtype
-
-use seq.ipair.llvmtype
-
-use ipair.llvmtype
-
-use seq.seq.ipair.llvmconst
-
-use seq.ipair.llvmconst
-
-use ipair.llvmconst
-
-
-use seq.seq.ipair.seq.int
-
-use seq.ipair.seq.int
-
-use ipair.seq.int
 
 Function typ(llvmconst)int export
 
@@ -85,6 +66,8 @@ use blockseq.int
 use packedseq.seq.int
 
 use packedseq.int
+
+
 
 type llvmtypes is encoding llvmtype
 
@@ -112,6 +95,7 @@ Function mapping(erecord.llvmconst)seq.llvmconst export
 type machineinfo is record triple:seq.int, datalayout:seq.int
 
 function getmachineinfo machineinfo builtin.usemangle
+
 
 Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits 
  let MODABBREVLEN = 3 
@@ -141,7 +125,7 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
   // sym table // 
   let symtabheader = addblockheader(a7, MODABBREVLEN, VALUESYMTABBLOCK, TYPEABBREVLEN)
   let a8 = finishblock(symentries(symtabheader, mapping.llvmconsts, 1), length.symtabheader, TYPEABBREVLEN)
-  // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN)
+  // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN) 
 
 Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int 
  if i > length.adj 

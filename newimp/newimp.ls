@@ -66,8 +66,17 @@ use seq.libmod
 
 use seq.libsym
 
+use Symbol
+
+use seq.symbol
+
+use set.symbol
+
+use seq.mytype
+
 Function X(libname:seq.word)seq.word 
  let p1=pass1(libname) 
+ // @(+,print5,"",toseq.symset.p1) //
  let intercode= pass2(symset.p1,toseq.roots.p1) 
  let newlibname="testx"_1
  let liblib=libdesc( roots.p1 ,intercode ,newlibname,mods.p1) 
@@ -76,6 +85,10 @@ Function X(libname:seq.word)seq.word
  print.intercode
  
   @(+,print,"",mods.liblib)
+  
+ function print5(s:symbol) seq.word
+   if isdefined.s &and nopara.s=1 &and resulttype.s=(paratypes.s)_1 then
+    "&br"+print2.s else ""
 
  
 / type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, library:word
@@ -93,4 +106,4 @@ function print(l:libmod) seq.word
    
 
 Function test1 seq.word
-  X("small")
+  X("stdlib")
