@@ -29,7 +29,9 @@ function hash(a:inst)int hash.towords.a
 
 function =(a:inst, b:inst)boolean towords.a = towords.b
 
-function aseinst(w:seq.word)int encoding.encode(inst.w, einst)
+function aseinst(w:seq.word)int 
+assert not(w="FREF") report "problem!"
+encoding.encode(inst.w, einst)
 
 function inst(x:seq.word)inst inst(x,"", mytype."?")
 
@@ -40,8 +42,16 @@ function encode(x:inst)int encoding.encode(x, einst)
 
 function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int 
   assert not(label.codetree.f = "default") report "in addcodes"+print2.f
+  // assert mangledname.f &ne "arithseqZintzseqZintZTZT"_1 report 
+   let k=prepb(allfunctions, codetree.f)
+   print.codetree.f+"??"+  @(+,towords,"",  @(+,_(mapping.einst),empty:seq.inst,k)) //
  let j = encode.toinst.f 
+   assert not.hasexternal.codetree.f report print.f
   replace(a, j, prepb(allfunctions, codetree.f))
+  
+function hasexternal(t:tree.seq.word) boolean
+if "EXTERNAL"_1 in label.t then true
+else @(&or,hasexternal,false,sons.t)
   
 Function convert2(allfunctions:symbolset, s:seq.symbol)intercode2 
  let discard = @(+, encode, empty:seq.int, initinst)

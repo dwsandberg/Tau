@@ -38,15 +38,16 @@ use Symbol
 
 use seq.firstpass
 
-Function libdesc(roots:set.word,intercode:intercode2,lib:word,mods:seq.firstpass)liblib 
+Function libdesc(roots:set.word,intercode:intercode2,lib:word,mods:seq.firstpass,known:symbolset)liblib 
   let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
    let a = close(intercode, rootindices, rootindices)
    let syms = @(+, tolibsym(intercode), empty:seq.libsym, toseq.a)
-  let othermod = libmod(false,"$other"_1, syms, empty:seq.libsym, lib)
-  let allmods = @(+, map(lib, asset.syms), empty:seq.libmod, mods)+ othermod 
-  liblib([lib],  empty:seq.libtype , allmods)
+   let allmods = @(map(lib,known), identity,mapresult(asset.syms,empty:seq.libmod), mods)
+  liblib([lib],  empty:seq.libtype , mods.allmods+libmod(false,"$other"_1, toseq.syms.allmods, empty:seq.libsym, lib))
 
-  emptyliblib."testx"_1
+  @(+, print,"",toseq.asset.@(+, exports,  empty:seq.libsym ,allmods))
+
+    
   
   function toinstindex(a:set.word, d:intercode2, i:int)seq.int 
  if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
@@ -93,7 +94,7 @@ function astext(s:seq.inst, i:int)seq.word
   else if f_1 ="PARAM"_1 then"PARAM"+ toword(-toint(f_2)- 1)else 
   if f_1 in "ELSEBLOCK THENBLOCK DEFINE" then ""
   else 
-  if f_1 in"SET WORD WORDS LOCAL LIT PARAM  RECORD " then f
+  if f_1 in"SET WORD WORDS LOCAL LIT PARAM  RECORD FREF" then f
   else [f_1]
  
 
@@ -106,20 +107,31 @@ function tolibsym(d:intercode2, i:int)seq.libsym
   else let inst = if"STATE"_1 in flags.a 
    then [ mangledname.a,"STATE"_1,"1"_1]
    else 
-    let body=simpleonly(d,i)
+     let body=simpleonly(d,i)
     if length.body > 0  
-     then astext5(coding.d, (codes.d)_i)+flags.a  
+     then 
+       // assert mangledname.a &ne "arithseqZintzseqZintZTZT"_1 report astext5(coding.d, (codes.d)_i) //
+     astext5(coding.d, (codes.d)_i)+flags.a  
    else "EXTERNAL"
   [ libsym(returntype.a, mangledname.a, inst)]
   
 
+type mapresult is record syms:set.libsym,mods:seq.libmod
 
-function map(lib:word, syms:set.libsym, l:firstpass)seq.libmod 
+type mapresult2 is record syms:set.libsym,libsyms:seq.libsym
+
+use seq.symbol
+
+function map(lib:word,known:symbolset,r:mapresult,l:firstpass) mapresult
  if not.exportmodule.l  
-  then empty:seq.libmod 
+  then r
   else if isabstract.modname.l 
-  then [ libmod(true, abstracttype.modname.l, @(+, tolibsym4, empty:seq.libsym, toseq.defines.l), @(+, tolibsym4, empty:seq.libsym, toseq.exports.l), lib)]
-  else [ libmod(false, abstracttype.modname.l, @(+, findelement.syms, empty:seq.libsym, toseq.defines.l), @(+, findelement.syms, empty:seq.libsym, toseq.exports.l), lib)]
+  then mapresult(syms.r, mods.r+libmod(true, abstracttype.modname.l, @(+, tolibsym4, empty:seq.libsym, toseq.defines.l),
+     @(+, tolibsym4, empty:seq.libsym, toseq.exports.l), lib))
+  else 
+     // let d=@(findelement.known,identity, mapresult2(syms.r,empty:seq.libsym), toseq.defines.l)//
+     let e= @(findelement.known,identity, mapresult2(syms.r,empty:seq.libsym), toseq.exports.l)
+    mapresult(syms.e, mods.r+libmod(false, abstracttype.modname.l,  empty:seq.libsym,libsyms.e, lib))
 
 function tolibsym4(s:symbol)libsym 
   libsym(resulttype.s, mangledname.s, src.s) 
@@ -127,7 +139,39 @@ function tolibsym4(s:symbol)libsym
 function findelement(syms:set.libsym, s:symbol)seq.libsym 
  toseq.findelement(libsym(resulttype.s, mangledname.s, ""), syms)
  
+function findelement(known:symbolset,r:mapresult2,s:symbol) mapresult2
+   let z=findelement(libsym(resulttype.s, mangledname.s, ""), syms.r)
+    if isempty.z then
+        let t1=known_mangledname.s 
+        let t=tolibsym4.t1
+        assert src.t1 in ["EXTERNAL","xPARAM 1 VERYSIMPLE" ] report print2.t1
+        mapresult2(syms.r+t,libsyms.r+t)
+    else mapresult2(syms.r,libsyms.r+z_1)
+        
+ 
  function ?(a:libsym, b:libsym)ordering fsig.a ? fsig.b
 
 
+/type libsym is record fsig:word, returntype:seq.word, instruction:seq.word
 
+use seq.mytype
+
+
+
+Function tosymbol(ls:libsym) symbol
+let d=codedown(fsig.ls)
+symbol(d_1_1,mytype(d_2),@(+,mytype,empty:seq.mytype,subseq(d,3,length.d)),mytype.returntype.ls,instruction.ls)
+
+Function tofirstpass(m:libmod) firstpass 
+ firstpass(mytype.if parameterized.m then  "T"+modname.m else [modname.m],empty:seq.mytype,
+  @(+,tosymbol,empty:set.symbol,defines.m),  @(+,tosymbol,empty:set.symbol,exports.m),empty:seq.symbol,empty:set.symbol,false)
+  
+Function tofirstpass(l:liblib) seq.firstpass
+@(+,tofirstpass,empty:seq.firstpass,mods.l)
+
+/type liblib is record libname:seq.word, types:seq.libtype, mods:seq.libmod, timestamp:int, readonly:boolean
+/type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, library:word
+/type firstpass is record modname:mytype, uses:seq.mytype,defines:set.symbol,exports:set.symbol,unboundexports:seq.symbol,
+unbound:set.symbol,exportmodule:boolean
+
+ 

@@ -86,17 +86,17 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
 
 type program is record  knownsymbols:symbolset, callgraph:graph.word, inline:set.word, hasstate:seq.word
 
-Function pass2(knownsymbols:symbolset,roots:seq.word) intercode2
+Function pass2(knownsymbols:symbolset,roots:seq.word,compiled:symbolset) intercode2
  let p = program(knownsymbols,newgraph.empty:seq.arc.word,empty:set.word,"")
    let x= @(addsymbol,identity,p,roots)
    let s2 = expandinline.x 
      let statechangingfuncs = reachable(complement.callgraph.s2, hasstate.p)∩ nodes.callgraph.s2 
   // only pass on functions that can be reached from roots and are in this library // 
-  let g = reachable(callgraph.s2, roots) //- asset.@(+, mangled, empty:seq.word, compiled.r) //
+  let g = reachable(callgraph.s2, roots)  - asset.@(+, mangledname, empty:seq.word, toseq.compiled)  
   // find tail calls and constants // 
    let rr = @(+, findconstandtail(s2, statechangingfuncs), empty:seq.symbol, toseq.g)
-   assert false report @(seperator.
-   "&br &br",print2,"",rr)
+   // assert false report @(seperator.
+   "&br &br",print2,"",rr) //
    convert2(knownsymbols.x, subseq(rr,1,500))
      
 
@@ -113,6 +113,8 @@ function addsymbol(p:program,mangledname:word) program
     if  last.src.sym="EXTERNAL"_1 then 
        program(replace(knownsymbols.p,changecodetree(sym,tree."EXTERNAL")),callgraph.p, inline.p  , hasstate.p)
     else
+         assert not("EXTERNAL"_1 in subseq(src.sym,1,length.src.sym-length.flags.sym)) 
+         report "KL"+subseq(src.sym,1,length.src.sym-length.flags.sym) 
          let tr0= buildcodetreeX(knownsymbols.p,false,sym,empty:stack.tree.seq.word,1,subseq(src.sym,1,length.src.sym-length.flags.sym))
          let caller=sym
          let tr=inline(p, inline.p, dseq.tree."UNASIGNED 1" , empty:seq.tree.seq.word, 1, if label.tr0="STATE" then tr0_1 else tr0)
@@ -151,7 +153,7 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
       else if name in "LIT PARAM LOCAL WORD"  then buildcodetreeX(knownsymbols,hasstate,caller,push(stk,tree(subseq(src,i,i+1))),i+2,src)
       else if name = "FREF"_1 then 
        let sym=(knownsymbols)_(src_(i+1))
-        assert isdefined.sym   report "UNDEFINED"+src_(i+1)+src
+        assert isdefined.sym &or (src_(i+1)) in"xdeepcopyQ3AintZinternalZint"   report "UNDEFINED"+src_(i+1)+src
        buildcodetreeX(knownsymbols,hasstate,caller,push(stk,tree(subseq(src,i,i+1))),i+2,src)
       else if name = "define"_1 then buildcodetreeX(knownsymbols,hasstate,caller,stk,i+2,src)
            else if name in "RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP" then
@@ -169,6 +171,7 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
           if last.src.sym="EXTERNAL"_1 then 
               buildcodetreeX(knownsymbols,hasstate &or "STATE"_1 in flags.sym ,caller,push(pop(stk,nopara.sym), tree([name],top(stk,nopara.sym))),i+1,src)
           else if last.src.sym="VERYSIMPLE"_1 then
+                 assert not("EXTERNAL"_1 in src.sym)  report src.sym
              buildcodetreeX(knownsymbols,hasstate &or "STATE"_1 in flags.sym,caller,stk, 1,subseq(src.sym, nopara.sym * 2 + 1 ,length.src.sym-length.flags.sym) +subseq(src,i+1,length.src))
          else  
                 buildcodetreeX(knownsymbols,hasstate,caller,push(pop(stk,nopara.sym), tree([name],top(stk,nopara.sym))), i+1,src)

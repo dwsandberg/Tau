@@ -46,8 +46,6 @@ Function liblib(a:seq.word, c:seq.libtype, d:seq.libmod)liblib liblib(a, c, d, 0
 
 Function liblib(a:seq.word, c:seq.libtype, d:seq.libmod, readonly:boolean)liblib liblib(a, c, d, 0, readonly)
 
-/Function liblib(a:seq.word, b:seq.libsym, c:seq.libtype, d:seq.libmod, int)liblib export
-
 Function timestamp(liblib)int export
 
 Function libname(liblib)seq.word export

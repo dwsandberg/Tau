@@ -394,7 +394,7 @@ bindinfo(dict,code.$_5,[ mytype.[merge(code.$_2+ &quot  : &quot  +print.mytype.f
 bindinfo(dict, &quot   &quot  ,types.$_1+[ mytype(code.$_5+code.$_3)])  
 "],[" E W ","let id = code.$_1 
 let f = lookup(dict, id_1, empty:seq.mytype)
-assert not.isempty.f report  &quot  cannot find id &quot  + id 
+assert not.isempty.f report  errormessage(&quot  cannot find id &quot  + id ,input,place)
 bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1]) 
 "],[" E N(L) ","unaryop( $_1,$_3,input,place)  
 "],[" E W(L) ","unaryop( $_1,$_3,input,place)  
@@ -427,8 +427,9 @@ bindinfo(dict,code.$_1+code.$_3,types.$_1+types.$_3)
  "],[" A let W = E "," let e = $_4 let name =(code.$_2)_1 
 let newdict = dict + symbol(name, mytype( &quot  local &quot  ), empty:seq.mytype,(types.e)_1,&quot &quot)
 bindinfo(newdict, code.e + &quot  define &quot  + name, types.e)
-"],[" E A E ","let f = lookup(dict, last.code.$_1, empty:seq.mytype)
-assert not.isempty.f report  &quot  error &quot  bindinfo(dict.$_1-f_1, code.$_1 + code.$_2 + &quot  SET &quot +last.code.$_1 , types.$_2)
+"],
+[" E A E ","let t = code.$_1 let f = lookup(dict, last.code.$_1, empty:seq.mytype)
+assert not.isempty.f report  &quot  error &quot  bindinfo(dict.$_1-f_1, subseq(t,1,length.t-2) + code.$_2 + &quot  SET &quot +last.code.$_1 , types.$_2)
 "],[" E assert E report E E ","
 assert types($_2)_1 = mytype.&quot  boolean &quot  report  &quot  condition in assert must be boolean in: &quot    
   assert types($_4)_1 = mytype.&quot  word seq &quot  report  &quot  report in assert must be seq of word in: &quot   

@@ -4,7 +4,7 @@ Library stdlib UTF8 altgen bitpackedseq bits blockseq buildtree codegen codetemp
  saveencoding uses 
  exports UTF8 bitpackedseq bits blockseq codetemplates display fileio format graph internalbc
   invertedseq ipair libdesc libscope llvm main oseq passcommon persistant prims process real 
-  reconstruct seq set stack stacktrace stdlib textio tree saveencoding codegen
+  reconstruct seq set stack stacktrace stdlib textio tree saveencoding codegen  
 
 module stdlib
 
@@ -124,7 +124,7 @@ Function ∧(a:ordering, b:ordering)ordering
 
 Function ?(a:boolean, b:boolean)ordering toint.a ? toint.b
 
-Function ∧(a:boolean, b:boolean)boolean 
+Function &and(a:boolean, b:boolean)boolean 
  if a then b else // false // boolean.0
 
 Function ∨(a:boolean, b:boolean)boolean 

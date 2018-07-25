@@ -34,7 +34,7 @@ type lexaction1 is record w:word, tokenno:int, label:word
 
 function tokenlist seq.word 
  // tokenlist is from parser generator // 
-".-is)]= > {:} comment,([_^∧ ∨ T # if * $wordlist then else let assert report @ A E G F W P N L I K FP" 
+".-is)]= > {:} comment,([_^∧ ∨ T # if * $wordlist let then else assert report @ A E G F W P N L I K FP" 
 
 
 function actionlist seq.lexaction1 
@@ -48,13 +48,22 @@ function tolexaction(next:word)lexaction1
  // use supplied procedure to convert a word into a lex action // 
   if next in"&quot //"
   then lexaction1(next, 0, next)
-  else let token = if next in". ,():"
+    else if next = merge("&"+"le") then  lexaction1(next,findindex(">"_1,tokenlist),"≤"_1)
+   else if next = merge("&"+"ge") then  lexaction1(next,findindex(">"_1,tokenlist),"≥"_1)
+   else if next = merge("&"+"ne") then  lexaction1(next,findindex(">"_1,tokenlist),"≠"_1)
+  else if next = merge("&"+"and") then  lexaction1(next,findindex("∧"_1,tokenlist),"∧"_1)
+  else if next = merge("&"+"or") then  lexaction1(next,findindex(" ∨"_1,tokenlist),"∨"_1)
+    else if next = merge("&"+"cup") then  lexaction1(next,findindex(" *"_1,tokenlist),"∪"_1)
+  else if next = merge("&"+"cap") then  lexaction1(next,findindex(" *"_1,tokenlist),"∩"_1)
+ else if next = merge("&"+"contains") then  lexaction1(next,findindex("-"_1,tokenlist),"∋"_1)
+ else if next = merge("&"+"in") then  lexaction1(next,findindex("-"_1,tokenlist),"∈"_1)
+   else  let token = if next in". ,():"
    then next 
-   else if next in" < > ? ≤ ≠ ≥ >> <<"
+   else if next in " < > ? ≤ ≠ ≥ >> <<"
    then">"_1 
    else if next in"in +-∈ ∋"
    then"-"_1 
-   else if next in"* / mod ∪ ∩"
+   else if next in "* / mod ∪ ∩"
    then"*"_1 
    else if next in"_^"
    then"_"_1 
@@ -75,9 +84,11 @@ function tonohash(l:lexaction1)seq.word
   {"&br if next = &quot"+ a_4 +"&quot_1 then"+ a +"else"}
 
 Function totext(l:lexaction1)seq.word 
- let w = if w.l ="&quot"_1 then merge("&"+"quot")else w.l 
-  let label = if label.l ="&quot"_1 then merge("&"+"quot")else label.l 
-  {"lexaction(&quot"+ w +"&quot_1,"+ toword.tokenno.l +", &quot"+ label +"&quot_1)"}
+  let w =if  decode(w.l)_1=decode("&"_1)_1 then 
+    "merge( &quot & &quot + &quot"+encodeword(subseq(decode(w.l),2,100)) + " &quot )"
+  else  "&quot"+ (if w.l ="&quot"_1 then merge("&"+"quot")  else w.l )+"&quot_1"
+  let label = if label.l ="&quot"_1 then merge("&"+"quot") else label.l 
+  {"lexaction("+ w +","+ toword.tokenno.l +", &quot"+ label +"&quot_1)"}
 
 Function genhash seq.word gen.true
 

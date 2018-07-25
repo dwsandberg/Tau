@@ -66,7 +66,7 @@ Function changecodetree(old:symbol  ,t:tree.seq.word ) symbol
    else if"NOINLINE"_1 in oldflags 
    then"NOINLINE"_1 
    else functype(t, nopara.old)
-    let newflags=[functyp]+toseq(asset(oldflags) - asset."SIMPLE INLINE")
+    let newflags=[functyp]+toseq(asset(oldflags) - asset."SIMPLE INLINE VERYSIMPLE")
     let newsrc= subseq(src.old,1,length.src.old-length.oldflags)+newflags 
     symbol(mangledname.old, resulttype.old, paratypes.old,name.old, modname.old,newsrc,t)
     
