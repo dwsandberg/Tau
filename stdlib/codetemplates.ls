@@ -12,6 +12,8 @@ use llvm
 
 use persistant
 
+use reconstruct
+
 use process.seq.match5
 
 use seq.bit

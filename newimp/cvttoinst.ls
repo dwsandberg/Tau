@@ -176,6 +176,8 @@ Module borrow2
 
 use passcommon
 
+use reconstruct
+
 /Function emptyintercode intercode2 intercode2(empty:seq.seq.int, empty:seq.inst, empty:seq.int)
 
 defines are indices into coding that indicate which functions are defined and indices into codes that give a seq of integers which are indices into coding

@@ -6,6 +6,9 @@ Library newimp other symbol pass2  cvttoinst libdescfunc newparse groupparagraph
  
 Module borrow 
 
+* usegraph include newimp pass2 newparse other libdescfunc borrow borrow2 exclude real seq set graph stack stdlib
+bits tree ipair stacktrace
+
 
 use libscope
 
@@ -66,11 +69,9 @@ use set.symbol
 
 use seq.mytype
 
-/use libdesc
 
 use seq.seq.seq.word
 
-/use seq.moddesc
 
 use textio
 
@@ -89,7 +90,10 @@ function gettext2(libname:word, e:seq.word, a:word)seq.seq.seq.word
 
 Function X(libname:seq.word)seq.word
 let p1=process.X2(libname,emptysymbolset,empty:set.firstpass)
+if aborted.p1 then message.p1 else 
 let l=result.p1  
+// @(seperator."&br  &br",print2, "",defines.last.mods.l)
+  //
 let known=@(+,tosymbol,emptysymbolset ,defines.last.mods.l)
 let mods=tofirstpass.l 
 let  p2=process.X2("test6",known,asset.mods)
@@ -97,6 +101,9 @@ if aborted.p2 then message.p2 else
 @(seperator."&br  &br",print, "",defines.last.mods.result.p2)
  
  use process.liblib
+ 
+  use set.firstpass
+
 
 function X2(libname:seq.word, insyms:symbolset,  inmods:set.firstpass) liblib
 let a = gettext.[ merge( libname+"/"+ libname +".ls")]
@@ -108,9 +115,9 @@ let a = gettext.[ merge( libname+"/"+ libname +".ls")]
   let exports = subseq(s, e + 1, length.s)
   let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
   let p1=pass1(allsrc,exports,insyms,inmods)
-  let kk=      (symset.p1)_("test11Ztest6"_1)  
- // assert not.isdefined.kk report src.kk //
-  // @(+,print5,"",toseq.symset.p1) //
+  // let kk=      (symset.p1)_("wordencodingZstdlib"_1)  
+  // // assert false report  
+   @(+,print5,"",toseq.symset.p1)  //
  let intercode= pass2(symset.p1,toseq.roots.p1,insyms) 
  let newlibname=merge("X"+libname)
  let liblib=libdesc( roots.p1 ,intercode ,newlibname,mods.p1,symset.p1) 
@@ -118,9 +125,6 @@ let a = gettext.[ merge( libname+"/"+ libname +".ls")]
  let z2 = createlib(bc, newlibname, "") 
  liblib
  
- use libscope
-   
-  
 
   @(seperator."&br  &br",print, "",defines.last.mods.liblib)
   
@@ -128,10 +132,11 @@ let a = gettext.[ merge( libname+"/"+ libname +".ls")]
 
  print.intercode
  
- use set.firstpass
    
  function print5(s:symbol) seq.word
-   if isdefined.s &and nopara.s=1 &and resulttype.s=(paratypes.s)_1 then
+   let d=decode(mangledname.s)
+   if isdefined.s &and ( modname.s=mytype."internal"
+    &or   subseq(d,1,15)=   decode("siQ7AeoftypeQ3A"_1) ) then
     "&br"+print2.s else ""
 
  
@@ -150,4 +155,20 @@ function print(l:libmod) seq.word
    
 
 Function test1 seq.word
-  X("small")
+  let y=X("small")
+  y
+  
+    test2 +"&br &br"+y
+
+use main
+
+use prims
+
+use process.seq.word
+
+Function test2 seq.word
+ let l=loadlibrary("Xtest6"_1)
+   let p2 = process.execute.mangle("test11"_1, mytype."test6", empty:seq.mytype)
+    if aborted.p2 then message.p2 else result.p2 
+ 
+ "JKL"

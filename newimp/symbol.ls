@@ -1,5 +1,7 @@
 #!/usr/local/bin/tau
 
+run newimp test1
+
 Module Symbol
 
 use stdlib
@@ -110,9 +112,9 @@ Function print(s:symbol) seq.word
      let n=if length.paratypes.s > 0 then name.s else
           let x=decode(name.s)
           if subseq(x,length.x-1,length.x)=// .T // [46 ,84] then
-              merge([encodeword.subseq(x,1,length.x-1)]+print.with) 
+               merge([encodeword.subseq(x,1,length.x-1)]+print.with) 
            else name.s
-      symbol(mangle(name.s,newmodname,paratypes.s),replaceT(with, resulttype.s),newparas,n,newmodname,src.s,codetree.s)
+      symbol(mangle(n,newmodname,paratypes.s),replaceT(with, resulttype.s),newparas,n,newmodname,src.s,codetree.s)
       
 Function +(a:symbolset, s: symbol) symbolset
   symbolset(replace(toseq.a,encoding.mangledname.s, s))

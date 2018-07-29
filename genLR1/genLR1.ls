@@ -433,7 +433,7 @@ assert not.isempty.f report  &quot  error &quot  bindinfo(dict.$_1-f_1, subseq(t
 "],[" E assert E report E E ","
 assert types($_2)_1 = mytype.&quot  boolean &quot  report  &quot  condition in assert must be boolean in: &quot    
   assert types($_4)_1 = mytype.&quot  word seq &quot  report  &quot  report in assert must be seq of word in: &quot   
-  let newcode=code.$_2 + code.$_4 + code.$_5 +   &quot  assertZbuiltinZwordzseq   if  &quot   
+  let newcode=code.$_2 + code.$_5 + code.$_4 +   &quot  assertZbuiltinZwordzseq   if  &quot   
   bindinfo(dict,newcode,types.$_5)
 "],[" E I ","$_1  
 "],[" E I.I "," let d = decode.(code.$_3)_2 

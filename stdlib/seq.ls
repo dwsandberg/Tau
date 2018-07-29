@@ -23,7 +23,9 @@ use stdlib
 
 Function =(T, T)boolean unbound
 
+
 Function_(a:seq.T, b:int)T 
+ NOINLINE.
  let typ = getseqtype(a, 0)
   if typ = 0 
   then assert b > 0 ∧ b ≤ length.a report"out of bounds"+ stacktrace 

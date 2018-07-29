@@ -42,6 +42,8 @@ use stdlib
 
 use tree.seq.word
 
+use reconstruct
+
 type word3encoding is encoding word3
 
 Function wordcount int length.mapping.word3encoding
@@ -56,9 +58,6 @@ encode Functions
 
 The linklists2 type contains a seq of integers that represents the memory.Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq. One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
 
-type linklists2 is record a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int
-
-Function createlinkedlists linklists2 linklists2(empty:seq.int, 0, 0, 0)
 
 Function a(linklists2)seq.int export
 
@@ -92,11 +91,8 @@ function eword(w:word3)seq.int
  let a = decode.toword.w 
   @(+, C64, [ C64.0, C64.length.a], a)
 
-Function getftype(w:word)encoding.llvmtype 
- let a = @(+, count.90, 1, decode.w)
-  function.constantseq(a, i64)
 
-function count(val:int, i:int)int if val = i then 1 else 0
+
 
 function cast2int(liblib)int builtin.NOOP
 
@@ -289,15 +285,6 @@ function cast2int(s:seq.int)int builtin.NOOP
 
 ______________________________
 
-Three Functions to pack two ints into 64 bits
-
-function halfsize int // 2^31 // 2147483648
-
-Function getlink(a:int)int toint(bits.a >> 31) - halfsize
-
-Function packit(link:int, b:int)int toint(bits(halfsize + link)<< 31 ∨ bits.b)
-
-Function getb(a:int)int toint(bits.a ∧ bits(halfsize - 1))
 
 Function IDXUC(int, int)int builtin.IDXUC
 

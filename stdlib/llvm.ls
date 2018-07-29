@@ -8,7 +8,7 @@ use bits
 
 use internalbc
 
-use persistant
+use reconstruct
 
 use seq.bitblock
 
@@ -239,6 +239,14 @@ Function symentries(bits:bitpackedseq.bit, s:seq.llvmconst, i:int)bitpackedseq.b
     addvbr6(a1, toseq.l)
    else bits 
   symentries(bs, s, i + 1)
+
+Function getftype(w:word)encoding.llvmtype 
+ let a = @(+, count.90, 1, decode.w)
+  function.constantseq(a, i64)
+  
+function count(val:int, i:int)int if val = i then 1 else 0
+
+Function manglednopara(w:word) int @(+, count.90, -1, decode.w)
 
 Function STRUCTNAME int 19
 

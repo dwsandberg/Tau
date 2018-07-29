@@ -32,13 +32,14 @@ Function headdict set.symbol
  asset.( [symbol("builtin"_1,modulename, [mytype."internal1"],mytype."internal",""),
             symbol("builtin"_1,modulename, [mytype."word seq"],mytype."internal",""),
               symbol("builtin"_1,modulename, empty:seq.mytype,mytype."internal",""),
+               symbol("NOINLINE"_1,   mytype."NOINLINE local" , [mytype."T"],mytype."T",""),
+                symbol("TESTOPT"_1,   mytype."TESTOPT local" , [mytype."T"],mytype."T",""),
+              symbol("PROFILE"_1,   mytype."PROFILE local" , [mytype."T"],mytype."T",""),
+    symbol("FORCEINLINE"_1,   mytype."FORCEINLINE local" , [mytype."T"],mytype."T",""),
             symbol("STATE"_1,modulename, [mytype."internal1"],mytype."internal1",""),
-            symbol("IDXUC"_1,modulename, [mytype."int"],mytype."internal1",""),
-            symbol(merge("sizeoftype:T"),modulename, empty:seq.mytype,mytype."int",""), 
-            symbol("NOINLINE"_1,modulename, [mytype."internal1"],mytype."internal1","")]
-            +@(+,builtinsym.modulename,empty:seq.symbol," export unbound stub usemangle   NOINLINE  PROFILE IDXUC  NOOP DEEPCOPY  FROMSEQ
-             CALLIDX ERECORD  
-            EMPTYSEQ FORCEINLINE TESTOPT"))
+            symbol(merge("sizeoftype:T"),mytype."$typesize local", empty:seq.mytype,mytype."int","")] 
+            +@(+,builtinsym.modulename,empty:seq.symbol," export unbound stub usemangle    IDXUC  NOOP DEEPCOPY  FROMSEQ
+             CALLIDX   EMPTYSEQ "))
             
 function builtinsym(modname:mytype,name:word) symbol symbol(name,modname, empty:seq.mytype,mytype."internal1","")
 
@@ -382,7 +383,7 @@ let a=@(consumeinput,identity,stepresult(push(empty:stack.stkele,stkele(startsta
  
 
 
- 
+ use llvm
  
 function  opaction( subtrees:seq.stkele,input:seq.word,place:int) bindinfo
 let op = (code.result.subtrees_2)_1
@@ -392,13 +393,28 @@ let f = lookup(dict,op, types)
    assert not.isempty.f report
    errormessage("cannot find "+op+"("+@(seperator.",",print,"",types)+")",input,place)
    bindinfo(dict , code.result.subtrees_1 + code.result.subtrees_3 + mangledname.f_1, [ resulttype.f_1]) 
+
+Function deepcopymangle(type:mytype) word
+ mangle(merge("deepcopy:"+print.type),mytype."deepcopy",[type])
    
 function unaryop( op:bindinfo,exp:bindinfo,input:seq.word,place:int) bindinfo
   let dict=dict.op
+  if (code.op)_1 ="process"_1 then
+     let nopara=manglednopara.last.code.exp
+     let rt=(types.exp)_1
+     let prt= mytype(towords.rt+"process")
+     let newcode=subseq(code.exp,1,length.code.exp-1)+
+       "FREF"+deepcopymangle( rt)
+      + "FREF"+deepcopymangle(mytype."word seq") 
+      +"FREF"+last.code.exp
+      +"LIT"+toword.nopara
+      + "PRECORD" +toword(nopara+4)
+       bindinfo( dict , newcode, [ mytype(towords.rt+"process")]) 
+ else 
   let f = lookup(dict,(code.op)_1, types.exp)
    assert not.isempty.f report
     errormessage("cannot find  "+code.op+"("+@(seperator.",",print,"",types.exp)+")",input,place)
-   assert cardinality.f=1 report "found more that one"+@(+,print,"",toseq.f)
+   assert cardinality.f=1 &or (code.op)_1 in "length" report "found more that one"+@(+,print2,"",toseq.f)
     bindinfo( dict , code.exp +   mangledname.f_1, [ resulttype.f_1]) 
 
  
@@ -486,7 +502,10 @@ if ruleno = // L L, E // 31 then bindinfo(dict, code.result.subtrees_1 + code.re
 if ruleno = // E [ L]// 32 then let types = types(result.subtrees_2)assert @(∧, =(types_1), true, types)report"types do not match in build"bindinfo(dict,"LIT 0 LIT"+ toword.(length.types)+ code.result.subtrees_2 +"RECORD"+ toword.(length.types + 2), [ mytype(towords(types_1)+"seq")])else 
 if ruleno = // A let W = E // 33 then let e = result.subtrees_4 let name =(code.result.subtrees_2)_1 let newdict = dict + symbol(name, mytype("local"), empty:seq.mytype,(types.e)_1,"")bindinfo(newdict, code.e +"define"+ name, types.e)else 
 if ruleno = // E A E // 34 then let t = code.result.subtrees_1 let f = lookup(dict, last.code.result.subtrees_1, empty:seq.mytype)assert not.isempty.f report"error"bindinfo(dict.result.subtrees_1-f_1, subseq(t, 1, length.t-2)+ code.result.subtrees_2 +"SET"+ last.code.result.subtrees_1, types.result.subtrees_2)else 
-if ruleno = // E assert E report E E // 35 then assert types(result.subtrees_2)_1 = mytype."boolean"report"condition in assert must be boolean in:"assert types(result.subtrees_4)_1 = mytype."word seq"report"report in assert must be seq of word in:"let newcode = code.result.subtrees_2 + code.result.subtrees_4 + code.result.subtrees_5 +"assertZbuiltinZwordzseq if"bindinfo(dict, newcode, types.result.subtrees_5)else 
+if ruleno = // E assert E report E E // 35 then 
+assert types(result.subtrees_2)_1 = mytype."boolean"report"condition in assert must be boolean in:"
+assert types(result.subtrees_4)_1 = mytype."word seq"report"report in assert must be seq of word in:"
+let newcode = code.result.subtrees_2 + code.result.subtrees_5 + code.result.subtrees_4 +"assertZbuiltinZwordzseq if"bindinfo(dict, newcode, types.result.subtrees_5)else 
 if ruleno = // E I // 36 then result.subtrees_1 else 
 if ruleno = // E I.I // 37 then let d = decode.(code.result.subtrees_3)_2 bindinfo(dict,"LIT"+ [ encodeword(decode.(code.result.subtrees_1)_2 + d)]+"LIT"+ countdigits(d, 1, 0)+"makerealZrealZintZint", [ mytype."real"])else 
 if ruleno = // T W // 38 then result.subtrees_1 else 

@@ -36,11 +36,6 @@ use stdlib
 
 use textio
 
-use seq.seq.ipair.seq.int
-
-use  seq.ipair.seq.int
-
-use  ipair.seq.int
 
 type int
 

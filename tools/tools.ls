@@ -14,13 +14,13 @@ Module tools
 
 /run tools test2
 
-run tools stdlibdoc
+/run tools stdlibdoc
 
 /run doc createdoc
 
-run tools testprintBitCodes
+/run tools testprintBitCodes
 
-run tools test
+/run tools test
 
 run tools checkdoclib
 
@@ -52,7 +52,7 @@ Function prettytest seq.word prettylib("test1","")
 
 "byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 
-Function checkdoclib seq.word doclibrary."tools"
+Function checkdoclib seq.word doclibrary."stdlib"
 
 use seq.word
 

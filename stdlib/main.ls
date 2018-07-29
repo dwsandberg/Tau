@@ -23,7 +23,6 @@ use pass2a
 
 use passcommon
 
-use persistant
 
 use prims
 

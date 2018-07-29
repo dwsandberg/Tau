@@ -9,14 +9,16 @@ use bits
 
 use stdlib
 
-These Decode Functions, getlink,getb,halfsize must match those in persistant module
 
-function getlink(a:int)int toint(bits.a >> 31) - halfsize
-
-
-function getb(a:int)int toint(bits.a ∧ bits(halfsize - 1))
+Three Functions to pack two ints into 64 bits
 
 function halfsize int // 2^31 // 2147483648
+
+Function getlink(a:int)int toint(bits.a >> 31) - halfsize
+
+Function packit(link:int, b:int)int toint(bits(halfsize + link)<< 31 ∨ bits.b)
+
+Function getb(a:int)int toint(bits.a ∧ bits(halfsize - 1))
 
 
 
@@ -56,3 +58,20 @@ function fixword(a:seq.int, ws:seq.word, i:int)int
  let discard = setfld(getaddress(a, i + 1), encoding(ws_(a_i)))
   0
 
+_______________
+
+The linklists2 type contains a seq of integers that represents the memory.Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq. One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
+
+type linklists2 is record a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int
+
+Function createlinkedlists linklists2 linklists2(empty:seq.int, 0, 0, 0)
+
+Function a(linklists2)seq.int export
+
+Function wordthread(linklists2)int export
+
+Function offsetthread(linklists2)int export
+
+Function wordseqthread(linklists2)int export
+
+Function linklists2(a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int) linklists2 export

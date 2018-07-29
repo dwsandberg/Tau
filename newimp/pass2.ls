@@ -81,7 +81,15 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
   assert isdefined.s  report"cannot locate"+ f 
   s
 
-
+wordencoding()erecord.seq.int module:stdlib mn:wordencodingZstdlib src 
+FREF deepcopyQ3AseqQ2EintZdeepcopyZintzseq 
+FREF lookupZintzseqzinvertedseqZTZTzinvertedseq 
+FREF addZintzseqzinvertedseqZTzinvertedseqZintZT 
+LIT 1 
+WORD wordencodingZstdlib 
+LIT 3 IDXUC LIT 0 
+WORDS 2 int seq 
+RECORD 7 NOINLINE NOINLINE
  
 
 type program is record  knownsymbols:symbolset, callgraph:graph.word, inline:set.word, hasstate:seq.word
@@ -144,7 +152,7 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
      findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint  " then 2
      else if name in "assertZbuiltinZwordzseq mappingZbuiltinZTzerecord allocatespaceZbuiltinZint  builtinZtestZinternal1
      abortedZbuiltinZTzprocess processZbuiltinZT " then 1
-     else if name in " FORCEINLINEZtest PROFILEZtest" then 0
+     else if name in " FORCEINLINEZtest PROFILEZtest NOINLINEZtest" then 0
      else -1 
        assert length.toseq.stk &ge specialnopara report "STACK ISSUE"+name+mangledname.caller+src
     if specialnopara > -1 then
@@ -156,10 +164,15 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
         assert isdefined.sym &or (src_(i+1)) in"xdeepcopyQ3AintZinternalZint"   report "UNDEFINED"+src_(i+1)+src
        buildcodetreeX(knownsymbols,hasstate,caller,push(stk,tree(subseq(src,i,i+1))),i+2,src)
       else if name = "define"_1 then buildcodetreeX(knownsymbols,hasstate,caller,stk,i+2,src)
-           else if name in "RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP" then
+      else if name in "RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD" then
             let size = toint(src_(i+1))
              assert length.toseq.stk &ge size report "stack problem APPLY/RECORD" +src
         buildcodetreeX(knownsymbols,hasstate,caller,push(pop(stk,size ),tree(subseq(src,i,i+1),top(stk,size ))),i+2,src)
+      else if name ="PRECORD"_1 then 
+          let size = toint(src_(i+1))
+           let s= top(stk,size)
+              let b =tree("PROCESS2",[tree("RECORD",subseq(s, size-3,size)+subseq(s,1, size-4))])
+           buildcodetreeX(knownsymbols,hasstate,caller,push(pop(stk,size ),b),i+2,src)
       else if name="WORDS"_1 then
          let size=toint(src_(i+1))
          buildcodetreeX(knownsymbols,hasstate,caller,push(stk,tree(subseq(src,i,i+size+1))),i+size+2,src)
@@ -188,7 +201,7 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
   else if inst.t in"assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint
   decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint
   WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD
-   FORCEINLINEZtest  builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT  PROFILEZtest"
+   FORCEINLINEZtest  builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT  PROFILEZtest NOINLINEZtest"
   then empty:seq.word 
   else  
     let sym=(knownsymbols)_inst.t
@@ -295,6 +308,8 @@ by have a second // encoding.var
 
 function paraorder boolean false 
 
+use seq.boolean
+
 function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap:seq.tree.seq.word, nextset:int, code:tree.seq.word)tree.seq.word 
  let inst = inst.code 
   if nosons.code = 0 ∧ inst in"LIT FREF FREFB WORD WORDS"
@@ -322,7 +337,8 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
   else let l = @(+, inline(pp, inlinename, sets, paramap, nextset), empty:seq.tree.seq.word, sons.code)
   // look for simplifications // 
   if inst ="RECORD"_1 
-  then tree(if @(∧, isconst, true, l)then  "CRECORD 0" else label.code, l)
+  then 
+    tree(if @(∧, isconst, true, l)then     "CRECORD" else label.code, l)
   else if inst ="IDXUC"_1 ∧ inst(l_2)="LIT"_1 
   then let idx = toint.arg(l_2)
    if inst(l_1)="CRECORD"_1 
