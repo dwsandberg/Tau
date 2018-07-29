@@ -1,6 +1,6 @@
 Module real
 
-type real
+type real is record representation:int
 
 use UTF8
 
@@ -58,7 +58,7 @@ Function *(a:real, b:real)real builtin.usemangle
 
 Function /(a:real, b:real)real builtin.usemangle
 
-Function representation(a:real)int builtin.NOOP
+Function representation(a:real)int export
 
 Function casttoreal(i:int)real builtin.NOOP
 

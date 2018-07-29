@@ -243,8 +243,7 @@ function buildtypedesc(knownsymbols:symbolset,k:seq.word,t:mytype) seq.word
    k+if abstracttype.t in "word int seq" then  print.t
    else if mytype."bit bitpackedseq"=t then // NOT GENERAL SOLUTION! // "seq.bit"
    else if abstracttype.t="encoding"_1 then "int"
-   else 
-      if towords.t = "boolean" then  "LIT 1" else 
+   else  if  t = mytype."boolean" then  "int" else   
                     let name=mangle(merge(" typedesc:"+print.t),mytype."internal",empty:seq.mytype)
                   let a = knownsymbols_name
                      assert not(mangledname.a="undefinedsym"_1) report "type?"+name+print.t 
@@ -276,49 +275,61 @@ function definestructure(org:symbol,dict:set.symbol,templates:symbolset,src:seq.
      if i > length.src then  
        let consrc=if length.paras=1 then "PARAM 1 VERYSIMPLE" else   constructor+"RECORD"+toword.recordsize(constructor,1)
        let con=symbol(src_2,modname,paras,mytype(towords.parameter.modname  +src_2),consrc)
-       let name=  merge("sizeoftype:"+  // if towords.parameter.modname="" then [src_2] else 
-          print.mytype("T"  +src_2)) //  print.mytype(towords.parameter.modname +src_2) )
-       if src_1="sequence"_1 then
-           let sizesym=  symbol(name,modname,empty:seq.mytype,mytype."int",  "LIT 1" ) 
+       let name=  merge("sizeoftype:"+   print.mytype(towords.parameter.modname +src_2) )
+        if src_1="sequence"_1 then
+           let sizesym=  symbol(name,mytype."internal",empty:seq.mytype,mytype."int",  "LIT 1" ) 
           let t =  mytype.(towords.parameter.modname+src_2 )
           let symtoseq=symbol("toseq"_1, modname, [ mytype.("T"+src_2 )], mytype(towords.parameter.t +"seq"_1),"PARAM 1 VERYSIMPLE")
           // assert  not (src_2="pseq"_1 &and print.modname="seq.word") report print.modname+src+"&br"+print2.symtoseq //
-           replace(replace(replace(knownsymbols,con),sizesym),symtoseq)
-        else  
+            let descsym= symbol(merge(" typedesc:"+print.mytype(towords.parameter.modname +src_2) ),
+           mytype."internal",empty:seq.mytype,mytype."word seq", "1 seq."+print.parameter.modname )
+               replace      (replace(replace(replace(knownsymbols,con),sizesym),symtoseq),descsym)
+      else  
           // assert not(mytype." bit bitpackedseq" in paras) report src //
           let  dsrc=
              @(buildtypedesc.knownsymbols,replaceT.parameter.modname,"",paras)
-         let descsym= symbol(merge(" typedesc:"+print.resulttype.con),mytype."internal",empty:seq.mytype,mytype."word seq",  dsrc )
-          let sizesym=  symbol(name,modname,empty:seq.mytype,mytype."int",offset)
+         let descsym= symbol(merge(" typedesc:"+print.resulttype.con),mytype."internal",empty:seq.mytype,mytype."word seq", [offset_2]+ dsrc )
+          let sizesym=  symbol(name,mytype."internal",empty:seq.mytype,mytype."int",offset)
+       //   assert mangledname.sizesym in "siQ7AeoftypeQ3AUTF8Zinternal siQ7AeoftypeQ3AbitZinternal
+          siQ7AeoftypeQ3AbitsZinternal siQ7AeoftypeQ3AwordZinternal siQ7AeoftypeQ3AbooleanZinternal
+          siQ7AeoftypeQ3AorderingZinternal siQ7AeoftypeQ3AalphawordZinternal siQ7AeoftypeQ3AinvertedseqQ2EseqQ2EintZinternal
+          siQ7AeoftypeQ3AipairQ2EseqQ2EintZinternal siQ7AeoftypeQ3AipairQ2EseqQ2EintZinternal
+          siQ7AeoftypeQ3AlibsymZinternal siQ7AeoftypeQ3AmytypeZinternal siQ7AeoftypeQ3AoffsetZinternal
+          siQ7AeoftypeQ3AlibmodZinternal  siQ7AeoftypeQ3AlibtypeZinternal siQ7AeoftypeQ3AsyminfoZinternal
+          siQ7AeoftypeQ3AliblibZinternal siQ7AeoftypeQ3AinvertedseqQ2ElibsymZinternal siQ7AeoftypeQ3AipairQ2ElibsymZinternal
+          siQ7AeoftypeQ3Alinklists2Zinternal siQ7AeoftypeQ3AfileresultZinternal siQ7AeoftypeQ3AoutputformatZinternal
+          siQ7AeoftypeQ3AbyteZinternal siQ7AeoftypeQ3ApointQ2EintZinternal siQ7AeoftypeQ3AipairQ2EwordZinternal
+          siQ7AeoftypeQ3AsetQ2EintZinternal siQ7AeoftypeQ3AarcQ2EintZinternal siQ7AeoftypeQ3Apoint2dZinternal
+          siQ7AeoftypeQ3AinvertedseqQ2EwordZinternal siQ7AeoftypeQ3AinvertedseqQ2EwordZinternal
+          siQ7AeoftypeQ3AprocessQ2EseqQ2EwordZinternal siQ7AeoftypeQ3AprocessQ2EintZinternal
+          siQ7AeoftypeQ3AsetQ2EarcQ2EintZinternal siQ7AeoftypeQ3AgraphQ2EintZinternal
+          " report "HH"+mangledname.sizesym //
             replace(replace(replace(knownsymbols,con),sizesym),descsym)
   else 
     let len=  (toint.src_i) 
     let a = mytype.subseq(src,i+1,i+len-1)
     let fldtype=mytype.subseq(src,i+1,i+len-1)    
     let thetype=replaceT(parameter.modname,fldtype)
-    let z1=if abstracttype.thetype in "int real seq  word encoding"  
+    let z1=if abstracttype.thetype in // set should not need to be included // "int real seq  word encoding set"  
          then   
             zzz(knownsymbols,"LIT 1" )
          else         
-           let x=lookup(dict,merge("sizeoftype:"+print.thetype),empty:seq.mytype )
-       //    assert print.thetype in ["int","real","bits","bit","boolean","ordering","xipair.seq.int"
-           ,"alphaword","word","offset","mytype","libsym","libmod","ipair.libsym","liblib","byte"] report "JKLJKLJ"+print.thetype+mangledname.x_1 //
-          assert  not.isempty.x report "HJKL:"+print.thetype+ print.org +"::"+print.modname
-        //  definestructure(org:symbol,dict:set.symbol,templates:symbolset,src:seq.word, modname:mytype, knownsymbols:symbolset,i:int,offset:seq.word
-,paras:seq.mytype,constructor:seq.word) //
-          let sym2=knownsymbols_(mangledname.x_1)
-          let symsrc2=if isdefined.sym2 &and last.src.sym2="SIMPLE"_1 then subseq(src.sym2,1,length.src.sym2-1) else src.sym2
+           let sym2=knownsymbols_mangle(merge("sizeoftype:"+print.thetype),mytype."internal",empty:seq.mytype)
+           assert isdefined.sym2 report "can not find type"+print.thetype +"for"+print.org
+            let symsrc2=if isdefined.sym2 &and last.src.sym2="SIMPLE"_1 then subseq(src.sym2,1,length.src.sym2-1) else src.sym2
           if     length.symsrc2=2 &and (symsrc2)_1="LIT"_1 then zzz(knownsymbols,symsrc2)
           else
-           assert mangledname.x_1 in "siQ7AeoftypeQ3AipairQ2EseqQ2EintZintzseqzipair siQ7AeoftypeQ3AoffsetZlibscope
-           siQ7AeoftypeQ3AsetQ2EarcQ2EintZintzarczset"  report "QQQ"+print2.x_1
-           let code=src.x_1
+             //      assert mangledname.sym2 in" siQ7AeoftypeQ3AbitsZinternal siQ7AeoftypeQ3AbitZinternal
+           siQ7AeoftypeQ3AipairQ2EseqQ2EintZinternal siQ7AeoftypeQ3AalphawordZinternal
+           siQ7AeoftypeQ3AbooleanZinternal siQ7AeoftypeQ3AoffsetZinternal siQ7AeoftypeQ3AmytypeZinternal
+           siQ7AeoftypeQ3AlibsymZinternal siQ7AeoftypeQ3AipairQ2ElibsymZinternal siQ7AeoftypeQ3AliblibZinternal
+           siQ7AeoftypeQ3AlibmodZinternal siQ7AeoftypeQ3AbyteZinternal" report "HH3"+print2.sym2 //
+           let code=src.sym2
                      let len2=  (toint.code_3) 
-           let  modname2 = replaceT(parameter.modname.x_1,mytype.subseq(code,3+1,3+len2))
-          assert modname2=modname.x_1 report towords.modname2+"///"+towords.modname.x_1+print2.x_1
-         let  newknown=definestructure(org,dict,templates,src.x_1,modname.x_1,knownsymbols,3+len2+1, "" ,empty:seq.mytype,"")
-             let z=newknown_(mangledname.x_1)  
-             assert isdefined.z report "KL"+mangledname.x_1
+           let  modname2 = replaceT(parameter.modname.sym2,mytype.subseq(code,3+1,3+len2))
+         let  newknown=definestructure(org,dict,templates,src.sym2,modname2,knownsymbols,3+len2+1, "" ,empty:seq.mytype,"")
+             let z=newknown_(mangledname.sym2)  
+             assert isdefined.z report "KL"+mangledname.sym2
              let symsrc=if last.src.z="SIMPLE"_1 then subseq(src.z,1,length.src.z-1) else src.z
              assert  length.symsrc=2 &and (symsrc)_1="LIT"_1 report "KL2"+print2.z+print.thetype
              zzz(newknown,symsrc )  
@@ -338,14 +349,13 @@ thissymbol:symbol,org:symbol
        if code_1 in "record" then 
           let len=  (toint.code_3) 
           let  modname = replaceT(modpara,mytype.subseq(code,3+1,3+len))
-          assert modname=modname.thissymbol report towords.modname+"///"+towords.modname.thissymbol
-         definestructure(org,dict,templates,code,modname.thissymbol,replace(knownsymbols,changesrc(thissymbol,"pending")) ,3+len+1, "" ,empty:seq.mytype,"")
+         definestructure(org,dict,templates,code,modname,replace(knownsymbols,changesrc(thissymbol,"pending")) ,3+len+1, "" ,empty:seq.mytype,"")
      else       if code_1 in "sequence" then 
                    let mn=mangle("_"_1, modname.thissymbol,[mytype("T"+code_2),mytype."int"] )
                    let  newknown = known.X(mn,   org ,dict,modpara,templates,knownsymbols)   
       let len=  (toint.code_3) 
           let  modname = replaceT(modpara,mytype.subseq(code,3+1,3+len))
-          assert modname=modname.thissymbol report towords.modname+"///"+towords.modname.thissymbol
+          assert modname=modname.thissymbol report towords.modname+"///2"+towords.modname.thissymbol
                   definestructure(org,dict,templates,code,modname.thissymbol,newknown,3+len+1, "LIT 1" ,empty:seq.mytype, "FREF"+mn)
     else                      
      if code_1 in "encoding" then
@@ -542,7 +552,7 @@ else if input_1 in "use" then
       firstpass( modname.f, uses.f+mytype.code.t,defines.f,exports.f,unboundexports.f,unbound.f,exportmodule.f)
   else if input_1 in "type" then 
      if input in ["type int","type real"] then 
-      let syms = [symbol(merge("sizeoftype:"+input_2),modname.f,empty:seq.mytype,mytype."int","LIT 1")]
+      let syms = [symbol(merge("sizeoftype:"+input_2),mytype."internal",empty:seq.mytype,mytype."int","LIT 1")]
        firstpass(modname.f,uses.f,defines.f &cup asset.syms,exports.f &cup asset.syms,unboundexports.f,unbound.f,exportmodule.f) 
      else 
        let b = parse(empty:set.symbol,input)
@@ -551,22 +561,22 @@ else if input_1 in "use" then
        if kind  = "encoding"_1 then
          assert parameter.modname.f=mytype."" report "encoding in template?"
           let typ=parameter.(types.b)_1
-         let sizeofsym=[symbol(merge( "sizeoftype:encoding."+print.typ),modname.f,empty:seq.mytype,mytype."int",code.b)]  
+         let sizeofsym=[symbol(merge( "sizeoftype:encoding."+print.typ),mytype."internal",empty:seq.mytype,mytype."int",code.b)]  
          let syms=          [symbol((code.b)_2,modname.f,empty:seq.mytype, mytype(towords.typ+"erecord"),code.b)]
           firstpass(modname.f,uses.f+mytype(towords.typ+"invertedseq") +mytype(towords.typ+"ipair")
-             ,defines.f &cup asset(syms+sizeofsym),exports.f &cup asset.sizeofsym,unboundexports.f,unbound.f,exportmodule.f) 
+             ,defines.f &cup asset(syms),exports.f ,unboundexports.f,unbound.f,exportmodule.f) 
        else
         assert parameter.modname.f in [mytype."",mytype."T"] report "KLJKL"
             // assert false report code.b //
              let modnm=towords.modname.f
              let code=subseq(code.b,1,2)+toword.length.modnm+modnm+subseq(code.b,3,length.code.b)
-            let sizeofsym=[ symbol(merge("sizeoftype:"+print.t) ,modname.f,empty:seq.mytype,mytype."int",code)]  
+            let sizeofsym= symbol(merge("sizeoftype:"+print.t) ,mytype."internal",empty:seq.mytype,mytype."int",code)  
           let constructor= symbol( (code)_2,modname.f,@(+,parameter,empty:seq.mytype,types.b),t,code)
-         let syms=  @(+,definefld(code,modname.f,[t]),[constructor] ,types.b)+  
+         let syms=  @(+,definefld(code,modname.f,[t]),[constructor,sizeofsym] ,types.b)+  
            if kind="sequence"_1 then
                 [symbol("toseq"_1, modname.f, [ t], mytype(towords.parameter.t +"seq"_1),code)] 
               else empty:seq.symbol
-      firstpass(modname.f,uses.f,defines.f &cup asset(syms+sizeofsym),exports.f &cup asset.sizeofsym,unboundexports.f,unbound.f,exportmodule.f)
+      firstpass(modname.f,uses.f,defines.f &cup asset(syms),exports.f ,unboundexports.f,unbound.f,exportmodule.f)
  else if input_1 in "Function function" then
     let  t = parse(stubdict,getheader.input)
          let name = (towords.(types.t)_1)_1
@@ -610,7 +620,7 @@ Function definedeepcopy( knownsymbols:symbolset, type:mytype) symbol
     else 
      let name=mangle(merge(" typedesc:"+print.type),mytype."internal",empty:seq.mytype)
      let a = knownsymbols_name
-    subfld(src.a,1,0,0)
+    subfld(src.a,2,0,0)
     symbol(merge("deepcopy:"+print.type),mytype."deepcopy",[type],type,body)
    
   
@@ -627,11 +637,5 @@ Function definedeepcopy( knownsymbols:symbolset, type:mytype) symbol
         else 
       "PARAM 1 LIT"+toword(fldno)+"IDXUC" 
       +subfld(desc,i+1,fldno+1,0)
-   
-
-  
-
-
-
  
  use seq.ipair.tree.seq.word

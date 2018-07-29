@@ -86,14 +86,14 @@ Function findlibclause(a:seq.seq.word, i:int)seq.word
 function gettext2(libname:word, e:seq.word, a:word)seq.seq.seq.word
  @(+, identity, empty:seq.seq.seq.word, groupparagraphs("module Module", gettext.[ merge([ libname]+"/"+ a +".ls")]))
  
- function print2(l:libsym) seq.word print.l+"mn:"+fsig.l+instruction.l
+ function print2(l:libsym) seq.word // print.l+"mn:"+// ""+ fsig.l+instruction.l
 
 Function X(libname:seq.word)seq.word
 let p1=process.X2(libname,emptysymbolset,empty:set.firstpass)
 if aborted.p1 then message.p1 else 
 let l=result.p1  
 // @(seperator."&br  &br",print2, "",defines.last.mods.l)
-  //
+ // 
 let known=@(+,tosymbol,emptysymbolset ,defines.last.mods.l)
 let mods=tofirstpass.l 
 let  p2=process.X2("test6",known,asset.mods)
@@ -156,9 +156,7 @@ function print(l:libmod) seq.word
 
 Function test1 seq.word
   let y=X("small")
-  y
-  
-    test2 +"&br &br"+y
+     test2 +"&br &br"+y
 
 use main
 

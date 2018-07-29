@@ -39,15 +39,66 @@ use Symbol
 use seq.firstpass
 
 Function libdesc(roots:set.word,intercode:intercode2,lib:word,mods:seq.firstpass,known:symbolset)liblib 
+    let b=@(&cup, gathertypes.known,empty:set.mytype,toseq.roots) 
+       let c= closetypes(known, @(+,print,empty:set.seq.word,toseq.b),empty:set.seq.word)
+       let typesyms=@(+,typelibsyms(known),empty:seq.libsym,toseq.c)
+    // assert false report @(+,filterT.known,"", toseq.c) //
   let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
    let a = close(intercode, rootindices, rootindices)
    let syms = @(+, tolibsym(intercode), empty:seq.libsym, toseq.a)
    let allmods = @(map(lib,known), identity,mapresult(asset.syms,empty:seq.libmod), mods)
-  liblib([lib],  empty:seq.libtype , mods.allmods+libmod(false,"$other"_1, toseq.syms.allmods, empty:seq.libsym, lib))
+  liblib([lib],  empty:seq.libtype , mods.allmods+libmod(false,"$other"_1, toseq.syms.allmods+typesyms, empty:seq.libsym, lib))
 
   @(+, print,"",toseq.asset.@(+, exports,  empty:seq.libsym ,allmods))
+  
+  use set.mytype
+  
+  use set.seq.word
+  
+  use oseq.word
+   
+   function filterT(known:symbolset,m:seq.word) seq.word
+         "&br"+ m+print2.known_mangle(merge("sizeoftype:"+m),mytype."internal",empty:seq.mytype)
+   +"&br"+ m+print2.known_mangle(merge("typedesc:"+m),mytype."internal",empty:seq.mytype)
+   
+   function typelibsyms(known:symbolset,m:seq.word) seq.libsym
+         let sizesym=known_mangle(merge("sizeoftype:"+m),mytype."internal",empty:seq.mytype)
+         let sym=known_mangle(merge("typedesc:"+m),mytype."internal",empty:seq.mytype)
+         if isdefined.sym &and isdefined.sizesym then [tolibsym4.sym,tolibsym4.sizesym] 
+          else       if isdefined.sym  then [tolibsym4.sym ] 
+ else if isdefined.sizesym then [tolibsym4.sizesym] 
+         else empty:seq.libsym
+     
+   function filterX(known:symbolset,typ:seq.word)  seq.seq.word
+       let a=known_mangle(merge("typedesc:"+typ),mytype."internal",empty:seq.mytype)
+         if isdefined.a then [typ]+typesused(src.a,2,2)
+        else empty:seq.seq.word
+   
+   
+   function closetypes(known:symbolset,newtypes:set.seq.word,processed:set.seq.word) set.seq.word
+      let a=asset.@(+,filterX.known,empty:seq.seq.word,toseq.newtypes)
+      let b=    a-processed
+       if isempty.b then processed
+       else closetypes(known,b,processed &cup b)
+     
+     function getsubtypes(typ:seq.word) seq.seq.word 
+       if length.typ = 1 then [typ]
+       else  
+       // assert typ in [ "seq.int","seq.seq.int","seq.seq.word","seq.word","seq.alphaword"] report typ //
+       [typ]+getsubtypes(subseq(typ,3,length.typ))
+   
+      function  typesused(w:seq.word,i:int,start:int) seq.seq.word
+          if i+1 > length.w then if start > i then empty:seq.seq.word
+           else getsubtypes(subseq(w,start,i))
+          else if w_(i+1)= "."_1 then typesused(w,i+2,start)
+          else  getsubtypes(subseq(w,start,i)) + typesused(w,i+1,i+1)
 
-    
+  function gathertypes(known:symbolset,mangledname:word) set.mytype
+    let sym=known_mangledname
+     @(+,replaceT.parameter.modname.sym,asset.[resulttype.sym],paratypes.sym) 
+   
+  let a=@(&cup, gathertypes,empty:set.mytype,roots) 
+    @(+,print,"",toseq.a)
   
   function toinstindex(a:set.word, d:intercode2, i:int)seq.int 
  if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
