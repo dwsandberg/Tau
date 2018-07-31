@@ -52,7 +52,11 @@ Function prettytest seq.word prettylib("test1","")
 
 "byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 
-Function checkdoclib seq.word doclibrary."stdlib"
+Function checkdoclib seq.word   doclibrary."newimp"
+
+callgraphbetween("newimp","libdescfunc libscope doc")  
+
+doclibrary."tools"
 
 use seq.word
 

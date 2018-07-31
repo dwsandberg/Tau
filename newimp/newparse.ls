@@ -32,13 +32,9 @@ Function headdict set.symbol
  asset.( [symbol("builtin"_1,modulename, [mytype."internal1"],mytype."internal",""),
             symbol("builtin"_1,modulename, [mytype."word seq"],mytype."internal",""),
               symbol("builtin"_1,modulename, empty:seq.mytype,mytype."internal",""),
-               symbol("NOINLINE"_1,   mytype."NOINLINE local" , [mytype."T"],mytype."T",""),
-                symbol("TESTOPT"_1,   mytype."TESTOPT local" , [mytype."T"],mytype."T",""),
-              symbol("PROFILE"_1,   mytype."PROFILE local" , [mytype."T"],mytype."T",""),
-    symbol("FORCEINLINE"_1,   mytype."FORCEINLINE local" , [mytype."T"],mytype."T",""),
-            symbol("STATE"_1,modulename, [mytype."internal1"],mytype."internal1",""),
-            symbol(merge("sizeoftype:T"),mytype."$typesize local", empty:seq.mytype,mytype."int","")] 
-            +@(+,builtinsym.modulename,empty:seq.symbol," export unbound stub usemangle    IDXUC  NOOP DEEPCOPY  FROMSEQ
+              symbol("STATE"_1,modulename, [mytype."internal1"],mytype."internal1",""),
+            symbol(merge("sizeoftype:T"),mytype."$typesize local", empty:seq.mytype,mytype."int","")]
+             +@(+,builtinsym.modulename,empty:seq.symbol," export unbound stub usemangle    IDXUC  NOOP   FROMSEQ
              CALLIDX   EMPTYSEQ "))
             
 function builtinsym(modname:mytype,name:word) symbol symbol(name,modname, empty:seq.mytype,mytype."internal1","")
@@ -395,7 +391,7 @@ let f = lookup(dict,op, types)
    bindinfo(dict , code.result.subtrees_1 + code.result.subtrees_3 + mangledname.f_1, [ resulttype.f_1]) 
 
 Function deepcopymangle(type:mytype) word
- mangle(merge("deepcopy:"+print.type),mytype."deepcopy",[type])
+ mangle( "deepcopy"_1 ,mytype.(towords.type+"deepcopy"),[mytype."T"])
    
 function unaryop( op:bindinfo,exp:bindinfo,input:seq.word,place:int) bindinfo
   let dict=dict.op
@@ -429,12 +425,14 @@ assert abstracttype.(types.term4)_1 ="seq"_1 report"last term of apply must be s
    assert not.isempty.sym1 report"cannot find term1 "+(code.term1)_1+"("+@(seperator.",",print,"",sym1types)+")"
    +"sym2"+print.sym2_1
  assert types(term3)_1 = resulttype.sym1_1 report"term3 not same as init"
-   let pseqtype = mytype(towords.parameter.(types.term4)_1+"pseq"_1)  
+  let pseqtype = mytype(towords.parameter.(types.term4)_1+"pseq"_1)  
+   let  idx=mangle("_"_1,mytype(towords.parameter.(types.term4)_1+"seq"_1) ,[mytype."T pseq",mytype."int"])
      let x=lookup(dict,"_"_1,[pseqtype,mytype."int"])
     assert not.isempty.x report "cannot find index function for"+print.pseqtype 
+    // assert mangledname.x_1=idx report "ERR15"+mangledname.x_1+idx //
 bindinfo(dict,subseq(code.term1,2,length.code.term1) + 
   subseq(code.term2,2,length.code.term2) + code.term3 + code.term4 + "FREF"+mangledname.sym2_1 + "FREF"+mangledname.sym1_1 +
-   "FREF"+mangledname.x_1+"APPLY"+ toword(length.types.term1 + length.types.term2 + 5), types.term3)
+   "FREF"+idx+"APPLY"+ toword(length.types.term1 + length.types.term2 + 5), types.term3)
 
 function countdigits(s:seq.int, i:int, result:int)word 
  // does not count no-break spaces // 

@@ -54,7 +54,7 @@ use seq.seq.word
  use cvttoinst
 
 
-use codegen
+/use codegen
 
 use fileio
 

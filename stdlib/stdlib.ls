@@ -4,7 +4,7 @@ Library stdlib UTF8 altgen bitpackedseq bits blockseq buildtree codegen codetemp
  saveencoding uses 
  exports UTF8 bitpackedseq bits blockseq codetemplates display fileio format graph internalbc
   invertedseq ipair libdesc libscope llvm main oseq passcommon persistant prims process real 
-  reconstruct seq set stack stacktrace stdlib textio tree saveencoding codegen  
+  reconstruct seq set stack stacktrace stdlib textio tree saveencoding  
 
 module stdlib
 
@@ -152,7 +152,6 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 type wordencoding is encoding seq.int
 
-/use blockseq.seq.int
 
 
 type word is record bb:encoding.seq.int

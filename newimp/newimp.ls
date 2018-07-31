@@ -1,12 +1,13 @@
 #!/usr/local/bin/tau
 
-Library newimp other symbol pass2  cvttoinst libdescfunc newparse groupparagraphs
+Library newimp other symbol pass2  cvttoinst libdescfunc newparse groupparagraphs codegen altgen
  uses stdlib
  exports newimp  
  
 Module borrow 
 
-* usegraph include newimp pass2 newparse other libdescfunc borrow borrow2 exclude real seq set graph stack stdlib
+* usegraph include newimp pass2 newparse other libdescfunc borrow borrow2 
+cvttoinst Symbol codegen altgen main exclude real seq set graph stack stdlib
 bits tree ipair stacktrace
 
 
@@ -33,6 +34,43 @@ function iscomplex(mytype) boolean export
 
 function  codedown(word) seq.seq.word export
 
+Function libname(liblib)seq.word export
+
+Function mods(liblib)seq.libmod export
+
+Function types(liblib)seq.libtype export
+
+Function returntype(libsym)seq.word export
+
+
+Function instruction(libsym)seq.word export
+
+Function fsig(libsym)word export
+
+Function library(libmod)word export
+
+Function parameterized(libmod)boolean export
+
+Function modname(libmod)word export
+
+Function defines(libmod)seq.libsym export
+
+Function exports(libmod)seq.libsym export
+
+Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, library:word)libmod 
+ export
+
+Function liblib(a:seq.word, c:seq.libtype, d:seq.libmod)liblib export 
+
+Function libsym(returntype:mytype, manglename:word, inst:seq.word)libsym export
+
+Function isabstract(a:mytype)boolean export
+
+Function print(l:libsym)seq.word export
+
+Function emptyliblib(libname:word) liblib
+export
+
 
 Module newimp
 
@@ -55,7 +93,7 @@ use set.word
 
 use pass2
 
-use libscope
+use borrow
 
 use seq.libmod
 
@@ -92,10 +130,15 @@ Function X(libname:seq.word)seq.word
 let p1=process.X2(libname,emptysymbolset,empty:set.firstpass)
 if aborted.p1 then message.p1 else 
 let l=result.p1  
-// @(seperator."&br  &br",print2, "",defines.last.mods.l)
- // 
+ // @(seperator."&br  &br",print2, "",defines.last.mods.l)
+ //
+//  @(seperator."&br  &br",fsig, "",exports.(mods.l)_2)
+//    
 let known=@(+,tosymbol,emptysymbolset ,defines.last.mods.l)
+// @(seperator."&br  &br",print2, "",toseq.known) //
 let mods=tofirstpass.l 
+// @(+,print,"",toseq.exports.(last.mods))
+//
 let  p2=process.X2("test6",known,asset.mods)
 if aborted.p2 then message.p2 else 
 @(seperator."&br  &br",print, "",defines.last.mods.result.p2)
@@ -155,8 +198,8 @@ function print(l:libmod) seq.word
    
 
 Function test1 seq.word
-  let y=X("small")
-     test2 +"&br &br"+y
+  let y=X("small") 
+  test2 +"&br &br"+y
 
 use main
 
@@ -166,7 +209,7 @@ use process.seq.word
 
 Function test2 seq.word
  let l=loadlibrary("Xtest6"_1)
-   let p2 = process.execute.mangle("test11"_1, mytype."test6", empty:seq.mytype)
+   let p2 = process.execute.mangle("test6"_1, mytype."test6", empty:seq.mytype)
     if aborted.p2 then message.p2 else result.p2 
  
  "JKL"

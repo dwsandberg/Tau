@@ -44,7 +44,10 @@ Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a,b,1)
 type symbol is record  mangledname:word, resulttype:mytype, paratypes:seq.mytype,name:word, modname:mytype,src:seq.word
 ,codetree:tree.seq.word
 
-
+Function symbol( mangledname:word, resulttype:mytype, paratypes:seq.mytype,name:word, modname:mytype,src:seq.word
+) symbol
+ symbol(mangledname,resulttype,paratypes,name,modname,src,tree("default"))
+   
 Function =(a:symbol, b:symbol) boolean modname.a=modname.b
 
 Function ?(a:symbol, b:symbol) ordering 

@@ -2,15 +2,16 @@
 
 module libdescfunc
 
-run newimp test1
+/run newimp test1
 
 use stdlib
 
-use libscope
 
 use cvttoinst
 
 use borrow2
+
+use borrow
 
 use set.word
 
@@ -180,8 +181,7 @@ function map(lib:word,known:symbolset,r:mapresult,l:firstpass) mapresult
   then mapresult(syms.r, mods.r+libmod(true, abstracttype.modname.l, @(+, tolibsym4, empty:seq.libsym, toseq.defines.l),
      @(+, tolibsym4, empty:seq.libsym, toseq.exports.l), lib))
   else 
-     // let d=@(findelement.known,identity, mapresult2(syms.r,empty:seq.libsym), toseq.defines.l)//
-     let e= @(findelement.known,identity, mapresult2(syms.r,empty:seq.libsym), toseq.exports.l)
+      let e= @(findelement.known,identity, mapresult2(syms.r,empty:seq.libsym), toseq.exports.l)
     mapresult(syms.e, mods.r+libmod(false, abstracttype.modname.l,  empty:seq.libsym,libsyms.e, lib))
 
 function tolibsym4(s:symbol)libsym 
@@ -191,13 +191,20 @@ function findelement(syms:set.libsym, s:symbol)seq.libsym
  toseq.findelement(libsym(resulttype.s, mangledname.s, ""), syms)
  
 function findelement(known:symbolset,r:mapresult2,s:symbol) mapresult2
+   // assert not.iscomplex.modname.s &or mangledname.s in "Q3CZrealzseqZTZT inZintzseqZTZTzseq inZwordzseqzseqZTZTzseq
+    inZwordzseqZTZTzseq" report "MMM"+print2.s //
    let z=findelement(libsym(resulttype.s, mangledname.s, ""), syms.r)
     if isempty.z then
         let t1=known_mangledname.s 
         let t=tolibsym4.t1
         assert src.t1 in ["EXTERNAL","xPARAM 1 VERYSIMPLE" ] report print2.t1
         mapresult2(syms.r+t,libsyms.r+t)
-    else mapresult2(syms.r,libsyms.r+z_1)
+    else 
+//        assert not.iscomplex.modname.s report "ERR11"+fsig.z_1+returntype.z_1+instruction.z_1 //
+  //  let toadd=    if iscomplex.modname.s then 
+           libsym(mytype.returntype.z_1,mangle(name.s,modname.s,@(+,replaceT.modname.s,empty:seq.mytype,paratypes.s)),instruction.z_1)
+        else z_1 //
+  mapresult2(syms.r,libsyms.r+z_1)
         
  
  function ?(a:libsym, b:libsym)ordering fsig.a ? fsig.b
@@ -208,10 +215,13 @@ function findelement(known:symbolset,r:mapresult2,s:symbol) mapresult2
 use seq.mytype
 
 
-
 Function tosymbol(ls:libsym) symbol
 let d=codedown(fsig.ls)
-symbol(d_1_1,mytype(d_2),@(+,mytype,empty:seq.mytype,subseq(d,3,length.d)),mytype.returntype.ls,instruction.ls)
+let modname=mytype.d_2
+let paratypes=@(+,mytype,empty:seq.mytype,subseq(d,3,length.d))
+ symbol(mangle(d_1_1,modname,paratypes),mytype.returntype.ls,@(+,replaceT.parameter.modname,empty:seq.mytype,paratypes),d_1_1,modname,
+ instruction.ls)
+
 
 Function tofirstpass(m:libmod) firstpass 
  firstpass(mytype.if parameterized.m then  "T"+modname.m else [modname.m],empty:seq.mytype,

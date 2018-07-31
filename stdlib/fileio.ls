@@ -22,7 +22,6 @@ use seq.seq.int
 
 use packedseq.seq.int
 
-
 use seq.bit
 
 use seq.bits

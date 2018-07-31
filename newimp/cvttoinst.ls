@@ -210,6 +210,8 @@ Function worddata seq.int export
 
 Function wordcount int export
 
+Function addliblib(linklists2, liblib) ipair.linklists2 export
+
 Function a(linklists2) seq.int export
 
 Function initializer(conststypex:encoding.llvmtype, data:linklists2)int export
