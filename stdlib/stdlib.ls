@@ -2,7 +2,7 @@
 
 Library stdlib UTF8 altgen bitpackedseq bits blockseq buildtree codegen codetemplates definestruct display fileio format graph groupparagraphs internalbc invertedseq ipair libdesc libdescfunc libscope llvm main opt2 oseq packedseq parse pass0 pass1a pass2a passcommon persistant pretty prims process processtypes real reconstruct seq set stack stacktrace symbol textio tree 
  saveencoding uses 
- exports UTF8 bitpackedseq bits blockseq codetemplates display fileio format graph internalbc
+ exports UTF8 bitpackedseq bits blockseq  display fileio format graph internalbc
   invertedseq ipair libdesc libscope llvm main oseq passcommon persistant prims process real 
   reconstruct seq set stack stacktrace stdlib textio tree saveencoding  
 

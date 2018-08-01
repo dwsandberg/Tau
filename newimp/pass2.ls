@@ -94,7 +94,7 @@ RECORD 7 NOINLINE NOINLINE
 
 type program is record  knownsymbols:symbolset, callgraph:graph.word, inline:set.word, hasstate:seq.word
 
-Function pass2(knownsymbols:symbolset,roots:seq.word,compiled:symbolset) intercode2
+Function pass2(knownsymbols:symbolset,roots:seq.word,compiled:symbolset) intercode
  let p = program(knownsymbols,newgraph.empty:seq.arc.word,empty:set.word,"")
    let x= @(addsymbol,identity,p,roots)
    let s2 = expandinline.x 
@@ -149,9 +149,10 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
       let name=src_i  
        let specialnopara= if name in "if CALLIDX" then 3
      else if name in "IDXUC setfldZbuiltinZTzaddressZT decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord 
-     findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint  " then 2
+     findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint 
+     createfileZbuiltinZbitszseqZoutputformat " then 2
      else if name in "assertZbuiltinZwordzseq mappingZbuiltinZTzerecord allocatespaceZbuiltinZint  builtinZtestZinternal1
-     abortedZbuiltinZTzprocess processZbuiltinZT " then 1
+     abortedZbuiltinZTzprocess processZbuiltinZT getfileZbuiltinZbitszseq " then 1
      else if name in " FORCEINLINEZtest PROFILEZtest NOINLINEZtest" then 0
      else -1 
        assert length.toseq.stk &ge specialnopara report "STACK ISSUE"+name+mangledname.caller+src
@@ -201,7 +202,8 @@ function buildcodetreeX(knownsymbols:symbolset,hasstate:boolean,caller:symbol,st
   else if inst.t in"assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint
   decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint
   WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD
-   FORCEINLINEZtest  builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT  PROFILEZtest NOINLINEZtest"
+   FORCEINLINEZtest  builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT  PROFILEZtest NOINLINEZtest
+   createfileZbuiltinZbitszseqZoutputformat getfileZbuiltinZbitszseq"
   then empty:seq.word 
   else  
     let sym=(knownsymbols)_inst.t

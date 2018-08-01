@@ -18,7 +18,7 @@ use seq.Lcode
 
 use seq.encoding.llvmtype
 
-use seq.inst
+use seq.inst2
 
 use seq.int
 
@@ -44,7 +44,7 @@ use stdlib
 
 function profiletype encoding.llvmtype array(-3, i64)
 
-Function addfuncdef(match5map:seq.match5, coding:seq.inst, codes:seq.seq.int, i:int)internalbc 
+Function addfuncdef(match5map:seq.match5, coding:seq.inst2, codes:seq.seq.int, i:int)internalbc 
  let f = coding_i 
   let l = Lcode(emptyinternalbc, empty:seq.localmap, 1, nopara.f + 1, empty:seq.int, empty:seq.Lcode, empty:seq.int, 0)
   let g5 = if"PROFILE"_1 in flags.f then mangledname.f else"noprofile"_1 

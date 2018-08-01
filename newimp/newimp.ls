@@ -1,6 +1,6 @@
 #!/usr/local/bin/tau
 
-Library newimp other symbol pass2  cvttoinst libdescfunc newparse groupparagraphs codegen altgen
+Library newimp other symbol pass2  cvttoinst libdescfunc newparse groupparagraphs codegen altgen codetemplates
  uses stdlib
  exports newimp  
  
@@ -128,7 +128,7 @@ function gettext2(libname:word, e:seq.word, a:word)seq.seq.seq.word
 
 Function X(libname:seq.word)seq.word
 let p1=process.X2(libname,emptysymbolset,empty:set.firstpass)
-if aborted.p1 then message.p1 else 
+if aborted.p1 then message.p1 else // "OK"+@(+,modname,"",mods.result.p1) //
 let l=result.p1  
  // @(seperator."&br  &br",print2, "",defines.last.mods.l)
  //
@@ -164,7 +164,7 @@ let a = gettext.[ merge( libname+"/"+ libname +".ls")]
  let intercode= pass2(symset.p1,toseq.roots.p1,insyms) 
  let newlibname=merge("X"+libname)
  let liblib=libdesc( roots.p1 ,intercode ,newlibname,mods.p1,symset.p1) 
- let bc=codegen5(intercode,newlibname,if libname="test6" then emptyliblib.libname_1 else liblib)
+ let bc=codegen5(intercode,newlibname,// if libname="test6" then emptyliblib.libname_1 else // liblib)
  let z2 = createlib(bc, newlibname, "") 
  liblib
  
@@ -198,6 +198,8 @@ function print(l:libmod) seq.word
    
 
 Function test1 seq.word
+// X("imp2")
+//
   let y=X("small") 
   test2 +"&br &br"+y
 

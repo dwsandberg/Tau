@@ -1,6 +1,7 @@
 #!/usr/local/bin/tau
 
-Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgraph layergraph makeDAG prettylib printbitcodes profile renamemodule svg svggraph 
+Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgraph layergraph makeDAG 
+prettylib printbitcodes profile renamemodule svg svggraph 
  uses stdlib 
  exports bandeskopf barycenter displaygraph displaytextgraph doc layergraph makeDAG prettylib prettylib printbitcodes profile svg svggraph tools
 
@@ -52,7 +53,7 @@ Function prettytest seq.word prettylib("test1","")
 
 "byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 
-Function checkdoclib seq.word   doclibrary."newimp"
+Function checkdoclib seq.word   doclibrary."stdlib"
 
 callgraphbetween("newimp","libdescfunc libscope doc")  
 

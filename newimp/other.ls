@@ -301,9 +301,9 @@ function definestructure(org:symbol,dict:set.symbol,templates:symbolset,src:seq.
            replace(replace(knownsymbols,con),descsym)
   else 
     let len=  (toint.src_i) 
-    let a = mytype.subseq(src,i+1,i+len-1)
     let fldtype=mytype.subseq(src,i+1,i+len-1)    
     let thetype=replaceT(parameter.modname,fldtype)
+    assert length.towords.thetype > 0  report "ERR16"+toword.i+src+"/"+towords.fldtype+"/"+towords.thetype+"/"+print.modname
     let z1=if abstracttype.thetype in // set should not need to be included // "int real seq  word encoding set"  
          then   
             zzz(knownsymbols,"LIT 1" )
@@ -314,10 +314,11 @@ function definestructure(org:symbol,dict:set.symbol,templates:symbolset,src:seq.
            let code=src.sym2
                      let len2=  (toint.code_3) 
            let  modname2 = replaceT(parameter.modname.sym2,mytype.subseq(code,3+1,3+len2))
+           assert not(modname2=mytype."tree") report "ERR17"+print2.sym2+"/"+subseq(code,3+1,3+len2)
          let  newknown=definestructure(org,dict,templates,src.sym2,modname2,knownsymbols,3+len2+1, "" ,empty:seq.mytype,"")
              let z=newknown_(mangledname.sym2)  
              assert isdefined.z report "KL"+mangledname.sym2
-             assert  (src.z)_1 in "1 2"  report "KL2"+print2.z+print.thetype
+             assert  (src.z)_1 in "1 2 3 4 5 6"  report "KL2"+print2.z+print.thetype
              zzz(newknown,"LIT"+(src.z)_1  )  
     let newoffset=   if offset="" then size.z1   else  "LIT"+toword(toint.offset_2+toint.(size.z1)_2 )
     let fldsrc= if offset="" then if i+len+1 > length.src then "PARAM 1"  else "PARAM 1 LIT 0 IDXUC" else  "PARAM 1"+offset+"IDXUC"

@@ -19,7 +19,7 @@ use set.int
 
 use seq.int
 
-use seq.inst
+use seq.inst2
 
 use seq.seq.int
 
@@ -39,7 +39,7 @@ use Symbol
 
 use seq.firstpass
 
-Function libdesc(roots:set.word,intercode:intercode2,lib:word,mods:seq.firstpass,known:symbolset)liblib 
+Function libdesc(roots:set.word,intercode:intercode,lib:word,mods:seq.firstpass,known:symbolset)liblib 
     let b=@(&cup, gathertypes.known,empty:set.mytype,toseq.roots) 
        let c= closetypes(known, @(+,print,empty:set.seq.word,toseq.b),empty:set.seq.word)
        let typesyms=@(+,typelibsyms(known),empty:seq.libsym,toseq.c)
@@ -101,15 +101,15 @@ Function libdesc(roots:set.word,intercode:intercode2,lib:word,mods:seq.firstpass
   let a=@(&cup, gathertypes,empty:set.mytype,roots) 
     @(+,print,"",toseq.a)
   
-  function toinstindex(a:set.word, d:intercode2, i:int)seq.int 
+  function toinstindex(a:set.word, d:intercode, i:int)seq.int 
  if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
 
-function close(d:intercode2, toprocess:set.int, old:set.int)set.int 
+function close(d:intercode, toprocess:set.int, old:set.int)set.int 
  let a = asset.@(+, simpleonly.d, empty:seq.int, toseq.toprocess) - old 
   let new = asset.@(+, filter.d, empty:seq.int, toseq.a) - old 
   if isempty.new then old else close(d, new, old ∪ new)
 
-function simpleonly(d:intercode2, i:int)seq.int 
+function simpleonly(d:intercode, i:int)seq.int 
   // returns body for simple function otherwise and empty sequence //
  let body = codes(d)_i
   if length.body > 30  then   empty:seq.int
@@ -117,7 +117,7 @@ function simpleonly(d:intercode2, i:int)seq.int
    let flags=flags.(coding.d)_i
    if    ("SIMPLE"_1 in flags &or  "INLINE"_1 in flags)  then body else empty:seq.int
   
-function filter(d:intercode2, i:int)seq.int 
+function filter(d:intercode, i:int)seq.int 
  let inst = coding(d)_i 
   let name = mangledname.inst 
   if name in"SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT ELSEBLOCK RECORD THENBLOCK if CONTINUE LOOPBLOCK FINISHLOOP FIRSTVAR"
@@ -139,7 +139,7 @@ function filter(d:intercode2, i:int)seq.int
   else findcalls(a, i + 2, result + if a_i ="FREF"_1 then [ a_(i + 1)]else"")
 
 
-function astext(s:seq.inst, i:int)seq.word 
+function astext(s:seq.inst2, i:int)seq.word 
  let f = towords(s_i)
   if f_1 ="CONSTANT"_1 
   then subseq(f, 2, length.f)
@@ -150,9 +150,9 @@ function astext(s:seq.inst, i:int)seq.word
   else [f_1]
  
 
-function astext5( s:seq.inst, d:seq.int)seq.word @(+, astext( s),"", d)
+function astext5( s:seq.inst2, d:seq.int)seq.word @(+, astext( s),"", d)
 
-function tolibsym(d:intercode2, i:int)seq.libsym 
+function tolibsym(d:intercode, i:int)seq.libsym 
   let a = (coding.d)_i 
   if mangledname.a in"CONSTANT EQL RECORD"∨"builtin"_1 in flags.a 
   then empty:seq.libsym 
