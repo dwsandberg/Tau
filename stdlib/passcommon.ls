@@ -1,4 +1,53 @@
+Module intercode
+
+
+use persistant
+
+use reconstruct
+
+use stdlib
+
+type intercode is record codes:seq.seq.int, coding:seq.inst, defines:seq.int
+
+defines are indices into coding that indicate which functions are defined and indices into codes that give a seq of integers which are indices into coding
+
+function intercode(seq.seq.int, seq.inst, seq.int)intercode export
+
+function codes(intercode)seq.seq.int export
+
+function coding(intercode)seq.inst export
+
+function defines(intercode)seq.int export
+
+type inst is record towords:seq.word, flags:seq.word, returntype:mytype
+
+Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst export
+
+Function mangledname(a:inst)word towords(a)_1
+
+Function nopara(a:inst)int toint(towords(a)_2)
+
+function flags(a:inst)seq.word export
+
+function towords(a:inst)seq.word export
+
+function returntype(a:inst)mytype export
+
+function addwordseq(linklists2, seq.word)ipair.linklists2 export
+
+Function worddata seq.int export
+
+Function wordcount int export
+
+Function addliblib(linklists2, liblib)ipair.linklists2 export
+
+Function a(linklists2)seq.int export
+
+Function initializer(conststypex:encoding.llvmtype, data:linklists2)int export
+
 Module passcommon
+
+use intercode
 
 use libscope
 
@@ -101,15 +150,15 @@ Function isprivate(a:mod2desc)boolean export
 Function mod2desc(modname:mytype, exportx:set.syminfo, uses:seq.mytype, typedefs:seq.libtype, defines:set.syminfo, tocompile:seq.seq.word, isprivate:boolean)mod2desc 
  export
 
-type pass1result is record code:intercode2, libname:seq.word, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype
+type pass1result is record code:intercode, libname:seq.word, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype
 
-Function pass1result(code:intercode2, libname:seq.word, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype)pass1result 
+Function pass1result(code:intercode, libname:seq.word, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype)pass1result 
  export
 
 Function pass1result(libname:seq.word, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype)pass1result 
  pass1result(emptyintercode, libname, newcode, compiled, mods, existingtypes, alltypes)
 
-Function code(pass1result)intercode2 export
+Function code(pass1result)intercode export
 
 Function libname(pass1result)seq.word export
 
@@ -144,14 +193,18 @@ Function parsefuncheader(text:seq.word)tree.word export
 
 Function expression(s:seq.word)tree.word export
 
-type inst is record towords:seq.word, flags:seq.word, returntype:mytype
+/type inst is record towords:seq.word, flags:seq.word, returntype:mytype
 
 
 Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst export
 
-Function mangledname(a:inst)word towords(a)_1
+Function mangledname(a:inst)word export
 
-Function nopara(a:inst)int toint(towords(a)_2)
+towords(a)_1
+
+Function nopara(a:inst)int export 
+
+toint(towords(a)_2)
 
 function flags(a:inst)seq.word export
 
@@ -159,17 +212,17 @@ function towords(a:inst)seq.word export
 
 function returntype(a:inst)mytype export
 
-type intercode2 is record codes:seq.seq.int, coding:seq.inst, defines:seq.int
+/type intercode is record codes:seq.seq.int, coding:seq.inst, defines:seq.int
 
-Function emptyintercode intercode2 intercode2(empty:seq.seq.int, empty:seq.inst, empty:seq.int)
+Function emptyintercode intercode intercode(empty:seq.seq.int, empty:seq.inst, empty:seq.int)
 
 defines are indices into coding that indicate which functions are defined and indices into codes that give a seq of integers which are indices into coding
 
-function intercode2(seq.seq.int, seq.inst, seq.int)intercode2 export
+function intercode(seq.seq.int, seq.inst, seq.int)intercode export
 
-function codes(intercode2)seq.seq.int export
+function codes(intercode)seq.seq.int export
 
-function coding(intercode2)seq.inst export
+function coding(intercode)seq.inst export
 
-function defines(intercode2)seq.int export
+function defines(intercode)seq.int export
 

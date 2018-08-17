@@ -1,5 +1,7 @@
 module persistant
 
+use deepcopy.linklists2
+
 use bits
 
 use fileio

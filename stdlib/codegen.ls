@@ -12,9 +12,7 @@ use libscope
 
 use llvm
 
-use passcommon
-
-use persistant
+use intercode
 
 use seq.encoding.llvmtype
 
@@ -57,7 +55,7 @@ function funcdec(f:inst)seq.int
   
 
  
-Function codegen5(fs:intercode2,thename:word,libdesc:liblib)seq.bits 
+Function codegen5(fs:intercode,thename:word,libdesc:liblib)seq.bits 
   let symlist ="libname initlib5 words wordlist list profcounts profclocks profspace profrefs profstat spacecount"+ merge(thename,"$profileresult"_1)+"init22 PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   let wordstype = array(-1, i64)
   // let conststype = array(-2, i64)// 

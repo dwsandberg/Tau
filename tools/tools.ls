@@ -49,11 +49,11 @@ Function test1 seq.word htmlcode."tools"
 
 Function checkbind seq.word checkbind."tools"
 
-Function prettytest seq.word prettylib("test1","")
+Function prettytest seq.word prettylib("newimp","")
 
 "byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 
-Function checkdoclib seq.word   doclibrary."stdlib"
+Function checkdoclib seq.word   doclibrary."newimp"
 
 callgraphbetween("newimp","libdescfunc libscope doc")  
 

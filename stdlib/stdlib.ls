@@ -4,7 +4,7 @@ Library stdlib UTF8 altgen bitpackedseq bits blockseq buildtree codegen codetemp
  saveencoding uses 
  exports UTF8 bitpackedseq bits blockseq  display fileio format graph internalbc
   invertedseq ipair libdesc libscope llvm main oseq passcommon persistant prims process real 
-  reconstruct seq set stack stacktrace stdlib textio tree saveencoding  
+  reconstruct seq set stack stacktrace stdlib textio tree saveencoding  codetemplates intercode groupparagraphs codegen
 
 module stdlib
 

@@ -1,3 +1,8 @@
+Module deepcopy.T
+
+use stdlib
+
+
 Module seq(T)
 
 Function_(dseq.T, int)T export

@@ -16,7 +16,7 @@ use passcommon
 
 use process.tree.word
 
-use profile
+/use profile
 
 use seq.int
 
@@ -44,7 +44,7 @@ use stdlib
 
 use tree.word
 
-Function test2 seq.word X."stdlib"+ profileresults."time"
+/Function test2 seq.word X."stdlib"+ profileresults."time"
 
 
  Function test3 seq.word

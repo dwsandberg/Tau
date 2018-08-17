@@ -2,6 +2,9 @@ module llvm
 
 In addition to the llvm bitcode format documentation, an useful file for reference is LLVMBitCodes.h
 
+use deepcopy.trackconst
+
+
 use bitpackedseq.bit
 
 use bits

@@ -68,10 +68,10 @@ function tolibsym(coding:seq.inst, codes:seq.seq.int, i:int)seq.libsym
 function roots2(m:mod2desc)set.word 
  if isprivate.m then empty:set.word else @(+, mangled, empty:set.word, toseq.export.m)
 
-function toinstindex(a:set.word, d:intercode2, i:int)seq.int 
+function toinstindex(a:set.word, d:intercode, i:int)seq.int 
  if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
 
-Function libdesc(r:pass1result,intercode:intercode2)liblib 
+Function libdesc(r:pass1result,intercode:intercode)liblib 
  let roots = @(∪, roots2, empty:set.word, mods.r)
   let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
   let a = close(intercode, rootindices, rootindices)
@@ -81,11 +81,11 @@ Function libdesc(r:pass1result,intercode:intercode2)liblib
   let allmods = @(+, map(lib, asset.syms), empty:seq.libmod, mods.r)+ othermod 
   liblib(libname.r, toseq(@(∪, libtypes.alltypes.r, empty:set.libtype, allmods) - existingtypes.r), allmods)
 
-function simpleonly(d:intercode2, i:int)seq.int 
+function simpleonly(d:intercode, i:int)seq.int 
  let inst = coding(d)_i 
   if"SIMPLE"_1 in flags.inst then codes(d)_i else empty:seq.int
 
-function filter(d:intercode2, i:int)seq.int 
+function filter(d:intercode, i:int)seq.int 
  let inst = coding(d)_i 
   let name = mangledname.inst 
   if name in"SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT ELSEBLOCK RECORD THENBLOCK if"
@@ -106,7 +106,7 @@ function findcalls(a:seq.word, i:int, result:seq.word)seq.word
   then result 
   else findcalls(a, i + 2, result + if a_i ="FREF"_1 then [ a_(i + 1)]else"")
 
-function close(d:intercode2, toprocess:set.int, old:set.int)set.int 
+function close(d:intercode, toprocess:set.int, old:set.int)set.int 
  let a = asset.@(+, simpleonly.d, empty:seq.int, toseq.toprocess) - old 
   let new = asset.@(+, filter.d, empty:seq.int, toseq.a) - old 
   if isempty.new then old else close(d, new, old ∪ new)

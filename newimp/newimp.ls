@@ -1,81 +1,19 @@
 #!/usr/local/bin/tau
 
-Library newimp other symbol pass2  cvttoinst libdescfunc newparse groupparagraphs codegen altgen codetemplates
+Library newimp other symbol pass2  cvttoinst libdescfunc newparse  
  uses stdlib
- exports newimp  
+ exports main
  
-Module borrow 
-
-* usegraph include newimp pass2 newparse other libdescfunc borrow borrow2 
-cvttoinst Symbol codegen altgen main exclude real seq set graph stack stdlib
-bits tree ipair stacktrace
-
-
-use libscope
-
-
-function mytype(seq.word) mytype export
-
-function towords(mytype) seq.word export
-
-function =(mytype,mytype) boolean export
-
-function mangle(word, mytype, seq.mytype)  word export
-
-function replaceT(mytype, mytype) mytype export
-
-function print(mytype) seq.word export
-
-function abstracttype(mytype) word export
-
-function parameter(mytype) mytype export
-
-function iscomplex(mytype) boolean export
-
-function  codedown(word) seq.seq.word export
-
-Function libname(liblib)seq.word export
-
-Function mods(liblib)seq.libmod export
-
-Function types(liblib)seq.libtype export
-
-Function returntype(libsym)seq.word export
-
-
-Function instruction(libsym)seq.word export
-
-Function fsig(libsym)word export
-
-Function library(libmod)word export
-
-Function parameterized(libmod)boolean export
-
-Function modname(libmod)word export
-
-Function defines(libmod)seq.libsym export
-
-Function exports(libmod)seq.libsym export
-
-Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, library:word)libmod 
- export
-
-Function liblib(a:seq.word, c:seq.libtype, d:seq.libmod)liblib export 
-
-Function libsym(returntype:mytype, manglename:word, inst:seq.word)libsym export
-
-Function isabstract(a:mytype)boolean export
-
-Function print(l:libsym)seq.word export
-
-Function emptyliblib(libname:word) liblib
-export
-
 
 Module newimp
 
-run newimp test1
+* usegraph exclude seq
 
+run main test1
+
+use stdlib
+
+Module main
 
 use stdlib
 
@@ -93,7 +31,7 @@ use set.word
 
 use pass2
 
-use borrow
+use libscope
 
 use seq.libmod
 
@@ -126,48 +64,87 @@ function gettext2(libname:word, e:seq.word, a:word)seq.seq.seq.word
  
  function print2(l:libsym) seq.word // print.l+"mn:"+// ""+ fsig.l+instruction.l
 
-Function X(libname:seq.word)seq.word
-let p1=process.X2(libname,emptysymbolset,empty:set.firstpass)
-if aborted.p1 then message.p1 else // "OK"+@(+,modname,"",mods.result.p1) //
-let l=result.p1  
- // @(seperator."&br  &br",print2, "",defines.last.mods.l)
- //
-//  @(seperator."&br  &br",fsig, "",exports.(mods.l)_2)
-//    
-let known=@(+,tosymbol,emptysymbolset ,defines.last.mods.l)
-// @(seperator."&br  &br",print2, "",toseq.known) //
-let mods=tofirstpass.l 
-// @(+,print,"",toseq.exports.(last.mods))
-//
-let  p2=process.X2("test6",known,asset.mods)
-if aborted.p2 then message.p2 else 
-@(seperator."&br  &br",print, "",defines.last.mods.result.p2)
+
+
+type libinfo is record known:symbolset,mods:set.firstpass
+
+function addliblib( a:libinfo,l:liblib) libinfo
+  libinfo(@(+,tosymbol,known.a,defines.last.mods.l),
+  asset.tofirstpass.l  &cup mods.a)
  
  use process.liblib
  
   use set.firstpass
 
+function loadlibs(dependentlibs:seq.word, i:int, time:int)int 
+ if i > length.dependentlibs 
+  then time 
+  else let stamp = loadlibrary(dependentlibs_i)
+  assert stamp ≥ time report"library"+ dependentlibs_i +"is out of date"+ toword.time + toword.stamp 
+  loadlibs(dependentlibs, i + 1, stamp)
 
-function X2(libname:seq.word, insyms:symbolset,  inmods:set.firstpass) liblib
-let a = gettext.[ merge( libname+"/"+ libname +".ls")]
+Function loadlibrary(libname:word)int loadlib([ libname], 0)
+
+ 
+ function subcompilelib(libname:word) seq.word
+let a = gettext.[ merge( [libname]+"/"+ libname +".ls")]
   let s = findlibclause(a, 1)
   let u = findindex("uses"_1, s, 3)
   let e = findindex("exports"_1, s, 3)
   let uses = subseq(s, u + 1, e - 1)
   let filelist = subseq(s, 2, min(u - 1, e - 1))
   let exports = subseq(s, e + 1, length.s)
-  let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
-  let p1=pass1(allsrc,exports,insyms,inmods)
+   let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
+   let b = unloadlib.[libname]
+   let li=if libname.last.libs="newimp" then libinfo(emptysymbolset,empty:set.firstpass)
+   else 
+     let discard5 = loadlibs(uses, 1, timestamp(libs_1))
+     addliblib(libinfo(emptysymbolset,empty:set.firstpass),last.libs)
+  let p1=pass1(allsrc,exports,known.li,mods.li)
   // let kk=      (symset.p1)_("wordencodingZstdlib"_1)  
   // // assert false report  
    @(+,print5,"",toseq.symset.p1)  //
- let intercode= pass2(symset.p1,toseq.roots.p1,insyms) 
- let newlibname=merge("X"+libname)
- let liblib=libdesc( roots.p1 ,intercode ,newlibname,mods.p1,symset.p1) 
- let bc=codegen5(intercode,newlibname,// if libname="test6" then emptyliblib.libname_1 else // liblib)
- let z2 = createlib(bc, newlibname, "") 
- liblib
+ let intercode= pass2(symset.p1,toseq.roots.p1,known.li) 
+ let liblib=libdesc( roots.p1 ,intercode ,libname,mods.p1,symset.p1) 
+ let bc=codegen5(intercode,libname,liblib)
+ let z2 = createlib(bc, libname, "") 
+ "OK"
  
+Function compilelib2(libname:word)seq.word 
+ let p1 = process.subcompilelib.libname 
+  if aborted.p1 
+  then"COMPILATION ERROR:"+ space + message.p1 
+  else let aa = result.p1 
+  if subseq(aa, 1, 1)="OK"
+  then aa 
+  else"COMPILATION ERROR:"+ space + aa
+  
+use format
+
+   use libscope
+   
+   use seq.liblib
+   
+   use prims
+
+use process.seq.word
+
+ 
+ Function main(arg:seq.int)outputformat 
+ let args = towords(arg + 10 + 10)
+  let libname = args_1 
+  let p = process.compilelib2.libname 
+  let output = if aborted.p 
+   then message.p 
+   else if subseq(result.p, 1, 1)="OK"∧ length.args = 3 
+   then // execute function specified in arg // 
+    let p2 = process.execute.mangle(args_3, mytype.[ args_2], empty:seq.mytype)
+    if aborted.p2 then message.p2 else result.p2 
+   else if subseq(result.p, 1, 1)="OK"∧ not(length.args = 1)
+   then"not correct number of args:"+ args 
+   else result.p 
+  outputformat.toUTF8plus(htmlheader + processpara.output)
+
 
   @(seperator."&br  &br",print, "",defines.last.mods.liblib)
   
@@ -183,7 +160,6 @@ let a = gettext.[ merge( libname+"/"+ libname +".ls")]
     "&br"+print2.s else ""
 
  
-/ type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, library:word
 
 function print2(full:boolean,l:libsym) seq.word 
    if full  then  "&br"+fsig.l+":"+print.mytype.returntype.l+instruction.l
@@ -195,23 +171,32 @@ function print(l:libmod) seq.word
    +"&br defines:"+ @(+,print2(modname.l="$other"_1),"",defines.l ) 
     +"&br exports:"+ @(+,print2(modname.l="$other"_1),"",defines.l ) 
   
-   
+
+
+/Function test1 seq.word
+// compilelib2("imp2"_1) //
+let t=compilelib2("imp2"_1)
+assert t="OK" report "HH"+t
+// "&br &br"+@(seperator."&br  &br",print, "",defines.last.mods.last.libs)
+// 
+let p2 = process.execute.mangle("ZXX"_1, mytype."main", empty:seq.mytype)
+    (if aborted.p2 then message.p2 else towords.cast.result.p2 )
 
 Function test1 seq.word
-// X("imp2")
+// compilelib2("imp2"_1) //
+let t=compilelib2("imp2"_1)
+assert t="OK" report "HH"+t
+let t2=compilelib2("test6"_1)
+assert t2="OK" report "HHH"+t2
+// @(+,libname,"",libs)
+"&br &br"+@(seperator."&br  &br",print, "",defines.last.mods.last.libs)
 //
-  let y=X("small") 
-  test2 +"&br &br"+y
+ //  let p2 = process.execute.mangle("gentau2"_1, mytype."genhash", empty:seq.mytype) //
+ let p2 = process.execute.mangle("test6"_1, mytype."test6", empty:seq.mytype)
+    (if aborted.p2 then message.p2 else result.p2 )
++"&br &br"+@(seperator."&br  &br",print, "",defines.last.mods.last.libs)
+  
+genlex genhash
 
-use main
-
-use prims
-
-use process.seq.word
-
-Function test2 seq.word
- let l=loadlibrary("Xtest6"_1)
-   let p2 = process.execute.mangle("test6"_1, mytype."test6", empty:seq.mytype)
-    if aborted.p2 then message.p2 else result.p2 
+function cast(seq.word) seq.int builtin.NOOP
  
- "JKL"

@@ -257,7 +257,9 @@ if (strcmp(libname,"stdlib")==0){
 
 BT initlib5(char * libname,BT * words,BT * wordlist, BT * consts,BT  libdesc, BT *elementlist) {
   // fprintf(stderr,"starting initlib4\n");
-if (strcmp(libname,"stdlib")==0){
+  fprintf(stderr,"init Q%sQ\n",libname);
+if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
+   fprintf(stderr,"init stdlib\n");
   /* only needed when initializing stdlib */
     append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");
     if (!append){
@@ -292,16 +294,16 @@ if (strcmp(libname,"stdlib")==0){
  int i,k;
   words[0]=0;
   words[1]=nowords;
- //  fprintf(stderr,"nowords %d\n",nowords);
+   fprintf(stderr,"nowords %d\n",nowords);
  for ( k=0;k<nowords;k++) {
   int wordlength=wordlist[j+1];
-  // fprintf(stderr,"%d:",k+1);
-  //for(i=0;i<wordlength;i++) {  fprintf(stderr,"%c",(char)wordlist[i+j+2]);}
+  //  fprintf(stderr,"%d:",k+1);
+  // for(i=0;i<wordlength;i++) {  fprintf(stderr,"%c",(char)wordlist[i+j+2]);}
    words[k+2]=encodeword(&sharedspace,(wordlist+j) );
   j=j+2+wordlength;
-  // fprintf(stderr,"\n");
+   // fprintf(stderr,"\n");
   }
-  // fprintf(stderr,"relocating const\n");
+   fprintf(stderr,"relocating const\n");
   relocate(&sharedspace, words,consts);
   
   if ( libname[0] =='Q')

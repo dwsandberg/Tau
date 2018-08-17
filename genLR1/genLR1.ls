@@ -1,8 +1,8 @@
 #!/usr/local/bin/tau
 
-Library genLR1  tauparser genlex  testparser parse
- uses stdlib tools 
- exports tauparser genLR1 genlex testparser
+Library genLR1    genlex   
+ uses stdlib  
+ exports   genLR1 genlex 
 
 Module genLR1
 

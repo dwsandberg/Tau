@@ -121,9 +121,9 @@ Function bindings(libname:word)pass1result
   assert not.aborted.p report message.p 
   result.p
 
-/use process.intercode2
+/use process.intercode
 
-/use seq.intercode2
+/use seq.intercode
 
 function subcompilelib(libname:word)seq.word 
  PROFILE.let discard3 = length.mapping.libsymencoding 

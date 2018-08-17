@@ -2,6 +2,10 @@ module altgen
 
 use bitpackedseq.bit
 
+use libscope
+
+use intercode
+
 use codetemplates
 
 use internalbc
@@ -10,9 +14,9 @@ use ipair.Lcode
 
 use ipair.internalbc
 
-use llvm
+use ipair.stat5
 
-use passcommon
+use llvm
 
 use seq.Lcode
 
@@ -26,6 +30,8 @@ use seq.internalbc
 
 use seq.ipair.Lcode
 
+use seq.ipair.stat5
+
 use seq.llvmconst
 
 use seq.localmap
@@ -34,11 +40,11 @@ use seq.match5
 
 use seq.seq.int
 
+use seq.seq.ipair.stat5
+
 use seq.stat5
 
 use seq.word
-
-use libscope
 
 use stdlib
 
@@ -187,12 +193,6 @@ function profilecall(profiletype2:encoding.llvmtype, l:Lcode, args:seq.int, call
 Function encode(stat5, erecord.stat5)encoding.stat5 export
 
 type statencoding is encoding stat5
-
-use seq.seq.ipair.stat5
-
-use seq.ipair.stat5
-
-use ipair.stat5
 
 type stat5 is record caller:word, callee:word
 
