@@ -4,12 +4,6 @@ use cvttoinst
 
 use seq.symbol
 
-use seq.ipair.symbol
-
-use invertedseq.symbol
-
-use ipair.symbol
-
 use buildtree
 
 use opt2
@@ -64,12 +58,6 @@ use tree.seq.word
 
 use seq.seq.ipair.symbol
 
-
-
-
- function lookupfunc(p:program,name:word) symbol
-   lookupfunc(knownsymbols.p,name)
-
 Function pass2(r:pass1result) intercode
  // does inline expansion, finds consts, removes unreaachable functions // 
   let p1 = program( emptysymbolset , newgraph.empty:seq.arc.word, asset."","")
@@ -104,6 +92,8 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
    then q
    else  tree("STATE",[q]) 
    [changecodetree(f,q2)]
+   
+   use stacktrace
       
 function addtoprogram(alltypes:set.libtype, map:set.track, p:program, f:word)program 
  if isoption.f 
@@ -119,8 +109,11 @@ function addtoprogram(alltypes:set.libtype, map:set.track, p:program, f:word)pro
    // assert myinst=instruction.q report
    myinst+"<><><>"+instruction.q //
   let instend = optdivide(myinst, length.myinst)
-  let options = subseq(myinst, instend, length.myinst)
-  let caller=symbol(length.paratypes.q, rt, mangled.q, tree("default"), options)
+  let options = toseq(asset.subseq(myinst, instend+1, length.myinst)-asset."1")
+   let aaa= asset.options - asset."VERYSIMPLE EXTERNAL STATE NOINLINE INLINE SIMPLE COMPLEX FORCEINLINE PROFILE
+   "
+assert cardinality.aaa=0 report "ERR16"+myinst
+  let caller=symbol(mangled.q, rt, paratypes.q, name.q, mytype."", options) 
   if subseq(instruction.q, 1, length.instruction.q - length.options)= [ mangled.q]
   then program(replace(knownsymbols.p,  caller), callgraph.p, inline.p, 
    if"STATE"_1 in flags.caller then hasstate.p + mangledname.caller else hasstate.p)
@@ -257,7 +250,7 @@ Function expandinline(p:program)program
   if isempty.inline.s2 then s2 else expandinline.s2
 
 Function simple3(inline:set.word, p:program, f:word)program 
- let infunc = lookupfunc(p, f)
+ let infunc = lookupfunc(knownsymbols.p, f)
   let oldarcs = arcstosuccessors(callgraph.p, f)
   let z = @(+, head, empty:set.word, toseq.oldarcs)∩ inline - f 
   if isempty.z ∨"NOINLINE"_1 in flags.infunc 
@@ -369,7 +362,7 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
    then if nosons.code = 5 ∧ checkistypechangeonly(pp, inlinename, arg(l_4), arg(l_3), l_1)
     then inline(pp, inlinename, sets, paramap, nextset, l_2)
     else expandapply(pp, inlinename, nextset, code, l)
-   else let f = lookupfunc(pp, inst)
+   else let f = lookupfunc(knownsymbols.pp, inst)
    explodeinline(pp, inlinename, codetree.f,"SIMPLE"_1 in flags.f, nextset, l)
   else if length.l = 2 ∧ inst(l_1)="LIT"_1 ∧ inst(l_2)="LIT"_1 
   then // location after inline expansion so inlining will happen if both sons happen to be LIT's // 
@@ -451,7 +444,7 @@ function checkistypechangeonly(prg:program, inlinename:set.word, term1:word, ter
  // check to see if APPLY just does a type change // 
   let q = codedown.term1 
   if length.q = 4 ∧ last(q_2)="seq"_1 ∧ q_1_1 ="+"_1 ∧ subseq(q, 3, length.q)= ["T seq","T"]
-  then let f = lookupfunc(prg, term2)
+  then let f = lookupfunc(knownsymbols.prg, term2)
    if nopara.f = 1 ∧ inst.codetree.f in"PARAM"
    then if inst.term3 ="CRECORD"_1 ∧ nosons.term3 = 2 ∧ "LIT 0"= label(term3_1)∧ "LIT 0"= label(term3_1)
     then // let z = [ term1, term2]+ print(term3)assert z in ["Q2BZbitszseqZTzseqZT tobitsZbitsZbit LIT 0 LIT 0 CRECORD 2","Q2BZbitszseqZTzseqZT tobitsZfileioZbyte LIT 0 LIT 0 CRECORD 2","Q2BZalphawordzseqZTzseqZT alphawordZstdlibZword LIT 0 LIT 0 CRECORD 2","Q2BZwordzseqZTzseqZT towordZstdlibZalphaword LIT 0 LIT 0 CRECORD 2","Q2BZalphawordzseqzseqZTzseqZT toalphaseqZstdlibZwordzseq LIT 0 LIT 0 CRECORD 2","Q2BZwordzseqzseqZTzseqZT towordseqZstdlibZalphawordzseq LIT 0 LIT 0 CRECORD 2","Q2BZbytezseqZTzseqZT byteZfileioZint LIT 0 LIT 0 CRECORD 2","Q2BZmytypezseqZTzseqZT mytypeZlibscopeZwordzseq LIT 0 LIT 0 CRECORD 2","Q2BZwordzarczseqZTzseqZT identityZwordzarczseqZT LIT 0 LIT 0 CRECORD 2","Q2BZsyminfozseqZTzseqZT identityZsyminfozseqZT LIT 0 LIT 0 CRECORD 2","Q2BZlibtypezarczseqZTzseqZT identityZlibtypezarczseqZT LIT 0 LIT 0 CRECORD 2","Q2BZbitzseqZTzseqZT bitZbitsZint LIT 0 LIT 0 CRECORD 2"]report"V"+ z // 

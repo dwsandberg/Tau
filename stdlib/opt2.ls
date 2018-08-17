@@ -40,13 +40,13 @@ function removeRECORD(loop:tree.seq.word)tree.seq.word
   let x = decode("X"_1)_1 
   let i = findindex(x, z)
   let candidate = encodeword.subseq(z, 1, i - 1)
-  if candidate in checked ∨ not(cnode("LOCAL"_1, candidate)= label(loop_2_2))
+  if candidate in checked ∨ not(["LOCAL"_1, candidate]= label(loop_2_2))
   then // Candidate use has whole record rather than components // nogo 
   else let expand = [ toint.candidate]
   let size = toint.encodeword.subseq(z, i + 1, 100)
   let map = constantseq(first, 0)+(size - 1)
   let if1 = splitrecord(first, map, expand, loop_2_1)
-  let if2 = tree(cnode("RECORD"_1,"0"_1), @(+, makelocal, empty:seq.tree.seq.word, arithseq(size, 1, first)))
+  let if2 = tree( "RECORD 0" , @(+, makelocal, empty:seq.tree.seq.word, arithseq(size, 1, first)))
   let if3 = splitrecord(first, map, expand, loop_2_3)
   // assert false report a +"/"+ b + printb(0, loop)// 
   let newloopblock = tree(label.lb, @(+, fixloopinit(sons.lb, size, expand, first), empty:seq.tree.seq.word, arithseq(nosons.lb - 1, 1, 1))+ lb_nosons.lb)
@@ -83,7 +83,7 @@ function splitrecord(first:int, map:seq.int, expand:seq.int, t:tree.seq.word)tre
   if inst ="LOCAL"_1 
   then tree.[inst, toword.mapit(map, arg.t)]
   else if inst ="SET"_1 
-  then tree(cnode(inst, toword.mapit(map, arg.t)), [ splitrecord(first, map, expand, t_1), splitrecord(first, map, expand, t_2)])
+  then tree([inst, toword.mapit(map, arg.t)], [ splitrecord(first, map, expand, t_1), splitrecord(first, map, expand, t_2)])
   else if inst ="IDXUC"_1 ∧ inst(t_2)="LIT"_1 ∧ inst(t_1)="LOCAL"_1 ∧ toint.arg(t_1)in expand 
   then tree.["LOCAL"_1, toword(mapit(map, arg(t_1))+ toint.arg(t_2))]
   else if inst ="CONTINUE"_1 
@@ -110,7 +110,7 @@ function fixloopinit(loopsons:seq.tree.seq.word, size:int, expand:seq.int, first
   else [ son]
 
 function fixloopinit(t:tree.seq.word, i:int)tree.seq.word 
- tree(cnode("IDXUC"_1,"0"_1), [ t, tree.["LIT"_1, toword.i]])
+ tree( "IDXUC 0", [ t, tree.["LIT"_1, toword.i]])
 
 function mapit(map:seq.int, arg:word)int 
  let i = toint.arg 
@@ -153,7 +153,7 @@ function fix2(t:tree.seq.word, replacements:seq.tree.seq.word, i:int, varbase:in
   if inst.s in"LIT LOCAL PARAM FREF"
   then fix2(t, replacements + s, i + 1, varbase)
   else let var = toword(varbase + i)
-  tree(cnode("SET"_1, var), [ s, fix2(t, replacements + tree.["LOCAL"_1, var], i + 1, varbase)])
+  tree(["SET"_1, var], [ s, fix2(t, replacements + tree.["LOCAL"_1, var], i + 1, varbase)])
 
 function fix3(var:word, replacements:seq.tree.seq.word, t:tree.seq.word)tree.seq.word 
  // replaces IDXUC(LOCAL var, LIT i)with replacements_(i + 1)// 
