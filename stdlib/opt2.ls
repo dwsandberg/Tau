@@ -2,6 +2,8 @@ module opt2
 
 use buildtree
 
+use newsymbol
+
 use passcommon
 
 use seq.int

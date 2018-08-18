@@ -14,86 +14,26 @@ use seq.symbol
 
 use set.word
 
+use stacktrace
+
+use stdlib
+
+use tree.seq.word
+
 use seq.ipair.symbol
 
 use seq.seq.int
 
 use seq.seq.word
 
-/type symbol is record nopara:int, resulttype:mytype, mangledname:word, codetree:tree.seq.word, flags:seq.word
-
-type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, src:seq.word, codetree:tree.seq.word
-
-
-Function =(a:symbol, b:symbol)boolean mangledname.a = mangledname.b
-
-Function src(symbol)seq.word export
-
-Function name(symbol)word export
-
-Function mangledname(symbol)word export
-
-Function paratypes(symbol)seq.mytype export
-
-Function modname(symbol)mytype export
-
-Function resulttype(symbol)mytype export
-
-Function codetree(f:symbol)tree.seq.word export
-
-Function nopara(s:symbol)int length.paratypes.s
-
- Function symbol(name:word, modname:mytype, paratypes:seq.mytype, resulttype:mytype, src:seq.word)symbol 
- symbol(mangle(name, modname, paratypes), resulttype, paratypes, name, modname, src)
-
-Function symbol(mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, src:seq.word)symbol
-symbol(mangledname, resulttype, paratypes, name, modname, src, tree."default")
-
-
-Function flags(s:symbol)seq.word flags(src.s, length.src.s)
-
-function flags(src:seq.word, i:int)seq.word 
- if i = 0 
-  then""
-  else if src_i in"VERYSIMPLE EXTERNAL STATE NOINLINE INLINE SIMPLE COMPLEX FORCEINLINE"
-  then flags(src, i - 1)+ src_i 
-  else""
-
-Function isundefined(s:symbol)boolean mangledname.s ="undefinedsym"_1
-
-Function isdefined(s:symbol)boolean mangledname.s ≠"undefinedsym"_1
-
-
-/Function ?(a:symbol, b:symbol)ordering 
- name.a ? name.b ∧ paratypes.a ? paratypes.b ∧ modname.a ? modname.b
-
-/function ?2(a:symbol, b:symbol)ordering name.a ? name.b ∧ paratypes.a ? paratypes.b
-
-
-Function changesrc(s:symbol, src:seq.word)symbol 
-   symbol(mangledname.s, resulttype.s, paratypes.s, name.s, modname.s, src, codetree.s)
-
-Function changecodetree(old:symbol, t:tree.seq.word)symbol 
-let oldflags = flags.old
-let adjustedflags=flags.old+if inst.t="STATE"_1 then "STATE" else ""
-  let functyp = if"FORCEINLINE"_1 in adjustedflags 
-   then"INLINE"_1 
-   else if"NOINLINE"_1 in adjustedflags 
-   then"NOINLINE"_1 
-   else functype(t, nopara.old)
-  let newflags = [ functyp]+ toseq(asset.adjustedflags - asset."SIMPLE INLINE VERYSIMPLE")
- let newsrc = subseq(src.old, 1, length.src.old - length.oldflags)+ newflags 
-symbol(mangledname.old, resulttype.old, paratypes.old, name.old, modname.old, newflags, if inst.t="STATE"_1  then t_1 else t)
-
-Function printdict(s:set.symbol)seq.word @(+, print,"", toseq.s)
-
-Function print(s:symbol)seq.word 
- [ name.s]+"("+ @(seperator.",", print,"", paratypes.s)+")"+ print.resulttype.s +"module:"+ print.modname.s
 
 
 
 
-Function print(t:tree.seq.word)seq.word 
+
+
+
+/Function print(t:tree.seq.word)seq.word 
  let inst = inst.t 
   @(+, print,"", sons.t)+ if inst in"PARA LIT LOCAL FREF WORD FLAT PARAM FIRSTVAR"
    then [ inst, arg.t]
@@ -101,62 +41,11 @@ Function print(t:tree.seq.word)seq.word
    then [ inst, toword.nosons.t, arg.t]
    else if inst ="SET"_1 then [ inst, arg.t]else [ inst, toword.nosons.t]
 
-/Function print(a:symbol)seq.word 
- {"<"+ mangledname.a + towords.resulttype.a +">"+ print.codetree.a }
-
---------
-
-
-Function inst(t:tree.seq.word)word    label(t)_1 
-
-Function arg(t:tree.seq.word)word label(t)_2
- 
-
-
-type ch1result is record nodecount:int, para:seq.int
-
-function combine(nopara:int, a:ch1result, t:tree.seq.word)ch1result 
- if nodecount.a > 15 
-  then ch1result(1000, empty:seq.int)
-  else let b = ch1(nopara, t)
-  ch1result(nodecount.a + nodecount.b, para.a + para.b)
-
-function ch1(nopara:int, t:tree.seq.word)ch1result 
- if inst.t ="PARA"_1 
-  then ch1result(1, [ toint.arg.t - nopara - 2])
-  else if inst.t ="PARAM"_1 
-  then ch1result(1, [ toint.arg.t])
-  else if inst.t in"NOINLINE LOOP FINISHLOOP LOOPBLOCK STATE APPLY"
-  then ch1result(1000, empty:seq.int)
-  else @(combine.nopara, identity, ch1result(1, empty:seq.int), sons.t)
-
-Function functype(t:tree.seq.word, nopara:int)word 
- let a = ch1(nopara, t)
-  if nodecount.a > 15 
-  then"COMPLEX"_1 
-  else if para.a = @(+, identity, empty:seq.int, arithseq(nopara, 1, 1))
-  then"SIMPLE"_1 
-  else"INLINE"_1
-
-_____________________
-
-
-Function emptysymbolset symbolset 
- symbolset.dseq.symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default")
-
-Function replace(a:symbolset,sym:symbol) symbolset
- symbolset.replace(toseq.a, encoding.mangledname.sym, sym)
-
-type symbolset is record  toseq:seq.symbol
 
 
 
-Function lookupfunc(allfunctions:symbolset, f:word)symbol 
-   let x= lookupsymbol(allfunctions,f)
-    assert isdefined.x report"cannot locate"+ f +stacktrace
-x
+use newsymbol 
 
-Function lookupsymbol(a:symbolset, f:word)symbol toseq(a)_encoding.f
 
  
 use seq.seq.ipair.inst
@@ -191,6 +80,12 @@ use ipair.symbol
 use seq.mytype
 
 use set.symbol
+
+use graph.word
+
+use set.arc.word
+
+use seq.arc.word
 
 type bld is record state:int, last:word, stk:stack.tree.seq.word, hasstate:boolean
 
@@ -275,3 +170,164 @@ Function check(a:seq.word, count:int, i:int, ops:seq.word)seq.word
 function isdigits(w:word)boolean @(∧, isdigit, true, decode.w)
 
 function isdigit(i:int)boolean between(i, 48, 57)
+
+
+_____________
+
+
+Function prt(f:seq.symbol, i:int)seq.word 
+ [ EOL]+ mangledname(f_i)+ towords.resulttype(f_i)+ print.codetree(f_i)
+
+Function filterlib(existing:set.word, f:symbol)seq.symbol 
+ if mangledname.f in existing then empty:seq.symbol else [ f]
+
+
+Function isoption(w:word)boolean 
+ w in"PROFILE FORCEINLINE NOINLINE STATE TESTOPT"
+
+Function optdivide(inst:seq.word, i:int)int 
+ // look for options at end of instruction // 
+  if inst_i ="1"_1 ∧ isoption(inst_(i - 1))then optdivide(inst, i - 2)else i
+  
+Function roots(isencoding:set.syminfo, m:mod2desc)set.word 
+ if isabstract.modname.m ∨ isprivate.m 
+  then empty:set.word 
+  else @(+, mangled, empty:set.word, toseq.export.m + toseq(defines.m ∩ isencoding))
+
+Function hasErecord(s:syminfo)seq.syminfo 
+ if"erecord"_1 in towords.returntype.s then [ s]else empty:seq.syminfo
+ 
+ Function tonewsymbol(alltypes:set.libtype,q:syminfo)    symbol
+  let rt = if hasproto.q then protoreturntype.q else returntype.q 
+  let myinst = funcfrominstruction(alltypes, instruction.q, replaceT(parameter.modname.q, returntype.q), length.paratypes.q)
+  let instend = optdivide(myinst, length.myinst)
+  let options = toseq(asset.subseq(myinst, instend+1, length.myinst)-asset."1")
+  let newsrc=if subseq(instruction.q, 1, length.instruction.q - length.options)= [ mangled.q] then
+   subseq(myinst, 1, instend)+options+"EXTERNAL" 
+   else // subseq(myinst, 1, instend)+options //
+    printx.buildcodetree(length.paratypes.q , subseq(myinst, 1, instend))+options
+  symbol(mangled.q, rt, paratypes.q, name.q, mytype."", newsrc) 
+    
+ Function printx(t:tree.seq.word)seq.word 
+ let inst = inst.t 
+  @(+, printx,"", sons.t)+ if inst in"PARA LIT LOCAL FREF WORD FLAT PARAM FIRSTVAR SET"
+   then [ inst, arg.t]
+   else if inst in "APPLY RECORD CRECORD" then [ inst, toword.nosons.t]
+   else [ inst]
+
+/function checkbuild(knownsymbols:symbolset,tr0:tree.seq.word,caller:symbol) seq.word
+   let aa=printx.tr0
+    let trx=buildcodetreeX(knownsymbols, false, caller, empty:stack.tree.seq.word, 1,aa)
+    let bb=printx.trx
+     assert aa=bb report "ERR67" +aa+"&br"+bb
+     "OK" 
+
+use process.seq.word  
+
+use seq.syminfo
+ 
+ use stacktrace
+   
+   use stack.tree.seq.word
+   
+   use set.syminfo
+   
+   use seq.mod2desc
+   
+   use opt2
+
+use oseq.int
+
+use passcommon
+
+use buildtree
+
+
+
+/use seq.debuginfo
+
+/type debuginfoencoding is encoding debuginfo
+
+/function hash(a:debuginfo)int hash.toword.a
+
+/type debuginfo is record toword:word
+
+/function =(a:debuginfo, b:debuginfo)boolean toword.a = toword.b
+
+function print(g:graph.word)seq.word @(+, p,"", toseq.arcs.g)
+
+function p(a:arc.word)seq.word [ tail.a]+":"+ head.a
+
+function makesym(rt:mytype,name:word) symbol
+let d=codedown(name)
+  symbol(name,rt, @(+,mytype,empty:seq.mytype,subseq(d,3,length.d)),
+  d_1_1,mytype.d_2,"EXTERNAL")
+
+function testx seq.symbol
+ let a1=@(+,makesym.mytype."boolean",empty:seq.symbol,
+  "Q3EZbuiltinZintZint Q3DZbuiltinZintZint
+  Q3FZbuiltinZintZint ")
+  let a2=@(+,makesym.mytype."int",a1,
+  "Q2BZbuiltinZintZint
+  Q2DZbuiltinZintZint 
+  Q2AZbuiltinZintZint 
+  Q2FZbuiltinZintZint
+  hashZbuiltinZint
+  randomintZbuiltinZint")
+  // assert false report "ERR19"+@(+,print2,"",a2) //
+  a2
+  
+ // opGT // 
+  inst("Q3EZbuiltinZrealZreal 2","builtin", mytype."boolean"), 
+ // EQL // 
+  inst("Q3DZbuiltinZrealZreal 2","builtin", mytype."boolean"), 
+ // ? // 
+  inst("Q3FZbuiltinZrealZreal 2","builtin", mytype."boolean"), 
+ // ADD // 
+  inst("Q2BZbuiltinZrealZreal 2","builtin", mytype."real"), 
+ // SUB // 
+  inst("Q2DZbuiltinZrealZreal 2","builtin", mytype."real"), 
+ // MULT // 
+  inst("Q2AZbuiltinZrealZreal 2","builtin", mytype."real"), 
+ // DIV // 
+  inst("Q2FZbuiltinZrealZreal 2","builtin", mytype."real"), 
+ inst("int2realZbuiltinZint 1","builtin", mytype."real"), 
+ inst("intpartZbuiltinZreal 1","builtin", mytype."int"), 
+ inst("arccosZbuiltinZreal 1","builtin", mytype."real"), 
+ inst("arcsinZbuiltinZreal 1","builtin", mytype."real"), 
+ inst("sinZbuiltinZreal 1","builtin", mytype."real"), 
+ inst("cosZbuiltinZreal 1","builtin", mytype."real"), 
+ inst("tanZbuiltinZreal 1","builtin", mytype."real"), 
+ inst("sqrtZbuiltinZreal 1","builtin", mytype."real"), 
+ // leftshift // 
+  inst("Q3CQ3CZbuiltinZbitsZint 2","builtin", mytype."bits"), 
+ // rightshift // 
+  inst("Q3EQ3EZbuiltinZbitsZint 2","builtin", mytype."bits"), 
+ inst("Q02227ZbuiltinZbitsZbits 2","builtin", mytype."bits"), 
+ inst("Q02228ZbuiltinZbitsZbits 2","builtin", mytype."bits"), 
+ inst("callstackZbuiltinZint 1","builtin", mytype."int seq"), 
+ inst("decodeZbuiltinZTzencodingZTzerecord 2","builtin", mytype."T"), 
+ inst("mappingZbuiltinZTzerecord 1","builtin", mytype."T seq"), 
+ inst("encodeZbuiltinZTZTzerecord 2","builtin", mytype."T encoding"), 
+ inst("findencodeZbuiltinZTZTzerecord 2","builtin", mytype."T"), 
+ inst("notZbuiltinZboolean 1","builtin", mytype."boolean"), 
+ inst("getaddressZbuiltinZTzseqZint 2","builtin", mytype."T address"), 
+ inst("setfldZbuiltinZTzaddressZT 2","builtin", mytype."T address"), 
+ inst("allocatespaceZbuiltinZint 1","builtin", mytype."T seq"), 
+ inst("libsZbuiltin 0","builtin", mytype."liblib seq"), 
+ inst("addresstosymbol2ZbuiltinZint 1","builtin", mytype."int"), 
+ inst("createfileZbuiltinZbitszseqZoutputformat 2","builtin", mytype."int"), 
+ inst("createlibZbuiltinZbitszseqZbitszseqZoutputformat 3","builtin", mytype."int"), 
+ inst("getfileZbuiltinZUTF8 1","builtin", mytype."int"), 
+ inst("getfileZbuiltinZbitszseq 1","builtin", mytype."int"), 
+ inst("loadlibZbuiltinZUTF8 1","builtin", mytype."int"), 
+ inst("loadlibZbuiltinZbitszseq 1","builtin", mytype."int"), 
+ inst("unloadlibZbuiltinZUTF8 1","builtin", mytype."int"), 
+ inst("unloadlibZbuiltinZbitszseq 1","builtin", mytype."int"), 
+ inst("executecodeZbuiltinZUTF8Zintzseq 2","builtin", mytype."int"), 
+ inst("executecodeZbuiltinZbitszseqZintzseq 2","builtin", mytype."int"), 
+ inst("abortedZbuiltinZTzprocess 1","builtin", mytype."int"), 
+ inst("assertZbuiltinZwordzseq 1","builtin", mytype."int"), 
+ inst("getmachineinfoZbuiltin 0","builtin", mytype."int"), 
+ inst("profileinfoZbuiltin 0","builtin", mytype."int")]
+

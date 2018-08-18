@@ -112,9 +112,11 @@ Function noparameters(l:libsym)int length.paratypes.syminfo.l
 
 _______________________-
 
+use newsymbol
+
 Function +(a:mytype, w:word)mytype mytype(towords.a + w)
 
-Function ?(a:mytype, b:mytype)ordering 
+/Function ?(a:mytype, b:mytype)ordering 
  let y = towords(a)_length.towords.a ? towords(b)_length.towords.b 
   if y = EQ 
   then let x = length.towords.a ? length.towords.b 
@@ -127,14 +129,14 @@ Function ?(a:mytype, b:mytype)ordering
    else x 
   else y
 
-function orderm(a:seq.word, b:seq.word, i:int)ordering 
+/function orderm(a:seq.word, b:seq.word, i:int)ordering 
  if i = 1 
   then encoding(a_1)? encoding(b_1)
   else let x = encoding(a_i)? encoding(b_i)
   if x = EQ then orderm(a, b, i - 1)else x
 
 
-Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering 
+/Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering 
  let o1 = length.a ? length.b 
   if o1 = EQ ∧ length.a ≥ i 
   then let o2 = a_i ? b_i 

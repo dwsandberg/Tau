@@ -1,4 +1,4 @@
-Module Symbol
+Module newsymbol
 
 use libscope
 
@@ -91,7 +91,7 @@ Function isdefined(s:symbol)boolean mangledname.s ≠"undefinedsym"_1
 Function ?(a:symbol, b:symbol)ordering 
  name.a ? name.b ∧ paratypes.a ? paratypes.b ∧ modname.a ? modname.b
 
-function ?2(a:symbol, b:symbol)ordering name.a ? name.b ∧ paratypes.a ? paratypes.b
+Function ?2(a:symbol, b:symbol)ordering name.a ? name.b ∧ paratypes.a ? paratypes.b
 
 
 Function changesrc(s:symbol, src:seq.word)symbol 

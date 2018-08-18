@@ -1,6 +1,6 @@
 #!/usr/local/bin/tau
 
-Library newimp other symbol pass2  cvttoinst libdescfunc newparse  
+Library newimp other  pass2   libdescfunc newparse  
  uses stdlib
  exports main
  
@@ -37,7 +37,7 @@ use seq.libmod
 
 use seq.libsym
 
-use Symbol
+use newsymbol
 
 use seq.symbol
 

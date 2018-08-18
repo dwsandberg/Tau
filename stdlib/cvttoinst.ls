@@ -2,7 +2,7 @@ Module cvttoinst
 
 run newimp test1
 
-use buildtree
+use newsymbol
 
 use libscope
 
@@ -53,7 +53,7 @@ Function convert2(allfunctions:symbolset, s:seq.symbol)intercode
 
 Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int 
  let inst = inst.t 
-  if inst in"PARAM"
+   if inst in"PARAM"
   then [ aseinst.[ inst, toword(-toint.arg.t - 1)]]
   else if inst in"LIT LOCAL FREF WORD FIRSTVAR WORDS"
   then [ aseinst.label.t]

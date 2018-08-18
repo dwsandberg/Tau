@@ -126,7 +126,7 @@ Function bindings(libname:word)pass1result
 /use seq.intercode
 
 function subcompilelib(libname:word)seq.word 
- PROFILE.let discard3 = length.mapping.libsymencoding 
+ // PROFILE. // let discard3 = length.mapping.libsymencoding 
   let ld = tolibdesc.libname 
   // if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
   then interface([ name.ld], exports.ld, dependentlibs.ld)
@@ -143,6 +143,18 @@ function subcompilelib(libname:word)seq.word
   let z2 = createlib(y1, libname, dependentlibs.ld)
   {"OK"}
 
+Function pass2(r:pass1result) intercode
+   let compiled= @(+, tonewsymbol.alltypes.r, emptysymbolset,  compiled.r) 
+   let knownsymbols = @(+, tonewsymbol.alltypes.r, compiled, newcode.r ) 
+  let roots = toseq.@(∪, roots.asset.@(+, hasErecord, empty:seq.syminfo, newcode.r), empty:set.word, mods.r)
+  pass2(knownsymbols,roots, compiled)
+  
+use buildtree
+
+use newsymbol
+
+use set.word
+  
 /function waitforpass2(a:pass1result)process.pass1result 
  NOINLINE.let p = process.pass2.a 
   if aborted.p then p else p

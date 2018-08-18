@@ -2,7 +2,7 @@ Module newparse
 
 run newimp test1
 
-use Symbol
+use newsymbol
 
 use libscope
 

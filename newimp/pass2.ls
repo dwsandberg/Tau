@@ -2,9 +2,7 @@ module pass2
 
 use cvttoinst
 
-use fileio
-
-use Symbol
+use newsymbol
 
 use bits
 
@@ -46,7 +44,8 @@ use tree.seq.word
 
 
 Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)intercode 
- let p = program(knownsymbols, newgraph.empty:seq.arc.word, empty:set.word,"")
+  // does inline expansion, finds consts, removes unreaachable functions // 
+let p = program(knownsymbols, newgraph.empty:seq.arc.word, empty:set.word,"")
   let x = @(addsymbol, identity, p, roots)
    let s2 = expandinline.x 
   let statechangingfuncs = reachable(complement.callgraph.s2, hasstate.x)∩ nodes.callgraph.s2 
@@ -62,33 +61,28 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
   let a = codedown.mangledname 
   if length.a > 1 ∧ a_2 ="builtin"
   then empty:seq.symbol 
-  else let f = knownsymbols(p)_mangledname 
+  else let f = lookupfunc(knownsymbols.p, mangledname)
+ // let code1 = if"TESTOPT"_1 in flags.f then hoistRecord.codetree.f else hoistRecord.codetree.f 
+  let code2 = // // remove result record in loop // // opt2.code1 
+  let code3 = removerecords.code2 //
   let q = inline(p, empty:set.word, dseq.tree."UNASIGNED 1", empty:seq.tree.seq.word, 1, codetree.f)
-  if"STATE"_1 in flags.f ∨ not(mangledname.f in stateChangingFuncs)
-  then [ changecodetree(f, q)]
-  else [ changecodetree(changesrc(f, src.f +"STATE"), q)]
-
-Function lookupfunc(p:program, f:word)symbol 
- let s = knownsymbols(p)_f 
-  assert isdefined.s report"cannot locate"+ f 
-  s
+  let q2= if"STATE"_1 in flags.f ∨ not(mangledname.f in stateChangingFuncs)
+   then q
+   else  tree("STATE",[q]) 
+   [changecodetree(f,q2)]
 
 
 
 function addsymbol(p:program, mangledname:word)program 
- let sym = knownsymbols(p)_mangledname 
-  assert length.src.sym > 0 report"Error"+ mangledname + print2.sym 
-   if label.codetree.sym ="default"
-  then if last.src.sym ="EXTERNAL"_1 
-   then program(replace(knownsymbols.p, changecodetree(sym, tree."EXTERNAL")), callgraph.p, inline.p, hasstate.p)
-   else assert not("EXTERNAL"_1 in subseq(src.sym, 1, length.src.sym - length.flags.sym))
-   &or mangledname in "flagsZSymbolZwordzseqZint buildcodetreeXZpass2ZsymbolsetZbooleanZsymbolZwordzseqztreezstackZintZwordzseq
-   addsymbolZpass2ZprogramZword hasexternalZcvttoinstZwordzseqztree
-   postbindZotherZsymbolzsetZmytypeZsymbolsetZsymbolsetZwordzseqZsymbolZsymbol tolibsymZlibdescfuncZintercodeZint
-   findelementZlibdescfuncZsymbolsetZmapresult2Zsymbol " report
-   "ERR32"+ mangledname+subseq(src.sym, 1, length.src.sym - length.flags.sym)
-   let tr0 = buildcodetreeX(knownsymbols.p, false, sym, empty:stack.tree.seq.word, 1, subseq(src.sym, 1, length.src.sym - length.flags.sym))
-   let caller = sym 
+ let caller = knownsymbols(p)_mangledname 
+  // assert length.src.caller > 0 report"Error"+ mangledname + print2.caller //
+  if isdefined.caller &and label.codetree.caller = "default"
+  then 
+   let treecode=subseq(src.caller,1,length.src.caller-length.flags.caller)
+  if length.src.caller > 0 &and last.src.caller ="EXTERNAL"_1 
+   then program(replace(knownsymbols.p, changecodetree(caller, tree."EXTERNAL")), callgraph.p, inline.p, 
+   if"STATE"_1 in flags.caller then hasstate.p + mangledname.caller else hasstate.p)
+   else  let tr0 = buildcodetreeX(knownsymbols.p, false, caller, empty:stack.tree.seq.word, 1, treecode)
    let tr = inline(p, inline.p, dseq.tree."UNASIGNED 1", empty:seq.tree.seq.word, 1, if label.tr0 ="STATE"then tr0_1 else tr0)
    let calls2 = calls(knownsymbols.p, tr)
    let isrecusive = mangledname.caller in calls2 
@@ -127,7 +121,7 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
   else if name in"LIT PARAM LOCAL WORD"
   then buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
   else if name ="FREF"_1 
-  then let sym = lookupfunc(knownsymbols,src_(i + 1))
+  then // let sym = lookupfunc(knownsymbols,src_(i + 1)) //
      buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
   else if name ="define"_1 
   then buildcodetreeX(knownsymbols, hasstate, caller, stk, i + 2, src)
@@ -143,9 +137,15 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
   else if name ="WORDS"_1 
   then let size = toint(src_(i + 1))
    buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + size + 1)), i + size + 2, src)
-  else let sym = lookupfunc(knownsymbols,name) 
-  // assert not(mangledname.sym ="undefinedsym"_1)report print.caller +"MM3"+ name + subseq(src, 0, i - 1)+"<<<>>>"+ subseq(src, i, length.src)
-  // assert not(src(sym)_1 in"sequence record encoding")report"MM4"+ name + mangledname.caller 
+  else 
+    let sym = lookupsymbol(knownsymbols,name) 
+  if isundefined.sym then
+    let nopara=if name="EQL"_1 then 2 else 
+     if name in "STATE PROCESS2" then 1 else 
+    length.codedown(name)-2
+  buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara), tree([ name], top(stk, nopara))), i + 1, src)
+  else 
+  // assert not(src(sym)_1 in"sequence record encoding")report"MM4"+ name + mangledname.caller   //
   assert length.toseq.stk ≥ nopara.sym report"stack problem"
   if last.src.sym ="EXTERNAL"_1 
   then buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
@@ -154,16 +154,17 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
    buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, stk, 1, subseq(src.sym, nopara.sym * 2 + 1, length.src.sym - length.flags.sym)+ subseq(src, i + 1, length.src))
   else buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
 
-function print(a:arc.word)seq.word [ tail.a,":"_1, head.a]
 
 Function calls(knownsymbols:symbolset, t:tree.seq.word)seq.word 
  @(+, calls.knownsymbols, empty:seq.word, sons.t)+ if inst.t ="FREF"_1 
   then [ arg.t]
-  else if inst.t in"assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD FORCEINLINEZtest builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT PROFILEZtest NOINLINEZtest createfileZbuiltinZbitszseqZoutputformat getfileZbuiltinZbitszseq"
+  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD 
+  assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint 
+  FORCEINLINEZtest builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT PROFILEZtest NOINLINEZtest createfileZbuiltinZbitszseqZoutputformat getfileZbuiltinZbitszseq"
   then empty:seq.word 
-  else let sym = knownsymbols_inst.t 
+  else // let sym = knownsymbols_inst.t 
   assert mangledname.sym ≠"undefinedsym"_1 ∨ inst.t in"APPLY"report"IN calls"+ inst.t + print.t 
-   [ inst.t]
+  // [ inst.t]
 
 Function calls(self:word, t:tree.seq.word)seq.arc.word 
  @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.t ="FREF"_1 
@@ -222,7 +223,7 @@ Function expandinline(p:program)program
   if isempty.inline.s2 then s2 else expandinline.s2
 
 Function simple3(inline:set.word, p:program, f:word)program 
- let infunc = lookupfunc(p, f)
+ let infunc = lookupfunc(knownsymbols.p, f)
   let oldarcs = arcstosuccessors(callgraph.p, f)
   let z = @(+, head, empty:set.word, toseq.oldarcs)∩ inline - f 
   if isempty.z ∨"NOINLINE"_1 in flags.infunc 
@@ -332,7 +333,7 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
    then if nosons.code = 5 ∧ checkistypechangeonly(pp, inlinename, arg(l_4), arg(l_3), l_1)
     then inline(pp, inlinename, sets, paramap, nextset, l_2)
     else expandapply(pp, inlinename, nextset, code, l)
-   else let f = lookupfunc(pp, inst)
+   else let f = lookupfunc(knownsymbols.pp, inst)
    explodeinline(pp, inlinename, codetree.f,"SIMPLE"_1 in flags.f, nextset, l)
   else if length.l = 2 ∧ inst(l_1)="LIT"_1 ∧ inst(l_2)="LIT"_1 
   then // location after inline expansion so inlining will happen if both sons happen to be LIT's // 
@@ -346,8 +347,10 @@ function expandapply(pp:program, inlinename:set.word, nextset:int, code:tree.seq
   let p1 = noparamangled.term1 - 2 
   let p2 = noparamangled.term2 - 1 
   let nopara = 2 + p2 + p1 
-  assert p2 ≥ 0 report"illformed"+ term1 + term2 + print.lookupfunc(pp, term2)
-  let thetree = buildcodetree(knownsymbols.pp, template2(term1, term2, p1, p2, ptyp))
+  assert p2 ≥ 0 report"illformed"+ term1 + term2 + print.lookupfunc(knownsymbols.pp, term2)
+ // let thetree = buildcodetree(nopara, template2(term1, term2, p1, p2, ptyp))
+   let z=@(+,identity,knownsymbols.pp,testx)
+ //  let thetree = buildcodetree(knownsymbols.pp, template2(term1, term2, p1, p2, ptyp))
   explodeinline(pp, inlinename, thetree, false, nextset, subseq(l, 1, length.l - 3))
 
 ______________
@@ -413,7 +416,7 @@ function checkistypechangeonly(prg:program, inlinename:set.word, term1:word, ter
  // check to see if APPLY just does a type change // 
   let q = codedown.term1 
   if length.q = 4 ∧ last(q_2)="seq"_1 ∧ q_1_1 ="+"_1 ∧ subseq(q, 3, length.q)= ["T seq","T"]
-  then let f = lookupfunc(prg, term2)
+  then let f = lookupfunc(knownsymbols.prg, term2)
    if nopara.f = 1 ∧ inst.codetree.f in"PARAM"
    then if inst.term3 ="CRECORD"_1 ∧ nosons.term3 = 2 ∧"LIT 0"= label(term3_1)∧"LIT 0"= label(term3_1)
     then // let z = [ term1, term2]+ print(term3)assert z in ["Q2BZbitszseqZTzseqZT tobitsZbitsZbit LIT 0 LIT 0 CRECORD 2","Q2BZbitszseqZTzseqZT tobitsZfileioZbyte LIT 0 LIT 0 CRECORD 2","Q2BZalphawordzseqZTzseqZT alphawordZstdlibZword LIT 0 LIT 0 CRECORD 2","Q2BZwordzseqZTzseqZT towordZstdlibZalphaword LIT 0 LIT 0 CRECORD 2","Q2BZalphawordzseqzseqZTzseqZT toalphaseqZstdlibZwordzseq LIT 0 LIT 0 CRECORD 2","Q2BZwordzseqzseqZTzseqZT towordseqZstdlibZalphawordzseq LIT 0 LIT 0 CRECORD 2","Q2BZbytezseqZTzseqZT byteZfileioZint LIT 0 LIT 0 CRECORD 2","Q2BZmytypezseqZTzseqZT mytypeZlibscopeZwordzseq LIT 0 LIT 0 CRECORD 2","Q2BZwordzarczseqZTzseqZT identityZwordzarczseqZT LIT 0 LIT 0 CRECORD 2","Q2BZsyminfozseqZTzseqZT identityZsyminfozseqZT LIT 0 LIT 0 CRECORD 2","Q2BZlibtypezarczseqZTzseqZT identityZlibtypezarczseqZT LIT 0 LIT 0 CRECORD 2","Q2BZbitzseqZTzseqZT bitZbitsZint LIT 0 LIT 0 CRECORD 2"]report"V"+ z // 
@@ -422,3 +425,4 @@ function checkistypechangeonly(prg:program, inlinename:set.word, term1:word, ter
    else false 
   else false
 
+function print(a:arc.word)seq.word [ tail.a,":"_1, head.a]
