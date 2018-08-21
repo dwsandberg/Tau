@@ -166,7 +166,7 @@ Function print0(a:syminfo)seq.word formatcall(name.a, paratypes.a)+ print.return
 Function funcfrominstruction(alltypes:set.libtype, instruction:seq.word, returntype:mytype, nopara:int)seq.word 
  // assumes not for abstract symbol // 
   if length.instruction = 0 
-  then"USECALL PARA 1"
+  then"USECALL PARAM 1"
   else if instruction_1 ="USECALL"_1 
   then instruction 
   else assert not(instruction_1 in"ERECORD BUILDSEQ")report"not expecting"+ instruction 
@@ -182,11 +182,11 @@ function flattenrecord(alltypes:set.libtype, ptypes:seq.mytype, i:int, result:se
   then result +"RECORD"+ toword.length.ptypes 
   else let sz = sizeoftype(alltypes, ptypes_i)
   let flatinst = if sz = offset.1 then""else"FLAT"+ print.sz 
-  flattenrecord(alltypes, ptypes, i + 1, result +"PARA"+ toword(length.ptypes - i + 1)+ flatinst, total + sz)
+  flattenrecord(alltypes, ptypes, i + 1,  result +"PARAM"+toword.i+ flatinst, total + sz)
 
-Function paralistcode(nopara:int)seq.word @(+, makepara,"", arithseq(nopara, 0 - 1, nopara))
+Function paralistcode(nopara:int)seq.word @(+, makepara,"", arithseq(nopara, 1, 1))
 
-function makepara(i:int)seq.word {"PARA"+ toword.i }
+function makepara(i:int)seq.word  {"PARAM"+ toword.i } 
 
 Function replaceTsyminfo(within:mytype, s:syminfo)syminfo 
  if not.hasproto.s ∧ not.isabstract.modname.s 

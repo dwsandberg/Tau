@@ -99,7 +99,8 @@ function addinstruction(nopara:int, b:bld, w:word)bld
     else let z = if last.b in"LIT LOCAL FREF WORD PARAM"
      then tree.[last.b, w]
      else if last.b ="PARA"_1 
-     then tree.["PARAM"_1, toword(-(toint.w - nopara - 2)-1)]
+     then 
+     tree.["PARAM"_1, toword(-(toint.w - nopara - 2)-1)]
      else if last.b in"FLD"
      then tree(if w ="1"_1 
       then "IDXUC 0"
@@ -147,7 +148,7 @@ function processson(t:tree.seq.word)seq.tree.seq.word
 function fixup2(x:tree.seq.word, i:int)tree.seq.word 
  tree( "IDXUC 0", [ x, tree.["LIT"_1, toword.i]])
 
-Function check(a:seq.word, count:int, i:int, ops:seq.word)seq.word 
+/Function check(a:seq.word, count:int, i:int, ops:seq.word)seq.word 
  if i > length.a 
   then assert i - 1 = length.a report"length overrun"+ a 
    assert count = 1 report"stack should have one"+ toword.count + a 
@@ -183,7 +184,7 @@ Function filterlib(existing:set.word, f:symbol)seq.symbol
 
 
 Function isoption(w:word)boolean 
- w in"PROFILE FORCEINLINE NOINLINE STATE TESTOPT"
+ w in"PROFILE FORCEINLINE NOINLINE STATE TESTOPT  VERYSIMPLE"
 
 Function optdivide(inst:seq.word, i:int)int 
  // look for options at end of instruction // 

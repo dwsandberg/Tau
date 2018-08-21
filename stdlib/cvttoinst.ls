@@ -69,12 +69,14 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
    @(+, prepb.allfunctions, empty:seq.int, subseq(sons.t, 1, nosons.t - 1))+ aseinst("FIRSTVAR"+ firstvar)+ aseinst.[ inst, toword.nosons.t]
   else if inst ="CRECORD"_1 
   then [ aseinst("CONSTANT"+ prep3.t)]
-  else @(+, prepb.allfunctions, empty:seq.int, sons.t)+ if inst in"IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD"
-   then aseinst.[ inst, toword.nosons.t]
+  else @(+, prepb.allfunctions, empty:seq.int, sons.t)+ 
+   if inst in"IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD"
+   then [aseinst.[ inst, toword.nosons.t]]
+   else if inst="STATE"_1 then empty:seq.int
    else let s = findencode(inst.[ inst, toword.nosons.t], einst)
-   if length.s = 0 
+   [if length.s = 0 
    then encoding.encode(toinst.lookupfunc(allfunctions, inst), einst)
-   else encoding.encode(s_1, einst)
+   else encoding.encode(s_1, einst)]
    
 
 function initinst seq.inst 

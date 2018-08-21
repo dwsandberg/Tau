@@ -157,11 +157,10 @@ function tolibsym(d:intercode, i:int)seq.libsym
   if mangledname.a in"CONSTANT EQL RECORD"∨"builtin"_1 in flags.a 
   then empty:seq.libsym 
   else let inst = if"STATE"_1 in flags.a 
-   then [ mangledname.a,"STATE"_1,"1"_1]
+   then [ mangledname.a,"STATE"_1,"EXTERNAL"_1]
    else let body = simpleonly(d, i)
    if length.body > 0 
-   then // assert mangledname.a ≠"arithseqZintzseqZintZTZT"_1 report astext5(coding.d,(codes.d)_i)// 
-    astext5(coding.d, codes(d)_i)+ flags.a 
+   then  astext5(coding.d, codes(d)_i)+ flags.a 
    else"EXTERNAL"
   [ libsym(returntype.a, mangledname.a, inst)]
 

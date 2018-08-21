@@ -19,7 +19,7 @@ use pass0
 
 use pass1a
 
-use pass2a
+use pass2
 
 use passcommon
 

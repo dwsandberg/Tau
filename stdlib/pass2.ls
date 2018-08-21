@@ -1,4 +1,4 @@
-module pass2a
+module pass2
 
 use cvttoinst
 
@@ -57,6 +57,7 @@ Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)interc
 
 function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:word)seq.symbol 
  // finds constants, discards builtins, and make sure"STATE"is root on state changing functions // 
+  if mangledname="STATE"_1 then empty:seq.symbol else 
   let a = codedown.mangledname 
   if length.a > 1 ∧ a_2 ="builtin" 
   then empty:seq.symbol 
@@ -89,7 +90,8 @@ function addsymbol(p:program, mangledname:word)program
   let calls3=asset.calls(knownsymbols.p, tr2)
      let newsym = changecodetree(caller, tr2)
    let flags = flags.newsym 
-  let newp = program(replace(knownsymbols.p,  newsym), callgraph.p + @(+, arc.mangledname.caller, empty:seq.arc.word, toseq.calls3), if isrecusive ∨ not("SIMPLE"_1 in flags ∨"INLINE"_1 in flags)
+  let newp = program(replace(knownsymbols.p,  newsym), callgraph.p + @(+, arc.mangledname.caller, empty:seq.arc.word, toseq.calls3), 
+   if isrecusive ∨ not("SIMPLE"_1 in flags  ∨"INLINE"_1 in flags)
    then inline.p 
    else inline.p + mangledname.newsym, 
    if"STATE"_1 in flags  ∨ inst.tr0 ="STATE"_1 then hasstate.p + mangledname.newsym 
@@ -148,13 +150,15 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara), tree([ name], top(stk, nopara))), i + 1, src)
   else 
   // assert not(src(sym)_1 in"sequence record encoding")report"MM4"+ name + mangledname.caller   //
- assert length.toseq.stk ≥ nopara.sym report"stack problem"
-  if last.src.sym ="EXTERNAL"_1 
+ assert length.toseq.stk ≥ nopara.sym report"stack problem"+print2.sym
+  let flags=flags.sym
+  if "EXTERNAL"_1 in flags &or "VERYSIMPLE"_1 in flags 
   then buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
-  else if last.src.sym ="VERYSIMPLE"_1 
-  then assert not("EXTERNAL"_1 in src.sym)report "ERR20"+src.sym 
+  else if  "VERYSIMPLE"_1 in flags   
+  then assert not("EXTERNAL"_1 in flags )report "ERR20"+src.sym 
    buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, stk, 1, subseq(src.sym, nopara.sym * 2 + 1, length.src.sym - length.flags.sym)+ subseq(src, i + 1, length.src))
-  else buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
+  else 
+   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
 
 
 Function calls(knownsymbols:symbolset, t:tree.seq.word)seq.word 
@@ -234,7 +238,7 @@ Function simple3(inline:set.word, p:program, f:word)program
   let newsymbol = changecodetree(infunc, t)
   let newknown = replace(knownsymbols.p, newsymbol)
   let flags = flags.newsymbol
-  program(newknown, replacearcs(callgraph.p, oldarcs, asset.calls(f, t)), if"SIMPLE"_1 in flags ∨"INLINE"_1 in flags then inline.p + f else inline.p,"")
+  program(newknown, replacearcs(callgraph.p, oldarcs, asset.calls(f, t)), if"SIMPLE"_1 in flags   ∨"INLINE"_1 in flags then inline.p + f else inline.p,"")
 
 
 
@@ -279,6 +283,7 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
   then sets_setvarmapping.arg.code 
   else if inst ="PARAM"_1 
   then let i = if paraorder then -1 - toint.arg.code else toint.arg.code
+   assert i > 0 report "PARAM Problem"+print.code
    if i ≤ length.paramap then paramap_i else code 
   else if inst ="CRECORD"_1 
   then code 
@@ -337,7 +342,7 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
     then inline(pp, inlinename, sets, paramap, nextset, l_2)
     else expandapply(pp, inlinename, nextset, code, l)
    else let f = lookupfunc(knownsymbols.pp, inst)
-   explodeinline(pp, inlinename, codetree.f,"SIMPLE"_1 in flags.f, nextset, l)
+   explodeinline(pp, inlinename, codetree.f,"SIMPLE"_1 in flags.f , nextset, l)
   else if length.l = 2 ∧ inst(l_1)="LIT"_1 ∧ inst(l_2)="LIT"_1 
   then // location after inline expansion so inlining will happen if both sons happen to be LIT's // 
    simplecalcs(label.code, toint.arg(l_1), toint.arg(l_2), l)

@@ -57,25 +57,25 @@ Function catfunc(type:mytype)syminfo
 
 Function deepcopybody(alltypes:set.libtype, type:mytype)seq.word 
  if type = mytype."int"∨ abstracttype.type ="encoding"_1 
-  then"PARA 1"
+  then"PARAM 1"
   else if abstracttype.type ="seq"_1 
   then let typepara = parameter.type 
    let dc = FREFcode.finddeepcopyfunction.typepara 
    let xx = FREFcode.pseqidxfunc.typepara 
    let cat = FREFcode.catfunc.type 
    let blockit = CALLcode.blockitfunc 
-   {"LIT 0 LIT 0 RECORD 2 PARA 1"+ dc + cat + xx +"APPLY 5"+ blockit } 
+   {"LIT 0 LIT 0 RECORD 2 PARAM 1"+ dc + cat + xx +"APPLY 5"+ blockit } 
   else let subs = deepcopytypes2(alltypes, type)
   if length.subs = 0 
-  then"PARA 1"
+  then"PARAM 1"
   else if length.subs = 1 
   then if subs_1 = type 
-   then"PARA 1"
-   else"PARA 1"+ CALLcode.finddeepcopyfunction(subs_1)
+   then"PARAM 1"
+   else"PARAM 1"+ CALLcode.finddeepcopyfunction(subs_1)
   else @(+, subfld.subs, empty:seq.word, arithseq(length.subs, 1, 1))+"RECORD"+ toword.length.subs
 
 Function subfld(subs:seq.mytype, i:int)seq.word 
- {"PARA 1 LIT"+ toword(i - 1)+"IDXUC 2"+ CALLcode.finddeepcopyfunction(subs_i)}
+ {"PARAM 1 LIT"+ toword(i - 1)+"IDXUC 2"+ CALLcode.finddeepcopyfunction(subs_i)}
 
 Function codingrecord(sym:syminfo)seq.word 
  let encodingtype = parameter.returntype.sym 

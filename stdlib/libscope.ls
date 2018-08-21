@@ -205,9 +205,14 @@ Function syminfo(s:libsym)syminfo
   let name = c_1_1 
   let modname = mytype(c_2)
   let parameters = @(+, mytype, empty:seq.mytype, subseq(c, 3, length.c))
+  let src=
+  // if length.instruction.s > 0 &and last.instruction.s="VERYSIMPLE"_1 then
+    subseq(instruction.s,2 * length.parameters+1,length.instruction.s-1)
+    else // instruction.s
   if isinstance.modname 
-  then syminfo(if length.parameters = 0 then replaceT(parameter.modname, name)else name, replaceT(parameter.modname, returntypeold.s), @(+, replaceT.parameter.modname, empty:seq.mytype, parameters), modname, instruction.s, name, returntypeold.s, parameters, fsig.s)
-  else syminfo(name, returntypeold.s, parameters, modname, instruction.s,"$noproto"_1, mytype."", empty:seq.mytype, fsig.s)
+  then syminfo(if length.parameters = 0 then replaceT(parameter.modname, name)else name, replaceT(parameter.modname, returntypeold.s), 
+  @(+, replaceT.parameter.modname, empty:seq.mytype, parameters), modname, src, name, returntypeold.s, parameters, fsig.s)
+  else syminfo(name, returntypeold.s, parameters, modname, src,"$noproto"_1, mytype."", empty:seq.mytype, fsig.s)
 
 Function changeinstruction(p:syminfo, inst:seq.word)syminfo 
  syminfo(name.p, returntype.p, paratypes.p, modname.p, inst, protoname.p, protoreturntype.p, protoparatypes.p, mangled.p)

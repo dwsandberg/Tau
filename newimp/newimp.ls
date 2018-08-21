@@ -1,6 +1,6 @@
 #!/usr/local/bin/tau
 
-Library newimp other  pass2   libdescfunc newparse  
+Library newimp other     libdescfunc newparse  
  uses stdlib
  exports main
  

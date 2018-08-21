@@ -129,7 +129,7 @@ function fixuprecord(alltypes:set.libtype, l:seq.r3, nopara:int, nextvar:int, i:
   else let r = l_i 
   let sz = sizeoftype(alltypes, types(r)_1)
   let flatinst = if sz = offset.1 then""else"FLAT"+ print.sz 
-  if length.code.r = 2 ∧ code(r)_1 in"LIT LOCAL PARA FREF FREFB"
+  if length.code.r = 2 ∧ code(r)_1 in"LIT LOCAL PARA FREF FREFB PARAM"
   then fixuprecord(alltypes, l, nopara, nextvar, i + 1, result + code.r + flatinst, total + sz)
   else let f = fixuprecord(alltypes, l, nopara, nextvar + 1, i + 1, result +"LOCAL"+ toword.nextvar + flatinst, total + sz)
   r3(code.r + code.f +"SET"+ toword.nextvar, types.f, nexttemp.f)
@@ -259,22 +259,22 @@ Function bind(bindingonly:boolean, alltypes:set.libtype, modname:mytype, a:set.s
   then if bindingonly 
    then changeinstruction(sym,"USECALL builtin 0")
    else if nosons.functionbody.t = 0 
-   then changeinstruction(sym,"USECALL PARA 1")
+   then changeinstruction(sym,"USECALL PARAM 1")
    else if instruction(sym)_1 ="BUILDSEQ"_1 
    then changeinstruction(sym,"USECALL"+ FREFcode.findseqindexfunction(dict, returntype.sym)+ paralistcode.noparameters +"RECORD"+ toword(toint(instruction(sym)_2)+ 1))
    else if instruction(sym)_1 in"ERECORD PRECORD"
    then changeinstruction(sym,"USECALL"+ codingrecord.sym)
-   else sym 
+   else 
+    assert false report "NEVER HERE?"
+    sym 
   else let n = noparameters 
-  let args = @(+, toword,"", arithseq(n, -1, n))
-  // let dwithparameters = symdict(t, noparameters, paranames.t, paratypes.sym, args, syminfos.dict)// 
-  let dwithparameters = symdict(text, @(+, makepara(paranames.t, paratypes.sym, args), syminfos.dict, arithseq(n, 1, 1)), alltypes.dict, bindingonly)
+   let dwithparameters = symdict(text, @(+, makepara(paranames.t, paratypes.sym), syminfos.dict, arithseq(n, 1, 1)), alltypes.dict, bindingonly)
   let r = bind(dwithparameters, functionbody.t, 1)
   assert types(r)_1 = returntype.sym report"returntype does not match expression type for"+ print.sym 
   changeinstruction(sym,"USECALL"+ code.r)
 
-Function makepara(paranames:seq.word, paratypes:seq.mytype, args:seq.word, i:int)syminfo 
- syminfo(paranames_i, mytype."local", empty:seq.mytype, paratypes_i,"PARA"+ args_i)
+Function makepara(paranames:seq.word, paratypes:seq.mytype,  i:int)syminfo 
+ syminfo(paranames_i, mytype."local", empty:seq.mytype, paratypes_i,"PARAM"+ toword.i) 
 
 Function paranames(p:tree.word)seq.word @(+, label,"", subseq(sons.p, 3, nosons.p))
 

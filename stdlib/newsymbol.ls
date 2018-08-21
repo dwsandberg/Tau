@@ -101,13 +101,27 @@ Function changecodetree(old:symbol, t:tree.seq.word)symbol
  let oldflags = flags.old 
 let adjustedflags=flags.old+if inst.t="STATE"_1 then "STATE" else ""
   let functyp = if"FORCEINLINE"_1 in adjustedflags 
-   then"INLINE"_1 
+   then"INLINE"
    else if"NOINLINE"_1 in adjustedflags 
-   then"NOINLINE"_1 
-   else functype(t, nopara.old)
-  let newflags = [ functyp]+ toseq(asset.adjustedflags - asset."SIMPLE INLINE VERYSIMPLE")
+   then"NOINLINE"
+   else 
+     let a = ch1( t)
+     if nodecount.a > 15 
+     then"COMPLEX"
+     else if not(para.a = @(+, identity, empty:seq.int, arithseq(nopara.old, 1, 1))) 
+     then "INLINE"
+     else
+         let x=checkverysimple(t)
+         if "SET"_1 in x &or not(subseq(x,1,nopara.old) =@(+,toword,"",arithseq(nopara.old,1,1))) 
+         then "SIMPLE"
+         else 
+          // assert mangledname.old &ne "Q02227ZstdlibZbooleanZboolean"_1 report "ERR91"+x+ ">>>" +print.t //
+          "VERYSIMPLE SIMPLE"  
+  let newflags =  functyp+ toseq(asset.adjustedflags - asset."SIMPLE INLINE VERYSIMPLE COMPLEX")
   let newsrc = subseq(src.old, 1, length.src.old - length.oldflags)+ newflags 
  symbol(mangledname.old, resulttype.old, paratypes.old, name.old, modname.old, newflags, if inst.t="STATE"_1  then t_1 else t)
+
+
 
 
 Function lookup(dict:set.symbol, name:word, types:seq.mytype)set.symbol 
@@ -155,28 +169,23 @@ Function arg(t:tree.seq.word)word label(t)_2
 
 type ch1result is record nodecount:int, para:seq.int
 
-function combine(nopara:int, a:ch1result, t:tree.seq.word)ch1result 
+function combine(a:ch1result, t:tree.seq.word)ch1result 
  if nodecount.a > 15 
   then ch1result(1000, empty:seq.int)
-  else let b = ch1(nopara, t)
+  else let b = ch1(t)
   ch1result(nodecount.a + nodecount.b, para.a + para.b)
 
-function ch1(nopara:int, t:tree.seq.word)ch1result 
- if inst.t ="PARA"_1 
-  then ch1result(1, [ toint.arg.t - nopara - 2])
-  else if inst.t ="PARAM"_1 
+function ch1( t:tree.seq.word)ch1result 
+  if inst.t ="PARAM"_1 
   then ch1result(1, [ toint.arg.t])
   else if inst.t in"NOINLINE LOOP FINISHLOOP LOOPBLOCK STATE APPLY"
   then ch1result(1000, empty:seq.int)
-  else @(combine.nopara, identity, ch1result(1, empty:seq.int), sons.t)
+  else @(combine, identity, ch1result(1, empty:seq.int), sons.t)
 
-Function functype(t:tree.seq.word, nopara:int)word 
- let a = ch1(nopara, t)
-  if nodecount.a > 15 
-  then"COMPLEX"_1 
-  else if para.a = @(+, identity, empty:seq.int, arithseq(nopara, 1, 1))
-  then"SIMPLE"_1 
-  else"INLINE"_1
+function checkverysimple(t:tree.seq.word) seq.word
+   if inst.t in "PARAM" then [label(t)_2] else
+   if inst.t ="SET"_1 then "SET" else  @(+,checkverysimple, "",sons.t)+"inst"
+   
   
 Function emptysymbolset symbolset 
  symbolset.dseq.symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default")
