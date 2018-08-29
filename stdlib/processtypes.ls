@@ -21,6 +21,28 @@ use set.libtype
 
 use stdlib
 
+type libtype is record name:word, abstract:boolean, kind:word, subtypes:seq.mytype, size:offset, fldnames:seq.word
+
+Function =(a:libtype, b:libtype)boolean name.a = name.b ∧ abstract.a = abstract.b
+
+Function abstract(libtype)boolean export
+
+Function name(libtype)word export
+
+Function fortype(l:libtype)mytype 
+ mytype.if abstract.l then"T"+ name.l else [ name.l]
+
+Function subtypes(libtype)seq.mytype export
+
+Function kind(libtype)word export
+
+Function libtype(word, boolean, word, seq.mytype, offset, seq.word)libtype export
+
+Function fldnames(libtype)seq.word export
+
+Function size(libtype)offset export
+
+
 Function ?(a:arc.libtype, b:arc.libtype)ordering export
 
 
@@ -82,6 +104,17 @@ Function deepcopytypes2(all:set.libtype, t:mytype)seq.mytype
   if kind.b in"type sequence"∨ towords.t ="word"
   then [ t]
   else @(+, deepcopytypes2.all, empty:seq.mytype, if isinstance.t then @(+, replaceT.parameter.t, empty:seq.mytype, subtypes.b)else subtypes.b)
+
+Function deepcopytypes3(all:set.libtype, t:mytype)seq.mytype 
+ // deepcopytypes is only for structures.It returns the types of the fields.If one of the fields is a structure it returns the types of that structure to flatten out the struct into a sequence of fields of size 1.// 
+  let b = lookup(abstracttype.t, iscomplex.t, all,"Unknown error in process types!")
+  if kind.b in"type sequence encoding"∨ towords.t in ["word", "int"] &or "T"_1 in towords.t
+  then [ t]
+  else @(+, deepcopytypes3.all, empty:seq.mytype, if isinstance.t then @(+, replaceT.parameter.t, empty:seq.mytype, subtypes.b)else subtypes.b)
+
+
+
+
 
 Function fldsoftype(s:set.libtype, a:mytype)seq.mytype 
  let b = subtypes.lookup(abstracttype.a, iscomplex.a, s,"Unknown error in process types!")

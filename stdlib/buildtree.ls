@@ -194,6 +194,8 @@ Function roots(isencoding:set.syminfo, m:mod2desc)set.word
  if isabstract.modname.m ∨ isprivate.m 
   then empty:set.word 
   else @(+, mangled, empty:set.word, toseq.export.m + toseq(defines.m ∩ isencoding))
+  
+
 
 Function hasErecord(s:syminfo)seq.syminfo 
  if"erecord"_1 in towords.returntype.s then [ s]else empty:seq.syminfo
@@ -206,6 +208,9 @@ Function hasErecord(s:syminfo)seq.syminfo
   let newsrc=if subseq(instruction.q, 1, length.instruction.q - length.options)= [ mangled.q] then
    subseq(myinst, 1, instend)+options+"EXTERNAL" 
    else // subseq(myinst, 1, instend)+options //
+    // assert not(instruction.q="WORDS 3 X X X") report "KK"+subseq(myinst, 1, instend) //
+    if subseq(myinst,1,2)="USECALL WORDS" then subseq(myinst,2,instend)
+    else 
     printx.buildcodetree(length.paratypes.q , subseq(myinst, 1, instend))+options
   symbol(mangled.q, rt, paratypes.q, name.q, mytype."", newsrc) 
     

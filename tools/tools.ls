@@ -3,7 +3,7 @@
 Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgraph layergraph makeDAG 
 prettylib printbitcodes profile renamemodule svg svggraph 
  uses stdlib 
- exports bandeskopf barycenter displaygraph displaytextgraph doc layergraph makeDAG prettylib prettylib printbitcodes profile svg svggraph tools
+ exports bandeskopf barycenter displaygraph displaytextgraph doc layergraph makeDAG prettylib prettylib printbitcodes profile svg svggraph tools labeledgraph
 
 Module tools
 

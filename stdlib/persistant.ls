@@ -28,7 +28,6 @@ use seq.libmod
 
 use seq.libsym
 
-use seq.libtype
 
 use seq.linklists2
 
@@ -207,18 +206,10 @@ function       addele(t:trackele,s:libmod) trackele
     let a = addlibmod(l.t,s)
     trackele(value.a,places.t+index.a)
     
-function       addele(t:trackele,s:libtype) trackele
-    let a = addlibtype(l.t,s)
-    trackele(value.a,places.t+index.a)
     
 function       addele(t:trackele,s:mytype) trackele
     let a = addwordseq(l.t,towords.s)
     trackele(value.a,places.t+index.a)
-
-function addlibtypeseq(l:linklists2,s:seq.libtype) ipair.linklists2
-let x =@(addele,identity,trackele(l,empty:seq.int),s)
-    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
-    ipair(place.l.x,@(addoffset,identity,t,places.x) )
 
 function addmytypeseq(l:linklists2,s:seq.mytype) ipair.linklists2
 let x =@(addele,identity,trackele(l,empty:seq.int),s)
@@ -249,24 +240,19 @@ function addlibsym(l1:linklists2,sym:libsym) ipair.linklists2
    
 Function addliblib(lin:linklists2,t:liblib) ipair.linklists2
    let a = addwordseq(lin,libname.t)
-   let b =addlibtypeseq(value.a,types.t)
-      let c =addlibmodseq(value.b,mods.t)
+      let c =addlibmodseq(value.a,mods.t)
    let l=value.c
-     let l5=l+a+b+c+timestamp.t+toint.readonly.t 
+     let l5=l+a+0+c+timestamp.t+toint.readonly.t 
    ipair(place.l,l5)
 
-function addlibtype(lin:linklists2,t:libtype) ipair.linklists2
-   let a = addmytypeseq(lin,subtypes.t)
-   let b =addwordseq(value.a,fldnames.t)
-   let l=value.b
-     let l5=l+name.t+toint.abstract.t+kind.t+a+TSIZE.size.t+LIT.size.t+b  
-   ipair(place.l,l5)
+use seq.word
+
    
 function addlibmod(lin:linklists2,modx:libmod) ipair.linklists2
    let a = addlibsymseq(lin,defines.modx)
    let b =addlibsymseq(value.a,exports.modx)
    let l=value.b
-     let l5=l+toint.parameterized.modx+modname.modx+a+b+library.modx   
+     let l5=l+toint.parameterized.modx+modname.modx+a+b   
    ipair(place.l,l5)
 
 function +(l:linklists2,i:int) linklists2 

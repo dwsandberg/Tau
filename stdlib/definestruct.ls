@@ -20,9 +20,7 @@ use stdlib
 
 use tree.word
 
-/use parse
-
-/use pretty
+use processtypes
 
 function lastson(s:tree.word)tree.word s_nosons.s
 
@@ -37,7 +35,8 @@ Function tolibtype2(s:tree.word)libtype
  let kind = label.s 
   let type = s_1 
   let flds = @(+, lastson, empty:seq.tree.word, subseq(sons.s, 2, nosons.s))
-  libtype(label.type, nosons.type = 1, kind, @(+, mytypex, empty:seq.mytype, flds), if kind in"sequence type"then offset.1 else offset.0, @(+, label,"", subseq(sons.s, 2, nosons.s)))
+  libtype(label.type, nosons.type = 1, kind, @(+, mytypex, empty:seq.mytype, flds), 
+  if kind in"sequence type"then offset.1 else offset.0, @(+, label,"", subseq(sons.s, 2, nosons.s)))
 
 Function locals(sizes:set.libtype, modname:mytype, libtyp:libtype)seq.syminfo 
  // locals returns list of symbols needed to create and access components of structure // 

@@ -10,7 +10,6 @@ use seq.libmod
 
 use seq.libsym
 
-use seq.libtype
 
 use seq.mytype
 
@@ -40,11 +39,9 @@ Function formatcall(name:word, paratypes:seq.mytype)seq.word
 
 type libsym is record fsig:word, returntype:seq.word, instruction:seq.word
 
-type liblib is record libname:seq.word, types:seq.libtype, mods:seq.libmod, timestamp:int, readonly:boolean
+type liblib is record libname:seq.word, unused:int, mods:seq.libmod, timestamp:int, readonly:boolean
 
-Function liblib(a:seq.word, c:seq.libtype, d:seq.libmod)liblib liblib(a, c, d, 0, false)
-
-Function liblib(a:seq.word, c:seq.libtype, d:seq.libmod, readonly:boolean)liblib liblib(a, c, d, 0, readonly)
+Function liblib(a:seq.word,   d:seq.libmod)liblib liblib(a, 0, d, 0, false)
 
 Function timestamp(liblib)int export
 
@@ -52,13 +49,12 @@ Function libname(liblib)seq.word export
 
 Function mods(liblib)seq.libmod export
 
-Function types(liblib)seq.libtype export
 
 Function readonly(liblib)boolean export
 
 function =(a:libsym, b:libsym)boolean fsig.a = fsig.b
 
-function =(a:libmod, b:libmod)boolean modname.a = modname.b ∧ library.a = library.b
+function =(a:libmod, b:libmod)boolean modname.a = modname.b  
 
 Function =(t:mytype, b:mytype)boolean towords.t = towords.b
 
@@ -80,26 +76,6 @@ Function fsig(libsym)word export
 
 Function libs seq.liblib builtin.usemangle
 
-type libtype is record name:word, abstract:boolean, kind:word, subtypes:seq.mytype, size:offset, fldnames:seq.word
-
-Function =(a:libtype, b:libtype)boolean name.a = name.b ∧ abstract.a = abstract.b
-
-Function abstract(libtype)boolean export
-
-Function name(libtype)word export
-
-Function fortype(l:libtype)mytype 
- mytype.if abstract.l then"T"+ name.l else [ name.l]
-
-Function subtypes(libtype)seq.mytype export
-
-Function kind(libtype)word export
-
-Function libtype(word, boolean, word, seq.mytype, offset, seq.word)libtype export
-
-Function fldnames(libtype)seq.word export
-
-Function size(libtype)offset export
 
 type mytype is record towords:seq.word
 
@@ -107,12 +83,11 @@ Function mytype(seq.word)mytype export
 
 Function towords(mytype)seq.word export
 
-type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, library:word
+type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym
 
-Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, library:word)libmod 
+Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym)libmod 
  export
 
-Function library(libmod)word export
 
 Function parameterized(libmod)boolean export
 
@@ -293,8 +268,8 @@ Function findFunction(libname:word, modname:word, funcname:word, types:seq.mytyp
  @(+, f44(libname, modname, funcname, types),"", libs)
 
 Function emptyliblib(libname:word) liblib
-let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, libname)
-  liblib([ libname], empty:seq.libtype, [ mymod])
+let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym)
+  liblib([ libname],  [ mymod])
 
 ______________________
 

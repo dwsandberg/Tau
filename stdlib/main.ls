@@ -105,7 +105,12 @@ Function bindings(libname:word)pass1result
   let templatesin = @(asliblib.dependentlibs.ld, identity, emptyliblib, libs)
   let ptext = process.pass0.ld 
   assert not.aborted.ptext report message.ptext 
-  pass1a(true, result.ptext, YYY.templatesin, [ libname])
+   pass1a(true, result.ptext, YYY.templatesin,getlibtypes.mods.templatesin)
+   
+function getlibtypes(s:seq.libmod) seq.libtype
+    toseq.asset.getlibtypes.@(+,defines,empty:seq.libsym,s)
+
+use set.libtype
 
 /Function pass(passno:int, libname:word)pass1result 
  let ld = tolibdesc.libname 
@@ -125,6 +130,10 @@ Function bindings(libname:word)pass1result
 
 /use seq.intercode
 
+use convertlibtyp
+
+use seq.firstpass
+
 function subcompilelib(libname:word)seq.word 
  // PROFILE. // let discard3 = length.mapping.libsymencoding 
   let ld = tolibdesc.libname 
@@ -136,10 +145,17 @@ function subcompilelib(libname:word)seq.word
   let ptext = process.pass0.ld 
   if aborted.ptext 
   then message.ptext 
-  else let p1a = setprivate(exports.ld, pass1a(false, result.ptext, YYY.templatesin, [ libname]))
+  else 
+   let p1a = setprivate(exports.ld, pass1a(false, result.ptext, YYY.templatesin,getlibtypes.mods.templatesin))
   // let p = waitforpass2.p1a if aborted.p then message.p else let y1 = codegen5.result.p // 
-  let intercode =pass2.p1a
-  let y1 = codegen5(intercode,libname ,libdesc(p1a,intercode))
+  let r =p1a
+    let compiled= @(+, tonewsymbol.alltypes.r, emptysymbolset,  compiled.r) 
+   let knownsymbols = @(+, tonewsymbol.alltypes.r, compiled, newcode.r ) 
+  let roots = toseq.@(∪, roots.asset.@(+, hasErecord, empty:seq.syminfo, newcode.r), empty:set.word, mods.r)
+  let mods=  @(+, tofirstpass, empty:seq.firstpass, mods.r)
+  let known2=@(+,todesc.alltypes.r,knownsymbols,toseq.alltypes.r)
+   let intercode=pass2(knownsymbols,roots, compiled)
+   let y1 = codegen5(intercode,libname ,liblib([ libname],libdesc(asset.roots,intercode,mods,known2)))
   let z2 = createlib(y1, libname, dependentlibs.ld)
   {"OK"}
 
@@ -159,8 +175,8 @@ use set.word
  NOINLINE.let p = process.pass2.a 
   if aborted.p then p else p
 
-function asliblib(s:seq.word, a:liblib, l:liblib)liblib 
- if libname(l)_1 in s then a + l else a
+function asliblib(s:seq.word, a:liblib, b:liblib)liblib 
+ if libname(b)_1 in s then   liblib(libname.a + libname.b,  mods.a + mods.b) else a
 
 Function compilelib(libname:word)seq.word 
  let p1 = process.subcompilelib.libname 
@@ -185,13 +201,11 @@ Function run(libname:word, modname:word, funcname:word)seq.word
    if aborted.p2 then message.p2 else result.p2 
   else aa
 
-function +(a:liblib, b:liblib)liblib liblib(libname.a + libname.b, types.a + types.b, mods.a + mods.b)
 
-function emptyliblib liblib liblib("empty", empty:seq.libtype, empty:seq.libmod)
+function emptyliblib liblib liblib("empty",  empty:seq.libmod)
 
 function YYY(a:liblib)seq.mod2desc 
- let z2 = template(mytype."x$types", empty:seq.syminfo, empty:seq.syminfo, types.a)
-  @(+, totemplate, empty:seq.mod2desc, mods.a)+ z2
+  @(+, totemplate, empty:seq.mod2desc, mods.a)
 
 function totemplate(s:libmod)mod2desc 
  let n = mytype.if parameterized.s then"T"+ modname.s else [ modname.s]

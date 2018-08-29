@@ -1,6 +1,6 @@
-module libdescfunc
+#!/usr/local/bin/tau
 
-/run newimp test1
+module libdescfunc
 
 use newsymbol
 
@@ -10,9 +10,9 @@ use intercode
 
 use cvttoinst
 
-use oseq.word
-
 use other
+
+use oseq.word
 
 use seq.firstpass
 
@@ -46,30 +46,36 @@ use set.word
 
 use stdlib
 
-Function libdesc(roots:set.word, intercode:intercode, lib:word, mods:seq.firstpass, known:symbolset)liblib 
+function print2(l:libsym) seq.word print.l+instruction.l
+
+Function libdesc(roots:set.word, intercode:intercode,   mods:seq.firstpass, known:symbolset) seq.libmod
  let b = @(∪, gathertypes.known, empty:set.mytype, toseq.roots)
   let c = closetypes(known, @(+, print, empty:set.seq.word, toseq.b), empty:set.seq.word)
   let typesyms = @(+, typelibsyms.known, empty:seq.libsym, toseq.c)
-  // assert false report @(+, filterT.known,"", toseq.c)// 
+  // assert false report @(seperator."&br",print2,"",typesyms) //
   let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
   let a = close(intercode, rootindices, rootindices)
   let syms = @(+, tolibsym.intercode, empty:seq.libsym, toseq.a)
-  let allmods = @(map(lib, known), identity, mapresult(asset.syms, empty:seq.libmod), mods)
-  liblib([ lib], empty:seq.libtype, mods.allmods + libmod(false,"$other"_1, toseq.syms.allmods + typesyms, empty:seq.libsym, lib))
+  let allmods = @(map(known), identity, mapresult(asset.syms, empty:seq.libmod), mods)
+   assert true report // @(+,print,"",toseq.syms.allmods) //  
+    @(+,print,"",toseq.asset.@(+,usestypes,empty:seq.mytype,toseq.syms.allmods))
+   mods.allmods + libmod(false,"$other"_1, toseq.syms.allmods + typesyms, empty:seq.libsym) 
 
-@(+, print,"", toseq.asset.@(+, exports, empty:seq.libsym, allmods))
-
-function filterT(known:symbolset, m:seq.word)seq.word 
- {"&br"+ m + print2(known_mangle(merge("sizeoftype:"+ m), mytype."internal", empty:seq.mytype))+"&br"+ m + print2(known_mangle(merge("typedesc:"+ m), mytype."internal", empty:seq.mytype))}
+function usestypes(s:libsym) seq.mytype
+ let d=codedown.fsig.s
+   let x=  @(+,mytype,[mytype.returntype.s], subseq(d,3,length.d))
+   @(+,primtypes,empty:seq.mytype,x)
+     
+function primtypes(m:mytype) seq.mytype
+   let s = towords.m
+   if length.s=1 then [m] else
+     @(+,mytype,empty:seq.mytype,@( +, +."T",[[s_1]],subseq(s,2,length.s)))
 
 function typelibsyms(known:symbolset, m:seq.word)seq.libsym 
- let sizesym = known_mangle(merge("sizeoftype:"+ m), mytype."internal", empty:seq.mytype)
   let sym = known_mangle(merge("typedesc:"+ m), mytype."internal", empty:seq.mytype)
-  if isdefined.sym ∧ isdefined.sizesym 
-  then [ tolibsym4.sym, tolibsym4.sizesym]
-  else if isdefined.sym 
+  if isdefined.sym 
   then [ tolibsym4.sym]
-  else if isdefined.sizesym then [ tolibsym4.sizesym]else empty:seq.libsym
+  else  empty:seq.libsym
 
 function filterX(known:symbolset, typ:seq.word)seq.seq.word 
  let a = known_mangle(merge("typedesc:"+ typ), mytype."internal", empty:seq.mytype)
@@ -95,9 +101,8 @@ function typesused(w:seq.word, i:int, start:int)seq.seq.word
 
 function gathertypes(known:symbolset, mangledname:word)set.mytype 
  let sym = known_mangledname 
-  @(+, replaceT.parameter.modname.sym, asset.[ resulttype.sym], paratypes.sym)
-
-let a = @(∪, gathertypes, empty:set.mytype, roots)@(+, print,"", toseq.a)
+   @(+, replaceT.parameter.modname.sym, asset.[ resulttype.sym], paratypes.sym)
+   
 
 function toinstindex(a:set.word, d:intercode, i:int)seq.int 
  if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
@@ -168,34 +173,30 @@ type mapresult is record syms:set.libsym, mods:seq.libmod
 
 type mapresult2 is record syms:set.libsym, libsyms:seq.libsym
 
-function map(lib:word, known:symbolset, r:mapresult, l:firstpass)mapresult 
+function map(known:symbolset, r:mapresult, l:firstpass)mapresult 
  if not.exportmodule.l 
   then r 
   else if isabstract.modname.l 
-  then mapresult(syms.r, mods.r + libmod(true, abstracttype.modname.l, @(+, tolibsym4, empty:seq.libsym, toseq.defines.l), @(+, tolibsym4, empty:seq.libsym, toseq.exports.l), lib))
-  else let e = @(findelement.known, identity, mapresult2(syms.r, empty:seq.libsym), toseq.exports.l)
-  mapresult(syms.e, mods.r + libmod(false, abstracttype.modname.l, empty:seq.libsym, libsyms.e, lib))
+  then mapresult(syms.r, mods.r + libmod(true, abstracttype.modname.l, 
+  @(+, tolibsym4, empty:seq.libsym, toseq.defines.l), @(+, tolibsym4, empty:seq.libsym, toseq.exports.l)))
+  else 
+   let d = @(findelement.known, identity, mapresult2(syms.r, empty:seq.libsym), toseq.exports.l)
+   let e = @(findelement.known, identity, mapresult2(syms.d, empty:seq.libsym), toseq.exports.l)
+  mapresult(syms.e, mods.r + libmod(false, abstracttype.modname.l, libsyms.d, libsyms.e))
+
 
 function tolibsym4(s:symbol)libsym libsym(resulttype.s, mangledname.s, src.s)
 
-function findelement(syms:set.libsym, s:symbol)seq.libsym 
- toseq.findelement(libsym(resulttype.s, mangledname.s,""), syms)
-
 function findelement(known:symbolset, r:mapresult2, s:symbol)mapresult2 
- // assert not.iscomplex.modname.s ∨ mangledname.s in"Q3CZrealzseqZTZT inZintzseqZTZTzseq inZwordzseqzseqZTZTzseq inZwordzseqZTZTzseq"report"MMM"+ print2.s // 
   let z = findelement(libsym(resulttype.s, mangledname.s,""), syms.r)
   if isempty.z 
   then let t1 = known_mangledname.s 
    let t = tolibsym4.t1 
    assert src.t1 in ["EXTERNAL"]report "ERR33"+ print2.t1 
    mapresult2(syms.r + t, libsyms.r + t)
-  else // assert not.iscomplex.modname.s report"ERR11"+ fsig.z_1 + returntype.z_1 + instruction.z_1 // 
-  // let toadd = if iscomplex.modname.s then libsym(mytype.returntype.z_1, mangle(name.s, modname.s, @(+, replaceT.modname.s, empty:seq.mytype, paratypes.s)), instruction.z_1)else z_1 // 
-  mapresult2(syms.r, libsyms.r + z_1)
+  else  mapresult2(syms.r, libsyms.r + z_1)
 
 function ?(a:libsym, b:libsym)ordering fsig.a ? fsig.b
-
-/type libsym is record fsig:word, returntype:seq.word, instruction:seq.word
 
 Function tosymbol(ls:libsym)symbol 
  let d = codedown.fsig.ls 
@@ -208,5 +209,4 @@ Function tofirstpass(m:libmod)firstpass
 
 Function tofirstpass(l:liblib)seq.firstpass @(+, tofirstpass, empty:seq.firstpass, mods.l)
 
-/type liblib is record libname:seq.word, types:seq.libtype, mods:seq.libmod, timestamp:int, readonly:boolean /type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, library:word /type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol, exportmodule:boolean
 

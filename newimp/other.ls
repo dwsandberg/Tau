@@ -1,6 +1,8 @@
+#!/usr/local/bin/tau
+
 Module other
 
-run newimp test1
+run main test1
 
 use newsymbol
 
@@ -222,7 +224,28 @@ function buildtypedesc(knownsymbols:symbolset, k:seq.word, t:mytype)seq.word
   else let name = mangle(merge("typedesc:"+ print.t), mytype."internal", empty:seq.mytype)
   let a = knownsymbols_name 
   assert not(mangledname.a ="undefinedsym"_1)report"type?"+ name + print.t 
-  src.a
+  // assert not(src(a)_1 in "type sequence record encoding") report "ERROR101"+print2.a //
+  subseq(src.a,2,length.src.a)
+
+  
+function checkdefined(org:symbol, dict:set.symbol, templates:symbolset,   knownsymbols:symbolset,t:mytype)symbolset
+  assert not("T"_1 in towords.t )report "ERR104"+print.t
+  if abstracttype.t in"word int seq encoding T" then knownsymbols
+  else 
+  let name = mangle(merge("typedesc:"+ print.t), mytype."internal", empty:seq.mytype)
+   let a = knownsymbols_name 
+  assert not(mangledname.a ="undefinedsym"_1)report"type?2"+ name + print.t 
+  if  not(src(a)_1 in "record")  then
+   knownsymbols 
+   else
+    assert src.a &ne "pending" report "ERROR101"+print2.a
+    // assert false report "ERROR101"+name //
+      definestructure(org, dict, templates, src.a, parameter.t, 
+  replace(knownsymbols, changesrc(a,"pending")), 3 +  toint((src.a)_3)+ 1,"", empty:seq.mytype,"")
+
+  
+
+
 
 function definestructure(org:symbol, dict:set.symbol, templates:symbolset, src:seq.word, modname:mytype, knownsymbols:symbolset, i:int, offset:seq.word, paras:seq.mytype, constructor:seq.word)symbolset 
  // assert src in ["sequence cseq 3 seq.T 2 int len 2 T element","sequence seq 3 seq.T 2 int length 2 T x","sequence pseq 3 seq.T 2 int length 3 T seq a 3 T seq b","record UTF8 1 UTF8 3 int seq toseqint","record bit 1 bits 2 int toint","record bits 1 bits 2 int toint","sequence bitpackedseq 3 bitpackedseq.T 2 int length 3 T seq data 2 bits part","sequence arithmeticseq 3 seq.T 2 int length 2 T step 2 T start","record word 1 stdlib 4 int seq encoding bb","record boolean 1 stdlib 2 int toint","record ordering 1 stdlib 2 int toint","record alphaword 1 stdlib 2 word toword","record invertedseq 3 invertedseq.T 5 T ipair seq seq hashtable 2 int elecount","record ipair 3 ipair.T 2 int index 2 T value","sequence dseq 3 seq.T 2 int length 2 T default 3 T seq data","sequence packedseq 3 packedseq.T 2 int length 3 T seq x","sequence blockseq 3 blockseq.T 2 int length 2 int blocksize 4 T seq seq data","record libsym 1 libscope 2 word fsig 3 word seq returntype 3 word seq instruction","record mytype 1 libscope 3 word seq towords","record libtype 1 libscope 2 word name 2 boolean abstract 2 word kind 3 mytype seq subtypes 2 offset size 3 word seq fldnames","record offset 1 libscope 2 int TSIZE 2 int LIT"]report"JKLLL"+ src // 
@@ -236,9 +259,12 @@ function definestructure(org:symbol, dict:set.symbol, templates:symbolset, src:s
     let symtoseq = symbol("toseq"_1, modname, [ mytype("T"+ src_2)], mytype(towords.parameter.t +"seq"_1),"PARAM 1 VERYSIMPLE")
     // assert not(src_2 ="pseq"_1 ∧ print.modname ="seq.word")report print.modname + src +"&br"+ print2.symtoseq // 
     let descsym = symbol(merge("typedesc:"+ print.mytype(towords.parameter.modname + src_2)), mytype."internal", empty:seq.mytype, mytype."word seq","1 seq."+ print.parameter.modname)
+      assert not("T"_1 in src.descsym) report "ERR1011"+src.descsym+">>"+print.org
     replace(replace(replace(knownsymbols, con), symtoseq), descsym)
    else // assert not(mytype."bit bitpackedseq"in paras)report src // 
-   let dsrc = @(buildtypedesc.knownsymbols, replaceT.parameter.modname,"", paras)
+   let newk=@(checkdefined(org , dict , templates ),replaceT.parameter.modname,knownsymbols,paras)
+   let dsrc = @(buildtypedesc.newk, replaceT.parameter.modname,"", paras)
+   assert not("T"_1 in dsrc) report "ERR1010"+dsrc+">>"+print.org
    let descsym = symbol(merge("typedesc:"+ print.resulttype.con), mytype."internal", empty:seq.mytype, mytype."word seq", [ offset_2]+ dsrc)
    replace(replace(knownsymbols, con), descsym)
   else let len = toint(src_i)
@@ -254,11 +280,9 @@ function definestructure(org:symbol, dict:set.symbol, templates:symbolset, src:s
    else let code = src.sym2 
    let len2 = toint(code_3)
    let modname2 = replaceT(parameter.thetype, mytype.subseq(code, 3 + 1, 3 + len2))
-   assert not(modname2 = mytype."tree")report"ERR17"+ print2.sym2 +"/"+ subseq(code, 3 + 1, 3 + len2)+"/"+print.thetype
    let newknown = definestructure(org, dict, templates, src.sym2, modname2, knownsymbols, 3 + len2 + 1,"", empty:seq.mytype,"")
    let z = newknown_mangledname.sym2 
    assert isdefined.z report"ERR30"+ mangledname.sym2 
-   assert src(z)_1 in"1 2 3 4 5 6 7 8 9"report"KL2"+ print2.z + print.thetype 
    zzz(newknown,"LIT"+ src(z)_1)
   let newoffset = if offset =""
    then size.z1 
@@ -498,6 +522,7 @@ function definedeepcopy(knownsymbols:symbolset, type:mytype)symbol
     let blockit = mangle("blockit"_1, mytype(towords.typepara +"blockseq"), [ mytype."T seq"])
     {"LIT 0 LIT 0 RECORD 2 PARAM 1 FREF"+ dc +"FREF"+ cat +"FREF"+ pseqidx +"APPLY 5"+ blockit } 
    else let name = mangle(merge("typedesc:"+ print.type), mytype."internal", empty:seq.mytype)
+   assert false report "ERR100"+name+"NO test example for deepcopy"
    let a = knownsymbols_name 
    subfld(src.a, 2, 0, 0)
   symbol("deepcopy"_1, mytype(towords.type +"deepcopy"), [ mytype."T"], type, body)

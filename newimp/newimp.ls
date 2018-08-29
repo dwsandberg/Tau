@@ -2,14 +2,16 @@
 
 Library newimp other     libdescfunc newparse  
  uses stdlib
- exports main
- 
+ exports main 
+
+
 
 Module newimp
 
 * usegraph exclude seq
 
 run main test1
+
 
 use stdlib
 
@@ -53,6 +55,9 @@ use textio
 
 use groupparagraphs
 
+
+
+ 
 Function findlibclause(a:seq.seq.word, i:int)seq.word 
  assert i < length.a report"No Library clause found"
   let s = a_i 
@@ -105,7 +110,7 @@ let a = gettext.[ merge( [libname]+"/"+ libname +".ls")]
   // // assert false report  
    @(+,print5,"",toseq.symset.p1)  //
  let intercode= pass2(symset.p1,toseq.roots.p1,known.li) 
- let liblib=libdesc( roots.p1 ,intercode ,libname,mods.p1,symset.p1) 
+ let liblib=liblib([libname],libdesc( roots.p1 ,intercode ,mods.p1,symset.p1) )
  let bc=codegen5(intercode,libname,liblib)
  let z2 = createlib(bc, libname, "") 
  "OK"

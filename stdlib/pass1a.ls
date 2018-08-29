@@ -285,8 +285,7 @@ function isinstance(s:syminfo)set.word
    asset.[ mangled.s]
   else empty:set.word
 
-Function pass1a(bindingonly:boolean, primitivemods:set.mod2desc, intemplates:seq.mod2desc, libname:seq.word)pass1result 
- let templatetypes = @(+, typedefs, empty:seq.libtype, intemplates)
+Function pass1a(bindingonly:boolean, primitivemods:set.mod2desc, intemplates:seq.mod2desc,templatetypes:seq.libtype)pass1result 
   let P1 = toseq.primitivemods 
   let alltypes = assigntypesizes(@(+, typedefs, empty:seq.libtype, P1)+ templatetypes)
   let discard = @(+, checktypes.alltypes, 0, P1)
@@ -300,7 +299,7 @@ Function pass1a(bindingonly:boolean, primitivemods:set.mod2desc, intemplates:seq
   let allsyms = allsymbols.allmods 
   let PYS = @(+, compilesimple(bindingonly, alltypes, allsyms, allmods), empty:seq.mod2desc, PX)
   let simplepairs = toseq.@(∪, defines, empty:set.syminfo, PYS)
-  pass1result(libname, simplepairs, alreadycompiled, PYA + PYS, asset.templatetypes, alltypes)
+  pass1result(simplepairs, alreadycompiled, PYA + PYS, asset.templatetypes, alltypes)
 
 the code for type func is never a code fragment and never abstract.
 

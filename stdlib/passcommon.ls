@@ -150,17 +150,16 @@ Function isprivate(a:mod2desc)boolean export
 Function mod2desc(modname:mytype, exportx:set.syminfo, uses:seq.mytype, typedefs:seq.libtype, defines:set.syminfo, tocompile:seq.seq.word, isprivate:boolean)mod2desc 
  export
 
-type pass1result is record code:intercode, libname:seq.word, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype
+type pass1result is record code:intercode, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype
 
-Function pass1result(code:intercode, libname:seq.word, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype)pass1result 
+Function pass1result(code:intercode, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype)pass1result 
  export
 
-Function pass1result(libname:seq.word, newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype)pass1result 
- pass1result(emptyintercode, libname, newcode, compiled, mods, existingtypes, alltypes)
+Function pass1result( newcode:seq.syminfo, compiled:seq.syminfo, mods:seq.mod2desc, existingtypes:set.libtype, alltypes:set.libtype)pass1result 
+ pass1result(emptyintercode,   newcode, compiled, mods, existingtypes, alltypes)
 
 Function code(pass1result)intercode export
 
-Function libname(pass1result)seq.word export
 
 Function newcode(pass1result)seq.syminfo export
 
@@ -177,7 +176,7 @@ function setprivate(exports:seq.word, m:mod2desc)mod2desc
   mod2desc(modname.m, export.m, uses.m, typedefs.m, defines.m, tocompile.m, not(abstracttype.modname.m in exports))
 
 Function setprivate(exports:seq.word, a:pass1result)pass1result 
- pass1result(code.a, libname.a, newcode.a, compiled.a, @(+, setprivate.exports, empty:seq.mod2desc, mods.a), existingtypes.a, alltypes.a)
+ pass1result(code.a,   newcode.a, compiled.a, @(+, setprivate.exports, empty:seq.mod2desc, mods.a), existingtypes.a, alltypes.a)
 
 Function ?(a:syminfo, b:syminfo)ordering export
 

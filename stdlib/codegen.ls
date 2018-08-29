@@ -24,8 +24,6 @@ use seq.internalbc
 
 use seq.libsym
 
-use seq.libtype
-
 use seq.linklists2
 
 use seq.llvmconst
