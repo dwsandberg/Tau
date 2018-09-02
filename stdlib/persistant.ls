@@ -1,3 +1,27 @@
+module persistantseq.T
+
+use stdlib
+
+use seq.T
+
+use persistant
+
+use ipair.linklists2
+
+ function       addele(t:trackele,s:T) trackele  
+    let a = addrecord(l.t,s)
+    trackele(value.a,places.t+index.a)
+    
+ function addrecord(linklists2,s:T) ipair.linklists2 unbound
+ 
+ Function addseq(l:linklists2,s:seq.T) ipair.linklists2
+    let x =@(addele,identity,trackele(l,empty:seq.int),s)
+    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
+    ipair(place.l.x,@(addoffset,identity,t,places.x) )
+
+ use llvm
+ 
+
 module persistant
 
 use deepcopy.linklists2
@@ -198,59 +222,43 @@ Function buildtheobject(objectstart:int, l:linklists2, d:flddesc)linklists2
 
 type   trackele is record l:linklists2,places:seq.int
 
-function       addele(t:trackele,s:libsym) trackele
-    let a = addlibsym(l.t,s)
-    trackele(value.a,places.t+index.a)
+function l(trackele) linklists2 export
 
-function       addele(t:trackele,s:libmod) trackele
-    let a = addlibmod(l.t,s)
-    trackele(value.a,places.t+index.a)
-    
-    
-function       addele(t:trackele,s:mytype) trackele
-    let a = addwordseq(l.t,towords.s)
-    trackele(value.a,places.t+index.a)
+function places(trackele) seq.int export
 
-function addmytypeseq(l:linklists2,s:seq.mytype) ipair.linklists2
-let x =@(addele,identity,trackele(l,empty:seq.int),s)
-    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
-    ipair(place.l.x,@(addoffset,identity,t,places.x) )
+function  trackele(l:linklists2,places:seq.int) trackele export
 
-function addlibmodseq(l:linklists2,s:seq.libmod) ipair.linklists2
-let x =@(addele,identity,trackele(l,empty:seq.int),s)
-    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
-    ipair(place.l.x,@(addoffset,identity,t,places.x) )
 
-function addlibsymseq(l:linklists2,s:seq.libsym) ipair.linklists2
-let x =@(addele,identity,trackele(l,empty:seq.int),s)
-    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
-    ipair(place.l.x,@(addoffset,identity,t,places.x) )
+function addrecord(l:linklists2,s:mytype) ipair.linklists2
+    addwordseq(l,towords.s)
 
-function addoffset(l:linklists2,index:int) linklists2
+Function addoffset(l:linklists2,index:int) linklists2
 linklists2(a.l+C64.packit(offsetthread.l, index),wordthread.l,place.l,wordseqthread.l)
   
-function addlibsym(l1:linklists2,sym:libsym) ipair.linklists2
+function addrecord(l1:linklists2,sym:libsym) ipair.linklists2
     let a = addwordseq(l1,returntype.sym)
    let b =addwordseq(value.a,instruction.sym)
    let l=value.b
-   let l2=linklists2(a.l+C64.packit(wordthread.l,word33.fsig.sym),place.l,offsetthread.l,wordseqthread.l)
-   let l3=linklists2(a.l2+C64.packit(offsetthread.l2, index.a),wordthread.l2,place.l2,wordseqthread.l2)
-   let l4=linklists2(a.l3+C64.packit(offsetthread.l3, index.b),wordthread.l3,place.l3,wordseqthread.l3)
-   ipair(place.l,l4)
+    ipair(place.l,l+fsig.sym+a+b )
    
 Function addliblib(lin:linklists2,t:liblib) ipair.linklists2
    let a = addwordseq(lin,libname.t)
-      let c =addlibmodseq(value.a,mods.t)
+   let c =addseq(value.a,mods.t)
    let l=value.c
-     let l5=l+a+0+c+timestamp.t+toint.readonly.t 
+   let l5=l+a+0+c+timestamp.t+toint.readonly.t 
    ipair(place.l,l5)
 
 use seq.word
 
-   
-function addlibmod(lin:linklists2,modx:libmod) ipair.linklists2
-   let a = addlibsymseq(lin,defines.modx)
-   let b =addlibsymseq(value.a,exports.modx)
+use persistantseq.libsym
+
+use persistantseq.mytype
+
+use persistantseq.libmod
+
+function addrecord(lin:linklists2,modx:libmod) ipair.linklists2
+   let a = addseq(lin,defines.modx)
+   let b =addseq(value.a,exports.modx)
    let l=value.b
      let l5=l+toint.parameterized.modx+modname.modx+a+b   
    ipair(place.l,l5)
@@ -272,9 +280,4 @@ function C64word33(a:word)int C64.word33.a
 function cast2int(s:seq.int)int builtin.NOOP
 
 ______________________________
-
-
-Function IDXUC(int, int)int builtin.IDXUC
-
-Function cast2wordseq(int)seq.word builtin.NOOP
 

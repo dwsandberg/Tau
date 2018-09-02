@@ -65,17 +65,16 @@ function getindex(alltypes:set.libtype, b:seq.mytype, data:int, f:trackflds, i:i
   trackflds(value.k, flds.f + flddesc(index.k,"CRECORD"_1), 0)
 
 Function createlib2(thedata:int, encodetype:seq.word, libname:word, dependlibs:seq.word)int 
-result.process.createlibp(thedata, encodetype, emptyliblib.libname, "")
+result.process.createlibp(thedata, encodetype,  libname )
 
 use convertlibtyp
 
-function createlibp(thedata:int, thetype:seq.word, mylib:liblib, dependlibs:seq.word)int 
- let libname = libname(mylib)_1 
+function createlibp(thedata:int, thetype:seq.word, libname:word)int 
   let symtab ="libname initlib5 words wordlist list init22"
   let discard = @(+, C, 0, symtab)
     let alltypes = asset.getalllibtypes
   let data1 = addobject2(alltypes, mytype(thetype +"seq"), createlinkedlists, thedata)
-  let liblib = addliblib( value.data1, mylib)
+  let liblib = addliblib( value.data1, emptyliblib.libname)
   let data = value.liblib 
   let words = worddata 
   let worddatatype = array(length.words + 2, i64)
@@ -130,6 +129,11 @@ function createlibp(thedata:int, thetype:seq.word, mylib:liblib, dependlibs:seq.
   createlib(llvm(deflist, bodytxts, typerecords), libname,"")
 
 
+
+
+Function IDXUC(int, int)int builtin.IDXUC
+
+Function cast2wordseq(int)seq.word builtin.NOOP
 
 
 

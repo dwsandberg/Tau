@@ -1,5 +1,8 @@
 #!/usr/local/bin/tau
 
+run main test1
+
+
 module libdescfunc
 
 use newsymbol
@@ -56,10 +59,23 @@ Function libdesc(roots:set.word, intercode:intercode,   mods:seq.firstpass, know
   let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
   let a = close(intercode, rootindices, rootindices)
   let syms = @(+, tolibsym.intercode, empty:seq.libsym, toseq.a)
+ // assert false report check.syms //
   let allmods = @(map(known), identity, mapresult(asset.syms, empty:seq.libmod), mods)
    assert true report // @(+,print,"",toseq.syms.allmods) //  
     @(+,print,"",toseq.asset.@(+,usestypes,empty:seq.mytype,toseq.syms.allmods))
    mods.allmods + libmod(false,"$other"_1, toseq.syms.allmods + typesyms, empty:seq.libsym) 
+   
+/function check(syms:seq.libsym) seq.word 
+   let x=
+    findelement( libsym(mytype."X", "wordencodingZstdlib"_1,""),syms)
+    assert length.x=1 report "??"
+    "CODE"+ instruction.x_1
+    
+     wordencodingZstdlib
+     
+     encodewordZstdlibZintzseq
+    
+function =(a:libsym,b:libsym) boolean  fsig.a=fsig.b
 
 function usestypes(s:libsym) seq.mytype
  let d=codedown.fsig.s
@@ -78,8 +94,8 @@ function typelibsyms(known:symbolset, m:seq.word)seq.libsym
   else  empty:seq.libsym
 
 function filterX(known:symbolset, typ:seq.word)seq.seq.word 
- let a = known_mangle(merge("typedesc:"+ typ), mytype."internal", empty:seq.mytype)
-  if isdefined.a then [ typ]+ typesused(src.a, 2, 2)else empty:seq.seq.word
+ let a=lookuptypedesc(known,typ)
+  if a="undefined" then empty:seq.seq.word else   [ typ]+ typesused(a, 2, 2) 
 
 function closetypes(known:symbolset, newtypes:set.seq.word, processed:set.seq.word)set.seq.word 
  let a = asset.@(+, filterX.known, empty:seq.seq.word, toseq.newtypes)

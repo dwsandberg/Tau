@@ -273,7 +273,6 @@ function setvarmapping(var:word) int
 // should change how local vars are mapped. changing from int.var to encoding.var slowed things down by have a second // 
 encoding.var
 
-function paraorder boolean false 
 
 function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap:seq.tree.seq.word, nextset:int, code:tree.seq.word)tree.seq.word 
  let inst = inst.code 
@@ -282,7 +281,7 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
   else if inst ="LOCAL"_1 
   then sets_setvarmapping.arg.code 
   else if inst ="PARAM"_1 
-  then let i = if paraorder then -1 - toint.arg.code else toint.arg.code
+  then let i = toint.arg.code
    assert i > 0 report "PARAM Problem"+print.code
    if i ≤ length.paramap then paramap_i else code 
   else if inst ="CRECORD"_1 
@@ -303,7 +302,16 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
   else let l = @(+, inline(pp, inlinename, sets, paramap, nextset), empty:seq.tree.seq.word, sons.code)
   // look for simplifications // 
   if inst ="RECORD"_1 
-  then tree(if @(∧, isconst, true, l)then"CRECORD"else label.code, l)
+  then 
+   let insts=@(+,inst,empty:set.word,l)
+     if isempty.(insts-asset."LIT CRECORD WORD WORDS FREF") then
+        if length.l > 2 &and  label.l_1="LIT 0"  &and  inst.l_2="LIT"_1 &and 
+          arg.l_2=toword(length.l-2)  &and  insts  =asset."WORD LIT"
+            &and   toseq.@(+,inst,empty:set.word,subseq(l,3,length.l))="WORD" then
+             // assert false report "HERe"+label.tt //
+          tree( @(+,arg,"WORDS "+arg.l_2,subseq(l,3,length.l)))
+      else 
+    tree("CRECORD",l )else tree(label.code, l)
   else if inst ="IDXUC"_1 ∧ inst(l_2)="LIT"_1 
   then let idx = toint.arg(l_2)
    if inst(l_1)="CRECORD"_1 
@@ -376,7 +384,7 @@ Function tailcall(t:tree.seq.word, self:word, nopara:int)tree.seq.word
  if tailcall(t, self)
   then let m = getmaxvar.t + 1 
    let s = @(+, newNode("LOCAL"_1), empty:seq.tree.seq.word, arithseq(nopara, 1, m))
-   let plist = @(+, newNode("PARAM"_1), empty:seq.tree.seq.word, if paraorder then arithseq(nopara, -1, -2) else arithseq(nopara,1,1))
+   let plist = @(+, newNode("PARAM"_1), empty:seq.tree.seq.word,  arithseq(nopara,1,1))
    tree("FINISHLOOP 2", [ tree(["LOOPBLOCK"_1, toword(nopara + 1)], plist + newNode("LIT"_1, m)), 
    tailcall(s, self, t)])
   else t
@@ -393,7 +401,7 @@ function tailcall(paramap:seq.tree.seq.word, self:word, t:tree.seq.word)tree.seq
   else if inst.t = self 
   then tree(["CONTINUE"_1, self], @(+, tailcall(paramap,"nomatch"_1), empty:seq.tree.seq.word, sons.t))
   else if inst.t ="PARAM"_1 
-  then paramap_if paraorder then -1 - toint.arg.t else toint.arg.t
+  then paramap_ toint.arg.t
   else tree(label.t, @(+, tailcall(paramap,"nomatch"_1), empty:seq.tree.seq.word, sons.t))
 
 ------paramap_(length.paramap-toint.arg.code + 1)
@@ -408,7 +416,7 @@ _____________
 function noparamangled(a:word)int length.codedown.a - 2
 
 function parainst(i:int)seq.word 
-{"PARAM"+ if paraorder then toword(-1 - i) else toword.i }
+{"PARAM"+  toword.i }
 
 function template2(term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)seq.word 
  // PARA 1 is seq PARA 2 is result LOCAL 10 is result of inner loop LOCAL 3 is seq LOCAL 2 is stk LOCAL 1 is accumulator // 

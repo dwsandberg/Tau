@@ -55,9 +55,6 @@ use textio
 
 use groupparagraphs
 
-
-
- 
 Function findlibclause(a:seq.seq.word, i:int)seq.word 
  assert i < length.a report"No Library clause found"
   let s = a_i 
