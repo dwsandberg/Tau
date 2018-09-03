@@ -22,9 +22,9 @@ Function getb(a:int)int toint(bits.a ∧ bits(halfsize - 1))
 
 type xxx is record a:address.int, t:int 
 
-Function print(a:address.int) seq.word    
+Function print(a:address.int) int  
 // added so typedesc of address.int is processed correctly  by declaring in type xxx  //
-let x=xxx(a,100) "HELLO"
+let x=xxx(a,100) 3
 
 Function relocate(ws:seq.word, d2:seq.int)address.int 
  // d2 format is [ wordthread start, offsetthread start, unused]+ actual data]// 

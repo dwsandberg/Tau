@@ -52,7 +52,10 @@ Function mods(liblib)seq.libmod export
 
 Function readonly(liblib)boolean export
 
-function =(a:libsym, b:libsym)boolean fsig.a = fsig.b
+Function =(a:libsym, b:libsym)boolean fsig.a = fsig.b
+
+Function ?(a:libsym, b:libsym)ordering fsig.a ? fsig.b
+
 
 function =(a:libmod, b:libmod)boolean modname.a = modname.b  
 

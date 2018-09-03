@@ -3,7 +3,7 @@
 run main test1
 
 
-module libdescfunc
+module libdescfuncnew
 
 use newsymbol
 
@@ -60,7 +60,7 @@ Function libdesc(roots:set.word, intercode:intercode,   mods:seq.firstpass, know
   let a = close(intercode, rootindices, rootindices)
   let syms = @(+, tolibsym.intercode, empty:seq.libsym, toseq.a)
  // assert false report check.syms //
-  let allmods = @(map(known), identity, mapresult(asset.syms, empty:seq.libmod), mods)
+  let allmods = @(map(known), identity, mapresult3(asset.syms, empty:seq.libmod), mods)
    assert true report // @(+,print,"",toseq.syms.allmods) //  
     @(+,print,"",toseq.asset.@(+,usestypes,empty:seq.mytype,toseq.syms.allmods))
    mods.allmods + libmod(false,"$other"_1, toseq.syms.allmods + typesyms, empty:seq.libsym) 
@@ -75,7 +75,7 @@ Function libdesc(roots:set.word, intercode:intercode,   mods:seq.firstpass, know
      
      encodewordZstdlibZintzseq
     
-function =(a:libsym,b:libsym) boolean  fsig.a=fsig.b
+/function =(a:libsym,b:libsym) boolean  fsig.a=fsig.b
 
 function usestypes(s:libsym) seq.mytype
  let d=codedown.fsig.s
@@ -185,34 +185,34 @@ function tolibsym(d:intercode, i:int)seq.libsym
    else"EXTERNAL"
   [ libsym(returntype.a, mangledname.a, inst)]
 
-type mapresult is record syms:set.libsym, mods:seq.libmod
+type mapresult3 is record syms:set.libsym, mods:seq.libmod
 
-type mapresult2 is record syms:set.libsym, libsyms:seq.libsym
+type mapresult32 is record syms:set.libsym, libsyms:seq.libsym
 
-function map(known:symbolset, r:mapresult, l:firstpass)mapresult 
+function map(known:symbolset, r:mapresult3, l:firstpass)mapresult3 
  if not.exportmodule.l 
   then r 
   else if isabstract.modname.l 
-  then mapresult(syms.r, mods.r + libmod(true, abstracttype.modname.l, 
+  then mapresult3(syms.r, mods.r + libmod(true, abstracttype.modname.l, 
   @(+, tolibsym4, empty:seq.libsym, toseq.defines.l), @(+, tolibsym4, empty:seq.libsym, toseq.exports.l)))
   else 
-   let d = @(findelement.known, identity, mapresult2(syms.r, empty:seq.libsym), toseq.exports.l)
-   let e = @(findelement.known, identity, mapresult2(syms.d, empty:seq.libsym), toseq.exports.l)
-  mapresult(syms.e, mods.r + libmod(false, abstracttype.modname.l, libsyms.d, libsyms.e))
+   let d = @(findelement.known, identity, mapresult32(syms.r, empty:seq.libsym), toseq.exports.l)
+   let e = @(findelement.known, identity, mapresult32(syms.d, empty:seq.libsym), toseq.exports.l)
+  mapresult3(syms.e, mods.r + libmod(false, abstracttype.modname.l, libsyms.d, libsyms.e))
 
 
 function tolibsym4(s:symbol)libsym libsym(resulttype.s, mangledname.s, src.s)
 
-function findelement(known:symbolset, r:mapresult2, s:symbol)mapresult2 
+function findelement(known:symbolset, r:mapresult32, s:symbol)mapresult32 
   let z = findelement(libsym(resulttype.s, mangledname.s,""), syms.r)
   if isempty.z 
   then let t1 = known_mangledname.s 
    let t = tolibsym4.t1 
    assert src.t1 in ["EXTERNAL"]report "ERR33"+ print2.t1 
-   mapresult2(syms.r + t, libsyms.r + t)
-  else  mapresult2(syms.r, libsyms.r + z_1)
+   mapresult32(syms.r + t, libsyms.r + t)
+  else  mapresult32(syms.r, libsyms.r + z_1)
 
-function ?(a:libsym, b:libsym)ordering fsig.a ? fsig.b
+/function ?(a:libsym, b:libsym)ordering fsig.a ? fsig.b
 
 Function tosymbol(ls:libsym)symbol 
  let d = codedown.fsig.ls 

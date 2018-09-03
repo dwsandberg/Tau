@@ -32,7 +32,7 @@ use persistant
 
 use reconstruct
 
-function addobject2(alltypes:set.libtype, a:mytype, l:linklists2, data:int)ipair.linklists2 
+Function addobject2(alltypes:set.libtype, a:mytype, l:linklists2, data:int)ipair.linklists2 
  // assert a in [ mytype."int", mytype."word", mytype."word seq", mytype."int seq seq", mytype."liblib", mytype."libtype seq",
   mytype."libtype", mytype."mytype seq", mytype."mytype", mytype."libmod seq"]report"??"+ towords.a // 
   if a = mytype."word seq"∨ a = mytype."mytype"

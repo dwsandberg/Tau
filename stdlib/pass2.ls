@@ -305,10 +305,12 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
   then 
    let insts=@(+,inst,empty:set.word,l)
      if isempty.(insts-asset."LIT CRECORD WORD WORDS FREF") then
-        if length.l > 2 &and  label.l_1="LIT 0"  &and  inst.l_2="LIT"_1 &and 
+        if length.l > 2 &and   label.l_1="LIT 0"   &and  inst.l_2="LIT"_1 &and 
           arg.l_2=toword(length.l-2)  &and  insts  =asset."WORD LIT"
-            &and   toseq.@(+,inst,empty:set.word,subseq(l,3,length.l))="WORD" then
-             // assert false report "HERe"+label.tt //
+            &and   toseq.@(+,inst,empty:set.word,subseq(l,3,length.l))="WORD" 
+                then  
+               // assert length.l > 3  &or decode(arg.l_3)_1 > 75 &or arg.l_3  in " &br  , IDXUC HASH INLINE HERe HELLO" report "HERe"+print.code  
+               +@(+,toword,"",decode.arg.l_3)  //
           tree( @(+,arg,"WORDS "+arg.l_2,subseq(l,3,length.l)))
       else 
     tree("CRECORD",l )else tree(label.code, l)

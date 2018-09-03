@@ -1,7 +1,14 @@
 Module deepcopy.T
 
-use stdlib
+Function deepcopy(T) T builtin.NOOP
 
+Function NOINLINE(T) T builtin.NOOP
+
+Function TESTOPT(T) T builtin.NOOP
+
+Function PROFILE(T) T builtin.NOOP
+
+Function FORCEINLINE(T) T builtin.NOOP
 
 Module seq(T)
 
@@ -11,9 +18,8 @@ type seq is sequence length:int, x:T
 
 type pseq is sequence length:int, a:seq.T, b:seq.T
 
-use saveencoding
 
-use process.seq.T
+use deepcopy.T
 
 use seq.T
 
@@ -23,7 +29,6 @@ use stacktrace
 
 use stdlib
 
-/use seq.word
 
 
 Function =(T, T)boolean unbound
@@ -241,18 +246,14 @@ type erecord is record deepcopy:int, invertedseqlookup:int, invertedseq:int, num
 
 `___________
 
-function cast2int(s:seq.T)int builtin.NOOP
+Function ispersistant(erecord.T) boolean export
 
-function identityf(s:seq.T)seq.T s
+Function encodingtype(erecord.T) seq.word export
 
-Function flush(s:erecord.T)seq.word 
- if ispersistant.s 
-  then let thedata = cast2int.result.process.identityf.mapping.s 
-   let b = createlib2(thedata, encodingtype.s, merge("Q"+ name.s),"")
-   {"OK"} 
-  else"Encoding is not persistant."
+Function name(erecord.T)  word export
 
-_____________-
+
+_____________
 
 type arithmeticseq is sequence length:int, step:T, start:T
 
@@ -266,11 +267,5 @@ Function_(s:arithmeticseq.T, i:int)T start.s +(i - 1)* step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 
-Function PROFILE(T)T builtin.PROFILE
 
-Function FORCEINLINE(T)T builtin.FORCEINLINE
-
-Function NOINLINE(T)T builtin.NOINLINE
-
-Function TESTOPT(T)T builtin.TESTOPT
 

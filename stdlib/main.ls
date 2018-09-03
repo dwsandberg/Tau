@@ -80,6 +80,48 @@ use seq.int
 
 use invertedseq.libsym
 
+function loadlibs(dependentlibs:seq.word, i:int, time:int)int 
+ if i > length.dependentlibs 
+  then time 
+  else let stamp = loadlibrary(dependentlibs_i)
+  assert stamp ≥ time report"library"+ dependentlibs_i +"is out of date"+ toword.time + toword.stamp 
+  loadlibs(dependentlibs, i + 1, stamp)
+
+function subcompilelib(libname:word)seq.word 
+ // PROFILE. // let discard3 = length.mapping.libsymencoding 
+  let ld = tolibdesc.libname 
+  let dependentlibs=dependentlibs.ld
+  let b = unloadlib.[ libname]
+  let discard5 = loadlibs(dependentlibs, 1, timestamp(libs_1))
+  let templatesin = @(asliblib.dependentlibs.ld, identity, emptyliblib, libs)
+  let ptext = process.pass0.ld 
+  if aborted.ptext 
+  then message.ptext 
+  else 
+   let p1a = setprivate(exports.ld, pass1a(false, result.ptext, YYY.templatesin,getlibtypes.mods.templatesin))
+  // let p = waitforpass2.p1a if aborted.p then message.p else let y1 = codegen5.result.p // 
+  let r =p1a
+    let compiled= @(+, tonewsymbol.alltypes.r, emptysymbolset,  compiled.r) 
+   let knownsymbols = @(+, tonewsymbol.alltypes.r, compiled, newcode.r ) 
+  let roots = @(∪, roots.asset.@(+, hasErecord, empty:seq.syminfo, newcode.r), empty:set.word, mods.r)
+  let mods=  @(+, tofirstpass, empty:seq.firstpass, mods.r)
+  let known2=@(+,todesc.alltypes.r,knownsymbols,toseq.alltypes.r)
+   let intercode=pass2(knownsymbols,toseq.roots, compiled)
+   let bc = codegen5(intercode,libname ,liblib([ libname],libdesc(roots,intercode,mods,known2)))
+  let z2 = createlib(bc, libname, dependentlibs)
+  "OK"
+
+
+Function compilelib(libname:word)seq.word 
+ let p1 = process.subcompilelib.libname 
+  if aborted.p1 
+  then"COMPILATION ERROR:"+ space + message.p1 
+  else let aa = result.p1 
+  if subseq(aa, 1, 1)="OK"
+  then aa 
+  else"COMPILATION ERROR:"+ space + aa
+
+
 Function main(arg:seq.int)outputformat 
  let args = towords(arg + 10 + 10)
   let libname = args_1 
@@ -134,30 +176,6 @@ use convertlibtyp
 
 use seq.firstpass
 
-function subcompilelib(libname:word)seq.word 
- // PROFILE. // let discard3 = length.mapping.libsymencoding 
-  let ld = tolibdesc.libname 
-  // if length.modules.ld = 1 ∧ length.src(modules(ld)_1)= 1 
-  then interface([ name.ld], exports.ld, dependentlibs.ld)
-  else // let b = unloadlib.[ libname]
-  let discard5 = loadlibs(dependentlibs.ld, 1, timestamp(libs_1))
-  let templatesin = @(asliblib.dependentlibs.ld, identity, emptyliblib, libs)
-  let ptext = process.pass0.ld 
-  if aborted.ptext 
-  then message.ptext 
-  else 
-   let p1a = setprivate(exports.ld, pass1a(false, result.ptext, YYY.templatesin,getlibtypes.mods.templatesin))
-  // let p = waitforpass2.p1a if aborted.p then message.p else let y1 = codegen5.result.p // 
-  let r =p1a
-    let compiled= @(+, tonewsymbol.alltypes.r, emptysymbolset,  compiled.r) 
-   let knownsymbols = @(+, tonewsymbol.alltypes.r, compiled, newcode.r ) 
-  let roots = toseq.@(∪, roots.asset.@(+, hasErecord, empty:seq.syminfo, newcode.r), empty:set.word, mods.r)
-  let mods=  @(+, tofirstpass, empty:seq.firstpass, mods.r)
-  let known2=@(+,todesc.alltypes.r,knownsymbols,toseq.alltypes.r)
-   let intercode=pass2(knownsymbols,roots, compiled)
-   let y1 = codegen5(intercode,libname ,liblib([ libname],libdesc(asset.roots,intercode,mods,known2)))
-  let z2 = createlib(y1, libname, dependentlibs.ld)
-  {"OK"}
 
 Function pass2(r:pass1result) intercode
    let compiled= @(+, tonewsymbol.alltypes.r, emptysymbolset,  compiled.r) 
@@ -178,21 +196,7 @@ use set.word
 function asliblib(s:seq.word, a:liblib, b:liblib)liblib 
  if libname(b)_1 in s then   liblib(libname.a + libname.b,  mods.a + mods.b) else a
 
-Function compilelib(libname:word)seq.word 
- let p1 = process.subcompilelib.libname 
-  if aborted.p1 
-  then"COMPILATION ERROR:"+ space + message.p1 
-  else let aa = result.p1 
-  if subseq(aa, 1, 1)="OK"
-  then aa 
-  else"COMPILATION ERROR:"+ space + aa
 
-function loadlibs(dependentlibs:seq.word, i:int, time:int)int 
- if i > length.dependentlibs 
-  then time 
-  else let stamp = loadlibrary(dependentlibs_i)
-  assert stamp ≥ time report"library"+ dependentlibs_i +"is out of date"+ toword.time + toword.stamp 
-  loadlibs(dependentlibs, i + 1, stamp)
 
 Function run(libname:word, modname:word, funcname:word)seq.word 
  let aa = compilelib.libname 

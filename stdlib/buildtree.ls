@@ -87,6 +87,8 @@ use set.arc.word
 
 use seq.arc.word
 
+use deepcopy.bld
+
 type bld is record state:int, last:word, stk:stack.tree.seq.word, hasstate:boolean
 
 function  towordsx(t:tree.seq.word) word

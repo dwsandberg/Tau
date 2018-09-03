@@ -15,7 +15,7 @@ Module tools
 
 /run tools test2
 
-/run tools stdlibdoc
+run tools stdlibdoc
 
 /run doc createdoc
 

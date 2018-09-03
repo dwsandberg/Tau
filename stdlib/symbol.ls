@@ -20,6 +20,8 @@ use seq.word
 
 use stdlib
 
+use deepcopy.callsresult
+
 Function CALLcode(info:syminfo)seq.word 
  // let inst = if name.info ="encodeword"_1 ∧ returntype.info = mytype."word"then"encodeword 1"else instruction.info // 
   let inst = instruction.info 

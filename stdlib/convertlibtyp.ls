@@ -32,7 +32,9 @@ use set.symbol
 
 use set.syminfo
 
-type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
+use other
+
+/type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
 unbound:set.symbol, exportmodule:boolean
 
 Function exportmodule(firstpass) boolean export

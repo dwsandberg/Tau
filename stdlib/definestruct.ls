@@ -89,7 +89,9 @@ Function parsesyminfo(modname:mytype, text:seq.word)syminfo
       second_1 else first
     let r= if arg1 = "EMPTYSEQ"_1 then
         "LIT 0 LIT 0 RECORD 2"
-    else if arg1 = "NOOP"_1 then ""
+    else if arg1 = "NOOP"_1 then 
+       if functionname in "FORCEINLINE NOINLINE TESTOPT PROFILE" then 
+          [functionname]+"1" else ""
     else 
        [if arg1 ="usemangle"_1 
       then mangle(funcname, mytype."builtin", @(+, mytype, empty:seq.mytype, paras))

@@ -140,6 +140,8 @@ Function checkassert(d:symdict, c:r3, t:r3, e:r3)r3
  assert types(c)_1 = mytype."boolean"report"condition in assert must be boolean in:"+ fortext.d 
   assert types(e)_1 = mytype."word seq"report"else in assert must be seq of word in:"+ fortext.d 
   r3(code.c + code.t + code.e + if bindingonly.d then"assert 3"else"assertZbuiltinZwordzseq 1 if 3", types.t, nexttemp.e)
+  
+use deepcopy.r3
 
 function addlocal(d:symdict, name:word, exp:r3, t:tree.word)r3 
  FORCEINLINE.let nexttmp = nexttemp.exp 

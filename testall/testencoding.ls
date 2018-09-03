@@ -14,6 +14,19 @@ use seq.testrecord
 
 use stdlib
 
+use persistantseq.testrecord
+
+use ipair.linklists2
+
+use persistant
+
+function addrecord(l1:linklists2, t:testrecord) ipair.linklists2
+   let a = addwordseq(l1,body.t)
+     let l=value.a
+    ipair(place.l,l+key.t+a  )
+   
+ 
+
 
 function =(a:testrecord, b:testrecord)boolean key.a = key.b
 

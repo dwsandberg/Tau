@@ -164,7 +164,6 @@ function findelement(known:symbolset, r:mapresult2, s:symbol)mapresult2
     r
   else   mapresult2(syms.r, libsyms.r + z_1)
 
-function ?(a:libsym, b:libsym)ordering fsig.a ? fsig.b
 
  
 
