@@ -106,7 +106,7 @@ let a = gettext.[ merge( [libname]+"/"+ libname +".ls")]
   let filelist = subseq(s, 2, min(u - 1, e - 1))
   let exports = subseq(s, e + 1, length.s)
    let b = unloadlib.[libname]
-   let li=if libname.last.libs="newimp" then libinfo(emptysymbolset,empty:seq.firstpass)
+   let li=if (libname.last.libs)_1 in "newimp stdlib" then libinfo(emptysymbolset,empty:seq.firstpass)
    else 
      let discard5 = loadlibs(dependentlibs, 1, timestamp(libs_1))
      addliblib(libinfo(emptysymbolset,empty:seq.firstpass),last.libs)

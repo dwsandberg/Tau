@@ -8,6 +8,10 @@ use seq.bits
 
 use stdlib
 
+use packedseq.T
+
+use packedseq.seq.T
+
 type bitpackedseq is sequence length:int, data:seq.T, part:bits
 
 function frombits(a:bits)T unbound

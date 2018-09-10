@@ -29,9 +29,13 @@ use process.seq.T
  
  use fileio
  
+ use process.seq.word
+ 
  Function flush(s:erecord.T)seq.word 
  if ispersistant.s 
-  then   createlib2(s)
+  then   
+    let p=process.createlib2(s)
+    result.p
   else"Encoding is not persistant."
 
 

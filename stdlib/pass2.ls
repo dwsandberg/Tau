@@ -50,6 +50,8 @@ Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)interc
   let statechangingfuncs = reachable(complement.callgraph.s2, hasstate.x)∩ nodes.callgraph.s2 
   // only pass on functions that can be reached from roots and are in this library // 
   let g = reachable(callgraph.s2, roots) - asset.@(+, mangledname, empty:seq.word, toseq.compiled)
+  let z = predecessors(callgraph.s2,"APPLY"_1)
+  assert isempty.z report "APPLY?"+toseq.z
   // find tail calls and constants // 
   let rr = @(+, findconstandtail(s2, statechangingfuncs), empty:seq.symbol, toseq.g)
   // assert false report @(seperator."&br &br", print2,"", rr)// 
@@ -231,7 +233,7 @@ Function simple3(inline:set.word, p:program, f:word)program
  let infunc = lookupfunc(knownsymbols.p, f)
   let oldarcs = arcstosuccessors(callgraph.p, f)
   let z = @(+, head, empty:set.word, toseq.oldarcs)∩ inline - f 
-  if isempty.z ∨"NOINLINE"_1 in flags.infunc 
+  if isempty.z  
   then p 
   else // inline may introduce new calls that are not in z so pass full set of possible inline expansions // 
   let t = inline(p, inline, dseq.tree."UNASIGNED 1", empty:seq.tree.seq.word, 1, codetree.infunc)
@@ -435,7 +437,7 @@ function checkistypechangeonly(prg:program, inlinename:set.word, term1:word, ter
   let q = codedown.term1 
   if length.q = 4 ∧ last(q_2)="seq"_1 ∧ q_1_1 ="+"_1 ∧ subseq(q, 3, length.q)= ["T seq","T"]
   then let f = lookupfunc(knownsymbols.prg, term2)
-   if nopara.f = 1 ∧ inst.codetree.f in"PARAM"
+   if nopara.f = 1 ∧ inst.codetree.f in"PARAM" &and not("NOINLINE"_1 in flags.f)
    then if inst.term3 ="CRECORD"_1 ∧ nosons.term3 = 2 ∧ "LIT 0"= label(term3_1)∧ "LIT 0"= label(term3_1)
     then // let z = [ term1, term2]+ print(term3)assert z in ["Q2BZbitszseqZTzseqZT tobitsZbitsZbit LIT 0 LIT 0 CRECORD 2","Q2BZbitszseqZTzseqZT tobitsZfileioZbyte LIT 0 LIT 0 CRECORD 2","Q2BZalphawordzseqZTzseqZT alphawordZstdlibZword LIT 0 LIT 0 CRECORD 2","Q2BZwordzseqZTzseqZT towordZstdlibZalphaword LIT 0 LIT 0 CRECORD 2","Q2BZalphawordzseqzseqZTzseqZT toalphaseqZstdlibZwordzseq LIT 0 LIT 0 CRECORD 2","Q2BZwordzseqzseqZTzseqZT towordseqZstdlibZalphawordzseq LIT 0 LIT 0 CRECORD 2","Q2BZbytezseqZTzseqZT byteZfileioZint LIT 0 LIT 0 CRECORD 2","Q2BZmytypezseqZTzseqZT mytypeZlibscopeZwordzseq LIT 0 LIT 0 CRECORD 2","Q2BZwordzarczseqZTzseqZT identityZwordzarczseqZT LIT 0 LIT 0 CRECORD 2","Q2BZsyminfozseqZTzseqZT identityZsyminfozseqZT LIT 0 LIT 0 CRECORD 2","Q2BZlibtypezarczseqZTzseqZT identityZlibtypezarczseqZT LIT 0 LIT 0 CRECORD 2","Q2BZbitzseqZTzseqZT bitZbitsZint LIT 0 LIT 0 CRECORD 2"]report"V"+ z // 
      true 

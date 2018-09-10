@@ -45,7 +45,7 @@ Function packed(s:seq.T)seq.T
    else @(+, setelement(ds, s, b), 0, arithseq(length.s, 1, 1))
   b
 
-function setelement(ds:int, s:seq.T, a:seq.T, i:int)int 
+Function setelement(ds:int, s:seq.T, a:seq.T, i:int)int 
  let d = @(setfld, fldof(s_i), getaddress(a, 2 + ds *(i - 1)), arithseq(ds, 1, 0))
   0
 

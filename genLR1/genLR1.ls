@@ -284,7 +284,7 @@ Function taurules seq.seq.seq.word
  ["F W W:T E", "tree(label.$_1, [ tree(merge([ label.$_2]+ &quot  :  &quot + print.$_4), [ $_4]), $_5]) "],
  ["F W W is W P",
  "let s=sons.result.subtrees_5 let kind=label.result.subtrees_4
- let q=if kind=  &quot  encoding  &quot _1 then    [s_1_1] else @(+,insertson.[result.subtrees_2],empty:seq.tree.word,s)
+ let q=if kind in  &quot  encoding Encoding &quot _1 then    [s_1_1] else @(+,insertson.[result.subtrees_2],empty:seq.tree.word,s)
 tree(if kind= &quot  record  &quot _1 then  &quot  struct  &quot _1 else kind, [result.subtrees_2]+q)"],
  [ "F W T" , "tree(label.$_1, [$_2])"],
  ["P T","tree( &quot  P  &quot _1, [ tree( &quot : &quot _1, [ $_1])])"], 

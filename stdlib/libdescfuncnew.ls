@@ -218,7 +218,8 @@ Function tosymbol(ls:libsym)symbol
  let d = codedown.fsig.ls 
   let modname = mytype(d_2)
   let paratypes = @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d))
-  symbol(mangle(d_1_1, modname, paratypes), mytype.returntype.ls, @(+, replaceT.parameter.modname, empty:seq.mytype, paratypes), d_1_1, modname, instruction.ls)
+  symbol(mangle(d_1_1, modname, paratypes), mytype.returntype.ls, @(+, replaceT.parameter.modname, empty:seq.mytype, paratypes), d_1_1, modname, 
+  instruction.ls)
 
 Function tofirstpass(m:libmod)firstpass 
  firstpass(mytype.if parameterized.m then"T"+ modname.m else [ modname.m], empty:seq.mytype, @(+, tosymbol, empty:set.symbol, defines.m), @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol, false)

@@ -386,14 +386,15 @@ function unaryop(op:bindinfo, exp:bindinfo, input:seq.word, place:int)bindinfo
   else let f = lookup(dict, code(op)_1, types.exp)
   assert not.isempty.f report errormessage("cannot find"+ code.op +"("+ @(seperator.",", print,"", types.exp)+")", input, place)
   assert cardinality.f = 1 ∨ code(op)_1 in"length"report"found more that one"+ @(+, print2,"", toseq.f)
+  //  assert code(op)_1 &ne "arithseq"_1 report "XX"+print.f_1 //
   bindinfo(dict, code.exp + mangledname(f_1), [ resulttype(f_1)])
 
-function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo)bindinfo 
+function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo,input:seq.word, place:int)bindinfo 
  let dict = dict.term1 
   assert abstracttype(types(term4)_1)="seq"_1 report"last term of apply must be seq"
   let sym2types = types.term2 + [ parameter(types(term4)_1)]
   let sym2 = lookup(dict, code(term2)_1, sym2types)
-  assert not.isempty.sym2 report"cannot find term2"+ code(term2)_1 +"("+ @(seperator.",", print,"", sym2types)+")"
+  assert not.isempty.sym2 report errormessage("cannot find term2"+ code(term2)_1 +"("+ @(seperator.",", print,"", sym2types)+")",input,place)
   let sym1types = types.term1 + types.term3 + [ resulttype(sym2_1)]
   let sym1 = lookup(dict, code(term1)_1, sym1types)
   assert not.isempty.sym1 report"cannot find term1"+ code(term1)_1 +"("+ @(seperator.",", print,"", sym1types)+")"+"sym2"+ print(sym2_1)
@@ -1154,7 +1155,7 @@ function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.st
    else if ruleno = // K W // 55 
    then bindinfo(dict, code.result(subtrees_1), empty:seq.mytype)
    else assert ruleno = // E @(K, K, E, E)// 56 report"invalid rule number"+ toword.ruleno 
-   apply(result(subtrees_3), result(subtrees_5), result(subtrees_7), result(subtrees_9))
+   apply(result(subtrees_3), result(subtrees_5), result(subtrees_7), result(subtrees_9),input,place)
   let leftsidetoken = [ 32, 33, 33, 33, 33, 33, 33, 40, 35, 35, 
   35, 35, 31, 31, 31, 31, 31, 31, 31, 31, 
   31, 31, 31, 31, 31, 31, 31, 31, 31, 37, 
