@@ -9,13 +9,14 @@ libdesc libdescfunc libscope llvm main opt2 oseq packedseq parse pass0 pass1a pa
   reconstruct seq set stack stacktrace stdlib textio tree   codetemplates intercode groupparagraphs codegen
   cvttoinst newsymbol pass2 persistantseq   other libdescfuncnew  main2
   
-/Library stdlib UTF8 altgen bitpackedseq bits blockseq codegen codetemplates fileio format graph groupparagraphs   internalbc  invertedseq   ipair
+/Library stdlib
+ UTF8 altgen bitpackedseq bits blockseq codegen codetemplates fileio format graph groupparagraphs   internalbc  invertedseq   ipair
  libscope llvm  oseq  packedseq pass2 persistant prims process real  reconstruct seq set stack stacktrace textio  tree    
  cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2
- uses 
+  uses 
  exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real invertedseq ipair set graph textio blockseq packedseq
- deepcopy tree fileio pass2 stack   main2
-
+ deepcopy tree fileio pass2 stack newimp2 persistant persistantseq deepcopy llvm libscope internalbc
+ 
 
 module stdlib
 

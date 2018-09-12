@@ -1,4 +1,4 @@
-Module deepcopy(T)
+Module deepcopy.T
 
 Function deepcopy(T) T builtin.NOOP
 

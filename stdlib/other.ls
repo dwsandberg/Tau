@@ -539,8 +539,11 @@ function definedeepcopy(knownsymbols:symbolset, type:mytype)symbol
 //   assert false report "ERR100"+name+"NO test example for deepcopy" //
    let a = knownsymbols_name 
    let y =subfld(src.a, 4, 0, 4)
-      // assert true report "DDD3"+src.a+"bb"+y //
-      y
+    if last.y="1"_1 then 
+      // only one element in record so type is not represent by actual record //
+      "PARAM 1 "+subseq(y,6,length.y-2)
+      else 
+    y
   symbol("deepcopy"_1, mytype(towords.type +"deepcopy"), [ mytype."T"], type, body)
   
 function subfld(desc:seq.word, i:int, fldno:int, starttype:int)seq.word 
