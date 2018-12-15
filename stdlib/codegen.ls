@@ -51,10 +51,10 @@ function funcdec(f:inst)seq.int
  let discard = C.mangledname.f 
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
   
-
+use textio
  
 Function codegen5(fs:intercode,thename:word,libdesc:liblib)seq.bits 
-  let symlist ="libname initlib5 words wordlist list profcounts profclocks profspace profrefs profstat spacecount"+ merge(thename,"$profileresult"_1)+"init22 PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
+   let symlist ="libname initlib5 words wordlist list profcounts profclocks profspace profrefs profstat spacecount"+ merge(thename,"$profileresult"_1)+"init22 PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   let wordstype = array(-1, i64)
   // let conststype = array(-2, i64)// 
   let cxx = conststype 
@@ -62,13 +62,17 @@ Function codegen5(fs:intercode,thename:word,libdesc:liblib)seq.bits
   let declist = @(+,_.coding.fs, empty:seq.inst, defines.fs)
   let discard2 = @(+, C, 0, @(+, mangledname, symlist, declist))
   let xy = table 
-  let match5map = @(buildtemplates, identity, empty:seq.match5, @(+, towords, empty:seq.seq.word, coding.fs))
+   // let zx2a=createfile("stat.txt",["in codegen0.1"]) //
+  let aa=@(+, towords, empty:seq.seq.word, coding.fs)
+    // let zx2b=createfile("stat.txt",["in codegen0.2"]+aa)  //
+  let match5map = @(buildtemplates, identity, inittemppair, aa)
+     // let zx2c=createfile("stat.txt",["in codegen0.3"])  //
   // assert false report checkmap.match5map // 
-  let bodies = @(+, addfuncdef(match5map, coding.fs, codes.fs), empty:seq.internalbc, defines.fs)
+  let bodies = @(+, addfuncdef(templates.match5map, coding.fs, codes.fs), empty:seq.internalbc, defines.fs)
   let profilearcs2 = profilearcs 
   let noprofileslots = length.profilearcs2 / 2 
   // let libsyms = @(+, tolibsym(coding.fs, codes.fs), empty:seq.libsym, defines.fs)// 
-  let liblib = addliblib( consts.last.match5map, libdesc)
+  let liblib = addliblib( consts.match5map, libdesc)
    let tmp1 = addwordseq( value.liblib , profilearcs2)
   let data= value.tmp1
   let arcs=index.tmp1

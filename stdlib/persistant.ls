@@ -49,17 +49,22 @@ use reconstruct
 
 use internalbc
 
+use textio
+
 Function createlib2(s:erecord.T) seq.word 
   let thedata = result.process.identityf.mapping.s 
   let libname=merge("Q"+ name.s)
    let symtab ="libname initlib5 words wordlist list init22"
+     //  let z1=createfile("stat.txt",["in createlib2.1"]) //
   let discard = @(+, C, 0, symtab)
   let data1=  addseq(createlinkedlists,thedata )  
   let liblib = addliblib( value.data1, emptyliblib.libname)
+       //  let z2=createfile("stat.txt",["in createlib2.2"]) //
   let data = value.liblib 
   let words = worddata 
   let worddatatype = array(length.words + 2, i64)
   let wordstype = array(2 + wordcount, i64)
+          //  let z3=createfile("stat.txt",["in createlib2.3"])//
   let conststype2 = array(length.a.data + 5, i64)
   let libnametype = array(length.decode.libname + 1, i8)
   let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])
@@ -107,6 +112,7 @@ Function createlib2(s:erecord.T) seq.word
   0], 
   // init22 // [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
   let bodytxts = [ BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib5", libnameptr, getelementptr(wordstype,"words", 0), getelementptr(worddatatype,"wordlist", 0), getelementptr(conststype2,"list", 0), getelementptr(conststype2,"list", index.liblib + 1), getelementptr(conststype2,"list", index.data1 + 1))+ RET.3]
+        //   let z4=createfile("stat.txt",["in createlib2.4"]) //
   let b=createlib(llvm(deflist, bodytxts, typerecords), libname,"")
   "OK"
 
@@ -251,6 +257,7 @@ function hash(a:const3)int length.flds.a + @(+, index, 0, flds.a)
 
 Function addconst(l:linklists2, fullinst:seq.word)ipair.linklists2 
  addconst(l, buildconsttree(fullinst, 2, empty:stack.tree.seq.word))
+ 
 
 function buildconsttree(s:seq.word, i:int, result:stack.tree.seq.word)tree.seq.word 
  if i + 1 > length.s 
@@ -363,6 +370,10 @@ Function +(l:linklists2,b:ipair.linklists2) linklists2
  
 Function addwordseq(t:linklists2, a:seq.word) ipair.linklists2
 ipair(place.t, linklists2(a.t + @(+, C64word33, [ C64.wordseqthread.t, C64.length.a], a), wordthread.t, offsetthread.t, place.t))
+
+Function addintseq(t:linklists2,s:seq.int) ipair.linklists2
+ipair(place.t, linklists2(a.t + @(+, C64, [ C64.0, C64.length.s], s), wordthread.t, offsetthread.t, wordseqthread.t))
+
 
 function C64word33(a:word)int C64.word33.a
 

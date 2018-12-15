@@ -79,7 +79,7 @@ Function flags(s:symbol)seq.word flags(src.s, length.src.s)
 function flags(src:seq.word, i:int)seq.word 
  if i = 0 
   then""
-  else if src_i in"VERYSIMPLE EXTERNAL STATE NOINLINE INLINE SIMPLE COMPLEX FORCEINLINE"
+  else if src_i in"VERYSIMPLE EXTERNAL STATE NOINLINE INLINE SIMPLE COMPLEX FORCEINLINE PROFILE"
   then flags(src, i - 1)+ src_i 
   else""
 

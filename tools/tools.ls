@@ -7,7 +7,7 @@ prettylib printbitcodes profile renamemodule svg svggraph
 
 Module tools
 
-/run tools test
+run tools test
 
 /run tools prettytest
 

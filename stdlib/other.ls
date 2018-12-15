@@ -336,7 +336,7 @@ function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsym
    let copy = deepcopymangle.encodingtype 
    let newsrc ="FREF"+ copy +"FREF"+ mangledname(lkup_1)+"FREF"+ mangledname(iadd_1)+(if name.thissymbol ="wordencoding"_1 
     then"LIT 1"
-    else"LIT 0")+"WORD"+ mangledname.thissymbol +(if code_1 ="encoding"_1 then"LIT 0"else"LIT 1")+"WORDS"+ toword.length.towords.encodingtype + towords.encodingtype +"RECORD 7 NOINLINE"
+    else"LIT 0")+"WORD"+ mangledname.thissymbol +(if code_1 ="encoding"_1 then"LIT 0"else"LIT 1") +"RECORD 6 NOINLINE"
    let new1 = known.X(mangledname(lkup_1), org, dict, modpara, templates, knownsymbols)
    let new2 = known.X(mangledname(iadd_1), org, dict, modpara, templates, new1)
    let newknown = known.X(copy, org, dict, modpara, templates, new2)
@@ -475,8 +475,7 @@ function definefld(src:seq.word, modname:mytype, t:seq.mytype, m:mytype)symbol
 function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass 
  // assert print.modname.f in ["?","stdlib","UTF8","altgen"]∨(print.modname.f ="bitpackedseq.T"∧ cardinality.defines.f + cardinality.unbound.f < 8)report print.modname.f + printdict.unbound.f // 
   if input in ["Function sizeoftype T builtin.TYPESIZE", 
-  "type encoding", 
-   "Function deepcopy(T)T builtin.DEEPCOPY"]
+  "type encoding"]
   then f 
   else if length.input = 0 
   then f 
@@ -527,22 +526,28 @@ function definedeepcopy(knownsymbols:symbolset, type:mytype)symbol
  let body = if  abstracttype.type in"encoding int word"
    then"PARAM 1"
    else 
-   // assert print.type in ["match5","seq.int","llvmconst","match5","inst","libsym","llvmtype","word3","const3","seq.word","stat5","seq.flddesc"] report "DDD"+print.type
-  // if abstracttype.type ="seq"_1 
+    // assert length.print.type = 1 &or print.type in ["match5","seq.int","llvmconst","match5","inst","libsym","llvmtype","word3",
+     "const3","seq.word","stat5","seq.flddesc","flddesc","seq.templatepart","templatepart","set.mod2desc"] report "DDD"+print.type //
+    if abstracttype.type ="seq"_1 
    then let typepara = parameter.type 
     let dc = deepcopymangle.typepara 
     let pseqidx = mangle("_"_1, type, [ mytype."T pseq", mytype."int"])
     let cat = mangle("+"_1, type, [ mytype."T seq", mytype."T"])
-    let blockit = mangle("blockit"_1, mytype(towords.typepara +"blockseq"), [ mytype."T seq"])
+    let blockit = mangle("blockit"_1, mytype("int blockseq"), [ mytype."T seq"])
     {"LIT 0 LIT 0 RECORD 2 PARAM 1 FREF"+ dc +"FREF"+ cat +"FREF"+ pseqidx +"APPLY 5"+ blockit } 
    else let name = mangle(merge("typedesc:"+ print.type), mytype."internal", empty:seq.mytype)
 //   assert false report "ERR100"+name+"NO test example for deepcopy" //
    let a = knownsymbols_name 
-   let y =subfld(src.a, 4, 0, 4)
+       // assert not( name in "typedescQ3Amatch5Zinternal") report "ERR1002"+name+src.a +"<<>"+toword.length.print.type //
+    // assert length.print.type =1 &or  print.type in [ "set.mod2desc"]  
+    report "DDDDD"+print.type+if isdefined.a then "OK"+src.a else "U" //
+     assert length.print.type =1 report "ERR 234"+[name]
+ let y =subfld(src.a, 4, 0, 4)
     if last.y="1"_1 then 
       // only one element in record so type is not represent by actual record //
       "PARAM 1 "+subseq(y,6,length.y-2)
       else 
+          // assert not( name in "typedescQ3Amatch5Zinternal") report "ERR1002"+name+src.a  +"&br"+y //
     y
   symbol("deepcopy"_1, mytype(towords.type +"deepcopy"), [ mytype."T"], type, body)
   

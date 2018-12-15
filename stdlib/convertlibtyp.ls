@@ -53,9 +53,6 @@ function tosymbol(ls: syminfo)symbol
   symbol(mangled.ls,   returntype.ls, @(+, replaceT.parameter.modname.ls, empty:seq.mytype, paratypes.ls), 
   name.ls, modname.ls, instruction.ls)
 
-Function getalllibtypes seq.libtype
-  let m=  @(+,mods,empty:seq.libmod,  libs )
-    toseq.asset.getlibtypes.@(+,defines,empty:seq.libsym,m)
 
 
 Function  todesc(alltypes:set.libtype,l:libtype) symbol

@@ -4,7 +4,6 @@ use cvttoinst
 
 use newsymbol
 
-
 use bits
 
 use graph.word
@@ -77,6 +76,8 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
   
 function addsymbol(p:program, mangledname:word)program 
   let caller= knownsymbols(p)_mangledname
+    // assert not(mangledname="test4Ztest4"_1) report    src.caller +"FLAGS"+flags.caller //
+   // assert not(mangledname="PROFILE"_1) report "XXX"+mangledname //
    // assert length.src.caller > 0 report"Error"+ mangledname + print2.caller //
   if isdefined.caller &and label.codetree.caller = "default"
   then 

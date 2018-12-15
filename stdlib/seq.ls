@@ -1,14 +1,14 @@
 Module deepcopy.T
 
-Function deepcopy(T) T builtin.NOOP
+Function deepcopy(a:T) T deepcopy(a)
 
-Function NOINLINE(T) T builtin.NOOP
+Function NOINLINE(a:T) T builtin.NOOP
 
-Function TESTOPT(T) T builtin.NOOP
+Function TESTOPT(a:T) T builtin.NOOP
 
-Function PROFILE(T) T builtin.NOOP
+Function PROFILE(a:T) T builtin.NOOP
 
-Function FORCEINLINE(T) T builtin.NOOP
+Function FORCEINLINE(a:T) T builtin.NOOP
 
 Module seq(T)
 

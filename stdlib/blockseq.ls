@@ -12,9 +12,6 @@ use stdlib
 
 type blockseq is sequence length:int, blocksize:int, data:seq.seq.T
 
-Function deepcopy(T)T builtin.DEEPCOPY
-
-
 Function blockit(s:seq.T)seq.T 
  let blocksize = 10000 / sizeoftype:T 
   if length.s ≤ blocksize 

@@ -36,14 +36,13 @@ function wordstype encoding.llvmtype array(-1, i64)
 
 Function conststype encoding.llvmtype array(-2, i64)
 
-type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, consts:linklists2
+type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int
 
 
 use blockseq.word
 
 use blockseq.templatepart
 
-Function consts(match5)linklists2 export
 
 Function length(match5)int export
 
@@ -101,11 +100,11 @@ Function table seq.match5
   match5("setfldZbuiltinZTzaddressZT"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ STORE(2, -1, ibcsub2, align8, 0)+ GEP(2, 1, typ.i64, -1, C64.1)+ CAST(3, -2, typ.i64, 9)), 
   match5("STKRECORD"_1, 3, ALLOCA(1, typ.ptr.i64, typ.i64, C64.2, 0)+ STORE(2, -1, ibcsub1, align8, 0)+ GEP(2, 1, typ.i64, -1, C64.1)+ STORE(3, -2, ibcsub2, align8, 0)+ CAST(3, -1, typ.i64, CASTPTRTOINT)), 
   match5("CALLIDX"_1, 2, CAST(1, ibcsub1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)+ CALL(2, 0, 32768, typ.function.[ i64, i64, i64, i64], -1, ibcfirstpara2, ibcsub2, ibcsub3)), 
-  match5("if 3", 0, empty:seq.templatepart,"SPECIAL"_1, 0, createlinkedlists), 
-  match5("if 4", 0, empty:seq.templatepart,"SPECIAL"_1, 0, createlinkedlists), 
-  match5("MRECORD 2", 0, empty:seq.templatepart,"SPECIAL"_1, 0, createlinkedlists), 
-  match5("THENBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0, createlinkedlists), 
-  match5("ELSEBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0, createlinkedlists)]
+  match5("if 3", 0, empty:seq.templatepart,"SPECIAL"_1, 0 ), 
+  match5("if 4", 0, empty:seq.templatepart,"SPECIAL"_1, 0 ), 
+  match5("MRECORD 2", 0, empty:seq.templatepart,"SPECIAL"_1, 0 ), 
+  match5("THENBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0 ), 
+  match5("ELSEBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0 )]
   let discard = @(+, addit, 0, t)
   t
 
@@ -115,29 +114,47 @@ function addit(m:match5)int encoding.encode(m, ematch5)
 function match5(inst:word, length:int, b:internalbc)match5 
  let parts = getparts.b 
   let nopara = @(max, parano, 0, parts)
-  match5([ inst, toword.nopara], length, parts,"TEMPLATE"_1, nopara, createlinkedlists)
+  match5([ inst, toword.nopara], length, parts,"TEMPLATE"_1, nopara)
 
-Function buildtemplates(s:seq.match5, fullinst:seq.word)seq.match5 
- let lastconsts = if length.s = 0 then createlinkedlists else consts.last.s 
-  let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0, lastconsts)
+use textio
+
+type temppair  is record templates:seq.match5, consts:linklists2
+
+Function templates(temppair) seq.match5 export
+
+Function consts(temppair) linklists2 export
+
+
+Function inittemppair temppair temppair(empty:seq.match5,createlinkedlists)
+
+Function buildtemplates(p:temppair,fullinst:seq.word) temppair
+  let s = templates.p
+  let lastconsts = consts.p
+  // let z10=createfile("stat.txt",[fullinst]+"start") //
+  let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
   let b = findencode(a, ematch5)
-  s + if length.b = 0 
+  if length.b = 0 
    then let inst = fullinst_1 
     let instarg = fullinst_2 
     let m = if inst ="FREF"_1 
-     then match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]), lastconsts)
+     then 
+       temppair(s+match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]))
+       ,lastconsts)
      else if inst ="LIT"_1 
-     then match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg, lastconsts)
+     then temppair(s+match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg),lastconsts)
      else if inst ="LOCAL"_1 
-     then match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg, lastconsts)
+     then temppair(s+match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg),lastconsts)
      else if inst in"PARAM FIRSTVAR"
-     then match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg, lastconsts)
+     then temppair(s+match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg),lastconsts)
      else if inst in"CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE MSET"
-     then match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0, lastconsts)
+     then temppair(s+match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0),lastconsts)
      else if inst  in "CONSTANT WORDS"  
-     then let tt =if inst="CONSTANT"_1 then  addconst(lastconsts, fullinst) else addwordseq(lastconsts,subseq(fullinst,3,length.fullinst))
+     then 
+      let tt =if inst="CONSTANT"_1 then  addconst(lastconsts, fullinst) else addwordseq(lastconsts,subseq(fullinst,3,length.fullinst))
       let newcode = GEP(1, 1, typ.conststype, C."list", C64.0, C64(index.tt + 1))+ CAST(2, -1, typ.i64, 9)
-      match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1, 0, value.tt)
+      let r=match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1, 0)
+      // let z11=createfile("stat.txt",[fullinst]+"finish 3")  //
+      temppair(s+r,value.tt)
      else if inst ="WORD"_1 
      then let aa = C(ptr.i64, [ CONSTGEP, 
       typ.wordstype, 
@@ -147,18 +164,48 @@ Function buildtemplates(s:seq.match5, fullinst:seq.word)seq.match5
       C32.0, 
       typ.i64, 
       C64(word33.instarg + 1)])
-      match5(fullinst, 1, getparts.LOAD(1, aa, typ.i64, align8, 0),"TEMPLATE"_1, 0, lastconsts)
+      temppair(s+match5(fullinst, 1, getparts.LOAD(1, aa, typ.i64, align8, 0),"TEMPLATE"_1, 0),lastconsts)
      else let noargs = toint.instarg 
-     let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
-     match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs, lastconsts)
-    let discard = encode(m, ematch5)
+      let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
+      temppair(s+match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs),lastconsts)
+      // let x =  if fullinst="CONSTANT LIT 4 WORD 45 CRECORD 2" then
+             let y0=deepcopy.match5(fullinst,  length.m, parts.m,action.m, arg.m, lastconsts)
+             assert not(fullinst="CONSTANT LIT 4 WORD 45 CRECORD 2") report "HERE3" 
+          ""
+          else "" //
+   // type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, consts:linklists2
+ //
+    let discard = encode(last.templates.m, ematch5)
+      // let z13=createfile("stat.txt",[fullinst]+"after encode")  //
     m 
-   else let t = b_1 
-   match5(fullinst.t, length.t, parts.t, action.t, arg.t, lastconsts)
+   else // already have a match5 //
+    temppair(s+b_1,lastconsts)
+   
 
-Function checkmap(s:seq.match5)seq.word @(+, hjk,"", s)
+/Function deepcopy2(m:match5) match5 
+let y0=deepcopy.fullinst.m
+             let y1=deepcopy.length.m
+             let y2 = deepcopy.parts.m 
+             let y3= deepcopy.action.m
+             let y4=deepcopy.arg.m
+             let y5=deepcopy.consts.m
+              match5(y0,y1,y2,y3,y4,y5)
+   
+use deepcopy.match5
 
-function hjk(m:match5)seq.word [ inst.m, toword.length.a.consts.m]
+use deepcopy.word
+
+use deepcopy.seq.word
+
+use deepcopy.int
+
+use deepcopy.linklists2
+
+use deepcopy.seq.templatepart
+
+/Function checkmap(s:seq.match5)seq.word @(+, hjk,"", s)
+
+/function hjk(m:match5)seq.word [ inst.m, toword.length.a.consts.m]
 
 Function ematch5 erecord.match5 export
 
@@ -176,15 +223,15 @@ Function CASTPTRTOINT int 9
 
 Function CASTINTTOPTR int 10
 
-/type pp is record idx:int, val:int
+type pp is record idx:int, val:int
 
-/function getvbr(a:seq.bit, idx:int, size:int)pp getvbr(a, size, bits.0, 0, idx, 0)
+function getvbr(a:seq.bit, idx:int, size:int)pp getvbr(a, size, bits.0, 0, idx, 0)
 
-/function getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp let b = toint(a_(idx + i))if i = size-1 then if b = 0 then pp(idx + size, toint.val)else getvbr(a, size, val, nobits, idx + size, 0)else getvbr(a, size, bits.b << nobits ∨ val, nobits + 1, idx, i + 1)
+function getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp let b = toint(a_(idx + i))if i = size-1 then if b = 0 then pp(idx + size, toint.val)else getvbr(a, size, val, nobits, idx + size, 0)else getvbr(a, size, bits.b << nobits ∨ val, nobits + 1, idx, i + 1)
 
-/function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, abbrvlen:int)seq.seq.int if length.r > 0 then // working on record // if noargs = 0 then getinfo(b, 0, empty:seq.int, idx, recs + r, abbrvlen)else let next = getvbr(b, idx, 6)getinfo(b, noargs-1, r + val.next, idx.next, recs, abbrvlen)else let t = getvbr(b, abbrvlen, bits.0, 0, idx, 0)if val.t = 3 then // record // let inst = getvbr(b, idx.t, 6)let args = getvbr(b, idx.inst, 6)getinfo(b, val.args, [ val.inst], idx.args, recs, abbrvlen)else recs
+function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, abbrvlen:int)seq.seq.int if length.r > 0 then // working on record // if noargs = 0 then getinfo(b, 0, empty:seq.int, idx, recs + r, abbrvlen)else let next = getvbr(b, idx, 6)getinfo(b, noargs-1, r + val.next, idx.next, recs, abbrvlen)else let t = getvbr(b, abbrvlen, bits.0, 0, idx, 0)if val.t = 3 then // record // let inst = getvbr(b, idx.t, 6)let args = getvbr(b, idx.inst, 6)getinfo(b, val.args, [ val.inst], idx.args, recs, abbrvlen)else recs
 
-/function astext2(a:seq.int)seq.word"["+ @(+, toword,"", a)+"]"
+function astext2(a:seq.int)seq.word"["+ @(+, toword,"", a)+"]"
 
-/Function astext(a:bitpackedseq.bit)seq.word // @(+, toword,"", @(+, toint, empty:seq.int, toseq.a))+"&br"+ // let recs = getinfo(toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)@(seperator("&br"), astext2,"", recs)
+Function astext(a:bitpackedseq.bit)seq.word // @(+, toword,"", @(+, toint, empty:seq.int, toseq.a))+"&br"+ // let recs = getinfo(toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)@(seperator("&br"), astext2,"", recs)
 

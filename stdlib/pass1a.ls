@@ -74,7 +74,6 @@ Function findsymbol(d:symdict, w:word, types:seq.mytype)syminfo
    else"Symbol"+ formatcall(w, types)+"NOT FOUND in:"+ fortext.d 
   e_1
 
-function noparameters(s:syminfo)int length.paratypes.s
 
 Function findseqindexfunction(d:symdict, type:mytype)syminfo 
  let sym = findsymbol(d,"_"_1, [ type, mytype."int"])
@@ -220,10 +219,7 @@ Function bind(d:symdict, t:tree.word, nexttmp:int)r3
     r3(code.c +"process 1", [ types(c)_1 +"process"_1], nexttemp.c)
    else let l = bindsonslist(d, t_1, nexttmp)
    let sym = findsymbol(d, label(t_1), @(+, types, empty:seq.mytype, l))
-   let noargs = noparameters.sym 
-   r3(FREFcode.finddeepcopyfunction.returntype.sym + 
-   FREFcode.finddeepcopyfunction.mytype."word seq"+ FREFcode.sym +"LIT"+ toword.noargs + @(+, code,"", l)+
-   "RECORD"+ toword(noargs + 4)+"PROCESS2 1", [ returntype.sym +"process"_1], nexttemp(l_length.l))
+   r3(processcode(sym,@(+, code,"", l)),[ returntype.sym +"process"_1], nexttemp(l_length.l))
   else if nosons.t = 0 
   then find(d, label.t, bindsonslist(d, t, nexttmp))
   else if label.t ="makereal"_1 ∧ nosons.t = 2 ∧ isnumber.label(t_1)∧ isnumber.label(t_2)
@@ -232,6 +228,8 @@ Function bind(d:symdict, t:tree.word, nexttmp:int)r3
    else r3("LIT"+ toword.representation.makereal(toint.label(t_1), toint.label(t_2)), [ mytype."real"], nexttmp)
   else let l = bindsonslist(d, t, nexttmp)
   find(d, label.t, l)
+  
+use symbol
 
 Function checkapplyA(d:symdict, t:tree.word, nexttmp:int)r3 
  FORCEINLINE.assert nosons.t = 4 report"apply must have 4 terms"+ fortext.d 

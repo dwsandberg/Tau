@@ -36,56 +36,65 @@ Function FREFcode(info:syminfo)seq.word
   then ["FREFB"_1, mangled.info]
   else ["FREF"_1, mangled.info]
 
-Function finddeepcopyfunction(type:mytype)syminfo 
- let a = syminfo("deepcopy"_1, mytype."T blockseq", [ mytype."T"], mytype."T","DEEPCOPY 1")
-  if mytype."T"= type 
-  then a 
-  else changeinstruction(replaceTsyminfo(type, a),"USECALL")
+  
+function FREFdeepcopy(type:mytype) seq.word
+ { if isabstract.type then "FREFB" else "FREF" }+mangle("deepcopy"_1, mytype(towords.type+"deepcopy"), [ mytype."T"])
+  
+function CALLdeepcopy(type:mytype) seq.word
+  { if isabstract.type then "CALLB 1" else "CALL 1" }+mangle("deepcopy"_1, mytype(towords.type+"deepcopy"), [ mytype."T"])
 
-Function invertedseqadd(type:mytype)syminfo 
- replaceTsyminfo(type, syminfo("add"_1, mytype."T invertedseq", [ mytype."T invertedseq", mytype."int", mytype."T"], mytype."T invertedseq","USECALL"))
 
-Function invertedseqlookup(type:mytype)syminfo 
+function invertedseqadd(type:mytype) seq.word
+ { if isabstract.type then "FREFB" else "FREF" }+mangle("add"_1, mytype(towords.type+"invertedseq"), [ mytype."T invertedseq", mytype."int", mytype."T"])
+
+
+function invertedseqlookup(type:mytype) seq.word
+ { if isabstract.type then "FREFB" else "FREF" }+mangle("lookup"_1, mytype(towords.type+"invertedseq"), [ mytype."T", mytype."T invertedseq"])
+
  replaceTsyminfo(type, syminfo("lookup"_1, mytype."T invertedseq", [ mytype."T", mytype."T invertedseq"], mytype."int","USECALL"))
+ 
 
-Function blockitfunc syminfo 
- replaceTsyminfo(mytype."int", syminfo("blockit"_1, mytype."T blockseq", [ mytype."T seq"], mytype."T seq","USECALL"))
-
-Function pseqidxfunc(type:mytype)syminfo 
- replaceTsyminfo(type, syminfo("_"_1, mytype."T seq", [ mytype."T pseq", mytype."int"], mytype."T","USECALL"))
-
-Function catfunc(type:mytype)syminfo 
- replaceTsyminfo(type, syminfo("+"_1, mytype."T seq", [ mytype."T seq", mytype."T"], mytype."T seq","USECALL"))
 
 Function deepcopybody(alltypes:set.libtype, type:mytype)seq.word 
  if type = mytype."int"∨ abstracttype.type ="encoding"_1 
   then"PARAM 1"
   else if abstracttype.type ="seq"_1 
   then let typepara = parameter.type 
-   let dc = FREFcode.finddeepcopyfunction.typepara 
-   let xx = FREFcode.pseqidxfunc.typepara 
-   let cat = FREFcode.catfunc.type 
-   let blockit = CALLcode.blockitfunc 
-   {"LIT 0 LIT 0 RECORD 2 PARAM 1"+ dc + cat + xx +"APPLY 5"+ blockit } 
+   let pseqidx =  { if isabstract.type then "FREFB" else "FREF" }+mangle("_"_1, mytype(towords.type+"seq"),  [ mytype."T pseq", mytype."int"])
+  let cat =
+    { if isabstract.type then "FREFB" else "FREF" }+mangle("+"_1, mytype(towords.type+"seq"), [ mytype."T seq", mytype."T"])
+   let blockit =   { if isabstract.type then "CALLB 1" else "CALL 1" }+
+   mangle("blockit"_1, mytype(" int blockseq"), [  mytype."T seq"])
+    {"LIT 0 LIT 0 RECORD 2 PARAM 1"+ FREFdeepcopy.typepara  + cat + pseqidx +"APPLY 5"+ blockit } 
   else let subs = deepcopytypes2(alltypes, type)
   if length.subs = 0 
   then"PARAM 1"
   else if length.subs = 1 
   then if subs_1 = type 
    then"PARAM 1"
-   else"PARAM 1"+ CALLcode.finddeepcopyfunction(subs_1)
+   else"PARAM 1"+ CALLdeepcopy(subs_1)
   else @(+, subfld.subs, empty:seq.word, arithseq(length.subs, 1, 1))+"RECORD"+ toword.length.subs
 
-Function subfld(subs:seq.mytype, i:int)seq.word 
- {"PARAM 1 LIT"+ toword(i - 1)+"IDXUC 2"+ CALLcode.finddeepcopyfunction(subs_i)}
+function subfld(subs:seq.mytype, i:int)seq.word 
+ {"PARAM 1 LIT"+ toword(i - 1)+"IDXUC 2"+ CALLdeepcopy(subs_i)}
 
 Function codingrecord(sym:syminfo)seq.word 
  let encodingtype = parameter.returntype.sym 
-  let l2 = length.towords.encodingtype 
-  let codefortype = @(+, +."WORD","LIT 0 LIT"+ toword.l2, towords.encodingtype)+"RECORD"+ toword(l2 + 2)
-  FREFcode.finddeepcopyfunction.encodingtype + FREFcode.invertedseqlookup.encodingtype + FREFcode.invertedseqadd.encodingtype +(if name.sym ="wordencoding"_1 then"LIT 1"else"LIT 0")+"WORD"+ mangled.sym +(if instruction(sym)_1 ="ERECORD"_1 
+ let invertedseqadd=
+ { if isabstract.encodingtype then "FREFB" else "FREF" }+mangle("add"_1, mytype(towords.encodingtype+"invertedseq"), [ mytype."T invertedseq", mytype."int", mytype."T"])
+let invertedseqlookup=
+ { if isabstract.encodingtype then "FREFB" else "FREF" }+mangle("lookup"_1, mytype(towords.encodingtype+"invertedseq"), [ mytype."T", mytype."T invertedseq"])
+  FREFdeepcopy.encodingtype +invertedseqlookup + invertedseqadd +(if name.sym ="wordencoding"_1 then"LIT 1"else"LIT 0")+"WORD"+ mangled.sym +(if instruction(sym)_1 ="ERECORD"_1 
    then"LIT 0"
-   else"LIT 1")+ codefortype +"RECORD 7 NOINLINE 1"
+   else"LIT 1") +"RECORD 6 NOINLINE 1"
+   
+Function noparameters(s:syminfo)int length.paratypes.s
+
+   
+Function processcode(sym:syminfo,pcode:seq.word) seq.word 
+let noargs = noparameters.sym FREFdeepcopy.returntype.sym + 
+   FREFdeepcopy.mytype."word seq"+ FREFcode.sym +"LIT"+ toword.noargs + pcode+
+   "RECORD"+ toword(noargs + 4)+"PROCESS2 1"
 
 type callsresult is record state:int, result:set.word
 
@@ -117,7 +126,9 @@ Function compileinstance(alltypes:set.libtype, lookup:set.syminfo, w:word)seq.sy
   else let manglep = mangle(protoname.info, mytype("T"+ abstracttype.modname.info), protoparatypes.info)
   let lc = decode(encode(libsym(mytype."?", manglep,""), libsymencoding), libsymencoding)
   assert not("UNBOUND"_1 in instruction.lc)report"U2"+ w 
-  let inst = funcfrominstruction(alltypes, removeB(alltypes, lookup, modname.info, instruction.lc, 1), replaceT(parameter.modname.info, returntypeold.lc), length.paratypes.info)
+   let inst=
+     if abstracttype.modname.info = "deepcopy"_1 &and name.info="deepcopy"_1 then "USECALL"+ deepcopybody(alltypes, parameter.modname.info)
+  else   funcfrominstruction(alltypes, removeB(alltypes, lookup, modname.info, instruction.lc, 1), replaceT(parameter.modname.info, returntypeold.lc), length.paratypes.info)
   let x = changeinstruction(replaceTsyminfo(parameter.modname.info, syminfo.lc), inst)
   let b = encode(libsym(returntype.x, mangled.x, instruction.x), libsymencoding)
   @(+, compileinstance(alltypes, lookup), [ x], toseq.calls.x)
@@ -153,9 +164,9 @@ function removeB(alltypes:set.libtype, lookup:set.syminfo, modname:mytype, w:seq
   then let k = toword(LIT.sizeoftype(alltypes, parameter.modname)* toint(w_(i + 1))+ toint(w_(i - 1)))
    let new = subseq(w, 1, i - 2)+ k + subseq(w, i + 2, length.w)
    removeB(alltypes, lookup, modname, new, i)
-  else if w_i ="DEEPCOPY"_1 
+  else // if w_i ="DEEPCOPY"_1 
   then"USECALL"+ deepcopybody(alltypes, parameter.modname)
-  else if w_i ="BUILDSEQ"_1 
+  else // if w_i ="BUILDSEQ"_1 
   then let name ="_"_1 
    let paras = [ mytype(towords.parameter.modname + w_(i + 2)), mytype."int"]
    let e = findelement2(lookup, syminfo(name, paras))

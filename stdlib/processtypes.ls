@@ -63,7 +63,12 @@ function addnodup(a:set.libtype, b:libtype)set.libtype
   assert cardinality.c > cardinality.a report"type"+ print.fortype.b +"is defined twice"
   c
 
+use textio
+
+use seq.seq.word
+
 Function assigntypesizes(f:seq.libtype)set.libtype 
+ let zx1=createfile("typesizes.txt", @(+,  print,empty:seq.seq.word,f))
  let init = empty:seq.libtype 
   let a = @(addnodup, identity, asset.init, f)+ libtype("T"_1, false,"struct"_1, empty:seq.mytype, offset.0,"")
   // assert false report @(lines, print,"", toseq.a)// 

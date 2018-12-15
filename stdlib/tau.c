@@ -131,21 +131,18 @@ int looklibraryname(char* name) { int i;
     }
    return -1;}
 
-void closelibs ( int libidx) { int i;
-  for(  i=loaded[1]-1; i>=libidx;i--){ char lib_name[100];
-   sprintf(lib_name,"%s.dylib",libnames[i+2]);
-    void *lib_handle =dlopen(lib_name,RTLD_NOW);dlclose(lib_handle);
-     fprintf(stderr,"close %s %d\n",libnames[i+2], dlclose(lib_handle) );
-  }
-  loaded[1]=libidx;
-}
-
 
 BT unloadlibZbuiltinZUTF8(processinfo PD,BT p_libname){char *libname=(char *)&IDXUC(p_libname,2);
 int libidx = looklibraryname(libname);
 // fprintf(stderr,"unload library %s %d\n",libname,libidx);
 if (libidx > 0 ) {
-  closelibs(libidx);
+   int i;
+   for(  i=loaded[1]-1; i>=libidx;i--){ char lib_name[100];
+   sprintf(lib_name,"%s.dylib",libnames[i+2]);
+    void *lib_handle =dlopen(lib_name,RTLD_NOW);dlclose(lib_handle);
+     fprintf(stderr,"close %s %d\n",libnames[i+2], dlclose(lib_handle) );
+  }
+  loaded[1]=libidx;
    } 
 return 0; 
 }
@@ -339,7 +336,7 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
     ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
     strcpy(libnames[i+2],libname);
     }
-//   fprintf(stderr,"finish initlib4  \n");
+  fprintf(stderr,"finish initlib5  \n");
  return 0;
   
 }
@@ -477,7 +474,7 @@ char *name=(char *)&IDXUC(funcname,2);
       
       fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
      
-       BT (*towords)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"towordsZfileresultZintzseq"); 
+       BT (*towords)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"towordsZtextioZintzseq"); 
        if (!towords) {
           fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
           exit(EXIT_FAILURE); return 1;

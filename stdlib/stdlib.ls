@@ -1,21 +1,23 @@
 #!/usr/local/bin/tau
 
-Library stdlib UTF8 altgen bitpackedseq bits blockseq buildtree codegen codetemplates definestruct display fileio format graph groupparagraphs internalbc invertedseq ipair 
-libdesc libdescfunc libscope llvm main opt2 oseq packedseq parse pass0 pass1a pass2 passcommon persistant pretty prims process processtypes real reconstruct seq set stack stacktrace symbol textio tree 
-  cvttoinst newsymbol convertlibtyp newparse other intercode libdescfuncnew  main2
+Library stdlib UTF8 altgen bitpackedseq bits blockseq 
+codegen codetemplates   fileio format graph groupparagraphs internalbc invertedseq ipair 
+libscope llvm   oseq packedseq  pass2  persistant  prims process  real reconstruct seq set stack stacktrace  textio tree 
+cvttoinst newsymbol newparse other intercode libdescfuncnew  main2
+  buildtree definestruct display libdesc libdescfunc opt2 parse pass0 pass1a passcommon pretty symbol convertlibtyp main processtypes 
  uses 
  exports UTF8 bitpackedseq bits blockseq  display fileio format graph internalbc
   invertedseq ipair libdesc libscope llvm main oseq passcommon persistant prims process real 
   reconstruct seq set stack stacktrace stdlib textio tree   codetemplates intercode groupparagraphs codegen
-  cvttoinst newsymbol pass2 persistantseq   other libdescfuncnew  main2
+  cvttoinst newsymbol pass2 persistantseq   other libdescfuncnew  main2 deepcopy
   
-/Library stdlib
- UTF8 altgen bitpackedseq bits blockseq codegen codetemplates fileio format graph groupparagraphs   internalbc  invertedseq   ipair
+/Library stdlib UTF8 altgen bitpackedseq bits blockseq 
+codegen codetemplates fileio format graph groupparagraphs   internalbc  invertedseq   ipair
  libscope llvm  oseq  packedseq pass2 persistant prims process real  reconstruct seq set stack stacktrace textio  tree    
  cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2
   uses 
- exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real invertedseq ipair set graph textio blockseq packedseq
- deepcopy tree fileio pass2 stack newimp2 persistant persistantseq deepcopy llvm libscope internalbc
+  exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real invertedseq ipair set graph textio blockseq packedseq
+ deepcopy tree fileio pass2 stack newimp2 persistant persistantseq deepcopy llvm libscope internalbc format bits
  
 
 module stdlib
@@ -343,5 +345,5 @@ Function alphasort(a:seq.seq.word)seq.seq.word
 
 * usegraph include real oseq textio UTF8 prims stacktrace libscope tree seq blockseq graph ipair invertedseq process stack set oseq packedseq format groupparagraphs fileio
 
-* usegraph include libscope display constant codegen convert altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs etype codetemplates core sid pretty pass2 persistant libdesc passcommon main parts llvm reconstruct exclude seq set oseq stdlib tree graph UTF8 stack stacktrace real process libscope ipair
+* usegraph include main2 other libscope display constant codegen convert altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs etype codetemplates core sid pretty pass2 persistant libdesc passcommon main parts llvm reconstruct exclude seq set oseq stdlib tree graph UTF8 stack stacktrace real process libscope ipair
 

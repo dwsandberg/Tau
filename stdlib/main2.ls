@@ -1,16 +1,3 @@
-#!/usr/local/bin/tau
-
-Library newimp     
- uses stdlib
- exports main newimp
-
-
-
-Module newimp
-
-* usegraph exclude seq
-
-
 Module main2
 
 use stdlib
@@ -87,6 +74,9 @@ use process.seq.word
  use process.liblib
  
   use set.firstpass
+  
+  use textio
+
 
   function loadlibs(dependentlibs:seq.word, i:int, time:int)int 
  if i > length.dependentlibs 
@@ -95,9 +85,10 @@ use process.seq.word
   assert stamp ≥ time report"library"+ dependentlibs_i +"is out of date"+ toword.time + toword.stamp 
   loadlibs(dependentlibs, i + 1, stamp)
 
-
+ use deepcopy.seq.word
  
  function subcompilelib(libname:word) seq.word
+//  PROFILE. //
 let a = gettext.[ merge( [libname]+"/"+ libname +".ls")]
   let s = findlibclause(a, 1)
   let u = findindex("uses"_1, s, 3)
@@ -106,18 +97,20 @@ let a = gettext.[ merge( [libname]+"/"+ libname +".ls")]
   let filelist = subseq(s, 2, min(u - 1, e - 1))
   let exports = subseq(s, e + 1, length.s)
    let b = unloadlib.[libname]
-   let li=if (libname.last.libs)_1 in "newimp stdlib" then libinfo(emptysymbolset,empty:seq.firstpass)
+   let li=if (libname) in "newimp stdlib imp2" then libinfo(emptysymbolset,empty:seq.firstpass)
    else 
-     let discard5 = loadlibs(dependentlibs, 1, timestamp(libs_1))
-     addliblib(libinfo(emptysymbolset,empty:seq.firstpass),last.libs)
+     let discard5 = loadlibs(dependentlibs, 1, timestamp(loadedlibs_1))
+     addliblib(libinfo(emptysymbolset,empty:seq.firstpass),last.loadedlibs)
   let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
+  let zx1=createfile("stat.txt",["start"])
   let p1=pass1(allsrc,exports,known.li,asset.mods.li)
+    let zx2=createfile("stat.txt",["finish pass1"])
    let roots=roots.p1
  let mods=mods.p1
  let known2=symset.p1
  let intercode= pass2(symset.p1,toseq.roots.p1,known.li) 
-  let bc=codegen5(intercode,libname,liblib([libname],libdesc( roots ,intercode ,mods,known2) ))
- let z2 = createlib(bc, libname, dependentlibs) 
+  let bc = codegen5(intercode,libname,liblib([libname],libdesc( roots ,intercode ,mods,known2) ))
+  let z2 = createlib(bc, libname, dependentlibs) 
  "OK"
  
 Function compilelib2(libname:word)seq.word 
@@ -144,6 +137,24 @@ Function compilelib2(libname:word)seq.word
    then"not correct number of args:"+ args 
    else result.p 
   outputformat.toUTF8plus(htmlheader + processpara.output)
+  
+  
+Function compstdlib seq.word
+ mainA.decode."imp2"_1
+  
+ Function mainA(arg:seq.int)seq.word
+ let args = towords(arg + 10 + 10)
+  let libname = args_1 
+  let p = process.compilelib2.libname 
+  if aborted.p 
+   then message.p 
+   else if subseq(result.p, 1, 1)="OK"∧ length.args = 3 
+   then // execute function specified in arg // 
+    let p2 = process.execute.mangle(args_3, mytype.[ args_2], empty:seq.mytype)
+    if aborted.p2 then message.p2 else result.p2 
+   else if subseq(result.p, 1, 1)="OK"∧ not(length.args = 1)
+   then"not correct number of args:"+ args 
+   else result.p 
 
 function loadlibrary(libname:word)int loadlib([ libname], 0)
 

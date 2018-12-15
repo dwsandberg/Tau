@@ -119,9 +119,11 @@ function gathertypes(known:symbolset, mangledname:word)set.mytype
  let sym = known_mangledname 
    @(+, replaceT.parameter.modname.sym, asset.[ resulttype.sym], paratypes.sym)
    
-
 function toinstindex(a:set.word, d:intercode, i:int)seq.int 
- if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
+ if mangledname(coding(d)_i)in a then [ i]else 
+ empty:seq.int
+
+
 
 function close(d:intercode, toprocess:set.int, old:set.int)set.int 
  let a = asset.@(+, simpleonly.d, empty:seq.int, toseq.toprocess) - old 
@@ -138,20 +140,21 @@ function simpleonly(d:intercode, i:int)seq.int
   then body 
   else empty:seq.int
 
+
 function filter(d:intercode, i:int)seq.int 
  let inst = coding(d)_i 
   let name = mangledname.inst 
   if name in"SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT ELSEBLOCK RECORD THENBLOCK if CONTINUE LOOPBLOCK FINISHLOOP FIRSTVAR"
   then empty:seq.int 
   else if name in"CONSTANT FREF"
-  then let a = if name ="CONSTANT"_1 
+  then let funcnames = if name ="CONSTANT"_1 
     then asset.findcalls(towords.inst, 2,"")
     else asset.[ towords(inst)_2]
-   if isempty.a 
+   if isempty.funcnames
    then empty:seq.int 
-   else let result = @(+, toinstindex(a, d), empty:seq.int, arithseq(length.coding.d, 1, 1))
-   assert length.toseq.a = length.result report"Did not find all function embedded in CONSTANT"+ toseq.a 
-   result 
+   else 
+     // not all functions appearing in CONSTANT and FREF will have indices in intercode //
+        @(+, toinstindex(funcnames, d), empty:seq.int, arithseq(length.coding.d, 1, 1))
   else [ i]
 
 function findcalls(a:seq.word, i:int, result:seq.word)seq.word 
@@ -208,7 +211,7 @@ function findelement(known:symbolset, r:mapresult32, s:symbol)mapresult32
   if isempty.z 
   then let t1 = known_mangledname.s 
    let t = tolibsym4.t1 
-   assert src.t1 in ["EXTERNAL"]report "ERR33"+ print2.t1 
+   // assert src.t1 in ["EXTERNAL"]report "ERR33"+ print2.t1 //
    mapresult32(syms.r + t, libsyms.r + t)
   else  mapresult32(syms.r, libsyms.r + z_1)
 

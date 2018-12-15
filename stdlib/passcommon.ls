@@ -78,10 +78,6 @@ Function CALLcode(syminfo)seq.word export
 
 Function FREFcode(syminfo)seq.word export
 
-Function finddeepcopyfunction(mytype)syminfo export
-
-Function codingrecord(syminfo)seq.word export
-
 Function calls(syminfo)set.word export
 
 Function compileinstance(set.libtype, set.syminfo, word)seq.syminfo export
