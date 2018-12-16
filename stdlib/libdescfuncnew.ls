@@ -27,8 +27,6 @@ use seq.libmod
 
 use seq.libsym
 
-use seq.libtype
-
 use seq.mytype
 
 use seq.seq.int
@@ -94,7 +92,7 @@ function typelibsyms(known:symbolset, m:seq.word)seq.libsym
   else  empty:seq.libsym
 
 function filterX(known:symbolset, typ:seq.word)seq.seq.word 
- let a=lookuptypedesc(known,typ)
+ let a=extracttypedesc.lookuptypedesc2(known,typ)
   if a="undefined" then empty:seq.seq.word else   [ typ]+ typesused(a, 2, 2) 
 
 function closetypes(known:symbolset, newtypes:set.seq.word, processed:set.seq.word)set.seq.word 

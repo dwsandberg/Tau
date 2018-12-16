@@ -240,8 +240,6 @@ Function decode(t:encoding.T, erec:erecord.T)T builtin.STATE.usemangle
 
 Function findencode(t:T, erec:erecord.T)seq.T builtin.STATE.usemangle 
 
-type encoding
-
 type erecord is record deepcopy:int, invertedseqlookup:int, invertedseq:int, number:int, name:word, ispersistant:boolean, encodingtype:seq.word
 
 `___________

@@ -1,8 +1,11 @@
+#!/usr/local/bin/tau
+
 Module test11a
+
+run test11a test11a
 
 use fileio
 
-use passcommon
 
 
 use process.tree.word
@@ -35,8 +38,15 @@ function tr2 tree.int tree(37, [ tr1, tr1])
 
 Function t401 boolean [ 56, 200, 3]= [ label.tr1, label(tr1_1), nosons.tr1]
 
-Function t402 boolean true
+function ?(a:tree.int, b:tree.int) ordering
+    subx( a,b, 1,label.a ? label.b  &and nosons.a ? nosons.b) 
+    
+function subx(a:tree.int,b:tree.int,i:int,o:ordering) ordering
+ if o = EQ  &and i &le nosons.a then
+   subx(a,b,i+1, a_i ? b_i)
+ else o 
 
+Function t402 boolean 
 [ GT, EQ, EQ]= [ tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree(1)]
 
 Function t403 boolean {"a"= print.tree("a"_1)}
@@ -63,15 +73,31 @@ Function t410 boolean
 Function t411 boolean 
  {"@(+, b, g, $build(c, d, e))"= print.expression."@(+, b, g, [ c, d, e])#"}
 
-Function t413 boolean 
- {"let(a, makereal(45, 1), let(b, *(a, a), +(b, 3)))"= print.expression."let a = 4.5 let b = a * a b + 3"}
-
 Function t412 boolean 
  {"+(comment(4, this, is, a, comment), 8)"= print.expression."// this is a comment // 4 + 8"}
+ 
+ Function t413 boolean 
+ {"let(a, makereal(45, 1), let(b, *(a, a), +(b, 3)))"= print.expression."let a = 4.5 let b = a * a b + 3"}
+
+
 
 Function prefix(p:seq.word, d:seq.word)boolean subseq(d, 1, length.p)= p
 
-function parse(x:seq.word)tree.word parse(x, tree("xxx"_1))
+function parse(x:seq.word)tree.word  tree("xxx"_1) 
+
+function print(t:tree.word) seq.word  if nosons.t=0 then [label.t]
+else [label.t]+if nosons.t=1 then "."+print(t_1)
+else  "("+@(seperator(","),print,"",sons.t)+")"
+
+function expression(s:seq.word) tree.word tree("xxx"_1)
+
+
+Function t414 boolean @(∧, filetest, true, arithseq(9, 1, 4))
+
+Function t415 boolean @(-, identity, 100, [ 1, 2])= 97
+
+Function t416 boolean // testing UNICODE to word conversion and no-break space in integer 8746 //
+decode("1 2∪"_1) = [49, 160 ,50, 87 46 ] 
 
 /Function prettytext(s:seq.word)seq.word prettyexpression.s
 
@@ -82,13 +108,6 @@ Function test23 seq.seq.word ["k"]
 Function test24 seq.seq.word ["k"]
 
 @(+, prettyparagraph, empty:seq.seq.word, ["Function space seq(word)[ encodeword.[ 32]]","function f1(u:int, y:seq(real))int 1","type r1 is struct input:seq(word), n:int, tr:seq(tree(word))","type bb is encoding seq(int)","Function f3(int, b:real)seq(word)export"])
-
-Function t414 boolean @(∧, filetest, true, arithseq(9, 1, 4))
-
-Function t415 boolean @(-, identity, 100, [ 1, 2])= 97
-
-Function t416 boolean // testing UNICODE to word conversion and no-break space in integer 8746 //
-decode("1 2∪"_1) = [49, 160 ,50, 87 46 ] 
 
 function filetest(i:int)boolean 
  let name ="test"+ toword.i +".txt"
@@ -111,6 +130,7 @@ Function test11a seq.word
   t413, 
   t414, 
   t415, 
+  t416,
   "EXPECTED)&br &keyword function a boolean(a #"= message.process.parse."function a boolean(a", 
   "EXPECTED]&br &keyword function a boolean [ a)"= message.process.parse."function a boolean [ a)", 
   "EXPECTED)&br &keyword function a boolean(a +"= message.process.parse."function a boolean(a +", 

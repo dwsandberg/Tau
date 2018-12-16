@@ -1,10 +1,12 @@
+#!/usr/local/bin/tau
+
 module opt2
 
-use buildtree
+/use buildtree
 
 use newsymbol
 
-use passcommon
+/use passcommon
 
 use seq.int
 

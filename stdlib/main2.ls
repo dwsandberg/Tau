@@ -67,9 +67,11 @@ use process.seq.word
  
  known:symbolset,mods:set.firstpass
 
-  function addliblib( a:libinfo,l:liblib) libinfo
+  function addliblib(s:seq.word, a:libinfo,l:liblib) libinfo
+  if (libname.l)_1 in s then 
   libinfo(@(+,tosymbol,known.a,defines.last.mods.l),
    tofirstpass.l  + mods.a)
+   else a
  
  use process.liblib
  
@@ -88,8 +90,8 @@ use process.seq.word
  use deepcopy.seq.word
  
  function subcompilelib(libname:word) seq.word
-//  PROFILE. //
-let a = gettext.[ merge( [libname]+"/"+ libname +".ls")]
+  PROFILE. 
+  let a = gettext.[ merge( [libname]+"/"+ libname +".ls")]
   let s = findlibclause(a, 1)
   let u = findindex("uses"_1, s, 3)
   let e = findindex("exports"_1, s, 3)
@@ -100,11 +102,9 @@ let a = gettext.[ merge( [libname]+"/"+ libname +".ls")]
    let li=if (libname) in "newimp stdlib imp2" then libinfo(emptysymbolset,empty:seq.firstpass)
    else 
      let discard5 = loadlibs(dependentlibs, 1, timestamp(loadedlibs_1))
-     addliblib(libinfo(emptysymbolset,empty:seq.firstpass),last.loadedlibs)
+     @(addliblib(dependentlibs),identity,libinfo(emptysymbolset,empty:seq.firstpass), loadedlibs)
   let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
-  let zx1=createfile("stat.txt",["start"])
   let p1=pass1(allsrc,exports,known.li,asset.mods.li)
-    let zx2=createfile("stat.txt",["finish pass1"])
    let roots=roots.p1
  let mods=mods.p1
  let known2=symset.p1
@@ -139,25 +139,34 @@ Function compilelib2(libname:word)seq.word
   outputformat.toUTF8plus(htmlheader + processpara.output)
   
   
-Function compstdlib seq.word
- mainA.decode."imp2"_1
-  
- Function mainA(arg:seq.int)seq.word
- let args = towords(arg + 10 + 10)
-  let libname = args_1 
-  let p = process.compilelib2.libname 
-  if aborted.p 
-   then message.p 
-   else if subseq(result.p, 1, 1)="OK"∧ length.args = 3 
-   then // execute function specified in arg // 
-    let p2 = process.execute.mangle(args_3, mytype.[ args_2], empty:seq.mytype)
-    if aborted.p2 then message.p2 else result.p2 
-   else if subseq(result.p, 1, 1)="OK"∧ not(length.args = 1)
-   then"not correct number of args:"+ args 
-   else result.p 
 
 function loadlibrary(libname:word)int loadlib([ libname], 0)
 
+     
+ function firstPass(libname:word) seq.word
+  let a = gettext.[ merge( [libname]+"/"+ libname +".ls")]
+  let s = findlibclause(a, 1)
+  let u = findindex("uses"_1, s, 3)
+  let e = findindex("exports"_1, s, 3)
+  let dependentlibs = subseq(s, u + 1, e - 1)
+  let filelist = subseq(s, 2, min(u - 1, e - 1))
+  let exports = subseq(s, e + 1, length.s)
+   let b = unloadlib.[libname]
+   let li=if (libname) in "newimp stdlib imp2" then libinfo(emptysymbolset,empty:seq.firstpass)
+   else 
+     let discard5 = loadlibs(dependentlibs, 1, timestamp(loadedlibs_1))
+     @(addliblib(dependentlibs),identity,libinfo(emptysymbolset,empty:seq.firstpass), loadedlibs)
+  let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
+  let r=pass1(allsrc,exports,known.li,asset.mods.li)
+  printcode.symset.r+@(+,print,"",mods.r)
+     
+     use process.linkage
+     
+  Function firstpassonly(libname:word) seq.word
+ let p1 = process.firstPass.libname 
+   assert not.aborted.p1 report "COMPILATION ERROR:"+ space + message.p1 
+     result.p1 
+    
      
  /function print5(s:symbol) seq.word
    let d=decode(mangledname.s)

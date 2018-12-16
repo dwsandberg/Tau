@@ -39,9 +39,7 @@ use process.seq.T
   else"Encoding is not persistant."
 
 
-use seq.libtype
 
-use set.libtype
 
 use libscope
 

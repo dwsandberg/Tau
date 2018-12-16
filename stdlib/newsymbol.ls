@@ -46,12 +46,18 @@ Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering
 
 Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a, b, 1)
 
-type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, src:seq.word, codetree:tree.seq.word
+type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, 
+src:seq.word, codetree:tree.seq.word,orgsrc:seq.word,parsedsrc:seq.word
 
 
 Function =(a:symbol, b:symbol)boolean mangledname.a = mangledname.b
 
 Function src(symbol)seq.word export
+
+Function orgsrc(symbol)seq.word export
+
+Function parsedsrc(symbol)seq.word export
+
 
 Function name(symbol)word export
 
@@ -68,10 +74,11 @@ Function codetree(f:symbol)tree.seq.word export
 Function nopara(s:symbol)int length.paratypes.s
 
 Function symbol(name:word, modname:mytype, paratypes:seq.mytype, resulttype:mytype, src:seq.word)symbol 
- symbol(mangle(name, modname, paratypes), resulttype, paratypes, name, modname, src)
+ symbol(mangle(name, modname, paratypes), resulttype, paratypes, name, modname, src,tree."default",src,"")
+ 
 
 Function symbol(mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, src:seq.word)symbol 
- symbol(mangledname, resulttype, paratypes, name, modname, src, tree."default")
+ symbol(mangledname, resulttype, paratypes, name, modname, src, tree."default","","")
 
 
 Function flags(s:symbol)seq.word flags(src.s, length.src.s)
@@ -95,7 +102,11 @@ Function ?2(a:symbol, b:symbol)ordering name.a ? name.b ∧ paratypes.a ? paraty
 
 
 Function changesrc(s:symbol, src:seq.word)symbol 
-   symbol(mangledname.s, resulttype.s, paratypes.s, name.s, modname.s, src, codetree.s)
+   symbol(mangledname.s, resulttype.s, paratypes.s, name.s, modname.s, src, codetree.s,orgsrc.s,parsedsrc.s)
+
+Function changesrc(s:symbol, src:seq.word,orgsrc:seq.word,parsedsrc:seq.word)symbol 
+   symbol(mangledname.s, resulttype.s, paratypes.s, name.s, modname.s, src, codetree.s,orgsrc,parsedsrc)
+
 
 Function changecodetree(old:symbol, t:tree.seq.word)symbol 
  let oldflags = flags.old 
@@ -119,7 +130,8 @@ let adjustedflags=flags.old+if inst.t="STATE"_1 then "STATE" else ""
           "VERYSIMPLE SIMPLE"  
   let newflags =  functyp+ toseq(asset.adjustedflags - asset."SIMPLE INLINE VERYSIMPLE COMPLEX")
   let newsrc = subseq(src.old, 1, length.src.old - length.oldflags)+ newflags 
- symbol(mangledname.old, resulttype.old, paratypes.old, name.old, modname.old, newflags, if inst.t="STATE"_1  then t_1 else t)
+ symbol(mangledname.old, resulttype.old, paratypes.old, name.old, modname.old, newflags, if inst.t="STATE"_1  then t_1 else t
+ ,orgsrc.old,parsedsrc.old)
 
 
 
@@ -142,7 +154,8 @@ Function replaceT(with:mytype, s:symbol)symbol
    then merge([ encodeword.subseq(x, 1, length.x - 1)]+ print.with)
    else name.s 
       //  assert n &ne merge("typedesc:tree.seq.word") report "ERR36a"+n+name.s +print.newmodname //
-  symbol(mangle(if towords.newmodname="internal" then n else name.s, newmodname, paratypes.s), replaceT(with, resulttype.s), newparas, n, newmodname, src.s, codetree.s)
+  symbol(mangle(if towords.newmodname="internal" then n else name.s, newmodname, paratypes.s), replaceT(with, resulttype.s), newparas, n, 
+  newmodname, src.s, codetree.s,orgsrc.s,parsedsrc.s)
 
 Function print2(s:symbol)seq.word print.s +"mn:"+ mangledname.s +"src"+ src.s
 
@@ -188,7 +201,7 @@ function checkverysimple(t:tree.seq.word) seq.word
    
   
 Function emptysymbolset symbolset 
- symbolset.dseq.symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default")
+ symbolset.dseq.symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default","","")
 
 
 Function replace(a:symbolset, sym:symbol)symbolset 
@@ -212,7 +225,7 @@ Function +(a:symbolset, s:symbol)symbolset symbolset.replace(toseq.a, encoding.m
 Function_(a:symbolset, name:word)symbol toseq(a)_encoding.name
 
 Function printcode(s:symbolset)seq.word 
- {"count:"+ toword.@(+, count, 0, toseq.s)+ @(+, print4,"", toseq.s)}
+ {"count:"+ toword.@(+, count, 0, toseq.s)+ @(+, print3,"", toseq.s)}
 
 function count(s:symbol)int 
  if not(label.codetree.s ="default")then 1 else 0

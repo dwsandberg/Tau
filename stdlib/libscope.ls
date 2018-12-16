@@ -245,32 +245,32 @@ Function replaceT(with:mytype, name:word)word
   assert subseq(d, length.d, length.d)= [ 84]report"PROBLEM replacing T in word"+ name +"with"+ print.with 
   merge([ encodeword.subseq(d, 1, length.d - 1)]+ print.with)
 
-Function libsymencoding erecord.libsym libsymencodingx
+/Function libsymencoding erecord.libsym libsymencodingx
 
-function hash(a:libsym)int encoding.fsig.a
+/function hash(a:libsym)int encoding.fsig.a
 
 
 use seq.libsym
 
-type libsymencodingx is encoding libsym
+/type libsymencodingx is encoding libsym
 
-function f42(mangledname:word, types:seq.mytype, l:libsym)seq.word 
+/function f42(mangledname:word, types:seq.mytype, l:libsym)seq.word 
  let info = syminfo.l 
   if mangledname = name.info ∧ types = paratypes.info + returntype.info 
   then [ fsig.l]
   else""
 
-function f43(modname:word, mangledname:word, types:seq.mytype, l:libmod)seq.word 
+/function f43(modname:word, mangledname:word, types:seq.mytype, l:libmod)seq.word 
  if modname = modname.l 
   then @(+, f42(mangledname, types),"", exports.l)
   else""
 
-function f44(libname:word, modname:word, mangledname:word, types:seq.mytype, l:liblib)seq.word 
+/function f44(libname:word, modname:word, mangledname:word, types:seq.mytype, l:liblib)seq.word 
  if [ libname]= libname.l 
   then @(+, f43(modname, mangledname, types),"", mods.l)
   else""
 
-Function findFunction(libname:word, modname:word, funcname:word, types:seq.mytype)seq.word 
+/Function findFunction(libname:word, modname:word, funcname:word, types:seq.mytype)seq.word 
  @(+, f44(libname, modname, funcname, types),"", libs)
 
 Function emptyliblib(libname:word) liblib

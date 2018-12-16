@@ -257,7 +257,7 @@ int main(int argc, char **argv)    {   int i=0;
        myarg2.type =1;
                    myarg3.length=0;
        myarg3.type =1;
-        processinfo p = step("mainZmainZintzseq",&myarg,&myarg2,&myarg3);
+        processinfo p = step("mainZmain2Zintzseq",&myarg,&myarg2,&myarg3);
         fflush(stdout); 
         createfilefromoutput( output(p ),/* stdout */ 1);
        return 0;

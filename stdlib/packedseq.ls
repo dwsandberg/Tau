@@ -32,7 +32,6 @@ Function_(a:packedseq.T, i:int)T
  let ds = sizeoftype:T 
   toT.getaddress(toseq.a, 2 + ds *(i - 1))
 
-Function sizeoftype T builtin.TYPESIZE
 
 Function packed(s:seq.T)seq.T 
  let ds = sizeoftype:T 
