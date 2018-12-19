@@ -85,7 +85,7 @@ function t020 boolean 5 = findindex(1, [ 2, 4, 3, 8, 1, 3]+ constantseq(4, 1))
 
 function t021 boolean 28 = constantseq(13, 5)_7 + length.constantseq(23, 3)
 
-* function t022 boolean [ 3, 6]= all(3, [ 2, 4, 3, 8, 1, 3])
+/ function t022 boolean [ 3, 6]= all(3, [ 2, 4, 3, 8, 1, 3])
 
 function t022 boolean [ toword.384]+ toword.52 ="384 52"
 

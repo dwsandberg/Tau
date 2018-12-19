@@ -1,11 +1,16 @@
 #!/usr/local/bin/tau
 
-Library tools bandeskopf barycenter displaygraph displaytextgraph doc labeledgraph layergraph makeDAG 
-prettylib printbitcodes profile renamemodule svg svggraph 
+prettylib  pretty doc profile
+
+Library tools bandeskopf barycenter displaygraph displaytextgraph  labeledgraph layergraph makeDAG 
+ printbitcodes  svg svggraph   profile pretty doc prettylib
+display
  uses stdlib 
- exports bandeskopf barycenter displaygraph displaytextgraph doc layergraph makeDAG prettylib prettylib printbitcodes profile svg svggraph tools labeledgraph
+ exports bandeskopf barycenter displaygraph displaytextgraph doc layergraph makeDAG   prettylib printbitcodes profile svg 
+ svggraph tools labeledgraph display pretty
 
 Module tools
+
 
 run tools test
 
@@ -15,7 +20,7 @@ run tools test
 
 /run tools test2
 
-run tools stdlibdoc
+/run newtools stdlibdoc
 
 /run doc createdoc
 
@@ -23,9 +28,8 @@ run tools stdlibdoc
 
 /run tools test
 
-run tools checkdoclib
+run newtools checkdoclib
 
-run tools test1
 
 run doc createdoc
 
@@ -35,9 +39,9 @@ run doc createdoc
 
 use doc
 
-use main
+use main2
 
-use prettylib
+/use prettylib
 
 use printbitcodes
 
@@ -45,15 +49,14 @@ use profile
 
 use seq.word
 
-Function test1 seq.word htmlcode."tools"
+/Function test1 seq.word htmlcode."test11"
 
-Function checkbind seq.word checkbind."tools"
 
-Function prettytest seq.word prettylib("newimp","")
+/Function prettytest seq.word prettylib("test4","")
 
 "byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 
-Function checkdoclib seq.word   doclibrary."newimp"
+Function checkdoclib seq.word   doclibrary."newtools"
 
 callgraphbetween("newimp","libdescfunc libscope doc")  
 
@@ -62,14 +65,14 @@ doclibrary."tools"
 use seq.word
 
 Function test seq.word 
- let a = compilelib("stdlib"_1)
+ let a = compilelib2("stdlib"_1)
   a + profileresults."time"
 
 Function testprintBitCodes seq.word printBitCodes."mytest.bc"
 
-Function stdlibdoc seq.word 
+/Function stdlibdoc seq.word 
  // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
 
-Function test2 seq.word 
+/Function test2 seq.word 
  callgraphbetween("useful","useful processtypes")+ doclibrary."tools"
 

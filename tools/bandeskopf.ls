@@ -20,6 +20,8 @@ use stdlib
 
 use svggraph.T
 
+use seq.int
+
 function =(T, T)boolean unbound
 
 Based on:Fast and Simple Horizontal Coordinate Assignment Ulrik Brandes and Boris Kopf, 2002

@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau
 
 Module other
 
@@ -48,10 +47,13 @@ use stdlib
 
 use textio
 
-type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol, exportmodule:boolean
+type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol, exportmodule:boolean,
+rawsrc:seq.seq.word
 
-function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol, exportmodule:boolean)firstpass 
- export
+Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, exportmodule:boolean)firstpass 
+ firstpass(modname , uses , defines , exports , unboundexports , unboundx, 
+ exportmodule ,empty:seq.seq.word) 
+
 
 function exportmodule(firstpass)boolean export
 
@@ -59,10 +61,20 @@ Function modname(firstpass)mytype export
 
 function defines(firstpass)set.symbol export
 
+
+
 function exports(firstpass)set.symbol export
 
+function uses(firstpass)seq.mytype export
+
+function rawsrc(firstpass)seq.seq.word export
+
+
 Function replaceT(with:mytype, f:firstpass)firstpass 
- firstpass(replaceT(with, modname.f), @(+, replaceT.with, empty:seq.mytype, uses.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.defines.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.exports.f), @(+, replaceT.with, empty:seq.symbol, unboundexports.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.unbound.f), false)
+ firstpass(replaceT(with, modname.f), @(+, replaceT.with, empty:seq.mytype, uses.f), 
+ asset.@(+, replaceT.with, empty:seq.symbol, toseq.defines.f),
+  asset.@(+, replaceT.with, empty:seq.symbol, toseq.exports.f), @(+, replaceT.with, empty:seq.symbol, unboundexports.f), 
+  asset.@(+, replaceT.with, empty:seq.symbol, toseq.unbound.f), false,rawsrc.f)
 
 function =(a:firstpass, b:firstpass)boolean modname.a = modname.b
 
@@ -72,7 +84,7 @@ Function print(b:firstpass)seq.word
  {"&br &br"+ print.modname.b +"&br defines"+ printdict.defines.b +"&br unboundexports"+ printdict.asset.unboundexports.b }
 
 function find(modset:set.firstpass, name:mytype)set.firstpass 
- findelement(firstpass(name, empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, false), modset)
+ findelement(firstpass(name, empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, false,empty:seq.seq.word), modset)
 
 type linkage is record symset:symbolset, mods:seq.firstpass, roots:set.word
 
@@ -82,7 +94,10 @@ function mods(linkage)seq.firstpass export
 
 function roots(linkage)set.word export
 
+use deepcopy.linkage
+
 Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarysyms:symbolset, librarymods:set.firstpass)linkage 
+PROFILE.
  let a = @(+, gathersymbols.exports, librarymods, allsrc)
   let d2 = resolveunboundexports.expanduse.a 
   let simple = @(+, findsimple, empty:seq.firstpass, toseq.d2)
@@ -138,14 +153,15 @@ function bindunboundexports(modset:set.firstpass, f:firstpass)set.firstpass
  if length.unboundexports.f = 0 
   then modset 
   else let dict = builddict(modset, f)
-  let new = @(resolveexport.dict, identity, firstpass(modname.f, uses.f, defines.f, exports.f, empty:seq.symbol, unbound.f, exportmodule.f), unboundexports.f)
+  let new = @(resolveexport.dict, identity, 
+  firstpass(modname.f, uses.f, defines.f, exports.f, empty:seq.symbol, unbound.f, exportmodule.f,rawsrc.f), unboundexports.f)
   replace(modset, new)
 
 function resolveexport(dict:set.symbol, f:firstpass, s:symbol)firstpass 
  let x = findelement2(dict, s)
   if cardinality.x = 1 
-  then firstpass(modname.f, uses.f, defines.f, exports.f ∪ x, unboundexports.f, unbound.f, exportmodule.f)
-  else firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + s, unbound.f, exportmodule.f)
+  then firstpass(modname.f, uses.f, defines.f, exports.f ∪ x, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
+  else firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + s, unbound.f, exportmodule.f,rawsrc.f)
 
 function expanduse(modset:set.firstpass)set.firstpass 
  let newset = @(expanduse, identity, modset, toseq.asset.@(+, uses, empty:seq.mytype, toseq.modset))
@@ -175,7 +191,7 @@ function templates(modset:set.firstpass, f:firstpass)seq.firstpass
  if parameter.modname.f = mytype."T"
   then if length.uses.f > 0 
    then let newdefines = @(+, template(builddict(modset, f)∪ headdict), empty:seq.symbol, toseq.defines.f)
-    [ firstpass(modname.f, empty:seq.mytype, asset.newdefines, exports.f, empty:seq.symbol, empty:set.symbol, exportmodule.f)]
+    [ firstpass(modname.f, uses.f, asset.newdefines, exports.f, empty:seq.symbol, empty:set.symbol, exportmodule.f,rawsrc.f)]
    else [ f]
   else empty:seq.firstpass
 
@@ -184,6 +200,8 @@ function template(dict:set.symbol, s:symbol)symbol
   then s 
   else let b = parse(bindinfo(dict,"", empty:seq.mytype), src.s)
   changesrc(s, code.b,src.s,code.b)
+
+use deepcopy.symbolset
 
 function bind(templates:symbolset, modset:set.firstpass, a:symbolset, f:firstpass)symbolset 
  let x = subseq(towords.modname.f, 1, length.towords.modname.f - 1)
@@ -212,8 +230,12 @@ function bind(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:sy
    else assert length.src.s > 2 report"PROBLEM TT"
    let code = code.parse(bindinfo(dict,"", empty:seq.mytype), symsrc)
    let s2=changesrc(s,src.s,src.s,code)
-    postbind(dict, mytype."", templates, knownsymbols, code, s2, s2)
-   
+    let t=postbind(dict, mytype."", templates, knownsymbols, code, s2, s2)
+    // let newsrc=src.t_mangledname.s
+       assert  length.towords.modname.s > 1 &or  last.code ="builtinZtestZinternal1"_1  &or newsrc=code 
+       &or last.newsrc in "FORCEINLINE PROFILE"
+        report "DIFF"+[mangledname.s]+ code+"&br >>>>"+newsrc //
+     t 
 
 type zzz is record known:symbolset, size:seq.word
 
@@ -349,7 +371,7 @@ function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsym
    let syme=changesrc(thissymbol, newsrc)
       postbind(dict, mytype."", templates, replace(newknown,syme), src.syme, syme, org)
   else if last.code ="builtinZtestZinternal1"_1 
-  then if code ="NOOPZtest builtinZtestZinternal1"
+   then if code ="NOOPZtest builtinZtestZinternal1"
    then replace(knownsymbols, changesrc(thissymbol,"PARAM 1 VERYSIMPLE"))
    else if code ="EMPTYSEQ51Ztest builtinZtestZinternal1"
    then replace(knownsymbols, changesrc(thissymbol,"LIT 0 LIT 0 RECORD 2 VERYSIMPLE"))
@@ -372,21 +394,18 @@ function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsym
    knownsymbols 
   else if last.code ="builtinZtestZwordzseq"_1 ∧ code_1 ="WORDS"_1 
   then replace(knownsymbols, changesrc(thissymbol, subseq(code, 3, length.code - 1)))
-  else postbind2(org, dict, modpara, templates, knownsymbols, code, 1,"", thissymbol)
+  else
+   postbind2(org, dict, modpara, templates, knownsymbols, code, 1,"", thissymbol)
 
 function topara(i:int)seq.word {"PARAM"+ toword.i }
 
 function postbind2(org:symbol, dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset, code:seq.word, i:int, result:seq.word, thissymbol:symbol)symbolset 
  if i > length.code 
   then let src = result 
-   let nopara = nopara.thissymbol 
-   let newflag = if length.src < 8 * nopara ∧ subseq(src, 1, 2 * nopara)= @(+, topara,"", arithseq(nopara, 1, 1))∧ not("PARAM"_1 in subseq(src, nopara * 2 + 1, length.src))∧ not(mangledname.thissymbol in src)∧ not("SET"_1 in src)
-    then"VERYSIMPLE"
-    else""
-   replace(knownsymbols, changesrc(thissymbol, result + newflag))
+    replace(knownsymbols, changesrc(thissymbol,  result ))
   else if code_i in"IDXUC FREF if assertZbuiltinZwordzseq NOINLINE"
   then postbind2(org, dict, modpara, templates, knownsymbols, code, i + 1, result + code_i, thissymbol)
-  else if code_i ="WORDS"_1 
+  else if code_i in "WORDS COMMENT"  
   then postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2 + toint(code_(i + 1)), result + subseq(code, i, i + 1 + toint(code_(i + 1))), thissymbol)
   else if code_i in"LIT APPLY RECORD SET PARAM PRECORD WORD"
   then postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2, result + subseq(code, i, i + 1), thissymbol)
@@ -402,14 +421,22 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
    then let down = codedown.mangledname 
     assert length(down_2)= 1 report"inX"+ print2.t1 
     zzz(postbind(dict, mytype(down_2), templates, knownsymbols, src, t1, org), [ mangledname])
-   else zzz(knownsymbols, if length.src = 2 ∧ src_1 ="LIT"_1 then src else [ mangledname])
+   else zzz(knownsymbols, // if length.src = 2 ∧ src_1 ="LIT"_1 then src else // [ mangledname])
   else let down = codedown.mangledname 
   assert length.down > 1 report"LLLx"+ mangledname 
   let newmodname = replaceT(modpara, mytype(down_2))
   let newmodpara = parameter.newmodname 
   let templatename = abstracttype.newmodname 
-  if templatename ="para"_1 
-  then zzz(knownsymbols,"PARAM"+ down_2_1)
+  if templatename ="local"_1 &and down_1 = [ merge."sizeoftype:T"]
+   then if towords.modpara in ["int"]∨ abstracttype.modpara ="seq"_1 
+    then zzz(knownsymbols,"LIT 1")
+    else let xx = extracttypedesc.lookuptypedesc2(knownsymbols , print.modpara )
+    if  (xx)_1 in"1 2 3 4 5 6"
+    then zzz(knownsymbols,"LIT"+  (xx)_1)
+    else assert false report"did it get here?"+ xx 
+    X(merge("sizeoftype:"+ print.modpara), org, dict, modpara, templates, knownsymbols)
+   else if templatename  in "para local"
+  then zzz(knownsymbols,// "PARAM"+ down_2_1 // [mangledname])
   else if templatename ="deepcopy"_1 
   then if down_1 ="deepcopy"
    then 
@@ -420,19 +447,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
    //  assert mangledname.sym = mangledname report "ERR21"+[ mangledname.sym, mangledname]+print2.org+stacktrace //
     zzz(postbind(dict, mytype."", templates, knownsymbols + sym, src.sym, sym, org), [ mangledname.sym])
    else // Compile options // zzz(knownsymbols, down_1)
-  else if templatename ="local"_1 
-  then if towords.newmodpara =""
-   then zzz(knownsymbols,"LOCAL"+ down_1)
-   else if down_1 = [ merge."sizeoftype:T"]
-   then if towords.modpara in ["int"]∨ abstracttype.modpara ="seq"_1 
-    then zzz(knownsymbols,"LIT 1")
-    else let xx = extracttypedesc.lookuptypedesc2(knownsymbols , print.modpara )
-    if  (xx)_1 in"1 2 3 4 5 6"
-    then zzz(knownsymbols,"LIT"+  (xx)_1)
-    else assert false report"did it get here?"+ xx 
-    X(merge("sizeoftype:"+ print.modpara), org, dict, modpara, templates, knownsymbols)
-   else // Compile options // zzz(knownsymbols, towords.newmodpara)
-  else let params = @(+, mytype, empty:seq.mytype, subseq(down, 3, length.down))
+  else  let params = @(+, mytype, empty:seq.mytype, subseq(down, 3, length.down))
   let fullname = mangle(down_1_1, newmodname, params)
   let t2 = knownsymbols_fullname 
   if fullname ≠ mangledname ∧ isdefined.t2 
@@ -457,14 +472,13 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
 function roots(f:firstpass)seq.word 
  if exportmodule.f then @(+, mangledname,"", toseq.exports.f)else""
 
-
-function gathersymbols(exported:seq.word, src:seq.seq.word)firstpass 
- let modulename = mytype."test"
-  let stubdict = asset.[ symbol("export"_1, modulename, empty:seq.mytype, mytype."internal",""), 
+Function  headerdict set.symbol let modulename = mytype."test" asset.[ symbol("export"_1, modulename, empty:seq.mytype, mytype."internal",""), 
   symbol("unbound"_1, modulename, empty:seq.mytype, mytype."internal",""), 
   symbol("stub"_1, modulename, empty:seq.mytype, mytype."internal",""), 
   symbol("usemangle"_1, modulename, empty:seq.mytype, mytype."internal","")]
-  @(wrapgathersymbols(exported, stubdict), identity, firstpass(mytype."?", empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, false), src)
+
+function gathersymbols(exported:seq.word, src:seq.seq.word)firstpass 
+  @(wrapgathersymbols(exported, headerdict), identity, firstpass(mytype."?", empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, false,src), src)
 
 function wrapgathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass 
  gathersymbols(exported, stubdict, f, input)
@@ -483,7 +497,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
   then f 
   else if input_1 in"use"
   then let t = parse(empty:set.symbol, input)
-   firstpass(modname.f, uses.f + mytype.code.t, defines.f, exports.f, unboundexports.f, unbound.f, exportmodule.f)
+   firstpass(modname.f, uses.f + mytype.code.t, defines.f, exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
   else if input_1 in"type"
   then 
    let b = parse(empty:set.symbol, input)
@@ -493,7 +507,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
    then assert parameter.modname.f = mytype.""report"encoding in template?"
     let typ = parameter(types(b)_1)
     let sym= symbol(code(b)_2, modname.f, empty:seq.mytype, mytype(towords.typ +"erecord"), code.b)
-    firstpass(modname.f, uses.f + mytype(towords.typ +"invertedseq")+ mytype(towords.typ +"ipair"), defines.f +changesrc(sym,code.b,input,code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f)
+    firstpass(modname.f, uses.f + mytype(towords.typ +"invertedseq")+ mytype(towords.typ +"ipair"), defines.f +changesrc(sym,code.b,input,code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
    else assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
    // assert false report code.b // 
    let modnm = towords.modname.f 
@@ -504,7 +518,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
    let syms = @(+, definefld(code, modname.f, [ t]), [ constructor, sizeofsym], types.b)+ if kind ="sequence"_1 
     then [ symbol("toseq"_1, modname.f, [ t], mytype(towords.parameter.t +"seq"_1), code)]
     else empty:seq.symbol 
-   firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, exportmodule.f)
+   firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
   else if input_1 in"Function function"
   then let t = parse(stubdict, getheader.input)
    let name = towords(types(t)_1)_1 
@@ -513,15 +527,15 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
     else name 
     if code.t ="usemangleZtest"
    then let sym = symbol(n, mytype.if iscomplex.modname.f then"T builtin"else"builtin", subseq(types.t, 3, length.types.t), types(t)_2, input)
-    firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f)
+    firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
    else let sym = symbol(n, modname.f, subseq(types.t, 3, length.types.t), types(t)_2, input)
    if"exportZtest"= code.t 
-   then firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, exportmodule.f)
+   then firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, exportmodule.f,rawsrc.f)
    else if"unboundZtest"= code.t 
-   then firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + sym, exportmodule.f)
-   else firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f)
+   then firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + sym, exportmodule.f,rawsrc.f)
+   else firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
   else if input_1 in"module Module"
-  then firstpass(mytype.if length.input > 2 then"T"+ input_2 else [ input_2], uses.f, defines.f, exports.f, unboundexports.f, unbound.f, input_2 in exported)
+  then firstpass(mytype.if length.input > 2 then"T"+ input_2 else [ input_2], uses.f, defines.f, exports.f, unboundexports.f, unbound.f, input_2 in exported,rawsrc.f)
   else f
 
 function definedeepcopy(knownsymbols:symbolset, type:mytype)symbol 

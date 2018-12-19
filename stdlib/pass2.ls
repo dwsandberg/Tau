@@ -117,7 +117,8 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
    then 3 
    else if name in"IDXUC setfldZbuiltinZTzaddressZT decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint createfileZbuiltinZbitszseqZoutputformat"
    then 2 
-   else if name in"assertZbuiltinZwordzseq mappingZbuiltinZTzerecord allocatespaceZbuiltinZint builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT getfileZbuiltinZbitszseq"
+   else if name in"assertZbuiltinZwordzseq mappingZbuiltinZTzerecord allocatespaceZbuiltinZint builtinZtestZinternal1 abortedZbuiltinZTzprocess 
+   processZbuiltinZT getfileZbuiltinZbitszseq"
    then 1 
    else if name in"FORCEINLINEZtest PROFILEZtest NOINLINEZtest"then 0 else -1 
   assert length.toseq.stk ≥ specialnopara report"STACK ISSUE"+ name + mangledname.caller + src 
@@ -144,13 +145,19 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
   else if name ="WORDS"_1 
   then let size = toint(src_(i + 1))
    buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + size + 1)), i + size + 2, src)
+   else if name ="COMMENT"_1 
+  then let size = toint(src_(i + 1))
+   buildcodetreeX(knownsymbols, hasstate, caller, stk, i + size + 2, src)
   else 
     let sym = lookupsymbol(knownsymbols,name) 
   if isundefined.sym then
-    let nopara=if name="EQL"_1 then 2 else 
-     if name in "STATE PROCESS2" then 1 else 
-    length.codedown(name)-2
-  buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara), tree([ name], top(stk, nopara))), i + 1, src)
+     let down=codedown(name)
+         let nopara=length.codedown(name)-2
+         let modname=mytype(down_2) 
+      let templatename = abstracttype.modname
+    let label=if templatename ="para"_1 then "PARAM"+down_2_1
+    else if templatename ="local"_1  then  "LOCAL"+ down_1  else  down_1
+  buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara), tree(label, top(stk, nopara))), i + 1, src)
   else 
   // assert not(src(sym)_1 in"sequence record encoding")report"MM4"+ name + mangledname.caller   //
  assert length.toseq.stk ≥ nopara.sym report"stack problem"+print2.sym

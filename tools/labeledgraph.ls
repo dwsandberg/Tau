@@ -2,6 +2,8 @@ module labeledgraph.T
 
 use set.T
 
+use seq.T
+
 use stdlib
 
 function ?(a:T, b:T)ordering unbound

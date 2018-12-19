@@ -32,7 +32,11 @@ use set.parc
 
 use stdlib
 
-* To profile a function add a use clause &{ block"use options.<return type of function >"&} and change function so body is wrap by a call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the part of code of interest add a call to profileresults("time")to optain the result.
+use seq.word
+
+use seq.seq.word
+
+* To profile a function add a use clause &{ block"use options.<return type of /function >"&} and change /function so body is wrap by a call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the part of code of interest add a call to profileresults("time")to optain the result.
 
 * Profiling is accomplished by adding code to perform measurements before and after each procedure call and recording the difference.
 
@@ -44,7 +48,8 @@ function toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.wo
 
 Function profileresults(measure:seq.word)seq.word 
  // Returns label graph of profile results. Measure is time, count, or space. // 
-  let g = profileresults 
+ // let g = profileresults //
+  let g=@(+, identity, empty:labeledgraph.parc, profileinfo)
   let m = if measure ="time"
    then @(max, clocks, 0, toseq.arcs.g)
    else if measure ="count"
@@ -139,8 +144,11 @@ function +(g:labeledgraph.parc, p:profileresult)labeledgraph.parc
 
 type profileresult is record arcs:seq.word, counts:seq.int, clocks:seq.int, space:seq.int
 
-function rawprofileresults seq.profileresult builtin.profileinfoZbuiltin
+function profileinfo seq.profileresult 
+ builtin.usemangle
 
-Function profileresults labeledgraph.parc 
- // raw profile data // @(+, identity, empty:labeledgraph.parc, rawprofileresults)
+
+/Function profileresults labeledgraph.parc 
+ // raw profile data // @(+, identity, empty:labeledgraph.parc, profileinfo)
+ 
 

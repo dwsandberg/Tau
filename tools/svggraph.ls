@@ -127,10 +127,10 @@ Function label(arcinfo.T)arc.T export
 
 function =(a:arcinfo.T, b:arcinfo.T)boolean a.a = a.b ∧ backarc.a = backarc.b
 
-function ?(a:arcinfo.T, b:arcinfo.T)ordering 
+Function ?(a:arcinfo.T, b:arcinfo.T)ordering 
  head.a.a ? head.a.b ∧ y.a ? y.b ∧ tail.a.a ? tail.a.b ∧ backarc.a ? backarc.b
 
-function ?2(a:arcinfo.T, b:arcinfo.T)ordering head.a.a ? head.a.b
+Function ?2(a:arcinfo.T, b:arcinfo.T)ordering head.a.a ? head.a.b
 
 function ?(a:T, b:T)ordering unbound
 

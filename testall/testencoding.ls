@@ -4,6 +4,8 @@ run testencoding testencoding
 
 module testencoding
 
+Testing encodings
+
 use checking
 
 use process.int
@@ -19,6 +21,8 @@ use persistantseq.testrecord
 use ipair.linklists2
 
 use persistant
+
+Function +(i:int,b:int) int export
 
 function addrecord(l1:linklists2, t:testrecord) ipair.linklists2
    let a = addwordseq(l1,body.t)

@@ -1127,7 +1127,10 @@ function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.st
    then let s = code.result(subtrees_1)
     bindinfo(dict,"WORDS"+ toword.length.s + s, [ mytype."word seq"])
    else if ruleno = // E comment E // 42 
-   then result(subtrees_2)
+   then  //
+   let s = code.result(subtrees_1)
+    bindinfo(dict,"COMMENT"+ toword.length.s + s, types.result(subtrees_1))
+    // result(subtrees_2)
    else if ruleno = // N_// 43 
    then result(subtrees_1)
    else if ruleno = // N-// 44 

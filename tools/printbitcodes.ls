@@ -28,6 +28,10 @@ use seq.decodename
 
 use seq.seq.int
 
+use seq.seq.word
+
+use seq.int
+
 use stdlib
 
 Function test1 seq.word printBitCodes."mytest.bc"

@@ -10,6 +10,10 @@ use seq.moddesc
 
 use stdlib
 
+use seq.word
+
+use seq.seq.word
+
 function mapentry(n:seq.word, i:int)int 
  let x = encode(mapnames(n_i, n_(i + 1)), encodenames)
   0

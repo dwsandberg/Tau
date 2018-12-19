@@ -1,15 +1,5 @@
 #!/usr/local/bin/tau
 
-/Library stdlib UTF8 altgen bitpackedseq bits blockseq 
-codegen codetemplates   fileio format graph groupparagraphs internalbc invertedseq ipair 
-libscope llvm   oseq packedseq  pass2  persistant  prims process  real reconstruct seq set stack stacktrace  textio tree 
-cvttoinst newsymbol newparse other intercode libdescfuncnew  main2
-  buildtree definestruct display libdesc libdescfunc opt2 parse pass0 pass1a passcommon pretty symbol convertlibtyp main processtypes 
- uses 
- exports UTF8 bitpackedseq bits blockseq  display fileio format graph internalbc
-  invertedseq ipair libdesc libscope llvm main oseq passcommon persistant prims process real 
-  reconstruct seq set stack stacktrace stdlib textio tree   codetemplates intercode groupparagraphs codegen
-  cvttoinst newsymbol pass2 persistantseq   other libdescfuncnew  main2 deepcopy
   
 Library stdlib UTF8 altgen bitpackedseq bits blockseq 
 codegen codetemplates fileio format graph groupparagraphs   internalbc  invertedseq   ipair
@@ -18,7 +8,7 @@ codegen codetemplates fileio format graph groupparagraphs   internalbc  inverted
   uses 
   exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real invertedseq ipair set graph textio blockseq packedseq
  deepcopy tree fileio pass2 stack newimp2 persistant persistantseq deepcopy llvm libscope internalbc format bits  newsymbol
- newparse prims cvttoinst libdescfuncnew groupparagraphs 
+ newparse prims cvttoinst libdescfuncnew groupparagraphs other
  
 
 module stdlib
