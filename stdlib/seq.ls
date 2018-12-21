@@ -42,7 +42,7 @@ Function_(a:seq.T, b:int)T
    getval(a, b + 1)
   else callidx(typ, a, b)
 
-function callidx(func:int, a:seq.T, b:int)T builtin.CALLIDX
+function callidx(func:int, a:seq.T, b:int)T builtin."PARAM 1 PARAM 2 PARAM 3 CALLIDX "
 
 function getval(a:seq.T, offset:int)T builtin.IDXUC
 
@@ -50,7 +50,7 @@ function getseqtype(a:seq.T, offset:int)int builtin.IDXUC
 
 Function length(a:seq.T)int export
 
-Function empty seq.T builtin.EMPTYSEQ
+Function empty seq.T builtin."LIT 0 LIT 0 RECORD 2 "
 
 Function =(a:seq.T, b:seq.T)boolean 
  if length.a = length.b then subequal(a, b, length.a)else false
@@ -237,6 +237,7 @@ Function encoding(encoding.T)int builtin.NOOP
 Function encode(t:T, erec:erecord.T)encoding.T builtin.STATE.usemangle 
 
 Function decode(t:encoding.T, erec:erecord.T)T builtin.STATE.usemangle 
+
 
 Function findencode(t:T, erec:erecord.T)seq.T builtin.STATE.usemangle 
 

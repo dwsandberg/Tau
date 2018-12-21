@@ -34,7 +34,8 @@ Function headdict set.symbol
   symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal",""), 
   symbol("builtin"_1, modulename, empty:seq.mytype, mytype."internal",""), 
   symbol("STATE"_1, modulename, [ mytype."internal1"], mytype."internal1",""), 
-  symbol(merge."sizeoftype:T", mytype."$typesize local", empty:seq.mytype, mytype."int","")]+ @(+, builtinsym.modulename, empty:seq.symbol,"export unbound stub usemangle IDXUC NOOP FROMSEQ CALLIDX EMPTYSEQ"))
+  symbol(merge."sizeoftype:T", mytype."$typesize local", empty:seq.mytype, mytype."int","")]+ 
+  @(+, builtinsym.modulename, empty:seq.symbol,"export unbound stub usemangle IDXUC NOOP FROMSEQ "))
 
 function builtinsym(modname:mytype, name:word)symbol 
  symbol(name, modname, empty:seq.mytype, mytype."internal1","")
@@ -92,6 +93,18 @@ function dict(bindinfo)set.symbol export
 function code(bindinfo)seq.word export
 
 function types(bindinfo)seq.mytype export
+
+Function funcparametertypes(t:bindinfo) seq.mytype // subseq(types.t, 3, length.types.t) //
+@(+, parameter, empty:seq.mytype, subseq(types.t, 3, length.types.t))
+
+Function parsedresult(t:bindinfo) seq.word
+   let argnames=@(+, abstracttype, "", subseq(types.t, 3, length.types.t))
+    let y=  [funcname.t]+toword.length.argnames +@(+,print,"",funcparametertypes.t)+argnames
+    "parsedfunc" +toword.length.y+y+code.t
+
+Function funcname(t:bindinfo) word towords(types(t)_1)_1 
+
+Function funcreturntype(t:bindinfo) mytype types(t)_2
 
 function bindinfo(dict:set.symbol, code:seq.word, types:seq.mytype)bindinfo export
 
@@ -360,9 +373,36 @@ function BB(token:int, tr:bindinfo, stk:stack.stkele, place:int, input:seq.word)
 Function parse(dict:set.symbol, input:seq.word)bindinfo 
  parse(bindinfo(dict,"", empty:seq.mytype), input)
 
+  
+ 
+
 Function parse(b:bindinfo, input:seq.word)bindinfo 
  let a = @(consumeinput, identity, stepresult(push(empty:stack.stkele, stkele(startstate, b)), 1, input, 0,""), input +"#")
   result(toseq(stk.a)_2)
+  
+   let newcode=if input_1 in "type use"  &or not("COMMENT"_1 in code.z)   
+   &or input_2 in "constrecordsx" &or  length.input 
+    < 8000 then code.z else 
+     // if length.input = 358 then 
+        if input_2 in "constrecordsx" then  stripcomment(code.z,1,"") else  
+         assert false report input +code.z 
+        code.z 
+      else  // stripcomment(code.z,1,"")  
+  bindinfo(dict.z,newcode,types.z)
+  
+ / Function stripcomment(code:seq.word,i:int,result:seq.word) seq.word
+  if i > length.code 
+  then   result 
+  else if code_i in"IDXUC FREF if assertZbuiltinZwordzseq NOINLINE"
+   then stripcomment( code, i + 1, result + code_i)
+  else if code_i in "WORDS"  
+  then stripcomment( code, i + 2 + toint(code_(i + 1)), result + subseq(code, i, i + 1 + toint(code_(i + 1))))
+  else if code_i in "COMMENT"  
+  then stripcomment(  code, i + 2 + toint(code_(i + 1)), result )
+  else if code_i in"LIT APPLY RECORD SET PARAM PRECORD WORD"
+  then stripcomment( code, i + 2, result + subseq(code, i, i + 1))
+  else  stripcomment( code, i + 1, result + code_i)
+  
 
 function opaction(subtrees:seq.stkele, input:seq.word, place:int)bindinfo 
  let op = code(result(subtrees_2))_1 
@@ -1015,29 +1055,32 @@ function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.st
    else if ruleno = // F W W(FP)T E // 2 
    then let functype = code.result(subtrees_6)
     let exptype = types.result(subtrees_7)
-    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report"function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1)
+    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report
+    errormessage(
+    "function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1), input, place)
     bindinfo(dict, code.result(subtrees_7), [ mytype.code.result(subtrees_2), mytype.functype]+ types.result(subtrees_4))
    else if ruleno = // F W N(FP)T E // 3 
    then let functype = code.result(subtrees_6)
     let exptype = types.result(subtrees_7)
-    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report"function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1)
+    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report  errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1), input, place)
     bindinfo(dict, code.result(subtrees_7), [ mytype.code.result(subtrees_2), mytype.functype]+ types.result(subtrees_4))
    else if ruleno = // F W W T E // 4 
    then let functype = code.result(subtrees_3)
     let exptype = types.result(subtrees_4)
-    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report"function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1)
+    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report  errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1), input, place)
     bindinfo(dict, code.result(subtrees_4), [ mytype.code.result(subtrees_2), mytype.functype])
    else if ruleno = // F W W:T E // 5 
    then let functype = code.result(subtrees_4)
     let exptype = types.result(subtrees_5)
-    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report"function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1)
+    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report  errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1), input, place)
     bindinfo(dict, code.result(subtrees_5), [ mytype.[ merge(code.result(subtrees_2)+":"+ print.mytype.functype)], mytype.functype])
    else if ruleno = // F W W is W P // 6 
    then bindinfo(dict, code.result(subtrees_4)+ code.result(subtrees_2)+ @(+, cvttotext,"", types.result(subtrees_5)), types.result(subtrees_5))
    else if ruleno = // F W T // 7 
    then result(subtrees_2)
    else if ruleno = // FP P // 8 
-   then bindinfo(@(addparameter.cardinality.dict, identity, dict, types.result(subtrees_1)),"", @(+, parameter, empty:seq.mytype, types.result(subtrees_1)))
+   then bindinfo(@(addparameter.cardinality.dict, identity, dict, types.result(subtrees_1)),"", 
+    types.result(subtrees_1))
    else if ruleno = // P T // 9 
    then bindinfo(dict,"", [ mytype(code.result(subtrees_1)+":")])
    else if ruleno = // P P, T // 10 
@@ -1127,10 +1170,10 @@ function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.st
    then let s = code.result(subtrees_1)
     bindinfo(dict,"WORDS"+ toword.length.s + s, [ mytype."word seq"])
    else if ruleno = // E comment E // 42 
-   then  //
+   then         // result(subtrees_2)
+   //
    let s = code.result(subtrees_1)
-    bindinfo(dict,"COMMENT"+ toword.length.s + s, types.result(subtrees_1))
-    // result(subtrees_2)
+    bindinfo(dict,  code.result(subtrees_2)+"COMMENT"+ toword.length.s + s, types.result(subtrees_2))
    else if ruleno = // N_// 43 
    then result(subtrees_1)
    else if ruleno = // N-// 44 

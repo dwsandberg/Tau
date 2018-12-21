@@ -131,7 +131,7 @@ function initinst seq.inst
  inst("findencodeZbuiltinZTZTzerecord 2","builtin", mytype."T"), 
  inst("notZbuiltinZboolean 1","builtin", mytype."boolean"), 
  inst("getaddressZbuiltinZTzseqZint 2","builtin", mytype."T address"), 
- inst("setfldZbuiltinZTzaddressZT 2","builtin", mytype."T address"), 
+  inst("setfldZbuiltinZTzaddressZT 2","builtin", mytype."T address"),  
  inst("allocatespaceZbuiltinZint 1","builtin", mytype."T seq"), 
  inst("libsZbuiltin 0","builtin", mytype."liblib seq"), 
  inst("addresstosymbol2ZbuiltinZint 1","builtin", mytype."int"), 

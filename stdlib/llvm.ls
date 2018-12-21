@@ -212,8 +212,8 @@ function addrecord(abbrevlength:int, bits:bitpackedseq.bit, a:seq.int)bitpackeds
 type trackconst is record bits:bitpackedseq.bit, lasttype:int, blockstart:int
 
 function constrecords(z:trackconst, l:llvmconst)trackconst 
- // keep track of type of last const processed and add record when type changes // 
-  FORCEINLINE.let MODABBREVLEN = 3 
+ FORCEINLINE.// keep track of type of last const processed and add record when type changes // 
+  let MODABBREVLEN = 3 
    let TYPEABBREVLEN = 4 
    if typ.l = -1 
    then let bits = if lasttype.z ≠ -1 then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)else bits.z 

@@ -8,7 +8,7 @@ codegen codetemplates fileio format graph groupparagraphs   internalbc  inverted
   uses 
   exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real invertedseq ipair set graph textio blockseq packedseq
  deepcopy tree fileio pass2 stack newimp2 persistant persistantseq deepcopy llvm libscope internalbc format bits  newsymbol
- newparse prims cvttoinst libdescfuncnew groupparagraphs other
+   prims cvttoinst libdescfuncnew groupparagraphs 
  
 
 module stdlib

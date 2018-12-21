@@ -8,15 +8,16 @@ setfld set value at a to x and return next address
 
 Function setfld(a:address.T, x:T)address.T builtin.STATE.usemangle
 
-function allocatespace(i:int)seq.T builtin.usemangle
+
+function allocatespace(i:int)seq.T builtin." PARAM 1 allocatespaceZbuiltinZint"
 
 type address is record toseq:seq.T
 
-Function getaddress(s:seq.T, i:int)address.T builtin.usemangle
+Function getaddress(s:seq.T, i:int)address.T builtin." PARAM 1 PARAM 2 getaddressZbuiltinZTzseqZint"
 
-Function toT(a:address.T)T builtin.NOOP
+Function toT(a:address.T)T builtin." PARAM 1 "
 
-function inttoT(int)T builtin.NOOP
+function inttoT(int)T builtin." PARAM 1 "
 
 function fldof(T, offset:int)T builtin.IDXUC
 

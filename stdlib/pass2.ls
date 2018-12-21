@@ -60,7 +60,7 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
  // finds constants, discards builtins, and make sure"STATE"is root on state changing functions // 
   if mangledname="STATE"_1 then empty:seq.symbol else 
   let a = codedown.mangledname 
-  if length.a > 1 ∧ a_2 ="builtin" 
+  if length.a > 1 ∧ last(a_2) ="builtin"_1 
   then empty:seq.symbol 
   else let f = lookupfunc(knownsymbols.p, mangledname)
  // let code1 = if"TESTOPT"_1 in flags.f then hoistRecord.codetree.f else hoistRecord.codetree.f 
@@ -72,6 +72,8 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
    else  tree("STATE",[q]) 
    [changecodetree(f,q2)]
    
+  function paratree(i:int) tree.seq.word 
+tree("PARAM"+  toword.i )
   
   
 function addsymbol(p:program, mangledname:word)program 
@@ -105,14 +107,21 @@ function addsymbol(p:program, mangledname:word)program
 
 
 function buildcodetree(knownsymbols:symbolset, src:seq.word)tree.seq.word 
- buildcodetreeX(knownsymbols, false, symbol("looptemplate"_1, mytype."?", empty:seq.mytype, mytype."?",""), empty:stack.tree.seq.word, 1, src)
+  buildcodetreeX(knownsymbols, false, symbol("looptemplate"_1, mytype."?", empty:seq.mytype, mytype."?",""), empty:stack.tree.seq.word, 1, src)
 
 
 function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol, stk:stack.tree.seq.word, i:int, src:seq.word)tree.seq.word 
  if i > length.src 
   then assert length.toseq.stk > 0 report"STACK ISSUE"+ mangledname.caller + src 
-   if hasstate then tree("STATE", [ top.stk])else top.stk 
+    let top2=top.stk
+    // let top2=if label.top="builtinZtestZinternal1" &and label.top_1="NOOP" then 
+       tree("PARAM 1" ) else top
+    assert not(label.top2 ="builtinZtestZinternal1") report print.top2 //
+   if hasstate then tree("STATE", [ top2])else top2 
   else let name = src_i 
+   if name in "builtinZtestZwordzseq builtinZtestZinternal1" then
+    buildcodetreeX(knownsymbols,hasstate, caller , stk , i+1 ,src) 
+  else  
   let specialnopara = if name in"if CALLIDX"
    then 3 
    else if name in"IDXUC setfldZbuiltinZTzaddressZT decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint createfileZbuiltinZbitszseqZoutputformat"

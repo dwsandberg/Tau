@@ -87,8 +87,10 @@ function flags(src:seq.word, i:int)seq.word
  if i = 0 
   then""
   else if src_i in"VERYSIMPLE EXTERNAL STATE NOINLINE INLINE SIMPLE COMPLEX FORCEINLINE PROFILE"
-  then flags(src, i - 1)+ src_i 
-  else""
+  then 
+  flags(src, i - 1)+ src_i 
+  else if src_i in "STATEZtestZinternal1" then flags(src, i - 1)+ "STATE" 
+  else ""
 
 Function isundefined(s:symbol)boolean mangledname.s ="undefinedsym"_1
 
