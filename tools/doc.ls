@@ -1,6 +1,9 @@
+#!/usr/local/bin/tau
+
 module doc
 
-run useful testing2
+run tools checkdoclib  
+
 
 run tools createdoc
 
@@ -43,15 +46,20 @@ use tree.word
 use main2
 
 
-/Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html // let d = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/doc.txt")let x = createfile("taudoc.html", [ htmlheader + processpara.d])let e = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/appdoc.txt")let x2 = createfile("appdoc.html", [ htmlheader + processpara.e])let y = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])let z = createfile("tools.html", [ htmlheader + processpara.htmlcode."tools"])d
+/Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html // 
+let d = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/doc.txt")
+let x = createfile("taudoc.html", [ htmlheader + processpara.d])let e = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/appdoc.txt")let x2 = createfile("appdoc.html", [ htmlheader + processpara.e])let y = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])let z = createfile("tools.html", [ htmlheader + processpara.htmlcode."tools"])d
 
 /function prettyit(usegraph:graph.word, s:seq.word)seq.word if subseq(s, 1, 2)="* usegraph"then let l = findindex("include"_1, s)let k = findindex("exclude"_1, s){"&{ noformat <h2> Use graph</h2> &}"+ if k > l then usegraph(usegraph, subseq(s, l + 1, k), subseq(s, k + 1, length.s))else usegraph(usegraph, subseq(s, l + 1, length.s), subseq(s, k + 1, l))} else"&{ select 1"+ prettyparagraph(defaultcontrol, s)+"&}"
 
-/Function htmlcode(libname:seq.word)seq.word let l = tolibdesc(libname_1)let g = newgraph.usegraph("mod", l){"&{ noformat <h1> Source code for Library"+ libname +"</h1> &}"+ @(+, ref,"", modules.l)+ @(seperator."&{ noformat <hr> &}", prettymod.g,"", modules.l)}
+/Function htmlcode(libname:seq.word)seq.word 
+let l = tolibdesc(libname_1)
+let g = newgraph.usegraph("mod", l)
+{"&{ noformat <h1> Source code for Library"+ libname +"</h1> &}"+
+ @(+, ref,"", modules.l)+ @(seperator."&{ noformat <hr> &}", prettymod.g,"", modules.l)}
 
-/function ref(m:moddesc)seq.word {"&{ noformat <a href = &quot"+ merge("#"_1, modname.m)+"&quot >"+ modname.m +"</a> &}"}
 
-/function prettymod(usegraph:graph.word, m:moddesc)seq.word {"&{ noformat <hr id = &quot"+ modname.m +"&quot > &}"+ @(+, prettyit.usegraph,"", src.m)}
+
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word 
 // Calls between modules in list of modules. // 
@@ -152,9 +160,11 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
   else if lib_i_1 ="Function"_1 
   then let toadd ="&{ select x &keyword"+ subseq(lib_i, 1, length(lib_i) - if length.currentmod = 1 then 2 else 1)+ toword.length.currentmod +"&}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
-  else if lib_i_1 in"record encoding sequence"
+  else if lib_i_1 in"record encoding sequence"  
   then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_2)
-  else if lib_i_1 in"export"
+ else if     subseq(lib_i, 1, 2)="skip type"
+  then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_3)
+ else if lib_i_1 in"export"
   then let j = findindex("Function"_1, lib_i)
    if length(lib_i)> j 
    then let toadd ="&{ select x &keyword"+ subseq(lib_i, j, length(lib_i))
@@ -189,8 +199,11 @@ function usegraph(lib:seq.seq.word, kind:word, i:int, currentmod:word, result:se
 function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word 
  if i > length.lib 
   then empty:seq.arc.word 
-  else if lib_i_1 ="bindings"_1 
-  then formcallgraph(lib_i_2, lib_i, 3, empty:seq.arc.word)+ formcallgraph(lib, i + 1)
+  else if lib_i_1 in "Parsedfunc parsedfunc" 
+  then  let j=toint(lib_i_2)+3
+      if lib_i_j="unknown"_1 then formcallgraph(lib, i + 1)
+      else 
+   formcallgraph(lib_i_j, lib_i, j+1, empty:seq.arc.word)+ formcallgraph(lib, i + 1)
   else formcallgraph(lib, i + 1)
 
 function formcallgraph(func:word, src:seq.word, i:int, result:seq.arc.word)seq.arc.word 

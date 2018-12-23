@@ -83,8 +83,9 @@ function addsymbol(p:program, mangledname:word)program
    // assert length.src.caller > 0 report"Error"+ mangledname + print2.caller //
   if isdefined.caller &and label.codetree.caller = "default"
   then 
-    let treecode=subseq(src.caller,1,length.src.caller-length.flags.caller)
-     if length.src.caller > 0 &and last.src.caller="EXTERNAL"_1  
+    let startindex=if (src.caller)_1 ="parsedfunc"_1 then toint((src.caller)_2)+3 else 1
+    let treecode=subseq(src.caller,startindex,length.src.caller-length.flags.caller)
+      if length.src.caller > 0 &and last.src.caller="EXTERNAL"_1  
     then program(replace(knownsymbols.p,  changecodetree(caller, tree."EXTERNAL")), callgraph.p, inline.p, 
    if"STATE"_1 in flags.caller then hasstate.p + mangledname.caller else hasstate.p)
   else let tr0=buildcodetreeX(knownsymbols.p, false, caller, empty:stack.tree.seq.word, 1,treecode)

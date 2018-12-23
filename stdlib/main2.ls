@@ -169,41 +169,70 @@ else  if p_1 in "function Function type use" then
   empty:seq.seq.word 
 else 
   ["skip"+p] +moduleHeaderLines(s,i+1)
+  
+use set.seq.word
+
+use oseq.word
 
 function bindingformat(known:symbolset,m:firstpass) seq.seq.word
  if length.rawsrc.m =0   then empty:seq.seq.word  else
    let  header=moduleHeaderLines(rawsrc.m,2)
-   let uses=@(+,formatuse,empty:seq.seq.word,uses.m)
-    @(+,bindingfind(toseq.defines.m,toseq.exports.m,known,1,parameter.modname.m =mytype."T"),["module"+print.modname.m]+header+uses,
+   let uses=@(+,formatuse,empty:set.seq.word,uses.m)
+   let dd=@(+,extractparsed(parameter.modname.m =mytype."T",known),empty:seq.seq.word,toseq.defines.m)
+   // assert length.dd > 0 report "empty dd"+print.modname.m+toword.length.toseq.defines.m //
+    //  ["start defines"+ print.modname.m]+dd+["end defines"+ print.modname.m]  
+    + // @(+,bindingfind.dd,["module"+print.modname.m]+header+alphasort.toseq.uses,
    subseq(rawsrc.m,length.header+2,length.rawsrc.m))
+   
+function extractparsed(abstract:boolean,known:symbolset,s:symbol) seq.seq.word
+// assert not(name.s="cindex"_1) report [mangledname.s]+if abstract then "abstract"else "" //
+let a=if abstract then
+        src.s 
+      else
+      let sy =known_(mangledname.s)
+      // assert false report [mangledname.s]+src.sy  parsedfunc 7 = 2 wordfreq wordfreq boolean a b falseZstdlib //
+        src.sy
+   if length.a > 0     &and a_1="parsedfunc"_1 then  
+    let headlength=toint(a_2)+2
+     [subseq(a,1,headlength)+mangledname.s+subseq(a,headlength+1,length.a)]
+       else empty:seq.seq.word
   
 function formatuse(m:mytype) seq.word   "use"+print.m
-  
 
-function  bindingfind(defines:seq.symbol,exports:seq.symbol,known:symbolset,i:int,abstract:boolean,s:seq.word) seq.seq.word
-  if length.s=0 then ["skip"+s] 
-   else   if i=1  &and not(s_1 in "function type Function ") then 
-      if s_1 in"use Use "  then empty:seq.seq.word else ["skip"+s]
-   else if  i > length.defines then 
-    if s_1 in "function  Function " then 
-     let r=parse(headerdict,s)
-       let pt =  @(+,identity,empty:seq.mytype,subseq(types.r,3,length.types.r) ) 
-       let name = abstracttype.(types.r)_1
-      [ "export" +findexport(exports,name,pt,1)+s  ]
-    else 
-    ["skip"+s] 
-   else if orgsrc.(defines_i)=s then 
-      if abstract then
-        [getheader.s,"parsed "+src.defines_i] 
-      else
-      let sy =known_(mangledname.defines_i)  
-      if  s_1 in " type " then [ parsedsrc.sy,"pass1 "+src.sy]
-      else  if s_1 in "function   Function " then
-         if abstract then [getheader.s,"parsed "+src.defines_i] else
-       [getheader.orgsrc.sy+mangledname.sy,"parsed "+parsedsrc.sy,"bindings"+mangledname.sy+src.sy]
-   else empty:seq.seq.word 
-   else bindingfind(defines,exports,known,i+1,abstract,s)
-  
+
+function bindingfind2(defines:seq.seq.word,i:int,key:seq.word) seq.seq.word
+if i > length.defines then empty:seq.seq.word
+else if getkey.(defines_i)=key then [defines_i] 
+else bindingfind2(defines,i+1,key)
+
+function getkey(a:seq.word) seq.word 
+if a_1 in "function record sequence encoding Encoding Function" then a else 
+assert a_1 ="parsedfunc"_1 report "JKLL"+a   
+subseq(a,3, toint(a_2)-toint(a_4))
+
+function  bindingfind(defines:seq.seq.word,s:seq.word) seq.seq.word
+ if length.s=0 then ["skip"+s] 
+   else   if s_1 in "function Function " then 
+   let a =parsedresult.parse(headerdict, getheader.s)
+      let b=bindingfind2(defines,1,getkey(a))
+       let c =if length.b =0 then let headlength=toint(a_2)+2
+     [subseq(a,1,headlength)+"unknown"+subseq(a,headlength+1,length.a)]
+     else b
+      let d = if s_1 in "Function " then ["Parsedfunc" +subseq(c_1,2,length.c_1)] else c
+    if  d_1_(toint(d_1_2)+4)=" stubZtest"_1 then
+          ["skip"+s] 
+        else 
+           d
+    else  
+      if s_1 in"use Use "  then empty:seq.seq.word 
+    else ["skip"+s]
+   
+   
+function xx(s:seq.word) seq.word   parsedresult.parse(headerdict, getheader.s)
+
+use process.seq.word
+
+
 
 function findexport(sq:seq.symbol, name:word,types:seq.mytype,i:int) seq.word
    if i > length.sq then "?" else 

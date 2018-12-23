@@ -196,10 +196,10 @@ function templates(modset:set.firstpass, f:firstpass)seq.firstpass
   else empty:seq.firstpass
 
 function template(dict:set.symbol, s:symbol)symbol 
- if src(s)_1 in"type sequence record encoding LIT Encoding"
-  then s 
+ if src(s)_1 in"sequence record encoding  Encoding"
+  then  s 
   else let b = parse(bindinfo(dict,"", empty:seq.mytype), src.s)
-  changesrc(s, code.b,src.s,code.b)
+  changesrc(s, code.b)
 
 use deepcopy.symbolset
 
@@ -231,12 +231,13 @@ function bind(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:sy
   if symsrc_1 in"type sequence record encoding Encoding"
    then postbindtypes(dict, mytype."", templates, knownsymbols, src.s, s, s) 
    else assert length.src.s > 2 report"PROBLEM TT"
-   let code = code.parse(bindinfo(dict,"", empty:seq.mytype), symsrc)
-   let s2=changesrc(s,src.s,src.s,code)
+   let b = parse(bindinfo(dict,"", empty:seq.mytype), symsrc)
+   let code = code.b
+   let s2=// changesrc(s,src.s,src.s,code) // s
    if code_1 in"type sequence record encoding Encoding" then
      postbindtypes(dict, mytype."", templates, knownsymbols, code, s2, s2)
    else
-    postbind(dict, mytype."", templates, knownsymbols, code, s2, s2)
+    postbind(dict, mytype."", templates, knownsymbols, parsedresult.b, s2, s2)
     
 type zzz is record known:symbolset, size:seq.word
 
@@ -253,7 +254,7 @@ function definetypedesc(knownsymbols:symbolset,t:mytype,code:seq.word) symbol
 let s1=lookuptypedesc2(knownsymbols, print.t)
 let s =if  isdefined.s1 then s1 else   symbol(merge("typedesc:"+ print.t), mytype."internal", empty:seq.mytype, mytype."word seq", 
 "")
-changesrc(s,if code_1 in "record sequence pending" then code else  "WORDS"+toword.length.code+ code,orgsrc.s,parsedsrc.s)
+changesrc(s,if code_1 in "record sequence pending" then code else  "WORDS"+toword.length.code+ code)
 
 
 function buildtypedesc(knownsymbols:symbolset, k:seq.word, t:mytype)seq.word 
@@ -394,7 +395,7 @@ function postbind2(org:symbol, dict:set.symbol, modpara:mytype, templates:symbol
     postbind2(org, dict, modpara, templates, knownsymbols, code, i + 3 + toint(code_(i + 1)), result + subseq(code, i+2, length.code  ), thissymbol)
   else 
     postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2 + toint(code_(i + 1)), result + subseq(code, i, i + 1 + toint(code_(i + 1))), thissymbol)
- else if code_i in " COMMENT"  
+ else if code_i in " COMMENT parsedfunc"  
   then postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2 + toint(code_(i + 1)), result + subseq(code, i, i + 1 + toint(code_(i + 1))), thissymbol)
   else if code_i in"LIT APPLY RECORD SET PARAM PRECORD WORD"
   then postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2, result + subseq(code, i, i + 1), thissymbol)
@@ -515,13 +516,12 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
    then assert parameter.modname.f = mytype.""report"encoding in template?"
     let typ = parameter(types(b)_1)
     let sym= symbol(code(b)_2, modname.f, empty:seq.mytype, mytype(towords.typ +"erecord"), code.b)
-    firstpass(modname.f, uses.f + mytype(towords.typ +"invertedseq")+ mytype(towords.typ +"ipair"), defines.f +changesrc(sym,code.b,input,code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
+    firstpass(modname.f, uses.f + mytype(towords.typ +"invertedseq")+ mytype(towords.typ +"ipair"), defines.f +changesrc(sym,code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
    else assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
    // assert false report code.b // 
    let modnm = towords.modname.f 
    let code = subseq(code.b, 1, 2)+ toword.length.modnm + modnm + subseq(code.b, 3, length.code.b)
-   let tmp1=definetypedesc(emptysymbolset,t,code) 
-   let sizeofsym = changesrc(tmp1,src.tmp1,input,code)
+   let sizeofsym =definetypedesc(emptysymbolset,t,code) 
    let constructor = symbol(code_2, modname.f, @(+, parameter, empty:seq.mytype, types.b), t, code)
    let syms = @(+, definefld(code, modname.f, [ t]), [ constructor, sizeofsym], types.b)+ if kind ="sequence"_1 
     then [ symbol("toseq"_1, modname.f, [ t], mytype(towords.parameter.t +"seq"_1), code)]
@@ -534,15 +534,17 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
    let n = if iscomplex.modname.f ∧ length.paratypes= 0 
     then merge([ name]+":"+ print(funcreturntype.t))
     else name 
-    if (code.t)_1 ="usemangleZtest"_1
+    let firstinstruction=(code.t)_1
+    if firstinstruction ="usemangleZtest"_1
    then let sym = symbol(n, mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t, input)
     firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
    else let sym = symbol(n, modname.f, paratypes, funcreturntype.t, input)
-   if"exportZtest"_1= (code.t)_1
+   if"exportZtest"_1= firstinstruction
    then firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, exportmodule.f,rawsrc.f)
-   else if"unboundZtest"_1= (code.t)_1
+   else if"unboundZtest"_1= firstinstruction
    then firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + sym, exportmodule.f,rawsrc.f)
-   else firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
+   else 
+   firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
   else if input_1 in"module Module"
   then firstpass(mytype.if length.input > 2 then"T"+ input_2 else [ input_2], uses.f, defines.f, exports.f, unboundexports.f, unbound.f, input_2 in exported,rawsrc.f)
   else f

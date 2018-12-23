@@ -202,7 +202,10 @@ function map(known:symbolset, r:mapresult3, l:firstpass)mapresult3
   mapresult3(syms.e, mods.r + libmod(false, abstracttype.modname.l, libsyms.d, libsyms.e))
 
 
-function tolibsym4(s:symbol)libsym libsym(resulttype.s, mangledname.s, src.s)
+function tolibsym4(s:symbol)libsym 
+// let src=if length.src.s > 0 &and  ((src.s)_1="parsedfunc"_1) then 
+      subseq(src.s,toint((src.s)_2)+4,length.src.s) else src.s //
+libsym(resulttype.s, mangledname.s, src.s)
 
 function findelement(known:symbolset, r:mapresult32, s:symbol)mapresult32 
   let z = findelement(libsym(resulttype.s, mangledname.s,""), syms.r)

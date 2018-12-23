@@ -11,8 +11,9 @@ display
 
 Module tools
 
+run tools testx
 
-run tools test
+/run tools test
 
 /run tools prettytest
 
@@ -56,13 +57,17 @@ use seq.word
 
 "byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 
-Function checkdoclib seq.word   doclibrary."newtools"
-
-callgraphbetween("newimp","libdescfunc libscope doc")  
+Function checkdoclib seq.word   // doclibrary."testall" //
+callgraphbetween("stdlib","libdescfunc libscope")  
 
 doclibrary."tools"
 
 use seq.word
+
+Function testx seq.word 
+@(+,   +("&br &br"),"", firstPass("testall"_1))
+
+use seq.seq.word
 
 Function test seq.word 
  let a = compilelib2("stdlib"_1)
