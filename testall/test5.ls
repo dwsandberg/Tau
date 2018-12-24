@@ -143,7 +143,7 @@ function isprefex(prefix:seq.word, s:seq.word)boolean subseq(s, 1, length.prefix
 function testout(i:int)seq.word ["one two three"_i]
 
 function t517 boolean 
- isprefex("out of bounds", message.process.testout.0)∧ isprefex("out of bounds", message.process.testout.-10)∧ isprefex("out of bounds", message.process.testout.4)∧ message.process.testout.1 ="normal exit"∧ aborted.process.testout.5 ∧ not.aborted.process.testout.2 ∧ result.process.testout.3 ="three"∧ message.process.result.process.testout.4 ="no result of aborted process"
+ isprefex("out of bounds", message.process.testout.0)∧ isprefex("out of bounds", message.process.testout(-10))∧ isprefex("out of bounds", message.process.testout.4)∧ message.process.testout.1 ="normal exit"∧ aborted.process.testout.5 ∧ not.aborted.process.testout.2 ∧ result.process.testout.3 ="three"∧ message.process.result.process.testout.4 ="no result of aborted process"
 
 function t518 boolean isprefex("invalid digit", message.process.toint("0A"_1))
 
@@ -194,9 +194,7 @@ function t523 boolean
   let closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
   closure = toseq.arcs.transitiveClosure.g
 
-function print(g:graph.int)seq.word 
- {"GRAPH:"+ @(+, print,"", toseq.arcs.g)}
- 
+function print(g:graph.int)seq.word {"GRAPH:"+ @(+, print,"", toseq.arcs.g)}
 
 function print(a:arc.int)seq.word {"("+ toword.tail.a + toword.head.a +")"}
 

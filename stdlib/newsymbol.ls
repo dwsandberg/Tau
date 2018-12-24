@@ -107,7 +107,7 @@ Function changesrc(s:symbol, src:seq.word)symbol
   
 
 Function changecodetree(old:symbol, t:tree.seq.word)symbol 
- let oldflags = flags.old 
+  let oldflags = flags.old 
 let adjustedflags=flags.old+if inst.t="STATE"_1 then "STATE" else ""
   let functyp = if"FORCEINLINE"_1 in adjustedflags 
    then"INLINE"

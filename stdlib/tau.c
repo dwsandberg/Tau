@@ -688,23 +688,22 @@ if (setjmp(q->env)!=0) {
      default: assert(0,"only 1 ,2,3 or 4 arguments to process are handled");
         
      }
-     // fprintf(stderr,"start result copy \n");
+     // fprintf(stderr,"start result copy \n"); //
      assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
      q->result= ((BT (*) (processinfo,BT))(q->d->deepcopyresult) ) ( q->spawningprocess,result);
      assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-     // fprintf(stderr,"finish result copy\n");
-
+     // fprintf(stderr,"finish result copy\n"); //
     }
     if (q->freespace )  myfree(&q->space); 
     if (q->profileindex > 0 )  (q->finishprof)(q->profileindex ,0);
 }
 
 void initprocessinfo(processinfo p,processinfo PD,struct pinfo2 * pin){
-       p->spawningprocess =PD;
+    p->spawningprocess =PD;
     p->encodings = PD->encodings;
     p->kind = 0;
     p->d = pin;  
-     p->pid = pthread_self ();
+    p->pid = pthread_self ();
     p->joined =0 ;
     p->space.nextone =0;
     p->space.lastone =0;
@@ -718,13 +717,13 @@ void initprocessinfo(processinfo p,processinfo PD,struct pinfo2 * pin){
 }
 
 BT PROCESS3(processinfo PD,BT pin,BT profileidx, BT (*finishprof)(BT idx,BT x)){
- pthread_attr_t 	stackSizeAttribute;
-    size_t			stackSize = 0;
+  pthread_attr_t 	stackSizeAttribute;
+  size_t			stackSize = 0;
   pthread_attr_init (&stackSizeAttribute);
   pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024 * 12 );
-    pthread_attr_getstacksize(&stackSizeAttribute, &stackSize); 
+  pthread_attr_getstacksize(&stackSizeAttribute, &stackSize); 
   /*  fprintf(stderr,"Stack size %d\n", stackSize);*/
-  processinfo p=(processinfo)  myalloc(PD,sizeof (struct pinfo)/8);
+  processinfo p=(processinfo)  myalloc(PD,(sizeof (struct pinfo)+7)/8);
   initprocessinfo(p,PD,(struct pinfo2 *) pin);
   p->profileindex = profileidx; 
   p->finishprof=finishprof;

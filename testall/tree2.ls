@@ -1,8 +1,4 @@
-module tree2(T)
-
-type tree2 is record nodes:seq.treenode.T, subtree:int
-
-type treenode is record label:T, nosons:int, nonodes:int
+Module tree2.T
 
 use seq.T
 
@@ -11,6 +7,10 @@ use seq.tree2.T
 use seq.treenode.T
 
 use stdlib
+
+type tree2 is record nodes:seq.treenode.T, subtree:int
+
+type treenode is record label:T, nosons:int, nonodes:int
 
 Function =(T, T)boolean unbound
 

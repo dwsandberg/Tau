@@ -1,8 +1,8 @@
-Module point(T)
-
-type point is record x:T, y:T, z:T
+Module point.T
 
 use stdlib
+
+type point is record x:T, y:T, z:T
 
 Function +(T, T)T unbound
 

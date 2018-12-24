@@ -348,6 +348,13 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
    else if i2 ="notZbuiltinZboolean"_1 
    then tree(label.code, [ l_1_1, l_3, l_2])
    else tree(label.code, l)
+   else if inst in"mergeZstdlibZwordzseq" ∧ inst(l_1)="WORDS"_1 then
+      // assert false report "merge"+label(l_1) // 
+          tree("WORD"+merge(subseq(label(l_1),3,length.label(l_1)) ))
+  else if inst ="Q2BZwordzseqZTzseqZTzseq"_1 &and inst(l_1)="WORDS"_1 
+  &and inst(l_2)="WORDS"_1 then
+    let cat=subseq(label(l_1),3,length.label(l_1))+ subseq(label(l_2),3,length.label(l_2))
+   tree ("WORDS"+toword.length.cat+cat)
   else if inst in"Q5FZwordzseqZTzseqZint"∧ inst(l_2)="LIT"_1 ∧ inst(l_1)="WORDS"_1 
   then   let cst = l_1 
    let idx = toint.arg(l_2)

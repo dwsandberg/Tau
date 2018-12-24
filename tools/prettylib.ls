@@ -35,8 +35,7 @@ function plist(t:seq.word,i:int,parano:int,names:seq.word) seq.word
 
 
 Function testing2 seq.word
-htmlcode("stdlib")
-
+// htmlcode("stdlib") //
 // let z ="Parsedfunc 11 check 2 seq.boolean int seq.word l i"
  let nopara= toint(z_4)
    let headlength=toint(z_2)
@@ -46,12 +45,12 @@ htmlcode("stdlib")
 //
  // callgraphwithin("testall","testall test11 test5 testencodings")  
  doclibrary."stdlib" //
-  // @(+,   +("&br &br"),"", subseq(firstPass("testall"_1),1,30))
+    @(+,   +("&br &br"),"", subseq(firstPass("testall"_1),1,30))
+
 //
   let x= prettyit(   firstPass("testall"_1)  ,"junk"+"/" ,1,[""]) 
  @(+,   +("&br &br"),"", x)
  
-@(+,   +("&br &br"),"", subseq(firstPass("test4"_1),1,20))
 
 use format
 
@@ -80,7 +79,7 @@ else
   let  newfilename=subseq(modname,1,max(length.modname-1,2))+p_2
     // assert false report newfilename //
  prettyit(lib,newfilename ,i+1, if firstmod then  ["#!/usr/local/bin/tau"]+result+[processtotext(" &keyword "+p)] else 
- [processtotext(" &keyword "+p)]  )
+ [processtotext(" &keyword Module"+subseq(p,2,length.p))]  )
  else
  let toadd=prettyparagraph(p)
  prettyit(lib,modname,i+1,if toadd="" then result else result+[processtotext.toadd] )

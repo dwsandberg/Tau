@@ -203,9 +203,10 @@ function map(known:symbolset, r:mapresult3, l:firstpass)mapresult3
 
 
 function tolibsym4(s:symbol)libsym 
-// let src=if length.src.s > 0 &and  ((src.s)_1="parsedfunc"_1) then 
-      subseq(src.s,toint((src.s)_2)+4,length.src.s) else src.s //
-libsym(resulttype.s, mangledname.s, src.s)
+ let src=if length.src.s > 0 &and  ((src.s)_1="parsedfunc"_1) then 
+      subseq(src.s,toint((src.s)_2)+3,length.src.s) else src.s
+ assert not("parsedfunc"_1  in src) report src
+libsym(resulttype.s, mangledname.s, src)
 
 function findelement(known:symbolset, r:mapresult32, s:symbol)mapresult32 
   let z = findelement(libsym(resulttype.s, mangledname.s,""), syms.r)

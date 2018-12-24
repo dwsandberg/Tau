@@ -103,12 +103,17 @@ PROFILE.
   let simple = @(+, findsimple, empty:seq.firstpass, toseq.d2)
   let roots = toseq.asset.@(+, roots,"", simple)
   let abstractmods = @(+, templates.d2, empty:seq.firstpass, toseq.d2)
-  let templates = @(+, identity, emptysymbolset, toseq.@(∪, defines, empty:set.symbol, abstractmods))
+  let templates = @(+, clean, emptysymbolset, toseq.@(∪, defines, empty:set.symbol, abstractmods))
   let knownsymbols = @(+, identity, librarysyms, toseq.@(∪, defines, empty:set.symbol, simple))
   let known2 = @(addinternal, identity, knownsymbols, toseq.d2)
   let X = @(bind(templates, d2), identity, known2, simple)
   linkage(X, simple + abstractmods, asset.roots)
-
+  
+function clean(s:symbol) symbol
+   if length.src.s > 0 &and  ((src.s)_1="parsedfunc"_1) then 
+      changesrc(s,subseq(src.s,toint((src.s)_2)+3,length.src.s)) else s
+   
+  
 function addinternal(known:symbolset, sym:symbol)symbolset 
  if modname.sym = mytype."internal"
   then let x = known_mangledname.sym 
@@ -199,11 +204,12 @@ function template(dict:set.symbol, s:symbol)symbol
  if src(s)_1 in"sequence record encoding  Encoding"
   then  s 
   else let b = parse(bindinfo(dict,"", empty:seq.mytype), src.s)
-  changesrc(s, code.b)
+  changesrc(s, parsedresult.b)
 
 use deepcopy.symbolset
 
 function bind(templates:symbolset, modset:set.firstpass, a:symbolset, f:firstpass)symbolset 
+PROFILE.
  let x = subseq(towords.modname.f, 1, length.towords.modname.f - 1)
   if x =""
   then let dict = builddict(modset, f)∪ headdict 
@@ -224,6 +230,7 @@ function x2(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:symb
   
 
 function bind(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:symbol)symbolset 
+ PROFILE.
  let symsrc = src.s 
   if length.symsrc = 2 ∧ symsrc_1 ="LIT"_1 
   then knownsymbols 
@@ -435,7 +442,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
    then if towords.modpara in ["int"]∨ abstracttype.modpara ="seq"_1 
     then zzz(knownsymbols,"LIT 1")
     else let xx = extracttypedesc.lookuptypedesc2(knownsymbols , print.modpara )
-    if  (xx)_1 in"1 2 3 4 5 6"
+    if  (xx)_1 in"1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16"
     then zzz(knownsymbols,"LIT"+  (xx)_1)
     else assert false report"did it get here?"+ xx 
     X(merge("sizeoftype:"+ print.modpara), org, dict, modpara, templates, knownsymbols)

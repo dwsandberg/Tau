@@ -11,9 +11,9 @@ display
 
 Module tools
 
-run tools testx
+/run tools testx
 
-/run tools test
+run tools test
 
 /run tools prettytest
 
