@@ -28,13 +28,13 @@ use seq.profileresult
 
 use seq.seq.seq.word
 
-use set.parc
-
-use stdlib
+use seq.seq.word
 
 use seq.word
 
-use seq.seq.word
+use set.parc
+
+use stdlib
 
 * To profile a function add a use clause &{ block"use options.<return type of /function >"&} and change /function so body is wrap by a call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the part of code of interest add a call to profileresults("time")to optain the result.
 
@@ -144,11 +144,6 @@ function +(g:labeledgraph.parc, p:profileresult)labeledgraph.parc
 
 type profileresult is record arcs:seq.word, counts:seq.int, clocks:seq.int, space:seq.int
 
-function profileinfo seq.profileresult 
- builtin.usemangle
-
-
-/Function profileresults labeledgraph.parc 
- // raw profile data // @(+, identity, empty:labeledgraph.parc, profileinfo)
+function profileinfo seq.profileresult builtin.usemangle
  
 

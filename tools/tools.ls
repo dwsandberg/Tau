@@ -3,11 +3,12 @@
 prettylib  pretty doc profile
 
 Library tools bandeskopf barycenter displaygraph displaytextgraph  labeledgraph layergraph makeDAG 
- printbitcodes  svg svggraph   profile pretty doc prettylib
+ printbitcodes  svg svggraph   profile pretty doc prettylib renamemodule
+ genLR1 testparser taulextable
 display
  uses stdlib 
  exports bandeskopf barycenter displaygraph displaytextgraph doc layergraph makeDAG   prettylib printbitcodes profile svg 
- svggraph tools labeledgraph display pretty
+ svggraph tools labeledgraph display pretty genLR1 testparser taulextable
 
 Module tools
 

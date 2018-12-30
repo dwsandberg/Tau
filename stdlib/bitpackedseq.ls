@@ -34,13 +34,13 @@ Function_(a:bitpackedseq.T, idx:int)T
   let dataidx =(idx - 1)/ slotsperword + 1 
   let d = if dataidx > length.data.a then part.a else tobits(data(a)_dataidx)
   let slot =(idx - 1)mod slotsperword * nobits 
-  frombits(d >> slot ∧ bits.-1 >> 64 - nobits)
+  frombits(d >> slot ∧ bits(-1)>> 64 - nobits)
 
 Function add(a:bitpackedseq.T, b:T)bitpackedseq.T 
  let nobits = sizeinbits.b 
   let slotsperword = 64 / nobits 
   let slot = length.a mod slotsperword 
-  let newpart =(tobits.b ∧ bits.-1 >> 64 - nobits)<< slot * nobits ∨ part.a 
+  let newpart =(tobits.b ∧ bits(-1)>> 64 - nobits)<< slot * nobits ∨ part.a 
   if slot = slotsperword - 1 
   then bitpackedseq(length.a + 1, data.a + frombits.newpart, bits.0)
   else bitpackedseq(length.a + 1, data.a, newpart)
@@ -68,7 +68,7 @@ Function add(a:bitpackedseq.T, b:bits, count:int)bitpackedseq.T
   let slotsperword = 64 / nobits 
   let slot = length.a mod slotsperword 
   let slotstoadd = min(slotsperword - slot, count)
-  let newpart =(b ∧ bits.-1 >> 64 - slotstoadd * nobits)<< slot * nobits ∨ part.a 
+  let newpart =(b ∧ bits(-1)>> 64 - slotstoadd * nobits)<< slot * nobits ∨ part.a 
   let d = if slot + slotstoadd = slotsperword 
    then bitpackedseq(length.a + slotstoadd, data.a + frombits.newpart, bits.0)
    else bitpackedseq(length.a + slotstoadd, data.a, newpart)

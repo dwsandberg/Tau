@@ -1,5 +1,3 @@
-#!/usr/local/bin/tau
-
 Module printbitcodes
 
 run printbitcodes test1
@@ -26,11 +24,13 @@ use seq.content
 
 use seq.decodename
 
+use seq.int
+
 use seq.seq.int
 
 use seq.seq.word
 
-use seq.int
+use seq.word
 
 use stdlib
 
@@ -52,7 +52,7 @@ Function printBitCodes(file:seq.word)seq.word
    let symbols = last.blocks.z 
    assert blockid.(blocks.z)_1=TYPEBLOCK report "Expected TYPE Table as first block"
    assert blockid.symbols=VALUESYMTABBLOCK report "EXPECTED SYMBOL Table as last block"
-    let types = recs.getinfo( (blocks.z)_1)
+  let types = recs.getinfo(blocks(z)_1)
    let names=@(  processsymentry,identity,dseq("**"_1),recs.getinfo.symbols)
    let constanddefs=ggh(z,names,4,0,empty:seq.seq.word)
    let functionblocks=findblock(FUNCTIONBLOCK, blocks.z)
@@ -77,38 +77,28 @@ empty:seq.seq.int
 function  firstconst(s:seq.seq.int,i:int) int
    if s_i_1=-1 then i else firstconst(s,i+1)
 
-function filterm(types:seq.seq.int,s:seq.word) seq.seq.word   if length.s > 10 &and s_11="MODULECODEFUNCTION"_1  
-    &and  s_17="0"_1 then 
-      let typeno=toint.s_13
+function filterm(types:seq.seq.int, s:seq.word)seq.seq.word 
+ if length.s > 10 ∧ s_11 ="MODULECODEFUNCTION"_1 ∧ s_17 ="0"_1 
+  then let typeno = toint(s_13)
       let nopara=length(types_(typeno + 2)) - 3 
-        [[s_7,s_13,toword.nopara]] else empty:seq.seq.word
-
-
-  
-  use seq.word
-  
-
+   [ [ s_7, s_13, toword.nopara]]
+  else empty:seq.seq.word
 
 function ggh(z:content,names:seq.word,j:int,number:int,result:seq.seq.word) seq.seq.word
- if j > length.recs.z then result
- else 
- //  assert max(number+1,0)=length.result report "L"+toword.number+toword.length.result+@(+,identity,"",result) //
-  let i = (recs.z)_j
-  if i_1=-1 then 
-     let blocks=blocks.z
-    if blockid.blocks_(i_3)=CONSTANTSBLOCK then
-      let x = printconstant(recs.getinfo(blocks_(i_3)), -1, number, 1, empty:seq.seq.word)
+ if j > length.recs.z 
+  then result 
+  else // assert max(number + 1, 0)= length.result report"L"+ toword.number + toword.length.result + @(+, identity,"", result)// 
+  let i = recs(z)_j 
+  if i_1 =-1 
+  then let blocks = blocks.z 
+   if blockid(blocks_(i_3))= CONSTANTSBLOCK 
+   then let x = printconstant(recs.getinfo(blocks_(i_3)),-1, number, 1, empty:seq.seq.word)
       ggh(z,names,j+1,number+length.x,result+x)
    else ggh(z,names,j+1,number,result)
-     else ggh(z,names,j+1,number+1,result+[ " &br Cdef("+toword.number+", &quot"+
-         names_(number+1)+"&quot"+","+printrecord(MODULEBLOCK,i)+")"])
-
-
-
+  else ggh(z, names, j + 1, number + 1, result + ["&br Cdef("+ toword.number +", &quot"+ names_(number + 1)+"&quot"+","+ printrecord(MODULEBLOCK, i)+")"])
 
 function processsymentry(t:seq.word,a:seq.int) seq.word
-   replace(t,(a_2)+1,encodeword.subseq(a, 3, length.a) )
- 
+ replace(t, a_2 + 1, encodeword.subseq(a, 3, length.a))
  
 function second(s:seq.word)seq.word 
  let x = s_2 
@@ -123,9 +113,8 @@ function printtypes(r:seq.seq.int)seq.word
 function printfuncs(offset:int, decs:seq.seq.word, defs:seq.block, j:int, result:seq.word)seq.word 
  if j > length.defs  
   then result 
-  else let nopara = toint.last.decs_j 
-   let a =(if length.result = 0 then""else",")+"&br //"+ decs_j_1 +"nopara:"+ toword.nopara +"//"+
-   yy(recs.getinfo(defs_j), 1, offset + nopara + 1,"", offset)
+  else let nopara = toint.last(decs_j)
+  let a =(if length.result = 0 then""else",")+"&br //"+ decs_j_1 +"nopara:"+ toword.nopara +"//"+ yy(recs.getinfo(defs_j), 1, offset + nopara + 1,"", offset)
    printfuncs(offset, decs, defs, j + 1, result + a)
  
 
@@ -280,12 +269,18 @@ function initnames int
   3
 
 function decodeblock(i:int) seq.word
-  if TYPEBLOCK=i then "TYPEBLOCK"
-  else if VALUESYMTABBLOCK=i then "VALUESYMTABBLOCK"
-  else if FUNCTIONBLOCK=i then "FUNCTIONBLOCK"
-  else if CONSTANTSBLOCK=i then "CONSTANTSBLOCK"
-  else if PARABLOCK=i then "PARABLOCK"
-  else if PARAGRPBLOCK=i then "PARAGRPBLOCK"
+ if TYPEBLOCK = i 
+  then"TYPEBLOCK"
+  else if VALUESYMTABBLOCK = i 
+  then"VALUESYMTABBLOCK"
+  else if FUNCTIONBLOCK = i 
+  then"FUNCTIONBLOCK"
+  else if CONSTANTSBLOCK = i 
+  then"CONSTANTSBLOCK"
+  else if PARABLOCK = i 
+  then"PARABLOCK"
+  else if PARAGRPBLOCK = i 
+  then"PARAGRPBLOCK"
   else "BLOCK "+toword.i
   
 function printtypes(t:seq.seq.int, i:int, result:seq.seq.word)seq.seq.word 

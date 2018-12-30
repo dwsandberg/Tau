@@ -19,6 +19,8 @@ use graph.word
 
 use libscope
 
+use main2
+
 use pretty
 
 use seq.arc.word
@@ -43,23 +45,11 @@ use textio
 
 use tree.word
 
-use main2
-
-
-/Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html // 
-let d = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/doc.txt")
-let x = createfile("taudoc.html", [ htmlheader + processpara.d])let e = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/appdoc.txt")let x2 = createfile("appdoc.html", [ htmlheader + processpara.e])let y = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])let z = createfile("tools.html", [ htmlheader + processpara.htmlcode."tools"])d
+/Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html // let d = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/doc.txt")let x = createfile("taudoc.html", [ htmlheader + processpara.d])let e = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/appdoc.txt")let x2 = createfile("appdoc.html", [ htmlheader + processpara.e])let y = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])let z = createfile("tools.html", [ htmlheader + processpara.htmlcode."tools"])d
 
 /function prettyit(usegraph:graph.word, s:seq.word)seq.word if subseq(s, 1, 2)="* usegraph"then let l = findindex("include"_1, s)let k = findindex("exclude"_1, s){"&{ noformat <h2> Use graph</h2> &}"+ if k > l then usegraph(usegraph, subseq(s, l + 1, k), subseq(s, k + 1, length.s))else usegraph(usegraph, subseq(s, l + 1, length.s), subseq(s, k + 1, l))} else"&{ select 1"+ prettyparagraph(defaultcontrol, s)+"&}"
 
-/Function htmlcode(libname:seq.word)seq.word 
-let l = tolibdesc(libname_1)
-let g = newgraph.usegraph("mod", l)
-{"&{ noformat <h1> Source code for Library"+ libname +"</h1> &}"+
- @(+, ref,"", modules.l)+ @(seperator."&{ noformat <hr> &}", prettymod.g,"", modules.l)}
-
-
-
+/Function htmlcode(libname:seq.word)seq.word let l = tolibdesc(libname_1)let g = newgraph.usegraph("mod", l){"&{ noformat <h1> Source code for Library"+ libname +"</h1> &}"+ @(+, ref,"", modules.l)+ @(seperator."&{ noformat <hr> &}", prettymod.g,"", modules.l)}
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word 
 // Calls between modules in list of modules. // 
@@ -117,8 +107,7 @@ Function doclibrary(libname:seq.word)seq.word
   let exports = subseq(libclause, e + 1, length.libclause)
   docmodule(g, exports, r, lib, 1,"","","")+ if length.r > 0 
    then""
-   else
-   "&{ select x &section Possibly Unused Functions &} &{ select x"+ uncalledfunctions.libname +"&}"
+   else"&{ select x &section Possibly Unused Functions &} &{ select x"+ uncalledfunctions.libname +"&}"
 
 @(+, +("&br &br"),"", lib)
 
@@ -172,7 +161,8 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
    else docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
   else docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
 
-Function uncalledfunctions(libname:seq.word)seq.word // List of functions may include indirectly called functions. // 
+Function uncalledfunctions(libname:seq.word)seq.word 
+ // List of functions may include indirectly called functions. // 
  let g = newgraph.formcallgraph(firstPass(libname_1), 2)
   let sources = @(+, sources(g, empty:set.word),"", toseq.nodes.g)
   @(seperator."&br", readable,"", alphasort.sources)
@@ -201,9 +191,9 @@ function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
   then empty:seq.arc.word 
   else if lib_i_1 in "Parsedfunc parsedfunc" 
   then  let j=toint(lib_i_2)+3
-      if lib_i_j="unknown"_1 then formcallgraph(lib, i + 1)
-      else 
-   formcallgraph(lib_i_j, lib_i, j+1, empty:seq.arc.word)+ formcallgraph(lib, i + 1)
+   if lib_i_j ="unknown"_1 
+   then formcallgraph(lib, i + 1)
+   else formcallgraph(lib_i_j, lib_i, j + 1, empty:seq.arc.word)+ formcallgraph(lib, i + 1)
   else formcallgraph(lib, i + 1)
 
 function formcallgraph(func:word, src:seq.word, i:int, result:seq.arc.word)seq.arc.word 

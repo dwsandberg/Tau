@@ -1,10 +1,10 @@
-Module tree(T)
-
-type tree is record label:T, sons:seq.tree.T
+Module tree.T
 
 use seq.tree.T
 
 use stdlib
+
+type tree is record label:T, sons:seq.tree.T
 
 Function =(T, T)boolean unbound
 

@@ -1,12 +1,10 @@
-module altgen
+Module altgen
 
 use bitpackedseq.bit
 
-use libscope
+use codetemplates
 
 use intercode
-
-use codetemplates
 
 use internalbc
 
@@ -15,6 +13,8 @@ use ipair.Lcode
 use ipair.internalbc
 
 use ipair.stat5
+
+use libscope
 
 use llvm
 
@@ -57,14 +57,7 @@ Function addfuncdef(match5map:seq.match5, coding:seq.inst, codes:seq.seq.int, i:
   let l = Lcode(emptyinternalbc, empty:seq.localmap, 1, nopara.f + 1, empty:seq.int, empty:seq.Lcode, empty:seq.int, 0)
   let g5 = if"PROFILE"_1 in flags.f then mangledname.f else"noprofile"_1 
   let r = @(processnext.g5,_.match5map, l, codes_i)
-   // assert  not (mangledname.f="test4Ztest4"_1  ) report  //
-   let x= if (mangledname.f="test4Ztest4"_1  ) then
-     let aa= [ mangledname.f]+ 
-    astext.addtobitstream(10000, empty:bitpackedseq.bit, code.r)+ @(+, toword,"??", done.code.r)+print.code.r 
-    let zx2b=createfile("test4.txt",["in addfuncdef"]+aa) 
-    "" 
-    else "" 
-   BLOCKCOUNT(1, noblocks.r)+ code.r + RET(regno.r + 1, last.args.r)
+    BLOCKCOUNT(1, noblocks.r)+ code.r + RET(regno.r + 1, last.args.r)
 
 type Lcode is record code:internalbc, lmap:seq.localmap, noblocks:int, regno:int, args:seq.int, blocks:seq.Lcode, tailphi:seq.int, loopblock:int
 

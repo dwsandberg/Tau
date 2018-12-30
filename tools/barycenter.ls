@@ -1,4 +1,4 @@
-Module barycenter(T)
+Module barycenter.T
 
 use graph.T
 

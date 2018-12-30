@@ -1,4 +1,4 @@
-module bits
+Module bits
 
 use UTF8
 
@@ -8,6 +8,8 @@ use blockseq.bits
 
 use blockseq.int
 
+use fileio
+
 use packedseq.bits
 
 use seq.bit
@@ -16,7 +18,6 @@ use seq.int
 
 use stdlib
 
-use fileio
 
 type bits is record toint:int
 
@@ -77,7 +78,7 @@ Function addvbrsigned6(b:bitpackedseq.bit, val:int)bitpackedseq.bit
  if val < 0 
   then if val > -16 
    then addvbr6(b, 2 *-val + 1)
-   else let chunk = bits(32 +(-val) mod 16 * 2 + 1)
+   else let chunk = bits(32 +-val mod 16 * 2 + 1)
    addvbr6(chunk, 6, bits(-val)>> 4, empty:seq.int, b, 1)
   else if val < 16 
   then addvbr6(b, 2 * val)

@@ -2,14 +2,13 @@ Module display
 
 use UTF8
 
-
 use seq.int
 
-use seq.word
+use seq.seq.seq.word
 
 use seq.seq.word
 
-use seq.seq.seq.word
+use seq.word
 
 use stdlib
 

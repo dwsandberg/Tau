@@ -1,4 +1,4 @@
-Module svggraph(T)
+Module svggraph.T
 
 use graph.T
 

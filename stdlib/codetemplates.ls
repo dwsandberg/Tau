@@ -63,15 +63,15 @@ function hash(a:match5)int hash.fullinst.a
 
 type ematch5 is encoding match5
 
-use seq.seq.ipair.match5
+/use seq.seq.ipair.match5
 
-use seq.ipair.match5
+/use seq.ipair.match5
 
-use ipair.match5
+/use ipair.match5
 
 Function table seq.match5 
  let t = [ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64, -1, ibcsub2)+ LOAD(3, -2, typ.i64, align8, 0)), 
-  match5((// ? //"Q3FZbuiltinZintZint")_1, 5, CMP2(1, ibcsub1, ibcsub2, 39)+ CAST(2, -1, typ.i64, CASTZEXT)+ CMP2(3, ibcsub1, ibcsub2, 38)+ CAST(4, -3, typ.i64, CASTZEXT)+ BINOP(5, -2, -4, 0, typ.i64)), 
+  match5(// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(1, ibcsub1, ibcsub2, 39)+ CAST(2,-1, typ.i64, CASTZEXT)+ CMP2(3, ibcsub1, ibcsub2, 38)+ CAST(4,-3, typ.i64, CASTZEXT)+ BINOP(5,-2,-4, 0, typ.i64)), 
   match5("getaddressZbuiltinZTzseqZint"_1, 2, BINOP(1, ibcsub2, C64.3, // shift left // 7)+ BINOP(2, ibcsub1, -1, 0, typ.i64)), 
   match5("Q3EZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 38)+ CAST(2, -1, typ.i64, CASTZEXT)), 
   match5("notZbuiltinZboolean"_1, 1, BINOP(1, ibcsub1, C64.1, 12, typ.i64)), 
@@ -84,10 +84,10 @@ Function table seq.match5
   match5("Q2AZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64)), 
   match5("Q2FZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64)), 
   match5("Q2DZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3, -1, -2, 1)+ CAST(4, -3, typ.i64, 11)), 
-  match5(// + //("Q2BZbuiltinZrealZreal"_1), 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3, -1, -2, 0)+ CAST(4, -3, typ.i64, 11)), 
-  match5(// * //("Q2AZbuiltinZrealZreal"_1), 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3, -1, -2, 2)+ CAST(4, -3, typ.i64, 11)), 
-  match5(// / //("Q2FZbuiltinZrealZreal"_1), 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3, -1, -2, 4)+ CAST(4, -3, typ.i64, 11)), 
-  match5(// ? //("Q3FZbuiltinZrealZreal"_1), 7, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ CMP2(3, -1, -2, 3)+ CAST(4, -3, typ.i64, CASTZEXT)+ CMP2(5, -1, -2, 2)+ CAST(6, -5, typ.i64, CASTZEXT)+ BINOP(7, -4, -6, 0, typ.i64)), 
+  match5(// + //"Q2BZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 0)+ CAST(4,-3, typ.i64, 11)), 
+  match5(// * //"Q2AZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 2)+ CAST(4,-3, typ.i64, 11)), 
+  match5(// / //"Q2FZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 4)+ CAST(4,-3, typ.i64, 11)), 
+  match5(// ? //"Q3FZbuiltinZrealZreal"_1, 7, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ CMP2(3,-1,-2, 3)+ CAST(4,-3, typ.i64, CASTZEXT)+ CMP2(5,-1,-2, 2)+ CAST(6,-5, typ.i64, CASTZEXT)+ BINOP(7,-4,-6, 0, typ.i64)), 
   match5("intpartZbuiltinZreal"_1, 2, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, -1, typ.i64, // fptosi double // 4)), 
   match5("int2realZbuiltinZint"_1, 2, // sitofp // CAST(1, ibcsub1, typ.double, 6)+ CAST(2, -1, typ.i64, 11)), 
   match5("sqrtZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.sqrt.f64", -1)+ CAST(3, -2, typ.i64, 11)), 
@@ -137,9 +137,7 @@ Function buildtemplates(p:temppair,fullinst:seq.word) temppair
    then let inst = fullinst_1 
     let instarg = fullinst_2 
     let m = if inst ="FREF"_1 
-     then 
-       temppair(s+match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]))
-       ,lastconsts)
+    then temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg])), lastconsts)
      else if inst ="LIT"_1 
      then temppair(s+match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg),lastconsts)
      else if inst ="LOCAL"_1 
@@ -149,12 +147,12 @@ Function buildtemplates(p:temppair,fullinst:seq.word) temppair
      else if inst in"CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE MSET"
      then temppair(s+match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0),lastconsts)
      else if inst  in "CONSTANT WORDS"  
-     then 
-      let tt =if inst="CONSTANT"_1 then  addconst(lastconsts, fullinst) else addwordseq(lastconsts,subseq(fullinst,3,length.fullinst))
+    then let tt = if inst ="CONSTANT"_1 
+      then addconst(lastconsts, fullinst)
+      else addwordseq(lastconsts, subseq(fullinst, 3, length.fullinst))
       let newcode = GEP(1, 1, typ.conststype, C."list", C64.0, C64(index.tt + 1))+ CAST(2, -1, typ.i64, 9)
       let r=match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1, 0)
-      // let z11=createfile("stat.txt",[fullinst]+"finish 3")  //
-      temppair(s+r,value.tt)
+       temppair(s+r,value.tt)
      else if inst ="WORD"_1 
      then let aa = C(ptr.i64, [ CONSTGEP, 
       typ.wordstype, 
@@ -168,16 +166,8 @@ Function buildtemplates(p:temppair,fullinst:seq.word) temppair
      else let noargs = toint.instarg 
       let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
       temppair(s+match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs),lastconsts)
-      // let x =  if fullinst="CONSTANT LIT 4 WORD 45 CRECORD 2" then
-             let y0=deepcopy.match5(fullinst,  length.m, parts.m,action.m, arg.m, lastconsts)
-             assert not(fullinst="CONSTANT LIT 4 WORD 45 CRECORD 2") report "HERE3" 
-          ""
-          else "" //
-   // type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, consts:linklists2
- //
-    let discard = encode(last.templates.m, ematch5)
-      // let z13=createfile("stat.txt",[fullinst]+"after encode")  //
-    m 
+     let discard = encode(last.templates.m, ematch5)
+      m 
    else // already have a match5 //
     temppair(s+b_1,lastconsts)
    

@@ -1,12 +1,12 @@
-Module set(T)
-
-type set is record toseq:seq.T
+Module set.T
 
 use oseq.T
 
 use seq.T
 
 use stdlib
+
+type set is record toseq:seq.T
 
 Function empty seq.T export
 

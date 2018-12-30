@@ -1,8 +1,8 @@
-#!/usr/local/bin/tau
-
 Module pretty
 
 use display
+
+use seq.int
 
 use seq.prettyresult
 
@@ -19,8 +19,6 @@ use seq.word
 use stdlib
 
 use tree.word
-
-use seq.int
 
 Function defaultprec seq.seq.word 
  ["_^", 
@@ -204,14 +202,4 @@ Function prettytree(control:prettycontrol, t:tree.word)seq.word
    else"&keyword type"+ label(t_1)
   {"&{ block"+ result +"&}"}
 
-/Function prettyexpression(control:prettycontrol, p:seq.word)seq.word text.pretty(control, expression.p)
-
-/Function prettyparagraph(control:prettycontrol, p:seq.word)seq.word 
- if length.p = 0 
-  then p 
-  else if p_1 in"function Function type use"
-  then prettytree(control, parse(p, tree("xxx"_1)))
-  else if p_1 in"Module module"
-  then"&{ block &keyword module"+ subseq(p, 2, length.p)+"&}"
-  else p
 

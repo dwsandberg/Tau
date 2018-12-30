@@ -523,7 +523,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
    then assert parameter.modname.f = mytype.""report"encoding in template?"
     let typ = parameter(types(b)_1)
     let sym= symbol(code(b)_2, modname.f, empty:seq.mytype, mytype(towords.typ +"erecord"), code.b)
-    firstpass(modname.f, uses.f + mytype(towords.typ +"invertedseq")+ mytype(towords.typ +"ipair"), defines.f +changesrc(sym,code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
+    firstpass(modname.f, uses.f + mytype(towords.typ +"invertedseq"), // + mytype(towords.typ +"ipair"), // defines.f +changesrc(sym,code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f,rawsrc.f)
    else assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
    // assert false report code.b // 
    let modnm = towords.modname.f 

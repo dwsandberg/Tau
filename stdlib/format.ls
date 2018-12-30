@@ -54,7 +54,7 @@ function processpara(a:seq.word, j:int, i:int, result:seq.word, stk:stack.seq.wo
    else if next ="keyword"_1 
    then processpara(a, j, i + 2, result +"<span class = keywords>"+ space, push(stk,"</span>"))
    else if next ="noformat"_1 
-   then let t = findindex("&}"_1, a, i + 2)
+   then let t = // findindex("&}"_1, a, i + 2) // match(a,0,i+2)
     processpara(a, j, t + 1, result + subseq(a, i + 2, t - 1), stk)
    else if next ="select"_1 
    then if i + 4 < length.a ∧ a_(i + 3)="&section"_1 
@@ -66,7 +66,14 @@ function processpara(a:seq.word, j:int, i:int, result:seq.word, stk:stack.seq.wo
   else if this = space 
   then processpara(a, j, i + 1, result + space, stk)
   else processpara(a, j, i + 1, result + addamp.this, stk)
-
+  
+  function  match(s:seq.word,depth:int, i:int) int
+     if i > length.s then i 
+     else if s_i="&{"_1 then match(s,depth+1,i+1)
+     else if s_i="&}"_1 then 
+       if depth=0 then i else match(s,depth-1,i+1)
+     else match(s,depth,i+1)
+     
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 
 function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.word 
@@ -82,6 +89,9 @@ function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.wo
   else if a_i ="&{"_1 
   then if a_(i + 1)="block"_1 
    then processtotext(a, i + 2, result, push(stk, space))
+   else if a_(i + 1) ="noformat"_1 
+   then let t =  match(a,0,i+2)
+     processtotext(a,  t+1,result+subseq(a,i+2,t-1),stk)
    else processtotext(a, i + 2, result, push(stk, top.stk))
   else if a_i ="&}"_1 
   then processtotext(a, i + 1, result + if top.stk ="endtable"_1 then")]"else"", pop.stk)

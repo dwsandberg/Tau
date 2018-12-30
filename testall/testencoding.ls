@@ -8,6 +8,12 @@ Testing encodings
 
 use checking
 
+use ipair.linklists2
+
+use persistant
+
+use persistantseq.testrecord
+
 use process.int
 
 use seq.boolean
@@ -15,12 +21,6 @@ use seq.boolean
 use seq.testrecord
 
 use stdlib
-
-use persistantseq.testrecord
-
-use ipair.linklists2
-
-use persistant
 
 Function +(i:int,b:int) int export
 

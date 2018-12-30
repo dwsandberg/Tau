@@ -1,12 +1,13 @@
-Module stack(T)
-
-type stack is record toseq:seq.T
+Module stack.T
 
 use seq.T
 
 use stacktrace
 
 use stdlib
+
+type stack is record toseq:seq.T
+
 
 Function top(f:stack.T, n:int)seq.T subseq(toseq.f, length.toseq.f - n + 1, length.toseq.f)
 

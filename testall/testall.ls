@@ -2,11 +2,13 @@
 
 test11a
 
-Library testall checking myseq point point2d randomphrase test11 test11a  test2 test20 test5 testencoding testgraph tree2 
+
+Module testall
+
+Library testall point test11a checking myseq  point2d randomphrase test11   test2 test20 test5 testencoding testgraph tree2 
  uses stdlib 
  exports checking randomphrase test11 test11a test2 test5 testall testencoding
 
-Module testall
 
 /run randomphrase randomphrase
 

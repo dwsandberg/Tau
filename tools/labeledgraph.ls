@@ -1,8 +1,8 @@
-module labeledgraph.T
-
-use set.T
+Module labeledgraph.T
 
 use seq.T
+
+use set.T
 
 use stdlib
 
