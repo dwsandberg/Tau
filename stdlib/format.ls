@@ -1,12 +1,12 @@
 Module format
 
+use seq.seq.word
+
+use seq.word
+
 use set.int
 
 use stack.seq.word
-
-use  seq.seq.word
-
-use seq.word
 
 use stack.word
 
@@ -68,10 +68,12 @@ function processpara(a:seq.word, j:int, i:int, result:seq.word, stk:stack.seq.wo
   else processpara(a, j, i + 1, result + addamp.this, stk)
   
   function  match(s:seq.word,depth:int, i:int) int
-     if i > length.s then i 
-     else if s_i="&{"_1 then match(s,depth+1,i+1)
-     else if s_i="&}"_1 then 
-       if depth=0 then i else match(s,depth-1,i+1)
+ if i > length.s 
+  then i 
+  else if s_i ="&{"_1 
+  then match(s, depth + 1, i + 1)
+  else if s_i ="&}"_1 
+  then if depth = 0 then i else match(s, depth - 1, i + 1)
      else match(s,depth,i+1)
      
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)

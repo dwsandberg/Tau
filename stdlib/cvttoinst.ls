@@ -2,11 +2,11 @@ Module cvttoinst
 
 run newimp test1
 
-use newsymbol
+use intercode
 
 use libscope
 
-use intercode
+use newsymbol
 
 use seq.inst
 
@@ -37,13 +37,16 @@ function toinst(f:symbol)inst inst([ mangledname.f, toword.nopara.f], flags.f, r
 function encode(x:inst)int encoding.encode(x, einst)
 
 function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int 
- assert not(label.codetree.f ="default")report"in addcodes" // + print2.f //
+ assert not(label.codetree.f ="default")report"in addcodes"
+  // + print2.f // 
    let j = encode.toinst.f 
-  assert not.hasexternal.codetree.f report "ERR22" // +print2.f //
-  replace(a, j, prepb(allfunctions, codetree.f))
+  assert not.hasexternal.codetree.f report"ERR22"
+  // + print2.f // replace(a, j, prepb(allfunctions, codetree.f))
 
 function hasexternal(t:tree.seq.word)boolean 
- if"EXTERNAL"_1 in label.t &and not((label.t)_1 in "WORD WORDS") then true else @(∨, hasexternal, false, sons.t)
+ if"EXTERNAL"_1 in label.t ∧ not(label(t)_1 in"WORD WORDS")
+  then true 
+  else @(∨, hasexternal, false, sons.t)
 
 Function convert2(allfunctions:symbolset, s:seq.symbol)intercode 
  let discard = @(+, encode, empty:seq.int, initinst)
@@ -69,10 +72,10 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
    @(+, prepb.allfunctions, empty:seq.int, subseq(sons.t, 1, nosons.t - 1))+ aseinst("FIRSTVAR"+ firstvar)+ aseinst.[ inst, toword.nosons.t]
   else if inst ="CRECORD"_1 
   then [ aseinst("CONSTANT"+ prep3.t)]
-  else @(+, prepb.allfunctions, empty:seq.int, sons.t)+ 
-   if inst in"IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD"
+  else @(+, prepb.allfunctions, empty:seq.int, sons.t)+ if inst in"IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD"
    then [aseinst.[ inst, toword.nosons.t]]
-   else if inst="STATE"_1 then empty:seq.int
+   else if inst ="STATE"_1 
+   then empty:seq.int 
    else let s = findencode(inst.[ inst, toword.nosons.t], einst)
    [if length.s = 0 
    then encoding.encode(toinst.lookupfunc(allfunctions, inst), einst)

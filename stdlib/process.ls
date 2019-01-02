@@ -1,4 +1,4 @@
-Module process(T)
+Module process.T
 
 use stdlib
 

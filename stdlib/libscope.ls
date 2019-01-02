@@ -10,14 +10,13 @@ use seq.libmod
 
 use seq.libsym
 
-
 use seq.mytype
+
+use seq.seq.word
 
 use seq.syminfo
 
 use seq.word
-
-use seq.seq.word
 
 use stacktrace
 
@@ -186,13 +185,10 @@ Function syminfo(s:libsym)syminfo
   let name = c_1_1 
   let modname = mytype(c_2)
   let parameters = @(+, mytype, empty:seq.mytype, subseq(c, 3, length.c))
-  let src=
-  // if length.instruction.s > 0 &and last.instruction.s="VERYSIMPLE"_1 then
-    subseq(instruction.s,2 * length.parameters+1,length.instruction.s-1)
-    else // instruction.s
+  let src = // if length.instruction.s > 0 &and last.instruction.s ="VERYSIMPLE"_1 then subseq(instruction.s, 2 * length.parameters + 1, length.instruction.s-1)else // 
+   instruction.s 
   if isinstance.modname 
-  then syminfo(if length.parameters = 0 then replaceT(parameter.modname, name)else name, replaceT(parameter.modname, returntypeold.s), 
-  @(+, replaceT.parameter.modname, empty:seq.mytype, parameters), modname, src, name, returntypeold.s, parameters, fsig.s)
+  then syminfo(if length.parameters = 0 then replaceT(parameter.modname, name)else name, replaceT(parameter.modname, returntypeold.s), @(+, replaceT.parameter.modname, empty:seq.mytype, parameters), modname, src, name, returntypeold.s, parameters, fsig.s)
   else syminfo(name, returntypeold.s, parameters, modname, src,"$noproto"_1, mytype."", empty:seq.mytype, fsig.s)
 
 Function changeinstruction(p:syminfo, inst:seq.word)syminfo 
@@ -244,34 +240,6 @@ Function replaceT(with:mytype, name:word)word
   else let d = decode.name 
   assert subseq(d, length.d, length.d)= [ 84]report"PROBLEM replacing T in word"+ name +"with"+ print.with 
   merge([ encodeword.subseq(d, 1, length.d - 1)]+ print.with)
-
-/Function libsymencoding erecord.libsym libsymencodingx
-
-/function hash(a:libsym)int encoding.fsig.a
-
-
-use seq.libsym
-
-/type libsymencodingx is encoding libsym
-
-/function f42(mangledname:word, types:seq.mytype, l:libsym)seq.word 
- let info = syminfo.l 
-  if mangledname = name.info ∧ types = paratypes.info + returntype.info 
-  then [ fsig.l]
-  else""
-
-/function f43(modname:word, mangledname:word, types:seq.mytype, l:libmod)seq.word 
- if modname = modname.l 
-  then @(+, f42(mangledname, types),"", exports.l)
-  else""
-
-/function f44(libname:word, modname:word, mangledname:word, types:seq.mytype, l:liblib)seq.word 
- if [ libname]= libname.l 
-  then @(+, f43(modname, mangledname, types),"", mods.l)
-  else""
-
-/Function findFunction(libname:word, modname:word, funcname:word, types:seq.mytype)seq.word 
- @(+, f44(libname, modname, funcname, types),"", libs)
 
 Function emptyliblib(libname:word) liblib
 let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym)

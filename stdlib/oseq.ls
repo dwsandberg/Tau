@@ -1,4 +1,4 @@
-Module oseq(T)
+Module oseq.T
 
 use seq.T
 
@@ -63,8 +63,8 @@ Function setdelete(s:seq.T, val:T)seq.T
 
 Function setreplaceorinsert(s:seq.T, val:T)seq.T 
  let i = binarysearch(s, val)
-  if i > 0 then subseq(s, 1, i - 1)+[val]+ subseq(s, i + 1, length.s) else subseq(s, 1,-i - 1)+ [ val]+ subseq(s,-i, length.s)
+  if i > 0 
+  then subseq(s, 1, i - 1)+ [ val]+ subseq(s, i + 1, length.s)
+  else subseq(s, 1,-i - 1)+ [ val]+ subseq(s,-i, length.s)
 
-
---------------------
 

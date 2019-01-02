@@ -2,11 +2,11 @@ Module prims
 
 use fileio
 
-use stdlib
+use seq.seq.word
 
 use seq.word
 
-use seq.seq.word
+use stdlib
 
 Function execute(name:word)seq.word executecode(toCformat.[ name], empty:seq.int)
 

@@ -1,6 +1,4 @@
-Module invertedseq(T)
-
-type invertedseq is record hashtable:seq.seq.ipair.T, elecount:int
+Module invertedseq.T
 
 use ipair.T
 
@@ -9,6 +7,8 @@ use seq.ipair.T
 use seq.seq.ipair.T
 
 use stdlib
+
+type invertedseq is record hashtable:seq.seq.ipair.T, elecount:int
 
 Function hashtable(invertedseq.T)seq.seq.ipair.T export
 

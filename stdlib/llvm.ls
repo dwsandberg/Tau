@@ -1,21 +1,32 @@
-module llvm
+Module llvm
 
 In addition to the llvm bitcode format documentation, an useful file for reference is LLVMBitCodes.h
-
-use deepcopy.trackconst
-
 
 use bitpackedseq.bit
 
 use bits
 
+use blockseq.int
+
+use deepcopy.trackconst
+
+use fileio
+
 use internalbc
 
+use packedseq.int
+
+use packedseq.seq.int
+
 use reconstruct
+
+use seq.bit
 
 use seq.bitblock
 
 use seq.bitpackedseq.bit
+
+use seq.bits
 
 use seq.boolean
 
@@ -31,21 +42,17 @@ use seq.llvmconst
 
 use seq.llvmtype
 
-use seq.bits
-
-use seq.bit
-
 use seq.seq.bit
 
 use seq.seq.bits
 
 use seq.seq.int
 
-use seq.seq.seq.int
-
 use seq.seq.internalbc
 
 use seq.seq.llvmtype
+
+use seq.seq.seq.int
 
 use seq.trackconst
 
@@ -53,24 +60,11 @@ use stacktrace
 
 use stdlib
 
-use fileio
-
-
-
 Function typ(llvmconst)int export
 
 Function toseq(llvmconst)seq.int export
 
 type llvmtype is record toseq:seq.int
-
-
-use blockseq.int
-
-use packedseq.seq.int
-
-use packedseq.int
-
-
 
 type llvmtypes is encoding llvmtype
 

@@ -135,11 +135,6 @@ Function codegen5(fs:intercode,thename:word,libdesc:liblib)seq.bits
   // llvm.cos.f64 // 
    [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]+ @(+, funcdec, empty:seq.seq.int, declist)
   let bodytxts = [ BLOCKCOUNT(1, 1)+ RET(1, C(i64, [ CONSTCECAST, 9, typ.ptr.array(4, i64), C."profstat"])), 
-  BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib5", 
-  libnameptr, 
-  getelementptr(wordstype,"words", 0), getelementptr(worddatatype,"wordlist", 0), 
-  getelementptr(conststype,"list", 0), 
-  getelementptr(conststype,"list", index.liblib + 1))+ GEP(2, 1, typ.profiletype,
-   C."profclocks", C64.0, C64.1)+ STORE(3, -2, C64.noprofileslots, align8, 0)+ GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1)+ STORE(4, -3, C64.noprofileslots, align8, 0)+ GEP(4, 1, typ.profiletype, C."profcounts", C64.0, C64.1)+ STORE(5, -4, C64.noprofileslots, align8, 0)+ GEP(5, 1, typ.profiletype, C."profrefs", C64.0, C64.1)+ STORE(6, -5, C64.noprofileslots, align8, 0)+ RET.6]+ bodies 
+  BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib5", libnameptr, getelementptr(wordstype,"words", 0), getelementptr(worddatatype,"wordlist", 0), getelementptr(conststype,"list", 0), getelementptr(conststype,"list", index.liblib + 1))+ GEP(2, 1, typ.profiletype, C."profclocks", C64.0, C64.1)+ STORE(3,-2, C64.noprofileslots, align8, 0)+ GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1)+ STORE(4,-3, C64.noprofileslots, align8, 0)+ GEP(4, 1, typ.profiletype, C."profcounts", C64.0, C64.1)+ STORE(5,-4, C64.noprofileslots, align8, 0)+ GEP(5, 1, typ.profiletype, C."profrefs", C64.0, C64.1)+ STORE(6,-5, C64.noprofileslots, align8, 0)+ RET.6]+ bodies 
   llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 

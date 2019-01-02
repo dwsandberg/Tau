@@ -10,13 +10,8 @@ Function PROFILE(a:T) T builtin.NOOP
 
 Function FORCEINLINE(a:T) T builtin.NOOP
 
-Module seq(T)
+Module seq.T
 
-Function_(dseq.T, int)T export
-
-type seq is sequence length:int, x:T
-
-type pseq is sequence length:int, a:seq.T, b:seq.T
 
 
 use deepcopy.T
@@ -30,19 +25,23 @@ use stacktrace
 use stdlib
 
 
+type seq is sequence length:int, x:T
+
+type pseq is sequence length:int, a:seq.T, b:seq.T
+
 
 Function =(T, T)boolean unbound
 
 
 Function_(a:seq.T, b:int)T 
- NOINLINE.
- let typ = getseqtype(a, 0)
+ NOINLINE.let typ = getseqtype(a, 0)
   if typ = 0 
   then assert b > 0 ∧ b ≤ length.a report"out of bounds"+ stacktrace 
    getval(a, b + 1)
   else callidx(typ, a, b)
 
-function callidx(func:int, a:seq.T, b:int)T builtin."PARAM 1 PARAM 2 PARAM 3 CALLIDX "
+function callidx(func:int, a:seq.T, b:int)T 
+ builtin."PARAM 1 PARAM 2 PARAM 3 CALLIDX"
 
 function getval(a:seq.T, offset:int)T builtin.IDXUC
 

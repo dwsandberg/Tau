@@ -4,6 +4,22 @@ use bitpackedseq.bit
 
 use bits
 
+use blockseq.templatepart
+
+use blockseq.word
+
+use deepcopy.int
+
+use deepcopy.linklists2
+
+use deepcopy.match5
+
+use deepcopy.seq.templatepart
+
+use deepcopy.seq.word
+
+use deepcopy.word
+
 use internalbc
 
 use ipair.linklists2
@@ -12,9 +28,9 @@ use llvm
 
 use persistant
 
-use reconstruct
-
 use process.seq.match5
+
+use reconstruct
 
 use seq.bit
 
@@ -32,17 +48,13 @@ use seq.word
 
 use stdlib
 
+use textio
+
 function wordstype encoding.llvmtype array(-1, i64)
 
 Function conststype encoding.llvmtype array(-2, i64)
 
 type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int
-
-
-use blockseq.word
-
-use blockseq.templatepart
-
 
 Function length(match5)int export
 
@@ -116,8 +128,6 @@ function match5(inst:word, length:int, b:internalbc)match5
   let nopara = @(max, parano, 0, parts)
   match5([ inst, toword.nopara], length, parts,"TEMPLATE"_1, nopara)
 
-use textio
-
 type temppair  is record templates:seq.match5, consts:linklists2
 
 Function templates(temppair) seq.match5 export
@@ -168,30 +178,9 @@ Function buildtemplates(p:temppair,fullinst:seq.word) temppair
       temppair(s+match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs),lastconsts)
      let discard = encode(last.templates.m, ematch5)
       m 
-   else // already have a match5 //
-    temppair(s+b_1,lastconsts)
-   
+  else // already have a match5 // temppair(s + b_1, lastconsts)
 
-/Function deepcopy2(m:match5) match5 
-let y0=deepcopy.fullinst.m
-             let y1=deepcopy.length.m
-             let y2 = deepcopy.parts.m 
-             let y3= deepcopy.action.m
-             let y4=deepcopy.arg.m
-             let y5=deepcopy.consts.m
-              match5(y0,y1,y2,y3,y4,y5)
-   
-use deepcopy.match5
-
-use deepcopy.word
-
-use deepcopy.seq.word
-
-use deepcopy.int
-
-use deepcopy.linklists2
-
-use deepcopy.seq.templatepart
+/Function deepcopy2(m:match5)match5 let y0 = deepcopy.fullinst.m let y1 = deepcopy.length.m let y2 = deepcopy.parts.m let y3 = deepcopy.action.m let y4 = deepcopy.arg.m let y5 = deepcopy.consts.m match5(y0, y1, y2, y3, y4, y5)
 
 /Function checkmap(s:seq.match5)seq.word @(+, hjk,"", s)
 
@@ -217,11 +206,31 @@ type pp is record idx:int, val:int
 
 function getvbr(a:seq.bit, idx:int, size:int)pp getvbr(a, size, bits.0, 0, idx, 0)
 
-function getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp let b = toint(a_(idx + i))if i = size-1 then if b = 0 then pp(idx + size, toint.val)else getvbr(a, size, val, nobits, idx + size, 0)else getvbr(a, size, bits.b << nobits ∨ val, nobits + 1, idx, i + 1)
+function getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp 
+ let b = toint(a_(idx + i))
+  if i = size - 1 
+  then if b = 0 then pp(idx + size, toint.val)else getvbr(a, size, val, nobits, idx + size, 0)
+  else getvbr(a, size, bits.b << nobits ∨ val, nobits + 1, idx, i + 1)
 
-function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, abbrvlen:int)seq.seq.int if length.r > 0 then // working on record // if noargs = 0 then getinfo(b, 0, empty:seq.int, idx, recs + r, abbrvlen)else let next = getvbr(b, idx, 6)getinfo(b, noargs-1, r + val.next, idx.next, recs, abbrvlen)else let t = getvbr(b, abbrvlen, bits.0, 0, idx, 0)if val.t = 3 then // record // let inst = getvbr(b, idx.t, 6)let args = getvbr(b, idx.inst, 6)getinfo(b, val.args, [ val.inst], idx.args, recs, abbrvlen)else recs
+function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, abbrvlen:int)seq.seq.int 
+ if length.r > 0 
+  then // working on record // 
+   if noargs = 0 
+   then getinfo(b, 0, empty:seq.int, idx, recs + r, abbrvlen)
+   else let next = getvbr(b, idx, 6)
+   getinfo(b, noargs - 1, r + val.next, idx.next, recs, abbrvlen)
+  else let t = getvbr(b, abbrvlen, bits.0, 0, idx, 0)
+  if val.t = 3 
+  then // record // 
+   let inst = getvbr(b, idx.t, 6)
+   let args = getvbr(b, idx.inst, 6)
+   getinfo(b, val.args, [ val.inst], idx.args, recs, abbrvlen)
+  else recs
 
-function astext2(a:seq.int)seq.word"["+ @(+, toword,"", a)+"]"
+function astext2(a:seq.int)seq.word {"["+ @(+, toword,"", a)+"]"}
 
-Function astext(a:bitpackedseq.bit)seq.word // @(+, toword,"", @(+, toint, empty:seq.int, toseq.a))+"&br"+ // let recs = getinfo(toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)@(seperator("&br"), astext2,"", recs)
+Function astext(a:bitpackedseq.bit)seq.word 
+ // @(+, toword,"", @(+, toint, empty:seq.int, toseq.a))+"&br"+ // 
+  let recs = getinfo(toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)
+  @(seperator."&br", astext2,"", recs)
 

@@ -1,18 +1,16 @@
 #!/usr/local/bin/tau
 
-  
+Module stdlib 
+
 Library stdlib UTF8 altgen bitpackedseq bits blockseq 
 codegen codetemplates fileio format graph groupparagraphs   internalbc  invertedseq   ipair
- libscope llvm  oseq  packedseq pass2 persistant prims process real  reconstruct seq set stack stacktrace textio  tree    
+ libscope llvm  oseq  packedseq pass2 persistant persistantseq prims process real  reconstruct seq set stack stacktrace textio  tree    
  cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2 opt2
   uses 
   exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real invertedseq ipair set graph textio blockseq packedseq
  deepcopy tree fileio pass2 stack newimp2 persistant persistantseq deepcopy llvm libscope internalbc format bits  newsymbol
    prims cvttoinst libdescfuncnew groupparagraphs 
  
-
-module stdlib
-
 use UTF8
 
 use oseq.alphaword
@@ -123,7 +121,7 @@ Function ∧(a:ordering, b:ordering)ordering
 
 Function ?(a:boolean, b:boolean)ordering toint.a ? toint.b
 
-Function &and(a:boolean, b:boolean)boolean 
+Function ∧(a:boolean, b:boolean)boolean 
  if a then b else // false // boolean.0
 
 Function ∨(a:boolean, b:boolean)boolean 

@@ -1,4 +1,4 @@
-Module packedseq(T)
+Module packedseq.T
 
 use seq.T
 
@@ -13,7 +13,8 @@ function allocatespace(i:int)seq.T builtin." PARAM 1 allocatespaceZbuiltinZint"
 
 type address is record toseq:seq.T
 
-Function getaddress(s:seq.T, i:int)address.T builtin." PARAM 1 PARAM 2 getaddressZbuiltinZTzseqZint"
+Function getaddress(s:seq.T, i:int)address.T 
+ builtin."PARAM 1 PARAM 2 getaddressZbuiltinZTzseqZint"
 
 Function toT(a:address.T)T builtin." PARAM 1 "
 

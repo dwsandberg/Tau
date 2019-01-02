@@ -1,14 +1,12 @@
-#!/usr/local/bin/tau
-
-module opt2
+Module opt2
 
 /use buildtree
 
 use newsymbol
 
-/use passcommon
-
 use seq.int
+
+use seq.seq.tree.seq.word
 
 use seq.tree.seq.word
 
@@ -19,8 +17,6 @@ use set.word
 use stdlib
 
 use tree.seq.word
-
-use seq.seq.tree.seq.word
 
 Function opt2(t:tree.seq.word)tree.seq.word 
  if inst.t ="FINISHLOOP"_1 

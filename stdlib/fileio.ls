@@ -14,11 +14,9 @@ use blockseq.int
 
 use packedseq.bits
 
-use packedseq.seq.bits
-
 use packedseq.int
 
-use seq.seq.int
+use packedseq.seq.bits
 
 use packedseq.seq.int
 
@@ -26,11 +24,13 @@ use seq.bit
 
 use seq.bits
 
-use seq.seq.bits 
-
 use seq.byte
 
 use seq.int
+
+use seq.seq.bits
+
+use seq.seq.int
 
 use stdlib
 

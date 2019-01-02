@@ -1,11 +1,8 @@
 Module reconstruct
 
-use packedseq.int
-
 use bits
 
-
-
+use packedseq.int
 
 use stdlib
 
@@ -24,7 +21,8 @@ type xxx is record a:address.int, t:int
 
 Function print(a:address.int) int  
 // added so typedesc of address.int is processed correctly  by declaring in type xxx  //
-let x=xxx(a,100) 3
+  let x = xxx(a, 100)
+  3
 
 Function relocate(ws:seq.word, d2:seq.int)address.int 
  // d2 format is [ wordthread start, offsetthread start, unused]+ actual data]// 

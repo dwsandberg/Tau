@@ -6,6 +6,10 @@ use bitpackedseq.bit
 
 use bits
 
+use deepcopy.internal2
+
+use fileio
+
 use seq.bitpackedseq.bit
 
 use seq.bits
@@ -19,11 +23,6 @@ use seq.internalbc
 use seq.templatepart
 
 use stdlib
-
-use fileio
-
-use deepcopy.internal2
-
 
 Function BLOCKCOUNT(slot:int, a1:int)internalbc addstartbits(1, 1, add(a1, emptyinternalbc))
 

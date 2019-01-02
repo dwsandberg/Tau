@@ -1,4 +1,4 @@
-module graph(T)
+Module graph.T
 
 use graph.T
 

@@ -1,125 +1,10 @@
-module persistantseq.T
-
-use stdlib
-
-use seq.T
-
-use persistant
-
-use ipair.linklists2
-
- function       addele(t:trackele,s:T) trackele  
-    let a = addrecord(l.t,s)
-    trackele(value.a,places.t+index.a)
-    
- function addrecord(linklists2,s:T) ipair.linklists2 unbound
- 
- Function addseq(l:linklists2,s:seq.T) ipair.linklists2
-    let x =@(addele,identity,trackele(l,empty:seq.int),s)
-    let t = linklists2(a.l.x + C64.0 + C64.length.s, wordthread.l.x, offsetthread.l.x, wordseqthread.l.x)
-    ipair(place.l.x,@(addoffset,identity,t,places.x) )
-
-
-function identityf(s:seq.T)seq.T s
-
-use process.seq.T
-
-
- use llvm
- 
- use fileio
- 
- use process.seq.word
- 
- Function flush(s:erecord.T)seq.word 
- if ispersistant.s 
-  then   
-    let p=process.createlib2(s)
-    result.p
-  else"Encoding is not persistant."
-
-
-
-
-use libscope
-
-use reconstruct
-
-use internalbc
-
-use textio
-
-Function createlib2(s:erecord.T) seq.word 
-  let thedata = result.process.identityf.mapping.s 
-  let libname=merge("Q"+ name.s)
-   let symtab ="libname initlib5 words wordlist list init22"
-     //  let z1=createfile("stat.txt",["in createlib2.1"]) //
-  let discard = @(+, C, 0, symtab)
-  let data1=  addseq(createlinkedlists,thedata )  
-  let liblib = addliblib( value.data1, emptyliblib.libname)
-       //  let z2=createfile("stat.txt",["in createlib2.2"]) //
-  let data = value.liblib 
-  let words = worddata 
-  let worddatatype = array(length.words + 2, i64)
-  let wordstype = array(2 + wordcount, i64)
-          //  let z3=createfile("stat.txt",["in createlib2.3"])//
-  let conststype2 = array(length.a.data + 5, i64)
-  let libnametype = array(length.decode.libname + 1, i8)
-  let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])
-  let deflist = [ // libname // 
-   [ MODULECODEGLOBALVAR, 
-   typ.libnametype, 
-   2, 
-   C(libnametype, [ CONSTDATA]+ decode.libname + 0)+ 1, 
-   3, 
-   align4, 
-   0], 
-  [ MODULECODEFUNCTION, 
-  typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64, ptr.i64], 
-  0, 
-  1, 
-  0, 
-  1, 
-  0, 
-  0, 
-  0, 
-  0, 
-  0, 
-  0, 
-  0, 
-  0], 
-  [ MODULECODEGLOBALVAR, typ.wordstype, 2, C(i64, [ CONSTNULL])+ 1, 3, align8 + 1, 0], 
-  [ MODULECODEGLOBALVAR, 
-  typ.worddatatype, 
-  2, 
-  1 + C(worddatatype, [ AGGREGATE, C64.0, C64.length.words]+ words), 
-  3, 
-  align8 + 1, 
-  0], 
-  [ MODULECODEGLOBALVAR, 
-  typ.conststype2, 
-  2, 
-  C(conststype2, [ AGGREGATE, 
-  C64.0, 
-  C64(length.a.data + 3), 
-  C64.wordthread.data, 
-  C64.offsetthread.data, 
-  C64.wordseqthread.data]+ a.data)+ 1, 
-  3, 
-  align8 + 1, 
-  0], 
-  // init22 // [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
-  let bodytxts = [ BLOCKCOUNT(1, 1)+ CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64, ptr.i64, ptr.i64, ptr.i64], C."initlib5", libnameptr, getelementptr(wordstype,"words", 0), getelementptr(worddatatype,"wordlist", 0), getelementptr(conststype2,"list", 0), getelementptr(conststype2,"list", index.liblib + 1), getelementptr(conststype2,"list", index.data1 + 1))+ RET.3]
-        //   let z4=createfile("stat.txt",["in createlib2.4"]) //
-  let b=createlib(llvm(deflist, bodytxts, typerecords), libname,"")
-  "OK"
-
-
-module persistant
-
-use deepcopy.linklists2
+Module persistant
 
 use bits
+
+use blockseq.flddesc
+
+use deepcopy.linklists2
 
 use fileio
 
@@ -130,6 +15,18 @@ use ipair.linklists2
 use libscope
 
 use llvm
+
+use packedseq.flddesc
+
+use packedseq.seq.flddesc
+
+use persistantseq.libmod
+
+use persistantseq.libsym
+
+use persistantseq.mytype
+
+use reconstruct
 
 use seq.const3
 
@@ -150,7 +47,11 @@ use seq.linklists2
 
 use seq.mytype
 
+use seq.seq.flddesc
+
 use seq.tree.seq.word
+
+use seq.word
 
 use seq.word3
 
@@ -159,8 +60,6 @@ use stack.tree.seq.word
 use stdlib
 
 use tree.seq.word
-
-use reconstruct
 
 type word3encoding is encoding word3
 
@@ -239,16 +138,6 @@ Function  flds(trackflds) seq.flddesc export
 
 Function state(trackflds) int export
 
-
-use blockseq.flddesc
-
-use packedseq.flddesc
-
-use seq.seq.flddesc
-
-use packedseq.seq.flddesc
-
-
 function =(a:const3, b:const3)boolean flds.a = flds.b
 
 function hash(a:const3)int length.flds.a + @(+, index, 0, flds.a)
@@ -264,8 +153,8 @@ function buildconsttree(s:seq.word, i:int, result:stack.tree.seq.word)tree.seq.w
   if c_1 ="CRECORD"_1 
   then let nosons = toint(c_2)
    buildconsttree(s, i + 2, push(pop(result, nosons), tree(c, top(result, nosons))))
-  else if c_1="WORDS"_1 then
-          let len=toint.c_2
+  else if c_1 ="WORDS"_1 
+  then let len = toint(c_2)
     // assert false report subseq(s,i,len+1) //
     buildconsttree(s, i + len+2, push(result, tree.subseq(s,i,i+len+1)))
   else buildconsttree(s, i + 2, push(result, tree.c))
@@ -293,8 +182,8 @@ function getindex(f:trackflds, t:tree.seq.word)trackflds
    else if state.f = 2 then 3 else 0)
   else if typ ="WORD"_1 
   then trackflds(l.f, flds.f + flddesc(word33(label(t)_2),"WORD"_1), if state.f = 3 then 3 else 0)
-  else if typ="WORDS"_1 then
-   // assert false report "in get index" + subseq(label.t,3,length.label.t) //
+  else if typ ="WORDS"_1 
+  then // assert false report"in get index"+ subseq(label.t, 3, length.label.t)// 
    let k = addwordseq(l.f, subseq(label.t,3,length.label.t))
     trackflds(value.k, flds.f + flddesc(index.k,"CRECORD"_1), 0) 
   else if typ ="FREF"_1 
@@ -322,9 +211,7 @@ function places(trackele) seq.int export
 
 function  trackele(l:linklists2,places:seq.int) trackele export
 
-
-function addrecord(l:linklists2,s:mytype) ipair.linklists2
-    addwordseq(l,towords.s)
+function addrecord(l:linklists2, s:mytype)ipair.linklists2 addwordseq(l, towords.s)
 
 Function addoffset(l:linklists2,index:int) linklists2
 linklists2(a.l+C64.packit(offsetthread.l, index),wordthread.l,place.l,wordseqthread.l)
@@ -342,14 +229,6 @@ Function addliblib(lin:linklists2,t:liblib) ipair.linklists2
    let l5=l+a+0+c+timestamp.t+toint.readonly.t 
    ipair(place.l,l5)
 
-use seq.word
-
-use persistantseq.libsym
-
-use persistantseq.mytype
-
-use persistantseq.libmod
-
 function addrecord(lin:linklists2,modx:libmod) ipair.linklists2
    let a = addseq(lin,defines.modx)
    let b =addseq(value.a,exports.modx)
@@ -357,8 +236,7 @@ function addrecord(lin:linklists2,modx:libmod) ipair.linklists2
      let l5=l+toint.parameterized.modx+modname.modx+a+b   
    ipair(place.l,l5)
 
-Function +(l:linklists2,i:int) linklists2 
-   linklists2(a.l+C64.i,wordthread.l,offsetthread.l,wordseqthread.l)   
+Function +(l:linklists2, i:int)linklists2 linklists2(a.l + C64.i, wordthread.l, offsetthread.l, wordseqthread.l)
 
 Function +(l:linklists2,w:word) linklists2 
    linklists2(a.l+C64.packit(wordthread.l,word33.w),place.l,offsetthread.l,wordseqthread.l)   

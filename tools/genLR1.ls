@@ -1,9 +1,5 @@
 #!/usr/local/bin/tau
 
-Library genLR1    genlex   testparser
- uses stdlib  
- exports   genLR1 genlex testparser
-
 Module genLR1
 
 A paragraph of just a single word function crashes the compiler
@@ -299,8 +295,8 @@ bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])
 "],[" E { E } ","$_2  
 "],[" E if E then E else E ","
 let thenpart=$_4
-assert (types.$_2)_1 =mytype.&quot  boolean &quot   report  &quot  cond of if must be boolean &quot  
-assert (types.$_4) =(types.$_6) report  &quot  then and else types are different &quot  
+assert (types.$_2)_1 =mytype.&quot  boolean &quot   report   errormessage(&quot  cond of if must be boolean &quot  ,input,place)
+assert (types.$_4) =(types.$_6) report  errormessage(&quot  then and else types are different &quot  ,input,place)
   let newcode= code.$_2 + code.$_4 + code.$_6 
    bindinfo(dict,newcode+  &quot  if &quot  ,types.thenpart)
 "],[" E E^E ","opaction(subtrees,input,place)  
@@ -319,7 +315,7 @@ assert (types.$_4) =(types.$_6) report  &quot  then and else types are different
 bindinfo(dict,code.$_1+code.$_3,types.$_1+types.$_3)
 "],[" E [ L]","
  let types=types($_2)
- assert @(∧, =(types_1), true, types )report  &quot  types do not match in build &quot   
+ assert @(∧, =(types_1), true, types )report  errormessage(&quot  types do not match in build &quot,input, place)   
     bindinfo( dict,&quot LIT 0 LIT  &quot+toword.(length.types)+ code.$_2+ &quot  RECORD &quot  +toword.(length.types+2), [mytype(towords(types_1)+ &quot  seq &quot   )])
  "],[" A let W = E "," let e = $_4 let name =(code.$_2)_1 
 let newdict = dict + symbol(name, mytype( &quot  local &quot  ), empty:seq.mytype,(types.e)_1,&quot &quot)
@@ -328,8 +324,10 @@ bindinfo(newdict, code.e + &quot  define &quot  + name, types.e)
 [" E A E ","let t = code.$_1 let f = lookup(dict, last.code.$_1, empty:seq.mytype)
 assert not.isempty.f report  &quot  error &quot  bindinfo(dict.$_1-f_1, subseq(t,1,length.t-2) + code.$_2 + &quot  SET &quot +last.code.$_1 , types.$_2)
 "],[" E assert E report E E ","
-assert types($_2)_1 = mytype.&quot  boolean &quot  report  &quot  condition in assert must be boolean in: &quot    
-  assert types($_4)_1 = mytype.&quot  word seq &quot  report  &quot  report in assert must be seq of word in: &quot   
+assert types($_2)_1 = mytype.&quot  boolean &quot  report  
+ errormessage(&quot  condition in assert must be boolean in: &quot    ,input, place)
+  assert types($_4)_1 = mytype.&quot  word seq &quot  report  
+  errormessage(&quot  report in assert must be seq of word in: &quot   ,input, place)
   let newcode=code.$_2 + code.$_5 + code.$_4 +   &quot  assertZbuiltinZwordzseq   if  &quot   
   bindinfo(dict,newcode,types.$_5)
 "],[" E I ","$_1  

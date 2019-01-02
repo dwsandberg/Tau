@@ -1,18 +1,12 @@
 Module real
 
-type real is record representation:int
-
 use UTF8
 
 use seq.real
 
-/use seq.seq.real 
-
-/use seq.word
-
-/use seq.int
-
 use stdlib
+
+type real is record representation:int
 
 Function-(r:real)real 0.0 - r
 

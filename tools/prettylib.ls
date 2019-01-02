@@ -112,10 +112,20 @@ function prettyparagraph( p:seq.word) seq.word
     else"&keyword Function")+ z_3 + plist(subseq(z, 5, headlength + 2 - nopara), 1, 1, subseq(z, headlength + 2 - nopara + 1, headlength + 2))
    let tr=x(z,headlength+4,empty:stack.tree.word)
    // assert not(label.tr="builtin"_1) report "XXXX"+label.tr_1 + z_3 //
-   let tr1 = if label.tr ="builtin"_1 ∧ label(tr_1)= z_3 
+   let tr1 = if label.tr ="builtin"_1  then if
+      label(tr_1)= z_3 
     then tree("builtin"_1, [ tree("usemangle"_1)])
-    else tr 
-   prettytree2(defaultcontrol, tr1, head)
+    else if label.(tr_1)="1"_1 then
+         tree("builtin"_1,[tree("NOOP"_1)])
+        else if label(tr_1)="STATE"_1  &and label(tr_1_1)= z_3 then
+          tree("builtin"_1,[tree("STATE"_1,[tree("usemangle"_1)])])
+        else 
+       // assert false report print.tr //
+       tr
+    else tr
+ let zz=  prettytree2(defaultcontrol, tr1, head)
+    //  assert not(z_3="blockit"_1) &or label.tr="export"_1 report print.tr_2_2  +z //
+ zz
  else ""
 
 function decodefld(s:seq.word,i:int,result:seq.word ) seq.word
@@ -183,8 +193,10 @@ function x(s:seq.word,i:int,stk:stack.tree.word) tree.word
         x(s,i+2,push(pop(stk,noargs),t))
   else if w in"FORCEINLINE PROFILE"
   then x(s, i + 1, push(pop(stk, 1), tree(w, [ top.stk])))
-  else let a = codedown.w 
- assert length.a > 1 report "JJJ"+w+s+toword.i+stacktrace
+  else if w="siQ7AeoftypeQ3ATZQ24typesiQ7Aezlocal "_1 then 
+       x(s,i+1,push(stk,tree.merge("sizeoftype:T")))
+  else  let a = codedown.w 
+  assert length.a > 1 report "JJJ"+w+s+toword.i+stacktrace
    let noargs=length.a-2
     x(s,i+1,push(pop(stk,noargs),tree(getname.a,top(stk,noargs))))
     

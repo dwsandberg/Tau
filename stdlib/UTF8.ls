@@ -1,8 +1,8 @@
 Module UTF8
 
-use stdlib
-
 use seq.int
+
+use stdlib
 
 type UTF8 is record toseqint:seq.int
 
