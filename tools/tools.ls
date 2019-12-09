@@ -12,28 +12,30 @@ display
 
 Module tools
 
-/run tools testx
+/run tools testfirstpass
 
-run tools test
+/run tools testprofile
 
 /run tools prettytest
 
-/run printbitcodes test1
-
-/run tools test2
-
-/run newtools stdlibdoc
-
-/run doc createdoc
-
-/run tools testprintBitCodes
-
-/run tools test
-
-run newtools checkdoclib
-
+run tools stdlibdoc
 
 run doc createdoc
+
+/run tools testhtmlcode 
+
+/run genLR1 gentau2
+
+/run taulextable getlextable
+
+
+
+/run printbitcodes test1
+
+
+run tools testprintBitCodes
+
+run tools checkdoclib
 
 * only document  printbitcodes profile prettylib doc
 
@@ -43,7 +45,7 @@ use doc
 
 use main2
 
-/use prettylib
+use prettylib
 
 use printbitcodes
 
@@ -51,34 +53,31 @@ use profile
 
 use seq.word
 
-/Function test1 seq.word htmlcode."test11"
+Function testhtmlcode seq.word htmlcode."testall"
 
 
-/Function prettytest seq.word prettylib("test4","")
+Function prettytest seq.word prettylib("stdlib2","")
 
-"byteseq bitpackedseq codegen2 codegen codetemplates2 codetemplates definestruct2 definestruct fileresult textio persistant2 persistant pretty2 pretty")
 
-Function checkdoclib seq.word   // doclibrary."testall" //
+Function checkdoclib seq.word    doclibrary."tools"
+
 callgraphbetween("stdlib","libdescfunc libscope")  
 
 doclibrary."tools"
 
-use seq.word
 
-Function testx seq.word 
+Function testfirstpass seq.word 
 @(+,   +("&br &br"),"", firstPass("testall"_1))
 
 use seq.seq.word
 
-Function test seq.word 
+Function testprofile seq.word 
  let a = compilelib2("stdlib"_1)
   a + profileresults."time"
 
-Function testprintBitCodes seq.word printBitCodes."mytest.bc"
+Function testprintBitCodes seq.word printBitCodes."test4.bc"
 
-/Function stdlibdoc seq.word 
+Function stdlibdoc seq.word 
  // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
 
-/Function test2 seq.word 
- callgraphbetween("useful","useful processtypes")+ doclibrary."tools"
 

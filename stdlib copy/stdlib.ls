@@ -9,7 +9,7 @@ codegen codetemplates deepcopy fileio format graph groupparagraphs   internalbc 
   uses 
   exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real invertedseq ipair set graph textio blockseq packedseq
  deepcopy tree fileio pass2 stack newimp2 persistant persistantseq  llvm libscope internalbc format bits  newsymbol
-   prims cvttoinst libdescfuncnew groupparagraphs 
+   prims cvttoinst libdescfuncnew groupparagraphs newencoding
  
 use UTF8
 
@@ -154,13 +154,13 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 type wordencoding is encoding seq.int
 
-
+use newencoding.seq.int
 
 type word is record bb:encoding.seq.int
 
 Function encodeword(a:seq.int)word word.encode(a, wordencoding)
 
-Function wordmapping seq.seq.int mapping.wordencoding
+Function wordmapping seq.seq.int mapping2.wordencoding
 
 Function encoding(w:word)int encoding.bb.w
 

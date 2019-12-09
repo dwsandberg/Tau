@@ -63,13 +63,13 @@ function find(v:T, a:ipair.T)seq.ipair.T
  function getinstance(erec:erecord.T)invertedseq.T builtin.STATE.usemangle 
 
 
-/Function mapping2(erec:erecord.T)seq.T  mapping.getinstance.erec
+Function mapping2(erec:erecord.T)seq.T  mapping.getinstance.erec
 
-/Function decode(t:encoding.T, erec:erecord.T)T (mapping.getinstance.erec)_(encoding.t)
+Function decode(t:encoding.T, erec:erecord.T)T (mapping.getinstance.erec)_(encoding.t)
 
 
 
-/Function findencode(t:T, erec:erecord.T)seq.T
+Function findencode(t:T, erec:erecord.T)seq.T
     let inst= getinstance.erec
     let x=lookup(t,inst) 
     if x = 0 then empty:seq.T else  [(mapping.inst)_x]

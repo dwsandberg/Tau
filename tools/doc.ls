@@ -2,10 +2,6 @@
 
 module doc
 
-run tools checkdoclib  
-
-
-run tools createdoc
 
 use display
 
@@ -45,11 +41,18 @@ use textio
 
 use tree.word
 
-/Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html // let d = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/doc.txt")let x = createfile("taudoc.html", [ htmlheader + processpara.d])let e = @(+, prettyit.newgraph.empty:seq.arc.word,"", gettext."tools/appdoc.txt")let x2 = createfile("appdoc.html", [ htmlheader + processpara.e])let y = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])let z = createfile("tools.html", [ htmlheader + processpara.htmlcode."tools"])d
+use prettylib
 
-/function prettyit(usegraph:graph.word, s:seq.word)seq.word if subseq(s, 1, 2)="* usegraph"then let l = findindex("include"_1, s)let k = findindex("exclude"_1, s){"&{ noformat <h2> Use graph</h2> &}"+ if k > l then usegraph(usegraph, subseq(s, l + 1, k), subseq(s, k + 1, length.s))else usegraph(usegraph, subseq(s, l + 1, length.s), subseq(s, k + 1, l))} else"&{ select 1"+ prettyparagraph(defaultcontrol, s)+"&}"
 
-/Function htmlcode(libname:seq.word)seq.word let l = tolibdesc(libname_1)let g = newgraph.usegraph("mod", l){"&{ noformat <h1> Source code for Library"+ libname +"</h1> &}"+ @(+, ref,"", modules.l)+ @(seperator."&{ noformat <hr> &}", prettymod.g,"", modules.l)}
+Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html //
+ let d = @(+,addselect,"",gettext."tools/doc.txt")
+ let x1= createfile("doc.html", [ htmlheader + processpara.d])
+ let x2= createfile("appdoc.html", [ htmlheader + processpara.@(+,addselect,"",gettext."tools/appdoc.txt")])
+let y1=  createfile("testall.html",[ htmlheader + processpara.htmlcode."testall"])
+ d 
+ 
+function addselect(s:seq.word) seq.word "&{ select X"+s+"&}"
+
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word 
 // Calls between modules in list of modules. // 
@@ -120,6 +123,18 @@ Function doclibrary(libname:seq.word)seq.word
 function findrestrict(s:seq.word)seq.word 
  if subseq(s, 1, 3)="skip * only document"then subseq(s, 4, length.s)else""
 
+function plist(t:seq.word,i:int,parano:int,names:seq.word) seq.word
+ if i = 1 
+  then if length.names > 0 
+   then"("+(if names_parano =":"_1 then""else [ names_parano]+":")+ t_i + plist(t, i + 1, parano + 1, names)
+     else t
+  else if t_i =".a"_1 ∨ t_i =". a"_1 
+  then subseq(t, i, i + 1)+ plist(t, i + 2, parano, names)
+  else if parano ≤ length.names 
+  then","+(if names_parano =":"_1 then""else [ names_parano]+":")+ t_i + plist(t, i + 1, parano + 1, names)
+   else  ")"+subseq(t,i,length.t) 
+
+
 function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:seq.seq.word, i:int, currentmod:seq.word, funcs:seq.word, types:seq.word)seq.word 
  if i > length.lib 
   then if length.types > 0 ∨ length.funcs > 0 
@@ -146,19 +161,18 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
      usegraph(usegraph, subseq(a, l + 1, k), subseq(a, k + 1, length.a))
     else subseq(a, 2, length.a))+"&}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
-  else if lib_i_1 ="Function"_1 
-  then let toadd ="&{ select x &keyword"+ subseq(lib_i, 1, length(lib_i) - if length.currentmod = 1 then 2 else 1)+ toword.length.currentmod +"&}"
+  else if lib_i_1 in"Parsedfunc"
+  then let z = lib_i 
+   let nopara= toint(z_4)
+   let headlength=toint(z_2)
+   let toadd ="&{ select x &keyword Function"+ z_3 + plist(subseq(z, 5, headlength + 2 - nopara), 1, 1, subseq(z, headlength + 2 - nopara + 1, headlength + 2))
+   +"&}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
   else if lib_i_1 in"record encoding sequence"  
   then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_2)
  else if     subseq(lib_i, 1, 2)="skip type"
-  then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_3)
- else if lib_i_1 in"export"
-  then let j = findindex("Function"_1, lib_i)
-   if length(lib_i)> j 
-   then let toadd ="&{ select x &keyword"+ subseq(lib_i, j, length(lib_i))
-    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)+"&}"
-   else docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
+  then  
+  docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_3)
   else docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
 
 Function uncalledfunctions(libname:seq.word)seq.word 
