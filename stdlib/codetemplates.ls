@@ -80,7 +80,6 @@ type ematch5 is encoding match5
 
 /use ipair.match5
 
-use newencoding.match5
 
 Function table seq.match5 
  let t = [ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64,-1, ibcsub2)+ LOAD(3,-2, typ.i64, align8, 0)), 

@@ -60,9 +60,6 @@ use stdlib
 
 use tree.seq.word
 
-use newencoding.word3
-
-use newencoding.const3
 
 type word3encoding is encoding word3
 

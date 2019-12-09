@@ -20,7 +20,6 @@ use stdlib
 
 use tree.seq.word
 
-use newencoding.inst
 
 type einst is encoding inst
 

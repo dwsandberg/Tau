@@ -1,66 +1,68 @@
-Module invertedseq.T
+Module encoding.T
 
-use ipair.T
+use seq.encodingrep.T
 
-use seq.ipair.T
-
-use seq.seq.ipair.T
+use seq.seq.encodingrep.T
 
 use stdlib
 
 use seq.T
 
-type invertedseq is record hashtable:seq.seq.ipair.T, elecount:int,mapping:seq.T
 
-Function hashtable(invertedseq.T)seq.seq.ipair.T export
+type encodingstate is record encodingtable:seq.seq.encodingrep.T, elecount:int,mapping:seq.T,
+   decodetable:seq.seq.encodingrep.T
 
-Function mapping(invertedseq.T) seq.T export
+
+   type encodingrep is record code:int,data: T ,hash:int 
+ 
+
 
 Function hash(T)int unbound
 
 Function =(T, T)boolean unbound
 
-Function =(a:ipair.T, b:ipair.T)boolean index.a = index.b ∧ value.a = value.b
+function ele(v:T, a:encodingrep.T)int if v = data.a then code.a else 0
 
-Function lookup(value:T, h:invertedseq.T)int 
- @(max, ele.value, 0, hashtable(h)_(hash.value mod length.hashtable.h + 1))
-
-Function ele(v:T, a:ipair.T)int if v = value.a then index.a else 0
-
-Function invertedseq(v:T)invertedseq.T invertedseq(constantseq(4, empty:seq.ipair.T), 0,empty:seq.T)
-
-Function add(h:invertedseq.T, i:int, v:T)invertedseq.T add(h, ipair(length.mapping.h+1, v))
-
-Function replicatefourseq2(a:seq.seq.ipair.T)seq.seq.ipair.T a + a +(a + a)
-
-Function add(h:invertedseq.T, p:ipair.T)invertedseq.T 
- if 3 * elecount.h > 2 * length.hashtable.h 
-  then add(invertedseq(replicatefourseq2.hashtable.h, elecount.h,mapping.h), p)
-  else subadd(h, p, hash.value.p mod length.hashtable.h + 1)
-
-Function ele2(e:T, len:int, a:ipair.T)seq.ipair.T 
- if value.a = e ∨ not(hash.e mod len = hash.value.a mod len)then empty:seq.ipair.T else [ a]
-
-Function subadd(m:invertedseq.T, p:ipair.T, hashofvalue:int)invertedseq.T 
- invertedseq(replace(hashtable.m, hashofvalue, @(+, ele2(value.p, length.hashtable.m), [ p], hashtable(m)_hashofvalue)), elecount.m + 1
-  ,mapping.m+value.p)
-
-Function toipair(a:invertedseq.T)seq.ipair.T 
- @(+, data.hashtable.a, empty:seq.ipair.T, arithseq(length.hashtable.a, 1, 1))
-
-function data(len:int, i:int, m:ipair.T)seq.ipair.T 
- if hash.value.m mod len = i then [ m]else empty:seq.ipair.T
-
-function data(s:seq.seq.ipair.T, i:int)seq.ipair.T @(+, data(length.s, i - 1), empty:seq.ipair.T, s_i)
-
-Function find(h:invertedseq.T, value:T)seq.ipair.T 
- // return list of ipairs matching value // 
-  @(+, find.value, empty:seq.ipair.T, hashtable(h)_(hash.value mod length.hashtable.h + 1))
-
-function find(v:T, a:ipair.T)seq.ipair.T 
- if v = value.a then [ a]else empty:seq.ipair.T
+function ele2(eletoadd:encodingrep.T, tablesize:int, a:encodingrep.T)seq.encodingrep.T 
+ if data.a = data.eletoadd ∨ not(hash.eletoadd mod tablesize = hash.a mod tablesize)
+ then empty:seq.encodingrep.T else [ a]
  
- function getinstance(erec:erecord.T)invertedseq.T builtin.STATE.usemangle 
+function ele4(eletoadd:encodingrep.T, tablesize:int, a:encodingrep.T)seq.encodingrep.T 
+ if code.a = code.eletoadd ∨ not(hash.code.eletoadd mod tablesize = hash.code.a mod tablesize)
+ then empty:seq.encodingrep.T else [ a]
+
+
+
+
+Function lookup(data:T, h:encodingstate.T)int 
+ @(max, ele.data, 0, encodingtable(h)_(hash.data mod length.encodingtable.h + 1))
+
+
+
+Function add(h:encodingstate.T, i:int, v:T)encodingstate.T add(h,v )
+
+
+Function add(h:encodingstate.T, v:T)encodingstate.T 
+ if 3 * elecount.h > 2 * length.encodingtable.h 
+  then 
+   let t=encodingtable.h
+   add(encodingstate(t+t+t+t, elecount.h,mapping.h,decodetable.h), v)
+  else 
+   let code=length.mapping.h+1
+   let tablesize=length.encodingtable.h
+   let p=encodingrep(code, v,hash.v)
+   let hashofdata=hash.p mod tablesize + 1 
+    encodingstate(replace(encodingtable.h, hashofdata, @(+, ele2(p, tablesize), [ p], 
+ encodingtable(h)_hashofdata)), 
+ elecount.h + 1,mapping.h+data.p,decodetable.h
+ )
+ 
+ 
+ replace(decodetable.h, hashofdata, @(+, ele2(p, tablesize), [ p], 
+ decodetable(h)_hashofdata)))
+
+ 
+ function getinstance(erec:erecord.T)encodingstate.T builtin.STATE.usemangle 
 
 
 Function mapping2(erec:erecord.T)seq.T  mapping.getinstance.erec
@@ -73,4 +75,7 @@ Function findencode(t:T, erec:erecord.T)seq.T
     let inst= getinstance.erec
     let x=lookup(t,inst) 
     if x = 0 then empty:seq.T else  [(mapping.inst)_x]
+
+
+
 

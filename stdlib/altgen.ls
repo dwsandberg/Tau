@@ -195,7 +195,6 @@ Function encode(stat5, erecord.stat5)encoding.stat5 export
 
 type statencoding is encoding stat5
 
-use newencoding.stat5
 
 type stat5 is record caller:word, callee:word
 

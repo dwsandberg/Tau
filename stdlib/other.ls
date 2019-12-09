@@ -467,7 +467,7 @@ function wrapgathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, 
 function definefld(src:seq.word, modname:mytype, t:seq.mytype, m:mytype)symbol 
  symbol(abstracttype.m, modname, t, parameter.m, src)
  
-function switch seq.word "invertedseq"
+function switch seq.word "encodingstate"
 
 function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass 
  // assert print.modname.f in ["?","stdlib","UTF8","altgen"]∨(print.modname.f ="bitpackedseq.T"∧ cardinality.defines.f + cardinality.unbound.f < 8)report print.modname.f + printdict.unbound.f // 
@@ -484,7 +484,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
    then assert parameter.modname.f = mytype.""report"encoding in template?"
     let typ = parameter(types(b)_1)
     let sym = symbol(code(b)_2, modname.f, empty:seq.mytype, mytype(towords.typ +"erecord"), code.b)
-    firstpass(modname.f, uses.f   + mytype(towords.typ +switch),  defines.f + changesrc(sym, code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
+    firstpass(modname.f, uses.f    +  mytype(towords.typ +"encoding"),  defines.f + changesrc(sym, code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
    else assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
    // assert false report code.b // 
    let modnm = towords.modname.f 

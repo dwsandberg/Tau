@@ -24,7 +24,7 @@ use stdlib
 
 use textio
 
-use newencoding.T
+use encoding.T
 
 function addele(t:trackele, s:T)trackele 
  let a = addrecord(l.t, s)

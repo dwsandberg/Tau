@@ -251,25 +251,6 @@ Function_(s:arithmeticseq.T, i:int)T start.s +(i - 1)* step.s
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 
 
-Module newencoding.T
-
-   
-use invertedseq.T
-
-/use encodingstate.T
-
-
-
-
-
-Function mapping2(erec:erecord.T)seq.T  export
-
-Function decode(t:encoding.T, erec:erecord.T)T export
-
-
-
-Function findencode(t:T, erec:erecord.T)seq.T export
-
 
 
 

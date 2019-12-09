@@ -181,7 +181,7 @@ function bindingformat(known:symbolset, m:firstpass)seq.seq.word
 
 function extractencoding(s:seq.word)seq.mytype 
  if length.s > 3 ∧ s_1 ="type"_1 ∧ s_4 in"Encoding encoding"
-  then [ mytype(towords.parameter(types(parse(headerdict, s))_1)+"invertedseq")]
+  then [ mytype(towords.parameter(types(parse(headerdict, s))_1)+"encodingstate")]
   else empty:seq.mytype
 
 function extractparsed(abstract:boolean, known:symbolset, s:symbol)seq.seq.word 

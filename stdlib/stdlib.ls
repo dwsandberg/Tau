@@ -7,7 +7,7 @@ codegen codetemplates deepcopy fileio format graph groupparagraphs   internalbc 
  libscope llvm  oseq  packedseq pass2 persistant persistantseq prims process real  reconstruct seq set stack stacktrace textio  tree    
  cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2 opt2
   uses 
-  exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real invertedseq ipair set graph textio blockseq packedseq
+  exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real encoding ipair set graph textio blockseq packedseq
  deepcopy tree fileio pass2 stack newimp2 persistant persistantseq  llvm libscope internalbc format bits  newsymbol
    prims cvttoinst libdescfuncnew groupparagraphs 
  
@@ -154,7 +154,6 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 type wordencoding is encoding seq.int
 
-use newencoding.seq.int
 
 type word is record bb:encoding.seq.int
 

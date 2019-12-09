@@ -60,9 +60,7 @@ use stacktrace
 
 use stdlib
 
-use newencoding.llvmconst
 
-use newencoding.llvmtype
 
 Function typ(llvmconst)int export
 
