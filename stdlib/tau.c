@@ -828,19 +828,17 @@ void createfilefromoutput(struct outputformat *t,int file)
 
 //  encoding support
 
-struct einfo {BT hashtable; BT encoded;  processinfo allocatein; };
+struct einfo {BT hashtable;   processinfo allocatein; };
 
 struct einfo * neweinfo(processinfo PD){
    static const BT x1[]={0,0};
    static const BT empty4[]={0,4,(BT) x1,(BT) x1,(BT) x1,(BT) x1};
    static const BT inverted[]={(BT) empty4,0,(BT) x1,(BT) empty4};
    struct einfo *e=(struct einfo *)myalloc(PD,sizeof (struct einfo)/8);
-   e->encoded=(BT) x1;
    e->hashtable=(BT)inverted;
    e->allocatein=PD ;
    return e;
 }
-
 
 
 
@@ -867,7 +865,9 @@ if (ee->no==0){
     assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
     }
  
- if (ee->persitant ) {
+ /* broke persistant when changed encoding 
+ 
+   if (ee->persitant ) {
    struct einfo *e= staticencodings[ee->no];
    if (e==0) {
      assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
@@ -875,7 +875,7 @@ if (ee->no==0){
      staticencodings[ee->no]=e;
      assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
         struct einfo *wordendcoding= (sharedspace.encodings[1]);
-    BT data= IDX(NULL,wordendcoding->encoded,ee->nameasword);
+    BT data= IDX(NULL,encoded2(wordendcoding),ee->nameasword);
     int i,len=SEQLEN(data) ;
     char libname[100],*p=libname;
     *p++='Q';
@@ -885,7 +885,7 @@ if (ee->no==0){
      loadlibrary(&sharedspace,libname);
     }
     return e;
- }
+ } */
  struct einfo *e= PD->encodings[ee->no];
  if (e==0) {
    if  ( PD->newencodings==0 && PD != &sharedspace) 
@@ -901,37 +901,11 @@ if (ee->no==0){
  }
  return e;
  }
- 
- BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){ 
+
+
+BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){ 
   return startencoding(PD,P2)->hashtable ;
 }
-
- BT decodeZbuiltinZTzencodingZTzerecord (processinfo PD,BT P1,BT P2) { 
-  BT map=startencoding(PD,P2)->encoded;
-  assert ( P1>0&& P1<=SEQLEN(map), "out of range decode");
-  return IDX(NULL,map,P1);
-}
-
-BT mappingZbuiltinZTzerecord(processinfo PD,BT P2){
- return startencoding(PD,P2)->encoded;
-}
-
-
-
-BT findencodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){ 
-  BT r;
-  struct cinfo *ee = (struct cinfo *) P2;
-  struct einfo *e=startencoding(PD,P2)  ;
-  r= (ee->look) (PD,P1,e->hashtable);
-  if (r > 0) { 
-   BT *s = (BT *) myalloc(PD,3);
-   s[0]=0; s[1]=1; s[2]=IDX(NULL,e->encoded,r);
-   return (BT)s;
-  }
-  static const BT x1[]={0,0};
-  return (BT)x1;
-}
-
 
 BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){  
  BT r;
@@ -939,11 +913,10 @@ BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){
   struct cinfo *ee = (struct cinfo *) P2;
   assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
   r= (ee->look) (PD,P1,e->hashtable);
-if (r<=0) {
+if (r<=0) {// not found
    P1=  (ee->copy) (e->allocatein,P1);
-   r=SEQLEN(e->encoded)+1;
-   e->encoded=append(e->allocatein,e->encoded,P1);
-   e->hashtable=(ee->add)(e->allocatein,e->hashtable,r,P1);
+   e->hashtable=(ee->add)(e->allocatein,e->hashtable,0,P1);
+   r= (ee->look) (PD,P1,e->hashtable);
   }
 assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
 return r;

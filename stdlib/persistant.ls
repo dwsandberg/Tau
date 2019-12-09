@@ -69,7 +69,7 @@ type word3encoding is encoding word3
 Function wordcount int length.mapping2.word3encoding
 
 Function worddata seq.int 
- let ws = mapping.word3encoding 
+ let ws = mapping2.word3encoding 
   @(+, eword, [ C64.0, C64.length.ws], ws)
 
 _________________

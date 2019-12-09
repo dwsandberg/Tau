@@ -218,16 +218,12 @@ Function fastsubseq(s:seq.T, from:int, to:int)seq.T
 
 _________________________________
 
-Function mapping(erec:erecord.T)seq.T builtin.STATE.usemangle 
+
 
 Function encoding(encoding.T)int builtin.NOOP
 
 Function encode(t:T, erec:erecord.T)encoding.T builtin.STATE.usemangle 
 
-Function decode(t:encoding.T, erec:erecord.T)T builtin.STATE.usemangle 
-
-
-Function findencode(t:T, erec:erecord.T)seq.T builtin.STATE.usemangle 
 
 type erecord is record deepcopy:int, invertedseqlookup:int, invertedseq:int, number:int, name:word, ispersistant:boolean, encodingtype:seq.word
 
@@ -257,7 +253,6 @@ Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, 
 
 Module newencoding.T
 
- use seq.T
    
 use invertedseq.T
 
@@ -267,15 +262,13 @@ use invertedseq.T
 
 
 
-Function mapping2(erec:erecord.T)seq.T  
-mapping(erec)
+Function mapping2(erec:erecord.T)seq.T  export
 
-
-/Function decode(t:encoding.T, erec:erecord.T)T export
+Function decode(t:encoding.T, erec:erecord.T)T export
 
 
 
-/Function findencode(t:T, erec:erecord.T)seq.T export
+Function findencode(t:T, erec:erecord.T)seq.T export
 
 
 
@@ -284,3 +277,4 @@ mapping(erec)
 
 
 
+    

@@ -154,13 +154,13 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 type wordencoding is encoding seq.int
 
-
+use newencoding.seq.int
 
 type word is record bb:encoding.seq.int
 
 Function encodeword(a:seq.int)word word.encode(a, wordencoding)
 
-Function wordmapping seq.seq.int mapping.wordencoding
+Function wordmapping seq.seq.int mapping2.wordencoding
 
 Function encoding(w:word)int encoding.bb.w
 
