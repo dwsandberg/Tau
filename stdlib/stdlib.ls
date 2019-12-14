@@ -3,7 +3,7 @@
 Module stdlib 
 
 Library stdlib UTF8 altgen bitpackedseq bits blockseq 
-codegen codetemplates deepcopy fileio format graph groupparagraphs   internalbc  invertedseq   ipair
+codegen codetemplates deepcopy fileio format graph groupparagraphs   internalbc  encoding   ipair
  libscope llvm  oseq  packedseq pass2 persistant persistantseq prims process real  reconstruct seq set stack stacktrace textio  tree    
  cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2 opt2
   uses 
@@ -154,14 +154,15 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 type wordencoding is encoding seq.int
 
+Function wordencoding erecord.wordencoding export 
 
 type word is record bb:encoding.seq.int
 
 Function encodeword(a:seq.int)word word.encode(a, wordencoding)
 
-Function wordmapping seq.seq.int mapping2.wordencoding
+/Function wordmapping seq.seq.int mapping2.wordencoding
 
-Function encoding(w:word)int encoding.bb.w
+Function encoding23(w:word)int encoding22.bb.w
 
 Function decode(w:word)seq.int decode(bb.w, wordencoding)
 
@@ -169,11 +170,11 @@ Function hash(a:seq.int)int @(+, hash, 0, a)
 
 Function hash(a:seq.word)int @(+, hash, 0, a)
 
-Function hash(a:word)int hash.encoding.a
+Function hash(a:word)int hash.bb.a
 
-Function ?(a:word, b:word)ordering encoding.a ? encoding.b
+Function ?(a:word, b:word)ordering bb.a ? bb.b
 
-Function =(a:word, b:word)boolean encoding.a = encoding.b
+Function =(a:word, b:word)boolean bb.a = bb.b
 
 Function ≠(a:word, b:word)boolean export
 
@@ -320,7 +321,7 @@ Function toalphaseq(a:seq.word)seq.alphaword
   @(+, alphaword, empty:seq.alphaword, a)
 
 Function ?(a:alphaword, b:alphaword)ordering 
- if encoding.toword.a = encoding.toword.b then EQ else decode.toword.a ? decode.toword.b
+ if toword.a = toword.b then EQ else decode.toword.a ? decode.toword.b
 
 Function towordseq(a:seq.alphaword)seq.word @(+, toword, empty:seq.word, a)
 
@@ -330,7 +331,7 @@ Function alphasort(a:seq.seq.word)seq.seq.word
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
   @(+, towordseq, empty:seq.seq.word, sort.b)
 
-* usegraph include real oseq textio UTF8 prims stacktrace libscope tree seq blockseq graph ipair invertedseq process stack set oseq packedseq format groupparagraphs fileio
+* usegraph include real oseq textio UTF8 prims stacktrace libscope tree seq blockseq graph ipair encoding process stack set oseq packedseq format groupparagraphs fileio
 
 * usegraph include main2 other libscope display constant codegen convert altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs etype codetemplates core sid pretty pass2 persistant libdesc passcommon main parts llvm reconstruct exclude seq set oseq stdlib tree graph UTF8 stack stacktrace real process libscope ipair
 

@@ -38,7 +38,6 @@ use seq.seq.int
 
 use seq.seq.seq.int
 
-use seq.stat5
 
 use stacktrace
 

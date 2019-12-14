@@ -30,7 +30,6 @@ use reconstruct
 
 use seq.const3
 
-use seq.encoding.llvmtype
 
 use seq.flddesc
 
@@ -63,10 +62,10 @@ use tree.seq.word
 
 type word3encoding is encoding word3
 
-Function wordcount int length.mapping2.word3encoding
+Function wordcount int length.orderadded.word3encoding
 
 Function worddata seq.int 
- let ws = mapping2.word3encoding 
+ let ws = orderadded.word3encoding 
   @(+, eword, [ C64.0, C64.length.ws], ws)
 
 _________________
@@ -101,7 +100,7 @@ function hash(a:word3)int hash.toword.a
 
 Function place(a:linklists2)int length.a.a + 4
 
-Function word33(a:word)int encoding.encode(word3.a, word3encoding)
+Function word33(a:word)int encoding22.encode(word3.a, word3encoding)
 
 function eword(w:word3)seq.int 
  let a = decode.toword.w 

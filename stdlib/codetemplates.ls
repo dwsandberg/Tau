@@ -54,7 +54,13 @@ function wordstype encoding.llvmtype array(-1, i64)
 
 Function conststype encoding.llvmtype array(-2, i64)
 
-type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int
+type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, index:int
+
+Function addindex(m:match5,i:int) match5  match5(fullinst.m,length.m,parts.m,action.m,arg.m,i)
+
+function match5( fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int) match5
+match5(fullinst,length,parts,action,arg,0)
+
 
 Function length(match5)int export
 
@@ -120,7 +126,7 @@ Function table seq.match5
   let discard = @(+, addit, 0, t)
   t
 
-function addit(m:match5)int encoding.encode(m, ematch5)
+function addit(m:match5)int findindex(m, ematch5)
 
 function match5(inst:word, length:int, b:internalbc)match5 
  let parts = getparts.b 

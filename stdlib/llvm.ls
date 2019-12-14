@@ -66,15 +66,23 @@ Function typ(llvmconst)int export
 
 Function toseq(llvmconst)seq.int export
 
-type llvmtype is record toseq:seq.int
+type llvmtype is record toseq:seq.int,index:int
 
 type llvmtypes is encoding llvmtype
+
+function llvmtype(toseq:seq.int) llvmtype llvmtype(toseq,0)
+
+/function addindex(l:llvmtype,i:int) llvmtype llvmtype(toseq,i)
 
 function hash(a:llvmtype)int hash.toseq.a
 
 function =(a:llvmtype, b:llvmtype)boolean toseq.a = toseq.b
 
-type llvmconst is record typ:int, toseq:seq.int
+type llvmconst is record typ:int, toseq:seq.int,index:int
+
+function llvmconst(typ:int, toseq:seq.int) llvmconst llvmconst(typ,toseq,0)
+
+function addindex(a:llvmconst,i:int) llvmconst llvmconst(typ.a,toseq.a,i)
 
 type llvmconsts is encoding llvmconst
 
@@ -133,18 +141,18 @@ Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
 
 Function C(s:seq.word)int C(s_1)
 
-Function C(w:word)int encoding.encode(llvmconst(-1, decode.w), llvmconsts) - 1
+Function C(w:word)int findindex(llvmconst(-1, decode.w), llvmconsts) - 1
 
-Function C64(i:int)int encoding.encode(llvmconst(typ.i64, [ CONSTINTEGER, i]), llvmconsts) - 1
+Function C64(i:int)int findindex(llvmconst(typ.i64, [ CONSTINTEGER, i]), llvmconsts) - 1
 
 Function getllvmconst(i:int)seq.int toseq(mapping2(llvmconsts)_(i + 1))
 
-Function C32(i:int)int encoding.encode(llvmconst(typ.i32, [ CONSTINTEGER, i]), llvmconsts) - 1
+Function C32(i:int)int findindex(llvmconst(typ.i32, [ CONSTINTEGER, i]), llvmconsts) - 1
 
-Function C(t:encoding.llvmtype, s:seq.int)int encoding.encode(llvmconst(typ.t, s), llvmconsts) - 1
+Function C(t:encoding.llvmtype, s:seq.int)int findindex(llvmconst(typ.t, s), llvmconsts) - 1
 
 Function Cprt(t:int, s:seq.int)int 
- // used in print bitcodes tool // encoding.encode(llvmconst(t, s), llvmconsts) - 1
+ // used in print bitcodes tool // findindex(llvmconst(t, s), llvmconsts) - 1
 
 -----------------------
 
@@ -152,7 +160,7 @@ Function funcname(a:llvmconst)word encodeword.toseq.a
 
 Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, mapping2.llvmtypes)
 
-Function typ(a:encoding.llvmtype)int encoding.a - 1
+Function typ(a:encoding.llvmtype)int encoding22.a - 1
 
 Function typerecord(s:seq.int)encoding.llvmtype encode(llvmtype.s, llvmtypes)
 

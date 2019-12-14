@@ -12,15 +12,20 @@ defines are indices into coding that indicate which functions are defined and in
 
 function intercode(seq.seq.int, seq.inst, seq.int)intercode export
 
+
 function codes(intercode)seq.seq.int export
 
 function coding(intercode)seq.inst export
 
 function defines(intercode)seq.int export
 
-type inst is record towords:seq.word, flags:seq.word, returntype:mytype
+type inst is record towords:seq.word, flags:seq.word, returntype:mytype,index:int
 
-Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst export
+Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst
+   inst(towords,flags,returntype,0)
+   
+Function addindex(a:inst,i:int) inst inst(towords.a,flags.a,returntype.a,i)
+
 
 Function mangledname(a:inst)word towords(a)_1
 
@@ -31,6 +36,9 @@ function flags(a:inst)seq.word export
 function towords(a:inst)seq.word export
 
 function returntype(a:inst)mytype export
+
+function index(a:inst) int export
+
 
 function addwordseq(linklists2, seq.word)ipair.linklists2 export
 

@@ -164,6 +164,8 @@ BT (*toUTF8)(struct pinfo *,BT );
 
 BT *byteseqencetype;
 
+BT (*  decodeword)(processinfo PD,BT P1);
+
 
 BT initlib4(char * libname,BT * words,BT * wordlist, BT * consts,BT * libdesc) {
   // fprintf(stderr,"starting initlib4\n");
@@ -184,7 +186,13 @@ if (strcmp(libname,"stdlib")==0){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
-}
+       decodeword= dlsym(RTLD_DEFAULT,"decodeZstdlibZword");
+    if (!decodeword){
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }
+
+ }
 
    BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
    if (!relocate) {
@@ -273,6 +281,12 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
+       decodeword= dlsym(RTLD_DEFAULT,"decodeZstdlibZword");
+    if (!decodeword){
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }
+
 }
 
    BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
@@ -833,7 +847,7 @@ struct einfo {BT hashtable;   processinfo allocatein; };
 struct einfo * neweinfo(processinfo PD){
    static const BT x1[]={0,0};
    static const BT empty4[]={0,4,(BT) x1,(BT) x1,(BT) x1,(BT) x1};
-   static const BT inverted[]={(BT) empty4,0,(BT) x1,(BT) empty4};
+   static const BT inverted[]={0,0,(BT) empty4,(BT) empty4,(BT) x1};
    struct einfo *e=(struct einfo *)myalloc(PD,sizeof (struct einfo)/8);
    e->hashtable=(BT)inverted;
    e->allocatein=PD ;
@@ -865,9 +879,8 @@ if (ee->no==0){
     assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
     }
  
- /* broke persistant when changed encoding 
- 
-   if (ee->persitant ) {
+   
+  if (ee->persitant ) {
    struct einfo *e= staticencodings[ee->no];
    if (e==0) {
      assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
@@ -875,17 +888,19 @@ if (ee->no==0){
      staticencodings[ee->no]=e;
      assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
         struct einfo *wordendcoding= (sharedspace.encodings[1]);
-    BT data= IDX(NULL,encoded2(wordendcoding),ee->nameasword);
+    
+    BT data =decodeword(PD,ee->nameasword);
+    //BT data= IDX(NULL,encoded2(wordendcoding),ee->nameasword);
     int i,len=SEQLEN(data) ;
     char libname[100],*p=libname;
     *p++='Q';
     for (i=1; i <=len; i++) *(p++)=(char) (IDX(NULL,data,i));
     *p++=0;
-     //printf(" global %s ",libname);
+     printf(" global %s ",libname);
      loadlibrary(&sharedspace,libname);
-    }
+    } 
     return e;
- } */
+ }  
  struct einfo *e= PD->encodings[ee->no];
  if (e==0) {
    if  ( PD->newencodings==0 && PD != &sharedspace) 

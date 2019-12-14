@@ -36,7 +36,7 @@ function wordthread(a:seq.int, ws:seq.word, i:int)int
  if i = 0 
   then 0 
   else let d = a_i 
-  let discard = setfld(getaddress(a, i + 1), encoding(ws_getb.d))
+  let discard = setfld(getaddress(a, i + 1), encoding23(ws_getb.d))
   wordthread(a, ws, getlink.d)
 
 function offsetthread(a:seq.int, i:int)int 
@@ -56,7 +56,7 @@ function wordseqthread(a:seq.int, ws:seq.word, i:int)int
   wordseqthread(a, ws, d)
 
 function fixword(a:seq.int, ws:seq.word, i:int)int 
- let discard = setfld(getaddress(a, i + 1), encoding(ws_(a_i)))
+ let discard = setfld(getaddress(a, i + 1), encoding23(ws_(a_i)))
   0
 
 _______________

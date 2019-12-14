@@ -29,18 +29,19 @@ function =(a:inst, b:inst)boolean towords.a = towords.b
 
 function aseinst(w:seq.word)int 
  assert not(w ="FREF")report"problem!"
-  encoding.encode(inst.w, einst)
+  encode2(inst.w)
 
 function inst(x:seq.word)inst inst(x,"", mytype."?")
 
 function toinst(f:symbol)inst inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f)
 
-function encode(x:inst)int encoding.encode(x, einst)
+function encode2(x:inst)int findindex(x,einst)
+
 
 function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int 
  assert not(label.codetree.f ="default")report"in addcodes"
   // + print2.f // 
-  let j = encode.toinst.f 
+  let j = encode2.toinst.f 
   assert not.hasexternal.codetree.f report"ERR22"
   // + print2.f // replace(a, j, prepb(allfunctions, codetree.f))
 
@@ -50,9 +51,9 @@ function hasexternal(t:tree.seq.word)boolean
   else @(∨, hasexternal, false, sons.t)
 
 Function convert2(allfunctions:symbolset, s:seq.symbol)intercode 
- let discard = @(+, encode, empty:seq.int, initinst)
+ let discard = @(+, encode2, empty:seq.int, initinst)
   let a = @(+, toinst, empty:seq.inst, s)
-  let defines = @(+, encode, empty:seq.int, a)
+  let defines = @(+, encode2, empty:seq.int, a)
   intercode(@(addcodes.allfunctions, identity, dseq.empty:seq.int, s), mapping2.einst, defines)
 
 Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int 
@@ -79,8 +80,8 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
    then empty:seq.int 
    else let s = findencode(inst.[ inst, toword.nosons.t], einst)
    [ if length.s = 0 
-    then encoding.encode(toinst.lookupfunc(allfunctions, inst), einst)
-    else encoding.encode(s_1, einst)]
+    then encode2(toinst.lookupfunc(allfunctions, inst))
+    else encode2(s_1)]
 
 function initinst seq.inst 
  [ // opGT // 

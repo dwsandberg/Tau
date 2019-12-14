@@ -1,3 +1,29 @@
+ module dict.T
+  
+  use stdlib
+  
+  use seq.T
+  
+  use seq.word
+  
+  type worddict is record keys:seq.word,data:seq.T
+  
+  Function    emptyworddict   worddict.T worddict(empty:seq.word,empty:seq.T)  
+  
+  Function add(dict:worddict.T,w:word,d:T) worddict.T  worddict(keys.dict+w,data.dict+d)
+  
+  Function lookup(dict:worddict.T,w:word) seq.T 
+    let i = findindex(w, keys.dict)
+    if i > length.data.dict then empty:seq.T else [(data.dict)_i]
+    
+    Function replace(dict:worddict.T,w:word,d:T) worddict.T
+    let i = findindex(w, keys.dict)
+    if i > length.data.dict then add(dict,w,d) 
+    else worddict(subseq(keys.dict,1,i-1) + w + subseq(keys.dict,i+1,length.keys.dict) ,
+    subseq(data.dict,1,i-1) + d + subseq(data.dict,i+1,length.data.dict) ) 
+ 
+ 
+
 Module pass2
 
 use bits
@@ -65,7 +91,7 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
   // let code1 = if"TESTOPT"_1 in flags.f then hoistRecord.codetree.f else hoistRecord.codetree.f let code2 = // 
   // remove result record in loop // 
   // opt2.code1 let code3 = removerecords.code2 // 
-  let q = inline(p, empty:set.word, dseq.tree."UNASIGNED 1", empty:seq.tree.seq.word, 1, codetree.f)
+  let q = inline(p, empty:set.word, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, codetree.f)
   let q2 = if"STATE"_1 in flags.f ∨ not(mangledname.f in stateChangingFuncs)
    then q 
    else tree("STATE", [ q])
@@ -84,7 +110,7 @@ function addsymbol(p:program, mangledname:word)program
    if length.src.caller > 0 ∧ last.src.caller ="EXTERNAL"_1 
    then program(replace(knownsymbols.p, changecodetree(caller, tree."EXTERNAL")), callgraph.p, inline.p, if"STATE"_1 in flags.caller then hasstate.p + mangledname.caller else hasstate.p)
    else let tr0 = buildcodetreeX(knownsymbols.p, false, caller, empty:stack.tree.seq.word, 1, treecode)
-   let tr = inline(p, inline.p, dseq.tree."UNASIGNED 1", empty:seq.tree.seq.word, 1, if label.tr0 ="STATE"then tr0_1 else tr0)
+   let tr = inline(p, inline.p, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, if label.tr0 ="STATE"then tr0_1 else tr0)
    let calls2 = calls(knownsymbols.p, tr)
    let isrecusive = mangledname.caller in calls2 
    let tr2 = if isrecusive then tailcall(tr, mangledname.caller, nopara.caller)else tr 
@@ -233,7 +259,7 @@ Function simple3(inline:set.word, p:program, f:word)program
   if isempty.z 
   then p 
   else // inline may introduce new calls that are not in z so pass full set of possible inline expansions // 
-  let t = inline(p, inline, dseq.tree."UNASIGNED 1", empty:seq.tree.seq.word, 1, codetree.infunc)
+  let t = inline(p, inline, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, codetree.infunc)
   let newsymbol = changecodetree(infunc, t)
   let newknown = replace(knownsymbols.p, newsymbol)
   let flags = flags.newsymbol 
@@ -242,9 +268,9 @@ Function simple3(inline:set.word, p:program, f:word)program
 function explodeinline(prg:program, inlinename:set.word, inlinetree:tree.seq.word, simple:boolean, nextset:int, paras:seq.tree.seq.word)tree.seq.word 
  // add sets for complex parameters and then does inline expansion. // 
   if simple 
-  then inline(prg, inlinename, dseq.tree."UNASIGNED 1", paras, nextset, inlinetree)
+  then inline(prg, inlinename, emptyworddict:worddict.tree.seq.word, paras, nextset, inlinetree)
   else let pmap = @(addtoparamatermap, identity, parametermap(empty:seq.tree.seq.word, nextset, empty:seq.ipair.tree.seq.word), paras)
-  let a = inline(prg, inlinename, dseq.tree."UNASIGNED 1", paramap.pmap, nextset.pmap, inlinetree)
+  let a = inline(prg, inlinename, emptyworddict:worddict.tree.seq.word, paramap.pmap, nextset.pmap, inlinetree)
   @(addsets, identity, a, addnodes.pmap)
 
 type parametermap is record paramap:seq.tree.seq.word, nextset:int, addnodes:seq.ipair.tree.seq.word
@@ -257,25 +283,23 @@ function addtoparamatermap(p:parametermap, t:tree.seq.word)parametermap
 function addsets(t:tree.seq.word, a:ipair.tree.seq.word)tree.seq.word 
  tree(["SET"_1, toword.index.a], [ value.a, t])
 
-function addlooptosetmap(sets:seq.tree.seq.word, old:int, new:int, numbertoadd:int)seq.tree.seq.word 
+function addlooptosetmap(sets:worddict.tree.seq.word, old:int, new:int, numbertoadd:int)worddict.tree.seq.word 
  if numbertoadd = 0 
   then sets 
   else let i = numbertoadd - 1 
   addlooptosetmap(addtosetmap(sets, toword(old + i), new + i), old, new, i)
 
-function addtosetmap(sets:seq.tree.seq.word, old:word, new:int)seq.tree.seq.word 
- replace(sets, setvarmapping.old, tree.["LOCAL"_1, toword.new])
+function addtosetmap(sets:worddict.tree.seq.word, old:word, new:int)worddict.tree.seq.word 
+ replace(sets, old, tree.["LOCAL"_1, toword.new])
 
-function setvarmapping(var:word)int 
- // should change how local vars are mapped. changing from int.var to encoding.var slowed things down by have a second // 
-  encoding.var
+use dict.tree.seq.word
 
-function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap:seq.tree.seq.word, nextset:int, code:tree.seq.word)tree.seq.word 
+function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, paramap:seq.tree.seq.word, nextset:int, code:tree.seq.word)tree.seq.word 
  let inst = inst.code 
   if nosons.code = 0 ∧ inst in"LIT FREF FREFB WORD WORDS"
   then code 
   else if inst ="LOCAL"_1 
-  then sets_setvarmapping.arg.code 
+  then lookup(sets, arg.code )_1
   else if inst ="PARAM"_1 
   then let i = toint.arg.code 
    assert i > 0 report"PARAM Problem"+ print.code 
@@ -285,7 +309,7 @@ function inline(pp:program, inlinename:set.word, sets:seq.tree.seq.word, paramap
   else if inst ="SET"_1 
   then let s1 = inline(pp, inlinename, sets, paramap, nextset + 1, code_1)
    if inst.s1 in"LIT LOCAL PARAM FREF FREFB WORD"∨ inst.s1 ="getaddressZbuiltinZTzseqZint"_1 ∧ inst(s1_1)="LOCAL"_1 ∧ inst(s1_2)="LIT"_1 
-   then inline(pp, inlinename, replace(sets, setvarmapping.arg.code, s1), paramap, nextset, code_2)
+   then inline(pp, inlinename, replace(sets, arg.code, s1), paramap, nextset, code_2)
    else let s2 = inline(pp, inlinename, addtosetmap(sets, arg.code, nextset), paramap, nextset + 1, code_2)
    tree(["SET"_1, toword.nextset], [ s1, s2])
   else if inst.code ="FINISHLOOP"_1 

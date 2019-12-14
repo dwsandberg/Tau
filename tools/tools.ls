@@ -14,7 +14,7 @@ Module tools
 
 /run tools testfirstpass
 
-/run tools testprofile
+run tools testprofile
 
 /run tools prettytest
 

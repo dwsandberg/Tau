@@ -216,26 +216,6 @@ Function fastsubseq(s:seq.T, from:int, to:int)seq.T
   then fastsubseq(s, from, length.s)
   else if to < 1 then fastsubseq(s, 1, to)else toseq.fastsubseq(to - from + 1, s, from - 1)
 
-_________________________________
-
-
-
-Function encoding(encoding.T)int builtin.NOOP
-
-Function encode(t:T, erec:erecord.T)encoding.T builtin.STATE.usemangle 
-
-
-type erecord is record deepcopy:int, invertedseqlookup:int, invertedseq:int, number:int, name:word, ispersistant:boolean, encodingtype:seq.word
-
-`___________
-
-Function ispersistant(erecord.T) boolean export
-
-Function encodingtype(erecord.T) seq.word export
-
-Function name(erecord.T)  word export
-
-
 _____________
 
 type arithmeticseq is sequence length:int, step:T, start:T

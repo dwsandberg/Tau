@@ -33,8 +33,8 @@ Function ?(a:mytype, b:mytype)ordering
 
 function orderm(a:seq.word, b:seq.word, i:int)ordering 
  if i = 1 
-  then encoding(a_1)? encoding(b_1)
-  else let x = encoding(a_i)? encoding(b_i)
+  then a_1 ? b_1
+  else let x = a_i ?  b_i
   if x = EQ then orderm(a, b, i - 1)else x
 
 Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering 
@@ -179,7 +179,7 @@ Function emptysymbolset symbolset
  symbolset.dseq.symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default")
 
 Function replace(a:symbolset, sym:symbol)symbolset 
- symbolset.replace(toseq.a, encoding.mangledname.sym, sym)
+ symbolset.replace(toseq.a, encoding23.mangledname.sym, sym)
 
 type symbolset is record toseq:seq.symbol
 
@@ -188,15 +188,15 @@ Function lookupfunc(allfunctions:symbolset, f:word)symbol
   assert isdefined.x report"cannot locate"+ f + stacktrace 
   x
 
-Function lookupsymbol(a:symbolset, f:word)symbol toseq(a)_encoding.f
+Function lookupsymbol(a:symbolset, f:word)symbol toseq(a)_encoding23.f
 
 function toseq(symbolset)seq.symbol export
 
 Function print(s:symbolset)seq.word @(+, print3,"", toseq.s)
 
-Function +(a:symbolset, s:symbol)symbolset symbolset.replace(toseq.a, encoding.mangledname.s, s)
+Function +(a:symbolset, s:symbol)symbolset symbolset.replace(toseq.a, encoding23.mangledname.s, s)
 
-Function_(a:symbolset, name:word)symbol toseq(a)_encoding.name
+Function_(a:symbolset, name:word)symbol toseq(a)_encoding23.name
 
 Function printcode(s:symbolset)seq.word 
  {"count:"+ toword.@(+, count, 0, toseq.s)+ @(+, print3,"", toseq.s)}

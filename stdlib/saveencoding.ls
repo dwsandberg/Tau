@@ -64,7 +64,7 @@ function getindex(alltypes:set.libtype, b:seq.mytype, data:int, f:trackflds, i:i
   else let k = addobject2(alltypes, elementtype, l.f, dataelement)
   trackflds(value.k, flds.f + flddesc(index.k,"CRECORD"_1), 0)
 
-Function createlib2(thedata:int, encodetype:seq.word, libname:word, dependlibs:seq.word)int 
+/Function createlib2(thedata:int, encodetype:seq.word, libname:word, dependlibs:seq.word)int 
 result.process.createlibp(thedata, encodetype,  libname )
 
 use convertlibtyp

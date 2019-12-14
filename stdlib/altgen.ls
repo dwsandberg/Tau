@@ -12,7 +12,6 @@ use ipair.Lcode
 
 use ipair.internalbc
 
-use ipair.stat5
 
 use libscope
 
@@ -28,9 +27,7 @@ use seq.int
 
 use seq.internalbc
 
-use seq.ipair.Lcode
 
-use seq.ipair.stat5
 
 use seq.llvmconst
 
@@ -40,7 +37,6 @@ use seq.match5
 
 use seq.seq.int
 
-use seq.seq.ipair.stat5
 
 use seq.stat5
 
@@ -196,7 +192,11 @@ Function encode(stat5, erecord.stat5)encoding.stat5 export
 type statencoding is encoding stat5
 
 
-type stat5 is record caller:word, callee:word
+type stat5 is record caller:word, callee:word,index:int
+
+function stat5(caller:word, callee:word) stat5 stat5(caller,callee,0)
+
+function addindex(s:stat5,i:int) stat5 stat5(caller.s,callee.s,i)
 
 function hash(s:stat5)int hash.caller.s + hash.callee.s
 
@@ -205,11 +205,11 @@ function =(a:stat5, b:stat5)boolean caller.a = caller.b ∧ callee.a = callee.b
 Function profile(caller:word, callee:word)int 
  if caller = callee ∨ caller ="noprofile"_1 
   then 0 
-  else encoding.encode(stat5(caller, callee), statencoding)+ 1
+  else findindex(stat5(caller, callee), statencoding)+ 1
 
 function callarc(a:stat5)seq.word [ caller.a, callee.a]
 
-Function profilearcs seq.word @(+, callarc,"", mapping2.statencoding)
+Function profilearcs seq.word @(+, callarc,"", orderadded.statencoding)
 
 /type debug is encoding ipair.Lcode
 

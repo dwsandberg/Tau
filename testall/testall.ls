@@ -12,7 +12,7 @@ Library testall point test11a checking myseq  point2d randomphrase test11   test
 
 /run randomphrase randomphrase
 
-/run testencoding testencoding
+run testencoding testencoding
 
 run testall testall
 

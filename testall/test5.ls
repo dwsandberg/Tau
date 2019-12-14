@@ -13,7 +13,7 @@ use fileio
 
 use graph.int
 
-use invertedseq.word
+/use invertedseq.word
 
 use ipair.word
 
@@ -104,7 +104,8 @@ Function t510 boolean
 Function t511 boolean 
  {"1 2 k 4 5"= replace("1 2 3 4 5", 3,"k"_1)}
 
-Function t512 boolean 
+Function t512 boolean true
+
  let r = @(+, print, empty:seq.word, toipair.add(add(invertedseq("HI"_1), 3,"HI"_1), ipair(4,"dI"_1)))
   r in ["3:HI 4:dI","4:dI 3:HI"]
 

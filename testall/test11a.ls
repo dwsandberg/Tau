@@ -30,8 +30,8 @@ Function test11a seq.word
   compare("{ a + b } * c","{(a + b)* c }"), 
   testerror("ERR parse error expect:)> got:end of paragraph",["function f1(a:int)boolean(a"]),
   testerror("ERR parse error expect:)> got:end of paragraph",["function f1(a:int)boolean(a"]),
-  testerror("ERR parse error expect:)>], got:end of paragraph",["function f1(a:int)boolean [ a"]),
-  testerror("ERR parse error expect:(> { comment [ if let assert $wordlist @ A E W N I got:end of paragraph",["function f1(a:int)boolean [ a +"])
+  testerror("ERR parse error expect:),]> got:end of paragraph",["function f1(a:int)boolean [ a"]),
+  testerror("ERR parse error expect:([ > { comment if let assert $wordlist @ A E W N I got:end of paragraph",["function f1(a:int)boolean [ a +"])
  ,testerror("ERR Function f1 is defined twice in module testit",["function f1(a:int) int 3","function f1(a:int) int 3"])
  ,testerror("ERR then and else types are different ",["function f1(a:int) int if true then true else 0"])
  ,testerror("ERR cond of if must be boolean",["function f1(a:int) int if 1 then 2 else 3"])

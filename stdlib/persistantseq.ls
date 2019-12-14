@@ -39,13 +39,13 @@ Function addseq(l:linklists2, s:seq.T)ipair.linklists2
 
 function identityf(s:seq.T)seq.T s
 
-Function flush(s:erecord.T)seq.word 
+/Function flush(s:erecord.T)seq.word 
  if ispersistant.s 
   then let p = process.createlib2.s 
    result.p 
   else"Encoding is not persistant."
 
-Function createlib2(s:erecord.T)seq.word 
+/Function createlib2(s:erecord.T)seq.word 
  let thedata = result.process.identityf.mapping2.s 
   let libname = merge("Q"+ name.s)
   let symtab ="libname initlib5 words wordlist list init22"
