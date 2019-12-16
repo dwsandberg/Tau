@@ -53,7 +53,23 @@ function createlib(name:seq.bits, libs:seq.bits, t:outputformat)int builtin.usem
 
 function createfile(name:seq.bits, data:outputformat)int builtin.usemangle
 
+Function createfile(name:seq.word, a:seq.int)int createfile(toCformat.name, blockit.a)
+
+
+function createfile(name:seq.bits, data:seq.int)int builtin.usemangle
+
 function getfile(f:seq.bits)fileresult builtin.STATE.usemangle
+
+function size(fileresult) int export
+
+function word1(fileresult) int export
+
+function word2(fileresult) int export
+
+function data(fileresult) seq.int export
+
+Function getfile2(name:seq.word) fileresult
+  getfile.toCformat.name
 
 type fileresult is record size:int, word1:int, word2:int, data:seq.int
 

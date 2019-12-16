@@ -95,7 +95,7 @@ function reduce(stateno:int, lookahead:word, ruleno:int)action action(stateno, l
 
 function getaction(ruleprec:seq.seq.word, grammar:seq.seq.word, state:set.ipair.seq.word, stateno:int, reductions:seq.seq.word, lookahead:word)action 
  let newstate = advance(grammar, state, lookahead)
-  let newstateno = if not.isempty.newstate then encoding.encode(newstate, estate)else 0 
+  let newstateno = if not.isempty.newstate then valueofencoding.encode(newstate, estate)else 0 
   if length.reductions = 0 ∧ newstateno ≠ 0 
   then shift(stateno, lookahead, newstateno)
   else if length.reductions = 1 ∧ newstateno = 0 
@@ -171,7 +171,7 @@ function shifts(s:set.ipair.seq.word)seq.word toseq.asset.@(+, shifts, empty:seq
 
 Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word)seq.word 
  let grammar2 = @(+, first, empty:seq.seq.word, grammarandact)
-  let initialstateno = encoding.encode(initialstate.grammar2, estate)
+  let initialstateno = valueofencoding.encode(initialstate.grammar2, estate)
   let alphabet = alphabet.grammar2 
   let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
   let actions = closestate(graminfo, 1, empty:seq.action)

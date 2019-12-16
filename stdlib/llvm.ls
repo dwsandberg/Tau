@@ -32,7 +32,7 @@ use seq.boolean
 
 use seq.encoding.llvmconst
 
-use seq.encoding.llvmtype
+use seq.llvmtype
 
 use seq.int
 
@@ -40,7 +40,7 @@ use seq.internalbc
 
 use seq.llvmconst
 
-use seq.llvmtype
+use seq.llvmtypeele
 
 use seq.seq.bit
 
@@ -50,7 +50,7 @@ use seq.seq.int
 
 use seq.seq.internalbc
 
-use seq.seq.llvmtype
+use seq.seq.llvmtypeele
 
 use seq.seq.seq.int
 
@@ -66,17 +66,19 @@ Function typ(llvmconst)int export
 
 Function toseq(llvmconst)seq.int export
 
-type llvmtype is record toseq:seq.int,index:int
+type llvmtypeele is record toseq:seq.int,index:int
 
-type llvmtypes is encoding llvmtype
+type llvmtypes is encoding llvmtypeele
 
-function llvmtype(toseq:seq.int) llvmtype llvmtype(toseq,0)
+type llvmtype is record index: int
 
-/function addindex(l:llvmtype,i:int) llvmtype llvmtype(toseq,i)
+function llvmtypeele(toseq:seq.int) llvmtypeele llvmtypeele(toseq,0)
 
-function hash(a:llvmtype)int hash.toseq.a
+function addindex(l:llvmtypeele,i:int) llvmtypeele llvmtypeele(toseq.l,i)
 
-function =(a:llvmtype, b:llvmtype)boolean toseq.a = toseq.b
+function hash(a:llvmtypeele)int hash.toseq.a
+
+function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
 type llvmconst is record typ:int, toseq:seq.int,index:int
 
@@ -86,13 +88,13 @@ function addindex(a:llvmconst,i:int) llvmconst llvmconst(typ.a,toseq.a,i)
 
 type llvmconsts is encoding llvmconst
 
-Function listconsts seq.seq.int @(+, toseq, empty:seq.seq.int, mapping2.llvmconsts)
+Function listconsts seq.seq.int @(+, toseq, empty:seq.seq.int, orderadded.llvmconsts)
 
 function hash(a:llvmconst)int hash.toseq.a
 
 function =(a:llvmconst, b:llvmconst)boolean toseq.a = toseq.b ∧ typ.a = typ.b
 
-Function getelementptr(type:encoding.llvmtype, name:seq.word, i:int)int 
+Function getelementptr(type:llvmtype, name:seq.word, i:int)int 
  C(ptr.i64, [ CONSTGEP, typ.type, typ.ptr.type, C.name, typ.i32, C32.0, typ.i64, C64.i])
 
 Function llvmconsts erecord.llvmconst export
@@ -106,7 +108,7 @@ function getmachineinfo machineinfo builtin.usemangle
 Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits 
  let MODABBREVLEN = 3 
   let TYPEABBREVLEN = 4 
-  let offset = length.mapping2.llvmconsts 
+  let offset = length.orderadded.llvmconsts 
   let h = addblockheader(add(add(add(add(empty:bitpackedseq.bit, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8), 2, MODULEBLOCK, MODABBREVLEN)
   let info = getmachineinfo 
   let a = addrecords(h, MODABBREVLEN, [ [ 1, 1], [ MODULETRIPLE]+ triple.info, [ MODULELAYOUT]+ datalayout.info])
@@ -123,14 +125,14 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
   // def list // 
   let a5 = addrecords(a4, MODABBREVLEN, deflist)
   // const block // 
-  let g = @(constrecords, identity, trackconst(a5,-1, 0), subseq(mapping2.llvmconsts, length.deflist + 1, offset))
+  let g = @(constrecords, identity, trackconst(a5,-1, 0), subseq(orderadded.llvmconsts, length.deflist + 1, offset))
   let a6 = finishblock(bits.g, blockstart.g, TYPEABBREVLEN)
   // function bodies // 
   // assert length.trecords = length.typerecords report"X"// 
   let a7 = @(addbody(offset, MODABBREVLEN), identity, a6, bodytxts)
   // sym table // 
   let symtabheader = addblockheader(a7, MODABBREVLEN, VALUESYMTABBLOCK, TYPEABBREVLEN)
-  let a8 = finishblock(symentries(symtabheader, mapping2.llvmconsts, 1), length.symtabheader, TYPEABBREVLEN)
+  let a8 = finishblock(symentries(symtabheader, orderadded.llvmconsts, 1), length.symtabheader, TYPEABBREVLEN)
   // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN)
 
 Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int 
@@ -145,11 +147,11 @@ Function C(w:word)int findindex(llvmconst(-1, decode.w), llvmconsts) - 1
 
 Function C64(i:int)int findindex(llvmconst(typ.i64, [ CONSTINTEGER, i]), llvmconsts) - 1
 
-Function getllvmconst(i:int)seq.int toseq(mapping2(llvmconsts)_(i + 1))
+Function getllvmconst(i:int)seq.int toseq(orderadded(llvmconsts)_(i + 1))
 
 Function C32(i:int)int findindex(llvmconst(typ.i32, [ CONSTINTEGER, i]), llvmconsts) - 1
 
-Function C(t:encoding.llvmtype, s:seq.int)int findindex(llvmconst(typ.t, s), llvmconsts) - 1
+Function C(t:llvmtype, s:seq.int)int findindex(llvmconst(typ.t, s), llvmconsts) - 1
 
 Function Cprt(t:int, s:seq.int)int 
  // used in print bitcodes tool // findindex(llvmconst(t, s), llvmconsts) - 1
@@ -158,32 +160,36 @@ Function Cprt(t:int, s:seq.int)int
 
 Function funcname(a:llvmconst)word encodeword.toseq.a
 
-Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, mapping2.llvmtypes)
+Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, orderadded.llvmtypes)
 
-Function typ(a:encoding.llvmtype)int encoding22.a - 1
+Function typ(a:llvmtype)int index.a - 1
 
-Function typerecord(s:seq.int)encoding.llvmtype encode(llvmtype.s, llvmtypes)
+Function llvmtype(s:seq.int) llvmtype 
+llvmtype.findindex(llvmtypeele.s,llvmtypes)
 
-Function double encoding.llvmtype encode(llvmtype.[ TYPEDOUBLE], llvmtypes)
 
-Function i64 encoding.llvmtype encode(llvmtype.[ TYPEINTEGER, 64], llvmtypes)
+Function double  llvmtype llvmtype. [ TYPEDOUBLE] 
 
-Function i32 encoding.llvmtype encode(llvmtype.[ TYPEINTEGER, 32], llvmtypes)
+Function i64 llvmtype llvmtype. [ TYPEINTEGER, 64] 
 
-Function i8 encoding.llvmtype encode(llvmtype.[ TYPEINTEGER, 8], llvmtypes)
+Function i32  llvmtype llvmtype. [ TYPEINTEGER, 32] 
 
-Function i1 encoding.llvmtype encode(llvmtype.[ TYPEINTEGER, 1], llvmtypes)
+Function i8  llvmtype llvmtype. [ TYPEINTEGER, 8] 
 
-Function VOID encoding.llvmtype encode(llvmtype.[ TYPEVOID], llvmtypes)
+Function i1  llvmtype llvmtype. [ TYPEINTEGER, 1] 
 
-Function array(size:int, base:encoding.llvmtype)encoding.llvmtype 
- encode(llvmtype.[ TYPEARRAY, size, typ.base], llvmtypes)
+Function VOID  llvmtype llvmtype.[ TYPEVOID] 
 
-Function ptr(base:encoding.llvmtype)encoding.llvmtype 
- encode(llvmtype.[ TYPEPOINTER, typ.base, 0], llvmtypes)
+Function array(size:int, base:llvmtype)llvmtype
+ llvmtype. [ TYPEARRAY, size, typ.base]
 
-Function function(para:seq.encoding.llvmtype)encoding.llvmtype 
- encode(llvmtype.@(+, typ, [ TYPEFUNCTION, 0], para), llvmtypes)
+Function ptr(base:llvmtype)llvmtype  
+ llvmtype. [ TYPEPOINTER, typ.base, 0] 
+ 
+ use seq.llvmtype
+
+Function function(para:seq.llvmtype) llvmtype
+ llvmtype.@(+, typ, [ TYPEFUNCTION, 0], para)
 
 function ENDBLOCK int 0
 
@@ -246,7 +252,7 @@ Function symentries(bits:bitpackedseq.bit, s:seq.llvmconst, i:int)bitpackedseq.b
    else bits 
   symentries(bs, s, i + 1)
 
-Function getftype(w:word)encoding.llvmtype 
+Function getftype(w:word)llvmtype
  let a = @(+, count.90, 1, decode.w)
   function.constantseq(a, i64)
 

@@ -84,7 +84,7 @@ Function wordseqthread(linklists2)int export
 
 Function linklists2(a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int)linklists2 export
 
-Function initializer(conststypex:encoding.llvmtype, data:linklists2)int 
+Function initializer(conststypex:llvmtype, data:linklists2)int 
  C(conststypex, [ AGGREGATE, 
  C64.0, 
  C64(length.a.data + 3), 
@@ -92,7 +92,11 @@ Function initializer(conststypex:encoding.llvmtype, data:linklists2)int
  C64.offsetthread.data, 
  C64.wordseqthread.data]+ a.data)+ 1
 
-type word3 is record toword:word
+type word3 is record toword:word, index:int
+
+function word3(a:word) word3 word3( a,0)
+
+function addindex(e:word3,i:int) word3 word3(toword.e,i)
 
 function =(a:word3, b:word3)boolean toword.a = toword.b
 
@@ -100,7 +104,7 @@ function hash(a:word3)int hash.toword.a
 
 Function place(a:linklists2)int length.a.a + 4
 
-Function word33(a:word)int encoding22.encode(word3.a, word3encoding)
+Function word33(a:word)int findindex(word3.a, word3encoding)
 
 function eword(w:word3)seq.int 
  let a = decode.toword.w 

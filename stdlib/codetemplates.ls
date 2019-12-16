@@ -34,7 +34,7 @@ use reconstruct
 
 use seq.bit
 
-use seq.encoding.llvmtype
+use seq.llvmtype
 
 use seq.int
 
@@ -50,9 +50,9 @@ use stdlib
 
 use textio
 
-function wordstype encoding.llvmtype array(-1, i64)
+function wordstype llvmtype array(-1, i64)
 
-Function conststype encoding.llvmtype array(-2, i64)
+Function conststype llvmtype array(-2, i64)
 
 type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, index:int
 
@@ -80,11 +80,7 @@ function hash(a:match5)int hash.fullinst.a
 
 type ematch5 is encoding match5
 
-/use seq.seq.ipair.match5
 
-/use seq.ipair.match5
-
-/use ipair.match5
 
 
 Function table seq.match5 
@@ -190,7 +186,7 @@ Function buildtemplates(p:temppair, fullinst:seq.word)temppair
 
 /function hjk(m:match5)seq.word [ inst.m, toword.length.a.consts.m]
 
-Function ematch5 erecord.match5 export
+function ematch5 erecord.match5 export
 
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc 
  let args = if inst.t in"WORD CONSTANT"∨ action.t ="CALL"_1 

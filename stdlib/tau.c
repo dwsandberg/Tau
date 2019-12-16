@@ -210,7 +210,7 @@ if (strcmp(libname,"stdlib")==0){
  int i,k;
   words[0]=0;
   words[1]=nowords;
- //  fprintf(stderr,"nowords %d\n",nowords);
+   fprintf(stderr,"nowords %d\n",nowords);
  for ( k=0;k<nowords;k++) {
   int wordlength=wordlist[j+1];
   // fprintf(stderr,"%d:",k+1);
@@ -615,6 +615,7 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     data2[0]=0;
     data2[1]=sbuf.st_size > 16 ? (sbuf.st_size+7-16)/8 : 0;
     close(fd);
+  //  fprintf(stderr,"filename %s address %lld\n",name,(long long ) filedata);
     return org;
 }
 
@@ -631,7 +632,7 @@ return 0;
 }
 
 
-BT createfileZbuiltinZintzseqZintzseq(processinfo PD,BT filename,BT t){ 
+BT createfileZbuiltinZbitszseqZintzseq(processinfo PD,BT filename,BT t){ 
 //format of filename is  {struct  BT type=1; BT length;  char name[length]; char term=0; } 
 //format of t is either {struct  BT type=1; BT length;  char t[length];  }
 //{struct  BT type=0; BT length;  BT t[length];  }
@@ -661,7 +662,7 @@ char *name=(char *)&IDXUC(filename,2);
 return 0;
 }
 
-BT createfileZbuiltinZUTF8Zintzseq(processinfo PD,BT filename,BT t){ return createfileZbuiltinZintzseqZintzseq(PD,filename,t);}
+//BT createfileZbuiltinZUTF8Zintzseq(processinfo PD,BT filename,BT t){ return createfileZbuiltinZintzseqZintzseq(PD,filename,t);}
 
 // end of file io
 
@@ -928,9 +929,9 @@ BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){
   struct cinfo *ee = (struct cinfo *) P2;
   assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
   r= (ee->look) (PD,P1,e->hashtable);
-if (r<=0) {// not found
+  if (r<=0) {// not found
    P1=  (ee->copy) (e->allocatein,P1);
-   e->hashtable=(ee->add)(e->allocatein,e->hashtable,0,P1);
+   e->hashtable=(ee->add)(e->allocatein,e->hashtable,ee->no,P1);
    r= (ee->look) (PD,P1,e->hashtable);
   }
 assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
@@ -1010,7 +1011,7 @@ int randomData = open("/dev/urandom", O_RDONLY);
   BT org = myalloc(PD,2+len );
      IDXUC(org,0)=0;
      IDXUC(org,1)=len;
-    if (len!=read(randomData, &IDXUC(org,2), len ))
+    if (len!=read(randomData, &IDXUC(org,2), len*8 ))
     {
         // error, unable to read /dev/random 
     }

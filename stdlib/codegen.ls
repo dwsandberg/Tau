@@ -14,7 +14,7 @@ use libscope
 
 use llvm
 
-use seq.encoding.llvmtype
+use seq.llvmtype
 
 use seq.func
 

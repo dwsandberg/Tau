@@ -33,6 +33,10 @@ Function code(encodingrep.T) int export
 Function hash(encodingrep.T) int export
 
 Function data(encodingrep.T) T export
+
+Function   encodingrep(code:int,data: T ,hash:int)  encodingrep.T export
+
+Function =(a :encodingrep.T,b :encodingrep.T ) boolean  hash.a=hash.b &and code.a=code.b &and data.a=data.b
  
 Function check(h:encodingstate.T) seq.word
   [toword.length.encodetable.h,toword.length.decodetable.h]
@@ -56,7 +60,7 @@ function ele2(eletoadd:encodingrep.T, tablesize:int, a:encodingrep.T)seq.encodin
  then empty:seq.encodingrep.T else [ a]
  
 function addcode(code:int, hashsize:int,x:seq.encodingrep.T,e:encodingrep.T) seq.encodingrep.T
-        if  code.e=code  &or not (hash.code mod hashsize=hash.code.e mod hashsize ) then x
+        if  code.e=code  &or not (code mod hashsize=code.e mod hashsize ) then x
        else x+e 
 
  
@@ -66,7 +70,10 @@ Function lookup(data:T, h:encodingstate.T)int
 
 
 
-Function add(h:encodingstate.T, i:int, v:T)encodingstate.T add(h,v )
+Function add(h:encodingstate.T, i:int, v:T)encodingstate.T 
+if i > 1 &or length.h > 1000 then add2(h,v) else add(h,v )
+
+if i > 1   &or length.h > 75 &or length.h < 1 then add2(h,v) else add(h,v )
 
 
 Function add(h:encodingstate.T, v:T)encodingstate.T 
@@ -74,24 +81,54 @@ Function add(h:encodingstate.T, v:T)encodingstate.T
   then 
    let t=encodetable.h
    let d=decodetable.h
-   let t4=t+t+t+t
-   add(encodingstate( elecount.h,t4,d+d+d+d,all.h), v)
+   add(encodingstate( elecount.h,t+t+t+t,d+d+d+d,all.h), v)
   else 
-   let code=elecount.h+1
-   let tablesize=length.encodetable.h
-    let p=encodingrep(code, v,hash.v)
-   let codehash=hash.code mod tablesize + 1
-   let l2=@(addcode(code, tablesize), identity,[ p], (decodetable.h)_codehash)
-   let hashofdata=hash.p mod tablesize + 1 
-   let  tnew=replace(encodetable.h, hashofdata, @(+, ele2(p, tablesize), [ p], 
- encodetable(h)_hashofdata))
+    let tablesize=length.encodetable.h
+    let datahash=hash.v 
+    let dataindex= datahash mod tablesize+1
+     if @(max, ele.v, 0, encodetable(h)_dataindex) > 0 then // already present // h
+     else
+    let uid = (randomint(1)_1) mod 1000000 
+      let code= elecount.h+1+1000000   
+      if code < 0 then add(h,v) else
+      let p=encodingrep(code, v,datahash)
+      let codeindex=code mod tablesize + 1
+      let l2=@(addcode(code, tablesize), identity,[ p], (decodetable.h)_codeindex)
+      let  tnew=replace(encodetable.h,dataindex, @(+, ele2(p, tablesize), [ p], 
+ encodetable(h)_dataindex))
     encodingstate( 
- elecount.h + 1,tnew,replace(decodetable.h, codehash,l2)
+ elecount.h + 1,tnew,replace(decodetable.h, codeindex,l2)
+ ,all.h+p)
+ 
+ function add2(h:encodingstate.T, v:T)encodingstate.T 
+ if 3 * elecount.h > 2 * length.encodetable.h 
+  then 
+   let t=encodetable.h
+   let d=decodetable.h
+   add(encodingstate( elecount.h,t+t+t+t,d+d+d+d,all.h), v)
+  else 
+    let tablesize=length.encodetable.h
+    let datahash=hash.v 
+    let dataindex= datahash mod tablesize+1
+     if @(max, ele.v, 0, encodetable(h)_dataindex) > 0 then // already present // h
+     else
+      let code= (randomint(1)_1)  
+      if code < 0 then add(h,v) else
+      let p=encodingrep(code, v,datahash)
+      let codeindex=code mod tablesize + 1
+      let l2=@(addcode(code, tablesize), identity,[ p], (decodetable.h)_codeindex)
+      let  tnew=replace(encodetable.h,dataindex, @(+, ele2(p, tablesize), [ p], 
+ encodetable(h)_dataindex))
+    encodingstate( 
+ elecount.h + 1,tnew,replace(decodetable.h, codeindex,l2)
  ,all.h+p)
  
  
+
+
+ 
  Function decode( h:encodingstate.T,code:int) seq.T 
- @(+, ele4.code, empty:seq.T, decodetable(h)_(hash.code mod length.decodetable.h + 1))
+ @(+, ele4.code, empty:seq.T, decodetable(h)_(code mod length.decodetable.h + 1))
 
 function ele4(v:int, a: encodingrep.T ) seq.T if v =code.a then [data.a] else empty:seq.T
 
@@ -102,29 +139,23 @@ function ele4(v:int, a: encodingrep.T ) seq.T if v =code.a then [data.a] else em
 @(+, data,empty:seq.T,     all.getinstance.erec)
 
 
-Function mapping2(erec:erecord.T)seq.T  toseq.getinstance.erec
+Function mapping(erec:erecord.T)seq.T  toseq.getinstance.erec
 
 Function orderadded(erec:erecord.T)seq.T toseq.getinstance.erec
 
 
-@(+, data,empty:seq.T,     all.getinstance.erec)
-
-
-
-toseq.getinstance.erec
-
 
 
 Function decode(t:encoding.T, erec:erecord.T)T
-  decode(getinstance.erec,encoding22.t)_1
+  decode(getinstance.erec,valueofencoding.t)_1
 
- Function encoding22(encoding.T)int builtin.NOOP 
+ Function valueofencoding(encoding.T)int builtin.NOOP 
  
- Function =(a:encoding.T,b:encoding.T) boolean  encoding22(a) = encoding22(b)
+ Function =(a:encoding.T,b:encoding.T) boolean  valueofencoding(a) = valueofencoding(b)
  
- Function ?(a:encoding.T,b:encoding.T) ordering  encoding22(a) ? encoding22(b)
+ Function ?(a:encoding.T,b:encoding.T) ordering  valueofencoding(a) ? valueofencoding(b)
  
-  Function hash(a:encoding.T ) int  hash.encoding22.a
+  Function hash(a:encoding.T ) int  hash.valueofencoding.a
 
  
          

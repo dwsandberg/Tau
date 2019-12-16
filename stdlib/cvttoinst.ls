@@ -54,7 +54,7 @@ Function convert2(allfunctions:symbolset, s:seq.symbol)intercode
  let discard = @(+, encode2, empty:seq.int, initinst)
   let a = @(+, toinst, empty:seq.inst, s)
   let defines = @(+, encode2, empty:seq.int, a)
-  intercode(@(addcodes.allfunctions, identity, dseq.empty:seq.int, s), mapping2.einst, defines)
+  intercode(@(addcodes.allfunctions, identity, dseq.empty:seq.int, s), orderadded.einst, defines)
 
 Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int 
  let inst = inst.t 

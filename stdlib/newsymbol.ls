@@ -175,28 +175,35 @@ function checkverysimple(t:tree.seq.word)seq.word
   then"SET"
   else @(+, checkverysimple,"", sons.t)+"inst"
 
-Function emptysymbolset symbolset 
- symbolset.dseq.symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default")
-
+Function emptysymbolset symbolset  symbolset.emptyworddict:worddict.symbol
+ 
 Function replace(a:symbolset, sym:symbol)symbolset 
- symbolset.replace(toseq.a, encoding23.mangledname.sym, sym)
+   symbolset.replace(todict.a,mangledname.sym,sym)
+   
+ 
+use dict.symbol
 
-type symbolset is record toseq:seq.symbol
+type symbolset is record todict:worddict.symbol
+
+Function toseq(a:symbolset) seq.symbol  data.todict.a
 
 Function lookupfunc(allfunctions:symbolset, f:word)symbol 
  let x = lookupsymbol(allfunctions, f)
   assert isdefined.x report"cannot locate"+ f + stacktrace 
   x
 
-Function lookupsymbol(a:symbolset, f:word)symbol toseq(a)_encoding23.f
+Function lookupsymbol(a:symbolset, f:word)symbol 
+   let t=lookup(todict.a,f)
+   if length.t=0 then symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default")
+    else t_1
 
 function toseq(symbolset)seq.symbol export
 
 Function print(s:symbolset)seq.word @(+, print3,"", toseq.s)
 
-Function +(a:symbolset, s:symbol)symbolset symbolset.replace(toseq.a, encoding23.mangledname.s, s)
+Function +(a:symbolset, s:symbol)symbolset replace(a,  s)
 
-Function_(a:symbolset, name:word)symbol toseq(a)_encoding23.name
+Function_(a:symbolset, name:word)symbol lookupsymbol(a,name)
 
 Function printcode(s:symbolset)seq.word 
  {"count:"+ toword.@(+, count, 0, toseq.s)+ @(+, print3,"", toseq.s)}

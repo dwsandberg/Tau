@@ -520,7 +520,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
 function definedeepcopy(knownsymbols:symbolset, type:mytype)symbol 
  let body = if abstracttype.type in"encoding int word"
    then"PARAM 1"
-   else // assert length.print.type = 1 &or print.type in ["match5","seq.int","llvmconst","match5","inst","libsym","llvmtype","word3","const3","seq.word","stat5","seq.flddesc","flddesc","seq.templatepart","templatepart","set.mod2desc"]report"DDD"+ print.type // 
+   else // assert length.print.type = 1 &or print.type in ["match5","seq.int","llvmconst","match5","inst","libsym","llvmtypeele","word3","const3","seq.word","stat5","seq.flddesc","flddesc","seq.templatepart","templatepart","set.mod2desc"]report"DDD"+ print.type // 
    if abstracttype.type ="seq"_1 
    then let typepara = parameter.type 
     let dc = deepcopymangle.typepara 

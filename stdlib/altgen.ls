@@ -19,7 +19,7 @@ use llvm
 
 use seq.Lcode
 
-use seq.encoding.llvmtype
+use seq.llvmtype
 
 use seq.inst
 
@@ -46,7 +46,7 @@ use stdlib
 
 use textio
 
-function profiletype encoding.llvmtype array(-3, i64)
+function profiletype llvmtype array(-3, i64)
 
 Function addfuncdef(match5map:seq.match5, coding:seq.inst, codes:seq.seq.int, i:int)internalbc 
  let f = coding_i 
@@ -157,7 +157,7 @@ exp1 exp2 exp2 FIRSTVAR <firstvar> LOOPBLOCK 4 <loop body> FINISHLOOP 2
 
 function loopmapentry(baselocal:int, regbase:int, i:int)localmap localmap(baselocal + i - 1,-regbase - i)
 
-function profilecall(profiletype2:encoding.llvmtype, l:Lcode, args:seq.int, callee:int, idx:int)Lcode 
+function profilecall(profiletype2:llvmtype, l:Lcode, args:seq.int, callee:int, idx:int)Lcode 
  let base = regno.l 
   let block = noblocks.l 
   let p1 = C(ptr.i64, [ CONSTGEP, 

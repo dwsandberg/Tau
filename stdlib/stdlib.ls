@@ -160,9 +160,7 @@ type word is record bb:encoding.seq.int
 
 Function encodeword(a:seq.int)word word.encode(a, wordencoding)
 
-/Function wordmapping seq.seq.int mapping2.wordencoding
 
-Function encoding23(w:word)int encoding22.bb.w
 
 Function decode(w:word)seq.int decode(bb.w, wordencoding)
 

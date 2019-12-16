@@ -50,7 +50,8 @@ type mydata5 is Encoding testrecord
 
 function add(z:erecord.testrecord, b:seq.word)int 
  let d = mapping.z 
-  encoding.encode(testrecord(length.d + 1, b), z)
+  let x=encode(testrecord(length.d + 1, b), z)
+  1
 
 type testrecord is record key:int, body:seq.word
 
@@ -66,7 +67,7 @@ Function testencoding seq.word
   if aborted.p 
   then"Failed encoding"+ message.p 
   else let plen = result.p 
-   let status = flush.mydata2 + flush.mydata + flush.mydata3 + flush.mydata5 
+   // let status = flush.mydata2 + flush.mydata + flush.mydata3 + flush.mydata5 //
   let final = length.mapping.mydata 
   let final2 = length.mapping.mydata2 
   let final3 = length.mapping.mydata3 
@@ -78,7 +79,7 @@ Function testencoding seq.word
   final2 = start2 + 3, 
   final3 = 4, 
   final4 = 0, 
-  status ="OK OK Encoding is not persistant.OK", 
+  // status ="OK OK Encoding is not persistant.OK", // 
   plen = 54],"encoding")
 
 Function process1 int 

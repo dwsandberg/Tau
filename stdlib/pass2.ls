@@ -1,4 +1,4 @@
- module dict.T
+  module dict.T
   
   use stdlib
   
@@ -6,22 +6,36 @@
   
   use seq.word
   
+  use oseq.word
+  
   type worddict is record keys:seq.word,data:seq.T
+  
+  Function data(worddict.T) seq.T export
   
   Function    emptyworddict   worddict.T worddict(empty:seq.word,empty:seq.T)  
   
-  Function add(dict:worddict.T,w:word,d:T) worddict.T  worddict(keys.dict+w,data.dict+d)
+  Function add(dict:worddict.T,w:word,d:T) worddict.T  
+   let i = binarysearch(keys.dict, w)
+  if i > 0 then dict else 
+  worddict(
+  subseq(keys.dict, 1,-i - 1)+ [w]+ subseq(keys.dict,-i, length.keys.dict),
+  subseq(data.dict, 1,-i - 1)+ [d]+ subseq(data.dict,-i, length.keys.dict))
+  
+
   
   Function lookup(dict:worddict.T,w:word) seq.T 
-    let i = findindex(w, keys.dict)
-    if i > length.data.dict then empty:seq.T else [(data.dict)_i]
+    let i = binarysearch(keys.dict, w)
+    if i < 0 then empty:seq.T else [(data.dict)_i]
     
     Function replace(dict:worddict.T,w:word,d:T) worddict.T
-    let i = findindex(w, keys.dict)
-    if i > length.data.dict then add(dict,w,d) 
-    else worddict(subseq(keys.dict,1,i-1) + w + subseq(keys.dict,i+1,length.keys.dict) ,
-    subseq(data.dict,1,i-1) + d + subseq(data.dict,i+1,length.data.dict) ) 
- 
+     let i = binarysearch(keys.dict, w) 
+     if i < 0 then
+   worddict(
+  subseq(keys.dict, 1,-i - 1)+ [w]+ subseq(keys.dict,-i, length.keys.dict),
+  subseq(data.dict, 1,-i - 1)+ [d]+ subseq(data.dict,-i, length.keys.dict))
+  else 
+   worddict(keys.dict,
+  subseq(data.dict, 1,i - 1)+ [d]+ subseq(data.dict,i+1, length.keys.dict))
  
 
 Module pass2
