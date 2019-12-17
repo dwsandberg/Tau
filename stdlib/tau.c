@@ -113,7 +113,123 @@ void myfree(struct spaceinfo *sp) {int i; i =0;
 // End of space allocation
 
 
+#ifdef DYNLIB
 
+BT (* append) (processinfo,BT,BT);
+
+
+#else
+
+BT append(processinfo PD,BT P1, BT P2);
+#endif
+
+BT (*toUTF8)(struct pinfo *,BT );
+
+BT *byteseqencetype;
+
+BT (*  decodeword)(processinfo PD,BT P1);
+
+BT loadlibrary(struct pinfo *PD,char *lib_name_root);
+
+BT getfileZbuiltinZUTF8(processinfo PD,BT filename);
+
+//  encoding support
+
+struct einfo {BT hashtable;   processinfo allocatein; };
+
+struct einfo * neweinfo(processinfo PD){
+   static const BT x1[]={0,0};
+   static const BT empty4[]={0,4,(BT) x1,(BT) x1,(BT) x1,(BT) x1};
+   static const BT inverted[]={0,0,(BT) empty4,(BT) empty4,(BT) x1};
+   struct einfo *e=(struct einfo *)myalloc(PD,sizeof (struct einfo)/8);
+   e->hashtable=(BT)inverted;
+   e->allocatein=PD ;
+   return e;
+}
+
+
+
+
+/* cinfo describes the constant part of encoding description. This is info the compile gernerates and only one record is generated per encoding type.
+no is changed from 0 at runtime to an integer number of the encoding */
+struct cinfo{ BT (* copy) (processinfo,BT) ;
+             BT (* look)(processinfo,BT,BT);
+             BT (*add)(processinfo,BT,BT,BT);
+             BT no; 
+             BT nameasword; BT persitant;
+             BT typeaswords;};
+             
+struct einfo *staticencodings[noencodings];
+
+
+struct einfo  *startencoding(processinfo PD,BT P2)
+{ struct cinfo *ee = (struct cinfo *) P2;
+// assign encoding number 
+if (ee->no==0){
+    assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+    ee->no =encnum--; 
+    assert(encnum>1,"out of encoding numbers");
+    assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+    }
+ 
+   
+  if (ee->persitant ) {
+   struct einfo *e= staticencodings[ee->no];
+   if (e==0) {
+     assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+     e = neweinfo(&sharedspace );
+     staticencodings[ee->no]=e;
+     assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+        struct einfo *wordendcoding= (sharedspace.encodings[1]);
+    
+    BT data =decodeword(PD,ee->nameasword);
+    //BT data= IDX(NULL,encoded2(wordendcoding),ee->nameasword);
+    int i,len=SEQLEN(data) ;
+    char libname[100],*p=libname;
+    *p++='Q';
+    for (i=1; i <=len; i++) *(p++)=(char) (IDX(NULL,data,i));
+    *p++=0;
+   //  fprintf(stderr," global %s ",libname);
+     loadlibrary(&sharedspace,libname);
+    } 
+    return e;
+ }  
+ struct einfo *e= PD->encodings[ee->no];
+ if (e==0) {
+   if  ( PD->newencodings==0 && PD != &sharedspace) 
+     { int i;
+       struct einfo ** cpy=  (struct einfo **) myalloc(PD,noencodings); 
+       for(i=0; i<noencodings ;i++)
+         cpy[i]=PD->encodings[i];
+       PD->encodings = cpy;
+       PD->newencodings=1;  
+       }
+  e = neweinfo(PD);
+  PD->encodings[ee->no]=e;
+ }
+ return e;
+ }
+
+
+BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){ 
+  return startencoding(PD,P2)->hashtable ;
+}
+
+BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){  
+ BT r;
+ struct einfo *e=startencoding(PD,P2)  ;
+  struct cinfo *ee = (struct cinfo *) P2;
+  assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+  r= (ee->look) (PD,P1,e->hashtable);
+  if (r<=0) {// not found
+   P1=  (ee->copy) (e->allocatein,P1);
+   e->hashtable=(ee->add)(e->allocatein,e->hashtable,ee->no,P1);
+   r= (ee->look) (PD,P1,e->hashtable);
+  }
+assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+return r;
+}
+// end of encoding support
 
 
 
@@ -150,21 +266,6 @@ return 0;
 BT unloadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){ return unloadlibZbuiltinZUTF8( PD, p_libname);}
 
 
-#ifdef DYNLIB
-
-BT (* append) (processinfo,BT,BT);
-
-
-#else
-
-BT append(processinfo PD,BT P1, BT P2);
-#endif
-
-BT (*toUTF8)(struct pinfo *,BT );
-
-BT *byteseqencetype;
-
-BT (*  decodeword)(processinfo PD,BT P1);
 
 
 BT initlib4(char * libname,BT * words,BT * wordlist, BT * consts,BT * libdesc) {
@@ -191,6 +292,8 @@ if (strcmp(libname,"stdlib")==0){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
+    
+   
 
  }
 
@@ -286,7 +389,16 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
-
+    
+      BT (*  getwordbase)(processinfo PD,BT fileresult);
+    
+         getwordbase= dlsym(RTLD_DEFAULT,"getwordbaseZbasewordsZfileresult");
+    if (!getwordbase){
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }
+       staticencodings[1]=neweinfo(&sharedspace);
+      staticencodings[1]->hashtable=    getwordbase(&sharedspace,getfileZbuiltinZUTF8(&sharedspace,(BT)"1234567812345678wordbase.data"));  
 }
 
    BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
@@ -374,7 +486,7 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
       
 }
 
-
+/*
 
 uint32_t jenkins_one_at_a_time_hash(char *key, size_t len)
 {
@@ -393,7 +505,7 @@ uint32_t jenkins_one_at_a_time_hash(char *key, size_t len)
 
 BT HASH(BT a) {  return jenkins_one_at_a_time_hash( (char *) &a , 8);}
 
-
+*/
 
 
 extern BT  CLOCKPLUS (processinfo PD )
@@ -595,7 +707,7 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     char *filedata;
     struct stat sbuf;
     BT *data2,org;
-// fprintf(stderr,"openning %s\n",name);
+ // fprintf(stderr,"openning %s\n",name);
         org=myalloc(PD,4);
      IDXUC(org,0)=-1;
      IDXUC(org,1)=0;
@@ -840,104 +952,6 @@ void createfilefromoutput(struct outputformat *t,int file)
 
 
 
-
-//  encoding support
-
-struct einfo {BT hashtable;   processinfo allocatein; };
-
-struct einfo * neweinfo(processinfo PD){
-   static const BT x1[]={0,0};
-   static const BT empty4[]={0,4,(BT) x1,(BT) x1,(BT) x1,(BT) x1};
-   static const BT inverted[]={0,0,(BT) empty4,(BT) empty4,(BT) x1};
-   struct einfo *e=(struct einfo *)myalloc(PD,sizeof (struct einfo)/8);
-   e->hashtable=(BT)inverted;
-   e->allocatein=PD ;
-   return e;
-}
-
-
-
-
-/* cinfo describes the constant part of encoding description. This is info the compile gernerates and only one record is generated per encoding type.
-no is changed from 0 at runtime to an integer number of the encoding */
-struct cinfo{ BT (* copy) (processinfo,BT) ;
-             BT (* look)(processinfo,BT,BT);
-             BT (*add)(processinfo,BT,BT,BT);
-             BT no; 
-             BT nameasword; BT persitant;
-             BT typeaswords;};
-             
-struct einfo *staticencodings[noencodings];
-
-
-struct einfo  *startencoding(processinfo PD,BT P2)
-{ struct cinfo *ee = (struct cinfo *) P2;
-// assign encoding number 
-if (ee->no==0){
-    assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-    ee->no =encnum--; 
-    assert(encnum>0,"out of encoding numbers");
-    assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-    }
- 
-   
-  if (ee->persitant ) {
-   struct einfo *e= staticencodings[ee->no];
-   if (e==0) {
-     assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-     e = neweinfo(&sharedspace );
-     staticencodings[ee->no]=e;
-     assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-        struct einfo *wordendcoding= (sharedspace.encodings[1]);
-    
-    BT data =decodeword(PD,ee->nameasword);
-    //BT data= IDX(NULL,encoded2(wordendcoding),ee->nameasword);
-    int i,len=SEQLEN(data) ;
-    char libname[100],*p=libname;
-    *p++='Q';
-    for (i=1; i <=len; i++) *(p++)=(char) (IDX(NULL,data,i));
-    *p++=0;
-     printf(" global %s ",libname);
-     loadlibrary(&sharedspace,libname);
-    } 
-    return e;
- }  
- struct einfo *e= PD->encodings[ee->no];
- if (e==0) {
-   if  ( PD->newencodings==0 && PD != &sharedspace) 
-     { int i;
-       struct einfo ** cpy=  (struct einfo **) myalloc(PD,noencodings); 
-       for(i=0; i<noencodings ;i++)
-         cpy[i]=PD->encodings[i];
-       PD->encodings = cpy;
-       PD->newencodings=1;  
-       }
-  e = neweinfo(PD);
-  PD->encodings[ee->no]=e;
- }
- return e;
- }
-
-
-BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){ 
-  return startencoding(PD,P2)->hashtable ;
-}
-
-BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){  
- BT r;
- struct einfo *e=startencoding(PD,P2)  ;
-  struct cinfo *ee = (struct cinfo *) P2;
-  assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-  r= (ee->look) (PD,P1,e->hashtable);
-  if (r<=0) {// not found
-   P1=  (ee->copy) (e->allocatein,P1);
-   e->hashtable=(ee->add)(e->allocatein,e->hashtable,ee->no,P1);
-   r= (ee->look) (PD,P1,e->hashtable);
-  }
-assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-return r;
-}
-// end of encoding support
 
 
 volatile sig_atomic_t fatal_error_in_progress = 0;

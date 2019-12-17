@@ -203,7 +203,7 @@ Function print(s:symbolset)seq.word @(+, print3,"", toseq.s)
 
 Function +(a:symbolset, s:symbol)symbolset replace(a,  s)
 
-Function_(a:symbolset, name:word)symbol lookupsymbol(a,name)
+/Function_(a:symbolset, name:word)symbol lookupsymbol(a,name)
 
 Function printcode(s:symbolset)seq.word 
  {"count:"+ toword.@(+, count, 0, toseq.s)+ @(+, print3,"", toseq.s)}

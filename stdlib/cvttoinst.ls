@@ -127,7 +127,8 @@ function initinst seq.inst
  // rightshift // 
   inst("Q3EQ3EZbuiltinZbitsZint 2","builtin", mytype."bits"), 
  inst("Q02227ZbuiltinZbitsZbits 2","builtin", mytype."bits"), 
- inst("Q02228ZbuiltinZbitsZbits 2","builtin", mytype."bits"), 
+ inst("Q02228ZbuiltinZbitsZbits 2","builtin", mytype."bits"),
+ inst("xorZbuiltinZbitsZbits 2","builtin", mytype."bits"),  
  inst("callstackZbuiltinZint 1","builtin", mytype."int seq"), 
  inst("decodeZbuiltinZTzencodingZTzerecord 2","builtin", mytype."T"), 
  inst("mappingZbuiltinZTzerecord 1","builtin", mytype."T seq"), 

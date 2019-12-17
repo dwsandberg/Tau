@@ -70,37 +70,14 @@ Function lookup(data:T, h:encodingstate.T)int
 
 
 
-Function add(h:encodingstate.T, i:int, v:T)encodingstate.T 
-if i > 1 &or length.h > 1000 then add2(h,v) else add(h,v )
+Function add(h:encodingstate.T, i:int, v:T)encodingstate.T  add(h,v )
 
 if i > 1   &or length.h > 75 &or length.h < 1 then add2(h,v) else add(h,v )
 
 
-Function add(h:encodingstate.T, v:T)encodingstate.T 
- if 3 * elecount.h > 2 * length.encodetable.h 
-  then 
-   let t=encodetable.h
-   let d=decodetable.h
-   add(encodingstate( elecount.h,t+t+t+t,d+d+d+d,all.h), v)
-  else 
-    let tablesize=length.encodetable.h
-    let datahash=hash.v 
-    let dataindex= datahash mod tablesize+1
-     if @(max, ele.v, 0, encodetable(h)_dataindex) > 0 then // already present // h
-     else
-    let uid = (randomint(1)_1) mod 1000000 
-      let code= elecount.h+1+1000000   
-      if code < 0 then add(h,v) else
-      let p=encodingrep(code, v,datahash)
-      let codeindex=code mod tablesize + 1
-      let l2=@(addcode(code, tablesize), identity,[ p], (decodetable.h)_codeindex)
-      let  tnew=replace(encodetable.h,dataindex, @(+, ele2(p, tablesize), [ p], 
- encodetable(h)_dataindex))
-    encodingstate( 
- elecount.h + 1,tnew,replace(decodetable.h, codeindex,l2)
- ,all.h+p)
+
  
- function add2(h:encodingstate.T, v:T)encodingstate.T 
+ Function add(h:encodingstate.T, v:T)encodingstate.T 
  if 3 * elecount.h > 2 * length.encodetable.h 
   then 
    let t=encodetable.h
@@ -199,16 +176,22 @@ function counts(s:seq.seq.encodingrep.T,i:int,one:int,two:int,big:int) seq.word
     else if t=1 then counts(s,i+1,one+1,two,big)
       else if t=1 then counts(s,i+1,one,two+1,big)
       else  counts(s,i+1,one,two,big+1)
+ 
+ use deepcopy.seq.encodingrep.T
       
-/Function reconstruct(all:seq.encodingrep.T) encodingstate.T
-let x=constantseq(2 * length.all, empty:seq.encodingrep.T)
- let t=encodingstate(x, length.all,x,x,all)
-    @( XX(2 * length.all),identity,t,all)
+Function reconstruct(allx:seq.encodingrep.T) encodingstate.T
+   let all=deepcopy.allx
+   let size=4 * length.all
+let x=constantseq(size, empty:seq.encodingrep.T)
+let t=encodingstate(length.all,x,x,all)
+    @( XX(size),identity,t,all)
+    
 
-/function XX(hashsize:int,h:encodingstate.T,a:encodingrep.T) encodingstate.T
+
+function XX(hashsize:int,h:encodingstate.T,a:encodingrep.T) encodingstate.T
     let codehash=code.a mod hashsize+1
        let datahash=hash.a mod hashsize+1
-    encodingstate(replace(encodetable.h, datahash, (encodetable.h)_datahash+a),elecount.h,empty:seq.T,
+    encodingstate(elecount.h,replace(encodetable.h, datahash, (encodetable.h)_datahash+a),
    replace(decodetable.h, codehash, (decodetable.h)_codehash+a),all.h)
   
 

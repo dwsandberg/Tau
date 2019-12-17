@@ -5,11 +5,11 @@ Module stdlib
 Library stdlib UTF8 altgen bitpackedseq bits blockseq 
 codegen codetemplates deepcopy fileio format graph groupparagraphs   internalbc  encoding   ipair
  libscope llvm  oseq  packedseq pass2 persistant persistantseq prims process real  reconstruct seq set stack stacktrace textio  tree    
- cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2 opt2
+ cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2 opt2 basewords
   uses 
   exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real encoding ipair set graph textio blockseq packedseq
  deepcopy tree fileio pass2 stack newimp2 persistant persistantseq  llvm libscope internalbc format bits  newsymbol
-   prims cvttoinst libdescfuncnew groupparagraphs 
+   prims cvttoinst libdescfuncnew groupparagraphs basewords
  
 use UTF8
 
@@ -103,7 +103,7 @@ Function *(a:int, b:int)int builtin.usemangle
 
 Function /(a:int, b:int)int builtin.usemangle
 
-Function hash(i:int)int builtin.usemangle
+Function hash(i:int)int finalmix.hash(hashstart,i)
 
 Function =(a:int, b:int)boolean builtin.usemangle
 
@@ -164,9 +164,12 @@ Function encodeword(a:seq.int)word word.encode(a, wordencoding)
 
 Function decode(w:word)seq.int decode(bb.w, wordencoding)
 
-Function hash(a:seq.int)int @(+, hash, 0, a)
+use xxhash
 
-Function hash(a:seq.word)int @(+, hash, 0, a)
+Function hash(a:seq.int)int 
+finalmix.@(hash, identity, hashstart, a)
+
+Function hash(a:seq.word)int finalmix.@(hash, hash, hashstart, a)
 
 Function hash(a:word)int hash.bb.a
 

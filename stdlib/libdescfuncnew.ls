@@ -78,7 +78,7 @@ function primtypes(m:mytype)seq.mytype
   else @(+, mytype, empty:seq.mytype, @(+, +."T", [ [ s_1]], subseq(s, 2, length.s)))
 
 function typelibsyms(known:symbolset, m:seq.word)seq.libsym 
- let sym = known_mangle(merge("typedesc:"+ m), mytype."internal", empty:seq.mytype)
+ let sym = lookupsymbol(known,mangle(merge("typedesc:"+ m), mytype."internal", empty:seq.mytype))
   if isdefined.sym then [ tolibsym4.sym]else empty:seq.libsym
 
 function filterX(known:symbolset, typ:seq.word)seq.seq.word 
@@ -104,7 +104,7 @@ function typesused(w:seq.word, i:int, start:int)seq.seq.word
   else getsubtypes.subseq(w, start, i)+ typesused(w, i + 1, i + 1)
 
 function gathertypes(known:symbolset, mangledname:word)set.mytype 
- let sym = known_mangledname 
+ let sym = lookupsymbol(known,mangledname) 
   @(+, replaceT.parameter.modname.sym, asset.[ resulttype.sym], paratypes.sym)
 
 function toinstindex(a:set.word, d:intercode, i:int)seq.int 
@@ -192,7 +192,7 @@ function tolibsym4(s:symbol)libsym
 function findelement(known:symbolset, r:mapresult32, s:symbol)mapresult32 
  let z = findelement(libsym(resulttype.s, mangledname.s,""), syms.r)
   if isempty.z 
-  then let t1 = known_mangledname.s 
+  then let t1 = lookupsymbol(known,mangledname.s) 
    let t = tolibsym4.t1 
    // assert src.t1 in ["EXTERNAL"]report"ERR33"+ print2.t1 // 
    mapresult32(syms.r + t, libsyms.r + t)

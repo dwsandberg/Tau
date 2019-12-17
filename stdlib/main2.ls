@@ -188,7 +188,7 @@ function extractparsed(abstract:boolean, known:symbolset, s:symbol)seq.seq.word
  // assert not(name.s ="cindex"_1)report [ mangledname.s]+ if abstract then"abstract"else""// 
   let a = if abstract 
    then src.s 
-   else let sy = known_mangledname.s 
+   else let sy = lookupsymbol(known,mangledname.s) 
    // assert false report [ mangledname.s]+ src.sy parsedfunc 7 = 2 wordfreq wordfreq boolean a b falseZstdlib // 
    src.sy 
   if length.a > 0 ∧ a_1 ="parsedfunc"_1 

@@ -114,7 +114,7 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
 function paratree(i:int)tree.seq.word tree("PARAM"+ toword.i)
 
 function addsymbol(p:program, mangledname:word)program 
- let caller = knownsymbols(p)_mangledname 
+ let caller = lookupsymbol(knownsymbols(p),mangledname )
   // assert not(mangledname ="test4Ztest4"_1)report src.caller +"FLAGS"+ flags.caller // 
   // assert not(mangledname ="PROFILE"_1)report"XXX"+ mangledname // 
   // assert length.src.caller > 0 report"Error"+ mangledname + print2.caller // 

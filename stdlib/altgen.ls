@@ -198,7 +198,7 @@ function stat5(caller:word, callee:word) stat5 stat5(caller,callee,0)
 
 function addindex(s:stat5,i:int) stat5 stat5(caller.s,callee.s,i)
 
-function hash(s:stat5)int hash.caller.s + hash.callee.s
+function hash(s:stat5)int abs(hash.caller.s + hash.callee.s)
 
 function =(a:stat5, b:stat5)boolean caller.a = caller.b ∧ callee.a = callee.b
 
