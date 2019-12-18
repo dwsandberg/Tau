@@ -68,18 +68,17 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
   let profilearcs2 = profilearcs 
   let noprofileslots = length.profilearcs2 / 2 
   // let libsyms = @(+, tolibsym(coding.fs, codes.fs), empty:seq.libsym, defines.fs)// 
-  let liblib = addliblib(consts.match5map, libdesc)
-  let tmp1 = addwordseq(value.liblib, profilearcs2)
-  let data = value.tmp1 
-  let arcs = index.tmp1 
+  let profilearcs3 = addwordseq(consts.match5map, profilearcs2)
+  let liblib = addliblib(value.profilearcs3, libdesc)
+  let data = value.liblib 
   let x = C(array(4, i64), [ AGGREGATE, 
-  C(i64, [ CONSTCECAST, 9, typ.ptr.i64, getelementptr(conststype,"list", arcs + 1)]), 
+  C(i64, [ CONSTCECAST, 9, typ.ptr.i64, getelementptr(conststype,"list", index.profilearcs3 + 1)]), 
   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), 
   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profclocks"]), 
   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profspace"])])
   let words = worddata 
   let worddatatype = array(length.words + 2, i64)
-  let adjust = [ 0, 2 + wordcount + 1, length.a.data + 5 + 2, noprofileslots + 2 + 3]
+  let adjust = [ 0, // wordstype // 2 + wordcount + 1, // consttype // length.a.data + 5 + 2, // profiletype // noprofileslots + 2 + 3]
   let libnametype = array(length.decode.thename + 1, i8)
   let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])
   let deflist = [ [ MODULECODEGLOBALVAR, 

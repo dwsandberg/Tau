@@ -358,7 +358,7 @@ if (strcmp(libname,"stdlib")==0){
     ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
     strcpy(libnames[i+2],libname);
     }
-//   fprintf(stderr,"finish initlib4  \n");
+   fprintf(stderr,"finish initlib4  \n");
  return 0;
   
 }
@@ -398,19 +398,42 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
        exit(EXIT_FAILURE);
     }
        staticencodings[1]=neweinfo(&sharedspace);
-      staticencodings[1]->hashtable=    getwordbase(&sharedspace,getfileZbuiltinZUTF8(&sharedspace,(BT)"1234567812345678wordbase.data"));  
+     //  staticencodings[1]->hashtable=    getwordbase(&sharedspace,getfileZbuiltinZUTF8(&sharedspace,
+      // (BT)"1234567812345678wordbase400.data"));  
+     // fprintf( stderr, "nowords1 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);
 }
+
+  BT (* relocateoffset)(processinfo PD,BT *) = dlsym(RTLD_DEFAULT, "relocateoffsetZreconstructZintzseq");
+   if (!relocateoffset) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }      else
+      relocateoffset(&sharedspace,consts);
+        BT wdrepseq= ((BT *) libdesc)[1];
+       BT words2=((BT *)wdrepseq)[1];
+       fprintf(stderr,"nowords2 %lld\n" ,words2);
+       
+         BT (* addwords)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, "addZintzseqzencodingZTzencodingstateZTzencodingrepzseq");
+   if (!addwords) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+        exit(EXIT_FAILURE);
+    }  
+      fprintf(stderr,"start addwords\n");
+     staticencodings[1]->hashtable=addwords(&sharedspace,staticencodings[1]->hashtable,wdrepseq); 
+     fprintf( stderr, "nowords3 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);   
+    fprintf(stderr,"finish addwords\n");
 
    BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
    if (!relocate) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }    
+     
    BT (* encodeword)(struct pinfo *,BT *) = dlsym(RTLD_DEFAULT, "encodewordZstdlibZintzseq");
    if (!encodeword) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
-    }    
+    }  
 
  int nowords=wordlist[3];
  int j = 4;
@@ -428,6 +451,9 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
   }
    fprintf(stderr,"relocating const\n");
   relocate(&sharedspace, words,consts);
+  
+           fprintf( stderr, "nowords5 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);   
+       
   
   if ( libname[0] =='Q')
     { 
@@ -461,6 +487,8 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
     loaded[i+2]= libdesc; //relocate(&sharedspace, words,libdesc);
     ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
     strcpy(libnames[i+2],libname);
+
+  
     }
   fprintf(stderr,"finish initlib5  \n");
  return 0;

@@ -18,9 +18,9 @@ run tools testprofile
 
 /run tools prettytest
 
-run tools stdlibdoc
+/run tools stdlibdoc
 
-run doc createdoc
+/run doc createdoc
 
 /run tools testhtmlcode 
 
@@ -33,7 +33,7 @@ run doc createdoc
 /run printbitcodes test1
 
 
-run tools testprintBitCodes
+/run tools testprintBitCodes
 
 run tools checkdoclib
 
