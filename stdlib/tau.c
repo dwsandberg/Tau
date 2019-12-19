@@ -358,7 +358,7 @@ if (strcmp(libname,"stdlib")==0){
     ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
     strcpy(libnames[i+2],libname);
     }
-   fprintf(stderr,"finish initlib4  \n");
+//   fprintf(stderr,"finish initlib4  \n");
  return 0;
   
 }
@@ -390,6 +390,7 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
        exit(EXIT_FAILURE);
     }
     
+<<<<<<< HEAD
          staticencodings[1]=neweinfo(&sharedspace);
  }
 
@@ -416,6 +417,33 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
 
       
   int i,k;
+=======
+      BT (*  getwordbase)(processinfo PD,BT fileresult);
+    
+         getwordbase= dlsym(RTLD_DEFAULT,"getwordbaseZbasewordsZfileresult");
+    if (!getwordbase){
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }
+       staticencodings[1]=neweinfo(&sharedspace);
+      staticencodings[1]->hashtable=    getwordbase(&sharedspace,getfileZbuiltinZUTF8(&sharedspace,(BT)"1234567812345678wordbase.data"));  
+}
+
+   BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
+   if (!relocate) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }    
+   BT (* encodeword)(struct pinfo *,BT *) = dlsym(RTLD_DEFAULT, "encodewordZstdlibZintzseq");
+   if (!encodeword) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }    
+
+ int nowords=wordlist[3];
+ int j = 4;
+ int i,k;
+>>>>>>> parent of c024bb8... got rid of wordbase
   words[0]=0;
   words[1]=nowords;
    fprintf(stderr,"nowords %d\n",nowords);
@@ -432,10 +460,37 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
 
   relocate(&sharedspace, words,consts); 
   
+<<<<<<< HEAD
            fprintf( stderr, "nowords5 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);   
        
   
      { int i =loaded[1]++;
+=======
+  if ( libname[0] =='Q')
+    { 
+      BT (* erecordproc)(struct pinfo *)  = dlsym(RTLD_DEFAULT,libname+1);
+   if (erecordproc) { 
+       fprintf(stderr,"loading encoding\n");
+      int i,len = elementlist[1];
+      BT erec = erecordproc(&sharedspace);
+       fprintf(stderr,"start build list %d\n",len);
+      for(i=2; i < len+2; i++){
+         BT ele = elementlist[i];
+        // fprintf(stderr," %d %lld %lld\n",i,ele,erec);
+         encodeZbuiltinZTZTzerecord(&sharedspace,ele,erec);
+      }
+       fprintf(stderr,"finish build list\n");
+    } else
+         fprintf(stderr,"[%s] Unable to get symbol for erec: library is not encoding %s\n",__FILE__, dlerror());
+ 
+    }
+  // for(i=0;i < consts[1]+2; i++) {   fprintf(stderr,"%lld: %lld %llx \n",  (BT)( consts+i) ,consts[i],consts[i]);}
+  //  fprintf(stderr,"HI2\n");
+  
+ //for ( k=0;k<nowords;k++)  fprintf(stderr,"KK %d %lld\n",k,words[2+k]);
+ //  fprintf(stderr,"HHH %s %d %d %lld\n",libname,nowords,j,wordlist[1]+2);
+    { int i =loaded[1]++;
+>>>>>>> parent of c024bb8... got rid of wordbase
       char name[100];
      struct stat sbuf;
     sprintf(name,"%s.dylib",libname);
@@ -444,8 +499,6 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
     loaded[i+2]= libdesc; //relocate(&sharedspace, words,libdesc);
     ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
     strcpy(libnames[i+2],libname);
-
-  
     }
   fprintf(stderr,"finish initlib5  \n");
  return 0;

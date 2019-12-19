@@ -72,33 +72,9 @@ Function lookup(data:T, h:encodingstate.T)int
 
 Function add(h:encodingstate.T, i:int, v:T)encodingstate.T  add(h,v )
 
-Function add(h:encodingstate.T,l:seq.encodingrep.T) encodingstate.T 
-if 3 * (elecount.h+length.l) > 2 * length.encodetable.h then
- let t=encodetable.h
-   let d=decodetable.h
-   add(encodingstate( elecount.h,t+t+t+t,d+d+d+d,all.h), l)
-   else @(add,identity,h,l)
-   
-function ele6(v:encodingrep.T,e:encodingrep.T) int
-  if data.v = data.e then 
-   code.e 
-  else 0
+if i > 1   &or length.h > 75 &or length.h < 1 then add2(h,v) else add(h,v )
 
-Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T 
-    let tablesize=length.encodetable.h
-    let datahash=hash.v 
-    let dataindex= datahash mod tablesize+1
-     if @(max, ele6.v, 0, encodetable(h)_dataindex) > 0 then // already present // h
-     else
-      let code= code.v 
-      let p=v
-      let codeindex=code mod tablesize + 1
-      let l2=@(addcode(code, tablesize), identity,[ p], (decodetable.h)_codeindex)
-      let  tnew=replace(encodetable.h,dataindex, @(+, ele2(p, tablesize), [ p], 
- encodetable(h)_dataindex))
-    encodingstate( 
- elecount.h + 1,tnew,replace(decodetable.h, codeindex,l2)
- ,all.h+p)
+
 
  
  Function add(h:encodingstate.T, v:T)encodingstate.T 
@@ -136,6 +112,8 @@ function ele4(v:int, a: encodingrep.T ) seq.T if v =code.a then [data.a] else em
  
  Function getinstance(erec:erecord.T)encodingstate.T builtin.STATE.usemangle 
 
+/Function mapping(erec:erecord.T)seq.T  
+@(+, data,empty:seq.T,     all.getinstance.erec)
 
 
 Function mapping(erec:erecord.T)seq.T  toseq.getinstance.erec
@@ -183,8 +161,7 @@ Function findindex(t:T, erec:erecord.T) int
      if length.a=0 then 
         let x=encode(addindex(t,length.inst+1),erec)
         length.inst+1
-     else 
-       index.(a_1)
+     else index.(a_1)
 
 Function analyze(t:encodingstate.T)   seq.word
    "numele=" +toword.length.all.t +"encodecounts"+ counts(encodetable.t,1,0,0,0)
@@ -197,7 +174,7 @@ function counts(s:seq.seq.encodingrep.T,i:int,one:int,two:int,big:int) seq.word
     let t=length(s_i)
     if t=0 then counts(s,i+1,one,two,big)
     else if t=1 then counts(s,i+1,one+1,two,big)
-      else if t=2 then counts(s,i+1,one,two+1,big)
+      else if t=1 then counts(s,i+1,one,two+1,big)
       else  counts(s,i+1,one,two,big+1)
  
  use deepcopy.seq.encodingrep.T

@@ -135,8 +135,7 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
   let a8 = finishblock(symentries(symtabheader, orderadded.llvmconsts, 1), length.symtabheader, TYPEABBREVLEN)
   // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN)
 
-Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
- // go back and adjust types to fillin the length of arrays that where not known at time of creation of type  //  
+Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int 
  if i > length.adj 
   then subseq(s, i, length.s)
   else let r = s_i 

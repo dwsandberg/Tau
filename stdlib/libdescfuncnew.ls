@@ -45,10 +45,8 @@ use stdlib
 /function print2(l:libsym) seq.word print.l+instruction.l
 
 Function libdesc(roots:set.word, intercode:intercode, mods:seq.firstpass, known:symbolset)seq.libmod 
- //  assert false report @(seperator([encodeword.[10]]+"   ---"),print2,"",@(+,filter,empty:seq.symbol,toseq(known))) //  
  let b = @(∪, gathertypes.known, empty:set.mytype, toseq.roots)
   let c = closetypes(known, @(+, print, empty:set.seq.word, toseq.b), empty:set.seq.word)
-  // assert false report @(seperator(","),identity,"",toseq.c) //
   let typesyms = @(+, typelibsyms.known, empty:seq.libsym, toseq.c)
   // assert false report @(seperator."&br", print2,"", typesyms)// 
   let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
@@ -62,12 +60,11 @@ Function libdesc(roots:set.word, intercode:intercode, mods:seq.firstpass, known:
 
 /function check(syms:seq.libsym)seq.word let x = findelement(libsym(mytype."X","wordencodingZstdlib"_1,""), syms)assert length.x = 1 report"??""CODE"+ instruction.x_1
 
+wordencodingZstdlib
 
+encodewordZstdlibZintzseq
 
-/function filter(s:symbol) seq.symbol  if subseq(src.s,1,2)="record erecord" then [s] else empty:seq.symbol
-
-/if "LIT"_1 in src.s &or "FREF"_1 in src.s then empty:seq.symbol else [s]
-
+/function =(a:libsym, b:libsym)boolean fsig.a = fsig.b
 
 function usestypes(s:libsym)seq.mytype 
  let d = codedown.fsig.s 
@@ -82,61 +79,33 @@ function primtypes(m:mytype)seq.mytype
 
 function typelibsyms(known:symbolset, m:seq.word)seq.libsym 
  let sym = lookupsymbol(known,mangle(merge("typedesc:"+ m), mytype."internal", empty:seq.mytype))
-  if isdefined.sym then [ tolibsym4.sym]else 
-   assert m in ["seq","int","encoding.T","T"] report "LKJP"+merge("typedesc:"+ m)
-    empty:seq.libsym
+  if isdefined.sym then [ tolibsym4.sym]else empty:seq.libsym
 
 function filterX(known:symbolset, typ:seq.word)seq.seq.word 
- if typ_1 ="erecord"_1 then 
-   // erecord contains funky types so do not look in up //
-   assert length.typ > 2 report "JKL"+typ
-   [subseq(typ,3,length.typ)]
- else 
- let d=  lookupsymbol(known,mangle(merge("typedesc:"+ typ), mytype."internal", empty:seq.mytype))
-  let src=src.d
- assert  length(src) = 0  &or (src)_1 in "WORDS record"   report typ+"XX"+print2.d 
- if length.src=0 then [typ] else [typ]+
-  @(+,getsubtypes.1,empty:seq.seq.word,componenttypes(src,1,empty:seq.seq.word,""))
-
-
-
-function getsubtypes( i:int,typ:seq.word) seq.seq.word
-    // converts    "int seq stack seq"   to ["int", "seq.int", "stack.seq.int", "seq.stack.seq.int" //
-   if i > length.typ then empty:seq.seq.word else 
-     [print.mytype.subseq(typ,1,i)]+ getsubtypes(i+1,typ)
-
- 
-function   componenttypes(  s:seq.word, i:int,types:seq.seq.word,part:seq.word ) seq.seq.word
-  if i &ge length.s then if s_1 in "WORDS" then types+([s_(i)]+part) else types
-  else if s_1 in "sequence record" then
-    // example format sequence cseq 2 T seq 2 int len 2 T element //
-     if i=1 then  componenttypes(s,2,types,part)
-     else 
-        let  typelen=toint(s_(i+1))
-        componenttypes(s,i+1+typelen , types+subseq(s,i+2,i+2+typelen-1),part)
-   else 
-   if i=1 then  componenttypes(s,4,types,part)
-     else
-    // example format  WORDS 7 2 seq.libsym seq.libmod //
-    assert s_1 in "WORDS" report "unexpected type format"
-         if s_(i+1)="."_1 then
-           componenttypes(s,i+2,types, [s_(i)]+part)
-           else componenttypes(s,i+1,types+([s_(i)]+part),"")
-
-
-
+ let a = extracttypedesc.lookuptypedesc2(known, typ)
+  if a ="undefined"then empty:seq.seq.word else [ typ]+ typesused(a, 2, 2)
 
 function closetypes(known:symbolset, newtypes:set.seq.word, processed:set.seq.word)set.seq.word 
  let a = asset.@(+, filterX.known, empty:seq.seq.word, toseq.newtypes)
   let b = a - processed 
   if isempty.b then processed else closetypes(known, b, processed ∪ b)
 
+function getsubtypes(typ:seq.word)seq.seq.word 
+ if length.typ = 1 
+  then [ typ]
+  else // assert typ in ["seq.int","seq.seq.int","seq.seq.word","seq.word","seq.alphaword"]report typ // 
+   [ typ]+ getsubtypes.subseq(typ, 3, length.typ)
+
+function typesused(w:seq.word, i:int, start:int)seq.seq.word 
+ if i + 1 > length.w 
+  then if start > i then empty:seq.seq.word else getsubtypes.subseq(w, start, i)
+  else if w_(i + 1)="."_1 
+  then typesused(w, i + 2, start)
+  else getsubtypes.subseq(w, start, i)+ typesused(w, i + 1, i + 1)
 
 function gathertypes(known:symbolset, mangledname:word)set.mytype 
  let sym = lookupsymbol(known,mangledname) 
-  let x=@(+, replaceT.parameter.modname.sym, asset.[ resulttype.sym], paratypes.sym)
-   let z= @(seperator.",",towords,"",  toseq.x)
-  x
+  @(+, replaceT.parameter.modname.sym, asset.[ resulttype.sym], paratypes.sym)
 
 function toinstindex(a:set.word, d:intercode, i:int)seq.int 
  if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
