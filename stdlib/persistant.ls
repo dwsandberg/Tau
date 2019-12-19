@@ -59,6 +59,13 @@ use stdlib
 
 use tree.seq.word
 
+use seq.encodingrep.seq.int
+
+use encoding.seq.int
+
+use persistantseq.encodingrep.seq.int
+
+
 
 type word3encoding is encoding word3
 
@@ -110,6 +117,11 @@ Function word33(a:word)int findindex(word3.a, word3encoding)
 function eword(w:word3)seq.int 
  let a = decode.toword.w 
   @(+, C64, [ C64.0, C64.length.a], a)
+  
+  
+function eword2(w:word3)  encodingrep.seq.int
+    let a = decode.toword.w
+     encodingrep(hash.toword.w,a,hash(a))
 
 function cast2int(liblib)int builtin.NOOP
 
@@ -219,9 +231,17 @@ function addrecord(l1:linklists2, sym:libsym)ipair.linklists2
 Function addliblib(lin:linklists2, t:liblib)ipair.linklists2 
  let a = addwordseq(lin, libname.t)
   let c = addseq(value.a, mods.t)
-  let l = value.c 
-  let l5 = l + a + 0 + c + timestamp.t + toint.readonly.t 
+  let d=  addseq(value.c,@(+,eword2,empty:seq.encodingrep.seq.int,orderadded.word3encoding))  
+  let l = value.d 
+  let l5 = l + a +d+ c + timestamp.t + toint.readonly.t 
   ipair(place.l, l5)
+   
+  
+Function addrecord(lin:linklists2,  e:encodingrep.seq.int) ipair.linklists2
+   let k = addintseq(lin,data.e)
+  let l = value.k
+      ipair(place.l,l+code.e+k+hash.e)
+      
 
 function addrecord(lin:linklists2, modx:libmod)ipair.linklists2 
  let a = addseq(lin, defines.modx)
