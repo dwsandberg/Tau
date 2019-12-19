@@ -6,6 +6,13 @@ use packedseq.int
 
 use stdlib
 
+use encoding.seq.int
+
+Function add2(h:encodingstate.seq.int,v:seq.encodingrep.seq.int) encodingstate.seq.int
+// so add is included in stdlib //
+ add(h,v)
+ 
+ 
 Three Functions to pack two ints into 64 bits
 
 function halfsize int // 2^31 // 2147483648
@@ -27,12 +34,15 @@ Function print(a:address.int)int
 
 Function relocate(ws:seq.word, d2:seq.int)address.int 
  // d2 format is [ wordthread start, offsetthread start, unused]+ actual data]// 
-  // initwordset is called before relocate // 
   // new version // 
   let discard = wordthread(d2, ws, d2_1)
   let discard2 = offsetthread(d2, d2_2)
   let discard3 = wordseqthread(d2, ws, d2_3)
   setfld(setfld(setfld(getaddress(d2, 2), 0), 0), 0)
+  
+Function relocateoffset(d2:seq.int) address.int
+   let discard2 = offsetthread(d2, d2_2)
+   setfld(setfld(getaddress(d2, 2),d2_1), 0)
 
 function wordthread(a:seq.int, ws:seq.word, i:int)int 
  if i = 0 

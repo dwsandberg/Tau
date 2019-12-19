@@ -50,6 +50,8 @@ use stdlib
 
 use textio
 
+use fileio
+
 function wordstype llvmtype array(-1, i64)
 
 Function conststype llvmtype array(-2, i64)

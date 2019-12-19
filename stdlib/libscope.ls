@@ -21,6 +21,8 @@ use stacktrace
 
 use stdlib
 
+use seq.encodingrep.seq.int
+
 
 Function formatcall(modname:mytype, name:word, paratypes:seq.mytype)seq.word 
  print.modname +":"+ name + if length.paratypes = 0 
@@ -34,15 +36,18 @@ Function formatcall(name:word, paratypes:seq.mytype)seq.word
 
 type libsym is record fsig:word, returntype:seq.word, instruction:seq.word
 
-type liblib is record libname:seq.word, unused:int, mods:seq.libmod, timestamp:int, readonly:boolean
+type liblib is record libname:seq.word, words:seq.encodingrep.seq.int, mods:seq.libmod, timestamp:int, readonly:boolean
 
-Function liblib(a:seq.word, d:seq.libmod)liblib liblib(a, 0, d, 0, false)
+Function liblib(a:seq.word, d:seq.libmod)liblib liblib(a, empty:seq.encodingrep.seq.int, d, 0, false)
 
 Function timestamp(liblib)int export
 
 Function libname(liblib)seq.word export
 
 Function mods(liblib)seq.libmod export
+
+Function words(liblib)seq.encodingrep.seq.int export
+
 
 Function readonly(liblib)boolean export
 

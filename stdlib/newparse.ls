@@ -187,7 +187,7 @@ function unaryop(op:bindinfo, exp:bindinfo, input:seq.word, place:int)bindinfo
    let newcode = subseq(code.exp, 1, length.code.exp - 1)+"FREF"+ deepcopymangle.rt +"FREF"+ deepcopymangle.mytype."word seq"+"FREF"+ last.code.exp +"LIT"+ toword.nopara +"PRECORD"+ toword(nopara + 4)
    bindinfo(dict, newcode, [ mytype(towords.rt +"process")])
   else let f = lookup(dict, code(op)_1, types.exp)
-  assert not.isempty.f report errormessage("cannot find"+ code.op +"("+ @(seperator.",", print,"", types.exp)+")", input, place)
+  assert not.isempty.f report errormessage("cannot find unaryop"+ code.op +"("+ @(seperator.",", print,"", types.exp)+")", input, place)
   assert cardinality.f = 1 ∨ code(op)_1 in"length"report"found more that one"+ @(+, print2,"", toseq.f)
   //  assert code(op)_1 &ne "arithseq"_1 report "XX"+print.f_1 //
   bindinfo(dict, code.exp + mangledname(f_1), [ resulttype(f_1)])
