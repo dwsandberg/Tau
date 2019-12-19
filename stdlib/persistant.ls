@@ -92,7 +92,6 @@ Function wordseqthread(linklists2)int export
 Function linklists2(a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int)linklists2 export
 
 Function initializer(conststypex:llvmtype, data:linklists2)int 
-assert wordthread.data=0 &and wordseqthread.data=0 report "wordthread or data thread is not zero"
  C(conststypex, [ AGGREGATE, 
  C64.0, 
  C64(length.a.data + 3), 
@@ -177,7 +176,11 @@ function addconst(l:linklists2, t:tree.seq.word)ipair.linklists2
   if place.x ≠ place.l.y 
   then ipair(place.x, l.y)
   else // have seen this CRECORD before so process it // 
-   let  newlist=@(buildtheobject.place.l.y, identity, l.y, flds.x)
+  // assert not(nosons.t > 4 ∧ state.y = 3)∨ isnumber.(label.t_1)_2 report"ZZZ"+ @(+, label,"", sons.t)+ label.t // 
+  let newlist = if nosons.t > 4 ∧ state.y = 3 ∧ toint(label(t_1)_2)= nosons.t - 2 
+   then // word seq // 
+    linklists2(@(+, index, a.l.y + C64.wordseqthread.l.y, subseq(flds.y, 2, length.flds.y)), wordthread.l.y, offsetthread.l.y, place.l.y)
+   else @(buildtheobject.place.l.y, identity, l.y, flds.x)
   ipair(place.l.y, newlist)
 
 function getindex(f:trackflds, t:tree.seq.word)trackflds 
@@ -187,8 +190,7 @@ function getindex(f:trackflds, t:tree.seq.word)trackflds
    then 2 
    else if state.f = 2 then 3 else 0)
   else if typ ="WORD"_1 
-  then let discard=word33(label(t)_2)
-    trackflds(l.f, flds.f + flddesc(C64.hash(label(t)_2),"LIT"_1), if state.f = 3 then 3 else 0)
+  then trackflds(l.f, flds.f + flddesc(word33(label(t)_2),"WORD"_1), if state.f = 3 then 3 else 0)
   else if typ ="WORDS"_1 
   then // assert false report"in get index"+ subseq(label.t, 3, length.label.t)// 
    let k = addwordseq(l.f, subseq(label.t, 3, length.label.t))
@@ -201,13 +203,13 @@ function getindex(f:trackflds, t:tree.seq.word)trackflds
 
 Function buildtheobject(objectstart:int, l:linklists2, d:flddesc)linklists2 
  FORCEINLINE.let typ = kind.d 
- assert typ &ne "WORD"_1 report "no longer expection word"
+  let newwordthread = if typ ="WORD"_1 then place.l else wordthread.l 
   let newoffsetthread = if typ ="CRECORD"_1 then place.l else offsetthread.l 
   linklists2(a.l + if typ ="LIT"_1 
    then index.d 
    else if typ ="WORD"_1 
    then C64.packit(wordthread.l, index.d)
-   else C64.packit(offsetthread.l, index.d), if typ ="WORD"_1 then place.l else wordthread.l, newoffsetthread, wordseqthread.l)
+   else C64.packit(offsetthread.l, index.d), newwordthread, newoffsetthread, wordseqthread.l)
 
 type trackele is record l:linklists2, places:seq.int
 
@@ -253,20 +255,18 @@ function addrecord(lin:linklists2, modx:libmod)ipair.linklists2
 Function +(l:linklists2, i:int)linklists2 linklists2(a.l + C64.i, wordthread.l, offsetthread.l, wordseqthread.l)
 
 Function +(l:linklists2, w:word)linklists2 
-  let discard=word33.w
-     l+hash.w 
-     
- 
+ linklists2(a.l + C64.packit(wordthread.l, word33.w), place.l, offsetthread.l, wordseqthread.l)
+
 Function +(l:linklists2, b:ipair.linklists2)linklists2 
  linklists2(a.l + C64.packit(offsetthread.l, index.b), wordthread.l, place.l, wordseqthread.l)
 
-Function addwordseq(t:linklists2, a:seq.word)ipair.linklists2
-  let discard= @(+,word33,0,a)
-   addintseq(t,  @(+,    hash,empty:seq.int,a)) 
+Function addwordseq(t:linklists2, a:seq.word)ipair.linklists2 
+ ipair(place.t, linklists2(a.t + @(+, C64word33, [ C64.wordseqthread.t, C64.length.a], a), wordthread.t, offsetthread.t, place.t))
 
 Function addintseq(t:linklists2, s:seq.int)ipair.linklists2 
  ipair(place.t, linklists2(a.t + @(+, C64, [ C64.0, C64.length.s], s), wordthread.t, offsetthread.t, wordseqthread.t))
 
+function C64word33(a:word)int C64.word33.a
 
 function cast2int(s:seq.int)int builtin.NOOP
 

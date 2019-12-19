@@ -167,7 +167,7 @@ Function buildtemplates(p:temppair, fullinst:seq.word)temppair
      let r = match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1, 0)
      temppair(s + r, value.tt)
     else if inst ="WORD"_1 
-    then if // not( instarg in "." ) // false then 
+    then if // not( instarg in "." ) // true then 
      // assert false report "PO" +instarg //
      let aa = C(ptr.i64, [ CONSTGEP, 
      typ.wordstype, 
