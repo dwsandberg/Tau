@@ -518,9 +518,9 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
 
    
 function definedeepcopy(dict:set.symbol,templates:symbolset,knownsymbols:symbolset, type:mytype,org:symbol)resultpair 
-  assert towords.type in ["int seq","int","word3","stat5","word seq","llvmtypeele"
+  // assert towords.type in ["int seq","int","word3","stat5","word seq","llvmtypeele"
  ,"word","llvmconst","const3","inst","flddesc seq","match5","flddesc","templatepart seq","templatepart",
- "internalbc"," persistant"] report "definedeepcopy" +towords.type 
+ "internalbc"," persistant"] report "definedeepcopy" +towords.type // 
  let body = if abstracttype.type in"encoding int word"
    then resultpair(knownsymbols,"PARAM 1")
    else // assert length.print.type = 1 &or print.type in ["match5","seq.int","llvmconst","match5","inst","libsym","llvmtypeele","word3","const3","seq.word","stat5","seq.flddesc","flddesc","seq.templatepart","templatepart","set.mod2desc"]report"DDD"+ print.type // 

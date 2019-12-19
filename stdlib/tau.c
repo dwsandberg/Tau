@@ -390,95 +390,52 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
        exit(EXIT_FAILURE);
     }
     
-      BT (*  getwordbase)(processinfo PD,BT fileresult);
-    
-         getwordbase= dlsym(RTLD_DEFAULT,"getwordbaseZbasewordsZfileresult");
-    if (!getwordbase){
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }
-       staticencodings[1]=neweinfo(&sharedspace);
-     //  staticencodings[1]->hashtable=    getwordbase(&sharedspace,getfileZbuiltinZUTF8(&sharedspace,
-      // (BT)"1234567812345678wordbase400.data"));  
-     // fprintf( stderr, "nowords1 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);
-}
+         staticencodings[1]=neweinfo(&sharedspace);
+ }
 
-  BT (* relocateoffset)(processinfo PD,BT *) = dlsym(RTLD_DEFAULT, "relocateoffsetZreconstructZintzseq");
+        
+       BT (* relocateoffset)(processinfo PD,BT *) = dlsym(RTLD_DEFAULT, "relocateoffsetZreconstructZintzseq");
    if (!relocateoffset) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
-    }      else
+    }      
       relocateoffset(&sharedspace,consts);
         BT wdrepseq= ((BT *) libdesc)[1];
-       BT words2=((BT *)wdrepseq)[1];
-       fprintf(stderr,"nowords2 %lld\n" ,words2);
-       
-         BT (* addwords)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, "addZintzseqzencodingZTzencodingstateZTzencodingrepzseq");
+       int  nowords =((BT *)wdrepseq)[1];
+    
+      fprintf(stderr,"start addwords\n");
+             BT (* addwords)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, "addZintzseqzencodingZTzencodingstateZTzencodingrepzseq");
    if (!addwords) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
         exit(EXIT_FAILURE);
     }  
-      fprintf(stderr,"start addwords\n");
+
      staticencodings[1]->hashtable=addwords(&sharedspace,staticencodings[1]->hashtable,wdrepseq); 
      fprintf( stderr, "nowords3 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);   
     fprintf(stderr,"finish addwords\n");
 
-   BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
-   if (!relocate) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }    
-     
-   BT (* encodeword)(struct pinfo *,BT *) = dlsym(RTLD_DEFAULT, "encodewordZstdlibZintzseq");
-   if (!encodeword) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }  
-
- int nowords=wordlist[3];
- int j = 4;
- int i,k;
+      
+  int i,k;
   words[0]=0;
   words[1]=nowords;
    fprintf(stderr,"nowords %d\n",nowords);
  for ( k=0;k<nowords;k++) {
-  int wordlength=wordlist[j+1];
-  //  fprintf(stderr,"%d:",k+1);
-  // for(i=0;i<wordlength;i++) {  fprintf(stderr,"%c",(char)wordlist[i+j+2]);}
-   words[k+2]=encodeword(&sharedspace,(wordlist+j) );
-  j=j+2+wordlength;
-   // fprintf(stderr,"\n");
+   BT * encodingrep=(BT *)(((BT *)wdrepseq)[2+k]);
+   words[k+2]=encodingrep[0];
   }
    fprintf(stderr,"relocating const\n");
-  relocate(&sharedspace, words,consts);
+     BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
+   if (!relocate) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }    
+
+  relocate(&sharedspace, words,consts); 
   
            fprintf( stderr, "nowords5 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);   
        
   
-  if ( libname[0] =='Q')
-    { 
-      BT (* erecordproc)(struct pinfo *)  = dlsym(RTLD_DEFAULT,libname+1);
-   if (erecordproc) { 
-       fprintf(stderr,"loading encoding\n");
-      int i,len = elementlist[1];
-      BT erec = erecordproc(&sharedspace);
-       fprintf(stderr,"start build list %d\n",len);
-      for(i=2; i < len+2; i++){
-         BT ele = elementlist[i];
-        // fprintf(stderr," %d %lld %lld\n",i,ele,erec);
-         encodeZbuiltinZTZTzerecord(&sharedspace,ele,erec);
-      }
-       fprintf(stderr,"finish build list\n");
-    } else
-         fprintf(stderr,"[%s] Unable to get symbol for erec: library is not encoding %s\n",__FILE__, dlerror());
- 
-    }
-  // for(i=0;i < consts[1]+2; i++) {   fprintf(stderr,"%lld: %lld %llx \n",  (BT)( consts+i) ,consts[i],consts[i]);}
-  //  fprintf(stderr,"HI2\n");
-  
- //for ( k=0;k<nowords;k++)  fprintf(stderr,"KK %d %lld\n",k,words[2+k]);
- //  fprintf(stderr,"HHH %s %d %d %lld\n",libname,nowords,j,wordlist[1]+2);
-    { int i =loaded[1]++;
+     { int i =loaded[1]++;
       char name[100];
      struct stat sbuf;
     sprintf(name,"%s.dylib",libname);

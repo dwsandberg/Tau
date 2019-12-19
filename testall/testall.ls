@@ -39,7 +39,7 @@ use testencoding
 
 Function testall seq.word "hello"
 +
- test5 + test11 +   test11a +     testencoding +   check([ print(sqrt.2.0, 3)="1.414", 
+ // test5 + // test11 +   test11a +   //  testencoding + //  check([ print(sqrt.2.0, 3)="1.414", 
  print(int2real.3, 2)="3.00", 
  intpart.3.1 = 3, 
  print(2.0 / 3.0, 3)="0.667", 

@@ -5,11 +5,11 @@ Module stdlib
 Library stdlib UTF8 altgen bitpackedseq bits blockseq 
 codegen codetemplates deepcopy fileio format graph groupparagraphs   internalbc  encoding   ipair
  libscope llvm  oseq  packedseq pass2 persistant persistantseq prims process real  reconstruct seq set stack stacktrace textio  tree    
- cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2 opt2 basewords
+ cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2 opt2  
   uses 
   exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real encoding ipair set graph textio blockseq packedseq
  deepcopy tree fileio pass2 stack newimp2 persistant persistantseq  llvm libscope internalbc format bits  newsymbol
-   prims cvttoinst libdescfuncnew groupparagraphs basewords
+   prims cvttoinst libdescfuncnew groupparagraphs  
  
 use UTF8
 
@@ -341,7 +341,7 @@ Function alphasort(a:seq.seq.word)seq.seq.word
 process stack set  packedseq format groupparagraphs   dict  bitpackedseq
 exclude stdlib seq bits
 
-* usegraph include basewords main2 other libscope display constant codegen convert xxhash
+* usegraph include  main2 other libscope display constant codegen convert xxhash
 altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs 
 etype codetemplates core sid pretty pass2 persistant libdesc passcommon main parts llvm reconstruct 
 reconstructseq persistantseq opt2
