@@ -331,22 +331,8 @@ Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
 Function alphasort(a:seq.seq.word)seq.seq.word 
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
   @(+, towordseq, empty:seq.seq.word, sort.b)
-  
-* usegraph include stdlib xxhash deepcopy encoding oseq bits seq stacktrace  textio
 
+* usegraph include real oseq textio UTF8 prims stacktrace libscope tree seq blockseq graph ipair encoding process stack set oseq packedseq format groupparagraphs fileio
 
-
-
-* usegraph include real oseq  UTF8 prims  libscope tree blockseq graph ipair fileio
-process stack set  packedseq format groupparagraphs   dict  bitpackedseq
-exclude stdlib seq bits
-
-* usegraph include basewords main2 other libscope display constant codegen convert xxhash
-altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs 
-etype codetemplates core sid pretty pass2 persistant libdesc passcommon main parts llvm reconstruct 
-reconstructseq persistantseq opt2
-newsymbol newparse libdescfuncnew internalbc intercode cvttoinst codegen
-exclude seq set oseq stdlib bits tree graph UTF8 stack stacktrace real process libscope ipair deepcopy
-bitpackedseq packedseq fileio blockseq textio encoding
-   
+* usegraph include main2 other libscope display constant codegen convert altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs etype codetemplates core sid pretty pass2 persistant libdesc passcommon main parts llvm reconstruct exclude seq set oseq stdlib tree graph UTF8 stack stacktrace real process libscope ipair
 

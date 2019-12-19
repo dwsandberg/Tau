@@ -49,11 +49,13 @@ function index(a:xx.encodingrep.seq.int,i:int)   encodingrep.seq.int
   encodingrep((data.a)_(3 * i),s,(data.a)_(3 * i +2))
 
 Function createbasewords seq.word  
-  let l=all.getinstance.wordencoding
+  let l=@(+,cleanup,empty:seq.encodingrep.seq.int, all.getinstance.wordencoding)
   let i=createbase("wordbase.data",l)
-   let x = all.getwordbase(getfile2("wordbase.data"))
+   let x = all.getwordbase
   if l =x  then "OK" else "DIFF"
     
+function cleanup(a:encodingrep.seq.int) encodingrep.seq.int
+  if code.a < 2000 then encodingrep(code.a,data.a,(randomint(1)_1) ) else a
   
  
    
@@ -63,8 +65,12 @@ let  b=data.add(place(empty:seq.int,0,empty:seq.int),l)
  
 
 Function getwordbase(g:fileresult) encodingstate.seq.int
-        add(getinstance.wordencoding,newxx(data.g,encodingrep(0,[0],0)))
-        
+reconstruct(newxx(data.g,encodingrep(0,[0],0)))
+ 
+Function getwordbase encodingstate.seq.int
+let g=getfile2("wordbase.data")
+   reconstruct(newxx(data.g,encodingrep(0,[0],0)))
+  
 
 module reconstructseq.T
   
@@ -87,5 +93,7 @@ Function_(s:xx.T, i:int)T  index(s,i)
   toseq.xx(data_2, data,a) 
 
     
- 
+  
+  
+
 
