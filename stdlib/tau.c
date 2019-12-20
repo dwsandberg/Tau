@@ -1012,7 +1012,7 @@ BT  tobyteseq ( processinfo PD,char *str) {
 
 BT getmachineinfoZbuiltin(processinfo PD) 
 {  BT a = myalloc(PD,2);
-   IDXUC(a,0)=tobyteseq(PD,"x86_64-apple-macosx10.12.0");
+   IDXUC(a,0)=tobyteseq(PD,"x86_64-apple-macosx10.15.0");
    IDXUC(a,1)=tobyteseq(PD,"e-m:o-i64:64-f80:128-n8:16:32:64-S128");
    return a;
  }

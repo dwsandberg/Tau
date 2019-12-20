@@ -66,6 +66,16 @@ use encoding.seq.int
 use persistantseq.encodingrep.seq.int
 
 
+The linklists2 type contains a seq of integers that represents the memory.Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq. One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
+
+type linklists2 is record a:seq.int, offsetthread:int
+
+Function createlinkedlists linklists2 linklists2(empty:seq.int, 0)
+
+
+Function linklists2(a:seq.int,   offsetthread:int )linklists2 export
+  
+
 
 type word3encoding is encoding word3
 
@@ -83,22 +93,17 @@ The linklists2 type contains a seq of integers that represents the memory.Any me
 
 Function a(linklists2)seq.int export
 
-Function wordthread(linklists2)int export
 
 Function offsetthread(linklists2)int export
 
-Function wordseqthread(linklists2)int export
-
-Function linklists2(a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int)linklists2 export
 
 Function initializer(conststypex:llvmtype, data:linklists2)int 
-assert wordthread.data=0 &and wordseqthread.data=0 report "wordthread or data thread is not zero"
  C(conststypex, [ AGGREGATE, 
  C64.0, 
  C64(length.a.data + 3), 
- C64.wordthread.data, 
+ C64.0, 
  C64.offsetthread.data, 
- C64.wordseqthread.data]+ a.data)+ 1
+ C64.0]+ a.data)+ 1
 
 type word3 is record toword:word, index:int
 
@@ -207,15 +212,13 @@ function getindex(f:trackflds, t:tree.seq.word)trackflds
   trackflds(value.k, flds.f + flddesc(index.k,"CRECORD"_1), 0)
 
 Function buildtheobject(objectstart:int, l:linklists2, d:flddesc)linklists2 
- FORCEINLINE.let typ = kind.d 
- assert typ &ne "WORD"_1 report "no longer expection word"
-  let newoffsetthread = if typ ="CRECORD"_1 then place.l else offsetthread.l 
-  linklists2(a.l + if typ ="LIT"_1 
-   then index.d 
-   else if typ ="WORD"_1 
-   then C64.packit(wordthread.l, index.d)
-   else C64.packit(offsetthread.l, index.d), if typ ="WORD"_1 then place.l else wordthread.l, newoffsetthread, wordseqthread.l)
-
+ FORCEINLINE.
+    if  kind.d ="LIT"_1 then 
+     linklists2(a.l+index.d, offsetthread.l )
+   else 
+    let newoffsetthread = if  kind.d ="CRECORD"_1 then place.l else offsetthread.l 
+     linklists2(a.l + C64.packit(offsetthread.l, index.d), newoffsetthread)
+  
 type trackele is record l:linklists2, places:seq.int
 
 function l(trackele)linklists2 export
@@ -227,7 +230,7 @@ function trackele(l:linklists2, places:seq.int)trackele export
 function addrecord(l:linklists2, s:mytype)ipair.linklists2 addwordseq(l, towords.s)
 
 Function addoffset(l:linklists2, index:int)linklists2 
- linklists2(a.l + C64.packit(offsetthread.l, index), wordthread.l, place.l, wordseqthread.l)
+ linklists2(a.l + C64.packit(offsetthread.l, index),  place.l)
 
 function addrecord(l1:linklists2, sym:libsym)ipair.linklists2 
  let a = addwordseq(l1, returntype.sym)
@@ -257,22 +260,21 @@ function addrecord(lin:linklists2, modx:libmod)ipair.linklists2
   let l5 = l + toint.parameterized.modx + modname.modx + a + b 
   ipair(place.l, l5)
 
-Function +(l:linklists2, i:int)linklists2 linklists2(a.l + C64.i, wordthread.l, offsetthread.l, wordseqthread.l)
+Function +(l:linklists2, i:int)linklists2 linklists2(a.l + C64.i,  offsetthread.l)
 
 Function +(l:linklists2, w:word)linklists2 
   let discard=word33.w
      l+hash.w 
-     
  
 Function +(l:linklists2, b:ipair.linklists2)linklists2 
- linklists2(a.l + C64.packit(offsetthread.l, index.b), wordthread.l, place.l, wordseqthread.l)
+ linklists2(a.l + C64.packit(offsetthread.l, index.b),  place.l)
 
 Function addwordseq(t:linklists2, a:seq.word)ipair.linklists2
   let discard= @(+,word33,0,a)
    addintseq(t,  @(+,    hash,empty:seq.int,a)) 
 
 Function addintseq(t:linklists2, s:seq.int)ipair.linklists2 
- ipair(place.t, linklists2(a.t + @(+, C64, [ C64.0, C64.length.s], s), wordthread.t, offsetthread.t, wordseqthread.t))
+ ipair(place.t, linklists2(a.t + @(+, C64, [ C64.0, C64.length.s], s), offsetthread.t))
 
 
 function cast2int(s:seq.int)int builtin.NOOP
