@@ -167,15 +167,9 @@ Function buildtemplates(p:temppair, fullinst:seq.word)temppair
      let r = match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1, 0)
      temppair(s + r, value.tt)
     else if inst ="WORD"_1 
-    then let aa = C(ptr.i64, [ CONSTGEP, 
-     typ.wordstype, 
-     typ.ptr.wordstype, 
-     C."words", 
-     typ.i32, 
-     C32.0, 
-     typ.i64, 
-     C64(word33.instarg + 1)])
-     temppair(s + match5(fullinst, 1, getparts.LOAD(1, aa, typ.i64, align8, 0),"TEMPLATE"_1, 0), lastconsts)
+    then 
+        let discard=registerword.instarg 
+        temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.hash(instarg)), lastconsts)
     else let noargs = toint.instarg 
     let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
     temppair(s + match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs), lastconsts)

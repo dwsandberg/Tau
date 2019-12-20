@@ -394,66 +394,32 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
  }
 
         
-       BT (* relocateoffset)(processinfo PD,BT *) = dlsym(RTLD_DEFAULT, "relocateoffsetZreconstructZintzseq");
-   if (!relocateoffset) {
+BT (* relocateoffset)(processinfo PD,BT *) = dlsym(RTLD_DEFAULT, "relocateoffsetZreconstructZintzseq");
+if (!relocateoffset) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
-    }      
-      relocateoffset(&sharedspace,consts);
-        BT wdrepseq= ((BT *) libdesc)[1];
-   //    int  nowords =((BT *)wdrepseq)[1];
-    
-      fprintf(stderr,"start addwords\n");
-             BT (* addwords)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, "addZintzseqzencodingZTzencodingstateZTzencodingrepzseq");
+}      
+relocateoffset(&sharedspace,consts);
+     
+BT (* addwords)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, "addZintzseqzencodingZTzencodingstateZTzencodingrepzseq");
    if (!addwords) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
         exit(EXIT_FAILURE);
     }  
 
-  /*   staticencodings[1]->hashtable=addwords(&sharedspace,staticencodings[1]->hashtable,wdrepseq); 
-     fprintf( stderr, "nowords3 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);   
-    fprintf(stderr,"finish addwords\n");
-    
-    */
-
-   BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
-   if (!relocate) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }    
-   BT (* encodeword)(struct pinfo *,BT *) = dlsym(RTLD_DEFAULT, "encodewordZstdlibZintzseq");
-   if (!encodeword) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }    
-
- int nowords=wordlist[3];
- int j = 4;
- int i,k;
-  words[0]=0;
-  words[1]=nowords;
-   fprintf(stderr,"nowords %d\n",nowords);
- for ( k=0;k<nowords;k++) {
-  int wordlength=wordlist[j+1];
-  //  fprintf(stderr,"%d:",k+1);
-  // for(i=0;i<wordlength;i++) {  fprintf(stderr,"%c",(char)wordlist[i+j+2]);}
-   words[k+2]=encodeword(&sharedspace,(wordlist+j) );
-  j=j+2+wordlength;
-   // fprintf(stderr,"\n");
-  }
-   fprintf(stderr,"relocating const\n");
-  relocate(&sharedspace, words,consts);
-  
-           fprintf( stderr, "nowords5 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);   
-       
-  
+BT wdrepseq= ((BT *) libdesc)[1];
+fprintf( stderr, "nowords %lld \n",  ((BT *)wdrepseq)[1]);   
+staticencodings[1]->hashtable=addwords(&sharedspace,staticencodings[1]->hashtable,wdrepseq); 
+fprintf( stderr, "nowords3 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);          
+ 
+ 
+ // register library 
      { int i =loaded[1]++;
       char name[100];
      struct stat sbuf;
     sprintf(name,"%s.dylib",libname);
      stat(name, &sbuf);
-    //   fprintf(stderr,"relocating libdesc\n");
-    loaded[i+2]= libdesc; //relocate(&sharedspace, words,libdesc);
+    loaded[i+2]= libdesc; 
     ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
     strcpy(libnames[i+2],libname);
     }
@@ -615,16 +581,8 @@ BT abortedZbuiltinZTzprocess(processinfo PD,BT pin){
     return (BT)( q->kind);
 }
 
-
-     
-
-
-
-BT libsZbuiltin()  // returns list of loaded libraries
+BT loadedlibsZbuiltin()  // returns list of loaded libraries
  {return (BT)loaded;}   
-
-
-
 
 BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
   static BT infoarray[30]={0};

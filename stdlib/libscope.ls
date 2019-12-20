@@ -72,9 +72,7 @@ Function instruction(libsym)seq.word export
 
 Function fsig(libsym)word export
 
-Function loadedlibs seq.liblib libs
-
-function libs seq.liblib builtin.usemangle
+Function loadedlibs seq.liblib builtin.usemangle
 
 type mytype is record towords:seq.word
 

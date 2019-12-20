@@ -63,11 +63,8 @@ function addcode(code:int, hashsize:int,x:seq.encodingrep.T,e:encodingrep.T) seq
         if  code.e=code  &or not (code mod hashsize=code.e mod hashsize ) then x
        else x+e 
 
- 
-
 Function lookup(data:T, h:encodingstate.T)int 
  @(max, ele.data, 0, encodetable(h)_(hash.data mod length.encodetable.h + 1))
-
 
 
 Function add(h:encodingstate.T, i:int, v:T)encodingstate.T  add(h,v )
@@ -124,7 +121,6 @@ Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T
  elecount.h + 1,tnew,replace(decodetable.h, codeindex,l2)
  ,all.h+p)
  
- 
 
 
  
@@ -146,7 +142,11 @@ Function orderadded(erec:erecord.T)seq.T toseq.getinstance.erec
 
 
 Function decode(t:encoding.T, erec:erecord.T)T
-  decode(getinstance.erec,valueofencoding.t)_1
+  let inst=getinstance.erec
+  let a =
+  decode(inst,valueofencoding.t)
+  assert length.a=1 report "no such encoding"+toword.valueofencoding.t+if valueofencoding.t in @(+,code,empty:seq.int,all.inst) then "F" else "NONE"
+  a_1
 
  Function valueofencoding(encoding.T)int builtin.NOOP 
  
@@ -154,7 +154,7 @@ Function decode(t:encoding.T, erec:erecord.T)T
  
  Function ?(a:encoding.T,b:encoding.T) ordering  valueofencoding(a) ? valueofencoding(b)
  
-  Function hash(a:encoding.T ) int  hash.valueofencoding.a
+  Function hash(a:encoding.T ) int  valueofencoding.a
 
  
          

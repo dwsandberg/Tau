@@ -89,3 +89,7 @@ Function wordseqthread(linklists2)int export
 
 Function linklists2(a:seq.int, wordthread:int, offsetthread:int, wordseqthread:int)linklists2 export
 
+Function linklists2(a:seq.int, wordthread:int)linklists2  
+linklists2(empty:seq.int, 0,0,0)
+
+
