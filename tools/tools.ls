@@ -20,9 +20,9 @@ Module tools
 
 /run tools  callgraphtest 
 
-run tools stdlibdoc
+/run tools stdlibdoc
 
-/run doc createdoc
+run doc createdoc
 
 /run tools testhtmlcode 
 

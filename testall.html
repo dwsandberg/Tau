@@ -1,197 +1,8 @@
 <meta charset ="UTF-8"> <style type ="text/css"> <!--span.avoidwrap { display:inline-block ; } span.keyword { color:blue ; } span.keywords { color:blue ; } span.literal { color:red ; } span.comment { color:green ; } span.block { padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ; } form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style> 
- <h1> Source code for Library testall </h1> <a href ="#testall"> testall </a> <a href ="#testencoding"> testencoding </a> <a href ="#test20"> test20 </a> <a href ="#test2"> test2 </a> <a href ="#test5"> test5 </a> <a href ="#tree2"> tree2 </a> <a href ="#test11"> test11 </a> <a href ="#test11a"> test11a </a> <a href ="#myseq"> myseq </a> <a href ="#randomphrase"> randomphrase </a> <a href ="#checking"> checking </a> <a href ="#testgraph"> testgraph </a> <a href ="#point2d"> point2d </a> <a href ="#point"> point </a> <hr id ="testall"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> testall </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> /run randomphrase randomphrase </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> run testall testall </p> <h2> Use graph</h2> 
- <svg height = 954 width = 463 > <defs> <marker id ="markerArrow2"markerWidth ="13"markerHeight ="13"refX ="2"refY ="7"orient ="auto"> <path d ="M8, 13 L8, 2 L2, 7 L8, 13"style ="fill:#000000 ;"/> </marker> <marker id ="markerArrow"markerWidth ="13"markerHeight ="13"refX ="8"refY ="7"orient ="auto"> <path d ="M2, 2 L2, 13 L8, 7 L2, 2"style ="fill:#000000 ;"/> </marker> </defs> <text id ="real"x ="275"y ="618"fill ="black"onclick ="javascript:cmd5(this)"> real </text> 
- <path d ="M 171 362 L 275 618"stroke ="black"fill ="none"/> 
- 
- <path d ="M 131 714 L 275 618"stroke ="black"fill ="none"/> 
- 
- <text id ="UTF8"x ="275"y ="74"fill ="black"onclick ="javascript:cmd5(this)"> UTF8 </text> 
- <path d ="M 171 362 L 275 74"stroke ="black"fill ="none"/> 
- 
- <path d ="M 79 890 L 131 858"stroke ="black"fill ="none"/> 
- 
- <path d ="M 66 954 L 131 954"stroke ="black"fill ="none"/> 
- 
- <path d ="M 58 442 L 131 714"stroke ="black"fill ="none"/> 
- 
- <text id ="fileresult"x ="275"y ="42"fill ="black"onclick ="javascript:cmd5(this)"> fileresult </text> 
- <path d ="M 171 90 L 275 42"stroke ="black"fill ="none"/> 
- 
- <path d ="M 171 362 L 275 42"stroke ="black"fill ="none"/> 
- 
- <path d ="M 131 954 L 275 954"stroke ="black"fill ="none"/> 
- 
- <path d ="M 131 922 L 275 922"stroke ="black"fill ="none"/> 
- 
- <text id ="pretty2"x ="275"y ="490"fill ="black"onclick ="javascript:cmd5(this)"> pretty2 </text> 
- <path d ="M 185 586 L 275 490"stroke ="black"fill ="none"/> 
- 
- <text id ="parse"x ="275"y ="522"fill ="black"onclick ="javascript:cmd5(this)"> parse </text> 
- <path d ="M 185 586 L 275 522"stroke ="black"fill ="none"/> 
- 
- <text id ="testall"x ="10"y ="442"fill ="black"onclick ="javascript:cmd5(this)"> testall </text> 
- <path d ="M 79 890 L 131 890"stroke ="black"fill ="none"/> 
- 
- <text id ="test2"x ="131"y ="90"fill ="black"onclick ="javascript:cmd5(this)"> test2 </text> 
- <path d ="M 58 442 L 131 90"stroke ="black"fill ="none"/> 
- 
- <path d ="M 58 442 L 131 746"stroke ="black"fill ="none"/> 
- 
- <path d ="M 58 442 L 131 826"stroke ="black"fill ="none"/> 
- 
- <path d ="M 79 890 L 131 922"stroke ="black"fill ="none"/> 
- 
- <path d ="M 171 90 L 275 10"stroke ="black"fill ="none"/> 
- 
- <path d ="M 171 362 L 275 298"stroke ="black"fill ="none"/> 
- 
- <path d ="M 178 506 L 275 362"stroke ="black"fill ="none"/> 
- 
- <path d ="M 185 586 L 275 586"stroke ="black"fill ="none"/> 
- 
- <path d ="M 222 618 L 275 746"stroke ="black"fill ="none"/> 
- 
- <text id ="point2d"x ="275"y ="106"fill ="black"onclick ="javascript:cmd5(this)"> point2d </text> 
- <path d ="M 171 362 L 275 106"stroke ="black"fill ="none"/> 
- 
- <text id ="test5"x ="131"y ="362"fill ="black"onclick ="javascript:cmd5(this)"> test5 </text> 
- <path d ="M 58 442 L 131 362"stroke ="black"fill ="none"/> 
- 
- <text id ="test11"x ="131"y ="506"fill ="black"onclick ="javascript:cmd5(this)"> test11 </text> 
- <path d ="M 58 442 L 131 506"stroke ="black"fill ="none"/> 
- 
- <text id ="test11a"x ="131"y ="586"fill ="black"onclick ="javascript:cmd5(this)"> test11a </text> 
- <path d ="M 58 442 L 131 586"stroke ="black"fill ="none"/> 
- 
- <text id ="randomphrase"x ="275"y ="138"fill ="black"onclick ="javascript:cmd5(this)"> randomphrase </text> 
- <path d ="M 171 362 L 275 138"stroke ="black"fill ="none"/> 
- 
- <text id ="checking"x ="275"y ="682"fill ="black"onclick ="javascript:cmd5(this)"> checking </text> 
- <path d ="M 171 362 L 275 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 222 618 L 275 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 131 746 L 275 682"stroke ="black"fill ="none"/> 
- 
- <text id ="testgraph"x ="10"y ="890"fill ="black"onclick ="javascript:cmd5(this)"> testgraph </text> 
- <text id ="testencoding"x ="131"y ="618"fill ="black"onclick ="javascript:cmd5(this)"> testencoding </text> 
- <path d ="M 58 442 L 131 618"stroke ="black"fill ="none"/> 
- 
- <text id ="test20"x ="131"y ="650"fill ="black"onclick ="javascript:cmd5(this)"> test20 </text> 
- <path d ="M 58 442 L 131 650"stroke ="black"fill ="none"/> 
- 
- <text id ="options.T"x ="275"y ="826"fill ="black"onclick ="javascript:cmd5(this)"> options.T </text> 
- <path d ="M 171 362 L 275 826"stroke ="black"fill ="none"/> 
- 
- <path d ="M 131 826 L 275 826"stroke ="black"fill ="none"/> 
- 
- <text id ="seq.T"x ="428"y ="682"fill ="black"onclick ="javascript:cmd5(this)"> seq.T </text> 
- <path d ="M 275 10 L 428 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 334 106 L 428 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 340 202 L 428 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 275 298 L 428 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 275 362 L 428 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 275 586 L 428 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 343 682 L 428 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 275 746 L 428 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 275 922 L 428 682"stroke ="black"fill ="none"/> 
- 
- <path d ="M 275 954 L 428 682"stroke ="black"fill ="none"/> 
- 
- <text id ="process.T"x ="275"y ="426"fill ="black"onclick ="javascript:cmd5(this)"> process.T </text> 
- <path d ="M 171 362 L 275 426"stroke ="black"fill ="none"/> 
- 
- <path d ="M 185 586 L 275 426"stroke ="black"fill ="none"/> 
- 
- <path d ="M 222 618 L 275 426"stroke ="black"fill ="none"/> 
- 
- <text id ="oseq.T"x ="275"y ="170"fill ="black"onclick ="javascript:cmd5(this)"> oseq.T </text> 
- <path d ="M 171 90 L 275 170"stroke ="black"fill ="none"/> 
- 
- <path d ="M 178 506 L 275 170"stroke ="black"fill ="none"/> 
- 
- <text id ="myseq.T"x ="275"y ="202"fill ="black"onclick ="javascript:cmd5(this)"> myseq.T </text> 
- <path d ="M 171 362 L 275 202"stroke ="black"fill ="none"/> 
- 
- <text id ="invertedseq.T"x ="275"y ="234"fill ="black"onclick ="javascript:cmd5(this)"> invertedseq.T </text> 
- <path d ="M 171 362 L 275 234"stroke ="black"fill ="none"/> 
- 
- <text id ="ipair.T"x ="275"y ="266"fill ="black"onclick ="javascript:cmd5(this)"> ipair.T </text> 
- <path d ="M 171 362 L 275 266"stroke ="black"fill ="none"/> 
- 
- <text id ="set.T"x ="275"y ="858"fill ="black"onclick ="javascript:cmd5(this)"> set.T </text> 
- <path d ="M 171 362 L 275 858"stroke ="black"fill ="none"/> 
- 
- <path d ="M 131 858 L 275 858"stroke ="black"fill ="none"/> 
- 
- <text id ="graph.T"x ="275"y ="890"fill ="black"onclick ="javascript:cmd5(this)"> graph.T </text> 
- <path d ="M 171 362 L 275 890"stroke ="black"fill ="none"/> 
- 
- <path d ="M 131 890 L 275 890"stroke ="black"fill ="none"/> 
- 
- <text id ="tree2.T"x ="10"y ="954"fill ="black"onclick ="javascript:cmd5(this)"> tree2.T </text> 
- <text id ="point.T"x ="275"y ="330"fill ="black"onclick ="javascript:cmd5(this)"> point.T </text> 
- <path d ="M 178 506 L 275 330"stroke ="black"fill ="none"/> 
- 
- <text id ="tree.T"x ="275"y ="554"fill ="black"onclick ="javascript:cmd5(this)"> tree.T </text> 
- <path d ="M 185 586 L 275 554"stroke ="black"fill ="none"/> 
- 
- Your browser does not support inline SVG.</svg> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> test2 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> test11 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> test11a </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> test5 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> test20 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> real </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> checking </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> options.seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> testencoding </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> testall seq.word 
- <br> test5 + test11 + test11a + testencoding + check([ print(sqrt.2.0, 3)= <span class = literal >"1.414"</span> , 
- <br> print(int2real.3, 2)= <span class = literal >"3.00"</span> , 
- <br> intpart.3.1 = 3, 
- <br> print(2.0 / 3.0, 3)= <span class = literal >"0.667"</span> , 
- <br> 2.0 + 3.0 = 5.0, 
- <br> 2.0 * 3.0 = 6.0, 
- <br> print(2.3 - 1.1, 5)= <span class = literal >"1.20000"</span> , 
- <br> print(cos.0.4, 5)= <span class = literal >"0.92106"</span> , 
- <br> print(sin.0.4, 5)= <span class = literal >"0.38942"</span> , 
- <br> 1.0 ? 2.0 = LT, 
- <br> -1.9 ? -3.0 = GT, 
- <br> 3.00 ? 3.000 = EQ, 
- <br> print(tan(pi / 4.0), 5)= <span class = literal >"1.00000"</span> , 
- <br> print(arcsin.sin.0.5, 5)= <span class = literal >"0.50000"</span> , 
- <br> print(arccos.cos.0.5, 5)= <span class = literal >"0.50000"</span> , 
- <br> test20], <span class = literal >"real"</span> )+ test2 </span> </p> <hr> <hr id ="testencoding"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> testencoding </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> checking </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.boolean </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.testrecord </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(a:testrecord, b:testrecord)boolean key.a = key.b </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(a:testrecord)seq.word [ toword.key.a]+ body.a </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> hash(a:testrecord)int key.a </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> mydata is <span class = keyword> Encoding </span> testrecord </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> mydata2 is <span class = keyword> Encoding </span> testrecord </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> mydata3 is <span class = keyword> encoding </span> testrecord </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> add(z:erecord.testrecord, b:seq.word)int <span class = block> <span class = keyword> let </span> d = mapping.z 
- <br> encoding.encode(testrecord(length.d + 1, b), z)</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> testrecord is <span class = keyword> record </span> key:int, body:seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> process.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> testencoding seq.word <span class = block> // <span class = comment > not sure how should behavior of temp encoding and processes should interact. </span> // 
- <br> // <span class = comment > must export this module so encoding type can be figured out </span> // 
+ <h1> Source code for Library testall </h1> <a href ="#point2d"> point2d </a> <a href ="#test20"> test20 </a> <a href ="#testencoding"> testencoding </a> <a href ="#testgraph"> testgraph </a> <a href ="#test5"> test5 </a> <a href ="#randomphrase"> randomphrase </a> <a href ="#test11a"> test11a </a> <a href ="#checking"> checking </a> <a href ="#testall"> testall </a> <a href ="#test11"> test11 </a> <a href ="#myseq"> myseq </a> <a href ="#tree2"> tree2 </a> <a href ="#point"> point </a> <span class = block> <hr id ="point2d"> <span class = keyword> module </span> point2d </span> <span class = block> The following paragraph starts a type definition which is immediately followed by a paragraph that defines the compoents of the type.The struct paragraph must immediate follow the type paragraph but does not need to be present as a type is simply a set of functions.</span> <span class = block> <span class = keyword> use </span> seq.word </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> type point2d is record x:int, y:int </span> <span class = block> The follow paragraph that begins with use allows reference to functions defined in another type.In this case, the standard build it funcitons.</span> <span class = block> The follow three paragraphs all access to the function automaticaly defined by the struct defintion in other types that “use” this package.If these paragraphs are omitted the functions would not be available outside of this type.</span> <span class = block> <span class = keyword> Function </span> point2d(a:int, b:int)point2d export </span> <span class = block> <span class = keyword> Function </span> y(a:point2d)int export </span> <span class = block> <span class = keyword> Function </span> x(a:point2d)int export </span> <span class = block> The following two paragraphs defines an addition and subtraction operator on points.</span> <span class = block> <span class = keyword> Function </span> +(a:point2d, b:point2d)point2d point2d(x.a + x.b, y.a + y.b)</span> <span class = block> <span class = keyword> Function </span>-(a:point2d, b:point2d)point2d point2d(x.a - x.b, y.a - y.b)</span> <span class = block> <span class = keyword> Function </span> print(p:point2d)seq.word 
+ <br> { <span class = literal >"("</span> + toword.x.p + <span class = literal >","</span> + toword.y.p + <span class = literal >")"</span> } </span> <span class = block> The beginning of the next paragraphs ends the point type.</span> <span class = block> <hr id ="test20"> <span class = keyword> module </span> test20 </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> type p is record a:int, b:int, c:int </span> <span class = block> type q is record d:int, e:p, f:int </span> <span class = block> <span class = keyword> Function </span> p(a:int, b:int, c:int)p export </span> <span class = block> <span class = keyword> Function </span> q(a:int, b:p, c:int)q export </span> <span class = block> <span class = keyword> function </span> z q q(1, p(2, 3, 4), 5)</span> <span class = block> <span class = keyword> function </span> f2 seq.int [ d.z, a.e.z, b.e.z, c.e.z, f.z]</span> <span class = block> <span class = keyword> Function </span> test20 boolean f2 = [ 1, 2, 3, 4, 5]</span> <span class = block> <span class = keyword> Function </span> c11 seq.q [ q(4, p(1, 2, 3), 5), q(41, p(11, 21, 31), 51)]</span> <span class = block> <hr id ="testencoding"> <span class = keyword> module </span> testencoding </span> <span class = block> Testing encodings </span> <span class = block> <span class = keyword> use </span> checking </span> <span class = block> <span class = keyword> use </span> encoding.testrecord </span> <span class = block> <span class = keyword> use </span> ipair.linklists2 </span> <span class = block> <span class = keyword> use </span> process.int </span> <span class = block> <span class = keyword> use </span> seq.boolean </span> <span class = block> <span class = keyword> use </span> seq.testrecord </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> <span class = keyword> Function </span> +(i:int, b:int)int export </span> <span class = block> </span> <span class = block> <span class = keyword> function </span> =(a:testrecord, b:testrecord)boolean key.a = key.b </span> <span class = block> <span class = keyword> Function </span> print(a:testrecord)seq.word [ toword.key.a]+ body.a </span> <span class = block> <span class = keyword> function </span> hash(a:testrecord)int key.a </span> <span class = block> type mydata is Encoding testrecord </span> <span class = block> type mydata2 is Encoding testrecord </span> <span class = block> type mydata3 is encoding testrecord </span> <span class = block> type mydata4 is encoding testrecord </span> <span class = block> type mydata5 is Encoding testrecord </span> <span class = block> <span class = keyword> function </span> add(z:erecord.testrecord, b:seq.word)int <span class = block> <span class = keyword> let </span> d = mapping.z 
+ <br> <span class = keyword> let </span> x = encode(testrecord(length.d + 1, b), z)
+ <br> 1 </span> </span> <span class = block> type testrecord is record key:int, body:seq.word </span> <span class = block> <span class = keyword> Function </span> testencoding seq.word <span class = block> // <span class = comment > must export this module so encoding type can be figured out </span> // 
  <br> <span class = keyword> let </span> start = length.mapping.mydata 
  <br> <span class = keyword> let </span> start2 = length.mapping.mydata2 
  <br> <span class = keyword> let </span> start3 = length.mapping.mydata3 
@@ -202,437 +13,143 @@
  <br> <span class = keyword> if </span> aborted.p 
  <br> <span class = keyword> then </span> <span class = literal >"Failed encoding"</span> + message.p 
  <br> <span class = keyword> else </span> <span class = keyword> let </span> plen = result.p 
- <br> <span class = keyword> let </span> status = flush.mydata2 + flush.mydata + flush.mydata3 
+ <br> // <span class = comment > let status = flush.mydata2 + flush.mydata + flush.mydata3 + flush.mydata5 </span> // 
  <br> <span class = keyword> let </span> final = length.mapping.mydata 
  <br> <span class = keyword> let </span> final2 = length.mapping.mydata2 
  <br> <span class = keyword> let </span> final3 = length.mapping.mydata3 
+ <br> <span class = keyword> let </span> final4 = length.mapping.mydata4 
  <br> check([ start3 = 0, 
  <br> start > 0, 
  <br> start2 > 0, 
  <br> final = start + 2, 
  <br> final2 = start2 + 3, 
  <br> final3 = 4, 
- <br> status = <span class = literal >"OK OK Encoding is not persistant."</span> , 
- <br> plen = 4], <span class = literal >"encoding"</span> )</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> process1 int <span class = block> <span class = keyword> let </span> z3 = @(+, add.mydata3, 0, [ <span class = literal >"A"</span> , <span class = literal >"B"</span> , <span class = literal >"C"</span> ])
- <br> length.mapping.mydata3 </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> nextpower(i:int, base:int, start:int)int 
- <br> <span class = keyword> if </span> i > start <span class = keyword> then </span> nextpower(i, base, start * base)<span class = keyword> else </span> start </span> </p> <hr> <hr id ="test20"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> test20 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> p is <span class = keyword> record </span> a:int, b:int, c:int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> q is <span class = keyword> record </span> d:int, e:p, f:int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> p(a:int, b:int, c:int)p export </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> q(a:int, b:p, c:int)q export </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> z q q(1, p(2, 3, 4), 5)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> f2 seq.int [ d.z, a.e.z, b.e.z, c.e.z, f.z]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test20 boolean f2 = [ 1, 2, 3, 4, 5]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> c11 seq.q [ q(4, p(1, 2, 3), 5), q(41, p(11, 21, 31), 51)]</span> </p> <hr> <hr id ="test2"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> test2 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> wordfreq is <span class = keyword> record </span> count:int, w:word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.wordfreq </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> oseq.wordfreq </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> fileresult </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> =(a:wordfreq, b:wordfreq)boolean false </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> count(s:seq.wordfreq, w:word)seq.wordfreq 
- <br> replace(s, encoding.w, wordfreq(count(s_encoding.w)+ 1, w))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(p:wordfreq)seq.word <span class = block> <span class = keyword> if </span> count.p = 0 
- <br> <span class = keyword> then </span> empty:seq.word 
- <br> <span class = keyword> else </span> <span class = literal >"&amp;br the word"</span> + w.p + <span class = literal >"occurs"</span> + toword.count.p + <span class = literal >"times."</span> + EOL </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> removelowcount(mincount:int, p:wordfreq)seq.wordfreq 
- <br> <span class = keyword> if </span> count.p &lt; mincount <span class = keyword> then </span> empty:seq.wordfreq <span class = keyword> else </span> [ p]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq 
- <br> sort.@(+, removelowcount.mincount, empty:seq.wordfreq, @(count, identity, dseq.wordfreq(0, <span class = literal >"A"</span> _1), a))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test2 seq.word @(+, print, empty:seq.word, wordfreq(300, gettext.<span class = literal >"input"</span> ))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> count(s:seq.wordfreq, w:seq.word)seq.wordfreq @(count, identity, s, w)</span> </p> <hr> <hr id ="test5"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> test5 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> point2d </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> myseq.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> UTF8 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> real </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> invertedseq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.ipair.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> ipair.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> checking </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> options.seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test5 seq.word 
- <br> PROFILE.<span class = block> <span class = keyword> let </span> y = [ test501, t502, t503, t504, t505, t506, t507, t508, t509, t510, 
- <br> t511, t512, t513, t514, t515, t516, t517, t518, t519, t520, 
- <br> t521, t522, t523]
- <br> check(y, <span class = literal >"test5"</span> )</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test501 boolean { <span class = literal >"(6, 8)"</span> = print(point2d(2, 3)+ point2d(4, 5))} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(a:seq.int)seq.word 
- <br> { <span class = literal >"["</span> + @(seperator.<span class = literal >","</span> , toword, <span class = literal >""</span> , a)+ <span class = literal >"]"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t502 boolean 
- <br> { <span class = literal >"23.45000"</span> + [ space]+ <span class = literal >"-18.45000"</span> = print(23.45, 5)+ print(5.0 - 23.45, 5)} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t503 boolean { <span class = literal >"[ 2, 3, 4, 5]"</span> = print.[ 2, 3, 4, 5]} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t504 boolean 10 = @(+, *.1, 0, [ 1, 2, 3, 4])</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t505 boolean 24 = @(*, *.1, 1, [ 1, 2, 3, 4])</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t506 boolean [ 1, 2, 3, 4]= @(+, +.empty:seq.int, empty:seq.int, [ 1, 2, 3, 4])</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> showcodes(i:int)seq.word [ toword.i, encodeword.toseqint.UTF8.i]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t507 boolean 
- <br> { <span class = literal >"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 &lt; 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"</span> = @(+, showcodes, <span class = literal >"code glyph"</span> , arithseq(43, 1, 48))} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t508 boolean <span class = block> <span class = keyword> let </span> a = 6 * 6 
- <br> a + a = 72 </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> modr(a:int, b:int)int b mod a + 1 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> incrementcount(s:seq.int, i:int)seq.int replace(s, i, s_i + 1)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(i:ipair.word)seq.word [ toword.index.i]+ <span class = literal >":"</span> + value.i </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t509 boolean <span class = block> <span class = keyword> let </span> s = @(incrementcount, identity, constantseq(100, 0), @(+, modr.100, empty:seq.int, randomseq(3456, 100001)))
- <br> <span class = keyword> let </span> totalcounts = @(+, identity, 0, s)
- <br> length.s = 100 ∧ totalcounts = 100001 </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t510 boolean 
- <br> { <span class = literal >"a b c d e 1 2 3 4 k"</span> = replace(<span class = literal >"a b c d e"</span> + <span class = literal >"1 2 3 4 5"</span> , 10, <span class = literal >"k"</span> _1)} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t511 boolean 
- <br> { <span class = literal >"1 2 k 4 5"</span> = replace(<span class = literal >"1 2 3 4 5"</span> , 3, <span class = literal >"k"</span> _1)} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t512 boolean <span class = block> <span class = keyword> let </span> r = @(+, print, empty:seq.word, toipair.add(add(invertedseq(<span class = literal >"HI"</span> _1), 3, <span class = literal >"HI"</span> _1), ipair(4, <span class = literal >"dI"</span> _1)))
- <br> r in [ <span class = literal >"3:HI 4:dI"</span> , <span class = literal >"4:dI 3:HI"</span> ]</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> testset set.int asset.[ 2, 5, 6, 9, 12, 15, 35, 36]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(a:set.int)seq.word @(+, print, <span class = literal >""</span> , toseq.a)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ?2(a:int, b:int)ordering a / 10 ? b / 10 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> _______________</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Primes </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t513 boolean { <span class = literal >"3 5 7 11 13 17 19 23 29 31 37"</span> = findprimes(3, 40)} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> process.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t514 boolean <span class = block> <span class = keyword> let </span> a = process.countprimes(3, 5000000)
- <br> <span class = keyword> let </span> b = process.countprimes(5000001, 10000000)
- <br> [ 348512, 316066]= [ result.a, result.b]</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> findprimes(start:int, end:int)seq.word 
- <br> @(+, isprime3, <span class = literal >""</span> , arithseq((end - start + 2)/ 2, 2, start))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> countprimes(start:int, end:int)int @(+, isprime4, 0, arithseq((end - start + 2)/ 2, 2, start))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> isprime3(i:int)seq.word 
- <br> <span class = keyword> if </span> isprime.i <span class = keyword> then </span> [ toword.i]<span class = keyword> else </span> <span class = literal >""</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> isprime4(i:int)int <span class = keyword> if </span> isprime.i <span class = keyword> then </span> 1 <span class = keyword> else </span> 0 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> isprime(i:int)boolean <span class = block> <span class = keyword> if </span> i mod 2 = 0 
- <br> <span class = keyword> then </span> i = 2 
- <br> <span class = keyword> else </span> <span class = keyword> let </span> a = intpart.sqrt.int2real.i 
- <br> <span class = keyword> let </span> b =(a + i / a)/ 2 
- <br> subisprime(i, 3, b)</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> subisprime(i:int, f:int, b:int)boolean 
- <br> <span class = keyword> if </span> f > b <span class = keyword> then </span> true <span class = keyword> else </span> <span class = keyword> if </span> i mod f = 0 <span class = keyword> then </span> false <span class = keyword> else </span> subisprime(i, f + 2, b)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> ________________</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t515 boolean <span class = block> <span class = keyword> let </span> s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
- <br> @(+, toword, <span class = literal >""</span> , myseq.toseqint.s)= <span class = literal >"40 50 335 50 336"</span> </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t516 boolean toseq.findelement2(testset, 36)= [ 35, 36]∧ toseq.findelement2(testset, 15)= [ 12, 15]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> isprefex(prefix:seq.word, s:seq.word)boolean subseq(s, 1, length.prefix)= prefix </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> process.seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> fileresult </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> testout(i:int)seq.word [ <span class = literal >"one two three"</span> _i]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t517 boolean 
- <br> isprefex(<span class = literal >"out of bounds"</span> , message.process.testout.0)∧ isprefex(<span class = literal >"out of bounds"</span> , message.process.testout.-10)∧ isprefex(<span class = literal >"out of bounds"</span> , message.process.testout.4)∧ message.process.testout.1 = <span class = literal >"normal exit"</span> ∧ aborted.process.testout.5 ∧ not.aborted.process.testout.2 ∧ result.process.testout.3 = <span class = literal >"three"</span> ∧ message.process.result.process.testout.4 = <span class = literal >"no result of aborted process"</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t518 boolean isprefex(<span class = literal >"invalid digit"</span> , message.process.toint(<span class = literal >"0A"</span> _1))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t519 boolean { <span class = literal >"""()+,-.:; = []^_"</span> = standalonechars } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ttt(c:int)seq.word 
- <br> <span class = keyword> if </span> classify.c = 1 <span class = keyword> then </span> [ encodeword.[ c]]<span class = keyword> else </span> <span class = literal >""</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> standalonechars seq.word @(+, ttt, <span class = literal >""</span> , arithseq(127, 1, 0))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t520 boolean <span class = block> <span class = keyword> let </span> s = message.process.subtest520.merge.<span class = literal >"45t6.3"</span> subseq(s, 1, length.s - 1)= <span class = literal >"unexpected character in real literal"</span> </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> subtest520(t:word)int <span class = block> <span class = keyword> let </span> x = reallit.decode.merge.<span class = literal >"45t6.3"</span> intpart.x </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> randomphrase </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t521 boolean { <span class = literal >"The umber ant ambles the opal nurse"</span> = getphrase.20 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> ____________</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> graphs </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arc.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arc.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n1 word { <span class = literal >"1"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n2 word { <span class = literal >"2"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n3 word { <span class = literal >"3"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n4 word { <span class = literal >"4"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n5 word { <span class = literal >"5"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n6 word { <span class = literal >"6"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n7 word { <span class = literal >"7"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n8 word { <span class = literal >"8"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t522 boolean <span class = block> <span class = keyword> let </span> g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6), arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
- <br> <span class = keyword> let </span> r = print.g + <span class = literal >"transversal"</span> + sinksfirst.g + <span class = literal >"Suc"</span> + toseq.successors(g, n2)+ <span class = literal >"sinks"</span> + sinks(g, asset.[ n4], n2)
- <br> r = <span class = literal >"GRAPH:(1 2)(1 4)(2 4)(3 2)(5 1)(5 6)(6 8)(6 7)(7 5)transversal 8 4 2 1 3 Suc 4 sinks 2"</span> </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t523 boolean <span class = block> <span class = keyword> let </span> g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4)]
- <br> <span class = keyword> let </span> closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
- <br> closure = toseq.arcs.transitiveClosure.g </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(g:graph.word)seq.word 
- <br> { <span class = literal >"GRAPH:"</span> + @(+, print, <span class = literal >""</span> , toseq.arcs.g)} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> print(a:arc.word)seq.word { <span class = literal >"("</span> + tail.a + head.a + <span class = literal >")"</span> } </span> </p> <hr> <hr id ="tree2"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> tree2(T)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> tree2 is <span class = keyword> record </span> nodes:seq.treenode.T, subtree:int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> treenode is <span class = keyword> record </span> label:T, nosons:int, nonodes:int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.tree2.T </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.treenode.T </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.T </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> =(T, T)boolean unbound </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> =(a:treenode.T, b:treenode.T)boolean label.a = label.b ∧ nosons.a = nosons.b </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> =(a:tree2.T, b:tree2.T)boolean <span class = block> <span class = keyword> let </span> na = nonodes.a 
- <br> <span class = keyword> let </span> nb = nonodes.b 
- <br> <span class = keyword> if </span> na = nb 
- <br> <span class = keyword> then </span> subseq(nodes.a, subtree.a - na + 1, subtree.a)= subseq(nodes.b, subtree.b - nb + 1, subtree.b)
- <br> <span class = keyword> else </span> false </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> tree2(l:T)tree2.T tree2([ treenode(l, 0, 1)], 1)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> label(t:tree2.T)T label(nodes(t)_subtree.t)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> sons(t:tree2.T)seq.tree2.T level(t, subtree.t, nosons.t)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> tree2(l:T, s:seq.tree2.T)tree2.T <span class = block> <span class = keyword> let </span> n = @(+, intreenodes, empty:seq.treenode.T, s)
- <br> tree2(n + [ treenode(l, length.s, length.n + 1)], length.n + 1)</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> intreenodes(t:tree2.T)seq.treenode.T subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span>_(t:tree2.T, i:int)tree2.T <span class = block> <span class = keyword> assert </span> between(i, 1, nosons.t)<span class = keyword> report </span> <span class = literal >"no such son"</span> + toword.i + toword.nosons.t 
- <br> son(t, subtree.t, nosons.t - i + 1)</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> nosons(t:tree2.T)int nosons(nodes(t)_subtree.t)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> nonodes(t:tree2.T)int nonodes(nodes(t)_subtree.t)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> level(t:tree2.T, i:int, remainingsons:int)seq.tree2.T <span class = block> <span class = keyword> if </span> remainingsons = 0 
- <br> <span class = keyword> then </span> empty:seq.tree2.T 
- <br> <span class = keyword> else </span> level(t, i - nonodes(nodes(t)_(i - 1)), remainingsons - 1)+ [ tree2(nodes.t, i - 1)]</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> son(t:tree2.T, i:int, remainingsons:int)tree2.T <span class = block> <span class = keyword> if </span> remainingsons = 1 
- <br> <span class = keyword> then </span> tree2(nodes.t, i - 1)
- <br> <span class = keyword> else </span> son(t, i - nonodes(nodes(t)_(i - 1)), remainingsons - 1)</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> replace(t:tree2.T, with:T, a:T)tree2.T 
- <br> tree2(@(+, replace(with, a), empty:seq.treenode.T, subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)), nonodes.t)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> replace(replacement:T, match:T, a:treenode.T)treenode.T 
- <br> <span class = keyword> if </span> label.a = match <span class = keyword> then </span> treenode(replacement, nosons.a, nonodes.a)<span class = keyword> else </span> a </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> postorder(a:tree2.T)seq.tree2.T 
- <br> @(+, tree2.nodes.a, empty:seq.tree2.T, arithseq(nonodes.a, 1, subtree.a - nonodes.a + 1))</span> </p> <hr> <hr id ="test11"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> test11 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.boolean </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> oseq.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.ordering </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> point.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> dummyfunction int 3 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t001 boolean true </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> 0-4 = 1-2-3 This expession is suppose to be test t001 but gives invalid digit when compiling.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t002 boolean 2 = 24 / 4 / 3 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> fact(a:int)int <span class = keyword> if </span> a = 1 <span class = keyword> then </span> 1 <span class = keyword> else </span> a * fact(a - 1)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t003 boolean 24 = fact.4 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> power(a:int, b:int)int 
- <br> <span class = keyword> if </span> b = 1 <span class = keyword> then </span> a <span class = keyword> else </span> power(a, b / 2)* power(a, b - b / 2)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t004 boolean 1024 = power(2, 10)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t005 boolean 45 = <span class = keyword> if </span> 2 = 2 <span class = keyword> then </span> 45 <span class = keyword> else </span> 23 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t006 boolean 34 = <span class = keyword> if </span> 6 ? 2 = GT <span class = keyword> then </span> 34 <span class = keyword> else </span> 16 + 4 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> test cat of sequences </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t007 boolean [ 2, 3]= [ 2]+ [ 3]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> ff(seed:int, x:int)int 
- <br> <span class = keyword> if </span> x = 1 <span class = keyword> then </span> pseudorandom.seed <span class = keyword> else </span> ff(pseudorandom.seed, x - 1)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t008 boolean 
- <br> // <span class = comment > testing random number generator </span> // 1043618065 = ff(1, 10000)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> gen(n:int)seq.int <span class = keyword> if </span> n = 1 <span class = keyword> then </span> [ n]<span class = keyword> else </span> gen(n - 1)+ [ n * n]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t009 boolean [ 1, 4, 9, 16, 25]= gen.5 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> genb(n:int)seq.int 
- <br> <span class = keyword> if </span> n = 1 <span class = keyword> then </span> [ 5]<span class = keyword> else </span> genb(n - 1)+ genb(n - 1)+ [ n]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t010 boolean [ 5, 5, 2, 5, 5, 2, 3, 5, 5, 2, 5, 5, 2, 3, 4]= genb.4 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> covert integer to sequence of digits </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> int2seq(n:int, b:int)seq.int 
- <br> <span class = keyword> if </span> n ? b = LT <span class = keyword> then </span> [ n]<span class = keyword> else </span> int2seq(n / b, b)+ [ n - n / b * b]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t011 boolean [ 2, 3, 9, 5]= int2seq(2395, 10)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t012 boolean [ GT, GT, LT]= [ [ 2, 8]? [ 2, 7], [ 3, 8]? [ 2, 8], [ 1, 8]? [ 2, 8]]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t013 boolean EQ =([ 2, 8, 1]? [ 2, 8, 1])</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t014 boolean [ LT, GT]= [ [ 2, 8]? [ 2, 8, 1], [ 2, 8, 1]? [ 2, 8]]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t015 boolean [ true, false, false, false]= [ true ∧ true, true ∧ false, false ∧ true, false ∧ false]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t016 boolean [ true, true, true, false]= [ true ∨ true, true ∨ false, false ∨ true, false ∨ false]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> test on in </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t017 boolean [ true, true, false]= [ 2 in [ 1, 2, 3], 3 in [ 1, 2, 3], 5 in [ 1, 2, 3]]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> test of + using functional notation pretty printer messes up this example this should be 3 = +(1, 2).</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t018 boolean 3 = 1 + 2 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t019 boolean 1 = findindex(3, [ 3])</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t020 boolean 5 = findindex(1, [ 2, 4, 3, 8, 1, 3]+ constantseq(4, 1))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t021 boolean 28 = constantseq(13, 5)_7 + length.constantseq(23, 3)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> * function t022 boolean [ 3, 6]= all(3, [ 2, 4, 3, 8, 1, 3])</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t022 boolean [ toword.384]+ toword.52 = <span class = literal >"384 52"</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> t023 boolean 9 =(0 - 21)mod 15 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t024 boolean point(3, 4, 5)= point(3, 4, 5)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t025 boolean false =(point(3, 4, 1)= point(3, 4, 5))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t026 boolean false =(point(3, 7, 5)= point(3, 4, 5))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t027 boolean point(10, 6, 3)= point(8, 3, 2)+ point(2, 3, 1)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t028 boolean point(6, 0, 1)= point(8, 3, 2) - point(2, 3, 1)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t029 boolean 6 = x.point(6, 0, 1)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t030 boolean [ false, false, true, true]= [ isbyte(0 - 1), isbyte.256, isbyte.255, isbyte.0]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> isbyte(i:int)boolean between(i, 0, 255)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t031 boolean false = @(∧, isbyte, true, [ 0 - 1, 256, 255, 0])</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t032 boolean @(∧, isbyte, true, [ 23, 4, 5, 255, 7, 2, 255])</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> / / Function t110 boolean [ 23, 4, 5, 255, 7, 2, 255]= byteseq.[ 23, 4, 5, 255, 7, 2, 255]</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> / / Function t111 boolean [ 23, 4, 5, 255, 7, 2, 255]= byteseq.[ 23, 4, 5, 255, 7, 2, 255]</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test11 seq.word <span class = block> <span class = keyword> let </span> y = [ t002, t003, t004, t005, t006, t007, t008, t009, t010, t011, 
- <br> t012, t013, t014, t015, t016, t017, t018, t019, t020, t021, 
- <br> t022, t023, t024, t025, t025, t026, t027, t028, t029, t030, 
- <br> t031]
- <br> <span class = keyword> let </span> x = @(+, check.y, <span class = literal >""</span> , arithseq(length.y, 1, 1))
- <br> <span class = keyword> if </span> x = <span class = literal >""</span> <span class = keyword> then </span> <span class = literal >"PASS test11"</span> <span class = keyword> else </span> <span class = literal >"FAIL test11"</span> + x </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> check(l:seq.boolean, i:int)seq.word 
- <br> <span class = keyword> if </span> l_i <span class = keyword> then </span> <span class = literal >""</span> <span class = keyword> else </span> [ toword.i]</span> </p> <hr> <hr id ="test11a"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> test11a </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> tree.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.tree.int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.tree.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.ordering </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> tree.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.seq.seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.boolean </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> parse </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> pretty2 </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> process.tree.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> tr1 tree.int tree(56, [ tree.200, tree.1, tree(5, [ tree.4])])</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> tr2 tree.int tree(37, [ tr1, tr1])</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t401 boolean [ 56, 200, 3]= [ label.tr1, label(tr1_1), nosons.tr1]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t402 boolean true </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> [ GT, EQ, EQ]= [ tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree(1)]</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t403 boolean { <span class = literal >"a"</span> = print.tree(<span class = literal >"a"</span> _1)} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t404 boolean { <span class = literal >"a.b"</span> = print.tree(<span class = literal >"a"</span> _1, [ tree(<span class = literal >"b"</span> _1)])} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t405 boolean { <span class = literal >"a(ab, b)"</span> = print.expression.<span class = literal >"a(ab, b)#"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t406 boolean { <span class = literal >"*(*(3, 5), 8)"</span> = print.expression.<span class = literal >"3 * 5 * 8 #"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t407 boolean 
- <br> { <span class = literal >"+(+(a, *(*(4, b(c, b)), 5)), 8)"</span> = print.expression.<span class = literal >"a + 4 * b(c, b)* 5 + 8 #"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t408 boolean { <span class = literal >"3"</span> = print.expression.<span class = literal >"3 #"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t409 boolean 
- <br> { <span class = literal >"if(=(a, 1), +(b, 3), +(c, 4))"</span> = print.expression.<span class = literal >"if a = 1 then b + 3 else c + 4 #"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> test apply </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t410 boolean 
- <br> { <span class = literal >"@(+, b.+(a, 3), g, $build(c, d, e))"</span> = print.expression.<span class = literal >"@(+, b(a + 3), g, [ c, d, e])#"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t411 boolean 
- <br> { <span class = literal >"@(+, b, g, $build(c, d, e))"</span> = print.expression.<span class = literal >"@(+, b, g, [ c, d, e])#"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t413 boolean 
- <br> { <span class = literal >"let(a, makereal(45, 1), let(b, *(a, a), +(b, 3)))"</span> = print.expression.<span class = literal >"let a = 4.5 let b = a * a b + 3"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> t412 boolean 
- <br> { <span class = literal >"+(comment(4, this, is, a, comment), 8)"</span> = print.expression.<span class = literal >"// this is a comment // 4 + 8"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> prefix(p:seq.word, d:seq.word)boolean subseq(d, 1, length.p)= p </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> parse(x:seq.word)tree.word parse(x, tree(<span class = literal >"xxx"</span> _1))</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> /Function prettytext(s:seq.word)seq.word prettyexpression.s </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test23 seq.seq.word [ <span class = literal >"k"</span> ]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> @(+, prettytext, empty:seq.seq.word, ["(@ a b c d)","s_i^2","(a / b)-(c / d)","a * b + c","a + b + c","a + b * c"+"(a + b)* c","a +(b + c)","(a + b)*(c + d)","s(3)_(i + 1)","(@ a b c d)+ 3","[ 1, 3, 4]","(if a = b * c then a + b else a-b)+ r","""ab""+""(c + b)""","Z +(if C then A else B)+ s","-(a + b)","-a^2","-a","-a + b","b(a)","b(a + b)","a(b(c))","a(b(c)^2)","a(b(c^2))","input(r)_n(r)"])</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test24 seq.seq.word [ <span class = literal >"k"</span> ]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> @(+, prettyparagraph, empty:seq.seq.word, ["Function space seq(word)[ encodeword.[ 32]]","function f1(u:int, y:seq(real))int 1","type r1 is struct input:seq(word), n:int, tr:seq(tree(word))","type bb is encoding seq(int)","Function f3(int, b:real)seq(word)export"])</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> test11a seq.word <span class = block> <span class = keyword> let </span> z = [ t401, 
- <br> t402, 
- <br> t403, 
- <br> t404, 
- <br> t405, 
- <br> t406, 
- <br> t407, 
- <br> t408, 
- <br> t409, 
- <br> t410, 
- <br> t411, 
- <br> t412, 
- <br> t413, 
- <br> <span class = literal >"EXPECTED):function a boolean(a #"</span> = message.process.parse.<span class = literal >"function a boolean(a"</span> , 
- <br> <span class = literal >"EXPECTED]:function a boolean [ a)"</span> = message.process.parse.<span class = literal >"function a boolean [ a)"</span> , 
- <br> <span class = literal >"EXPECTED):function a boolean(a +"</span> = message.process.parse.<span class = literal >"function a boolean(a +"</span> , 
- <br> <span class = literal >"EXPECTED):function a boolean(a +"</span> = message.process.parse.<span class = literal >"function a boolean(a +,"</span> , 
- <br> <span class = literal >"EXPECTED):function a boolean(a +"</span> = message.process.parse.<span class = literal >"function a boolean(a +)"</span> , 
- <br> <span class = literal >"EXPECTED):function a boolean(a +"</span> = message.process.parse.<span class = literal >"function a boolean(a +]"</span> ]
- <br> <span class = keyword> let </span> a = @(+, check.z, <span class = literal >""</span> , arithseq(length.z, 1, 1))
- <br> <span class = keyword> if </span> a = <span class = literal >""</span> <span class = keyword> then </span> <span class = literal >"PASS test11a"</span> <span class = keyword> else </span> <span class = literal >"FAIL test11a"</span> + a </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> check(l:seq.boolean, i:int)seq.word 
- <br> <span class = keyword> if </span> l_i <span class = keyword> then </span> <span class = literal >""</span> <span class = keyword> else </span> [ toword.i]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> ------------------------------------</p> <hr> <hr id ="myseq"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> myseq(T)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> All sequences must be in parameterized scopes.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.T </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> myseq is <span class = keyword> sequence </span> length:int, data:seq.T </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> All sequences must have the first element representing the length of the seqence.As with any parameterized scope any type must contain a element that use the parameter so that mutiple instances of the scope do not produce duplicate symbols.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> We need some operations on T.T will be an int in this example so all these operations are define on int in the stdlib.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> >(T, int)boolean unbound </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> &lt;(T, int)boolean unbound </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span>-(T, int)T unbound </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> *(T, int)T unbound </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> +(T, T)T unbound </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> We need to helper functions to calculate the length and find the ith element of the seq for this example.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> clength(s:seq.T, i:int)int <span class = block> <span class = keyword> if </span> i > length.s 
- <br> <span class = keyword> then </span> 0 
- <br> <span class = keyword> else </span> <span class = keyword> assert </span> s_i > 0 <span class = keyword> report </span> <span class = literal >"invalid"</span> <span class = keyword> if </span> s_i &lt; 128 
- <br> <span class = keyword> then </span> 1 + clength(s, i + 1)
- <br> <span class = keyword> else </span> <span class = keyword> assert </span> s_i &lt; 128 + 64 + 32 <span class = keyword> report </span> <span class = literal >"invalid"</span> 1 + clength(s, i + 2)</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> cindex(s:seq.T, i:int, idx:int)T <span class = block> <span class = keyword> if </span> idx = 1 
- <br> <span class = keyword> then </span> <span class = keyword> if </span> s_i &lt; 128 <span class = keyword> then </span> s_i <span class = keyword> else </span> s_(i + 1) - 128 +(s_i - 128 - 64)* 64 
- <br> <span class = keyword> else </span> cindex(s, i + <span class = keyword> if </span> s_i &lt; 128 <span class = keyword> then </span> 1 <span class = keyword> else </span> 2, idx - 1)</span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> We need a constructor of our sequence.Note the use of a toseq function.This is defined implicitly by the sequence type definition to change the type from myseq(T)to seq(T).</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> myseq(d:seq.T)seq.T toseq.myseq(clength(d, 1), d)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> Every sequence must have a_function defined on it which is below for mseq.T </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span>_(a:myseq.T, idx:int)T cindex(data.a, 1, idx)</span> </p> <hr> <hr id ="randomphrase"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> randomphrase </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> testrandomphrase seq.word <span class = block> <span class = keyword> if </span> <span class = literal >"The umber ant ambles the opal nurse"</span> = getphrase.20 
- <br> <span class = keyword> then </span> <span class = literal >"PASS"</span> <span class = keyword> else </span> <span class = literal >"FAIL randomphrase"</span> </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> randomphrase seq.word <span class = block> <span class = keyword> let </span> a = randomint.1 
- <br> <span class = keyword> let </span> seed = <span class = keyword> if </span> a_1 &lt; 0 <span class = keyword> then </span>-(a_1 + 1)<span class = keyword> else </span> a_1 
- <br> getphrase.seed </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> getphrase(seed:int)seq.word <span class = block> <span class = keyword> let </span> a = randomseq(seed, 6)
- <br> { <span class = literal >"The"</span> + adjectives_(a_1 mod 140 + 1)+ nouns_(a_2 mod 140 + 1)+ verbs_(a_3 mod 140 + 1)+ <span class = literal >"the"</span> + adjectives_(a_4 mod 140 + 1)+ nouns_(a_5 mod 140 + 1)} </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> verbs seq.word 
- <br> { <span class = literal >"adds binds calls destroys eats fences golfs hates illustrates jumps kisses odorizes mangles nets owes plays quits registers sails takes undresses votes walks xeroxes yanks zeros ambles blows bends bombs battles brushes bubbles empties agitates aids censors circles chews dangles combs climbs dumps cycles dwindles cracks eclipses edges cuts effaces enriches zones ejects elects dips drinks dyes fights frees foils flies grows heats hobbles fails ignores aligns infects idles guards fuels imagines gains generates gives gleans issues irons knocks jilts jerks jacks jogs keeps lathers lugs lynches offers obeys meets mills occupies mocks nips mutes nags levels nurses lives notes loves pries posts pitches rolls rules phones sets rhymes races push scrapes skips sings slithers rigs snips shows splashes sows tests squirts stacks smells throws touches summons appoints swims ties travels vacums tumbles weeps wraps arouses ascends winds works whips yells"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> nouns seq.word 
- <br> { <span class = literal >"ant bag cane daisy ear flower girl hat idol jam king ladder man napkin olive page queen river salt tire umbra vat walnut xray yam zoo apple bin bean brain boy bug effort empire cell chain city club cow cream editor cypress cup engine deck disk dragon duck dwarf dye echo egg elf expert face fox feast frog fur glass grave gym hog image ink igloo ale ice iron island jet arch job jig judge knob kayak kelp aunt awl lily lute lye ox outpost otter ostrich orchid onion omelet opera office ocean leaf orbit oar nymph nurse needle myth mica meat moon mug nipple noise owl pneumonia pepper phone pickle psalm python plate poetry prince puppy atom rabbit shrub sidewalk sound speaker rebel stone rock rug sun swan tomato acrobat train year wren uncle ash vole wind wench wheat wood"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> adjectives seq.word 
- <br> { <span class = literal >"amber beautiful calm dim easy final gray half impure jumpy knotty large maroon navy orange part queenly red sad tall umber very warm xenox yellow zippy big acid blue alive brown bumpy charcoal cold crude drab desolate elastic enormous double fluffy egotistic full edible effective glassy eighteenth giddy heavy high hot huge ghastly germy exotic messy muddy moldy mini jelly inept little ignorant nude nosy nimble new illicit jolly jittery jagged ideal kind isolated irate gaudy ivory fancy formal feisty absurd adsorbent affordable agile airy gentle atomic annoying leaky appalling oily offensive artful oozy only opal old lowly lukewarm outdoor pearl phony pink tiny polished princely purple right raw round skinny secure short silver slimy scruffy smooth square sticky snowy soapy teary thin tumbling twin violet weak white spooky super sweet toasty triple untied plastic young average awful ruby wild wormy"</span> } </span> </p> <hr> <hr id ="checking"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> checking </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.boolean </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> function </span> check2(l:seq.boolean, i:int)seq.word 
- <br> <span class = keyword> if </span> l_i <span class = keyword> then </span> <span class = literal >""</span> <span class = keyword> else </span> [ toword.i]</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> check(y:seq.boolean, testname:seq.word)seq.word <span class = block> <span class = keyword> let </span> x = @(+, check2.y, <span class = literal >""</span> , arithseq(length.y, 1, 1))
- <br> <span class = keyword> if </span> x = <span class = literal >""</span> <span class = keyword> then </span> <span class = literal >"PASS"</span> + testname 
- <br> <span class = keyword> else </span> <span class = literal >"FAILED test"</span> + x + <span class = literal >"in"</span> + testname </span> </span> </p> <hr> <hr id ="testgraph"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> testgraph </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> graph.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.arc.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.arc.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> set.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n1 word { <span class = literal >"1"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n2 word { <span class = literal >"2"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n3 word { <span class = literal >"3"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n4 word { <span class = literal >"4"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n5 word { <span class = literal >"5"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n6 word { <span class = literal >"6"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n7 word { <span class = literal >"7"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> n8 word { <span class = literal >"8"</span> _1 } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> testgraph seq.word <span class = block> <span class = keyword> let </span> g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6), arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
+ <br> final4 = 0, 
+ <br> // <span class = comment > status ="OK OK Encoding is not persistant.OK", </span> // plen = 54], <span class = literal >"encoding"</span> )</span> </span> <span class = block> <span class = keyword> Function </span> process1 int <span class = block> <span class = keyword> let </span> z3 = @(+, add.mydata3, 0, [ <span class = literal >"A"</span> , <span class = literal >"B"</span> , <span class = literal >"C"</span> ])
+ <br> <span class = keyword> let </span> z4 = @(+, add.mydata4, 0, [ <span class = literal >"A1"</span> , <span class = literal >"B2"</span> , <span class = literal >"C3"</span> , <span class = literal >"D4"</span> , <span class = literal >"E5"</span> ])
+ <br> length.mapping.mydata4 * 10 + length.mapping.mydata3 </span> </span> <span class = block> <span class = keyword> Function </span> nextpower(i:int, base:int, start:int)int 
+ <br> <span class = keyword> if </span> i > start <span class = keyword> then </span> nextpower(i, base, start * base)<span class = keyword> else </span> start </span> <span class = block> <hr id ="testgraph"> <span class = keyword> module </span> testgraph </span> <span class = block> <span class = keyword> use </span> graph.word </span> <span class = block> <span class = keyword> use </span> seq.arc.word </span> <span class = block> <span class = keyword> use </span> set.arc.word </span> <span class = block> <span class = keyword> use </span> set.word </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> <span class = keyword> Function </span> n1 word { <span class = literal >"1"</span> _1 } </span> <span class = block> <span class = keyword> Function </span> n2 word { <span class = literal >"2"</span> _1 } </span> <span class = block> <span class = keyword> Function </span> n3 word { <span class = literal >"3"</span> _1 } </span> <span class = block> <span class = keyword> Function </span> n4 word { <span class = literal >"4"</span> _1 } </span> <span class = block> <span class = keyword> Function </span> n5 word { <span class = literal >"5"</span> _1 } </span> <span class = block> <span class = keyword> Function </span> n6 word { <span class = literal >"6"</span> _1 } </span> <span class = block> <span class = keyword> Function </span> n7 word { <span class = literal >"7"</span> _1 } </span> <span class = block> <span class = keyword> Function </span> n8 word { <span class = literal >"8"</span> _1 } </span> <span class = block> <span class = keyword> Function </span> testgraph seq.word <span class = block> <span class = keyword> let </span> g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6), arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
  <br> <span class = keyword> let </span> r = print.g + <span class = literal >"transversal"</span> + sinksfirst.g + <span class = literal >"Suc"</span> + toseq.successors(g, n2)+ <span class = literal >"sinks"</span> + sinks(g, asset.[ n4], n2)
  <br> {(<span class = block> <span class = keyword> if </span> r = <span class = literal >"GRAPH:(1 2)(1 4)(2 4)(3 2)(6 8)(6 7)(5 1)(5 6)(7 5)transversal 4 8 2 1 3 Suc 4 sinks 2"</span> <span class = keyword> then </span> <span class = literal >"PASS testgraph"</span> <span class = keyword> else </span> <span class = literal >"FAIL testgraph"</span> </span> )+ <span class = block> <span class = keyword> let </span> g2 = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4)]
  <br> <span class = keyword> let </span> closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
- <br> @(+, print, <span class = literal >""</span> , toseq.arcs.transitiveClosure.g2)</span> } </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> @(+, print,"", toseq.arcs.g)</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> testgraph2 boolean <span class = block> <span class = keyword> let </span> g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4)]
+ <br> @(+, print, <span class = literal >""</span> , toseq.arcs.transitiveClosure.g2)</span> } </span> </span> <span class = block> @(+, print,"", toseq.arcs.g)</span> <span class = block> <span class = keyword> Function </span> testgraph2 boolean <span class = block> <span class = keyword> let </span> g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4)]
  <br> <span class = keyword> let </span> closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
- <br> closure = toseq.arcs.transitiveClosure.g </span> </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> print(g:graph.word)seq.word 
- <br> { <span class = literal >"GRAPH:"</span> + @(+, print, <span class = literal >""</span> , toseq.arcs.g)} </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> print(a:arc.word)seq.word { <span class = literal >"("</span> + tail.a + head.a + <span class = literal >")"</span> } </span> </p> <hr> <hr id ="point2d"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> point2d </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> The following paragraph starts a type definition which is immediately followed by a paragraph that defines the compoents of the type.The struct paragraph must immediate follow the type paragraph but does not need to be present as a type is simply a set of functions.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> point2d is <span class = keyword> record </span> x:int, y:int </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> The follow paragraph that begins with use allows reference to functions defined in another type.In this case, the standard build it funcitons.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> seq.word </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> The follow three paragraphs all access to the function automaticaly defined by the struct defintion in other types that “use” this package.If these paragraphs are omitted the functions would not be available outside of this type.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> point2d(a:int, b:int)point2d export </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> y(a:point2d)int export </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> x(a:point2d)int export </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> The following two paragraphs defines an addition and subtraction operator on points.</p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> +(a:point2d, b:point2d)point2d point2d(x.a + x.b, y.a + y.b)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span>-(a:point2d, b:point2d)point2d point2d(x.a - x.b, y.a - y.b)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> print(p:point2d)seq.word 
- <br> { <span class = literal >"("</span> + toword.x.p + <span class = literal >","</span> + toword.y.p + <span class = literal >")"</span> } </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> The beginning of the next paragraphs ends the point type.</p> <hr> <hr id ="point"> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> module </span> point(T)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> type </span> point is <span class = keyword> record </span> x:T, y:T, z:T </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> use </span> stdlib </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> +(T, T)T unbound </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span>-(T, T)T unbound </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> =(T, T)boolean unbound </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> point(a:T, b:T, c:T)point.T export </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> +(a:point.T, b:point.T)point.T point(x.a + x.b, y.a + y.b, z.a + z.b)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span>-(a:point.T, b:point.T)point.T point(x.a - x.b, y.a - y.b, z.a - z.b)</span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> =(a:point.T, b:point.T)boolean x.a = x.b ∧ y.a = y.b ∧ z.a = z.b </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> y(a:point.T)T export </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> x(a:point.T)T export </span> </p> 
- <p id = 1 onclick ="javascript:cmd5(this)"> <span class = block> <span class = keyword> Function </span> z(a:point.T)T export </span> </p> 
+ <br> closure = toseq.arcs.transitiveClosure.g </span> </span> <span class = block> <span class = keyword> Function </span> print(g:graph.word)seq.word 
+ <br> { <span class = literal >"GRAPH:"</span> + @(+, print, <span class = literal >""</span> , toseq.arcs.g)} </span> <span class = block> <span class = keyword> Function </span> print(a:arc.word)seq.word { <span class = literal >"("</span> + tail.a + head.a + <span class = literal >")"</span> } </span> <span class = block> <hr id ="test5"> <span class = keyword> module </span> test5 </span> <span class = block> <span class = keyword> use </span> UTF8 </span> <span class = block> <span class = keyword> use </span> checking </span> <span class = block> <span class = keyword> use </span> fileio </span> <span class = block> <span class = keyword> use </span> graph.int </span> <span class = block> <span class = keyword> use </span> ipair.word </span> <span class = block> <span class = keyword> use </span> myseq.int </span> <span class = block> <span class = keyword> use </span> point2d </span> <span class = block> <span class = keyword> use </span> process.int </span> <span class = block> <span class = keyword> use </span> process.seq.word </span> <span class = block> <span class = keyword> use </span> randomphrase </span> <span class = block> <span class = keyword> use </span> real </span> <span class = block> <span class = keyword> use </span> seq.arc.int </span> <span class = block> <span class = keyword> use </span> seq.int </span> <span class = block> <span class = keyword> use </span> seq.ipair.word </span> <span class = block> <span class = keyword> use </span> seq.ordering </span> <span class = block> <span class = keyword> use </span> seq.tree.word </span> <span class = block> <span class = keyword> use </span> seq.word </span> <span class = block> <span class = keyword> use </span> set.arc.int </span> <span class = block> <span class = keyword> use </span> set.int </span> <span class = block> <span class = keyword> use </span> set.word </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> <span class = keyword> use </span> textio </span> <span class = block> <span class = keyword> use </span> tree.int </span> <span class = block> <span class = keyword> use </span> tree.word </span> <span class = block> /use invertedseq.word </span> <span class = block> <span class = keyword> Function </span> test5 seq.word <span class = block> <span class = keyword> let </span> y = [ test501, t502, t503, t504, t505, t506, t507, t508, t509, t510, 
+ <br> t511, t512, t513, t514, t515, t516, t517, t518, t519, t520, 
+ <br> t521, t522, t523, t524, t525, t526, t527, t528, t529, t530]
+ <br> check(y, <span class = literal >"test5"</span> )</span> </span> <span class = block> <span class = keyword> Function </span> test501 boolean { <span class = literal >"(6, 8)"</span> = print(point2d(2, 3)+ point2d(4, 5))} </span> <span class = block> <span class = keyword> function </span> print(a:seq.int)seq.word 
+ <br> { <span class = literal >"["</span> + @(seperator.<span class = literal >","</span> , toword, <span class = literal >""</span> , a)+ <span class = literal >"]"</span> } </span> <span class = block> <span class = keyword> Function </span> t502 boolean 
+ <br> { <span class = literal >"23.45000"</span> + [ space]+ <span class = literal >"-18.45000"</span> = print(23.45, 5)+ print(5.0 - 23.45, 5)} </span> <span class = block> <span class = keyword> Function </span> t503 boolean { <span class = literal >"[ 2, 3, 4, 5]"</span> = print.[ 2, 3, 4, 5]} </span> <span class = block> <span class = keyword> Function </span> t504 boolean 10 = @(+, *.1, 0, [ 1, 2, 3, 4])</span> <span class = block> <span class = keyword> Function </span> t505 boolean 24 = @(*, *.1, 1, [ 1, 2, 3, 4])</span> <span class = block> <span class = keyword> Function </span> t506 boolean [ 1, 2, 3, 4]= @(+, +.empty:seq.int, empty:seq.int, [ 1, 2, 3, 4])</span> <span class = block> <span class = keyword> function </span> showcodes(i:int)seq.word [ toword.i, encodeword.toseqint.UTF8.i]</span> <span class = block> <span class = keyword> Function </span> t507 boolean 
+ <br> { <span class = literal >"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 &lt; 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"</span> = @(+, showcodes, <span class = literal >"code glyph"</span> , arithseq(43, 1, 48))} </span> <span class = block> <span class = keyword> Function </span> t508 boolean <span class = block> <span class = keyword> let </span> a = 6 * 6 
+ <br> a + a = 72 </span> </span> <span class = block> <span class = keyword> function </span> modr(a:int, b:int)int b mod a + 1 </span> <span class = block> <span class = keyword> function </span> incrementcount(s:seq.int, i:int)seq.int replace(s, i, s_i + 1)</span> <span class = block> <span class = keyword> function </span> print(i:ipair.word)seq.word [ toword.index.i]+ <span class = literal >":"</span> + value.i </span> <span class = block> <span class = keyword> Function </span> t509 boolean <span class = block> <span class = keyword> let </span> s = @(incrementcount, identity, constantseq(100, 0), @(+, modr.100, empty:seq.int, randomseq(3456, 100001)))
+ <br> <span class = keyword> let </span> totalcounts = @(+, identity, 0, s)
+ <br> length.s = 100 ∧ totalcounts = 100001 </span> </span> <span class = block> <span class = keyword> Function </span> t510 boolean 
+ <br> { <span class = literal >"a b c d e 1 2 3 4 k"</span> = replace(<span class = literal >"a b c d e"</span> + <span class = literal >"1 2 3 4 5"</span> , 10, <span class = literal >"k"</span> _1)} </span> <span class = block> <span class = keyword> Function </span> t511 boolean 
+ <br> { <span class = literal >"1 2 k 4 5"</span> = replace(<span class = literal >"1 2 3 4 5"</span> , 3, <span class = literal >"k"</span> _1)} </span> <span class = block> <span class = keyword> Function </span> t512 boolean true </span> <span class = block> let r = @(+, print, empty:seq.word, toipair.add(add(invertedseq("HI"_1), 3,"HI"_1), ipair(4,"dI"_1)))r in ["3:HI 4:dI","4:dI 3:HI"]</span> <span class = block> <span class = keyword> function </span> testset set.int asset.[ 2, 5, 6, 9, 12, 15, 35, 36]</span> <span class = block> <span class = keyword> function </span> print(a:set.int)seq.word @(+, toword, <span class = literal >""</span> , toseq.a)</span> <span class = block> <span class = keyword> function </span> ?2(a:int, b:int)ordering a / 10 ? b / 10 </span> <span class = block> _______________</span> <span class = block> Primes </span> <span class = block> <span class = keyword> function </span> t513 boolean { <span class = literal >"3 5 7 11 13 17 19 23 29 31 37"</span> = findprimes(3, 40)} </span> <span class = block> <span class = keyword> function </span> t514 boolean <span class = block> <span class = keyword> let </span> a = process.countprimes(3, 5000000)
+ <br> <span class = keyword> let </span> b = process.countprimes(5000001, 10000000)
+ <br> [ 348512, 316066]= [ result.a, result.b]</span> </span> <span class = block> <span class = keyword> function </span> findprimes(start:int, end:int)seq.word 
+ <br> @(+, isprime3, <span class = literal >""</span> , arithseq((end - start + 2)/ 2, 2, start))</span> <span class = block> <span class = keyword> function </span> countprimes(start:int, end:int)int @(+, isprime4, 0, arithseq((end - start + 2)/ 2, 2, start))</span> <span class = block> <span class = keyword> function </span> isprime3(i:int)seq.word 
+ <br> <span class = keyword> if </span> isprime.i <span class = keyword> then </span> [ toword.i]<span class = keyword> else </span> <span class = literal >""</span> </span> <span class = block> <span class = keyword> function </span> isprime4(i:int)int <span class = keyword> if </span> isprime.i <span class = keyword> then </span> 1 <span class = keyword> else </span> 0 </span> <span class = block> <span class = keyword> function </span> isprime(i:int)boolean <span class = block> <span class = keyword> if </span> i mod 2 = 0 
+ <br> <span class = keyword> then </span> i = 2 
+ <br> <span class = keyword> else </span> <span class = keyword> let </span> a = intpart.sqrt.int2real.i 
+ <br> <span class = keyword> let </span> b =(a + i / a)/ 2 
+ <br> subisprime(i, 3, b)</span> </span> <span class = block> <span class = keyword> function </span> subisprime(i:int, f:int, b:int)boolean 
+ <br> <span class = keyword> if </span> f > b <span class = keyword> then </span> true <span class = keyword> else </span> <span class = keyword> if </span> i mod f = 0 <span class = keyword> then </span> false <span class = keyword> else </span> subisprime(i, f + 2, b)</span> <span class = block> ________________</span> <span class = block> <span class = keyword> function </span> t515 boolean <span class = block> <span class = keyword> let </span> s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
+ <br> @(+, toword, <span class = literal >""</span> , myseq.toseqint.s)= <span class = literal >"40 50 335 50 336"</span> </span> </span> <span class = block> <span class = keyword> function </span> t516 boolean toseq.findelement2(testset, 36)= [ 35, 36]∧ toseq.findelement2(testset, 15)= [ 12, 15]</span> <span class = block> <span class = keyword> function </span> isprefex(prefix:seq.word, s:seq.word)boolean subseq(s, 1, length.prefix)= prefix </span> <span class = block> <span class = keyword> function </span> testout(i:int)seq.word [ <span class = literal >"one two three"</span> _i]</span> <span class = block> <span class = keyword> function </span> t517 boolean 
+ <br> isprefex(<span class = literal >"out of bounds"</span> , message.process.testout.0)∧ isprefex(<span class = literal >"out of bounds"</span> , message.process.testout(-10))∧ isprefex(<span class = literal >"out of bounds"</span> , message.process.testout.4)∧ message.process.testout.1 = <span class = literal >"normal exit"</span> ∧ aborted.process.testout.5 ∧ not.aborted.process.testout.2 ∧ result.process.testout.3 = <span class = literal >"three"</span> ∧ message.process.result.process.testout.4 = <span class = literal >"no result of aborted process"</span> </span> <span class = block> <span class = keyword> function </span> t518 boolean isprefex(<span class = literal >"invalid digit"</span> , message.process.toint(<span class = literal >"0A"</span> _1))</span> <span class = block> <span class = keyword> function </span> t519 boolean { <span class = literal >"&amp;quot()+,-.:= []^_"</span> = standalonechars } </span> <span class = block> <span class = keyword> function </span> ttt(c:int)seq.word 
+ <br> <span class = keyword> if </span> classify.c = 1 <span class = keyword> then </span> [ encodeword.[ c]]<span class = keyword> else </span> <span class = literal >""</span> </span> <span class = block> <span class = keyword> Function </span> standalonechars seq.word @(+, ttt, <span class = literal >""</span> , arithseq(127, 1, 0))</span> <span class = block> <span class = keyword> function </span> t520 boolean <span class = block> <span class = keyword> let </span> s = message.process.subtest520.merge.<span class = literal >"45t6.3"</span> subseq(s, 1, length.s - 1)= <span class = literal >"unexpected character in real literal"</span> </span> </span> <span class = block> <span class = keyword> function </span> subtest520(t:word)int <span class = block> <span class = keyword> let </span> x = reallit.decode.merge.<span class = literal >"45t6.3"</span> intpart.x </span> </span> <span class = block> <span class = keyword> Function </span> t521 boolean { <span class = literal >"The umber ant ambles the opal nurse"</span> = getphrase.20 } </span> <span class = block> <span class = keyword> function </span> filetest(i:int)boolean <span class = block> <span class = keyword> let </span> name = <span class = literal >"test"</span> + toword.i + <span class = literal >".txt"</span> <span class = keyword> let </span> a = createbytefile(name, arithseq(i, 1, 48))
+ <br> fileexists.name ∧ i = length.getfile.name </span> </span> <span class = block> <span class = keyword> Function </span> t522 boolean @(∧, filetest, true, arithseq(9, 1, 4))</span> <span class = block> <span class = keyword> Function </span> t523 boolean @(-, identity, 100, [ 1, 2])= 97 </span> <span class = block> <span class = keyword> Function </span> t524 boolean <span class = block> // <span class = comment > testing UNICODE to word conversion and no-break space in integer 8746 </span> // 
+ <br> decode(<span class = literal >"1 2∪"</span> _1)</span> = [ 49, 160, 50, 87 46]</span> <span class = block> ____________</span> <span class = block> graphs </span> <span class = block> <span class = keyword> Function </span> n1 int 1 </span> <span class = block> <span class = keyword> Function </span> n2 int 2 </span> <span class = block> <span class = keyword> Function </span> n3 int 3 </span> <span class = block> <span class = keyword> Function </span> n4 int 4 </span> <span class = block> <span class = keyword> Function </span> n5 int 5 </span> <span class = block> <span class = keyword> Function </span> n6 int 6 </span> <span class = block> <span class = keyword> Function </span> n7 int 7 </span> <span class = block> <span class = keyword> Function </span> n8 int 8 </span> <span class = block> <span class = keyword> function </span> t525 boolean <span class = block> <span class = keyword> let </span> g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6), arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
+ <br> <span class = keyword> let </span> r = print.g + <span class = literal >"transversal"</span> + print.sinksfirst.g + <span class = literal >"Suc"</span> + print.toseq.successors(g, n2)+ <span class = literal >"sinks"</span> + print.sinks(g, asset.[ n4], n2)
+ <br> r = <span class = literal >"GRAPH:(1 2)(1 4)(2 4)(3 2)(5 1)(5 6)(6 7)(6 8)(7 5)transversal [ 4, 8, 2, 1, 3]Suc [ 4]sinks [ 2]"</span> </span> </span> <span class = block> <span class = keyword> function </span> t526 boolean <span class = block> <span class = keyword> let </span> g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4)]
+ <br> <span class = keyword> let </span> closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
+ <br> closure = toseq.arcs.transitiveClosure.g </span> </span> <span class = block> <span class = keyword> function </span> print(g:graph.int)seq.word { <span class = literal >"GRAPH:"</span> + @(+, print, <span class = literal >""</span> , toseq.arcs.g)} </span> <span class = block> <span class = keyword> function </span> print(a:arc.int)seq.word { <span class = literal >"("</span> + toword.tail.a + toword.head.a + <span class = literal >")"</span> } </span> <span class = block> <span class = keyword> function </span> tr1 tree.int tree(56, [ tree.200, tree.1, tree(5, [ tree.4])])</span> <span class = block> <span class = keyword> function </span> tr2 tree.int tree(37, [ tr1, tr1])</span> <span class = block> <span class = keyword> Function </span> t527 boolean [ 56, 200, 3]= [ label.tr1, label(tr1_1), nosons.tr1]</span> <span class = block> <span class = keyword> function </span> ?(a:tree.int, b:tree.int)ordering subx(a, b, 1, label.a ? label.b ∧ nosons.a ? nosons.b)</span> <span class = block> <span class = keyword> function </span> subx(a:tree.int, b:tree.int, i:int, o:ordering)ordering 
+ <br> <span class = keyword> if </span> o = EQ ∧ i ≤ nosons.a <span class = keyword> then </span> subx(a, b, i + 1, a_i ? b_i)<span class = keyword> else </span> o </span> <span class = block> <span class = keyword> function </span> print(t:tree.word)seq.word <span class = block> <span class = keyword> if </span> nosons.t = 0 
+ <br> <span class = keyword> then </span> [ label.t]
+ <br> <span class = keyword> else </span> [ label.t]+ <span class = block> <span class = keyword> if </span> nosons.t = 1 
+ <br> <span class = keyword> then </span> <span class = literal >"."</span> + print(t_1)
+ <br> <span class = keyword> else </span> <span class = literal >"("</span> + @(seperator.<span class = literal >","</span> , print, <span class = literal >""</span> , sons.t)+ <span class = literal >")"</span> </span> </span> </span> <span class = block> <span class = keyword> Function </span> t528 boolean [ GT, EQ, EQ]= [ tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree.1]</span> <span class = block> <span class = keyword> Function </span> t529 boolean { <span class = literal >"a"</span> = print.tree(<span class = literal >"a"</span> _1)} </span> <span class = block> <span class = keyword> Function </span> t530 boolean { <span class = literal >"a.b"</span> = print.tree(<span class = literal >"a"</span> _1, [ tree(<span class = literal >"b"</span> _1)])} </span> <span class = block> <hr id ="randomphrase"> <span class = keyword> module </span> randomphrase </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> <span class = keyword> Function </span> testrandomphrase seq.word <span class = block> <span class = keyword> if </span> <span class = literal >"The umber ant ambles the opal nurse"</span> = getphrase.20 
+ <br> <span class = keyword> then </span> <span class = literal >"PASS"</span> <span class = keyword> else </span> <span class = literal >"FAIL randomphrase"</span> </span> </span> <span class = block> <span class = keyword> Function </span> randomphrase seq.word <span class = block> <span class = keyword> let </span> a = randomint.1 
+ <br> <span class = keyword> let </span> seed = <span class = keyword> if </span> a_1 &lt; 0 <span class = keyword> then </span>-(a_1 + 1)<span class = keyword> else </span> a_1 
+ <br> getphrase.seed </span> </span> <span class = block> <span class = keyword> Function </span> getphrase(seed:int)seq.word <span class = block> <span class = keyword> let </span> a = randomseq(seed, 6)
+ <br> { <span class = literal >"The"</span> + adjectives_(a_1 mod 140 + 1)+ nouns_(a_2 mod 140 + 1)+ verbs_(a_3 mod 140 + 1)+ <span class = literal >"the"</span> + adjectives_(a_4 mod 140 + 1)+ nouns_(a_5 mod 140 + 1)} </span> </span> <span class = block> <span class = keyword> Function </span> verbs seq.word 
+ <br> { <span class = literal >"adds binds calls destroys eats fences golfs hates illustrates jumps kisses odorizes mangles nets owes plays quits registers sails takes undresses votes walks xeroxes yanks zeros ambles blows bends bombs battles brushes bubbles empties agitates aids censors circles chews dangles combs climbs dumps cycles dwindles cracks eclipses edges cuts effaces enriches zones ejects elects dips drinks dyes fights frees foils flies grows heats hobbles fails ignores aligns infects idles guards fuels imagines gains generates gives gleans issues irons knocks jilts jerks jacks jogs keeps lathers lugs lynches offers obeys meets mills occupies mocks nips mutes nags levels nurses lives notes loves pries posts pitches rolls rules phones sets rhymes races push scrapes skips sings slithers rigs snips shows splashes sows tests squirts stacks smells throws touches summons appoints swims ties travels vacums tumbles weeps wraps arouses ascends winds works whips yells"</span> } </span> <span class = block> <span class = keyword> Function </span> nouns seq.word 
+ <br> { <span class = literal >"ant bag cane daisy ear flower girl hat idol jam king ladder man napkin olive page queen river salt tire umbra vat walnut xray yam zoo apple bin bean brain boy bug effort empire cell chain city club cow cream editor cypress cup engine deck disk dragon duck dwarf dye echo egg elf expert face fox feast frog fur glass grave gym hog image ink igloo ale ice iron island jet arch job jig judge knob kayak kelp aunt awl lily lute lye ox outpost otter ostrich orchid onion omelet opera office ocean leaf orbit oar nymph nurse needle myth mica meat moon mug nipple noise owl pneumonia pepper phone pickle psalm python plate poetry prince puppy atom rabbit shrub sidewalk sound speaker rebel stone rock rug sun swan tomato acrobat train year wren uncle ash vole wind wench wheat wood"</span> } </span> <span class = block> <span class = keyword> Function </span> adjectives seq.word 
+ <br> { <span class = literal >"amber beautiful calm dim easy final gray half impure jumpy knotty large maroon navy orange part queenly red sad tall umber very warm xenox yellow zippy big acid blue alive brown bumpy charcoal cold crude drab desolate elastic enormous double fluffy egotistic full edible effective glassy eighteenth giddy heavy high hot huge ghastly germy exotic messy muddy moldy mini jelly inept little ignorant nude nosy nimble new illicit jolly jittery jagged ideal kind isolated irate gaudy ivory fancy formal feisty absurd adsorbent affordable agile airy gentle atomic annoying leaky appalling oily offensive artful oozy only opal old lowly lukewarm outdoor pearl phony pink tiny polished princely purple right raw round skinny secure short silver slimy scruffy smooth square sticky snowy soapy teary thin tumbling twin violet weak white spooky super sweet toasty triple untied plastic young average awful ruby wild wormy"</span> } </span> <span class = block> <hr id ="test11a"> <span class = keyword> module </span> test11a </span> <span class = block> run test11a test11a </span> <span class = block> <span class = keyword> use </span> checking </span> <span class = block> <span class = keyword> use </span> main2 </span> <span class = block> <span class = keyword> use </span> process.seq.seq.word </span> <span class = block> <span class = keyword> use </span> seq.boolean </span> <span class = block> <span class = keyword> use </span> seq.word </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> <span class = keyword> Function </span> test11a seq.word <span class = block> // <span class = comment > testcomp2.["module testit","use stdlib","function f1(a:int)int assert true report 2 3"]</span> // 
+ <br> <span class = keyword> let </span> z = [ compare(<span class = literal >"a + b + c"</span> , <span class = literal >"{(a + b)+ c }"</span> ), 
+ <br> compare(<span class = literal >"a*b*c"</span> , <span class = literal >"{(a*b)*c }"</span> ), 
+ <br> compare(<span class = literal >"a + b*c"</span> , <span class = literal >"{(a +(b*c)}"</span> ), 
+ <br> compare(<span class = literal >"-a + b"</span> , <span class = literal >"{(-a)+ b }"</span> ), 
+ <br> compare(<span class = literal >"a +-b"</span> , <span class = literal >"{ a +(-b)}"</span> ), 
+ <br> compare(<span class = literal >"a^2 + b"</span> , <span class = literal >"(a^2)+ b"</span> ), 
+ <br> compare(<span class = literal >"length.[ 1, 2]"</span> , <span class = literal >"length([ 1, 2])"</span> ), 
+ <br> compare(<span class = literal >"{ a + b } * c"</span> , <span class = literal >"{(a + b)* c }"</span> ), 
+ <br> testerror(<span class = literal >"ERR parse error expect:)> got:end of paragraph"</span> , [ <span class = literal >"function f1(a:int)boolean(a"</span> ]), 
+ <br> testerror(<span class = literal >"ERR parse error expect:)> got:end of paragraph"</span> , [ <span class = literal >"function f1(a:int)boolean(a"</span> ]), 
+ <br> testerror(<span class = literal >"ERR parse error expect:),]> got:end of paragraph"</span> , [ <span class = literal >"function f1(a:int)boolean [ a"</span> ]), 
+ <br> testerror(<span class = literal >"ERR parse error expect:([ > { comment if let assert $wordlist @ A E W N I got:end of paragraph"</span> , [ <span class = literal >"function f1(a:int)boolean [ a +"</span> ]), 
+ <br> testerror(<span class = literal >"ERR Function f1 is defined twice in module testit"</span> , [ <span class = literal >"function f1(a:int)int 3"</span> , <span class = literal >"function f1(a:int)int 3"</span> ]), 
+ <br> testerror(<span class = literal >"ERR then and else types are different"</span> , [ <span class = literal >"function f1(a:int)int if true then true else 0"</span> ]), 
+ <br> testerror(<span class = literal >"ERR cond of if must be boolean"</span> , [ <span class = literal >"function f1(a:int)int if 1 then 2 else 3"</span> ]), 
+ <br> testerror(<span class = literal >"ERR condition in assert must be boolean"</span> , [ <span class = literal >"function f1(a:int)int assert 1 report 2 3"</span> ]), 
+ <br> testerror(<span class = literal >"ERR report in assert must be seq of word in:"</span> , [ <span class = literal >"function f1(a:int)int assert true report 2 3"</span> ])]
+ <br> check(z, <span class = literal >"test11a"</span> )</span> </span> <span class = block> <span class = keyword> Function </span> testcomp2(s:seq.seq.word)seq.word <span class = block> <span class = keyword> let </span> p = process.testcomp.s 
+ <br> <span class = keyword> if </span> aborted.p 
+ <br> <span class = keyword> then </span> <span class = literal >"ERR"</span> + message.p 
+ <br> <span class = keyword> else </span> @(+, +.<span class = literal >"&amp;br &amp;br"</span> , <span class = literal >""</span> , result.p)</span> </span> <span class = block> <span class = keyword> Function </span> compare(exp1:seq.word, exp2:seq.word)boolean <span class = block> <span class = keyword> let </span> e1 = testcomp2.[ <span class = literal >"module testit"</span> , <span class = literal >"use stdlib"</span> , <span class = literal >"function f1(a:int, b:int, c:int)int"</span> + exp1]
+ <br> <span class = keyword> let </span> e2 = testcomp2.[ <span class = literal >"module testit"</span> , <span class = literal >"use stdlib"</span> , <span class = literal >"function f1(a:int, b:int, c:int)int"</span> + exp2]
+ <br> <span class = keyword> let </span> i1 = findindex(<span class = literal >"f1ZtestitZintZintZint"</span> _1, e1)
+ <br> <span class = keyword> let </span> i2 = findindex(<span class = literal >"f1ZtestitZintZintZint"</span> _1, e2)
+ <br> subseq(e1, i1, length.e1)= subseq(e2, i2, length.e2)</span> </span> <span class = block> <span class = keyword> Function </span> isprefix(p:seq.word, s:seq.word)boolean subseq(s, 1, length.p)= p </span> <span class = block> <span class = keyword> Function </span> testerror(m:seq.word, code:seq.seq.word)boolean 
+ <br> isprefix(m, testcomp2([ <span class = literal >"module testit"</span> , <span class = literal >"use stdlib"</span> ]+ code))</span> <span class = block> <hr id ="checking"> <span class = keyword> module </span> checking </span> <span class = block> <span class = keyword> use </span> seq.boolean </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> <span class = keyword> function </span> check2(l:seq.boolean, i:int)seq.word 
+ <br> <span class = keyword> if </span> l_i <span class = keyword> then </span> <span class = literal >""</span> <span class = keyword> else </span> [ toword.i]</span> <span class = block> <span class = keyword> Function </span> check(y:seq.boolean, testname:seq.word)seq.word <span class = block> <span class = keyword> let </span> x = @(+, check2.y, <span class = literal >""</span> , arithseq(length.y, 1, 1))
+ <br> <span class = keyword> if </span> x = <span class = literal >""</span> <span class = keyword> then </span> <span class = literal >"PASS"</span> + testname 
+ <br> <span class = keyword> else </span> <span class = literal >"FAILED test"</span> + x + <span class = literal >"in"</span> + testname </span> </span> <span class = block> <hr id ="testall"> <span class = keyword> module </span> testall </span> <span class = block> <span class = keyword> Library </span> testall point test11a checking myseq point2d randomphrase test11 test20 test5 testencoding testgraph tree2 uses stdlib exports checking randomphrase test11 test11a test2 test5 testall testencoding </span> <span class = block> /run randomphrase randomphrase </span> <span class = block> /run testencoding testencoding </span> <span class = block> run testall testall </span> <span class = block> * usegraph exclude stdlib </span> <span class = block> <span class = keyword> use </span> checking </span> <span class = block> <span class = keyword> use </span> real </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> <span class = keyword> use </span> test11 </span> <span class = block> <span class = keyword> use </span> test11a </span> <span class = block> <span class = keyword> use </span> test20 </span> <span class = block> <span class = keyword> use </span> test5 </span> <span class = block> <span class = keyword> use </span> testencoding </span> <span class = block> /use test2 </span> <span class = block> <span class = keyword> Function </span> testall seq.word 
+ <br> { <span class = literal >"hello"</span> + test5 + test11 + test11a + testencoding + check([ print(sqrt.2.0, 3)= <span class = literal >"1.414"</span> , 
+ <br> print(int2real.3, 2)= <span class = literal >"3.00"</span> , 
+ <br> intpart.3.1 = 3, 
+ <br> print(2.0 / 3.0, 3)= <span class = literal >"0.667"</span> , 
+ <br> 2.0 + 3.0 = 5.0, 
+ <br> 2.0 * 3.0 = 6.0, 
+ <br> print(2.3 - 1.1, 5)= <span class = literal >"1.20000"</span> , 
+ <br> print(cos.0.4, 5)= <span class = literal >"0.92106"</span> , 
+ <br> print(sin.0.4, 5)= <span class = literal >"0.38942"</span> , 
+ <br> 1.0 ? 2.0 = LT, 
+ <br> -1.9 ?-3.0 = GT, 
+ <br> 3.00 ? 3.000 = EQ, 
+ <br> print(tan(pi / 4.0), 5)= <span class = literal >"1.00000"</span> , 
+ <br> print(arcsin.sin.0.5, 5)= <span class = literal >"0.50000"</span> , 
+ <br> print(arccos.cos.0.5, 5)= <span class = literal >"0.50000"</span> , 
+ <br> -2^4 =-16, 
+ <br> test20], <span class = literal >"real"</span> )} </span> <span class = block> <hr id ="test11"> <span class = keyword> module </span> test11 </span> <span class = block> <span class = keyword> use </span> oseq.int </span> <span class = block> <span class = keyword> use </span> point.int </span> <span class = block> <span class = keyword> use </span> seq.boolean </span> <span class = block> <span class = keyword> use </span> seq.int </span> <span class = block> <span class = keyword> use </span> seq.ordering </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> <span class = keyword> Function </span> dummyfunction int 3 </span> <span class = block> <span class = keyword> function </span> t001 boolean 0 - 4 = 1 - 2 - 3 </span> <span class = block> <span class = keyword> function </span> t002 boolean 2 = 24 / 4 / 3 </span> <span class = block> <span class = keyword> function </span> fact(a:int)int <span class = keyword> if </span> a = 1 <span class = keyword> then </span> 1 <span class = keyword> else </span> a * fact(a - 1)</span> <span class = block> <span class = keyword> function </span> t003 boolean 24 = fact.4 </span> <span class = block> <span class = keyword> function </span> power(a:int, b:int)int 
+ <br> <span class = keyword> if </span> b = 1 <span class = keyword> then </span> a <span class = keyword> else </span> power(a, b / 2)* power(a, b - b / 2)</span> <span class = block> <span class = keyword> function </span> t004 boolean 1024 = power(2, 10)</span> <span class = block> <span class = keyword> function </span> t005 boolean 45 = <span class = keyword> if </span> 2 = 2 <span class = keyword> then </span> 45 <span class = keyword> else </span> 23 </span> <span class = block> <span class = keyword> function </span> t006 boolean 34 = <span class = keyword> if </span> 6 ? 2 = GT <span class = keyword> then </span> 34 <span class = keyword> else </span> 16 + 4 </span> <span class = block> test cat of sequences </span> <span class = block> <span class = keyword> function </span> t007 boolean [ 2, 3]= [ 2]+ [ 3]</span> <span class = block> <span class = keyword> function </span> ff(seed:int, x:int)int 
+ <br> <span class = keyword> if </span> x = 1 <span class = keyword> then </span> pseudorandom.seed <span class = keyword> else </span> ff(pseudorandom.seed, x - 1)</span> <span class = block> <span class = keyword> function </span> t008 boolean 
+ <br> // <span class = comment > testing random number generator </span> // 1043618065 = ff(1, 10000)</span> <span class = block> <span class = keyword> function </span> gen(n:int)seq.int <span class = keyword> if </span> n = 1 <span class = keyword> then </span> [ n]<span class = keyword> else </span> gen(n - 1)+ [ n * n]</span> <span class = block> <span class = keyword> function </span> t009 boolean [ 1, 4, 9, 16, 25]= gen.5 </span> <span class = block> <span class = keyword> function </span> genb(n:int)seq.int 
+ <br> <span class = keyword> if </span> n = 1 <span class = keyword> then </span> [ 5]<span class = keyword> else </span> genb(n - 1)+ genb(n - 1)+ [ n]</span> <span class = block> <span class = keyword> function </span> t010 boolean [ 5, 5, 2, 5, 5, 2, 3, 5, 5, 2, 5, 5, 2, 3, 4]= genb.4 </span> <span class = block> covert integer to sequence of digits </span> <span class = block> <span class = keyword> function </span> int2seq(n:int, b:int)seq.int 
+ <br> <span class = keyword> if </span> n ? b = LT <span class = keyword> then </span> [ n]<span class = keyword> else </span> int2seq(n / b, b)+ [ n - n / b * b]</span> <span class = block> <span class = keyword> function </span> t011 boolean [ 2, 3, 9, 5]= int2seq(2395, 10)</span> <span class = block> <span class = keyword> function </span> t012 boolean [ GT, GT, LT]= [ [ 2, 8]? [ 2, 7], [ 3, 8]? [ 2, 8], [ 1, 8]? [ 2, 8]]</span> <span class = block> <span class = keyword> function </span> t013 boolean EQ =([ 2, 8, 1]? [ 2, 8, 1])</span> <span class = block> <span class = keyword> function </span> t014 boolean [ LT, GT]= [ [ 2, 8]? [ 2, 8, 1], [ 2, 8, 1]? [ 2, 8]]</span> <span class = block> <span class = keyword> function </span> t015 boolean [ true, false, false, false]= [ true ∧ true, true ∧ false, false ∧ true, false ∧ false]</span> <span class = block> <span class = keyword> function </span> t016 boolean [ true, true, true, false]= [ true ∨ true, true ∨ false, false ∨ true, false ∨ false]</span> <span class = block> test on in </span> <span class = block> <span class = keyword> function </span> t017 boolean [ true, true, false]= [ 2 in [ 1, 2, 3], 3 in [ 1, 2, 3], 5 in [ 1, 2, 3]]</span> <span class = block> test of + using functional notation pretty printer messes up this example this should be 3 = +(1, 2).</span> <span class = block> <span class = keyword> function </span> t018 boolean 3 = 1 + 2 </span> <span class = block> <span class = keyword> function </span> t019 boolean 1 = findindex(3, [ 3])</span> <span class = block> <span class = keyword> function </span> t020 boolean 5 = findindex(1, [ 2, 4, 3, 8, 1, 3]+ constantseq(4, 1))</span> <span class = block> <span class = keyword> function </span> t021 boolean 28 = constantseq(13, 5)_7 + length.constantseq(23, 3)</span> <span class = block> / function t022 boolean [ 3, 6]= all(3, [ 2, 4, 3, 8, 1, 3])</span> <span class = block> <span class = keyword> function </span> t022 boolean [ toword.384]+ toword.52 = <span class = literal >"384 52"</span> </span> <span class = block> <span class = keyword> function </span> t023 boolean 9 =(0 - 21)mod 15 </span> <span class = block> <span class = keyword> Function </span> t024 boolean point(3, 4, 5)= point(3, 4, 5)</span> <span class = block> <span class = keyword> Function </span> t025 boolean false =(point(3, 4, 1)= point(3, 4, 5))</span> <span class = block> <span class = keyword> Function </span> t026 boolean false =(point(3, 7, 5)= point(3, 4, 5))</span> <span class = block> <span class = keyword> Function </span> t027 boolean point(10, 6, 3)= point(8, 3, 2)+ point(2, 3, 1)</span> <span class = block> <span class = keyword> Function </span> t028 boolean point(6, 0, 1)= point(8, 3, 2) - point(2, 3, 1)</span> <span class = block> <span class = keyword> Function </span> t029 boolean 6 = x.point(6, 0, 1)</span> <span class = block> <span class = keyword> Function </span> t030 boolean [ false, false, true, true]= [ isbyte(0 - 1), isbyte.256, isbyte.255, isbyte.0]</span> <span class = block> <span class = keyword> function </span> isbyte(i:int)boolean between(i, 0, 255)</span> <span class = block> <span class = keyword> Function </span> t031 boolean false = @(∧, isbyte, true, [ 0 - 1, 256, 255, 0])</span> <span class = block> <span class = keyword> Function </span> t032 boolean @(∧, isbyte, true, [ 23, 4, 5, 255, 7, 2, 255])</span> <span class = block> / / Function t110 boolean [ 23, 4, 5, 255, 7, 2, 255]= byteseq.[ 23, 4, 5, 255, 7, 2, 255]</span> <span class = block> / / Function t111 boolean [ 23, 4, 5, 255, 7, 2, 255]= byteseq.[ 23, 4, 5, 255, 7, 2, 255]</span> <span class = block> <span class = keyword> Function </span> test11 seq.word <span class = block> <span class = keyword> let </span> y = [ t002, t003, t004, t005, t006, t007, t008, t009, t010, t011, 
+ <br> t012, t013, t014, t015, t016, t017, t018, t019, t020, t021, 
+ <br> t022, t023, t024, t025, t026, t027, t028, t029, t030, t031]
+ <br> <span class = keyword> let </span> x = @(+, check.y, <span class = literal >""</span> , arithseq(length.y, 1, 1))
+ <br> <span class = keyword> if </span> x = <span class = literal >""</span> <span class = keyword> then </span> <span class = literal >"PASS test11"</span> <span class = keyword> else </span> <span class = literal >"FAIL test11"</span> + x </span> </span> <span class = block> <span class = keyword> Function </span> check(l:seq.boolean, i:int)seq.word 
+ <br> <span class = keyword> if </span> l_i <span class = keyword> then </span> <span class = literal >""</span> <span class = keyword> else </span> [ toword.i]</span> <span class = block> <hr id ="myseq"> <span class = keyword> module </span> myseq.T </span> <span class = block> All sequences must be in parameterized scopes.</span> <span class = block> <span class = keyword> use </span> seq.T </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> type myseq is sequence length:int, data:seq.T </span> <span class = block> All sequences must have the first element representing the length of the seqence.As with any parameterized scope any type must contain a element that use the parameter so that mutiple instances of the scope do not produce duplicate symbols.</span> <span class = block> We need some operations on T.T will be an int in this example so all these operations are define on int in the stdlib.</span> <span class = block> <span class = keyword> function </span> >(T, int)boolean unbound </span> <span class = block> <span class = keyword> function </span> &lt;(T, int)boolean unbound </span> <span class = block> <span class = keyword> function </span>-(T, int)T unbound </span> <span class = block> <span class = keyword> function </span> *(T, int)T unbound </span> <span class = block> <span class = keyword> function </span> +(T, T)T unbound </span> <span class = block> We need to helper functions to calculate the length and find the ith element of the seq for this example.</span> <span class = block> <span class = keyword> Function </span> clength(s:seq.T, i:int)int <span class = block> <span class = keyword> if </span> i > length.s 
+ <br> <span class = keyword> then </span> 0 
+ <br> <span class = keyword> else </span> <span class = keyword> assert </span> s_i > 0 <span class = keyword> report </span> <span class = literal >"invalid"</span> <span class = keyword> if </span> s_i &lt; 128 
+ <br> <span class = keyword> then </span> 1 + clength(s, i + 1)
+ <br> <span class = keyword> else </span> <span class = keyword> assert </span> s_i &lt; 128 + 64 + 32 <span class = keyword> report </span> <span class = literal >"invalid"</span> 1 + clength(s, i + 2)</span> </span> <span class = block> <span class = keyword> Function </span> cindex(s:seq.T, i:int, idx:int)T <span class = block> <span class = keyword> if </span> idx = 1 
+ <br> <span class = keyword> then </span> <span class = keyword> if </span> s_i &lt; 128 <span class = keyword> then </span> s_i <span class = keyword> else </span> s_(i + 1) - 128 +(s_i - 128 - 64)* 64 
+ <br> <span class = keyword> else </span> cindex(s, i + <span class = keyword> if </span> s_i &lt; 128 <span class = keyword> then </span> 1 <span class = keyword> else </span> 2, idx - 1)</span> </span> <span class = block> We need a constructor of our sequence.Note the use of a toseq function.This is defined implicitly by the sequence type definition to change the type from myseq(T)to seq(T).</span> <span class = block> <span class = keyword> Function </span> myseq(d:seq.T)seq.T toseq.myseq(clength(d, 1), d)</span> <span class = block> Every sequence must have a_function defined on it which is below for mseq.T </span> <span class = block> <span class = keyword> Function </span>_(a:myseq.T, idx:int)T cindex(data.a, 1, idx)</span> <span class = block> <hr id ="tree2"> <span class = keyword> module </span> tree2.T </span> <span class = block> <span class = keyword> use </span> seq.T </span> <span class = block> <span class = keyword> use </span> seq.tree2.T </span> <span class = block> <span class = keyword> use </span> seq.treenode.T </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> type tree2 is record nodes:seq.treenode.T, subtree:int </span> <span class = block> type treenode is record label:T, nosons:int, nonodes:int </span> <span class = block> <span class = keyword> Function </span> =(T, T)boolean unbound </span> <span class = block> <span class = keyword> Function </span> =(a:treenode.T, b:treenode.T)boolean label.a = label.b ∧ nosons.a = nosons.b </span> <span class = block> <span class = keyword> Function </span> =(a:tree2.T, b:tree2.T)boolean <span class = block> <span class = keyword> let </span> na = nonodes.a 
+ <br> <span class = keyword> let </span> nb = nonodes.b 
+ <br> <span class = keyword> if </span> na = nb 
+ <br> <span class = keyword> then </span> subseq(nodes.a, subtree.a - na + 1, subtree.a)= subseq(nodes.b, subtree.b - nb + 1, subtree.b)
+ <br> <span class = keyword> else </span> false </span> </span> <span class = block> <span class = keyword> Function </span> tree2(l:T)tree2.T tree2([ treenode(l, 0, 1)], 1)</span> <span class = block> <span class = keyword> Function </span> label(t:tree2.T)T label(nodes(t)_subtree.t)</span> <span class = block> <span class = keyword> Function </span> sons(t:tree2.T)seq.tree2.T level(t, subtree.t, nosons.t)</span> <span class = block> <span class = keyword> Function </span> tree2(l:T, s:seq.tree2.T)tree2.T <span class = block> <span class = keyword> let </span> n = @(+, intreenodes, empty:seq.treenode.T, s)
+ <br> tree2(n + [ treenode(l, length.s, length.n + 1)], length.n + 1)</span> </span> <span class = block> <span class = keyword> function </span> intreenodes(t:tree2.T)seq.treenode.T subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)</span> <span class = block> <span class = keyword> Function </span>_(t:tree2.T, i:int)tree2.T <span class = block> <span class = keyword> assert </span> between(i, 1, nosons.t)<span class = keyword> report </span> <span class = literal >"no such son"</span> + toword.i + toword.nosons.t 
+ <br> son(t, subtree.t, nosons.t - i + 1)</span> </span> <span class = block> <span class = keyword> Function </span> nosons(t:tree2.T)int nosons(nodes(t)_subtree.t)</span> <span class = block> <span class = keyword> Function </span> nonodes(t:tree2.T)int nonodes(nodes(t)_subtree.t)</span> <span class = block> <span class = keyword> function </span> level(t:tree2.T, i:int, remainingsons:int)seq.tree2.T <span class = block> <span class = keyword> if </span> remainingsons = 0 
+ <br> <span class = keyword> then </span> empty:seq.tree2.T 
+ <br> <span class = keyword> else </span> level(t, i - nonodes(nodes(t)_(i - 1)), remainingsons - 1)+ [ tree2(nodes.t, i - 1)]</span> </span> <span class = block> <span class = keyword> function </span> son(t:tree2.T, i:int, remainingsons:int)tree2.T <span class = block> <span class = keyword> if </span> remainingsons = 1 
+ <br> <span class = keyword> then </span> tree2(nodes.t, i - 1)
+ <br> <span class = keyword> else </span> son(t, i - nonodes(nodes(t)_(i - 1)), remainingsons - 1)</span> </span> <span class = block> <span class = keyword> Function </span> replace(t:tree2.T, with:T, a:T)tree2.T 
+ <br> tree2(@(+, replace(with, a), empty:seq.treenode.T, subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)), nonodes.t)</span> <span class = block> <span class = keyword> function </span> replace(replacement:T, match:T, a:treenode.T)treenode.T 
+ <br> <span class = keyword> if </span> label.a = match <span class = keyword> then </span> treenode(replacement, nosons.a, nonodes.a)<span class = keyword> else </span> a </span> <span class = block> <span class = keyword> Function </span> postorder(a:tree2.T)seq.tree2.T 
+ <br> @(+, tree2.nodes.a, empty:seq.tree2.T, arithseq(nonodes.a, 1, subtree.a - nonodes.a + 1))</span> <span class = block> <hr id ="point"> <span class = keyword> module </span> point.T </span> <span class = block> <span class = keyword> use </span> stdlib </span> <span class = block> type point is record x:T, y:T, z:T </span> <span class = block> <span class = keyword> Function </span> +(T, T)T unbound </span> <span class = block> <span class = keyword> Function </span>-(T, T)T unbound </span> <span class = block> <span class = keyword> Function </span> =(T, T)boolean unbound </span> <span class = block> <span class = keyword> Function </span> point(a:T, b:T, c:T)point.T export </span> <span class = block> <span class = keyword> Function </span> +(a:point.T, b:point.T)point.T point(x.a + x.b, y.a + y.b, z.a + z.b)</span> <span class = block> <span class = keyword> Function </span>-(a:point.T, b:point.T)point.T point(x.a - x.b, y.a - y.b, z.a - z.b)</span> <span class = block> <span class = keyword> Function </span> =(a:point.T, b:point.T)boolean x.a = x.b ∧ y.a = y.b ∧ z.a = z.b </span> <span class = block> <span class = keyword> Function </span> y(a:point.T)T export </span> <span class = block> <span class = keyword> Function </span> x(a:point.T)T export </span> <span class = block> <span class = keyword> Function </span> z(a:point.T)T export </span> 
 
-   
