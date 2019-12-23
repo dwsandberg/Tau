@@ -10,6 +10,10 @@ use blockseq.int
 
 use deepcopy.trackconst
 
+use encoding.llvmconst
+
+use encoding.llvmtypeele
+
 use fileio
 
 use internalbc
@@ -17,8 +21,6 @@ use internalbc
 use packedseq.int
 
 use packedseq.seq.int
-
-use reconstruct
 
 use seq.bit
 
@@ -32,13 +34,13 @@ use seq.boolean
 
 use seq.encoding.llvmconst
 
-use seq.llvmtype
-
 use seq.int
 
 use seq.internalbc
 
 use seq.llvmconst
+
+use seq.llvmtype
 
 use seq.llvmtypeele
 
@@ -60,31 +62,29 @@ use stacktrace
 
 use stdlib
 
-
-
 Function typ(llvmconst)int export
 
 Function toseq(llvmconst)seq.int export
 
-type llvmtypeele is record toseq:seq.int,index:int
+type llvmtypeele is record toseq:seq.int, index:int
 
 type llvmtypes is encoding llvmtypeele
 
-type llvmtype is record index: int
+type llvmtype is record index:int
 
-function llvmtypeele(toseq:seq.int) llvmtypeele llvmtypeele(toseq,0)
+function llvmtypeele(toseq:seq.int)llvmtypeele llvmtypeele(toseq, 0)
 
-function addindex(l:llvmtypeele,i:int) llvmtypeele llvmtypeele(toseq.l,i)
+function addindex(l:llvmtypeele, i:int)llvmtypeele llvmtypeele(toseq.l, i)
 
 function hash(a:llvmtypeele)int hash.toseq.a
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
-type llvmconst is record typ:int, toseq:seq.int,index:int
+type llvmconst is record typ:int, toseq:seq.int, index:int
 
-function llvmconst(typ:int, toseq:seq.int) llvmconst llvmconst(typ,toseq,0)
+function llvmconst(typ:int, toseq:seq.int)llvmconst llvmconst(typ, toseq, 0)
 
-function addindex(a:llvmconst,i:int) llvmconst llvmconst(typ.a,toseq.a,i)
+function addindex(a:llvmconst, i:int)llvmconst llvmconst(typ.a, toseq.a, i)
 
 type llvmconsts is encoding llvmconst
 
@@ -135,9 +135,9 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
   let a8 = finishblock(symentries(symtabheader, orderadded.llvmconsts, 1), length.symtabheader, TYPEABBREVLEN)
   // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN)
 
-Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
- // go back and adjust types to fillin the length of arrays that where not known at time of creation of type  //  
- if i > length.adj 
+Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int 
+ // go back and adjust types to fillin the length of arrays that where not known at time of creation of type // 
+  if i > length.adj 
   then subseq(s, i, length.s)
   else let r = s_i 
   [ if length.r < 2 then r else [ r_1, r_2 + adj_i]+ subseq(r, 3, length.r)]+ adjust(s, adj, i + 1)
@@ -165,32 +165,25 @@ Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, orderadded.llvmt
 
 Function typ(a:llvmtype)int index.a - 1
 
-Function llvmtype(s:seq.int) llvmtype 
-llvmtype.findindex(llvmtypeele.s,llvmtypes)
+Function llvmtype(s:seq.int)llvmtype llvmtype.findindex(llvmtypeele.s, llvmtypes)
 
+Function double llvmtype llvmtype.[ TYPEDOUBLE]
 
-Function double  llvmtype llvmtype. [ TYPEDOUBLE] 
+Function i64 llvmtype llvmtype.[ TYPEINTEGER, 64]
 
-Function i64 llvmtype llvmtype. [ TYPEINTEGER, 64] 
+Function i32 llvmtype llvmtype.[ TYPEINTEGER, 32]
 
-Function i32  llvmtype llvmtype. [ TYPEINTEGER, 32] 
+Function i8 llvmtype llvmtype.[ TYPEINTEGER, 8]
 
-Function i8  llvmtype llvmtype. [ TYPEINTEGER, 8] 
+Function i1 llvmtype llvmtype.[ TYPEINTEGER, 1]
 
-Function i1  llvmtype llvmtype. [ TYPEINTEGER, 1] 
+Function VOID llvmtype llvmtype.[ TYPEVOID]
 
-Function VOID  llvmtype llvmtype.[ TYPEVOID] 
+Function array(size:int, base:llvmtype)llvmtype llvmtype.[ TYPEARRAY, size, typ.base]
 
-Function array(size:int, base:llvmtype)llvmtype
- llvmtype. [ TYPEARRAY, size, typ.base]
+Function ptr(base:llvmtype)llvmtype llvmtype.[ TYPEPOINTER, typ.base, 0]
 
-Function ptr(base:llvmtype)llvmtype  
- llvmtype. [ TYPEPOINTER, typ.base, 0] 
- 
- use seq.llvmtype
-
-Function function(para:seq.llvmtype) llvmtype
- llvmtype.@(+, typ, [ TYPEFUNCTION, 0], para)
+Function function(para:seq.llvmtype)llvmtype llvmtype.@(+, typ, [ TYPEFUNCTION, 0], para)
 
 function ENDBLOCK int 0
 
@@ -253,7 +246,7 @@ Function symentries(bits:bitpackedseq.bit, s:seq.llvmconst, i:int)bitpackedseq.b
    else bits 
   symentries(bs, s, i + 1)
 
-Function getftype(w:word)llvmtype
+Function getftype(w:word)llvmtype 
  let a = @(+, count.90, 1, decode.w)
   function.constantseq(a, i64)
 

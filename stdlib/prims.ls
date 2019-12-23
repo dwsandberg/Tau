@@ -1,5 +1,7 @@
 Module prims
 
+use encoding.seq.int
+
 use fileio
 
 use seq.seq.word
@@ -33,4 +35,7 @@ Function loadlib(a:seq.word, timestamp:int)int loadlib.toCformat.a
 function loadlib(seq.bits)int builtin.usemangle
 
 function executecode(seq.bits, para:seq.int)seq.word builtin.usemangle
+
+Function add2(h:encodingstate.seq.int, v:seq.encodingrep.seq.int)encodingstate.seq.int 
+ // so add is included in stdlib // add(h, v)
 

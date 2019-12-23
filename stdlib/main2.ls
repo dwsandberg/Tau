@@ -12,17 +12,15 @@ use format
 
 use groupparagraphs
 
-use libdescfuncnew
+use libdescfunc
 
 use libscope
 
-use newparse
-
-use newsymbol
-
 use oseq.word
 
-use other
+use pass1
+
+use parse
 
 use pass2
 
@@ -55,6 +53,8 @@ use set.symbol
 use set.word
 
 use stdlib
+
+use symbol
 
 use textio
 
@@ -108,8 +108,7 @@ function subcompilelib(libname:word)seq.word
   {"OK"}
 
 Function compilelib2(libname:word)seq.word 
-PROFILE.
- let p1 = process.subcompilelib.libname 
+ PROFILE.let p1 = process.subcompilelib.libname 
   if aborted.p1 
   then"COMPILATION ERROR:"+ space + message.p1 
   else let aa = result.p1 
@@ -188,7 +187,7 @@ function extractparsed(abstract:boolean, known:symbolset, s:symbol)seq.seq.word
  // assert not(name.s ="cindex"_1)report [ mangledname.s]+ if abstract then"abstract"else""// 
   let a = if abstract 
    then src.s 
-   else let sy = lookupsymbol(known,mangledname.s) 
+   else let sy = lookupsymbol(known, mangledname.s)
    // assert false report [ mangledname.s]+ src.sy parsedfunc 7 = 2 wordfreq wordfreq boolean a b falseZstdlib // 
    src.sy 
   if length.a > 0 ∧ a_1 ="parsedfunc"_1 

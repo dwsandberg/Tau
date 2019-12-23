@@ -1,4 +1,4 @@
-Module other
+Module pass1
 
 run main test1
 
@@ -10,9 +10,7 @@ use deepcopy.symbolset
 
 use libscope
 
-use newparse
-
-use newsymbol
+use parse
 
 use process.bindinfo
 
@@ -48,6 +46,8 @@ use stacktrace
 
 use stdlib
 
+use symbol
+
 use textio
 
 type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol, exportmodule:boolean, rawsrc:seq.seq.word
@@ -55,17 +55,17 @@ type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, ex
 Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, exportmodule:boolean)firstpass 
  firstpass(modname, uses, defines, exports, unboundexports, unboundx, exportmodule, empty:seq.seq.word)
 
-function exportmodule(firstpass)boolean export
+Function exportmodule(firstpass)boolean export
 
 Function modname(firstpass)mytype export
 
-function defines(firstpass)set.symbol export
+Function defines(firstpass)set.symbol export
 
-function exports(firstpass)set.symbol export
+Function exports(firstpass)set.symbol export
 
-function uses(firstpass)seq.mytype export
+Function uses(firstpass)seq.mytype export
 
-function rawsrc(firstpass)seq.seq.word export
+Function rawsrc(firstpass)seq.seq.word export
 
 Function replaceT(with:mytype, f:firstpass)firstpass 
  firstpass(replaceT(with, modname.f), @(+, replaceT.with, empty:seq.mytype, uses.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.defines.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.exports.f), @(+, replaceT.with, empty:seq.symbol, unboundexports.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.unbound.f), false, rawsrc.f)
@@ -82,15 +82,14 @@ function find(modset:set.firstpass, name:mytype)set.firstpass
 
 type linkage is record symset:symbolset, mods:seq.firstpass, roots:set.word
 
-function symset(linkage)symbolset export
+Function symset(linkage)symbolset export
 
-function mods(linkage)seq.firstpass export
+Function mods(linkage)seq.firstpass export
 
-function roots(linkage)set.word export
+Function roots(linkage)set.word export
 
 Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarysyms:symbolset, librarymods:set.firstpass)linkage 
- PROFILE.
-  // assert false report print.librarysyms //
+ PROFILE.// assert false report print.librarysyms // 
   let a = @(+, gathersymbols.exports, librarymods, allsrc)
   let d2 = resolveunboundexports.expanduse.a 
   let simple = @(+, findsimple, empty:seq.firstpass, toseq.d2)
@@ -109,7 +108,7 @@ function clean(s:symbol)symbol
 
 function addinternal(known:symbolset, sym:symbol)symbolset 
  if modname.sym = mytype."internal"
-  then let x = lookupsymbol(known,mangledname.sym )
+  then let x = lookupsymbol(known, mangledname.sym)
    if isdefined.x then known else replace(known, sym)
   else known
 
@@ -228,14 +227,14 @@ function bind(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:sy
   if code_1 in"type sequence record encoding Encoding"
   then postbindtypes(dict, mytype."", templates, knownsymbols, code, s2, s2)
   else postbind(dict, mytype."", templates, knownsymbols, parsedresult.b, s2, s2)
-  
+
 resultpair type is needed because calculation often involve adding new known symbols.
 
 type resultpair is record known:symbolset, size:seq.word
 
 Function lookuptypedesc2(knownsymbols:symbolset, typ:seq.word)symbol 
  let name = mangle(merge("typedesc:"+ typ), mytype."internal", empty:seq.mytype)
-  lookupsymbol(knownsymbols,name)
+  lookupsymbol(knownsymbols, name)
 
 Function extracttypedesc(a:symbol)seq.word 
  if isdefined.a 
@@ -339,9 +338,9 @@ function postbindtypes(dict:set.symbol, modpara:mytype, templates:symbolset, kno
    definestructure(org, dict, templates, code, modname.thissymbol, newknown, 3 + len + 1,"LIT 1", empty:seq.mytype,"FREF"+ mn)
   else if code_1 in"encoding Encoding"
   then let encodingtype = mytype.subseq(code, 4, length.code - 1)
-   let lkup = lookup(dict,"lookup"_1, [ encodingtype, mytype(towords.encodingtype +switch)])
+   let lkup = lookup(dict,"lookup"_1, [ encodingtype, mytype(towords.encodingtype + switch)])
    assert not.isempty.lkup report"no lookup for"+ code_2 + print.encodingtype 
-   let iadd = lookup(dict,"add"_1, [ mytype(towords.encodingtype  +switch), mytype."int", encodingtype])
+   let iadd = lookup(dict,"add"_1, [ mytype(towords.encodingtype + switch), mytype."int", encodingtype])
    assert not.isempty.iadd report"no add for"+ code_2 + print.encodingtype 
    let copy = deepcopymangle.encodingtype 
    let newsrc ="FREF"+ copy +"FREF"+ mangledname(lkup_1)+"FREF"+ mangledname(iadd_1)+(if name.thissymbol ="wordencoding"_1 
@@ -356,8 +355,8 @@ function postbindtypes(dict:set.symbol, modpara:mytype, templates:symbolset, kno
   emptysymbolset
 
 function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset, code:seq.word, thissymbol:symbol, org:symbol)symbolset 
-  assert not(code_1 in"record sequence encoding Encoding") report"not expecting type"+ code + stacktrace 
- postbind2(org, dict, modpara, templates, knownsymbols, code, 1,"", thissymbol)
+ assert not(code_1 in"record sequence encoding Encoding")report"not expecting type"+ code + stacktrace 
+  postbind2(org, dict, modpara, templates, knownsymbols, code, 1,"", thissymbol)
 
 function topara(i:int)seq.word {"PARAM"+ toword.i }
 
@@ -392,7 +391,7 @@ function postbind2(org:symbol, dict:set.symbol, modpara:mytype, templates:symbol
   postbind2(org, dict, modpara, templates, known.z, code, i + 1, result + size.z, thissymbol)
 
 function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset)resultpair 
- let t1 = lookupsymbol(knownsymbols,mangledname )
+ let t1 = lookupsymbol(knownsymbols, mangledname)
   if isdefined.t1 
   then let src = src.t1 
    if src_1 in"record encoding Encoding"
@@ -420,18 +419,18 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
    then // assert false report"XX"+ mangledname // 
     // assert code_i &ne"deepcopyZTzseqzdeepcopyZT"_1 report"ERR677"+ newmodpara // 
     assert down_3 in ["T"]report"OOO"+ down_3 + print.newmodpara 
-    definedeepcopy(dict,templates,knownsymbols, if down_3 ="T"then newmodpara else mytype(down_3),org)
+    definedeepcopy(dict, templates, knownsymbols, if down_3 ="T"then newmodpara else mytype(down_3), org)
    else // Compile options // resultpair(knownsymbols, down_1)
   else let params = @(+, mytype, empty:seq.mytype, subseq(down, 3, length.down))
   let fullname = mangle(down_1_1, newmodname, params)
-  let t2 = lookupsymbol(knownsymbols,fullname )
+  let t2 = lookupsymbol(knownsymbols, fullname)
   if fullname ≠ mangledname ∧ isdefined.t2 
   then // assert mangledname ="inZwordzseqzseqZTZTzseq"_1 report"ERR13"+ fullname + mangledname // 
    let src = src.t2 
    if src_1 in"sequence record"
    then resultpair(postbindtypes(dict, newmodpara, templates, knownsymbols, src, t2, org), [ fullname])
    else resultpair(knownsymbols, [ fullname])
-  else let f = lookupsymbol(templates,mangle(down_1_1, mytype("T"+ templatename), params))
+  else let f = lookupsymbol(templates, mangle(down_1_1, mytype("T"+ templatename), params))
   if isdefined.f 
   then let newsymbol = symbol(down_1_1, newmodname, params, replaceT(newmodpara, resulttype.f), src.f)
    assert length.src.f > 0 report"MMM4"+ mangledname.f 
@@ -443,7 +442,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
   let k = lookup(dict, down_1_1, params2)
   assert cardinality.k = 1 report"cannot find template for"+ down_1_1 +"("+ @(seperator.",", print,"", params2)+")while process"+ print.org 
   assert mangledname ≠ mangledname(k_1)report"ERR12"+ mangledname + print2(k_1)
-  if not.isdefined(lookupsymbol(knownsymbols,mangledname(k_1)))
+  if not.isdefined.lookupsymbol(knownsymbols, mangledname(k_1))
   then X(mangledname(k_1), org, dict, mytype."T", templates, knownsymbols)
   else resultpair(knownsymbols, [ mangledname(k_1)])
 
@@ -465,8 +464,8 @@ function wrapgathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, 
 
 function definefld(src:seq.word, modname:mytype, t:seq.mytype, m:mytype)symbol 
  symbol(abstracttype.m, modname, t, parameter.m, src)
- 
-function switch seq.word "encodingstate"
+
+function switch seq.word {"encodingstate"}
 
 function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass 
  // assert print.modname.f in ["?","stdlib","UTF8","altgen"]∨(print.modname.f ="bitpackedseq.T"∧ cardinality.defines.f + cardinality.unbound.f < 8)report print.modname.f + printdict.unbound.f // 
@@ -483,7 +482,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
    then assert parameter.modname.f = mytype.""report"encoding in template?"
     let typ = parameter(types(b)_1)
     let sym = symbol(code(b)_2, modname.f, empty:seq.mytype, mytype(towords.typ +"erecord"), code.b)
-    firstpass(modname.f, uses.f    +  mytype(towords.typ +"encoding"),  defines.f + changesrc(sym, code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
+    firstpass(modname.f, uses.f + mytype(towords.typ +"encoding"), defines.f + changesrc(sym, code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
    else assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
    // assert false report code.b // 
    let modnm = towords.modname.f 
@@ -516,12 +515,9 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
   then firstpass(mytype.if length.input > 2 then"T"+ input_2 else [ input_2], uses.f, defines.f, exports.f, unboundexports.f, unbound.f, input_2 in exported, rawsrc.f)
   else f
 
-   
-function definedeepcopy(dict:set.symbol,templates:symbolset,knownsymbols:symbolset, type:mytype,org:symbol)resultpair 
-  // assert towords.type in ["int seq","int","word3","stat5","word seq","llvmtypeele"
- ,"word","llvmconst","const3","inst","flddesc seq","match5","flddesc","templatepart seq","templatepart",
- "internalbc"," persistant"] report "definedeepcopy" +towords.type // 
- let body = if abstracttype.type in"encoding int word"
+function definedeepcopy(dict:set.symbol, templates:symbolset, knownsymbols:symbolset, type:mytype, org:symbol)resultpair 
+ // assert towords.type in ["int seq","int","word3","stat5","word seq","llvmtypeele","word","llvmconst","const3","inst","flddesc seq","match5","flddesc","templatepart seq","templatepart","internalbc","persistant"]report"definedeepcopy"+ towords.type // 
+  let body = if abstracttype.type in"encoding int word"
    then resultpair(knownsymbols,"PARAM 1")
    else // assert length.print.type = 1 &or print.type in ["match5","seq.int","llvmconst","match5","inst","libsym","llvmtypeele","word3","const3","seq.word","stat5","seq.flddesc","flddesc","seq.templatepart","templatepart","set.mod2desc"]report"DDD"+ print.type // 
    if abstracttype.type ="seq"_1 
@@ -530,26 +526,25 @@ function definedeepcopy(dict:set.symbol,templates:symbolset,knownsymbols:symbols
     let pseqidx = mangle("_"_1, type, [ mytype."T pseq", mytype."int"])
     let cat = mangle("+"_1, type, [ mytype."T seq", mytype."T"])
     let blockit = mangle("blockit"_1, mytype."int blockseq", [ mytype."T seq"])
-     resultpair(knownsymbols,{"LIT 0 LIT 0 RECORD 2 PARAM 1 FREF"+ dc +"FREF"+ cat +"FREF"+ pseqidx +"APPLY 5"+ blockit } )
+    resultpair(knownsymbols,"LIT 0 LIT 0 RECORD 2 PARAM 1 FREF"+ dc +"FREF"+ cat +"FREF"+ pseqidx +"APPLY 5"+ blockit)
    else let name = mangle(merge("typedesc:"+ print.type), mytype."internal", empty:seq.mytype)
    // assert false report"ERR100"+ name +"NO test example for deepcopy"// 
-   let a = lookupsymbol(knownsymbols,name) 
-   assert isdefined.a report "not defined" +name
-   let z=if (src.a)_1="record"_1 then 
-          let newknown=postbindtypes(dict, mytype."", templates, knownsymbols, src.a, a, org)
-            let b=lookupsymbol(newknown,name) 
-            resultpair(newknown,src.b)
-     else resultpair(knownsymbols,src.a)
-     let src=size.z
-   assert src_1="WORDS"_1 report "deepcopy: type desc format is wrong"+src
+   let a = lookupsymbol(knownsymbols, name)
+   assert isdefined.a report"not defined"+ name 
+   let z = if src(a)_1 ="record"_1 
+    then let newknown = postbindtypes(dict, mytype."", templates, knownsymbols, src.a, a, org)
+     let b = lookupsymbol(newknown, name)
+     resultpair(newknown, src.b)
+    else resultpair(knownsymbols, src.a)
+   let src = size.z 
+   assert src_1 ="WORDS"_1 report"deepcopy:type desc format is wrong"+ src 
    let y = subfld(src, 4, 0, 4)
-    resultpair(known.z,if last.y ="1"_1 
-   then // only one element in record so type is not represent by actual record // 
-    "PARAM 1"+ subseq(y, 6, length.y - 2)
-   else  y )
-  let sym=symbol("deepcopy"_1, mytype(towords.type +"deepcopy"), [ mytype."T"], type, size.body)
-    resultpair(postbind(dict, mytype."", templates, known.body + sym, src.sym, sym, org), [ mangledname.sym])
-  
+   resultpair(known.z, if last.y ="1"_1 
+    then // only one element in record so type is not represent by actual record // 
+     "PARAM 1"+ subseq(y, 6, length.y - 2)
+    else y)
+  let sym = symbol("deepcopy"_1, mytype(towords.type +"deepcopy"), [ mytype."T"], type, size.body)
+  resultpair(postbind(dict, mytype."", templates, known.body + sym, src.sym, sym, org), [ mangledname.sym])
 
 function subfld(desc:seq.word, i:int, fldno:int, starttype:int)seq.word 
  if i > length.desc 

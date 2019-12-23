@@ -20,13 +20,13 @@ Each paragraph is broken into words. One or more spaces separate the words. A si
 The characters ()+,-.:=[]^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
 A word sequence literal is quoted like "This is a string Literal."   &quot is used to represent a double quote within a word sequence literal. 
 
-An integer literal is represented by a sequence of words where each word only contains digits. That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 0 0 and 10 01 are integer.
+An integer literal is represented by a sequence of words where each word only contains digits. That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 0 0 and 10 01 are integers.
 
 For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ are  &le  &ge  &ne  &and  &or respectively.
 
 Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.
 
-Occasionally some unexpected lexical issues arise. 
+Occasionally some unexpected lexical issues arise. (Example is no longer valid as tupes use notation . notation only.)
 Consider the  function definition &{ block &keyword function test int  (3 + 4)* 5 &} Here the return type becomes int(3 + 4)which is illegal. Grouping braces resolve the difficulty &{ block &keyword function test int {(3 + 4)* 5 } &}
 
 When converting a sequence of words back to characters for output, an space is usually added after each word with the exceptions:
@@ -55,11 +55,12 @@ The computation unit in tau is  a library. A library contains modules. A module 
 
 A paragraph is a sequence of words. Paragraphs that do NOT start with type, use, module, Library, Function or function are always treated as comments.
 
-The syntax for non-comment paragraphs is &{ block <paragraph>::= <module definition> | <type definition> | &keyword use <type> &br <module definition>::= &keyword module <word>(T)| &keyword module <word> 
+The syntax for non-comment paragraphs is &{ block <paragraph>::= <module definition> | <definition> | &keyword use <type> &br <module definition>::= &keyword module <word>(T)| &keyword module <word> 
 &br <name list>:= <word>:<type> | <name list>, <word>:<type> 
-&br <type definition>::= &keyword type <word> &keyword is &keyword record <name list> 
+&br <definition>::= &keyword type <word> &keyword is &keyword record <name list> 
 &br | &keyword type <word> &keyword is &keyword sequence <name list> 
-&br <type definition>::= &keyword function <function name>(<name list>)<type> <exp> 
+&br | &keyword type <word> &keyword is &keyword encoding <type>
+&br <definition>::= &keyword function <function name>(<name list>)<type> <exp> 
 &br | &keyword function <function name> <type> <exp> 
 &br | &keyword Function <function name>(<name list>)<type> <exp> 
 &br | &keyword Function <function name> <type> <exp> &br <function name>::= <word> 
@@ -112,7 +113,7 @@ The follow paragraph that begins with use allows reference to functions defined 
 
 &keyword use stdlib
 
-The follow three paragraphs allow access to the function automatically defined by the struct definition in other types that “use” this module. If these paragraphs are omitted the functions would not be available outside of this module. If a function starts with “function” instead of “Function” the function is also not available outside the module.
+The follow three paragraphs allow access to the function automatically defined by the type definition in other types that “use” this module. If these paragraphs are omitted the functions would not be available outside of this module. If a function starts with “function” instead of “Function” the function is also not available outside the module.
 
 &keyword Function point2d(a:int, b:int)point2d export
 
@@ -184,7 +185,7 @@ The sum above can equivalantly   be expressed as follows sigma(0, arithseq(n,1,1
 &keyword function term1(a:int, b:int)int a + b
 
 &keyword function sigma(acc:int, s:seq.int, i:int)int 
- &keyword if i > length.s &keyword then acc &keyword else sigma(term1(acc, term2(s_i)), s, i + 1)
+ &br &keyword if i > length.s &keyword then acc &keyword else sigma(term1(acc, term2(s_i)), s, i + 1)
 
 Using aggregation this can be express as @(term1, term2, 0, arithseq(n,1,1))or
  @(+, +.1, 0, arithseq(n,1,1))
@@ -195,8 +196,8 @@ apply(exp1, exp2)
 
 where
 
- &keywordfunction apply(acc:<resulttype>, s:seq(<elementtype>), i:int)<resulttype> 
- &keyword if i > length.s &keyword then acc &keyword else apply(term1(acc, term2(s_i)), s, i + 1)
+ &keyword function apply(acc:<resulttype>, s:seq(<elementtype>), i:int)<resulttype> 
+ &br &keyword if i > length.s &keyword then acc &keyword else apply(term1(acc, term2(s_i)), s, i + 1)
 
 Term1 and term2 can have parameters.@(term1(p1), term2(p2), exp1, exp2)is defined as
 
@@ -204,7 +205,8 @@ apply2(exp1, exp2)
 
 where
 
-&keyword function apply2(acc:resulttype, s:seq(elementtype), i:int)resulttype &keyword if i > length.s &keyword then acc &keyword else apply2(p1, term1(acc, term2(p2, s_i)), s, i + 1)
+&keyword function apply2(acc:resulttype, s:seq(elementtype), i:int)resulttype 
+&br &keyword if i > length.s &keyword then acc &keyword else apply2(p1, term1(acc, term2(p2, s_i)), s, i + 1)
 
 Using this form the example sigma sum above where n=10 is @(+, +.1, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
@@ -217,10 +219,10 @@ The following gives back the same sequence @(+, identity, empty:int, [ 1, 2, 3, 
 One can print a sequence of integers with
 
 &keyword function print(a:seq.int)seq.word 
- {"["+ @(separator.",", print,"", a)+"]"}
+&br {"["+ @(separator.",", print,"", a)+"]"}
 
 &keyword function separator(sep:seq.word, a:seq.word, b:seq.word)seq.word 
- &keyword if length.a = 0 &keyword then b &keyword else a +sep+ b
+&br  &keyword if length.a = 0 &keyword then b &keyword else a +sep+ b
 
 &section Parameterized Module
 
@@ -238,7 +240,7 @@ Generic unbound functions on the type T may be included by using the word unboun
 
 &keyword function =(T, T)ordering unbound
 
-&keyword Function reverse(s:seq.T)seq.T @(+,_.s, empty:seq.T, arithseq(length.s, 0 - 1, length.s))
+&keyword Function reverse(s:seq.T)seq.T  &br @(+,_.s, empty:seq.T, arithseq(length.s, 0 - 1, length.s))
 
 Here is a use of this type
 
@@ -291,8 +293,8 @@ Consider the following code:
 &keyword use stdlib
 
 &keyword Function f1(p1:int)int 
- &keyword let l1 = p1 * TWO 
-  p1 * l1 - 3
+ &br &keyword let l1 = p1 * TWO 
+ &br  p1 * l1 - 3
 
 Parameters implicitly declare an access function"function p1 int"
 Parameters are only visible in the expression that defines the body. In the above p1 is only visible in the body of f1.
@@ -300,12 +302,13 @@ Parameters are only visible in the expression that defines the body. In the abov
 
 Names of Functions are visible within the module.
 
-Functions from another module B are visible in module A, if they are declared using Function rather than function or they are exported and the module A includes a use statement"use B”.  In the above the function TWO is visible in  module A and B.
+Functions from another module B are visible in module A, if they are declared using &keyword Function 
+rather than &keyword function or they are exported and the module A includes a use statement"&keyword use B”.  In the above the function TWO is visible in  module A and B.
 
 An word of all digits implicitly declares an access function"function 3 int"
 
-Let definitions are only visible within the second expression in the let statement.
-Let definitions declare an access function"function l1 < the type of the first expression of the let>".The definition itself returns the type of the second expression.
+Let definitions are only visible within the second expression in the let statement. 
+Let definitions declare an access function"function l1 < the type of the first expression of the let>". The definition itself returns the type of the second expression.
 
 A function call f1(<exp1>, <exp2>,...)must match exactly one visible function defintion in name, number of parameters and types of the expressions of the arguments.
 
@@ -339,9 +342,8 @@ The declaration below with introduce a type encoding.factors with the name of my
 
 &keyword type myencoding is encoding factors
 
-There can be many encodings of the type &em factors, so they have a names to distinguish between them. Furthermore an encoding can have different life times. The encoding above is created at the first use in a process and is destroyed when the process finishes. It is available in any child process of the creating process. The declaration below creates a second encoding of factors that persists between runs of a program. Note the capital e in &keyword Encoding.
+There can be many encodings of the type &em factors, so they have  names to distinguish between them. Furthermore an encoding can have different life times. The encoding above is created at the first use in a process and is destroyed when the process finishes. It is available in any child process of the creating process. 
 
-&keyword type pfactors is Encoding factors
 
 Two parameterized types are involved in a encoding:&em encoding and &em erecord. The first is use to represent the values of the encoding and the second the name of the encoding.
 
@@ -351,31 +353,26 @@ The parameterized module &em seq defines the following functions for working wit
 
 &keyword  Function decode(encoding.T, erecord.T)T // will return the value that was encoded // ;
 
-&keyword Function encoding(encoding.T, erecord.T)int // will return the integer the value has been mapped to // ;
-
 &keyword Function findencode(t:T, erecord.T)seq.T // will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.// ;
 
-&keyword  Function mapping(erecord.T)seq.T // list of values that have been encoded.// ; 
-
-Function flush(erecord.T) seq.word // Writes a persistant encoding to a file that will be
-load next time the program runs. // ;
+&keyword  Function orderadded(erecord.T)seq.T // list of values that have been encoded.// ; 
 
 The following two function are used to calculate the factors of an integer
 
 &keyword function factors(n:int)seq.int factors(n, 2)
 
 &keyword function factors(n:int, i:int)seq.int 
- if 2 * i > n 
-  then [ n]
-  else if n mod i = 0 then [ i]+ factors(n / i, i)else factors(n, i + 1)
+ &br &keyword if 2 * i > n 
+  &br &keyword then [ n]
+  &br &keyword else &keyword if n mod i = 0 &keyword then [ i]+ factors(n / i, i)else factors(n, i + 1)
 
 Now we can define a function that only calculates the factors if they have not been previous calculated.
 
 &keyword use seq.factors
 
 &keyword function cachefactors(n:int)seq.int 
- &keyword let a = findencode(factors(n, empty:seq.int), myencoding)
-  factors.&keyword if isempty.a &keyword then decode(encode(factors(n, factors.n), myencoding), myencoding)&keyword else a_1
+&br &keyword let a = findencode(factors(n, empty:seq.int), myencoding)
+ &br  factors.&keyword if isempty.a &keyword then decode(encode(factors(n, factors.n), myencoding), myencoding)&keyword else a_1
 
 Consider the sequence of calls, C, in the execution of the program to the function encode. Let S be the sequence of T where S_i is the value passed as parameter in call C_i Let E be the sequence of results where E_i = the result of call C_i.
 
@@ -396,15 +393,15 @@ Process allow abnormal events to be captured and reported. The following code sn
 &keyword use process.int
 
 &keyword function myprocess(a:int)int 
-&keyword  assert a > 0 &keyword report "invalid"
-  3^a
+&br &keyword  assert a > 0 &keyword report "invalid"
+&br  3^a
 
 &keyword function useprocess(i:int)int 
- &keyword let a = process.myprocess.i 
-  &keyword if aborted.a 
+&br &keyword let a = process.myprocess.i 
+&br  &keyword if aborted.a 
   &keyword then &keyword assert message.a ="invalid" &keyword report "new message"
-   0 
-  &keyword else result.a
+ &br  0 
+ &br &keyword else result.a
 
 In the use clause, the type int matches the return type of myprocess. The process function takes a expressing of the form <funcname>(<arg list>)evaluates the arguments and then spawns a process to execute the function returning a result of type process that refers to the spawned process.
 
@@ -416,7 +413,7 @@ The follow function interact with the spawned process and blocks to wait for the
 
 &keyword function result(process(T)) T // result return upon successful completion. // ;
 
-The spawning process cannot terminate until all of it child process complete, because it may have allocated space and passed it to a child process as parameter. 
+The spawning process cannot terminate until all of it child process complete, because it may have allocated space and passed it to a child process as a parameter. 
 
 
 &section Sequences
@@ -450,18 +447,18 @@ We need some operations on T. T will be an int in this example so all these oper
 We need to helper functions to calculate the length and find the ith element of the seq for this example.
 
 &keyword Function clength(s:seq.T, i:int)int 
-&keyword  if i > length.s 
- &keyword  then 0 
- &keyword  else &keyword assert s_i > 0 &keyword report"invalid"
-  &keyword if s_i < 128 
-  &keyword then 1 + clength(s, i + 1)
-  &keyword else &keyword assert s_i < 128 + 64 + 32 &keyword report"invalid"
+&br &keyword  if i > length.s 
+&br &keyword  then 0 
+&br &keyword  else &keyword assert s_i > 0 &keyword report"invalid"
+&br  &keyword if s_i < 128 
+ &br &keyword then 1 + clength(s, i + 1)
+&br  &keyword else &keyword assert s_i < 128 + 64 + 32 &keyword report"invalid"
   1 + clength(s, i + 2)
 
 &keyword Function cindex(s:seq.T, i:int, idx:int)T 
-&keyword  if idx = 1 
- &keyword  &keyword then if s_i < 128 &keyword then s_i else s_(i + 1) - 128 +(s_i - 128 - 64)* 64 
- &keyword  &keyword else cindex(s, i + if s_i < 128 &keyword then 1 else 2, idx - 1)
+&br &keyword  if idx = 1 
+&br &keyword  &keyword then if s_i < 128 &keyword then s_i else s_(i + 1) - 128 +(s_i - 128 - 64)* 64 
+&br &keyword  &keyword else cindex(s, i + if s_i < 128 &keyword then 1 else 2, idx - 1)
 
 We need a constructor of our sequence. Note the use of a toseq function. This is defined implicitly by the sequence type definition to change the type from myseq(T)to seq(T).
 
@@ -480,8 +477,8 @@ Every sequence must have a_function defined on it which is below for mseq.T
 &keyword use myseq.int
 
 &keyword Function testmyseq seq.word 
- let s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
-  @(+, toword,"", myseq.toseqint.s)
+ &br keyword  let s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
+ &br @(+, toword,"", myseq.toseqint.s)
 
 &section Tail Recursion
 

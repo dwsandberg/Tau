@@ -10,9 +10,6 @@ use checking
 
 use ipair.linklists2
 
-use persistant
-
-use persistantseq.testrecord
 
 use process.int
 
@@ -24,10 +21,6 @@ use stdlib
 
 Function +(i:int,b:int) int export
 
-function addrecord(l1:linklists2, t:testrecord) ipair.linklists2
-   let a = addwordseq(l1,body.t)
-     let l=value.a
-    ipair(place.l,l+key.t+a  )
    
  
 

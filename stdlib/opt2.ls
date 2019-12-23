@@ -2,8 +2,6 @@ Module opt2
 
 /use buildtree
 
-use newsymbol
-
 use seq.int
 
 use seq.seq.tree.seq.word
@@ -15,6 +13,8 @@ use seq.word
 use set.word
 
 use stdlib
+
+use symbol
 
 use tree.seq.word
 

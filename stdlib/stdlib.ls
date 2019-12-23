@@ -2,16 +2,16 @@
 
 Module stdlib 
 
-Library stdlib UTF8 altgen bitpackedseq bits blockseq 
-codegen codetemplates deepcopy fileio format graph groupparagraphs   internalbc  encoding   ipair
- libscope llvm  oseq  packedseq pass2 persistant persistantseq prims process real  reconstruct seq set stack stacktrace textio  tree    
- cvttoinst newsymbol   newparse other intercode libdescfuncnew  main2 opt2  
-  uses 
-  exports stdlib UTF8 seq main2 reconstruct oseq stacktrace process real encoding ipair set graph textio blockseq packedseq
- deepcopy tree fileio pass2 stack newimp2 persistant persistantseq  llvm libscope internalbc format bits  newsymbol
-   prims cvttoinst libdescfuncnew groupparagraphs  
- 
+Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates cvttoinst deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 opt2 oseq packedseq parse pass1 pass2 persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash 
+ uses 
+ exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
+ internalbc ipair  libscope llvm main2  oseq packedseq   process real reconstruct seq set stack stacktrace 
+ stdlib  textio tree prims
+
+
 use UTF8
+
+use encoding.seq.int
 
 use oseq.alphaword
 
@@ -39,15 +39,13 @@ use stdlib
 
 use textio
 
-
+use xxhash
 
 type ordering is record toint:int
 
 type boolean is record toint:int
 
 * Useful constants
-
-
 
 Function openpara word {"("_1 }
 
@@ -103,7 +101,7 @@ Function *(a:int, b:int)int builtin.usemangle
 
 Function /(a:int, b:int)int builtin.usemangle
 
-Function hash(i:int)int finalmix.hash(hashstart,i)
+Function hash(i:int)int finalmix.hash(hashstart, i)
 
 Function =(a:int, b:int)boolean builtin.usemangle
 
@@ -154,20 +152,15 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 type wordencoding is encoding seq.int
 
-Function wordencoding erecord.wordencoding export 
+Function wordencoding erecord.wordencoding export
 
 type word is record bb:encoding.seq.int
 
 Function encodeword(a:seq.int)word word.encode(a, wordencoding)
 
-
-
 Function decode(w:word)seq.int decode(bb.w, wordencoding)
 
-use xxhash
-
-Function hash(a:seq.int)int 
-finalmix.@(hash, identity, hashstart, a)
+Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
 
 Function hash(a:seq.word)int finalmix.@(hash, hash, hashstart, a)
 
@@ -332,20 +325,21 @@ Function alphasort(a:seq.seq.word)seq.seq.word
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
   @(+, towordseq, empty:seq.seq.word, sort.b)
   
-* usegraph include stdlib xxhash deepcopy encoding oseq bits seq stacktrace  textio
+* usegraph include  xxhash deepcopy encoding oseq bits  stacktrace  textio reconstruct fileio UTF8 libscope
+blockseq packedseq bitpackedseq exclude stdlib seq
 
 
 
 
-* usegraph include real oseq  UTF8 prims  libscope tree blockseq graph ipair fileio
-process stack set  packedseq format groupparagraphs   dict  bitpackedseq
-exclude stdlib seq bits
+* usegraph include real prims   tree  graph ipair 
+process stack set   format groupparagraphs   dict 
+exclude stdlib seq 
 
-* usegraph include  main2 other libscope display constant codegen convert xxhash
-altgen parse pass1a pass0 buildtree processtypes definestruct symbol libdescfunc groupparagraphs 
-etype codetemplates core sid pretty pass2 persistant libdesc passcommon main parts llvm reconstruct 
-reconstructseq persistantseq opt2
-newsymbol newparse libdescfuncnew internalbc intercode cvttoinst codegen
+* usegraph include  main2 libscope display constant codegen convert 
+ parse pass1  symbol libdescfunc  
+codetemplates pass2 persistant   llvm  
+reconstruct persistantseq opt2
+symbol parse libdescfunc internalbc intercode cvttoinst codegen
 exclude seq set oseq stdlib bits tree graph UTF8 stack stacktrace real process libscope ipair deepcopy
 bitpackedseq packedseq fileio blockseq textio encoding
    

@@ -209,7 +209,7 @@ function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
    then formcallgraph(lib, i + 1)
    else formcallgraph(lib_i_j, lib_i, j + 1, empty:seq.arc.word)+ formcallgraph(lib, i + 1)
   else formcallgraph(lib, i + 1)
-
+  
 function formcallgraph(func:word, src:seq.word, i:int, result:seq.arc.word)seq.arc.word 
  if i > length.src 
   then result 
@@ -218,9 +218,12 @@ function formcallgraph(func:word, src:seq.word, i:int, result:seq.arc.word)seq.a
   then formcallgraph(func, src, i + 1, result)
   else if name in"LIT PARAM LOCAL WORD SET define RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD PRECORD"
   then formcallgraph(func, src, i + 2, result)
-  else if name ="WORDS"_1 
-  then formcallgraph(func, src, i + toint(src_(i + 1))+ 2, result)
+  else if name in "WORDS COMMENT"  
+  then 
+    formcallgraph(func, src, i + toint(src_(i + 1))+ 2, result)
   else if name = func 
   then formcallgraph(func, src, i + 1, result)
   else formcallgraph(func, src, i + 1, result + arc(func, name))
+  
+  
 

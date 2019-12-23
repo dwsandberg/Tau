@@ -14,13 +14,15 @@ Module tools
 
 /run tools testfirstpass
 
-run tools testprofile
+/run tools testprofile
 
 /run tools prettytest
 
+/run tools  callgraphtest 
+
 run tools stdlibdoc
 
-run doc createdoc
+/run doc createdoc
 
 /run tools testhtmlcode 
 
@@ -33,7 +35,7 @@ run doc createdoc
 /run printbitcodes test1
 
 
-run tools testprintBitCodes
+/run tools testprintBitCodes
 
 run tools checkdoclib
 
@@ -56,14 +58,11 @@ use seq.word
 Function testhtmlcode seq.word htmlcode."testall"
 
 
-Function prettytest seq.word prettylib("stdlib2","")
+Function prettytest seq.word prettylib("stdlib2","other pass1")
 
 
 Function checkdoclib seq.word    doclibrary."tools"
 
-callgraphbetween("stdlib","libdescfunc libscope")  
-
-doclibrary."tools"
 
 
 Function testfirstpass seq.word 
@@ -76,6 +75,8 @@ Function testprofile seq.word
   a + profileresults."time"
 
 Function testprintBitCodes seq.word printBitCodes."test4.bc"
+
+Function callgraphtest seq.word callgraphbetween("stdlib","libdescfunc  other main2")
 
 Function stdlibdoc seq.word 
  // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"

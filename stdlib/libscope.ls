@@ -2,6 +2,8 @@ Module libscope
 
 use bits
 
+use seq.encodingrep.seq.int
+
 use seq.int
 
 use seq.liblib
@@ -14,15 +16,11 @@ use seq.mytype
 
 use seq.seq.word
 
-
 use seq.word
 
 use stacktrace
 
 use stdlib
-
-use seq.encodingrep.seq.int
-
 
 Function formatcall(modname:mytype, name:word, paratypes:seq.mytype)seq.word 
  print.modname +":"+ name + if length.paratypes = 0 
@@ -47,7 +45,6 @@ Function libname(liblib)seq.word export
 Function mods(liblib)seq.libmod export
 
 Function words(liblib)seq.encodingrep.seq.int export
-
 
 Function readonly(liblib)boolean export
 
@@ -151,7 +148,6 @@ function codeup(l:seq.int, char:int)seq.int
   else @(+, hexdigit.bits.char, l + charQ, [ 4, 3, 2, 1, 0])
 
 function hexdigit(val:bits, digit:int)int legal_(toint(val >> 4 * digit ∧ bits.15)+ 1)
-
 
 Function isabstract(a:mytype)boolean towords(a)_1 ="T"_1
 

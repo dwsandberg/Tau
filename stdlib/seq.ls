@@ -1,7 +1,4 @@
-
 Module seq.T
-
-
 
 use deepcopy.T
 
@@ -13,14 +10,11 @@ use stacktrace
 
 use stdlib
 
-
 type seq is sequence length:int, x:T
 
 type pseq is sequence length:int, a:seq.T, b:seq.T
 
-
 Function =(T, T)boolean unbound
-
 
 Function_(a:seq.T, b:int)T 
  NOINLINE.let typ = getseqtype(a, 0)
@@ -38,7 +32,7 @@ function getseqtype(a:seq.T, offset:int)int builtin.IDXUC
 
 Function length(a:seq.T)int export
 
-Function empty seq.T builtin."LIT 0 LIT 0 RECORD 2 "
+Function empty seq.T builtin."LIT 0 LIT 0 RECORD 2"
 
 Function =(a:seq.T, b:seq.T)boolean 
  if length.a = length.b then subequal(a, b, length.a)else false
@@ -230,12 +224,3 @@ Function_(s:arithmeticseq.T, i:int)T start.s +(i - 1)* step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 
-
-
-
-
-
-
-
-
-    

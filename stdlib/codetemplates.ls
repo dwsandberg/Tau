@@ -20,23 +20,25 @@ use deepcopy.seq.word
 
 use deepcopy.word
 
+use encoding.match5
+
+use fileio
+
+use intercode
+
 use internalbc
 
 use ipair.linklists2
 
 use llvm
 
-use persistant
-
 use process.seq.match5
-
-use reconstruct
 
 use seq.bit
 
-use seq.llvmtype
-
 use seq.int
+
+use seq.llvmtype
 
 use seq.match5
 
@@ -50,19 +52,16 @@ use stdlib
 
 use textio
 
-use fileio
-
 function wordstype llvmtype array(-1, i64)
 
 Function conststype llvmtype array(-2, i64)
 
 type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, index:int
 
-Function addindex(m:match5,i:int) match5  match5(fullinst.m,length.m,parts.m,action.m,arg.m,i)
+Function addindex(m:match5, i:int)match5 match5(fullinst.m, length.m, parts.m, action.m, arg.m, i)
 
-function match5( fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int) match5
-match5(fullinst,length,parts,action,arg,0)
-
+function match5(fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int)match5 
+ match5(fullinst, length, parts, action, arg, 0)
 
 Function length(match5)int export
 
@@ -81,9 +80,6 @@ function =(a:match5, b:match5)boolean fullinst.a = fullinst.b
 function hash(a:match5)int hash.fullinst.a
 
 type ematch5 is encoding match5
-
-
-
 
 Function table seq.match5 
  let t = [ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64,-1, ibcsub2)+ LOAD(3,-2, typ.i64, align8, 0)), 
@@ -167,9 +163,8 @@ Function buildtemplates(p:temppair, fullinst:seq.word)temppair
      let r = match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1, 0)
      temppair(s + r, value.tt)
     else if inst ="WORD"_1 
-    then 
-        let discard=registerword.instarg 
-        temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.hash(instarg)), lastconsts)
+    then let discard = registerword.instarg 
+     temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.hash.instarg), lastconsts)
     else let noargs = toint.instarg 
     let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
     temppair(s + match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs), lastconsts)

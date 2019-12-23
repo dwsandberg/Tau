@@ -1,12 +1,10 @@
 Module cvttoinst
 
-run newimp test1
+use encoding.inst
 
 use intercode
 
 use libscope
-
-use newsymbol
 
 use seq.inst
 
@@ -18,8 +16,9 @@ use seq.tree.seq.word
 
 use stdlib
 
-use tree.seq.word
+use symbol
 
+use tree.seq.word
 
 type einst is encoding inst
 
@@ -29,14 +28,13 @@ function =(a:inst, b:inst)boolean towords.a = towords.b
 
 function aseinst(w:seq.word)int 
  assert not(w ="FREF")report"problem!"
-  encode2(inst.w)
+  encode2.inst.w
 
 function inst(x:seq.word)inst inst(x,"", mytype."?")
 
 function toinst(f:symbol)inst inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f)
 
-function encode2(x:inst)int findindex(x,einst)
-
+function encode2(x:inst)int findindex(x, einst)
 
 function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int 
  assert not(label.codetree.f ="default")report"in addcodes"
@@ -79,9 +77,7 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
    else if inst ="STATE"_1 
    then empty:seq.int 
    else let s = findencode(inst.[ inst, toword.nosons.t], einst)
-   [ if length.s = 0 
-    then encode2(toinst.lookupfunc(allfunctions, inst))
-    else encode2(s_1)]
+   [ if length.s = 0 then encode2.toinst.lookupfunc(allfunctions, inst)else encode2(s_1)]
 
 function initinst seq.inst 
  [ // opGT // 
@@ -127,8 +123,8 @@ function initinst seq.inst
  // rightshift // 
   inst("Q3EQ3EZbuiltinZbitsZint 2","builtin", mytype."bits"), 
  inst("Q02227ZbuiltinZbitsZbits 2","builtin", mytype."bits"), 
- inst("Q02228ZbuiltinZbitsZbits 2","builtin", mytype."bits"),
- inst("xorZbuiltinZbitsZbits 2","builtin", mytype."bits"),  
+ inst("Q02228ZbuiltinZbitsZbits 2","builtin", mytype."bits"), 
+ inst("xorZbuiltinZbitsZbits 2","builtin", mytype."bits"), 
  inst("callstackZbuiltinZint 1","builtin", mytype."int seq"), 
  inst("decodeZbuiltinZTzencodingZTzerecord 2","builtin", mytype."T"), 
  inst("mappingZbuiltinZTzerecord 1","builtin", mytype."T seq"), 

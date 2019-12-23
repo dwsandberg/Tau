@@ -1,4 +1,4 @@
-Module newsymbol
+Module symbol
 
 use libscope
 
@@ -18,6 +18,8 @@ use stdlib
 
 use tree.seq.word
 
+use worddict.symbol
+
 Function ?(a:mytype, b:mytype)ordering 
  let y = towords(a)_length.towords.a ? towords(b)_length.towords.b 
   if y = EQ 
@@ -33,8 +35,8 @@ Function ?(a:mytype, b:mytype)ordering
 
 function orderm(a:seq.word, b:seq.word, i:int)ordering 
  if i = 1 
-  then a_1 ? b_1
-  else let x = a_i ?  b_i
+  then a_1 ? b_1 
+  else let x = a_i ? b_i 
   if x = EQ then orderm(a, b, i - 1)else x
 
 Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering 
@@ -175,17 +177,14 @@ function checkverysimple(t:tree.seq.word)seq.word
   then"SET"
   else @(+, checkverysimple,"", sons.t)+"inst"
 
-Function emptysymbolset symbolset  symbolset.emptyworddict:worddict.symbol
- 
+Function emptysymbolset symbolset symbolset.emptyworddict:worddict.symbol
+
 Function replace(a:symbolset, sym:symbol)symbolset 
-   symbolset.replace(todict.a,mangledname.sym,sym)
-   
- 
-use dict.symbol
+ symbolset.replace(todict.a, mangledname.sym, sym)
 
 type symbolset is record todict:worddict.symbol
 
-Function toseq(a:symbolset) seq.symbol  data.todict.a
+Function toseq(a:symbolset)seq.symbol data.todict.a
 
 Function lookupfunc(allfunctions:symbolset, f:word)symbol 
  let x = lookupsymbol(allfunctions, f)
@@ -193,17 +192,16 @@ Function lookupfunc(allfunctions:symbolset, f:word)symbol
   x
 
 Function lookupsymbol(a:symbolset, f:word)symbol 
-   let t=lookup(todict.a,f)
-   if length.t=0 then symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default")
-    else t_1
-
-function toseq(symbolset)seq.symbol export
+ let t = lookup(todict.a, f)
+  if length.t = 0 
+  then symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default")
+  else t_1
 
 Function print(s:symbolset)seq.word @(+, print3,"", toseq.s)
 
-Function +(a:symbolset, s:symbol)symbolset replace(a,  s)
+Function +(a:symbolset, s:symbol)symbolset replace(a, s)
 
-/Function_(a:symbolset, name:word)symbol lookupsymbol(a,name)
+/Function_(a:symbolset, name:word)symbol lookupsymbol(a, name)
 
 Function printcode(s:symbolset)seq.word 
  {"count:"+ toword.@(+, count, 0, toseq.s)+ @(+, print3,"", toseq.s)}

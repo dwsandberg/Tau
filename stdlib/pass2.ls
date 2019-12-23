@@ -1,43 +1,3 @@
-  module dict.T
-  
-  use stdlib
-  
-  use seq.T
-  
-  use seq.word
-  
-  use oseq.word
-  
-  type worddict is record keys:seq.word,data:seq.T
-  
-  Function data(worddict.T) seq.T export
-  
-  Function    emptyworddict   worddict.T worddict(empty:seq.word,empty:seq.T)  
-  
-  Function add(dict:worddict.T,w:word,d:T) worddict.T  
-   let i = binarysearch(keys.dict, w)
-  if i > 0 then dict else 
-  worddict(
-  subseq(keys.dict, 1,-i - 1)+ [w]+ subseq(keys.dict,-i, length.keys.dict),
-  subseq(data.dict, 1,-i - 1)+ [d]+ subseq(data.dict,-i, length.keys.dict))
-  
-
-  
-  Function lookup(dict:worddict.T,w:word) seq.T 
-    let i = binarysearch(keys.dict, w)
-    if i < 0 then empty:seq.T else [(data.dict)_i]
-    
-    Function replace(dict:worddict.T,w:word,d:T) worddict.T
-     let i = binarysearch(keys.dict, w) 
-     if i < 0 then
-   worddict(
-  subseq(keys.dict, 1,-i - 1)+ [w]+ subseq(keys.dict,-i, length.keys.dict),
-  subseq(data.dict, 1,-i - 1)+ [d]+ subseq(data.dict,-i, length.keys.dict))
-  else 
-   worddict(keys.dict,
-  subseq(data.dict, 1,i - 1)+ [d]+ subseq(data.dict,i+1, length.keys.dict))
- 
-
 Module pass2
 
 use bits
@@ -49,8 +9,6 @@ use graph.word
 use ipair.tree.seq.word
 
 use libscope
-
-use newsymbol
 
 use real
 
@@ -78,7 +36,11 @@ use stack.tree.seq.word
 
 use stdlib
 
+use symbol
+
 use tree.seq.word
+
+use worddict.tree.seq.word
 
 Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)intercode 
  // does inline expansion, finds consts, removes unreaachable functions // 
@@ -114,7 +76,7 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
 function paratree(i:int)tree.seq.word tree("PARAM"+ toword.i)
 
 function addsymbol(p:program, mangledname:word)program 
- let caller = lookupsymbol(knownsymbols(p),mangledname )
+ let caller = lookupsymbol(knownsymbols.p, mangledname)
   // assert not(mangledname ="test4Ztest4"_1)report src.caller +"FLAGS"+ flags.caller // 
   // assert not(mangledname ="PROFILE"_1)report"XXX"+ mangledname // 
   // assert length.src.caller > 0 report"Error"+ mangledname + print2.caller // 
@@ -306,14 +268,12 @@ function addlooptosetmap(sets:worddict.tree.seq.word, old:int, new:int, numberto
 function addtosetmap(sets:worddict.tree.seq.word, old:word, new:int)worddict.tree.seq.word 
  replace(sets, old, tree.["LOCAL"_1, toword.new])
 
-use dict.tree.seq.word
-
 function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, paramap:seq.tree.seq.word, nextset:int, code:tree.seq.word)tree.seq.word 
  let inst = inst.code 
   if nosons.code = 0 ∧ inst in"LIT FREF FREFB WORD WORDS"
   then code 
   else if inst ="LOCAL"_1 
-  then lookup(sets, arg.code )_1
+  then lookup(sets, arg.code)_1 
   else if inst ="PARAM"_1 
   then let i = toint.arg.code 
    assert i > 0 report"PARAM Problem"+ print.code 

@@ -267,102 +267,6 @@ BT unloadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){ return unloadlibZbui
 
 
 
-
-BT initlib4(char * libname,BT * words,BT * wordlist, BT * consts,BT * libdesc) {
-  // fprintf(stderr,"starting initlib4\n");
-if (strcmp(libname,"stdlib")==0){
-  /* only needed when initializing stdlib */
-    append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");
-    if (!append){
-           fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-          exit(EXIT_FAILURE);
-    }
-    toUTF8 = dlsym(RTLD_DEFAULT, "toUTF8ZUTF8Zwordzseq");
-    if (!toUTF8){
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }
-    byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZTzbitpackedseqZint");
-    if (!byteseqencetype){
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }
-       decodeword= dlsym(RTLD_DEFAULT,"decodeZstdlibZword");
-    if (!decodeword){
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }
-    
-   
-
- }
-
-   BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
-   if (!relocate) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }    
-   BT (* encodeword)(struct pinfo *,BT *) = dlsym(RTLD_DEFAULT, "encodewordZstdlibZintzseq");
-   if (!encodeword) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }    
-
- int nowords=wordlist[3];
- int j = 4;
- int i,k;
-  words[0]=0;
-  words[1]=nowords;
-   fprintf(stderr,"nowords %d\n",nowords);
- for ( k=0;k<nowords;k++) {
-  int wordlength=wordlist[j+1];
-  // fprintf(stderr,"%d:",k+1);
-  //for(i=0;i<wordlength;i++) {  fprintf(stderr,"%c",(char)wordlist[i+j+2]);}
-   words[k+2]=encodeword(&sharedspace,(wordlist+j) );
-  j=j+2+wordlength;
-  // fprintf(stderr,"\n");
-  }
-  // fprintf(stderr,"relocating const\n");
-  BT * elementlist = (BT *) relocate(&sharedspace, words,consts);
-  
-  if ( libname[0] =='Q')
-    { 
-      BT (* erecordproc)(struct pinfo *)  = dlsym(RTLD_DEFAULT,libname+1);
-   if (erecordproc) { 
-       fprintf(stderr,"loading encoding\n");
-      int i,len = elementlist[1];
-      BT erec = erecordproc(&sharedspace);
-       fprintf(stderr,"start build list %d\n",len);
-      for(i=2; i < len+2; i++){
-         BT ele = elementlist[i];
-        // fprintf(stderr," %d %lld %lld\n",i,ele,erec);
-         encodeZbuiltinZTZTzerecord(&sharedspace,ele,erec);
-      }
-       fprintf(stderr,"finish build list\n");
-    } else
-         fprintf(stderr,"[%s] Unable to get symbol for erec: library is not encoding %s\n",__FILE__, dlerror());
- 
-    }
-  // for(i=0;i < consts[1]+2; i++) {   fprintf(stderr,"%lld: %lld %llx \n",  (BT)( consts+i) ,consts[i],consts[i]);}
-  //  fprintf(stderr,"HI2\n");
-  
- //for ( k=0;k<nowords;k++)  fprintf(stderr,"KK %d %lld\n",k,words[2+k]);
- //  fprintf(stderr,"HHH %s %d %d %lld\n",libname,nowords,j,wordlist[1]+2);
-    { int i =loaded[1]++;
-      char name[100];
-     struct stat sbuf;
-    sprintf(name,"%s.dylib",libname);
-     stat(name, &sbuf);
-    //   fprintf(stderr,"relocating libdesc\n");
-    loaded[i+2]= relocate(&sharedspace, words,libdesc);
-    ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
-    strcpy(libnames[i+2],libname);
-    }
-   fprintf(stderr,"finish initlib4  \n");
- return 0;
-  
-}
-
 BT initlib5(char * libname,BT * words,BT * wordlist, BT * consts,BT  libdesc, BT *elementlist) {
   // fprintf(stderr,"starting initlib4\n");
   fprintf(stderr,"init Q%sQ\n",libname);
@@ -447,26 +351,7 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
       
 }
 
-/*
 
-uint32_t jenkins_one_at_a_time_hash(char *key, size_t len)
-{
-    uint32_t hash, i;
-    for(hash = i = 0; i < len; ++i)
-    {
-        hash += key[i];
-        hash += (hash << 10);
-        hash ^= (hash >> 6);
-    }
-    hash += (hash << 3);
-    hash ^= (hash >> 11);
-    hash += (hash << 15);
-    return hash;
-}
-
-BT HASH(BT a) {  return jenkins_one_at_a_time_hash( (char *) &a , 8);}
-
-*/
 
 
 extern BT  CLOCKPLUS (processinfo PD )
