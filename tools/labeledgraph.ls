@@ -1,4 +1,6 @@
-module labeledgraph.T
+Module labeledgraph.T
+
+use seq.T
 
 use set.T
 

@@ -113,7 +113,123 @@ void myfree(struct spaceinfo *sp) {int i; i =0;
 // End of space allocation
 
 
+#ifdef DYNLIB
 
+BT (* append) (processinfo,BT,BT);
+
+
+#else
+
+BT append(processinfo PD,BT P1, BT P2);
+#endif
+
+BT (*toUTF8)(struct pinfo *,BT );
+
+BT *byteseqencetype;
+
+BT (*  decodeword)(processinfo PD,BT P1);
+
+BT loadlibrary(struct pinfo *PD,char *lib_name_root);
+
+BT getfileZbuiltinZUTF8(processinfo PD,BT filename);
+
+//  encoding support
+
+struct einfo {BT hashtable;   processinfo allocatein; };
+
+struct einfo * neweinfo(processinfo PD){
+   static const BT x1[]={0,0};
+   static const BT empty4[]={0,4,(BT) x1,(BT) x1,(BT) x1,(BT) x1};
+   static const BT inverted[]={0,0,(BT) empty4,(BT) empty4,(BT) x1};
+   struct einfo *e=(struct einfo *)myalloc(PD,sizeof (struct einfo)/8);
+   e->hashtable=(BT)inverted;
+   e->allocatein=PD ;
+   return e;
+}
+
+
+
+
+/* cinfo describes the constant part of encoding description. This is info the compile gernerates and only one record is generated per encoding type.
+no is changed from 0 at runtime to an integer number of the encoding */
+struct cinfo{ BT (* copy) (processinfo,BT) ;
+             BT (* look)(processinfo,BT,BT);
+             BT (*add)(processinfo,BT,BT,BT);
+             BT no; 
+             BT nameasword; BT persitant;
+             BT typeaswords;};
+             
+struct einfo *staticencodings[noencodings];
+
+
+struct einfo  *startencoding(processinfo PD,BT P2)
+{ struct cinfo *ee = (struct cinfo *) P2;
+// assign encoding number 
+if (ee->no==0){
+    assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+    ee->no =encnum--; 
+    assert(encnum>1,"out of encoding numbers");
+    assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+    }
+ 
+   
+  if (ee->persitant ) {
+   struct einfo *e= staticencodings[ee->no];
+   if (e==0) {
+     assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+     e = neweinfo(&sharedspace );
+     staticencodings[ee->no]=e;
+     assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+        struct einfo *wordendcoding= (sharedspace.encodings[1]);
+    
+    BT data =decodeword(PD,ee->nameasword);
+    //BT data= IDX(NULL,encoded2(wordendcoding),ee->nameasword);
+    int i,len=SEQLEN(data) ;
+    char libname[100],*p=libname;
+    *p++='Q';
+    for (i=1; i <=len; i++) *(p++)=(char) (IDX(NULL,data,i));
+    *p++=0;
+   //  fprintf(stderr," global %s ",libname);
+     loadlibrary(&sharedspace,libname);
+    } 
+    return e;
+ }  
+ struct einfo *e= PD->encodings[ee->no];
+ if (e==0) {
+   if  ( PD->newencodings==0 && PD != &sharedspace) 
+     { int i;
+       struct einfo ** cpy=  (struct einfo **) myalloc(PD,noencodings); 
+       for(i=0; i<noencodings ;i++)
+         cpy[i]=PD->encodings[i];
+       PD->encodings = cpy;
+       PD->newencodings=1;  
+       }
+  e = neweinfo(PD);
+  PD->encodings[ee->no]=e;
+ }
+ return e;
+ }
+
+
+BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){ 
+  return startencoding(PD,P2)->hashtable ;
+}
+
+BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){  
+ BT r;
+ struct einfo *e=startencoding(PD,P2)  ;
+  struct cinfo *ee = (struct cinfo *) P2;
+  assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+  r= (ee->look) (PD,P1,e->hashtable);
+  if (r<=0) {// not found
+   P1=  (ee->copy) (e->allocatein,P1);
+   e->hashtable=(ee->add)(e->allocatein,e->hashtable,ee->no,P1);
+   r= (ee->look) (PD,P1,e->hashtable);
+  }
+assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+return r;
+}
+// end of encoding support
 
 
 
@@ -131,42 +247,31 @@ int looklibraryname(char* name) { int i;
     }
    return -1;}
 
-void closelibs ( int libidx) { int i;
-  for(  i=loaded[1]-1; i>=libidx;i--){ char lib_name[100];
-   sprintf(lib_name,"%s.dylib",libnames[i+2]);
-    void *lib_handle =dlopen(lib_name,RTLD_NOW);dlclose(lib_handle);
-     fprintf(stderr,"close %s %d\n",libnames[i+2], dlclose(lib_handle) );
-  }
-  loaded[1]=libidx;
-}
 
 BT unloadlibZbuiltinZUTF8(processinfo PD,BT p_libname){char *libname=(char *)&IDXUC(p_libname,2);
 int libidx = looklibraryname(libname);
 // fprintf(stderr,"unload library %s %d\n",libname,libidx);
 if (libidx > 0 ) {
-  closelibs(libidx);
+   int i;
+   for(  i=loaded[1]-1; i>=libidx;i--){ char lib_name[100];
+   sprintf(lib_name,"%s.dylib",libnames[i+2]);
+    void *lib_handle =dlopen(lib_name,RTLD_NOW);dlclose(lib_handle);
+     fprintf(stderr,"close %s %d\n",libnames[i+2], dlclose(lib_handle) );
+  }
+  loaded[1]=libidx;
    } 
 return 0; 
 }
 
-#ifdef DYNLIB
-
-BT (* append) (processinfo,BT,BT);
+BT unloadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){ return unloadlibZbuiltinZUTF8( PD, p_libname);}
 
 
-#else
 
-BT append(processinfo PD,BT P1, BT P2);
-#endif
-
-BT (*toUTF8)(struct pinfo *,BT );
-
-BT *byteseqencetype;
-
-
-BT initlib4(char * libname,BT * words,BT * wordlist, BT * consts,BT * libdesc) {
+BT initlib5(char * libname,BT * words,BT * wordlist, BT * consts,BT  libdesc, BT *elementlist) {
   // fprintf(stderr,"starting initlib4\n");
-if (strcmp(libname,"stdlib")==0){
+  fprintf(stderr,"init Q%sQ\n",libname);
+if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
+   fprintf(stderr,"init stdlib\n");
   /* only needed when initializing stdlib */
     append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");
     if (!append){
@@ -178,80 +283,54 @@ if (strcmp(libname,"stdlib")==0){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
-    byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbyteseqZTzbitpackedseqZint");
+    byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZTzbitpackedseqZint");
     if (!byteseqencetype){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
-}
-
-   BT (* relocate)(processinfo PD,BT *,BT *) = dlsym(RTLD_DEFAULT, "relocateZreconstructZwordzseqZintzseq");
-   if (!relocate) {
+       decodeword= dlsym(RTLD_DEFAULT,"decodeZstdlibZword");
+    if (!decodeword){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
-    }    
-   BT (* encodeword)(struct pinfo *,BT *) = dlsym(RTLD_DEFAULT, "encodewordZstdlibZintzseq");
-   if (!encodeword) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }    
-
- int nowords=wordlist[3];
- int j = 4;
- int i,k;
-  words[0]=0;
-  words[1]=nowords;
- //  fprintf(stderr,"nowords %d\n",nowords);
- for ( k=0;k<nowords;k++) {
-  int wordlength=wordlist[j+1];
-  // fprintf(stderr,"%d:",k+1);
-  //for(i=0;i<wordlength;i++) {  fprintf(stderr,"%c",(char)wordlist[i+j+2]);}
-   words[k+2]=encodeword(&sharedspace,(wordlist+j) );
-  j=j+2+wordlength;
-  // fprintf(stderr,"\n");
-  }
-  // fprintf(stderr,"relocating const\n");
-  BT * elementlist = (BT *) relocate(&sharedspace, words,consts);
-  
-  if ( libname[0] =='Q')
-    { 
-      BT (* erecordproc)(struct pinfo *)  = dlsym(RTLD_DEFAULT,libname+1);
-   if (erecordproc) { 
-       fprintf(stderr,"loading encoding\n");
-      int i,len = elementlist[1];
-      BT erec = erecordproc(&sharedspace);
-       fprintf(stderr,"start build list %d\n",len);
-      for(i=2; i < len+2; i++){
-         BT ele = elementlist[i];
-        // fprintf(stderr," %d %lld %lld\n",i,ele,erec);
-         encodeZbuiltinZTZTzerecord(&sharedspace,ele,erec);
-      }
-       fprintf(stderr,"finish build list\n");
-    } else
-         fprintf(stderr,"[%s] Unable to get symbol for erec: library is not encoding %s\n",__FILE__, dlerror());
- 
     }
-  // for(i=0;i < consts[1]+2; i++) {   fprintf(stderr,"%lld: %lld %llx \n",  (BT)( consts+i) ,consts[i],consts[i]);}
-  //  fprintf(stderr,"HI2\n");
-  
- //for ( k=0;k<nowords;k++)  fprintf(stderr,"KK %d %lld\n",k,words[2+k]);
- //  fprintf(stderr,"HHH %s %d %d %lld\n",libname,nowords,j,wordlist[1]+2);
-    { int i =loaded[1]++;
+    
+         staticencodings[1]=neweinfo(&sharedspace);
+ }
+
+        
+BT (* relocateoffset)(processinfo PD,BT *) = dlsym(RTLD_DEFAULT, "relocateoffsetZreconstructZintzseq");
+if (!relocateoffset) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+}      
+relocateoffset(&sharedspace,consts);
+     
+BT (* addwords)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, "addZintzseqzencodingZTzencodingstateZTzencodingrepzseq");
+   if (!addwords) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+        exit(EXIT_FAILURE);
+    }  
+
+BT wdrepseq= ((BT *) libdesc)[1];
+fprintf( stderr, "nowords %lld \n",  ((BT *)wdrepseq)[1]);   
+staticencodings[1]->hashtable=addwords(&sharedspace,staticencodings[1]->hashtable,wdrepseq); 
+fprintf( stderr, "nowords3 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);          
+ 
+ 
+ // register library 
+     { int i =loaded[1]++;
       char name[100];
      struct stat sbuf;
     sprintf(name,"%s.dylib",libname);
      stat(name, &sbuf);
-    //   fprintf(stderr,"relocating libdesc\n");
-    loaded[i+2]= relocate(&sharedspace, words,libdesc);
+    loaded[i+2]= libdesc; 
     ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
     strcpy(libnames[i+2],libname);
     }
-//   fprintf(stderr,"finish initlib4  \n");
+  fprintf(stderr,"finish initlib5  \n");
  return 0;
   
 }
-
-
 
 
 BT loadlibrary(struct pinfo *PD,char *lib_name_root){
@@ -271,25 +350,6 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
   return sbuf.st_mtimespec.tv_sec;
       
 }
-
-
-
-uint32_t jenkins_one_at_a_time_hash(char *key, size_t len)
-{
-    uint32_t hash, i;
-    for(hash = i = 0; i < len; ++i)
-    {
-        hash += key[i];
-        hash += (hash << 10);
-        hash ^= (hash >> 6);
-    }
-    hash += (hash << 3);
-    hash ^= (hash >> 11);
-    hash += (hash << 15);
-    return hash;
-}
-
-BT HASH(BT a) {  return jenkins_one_at_a_time_hash( (char *) &a , 8);}
 
 
 
@@ -386,7 +446,7 @@ char *name=(char *)&IDXUC(funcname,2);
       
       fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
      
-       BT (*towords)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"towordsZfileresultZintzseq"); 
+       BT (*towords)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"towordsZtextioZintzseq"); 
        if (!towords) {
           fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
           exit(EXIT_FAILURE); return 1;
@@ -396,6 +456,9 @@ char *name=(char *)&IDXUC(funcname,2);
     }
 }
 
+BT executecodeZbuiltinZbitszseqZintzseq(processinfo PD,BT funcname,BT P) {return executecodeZbuiltinZUTF8Zintzseq(PD,funcname,P)
+;}
+
 
 BT abortedZbuiltinZTzprocess(processinfo PD,BT pin){
      processinfo q = ( processinfo)  pin;
@@ -403,16 +466,8 @@ BT abortedZbuiltinZTzprocess(processinfo PD,BT pin){
     return (BT)( q->kind);
 }
 
-
-     
-
-
-
-BT libsZbuiltin()  // returns list of loaded libraries
+BT loadedlibsZbuiltin()  // returns list of loaded libraries
  {return (BT)loaded;}   
-
-
-
 
 BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
   static BT infoarray[30]={0};
@@ -431,6 +486,8 @@ BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
     return (BT) infoarray;
     }
 
+
+
 BT loadlibZbuiltinZUTF8(processinfo PD,BT p_libname){char *name=(char *)&IDXUC(p_libname,2);
 int i = looklibraryname(name) ;
 if (i >= 0)
@@ -439,6 +496,7 @@ if (i >= 0)
 return  loadlibrary(PD,name) ;  
 }
 
+BT loadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){  return loadlibZbuiltinZUTF8( PD, p_libname);}
 
 
 BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT otherlib,struct outputformat *t){
@@ -487,7 +545,7 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     char *filedata;
     struct stat sbuf;
     BT *data2,org;
-// fprintf(stderr,"openning %s\n",name);
+ // fprintf(stderr,"openning %s\n",name);
         org=myalloc(PD,4);
      IDXUC(org,0)=-1;
      IDXUC(org,1)=0;
@@ -507,8 +565,11 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     data2[0]=0;
     data2[1]=sbuf.st_size > 16 ? (sbuf.st_size+7-16)/8 : 0;
     close(fd);
+  //  fprintf(stderr,"filename %s address %lld\n",name,(long long ) filedata);
     return org;
 }
+
+BT getfileZbuiltinZbitszseq(processinfo PD,BT filename){return getfileZbuiltinZUTF8(PD,filename);}
 
 BT createfileZbuiltinZbitszseqZoutputformat(processinfo PD,BT filename,struct outputformat * t){ 
 int f;
@@ -521,7 +582,7 @@ return 0;
 }
 
 
-BT createfileZbuiltinZintzseqZintzseq(processinfo PD,BT filename,BT t){ 
+BT createfileZbuiltinZbitszseqZintzseq(processinfo PD,BT filename,BT t){ 
 //format of filename is  {struct  BT type=1; BT length;  char name[length]; char term=0; } 
 //format of t is either {struct  BT type=1; BT length;  char t[length];  }
 //{struct  BT type=0; BT length;  BT t[length];  }
@@ -551,7 +612,7 @@ char *name=(char *)&IDXUC(filename,2);
 return 0;
 }
 
-BT createfileZbuiltinZUTF8Zintzseq(processinfo PD,BT filename,BT t){ return createfileZbuiltinZintzseqZintzseq(PD,filename,t);}
+//BT createfileZbuiltinZUTF8Zintzseq(processinfo PD,BT filename,BT t){ return createfileZbuiltinZintzseqZintzseq(PD,filename,t);}
 
 // end of file io
 
@@ -592,23 +653,22 @@ if (setjmp(q->env)!=0) {
      default: assert(0,"only 1 ,2,3 or 4 arguments to process are handled");
         
      }
-     // fprintf(stderr,"start result copy \n");
+     // fprintf(stderr,"start result copy \n"); //
      assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
      q->result= ((BT (*) (processinfo,BT))(q->d->deepcopyresult) ) ( q->spawningprocess,result);
      assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-     // fprintf(stderr,"finish result copy\n");
-
+     // fprintf(stderr,"finish result copy\n"); //
     }
     if (q->freespace )  myfree(&q->space); 
     if (q->profileindex > 0 )  (q->finishprof)(q->profileindex ,0);
 }
 
 void initprocessinfo(processinfo p,processinfo PD,struct pinfo2 * pin){
-       p->spawningprocess =PD;
+    p->spawningprocess =PD;
     p->encodings = PD->encodings;
     p->kind = 0;
     p->d = pin;  
-     p->pid = pthread_self ();
+    p->pid = pthread_self ();
     p->joined =0 ;
     p->space.nextone =0;
     p->space.lastone =0;
@@ -622,11 +682,17 @@ void initprocessinfo(processinfo p,processinfo PD,struct pinfo2 * pin){
 }
 
 BT PROCESS3(processinfo PD,BT pin,BT profileidx, BT (*finishprof)(BT idx,BT x)){
-  processinfo p=(processinfo)  myalloc(PD,sizeof (struct pinfo)/8);
+  pthread_attr_t 	stackSizeAttribute;
+  size_t			stackSize = 0;
+  pthread_attr_init (&stackSizeAttribute);
+  pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024 * 12 );
+  pthread_attr_getstacksize(&stackSizeAttribute, &stackSize); 
+  /*  fprintf(stderr,"Stack size %d\n", stackSize);*/
+  processinfo p=(processinfo)  myalloc(PD,(sizeof (struct pinfo)+7)/8);
   initprocessinfo(p,PD,(struct pinfo2 *) pin);
   p->profileindex = profileidx; 
   p->finishprof=finishprof;
-  assert(0==pthread_create(&p->pid, NULL, (void *(*)(void *) )processfunction,(void *) p),"ERROR");
+  assert(0==pthread_create(&p->pid, &stackSizeAttribute, (void *(*)(void *) )processfunction,(void *) p),"ERROR");
   return (BT)p;
 }
 
@@ -725,126 +791,6 @@ void createfilefromoutput(struct outputformat *t,int file)
 
 
 
-//  encoding support
-
-struct einfo {BT hashtable; BT encoded;  processinfo allocatein; };
-
-struct einfo * neweinfo(processinfo PD){
-   static const BT x1[]={0,0};
-   static const BT empty4[]={0,4,(BT) x1,(BT) x1,(BT) x1,(BT) x1};
-   static const BT inverted[]={(BT) empty4,0};
-   struct einfo *e=(struct einfo *)myalloc(PD,sizeof (struct einfo)/8);
-   e->encoded=(BT) x1;
-   e->hashtable=(BT)inverted;
-   e->allocatein=PD ;
-   return e;
-}
-
-
-
-
-
-/* cinfo describes the constant part of encoding description. This is info the compile gernerates and only one record is generated per encoding type.
-no is changed from 0 at runtime to an integer number of the encoding */
-struct cinfo{ BT (* copy) (processinfo,BT) ;
-             BT (* look)(processinfo,BT,BT);
-             BT (*add)(processinfo,BT,BT,BT);
-             BT no; 
-             BT nameasword; BT persitant;
-             BT typeaswords;};
-             
-struct einfo *staticencodings[noencodings];
-
-
-struct einfo  *startencoding(processinfo PD,BT P2)
-{ struct cinfo *ee = (struct cinfo *) P2;
-// assign encoding number 
-if (ee->no==0){
-    assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-    ee->no =encnum--; 
-    assert(encnum>0,"out of encoding numbers");
-    assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-    }
- 
- if (ee->persitant ) {
-   struct einfo *e= staticencodings[ee->no];
-   if (e==0) {
-     assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-     e = neweinfo(&sharedspace );
-     staticencodings[ee->no]=e;
-     assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-        struct einfo *wordendcoding= (sharedspace.encodings[1]);
-    BT data= IDX(NULL,wordendcoding->encoded,ee->nameasword);
-    int i,len=SEQLEN(data) ;
-    char libname[100],*p=libname;
-    *p++='Q';
-    for (i=1; i <=len; i++) *(p++)=(char) (IDX(NULL,data,i));
-    *p++=0;
-     //printf(" global %s ",libname);
-     loadlibrary(&sharedspace,libname);
-    }
-    return e;
- }
- struct einfo *e= PD->encodings[ee->no];
- if (e==0) {
-   if  ( PD->newencodings==0 && PD != &sharedspace) 
-     { int i;
-       struct einfo ** cpy=  (struct einfo **) myalloc(PD,noencodings); 
-       for(i=0; i<noencodings ;i++)
-         cpy[i]=PD->encodings[i];
-       PD->encodings = cpy;
-       PD->newencodings=1;  
-       }
-  e = neweinfo(PD);
-  PD->encodings[ee->no]=e;
- }
- return e;
- }
-
- BT decodeZbuiltinZTzencodingZTzerecord (processinfo PD,BT P1,BT P2) { 
-  BT map=startencoding(PD,P2)->encoded;
-  assert ( P1>0&& P1<=SEQLEN(map), "out of range decode");
-  return IDX(NULL,map,P1);
-}
-
-BT mappingZbuiltinZTzerecord(processinfo PD,BT P2){
- return startencoding(PD,P2)->encoded;
-}
-
-
-
-BT findencodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){ 
-  BT r;
-  struct cinfo *ee = (struct cinfo *) P2;
-  struct einfo *e=startencoding(PD,P2)  ;
-  r= (ee->look) (PD,P1,e->hashtable);
-  if (r > 0) { 
-   BT *s = (BT *) myalloc(PD,3);
-   s[0]=0; s[1]=1; s[2]=IDX(NULL,e->encoded,r);
-   return (BT)s;
-  }
-  static const BT x1[]={0,0};
-  return (BT)x1;
-}
-
-
-BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){  
- BT r;
- struct einfo *e=startencoding(PD,P2)  ;
-  struct cinfo *ee = (struct cinfo *) P2;
-  assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-  r= (ee->look) (PD,P1,e->hashtable);
-if (r<=0) {
-   P1=  (ee->copy) (e->allocatein,P1);
-   r=SEQLEN(e->encoded)+1;
-   e->encoded=append(e->allocatein,e->encoded,P1);
-   e->hashtable=(ee->add)(e->allocatein,e->hashtable,r,P1);
-  }
-assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-return r;
-}
-// end of encoding support
-
 
 volatile sig_atomic_t fatal_error_in_progress = 0;
 
@@ -917,7 +863,7 @@ int randomData = open("/dev/urandom", O_RDONLY);
   BT org = myalloc(PD,2+len );
      IDXUC(org,0)=0;
      IDXUC(org,1)=len;
-    if (len!=read(randomData, &IDXUC(org,2), len ))
+    if (len!=read(randomData, &IDXUC(org,2), len*8 ))
     {
         // error, unable to read /dev/random 
     }
@@ -951,7 +897,7 @@ BT  tobyteseq ( processinfo PD,char *str) {
 
 BT getmachineinfoZbuiltin(processinfo PD) 
 {  BT a = myalloc(PD,2);
-   IDXUC(a,0)=tobyteseq(PD,"x86_64-apple-macosx10.12.0");
+   IDXUC(a,0)=tobyteseq(PD,"x86_64-apple-macosx10.15.0");
    IDXUC(a,1)=tobyteseq(PD,"e-m:o-i64:64-f80:128-n8:16:32:64-S128");
    return a;
  }

@@ -1,4 +1,4 @@
-Module barycenter(T)
+Module barycenter.T
 
 use graph.T
 
@@ -22,7 +22,7 @@ type baryinfo is record avg:real, node:T
 
 function =(a:baryinfo.T, b:baryinfo.T)boolean node.a = node.b
 
-function ?(a:baryinfo.T, b:baryinfo.T)ordering avg.a ? avg.b
+Function ?(a:baryinfo.T, b:baryinfo.T)ordering avg.a ? avg.b
 
 function findindex(s:seq.T, a:T)int findindex(a, s)
 

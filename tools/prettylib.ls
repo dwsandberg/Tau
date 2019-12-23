@@ -1,135 +1,211 @@
+#!/usr/local/bin/tau
+
+
 Module prettylib
 
-use UTF8
-
-use definestruct2
+run prettylib testing2
 
 use display
 
-use fileresult
-
 use format
-
-use libdesc
 
 use libscope
 
-use main
+use main2
 
-use parse
+use pretty
 
-use passcommon
-
-use pretty2
-
-use seq.moddesc
-
-use seq.mytype
-
-use seq.ptree
-
-use seq.syminfo
+use renamemodule
 
 use seq.tree.word
 
-use seq.word
+use stack.tree.word 
 
-use set.seq.word
-
-use stack.tree.word
+use stacktrace
 
 use stdlib
 
+use textio
+
 use tree.word
 
-function reverse2(l:seq.word)seq.word 
- if isempty.l then l else reverse2.subseq(l, 2, length.l)+ l_1
+function plist(t:seq.word,i:int,parano:int,names:seq.word) seq.word
+ if i = 1 
+  then if length.names > 0 
+   then"("+(if names_parano =":"_1 then""else [ names_parano]+":")+ t_i + plist(t, i + 1, parano + 1, names)
+     else t
+  else if t_i =".a"_1 ∨ t_i =". a"_1 
+  then subseq(t, i, i + 1)+ plist(t, i + 2, parano, names)
+  else if parano ≤ length.names 
+  then","+(if names_parano =":"_1 then""else [ names_parano]+":")+ t_i + plist(t, i + 1, parano + 1, names)
+   else  ")"+subseq(t,i,length.t) 
 
-Function prettylib(libname:seq.word)seq.word 
- // Pretty prints lib source. Does not create files for modules where the pretty printed version does not give the same parse tree. // 
+
+Function testing2 seq.word
+// htmlcode("stdlib") //
+  // callgraphwithin("testall","testall test11 test5 testencodings")doclibrary."stdlib"// 
+  prettylib("stdlib2", "")
+ 
+
+
+Function prettylib(libname:seq.word, namemap:seq.word)seq.word 
+// Pretty prints lib source.  // 
   // Warning:Discards text before first module. Multiple modules in the same file are broken into multiple files. // 
   // Will move a beginning comment inside parentheses and fail on(a + b)* b. // 
-  let lib = tolibdesc(libname_1)
-  let libheader = ["#!/usr/local/bin/tau", 
-  "Library"+ libname + alphasort.@(+, modname,"", subseq(modules.lib, 2, length.modules.lib))+ EOL +"uses"+ dependentlibs.lib + EOL +"exports"+ alphasort.exports.lib]
-  assert @(∧, checkpretty.libheader, true, modules.lib)report"failed"
-  {"PASSED"}
+  // namemap is form changing module names in form"oldname1 newname1 oldname2 newname2..."// 
+  // To avoid destroying source it is wise to map library name to a new directory and test to make sure pretty printing did not corrupt source. //
+  let discard = setmap.namemap 
+prettyit(   firstPass(libname_1)  ,[mapname(libname_1  ),"/"_1] ,1,[""]) _1
 
-function checkpretty(libheader:seq.seq.word, mod:moddesc)boolean 
- let x = checkpretty(src(mod), 1, empty:set.seq.word, empty:seq.seq.word, empty:seq.seq.word)
-  let z = createfile([ merge([ libname(mod)]+"/"+ [ modname(mod)]+".ls")], if modname(mod)= libname(mod)then libheader + x else x)
-  true
 
-function checkpretty(s:seq.seq.word, i:int, use:set.seq.word, before:seq.seq.word, after:seq.seq.word)seq.seq.word 
+function prettyit(lib:seq.seq.word,modname:seq.word,i:int,result:seq.seq.word)seq.seq.word
+ if i > length.lib 
+  then let x = createfile([ merge(modname +".ls")], result)
+   ["Finished prettylib"]
+  else let p = lib_i 
+  let key = p_1 
+  if key in"module"
+  then let firstmod = length.modname < 3 
+   let x = if firstmod then 0 else createfile([ merge(modname +".ls")], result)
+         let name=mapname(p_2)
+  let  newfilename=subseq(modname,1,max(length.modname-1,2))+name
+    // assert false report newfilename //
+   prettyit(lib, newfilename, i + 1, [ processtotext("&keyword Module"+ name + subseq(p, 3, length.p))])
+  else let toadd = if key in"use"
+   then"&{ block &keyword use"+ mapname(p_2)+ subseq(p, 3, length.p)+"&}"
+   else if key in"Library library"
+   then let u = findindex("uses"_1, p, 3)
+       let e = findindex("exports"_1, p, 3)
+    {"&{ block &keyword Library"+ mapname(p_2)+ alphasort.@(+, mapname,"", subseq(p, 3, u - 1))+"&br &keyword"+ subseq(p, u, e - 1)+"&br &keyword exports"+ alphasort.@(+, mapname,"", subseq(p, e + 1, length.p))+"&}"} 
+   else prettyparagraph.p 
+ prettyit(lib,modname,i+1,if toadd="" then result else result+[processtotext.toadd] )
+ 
+ Function htmlcode(libname:seq.word)seq.word 
+  let lib=firstPass(libname_1) 
+  let modules=  @(+,findmodules,"",lib)
+  {"&{ noformat <h1> Source code for Library"+ libname +"</h1> &}"+ @(+, ref,"", modules)+ @(+, prettyparagraph,"", lib)}
+
+Function ref(modname:word)seq.word 
+ {"&{ noformat <a href = &quot"+ merge("#"_1, modname)+"&quot >"+ modname +"</a> &}"}
+
+ function findmodules(p:seq.word) seq.word 
+    if p_1="module"_1 then [p_2] else ""
+ 
+function prettyparagraph( p:seq.word) seq.word
+ let key=p_1
+  if key in"Library library use"
+  then"&{ block &keyword"+ p +"&}"
+  else if key ="module"_1 
+  then"&{ block &{ noformat <hr id = &quot"+ p_2 +"&quot > &} &keyword"+ p +"&}"
+  else if key ="skip"_1 
+  then"&{ block &{ noformat"+ subseq(p, 2, length.p)+"&} &}"
+  else if key in"export"
+  then"&keyword"+ subseq(p, 3, length.p)
+  else if key in"record"
+  then"&keyword type"+ p_2 +"is"+ p_1 + decodefld(p, 4 + toint(p_3),"")
+  else if key in"parsedfunc Parsedfunc"
+  then let z = p 
+   let nopara= toint(z_4)
+   let headlength=toint(z_2)
+   let head =(if key ="parsedfunc"_1 
+    then"&keyword function"
+    else"&keyword Function")+ z_3 + plist(subseq(z, 5, headlength + 2 - nopara), 1, 1, subseq(z, headlength + 2 - nopara + 1, headlength + 2))
+   let tr=x(z,headlength+4,empty:stack.tree.word)
+   // assert not(label.tr="builtin"_1) report "XXXX"+label.tr_1 + z_3 //
+   let tr1 = if label.tr ="builtin"_1  then if
+      label(tr_1)= z_3 
+    then tree("builtin"_1, [ tree("usemangle"_1)])
+    else if label.(tr_1)="1"_1 then
+         tree("builtin"_1,[tree("NOOP"_1)])
+        else if label(tr_1)="STATE"_1  &and label(tr_1_1)= z_3 then
+          tree("builtin"_1,[tree("STATE"_1,[tree("usemangle"_1)])])
+        else 
+       // assert false report print.tr //
+       tr
+    else tr
+ let zz=  prettytree2(defaultcontrol, tr1, head)
+    //  assert not(z_3="blockit"_1) &or label.tr="export"_1 report print.tr_2_2  +z //
+ zz
+ else ""
+
+function decodefld(s:seq.word,i:int,result:seq.word ) seq.word
  if i > length.s 
-  then before + alphasort.toseq.use + after 
-  else let p = s_i 
-  if length.p = 0 
-  then checkpretty(s, i + 1, use, before, after)
-  else if not(p_1 in"function Function type use")
-  then if isempty.use then checkpretty(s, i + 1, use, before + p, after)else checkpretty(s, i + 1, use, before, after + p)
-  else let orgtree = parse(p, tree("xxx"_1))
-  let formatedtext = processtotext.prettytree(defaultcontrol, orgtree)
-  let newtext = towords.toseqint.toUTF8.formatedtext 
-  let newtree = parse(newtext, tree("xxx"_1))
-  assert newtree = orgtree report"FAILED on"+ formatedtext 
-  if p_1 ="use"_1 
-  then checkpretty(s, i + 1, use + formatedtext, before, after)
-  else if isempty.use 
-  then checkpretty(s, i + 1, use, before + formatedtext, after)
-  else checkpretty(s, i + 1, use, before, after + formatedtext)
+  then result 
+  else let k = toint(s_i)
+  let fld = [ s_(i + k)]+":"+ print.mytype.subseq(s, i + 1, i + k - 1)
+     decodefld(s,i+k+1,if result="" then fld else result+","+fld)
 
-Function checkbind(libname:seq.word)seq.word 
- // Verifies that that same parse tree can be created from the binding form of functions as from source txt. Does not check abstract type functions. // 
-  let lib = tolibdesc(libname_1)
-  let x = newcode.bindings(libname_1)
-  let ptrees = @(+, getparsetrees, empty:seq.ptree, modules.lib)
-  let a = @(+, checkbind.ptrees,"", subseq(x, 1, 40000))
-  if a =""
-  then"PASSED BINDING CHECK for"+ libname 
-  else"FAILED BINDING CHECK for"+ libname +". Detail:"+ a
 
-type ptree is record symbol:syminfo, parsetree:tree.word
-
-function getparsetrees(s:moddesc)seq.ptree @(+, getparsetree.modname.s, empty:seq.ptree, src.s)
-
-function getparsetree(modname:word, s:seq.word)seq.ptree 
- if length.s = 0 ∨ not(s_1 in"function Function")
-  then empty:seq.ptree 
-  else [ ptree(parsesyminfo(mytype.[ modname], s), parse(s, tree("xxx"_1)))]
-
-function checkbind(p:seq.ptree, s:syminfo)seq.word 
- let t = @(+, checkbind.s,"", p)
-  if t ="OK"
+function gatherarg(s:seq.word,i:int) seq.word
+ if i > length.s 
   then""
-  else // if length.t = 0 then"&br"+ [ name.s]+":"+ print.modname.s + instruction.s else // t
+  else if s_i in"0123456789"then [ s_i]+ gatherarg(s, i + 1)else""
 
-function checkbind(sym:syminfo, p:ptree)seq.word 
- // if iscomplex.modname.sym then""else // 
-  if name.sym = name.symbol.p ∧ paratypes.sym = paratypes.symbol.p ∧ modname.sym = modname.symbol.p 
-  then if label(parsetree(p)_2)in"builtin export"
-   then"OK"
-   else let b = toparse(instruction.sym, 2, empty:stack.tree.word)
-   if b = parsetree(p)_2 
-   then"OK"
-   else"&br"+ name.sym + print.modname.sym +"&br"+ print.parsetree.p +"&br"+ print.b +"&br"+ instruction.sym 
-  else""
-
-function toparse(s:seq.word, i:int, r:stack.tree.word)tree.word 
+function x(s:seq.word,i:int,stk:stack.tree.word) tree.word
  if i > length.s 
-  then top.r 
-  else if s_i in"LIT WORD"
-  then toparse(s, i + 2, push(r, tree(s_(i + 1))))
-  else let nosons = toint(s_(i + 1))
-  let cd = codedown(s_i)
-  let name = if length.cd = 2 ∧ length(cd_2)> 1 ∧ length.cd = 2 
-   then // assert false report cd_1 +"mod"+ cd_2 + towords.decode.(cd_1_1)// 
-    let a = towords.decode(cd_1_1)
-    if a_length.a ="T"_1 
-    then let z = merge(subseq(a, 1, length.a - 1)+ @(seperator.".", identity,"", reverse2.subseq(cd_2, 1, length(cd_2) - 1)))
-     // assert z = merge."empty:seq.word"report [ z, cd_1_1]// z 
-    else cd_1_1 
-   else cd_1_1 
-  let t = tree(name, top(r, nosons))
-  toparse(s, i + 2, push(pop(r, nosons), t))
-
+  then top.stk 
+  else let w = s_i 
+  if w ="FREF"_1 
+  then x(s, i + 2, push(stk, tree(s_(i + 1))))
+  else if w ="SET"_1 
+  then let t = tree("let"_1, [ tree(s_(i + 1))]+ top(stk, 2))
+     x(s,i+2,push(pop(stk,2),t))
+  else if w in"LIT PARAM"
+  then // let a = gatherarg(s, i + 1)// 
+     // x(s,i+length.a,push(stk,tree(merge(a)))) //
+   assert length.s < i + 2 ∨ not(s_(i + 2)="46"_1)report"?"
+      x(s,i+2,push(stk,tree(s_(i+1))))
+  else if w in"WORDS"
+  then let size = toint(s_(i + 1))
+      let txt= subseq(s,i+2,i+1+size) 
+     let t= tree( "$wordlist"_1  ,@(+,tree,empty:seq.tree.word,txt))
+     x(s,i+2+size,push(stk,t))
+  else if w in"COMMENT"
+  then let size = toint(s_(i + 1))
+      let txt= subseq(s,i+2,i+1+size) 
+   let t = tree("comment"_1, @(+, tree, [ top.stk], txt))
+     x(s,i+2+size,push(pop.stk,t))
+  else if w ="RECORD"_1 
+  then let noargs = toint(s_(i + 1))
+      let t= tree("$build"_1 ,subseq(top(stk,noargs),3,noargs))
+       x(s,i+2,push(pop(stk,noargs),t))
+  else if w ="APPLY"_1 
+  then let noargs = toint(s_(i + 1))
+     let args=top(stk,noargs)
+     // assert false report print.tree("X"_1,args) //
+   let term2 = codedown.label(args_(noargs - 2))
+     let noargs2=length.term2-2-1
+   let term1 = codedown.label(args_(noargs - 1))
+     let noargs1=length.term1-2-2
+   let t = tree("@"_1, [ tree(term1_1_1, subseq(args, 1, noargs1)), 
+   tree(term2_1_1, subseq(args, noargs1 + 1, noargs1 + noargs2)), 
+   args_(noargs1 + noargs2 + 1), 
+   args_(noargs1 + noargs2 + 2)])
+       x(s,i+2,push(pop(stk,noargs),t))
+  else if w ="if"_1 
+  then x(s, i + 1, push(pop(stk, 3), tree(w, top(stk, 3))))
+  else if subseq(s, i, i + 1)="assertZbuiltinZwordzseq if"
+  then x(s, i + 2, push(pop(stk, 3), tree("assert"_1, top(stk, 3))))
+  else if w ="PRECORD"_1 
+  then let noargs = toint(s_(i + 1))
+      let args=top(stk,noargs) 
+       let t=   tree("process"_1,  [ tree(getname.codedown.label(args_(noargs-1)),subseq(args,1,noargs-4))])
+        x(s,i+2,push(pop(stk,noargs),t))
+  else if w in"FORCEINLINE PROFILE"
+  then x(s, i + 1, push(pop(stk, 1), tree(w, [ top.stk])))
+  else if w="siQ7AeoftypeQ3ATZQ24typesiQ7Aezlocal "_1 then 
+       x(s,i+1,push(stk,tree.merge("sizeoftype:T")))
+  else  let a = codedown.w 
+  assert length.a > 1 report "JJJ"+w+s+toword.i+stacktrace
+   let noargs=length.a-2
+    x(s,i+1,push(pop(stk,noargs),tree(getname.a,top(stk,noargs))))
+    
+ function getname(a:seq.seq.word) word
+    let b=a_1_1 
+  if length(a_2)= 1 
+  then b 
+  else let x = decode.b 
+  let c = towordsX.decode.b 
+  if length.c > 1 ∧ last.c ="T"_1 
+  then merge(subseq(c, 1, length.c - 1)+ print.mytype.subseq(a_2, 1, length(a_2) - 1))
+     else b

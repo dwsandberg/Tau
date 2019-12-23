@@ -1,10 +1,12 @@
-module bandeskopf(T)
+Module bandeskopf.T
 
 use graph.T
 
 use seq.T
 
 use seq.arc.T
+
+use seq.int
 
 use seq.nodeinfo.T
 
@@ -143,7 +145,7 @@ function arcsfromsuccesors(root:T, g:graph.T, n:T)seq.arc.T
   if isempty.s then empty:seq.arc.T else [ arc(s_1, root)]+ arcsfromsuccesors(root, g, s_1)
 
 Function layerarcsR(arcstoroots:set.arc.T, layer:seq.T)seq.arc.T 
- @(+, layerarcsR(arcstoroots, layer), empty:seq.arc.T, arithseq(length.layer - 1, -1, length.layer))
+ @(+, layerarcsR(arcstoroots, layer), empty:seq.arc.T, arithseq(length.layer - 1,-1, length.layer))
 
 Function layerarcsR(arcstoroot:set.arc.T, layer:seq.T, i:int)seq.arc.T 
  let arc1 = arc(layer_i, layer_(i - 1))
@@ -193,7 +195,7 @@ function assignx(RtoL:boolean, layers:set.nodeinfo.T, list:seq.T, assigned:set.n
   if nodeinfo(node, 0, 0)in assigned 
   then assignx(RtoL, layers, list, assigned, vertarcs, i + 1)
   else let q = findelement(nodeinfo(node, 0, 0), layers)_1 
-  assignx(RtoL, layers, list, assignvert(RtoL, layers, vertarcs, assigned, q, if RtoL then -1 else 1, empty:seq.nodeinfo.T), vertarcs, i + 1)
+  assignx(RtoL, layers, list, assignvert(RtoL, layers, vertarcs, assigned, q, if RtoL then-1 else 1, empty:seq.nodeinfo.T), vertarcs, i + 1)
 
 ----------------------
 

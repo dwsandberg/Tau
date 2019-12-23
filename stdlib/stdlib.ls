@@ -1,15 +1,17 @@
 #!/usr/local/bin/tau
 
-Library stdlib UTF8 bits blockseq buildtree byteseq codegen2 codetemplates2 constant definestruct2 display etype fileio fileresult format graph groupparagraphs internalbc internals invertedseq ipair libdesc libdescfunc libscope llvm main options oseq packedseq parse pass0 pass1a pass2a passcommon persistant2 pretty2 prims process processtypes real reconstruct seq set stack stacktrace symbol tree 
- uses 
- exports UTF8  bits blockseq buildtree byteseq codetemplates2 constant definestruct2 display etype fileio fileresult format graph internalbc internals invertedseq ipair libdesc libdescfunc libscope llvm main options oseq packedseq parse passcommon persistant2 pretty2 prims process processtypes real reconstruct seq set stack stacktrace stdlib tree
+Module stdlib 
 
-module stdlib
+Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates cvttoinst deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 opt2 oseq packedseq parse pass1 pass2 persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash 
+ uses 
+ exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
+ internalbc ipair  libscope llvm main2  oseq packedseq   process real reconstruct seq set stack stacktrace 
+ stdlib  textio tree prims
+
 
 use UTF8
 
-
-use fileresult
+use encoding.seq.int
 
 use oseq.alphaword
 
@@ -35,7 +37,9 @@ use stacktrace
 
 use stdlib
 
-type int
+use textio
+
+use xxhash
 
 type ordering is record toint:int
 
@@ -63,6 +67,8 @@ Function commachar int 44
 
 Function hyphenchar int 45
 
+Function nbspchar int // no break space character // 160
+
 * EQ GT and LT are the possible results of ? operator
 
 Function EQ ordering ordering.1
@@ -87,7 +93,7 @@ Function ?(a:int, b:int)ordering builtin.usemangle
 
 Function ?(a:ordering, b:ordering)ordering toint.a ? toint.b
 
-Function +(a:int, b:int)int builtin.ADD
+Function +(a:int, b:int)int builtin.usemangle
 
 Function-(a:int, b:int)int builtin.usemangle
 
@@ -95,9 +101,9 @@ Function *(a:int, b:int)int builtin.usemangle
 
 Function /(a:int, b:int)int builtin.usemangle
 
-Function hash(i:int)int builtin.usemangle
+Function hash(i:int)int finalmix.hash(hashstart, i)
 
-Function =(a:int, b:int)boolean builtin.EQL
+Function =(a:int, b:int)boolean builtin.usemangle
 
 Function =(a:ordering, b:ordering)boolean toint.a = toint.b
 
@@ -113,9 +119,14 @@ Function ∧(a:ordering, b:ordering)ordering
 
 Function ?(a:boolean, b:boolean)ordering toint.a ? toint.b
 
-Function ∧(a:boolean, b:boolean)boolean if a then b else false
+Function ∧(a:boolean, b:boolean)boolean 
+ if a then b else // false // boolean.0
 
-Function ∨(a:boolean, b:boolean)boolean if a then true else b
+Function ∨(a:boolean, b:boolean)boolean 
+ if a 
+  then // true is not use so simple inline expansion is used to produce short circuit evaluation // 
+   boolean.1 
+  else b
 
 Function not(a:boolean)boolean builtin.usemangle
 
@@ -141,25 +152,25 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 type wordencoding is encoding seq.int
 
+Function wordencoding erecord.wordencoding export
+
 type word is record bb:encoding.seq.int
 
 Function encodeword(a:seq.int)word word.encode(a, wordencoding)
 
-Function wordmapping seq.seq.int mapping.wordencoding
-
-Function encoding(w:word)int encoding.bb.w
-
 Function decode(w:word)seq.int decode(bb.w, wordencoding)
 
-Function hash(a:seq.int)int @(+, hash, 0, a)
+Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
 
-Function hash(a:seq.word)int @(+, hash, 0, a)
+Function hash(a:seq.word)int finalmix.@(hash, hash, hashstart, a)
 
-Function hash(a:word)int hash.encoding.a
+Function hash(a:word)int hash.bb.a
 
-Function ?(a:word, b:word)ordering encoding.a ? encoding.b
+Function ?(a:word, b:word)ordering bb.a ? bb.b
 
-Function =(a:word, b:word)boolean encoding.a = encoding.b
+Function =(a:word, b:word)boolean bb.a = bb.b
+
+Function ≠(a:word, b:word)boolean export
 
 Function hasdigit(w:word)boolean 
  let l = decode.w 
@@ -171,13 +182,9 @@ Function toword(n:int)word
  // Covert integer to sequence of characters represented as a single word. // 
   encodeword.toseqint.toUTF8.n
 
-Function print(i:int)seq.word groupdigits.toUTF8.i
+/Function print(i:int)seq.word groupdigits.toUTF8.i
 
-function groupdigits(u:UTF8)seq.word 
- let s = toseqint.u 
-  if length.s < 5 ∧(length.s < 4 ∨ s_1 = hyphenchar)
-  then [ encodeword.s]
-  else groupdigits.UTF8.subseq(s, 1, length.s - 3)+ [ encodeword.subseq(s, length.s - 2, length.s)]
+/function groupdigits(u:UTF8)seq.word let s = toseqint.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s-3)+ [ encodeword.subseq(s, length.s-2, length.s)]
 
 Function toint(w:word)int 
  // Convert an integer represented as a word to and int // cvttoint(decode.w, 1, 0)
@@ -185,10 +192,12 @@ Function toint(w:word)int
 function cvttoint(s:seq.int, i:int, val:int)int 
  if i = 1 ∧ s_1 = hyphenchar 
   then cvttoint(s, i + 1, val)
+  else if i > length.s 
+  then if s_1 = hyphenchar then-val else val 
+  else if s_i = nbspchar 
+  then cvttoint(s, i + 1, val)
   else assert between(s_i, 48, 57)report"invalid digit"+ stacktrace 
-  if i = length.s 
-  then if s_1 = hyphenchar then 48 - s_i - val * 10 else val * 10 + s_i - 48 
-  else cvttoint(s, i + 1, val * 10 + s_i - 48)
+  cvttoint(s, i + 1, val * 10 + s_i - 48)
 
 Function merge(a:seq.word)word 
  // make multiple words into a single word. // encodeword.@(+, decode, empty:seq.int, a)
@@ -302,11 +311,11 @@ Function alphaword(word)alphaword export
 Function toword(alphaword)word export
 
 Function toalphaseq(a:seq.word)seq.alphaword 
- // This is just a type change and the compiler recognizes this and does not generator code // 
+ // This is just a type change and the compiler recognizes this and does not generate code // 
   @(+, alphaword, empty:seq.alphaword, a)
 
 Function ?(a:alphaword, b:alphaword)ordering 
- if encoding.toword.a = encoding.toword.b then EQ else decode.toword.a ? decode.toword.b
+ if toword.a = toword.b then EQ else decode.toword.a ? decode.toword.b
 
 Function towordseq(a:seq.alphaword)seq.word @(+, toword, empty:seq.word, a)
 
@@ -315,8 +324,23 @@ Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
 Function alphasort(a:seq.seq.word)seq.seq.word 
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
   @(+, towordseq, empty:seq.seq.word, sort.b)
+  
+* usegraph include  xxhash deepcopy encoding oseq bits  stacktrace  textio reconstruct fileio UTF8 libscope
+blockseq packedseq bitpackedseq exclude stdlib seq
 
-* usegraph include real oseq fileresult UTF8 prims stacktrace internals libscope tree seq  blockseq graph ipair invertedseq process stack set oseq packedseq options format groupparagraphs fileio
 
-* usegraph include libscope display constant codegen2 parse pass1a pass0 buildtree processtypes definestruct2 symbol libdescfunc groupparagraphs etype codetemplates core sid pretty2 pass2a persistant2 libdesc passcommon main parts llvm reconstruct exclude seq set oseq options stdlib tree graph UTF8 stack stacktrace real process libscope ipair
+
+
+* usegraph include real prims   tree  graph ipair 
+process stack set   format groupparagraphs   dict 
+exclude stdlib seq 
+
+* usegraph include  main2 libscope display constant codegen convert 
+ parse pass1  symbol libdescfunc  
+codetemplates pass2 persistant   llvm  
+reconstruct persistantseq opt2
+symbol parse libdescfunc internalbc intercode cvttoinst codegen
+exclude seq set oseq stdlib bits tree graph UTF8 stack stacktrace real process libscope ipair deepcopy
+bitpackedseq packedseq fileio blockseq textio encoding
+   
 

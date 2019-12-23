@@ -1,9 +1,5 @@
 Module test2
 
-type wordfreq is record count:int, w:word
-
-use fileresult
-
 use oseq.wordfreq
 
 use seq.seq.word
@@ -13,6 +9,10 @@ use seq.word
 use seq.wordfreq
 
 use stdlib
+
+use textio
+
+type wordfreq is record count:int, w:word
 
 function =(a:wordfreq, b:wordfreq)boolean false
 

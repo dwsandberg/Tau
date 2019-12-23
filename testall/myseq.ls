@@ -1,4 +1,4 @@
-module myseq(T)
+Module myseq.T
 
 All sequences must be in parameterized scopes.
 

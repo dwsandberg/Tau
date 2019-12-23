@@ -1,12 +1,14 @@
-module bits
+Module bits
 
 use UTF8
+
+use bitpackedseq.bit
 
 use blockseq.bits
 
 use blockseq.int
 
-use byteseq.bit
+use fileio
 
 use packedseq.bits
 
@@ -30,17 +32,21 @@ Function >>(a:bits, i:int)bits builtin.usemangle
 
 Function <<(a:bits, i:int)bits builtin.usemangle
 
+Function xor(a:bits, b:bits)bits builtin.usemangle
+
 __________________
 
 type bit is record toint:int
+
+Function =(a:bit, b:bit)boolean toint.a = toint.b
 
 Function toint(bit)int export
 
 Function bit(int)bit export
 
-function sizeinbits(a:bit)int 1
+Function sizeinbits(a:bit)int 1
 
-function tobits(a:bit)bits bits.toint.a
+Function tobits(a:bit)bits bits.toint.a
 
 Function addvbr(b:bitpackedseq.bit, newbits:int, bitcount:int)bitpackedseq.bit 
  let limit = toint(bits.1 << bitcount - 1)
@@ -71,7 +77,7 @@ Function addvbr6(b:bitpackedseq.bit, v:int)bitpackedseq.bit addvbr6(bits.0, 0, b
 
 Function addvbrsigned6(b:bitpackedseq.bit, val:int)bitpackedseq.bit 
  if val < 0 
-  then if val > -16 
+  then if val >-16 
    then addvbr6(b, 2 *-val + 1)
    else let chunk = bits(32 +-val mod 16 * 2 + 1)
    addvbr6(chunk, 6, bits(-val)>> 4, empty:seq.int, b, 1)

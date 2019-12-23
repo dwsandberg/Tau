@@ -14,9 +14,7 @@ use stdlib
 
 Function dummyfunction int 3
 
-function t001 boolean true
-
-0-4 = 1-2-3 This expession is suppose to be test t001 but gives invalid digit when compiling.
+function t001 boolean 0-4 = 1-2-3 
 
 function t002 boolean 2 = 24 / 4 / 3
 
@@ -83,7 +81,7 @@ function t020 boolean 5 = findindex(1, [ 2, 4, 3, 8, 1, 3]+ constantseq(4, 1))
 
 function t021 boolean 28 = constantseq(13, 5)_7 + length.constantseq(23, 3)
 
-* function t022 boolean [ 3, 6]= all(3, [ 2, 4, 3, 8, 1, 3])
+/ function t022 boolean [ 3, 6]= all(3, [ 2, 4, 3, 8, 1, 3])
 
 function t022 boolean [ toword.384]+ toword.52 ="384 52"
 
@@ -116,8 +114,7 @@ Function t032 boolean @(∧, isbyte, true, [ 23, 4, 5, 255, 7, 2, 255])
 Function test11 seq.word 
  let y = [ t002, t003, t004, t005, t006, t007, t008, t009, t010, t011, 
   t012, t013, t014, t015, t016, t017, t018, t019, t020, t021, 
-  t022, t023, t024, t025, t025, t026, t027, t028, t029, t030, 
-  t031]
+  t022, t023, t024, t025, t026, t027, t028, t029, t030, t031]
   let x = @(+, check.y,"", arithseq(length.y, 1, 1))
   if x =""then"PASS test11"else"FAIL test11"+ x
 

@@ -1,16 +1,6 @@
-Module seq(T)
+Module seq.T
 
-Function_(dseq.T, int)T export
-
-type seq is sequence length:int, x:T
-
-type pseq is sequence length:int, a:seq.T, b:seq.T
-
-use internals.T
-
-use persistant2
-
-use process.seq.T
+use deepcopy.T
 
 use seq.T
 
@@ -20,16 +10,21 @@ use stacktrace
 
 use stdlib
 
+type seq is sequence length:int, x:T
+
+type pseq is sequence length:int, a:seq.T, b:seq.T
+
 Function =(T, T)boolean unbound
 
 Function_(a:seq.T, b:int)T 
- let typ = getseqtype(a, 0)
+ NOINLINE.let typ = getseqtype(a, 0)
   if typ = 0 
   then assert b > 0 ∧ b ≤ length.a report"out of bounds"+ stacktrace 
    getval(a, b + 1)
   else callidx(typ, a, b)
 
-function callidx(func:int, a:seq.T, b:int)T builtin.CALLIDX
+function callidx(func:int, a:seq.T, b:int)T 
+ builtin."PARAM 1 PARAM 2 PARAM 3 CALLIDX"
 
 function getval(a:seq.T, offset:int)T builtin.IDXUC
 
@@ -37,7 +32,7 @@ function getseqtype(a:seq.T, offset:int)int builtin.IDXUC
 
 Function length(a:seq.T)int export
 
-Function empty seq.T builtin(LIT, 0, LIT, 0, RECORD, 2)
+Function empty seq.T builtin."LIT 0 LIT 0 RECORD 2"
 
 Function =(a:seq.T, b:seq.T)boolean 
  if length.a = length.b then subequal(a, b, length.a)else false
@@ -206,7 +201,7 @@ ______________________________________
 
 type fastsubseq is sequence length:int, data:seq.T, begin:int
 
-function_(a:fastsubseq.T, i:int)T data(a)_(i + begin.a)
+Function_(a:fastsubseq.T, i:int)T data(a)_(i + begin.a)
 
 Function fastsubseq(s:seq.T, from:int, to:int)seq.T 
  if to < from 
@@ -215,39 +210,9 @@ Function fastsubseq(s:seq.T, from:int, to:int)seq.T
   then fastsubseq(s, from, length.s)
   else if to < 1 then fastsubseq(s, 1, to)else toseq.fastsubseq(to - from + 1, s, from - 1)
 
-_________________________________
-
-Function mapping(erec:erecord.T)seq.T builtin.usemangle.STATE
-
-Function encoding(encoding.T)int builtin
-
-Function encode(t:T, erec:erecord.T)encoding.T builtin.usemangle.STATE
-
-Function decode(t:encoding.T, erec:erecord.T)T builtin.usemangle.STATE
-
-Function findencode(t:T, erec:erecord.T)seq.T builtin.usemangle.STATE
-
-type encoding
-
-type erecord is record deepcopy:int, invertedseqlookup:int, invertedseq:int, number:int, name:word, ispersistant:boolean, encodingtype:seq.word
-
-`___________
-
-function cast2int(s:seq.T)int builtin
-
-function identityf(s:seq.T)seq.T s
-
-Function flush(s:erecord.T)seq.word 
- if ispersistant.s 
-  then let thedata = cast2int.result.process.identityf.mapping.s 
-   let b = createlib2(thedata, encodingtype.s, merge("Q"+ name.s),"")
-   {"OK"} 
-  else"Encoding is not persistant."
-  
-_____________-
+_____________
 
 type arithmeticseq is sequence length:int, step:T, start:T
-
 
 Function +(T, T)T unbound
 
@@ -258,3 +223,4 @@ Function length(s:arithmeticseq.T)int export
 Function_(s:arithmeticseq.T, i:int)T start.s +(i - 1)* step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
+
