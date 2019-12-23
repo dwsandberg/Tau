@@ -54,5 +54,6 @@ Function testall seq.word "hello"
  print(tan(pi / 4.0), 5)="1.00000", 
  print(arcsin.sin.0.5, 5)="0.50000", 
  print(arccos.cos.0.5, 5)="0.50000", 
+ -2^4=-16,
  test20],"real")
 
