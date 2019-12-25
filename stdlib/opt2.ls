@@ -18,6 +18,8 @@ use symbol
 
 use tree.seq.word
 
+use seq.char
+
 Function opt2(t:tree.seq.word)tree.seq.word 
  if inst.t ="FINISHLOOP"_1 
   then let x = removeRECORD.t 
@@ -35,8 +37,8 @@ function removeRECORD(loop:tree.seq.word)tree.seq.word
   // assert false report a +"/"+ b // 
   if length.b ≠ 1 
   then nogo 
-  else let z = decode(b_1)
-  let x = decode("X"_1)_1 
+  else let z = decodeword(b_1)
+  let x = decodeword("X"_1)_1 
   let i = findindex(x, z)
   let candidate = encodeword.subseq(z, 1, i - 1)
   if candidate in checked ∨ not(["LOCAL"_1, candidate]= label(loop_2_2))

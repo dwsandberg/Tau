@@ -20,6 +20,8 @@ use tree.seq.word
 
 use worddict.symbol
 
+use seq.char
+
 Function ?(a:mytype, b:mytype)ordering 
  let y = towords(a)_length.towords.a ? towords(b)_length.towords.b 
   if y = EQ 
@@ -125,14 +127,16 @@ Function printdict(s:set.symbol)seq.word @(+, print,"", toseq.s)
 
 Function print(s:symbol)seq.word 
  [ name.s]+"("+ @(seperator.",", print,"", paratypes.s)+")"+ print.resulttype.s +"module:"+ print.modname.s
+ 
+use textio
 
 Function replaceT(with:mytype, s:symbol)symbol 
  let newmodname = replaceT(with, modname.s)
   let newparas = @(+, replaceT.with, empty:seq.mytype, paratypes.s)
   let n = if length.paratypes.s > 0 
    then name.s 
-   else let x = decode.name.s 
-   if subseq(x, length.x - 1, length.x)= //.T // [ 46, 84]
+   else let x = decodeword.name.s 
+   if subseq(x, length.x - 1, length.x)= //.T // [ char(46), char(84)]
    then merge([ encodeword.subseq(x, 1, length.x - 1)]+ print.with)
    else name.s 
   // assert n &ne merge("typedesc:tree.seq.word")report"ERR36a"+ n + name.s + print.newmodname // 

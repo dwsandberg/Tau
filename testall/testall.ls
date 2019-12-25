@@ -39,20 +39,20 @@ use testencoding
 
 Function testall seq.word "hello"
 +
- test5 + test11 +   test11a +     testencoding +   check([ print(sqrt.2.0, 3)="1.414", 
- print(int2real.3, 2)="3.00", 
+ test5 + test11 +   test11a +     testencoding +   check([ print(3,sqrt.2.0)="1.414", 
+ print(2,toreal.3)="3.00", 
  intpart.3.1 = 3, 
- print(2.0 / 3.0, 3)="0.667", 
+ print(3,2.0 / 3.0)="0.667", 
  2.0 + 3.0 = 5.0, 
  2.0 * 3.0 = 6.0, 
- print(2.3 - 1.1, 5)="1.20000", 
- print(cos.0.4, 5)="0.92106", 
- print(sin.0.4, 5)="0.38942", 
+ print(5,2.3 - 1.1)="1.20000", 
+ print(5,cos.0.4)="0.92106", 
+ print(5,sin.0.4)="0.38942", 
  1.0 ? 2.0 = LT, 
  -1.9 ? -3.0 = GT, 
  3.00 ? 3.000 = EQ, 
- print(tan(pi / 4.0), 5)="1.00000", 
- print(arcsin.sin.0.5, 5)="0.50000", 
- print(arccos.cos.0.5, 5)="0.50000", -2^4=-16,
+ print(5,tan(pi / 4.0))="1.00000", 
+ print(5,arcsin.sin.0.5)="0.50000", 
+ print(5,arccos.cos.0.5)="0.50000", -2^4=-16,
  test20],"real")
 

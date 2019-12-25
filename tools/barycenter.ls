@@ -28,7 +28,7 @@ function findindex(s:seq.T, a:T)int findindex(a, s)
 
 function averagepred(g:graph.T, layer1:seq.T, node:T)baryinfo.T 
  let pred = toseq.predecessors(g, node)
-  baryinfo(int2real.@(+, findindex.layer1, 0, pred)/ int2real.length.pred, node)
+  baryinfo(toreal.@(+, findindex.layer1, 0, pred)/ toreal.length.pred, node)
 
 function baryinfo(g:graph.T, layer1:seq.T, layer2:seq.T)seq.T 
  @(+, node, empty:seq.T, sort.@(+, averagepred(g, layer1), empty:seq.baryinfo.T, layer2))

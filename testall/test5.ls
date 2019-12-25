@@ -68,7 +68,7 @@ function print(a:seq.int)seq.word
  {"["+ @(seperator.",", toword,"", a)+"]"}
 
 Function t502 boolean 
- {"23.45000"+ [ space]+"-18.45000"= print(23.45, 5)+ print(5.0 - 23.45, 5)}
+ {"23.45000"+ [ space]+"-18.45000"= print(5,23.45)+ print(5,5.0 - 23.45)}
 
 Function t503 boolean {"[ 2, 3, 4, 5]"= print.[ 2, 3, 4, 5]}
 
@@ -78,7 +78,7 @@ Function t505 boolean 24 = @(*, *.1, 1, [ 1, 2, 3, 4])
 
 Function t506 boolean [ 1, 2, 3, 4]= @(+, +.empty:seq.int, empty:seq.int, [ 1, 2, 3, 4])
 
-function showcodes(i:int)seq.word [ toword.i, encodeword.toseqint.UTF8.i]
+function showcodes(i:int)seq.word [ toword.i, encodeword.toseqint.toUTF8.char.i]
 
 Function t507 boolean 
  {"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"= @(+, showcodes,"code glyph", arithseq(43, 1, 48))}
@@ -139,7 +139,7 @@ function isprime4(i:int)int if isprime.i then 1 else 0
 function isprime(i:int)boolean 
  if i mod 2 = 0 
   then i = 2 
-  else let a = intpart.sqrt.int2real.i 
+  else let a = intpart.sqrt.toreal.i 
   let b =(a + i / a)/ 2 
   subisprime(i, 3, b)
 
@@ -148,8 +148,9 @@ function subisprime(i:int, f:int, b:int)boolean
 
 ________________
 
-function t515 boolean 
- let s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
+function t515 boolean false
+
+ let s = UTF8.[ 40, 50]+ toUTF8.char.335 + UTF8.char.50 + toUTF8.char.336 
   @(+, toword,"", myseq.toseqint.s)="40 50 335 50 336"
 
 function t516 boolean toseq.findelement2(testset, 36)= [ 35, 36]∧ toseq.findelement2(testset, 15)= [ 12, 15]

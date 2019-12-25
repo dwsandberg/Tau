@@ -22,6 +22,8 @@ use llvm
 
 use seq.Lcode
 
+use seq.char
+
 use seq.func
 
 use seq.inst
@@ -60,6 +62,8 @@ use stdlib
 
 use textio
 
+use seq.char
+
 function funcdec(f:inst)seq.int 
  let discard = C.mangledname.f 
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -91,13 +95,13 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profclocks"]), 
   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profspace"])])
   let adjust = [ 0, // consttype // length.a.data + 5 + 2, // profiletype // noprofileslots + 2 + 3]
-  let libnametype = array(length.decode.thename + 1, i8)
+  let libnametype = array(length.decodeword.thename + 1, i8)
   let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])
   let deflist = [ // libname // 
    [ MODULECODEGLOBALVAR, 
    typ.libnametype, 
    2, 
-   C(libnametype, [ CONSTDATA]+ decode.thename + 0)+ 1, 
+   C(libnametype, [ CONSTDATA]+ tointseq.decodeword.thename + 0)+ 1, 
    3, 
    align4, 
    0], 

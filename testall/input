@@ -680,11 +680,11 @@ use seq(real)
 
 Function-(r:real)real; 0.0 - r
 
-Function int2real(i:int)real; builtin.INT2REAL
+Function toreal(i:int)real; builtin.toreal
 
 Function intpart(a:real)int; builtin.INTPART
 
-Function decpart(a:real)real; a - int2real.intpart.a
+Function decpart(a:real)real; a - toreal.intpart.a
 
 Function sqrt(a:real)real; builtin.RSQRT
 
@@ -726,20 +726,20 @@ Function^(i:real, n:int)real; @(*, identity, 1.0, constantseq(n, i))
 
 Function makereal(whole:int, digits:int)real;
 if digits < 7
-then int2real.whole / int2real([10, 100, 1000, 10000, 100000, 1000000]_digits)
-else int2real.whole / int2real(10^digits)
+then toreal.whole / toreal([10, 100, 1000, 10000, 100000, 1000000]_digits)
+else toreal.whole / toreal(10^digits)
 
 
 Function print(rin:real, decimals:int)seq(word);
 (if rin < 0.0 then [space] else empty.word)+towords.toUTF8(rin, decimals)
 
 Function toUTF8(rin:real, decimals:int)seq(int);
-if rin ? int2real.0 = LT
-then [hyphenchar] + toUTF8(int2real.0 - rin, decimals)
+if rin ? toreal.0 = LT
+then [hyphenchar] + toUTF8(toreal.0 - rin, decimals)
 else
  let a = 10^decimals;
- let r = rin + 1.0 / int2real(a * 2);
- toUTF8.intpart.r + [decode("."_1)_1] + lpad(toUTF8.intpart((r - int2real.intpart.r)* int2real.a), decimals)
+ let r = rin + 1.0 / toreal(a * 2);
+ toUTF8.intpart.r + [decode("."_1)_1] + lpad(toUTF8.intpart((r - toreal.intpart.r)* toreal.a), decimals)
 
 Function lpad(l:seq(int), n:int)seq(int);
 constantseq(n - length.l, 48)+ l
@@ -751,10 +751,10 @@ if i > length.s
 then
  let r =
   if decimals < 1
-  then int2real.val
+  then toreal.val
   else if decimals < 7
-  then int2real.val / int2real([10, 100, 1000, 10000, 100000, 1000000]_decimals)
-  else int2real.val / int2real(10^decimals);
+  then toreal.val / toreal([10, 100, 1000, 10000, 100000, 1000000]_decimals)
+  else toreal.val / toreal(10^decimals);
  if neg < 1 then-1.0 * r else r
 else if between(s_i, 48, 57)
 then reallit(s, if decimals =-1 then-1 else decimals + 1, i + 1, 10 * val + s_i - 48, neg)
@@ -4562,7 +4562,7 @@ then
  let exp2 = genCcode(lib, t_2);
  let v = [merge("R"+ toword.reg.label.t)];
  Ccode(statement.exp1 + v +"="+ expression.exp1 +";"+ statement.exp2 + v +"="+ expression.exp2 +";", v)
-else if inst in"IDXUC ADD SUB GT LT EQL MULTIPLY DIVIDE CMP HASH NOT RCMP INTPART INT2REAL RSQRT SIN COS TAN ARCCOS ARCSIN RSUB RADD RMULT RDIV SETFLD aborted"
+else if inst in"IDXUC ADD SUB GT LT EQL MULTIPLY DIVIDE CMP HASH NOT RCMP INTPART toreal RSQRT SIN COS TAN ARCCOS ARCSIN RSUB RADD RMULT RDIV SETFLD aborted"
 then wrap([inst] +"(", paras(lib, t),")")
 else
  let w = useCname(inst, nosons.t);

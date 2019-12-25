@@ -100,9 +100,13 @@ function ggh(z:content,names:seq.word,j:int,number:int,result:seq.seq.word) seq.
 function processsymentry(t:seq.word,a:seq.int) seq.word
  replace(t, a_2 + 1, encodeword.subseq(a, 3, length.a))
  
+ use textio 
+ 
+ use UTF8
+ 
 function second(s:seq.word)seq.word 
  let x = s_2 
-  if length.towords.decode.x > 1 
+  if length.towords.UTF8.decode.x > 1 
   then"&quot + merge(&quot"+ x +"&quot)+ &quot"
   else [ x]
 

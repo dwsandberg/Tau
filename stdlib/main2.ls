@@ -58,6 +58,8 @@ use symbol
 
 use textio
 
+use UTF8
+
 Function findlibclause(a:seq.seq.word, i:int)seq.word 
  assert i < length.a report"No Library clause found"
   let s = a_i 
@@ -117,7 +119,7 @@ Function compilelib2(libname:word)seq.word
   else"COMPILATION ERROR:"+ space + aa
 
 Function main(arg:seq.int)outputformat 
- let args = towords(arg + 10 + 10)
+ let args = towords.UTF8(arg + 10 + 10)
   let libname = args_1 
   let p = process.compilelib2.libname 
   let output = if aborted.p 

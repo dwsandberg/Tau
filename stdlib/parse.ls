@@ -30,6 +30,8 @@ use stdlib
 
 use symbol
 
+use UTF8
+
 Function headdict set.symbol 
  let modulename = mytype."test"
   asset([ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), 
@@ -121,6 +123,8 @@ function expect(stateno:int)seq.word
 function kk(stateno:int, token:int)seq.word 
  if 0 ≠ actiontable_(length.tokenlist * stateno + token)then [ tokenlist_token]else empty:seq.word
 
+use seq.char
+
 function consumeinput(b:stepresult, next:word)stepresult 
  if tokenstate.b ≠ 0 
   then if tokenstate.b = stringtoken 
@@ -131,7 +135,7 @@ function consumeinput(b:stepresult, next:word)stepresult
    else if next ="//"_1 
    then BB(commenttoken, bindinfo(dict.result.top.stk.b, string.b, [ mytype."int seq"]), stk.b, place.b, input.b)
    else // add to string // stepresult(stk.b, place.b + 1, input.b, tokenstate.b, string.b + next)
-  else let act = let x = decode.next 
+  else let act = let x = tointseq.decodeword.next 
    lextable_(1 +(if length.x > 2 
     then 23 *(x_1 + 2 * x_2)+ 4 * x_3 
     else if length.x = 1 then 23 * x_1 else 23 *(x_1 + 2 * x_2))mod 209)
@@ -208,7 +212,7 @@ function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo, i
   // assert mangledname.x_1 = idx report"ERR15"+ mangledname.x_1 + idx // 
   bindinfo(dict, subseq(code.term1, 2, length.code.term1)+ subseq(code.term2, 2, length.code.term2)+ code.term3 + code.term4 +"FREF"+ mangledname(sym2_1)+"FREF"+ mangledname(sym1_1)+"FREF"+ idx +"APPLY"+ toword(length.types.term1 + length.types.term2 + 5), types.term3)
 
-function countdigits(s:seq.int, i:int, result:int)word 
+function countdigits(s:seq.char, i:int, result:int)word 
  // does not count no-break spaces // 
   if i > length.s 
   then toword.result 
@@ -1135,8 +1139,8 @@ function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.st
    else if ruleno = // E I // 36 
    then result(subtrees_1)
    else if ruleno = // E I.I // 37 
-   then let d = decode(code(result(subtrees_3))_2)
-    bindinfo(dict,"LIT"+ [ encodeword(decode(code(result(subtrees_1))_2)+ d)]+"LIT"+ countdigits(d, 1, 0)+"makerealZrealZintZint", [ mytype."real"])
+   then let d = decodeword(code(result(subtrees_3))_2)
+    bindinfo(dict,"LIT"+ [ encodeword(decodeword(code(result(subtrees_1))_2)+ d)]+"LIT"+ countdigits(d, 1, 0)+"makerealZrealZintZint", [ mytype."real"])
    else if ruleno = // T W // 38 
    then result(subtrees_1)
    else if ruleno = // T W.T // 39 

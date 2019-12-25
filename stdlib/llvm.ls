@@ -118,7 +118,8 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
   let a3 = finishblock(a2, length.typeheader, TYPEABBREVLEN)
   // PARAGRPBLOCK // 
   let pgh = addblockheader(a3, MODABBREVLEN, PARAGRPBLOCK, TYPEABBREVLEN)
-  let pge = finishblock(addrecords(pgh, TYPEABBREVLEN, [ [ 3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18]+ @(+, decode, [ 3],"no-frame-pointer-elim-non-leaf")+ [ 0]]), length.pgh, TYPEABBREVLEN)
+  let pge = finishblock(addrecords(pgh, TYPEABBREVLEN, 
+  [ [ 3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18]+[3]+ tointseq.@(+, decodeword, empty:seq.char,"no-frame-pointer-elim-non-leaf")+ [ 0]]), length.pgh, TYPEABBREVLEN)
   // para block // 
   let paraheader = addblockheader(pge, MODABBREVLEN, PARABLOCK, TYPEABBREVLEN)
   let a4 = finishblock(addrecords(paraheader, TYPEABBREVLEN, [ [ 2, 0]]), length.paraheader, TYPEABBREVLEN)
@@ -144,7 +145,7 @@ Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
 
 Function C(s:seq.word)int C(s_1)
 
-Function C(w:word)int findindex(llvmconst(-1, decode.w), llvmconsts) - 1
+Function C(w:word)int findindex(llvmconst(-1, tointseq.decodeword.w), llvmconsts) - 1
 
 Function C64(i:int)int findindex(llvmconst(typ.i64, [ CONSTINTEGER, i]), llvmconsts) - 1
 
@@ -159,7 +160,7 @@ Function Cprt(t:int, s:seq.int)int
 
 -----------------------
 
-Function funcname(a:llvmconst)word encodeword.toseq.a
+Function funcname(a:llvmconst)word encodeword.tocharseq.toseq.a
 
 Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, orderadded.llvmtypes)
 
@@ -247,12 +248,14 @@ Function symentries(bits:bitpackedseq.bit, s:seq.llvmconst, i:int)bitpackedseq.b
   symentries(bs, s, i + 1)
 
 Function getftype(w:word)llvmtype 
- let a = @(+, count.90, 1, decode.w)
+ let a = @(+, count.char.90, 1, decodeword.w)
   function.constantseq(a, i64)
 
-function count(val:int, i:int)int if val = i then 1 else 0
+function count(val:char, i:char)int if val = i then 1 else 0
 
-Function manglednopara(w:word)int @(+, count.90,-1, decode.w)
+use seq.char
+
+Function manglednopara(w:word)int @(+, count.char.90,-1, decodeword.w)
 
 Function STRUCTNAME int 19
 

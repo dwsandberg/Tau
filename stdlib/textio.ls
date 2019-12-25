@@ -14,21 +14,21 @@ use seq.seq.seq.word
 
 use stdlib
 
-Function breaklines(a:seq.int)seq.seq.int breaklines(a, 2, 1, empty:seq.seq.int)
+/Function breaklines(a:seq.int)seq.seq.int breaklines(a, 2, 1, empty:seq.seq.int)
 
-function breaklines(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int 
+/function breaklines(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int 
  if i > length.a 
   then result 
   else if a_i = 10 
   then breaklines(a, i + 1, i + 1, result + subseq(a, last, i - if a_(i - 1)= 13 then 2 else 1))
   else breaklines(a, i + 1, last, result)
 
-Function breakcommas(a:seq.int)seq.seq.int breakcommas(a, 1, 1, empty:seq.seq.int)
+/Function breakcommas(a:seq.int)seq.seq.int breakcommas(a, 1, 1, empty:seq.seq.int)
 
-function breakcommas(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int 
+/function breakcommas(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int 
  if i > length.a 
   then result + subseq(a, last, i - 1)
-  else if a_i = commachar 
+  else if a_i = toint.commachar 
   then breakcommas(a, i + 1, i + 1, result + subseq(a, last, i - 1))
   else if a_i = decode("&quot"_1)_1 
   then let d = findindex(decode("&quot"_1)_1, a, i + 2)
@@ -39,22 +39,24 @@ function breakcommas(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int
 
 handle files of paragraphs
 
-Function breakparagraph(a:seq.int)seq.seq.int breakparagraph(a, 1, 1, empty:seq.seq.int)
+use seq.UTF8
+
+Function breakparagraph(a:UTF8)seq.UTF8 breakparagraph(toseqint.a, 1, 1, empty:seq.UTF8)
 
 function blankline(a:seq.int, i:int)int 
  // returns 0 if no new line is found before next non white char otherwise returns index of newline // 
   if classify(a_i)= 3 then if a_i = 10 then i else blankline(a, i + 1)else 0
 
-Function breakparagraph(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int 
+Function breakparagraph(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8 
  if i ≥ length.a 
-  then if last < length.a then result + [ fastsubseq(a, last, length.a)]else result 
+  then if last < length.a then result + UTF8.fastsubseq(a, last, length.a)else result 
   else if a_i = 10 
   then let j = blankline(a, i + 1)
    if j > 0 
    then let paragraph = fastsubseq(a, last, i - 1)
     if length.paragraph = 0 
     then breakparagraph(a, j + 1, j + 1, result)
-    else breakparagraph(a, j + 1, j + 1, result + paragraph)
+    else breakparagraph(a, j + 1, j + 1, result + UTF8.paragraph)
    else breakparagraph(a, i + 1, last, result)
   else breakparagraph(a, i + 1, last, result)
 
@@ -76,25 +78,27 @@ Function classify(c:int)int
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
   0, 0, 0, 0, 0, 0, 0, 0]_(c + 1)
 
-Function towords(a:seq.int)seq.word towords2(decodeUTF8.UTF8.a, 1, 1, empty:seq.word)
+Function towords(a:UTF8)seq.word towords(decodeUTF8.a)
 
-Function towordsX(a:seq.int)seq.word towords2(a, 1, 1, empty:seq.word)
-
-Function gettextX(filename:seq.word)seq.seq.word 
- @(+, towordsX, empty:seq.seq.word, breakparagraph.getfile.filename)
+Function towords(a:seq.char)seq.word towords2(a, 1, 1, empty:seq.word)
 
 Function gettext(filename:seq.word)seq.seq.word 
- @(+, towords, empty:seq.seq.word, breakparagraph.getfile.filename)
+ @(+, towords, empty:seq.seq.word, breakparagraph.getUTF8file.filename)
+ 
+ 
+Function getUTF8file(filename:seq.word) UTF8  UTF8(getfile.filename)
 
-function spacechar int 32
+function spacechar char char.32
 
-function periodchar int 46
+use seq.char
 
-function openparenchar int 40
+function openparenchar char char.40
 
-function closeparenchar int 41
+function closeparenchar char char.41
 
-Function towords2(a:seq.int, i:int, last:int, result:seq.word)seq.word 
+
+
+function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word 
  if i > length.a 
   then if last > length.a then result else result + [ encodeword.subseq(a, last, length.a)]
   else let t = a_i 
@@ -112,10 +116,11 @@ Function towords2(a:seq.int, i:int, last:int, result:seq.word)seq.word
   then towords2(a, i + 1, i + 1, if last = i then result +"("else result + encodeword.subseq(a, last, i - 1)+"(")
   else if t = closeparenchar 
   then towords2(a, i + 1, i + 1, if last = i then result +")"else result + encodeword.subseq(a, last, i - 1)+")")
-  else let class = classify.t 
+  else let class = classify.toint.t 
   if class = 0 
   then towords2(a, i + 1, last, result)
-  else let newresult = result +(if last = i then""else [ encodeword.subseq(a, last, i - 1)])+ if class = 3 then""else [ encodeword.[ a_i]]
+  else let newresult = (if last = i then result else result+ encodeword.subseq(a, last, i - 1))
+           + if class = 3 then""else [ encodeword.[ a_i]]
   towords2(a, i + 1, i + 1, newresult)
 
 ________

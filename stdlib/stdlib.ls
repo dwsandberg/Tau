@@ -17,6 +17,8 @@ use oseq.alphaword
 
 use oseq.int
 
+use oseq.char
+
 use oseq.seq.alphaword
 
 use seq.alphaword
@@ -59,15 +61,10 @@ Function closebracket word {"]"_1 }
 
 Function colon word {":"_1 }
 
-Function space word encodeword.[ 32]
+Function space word encodeword.[ char.32]
 
-Function EOL word encodeword.[ 10]
+Function EOL word encodeword.[ char.10]
 
-Function commachar int 44
-
-Function hyphenchar int 45
-
-Function nbspchar int // no break space character // 160
 
 * EQ GT and LT are the possible results of ? operator
 
@@ -85,7 +82,6 @@ Function false boolean boolean.0
 
 Function toint(boolean)int export
 
-Function towords(a:seq.int)seq.word export
 
 Function-(i:int)int 0 - i
 
@@ -150,17 +146,44 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
-type wordencoding is encoding seq.int
+type char is record toint:int
+
+Function =(a:char,b:char) boolean toint.a=toint.b
+
+Function ?(a:char,b:char) ordering toint.a ? toint.b
+
+
+Function hash(a:char) int hash.toint.a
+
+Function toint(char) int export
+
+Function char(int) char export
+
+use seq.char
+
+Function  tointseq(seq.char) seq.int builtin.NOOP
+
+Function  tocharseq(seq.int) seq.char builtin.NOOP
+
+
+type wordencoding is encoding seq.char
 
 Function wordencoding erecord.wordencoding export
 
-type word is record bb:encoding.seq.int
+type word is record bb:encoding.seq.char
 
-Function encodeword(a:seq.int)word word.encode(a, wordencoding)
+Function encodeword(a:seq.int)word word.encode(tocharseq.a, wordencoding)
 
-Function decode(w:word)seq.int decode(bb.w, wordencoding)
+Function encodeword(a:seq.char)word  word.encode(a, wordencoding)
+
+Function decodeword(w:word)seq.char decode(bb.w, wordencoding)
+
+Function decode(w:word)seq.int tointseq.decode(bb.w, wordencoding)
 
 Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
+
+Function hash(a:seq.char)int hash(tointseq.a)
+
 
 Function hash(a:seq.word)int finalmix.@(hash, hash, hashstart, a)
 
@@ -173,37 +196,37 @@ Function =(a:word, b:word)boolean bb.a = bb.b
 Function ≠(a:word, b:word)boolean export
 
 Function hasdigit(w:word)boolean 
- let l = decode.w 
-  between(l_1, 48, 57)∨ l_1 = hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)
+ let l = tointseq.decodeword.w 
+  between(l_1, 48, 57)∨ l_1 = toint.hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)
 
 covert integer to sequence of characters
 
 Function toword(n:int)word 
  // Covert integer to sequence of characters represented as a single word. // 
-  encodeword.toseqint.toUTF8.n
+  encodeword.tocharseq.toseqint.toUTF8.n
 
 /Function print(i:int)seq.word groupdigits.toUTF8.i
 
-/function groupdigits(u:UTF8)seq.word let s = toseqint.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s-3)+ [ encodeword.subseq(s, length.s-2, length.s)]
+/function groupdigits(u:UTF8)seq.word let s = tointseq.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = toint.hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s-3)+ [ encodeword.subseq(s, length.s-2, length.s)]
 
 Function toint(w:word)int 
- // Convert an integer represented as a word to and int // cvttoint(decode.w, 1, 0)
+ // Convert an integer represented as a word to and int // cvttoint(tointseq.decodeword.w, 1, 0)
 
 function cvttoint(s:seq.int, i:int, val:int)int 
- if i = 1 ∧ s_1 = hyphenchar 
+ if i = 1 ∧ s_1 = toint.hyphenchar 
   then cvttoint(s, i + 1, val)
   else if i > length.s 
-  then if s_1 = hyphenchar then-val else val 
-  else if s_i = nbspchar 
+  then if s_1 = toint.hyphenchar then-val else val 
+  else if s_i = toint.nbspchar 
   then cvttoint(s, i + 1, val)
   else assert between(s_i, 48, 57)report"invalid digit"+ stacktrace 
   cvttoint(s, i + 1, val * 10 + s_i - 48)
 
 Function merge(a:seq.word)word 
- // make multiple words into a single word. // encodeword.@(+, decode, empty:seq.int, a)
+ // make multiple words into a single word. // encodeword.@(+, decodeword, empty:seq.char, a)
 
 Function merge(a:word, b:word)word 
- // make two words into a single word // encodeword(decode.a + decode.b)
+ // make two words into a single word // encodeword(decodeword.a + decodeword.b)
 
 Function toUTF8(a:seq.word)UTF8 export
 
@@ -315,7 +338,7 @@ Function toalphaseq(a:seq.word)seq.alphaword
   @(+, alphaword, empty:seq.alphaword, a)
 
 Function ?(a:alphaword, b:alphaword)ordering 
- if toword.a = toword.b then EQ else decode.toword.a ? decode.toword.b
+ if toword.a = toword.b then EQ else decodeword.toword.a ? decodeword.toword.b
 
 Function towordseq(a:seq.alphaword)seq.word @(+, toword, empty:seq.word, a)
 

@@ -18,6 +18,8 @@ use libscope
 
 use llvm
 
+use seq.char
+
 use packedseq.flddesc
 
 use packedseq.seq.flddesc
@@ -114,11 +116,11 @@ Function registerword(a:word)int
   0
 
 function eword(w:word3)seq.int 
- let a = decode.toword.w 
+ let a = tointseq.decodeword.toword.w 
   @(+, C64, [ C64.0, C64.length.a], a)
 
 function eword2(w:word3)encodingrep.seq.int 
- let a = decode.toword.w 
+ let a = tointseq.decodeword.toword.w 
   encodingrep(hash.toword.w, a, hash.a)
 
 Function cast2intseq(int)seq.int builtin.NOOP

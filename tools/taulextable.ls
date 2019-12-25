@@ -195,7 +195,7 @@ function isprime3(i:int)seq.int if isprime.i then [ i]else empty:seq.int
 function isprime(i:int)boolean 
  if i mod 2 = 0 
   then i = 2 
-  else let a = intpart.sqrt.int2real.i 
+  else let a = intpart.sqrt.toreal.i 
   let b =(a + i / a)/ 2 
   subisprime(i, 3, b)
 

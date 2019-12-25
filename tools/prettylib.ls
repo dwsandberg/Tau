@@ -204,8 +204,8 @@ function x(s:seq.word,i:int,stk:stack.tree.word) tree.word
     let b=a_1_1 
   if length(a_2)= 1 
   then b 
-  else let x = decode.b 
-  let c = towordsX.decode.b 
+  else 
+  let c = towords.decodeword.b 
   if length.c > 1 ∧ last.c ="T"_1 
   then merge(subseq(c, 1, length.c - 1)+ print.mytype.subseq(a_2, 1, length(a_2) - 1))
      else b

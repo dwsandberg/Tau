@@ -101,7 +101,7 @@ Function table seq.match5
   match5(// / //"Q2FZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 4)+ CAST(4,-3, typ.i64, 11)), 
   match5(// ? //"Q3FZbuiltinZrealZreal"_1, 7, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ CMP2(3,-1,-2, 3)+ CAST(4,-3, typ.i64, CASTZEXT)+ CMP2(5,-1,-2, 2)+ CAST(6,-5, typ.i64, CASTZEXT)+ BINOP(7,-4,-6, 0, typ.i64)), 
   match5("intpartZbuiltinZreal"_1, 2, CAST(1, ibcsub1, typ.double, 11)+ CAST(2,-1, typ.i64, // fptosi double // 4)), 
-  match5("int2realZbuiltinZint"_1, 2, // sitofp // CAST(1, ibcsub1, typ.double, 6)+ CAST(2,-1, typ.i64, 11)), 
+  match5("torealZbuiltinZint"_1, 2, // sitofp // CAST(1, ibcsub1, typ.double, 6)+ CAST(2,-1, typ.i64, 11)), 
   match5("sqrtZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.sqrt.f64",-1)+ CAST(3,-2, typ.i64, 11)), 
   match5("sinZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.sin.f64",-1)+ CAST(3,-2, typ.i64, 11)), 
   match5("cosZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.cos.f64",-1)+ CAST(3,-2, typ.i64, 11)), 

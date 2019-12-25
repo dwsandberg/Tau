@@ -96,43 +96,43 @@ function prt(s:seq.word, i:int)seq.word
  if i = 1 then [ s_1]else [ s_i]+"."+ prt(s, i - 1)
 
 Function codedown(w:word)seq.seq.word 
- codedown(decode.w, 1, empty:seq.int,"", empty:seq.seq.word)
+ codedown(tointseq.decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)
 
-function codedown(l:seq.int, i:int, w:seq.int, words:seq.word, result:seq.seq.word)seq.seq.word 
+function codedown(l:seq.int, i:int, w:seq.char, words:seq.word, result:seq.seq.word)seq.seq.word 
  let charunderscore = 95 
   let charQ = 81 
   if i > length.l 
   then let a = if isempty.w then words else words + encodeword.w 
    if isempty.a then result else result + a 
   else if l_i = charminorseparator 
-  then codedown(l, i + 1, empty:seq.int, words + encodeword.w, result)
+  then codedown(l, i + 1, empty:seq.char, words + encodeword.w, result)
   else if l_i = charmajorseparator 
-  then codedown(l, i + 1, empty:seq.int, empty:seq.word, result +(words + encodeword.w))
+  then codedown(l, i + 1, empty:seq.char, empty:seq.word, result +(words + encodeword.w))
   else if l_i = charQ 
-  then assert i + 2 ≤ length.l report"format problem with codedown for"+ encodeword.l 
+  then assert i + 2 ≤ length.l report"format problem with codedown for"+ encodeword.tocharseq.l 
    let first = hexvalue(l_(i + 1))
    let t = first * 16 + hexvalue(l_(i + 2))
    if first > 0 
-   then codedown(l, i + 3, w + t, words, result)
+   then codedown(l, i + 3, w + char.t, words, result)
    else let t1 =((t * 16 + hexvalue(l_(i + 3)))* 16 + hexvalue(l_(i + 4)))* 16 + hexvalue(l_(i + 5))
-   codedown(l, i + 6, w + t1, words, result)
-  else codedown(l, i + 1, w + l_i, words, result)
+   codedown(l, i + 6, w + char.t1, words, result)
+  else codedown(l, i + 1, w + char.l_i, words, result)
 
 function legal seq.int 
- decode("0123456789ABCDEFGHIJKLMNOPRSTUVWXYabcdefghijklmnopqrstuvwxy"_1)
+ tointseq.decodeword("0123456789ABCDEFGHIJKLMNOPRSTUVWXYabcdefghijklmnopqrstuvwxy"_1)
 
 function hexvalue(i:int)int if between(i, 48, 57)then i - 48 else i - 65 + 10
 
 Function mangle(name:word, modname:mytype, parameters:seq.mytype)word 
- let nameandmodname = addword(empty:seq.int, name)+ codeup.modname 
+ let nameandmodname = tocharseq.addword(empty:seq.int, name)+ codeup.modname 
   encodeword.@(+, codeup, nameandmodname, parameters)
 
-function codeup(p:mytype)seq.int 
- // adds majorseparator before mytype // [ charmajorseparator]+ @(addword, identity, empty:seq.int, towords.p)
+function codeup(p:mytype)seq.char
+ // adds majorseparator before mytype // tocharseq([ charmajorseparator]+ @(addword, identity, empty:seq.int, towords.p))
 
 function addword(s:seq.int, w:word)seq.int 
  // adds minor separator between words // 
-  @(codeup, identity, if isempty.s then s else s + charminorseparator, decode.w)
+  @(codeup, identity, if isempty.s then s else s + charminorseparator, tointseq.decodeword.w)
 
 function charmajorseparator int // Z // 90
 
@@ -160,11 +160,13 @@ Function replaceT(with:mytype, m:mytype)mytype
   then mytype(towords.with + subseq(towords.m, 2, length.towords.m))
   else m
 
+use seq.char
+
 Function replaceT(with:mytype, name:word)word 
  if name = merge."empty:seq.T"
   then merge("empty:seq."+ print.with)
-  else let d = decode.name 
-  assert subseq(d, length.d, length.d)= [ 84]report"PROBLEM replacing T in word"+ name +"with"+ print.with 
+  else let d = decodeword.name 
+  assert subseq(d, length.d, length.d)= [ char.84]report"PROBLEM replacing T in word"+ name +"with"+ print.with 
   merge([ encodeword.subseq(d, 1, length.d - 1)]+ print.with)
 
 Function emptyliblib(libname:word)liblib 
