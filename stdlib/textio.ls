@@ -2,7 +2,6 @@ Module textio
 
 use UTF8
 
-use fileio
 
 use seq.int
 
@@ -14,25 +13,27 @@ use seq.seq.seq.word
 
 use stdlib
 
-/Function breaklines(a:seq.int)seq.seq.int breaklines(a, 2, 1, empty:seq.seq.int)
 
-/function breaklines(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int 
+Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqint.a, 2, 1, empty:seq.UTF8)
+
+function breaklines(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
  if i > length.a 
   then result 
   else if a_i = 10 
-  then breaklines(a, i + 1, i + 1, result + subseq(a, last, i - if a_(i - 1)= 13 then 2 else 1))
+  then breaklines(a, i + 1, i + 1, result + UTF8.subseq(a, last, i - if a_(i - 1)= 13 then 2 else 1))
   else breaklines(a, i + 1, last, result)
 
-/Function breakcommas(a:seq.int)seq.seq.int breakcommas(a, 1, 1, empty:seq.seq.int)
 
-/function breakcommas(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int 
+Function breakcommas(a:UTF8)seq.UTF8 breakcommas(toseqint.a, 1, 1, empty:seq.UTF8)
+
+function breakcommas(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8 
  if i > length.a 
-  then result + subseq(a, last, i - 1)
+  then result + UTF8.subseq(a, last, i - 1)
   else if a_i = toint.commachar 
-  then breakcommas(a, i + 1, i + 1, result + subseq(a, last, i - 1))
-  else if a_i = decode("&quot"_1)_1 
-  then let d = findindex(decode("&quot"_1)_1, a, i + 2)
-   breakcommas(a, d + 2, d + 2, result + subseq(a, i + 1, d - 1))
+  then breakcommas(a, i + 1, i + 1, result + UTF8.subseq(a, last, i - 1))
+  else if a_i = toint.doublequotechar 
+  then let d = findindex(toint.doublequotechar , a, i + 2)
+   breakcommas(a, d + 2, d + 2, result + UTF8.subseq(a, i + 1, d - 1))
   else breakcommas(a, i + 1, last, result)
 
 --------
@@ -82,11 +83,6 @@ Function towords(a:UTF8)seq.word towords(decodeUTF8.a)
 
 Function towords(a:seq.char)seq.word towords2(a, 1, 1, empty:seq.word)
 
-Function gettext(filename:seq.word)seq.seq.word 
- @(+, towords, empty:seq.seq.word, breakparagraph.getUTF8file.filename)
- 
- 
-Function getUTF8file(filename:seq.word) UTF8  UTF8(getfile.filename)
 
 function spacechar char char.32
 
@@ -125,8 +121,6 @@ function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
 
 ________
 
-Function createfile(filename:seq.word, s:seq.seq.word)int 
- createbytefile(filename, @(+, toUTF8plus, empty:seq.int, s))
 
 Function toUTF8plus(s:seq.word)seq.int toseqint.toUTF8.s + [ 10, 10]
 

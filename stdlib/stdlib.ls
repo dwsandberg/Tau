@@ -39,8 +39,6 @@ use stacktrace
 
 use stdlib
 
-use textio
-
 use xxhash
 
 type ordering is record toint:int
@@ -172,13 +170,10 @@ Function wordencoding erecord.wordencoding export
 
 type word is record bb:encoding.seq.char
 
-Function encodeword(a:seq.int)word word.encode(tocharseq.a, wordencoding)
 
 Function encodeword(a:seq.char)word  word.encode(a, wordencoding)
 
 Function decodeword(w:word)seq.char decode(bb.w, wordencoding)
-
-Function decode(w:word)seq.int tointseq.decode(bb.w, wordencoding)
 
 Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
 
@@ -211,6 +206,8 @@ Function toword(n:int)word
 
 Function toint(w:word)int 
  // Convert an integer represented as a word to and int // cvttoint(tointseq.decodeword.w, 1, 0)
+ 
+Function intlit(s:UTF8) int   cvttoint(toseqint.s,1,0)
 
 function cvttoint(s:seq.int, i:int, val:int)int 
  if i = 1 ∧ s_1 = toint.hyphenchar 
@@ -348,14 +345,15 @@ Function alphasort(a:seq.seq.word)seq.seq.word
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
   @(+, towordseq, empty:seq.seq.word, sort.b)
   
-* usegraph include  xxhash deepcopy encoding oseq bits  stacktrace  textio reconstruct fileio UTF8 libscope
-blockseq packedseq bitpackedseq exclude stdlib seq
+* usegraph include  xxhash deepcopy encoding oseq bits  
+stacktrace  textio reconstruct  UTF8 libscope seq
+blockseq packedseq bitpackedseq exclude stdlib  
 
 
 
 
 * usegraph include real prims   tree  graph ipair 
-process stack set   format groupparagraphs   dict 
+process stack set   format groupparagraphs   dict fileio
 exclude stdlib seq 
 
 * usegraph include  main2 libscope display constant codegen convert 

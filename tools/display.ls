@@ -29,9 +29,13 @@ Function chrwidths(prettycontrol)seq.int export
 
 Function defaultcontrol prettycontrol prettycontrol(defaultprec, charwidths)
 
+function _(s:seq.int,c:char)  int  s_toint.c
+
+use seq.char
+
 Function displaywidth(cw:seq.int, s:seq.word)int @(+,_.cw, 0, toseqint.toUTF8.s)
 
-Function displaywidth(cw:seq.int, w:word)int @(+,_.cw, 0, decode.w)
+Function displaywidth(cw:seq.int, w:word)int @(+,_.cw, 0, decodeword.w)
 
 function charwidths seq.int 
  dseq(60, [ 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 
@@ -52,7 +56,7 @@ Function checkwidths seq.word
  @(seperator."&br", check,"", arithseq(128 - 32, 1, 32))
 
 function check(i:int)seq.word 
- let a = encodeword.constantseq(100, i)
+ let a = encodeword.tocharseq.constantseq(100, i)
   let l = displaywidth(charwidths, a)
   [ a]+ toword.l +"&br"+ merge.constantseq(l / 100,"m"_1)
 

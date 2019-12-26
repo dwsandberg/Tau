@@ -224,3 +224,8 @@ Function_(s:arithmeticseq.T, i:int)T start.s +(i - 1)* step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 
+_______________
+
+type null  is record dummy:T
+
+Function null   null.T  builtin."LIT 0  RECORD 1 "

@@ -34,6 +34,10 @@ use seq.seq.int
 
 use stdlib
 
+use textio
+
+use seq.UTF8
+
 Function toCformat(s:seq.word)seq.bits 
  packed.data2.add(@(add, byte, bitpackedseq(0, empty:seq.byte, bits.0), toseqint.toUTF8.s), byte.0)
 
@@ -86,7 +90,15 @@ Function fileexists(f:seq.word)boolean
  let file = getfile.toCformat.f 
   size.file >-1
 
-type byte is record toint:int
+Function gettext(filename:seq.word)seq.seq.word 
+ @(+, towords, empty:seq.seq.word, breakparagraph.getUTF8file.filename)
+ 
+ Function createfile(filename:seq.word, s:seq.seq.word)int 
+ createbytefile(filename, @(+, toUTF8plus, empty:seq.int, s))
+
+ 
+ 
+Function getUTF8file(filename:seq.word) UTF8  UTF8(getfile.filename)
 
 function tobitpackedseq(s:seq.int)seq.byte @(+, byte, empty:seq.byte, s)
 
@@ -94,13 +106,6 @@ function tobitpackedseqbit(s:seq.int)seq.bit @(+, bit, empty:seq.bit, s)
 
 function tointseq(s:seq.byte)seq.int @(+, toint, empty:seq.int, s)
 
-Function sizeinbits(a:byte)int 8
-
-Function tobits(a:byte)bits bits.toint.a
-
-Function frombits(a:bits)byte byte.toint.a
-
-Function blockit(seq.int)seq.int export
 
 Blockit is exported so other deepcopy functions will compile
 

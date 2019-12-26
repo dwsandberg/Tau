@@ -8,7 +8,6 @@ use seq.char
 
 type UTF8 is record toseqint:seq.int
 
-/Function UTF8x(s:seq.word)UTF8 UTF8.@(+, decode, empty:seq.int, s)
 
 Function emptyUTF8 UTF8 UTF8.empty:seq.int
 
@@ -20,8 +19,6 @@ Function =(a:UTF8, b:UTF8)boolean toseqint.a = toseqint.b
 
 Function UTF8(seq.int)UTF8 export
 
-Function UTF8(w:word)UTF8 UTF8.tointseq.decodeword.w
-
 Function toseqint(UTF8)seq.int export
 
 Function commachar char char.44
@@ -29,6 +26,8 @@ Function commachar char char.44
 Function hyphenchar char  char.45
 
 Function periodchar char char.46
+
+Function doublequotechar char char.34
 
 Function nbspchar char  // no break space character // char.160
 

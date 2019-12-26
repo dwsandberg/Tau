@@ -78,7 +78,8 @@ Function t505 boolean 24 = @(*, *.1, 1, [ 1, 2, 3, 4])
 
 Function t506 boolean [ 1, 2, 3, 4]= @(+, +.empty:seq.int, empty:seq.int, [ 1, 2, 3, 4])
 
-function showcodes(i:int)seq.word [ toword.i, encodeword.toseqint.toUTF8.char.i]
+function showcodes(i:int)seq.word [ toword.i, encodeword.[char.i]]
+
 
 Function t507 boolean 
  {"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"= @(+, showcodes,"code glyph", arithseq(43, 1, 48))}
@@ -148,9 +149,8 @@ function subisprime(i:int, f:int, b:int)boolean
 
 ________________
 
-function t515 boolean false
-
- let s = UTF8.[ 40, 50]+ toUTF8.char.335 + UTF8.char.50 + toUTF8.char.336 
+function t515 boolean 
+ let s = UTF8.[ 40, 50]+ toUTF8.char.335 + toUTF8.char.50 + toUTF8.char.336 
   @(+, toword,"", myseq.toseqint.s)="40 50 335 50 336"
 
 function t516 boolean toseq.findelement2(testset, 36)= [ 35, 36]∧ toseq.findelement2(testset, 15)= [ 12, 15]
@@ -167,7 +167,7 @@ function t518 boolean isprefex("invalid digit", message.process.toint("0A"_1))
 function t519 boolean {"&quot()+,-.: = []^_"= standalonechars }
 
 function ttt(c:int)seq.word 
- if classify.c = 1 then [ encodeword.[ c]]else""
+ if classify.c = 1 then [ encodeword.[ char.c]]else""
 
 Function standalonechars seq.word @(+, ttt,"", arithseq(127, 1, 0))
 
@@ -176,7 +176,7 @@ function t520 boolean
   subseq(s, 1, length.s - 1)="unexpected character in real literal"
 
 function subtest520(t:word)int 
- let x = reallit.decode.merge."45t6.3"
+ let x = reallit.UTF8.tointseq.decodeword.merge."45t6.3"
   intpart.x
 
 Function t521 boolean {"The umber ant ambles the opal nurse"= getphrase.20 }
@@ -192,7 +192,9 @@ Function t523 boolean @(-, identity, 100, [ 1, 2])= 97
 
 Function t524 boolean 
  // testing UNICODE to word conversion and no-break space in integer 8746 // 
-decode("1 2∪"_1) = [49, 160 ,50, 87 46 ] 
+decodeword("1 2∪"_1) = [char.49, char.160 ,char.50, char(87 46) ] 
+
+use seq.char
 
 ____________
 

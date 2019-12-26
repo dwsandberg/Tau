@@ -27,6 +27,8 @@ use stdlib
 
 use textio
 
+use fileio
+
 use tree.word
 
 function plist(t:seq.word,i:int,parano:int,names:seq.word) seq.word

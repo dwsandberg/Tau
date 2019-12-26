@@ -73,11 +73,11 @@ function tolexaction(next:word)lexaction1
   lexaction1(next, findindex(token, tokenlist), next)
 
   
- 
+ use seq.char
 
 Function totext(l:lexaction1)seq.word 
-  let w =if  decode(w.l)_1=decode("&"_1)_1 then 
-    "merge( &quot & &quot + &quot"+encodeword(subseq(decode(w.l),2,100)) + " &quot )"
+  let w =if  decodeword(w.l)_1=decodeword("&"_1)_1 then 
+    "merge( &quot & &quot + &quot"+encodeword(subseq(decodeword(w.l),2,100)) + " &quot )"
   else  "&quot"+ (if w.l ="&quot"_1 then merge("&"+"quot")  else w.l )+"&quot_1"
   let label = if label.l ="&quot"_1 then merge("&"+"quot") else label.l 
   {"lexaction("+ w +","+ toword.tokenno.l +", &quot"+ label +"&quot_1)"}
@@ -106,7 +106,7 @@ assert tab_hash = defaultaction report"unexpected collision between"+ w.l +"and"
 function xx(x:int,y:int,m:int,t:triple) seq.word [toword.hashfunc(x,y,m,t),w.t]
 
 function hashsemiperfect(x:int,y:int,m:int,w:word)int 
- let chars = decode.w 
+ let chars = tointseq.decodeword.w 
   let first=chars_1
   let second= if length.chars > 1 then chars_2 else 0
   let third= if length.chars > 2 then chars_3 else 0 
@@ -133,10 +133,10 @@ type triple is record a:int, b:int, c:int, w:word
 
 function astriple(l:lexaction1)triple 
  // triple is first three letters of token //
- let x = decode.w.l 
-  if length.x = 1 then triple(x_1,0,0,w.l)
-  else if length.x=2 then triple(x_1,x_2,0,w.l)
-  else triple(x_1,x_2,x_3,w.l)
+ let x = decodeword.w.l 
+  if length.x = 1 then triple(toint.x_1,0,0,w.l)
+  else if length.x=2 then triple(toint.x_1,toint.x_2,0,w.l)
+  else triple(toint.x_1,toint.x_2,toint.x_3,w.l)
 
 function hashfunc(x:int, y:int, m:int, t:triple)int 
   // a b c of triple are first second and third letters of word being hashed. x, y and m are constant in hash function

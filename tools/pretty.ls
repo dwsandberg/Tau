@@ -182,6 +182,12 @@ Function prettytree2(control:prettycontrol, t:tree.word,head:seq.word)seq.word
 use UTF8
 
 use textio
+
+Function encodeword(a:seq.int)word  encodeword(tocharseq.a)
+
+
+Function decode(w:word)seq.int tointseq.decodeword(w)
+
   
 Function prettytree(control:prettycontrol, t:tree.word)seq.word 
  if label.t in"Function function"

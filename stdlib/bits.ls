@@ -8,7 +8,6 @@ use blockseq.bits
 
 use blockseq.int
 
-use fileio
 
 use packedseq.bits
 
@@ -17,6 +16,8 @@ use seq.bit
 use seq.int
 
 use stdlib
+
+use seq.byte
 
 type bits is record toint:int
 
@@ -47,6 +48,28 @@ Function bit(int)bit export
 Function sizeinbits(a:bit)int 1
 
 Function tobits(a:bit)bits bits.toint.a
+
+Function frombits(a:bits,null.bit)bit bit.toint.a
+
+
+_________________
+
+type byte is record toint:int
+
+
+Function sizeinbits(a:byte)int 8
+
+Function tobits(a:byte)bits bits.toint.a
+
+Function frombits(a:bits,null:null.byte)byte byte.toint.a
+
+Function blockit(seq.int)seq.int export
+
+Function byte(int) byte export
+
+Function  toint(byte) int export
+
+_______________
 
 Function addvbr(b:bitpackedseq.bit, newbits:int, bitcount:int)bitpackedseq.bit 
  let limit = toint(bits.1 << bitcount - 1)

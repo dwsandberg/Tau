@@ -288,7 +288,7 @@ if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
-       decodeword= dlsym(RTLD_DEFAULT,"decodeZstdlibZword");
+       decodeword= dlsym(RTLD_DEFAULT,"decodewordZstdlibZword");
     if (!decodeword){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);

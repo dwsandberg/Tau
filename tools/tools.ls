@@ -18,9 +18,9 @@ Module tools
 
 /run tools prettytest
 
-run tools  callgraphtest 
+/run tools  callgraphtest 
 
-/run tools stdlibdoc
+run tools stdlibdoc
 
 run doc createdoc
 

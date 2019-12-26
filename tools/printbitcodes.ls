@@ -98,7 +98,7 @@ function ggh(z:content,names:seq.word,j:int,number:int,result:seq.seq.word) seq.
   else ggh(z, names, j + 1, number + 1, result + ["&br Cdef("+ toword.number +", &quot"+ names_(number + 1)+"&quot"+","+ printrecord(MODULEBLOCK, i)+")"])
 
 function processsymentry(t:seq.word,a:seq.int) seq.word
- replace(t, a_2 + 1, encodeword.subseq(a, 3, length.a))
+ replace(t, a_2 + 1, encodeword.tocharseq.subseq(a, 3, length.a))
  
  use textio 
  
@@ -106,7 +106,7 @@ function processsymentry(t:seq.word,a:seq.int) seq.word
  
 function second(s:seq.word)seq.word 
  let x = s_2 
-  if length.towords.UTF8.decode.x > 1 
+  if length.towords.decodeword.x > 1 
   then"&quot + merge(&quot"+ x +"&quot)+ &quot"
   else [ x]
 
@@ -145,7 +145,7 @@ function printconstant(s:seq.seq.int, lasttype:int, number:int, i:int, result:se
 
 function printrecord(blockid:int, a:seq.int)seq.word 
  if blockid = VALUESYMTABBLOCK 
-  then [ toword(a_2), encodeword.subseq(a, 3, length.a)]
+  then [ toword(a_2), encodeword.tocharseq.subseq(a, 3, length.a)]
   else @(xx.blockid, identity,"", a)+"]"
 
 function xx(blockid:int, a:seq.word, v:int)seq.word 
