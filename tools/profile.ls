@@ -48,8 +48,8 @@ function toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.wo
 
 Function profileresults(measure:seq.word)seq.word 
  // Returns label graph of profile results. Measure is time, count, or space. // 
- // let g = profileresults //
-  let g=@(+, identity, empty:labeledgraph.parc, profileinfo)
+  // let g = profileresults // 
+  let g = @(+, identity, empty:labeledgraph.parc, profileinfo)
   let m = if measure ="time"
    then @(max, clocks, 0, toseq.arcs.g)
    else if measure ="count"
@@ -145,5 +145,4 @@ function +(g:labeledgraph.parc, p:profileresult)labeledgraph.parc
 type profileresult is record arcs:seq.word, counts:seq.int, clocks:seq.int, space:seq.int
 
 function profileinfo seq.profileresult builtin.usemangle
- 
 

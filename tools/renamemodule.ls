@@ -1,5 +1,7 @@
 Module renamemodule
 
+use encoding.mapnames
+
 use seq.mapnames
 
 use seq.seq.word

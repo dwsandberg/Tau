@@ -2,6 +2,8 @@ Module display
 
 use UTF8
 
+use seq.char
+
 use seq.int
 
 use seq.seq.seq.word
@@ -29,9 +31,7 @@ Function chrwidths(prettycontrol)seq.int export
 
 Function defaultcontrol prettycontrol prettycontrol(defaultprec, charwidths)
 
-function _(s:seq.int,c:char)  int  s_toint.c
-
-use seq.char
+function_(s:seq.int, c:char)int s_toint.c
 
 Function displaywidth(cw:seq.int, s:seq.word)int @(+,_.cw, 0, toseqint.toUTF8.s)
 

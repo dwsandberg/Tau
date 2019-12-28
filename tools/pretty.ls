@@ -1,5 +1,7 @@
 Module pretty
 
+use UTF8
+
 use display
 
 use seq.int
@@ -18,7 +20,11 @@ use seq.word
 
 use stdlib
 
+use textio
+
 use tree.word
+
+use seq.char
 
 Function defaultprec seq.seq.word 
  ["_^", 
@@ -28,10 +34,8 @@ Function defaultprec seq.seq.word
  "= < > ? ≤ ≠ ≥ >> <<", 
  "∧", 
  "∨"]
- 
- Function prec(w:word, preclist:seq.seq.word)int prec(w, preclist, 1)
 
-Function lastson(s:tree.word)tree.word s_nosons.s
+Function prec(w:word, preclist:seq.seq.word)int prec(w, preclist, 1)
 
 
 Function prec(w:word, p:seq.seq.word, i:int)int 
@@ -44,12 +48,10 @@ Function escapequote(t:tree.word)seq.word
 
 function pretty(control:prettycontrol, t:tree.word)prettyresult pretty(length.preclist.control + 1, t, control)
 
-function prec(preclist:seq.seq.word, pt:tree.word)int 
- let t = stripcomment.pt 
+function prec(preclist:seq.seq.word, t:tree.word)int 
+if label.t ="comment"_1 then prec(preclist,t_1) else
   if nosons.t = 1 ∧ label.t in"-"then 2 else prec(label.t, defaultprec)
 
-function stripcomment(t:tree.word)tree.word 
- if label.t ="comment"_1 then stripcomment(t_1)else t
 
 function checkbraces(control:prettycontrol, expb:prettyresult)prettyresult 
  let f = firstnonblank(text.expb, 1)
@@ -131,13 +133,13 @@ function pretty(rprec:int, t:tree.word, control:prettycontrol)prettyresult
    else block.seperator(control,"&br", a, stripblock(control, exp))
   else if label.t ="makereal"_1 ∧ nosons.t = 2 ∧ nosons(t_1)= 0 ∧ nosons(t_2)= 0 
   then let decimals = toint.label(t_2)
-   let signplusdigits = decode.label(t_1)
-   let isneg = signplusdigits_1 = toint.hyphenchar 
+   let signplusdigits = decodeword.label(t_1)
+   let isneg = signplusdigits_1 = hyphenchar 
    let digits = if isneg then subseq(signplusdigits, 2, length.signplusdigits)else signplusdigits 
    let number = zeropad(digits, decimals + 1)
    let decimalpart ="."+ encodeword.subseq(number, length.number - decimals + 1, length.number)
-   let wholepart = if length.number - decimals = 0 then [ 48]else subseq(number, 1, length.number - decimals)
-   prettyresult(control, [ encodeword((if isneg then [ toint.hyphenchar]else empty:seq.int)+ wholepart)]+ decimalpart)
+   let wholepart = if length.number - decimals = 0 then [ char.48]else subseq(number, 1, length.number - decimals)
+   prettyresult(control, [ encodeword((if isneg then [ hyphenchar]else empty:seq.char)+ wholepart)]+ decimalpart)
   else if nosons.t = 1 
   then // handle uniary ops // 
    if label.t ="-"_1 
@@ -156,60 +158,15 @@ function divideseq(control:prettycontrol, b:seq.tree.word, n:int)prettyresult
 function breakup(control:prettycontrol, b:seq.tree.word, len:int, i:int)prettyresult 
  @(seperator(control,","), pretty.control, blank, subseq(b, i, i + len - 1))
 
-function zeropad(l:seq.int, n:int)seq.int 
- if length.l < n then constantseq(n - length.l, 48)+ l else l
+function zeropad(l:seq.char, n:int)seq.char 
+ if length.l < n then constantseq(n - length.l, char(48))+ l else l
 
-Function printnameandtype(t:tree.word, i:int)seq.word 
- {(if label(t_i)=":"_1 
-  then print.lastson(t_i)
-  else [ label(t_i)]+":"+ print.lastson(t_i))+ if i = nosons.t then""else","}
-  
-Function print(t:tree.word)seq.word 
- if nosons.t = 0 
-  then [ label.t]
-  else if nosons.t = 1 
-  then [ label.t]+"."+ print(t_1)
-  else [ label.t, openpara]+ @(seperator.",", print,"", sons.t)+ [ closepara]
+Function prettytree2(control:prettycontrol, t:tree.word, head:seq.word)seq.word 
+ let phead = prettyresult(control, head)
+  let def1 = checkbraces(control, pretty(control, t))
+  if displaywidth.phead + displaywidth.def1 < 6000 
+  then text.block.seperator(control,"", phead, def1)
+  else text.block.seperator(control,"&br", phead, def1)
 
-
-Function prettytree2(control:prettycontrol, t:tree.word,head:seq.word)seq.word 
-     let phead = prettyresult(control, head)
-   let def1 = checkbraces(control, pretty(control, t))
-   if displaywidth.phead + displaywidth.def1 < 6000 
-   then text.block.seperator(control,"", phead, def1)
-   else text.block.seperator(control,"&br", phead, def1)
-   
-use UTF8
-
-use textio
-
-Function encodeword(a:seq.int)word  encodeword(tocharseq.a)
-
-
-Function decode(w:word)seq.int tointseq.decodeword(w)
-
-  
-Function prettytree(control:prettycontrol, t:tree.word)seq.word 
- if label.t in"Function function"
-  then let head ="&keyword"+ label.t + if nosons(t_1)= 1 
-    then if decode(":"_1)_1 in decode.label(t_1)
-     then towords.UTF8.decode.label(t_1)
-     else [ label(t_1)]+ print(t_1_nosons(t_1))
-    else [ label(t_1)]+"("+ @(+, printnameandtype.t,"", arithseq(nosons.t - 2, 1, 3))+")"+ print(t_1_nosons(t_1))
-   let phead = prettyresult(control, head)
-   let def1 = checkbraces(control, pretty(control, t_2))
-   if displaywidth.phead + displaywidth.def1 < 6000 
-   then text.block.seperator(control,"", phead, def1)
-   else text.block.seperator(control,"&br", phead, def1)
-  else let result = if label.t in"sequence"
-   then"&keyword type"+ label(t_1)+"is &keyword"+ label.t + @(+, printnameandtype.t,"", arithseq(nosons.t - 1, 1, 2))
-   else if label.t in"struct"
-   then"&keyword type"+ label(t_1)+"is &keyword record"+ @(+, printnameandtype.t,"", arithseq(nosons.t - 1, 1, 2))
-   else if label.t in"use"
-   then"&keyword"+ label.t + print(t_1)
-   else if label.t in"Encoding encoding"
-   then"&keyword type"+ label(t_1)+"is &keyword"+ label.t + print(t_2)
-   else"&keyword type"+ label(t_1)
-  {"&{ block"+ result +"&}"}
 
 

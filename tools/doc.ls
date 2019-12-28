@@ -1,7 +1,4 @@
-#!/usr/local/bin/tau
-
-module doc
-
+Module doc
 
 use display
 
@@ -18,6 +15,8 @@ use libscope
 use main2
 
 use pretty
+
+use prettylib
 
 use seq.arc.word
 
@@ -41,28 +40,25 @@ use textio
 
 use tree.word
 
-use prettylib
+Function createdoc seq.word 
+ // Creates html tau html documentation. Creates file taudocs.html // 
+  let d = @(+, addselect,"", gettext."tools/doc.txt")
+  let x1 = createfile("doc.html", [ htmlheader + processpara.d])
+  let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])
+  let y1 = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])
+  d
 
-
-Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html //
- let d = @(+,addselect,"",gettext."tools/doc.txt")
- let x1= createfile("doc.html", [ htmlheader + processpara.d])
- let x2= createfile("appdoc.html", [ htmlheader + processpara.@(+,addselect,"",gettext."tools/appdoc.txt")])
-let y1=  createfile("testall.html",[ htmlheader + processpara.htmlcode."testall"])
- d 
- 
-function addselect(s:seq.word) seq.word "&{ select X"+s+"&}"
-
+function addselect(s:seq.word)seq.word {"&{ select X"+ s +"&}"}
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word 
-// Calls between modules in list of modules. // 
- let z = formcallgraph(firstPass(libname_1), 2)
+ // Calls between modules in list of modules. // 
+  let z = formcallgraph(firstPass(libname_1), 2)
   let g = newgraph.@(+, modarc.@(+, mytype, empty:seq.mytype, modulelist), empty:seq.arc.word, z)
   display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g)
 
 Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word 
-// Calls within modules in list of modules. // 
- let g = newgraph.formcallgraph(firstPass(libname_1), 2)
+ // Calls within modules in list of modules. // 
+  let g = newgraph.formcallgraph(firstPass(libname_1), 2)
   let nodestoinclude = @(∪, filterx.modulelist, empty:set.word, toseq.nodes.g)
   let g2 = @(deletenode, identity, g, toseq.nodestoinclude)
   display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g2)
@@ -101,8 +97,8 @@ Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word
 function addabstractpara(w:word)word merge([ w]+".T")
 
 Function doclibrary(libname:seq.word)seq.word 
-// create summary documentation for libraray. // 
- let lib = firstPass(libname_1)
+ // create summary documentation for libraray. // 
+  let lib = firstPass(libname_1)
   let r = @(+, findrestrict,"", lib)
   let g = newgraph.usegraph(lib,"mod"_1, 1,"?"_1, empty:seq.arc.word)
   let libclause = lib_1 
@@ -123,17 +119,16 @@ Function doclibrary(libname:seq.word)seq.word
 function findrestrict(s:seq.word)seq.word 
  if subseq(s, 1, 3)="skip * only document"then subseq(s, 4, length.s)else""
 
-function plist(t:seq.word,i:int,parano:int,names:seq.word) seq.word
+function plist(t:seq.word, i:int, parano:int, names:seq.word)seq.word 
  if i = 1 
   then if length.names > 0 
    then"("+(if names_parano =":"_1 then""else [ names_parano]+":")+ t_i + plist(t, i + 1, parano + 1, names)
-     else t
+   else t 
   else if t_i =".a"_1 ∨ t_i =". a"_1 
   then subseq(t, i, i + 1)+ plist(t, i + 2, parano, names)
   else if parano ≤ length.names 
   then","+(if names_parano =":"_1 then""else [ names_parano]+":")+ t_i + plist(t, i + 1, parano + 1, names)
-   else  ")"+subseq(t,i,length.t) 
-
+  else")"+ subseq(t, i, length.t)
 
 function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:seq.seq.word, i:int, currentmod:seq.word, funcs:seq.word, types:seq.word)seq.word 
  if i > length.lib 
@@ -163,21 +158,19 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
   else if lib_i_1 in"Parsedfunc"
   then let z = lib_i 
-   let nopara= toint(z_4)
-   let headlength=toint(z_2)
-   let toadd ="&{ select x &keyword Function"+ z_3 + plist(subseq(z, 5, headlength + 2 - nopara), 1, 1, subseq(z, headlength + 2 - nopara + 1, headlength + 2))
-   +"&}"
+   let nopara = toint(z_4)
+   let headlength = toint(z_2)
+   let toadd ="&{ select x &keyword Function"+ z_3 + plist(subseq(z, 5, headlength + 2 - nopara), 1, 1, subseq(z, headlength + 2 - nopara + 1, headlength + 2))+"&}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
-  else if lib_i_1 in"record encoding sequence"  
+  else if lib_i_1 in"record encoding sequence"
   then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_2)
- else if     subseq(lib_i, 1, 2)="skip type"
-  then  
-  docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_3)
+  else if subseq(lib_i, 1, 2)="skip type"
+  then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_3)
   else docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
 
 Function uncalledfunctions(libname:seq.word)seq.word 
  // List of functions may include indirectly called functions. // 
- let g = newgraph.formcallgraph(firstPass(libname_1), 2)
+  let g = newgraph.formcallgraph(firstPass(libname_1), 2)
   let sources = @(+, sources(g, empty:set.word),"", toseq.nodes.g)
   @(seperator."&br", readable,"", alphasort.sources)
 
@@ -203,13 +196,13 @@ function usegraph(lib:seq.seq.word, kind:word, i:int, currentmod:word, result:se
 function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word 
  if i > length.lib 
   then empty:seq.arc.word 
-  else if lib_i_1 in "Parsedfunc parsedfunc" 
-  then  let j=toint(lib_i_2)+3
+  else if lib_i_1 in"Parsedfunc parsedfunc"
+  then let j = toint(lib_i_2)+ 3 
    if lib_i_j ="unknown"_1 
    then formcallgraph(lib, i + 1)
    else formcallgraph(lib_i_j, lib_i, j + 1, empty:seq.arc.word)+ formcallgraph(lib, i + 1)
   else formcallgraph(lib, i + 1)
-  
+
 function formcallgraph(func:word, src:seq.word, i:int, result:seq.arc.word)seq.arc.word 
  if i > length.src 
   then result 
@@ -218,12 +211,9 @@ function formcallgraph(func:word, src:seq.word, i:int, result:seq.arc.word)seq.a
   then formcallgraph(func, src, i + 1, result)
   else if name in"LIT PARAM LOCAL WORD SET define RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD PRECORD"
   then formcallgraph(func, src, i + 2, result)
-  else if name in "WORDS COMMENT"  
-  then 
-    formcallgraph(func, src, i + toint(src_(i + 1))+ 2, result)
+  else if name in"WORDS COMMENT"
+  then formcallgraph(func, src, i + toint(src_(i + 1))+ 2, result)
   else if name = func 
   then formcallgraph(func, src, i + 1, result)
   else formcallgraph(func, src, i + 1, result + arc(func, name))
-  
-  
 

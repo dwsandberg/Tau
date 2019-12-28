@@ -446,7 +446,7 @@ char *name=(char *)&IDXUC(funcname,2);
       
       fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
      
-       BT (*towords)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"towordsZtextioZintzseq"); 
+       BT (*towords)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"towordsZtextioZUTF8"); 
        if (!towords) {
           fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
           exit(EXIT_FAILURE); return 1;
