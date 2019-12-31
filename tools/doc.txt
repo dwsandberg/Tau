@@ -514,3 +514,26 @@ Perhaps the best way to reverse a sequence is to use
 
 In this case the tau compiler will remove the recursion and the bounds check when indexing the sequence.  If the sequence was built up out of smaller sequences, it will also  break the sequence into the smaller parts and process them separately. 
 
+
+&section markup
+
+&keyword &br Start a new line
+
+&keyword &em emphasis. &em example
+
+&keyword &strong strong emphasis. &strong example
+
+&keyword &keyword Keyword of program. &keyword example
+
+&em &{ &keyword literal...&em &} &{ literal this is an example of how a literal is displayed &}
+
+&em &{ &keyword block...&em &} Indented block
+
+&em &{ &keyword noformat..&em &} block of unformated output
+
+&em &{ &keyword table <caption> <rows of table> &em &} Defines a table
+
+&keyword &row..&keyword &cell..&keyword &cell..Defines a row of with three columns. 
+Must be placed within table.  This &{ noformat &{ table &row &cell 1 &cell 2 &cell 3 &row &cell 3 &cell 4 &cell 5 &} &}
+produces following table.
+&{ table &row &cell 1 &cell 2 &cell 3 &row &cell 3 &cell 4 &cell 5 &}

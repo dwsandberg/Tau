@@ -6,7 +6,7 @@ Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates cvttoinst d
  uses 
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  oseq packedseq   process real reconstruct seq set stack stacktrace 
- stdlib  textio tree prims
+ stdlib  textio tree prims symbol
 
 
 use UTF8

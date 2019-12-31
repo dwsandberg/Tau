@@ -32,6 +32,8 @@ use symbol
 
 use UTF8
 
+use format
+
 Function headdict set.symbol 
  let modulename = mytype."test"
   asset([ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), 
@@ -67,25 +69,6 @@ function consumecomment(s:seq.word, i:int)int
   then i 
   else if s_i ="//"_1 then consumecomment(s, findindex("//"_1, s, i + 1)+ 1)else i
 
-Function prettynoparse(s:seq.word, i:int, lastbreak:int, result:seq.word)seq.word 
- if i > length.s 
-  then result 
-  else let x = s_i 
-  if x ="&quot"_1 
-  then let t = findindex("&quot"_1, s, i + 1)
-   prettynoparse(s, t + 1, lastbreak + t - i, result +"&{ literal"+ subseq(s, i, t)+"&}")
-  else if x ="//"_1 
-  then let t = findindex("//"_1, s, i + 1)
-   prettynoparse(s, t + 1, t - i, result +"&br &{ comment"+ subseq(s, i, t)+"&}")
-  else if x in"if then else let assert function Function type"
-  then prettynoparse(s, i + 1, 0, result +"&br &keyword"+ x)
-  else if x in"report"
-  then prettynoparse(s, i + 1, lastbreak + 1, result +"&keyword"+ x)
-  else if lastbreak > 20 ∧ x in")]"∨ lastbreak > 40 ∧ x in","
-  then prettynoparse(s, i + 1, 0, result + x +"&br")
-  else if lastbreak > 20 ∧ x in"["
-  then prettynoparse(s, i + 1, 0, result +"&br"+ x)
-  else prettynoparse(s, i + 1, lastbreak + 1, result + x)
 
 type stepresult is record stk:stack.stkele, place:int, input:seq.word, tokenstate:int, string:seq.word
 
@@ -152,14 +135,14 @@ function consumeinput(b:stepresult, next:word)stepresult
   else BB(tokenno.act, bindinfo(dict.result.top.stk.b, [ label.act], [ mytype."int"]), stk.b, place.b, input.b)
 
 function errormessage(message:seq.word, input:seq.word, place:int)seq.word 
- message + prettynoparse(subseq(input, 1, place), 1, 0,"")
+ message + prettynoparse(subseq(input, 1, place))
 
 function BB(token:int, tr:bindinfo, stk:stack.stkele, place:int, input:seq.word)stepresult 
  let stateno = stateno.top.stk 
   let actioncode = actiontable_(token + length.tokenlist * stateno)
   if actioncode > 0 
   then stepresult(push(stk, stkele(actioncode, tr)), place + 1, input, 0,"")
-  else assert actioncode < 0 report"parse error expect:"+ expect.stateno +"got:"+(if place > length.input then"end of paragraph"else [ input_place])+ // printstate.stateno + // prettynoparse(subseq(input, 1, place), 1, 0,"")
+  else assert actioncode < 0 report"parse error expect:"+ expect.stateno +"got:"+(if place > length.input then"end of paragraph"else [ input_place])+ // printstate.stateno + // prettynoparse(subseq(input, 1, place))
   let x = reduce(stk,-actioncode, place, input)
   BB(token, bindinfo(dict.result.top.x, code.tr, types.tr), x, place, input)
 

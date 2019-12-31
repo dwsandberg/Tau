@@ -85,7 +85,7 @@ function flags(src:seq.word, i:int)seq.word
   then flags(src, i - 1)+ src_i 
   else if src_i in"STATEZtestZinternal1"
   then flags(src, i - 1)+"STATE"
-  else""
+   else""
 
 Function isundefined(s:symbol)boolean mangledname.s ="undefinedsym"_1
 

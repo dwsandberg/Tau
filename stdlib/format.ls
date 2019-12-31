@@ -78,6 +78,14 @@ function match(s:seq.word, depth:int, i:int)int
 
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 
+  
+  function needsEOL(x:seq.word,i:int) boolean
+// adds EOL only if no EOL is  present //
+if i=0 then false
+  else if x_i=space then needsEOL(x,i-1)
+  else   if x_i=EOL then false else true  
+ 
+
 function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.word 
  if i > length.a 
   then result 
@@ -90,7 +98,10 @@ function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.wo
    else processtotext(a, i + 1, result + [ EOL]+ toseq.stk, stk)
   else if a_i ="&{"_1 
   then if a_(i + 1)="block"_1 
-   then processtotext(a, i + 2, result, push(stk, space))
+   then 
+     if  a_(i + 2) &ne "&br"_1 &and needsEOL(result,length.result) then
+        processtotext(a, i + 2, result + [ EOL]+ toseq.stk+space, push(stk, space))
+    else   processtotext(a, i + 2, result, push(stk, space))
    else if a_(i + 1)="noformat"_1 
    then let t = match(a, 0, i + 2)
     processtotext(a, t + 1, result + subseq(a, i + 2, t - 1), stk)
@@ -116,4 +127,29 @@ Function addamp(ch:char)seq.char
  if ch = char.60 
   then decodeword("&lt;"_1)
   else if ch = char.38 then decodeword("&amp;"_1)else [ ch]
+  
+Function prettynoparse(s:seq.word)seq.word 
+  // format function  without first parsing it //
+   prettynoparse(s , 1, 0,"")
+
+function prettynoparse(s:seq.word, i:int, lastbreak:int, result:seq.word)seq.word 
+ if i > length.s 
+  then result 
+  else let x = s_i 
+  if x ="&quot"_1 
+  then let t = findindex("&quot"_1, s, i + 1)
+   prettynoparse(s, t + 1, lastbreak + t - i, result +"&{ literal"+ subseq(s, i, t)+"&}")
+  else if x ="//"_1 
+  then let t = findindex("//"_1, s, i + 1)
+   prettynoparse(s, t + 1, t - i, result +"&br &{ comment"+ subseq(s, i, t)+"&}")
+  else if x in"if then else let assert function Function type"
+  then prettynoparse(s, i + 1, 0, result +"&br &keyword"+ x)
+  else if x in"report"
+  then prettynoparse(s, i + 1, lastbreak + 1, result +"&keyword"+ x)
+  else if lastbreak > 20 ∧ x in")]"∨ lastbreak > 40 ∧ x in","
+  then prettynoparse(s, i + 1, 0, result + x +"&br")
+  else if lastbreak > 20 ∧ x in"["
+  then prettynoparse(s, i + 1, 0, result +"&br"+ x)
+  else prettynoparse(s, i + 1, lastbreak + 1, result + x)
+
 
