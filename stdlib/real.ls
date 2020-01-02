@@ -60,6 +60,9 @@ Function casttoreal(i:int)real builtin.NOOP
 
 Function^(i:real, n:int)real @(*, identity, 1.0, constantseq(n, i))
 
+Function *(a:int, b:real)real toreal.a * b
+
+
 Function makereal(whole:int, decdigits:int)real 
    //  real number value  is whole / 10^decdigits //
  if decdigits < 7 

@@ -211,7 +211,7 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word)seq.wo
   + @(+, reduceline(grammarandact),"", arithseq(length.grammarandact, 1, 1))
   +"&br let leftsidetoken = ["
   + @(seperator(","), leftside(alphabet),"", grammarandact)
-  +"]_ruleno &br let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)&br assert actioncode > 0 report &quot ?? &quot &br push(newstk, stkele(actioncode, newtree))"
+  +"]_ruleno &br let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)&br assert actioncode > 0 report &quot ???? &quot &br push(newstk, stkele(actioncode, newtree))"
 
 function rulelength(a:seq.seq.word)word toword(length(a_1) - 1)
 
@@ -262,13 +262,16 @@ function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
   ,"bindinfo(dict, code.$_4 + code.$_2 + @(+, cvttotext, &quot &quot, types.$_5), types.$_5)"]
   , ["F W T","$_2"]
   , ["FP P"
-  ,"bindinfo(@(addparameter.cardinality.dict, identity, dict, types.$_1), &quot &quot, types.$_1)"]
+  ,"bindinfo(@(addparameter(cardinality.dict,input,place), identity, dict, types.$_1), &quot &quot, types.$_1)"]
   , ["P T","bindinfo(dict, &quot &quot, [ mytype(code.$_1 + &quot:&quot)])"]
   , ["P P, T","bindinfo(dict, &quot &quot, types.$_1 + [ mytype(code.$_3 + &quot:&quot)])"]
   , ["P W:T","bindinfo(dict, &quot &quot, [ mytype(code.$_3 + code.$_1)])"]
   , ["P P, W:T","bindinfo(dict, &quot &quot, types.$_1 + [ mytype(code.$_5 + code.$_3)])"]
   , ["E W"
-  ,"let id = code.$_1 let f = lookup(dict, id_1, empty:seq.mytype)assert not.isempty.f report errormessage(&quot cannot find id &quot + id, input, place)bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])"]
+  ,"let id = code.$_1 
+  let f = lookupbysig(dict, id_1, empty:seq.mytype, input, place)
+      bindinfo(dict, [ mangledname.f], [ resulttype.f])
+"]
   , ["E N(L)","unaryop($_1, $_3, input, place)"]
   , ["E W(L)","unaryop($_1, $_3, input, place)"]
   , ["E(E)","$_2"]
@@ -291,9 +294,13 @@ function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
   , ["E [ L]"
   ,"let types = types($_2)assert @(∧, =(types_1), true, types)report errormessage(&quot types do not match in build &quot, input, place)bindinfo(dict, &quot LIT 0 LIT &quot + toword.(length.types)+ code.$_2 + &quot RECORD &quot + toword.(length.types + 2), [ mytype(towords(types_1)+ &quot seq &quot)])"]
   , ["A let W = E"
-  ,"let e = $_4 let name =(code.$_2)_1 let newdict = dict + symbol(name, mytype(&quot local &quot), empty:seq.mytype,(types.e)_1, &quot &quot)bindinfo(newdict, code.e + &quot define &quot + name, types.e)"]
+  ,"let e = $_4 let name =(code.$_2)_1 
+  assert isempty.lookup(dict, name, empty:seq.mytype)report errormessage(&quot duplicate symbol: &quot+ name, input, place)
+  let newdict = dict + symbol(name, mytype(&quot local &quot), empty:seq.mytype,(types.e)_1, &quot &quot)bindinfo(newdict, code.e + &quot define &quot + name, types.e)"]
   , ["E A E"
-  ,"let t = code.$_1 let f = lookup(dict, last.code.$_1, empty:seq.mytype)assert not.isempty.f report &quot error &quot bindinfo(dict.$_1-f_1, subseq(t, 1, length.t-2)+ code.$_2 + &quot SET &quot + last.code.$_1, types.$_2)"]
+  ,"let t = code.$_1 let f = lookup(dict, last.code.$_1, empty:seq.mytype)
+   assert not(isempty.f)report  &quot internal error/could not find local symbol to delete from dict with name  &quot + last(code.result(subtrees_1))
+  bindinfo(dict.$_1-f_1, subseq(t, 1, length.t-2)+ code.$_2 + &quot SET &quot + last.code.$_1, types.$_2)"]
   , ["E assert E report E E"
   ,"assert types($_2)_1 = mytype.&quot boolean &quot report errormessage(&quot condition in assert must be boolean in:&quot, input, place)assert types($_4)_1 = mytype.&quot word seq &quot report errormessage(&quot report in assert must be seq of word in:&quot, input, place)let newcode = code.$_2 + code.$_5 + code.$_4 + &quot assertZbuiltinZwordzseq if &quot bindinfo(dict, newcode, types.$_5)"]
   , ["E I","$_1"]

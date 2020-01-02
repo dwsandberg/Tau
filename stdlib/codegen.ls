@@ -72,8 +72,8 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
  let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount"+ merge(thename,"$profileresult"_1)+"init22 PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   // let conststype = array(-2, i64)// 
   let cxx = conststype 
-  let profiletype = array(-3, i64)
-  let declist = @(+,_.coding.fs, empty:seq.inst, defines.fs)
+ let discard = profiletype
+   let declist = @(+,_.coding.fs, empty:seq.inst, defines.fs)
   let discard2 = @(+, C, 0, @(+, mangledname, symlist, declist))
   let xy = table 
   // let zx2a = createfile("stat.txt", ["in codegen0.1"])// 

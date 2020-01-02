@@ -157,9 +157,8 @@ function opaction(subtrees:seq.stkele, input:seq.word, place:int)bindinfo
  let op = code(result(subtrees_2))_1 
   let dict = dict.result(subtrees_1)
   let types = types.result(subtrees_1)+ types.result(subtrees_3)
-  let f = lookup(dict, op, types)
-  assert not.isempty.f report errormessage("cannot find"+ op +"("+ @(seperator.",", print,"", types)+")", input, place)
-  bindinfo(dict, code.result(subtrees_1)+ code.result(subtrees_3)+ mangledname(f_1), [ resulttype(f_1)])
+  let f = lookupbysig(dict, op, types,input,place)
+   bindinfo(dict, code.result(subtrees_1)+ code.result(subtrees_3)+ mangledname(f), [ resulttype(f)])
 
 Function deepcopymangle(type:mytype)word 
  mangle("deepcopy"_1, mytype(towords.type +"deepcopy"), [ mytype."T"])
@@ -172,28 +171,25 @@ function unaryop(op:bindinfo, exp:bindinfo, input:seq.word, place:int)bindinfo
    let prt = mytype(towords.rt +"process")
    let newcode = subseq(code.exp, 1, length.code.exp - 1)+"FREF"+ deepcopymangle.rt +"FREF"+ deepcopymangle.mytype."word seq"+"FREF"+ last.code.exp +"LIT"+ toword.nopara +"PRECORD"+ toword(nopara + 4)
    bindinfo(dict, newcode, [ mytype(towords.rt +"process")])
-  else let f = lookup(dict, code(op)_1, types.exp)
-  assert not.isempty.f report errormessage("cannot find unaryop"+ code.op +"("+ @(seperator.",", print,"", types.exp)+")", input, place)
-  assert cardinality.f = 1 ∨ code(op)_1 in"length"report"found more that one"+ @(+, print2,"", toseq.f)
-  // assert code(op)_1 &ne"arithseq"_1 report"XX"+ print.f_1 // 
-  bindinfo(dict, code.exp + mangledname(f_1), [ resulttype(f_1)])
+  else let f = lookupbysig(dict, code(op)_1, types.exp,input,place)
+    bindinfo(dict, code.exp + mangledname(f), [ resulttype(f)])
 
 function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo, input:seq.word, place:int)bindinfo 
  let dict = dict.term1 
-  assert abstracttype(types(term4)_1)="seq"_1 report"last term of apply must be seq"
+  assert abstracttype(types(term4)_1)="seq"_1 report
+  errormessage("last term of apply must be seq",input,place)
   let sym2types = types.term2 + [ parameter(types(term4)_1)]
-  let sym2 = lookup(dict, code(term2)_1, sym2types)
-  assert not.isempty.sym2 report errormessage("cannot find term2"+ code(term2)_1 +"("+ @(seperator.",", print,"", sym2types)+")", input, place)
-  let sym1types = types.term1 + types.term3 + [ resulttype(sym2_1)]
-  let sym1 = lookup(dict, code(term1)_1, sym1types)
-  assert not.isempty.sym1 report"cannot find term1"+ code(term1)_1 +"("+ @(seperator.",", print,"", sym1types)+")"+"sym2"+ print(sym2_1)
-  assert types(term3)_1 = resulttype(sym1_1)report"term3 not same as init"
+  let sym2 = lookupbysig(dict, code(term2)_1, sym2types,input,place)
+  let sym1types = types.term1 + types.term3 + [ resulttype(sym2)]
+  let sym1 = lookupbysig(dict, code(term1)_1, sym1types,input,place)
+    assert types(term3)_1 = resulttype(sym1)report 
+  errormessage("term3 not same as init"+print.types(term3)_1+print.resulttype(sym1),input,place)
   let pseqtype = mytype(towords.parameter(types(term4)_1)+"pseq"_1)
   let idx = mangle("_"_1, mytype(towords.parameter(types(term4)_1)+"seq"_1), [ mytype."T pseq", mytype."int"])
-  let x = lookup(dict,"_"_1, [ pseqtype, mytype."int"])
-  assert not.isempty.x report"cannot find index function for"+ print.pseqtype 
-  // assert mangledname.x_1 = idx report"ERR15"+ mangledname.x_1 + idx // 
-  bindinfo(dict, subseq(code.term1, 2, length.code.term1)+ subseq(code.term2, 2, length.code.term2)+ code.term3 + code.term4 +"FREF"+ mangledname(sym2_1)+"FREF"+ mangledname(sym1_1)+"FREF"+ idx +"APPLY"+ toword(length.types.term1 + length.types.term2 + 5), types.term3)
+  let x = lookupbysig(dict,"_"_1, [ pseqtype, mytype."int"],input,place)
+  bindinfo(dict, subseq(code.term1, 2, length.code.term1)+ subseq(code.term2, 2, length.code.term2)
+  + code.term3 + code.term4 +"FREF"+ mangledname(sym2)+"FREF"+ mangledname(sym1)+"FREF"+ 
+  idx +"APPLY"+ toword(length.types.term1 + length.types.term2 + 5), types.term3)
 
 function countdigits(s:seq.char, i:int, result:int)word 
  // does not count no-break spaces // 
@@ -203,9 +199,19 @@ function countdigits(s:seq.char, i:int, result:int)word
 
 function cvttotext(m:mytype)seq.word [ toword.length.towords.m]+ towords.m
 
-function addparameter(orgsize:int, dict:set.symbol, m:mytype)set.symbol 
+function addparameter(orgsize:int,input:seq.word,place:int, dict:set.symbol, m:mytype)set.symbol 
+  assert isempty.lookup(dict,abstracttype.m,empty:seq.mytype) &or abstracttype.m=":"_1 report
+  errormessage("duplciate symbol:"+abstracttype.m,input,place) 
  let parano = toword(cardinality.dict - orgsize + 1)
   dict + symbol(abstracttype.m, mytype.[ parano,"para"_1], empty:seq.mytype, parameter.m,"")
+  
+function lookupbysig(dict:set.symbol,name:word,paratypes:seq.mytype,input:seq.word,place:int) symbol
+  let f = lookup(dict, name, paratypes)
+  assert not.isempty.f report errormessage("cannot find "+ name +"("+ @(seperator.",", print,"", paratypes)+")", input, place)
+  assert cardinality.f = 1 report 
+  errormessage("found more that one"+ @(+, print2,"", toseq.f),input,place)
+  f_1
+ 
 
 function Wtoken int // generated by genlex module in tools // 34
 
@@ -1046,7 +1052,7 @@ function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.st
    else if ruleno = // F W T // 7 
    then result(subtrees_2)
    else if ruleno = // FP P // 8 
-   then bindinfo(@(addparameter.cardinality.dict, identity, dict, types.result(subtrees_1)),"", types.result(subtrees_1))
+   then bindinfo(@(addparameter(cardinality.dict,input,place), identity, dict, types.result(subtrees_1)),"", types.result(subtrees_1))
    else if ruleno = // P T // 9 
    then bindinfo(dict,"", [ mytype(code.result(subtrees_1)+":")])
    else if ruleno = // P P, T // 10 
@@ -1057,9 +1063,8 @@ function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.st
    then bindinfo(dict,"", types.result(subtrees_1)+ [ mytype(code.result(subtrees_5)+ code.result(subtrees_3))])
    else if ruleno = // E W // 13 
    then let id = code.result(subtrees_1)
-    let f = lookup(dict, id_1, empty:seq.mytype)
-    assert not.isempty.f report errormessage("cannot find id"+ id, input, place)
-    bindinfo(dict, [ mangledname(f_1)], [ resulttype(f_1)])
+    let f = lookupbysig(dict, id_1, empty:seq.mytype,input,place)
+    bindinfo(dict, [ mangledname(f)], [ resulttype(f)])
    else if ruleno = // E N(L)// 14 
    then unaryop(result(subtrees_1), result(subtrees_3), input, place)
    else if ruleno = // E W(L)// 15 
@@ -1107,12 +1112,14 @@ function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.st
    else if ruleno = // A let W = E // 33 
    then let e = result(subtrees_4)
     let name = code(result(subtrees_2))_1 
+     assert isempty.lookup(dict,name,empty:seq.mytype) report 
+     errormessage("duplicate symbol:" + name , input, place)
     let newdict = dict + symbol(name, mytype."local", empty:seq.mytype, types(e)_1,"")
     bindinfo(newdict, code.e +"define"+ name, types.e)
    else if ruleno = // E A E // 34 
    then let t = code.result(subtrees_1)
     let f = lookup(dict, last.code.result(subtrees_1), empty:seq.mytype)
-    assert not.isempty.f report"error"
+    assert not.isempty.f report "internal error/could not find local symbol to delete from dict with name"+last.code.result(subtrees_1)
     bindinfo(dict.result(subtrees_1) - f_1, subseq(t, 1, length.t - 2)+ code.result(subtrees_2)+"SET"+ last.code.result(subtrees_1), types.result(subtrees_2))
    else if ruleno = // E assert E report E E // 35 
    then assert types(result(subtrees_2))_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place)
@@ -1173,6 +1180,6 @@ function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.st
   31, 31, 36, 36, 36, 36, 36, 36, 36, 39, 
   39, 39, 39, 39, 39, 31]_ruleno 
   let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)
-  assert actioncode > 0 report"??"
+  assert actioncode > 0 report"????"
   push(newstk, stkele(actioncode, newtree))
 
