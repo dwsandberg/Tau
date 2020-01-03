@@ -10,7 +10,7 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
 
 /run tools testprofile
 
-/run tools prettytest
+run tools prettytest
 
 /run tools callgraphtest
 
@@ -50,7 +50,7 @@ use seq.word
 
 Function testhtmlcode seq.word htmlcode."testall"
 
-Function prettytest seq.word prettylib("mytest","")
+Function prettytest seq.word prettylib("test4","")
 
 Function checkdoclib seq.word doclibrary."tools"
 

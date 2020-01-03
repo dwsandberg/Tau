@@ -1015,171 +1015,219 @@ function actiontable seq.int
  -56, 0, 0,-56, 0,-56, 0,-56]
 
 function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.stkele 
- // generated function // 
-  let rulelen = [ 2, 7, 7, 4, 5, 5, 2, 1, 1, 3, 
-  3, 5, 1, 4, 4, 3, 3, 6, 3, 3, 
-  2, 3, 3, 3, 3, 3, 3, 3, 3, 1, 
-  3, 3, 4, 2, 5, 1, 3, 1, 3, 3, 
-  1, 2, 1, 1, 1, 1, 1, 1, 1, 3, 
-  3, 4, 4, 1, 1, 10]_ruleno 
-  let newstk = pop(stk, rulelen)
-  let subtrees = top(stk, rulelen)
-  let dict = dict.result.top.stk 
-  let newtree = if ruleno = // G F # // 1 
-   then result(subtrees_1)
-   else if ruleno = // F W W(FP)T E // 2 
-   then let functype = code.result(subtrees_6)
-    let exptype = types.result(subtrees_7)
-    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1), input, place)
-    bindinfo(dict, code.result(subtrees_7), [ mytype.code.result(subtrees_2), mytype.functype]+ types.result(subtrees_4))
-   else if ruleno = // F W N(FP)T E // 3 
-   then let functype = code.result(subtrees_6)
-    let exptype = types.result(subtrees_7)
-    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1), input, place)
-    bindinfo(dict, code.result(subtrees_7), [ mytype.code.result(subtrees_2), mytype.functype]+ types.result(subtrees_4))
-   else if ruleno = // F W W T E // 4 
-   then let functype = code.result(subtrees_3)
-    let exptype = types.result(subtrees_4)
-    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1), input, place)
-    bindinfo(dict, code.result(subtrees_4), [ mytype.code.result(subtrees_2), mytype.functype])
-   else if ruleno = // F W W:T E // 5 
-   then let functype = code.result(subtrees_4)
-    let exptype = types.result(subtrees_5)
-    assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"report errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print(exptype_1), input, place)
-    bindinfo(dict, code.result(subtrees_5), [ mytype.[ merge(code.result(subtrees_2)+":"+ print.mytype.functype)], mytype.functype])
-   else if ruleno = // F W W is W P // 6 
-   then bindinfo(dict, code.result(subtrees_4)+ code.result(subtrees_2)+ @(+, cvttotext,"", types.result(subtrees_5)), types.result(subtrees_5))
-   else if ruleno = // F W T // 7 
-   then result(subtrees_2)
-   else if ruleno = // FP P // 8 
-   then bindinfo(@(addparameter(cardinality.dict,input,place), identity, dict, types.result(subtrees_1)),"", types.result(subtrees_1))
-   else if ruleno = // P T // 9 
-   then bindinfo(dict,"", [ mytype(code.result(subtrees_1)+":")])
-   else if ruleno = // P P, T // 10 
-   then bindinfo(dict,"", types.result(subtrees_1)+ [ mytype(code.result(subtrees_3)+":")])
-   else if ruleno = // P W:T // 11 
-   then bindinfo(dict,"", [ mytype(code.result(subtrees_3)+ code.result(subtrees_1))])
-   else if ruleno = // P P, W:T // 12 
-   then bindinfo(dict,"", types.result(subtrees_1)+ [ mytype(code.result(subtrees_5)+ code.result(subtrees_3))])
-   else if ruleno = // E W // 13 
-   then let id = code.result(subtrees_1)
-    let f = lookupbysig(dict, id_1, empty:seq.mytype,input,place)
-    bindinfo(dict, [ mangledname(f)], [ resulttype(f)])
-   else if ruleno = // E N(L)// 14 
-   then unaryop(result(subtrees_1), result(subtrees_3), input, place)
-   else if ruleno = // E W(L)// 15 
-   then unaryop(result(subtrees_1), result(subtrees_3), input, place)
-   else if ruleno = // E(E)// 16 
-   then result(subtrees_2)
-   else if ruleno = // E { E } // 17 
-   then result(subtrees_2)
-   else if ruleno = // E if E then E else E // 18 
-   then let thenpart = result(subtrees_4)
-    assert types(result(subtrees_2))_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)
-    assert types.result(subtrees_4)= types.result(subtrees_6)report errormessage("then and else types are different", input, place)
-    let newcode = code.result(subtrees_2)+ code.result(subtrees_4)+ code.result(subtrees_6)
-    bindinfo(dict, newcode +"if", types.thenpart)
-   else if ruleno = // E E^E // 19 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E_E // 20 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E-E // 21 
-   then unaryop(result(subtrees_1), result(subtrees_2), input, place)
-   else if ruleno = // E W.E // 22 
-   then unaryop(result(subtrees_1), result(subtrees_3), input, place)
-   else if ruleno = // E N.E // 23 
-   then unaryop(result(subtrees_1), result(subtrees_3), input, place)
-   else if ruleno = // E E * E // 24 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E-E // 25 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E = E // 26 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E > E // 27 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E ∧ E // 28 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E ∨ E // 29 
-   then opaction(subtrees, input, place)
-   else if ruleno = // L E // 30 
-   then result(subtrees_1)
-   else if ruleno = // L L, E // 31 
-   then bindinfo(dict, code.result(subtrees_1)+ code.result(subtrees_3), types.result(subtrees_1)+ types.result(subtrees_3))
-   else if ruleno = // E [ L]// 32 
-   then let types = types.result(subtrees_2)
-    assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place)
-    bindinfo(dict,"LIT 0 LIT"+ toword.length.types + code.result(subtrees_2)+"RECORD"+ toword(length.types + 2), [ mytype(towords(types_1)+"seq")])
-   else if ruleno = // A let W = E // 33 
-   then let e = result(subtrees_4)
-    let name = code(result(subtrees_2))_1 
-     assert isempty.lookup(dict,name,empty:seq.mytype) report 
-     errormessage("duplicate symbol:" + name , input, place)
-    let newdict = dict + symbol(name, mytype."local", empty:seq.mytype, types(e)_1,"")
-    bindinfo(newdict, code.e +"define"+ name, types.e)
-   else if ruleno = // E A E // 34 
-   then let t = code.result(subtrees_1)
-    let f = lookup(dict, last.code.result(subtrees_1), empty:seq.mytype)
-    assert not.isempty.f report "internal error/could not find local symbol to delete from dict with name"+last.code.result(subtrees_1)
-    bindinfo(dict.result(subtrees_1) - f_1, subseq(t, 1, length.t - 2)+ code.result(subtrees_2)+"SET"+ last.code.result(subtrees_1), types.result(subtrees_2))
-   else if ruleno = // E assert E report E E // 35 
-   then assert types(result(subtrees_2))_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place)
-    assert types(result(subtrees_4))_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place)
-    let newcode = code.result(subtrees_2)+ code.result(subtrees_5)+ code.result(subtrees_4)+"assertZbuiltinZwordzseq if"
-    bindinfo(dict, newcode, types.result(subtrees_5))
-   else if ruleno = // E I // 36 
-   then result(subtrees_1)
-   else if ruleno = // E I.I // 37 
-   then let d = decodeword(code(result(subtrees_3))_2)
-    bindinfo(dict,"LIT"+ [ encodeword(decodeword(code(result(subtrees_1))_2)+ d)]+"LIT"+ countdigits(d, 1, 0)+"makerealZrealZintZint", [ mytype."real"])
-   else if ruleno = // T W // 38 
-   then result(subtrees_1)
-   else if ruleno = // T W.T // 39 
-   then bindinfo(dict, code.result(subtrees_3)+ code.result(subtrees_1), types.result(subtrees_1))
-   else if ruleno = // E W:T // 40 
-   then let f = lookup(dict, merge(code.result(subtrees_1)+":"+ print.mytype.code.result(subtrees_3)), empty:seq.mytype)
-    assert not.isempty.f report errormessage("cannot find"+ code.result(subtrees_1)+":"+ print.mytype.code.result(subtrees_3), input, place)
-    bindinfo(dict, [ mangledname(f_1)], [ resulttype(f_1)])
-   else if ruleno = // E $wordlist // 41 
-   then let s = code.result(subtrees_1)
-    bindinfo(dict,"WORDS"+ toword.length.s + s, [ mytype."word seq"])
-   else if ruleno = // E comment E // 42 
-   then let s = code.result(subtrees_1)
-    bindinfo(dict, code.result(subtrees_2)+"COMMENT"+ toword.length.s + s, types.result(subtrees_2))
-   else if ruleno = // N_// 43 
-   then result(subtrees_1)
-   else if ruleno = // N-// 44 
-   then result(subtrees_1)
-   else if ruleno = // N = // 45 
-   then result(subtrees_1)
-   else if ruleno = // N > // 46 
-   then result(subtrees_1)
-   else if ruleno = // N * // 47 
-   then result(subtrees_1)
-   else if ruleno = // N ∧ // 48 
-   then result(subtrees_1)
-   else if ruleno = // N ∨ // 49 
-   then result(subtrees_1)
-   else if ruleno = // K W.E // 50 
-   then bindinfo(dict, code.result(subtrees_1)+ code.result(subtrees_3), types.result(subtrees_3))
-   else if ruleno = // K N.E // 51 
-   then bindinfo(dict, code.result(subtrees_1)+ code.result(subtrees_3), types.result(subtrees_3))
-   else if ruleno = // K N(L)// 52 
-   then bindinfo(dict, code.result(subtrees_1)+ code.result(subtrees_3), types.result(subtrees_3))
-   else if ruleno = // K W(L)// 53 
-   then bindinfo(dict, code.result(subtrees_1)+ code.result(subtrees_3), types.result(subtrees_3))
-   else if ruleno = // K N // 54 
-   then bindinfo(dict, code.result(subtrees_1), empty:seq.mytype)
-   else if ruleno = // K W // 55 
-   then bindinfo(dict, code.result(subtrees_1), empty:seq.mytype)
-   else assert ruleno = // E @(K, K, E, E)// 56 report"invalid rule number"+ toword.ruleno 
-   apply(result(subtrees_3), result(subtrees_5), result(subtrees_7), result(subtrees_9), input, place)
-  let leftsidetoken = [ 32, 33, 33, 33, 33, 33, 33, 40, 35, 35, 
-  35, 35, 31, 31, 31, 31, 31, 31, 31, 31, 
-  31, 31, 31, 31, 31, 31, 31, 31, 31, 37, 
-  37, 31, 30, 31, 31, 31, 31, 17, 17, 31, 
-  31, 31, 36, 36, 36, 36, 36, 36, 36, 39, 
-  39, 39, 39, 39, 39, 31]_ruleno 
-  let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)
-  assert actioncode > 0 report"????"
-  push(newstk, stkele(actioncode, newtree))
+  // generated function // 
+  let rulelen = [ 2, 7, 7, 4, 5, 5, 2, 1, 1, 3 
+   , 3, 5, 1, 4, 4, 3, 3, 6, 3, 3 
+   , 2, 3, 3, 3, 3, 3, 3, 3, 3, 1 
+   , 3, 3, 4, 2, 5, 1, 3, 1, 3, 3 
+   , 1, 2, 1, 1, 1, 1, 1, 1, 1, 3 
+   , 3, 4, 4, 1, 1, 10]
+   _ruleno 
+   let newstk = pop(stk, rulelen)
+   let subtrees = top(stk, rulelen)
+   let dict = dict.result.top.stk 
+   let newtree = 
+    if ruleno = // G F # // 1 
+    then result.subtrees_1 
+    else if ruleno = // F W W(FP)T E // 2 
+    then 
+     let functype = code.result.subtrees_6 
+     let exptype = types.result.subtrees_7 
+     assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"
+     report errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print.exptype_1 
+     , input 
+     , place)
+      bindinfo(dict, code.result.subtrees_7, [ mytype.code.result.subtrees_2, mytype.functype]+ types.result.subtrees_4)
+    else if ruleno = // F W N(FP)T E // 3 
+    then 
+     let functype = code.result.subtrees_6 
+     let exptype = types.result.subtrees_7 
+     assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"
+     report errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print.exptype_1 
+     , input 
+     , place)
+      bindinfo(dict, code.result.subtrees_7, [ mytype.code.result.subtrees_2, mytype.functype]+ types.result.subtrees_4)
+    else if ruleno = // F W W T E // 4 
+    then 
+     let functype = code.result.subtrees_3 
+     let exptype = types.result.subtrees_4 
+     assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"
+     report errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print.exptype_1 
+     , input 
+     , place)
+      bindinfo(dict, code.result.subtrees_4, [ mytype.code.result.subtrees_2, mytype.functype])
+    else if ruleno = // F W W:T E // 5 
+    then 
+     let functype = code.result.subtrees_4 
+     let exptype = types.result.subtrees_5 
+     assert mytype.functype = exptype_1 ∨ exptype_1 = mytype."internal"
+     report errormessage("function type of"+ print.mytype.functype +"does not match expression type"+ print.exptype_1 
+     , input 
+     , place)
+      bindinfo(dict 
+      , code.result.subtrees_5 
+      , [ mytype.[ merge(code.result.subtrees_2 +":"+ print.mytype.functype)], mytype.functype])
+    else if ruleno = // F W W is W P // 6 
+    then bindinfo(dict 
+    , code.result.subtrees_4 + code.result.subtrees_2 + @(+, cvttotext,"", types.result.subtrees_5)
+    , types.result.subtrees_5)
+    else if ruleno = // F W T // 7 
+    then result.subtrees_2 
+    else if ruleno = // FP P // 8 
+    then bindinfo(@(addparameter(cardinality.dict, input, place), identity, dict, types.result.subtrees_1)
+    ,""
+    , types.result.subtrees_1)
+    else if ruleno = // P T // 9 
+    then bindinfo(dict,"", [ mytype(code.result.subtrees_1 +":")])
+    else if ruleno = // P P, T // 10 
+    then bindinfo(dict,"", types.result.subtrees_1 + [ mytype(code.result.subtrees_3 +":")])
+    else if ruleno = // P W:T // 11 
+    then bindinfo(dict,"", [ mytype(code.result.subtrees_3 + code.result.subtrees_1)])
+    else if ruleno = // P P, W:T // 12 
+    then bindinfo(dict,"", types.result.subtrees_1 + [ mytype(code.result.subtrees_5 + code.result.subtrees_3)])
+    else if ruleno = // E W // 13 
+    then 
+     let id = code.result.subtrees_1 
+     let f = lookupbysig(dict, id_1, empty:seq.mytype, input, place)
+      bindinfo(dict, [ mangledname.f], [ resulttype.f])
+    else if ruleno = // E N(L)// 14 
+    then unaryop(result.subtrees_1, result.subtrees_3, input, place)
+    else if ruleno = // E W(L)// 15 
+    then unaryop(result.subtrees_1, result.subtrees_3, input, place)
+    else if ruleno = // E(E)// 16 
+    then result.subtrees_2 
+    else if ruleno = // E { E } // 17 
+    then result.subtrees_2 
+    else if ruleno = // E if E then E else E // 18 
+    then 
+     let thenpart = result.subtrees_4 
+     assert(types.result.subtrees_2)_1 = mytype."boolean"
+     report errormessage("cond of if must be boolean", input, place)
+      assert types.result.subtrees_4 = types.result.subtrees_6 
+       report errormessage("then and else types are different", input, place)
+        let newcode = code.result.subtrees_2 + code.result.subtrees_4 + code.result.subtrees_6 
+          bindinfo(dict, newcode +"if", types.thenpart)
+    else if ruleno = // E E^E // 19 
+    then opaction(subtrees, input, place)
+    else if ruleno = // E E_E // 20 
+    then opaction(subtrees, input, place)
+    else if ruleno = // E-E // 21 
+    then unaryop(result.subtrees_1, result.subtrees_2, input, place)
+    else if ruleno = // E W.E // 22 
+    then unaryop(result.subtrees_1, result.subtrees_3, input, place)
+    else if ruleno = // E N.E // 23 
+    then unaryop(result.subtrees_1, result.subtrees_3, input, place)
+    else if ruleno = // E E * E // 24 
+    then opaction(subtrees, input, place)
+    else if ruleno = // E E-E // 25 
+    then opaction(subtrees, input, place)
+    else if ruleno = // E E = E // 26 
+    then opaction(subtrees, input, place)
+    else if ruleno = // E E > E // 27 
+    then opaction(subtrees, input, place)
+    else if ruleno = // E E ∧ E // 28 
+    then opaction(subtrees, input, place)
+    else if ruleno = // E E ∨ E // 29 
+    then opaction(subtrees, input, place)
+    else if ruleno = // L E // 30 
+    then result.subtrees_1 
+    else if ruleno = // L L, E // 31 
+    then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_1 + types.result.subtrees_3)
+    else if ruleno = // E [ L]// 32 
+    then 
+     let types = types.result.subtrees_2 
+     assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place)
+      bindinfo(dict 
+      ,"LIT 0 LIT"+ toword.length.types + code.result.subtrees_2 +"RECORD"+ toword(length.types + 2)
+      , [ mytype(towords.types_1 +"seq")])
+    else if ruleno = // A let W = E // 33 
+    then 
+     let e = result.subtrees_4 
+     let name =(code.result.subtrees_2)_1 
+     assert isempty.lookup(dict, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place)
+      let newdict = dict + symbol(name, mytype."local", empty:seq.mytype,(types.e)_1,"")
+        bindinfo(newdict, code.e +"define"+ name, types.e)
+    else if ruleno = // E A E // 34 
+    then 
+     let t = code.result.subtrees_1 
+     let f = lookup(dict, last.code.result.subtrees_1, empty:seq.mytype)
+     assert not.isempty.f 
+     report"internal error/could not find local symbol to delete from dict with name"+ last.code.result.subtrees_1 
+      bindinfo(dict.result.subtrees_1 - f_1 
+      , subseq(t, 1, length.t - 2)+ code.result.subtrees_2 +"SET"+ last.code.result.subtrees_1 
+      , types.result.subtrees_2)
+    else if ruleno = // E assert E report E E // 35 
+    then 
+     assert(types.result.subtrees_2)_1 = mytype."boolean"
+     report errormessage("condition in assert must be boolean in:", input, place)
+      assert(types.result.subtrees_4)_1 = mytype."word seq"
+       report errormessage("report in assert must be seq of word in:", input, place)
+        let newcode = code.result.subtrees_2 + code.result.subtrees_5 + code.result.subtrees_4 +"assertZbuiltinZwordzseq if"
+          bindinfo(dict, newcode, types.result.subtrees_5)
+    else if ruleno = // E I // 36 
+    then result.subtrees_1 
+    else if ruleno = // E I.I // 37 
+    then 
+     let d = decodeword.(code.result.subtrees_3)_2 
+      bindinfo(dict 
+      ,"LIT"+ [ encodeword(decodeword.(code.result.subtrees_1)_2 + d)]+"LIT"+ countdigits(d, 1, 0)
+      +"makerealZrealZintZint"
+      , [ mytype."real"])
+    else if ruleno = // T W // 38 
+    then result.subtrees_1 
+    else if ruleno = // T W.T // 39 
+    then bindinfo(dict, code.result.subtrees_3 + code.result.subtrees_1, types.result.subtrees_1)
+    else if ruleno = // E W:T // 40 
+    then 
+     let f = lookup(dict, merge(code.result.subtrees_1 +":"+ print.mytype.code.result.subtrees_3), empty:seq.mytype)
+     assert not.isempty.f 
+     report errormessage("cannot find"+ code.result.subtrees_1 +":"+ print.mytype.code.result.subtrees_3, input, place)
+      bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])
+    else if ruleno = // E $wordlist // 41 
+    then 
+     let s = code.result.subtrees_1 
+      bindinfo(dict,"WORDS"+ toword.length.s + s, [ mytype."word seq"])
+    else if ruleno = // E comment E // 42 
+    then 
+     let s = code.result.subtrees_1 
+      bindinfo(dict, code.result.subtrees_2 +"COMMENT"+ toword.length.s + s, types.result.subtrees_2)
+    else if ruleno = // N_// 43 
+    then result.subtrees_1 
+    else if ruleno = // N-// 44 
+    then result.subtrees_1 
+    else if ruleno = // N = // 45 
+    then result.subtrees_1 
+    else if ruleno = // N > // 46 
+    then result.subtrees_1 
+    else if ruleno = // N * // 47 
+    then result.subtrees_1 
+    else if ruleno = // N ∧ // 48 
+    then result.subtrees_1 
+    else if ruleno = // N ∨ // 49 
+    then result.subtrees_1 
+    else if ruleno = // K W.E // 50 
+    then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)
+    else if ruleno = // K N.E // 51 
+    then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)
+    else if ruleno = // K N(L)// 52 
+    then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)
+    else if ruleno = // K W(L)// 53 
+    then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)
+    else if ruleno = // K N // 54 
+    then bindinfo(dict, code.result.subtrees_1, empty:seq.mytype)
+    else if ruleno = // K W // 55 
+    then bindinfo(dict, code.result.subtrees_1, empty:seq.mytype)
+    else 
+     assert ruleno = // E @(K, K, E, E)// 56 report"invalid rule number"+ toword.ruleno 
+      apply(result.subtrees_3, result.subtrees_5, result.subtrees_7, result.subtrees_9, input, place)
+   let leftsidetoken = [ 32, 33, 33, 33, 33, 33, 33, 40, 35, 35 
+   , 35, 35, 31, 31, 31, 31, 31, 31, 31, 31 
+   , 31, 31, 31, 31, 31, 31, 31, 31, 31, 37 
+   , 37, 31, 30, 31, 31, 31, 31, 17, 17, 31 
+   , 31, 31, 36, 36, 36, 36, 36, 36, 36, 39 
+   , 39, 39, 39, 39, 39, 31]
+   _ruleno 
+   let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)
+   assert actioncode > 0 report"????"
+    push(newstk, stkele(actioncode, newtree))
 
