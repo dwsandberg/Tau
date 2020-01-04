@@ -133,9 +133,8 @@ use textio
 Function replaceT(with:mytype, s:symbol)symbol 
  let newmodname = replaceT(with, modname.s)
   let newparas = @(+, replaceT.with, empty:seq.mytype, paratypes.s)
-  let n = if length.paratypes.s > 0 
-   then name.s 
-   else let x = decodeword.name.s 
+    let x = decodeword.name.s 
+  let n =
    if subseq(x, length.x - 1, length.x)= //.T // [ char(46), char(84)]
    then merge([ encodeword.subseq(x, 1, length.x - 1)]+ print.with)
    else name.s 

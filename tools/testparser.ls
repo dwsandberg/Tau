@@ -1,6 +1,10 @@
+#!/usr/local/bin/tau
+
 Module testparser
 
 * Example of LR1 parser. 
+
+/run testparser gentestgrammar
 
 run testparser testparser
 
@@ -26,7 +30,7 @@ Function gentestgrammar seq.word
    , ["E 2","2"]
    , ["E 3","3"]
    , ["E E + E","$_1 + $_3"]]
-    lr1parser(testgrammar, empty:seq.seq.word)
+    lr1parser(testgrammar, empty:seq.seq.word,"F # + 1 E 3 G 2" )
 
 type stepresult is record stk:stack.stkele, place:int, track:seq.word, tokenstate:int, string:seq.word
 
@@ -69,52 +73,54 @@ Function parse(input:seq.word)seq.word
 
 Below is generated from parser generator.
 
-function tokenlist seq.word"1 + 2 3 # E G F"
 
-function startstate int 1
+noactions 20 
+nosymbols:8 alphabet:F # + 1 E 3 G 2 
+norules 6 
+nostate 9 
+follow F > # + > 1 + > E + > 3 + > 2 1 > # 1 > + E > # E > + 3 > # 3 > + 2 > # 2 > + 
 
-function actiontable seq.int [ 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 
-  , 3, 4, 0, 5, 0, 6, 0,-3, 0, 0 
-  ,-3, 0, 0, 0, 0,-4, 0, 0,-4, 0 
-  , 0, 0, 0,-5, 0, 0,-5, 0, 0, 0 
-  , 0, 7, 0, 0,-2, 0, 0, 0, 0, 0 
-  , 0, 0, 8, 0, 0, 0, 2, 0, 3, 4 
-  , 0, 9, 0, 0, 0, 0, 0, 0, 0, 0 
-  , 0, 0, 0, 7, 0, 0,-6]
+function tokenlist seq.word"F # + 1 E 3 G 2" 
 
-function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.stkele 
-  // generated function // 
-  let rulelen = [ 2, 1, 1, 1, 1, 3]_ruleno 
-   let newstk = pop(stk, rulelen)
-   let subtrees = top(stk, rulelen)
-   let dict = dict.result(top.stk)
-   let newtree = 
-    if ruleno = // G F # // 1 
-    then result(subtrees_1)
-    else if ruleno = // F E // 2 
-    then result(subtrees_1)
-    else if ruleno = // E 1 // 3 
-    then 1 
-    else if ruleno = // E 2 // 4 
-    then 2 
-    else if ruleno = // E 3 // 5 
-    then 3 
-    else 
-     assert ruleno = // E E + E // 6 report"invalid rule number"+ toword.ruleno 
-      result(subtrees_1)+ result(subtrees_3)
-   let leftsidetoken = [ 7, 8, 6, 6, 6, 6]_ruleno 
-   let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno(top.newstk))
-   assert actioncode > 0 report"??"
-    push(newstk, stkele(actioncode, newtree))
+function startstate int 1 
 
-function printstate(stateno:int)seq.word ["E ' 1 | E ' 2 | E ' 3 | E ' E + E | G ' F # | F ' E"
-  ,"E 1 '"
-  ,"E 2 '"
-  ,"E 3 '"
-  ,"E E ' + E | F E '"
-  ,"G F ' #"
-  ,"E ' 1 | E ' 2 | E ' 3 | E ' E + E | E E + ' E"
-  ,"G F # '"
-  ,"E E ' + E | E E + E '"]
-  _stateno
+function actiontable seq.int [ 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 3, 4, 5, 0, 6, 0, 7, 0, 0, 0, 0, 0, 0, 0, -3, -3, 0, 0, 0, 0, 0, 0, -2, 8, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -4, -4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 9, 5, 0, 6, 0, -6, 8] 
 
+function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.stkele // generated function // 
+let rulelen = [ 2, 1, 1, 1, 1, 3]_ruleno 
+let newstk = pop(stk, rulelen) 
+let subtrees = top(stk, rulelen) 
+let dict = dict.result.top.stk 
+let newtree = 
+if ruleno = // G F # // 1 then result.subtrees_1 else 
+if ruleno = // F E // 2 then result.subtrees_1 else 
+if ruleno = // E 1 // 3 then 1 else 
+if ruleno = // E 2 // 4 then 2 else 
+if ruleno = // E 3 // 5 then 3 else 
+assert ruleno = // E E + E // 6 report"invalid rule number"+ toword.ruleno 
+result.subtrees_1 + result.subtrees_3 
+let leftsidetoken = [ 7, 1, 5, 5, 5, 5]_ruleno 
+let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk) 
+assert actioncode > 0 report"????" 
+push(newstk, stkele(actioncode, newtree)) 
+
+function printstate(stateno:int)seq.word 
+[ 
+"F ' E | E ' 1 | E ' E + E | E ' 3 | E ' 2 | G ' F # 
+", 
+"G F ' # 
+", 
+"E 1 ' 
+", 
+"F E ' | E E ' + E 
+", 
+"E 3 ' 
+", 
+"E 2 ' 
+", 
+"G F # ' 
+", 
+"E ' 1 | E ' E + E | E E + ' E | E ' 3 | E ' 2 
+", 
+"E E ' + E | E E + E ' 
+"]_stateno

@@ -1,18 +1,16 @@
+#!/usr/local/bin/tau
+
 Module genLR1
 
-A paragraph of just a single word function crashes the compiler
 
 run genLR1 gentau2
 
-skip A
 
-run tauparser test2
 
-use encoding.set.ipair.seq.word
+use encoding.set.dottedrule
 
 use graph.word
 
-use ipair.seq.word
 
 use oseq.int
 
@@ -26,39 +24,50 @@ use seq.arc.word
 
 use seq.int
 
-use seq.ipair.seq.word
+use seq.dottedrule
 
 use seq.seq.seq.word
 
 use seq.seq.word
 
-use seq.set.ipair.seq.word
+use seq.set.dottedrule
 
 use seq.word
 
 use set.arc.word
 
-use set.ipair.seq.word
+use set.dottedrule
 
 use set.word
 
 use stdlib
 
-type estate is encoding set.ipair.seq.word
+type estate is encoding state
+
+type state is record toset:set.dottedrule,index:int
+
+function state(a:set.dottedrule) state state(a,0)
+
+type  dottedrule is record place:int,rule:seq.word
+
+Function addindex(d:state,i:int) state state(toset.d,i)
+
 
 type action is record stateno:int, lookahead:word, codedaction:int
 
 type grammarinfo is record grammar:seq.seq.word, follow:graph.word, ruleprec:seq.seq.word
 
-function =(a:ipair.seq.word, b:ipair.seq.word)boolean value.a = value.b ∧ index.a = index.b
+function =(a:state,b:state) boolean toset.a=toset.b
 
-function ?(a:ipair.seq.word, b:ipair.seq.word)ordering value.a ? value.b ∧ index.a ? index.b
+function =(a:dottedrule, b:dottedrule)boolean rule.a = rule.b ∧ place.a = place.b
 
-function hash(p:ipair.seq.word)int hash(value.p)+ index.p
+function ?(a:dottedrule, b:dottedrule)ordering rule.a ? rule.b ∧ place.a ? place.b
+
+function hash(p:dottedrule)int hash(rule.p)+ place.p
 
 function =(a:action, b:action)boolean lookahead.a = lookahead.b ∧ stateno.a = stateno.b
 
-function hash(s:set.ipair.seq.word)int hash((toseq.s)_1)
+function hash(s:state)int hash((toseq.toset.s)_1)
 
 function backarc(tail:word, head:word)arc.word arc(head, tail)
 
@@ -83,15 +92,16 @@ function ruleno(grammar:seq.seq.word, rule:seq.word)int
    assert ruleno ≤ length.grammar report"rule not found"+ rule 
     ruleno
 
-function state(stateno:int)set.ipair.seq.word if stateno = 0 then empty:set.ipair.seq.word else(mapping.estate)_stateno
+function state(stateno:int)state if stateno = 0 then state(empty:set.dottedrule) else (orderadded.estate)_stateno
+ 
 
 function shift(stateno:int, lookahead:word, newstateno:int)action action(stateno, lookahead, newstateno)
 
 function reduce(stateno:int, lookahead:word, ruleno:int)action action(stateno, lookahead,-ruleno)
 
-function getaction(ruleprec:seq.seq.word, grammar:seq.seq.word, state:set.ipair.seq.word, stateno:int, reductions:seq.seq.word, lookahead:word)action 
-   let newstate = advance(grammar, state, lookahead)
-   let newstateno = if not(isempty.newstate)then valueofencoding.encode(newstate, estate)else 0 
+function getaction(ruleprec:seq.seq.word, grammar:seq.seq.word, state:state, stateno:int, reductions:seq.seq.word, lookahead:word)action 
+   let newstate = advance(grammar, toset.state, lookahead)
+   let newstateno = if not(isempty.newstate)then findindex(state(newstate), estate)else 0 
     if length.reductions = 0 ∧ newstateno ≠ 0 
      then shift(stateno, lookahead, newstateno)
      else if length.reductions = 1 ∧ newstateno = 0 
@@ -118,7 +128,8 @@ function printstate(stateno:int)seq.word [ toword.stateno]
 
 function alphabet(grammar:seq.seq.word)seq.word toseq(asset.@(+, identity,"", grammar))
 
-function addaction(alphabet:seq.word, table:seq.int, a:action)seq.int replace(table, findindex(lookahead.a, alphabet)+ length.alphabet * stateno.a, codedaction.a)
+function addaction(alphabet:seq.word, table:seq.int, a:action)seq.int 
+replace(table, findindex(lookahead.a, alphabet)+ length.alphabet * stateno.a, codedaction.a)
 
 function first(a:seq.seq.word)seq.word a_1
 
@@ -126,39 +137,42 @@ function first(a:seq.word)word a_1
 
 function tosubstate(state:seq.seq.word, rule:seq.word)seq.seq.word if rule in state then [ rule]else empty:seq.seq.word
 
-function print(p:ipair.seq.word)seq.word subseq(value.p, 1, index.p - 1)+"'"+ subseq(value.p, index.p, length(value.p))
+function print(p:dottedrule)seq.word subseq(rule.p, 1, place.p - 1)+"'"+ subseq(rule.p, place.p, length(rule.p))
 
-function print(s:set.ipair.seq.word)seq.word"&br &quot"+ @(seperator("|"), print,"", toseq.s)+"&br &quot"
+function print(s:state)seq.word"&br &quot"+ @(seperator("|"), print,"", toseq.toset.s)+"&br &quot"
 
-Function initialstate(grammar:seq.seq.word)set.ipair.seq.word close(grammar, asset.[ ipair(2,"G F #")])
+Function initialstate(grammar:seq.seq.word)set.dottedrule close(grammar, asset.[ dottedrule(2,"G F #")])
 
-function close(g:seq.seq.word, s:set.ipair.seq.word)set.ipair.seq.word 
+function close(g:seq.seq.word, s:set.dottedrule)set.dottedrule 
    let newset = @(∪, close(g), s, toseq.s)
     if s = newset then s else close(g, newset)
 
-function close(g:seq.seq.word, p:ipair.seq.word)set.ipair.seq.word 
-   if index.p > length(value.p)
-   then empty:set.ipair.seq.word 
-   else asset.@(+, startswith((value.p)_(index.p)), empty:seq.ipair.seq.word, g)
+function close(g:seq.seq.word, p:dottedrule)set.dottedrule 
+   if place.p > length(rule.p)
+   then empty:set.dottedrule 
+   else asset.@(+, startswith((rule.p)_(place.p)), empty:seq.dottedrule, g)
 
-function startswith(first:word, x:seq.word)seq.ipair.seq.word if x_1 = first then [ ipair(2, x)]else empty:seq.ipair.seq.word
+function startswith(first:word, x:seq.word)seq.dottedrule if x_1 = first then [ dottedrule(2, x)]else empty:seq.dottedrule
 
-function advance(g:seq.seq.word, state:set.ipair.seq.word, next:word)set.ipair.seq.word close(g, asset.@(+, advance(next), empty:seq.ipair.seq.word, toseq.state))
+function advance(g:seq.seq.word, state:set.dottedrule, next:word)set.dottedrule 
+close(g, asset.@(+, advance(next), empty:seq.dottedrule, toseq.state))
 
-function advance(next:word, p:ipair.seq.word)seq.ipair.seq.word if index.p ≤ length(value.p)∧(value.p)_(index.p)= next then [ ipair(index.p + 1, value.p)]else empty:seq.ipair.seq.word
+function advance(next:word, p:dottedrule)seq.dottedrule 
+if place.p ≤ length(rule.p)∧(rule.p)_(place.p)= next then [ dottedrule(place.p + 1, rule.p)]else empty:seq.dottedrule
 
-function finished(p:ipair.seq.word)seq.seq.word if index.p = length(value.p)+ 1 then [ value.p]else empty:seq.seq.word
+function finished(p:dottedrule)seq.seq.word if place.p = length(rule.p)+ 1 then [ rule.p]else empty:seq.seq.word
 
-function finished(s:set.ipair.seq.word)seq.seq.word @(+, finished, empty:seq.seq.word, toseq.s)
+function finished(s:state)seq.seq.word @(+, finished, empty:seq.seq.word, toseq.toset.s)
 
-function shifts(p:ipair.seq.word)seq.word if index.p = length(value.p)+ 1 then empty:seq.word else [(value.p)_(index.p)]
+function shifts(p:dottedrule)seq.word if place.p = length(rule.p)+ 1 then empty:seq.word else [(rule.p)_(place.p)]
 
-function shifts(s:set.ipair.seq.word)seq.word toseq(asset.@(+, shifts, empty:seq.word, toseq.s))
+function shifts(s:state)seq.word toseq(asset.@(+, shifts, empty:seq.word, toseq.toset.s))
 
-Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word)seq.word 
+Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word,alphabet:seq.word)seq.word 
    let grammar2 = @(+, first, empty:seq.seq.word, grammarandact)
-   let initialstateno = valueofencoding.encode(initialstate.grammar2, estate)
-   let alphabet = alphabet.grammar2 
+   let initialstateno = findindex(state(initialstate.grammar2), estate)
+   let missingsymbols= asset.alphabet - asset.alphabet.grammar2
+   assert isempty.missingsymbols report "Symbols not included in alphabet"+toseq.missingsymbols
    let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
    let actions = closestate(graminfo, 1, empty:seq.action)
    let amb = @(+, isambiguous,"", actions)
@@ -171,7 +185,7 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word)seq.wor
     +"&br norules"
     + toword(length.grammarandact)
     +"&br nostate"
-    + toword.length(mapping.estate)
+    + toword.length(orderadded.estate)
     +"&br follow"
     + @(+, print,"", toseq.arcs(follow.graminfo))
     +(
@@ -184,15 +198,17 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word)seq.wor
       +"&br &br"
       + generatereduce(grammarandact, alphabet)
       +"&br &br function printstate(stateno:int)seq.word &br ["
-      + @(seperator(","), print,"", mapping.estate)
+      + @(seperator(","), print,"", orderadded.estate)
       +"]_stateno")
+      
+use seq.state
 
 function isambiguous(a:action)seq.word if codedaction.a = 0 then"&br"+ toword(stateno.a)+ lookahead.a else""
 
 function print(a:arc.word)seq.word [ tail.a]+">"+ head.a
 
 function closestate(graminfo:grammarinfo, stateno:int, result:seq.action)seq.action 
-   let m = mapping.estate 
+   let m = orderadded.estate 
     if stateno > length.m 
      then result 
      else 
@@ -227,7 +243,9 @@ function reduceline(grammerandact:seq.seq.seq.word, i:int)seq.word
      else"&br if ruleno = //"+ s_1 +"//"+ toword.i +"then"+ @(+, replace$,"", s_2)
      +"else"
 
-Function gentau2 seq.word // used to generater tau parser for Pass1 of the tau compiler. // lr1parser(taurules2, tauruleprec)
+Function gentau2 seq.word // used to generater tau parser for Pass1 of the tau compiler. // 
+lr1parser(taurules2, tauruleprec,".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP"
+)
 
 function tauruleprec seq.seq.word ["E E_E"
   ,"_"
@@ -250,14 +268,13 @@ function tauruleprec seq.seq.word ["E E_E"
   ,"∨"]
 
 function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
-  , ["F W W(FP)T E"
-  ,"let functype = code.$_6 let exptype = types.$_7 assert mytype.functype = exptype_1 &or exptype_1 = mytype.&quot internal &quot report errormessage(&quot function type of &quot + print.mytype.functype + &quot does not match expression type &quot + print.exptype_1, input, place)bindinfo(dict, code.$_7, [ mytype.code.$_2, mytype.functype]+ types.$_4)"]
-  , ["F W N(FP)T E"
-  ,"let functype = code.$_6 let exptype = types.$_7 assert mytype.functype = exptype_1 &or exptype_1 = mytype.&quot internal &quot report errormessage(&quot function type of &quot + print.mytype.functype + &quot does not match expression type &quot + print.exptype_1, input, place)bindinfo(dict, code.$_7, [ mytype.code.$_2, mytype.functype]+ types.$_4)"]
-  , ["F W W T E"
-  ,"let functype = code.$_3 let exptype = types.$_4 assert mytype.functype = exptype_1 &or exptype_1 = mytype.&quot internal &quot report errormessage(&quot function type of &quot + print.mytype.functype + &quot does not match expression type &quot + print.exptype_1, input, place)bindinfo(dict, code.$_4, [ mytype.code.$_2, mytype.functype])"]
-  , ["F W W:T E"
-  ,"let functype = code.$_4 let exptype = types.$_5 assert mytype.functype = exptype_1 &or exptype_1 = mytype.&quot internal &quot report errormessage(&quot function type of &quot + print.mytype.functype + &quot does not match expression type &quot + print.exptype_1, input, place)bindinfo(dict, code.$_5, [ mytype.[ merge(code.$_2 + &quot:&quot + print.mytype.functype)], mytype.functype])"]
+   ,   [" F W W(FP)T E " ,  " createfunc(dict,code.$_2,types.$_4,mytype.code.$_6 ,  $_7,input,place)
+   " ],[" F W N(FP)T E ",  "  createfunc(dict,code.$_2,types.$_4,mytype.code.$_6 , $_7,input,place)
+   " ],[" F W W T E " ,    "  createfunc(dict,code.$_2,empty:seq.mytype,mytype.code.$_3 ,$_4,input,place)
+   " ],[" F W W:T T E " ,  "    let name=[ merge(code.$_2 + &quot:&quot + print.mytype.code.$_4 )]
+        createfunc(dict,name,empty:seq.mytype,mytype.code.$_5 , $_6,input,place) "]
+  ,[" F W W:T(FP) T E " ,  "    let name=[ merge(code.$_2 + &quot:&quot + print.mytype.code.$_4 )]
+        createfunc(dict,name,types.$_6,mytype.code.$_8 , $_9,input,place) "]
   , ["F W W is W P"
   ,"bindinfo(dict, code.$_4 + code.$_2 + @(+, cvttotext, &quot &quot, types.$_5), types.$_5)"]
   , ["F W T","$_2"]
@@ -272,17 +289,18 @@ function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
   let f = lookupbysig(dict, id_1, empty:seq.mytype, input, place)
       bindinfo(dict, [ mangledname.f], [ resulttype.f])
 "]
-  , ["E N(L)","unaryop($_1, $_3, input, place)"]
-  , ["E W(L)","unaryop($_1, $_3, input, place)"]
+  , ["E N(L)","unaryop(dict,code.$_1, $_3, input, place)"]
+  , ["E W(L)","unaryop(dict,code.$_1, $_3, input, place)"]
+  , ["E W:T(L)","let name=[ merge(code.$_1 + &quot:&quot + print.mytype.code.$_3 )] unaryop(dict,name, $_5, input, place)"]
   , ["E(E)","$_2"]
   , ["E { E }","$_2"]
   , ["E if E then E else E"
   ,"let thenpart = $_4 assert(types.$_2)_1 = mytype.&quot boolean &quot report errormessage(&quot cond of if must be boolean &quot, input, place)assert(types.$_4)=(types.$_6)report errormessage(&quot then and else types are different &quot, input, place)let newcode = code.$_2 + code.$_4 + code.$_6 bindinfo(dict, newcode + &quot if &quot, types.thenpart)"]
   , ["E E^E","opaction(subtrees, input, place)"]
   , ["E E_E","opaction(subtrees, input, place)"]
-  , ["E-E","unaryop($_1, $_2, input, place)"]
-  , ["E W.E","unaryop($_1, $_3, input, place)"]
-  , ["E N.E","unaryop($_1, $_3, input, place)"]
+  , ["E-E","unaryop(dict,code.$_1, $_2, input, place)"]
+  , ["E W.E","unaryop(dict,code.$_1, $_3, input, place)"]
+  , ["E N.E","unaryop(dict,code.$_1, $_3, input, place)"]
   , ["E E * E","opaction(subtrees, input, place)"]
   , ["E E-E","opaction(subtrees, input, place)"]
   , ["E E = E","opaction(subtrees, input, place)"]

@@ -22,7 +22,7 @@ Function toseq(a:bitpackedseq.T)seq.T export
 
 Function length(bitpackedseq.T)int export
 
-Function empty bitpackedseq.T bitpackedseq(0, empty:seq.T, bits.0)
+Function empty:bitpackedseq.T bitpackedseq.T bitpackedseq(0, empty:seq.T, bits.0)
 
 Function bitpackedseq2(len:int, d:seq.T, part:bits)seq.T toseq.bitpackedseq(len, d, part)
 

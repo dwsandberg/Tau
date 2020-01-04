@@ -8,7 +8,7 @@ use stdlib
 
 type set is record toseq:seq.T
 
-Function empty seq.T export
+Function empty:seq.T seq.T export
 
 Function +(seq.T, T)seq.T export
 
@@ -22,7 +22,7 @@ function ?(T, T)ordering unbound
 
 Function asset(s:seq.T)set.T set.@(setinsert, identity, empty:seq.T, s)
 
-Function empty set.T set.empty:seq.T
+Function empty:set.T set.T set.empty:seq.T
 
 Function +(s:set.T, val:T)set.T set.setinsert(toseq.s, val)
 

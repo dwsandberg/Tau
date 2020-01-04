@@ -3,10 +3,10 @@
 Module stdlib 
 
 Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates cvttoinst deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 opt2 oseq packedseq parse pass1 pass2 persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash 
- uses 
+ timestamp uses 
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  oseq packedseq   process real reconstruct seq set stack stacktrace 
- stdlib  textio tree prims symbol
+ stdlib  textio tree prims symbol timestamp
 
 
 use UTF8
@@ -239,8 +239,6 @@ function addrandom(s:seq.int, i:int)seq.int s + pseudorandom(s_length.s)
 
 Function randomseq(seed:int, length:int)seq.int @(addrandom, identity, [ seed], constantseq(length - 1, 1))
 
-/Function randombytes(i:int)seq.int builtin.usemangle
-
 Function randomint(i:int)seq.int builtin.usemangle
 
 Function lines(a:seq.word, b:seq.word)seq.word a + EOL + b
@@ -252,11 +250,11 @@ Function seperator(sep:seq.word, s:seq.word, w:word)seq.word
  // Good for adding commas in seq of words. @(seperator(",", toword,"", [ 1, 2, 3])// 
   if length.s = 0 then [ w]else s + sep + w
 
-Function empty:seq.seq.word export
+Function empty:seq.seq.word seq.seq.word  export
 
-Function empty:seq.word export
+Function empty:seq.word  seq.word export
 
-Function empty:seq.int export
+Function empty:seq.int  seq.int export
 
 Function arithseq(int, int, int)seq.int export
 

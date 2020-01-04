@@ -153,6 +153,9 @@ Function findencode(t:T, erec:erecord.T)seq.T
   @(+, ele5.t, empty:seq.T, encodetable(inst)_(hash.t mod length.encodetable.inst + 1))
 
 Function findindex(t:T, erec:erecord.T)int 
+ // works if type T has a integer field named index and a function setindex is defined to set the index value.  
+ If t is not in encoding will assign index to one plus current encoding size. If t is in the encoding it will return the index value.
+ //
  let inst = getinstance.erec 
   let a = @(+, ele5.t, empty:seq.T, encodetable(inst)_(hash.t mod length.encodetable.inst + 1))
   if length.a = 0 

@@ -49,7 +49,7 @@ Function sizeinbits(a:bit)int 1
 
 Function tobits(a:bit)bits bits.toint.a
 
-Function frombits(a:bits,null.bit)bit bit.toint.a
+Function frombits(a:bits,null:null.bit)bit bit.toint.a
 
 
 _________________

@@ -8,7 +8,7 @@ setfld set value at a to x and return next address
 
 Function setfld(a:address.T, x:T)address.T builtin.STATE.usemangle
 
-function allocatespace(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZint"
+function allocatespace:seq.T(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZint"
 
 type address is record toseq:seq.T
 
@@ -17,7 +17,7 @@ Function getaddress(s:seq.T, i:int)address.T
 
 Function toT(a:address.T)T builtin."PARAM 1"
 
-function inttoT(int)T builtin."PARAM 1"
+function inttoT:T(int)T builtin."PARAM 1"
 
 function fldof(T, offset:int)T builtin.IDXUC
 
@@ -36,8 +36,8 @@ Function_(a:packedseq.T, i:int)T
 Function packed(s:seq.T)seq.T 
  let ds = sizeoftype:T 
   let typ = if ds = 1 then 0 else getfld(packedseq(length.s, empty:seq.T), 0)
-  let b = allocatespace(ds * length.s + 2)
-  let address1stelement = setfld(setfld(getaddress(b, 0), inttoT.typ), inttoT.length.s)
+  let b = allocatespace:seq.T(ds * length.s + 2)
+  let address1stelement = setfld(setfld(getaddress(b, 0), inttoT:T(typ)), inttoT:T(length.s))
   let d = if ds = 1 
    then let g = @(setfld, identity, address1stelement, s)
     0 

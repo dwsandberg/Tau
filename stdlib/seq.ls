@@ -32,7 +32,7 @@ function getseqtype(a:seq.T, offset:int)int builtin.IDXUC
 
 Function length(a:seq.T)int export
 
-Function empty seq.T builtin."LIT 0 LIT 0 RECORD 2"
+Function empty:seq.T seq.T builtin."LIT 0 LIT 0 RECORD 2"
 
 Function =(a:seq.T, b:seq.T)boolean 
  if length.a = length.b then subequal(a, b, length.a)else false
@@ -228,4 +228,4 @@ _______________
 
 type null  is record dummy:T
 
-Function null   null.T  builtin."LIT 0  RECORD 1 "
+Function null:null.T   null.T  builtin."LIT 0  RECORD 1 "

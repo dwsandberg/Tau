@@ -467,6 +467,18 @@ function definefld(src:seq.word, modname:mytype, t:seq.mytype, m:mytype)symbol
 
 function switch seq.word {"encodingstate"}
 
+use seq.char
+
+function hasT (s:seq.word,i:int) boolean
+  // used to determine it type T is specified somewhere in function sig //
+  if s_(i+1) in ":." then // s_i is name // hasT(s,i+2)
+  else // at end of type // if s_i="T"_1 then  true
+  else  if s_(i+1)  in ",(" then 
+     hasT(s,i+2)
+  else // at end of parameter list or beginning of function type // 
+      false
+
+
 function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass 
  // assert print.modname.f in ["?","stdlib","UTF8","altgen"]∨(print.modname.f ="bitpackedseq.T"∧ cardinality.defines.f + cardinality.unbound.f < 8)report print.modname.f + printdict.unbound.f // 
   if length.input = 0 
@@ -497,14 +509,14 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
   then let t = parse(stubdict, getheader.input)
    let name = funcname.t 
    let paratypes = funcparametertypes.t 
-   let n = if iscomplex.modname.f ∧ length.paratypes = 0 
-    then merge([ name]+":"+ print.funcreturntype.t)
-    else name 
+   assert  iscomplex.modname.f=hasT(input,2) report
+      "Must use type T in function name or parameters in  parameterized module and T cannot be used in non-parameterized module"
+       +getheader.input
    let firstinstruction = code(t)_1 
    if firstinstruction ="usemangleZtest"_1 
-   then let sym = symbol(n, mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t, input)
+   then let sym = symbol(name, mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t, input)
     firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
-   else let sym = symbol(n, modname.f, paratypes, funcreturntype.t, input)
+   else let sym = symbol(name, modname.f, paratypes, funcreturntype.t, input)
    if"exportZtest"_1 = firstinstruction 
    then firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, exportmodule.f, rawsrc.f)
    else if"unboundZtest"_1 = firstinstruction 

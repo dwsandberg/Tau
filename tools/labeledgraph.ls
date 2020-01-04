@@ -20,7 +20,7 @@ Function backarcs(labeledgraph.T)T export
 
 Function nodes(labeledgraph.T)T export
 
-Function empty labeledgraph.T labeledgraph(empty:set.T, empty:set.T, empty:set.T)
+Function empty:labeledgraph.T labeledgraph.T labeledgraph(empty:set.T, empty:set.T, empty:set.T)
 
 Function +(g:labeledgraph.T, a:T)labeledgraph.T labeledgraph(arcs.g + a, backarcs.g + reverse.a, nodes.g + tonode.a + tonode(reverse.a))
 

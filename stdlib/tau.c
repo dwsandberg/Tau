@@ -15,6 +15,8 @@
 #include <sys/stat.h>
 #include <strings.h>
 #include <signal.h>
+#include <time.h>
+
 
 void assert(int b,char *message);
 
@@ -902,7 +904,12 @@ BT getmachineinfoZbuiltin(processinfo PD)
    return a;
  }
 
-
+BT currenttimeZbuiltin() { 
+     BT T1970=210866716800;
+     time_t seconds;
+     seconds = time(NULL);
+     return T1970+seconds;
+}
 
 
 

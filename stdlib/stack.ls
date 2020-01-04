@@ -22,7 +22,7 @@ Function pop(f:stack.T)stack.T
  assert length.toseq.f > 0 report"stack underflow"
   stack.subseq(toseq.f, 1, length.toseq.f - 1)
 
-Function empty stack.T stack.empty:seq.T
+Function empty:stack.T stack.T stack.empty:seq.T
 
 Function stack(t:T)stack.T stack.[ t]
 

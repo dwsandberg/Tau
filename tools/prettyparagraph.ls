@@ -37,9 +37,6 @@ function result(c:control, wrap:seq.word, seperator:seq.word, a:seq.prettyresult
     , if length.wrap > 1 then subseq(wrap, 1, length.wrap - 1)+ s + last.wrap else s)
 
 Function prettyparagraph(p:seq.word)seq.word 
-  // change so can remove explicit mention of PROFILE // 
-  // change to break up strings with EOL // 
-  // change to use right and left prec // 
   if length.p < 3 
    then p 
    else 

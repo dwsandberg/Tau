@@ -68,7 +68,7 @@ Function findlibclause(a:seq.seq.word, i:int)seq.word
 function gettext2(libname:word, e:seq.word, a:word)seq.seq.seq.word 
  @(+, identity, empty:seq.seq.seq.word, groupparagraphs("module Module", gettext.[ merge([ libname]+"/"+ a +".ls")]))
 
-/ function print2(l:libsym)seq.word // print.l +"mn:"+ //""+ fsig.l + instruction.l
+/function print2(l:libsym)seq.word // print.l +"mn:"+ //""+ fsig.l + instruction.l
 
 type libinfo is record known:symbolset, mods:seq.firstpass
 
@@ -107,7 +107,12 @@ function subcompilelib(libname:word)seq.word
   let intercode = pass2(symset.p1, toseq.roots.p1, known.li)
   let bc = codegen5(intercode, libname, liblib([ libname], libdesc(roots, intercode, mods, known2)))
   let z2 = createlib(bc, libname, dependentlibs)
+  let save=@(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1)
+  let name= merge("pass1/"+libname+"."+print.currenttime +".txt")
+  let z= createfile( [name],save)
   {"OK"}
+
+use timestamp
 
 Function compilelib2(libname:word)seq.word 
  PROFILE.let p1 = process.subcompilelib.libname 

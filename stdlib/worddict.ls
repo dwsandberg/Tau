@@ -12,7 +12,7 @@ type worddict is record keys:seq.word, data:seq.T
 
 Function data(worddict.T)seq.T export
 
-Function emptyworddict worddict.T worddict(empty:seq.word, empty:seq.T)
+Function emptyworddict:worddict.T worddict.T worddict(empty:seq.word, empty:seq.T)
 
 Function add(dict:worddict.T, w:word, d:T)worddict.T 
  let i = binarysearch(keys.dict, w)
