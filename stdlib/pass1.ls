@@ -398,7 +398,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
    then let down = codedown.mangledname 
     assert length(down_2)= 1 report"inX"+ print2.t1 
     resultpair(postbindtypes(dict, mytype(down_2), templates, knownsymbols, src, t1, org), [ mangledname])
-   else resultpair(knownsymbols, // if length.src = 2 ∧ src_1 ="LIT"_1 then src else // [ mangledname])
+   else resultpair(knownsymbols,  [ mangledname])
   else let down = codedown.mangledname 
   assert length.down > 1 report"LLLx"+ mangledname 
   let newmodname = replaceT(modpara, mytype(down_2))
@@ -423,6 +423,8 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
    else // Compile options // resultpair(knownsymbols, down_1)
   else let params = @(+, mytype, empty:seq.mytype, subseq(down, 3, length.down))
   let fullname = mangle(down_1_1, newmodname, params)
+ //  assert not(mangledname="frombits2Q3ATZTzbitpackedseqZbits"_1) 
+   report   [fullname]+print.newmodpara+@(seperator("&br"),print2,"",toseq.knownsymbols) //
   let t2 = lookupsymbol(knownsymbols, fullname)
   if fullname ≠ mangledname ∧ isdefined.t2 
   then // assert mangledname ="inZwordzseqzseqZTZTzseq"_1 report"ERR13"+ fullname + mangledname // 
@@ -438,13 +440,25 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
     then postbindtypes(dict, newmodpara, templates, knownsymbols + newsymbol, src.f, newsymbol, org)
     else postbind(dict, newmodpara, templates, knownsymbols + newsymbol, src.f, newsymbol, org)
    resultpair(a, [ fullname])
-  else let params2 = @(+, replaceT.modpara, empty:seq.mytype, params)
-  let k = lookup(dict, down_1_1, params2)
-  assert cardinality.k = 1 report"cannot find template for"+ down_1_1 +"("+ @(seperator.",", print,"", params2)+")while process"+ print.org 
+  else 
+  let params2 = @(+, replaceT.modpara, empty:seq.mytype, params)
+  let k2 = lookup(dict, down_1_1, params2)
+  let k=if cardinality.k2=0 then
+        // case for examples like "frombits:T(bits) T" which needs to find "frombits:bit(bits) bit //
+        // assert down_1_1 in [merge("frombits:T")] report [down_1_1] //
+       lookup(dict, replaceTinname(newmodpara,down_1_1), params2)
+      else
+        // often there is no T in the function name so a lookup assuming that is done first. //
+       k2
+  assert cardinality.k = 1 report"cannot find template  for"+
+  down_1_1 +"("+ @(seperator.",", print,"", params2)+")while process"+ print.org 
   assert mangledname ≠ mangledname(k_1)report"ERR12"+ mangledname + print2(k_1)
   if not.isdefined.lookupsymbol(knownsymbols, mangledname(k_1))
   then X(mangledname(k_1), org, dict, mytype."T", templates, knownsymbols)
   else resultpair(knownsymbols, [ mangledname(k_1)])
+  
+ 
+
 
 function roots(f:firstpass)seq.word 
  if exportmodule.f then @(+, mangledname,"", toseq.exports.f)else""

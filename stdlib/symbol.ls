@@ -128,18 +128,20 @@ Function printdict(s:set.symbol)seq.word @(+, print,"", toseq.s)
 Function print(s:symbol)seq.word 
  [ name.s]+"("+ @(seperator.",", print,"", paratypes.s)+")"+ print.resulttype.s +"module:"+ print.modname.s
  
-use textio
+use seq.seq.char
+
+Function replaceTinname(with:mytype,name:word) word
+   let x = decodeword.name
+   if subseq(x, length.x - 1, length.x) in [//.T // [ char(46), char(84)], // :T // [char(58),char(84)]]
+   then merge([ encodeword.subseq(x, 1, length.x - 1)]+ print.with)
+   else name
+
 
 Function replaceT(with:mytype, s:symbol)symbol 
  let newmodname = replaceT(with, modname.s)
   let newparas = @(+, replaceT.with, empty:seq.mytype, paratypes.s)
-    let x = decodeword.name.s 
-  let n =
-   if subseq(x, length.x - 1, length.x)= //.T // [ char(46), char(84)]
-   then merge([ encodeword.subseq(x, 1, length.x - 1)]+ print.with)
-   else name.s 
-  // assert n &ne merge("typedesc:tree.seq.word")report"ERR36a"+ n + name.s + print.newmodname // 
-  symbol(mangle(if towords.newmodname ="internal"then n else name.s, newmodname, paratypes.s), replaceT(with, resulttype.s), newparas, n, newmodname, src.s, codetree.s)
+  let n =replaceTinname(with,name.s)
+   symbol(mangle(if towords.newmodname ="internal"then n else name.s, newmodname, paratypes.s), replaceT(with, resulttype.s), newparas, n, newmodname, src.s, codetree.s)
 
 Function print2(s:symbol)seq.word print.s +"mn:"+ mangledname.s +"src"+ src.s
 

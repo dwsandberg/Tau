@@ -49,7 +49,9 @@ Function sizeinbits(a:bit)int 1
 
 Function tobits(a:bit)bits bits.toint.a
 
-Function frombits(a:bits,null:null.bit)bit bit.toint.a
+
+Function frombits:bit(a:bits)bit bit.toint.a
+
 
 
 _________________
@@ -61,7 +63,9 @@ Function sizeinbits(a:byte)int 8
 
 Function tobits(a:byte)bits bits.toint.a
 
-Function frombits(a:bits,null:null.byte)byte byte.toint.a
+
+Function frombits:byte(a:bits )byte byte.toint.a
+
 
 Function blockit(seq.int)seq.int export
 
@@ -112,4 +116,4 @@ Function addvbrsigned6(b:bitpackedseq.bit, val:int)bitpackedseq.bit
 Function align32(a:bitpackedseq.bit)bitpackedseq.bit 
  let k = length.a mod 32 
   if k = 0 then a else add(a, bits.0, 32 - k)
-
+  
