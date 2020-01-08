@@ -170,6 +170,8 @@ Function wordencoding erecord.wordencoding export
 
 type word is record bb:encoding.seq.char
 
+Function add(erecord.seq.char,seq.encodingrep.seq.char) int export
+
 
 Function encodeword(a:seq.char)word  word.encode(a, wordencoding)
 
@@ -338,6 +340,10 @@ Function ?(a:alphaword, b:alphaword)ordering
 Function towordseq(a:seq.alphaword)seq.word @(+, toword, empty:seq.word, a)
 
 Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
+
+Function ?(a:seq.alphaword, b: seq.alphaword)ordering export
+
+use seq.seq.alphaword
 
 Function alphasort(a:seq.seq.word)seq.seq.word 
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)

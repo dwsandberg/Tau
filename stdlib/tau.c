@@ -149,17 +149,14 @@ struct einfo * neweinfo(processinfo PD){
    return e;
 }
 
-
-
-
 /* cinfo describes the constant part of encoding description. This is info the compile gernerates and only one record is generated per encoding type.
 no is changed from 0 at runtime to an integer number of the encoding */
 struct cinfo{ BT (* copy) (processinfo,BT) ;
              BT (* look)(processinfo,BT,BT);
-             BT (*add)(processinfo,BT,BT,BT);
+             BT (*add)(processinfo,BT,BT);
              BT no; 
-             BT nameasword; BT persitant;
-             BT typeaswords;};
+             BT (*add2)(processinfo,BT,BT);
+            };
              
 struct einfo *staticencodings[noencodings];
 
@@ -173,29 +170,7 @@ if (ee->no==0){
     assert(encnum>1,"out of encoding numbers");
     assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
     }
- 
-   
-  if (ee->persitant ) {
-   struct einfo *e= staticencodings[ee->no];
-   if (e==0) {
-     assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-     e = neweinfo(&sharedspace );
-     staticencodings[ee->no]=e;
-     assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-        struct einfo *wordendcoding= (sharedspace.encodings[1]);
-    
-    BT data =decodeword(PD,ee->nameasword);
-    //BT data= IDX(NULL,encoded2(wordendcoding),ee->nameasword);
-    int i,len=SEQLEN(data) ;
-    char libname[100],*p=libname;
-    *p++='Q';
-    for (i=1; i <=len; i++) *(p++)=(char) (IDX(NULL,data,i));
-    *p++=0;
-   //  fprintf(stderr," global %s ",libname);
-     loadlibrary(&sharedspace,libname);
-    } 
-    return e;
- }  
+
  struct einfo *e= PD->encodings[ee->no];
  if (e==0) {
    if  ( PD->newencodings==0 && PD != &sharedspace) 
@@ -225,22 +200,28 @@ BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){
   r= (ee->look) (PD,P1,e->hashtable);
   if (r<=0) {// not found
    P1=  (ee->copy) (e->allocatein,P1);
-   e->hashtable=(ee->add)(e->allocatein,e->hashtable,ee->no,P1);
+   e->hashtable=(ee->add)(e->allocatein,e->hashtable,P1);
    r= (ee->look) (PD,P1,e->hashtable);
   }
 assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
 return r;
 }
+
+ BT addZbuiltinZTzerecordZTzencodingrepzseq(processinfo PD,BT P1,BT P2){  
+ struct einfo *e=startencoding(PD,P1)  ;
+ struct cinfo *ee = (struct cinfo *) P1;
+ assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+ P2=  (ee->copy) (e->allocatein,P2);
+ e->hashtable=(ee->add2)(e->allocatein,e->hashtable,P2);
+ assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+ return 0;
+} 
+
 // end of encoding support
-
-
-
 
 
 BT loaded[20]={0,0};
 char libnames[20][100];
-
-
 
 int looklibraryname(char* name) { int i;
   for(  i=0;i<loaded[1];i++){
@@ -269,9 +250,9 @@ BT unloadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){ return unloadlibZbui
 
 
 
-BT initlib5(char * libname,BT * words,BT * wordlist, BT * consts,BT  libdesc, BT *elementlist) {
+BT initlib5(char * libname, BT * consts,BT  libdesc) {
   // fprintf(stderr,"starting initlib4\n");
-  fprintf(stderr,"init Q%sQ\n",libname);
+  fprintf(stderr,"initlib5 %s\n",libname);
 if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
    fprintf(stderr,"init stdlib\n");
   /* only needed when initializing stdlib */
@@ -353,9 +334,6 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
       
 }
 
-
-
-
 extern BT  CLOCKPLUS (processinfo PD )
  {    BT   org=myalloc(PD,2);
      IDXUC(org,0)=clock();
@@ -384,9 +362,6 @@ void assert(int b,char *message){
     if (b ) return;
      fprintf(stderr,"\n%s\n",message);
     dumpstack();}
-
-
-
 
 
 static BT LIBFUNC(processinfo PD,BT F,BT P) {
@@ -490,15 +465,14 @@ BT  profileinfoZbuiltin(processinfo PD) { int i; char buff[100];
 
 
 
-BT loadlibZbuiltinZUTF8(processinfo PD,BT p_libname){char *name=(char *)&IDXUC(p_libname,2);
+BT loadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){char *name=(char *)&IDXUC(p_libname,2);
 int i = looklibraryname(name) ;
 if (i >= 0)
-{  // fprintf(stderr,"did not load %s as it was loaded\n",name) ; 
+{   fprintf(stderr,"did not load %s as it was loaded\n",name) ; 
   return ((BT*)loaded[i+2])[3];}
 return  loadlibrary(PD,name) ;  
 }
 
-BT loadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){  return loadlibZbuiltinZUTF8( PD, p_libname);}
 
 
 BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT otherlib,struct outputformat *t){
@@ -517,28 +491,12 @@ BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT
    fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else {loadlibZbuiltinZUTF8(PD,libname); return 1;}
+  else {loadlibZbuiltinZbitszseq(PD,libname); return 1;}
 }
-
-
-BT createlib3ZbuiltinZUTF8ZUTF8(processinfo PD,BT libname,BT otherlib){
-  char *name=(char *)&IDXUC(libname,2),buff[200];
-     char *libs=(char *)&IDXUC(otherlib,2) ;
- 
-  sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",name,libs,name);
-   fprintf(stderr,"Createlib3 %s\n",buff);
-  int err=system(buff);
-  if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else {loadlibZbuiltinZUTF8(PD,libname); return 1;}
-}
-
-
 
 // start of file io
 
 #include <errno.h>
-
-
 
 
 BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
@@ -741,10 +699,6 @@ void createfilefromoutput(struct outputformat *t,int file)
                 }}
                 
 
-                            
-
-
-
  processinfo  step (char * func,struct str2 *arg1, struct str2 *arg2,struct str2 *arg3 ) {
  // Does not appear to allocate space correctly form pinfo as no space is given for the 3 parameters 
  processinfo PD=&sharedspace;
@@ -791,9 +745,6 @@ void createfilefromoutput(struct outputformat *t,int file)
 // end of thread creation.
 
 
-
-
-
 volatile sig_atomic_t fatal_error_in_progress = 0;
 
 void
@@ -824,9 +775,6 @@ Dl_info d; int i;
   return (BT)r;}
 
 struct pinfo mainprocess={0,0};
-
-
-
 
 
 void inittau(int additional) {
@@ -893,7 +841,6 @@ BT  tobyteseq ( processinfo PD,char *str) {
      b->length2=(len+7)/8;
      memcpy(b->data,str,len);
      return (BT) b;
-
 }
 
 
@@ -910,6 +857,4 @@ BT currenttimeZbuiltin() {
      seconds = time(NULL);
      return T1970+seconds;
 }
-
-
 

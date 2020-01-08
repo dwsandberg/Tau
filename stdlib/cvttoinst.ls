@@ -128,6 +128,7 @@ function initinst seq.inst
  inst("callstackZbuiltinZint 1","builtin", mytype."int seq"), 
  inst("getinstanceZbuiltinZTzerecord 1","builtin", mytype."T seq"), 
  inst("encodeZbuiltinZTZTzerecord 2","builtin", mytype."T encoding"), 
+  inst("addZbuiltinZTzerecordZTzencodingrepzseq 2","builtin", mytype."int"), 
  inst("notZbuiltinZboolean 1","builtin", mytype."boolean"), 
  inst("getaddressZbuiltinZTzseqZint 2","builtin", mytype."T address"), 
  inst("setfldZbuiltinZTzaddressZT 2","builtin", mytype."T address"), 

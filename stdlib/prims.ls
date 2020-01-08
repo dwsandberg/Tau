@@ -30,9 +30,9 @@ Function unloadlib(a:seq.word)int unloadlib.toCformat.a
 
 function unloadlib(seq.bits)int builtin.usemangle
 
-Function loadlib(a:seq.word, timestamp:int)int loadlib.toCformat.a
+Function loadlibrary(a:word)int loadlib.toCformat.[a]
 
-function loadlib(seq.bits)int builtin.usemangle
+Function loadlib(seq.bits)int builtin.usemangle
 
 function executecode(seq.bits, para:seq.int)seq.word builtin.usemangle
 

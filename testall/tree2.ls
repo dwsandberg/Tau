@@ -19,39 +19,35 @@ Function =(a:treenode.T, b:treenode.T)boolean label.a = label.b ∧ nosons.a = n
 Function =(a:tree2.T, b:tree2.T)boolean 
  let na = nonodes.a 
   let nb = nonodes.b 
-  if na = nb 
-  then subseq(nodes.a, subtree.a - na + 1, subtree.a)= subseq(nodes.b, subtree.b - nb + 1, subtree.b)
-  else false
+   if na = nb then subseq(nodes.a, subtree.a - na + 1, subtree.a)= subseq(nodes.b, subtree.b - nb + 1, subtree.b)else false
 
 Function tree2(l:T)tree2.T tree2([ treenode(l, 0, 1)], 1)
 
-Function label(t:tree2.T)T label(nodes(t)_subtree.t)
+Function label(t:tree2.T)T label.(nodes.t)_(subtree.t)
 
 Function sons(t:tree2.T)seq.tree2.T level(t, subtree.t, nosons.t)
 
 Function tree2(l:T, s:seq.tree2.T)tree2.T 
  let n = @(+, intreenodes, empty:seq.treenode.T, s)
-  tree2(n + [ treenode(l, length.s, length.n + 1)], length.n + 1)
+   tree2(n + [ treenode(l, length.s, length.n + 1)], length.n + 1)
 
 function intreenodes(t:tree2.T)seq.treenode.T subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)
 
 Function_(t:tree2.T, i:int)tree2.T 
  assert between(i, 1, nosons.t)report"no such son"+ toword.i + toword.nosons.t 
-  son(t, subtree.t, nosons.t - i + 1)
+   son(t, subtree.t, nosons.t - i + 1)
 
-Function nosons(t:tree2.T)int nosons(nodes(t)_subtree.t)
+Function nosons(t:tree2.T)int nosons.(nodes.t)_(subtree.t)
 
-Function nonodes(t:tree2.T)int nonodes(nodes(t)_subtree.t)
+Function nonodes(t:tree2.T)int nonodes.(nodes.t)_(subtree.t)
 
 function level(t:tree2.T, i:int, remainingsons:int)seq.tree2.T 
  if remainingsons = 0 
   then empty:seq.tree2.T 
-  else level(t, i - nonodes(nodes(t)_(i - 1)), remainingsons - 1)+ [ tree2(nodes.t, i - 1)]
+  else level(t, i - nonodes.(nodes.t)_(i - 1), remainingsons - 1)+ [ tree2(nodes.t, i - 1)]
 
 function son(t:tree2.T, i:int, remainingsons:int)tree2.T 
- if remainingsons = 1 
-  then tree2(nodes.t, i - 1)
-  else son(t, i - nonodes(nodes(t)_(i - 1)), remainingsons - 1)
+ if remainingsons = 1 then tree2(nodes.t, i - 1)else son(t, i - nonodes.(nodes.t)_(i - 1), remainingsons - 1)
 
 Function replace(t:tree2.T, with:T, a:T)tree2.T 
  tree2(@(+, replace(with, a), empty:seq.treenode.T, subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)), nonodes.t)
@@ -60,5 +56,5 @@ function replace(replacement:T, match:T, a:treenode.T)treenode.T
  if label.a = match then treenode(replacement, nosons.a, nonodes.a)else a
 
 Function postorder(a:tree2.T)seq.tree2.T 
- @(+, tree2.nodes.a, empty:seq.tree2.T, arithseq(nonodes.a, 1, subtree.a - nonodes.a + 1))
+ @(+, tree2(nodes.a), empty:seq.tree2.T, arithseq(nonodes.a, 1, subtree.a - nonodes.a + 1))
 

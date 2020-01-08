@@ -63,7 +63,6 @@ function addcode(code:int, hashsize:int, x:seq.encodingrep.T, e:encodingrep.T)se
 Function lookup(data:T, h:encodingstate.T)int 
  @(max, ele.data, 0, encodetable(h)_(hash.data mod length.encodetable.h + 1))
 
-Function add(h:encodingstate.T, i:int, v:T)encodingstate.T add(h, v)
 
 Function add(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T 
  if 3 *(elecount.h + length.l)> 2 * length.encodetable.h 
@@ -136,6 +135,9 @@ Function ?(a:encoding.T, b:encoding.T)ordering valueofencoding.a ? valueofencodi
 Function hash(a:encoding.T)int valueofencoding.a
 
 Function encode(t:T, erec:erecord.T)encoding.T builtin.STATE.usemangle
+
+Function add(  erec:erecord.T,s:seq.encodingrep.T ) int builtin.STATE.usemangle
+
 
 type erecord is record deepcopy:int, lookupfunc:int, addfunc:int, number:int, name:word, ispersistant:boolean, encodingtype:seq.word
 

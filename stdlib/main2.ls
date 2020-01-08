@@ -138,8 +138,6 @@ Function main(arg:seq.int)outputformat
    else result.p 
   outputformat.toUTF8plus(htmlheader + processpara.output)
 
-function loadlibrary(libname:word)int loadlib([ libname], 0)
-
 Function testcomp(s:seq.seq.word)seq.seq.word 
  let exports ="testit"
   let allsrc = groupparagraphs("module Module", s)
