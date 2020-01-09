@@ -115,7 +115,7 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
   then buildcodetreeX(knownsymbols, hasstate, caller, stk, i + 1, src)
   else let specialnopara = if name in"if CALLIDX"
    then 3 
-   else if name in"IDXUC setfldZbuiltinZTzaddressZT  addZbuiltinZTzerecordZTzencodingrepzseq encodeZbuiltinZTZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint createfileZbuiltinZbitszseqZoutputformat"
+   else if name in"IDXUC setfldZbuiltinZTzaddressZT  addZbuiltinZTzerecordZTzencodingrep encodeZbuiltinZTZTzerecord  getaddressZbuiltinZTzseqZint createfileZbuiltinZbitszseqZoutputformat"
    then 2 
    else if name in"assertZbuiltinZwordzseq mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord allocatespaceZbuiltinZint builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT getfileZbuiltinZbitszseq"
    then 1 
@@ -170,7 +170,7 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
 Function calls(knownsymbols:symbolset, t:tree.seq.word)seq.word 
  @(+, calls.knownsymbols, empty:seq.word, sons.t)+ if inst.t ="FREF"_1 
   then [ arg.t]
-  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint addZbuiltinZTzerecordZTzencodingrepzseq  encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint FORCEINLINEZtest builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT PROFILEZtest NOINLINEZtest createfileZbuiltinZbitszseqZoutputformat getfileZbuiltinZbitszseq"
+  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint addZbuiltinZTzerecordZTzencodingrep  encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord  getaddressZbuiltinZTzseqZint FORCEINLINEZtest builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT PROFILEZtest NOINLINEZtest createfileZbuiltinZbitszseqZoutputformat getfileZbuiltinZbitszseq"
   then empty:seq.word 
   else // let sym = knownsymbols_inst.t assert mangledname.sym ≠"undefinedsym"_1 ∨ inst.t in"APPLY"report"IN calls"+ inst.t + print.t // 
   [ inst.t]

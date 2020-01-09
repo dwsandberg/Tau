@@ -8,7 +8,7 @@ use deepcopy.linklists2
 
 use encoding.const3
 
-use encoding.seq.int
+use encoding.seq.char
 
 use encoding.word3
 
@@ -24,7 +24,7 @@ use packedseq.flddesc
 
 use packedseq.seq.flddesc
 
-use persistantseq.encodingrep.seq.int
+use persistantseq.encodingrep.seq.char
 
 use persistantseq.libmod
 
@@ -36,7 +36,7 @@ use reconstruct
 
 use seq.const3
 
-use seq.encodingrep.seq.int
+use seq.encodingrep.seq.char
 
 use seq.encodingrep.word3
 
@@ -97,11 +97,8 @@ Function offsetthread(linklists2)int export
 Function initializer(conststypex:llvmtype, data:linklists2)int 
  C(conststypex, [ AGGREGATE, C64.0, C64(length.a.data + 3), C64.0, C64.offsetthread.data, C64.0]+ a.data)+ 1
 
-type word3 is record toword:word, index:int
+type word3 is record toword:word
 
-function word3(a:word)word3 word3(a, 0)
-
-function addindex(e:word3, i:int)word3 word3(toword.e, i)
 
 function =(a:word3, b:word3)boolean toword.a = toword.b
 
@@ -109,18 +106,17 @@ function hash(a:word3)int hash.toword.a
 
 Function place(a:linklists2)int length.a.a + 4
 
-function word33(a:word)int findindex(word3.a, word3encoding)
 
 Function registerword(a:word)int 
- let d = findindex(word3.a, word3encoding)
+let d=encode(word3.a,word3encoding)
   0
 
 function eword(w:word3)seq.int 
  let a = tointseq.decodeword.toword.w 
   @(+, C64, [ C64.0, C64.length.a], a)
 
-function eword2(w:word3)encodingrep.seq.int 
- let a = tointseq.decodeword.toword.w 
+function eword2(w:word3)encodingrep.seq.char 
+ let a = decodeword.toword.w 
   encodingrep(hash.toword.w, a, hash.a)
 
 Function cast2intseq(int)seq.int builtin.NOOP
@@ -185,7 +181,7 @@ function getindex(f:trackflds, t:tree.seq.word)trackflds
    then 2 
    else if state.f = 2 then 3 else 0)
   else if typ ="WORD"_1 
-  then let discard = word33(label(t)_2)
+  then let discard = registerword(label(t)_2)
    trackflds(l.f, flds.f + flddesc(C64.hash(label(t)_2),"LIT"_1), if state.f = 3 then 3 else 0)
   else if typ ="WORDS"_1 
   then // assert false report"in get index"+ subseq(label.t, 3, length.label.t)// 
@@ -220,17 +216,20 @@ function addrecord(l1:linklists2, sym:libsym)ipair.linklists2
   let b = addwordseq(value.a, instruction.sym)
   let l = value.b 
   ipair(place.l, l + fsig.sym + a + b)
+  
+use libscope
 
 Function addliblib(lin:linklists2, t:liblib)ipair.linklists2 
+ // assert libname.t="stdlib" report libname.t //
  let a = addwordseq(lin, libname.t)
   let c = addseq(value.a, mods.t)
-  let d = addseq(value.c, @(+, eword2, empty:seq.encodingrep.seq.int, orderadded.word3encoding))
+  let d = addseq(value.c, @(+, eword2, empty:seq.encodingrep.seq.char, orderadded.word3encoding))
   let l = value.d 
   let l5 = l + a + d + c + timestamp.t + toint.readonly.t 
   ipair(place.l, l5)
 
-Function addrecord(lin:linklists2, e:encodingrep.seq.int)ipair.linklists2 
- let k = addintseq(lin, data.e)
+Function addrecord(lin:linklists2, e:encodingrep.seq.char)ipair.linklists2 
+ let k = addintseq(lin, tointseq.data.e)
   let l = value.k 
   ipair(place.l, l + code.e + k + hash.e)
 
@@ -244,14 +243,14 @@ function addrecord(lin:linklists2, modx:libmod)ipair.linklists2
 Function +(l:linklists2, i:int)linklists2 linklists2(a.l + C64.i, offsetthread.l)
 
 Function +(l:linklists2, w:word)linklists2 
- let discard = word33.w 
+ let discard = registerword.w 
   l + hash.w
 
 Function +(l:linklists2, b:ipair.linklists2)linklists2 
  linklists2(a.l + C64.packit(offsetthread.l, index.b), place.l)
 
 Function addwordseq(t:linklists2, a:seq.word)ipair.linklists2 
- let discard = @(+, word33, 0, a)
+ let discard = @(+, registerword, 0, a)
   addintseq(t, @(+, hash, empty:seq.int, a))
 
 Function addintseq(t:linklists2, s:seq.int)ipair.linklists2 

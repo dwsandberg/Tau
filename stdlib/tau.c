@@ -151,11 +151,8 @@ struct einfo * neweinfo(processinfo PD){
 
 /* cinfo describes the constant part of encoding description. This is info the compile gernerates and only one record is generated per encoding type.
 no is changed from 0 at runtime to an integer number of the encoding */
-struct cinfo{ BT (* copy) (processinfo,BT) ;
-             BT (* look)(processinfo,BT,BT);
-             BT (*add)(processinfo,BT,BT);
-             BT no; 
-             BT (*add2)(processinfo,BT,BT);
+struct cinfo{ BT (*add2)(processinfo,BT,BT);
+              BT no; 
             };
              
 struct einfo *staticencodings[noencodings];
@@ -192,26 +189,12 @@ BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){
   return startencoding(PD,P2)->hashtable ;
 }
 
-BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2){  
- BT r;
- struct einfo *e=startencoding(PD,P2)  ;
-  struct cinfo *ee = (struct cinfo *) P2;
-  assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-  r= (ee->look) (PD,P1,e->hashtable);
-  if (r<=0) {// not found
-   P1=  (ee->copy) (e->allocatein,P1);
-   e->hashtable=(ee->add)(e->allocatein,e->hashtable,P1);
-   r= (ee->look) (PD,P1,e->hashtable);
-  }
-assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-return r;
-}
 
- BT addZbuiltinZTzerecordZTzencodingrepzseq(processinfo PD,BT P1,BT P2){  
+
+ BT addZbuiltinZTzerecordZTzencodingrep(processinfo PD,BT P1,BT P2){  
  struct einfo *e=startencoding(PD,P1)  ;
  struct cinfo *ee = (struct cinfo *) P1;
  assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
- P2=  (ee->copy) (e->allocatein,P2);
  e->hashtable=(ee->add2)(e->allocatein,e->hashtable,P2);
  assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
  return 0;

@@ -2,7 +2,7 @@ Module libscope
 
 use bits
 
-use seq.encodingrep.seq.int
+use seq.encodingrep.seq.char
 
 use seq.int
 
@@ -34,9 +34,9 @@ Function formatcall(name:word, paratypes:seq.mytype)seq.word
 
 type libsym is record fsig:word, returntype:seq.word, instruction:seq.word
 
-type liblib is record libname:seq.word, words:seq.encodingrep.seq.int, mods:seq.libmod, timestamp:int, readonly:boolean
+type liblib is record libname:seq.word, words:seq.encodingrep.seq.char, mods:seq.libmod, timestamp:int, readonly:boolean
 
-Function liblib(a:seq.word, d:seq.libmod)liblib liblib(a, empty:seq.encodingrep.seq.int, d, 0, false)
+Function liblib(a:seq.word, d:seq.libmod)liblib liblib(a, empty:seq.encodingrep.seq.char, d, 0, false)
 
 Function timestamp(liblib)int export
 

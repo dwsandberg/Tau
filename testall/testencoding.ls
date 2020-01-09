@@ -1,3 +1,5 @@
+#!/usr/local/bin/tau
+
 Module testencoding
 
 Testing encodings
@@ -18,7 +20,7 @@ use stdlib
 
 Function +(i:int, b:int)int export
 
-skip
+run testencoding testencoding
 
 function =(a:testrecord, b:testrecord)boolean key.a = key.b
 
@@ -37,7 +39,7 @@ type mydata4 is encoding testrecord
 type mydata5 is encoding testrecord
 
 function add(z:erecord.testrecord, b:seq.word)int 
- let d = mapping.z 
+ let d = orderadded.z 
   let x = encode(testrecord(length.d + 1, b), z)
    1
 
@@ -45,9 +47,9 @@ type testrecord is record key:int, body:seq.word
 
 Function testencoding seq.word 
  // must export this module so encoding type can be figured out // 
- let start = length.mapping.mydata 
-  let start2 = length.mapping.mydata2 
-  let start3 = length.mapping.mydata3 
+ let start = length.orderadded.mydata 
+  let start2 = length.orderadded.mydata2 
+  let start3 = length.orderadded.mydata3 
   let z = @(+, add(mydata), 0, ["firstadd","secondadd"])
   let z2 = @(+, add(mydata2), 0, ["one","two","three"])
   let z3 = @(+, add(mydata3), 0, ["temp"])
@@ -56,25 +58,24 @@ Function testencoding seq.word
     then"Failed encoding"+ message.p 
     else 
      let plen = result.p 
-      // let status = flush.mydata2 + flush.mydata + flush.mydata3 + flush.mydata5 // 
-      let final = length.mapping.mydata 
-       let final2 = length.mapping.mydata2 
-       let final3 = length.mapping.mydata3 
-       let final4 = length.mapping.mydata4 
+      let final = length.orderadded.mydata 
+       let final2 = length.orderadded.mydata2 
+       let final3 = length.orderadded.mydata3 
+       let final4 = length.orderadded.mydata4 
         check([ start3 = 0 
-        , start > 0 
-        , start2 > 0 
+        , start = 0 
+        , start2 = 0 
         , final = start + 2 
         , final2 = start2 + 3 
         , final3 = 4 
         , final4 = 0 
-        , // status ="OK OK Encoding is not persistant.OK", // plen = 54]
+        ,  plen = 54]
         ,"encoding")
 
 Function process1 int 
  let z3 = @(+, add(mydata3), 0, ["A","B","C"])
   let z4 = @(+, add(mydata4), 0, ["A1","B2","C3","D4","E5"])
-   length.mapping.mydata4 * 10 + length.mapping.mydata3
+   length.orderadded.mydata4 * 10 + length.orderadded.mydata3
 
 Function nextpower(i:int, base:int, start:int)int if i > start then nextpower(i, base, start * base)else start
 

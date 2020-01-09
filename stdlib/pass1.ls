@@ -340,21 +340,14 @@ function postbindtypes(dict:set.symbol, modpara:mytype, templates:symbolset, kno
    definestructure(org, dict, templates, code, modname.thissymbol, newknown, 3 + len + 1,"LIT 1", empty:seq.mytype,"FREF"+ mn)
   else if code_1 in"encoding "
   then let encodingtype = mytype.subseq(code, 4, length.code - 1)
-   let lkup = lookup(dict,"lookup"_1, [ encodingtype, mytype(towords.encodingtype + "encodingstate")])
-   assert not.isempty.lkup report"no lookup for"+ code_2 + print.encodingtype 
-   let iadd = lookup(dict,"add"_1, [ mytype(towords.encodingtype + "encodingstate"),  encodingtype])
+     let iadd = lookup(dict,"add"_1, [ mytype(towords.encodingtype + "encodingstate"), 
+    mytype(towords.encodingtype+"encodingrep")])
    assert not.isempty.iadd report"no add for"+ code_2 + print.encodingtype 
-   let iadd2 = lookup(dict,"add"_1, [ mytype(towords.encodingtype + "encodingstate"), 
-    mytype(towords.encodingtype+"encodingrep seq")])
-   assert not.isempty.iadd2 report"no add for"+ code_2 + print.encodingtype 
-   let copy = deepcopymangle.encodingtype 
-   let newsrc ="FREF"+ copy +"FREF"+ mangledname(lkup_1)+"FREF"+ mangledname(iadd_1)+(if name.thissymbol ="wordencoding"_1 
+   let newsrc ="FREF"+ mangledname(iadd_1) +(if name.thissymbol ="wordencoding"_1 
     then"LIT 1"
-    else"LIT 0")+"FREF"+ mangledname(iadd2_1)+"RECORD 5 NOINLINE"
-   let new1 = known.X(mangledname(lkup_1), org, dict, modpara, templates, knownsymbols)
-   let new2 = known.X(mangledname(iadd_1), org, dict, modpara, templates, new1)
-   let newknown = known.X(copy, org, dict, modpara, templates, new2)
-   let syme = changesrc(thissymbol, newsrc)
+    else"LIT 0")+"WORD"+mangledname.thissymbol+"RECORD 3 NOINLINE"
+   let newknown = known.X(mangledname(iadd_1), org, dict, modpara, templates, knownsymbols)
+    let syme = changesrc(thissymbol, newsrc)
    postbind(dict, mytype."", templates, replace(newknown, syme), src.syme, syme, org)
   else assert false report"not a type"+ code 
   emptysymbolset
