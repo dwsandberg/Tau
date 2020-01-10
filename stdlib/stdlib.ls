@@ -3,10 +3,10 @@
 Module stdlib 
 
 Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates cvttoinst deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 opt2 oseq packedseq parse pass1 pass2 persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash 
- timestamp uses 
+ timestamp maindict uses 
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  oseq packedseq   process real reconstruct seq set stack stacktrace 
- stdlib  textio tree prims symbol timestamp
+ stdlib  textio tree prims symbol timestamp ioseq dataio maindict
 
 
 use UTF8
@@ -168,14 +168,16 @@ type wordencoding is encoding seq.char
 
 Function wordencoding erecord.wordencoding export
 
-type word is record bb:encoding.seq.char
+type word is record asencoding:encoding.seq.char
+
+Function asencoding(w:word) encoding.seq.char export
 
 Function add(erecord.seq.char,seq.encodingrep.seq.char) int export
 
 
 Function encodeword(a:seq.char)word  word.encode(a, wordencoding)
 
-Function decodeword(w:word)seq.char decode(bb.w, wordencoding)
+Function decodeword(w:word)seq.char decode(asencoding.w, wordencoding)
 
 Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
 
@@ -184,11 +186,11 @@ Function hash(a:seq.char)int hash(tointseq.a)
 
 Function hash(a:seq.word)int finalmix.@(hash, hash, hashstart, a)
 
-Function hash(a:word)int hash.bb.a
+Function hash(a:word)int hash.asencoding.a
 
-Function ?(a:word, b:word)ordering bb.a ? bb.b
+Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
 
-Function =(a:word, b:word)boolean bb.a = bb.b
+Function =(a:word, b:word)boolean asencoding.a = asencoding.b
 
 Function ≠(a:word, b:word)boolean export
 

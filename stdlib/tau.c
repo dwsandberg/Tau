@@ -133,7 +133,8 @@ BT (*  decodeword)(processinfo PD,BT P1);
 
 BT loadlibrary(struct pinfo *PD,char *lib_name_root);
 
-BT getfileZbuiltinZUTF8(processinfo PD,BT filename);
+
+BT getfileZbuiltinZbitszseq(processinfo PD,BT filename);
 
 //  encoding support
 
@@ -206,6 +207,11 @@ BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){
 BT loaded[20]={0,0};
 char libnames[20][100];
 
+BT empty[2]={0,0};
+BT* initialdict=empty;
+
+BT* initialdictZbuiltin() { return initialdict; }
+
 int looklibraryname(char* name) { int i;
   for(  i=0;i<loaded[1];i++){
     // fprintf(stderr,"match %d %s %s\n",i,name,libnames[i+2]);
@@ -236,7 +242,7 @@ BT unloadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){ return unloadlibZbui
 BT initlib5(char * libname, BT * consts,BT  libdesc) {
   // fprintf(stderr,"starting initlib4\n");
   fprintf(stderr,"initlib5 %s\n",libname);
-if (strcmp(libname,"stdlib")==0 || strcmp(libname,"imp2")==0){
+if (strcmp(libname,"stdlib")==0 ){
    fprintf(stderr,"init stdlib\n");
   /* only needed when initializing stdlib */
     append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");
@@ -270,6 +276,19 @@ if (!relocateoffset) {
        exit(EXIT_FAILURE);
 }      
 relocateoffset(&sharedspace,consts);
+
+    if (strcmp(libname,"stdlib")==0 ){
+   BT (* loaddict)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"loaddictZmaindictZfileresult");
+    if (!loaddict){
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }
+   loaddict(&sharedspace,getfileZbuiltinZbitszseq(&sharedspace,(BT)"1234567812345678maindictionary.data")); 
+   fprintf( stderr, "nowords2 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);          
+
+     initialdict=(BT *)(  ((BT * )  (staticencodings[1]->hashtable)) [4]); 
+}
+
      
 BT (* addwords)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, "addZintzseqzencodingZTzencodingstateZTzencodingrepzseq");
    if (!addwords) {
@@ -293,6 +312,7 @@ fprintf( stderr, "nowords3 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1
     ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
     strcpy(libnames[i+2],libname);
     }
+
   fprintf(stderr,"finish initlib5  \n");
  return 0;
   
@@ -481,14 +501,13 @@ BT createlibZbuiltinZbitszseqZbitszseqZoutputformat(processinfo PD,BT libname,BT
 
 #include <errno.h>
 
-
-BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
+BT getfileZbuiltinZbitszseq(processinfo PD,BT filename){
     int fd;
     char *name=(char *)&IDXUC(filename,2);
     char *filedata;
     struct stat sbuf;
     BT *data2,org;
- // fprintf(stderr,"openning %s\n",name);
+  //fprintf(stderr,"openning %s\n",name);
         org=myalloc(PD,4);
      IDXUC(org,0)=-1;
      IDXUC(org,1)=0;
@@ -512,7 +531,6 @@ BT getfileZbuiltinZUTF8(processinfo PD,BT filename){
     return org;
 }
 
-BT getfileZbuiltinZbitszseq(processinfo PD,BT filename){return getfileZbuiltinZUTF8(PD,filename);}
 
 BT createfileZbuiltinZbitszseqZoutputformat(processinfo PD,BT filename,struct outputformat * t){ 
 int f;

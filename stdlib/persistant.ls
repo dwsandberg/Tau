@@ -117,7 +117,7 @@ function eword(w:word3)seq.int
 
 function eword2(w:word3)encodingrep.seq.char 
  let a = decodeword.toword.w 
-  encodingrep(hash.toword.w, a, hash.a)
+  encodingrep(asencoding.toword.w, a, hash.a)
 
 Function cast2intseq(int)seq.int builtin.NOOP
 
@@ -219,11 +219,17 @@ function addrecord(l1:linklists2, sym:libsym)ipair.linklists2
   
 use libscope
 
+use set.encodingrep.seq.char
+
+function ? (a:encodingrep.seq.char,b:encodingrep.seq.char) ordering valueofencoding.code.a ? valueofencoding.code.b
+
 Function addliblib(lin:linklists2, t:liblib)ipair.linklists2 
  // assert libname.t="stdlib" report libname.t //
  let a = addwordseq(lin, libname.t)
   let c = addseq(value.a, mods.t)
-  let d = addseq(value.c, @(+, eword2, empty:seq.encodingrep.seq.char, orderadded.word3encoding))
+  let used=@(+, eword2, empty:seq.encodingrep.seq.char, orderadded.word3encoding)
+  let have=if libname.t="stdlib" then  empty:seq.encodingrep.seq.char  else words.loadedlibs_1
+  let d = addseq(value.c, toseq(asset.used - asset.have))
   let l = value.d 
   let l5 = l + a + d + c + timestamp.t + toint.readonly.t 
   ipair(place.l, l5)
@@ -231,7 +237,7 @@ Function addliblib(lin:linklists2, t:liblib)ipair.linklists2
 Function addrecord(lin:linklists2, e:encodingrep.seq.char)ipair.linklists2 
  let k = addintseq(lin, tointseq.data.e)
   let l = value.k 
-  ipair(place.l, l + code.e + k + hash.e)
+  ipair(place.l, l + valueofencoding.code.e + k + hash.e)
 
 function addrecord(lin:linklists2, modx:libmod)ipair.linklists2 
  let a = addseq(lin, defines.modx)

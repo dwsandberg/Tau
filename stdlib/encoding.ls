@@ -24,17 +24,17 @@ Function length(e:encodingstate.T)int export
 
 Function_(e:encodingstate.T, i:int)T data(all(e)_i)
 
-type encodingrep is record code:int, data:T, hash:int
+type encodingrep is record code:encoding.T, data:T, hash:int
 
-Function code(encodingrep.T)int export
+Function code(encodingrep.T)encoding.T export
 
 Function hash(encodingrep.T)int export
 
 Function data(encodingrep.T)T export
 
-Function encodingrep(code:int, data:T, hash:int)encodingrep.T export
+Function encodingrep(code:encoding.T, data:T, hash:int)encodingrep.T export
 
-Function =(a:encodingrep.T, b:encodingrep.T)boolean hash.a = hash.b ∧ code.a = code.b ∧ data.a = data.b
+Function =(a:encodingrep.T, b:encodingrep.T)boolean hash.a = hash.b ∧ valueofencoding.code.a = valueofencoding.code.b ∧ data.a = data.b
 
 Function check(h:encodingstate.T)seq.word [ toword.length.encodetable.h, toword.length.decodetable.h]
 
@@ -56,10 +56,12 @@ function adddata(eletoadd:encodingrep.T, tablesize:int, a:encodingrep.T)seq.enco
   then empty:seq.encodingrep.T 
   else [ a]
 
-function addcode(code:int, hashsize:int, x:seq.encodingrep.T, e:encodingrep.T)seq.encodingrep.T 
- if code.e = code ∨ not(code mod hashsize = code.e mod hashsize)then x else x + e
+function addcode(code:encoding.T, hashsize:int, x:seq.encodingrep.T, e:encodingrep.T)seq.encodingrep.T 
+ if code.e = code ∨ not(valueofencoding.code mod hashsize = valueofencoding.code.e mod hashsize)then x else x + e
 
+type encoding is record valueofencoding:int
 
+Function toencoding:T(int) encoding.T builtin.NOOP
 
 use deepcopy.T
 
@@ -76,11 +78,11 @@ Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T
   if @(max, ele.data.v, 0, encodetable(h)_dataindex)> 0 
   then // already present // h 
   else 
-   if code.v &le 0 then add(h, encodingrep(randomint(1)_1,data.v,datahash) ) 
+   if valueofencoding.code.v &le 0 then add(h, encodingrep(encoding.randomint(1)_1,data.v,datahash) ) 
    else 
     let p = encodingrep(code.v,deepcopy.data.v ,datahash)
     let code=code.p
-  let codeindex = code mod tablesize + 1 
+  let codeindex = valueofencoding.code mod tablesize + 1 
   let l2 = @(addcode(code, tablesize), identity, [ p], decodetable(h)_codeindex)
   let tnew = replace(encodetable.h, dataindex, @(+, adddata(p, tablesize), [ p], encodetable(h)_dataindex))
   encodingstate(elecount.h + 1, tnew, replace(decodetable.h, codeindex, l2), all.h + p)
@@ -105,7 +107,7 @@ function decode(h:encodingstate.T, t:encoding.T)seq.encodingrep.T
  @(+, ele4.t, empty:seq.encodingrep.T , decodetable(h)_(valueofencoding.t  mod length.decodetable.h + 1))
 
 function ele4(t:encoding.T, a:encodingrep.T)seq.encodingrep.T 
- if valueofencoding.t = code.a then [ a] else empty:seq.encodingrep.T
+ if t = code.a then [ a] else empty:seq.encodingrep.T
 
 Function decode(t:encoding.T, erec:erecord.T)T 
  let inst = getinstance.erec 
@@ -113,7 +115,7 @@ Function decode(t:encoding.T, erec:erecord.T)T
   assert length.a = 1 report"no such encoding"+ toword.valueofencoding.t 
   data.a_1
 
-Function valueofencoding(encoding.T)int builtin.NOOP
+Function valueofencoding(encoding.T)int export
 
 Function =(a:encoding.T, b:encoding.T)boolean valueofencoding.a = valueofencoding.b
 
@@ -124,22 +126,20 @@ Function hash(a:encoding.T)int valueofencoding.a
 Function encode(t:T, erec:erecord.T)encoding.T 
      let r=lookuprep(t,  getinstance.erec)
      if isempty.r then 
-       let discard=add(erec,encodingrep(0, t, hash.t))
+       let discard=add(erec,encodingrep(encoding.0, t, hash.t))
          encode(t,erec)
-     else toencoding:encoding.T(code.r_1) 
+     else  (code.r_1) 
          
 
 function lookuprep(t:T,inst:encodingstate.T) seq.encodingrep.T
 @(+, ele5.t, empty:seq.encodingrep.T, encodetable(inst)_(hash.t mod length.encodetable.inst + 1))
 
-function ele(v:T, a:encodingrep.T)int if v = data.a then code.a else 0
-
-
-function toencoding:encoding.T(int) encoding.T  builtin.NOOP
+function ele(v:T, a:encodingrep.T)int if v = data.a then valueofencoding.code.a else 0
 
 
 
-type erecord is record  addfunc:int, number:int
+
+type erecord is record  addfunc:int, number:int,name:word
 
 
 function ele5(v:T, a:encodingrep.T)seq.encodingrep.T 
