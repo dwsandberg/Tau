@@ -175,9 +175,9 @@ Function asencoding(w:word) encoding.seq.char export
 Function add(erecord.seq.char,seq.encodingrep.seq.char) int export
 
 
-Function encodeword(a:seq.char)word  word.encode(a, wordencoding)
+Function encodeword(a:seq.char)word  word.encode(wordencoding,a)
 
-Function decodeword(w:word)seq.char decode(asencoding.w, wordencoding)
+Function decodeword(w:word)seq.char decode( wordencoding,asencoding.w)
 
 Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
 

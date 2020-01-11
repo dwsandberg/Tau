@@ -11,7 +11,7 @@ use seq.word
 use stdlib
 
 function mapentry(n:seq.word, i:int)int 
-   let x = encode(mapnames(n_i, n_(i + 1)), encodenames)
+   let x = encode( encodenames,mapnames(n_i, n_(i + 1)))
     0
 
 Function setmap(namelist:seq.word)seq.word 
@@ -26,5 +26,5 @@ function hash(a:mapnames)int hash(old.a)
 
 type encodenames is encoding mapnames
 
-Function mapname(n:word)word new.decode(encode(mapnames(n, n), encodenames), encodenames)
+Function mapname(n:word)word new.decode( encodenames,encode( encodenames,mapnames(n, n)))
 

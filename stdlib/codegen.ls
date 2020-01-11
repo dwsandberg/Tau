@@ -285,7 +285,7 @@ function profilecall(profiletype2:llvmtype, l:Lcode, args:seq.int, callee:int, i
   let c = GEP(base + 1, 1, typ.profiletype2, C."profrefs", C64.0, C64.idx)+ LOAD(base + 2,-base - 1, typ.i64, align8, 0)+ BINOP(base + 3,-base - 2, C64.1, 0, typ.i64)+ STORE(base + 4,-base - 1,-base - 3, align8, 0)+ CMP2(base + 4,-base - 2, C64.0, 32)+ BR(base + 5, block, block + 1,-base - 4)+ CALL(base + 5, 0, 32768, typ.function.[ i64], C."clock")+ LOAD(base + 6, C."spacecount", typ.i64, align8, 0)+ CALL(base + 7, 0, 32768, typ.function.constantseq(length.args + 2, i64), callee,-1, args)+ CALL(base + 8, 0, 32768, typ.function.[ i64], C."clock")+ LOAD(base + 9, C."spacecount", typ.i64, align8, 0)+ BINOP(base + 10,-base - 8,-base - 5, 1, typ.i64)+ BINOP(base + 11,-base - 9,-base - 6, 1, typ.i64)+ LOAD(base + 12, p1, typ.i64, align8, 0)+ BINOP(base + 13,-base - 12,-base - 10, 0, typ.i64)+ STORE(base + 14, p1,-base - 13, align8, 0)+ LOAD(base + 14, pspace, typ.i64, align8, 0)+ BINOP(base + 15,-base - 14,-base - 11, 0, typ.i64)+ STORE(base + 16, pspace,-base - 15, align8, 0)+ LOAD(base + 16, pcount, typ.i64, align8, 0)+ BINOP(base + 17,-base - 16, C64.1, 0, typ.i64)+ STORE(base + 18, pcount,-base - 17, align8, 0)+ BR(base + 18, block + 2)+ CALL(base + 18, 0, 32768, typ.function.constantseq(length.args + 2, i64), callee,-1, args)+ BR(base + 19, block + 2)+ PHI(base + 19, typ.i64,-base - 7, block,-base - 18, block + 1)+ LOAD(base + 20,-base - 1, typ.i64, align8, 0)+ BINOP(base + 21,-base - 20, C64.1, 1, typ.i64)+ STORE(base + 22,-base - 1,-base - 21, align8, 0)
   Lcode(code.l + c, lmap.l, noblocks.l + 3, regno.l + 21, poppush(args.l, length.args,-base - 19), blocks.l, tailphi.l, loopblock.l)
 
-Function encode(stat5, erecord.stat5)encoding.stat5 export
+Function encode( erecord.stat5,stat5)encoding.stat5 export
 
 type statencoding is encoding stat5
 
@@ -302,7 +302,7 @@ function =(a:stat5, b:stat5)boolean caller.a = caller.b ∧ callee.a = callee.b
 Function profile(caller:word, callee:word)int 
  if caller = callee ∨ caller ="noprofile"_1 
   then 0 
-  else findindex(stat5(caller, callee), statencoding)+ 1
+  else findindex(statencoding,stat5(caller, callee))+ 1
 
 function callarc(a:stat5)seq.word [ caller.a, callee.a]
 

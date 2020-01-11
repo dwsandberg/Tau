@@ -34,7 +34,7 @@ function inst(x:seq.word)inst inst(x,"", mytype."?")
 
 function toinst(f:symbol)inst inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f)
 
-function encode2(x:inst)int findindex(x, einst)
+function encode2(x:inst)int findindex(einst,x)
 
 function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int 
  assert not(label.codetree.f ="default")report"in addcodes"
@@ -76,7 +76,7 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
    then [ aseinst.[ inst, toword.nosons.t]]
    else if inst ="STATE"_1 
    then empty:seq.int 
-   else let s = findencode(inst.[ inst, toword.nosons.t], einst)
+   else let s = findencode(einst,inst.[ inst, toword.nosons.t])
    [ if length.s = 0 then encode2.toinst.lookupfunc(allfunctions, inst)else encode2(s_1)]
 
 function initinst seq.inst 

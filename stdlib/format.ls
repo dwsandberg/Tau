@@ -143,7 +143,8 @@ function prettynoparse(s:seq.word, i:int, lastbreak:int, result:seq.word)seq.wor
   then let t = findindex("//"_1, s, i + 1)
    prettynoparse(s, t + 1, t - i, result +"&br &{ comment"+ subseq(s, i, t)+"&}")
   else if x in"if then else let assert function Function type"
-  then prettynoparse(s, i + 1, 0, result +"&br &keyword"+ x)
+  then  let t=if lastbreak > 0 then result+"&br" else result
+           prettynoparse(s, i + 1, 0, t +"&keyword"+ x)
   else if x in"report"
   then prettynoparse(s, i + 1, lastbreak + 1, result +"&keyword"+ x)
   else if lastbreak > 20 ∧ x in")]"∨ lastbreak > 40 ∧ x in","

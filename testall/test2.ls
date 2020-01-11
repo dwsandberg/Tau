@@ -39,7 +39,7 @@ function =(a:wordfreq, b:wordfreq)boolean false
 function ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b
 
 function count(s:seq.wordfreq, w:word)seq.wordfreq 
- replace(s, findindex(indexedword(w, 0), eword), wordfreq(count.s_findindex(indexedword(w, 0), eword)+ 1, w))
+ replace(s, findindex(eword,indexedword(w, 0)), wordfreq(count.s_findindex(eword,indexedword(w, 0))+ 1, w))
 
 function print(p:wordfreq)seq.word 
  if count.p = 0 

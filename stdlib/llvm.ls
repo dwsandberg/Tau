@@ -145,18 +145,18 @@ Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
 
 Function C(s:seq.word)int C(s_1)
 
-Function C(w:word)int findindex(llvmconst(-1, tointseq.decodeword.w), llvmconsts) - 1
+Function C(w:word)int findindex(llvmconsts,llvmconst(-1, tointseq.decodeword.w) ) - 1
 
-Function C64(i:int)int findindex(llvmconst(typ.i64, [ CONSTINTEGER, i]), llvmconsts) - 1
+Function C64(i:int)int findindex(llvmconsts,llvmconst(typ.i64, [ CONSTINTEGER, i])) - 1
 
 Function getllvmconst(i:int)seq.int toseq(orderadded(llvmconsts)_(i + 1))
 
-Function C32(i:int)int findindex(llvmconst(typ.i32, [ CONSTINTEGER, i]), llvmconsts) - 1
+Function C32(i:int)int findindex( llvmconsts,llvmconst(typ.i32, [ CONSTINTEGER, i])) - 1
 
-Function C(t:llvmtype, s:seq.int)int findindex(llvmconst(typ.t, s), llvmconsts) - 1
+Function C(t:llvmtype, s:seq.int)int findindex( llvmconsts,llvmconst(typ.t, s)) - 1
 
 Function Cprt(t:int, s:seq.int)int 
- // used in print bitcodes tool // findindex(llvmconst(t, s), llvmconsts) - 1
+ // used in print bitcodes tool // findindex( llvmconsts,llvmconst(t, s)) - 1
 
 -----------------------
 
@@ -166,7 +166,7 @@ Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, orderadded.llvmt
 
 Function typ(a:llvmtype)int index.a - 1
 
-Function llvmtype(s:seq.int)llvmtype llvmtype.findindex(llvmtypeele.s, llvmtypes)
+Function llvmtype(s:seq.int)llvmtype llvmtype.findindex( llvmtypes,llvmtypeele.s)
 
 Function double llvmtype llvmtype.[ TYPEDOUBLE]
 

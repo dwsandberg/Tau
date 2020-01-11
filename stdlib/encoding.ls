@@ -108,12 +108,13 @@ function decode(h:encodingstate.T, t:encoding.T)seq.encodingrep.T
 
 function ele4(t:encoding.T, a:encodingrep.T)seq.encodingrep.T 
  if t = code.a then [ a] else empty:seq.encodingrep.T
-
-Function decode(t:encoding.T, erec:erecord.T)T 
+  
+Function decode( erec:erecord.T,t:encoding.T )T 
  let inst = getinstance.erec 
   let a = decode(inst, t)
   assert length.a = 1 report"no such encoding"+ toword.valueofencoding.t 
   data.a_1
+
 
 Function valueofencoding(encoding.T)int export
 
@@ -123,12 +124,14 @@ Function ?(a:encoding.T, b:encoding.T)ordering valueofencoding.a ? valueofencodi
 
 Function hash(a:encoding.T)int valueofencoding.a
 
-Function encode(t:T, erec:erecord.T)encoding.T 
+     
+Function encode(erec:erecord.T,t:T )encoding.T 
      let r=lookuprep(t,  getinstance.erec)
      if isempty.r then 
        let discard=add(erec,encodingrep(encoding.0, t, hash.t))
-         encode(t,erec)
+         encode(erec,t)
      else  (code.r_1) 
+
          
 
 function lookuprep(t:T,inst:encodingstate.T) seq.encodingrep.T
@@ -145,18 +148,18 @@ type erecord is record  addfunc:int, number:int,name:word
 function ele5(v:T, a:encodingrep.T)seq.encodingrep.T 
  if v = data.a then [ a]else empty:seq.encodingrep.T
 
-Function findencode(t:T, erec:erecord.T)seq.T 
+Function findencode( erec:erecord.T,t:T)seq.T 
   let r= lookuprep(t,getinstance.erec )
   if isempty.r then empty:seq.T else [data.r_1]
 
-Function findindex(t:T, erec:erecord.T)int 
+Function findindex( erec:erecord.T,t:T)int 
  // works if type T has a integer field named index and a function setindex is defined to set the index value.  
  If t is not in encoding will assign index to one plus current encoding size. If t is in the encoding it will return the index value.
  //
  let inst = getinstance.erec 
   let a = lookuprep(t,inst)
   if length.a = 0 
-  then let x = encode(addindex(t, length.inst + 1), erec)
+  then let x = encode(erec,addindex(t, length.inst + 1))
    length.inst + 1 
   else index(data.a_1)
 

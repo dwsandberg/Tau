@@ -40,7 +40,7 @@ type mydata5 is encoding testrecord
 
 function add(z:erecord.testrecord, b:seq.word)int 
  let d = orderadded.z 
-  let x = encode(testrecord(length.d + 1, b), z)
+  let x = encode(z,testrecord(length.d + 1, b))
    1
 
 type testrecord is record key:int, body:seq.word

@@ -121,7 +121,7 @@ Function table seq.match5
   let discard = @(+, addit, 0, t)
   t
 
-function addit(m:match5)int findindex(m, ematch5)
+function addit(m:match5)int findindex(ematch5,m)
 
 function match5(inst:word, length:int, b:internalbc)match5 
  let parts = getparts.b 
@@ -141,7 +141,7 @@ Function buildtemplates(p:temppair, fullinst:seq.word)temppair
   let lastconsts = consts.p 
   // let z10 = createfile("stat.txt", [ fullinst]+"start")// 
   let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
-  let b = findencode(a, ematch5)
+  let b = findencode(ematch5,a)
   if length.b = 0 
   then let inst = fullinst_1 
    let instarg = fullinst_2 
@@ -168,7 +168,7 @@ Function buildtemplates(p:temppair, fullinst:seq.word)temppair
     else let noargs = toint.instarg 
     let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
     temppair(s + match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs), lastconsts)
-   let discard = encode(last.templates.m, ematch5)
+   let discard = encode(ematch5,last.templates.m)
    m 
   else // already have a match5 // temppair(s + b_1, lastconsts)
 

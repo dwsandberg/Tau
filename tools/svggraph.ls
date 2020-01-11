@@ -28,6 +28,8 @@ use stdlib
 
 use svg
 
+use seq.seq.word
+
 type svgdraw is record width:int, height:int, a:seq.word
 
 type nodeinfo is record n:T, x:int, y:int, width:int, seperation:int
@@ -88,18 +90,18 @@ Function tosvg(arci:seq.arcinfo.T, nodes:seq.T, positions:set.nodeinfo.T)seq.wor
    let vertnodesize = 16 
    let p2 = @(+, adjust(vertnodesize, minx, @(layerwidths, identity, dseq.1, toseq.r)), empty:set.nodeinfo.T, toseq.r)
    let g = @(+, toarcinfo(p2), empty:set.arcinfo.T, arci)
-    svg(@(+, svgnode(vertnodesize, g, p2),"", toseq.p2), maxx(toseq.p2), maxy(toseq.p2))
+    svg(["text { fill:black }"],@(+, svgnode(vertnodesize, g, p2),"", toseq.p2), maxx(toseq.p2), maxy(toseq.p2))
 
 Function svgnode(vertnodesize:int, info:set.arcinfo.T, s:set.nodeinfo.T, p:nodeinfo.T)seq.word 
    let arcstonode = findelement2(info, arcinfo(arc(n.p, n.p),"", 0))
-    (if width.p > 0 then text(x.p, y.p, nodetotext(n.p))else"")+ @(+, drawarc(vertnodesize, p, toseq.arcstonode),"", arithseq(length(toseq.arcstonode), 1, 1))
+    (if width.p > 0 then text("text",x.p, y.p, nodetotext(n.p))else"")+ @(+, drawarc(vertnodesize, p, toseq.arcstonode),"", arithseq(length(toseq.arcstonode), 1, 1))
 
 function drawarc(vertnodesize:int, stop:nodeinfo.T, s:seq.arcinfo.T, i:int)seq.word 
    let a = s_i 
    let xstop = if width.a = 0 then x.stop else x.stop - width.a / 8 - 5 
     line(x.a, y.a, xstop, y.stop +(i - 1)*(if width.a = 0 then 0 else vertnodesize), backarc.a, false)
     + EOL 
-    + text(xstop, y.stop +(i - 1)* vertnodesize, label.a)
+    + text("text",xstop, y.stop +(i - 1)* vertnodesize, label.a)
 
 function toarcinfo(s:set.nodeinfo.T, a:arcinfo.T)arcinfo.T 
    let y = findelement(nodeinfo(tail(a.a), 0, 0), s)

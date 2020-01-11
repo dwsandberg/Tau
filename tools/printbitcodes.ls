@@ -247,11 +247,11 @@ function =(a:decodename, b:decodename)boolean block.a = block.b ∧ code.a = cod
 function hash(a:decodename)int(block.a + 2)*(code.a + 2)
 
 function lookup(block:int, code:int)seq.word 
-   let a = encode(decodename(block, code,"// unknown //"+ toword.code), nameencoding)
-    name.decode(a, nameencoding)
+   let a = encode(nameencoding,decodename(block, code,"// unknown //"+ toword.code) )
+    name.decode(nameencoding,a )
 
 function I(block:int, code:int, name:seq.word)int 
-   let a = encode(decodename(block, code, name), nameencoding)
+   let a = encode( nameencoding,decodename(block, code, name))
     0
 
 function initnames int 

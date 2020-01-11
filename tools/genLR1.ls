@@ -101,7 +101,7 @@ function reduce(stateno:int, lookahead:word, ruleno:int)action action(stateno, l
 
 function getaction(ruleprec:seq.seq.word, grammar:seq.seq.word, state:state, stateno:int, reductions:seq.seq.word, lookahead:word)action 
    let newstate = advance(grammar, toset.state, lookahead)
-   let newstateno = if not(isempty.newstate)then findindex(state(newstate), estate)else 0 
+   let newstateno = if not(isempty.newstate)then findindex(estate,state(newstate))else 0 
     if length.reductions = 0 ∧ newstateno ≠ 0 
      then shift(stateno, lookahead, newstateno)
      else if length.reductions = 1 ∧ newstateno = 0 
@@ -170,7 +170,7 @@ function shifts(s:state)seq.word toseq(asset.@(+, shifts, empty:seq.word, toseq.
 
 Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word,alphabet:seq.word)seq.word 
    let grammar2 = @(+, first, empty:seq.seq.word, grammarandact)
-   let initialstateno = findindex(state(initialstate.grammar2), estate)
+   let initialstateno = findindex(estate,state(initialstate.grammar2))
    let missingsymbols= asset.alphabet - asset.alphabet.grammar2
    assert isempty.missingsymbols report "Symbols not included in alphabet"+toseq.missingsymbols
    let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)

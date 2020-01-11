@@ -108,7 +108,7 @@ Function place(a:linklists2)int length.a.a + 4
 
 
 Function registerword(a:word)int 
-let d=encode(word3.a,word3encoding)
+let d=encode(word3encoding,word3.a)
   0
 
 function eword(w:word3)seq.int 
@@ -167,7 +167,7 @@ function addconst(l:linklists2, t:tree.seq.word)ipair.linklists2
  // First build description of record. This may add other const records to l // 
   let y = @(getindex, identity, trackflds(l, empty:seq.flddesc, 1), sons.t)
   // look up CRECORD to see if we have already used it. // 
-  let x = decode(encode(const3(place.l.y, flds.y), const3e), const3e)
+  let x = decode(const3e,encode(const3e,const3(place.l.y, flds.y)))
   if place.x ≠ place.l.y 
   then ipair(place.x, l.y)
   else // have seen this CRECORD before so process it // 

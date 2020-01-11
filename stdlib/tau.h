@@ -26,16 +26,11 @@ BT aborted(BT p);
 #define  IDX(PD,P2,P1)   (*(BT*)(P2)== 0) ? IDXUC(P2,P1 + 1): ((*(BT *) (P2) )==1) ? *((unsigned char *) ((P2)+15+ (P1)  ) ) :    ((BT(*)(processinfo,BT, BT))IDXUC(P2,0))(PD,P2,P1)
 
 
-BT DECODE(processinfo PD,BT P1,BT P2);
-BT ENCODE(processinfo PD,BT P1,BT P2);
-BT MAPENCODE(processinfo PD,BT P2);
-BT LOCALENCODE(processinfo PD,BT P2);
 
 
 BT assert2(processinfo PD,BT message);
 
 
-BT HASH(BT a);
 
 
 BT allocatespaceZbuiltinZint(processinfo PD,BT i) ;
