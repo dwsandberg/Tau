@@ -6,7 +6,7 @@ Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates cvttoinst d
  timestamp maindict uses 
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  oseq packedseq   process real reconstruct seq set stack stacktrace 
- stdlib  textio tree prims symbol timestamp ioseq dataio maindict
+ stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol
 
 
 use UTF8
@@ -40,6 +40,20 @@ use stacktrace
 use stdlib
 
 use xxhash
+
+Function type:ordering seq.word export
+
+Function type:boolean seq.word export
+
+Function type:word  seq.word export
+
+Function type:seq.word  seq.word export
+
+Function type:seq.seq.word  seq.word export
+
+
+
+Function type:char seq.word export
 
 type ordering is record toint:int
 

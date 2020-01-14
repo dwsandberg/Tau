@@ -220,22 +220,21 @@ function bind(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:sy
  PROFILE.let symsrc = src.s 
   if length.symsrc = 2 ∧ symsrc_1 ="LIT"_1 
   then knownsymbols 
-  else if symsrc_1 in"type sequence record encoding "
-  then postbindtypes(dict, mytype."", templates, knownsymbols, src.s, s, s)
-  else assert length.src.s > 2 report"PROBLEM TT"
+  else if symsrc_1 in"sequence record encoding "
+  then 
+   postbindtypes(dict, mytype."", templates, knownsymbols, src.s, s, s)
+  else 
+  assert symsrc_1 in "Function function" report "internal error bind"
   let b = parse(bindinfo(dict,"", empty:seq.mytype), symsrc)
-  let code = code.b 
-  let s2 = // changesrc(s, src.s, src.s, code)// s 
-  if code_1 in"type sequence record encoding "
-  then postbindtypes(dict, mytype."", templates, knownsymbols, code, s2, s2)
-  else postbind(dict, mytype."", templates, knownsymbols, parsedresult.b, s2, s2)
+    postbind(dict, mytype."", templates, knownsymbols, parsedresult.b, s, s)
+   
 
 resultpair type is needed because calculation often involve adding new known symbols.
 
 type resultpair is record known:symbolset, size:seq.word
 
 Function lookuptypedesc2(knownsymbols:symbolset, typ:seq.word)symbol 
- let name = mangle(merge("typedesc:"+ typ), mytype."internal", empty:seq.mytype)
+ let name = mangle(merge("type:"+ typ), mytype."internal", empty:seq.mytype)
   lookupsymbol(knownsymbols, name)
 
 Function extracttypedesc(a:symbol)seq.word 
@@ -247,7 +246,7 @@ function definetypedesc(knownsymbols:symbolset, t:mytype, code:seq.word)symbol
  let s1 = lookuptypedesc2(knownsymbols, print.t)
   let s = if isdefined.s1 
    then s1 
-   else symbol(merge("typedesc:"+ print.t), mytype."internal", empty:seq.mytype, mytype."word seq","")
+   else symbol(merge("type:"+ print.t), mytype."internal", empty:seq.mytype, mytype."word seq","")
   changesrc(s, if code_1 in"record sequence pending"
    then code 
    else"WORDS"+ toword.length.code + code)
@@ -324,7 +323,6 @@ function definestructure(org:symbol, dict:set.symbol, templates:symbolset, src:s
     else removeflat(toword(length.paras + 1), toint(size(z1)_2) - 1)
   definestructure(org, dict, templates, src, modname, replace(known.z1, fldsym), i + len + 1, newoffset, paras + fldtype, constructor + confld)
 
-struct cinfo{ BT(* copy)(processinfo, BT); BT(* look)(processinfo, BT, BT); BT(*add)(processinfo, BT, BT, BT); BT no; BT nameasword; BT persitant; BT typeaswords;};
 
 function postbindtypes(dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset, code:seq.word, thissymbol:symbol, org:symbol)symbolset 
  if code_1 in"record"
@@ -550,13 +548,11 @@ function definedeepcopy(dict:set.symbol, templates:symbolset, knownsymbols:symbo
     let cat = mangle("+"_1, type, [ mytype."T seq", mytype."T"])
     let blockit = mangle("blockit"_1, mytype."int blockseq", [ mytype."T seq"])
     resultpair(knownsymbols,"LIT 0 LIT 0 RECORD 2 PARAM 1 FREF"+ dc +"FREF"+ cat +"FREF"+ pseqidx +"APPLY 5"+ blockit)
-   else let name = mangle(merge("typedesc:"+ print.type), mytype."internal", empty:seq.mytype)
-   // assert false report"ERR100"+ name +"NO test example for deepcopy"// 
-   let a = lookupsymbol(knownsymbols, name)
-   assert isdefined.a report"not defined"+ name 
+   else let a=lookuptypedesc2(knownsymbols,print.type)
+    assert isdefined.a report"not defined"+ name.a 
    let z = if src(a)_1 ="record"_1 
     then let newknown = postbindtypes(dict, mytype."", templates, knownsymbols, src.a, a, org)
-     let b = lookupsymbol(newknown, name)
+     let b = lookupsymbol(newknown, mangledname.a)
      resultpair(newknown, src.b)
     else resultpair(knownsymbols, src.a)
    let src = size.z 

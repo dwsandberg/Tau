@@ -72,7 +72,6 @@ function gettext2(libname:word, e:seq.word, a:word)seq.seq.seq.word
 
 type libinfo is record known:symbolset, mods:seq.firstpass
 
-known:symbolset, mods:set.firstpass
 
 function addliblib(s:seq.word, a:libinfo, l:liblib)libinfo 
  if libname(l)_1 in s 

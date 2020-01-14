@@ -6,6 +6,8 @@ use stdlib
 
 type tree is record label:T, sons:seq.tree.T
 
+Function type:tree.T seq.word export
+
 Function =(T, T)boolean unbound
 
 Function =(a:tree.T, b:tree.T)boolean 

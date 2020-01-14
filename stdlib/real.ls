@@ -10,6 +10,8 @@ use stdlib
 
 type real is record representation:int
 
+Function type:real seq.word export
+
 Function-(r:real)real 0.0 - r
 
 Function abs(x:real)real if x < 0.0 then 0.0 - x else x

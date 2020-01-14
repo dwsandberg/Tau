@@ -12,6 +12,8 @@ use stdlib
 
 type seq is sequence length:int, x:T
 
+Function type:seq.T seq.word export
+
 type pseq is sequence length:int, a:seq.T, b:seq.T
 
 Function =(T, T)boolean unbound

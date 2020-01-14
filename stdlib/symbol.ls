@@ -52,6 +52,10 @@ Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a, b, 1)
 
 type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, src:seq.word, codetree:tree.seq.word
 
+Function type:symbol seq.word export
+
+Function type:symbolset seq.word export
+
 Function =(a:symbol, b:symbol)boolean mangledname.a = mangledname.b
 
 Function src(symbol)seq.word export

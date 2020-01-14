@@ -2,6 +2,10 @@ Module test20
 
 use stdlib
 
+use seq.q
+
+use seq.int
+
 type p is record a:int, b:int, c:int
 
 type q is record d:int, e:p, f:int

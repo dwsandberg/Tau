@@ -76,20 +76,21 @@ function primtypes(m:mytype)seq.mytype
   if length.s = 1 
   then [ m]
   else @(+, mytype, empty:seq.mytype, @(+, +."T", [ [ s_1]], subseq(s, 2, length.s)))
+  
+  
 
 function typelibsyms(known:symbolset, m:seq.word)seq.libsym 
- let sym = lookupsymbol(known, mangle(merge("typedesc:"+ m), mytype."internal", empty:seq.mytype))
+ let sym = lookuptypedesc2(known,  m)
   if isdefined.sym 
   then [ tolibsym4.sym]
-  else // assert m in ["seq","int","encoding.T","T"]report"LKJP"+ merge("typedesc:"+ m)// 
-  empty:seq.libsym
+  else   empty:seq.libsym
 
 function filterX(known:symbolset, typ:seq.word)seq.seq.word 
  if typ_1 ="erecord"_1 
   then // erecord contains funky types so do not look in up // 
    assert length.typ > 2 report"JKL"+ typ 
    [ subseq(typ, 3, length.typ)]
-  else let d = lookupsymbol(known, mangle(merge("typedesc:"+ typ), mytype."internal", empty:seq.mytype))
+  else let d = lookuptypedesc2(known,  typ)
   let src = src.d 
   // assert length(src)= 0 &or(src)_1 in"WORDS record"report typ +"XX"+ print2.d // 
   if length.src = 0 ∨ not(src_1 in"WORDS record")

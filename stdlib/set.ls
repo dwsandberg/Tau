@@ -8,6 +8,8 @@ use stdlib
 
 type set is record toseq:seq.T
 
+Function type:set.T seq.word export
+
 Function empty:seq.T seq.T export
 
 Function +(seq.T, T)seq.T export
