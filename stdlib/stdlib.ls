@@ -173,9 +173,14 @@ Function char(int) char export
 
 use seq.char
 
-Function  tointseq(seq.char) seq.int builtin.NOOP
+Function  tointseq(a:seq.char) seq.int  
+// This is just a type change and the compiler recognizes this and does not generate code // 
+  @(+, toint , empty:seq.int, a)
 
-Function  tocharseq(seq.int) seq.char builtin.NOOP
+
+Function  tocharseq(a:seq.int) seq.char // builtin.NOOP //
+// This is just a type change and the compiler recognizes this and does not generate code // 
+  @(+, char, empty:seq.char, a)
 
 
 type wordencoding is encoding seq.char

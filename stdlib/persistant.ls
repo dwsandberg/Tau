@@ -119,9 +119,6 @@ function eword2(w:word3)encodingrep.seq.char
  let a = decodeword.toword.w 
   encodingrep(asencoding.toword.w, a, hash.a)
 
-Function cast2intseq(int)seq.int builtin.NOOP
-
-Function cast2word(int)word builtin.NOOP
 
 type trackflds is record l:linklists2, flds:seq.flddesc, state:int
 

@@ -61,7 +61,7 @@ function addcode(code:encoding.T, hashsize:int, x:seq.encodingrep.T, e:encodingr
 
 type encoding is record valueofencoding:int
 
-Function toencoding:T(int) encoding.T builtin.NOOP
+Function toencoding:T(int) encoding.T builtin."PARAM 1"
 
 use deepcopy.T
 

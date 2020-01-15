@@ -19,7 +19,7 @@ type pseq is sequence length:int, a:seq.T, b:seq.T
 Function =(T, T)boolean unbound
 
 Function_(a:seq.T, b:int)T 
- NOINLINE.let typ = getseqtype(a, 0)
+ NOINLINE.let typ = getseqtype(a)
   if typ = 0 
   then assert b > 0 ∧ b ≤ length.a report"out of bounds"+ stacktrace 
    getval(a, b + 1)
@@ -28,13 +28,13 @@ Function_(a:seq.T, b:int)T
 function callidx(func:int, a:seq.T, b:int)T 
  builtin."PARAM 1 PARAM 2 PARAM 3 CALLIDX"
 
-function getval(a:seq.T, offset:int)T builtin.IDXUC
+function getval(a:seq.T, offset:int)T builtin."PARAM 1 PARAM 2 IDXUC"
 
-function getseqtype(a:seq.T, offset:int)int builtin.IDXUC
+function getseqtype(a:seq.T)int builtin."PARAM 1 LIT 0 IDXUC"
 
 Function length(a:seq.T)int export
 
-Function empty:seq.T seq.T builtin."LIT 0 LIT 0 RECORD 2"
+Function empty:seq.T seq.T // empty seq // builtin."LIT 0 LIT 0 RECORD 2"
 
 Function =(a:seq.T, b:seq.T)boolean 
  if length.a = length.b then subequal(a, b, length.a)else false

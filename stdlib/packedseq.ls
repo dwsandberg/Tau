@@ -12,16 +12,16 @@ function allocatespace:seq.T(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZ
 
 type address is record toseq:seq.T
 
-Function getaddress(s:seq.T, i:int)address.T 
- builtin."PARAM 1 PARAM 2 getaddressZbuiltinZTzseqZint"
-
+Function getaddress(s:seq.T, i:int)address.T builtin.usemangle
+ 
+ 
 Function toT(a:address.T)T builtin."PARAM 1"
 
 function inttoT:T(int)T builtin."PARAM 1"
 
-function fldof(T, offset:int)T builtin.IDXUC
+function fldof(T, offset:int)T builtin."PARAM 1 PARAM 2 IDXUC"
 
-function getfld(packedseq.T, i:int)int builtin.IDXUC
+function getfld(packedseq.T, i:int)int builtin."PARAM 1 PARAM 2 IDXUC"
 
 x is included in packedseq so the procedure to access the type with be different between instances of the scope.
 
