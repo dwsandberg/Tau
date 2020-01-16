@@ -77,10 +77,7 @@ function paratree(i:int)tree.seq.word tree("PARAM"+ toword.i)
 
 function addsymbol(p:program, mangledname:word)program 
  let caller = lookupsymbol(knownsymbols.p, mangledname)
-  // assert not(mangledname ="test4Ztest4"_1)report src.caller +"FLAGS"+ flags.caller // 
-  // assert not(mangledname ="PROFILE"_1)report"XXX"+ mangledname // 
-  // assert length.src.caller > 0 report"Error"+ mangledname + print2.caller // 
-  if isdefined.caller ∧ label.codetree.caller ="default"
+   if isdefined.caller ∧ label.codetree.caller ="default"
   then let startindex = if src(caller)_1 ="parsedfunc"_1 then toint(src(caller)_2)+ 3 else 1 
    let treecode = subseq(src.caller, startindex, length.src.caller - length.flags.caller)
    if length.src.caller > 0 ∧ last.src.caller ="EXTERNAL"_1 
@@ -108,18 +105,18 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
  if i > length.src 
   then assert length.toseq.stk > 0 report"STACK ISSUE"+ mangledname.caller + src 
    let top2 = top.stk 
-   // let top2 = if label.top ="builtinZtestZinternal1"&and label.top_1 ="NOOP"then tree("PARAM 1")else top assert not(label.top2 ="builtinZtestZinternal1")report print.top2 // 
-   if hasstate then tree("STATE", [ top2])else top2 
+    if hasstate then tree("STATE", [ top2])else top2 
   else let name = src_i 
-  if name in"builtinZtestZwordzseq builtinZtestZinternal1"
+  if name in" builtinZinternal1Zwordzseq builtinZinternal1Zinternal1"
   then buildcodetreeX(knownsymbols, hasstate, caller, stk, i + 1, src)
   else let specialnopara = if name in"if CALLIDX"
    then 3 
    else if name in"IDXUC setfldZbuiltinZTzaddressZT  addZbuiltinZTzerecordZTzencodingrep encodeZbuiltinZTZTzerecord  getaddressZbuiltinZTzseqZint createfileZbuiltinZbitszseqZoutputformat"
    then 2 
-   else if name in"assertZbuiltinZwordzseq mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord allocatespaceZbuiltinZint builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT getfileZbuiltinZbitszseq"
+   else if name in"assertZbuiltinZwordzseq mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord 
+   allocatespaceZbuiltinZint builtinZinternal1Zinternal1 abortedZbuiltinZTzprocess processZbuiltinZT getfileZbuiltinZbitszseq"
    then 1 
-   else if name in"FORCEINLINEZtest PROFILEZtest NOINLINEZtest"then 0 else-1 
+   else  -1 
   assert length.toseq.stk ≥ specialnopara report"STACK ISSUE"+ name + mangledname.caller + src 
   if specialnopara >-1 
   then buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, specialnopara), tree([ name], top(stk, specialnopara))), i + 1, src)
@@ -170,7 +167,7 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
 Function calls(knownsymbols:symbolset, t:tree.seq.word)seq.word 
  @(+, calls.knownsymbols, empty:seq.word, sons.t)+ if inst.t ="FREF"_1 
   then [ arg.t]
-  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint addZbuiltinZTzerecordZTzencodingrep  encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord  getaddressZbuiltinZTzseqZint FORCEINLINEZtest builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT PROFILEZtest NOINLINEZtest createfileZbuiltinZbitszseqZoutputformat getfileZbuiltinZbitszseq"
+  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint addZbuiltinZTzerecordZTzencodingrep  encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord  getaddressZbuiltinZTzseqZint   builtinZinternal1Zinternal1 abortedZbuiltinZTzprocess processZbuiltinZT  createfileZbuiltinZbitszseqZoutputformat getfileZbuiltinZbitszseq"
   then empty:seq.word 
   else // let sym = knownsymbols_inst.t assert mangledname.sym ≠"undefinedsym"_1 ∨ inst.t in"APPLY"report"IN calls"+ inst.t + print.t // 
   [ inst.t]

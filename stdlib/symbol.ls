@@ -87,7 +87,7 @@ function flags(src:seq.word, i:int)seq.word
   then""
   else if src_i in"VERYSIMPLE EXTERNAL STATE NOINLINE INLINE SIMPLE COMPLEX FORCEINLINE PROFILE"
   then flags(src, i - 1)+ src_i 
-  else if src_i in"STATEZtestZinternal1"
+  else if src_i in"STATEZinternal1Zinternal1"
   then flags(src, i - 1)+"STATE"
    else""
 

@@ -223,7 +223,7 @@ function bindingfind(defines:seq.seq.word, s:seq.word)seq.seq.word
      [ subseq(a, 1, headlength)+"unknown"+ subseq(a, headlength + 1, length.a)]
     else b 
    let d = if s_1 in"Function"then ["Parsedfunc"+ subseq(c_1, 2, length(c_1))]else c 
-   if d_1_(toint(d_1_2)+ 4)="stubZtest"_1 then ["skip"+ s]else d 
+   if d_1_(toint(d_1_2)+ 4) in  "stubZinteral1"  then ["skip"+ s]else d 
   else if s_1 in"use Use"
   then empty:seq.seq.word 
   else if s_1 ="Library"_1 then [ s]else ["skip"+ s]

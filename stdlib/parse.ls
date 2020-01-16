@@ -35,7 +35,7 @@ use UTF8
 use format
 
 Function headdict set.symbol 
- let modulename = mytype."test"
+ let modulename = mytype."internal1"
   asset([ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), 
   symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal",""), 
   symbol("builtin"_1, modulename, empty:seq.mytype, mytype."internal",""), 
@@ -218,7 +218,7 @@ function lookupbysig(dict:set.symbol,name:word,paratypes:seq.mytype,input:seq.wo
  
  function createfunc(dict:set.symbol, funcname:seq.word,paralist:seq.mytype,functype:mytype,exp:bindinfo,input:seq.word,place:int)
    bindinfo
-    assert  functype = (types.exp)_1 ∨ (types.exp)_1 = mytype."internal"
+    assert  functype = (types.exp)_1 ∨ (types.exp)_1 in[ mytype."internal",mytype."internal1"]
     report errormessage("function type of"+ print.functype +"does not match expression type"+ print.(types.exp)_1 
     , input 
     , place)

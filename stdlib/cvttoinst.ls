@@ -27,31 +27,24 @@ function hash(a:inst)int hash.towords.a
 function =(a:inst, b:inst)boolean towords.a = towords.b
 
 function aseinst(w:seq.word)int 
- assert not(w ="FREF")report"problem!"
-  encode2.inst.w
+  findindex(einst,inst.w)
 
 function inst(x:seq.word)inst inst(x,"", mytype."?")
 
-function toinst(f:symbol)inst inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f)
+function toinst(f:symbol)inst 
+inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f)
 
-function encode2(x:inst)int findindex(einst,x)
+function encode3(f:symbol)int 
+findindex(einst,inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f))
+
+
 
 function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int 
- assert not(label.codetree.f ="default")report"in addcodes"
-  // + print2.f // 
-  let j = encode2.toinst.f 
-  assert not.hasexternal.codetree.f report"ERR22"
-  // + print2.f // replace(a, j, prepb(allfunctions, codetree.f))
-
-function hasexternal(t:tree.seq.word)boolean 
- if"EXTERNAL"_1 in label.t ∧ not(label(t)_1 in"WORD WORDS")
-  then true 
-  else @(∨, hasexternal, false, sons.t)
+    replace(a, encode3.f, prepb(allfunctions, codetree.f))
 
 Function convert2(allfunctions:symbolset, s:seq.symbol)intercode 
- let discard = @(+, encode2, empty:seq.int, initinst)
-  let a = @(+, toinst, empty:seq.inst, s)
-  let defines = @(+, encode2, empty:seq.int, a)
+ let discard = @(+, findindex.einst, empty:seq.int, initinst)
+   let defines = @(+, encode3, empty:seq.int, s)
   intercode(@(addcodes.allfunctions, identity, dseq.empty:seq.int, s), orderadded.einst, defines)
 
 Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int 
@@ -77,7 +70,9 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
    else if inst ="STATE"_1 
    then empty:seq.int 
    else let s = findencode(einst,inst.[ inst, toword.nosons.t])
-   [ if length.s = 0 then encode2.toinst.lookupfunc(allfunctions, inst)else encode2(s_1)]
+   [ if length.s = 0 then 
+      encode3.lookupfunc(allfunctions, inst)else      
+       index.s_1]
 
 function initinst seq.inst 
  [ // opGT // 

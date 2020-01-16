@@ -365,17 +365,17 @@ function topara(i:int)seq.word {"PARAM"+ toword.i }
 function handlebuiltin(org:symbol, dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset, code:seq.word, i:int, result:seq.word, thissymbol:symbol)symbolset 
    if code_i ="WORDS" _1 then
      let l=toint(code_(i+1))+ 2+i
-      if l ≤ length.code ∧ code_l="builtinZtestZwordzseq"_1 
+      if l ≤ length.code ∧ code_l="builtinZinternal1Zwordzseq"_1 
      then 
          replace(knownsymbols, changesrc(thissymbol, result+subseq(code, i+2, length.code)))
       else 
       postbind2(org, dict, modpara, templates, knownsymbols, code, l, result+subseq(code, i,   l-1), thissymbol)
-   else if code_i ="usemangleZtest"_1 
+   else if code_i  in "usemangleZinternal1"  
   then 
      let builtinname = mangle(name.thissymbol, mytype."builtin", paratypes.thissymbol)
    let src = @(+, topara,"", arithseq(length.paratypes.thissymbol, 1, 1))+ builtinname 
             replace(knownsymbols, changesrc(thissymbol,  result+src+subseq(code,i+1,length.code)))
-   else  if code_i ="FROMSEQ51Ztest"_1 
+   else  if code_i in "FROMSEQ51Zinternal1"  
   then  let mn = mangle("_"_1, modname.thissymbol, [ mytype("T"+ abstracttype.resulttype.thissymbol), mytype."int"])
    let newknown = known.X(mn, org, dict, modpara, templates, knownsymbols)
    let f1 ="PARAM 1 LIT 0 IDXUC FREF"+ mn +"Q3DZbuiltinZintZint PARAM 1 LIT 0 LIT 0 RECORD 2 if"
@@ -531,20 +531,20 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
     else empty:seq.symbol 
    firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
   else if input_1 in"Function function"
-  then let t = parse(stubdict, getheader.input)
+  then let t = // should be able to use stubdict here // parse(headdict, getheader.input)
    let name = funcname.t 
    let paratypes = funcparametertypes.t 
    assert  iscomplex.modname.f=hasT(input,2) report
       "Must use type T in function name or parameters in  parameterized module and T cannot be used in non-parameterized module"
        +getheader.input
    let firstinstruction = code(t)_1 
-   if firstinstruction ="usemangleZtest"_1 
+   if firstinstruction  in "usemangleZinternal1"  
    then let sym = symbol(name, mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t, input)
     firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
    else let sym = symbol(name, modname.f, paratypes, funcreturntype.t, input)
-   if"exportZtest"_1 = firstinstruction 
+   if firstinstruction  in " exportZinternal1 " 
    then firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, exportmodule.f, rawsrc.f)
-   else if"unboundZtest"_1 = firstinstruction 
+   else if firstinstruction in "  unboundZinternal1" 
    then firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + sym, exportmodule.f, rawsrc.f)
    else assert not(sym in defines.f)report"Function"+ name.sym +"is defined twice in module"+ print.modname.f 
    firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
