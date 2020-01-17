@@ -61,9 +61,10 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
   if mangledname ="STATE"_1 
   then empty:seq.symbol 
   else let a = codedown.mangledname 
-  if length.a > 1 ∧ last(a_2)="builtin"_1 
+  if length.a > 1 ∧  a_2  ="builtin"  
   then empty:seq.symbol 
-  else let f = lookupfunc(knownsymbols.p, mangledname)
+  else 
+   let f = lookupfunc(knownsymbols.p, mangledname)
   // let code1 = if"TESTOPT"_1 in flags.f then hoistRecord.codetree.f else hoistRecord.codetree.f let code2 = // 
   // remove result record in loop // 
   // opt2.code1 let code3 = removerecords.code2 // 
@@ -83,7 +84,8 @@ function addsymbol(p:program, mangledname:word)program
    if length.src.caller > 0 ∧ last.src.caller ="EXTERNAL"_1 
    then program(replace(knownsymbols.p, changecodetree(caller, tree."EXTERNAL")), callgraph.p, inline.p, if"STATE"_1 in flags.caller then hasstate.p + mangledname.caller else hasstate.p)
    else let tr0 = buildcodetreeX(knownsymbols.p, false, caller, empty:stack.tree.seq.word, 1, treecode)
-   let tr = inline(p, inline.p, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, if label.tr0 ="STATE"then tr0_1 else tr0)
+   let tr = inline(p, inline.p, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, 
+   if label.tr0 ="STATE"then tr0_1 else tr0)
    let calls2 = calls(knownsymbols.p, tr)
    let isrecusive = mangledname.caller in calls2 
    let tr2 = if isrecusive then tailcall(tr, mangledname.caller, nopara.caller)else tr 
@@ -109,18 +111,13 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
   else let name = src_i 
   if name in" builtinZinternal1Zwordzseq builtinZinternal1Zinternal1"
   then buildcodetreeX(knownsymbols, hasstate, caller, stk, i + 1, src)
-  else let specialnopara = if name in"if CALLIDX"
-   then 3 
-   else if name in"IDXUC setfldZbuiltinZTzaddressZT  addZbuiltinZTzerecordZTzencodingrep encodeZbuiltinZTZTzerecord  getaddressZbuiltinZTzseqZint createfileZbuiltinZbitszseqZoutputformat"
-   then 2 
-   else if name in"assertZbuiltinZwordzseq mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord 
-   allocatespaceZbuiltinZint builtinZinternal1Zinternal1 abortedZbuiltinZTzprocess processZbuiltinZT getfileZbuiltinZbitszseq"
-   then 1 
-   else  -1 
-  assert length.toseq.stk ≥ specialnopara report"STACK ISSUE"+ name + mangledname.caller + src 
-  if specialnopara >-1 
-  then buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, specialnopara), tree([ name], top(stk, specialnopara))), i + 1, src)
-  else if name ="SET"_1 
+  else if name in"if CALLIDX"
+   then let specialnopara=3
+   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, specialnopara), tree([ name], top(stk, specialnopara))), i + 1, src)
+ else if name in"IDXUC "
+   then 
+   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, 2), tree([ name], top(stk, 2))), i + 1, src)
+   else  if name ="SET"_1 
   then buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, 2), tree(subseq(src, i, i + 1), top(stk, 2))), i + 2, src)
   else if name in"LIT PARAM LOCAL WORD"
   then buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
@@ -152,22 +149,30 @@ function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol,
    let templatename = abstracttype.modname 
    let label = if templatename ="para"_1 
     then"PARAM"+ down_2_1 
-    else if templatename ="local"_1 then"LOCAL"+ down_1 else down_1 
+    else if templatename ="local"_1 then"LOCAL"+ down_1 else 
+     if templatename = "builtin"_1 then [name] else
+      down_1 
    buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara), tree(label, top(stk, nopara))), i + 1, src)
   else // assert not(src(sym)_1 in"sequence record encoding")report"MM4"+ name + mangledname.caller // 
   assert length.toseq.stk ≥ nopara.sym report"stack problem"+ print2.sym 
   let flags = flags.sym 
-  if"EXTERNAL"_1 in flags ∨"VERYSIMPLE"_1 in flags 
-  then buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
-  else if"VERYSIMPLE"_1 in flags 
-  then assert not("EXTERNAL"_1 in flags)report"ERR20"+ src.sym 
-   buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, stk, 1, subseq(src.sym, nopara.sym * 2 + 1, length.src.sym - length.flags.sym)+ subseq(src, i + 1, length.src))
-  else buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
+  if   "VERYSIMPLE"_1 in flags ∨   "EXTERNAL"_1 in flags 
+  then buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, 
+    push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
+  else // if"VERYSIMPLE"_1 in flags 
+  then assert  not("EXTERNAL"_1 in flags)report"ERR20"+ src.sym 
+  assert false report print.sym+src.sym+"\\\"+subseq(src.sym, nopara.sym * 2 + 1, length.src.sym - length.flags.sym)
+     +name
+   buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, 
+   stk, 1, subseq(src.sym, nopara.sym * 2 + 1, length.src.sym - length.flags.sym)+ subseq(src, i + 1, length.src))
+  else // buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
 
 Function calls(knownsymbols:symbolset, t:tree.seq.word)seq.word 
  @(+, calls.knownsymbols, empty:seq.word, sons.t)+ if inst.t ="FREF"_1 
   then [ arg.t]
-  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint addZbuiltinZTzerecordZTzencodingrep  encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord  getaddressZbuiltinZTzseqZint   builtinZinternal1Zinternal1 abortedZbuiltinZTzprocess processZbuiltinZT  createfileZbuiltinZbitszseqZoutputformat getfileZbuiltinZbitszseq"
+  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 
+  CRECORD STKRECORD 
+        "
   then empty:seq.word 
   else // let sym = knownsymbols_inst.t assert mangledname.sym ≠"undefinedsym"_1 ∨ inst.t in"APPLY"report"IN calls"+ inst.t + print.t // 
   [ inst.t]
@@ -175,7 +180,8 @@ Function calls(knownsymbols:symbolset, t:tree.seq.word)seq.word
 Function calls(self:word, t:tree.seq.word)seq.arc.word 
  @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.t ="FREF"_1 
   then [ arc(self, arg.t)]
-  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD"
+  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 
+  CRECORD STKRECORD"
   then empty:seq.arc.word 
   else // let a = codedown.inst.t if length.a > 1 ∧(a_2 ="builtin")then empty:seq.arc.word else // 
   [ arc(self, inst.t)]
