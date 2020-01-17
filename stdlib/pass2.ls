@@ -236,13 +236,15 @@ function simplecalcs(label:seq.word, a:int, b:int, l:seq.tree.seq.word)tree.seq.
   then tree.["LIT"_1, toword(a / b)]
   else if inst ="Q2AZbuiltinZintZint"_1 
   then tree.["LIT"_1, toword(a * b)]
-  else if inst ="EQL"_1 
+  else if inst ="Q3DZbuiltinZintZint"_1 
   then tree.["LIT"_1, if a = b then"1"_1 else"0"_1]
   else if inst ="Q3CQ3CZbuiltinZbitsZint"_1 
   then tree.["LIT"_1, toword.toint(bits.a << b)]
   else if inst ="Q3EQ3EZbuiltinZbitsZint"_1 
   then tree.["LIT"_1, toword.toint(bits.a >> b)]
-  else // assert inst in"Q5EZstdlibZintZint BLOCKCOUNTZinternalbcZintZint"report"XY"+ inst // 
+  else if inst ="makerealZrealZintZint"_1 then
+    tree.["LIT"_1, toword.representation.makereal(a,b)]
+  else
   tree(label, l)
 
 type program is record knownsymbols:symbolset, callgraph:graph.word, inline:set.word, hasstate:seq.word
@@ -361,15 +363,6 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
    if idx > 0 ∧ idx ≤ toint.arg(l_1)
    then tree("WORD"+ label(l_1)_(idx + 2))
    else tree(label.code, l)
-  else if inst in"Q5FZwordzseqZTzseqZint"∧ inst(l_2)="LIT"_1 ∧ inst(l_1)="CRECORD"_1 
-  then // only expand when is standard sequence:that is 0 is in first field of record // 
-   let cst = l_1 
-   let idx = toint.arg(l_2)
-   if idx > 0 ∧ idx ≤ nosons.cst - 2 ∧ inst(cst_1)="LIT"_1 ∧ arg(cst_1)="0"_1 
-   then cst_(idx + 2)
-   else tree(label.code, l)
-  else if length.l = 2 ∧ inst(l_2)="LIT"_1 ∧ inst.code ="getaddressZbuiltinZTzseqZint"_1 ∧ arg(l_2)="0"_1 
-  then l_1 
   else if inst ="APPLY"_1 ∧(nosons.code ≠ 5 ∨ nosons(l_1)> 2)
   then expandapply(pp, inlinename, nextset, code, l)
   else if inst in inlinename 
@@ -380,10 +373,26 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
     else expandapply(pp, inlinename, nextset, code, l)
    else let f = lookupfunc(knownsymbols.pp, inst)
    explodeinline(pp, inlinename, codetree.f,"SIMPLE"_1 in flags.f, nextset, l)
-  else if length.l = 2 ∧ inst(l_1)="LIT"_1 ∧ inst(l_2)="LIT"_1 
-  then // location after inline expansion so inlining will happen if both sons happen to be LIT's // 
-   simplecalcs(label.code, toint.arg(l_1), toint.arg(l_2), l)
+  else if length.l = 2 ∧ inst(l_2)="LIT"_1 then
+     if  inst(l_1)="LIT"_1 
+       then // location after inline expansion so inlining will happen if both sons happen to be LIT's // 
+      simplecalcs(label.code, toint.arg(l_1), toint.arg(l_2), l)
+     else if    inst(l_1)="CRECORD"_1 
+        then // only expand when is standard sequence:that is 0 is in first field of record // 
+      let cst = l_1 
+     let idx = toint.arg(l_2)
+     if idx > 0 ∧ idx ≤ nosons.cst - 2 ∧ inst(cst_1)="LIT"_1 ∧ arg(cst_1)="0"_1 
+     then 
+        let c=codedown.inst
+        if c_1="_" &and last.c_2="seq"_1 &and c_3="T seq" &and c_4="int" then
+        cst_(idx + 2)
+        else tree(label.code, l)
+     else tree(label.code, l)
+    else if inst.code ="getaddressZbuiltinZTzseqZint"_1 ∧ arg(l_2)="0"_1 then l_1
+     else
+       tree(label.code, l)
   else tree(label.code, l)
+
 
 function expandapply(pp:program, inlinename:set.word, nextset:int, code:tree.seq.word, l:seq.tree.seq.word)tree.seq.word 
  let term1 = arg(code_(nosons.code - 1))

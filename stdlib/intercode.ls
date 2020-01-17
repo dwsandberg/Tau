@@ -57,3 +57,15 @@ Function createlinkedlists linklists2 export
 
 Function initializer(conststypex:llvmtype, data:linklists2)int export
 
+use textio
+
+use seq.inst
+
+use seq.seq.int
+
+Function print(c:intercode,i:inst) seq.word
+      towords.i+     @(+, towords2, ""  ,       @(+,_.coding.c,empty:seq.inst, (codes.c)_index.i))
+
+function   towords2(i:inst) seq.word if (towords.i)_1 in "PARAM LIT" then [(towords.i)_1]+towords.decodeword.(towords.i)_2 else towords.i
+
+

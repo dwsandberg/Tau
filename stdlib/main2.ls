@@ -100,11 +100,8 @@ function subcompilelib(libname:word)seq.word
    @(addliblib.dependentlibs, identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
   let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
   let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
-  let roots = roots.p1 
-  let mods = mods.p1 
-  let known2 = symset.p1 
   let intercode = pass2(symset.p1, toseq.roots.p1, known.li)
-  let bc = codegen5(intercode, libname, liblib([ libname], libdesc(roots, intercode, mods, known2)))
+  let bc = codegen5(intercode, libname, liblib([ libname], libdesc(roots.p1, intercode, mods.p1, symset.p1)))
   let z2 = createlib(bc, libname, dependentlibs)
   let save=@(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1)
   let name= merge("pass1/"+libname+"."+print.currenttime +".txt")
@@ -242,3 +239,23 @@ function findexport(sq:seq.symbol, name:word, types:seq.mytype, i:int)seq.word
 
 /function print(l:libmod)seq.word"&br &br"+ if parameterized.l then [ modname.l]+".T"else [ modname.l]+"&br defines:"+ @(+, print2(modname.l ="$other"_1),"", defines.l)+"&br exports:"+ @(+, print2(modname.l ="$other"_1),"", defines.l)
 
+Function secondPass(libname:word) seq.seq.word
+let a = gettext.[ merge([ libname]+"/"+ libname +".ls")]
+  let s = findlibclause(a, 1)
+  let u = findindex("uses"_1, s, 3)
+  let e = findindex("exports"_1, s, 3)
+  let dependentlibs = subseq(s, u + 1, e - 1)
+  let filelist = subseq(s, 2, min(u - 1, e - 1))
+  let exports = subseq(s, e + 1, length.s)
+  let li = if libname in"stdlib"
+   then libinfo(emptysymbolset, empty:seq.firstpass)
+   else let discard5 = loadlibs(dependentlibs, 1, timestamp(loadedlibs_1))
+   @(addliblib.dependentlibs, identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
+  let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
+  let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
+  let p2= pass2(symset.p1, toseq.roots.p1, known.li)
+   @(+, print.p2, empty:seq.seq.word  ,@(+,_.coding.p2,empty:seq.inst,defines.p2))
+   
+   use intercode
+   
+   use seq.inst
