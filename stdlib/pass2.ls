@@ -42,7 +42,10 @@ use tree.seq.word
 
 use worddict.tree.seq.word
 
+use deepcopy.intercode
+
 Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)intercode 
+PROFILE.
  // does inline expansion, finds consts, removes unreaachable functions // 
   let p = program(knownsymbols, newgraph.empty:seq.arc.word, empty:set.word,"")
   let x = @(addsymbol, identity, p, roots)
@@ -82,100 +85,126 @@ function addsymbol(p:program, mangledname:word)program
   then let startindex = if src(caller)_1 ="parsedfunc"_1 then toint(src(caller)_2)+ 3 else 1 
    let treecode = subseq(src.caller, startindex, length.src.caller - length.flags.caller)
    if length.src.caller > 0 ∧ last.src.caller ="EXTERNAL"_1 
-   then program(replace(knownsymbols.p, changecodetree(caller, tree."EXTERNAL")), callgraph.p, inline.p, if"STATE"_1 in flags.caller then hasstate.p + mangledname.caller else hasstate.p)
-   else let tr0 = buildcodetreeX(knownsymbols.p, false, caller, empty:stack.tree.seq.word, 1, treecode)
+   then program(replace(knownsymbols.p, changecodetree(caller, tree."EXTERNAL")), callgraph.p, 
+       inline.p, if"STATE"_1 in flags.caller then hasstate.p + mangledname.caller else hasstate.p)
+   else let tr0 = buildcodetreeX(false,  empty:stack.tree.seq.word, 1, treecode)
    let tr = inline(p, inline.p, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, 
    if label.tr0 ="STATE"then tr0_1 else tr0)
-   let calls2 = calls(knownsymbols.p, tr)
-   let isrecusive = mangledname.caller in calls2 
-   let tr2 = if isrecusive then tailcall(tr, mangledname.caller, nopara.caller)else tr 
-   let calls3 = asset.calls(knownsymbols.p, tr2)
-   let newsym = changecodetree(caller, tr2)
+   let tr2=tailcall(tr, mangledname.caller, nopara.caller)
+    let calls3 = asset.calls( tr2)
+    let isrecusive = mangledname.caller in calls3 
+    let newsym = changecodetree(caller, tr2)
    let flags = flags.newsym 
-   let newp = program(replace(knownsymbols.p, newsym), callgraph.p + @(+, arc.mangledname.caller, empty:seq.arc.word, toseq.calls3), if isrecusive ∨ not("SIMPLE"_1 in flags ∨"INLINE"_1 in flags)
+   let newp = program(replace(knownsymbols.p, newsym), callgraph.p + @(+, arc.mangledname.caller, empty:seq.arc.word, toseq.calls3),
+    if isrecusive ∨ not("SIMPLE"_1 in flags ∨"INLINE"_1 in flags)
     then inline.p 
-    else inline.p + mangledname.newsym, if"STATE"_1 in flags ∨ inst.tr0 ="STATE"_1 
+    else inline.p + mangledname.newsym, 
+    if"STATE"_1 in flags ∨ inst.tr0 ="STATE"_1 
     then hasstate.p + mangledname.newsym 
     else hasstate.p)
    @(addsymbol, identity, newp, toseq(calls3 - "APPLY"_1))
   else p
 
-function buildcodetree(knownsymbols:symbolset, src:seq.word)tree.seq.word 
- buildcodetreeX(knownsymbols, false, symbol("looptemplate"_1, mytype."?", empty:seq.mytype, mytype."?",""), empty:stack.tree.seq.word, 1, src)
+function buildcodetree(src:seq.word)tree.seq.word 
+ buildcodetreeX( false,  empty:stack.tree.seq.word, 1, src)
 
-function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol, stk:stack.tree.seq.word, i:int, src:seq.word)tree.seq.word 
+function buildcodetreeX( hasstate:boolean,  stk:stack.tree.seq.word, i:int, src:seq.word)tree.seq.word 
  if i > length.src 
-  then assert length.toseq.stk > 0 report"STACK ISSUE"+ mangledname.caller + src 
+  then assert length.toseq.stk > 0 report"STACK ISSUE"+  src 
    let top2 = top.stk 
     if hasstate then tree("STATE", [ top2])else top2 
   else let name = src_i 
   if name in" builtinZinternal1Zwordzseq builtinZinternal1Zinternal1"
-  then buildcodetreeX(knownsymbols, hasstate, caller, stk, i + 1, src)
+  then buildcodetreeX( hasstate,  stk, i + 1, src)
   else if name in"if CALLIDX"
    then let specialnopara=3
-   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, specialnopara), tree([ name], top(stk, specialnopara))), i + 1, src)
+   buildcodetreeX( hasstate,  push(pop(stk, specialnopara), tree([ name], top(stk, specialnopara))), i + 1, src)
  else if name in"IDXUC "
    then 
-   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, 2), tree([ name], top(stk, 2))), i + 1, src)
+   buildcodetreeX( hasstate,  push(pop(stk, 2), tree([ name], top(stk, 2))), i + 1, src)
    else  if name ="SET"_1 
-  then buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, 2), tree(subseq(src, i, i + 1), top(stk, 2))), i + 2, src)
+  then buildcodetreeX( hasstate,  push(pop(stk, 2), tree(subseq(src, i, i + 1), top(stk, 2))), i + 2, src)
   else if name in"LIT PARAM LOCAL WORD"
-  then buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
+  then buildcodetreeX( hasstate,  push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
   else if name ="FREF"_1 
   then // let sym = lookupfunc(knownsymbols, src_(i + 1))// 
-   buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
+   buildcodetreeX( hasstate,  push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
   else if name ="define"_1 
-  then buildcodetreeX(knownsymbols, hasstate, caller, stk, i + 2, src)
+  then buildcodetreeX( hasstate,  stk, i + 2, src)
   else if name in"RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD"
   then let size = toint(src_(i + 1))
    assert length.toseq.stk ≥ size report"stack problem APPLY/RECORD"+ src 
-   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, size), tree(subseq(src, i, i + 1), top(stk, size))), i + 2, src)
+   buildcodetreeX( hasstate,  push(pop(stk, size), tree(subseq(src, i, i + 1), top(stk, size))), i + 2, src)
   else if name ="PRECORD"_1 
   then let size = toint(src_(i + 1))
    let s = top(stk, size)
    let b = tree("PROCESS2", [ tree("RECORD", subseq(s, size - 3, size)+ subseq(s, 1, size - 4))])
-   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, size), b), i + 2, src)
+   buildcodetreeX( hasstate,  push(pop(stk, size), b), i + 2, src)
   else if name ="WORDS"_1 
   then let size = toint(src_(i + 1))
-   buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + size + 1)), i + size + 2, src)
+   buildcodetreeX( hasstate,  push(stk, tree.subseq(src, i, i + size + 1)), i + size + 2, src)
   else if name ="COMMENT"_1 
   then let size = toint(src_(i + 1))
-   buildcodetreeX(knownsymbols, hasstate, caller, stk, i + size + 2, src)
-  else let sym = lookupsymbol(knownsymbols, name)
-  if isundefined.sym 
-  then let down = codedown.name 
-   let nopara = length.codedown.name - 2 
-   let modname = mytype(down_2)
-   let templatename = abstracttype.modname 
-   let label = if templatename ="para"_1 
-    then"PARAM"+ down_2_1 
-    else if templatename ="local"_1 then"LOCAL"+ down_1 else 
-     if templatename = "builtin"_1 then [name] else
-      down_1 
-   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara), tree(label, top(stk, nopara))), i + 1, src)
-  else // assert not(src(sym)_1 in"sequence record encoding")report"MM4"+ name + mangledname.caller // 
-  assert length.toseq.stk ≥ nopara.sym report"stack problem"+ print2.sym 
-  let flags = flags.sym 
-  if   "VERYSIMPLE"_1 in flags ∨   "EXTERNAL"_1 in flags 
-  then buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, 
-    push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
-  else // if"VERYSIMPLE"_1 in flags 
-  then assert  not("EXTERNAL"_1 in flags)report"ERR20"+ src.sym 
-  assert false report print.sym+src.sym+"\\\"+subseq(src.sym, nopara.sym * 2 + 1, length.src.sym - length.flags.sym)
-     +name
-   buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, 
-   stk, 1, subseq(src.sym, nopara.sym * 2 + 1, length.src.sym - length.flags.sym)+ subseq(src, i + 1, length.src))
-  else // buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
+   buildcodetreeX( hasstate,  stk, i + size + 2, src)
+  else if  name in "STATEZinternal1Zinternal1" then
+   buildcodetreeX( true,  stk, i + 1, src)
+  else 
+   let p=handlelocalandpara.name
+   let nopara = index.p
+    assert length.toseq.stk ≥ nopara report"stack problem"+ name
+   buildcodetreeX( hasstate,  push(pop(stk, nopara), tree(value.p, top(stk, nopara))), i + 1, src)
+   
+ use ipair.seq.word
+ 
+ use seq.char
+ 
+ function  handlelocalandpara(w:word) ipair.seq.word
+      let charmajorseparator =// Z // char(90)
+      let l=decodeword(w)
+      let nopara=@(+, count.charmajorseparator,-1,l)
+      if nopara &ne 0 then ipair(nopara,[w])
+      else
+      if subseq(l,length.l-4,  length.l)=decodeword("zpara"_1) then 
+        let j=findindex(charmajorseparator,l)
+          ipair(0,"PARAM"+encodeword.subseq(l,j+1,length.l-5) )
+      else if subseq(l,length.l-5,  length.l)=decodeword("Zlocal"_1) then
+           ipair(0,"LOCAL"+removeQ(subseq(l,1,length.l-6),1,empty:seq.char))
+      else
+      ipair(nopara,[w])
+ 
+ 
+  function count(val:char, i:char)int if val = i then 1 else 0
+ 
 
-Function calls(knownsymbols:symbolset, t:tree.seq.word)seq.word 
- @(+, calls.knownsymbols, empty:seq.word, sons.t)+ if inst.t ="FREF"_1 
+
+
+ 
+ function removeQ(l:seq.char, i:int, w:seq.char) word 
+  let charQ = char(81 )
+  if i > length.l 
+  then  encodeword.w 
+  else if l_i = charQ 
+  then assert i + 2 ≤ length.l report"format problem with removeQ for"+ encodeword.l 
+   let first = hexvalue(l_(i + 1))
+   let t = first * 16 + hexvalue(l_(i + 2))
+   if first > 0 
+   then removeQ(l, i + 3, w + char.t)
+   else let t1 =((t * 16 + hexvalue(l_(i + 3)))* 16 + hexvalue(l_(i + 4)))* 16 + hexvalue(l_(i + 5))
+   removeQ(l, i + 6, w + char.t1)
+  else removeQ(l, i + 1, w + l_i)
+  
+ function hexvalue(i:char)int if between(toint.i, 48, 57)then toint.i - 48 else toint.i - 65 + 10
+ 
+
+  
+
+Function calls( t:tree.seq.word)seq.word 
+ @(+, calls, empty:seq.word, sons.t)+ if inst.t ="FREF"_1 
   then [ arg.t]
   else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 
-  CRECORD STKRECORD 
-        "
+  CRECORD STKRECORD  "
   then empty:seq.word 
-  else // let sym = knownsymbols_inst.t assert mangledname.sym ≠"undefinedsym"_1 ∨ inst.t in"APPLY"report"IN calls"+ inst.t + print.t // 
-  [ inst.t]
+  else [ inst.t]
 
 Function calls(self:word, t:tree.seq.word)seq.arc.word 
  @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.t ="FREF"_1 
@@ -365,7 +394,7 @@ function expandapply(pp:program, inlinename:set.word, nextset:int, code:tree.seq
   let nopara = 2 + p2 + p1 
   assert p2 ≥ 0 report"illformed"+ term1 + term2 + print.lookupfunc(knownsymbols.pp, term2)
   // let thetree = buildcodetree(nopara, template2(term1, term2, p1, p2, ptyp))let z = @(+, identity, knownsymbols.pp, testx)// 
-  let thetree = buildcodetree(knownsymbols.pp, template2(term1, term2, p1, p2, ptyp))
+  let thetree = buildcodetree( template2(term1, term2, p1, p2, ptyp))
   explodeinline(pp, inlinename, thetree, false, nextset, subseq(l, 1, length.l - 3))
 
 ______________
