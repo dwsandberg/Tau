@@ -12,7 +12,7 @@ use stdlib
 
 type seq is sequence length:int, x:T
 
-Function type:seq.T seq.word export
+Function type:seq.T internaltype export
 
 type pseq is sequence length:int, a:seq.T, b:seq.T
 

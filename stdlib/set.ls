@@ -8,7 +8,7 @@ use stdlib
 
 type set is record toseq:seq.T
 
-Function type:set.T seq.word export
+Function type:set.T internaltype  export
 
 Function empty:seq.T seq.T export
 

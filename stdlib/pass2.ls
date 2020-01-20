@@ -357,6 +357,9 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
   else if inst ="Q2BZwordzseqZTzseqZTzseq"_1 ∧ inst(l_1)="WORDS"_1 ∧ inst(l_2)="WORDS"_1 
   then let cat = subseq(label(l_1), 3, length.label(l_1))+ subseq(label(l_2), 3, length.label(l_2))
    tree("WORDS"+ toword.length.cat + cat)
+  else if inst="decodeZcharzseqzencodingZTzerecordZTzencoding"_1 ∧ inst(l_2)="WORD"_1 ∧ inst(l_1)="wordencodingZstdlib"_1 then
+        let charseq=decodeword.arg(l_2)
+     tree("CRECORD",  @(+,treelit,empty:seq.tree.seq.word,   [char.0,char.length.charseq]+charseq))
   else if inst in"Q5FZwordzseqZTzseqZint"∧ inst(l_2)="LIT"_1 ∧ inst(l_1)="WORDS"_1 
   then let cst = l_1 
    let idx = toint.arg(l_2)
@@ -365,7 +368,7 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
    else tree(label.code, l)
   else if inst ="APPLY"_1 ∧(nosons.code ≠ 5 ∨ nosons(l_1)> 2)
   then expandapply(pp, inlinename, nextset, code, l)
-  else if inst in inlinename 
+  else  if inst in inlinename 
   then // inline expansion // 
    if inst ="APPLY"_1 
    then if nosons.code = 5 ∧ checkistypechangeonly(pp, inlinename, arg(l_4), arg(l_3), l_1)
@@ -393,6 +396,8 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
        tree(label.code, l)
   else tree(label.code, l)
 
+function treelit(c:char) tree.seq.word
+     tree("LIT"+toword.toint.c)
 
 function expandapply(pp:program, inlinename:set.word, nextset:int, code:tree.seq.word, l:seq.tree.seq.word)tree.seq.word 
  let term1 = arg(code_(nosons.code - 1))

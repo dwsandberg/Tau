@@ -10,7 +10,7 @@ use stdlib
 
 type real is record representation:int
 
-Function type:real seq.word export
+Function type:real internaltype  export
 
 Function-(r:real)real 0.0 - r
 

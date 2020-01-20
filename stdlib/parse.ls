@@ -201,7 +201,7 @@ function countdigits(s:seq.char, i:int, result:int)word
   then toword.result 
   else countdigits(s, i + 1, result + if s_i = nbspchar then 0 else 1)
 
-function cvttotext(m:mytype)seq.word [ toword.length.towords.m]+ towords.m
+Function cvttotext(m:mytype)seq.word [ toword.length.towords.m]+ towords.m
 
 function addparameter(orgsize:int,input:seq.word,place:int, dict:set.symbol, m:mytype)set.symbol 
   assert isempty.lookup(dict,abstracttype.m,empty:seq.mytype) &or abstracttype.m=":"_1 report
@@ -228,7 +228,7 @@ function isdefined(dict:set.symbol,typ:seq.word,input:seq.word,place:int) seq.wo
 
   if cardinality.dict < 15 &or typ in ["T","int"] then typ else
  let a=lookup(dict,merge("type:"+ print.mytype(typ)), empty:seq.mytype)
-  assert cardinality.a=1  &or print.mytype(typ) in ["libsym" ,"liblib","mytype","libmod","seq.symbol"
+  assert cardinality.a=1  &or print.mytype(typ) in ["libsym" ,"liblib","mytype","libmod","seq.symbol bits"
    ] report 
    errormessage(
   "parameter type"+print.mytype(typ) +"is undefined in"  ,// +@(+,print,"",toseq.dict) // input,place)

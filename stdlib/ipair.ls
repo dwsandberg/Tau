@@ -4,7 +4,7 @@ use stdlib
 
 type ipair is record index:int, value:T
 
-Function type:ipair.T seq.word export
+Function type:ipair.T internaltype  export
 
 Function index(ipair.T)int export
 

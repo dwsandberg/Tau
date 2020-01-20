@@ -24,9 +24,9 @@ use stdlib
 
 type arc is record tail:T, head:T
 
-function type:arc.T seq.word export
+function type:arc.T internaltype export
 
-function type:graph.T seq.word export
+function type:graph.T internaltype  export
 
 type graph is record arcs:set.arc.T, backarcs:set.arc.T, nodes:set.T
 

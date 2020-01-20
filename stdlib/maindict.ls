@@ -85,7 +85,7 @@ function newplace place place(empty:seq.int,0,empty:seq.int)
 
 type place is record this:seq.int,offset:int, data:seq.int
 
-Function type:place seq.word export
+Function type:place internaltype export
 
 offset is offset to data
 

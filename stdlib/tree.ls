@@ -6,7 +6,7 @@ use stdlib
 
 type tree is record label:T, sons:seq.tree.T
 
-Function type:tree.T seq.word export
+Function type:tree.T internaltype  export
 
 Function =(T, T)boolean unbound
 

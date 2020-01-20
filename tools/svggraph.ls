@@ -124,7 +124,7 @@ Function setarc(a:arcinfo.T, b:arc.T, backarc:boolean)arcinfo.T arcinfo(b, x.a, 
 
 Function a(arcinfo.T)arc.T export
 
-Function label(arcinfo.T)arc.T export
+Function label(arcinfo.T) seq.word export
 
 /Function b(a:arc.T)T head.a
 

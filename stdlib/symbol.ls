@@ -52,9 +52,9 @@ Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a, b, 1)
 
 type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, src:seq.word, codetree:tree.seq.word
 
-Function type:symbol seq.word export
+Function type:symbol internaltype  export
 
-Function type:symbolset seq.word export
+Function type:symbolset internaltype  export
 
 Function =(a:symbol, b:symbol)boolean mangledname.a = mangledname.b
 
@@ -145,7 +145,32 @@ Function replaceT(with:mytype, s:symbol)symbol
  let newmodname = replaceT(with, modname.s)
   let newparas = @(+, replaceT.with, empty:seq.mytype, paratypes.s)
   let n =replaceTinname(with,name.s)
-   symbol(mangle(if towords.newmodname ="internal"then n else name.s, newmodname, paratypes.s), replaceT(with, resulttype.s), newparas, n, newmodname, src.s, codetree.s)
+    symbol(replaceTmangled(with,mangledname.s ), replaceT(with, resulttype.s), 
+   newparas, n, newmodname, src.s, codetree.s)
+   
+
+  function replaceTmangled(with:mytype,mangledname:word) word
+ let c=decodeword.mangledname
+  let ZTz=decodeword."ZTz" _1  
+  let Q2=decodeword."Q2ETZinternal"_1
+  let  i=findindex(ZTz_1,c)
+    if subseq(c,i,i+2) =ZTz then
+      let withx=@(seperator.ZTz_3,decodeword, empty:seq.char,(towords.with)) 
+      encodeword.(subseq(c,1,i)+withx+subseq(c,i+2,length.c))
+      else if subseq(c,i-4,i+8) =Q2 then
+      let withx=@(seperatorR.decodeword."Q2E"_1,decodeword, empty:seq.char,(towords.with)) 
+       encodeword.(subseq(c,1,i-2)+withx+subseq(c,i,length.c))
+      else mangledname
+      
+     
+      
+      
+      Function seperator(sep:char, s:seq.char, w:seq.char)seq.char 
+ if length.s = 0 then w else s + sep + w
+ 
+      Function seperatorR(sep:seq.char, s:seq.char, w:seq.char)seq.char 
+ if length.s = 0 then w else w + sep + s
+
 
 Function print2(s:symbol)seq.word print.s +"mn:"+ mangledname.s +"src"+ src.s
 

@@ -144,7 +144,7 @@ function ele(v:T, a:encodingrep.T)int if v = data.a then valueofencoding.code.a 
 
 type erecord is record  addfunc:int, number:int,name:word
 
-Function type:erecord.T seq.word export
+Function type:erecord.T internaltype export
 
 
 function ele5(v:T, a:encodingrep.T)seq.encodingrep.T 

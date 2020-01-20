@@ -14,11 +14,11 @@ function reverse(a:T)T unbound
 
 type labeledgraph is record arcs:set.T, backarcs:set.T, nodes:set.T
 
-Function arcs(labeledgraph.T)T export
+Function arcs(labeledgraph.T)set.T export
 
-Function backarcs(labeledgraph.T)T export
+Function backarcs(labeledgraph.T)set.T export
 
-Function nodes(labeledgraph.T)T export
+Function nodes(labeledgraph.T)set.T export
 
 Function empty:labeledgraph.T labeledgraph.T labeledgraph(empty:set.T, empty:set.T, empty:set.T)
 

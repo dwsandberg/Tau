@@ -99,7 +99,6 @@ Function getelementptr(type:llvmtype, name:seq.word, i:int)int
 
 Function llvmconsts erecord.llvmconst export
 
-Function mapping(erecord.llvmconst)seq.llvmconst export
 
 type machineinfo is record triple:seq.int, datalayout:seq.int
 

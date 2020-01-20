@@ -41,19 +41,19 @@ use stdlib
 
 use xxhash
 
-Function type:ordering seq.word export
+Function type:ordering internaltype  export
 
-Function type:boolean seq.word export
+Function type:boolean internaltype  export
 
-Function type:word  seq.word export
+Function type:word  internaltype  export
 
-Function type:seq.word  seq.word export
+Function type:seq.word  internaltype  export
 
-Function type:seq.seq.word  seq.word export
+Function type:seq.seq.word  internaltype  export
 
 
 
-Function type:char seq.word export
+Function type:char internaltype  export
 
 type ordering is record toint:int
 
@@ -185,7 +185,7 @@ Function  tocharseq(a:seq.int) seq.char // builtin.NOOP //
 
 type wordencoding is encoding seq.char
 
-Function wordencoding erecord.wordencoding export
+Function wordencoding erecord.seq.char export
 
 type word is record asencoding:encoding.seq.char
 

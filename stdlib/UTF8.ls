@@ -8,7 +8,7 @@ use seq.char
 
 type UTF8 is record toseqint:seq.int
 
-Function type:UTF8 seq.word export
+Function type:UTF8 internaltype  export
 
 Function emptyUTF8 UTF8 UTF8.empty:seq.int
 

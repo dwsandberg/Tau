@@ -31,6 +31,14 @@ Function formatcall(name:word, paratypes:seq.mytype)seq.word
  [ name]+ if length.paratypes = 0 
   then""
   else"("+ @(seperator.",", print,"", paratypes)+")"
+  
+Function type:liblib internaltype  export
+
+Function type:libsym internaltype  export
+
+Function type:libmod internaltype  export
+
+Function type:mytype internaltype  export
 
 type libsym is record fsig:word, returntype:seq.word, instruction:seq.word
 
@@ -44,7 +52,7 @@ Function libname(liblib)seq.word export
 
 Function mods(liblib)seq.libmod export
 
-Function words(liblib)seq.encodingrep.seq.int export
+Function words(liblib)seq.encodingrep.seq.char export
 
 Function readonly(liblib)boolean export
 

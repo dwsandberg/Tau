@@ -50,7 +50,7 @@ use symbol
 
 use textio
 
-Function type:firstpass seq.word export
+Function type:firstpass internaltype  export
 
 type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol, exportmodule:boolean, rawsrc:seq.seq.word
 
@@ -70,7 +70,11 @@ Function uses(firstpass)seq.mytype export
 Function rawsrc(firstpass)seq.seq.word export
 
 Function replaceT(with:mytype, f:firstpass)firstpass 
- firstpass(replaceT(with, modname.f), @(+, replaceT.with, empty:seq.mytype, uses.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.defines.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.exports.f), @(+, replaceT.with, empty:seq.symbol, unboundexports.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.unbound.f), false, rawsrc.f)
+ firstpass(replaceT(with, modname.f), @(+, replaceT.with, empty:seq.mytype, uses.f), 
+ asset.@(+, replaceT.with, empty:seq.symbol, toseq.defines.f), 
+ asset.@(+, replaceT.with, empty:seq.symbol, toseq.exports.f), 
+ @(+, replaceT.with, empty:seq.symbol, unboundexports.f), 
+ asset.@(+, replaceT.with, empty:seq.symbol, toseq.unbound.f), false, rawsrc.f)
 
 function =(a:firstpass, b:firstpass)boolean modname.a = modname.b
 
@@ -141,7 +145,9 @@ function resolveunboundexports(modset:set.firstpass)set.firstpass
   then modset 
   else let newset = @(bindunboundexports, identity, modset, u)
   let newcount = @(+, totalunbound, 0, toseq.newset)
-  if newcount = orgcount then modset else resolveunboundexports.newset
+  if newcount = orgcount then
+  assert orgcount=0 report "unresoslved exports"+@(+,print, "",  @(+,unboundexports,empty:seq.symbol,u))
+   modset else resolveunboundexports.newset
 
 function builddict(modset:set.firstpass, use:mytype)set.symbol 
  let e = find(modset, use)
@@ -160,7 +166,9 @@ function bindunboundexports(modset:set.firstpass, f:firstpass)set.firstpass
 function resolveexport(dict:set.symbol, f:firstpass, s:symbol)firstpass 
  let x = findelement2(dict, s)
   if cardinality.x = 1 
-  then firstpass(modname.f, uses.f, defines.f, exports.f ∪ x, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
+  then 
+    assert resulttype.x_1=resulttype.s report "export return type missmatch"+print.s+print.x_1
+    firstpass(modname.f, uses.f, defines.f, exports.f ∪ x, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
   else firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + s, unbound.f, exportmodule.f, rawsrc.f)
 
 function expanduse(modset:set.firstpass)set.firstpass 
@@ -206,10 +214,10 @@ function bind(templates:symbolset, modset:set.firstpass, a:symbolset, f:firstpas
   if x =""
   then  
    let b = @(x2(templates, dict), identity, a, toseq.exports.f)
-   @(bind(templates, dict), identity, b, toseq.defines.f)
+   @(bind2(templates, dict), identity, b, toseq.defines.f)
   else
    assert    x ="T" report "internal error bind"
-    @(bind(templates, dict), identity, a, toseq.defines.f)
+    @(bind2(templates, dict), identity, a, toseq.defines.f)
  
 
 function iscomplex(s:symbol)seq.symbol 
@@ -220,15 +228,15 @@ function x2(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:symb
   then known.X(mangledname.s, s, dict, parameter.modname.s, templates, knownsymbols)
   else knownsymbols
 
-function bind(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:symbol)symbolset 
+function bind2(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:symbol)symbolset 
  PROFILE.let symsrc = src.s 
-  if length.symsrc = 2 ∧ symsrc_1 ="LIT"_1 
-  then knownsymbols 
-  else if symsrc_1 in"sequence record encoding "
+   if symsrc_1 in"sequence record encoding "
   then 
    postbindtypes(dict, mytype."", templates, knownsymbols, src.s, s, s)
-  else 
-  assert symsrc_1 in "Function function" report "internal error bind"
+  else if symsrc_1="FREF"_1 then
+     postbind(dict, mytype."", templates, knownsymbols, symsrc, s, s)
+   else 
+  assert symsrc_1 in "Function function" report "internal error bind"+symsrc
   let b = parse(bindinfo(dict,"", empty:seq.mytype), symsrc)
     postbind(dict, mytype."", templates, knownsymbols, parsedresult.b, s, s)
    
@@ -251,7 +259,7 @@ function definetypedesc(knownsymbols:symbolset, t:mytype, code:seq.word)symbol
  let s1 = lookuptypedesc2(knownsymbols, print.t)
   let s = if isdefined.s1 
    then s1 
-   else symbol(merge("type:"+ print.t), mytype."internal", empty:seq.mytype, mytype."word seq","")
+   else symbol(merge("type:"+ print.t), mytype."internal", empty:seq.mytype, mytype."internaltype","")
   changesrc(s, if code_1 in"record sequence pending"
    then code 
    else"WORDS"+ toword.length.code + code)
@@ -337,19 +345,9 @@ function postbindtypes(dict:set.symbol, modpara:mytype, templates:symbolset, kno
    let modname = replaceT(modpara, mytype.subseq(code, 3 + 1, 3 + len))
    assert modname = modname.thissymbol report towords.modname +"///2"+ towords.modname.thissymbol 
    definestructure(org, dict, templates, code, modname.thissymbol, newknown, 3 + len + 1,"LIT 1", empty:seq.mytype,"FREF"+ mn)
-  else if code_1 in"encoding "
-  then let encodingtype = mytype.subseq(code, 4, length.code - 1)
-     let iadd = lookup(dict,"add"_1, [ mytype(towords.encodingtype + "encodingstate"), 
-    mytype(towords.encodingtype+"encodingrep")])
-   assert not.isempty.iadd report"no add for"+ code_2 + print.encodingtype 
-   let newsrc ="FREF"+ mangledname(iadd_1) +(if name.thissymbol ="wordencoding"_1 
-    then"LIT 1"
-    else"LIT 0")+"WORD"+mangledname.thissymbol+"RECORD 3 NOINLINE"
-   let newknown = known.X(mangledname(iadd_1), org, dict, modpara, templates, knownsymbols)
-    let syme = changesrc(thissymbol, newsrc)
-   postbind(dict, mytype."", templates, replace(newknown, syme), src.syme, syme, org)
   else assert false report"not a type"+ code 
   emptysymbolset
+  
 
 function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset, code:seq.word, thissymbol:symbol, org:symbol)symbolset 
  assert not(code_1 in"record sequence encoding ")report"not expecting type"+ code + stacktrace 
@@ -447,8 +445,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
   else let f = lookupsymbol(templates, mangle(down_1_1, mytype("T"+ templatename), params))
   if isdefined.f 
   then let newsymbol = symbol(down_1_1, newmodname, params, replaceT(newmodpara, resulttype.f), src.f)
-   assert length.src.f > 0 report"MMM4"+ mangledname.f 
-   let a = if src(f)_1 in"record sequence encoding "
+    let a = if src(f)_1 in"record sequence encoding "
     then postbindtypes(dict, newmodpara, templates, knownsymbols + newsymbol, src.f, newsymbol, org)
     else postbind(dict, newmodpara, templates, knownsymbols + newsymbol, src.f, newsymbol, org)
    resultpair(a, [ fullname])
@@ -514,18 +511,22 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
   else if input_1 in"type"
   then let b = parse(empty:set.symbol, input)
    let kind = code(b)_1 
-   let t = mytype(towords.parameter.modname.f + [ code(b)_2])
+   let name = code(b)_2
+   let t = mytype(towords.parameter.modname.f + name)
    if kind in"encoding"
    then assert parameter.modname.f = mytype.""report"encoding in template?"
     let typ = parameter(types(b)_1)
-    let sym = symbol(code(b)_2, modname.f, empty:seq.mytype, mytype(towords.typ +"erecord"), code.b)
-    firstpass(modname.f, uses.f + mytype(towords.typ +"encoding"), defines.f + changesrc(sym, code.b), exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
+       let adde=mangle("add"_1,mytype(towords.typ+"encoding"),
+     [mytype."T encodingstate",mytype."T encodingrep"])
+    let code="FREF"+ adde +(if name ="wordencoding"_1  then"LIT 1"  else"LIT 0")+"WORD"+merge([name]+print.modname.f)
+     +"RECORD 3 NOINLINE"
+    let sym = symbol(name, modname.f, empty:seq.mytype, mytype(towords.typ +"erecord"), code)
+    firstpass(modname.f, uses.f + mytype(towords.typ +"encoding"), defines.f + sym, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
    else assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
-   // assert false report code.b // 
-   let modnm = towords.modname.f 
-   let code = subseq(code.b, 1, 2)+ toword.length.modnm + modnm + subseq(code.b, 3, length.code.b)
+    let modnm = towords.modname.f 
+   let code = [kind,name]+ toword.length.modnm + modnm + @(+, cvttotext,"", types.b)
    let sizeofsym = definetypedesc(emptysymbolset, t, code)
-   let constructor = symbol(code_2, modname.f, @(+, parameter, empty:seq.mytype, types.b), t, code)
+   let constructor = symbol(name, modname.f, @(+, parameter, empty:seq.mytype, types.b), t, code)
    let syms = @(+, definefld(code, modname.f, [ t]), [ constructor, sizeofsym], types.b)+ if kind ="sequence"_1 
     then [ symbol("toseq"_1, modname.f, [ t], mytype(towords.parameter.t +"seq"_1), code)]
     else empty:seq.symbol 
@@ -568,9 +569,13 @@ function definedeepcopy(dict:set.symbol, templates:symbolset, knownsymbols:symbo
      let z=gettypedesc(org,dict, templates,knownsymbols,"",type)
      let y = subfld(size.z, 2, 0, 2)
    resultpair(known.z, if last.y ="1"_1 
-    then // only one element in record so type is not represent by actual record // 
+    then // only one element in record so type is not represent by actual record //
+      assert (size.z)_1="1"_1 report "Err99" 
+      assert subseq(y, 6, length.y - 2) ="" report "Err99b"+subseq(y, 6, length.y - 2)
      "PARAM 1"+ subseq(y, 6, length.y - 2)
-    else y)
+    else 
+    assert (size.z)_1 &ne "1"_1 report "Err99a"
+    y)
   let sym = symbol("deepcopy"_1, mytype(towords.type +"deepcopy"), [ mytype."T"], type, size.body)
   resultpair(postbind(dict, mytype."", templates, known.body + sym, src.sym, sym, org), [ mangledname.sym])
 
@@ -580,5 +585,8 @@ function subfld(desc:seq.word, i:int, fldno:int, starttype:int)seq.word
   else if i < length.desc ∧ desc_(i + 1)="."_1 
   then subfld(desc, i + 2, fldno, starttype)
   else let fldtype = mytype.@(+,_.desc,"", arithseq((i - starttype + 2)/ 2,-2, i))
-  {"PARAM 1 LIT"+ toword.fldno +"IDXUC"+ deepcopymangle.fldtype + subfld(desc, i + 1, fldno + 1, i + 1)}
+  { if abstracttype.fldtype in "encoding int word" then
+  "PARAM 1 LIT"+ toword.fldno +"IDXUC" else 
+   assert abstracttype.fldtype ="seq"_1 report "ERR99"+desc
+   "PARAM 1 LIT"+ toword.fldno +"IDXUC"+ deepcopymangle.fldtype } + subfld(desc, i + 1, fldno + 1, i + 1)
 
