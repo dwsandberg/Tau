@@ -145,6 +145,7 @@ module ioseq.T
   use seq.T
   
   use dataio
+  
  
 type ioseq is sequence length:int,data:seq.int,offset:int, k:seq.T
 
@@ -167,6 +168,7 @@ Function _(a:ioseq.T, i:int)T
    +@(+,toword,"",[i,size,index]+data.a)
    getrecord:T(data.a,index) 
 
+use deepcopy.T
 
 Function offset(ioseq.T) int export
 

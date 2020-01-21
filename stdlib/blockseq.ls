@@ -10,10 +10,13 @@ use seq.seq.T
 
 use stdlib
 
+use deepcopy.T
+
 type blockseq is sequence length:int, blocksize:int, data:seq.seq.T
 
+
 Function blockit(s:seq.T)seq.T 
- let blocksize = 10000 / sizeoftype:T 
+ let blocksize = 10000 /  sizeoftype:T 
   if length.s ≤ blocksize 
   then packed.s 
   else newblockseq(length.s, @(+, subblock(s, blocksize), empty:seq.seq.T, arithseq((length.s + blocksize - 1)/ blocksize, blocksize, 1)))

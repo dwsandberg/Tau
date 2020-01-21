@@ -10,3 +10,4 @@ Function PROFILE(a:T)T a
 
 Function FORCEINLINE(a:T)T a
 
+Function sizeoftype:T int builtin."INTERNAL"

@@ -146,6 +146,7 @@ type erecord is record  addfunc:int, number:int,name:word
 
 Function type:erecord.T internaltype export
 
+Function type:encodingrep.T internaltype export
 
 function ele5(v:T, a:encodingrep.T)seq.encodingrep.T 
  if v = data.a then [ a]else empty:seq.encodingrep.T

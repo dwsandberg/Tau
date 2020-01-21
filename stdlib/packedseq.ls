@@ -29,6 +29,8 @@ type packedseq is sequence length:int, x:seq.T
 
 Function length(packedseq.T)int export
 
+use deepcopy.T
+
 Function_(a:packedseq.T, i:int)T 
  let ds = sizeoftype:T 
   toT.getaddress(toseq.a, 2 + ds *(i - 1))

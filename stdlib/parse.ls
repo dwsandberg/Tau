@@ -39,9 +39,9 @@ Function headdict set.symbol
   asset([ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), 
   symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal",""), 
   symbol("builtin"_1, modulename, empty:seq.mytype, mytype."internal",""), 
-  symbol("STATE"_1, modulename, [ mytype."internal1"], mytype."internal1",""), 
-  symbol(merge."sizeoftype:T", mytype."$typesize local", empty:seq.mytype, mytype."int","")]
-  + @(+, builtinsym.modulename, empty:seq.symbol,"export unbound stub usemangle  FROMSEQ"))
+  symbol("STATE"_1, modulename, [ mytype."internal1"], mytype."internal1","") ] 
+  + 
+   @(+, builtinsym.modulename, empty:seq.symbol,"export unbound stub usemangle  FROMSEQ"))
 
 function builtinsym(modname:mytype, name:word)symbol 
  symbol(name, modname, empty:seq.mytype, mytype."internal1","")
@@ -518,7 +518,10 @@ else
 if ruleno = // T W.T // 41 then bindinfo(dict, 
 isdefined(dict,code.result.subtrees_3 + code.result.subtrees_1,input,place), 
 types.result.subtrees_1)else 
-if ruleno = // E W:T // 42 then let f = lookup(dict, merge(code.result.subtrees_1 +":"+ print.mytype.code.result.subtrees_3), empty:seq.mytype)assert not.isempty.f report errormessage("cannot find"+ code.result.subtrees_1 +":"+ print.mytype.code.result.subtrees_3, input, place)bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])else 
+if ruleno = // E W:T // 42 then let f = lookup(dict, merge(code.result.subtrees_1 +":"+ print.mytype.code.result.subtrees_3),
+ empty:seq.mytype)assert not.isempty.f report errormessage("cannot find"+ code.result.subtrees_1 +":"+ 
+ print.mytype.code.result.subtrees_3+@(+,print,"",toseq.dict), input, place)
+ bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])else 
 if ruleno = // E $wordlist // 43 then let s = code.result.subtrees_1 bindinfo(dict,"WORDS"+ toword.length.s + s, [ mytype."word seq"])else 
 if ruleno = // E comment E // 44 then let s = code.result.subtrees_1 bindinfo(dict, code.result.subtrees_2 +"COMMENT"+ toword.length.s + s, types.result.subtrees_2)else 
 if ruleno = // N_// 45 then result.subtrees_1 else 

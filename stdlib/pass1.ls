@@ -289,7 +289,7 @@ desc:seq.word,symbols:seq.symbol)
         let mn = mangle("_"_1, modname , ptype+mytype."int")
         let consrc = "FREF"+mn+constructor +"RECORD"+ toword.recordsize("FREF"+mn+constructor, 1)
    let con = symbol(abstracttype.ptype_1, modname, paras, mytype(towords.parameter.modname + abstracttype.ptype_1), consrc)
-    let symtoseq = symbol("toseq"_1, modname, ptype, mytype(towords.parameter.modname +"seq"_1),"PARAM 1")
+     let symtoseq = symbol("toseq"_1, modname, ptype, mytype(towords.parameter.modname +"seq"_1),"PARAM 1")
     let t="1 seq."+ print.parameter.modname
      let descsym=
      symbol(merge("type:"+ print.resulttype.con), mytype."internal", empty:seq.mytype, mytype."internaltype",
@@ -299,7 +299,7 @@ desc:seq.word,symbols:seq.symbol)
    let consrc = if length.paras = 1 
     then"PARAM 1"
     else constructor +"RECORD"+ toword.recordsize(constructor, 1)
-   let con = symbol(abstracttype.ptype_1, modname, paras, mytype(towords.parameter.modname + abstracttype.ptype_1), consrc)  
+   let con = symbol(abstracttype.ptype_1, modname, paras, mytype(towords.parameter.modname + abstracttype.ptype_1), consrc) 
      let descsym=
      symbol(merge("type:"+ print.resulttype.con), mytype."internal", empty:seq.mytype, mytype."internaltype",
       "WORDS"+toword(length(desc)+1)+toword.offset+desc)
@@ -400,7 +400,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
  let t1 = lookupsymbol(knownsymbols, mangledname)
   if isdefined.t1 
   then let src = src.t1 
-   if src_1 in"record encoding "
+   if src_1 in"record sequence "
    then let down = codedown.mangledname 
     assert length(down_2)= 1 report"inX"+ print2.t1 
     resultpair(postbindtypes(dict, mytype(down_2), templates, knownsymbols, src, t1, org), [ mangledname])
@@ -410,22 +410,22 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
   let newmodname = replaceT(modpara, mytype(down_2))
   let newmodpara = parameter.newmodname 
   let templatename = abstracttype.newmodname 
-  if templatename ="local"_1 ∧ down_1 = [ merge."sizeoftype:T"]
-  then  let y=gettypedesc(org,dict, templates,knownsymbols,"",modpara)
-    resultpair(knownsymbols,"LIT"+ (size.y)_1)
-    else  if templatename in"para local"
-  then resultpair(knownsymbols, //"PARAM"+ down_2_1 // [ mangledname])
+   if templatename in"para local"
+  then resultpair(knownsymbols,  [ mangledname])
   else if templatename ="deepcopy"_1 
   then if down_1 ="deepcopy"
-   then // assert false report"XX"+ mangledname // 
-    // assert code_i &ne"deepcopyZTzseqzdeepcopyZT"_1 report"ERR677"+ newmodpara // 
-    assert down_3 in ["T"]report"OOO"+ down_3 + print.newmodpara 
-    definedeepcopy(dict, templates, knownsymbols, if down_3 ="T"then newmodpara else mytype(down_3), org)
-   else // Compile options // resultpair(knownsymbols, down_1)
+   then  definedeepcopy(dict, templates, knownsymbols, if down_3 ="T"then newmodpara else mytype(down_3), org)
+   else if down_1=[merge("sizeoftype:T")] then
+      let z=gettypedesc(org,dict, templates,knownsymbols,"",newmodpara)
+      let newsym=symbol(down_1_1  ,newmodname , empty:seq.mytype, mytype."int" , "LIT"+(size.z)_1 )  
+  //        assert down_1 &ne [merge("sizeoftype:T")] report  size.z+mangledname+down_1+print2.newsym //
+   // assert mangledname=mangledname.newsym report print2.newsym + mangledname //
+   // assert mangledname.newsym in "siQ7AeoftypeQ3ATZintzdeepcopy siQ7AeoftypeQ3ATZintzseqzdeepcopy siQ7AeoftypeQ3ATZbitszdeepcopy siQ7AeoftypeQ3ATZbitszseqzdeepcopy siQ7AeoftypeQ3ATZcharzseqzencodingrepzdeepcopy" report print2.newsym //
+ resultpair(replace(known.z,newsym), [ mangledname.newsym])
+   else // Compile options // 
+  resultpair(knownsymbols, down_1)
   else let params = @(+, mytype, empty:seq.mytype, subseq(down, 3, length.down))
   let fullname = mangle(down_1_1, newmodname, params)
- //  assert not(mangledname="frombits2Q3ATZTzbitpackedseqZbits"_1) 
-   report   [fullname]+print.newmodpara+@(seperator("&br"),print2,"",toseq.knownsymbols) //
   let t2 = lookupsymbol(knownsymbols, fullname)
   if fullname ≠ mangledname ∧ isdefined.t2 
   then // assert mangledname ="inZwordzseqzseqZTZTzseq"_1 report"ERR13"+ fullname + mangledname // 
@@ -436,7 +436,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
   else let f = lookupsymbol(templates, mangle(down_1_1, mytype("T"+ templatename), params))
   if isdefined.f 
   then let newsymbol = symbol(down_1_1, newmodname, params, replaceT(newmodpara, resulttype.f), src.f)
-    let a = if src(f)_1 in"record sequence encoding "
+    let a = if src(f)_1 in"record sequence"
     then postbindtypes(dict, newmodpara, templates, knownsymbols + newsymbol, src.f, newsymbol, org)
     else postbind(dict, newmodpara, templates, knownsymbols + newsymbol, src.f, newsymbol, org)
    resultpair(a, [ fullname])
@@ -452,6 +452,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
        k2
   assert cardinality.k = 1 report"cannot find template  for"+
   down_1_1 +"("+ @(seperator.",", print,"", params2)+")while process"+ print.org 
+   +"templatename"+templatename+mangledname+fullname+"newmodpara:"+print.newmodpara +toword.cardinality.k2 // +@(+,print,"",toseq.templates) //
   assert mangledname ≠ mangledname(k_1)report"ERR12"+ mangledname + print2(k_1) 
   if not.isdefined.lookupsymbol(knownsymbols, mangledname(k_1))
   then X(mangledname(k_1), org, dict, mytype."T", templates, knownsymbols)
@@ -521,7 +522,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
    let constructor = symbol(name, modname.f, @(+, parameter, empty:seq.mytype, types.b), t, code)
    let syms = @(+, definefld(code, modname.f, [ t]), [ constructor, sizeofsym], types.b)+ if kind ="sequence"_1 
     then [ symbol("toseq"_1, modname.f, [ t], mytype(towords.parameter.t +"seq"_1), code)]
-    else empty:seq.symbol 
+    else       empty:seq.symbol
    firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
   else if input_1 in"Function function"
   then let t = // should be able to use stubdict here // parse(headdict, getheader.input)
