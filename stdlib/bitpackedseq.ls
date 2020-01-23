@@ -8,6 +8,8 @@ use seq.bits
 
 use stdlib
 
+Function type:bitpackedseq.T internaltype export
+
 type bitpackedseq is sequence length:int, data:seq.T, part:bits
 
 

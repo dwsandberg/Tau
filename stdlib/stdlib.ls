@@ -25,7 +25,6 @@ use seq.alphaword
 
 use seq.int
 
-use seq.moddesc
 
 use seq.seq.alphaword
 
@@ -51,7 +50,7 @@ Function type:seq.word  internaltype  export
 
 Function type:seq.seq.word  internaltype  export
 
-
+Function type:seq.int internaltype export
 
 Function type:char internaltype  export
 
@@ -344,6 +343,9 @@ Function +(seq.seq.word, seq.seq.word)seq.seq.word export
 Function +(a:seq.word, b:seq.word)seq.word export
 
 * Functions to perform alphabetical sorting
+
+Function type:alphaword internaltype export
+
 
 type alphaword is record toword:word
 

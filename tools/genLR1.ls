@@ -9,6 +9,10 @@ run genLR1 gentau2
 
 use encoding.set.dottedrule
 
+use seq.seq.encodingrep.set.dottedrule
+
+use  seq.encodingrep.set.dottedrule
+
 use graph.word
 
 
@@ -43,6 +47,11 @@ use set.word
 use stdlib
 
 type estate is encoding state
+
+use seq.seq.encodingrep.state
+
+use  seq.encodingrep.state
+
 
 type state is record toset:set.dottedrule,index:int
 

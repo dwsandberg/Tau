@@ -34,17 +34,6 @@ use UTF8
 
 use format
 
-Function headdict set.symbol 
- let modulename = mytype."internal1"
-  asset([ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), 
-  symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal",""), 
-  symbol("builtin"_1, modulename, empty:seq.mytype, mytype."internal",""), 
-  symbol("STATE"_1, modulename, [ mytype."internal1"], mytype."internal1","") ] 
-  + 
-   @(+, builtinsym.modulename, empty:seq.symbol,"export unbound stub usemangle  FROMSEQ"))
-
-function builtinsym(modname:mytype, name:word)symbol 
- symbol(name, modname, empty:seq.mytype, mytype."internal1","")
  
 Function getheader(s:seq.word)seq.word 
  if length.s < 3 
@@ -75,6 +64,10 @@ function consumecomment(s:seq.word, i:int)int
 
 
 type stepresult is record stk:stack.stkele, place:int, input:seq.word, tokenstate:int, string:seq.word
+
+Function type:stepresult internaltype export
+
+Function type:bindinfo internaltype export
 
 type bindinfo is record dict:set.symbol, code:seq.word, types:seq.mytype
 

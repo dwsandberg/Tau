@@ -8,6 +8,11 @@ run test2 test2
 
 use encoding.indexedword
 
+use seq.encodingrep.indexedword
+
+use seq.seq.encodingrep.indexedword
+
+
 use fileio
 
 use oseq.wordfreq

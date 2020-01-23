@@ -24,7 +24,6 @@ use seq.Lcode
 
 use seq.char
 
-use seq.func
 
 use seq.inst
 
@@ -42,7 +41,6 @@ use seq.llvmtype
 
 use seq.localmap
 
-use seq.localmap5
 
 use seq.match5
 

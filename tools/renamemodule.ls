@@ -2,6 +2,11 @@ Module renamemodule
 
 use encoding.mapnames
 
+use seq.seq.encodingrep.mapnames
+
+use seq.encodingrep.mapnames
+
+
 use seq.mapnames
 
 use seq.seq.word

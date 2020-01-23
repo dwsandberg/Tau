@@ -32,6 +32,8 @@ use seq.seq.word
 
 type svgdraw is record width:int, height:int, a:seq.word
 
+Function type:nodeinfo.T internaltype export
+
 type nodeinfo is record n:T, x:int, y:int, width:int, seperation:int
 
 seperation is"width"of node in layer.y is the layer value, x is the posistion within the layer.
@@ -113,6 +115,8 @@ function toarcinfo(s:set.nodeinfo.T, a:arcinfo.T)arcinfo.T
       , label.a 
       , width.a 
       , backarc.a)
+
+Function type:arcinfo.T internaltype export
 
 type arcinfo is record a:arc.T, x:int, y:int, label:seq.word, width:int, backarc:boolean
 

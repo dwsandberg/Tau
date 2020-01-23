@@ -20,11 +20,10 @@ use seq.arc.word
 
 use seq.arcinfo.seq.word
 
-use seq.moddesc
 
 use seq.mytype
 
-use seq.syminfo
+
 
 use seq.tree.word
 

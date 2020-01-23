@@ -20,6 +20,11 @@ function coding(intercode)seq.inst export
 
 function defines(intercode)seq.int export
 
+Function type:inst internaltype export
+
+Function type:intercode internaltype export
+
+
 type inst is record towords:seq.word, flags:seq.word, returntype:mytype, index:int
 
 Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst inst(towords, flags, returntype, 0)

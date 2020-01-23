@@ -8,7 +8,10 @@ use checking
 
 use encoding.testrecord
 
-use ipair.linklists2
+use seq.seq.encodingrep.testrecord
+
+use seq.encodingrep.testrecord
+
 
 use process.int
 

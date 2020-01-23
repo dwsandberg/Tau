@@ -25,6 +25,8 @@ function getfld(packedseq.T, i:int)int builtin."PARAM 1 PARAM 2 IDXUC"
 
 x is included in packedseq so the procedure to access the type with be different between instances of the scope.
 
+Function type:packedseq.T internaltype export
+
 type packedseq is sequence length:int, x:seq.T
 
 Function length(packedseq.T)int export

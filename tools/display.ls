@@ -21,6 +21,9 @@ Function defaultprec seq.seq.word ["_^"
   ,"= < > ? ≤ ≠ ≥ >> <<"
   ,"∧"
   ,"∨"]
+  
+Function type:prettycontrol internaltype export
+
 
 type prettycontrol is record preclist:seq.seq.word, chrwidths:seq.int
 

@@ -56,6 +56,9 @@ function wordstype llvmtype array(-1, i64)
 
 Function conststype llvmtype array(-2, i64)
 
+Function type:match5 internaltype export
+
+
 type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, index:int
 
 Function addindex(m:match5, i:int)match5 match5(fullinst.m, length.m, parts.m, action.m, arg.m, i)

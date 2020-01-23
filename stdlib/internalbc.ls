@@ -283,6 +283,11 @@ Function INSTSTORE int 44
 
 Function INSTGEP int 43
 
+Function type:templatepart internaltype export
+
+Function type:internalbc internaltype export
+
+
 type templatepart is record part:seq.int, loc:int, parano:int
 
 Function parano(templatepart)int export

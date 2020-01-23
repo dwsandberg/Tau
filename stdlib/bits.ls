@@ -19,6 +19,12 @@ use stdlib
 
 use seq.byte
 
+Function type:bits internaltype export
+
+Function type:bit internaltype export
+
+
+
 type bits is record toint:int
 
 Function toint(bits)int export

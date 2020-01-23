@@ -24,7 +24,6 @@ use packedseq.seq.int
 
 use seq.bit
 
-use seq.bitblock
 
 use seq.bitpackedseq.bit
 
@@ -61,6 +60,9 @@ use seq.trackconst
 use stacktrace
 
 use stdlib
+
+Function type:llvmtype internaltype export
+
 
 Function typ(llvmconst)int export
 

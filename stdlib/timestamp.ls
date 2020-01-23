@@ -6,6 +6,8 @@ use seq.int
 
 use stdlib
 
+Function type:timestamp internaltype export
+
 type timestamp is record toint:int
 
 function subseq(a:UTF8, i:int, j:int)UTF8 UTF8.subseq(toseqint.a, i, j)

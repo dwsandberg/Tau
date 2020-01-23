@@ -70,6 +70,8 @@ use tree.seq.word
 
 The linklists2 type contains a seq of integers that represents the memory.Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq. One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
 
+Function type:linklists2 internaltype export
+
 type linklists2 is record a:seq.int, offsetthread:int
 
 Function createlinkedlists linklists2 linklists2(empty:seq.int, 0)
@@ -195,6 +197,8 @@ Function buildtheobject(objectstart:int, l:linklists2, d:flddesc)linklists2
   then linklists2(a.l + index.d, offsetthread.l)
   else let newoffsetthread = if kind.d ="CRECORD"_1 then place.l else offsetthread.l 
   linklists2(a.l + C64.packit(offsetthread.l, index.d), newoffsetthread)
+
+Function type:trackele internaltype export
 
 type trackele is record l:linklists2, places:seq.int
 

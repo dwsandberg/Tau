@@ -6,6 +6,8 @@ use stdlib
 
 use seq.char
 
+use bits
+
 type UTF8 is record toseqint:seq.int
 
 Function type:UTF8 internaltype  export

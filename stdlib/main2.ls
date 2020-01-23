@@ -181,7 +181,7 @@ function bindingformat(known:symbolset, m:firstpass)seq.seq.word
 
 function extractencoding(s:seq.word)seq.mytype 
  if length.s > 3 ∧ s_1 ="type"_1 ∧ s_4 in"Encoding encoding"
-  then [ mytype(towords.parameter(types(parse(headerdict, s))_1)+"encodingstate")]
+  then [ mytype(towords.parameter(types(parse(headdict, s))_1)+"encodingstate")]
   else empty:seq.mytype
 
 function extractparsed(abstract:boolean, known:symbolset, s:symbol)seq.seq.word 
@@ -213,7 +213,7 @@ function bindingfind(defines:seq.seq.word, s:seq.word)seq.seq.word
  if length.s = 0 
   then ["skip"+ s]
   else if s_1 in"function Function"
-  then let a = parsedresult.parse(headerdict, getheader.s)
+  then let a = parsedresult.parse(headdict, getheader.s)
    let b = bindingfind2(defines, 1, getkey.a)
    let c = if length.b = 0 
     then let headlength = toint(a_2)+ 2 
@@ -225,7 +225,7 @@ function bindingfind(defines:seq.seq.word, s:seq.word)seq.seq.word
   then empty:seq.seq.word 
   else if s_1 ="Library"_1 then [ s]else ["skip"+ s]
 
-function xx(s:seq.word)seq.word parsedresult.parse(headerdict, getheader.s)
+function xx(s:seq.word)seq.word parsedresult.parse(headdict, getheader.s)
 
 function findexport(sq:seq.symbol, name:word, types:seq.mytype, i:int)seq.word 
  if i > length.sq 
