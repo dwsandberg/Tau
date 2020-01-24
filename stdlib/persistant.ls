@@ -243,8 +243,9 @@ Function addrecord(lin:linklists2, e:encodingrep.seq.char)ipair.linklists2
 function addrecord(lin:linklists2, modx:libmod)ipair.linklists2 
  let a = addseq(lin, defines.modx)
   let b = addseq(value.a, exports.modx)
-  let l = value.b 
-  let l5 = l + toint.parameterized.modx + modname.modx + a + b 
+  let c=addseq(value.b,uses.modx)
+  let l = value.c 
+  let l5 = l + toint.parameterized.modx + modname.modx + a + b+c 
   ipair(place.l, l5)
 
 Function +(l:linklists2, i:int)linklists2 linklists2(a.l + C64.i, offsetthread.l)
@@ -255,6 +256,8 @@ Function +(l:linklists2, w:word)linklists2
 
 Function +(l:linklists2, b:ipair.linklists2)linklists2 
  linklists2(a.l + C64.packit(offsetthread.l, index.b), place.l)
+ 
+   
 
 Function addwordseq(t:linklists2, a:seq.word)ipair.linklists2 
  let discard = @(+, registerword, 0, a)

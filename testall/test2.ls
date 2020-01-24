@@ -6,11 +6,6 @@ Count word frequence in text file. An indexed encoding is used to assign indexes
 
 run test2 test2
 
-use encoding.indexedword
-
-use seq.encodingrep.indexedword
-
-use seq.seq.encodingrep.indexedword
 
 
 use fileio

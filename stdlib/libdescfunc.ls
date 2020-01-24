@@ -50,29 +50,7 @@ Function libdesc(roots:set.word, intercode:intercode, mods:seq.firstpass, known:
   let syms = @(+, tolibsym.intercode, empty:seq.libsym, toseq.a)
   // assert false report check.syms // 
   let allmods = @(map.known, identity, mapresult3(asset.syms, empty:seq.libmod), mods)
-  assert true report // @(+, print,"", toseq.syms.allmods)// 
-   @(+, print,"", toseq.asset.@(+, usestypes, empty:seq.mytype, toseq.syms.allmods))
-  mods.allmods + libmod(false,"$other"_1, toseq.syms.allmods , empty:seq.libsym)
-
-
-function usestypes(s:libsym)seq.mytype 
- let d = codedown.fsig.s 
-  let x = @(+, mytype, [ mytype.returntype.s], subseq(d, 3, length.d))
-  @(+, primtypes, empty:seq.mytype, x)
-
-function primtypes(m:mytype)seq.mytype 
- let s = towords.m 
-  if length.s = 1 
-  then [ m]
-  else @(+, mytype, empty:seq.mytype, @(+, +."T", [ [ s_1]], subseq(s, 2, length.s)))
-  
-  
-
-
-
-
-
-
+   mods.allmods + libmod(false,"$other"_1, toseq.syms.allmods , empty:seq.libsym,empty:seq.mytype)
 
 function toinstindex(a:set.word, d:intercode, i:int)seq.int 
  if mangledname(coding(d)_i)in a then [ i]else empty:seq.int
@@ -144,10 +122,12 @@ function map(known:symbolset, r:mapresult3, l:firstpass)mapresult3
  if not.exportmodule.l 
   then r 
   else if isabstract.modname.l 
-  then mapresult3(syms.r, mods.r + libmod(true, abstracttype.modname.l, @(+, tolibsym4, empty:seq.libsym, toseq.defines.l), @(+, tolibsym4, empty:seq.libsym, toseq.exports.l)))
-  else let d = @(findelement.known, identity, mapresult32(syms.r, empty:seq.libsym), toseq.exports.l)
+  then mapresult3(syms.r, mods.r + libmod(true, abstracttype.modname.l, 
+          @(+, tolibsym4, empty:seq.libsym, toseq.defines.l), @(+, tolibsym4, empty:seq.libsym, toseq.exports.l),uses.l))
+  else 
+  let d = @(findelement.known, identity, mapresult32(syms.r, empty:seq.libsym), toseq.exports.l)
   let e = @(findelement.known, identity, mapresult32(syms.d, empty:seq.libsym), toseq.exports.l)
-  mapresult3(syms.e, mods.r + libmod(false, abstracttype.modname.l, libsyms.d, libsyms.e))
+  mapresult3(syms.e, mods.r + libmod(false, abstracttype.modname.l, libsyms.d, libsyms.e,empty:seq.mytype))
 
 function tolibsym4(s:symbol)libsym 
  let src = if length.src.s > 0 ∧ src(s)_1 ="parsedfunc"_1 
@@ -165,16 +145,10 @@ function findelement(known:symbolset, r:mapresult32, s:symbol)mapresult32
    mapresult32(syms.r + t, libsyms.r + t)
   else mapresult32(syms.r, libsyms.r + z_1)
 
-/function ?(a:libsym, b:libsym)ordering fsig.a ? fsig.b
 
-Function tosymbol(ls:libsym)symbol 
- let d = codedown.fsig.ls 
-  let modname = mytype(d_2)
-  let paratypes = @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d))
-  symbol(mangle(d_1_1, modname, paratypes), mytype.returntype.ls, @(+, replaceT.parameter.modname, empty:seq.mytype, paratypes), d_1_1, modname, instruction.ls)
 
 Function tofirstpass(m:libmod)firstpass 
- firstpass(mytype.if parameterized.m then"T"+ modname.m else [ modname.m], empty:seq.mytype, @(+, tosymbol, empty:set.symbol, defines.m), @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol, false)
+ firstpass(mytype.if parameterized.m then"T"+ modname.m else [ modname.m], uses.m, @(+, tosymbol, empty:set.symbol, defines.m), @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol, false)
 
 Function tofirstpass(l:liblib)seq.firstpass @(+, tofirstpass, empty:seq.firstpass, mods.l)
 

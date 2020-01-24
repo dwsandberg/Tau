@@ -85,10 +85,14 @@ Function mytype(seq.word)mytype export
 
 Function towords(mytype)seq.word export
 
-type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym
+type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym,uses:seq.mytype
 
-Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym)libmod 
+Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym,uses:seq.mytype)libmod 
  export
+
+/Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym)libmod 
+ libmod(parameterized, modname , defines , exports ,empty:seq.mytype)
+
 
 Function parameterized(libmod)boolean export
 
@@ -97,6 +101,9 @@ Function modname(libmod)word export
 Function defines(libmod)seq.libsym export
 
 Function exports(libmod)seq.libsym export
+
+Function uses(libmod) seq.mytype export
+
 
 Function print(p:mytype)seq.word prt(towords.p, length.towords.p)
 
@@ -126,36 +133,39 @@ function codedown(l:seq.int, i:int, w:seq.char, words:seq.word, result:seq.seq.w
    codedown(l, i + 6, w + char.t1, words, result)
   else codedown(l, i + 1, w + char.l_i, words, result)
 
-function legal seq.int 
- tointseq.decodeword("0123456789ABCDEFGHIJKLMNOPRSTUVWXYabcdefghijklmnopqrstuvwxy"_1)
+function legal seq.char 
+ decodeword("0123456789ABCDEFGHIJKLMNOPRSTUVWXYabcdefghijklmnopqrstuvwxy"_1)
 
 function hexvalue(i:int)int if between(i, 48, 57)then i - 48 else i - 65 + 10
 
 Function mangle(name:word, modname:mytype, parameters:seq.mytype)word 
- let nameandmodname = tocharseq.addword(empty:seq.int, name)+ codeup.modname 
-  encodeword.@(+, codeup, nameandmodname, parameters)
+  encodeword.manglechars(name,modname,parameters)
+  
+Function manglechars(name:word, modname:mytype, parameters:seq.mytype)seq.char
+ let nameandmodname = addword(empty:seq.char, name)+ codeup.modname 
+   @(+, codeup, nameandmodname, parameters)
 
 function codeup(p:mytype)seq.char
- // adds majorseparator before mytype // tocharseq([ charmajorseparator]+ @(addword, identity, empty:seq.int, towords.p))
+ // adds majorseparator before mytype // [ char.charmajorseparator]+ @(addword, identity, empty:seq.char, towords.p)
 
-function addword(s:seq.int, w:word)seq.int 
+function addword(s:seq.char, w:word)seq.char 
  // adds minor separator between words // 
-  @(codeup, identity, if isempty.s then s else s + charminorseparator, tointseq.decodeword.w)
+  @(codeup, identity, if isempty.s then s else s + char.charminorseparator, decodeword.w)
 
 function charmajorseparator int // Z // 90
 
 function charminorseparator int // z // 122
 
-function codeup(l:seq.int, char:int)seq.int 
+function codeup(l:seq.char, char:char)seq.char 
  // represent legal characters as themselves, and others as Qxx where xx is hexadecimal of byte or Q0xxxx // 
-  let charQ = 81 
+  let charQ = char.81 
   if char in legal 
   then l + char 
-  else if char < 256 
-  then @(+, hexdigit.bits.char, l + charQ, [ 1, 0])
-  else @(+, hexdigit.bits.char, l + charQ, [ 4, 3, 2, 1, 0])
+  else if toint.char < 256 
+  then @(+, hexdigit.bits.toint.char, l + charQ, [ 1, 0])
+  else @(+, hexdigit.bits.toint.char, l + charQ, [ 4, 3, 2, 1, 0])
 
-function hexdigit(val:bits, digit:int)int legal_(toint(val >> 4 * digit ∧ bits.15)+ 1)
+function hexdigit(val:bits, digit:int) char legal_(toint(val >> 4 * digit ∧ bits.15)+ 1)
 
 Function isabstract(a:mytype)boolean towords(a)_1 ="T"_1
 
@@ -178,6 +188,6 @@ Function replaceT(with:mytype, name:word)word
   merge([ encodeword.subseq(d, 1, length.d - 1)]+ print.with)
 
 Function emptyliblib(libname:word)liblib 
- let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym)
+ let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym,empty:seq.mytype)
   liblib([ libname], [ mymod])
 

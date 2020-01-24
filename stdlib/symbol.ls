@@ -50,7 +50,8 @@ Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering
 
 Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a, b, 1)
 
-type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, src:seq.word, codetree:tree.seq.word
+type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, src:seq.word, 
+codetree:tree.seq.word,mangledchars:seq.char
 
 Function type:symbol internaltype  export
 
@@ -75,10 +76,10 @@ Function codetree(f:symbol)tree.seq.word export
 Function nopara(s:symbol)int length.paratypes.s
 
 Function symbol(name:word, modname:mytype, paratypes:seq.mytype, resulttype:mytype, src:seq.word)symbol 
- symbol(mangle(name, modname, paratypes), resulttype, paratypes, name, modname, src, tree."default")
+ let mc=manglechars(name, modname, paratypes)
+ symbol(encodeword.mc, resulttype, paratypes, name, modname, src, tree."default",mc)
 
-Function symbol(mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype, src:seq.word)symbol 
- symbol(mangledname, resulttype, paratypes, name, modname, src, tree."default")
+
 
 Function flags(s:symbol)seq.word flags(src.s, length.src.s)
 
@@ -101,7 +102,7 @@ Function ?(a:symbol, b:symbol)ordering
 Function ?2(a:symbol, b:symbol)ordering name.a ? name.b ∧ paratypes.a ? paratypes.b
 
 Function changesrc(s:symbol, src:seq.word)symbol 
- symbol(mangledname.s, resulttype.s, paratypes.s, name.s, modname.s, src, codetree.s)
+ symbol(mangledname.s, resulttype.s, paratypes.s, name.s, modname.s, src, codetree.s,mangledchars.s)
 
 Function changecodetree(old:symbol, t:tree.seq.word)symbol 
  let oldflags = flags.old 
@@ -122,7 +123,8 @@ Function changecodetree(old:symbol, t:tree.seq.word)symbol
    "VERYSIMPLE SIMPLE"
   let newflags = functyp + toseq(asset.adjustedflags - asset."SIMPLE INLINE VERYSIMPLE COMPLEX")
   let newsrc = subseq(src.old, 1, length.src.old - length.oldflags)+ newflags 
-  symbol(mangledname.old, resulttype.old, paratypes.old, name.old, modname.old, newflags, if inst.t ="STATE"_1 then t_1 else t)
+  symbol(mangledname.old, resulttype.old, paratypes.old, name.old, modname.old, newflags, 
+  if inst.t ="STATE"_1 then t_1 else t,mangledchars.old)
 
 Function lookup(dict:set.symbol, name:word, types:seq.mytype)set.symbol 
  findelement2(dict, symbol(name, mytype."?", types, mytype."?",""))
@@ -137,30 +139,27 @@ use seq.seq.char
 Function replaceTinname(with:mytype,name:word) word
    let x = decodeword.name
    if subseq(x, length.x - 1, length.x) in [//.T // [ char(46), char(84)], // :T // [char(58),char(84)]]
-   then merge([ encodeword.subseq(x, 1, length.x - 1)]+ print.with)
-   else name
-
+   then 
+      encodeword.(subseq(x, 1, length.x - 1)+@(+,decodeword,empty:seq.char,print.with))
+    else name
 
 Function replaceT(with:mytype, s:symbol)symbol 
- let newmodname = replaceT(with, modname.s)
+  let newmodname = replaceT(with, modname.s)
   let newparas = @(+, replaceT.with, empty:seq.mytype, paratypes.s)
-  let n =replaceTinname(with,name.s)
-    symbol(replaceTmangled(with,mangledname.s ), replaceT(with, resulttype.s), 
-   newparas, n, newmodname, src.s, codetree.s)
+  let i=findindex(decodeword("Z"_1)_1,mangledchars.s)
+  let n = if (mangledchars.s)_(i-1)= // T // char(84) then
+        replaceTinname(with,name.s) else name.s
+  let z=replaceTmangled(with,mangledchars.s,i )
+    symbol(encodeword.z, replaceT(with, resulttype.s), 
+   newparas, n, newmodname, src.s, codetree.s,z)
    
 
-  function replaceTmangled(with:mytype,mangledname:word) word
- let c=decodeword.mangledname
+  function replaceTmangled(with:mytype,c:seq.char,i:int) seq.char
   let ZTz=decodeword."ZTz" _1  
-  let Q2=decodeword."Q2ETZinternal"_1
-  let  i=findindex(ZTz_1,c)
-    if subseq(c,i,i+2) =ZTz then
+     if subseq(c,i,i+2) =ZTz then
       let withx=@(seperator.ZTz_3,decodeword, empty:seq.char,(towords.with)) 
-      encodeword.(subseq(c,1,i)+withx+subseq(c,i+2,length.c))
-      else if subseq(c,i-4,i+8) =Q2 then
-      let withx=@(seperatorR.decodeword."Q2E"_1,decodeword, empty:seq.char,(towords.with)) 
-       encodeword.(subseq(c,1,i-2)+withx+subseq(c,i,length.c))
-      else mangledname
+      (subseq(c,1,i)+withx+subseq(c,i+2,length.c))
+      else  c
       
      
       
@@ -228,14 +227,13 @@ Function lookupfunc(allfunctions:symbolset, f:word)symbol
 Function lookupsymbol(a:symbolset, f:word)symbol 
  let t = lookup(todict.a, f)
   if length.t = 0 
-  then symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default")
+  then symbol("undefinedsym"_1, mytype."?", empty:seq.mytype,"??"_1, mytype."?","", tree."default",empty:seq.char)
   else t_1
 
 Function print(s:symbolset)seq.word @(+, print3,"", toseq.s)
 
 Function +(a:symbolset, s:symbol)symbolset replace(a, s)
 
-/Function_(a:symbolset, name:word)symbol lookupsymbol(a, name)
 
 Function printcode(s:symbolset)seq.word 
  {"count:"+ toword.@(+, count, 0, toseq.s)+ @(+, print3,"", toseq.s)}
@@ -243,3 +241,10 @@ Function printcode(s:symbolset)seq.word
 function count(s:symbol)int 
  if not(label.codetree.s ="default")then 1 else 0
 
+Function tosymbol(ls:libsym)symbol 
+ let d = codedown.fsig.ls 
+  let modname = mytype(d_2)
+  let paratypes = @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d))
+  let mc=manglechars(d_1_1, modname, paratypes)
+  symbol(encodeword.mc, mytype.returntype.ls, @(+, replaceT.parameter.modname, empty:seq.mytype, paratypes)
+  , d_1_1, modname, instruction.ls,tree."default",mc)

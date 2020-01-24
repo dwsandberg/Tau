@@ -6,11 +6,6 @@ Testing encodings
 
 use checking
 
-use encoding.testrecord
-
-use seq.seq.encodingrep.testrecord
-
-use seq.encodingrep.testrecord
 
 
 use process.int

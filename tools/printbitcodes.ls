@@ -6,11 +6,6 @@ use UTF8
 
 use bits
 
-use encoding.decodename
-
-use seq.seq.encodingrep.decodename
-
-use  seq.encodingrep.decodename
 
 
 use fileio

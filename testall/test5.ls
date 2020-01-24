@@ -34,8 +34,6 @@ use seq.ordering
 
 use seq.tree.word
 
-use seq.tree.int
-
 use seq.word
 
 use set.arc.int

@@ -85,6 +85,29 @@ function diff(a:seq.T, b:seq.T, i:int, j:int)seq.T
   else if a_i ? b_j = EQ 
   then diff(a, b, i + 1, j + 1)
   else if a_i ? b_j = LT then [ a_i]+ diff(a, b, i + 1, j)else diff(a, b, i, j + 1)
+  
+Function replace(a:set.T, b:set.T)set.T set.replace(toseq.a, toseq.b,1,1,empty:seq.T)
+
+
+function  replace(a:seq.T, b:seq.T, i:int, j:int,result:seq.T)seq.T 
+   // if in a and b then b else a //
+ if i > length.a 
+  then result
+  else if j > length.b 
+  then result+subseq(a, i, length.a)
+  else 
+   let ai=a_i
+   let c=ai ? b_j
+  if c = EQ 
+  then replace(a, b, i + 1, j + 1,result+[b_j])
+  else if c = LT then replace(a, b, i + 1, j,result+ai)else 
+     replace(a, b, i, skipahead(b,j,1,ai),result)
+  
+ function skipahead(    b:seq.T,j:int,k:int,ai:T) int
+      if  j+k > length.b then j+k / 2+1
+      else  if ai ? b_(j+k) =GT then skipahead(b,j,k+k,ai)
+      else j+k / 2 +1
+        
 
 Function toseq(set.T)seq.T export
 
