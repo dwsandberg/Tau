@@ -22,6 +22,8 @@ use stacktrace
 
 use stdlib
 
+use encoding.seq.char
+
 Function formatcall(modname:mytype, name:word, paratypes:seq.mytype)seq.word 
  print.modname +":"+ name + if length.paratypes = 0 
   then""

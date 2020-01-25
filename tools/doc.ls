@@ -37,6 +37,8 @@ use textio
 
 use tree.word
 
+use svggraph.seq.word
+
 Function createdoc seq.word 
   // Creates html tau html documentation. Creates file taudocs.html // 
   let d = @(+, addselect,"", gettext."tools/doc.txt")

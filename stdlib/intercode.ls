@@ -4,6 +4,9 @@ use persistant
 
 use stdlib
 
+use libscope
+
+
 type intercode is record codes:seq.seq.int, coding:seq.inst, defines:seq.int
 
 Defines are ipointers into coding that indicate which functions are defined.

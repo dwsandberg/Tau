@@ -44,6 +44,8 @@ use worddict.tree.seq.word
 
 use deepcopy.intercode
 
+use intercode
+
 Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)intercode 
 PROFILE.
  // does inline expansion, finds consts, removes unreaachable functions // 

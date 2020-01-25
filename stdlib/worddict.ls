@@ -8,6 +8,8 @@ use seq.word
 
 use stdlib
 
+Function type:worddict.T internaltype export
+
 type worddict is record keys:seq.word, data:seq.T
 
 Function data(worddict.T)seq.T export

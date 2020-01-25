@@ -10,6 +10,14 @@ use seq.word
 
 use stdlib
 
+use bits
+
+use seq.bits
+
+use encoding.seq.int
+
+ use seq.encodingrep.seq.int
+
 Function execute(name:word)seq.word executecode(toCformat.[ name], empty:seq.int)
 
 type argblock3 is record a:int, length:int, arg1:seq.word, arg2:word, arg3:word

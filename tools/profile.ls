@@ -36,6 +36,8 @@ use set.parc
 
 use stdlib
 
+use svggraph.seq.word
+
 * To profile a function add a use clause 
   "use options.<return type of /function >"and change /function so body is wrap 
  by a call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the part of code of interest add a 

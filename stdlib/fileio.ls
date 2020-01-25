@@ -38,6 +38,13 @@ use textio
 
 use seq.UTF8
 
+use bits
+
+Function type:outputformat internaltype export
+
+Function type:fileresult internaltype export
+
+
 Function toCformat(s:seq.word)seq.bits 
  packed.data2.add(@(add, byte, bitpackedseq(0, empty:seq.byte, bits.0), toseqint.toUTF8.s), byte.0)
 

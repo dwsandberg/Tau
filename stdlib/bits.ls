@@ -17,7 +17,7 @@ use seq.int
 
 use stdlib
 
-use seq.byte
+Function type:byte internaltype export
 
 Function type:bits internaltype export
 

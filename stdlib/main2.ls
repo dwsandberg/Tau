@@ -60,6 +60,8 @@ use textio
 
 use UTF8
 
+use seq.firstpass
+
 Function findlibclause(a:seq.seq.word, i:int)seq.word 
  assert i < length.a report"No Library clause found"
   let s = a_i 

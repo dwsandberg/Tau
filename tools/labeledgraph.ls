@@ -12,6 +12,8 @@ function ?2(a:T, b:T)ordering unbound
 
 function reverse(a:T)T unbound
 
+Function type:labeledgraph.T internaltype export
+
 type labeledgraph is record arcs:set.T, backarcs:set.T, nodes:set.T
 
 Function arcs(labeledgraph.T)set.T export

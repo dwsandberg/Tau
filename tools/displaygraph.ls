@@ -28,6 +28,9 @@ use stdlib
 
 use svggraph.T
 
+use display
+
+
 function assignwidths(control:prettycontrol, p:nodeinfo.T)nodeinfo.T unbound
 
 Function nodetotext(a:T)seq.word unbound

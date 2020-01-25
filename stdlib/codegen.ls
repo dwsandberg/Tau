@@ -62,6 +62,10 @@ use textio
 
 use seq.char
 
+use bits
+
+use seq.bits
+
 function funcdec(f:inst)seq.int 
  let discard = C.mangledname.f 
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]

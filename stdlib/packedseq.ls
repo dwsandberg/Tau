@@ -10,6 +10,8 @@ Function setfld(a:address.T, x:T)address.T builtin.STATE.usemangle
 
 function allocatespace:seq.T(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZint"
 
+Function type:address.T internaltype export
+
 type address is record toseq:seq.T
 
 Function getaddress(s:seq.T, i:int)address.T builtin.usemangle
