@@ -269,22 +269,26 @@ function tauruleprec seq.seq.word ["E E_E"
   ,"∨"]
 
 function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
-   ,   [" F W W(FP)T E " ,  " createfunc(dict,code.$_2,types.$_4,mytype.code.$_6 ,  $_7,input,place)
-   " ],[" F W N(FP)T E ",  "  createfunc(dict,code.$_2,types.$_4,mytype.code.$_6 , $_7,input,place)
-   " ],[" F W W T E " ,    "  createfunc(dict,code.$_2,empty:seq.mytype,mytype.code.$_3 ,$_4,input,place)
-   " ],[" F W W:T T E " ,  "    let name=[ merge(code.$_2 + &quot:&quot + print.mytype.code.$_4 )]
-        createfunc(dict,name,empty:seq.mytype,mytype.code.$_5 , $_6,input,place) "]
-  ,[" F W W:T(FP) T E " ,  "    let name=[ merge(code.$_2 + &quot:&quot + print.mytype.code.$_4 )]
-        createfunc(dict,name,types.$_6,mytype.code.$_8 , $_9,input,place) "]
+   ,   [" F W W(FP)T E " ,  " createfunc(dict,code.$_2,types.$_4,mytype.gettype.$_6 ,  $_7,input,place)
+   " ],[" F W N(FP)T E ",  "  createfunc(dict,code.$_2,types.$_4,mytype.gettype.$_6 , $_7,input,place)
+   " ],[" F W W T E " ,    "  createfunc(dict,code.$_2,empty:seq.mytype,mytype.gettype.$_3 ,$_4,input,place)
+   " ],[" F W W:T T E " ,  "    let name=[ merge(code.$_2 + &quot:&quot + print.mytype.gettype.$_4 )]
+        createfunc(dict,name,empty:seq.mytype,mytype.gettype.$_5 , $_6,input,place) "]
+  ,[" F W W:T(FP) T E " ,  "    let name=[ merge(code.$_2 + &quot:&quot + print.mytype.gettype.$_4 )]
+        createfunc(dict,name,types.$_6,mytype.gettype.$_8 , $_9,input,place) "]
   , ["F W W is W P"
-  ,"bindinfo(dict, code.$_4 + code.$_2 + @(+, cvttotext, &quot &quot, types.$_5), types.$_5)"]
-  , ["F W T","$_2"]
+  ,"bindinfo(dict, code.$_4 + code.$_2 + code.$_5, types.$_5)"]
+  , ["F W T","// use clause // bindinfo(dict, gettype.$_2, empty:seq.mytype)
+  "]
   , ["FP P"
   ,"bindinfo(@(addparameter(cardinality.dict,input,place), identity, dict, types.$_1), &quot &quot, types.$_1)"]
-  , ["P T","bindinfo(dict, &quot &quot, [ mytype(code.$_1 + &quot:&quot)])"]
-  , ["P P, T","bindinfo(dict, &quot &quot, types.$_1 + [ mytype(code.$_3 + &quot:&quot)])"]
-  , ["P W:T","bindinfo(dict, &quot &quot, [ mytype(code.$_3 + code.$_1)])"]
-  , ["P P, W:T","bindinfo(dict, &quot &quot, types.$_1 + [ mytype(code.$_5 + code.$_3)])"]
+  , ["P T","bindinfo(dict, &quot &quot, [ mytype(gettype.$_1 + &quot:&quot)])"]
+  , ["P P, T","bindinfo(dict, &quot &quot, types.$_1 + [ mytype(gettype.$_3 + &quot:&quot)])"]
+  , ["P W:T","bindinfo(dict, code.$_1 + code.$_3, [ mytype(gettype.$_3 + code.$_1)])
+   "]
+  , ["P P, W:T","bindinfo(dict 
+   , code.$_1 + code.$_3 + code.$_5 
+   , types.$_1 + [ mytype(gettype.$_5 + code.$_3)])"]
   , ["E W"
   ,"let id = code.$_1 
   let f = lookupbysig(dict, id_1, empty:seq.mytype, input, place)
@@ -292,7 +296,7 @@ function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
 "]
   , ["E N(L)","unaryop(dict,code.$_1, $_3, input, place)"]
   , ["E W(L)","unaryop(dict,code.$_1, $_3, input, place)"]
-  , ["E W:T(L)","let name=[ merge(code.$_1 + &quot:&quot + print.mytype.code.$_3 )] unaryop(dict,name, $_5, input, place)"]
+  , ["E W:T(L)","let name=[ merge(code.$_1 + &quot:&quot + print.(types.$_3)_1 )] unaryop(dict,name, $_5, input, place)"]
   , ["E(E)","$_2"]
   , ["E { E }","$_2"]
   , ["E if E then E else E"
@@ -325,10 +329,12 @@ function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
   , ["E I","$_1"]
   , ["E I.I"
   ,"let d = decodeword.(code.$_3)_2 bindinfo(dict, &quot LIT &quot + [ encodeword(decodeword.(code.$_1)_2 + d)]+ &quot LIT &quot + countdigits(d, 1, 0)+ &quot makerealZrealZintZint &quot, [ mytype.&quot real &quot])"]
-  , ["T W","$_1"]
-  , ["T W.T","bindinfo(dict, code.$_3 + code.$_1, types.$_1)"]
+   , ["T W","isdefined(dict, code.$_1, input, place)"]
+  , ["T W.T","isdefined(dict, towords.(types.$_3)_1 + code.$_1, input, place)"]
   , ["E W:T"
-  ,"let f = lookup(dict, merge(code.$_1 + &quot:&quot + print.mytype.code.$_3), empty:seq.mytype)assert not.isempty.f report errormessage(&quot cannot find &quot + code.$_1 + &quot:&quot + print.mytype.code.$_3, input, place)bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])"]
+  ,"let f = lookup(dict, merge(code.$_1 + &quot:&quot + print.(types.$_3)_1)), empty:seq.mytype)
+  assert not.isempty.f report errormessage(&quot cannot find &quot + code.$_1 + &quot:&quot + print.mytype.code.$_3, input, place)
+  bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])"]
   , ["E $wordlist"
   ,"let s = code.$_1 bindinfo(dict, &quot WORDS &quot + toword.length.s + s, [ mytype.&quot word seq &quot])"]
   , ["E comment E"

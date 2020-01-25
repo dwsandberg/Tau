@@ -1,3 +1,10 @@
+#!/usr/local/bin/tau
+
+
+
+ 
+run mylib test
+
 Module pass1
 
 run main test1

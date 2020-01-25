@@ -1,12 +1,10 @@
-#!/usr/local/bin/tau
-
 Module testencoding
 
 Testing encodings
 
 use checking
 
-
+use encoding.testrecord
 
 use process.int
 
@@ -38,7 +36,7 @@ type mydata5 is encoding testrecord
 
 function add(z:erecord.testrecord, b:seq.word)int 
  let d = orderadded.z 
-  let x = encode(z,testrecord(length.d + 1, b))
+  let x = encode(z, testrecord(length.d + 1, b))
    1
 
 type testrecord is record key:int, body:seq.word
@@ -56,19 +54,11 @@ Function testencoding seq.word
     then"Failed encoding"+ message.p 
     else 
      let plen = result.p 
-      let final = length.orderadded.mydata 
-       let final2 = length.orderadded.mydata2 
-       let final3 = length.orderadded.mydata3 
-       let final4 = length.orderadded.mydata4 
-        check([ start3 = 0 
-        , start = 0 
-        , start2 = 0 
-        , final = start + 2 
-        , final2 = start2 + 3 
-        , final3 = 4 
-        , final4 = 0 
-        ,  plen = 54]
-        ,"encoding")
+     let final = length.orderadded.mydata 
+     let final2 = length.orderadded.mydata2 
+     let final3 = length.orderadded.mydata3 
+     let final4 = length.orderadded.mydata4 
+      check([ start3 = 0, start = 0, start2 = 0, final = start + 2, final2 = start2 + 3, final3 = 4, final4 = 0, plen = 54],"encoding")
 
 Function process1 int 
  let z3 = @(+, add(mydata3), 0, ["A","B","C"])

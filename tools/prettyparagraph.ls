@@ -37,7 +37,7 @@ function result(c:control, wrap:seq.word, seperator:seq.word, a:seq.prettyresult
     , if length.wrap > 1 then subseq(wrap, 1, length.wrap - 1)+ s + last.wrap else s)
 
 Function prettyparagraph(p:seq.word)seq.word 
-  if length.p < 3 
+  if length.p < 2 
    then p 
    else 
     let key = p_1 

@@ -8,19 +8,19 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
 
 /run tools testfirstpass
 
-/run tools testprofile
+run tools testprofile
 
 /run tools prettytest
 
 /run tools callgraphtest
 
-run tools stdlibdoc
+/run tools stdlibdoc
 
 /run doc createdoc
 
 /run tools testhtmlcode
 
-/run genLR1 gentau2
+run genLR1 gentau2
 
 run taulextable getlextable
 
@@ -52,11 +52,11 @@ use stdlib
 
 Function testhtmlcode seq.word htmlcode."testall"
 
-Function prettytest seq.word prettylib("testall","")
+Function prettytest seq.word prettylib("mylib","")
 
 Function checkdoclib seq.word doclibrary."tools"
 
-Function testfirstpass seq.word @(+, +("&br &br"),"", firstPass("stdlib"_1))
+Function testfirstpass seq.word @(+, +("&br &br "),"", firstPass("testall"_1))
 
 Function testprofile seq.word 
    let a = compilelib2("stdlib"_1)
