@@ -294,7 +294,7 @@ function template(dict:set.symbol, s:symbol)seq.symbol
    empty:seq.symbol
  else  if src(s)_1 in "Function function " then
    let b = parse(bindinfo(dict,"", empty:seq.mytype), src.s)
-  [ changesrc(s, parsedresult.b)]
+  [ changesrc(s, code.b)]
  else [s]
 
 function bind(templates:symbolset, modset:set.firstpass, a:symbolset, f:firstpass)symbolset 
@@ -322,7 +322,8 @@ function bind2(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:s
     else
   assert symsrc_1 in "Function function" report "internal error bind"+symsrc
   let b = parse(bindinfo(dict,"", empty:seq.mytype), symsrc)
-    postbind(dict, mytype."", templates, knownsymbols, parsedresult.b, s, s)
+    let code=bodyonly.code.b
+    postbind(dict, mytype."", templates, knownsymbols, code.b, s, s)
    
 
 resultpair type is needed because calculation often involve adding new known symbols.
@@ -381,27 +382,59 @@ desc:seq.word,symbols:seq.symbol)
    
 
 function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset, code:seq.word, thissymbol:symbol, org:symbol)symbolset 
+  let i= if code_1 = "parsedfunc"_1  then  3 + toint(code_2) else 1
+    let result=if i=1 then "" else subseq(code,1,i-1) 
+     if code_i ="WORDS" _1 then
+     let l=toint(code_(i+1))+ 2+i
+       if l ≤ length.code ∧ code_l="builtinZinternal1Zwordzseq"_1 
+     then 
+        replace(knownsymbols, changesrc(thissymbol, result+subseq(code, i+2, length.code)))
+      else 
+     postbind2(org, dict, modpara, templates, knownsymbols, code, l, result+subseq(code, i,   l-1), thissymbol)
+     else if code_i  in "usemangleZinternal1"  
+  then 
+     let builtinname = mangle(name.thissymbol, mytype."builtin", paratypes.thissymbol)
+   let src = @(+, topara,"", arithseq(length.paratypes.thissymbol, 1, 1))+ builtinname 
+              replace(knownsymbols, changesrc(thissymbol,  result+src+subseq(code,i+1,length.code)))
+  else  if code_i in "FROMSEQ51Zinternal1"  
+  then  let mn = mangle("_"_1, modname.thissymbol, [ mytype("T"+ abstracttype.resulttype.thissymbol), mytype."int"])
+   let newknown = known.X(mn, org, dict, modpara, templates, knownsymbols)
+   let f1 ="PARAM 1 LIT 0 IDXUC FREF"+ mn +"Q3DZbuiltinZintZint PARAM 1 LIT 0 LIT 0 RECORD 2 if"
+       replace(newknown, changesrc(thissymbol,  result+f1+subseq(code,i+1,length.code)))
+else 
+    postbind2(org, dict, modpara, templates, knownsymbols, code, i , result , thissymbol)
+  
+/function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset, code:seq.word, thissymbol:symbol, org:symbol)symbolset 
     let i= if code_1="parsedfunc"_1 then  3 + toint(code_2) else 1
     let result=if i=1 then "" else subseq(code,1,i-1) 
     if code_i ="WORDS" _1 then
      let l=toint(code_(i+1))+ 2+i
+    if code_1 ="WORDS" _1 then
+     let l=toint(code_(2))+ 3
       if l ≤ length.code ∧ code_l="builtinZinternal1Zwordzseq"_1 
      then 
          replace(knownsymbols, changesrc(thissymbol, result+subseq(code, i+2, length.code)))
+         replace(knownsymbols, changesrc(thissymbol,  subseq(code, 3, length.code)))
       else 
       postbind2(org, dict, modpara, templates, knownsymbols, code, l, result+subseq(code, i,   l-1), thissymbol)
    else if code_i  in "usemangleZinternal1"  
+      postbind2(org, dict, modpara, templates, knownsymbols, code, l,  subseq(code, 1,   l-1), thissymbol)
+   else if code_1  in "usemangleZinternal1"  
   then 
      let builtinname = mangle(name.thissymbol, mytype."builtin", paratypes.thissymbol)
    let src = @(+, topara,"", arithseq(length.paratypes.thissymbol, 1, 1))+ builtinname 
             replace(knownsymbols, changesrc(thissymbol,  result+src+subseq(code,i+1,length.code)))
    else  if code_i in "FROMSEQ51Zinternal1"  
+            replace(knownsymbols, changesrc(thissymbol,   src+subseq(code,2,length.code)))
+   else  if code_1 in "FROMSEQ51Zinternal1"  
   then  let mn = mangle("_"_1, modname.thissymbol, [ mytype("T"+ abstracttype.resulttype.thissymbol), mytype."int"])
    let newknown = known.X(mn, org, dict, modpara, templates, knownsymbols)
    let f1 ="PARAM 1 LIT 0 IDXUC FREF"+ mn +"Q3DZbuiltinZintZint PARAM 1 LIT 0 LIT 0 RECORD 2 if"
               replace(newknown, changesrc(thissymbol,  result+f1+subseq(code,i+1,length.code)))
+              replace(newknown, changesrc(thissymbol,  f1+subseq(code,2,length.code)))
  else 
      postbind2(org, dict, modpara, templates, knownsymbols, code, i , result , thissymbol)
+     postbind2(org, dict, modpara, templates, knownsymbols, code, 1 , "" , thissymbol)
  
 
 
@@ -526,6 +559,8 @@ function hasT (s:seq.word,i:int) boolean
   else // at end of parameter list or beginning of function type // 
       false
 
+Function bodyonly(code:seq.word) seq.word
+if code_1 = "parsedfunc"_1 then subseq( code,3 + toint.code_2,length.code) else code 
 
 function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass 
  // assert print.modname.f in ["?","stdlib","UTF8","altgen"]∨(print.modname.f ="bitpackedseq.T"∧ cardinality.defines.f + cardinality.unbound.f < 8)report print.modname.f + printdict.unbound.f // 
@@ -560,12 +595,13 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
    firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
   else if input_1 in"Function function"
   then let t =  parse(stubdict, getheader.input)
+   let code=bodyonly.code.t
    let name = funcname.t 
    let paratypes = funcparametertypes.t 
    assert  iscomplex.modname.f=hasT(input,2) report
       "Must use type T in function name or parameters in  parameterized module and T cannot be used in non-parameterized module"
        +getheader.input
-   let firstinstruction = code(t)_1 
+   let firstinstruction = code_1 
    if firstinstruction  in "usemangleZinternal1"  
    then let sym = symbol(name, mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t, input)
     firstpass(modname.f, uses.f, defines.f + sym, if input_1 ="Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)

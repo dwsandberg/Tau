@@ -188,7 +188,7 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word,alphabe
     +"&br nostate"
     + toword.length(orderadded.estate)
     +"&br follow"
-    + @(+, print,"", toseq.arcs(follow.graminfo))
+    + @(seperator."&br", print,"", toseq.arcs(follow.graminfo))
     +(
      let a = @(addaction(alphabet), identity, dseq.0, actions)
       "&br &br function tokenlist seq.word &quot"+ alphabet +"&quot"+"&br &br function startstate int"
@@ -277,7 +277,10 @@ function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
   ,[" F W W:T(FP) T E " ,  "    let name=[ merge(code.$_2 + &quot:&quot + print.mytype.gettype.$_4 )]
         createfunc(dict,name,types.$_6,mytype.gettype.$_8 , $_9,input,place) "]
   , ["F W W is W P"
-  ,"bindinfo(dict, code.$_4 + code.$_2 + code.$_5, types.$_5)"]
+  ,"assert (code.$_4)_1 in &quot record encoding sequence &quot report
+    errormessage( &quot Expected &em record &em encoding or &em sequence after &em is in type definition got: &quot
+    +code.$_4,input,place)
+    bindinfo(dict, code.$_4 + code.$_2 + code.$_5, types.$_5)"]
   , ["F W T","// use clause // bindinfo(dict, gettype.$_2, empty:seq.mytype)
   "]
   , ["FP P"
@@ -289,6 +292,11 @@ function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
   , ["P P, W:T","bindinfo(dict 
    , code.$_1 + code.$_3 + code.$_5 
    , types.$_1 + [ mytype(gettype.$_5 + code.$_3)])"]
+    , ["P comment W:T","bindinfo(dict, &quot //  &quot +code.$1 +&quot //  &quot  +code.$_2 + code.$_4, [ mytype(gettype.$_4 + code.$_2)])
+   "]
+  , ["P P, comment W:T","bindinfo(dict 
+   , &quot //  &quot +code.$3 +&quot //  &quot  +code.$_1 + code.$_4 + code.$_6 
+   , types.$_1 + [ mytype(gettype.$_6 + code.$_4)])"]
   , ["E W"
   ,"let id = code.$_1 
   let f = lookupbysig(dict, id_1, empty:seq.mytype, input, place)
@@ -332,7 +340,7 @@ function taurules2 seq.seq.seq.word [ ["G F #","$_1"]
    , ["T W","isdefined(dict, code.$_1, input, place)"]
   , ["T W.T","isdefined(dict, towords.(types.$_3)_1 + code.$_1, input, place)"]
   , ["E W:T"
-  ,"let f = lookup(dict, merge(code.$_1 + &quot:&quot + print.(types.$_3)_1)), empty:seq.mytype)
+  ,"let f = lookup(dict, merge(code.$_1 + &quot:&quot + print((types.$_3)_1)), empty:seq.mytype)
   assert not.isempty.f report errormessage(&quot cannot find &quot + code.$_1 + &quot:&quot + print.mytype.code.$_3, input, place)
   bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])"]
   , ["E $wordlist"

@@ -54,16 +54,11 @@ Function prettyparagraph(p:seq.word)seq.word
       then 
          assert false report "is this still used"+p
          "&keyword"+subseq(p, 3, length.p)
-      else if key in"record"
-      then"&keyword type"+ p_2 +"is"+ p_1 + decodefld(p, 4 + toint(p_3),"")
       else 
-       assert key in"parsedfunc Parsedfunc"report"unknown key"+ key 
+       assert key in"parsedfunc"report"unknown key"+ key 
         let z = p 
-         let nopara = toint(z_4)
-         let headlength = toint(z_2)
-         let head =(if key ="Parsedfunc"_1 &or last.z="exportZtest"_1 then"&keyword Function"else"&keyword function")
-         + z_3 
-         + plist(subseq(z, 5, headlength + 2 - nopara), 1, 1, subseq(z, headlength + 2 - nopara + 1, headlength + 2))
+          let headlength = toint(z_2)
+          let head="&keyword"+subseq(z,3,headlength+2)
          let x = x(control.charwidths, p, headlength + 4, empty:stack.prettyresult)
          let t = text.x 
           // assert not(t_1 ="builtin"_1)report"XXXX"+ z_3 + t // 
@@ -276,29 +271,7 @@ function functioncall(ctl:control, name:word, args:seq.prettyresult)prettyresult
        , [ name]+"."+ text(args_1))
      else if noargs = 0 then result(ctl, [ name])else result(ctl, [ name]+"()",",", args)
 
-function plist(t:seq.word, i:int, parano:int, names:seq.word)seq.word 
-   if i = 1 
-   then 
-    if length.names > 0 
-    then"("+(if names_parano =":"_1 then""else [ names_parano]+":")
-    + t_i 
-    + plist(t, i + 1, parano + 1, names)
-    else t 
-   else if t_i =".a"_1 ∨ t_i =". a"_1 
-   then subseq(t, i, i + 1)+ plist(t, i + 2, parano, names)
-   else if parano ≤ length.names 
-   then","+(if names_parano =":"_1 then""else [ names_parano]+":")
-   + t_i 
-   + plist(t, i + 1, parano + 1, names)
-   else")"+ subseq(t, i, length.t)
 
-function decodefld(s:seq.word, i:int, result:seq.word)seq.word 
-   if i > length.s 
-   then result 
-   else 
-    let k = toint(s_i)
-    let fld = [ s_(i + k)]+":"+ print(mytype.subseq(s, i + 1, i + k - 1))
-     decodefld(s, i + k + 1, if result =""then fld else result +","+ fld)
 
 function charwidths seq.int dseq(60 
   , [ 60, 60, 60, 60, 60, 60, 60, 60, 60, 60 

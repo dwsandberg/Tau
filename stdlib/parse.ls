@@ -1,6 +1,8 @@
+#!/usr/local/bin/tau
+
 Module parse
 
-run newimp test1
+run mylib test
 
 use UTF8
 
@@ -71,12 +73,8 @@ function code(bindinfo)seq.word export
 function types(bindinfo)seq.mytype export
 
 Function funcparametertypes(t:bindinfo)seq.mytype 
- // subseq(types.t, 3, length.types.t)// @(+, parameter, empty:seq.mytype, subseq(types.t, 3, length.types.t))
+  @(+, parameter, empty:seq.mytype, subseq(types.t, 3, length.types.t))
 
-Function parsedresult(t:bindinfo)seq.word 
- let argnames = @(+, abstracttype,"", subseq(types.t, 3, length.types.t))
-  let y = [ funcname.t, toword.length.argnames]+ @(+, print,"", funcparametertypes.t)+ print.funcreturntype.t + argnames 
-   "parsedfunc"+ toword.length.y + y + code.t
 
 Function funcname(t:bindinfo)word(towords.(types.t)_1)_1
 
@@ -96,6 +94,7 @@ function kk(stateno:int, token:int)seq.word
  if 0 ≠ actiontable_(length.tokenlist * stateno + token)then [ tokenlist_token]else empty:seq.word
 
 function consumeinput(b:stepresult, next:word)stepresult 
+ // assert (input.b)_1="use"_1 &or next in "function segment(  " report "MMM"+[next]+input.b //
  if tokenstate.b ≠ 0 
   then 
    if tokenstate.b = stringtoken 
@@ -164,6 +163,8 @@ Function parse(b:bindinfo, input:seq.word)bindinfo
   , stepresult(push(empty:stack.stkele, stkele(startstate, b)), 1, input, 0,"")
   , input +"#")
    result.(toseq.stk.a)_2
+     
+   
 
 function opaction(subtrees:seq.stkele, input:seq.word, place:int)bindinfo 
  let op =(code.result.subtrees_2)_1 
@@ -221,9 +222,7 @@ function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo, i
 
 function countdigits(s:seq.char, i:int, result:int)word 
  // does not count no-break spaces // 
-  if i > length.s 
-  then toword.result 
-  else countdigits(s, i + 1, result + if s_i = nbspchar then 0 else 1)
+ if i > length.s then toword.result else countdigits(s, i + 1, result + if s_i = nbspchar then 0 else 1)
 
 Function cvttotext(m:mytype)seq.word [ toword.length.towords.m]+ towords.m
 
@@ -242,23 +241,36 @@ function lookupbysig(dict:set.symbol, name:word, paratypes:seq.mytype, input:seq
    assert cardinality.f = 1 report errormessage("found more that one"+ @(+, print2,"", toseq.f), input, place)
      f_1
 
-function createfunc(dict:set.symbol, funcname:seq.word, paralist:seq.mytype, functype:mytype, exp:bindinfo, input:seq.word, place:int)bindinfo 
- assert functype =(types.exp)_1 ∨(types.exp)_1 in [ mytype."internal", mytype."internal1"]
+function backoffcomment(s:seq.word,i:int) seq.word
+  if s_i="//"_1 then subseq(s,1,i-1) else backoffcomment(s,i-1)
+
+function createfunc(dict:set.symbol, funcname:seq.word, paralist:seq.mytype, functypebind:bindinfo, exp:bindinfo, input:seq.word, place:int)bindinfo 
+  let functype=mytype.gettype.functypebind
+  assert functype =(types.exp)_1 ∨(types.exp)_1 in [ mytype."internal", mytype."internal1"]
   report errormessage("function type of"+ print.functype +"does not match expression type"+ print.(types.exp)_1 
   , input 
   , place)
-   bindinfo(dict, code.exp, [ mytype.funcname, functype]+ paralist)
+    let i=toint((code.functypebind)_1)
+    let header= if input_i="//"_1 then backoffcomment(input,i-1) else 
+     subseq(input,1,i-1)
+    let newcode="parsedfunc"+ toword.length.header + header+ code.exp
+    bindinfo(dict, newcode, [ mytype.funcname, functype]+ paralist)
+    
+        // assert input_2 in "segment yyyx test3 yyy test2 addcomma" report   
+     let i=toint((code.functypebind)_1)
+     if input_i="//"_1 then backoffcomment(input,i-1) else 
+     subseq(input,1,i-1) //
 
 function isdefined(dict:set.symbol, typ:seq.word, input:seq.word, place:int)bindinfo 
  if cardinality.dict < 25 ∨ typ in ["T","int"]
-  then bindinfo(dict, typ, [ mytype.typ])
+  then bindinfo(dict, [toword.place], [ mytype.typ])
   else 
    let a = lookup(dict, merge("type:"+ print.mytype.typ), empty:seq.mytype)
    assert cardinality.a = 1 ∨ print.mytype.typ in ["?"]
    report errormessage("parameter type"+ print.mytype.typ +"is undefined in"
    , // + @(+, print,"", toseq.dict), // input 
    , place)
-    bindinfo(dict, [ mangledname.a_1], [ mytype.typ])
+    bindinfo(dict, [toword.place], [ mytype.typ])
 
 function gettype(b:bindinfo)seq.word towords.(types.b)_1
 
@@ -483,831 +495,95 @@ function lextable seq.lexaction
  , lexaction("`"_1, 0,"`"_1)
  , lexaction("`"_1, 0,"`"_1)]
 
-noactions 2284 nosymbols:40 alphabet:.=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist 
- @ A E G F W P N L I K FP norules 58 nostate 151
 
-function tokenlist seq.word 
- ".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP"
+noactions 2303 
+nosymbols:40 alphabet:.=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP 
+norules 60 
+nostate 159 
+follow N >(N >, N >.(> N(>((> I(>_(> @(> P(> *(> FP(> W(> A(> $wordlist(> assert(> K(> ∧(> {(>-(> L(> ∨(> E(> >(> comment(> =(> if(> [(> let(> T } > N } >(} > } } >]} > I } > # } >_} > @ } > else } >)} > * } >, } > W } > A } > $wordlist } > assert } > report } > ∧ } > { } > then } >-} > ∨ } > E } > > } >^} > comment } > = } > if } > [ } > let]> N]>(]> }]>]]> I]> #]>_]> @]> else]>)]> *]>,]> W]> A]> $wordlist]> assert]> report]> ∧]> {]> then]>-]> ∨]> E]> >]>^]> comment]> =]> if]> []> let I > N I >(I > } I >]I > I I > # I >_I > @ I > else I >)I > * I >, I > W I > A I > $wordlist I > assert I > report I > ∧ I > { I > then I >-I > ∨ I > E I > > I >^I > comment I > = I > if I > [ I >.I > let F > #_> N_>(_> I_>__> @_> *_>,_> W_> A_> $wordlist_> assert_> ∧_> {_>-_> ∨_> E_> >_> comment_> =_> if_> [_>._> let @ >(P > # P >)P >, else > N else >(else > I else >_else > @ else > * else > W else > A else > $wordlist else > assert else > ∧ else > { else >-else > ∨ else > E else > > else > comment else > = else > if else > [ else > let)> N)>()> })>])> I)> #)>_)> @)> else)>))> *)>,)> W)> A)> $wordlist)> assert)> report)> ∧)> {)> then)>-)> ∨)> E)> >)>^)> comment)> =)> if)> [)> let)> T * > N * >(* > I * >_* > @ * > * * >, * > W * > A * > $wordlist * > assert * > ∧ * > { * >-* > ∨ * > E * > > * > comment * > = * > if * > [ * >.* > let FP >), > N, >(, > I, >_, > @, > *, > W, > A, > $wordlist, > assert, > K, > ∧, > {, >-, > ∨, > E, > >, > comment, > =, > if, > [, > let, > T W > N W >(W > } W >]W > I W > # W >_W > @ W > P W > else W >)W > * W >, W > W W > A W > $wordlist W > is W > assert W > report W > ∧ W >:W > { W > then W >-W > ∨ W > E W > > W >^W > comment W > = W > if W > [ W >.W > let W > T A > N A >(A > I A >_A > @ A > * A > W A > A A > $wordlist A > assert A > ∧ A > { A >-A > ∨ A > E A > > A > comment A > = A > if A > [ A > let $wordlist > N $wordlist >($wordlist > } $wordlist >]$wordlist > I $wordlist > # $wordlist >_$wordlist > @ $wordlist > else $wordlist >)$wordlist > * $wordlist >, $wordlist > W $wordlist > A $wordlist > $wordlist $wordlist > assert $wordlist > report $wordlist > ∧ $wordlist > { $wordlist > then $wordlist >-$wordlist > ∨ $wordlist > E $wordlist > > $wordlist >^$wordlist > comment $wordlist > = $wordlist > if $wordlist > [ $wordlist > let is > W assert > N assert >(assert > I assert >_assert > @ assert > * assert > W assert > A assert > $wordlist assert > assert assert > ∧ assert > { assert >-assert > ∨ assert > E assert > > assert > comment assert > = assert > if assert > [ assert > let K >, report > N report >(report > I report >_report > @ report > * report > W report > A report > $wordlist report > assert report > ∧ report > { report >-report > ∨ report > E report > > report > comment report > = report > if report > [ report > let ∧ > N ∧ >(∧ > I ∧ >_∧ > @ ∧ > * ∧ >, ∧ > W ∧ > A ∧ > $wordlist ∧ > assert ∧ > ∧ ∧ > { ∧ >-∧ > ∨ ∧ > E ∧ > > ∧ > comment ∧ > = ∧ > if ∧ > [ ∧ >.∧ > let:> W:> T { > N { >({ > I { >_{ > @ { > * { > W { > A { > $wordlist { > assert { > ∧ { > { { >-{ > ∨ { > E { > > { > comment { > = { > if { > [ { > let then > N then >(then > I then >_then > @ then > * then > W then > A then > $wordlist then > assert then > ∧ then > { then >-then > ∨ then > E then > > then > comment then > = then > if then > [ then > let-> N->(-> I->_-> @-> *->,-> W-> A-> $wordlist-> assert-> ∧-> {->--> ∨-> E-> >-> comment-> =-> if-> [->.-> let L >]L >)L >, ∨ > N ∨ >(∨ > I ∨ >_∨ > @ ∨ > * ∨ >, ∨ > W ∨ > A ∨ > $wordlist ∨ > assert ∨ > ∧ ∨ > { ∨ >-∨ > ∨ ∨ > E ∨ > > ∨ > comment ∨ > = ∨ > if ∨ > [ ∨ >.∨ > let E > N E >(E > } E >]E > I E > # E >_E > @ E > else E >)E > * E >, E > W E > A E > $wordlist E > assert E > report E > ∧ E > { E > then E >-E > ∨ E > E E > > E >^E > comment E > = E > if E > [ E > let > > N > >(> > I > >_> > @ > > * > >, > > W > > A > > $wordlist > > assert > > ∧ > > { > >-> > ∨ > > E > > > > > comment > > = > > if > > [ > >.> > let^> N^>(^> I^>_^> @^> *^> W^> A^> $wordlist^> assert^> ∧^> {^>-^> ∨^> E^> >^> comment^> =^> if^> [^> let comment > N comment >(comment > I comment >_comment > @ comment > * comment > W comment > A comment > $wordlist comment > assert comment > ∧ comment > { comment >-comment > ∨ comment > E comment > > comment > comment comment > = comment > if comment > [ comment > let = > N = >(= > I = >_= > @ = > * = >, = > W = > A = > $wordlist = > assert = > ∧ = > { = >-= > ∨ = > E = > > = > comment = > = = > if = > [ = >.= > let if > N if >(if > I if >_if > @ if > * if > W if > A if > $wordlist if > assert if > ∧ if > { if >-if > ∨ if > E if > > if > comment if > = if > if if > [ if > let [ > N [ >([ > I [ >_[ > @ [ > * [ > W [ > A [ > $wordlist [ > assert [ > ∧ [ > { [ >-[ > L [ > ∨ [ > E [ > > [ > comment [ > = [ > if [ > [ [ > let.> N.>(.> I.>_.> @.> *.> W.> A.> $wordlist.> assert.> ∧.> {.>-.> ∨.> E.> >.> comment.> =.> if.> [.> let.> T let > W T > N T >(T > } T >]T > I T > # T >_T > @ T > else T >)T > * T >, T > W T > A T > $wordlist T > assert T > report T > ∧ T > { T > then T >-T > ∨ T > E T > > T >^T > comment T > = T > if T > [ T > let T > T 
 
-function startstate int 1
+function tokenlist seq.word".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP" 
 
-function actiontable seq.int 
- [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 2, 3, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 4, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 13, 0, 0, 0, 12, 0, 10, 0, 0 
- , 0, 0, 0, 6, 0, 0, 14, 0, 0, 0 
- , 0, 0, 0, 0, 9, 11, 7, 0, 0, 0 
- , 0, 0, 0, 8, 0, 5, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 15, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- ,-45, 0,-45, 0, 0, 0, 0, 0, 0, 0 
- , 0,-45, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- ,-49, 0,-49, 0, 0, 0, 0, 0, 0, 0 
- , 0,-49, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 20,-40, 16,-40, 19,-40,-40,-40,-40,-40 
- ,-40,-40,-40,-40,-40, 18, 21,-40,-40,-40 
- ,-40,-40,-40,-40,-40,-40,-40,-40,-40,-40 
- ,-40, 0, 0, 17, 0,-40, 0,-40, 0, 0 
- ,-50, 0,-50, 0, 0, 0, 0, 0, 0, 0 
- , 0,-50, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- ,-46, 0,-46, 0, 0, 0, 0, 0, 0, 0 
- , 0,-46, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- ,-51, 0,-51, 0, 0, 0, 0, 0, 0, 0 
- , 0,-51, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- ,-48, 0,-48, 0, 0, 0, 0, 0, 0, 0 
- , 0,-48, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- ,-47, 0,-47, 0, 0, 0, 0, 0, 0, 0 
- , 0,-47, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0,-8, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 25, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 24, 22, 0, 0, 0, 0, 23 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 25, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 24, 22, 0, 0, 0, 0, 26 
- , 20,-40,-40,-40, 0,-40,-40,-40,-40,-40 
- ,-40,-40,-40,-40,-40, 0,-40,-40,-40,-40 
- ,-40,-40,-40,-40,-40,-40,-40,-40,-40,-40 
- ,-40, 0, 0,-40, 0,-40, 0,-40, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 27, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 28, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 17, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 29, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 17, 0, 0, 0, 0, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 40, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 0, 0,-9, 0, 0, 0, 0, 0, 0 
- , 0, 45, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 46, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 20,-40,-40,-40, 47,-40,-40,-40,-40,-40 
- ,-40,-40,-40,-40,-40, 0,-40,-40,-40,-40 
- ,-40,-40,-40,-40,-40,-40,-40,-40,-40,-40 
- ,-40, 0, 0,-40, 0,-40, 0,-40, 0, 0 
- , 0, 0, 0,-10, 0, 0, 0, 0, 0, 0 
- , 0,-10, 0, 0, 0, 0, 0, 0,-10, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 48, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 25, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 24, 49, 0, 0, 0, 0, 0 
- , 0, 0, 50, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 51, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 17, 0, 0, 0, 0, 0, 0 
- , 0,-41,-41,-41, 0,-41,-41,-41,-41,-41 
- ,-41,-41,-41,-41,-41, 0,-41,-41,-41,-41 
- ,-41,-41,-41,-41,-41,-41,-41,-41,-41,-41 
- ,-41, 0, 0,-41, 0,-41, 0,-41, 0, 0 
- , 53, 0, 52, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 54, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 55,-38,-38,-38, 0,-38,-38,-38,-38,-38 
- ,-38,-38,-38,-38,-38, 0, 0,-38,-38,-38 
- ,-38,-38,-38,-38,-38,-38,-38,-38,-38,-38 
- ,-38, 0, 0,-38, 0,-38, 0,-38, 0, 0 
- , 0, 0, 56, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 59,-14, 57,-14, 58,-14,-14,-14,-14,-14 
- ,-14,-14,-14,-14,-14, 0, 0,-14,-14,-14 
- ,-14,-14,-14,-14,-14,-14,-14,-14,-14,-14 
- ,-14, 0, 0,-14, 0,-14, 0,-14, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 60, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0,-43,-43,-43, 0,-43,-43,-43,-43,-43 
- ,-43,-43,-43,-43,-43, 0, 0,-43,-43,-43 
- ,-43,-43,-43,-43,-43,-43,-43,-43,-43,-43 
- ,-43, 0, 0,-43, 0,-43, 0,-43, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 61, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 62, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- ,-46, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41,-46, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 63, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0,-4, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 72, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 73, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 75, 0, 0, 34, 0, 30, 74, 32, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 76, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 78, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 77, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 79, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 17, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 80, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 17, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 81, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 17, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 45, 0, 0, 0, 0, 0, 0,-7, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 25, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 24, 22, 0, 0, 0, 0, 82 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 83, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 75, 0, 0, 34, 0, 30, 84, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 85, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 71, 0, 86, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 87, 0, 0 
- , 0, 13, 0, 0, 0, 12, 0, 10, 0, 0 
- , 0, 0, 0, 6, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 9, 11, 7, 0, 0, 0 
- , 0, 0, 0, 89, 0, 88, 0, 0, 90, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 75, 0, 0, 34, 0, 30, 91, 32, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 92, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 17, 0, 0, 0, 0, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 93, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 71,-36,-36, 0, 69,-36, 67,-36,-36 
- ,-36,-36,-36, 64, 70, 0, 0,-36,-36,-36 
- ,-36,-36,-36,-36, 66, 68, 65,-36,-36,-36 
- ,-36, 0, 0,-36, 0,-36, 0,-36, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0, 0, 0 
- , 0, 0, 0, 94, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 95 
- , 0, 0, 0, 64, 70, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0,-23,-23,-23, 0,-23,-23,-23,-23,-23 
- ,-23,-23,-23, 64, 70, 0, 0,-23,-23,-23 
- ,-23,-23,-23,-23,-23,-23,-23,-23,-23,-23 
- ,-23, 0, 0,-23, 0,-23, 0,-23, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 96, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 97, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 98, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 99, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 100, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 101, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 102, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 103, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0,-44,-44,-44, 0,-44,-44,-44,-44,-44 
- ,-44,-44,-44, 64, 70, 0, 0,-44,-44,-44 
- ,-44,-44,-44,-44,-44,-44,-44,-44,-44,-44 
- ,-44, 0, 0,-44, 0,-44, 0,-44, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0, 0, 104 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 105, 0, 0, 0 
- , 0, 106, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 71, 0,-32, 0, 69,-32, 67, 0, 0 
- , 0,-32, 0, 64, 70, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 107, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 20,-40,-40,-40, 108,-40,-40,-40,-40,-40 
- ,-40,-40,-40,-40,-40, 0,-40,-40,-40,-40 
- ,-40,-40,-40,-40,-40,-40,-40,-40,-40,-40 
- ,-40, 0, 0,-40, 0,-40, 0,-40, 0, 0 
- , 0, 0, 0,-11, 0, 0, 0, 0, 0, 0 
- , 0,-11, 0, 0, 0, 0, 0, 0,-11, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 109, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 0, 0,-12, 0, 0, 0, 0, 0, 0 
- , 0,-12, 0, 0, 0, 0, 0, 0,-12, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 110, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 0, 0, 111, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0,-5, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 112, 0, 0, 0, 0, 0, 0 
- , 0, 106, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0,-25,-25,-25, 0,-25,-25,-25,-25,-25 
- ,-25,-25,-25, 64, 70, 0, 0,-25,-25,-25 
- ,-25,-25,-25,-25,-25,-25,-25,-25,-25,-25 
- ,-25, 0, 0,-25, 0,-25, 0,-25, 0, 0 
- , 0,-18,-18,-18, 0,-18,-18,-18,-18,-18 
- ,-18,-18,-18,-18,-18, 0, 0,-18,-18,-18 
- ,-18,-18,-18,-18,-18,-18,-18,-18,-18,-18 
- ,-18, 0, 0,-18, 0,-18, 0,-18, 0, 0 
- , 0,-39,-39,-39, 0,-39,-39,-39,-39,-39 
- ,-39,-39,-39,-39,-39, 0, 0,-39,-39,-39 
- ,-39,-39,-39,-39,-39,-39,-39,-39,-39,-39 
- ,-39, 0, 0,-39, 0,-39, 0,-39, 0, 0 
- , 114, 0, 113, 0, 0, 0, 0, 0, 0, 0 
- , 0,-56, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 116, 0, 115, 0, 0, 0, 0, 0, 0, 0 
- , 0,-57, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 117, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 118, 0, 0, 0, 0, 0, 0 
- , 0, 106, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0,-42, 119,-42, 0,-42,-42,-42,-42,-42 
- ,-42,-42,-42,-42,-42, 0, 0,-42,-42,-42 
- ,-42,-42,-42,-42,-42,-42,-42,-42,-42,-42 
- ,-42, 0, 0,-42, 0,-42, 0,-42, 0, 0 
- , 0,-24,-24,-24, 0,-24,-24,-24,-24,-24 
- ,-24,-24,-24, 64, 70, 0, 0,-24,-24,-24 
- ,-24,-24,-24,-24,-24,-24,-24,-24,-24,-24 
- ,-24, 0, 0,-24, 0,-24, 0,-24, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 120, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0,-19,-19,-19, 0,-19,-19,-19,-19,-19 
- ,-19,-19,-19,-19,-19, 0, 0,-19,-19,-19 
- ,-19,-19,-19,-19,-19,-19,-19,-19,-19,-19 
- ,-19, 0, 0,-19, 0,-19, 0,-19, 0, 0 
- , 0,-22,-22,-22, 0,-22,-22,-22,-22,-22 
- ,-22,-22,-22,-22, 70, 0, 0,-22,-22,-22 
- ,-22,-22,-22,-22,-22,-22,-22,-22,-22,-22 
- ,-22, 0, 0,-22, 0,-22, 0,-22, 0, 0 
- , 0,-26,-26,-26, 0,-26,-26,-26,-26,-26 
- ,-26,-26,-26, 64, 70, 0, 0,-26,-26,-26 
- ,-26,-26,-26,-26,-26,-26,-26,-26,-26,-26 
- ,-26, 0, 0,-26, 0,-26, 0,-26, 0, 0 
- , 0, 71,-30,-30, 0, 69,-30, 67,-30,-30 
- ,-30,-30,-30, 64, 70, 0, 0,-30,-30,-30 
- ,-30,-30,-30,-30,-30,-30, 65,-30,-30,-30 
- ,-30, 0, 0,-30, 0,-30, 0,-30, 0, 0 
- , 0,-27,-27,-27, 0,-27,-27,-27,-27,-27 
- ,-27,-27,-27, 64, 70, 0, 0,-27,-27,-27 
- ,-27,-27,-27,-27,-27,-27, 65,-27,-27,-27 
- ,-27, 0, 0,-27, 0,-27, 0,-27, 0, 0 
- , 0, 71,-31,-31, 0, 69,-31, 67,-31,-31 
- ,-31,-31,-31, 64, 70, 0, 0,-31,-31,-31 
- ,-31,-31,-31,-31, 66,-31, 65,-31,-31,-31 
- ,-31, 0, 0,-31, 0,-31, 0,-31, 0, 0 
- , 0,-29,-29,-29, 0,-29,-29, 67,-29,-29 
- ,-29,-29,-29, 64, 70, 0, 0,-29,-29,-29 
- ,-29,-29,-29,-29,-29,-29, 65,-29,-29,-29 
- ,-29, 0, 0,-29, 0,-29, 0,-29, 0, 0 
- , 0, 71,-21,-21, 0, 69,-21, 67,-21,-21 
- ,-21,-21,-21, 64, 70, 0, 0,-21,-21,-21 
- ,-21,-21,-21,-21, 66, 68, 65,-21,-21,-21 
- ,-21, 0, 0,-21, 0,-21, 0,-21, 0, 0 
- , 0,-28,-28,-28, 0,-28,-28, 67,-28,-28 
- ,-28,-28,-28, 64, 70, 0, 0,-28,-28,-28 
- ,-28,-28,-28,-28,-28,-28, 65,-28,-28,-28 
- ,-28, 0, 0,-28, 0,-28, 0,-28, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 121, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0,-34,-34,-34, 0,-34,-34,-34,-34,-34 
- ,-34,-34,-34,-34,-34, 0, 0,-34,-34,-34 
- ,-34,-34,-34,-34,-34,-34,-34,-34,-34,-34 
- ,-34, 0, 0,-34, 0,-34, 0,-34, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 122, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 123, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 124, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 17, 0, 0, 0, 0, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0,-3, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0,-2, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 125, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 17, 0, 0, 0, 0, 0, 0 
- , 0,-15,-15,-15, 0,-15,-15,-15,-15,-15 
- ,-15,-15,-15,-15,-15, 0, 0,-15,-15,-15 
- ,-15,-15,-15,-15,-15,-15,-15,-15,-15,-15 
- ,-15, 0, 0,-15, 0,-15, 0,-15, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 75, 0, 0, 34, 0, 30, 126, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 127, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 75, 0, 0, 34, 0, 30, 128, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 129, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 0, 0, 0, 12, 0, 10, 0, 0 
- , 0, 0, 0, 6, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 9, 11, 7, 0, 0, 0 
- , 0, 0, 0, 89, 0, 88, 0, 0, 130, 0 
- , 0,-16,-16,-16, 0,-16,-16,-16,-16,-16 
- ,-16,-16,-16,-16,-16, 0, 0,-16,-16,-16 
- ,-16,-16,-16,-16,-16,-16,-16,-16,-16,-16 
- ,-16, 0, 0,-16, 0,-16, 0,-16, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 75, 0, 0, 34, 0, 30, 131, 32, 0, 0 
- , 0, 139, 31, 0, 0, 138, 0, 135, 38, 0 
- , 41, 0, 43, 132, 70, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 134, 136, 133, 36, 33, 35 
- , 137, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0, 0, 0 
- , 140, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 71, 0,-33, 0, 69,-33, 67, 0, 0 
- , 0,-33, 0, 64, 70, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 71,-35, 0, 0, 69, 0, 67,-35, 0 
- ,-35, 0,-35, 64, 70, 0, 0,-35, 0, 0 
- , 0,-35,-35, 0, 66, 68, 65,-35,-35,-35 
- ,-35, 0, 0,-35, 0,-35, 0,-35, 0, 0 
- , 0, 0, 0,-13, 0, 0, 0, 0, 0, 0 
- , 0,-13, 0, 0, 0, 0, 0, 0,-13, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 141, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 0, 0, 142, 0, 0, 0, 0, 0, 0 
- , 0, 106, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0,-53, 0, 64, 70, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 143, 0, 0, 0, 0, 0, 0 
- , 0, 106, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0,-52, 0, 64, 70, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 144, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 145, 0, 0, 0, 0, 0, 0 
- , 0, 106, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- ,-45, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41,-45, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 96, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- ,-49, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41,-49, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 97, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- ,-50, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41,-50, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 98, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- ,-46, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41,-46, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 146, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- ,-51, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41,-51, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 100, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 71,-37,-37, 0, 69,-37, 67,-37,-37 
- ,-37,-37,-37, 64, 70, 0, 0,-37,-37,-37 
- ,-37,-37,-37,-37, 66, 68, 65,-37,-37,-37 
- ,-37, 0, 0,-37, 0,-37, 0,-37, 0, 0 
- ,-48, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41,-48, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 101, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- ,-47, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41,-47, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 103, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 147, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0,-6, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0,-54, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0,-55, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 148, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0,-17,-17,-17, 0,-17,-17,-17,-17,-17 
- ,-17,-17,-17,-17,-17, 0, 0,-17,-17,-17 
- ,-17,-17,-17,-17,-17,-17,-17,-17,-17,-17 
- ,-17, 0, 0,-17, 0,-17, 0,-17, 0, 0 
- , 0,-27,-27,-27, 0,-27,-27,-27,-27,-27 
- ,-27,-27,-27, 64, 70, 0, 0,-27,-27,-27 
- ,-27,-27,-27,-27,-27,-27,-23,-27,-27,-27 
- ,-27, 0, 0,-27, 0,-27, 0,-27, 0, 0 
- , 0, 71,-20,-20, 0, 69,-20, 67,-20,-20 
- ,-20,-20,-20, 64, 70, 0, 0,-20,-20,-20 
- ,-20,-20,-20,-20, 66, 68, 65,-20,-20,-20 
- ,-20, 0, 0,-20, 0,-20, 0,-20, 0, 0 
- , 0, 71, 0, 0, 0, 69, 0, 67, 0, 0 
- , 0, 149, 0, 64, 70, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0, 13, 31, 0, 0, 12, 0, 39, 38, 0 
- , 41, 0, 43, 6, 0, 0, 0, 42, 0, 0 
- , 0, 44, 37, 0, 9, 11, 7, 36, 33, 35 
- , 150, 0, 0, 34, 0, 30, 0, 32, 0, 0 
- , 0, 71, 0, 151, 0, 69, 0, 67, 0, 0 
- , 0, 0, 0, 64, 70, 0, 0, 0, 0, 0 
- , 0, 0, 0, 0, 66, 68, 65, 0, 0, 0 
- , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
- , 0,-58,-58,-58, 0,-58,-58,-58,-58,-58 
- ,-58,-58,-58,-58,-58, 0, 0,-58,-58,-58 
- ,-58,-58,-58,-58,-58,-58,-58,-58,-58,-58 
- ,-58, 0, 0,-58, 0,-58, 0,-58]
+function startstate int 1 
 
-function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.stkele 
- // generated function // 
- let rulelen = [ 2, 7, 7, 4, 6, 9, 5, 2, 1, 1 
-  , 3, 3, 5, 1, 4, 4, 6, 3, 3, 6 
-  , 3, 3, 2, 3, 3, 3, 3, 3, 3, 3 
-  , 3, 1, 3, 3, 4, 2, 5, 1, 3, 1 
-  , 3, 3, 1, 2, 1, 1, 1, 1, 1, 1 
-  , 1, 3, 3, 4, 4, 1, 1, 10]
-  _ruleno 
-  let newstk = pop(stk, rulelen)
-  let subtrees = top(stk, rulelen)
-  let dict = dict.result.top.stk 
-  let newtree = 
-   if ruleno = // G F # // 1 
-   then result.subtrees_1 
-   else if ruleno = // F W W(FP)T E // 2 
-   then createfunc(dict 
-   , code.result.subtrees_2 
-   , types.result.subtrees_4 
-   , mytype.gettype.result.subtrees_6 
-   , result.subtrees_7 
-   , input 
-   , place)
-   else if ruleno = // F W N(FP)T E // 3 
-   then createfunc(dict 
-   , code.result.subtrees_2 
-   , types.result.subtrees_4 
-   , mytype.gettype.result.subtrees_6 
-   , result.subtrees_7 
-   , input 
-   , place)
-   else if ruleno = // F W W T E // 4 
-   then createfunc(dict, code.result.subtrees_2, empty:seq.mytype, mytype.gettype.result.subtrees_3, result.subtrees_4, input, place)
-   else if ruleno = // F W W:T T E // 5 
-   then 
-    let name = [ merge(code.result.subtrees_2 +":"+ print.mytype.gettype.result.subtrees_4)]
-     createfunc(dict, name, empty:seq.mytype, mytype.gettype.result.subtrees_5, result.subtrees_6, input, place)
-   else if ruleno = // F W W:T(FP)T E // 6 
-   then 
-    let name = [ merge(code.result.subtrees_2 +":"+ print.mytype.gettype.result.subtrees_4)]
-     createfunc(dict, name, types.result.subtrees_6, mytype.gettype.result.subtrees_8, result.subtrees_9, input, place)
-   else if ruleno = // F W W is W P // 7 
-   then bindinfo(dict, code.result.subtrees_4 + code.result.subtrees_2 + code.result.subtrees_5, types.result.subtrees_5)
-   else if ruleno = // F W T // 8 
-   then // use clause // bindinfo(dict, gettype.result.subtrees_2, empty:seq.mytype)
-   else if ruleno = // FP P // 9 
-   then bindinfo(@(addparameter(cardinality.dict, input, place), identity, dict, types.result.subtrees_1)
-   ,""
-   , types.result.subtrees_1)
-   else if ruleno = // P T // 10 
-   then bindinfo(dict,"", [ mytype(gettype.result.subtrees_1 +":")])
-   else if ruleno = // P P, T // 11 
-   then bindinfo(dict,"", types.result.subtrees_1 + [ mytype(gettype.result.subtrees_3 +":")])
-   else if ruleno = // P W:T // 12 
-   then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, [ mytype(gettype.result.subtrees_3 + code.result.subtrees_1)])
-   else if ruleno = // P P, W:T // 13 
-   then bindinfo(dict 
-   , code.result.subtrees_1 + code.result.subtrees_3 + code.result.subtrees_5 
-   , types.result.subtrees_1 + [ mytype(gettype.result.subtrees_5 + code.result.subtrees_3)])
-   else if ruleno = // E W // 14 
-   then 
-    let id = code.result.subtrees_1 
-    let f = lookupbysig(dict, id_1, empty:seq.mytype, input, place)
-     bindinfo(dict, [ mangledname.f], [ resulttype.f])
-   else if ruleno = // E N(L)// 15 
-   then unaryop(dict, code.result.subtrees_1, result.subtrees_3, input, place)
-   else if ruleno = // E W(L)// 16 
-   then unaryop(dict, code.result.subtrees_1, result.subtrees_3, input, place)
-   else if ruleno = // E W:T(L)// 17 
-   then 
-    let name = [ merge(code.result.subtrees_1 +":"+ print.(types.result.subtrees_3)_1)]
-     unaryop(dict, name, result.subtrees_5, input, place)
-   else if ruleno = // E(E)// 18 
-   then result.subtrees_2 
-   else if ruleno = // E { E } // 19 
-   then result.subtrees_2 
-   else if ruleno = // E if E then E else E // 20 
-   then 
-    let thenpart = result.subtrees_4 
-    assert(types.result.subtrees_2)_1 = mytype."boolean"
-    report errormessage("cond of if must be boolean", input, place)
-     assert types.result.subtrees_4 = types.result.subtrees_6 
-      report errormessage("then and else types are different", input, place)
-       let newcode = code.result.subtrees_2 + code.result.subtrees_4 + code.result.subtrees_6 
-         bindinfo(dict, newcode +"if", types.thenpart)
-   else if ruleno = // E E^E // 21 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E_E // 22 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E-E // 23 
-   then unaryop(dict, code.result.subtrees_1, result.subtrees_2, input, place)
-   else if ruleno = // E W.E // 24 
-   then unaryop(dict, code.result.subtrees_1, result.subtrees_3, input, place)
-   else if ruleno = // E N.E // 25 
-   then unaryop(dict, code.result.subtrees_1, result.subtrees_3, input, place)
-   else if ruleno = // E E * E // 26 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E-E // 27 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E = E // 28 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E > E // 29 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E ∧ E // 30 
-   then opaction(subtrees, input, place)
-   else if ruleno = // E E ∨ E // 31 
-   then opaction(subtrees, input, place)
-   else if ruleno = // L E // 32 
-   then result.subtrees_1 
-   else if ruleno = // L L, E // 33 
-   then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_1 + types.result.subtrees_3)
-   else if ruleno = // E [ L]// 34 
-   then 
-    let types = types.result.subtrees_2 
-    assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place)
-     bindinfo(dict 
-     ,"LIT 0 LIT"+ toword.length.types + code.result.subtrees_2 +"RECORD"+ toword(length.types + 2)
-     , [ mytype(towords.types_1 +"seq")])
-   else if ruleno = // A let W = E // 35 
-   then 
-    let e = result.subtrees_4 
-    let name =(code.result.subtrees_2)_1 
-    assert isempty.lookup(dict, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place)
-     let newdict = dict + symbol(name, mytype."local", empty:seq.mytype,(types.e)_1,"")
-       bindinfo(newdict, code.e +"define"+ name, types.e)
-   else if ruleno = // E A E // 36 
-   then 
-    let t = code.result.subtrees_1 
-    let f = lookup(dict, last.code.result.subtrees_1, empty:seq.mytype)
-    assert not.isempty.f 
-    report"internal error/could not find local symbol to delete from dict with name"+ last.code.result.subtrees_1 
-     bindinfo(dict.result.subtrees_1 - f_1 
-     , subseq(t, 1, length.t - 2)+ code.result.subtrees_2 +"SET"+ last.code.result.subtrees_1 
-     , types.result.subtrees_2)
-   else if ruleno = // E assert E report E E // 37 
-   then 
-    assert(types.result.subtrees_2)_1 = mytype."boolean"
-    report errormessage("condition in assert must be boolean in:", input, place)
-     assert(types.result.subtrees_4)_1 = mytype."word seq"
-      report errormessage("report in assert must be seq of word in:", input, place)
-       let newcode = code.result.subtrees_2 + code.result.subtrees_5 + code.result.subtrees_4 +"assertZbuiltinZwordzseq if"
-         bindinfo(dict, newcode, types.result.subtrees_5)
-   else if ruleno = // E I // 38 
-   then result.subtrees_1 
-   else if ruleno = // E I.I // 39 
-   then 
-    let d = decodeword.(code.result.subtrees_3)_2 
-     bindinfo(dict 
-     ,"LIT"+ [ encodeword(decodeword.(code.result.subtrees_1)_2 + d)]+"LIT"+ countdigits(d, 1, 0)
-     +"makerealZrealZintZint"
-     , [ mytype."real"])
-   else if ruleno = // T W // 40 
-   then isdefined(dict, code.result.subtrees_1, input, place)
-   else if ruleno = // T W.T // 41 
-   then isdefined(dict, towords.(types.result.subtrees_3)_1 + code.result.subtrees_1, input, place)
-   else if ruleno = // E W:T // 42 
-   then 
-    let f = lookup(dict, merge(code.result.subtrees_1 +":"+ print.(types.result.subtrees_3)_1), empty:seq.mytype)
-    assert not.isempty.f 
-    report errormessage("cannot find"+ code.result.subtrees_1 +":"+ print.mytype.code.result.subtrees_3, input, place)
-     bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])
-   else if ruleno = // E $wordlist // 43 
-   then 
-    let s = code.result.subtrees_1 
-     bindinfo(dict,"WORDS"+ toword.length.s + s, [ mytype."word seq"])
-   else if ruleno = // E comment E // 44 
-   then 
-    let s = code.result.subtrees_1 
-     bindinfo(dict, code.result.subtrees_2 +"COMMENT"+ toword.length.s + s, types.result.subtrees_2)
-   else if ruleno = // N_// 45 
-   then result.subtrees_1 
-   else if ruleno = // N-// 46 
-   then result.subtrees_1 
-   else if ruleno = // N = // 47 
-   then result.subtrees_1 
-   else if ruleno = // N > // 48 
-   then result.subtrees_1 
-   else if ruleno = // N * // 49 
-   then result.subtrees_1 
-   else if ruleno = // N ∧ // 50 
-   then result.subtrees_1 
-   else if ruleno = // N ∨ // 51 
-   then result.subtrees_1 
-   else if ruleno = // K W.E // 52 
-   then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)
-   else if ruleno = // K N.E // 53 
-   then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)
-   else if ruleno = // K N(L)// 54 
-   then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)
-   else if ruleno = // K W(L)// 55 
-   then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)
-   else if ruleno = // K N // 56 
-   then bindinfo(dict, code.result.subtrees_1, empty:seq.mytype)
-   else if ruleno = // K W // 57 
-   then bindinfo(dict, code.result.subtrees_1, empty:seq.mytype)
-   else 
-    assert ruleno = // E @(K, K, E, E)// 58 report"invalid rule number"+ toword.ruleno 
-     apply(result.subtrees_3, result.subtrees_5, result.subtrees_7, result.subtrees_9, input, place)
-  let leftsidetoken = [ 32, 33, 33, 33, 33, 33, 33, 33, 40, 35 
-  , 35, 35, 35, 31, 31, 31, 31, 31, 31, 31 
-  , 31, 31, 31, 31, 31, 31, 31, 31, 31, 31 
-  , 31, 37, 37, 31, 30, 31, 31, 31, 31, 17 
-  , 17, 31, 31, 31, 36, 36, 36, 36, 36, 36 
-  , 36, 39, 39, 39, 39, 39, 39, 31]
-  _ruleno 
-  let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)
-  assert actioncode > 0 report"????"
-   push(newstk, stkele(actioncode, newtree))
+function actiontable seq.int [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 12, 0, 10, 0, 0, 0, 0, 0, 6, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 9, 11, 7, 0, 0, 0, 0, 0, 0, 8, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -47, 0, -47, 0, 0, 0, 0, 0, 0, 0, 0, -47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -51, 0, -51, 0, 0, 0, 0, 0, 0, 0, 0, -51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, -42, 16, -42, 19, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, 18, 21, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, 0, 0, 17, 0, -42, 0, -42, 0, 0, -52, 0, -52, 0, 0, 0, 0, 0, 0, 0, 0, -52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -48, 0, -48, 0, 0, 0, 0, 0, 0, 0, 0, -48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -53, 0, -53, 0, 0, 0, 0, 0, 0, 0, 0, -53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -50, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, -50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -49, 0, -49, 0, 0, 0, 0, 0, 0, 0, 0, -49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 22, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 22, 0, 0, 0, 0, 27, 20, -42, -42, -42, 0, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, 0, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, 0, 0, -42, 0, -42, 0, -42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 41, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 0, 0, -9, 0, 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, -42, -42, -42, 48, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, 0, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, 0, 0, -42, 0, -42, 0, -42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 0, 0, 0, -10, 0, 0, 0, 0, 0, 0, 0, -10, 0, 0, 0, 0, 0, 0, -10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 51, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, -43, -43, -43, 0, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43, 0, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43, -43, 0, 0, -43, 0, -43, 0, -43, 0, 0, 55, 0, 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 56, 0, 0, 35, 0, 31, 0, 33, 0, 0, 57, -40, -40, -40, 0, -40, -40, -40, -40, -40, -40, -40, -40, -40, -40, 0, 0, -40, -40, -40, -40, -40, -40, -40, -40, -40, -40, -40, -40, -40, -40, 0, 0, -40, 0, -40, 0, -40, 0, 0, 0, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 61, -16, 59, -16, 60, -16, -16, -16, -16, -16, -16, -16, -16, -16, -16, 0, 0, -16, -16, -16, -16, -16, -16, -16, -16, -16, -16, -16, -16, -16, -16, 0, 0, -16, 0, -16, 0, -16, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 62, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, -45, -45, -45, 0, -45, -45, -45, -45, -45, -45, -45, -45, -45, -45, 0, 0, -45, -45, -45, -45, -45, -45, -45, -45, -45, -45, -45, -45, -45, -45, 0, 0, -45, 0, -45, 0, -45, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 63, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 64, 0, 0, 35, 0, 31, 0, 33, 0, 0, -48, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, -48, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 65, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, -4, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 74, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 75, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 77, 0, 0, 35, 0, 31, 76, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 85, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 0, 0, 0, -7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 22, 0, 0, 0, 0, 86, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 87, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 77, 0, 0, 35, 0, 31, 88, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 89, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 73, 0, 90, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 91, 0, 0, 0, 13, 0, 0, 0, 12, 0, 10, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 7, 0, 0, 0, 0, 0, 0, 93, 0, 92, 0, 0, 94, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 77, 0, 0, 35, 0, 31, 95, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 97, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 73, -38, -38, 0, 71, -38, 69, -38, -38, -38, -38, -38, 66, 72, 0, 0, -38, -38, -38, -38, -38, -38, -38, 68, 70, 67, -38, -38, -38, -38, 0, 0, -38, 0, -38, 0, -38, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, 0, 0, 0, 0, 0, 98, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 99, 0, 0, 0, 66, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -25, -25, -25, 0, -25, -25, -25, -25, -25, -25, -25, -25, 66, 72, 0, 0, -25, -25, -25, -25, -25, -25, -25, -25, -25, -25, -25, -25, -25, -25, 0, 0, -25, 0, -25, 0, -25, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 100, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 101, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 102, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 103, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 104, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 105, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 106, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 107, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, -46, -46, -46, 0, -46, -46, -46, -46, -46, -46, -46, -46, 66, 72, 0, 0, -46, -46, -46, -46, -46, -46, -46, -46, -46, -46, -46, -46, -46, -46, 0, 0, -46, 0, -46, 0, -46, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, 0, 108, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 109, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, -34, 0, 71, -34, 69, 0, 0, 0, -34, 0, 66, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, -42, -42, -42, 112, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, 0, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, -42, 0, 0, -42, 0, -42, 0, -42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 113, 0, 0, 0, 0, 0, 0, 0, 0, 0, -11, 0, 0, 0, 0, 0, 0, 0, -11, 0, 0, 0, 0, 0, 0, -11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 114, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 0, 0, -12, 0, 0, 0, 0, 0, 0, 0, -12, 0, 0, 0, 0, 0, 0, -12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 115, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 116, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 0, 0, 117, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, -5, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 118, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -27, -27, -27, 0, -27, -27, -27, -27, -27, -27, -27, -27, 66, 72, 0, 0, -27, -27, -27, -27, -27, -27, -27, -27, -27, -27, -27, -27, -27, -27, 0, 0, -27, 0, -27, 0, -27, 0, 0, 0, -20, -20, -20, 0, -20, -20, -20, -20, -20, -20, -20, -20, -20, -20, 0, 0, -20, -20, -20, -20, -20, -20, -20, -20, -20, -20, -20, -20, -20, -20, 0, 0, -20, 0, -20, 0, -20, 0, 0, 0, -41, -41, -41, 0, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, 0, 0, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, -41, 0, 0, -41, 0, -41, 0, -41, 0, 0, 120, 0, 119, 0, 0, 0, 0, 0, 0, 0, 0, -58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 122, 0, 121, 0, 0, 0, 0, 0, 0, 0, 0, -59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 123, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 124, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -44, 125, -44, 0, -44, -44, -44, -44, -44, -44, -44, -44, -44, -44, 0, 0, -44, -44, -44, -44, -44, -44, -44, -44, -44, -44, -44, -44, -44, -44, 0, 0, -44, 0, -44, 0, -44, 0, 0, 0, -26, -26, -26, 0, -26, -26, -26, -26, -26, -26, -26, -26, 66, 72, 0, 0, -26, -26, -26, -26, -26, -26, -26, -26, -26, -26, -26, -26, -26, -26, 0, 0, -26, 0, -26, 0, -26, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 126, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, -21, -21, -21, 0, -21, -21, -21, -21, -21, -21, -21, -21, -21, -21, 0, 0, -21, -21, -21, -21, -21, -21, -21, -21, -21, -21, -21, -21, -21, -21, 0, 0, -21, 0, -21, 0, -21, 0, 0, 0, -24, -24, -24, 0, -24, -24, -24, -24, -24, -24, -24, -24, -24, 72, 0, 0, -24, -24, -24, -24, -24, -24, -24, -24, -24, -24, -24, -24, -24, -24, 0, 0, -24, 0, -24, 0, -24, 0, 0, 0, -28, -28, -28, 0, -28, -28, -28, -28, -28, -28, -28, -28, 66, 72, 0, 0, -28, -28, -28, -28, -28, -28, -28, -28, -28, -28, -28, -28, -28, -28, 0, 0, -28, 0, -28, 0, -28, 0, 0, 0, 73, -32, -32, 0, 71, -32, 69, -32, -32, -32, -32, -32, 66, 72, 0, 0, -32, -32, -32, -32, -32, -32, -32, -32, -32, 67, -32, -32, -32, -32, 0, 0, -32, 0, -32, 0, -32, 0, 0, 0, -29, -29, -29, 0, -29, -29, -29, -29, -29, -29, -29, -29, 66, 72, 0, 0, -29, -29, -29, -29, -29, -29, -29, -29, -29, 67, -29, -29, -29, -29, 0, 0, -29, 0, -29, 0, -29, 0, 0, 0, 73, -33, -33, 0, 71, -33, 69, -33, -33, -33, -33, -33, 66, 72, 0, 0, -33, -33, -33, -33, -33, -33, -33, 68, -33, 67, -33, -33, -33, -33, 0, 0, -33, 0, -33, 0, -33, 0, 0, 0, -31, -31, -31, 0, -31, -31, 69, -31, -31, -31, -31, -31, 66, 72, 0, 0, -31, -31, -31, -31, -31, -31, -31, -31, -31, 67, -31, -31, -31, -31, 0, 0, -31, 0, -31, 0, -31, 0, 0, 0, 73, -23, -23, 0, 71, -23, 69, -23, -23, -23, -23, -23, 66, 72, 0, 0, -23, -23, -23, -23, -23, -23, -23, 68, 70, 67, -23, -23, -23, -23, 0, 0, -23, 0, -23, 0, -23, 0, 0, 0, -30, -30, -30, 0, -30, -30, 69, -30, -30, -30, -30, -30, 66, 72, 0, 0, -30, -30, -30, -30, -30, -30, -30, -30, -30, 67, -30, -30, -30, -30, 0, 0, -30, 0, -30, 0, -30, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 127, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, -36, -36, -36, 0, -36, -36, -36, -36, -36, -36, -36, -36, -36, -36, 0, 0, -36, -36, -36, -36, -36, -36, -36, -36, -36, -36, -36, -36, -36, -36, 0, 0, -36, 0, -36, 0, -36, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 128, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 129, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 131, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, -3, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -14, 0, 0, 0, 0, 0, 0, 0, -14, 0, 0, 0, 0, 0, 0, -14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, -2, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 132, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, -17, -17, -17, 0, -17, -17, -17, -17, -17, -17, -17, -17, -17, -17, 0, 0, -17, -17, -17, -17, -17, -17, -17, -17, -17, -17, -17, -17, -17, -17, 0, 0, -17, 0, -17, 0, -17, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 77, 0, 0, 35, 0, 31, 133, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 134, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 77, 0, 0, 35, 0, 31, 135, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 136, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 0, 0, 0, 12, 0, 10, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 11, 7, 0, 0, 0, 0, 0, 0, 93, 0, 92, 0, 0, 137, 0, 0, -18, -18, -18, 0, -18, -18, -18, -18, -18, -18, -18, -18, -18, -18, 0, 0, -18, -18, -18, -18, -18, -18, -18, -18, -18, -18, -18, -18, -18, -18, 0, 0, -18, 0, -18, 0, -18, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 77, 0, 0, 35, 0, 31, 138, 33, 0, 0, 0, 146, 32, 0, 0, 145, 0, 142, 39, 0, 42, 0, 44, 139, 72, 0, 0, 43, 0, 0, 0, 45, 38, 0, 141, 143, 140, 37, 34, 36, 144, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, 0, 0, 147, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, -35, 0, 71, -35, 69, 0, 0, 0, -35, 0, 66, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, -37, 0, 0, 71, 0, 69, -37, 0, -37, 0, -37, 66, 72, 0, 0, -37, 0, 0, 0, -37, -37, 0, 68, 70, 67, -37, -37, -37, -37, 0, 0, -37, 0, -37, 0, -37, 0, 0, 0, 0, 0, -13, 0, 0, 0, 0, 0, 0, 0, -13, 0, 0, 0, 0, 0, 0, -13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 148, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 149, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 0, 0, 150, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, -55, 0, 66, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 151, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, -54, 0, 66, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 153, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -47, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, -47, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 100, 0, 0, 35, 0, 31, 0, 33, 0, 0, -51, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, -51, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 101, 0, 0, 35, 0, 31, 0, 33, 0, 0, -52, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, -52, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 102, 0, 0, 35, 0, 31, 0, 33, 0, 0, -48, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, -48, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 154, 0, 0, 35, 0, 31, 0, 33, 0, 0, -53, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, -53, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 104, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 73, -39, -39, 0, 71, -39, 69, -39, -39, -39, -39, -39, 66, 72, 0, 0, -39, -39, -39, -39, -39, -39, -39, 68, 70, 67, -39, -39, -39, -39, 0, 0, -39, 0, -39, 0, -39, 0, 0, -50, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, -50, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 105, 0, 0, 35, 0, 31, 0, 33, 0, 0, -49, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, -49, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 107, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 155, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 0, 0, -15, 0, 0, 0, 0, 0, 0, 0, -15, 0, 0, 0, 0, 0, 0, -15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, -6, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -57, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 156, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, -19, -19, -19, 0, -19, -19, -19, -19, -19, -19, -19, -19, -19, -19, 0, 0, -19, -19, -19, -19, -19, -19, -19, -19, -19, -19, -19, -19, -19, -19, 0, 0, -19, 0, -19, 0, -19, 0, 0, 0, -29, -29, -29, 0, -29, -29, -29, -29, -29, -29, -29, -29, 66, 72, 0, 0, -29, -29, -29, -29, -29, -29, -29, -29, -29, -25, -29, -29, -29, -29, 0, 0, -29, 0, -29, 0, -29, 0, 0, 0, 73, -22, -22, 0, 71, -22, 69, -22, -22, -22, -22, -22, 66, 72, 0, 0, -22, -22, -22, -22, -22, -22, -22, 68, 70, 67, -22, -22, -22, -22, 0, 0, -22, 0, -22, 0, -22, 0, 0, 0, 73, 0, 0, 0, 71, 0, 69, 0, 0, 0, 157, 0, 66, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 32, 0, 0, 12, 0, 40, 39, 0, 42, 0, 44, 6, 0, 0, 0, 43, 0, 0, 0, 45, 38, 0, 9, 11, 7, 37, 34, 36, 158, 0, 0, 35, 0, 31, 0, 33, 0, 0, 0, 73, 0, 159, 0, 71, 0, 69, 0, 0, 0, 0, 0, 66, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 70, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -60, -60, -60, 0, -60, -60, -60, -60, -60, -60, -60, -60, -60, -60, 0, 0, -60, -60, -60, -60, -60, -60, -60, -60, -60, -60, -60, -60, -60, -60, 0, 0, -60, 0, -60, 0, -60] 
 
+function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.stkele // generated function // 
+let rulelen = [ 2, 7, 7, 4, 6, 9, 5, 2, 1, 1, 3, 3, 5, 4, 6, 1, 4, 4, 6, 3, 3, 6, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 4, 2, 5, 1, 3, 1, 3, 3, 1, 2, 1, 1, 1, 1, 1, 1, 1, 3, 3, 4, 4, 1, 1, 10]_ruleno 
+let newstk = pop(stk, rulelen) 
+let subtrees = top(stk, rulelen) 
+let dict = dict.result.top.stk 
+let newtree = 
+if ruleno = // G F # // 1 then result.subtrees_1 else 
+if ruleno = // F W W(FP)T E // 2 then createfunc(dict, code.result.subtrees_2, types.result.subtrees_4, result.subtrees_6, result.subtrees_7, input, place)else 
+if ruleno = // F W N(FP)T E // 3 then createfunc(dict, code.result.subtrees_2, types.result.subtrees_4,result.subtrees_6, result.subtrees_7, input, place)else 
+if ruleno = // F W W T E // 4 then    createfunc(dict, code.result.subtrees_2, empty:seq.mytype,        result.subtrees_3, result.subtrees_4, input, place)else 
+if ruleno = // F W W:T T E // 5 then let name = [ merge(code.result.subtrees_2 +":"+ print.mytype.gettype.result.subtrees_4)]
+                                      createfunc(dict, name, empty:seq.mytype,                          result.subtrees_5, result.subtrees_6, input, place)else 
+if ruleno = // F W W:T(FP)T E // 6 then let name = [ merge(code.result.subtrees_2 +":"+ print.mytype.gettype.result.subtrees_4)]
+                                      createfunc(dict, name, types.result.subtrees_6,                   result.subtrees_8, result.subtrees_9, input, place)else 
+if ruleno = // F W W is W P // 7 then assert(code.result.subtrees_4)_1 in"record encoding sequence"report errormessage("Expected record encoding or sequence after is in type definition got:"+ code.result.subtrees_4, input, place)bindinfo(dict, code.result.subtrees_4 + code.result.subtrees_2 + code.result.subtrees_5, types.result.subtrees_5)else 
+if ruleno = // F W T // 8 then // use clause // bindinfo(dict, gettype.result.subtrees_2, empty:seq.mytype)else 
+if ruleno = // FP P // 9 then 
+bindinfo(@(addparameter(cardinality.dict, input, place), identity, dict, types.result.subtrees_1),"", types.result.subtrees_1)else 
+if ruleno = // P T // 10 then bindinfo(dict,"", [ mytype(gettype.result.subtrees_1 +":")])else 
+if ruleno = // P P, T // 11 then bindinfo(dict,"", types.result.subtrees_1 + [ mytype(gettype.result.subtrees_3 +":")])else 
+if ruleno = // P W:T // 12 then 
+bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, 
+[ mytype(gettype.result.subtrees_3 + code.result.subtrees_1)]) else 
+if ruleno = // P P, W:T // 13 then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3 + code.result.subtrees_5, types.result.subtrees_1 + [ mytype(gettype.result.subtrees_5 + code.result.subtrees_3)])else 
+if ruleno = // P comment W:T // 14 then 
+bindinfo(dict,"//"+ code.result.subtrees_1 +"//"+ code.result.subtrees_2 + code.result.subtrees_4, 
+[ mytype(gettype.result.subtrees_4 + code.result.subtrees_2)])else 
+if ruleno = // P P, comment W:T // 15 then bindinfo(dict,"//"+ code.result.subtrees_3 +"//"+ code.result.subtrees_1 + code.result.subtrees_4 + code.result.subtrees_6, types.result.subtrees_1 + [ mytype(gettype.result.subtrees_6 + code.result.subtrees_4)])else 
+if ruleno = // E W // 16 then let id = code.result.subtrees_1 let f = lookupbysig(dict, id_1, empty:seq.mytype, input, place)bindinfo(dict, [ mangledname.f], [ resulttype.f])else 
+if ruleno = // E N(L)// 17 then unaryop(dict, code.result.subtrees_1, result.subtrees_3, input, place)else 
+if ruleno = // E W(L)// 18 then unaryop(dict, code.result.subtrees_1, result.subtrees_3, input, place)else 
+if ruleno = // E W:T(L)// 19 then let name = [ merge(code.result.subtrees_1 +":"+ print.(types.result.subtrees_3)_1)]unaryop(dict, name, result.subtrees_5, input, place)else 
+if ruleno = // E(E)// 20 then result.subtrees_2 else 
+if ruleno = // E { E } // 21 then result.subtrees_2 else 
+if ruleno = // E if E then E else E // 22 then let thenpart = result.subtrees_4 assert(types.result.subtrees_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert(types.result.subtrees_4)=(types.result.subtrees_6)report errormessage("then and else types are different", input, place)let newcode = code.result.subtrees_2 + code.result.subtrees_4 + code.result.subtrees_6 bindinfo(dict, newcode +"if", types.thenpart)else 
+if ruleno = // E E^E // 23 then opaction(subtrees, input, place)else 
+if ruleno = // E E_E // 24 then opaction(subtrees, input, place)else 
+if ruleno = // E-E // 25 then unaryop(dict, code.result.subtrees_1, result.subtrees_2, input, place)else 
+if ruleno = // E W.E // 26 then unaryop(dict, code.result.subtrees_1, result.subtrees_3, input, place)else 
+if ruleno = // E N.E // 27 then unaryop(dict, code.result.subtrees_1, result.subtrees_3, input, place)else 
+if ruleno = // E E * E // 28 then opaction(subtrees, input, place)else 
+if ruleno = // E E-E // 29 then opaction(subtrees, input, place)else 
+if ruleno = // E E = E // 30 then opaction(subtrees, input, place)else 
+if ruleno = // E E > E // 31 then opaction(subtrees, input, place)else 
+if ruleno = // E E ∧ E // 32 then opaction(subtrees, input, place)else 
+if ruleno = // E E ∨ E // 33 then opaction(subtrees, input, place)else 
+if ruleno = // L E // 34 then result.subtrees_1 else 
+if ruleno = // L L, E // 35 then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_1 + types.result.subtrees_3)else 
+if ruleno = // E [ L]// 36 then let types = types(result.subtrees_2)assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place)bindinfo(dict,"LIT 0 LIT"+ toword.(length.types)+ code.result.subtrees_2 +"RECORD"+ toword.(length.types + 2), [ mytype(towords(types_1)+"seq")])else 
+if ruleno = // A let W = E // 37 then let e = result.subtrees_4 let name =(code.result.subtrees_2)_1 assert isempty.lookup(dict, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place)let newdict = dict + symbol(name, mytype("local"), empty:seq.mytype,(types.e)_1,"")bindinfo(newdict, code.e +"define"+ name, types.e)else 
+if ruleno = // E A E // 38 then let t = code.result.subtrees_1 let f = lookup(dict, last.code.result.subtrees_1, empty:seq.mytype)assert not(isempty.f)report"internal error/could not find local symbol to delete from dict with name"+ last(code.result(subtrees_1))bindinfo(dict.result.subtrees_1-f_1, subseq(t, 1, length.t-2)+ code.result.subtrees_2 +"SET"+ last.code.result.subtrees_1, types.result.subtrees_2)else 
+if ruleno = // E assert E report E E // 39 then assert types(result.subtrees_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place)assert types(result.subtrees_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place)let newcode = code.result.subtrees_2 + code.result.subtrees_5 + code.result.subtrees_4 +"assertZbuiltinZwordzseq if"bindinfo(dict, newcode, types.result.subtrees_5)else 
+if ruleno = // E I // 40 then result.subtrees_1 else 
+if ruleno = // E I.I // 41 then let d = decodeword.(code.result.subtrees_3)_2 bindinfo(dict,"LIT"+ [ encodeword(decodeword.(code.result.subtrees_1)_2 + d)]+"LIT"+ countdigits(d, 1, 0)+"makerealZrealZintZint", [ mytype."real"])else 
+if ruleno = // T W // 42 then isdefined(dict, code.result.subtrees_1, input, place)else 
+if ruleno = // T W.T // 43 then isdefined(dict, towords.(types.result.subtrees_3)_1 + code.result.subtrees_1, input, place)else 
+if ruleno = // E W:T // 44 then let f = lookup(dict, merge(code.result.subtrees_1 +":"+ print((types.result.subtrees_3)_1)), empty:seq.mytype)assert not.isempty.f report errormessage("cannot find"+ code.result.subtrees_1 +":"+ print.mytype.code.result.subtrees_3, input, place)bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])else 
+if ruleno = // E $wordlist // 45 then let s = code.result.subtrees_1 bindinfo(dict,"WORDS"+ toword.length.s + s, [ mytype."word seq"])else 
+if ruleno = // E comment E // 46 then let s = code.result.subtrees_1 bindinfo(dict, code.result.subtrees_2 +"COMMENT"+ toword.length.s + s, types.result.subtrees_2)else 
+if ruleno = // N_// 47 then result.subtrees_1 else 
+if ruleno = // N-// 48 then result.subtrees_1 else 
+if ruleno = // N = // 49 then result.subtrees_1 else 
+if ruleno = // N > // 50 then result.subtrees_1 else 
+if ruleno = // N * // 51 then result.subtrees_1 else 
+if ruleno = // N ∧ // 52 then result.subtrees_1 else 
+if ruleno = // N ∨ // 53 then result.subtrees_1 else 
+if ruleno = // K W.E // 54 then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)else 
+if ruleno = // K N.E // 55 then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)else 
+if ruleno = // K N(L)// 56 then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)else 
+if ruleno = // K W(L)// 57 then bindinfo(dict, code.result.subtrees_1 + code.result.subtrees_3, types.result.subtrees_3)else 
+if ruleno = // K N // 58 then bindinfo(dict, code.result.subtrees_1, empty:seq.mytype)else 
+if ruleno = // K W // 59 then bindinfo(dict, code.result.subtrees_1, empty:seq.mytype)else 
+assert ruleno = // E @(K, K, E, E)// 60 report"invalid rule number"+ toword.ruleno 
+apply(result.subtrees_3, result.subtrees_5, result.subtrees_7, result.subtrees_9, input, place) 
+let leftsidetoken = [ 32, 33, 33, 33, 33, 33, 33, 33, 40, 35, 35, 35, 35, 35, 35, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 37, 37, 31, 30, 31, 31, 31, 31, 17, 17, 31, 31, 31, 36, 36, 36, 36, 36, 36, 36, 39, 39, 39, 39, 39, 39, 31]_ruleno 
+let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk) 
+assert actioncode > 0 report"????" 
+push(newstk, stkele(actioncode, newtree)) 
 
