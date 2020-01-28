@@ -10,6 +10,8 @@ use seq.seq.encodingrep.T
 
 use stdlib
 
+Function type:encoding.T internaltype export
+
 Function type:encodingstate.T internaltype export
 
 type encodingstate is sequence length:int, encodetable:seq.seq.encodingrep.T, decodetable:seq.seq.encodingrep.T, all:seq.encodingrep.T

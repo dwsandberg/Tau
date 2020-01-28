@@ -256,13 +256,10 @@ function createfunc(dict:set.symbol, funcname:seq.word, paralist:seq.mytype, fun
     let newcode="parsedfunc"+ toword.length.header + header+ code.exp
     bindinfo(dict, newcode, [ mytype.funcname, functype]+ paralist)
     
-        // assert input_2 in "segment yyyx test3 yyy test2 addcomma" report   
-     let i=toint((code.functypebind)_1)
-     if input_i="//"_1 then backoffcomment(input,i-1) else 
-     subseq(input,1,i-1) //
+     
 
 function isdefined(dict:set.symbol, typ:seq.word, input:seq.word, place:int)bindinfo 
- if cardinality.dict < 25 ∨ typ in ["T","int"]
+ if cardinality.dict < 25 ∨ typ in ["T","int"]  &or subseq(typ,1,1)="T"
   then bindinfo(dict, [toword.place], [ mytype.typ])
   else 
    let a = lookup(dict, merge("type:"+ print.mytype.typ), empty:seq.mytype)

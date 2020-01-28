@@ -48,6 +48,7 @@ function index(a:inst)int export
 
 function addwordseq(linklists2, seq.word)ipair.linklists2 export
 
+Function type:linklists2 internaltype export
 
 Function wordcount int export
 
