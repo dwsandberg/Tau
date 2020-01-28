@@ -68,6 +68,13 @@ use stdlib
 
 use tree.seq.word
 
+ use set.flddesc
+ 
+
+
+use blockseq.seq.flddesc
+
+
 The linklists2 type contains a seq of integers that represents the memory.Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq. One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
 
 Function type:linklists2 internaltype export

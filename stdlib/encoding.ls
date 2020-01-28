@@ -1,6 +1,8 @@
 Module encoding.T
 
-use deepcopy.seq.encodingrep.T
+use deepcopy.T
+
+use blockseq.T
 
 use seq.T
 
@@ -67,7 +69,6 @@ type encoding is record valueofencoding:int
 
 Function toencoding:T(int) encoding.T builtin."PARAM 1"
 
-use deepcopy.T
 
 Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T 
  // this is the add the is stored in the erecord //

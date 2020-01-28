@@ -35,9 +35,12 @@ module maindict
  
  use set.word
  
- 
   
  use set.encodingrep.seq.char
+ 
+
+use blockseq.seq.encodingrep.seq.char
+
 
 function ? (a:encodingrep.seq.char,b:encodingrep.seq.char) ordering valueofencoding.code.a ? valueofencoding.code.b
     

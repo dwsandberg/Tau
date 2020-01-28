@@ -12,6 +12,8 @@ use stdlib
 
 use deepcopy.T
 
+Function type:seq.T internaltype export
+
 type blockseq is sequence length:int, blocksize:int, data:seq.seq.T
 
 

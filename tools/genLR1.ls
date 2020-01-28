@@ -41,6 +41,10 @@ use set.word
 
 use stdlib
 
+ 
+use blockseq.seq.dottedrule
+
+ 
 type estate is encoding state
 
 

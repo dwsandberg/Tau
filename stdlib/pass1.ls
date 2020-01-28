@@ -236,7 +236,7 @@ function recordsize(src:seq.word, i:int)int
   else if src_i ="LIT"_1 then recordsize(src, i + 3)else 10000
 
 function removeflat(p:word, i:int)seq.word 
- if i = 0 
+ if i = -1 
   then""
   else removeflat(p, i - 1)+"PARAM"+ p +"LIT"+ toword.i +"IDXUC"
 
@@ -378,17 +378,16 @@ desc:seq.word,symbols:seq.symbol)
     let newoffset = if offset =0 then tsize else offset+tsize
    let fldsrc = if offset =0 &and i+1 > length.flds 
    then  "PARAM 1" 
-   else"PARAM 1 LIT"+toword.offset +"IDXUC"
+   else if tsize = 1  then "PARAM 1 LIT"+toword.offset +"IDXUC"
+    else 
+    // should use a GEP instruction //
+    "PARAM 1 LIT"+toword.(8 * offset)+ "Q2BZbuiltinZintZint"
   let fldsym = symbol(fldname, modname, ptype, fldtype, fldsrc)
   let confld = if tsize=1
    then"PARAM"+ toword(length.paras + 1)
-   else"PARAM"+ toword(length.paras + 1)+ if tsize=1
-    then""
-    else removeflat(toword(length.paras + 1), tsize - 1)
+   else removeflat(toword(length.paras + 1), tsize - 1)
     definestructure(kind,flds,i+1,ptype,modname,newoffset,paras+fldtype,constructor+confld,desc+ 
       subseq(desc.flds_i,2,length.desc.flds_i), symbols+fldsym)
-
-
 
 
  function topara(i:int)seq.word {"PARAM"+ toword.i }
@@ -603,7 +602,8 @@ function definedeepcopy(dict:set.symbol, templates:symbolset, knownsymbols:symbo
     let dc = deepcopymangle.typepara 
     let pseqidx = mangle("_"_1, type, [ mytype."T pseq", mytype."int"])
     let cat = mangle("+"_1, type, [ mytype."T seq", mytype."T"])
-    let blockit = mangle("blockit"_1, mytype."int blockseq", [ mytype."T seq"])
+    let blockittype=if  abstracttype.parameter.type in "seq word char int" then mytype."int blockseq" else mytype.(towords.type+"blockseq")
+    let blockit = mangle("blockit"_1, blockittype, [ mytype."T seq"])
     resultpair(knownsymbols,"LIT 0 LIT 0 RECORD 2 PARAM 1 FREF"+ dc +"FREF"+ cat +"FREF"+ pseqidx +"APPLY 5"+ blockit)
    else 
      let xx=    lookup(dict,merge("type:"+print.type),empty:seq.mytype)

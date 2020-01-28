@@ -1,3 +1,5 @@
+#!/usr/local/bin/tau
+
 Module testencoding
 
 Testing encodings
@@ -58,7 +60,10 @@ Function testencoding seq.word
      let final2 = length.orderadded.mydata2 
      let final3 = length.orderadded.mydata3 
      let final4 = length.orderadded.mydata4 
-      check([ start3 = 0, start = 0, start2 = 0, final = start + 2, final2 = start2 + 3, final3 = 4, final4 = 0, plen = 54],"encoding")
+      check([ start3 = 0, start = 0, start2 = 0, final = start + 2, final2 = start2 + 3, final3 = 4, final4 = 0, plen = 54,
+         3=deepcopy.3,asset.[3,7,9]=deepcopy.asset.[3,7,9],
+    deepcopy.testdeep1=testdeep1  
+ ],"encoding")
 
 Function process1 int 
  let z3 = @(+, add(mydata3), 0, ["A","B","C"])
@@ -67,3 +72,37 @@ Function process1 int
 
 Function nextpower(i:int, base:int, start:int)int if i > start then nextpower(i, base, start * base)else start
 
+use tree.seq.word
+
+
+use blockseq.seq.word
+
+use seq.tree.seq.word
+
+
+
+use blockseq.seq.tree.seq.word
+
+
+use deepcopy.int
+
+use deepcopy.set.int
+
+use set.int
+
+use deepcopy.testdeep
+
+use seq.char
+
+
+type  testdeep is record fld1:seq.word, 
+fld2:tree.seq.word,fld3:seq.char
+
+function testdeep1 testdeep  testdeep("A BC DEF",tree("LIT 1",[tree("PARAM 1")]),decodeword("TEST"_1))
+
+function =(a:testdeep,b:testdeep) boolean  fld1.a=fld1.b &and fld2.a=fld2.b &and fld3.a=fld3.b
+
+Function test55 seq.word
+   if  3=deepcopy.3 &and  asset.[3,7,9]=deepcopy.asset.[3,7,9]
+    &and deepcopy.testdeep1=testdeep1  then "OK!" else "error"
+  
