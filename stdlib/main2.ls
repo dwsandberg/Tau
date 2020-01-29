@@ -216,7 +216,7 @@ function bindingfind(defines:seq.seq.word, s:seq.word)seq.seq.word
   else if s_1 in"use Use"then empty:seq.seq.word else if s_1 ="Library"_1 then [ s]else ["skip"+ s]
 
 function bindingfind2(defines:seq.seq.word, i:int, key:seq.word)seq.seq.word 
- if i > length.defines then empty:seq.seq.word else 
+ if i > length.defines then ["skip"+key] else 
     let d=defines_i
     let l=toint.d_2
     if subseq(d,3,l+2)=subseq(key,1,l) then  [defines_i] else bindingfind2(defines, i + 1, key)

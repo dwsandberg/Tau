@@ -8,13 +8,13 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
 
 /run tools testfirstpass
 
-run tools testprofile
+/run tools testprofile
 
-/run tools prettytest
+run tools prettytest
 
 /run tools callgraphtest
 
-/run tools stdlibdoc
+run tools stdlibdoc
 
 /run doc createdoc
 
@@ -52,7 +52,7 @@ use stdlib
 
 Function testhtmlcode seq.word htmlcode."testall"
 
-Function prettytest seq.word prettylib("mylib","")
+Function prettytest seq.word prettylib("newtools","")
 
 Function checkdoclib seq.word doclibrary."tools"
 

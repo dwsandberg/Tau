@@ -6,6 +6,8 @@ use point.int
 
 use seq.boolean
 
+use seq.char
+
 use seq.int
 
 use seq.ordering
@@ -102,12 +104,16 @@ Function t031 boolean false = @(∧, isbyte, true, [ 0 - 1, 256, 255, 0])
 
 Function t032 boolean @(∧, isbyte, true, [ 23, 4, 5, 255, 7, 2, 255])
 
-Function t033 boolean   6=toint (if true then "3"_1 else "5"_1) + 3
+Function t033 boolean 6 = toint(if true then"3"_1 else"5"_1)+ 3
+
+Function t034 boolean 
+ 3464 = 3456+(if true then 3 else  1 )+5
 
 Function test11 seq.word 
  let y = [ t002, t003, t004, t005, t006, t007, t008, t009, t010, t011 
   , t012, t013, t014, t015, t016, t017, t018, t019, t020, t021 
-  , t022, t023, t024, t025, t026, t027, t028, t029, t030, t031,t032,t033]
+  , t022, t023, t024, t025, t026, t027, t028, t029, t030, t031 
+  , t032, t033, t034]
   let x = @(+, check(y),"", arithseq(length.y, 1, 1))
    if x =""then"PASS test11"else"FAIL test11"+ x
 

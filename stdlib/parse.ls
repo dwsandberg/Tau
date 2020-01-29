@@ -224,7 +224,6 @@ function countdigits(s:seq.char, i:int, result:int)word
  // does not count no-break spaces // 
  if i > length.s then toword.result else countdigits(s, i + 1, result + if s_i = nbspchar then 0 else 1)
 
-Function cvttotext(m:mytype)seq.word [ toword.length.towords.m]+ towords.m
 
 function addparameter(orgsize:int, input:seq.word, place:int, dict:set.symbol, m:mytype)set.symbol 
  assert isempty.lookup(dict, abstracttype.m, empty:seq.mytype)∨ abstracttype.m =":"_1 
@@ -241,8 +240,8 @@ function lookupbysig(dict:set.symbol, name:word, paratypes:seq.mytype, input:seq
    assert cardinality.f = 1 report errormessage("found more that one"+ @(+, print2,"", toseq.f), input, place)
      f_1
 
-function backoffcomment(s:seq.word,i:int) seq.word
-  if s_i="//"_1 then subseq(s,1,i-1) else backoffcomment(s,i-1)
+function backoffcomment(s:seq.word,match:word,i:int) seq.word
+  if s_i=match then subseq(s,1,i-1) else backoffcomment(s,match,i-1)
 
 function createfunc(dict:set.symbol, funcname:seq.word, paralist:seq.mytype, functypebind:bindinfo, exp:bindinfo, input:seq.word, place:int)bindinfo 
   let functype=mytype.gettype.functypebind
@@ -251,7 +250,7 @@ function createfunc(dict:set.symbol, funcname:seq.word, paralist:seq.mytype, fun
   , input 
   , place)
     let i=toint((code.functypebind)_1)
-    let header= if input_i="//"_1 then backoffcomment(input,i-1) else 
+    let header= if input_i in "// &quot"  then backoffcomment(input,input_i,i-1) else 
      subseq(input,1,i-1)
     let newcode="parsedfunc"+ toword.length.header + header+ code.exp
     bindinfo(dict, newcode, [ mytype.funcname, functype]+ paralist)

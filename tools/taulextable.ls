@@ -31,207 +31,207 @@ use tree.word
 type lexaction1 is record w:word, tokenno:int, label:word
 
 function tokenlist seq.word 
-  // tokenlist is from parser generator // 
-  ".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP"
+ // tokenlist is from parser generator // 
+ ".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP"
 
 function actionlist seq.lexaction1 
-  // most frequently used words in programs // 
-  let mostfrequentwords ="// &quot,(). :+_seq = a int if-then else Function let word 0 i T][ 2 use function mytype @ empty inst"
-   let wordstoinclude = mostfrequentwords + tokenlist +"= < > ? ≤ ≠ ≥ >> << in +-∈ ∋ * / mod ∪ ∩_^"+ prepreplacements("","","le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ contains ∋", 1)
-    @(+, tolexaction, empty:seq.lexaction1, toseq(asset.wordstoinclude))
+ // most frequently used words in programs // 
+ let mostfrequentwords ="// &quot,(). :+_seq = a int if-then else Function let word 0 i T][ 2 use function mytype @ empty inst"
+  let wordstoinclude = mostfrequentwords + tokenlist +"= < > ? ≤ ≠ ≥ >> << in +-∈ ∋ * / mod ∪ ∩_^"+ prepreplacements("","","le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ contains ∋", 1)
+   @(+, tolexaction, empty:seq.lexaction1, toseq.asset.wordstoinclude)
 
 function tolexaction(next:word)lexaction1 
-  // user supplied procedure to convert a word into a lex action // 
-  if next in"&quot //"
-   then lexaction1(next, 0, next)
-   else if next = merge("&"+"le")
-   then lexaction1(next, findindex(">"_1, tokenlist),"≤"_1)
-   else if next = merge("&"+"ge")
-   then lexaction1(next, findindex(">"_1, tokenlist),"≥"_1)
-   else if next = merge("&"+"ne")
-   then lexaction1(next, findindex(">"_1, tokenlist),"≠"_1)
-   else if next = merge("&"+"and")
-   then lexaction1(next, findindex("∧"_1, tokenlist),"∧"_1)
-   else if next = merge("&"+"or")
-   then lexaction1(next, findindex("∨"_1, tokenlist),"∨"_1)
-   else if next = merge("&"+"cup")
-   then lexaction1(next, findindex("*"_1, tokenlist),"∪"_1)
-   else if next = merge("&"+"cap")
-   then lexaction1(next, findindex("*"_1, tokenlist),"∩"_1)
-   else if next = merge("&"+"contains")
-   then lexaction1(next, findindex("-"_1, tokenlist),"∋"_1)
-   else if next = merge("&"+"in")
-   then lexaction1(next, findindex("-"_1, tokenlist),"∈"_1)
-   else 
-    let token = 
-     if next in". ,():"
-     then next 
-     else if next in"< > ? ≤ ≠ ≥ >> <<"
-     then">"_1 
-     else if next in"in +-∈ ∋"
-     then"-"_1 
-     else if next in"* / mod ∪ ∩"
-     then"*"_1 
-     else if next in"_^"
-     then"_"_1 
-     else if next in".)]= {:},([ ∧ ∨ # if then else let assert report @ is"
-     then next 
-     else if hasdigit.next then"I"_1 else"W"_1 
-     lexaction1(next, findindex(token, tokenlist), next)
+ // user supplied procedure to convert a word into a lex action // 
+ if next in"&quot //"
+  then lexaction1(next, 0, next)
+  else if next = merge("&"+"le")
+  then lexaction1(next, findindex(">"_1, tokenlist),"≤"_1)
+  else if next = merge("&"+"ge")
+  then lexaction1(next, findindex(">"_1, tokenlist),"≥"_1)
+  else if next = merge("&"+"ne")
+  then lexaction1(next, findindex(">"_1, tokenlist),"≠"_1)
+  else if next = merge("&"+"and")
+  then lexaction1(next, findindex("∧"_1, tokenlist),"∧"_1)
+  else if next = merge("&"+"or")
+  then lexaction1(next, findindex("∨"_1, tokenlist),"∨"_1)
+  else if next = merge("&"+"cup")
+  then lexaction1(next, findindex("*"_1, tokenlist),"∪"_1)
+  else if next = merge("&"+"cap")
+  then lexaction1(next, findindex("*"_1, tokenlist),"∩"_1)
+  else if next = merge("&"+"contains")
+  then lexaction1(next, findindex("-"_1, tokenlist),"∋"_1)
+  else if next = merge("&"+"in")
+  then lexaction1(next, findindex("-"_1, tokenlist),"∈"_1)
+  else 
+   let token = 
+    if next in". ,():"
+    then next 
+    else if next in"< > ? ≤ ≠ ≥ >> <<"
+    then">"_1 
+    else if next in"in +-∈ ∋"
+    then"-"_1 
+    else if next in"* / mod ∪ ∩"
+    then"*"_1 
+    else if next in"_^"
+    then"_"_1 
+    else if next in".)]= {:},([ ∧ ∨ # if then else let assert report @ is"
+    then next 
+    else if hasdigit.next then"I"_1 else"W"_1 
+    lexaction1(next, findindex(token, tokenlist), next)
 
 Function totext(l:lexaction1)seq.word 
-   let w = 
-    if decodeword(w.l)_1 = decodeword("&"_1)_1 
-    then"merge(&quot & &quot + &quot"+ encodeword.subseq(decodeword(w.l), 2, 100)+"&quot)"
-    else"&quot"+(if w.l ="&quot"_1 then merge("&"+"quot")else w.l)
-    +"&quot_1"
-   let label = if label.l ="&quot"_1 then merge("&"+"quot")else label.l 
-    "lexaction("+ w +","+ toword(tokenno.l)+", &quot"+ label +"&quot_1)"
+ let w = 
+   if(decodeword.w.l)_1 =(decodeword."&"_1)_1 
+   then"merge(&quot & &quot + &quot"+ encodeword.subseq(decodeword.w.l, 2, 100)+"&quot)"
+   else("&quot"+ if w.l ="&quot"_1 then merge("&"+"quot")else w.l)+"&quot_1"
+  let label = if label.l ="&quot"_1 then merge("&"+"quot")else label.l 
+   "lexaction("+ w +","+ toword.tokenno.l +", &quot"+ label +"&quot_1)"
 
 Function getlextable seq.word 
-  // generate the lextable for the Tau compiler. // 
-  let alist = actionlist 
-    "&br &br function Wtoken int // generated by genlex module in tools //"+ toword.findindex("W"_1, tokenlist)
-    +"&br &br function Itoken int // generated by genlex module in tools //"
-    + toword.findindex("I"_1, tokenlist)
-    +"&br &br function commenttoken int // generated by genlex module in tools //"
-    + toword.findindex("comment"_1, tokenlist)
-    +"&br &br function stringtoken int // generated by genlex module in tools //"
-    + toword.findindex("$wordlist"_1, tokenlist)
-    +"&br &br function lextable seq.lexaction FORCEINLINE.// generated by genlex module in tools // ["
-    + @(seperator(", &br")
-    , identity 
-    ,""
-    , @(item(23, 4, 209), identity, constantseq(209, defaultaction), alist))
-    +"]"
+ // generate the lextable for the Tau compiler. // 
+ let alist = actionlist 
+   "&br &br function Wtoken int // generated by genlex module in tools //"+ toword.findindex("W"_1, tokenlist)
+   +"&br &br function Itoken int // generated by genlex module in tools //"
+   + toword.findindex("I"_1, tokenlist)
+   +"&br &br function commenttoken int // generated by genlex module in tools //"
+   + toword.findindex("comment"_1, tokenlist)
+   +"&br &br function stringtoken int // generated by genlex module in tools //"
+   + toword.findindex("$wordlist"_1, tokenlist)
+   +"&br &br function lextable seq.lexaction FORCEINLINE.// generated by genlex module in tools // ["
+   + @(seperator(", &br")
+   , identity 
+   ,""
+   , @(item(23, 4, 209), identity, constantseq(209, defaultaction), alist))
+   +"]"
 
-function find(w:word, s:seq.lexaction1, i:int)int if w(s_i)= w then i else find(w, s, i + 1)
+function find(w:word, s:seq.lexaction1, i:int)int if w.s_i = w then i else find(w, s, i + 1)
 
 function item(x:int, y:int, m:int, tab:seq.seq.word, l:lexaction1)seq.seq.word 
-   let hash = hashsemiperfect(x, y, m, w.l)
-   assert tab_hash = defaultaction report"unexpected collision between"+ w.l +"and"+ tab_hash 
-    replace(tab, hash, totext.l)
+ let hash = hashsemiperfect(x, y, m, w.l)
+  assert tab_hash = defaultaction report"unexpected collision between"+ w.l +"and"+ tab_hash 
+   replace(tab, hash, totext.l)
 
 function xx(x:int, y:int, m:int, t:triple)seq.word [ toword.hashfunc(x, y, m, t), w.t]
 
 function hashsemiperfect(x:int, y:int, m:int, w:word)int 
-   let chars = tointseq(decodeword.w)
-   let first = chars_1 
-   let second = if length.chars > 1 then chars_2 else 0 
-   let third = if length.chars > 2 then chars_3 else 0 
-    1 +(x *(first + 2 * second)+ y * third)mod m
+ let chars = tointseq.decodeword.w 
+  let first = chars_1 
+  let second = if length.chars > 1 then chars_2 else 0 
+  let third = if length.chars > 2 then chars_3 else 0 
+   1 +(x *(first + 2 * second)+ y * third)mod m
 
 function defaultaction seq.word"lexaction(&quot ` &quot_1, 0, &quot ` &quot_1)"
 
 Function findhash seq.word 
-  // look for a semiperfect hash function // 
-  // crashes when search larger range of primes // 
-  let b = @(+, w,"", actionlist)
-   let t = @(+, astriple, empty:seq.triple, actionlist)
-   let x = 23 
-   let y = 4 
-   let m = 209 
-   let actualhashvalues = sort.@(+, xx(23, 4, 209), empty:seq.seq.word, t)
-    "Hash function is of form(x *(firstchar + 2 * secondchar)+ y * thirdchar)mod m + 1"+"&br actual hash values for x ="
-    + toword.x 
-    +"y ="
-    + toword.y 
-    +"m ="
-    + toword.m 
-    + @(seperator(", &br"), identity,"&br", actualhashvalues)
-    +"&br &br x, y, m, list of collisions"
-    + @(+ 
-    , searchhash(// subseq(findprimes(3, 400), 60, 4000)// arithseq(50, 1, 2), t, 0,"")
-    ,""
-    , arithseq(10, 1, 200))
+ // look for a semiperfect hash function // 
+ // crashes when search larger range of primes // 
+ let b = @(+, w,"", actionlist)
+  let t = @(+, astriple, empty:seq.triple, actionlist)
+  let x = 23 
+  let y = 4 
+  let m = 209 
+  let actualhashvalues = sort.@(+, xx(23, 4, 209), empty:seq.seq.word, t)
+   "Hash function is of form(x *(firstchar + 2 * secondchar)+ y * thirdchar)mod m + 1"+"&br actual hash values for x ="
+   + toword.x 
+   +"y ="
+   + toword.y 
+   +"m ="
+   + toword.m 
+   + @(seperator(", &br"), identity,"&br", actualhashvalues)
+   +"&br &br x, y, m, list of collisions"
+   + @(+ 
+   , searchhash(// subseq(findprimes(3, 400), 60, 4000)// arithseq(50, 1, 2), t, 0,"")
+   ,""
+   , arithseq(10, 1, 200))
 
 type triple is record a:int, b:int, c:int, w:word
 
 function astriple(l:lexaction1)triple 
-  // triple is first three letters of token // 
-  let x = decodeword(w.l)
-    if length.x = 1 
-     then triple(toint(x_1), 0, 0, w.l)
-     else if length.x = 2 then triple(toint(x_1), toint(x_2), 0, w.l)else triple(toint(x_1), toint(x_2), toint(x_3), w.l)
+ // triple is first three letters of token // 
+ let x = decodeword.w.l 
+   if length.x = 1 
+    then triple(toint.x_1, 0, 0, w.l)
+    else if length.x = 2 then triple(toint.x_1, toint.x_2, 0, w.l)else triple(toint.x_1, toint.x_2, toint.x_3, w.l)
 
-function hashfunc(x:int, y:int, m:int, t:triple)int(
-  // a b c of triple are first second and third letters of word being hashed. x, y and m are constant in hash function we are trying to optimize // 
-  x 
-  *(a.t + 2 * b.t)
-  + y * c.t)
-  mod m 
-  + 1
+function hashfunc(x:int, y:int, m:int, t:triple)int 
+ (
+ // a b c of triple are first second and third letters of word being hashed. x, y and m are constant in hash function we are trying to optimize // 
+ x 
+ *(a.t + 2 * b.t)
+ + y * c.t)
+ mod m 
+ + 1
 
 209 23 46 4
 
 function check(nocollision:int, b:seq.triple, x:int, y:int, m:int, i:int, j:int)seq.word 
-  // check to see if b_i b_j collide. If they do not continue checking with next value of i. // 
-  if i ≠ j ∧ hashfunc(x, y, m, b_i)= hashfunc(x, y, m, b_j)
-   then 
-    if nocollision > 1 
-    then"fail"
-    else 
-     let more = 
-      if i < j 
-      then check(nocollision + 1, b, x, y, m, i + 1, j)
-      else if j = length.b then"success"else check(nocollision + 1, b, x, y, m, 1, j + 1)
-      if more ="fail"
-       then more 
-       else 
-        let newcollision = [ w(b_i), w(b_j)]
-         if more ="success"then newcollision else more + newcollision 
-   else if i < j 
-   then check(nocollision, b, x, y, m, i + 1, j)
-   else if j = length.b then"success"else check(nocollision, b, x, y, m, 1, j + 1)
+ // check to see if b_i b_j collide. If they do not continue checking with next value of i. // 
+ if i ≠ j ∧ hashfunc(x, y, m, b_i)= hashfunc(x, y, m, b_j)
+  then 
+   if nocollision > 1 
+   then"fail"
+   else 
+    let more = 
+     if i < j 
+     then check(nocollision + 1, b, x, y, m, i + 1, j)
+     else if j = length.b then"success"else check(nocollision + 1, b, x, y, m, 1, j + 1)
+     if more ="fail"
+      then more 
+      else 
+       let newcollision = [ w.b_i, w.b_j]
+        if more ="success"then newcollision else more + newcollision 
+  else if i < j 
+  then check(nocollision, b, x, y, m, i + 1, j)
+  else if j = length.b then"success"else check(nocollision, b, x, y, m, 1, j + 1)
 
 function prepreplacements(old:seq.word, new:seq.word, pairs:seq.word, i:int)seq.word 
-  // the pair elements in pair are one after the other. The first element will be merged with a"&".The result is the first elements sorted followed by the second elements rearranged to match the sort. // 
-  if i > length.pairs 
-   then old + new 
-   else 
-    let val = merge("&"+ pairs_i)
-    let j = binarysearch(old, val)
-     prepreplacements(subseq(old, 1,-j - 1)+ [ val]+ subseq(old,-j, length.old)
-     , subseq(new, 1,-j - 1)+ [ pairs_(i + 1)]+ subseq(new,-j, length.new)
-     , pairs 
-     , i + 2)
+ // the pair elements in pair are one after the other. The first element will be merged with a"&".The result is the first elements sorted followed by the second elements rearranged to match the sort. // 
+ if i > length.pairs 
+  then old + new 
+  else 
+   let val = merge("&"+ pairs_i)
+   let j = binarysearch(old, val)
+    prepreplacements(subseq(old, 1,-j - 1)+ [ val]+ subseq(old,-j, length.old)
+    , subseq(new, 1,-j - 1)+ [ pairs_(i + 1)]+ subseq(new,-j, length.new)
+    , pairs 
+    , i + 2)
 
 /function reconstruct(t:triple)word 
  if c.t > 0 
  then encodeword([ a.t, b.t, c.t])
- else 
- if b.t > 0 
+ else if b.t > 0 
  then encodeword([ a.t, b.t])
  else encodeword([ a.t])
 
 Function searchhash(p:seq.int, b:seq.triple, i:int, result:seq.word, m:int)seq.word 
-   let base = length.p 
-   let x = p_(i mod base + 1)
-   let tmp = i / base 
-    if tmp ≥ base 
-     then result 
-     else 
-      let y = p_(tmp + 1)
-      let l = check(0, b, x, y, m, 1, 2)
-       if not(l ="fail")
-        then searchhash(p 
-        , b 
-        , i + 1 
-        , result +"&br"+ @(+, toword,"", [ x, y, m])+(if l ="success"then""else l)
-        , m)
-        else searchhash(p, b, i + 1, result, m)
+ let base = length.p 
+  let x = p_(i mod base + 1)
+  let tmp = i / base 
+   if tmp ≥ base 
+    then result 
+    else 
+     let y = p_(tmp + 1)
+     let l = check(0, b, x, y, m, 1, 2)
+      if not(l ="fail")
+       then searchhash(p 
+       , b 
+       , i + 1 
+       , result +"&br"+ @(+, toword,"", [ x, y, m])+ if l ="success"then""else l 
+       , m)
+       else searchhash(p, b, i + 1, result, m)
 
-function findprimes(start:int, end:int)seq.int @(+, isprime3, empty:seq.int, arithseq((end - start + 2)/ 2, 2, start))
+function findprimes(start:int, end:int)seq.int 
+ @(+, isprime3, empty:seq.int, arithseq((end - start + 2)/ 2, 2, start))
 
 function isprime3(i:int)seq.int if isprime.i then [ i]else empty:seq.int
 
 function isprime(i:int)boolean 
-   if i mod 2 = 0 
-   then i = 2 
-   else 
-    let a = intpart.sqrt(toreal.i)
-    let b =(a + i / a)/ 2 
-     subisprime(i, 3, b)
+ if i mod 2 = 0 
+  then i = 2 
+  else 
+   let a = intpart.sqrt.toreal.i 
+   let b =(a + i / a)/ 2 
+    subisprime(i, 3, b)
 
 function subisprime(i:int, f:int, b:int)boolean if f > b then true else if i mod f = 0 then false else subisprime(i, f + 2, b)
 
