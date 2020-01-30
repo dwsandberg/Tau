@@ -215,10 +215,6 @@ Function =(a:word, b:word)boolean asencoding.a = asencoding.b
 
 Function ≠(a:word, b:word)boolean export
 
-Function hasdigit(w:word)boolean 
- let l = tointseq.decodeword.w 
-  between(l_1, 48, 57)∨ l_1 = toint.hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)
-
 covert integer to sequence of characters
 
 Function toword(n:int)word 

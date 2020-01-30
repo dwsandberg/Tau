@@ -114,7 +114,7 @@ function ?2(a:int, b:int)ordering a / 10 ? b / 10
 
 _______________
 
-skip Primes
+Primes
 
 function t513 boolean"3 5 7 11 13 17 19 23 29 31 37"= findprimes(3, 40)
 
