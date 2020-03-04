@@ -2,7 +2,6 @@ Module timestamp
 
 use UTF8
 
-use seq.int
 
 use stdlib
 

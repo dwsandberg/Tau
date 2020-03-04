@@ -1,6 +1,5 @@
 Module UTF8
 
-use seq.int
 
 use stdlib
 
@@ -9,6 +8,10 @@ use seq.char
 use bits
 
 use stacktrace
+
+use words
+
+
 
 type UTF8 is record toseqint:seq.int
 
@@ -127,5 +130,18 @@ function cvttoint(s:seq.char, i:int, val:int)int
   then cvttoint(s, i + 1, val)
   else assert between(toint(s_i), 48, 57)report"invalid digit"+ stacktrace 
   cvttoint(s, i + 1, val * 10 + toint(s_i) - 48)
+
+-------------
+
+Function hash(a:seq.char)int hash(tointseq.a)
+
+Function  tointseq(a:seq.char) seq.int  
+// This is just a type change and the compiler recognizes this and does not generate code // 
+  @(+, toint , empty:seq.int, a)
+
+
+Function  tocharseq(a:seq.int) seq.char // builtin.NOOP //
+// This is just a type change and the compiler recognizes this and does not generate code // 
+  @(+, char, empty:seq.char, a)
 
 

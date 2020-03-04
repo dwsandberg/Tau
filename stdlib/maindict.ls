@@ -7,6 +7,7 @@ module maindict
 
  use stdlib
  
+ use UTF8
   
  use dataio
  
@@ -24,7 +25,6 @@ module maindict
  use deepcopy.seq.encodingrep.seq.char
  
   
- use seq.int
  
  use seq.seq.char
  
@@ -40,6 +40,8 @@ module maindict
  
 
 use blockseq.seq.encodingrep.seq.char
+
+use words
 
 
 function ? (a:encodingrep.seq.char,b:encodingrep.seq.char) ordering valueofencoding.code.a ? valueofencoding.code.b
@@ -82,7 +84,10 @@ use stdlib
 
 use real
 
-use seq.int
+use UTF8
+
+
+use words
 
 function newplace place place(empty:seq.int,0,empty:seq.int)
 
@@ -143,7 +148,6 @@ module ioseq.T
   
   use stdlib
   
-  use seq.int
   
   use seq.T
   

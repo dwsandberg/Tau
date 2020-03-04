@@ -4,7 +4,6 @@ use encoding.inst
 
 use intercode
 
-use libscope
 
 use seq.inst
 

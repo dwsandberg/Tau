@@ -9,7 +9,7 @@ run taulextable getlextable
 
 
 
-use oseq.word
+use otherseq.word
 
 
 use seq.char
@@ -27,6 +27,8 @@ use stdlib
 
 
 use UTF8
+
+use words
 
 type lexaction1 is record w:word, tokenno:int, label:word
 

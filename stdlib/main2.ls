@@ -2,7 +2,7 @@ Module main2
 
 use codegen
 
-use cvttoinst
+use intercode
 
 use deepcopy.seq.word
 
@@ -16,7 +16,7 @@ use libdescfunc
 
 use libscope
 
-use oseq.word
+use otherseq.word
 
 use pass1
 

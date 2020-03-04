@@ -53,6 +53,8 @@ use  otherseq.word
 
 use otherseq.int
 
+use words
+
 /use invertedseq.word
 
 Function test5 seq.word 

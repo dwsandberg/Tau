@@ -7,7 +7,7 @@ run test11 test11
 
 Module test11
 
-use oseq.int
+use otherseq.int
 
 use point.int
 

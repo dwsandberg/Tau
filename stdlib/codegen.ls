@@ -27,7 +27,6 @@ use seq.char
 
 use seq.inst
 
-use seq.int
 
 use seq.internalbc
 
@@ -52,7 +51,6 @@ use seq.seq.seq.int
 
 use seq.stat5
 
-use seq.word
 
 use stacktrace
 
@@ -68,12 +66,16 @@ use seq.bits
 
 use otherseq.llvmtype
 
+use UTF8
+
+use words
+
 function funcdec(f:inst)seq.int 
  let discard = C.mangledname.f 
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
 
 Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits 
- let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount"+ merge(thename,"$profileresult"_1)+"init22 PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
+ let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount"+ merge([thename,"$profileresult"_1])+"init22 PROCESS2 HASH"+ merge."llvm.sqrt.f64"+ merge."llvm.sin.f64"+ merge."llvm.cos.f64"
   // let conststype = array(-2, i64)// 
   let cxx = conststype 
  let discard = profiletype

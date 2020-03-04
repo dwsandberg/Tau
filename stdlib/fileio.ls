@@ -12,21 +12,12 @@ use blockseq.bits
 
 use blockseq.int
 
-use packedseq.bits
-
-use packedseq.int
-
-use packedseq.seq.bits
-
-use packedseq.seq.int
-
 use seq.bit
 
 use seq.bits
 
 use seq.byte
 
-use seq.int
 
 use seq.seq.bits
 

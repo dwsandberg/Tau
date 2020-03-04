@@ -2,7 +2,6 @@ Module format
 
 use seq.seq.word
 
-use seq.word
 
 use set.int
 
@@ -13,6 +12,8 @@ use stack.word
 use stdlib
 
 use UTF8
+
+use words
 
 Function processpara(t:seq.word)seq.word 
  processpara(t, 1, 1,"", push(empty:stack.seq.word,""))

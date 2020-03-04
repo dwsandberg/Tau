@@ -2,7 +2,7 @@ Module barycenter.T
 
 use graph.T
 
-use oseq.baryinfo.T
+use otherseq.baryinfo.T
 
 use real
 

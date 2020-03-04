@@ -1,14 +1,14 @@
 Module opt2
 
-/use buildtree
+use UTF8
 
-use seq.int
+use words
+
 
 use seq.seq.tree.seq.word
 
 use seq.tree.seq.word
 
-use seq.word
 
 use set.word
 

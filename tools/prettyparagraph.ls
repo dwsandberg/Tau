@@ -2,6 +2,8 @@ Module prettyparagraph
 
 use UTF8
 
+use words
+
 use format
 
 use libscope

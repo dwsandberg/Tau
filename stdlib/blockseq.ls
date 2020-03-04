@@ -4,13 +4,15 @@ use packedseq.T
 
 use packedseq.seq.T
 
+use unsafe.T
+
 use seq.T
 
 use seq.seq.T
 
 use stdlib
 
-use deepcopy.T
+Function packed(seq.T) seq.T export
 
 Function type:seq.T internaltype export
 
@@ -31,11 +33,11 @@ Function_(a:blockseq.T, i:int)T data(a)_((i - 1)/ blocksize.a + 1)_((i - 1)mod b
 
 /Function pstruct2(a:seq.T)seq.word iftype x:pseq.T = a then"["+ toword.length.x + pstruct2.a.x +"/"+ pstruct2.b.x +"]"else iftype y:blockseq.T = a then"("+ toword.length.y + toword.blocksize.y + toword.length.data.y +")"else"^"+ toword.length.a
 
-function topackedseq(s:seq.T)packedseq.T builtin.FROMSEQ
+/function topackedseq(s:seq.T)packedseq.T builtin.FROMSEQ
 
-Function ispackedseq(s:seq.T)boolean (length.topackedseq.s &ne 0)
+/Function ispackedseq(s:seq.T)boolean (length.topackedseq.s &ne 0)
 
-function toblockseq(s:seq.T)blockseq.T builtin.FROMSEQ
+/function toblockseq(s:seq.T)blockseq.T builtin.FROMSEQ
 
-Function isblockseq(s:seq.T)boolean  (length.toblockseq.s &ne 0)
+/Function isblockseq(s:seq.T)boolean  (length.toblockseq.s &ne 0)
 

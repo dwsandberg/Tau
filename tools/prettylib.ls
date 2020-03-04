@@ -82,7 +82,7 @@ Function htmlcode(libname:seq.word)seq.word
    + @(+, prettyparagraph,"", lib)
 
 Function ref(modname:word)seq.word 
- "&{ noformat <a href = &quot"+ merge("#"_1, modname)+"&quot >"+ modname +"</a> &}"
+ "&{ noformat <a href = &quot"+ merge(["#"_1, modname])+"&quot >"+ modname +"</a> &}"
 
 function findmodules(p:seq.word)seq.word if p_1 ="module"_1 then [ p_2]else""
 

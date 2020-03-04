@@ -36,7 +36,6 @@ use process.seq.match5
 
 use seq.bit
 
-use seq.int
 
 use seq.llvmtype
 
@@ -46,7 +45,7 @@ use seq.seq.int
 
 use seq.templatepart
 
-use seq.word
+
 
 use stdlib
 

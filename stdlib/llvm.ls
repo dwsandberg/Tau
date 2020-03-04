@@ -18,10 +18,6 @@ use fileio
 
 use internalbc
 
-use packedseq.int
-
-use packedseq.seq.int
-
 use seq.bit
 
 
@@ -33,7 +29,6 @@ use seq.boolean
 
 use seq.encoding.llvmconst
 
-use seq.int
 
 use seq.internalbc
 
@@ -62,6 +57,14 @@ use stacktrace
 use stdlib
 
 use otherseq.llvmtype
+
+use mangle
+
+use UTF8
+
+use words
+
+use seq.char
 
 Function type:llvmtype internaltype export
 
@@ -251,14 +254,8 @@ Function symentries(bits:bitpackedseq.bit, s:seq.llvmconst, i:int)bitpackedseq.b
   symentries(bs, s, i + 1)
 
 Function getftype(w:word)llvmtype 
- let a = @(+, count.char.90, 1, decodeword.w)
-  function.constantseq(a, i64)
+  function.constantseq(manglednopara.w+2, i64)
 
-function count(val:char, i:char)int if val = i then 1 else 0
-
-use seq.char
-
-Function manglednopara(w:word)int @(+, count.char.90,-1, decodeword.w)
 
 Function STRUCTNAME int 19
 

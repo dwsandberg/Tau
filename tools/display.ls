@@ -18,6 +18,8 @@ use otherseq.word
 
 use otherseq.int
 
+use words
+
 Function defaultprec seq.seq.word 
  ["_^"
  ,""

@@ -20,10 +20,6 @@ use llvm
 
 use seq.char
 
-use packedseq.flddesc
-
-use packedseq.seq.flddesc
-
 use persistantseq.encodingrep.seq.char
 
 use persistantseq.libmod
@@ -42,7 +38,6 @@ use seq.encodingrep.word3
 
 use seq.flddesc
 
-use seq.int
 
 use seq.liblib
 
@@ -58,7 +53,6 @@ use seq.seq.flddesc
 
 use seq.tree.seq.word
 
-use seq.word
 
 use seq.word3
 
@@ -70,7 +64,9 @@ use tree.seq.word
 
  use set.flddesc
  
+use UTF8
 
+use words
 
 use blockseq.seq.flddesc
 

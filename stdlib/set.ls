@@ -1,6 +1,6 @@
 Module set.T
 
-use oseq.T
+use otherseq.T
 
 use seq.T
 

@@ -10,7 +10,7 @@ use encoding.indexedword
 
 use fileio
 
-use oseq.wordfreq
+use otherseq.wordfreq
 
 use seq.seq.word
 

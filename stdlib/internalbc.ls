@@ -14,7 +14,6 @@ use seq.bitpackedseq.bit
 
 use seq.bits
 
-use seq.int
 
 use seq.internal2
 

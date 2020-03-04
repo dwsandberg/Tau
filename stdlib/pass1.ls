@@ -56,24 +56,8 @@ use symbol
 
 use textio
 
-Function type:firstpass internaltype  export
+use words
 
-type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol, exportmodule:boolean, rawsrc:seq.seq.word
-
-Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, exportmodule:boolean)firstpass 
- firstpass(modname, uses, defines, exports, unboundexports, unboundx, exportmodule, empty:seq.seq.word)
-
-Function exportmodule(firstpass)boolean export
-
-Function modname(firstpass)mytype export
-
-Function defines(firstpass)set.symbol export
-
-Function exports(firstpass)set.symbol export
-
-Function uses(firstpass)seq.mytype export
-
-Function rawsrc(firstpass)seq.seq.word export
 
 Function replaceT(with:mytype, f:firstpass)firstpass 
  firstpass(replaceT(with, modname.f), @(+, replaceT.with, empty:seq.mytype, uses.f),
@@ -100,7 +84,7 @@ Function mods(linkage)seq.firstpass export
 
 Function roots(linkage)set.word export
 
-use oseq.firstpass
+use otherseq.firstpass
 
 
 Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarysyms:symbolset, librarymods:set.firstpass)linkage 

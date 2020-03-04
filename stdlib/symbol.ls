@@ -22,6 +22,10 @@ use worddict.symbol
 
 use seq.char
 
+use UTF8
+
+use words
+
 Function ?(a:mytype, b:mytype)ordering 
  let y = towords(a)_length.towords.a ? towords(b)_length.towords.b 
   if y = EQ 
@@ -248,3 +252,54 @@ Function tosymbol(ls:libsym)symbol
   let mc=manglechars(d_1_1, modname, paratypes)
   symbol(encodeword.mc, mytype.returntype.ls, @(+, replaceT.parameter.modname, empty:seq.mytype, paratypes)
   , d_1_1, modname, instruction.ls,tree."default",mc)
+
+Function type:mytype internaltype export
+
+Function towords(mytype) seq.word  export
+
+Function mytype(seq.word) mytype export
+
+Function abstracttype(m:mytype)word export
+
+Function parameter(m:mytype)mytype export
+
+Function print(p:mytype)seq.word export
+
+Function =(t:mytype, b:mytype)boolean export
+
+Function mangle(name:word, modname:mytype, parameters:seq.mytype)word export
+
+Function codedown(w:word)seq.seq.word export
+
+Function replaceT(with:mytype, m:mytype)mytype export
+
+Function iscomplex(a:mytype)boolean export
+
+Function type:firstpass internaltype  export
+
+type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, 
+unboundexports:seq.symbol, unbound:set.symbol, exportmodule:boolean, rawsrc:seq.seq.word
+
+Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, exportmodule:boolean)firstpass 
+ firstpass(modname, uses, defines, exports, unboundexports, unboundx, exportmodule, empty:seq.seq.word)
+
+Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol,
+ unboundx:set.symbol, exportmodule:boolean,rawsrc:seq.seq.word)firstpass export
+ 
+Function exportmodule(firstpass)boolean export
+
+Function modname(firstpass)mytype export
+
+Function defines(firstpass)set.symbol export
+
+Function exports(firstpass)set.symbol export
+
+Function uses(firstpass)seq.mytype export
+
+Function rawsrc(firstpass)seq.seq.word export
+
+Function unboundexports(firstpass)seq.symbol export
+
+Function unbound (firstpass)set.symbol export
+
+

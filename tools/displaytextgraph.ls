@@ -10,7 +10,7 @@ use graph.seq.word
 
 use ipair.seq.word
 
-use oseq.word
+use otherseq.word
 
 use seq.arcinfo.seq.word
 

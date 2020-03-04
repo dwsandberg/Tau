@@ -1,14 +1,14 @@
 Module real
 
-use UTF8
-
-use textio
 
 use seq.real
 
 use stdlib
 
 use otherseq.real
+
+use subreal
+
 
 type real is record representation:int
 
@@ -73,8 +73,37 @@ Function makereal(whole:int, decdigits:int)real
   then toreal.whole / toreal([ 10, 100, 1000, 10000, 100000, 1000000]_decdigits)
   else toreal.whole / toreal(10^decdigits)
 
+Function print( decimals:int,rin:real) seq.word export
+
+
+Function reallit(s:UTF8)real export 
+
+
+Function toUTF8(rin:real, decimals:int) UTF8 export
+
+
+
+
+-------------
+
+module subreal 
+
+use real
+
+use stdlib
+
+use UTF8
+
+
+use words
+
+use seq.char
+
+use textio
+
 Function print( decimals:int,rin:real)seq.word 
  {(if rin < 0.0 then [ space]else empty:seq.word)+ towords.toUTF8(rin, decimals)}
+
 
 Function toUTF8(rin:real, decimals:int) UTF8
  if rin ? toreal.0 = LT 
@@ -85,11 +114,9 @@ Function toUTF8(rin:real, decimals:int) UTF8
    then toUTF8.intpart.r +encodeUTF8.periodchar+ lpad(toseqint.toUTF8.intpart((r - toreal.intpart.r)* toreal.a), decimals)
    else toUTF8.intpart.r 
 
-Function lpad(l:seq.int, n:int) UTF8 UTF8(constantseq(n - length.l, 48)+ l)
 
 Function reallit(s:UTF8)real reallit(toseqint.s,-1, 1, 0, 1)
 
-use seq.char
 
 function reallit(s:seq.int, decimals:int, i:int, val:int, neg:int)real 
  if i > length.s 
@@ -106,5 +133,6 @@ function reallit(s:seq.int, decimals:int, i:int, val:int, neg:int)real
   else assert s_i = toint.periodchar report"unexpected character in real literal"+ encodeword.tocharseq.s 
   reallit(s, decimals + 1, i + 1, val, neg)
 
--------------
+Function lpad(l:seq.int, n:int) UTF8 UTF8(constantseq(n - length.l, 48)+ l)
+
 

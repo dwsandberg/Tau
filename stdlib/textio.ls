@@ -5,8 +5,6 @@ use UTF8
 
 use seq.int
 
-use seq.seq.int
-
 use seq.seq.seq.int
 
 use seq.seq.seq.word
@@ -14,6 +12,8 @@ use seq.seq.seq.word
 use stdlib
 
 use otherseq.int
+
+use words
 
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqint.a, 2, 1, empty:seq.UTF8)

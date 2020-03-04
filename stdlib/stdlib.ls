@@ -2,31 +2,16 @@
 
 Module stdlib 
 
-Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates cvttoinst deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 opt2 oseq packedseq parse pass1 pass2 persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash 
+Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates  deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 opt2 oseq packedseq parse pass1 pass2 persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash 
  timestamp maindict uses 
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
- internalbc ipair  libscope llvm main2  oseq packedseq   process real reconstruct seq set stack stacktrace 
- stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode pass2  libdescfunc otherseq
+ internalbc ipair  libscope llvm main2  unsafe packedseq   process real reconstruct seq set stack stacktrace 
+ stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode pass2  libdescfunc otherseq words mangle
 
 
 use UTF8
 
-use encoding.seq.int
-
-use oseq.alphaword
-
-use oseq.int
-
-use oseq.char
-
-use oseq.seq.alphaword
-
-use seq.alphaword
-
 use seq.int
-
-
-use seq.seq.alphaword
 
 use seq.seq.int
 
@@ -34,27 +19,14 @@ use seq.seq.word
 
 use seq.word
 
-use stacktrace
-
-use stdlib
-
 use xxhash
 
 use otherseq.int
 
 use otherseq.word
 
-Function type:ordering internaltype  export
+use words
 
-Function type:boolean internaltype  export
-
-Function type:word  internaltype  export
-
-Function type:seq.word  internaltype  export
-
-Function type:seq.seq.word  internaltype  export
-
-Function type:seq.int internaltype export
 
 
 
@@ -75,6 +47,11 @@ Function openbracket word {"["_1 }
 Function closebracket word {"]"_1 }
 
 Function colon word {":"_1 }
+
+Function space word encodeword.[ char.32]
+
+Function EOL word encodeword.[ char.10]
+
 
 
 
@@ -160,55 +137,6 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 ---------------------------
 
 
-Function =(a:char,b:char) boolean export
-
-Function type:char internaltype  export
-
-Function type:seq.char internaltype  export
-
-Function hash(a:char) int export
-
-Function toint(char) int export
-
-Function char(int) char export
-
-Function space word encodeword.[ char.32]
-
-Function EOL word encodeword.[ char.10]
-
-
-/Function type:seq.char internaltype  export
-
-
-use seq.char
-
-Function  tointseq(a:seq.char) seq.int  
-// This is just a type change and the compiler recognizes this and does not generate code // 
-  @(+, toint , empty:seq.int, a)
-
-
-Function  tocharseq(a:seq.int) seq.char // builtin.NOOP //
-// This is just a type change and the compiler recognizes this and does not generate code // 
-  @(+, char, empty:seq.char, a)
-
-
-type wordencoding is encoding seq.char
-
-Function wordencoding erecord.seq.char export
-
-type word is record asencoding:encoding.seq.char
-
-Function asencoding(w:word) encoding.seq.char export
-
-Function add(erecord.seq.char,seq.encodingrep.seq.char) int export
-
-
-Function encodeword(a:seq.char)word  word.encode(wordencoding,a)
-
-Function decodeword(w:word)seq.char decode( wordencoding,asencoding.w)
-
-Function hash(a:seq.char)int hash(tointseq.a)
-
 
 Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
 
@@ -216,34 +144,7 @@ Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
 
 Function hash(a:seq.word)int finalmix.@(hash, hash, hashstart, a)
 
-Function hash(a:word)int hash.asencoding.a
 
-Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
-
-Function =(a:word, b:word)boolean asencoding.a = asencoding.b
-
-Function ≠(a:word, b:word)boolean export
-
-Function ≠(a:int, b:int)boolean export
-
-
-Function toword(n:int)word 
- // Covert integer to  a single word. // 
- export
- 
-Function toint(w:word)int 
- // Convert an integer represented as a word to an int // export
- 
-
-
-
-
-
-Function merge(a:seq.word)word 
- // make multiple words into a single word. // encodeword.@(+, decodeword, empty:seq.char, a)
-
-Function merge(a:word, b:word)word 
- // make two words into a single word // encodeword(decodeword.a + decodeword.b)
 
 
 Function^(i:int, n:int)int @(*, identity, 1, constantseq(n, i))
@@ -268,6 +169,40 @@ Function seperator(sep:seq.word, s:seq.word, w:seq.word)seq.word
 Function seperator(sep:seq.word, s:seq.word, w:word)seq.word 
  // Good for adding commas in seq of words. @(seperator(",", toword,"", [ 1, 2, 3])// 
   if length.s = 0 then [ w]else s + sep + w
+  
+
+Function hash(a:word)int export
+
+Function ?(a:word, b:word)ordering export
+
+Function =(a:word, b:word)boolean export
+
+Function ≠(a:word, b:word)boolean export
+
+Function ≠(a:int, b:int)boolean export
+ 
+Function toword(n:int)word 
+ // Covert integer to  a single word. // 
+ export
+ 
+Function toint(w:word)int 
+ // Convert an integer represented as a word to an int // export
+ 
+Function merge(a:seq.word)word 
+ // make multiple words into a single word. // export
+
+Function type:ordering internaltype  export
+
+Function type:boolean internaltype  export
+
+Function type:word  internaltype  export
+
+Function type:seq.word  internaltype  export
+
+Function type:seq.seq.word  internaltype  export
+
+Function type:seq.int internaltype export
+
 
 Function empty:seq.seq.word seq.seq.word  export
 
@@ -333,11 +268,98 @@ Function +(seq.int, seq.int)seq.int export
 
 Function +(seq.int, int)seq.int export
 
+Function last(seq.int) int export
+
 Function +(seq.seq.word, seq.word)seq.seq.word export
 
 Function +(seq.seq.word, seq.seq.word)seq.seq.word export
 
 Function +(a:seq.word, b:seq.word)seq.word export
+
+
+Function alphasort(a:seq.word)seq.word export 
+
+
+Function alphasort(a:seq.seq.word)seq.seq.word export
+
+  
+* usegraph include  xxhash encoding   bits  words real subreal
+stacktrace  textio reconstruct  UTF8  seq otherseq
+blockseq packedseq bitpackedseq stdlib exclude stdlib seq  
+
+
+
+
+* usegraph include  prims   tree  graph ipair libscope internalbc
+process stack set   format groupparagraphs   dict fileio
+exclude stdlib seq 
+
+* usegraph include  main2 libscope display constant codegen convert 
+ parse pass1  symbol libdescfunc  
+codetemplates pass2 persistant   llvm  
+reconstruct persistantseq opt2
+symbol parse libdescfunc internalbc intercode cvttoinst codegen
+exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process  ipair deepcopy
+bitpackedseq packedseq fileio blockseq textio encoding words
+   
+
+module words
+
+use stdlib
+
+use encoding.seq.int
+
+use seq.char
+
+use seq.alphaword
+
+use otherseq.alphaword
+
+use otherseq.int
+
+use otherseq.char
+
+use otherseq.seq.alphaword
+
+use seq.alphaword
+
+
+
+use seq.seq.alphaword
+
+
+
+use UTF8
+
+use words
+
+Function type:word  internaltype  export
+
+
+type wordencoding is encoding seq.char
+
+Function wordencoding erecord.seq.char export
+
+type word is record asencoding:encoding.seq.char
+
+Function asencoding(w:word) encoding.seq.char export
+
+Function word(encoding.seq.char) word export
+
+Function add(erecord.seq.char,seq.encodingrep.seq.char) int export
+
+Function encodeword(a:seq.char)word  word.encode(wordencoding,a)
+
+Function decodeword(w:word)seq.char decode( wordencoding,asencoding.w)
+
+Function hash(a:word)int hash.asencoding.a
+
+Function =(a:word, b:word)boolean asencoding.a = asencoding.b
+
+Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
+
+Function merge(a:seq.word)word 
+ // make multiple words into a single word. // encodeword.@(+, decodeword, empty:seq.char, a)
 
 * Functions to perform alphabetical sorting
 
@@ -368,24 +390,5 @@ use seq.seq.alphaword
 Function alphasort(a:seq.seq.word)seq.seq.word 
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
   @(+, towordseq, empty:seq.seq.word, sort.b)
-  
-* usegraph include  xxhash deepcopy encoding oseq bits  
-stacktrace  textio reconstruct  UTF8 libscope seq
-blockseq packedseq bitpackedseq exclude stdlib  
 
-
-
-
-* usegraph include real prims   tree  graph ipair 
-process stack set   format groupparagraphs   dict fileio
-exclude stdlib seq 
-
-* usegraph include  main2 libscope display constant codegen convert 
- parse pass1  symbol libdescfunc  
-codetemplates pass2 persistant   llvm  
-reconstruct persistantseq opt2
-symbol parse libdescfunc internalbc intercode cvttoinst codegen
-exclude seq set oseq stdlib bits tree graph UTF8 stack stacktrace real process libscope ipair deepcopy
-bitpackedseq packedseq fileio blockseq textio encoding
-   
 

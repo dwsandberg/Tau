@@ -262,9 +262,12 @@ if (strcmp(libname,"stdlib")==0 ){
     }
        decodeword= dlsym(RTLD_DEFAULT,"decodewordZstdlibZword");
     if (!decodeword){
+           decodeword= dlsym(RTLD_DEFAULT,"decodewordZwordsZword");
+    if (!decodeword){
+   
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
-    }
+    }}
     
          staticencodings[1]=neweinfo(&sharedspace);
  }

@@ -32,6 +32,10 @@ use set.int
 
 use stdlib
 
+use UTF8
+
+use words
+
 use tree.seq.word
 
 Function +(i:int, b:int)int export

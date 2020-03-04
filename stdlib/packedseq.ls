@@ -4,26 +4,8 @@ use seq.T
 
 use stdlib
 
-setfld set value at a to x and return next address
+use unsafe.T
 
-Function setfld(a:address.T, x:T)address.T builtin.STATE.usemangle
-
-function allocatespace:seq.T(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZint"
-
-Function type:address.T internaltype export
-
-type address is record toseq:seq.T
-
-Function getaddress(s:seq.T, i:int)address.T builtin.usemangle
- 
- 
-Function toT(a:address.T)T builtin."PARAM 1"
-
-function inttoT:T(int)T builtin."PARAM 1"
-
-function fldof(T, offset:int)T builtin."PARAM 1 PARAM 2 IDXUC"
-
-function getfld(packedseq.T, i:int)int builtin."PARAM 1 PARAM 2 IDXUC"
 
 x is included in packedseq so the procedure to access the type with be different between instances of the scope.
 
@@ -33,7 +15,6 @@ type packedseq is sequence length:int, x:seq.T
 
 Function length(packedseq.T)int export
 
-use deepcopy.T
 
 Function_(a:packedseq.T, i:int)T 
  let ds = sizeoftype:T 
@@ -41,16 +22,47 @@ Function_(a:packedseq.T, i:int)T
 
 Function packed(s:seq.T)seq.T 
  let ds = sizeoftype:T 
-  let typ = if ds = 1 then 0 else getfld(packedseq(length.s, empty:seq.T), 0)
-  let b = allocatespace:seq.T(ds * length.s + 2)
-  let address1stelement = setfld(setfld(getaddress(b, 0), inttoT:T(typ)), inttoT:T(length.s))
-  let d = if ds = 1 
-   then let g = @(setfld, identity, address1stelement, s)
-    0 
-   else @(+, setelement(ds, s, b), 0, arithseq(length.s, 1, 1))
-  b
+  let typ = if ds = 1 then 0 else getseqtype(toseq.packedseq(length.s, empty:seq.T))
+  let b = setfld(allocatespace:seq.T(ds * length.s + 2),0,inttoT:T(typ))
+    if ds = 1 
+   then  @(append,identity,setfld(b,1,inttoT:T(0)),s)  
+   else let g=@(append(ds),identity,setfld(b,1,inttoT:T(0)),s)
+        setfld(g,1,inttoT:T(length.s))
 
-function setelement(ds:int, s:seq.T, a:seq.T, i:int)int 
- let d = @(setfld, fldof(s_i), getaddress(a, 2 + ds *(i - 1)), arithseq(ds, 1, 0))
-  0
+
+Module unsafe.T
+
+use seq.T
+
+use stdlib
+
+setfld set value at a to x and return next address
+
+function setfld(a:address.T, x:T)address.T builtin.STATE.usemangle
+
+Function allocatespace:seq.T(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZint"
+
+Function type:address.T internaltype export
+
+type address is record toseq:seq.T
+
+Function getaddress(s:seq.T, i:int)address.T builtin.usemangle
+
+Function setfld(s:seq.T,i:int,val:T) seq.T
+  let discard=    setfld(getaddress(s,i),val)
+  s
+
+Function append(s:seq.T,val:T) seq.T
+    let len=length.s+1
+    setfld(setfld(s,1,inttoT:T(len)),len+1,val)
+    
+ Function   append(ds:int,s:seq.T,val:T) seq.T   
+       @(append, fldof(val),s, arithseq(ds, 1, 0))
+  
+ 
+Function toT(a:address.T)T builtin."PARAM 1"
+
+Function inttoT:T(int)T builtin."PARAM 1"
+
+Function fldof(T, offset:int)T builtin."PARAM 1 PARAM 2 IDXUC"
 

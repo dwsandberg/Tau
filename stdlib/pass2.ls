@@ -2,19 +2,17 @@ Module pass2
 
 use bits
 
-use cvttoinst
+use intercode
 
 use graph.word
 
 use ipair.tree.seq.word
 
-use libscope
 
 use real
 
 use seq.arc.word
 
-use seq.int
 
 use seq.ipair.tree.seq.word
 
@@ -45,6 +43,10 @@ use worddict.tree.seq.word
 use deepcopy.intercode
 
 use intercode
+
+use UTF8
+
+use words
 
 Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)intercode 
 PROFILE.
@@ -353,13 +355,13 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
    else if i2 ="notZbuiltinZboolean"_1 
    then tree(label.code, [ l_1_1, l_3, l_2])
    else tree(label.code, l)
-  else if inst in"mergeZstdlibZwordzseq"∧ inst(l_1)="WORDS"_1 
+  else if inst in"mergeZwordsZwordzseq"∧ inst(l_1)="WORDS"_1 
   then // assert false report"merge"+ label(l_1)// 
    tree("WORD"+ merge.subseq(label(l_1), 3, length.label(l_1)))
   else if inst ="Q2BZwordzseqZTzseqZTzseq"_1 ∧ inst(l_1)="WORDS"_1 ∧ inst(l_2)="WORDS"_1 
   then let cat = subseq(label(l_1), 3, length.label(l_1))+ subseq(label(l_2), 3, length.label(l_2))
    tree("WORDS"+ toword.length.cat + cat)
-  else if inst="decodeZcharzseqzencodingZTzerecordZTzencoding"_1 ∧ inst(l_2)="WORD"_1 ∧ inst(l_1)="wordencodingZstdlib"_1 then
+  else if inst="decodeZcharzseqzencodingZTzerecordZTzencoding"_1 ∧ inst(l_2)="WORD"_1 ∧ inst(l_1)="wordencodingZwords"_1 then
         let charseq=decodeword.arg(l_2)
      tree("CRECORD",  @(+,treelit,empty:seq.tree.seq.word,   [char.0,char.length.charseq]+charseq))
   else if inst in"Q5FZwordzseqZTzseqZint"∧ inst(l_2)="LIT"_1 ∧ inst(l_1)="WORDS"_1 

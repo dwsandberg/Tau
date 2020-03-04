@@ -1,20 +1,17 @@
 Module libdescfunc
 
-use cvttoinst
 
 use intercode
 
 use libscope
 
-use oseq.word
+use otherseq.word
 
-use pass1
 
 use seq.firstpass
 
 use seq.inst
 
-use seq.int
 
 use seq.libmod
 

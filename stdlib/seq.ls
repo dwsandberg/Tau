@@ -4,13 +4,15 @@ use deepcopy.T
 
 use seq.T
 
-use seq.int
 
 use stacktrace
 
 use stdlib
 
 type seq is sequence length:int, x:T
+
+Function sizeoftype:T int export
+
 
 Function type:seq.T internaltype export
 
@@ -30,7 +32,7 @@ function callidx(func:int, a:seq.T, b:int)T
 
 function getval(a:seq.T, offset:int)T builtin."PARAM 1 PARAM 2 IDXUC"
 
-function getseqtype(a:seq.T)int builtin."PARAM 1 LIT 0 IDXUC"
+Function getseqtype(a:seq.T)int builtin."PARAM 1 LIT 0 IDXUC"
 
 Function length(a:seq.T)int export
 
@@ -151,97 +153,4 @@ Function last(a:seq.T)T a_length.a
 Function isempty(a:seq.T)boolean length.a = 0
 
 --------------------------
-
-Module otherseq.T
-
-use seq.T
-
-use stdlib
-
-Function ≠(a:T, b:T)boolean not(a = b)
-
-Function ≤(a:T, b:T)boolean not(a > b)
-
-Function ≥(a:T, b:T)boolean not(b > a)
-
-Function <(a:T, b:T)boolean b > a
-
-Function =(T, T)boolean unbound
-
-Function >(a:T, b:T)boolean unbound
-
-Function reverse(s:seq.T)seq.T @(+,_(s), empty:seq.T, arithseq(length.s, 0 - 1, length.s))
-
-Function removedups(a:seq.T, b:seq.T, c:int)seq.T 
- if c = 0 
-  then b 
-  else if a_c in b then removedups(a, b, c - 1)else removedups(a, b + a_c, c - 1)
-
-Function removedups(a:seq.T)seq.T removedups(a, empty:seq.T, length.a)
-
-type cseq is sequence len:int, element:T
-
-Function length(c:cseq.T)int len.c
-
-Function_(s:cseq.T, i:int)T element.s
-
-Function constantseq(len:int, element:T)seq.T toseq.cseq(len, element)
-
---------------------
-
-dseq lets a sequence have a default value even beyond the length of the seq.
-
-type dseq is sequence length:int, default:T, data:seq.T
-
-function todseq(s:seq.T)dseq.T builtin.FROMSEQ
-
-
-Function_(d:dseq.T, i:int)T 
- if i > length.data.d then default.d else data(d)_i
-
-Function replace(a:seq.T, b:int, v:T)seq.T 
- let d = todseq.a 
-  if length.d = 0 
-  then replace2(a, b, v)
-  else let s = if b > length.a then replace2(data.d + constantseq(b - length.a, default.d), b, v)else replace2(data.d, b, v)
-  toseq.dseq(length.s, default.d, s)
-
-Function dseq(d:T)seq.T toseq.dseq(1, d, [ d])
-
-Function dseq(d:T, s:seq.T)seq.T toseq.dseq(1, d, s)
-
-function replace2(s:seq.T, index:int, value:T)seq.T 
- let p = topseq.s 
-  if length.p = 0 
-  then @(+,_.s, @(+,_.s, empty:seq.T, arithseq(index - 1, 1, 1))+ value, arithseq(length.s - index, 1, index + 1))
-  else if index > length.a.p 
-  then a.p + replace2(b.p, index - length.a.p, value)
-  else replace2(a.p, index, value)+ b.p
-
-______________________________________
-
-type fastsubseq is sequence length:int, data:seq.T, begin:int
-
-Function_(a:fastsubseq.T, i:int)T data(a)_(i + begin.a)
-
-Function fastsubseq(s:seq.T, from:int, to:int)seq.T 
- if to < from 
-  then empty:seq.T 
-  else if to > length.s 
-  then fastsubseq(s, from, length.s)
-  else if to < 1 then fastsubseq(s, 1, to)else toseq.fastsubseq(to - from + 1, s, from - 1)
-
-_____________
-
-type arithmeticseq is sequence length:int, step:T, start:T
-
-Function +(T, T)T unbound
-
-Function *(int, T)T unbound
-
-Function length(s:arithmeticseq.T)int export
-
-Function_(s:arithmeticseq.T, i:int)T start.s +(i - 1)* step.s
-
-Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 

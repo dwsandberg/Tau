@@ -9,11 +9,9 @@ use blockseq.bits
 use blockseq.int
 
 
-use packedseq.bits
 
 use seq.bit
 
-use seq.int
 
 use stdlib
 

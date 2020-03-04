@@ -14,7 +14,7 @@ use labeledgraph.parc
 
 use libscope
 
-use oseq.alphaword
+use otherseq.alphaword
 
 use seq.alphaword
 
@@ -39,6 +39,8 @@ use stdlib
 use svggraph.seq.word
 
 use otherseq.word
+
+use words
 
 * To profile a function add a use clause"use options.<return type of /function >"and change /function so body 
  is wrap by a call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the 

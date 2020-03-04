@@ -4,6 +4,8 @@ run printbitcodes test1
 
 use UTF8
 
+use words
+
 use bits
 
 use encoding.decodename
@@ -14,7 +16,7 @@ use internalbc
 
 use llvm
 
-use oseq.codefreq
+use otherseq.codefreq
 
 use seq.bit
 

@@ -22,6 +22,10 @@ use textio
 
 use otherseq.seq.word
 
+use words
+
+use UTF8
+
 Function testopt seq.word 
  let p2 = secondPass."testall"_1 
   let cl = ["LIT 7"

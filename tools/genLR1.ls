@@ -8,11 +8,11 @@ use encoding.state
 
 use graph.word
 
-use oseq.int
+use otherseq.int
 
-use oseq.seq.word
+use otherseq.seq.word
 
-use oseq.word
+use otherseq.word
 
 use seq.action
 

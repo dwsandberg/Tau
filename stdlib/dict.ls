@@ -1,10 +1,8 @@
 Module dict.T
 
-use oseq.word
+use otherseq.word
 
 use seq.T
-
-use seq.word
 
 use stdlib
 

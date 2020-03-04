@@ -14,7 +14,7 @@ use aseq(int)
 
 use seq(seq(int))
 
-use oseq(int)
+use otherseq(int)
 
 use fileresult
 
@@ -1325,9 +1325,9 @@ use seq(arc(T))
 
 use seq(T)
 
-use oseq(T)
+use otherseq(T)
 
-use oseq(arc(T))
+use otherseq(arc(T))
 
 use set(T)
 
@@ -1462,7 +1462,7 @@ use stdlib
 
 use seq(T)
 
-use oseq(T)
+use otherseq(T)
 
 function ?(T, T)ordering; unbound
 
@@ -2977,7 +2977,7 @@ use pass0
 
 use seq(seq(seq(word)))
 
-use oseq(symbol)
+use otherseq(symbol)
 
 use module
 
@@ -3328,7 +3328,7 @@ function tofunc(q:libsym)func;
 let k = substring(inst.q, 2, length.inst.q);
 func(length.types.q - 1, symname.q, toint.address.q, buildcodetree(k, 1))
 
-use oseq(libsym)
+use otherseq(libsym)
 
 function +(b:pass1result, p:presym)pass1result;
 let v = tolibsym2(libname(b)_1, funcfrominstruction.p);
@@ -3556,7 +3556,7 @@ use seq.modinstance
 
 use seq.moddesc
 
-use oseq.modinstance
+use otherseq.modinstance
 
 Function primitivemods(s:seq.seq.seq.word)seq.moddesc; @(+, tomodule2, empty.moddesc, s)
 
@@ -3738,7 +3738,7 @@ use graph(int)
 
 use seq(int)
 
-use oseq(int)
+use otherseq(int)
 
 use seq(arc(int))
 

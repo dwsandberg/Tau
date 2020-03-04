@@ -6,8 +6,6 @@ use fileio
 
 use seq.seq.word
 
-use seq.word
-
 use stdlib
 
 use bits

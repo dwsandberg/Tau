@@ -10,9 +10,8 @@ use deepcopy.seq.lexaction
 
 use format
 
-use libscope
+use mangle
 
-use llvm
 
 use seq.char
 
@@ -37,6 +36,8 @@ use stack.stkele
 use stdlib
 
 use symbol
+
+use words
 
 Function getheader(s:seq.word)seq.word 
  if length.s < 3 
@@ -196,7 +197,7 @@ function  =(a:lexaction,b:lexaction) boolean  w.a = w.b
 function hash(l:seq.lexaction) int length.l
 
 
-use oseq.lexaction
+use otherseq.lexaction
 
 use blockseq.lexaction
 

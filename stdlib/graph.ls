@@ -4,11 +4,11 @@ use graph.T
 
 use ipair.T
 
-use oseq.T
+use otherseq.T
 
-use oseq.arc.T
+use otherseq.arc.T
 
-use oseq.ipair.T
+use otherseq.ipair.T
 
 use seq.T
 
