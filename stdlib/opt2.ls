@@ -20,6 +20,8 @@ use tree.seq.word
 
 use seq.char
 
+use otherseq.word
+
 Function opt2(t:tree.seq.word)tree.seq.word 
  if inst.t ="FINISHLOOP"_1 
   then let x = removeRECORD.t 

@@ -33,9 +33,9 @@ Function_(a:blockseq.T, i:int)T data(a)_((i - 1)/ blocksize.a + 1)_((i - 1)mod b
 
 function topackedseq(s:seq.T)packedseq.T builtin.FROMSEQ
 
-Function ispackedseq(s:seq.T)boolean not(length.topackedseq.s = 0)
+Function ispackedseq(s:seq.T)boolean (length.topackedseq.s &ne 0)
 
 function toblockseq(s:seq.T)blockseq.T builtin.FROMSEQ
 
-Function isblockseq(s:seq.T)boolean not(length.toblockseq.s = 0)
+Function isblockseq(s:seq.T)boolean  (length.toblockseq.s &ne 0)
 

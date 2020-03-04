@@ -61,6 +61,8 @@ use stacktrace
 
 use stdlib
 
+use otherseq.llvmtype
+
 Function type:llvmtype internaltype export
 
 

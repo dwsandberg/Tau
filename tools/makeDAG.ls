@@ -12,7 +12,6 @@ use set.arc.T
 
 use stdlib
 
-Function reverse(s:seq.T)seq.T @(+,_(s), empty:seq.T, arithseq(length.s, 0 - 1, length.s))
 
 Function makeDAG(g:graph.T)graph.T 
  // Turn directed graph into DAG by reversing arcs // 

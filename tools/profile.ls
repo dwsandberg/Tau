@@ -38,6 +38,8 @@ use stdlib
 
 use svggraph.seq.word
 
+use otherseq.word
+
 * To profile a function add a use clause"use options.<return type of /function >"and change /function so body 
  is wrap by a call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the 
  part of code of interest add a call to profileresults("time")to optain the result.
@@ -119,7 +121,6 @@ function shorten(a:seq.seq.seq.word, i:int)seq.word
 function formattype(a:seq.word)seq.word 
  reverse.@(seperator("."), identity, empty:seq.word, a)
 
-function reverse(s:seq.word)seq.word @(+,_(s), empty:seq.word, arithseq(length.s, 0 - 1, length.s))
 
 function differ(a:seq.seq.word, b:seq.seq.word, i:int)int 
  if i > length.a ∨ i > length.b then i else if a_i = b_i then differ(a, b, i + 1)else i

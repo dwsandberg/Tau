@@ -20,6 +20,8 @@ use stdlib
 
 use textio
 
+use otherseq.seq.word
+
 Function testopt seq.word 
  let p2 = secondPass."testall"_1 
   let cl = ["LIT 7"

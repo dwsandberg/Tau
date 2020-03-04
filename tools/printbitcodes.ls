@@ -40,6 +40,12 @@ use stdlib
 
 use textio
 
+use otherseq.word
+
+use otherseq.codefreq
+
+use otherseq.boolean
+
 Function test1 seq.word printBitCodes."mytest.bc"
 
 stats("tools.bc")

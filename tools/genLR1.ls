@@ -38,6 +38,8 @@ use set.dottedrule
 
 use set.word
 
+use otherseq.int
+
 use stdlib
 
 type estate is encoding state

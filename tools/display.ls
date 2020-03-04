@@ -14,6 +14,10 @@ use seq.word
 
 use stdlib
 
+use otherseq.word
+
+use otherseq.int
+
 Function defaultprec seq.seq.word 
  ["_^"
  ,""

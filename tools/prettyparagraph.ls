@@ -18,6 +18,10 @@ use stdlib
 
 use textio
 
+use otherseq.int
+
+use otherseq.char
+
 type prettyresult is record displaywidth:int, prec:int, rprec:int, text:seq.word
 
 function result(c:control, w:seq.word)prettyresult prettyresult(@(+, displaywidth(c), 0, w), 0, 0, w)

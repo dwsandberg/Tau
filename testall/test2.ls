@@ -22,6 +22,8 @@ use stdlib
 
 use textio
 
+use otherseq.wordfreq
+
 type indexedword is record w:word, index:int
 
 function addindex(a:indexedword, i:int)indexedword indexedword(w.a, i)

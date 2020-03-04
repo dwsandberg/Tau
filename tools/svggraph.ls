@@ -30,6 +30,8 @@ use stdlib
 
 use svg
 
+use otherseq.int
+
 type svgdraw is record width:int, height:int, a:seq.word
 
 Function type:nodeinfo.T internaltype export

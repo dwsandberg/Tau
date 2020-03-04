@@ -66,6 +66,8 @@ use bits
 
 use seq.bits
 
+use otherseq.llvmtype
+
 function funcdec(f:inst)seq.int 
  let discard = C.mangledname.f 
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]

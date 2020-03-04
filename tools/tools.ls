@@ -52,7 +52,7 @@ use stdlib
 
 Function testhtmlcode seq.word htmlcode."testall"
 
-Function prettytest seq.word prettylib("newtools","")
+Function prettytest seq.word prettylib("test4","")
 
 Function checkdoclib seq.word doclibrary."tools"
 

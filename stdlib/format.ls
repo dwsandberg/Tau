@@ -12,6 +12,8 @@ use stack.word
 
 use stdlib
 
+use UTF8
+
 Function processpara(t:seq.word)seq.word 
  processpara(t, 1, 1,"", push(empty:stack.seq.word,""))
 

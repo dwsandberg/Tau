@@ -54,6 +54,8 @@ use textio
 
 use blockseq.seq.templatepart
 
+use otherseq.llvmtype
+
 function wordstype llvmtype array(-1, i64)
 
 Function conststype llvmtype array(-2, i64)

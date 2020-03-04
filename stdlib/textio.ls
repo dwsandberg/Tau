@@ -13,6 +13,8 @@ use seq.seq.seq.word
 
 use stdlib
 
+use otherseq.int
+
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqint.a, 2, 1, empty:seq.UTF8)
 

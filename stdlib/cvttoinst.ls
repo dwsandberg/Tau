@@ -20,6 +20,8 @@ use symbol
 
 use tree.seq.word
 
+use otherseq.seq.int
+
 type einst is encoding inst
 
 function hash(a:inst)int hash.towords.a

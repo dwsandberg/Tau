@@ -6,7 +6,7 @@ Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates cvttoinst d
  timestamp maindict uses 
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  oseq packedseq   process real reconstruct seq set stack stacktrace 
- stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode pass2  libdescfunc
+ stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode pass2  libdescfunc otherseq
 
 
 use UTF8
@@ -40,6 +40,10 @@ use stdlib
 
 use xxhash
 
+use otherseq.int
+
+use otherseq.word
+
 Function type:ordering internaltype  export
 
 Function type:boolean internaltype  export
@@ -52,9 +56,6 @@ Function type:seq.seq.word  internaltype  export
 
 Function type:seq.int internaltype export
 
-Function type:char internaltype  export
-
-Function type:seq.char internaltype  export
 
 
 type ordering is record toint:int
@@ -75,9 +76,7 @@ Function closebracket word {"]"_1 }
 
 Function colon word {":"_1 }
 
-Function space word encodeword.[ char.32]
 
-Function EOL word encodeword.[ char.10]
 
 
 * EQ GT and LT are the possible results of ? operator
@@ -160,18 +159,26 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
-type char is record toint:int
 
-Function =(a:char,b:char) boolean toint.a=toint.b
+Function =(a:char,b:char) boolean export
 
-Function ?(a:char,b:char) ordering toint.a ? toint.b
+Function type:char internaltype  export
 
+Function type:seq.char internaltype  export
 
-Function hash(a:char) int hash.toint.a
+Function hash(a:char) int export
 
 Function toint(char) int export
 
 Function char(int) char export
+
+Function space word encodeword.[ char.32]
+
+Function EOL word encodeword.[ char.10]
+
+
+/Function type:seq.char internaltype  export
+
 
 use seq.char
 
@@ -200,9 +207,11 @@ Function encodeword(a:seq.char)word  word.encode(wordencoding,a)
 
 Function decodeword(w:word)seq.char decode( wordencoding,asencoding.w)
 
+Function hash(a:seq.char)int hash(tointseq.a)
+
+
 Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
 
-Function hash(a:seq.char)int hash(tointseq.a)
 
 
 Function hash(a:seq.word)int finalmix.@(hash, hash, hashstart, a)
@@ -215,30 +224,20 @@ Function =(a:word, b:word)boolean asencoding.a = asencoding.b
 
 Function ≠(a:word, b:word)boolean export
 
-covert integer to sequence of characters
+Function ≠(a:int, b:int)boolean export
+
 
 Function toword(n:int)word 
- // Covert integer to sequence of characters represented as a single word. // 
-  encodeword.tocharseq.toseqint.toUTF8.n
-
-/Function print(i:int)seq.word groupdigits.toUTF8.i
-
-/function groupdigits(u:UTF8)seq.word let s = tointseq.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = toint.hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s-3)+ [ encodeword.subseq(s, length.s-2, length.s)]
-
-Function toint(w:word)int 
- // Convert an integer represented as a word to and int // cvttoint(tointseq.decodeword.w, 1, 0)
+ // Covert integer to  a single word. // 
+ export
  
-Function intlit(s:UTF8) int   cvttoint(toseqint.s,1,0)
+Function toint(w:word)int 
+ // Convert an integer represented as a word to an int // export
+ 
 
-function cvttoint(s:seq.int, i:int, val:int)int 
- if i = 1 ∧ s_1 = toint.hyphenchar 
-  then cvttoint(s, i + 1, val)
-  else if i > length.s 
-  then if s_1 = toint.hyphenchar then-val else val 
-  else if s_i = toint.nbspchar 
-  then cvttoint(s, i + 1, val)
-  else assert between(s_i, 48, 57)report"invalid digit"+ stacktrace 
-  cvttoint(s, i + 1, val * 10 + s_i - 48)
+
+
+
 
 Function merge(a:seq.word)word 
  // make multiple words into a single word. // encodeword.@(+, decodeword, empty:seq.char, a)
@@ -246,7 +245,6 @@ Function merge(a:seq.word)word
 Function merge(a:word, b:word)word 
  // make two words into a single word // encodeword(decodeword.a + decodeword.b)
 
-Function toUTF8(a:seq.word)UTF8 export
 
 Function^(i:int, n:int)int @(*, identity, 1, constantseq(n, i))
 

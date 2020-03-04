@@ -12,6 +12,10 @@ use seq.seq.encodingrep.T
 
 use stdlib
 
+use otherseq.encodingrep.T
+
+use otherseq.seq.encodingrep.T
+
 Function type:encoding.T internaltype export
 
 Function type:encodingstate.T internaltype export
@@ -58,12 +62,12 @@ Function empty:encodingstate.T  encodingstate.T
 
 
 function adddata(eletoadd:encodingrep.T, tablesize:int, a:encodingrep.T)seq.encodingrep.T 
- if data.a = data.eletoadd ∨ not(hash.eletoadd mod tablesize = hash.a mod tablesize)
+ if data.a = data.eletoadd ∨  (hash.eletoadd mod tablesize &ne hash.a mod tablesize)
   then empty:seq.encodingrep.T 
   else [ a]
 
 function addcode(code:encoding.T, hashsize:int, x:seq.encodingrep.T, e:encodingrep.T)seq.encodingrep.T 
- if code.e = code ∨ not(valueofencoding.code mod hashsize = valueofencoding.code.e mod hashsize)then x else x + e
+ if code.e = code ∨  (valueofencoding.code mod hashsize &ne valueofencoding.code.e mod hashsize)then x else x + e
 
 type encoding is record valueofencoding:int
 

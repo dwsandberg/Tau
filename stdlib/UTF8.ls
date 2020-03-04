@@ -8,6 +8,8 @@ use seq.char
 
 use bits
 
+use stacktrace
+
 type UTF8 is record toseqint:seq.int
 
 Function type:UTF8 internaltype  export
@@ -16,13 +18,32 @@ Function emptyUTF8 UTF8 UTF8.empty:seq.int
 
 Function +(a:UTF8, b:UTF8)UTF8 UTF8(toseqint.a + toseqint.b)
 
-Function +(a:UTF8, ch:char)UTF8  a+toUTF8(ch)
+Function +(a:UTF8, ch:char)UTF8  a+encodeUTF8(ch)
 
 Function =(a:UTF8, b:UTF8)boolean toseqint.a = toseqint.b
 
 Function UTF8(seq.int)UTF8 export
 
 Function toseqint(UTF8)seq.int export
+
+
+type char is record toint:int
+
+Function =(a:char,b:char) boolean toint.a=toint.b
+
+Function ?(a:char,b:char) ordering toint.a ? toint.b
+
+Function hash(a:char) int hash.toint.a
+
+
+Function type:char internaltype  export
+
+Function type:seq.char internaltype  export
+
+Function toint(char) int export
+
+Function char(int) char export
+
 
 Function commachar char char.44
 
@@ -43,7 +64,7 @@ function toUTF8(n:int, base:int)seq.int
  // n should always be negative.This is to handle the smallest integer in the twos complement representation of integers // 
   if base + n > 0 then [ 48 - n]else toUTF8(n / base, base)+ [ 48 + n / base * base - n]
 
-Function toUTF8(ch:char)UTF8 
+Function encodeUTF8(ch:char)UTF8 
  // convert to UTF8 byte encoding of unicode character // 
   let i=toint.ch
   UTF8.if i < 128 then [ i]else subUTF8(2, i / 64)+ [ 128 + i mod 64]  
@@ -78,6 +99,33 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
   then result 
   else let this = s_i 
   let single = this in("()-].:&quot_^. "+ space)
-  let d = @(+, toUTF8, emptyUTF8, decodeword.this)
+  let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
   addspace(s, i + 1, single, if nospace ∨ single ∨ this =","_1 then result + d else result + char.32+ d)
+  
+  ---------
+  
+  Function toword(n:int)word 
+ // Covert integer to sequence of characters represented as a single word. // 
+  encodeword.tocharseq.toseqint.toUTF8.n
+
+/Function print(i:int)seq.word groupdigits.toUTF8.i
+
+/function groupdigits(u:UTF8)seq.word let s = tointseq.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = toint.hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s-3)+ [ encodeword.subseq(s, length.s-2, length.s)]
+
+  
+  Function toint(w:word)int 
+ // Convert an integer represented as a word to an int // cvttoint(decodeword.w, 1, 0)
+ 
+Function intlit(s:UTF8) int   cvttoint(tocharseq.toseqint.s,1,0)
+
+function cvttoint(s:seq.char, i:int, val:int)int 
+ if i = 1 ∧ s_1 = hyphenchar 
+  then cvttoint(s, i + 1, val)
+  else if i > length.s 
+  then if s_1 = hyphenchar then-val else val 
+  else if s_i = nbspchar 
+  then cvttoint(s, i + 1, val)
+  else assert between(toint(s_i), 48, 57)report"invalid digit"+ stacktrace 
+  cvttoint(s, i + 1, val * 10 + toint(s_i) - 48)
+
 

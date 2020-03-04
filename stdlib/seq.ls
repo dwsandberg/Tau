@@ -51,15 +51,10 @@ Function in(a:T, s:seq.T)boolean subin(a, s, length.s)
 
 Function identity(a:T)T a
 
-Function ≠(a:T, b:T)boolean not(a = b)
 
-Function ≤(a:T, b:T)boolean not(a > b)
-
-Function ≥(a:T, b:T)boolean not(b > a)
 
 Function >(a:T, b:T)boolean unbound
 
-Function <(a:T, b:T)boolean b > a
 
 Function findelement(w:T, s:seq.T)seq.T 
  let idx = findindex(w, s, 1)
@@ -90,9 +85,8 @@ Function_(s:pseq.T, i:int)T
 
 Function ispseq(s:seq.T)boolean not(length.topseq.s = 0)
 
-function topseq(s:seq.T)pseq.T builtin.FROMSEQ
+Function topseq(s:seq.T)pseq.T builtin.FROMSEQ
 
-function todseq(s:seq.T)dseq.T builtin.FROMSEQ
 
 Function +(a:seq.T, b:seq.T)seq.T 
  let la = length.a 
@@ -150,26 +144,40 @@ Function subseq(p:pseq.T, start:int, end:int)seq.T
   then subseq(a.p, start, length.a.p)+ subseq(b.p, 1, end - length.a.p)
   else subseq(a.p, start, end)
 
-Function removedups(a:seq.T, b:seq.T, c:int)seq.T 
- if c = 0 
-  then b 
-  else if a_c in b then removedups(a, b, c - 1)else removedups(a, b + a_c, c - 1)
 
-Function removedups(a:seq.T)seq.T removedups(a, empty:seq.T, length.a)
-
-function replace2(s:seq.T, index:int, value:T)seq.T 
- let p = topseq.s 
-  if length.p = 0 
-  then @(+,_.s, @(+,_.s, empty:seq.T, arithseq(index - 1, 1, 1))+ value, arithseq(length.s - index, 1, index + 1))
-  else if index > length.a.p 
-  then a.p + replace2(b.p, index - length.a.p, value)
-  else replace2(a.p, index, value)+ b.p
 
 Function last(a:seq.T)T a_length.a
 
 Function isempty(a:seq.T)boolean length.a = 0
 
 --------------------------
+
+Module otherseq.T
+
+use seq.T
+
+use stdlib
+
+Function ≠(a:T, b:T)boolean not(a = b)
+
+Function ≤(a:T, b:T)boolean not(a > b)
+
+Function ≥(a:T, b:T)boolean not(b > a)
+
+Function <(a:T, b:T)boolean b > a
+
+Function =(T, T)boolean unbound
+
+Function >(a:T, b:T)boolean unbound
+
+Function reverse(s:seq.T)seq.T @(+,_(s), empty:seq.T, arithseq(length.s, 0 - 1, length.s))
+
+Function removedups(a:seq.T, b:seq.T, c:int)seq.T 
+ if c = 0 
+  then b 
+  else if a_c in b then removedups(a, b, c - 1)else removedups(a, b + a_c, c - 1)
+
+Function removedups(a:seq.T)seq.T removedups(a, empty:seq.T, length.a)
 
 type cseq is sequence len:int, element:T
 
@@ -185,6 +193,9 @@ dseq lets a sequence have a default value even beyond the length of the seq.
 
 type dseq is sequence length:int, default:T, data:seq.T
 
+function todseq(s:seq.T)dseq.T builtin.FROMSEQ
+
+
 Function_(d:dseq.T, i:int)T 
  if i > length.data.d then default.d else data(d)_i
 
@@ -198,6 +209,14 @@ Function replace(a:seq.T, b:int, v:T)seq.T
 Function dseq(d:T)seq.T toseq.dseq(1, d, [ d])
 
 Function dseq(d:T, s:seq.T)seq.T toseq.dseq(1, d, s)
+
+function replace2(s:seq.T, index:int, value:T)seq.T 
+ let p = topseq.s 
+  if length.p = 0 
+  then @(+,_.s, @(+,_.s, empty:seq.T, arithseq(index - 1, 1, 1))+ value, arithseq(length.s - index, 1, index + 1))
+  else if index > length.a.p 
+  then a.p + replace2(b.p, index - length.a.p, value)
+  else replace2(a.p, index, value)+ b.p
 
 ______________________________________
 

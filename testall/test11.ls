@@ -1,3 +1,10 @@
+#!/usr/local/bin/tau
+
+
+
+  
+run test11 test11
+
 Module test11
 
 use oseq.int
@@ -6,15 +13,18 @@ use point.int
 
 use seq.boolean
 
-use seq.char
-
 use seq.int
+
+use otherseq.int
+
+use ipair.word
 
 use seq.ordering
 
+use otherseq.word
+
 use stdlib
 
-Function dummyfunction int 3
 
 function t001 boolean 0 - 4 = 1 - 2 - 3
 
@@ -106,16 +116,53 @@ Function t032 boolean @(∧, isbyte, true, [ 23, 4, 5, 255, 7, 2, 255])
 
 Function t033 boolean 6 = toint(if true then"3"_1 else"5"_1)+ 3
 
-Function t034 boolean 
+function t034 boolean 
  3464 = 3456+(if true then 3 else  1 )+5
+ 
+function print(a:seq.int)seq.word 
+ "["+ @(seperator(","), toword,"", a)+"]"
 
-Function test11 seq.word 
- let y = [ t002, t003, t004, t005, t006, t007, t008, t009, t010, t011 
+
+Function t503 boolean"[ 2, 3, 4, 5]"= print.[ 2, 3, 4, 5]
+
+Function t504 boolean 10 = @(+, *(1), 0, [ 1, 2, 3, 4])
+
+Function t505 boolean 24 = @(*, *(1), 1, [ 1, 2, 3, 4])
+
+Function t506 boolean [ 1, 2, 3, 4]= @(+, +(empty:seq.int), empty:seq.int, [ 1, 2, 3, 4])
+
+Function t508 boolean 
+ let a = 6 * 6 
+   a + a = 72
+   
+Function t510 boolean 
+ "a b c d e 1 2 3 4 k"= replace("a b c d e"+"1 2 3 4 5", 10,"k"_1)
+
+Function t511 boolean"1 2 k 4 5"= replace("1 2 3 4 5", 3,"k"_1)
+
+Function t523 boolean @(-, identity, 100, [ 1, 2])= 97
+
+function modr(a:int, b:int)int b mod a + 1
+
+function incrementcount(s:seq.int, i:int)seq.int replace(s, i, s_i + 1)
+
+function print(i:ipair.word)seq.word [ toword.index.i]+":"+ value.i
+
+Function t509 boolean 
+ let s = @(incrementcount, identity, constantseq(100, 0), @(+, modr(100), empty:seq.int, randomseq(3456, 100001)))
+  let totalcounts = @(+, identity, 0, s)
+   length.s = 100 ∧ totalcounts = 100001
+
+
+
+
+use checking
+
+
+Function test11 seq.word
+ let y = [ t001,t002, t003, t004, t005, t006, t007, t008, t009, t010, t011 
   , t012, t013, t014, t015, t016, t017, t018, t019, t020, t021 
   , t022, t023, t024, t025, t026, t027, t028, t029, t030, t031 
-  , t032, t033, t034]
-  let x = @(+, check(y),"", arithseq(length.y, 1, 1))
-   if x =""then"PASS test11"else"FAIL test11"+ x
-
-Function check(l:seq.boolean, i:int)seq.word if l_i then""else [ toword.i]
-
+  , t032, t033, t034,t503,t504,t505,t506,t508,t510,t511,t523,t509]
+  check(y,"test11") 
+  
