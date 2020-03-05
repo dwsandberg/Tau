@@ -1,3 +1,5 @@
+#!/usr/local/bin/tau
+
 Module testopt
 
 run testopt testopt

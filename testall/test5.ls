@@ -69,7 +69,7 @@ function print(a:seq.int)seq.word
  "["+ @(seperator(","), toword,"", a)+"]"
 
 Function t502 boolean 
- "23.45000"+ [ space]+"-18.45000"= print(5, 23.45)+ print(5, 5.0 - 23.45)
+ "23.45000 - 18.45000"= print(5, 23.45)+ print(5, 5.0 - 23.45)
 
 
 function showcodes(i:int)seq.word [ toword.i, encodeword.[ char.i]]

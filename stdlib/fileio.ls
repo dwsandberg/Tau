@@ -29,8 +29,6 @@ use textio
 
 use seq.UTF8
 
-use bits
-
 Function type:outputformat internaltype export
 
 Function type:fileresult internaltype export

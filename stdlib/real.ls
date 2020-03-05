@@ -7,7 +7,7 @@ use stdlib
 
 use otherseq.real
 
-use subreal
+
 
 
 type real is record representation:int
@@ -76,63 +76,10 @@ Function makereal(whole:int, decdigits:int)real
 Function print( decimals:int,rin:real) seq.word export
 
 
-Function reallit(s:UTF8)real export 
-
-
-Function toUTF8(rin:real, decimals:int) UTF8 export
-
-
 
 
 -------------
 
-module subreal 
 
-use real
-
-use stdlib
-
-use UTF8
-
-
-use words
-
-use seq.char
-
-use textio
-
-Function print( decimals:int,rin:real)seq.word 
- {(if rin < 0.0 then [ space]else empty:seq.word)+ towords.toUTF8(rin, decimals)}
-
-
-Function toUTF8(rin:real, decimals:int) UTF8
- if rin ? toreal.0 = LT 
-  then   encodeUTF8.hyphenchar + toUTF8(toreal.0 - rin, decimals)
-  else let a = 10^decimals 
-  let r = rin + 1.0 / toreal(a * 2)
-    if decimals > 0 
-   then toUTF8.intpart.r +encodeUTF8.periodchar+ lpad(toseqint.toUTF8.intpart((r - toreal.intpart.r)* toreal.a), decimals)
-   else toUTF8.intpart.r 
-
-
-Function reallit(s:UTF8)real reallit(toseqint.s,-1, 1, 0, 1)
-
-
-function reallit(s:seq.int, decimals:int, i:int, val:int, neg:int)real 
- if i > length.s 
-  then let r = if decimals < 1 then toreal.val  else makereal(val,decimals) 
-   if neg < 1 then-(1.0 * r)else r 
-  else if between(s_i, 48, 57)
-  then reallit(s, if decimals =-1 then-1 else decimals + 1, i + 1, 10 * val + s_i - 48, neg)
-  else if s_i = 32 ∨ s_i = toint.commachar 
-  then reallit(s, decimals, i + 1, val, neg)
-  else if i < 3 ∧ s_i = toint.hyphenchar 
-  then reallit(s, decimals, i + 1, val,-1)
-  else if i < 3 ∧ s_i = toint.(decodeword."+"_1 )_1
-  then reallit(s, decimals, i + 1, val,1)
-  else assert s_i = toint.periodchar report"unexpected character in real literal"+ encodeword.tocharseq.s 
-  reallit(s, decimals + 1, i + 1, val, neg)
-
-Function lpad(l:seq.int, n:int) UTF8 UTF8(constantseq(n - length.l, 48)+ l)
 
 

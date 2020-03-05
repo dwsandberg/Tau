@@ -3,7 +3,7 @@
 Module stdlib 
 
 Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates  deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 opt2 oseq packedseq parse pass1 pass2 persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash 
- timestamp maindict uses 
+ timestamp maindict words uses 
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  unsafe packedseq   process real reconstruct seq set stack stacktrace 
  stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode pass2  libdescfunc otherseq words mangle
@@ -51,9 +51,6 @@ Function colon word {":"_1 }
 Function space word encodeword.[ char.32]
 
 Function EOL word encodeword.[ char.10]
-
-
-
 
 
 * EQ GT and LT are the possible results of ? operator
@@ -161,7 +158,7 @@ Function randomseq(seed:int, length:int)seq.int @(addrandom, identity, [ seed], 
 
 Function randomint(i:int)seq.int builtin.usemangle
 
-Function lines(a:seq.word, b:seq.word)seq.word a + EOL + b
+/Function lines(a:seq.word, b:seq.word)seq.word a + EOL + b
 
 Function seperator(sep:seq.word, s:seq.word, w:seq.word)seq.word 
  if length.s = 0 then w else s + sep + w
@@ -282,16 +279,44 @@ Function alphasort(a:seq.word)seq.word export
 
 Function alphasort(a:seq.seq.word)seq.seq.word export
 
+type char is record toint:int
+
+Function =(a:char,b:char) boolean toint.a=toint.b
+
+Function ?(a:char,b:char) ordering toint.a ? toint.b
+
+Function hash(a:char) int hash.toint.a
+
+
+Function type:char internaltype  export
+
+Function type:seq.char internaltype  export
+
+Function toint(char) int export
+
+Function char(int) char export
+
+Function  char1(s:seq.word) char  (decodeword.(s_1))_1 
+
+Function encodeword(a:seq.char)word  export
+
+Function decodeword(w:word)seq.char export
+
+Function print( decimals:int,rin:real) seq.word export
+
+
+use seq.char
+
   
 * usegraph include  xxhash encoding   bits  words real subreal
 stacktrace  textio reconstruct  UTF8  seq otherseq
-blockseq packedseq bitpackedseq stdlib exclude stdlib seq  
+blockseq packedseq stdlib exclude stdlib seq  
 
 
 
 
 * usegraph include  prims   tree  graph ipair libscope internalbc
-process stack set   format groupparagraphs   dict fileio
+process stack set   format groupparagraphs   dict fileio bitpackedseq 
 exclude stdlib seq 
 
 * usegraph include  main2 libscope display constant codegen convert 
@@ -302,93 +327,5 @@ symbol parse libdescfunc internalbc intercode cvttoinst codegen
 exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process  ipair deepcopy
 bitpackedseq packedseq fileio blockseq textio encoding words
    
-
-module words
-
-use stdlib
-
-use encoding.seq.int
-
-use seq.char
-
-use seq.alphaword
-
-use otherseq.alphaword
-
-use otherseq.int
-
-use otherseq.char
-
-use otherseq.seq.alphaword
-
-use seq.alphaword
-
-
-
-use seq.seq.alphaword
-
-
-
-use UTF8
-
-use words
-
-Function type:word  internaltype  export
-
-
-type wordencoding is encoding seq.char
-
-Function wordencoding erecord.seq.char export
-
-type word is record asencoding:encoding.seq.char
-
-Function asencoding(w:word) encoding.seq.char export
-
-Function word(encoding.seq.char) word export
-
-Function add(erecord.seq.char,seq.encodingrep.seq.char) int export
-
-Function encodeword(a:seq.char)word  word.encode(wordencoding,a)
-
-Function decodeword(w:word)seq.char decode( wordencoding,asencoding.w)
-
-Function hash(a:word)int hash.asencoding.a
-
-Function =(a:word, b:word)boolean asencoding.a = asencoding.b
-
-Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
-
-Function merge(a:seq.word)word 
- // make multiple words into a single word. // encodeword.@(+, decodeword, empty:seq.char, a)
-
-* Functions to perform alphabetical sorting
-
-Function type:alphaword internaltype export
-
-
-type alphaword is record toword:word
-
-Function alphaword(word)alphaword export
-
-Function toword(alphaword)word export
-
-Function toalphaseq(a:seq.word)seq.alphaword 
- // This is just a type change and the compiler recognizes this and does not generate code // 
-  @(+, alphaword, empty:seq.alphaword, a)
-
-Function ?(a:alphaword, b:alphaword)ordering 
- if toword.a = toword.b then EQ else decodeword.toword.a ? decodeword.toword.b
-
-Function towordseq(a:seq.alphaword)seq.word @(+, toword, empty:seq.word, a)
-
-Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
-
-Function ?(a:seq.alphaword, b: seq.alphaword)ordering export
-
-use seq.seq.alphaword
-
-Function alphasort(a:seq.seq.word)seq.seq.word 
- let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
-  @(+, towordseq, empty:seq.seq.word, sort.b)
 
 

@@ -5,13 +5,12 @@ use stdlib
 
 use seq.char
 
-use bits
 
 use stacktrace
 
 use words
 
-
+use real
 
 type UTF8 is record toseqint:seq.int
 
@@ -28,24 +27,6 @@ Function =(a:UTF8, b:UTF8)boolean toseqint.a = toseqint.b
 Function UTF8(seq.int)UTF8 export
 
 Function toseqint(UTF8)seq.int export
-
-
-type char is record toint:int
-
-Function =(a:char,b:char) boolean toint.a=toint.b
-
-Function ?(a:char,b:char) ordering toint.a ? toint.b
-
-Function hash(a:char) int hash.toint.a
-
-
-Function type:char internaltype  export
-
-Function type:seq.char internaltype  export
-
-Function toint(char) int export
-
-Function char(int) char export
 
 
 Function commachar char char.44
@@ -144,4 +125,48 @@ Function  tocharseq(a:seq.int) seq.char // builtin.NOOP //
 // This is just a type change and the compiler recognizes this and does not generate code // 
   @(+, char, empty:seq.char, a)
 
+
+_________________
+
+
+Function print( decimals:int,rin1:real)seq.word 
+ let neg= rin1 ? toreal.0 = LT  
+ let rin=if neg then toreal.0 - rin1 else rin1
+ let a = 10^decimals 
+  let r = rin + 1.0 / toreal(a * 2)
+  let r2=  if decimals > 0 
+   then  [ toword.intpart.r ,"."_1, encodeword(tocharseq.toseqint.lpad(toseqint.toUTF8.intpart((r - toreal.intpart.r)* toreal.a), decimals))]
+   else  [ toword.intpart.r] 
+   if neg then "-"+r2 else r2 
+
+
+Function toUTF8(rin:real, decimals:int) UTF8
+ if rin ? toreal.0 = LT 
+  then   encodeUTF8.hyphenchar + toUTF8(toreal.0 - rin, decimals)
+  else let a = 10^decimals 
+  let r = rin + 1.0 / toreal(a * 2)
+    if decimals > 0 
+   then toUTF8.intpart.r +encodeUTF8.periodchar+ lpad(toseqint.toUTF8.intpart((r - toreal.intpart.r)* toreal.a), decimals)
+   else toUTF8.intpart.r 
+
+
+Function reallit(s:UTF8)real reallit(toseqint.s,-1, 1, 0, 1)
+
+
+function reallit(s:seq.int, decimals:int, i:int, val:int, neg:int)real 
+ if i > length.s 
+  then let r = if decimals < 1 then toreal.val  else makereal(val,decimals) 
+   if neg < 1 then-(1.0 * r)else r 
+  else if between(s_i, 48, 57)
+  then reallit(s, if decimals =-1 then-1 else decimals + 1, i + 1, 10 * val + s_i - 48, neg)
+  else if s_i = 32 ∨ s_i = toint.commachar 
+  then reallit(s, decimals, i + 1, val, neg)
+  else if i < 3 ∧ s_i = toint.hyphenchar 
+  then reallit(s, decimals, i + 1, val,-1)
+  else if i < 3 ∧ s_i = toint.(decodeword."+"_1 )_1
+  then reallit(s, decimals, i + 1, val,1)
+  else assert s_i = toint.periodchar report"unexpected character in real literal"+ encodeword.tocharseq.s 
+  reallit(s, decimals + 1, i + 1, val, neg)
+
+Function lpad(l:seq.int, n:int) UTF8 UTF8(constantseq(n - length.l, 48)+ l)
 
