@@ -8,7 +8,6 @@ use stdlib
 
 use encoding.seq.int
 
-use seq.char
 
 use seq.alphaword
 
@@ -30,7 +29,7 @@ use seq.seq.alphaword
 
 use UTF8
 
-use words
+
 
 Function type:word  internaltype  export
 

@@ -13,7 +13,6 @@ use format
 use mangle
 
 
-use seq.char
 
 use seq.int
 
@@ -37,7 +36,7 @@ use stdlib
 
 use symbol
 
-use words
+
 
 Function getheader(s:seq.word)seq.word 
  if length.s < 3 

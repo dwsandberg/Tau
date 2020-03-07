@@ -44,9 +44,9 @@ use deepcopy.intercode
 
 use intercode
 
-use UTF8
 
-use words
+
+
 
 Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)intercode 
 PROFILE.
@@ -206,7 +206,7 @@ Function calls( t:tree.seq.word)seq.word
  @(+, calls, empty:seq.word, sons.t)+ if inst.t ="FREF"_1 
   then [ arg.t]
   else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 
-  CRECORD STKRECORD  "
+  CRECORD STKRECORD TESTOPT "
   then empty:seq.word 
   else [ inst.t]
 
@@ -214,7 +214,7 @@ Function calls(self:word, t:tree.seq.word)seq.arc.word
  @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.t ="FREF"_1 
   then [ arc(self, arg.t)]
   else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 
-  CRECORD STKRECORD"
+  CRECORD STKRECORD TESTOPT"
   then empty:seq.arc.word 
   else // let a = codedown.inst.t if length.a > 1 ∧(a_2 ="builtin")then empty:seq.arc.word else // 
   [ arc(self, inst.t)]

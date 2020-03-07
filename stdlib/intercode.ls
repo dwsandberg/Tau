@@ -72,7 +72,7 @@ use seq.inst
 
 use seq.seq.int
 
-use words
+
 
 Function print(c:intercode,i:inst) seq.word
       towords.i+     @(+, towords2, ""  ,       @(+,_.coding.c,empty:seq.inst, (codes.c)_index.i))

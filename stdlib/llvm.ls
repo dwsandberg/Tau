@@ -62,9 +62,7 @@ use mangle
 
 use UTF8
 
-use words
 
-use seq.char
 
 Function type:llvmtype internaltype export
 

@@ -18,7 +18,6 @@ use libscope
 
 use llvm
 
-use seq.char
 
 use persistantseq.encodingrep.seq.char
 

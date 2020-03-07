@@ -11,9 +11,9 @@ use stack.word
 
 use stdlib
 
-use UTF8
 
-use words
+
+ 
 
 Function processpara(t:seq.word)seq.word 
  processpara(t, 1, 1,"", push(empty:stack.seq.word,""))
@@ -123,8 +123,6 @@ Function htmlheader seq.word
  {"<meta charset = &quot UTF-8 &quot > <style type = &quot text/css &quot > <!--span.avoidwrap { display:inline-block ; } span.keyword { color:blue ; } span.keywords { color:blue ; } span.literal { color:red ; } span.comment { color:green ; } span.block { padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ; } form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style>"+ EOL }
 
 Function addamp(w:word)word encodeword.@(+, addamp, empty:seq.char, decodeword.w)
-
-use seq.char
 
 Function addamp(ch:char)seq.char 
  if ch = char.60 

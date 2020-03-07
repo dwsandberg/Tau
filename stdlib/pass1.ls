@@ -408,7 +408,7 @@ function postbind2(org:symbol, dict:set.symbol, modpara:mytype, templates:symbol
   then 
    replace(knownsymbols, changesrc(thissymbol, result))
   else 
-   if code_i in"IDXUC FREF if assertZbuiltinZwordzseq NOINLINE "
+   if code_i in"IDXUC FREF if assertZbuiltinZwordzseq NOINLINE TESTOPT"
   then postbind2(org, dict, modpara, templates, knownsymbols, code, i + 1, result + code_i, thissymbol)
   else if code_i ="WORDS"_1
   then 
@@ -510,7 +510,6 @@ function definefld(src:seq.word, modname:mytype, t:seq.mytype, m:mytype)symbol
  symbol(abstracttype.m, modname, t, parameter.m, src)
 
 
-use seq.char
 
 function hasT (s:seq.word,i:int) boolean
   // used to determine it type T is specified somewhere in function sig //

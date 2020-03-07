@@ -1,8 +1,7 @@
 Module opt2
 
-use UTF8
 
-use words
+
 
 
 use seq.seq.tree.seq.word

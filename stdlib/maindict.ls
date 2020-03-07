@@ -31,7 +31,6 @@ module maindict
  
  use fileio
  
- use seq.char
  
  use set.word
  
@@ -87,7 +86,7 @@ use real
 use UTF8
 
 
-use words
+
 
 function newplace place place(empty:seq.int,0,empty:seq.int)
 

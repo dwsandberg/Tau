@@ -22,7 +22,6 @@ use llvm
 
 use seq.Lcode
 
-use seq.char
 
 
 use seq.inst
@@ -58,7 +57,6 @@ use stdlib
 
 use textio
 
-use seq.char
 
 use bits
 
@@ -68,7 +66,7 @@ use otherseq.llvmtype
 
 use UTF8
 
-use words
+
 
 function funcdec(f:inst)seq.int 
  let discard = C.mangledname.f 

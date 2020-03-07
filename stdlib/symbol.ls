@@ -22,9 +22,9 @@ use worddict.symbol
 
 use seq.char
 
-use UTF8
 
-use words
+
+
 
 Function ?(a:mytype, b:mytype)ordering 
  let y = towords(a)_length.towords.a ? towords(b)_length.towords.b 
@@ -90,7 +90,7 @@ Function flags(s:symbol)seq.word flags(src.s, length.src.s)
 function flags(src:seq.word, i:int)seq.word 
  if i = 0 
   then""
-  else if src_i in"VERYSIMPLE EXTERNAL STATE NOINLINE INLINE SIMPLE COMPLEX FORCEINLINE PROFILE"
+  else if src_i in"VERYSIMPLE EXTERNAL STATE NOINLINE INLINE SIMPLE COMPLEX FORCEINLINE PROFILE TESTOPT"
   then flags(src, i - 1)+ src_i 
   else if src_i in"STATEZinternal1Zinternal1"
   then flags(src, i - 1)+"STATE"

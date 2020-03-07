@@ -6,7 +6,8 @@ Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates  deepcopy e
  timestamp maindict words uses 
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  unsafe packedseq   process real reconstruct seq set stack stacktrace 
- stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode pass2  libdescfunc otherseq words mangle
+ stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode  pass1  libdescfunc otherseq words mangle
+ worddict parse
 
 
 use UTF8
@@ -292,6 +293,25 @@ Function type:char internaltype  export
 
 Function type:seq.char internaltype  export
 
+Function length(seq.char) int export
+
+Function empty:seq.char seq.char export
+
+Function +(seq.char, seq.char) seq.char export
+
+Function isempty(seq.char) boolean export
+
+Function _(seq.char, int) char export
+
+Function _(pseq.char, int) char export
+
+Function subseq(seq.char, int, int) seq.char export
+
+Function =(seq.char, seq.char) boolean export
+
+Function +(seq.char, char) seq.char export
+
+
 Function toint(char) int export
 
 Function char(int) char export
@@ -309,14 +329,14 @@ use seq.char
 
   
 * usegraph include  xxhash encoding   bits  words real subreal
-stacktrace  textio reconstruct  UTF8  seq otherseq
+stacktrace  textio reconstruct  UTF8  seq otherseq fileio
 blockseq packedseq stdlib exclude stdlib seq  
 
 
 
 
 * usegraph include  prims   tree  graph ipair libscope internalbc
-process stack set   format groupparagraphs   dict fileio bitpackedseq 
+process stack set   format groupparagraphs    bitpackedseq maindict worddict
 exclude stdlib seq 
 
 * usegraph include  main2 libscope display constant codegen convert 

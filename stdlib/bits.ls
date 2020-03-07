@@ -1,13 +1,5 @@
 Module bits
 
-use UTF8
-
-
-
-
-
-use seq.bit
-
 
 use stdlib
 

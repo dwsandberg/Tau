@@ -3,12 +3,11 @@ Module UTF8
 
 use stdlib
 
-use seq.char
 
 
 use stacktrace
 
-use words
+
 
 use real
 

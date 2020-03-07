@@ -18,7 +18,7 @@ use seq.seq.word
 
 use stdlib
 
-use words
+
 
 use encoding.seq.char
 
@@ -136,7 +136,6 @@ Function replaceT(with:mytype, m:mytype)mytype
   then mytype(towords.with + subseq(towords.m, 2, length.towords.m))
   else m
 
-use seq.char
 
 Function replaceT(with:mytype, name:word)word 
  if name = merge."empty:seq.T"
@@ -157,7 +156,7 @@ use stdlib
 
 use UTF8
 
-use words
+
 
 use seq.char
 

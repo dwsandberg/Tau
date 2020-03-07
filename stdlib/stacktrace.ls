@@ -4,9 +4,9 @@ use mangle
 
 use stdlib
 
-use UTF8
 
-use words
+
+
 
 Function callstack(n:int)seq.int builtin.usemangle
 

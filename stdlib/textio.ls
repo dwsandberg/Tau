@@ -13,7 +13,7 @@ use stdlib
 
 use otherseq.int
 
-use words
+
 
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqint.a, 2, 1, empty:seq.UTF8)
@@ -88,7 +88,6 @@ Function towords(a:seq.char)seq.word towords2(a, 1, 1, empty:seq.word)
 
 function spacechar char char.32
 
-use seq.char
 
 function openparenchar char char.40
 
