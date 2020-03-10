@@ -9,6 +9,8 @@ use stacktrace
 
 use stdlib
 
+use deepcopy.boolean
+
 type seq is sequence length:int, x:T
 
 Function sizeoftype:T int export
@@ -49,7 +51,7 @@ subin is helper function
 Function subin(a:T, s:seq.T, i:int)boolean 
  if i = 0 then false else if a = s_i then true else subin(a, s, i - 1)
 
-Function in(a:T, s:seq.T)boolean subin(a, s, length.s)
+Function in(a:T, s:seq.T)boolean NOINLINE.subin(a, s, length.s)
 
 Function identity(a:T)T a
 

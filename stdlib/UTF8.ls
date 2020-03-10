@@ -162,7 +162,7 @@ function reallit(s:seq.int, decimals:int, i:int, val:int, neg:int)real
   then reallit(s, decimals, i + 1, val, neg)
   else if i < 3 ∧ s_i = toint.hyphenchar 
   then reallit(s, decimals, i + 1, val,-1)
-  else if i < 3 ∧ s_i = toint.(decodeword."+"_1 )_1
+  else if i < 3 ∧ s_i = toint.char1."+" 
   then reallit(s, decimals, i + 1, val,1)
   else assert s_i = toint.periodchar report"unexpected character in real literal"+ encodeword.tocharseq.s 
   reallit(s, decimals + 1, i + 1, val, neg)

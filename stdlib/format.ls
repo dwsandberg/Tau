@@ -85,7 +85,7 @@ Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.wo
   function needsEOL(x:seq.word,i:int) boolean
 // adds EOL only if no EOL is  present //
 if i=0 then false
-  else if x_i=space then needsEOL(x,i-1)
+  else if x_i=space then needsEOL(x,i- 1)
   else   if x_i=EOL then false else true  
  
 
@@ -125,9 +125,9 @@ Function htmlheader seq.word
 Function addamp(w:word)word encodeword.@(+, addamp, empty:seq.char, decodeword.w)
 
 Function addamp(ch:char)seq.char 
- if ch = char.60 
+ if ch = char1."<" 
   then decodeword("&lt;"_1)
-  else if ch = char.38 then decodeword("&amp;"_1)else [ ch]
+  else if ch = char1."&"  then decodeword("&amp;"_1)else [ ch]
   
 Function prettynoparse(s:seq.word)seq.word 
   // format function  without first parsing it //

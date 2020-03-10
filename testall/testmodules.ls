@@ -157,7 +157,7 @@ use seq.char
 function int2seq(n:bits, result:seq.char,digits:int) word 
 if digits = 0 then encodeword.result 
 else  
-int2seq(n >> 4,     [decodeword("0123456789ABCDEF"_1)_((toint(n &and bits(15))+1)     )]+result ,digits-1)
+int2seq(n >> 4,     [decodeword("0123456789ABCDEF"_1)_((toint(n &and bits(15))+1)     )]+result ,digits- 1)
 
 
 

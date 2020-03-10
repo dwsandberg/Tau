@@ -274,6 +274,8 @@ Function +(seq.seq.word, seq.seq.word)seq.seq.word export
 
 Function +(a:seq.word, b:seq.word)seq.word export
 
+Function nbspchar char export
+
 
 Function alphasort(a:seq.word)seq.word export 
 

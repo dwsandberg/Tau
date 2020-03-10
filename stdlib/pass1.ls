@@ -379,14 +379,14 @@ desc:seq.word,symbols:seq.symbol)
 
 function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset, code:seq.word, thissymbol:symbol, org:symbol)symbolset 
   let i= if code_1 = "parsedfunc"_1  then  3 + toint(code_2) else 1
-    let result=if i=1 then "" else subseq(code,1,i-1) 
+    let result=if i=1 then "" else subseq(code,1,i- 1) 
      if code_i ="WORDS" _1 then
      let l=toint(code_(i+1))+ 2+i
        if l ≤ length.code ∧ code_l="builtinZinternal1Zwordzseq"_1 
      then 
         replace(knownsymbols, changesrc(thissymbol, result+subseq(code, i+2, length.code)))
       else 
-     postbind2(org, dict, modpara, templates, knownsymbols, code, l, result+subseq(code, i,   l-1), thissymbol)
+     postbind2(org, dict, modpara, templates, knownsymbols, code, l, result+subseq(code, i,   l - 1), thissymbol)
      else if code_i  in "usemangleZinternal1"  
   then 
      let builtinname = mangle(name.thissymbol, mytype."builtin", paratypes.thissymbol)
@@ -413,7 +413,7 @@ function postbind2(org:symbol, dict:set.symbol, modpara:mytype, templates:symbol
   else if code_i ="WORDS"_1
   then 
      let l=toint(code_(i + 1))+ 2
-     postbind2(org, dict, modpara, templates, knownsymbols, code, i + l, result + subseq(code, i, i + l-1), thissymbol)
+     postbind2(org, dict, modpara, templates, knownsymbols, code, i + l, result + subseq(code, i, i + l- 1), thissymbol)
   else if code_i ="COMMENT"_1
   then postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2 + toint(code_(i + 1)), result + subseq(code, i, i + 1 + toint(code_(i + 1))), thissymbol)
   else if code_i in"LIT APPLY RECORD SET PARAM PRECORD WORD"

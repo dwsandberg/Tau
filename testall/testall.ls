@@ -52,7 +52,7 @@ Function testall seq.word
  , print(5, tan(pi / 4.0))="1.00000"
  , print(5, arcsin.sin.0.5)="0.50000"
  , print(5, arccos.cos.0.5)="0.50000"
- ,-2^4 =-16 
+ ,- 2^4 =-16 
  , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"="1 C addcomma function i int merge s segment seq seq toword toword word"
  , @(seperator("/")
  , identity 

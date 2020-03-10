@@ -1,3 +1,10 @@
+#!/usr/local/bin/tau
+
+
+
+  
+run test5 standalonechars
+
 Module test5
 
 use UTF8
@@ -85,16 +92,15 @@ Function t507 boolean
 
 function t519 boolean"&quot()+,-.:= []^_"= standalonechars
 
-function ttt(c:int)seq.word if classify.c = 1 then [ encodeword.[ char.c]]else""
+function ttt(c:int)seq.word
+let class=classifychar_c
+ if class in "0 SPACE" then "" else [class]
 
-Function standalonechars seq.word @(+, ttt,"", arithseq(127, 1, 0))
+Function standalonechars seq.word
+ @(+, ttt,"", arithseq(length.classifychar, 1, 1))
 
 Function t524 boolean 
  // testing UNICODE to word conversion and no-break space in integer 8746 // decodeword."1 2∪"_1 = [ char.49, char.160, char.50, char.87 46]
-
-
-
-
 
 
 

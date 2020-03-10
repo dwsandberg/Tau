@@ -48,6 +48,11 @@ Function breakparagraph(a:UTF8)seq.UTF8 breakparagraph(toseqint.a, 1, 1, empty:s
 
 function blankline(a:seq.int, i:int)int 
  // returns 0 if no new line is found before next non white char otherwise returns index of newline // 
+    let t=a_i
+    if t=10 then i  
+    else if t > length.classifychar &or t=0 then 0
+    else if classifychar_t="SPACE"_1 then blankline(a, i + 1) else 0
+ 
   if classify(a_i)= 3 then if a_i = 10 then i else blankline(a, i + 1)else 0
 
 Function breakparagraph(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8 
@@ -63,62 +68,46 @@ Function breakparagraph(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
    else breakparagraph(a, i + 1, last, result)
   else breakparagraph(a, i + 1, last, result)
 
-Function classify(c:int)int 
- // clasify charactor as standalone(1)whitespace(3)or other(0)// 
-  if c > 127 
-  then 0 
-  else [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-  3, 0, 0, 3, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 
-  1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 
-  0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0]_(c + 1)
+
+
+Function classifychar seq.word
+"0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 SPACE 0 &quot 0 0 0 0 0()0 +,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ 0]^_"
+
 
 Function towords(a:UTF8)seq.word towords(decodeUTF8.a)
 
 Function towords(a:seq.char)seq.word towords2(a, 1, 1, empty:seq.word)
 
 
-function spacechar char char.32
-
-
-function openparenchar char char.40
-
-function closeparenchar char char.41
-
-
 
 function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word 
+  let spacechar=char.32
  if i > length.a 
   then if last > length.a then result else result + [ encodeword.subseq(a, last, length.a)]
   else let t = a_i 
-  if t = spacechar 
-  then towords2(a, i + 1, i + 1, if last = i then result else result + encodeword.subseq(a, last, i - 1))
-  else if t = commachar 
-  then towords2(a, i + 1, i + 1, if last = i then result +","else result + encodeword.subseq(a, last, i - 1)+",")
-  else if t = periodchar 
-  then if i + 1 ≤ length.a ∧ a_(i + 1)= spacechar 
-   then towords2(a, i + 2, i + 2, if last = i 
+  if toint(t) >  length.classifychar  &or t=char(0) 
+  then towords2(a, i + 1, last, result) 
+  else
+   let class = classifychar_toint.t 
+  if class = "0"_1
+  then towords2(a, i + 1, last, result)
+  else if class="SPACE"_1 then
+     towords2(a, i + 1, i + 1,if last = i then result else result+ encodeword.subseq(a, last, i - 1))
+  else 
+    if  class="-"_1 &and i + 1 ≤ length.a ∧  between(toint(a_(i + 1)), 48, 57) then
+    towords2(a, i+2 , i , if last = i 
+    then result 
+    else result + encodeword.subseq(a, last, i - 1))
+  else if t = periodchar &and i + 1 ≤ length.a ∧ a_(i + 1)= spacechar
+  then  towords2(a, i + 2, i + 2, if last = i 
     then result + encodeword.[ periodchar, spacechar]
     else result + encodeword.subseq(a, last, i - 1)+ encodeword.[ periodchar, spacechar])
-   else towords2(a, i + 1, i + 1, if last = i then result +"."else result + encodeword.subseq(a, last, i - 1)+".")
-  else if t = openparenchar 
-  then towords2(a, i + 1, i + 1, if last = i then result +"("else result + encodeword.subseq(a, last, i - 1)+"(")
-  else if t = closeparenchar 
-  then towords2(a, i + 1, i + 1, if last = i then result +")"else result + encodeword.subseq(a, last, i - 1)+")")
-  else let class = classify.toint.t 
-  if class = 0 
-  then towords2(a, i + 1, last, result)
-  else let newresult = (if last = i then result else result+ encodeword.subseq(a, last, i - 1))
-           + if class = 3 then""else [ encodeword.[ a_i]]
-  towords2(a, i + 1, i + 1, newresult)
+  else  
+    towords2(a, i + 1, i + 1, 
+   (if last = i then result else result+ encodeword.subseq(a, last, i - 1)) + class )
+  
 
 ________
 

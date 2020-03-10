@@ -69,8 +69,8 @@ Function loaddict (file:fileresult) int
 function get2(data:seq.int,i:int) seq.encodingrep.seq.char
  // file is built by append new data to the end followed by two words. The first is the start of the new data and the second is the size of 
  the data before the new data was appended.  To read the file the appended segements are combined into one long sequence. //
-  if data_i=0 then getseq2:encodingrep.seq.char(data, (i-1))
-  else get2(data,data_i)+getseq2:encodingrep.seq.char(data, (i-1))
+  if data_i=0 then getseq2:encodingrep.seq.char(data, (i- 1))
+  else get2(data,data_i)+getseq2:encodingrep.seq.char(data, (i- 1))
 
 function getrecord:encodingrep.seq.char(data:seq.int,i:int) encodingrep.seq.char
     encodingrep(toencoding:seq.char(getint(data,i)),tocharseq.getintseq(data,(i+1)),getint(data,i+2))
@@ -126,7 +126,7 @@ encodeword.tocharseq.y
 Function getintseq(data:seq.int,seqpointer:int) seq.int
          let index=data_seqpointer
          let len= (data)_(index+1)
-         subseq(data,index+2,index+2+len-1)
+         subseq(data,index+2,index+2+len- 1)
 
     
 Function getint(data:seq.int,i:int) int data_i
@@ -168,7 +168,7 @@ Function +(place,T) place unbound
 
 Function _(a:ioseq.T, i:int)T  
    let size=sizeoftype:T
-   let index=  ( offset.a+size * (i-1) +2)
+   let index=  ( offset.a+size * (i- 1) +2)
    //  assert false report "JKLL"+@(+,toword,"",[i,size,index]+data.a) //
    assert between(i,1,(data.a)_(offset.a+1)) report "out of bounds2"
    +@(+,toword,"",[i,size,index]+data.a)

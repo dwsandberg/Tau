@@ -76,7 +76,7 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
       else 
          let a = codedown.inst
          assert a_2="builtin" report [inst]+a_2
-         findindex(einst,inst([ inst,toword(length.a-2)],"builtin",mytype."?"))
+         findindex(einst,inst([ inst,toword(length.a- 2)],"builtin",mytype."?"))
       else      
        index.s_1]
        

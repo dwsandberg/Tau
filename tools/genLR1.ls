@@ -1,3 +1,5 @@
+#!/usr/local/bin/tau
+
 Module genLR1
 
 run genLR1 gentau2
@@ -227,8 +229,9 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word)seq.wo
  "function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.stkele // generated function 
  // &br let rulelen = ["
  + @(seperator(","), rulelength,"", grammarandact)
- +"]_ruleno &br let newstk = pop(stk, rulelen)&br let subtrees = top(stk, rulelen)&br let dict = dict.result.top.
- stk &br let newtree ="
+ +"]_ruleno &br let newstk = pop(stk, rulelen)
+ &br let R =reduction(top(stk, rulelen),input,place) 
+  &br let newtree ="
  + @(+, reduceline(grammarandact),"", arithseq(length.grammarandact, 1, 1))
  +"&br let leftsidetoken = ["
  + @(seperator(","), leftside(alphabet),"", grammarandact)
@@ -239,14 +242,14 @@ function rulelength(a:seq.seq.word)word toword(length.a_1 - 1)
 
 function leftside(alphabet:seq.word, a:seq.seq.word)word toword.findindex(a_1_1, alphabet)
 
-function replace$(w:word)seq.word if w ="$"_1 then"result.subtrees"else [ w]
+function replace$(w:word)seq.word if w ="let"_1 then"&br let"else [ w]
 
 function reduceline(grammerandact:seq.seq.seq.word, i:int)seq.word 
  let s = grammerandact_i 
    if i = length.grammerandact 
     then"&br assert ruleno = //"+ s_1 +"//"+ toword.i +"report &quot invalid rule number &quot + toword.ruleno &br"
     + @(+, replace$,"", s_2)
-    else"&br if ruleno = //"+ s_1 +"//"+ toword.i +"then"+ @(+, replace$,"", s_2)
+    else"&br if ruleno = //"+ s_1 +"//"+ toword.i +"then"+   @(+, replace$,"", s_2)  
     +"else"
 
 Function gentau2 seq.word 
@@ -275,112 +278,114 @@ function tauruleprec seq.seq.word
  ,"∧"
  ,"E E ∨ E"
  ,"∨"]
+ 
+ 
 
 function taurules2 seq.seq.seq.word 
- [ ["G F #","$_1"]
- , ["F W W(FP)T E","createfunc(dict, code.$_2, types.$_4, mytype.gettype.$_6, $_7, input, place)"]
- , ["F W N(FP)T E","createfunc(dict, code.$_2, types.$_4, mytype.gettype.$_6, $_7, input, place)"]
+ [ ["G F #","R_1"]
+ , ["F W W(FP)T E","createfunc(R, code.R_2, types.R_4, R_6, R_7)"]
+ , ["F W N(FP)T E","createfunc(R, code.R_2, types.R_4, R_6, R_7)"]
  , ["F W W T E"
- ,"createfunc(dict, code.$_2, empty:seq.mytype, mytype.gettype.$_3, $_4, input, place)"]
+ ,"createfunc(R, code.R_2, empty:seq.mytype, R_3, R_4)"]
  , ["F W W:T T E"
- ,"let name = [ merge(code.$_2 + &quot:&quot + print.mytype.gettype.$_4)]createfunc(dict, name, empty 
-:seq.mytype, mytype.gettype.$_5, $_6, input, place)"]
+ ,"let name = [ merge(code.R_2 + &quot:&quot + print.mytype.gettype.R_4)]createfunc(R, name, empty 
+:seq.mytype, R_5, R_6)"]
  , ["F W W:T(FP)T E"
- ,"let name = [ merge(code.$_2 + &quot:&quot + print.mytype.gettype.$_4)]createfunc(dict, name, types.
- $_6, mytype.gettype.$_8, $_9, input, place)"]
+ ,"let name = [ merge(code.R_2 + &quot:&quot + print.mytype.gettype.R_4)]createfunc(R, name, types.
+ R_6, R_8, R_9)"]
  , ["F W W is W P"
- ,"assert(code.$_4)_1 in &quot record encoding sequence &quot report errormessage(&quot Expected &em 
- record &em encoding or &em sequence after &em is in type definition got:&quot + code.$_4, input, place 
-)bindinfo(dict, code.$_4 + code.$_2 + code.$_5, types.$_5)"]
- , ["F W T","// use clause // bindinfo(dict, gettype.$_2, empty:seq.mytype)"]
+ ,"assert(code.R_4)_1 in &quot record encoding sequence &quot report errormessage(&quot Expected &em 
+ record &em encoding or &em sequence after &em is in type definition got:&quot + code.R_4, input, place 
+)bindinfo(dict.R, code.R_4 + code.R_2 + code.R_5, types.R_5)"]
+ , ["F W T","// use clause // bindinfo(dict.R, gettype.R_2, empty:seq.mytype)"]
  , ["FP P"
- ,"bindinfo(@(addparameter(cardinality.dict, input, place), identity, dict, types.$_1), &quot &quot, types 
-.$_1)"]
- , ["P T","bindinfo(dict, &quot &quot, [ mytype(gettype.$_1 + &quot:&quot)])"]
- , ["P P, T","bindinfo(dict, &quot &quot, types.$_1 + [ mytype(gettype.$_3 + &quot:&quot)])"]
- , ["P W:T","bindinfo(dict, code.$_1 + code.$_3, [ mytype(gettype.$_3 + code.$_1)])"]
+ ,"bindinfo(@(addparameter(cardinality.dict.R, input, place), identity, dict.R, types.R_1), &quot &quot, types 
+.R_1)"]
+ , ["P T","bindinfo(dict.R, &quot &quot, [ mytype(gettype.R_1 + &quot:&quot)])"]
+ , ["P P, T","bindinfo(dict.R, &quot &quot, types.R_1 + [ mytype(gettype.R_3 + &quot:&quot)])"]
+ , ["P W:T","bindinfo(dict.R, code.R_1 + code.R_3, [ mytype(gettype.R_3 + code.R_1)])"]
  , ["P P, W:T"
- ,"bindinfo(dict, code.$_1 + code.$_3 + code.$_5, types.$_1 + [ mytype(gettype.$_5 + code.$_3)])"]
+ ,"bindinfo(dict.R, code.R_1 + code.R_3 + code.R_5, types.R_1 + [ mytype(gettype.R_5 + code.R_3)])"]
  , ["P comment W:T"
- ,"bindinfo(dict, &quot // &quot + code.$1 + &quot // &quot + code.$_2 + code.$_4, [ mytype(gettype.$_4 + code 
-.$_2)])"]
+ ,"bindinfo(dict.R, &quot // &quot + code.R_1 + &quot // &quot + code.R_2 + code.R_4, [ mytype(gettype.R_4 + code 
+.R_2)])"]
  , ["P P, comment W:T"
- ,"bindinfo(dict, &quot // &quot + code.$3 + &quot // &quot + code.$_1 + code.$_4 + code.$_6, types.$_1 + [ mytype 
-(gettype.$_6 + code.$_4)])"]
+ ,"bindinfo(dict.R, &quot // &quot + code.R_3 + &quot // &quot + code.R_1 + code.R_4 + code.R_6, types.R_1 + [ mytype 
+(gettype.R_6 + code.R_4)])"]
  , ["E W"
- ,"let id = code.$_1 let f = lookupbysig(dict, id_1, empty:seq.mytype, input, place)bindinfo(dict, [ mangledname 
+ ,"let id = code.R_1 let f = lookupbysig(dict.R, id_1, empty:seq.mytype, input, place)bindinfo(dict.R, [ mangledname 
 .f], [ resulttype.f])"]
- , ["E N(L)","unaryop(dict, code.$_1, $_3, input, place)"]
- , ["E W(L)","unaryop(dict, code.$_1, $_3, input, place)"]
+ , ["E N(L)","unaryop(R, code.R_1, R_3)"]
+ , ["E W(L)","unaryop(R, code.R_1, R_3)"]
  , ["E W:T(L)"
- ,"let name = [ merge(code.$_1 + &quot:&quot + print.(types.$_3)_1)]unaryop(dict, name, $_5, input, place 
+ ,"let name = [ merge(code.R_1 + &quot:&quot + print.(types.R_3)_1)]unaryop(R, name, R_5 
 )"]
- , ["E(E)","$_2"]
- , ["E { E }","$_2"]
+ , ["E(E)","R_2"]
+ , ["E { E }","R_2"]
  , ["E if E then E else E"
- ,"let thenpart = $_4 assert(types.$_2)_1 = mytype.&quot boolean &quot report errormessage(&quot cond of 
- if must be boolean &quot, input, place)assert(types.$_4)=(types.$_6)report errormessage(&quot then 
- and else types are different &quot, input, place)let newcode = code.$_2 + code.$_4 + code.$_6 bindinfo(dict 
+ ,"let thenpart = R_4 assert(types.R_2)_1 = mytype.&quot boolean &quot report errormessage(&quot cond of 
+ if must be boolean &quot, input, place)assert(types.R_4)=(types.R_6)report errormessage(&quot then 
+ and else types are different &quot, input, place)let newcode = code.R_2 + code.R_4 + code.R_6 bindinfo(dict.R 
 , newcode + &quot if &quot, types.thenpart)"]
- , ["E E^E","opaction(subtrees, input, place)"]
- , ["E E_E","opaction(subtrees, input, place)"]
- , ["E-E","unaryop(dict, code.$_1, $_2, input, place)"]
- , ["E W.E","unaryop(dict, code.$_1, $_3, input, place)"]
- , ["E N.E","unaryop(dict, code.$_1, $_3, input, place)"]
- , ["E E * E","opaction(subtrees, input, place)"]
- , ["E E-E","opaction(subtrees, input, place)"]
- , ["E E = E","opaction(subtrees, input, place)"]
- , ["E E > E","opaction(subtrees, input, place)"]
- , ["E E ∧ E","opaction(subtrees, input, place)"]
- , ["E E ∨ E","opaction(subtrees, input, place)"]
- , ["L E","$_1"]
- , ["L L, E","bindinfo(dict, code.$_1 + code.$_3, types.$_1 + types.$_3)"]
+ , ["E E^E","opaction(R)"]
+ , ["E E_E","opaction(R)"]
+ , ["E-E","unaryop(R, code.R_1, R_2)"]
+ , ["E W.E","unaryop(R, code.R_1, R_3)"]
+ , ["E N.E","unaryop(R, code.R_1, R_3)"]
+ , ["E E * E","opaction(R)"]
+ , ["E E-E","opaction(R)"]
+ , ["E E = E","opaction(R)"]
+ , ["E E > E","opaction(R)"]
+ , ["E E ∧ E","opaction(R)"]
+ , ["E E ∨ E","opaction(R)"]
+ , ["L E","R_1"]
+ , ["L L, E","bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3)"]
  , ["E [ L]"
- ,"let types = types($_2)assert @(∧, =(types_1), true, types)report errormessage(&quot types do not match in 
- build &quot, input, place)bindinfo(dict, &quot LIT 0 LIT &quot + toword.(length.types)+ code.$_2 + &quot 
+ ,"let types = types(R_2)assert @(&and, =(types_1), true, types)report errormessage(&quot types do not match in 
+ build &quot, input, place)bindinfo(dict.R, &quot LIT 0 LIT &quot + toword.(length.types)+ code.R_2 + &quot 
  RECORD &quot + toword.(length.types + 2), [ mytype(towords(types_1)+ &quot seq &quot)])"]
  , ["A let W = E"
- ,"let e = $_4 let name =(code.$_2)_1 assert isempty.lookup(dict, name, empty:seq.mytype)report errormessage 
-(&quot duplicate symbol:&quot + name, input, place)let newdict = dict + symbol(name, mytype(&quot 
+ ,"let e = R_4 let name =(code.R_2)_1 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage 
+(&quot duplicate symbol:&quot + name, input, place)let newdict = dict.R + symbol(name, mytype(&quot 
  local &quot), empty:seq.mytype,(types.e)_1, &quot &quot)bindinfo(newdict, code.e + &quot define &quot 
  + name, types.e)"]
- , ["E A E"
- ,"let t = code.$_1 let f = lookup(dict, last.code.$_1, empty:seq.mytype)assert not(isempty.f)report &quot internal 
- error/could not find local symbol to delete from dict with name &quot + last(code.result(subtrees_1))bindinfo 
-(dict.$_1-f_1, subseq(t, 1, length.t-2)+ code.$_2 + &quot SET &quot + last.code.$_1, types.$_2)"]
+ , ["E A E","let t = code.R_1 
+ let f = lookup(dict.R, last.code.R_1, empty:seq.mytype)assert not(isempty.f)report &quot internal 
+ error/could not find local symbol to delete from dict with name &quot + last(code.R_1)bindinfo 
+(dict.R_1-f_1, subseq(t, 1, length.t- 2)+ code.R_2 + &quot SET &quot + last.code.R_1, types.R_2)"]
  , ["E assert E report E E"
- ,"assert types($_2)_1 = mytype.&quot boolean &quot report errormessage(&quot condition in assert must 
- be boolean in:&quot, input, place)assert types($_4)_1 = mytype.&quot word seq &quot report errormessage 
-(&quot report in assert must be seq of word in:&quot, input, place)let newcode = code.$_2 + code.$_5 + code 
-.$_4 + &quot assertZbuiltinZwordzseq if &quot bindinfo(dict, newcode, types.$_5)"]
- , ["E I","$_1"]
+ ,"assert types(R_2)_1 = mytype.&quot boolean &quot report errormessage(&quot condition in assert must 
+ be boolean in:&quot, input, place)assert types(R_4)_1 = mytype.&quot word seq &quot report errormessage 
+(&quot report in assert must be seq of word in:&quot, input, place)let newcode = code.R_2 + code.R_5 + code 
+.R_4 + &quot assertZbuiltinZwordzseq if &quot bindinfo(dict.R, newcode, types.R_5)"]
+ , ["E I","R_1"]
  , ["E I.I"
- ,"let d = decodeword.(code.$_3)_2 bindinfo(dict, &quot LIT &quot + [ encodeword(decodeword.(code.$ 
+ ,"let d = decodeword.(code.R_3)_2 bindinfo(dict.R, &quot LIT &quot + [ encodeword(decodeword.(code.R 
 _1)_2 + d)]+ &quot LIT &quot + countdigits(d, 1, 0)+ &quot makerealZrealZintZint &quot, [ mytype.&quot 
  real &quot])"]
- , ["T W","isdefined(dict, code.$_1, input, place)"]
- , ["T W.T","isdefined(dict, towords.(types.$_3)_1 + code.$_1, input, place)"]
+ , ["T W","isdefined( R, code.R_1)"]
+ , ["T W.T","isdefined( R, towords.(types.R_3)_1 + code.R_1)"]
  , ["E W:T"
- ,"let f = lookup(dict, merge(code.$_1 + &quot:&quot + print((types.$_3)_1)), empty:seq.mytype)assert not 
-.isempty.f report errormessage(&quot cannot find &quot + code.$_1 + &quot:&quot + print.mytype.code 
-.$_3, input, place)bindinfo(dict, [ mangledname.f_1], [ resulttype.f_1])"]
+ ,"let f = lookup(dict.R, merge(code.R_1 + &quot:&quot + print((types.R_3)_1)), empty:seq.mytype)assert not 
+.isempty.f report errormessage(&quot cannot find &quot + code.R_1 + &quot:&quot + print.mytype.code 
+.R_3, input, place)bindinfo(dict.R, [ mangledname.f_1], [ resulttype.f_1])"]
  , ["E $wordlist"
- ,"let s = code.$_1 bindinfo(dict, &quot WORDS &quot + toword.length.s + s, [ mytype.&quot word seq &quot 
+ ,"let s = code.R_1 bindinfo(dict.R, &quot WORDS &quot + toword.length.s + s, [ mytype.&quot word seq &quot 
 ])"]
  , ["E comment E"
- ,"let s = code.$_1 bindinfo(dict, code.$_2 + &quot COMMENT &quot + toword.length.s + s, types.$_2)"]
- , ["N_","$_1"]
- , ["N-","$_1"]
- , ["N =","$_1"]
- , ["N >","$_1"]
- , ["N *","$_1"]
- , ["N ∧","$_1"]
- , ["N ∨","$_1"]
- , ["K W.E","bindinfo(dict, code.$_1 + code.$_3, types.$_3)"]
- , ["K N.E","bindinfo(dict, code.$_1 + code.$_3, types.$_3)"]
- , ["K N(L)","bindinfo(dict, code.$_1 + code.$_3, types.$_3)"]
- , ["K W(L)","bindinfo(dict, code.$_1 + code.$_3, types.$_3)"]
- , ["K N","bindinfo(dict, code.$_1, empty:seq.mytype)"]
- , ["K W","bindinfo(dict, code.$_1, empty:seq.mytype)"]
- , ["E @(K, K, E, E)","apply($_3, $_5, $_7, $_9, input, place)"]]
+ ,"let s = code.R_1 bindinfo(dict.R, code.R_2 + &quot COMMENT &quot + toword.length.s + s, types.R_2)"]
+ , ["N_","R_1"]
+ , ["N-","R_1"]
+ , ["N =","R_1"]
+ , ["N >","R_1"]
+ , ["N *","R_1"]
+ , ["N &and ","R_1"]
+ , ["N &or ","R_1"]
+ , ["K W.E","bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)"]
+ , ["K N.E","bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)"]
+ , ["K N(L)","bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)"]
+ , ["K W(L)","bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)"]
+ , ["K N","bindinfo(dict.R, code.R_1, empty:seq.mytype)"]
+ , ["K W","bindinfo(dict.R, code.R_1, empty:seq.mytype)"]
+ , ["E @(K, K, E, E)","apply(R_3, R_5, R_7, R_9, input, place)"]]
 

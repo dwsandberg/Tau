@@ -151,7 +151,7 @@ Function replaceT(with:mytype, s:symbol)symbol
   let newmodname = replaceT(with, modname.s)
   let newparas = @(+, replaceT.with, empty:seq.mytype, paratypes.s)
   let i=findindex(decodeword("Z"_1)_1,mangledchars.s)
-  let n = if (mangledchars.s)_(i-1)= // T // char(84) then
+  let n = if (mangledchars.s)_(i- 1)= // T // char(84) then
         replaceTinname(with,name.s) else name.s
   let z=replaceTmangled(with,mangledchars.s,i )
     symbol(encodeword.z, replaceT(with, resulttype.s), 
@@ -186,7 +186,7 @@ function print4(s:symbol)seq.word
   else""
 
 Function print(t:tree.seq.word)seq.word 
- @(+, print,"", sons.t)+ if label(t)_1 in"PARAM FREF LIT"then label.t else label.t + toword.nosons.t
+ @(+, print,"", sons.t)+ if label(t)_1 in"PARAM FREF LIT SET LOCAL"then label.t else label.t + toword.nosons.t
 
 Function inst(t:tree.seq.word)word label(t)_1
 
