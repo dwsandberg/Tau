@@ -18,7 +18,7 @@ Function length(packedseq.T)int export
 
 Function_(a:packedseq.T, i:int)T 
  let ds = sizeoftype:T 
-  toT.getaddress(toseq.a, 2 + ds *(i - 1))
+  cast(toseq.a, 2 + ds *(i - 1),ds)
 
 Function packed(s:seq.T)seq.T 
  let ds = sizeoftype:T 
@@ -36,21 +36,25 @@ use seq.T
 
 use stdlib
 
-setfld set value at a to x and return next address
 
-function setfld(a:address.T, x:T)address.T builtin.STATE.usemangle
+Function cast(s:seq.T, offset:int,typ:int) T builtin.usemangle
+
 
 Function allocatespace:seq.T(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZint"
 
-Function type:address.T internaltype export
 
-type address is record toseq:seq.T
 
-Function getaddress(s:seq.T, i:int)address.T builtin.usemangle
+function setfld(a:T, x:T)address.T builtin.STATE.usemangle
 
-Function setfld(s:seq.T,i:int,val:T) seq.T
-  let discard=    setfld(getaddress(s,i),val)
-  s
+function setfld2(s:seq.T,i:int,val:T) int builtin.STATE.usemangle
+
+Function setfld(s:seq.T,i:int,val:T) seq.T  let discard=   setfld(cast(s,i,sizeoftype:T),val) s 
+   
+
+
+/Function setfld(s:seq.T,i:int,val:T) seq.T  let discard= setfld2(s,i,val) s
+   
+
 
 Function append(s:seq.T,val:T) seq.T
     let len=length.s+1
@@ -60,7 +64,6 @@ Function append(s:seq.T,val:T) seq.T
        @(append, fldof(val),s, arithseq(ds, 1, 0))
   
  
-Function toT(a:address.T)T builtin."PARAM 1"
 
 Function inttoT:T(int)T builtin."PARAM 1"
 

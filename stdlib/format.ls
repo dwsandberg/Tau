@@ -34,6 +34,8 @@ function processpara(a:seq.word, j:int, i:int, result:seq.word, stk:stack.seq.wo
    processpara(a, j, end + 1, result + subseq(a, i + 2, end - 1), stk)
   else if this ="&keyword"_1 
   then processpara(a, j, i + 2, result +"<span class = keyword>"+ subseq(a, i + 1, i + 1)+"</span>", stk)
+  else if this ="&p"_1 
+  then processpara(a, j, i + 1, result +"<p>", stk)
   else if this ="&em"_1 
   then processpara(a, j, i + 2, result +"<em>"+ subseq(a, i + 1, i + 1)+"</em>", stk)
   else if this ="&strong"_1 
@@ -120,7 +122,9 @@ function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.wo
   else processtotext(a, i + 1, result + [ a_i], stk)
 
 Function htmlheader seq.word 
- {"<meta charset = &quot UTF-8 &quot > <style type = &quot text/css &quot > <!--span.avoidwrap { display:inline-block ; } span.keyword { color:blue ; } span.keywords { color:blue ; } span.literal { color:red ; } span.comment { color:green ; } span.block { padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ; } form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style>"+ EOL }
+// the format of the meta tag is carefully crafted to get math unicode characters to display correctly //
+ {" <meta"+merge." http-equiv=&quot Content-Type &quot"+" content=&quot text/html; " + merge."charset=utf-8"+"&quot >
+ <style type = &quot text/css &quot > <!--span.avoidwrap { display:inline-block ; } span.keyword { color:blue ; } span.keywords { color:blue ; } span.literal { color:red ; } span.comment { color:green ; } span.block { padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ; } form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style>"+ EOL }
 
 Function addamp(w:word)word encodeword.@(+, addamp, empty:seq.char, decodeword.w)
 

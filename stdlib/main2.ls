@@ -134,7 +134,7 @@ Function main(arg:seq.int)outputformat
    else if subseq(result.p, 1, 1)="OK"∧ not(length.args = 1)
    then"not correct number of args:"+ args 
    else result.p 
-  outputformat.toUTF8plus(htmlheader + processpara.output)
+  outputformat.toseqint.toUTF8(htmlheader + processpara.output)
 
 Function testcomp(s:seq.seq.word)seq.seq.word 
  let exports ="testit"

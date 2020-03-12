@@ -25,12 +25,12 @@ Function testparser seq.word
 
 Function gentestgrammar seq.word 
  // generates the tables used in this test // 
- let testgrammar = [ ["G F #","$_1"]
-  , ["F E","$_1"]
+ let testgrammar = [ ["G F #","R_1"]
+  , ["F E","R_1"]
   , ["E 1","1"]
   , ["E 2","2"]
   , ["E 3","3"]
-  , ["E E + E","$_1 + $_3"]]
+  , ["E E + E","R_1 + R_3"]]
    lr1parser(testgrammar, empty:seq.seq.word,"F # + 1 E 3 G 2")
 
 type stepresult is record stk:stack.stkele, place:int, track:seq.word, tokenstate:int, string:seq.word
@@ -74,6 +74,11 @@ Function parse(input:seq.word)seq.word
   , input +"#")
    [ toword.result.(toseq.stk.a)_2]
 
+function   _(r:reduction,n:int) int result.(toseq.r)_n
+
+
+type reduction is record toseq:seq.stkele,input:seq.word,place:int
+
 Below is generated from parser generator.
 
 noactions 20 nosymbols:8 alphabet:F # + 1 E 3 G 2 norules 6 nostate 9 follow F > # + > 1 + > E + > 3 + > 2 1 > # 1 > + E 
@@ -93,30 +98,24 @@ function actiontable seq.int
  , 0, 0, 0, 0, 0, 0, 0, 3, 9, 5 
  , 0, 6, 0,-6, 8]
 
-function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.stkele 
- // generated function // 
- let rulelen = [ 2, 1, 1, 1, 1, 3]_ruleno 
-  let newstk = pop(stk, rulelen)
-  let subtrees = top(stk, rulelen)
-  let dict = dict.result.top.stk 
-  let newtree = 
-   if ruleno = // G F # // 1 
-   then result.subtrees_1 
-   else if ruleno = // F E // 2 
-   then result.subtrees_1 
-   else if ruleno = // E 1 // 3 
-   then 1 
-   else if ruleno = // E 2 // 4 
-   then 2 
-   else if ruleno = // E 3 // 5 
-   then 3 
-   else 
-    assert ruleno = // E E + E // 6 report"invalid rule number"+ toword.ruleno 
-     result.subtrees_1 + result.subtrees_3 
-  let leftsidetoken = [ 7, 1, 5, 5, 5, 5]_ruleno 
-  let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk)
-  assert actioncode > 0 report"????"
-   push(newstk, stkele(actioncode, newtree))
+
+function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.stkele // generated function // 
+let rulelen = [ 2, 1, 1, 1, 1, 3]_ruleno 
+let newstk = pop(stk, rulelen) 
+let R = reduction(top(stk, rulelen), input, place) 
+let newtree = 
+if ruleno = // G F # // 1 then R_1 else 
+if ruleno = // F E // 2 then R_1 else 
+if ruleno = // E 1 // 3 then 1 else 
+if ruleno = // E 2 // 4 then 2 else 
+if ruleno = // E 3 // 5 then 3 else 
+assert ruleno = // E E + E // 6 report"invalid rule number"+ toword.ruleno 
+R_1 + R_3 
+let leftsidetoken = [ 7, 1, 5, 5, 5, 5]_ruleno 
+let actioncode = actiontable_(leftsidetoken + length.tokenlist * stateno.top.newstk) 
+assert actioncode > 0 report"????" 
+push(newstk, stkele(actioncode, newtree)) 
+
 
 function printstate(stateno:int)seq.word 
  ["F ' E | E ' 1 | E ' E + E | E ' 3 | E ' 2 | G ' F #"

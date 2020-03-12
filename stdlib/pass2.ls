@@ -66,7 +66,7 @@ PROFILE.
   
 function listswitchopt(p:program, stateChangingFuncs:set.word, mangledname:word)seq.word 
  // finds constants, discards builtins, and make sure"STATE"is root on state changing functions // 
-  if mangledname ="STATE"_1 
+   if mangledname ="STATE"_1 
   then "" 
   else let a = codedown.mangledname 
   if length.a > 1 ∧  a_2  ="builtin"  
@@ -444,9 +444,7 @@ TESTOPT.
   then tree.["LIT"_1, toword.toint(bits.a << b)]
   else if inst ="Q3EQ3EZbuiltinZbitsZint"_1 
   then tree.["LIT"_1, toword.toint(bits.a >> b)]
-  else if inst ="makerealZrealZintZint"_1 then
-    tree.["LIT"_1, toword.representation.makereal(a,b)]
-  else
+  else 
   tree(label, l)
 
 type program is record knownsymbols:symbolset, callgraph:graph.word, inline:set.word, hasstate:seq.word
@@ -596,7 +594,12 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
     else if inst.code ="getaddressZbuiltinZTzseqZint"_1 ∧ arg(l_2)="0"_1 then l_1
      else
        tree(label.code, l)
-  else tree(label.code, l)
+  else if inst ="makerealZUTF8Zwordzseq"_1 &and inst(l_1)="WORDS"_1 then
+    tree.["LIT"_1, toword.representation.makereal(subseq(label.l_1,3,length.label.l_1))]
+  else
+  tree(label.code, l)
+  
+  use UTF8
 
 function treelit(c:char) tree.seq.word
      tree("LIT"+toword.toint.c)

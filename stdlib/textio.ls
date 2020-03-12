@@ -112,7 +112,6 @@ function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
 ________
 
 
-Function toUTF8plus(s:seq.word)seq.int toseqint.toUTF8.s + [ 10, 10]
 
 -------------------
 

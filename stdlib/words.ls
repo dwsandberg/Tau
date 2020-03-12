@@ -89,3 +89,15 @@ Function alphasort(a:seq.seq.word)seq.seq.word
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)
   @(+, towordseq, empty:seq.seq.word, sort.b)
 
+Function checkinteger(w:word)word
+ let l = decodeword.w 
+ let i= if l_1=char1."-" ∧ length.l > 1 then 2 else 1
+ if not.between(toint.l_i, 48, 57) then "WORD"_1
+ else checkalldigits(l,i)
+   
+  
+function  checkalldigits(l:seq.char,i:int) word
+   if i > length.l then "INTEGER"_1 else
+   if between(toint.l_i, 48, 57)   &or l_i=nbspchar then checkalldigits(l,i+1) else "ILLEGAL"_1 
+
+

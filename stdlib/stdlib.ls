@@ -326,6 +326,9 @@ Function decodeword(w:word)seq.char export
 
 Function print( decimals:int,rin:real) seq.word export
 
+Function checkinteger(w:word)word export
+
+
 
 use seq.char
 

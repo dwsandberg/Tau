@@ -77,13 +77,17 @@ function xx(b:seq.int, i:int, result:seq.int)seq.int
 
 Function toUTF8(a:seq.word)UTF8 addspace(a, 1, true, emptyUTF8)
 
-function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8 
+function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
+  // nospace means add no space before word s_i.
+   comma adds space after but not before
+   single means add not space before or after  // 
  if i > length.s 
   then result 
   else let this = s_i 
   let single = this in("()-].:&quot_^. "+ space)
   let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
   addspace(s, i + 1, single, if nospace ∨ single ∨ this =","_1 then result + d else result + char.32+ d)
+  
   
   ---------
   
@@ -134,7 +138,8 @@ Function print( decimals:int,rin1:real)seq.word
  let a = 10^decimals 
   let r = rin + 1.0 / toreal(a * 2)
   let r2=  if decimals > 0 
-   then  [ toword.intpart.r ,"."_1, encodeword(tocharseq.toseqint.lpad(toseqint.toUTF8.intpart((r - toreal.intpart.r)* toreal.a), decimals))]
+   then  [ toword.intpart.r ,"."_1, encodeword(tocharseq.lpad(
+   decimals,48,toseqint.toUTF8.intpart((r - toreal.intpart.r)* toreal.a) ))]
    else  [ toword.intpart.r] 
    if neg then "-"+r2 else r2 
 
@@ -145,27 +150,31 @@ Function toUTF8(rin:real, decimals:int) UTF8
   else let a = 10^decimals 
   let r = rin + 1.0 / toreal(a * 2)
     if decimals > 0 
-   then toUTF8.intpart.r +encodeUTF8.periodchar+ lpad(toseqint.toUTF8.intpart((r - toreal.intpart.r)* toreal.a), decimals)
+   then toUTF8.intpart.r +encodeUTF8.periodchar+ UTF8.lpad(decimals,48,toseqint.toUTF8.intpart((r - toreal.intpart.r)* toreal.a)) 
    else toUTF8.intpart.r 
 
 
-Function reallit(s:UTF8)real reallit(toseqint.s,-1, 1, 0, 1)
+Function reallit(s:UTF8)real reallit(tocharseq.toseqint.s,-1, 1, 0, 1)
+
+Function makereal(w:seq.word) real
+   reallit(@(+, decodeword,empty:seq.char,w),-1, 1, 0, 1)
 
 
-function reallit(s:seq.int, decimals:int, i:int, val:int, neg:int)real 
+
+use otherseq.int
+
+function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real 
  if i > length.s 
-  then let r = if decimals < 1 then toreal.val  else makereal(val,decimals) 
+  then let r = if decimals < 1 then toreal.val  else 
+   toreal.val / toreal.decimals  
    if neg < 1 then-(1.0 * r)else r 
-  else if between(s_i, 48, 57)
-  then reallit(s, if decimals =-1 then-1 else decimals + 1, i + 1, 10 * val + s_i - 48, neg)
-  else if s_i = 32 ∨ s_i = toint.commachar 
+  else if between(toint.s_i, 48, 57)
+  then reallit(s, if decimals =-1 then-1 else decimals * 10, i + 1, 10 * val + toint.s_i - 48, neg)
+  else if s_i = char.32 ∨ s_i =  commachar 
   then reallit(s, decimals, i + 1, val, neg)
-  else if i < 3 ∧ s_i = toint.hyphenchar 
+  else if i < 3 ∧ s_i =  hyphenchar 
   then reallit(s, decimals, i + 1, val,-1)
-  else if i < 3 ∧ s_i = toint.char1."+" 
+  else if i < 3 ∧ s_i =  char1."+" 
   then reallit(s, decimals, i + 1, val,1)
-  else assert s_i = toint.periodchar report"unexpected character in real literal"+ encodeword.tocharseq.s 
-  reallit(s, decimals + 1, i + 1, val, neg)
-
-Function lpad(l:seq.int, n:int) UTF8 UTF8(constantseq(n - length.l, 48)+ l)
-
+  else assert s_i =  periodchar report"unexpected character in real literal"+ encodeword.s 
+  reallit(s, 1, i + 1, val, neg)

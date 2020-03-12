@@ -67,15 +67,12 @@ Function^(i:real, n:int)real @(*, identity, 1.0, constantseq(n, i))
 Function *(a:int, b:real)real toreal.a * b
 
 
-Function makereal(whole:int, decdigits:int)real 
-   //  real number value  is whole / 10^decdigits //
- if decdigits < 7 
-  then toreal.whole / toreal([ 10, 100, 1000, 10000, 100000, 1000000]_decdigits)
-  else toreal.whole / toreal(10^decdigits)
+
+
 
 Function print( decimals:int,rin:real) seq.word export
 
-
+use UTF8
 
 
 -------------

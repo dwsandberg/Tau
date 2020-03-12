@@ -365,7 +365,8 @@ desc:seq.word,symbols:seq.symbol)
    else if tsize = 1  then "PARAM 1 LIT"+toword.offset +"IDXUC"
     else 
     // should use a GEP instruction //
-    "PARAM 1 LIT"+toword.(8 * offset)+ "Q2BZbuiltinZintZint"
+     //  "PARAM 1 LIT"+ toword.offset+"LIT"+toword.tsize +"castZbuiltinZTzseqZintZint"  // 
+     "PARAM 1 LIT"+toword.(8 * offset)+ "Q2BZbuiltinZintZint" 
   let fldsym = symbol(fldname, modname, ptype, fldtype, fldsrc)
   let confld = if tsize=1
    then"PARAM"+ toword(length.paras + 1)

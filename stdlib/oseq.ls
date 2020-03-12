@@ -153,3 +153,4 @@ Function setreplaceorinsert(s:seq.T, val:T)seq.T
   then subseq(s, 1, i - 1)+ [ val]+ subseq(s, i + 1, length.s)
   else subseq(s, 1,-i - 1)+ [ val]+ subseq(s,-i, length.s)
 
+Function lpad( n:int,val:T,l:seq.T) seq.T  constantseq(n - length.l, val)+ l

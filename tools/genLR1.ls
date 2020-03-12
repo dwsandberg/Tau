@@ -2,7 +2,7 @@
 
 Module genLR1
 
-run genLR1 gentau2
+run genLR1 gentaupretty 
 
 use blockseq.seq.dottedrule
 
@@ -182,26 +182,22 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphab
    let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
     let actions = closestate(graminfo, 1, empty:seq.action)
     let amb = @(+, isambiguous,"", actions)
-     (if length.amb > 0 then"ambiguous actions:"+ amb else"")+"&br noactions"+ toword.length.actions 
+     (if length.amb > 0 then"ambiguous actions:"+ amb else"")
+      + generatereduce(grammarandact, alphabet)
+      +    "&br &br function tokenlist seq.word &quot"+ alphabet +"&quot"
+      +"&br &br function startstate int"+ toword.initialstateno 
+       +"&br &br noactions"+ toword.length.actions 
      +"&br nosymbols:"
      + toword.length.alphabet 
-     +"alphabet:"
-     + alphabet 
-     +"&br norules"
+      +"&br norules"
      + toword.length.grammarandact 
      +"&br nostate"
-     + toword.length.orderadded.estate 
-     +"&br follow"
-     + @(seperator("&br"), print,"", toseq.arcs.follow.graminfo)
-     + 
-      let a = @(addaction(alphabet), identity, dseq.0, actions)
-       "&br &br function tokenlist seq.word &quot"+ alphabet +"&quot"+"&br &br function startstate int"
-       + toword.initialstateno 
+     + toword.length.orderadded.estate       
        +"&br &br function actiontable seq.int ["
-       + @(seperator(","), toword,"", a)
+       + @(seperator(","), toword,"", @(addaction(alphabet), identity, dseq.0, actions))
        +"]"
-       +"&br &br"
-       + generatereduce(grammarandact, alphabet)
+         +"&br &br follow"
+     + @(seperator("&br"), print,"", toseq.arcs.follow.graminfo)
        +"&br &br function printstate(stateno:int)seq.word &br ["
        + @(seperator(","), print,"", orderadded.estate)
        +"]_stateno"
@@ -388,4 +384,88 @@ _1)_2 + d)]+ &quot LIT &quot + countdigits(d, 1, 0)+ &quot makerealZrealZintZint
  , ["K N","bindinfo(dict.R, code.R_1, empty:seq.mytype)"]
  , ["K W","bindinfo(dict.R, code.R_1, empty:seq.mytype)"]
  , ["E @(K, K, E, E)","apply(R_3, R_5, R_7, R_9, input, place)"]]
+ 
+ 
+ 
+ Function gentaupretty seq.word 
+ // used to generater tau parser for Pass1 of the tau compiler. // 
+ lr1parser(tauprettyrules 
+ , tauruleprec 
+ ,".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP")
+
+ 
+ function tauprettyrules  seq.seq.seq.word 
+ [ ["G F #","R_1"]
+ , ["F W W(FP)T E"," pretty 
+  .[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]
+"]
+ , ["F W N(FP)T E","F W W(FP)T E"," pretty 
+  .[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]
+"]
+ , ["F W W T E" ,"pretty.[key.R_1,R_2,R_3,R_4]"]
+ , ["F W W:T T E","pretty.[key.R_1,R_2,R_3,R_4,R_5,R_6]"]
+ , ["F W W:T(FP)T E","pretty.[key.R_1,R_2,R_3,R_4,R_5,R_6,R_7,R_8,R_9]"]
+ , ["F W W is W P","pretty.[key.R_1,R_2,R_3,R_4,list.R_5]"]
+ , ["F W T"," // use // pretty.[key.R_1,R_2]"]
+ , ["FP P","list.R_1"]
+ , ["P T","R_1 "]
+ , ["P P, T","R_1+R_3 "]
+ , ["P W:T","pretty.[R_1,R_2,R_3]"]
+ , ["P P, W:T","R_1+pretty.[R_3,R_4,R_5]"]
+ , ["P comment W:T","pretty.[R_1,R_2,R_3,R_4]"]
+ , ["P P, comment W:T","R_1+pretty.[R_3,R_4,R_5,R_6]"]
+ , ["E W","R_1 "]
+ , ["E N(L)",' pretty.[R_1,R_2,list.R_3,R_4] ' ]
+ , ["E W(L)","pretty.[R_1,R_2,list.R_3,R_4]"]
+ , ["E W:T(L)","pretty.[R_1,R_2,R_3,R_4,list.R_5,R_6]"]
+ , ["E(E)","R_2"]
+ , ["E { E }","R_2"]
+ , ["E if E then E else E","
+  if width.R_2 + width.R_4 + width.R_6 < 30 then 
+  pretty.[ key.R_1, R_2, key.R_3, R_4, key.R_5, R_6]
+  else if width.R_2 + width.R_4 < 30 then 
+   pretty.[ key.R_1, R_2, key.R_3,  R_4, elseblock.R_6]
+  else pretty.[ keyif, R_2, prettyresult(  &quot &keyword then &br  &quot ), block(R_4), elseblock.R_6] " ]
+ , ["E E^E","wrap(1,R_1,text.R_2,R_3)"]
+ , ["E E_E","wrap(1,R_1,text.R_2,R_3)"]
+ , ["E-E","wrap(2,prettyresult.&quot &quot,text.R_2,R_3)"]
+ , ["E W.E","wrap(3,R_1,text.R_2,R_3)"]
+ , ["E N.E","wrap(3,R_1,text.R_2,R_3)"]
+ , ["E E * E","wrap(4,R_1,text.R_2,R_3)"]
+ , ["E E-E","wrap(5,R_1,text.R_2,R_3)"]
+ , ["E E = E","wrap(6,R_1,text.R_2,R_3)"]
+ , ["E E > E","wrap(7,R_1,text.R_2,R_3)"]
+ , ["E E ∧ E","wrap(8,R_1,text.R_2,R_3)"]
+ , ["E E ∨ E","wrap(9,R_1,text.R_2,R_3)"]
+ , ["L E","R_1"]
+ , ["L L, E","R_1+R_3"]
+ , ["E [ L]",  "pretty.[R_1,list.R_2,R_3]"]
+ , [ "A let W = E" ," pretty.[ keylet, R_2, R_3,R_4]" ]
+ , [ "E A E " ,'   pretty.[ R_1, block("let assert", R_2)] ']
+ , [ "E assert E report E E " ,'   pretty.[ keyassert, R_2, keyreport, R_4, block("let assert", R_5)] ' ]
+ , ["E I","R_1"]
+ , ["E I.I","pretty.[R_1,R_2,R_3]"]
+ , ["T W","R_1"]
+ , ["T W.T","pretty.[R_1,R_2,R_3]"]
+ , ["E W:T","pretty.[R_1,R_2,R_3]"]
+ , ["E $wordlist","R_1"]
+ , ["E comment E",  ' if width.R_1 + width.R_2 > 30 
+  ∧ (text.R_2)_1 ≠ "&br"_1 then 
+ pretty.[ R_1,prettyresult."&br", R_2]
+  else pretty.[ R_1, R_2]  ' ]
+ , ["N_","R_1"]
+ , ["N-","R_1"]
+ , ["N =","R_1"]
+ , ["N >","R_1"]
+ , ["N *","R_1"]
+ , ["N &and ","R_1"]
+ , ["N &or ","R_1"]
+ , ["K W.E","pretty.[R_1,R_2,R_3]"]
+ , ["K N.E","pretty.[R_1,R_2,R_3]"]
+ , ["K N(L)","pretty.[ R_1,  R_2, list.R_3,R_4]"]
+ , ["K W(L)","pretty.[ R_1,  R_2, list.R_3,R_4]"]
+ , ["K N","R_1"]
+ , ["K W","R_1"]
+ , ["E @(K, K, E, E)","pretty.[ R_1, R_2,   list(R_3+R_5+R_7+R_9), R_10]"]]
+
 

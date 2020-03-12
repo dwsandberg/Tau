@@ -69,7 +69,7 @@ Function addindex(m:match5, i:int)match5 match5(fullinst.m, length.m, parts.m, a
 function match5(fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int)match5 
  match5(fullinst, length, parts, action, arg, 0)
 
-Function length(match5)int export
+Function length(match5)int // no of  instruction that return results // export
 
 Function action(match5)word export
 
@@ -88,19 +88,19 @@ function hash(a:match5)int hash.fullinst.a
 type ematch5 is encoding match5
 
 Function table seq.match5 
- let t = [ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64,-1, ibcsub2)+ LOAD(3,-2, typ.i64, align8, 0)), 
-  match5(// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(1, ibcsub1, ibcsub2, 39)+ CAST(2,-1, typ.i64, CASTZEXT)+ CMP2(3, ibcsub1, ibcsub2, 38)+ CAST(4,-3, typ.i64, CASTZEXT)+ BINOP(5,-2,-4, 0, typ.i64)), 
-  match5("getaddressZbuiltinZTzseqZint"_1, 2, BINOP(1, ibcsub2, C64.3, // shift left // 7)+ BINOP(2, ibcsub1,-1, 0, typ.i64)), 
-  match5("Q3EZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 38)+ CAST(2,-1, typ.i64, CASTZEXT)), 
-  match5("notZbuiltinZboolean"_1, 1, BINOP(1, ibcsub1, C64.1, 12, typ.i64)), 
-  match5("hashZbuiltinZint"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64], C."HASH", ibcsub1)), 
-  // include aborted here so does not show up in profile results match5("abortedZbuiltinZTzprocess"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."abortedZbuiltinZTzprocess",-1, ibcsub1)), Including this as a template causes subtle compile errors // 
-   match5("Q3DZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32)+ CAST(2,-1, typ.i64, CASTZEXT)), 
+ let t = [ match5("IDXUC 2" , 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64,-1, ibcsub2)+ LOAD(3,-2, typ.i64, align8, 0)), 
+  match5(// ? //"Q3FZbuiltinZintZint 2", 5, CMP2(1, ibcsub1, ibcsub2, 39)+ CAST(2,-1, typ.i64, CASTZEXT)+ CMP2(3, ibcsub1, ibcsub2, 38)+ CAST(4,-3, typ.i64, CASTZEXT)+ BINOP(5,-2,-4, 0, typ.i64)), 
+  match5("castZbuiltinZTzseqZintZint 3", 2, 
+  BINOP(1, ibcsub2, C64.3, // shift left // 7)+ BINOP(2, ibcsub1,-1, 0, typ.i64)), 
+ match5("Q3EZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 38)+ CAST(2,-1, typ.i64, CASTZEXT)), 
+  match5("notZbuiltinZboolean 1", 1, BINOP(1, ibcsub1, C64.1, 12, typ.i64)), 
+   // include aborted here so does not show up in profile results match5("abortedZbuiltinZTzprocess"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."abortedZbuiltinZTzprocess",-1, ibcsub1)), Including this as a template causes subtle compile errors // 
+   match5("Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32)+ CAST(2,-1, typ.i64, CASTZEXT)), 
   match5("EQL"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32)+ CAST(2,-1, typ.i64, CASTZEXT)), 
-  match5("Q2DZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 1, typ.i64)), 
-  match5("Q2BZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 0, typ.i64)), 
-  match5("Q2AZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64)), 
-  match5("Q2FZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64)), 
+  match5("Q2DZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 1, typ.i64)), 
+  match5("Q2BZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 0, typ.i64)), 
+  match5("Q2AZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64)), 
+  match5("Q2FZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64)), 
   match5("Q2DZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 1)+ CAST(4,-3, typ.i64, 11)), 
   match5(// + //"Q2BZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 0)+ CAST(4,-3, typ.i64, 11)), 
   match5(// * //"Q2AZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 2)+ CAST(4,-3, typ.i64, 11)), 
@@ -115,8 +115,18 @@ Function table seq.match5
   match5("Q3EQ3EZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // LSHR // 8, typ.i64)), 
   match5("Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // AND // 10, typ.i64)), 
   match5("Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // OR // 11, typ.i64)), 
-  match5("xorZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // XOR // 12, typ.i64)), 
-  match5("setfldZbuiltinZTzaddressZT"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ STORE(2,-1, ibcsub2, align8, 0)+ GEP(2, 1, typ.i64,-1, C64.1)+ CAST(3,-2, typ.i64, 9)), 
+  match5("xorZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // XOR // 12, typ.i64)),
+   match5("setfld2ZbuiltinZTzseqZintZT 3", 4,
+   BINOP(1, ibcsub2, C64.3, // shift left // 7)+ 
+   BINOP(2, ibcsub1,-1, 0, typ.i64)+ 
+  CAST(1, -1, typ.ptr.i64, 10)+ 
+  STORE(2,-1, ibcsub3, align8, 0)+ 
+  BINOP(2, C64.0,C64.0, 0, typ.i64)),  
+  match5("setfldZbuiltinZTZT"_1, 3, 
+  CAST(1, ibcsub1, typ.ptr.i64, 10)+ 
+  STORE(2,-1, ibcsub2, align8, 0)+ 
+  GEP(2, 1, typ.i64,-1, C64.1)+ 
+  CAST(3,-2, typ.i64, 9)), 
   match5("STKRECORD"_1, 3, ALLOCA(1, typ.ptr.i64, typ.i64, C64.2, 0)+ STORE(2,-1, ibcsub1, align8, 0)+ GEP(2, 1, typ.i64,-1, C64.1)+ STORE(3,-2, ibcsub2, align8, 0)+ CAST(3,-1, typ.i64, CASTPTRTOINT)), 
   match5("CALLIDX"_1, 2, CAST(1, ibcsub1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)+ CALL(2, 0, 32768, typ.function.[ i64, i64, i64, i64],-1, ibcfirstpara2, ibcsub2, ibcsub3)), 
   match5("if 3", 0, empty:seq.templatepart,"SPECIAL"_1, 0), 
@@ -134,6 +144,12 @@ function match5(inst:word, length:int, b:internalbc)match5
   let nopara = @(max, parano, 0, parts)
   match5([ inst, toword.nopara], length, parts,"TEMPLATE"_1, nopara)
 
+function match5(fullinst:seq.word, length:int, b:internalbc)match5 
+ let parts = getparts.b 
+  let nopara = @(max, parano, 0, parts)
+  match5(fullinst, length, parts,"TEMPLATE"_1, nopara)
+
+
 type temppair is record templates:seq.match5, consts:linklists2
 
 Function templates(temppair)seq.match5 export
@@ -148,7 +164,8 @@ Function buildtemplates(p:temppair, fullinst:seq.word)temppair
   // let z10 = createfile("stat.txt", [ fullinst]+"start")// 
   let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
   let b = findencode(ematch5,a)
-  if length.b = 0 
+   assert fullinst_1 in "WORD WORDS" &or not( "setfld2ZbuiltinZTzseqZintZT"_1 in fullinst) report "XXX"+fullinst+if length.b=0 then "NOT FOUND" else "FOUND"
+ if length.b = 0 
   then let inst = fullinst_1 
    let instarg = fullinst_2 
    let m = if inst ="FREF"_1 

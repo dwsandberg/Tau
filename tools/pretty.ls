@@ -76,7 +76,8 @@ function wrap(control:prettycontrol, pre:seq.word, p:prettyresult, post:seq.word
  prettyresult(displaywidth.p + displaywidth(chrwidths.control, pre)+ displaywidth(chrwidths.control, post), false, pre + text.p + post)
 
 function wrap(control:prettycontrol, pre:prettyresult, binary:seq.word, post:prettyresult)prettyresult 
- prettyresult(displaywidth.pre + displaywidth(chrwidths.control, binary)+ displaywidth.post, false, text.pre + binary + text.post)
+ prettyresult(displaywidth.pre + displaywidth(chrwidths.control, binary)+ displaywidth.post, false, 
+ text.pre + binary + text.post)
 
 function block(a:prettyresult)prettyresult 
  prettyresult(displaywidth.a + 10000, true,"&{ block"+ text.a +"&}")

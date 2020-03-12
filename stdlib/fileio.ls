@@ -90,9 +90,13 @@ Function gettext(filename:seq.word)seq.seq.word
  @(+, towords, empty:seq.seq.word, breakparagraph.getUTF8file.filename)
  
  Function createfile(filename:seq.word, s:seq.seq.word)int 
- createbytefile(filename, @(+, toUTF8plus, empty:seq.int, s))
+ createfile(filename, @(+, toUTF8plus, empty:seq.int, s)) 
 
- 
+ Function createfile(filename:seq.word, s:seq.word)int 
+ createbytefile(filename,  toseqint.toUTF8.s)
+
+function toUTF8plus(s:seq.word)seq.int toseqint.toUTF8.s + [ 10, 10]
+
  
 Function getUTF8file(filename:seq.word) UTF8  UTF8(getfile.filename)
 

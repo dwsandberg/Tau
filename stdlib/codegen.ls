@@ -172,7 +172,7 @@ function push(l:Lcode, arg:int)Lcode
  Lcode(code.l, lmap.l, noblocks.l, regno.l, args.l + [ arg], blocks.l, tailphi.l, loopblock.l)
 
 function processnext(profile:word, l:Lcode, m:match5)Lcode 
- let inst = inst.m 
+  let inst = inst.m 
   let instarg = instarg.m 
   let action = action.m 
   if action ="CALL"_1 

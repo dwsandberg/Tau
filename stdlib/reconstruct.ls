@@ -24,7 +24,6 @@ function offsetthread(a:seq.int, i:int)int
  if i = 0 
   then 0 
   else let d = a_i 
-   let discard= setfld(a,i+1,toT.getaddress(a, 1 + getb.d))
-  // let discard = setfld(getaddress(a, i + 1), toT.getaddress(a, 1 + getb.d)) //
+    let discard= setfld(a,i+1,cast(a, 1 + getb.d,1))  
   offsetthread(a, getlink.d)
 
