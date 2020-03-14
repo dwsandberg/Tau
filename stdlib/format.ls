@@ -97,6 +97,9 @@ function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.wo
   else if a_i ="&quot"_1 
   then let j = findindex("&quot"_1, a, i + 1)
    processtotext(a, j + 1, result + subseq(a, i, j), stk)
+  else if a_i ="' "_1 
+  then let j = findindex("'"_1, a, i + 1)
+   processtotext(a, j + 1, result + subseq(a, i, j), stk)
   else if a_i ="&br"_1 
   then if a_(i + 1)="&br"_1 
    then processtotext(a, i + 1, result, stk)

@@ -375,8 +375,8 @@ _1)_2 + d)]+ &quot LIT &quot + countdigits(d, 1, 0)+ &quot makerealZrealZintZint
  , ["N =","R_1"]
  , ["N >","R_1"]
  , ["N *","R_1"]
- , ["N &and ","R_1"]
- , ["N &or ","R_1"]
+ , ["N ∧  ","R_1"]
+ , ["N ∨ ","R_1"]
  , ["K W.E","bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)"]
  , ["K N.E","bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)"]
  , ["K N(L)","bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)"]
@@ -389,18 +389,21 @@ _1)_2 + d)]+ &quot LIT &quot + countdigits(d, 1, 0)+ &quot makerealZrealZintZint
  
  Function gentaupretty seq.word 
  // used to generater tau parser for Pass1 of the tau compiler. // 
- lr1parser(tauprettyrules 
+ let a=lr1parser(tauprettyrules 
  , tauruleprec 
  ,".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP")
+ let discard=createfile("prettygrammer.ls",processtotext.a)
+ a
 
+use fileio
+
+use format
  
  function tauprettyrules  seq.seq.seq.word 
  [ ["G F #","R_1"]
- , ["F W W(FP)T E"," pretty 
-  .[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]
+ , ["F W W(FP)T E"," pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]
 "]
- , ["F W N(FP)T E","F W W(FP)T E"," pretty 
-  .[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]
+ , ["F W N(FP)T E"," pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]
 "]
  , ["F W W T E" ,"pretty.[key.R_1,R_2,R_3,R_4]"]
  , ["F W W:T T E","pretty.[key.R_1,R_2,R_3,R_4,R_5,R_6]"]
@@ -415,20 +418,25 @@ _1)_2 + d)]+ &quot LIT &quot + countdigits(d, 1, 0)+ &quot makerealZrealZintZint
  , ["P comment W:T","pretty.[R_1,R_2,R_3,R_4]"]
  , ["P P, comment W:T","R_1+pretty.[R_3,R_4,R_5,R_6]"]
  , ["E W","R_1 "]
- , ["E N(L)",' pretty.[R_1,R_2,list.R_3,R_4] ' ]
- , ["E W(L)","pretty.[R_1,R_2,list.R_3,R_4]"]
+ , ["E N(L)",' if length.R_3 = 1 then wrap(3, R_1,".", R_3)
+  else pretty.[ R_1, R_2, list.R_3, R_4]
+ ' ]
+ , ["E W(L)","if length.R_3 = 1 then wrap(3, R_1,".", R_3)
+  else pretty.[ R_1, R_2, list.R_3, R_4]
+"]
  , ["E W:T(L)","pretty.[R_1,R_2,R_3,R_4,list.R_5,R_6]"]
  , ["E(E)","R_2"]
  , ["E { E }","R_2"]
  , ["E if E then E else E","
   if width.R_2 + width.R_4 + width.R_6 < 30 then 
-  pretty.[ key.R_1, R_2, key.R_3, R_4, key.R_5, R_6]
+  pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]
   else if width.R_2 + width.R_4 < 30 then 
-   pretty.[ key.R_1, R_2, key.R_3,  R_4, elseblock.R_6]
-  else pretty.[ keyif, R_2, prettyresult(  &quot &keyword then &br  &quot ), block(R_4), elseblock.R_6] " ]
+   pretty.[ R_1, R_2, key.R_3,  R_4, elseblock.R_6]
+  else pretty.[ R_1, R_2, prettyresult(  &quot &keyword then &br  &quot ), block(R_4), elseblock.R_6] " ]
  , ["E E^E","wrap(1,R_1,text.R_2,R_3)"]
  , ["E E_E","wrap(1,R_1,text.R_2,R_3)"]
- , ["E-E","wrap(2,prettyresult.&quot &quot,text.R_2,R_3)"]
+ , ["E-E",'[ prettyresult(2, 1 + width.text.R_2, "-"+space + text.R_2)]
+']
  , ["E W.E","wrap(3,R_1,text.R_2,R_3)"]
  , ["E N.E","wrap(3,R_1,text.R_2,R_3)"]
  , ["E E * E","wrap(4,R_1,text.R_2,R_3)"]
@@ -440,9 +448,10 @@ _1)_2 + d)]+ &quot LIT &quot + countdigits(d, 1, 0)+ &quot makerealZrealZintZint
  , ["L E","R_1"]
  , ["L L, E","R_1+R_3"]
  , ["E [ L]",  "pretty.[R_1,list.R_2,R_3]"]
- , [ "A let W = E" ," pretty.[ keylet, R_2, R_3,R_4]" ]
+ , [ "A let W = E" ,'  pretty.[ R_1,R_2,   R_3,R_4] ' ]
  , [ "E A E " ,'   pretty.[ R_1, block("let assert", R_2)] ']
- , [ "E assert E report E E " ,'   pretty.[ keyassert, R_2, keyreport, R_4, block("let assert", R_5)] ' ]
+ , [ "E assert E report E E " ,'    pretty.[ R_1, R_2, keyreport, R_4, block("let assert", R_5)]
+  ' ]
  , ["E I","R_1"]
  , ["E I.I","pretty.[R_1,R_2,R_3]"]
  , ["T W","R_1"]
@@ -458,8 +467,8 @@ _1)_2 + d)]+ &quot LIT &quot + countdigits(d, 1, 0)+ &quot makerealZrealZintZint
  , ["N =","R_1"]
  , ["N >","R_1"]
  , ["N *","R_1"]
- , ["N &and ","R_1"]
- , ["N &or ","R_1"]
+ , ["N ∧ ","R_1"]
+ , ["N ∨ ","R_1"]
  , ["K W.E","pretty.[R_1,R_2,R_3]"]
  , ["K N.E","pretty.[R_1,R_2,R_3]"]
  , ["K N(L)","pretty.[ R_1,  R_2, list.R_3,R_4]"]

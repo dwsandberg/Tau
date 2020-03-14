@@ -80,13 +80,13 @@ Function toUTF8(a:seq.word)UTF8 addspace(a, 1, true, emptyUTF8)
 function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
   // nospace means add no space before word s_i.
    comma adds space after but not before
-   single means add not space before or after  // 
+   single means add no space before or after  // 
  if i > length.s 
   then result 
   else let this = s_i 
-  let single = this in("()-].:&quot_^. "+ space)
+  let single = this in("()-].:&quot_^. "+ space+EOL)
   let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
-  addspace(s, i + 1, single, if nospace ∨ single ∨ this =","_1 then result + d else result + char.32+ d)
+  addspace(s, i + 1, single, if nospace ∨ single ∨ this =","_1  then result + d else result + char.32+ d)
   
   
   ---------
