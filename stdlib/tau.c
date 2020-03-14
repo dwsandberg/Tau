@@ -340,6 +340,8 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
       
 }
 
+BT clockZbuiltin(processinfo PD) {return clock();}
+
 extern BT  CLOCKPLUS (processinfo PD )
  {    BT   org=myalloc(PD,2);
      IDXUC(org,0)=clock();

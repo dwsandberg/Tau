@@ -144,6 +144,8 @@ function subflddefined(s:seq.flddesc, T:mytype, i:int, defined:set.symbol, resul
       let src = src.sym_1
        subflddefined(s, T, i + 1, defined, result + flddesc(subseq(src, 3, 2 + toint.src_2), combined.next))
 
+
+
 function nametotype(w:word)mytype
  let t = towords.decodeword.w
   mytype.@(+,_(t),"", arithseq(length.t / 2, -2, length.t))
@@ -310,6 +312,8 @@ resultpair type is needed because calculation often involve adding new known sym
 
 type resultpair is record known:symbolset, size:seq.word
 
+
+
 function definestructure(kind:word, flds:seq.flddesc, i:int, ptype:seq.mytype, modname:mytype, offset:int, paras:seq.mytype, constructor:seq.word, desc:seq.word, symbols:seq.symbol)seq.symbol
  if i > length.flds then
  if kind = "sequence"_1 then
@@ -422,154 +426,4 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
           let params2 = @(+, replaceT.modpara, empty:seq.mytype, params)
           let k2 = lookup(dict, down_1_1, params2)
           let k = if cardinality.k2 = 0 then
-          // case for examples like frombits:T(bits)T which needs to find frombits:bit(bits)bit //
-           // assert down_1_1 in [ merge(frombits:T)]report [ down_1_1]//
-           lookup(dict, replaceTinname(newmodpara, down_1_1), params2)
-          else // often there is no T in the function name so a lookup assuming that is done first. // k2
-           assert cardinality.k = 1 report"cannot find template for" + down_1_1 + "("
-           + @(seperator.",", print,"", params2)
-           + ")while process"
-           + print.org
-           + "templatename"
-           + templatename
-           + mangledname
-           + fullname
-           + "newmodpara:"
-           + print.newmodpara
-           + toword.cardinality.k2
-            // + @(+, print,"", toseq.templates)//
-            assert mangledname ≠ mangledname.k_1 report"ERR12" + mangledname + print2.k_1
-             if not.isdefined.lookupsymbol(knownsymbols, mangledname.k_1)then
-             X(mangledname.k_1, org, dict, mytype."T", templates, knownsymbols)
-             else resultpair(knownsymbols, [ mangledname.k_1])
-
-
-
-function roots(f:firstpass)seq.word if exportmodule.f then @(+, mangledname,"", toseq.exports.f)else""
-
-Function headdict set.symbol
-let modulename = mytype."internal1"
- asset
- .[ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal",""), symbol("STATE"_1, modulename, [ mytype."internal1"], mytype."internal1",""), symbol("FROMSEQ"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("export"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("unbound"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("stub"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("usemangle"_1, modulename, empty:seq.mytype, mytype."internal1","")]
-
-
-
-function gathersymbols(exported:seq.word, src:seq.seq.word)firstpass
- @(wrapgathersymbols(exported, headdict)
- , identity
- , firstpass(mytype."?", empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, false, src)
- , src)
-
-function wrapgathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass gathersymbols(exported, stubdict, f, input)
-
-function definefld(src:seq.word, modname:mytype, t:seq.mytype, m:mytype)symbol symbol(abstracttype.m, modname, t, parameter.m, src)
-
-function hasT(s:seq.word, i:int)boolean
- // used to determine it type T is specified somewhere in function sig //
- if s_(i + 1) in ":."then
- // s_i is name // hasT(s, i + 2)
- else
-  // at end of type //
-  if s_i = "T"_1 then true
-  else if s_(i + 1) in ",("then hasT(s, i + 2)
-  else // at end of parameter list or beginning of function type // false
-
-Function bodyonly(code:seq.word)seq.word
- if code_1 = "parsedfunc"_1 then subseq(code, 3 + toint.code_2, length.code)else code
-
-function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass
- // assert print.modname.f in ["?","stdlib","UTF8","altgen"]∨(print.modname.f ="bitpackedseq.T"∧ cardinality.defines.f + cardinality.unbound.f < 8)report print.modname.f + printdict.unbound.f //
- if length.input = 0 then f
- else if input_1 in "use"then
- let t = parse(empty:set.symbol, input)
-   firstpass(modname.f, uses.f + mytype.code.t, defines.f, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
- else if input_1 in "type"then
- let b = parse(empty:set.symbol, input)
-  let kind =(code.b)_1
-  let name =(code.b)_2
-  let t = mytype(towords.parameter.modname.f + name)
-   if kind in "encoding"then
-   assert parameter.modname.f = mytype.""report"encoding in template?"
-    let typ = parameter.(types.b)_1
-    let adde = mangle("add"_1, mytype(towords.typ + "encoding"), [ mytype."T encodingstate", mytype."T encodingrep"])
-    let code =("FREF" + adde + if name = "wordencoding"_1 then"LIT 1"else"LIT 0")
-    + "WORD"
-    + merge([ name] + print.modname.f)
-    + "RECORD 3 NOINLINE"
-    let sym = symbol(name, modname.f, empty:seq.mytype, mytype(towords.typ + "erecord"), code)
-     firstpass(modname.f, uses.f + mytype(towords.typ + "encoding"), defines.f + sym, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
-   else
-    assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
-    let sizeofsym = symbol(merge("type:" + print.t), modname.f, empty:seq.mytype, mytype."internaltype", input)
-    let constructor = symbol(name, modname.f, @(+, parameter, empty:seq.mytype, types.b), t,"STUB")
-    let syms = @(+, definefld("STUB", modname.f, [ t]), [ constructor, sizeofsym], types.b)
-    + if kind = "sequence"_1 then
-    [ symbol("toseq"_1, modname.f, [ t], mytype(towords.parameter.t + "seq"_1),"STUB")]
-    else empty:seq.symbol
-     firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
- else if input_1 in "Function function"then
- let t = parse(stubdict, getheader.input)
-  let code = bodyonly.code.t
-  let name = funcname.t
-  let paratypes = funcparametertypes.t
-   assert iscomplex.modname.f = hasT(input, 2)report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input
-   let firstinstruction = code_1
-    if firstinstruction in "usemangleZinternal1"then
-    let sym = symbol(name, mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t, input)
-      firstpass(modname.f, uses.f, defines.f + sym, if input_1 = "Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
-    else
-     let sym = symbol(name, modname.f, paratypes, funcreturntype.t, input)
-      if firstinstruction in "exportZinternal1"then
-      firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, exportmodule.f, rawsrc.f)
-      else if firstinstruction in "unboundZinternal1"then
-      firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + sym, exportmodule.f, rawsrc.f)
-      else
-       assert not(sym in defines.f)report"Function" + name.sym + "is defined twice in module" + print.modname.f
-        firstpass(modname.f, uses.f, defines.f + sym, if input_1 = "Function"_1 then exports.f + sym else exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
- else if input_1 in "module Module"then
- firstpass(mytype.if length.input > 2 then"T" + input_2 else [ input_2], uses.f, defines.f, exports.f, unboundexports.f, unbound.f, input_2 in exported, rawsrc.f)
- else f
-
-function definedeepcopy(dict:set.symbol, templates:symbolset, knownsymbols:symbolset, type:mytype, org:symbol)resultpair
- // assert towords.type in ["int seq","int","word3","stat5","word seq","llvmtypeele","word","llvmconst","const3","inst","flddesc seq","match5","flddesc","templatepart seq","templatepart","internalbc","persistant"]report"definedeepcopy"+ towords.type //
- let body = if abstracttype.type in "encoding int word"then resultpair(knownsymbols,"PARAM 1")
- else
-  // assert length.print.type = 1 &or print.type in ["match5","seq.int","llvmconst","match5","inst","libsym","llvmtypeele","word3","const3","seq.word","stat5","seq.flddesc","flddesc","seq.templatepart","templatepart","set.mod2desc"]report"DDD"+ print.type //
-  if abstracttype.type = "seq"_1 then
-  let typepara = parameter.type
-   let dc = deepcopymangle.typepara
-   let pseqidx = mangle("_"_1, type, [ mytype."T pseq", mytype."int"])
-   let cat = mangle("+"_1, type, [ mytype."T seq", mytype."T"])
-   let blockittype = if abstracttype.parameter.type in "seq word char int"then mytype."int blockseq"
-   else mytype(towords.type + "blockseq")
-   let blockit = mangle("blockit"_1, blockittype, [ mytype."T seq"])
-    resultpair(knownsymbols,"LIT 0 LIT 0 RECORD 2 PARAM 1 FREF" + dc + "FREF" + cat + "FREF"
-    + pseqidx
-    + "APPLY 5"
-    + blockit)
-  else
-   let xx = lookup(dict, merge("type:" + print.type), empty:seq.mytype)
-    assert cardinality.xx = 1 ∧ (src.xx_1)_1 = "WORDS"_1 report"can not find type deepcopy" + print.type + print.org
-    let z = subseq(src.xx_1, 3, toint.(src.xx_1)_2 + 2)
-    let y = subfld(z, 2, 0, 2)
-     resultpair(knownsymbols
-     , if last.y = "1"_1 then
-     // only one element in record so type is not represent by actual record //"PARAM 1"
-      + subseq(y, 6, length.y - 2)
-     else
-      assert z_1 ≠ "1"_1 report"Err99a"
-       y)
- let sym = symbol("deepcopy"_1, mytype(towords.type + "deepcopy"), [ mytype."T"], type, size.body)
-  resultpair(postbind(dict, mytype."", templates, known.body + sym, src.sym, sym, org), [ mangledname.sym])
-
-function subfld(desc:seq.word, i:int, fldno:int, starttype:int)seq.word
- if i > length.desc then"RECORD" + toword.fldno
- else if i < length.desc ∧ desc_(i + 1) = "."_1 then
- subfld(desc, i + 2, fldno, starttype)
- else
-  let fldtype = mytype.@(+,_.desc,"", arithseq((i - starttype + 2) / 2, -2, i))
-   {(if abstracttype.fldtype in "encoding int word"then"PARAM 1 LIT" + toword.fldno + "IDXUC"
-   else
-    assert abstracttype.fldtype = "seq"_1 report"ERR99" + desc
-     "PARAM 1 LIT" + toword.fldno + "IDXUC" + deepcopymangle.fldtype)
-   + subfld(desc, i + 1, fldno + 1, i + 1)}
+          // case for examples like"frombits:T(bits)T"which needs to find"frombits:bit(bits)bit // &br // assert down_1_1 in [ merge("frombits:T")]report [ down_1_1]// &br lookup(dict, replaceTinname(newmodpara, down_1_1), params2)&} &br &keyword else // often there is no T in the function name so a lookup assuming that is done first. // k2 &{ block assert cardinality.k = 1 &keyword report"cannot find template for" + down_1_1 + "("&br + @(seperator.",", print,"", params2)&br + ")while process"&br + print.org &br + "templatename"&br + templatename &br + mangledname &br + fullname &br + "newmodpara:"&br + print.newmodpara &br + toword.cardinality.k2 &{ block // + @(+, print,"", toseq.templates)// &br assert mangledname ≠ mangledname.k_1 &keyword report"ERR12" + mangledname + print2.k_1 &{ block &keyword if not.isdefined.lookupsymbol(knownsymbols, mangledname.k_1)&keyword then &br &{ block X(mangledname.k_1, org, dict, mytype."T", templates, knownsymbols)&} &br &keyword else resultpair(knownsymbols, [ mangledname.k_1])&} &} &} &} &} &} &} &} &} &} &} &} &} &p &p &keyword function roots(f:firstpass)seq.word &keyword if exportmodule.f &keyword then @(+, mangledname,"", toseq.exports.f)&keyword else""&p &keyword Function headdict set.symbol &br &keyword let modulename = mytype."internal1"&{ block asset &br.[ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal",""), symbol("STATE"_1, modulename, [ mytype."internal1"], mytype."internal1",""), symbol("FROMSEQ"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("export"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("unbound"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("stub"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("usemangle"_1, modulename, empty:seq.mytype, mytype."internal1","")]&} &p &p &keyword function gathersymbols(exported:seq.word, src:seq.seq.word)firstpass &{ block @(wrapgathersymbols(exported, headdict)&br, identity &br, firstpass(mytype."?", empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, false, src)&br, src)&} &p &keyword function wrapgathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass gathersymbols(exported, stubdict, f, input)&p &keyword function definefld(src:seq.word, modname:mytype, t:seq.mytype, m:mytype)symbol symbol(abstracttype.m, modname, t, parameter.m, src)&p &keyword function hasT(s:seq.word, i:int)boolean &{ block // used to determine it type T is specified somewhere in function sig // &br &keyword if s_(i + 1) in ":."&keyword then &br &{ block // s_i is name // hasT(s, i + 2)&} &br &keyword else &{ block // at end of type // &br &keyword if s_i = "T"_1 &keyword then true &br &keyword else &keyword if s_(i + 1) in ",("&keyword then hasT(s, i + 2)&br &keyword else // at end of parameter list or beginning of function type // false &} &} &p &keyword Function bodyonly(code:seq.word)seq.word &{ block &keyword if code_1 = "parsedfunc"_1 &keyword then subseq(code, 3 + toint.code_2, length.code)&keyword else code &} &p &keyword function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass &{ block // assert print.modname.f in ["?","stdlib","UTF8","altgen"]∨(print.modname.f ="bitpackedseq.T"∧ cardinality.defines.f + cardinality.unbound.f < 8)report print.modname.f + printdict.unbound.f // &br &keyword if length.input = 0 &keyword then f &br &keyword else &keyword if input_1 in "use"&keyword then &br &{ block &keyword let t = parse(empty:set.symbol, input)&{ block firstpass(modname.f, uses.f + mytype.code.t, defines.f, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)&} &} &br &keyword else &keyword if input_1 in "type"&keyword then &br &{ block &keyword let b = parse(empty:set.symbol, input)&br &keyword let kind =(code.b)_1 &br &keyword let name =(code.b)_2 &br &keyword let t = mytype(towords.parameter.modname.f + name)&{ block &keyword if kind in "encoding"&keyword then &br &{ block assert parameter.modname.f = mytype.""&keyword report"encoding in template?"&br &keyword let typ = parameter.(types.b)_1 &br &keyword let adde = mangle("add"_1, mytype(towords.typ + "encoding"), [ mytype."T encodingstate", mytype."T encodingrep"])&br &keyword let code =("FREF" + adde + &keyword if name = "wordencoding"_1 &keyword then"LIT 1"&keyword else"LIT 0")&br + "WORD"&br + merge([ name] + print.modname.f)&br + "RECORD 3 NOINLINE"&br &keyword let sym = symbol(name, modname.f, empty:seq.mytype, mytype(towords.typ + "erecord"), code)&{ block firstpass(modname.f, uses.f + mytype(towords.typ + "encoding"), defines.f + sym, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)&} &} &br &keyword else &{ block assert parameter.modname.f in [ mytype."", mytype."T"]&keyword report"KLJKL"&br &keyword let sizeofsym = symbol(merge("type:" + print.t), modname.f, empty:seq.mytype, mytype."internaltype", input)&br &keyword let constructor = symbol(name, modname.f, @(+, parameter, empty:seq.mytype, types.b), t,"STUB")&br &keyword let syms = @(+, definefld("STUB", modname.f, [ t]), [ constructor, sizeofsym], types.b)&br + &keyword if kind = "sequence"_1 &keyword then &br &{ block [ symbol("toseq"_1, modname.f, [ t], mytype(towords.parameter.t + "seq"_1),"STUB")]&} &br &keyword else empty:seq.symbol &{ block firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)&} &} &} &} &br &keyword else &keyword if input_1 in "Function function"&keyword then &br &{ block &keyword let t = parse(stubdict, getheader.input)&br &keyword let code = bodyonly.code.t &br &keyword let name = funcname.t &br &keyword let paratypes = funcparametertypes.t &{ block assert iscomplex.modname.f = hasT(input, 2)&keyword report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input &br &keyword let firstinstruction = code_1 &{ block &keyword if firstinstruction in "usemangleZinternal1"&keyword then &br &{ block &keyword let sym = symbol(name, mytype.&keyword if iscomplex.modname.f &keyword then"T builtin"&keyword else"builtin", paratypes, funcreturntype.t, input)&{ block firstpass(modname.f, uses.f, defines.f + sym, &keyword if input_1 = "Function"_1 &keyword then exports.f + sym &keyword else exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)&} &} &br &keyword else &{ block &keyword let sym = symbol(name, modname.f, paratypes, funcreturntype.t, input)&{ block &keyword if firstinstruction in "exportZinternal1"&keyword then &br &{ block firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, exportmodule.f, rawsrc.f)&} &br &keyword else &keyword if firstinstruction in "unboundZinternal1"&keyword then &br &{ block firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + sym, exportmodule.f, rawsrc.f)&} &br &keyword else &{ block assert not(sym in defines.f)&keyword report"Function" + name.sym + "is defined twice in module" + print.modname.f &{ block firstpass(modname.f, uses.f, defines.f + sym, &keyword if input_1 = "Function"_1 &keyword then exports.f + sym &keyword else exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)&} &} &} &} &} &} &} &br &keyword else &keyword if input_1 in "module Module"&keyword then &br &{ block firstpass(mytype.&keyword if length.input > 2 &keyword then"T" + input_2 &keyword else [ input_2], uses.f, defines.f, exports.f, unboundexports.f, unbound.f, input_2 in exported, rawsrc.f)&} &br &keyword else f &} &p &keyword function definedeepcopy(dict:set.symbol, templates:symbolset, knownsymbols:symbolset, type:mytype, org:symbol)resultpair &{ block // assert towords.type in ["int seq","int","word3","stat5","word seq","llvmtypeele","word","llvmconst","const3","inst","flddesc seq","match5","flddesc","templatepart seq","templatepart","internalbc","persistant"]report"definedeepcopy"+ towords.type // &br &keyword let body = &keyword if abstracttype.type in "encoding int word"&keyword then resultpair(knownsymbols,"PARAM 1")&br &keyword else &{ block // assert length.print.type = 1 &or print.type in ["match5","seq.int","llvmconst","match5","inst","libsym","llvmtypeele","word3","const3","seq.word","stat5","seq.flddesc","flddesc","seq.templatepart","templatepart","set.mod2desc"]report"DDD"+ print.type // &br &keyword if abstracttype.type = "seq"_1 &keyword then &br &{ block &keyword let typepara = parameter.type &br &keyword let dc = deepcopymangle.typepara &br &keyword let pseqidx = mangle("_"_1, type, [ mytype."T pseq", mytype."int"])&br &keyword let cat = mangle("+"_1, type, [ mytype."T seq", mytype."T"])&br &keyword let blockittype = &keyword if abstracttype.parameter.type in "seq word char int"&keyword then mytype."int blockseq"&br &keyword else mytype(towords.type + "blockseq")&br &keyword let blockit = mangle("blockit"_1, blockittype, [ mytype."T seq"])&{ block resultpair(knownsymbols,"LIT 0 LIT 0 RECORD 2 PARAM 1 FREF" + dc + "FREF" + cat + "FREF"&br + pseqidx &br + "APPLY 5"&br + blockit)&} &} &br &keyword else &{ block &keyword let xx = lookup(dict, merge("type:" + print.type), empty:seq.mytype)&{ block assert cardinality.xx = 1 ∧ (src.xx_1)_1 = "WORDS"_1 &keyword report"can not find type deepcopy" + print.type + print.org &br &keyword let z = subseq(src.xx_1, 3, toint.(src.xx_1)_2 + 2)&br &keyword let y = subfld(z, 2, 0, 2)&{ block resultpair(knownsymbols &br, &keyword if last.y = "1"_1 &keyword then &br &{ block // only one element in record so type is not represent by actual record //"PARAM 1"&br + subseq(y, 6, length.y - 2)&} &br &keyword else &{ block assert z_1 ≠ "1"_1 &keyword report"Err99a"&{ block y &} &})&} &} &} &} &br &keyword let sym = symbol("deepcopy"_1, mytype(towords.type + "deepcopy"), [ mytype."T"], type, size.body)&{ block resultpair(postbind(dict, mytype."", templates, known.body + sym, src.sym, sym, org), [ mangledname.sym])&} &} &p &keyword function subfld(desc:seq.word, i:int, fldno:int, starttype:int)seq.word &{ block &keyword if i > length.desc &keyword then"RECORD" + toword.fldno &br &keyword else &keyword if i < length.desc ∧ desc_(i + 1) = "."_1 &keyword then &br &{ block subfld(desc, i + 2, fldno, starttype)&} &br &keyword else &{ block &keyword let fldtype = mytype.@(+,_.desc,"", arithseq((i - starttype + 2) / 2, -2, i))&{ block {(&keyword if abstracttype.fldtype in "encoding int word"&keyword then"PARAM 1 LIT" + toword.fldno + "IDXUC"&br &keyword else &{ block assert abstracttype.fldtype = "seq"_1 &keyword report"ERR99" + desc &{ block"PARAM 1 LIT" + toword.fldno + "IDXUC" + deepcopymangle.fldtype &} &})&br + subfld(desc, i + 1, fldno + 1, i + 1)} &} &} &}

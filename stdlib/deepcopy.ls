@@ -1,6 +1,6 @@
 Module deepcopy.T
 
-Function deepcopy(a:T)T deepcopy(a)
+Function deepcopy(a:T)T deepcopy.a
 
 Function NOINLINE(a:T)T a
 

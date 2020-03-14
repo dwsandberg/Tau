@@ -14,19 +14,24 @@ Function data(worddict.T)seq.T export
 
 Function emptyworddict:worddict.T worddict.T worddict(empty:seq.word, empty:seq.T)
 
-Function add(dict:worddict.T, w:word, d:T)worddict.T 
+Function add(dict:worddict.T, w:word, d:T)worddict.T
  let i = binarysearch(keys.dict, w)
-  if i > 0 
-  then dict 
-  else worddict(subseq(keys.dict, 1,-i - 1)+ [ w]+ subseq(keys.dict,-i, length.keys.dict), subseq(data.dict, 1,-i - 1)+ [ d]+ subseq(data.dict,-i, length.keys.dict))
+  if i > 0 then dict
+  else
+   worddict(subseq(keys.dict, 1,-i - 1) + [ w]
+   + subseq(keys.dict,-i, length.keys.dict), subseq(data.dict, 1,-i - 1) + [ d]
+   + subseq(data.dict,-i, length.keys.dict))
 
-Function lookup(dict:worddict.T, w:word)seq.T 
+Function lookup(dict:worddict.T, w:word)seq.T
  let i = binarysearch(keys.dict, w)
-  if i < 0 then empty:seq.T else [ data(dict)_i]
+  if i < 0 then empty:seq.T else [(data.dict)_i]
 
-Function replace(dict:worddict.T, w:word, d:T)worddict.T 
+Function replace(dict:worddict.T, w:word, d:T)worddict.T
  let i = binarysearch(keys.dict, w)
-  if i < 0 
-  then worddict(subseq(keys.dict, 1,-i - 1)+ [ w]+ subseq(keys.dict,-i, length.keys.dict), subseq(data.dict, 1,-i - 1)+ [ d]+ subseq(data.dict,-i, length.keys.dict))
-  else worddict(keys.dict, subseq(data.dict, 1, i - 1)+ [ d]+ subseq(data.dict, i + 1, length.keys.dict))
-
+  if i < 0 then
+  worddict(subseq(keys.dict, 1,-i - 1) + [ w]
+   + subseq(keys.dict,-i, length.keys.dict), subseq(data.dict, 1,-i - 1) + [ d]
+   + subseq(data.dict,-i, length.keys.dict))
+  else
+   worddict(keys.dict, subseq(data.dict, 1, i - 1) + [ d]
+   + subseq(data.dict, i + 1, length.keys.dict))

@@ -4,11 +4,11 @@ use seq.T
 
 use stdlib
 
-Function ≠(a:T, b:T)boolean not(a = b)
+Function ≠(a:T, b:T)boolean not.(a = b)
 
-Function ≤(a:T, b:T)boolean not(a > b)
+Function ≤(a:T, b:T)boolean not.(a > b)
 
-Function ≥(a:T, b:T)boolean not(b > a)
+Function ≥(a:T, b:T)boolean not.(b > a)
 
 Function <(a:T, b:T)boolean b > a
 
@@ -126,7 +126,7 @@ Function binarysearch(s:seq.T, val:T)int
  // binarysearch returns position in seq if found and the negation of the posistion if not found // binarysearch(s, 1, length.s, val)
 
 Function binarysearch(s:seq.T, b:int, a:int, val:T)int
- if a < b then-(a + 1)
+ if a < b then- a + 1
  else
   let p =(a + b) / 2
   let c = s_p ? val
@@ -136,7 +136,7 @@ Function binarysearch(s:seq.T, b:int, a:int, val:T)int
 Function setinsert(s:seq.T, val:T)seq.T
  let i = binarysearch(s, val)
   if i > 0 then s
-  else subseq(s, 1,-i - 1) + [ val] + subseq(s,-i, length.s)
+  else subseq(s, 1,- i - 1) + [ val] + subseq(s,- i, length.s)
 
 Function setdelete(s:seq.T, val:T)seq.T
  let i = binarysearch(s, val)
@@ -148,6 +148,6 @@ Function setreplaceorinsert(s:seq.T, val:T)seq.T
  let i = binarysearch(s, val)
   if i > 0 then
   subseq(s, 1, i - 1) + [ val] + subseq(s, i + 1, length.s)
-  else subseq(s, 1,-i - 1) + [ val] + subseq(s,-i, length.s)
+  else subseq(s, 1,- i - 1) + [ val] + subseq(s,- i, length.s)
 
 Function lpad(n:int, val:T, l:seq.T)seq.T constantseq(n - length.l, val) + l

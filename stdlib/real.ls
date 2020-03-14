@@ -1,18 +1,14 @@
 Module real
 
-
 use seq.real
 
 use stdlib
 
 use otherseq.real
 
-
-
-
 type real is record representation:int
 
-Function type:real internaltype  export
+Function type:real internaltype export
 
 Function-(r:real)real 0.0 - r
 
@@ -40,15 +36,15 @@ Function pi real 3.1415926535898
 
 Function ?(a:real, b:real)ordering builtin.usemangle
 
-Function =(a:real, b:real)boolean a ? b = EQ
+Function =(a:real, b:real)boolean(a ? b) = EQ
 
-Function >(a:real, b:real)boolean a ? b = GT
+Function >(a:real, b:real)boolean(a ? b) = GT
 
 Function <(a:real, b:real)boolean export
 
-Function max(a:real, b:real)real if a ? b = GT then a else b
+Function max(a:real, b:real)real if(a ? b) = GT then a else b
 
-Function min(a:real, b:real)real if a ? b = LT then a else b
+Function min(a:real, b:real)real if(a ? b) = LT then a else b
 
 Function +(a:real, b:real)real builtin.usemangle
 
@@ -66,17 +62,8 @@ Function^(i:real, n:int)real @(*, identity, 1.0, constantseq(n, i))
 
 Function *(a:int, b:real)real toreal.a * b
 
-
-
-
-
-Function print( decimals:int,rin:real) seq.word export
+Function print(decimals:int, rin:real)seq.word export
 
 use UTF8
 
-
 -------------
-
-
-
-

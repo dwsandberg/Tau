@@ -4,11 +4,12 @@ Module tools
 
 Library tools bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph makeDAG prettylib prettyparagraph printbitcodes profile renamemodule svg svggraph taulextable testparser 
  uses stdlib 
- exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph makeDAG pretty prettylib printbitcodes profile svg svggraph taulextable testparser tools
+ exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph 
+ makeDAG pretty prettylib printbitcodes profile svg svggraph taulextable testparser tools
 
 /run tools testfirstpass
 
-/run tools testprofile
+run tools testprofile
 
 /run tools prettytest
 

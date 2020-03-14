@@ -2,15 +2,13 @@ Module process.T
 
 use stdlib
 
-
 type process is record abortedx:boolean, a:seq.word, resultb:T
 
 Function aborted(p:process.T)boolean builtin.usemangle
 
-Function message(p:process.T)seq.word 
- if aborted.p then a.p else"normal exit"
+Function message(p:process.T)seq.word if aborted.p then a.p else"normal exit"
 
-Function result(p:process.T)T 
+Function result(p:process.T)T
  assert not.aborted.p report"no result of aborted process"
   subresult(p, 2)
 
@@ -21,4 +19,3 @@ Note:Must access result of process with function result rather than using field 
 Function process(T)process.T builtin.usemangle
 
 ______________
-
