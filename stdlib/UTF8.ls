@@ -96,10 +96,18 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
  if i > length.s then result
  else
   let this = s_i
-  let single = this in ('()-].:"_^. ' + space + EOL)
-  let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
-   addspace(s, i + 1, single, if nospace ∨ single ∨ this = ","_1 then result + d
-   else result + char.32 + d)
+  if this="&br"_1 then 
+     addspace(s, i + 1, true,  result + char(10))
+  else if this=","_1 then
+     // no space before but space after //
+     addspace(s, i + 1, false,  result + char1.",")
+  else 
+   let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
+   if this in ('()-].:"_^. ' + space )then
+      // no space before or after //
+      addspace(s, i + 1, true,   result + d)
+    else 
+    addspace(s, i + 1, false, if nospace   then result + d else result + char.32 + d)
 
 ---------
 

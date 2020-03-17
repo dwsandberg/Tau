@@ -32,7 +32,7 @@ run testall testall
  
  use testopt 
  
- Function testall seq.word test5 + test11 + test11a + testencoding + testmodules + testopt 
+ Function testall seq.word // this is a comment // test5 + test11 + test11a + testencoding + testmodules + testopt 
  + check([ print(3, sqrt.2.0) = "1.414"
 , print(2, toreal.3) = "3.00"
 , intpart.3.1 = 3 

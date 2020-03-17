@@ -82,7 +82,7 @@ function x(ctl:control, s:seq.word, i:int, stk:stack.prettyresult)prettyresult
    // need to excape quotes //
     let size = toint.s_(i + 1)
     let txt = @(+, escapequote,"", subseq(s, i + 2, i + 1 + size))
-    let t = result(ctl, ' &{ literal"' + addbreak(ctl, [ EOL], txt, 1, 0) + '"&} ')
+    let t = result(ctl, ' &{ literal"' + addbreak(ctl, "&br", txt, 1, 0) + '"&} ')
      x(ctl, s, i + 2 + size, push(stk, t))
    else if w in "COMMENT"then
    let size = toint.s_(i + 1)

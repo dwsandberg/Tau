@@ -6,14 +6,14 @@ use stdlib
 
 Function svg(classes:seq.seq.word, body:seq.word, width:int, length:int)seq.word
  let classdefs = ' <style type ="text/css"> ' + merge."<! [ CDATA ["
- + @(+, identity,"", @(+, +([ EOL] + "."), empty:seq.seq.word, classes))
+ + @(+, identity,"", @(+, +(" &br."), empty:seq.seq.word, classes))
  + "]]></style>"
-  [ EOL] + "<svg height =" + toword.length + "width =" + toword.width
+   " &br <svg height =" + toword.length + "width =" + toword.width
   + ' > <defs> <marker id ="markerArrow2"markerWidth ="13"markerHeight ="13"refX ="2"refY ="7"orient ="auto"> <path d ="M8, 13 L8, 2 L2, 7 L8, 13"style ="fill:#000000 ;"/> </marker> '
   + ' <marker id ="markerArrow"markerWidth ="13"markerHeight ="13"refX ="8"refY ="7"orient ="auto"> <path d ="M2, 2 L2, 13 L8, 7 L2, 2"style ="fill:#000000 ;"/> </marker> </defs> '
-  + EOL
+  + "&br"
   + classdefs
-  + EOL
+  + "&br"
   + body
   + "Your browser does not support inline SVG.</svg>"
 
@@ -24,12 +24,12 @@ Function line(x:int, y:int, x2:int, y2:int, arrowstart:boolean, arrowend:boolean
   + toword.y2
   + '"stroke ="black"fill ="none"'
   + if style = ""then"/>"else ' style ="' + style + '"/> ')
-  + EOL }
+  + "&br" }
 
 Function text(class:seq.word, x:int, y:int, w:seq.word)seq.word
  if length.w = 0 then w
  else
-  [ EOL] + ' <text class ="' + class_1 + '"x ="' + toword.x
+   ' &br <text class ="' + class_1 + '"x ="' + toword.x
   + '"y ="'
   + toword.y
   + '"> '

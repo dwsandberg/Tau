@@ -45,7 +45,7 @@ function print(p:wordfreq)seq.word
  if count.p = 0 then empty:seq.word
  else
   "&br the word" + w.p + "occurs" + toword.count.p + "times."
-  + EOL
+  
 
 function removelowcount(mincount:int, p:wordfreq)seq.wordfreq if count.p < mincount then empty:seq.wordfreq else [ p]
 

@@ -28,9 +28,7 @@ use seq.seq.seq.word
 
 use seq.seq.word
 
-use seq.stepresult
 
-use seq.stkele
 
 use seq.symbol
 
@@ -42,7 +40,6 @@ use set.symbol
 
 use set.word
 
-use stack.stkele
 
 use stacktrace
 
@@ -390,7 +387,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
   if isdefined.t1 then resultpair(checkforindex(t1, org, dict, templates, knownsymbols), [ mangledname])
   else
    let down = codedown.mangledname
-    assert length.down > 1 report"LLLx" + mangledname
+    assert length.down > 1 report"LLLx" + mangledname+print.org
     let newmodname = replaceT(modpara, mytype.down_2)
     let newmodpara = parameter.newmodname
     let templatename = abstracttype.newmodname

@@ -107,7 +107,7 @@ function drawarc(vertnodesize:int, stop:nodeinfo.T, s:seq.arcinfo.T, i:int)seq.w
  let a = s_i
  let xstop = if width.a = 0 then x.stop else x.stop - width.a / 8 - 5
   line(x.a, y.a, xstop, y.stop + (i - 1) * if width.a = 0 then 0 else vertnodesize, backarc.a, false)
-  + EOL
+  + "&br"
   + text("text", xstop, y.stop + (i - 1) * vertnodesize, label.a)
 
 function toarcinfo(s:set.nodeinfo.T, a:arcinfo.T)arcinfo.T

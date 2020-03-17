@@ -343,8 +343,8 @@ function print(block:int, p:codefreq)seq.word
  if count.p = 0 then empty:seq.word
  else
   "&br the code" + lookup(block, w.p) + "occurs" + toword.count.p
-  + "times."
-  + EOL
+  + "times.&br"
+ 
 
 function removelowcount(mincount:int, p:codefreq)seq.codefreq if count.p < mincount then empty:seq.codefreq else [ p]
 
