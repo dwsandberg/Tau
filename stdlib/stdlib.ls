@@ -9,7 +9,7 @@ parsersupport  uses
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  unsafe packedseq   process real reconstruct seq set stack stacktrace 
  stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode   libdescfunc otherseq words mangle
- worddict parse parsersupport
+ worddict  
 
 
 use UTF8

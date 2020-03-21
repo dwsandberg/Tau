@@ -4,8 +4,6 @@ use packedseq.T
 
 use packedseq.seq.T
 
-use unsafe.T
-
 use seq.T
 
 use seq.seq.T

@@ -90,6 +90,13 @@ message + "&br" +prettynoparse.@(+,text,"",subseq(input,1,place))
  let newstkele=stkele(newstateno,place.top.stk, action(ruleno,input,reduction(top(stk, rulelen))))
  step(input,push(newstk, newstkele),token)
 
+/function expect:T(stateno:int)seq.word 
+ let l = @(+, kk:T(stateno),"", arithseq(length.tokenlist:T, 1, 1))
+   toseq(asset.l - asset."-=_^∧ ∨ *")
+
+function kk:T(stateno:int, token:int)seq.word 
+ if 0 ≠ actiontable:T_(length.tokenlist:T * stateno + token)then [ tokenlist:T_token]else empty:seq.word
+
 
  Function  place(R:reduction.T) int  place((toseq.R)_length.toseq.R)
 

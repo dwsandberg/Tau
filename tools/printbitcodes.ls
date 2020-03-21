@@ -1,6 +1,10 @@
+#!/usr/local/bin/tau
+
 Module printbitcodes
 
 run printbitcodes test1
+
+
 
 use UTF8
 
@@ -48,7 +52,7 @@ use otherseq.codefreq
 
 use otherseq.boolean
 
-Function test1 seq.word printBitCodes."mytest.bc"
+Function test1 seq.word printBitCodes."simpletest.bc"
 
 stats("tools.bc")
 

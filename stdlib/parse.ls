@@ -92,7 +92,6 @@ use parsersupport.bindinfo
 
 use seq.token.bindinfo
 
-use stacktrace
 
 Function parse(b:bindinfo, input:seq.word)bindinfo
   let a=sortedlextable:bindinfo
@@ -186,7 +185,7 @@ function addparameter(orgsize:int, input:seq.token.bindinfo, place:int, dict:set
 function lookupbysig(dict:set.symbol, name:word, paratypes:seq.mytype, input:seq.token.bindinfo, place:int)symbol
  let f = lookup(dict, name, paratypes)
   assert not.isempty.f report errormessage("cannot find 1" + name + "(" + @(seperator(","), print,"", paratypes)
-  + ")", input, place)+stacktrace
+  + ")", input, place)
    assert cardinality.f = 1 report errormessage("found more that one" + @(+, print2,"", toseq.f), input, place)
     f_1
 

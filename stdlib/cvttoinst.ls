@@ -4,7 +4,6 @@ use encoding.inst
 
 use intercode
 
-
 use seq.inst
 
 use seq.seq.int

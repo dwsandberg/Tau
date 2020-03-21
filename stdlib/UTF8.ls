@@ -103,7 +103,7 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
      addspace(s, i + 1, false,  result + char1.",")
   else 
    let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
-   if this in ('()-].:"_^. ' + space )then
+   if this in ('()].:"_^. ' + space )then
       // no space before or after //
       addspace(s, i + 1, true,   result + d)
     else 
