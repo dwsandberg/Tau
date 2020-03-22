@@ -4,7 +4,7 @@ Module genLR1
 
 /run genLR1 test11
 
-run genLR1 gentau2 
+/run genLR1 gentau2 
 
 
 run genLR1 gentaupretty
@@ -186,7 +186,7 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphab
   let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
   let actions = closestate(graminfo, 1, empty:seq.action)
   let amb = @(+, isambiguous,"", actions)
-   {(if length.amb > 0 then"ambiguous actions:" + amb else"") + generatereduce(grammarandact, alphabet,"bindinfo")
+   {(if length.amb > 0 then"ambiguous actions:" + amb else"") + generatereduce(grammarandact, alphabet,"attribute")
    + ' &p function tokenlist seq.word"'
    + alphabet
    + '"'
@@ -318,7 +318,7 @@ function taurules2 seq.seq.seq.word[[  ' G F # ', ' R_1 ']
 ,[ ' K NM ' ,' R_1 ' ]
 , [ ' NM W ', ' R_1 ']
 , [ ' NM N ',' R_1 ']
-, [ ' NM W : T ','  bindinfo(dict.R,[ merge(code.R_1 + ":" + print.(types.R_3)_1)], types.R_3) ']
+, [ ' NM W : T ','  bindinfo(dict.R,[ merge(code.R_1 + ":" + print.(types.R_3)_1)], empty:seq.mytype) ']
 ,  [ ' E @(K, K, E, E) ', ' apply(R_3, R_5, R_7, R_9, input, place.R)']]
 
    M  N
@@ -342,13 +342,10 @@ use fileio
 use format
 
 function tauprettyrules seq.seq.seq.word [ ["G F #","R_1"]
-, ["F W W(FP)T E","pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]"]
-, ["F W N(FP)T E","pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]"]
-, ["F W W T E","pretty.[ key.R_1, R_2, R_3, R_4]"]
-, ["F W W:T T E","pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6]"]
-, ["F W W:T(FP)T E","pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9]"]
+, ["F W NM(FP)T E","pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]"]
+, ["F W NM T E","pretty.[ key.R_1, R_2, R_3, R_4]"]
 , ["F W W is W P","pretty.[ key.R_1, R_2, R_3, R_4, list.R_5]"]
-, ["F W T","// use // pretty.[ key.R_1, R_2]"]
+, ["F  T","// use // pretty.[  R_2]"]
 , ["FP P","list.R_1"]
 , ["P T","R_1"]
 , ["P P, T","R_1 + R_3"]
@@ -356,16 +353,18 @@ function tauprettyrules seq.seq.seq.word [ ["G F #","R_1"]
 , ["P P, W:T","R_1 + pretty.[ R_3, R_4, R_5]"]
 , ["P comment W:T","pretty.[ R_1, R_2, R_3, R_4]"]
 , ["P P, comment W:T","R_1 + pretty.[ R_3, R_4, R_5, R_6]"]
-, ["E W","R_1"]
-, ["E N(L)", ' if length.R_3 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]']
-, ["E W(L)", ' if length.R_3 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]']
-, ["E W:T(L)","pretty.[ R_1, R_2, R_3, R_4, list.R_5, R_6]"]
+, ["E NM","R_1"]
+, ["E NM(L)", ' if length.R_3 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]']
 , ["E(E)","R_2"]
 , ["E { E }","R_2"]
-, ["E if E then E else E", ' if width.R_2 + width.R_4 + width.R_6 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]else if width.R_2 + width.R_4 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]else pretty.[ R_1, R_2, prettyresult("&keyword then &br"), block(R_4), elseblock.R_6]']
+, ["E if E then E else E", '  pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]
+  else if width.R_2 + width.R_4 < 30 then 
+  pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]
+  else pretty.[ R_1, R_2, attribute."&keyword then &br", block.R_4, elseblock.R_6]
+']
 , ["E E^E","wrap(1, R_1, text.R_2, R_3)"]
 , ["E E_E","wrap(1, R_1, text.R_2, R_3)"]
-, ["E-E", ' [ prettyresult(2, 1 + width.text.R_2,"-"+ space + text.R_2)]']
+, ["E-E", ' unaryminus.R_2 ']
 , ["E W.E","wrap(3, R_1, text.R_2, R_3)"]
 , ["E N.E","wrap(3, R_1, text.R_2, R_3)"]
 , ["E E * E","wrap(4, R_1, text.R_2, R_3)"]
@@ -378,15 +377,19 @@ function tauprettyrules seq.seq.seq.word [ ["G F #","R_1"]
 , ["L L, E","R_1 + R_3"]
 , ["E [ L]","pretty.[ R_1, list.R_2, R_3]"]
 , ["A let W = E", ' pretty.[ R_1, R_2, R_3, R_4]']
-, ["E A E", ' pretty.[ R_1, block("let assert", R_2)]']
-, ["E assert E report E E", ' pretty.[ R_1, R_2, keyreport, R_4, block("let assert", R_5)]']
+, ["E A E", ' pretty.[ R_1, checkpara( R_1, block("&br let assert", R_2))']
+, ["E assert E report E E", ' pretty.[ R_1, R_2, key.R_3, R_4, block("&br let assert", R_5)]']
 , ["E I","R_1"]
 , ["E I.I","pretty.[ R_1, R_2, R_3]"]
 , ["T W","R_1"]
 , ["T W.T","pretty.[ R_1, R_2, R_3]"]
-, ["E W:T","pretty.[ R_1, R_2, R_3]"]
-, ["E $wordlist","R_1"]
-, ["E comment E", ' if width.R_1 + width.R_2 > 30 ∧(text.R_2)_1 ≠"&br"_1 then pretty.[ R_1, prettyresult."&br", R_2]else pretty.[ R_1, R_2]']
+, ["E $wordlist",' attribute([prettyresult(0,length.text.R_1,
+ "&{ literal"+escapeformat.text.R_1+"&}")])']
+, ["E comment E", '  let t="&{ comment"+  escapeformat.text.R_1 +"&}"
+ let t2=if width.R_1 + width.R_2 > 30 
+  ∧ (text.R_2)_1 ≠ "&br"_1 then t+"&br" else t
+  pretty.[ attribute.[prettyresult(0,length.text.R_1,t2)], R_2] 
+ ' ]
 , ["N_","R_1"]
 , ["N-","R_1"]
 , ["N =","R_1"]
@@ -396,141 +399,112 @@ function tauprettyrules seq.seq.seq.word [ ["G F #","R_1"]
 , ["N ∨","R_1"]
 , ["K W.E","pretty.[ R_1, R_2, R_3]"]
 , ["K N.E","pretty.[ R_1, R_2, R_3]"]
-, ["K N(L)","pretty.[ R_1, R_2, list.R_3, R_4]"]
-, ["K W(L)","pretty.[ R_1, R_2, list.R_3, R_4]"]
-, ["K N","R_1"]
-, ["K W","R_1"]
+, ["K NM(L)","pretty.[ R_1, R_2, list.R_3, R_4]"]
+,[ ' K NM ' ,' R_1 ' ]
+, [ ' NM W ', ' R_1 ']
+, [ ' NM N ',' R_1 ']
+, [ ' NM W : T ',"pretty.[ R_1, R_2, R_3]"]
 , ["E @(K, K, E, E)","pretty.[ R_1, R_2, list(R_3 + R_5 + R_7 + R_9), R_10]"]]
-
 
 
 Function test11 seq.word
 extractgrammer.
- ' if ruleno = // G F # // 1 then R_1
- else if ruleno = // F W W(FP)T E // 2 then
- createfunc(R,input, code.R_2, types.R_4, R_6, R_7)
- else if ruleno = // F W N(FP)T E // 3 then
- createfunc(R,input, code.R_2, types.R_4, R_6, R_7)
- else if ruleno = // F W W T E // 4 then
- createfunc(R,input, code.R_2, empty:seq.mytype, R_3, R_4)
- else if ruleno = // F W W:T T E // 5 then
- let name = [ merge(code.R_2 + ":" + print.mytype.gettype.R_4)]
-   createfunc(R,input, name, empty:seq.mytype, R_5, R_6)
- else if ruleno = // F W W:T(FP)T E // 6 then
- let name = [ merge(code.R_2 + ":" + print.mytype.gettype.R_4)]
-   createfunc(R,input, name, types.R_6, R_8, R_9)
- else if ruleno = // F W W is W P // 7 then
- assert(code.R_4)_1 in "record encoding sequence"report 
- errormessage("Expected record encoding or sequence after is in type definition got:" + code.R_4, input, place.R)
-   bindinfo(dict.R, code.R_4 + code.R_2 + code.R_5, types.R_5)
- else if ruleno = // F W T // 8 then
- // use clause // bindinfo(dict.R, gettype.R_2, empty:seq.mytype)
- else if ruleno = // FP P // 9 then
- bindinfo(@(addparameter(cardinality.dict.R, input, place.R), identity, dict.R, types.R_1),"", types.R_1)
- else if ruleno = // P T // 10 then
- bindinfo(dict.R,"", [ mytype(gettype.R_1 + ":")])
- else if ruleno = // P P, T // 11 then
- bindinfo(dict.R,"", types.R_1 + [ mytype(gettype.R_3 + ":")])
- else if ruleno = // P W:T // 12 then
- bindinfo(dict.R, code.R_1 + code.R_3, [ mytype(gettype.R_3 + code.R_1)])
- else if ruleno = // P P, W:T // 13 then
- bindinfo(dict.R, code.R_1 + code.R_3 + code.R_5, types.R_1 + [ mytype(gettype.R_5 + code.R_3)])
- else if ruleno = // P comment W:T // 14 then
- bindinfo(dict.R,"//" + code.R_1 + "//" + code.R_2 + code.R_4, [ mytype(gettype.R_4 + code.R_2)])
- else if ruleno = // P P, comment W:T // 15 then
- bindinfo(dict.R,"//" + code.R_3 + "//" + code.R_1 + code.R_4
-  + code.R_6, types.R_1 + [ mytype(gettype.R_6 + code.R_4)])
- else if ruleno = // E W // 16 then
- let id = code.R_1
-  let f = lookupbysig(dict.R, id_1, empty:seq.mytype, input, place.R)
-   bindinfo(dict.R, [ mangledname.f], [ resulttype.f])
- else if ruleno = // E N(L)// 17 then unaryop(R,input, code.R_1, R_3)
- else if ruleno = // E W(L)// 18 then unaryop(R,input, code.R_1, R_3)
- else if ruleno = // E W:T(L)// 19 then
- let name = [ merge(code.R_1 + ":" + print.(types.R_3)_1)]
-   unaryop(R,input, name, R_5)
- else if ruleno = // E(E)// 20 then R_2
- else if ruleno = // E { E } // 21 then R_2
- else if ruleno = // E if E then E else E // 22 then
- let thenpart = R_4
-   assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)
-    assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R)
-    let newcode = code.R_2 + code.R_4 + code.R_6
-     bindinfo(dict.R, newcode + "if", types.thenpart)
- else if ruleno = // E E^E // 23 then opaction(R,input)
- else if ruleno = // E E_E // 24 then opaction(R,input)
- else if ruleno = // E-E // 25 then unaryop(R,input, code.R_1, R_2)
- else if ruleno = // E W.E // 26 then unaryop(R,input, code.R_1, R_3)
- else if ruleno = // E N.E // 27 then unaryop(R,input, code.R_1, R_3)
- else if ruleno = // E E * E // 28 then opaction(R,input)
- else if ruleno = // E E-E // 29 then opaction(R,input)
- else if ruleno = // E E = E // 30 then opaction(R,input)
- else if ruleno = // E E > E // 31 then opaction(R,input)
- else if ruleno = // E E ∧ E // 32 then opaction(R,input)
- else if ruleno = // E E ∨ E // 33 then opaction(R,input)
- else if ruleno = // L E // 34 then R_1
- else if ruleno = // L L, E // 35 then
- bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3)
- else if ruleno = // E [ L]// 36 then
- let types = types.R_2
-   assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place.R)
-    bindinfo(dict.R,"LIT 0 LIT" + toword.length.types + code.R_2 + "RECORD"
-    + toword(length.types + 2), [ mytype(towords.types_1 + "seq")])
- else if ruleno = // A let W = E // 37 then
- let e = R_4
-  let name =(code.R_2)_1
-   assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:" + name, input, place.R)
-   let newdict = dict.R + symbol(name, mytype."local", empty:seq.mytype,(types.e)_1,"")
-    bindinfo(newdict, code.e + "define" + name, types.e)
- else if ruleno = // E A E // 38 then
- let t = code.R_1
-  let f = lookup(dict.R, last.code.R_1, empty:seq.mytype)
-   assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name" + last.code.R_1
-    bindinfo(dict.R_1 - f_1, subseq(t, 1, length.t - 2) + code.R_2 + "SET"
-    + last.code.R_1, types.R_2)
- else if ruleno = // E assert E report E E // 39 then
- assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place.R)
-   assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place.R)
-   let newcode = code.R_2 + code.R_5 + code.R_4 + "assertZbuiltinZwordzseq if"
-    bindinfo(dict.R, newcode, types.R_5)
- else if ruleno = // E I // 40 then 
-  bindinfo(dict.R,"LIT"+code.R_1,[mytype."int"])
- else if ruleno = // E I.I // 41 then
- bindinfo(dict.R,"WORDS 3" +  code.R_1+"."+code.R_3 
-  + "makerealZUTF8Zwordzseq", [ mytype."real"])
- else if ruleno = // T W // 42 then isdefined(R,input, code.R_1)
- else if ruleno = // T W.T // 43 then
- isdefined(R,input, towords.(types.R_3)_1 + code.R_1)
- else if ruleno = // E W:T // 44 then
- let f = lookup(dict.R, merge(code.R_1 + ":" + print.(types.R_3)_1), empty:seq.mytype)
-   assert not.isempty.f report errormessage("cannot find" + code.R_1 + ":" + print.mytype.code.R_3, input, place.R)
-    bindinfo(dict.R, [ mangledname.f_1], [ resulttype.f_1])
- else if ruleno = // E $wordlist // 45 then
- let s = code.R_1
-    bindinfo(dict.R,"WORDS" + toword.(length.s- 2) + subseq(s,2,length.s- 1), [ mytype."word seq"])
- else if ruleno = // E comment E // 46 then
- let s = code.R_1
-   bindinfo(dict.R, code.R_2 + "COMMENT" + toword.(length.s- 2) + subseq(s,2,length.s- 1), types.R_2)
- else if ruleno = // N_// 47 then R_1
- else if ruleno = // N-// 48 then R_1
- else if ruleno = // N = // 49 then R_1
- else if ruleno = // N > // 50 then R_1
- else if ruleno = // N * // 51 then R_1
- else if ruleno = // N &and // 52 then R_1
- else if ruleno = // N &or // 53 then R_1
- else if ruleno = // K W.E // 54 then
- bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)
- else if ruleno = // K N.E // 55 then
- bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)
- else if ruleno = // K N(L)// 56 then
- bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)
- else if ruleno = // K W(L)// 57 then
- bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)
- else if ruleno = // K N // 58 then bindinfo(dict.R, code.R_1, empty:seq.mytype)
- else if ruleno = // K W // 59 then bindinfo(dict.R, code.R_1, empty:seq.mytype)
- else
-  assert ruleno = // E @(K, K, E, E)// 60 report"invalid rule number" + toword.ruleno
-   apply(R_3, R_5, R_7, R_9, input, place.R)'
+ '  Function action(ruleno:int,input:seq.token.attribute,R:reduction.attribute) attribute
+ if ruleno = // G F # // 1 then R_1 
+ else if ruleno = // F W W(FP)T E // 2 then 
+ pretty 
+  .[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
+ else if ruleno = // F W N(FP)T E // 3 then 
+ pretty 
+  .[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
+ else if ruleno = // F W W T E // 4 then 
+ pretty.[ key.R_1, R_2, R_3, R_4]
+ else if ruleno = // F W W:T T E // 5 then 
+ pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6]
+ else if ruleno = // F W W:T(FP)T E // 6 then 
+ pretty 
+  .[ key.R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9]
+ else if ruleno = // F W W is W P // 7 then 
+ pretty.[ key.R_1, R_2, R_3, R_4, list.R_5]
+ else if ruleno = // F W T // 8 then // use // pretty.[ key.R_1, R_2]
+ else if ruleno = // FP P // 9 then list.R_1 
+ else if ruleno = // P T // 10 then R_1 
+ else if ruleno = // P P, T // 11 then R_1 + R_3 
+ else if ruleno = // P W:T // 12 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = // P P, W:T // 13 then 
+ R_1 + pretty.[ R_3, R_4, R_5]
+ else if ruleno = // P comment W:T // 14 then pretty.[ R_1, R_2, R_3, R_4]
+ else if ruleno = // P P, comment W:T // 15 then 
+ R_1 + pretty.[ R_3, R_4, R_5, R_6]
+ else if ruleno = // E W // 16 then R_1
+ else if ruleno = // E N(L)// 17 then 
+ if length.R_3 = 1 then wrap(3, R_1,".", R_3)
+  else pretty.[ R_1, R_2, list.R_3, R_4]
+ else if ruleno = // E W(L)// 18 then 
+ if length.R_3 = 1 then wrap(3, R_1,".", R_3)
+  else pretty.[ R_1, R_2, list.R_3, R_4]
+ else if ruleno = // E W:T(L)// 19 then 
+ pretty.[ R_1, R_2, R_3, R_4, list.R_5, R_6]
+ else if ruleno = // E(E)// 20 then R_2 
+ else if ruleno = // E { E } // 21 then R_2 
+ else if ruleno = // E if E then E else E // 22 then 
+ if width.R_2 + width.R_4 + width.R_6 < 30 then 
+  pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]
+  else if width.R_2 + width.R_4 < 30 then 
+  pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]
+  else pretty.[ R_1, R_2, attribute."&keyword then &br", block.R_4, elseblock.R_6]
+ else if ruleno = // E E^E // 23 then wrap(1, R_1, text.R_2, R_3)
+ else if ruleno = // E E_E // 24 then wrap(1, R_1, text.R_2, R_3)
+ else if ruleno = // E-E // 25 then unaryminus.R_2 
+ else if ruleno = // E W.E // 26 then wrap(3, R_1, text.R_2, R_3)
+ else if ruleno = // E N.E // 27 then wrap(3, R_1, text.R_2, R_3)
+ else if ruleno = // E E * E // 28 then wrap(4, R_1, text.R_2, R_3)
+ else if ruleno = // E E-E // 29 then wrap(5, R_1, text.R_2, R_3)
+ else if ruleno = // E E = E // 30 then wrap(6, R_1, text.R_2, R_3)
+ else if ruleno = // E E > E // 31 then wrap(7, R_1, text.R_2, R_3)
+ else if ruleno = // E E ∧ E // 32 then wrap(8, R_1, text.R_2, R_3)
+ else if ruleno = // E E ∨ E // 33 then wrap(9, R_1, text.R_2, R_3)
+ else if ruleno = // L E // 34 then R_1 
+ else if ruleno = // L L, E // 35 then R_1 + R_3 
+ else if ruleno = // E [ L]// 36 then pretty.[ R_1, list.R_2, R_3]
+ else if ruleno = // A let W = E // 37 then pretty.[ R_1, R_2, R_3, R_4]
+ else if ruleno = // E A E // 38 then checkpara( R_1, block("&br let assert", R_2))
+ else if ruleno = // E assert E report E E // 39 then 
+ pretty.[ R_1, R_2, key.R_3, R_4, block("&br let assert", R_5)]
+ else if ruleno = // E I // 40 then R_1 
+ else if ruleno = // E I.I // 41 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = // T W // 42 then R_1 
+ else if ruleno = // T W.T // 43 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = // E W:T // 44 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = // E $wordlist // 45 then  // attribute(
+ "&{ literal" + escapeformat.fixstring(text.R_1,1) +"&}") //
+ attribute([prettyresult(0,length.text.R_1,
+ "&{ literal"+escapeformat.text.R_1+"&}")])
+ else if ruleno = // E comment E // 46 then 
+ let t="&{ comment"+  escapeformat.text.R_1 +"&}"
+ let t2=if width.R_1 + width.R_2 > 30 
+  ∧ (text.R_2)_1 ≠ "&br"_1 then t+"&br" else t
+  pretty.[ attribute.[prettyresult(0,length.text.R_1,t2)], R_2]
+ else if ruleno = // N_// 47 then R_1 
+ else if ruleno = // N-// 48 then R_1 
+ else if ruleno = // N = // 49 then R_1 
+ else if ruleno = // N > // 50 then R_1 
+ else if ruleno = // N * // 51 then R_1 
+ else if ruleno = // N ∧ // 52 then R_1 
+ else if ruleno = // N ∨ // 53 then R_1 
+ else if ruleno = // K W.E // 54 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = // K N.E // 55 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = // K N(L)// 56 then 
+ pretty.[ R_1, R_2, list.R_3, R_4]
+ else if ruleno = // K W(L)// 57 then 
+ pretty.[ R_1, R_2, list.R_3, R_4]
+ else if ruleno = // K N // 58 then R_1 
+ else if ruleno = // K W // 59 then R_1 
+ else 
+  assert ruleno = // E @(K, K, E, E)// 60 report"invalid rule number" + toword.ruleno 
+   pretty 
+   .[ R_1, R_2, list.(R_3 + R_5 + R_7 + R_9), R_10]
+ '
    
 Function extractgrammer(z:seq.word) seq.word 
 // use to extract grammar and rules from action procedure generated by genLR1 //

@@ -7,7 +7,7 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
  exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph 
  makeDAG pretty prettylib printbitcodes profile svg svggraph taulextable testparser tools
 
-run printbitcodes test1
+/run printbitcodes test1
 
 /run tools testfirstpass
 

@@ -29,7 +29,6 @@ use seq.seq.seq.word
 use seq.seq.word
 
 
-
 use seq.symbol
 
 use set.firstpass
@@ -39,7 +38,6 @@ use set.mytype
 use set.symbol
 
 use set.word
-
 
 use stacktrace
 
@@ -478,7 +476,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
  // assert print.modname.f in ["?","stdlib","UTF8","altgen"]∨(print.modname.f ="bitpackedseq.T"∧ cardinality.defines.f + cardinality.unbound.f < 8)report print.modname.f + printdict.unbound.f //
  if length.input = 0 then f
  else if input_1 in "use"then
- let t = parse(empty:set.symbol, input)
+ let t = parse(empty:set.symbol, subseq(input,2,length.input))
    firstpass(modname.f, uses.f + mytype.code.t, defines.f, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
  else if input_1 in "type"then
  let b = parse(empty:set.symbol, input)

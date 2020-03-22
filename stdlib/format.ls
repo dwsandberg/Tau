@@ -76,13 +76,15 @@ function processpara(a:seq.word, j:int, i:int, result:seq.word, stk:stack.seq.wo
    else if this = space then processpara(a, j, i + 1, result + space, stk)
    else processpara(a, j, i + 1, result + addamp.this, stk)
    
-function escapeformat(added :word, c:word) word
-     if c in "&{ &} &br" then  merge([added,c]) else c
+function escapeformat(length:int, c:word) word
+     if c in "&{  &br &p &row " then  
+       if length > 20 then merge([encodeword([char.10]),c]) else   merge([space,c])
+    else 
+      if c in "&keyword &} &em &strong &cell " then merge([space,c])
+      else c
 
 Function escapeformat(s:seq.word) seq.word 
-if length.s < 20 then @(+,escapeformat.space ,"",s )
-else
-@(+,escapeformat.encodeword([char.10]),"",s )
+@(+,escapeformat.length.s,"",s )
  
 
 function match(s:seq.word, depth:int, i:int)int
