@@ -1,18 +1,18 @@
 Module layergraph.T
 
+use seq.arc.T
+
+use set.arc.T
+
 use barycenter.T
 
 use graph.T
 
-use seq.T
-
-use seq.arc.T
-
 use seq.seq.T
 
-use set.T
+use seq.T
 
-use set.arc.T
+use set.T
 
 use stdlib
 
@@ -43,7 +43,7 @@ Function issource(g:graph.T, n:T)seq.T
 
 Function sources(g:graph.T)seq.T @(+, issource(g), empty:seq.T, toseq.nodes.g)
 
-----adddummy nodes---
+- - - - adddummy nodes - - -
 
 add nodes so that arcs never cross layers.
 
@@ -59,7 +59,7 @@ function d2(org:layeredgraph.T, g:graph.T, i:int, ok:set.T, layerout:seq.seq.T)l
     d2(org, gnew, i + 1, x, newout)
   else layeredgraph(gnew, newout)
 
-function splitarcs(g:graph.T, ok:set.T, n:T)seq.arc.T toarcs(n, toseq.(successors(g, n) - ok))
+function splitarcs(g:graph.T, ok:set.T, n:T)seq.arc.T toarcs(n, toseq(successors(g, n) - ok))
 
 function splitarc(g:graph.T, a:arc.T)graph.T
  let new = generatenode.nodes.g

@@ -16,15 +16,15 @@ use prettyparagraph
 
 use renamemodule
 
-use seq.tree.word
-
-use stack.tree.word
-
 use stacktrace
 
 use stdlib
 
 use textio
+
+use seq.tree.word
+
+use stack.tree.word
 
 use tree.word
 
@@ -42,42 +42,42 @@ Function prettylib(libname:seq.word, namemap:seq.word)seq.word
 
 function prettyit(lib:seq.seq.word, modname:seq.word, i:int, result:seq.seq.word)seq.seq.word
  if i > length.lib then
- let x = createfile([ merge.(modname + ".ls")], result)
+ let x = createfile([ merge(modname + ".ls")], result)
    ["Finished prettylib"]
  else
   let p = lib_i
   let key = p_1
    if key in "module"then
    let firstmod = length.modname < 3
-    let x = if firstmod then 0 else createfile([ merge.(modname + ".ls")], result)
+    let x = if firstmod then 0 else createfile([ merge(modname + ".ls")], result)
     let name = mapname.p_2
     let newfilename = subseq(modname, 1, max(length.modname - 1, 2)) + name
      // assert false report newfilename //
-     prettyit(lib, newfilename, i + 1, [ processtotext.("&keyword Module" + name + subseq(p, 3, length.p))])
+     prettyit(lib, newfilename, i + 1, [ processtotext(" &keyword Module" + name + subseq(p, 3, length.p))])
    else
     let toadd = if key in "use"then
-    "&{ block &keyword use" + mapname.p_2 + subseq(p, 3, length.p) + "&}"
+    " &{ block  &keyword use" + mapname.p_2 + subseq(p, 3, length.p) + " &}"
     else if key in "Library library"then
     let u = findindex("uses"_1, p, 3)
      let e = findindex("exports"_1, p, 3)
-      "&{ block &keyword Library" + mapname.p_2
+      " &{ block  &keyword Library" + mapname.p_2
       + alphasort.@(+, mapname,"", subseq(p, 3, u - 1))
-      + "&br &keyword"
+      + " &br  &keyword"
       + subseq(p, u, e - 1)
-      + "&br &keyword exports"
+      + " &br  &keyword exports"
       + alphasort.@(+, mapname,"", subseq(p, e + 1, length.p))
-      + "&}"
+      + " &}"
     else prettyparagraph.p
      prettyit(lib, modname, i + 1, if toadd = ""then result else result + [ processtotext.toadd])
 
 Function htmlcode(libname:seq.word)seq.word
  let lib = firstPass.libname_1
  let modules = @(+, findmodules,"", lib)
-  "&{ noformat <h1> Source code for Library" + libname + "</h1> &}" + @(+, ref,"", modules)
+  " &{ noformat <h1> Source code for Library" + libname + "</h1>  &}" + @(+, ref,"", modules)
   + @(+, prettyparagraph,"", lib)
 
 Function ref(modname:word)seq.word
- ' &{ noformat <a href ="' + merge.["#"_1, modname] + '"> ' + modname
- + "</a> &}"
+ '  &{ noformat <a href ="' + merge.["#"_1, modname] + '"> ' + modname
+ + "</a>  &}"
 
 function findmodules(p:seq.word)seq.word if p_1 = "module"_1 then [ p_2]else""

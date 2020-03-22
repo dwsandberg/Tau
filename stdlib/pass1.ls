@@ -6,46 +6,51 @@ Module pass1
 
 run main test1
 
-use blockseq.int
-
-use deepcopy.linkage
-
-use deepcopy.symbolset
-
-use libscope
-
-use parse
-
 use process.bindinfo
+
+use otherseq.firstpass
 
 use process.firstpass
 
 use seq.firstpass
 
-use seq.mytype
-
-use seq.seq.seq.word
-
-use seq.seq.word
-
-
-use seq.symbol
-
 use set.firstpass
+
+use seq.flddesc
+
+use blockseq.int
+
+use libscope
+
+use deepcopy.linkage
+
+use seq.mytype
 
 use set.mytype
 
-use set.symbol
-
-use set.word
+use parse
 
 use stacktrace
 
 use stdlib
 
+use seq.symbol
+
+use set.symbol
+
 use symbol
 
+use deepcopy.symbolset
+
 use textio
+
+use seq.typedesc
+
+use seq.seq.seq.word
+
+use seq.seq.word
+
+use set.word
 
 use words
 
@@ -57,8 +62,8 @@ function =(a:firstpass, b:firstpass)boolean modname.a = modname.b
 Function ?(a:firstpass, b:firstpass)ordering toalphaseq.towords.modname.a ? toalphaseq.towords.modname.b
 
 Function print(b:firstpass)seq.word
- "&br &br" + print.modname.b + "&br defines" + printdict.defines.b
- + "&br unboundexports"
+ " &br  &br" + print.modname.b + " &br defines" + printdict.defines.b
+ + " &br unboundexports"
  + printdict.asset.unboundexports.b
 
 Function find(modset:set.firstpass, name:mytype)set.firstpass
@@ -72,8 +77,6 @@ Function symset(linkage)symbolset export
 Function mods(linkage)seq.firstpass export
 
 Function roots(linkage)set.word export
-
-use otherseq.firstpass
 
 Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarysyms:symbolset, librarymods:set.firstpass)linkage
  PROFILE
@@ -98,7 +101,7 @@ function processtypedef(defined:set.symbol, undefined:seq.typedesc, i:int, newun
  if i > length.undefined then
  if length.newundefined = 0 then other
   else
-   assert length.undefined > length.newundefined report"ProBLEM" + @(seperator."&br", print2,"", @(+, s, empty:seq.symbol, newundefined))
+   assert length.undefined > length.newundefined report"ProBLEM" + @(seperator." &br", print2,"", @(+, s, empty:seq.symbol, newundefined))
     processtypedef(defined, newundefined, 1, empty:seq.typedesc, other)
  else if kind.undefined_i = "defined"_1 then
  processtypedef(defined + s.undefined_i, undefined, i + 1, newundefined, other)
@@ -118,8 +121,6 @@ type flddesc is record desc:seq.word, combined:mytype
 function fldname(t:flddesc)word abstracttype.combined.t
 
 function fldtype(t:flddesc)mytype parameter.combined.t
-
-use seq.flddesc
 
 function subflddefined(s:seq.flddesc, T:mytype, i:int, defined:set.symbol, result:seq.flddesc)seq.flddesc
  // check to see all flds of type are defined. //
@@ -143,8 +144,6 @@ function nametotype(w:word)mytype
  let t = towords.decodeword.w
   mytype.@(+,_(t),"", arithseq(length.t / 2, -2, length.t))
 
-use set.symbol
-
 function fixfirstpass(new:set.symbol, f:firstpass)firstpass
  let newdefines = replace(defines.f, new)
   assert cardinality.newdefines = cardinality.defines.f report"oops 2" + toword.cardinality.newdefines + toword.cardinality.defines.f
@@ -155,8 +154,6 @@ function fixfirstpass(new:set.symbol, f:firstpass)firstpass
      firstpass(modname.f, uses.f, newdefines, newexports, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
 
 type typedesc is record s:symbol, kind:word, name:word, flds:seq.flddesc
-
-use seq.typedesc
 
 function cvty(t:flddesc)seq.word
  [ toword.length.towords.combined.t] + towords.combined.t
@@ -385,7 +382,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
   if isdefined.t1 then resultpair(checkforindex(t1, org, dict, templates, knownsymbols), [ mangledname])
   else
    let down = codedown.mangledname
-    assert length.down > 1 report"LLLx" + mangledname+print.org
+    assert length.down > 1 report"LLLx" + mangledname + print.org
     let newmodname = replaceT(modpara, mytype.down_2)
     let newmodpara = parameter.newmodname
     let templatename = abstracttype.newmodname
@@ -438,16 +435,12 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
              X(mangledname.k_1, org, dict, mytype."T", templates, knownsymbols)
              else resultpair(knownsymbols, [ mangledname.k_1])
 
-
-
 function roots(f:firstpass)seq.word if exportmodule.f then @(+, mangledname,"", toseq.exports.f)else""
 
 Function headdict set.symbol
 let modulename = mytype."internal1"
  asset
  .[ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal",""), symbol("STATE"_1, modulename, [ mytype."internal1"], mytype."internal1",""), symbol("FROMSEQ"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("export"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("unbound"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("stub"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("usemangle"_1, modulename, empty:seq.mytype, mytype."internal1","")]
-
-
 
 function gathersymbols(exported:seq.word, src:seq.seq.word)firstpass
  @(wrapgathersymbols(exported, headdict)
@@ -476,7 +469,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
  // assert print.modname.f in ["?","stdlib","UTF8","altgen"]∨(print.modname.f ="bitpackedseq.T"∧ cardinality.defines.f + cardinality.unbound.f < 8)report print.modname.f + printdict.unbound.f //
  if length.input = 0 then f
  else if input_1 in "use"then
- let t = parse(empty:set.symbol, subseq(input,2,length.input))
+ let t = parse(empty:set.symbol, subseq(input, 2, length.input))
    firstpass(modname.f, uses.f + mytype.code.t, defines.f, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
  else if input_1 in "type"then
  let b = parse(empty:set.symbol, input)
@@ -507,7 +500,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
   let code = bodyonly.code.t
   let name = funcname.t
   let paratypes = funcparametertypes.t
-   assert iscomplex.modname.f = hasT(input, 2)report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input
+   assert iscomplex.modname.f = hasT(input, 2)report"Must use type T in function name or parameters in parameterized module and T cannot be used in non - parameterized module" + getheader.input
    let firstinstruction = code_1
     if firstinstruction in "usemangleZinternal1"then
     let sym = symbol(name, mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t, input)

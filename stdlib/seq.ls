@@ -4,11 +4,11 @@ use deepcopy.T
 
 use seq.T
 
+use deepcopy.boolean
+
 use stacktrace
 
 use stdlib
-
-use deepcopy.boolean
 
 type seq is sequence length:int, x:T
 
@@ -68,7 +68,7 @@ Function findindex(w:T, s:seq.T, i:int)int
  if i > length.s then i
  else if s_i = w then i else findindex(w, s, i + 1)
 
--------------------------
+- - - - - - - - - - - - - - - - - - - - - - - - -
 
 Function length(c:pseq.T)int export
 
@@ -148,4 +148,4 @@ Function last(a:seq.T)T a_(length.a)
 
 Function isempty(a:seq.T)boolean length.a = 0
 
---------------------------
+- - - - - - - - - - - - - - - - - - - - - - - - - -

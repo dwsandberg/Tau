@@ -1,26 +1,26 @@
 Module bandeskopf.T
 
-use graph.T
-
-use seq.T
-
 use seq.arc.T
-
-use seq.int
-
-use seq.nodeinfo.T
-
-use seq.seq.T
-
-use set.T
 
 use set.arc.T
 
+use graph.T
+
+use seq.nodeinfo.T
+
 use set.nodeinfo.T
 
-use stdlib
+use seq.seq.T
+
+use seq.T
+
+use set.T
 
 use svggraph.T
+
+use seq.int
+
+use stdlib
 
 function =(T, T)boolean unbound
 
@@ -32,7 +32,7 @@ function contains(a:set.T, w:T)set.T findelement(w, a)
 
 function iis(g:graph.T, dummy:set.T, node:T)seq.T
  // returns upper nieghbor of inner segment ending at node //
- if not.(node in dummy)then empty:seq.T
+ if not(node in dummy)then empty:seq.T
  else
   let p = @(∪, contains(dummy), empty:set.T, toseq.predecessors(g, node))
    if isempty.p then empty:seq.T else [ p_1]
@@ -78,9 +78,9 @@ Function findvertarcsUL(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x
    let upperidx = @(+, findidx(lastlayer), empty:seq.int, preds)
     let medianleft = upperidx_((length.upperidx + 1) / 2)
     let medianright = upperidx_((length.upperidx + 1) / 2)
-     if r < medianleft ∧ not.(lastlayer_medianleft in assigned)then
+     if r < medianleft ∧ not(lastlayer_medianleft in assigned)then
      findvertarcsUL(g, currentlayer, lastlayer, medianleft, x + 1, assigned + lastlayer_medianleft) + arc(lastlayer_medianleft, node)
-     else if r < medianright ∧ not.(lastlayer_medianright in assigned)then
+     else if r < medianright ∧ not(lastlayer_medianright in assigned)then
      findvertarcsUL(g, currentlayer, lastlayer, medianright, x + 1, assigned + lastlayer_medianright) + arc(lastlayer_medianright, node)
      else findvertarcsUL(g, currentlayer, lastlayer, r, x + 1, assigned)
    else findvertarcsUL(g, currentlayer, lastlayer, r, x + 1, assigned)
@@ -106,9 +106,9 @@ Function findvertarcsUR(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x
    let upperidx = @(+, findidx(lastlayer), empty:seq.int, preds)
     let medianleft = upperidx_((length.upperidx + 1) / 2)
     let medianright = upperidx_((length.upperidx + 1) / 2)
-     if r > medianright ∧ not.(lastlayer_medianright in assigned)then
+     if r > medianright ∧ not(lastlayer_medianright in assigned)then
      findvertarcsUR(g, currentlayer, lastlayer, medianright, x - 1, assigned + lastlayer_medianright) + arc(lastlayer_medianright, node)
-     else if r > medianleft ∧ not.(lastlayer_medianleft in assigned)then
+     else if r > medianleft ∧ not(lastlayer_medianleft in assigned)then
      findvertarcsUR(g, currentlayer, lastlayer, medianleft, x - 1, assigned + lastlayer_medianleft) + arc(lastlayer_medianleft, node)
      else findvertarcsUR(g, currentlayer, lastlayer, r, x - 1, assigned)
    else findvertarcsUR(g, currentlayer, lastlayer, r, x - 1, assigned)
@@ -135,7 +135,7 @@ function findx(RtoL:boolean, q:nodeinfo.T, a:nodeinfo.T)int
  if RtoL then x.a - seperation.q else x.a + seperation.q
  else 0
 
-------------Helper functions for adding arcs for block graph in hrizontal alignment
+- - - - - - - - - - - - Helper functions for adding arcs for block graph in hrizontal alignment
 
 Function isroot(g:graph.T, n:T)seq.arc.T
  if isempty.predecessors(g, n)then arcsfromsuccesors(n, g, n)else empty:seq.arc.T
@@ -161,7 +161,7 @@ Function layerarcs(arcstoroot:set.arc.T, layer:seq.T, i:int)seq.arc.T
  let e = findelement2(arcstoroot, arc1)
   if isempty.e then [ arc1]else [ arc(head.e_1, head.arc1), arc1]
 
------------
+- - - - - - - - - - -
 
 For providing horizontal alignment.There is one for left and right directions.
 
@@ -197,7 +197,7 @@ function assignx(RtoL:boolean, layers:set.nodeinfo.T, list:seq.T, assigned:set.n
     let q = findelement(nodeinfo(node, 0, 0), layers)_1
      assignx(RtoL, layers, list, assignvert(RtoL, layers, vertarcs, assigned, q, if RtoL then -1 else 1, empty:seq.nodeinfo.T), vertarcs, i + 1)
 
-----------------------
+- - - - - - - - - - - - - - - - - - - - - -
 
 Final step is to merge multiple layouts into one.
 

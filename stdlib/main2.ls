@@ -1,66 +1,70 @@
 Module main2
 
+use UTF8
+
 use codegen
 
-use intercode
-
-use deepcopy.seq.word
-
 use fileio
+
+use seq.firstpass
+
+use set.firstpass
 
 use format
 
 use groupparagraphs
 
+use seq.inst
+
+use intercode
+
 use libdescfunc
 
-use libscope
-
-use otherseq.word
-
-use pass1
-
-use parse
-
-use pass2
-
-use prims
-
 use process.liblib
-
-use process.seq.word
 
 use seq.liblib
 
 use seq.libmod
 
+use libscope
+
 use seq.libsym
 
 use seq.mytype
 
-use seq.seq.seq.word
+use set.mytype
+
+use parse
+
+use pass1
+
+use pass2
+
+use prims
+
+use stdlib
 
 use seq.symbol
 
-use set.firstpass
-
-use set.mytype
-
-use set.seq.word
-
 use set.symbol
-
-use set.word
-
-use stdlib
 
 use symbol
 
 use textio
 
-use UTF8
+use timestamp
 
-use seq.firstpass
+use otherseq.word
+
+use deepcopy.seq.word
+
+use process.seq.word
+
+use seq.seq.seq.word
+
+use set.seq.word
+
+use set.word
 
 Function findlibclause(a:seq.seq.word, i:int)seq.word
  assert i < length.a report"No Library clause found"
@@ -113,8 +117,6 @@ function subcompilelib(libname:word)seq.word
  let name = merge("pass1/" + libname + "." + print.currenttime + ".txt")
  let z = createfile([ name], save)
   "OK"
-
-use timestamp
 
 Function compilelib2(libname:word)seq.word
  PROFILE
@@ -214,11 +216,17 @@ function bindingfind2(defines:seq.seq.word, i:int, key:seq.word)seq.seq.word
    if subseq(d, 3, l + 2) = subseq(key, 1, l)then [ defines_i]
    else bindingfind2(defines, i + 1, key)
 
-/function print5(s:symbol)seq.word let d = decode(mangledname.s)if isdefined.s &and(modname.s = mytype."internal"&or subseq(d, 1, 15)= decode("siQ7AeoftypeQ3A"_1))then"&br"+ print2.s else""
+/function print5(s:symbol)seq.word let d = decode(mangledname.s)if isdefined.s &and(modname.s = mytype."internal"&or subseq(d, 1, 15)= decode("siQ7AeoftypeQ3A"_1))then"
+&br"+ print2.s else""
 
-/function print2(full:boolean, l:libsym)seq.word if full then"&br"+ fsig.l +":"+ print.mytype.returntype.l + instruction.l else [ fsig.l]
+/function print2(full:boolean, l:libsym)seq.word if full then"
+&br"+ fsig.l +":"+ print.mytype.returntype.l + instruction.l else [ fsig.l]
 
-/function print(l:libmod)seq.word"&br &br"+ if parameterized.l then [ modname.l]+".T"else [ modname.l]+"&br defines:"+ @(+, print2(modname.l ="$other"_1),"", defines.l)+"&br exports:"+ @(+, print2(modname.l ="$other"_1),"", defines.l)
+/function print(l:libmod)seq.word"
+&br 
+&br"+ if parameterized.l then [ modname.l]+".T"else [ modname.l]+"
+&br defines:"+ @(+, print2(modname.l ="$other"_1),"", defines.l)+"
+&br exports:"+ @(+, print2(modname.l ="$other"_1),"", defines.l)
 
 Function secondPass(libname:word)seq.seq.word
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
@@ -236,7 +244,3 @@ Function secondPass(libname:word)seq.seq.word
  let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
  let p2 = pass2(symset.p1, toseq.roots.p1, known.li)
   @(+, print.p2, empty:seq.seq.word, @(+,_.coding.p2, empty:seq.inst, defines.p2))
-
-use intercode
-
-use seq.inst

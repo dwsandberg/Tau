@@ -1,32 +1,32 @@
 Module fileio
 
+use seq.UTF8
+
 use UTF8
 
 use bitpackedseq.bit
 
-use bitpackedseq.byte
-
-use bits
+use seq.bit
 
 use blockseq.bits
 
-use blockseq.int
-
-use seq.bit
+use seq.seq.bits
 
 use seq.bits
 
+use bits
+
+use bitpackedseq.byte
+
 use seq.byte
 
-use seq.seq.bits
+use blockseq.int
 
 use seq.seq.int
 
 use stdlib
 
 use textio
-
-use seq.UTF8
 
 Function type:outputformat internaltype export
 

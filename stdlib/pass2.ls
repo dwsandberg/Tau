@@ -1,46 +1,60 @@
 Module pass2
 
+use UTF8
+
 use bits
 
-use intercode
+use encoding.seq.char
 
-use graph.word
-
-use ipair.tree.seq.word
-
-use real
-
-use seq.arc.word
-
-use seq.ipair.tree.seq.word
-
-use seq.mytype
-
-use seq.seq.word
-
-use seq.symbol
-
-use seq.tree.seq.word
-
-use set.arc.word
-
-use set.symbol
-
-use set.word
-
-use stack.tree.seq.word
-
-use stdlib
-
-use symbol
-
-use tree.seq.word
-
-use worddict.tree.seq.word
+use seq.char
 
 use deepcopy.intercode
 
 use intercode
+
+use seq.mytype
+
+use real
+
+use stdlib
+
+use otherseq.switch
+
+use seq.switch
+
+use seq.symbol
+
+use set.symbol
+
+use symbol
+
+use seq.arc.word
+
+use set.arc.word
+
+use graph.word
+
+use ipair.seq.word
+
+use seq.seq.word
+
+use deepcopy.tree.seq.word
+
+use seq.ipair.tree.seq.word
+
+use ipair.tree.seq.word
+
+use seq.tree.seq.word
+
+use stack.tree.seq.word
+
+use worddict.tree.seq.word
+
+use tree.seq.word
+
+use set.word
+
+use words
 
 Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)intercode
  PROFILE
@@ -56,7 +70,9 @@ Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)interc
     // find tail calls and constants //
     // assert false report @(+, listswitchopt(s2, statechangingfuncs),"", toseq.g)//
     let rr = @(+, findconstandtail(s2, statechangingfuncs), empty:seq.symbol, toseq.g)
-     // assert false report @(seperator."&br &br", print2,"", rr)// convert2(knownsymbols.x, rr)
+     // assert false report @(seperator."
+&br 
+&br", print2,"", rr)// convert2(knownsymbols.x, rr)
 
 function listswitchopt(p:program, stateChangingFuncs:set.word, mangledname:word)seq.word
  // finds constants, discards builtins, and make sure"STATE"is root on state changing functions //
@@ -89,13 +105,13 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
      else tree("STATE", [ q])
       [ changecodetree(f, q2)]
 
-Function print2(t:tree.seq.word)seq.word print("&br", t)
+Function print2(t:tree.seq.word)seq.word print(" &br", t)
 
 Function print(indent:seq.word, t:tree.seq.word)seq.word
  @(+, print(indent + "_"),"", sons.t) + indent
  + if(label.t)_1 in "PARAM FREF LIT SET LOCAL"then label.t else label.t + toword.nosons.t
 
-----------------------
+- - - - - - - - - - - - - - - - - - - - - -
 
 function maxvarused(t:tree.seq.word)int
  if inst.t in "SET LOCAL"then toint.arg.t
@@ -122,8 +138,6 @@ function optswitch(name:word, k:int, t:tree.seq.word)tree.seq.word
    , [ tree("LOOPBLOCK", [ key, tree("LIT" + var)]), buildswitchcode(s, tree("LOCAL" + var), 1, length.s - 1, default, tree("CONTINUE", firstvalue), lower, upper)])
     // assert false report print2.r // r
 
-
-
 function checkswitch(start:seq.tree.seq.word, key:tree.seq.word, t:tree.seq.word)seq.switch
  if subseq(label.t, 1, 1) = "if"
  ∧ label.t_1 in ["Q3DZbuiltinZintZint","inZwordzseqZTZTzseq","inZintzseqZTZTzseq"]
@@ -133,8 +147,6 @@ function checkswitch(start:seq.tree.seq.word, key:tree.seq.word, t:tree.seq.word
  else if length.start > 0 then buildswitchlist(start, 1, empty:seq.switch) + [ switch(t, key)]
  else empty:seq.switch
 
-
-
 type switch is record keycode:tree.seq.word, keyvalue:tree.seq.word
 
 function switchorderkey(s:switch)int
@@ -143,14 +155,8 @@ function switchorderkey(s:switch)int
 
 function ?(a:switch, b:switch)ordering switchorderkey.a ? switchorderkey.b
 
-use otherseq.switch
-
 function print(s:switch)seq.word
- "&br bbb" + toword.switchorderkey.s + print.keyvalue.s + print.keycode.s
-
-use seq.switch
-
-use seq.char
+ " &br bbb" + toword.switchorderkey.s + print.keyvalue.s + print.keycode.s
 
 function buildswitchlist(t:seq.tree.seq.word, i:int, result:seq.switch)seq.switch
  if i > length.t then result
@@ -179,16 +185,6 @@ function findfirst(result:seq.switch, code:tree.seq.word, sons:seq.tree.seq.word
    if length.result = length.try then // key is already present // findfirst(result, code, sons, i + 1, false)
    else findfirst(try, if not.found then tree("CONTINUE", [ first])else code, sons, i + 1, true)
 
-
-
-
-
-use words
-
-use encoding.seq.char
-
-
-
 function buildswitchcode(s:seq.switch, key:tree.seq.word, f:int, t:int, default:tree.seq.word, defaultcontinue:tree.seq.word, lower:int, upper:int)tree.seq.word
  let EQL ="Q3DZbuiltinZintZint"
  let opGT ="Q3EZbuiltinZintZint"
@@ -206,7 +202,7 @@ function buildswitchcode(s:seq.switch, key:tree.seq.word, f:int, t:int, default:
      , [ tree(opGT, [ keyvalue.s_j, key]), buildswitchcode(s, key, f, j - 1, default, defaultcontinue, lower, order), keycode.s_j])
      tree("if", [ tree(opGT, [ key, keyvalue.s_j]), buildswitchcode(s, key, j + 1, t, default, defaultcontinue, order, t), a])
 
-------------------------
+- - - - - - - - - - - - - - - - - - - - - - - -
 
 function paratree(i:int)tree.seq.word tree("PARAM" + toword.i)
 
@@ -284,8 +280,6 @@ function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:se
      assert length.toseq.stk ≥ nopara report"stack problem" + name
       buildcodetreeX(hasstate, push(pop(stk, nopara), tree(value.p, top(stk, nopara))), i + 1, src)
 
-use deepcopy.tree.seq.word
-
 function buildcodetreeX2(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:seq.word)tree.seq.word
  TESTOPT
  .if i > length.src then
@@ -329,10 +323,6 @@ function buildcodetreeX2(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:s
     let nopara = index.p
      assert length.toseq.stk ≥ nopara report"stack problem" + name
       buildcodetreeX2(hasstate, push(pop(stk, nopara), tree(value.p, top(stk, nopara))), i + 1, src)
-
-use ipair.seq.word
-
-use seq.char
 
 function handlelocalandpara(w:word)ipair.seq.word
  let charmajorseparator = // Z // char.90
@@ -387,8 +377,6 @@ function opSUB word"Q2DZbuiltinZintZint"_1
 function opRSUB word"Q2DZbuiltinZrealZreal"_1
 
 function isconst(t:tree.seq.word)boolean inst.t in "LIT CRECORD WORD WORDS FREF"
-
-use deepcopy.tree.seq.word
 
 function simplecalcs(label:seq.word, a:int, b:int, l:seq.tree.seq.word)tree.seq.word
  TESTOPT
@@ -502,7 +490,8 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
        ∧ arg.l_2 = toword(length.l - 2)
        ∧ insts = asset."WORD LIT"
        ∧ toseq.@(+, inst, empty:set.word, subseq(l, 3, length.l)) = "WORD"then
-       // assert length.l > 3 &or decode(arg.l_3)_1 > 75 &or arg.l_3 in"&br, IDXUC HASH INLINE HERe HELLO"report"HERe"+ print.code + @(+, toword,"", decode.arg.l_3)//
+       // assert length.l > 3 &or decode(arg.l_3)_1 > 75 &or arg.l_3 in"
+&br, IDXUC HASH INLINE HERe HELLO"report"HERe"+ print.code + @(+, toword,"", decode.arg.l_3)//
         tree.@(+, arg,"WORDS" + arg.l_2, subseq(l, 3, length.l))
        else tree("CRECORD", l)
       else tree(label.code, l)
@@ -575,8 +564,6 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
     tree.["LIT"_1, toword.representation.makereal.subseq(label.l_1, 3, length.label.l_1)]
     else tree(label.code, l)
 
-use UTF8
-
 function treelit(c:char)tree.seq.word tree("LIT" + toword.toint.c)
 
 function expandapply(pp:program, inlinename:set.word, nextset:int, code:tree.seq.word, l:seq.tree.seq.word)tree.seq.word
@@ -625,7 +612,7 @@ function tailcall(paramap:seq.tree.seq.word, self:word, t:tree.seq.word)tree.seq
  else
   tree(label.t, @(+, tailcall(paramap,"nomatch"_1), empty:seq.tree.seq.word, sons.t))
 
-------paramap_(length.paramap-toint.arg.code + 1)
+- - - - - - paramap_(length.paramap - toint.arg.code + 1)
 
 function getmaxvar(t:tree.seq.word)int
  @(max
@@ -645,7 +632,7 @@ function parainst(i:int)seq.word"PARAM" + toword.i
 function template2(term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)seq.word
  // PARA 1 is seq PARA 2 is result LOCAL 10 is result of inner loop LOCAL 3 is seq LOCAL 2 is stk LOCAL 1 is accumulator //
  // Inner loop LOCAL 6 result LOCAL 7 index LOCAL 5 length of seq //
- // EQL-Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint ADD = Q2BZbuiltinZintZint //
+ // EQL - Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint ADD = Q2BZbuiltinZintZint //
  let CALLTERM1 = [ term1]
  let CALLTERM2 = [ term2]
  let TERM1PARA = @(+, parainst,"", arithseq(nopara1, 1, 1))

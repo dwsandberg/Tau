@@ -1,36 +1,36 @@
 Module svggraph.T
 
-use graph.T
-
-use libscope
-
-use seq.T
-
 use seq.arc.T
-
-use seq.arcinfo.T
-
-use seq.int
-
-use seq.nodeinfo.T
-
-use seq.seq.T
-
-use seq.seq.word
-
-use set.T
 
 use set.arc.T
 
+use seq.arcinfo.T
+
 use set.arcinfo.T
 
+use graph.T
+
+use seq.nodeinfo.T
+
 use set.nodeinfo.T
+
+use seq.seq.T
+
+use seq.T
+
+use set.T
+
+use otherseq.int
+
+use seq.int
+
+use libscope
 
 use stdlib
 
 use svg
 
-use otherseq.int
+use seq.seq.word
 
 type svgdraw is record width:int, height:int, a:seq.word
 
@@ -107,7 +107,7 @@ function drawarc(vertnodesize:int, stop:nodeinfo.T, s:seq.arcinfo.T, i:int)seq.w
  let a = s_i
  let xstop = if width.a = 0 then x.stop else x.stop - width.a / 8 - 5
   line(x.a, y.a, xstop, y.stop + (i - 1) * if width.a = 0 then 0 else vertnodesize, backarc.a, false)
-  + "&br"
+  + " &br"
   + text("text", xstop, y.stop + (i - 1) * vertnodesize, label.a)
 
 function toarcinfo(s:set.nodeinfo.T, a:arcinfo.T)arcinfo.T

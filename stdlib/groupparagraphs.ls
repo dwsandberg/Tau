@@ -2,9 +2,9 @@ Module groupparagraphs
 
 use seq.seq.int
 
-use seq.seq.seq.word
-
 use stdlib
+
+use seq.seq.seq.word
 
 function findparagraph(break:seq.word, a:seq.seq.word, i:int)int
  // find paragraph starting with a word in break and return its index //

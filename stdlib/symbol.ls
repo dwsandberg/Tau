@@ -1,26 +1,28 @@
 Module symbol
 
+use seq.seq.char
+
+use seq.char
+
 use libscope
 
 use seq.mytype
-
-use seq.symbol
-
-use seq.tree.seq.word
-
-use set.symbol
-
-use set.word
 
 use stacktrace
 
 use stdlib
 
-use tree.seq.word
+use seq.symbol
+
+use set.symbol
 
 use worddict.symbol
 
-use seq.char
+use seq.tree.seq.word
+
+use tree.seq.word
+
+use set.word
 
 Function ?(a:mytype, b:mytype)ordering
  let y =(towords.a)_(length.towords.a) ? (towords.b)_(length.towords.b)
@@ -132,8 +134,6 @@ Function print(s:symbol)seq.word
  + "module:"
  + print.modname.s
 
-use seq.seq.char
-
 Function replaceTinname(with:mytype, name:word)word
  let x = decodeword.name
   if subseq(x, length.x - 1, length.x)
@@ -165,11 +165,11 @@ Function seperatorR(sep:seq.char, s:seq.char, w:seq.char)seq.char
 Function print2(s:symbol)seq.word
  print.s + "mn:" + mangledname.s + "src" + src.s
 
-function print3(s:symbol)seq.word if isdefined.s then"&br &br" + print2.s else""
+function print3(s:symbol)seq.word if isdefined.s then" &br  &br" + print2.s else""
 
 function print4(s:symbol)seq.word
  if not(label.codetree.s = "default")then
- "&br &br" + print.s + "code:" + print.codetree.s + flags.s
+ " &br  &br" + print.s + "code:" + print.codetree.s + flags.s
  else""
 
 Function print(t:tree.seq.word)seq.word

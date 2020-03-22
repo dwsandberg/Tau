@@ -1,20 +1,20 @@
 Module opt2
 
-use seq.seq.tree.seq.word
-
-use seq.tree.seq.word
-
-use set.word
+use seq.char
 
 use stdlib
 
 use symbol
 
+use otherseq.word
+
+use seq.seq.tree.seq.word
+
+use seq.tree.seq.word
+
 use tree.seq.word
 
-use seq.char
-
-use otherseq.word
+use set.word
 
 Function opt2(t:tree.seq.word)tree.seq.word
  if inst.t = "FINISHLOOP"_1 then
@@ -121,13 +121,13 @@ function mapit(map:seq.int, arg:word)int
 Function printb(level:int, t:tree.seq.word)seq.word
  // for printing code tree //
  let inst = inst.t
-  "&br" + constantseq(level,"_"_1)
+  " &br" + constantseq(level,"_"_1)
   + if inst = "if"_1 then
-  "if" + printb(level + 1, t_1) + "&br"
+  "if" + printb(level + 1, t_1) + " &br"
    + constantseq(level,"_"_1)
    + "then"
    + printb(level + 1, t_2)
-   + "&br"
+   + " &br"
    + constantseq(level,"_"_1)
    + "else"
    + printb(level + 1, t_3)

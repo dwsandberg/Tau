@@ -1,70 +1,72 @@
 Module persistant
 
+use UTF8
+
 use bits
-
-use blockseq.flddesc
-
-use deepcopy.linklists2
-
-use encoding.const3
 
 use encoding.seq.char
 
-use encoding.word3
-
-use ipair.linklists2
-
-use libscope
-
-use llvm
-
 use persistantseq.encodingrep.seq.char
-
-use persistantseq.libmod
-
-use persistantseq.libsym
-
-use persistantseq.mytype
-
-use reconstruct
-
-use seq.const3
 
 use seq.encodingrep.seq.char
 
-use seq.encodingrep.word3
+use set.encodingrep.seq.char
 
-use seq.flddesc
+use encoding.const3
 
-use seq.liblib
+use seq.const3
 
-use seq.libmod
+use blockseq.flddesc
 
-use seq.libsym
-
-use seq.linklists2
-
-use seq.mytype
+use blockseq.seq.flddesc
 
 use seq.seq.flddesc
 
-use seq.tree.seq.word
-
-use seq.word3
-
-use stack.tree.seq.word
-
-use stdlib
-
-use tree.seq.word
+use seq.flddesc
 
 use set.flddesc
 
-use UTF8
+use seq.liblib
+
+use persistantseq.libmod
+
+use seq.libmod
+
+use libscope
+
+use persistantseq.libsym
+
+use seq.libsym
+
+use deepcopy.linklists2
+
+use ipair.linklists2
+
+use seq.linklists2
+
+use llvm
+
+use persistantseq.mytype
+
+use seq.mytype
+
+use reconstruct
+
+use stdlib
+
+use seq.tree.seq.word
+
+use stack.tree.seq.word
+
+use tree.seq.word
+
+use encoding.word3
+
+use seq.encodingrep.word3
+
+use seq.word3
 
 use words
-
-use blockseq.seq.flddesc
 
 The linklists2 type contains a seq of integers that represents the memory.Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq. One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
 
@@ -217,10 +219,6 @@ function addrecord(l1:linklists2, sym:libsym)ipair.linklists2
  let b = addwordseq(value.a, instruction.sym)
  let l = value.b
   ipair(place.l, l + fsig.sym + a + b)
-
-use libscope
-
-use set.encodingrep.seq.char
 
 function ?(a:encodingrep.seq.char, b:encodingrep.seq.char)ordering valueofencoding.code.a ? valueofencoding.code.b
 

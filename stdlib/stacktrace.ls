@@ -12,4 +12,4 @@ function addresstosymbol2(a:int)seq.char builtin.usemangle
 
 Function addresstosymbol(a:int)word encodeword.addresstosymbol2.a
 
-Function decodeaddress(address:int)seq.word"&br" + @(+, identity,"", codedown.addresstosymbol.address)
+Function decodeaddress(address:int)seq.word" &br" + @(+, identity,"", codedown.addresstosymbol.address)

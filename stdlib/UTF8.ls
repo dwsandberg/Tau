@@ -1,10 +1,12 @@
 Module UTF8
 
-use stdlib
+use otherseq.int
+
+use real
 
 use stacktrace
 
-use real
+use stdlib
 
 type UTF8 is record toseqint:seq.int
 
@@ -33,7 +35,7 @@ Function doublequotechar char char.34
 Function nbspchar char // no break space character // char.160
 
 Function toUTF8(n:int)UTF8
- UTF8.if n < 0 then [ toint.hyphenchar] + toUTF8(n, 10)else toUTF8(-n, 10)
+ UTF8.if n < 0 then [ toint.hyphenchar] + toUTF8(n, 10)else toUTF8(- n, 10)
 
 function toUTF8(n:int, base:int)seq.int
  // n should always be negative.This is to handle the smallest integer in the twos complement representation of integers //
@@ -96,20 +98,17 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
  if i > length.s then result
  else
   let this = s_i
-  if this="&br"_1 then 
-     addspace(s, i + 1, true,  result + char(10))
-  else if this=","_1 then
-     // no space before but space after //
-     addspace(s, i + 1, false,  result + char1.",")
-  else 
-   let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
-   if this in ('()].:"_^. ' + space )then
-      // no space before or after //
-      addspace(s, i + 1, true,   result + d)
-    else 
-    addspace(s, i + 1, false, if nospace   then result + d else result + char.32 + d)
+   if this = " &br"_1 then addspace(s, i + 1, true, result + char.10)
+   else if this = ","_1 then
+   // no space before but space after // addspace(s, i + 1, false, result + char1.",")
+   else
+    let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
+     if this in ('()].:"_^. ' + space)then
+     // no space before or after // addspace(s, i + 1, true, result + d)
+     else
+      addspace(s, i + 1, false, if nospace then result + d else result + char.32 + d)
 
----------
+- - - - - - - - -
 
 Function toword(n:int)word // Covert integer to sequence of characters represented as a single word. // encodeword.tocharseq.toseqint.toUTF8.n
 
@@ -123,13 +122,13 @@ Function intlit(s:UTF8)int cvttoint(tocharseq.toseqint.s, 1, 0)
 
 function cvttoint(s:seq.char, i:int, val:int)int
  if i = 1 ∧ s_1 = hyphenchar then cvttoint(s, i + 1, val)
- else if i > length.s then if s_1 = hyphenchar then-val else val
+ else if i > length.s then if s_1 = hyphenchar then - val else val
  else if s_i = nbspchar then cvttoint(s, i + 1, val)
  else
   assert between(toint.s_i, 48, 57)report"invalid digit" + stacktrace
    cvttoint(s, i + 1, val * 10 + toint.s_i - 48)
 
--------------
+- - - - - - - - - - - - -
 
 Function hash(a:seq.char)int hash.tointseq.a
 
@@ -165,8 +164,6 @@ Function toUTF8(rin:real, decimals:int)UTF8
 Function reallit(s:UTF8)real reallit(tocharseq.toseqint.s, -1, 1, 0, 1)
 
 Function makereal(w:seq.word)real reallit(@(+, decodeword, empty:seq.char, w), -1, 1, 0, 1)
-
-use otherseq.int
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
  if i > length.s then

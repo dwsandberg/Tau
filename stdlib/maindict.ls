@@ -1,28 +1,28 @@
 module maindict
 
-use stdlib
-
 use UTF8
-
-use dataio
 
 use encoding.seq.char
 
-use seq.encodingrep.seq.char
-
 use ioseq.encodingrep.seq.char
+
+use blockseq.seq.encodingrep.seq.char
 
 use deepcopy.seq.encodingrep.seq.char
 
-use seq.seq.char
-
-use fileio
-
-use set.word
+use seq.encodingrep.seq.char
 
 use set.encodingrep.seq.char
 
-use blockseq.seq.encodingrep.seq.char
+use seq.seq.char
+
+use dataio
+
+use fileio
+
+use stdlib
+
+use set.word
 
 use words
 
@@ -53,17 +53,18 @@ function get2(data:seq.int, i:int)seq.encodingrep.seq.char
  if data_i = 0 then getseq2:encodingrep.seq.char(data, i - 1)
  else get2(data, data_i) + getseq2:encodingrep.seq.char(data, i - 1)
 
-function getrecord:encodingrep.seq.char(data:seq.int, i:int)encodingrep.seq.char encodingrep(toencoding:seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1), getint(data, i + 2))
+function getrecord:encodingrep.seq.char(data:seq.int, i:int)encodingrep.seq.char
+ encodingrep(toencoding:seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1), getint(data, i + 2))
 
 Function initialdict seq.encodingrep.seq.char builtin.usemangle
 
 module dataio
 
-use stdlib
+use UTF8
 
 use real
 
-use UTF8
+use stdlib
 
 function newplace place place(empty:seq.int, 0, empty:seq.int)
 
@@ -92,10 +93,11 @@ Function +(p:place, w:word)place p + tointseq.decodeword.w
 
 Function getword(data:seq.int, i:int)word encodeword.tocharseq.getintseq(data, data_i)
 
-Function getrecord:word(data:seq.int, i:int)word // assert false report"JKLword"+ @(+, toword,"", [ i]+ data)//
-let y = getintseq(data, i)
- // assert false report"JKLword"+ @(+, toword,"", [ i]+ data)+ @(+, toword,":", y)+ encodeword.y //
- encodeword.tocharseq.y
+Function getrecord:word(data:seq.int, i:int)word
+ // assert false report"JKLword"+ @(+, toword,"", [ i]+ data)//
+ let y = getintseq(data, i)
+  // assert false report"JKLword"+ @(+, toword,"", [ i]+ data)+ @(+, toword,":", y)+ encodeword.y //
+  encodeword.tocharseq.y
 
 Function getintseq(data:seq.int, seqpointer:int)seq.int
  let index = data_seqpointer
@@ -110,11 +112,13 @@ Function next(p:place)int offset.p + length.data.p
 
 module ioseq.T
 
-use stdlib
+use deepcopy.T
 
 use seq.T
 
 use dataio
+
+use stdlib
 
 type ioseq is sequence length:int, data:seq.int, offset:int, k:seq.T
 
@@ -133,13 +137,11 @@ Function_(a:ioseq.T, i:int)T
   assert between(i, 1,(data.a)_(offset.a + 1))report"out of bounds2" + @(+, toword,"", [ i, size, index] + data.a)
    getrecord:T(data.a, index)
 
-use deepcopy.T
-
 Function offset(ioseq.T)int export
 
 Function getseq2:T(data:seq.int, seqpointer:int)seq.T
-let offset = data_seqpointer
- toseq.ioseq(data_(offset + 1), data, offset, empty:seq.T)
+ let offset = data_seqpointer
+  toseq.ioseq(data_(offset + 1), data, offset, empty:seq.T)
 
 Function +(p:place, s:seq.T)place
  let size = sizeoftype:T

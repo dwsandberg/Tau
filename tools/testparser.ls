@@ -10,7 +10,7 @@ run testparser testparser
 
 use genLR1
 
-use seq.seq.word
+use stdlib
 
 use seq.stepresult
 
@@ -18,7 +18,7 @@ use seq.stkele
 
 use stack.stkele
 
-use stdlib
+use seq.seq.word
 
 Function testparser seq.word // runs the parser on a sample string. // parse."1 + 2 + 3" + "OK"
 
@@ -43,11 +43,11 @@ function consumeinput(b:stepresult, next:word)stepresult
  let token = next
  let actioncode = getactioncode(stateno, token)
   if actioncode > 0 then
-  stepresult(push(stk, stkele(actioncode, 0)), place.b + 1, if track then track.b + "&br next" + next + printstate.actioncode else track.b, 0,"")
+  stepresult(push(stk, stkele(actioncode, 0)), place.b + 1, if track then track.b + " &br next" + next + printstate.actioncode else track.b, 0,"")
   else
    assert actioncode < 0 report"parse error" + "place" + toword.place.b + toword.actioncode + track.b
-   let x = reduce(stk,- actioncode, place.b, track.b)
-    consumeinput(stepresult(x, place.b, if track then track.b + "&br reduce by" + toword.- actioncode + printstate.stateno.top.x
+   let x = reduce(stk, - actioncode, place.b, track.b)
+    consumeinput(stepresult(x, place.b, if track then track.b + " &br reduce by" + toword.- actioncode + printstate.stateno.top.x
     else track.b, tokenstate.b, string.b)
     , next)
 

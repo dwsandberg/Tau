@@ -68,12 +68,12 @@ function union(a:seq.T, b:seq.T, i:int, j:int, result:seq.T)seq.T
    if p > 0 then
    union(a, b, p + 1, j + 1, result + subseq(a, i, p))
    else
-    union(a, b,-p, j + 1, result + subseq(a, i,-p - 1) + [ b_j])
+    union(a, b, - p, j + 1, result + subseq(a, i, - p - 1) + [ b_j])
 
-Function-(a:set.T, b:set.T)set.T
+Function -(a:set.T, b:set.T)set.T
  // elements in a but not in b // set.diff(toseq.a, toseq.b, 1, 1)
 
-Function-(a:set.T, b:T)set.T set.setdelete(toseq.a, b)
+Function -(a:set.T, b:T)set.T set.setdelete(toseq.a, b)
 
 function diff(a:seq.T, b:seq.T, i:int, j:int)seq.T
  if i > length.a then empty:seq.T
@@ -140,7 +140,7 @@ function expandrangeup(a:seq.T, n:T, u:int)int
  else u
 
 function binarysearch2(s:seq.T, b:int, a:int, val:T)int
- if a < b then-(a + 1)
+ if a < b then -(a + 1)
  else
   let p =(a + b) / 2
   let c = ?2(s_p, val)

@@ -4,7 +4,13 @@ use UTF8
 
 use seq.char
 
+use otherseq.int
+
 use seq.int
+
+use stdlib
+
+use otherseq.word
 
 use seq.seq.seq.word
 
@@ -12,15 +18,9 @@ use seq.seq.word
 
 use seq.word
 
-use stdlib
-
-use otherseq.word
-
-use otherseq.int
-
 use words
 
-Function defaultprec seq.seq.word ["_^","","* / mod ∪ ∩","in +-∈ ∋","= < > ? ≤ ≠ ≥ >> <<","∧","∨"]
+Function defaultprec seq.seq.word ["_^","","* / mod ∪ ∩","in + - ∈ ∋","= < > ? ≤ ≠ ≥ >> <<","∧","∨"]
 
 Function type:prettycontrol internaltype export
 
@@ -53,9 +53,9 @@ function charwidths seq.int dseq(60
 , 64, 64, 64, 43, 50, 36, 64, 64, 93, 64
 , 64, 57, 62, 26, 62, 70])
 
-Function checkwidths seq.word @(seperator("&br"), check,"", arithseq(128 - 32, 1, 32))
+Function checkwidths seq.word @(seperator(" &br"), check,"", arithseq(128 - 32, 1, 32))
 
 function check(i:int)seq.word
  let a = encodeword.tocharseq.constantseq(100, i)
  let l = displaywidth(charwidths, a)
-  [ a] + toword.l + "&br" + merge.constantseq(l / 100,"m"_1)
+  [ a] + toword.l + " &br" + merge.constantseq(l / 100,"m"_1)

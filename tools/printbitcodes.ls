@@ -4,43 +4,37 @@ Module printbitcodes
 
 run printbitcodes test1
 
-
-
 use UTF8
-
-use words
-
-use bits
-
-use encoding.decodename
-
-use fileio
-
-use internalbc
-
-use llvm
-
-use otherseq.codefreq
 
 use seq.bit
 
+use bits
+
 use seq.block
 
+use otherseq.boolean
+
 use seq.boolean
+
+use otherseq.codefreq
 
 use seq.codefreq
 
 use seq.content
 
+use encoding.decodename
+
 use seq.decodename
 
-use seq.int
+use fileio
 
 use seq.seq.int
 
-use seq.seq.word
+use seq.int
 
-use seq.word
+use internalbc
+
+use llvm
 
 use stdlib
 
@@ -48,9 +42,11 @@ use textio
 
 use otherseq.word
 
-use otherseq.codefreq
+use seq.seq.word
 
-use otherseq.boolean
+use seq.word
+
+use words
 
 Function test1 seq.word printBitCodes."simpletest.bc"
 
@@ -63,7 +59,8 @@ Function printBitCodes(file:seq.word)seq.word
   assert print.subseq(d, 1, 64) = "66 67 192 222 33 12 0 0"report"incorrect magic" + print.subseq(d, 1, 64)
   let m = block(subseq(d, 97, length.d), 3, MODULEBLOCK)
   let z = getinfo.m
-   // @(seperator("&br"), printrecord(MODULEBLOCK),"", recs.z)//
+   // @(seperator("
+&br"), printrecord(MODULEBLOCK),"", recs.z)//
    let firstconst = firstconst(recs.z, 7) - 6
    let symbols = last.blocks.z
     assert blockid.(blocks.z)_1 = TYPEBLOCK report"Expected TYPE Table as first block"
@@ -74,14 +71,20 @@ Function printBitCodes(file:seq.word)seq.word
      let functionblocks = findblock(FUNCTIONBLOCK, blocks.z)
      let functiondefs = @(+, filterm(types), empty:seq.seq.word, constanddefs)
       assert length.functionblocks = length.functiondefs report"number of function declarations does not match number of bodies"
-       "function rebuild seq.bits &br let NumEle = 1 &br let TYPES = [" + printtypes.types
-       + "]let discard = @(+, typerecord, empty:seq.encoding.llvmtype, subseq(TYPES, 2, length.TYPES))&br let DEFLIST ="
+       "function rebuild seq.bits  &br let NumEle = 1  &br let TYPES = [" + printtypes.types
+       + "]let discard = @(+, typerecord, empty:seq.encoding.llvmtype, subseq(TYPES, 2, length.TYPES))
+&br let DEFLIST ="
        + @(seperator("+"), identity,"", subseq(constanddefs, 1, firstconst - 1))
-       + "&br let discard2 ="
+       + " &br let discard2 ="
        + @(seperator("+"), identity,"", subseq(constanddefs, firstconst, length.constanddefs))
-       + "&br let bodies = ["
+       + " &br let bodies = ["
        + printfuncs(length.constanddefs, functiondefs, functionblocks, 1,"")
-       + "]&br llvm(DEFLIST, bodies, subseq(TYPES, 2, length.TYPES))&br &br function Cdef(l:int, name:seq.word, rec:seq.int)seq.seq.int let discard = C.merge(name)[ rec]&br &br function Cdef(l:int, type:int, rec:seq.int)seq.seq.int let discard = Cprt(type, rec)empty:seq.seq.int"
+       + "]
+&br llvm(DEFLIST, bodies, subseq(TYPES, 2, length.TYPES))
+&br 
+&br function Cdef(l:int, name:seq.word, rec:seq.int)seq.seq.int let discard = C.merge(name)[ rec]
+&br 
+&br function Cdef(l:int, type:int, rec:seq.int)seq.seq.int let discard = Cprt(type, rec)empty:seq.seq.int"
 
 function firstconst(s:seq.seq.int, i:int)int
  if s_i_1 = -1 then i else firstconst(s, i + 1)
@@ -111,7 +114,7 @@ function ggh(z:content, names:seq.word, j:int, number:int, result:seq.seq.word)s
     , j + 1
     , number + 1
     , result
-    + ["&br Cdef(" + toword.number + ',"' + names_(number + 1)
+    + [" &br Cdef(" + toword.number + ',"' + names_(number + 1)
     + '"'
     + ","
     + printrecord(MODULEBLOCK, i)
@@ -127,13 +130,13 @@ function second(s:seq.word)seq.word
   else [ x]
 
 function printtypes(r:seq.seq.int)seq.word
- label("&br", ["X"] + printtypes(r, 2, empty:seq.seq.word), @(+, printrecord(TYPEBLOCK), empty:seq.seq.word, r), 1,"")
+ label(" &br", ["X"] + printtypes(r, 2, empty:seq.seq.word), @(+, printrecord(TYPEBLOCK), empty:seq.seq.word, r), 1,"")
 
 function printfuncs(offset:int, decs:seq.seq.word, defs:seq.block, j:int, result:seq.word)seq.word
  if j > length.defs then result
  else
   let nopara = toint.last.decs_j
-  let a =(if length.result = 0 then""else",") + "&br //" + decs_j_1
+  let a =(if length.result = 0 then""else",") + " &br //" + decs_j_1
   + "nopara:"
   + toword.nopara
   + "//"
@@ -160,7 +163,7 @@ function printconstant(s:seq.seq.int, lasttype:int, number:int, i:int, result:se
   let a = s_i
    if a_1 = CONSTSETTYPE then printconstant(s, a_2, number, i + 1, result)
    else
-    let b ="&br Cdef(" + toword.number + "," + toword.lasttype + ","
+    let b =" &br Cdef(" + toword.number + "," + toword.lasttype + ","
     + printrecord(CONSTANTSBLOCK, a)
     + ")"
      printconstant(s, lasttype, number + 1, i + 1, result + b)
@@ -172,7 +175,7 @@ function printrecord(blockid:int, a:seq.int)seq.word
 function xx(blockid:int, a:seq.word, v:int)seq.word
  a
  + if length.a = 0 then
- (if blockid in [ TYPEBLOCK, MODULEBLOCK, CONSTANTSBLOCK]then"["else"&br [") + lookup(blockid, v)
+ (if blockid in [ TYPEBLOCK, MODULEBLOCK, CONSTANTSBLOCK]then"["else" &br [") + lookup(blockid, v)
  else"," + toword.v
 
 function print(a:seq.bit)seq.word @(+, asbyte(a),"", arithseq(length.a / 8, 8, 1))
@@ -196,7 +199,7 @@ function getvbrsigned(a:seq.bit, idx:int, size:int)pp
  if toint.a_idx = 0 then getvbr(a, size, bits.0, 0, idx, 1)
  else
   let p = getvbr(a, size, bits.0, 0, idx, 1)
-   pp(idx.p,- val.p)
+   pp(idx.p, - val.p)
 
 function align32(p:pp)pp
  let m =(idx.p - 1) mod 32
@@ -278,7 +281,7 @@ function printtypes(t:seq.seq.int, i:int, result:seq.seq.word)seq.seq.word
  else
   let a = t_i
   let tp = a_1
-  let str = if tp = TYPEINTEGER then [ merge.("i" + toword.a_2)]
+  let str = if tp = TYPEINTEGER then [ merge("i" + toword.a_2)]
   else if tp = TYPEARRAY then
   "[" + toword.a_2 + "x" + lookuptype(result, a_3) + "]"
   else if tp = TYPEPOINTER then lookuptype(result, a_2) + "*"
@@ -291,7 +294,7 @@ function printtypes(t:seq.seq.int, i:int, result:seq.seq.word)seq.seq.word
 function lookuptype(s:seq.seq.word, i:int)seq.word s_(i + 1)
 
 function number(s:seq.seq.word, i:int)seq.word
- [ toword.(i - 1)] + ":" + s_i
+ [ toword(i - 1)] + ":" + s_i
 
 function yy(s:seq.seq.int, i:int, slot:int, result:seq.word, offset:int)seq.word
  if i > length.s then result
@@ -305,22 +308,22 @@ function yy(s:seq.seq.int, i:int, slot:int, result:seq.word, offset:int)seq.word
   else if tp = INSTGEP then [ false, false, false] + constantseq(length.d - 3, true)
   else if tp = INSTPHI then
   if length.d < 8 then [ false, false, true, false, true, false, true, false, true]
-   else [ false] + big.(length.d / 2)
+   else [ false] + big(length.d / 2)
   else if tp = 1 then [ false, false]
   else
    assert false report"unknown" + lookup(FUNCTIONBLOCK, d_1)
     empty:seq.boolean
   let slotinc = if tp in [ INSTLOAD, INSTALLOCA, INSTCALL, INSTGEP, INSTCAST, INSTCMP2, INSTBINOP, INSTPHI]then 1 else 0
-   yy(s, i + 1, slot + slotinc,(result + if length.result = 0 then"&br"else"+ &br") + lookup(FUNCTIONBLOCK, d_1)
+   yy(s, i + 1, slot + slotinc,(result + if length.result = 0 then" &br"else"+  &br") + lookup(FUNCTIONBLOCK, d_1)
    + "("
-   + toword.(slot - offset)
+   + toword(slot - offset)
    + yy(relocmask, d, length.d, offset, slot)
    + ")", offset)
 
 function big(i:int)seq.boolean
  if i < 4 then [ false, true, false, true, false, true, false, true]
  else
-  let t = big.(i / 2)
+  let t = big(i / 2)
    t + t
 
 function yy(relocmask:seq.boolean, s:seq.int, i:int, offset:int, slot:int)seq.word
@@ -346,9 +349,8 @@ function count(s:seq.codefreq, w:int)seq.codefreq replace(s, w, codefreq(count.s
 function print(block:int, p:codefreq)seq.word
  if count.p = 0 then empty:seq.word
  else
-  "&br the code" + lookup(block, w.p) + "occurs" + toword.count.p
-  + "times.&br"
- 
+  " &br the code" + lookup(block, w.p) + "occurs" + toword.count.p
+  + "times.  &br"
 
 function removelowcount(mincount:int, p:codefreq)seq.codefreq if count.p < mincount then empty:seq.codefreq else [ p]
 

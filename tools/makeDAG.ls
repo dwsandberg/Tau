@@ -1,14 +1,14 @@
 Module makeDAG.T
 
+use seq.arc.T
+
+use set.arc.T
+
 use graph.T
 
 use seq.T
 
-use seq.arc.T
-
 use set.T
-
-use set.arc.T
 
 use stdlib
 
@@ -32,14 +32,14 @@ Function expandback(org:graph.T, modified:graph.T, n:T)T
  if n in nodes.org then n else expandback(org, modified,(toseq.predecessors(modified, n))_1)
 
 Function sinks2(g:graph.T, b:set.T, n:T)set.T
- if cardinality.(successors(g, n) - b) = 0 then asset.[ n]else empty:set.T
+ if cardinality(successors(g, n) - b) = 0 then asset.[ n]else empty:set.T
 
 Function sources2(g:graph.T, b:set.T, n:T)set.T
- if cardinality.(predecessors(g, n) - b) = 0 then asset.[ n]else empty:set.T
+ if cardinality(predecessors(g, n) - b) = 0 then asset.[ n]else empty:set.T
 
 function ordernodes(g:graph.T, b:set.T, first:seq.T, last:seq.T)seq.T
- let a = @(∪, sources2(g, b), empty:set.T, toseq.(nodes.g - b))
- let d = @(∪, sinks2(g, b), empty:set.T, toseq.(nodes.g - b))
+ let a = @(∪, sources2(g, b), empty:set.T, toseq(nodes.g - b))
+ let d = @(∪, sinks2(g, b), empty:set.T, toseq(nodes.g - b))
   if cardinality.a + cardinality.d = 0 then
   let u = nodes.g - b
     if isempty.u then first + last else ordernodes(g, b + u_1, first + u_1, last)

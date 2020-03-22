@@ -1,16 +1,18 @@
 Module real
 
+use UTF8
+
+use otherseq.real
+
 use seq.real
 
 use stdlib
-
-use otherseq.real
 
 type real is record representation:int
 
 Function type:real internaltype export
 
-Function-(r:real)real 0.0 - r
+Function -(r:real)real 0.0 - r
 
 Function abs(x:real)real if x < 0.0 then 0.0 - x else x
 
@@ -48,7 +50,7 @@ Function min(a:real, b:real)real if(a ? b) = LT then a else b
 
 Function +(a:real, b:real)real builtin.usemangle
 
-Function-(a:real, b:real)real builtin.usemangle
+Function -(a:real, b:real)real builtin.usemangle
 
 Function *(a:real, b:real)real builtin.usemangle
 
@@ -64,6 +66,4 @@ Function *(a:int, b:real)real toreal.a * b
 
 Function print(decimals:int, rin:real)seq.word export
 
-use UTF8
-
--------------
+- - - - - - - - - - - - -

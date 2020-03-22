@@ -1,43 +1,43 @@
 Module libdescfunc
 
-use intercode
-
-use libscope
-
-use otherseq.word
-
 use seq.firstpass
 
 use seq.inst
 
-use seq.libmod
-
-use seq.libsym
-
-use seq.mytype
-
 use seq.seq.int
-
-use seq.symbol
 
 use set.int
 
+use intercode
+
+use seq.libmod
+
+use libscope
+
+use seq.libsym
+
 use set.libsym
+
+use seq.mytype
 
 use set.mytype
 
-use set.seq.word
+use stdlib
+
+use seq.symbol
 
 use set.symbol
 
-use set.word
-
-use stdlib
-
 use symbol
 
+use otherseq.word
+
+use set.seq.word
+
+use set.word
+
 Function libdesc(roots:set.word, intercode:intercode, mods:seq.firstpass, known:symbolset)seq.libmod
- // assert false report @(seperator([ encodeword.[ 10]]+"---"), print2,"", @(+, filter, empty:seq.symbol, toseq(known)))//
+ // assert false report @(seperator([ encodeword.[ 10]]+"- - -"), print2,"", @(+, filter, empty:seq.symbol, toseq(known)))//
  let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
  let a = close(intercode, rootindices, rootindices)
  let syms = @(+, tolibsym.intercode, empty:seq.libsym, toseq.a)
@@ -81,7 +81,7 @@ function findcalls(a:seq.word, i:int, result:seq.word)seq.word
 function astext(s:seq.inst, i:int)seq.word
  let f = towords.s_i
   if f_1 = "CONSTANT"_1 then subseq(f, 2, length.f)
-  else if f_1 = "PARAM"_1 then"PARAM" + toword(-toint.f_2 - 1)
+  else if f_1 = "PARAM"_1 then"PARAM" + toword(- toint.f_2 - 1)
   else if f_1 in "ELSEBLOCK THENBLOCK DEFINE"then""
   else if f_1 in "SET WORD WORDS LOCAL LIT PARAM RECORD FREF"then f else [ f_1]
 

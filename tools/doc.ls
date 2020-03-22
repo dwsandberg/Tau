@@ -8,31 +8,31 @@ use fileio
 
 use format
 
-use graph.word
-
 use libscope
 
 use main2
 
-use prettylib
-
-use seq.arc.word
-
-use seq.arcinfo.seq.word
-
 use seq.mytype
 
-use seq.tree.word
-
-use set.arc.word
-
-use set.word
+use prettylib
 
 use stdlib
 
+use textio
+
+use seq.arc.word
+
+use set.arc.word
+
+use graph.word
+
+use seq.arcinfo.seq.word
+
 use svggraph.seq.word
 
-use textio
+use set.word
+
+use seq.tree.word
 
 use tree.word
 
@@ -43,7 +43,7 @@ let x1 = createfile("doc.html", [ htmlheader + processpara.d])
  let y1 = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])
   d
 
-function addselect(s:seq.word)seq.word"&{ select X" + s + "&}"
+function addselect(s:seq.word)seq.word" &{ select X" + s + " &}"
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
  // Calls between modules in list of modules. //
@@ -69,7 +69,7 @@ function modarc(s:seq.mytype, a:arc.word)seq.arc.word
  let t1 = codedown.tail.a
  let h1 = codedown.head.a
   if length.t1 < 2 ∨ length.h1 < 2 ∨ t1_2 = h1_2
-  ∨ not.(mytype.h1_2 in s ∧ mytype.t1_2 in s)then
+  ∨ not(mytype.h1_2 in s ∧ mytype.t1_2 in s)then
   empty:seq.arc.word
   else [ arc(merge.readable.tail.a, merge.readable.head.a)]
 
@@ -91,7 +91,7 @@ Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word
   newgraph.toseq.@(∪, arcstosuccessors(g2), empty:set.arc.word, include + @(+, addabstractpara,"", include))
   display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g3)
 
-function addabstractpara(w:word)word merge.([ w] + ".T")
+function addabstractpara(w:word)word merge([ w] + ".T")
 
 Function doclibrary(libname:seq.word)seq.word
  // create summary documentation for libraray. //
@@ -103,9 +103,9 @@ Function doclibrary(libname:seq.word)seq.word
  let exports = subseq(libclause, e + 1, length.libclause)
   docmodule(g, exports, r, lib, 1,"","","")
   + if length.r > 0 then""
-  else"&{ select x &section Possibly Unused Functions &} &{ select x" + uncalledfunctions.libname + "&}"
+  else" &{ select x &section Possibly Unused Functions  &}  &{ select x" + uncalledfunctions.libname + " &}"
 
-@(+, +("&br &br"),"", lib)
+@(+, +(" &br  &br"),"", lib)
 
 * Paragraphs beginning with * are included in documentation.
 
@@ -136,20 +136,20 @@ function plist(t:seq.word, i:int, parano:int, names:seq.word)seq.word
 function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:seq.seq.word, i:int, currentmod:seq.word, funcs:seq.word, types:seq.word)seq.word
  if i > length.lib then
  if length.types > 0 ∨ length.funcs > 0 then
-  "&br defines types: " + types + funcs
+  " &br defines types: " + types + funcs
   else""
  else if lib_i_1 = "module"_1 then
  let modname = lib_i_2
-   if not.(modname in todoc ∨ length.todoc = 0)then
+   if not(modname in todoc ∨ length.todoc = 0)then
    docmodule(usegraph, exports, todoc, lib, i + 1,"", funcs, types)
    else
     let leftover = if length.types > 0 ∨ length.funcs > 0 then
-    "&br defines types: " + types + funcs
+    " &br defines types: " + types + funcs
     else""
     let name = [ modname] + if length.lib_i > 2 then".T"else""
-     {(leftover + "&{ select x &section &keyword module" + name + "&}"
+     {(leftover + " &{ select x &section  &keyword module" + name + " &}"
      + if modname in exports then"Module" + name + "is exported from library. "else"")
-     + "&br Module"
+     + " &br Module"
      + name
      + "is used in modules: "
      + alphasort.@(+, tail,"", toseq.arcstopredecessors(usegraph, merge.name))
@@ -157,21 +157,21 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
  else if currentmod = ""then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
  else if subseq(lib_i, 1, 2) = "skip *"then
  let a = subseq(lib_i, 2, length.lib_i)
-  let toadd =("&{ select x"
+  let toadd =(" &{ select x"
   + if a_2 = "usegraph"_1 then
   let l = findindex("include"_1, a)
    let k = findindex("exclude"_1, a)
     usegraph(usegraph, subseq(a, l + 1, k), subseq(a, k + 1, length.a))
   else subseq(a, 2, length.a))
-  + "&}"
+  + " &}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
  else if lib_i_1 in "Parsedfunc"then
  let z = lib_i
   let nopara = toint.z_4
   let headlength = toint.z_2
-  let toadd ="&{ select x &keyword Function" + z_3
+  let toadd =" &{ select x  &keyword Function" + z_3
   + plist(subseq(z, 5, headlength + 2 - nopara), 1, 1, subseq(z, headlength + 2 - nopara + 1, headlength + 2))
-  + "&}"
+  + " &}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
  else if lib_i_1 in "record encoding sequence"then
  docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_2)
@@ -183,7 +183,7 @@ Function uncalledfunctions(libname:seq.word)seq.word
  // List of functions may include indirectly called functions. //
  let g = newgraph.formcallgraph(firstPass.libname_1, 2)
  let sources = @(+, sources(g, empty:set.word),"", toseq.nodes.g)
-  @(seperator("&br"), readable,"", alphasort.sources)
+  @(seperator(" &br"), readable,"", alphasort.sources)
 
 * usegraph exclude stdlib seq set
 
@@ -195,7 +195,7 @@ function usegraph(lib:seq.seq.word, kind:word, i:int, currentmod:word, result:se
    usegraph(lib, kind, i + 1, merge.subseq(lib_i, 2, length.lib_i), result)
    else if key = "use"_1 then
    let m = if length.lib_i = 2 then lib_i_2
-    else if kind = "mod"_1 then merge.([ lib_i_2] + ".T")
+    else if kind = "mod"_1 then merge([ lib_i_2] + ".T")
     else merge.subseq(lib_i, 2, length.lib_i)
      if currentmod = m then usegraph(lib, kind, i + 1, currentmod, result)
      else usegraph(lib, kind, i + 1, currentmod, result + arc(currentmod, m))

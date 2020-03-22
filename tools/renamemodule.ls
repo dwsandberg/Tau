@@ -4,11 +4,11 @@ use encoding.mapnames
 
 use seq.mapnames
 
+use stdlib
+
 use seq.seq.word
 
 use seq.word
-
-use stdlib
 
 function mapentry(n:seq.word, i:int)int
  let x = encode(encodenames, mapnames(n_i, n_(i + 1)))

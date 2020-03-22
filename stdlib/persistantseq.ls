@@ -2,13 +2,13 @@ Module persistantseq.T
 
 use encoding.T
 
+use seq.T
+
 use ipair.linklists2
 
 use llvm
 
 use persistant
-
-use seq.T
 
 use stdlib
 

@@ -1,10 +1,10 @@
 Module worddict.T
 
-use otherseq.word
-
 use seq.T
 
 use stdlib
+
+use otherseq.word
 
 Function type:worddict.T internaltype export
 
@@ -18,9 +18,9 @@ Function add(dict:worddict.T, w:word, d:T)worddict.T
  let i = binarysearch(keys.dict, w)
   if i > 0 then dict
   else
-   worddict(subseq(keys.dict, 1,-i - 1) + [ w]
-   + subseq(keys.dict,-i, length.keys.dict), subseq(data.dict, 1,-i - 1) + [ d]
-   + subseq(data.dict,-i, length.keys.dict))
+   worddict(subseq(keys.dict, 1, - i - 1) + [ w]
+   + subseq(keys.dict, - i, length.keys.dict), subseq(data.dict, 1, - i - 1) + [ d]
+   + subseq(data.dict, - i, length.keys.dict))
 
 Function lookup(dict:worddict.T, w:word)seq.T
  let i = binarysearch(keys.dict, w)
@@ -29,9 +29,9 @@ Function lookup(dict:worddict.T, w:word)seq.T
 Function replace(dict:worddict.T, w:word, d:T)worddict.T
  let i = binarysearch(keys.dict, w)
   if i < 0 then
-  worddict(subseq(keys.dict, 1,-i - 1) + [ w]
-   + subseq(keys.dict,-i, length.keys.dict), subseq(data.dict, 1,-i - 1) + [ d]
-   + subseq(data.dict,-i, length.keys.dict))
+  worddict(subseq(keys.dict, 1, - i - 1) + [ w]
+   + subseq(keys.dict, - i, length.keys.dict), subseq(data.dict, 1, - i - 1) + [ d]
+   + subseq(data.dict, - i, length.keys.dict))
   else
    worddict(keys.dict, subseq(data.dict, 1, i - 1) + [ d]
    + subseq(data.dict, i + 1, length.keys.dict))

@@ -1,20 +1,20 @@
 Module encoding.T
 
-use deepcopy.T
-
 use blockseq.T
 
-use seq.T
-
-use seq.encodingrep.T
-
-use seq.seq.encodingrep.T
-
-use stdlib
+use deepcopy.T
 
 use otherseq.encodingrep.T
 
 use otherseq.seq.encodingrep.T
+
+use seq.seq.encodingrep.T
+
+use seq.encodingrep.T
+
+use seq.T
+
+use stdlib
 
 Function type:encoding.T internaltype export
 

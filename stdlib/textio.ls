@@ -1,16 +1,18 @@
 Module textio
 
+use seq.UTF8
+
 use UTF8
 
-use seq.int
+use otherseq.int
 
 use seq.seq.seq.int
 
-use seq.seq.seq.word
+use seq.int
 
 use stdlib
 
-use otherseq.int
+use seq.seq.seq.word
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqint.a, 2, 1, empty:seq.UTF8)
 
@@ -31,11 +33,9 @@ function breakcommas(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
    breakcommas(a, d + 2, d + 2, result + UTF8.subseq(a, i + 1, d - 1))
  else breakcommas(a, i + 1, last, result)
 
---------
+- - - - - - - -
 
 handle files of paragraphs
-
-use seq.UTF8
 
 Function breakparagraph(a:UTF8)seq.UTF8 breakparagraph(toseqint.a, 1, 1, empty:seq.UTF8)
 
@@ -60,7 +60,7 @@ Function breakparagraph(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
    else breakparagraph(a, i + 1, last, result)
  else breakparagraph(a, i + 1, last, result)
 
-Function classifychar seq.word ' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ 0]^_'
+Function classifychar seq.word ' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +, -.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ 0]^_'
 
 Function towords(a:UTF8)seq.word towords.decodeUTF8.a
 
@@ -90,5 +90,4 @@ function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
 
 ________
 
-
--------------------
+- - - - - - - - - - - - - - - - - - -

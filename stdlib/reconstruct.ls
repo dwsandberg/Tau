@@ -2,9 +2,9 @@ Module reconstruct
 
 use bits
 
-use stdlib
-
 use unsafe.int
+
+use stdlib
 
 Three Functions to pack two ints into 64 bits
 
@@ -24,9 +24,8 @@ function offsetthread(a:seq.int, i:int)int
  if i = 0 then 0
  else
   let d = a_i
-  let discard = // setfld(a, i + 1, cast(a, 1 + getb.d, 1)) // relocate(a,i+1,1 + getb.d)
+  let discard = // setfld(a, i + 1, cast(a, 1 + getb.d, 1))//
+  relocate(a, i + 1, 1 + getb.d)
    offsetthread(a, getlink.d)
 
-/function relocate(a:seq.int,idx:int,relloc:int) seq.int
-  setfld(a, idx, cast(a, relloc, 1))
-   
+/function relocate(a:seq.int, idx:int, relloc:int)seq.int setfld(a, idx, cast(a, relloc, 1))

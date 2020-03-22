@@ -4,9 +4,9 @@ use packedseq.T
 
 use packedseq.seq.T
 
-use seq.T
-
 use seq.seq.T
+
+use seq.T
 
 use stdlib
 

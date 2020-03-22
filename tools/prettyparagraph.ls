@@ -2,15 +2,17 @@ Module prettyparagraph
 
 use UTF8
 
-use words
-
-use format
-
-use libscope
+use otherseq.char
 
 use seq.char
 
+use format
+
+use otherseq.int
+
 use seq.int
+
+use libscope
 
 use seq.prettyresult
 
@@ -20,9 +22,7 @@ use stdlib
 
 use textio
 
-use otherseq.int
-
-use otherseq.char
+use words
 
 type prettyresult is record displaywidth:int, prec:int, rprec:int, text:seq.word
 
@@ -45,31 +45,31 @@ Function prettyparagraph(p:seq.word)seq.word
  if length.p < 2 then p
  else
   let key = p_1
-   if key in "Library library use"then"&{ block &keyword" + p + "&}"
+   if key in "Library library use"then" &{ block  &keyword" + p + " &}"
    else if key = "module"_1 then
-   ' &{ block &{ noformat <hr id ="' + p_2 + '"> &} &keyword ' + p
-    + "&}"
+   '  &{ block  &{ noformat <hr id ="' + p_2 + '">  &}  &keyword ' + p
+    + " &}"
    else if key = "skip"_1 then
    if p_2 in "/function /Function"then
-    "&{ block" + prettynoparse.subseq(p, 2, length.p) + "&}"
+    " &{ block" + prettynoparse.subseq(p, 2, length.p) + " &}"
     else
-     "&{ block" + addbreak(control.charwidths,"&br", subseq(p, 2, length.p), 1, 0) + "&}"
+     " &{ block" + addbreak(control.charwidths," &br", subseq(p, 2, length.p), 1, 0) + " &}"
    else if key in "export"then
    assert false report"is this still used" + p
-     "&keyword" + subseq(p, 3, length.p)
+     " &keyword" + subseq(p, 3, length.p)
    else
     assert key in "parsedfunc"report"unknown key" + key
     let z = p
     let headlength = toint.z_2
-    let head ="&keyword" + subseq(z, 3, headlength + 2)
+    let head =" &keyword" + subseq(z, 3, headlength + 2)
     let x = x(control.charwidths, p, headlength + 4, empty:stack.prettyresult)
     let t = text.x
     let t2 = if last.z = "builtinZinternal1Zinternal1"_1 ∧ z_(length.z - 1) = z_(headlength + 3)then
     subseq(t, 1, length.t - 1) + "usemangle"
     else t
      if @(+, displaywidth(control.charwidths), 0, head) + displaywidth.x > 6000 then
-     "&{ block" + head + "&br" + t2 + "&}"
-     else"&{ block" + head + t2 + "&}"
+     " &{ block" + head + " &br" + t2 + " &}"
+     else" &{ block" + head + t2 + " &}"
 
 function x(ctl:control, s:seq.word, i:int, stk:stack.prettyresult)prettyresult
  if i > length.s then top.stk
@@ -82,7 +82,7 @@ function x(ctl:control, s:seq.word, i:int, stk:stack.prettyresult)prettyresult
    // need to excape quotes //
     let size = toint.s_(i + 1)
     let txt = @(+, escapequote,"", subseq(s, i + 2, i + 1 + size))
-    let t = result(ctl, ' &{ literal"' + addbreak(ctl, "&br", txt, 1, 0) + '"&} ')
+    let t = result(ctl, '  &{ literal"' + addbreak(ctl," &br", txt, 1, 0) + '" &} ')
      x(ctl, s, i + 2 + size, push(stk, t))
    else if w in "COMMENT"then
    let size = toint.s_(i + 1)
@@ -90,7 +90,7 @@ function x(ctl:control, s:seq.word, i:int, stk:stack.prettyresult)prettyresult
     let txtwidth = @(+, displaywidth(ctl), 0, txt)
     let arg = top.stk
     let r = if displaywidth.arg + txtwidth > 6000 then
-    prettyresult(10000, 2, 2,"&br" + txt + "&br" + text.arg)
+    prettyresult(10000, 2, 2," &br" + txt + " &br" + text.arg)
     else prettyresult(displaywidth.arg + txtwidth, 2, 2, txt + text.arg)
      x(ctl, s, i + 2 + size, push(pop.stk, r))
    else if w = "RECORD"_1 then
@@ -117,30 +117,30 @@ function x(ctl:control, s:seq.word, i:int, stk:stack.prettyresult)prettyresult
     let width = @(+, displaywidth, 0, args)
     let r = if width > 6000 then
     resultblock(ctl
-     ,"&{ block &keyword if" + text.args_1 + "&br &keyword then" + text.args_2
-     + if subseq(text.args_3, 1, 4) = "&{ block &keyword if"then
-     "&br &keyword else" + subseq(text.args_3, 3, length.text.args_3)
-     else"&br &keyword else" + text.args_3 + "&}")
+     ," &{ block  &keyword if" + text.args_1 + " &br  &keyword then" + text.args_2
+     + if subseq(text.args_3, 1, 4) = " &{ block  &keyword if"then
+     " &br  &keyword else" + subseq(text.args_3, 3, length.text.args_3)
+     else" &br  &keyword else" + text.args_3 + " &}")
     else
-     prettyresult(width + @(+, displaywidth(ctl), 0,"if then else"), 0, 10,"&keyword if" + text.args_1 + "&keyword then" + text.args_2
-     + "&keyword else"
+     prettyresult(width + @(+, displaywidth(ctl), 0,"if then else"), 0, 10," &keyword if" + text.args_1 + " &keyword then" + text.args_2
+     + " &keyword else"
      + text.args_3)
      x(ctl, s, i + 1, push(pop(stk, 3), r))
    else if w = "SET"_1 then
    let args = top(stk, 2)
-    let t ="&{ block &keyword let" + s_(i + 1) + "=" + text.args_1
-    + if subseq(text.args_2, 1, 4) in ["&{ block &keyword let","&{ block &keyword assert"]then
-    "&br" + subseq(text.args_2, 3, length.text.args_2)
-    else"&{ block" + text.args_2 + "&} &}"
+    let t =" &{ block  &keyword let" + s_(i + 1) + "=" + text.args_1
+    + if subseq(text.args_2, 1, 4) in [" &{ block  &keyword let"," &{ block  &keyword assert"]then
+    " &br" + subseq(text.args_2, 3, length.text.args_2)
+    else" &{ block" + text.args_2 + " &}  &}"
     let r = prettyresult(10000, 0, 10, t)
      // assert i < 67 report [ toword.i, toword.prec.r, toword.rprec.r]+ text.args_1 //
      x(ctl, s, i + 2, push(pop(stk, 2), r))
    else if subseq(s, i, i + 1) = "assertZbuiltinZwordzseq if"then
    let args = top(stk, 3)
-    let reportclause = if displaywidth.args_3 + displaywidth.args_1 > 6000 then"&br report" + text.args_3
+    let reportclause = if displaywidth.args_3 + displaywidth.args_1 > 6000 then" &br report" + text.args_3
     else"report" + text.args_3
-    let r = resulthigh(ctl,"&{ block &keyword assert" + text.args_1 + reportclause + "&{ block" + text.args_2
-    + "&} &}")
+    let r = resulthigh(ctl," &{ block  &keyword assert" + text.args_1 + reportclause + " &{ block" + text.args_2
+    + " &}  &}")
      x(ctl, s, i + 2, push(pop(stk, 3), r))
    else if w = "PRECORD"_1 then
    let noargs = toint.s_(i + 1)
@@ -165,11 +165,11 @@ function x(ctl:control, s:seq.word, i:int, stk:stack.prettyresult)prettyresult
       let number = zeropad(digits, decimals + 1)
       let decimalpart ="." + encodeword.subseq(number, length.number - decimals + 1, length.number)
       let wholepart = if length.number - decimals = 0 then [ char.48]else subseq(number, 1, length.number - decimals)
-       result(ctl, [ encodeword.((if isneg then [ hyphenchar]else empty:seq.char) + wholepart)] + decimalpart)
+       result(ctl, [ encodeword((if isneg then [ hyphenchar]else empty:seq.char) + wholepart)] + decimalpart)
      else if name in "_^"then binaryop(ctl, [ name], 1, args_1, args_2)
      else if name in "* / mod ∪ ∩"then binaryop(ctl, [ name], 3, args_1, args_2)
      else if name in "-"then binaryop(ctl, [ space, name, space], 4, args_1, args_2)
-     else if name in "in +-∈ ∋"then binaryop(ctl, [ name], 4, args_1, args_2)
+     else if name in "in + - ∈ ∋"then binaryop(ctl, [ name], 4, args_1, args_2)
      else if name in "= < > ? ≤ ≠ ≥ >> <<"then binaryop(ctl, [ name], 5, args_1, args_2)
      else if name in "∧"then binaryop(ctl, [ name], 6, args_1, args_2)
      else if name in "∨"then binaryop(ctl, [ name], 7, args_1, args_2)else functioncall(ctl, name, args)
@@ -183,7 +183,7 @@ function binaryop(ctl:control, op:seq.word, prec:int, a:prettyresult, b:prettyre
  if prec ≤ prec.b then binaryop(ctl, op, prec, a, result(ctl,"()","", [ b]))
  else if prec < rprec.a then binaryop(ctl, op, prec, result(ctl,"()","", [ a]), b)
  else if displaywidth.a > 6000 then
- prettyresult(displaywidth.a + displaywidth.b + @(+, displaywidth(ctl), 0, op), prec, max(prec, rprec.b), text.a + "&br" + op + text.b)
+ prettyresult(displaywidth.a + displaywidth.b + @(+, displaywidth(ctl), 0, op), prec, max(prec, rprec.b), text.a + " &br" + op + text.b)
  else
   prettyresult(displaywidth.a + displaywidth.b + @(+, displaywidth(ctl), 0, op), prec, max(prec, rprec.b), text.a + op + text.b)
 
@@ -195,7 +195,7 @@ function addbreak(ctl:control, insert:seq.word, s:seq.word, i:int, width:int)seq
 
 function divideseq(seperator:seq.word, b:seq.prettyresult, n:int)seq.word
  let l =(length.b + n - 1) / n
-  @(seperator("&br" + seperator), breakup(seperator, b, n),"", arithseq(l, n, 1))
+  @(seperator(" &br" + seperator), breakup(seperator, b, n),"", arithseq(l, n, 1))
 
 function breakup(seperator:seq.word, b:seq.prettyresult, len:int, i:int)seq.word
  @(seperator(seperator), text,"", subseq(b, i, i + len - 1))
@@ -206,8 +206,7 @@ function getname(a:seq.seq.word)word
   else
    let c = towords.decodeword.b
     if length.c > 1 ∧ last.c = "T"_1 then
-    merge
-     .(subseq(c, 1, length.c - 1)
+    merge(subseq(c, 1, length.c - 1)
      + print.mytype.subseq(a_2, 1, length.a_2 - 1))
     else b
 

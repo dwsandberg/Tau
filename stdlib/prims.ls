@@ -1,20 +1,18 @@
 Module prims
 
-use encoding.seq.int
-
-use fileio
-
-use seq.seq.word
-
-use stdlib
+use seq.bits
 
 use bits
 
-use seq.bits
+use fileio
 
 use encoding.seq.int
 
 use seq.encodingrep.seq.int
+
+use stdlib
+
+use seq.seq.word
 
 Function execute(name:word)seq.word executecode(toCformat.[ name], empty:seq.int)
 

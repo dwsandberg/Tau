@@ -1,8 +1,14 @@
 Module displaytextgraph
 
-use barycenter.seq.word
-
 use display
+
+use stdlib
+
+use otherseq.word
+
+use seq.arcinfo.seq.word
+
+use barycenter.seq.word
 
 use displaygraph.seq.word
 
@@ -10,19 +16,13 @@ use graph.seq.word
 
 use ipair.seq.word
 
-use otherseq.word
-
-use seq.arcinfo.seq.word
-
-use seq.word
-
 use set.seq.word
-
-use stdlib
 
 use svggraph.seq.word
 
-Function display(z2:seq.arcinfo.seq.word)seq.word"&{ noformat" + displaygraph(defaultcontrol, z2) + "&}"
+use seq.word
+
+Function display(z2:seq.arcinfo.seq.word)seq.word" &{ noformat" + displaygraph(defaultcontrol, z2) + " &}"
 
 Function arcinfo(tail:seq.word, head:seq.word, arclabel:seq.word)arcinfo.seq.word
  arcinfo(arc(tail, head), arclabel, displaywidth(chrwidths.defaultcontrol, arclabel))

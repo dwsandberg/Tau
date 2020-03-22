@@ -2,25 +2,23 @@
 
 module words
 
-use stdlib
-
-use encoding.seq.int
-
-use seq.alphaword
+use UTF8
 
 use otherseq.alphaword
 
-use otherseq.int
-
-use otherseq.char
-
 use otherseq.seq.alphaword
-
-use seq.alphaword
 
 use seq.seq.alphaword
 
-use UTF8
+use seq.alphaword
+
+use otherseq.char
+
+use otherseq.int
+
+use encoding.seq.int
+
+use stdlib
 
 Function type:word internaltype export
 
@@ -69,8 +67,6 @@ Function towordseq(a:seq.alphaword)seq.word @(+, toword, empty:seq.word, a)
 Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
 
 Function ?(a:seq.alphaword, b:seq.alphaword)ordering export
-
-use seq.seq.alphaword
 
 Function alphasort(a:seq.seq.word)seq.seq.word
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)

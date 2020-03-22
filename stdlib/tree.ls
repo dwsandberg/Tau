@@ -31,4 +31,4 @@ Function replace(with:T, a:T, t:tree.T)tree.T
  let newlabel = if label.t = a then with else label.t
   tree(newlabel, @(+, replace(with, a), empty:seq.tree.T, sons.t))
 
-------------------
+- - - - - - - - - - - - - - - - - -

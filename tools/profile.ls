@@ -8,37 +8,37 @@ profileresult could return a sequence of packed parcs instead of four sequence.
 
 @(-, does not parse.
 
-use displaytextgraph
-
-use labeledgraph.parc
-
-use libscope
-
 use otherseq.alphaword
 
 use seq.alphaword
 
-use seq.arcinfo.seq.word
+use displaytextgraph
 
 use seq.int
 
+use libscope
+
+use labeledgraph.parc
+
 use seq.parc
 
+use set.parc
+
 use seq.profileresult
+
+use stdlib
+
+use otherseq.word
+
+use seq.arcinfo.seq.word
 
 use seq.seq.seq.word
 
 use seq.seq.word
 
-use seq.word
-
-use set.parc
-
-use stdlib
-
 use svggraph.seq.word
 
-use otherseq.word
+use seq.word
 
 use words
 
@@ -47,8 +47,7 @@ use words
 * Profiling is accomplished by adding code to perform measurements before and after each procedure call and recording the difference.
 
 function toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.word
- let label = toword
- .((if measure = "time"then clocks.a else if measure = "count"then counts.a else space.a)
+ let label = toword((if measure = "time"then clocks.a else if measure = "count"then counts.a else space.a)
  * 100
  / max)
   arcinfo(shorten(map, head.a), shorten(map, tail.a), [ label])
@@ -66,7 +65,7 @@ Function profileresults(measure:seq.word)seq.word
   // shorten the names of the functions and then build and display labeled graph //
   let nodemap = shorten.@(+, head,"", toseq.nodes.g3)
   let z2 = @(+, toarcinfo(measure, m, nodemap), empty:seq.arcinfo.seq.word, toseq.arcs.g3)
-   "&br" + measure + toword.m + "&br" + display.z2 + "&br"
+   " &br" + measure + toword.m + " &br" + display.z2 + " &br"
    + measure
    + toword.m
 

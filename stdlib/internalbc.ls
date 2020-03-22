@@ -2,26 +2,25 @@ Module internalbc
 
 * 64 + 2*3 instead of 64 + 2 * 3 does not give reasonable error message!
 
+use seq.bitpackedseq.bit
+
 use bitpackedseq.bit
+
+use seq.bits
 
 use bits
 
-
-use deepcopy.internal2
-
 use fileio
 
-use seq.bitpackedseq.bit
-
-use seq.bits
+use deepcopy.internal2
 
 use seq.internal2
 
 use seq.internalbc
 
-use seq.templatepart
-
 use stdlib
+
+use seq.templatepart
 
 Function BLOCKCOUNT(slot:int, a1:int)internalbc addstartbits(1, 1, add(a1, emptyinternalbc))
 
@@ -128,7 +127,7 @@ function addpair(tailphi:seq.int, slot:int, p:int, a:internalbc, b:int)internalb
 (block1, p11, p12, p13, block2, p21, p22, p23)phi(p11, block1, p21, block2)
 
 function phiinst(slot:int, typ:int, tailphi:seq.int, nopara:int, p:int)internalbc
- let t = @(addpair(tailphi, slot + p, p), identity, emptyinternalbc, arithseq(length.tailphi / (nopara + 1),-nopara - 1, length.tailphi - nopara))
+ let t = @(addpair(tailphi, slot + p, p), identity, emptyinternalbc, arithseq(length.tailphi / (nopara + 1), - nopara - 1, length.tailphi - nopara))
   addstartbits(INSTPHI, length.tailphi / (nopara + 1) * 2 + 1, add(typ, t))
 
 Function phiinst(slot:int, typ:int, tailphi:seq.int, nopara:int)internalbc
@@ -164,7 +163,7 @@ function print1(a:seq.int, i:int, result:seq.word)seq.word
   let val = a_i
   let nobits = toint(bits.val ∧ bits.63)
    if nobits = reloc then
-   print1(a, i + 1, result + "&br reloc" + toword(toint(bits.val >> 6) - relocoffset))
+   print1(a, i + 1, result + " &br reloc" + toword(toint(bits.val >> 6) - relocoffset))
    else
     // if val = vbr6 then print1(a, i + 2, result +"vbr6"+ toword(a_(i + 1)))else //
     if val = sub1 then
@@ -188,7 +187,7 @@ Function finish(b:internalbc)seq.int
  else [ bits.b * 64 + bitcount.b] + done.b
 
 Function addaddress(slot:int, a:int, b:internalbc)internalbc
- if-a > slot then
+ if - a > slot then
  if a = ibcfirstpara2 then internalbc(0, 0, [ firstpara2] + finish.b)
   else
    internalbc(0
@@ -207,7 +206,7 @@ Function addaddress(slot:int, a:int, b:internalbc)internalbc
 Function addsignedaddress(slot:int, a:int, b:internalbc)internalbc
  if a ≤ 0 then
  let v = slot + a
-  let c = if v ≥ 0 then 2 * v else 2 * -v + 1
+  let c = if v ≥ 0 then 2 * v else 2 * - v + 1
    add(c, b)
  else internalbc(0, 0, [ relocsigned, a - slot + 1] + finish.b)
 
@@ -258,7 +257,7 @@ function relocsigned int 63 + 64 * 3
 
 function reloc int 60
 
-Function ibcfirstpara2 int // must be big enough value so-ibcirstpart2 > max slot number in function // 0 - 6400000
+Function ibcfirstpara2 int // must be big enough value so - ibcirstpart2 > max slot number in function // 0 - 6400000
 
 function relocoffset int 1024 * 1024 * 1024 * 1024
 
@@ -378,10 +377,10 @@ Function addvbr6(b:bitpackedseq.bit, v:int)bitpackedseq.bit addvbr6(bits.0, 0, b
 
 Function addvbrsigned6(b:bitpackedseq.bit, val:int)bitpackedseq.bit
  if val < 0 then
- if val > -16 then addvbr6(b, 2 * -val + 1)
+ if val > -16 then addvbr6(b, 2 * - val + 1)
   else
-   let chunk = bits(32 + -val mod 16 * 2 + 1)
-    addvbr6(chunk, 6, bits.-val >> 4, empty:seq.int, b, 1)
+   let chunk = bits(32 + - val mod 16 * 2 + 1)
+    addvbr6(chunk, 6, bits.- val >> 4, empty:seq.int, b, 1)
  else if val < 16 then addvbr6(b, 2 * val)
  else
   let chunk = bits(32 + val mod 16 * 2)

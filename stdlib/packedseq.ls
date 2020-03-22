@@ -2,9 +2,9 @@ Module packedseq.T
 
 use seq.T
 
-use stdlib
-
 use unsafe.T
+
+use stdlib
 
 x is included in packedseq so the procedure to access the type with be different between instances of the scope.
 
@@ -39,10 +39,9 @@ Function allocatespace:seq.T(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZ
 
 function setfld(a:T, x:T)address.T builtin.STATE.usemangle
 
-function setfld2(s:seq.T, i:int, val:T) seq.T builtin.STATE.usemangle
+function setfld2(s:seq.T, i:int, val:T)seq.T builtin.STATE.usemangle
 
-
-Function setfld(s:seq.T, i:int, val:T)seq.T 
+Function setfld(s:seq.T, i:int, val:T)seq.T
  let discard = setfld(cast(s, i, sizeoftype:T), val)
   s
 
@@ -52,9 +51,7 @@ Function append(s:seq.T, val:T)seq.T
 
 Function append(ds:int, s:seq.T, val:T)seq.T @(append, fldof(val), s, arithseq(ds, 1, 0))
 
-Function relocate(a:seq.T,idx:int,relloc:int) seq.T
-  setfld(a, idx, cast(a, relloc, 1))
-
+Function relocate(a:seq.T, idx:int, relloc:int)seq.T setfld(a, idx, cast(a, relloc, 1))
 
 Function inttoT:T(int)T builtin."PARAM 1"
 

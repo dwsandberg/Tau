@@ -1,10 +1,24 @@
 Module intercode
 
+use seq.inst
+
+use otherseq.seq.int
+
+use seq.seq.int
+
+use libscope
+
 use persistant
 
 use stdlib
 
-use libscope
+use seq.symbol
+
+use symbol
+
+use seq.tree.seq.word
+
+use tree.seq.word
 
 type intercode is record codes:seq.seq.int, coding:seq.inst, defines:seq.int
 
@@ -64,31 +78,11 @@ Function createlinkedlists linklists2 export
 
 Function initializer(conststypex:llvmtype, data:linklists2)int export
 
-use seq.inst
-
-use seq.seq.int
-
 Function print(c:intercode, i:inst)seq.word
  towords.i
  + @(+, towords,"", @(+,_.coding.c, empty:seq.inst,(codes.c)_(index.i)))
 
 _________________________
-
-use seq.inst
-
-use seq.seq.int
-
-use seq.symbol
-
-use seq.tree.seq.word
-
-use stdlib
-
-use symbol
-
-use tree.seq.word
-
-use otherseq.seq.int
 
 type einst is encoding inst
 
@@ -110,7 +104,7 @@ Function convert2(allfunctions:symbolset, s:seq.symbol)intercode
 
 Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
  let inst = inst.t
-  if inst in "PARAM"then [ aseinst.[ inst, toword(-toint.arg.t - 1)]]
+  if inst in "PARAM"then [ aseinst.[ inst, toword(- toint.arg.t - 1)]]
   else if inst in "LIT LOCAL FREF WORD FIRSTVAR WORDS"then [ aseinst.label.t]
   else if inst = "if"_1 then
   prepb(allfunctions, t_1) + aseinst."THENBLOCK 1" + prepb(allfunctions, t_2)
@@ -153,4 +147,4 @@ function ithfunc(a:intercode, i:int)seq.word
  towords.(coding.a)_i + @(+, astext.coding.a,"",(codes.a)_i) + "flags:"
  + flags.(coding.a)_i
 
-Function print(a:intercode)seq.word @(seperator."&br &br", ithfunc.a,"", defines.a)
+Function print(a:intercode)seq.word @(seperator." &br  &br", ithfunc.a,"", defines.a)

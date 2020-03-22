@@ -4,12 +4,12 @@ Module stdlib
 
 Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates  deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 opt2 oseq packedseq 
 parse pass1 pass2 persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash 
- timestamp maindict words   
+ timestamp maindict words   newpretty
 parsersupport  uses 
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  unsafe packedseq   process real reconstruct seq set stack stacktrace 
  stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode   libdescfunc otherseq words mangle
- worddict  parsersupport parse pass1
+ worddict  parsersupport parse pass1 newpretty
 
 
 use UTF8

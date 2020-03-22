@@ -2,6 +2,12 @@
 
 Module tools
 
+cd stdlib
+ln bits.ls blockseq.ls deepcopy.ls graph.ls ipair.ls oseq.ls process.ls  seq.ls set.ls
+tree.ls xxhash.ls ~/work/jstest
+
+different than stdlib.s packedseq.ls real.ls stdlib.ls UTF8.ls 
+
 Library tools bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph makeDAG prettylib prettyparagraph printbitcodes profile renamemodule svg svggraph taulextable testparser 
  uses stdlib 
  exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph 
@@ -11,7 +17,7 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
 
 /run tools testfirstpass
 
-run tools testprofile
+/run tools testprofile
 
 /run tools prettytest
 

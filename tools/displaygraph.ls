@@ -1,8 +1,14 @@
 Module displaygraph.T
 
-use bandeskopf.T
+use seq.arc.T
 
-use display
+use set.arc.T
+
+use seq.arcinfo.T
+
+use set.arcinfo.T
+
+use bandeskopf.T
 
 use graph.T
 
@@ -10,32 +16,26 @@ use layergraph.T
 
 use makeDAG.T
 
-use seq.T
-
-use seq.arc.T
-
-use seq.arcinfo.T
-
 use seq.nodeinfo.T
-
-use set.T
-
-use set.arc.T
-
-use set.arcinfo.T
 
 use set.nodeinfo.T
 
-use stdlib
+use seq.T
+
+use set.T
 
 use svggraph.T
+
+use display
+
+use stdlib
 
 function assignwidths(control:prettycontrol, p:nodeinfo.T)nodeinfo.T unbound
 
 Function nodetotext(a:T)seq.word unbound
 
 function restoredirection(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T, a:arc.T)seq.arcinfo.T
- let other = if head.a in nodes.org ∧ not.(tail.a in nodes.org)then
+ let other = if head.a in nodes.org ∧ not(tail.a in nodes.org)then
  expandback(org, modified, tail.a)
  else tail.a
  let for = findelement(arcinfo.arc(other, head.a), orgarc)

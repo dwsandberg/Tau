@@ -1,10 +1,10 @@
 Module bitpackedseq.T
 
-use bits
-
 use seq.T
 
 use seq.bits
+
+use bits
 
 use stdlib
 

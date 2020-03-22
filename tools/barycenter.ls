@@ -1,18 +1,18 @@
 Module barycenter.T
 
-use graph.T
-
 use otherseq.baryinfo.T
-
-use real
-
-use seq.T
 
 use seq.baryinfo.T
 
+use graph.T
+
 use seq.seq.T
 
+use seq.T
+
 use set.T
+
+use real
 
 use stdlib
 

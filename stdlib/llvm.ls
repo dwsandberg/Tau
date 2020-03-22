@@ -2,63 +2,63 @@ Module llvm
 
 In addition to the llvm bitcode format documentation, an useful file for reference is LLVMBitCodes.h
 
-use bitpackedseq.bit
-
-use bits
-
-use blockseq.int
-
-use deepcopy.trackconst
-
-use encoding.llvmconst
-
-use encoding.llvmtypeele
-
-use fileio
-
-use internalbc
-
-use seq.bit
+use UTF8
 
 use seq.bitpackedseq.bit
 
-use seq.bits
-
-use seq.boolean
-
-use seq.encoding.llvmconst
-
-use seq.internalbc
-
-use seq.llvmconst
-
-use seq.llvmtype
-
-use seq.llvmtypeele
+use bitpackedseq.bit
 
 use seq.seq.bit
 
+use seq.bit
+
 use seq.seq.bits
+
+use seq.bits
+
+use bits
+
+use seq.boolean
+
+use fileio
+
+use blockseq.int
+
+use seq.seq.seq.int
 
 use seq.seq.int
 
 use seq.seq.internalbc
 
+use seq.internalbc
+
+use internalbc
+
+use seq.encoding.llvmconst
+
+use encoding.llvmconst
+
+use seq.llvmconst
+
+use otherseq.llvmtype
+
+use seq.llvmtype
+
+use encoding.llvmtypeele
+
 use seq.seq.llvmtypeele
 
-use seq.seq.seq.int
+use seq.llvmtypeele
 
-use seq.trackconst
+use mangle
 
 use stacktrace
 
 use stdlib
 
-use otherseq.llvmtype
+use deepcopy.trackconst
 
-use mangle
-
-use UTF8
+use seq.trackconst
 
 Function type:llvmtype internaltype export
 
@@ -122,7 +122,7 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
    let pge = finishblock(addrecords(pgh
    , TYPEABBREVLEN
    , [ [ 3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18] + [ 3]
-   + tointseq.@(+, decodeword, empty:seq.char,"no-frame-pointer-elim-non-leaf")
+   + tointseq.@(+, decodeword, empty:seq.char,"no - frame - pointer - elim - non - leaf")
    + [ 0]])
    , length.pgh
    , TYPEABBREVLEN)
@@ -165,7 +165,7 @@ Function C(t:llvmtype, s:seq.int)int findindex(llvmconsts, llvmconst(typ.t, s)) 
 
 Function Cprt(t:int, s:seq.int)int // used in print bitcodes tool // findindex(llvmconsts, llvmconst(t, s)) - 1
 
------------------------
+- - - - - - - - - - - - - - - - - - - - - - -
 
 Function funcname(a:llvmconst)word encodeword.tocharseq.toseq.a
 

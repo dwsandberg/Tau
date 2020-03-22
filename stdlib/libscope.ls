@@ -1,8 +1,8 @@
 Module libscope
 
-use seq.encodingrep.seq.char
+use encoding.seq.char
 
-use seq.word
+use seq.encodingrep.seq.char
 
 use seq.liblib
 
@@ -10,13 +10,15 @@ use seq.libmod
 
 use seq.libsym
 
-use seq.mytype
+use mangle
 
-use seq.seq.word
+use seq.mytype
 
 use stdlib
 
-use encoding.seq.char
+use seq.seq.word
+
+use seq.word
 
 Function formatcall(modname:mytype, name:word, paratypes:seq.mytype)seq.word
  print.modname + ":" + name
@@ -134,15 +136,13 @@ Function emptyliblib(libname:word)liblib
  let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, empty:seq.mytype)
   liblib([ libname], [ mymod])
 
-use mangle
-
 module mangle
 
-use stdlib
+use bits
 
 use seq.char
 
-use bits
+use stdlib
 
 use seq.word
 
