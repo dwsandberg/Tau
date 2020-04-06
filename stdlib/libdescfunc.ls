@@ -55,7 +55,8 @@ function close(d:intercode, toprocess:set.int, old:set.int)set.int
 
 function simpleonly(d:intercode, i:int)seq.int
  // returns body for simple function otherwise and empty sequence //
- let body =(codes.d)_i
+ let body=      (codes.d)_index.(coding.d)_i
+ // let body =(codes.d)_i //
   if length.body > 30 then empty:seq.int
   else
    let flags = flags.(coding.d)_i

@@ -26,4 +26,7 @@ function hash(a:mapnames)int hash.old.a
 
 type encodenames is encoding mapnames
 
+function assignencoding(l:int, a:mapnames) int assignrandom(l,a)
+
+
 Function mapname(n:word)word new.decode(encodenames, encode(encodenames, mapnames(n, n)))

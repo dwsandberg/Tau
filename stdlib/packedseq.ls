@@ -37,17 +37,15 @@ Function cast(s:seq.T, offset:int, typ:int)T builtin.usemangle
 
 Function allocatespace:seq.T(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZint"
 
-function setfld(a:T, x:T)address.T builtin.STATE.usemangle
 
 function setfld2(s:seq.T, i:int, val:T)seq.T builtin.STATE.usemangle
 
-Function setfld(s:seq.T, i:int, val:T)seq.T
- let discard = setfld(cast(s, i, sizeoftype:T), val)
-  s
-
+Function setfld(s:seq.T, i:int, val:T)seq.T   setfld2(s,i,val)
+ 
+ 
 Function append(s:seq.T, val:T)seq.T
  let len = length.s + 1
-  setfld2(setfld2(s, 1, inttoT:T(len)), len + 1, val)
+  setfld(setfld(s, 1, inttoT:T(len)), len + 1, val)
 
 Function append(ds:int, s:seq.T, val:T)seq.T @(append, fldof(val), s, arithseq(ds, 1, 0))
 

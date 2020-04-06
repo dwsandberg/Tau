@@ -14,6 +14,9 @@ use stdlib
 
 use seq.seq.word
 
+function assignencoding(l:int, a:seq.int) int assignrandom(l,a)
+
+
 Function execute(name:word)seq.word executecode(toCformat.[ name], empty:seq.int)
 
 type argblock3 is record a:int, length:int, arg1:seq.word, arg2:word, arg3:word

@@ -58,6 +58,9 @@ type mydata4 is encoding testrecord
 
 type mydata5 is encoding testrecord
 
+Function assignencoding(length:int,data:testrecord) int  (randomint.1)_1
+
+
 function add(z:erecord.testrecord, b:seq.word)int
  let d = orderadded.z
  let x = encode(z, testrecord(length.d + 1, b))

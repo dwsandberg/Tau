@@ -28,6 +28,9 @@ function addindex(a:indexedword, i:int)indexedword indexedword(w.a, i)
 
 type eword is encoding indexedword
 
+Function assignencoding(length:int,data:indexedword) int  (randomint.1)_1
+
+
 function hash(a:indexedword)int hash.w.a
 
 function =(a:indexedword, b:indexedword)boolean w.a = w.b

@@ -78,6 +78,8 @@ Function mods(linkage)seq.firstpass export
 
 Function roots(linkage)set.word export
 
+Function type:linkage internaltype export
+
 Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarysyms:symbolset, librarymods:set.firstpass)linkage
  PROFILE
  .// assert false report print.librarysyms //

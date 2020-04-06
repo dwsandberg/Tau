@@ -125,7 +125,7 @@ function cvttoint(s:seq.char, i:int, val:int)int
  else if i > length.s then if s_1 = hyphenchar then - val else val
  else if s_i = nbspchar then cvttoint(s, i + 1, val)
  else
-  assert between(toint.s_i, 48, 57)report"invalid digit" + stacktrace
+  assert between(toint.s_i, 48, 57)report"invalid digit" +encodeword.s+ stacktrace
    cvttoint(s, i + 1, val * 10 + toint.s_i - 48)
 
 - - - - - - - - - - - - -

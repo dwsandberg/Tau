@@ -42,9 +42,19 @@ Function type:intercode internaltype export
 
 type inst is record towords:seq.word, flags:seq.word, returntype:mytype, index:int
 
+Function inst(towords:seq.word, flags:seq.word, returntype:mytype,index:int)inst  export
+
+
 Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst inst(towords, flags, returntype, 0)
 
 Function addindex(a:inst, i:int)inst inst(towords.a, flags.a, returntype.a, i)
+
+function assignencoding(l:int, a:inst) int assignrandom(l,a)
+
+function aseinst(w:seq.word)int findindex(einst, inst(w,"", mytype."?"))
+
+Function objectref(b:ipair.linklists2) int export
+
 
 Function mangledname(a:inst)word(towords.a)_1
 
@@ -66,9 +76,10 @@ Function wordcount int export
 
 Function addliblib(linklists2, liblib)ipair.linklists2 export
 
-Function a(linklists2)seq.int export
+/Function a(linklists2)seq.int export
 
-Function addwordseq(t:linklists2, a:seq.word)ipair.linklists2 export
+Function length( data:linklists2) int export
+
 
 Function addconst(l:linklists2, fullinst:seq.word)ipair.linklists2 export
 
@@ -79,8 +90,11 @@ Function createlinkedlists linklists2 export
 Function initializer(conststypex:llvmtype, data:linklists2)int export
 
 Function print(c:intercode, i:inst)seq.word
- towords.i
- + @(+, towords,"", @(+,_.coding.c, empty:seq.inst,(codes.c)_(index.i)))
+ towords.i 
+ + @(+, towords,"", @(+,_.coding.c, empty:seq.inst,(codes.c)_(index.i))) 
+ 
+ +"flags:"+flags.i
+
 
 _________________________
 
@@ -90,7 +104,6 @@ function hash(a:inst)int hash.towords.a
 
 function =(a:inst, b:inst)boolean towords.a = towords.b
 
-function aseinst(w:seq.word)int findindex(einst, inst(w,"", mytype."?"))
 
 function toinst(f:symbol)inst inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f)
 
@@ -124,7 +137,8 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
   else if inst = "CRECORD"_1 then [ aseinst("CONSTANT" + prep3.t)]
   else
    @(+, prepb.allfunctions, empty:seq.int, sons.t)
-   + if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD"then [ aseinst.[ inst, toword.nosons.t]]
+   + if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD"
+   then [ aseinst.[ inst, toword.nosons.t]]
    else if inst = "STATE"_1 then empty:seq.int
    else
     let s = findencode(einst, inst([ inst, toword.nosons.t],"", mytype."?"))

@@ -248,6 +248,9 @@ type decodename is record block:int, code:int, name:seq.word
 
 type nameencoding is encoding decodename
 
+function assignencoding(l:int, a:decodename) int assignrandom(l,a)
+
+
 function =(a:decodename, b:decodename)boolean block.a = block.b ∧ code.a = code.b
 
 function hash(a:decodename)int(block.a + 2) * (code.a + 2)

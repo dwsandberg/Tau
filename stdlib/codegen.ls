@@ -65,11 +65,10 @@ function funcdec(f:inst)seq.int
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
 
 Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
- let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 PROCESS2 HASH"
+ let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 PROCESS2 "
  + merge."llvm.sqrt.f64"
  + merge."llvm.sin.f64"
  + merge."llvm.cos.f64"
-  // let conststype = array(-2, i64)//
   let cxx = conststype
   let discard = profiletype
   let declist = @(+,_.coding.fs, empty:seq.inst, defines.fs)
@@ -90,7 +89,7 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
       let data = value.liblib
       let x = C(array(4, i64)
       , [ AGGREGATE, C(i64, [ CONSTCECAST, 9, typ.ptr.i64, getelementptr(conststype,"list", index.profilearcs3 + 1)]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profclocks"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profspace"])])
-      let adjust = [ 0, // consttype // length.a.data + 5 + 2, // profiletype // noprofileslots + 2 + 3]
+      let adjust = [ 0, // consttype // length.data + 2, // profiletype // noprofileslots + 2 + 3]
       let libnametype = array(length.decodeword.thename + 1, i8)
       let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])
       let deflist = [ // libname //
@@ -107,7 +106,6 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
       , // profileresult // [ MODULECODEFUNCTION, typ.function.[ i64], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // init22 // [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // PROCESS2 // [ MODULECODEFUNCTION, typ.function.[ i64, i64, i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // hash // [ MODULECODEFUNCTION, typ.function.[ i64, i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.sqrt.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.sin.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.cos.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
@@ -134,7 +132,7 @@ Function addfuncdef(match5map:seq.match5, coding:seq.inst, codes:seq.seq.int, i:
  let f = coding_i
  let l = Lcode(emptyinternalbc, empty:seq.localmap, 1, nopara.f + 1, empty:seq.int, empty:seq.Lcode, empty:seq.int, 0)
  let g5 = if"PROFILE"_1 in flags.f then mangledname.f else"noprofile"_1
- let r = @(processnext.g5,_.match5map, l, codes_i)
+ let r = @(processnext.g5,_.match5map, l, codes_(index(coding_i)))
   BLOCKCOUNT(1, noblocks.r) + code.r + RET(regno.r + 1, last.args.r)
 
 type Lcode is record code:internalbc, lmap:seq.localmap, noblocks:int, regno:int, args:seq.int, blocks:seq.Lcode, tailphi:seq.int, loopblock:int
@@ -289,6 +287,8 @@ type stat5 is record caller:word, callee:word, index:int
 function stat5(caller:word, callee:word)stat5 stat5(caller, callee, 0)
 
 function addindex(s:stat5, i:int)stat5 stat5(caller.s, callee.s, i)
+
+function assignencoding(l:int, a:stat5) int assignrandom(l,a)
 
 function hash(s:stat5)int abs(hash.caller.s + hash.callee.s)
 

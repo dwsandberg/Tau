@@ -58,11 +58,8 @@ Function conststype llvmtype array(-2, i64)
 
 Function type:match5 internaltype export
 
-type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, index:int
+type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int
 
-Function addindex(m:match5, i:int)match5 match5(fullinst.m, length.m, parts.m, action.m, arg.m, i)
-
-function match5(fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int)match5 match5(fullinst, length, parts, action, arg, 0)
 
 Function length(match5)int // no of instruction that return results // export
 
@@ -80,6 +77,9 @@ function =(a:match5, b:match5)boolean fullinst.a = fullinst.b
 
 function hash(a:match5)int hash.fullinst.a
 
+function assignencoding(l:int, a:match5) int l+1
+
+
 type ematch5 is encoding match5
 
 Function table seq.match5
@@ -95,9 +95,9 @@ let t = [ match5("IDXUC 2", 3, CAST(1, ibcsub1, typ.ptr.i64, 10) + GEP(2, 1, typ
 match5("Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, typ.i64, CASTZEXT))
 , match5("EQL"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, typ.i64, CASTZEXT))
 , match5("Q2DZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 1, typ.i64))
-, match5("Q2BZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 0, typ.i64))
-, match5("Q2AZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64))
-, match5("Q2FZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64))
+, match5(// + // "Q2BZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 0, typ.i64))
+, match5(// * // "Q2AZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64))
+, match5(// / //"Q2FZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64))
 , match5("Q2DZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 1)
 + CAST(4, -3, typ.i64, 11))
 , match5(// + //"Q2BZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 0)
@@ -127,17 +127,10 @@ match5("Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, t
 , match5("Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // AND // 10, typ.i64))
 , match5("Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // OR // 11, typ.i64))
 , match5("xorZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // XOR // 12, typ.i64))
-, match5("setfldZbuiltinZTzseqZintZT 3", 5, CAST(1, ibcsub1, typ.ptr.i64, 10) + GEP(2, 1, typ.i64, -1, ibcsub2)
-+ GEP(3, 1, typ.i64, -2, C64.0)
-+ STORE(4, -3, ibcsub3, align8, 0)
-+ CAST(4, -1, typ.i64, 9))
 , match5("setfld2ZbuiltinZTzseqZintZT 3", 4, CAST(1, ibcsub1, typ.ptr.i64, 10) + GEP(2, 1, typ.i64, -1, ibcsub2)
 + GEP(3, 1, typ.i64, -2, C64.0)
 + STORE(4, -3, ibcsub3, align8, 0)
 + CAST(4, -1, typ.i64, 9))
-, match5("setfldZbuiltinZTZT"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10) + STORE(2, -1, ibcsub2, align8, 0)
-+ GEP(2, 1, typ.i64, -1, C64.1)
-+ CAST(3, -2, typ.i64, 9))
 , match5("STKRECORD"_1, 3, ALLOCA(1, typ.ptr.i64, typ.i64, C64.2, 0) + STORE(2, -1, ibcsub1, align8, 0)
 + GEP(2, 1, typ.i64, -1, C64.1)
 + STORE(3, -2, ibcsub2, align8, 0)
@@ -152,7 +145,8 @@ match5("Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, t
 let discard = @(+, addit, 0, t)
  t
 
-function addit(m:match5)int findindex(ematch5, m)
+function addit(m:match5)int valueofencoding.encode(ematch5,m) 
+
 
 function match5(inst:word, length:int, b:internalbc)match5
  let parts = getparts.b
@@ -194,13 +188,13 @@ Function buildtemplates(p:temppair, fullinst:seq.word)temppair
     temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg), lastconsts)
     else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE MSET"then
     temppair(s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0), lastconsts)
-    else if inst in "CONSTANT WORDS"then
-    let tt = if inst = "CONSTANT"_1 then addconst(lastconsts, fullinst)else addwordseq(lastconsts, subseq(fullinst, 3, length.fullinst))
-     let newcode = GEP(1, 1, typ.conststype, C."list", C64.0, C64(index.tt + 1))
-     + CAST(2, -1, typ.i64, 9)
-     let r = match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1, 0)
-      temppair(s + r, value.tt)
-    else if inst = "WORD"_1 then
+    else if inst in "CONSTANT "then
+    let tt =  addconst(lastconsts, fullinst)
+          temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, objectref.tt), value.tt)  
+      else if inst in "WORDS"then
+    let tt = addwordseq(lastconsts, subseq(fullinst, 3, length.fullinst))
+            temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, objectref.tt), value.tt) 
+       else if inst = "WORD"_1 then
     let discard = registerword.instarg
       temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.hash.instarg), lastconsts)
     else
@@ -265,3 +259,4 @@ Function astext(a:bitpackedseq.bit)seq.word
 &br"+ //
  let recs = getinfo(toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)
   @(seperator." &br", astext2,"", recs)
+  

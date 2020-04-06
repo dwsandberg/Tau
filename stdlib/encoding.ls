@@ -1,20 +1,20 @@
 Module encoding.T
 
+use deepcopy.T
+
 use blockseq.T
 
-use deepcopy.T
+use seq.T
+
+use seq.encodingrep.T
+
+use seq.seq.encodingrep.T
+
+use stdlib
 
 use otherseq.encodingrep.T
 
 use otherseq.seq.encodingrep.T
-
-use seq.seq.encodingrep.T
-
-use seq.encodingrep.T
-
-use seq.T
-
-use stdlib
 
 Function type:encoding.T internaltype export
 
@@ -88,14 +88,28 @@ Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T
    let datahash = hash.v
    let dataindex = datahash mod tablesize + 1
     if @(max, ele.data.v, 0,(encodetable.h)_dataindex) > 0 then // already present // h
-    else if valueofencoding.code.v ≤ 0 then add(h, encodingrep(encoding.(randomint.1)_1, data.v, datahash))
-    else
-     let p = encodingrep(code.v, deepcopy.data.v, datahash)
-     let code = code.p
-     let codeindex = valueofencoding.code mod tablesize + 1
-     let l2 = @(addcode(code, tablesize), identity, [ p],(decodetable.h)_codeindex)
+    else 
+     let p=subadd(h,v,1)
+          let codeindex = valueofencoding.code.p mod tablesize + 1
+     let l2 = @(addcode(code.p, tablesize), identity, [ p],(decodetable.h)_codeindex)
      let tnew = replace(encodetable.h, dataindex, @(+, adddata(p, tablesize), [ p],(encodetable.h)_dataindex))
       encodingstate(elecount.h + 1, tnew, replace(decodetable.h, codeindex, l2), all.h + p)
+
+function used(t:encoding.T, a:encodingrep.T) int
+ if t = code.a then 1  else 0
+ 
+ function subadd(h:encodingstate.T, v:encodingrep.T,count:int) encodingrep.T
+    // assert count < 10 report "unable to assign encoding" //
+     let tablesize = length.encodetable.h
+    let code = code.v
+     let codeindex = valueofencoding.code mod tablesize + 1
+             let found=  valueofencoding.code.v ≤ 0 &or @(+, used.code.v,0,(decodetable.h)_(codeindex) ) > 0
+   if found then subadd(h, encodingrep(encoding.assignencoding(length.h,data.v), data.v, hash.v),count+1)
+   else encodingrep(code.v, deepcopy.data.v, hash.v)
+
+Function assignencoding(length:int,data:T) int // (randomint.1)_1 // unbound
+
+Function assignrandom(length:int,data:T) int  (randomint.1)_1
 
 Function add(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T @(add, identity, h, l)
 

@@ -273,12 +273,12 @@ if (strcmp(libname,"stdlib")==0 ){
  }
 
         
-BT (* relocateoffset)(processinfo PD,BT *) = dlsym(RTLD_DEFAULT, "relocateoffsetZreconstructZintzseq");
+/* BT (* relocateoffset)(processinfo PD,BT *) = dlsym(RTLD_DEFAULT, "relocateoffsetZreconstructZintzseq");
 if (!relocateoffset) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
 }      
-relocateoffset(&sharedspace,consts);
+relocateoffset(&sharedspace,consts); */
 
     if (strcmp(libname,"stdlib")==0 ){
    BT (* loaddict)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"loaddictZmaindictZfileresult");

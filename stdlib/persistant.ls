@@ -50,8 +50,6 @@ use persistantseq.mytype
 
 use seq.mytype
 
-use reconstruct
-
 use stdlib
 
 use seq.tree.seq.word
@@ -68,17 +66,21 @@ use seq.word3
 
 use words
 
-The linklists2 type contains a seq of integers that represents the memory.Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq. One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
 
 Function type:linklists2 internaltype export
 
-type linklists2 is record a:seq.int, offsetthread:int
+type linklists2 is record a:seq.int 
 
-Function createlinkedlists linklists2 linklists2(empty:seq.int, 0)
 
-Function linklists2(a:seq.int, offsetthread:int)linklists2 export
+function linklists2(seq.int) linklists2 export 
+ 
+
+Function createlinkedlists linklists2 linklists2(empty:seq.int)
 
 type word3encoding is encoding word3
+
+function assignencoding(l:int, a:word3) int assignrandom(l,a)
+
 
 Function wordcount int length.orderadded.word3encoding
 
@@ -90,15 +92,14 @@ _________________
 
 encode Functions
 
-The linklists2 type contains a seq of integers that represents the memory.Any memory locations that store the type word are linked into a linked list begining with wordthread. Two values are packed into the integer is store in the seq. One is the word3 encoding and the other the next value in the linked list. Any memory locations that store an address of another memory are linked into a linked list beginning with offsetthread. In this case the element in the seq is represents two interger values. One is the next value in the linked list and the other is the index of the refrenced memory location.
 
 Function a(linklists2)seq.int export
 
-Function offsetthread(linklists2)int export
+Function length( data:linklists2) int length.a.data+ 5
+
 
 Function initializer(conststypex:llvmtype, data:linklists2)int
- C(conststypex, [ AGGREGATE, C64.0, C64(length.a.data + 3), C64.0, C64.offsetthread.data, C64.0]
- + a.data)
+ C(conststypex, [ AGGREGATE,  C64.0, C64(length.a.data + 3), C64.0, C64.0, C64.0]  +  a.data)
  + 1
 
 type word3 is record toword:word
@@ -144,6 +145,9 @@ Function state(trackflds)int export
 function =(a:const3, b:const3)boolean flds.a = flds.b
 
 function hash(a:const3)int length.flds.a + @(+, index, 0, flds.a)
+
+function assignencoding(l:int, a:const3) int assignrandom(l,a)
+
 
 Function addconst(l:linklists2, fullinst:seq.word)ipair.linklists2 addconst(l, buildconsttree(fullinst, 2, empty:stack.tree.seq.word))
 
@@ -195,10 +199,9 @@ function getindex(f:trackflds, t:tree.seq.word)trackflds
 
 Function buildtheobject(objectstart:int, l:linklists2, d:flddesc)linklists2
  FORCEINLINE
- .if kind.d = "LIT"_1 then linklists2(a.l + index.d, offsetthread.l)
+ .if kind.d = "LIT"_1 then linklists2(a.l + index.d)
  else
-  let newoffsetthread = if kind.d = "CRECORD"_1 then place.l else offsetthread.l
-   linklists2(a.l + C64.packit(offsetthread.l, index.d), newoffsetthread)
+    linklists2(a.l +  objectref( index.d ))
 
 Function type:trackele internaltype export
 
@@ -212,7 +215,8 @@ function trackele(l:linklists2, places:seq.int)trackele export
 
 function addrecord(l:linklists2, s:mytype)ipair.linklists2 addwordseq(l, towords.s)
 
-Function addoffset(l:linklists2, index:int)linklists2 linklists2(a.l + C64.packit(offsetthread.l, index), place.l)
+Function addoffset(l:linklists2, index:int)linklists2 linklists2(a.l + 
+ objectref( index ))
 
 function addrecord(l1:linklists2, sym:libsym)ipair.linklists2
  let a = addwordseq(l1, returntype.sym)
@@ -246,18 +250,30 @@ function addrecord(lin:linklists2, modx:libmod)ipair.linklists2
  let l5 = l + toint.parameterized.modx + modname.modx + a + b + c
   ipair(place.l, l5)
 
-Function +(l:linklists2, i:int)linklists2 linklists2(a.l + C64.i, offsetthread.l)
+Function +(l:linklists2, i:int)linklists2 linklists2(a.l + C64.i)
 
 Function +(l:linklists2, w:word)linklists2
  let discard = registerword.w
   l + hash.w
 
 Function +(l:linklists2, b:ipair.linklists2)linklists2
- linklists2(a.l + C64.packit(offsetthread.l, index.b), place.l)
+ linklists2(a.l +  objectref.index.b  )
 
 Function addwordseq(t:linklists2, a:seq.word)ipair.linklists2
  let discard = @(+, registerword, 0, a)
   addintseq(t, @(+, hash, empty:seq.int, a))
 
 Function addintseq(t:linklists2, s:seq.int)ipair.linklists2
- ipair(place.t, linklists2(a.t + @(+, C64, [ C64.0, C64.length.s], s), offsetthread.t))
+ ipair(place.t, linklists2(a.t + @(+, C64, [ C64.0, C64.length.s], s)))
+
+Function objectref(b:ipair.linklists2) int
+let conststype = array(-2, i64)
+    C(i64,[ CONSTCECAST, 9, typ.ptr.i64,getelementptr(conststype,"list", index.b+1)])   
+    
+Function objectref(idx:int) int
+let conststype = array(-2, i64)
+    C(i64,[ CONSTCECAST, 9, typ.ptr.i64,getelementptr(conststype,"list", idx+1)])   
+
+    
+ 
+     

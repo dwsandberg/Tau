@@ -62,6 +62,9 @@ use seq.trackconst
 
 Function type:llvmtype internaltype export
 
+Function type:llvmconst internaltype export
+
+
 Function typ(llvmconst)int export
 
 Function toseq(llvmconst)seq.int export
@@ -78,6 +81,9 @@ function addindex(l:llvmtypeele, i:int)llvmtypeele llvmtypeele(toseq.l, i)
 
 function hash(a:llvmtypeele)int hash.toseq.a
 
+function assignencoding(l:int, a:llvmtypeele) int assignrandom(l,a)
+
+
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
 type llvmconst is record typ:int, toseq:seq.int, index:int
@@ -91,6 +97,9 @@ type llvmconsts is encoding llvmconst
 Function listconsts seq.seq.int @(+, toseq, empty:seq.seq.int, orderadded.llvmconsts)
 
 function hash(a:llvmconst)int hash.toseq.a
+
+function assignencoding(l:int, a:llvmconst) int assignrandom(l,a)
+
 
 function =(a:llvmconst, b:llvmconst)boolean toseq.a = toseq.b ∧ typ.a = typ.b
 

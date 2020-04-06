@@ -72,6 +72,9 @@ function ?(a:dottedrule, b:dottedrule)ordering rule.a ? rule.b ∧ place.a ? pla
 
 function hash(p:dottedrule)int hash.rule.p + place.p
 
+function assignencoding(l:int, a:state) int assignrandom(l,a)
+
+
 function =(a:action, b:action)boolean lookahead.a = lookahead.b ∧ stateno.a = stateno.b
 
 function hash(s:state)int hash.(toseq.toset.s)_1

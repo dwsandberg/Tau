@@ -111,6 +111,9 @@ function text(b:bindinfo)seq.word code.b
 
 function hash(l:seq.token.bindinfo)int length.l
 
+function assignencoding(l:int, a:seq.token.bindinfo) int assignrandom(l,a)
+
+
 type cachelex is encoding seq.token.bindinfo
 
 function opaction(R:reduction.bindinfo, input:seq.token.bindinfo)bindinfo
