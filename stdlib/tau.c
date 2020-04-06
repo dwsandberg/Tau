@@ -239,7 +239,7 @@ BT unloadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){ return unloadlibZbui
 
 
 
-BT initlib5(char * libname, BT * consts,BT  libdesc) {
+BT initlib5(char * libname,BT  libdesc) {
   // fprintf(stderr,"starting initlib4\n");
   fprintf(stderr,"initlib5 %s\n",libname);
 if (strcmp(libname,"stdlib")==0 ){

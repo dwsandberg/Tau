@@ -55,7 +55,7 @@ function close(d:intercode, toprocess:set.int, old:set.int)set.int
 
 function simpleonly(d:intercode, i:int)seq.int
  // returns body for simple function otherwise and empty sequence //
- let body=      (codes.d)_index.(coding.d)_i
+ let body=    code.(coding.d)_i
  // let body =(codes.d)_i //
   if length.body > 30 then empty:seq.int
   else
@@ -96,7 +96,7 @@ function tolibsym(d:intercode, i:int)seq.libsym
    let inst = if"STATE"_1 in flags.a then [ mangledname.a,"STATE"_1,"EXTERNAL"_1]
    else
     let body = simpleonly(d, i)
-     if length.body > 0 then astext5(coding.d,(codes.d)_i) + flags.a else"EXTERNAL"
+     if length.body > 0 then astext5(coding.d,code.a) + flags.a else"EXTERNAL"
     [ libsym(returntype.a, mangledname.a, inst)]
 
 type mapresult3 is record syms:set.libsym, mods:seq.libmod

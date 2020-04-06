@@ -158,17 +158,9 @@ function match5(fullinst:seq.word, length:int, b:internalbc)match5
  let nopara = @(max, parano, 0, parts)
   match5(fullinst, length, parts,"TEMPLATE"_1, nopara)
 
-type temppair is record templates:seq.match5, consts:linklists2
 
-Function templates(temppair)seq.match5 export
-
-Function consts(temppair)linklists2 export
-
-Function inittemppair temppair temppair(empty:seq.match5, createlinkedlists)
-
-Function buildtemplates(p:temppair, fullinst:seq.word)temppair
- let s = templates.p
- let lastconsts = consts.p
+Function buildtemplates(templates:seq.match5,fullinst:seq.word) seq.match5
+ let s = templates
   // let z10 = createfile("stat.txt", [ fullinst]+"start")//
   let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
   let b = findencode(ematch5, a)
@@ -177,33 +169,32 @@ Function buildtemplates(p:temppair, fullinst:seq.word)temppair
    let inst = fullinst_1
     let instarg = fullinst_2
     let m = if inst = "FREF"_1 then
-    temppair(s
+    s
      + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]))
-     , lastconsts)
     else if inst = "LIT"_1 then
-    temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg), lastconsts)
+    s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg)
     else if inst = "LOCAL"_1 then
-    temppair(s + match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg), lastconsts)
+    s + match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg)
     else if inst in "PARAM FIRSTVAR"then
-    temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg), lastconsts)
+    s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg)
     else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE MSET"then
-    temppair(s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0), lastconsts)
+    s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0)
     else if inst in "CONSTANT "then
-    let tt =  addconst(lastconsts, fullinst)
-          temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, objectref.tt), value.tt)  
+    let tt =  addconst( fullinst)
+          s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, objectref.tt)  
       else if inst in "WORDS"then
-    let tt = addwordseq(lastconsts, subseq(fullinst, 3, length.fullinst))
-            temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, objectref.tt), value.tt) 
+    let tt = addwordseq(subseq(fullinst, 3, length.fullinst))
+            s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, objectref.tt)
        else if inst = "WORD"_1 then
     let discard = registerword.instarg
-      temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.hash.instarg), lastconsts)
+      s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.hash.instarg)
     else
      let noargs = toint.instarg
      let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
-      temppair(s + match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs), lastconsts)
-    let discard = encode(ematch5, last.templates.m)
+      s + match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs)
+    let discard = encode(ematch5, last.m)
      m
-   else // already have a match5 // temppair(s + b_1, lastconsts)
+   else // already have a match5 // s + b_1
 
 /Function deepcopy2(m:match5)match5 let y0 = deepcopy.fullinst.m let y1 = deepcopy.length.m let y2 = deepcopy.parts.m let y3 = deepcopy.action.m let y4 = deepcopy.arg.m let y5 = deepcopy.consts.m match5(y0, y1, y2, y3, y4, y5)
 

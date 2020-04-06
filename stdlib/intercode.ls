@@ -20,17 +20,18 @@ use seq.tree.seq.word
 
 use tree.seq.word
 
-type intercode is record codes:seq.seq.int, coding:seq.inst, defines:seq.int
+type intercode is record  coding:seq.inst, defines:seq.int
 
 Defines are ipointers into coding that indicate which functions are defined.
 
-The field index of inst is a pointer into codes
 
 Codes give a seq of integers which are indices into coding
 
-function intercode(seq.seq.int, seq.inst, seq.int)intercode export
+/function intercode(seq.seq.int, seq.inst, seq.int)intercode export
 
-function codes(intercode)seq.seq.int export
+
+function code(inst) seq.int export
+
 
 function coding(intercode)seq.inst export
 
@@ -40,20 +41,19 @@ Function type:inst internaltype export
 
 Function type:intercode internaltype export
 
-type inst is record towords:seq.word, flags:seq.word, returntype:mytype, index:int
+type inst is record towords:seq.word, flags:seq.word, returntype:mytype, code:seq.int
 
-Function inst(towords:seq.word, flags:seq.word, returntype:mytype,index:int)inst  export
+/Function inst(towords:seq.word, flags:seq.word, returntype:mytype,index:int)inst  export
 
 
-Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst inst(towords, flags, returntype, 0)
+Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst inst(towords, flags, returntype, empty:seq.int)
 
-Function addindex(a:inst, i:int)inst inst(towords.a, flags.a, returntype.a, i)
 
-function assignencoding(l:int, a:inst) int assignrandom(l,a)
+function assignencoding(l:int, a:inst) int l+1
 
-function aseinst(w:seq.word)int findindex(einst, inst(w,"", mytype."?"))
+function aseinst(w:seq.word,code:seq.int)int valueofencoding.encode(einst, inst(w,"", mytype."?",code))
 
-Function objectref(b:ipair.linklists2) int export
+function aseinst(w:seq.word )int valueofencoding.encode(einst, inst(w,"", mytype."?" ))
 
 
 Function mangledname(a:inst)word(towords.a)_1
@@ -66,35 +66,26 @@ function towords(a:inst)seq.word export
 
 function returntype(a:inst)mytype export
 
-function index(a:inst)int export
-
-function addwordseq(linklists2, seq.word)ipair.linklists2 export
-
-Function type:linklists2 internaltype export
-
-Function wordcount int export
-
-Function addliblib(linklists2, liblib)ipair.linklists2 export
-
-/Function a(linklists2)seq.int export
-
-Function length( data:linklists2) int export
-
-
-Function addconst(l:linklists2, fullinst:seq.word)ipair.linklists2 export
 
 Function registerword(a:word)int export
 
+Function objectref(b:int) int export
+
+
+function addwordseq(seq.word)int export
+
+Function type:linklists2 internaltype export
+
+Function addliblib(ipair.linklists2, liblib)int export
+
+
+Function addconst(  fullinst:seq.word)int export
+
+
 Function createlinkedlists linklists2 export
 
-Function initializer(conststypex:llvmtype, data:linklists2)int export
 
-Function print(c:intercode, i:inst)seq.word
- towords.i 
- + @(+, towords,"", @(+,_.coding.c, empty:seq.inst,(codes.c)_(index.i))) 
- 
- +"flags:"+flags.i
-
+Function constdata seq.int export
 
 _________________________
 
@@ -107,13 +98,28 @@ function =(a:inst, b:inst)boolean towords.a = towords.b
 
 function toinst(f:symbol)inst inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f)
 
-function encode3(f:symbol)int findindex(einst, inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f))
+function encode3(f:symbol)int 
+valueofencoding.encode(einst,
+   inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f))
 
-function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int replace(a, encode3.f, prepb(allfunctions, codetree.f))
+function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int 
+replace(a, encode3.f, prepb(allfunctions, codetree.f))
 
 Function convert2(allfunctions:symbolset, s:seq.symbol)intercode
  let defines = @(+, encode3, empty:seq.int, s)
+ let codes=@(addcodes.allfunctions, identity, dseq.empty:seq.int, s)
+  intercode(setcode(orderadded.einst,codes, 1,empty:seq.inst),defines)
+
   intercode(@(addcodes.allfunctions, identity, dseq.empty:seq.int, s), orderadded.einst, defines)
+  
+function  setcode(coding:seq.inst,codes:seq.seq.int,i:int,result:seq.inst) seq.inst
+   if i > length.coding then result
+   else  
+    let a=coding_i
+    if (towords.a)_1="CONSTANT"_1 then
+      setcode(coding,codes,i+1,result+a)
+    else
+     setcode(coding,codes,i+1,result+inst(towords.a,flags.a,returntype.a,codes_i))
 
 Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
  let inst = inst.t
@@ -134,7 +140,10 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
     @(+, prepb.allfunctions, empty:seq.int, subseq(sons.t, 1, nosons.t - 1))
     + aseinst("FIRSTVAR" + firstvar)
     + aseinst.[ inst, toword.nosons.t]
-  else if inst = "CRECORD"_1 then [ aseinst("CONSTANT" + prep3.t)]
+  else if inst = "CRECORD"_1 then 
+       let z=   @(+, prepb.allfunctions, empty:seq.int, sons.t)
+       assert length.z=nosons.t report "???"
+   [ aseinst("CONSTANT" + prep3.t,z)]
   else
    @(+, prepb.allfunctions, empty:seq.int, sons.t)
    + if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD"
@@ -148,8 +157,12 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
        else
         let a = codedown.inst
          assert a_2 = "builtin"report [ inst] + a_2
-          findindex(einst, inst([ inst, toword(length.a - 2)],"builtin", mytype."?"))
-     else index.s_1]
+           valueofencoding.encode(einst,inst([ inst, toword(length.a - 2)],"builtin", mytype."?"))  
+     else  // findindex(einst, inst([ inst, toword(length.a - 2)],"builtin", mytype."?")) //
+      // let a= index.s_1 //
+        let b= valueofencoding.encode(einst,s_1)
+       // assert a=b report "?" //
+     b]
 
 function prep3(t:tree.seq.word)seq.word
  @(+, prep3,"", sons.t)
@@ -158,7 +171,9 @@ function prep3(t:tree.seq.word)seq.word
 function astext(coding:seq.inst, i:int)seq.word towords.coding_i
 
 function ithfunc(a:intercode, i:int)seq.word
- towords.(coding.a)_i + @(+, astext.coding.a,"",(codes.a)_i) + "flags:"
+ towords.(coding.a)_i + @(+, astext.coding.a,"",code.(coding.a)_i) 
+ 
+ + "flags:"
  + flags.(coding.a)_i
 
-Function print(a:intercode)seq.word @(seperator." &br  &br", ithfunc.a,"", defines.a)
+Function print(a:intercode)seq.seq.word @(+, ithfunc.a,empty:seq.seq.word, defines.a)

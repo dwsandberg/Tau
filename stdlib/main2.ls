@@ -243,4 +243,4 @@ Function secondPass(libname:word)seq.seq.word
  let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
  let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
  let p2 = pass2(symset.p1, toseq.roots.p1, known.li)
-  @(+, print.p2, empty:seq.seq.word, @(+,_.coding.p2, empty:seq.inst, defines.p2))
+   print.p2 

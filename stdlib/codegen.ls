@@ -60,6 +60,8 @@ use stdlib
 
 use textio
 
+use seq.match5
+
 function funcdec(f:inst)seq.int
  let discard = C.mangledname.f
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -77,26 +79,26 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
    // let zx2a = createfile("stat.txt", ["in codegen0.1"])//
    let aa = @(+, towords, empty:seq.seq.word, coding.fs)
     // let zx2b = createfile("stat.txt", ["in codegen0.2"]+ aa)//
-    let match5map = @(buildtemplates, identity, inittemppair, aa)
+    let match5map = @(buildtemplates, identity, empty:seq.match5, aa)
      // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
      // assert false report checkmap.match5map //
-     let bodies = @(+, addfuncdef(templates.match5map, coding.fs, codes.fs), empty:seq.internalbc, defines.fs)
+     let bodies = @(+, addfuncdef(match5map, coding.fs), empty:seq.internalbc, defines.fs)
      let profilearcs2 = profilearcs
      let noprofileslots = length.profilearcs2 / 2
       // let libsyms = @(+, tolibsym(coding.fs, codes.fs), empty:seq.libsym, defines.fs)//
-      let profilearcs3 = addwordseq(consts.match5map, profilearcs2)
-      let liblib = addliblib(value.profilearcs3, libdesc)
-      let data = value.liblib
+      let profilearcs3 = addwordseq( profilearcs2)
+      let liblib = addliblib(ipair(0,createlinkedlists), libdesc)
+      let data = constdata
       let x = C(array(4, i64)
-      , [ AGGREGATE, C(i64, [ CONSTCECAST, 9, typ.ptr.i64, getelementptr(conststype,"list", index.profilearcs3 + 1)]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profclocks"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profspace"])])
+      , [ AGGREGATE, objectref.profilearcs3, C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profclocks"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profspace"])])
       let adjust = [ 0, // consttype // length.data + 2, // profiletype // noprofileslots + 2 + 3]
       let libnametype = array(length.decodeword.thename + 1, i8)
       let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])
       let deflist = [ // libname //
       [ MODULECODEGLOBALVAR, typ.libnametype, 2, C(libnametype, [ CONSTDATA] + tointseq.decodeword.thename + 0) + 1, 3, align4, 0]
       , // lnitlib 5 //
-      [ MODULECODEFUNCTION, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // list // [ MODULECODEGLOBALVAR, typ.conststype, 2, initializer(conststype, data), 3, align8 + 1, 0]
+      [ MODULECODEFUNCTION, typ.function.[ i64, ptr.i8, i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+      , // list // [ MODULECODEGLOBALVAR, typ.conststype, 2,    C(conststype, [ AGGREGATE]  +  data)+ 1, 3, align8 + 1, 0]
       , // profcounts // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0]
       , // profclocks // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0]
       , // profspace // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0]
@@ -113,7 +115,7 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
       let bodytxts = [ BLOCKCOUNT(1, 1)
       + RET(1, C(i64, [ CONSTCECAST, 9, typ.ptr.array(4, i64), C."profstat"]))
       , BLOCKCOUNT(1, 1)
-      + CALL(1, 0, 32768, typ.function.[ i64, ptr.i8, ptr.i64, ptr.i64], C."initlib5", libnameptr, getelementptr(conststype,"list", 0), getelementptr(conststype,"list", index.liblib + 1))
+      + CALL(1, 0, 32768, typ.function.[ i64, ptr.i8,   i64], C."initlib5", libnameptr,  liblib )
       + GEP(2, 1, typ.profiletype, C."profclocks", C64.0, C64.1)
       + STORE(3, -2, C64.noprofileslots, align8, 0)
       + GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1)
@@ -128,11 +130,11 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
 
 function profiletype llvmtype array(-3, i64)
 
-Function addfuncdef(match5map:seq.match5, coding:seq.inst, codes:seq.seq.int, i:int)internalbc
+Function addfuncdef(match5map:seq.match5, coding:seq.inst, i:int)internalbc
  let f = coding_i
  let l = Lcode(emptyinternalbc, empty:seq.localmap, 1, nopara.f + 1, empty:seq.int, empty:seq.Lcode, empty:seq.int, 0)
  let g5 = if"PROFILE"_1 in flags.f then mangledname.f else"noprofile"_1
- let r = @(processnext.g5,_.match5map, l, codes_(index(coding_i)))
+ let r = @(processnext.g5,_.match5map, l, (code.f))
   BLOCKCOUNT(1, noblocks.r) + code.r + RET(regno.r + 1, last.args.r)
 
 type Lcode is record code:internalbc, lmap:seq.localmap, noblocks:int, regno:int, args:seq.int, blocks:seq.Lcode, tailphi:seq.int, loopblock:int
