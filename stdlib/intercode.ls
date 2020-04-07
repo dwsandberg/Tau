@@ -27,7 +27,7 @@ Defines are ipointers into coding that indicate which functions are defined.
 
 Codes give a seq of integers which are indices into coding
 
-/function intercode(seq.seq.int, seq.inst, seq.int)intercode export
+function intercode(coding:seq.inst, defines:seq.int)intercode export
 
 
 function code(inst) seq.int export
@@ -43,7 +43,7 @@ Function type:intercode internaltype export
 
 type inst is record towords:seq.word, flags:seq.word, returntype:mytype, code:seq.int
 
-/Function inst(towords:seq.word, flags:seq.word, returntype:mytype,index:int)inst  export
+ Function inst(towords:seq.word, flags:seq.word, returntype:mytype,code:seq.int)inst  export
 
 
 Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst inst(towords, flags, returntype, empty:seq.int)
@@ -69,20 +69,11 @@ function returntype(a:inst)mytype export
 
 Function registerword(a:word)int export
 
-Function objectref(b:int) int export
+Function addobject(flds:seq.int) int export
 
+function addwordseq2(seq.word)int export
 
-function addwordseq(seq.word)int export
-
-Function type:linklists2 internaltype export
-
-Function addliblib(ipair.linklists2, liblib)int export
-
-
-Function addconst(  fullinst:seq.word)int export
-
-
-Function createlinkedlists linklists2 export
+Function addliblib( liblib)int export
 
 
 Function constdata seq.int export
@@ -110,13 +101,13 @@ Function convert2(allfunctions:symbolset, s:seq.symbol)intercode
  let codes=@(addcodes.allfunctions, identity, dseq.empty:seq.int, s)
   intercode(setcode(orderadded.einst,codes, 1,empty:seq.inst),defines)
 
-  intercode(@(addcodes.allfunctions, identity, dseq.empty:seq.int, s), orderadded.einst, defines)
-  
+
+   
 function  setcode(coding:seq.inst,codes:seq.seq.int,i:int,result:seq.inst) seq.inst
    if i > length.coding then result
    else  
     let a=coding_i
-    if (towords.a)_1="CONSTANT"_1 then
+    if (towords.a)_1 in "CONSTANT FREF" then
       setcode(coding,codes,i+1,result+a)
     else
      setcode(coding,codes,i+1,result+inst(towords.a,flags.a,returntype.a,codes_i))
@@ -124,7 +115,7 @@ function  setcode(coding:seq.inst,codes:seq.seq.int,i:int,result:seq.inst) seq.i
 Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
  let inst = inst.t
   if inst in "PARAM"then [ aseinst.[ inst, toword(- toint.arg.t - 1)]]
-  else if inst in "LIT LOCAL FREF WORD FIRSTVAR WORDS"then [ aseinst.label.t]
+  else if inst in "LIT LOCAL   WORD FIRSTVAR WORDS"then [ aseinst.label.t]
   else if inst = "if"_1 then
   prepb(allfunctions, t_1) + aseinst."THENBLOCK 1" + prepb(allfunctions, t_2)
    + aseinst."ELSEBLOCK 1"
@@ -144,25 +135,27 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
        let z=   @(+, prepb.allfunctions, empty:seq.int, sons.t)
        assert length.z=nosons.t report "???"
    [ aseinst("CONSTANT" + prep3.t,z)]
-  else
+   else if inst ="FREF"_1 then
+    let z=addfunction(allfunctions,(label.t)_2)
+   [ aseinst(label.t,[z])]
+  else 
    @(+, prepb.allfunctions, empty:seq.int, sons.t)
    + if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD"
    then [ aseinst.[ inst, toword.nosons.t]]
    else if inst = "STATE"_1 then empty:seq.int
    else
     let s = findencode(einst, inst([ inst, toword.nosons.t],"", mytype."?"))
-     [ if length.s = 0 then
-     let s2 = lookupsymbol(allfunctions, inst)
-       if isdefined.s2 then encode3.lookupfunc(allfunctions, inst)
+     [ if length.s = 0 then addfunction(allfunctions,inst)
+      else   valueofencoding.encode(einst,s_1)
+     ]
+     
+function addfunction(     allfunctions:symbolset, mangled:word) int
+     let s2 = lookupsymbol(allfunctions, mangled)
+      if isdefined.s2 then encode3.lookupfunc(allfunctions, mangled)
        else
-        let a = codedown.inst
-         assert a_2 = "builtin"report [ inst] + a_2
-           valueofencoding.encode(einst,inst([ inst, toword(length.a - 2)],"builtin", mytype."?"))  
-     else  // findindex(einst, inst([ inst, toword(length.a - 2)],"builtin", mytype."?")) //
-      // let a= index.s_1 //
-        let b= valueofencoding.encode(einst,s_1)
-       // assert a=b report "?" //
-     b]
+        let a = codedown.mangled
+         assert a_2 = "builtin"report [ mangled] + a_2
+           valueofencoding.encode(einst,inst([ mangled, toword(length.a - 2)],"builtin", mytype."?"))   
 
 function prep3(t:tree.seq.word)seq.word
  @(+, prep3,"", sons.t)

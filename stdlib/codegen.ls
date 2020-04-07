@@ -1,5 +1,7 @@
 Module codegen
 
+use seq.int
+
 use ipair.Lcode
 
 use seq.Lcode
@@ -34,9 +36,9 @@ use libscope
 
 use seq.libsym
 
-use ipair.linklists2
+/use ipair.linklists2
 
-use seq.linklists2
+/use seq.linklists2
 
 use llvm
 
@@ -77,20 +79,19 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
   let discard2 = @(+, C, 0, @(+, mangledname, symlist, declist))
   let xy = table
    // let zx2a = createfile("stat.txt", ["in codegen0.1"])//
-   let aa = @(+, towords, empty:seq.seq.word, coding.fs)
     // let zx2b = createfile("stat.txt", ["in codegen0.2"]+ aa)//
-    let match5map = @(buildtemplates, identity, empty:seq.match5, aa)
+    let match5map = @(buildtemplates, identity, empty:seq.match5, coding.fs)
      // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
      // assert false report checkmap.match5map //
      let bodies = @(+, addfuncdef(match5map, coding.fs), empty:seq.internalbc, defines.fs)
      let profilearcs2 = profilearcs
      let noprofileslots = length.profilearcs2 / 2
       // let libsyms = @(+, tolibsym(coding.fs, codes.fs), empty:seq.libsym, defines.fs)//
-      let profilearcs3 = addwordseq( profilearcs2)
-      let liblib = addliblib(ipair(0,createlinkedlists), libdesc)
+      let profilearcs3 = addwordseq2( profilearcs2)
+      let liblib = addliblib( libdesc)
       let data = constdata
       let x = C(array(4, i64)
-      , [ AGGREGATE, objectref.profilearcs3, C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profclocks"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profspace"])])
+      , [ AGGREGATE, profilearcs3, C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profclocks"]), C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profspace"])])
       let adjust = [ 0, // consttype // length.data + 2, // profiletype // noprofileslots + 2 + 3]
       let libnametype = array(length.decodeword.thename + 1, i8)
       let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])

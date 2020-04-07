@@ -66,23 +66,16 @@ function filter(d:intercode, i:int)seq.int
  let inst =(coding.d)_i
  let name = mangledname.inst
   if name in "SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT ELSEBLOCK RECORD THENBLOCK if CONTINUE LOOPBLOCK FINISHLOOP FIRSTVAR"then empty:seq.int
-  else if name in "CONSTANT FREF"then
-  let funcnames = if name = "CONSTANT"_1 then asset.findcalls(towords.inst, 2,"")else asset.[(towords.inst)_2]
-    if isempty.funcnames then empty:seq.int
-    else
-     // not all functions appearing in CONSTANT and FREF will have indices in intercode //
-     @(+, toinstindex(funcnames, d), empty:seq.int, arithseq(length.coding.d, 1, 1))
-  else [ i]
-
-function findcalls(a:seq.word, i:int, result:seq.word)seq.word
- if i > length.a then result
- else
-  findcalls(a, i + 2, result + if a_i = "FREF"_1 then [ a_(i + 1)]else"")
+  else if name="FREF"_1 then code.inst else 
+  if name in "CONSTANT"then
+    @(+, filter.d, empty:seq.int,code.inst)
+  else [i]
+ 
 
 function astext(s:seq.inst, i:int)seq.word
  let f = towords.s_i
-  if f_1 = "CONSTANT"_1 then subseq(f, 2, length.f)
-  else if f_1 = "PARAM"_1 then"PARAM" + toword(- toint.f_2 - 1)
+  if f_1 = "CONSTANT"_1 then   astext5(s,code.s_i)+"CRECORD"+toword.length.code.s_i
+   else if f_1 = "PARAM"_1 then"PARAM" + toword(- toint.f_2 - 1)
   else if f_1 in "ELSEBLOCK THENBLOCK DEFINE"then""
   else if f_1 in "SET WORD WORDS LOCAL LIT PARAM RECORD FREF"then f else [ f_1]
 

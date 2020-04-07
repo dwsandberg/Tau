@@ -16,9 +16,6 @@ use intercode
 
 use internalbc
 
-use deepcopy.linklists2
-
-use ipair.linklists2
 
 use llvm
 
@@ -67,7 +64,6 @@ Function action(match5)word export
 
 Function arg(match5)int export
 
-Function fullinst(m:match5)seq.word export
 
 Function inst(m:match5)word(fullinst.m)_1
 
@@ -158,9 +154,13 @@ function match5(fullinst:seq.word, length:int, b:internalbc)match5
  let nopara = @(max, parano, 0, parts)
   match5(fullinst, length, parts,"TEMPLATE"_1, nopara)
 
+function getarg(s:seq.match5,i:int) int
+  let m=s_i
+  assert action.m="ACTARG"_1 report "unexpected action"+action.m
+  arg.m
 
-Function buildtemplates(templates:seq.match5,fullinst:seq.word) seq.match5
- let s = templates
+Function buildtemplates(s:seq.match5,xx:inst) seq.match5
+ let fullinst=towords.xx
   // let z10 = createfile("stat.txt", [ fullinst]+"start")//
   let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
   let b = findencode(ematch5, a)
@@ -169,8 +169,7 @@ Function buildtemplates(templates:seq.match5,fullinst:seq.word) seq.match5
    let inst = fullinst_1
     let instarg = fullinst_2
     let m = if inst = "FREF"_1 then
-    s
-     + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]))
+    s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]))
     else if inst = "LIT"_1 then
     s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg)
     else if inst = "LOCAL"_1 then
@@ -180,12 +179,11 @@ Function buildtemplates(templates:seq.match5,fullinst:seq.word) seq.match5
     else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE MSET"then
     s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0)
     else if inst in "CONSTANT "then
-    let tt =  addconst( fullinst)
-          s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, objectref.tt)  
-      else if inst in "WORDS"then
-    let tt = addwordseq(subseq(fullinst, 3, length.fullinst))
-            s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, objectref.tt)
-       else if inst = "WORD"_1 then
+     let args=@(+,getarg.s, empty:seq.int,code.xx)
+     s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
+    else if inst in "WORDS"then
+      s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2(subseq(fullinst, 3, length.fullinst)))
+    else if inst = "WORD"_1 then
     let discard = registerword.instarg
       s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.hash.instarg)
     else
