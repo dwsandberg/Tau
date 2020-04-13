@@ -233,10 +233,11 @@ function addsymbol(p:program, mangledname:word)program
   else p
 
 function buildcodetree(src:seq.word)tree.seq.word
- let a = buildcodetreeX(false, empty:stack.tree.seq.word, 1, src)
-  // let b = buildcodetreeX2(false, empty:stack.tree.seq.word, 1, src)assert a = b report"DIFF BILD"//
-  a
-
+   buildcodetreeX(false, empty:stack.tree.seq.word, 1, src)
+   
+ 
+       
+   
 function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:seq.word)tree.seq.word
  if i > length.src then
  assert length.toseq.stk > 0 report"STACK ISSUE" + src
@@ -245,10 +246,15 @@ function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:se
  else
   let name = src_i
    if name in "builtinZinternal1Zwordzseq builtinZinternal1Zinternal1"then buildcodetreeX(hasstate, stk, i + 1, src)
-   else if name in "if CALLIDX"then
+   else if name in "if "then
+      let args=top(stk,3)
+      let t=tree("BLOCK 3",   [tree( "BR",[args_1,tree."LIT 2",tree."LIT 3"] ),
+      tree("EXITBLOCK",[args_2]),tree("EXITBLOCK",[args_3])])
+      buildcodetreeX(hasstate, push(pop(stk, 3), t), i + 1, src)
+   else if name in "CALLIDX"then
    let specialnopara = 3
      buildcodetreeX(hasstate, push(pop(stk, specialnopara), tree([ name], top(stk, specialnopara))), i + 1, src)
-   else if name in "IDXUC"then
+    else if name in "IDXUC"then
    buildcodetreeX(hasstate, push(pop(stk, 2), tree([ name], top(stk, 2))), i + 1, src)
    else if name = "SET"_1 then
    buildcodetreeX(hasstate, push(pop(stk, 2), tree(subseq(src, i, i + 1), top(stk, 2))), i + 2, src)
@@ -257,8 +263,11 @@ function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:se
    else if name = "FREF"_1 then
    // let sym = lookupfunc(knownsymbols, src_(i + 1))//
     buildcodetreeX(hasstate, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
-   else if name = "define"_1 then buildcodetreeX(hasstate, stk, i + 2, src)
-   else if name in "RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD"then
+   else if name = "DEFINE"_1 then 
+    assert false report "here define"
+   buildcodetreeX(hasstate, stk, i + 2, src)
+   else  if name in "RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD BLOCK EXITBLOCK BR"then
+     assert not(src_(i+1)="LIT"_1) report "KKK"+name+src
    let size = toint.src_(i + 1)
      assert length.toseq.stk ≥ size report"stack problem APPLY/RECORD" + src
       buildcodetreeX(hasstate, push(pop(stk, size), tree(subseq(src, i, i + 1), top(stk, size))), i + 2, src)
@@ -279,50 +288,6 @@ function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:se
     let nopara = index.p
      assert length.toseq.stk ≥ nopara report"stack problem" + name
       buildcodetreeX(hasstate, push(pop(stk, nopara), tree(value.p, top(stk, nopara))), i + 1, src)
-
-function buildcodetreeX2(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:seq.word)tree.seq.word
- TESTOPT
- .if i > length.src then
- assert length.toseq.stk > 0 report"STACK ISSUE" + src
-  let top2 = top.stk
-   if hasstate then tree("STATE", [ top2])else top2
- else
-  let name = src_i
-   if name in "builtinZinternal1Zwordzseq builtinZinternal1Zinternal1"then buildcodetreeX2(hasstate, stk, i + 1, src)
-   else if name in "if CALLIDX"then
-   let specialnopara = 3
-     buildcodetreeX2(hasstate, push(pop(stk, specialnopara), tree([ name], top(stk, specialnopara))), i + 1, src)
-   else if name in "IDXUC"then
-   buildcodetreeX2(hasstate, push(pop(stk, 2), tree([ name], top(stk, 2))), i + 1, src)
-   else if name = "SET"_1 then
-   buildcodetreeX2(hasstate, push(pop(stk, 2), tree(subseq(src, i, i + 1), top(stk, 2))), i + 2, src)
-   else if name in "LIT PARAM LOCAL WORD"then
-   buildcodetreeX2(hasstate, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
-   else if name = "FREF"_1 then
-   // let sym = lookupfunc(knownsymbols, src_(i + 1))//
-    buildcodetreeX2(hasstate, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
-   else if name = "define"_1 then buildcodetreeX2(hasstate, stk, i + 2, src)
-   else if name in "RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD"then
-   let size = toint.src_(i + 1)
-     assert length.toseq.stk ≥ size report"stack problem APPLY/RECORD" + src
-      buildcodetreeX2(hasstate, push(pop(stk, size), tree(subseq(src, i, i + 1), top(stk, size))), i + 2, src)
-   else if name = "PRECORD"_1 then
-   let size = toint.src_(i + 1)
-    let s = top(stk, size)
-    let b = tree("PROCESS2", [ tree("RECORD", subseq(s, size - 3, size) + subseq(s, 1, size - 4))])
-     buildcodetreeX2(hasstate, push(pop(stk, size), b), i + 2, src)
-   else if name = "WORDS"_1 then
-   let size = toint.src_(i + 1)
-     buildcodetreeX2(hasstate, push(stk, tree.subseq(src, i, i + size + 1)), i + size + 2, src)
-   else if name = "COMMENT"_1 then
-   let size = toint.src_(i + 1)
-     buildcodetreeX2(hasstate, stk, i + size + 2, src)
-   else if name in "STATEZinternal1Zinternal1"then buildcodetreeX2(true, stk, i + 1, src)
-   else
-    let p = handlelocalandpara.name
-    let nopara = index.p
-     assert length.toseq.stk ≥ nopara report"stack problem" + name
-      buildcodetreeX2(hasstate, push(pop(stk, nopara), tree(value.p, top(stk, nopara))), i + 1, src)
 
 function handlelocalandpara(w:word)ipair.seq.word
  let charmajorseparator = // Z // char.90
@@ -359,14 +324,16 @@ function hexvalue(i:char)int
 Function calls(t:tree.seq.word)seq.word
  @(+, calls, empty:seq.word, sons.t)
  + if inst.t = "FREF"_1 then [ arg.t]
- else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD TESTOPT"then
+ else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD TESTOPT
+ BR EXITBLOCK BLOCK"then
  empty:seq.word
  else [ inst.t]
 
 Function calls(self:word, t:tree.seq.word)seq.arc.word
  @(+, calls.self, empty:seq.arc.word, sons.t)
  + if inst.t = "FREF"_1 then [ arc(self, arg.t)]
- else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD TESTOPT"then
+ else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD TESTOPT
+  BR EXITBLOCK BLOCK"then
  empty:seq.arc.word
  else
   // let a = codedown.inst.t if length.a > 1 ∧(a_2 ="builtin")then empty:seq.arc.word else //
@@ -469,6 +436,9 @@ function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, pa
     inline(pp, inlinename, replace(sets, arg.code, s1), paramap, nextset, code_2)
     else
      let s2 = inline(pp, inlinename, addtosetmap(sets, arg.code, nextset), paramap, nextset + 1, code_2)
+    // if  inst.s2="BLOCK"_1 then
+       tree(label.s2,[tree(["SET"_1, toword.nextset], [ s1,  s2_1])])
+     else //
       tree(["SET"_1, toword.nextset], [ s1, s2])
   else if inst.code = "FINISHLOOP"_1 then
   let lb = code_1
@@ -582,14 +552,17 @@ ______________
 
 Tailcall
 
-Function tailcall(t:tree.seq.word, self:word)boolean
- if inst.t = "if"_1 then
- if tailcall(t_2, self)then true else tailcall(t_3, self)
- else if inst.t = "SET"_1 then tailcall(t_2, self)
+Function tailcall(self:word,t:tree.seq.word)boolean 
+// if inst.t="EXITBLOCK"_1 &and nosons.t=1  then //
+if inst.t="EXITBLOCK"_1    then
+  tailcall(self,t_1)
+else if inst.t="BLOCK"_1 then
+   @(&or, tailcall(self), false, sons.t) 
+  else if inst.t = "SET"_1 then tailcall(self,t_2)
  else if inst.t in "FINISHLOOP"then false else inst.t = self
 
 Function tailcall(t:tree.seq.word, self:word, nopara:int)tree.seq.word
- if tailcall(t, self)then
+ if tailcall( self,t)then
  let m = getmaxvar.t + 1
   let s = @(+, newNode("LOCAL"_1), empty:seq.tree.seq.word, arithseq(nopara, 1, m))
   let plist = @(+, newNode("PARAM"_1), empty:seq.tree.seq.word, arithseq(nopara, 1, 1))
@@ -597,13 +570,16 @@ Function tailcall(t:tree.seq.word, self:word, nopara:int)tree.seq.word
    , [ tree(["LOOPBLOCK"_1, toword(nopara + 1)], plist + newNode("LIT"_1, m)), tailcall(s, self, t)])
  else t
 
-function leftcat(a:seq.tree.seq.word, b:tree.seq.word)seq.tree.seq.word [ b] + a
+/function leftcat(a:seq.tree.seq.word, b:tree.seq.word)seq.tree.seq.word [ b] + a
 
 function newNode(w:word, i:int)tree.seq.word tree.[ w, toword.i]
 
+
+
 function tailcall(paramap:seq.tree.seq.word, self:word, t:tree.seq.word)tree.seq.word
- if inst.t = "if"_1 then
- tree(label.t, [ tailcall(paramap,"nomatch"_1, t_1), tailcall(paramap, self, t_2), tailcall(paramap, self, t_3)])
+ // if inst.t="BLOCK"_1  &or (inst.t="EXITBLOCK"_1 &and nosons.t=1) then //
+ if inst.t="BLOCK"_1  &or (inst.t="EXITBLOCK"_1 ) then 
+  tree(label.t,@(+, tailcall(paramap,self), empty:seq.tree.seq.word, sons.t))
  else if inst.t = "SET"_1 then
  tree(label.t, [ tailcall(paramap,"nomatch"_1, t_1), tailcall(paramap, self, t_2)])
  else if inst.t = self then
@@ -642,12 +618,64 @@ function template2(term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)s
   + ptyp
   + "Q3DZbuiltinZintZint LOCAL 1 LOCAL 2 LOCAL 3 LIT 3 IDXUC STKRECORD 2 LOCAL 3 LIT 2 IDXUC CONTINUE 3 LOCAL 3 LIT 1 IDXUC LOCAL 1 LIT 1 LIT 6 LOOPBLOCK 3 LOCAL 7 LOCAL 5 Q3EZbuiltinZintZint LOCAL 6"
   + TERM2PARA
-  + "LOCAL 3 LIT 0 IDXUC LIT 0 Q3DZbuiltinZintZint LOCAL 3 LOCAL 7 LIT 1 Q2BZbuiltinZintZint IDXUC LOCAL 3 LIT 0 IDXUC LOCAL 3 LOCAL 7 CALLIDX if"
+  + "LOCAL 3 LIT 0 IDXUC LIT 0 Q3DZbuiltinZintZint LOCAL 3 LOCAL 7 LIT 1 Q2BZbuiltinZintZint 
+  IDXUC LOCAL 3 LIT 0 IDXUC LOCAL 3 LOCAL 7 CALLIDX if"
   + CALLTERM2
   + TERM1PARA
   + "LOCAL 6 LOCAL 8"
   + CALLTERM1
-  + "LOCAL 7 LIT 1 Q2BZbuiltinZintZint CONTINUE 2 SET 8 if FINISHLOOP 2 SET 5 LOCAL 2 LIT 0 Q3DZbuiltinZintZint LOCAL 10 LOCAL 10 LOCAL 2 LIT 0 IDXUC LOCAL 2 LIT 1 IDXUC CONTINUE 3 if SET 10 if FINISHLOOP 2"
+  + "LOCAL 7 LIT 1 Q2BZbuiltinZintZint CONTINUE 2 SET 8 if FINISHLOOP 2 SET 5 
+  LOCAL 2 LIT 0 Q3DZbuiltinZintZint LOCAL 10 LOCAL 10 LOCAL 2 LIT 0 IDXUC LOCAL 2 LIT 1 IDXUC CONTINUE 3 if 
+  SET 10 if FINISHLOOP 2"
+
+/function template2(term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)seq.word
+ // PARA 1 is seq PARA 2 is result LOCAL 10 is result of inner loop LOCAL 3 is seq LOCAL 2 is stk LOCAL 1 is accumulator //
+ // Inner loop LOCAL 6 result LOCAL 7 index LOCAL 5 length of seq //
+ // EQL - Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint ADD = Q2BZbuiltinZintZint //
+ let CALLTERM1 = [ term1]
+ let CALLTERM2 = [ term2]
+ let TERM1PARA = @(+, parainst,"", arithseq(nopara1, 1, 1))
+ let TERM2PARA = @(+, parainst,"", arithseq(nopara2, 1, nopara1 + 1))
+  parainst(nopara1 + nopara2 + 1) + "LIT 0" + parainst(nopara1 + nopara2 + 2)
+  + "LIT 1 
+  LOOPBLOCK 4 LOCAL 3 LIT 0 IDXUC FREF"
+  + ptyp
+  + "Q3DZbuiltinZintZint BR 2 3
+     LOCAL 1 
+      LOCAL 2 
+      LOCAL 3 LIT 3 IDXUC 
+    STKRECORD 2 
+    LOCAL 3 LIT 2 IDXUC 
+  CONTINUE 3 
+  LOCAL 3 LIT 1 IDXUC EXITBLOCK 1
+      LOCAL 1 LIT 1 LIT 6 
+    LOOPBLOCK 3 
+    LOCAL 7 LOCAL 5 Q3EZbuiltinZintZint BR 2 3
+  LOCAL 6 EXITBLOCK 1"
+    + TERM2PARA
+     + "LOCAL 3 LIT 0 IDXUC LIT 0 Q3DZbuiltinZintZint BR 2 3
+      LOCAL 3 LOCAL 7 LIT 1 Q2BZbuiltinZintZint IDXUC EXITBLOCK 1
+      LOCAL 3 LIT 0 IDXUC LOCAL 3 LOCAL 7 CALLIDX EXITBLOCK  1
+      BLOCK 2"
+     + CALLTERM2
+     + TERM1PARA
+     + "LOCAL 6 LOCAL 8"
+     + CALLTERM1
+     + "LOCAL 7 LIT 1 Q2BZbuiltinZintZint CONTINUE 2 
+    SET 8 
+    EXITBLOCK 1
+  BLOCK 2
+    FINISHLOOP 2 SET 5 
+     LOCAL 2 LIT 0 Q3DZbuiltinZintZint BR 2 3
+      LOCAL 10 EXITBLOCK 1
+      LOCAL 10 
+      LOCAL 2 LIT 0 IDXUC 
+      LOCAL 2 LIT 1 IDXUC 
+      CONTINUE 3 EXITBLOCK 1
+      BLOCK 2
+   SET 10
+   EXITBLOCK 1
+ BLOCK 2 FINISHLOOP 2"
 
 function checkistypechangeonly(prg:program, inlinename:set.word, term1:word, term2:word, term3:tree.seq.word)boolean
  // check to see if APPLY just does a type change //

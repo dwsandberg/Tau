@@ -79,10 +79,9 @@ function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
       if class = "0"_1 then towords2(a, i + 1, last, result)
       else if class = "SPACE"_1 then
       towords2(a, i + 1, i + 1, if last = i then result else result + encodeword.subseq(a, last, i - 1))
-      else if class = "-"_1 ∧ i + 1 ≤ length.a
-      ∧ between(toint.a_(i + 1), 48, 57)then
-      towords2(a, i + 2, i, if last = i then result else result + encodeword.subseq(a, last, i - 1))
-      else if t = periodchar ∧ i + 1 ≤ length.a ∧ a_(i + 1) = spacechar then
+      else // if class = "-"_1 ∧ i + 1 ≤ length.a ∧ between(toint.a_(i + 1), 48, 57)then
+       towords2(a, i + 2, i, if last = i then result else result + encodeword.subseq(a, last, i - 1))
+      else // if t = periodchar ∧ i + 1 ≤ length.a ∧ a_(i + 1) = spacechar then
       towords2(a, i + 2, i + 2, if last = i then result + encodeword.[ periodchar, spacechar]
        else result + encodeword.subseq(a, last, i - 1) + encodeword.[ periodchar, spacechar])
       else

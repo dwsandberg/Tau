@@ -121,6 +121,8 @@ Function getinstance(erec:erecord.T)encodingstate.T builtin.STATE.usemangle
 
 Function orderadded(erec:erecord.T)seq.T toseq.getinstance.erec
 
+Function to:encoding.T (i:int)  encoding.T  encoding(i)
+
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingrep.T
  @(+, ele4.t, empty:seq.encodingrep.T,(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1))
 

@@ -12,6 +12,21 @@ use stack.word
 
 Function EOL word encodeword.[ char.10]
 
+Function  search(pattern:seq.word,s:seq.word,i:int) int
+    if i > length.s then i else
+   if subseq(s,i,i+length.pattern-1) =pattern then i else
+      search(pattern, s,i+1)
+
+Function consumecomment(s:seq.word, i:int)int
+  // result will be pointer pointer to last word of comment //
+ if i > length.s then i
+ else if s_i = "//"_1 &and not(s_i="/"_1) then
+ consumecomment(s, findindex("//"_1, s, i + 1) + 1)
+ else if s_i="/"_1 &and i < length.s &and  s_(i+1)= "/"_1 then
+  consumecomment(s,search("/ /",s,i+2)+2)
+ else i
+
+
 Function processpara(t:seq.word)seq.word processpara(t, 1, 1,"", push(empty:stack.seq.word,""))
 
 function processpara(a:seq.word, j:int, i:int, result:seq.word, stk:stack.seq.word)seq.word
@@ -149,9 +164,11 @@ function prettynoparse(s:seq.word, i:int, lastbreak:int, result:seq.word)seq.wor
    if x = '"'_1 then
    let t = findindex('"'_1, s, i + 1)
      prettynoparse(s, t + 1, lastbreak + t - i, result + " &{ literal" + subseq(s, i, t) + " &}")
-   else if x = "//"_1 then
-   let t = findindex("//"_1, s, i + 1)
-     prettynoparse(s, t + 1, t - i, result + " &br  &{ comment" + subseq(s, i, t) + " &}")
+   else if x  in  "// /"  then
+   let t = consumecomment(s,i)
+      if t > i then 
+     prettynoparse(s, t , t - i, result + " &br  &{ comment" + subseq(s, i, t- 1) + " &}")
+      else prettynoparse(s, i + 1, lastbreak + 1, result + x)
    else if x in "if then else let assert function Function type"then
    let t = if lastbreak > 0 then result + " &br"else result
      prettynoparse(s, i + 1, 0, t + " &keyword" + x)

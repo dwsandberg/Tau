@@ -93,14 +93,14 @@ match5("Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, t
 , match5("Q2DZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 1, typ.i64))
 , match5(// + // "Q2BZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 0, typ.i64))
 , match5(// * // "Q2AZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64))
-, match5(// / //"Q2FZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64))
+, match5(// / op //"Q2FZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64))
 , match5("Q2DZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 1)
 + CAST(4, -3, typ.i64, 11))
 , match5(// + //"Q2BZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 0)
 + CAST(4, -3, typ.i64, 11))
 , match5(// * //"Q2AZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 2)
 + CAST(4, -3, typ.i64, 11))
-, match5(// / //"Q2FZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 4)
+, match5(// / op //"Q2FZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 4)
 + CAST(4, -3, typ.i64, 11))
 , match5(// ? //"Q3FZbuiltinZrealZreal"_1, 7, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + CMP2(3, -1, -2, 3)
 + CAST(4, -3, typ.i64, CASTZEXT)
@@ -133,11 +133,10 @@ match5("Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, t
 + CAST(3, -1, typ.i64, CASTPTRTOINT))
 , match5("CALLIDX"_1, 2, CAST(1, ibcsub1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)
 + CALL(2, 0, 32768, typ.function.[ i64, i64, i64, i64], -1, ibcfirstpara2, ibcsub2, ibcsub3))
-, match5("if 3", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
-, match5("if 4", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
-, match5("MRECORD 2", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
-, match5("THENBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
-, match5("ELSEBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0)]
+, match5("BR 4", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
+ ,match5("EXITBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
+ ,match5("EXITBLOCK 2", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
+ ]
 let discard = @(+, addit, 0, t)
  t
 
@@ -176,7 +175,7 @@ Function buildtemplates(s:seq.match5,xx:inst) seq.match5
     s + match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg)
     else if inst in "PARAM FIRSTVAR"then
     s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg)
-    else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE MSET"then
+    else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE BLOCK BR"then
     s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0)
     else if inst in "CONSTANT "then
      let args=@(+,getarg.s, empty:seq.int,code.xx)

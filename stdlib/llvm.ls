@@ -86,11 +86,11 @@ function assignencoding(l:int, a:llvmtypeele) int assignrandom(l,a)
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
-type llvmconst is record typ:int, toseq:seq.int, index:int
+type llvmconst is record typ:int, toseq:seq.int
 
-function llvmconst(typ:int, toseq:seq.int)llvmconst llvmconst(typ, toseq, 0)
+/function llvmconst(typ:int, toseq:seq.int)llvmconst llvmconst(typ, toseq, 0)
 
-function addindex(a:llvmconst, i:int)llvmconst llvmconst(typ.a, toseq.a, i)
+/function addindex(a:llvmconst, i:int)llvmconst llvmconst(typ.a, toseq.a, i)
 
 type llvmconsts is encoding llvmconst
 
@@ -98,7 +98,7 @@ Function listconsts seq.seq.int @(+, toseq, empty:seq.seq.int, orderadded.llvmco
 
 function hash(a:llvmconst)int hash.toseq.a
 
-function assignencoding(l:int, a:llvmconst) int assignrandom(l,a)
+function assignencoding(l:int, a:llvmconst) int l+1
 
 
 function =(a:llvmconst, b:llvmconst)boolean toseq.a = toseq.b ∧ typ.a = typ.b
@@ -162,17 +162,19 @@ Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
 
 Function C(s:seq.word)int C.s_1
 
-Function C(w:word)int findindex(llvmconsts, llvmconst(-1, tointseq.decodeword.w)) - 1
+Function C(w:word)int valueofencoding.encode(llvmconsts, llvmconst(-1, tointseq.decodeword.w)) - 1
 
-Function C64(i:int)int findindex(llvmconsts, llvmconst(typ.i64, [ CONSTINTEGER, i])) - 1
+Function C64(i:int)int valueofencoding.encode(llvmconsts, llvmconst(typ.i64, [ CONSTINTEGER, i])) - 1
 
 Function getllvmconst(i:int)seq.int toseq.(orderadded.llvmconsts)_(i + 1)
 
-Function C32(i:int)int findindex(llvmconsts, llvmconst(typ.i32, [ CONSTINTEGER, i])) - 1
+Function C32(i:int)int valueofencoding.encode(llvmconsts, llvmconst(typ.i32, [ CONSTINTEGER, i])) - 1
 
-Function C(t:llvmtype, s:seq.int)int findindex(llvmconsts, llvmconst(typ.t, s)) - 1
+Function C(t:llvmtype, s:seq.int)int valueofencoding.encode(llvmconsts, llvmconst(typ.t, s)) - 1
 
-Function Cprt(t:int, s:seq.int)int // used in print bitcodes tool // findindex(llvmconsts, llvmconst(t, s)) - 1
+Function Cprt(t:int, s:seq.int)int // used in print bitcodes tool // valueofencoding.encode(llvmconsts, llvmconst(t, s)) - 1
+
+Function constvalue(i:int) int    (toseq.decode( llvmconsts, to:encoding.llvmconst(i+1)))_2
 
 - - - - - - - - - - - - - - - - - - - - - - -
 

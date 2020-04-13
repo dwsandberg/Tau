@@ -228,6 +228,7 @@ function count(s:symbol)int if not(label.codetree.s = "default")then 1 else 0
 
 Function tosymbol(ls:libsym)symbol
  let d = codedown.fsig.ls
+ assert length.d > 1 report "tosymbol"+fsig.ls
  let modname = mytype.d_2
  let paratypes = @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d))
  let mc = manglechars(d_1_1, modname, paratypes)

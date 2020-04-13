@@ -33,7 +33,13 @@ let p2 = secondPass."testall"_1
 let cl = ["LIT 7","LIT 12","LIT 1","LIT 2","WORD FIRST","WORD AB","WORDS 2 A B","LIT 7","LIT 11","LIT 2"
 ,"LIT 1","LIT 0","LIT 4607182418800017408","LIT 44","LIT 2","LIT 46","LIT 72"]
 let c2 = constantseq(99,"")
-+ ["PARAM -2 PARAM -3 FIRSTVAR 1 LOOPBLOCK 3 LOCAL 1 LIT 1 Q3DZbuiltinZintZint 2 THENBLOCK 1 LOCAL 2 ELSEBLOCK 1 LOCAL 1 LIT 1 Q2DZbuiltinZintZint 2 LOCAL 1 LOCAL 2 Q2AZbuiltinZintZint 2 CONTINUE 2 if 3 FINISHLOOP 2","PARAM -2 LIT 0 Q3EZbuiltinZintZint 2 THENBLOCK 1 LIT 10 PARAM -3 Q3EZbuiltinZintZint 2 ELSEBLOCK 1 LIT 0 if 3","PARAM -2 LIT 0 Q3EZbuiltinZintZint 2 THENBLOCK 1 LIT 1 ELSEBLOCK 1 LIT 10 PARAM -3 Q3EZbuiltinZintZint 2 if 3"]
++ ["PARAM -2 PARAM -3 FIRSTVAR 1 LOOPBLOCK 3 LOCAL 1 LIT 1 Q3DZbuiltinZintZint 2 
+LIT 2 LIT 3   BR 3 LOCAL 2   EXITBLOCK 1 LOCAL 1 LIT 1 Q2DZbuiltinZintZint 2 LOCAL 1 LOCAL 2 Q2AZbuiltinZintZint 2 
+CONTINUE 2 EXITBLOCK 1  BLOCK 3 FINISHLOOP 2",
+"PARAM -2 LIT 0 Q3EZbuiltinZintZint 2 LIT 2 LIT 3  BR 3 LIT 10 PARAM -3 
+Q3EZbuiltinZintZint 2   EXITBLOCK 1  LIT 0  EXITBLOCK 1   BLOCK 3",
+"PARAM -2 LIT 0 Q3EZbuiltinZintZint 2 LIT 2 LIT 3   BR 3 LIT 1 
+ EXITBLOCK 1 LIT 10 PARAM -3 Q3EZbuiltinZintZint 2 EXITBLOCK 1  BLOCK 3"]
 let r = @(+, getcode(p2,"", cl),"", arithseq(length.cl, 1, 1))
 + @(+, getcode(p2,"ZintZint", c2),"", arithseq(length.c2 - 99, 1, 100))
  if isempty.r then"PASS testopt"else"testopt" + r

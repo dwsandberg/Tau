@@ -3,7 +3,7 @@
 Module stdlib 
 
 Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates  deepcopy encoding fileio 
-format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 opt2 otherseq packedseq 
+format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2  otherseq packedseq 
 parse pass1 pass2 persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
  timestamp maindict words   newpretty
 parsersupport  uses 

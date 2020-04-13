@@ -51,9 +51,12 @@ Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst inst(towo
 
 function assignencoding(l:int, a:inst) int l+1
 
-function aseinst(w:seq.word,code:seq.int)int valueofencoding.encode(einst, inst(w,"", mytype."?",code))
+function aseinst(w:seq.word,code:seq.int)int 
+valueofencoding.encode(einst, inst(w,"", mytype."?",code))
 
-function aseinst(w:seq.word )int valueofencoding.encode(einst, inst(w,"", mytype."?" ))
+function aseinst(w:seq.word )int 
+let t=encode(einst, inst(w,"", mytype."?" ))
+valueofencoding.t
 
 
 Function mangledname(a:inst)word(towords.a)_1
@@ -94,14 +97,38 @@ valueofencoding.encode(einst,
    inst([ mangledname.f, toword.nopara.f], flags.f, resulttype.f))
 
 function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int 
-replace(a, encode3.f, prepb(allfunctions, codetree.f))
+let t=prepb(allfunctions, codetree.f)
+let s=checkdefines(codetree.f)
+// let z=@(+,check(orderadded.einst),empty:seq.word,t)
+assert cardinality.asset.z=length.z report "JKLH"+toseq.asset.z +"/" +z+"/"+print.codetree.f
+// replace(a, encode3.f,t )
+
+
+function checkdefines(t:tree.seq.word) seq.word
+ let s=@(+,checkdefines,empty:seq.word,sons.t)
+if  inst.t="SET"_1 then  
+ assert not((label.t)_2 in s) report "problem"
+s+(label.t)_2
+else if inst.t="LOOPBLOCK"_1 then
+   let firstvar=toint.(label((sons.t)_nosons.t))_2
+   let no=toint.(label.t)_2
+  // assert false report print.t+"/"+(label((sons.t)_nosons.t))_2 //
+  let new=   @(+,   toword,"",arithseq(no,1,firstvar))
+    assert isempty(asset.new &cap asset.s)report "problem2"
+    s+new
+else
+  s
+
+
+function check( coding:seq.inst, i:int) seq.word
+  if (towords.(coding_i))_1="DEFINE"_1 then [(towords.(coding_i))_2] else empty:seq.word
 
 Function convert2(allfunctions:symbolset, s:seq.symbol)intercode
  let defines = @(+, encode3, empty:seq.int, s)
  let codes=@(addcodes.allfunctions, identity, dseq.empty:seq.int, s)
   intercode(setcode(orderadded.einst,codes, 1,empty:seq.inst),defines)
 
-
+use set.word
    
 function  setcode(coding:seq.inst,codes:seq.seq.int,i:int,result:seq.inst) seq.inst
    if i > length.coding then result
@@ -116,16 +143,12 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
  let inst = inst.t
   if inst in "PARAM"then [ aseinst.[ inst, toword(- toint.arg.t - 1)]]
   else if inst in "LIT LOCAL   WORD FIRSTVAR WORDS"then [ aseinst.label.t]
-  else if inst = "if"_1 then
-  prepb(allfunctions, t_1) + aseinst."THENBLOCK 1" + prepb(allfunctions, t_2)
-   + aseinst."ELSEBLOCK 1"
-   + prepb(allfunctions, t_3)
-   + if nosons.t = 3 then [ aseinst."if 3"]
-   else prepb(allfunctions, t_4) + aseinst."if 4"
-  else if inst = "SET"_1 then
+   else  if inst = "DEFINE"_1 then
+  prepb(allfunctions, t_1) + aseinst(label.t)  
+  else  if inst = "SET"_1 then
   prepb(allfunctions, t_1) + aseinst("DEFINE" + arg.t) + prepb(allfunctions, t_2)
    + aseinst.[ inst, arg.t]
-  else if inst = "LOOPBLOCK"_1 then
+  else  if inst = "LOOPBLOCK"_1 then
   // number of sons of loop block may have change with optimization //
    let firstvar = arg.last.sons.t
     @(+, prepb.allfunctions, empty:seq.int, subseq(sons.t, 1, nosons.t - 1))
@@ -134,13 +157,13 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
   else if inst = "CRECORD"_1 then 
        let z=   @(+, prepb.allfunctions, empty:seq.int, sons.t)
        assert length.z=nosons.t report "???"
-   [ aseinst("CONSTANT" + prep3.t,z)]
+   [ aseinst("CONSTANT" +  @(+,toword,"",z),z)]
    else if inst ="FREF"_1 then
     let z=addfunction(allfunctions,(label.t)_2)
    [ aseinst(label.t,[z])]
   else 
    @(+, prepb.allfunctions, empty:seq.int, sons.t)
-   + if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP MSET MRECORD"
+   + if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP   EXITBLOCK BLOCK BR"
    then [ aseinst.[ inst, toword.nosons.t]]
    else if inst = "STATE"_1 then empty:seq.int
    else
@@ -157,9 +180,6 @@ function addfunction(     allfunctions:symbolset, mangled:word) int
          assert a_2 = "builtin"report [ mangled] + a_2
            valueofencoding.encode(einst,inst([ mangled, toword(length.a - 2)],"builtin", mytype."?"))   
 
-function prep3(t:tree.seq.word)seq.word
- @(+, prep3,"", sons.t)
- + if nosons.t > 0 then [ inst.t, toword.nosons.t]else label.t
 
 function astext(coding:seq.inst, i:int)seq.word towords.coding_i
 

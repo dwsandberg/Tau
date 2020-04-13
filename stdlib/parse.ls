@@ -62,10 +62,12 @@ function consumetype(s:seq.word, i:int)int
  if i > length.s then i
  else if s_i = "."_1 then consumetype(s, i + 2)else i
 
-function consumecomment(s:seq.word, i:int)int
+/function consumecomment(s:seq.word, i:int)int
  if i > length.s then i
  else if s_i = "//"_1 then
  consumecomment(s, findindex("//"_1, s, i + 1) + 1)
+ else if s_i="/"_1 &and i < length.s &and  s_(i+1)= "/"_1 then
+         search("/ /",s,i+2)+2
  else i
 
 Function type:bindinfo internaltype export

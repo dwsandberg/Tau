@@ -65,7 +65,7 @@ function simpleonly(d:intercode, i:int)seq.int
 function filter(d:intercode, i:int)seq.int
  let inst =(coding.d)_i
  let name = mangledname.inst
-  if name in "SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT ELSEBLOCK RECORD THENBLOCK if CONTINUE LOOPBLOCK FINISHLOOP FIRSTVAR"then empty:seq.int
+  if name in "SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT   EXITBLOCK BLOCK RECORD   BR if CONTINUE LOOPBLOCK FINISHLOOP FIRSTVAR"then empty:seq.int
   else if name="FREF"_1 then code.inst else 
   if name in "CONSTANT"then
     @(+, filter.d, empty:seq.int,code.inst)
@@ -76,8 +76,8 @@ function astext(s:seq.inst, i:int)seq.word
  let f = towords.s_i
   if f_1 = "CONSTANT"_1 then   astext5(s,code.s_i)+"CRECORD"+toword.length.code.s_i
    else if f_1 = "PARAM"_1 then"PARAM" + toword(- toint.f_2 - 1)
-  else if f_1 in "ELSEBLOCK THENBLOCK DEFINE"then""
-  else if f_1 in "SET WORD WORDS LOCAL LIT PARAM RECORD FREF"then f else [ f_1]
+  else if f_1 in " DEFINE  "then""
+  else if f_1 in "SET WORD WORDS LOCAL LIT PARAM RECORD FREF EXITBLOCK BR BLOCK xDEFINE"then f else [ f_1]
 
 function astext5(s:seq.inst, d:seq.int)seq.word @(+, astext.s,"", d)
 
@@ -89,7 +89,11 @@ function tolibsym(d:intercode, i:int)seq.libsym
    let inst = if"STATE"_1 in flags.a then [ mangledname.a,"STATE"_1,"EXTERNAL"_1]
    else
     let body = simpleonly(d, i)
-     if length.body > 0 then astext5(coding.d,code.a) + flags.a else"EXTERNAL"
+     if length.body > 0 then 
+      let b=astext5(coding.d,code.a) + flags.a 
+  //    assert not("EXITBLOCK"_1 in b) report b+"&br"+@(+,towords,"",@(+,_.coding.d,empty:seq.inst,code.a))
+  //    b
+     else"EXTERNAL"
     [ libsym(returntype.a, mangledname.a, inst)]
 
 type mapresult3 is record syms:set.libsym, mods:seq.libmod
@@ -124,6 +128,7 @@ function findelement(known:symbolset, r:mapresult32, s:symbol)mapresult32
   else mapresult32(syms.r, libsyms.r + z_1)
 
 Function tofirstpass(m:libmod)firstpass
- firstpass(mytype.if parameterized.m then"T" + modname.m else [ modname.m], uses.m, @(+, tosymbol, empty:set.symbol, defines.m), @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol, false)
+ firstpass(mytype.if parameterized.m then"T" + modname.m else [ modname.m], uses.m, 
+ @(+, tosymbol, empty:set.symbol, defines.m), @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol, false)
 
 Function tofirstpass(l:liblib)seq.firstpass @(+, tofirstpass, empty:seq.firstpass, mods.l)
