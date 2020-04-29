@@ -163,7 +163,7 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
    [ aseinst(label.t,[z])]
   else 
    @(+, prepb.allfunctions, empty:seq.int, sons.t)
-   + if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD PROCESS2 FINISHLOOP   EXITBLOCK BLOCK BR"
+   + if inst in "IDXUC EQL CALLIDX STKRECORD CONTINUE RECORD  FINISHLOOP   EXITBLOCK BLOCK BR"
    then [ aseinst.[ inst, toword.nosons.t]]
    else if inst = "STATE"_1 then empty:seq.int
    else

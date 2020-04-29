@@ -61,17 +61,17 @@ use words
 /use invertedseq.word
 
 Function test5 seq.word
-let y = [ t502, t507, t513, t514, t515, t516, t517, t518, t519, t520, t522, t524]
+let y = [ t501, t502, t503, t504, t515, t516,  t517,   t518, t519, t520, t522, t524]
  check(y,"test5")
 
 function print(a:seq.int)seq.word"[" + @(seperator(","), toword,"", a) + "]"
 
-Function t502 boolean"23.45000 - 18.45000"
+Function t501 boolean"23.45000 - 18.45000"
 = print(5, 23.45) + print(5, 5.0 - 23.45)
 
 function showcodes(i:int)seq.word [ toword.i, encodeword.[ char.i]]
 
-Function t507 boolean"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
+Function t502 boolean"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
 = @(+, showcodes,"code glyph", arithseq(43, 1, 48))
 
 function t515 boolean
@@ -93,9 +93,9 @@ _______________
 
 Primes
 
-function t513 boolean"3 5 7 11 13 17 19 23 29 31 37" = findprimes(3, 40)
+function t503 boolean"3 5 7 11 13 17 19 23 29 31 37" = findprimes(3, 40)
 
-function t514 boolean
+function t504 boolean
 let a = process.countprimes(3, 5000000)
 let b = process.countprimes(5000001, 10000000)
  [ 348512, 316066] = [ result.a, result.b]

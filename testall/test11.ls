@@ -99,50 +99,50 @@ function t022 boolean [ toword.384] + toword.52 = "384 52"
 
 function t023 boolean 9 = (0 - 21) mod 15
 
-Function t024 boolean point(3, 4, 5) = point(3, 4, 5)
+ function t024 boolean point(3, 4, 5) = point(3, 4, 5)
 
-Function t025 boolean false = (point(3, 4, 1) = point(3, 4, 5))
+ function t025 boolean false = (point(3, 4, 1) = point(3, 4, 5))
 
-Function t026 boolean false = (point(3, 7, 5) = point(3, 4, 5))
+ function t026 boolean false = (point(3, 7, 5) = point(3, 4, 5))
 
-Function t027 boolean point(10, 6, 3) = point(8, 3, 2) + point(2, 3, 1)
+ function t027 boolean point(10, 6, 3) = point(8, 3, 2) + point(2, 3, 1)
 
-Function t028 boolean point(6, 0, 1) = point(8, 3, 2) - point(2, 3, 1)
+ function t028 boolean point(6, 0, 1) = point(8, 3, 2) - point(2, 3, 1)
 
-Function t029 boolean 6 = x.point(6, 0, 1)
+ function t029 boolean 6 = x.point(6, 0, 1)
 
-Function t030 boolean [ false, false, true, true] = [ isbyte.(0 - 1), isbyte.256, isbyte.255, isbyte.0]
+function t030 boolean [ false, false, true, true] = [ isbyte.(0 - 1), isbyte.256, isbyte.255, isbyte.0]
 
 function isbyte(i:int)boolean between(i, 0, 255)
 
-Function t031 boolean false = @(∧, isbyte, true, [ 0 - 1, 256, 255, 0])
+function t031 boolean false = @(∧, isbyte, true, [ 0 - 1, 256, 255, 0])
 
-Function t032 boolean @(∧, isbyte, true, [ 23, 4, 5, 255, 7, 2, 255])
+function t032 boolean @(∧, isbyte, true, [ 23, 4, 5, 255, 7, 2, 255])
 
-Function t033 boolean 6 = (toint.if true then"3"_1 else"5"_1) + 3
+function t033 boolean 6 = (toint.if true then"3"_1 else"5"_1) + 3
 
 function t034 boolean 3464 = (3456 + if true then 3 else 1) + 5
 
 function print(a:seq.int)seq.word"[" + @(seperator(","), toword,"", a) + "]"
 
-Function t503 boolean"[ 2, 3, 4, 5]" = print.[ 2, 3, 4, 5]
+function t503 boolean"[ 2, 3, 4, 5]" = print.[ 2, 3, 4, 5]
 
-Function t504 boolean 10 = @(+, *(1), 0, [ 1, 2, 3, 4])
+function t504 boolean 10 = @(+, *(1), 0, [ 1, 2, 3, 4])
 
-Function t505 boolean 24 = @(*, *(1), 1, [ 1, 2, 3, 4])
+function t505 boolean 24 = @(*, *(1), 1, [ 1, 2, 3, 4])
 
-Function t506 boolean [ 1, 2, 3, 4] = @(+, +(empty:seq.int), empty:seq.int, [ 1, 2, 3, 4])
+function t506 boolean [ 1, 2, 3, 4] = @(+, +(empty:seq.int), empty:seq.int, [ 1, 2, 3, 4])
 
-Function t508 boolean
+function t508 boolean
 let a = 6 * 6
  a + a = 72
 
-Function t510 boolean"a b c d e 1 2 3 4 k"
+function t510 boolean"a b c d e 1 2 3 4 k"
 = replace("a b c d e" + "1 2 3 4 5", 10,"k"_1)
 
-Function t511 boolean"1 2 k 4 5" = replace("1 2 3 4 5", 3,"k"_1)
+function t511 boolean"1 2 k 4 5" = replace("1 2 3 4 5", 3,"k"_1)
 
-Function t523 boolean @(-, identity, 100, [ 1, 2]) = 97
+function t523 boolean @(-, identity, 100, [ 1, 2]) = 97
 
 function modr(a:int, b:int)int b mod a + 1
 
@@ -150,7 +150,7 @@ function incrementcount(s:seq.int, i:int)seq.int replace(s, i, s_i + 1)
 
 function print(i:ipair.word)seq.word [ toword.index.i] + ":" + value.i
 
-Function t509 boolean
+function t509 boolean
 let s = @(incrementcount, identity, constantseq(100, 0), @(+, modr(100), empty:seq.int, randomseq(3456, 100001)))
 let totalcounts = @(+, identity, 0, s)
  length.s = 100 ∧ totalcounts = 100001

@@ -69,7 +69,7 @@ function funcdec(f:inst)seq.int
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
 
 Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
- let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 PROCESS2 "
+ let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 "
  + merge."llvm.sqrt.f64"
  + merge."llvm.sin.f64"
  + merge."llvm.cos.f64"
@@ -108,7 +108,6 @@ Function codegen5(fs:intercode, thename:word, libdesc:liblib)seq.bits
       , // spacecount // [ MODULECODEGLOBALVAR, typ.i64, 2, 0, 0, align8 + 1, 0]
       , // profileresult // [ MODULECODEFUNCTION, typ.function.[ i64], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // init22 // [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // PROCESS2 // [ MODULECODEFUNCTION, typ.function.[ i64, i64, i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.sqrt.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.sin.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.cos.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
@@ -202,14 +201,14 @@ function processnext(profile:word, l:Lcode, m:match5)Lcode
        let newcode = processblk(tmp,1,empty:seq.localmap,BR(regno.l, noblocks.l- 1)) 
         let newstack =push(pop(args.tmp_1, 4)  , -(regno.l + 1))
       Lcode(newcode, lmap.l, noblocks.l , regno.l + 1,  newstack, subseq(blocks.l, no+1, length.blocks.l), tailphi.l, loopblock.l)
-      else if inst = "DEFINE"_1 then
+      else // if inst = "DEFINE"_1 then
     Lcode(code.l, lmap.l + localmap(toint.instarg, last.args.l), noblocks.l, regno.l, subseq(args.l, 1, length.args.l - 1), [ l] + blocks.l, tailphi.l, loopblock.l)
     else if inst = "SET"_1 then
     Lcode(code.l, lmap.(blocks.l)_1, noblocks.l, regno.l, args.l, subseq(blocks.l, 2, length.blocks.l), tailphi.l, loopblock.l)
-    else // if inst = "DEFINE"_1 then
+    else  // if inst = "DEFINE"_1 then
     Lcode(code.l,  [localmap(toint.instarg, top.args.l)]+lmap.l, noblocks.l, regno.l, pop(args.l,1),  blocks.l, tailphi.l, loopblock.l)
     else if inst = "SET"_1 then l
-     else // if inst = "LOOPBLOCK"_1 then
+     else   if inst = "LOOPBLOCK"_1 then
     let varcount = toint.instarg - 1
      let firstvar = top.args.l
      let bodymap = @(addloopmapentry(firstvar, regno.l), identity,lmap.l, arithseq(varcount, 1, 1))

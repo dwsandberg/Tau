@@ -50,7 +50,7 @@ function tr1 tree.int tree(56, [ tree.200, tree.1, tree(5, [ tree.4])])
 
 function tr2 tree.int tree(37, [ tr1, tr1])
 
-Function t501 boolean [ 56, 200, 3] = [ label.tr1, label.tr1_1, nosons.tr1]
+function t501 boolean [ 56, 200, 3] = [ label.tr1, label.tr1_1, nosons.tr1]
 
 function ?(a:tree.int, b:tree.int)ordering
  subx(a, b, 1, label.a ? label.b ∧ nosons.a ? nosons.b)
@@ -67,28 +67,28 @@ function print(t:tree.word)seq.word
   + if nosons.t = 1 then"." + print.t_1
   else"(" + @(seperator(","), print,"", sons.t) + ")"
 
-Function t502 boolean [ GT, EQ, EQ]
+function t502 boolean [ GT, EQ, EQ]
 = [ tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree.1]
 
-Function t503 boolean"a" = print.tree."a"_1
+function t503 boolean"a" = print.tree."a"_1
 
-Function t504 boolean"a.b" = print.tree("a"_1, [ tree."b"_1])
+function t504 boolean"a.b" = print.tree("a"_1, [ tree."b"_1])
 
-Function n1 int 1
+function n1 int 1
 
-Function n2 int 2
+function n2 int 2
 
-Function n3 int 3
+function n3 int 3
 
-Function n4 int 4
+function n4 int 4
 
-Function n5 int 5
+function n5 int 5
 
-Function n6 int 6
+function n6 int 6
 
-Function n7 int 7
+function n7 int 7
 
-Function n8 int 8
+function n8 int 8
 
 function t505 boolean
 let g = newgraph
@@ -121,7 +121,7 @@ bits
 
 use bits
 
-Function checkbits seq.word check([ 878082210 = toint.rotl32(hex."A2345678"_1, 8), tohex32.(hex."D687F000"_1 ∧ hex."0FE00000"_1) = "0680 0000", tohex32.(hex."D687F001"_1 >> 2) = "35A1 FC00", tohex32.(hex."D687F001"_1 << 2) = "5A1F C004", tohex32.(hex."D687F000"_1 ∨ hex."0FE00000"_1) = "DFE7 F000", tohex32.xor(hex."D687F000"_1, hex."0FE00000"_1) = "D967 F000"]
+function checkbits seq.word check([ 878082210 = toint.rotl32(hex."A2345678"_1, 8), tohex32.(hex."D687F000"_1 ∧ hex."0FE00000"_1) = "0680 0000", tohex32.(hex."D687F001"_1 >> 2) = "35A1 FC00", tohex32.(hex."D687F001"_1 << 2) = "5A1F C004", tohex32.(hex."D687F000"_1 ∨ hex."0FE00000"_1) = "DFE7 F000", tohex32.xor(hex."D687F000"_1, hex."0FE00000"_1) = "D967 F000"]
 ,"bits")
 
 function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> 32 - n)
@@ -133,9 +133,9 @@ function hexvalue(val:bits, i:char)bits
 
 function hex(w:word)bits @(hexvalue, identity, bits.0, decodeword.w)
 
-Function tohex32(i:bits)seq.word [ int2seq(i >> 16, empty:seq.char, 4), int2seq(i, empty:seq.char, 4)]
+function tohex32(i:bits)seq.word [ int2seq(i >> 16, empty:seq.char, 4), int2seq(i, empty:seq.char, 4)]
 
-Function tohex64(i:bits)seq.word tohex32.(i >> 32) + tohex32.i
+function tohex64(i:bits)seq.word tohex32.(i >> 32) + tohex32.i
 
 use seq.char
 

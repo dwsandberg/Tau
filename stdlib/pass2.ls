@@ -271,12 +271,12 @@ function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:se
    let size = toint.src_(i + 1)
      assert length.toseq.stk ≥ size report"stack problem APPLY/RECORD" + src
       buildcodetreeX(hasstate, push(pop(stk, size), tree(subseq(src, i, i + 1), top(stk, size))), i + 2, src)
-   else if name = "PRECORD"_1 then
+   else // if name = "PRECORD"_1 then
    let size = toint.src_(i + 1)
     let s = top(stk, size)
-    let b = tree("PROCESS2", [ tree("RECORD", subseq(s, size - 3, size) + subseq(s, 1, size - 4))])
+    let b = tree("process2ZbuiltinZint", [ tree("RECORD", subseq(s, size - 3, size) + subseq(s, 1, size - 4))])
      buildcodetreeX(hasstate, push(pop(stk, size), b), i + 2, src)
-   else if name = "WORDS"_1 then
+   else // if name = "WORDS"_1 then
    let size = toint.src_(i + 1)
      buildcodetreeX(hasstate, push(stk, tree.subseq(src, i, i + size + 1)), i + size + 2, src)
    else if name = "COMMENT"_1 then
@@ -324,7 +324,7 @@ function hexvalue(i:char)int
 Function calls(t:tree.seq.word)seq.word
  @(+, calls, empty:seq.word, sons.t)
  + if inst.t = "FREF"_1 then [ arg.t]
- else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD TESTOPT
+ else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX  CRECORD STKRECORD TESTOPT
  BR EXITBLOCK BLOCK"then
  empty:seq.word
  else [ inst.t]
@@ -332,7 +332,7 @@ Function calls(t:tree.seq.word)seq.word
 Function calls(self:word, t:tree.seq.word)seq.arc.word
  @(+, calls.self, empty:seq.arc.word, sons.t)
  + if inst.t = "FREF"_1 then [ arc(self, arg.t)]
- else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD TESTOPT
+ else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX  CRECORD STKRECORD TESTOPT
   BR EXITBLOCK BLOCK"then
  empty:seq.arc.word
  else
@@ -628,54 +628,7 @@ function template2(term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)s
   LOCAL 2 LIT 0 Q3DZbuiltinZintZint LOCAL 10 LOCAL 10 LOCAL 2 LIT 0 IDXUC LOCAL 2 LIT 1 IDXUC CONTINUE 3 if 
   SET 10 if FINISHLOOP 2"
 
-/function template2(term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)seq.word
- // PARA 1 is seq PARA 2 is result LOCAL 10 is result of inner loop LOCAL 3 is seq LOCAL 2 is stk LOCAL 1 is accumulator //
- // Inner loop LOCAL 6 result LOCAL 7 index LOCAL 5 length of seq //
- // EQL - Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint ADD = Q2BZbuiltinZintZint //
- let CALLTERM1 = [ term1]
- let CALLTERM2 = [ term2]
- let TERM1PARA = @(+, parainst,"", arithseq(nopara1, 1, 1))
- let TERM2PARA = @(+, parainst,"", arithseq(nopara2, 1, nopara1 + 1))
-  parainst(nopara1 + nopara2 + 1) + "LIT 0" + parainst(nopara1 + nopara2 + 2)
-  + "LIT 1 
-  LOOPBLOCK 4 LOCAL 3 LIT 0 IDXUC FREF"
-  + ptyp
-  + "Q3DZbuiltinZintZint BR 2 3
-     LOCAL 1 
-      LOCAL 2 
-      LOCAL 3 LIT 3 IDXUC 
-    STKRECORD 2 
-    LOCAL 3 LIT 2 IDXUC 
-  CONTINUE 3 
-  LOCAL 3 LIT 1 IDXUC EXITBLOCK 1
-      LOCAL 1 LIT 1 LIT 6 
-    LOOPBLOCK 3 
-    LOCAL 7 LOCAL 5 Q3EZbuiltinZintZint BR 2 3
-  LOCAL 6 EXITBLOCK 1"
-    + TERM2PARA
-     + "LOCAL 3 LIT 0 IDXUC LIT 0 Q3DZbuiltinZintZint BR 2 3
-      LOCAL 3 LOCAL 7 LIT 1 Q2BZbuiltinZintZint IDXUC EXITBLOCK 1
-      LOCAL 3 LIT 0 IDXUC LOCAL 3 LOCAL 7 CALLIDX EXITBLOCK  1
-      BLOCK 2"
-     + CALLTERM2
-     + TERM1PARA
-     + "LOCAL 6 LOCAL 8"
-     + CALLTERM1
-     + "LOCAL 7 LIT 1 Q2BZbuiltinZintZint CONTINUE 2 
-    SET 8 
-    EXITBLOCK 1
-  BLOCK 2
-    FINISHLOOP 2 SET 5 
-     LOCAL 2 LIT 0 Q3DZbuiltinZintZint BR 2 3
-      LOCAL 10 EXITBLOCK 1
-      LOCAL 10 
-      LOCAL 2 LIT 0 IDXUC 
-      LOCAL 2 LIT 1 IDXUC 
-      CONTINUE 3 EXITBLOCK 1
-      BLOCK 2
-   SET 10
-   EXITBLOCK 1
- BLOCK 2 FINISHLOOP 2"
+
 
 function checkistypechangeonly(prg:program, inlinename:set.word, term1:word, term2:word, term3:tree.seq.word)boolean
  // check to see if APPLY just does a type change //

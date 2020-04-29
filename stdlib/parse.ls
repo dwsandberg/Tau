@@ -130,15 +130,15 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
  let nopara = manglednopara.last.code.exp
   let rt =(types.exp)_1
   let prt = mytype(towords.rt + "process")
-  let newcode = subseq(code.exp, 1, length.code.exp - 1) + "FREF" + deepcopymangle.rt
-  + "FREF"
-  + deepcopymangle.mytype."word seq"
-  + "FREF"
-  + last.code.exp
-  + "LIT"
-  + toword.nopara
-  + "PRECORD"
+  let newcode =  
+    "FREF" + deepcopymangle.rt
+  + "FREF"+ deepcopymangle.mytype."word seq"
+  + "FREF" + last.code.exp
+  + "LIT" + toword.nopara
+  + subseq(code.exp, 1, length.code.exp - 1)
+  + "RECORD"
   + toword(nopara + 4)
+  +"process2ZbuiltinZint"
    bindinfo(dict.R, newcode, [ mytype(towords.rt + "process")])
  else
   let f = lookupbysig(dict.R, op_1, types.exp, input, place.R)

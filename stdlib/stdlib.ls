@@ -10,7 +10,7 @@ parsersupport  uses
  exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  unsafe packedseq   process real   seq set stack stacktrace 
  stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode   libdescfunc otherseq words mangle
- worddict  parsersupport parse pass1 newpretty  pass2 bitpackedseq 
+ worddict  parsersupport parse pass1 newpretty  pass2 bitpackedseq  codetemplates
 
 
 use UTF8
@@ -76,6 +76,8 @@ Function toint(boolean)int export
 Function-(i:int)int 0 - i
 
 Function ?(a:int, b:int)ordering builtin.usemangle
+
+Function process2(a:int) int builtin.usemangle
 
 Function ?(a:ordering, b:ordering)ordering toint.a ? toint.b
 
