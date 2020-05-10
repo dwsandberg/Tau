@@ -3,7 +3,7 @@
 Module stdlib 
 
 Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates  deepcopy encoding fileio 
-format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2  otherseq packedseq 
+format graph groupparagraphs intercode internalbc ipair libdesc libscope llvm main2  otherseq packedseq 
 parse pass1 pass2 persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
  timestamp maindict words   newpretty  codegennew pass2new intdict funcsig
 parsersupport  uses 
@@ -20,7 +20,7 @@ parsersupport  uses
  
  UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
  internalbc ipair  libscope llvm main2  unsafe packedseq   process real   seq set stack stacktrace 
- stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode   libdescfunc otherseq words mangle
+ stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode   libdesc otherseq words mangle
  worddict  parsersupport parse pass1 newpretty  pass2 bitpackedseq    codegennew intdict
 
 
@@ -360,10 +360,10 @@ process stack set   format groupparagraphs    bitpackedseq maindict worddict
 exclude stdlib seq 
 
 * usegraph include  main2 libscope display constant codegen convert 
- parse pass1  symbol libdescfunc  
+ parse pass1  symbol libdesc
 codetemplates pass2 persistant   llvm  
 reconstruct persistantseq opt2
-symbol parse libdescfunc internalbc intercode cvttoinst codegen
+symbol parse libdesc internalbc intercode cvttoinst codegen
 exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process  ipair deepcopy
 bitpackedseq packedseq fileio blockseq textio encoding words
    

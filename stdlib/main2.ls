@@ -141,7 +141,7 @@ Function compilelib2(libname:word,old:boolean)seq.word
 Function main(arg:seq.int)outputformat
  let args = towords.UTF8(arg + 10 + 10)
  let libname = args_1
- let p = process.compilelib2(libname,false)
+ let p = process.compilelib2(libname,true)
  let output = if aborted.p then message.p
  else if subseq(result.p, 1, 1) = "OK" ∧ length.args = 3 then
  // execute function specified in arg //
