@@ -21,8 +21,8 @@ type pseq is sequence length:int, a:seq.T, b:seq.T
 Function =(T, T)boolean unbound
 
 Function_(a:seq.T, b:int)T
- NOINLINE
- .
+// NOINLINE
+ . //
  let typ = getseqtype.a
   if typ = 0 then
   assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
@@ -51,7 +51,7 @@ subin is helper function
 Function subin(a:T, s:seq.T, i:int)boolean
  if i = 0 then false else if a = s_i then true else subin(a, s, i - 1)
 
-Function in(a:T, s:seq.T)boolean NOINLINE.subin(a, s, length.s)
+Function in(a:T, s:seq.T)boolean // NOINLINE. // subin(a, s, length.s)
 
 Function identity(a:T)T a
 

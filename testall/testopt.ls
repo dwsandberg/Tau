@@ -24,7 +24,7 @@ use textio
 
 use otherseq.seq.word
 
-use words
+/use words
 
 use UTF8
 

@@ -46,7 +46,7 @@ use seq.seq.word
 
 use seq.word
 
-use words
+/use words
 
 Function test1 seq.word printBitCodes."simpletest.bc"
 

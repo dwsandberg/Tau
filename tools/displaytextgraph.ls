@@ -22,13 +22,13 @@ use svggraph.seq.word
 
 use seq.word
 
-Function display(z2:seq.arcinfo.seq.word)seq.word" &{ noformat" + displaygraph(defaultcontrol, z2) + " &}"
+Function display(z2:seq.arcinfo.seq.word)seq.word" &{ noformat" + displaygraph(charwidths, z2) + " &}"
 
 Function arcinfo(tail:seq.word, head:seq.word, arclabel:seq.word)arcinfo.seq.word
- arcinfo(arc(tail, head), arclabel, displaywidth(chrwidths.defaultcontrol, arclabel))
+ arcinfo(arc(tail, head), arclabel, displaywidth(charwidths, arclabel))
 
-function assignwidths(control:prettycontrol, p:nodeinfo.seq.word)nodeinfo.seq.word
- nodeinfo(n.p, x.p, y.p, displaywidth(chrwidths.control, n.p), seperation.p)
+function assignwidths(control:characterwidths, p:nodeinfo.seq.word)nodeinfo.seq.word
+ nodeinfo(n.p, x.p, y.p, displaywidth(control, n.p), seperation.p)
 
 function ?(a:ipair.seq.word, b:ipair.seq.word)ordering index.b ? index.a
 

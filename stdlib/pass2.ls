@@ -209,9 +209,9 @@ function paratree(i:int)tree.seq.word tree("PARAM" + toword.i)
 function addsymbol(p:program, mangledname:word)program
  let caller = lookupsymbol(knownsymbols.p, mangledname)
   if isdefined.caller ∧ label.codetree.caller = "default"then
-  let startindex = if(src.caller)_1 = "parsedfunc"_1 then toint.(src.caller)_2 + 3 else 1
+  let startindex = if  length.src.caller > 1 &and (src.caller)_1 = "parsedfunc"_1 then toint.(src.caller)_2 + 3 else 1
    let treecode = subseq(src.caller, startindex, length.src.caller - length.flags.caller)
-    if length.src.caller > 0 ∧ last.src.caller = "EXTERNAL"_1 then
+    if length.treecode=0 &or (length.src.caller > 0 ∧ last.src.caller = "EXTERNAL"_1) then
     program(replace(knownsymbols.p, changecodetree(caller, tree."EXTERNAL")), callgraph.p, inline.p, if"STATE"_1 in flags.caller then hasstate.p + mangledname.caller else hasstate.p)
     else
      let tr0 = buildcodetreeX(false, empty:stack.tree.seq.word, 1, treecode)
@@ -233,17 +233,19 @@ function addsymbol(p:program, mangledname:word)program
   else p
 
 function buildcodetree(src:seq.word)tree.seq.word
+     if length.src=0 then tree("EXTERNAL") else 
    buildcodetreeX(false, empty:stack.tree.seq.word, 1, src)
    
- 
+ use stacktrace
        
    
 function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:seq.word)tree.seq.word
  if i > length.src then
- assert length.toseq.stk > 0 report"STACK ISSUE" + src
+ assert length.toseq.stk > 0 report"STACK ISSUE" + src+stacktrace
   let top2 = top.stk
    if hasstate then tree("STATE", [ top2])else top2
  else
+//  assert length.src &ne 44  report "X"+toword.length.src+src //
   let name = src_i
    if name in "builtinZinternal1Zwordzseq builtinZinternal1Zinternal1"then buildcodetreeX(hasstate, stk, i + 1, src)
    else if name in "if "then
@@ -264,19 +266,14 @@ function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:se
    // let sym = lookupfunc(knownsymbols, src_(i + 1))//
     buildcodetreeX(hasstate, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
    else if name = "DEFINE"_1 then 
-    assert false report "here define"
+   // assert false report "here define" //
    buildcodetreeX(hasstate, stk, i + 2, src)
    else  if name in "RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD BLOCK EXITBLOCK BR"then
      assert not(src_(i+1)="LIT"_1) report "KKK"+name+src
    let size = toint.src_(i + 1)
      assert length.toseq.stk ≥ size report"stack problem APPLY/RECORD" + src
       buildcodetreeX(hasstate, push(pop(stk, size), tree(subseq(src, i, i + 1), top(stk, size))), i + 2, src)
-   else // if name = "PRECORD"_1 then
-   let size = toint.src_(i + 1)
-    let s = top(stk, size)
-    let b = tree("process2ZbuiltinZint", [ tree("RECORD", subseq(s, size - 3, size) + subseq(s, 1, size - 4))])
-     buildcodetreeX(hasstate, push(pop(stk, size), b), i + 2, src)
-   else // if name = "WORDS"_1 then
+   else  if name = "WORDS"_1 then
    let size = toint.src_(i + 1)
      buildcodetreeX(hasstate, push(stk, tree.subseq(src, i, i + size + 1)), i + size + 2, src)
    else if name = "COMMENT"_1 then
@@ -346,8 +343,8 @@ function opRSUB word"Q2DZbuiltinZrealZreal"_1
 function isconst(t:tree.seq.word)boolean inst.t in "LIT CRECORD WORD WORDS FREF"
 
 function simplecalcs(label:seq.word, a:int, b:int, l:seq.tree.seq.word)tree.seq.word
- TESTOPT
- .
+//  TESTOPT
+ . //
  let inst = label_1
   if inst = opRSUB then tree.["LIT"_1, toword.representation(casttoreal.a - casttoreal.b)]
   else if not(between(a, -2147483648, 2147483648) ∧ between(b, -2147483648, 2147483648))then tree(label, l)

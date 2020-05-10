@@ -41,6 +41,6 @@ Function loadlibrary(a:word)int loadlib.toCformat.[ a]
 
 Function loadlib(seq.bits)int builtin.usemangle
 
-function executecode(seq.bits, para:seq.int)seq.word builtin.usemangle
+Function executecode(seq.bits, para:seq.int)seq.word builtin.usemangle
 
 Function add2(h:encodingstate.seq.int, v:seq.encodingrep.seq.int)encodingstate.seq.int // so add is included in stdlib // add(h, v)

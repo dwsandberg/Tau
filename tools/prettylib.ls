@@ -2,7 +2,7 @@ Module prettylib
 
 run prettylib testing2
 
-use display
+/use display
 
 use fileio
 

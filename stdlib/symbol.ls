@@ -234,6 +234,18 @@ Function tosymbol(ls:libsym)symbol
  let mc = manglechars(d_1_1, modname, paratypes)
   symbol(encodeword.mc, mytype.returntype.ls, @(+, replaceT.parameter.modname, empty:seq.mytype, paratypes), d_1_1, modname, instruction.ls, tree."default", mc)
 
+function tofirstpass(m:libmod)firstpass
+ firstpass(mytype.if parameterized.m then"T" + modname.m else [ modname.m], uses.m, 
+ @(+, tosymbol, empty:set.symbol, defines.m), @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol, false)
+
+Function tofirstpass(l:liblib)seq.firstpass @(+, tofirstpass, empty:seq.firstpass, mods.l)
+
+use seq.libsym
+
+use seq.firstpass
+
+use seq.libmod
+
 Function type:mytype internaltype export
 
 Function towords(mytype)seq.word export

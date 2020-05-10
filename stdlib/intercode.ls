@@ -8,7 +8,7 @@ use seq.seq.int
 
 use libscope
 
-use persistant
+/use persistant
 
 use stdlib
 
@@ -51,8 +51,11 @@ Function inst(towords:seq.word, flags:seq.word, returntype:mytype)inst inst(towo
 
 function assignencoding(l:int, a:inst) int l+1
 
-function aseinst(w:seq.word,code:seq.int)int 
+Function aseinst(w:seq.word,code:seq.int)int 
 valueofencoding.encode(einst, inst(w,"", mytype."?",code))
+
+Function aseinst(i:inst)int 
+valueofencoding.encode(einst, i)
 
 function aseinst(w:seq.word )int 
 let t=encode(einst, inst(w,"", mytype."?" ))
@@ -69,19 +72,7 @@ function towords(a:inst)seq.word export
 
 function returntype(a:inst)mytype export
 
-
-Function registerword(a:word)int export
-
-Function addobject(flds:seq.int) int export
-
-function addwordseq2(seq.word)int export
-
-Function addliblib( liblib)int export
-
-
-Function constdata seq.int export
-
-_________________________
+_______________
 
 type einst is encoding inst
 
@@ -119,6 +110,7 @@ else if inst.t="LOOPBLOCK"_1 then
 else
   s
 
+Function additionalinst(i:int) seq.inst subseq(orderadded.einst,i,length.orderadded.einst)
 
 function check( coding:seq.inst, i:int) seq.word
   if (towords.(coding_i))_1="DEFINE"_1 then [(towords.(coding_i))_2] else empty:seq.word

@@ -56,7 +56,7 @@ use otherseq.word
 
 use otherseq.int
 
-use words
+/use words
 
 /use invertedseq.word
 

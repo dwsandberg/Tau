@@ -1,4 +1,10 @@
-Module libdescfunc
+
+
+Module libdesc
+
+use stdlib
+
+use symbol
 
 use seq.firstpass
 
@@ -6,129 +12,172 @@ use seq.inst
 
 use seq.seq.int
 
-use set.int
-
 use intercode
-
-use seq.libmod
 
 use libscope
 
-use seq.libsym
+use seq.seq.word
 
-use set.libsym
-
-use seq.mytype
-
-use set.mytype
-
-use stdlib
+use seq.word
 
 use seq.symbol
 
 use set.symbol
 
-use symbol
-
-use otherseq.word
-
-use set.seq.word
-
 use set.word
 
-Function libdesc(roots:set.word, intercode:intercode, mods:seq.firstpass, known:symbolset)seq.libmod
- // assert false report @(seperator([ encodeword.[ 10]]+"- - -"), print2,"", @(+, filter, empty:seq.symbol, toseq(known)))//
- let rootindices = asset.@(+, toinstindex(roots, intercode), empty:seq.int, defines.intercode)
- let a = close(intercode, rootindices, rootindices)
- let syms = @(+, tolibsym.intercode, empty:seq.libsym, toseq.a)
-  // assert false report check.syms //
-  let allmods = @(map.known, identity, mapresult3(asset.syms, empty:seq.libmod), mods)
-   mods.allmods + libmod(false,"$other"_1, toseq.syms.allmods, empty:seq.libsym, empty:seq.mytype)
+use seq.int
 
-function toinstindex(a:set.word, d:intercode, i:int)seq.int
- if mangledname.(coding.d)_i in a then [ i]else empty:seq.int
+use seq.libsym
 
-function close(d:intercode, toprocess:set.int, old:set.int)set.int
- let a = asset.@(+, simpleonly.d, empty:seq.int, toseq.toprocess) - old
- let new = asset.@(+, filter.d, empty:seq.int, toseq.a) - old
-  if isempty.new then old else close(d, new, old ∪ new)
+use worddict.libsym
 
-function simpleonly(d:intercode, i:int)seq.int
- // returns body for simple function otherwise and empty sequence //
- let body=    code.(coding.d)_i
- // let body =(codes.d)_i //
-  if length.body > 30 then empty:seq.int
+use otherseq.libsym
+
+
+Function libdesc(intercode:intercode, mods:seq.firstpass, known:symbolset)seq.libmod
+  let abstract=@(+,abstractmods(coding.intercode,known),empty:seq.libmod,mods)
+  let t=@(&cup,getmore,empty:set.symbol,mods)
+  let b=@(+,find2(coding.intercode,known),empty:seq.libsym,toseq.t)
+    let have=@(+,fsig,empty:set.word,b)
+  let d=close(intercode,known,b,have,empty:seq.libsym)
+  let z=@(add,identity,emptyworddict:worddict.libsym,d)
+  @(+,libmod(z),abstract,mods)
++ libmod(false,"$other"_1, sort.d, empty:seq.libsym, empty:seq.mytype)
+
+function  abstractmods(coding:seq.inst, known:symbolset,f:firstpass) seq.libmod
+  if not.exportmodule.f &or not.isabstract.modname.f then empty:seq.libmod
+  else  
+    let d=sort.@(+,aslibsym.known,empty:seq.libsym,toseq.defines.f)
+        let e=sort.@(+,aslibsym.known,empty:seq.libsym,toseq.exports.f)
+    [libmod(true, abstracttype.modname.f,d,e, uses.f)]
+    
+function aslibsym(known:symbolset,sym1:symbol) libsym  
+let sym2=lookupsymbol(known,mangledname.sym1)
+let sym=if isdefined.sym2 then sym2 else 
+assert src.sym1="STUB" report print2.sym1 sym1
+libsym(resulttype.sym,mangledname.sym,stripparsedfunc.src.sym )
+     
+  
+function getmore(f:firstpass) set.symbol
+   if not.exportmodule.f &or isabstract.modname.f then empty:set.symbol
+  else  
+    exports.f
+    
+   
+
+      
+function filter(  i:int,result:seq.word, src:seq.word) seq.word
+ if i > length.src then result
   else
-   let flags = flags.(coding.d)_i
-    if"SIMPLE"_1 in flags ∨ "INLINE"_1 in flags then body else empty:seq.int
+  let name = src_i
+   if name in "builtinZinternal1Zwordzseq builtinZinternal1Zinternal1 if CALLIDX IDXUC getinstanceZbuiltinZTzerecord
+   STATEZinternal1Zinternal1" then filter( i + 1,result, src)
+   else if name in "SET LIT PARAM LOCAL WORD DEFINE
+    RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD BLOCK EXITBLOCK BR" then filter( i + 2, result,src)
+   else if name = "FREF"_1 then filter( i+2,result+src_(i+1),src)
+   else  if name = "WORDS COMMENT"_1 then
+   filter( i + toint.src_(i + 1) + 2,result, src)
+   else  filter( i+1, result+name,src)
+     
+ function calls(a:libsym) seq.word   
+   let d= codedown.fsig.a
+   if (d_2)_1="T"_1 then empty:seq.word else 
+   filter(1,"",instruction.a)
 
-function filter(d:intercode, i:int)seq.int
- let inst =(coding.d)_i
- let name = mangledname.inst
-  if name in "SET WORD WORDS DEFINE LOCAL LIT PARAM IDXUC LIT   EXITBLOCK BLOCK RECORD   BR if CONTINUE LOOPBLOCK FINISHLOOP FIRSTVAR"then empty:seq.int
-  else if name="FREF"_1 then code.inst else 
-  if name in "CONSTANT"then
-    @(+, filter.d, empty:seq.int,code.inst)
-  else [i]
+   
+function find(coding:seq.inst,i:int,mangledname:word)  seq.word
+   if i > length.coding then "not found" else
+   let ins=coding_i
+   if mangledname= (towords.ins)_1 then 
+     let c=if  "SIMPLE"_1 in flags.ins then code.ins else empty:seq.int
+     astext5(coding,c) 
+    else 
+      find(coding,i+1,mangledname) 
+      
+function stripparsedfunc(src:seq.word) seq.word
+if length.src > 0 ∧ (src)_1 = "parsedfunc"_1 then
+         subseq(src ,toint.(src)_2 + 3, length.src) else src
+      
+function find2(coding:seq.inst, known:symbolset, sym2:symbol) libsym
+  let mangledname=mangledname.sym2
+  let t=find2(coding,known,mangledname)
+  if isempty.t then libsym(resulttype.sym2,mangledname,"")
+  else t_1
+  
  
+  
+function find2(coding:seq.inst, known:symbolset, mangledname:word) seq.libsym
+  let sym=lookupsymbol(known,mangledname) 
+ // let ok=if isdefined.sym then true else let d=codedown.mangledname   length.d > 1 &and d_2 =   "builtin "
+  assert  ok report "HJK"+mangledname //
+  if last.towords.modname.sym in "builtin local para" then empty:seq.libsym else
+  let t= find (coding,1,mangledname)
+  let src=stripparsedfunc.if t="not found" then src.sym else t
+     let src2= if src="PARAM 1"+mangledname+"builtinZinternal1Zinternal1" then
+       "" else src
+     [libsym(resulttype.sym,mangledname,src2)]
+    
+function close(intercode:intercode,   known:symbolset,toprocess:seq.libsym,have:set.word,processed:seq.libsym) seq.libsym 
+     let more=asset.@(+,calls,"",toprocess)-have
+     if isempty.more then processed+toprocess else 
+    let new=@(+,find2(coding.intercode,known),empty:seq.libsym,toseq.more)
+     close(intercode,known,new,have &cup more,processed+toprocess)
+ 
+  
+function find(t:worddict.libsym,s:symbol) seq.libsym lookup(t,mangledname.s)
+
+function libmod (t:worddict.libsym, f:firstpass) seq.libmod
+     if not.exportmodule.f &or isabstract.modname.f then empty:seq.libmod
+     else  
+       let e=sort.@(+,find.t,empty:seq.libsym,toseq.exports.f)
+       assert length.e=cardinality.exports.f report "DIFF libmods"
+      [libmod(false, abstracttype.modname.f,empty:seq.libsym,e, empty:seq.mytype)]
+    
+use seq.libmod
+
+use seq.mytype
+
+function add(t:worddict.libsym,l:libsym) worddict.libsym  add(t,fsig.l,l) 
+  
 
 function astext(s:seq.inst, i:int)seq.word
  let f = towords.s_i
-  if f_1 = "CONSTANT"_1 then   astext5(s,code.s_i)+"CRECORD"+toword.length.code.s_i
-   else if f_1 = "PARAM"_1 then"PARAM" + toword(- toint.f_2 - 1)
-  else if f_1 in " DEFINE  "then""
-  else if f_1 in "SET WORD WORDS LOCAL LIT PARAM RECORD FREF EXITBLOCK BR BLOCK xDEFINE"then f else [ f_1]
+  if f_1 = "CONSTANT"_1 then   astext5(s,code.s_i)+"RECORD"+toword.length.code.s_i
+  else if f_1 = "PARAM"_1 then"PARAM" + toword(- toint.f_2 - 1)
+  else if f_1 in "SET WORD WORDS LOCAL LIT PARAM RECORD FREF EXITBLOCK BR BLOCK DEFINE"then f else [ f_1]
 
 function astext5(s:seq.inst, d:seq.int)seq.word @(+, astext.s,"", d)
 
-function tolibsym(d:intercode, i:int)seq.libsym
- let a =(coding.d)_i
-  if mangledname.a in "CONSTANT EQL RECORD" ∨ "builtin"_1 in flags.a then
-  empty:seq.libsym
-  else
-   let inst = if"STATE"_1 in flags.a then [ mangledname.a,"STATE"_1,"EXTERNAL"_1]
-   else
-    let body = simpleonly(d, i)
-     if length.body > 0 then 
-      let b=astext5(coding.d,code.a) + flags.a 
-  //    assert not("EXITBLOCK"_1 in b) report b+"&br"+@(+,towords,"",@(+,_.coding.d,empty:seq.inst,code.a))
-  //    b
-     else"EXTERNAL"
-    [ libsym(returntype.a, mangledname.a, inst)]
 
-type mapresult3 is record syms:set.libsym, mods:seq.libmod
+----------------------------------
 
-type mapresult32 is record syms:set.libsym, libsyms:seq.libsym
+function addlibsym(s:libsym) int
+      addconstant.[aseinst("WORD"+fsig.s,empty:seq.int) ,addwords.returntype.s ,addwords.instruction.s]
+     
+function addconstant(t:seq.int) int aseinst("CONSTANT"+@(+,toword,"",t),t)
 
-function map(known:symbolset, r:mapresult3, l:firstpass)mapresult3
- if not.exportmodule.l then r
- else if isabstract.modname.l then
- mapresult3(syms.r
-  , mods.r
-  + libmod(true, abstracttype.modname.l, @(+, tolibsym4, empty:seq.libsym, toseq.defines.l), @(+, tolibsym4, empty:seq.libsym, toseq.exports.l), uses.l))
- else
-  let d = @(findelement.known, identity, mapresult32(syms.r, empty:seq.libsym), toseq.exports.l)
-  let e = @(findelement.known, identity, mapresult32(syms.d, empty:seq.libsym), toseq.exports.l)
-   mapresult3(syms.e, mods.r + libmod(false, abstracttype.modname.l, libsyms.d, libsyms.e, empty:seq.mytype))
+function addwords(t:seq.word) int aseinst("WORDS"+toword.length.t+t,empty:seq.int)
 
-function tolibsym4(s:symbol)libsym
- let src = if length.src.s > 0 ∧ (src.s)_1 = "parsedfunc"_1 then
- subseq(src.s, toint.(src.s)_2 + 3, length.src.s)
- else src.s
-  assert not("parsedfunc"_1 in src)report src
-   libsym(resulttype.s, mangledname.s, src)
+function addmytype(t:mytype) int  addwords(towords.t)
 
-function findelement(known:symbolset, r:mapresult32, s:symbol)mapresult32
- let z = findelement(libsym(resulttype.s, mangledname.s,""), syms.r)
-  if isempty.z then
-  let t1 = lookupsymbol(known, mangledname.s)
-   let t = tolibsym4.t1
-    // assert src.t1 in ["EXTERNAL"]report"ERR33"+ print2.t1 //
-    mapresult32(syms.r + t, libsyms.r + t)
-  else mapresult32(syms.r, libsyms.r + z_1)
+use seq.mytype
 
-Function tofirstpass(m:libmod)firstpass
- firstpass(mytype.if parameterized.m then"T" + modname.m else [ modname.m], uses.m, 
- @(+, tosymbol, empty:set.symbol, defines.m), @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol, false)
+function addseq(s:seq.int) int let t=[ aseinst("LIT 0",empty:seq.int), aseinst("LIT"+toword.length.s,empty:seq.int)]+s
+ aseinst("CONSTANT"+@(+,toword,"",t),t)
 
-Function tofirstpass(l:liblib)seq.firstpass @(+, tofirstpass, empty:seq.firstpass, mods.l)
+ 
+function addlibmod(s:libmod) int 
+    addconstant.[aseinst("LIT"+if parameterized.s then "1" else "0",empty:seq.int)
+     ,aseinst("WORD"+modname.s,empty:seq.int)
+     ,addseq.@(+,addlibsym,empty:seq.int,defines.s)
+      ,addseq.@(+,addlibsym,empty:seq.int,exports.s)
+    ,addseq.@(+,addmytype,empty:seq.int,uses.s)]
+
+Function addlibmods(s:seq.libmod,i:intercode) intercode
+    let b=length.additionalinst.0
+    let last=addseq.@(+,addlibmod,empty:seq.int,s)
+    let c=additionalinst(b+1)
+    assert b=length.coding.i report "FAIL 15"
+    assert last=b+length.c report "FAIL 16"
+      intercode(  coding.i+c,defines.i)

@@ -34,7 +34,7 @@ use stdlib
 
 use UTF8
 
-use words
+/use words
 
 use tree.seq.word
 

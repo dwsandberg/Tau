@@ -1,10 +1,15 @@
-Module codegen
+#!/usr/local/bin/tau
+
+
+run mylib testnew
+
+Module codegennew
 
 use seq.int
 
-use ipair.Lcode
+use ipair.Lcode2
 
-use seq.Lcode
+use seq.Lcode2
 
 use UTF8
 
@@ -68,7 +73,7 @@ function funcdec(f:inst)seq.int
  let discard = C.mangledname.f
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
 
-Function codegen5(fs:intercode, thename:word, libmods:seq.libmod)seq.bits
+Function codegen(fs:intercode, thename:word, libmods:seq.libmod)seq.bits
  let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 "
  + merge."llvm.sqrt.f64"
  + merge."llvm.sin.f64"
@@ -81,9 +86,8 @@ Function codegen5(fs:intercode, thename:word, libmods:seq.libmod)seq.bits
    // let zx2a = createfile("stat.txt", ["in codegen0.1"])//
     // let zx2b = createfile("stat.txt", ["in codegen0.2"]+ aa)//
     let match5map = @(buildtemplates, identity, empty:seq.match5, coding.fs)
-    // assert false report fullinst.last.match5map //
-    let libmods2=arg.last.match5map
-     // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
+  let libmods2=arg.last.match5map
+      // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
      // assert false report checkmap.match5map //
      let bodies = @(+, addfuncdef(match5map, coding.fs), empty:seq.internalbc, defines.fs)
      let profilearcs2 = profilearcs
@@ -91,11 +95,11 @@ Function codegen5(fs:intercode, thename:word, libmods:seq.libmod)seq.bits
       // let libsyms = @(+, tolibsym(coding.fs, codes.fs), empty:seq.libsym, defines.fs)//
       let profilearcs3 = addwordseq2( profilearcs2)
       let liblib = addliblib( [thename],  libmods2)
-      let x = C(array(4, i64)
+       let x = C(array(4, i64)
       , [ AGGREGATE, profilearcs3, C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), 
                                    C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profclocks"]), 
                                    C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profspace"])])
-      let libnametype = array(length.decodeword.thename + 1, i8)
+       let libnametype = array(length.decodeword.thename + 1, i8)
       let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])
       let bodytxts = [ BLOCKCOUNT(1, 1)
       + RET(1, C(i64, [ CONSTCECAST, 9, typ.ptr.array(4, i64), C."profstat"]))
@@ -136,130 +140,153 @@ function profiletype llvmtype array(-3, i64)
 
 Function addfuncdef(match5map:seq.match5, coding:seq.inst, i:int)internalbc
  let f = coding_i
- let l = Lcode(emptyinternalbc, empty:seq.localmap, 1, nopara.f + 1, empty:seq.int, empty:seq.Lcode, empty:seq.int, 0)
- let g5 = if"PROFILE"_1 in flags.f then mangledname.f else"noprofile"_1
+ let l = Lcode2(emptyinternalbc, paramap(nopara.f,empty:seq.localmap), 1, nopara.f + 1, empty:stack.int, empty:stack.Lcode2)
+ let g5 =   if "PROFILE"_1 in flags.f then mangledname.f else"noprofile"_1
  let r = @(processnext.g5,_.match5map, l, (code.f))
-  BLOCKCOUNT(1, noblocks.r) + code.r + RET(regno.r + 1, last.args.r)
+  BLOCKCOUNT(1, noblocks.r) + code.r + RET(regno.r + 1, top.args.r)
 
-type Lcode is record code:internalbc, lmap:seq.localmap, noblocks:int, regno:int, args:seq.int, blocks:seq.Lcode, tailphi:seq.int, loopblock:int
+type Lcode2 is record code:internalbc, lmap:seq.localmap, noblocks:int, regno:int, args:stack.int,
+ blocks:stack.Lcode2
+ 
+ 
+
+use stack.Lcode2
+
+use stack.int
+
 
 type localmap is record localno:int, regno:int
 
-function push(l:Lcode, code:internalbc, regno:int, arg:int)Lcode
- Lcode(code, lmap.l, noblocks.l, regno, push(args.l ,arg) , blocks.l, tailphi.l, loopblock.l)
+function paramap( i:int ,result:seq.localmap) seq.localmap
+if i=0 then result else 
+paramap(i-1,result+localmap(i, -i-1))
 
-function push(l:Lcode, arg:int)Lcode
- Lcode(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg), blocks.l, tailphi.l, loopblock.l)
- 
-function top(l:seq.Lcode,n:int)  seq.Lcode  reverse.subseq(l,1,n) 
+function length(s:stack.int) int length.toseq.s
 
-function  push(args:seq.int,arg:int) seq.int args+ [ arg]
+use otherseq.Lcode2
 
-function pop(a:seq.int, pop:int) seq.int subseq(a, 1, length.a - pop)
-
-function poppush(a:seq.int, pop:int, new:int)seq.int push(pop(a, pop),   new )
-
-function top(a:seq.int, n:int)seq.int subseq(a, length.a - n + 1, length.a)
-
-function top(a:seq.int) int last.a  
-
-function push(l:seq.Lcode,a:Lcode) seq.Lcode  [a]+l 
-
-use otherseq.Lcode
-
-function processnext(profile:word, l:Lcode, m:match5)Lcode
+function processnext(profile:word, l:Lcode2, m:match5)Lcode2
  let inst = inst.m
  let instarg = instarg.m
  let action = action.m
   if action = "CALL"_1 then
   let noargs = arg.m
    let args = top(args.l, noargs)
-    if profile = "noprofile"_1 ∨ profile = inst then
+    if  profile = "noprofile"_1 ∨ profile = inst then
     let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [ -1] + args)
-      Lcode(code.l + c, lmap.l, noblocks.l, regno.l + 1, poppush(args.l, noargs, -(regno.l + 1)), blocks.l, tailphi.l, loopblock.l)
+      Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
     else
      // if callee ="PROCESS2"_1 then let discard = if noargs = 1 ∧ nosons(t_1)= 5 then profile(profile, arg.label(t_1_3))else Case of CONST insteand of record as arg 0 addcode(l.sons, c, -(regno.l.sons + 1), 1)else //
      profilecall(profiletype, l, args, C.[ inst], profile(profile, inst))
-  else if action = "ACTARG"_1 then push(l, arg.m)
-  else if action = "LOCAL"_1 then push(l, getloc(lmap.l, toint.instarg, 1))
+  else if action = "ACTARG"_1 then 
+  Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
+  else if action = "LOCAL"_1 then 
+   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, getloc(lmap.l, toint.instarg, 1)), blocks.l)
   else if action = "TEMPLATE"_1 then
-  let newcode = usetemplate(m, regno.l, args.l)
+  let newcode = usetemplate(m, regno.l, toseq.args.l)
     // assert inst ≠"CALLIDX"_1 report astext.addtobitstream(10000, empty:bitpackedseq.bit, newcode)//
     let noargs = arg.m
-     Lcode(code.l + newcode, lmap.l, noblocks.l, regno.l + length.m, poppush(args.l, noargs, -(regno.l + length.m)), blocks.l, tailphi.l, loopblock.l)
+     Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + length.m, push(pop(args.l, noargs), -(regno.l + length.m)), blocks.l)
   else
    assert action = "SPECIAL"_1 report"UNKNOWN ACTION" + action
     if inst in "EXITBLOCK" then
-     let tmp= if instarg="2"_1 then pop(args.l,1) else args.l
-     let exitblock=       Lcode(code.l, lmap.l, noblocks.l , regno.l, push(tmp,0), blocks.l,  tailphi.l, loopblock.l)
-    Lcode(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:seq.int, [ exitblock] + blocks.l, tailphi.l, loopblock.l)
+           assert   instarg="1"_1 &and length.toseq.args.l > 0 report "fail 5e"+instarg
+     let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(args.l,0), blocks.l)
+    Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))
     else if inst in "BR"  then
-            let tmp= if instarg="4"_1 then pop(args.l,1) else args.l
+           assert   instarg="3"_1 &and length.toseq.args.l > 2 report "fail 5b"
        let cond=
         let newcode = CAST(regno.l + 1, top(args.l,toint.instarg)_1, typ.i1, CASTTRUNC)
-        Lcode(code.l + newcode, lmap.l, noblocks.l, regno.l + 1, push(tmp,1), blocks.l,  tailphi.l, loopblock.l)
-      Lcode(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l + 1, empty:seq.int, [ cond] + blocks.l, tailphi.l, loopblock.l)
+        Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + 1, push(args.l,1), blocks.l)
+      Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l + 1, empty:stack.int, push(blocks.l,cond))
     else if inst in "BLOCK"  then
-     let no=toint.instarg
-      let tmp= top(blocks.l,no)
-       let newcode = processblk(tmp,1,empty:seq.localmap,BR(regno.l, noblocks.l- 1)) 
-        let newstack =push(pop(args.tmp_1, 4)  , -(regno.l + 1))
-      Lcode(newcode, lmap.l, noblocks.l , regno.l + 1,  newstack, subseq(blocks.l, no+1, length.blocks.l), tailphi.l, loopblock.l)
-      else // if inst = "DEFINE"_1 then
-    Lcode(code.l, lmap.l + localmap(toint.instarg, last.args.l), noblocks.l, regno.l, subseq(args.l, 1, length.args.l - 1), [ l] + blocks.l, tailphi.l, loopblock.l)
-    else if inst = "SET"_1 then
-    Lcode(code.l, lmap.(blocks.l)_1, noblocks.l, regno.l, args.l, subseq(blocks.l, 2, length.blocks.l), tailphi.l, loopblock.l)
-    else  // if inst = "DEFINE"_1 then
-    Lcode(code.l,  [localmap(toint.instarg, top.args.l)]+lmap.l, noblocks.l, regno.l, pop(args.l,1),  blocks.l, tailphi.l, loopblock.l)
+     let no=toint.instarg 
+      let blks= top(blocks.l,no)
+      assert length.blks=no report "XXXXXX arg"+instarg+profile
+       let rblk = processblk(blks,1,empty:seq.localmap,BR(regno.l, noblocks.l- 1)) 
+       //       assert length.phi.rblk > 3 report  "phi"+@(+,toword,"",phi.rblk) //
+        let firstblkargs=args.blks_1
+        let kind=top.firstblkargs
+        let popno=if kind=1 then 
+          // stack from top is kind,br label,br label, cond exp //
+          4
+        else 
+         assert  top.firstblkargs=2 report "Code Gen--not expecting first blk kind"+toword.kind+profile
+           // stack from top is  kind,noexps,firstvar,  exps //
+            top.pop.firstblkargs + 3
+         if length.phi.rblk=2 &and false then
+          Lcode2(code.rblk, lmap.l, noblocks.l , regno.l,  push(pop(firstblkargs, popno),(phi.rblk)_2), pop(blocks.l, no))  
+         else 
+       let newstack =push(pop(firstblkargs, popno)  , -(regno.l + 1))
+      let newcode=code.rblk+phiinst(regno.last.blks, typ.i64, phi.rblk,1)
+      Lcode2(newcode, lmap.l, noblocks.l , regno.l + 1,  newstack, pop(blocks.l, no))
+    else if inst = "DEFINE"_1 then
+    Lcode2(code.l,  [localmap(toint.instarg, top.args.l)]+lmap.l, noblocks.l, regno.l, pop(args.l,1),  blocks.l)
     else if inst = "SET"_1 then l
-     else   if inst = "LOOPBLOCK"_1 then
-    let varcount = toint.instarg - 1
-     let firstvar = top.args.l
+     else if inst = "LOOPBLOCK"_1 then
+     let varcount = toint.instarg - 1
+     let firstvar = constvalue.top.args.l
      let bodymap = @(addloopmapentry(firstvar, regno.l), identity,lmap.l, arithseq(varcount, 1, 1))
-     let tailphi = [ noblocks.l - 1]
-     + subseq(args.l, length.args.l - varcount, length.args.l - 1)
-     let k = Lcode(code.l, lmap.l, noblocks.l, regno.l, subseq(args.l, 1, length.args.l - varcount - 1), blocks.l, tailphi.l, loopblock.l)
-      Lcode(emptyinternalbc, bodymap, noblocks.l + 1, regno.l + varcount, [ varcount], [ k] + blocks.l, tailphi, noblocks.l)
-    else if inst = "FINISHLOOP"_1 then
-    let b =(blocks.l)_1
-     let varcount =(args.l)_(length.args.l - 1)
-     let newcode = BR(regno.b + 1, loopblock.l) + phiinst(regno.b, typ.i64, tailphi.l, varcount)
-     + code.l
-      Lcode(code.b + newcode, lmap.b, noblocks.l, regno.l, args.b + [ top.args.l], subseq(blocks.l, 2, length.blocks.l), tailphi.b, loopblock.b)
-    else if inst = "CONTINUE"_1 then
-    let noargs = toint.instarg
-     let block = noblocks.l
-     let tailphi = tailphi.l + [ block - 1]
-     + subseq(args.l, length.args.l - noargs + 1, length.args.l)
-      Lcode(code.l + BR(regno.l, loopblock.l), lmap.l, block + 1, regno.l, poppush(args.l, noargs, -1), blocks.l, tailphi, loopblock.l)
+     let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(push(args.l,varcount),2), blocks.l)
+    Lcode2(emptyinternalbc, bodymap, noblocks.l + 1, regno.l+ varcount, empty:stack.int,  push( blocks.l,exitblock) )  
+    else  if inst = "CONTINUE"_1 then
+    let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(args.l,3), blocks.l)
+    Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))  
     else 
-     assert inst = "RECORD"_1 report"SPECIAL" + inst
+     assert inst = "RECORD"_1 report"code gen SPECIAL" + inst
      let noargs = toint.instarg
      let args = top(args.l, noargs)
      let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceZbuiltinZint", -1, C64.noargs)
      + CAST(regno.l + 2, -(regno.l + 1), typ.ptr.i64, CASTINTTOPTR)
-      Lcode(value.@(setnextfld, identity, ipair(regno.l + 2, code.l + newcode), args), lmap.l, noblocks.l, regno.l + 2 + noargs, poppush(args.l, noargs, -(regno.l + 1)), blocks.l, tailphi.l, loopblock.l)
+      Lcode2(value.@(setnextfld, identity, ipair(regno.l + 2, code.l + newcode), args), lmap.l, noblocks.l, regno.l + 2 + noargs, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
 
 
-function processblk(blks:seq.Lcode,i:int, map:seq.localmap,exitbr:internalbc) internalbc
+function processblk(blks:seq.Lcode2,i:int, map:seq.localmap,exitbr:internalbc) processblkresult
          processblk(blks,1,exitbr,emptyinternalbc,1,empty:seq.int,empty:seq.int) 
+         
+function kind(a:Lcode2) word toword.(top.args.a) 
+
+type processblkresult  is record code:internalbc,phi:seq.int
      
-function processblk(    blks:seq.Lcode,i:int, exitbr:internalbc,code:internalbc,varcount:int,phi:seq.int,tailphi:seq.int) internalbc
-    assert length.blks=3 report "CHECK j"
-   if i > length.blks then
-         code+ phiinst(regno.last.blks, typ.i64, phi,varcount)   
-      else let l=blks_i
+function processblk(    blks:seq.Lcode2,i:int, exitbr:internalbc,code:internalbc,varcount:int,phi:seq.int,tailphi:seq.int) processblkresult
+    if i > length.blks then
+        let firstblk=blks_1
+        let code1= if top.args.firstblk= //  loopblock // 2 then
+            let noargs = top.pop.args.firstblk
+                     //    assert false report "JKL"+    @(+,toword,"",  tailphi ) //
+            code.firstblk+BR(regno.firstblk + 1, noblocks.firstblk) + phiinst(regno.firstblk, typ.i64, tailphi, noargs)+code
+         else code
+         //  code1 + phiinst(regno.last.blks, typ.i64, phi,varcount)   //
+         processblkresult(code1,phi)
+       else let l=blks_i
+         assert length.toseq.args.l > 0 report "XXXXXX"+toword.length.blks+toword.i
          let kind=top.args.l
           if kind=0 then // exit block //
-           assert length.args.l = 2 report "check l"
+           assert length.args.l &ge 2 report "check l"
            let t=top(args.l, varcount+1)
            let t2=subseq(t,1,varcount)
            processblk(blks,i+1,exitbr, code+code.l+exitbr,varcount,phi+ [ noblocks.l - 1] +  t2,tailphi )
-        else // br block //
-                assert length.args.l > 3 report "check m"+@(+,toword, "",[kind]+args.l)
-            let args=top(args.l,4) 
-            assert [2,3]=[constvalue(args_2),constvalue(args_3)] report " check o"
-          let newcode=BR(regno.l + 1, noblocks.blks_(constvalue(args_2)- 1 ),   noblocks.blks_(constvalue(args_3)- 1 ),-regno.l)
+        else if kind=2 then // LOOPBLOCK //
+           //   assert false report "L"+@(+,toword,"",args.l) //
+          let noargs = top.pop.args.l
+        //  let firstvar = top.pop.args.l //
+           let newtailphi = [ noblocks.l - 1] + top(pop.pop.pop.args.l,noargs)
+         processblk(blks,i+1,exitbr,    code, varcount,phi,newtailphi) 
+        else if kind=3 then // CONTINUE //
+           assert kind.blks_1 ="2"_1   report "incorrect format on block"+@(+,kind,"",         blks)  
+           let noargs = top.pop.args.blks_1
+                 //  assert false report "C"+@(+,toword,"",args.blks_1) +"noargs:"+toword.noargs //
+          let newtailphi = tailphi + [ noblocks.l - 1]+  top( pop.args.l,noargs)
+          let newcode=BR(regno.l, noblocks.blks_1)
+          processblk(blks,i+1,exitbr,    code+code.l+ newcode, varcount,phi,newtailphi) 
+        else
+          // br block //
+           assert kind=1 report "expecting br block"+toword.kind
+                assert length.args.l > 3 report "check m"+@(+,toword, "",[kind]+toseq.args.l)
+                 let args=top(args.l,4) 
+                assert between(constvalue(args_2)- 1,1,length.blks) &and 
+                between(constvalue(args_3)- 1,1,length.blks) report "check mm"
+           let newcode=BR(regno.l + 1, noblocks.blks_(constvalue(args_2)- 1 ),   noblocks.blks_(constvalue(args_3)- 1 ),-regno.l)
          processblk(blks,i+1,exitbr,    code+code.l+ newcode, varcount,phi,tailphi) 
     
  8XAT6qVV3qHJ9uLsowg2NmUa  
@@ -272,15 +299,10 @@ Function setnextfld(p:ipair.internalbc, arg:int)ipair.internalbc
 function getloc(l:seq.localmap, localno:int, i:int)int
  if localno.l_i = localno then regno.l_i else getloc(l, localno, i + 1)
 
-
-exp1 exp2 exp2 FIRSTVAR <firstvar> LOOPBLOCK 4 <loop body> FINISHLOOP 2
-
-function loopmapentry(baselocal:int, regbase:int, i:int)localmap localmap(baselocal + i - 1, - regbase - i)
-
 function addloopmapentry(baselocal:int, regbase:int,l:seq.localmap,i:int) seq.localmap
         [localmap(baselocal + i - 1, - regbase - i)]+l
-
-function profilecall(profiletype2:llvmtype, l:Lcode, args:seq.int, callee:int, idx:int)Lcode
+ 
+function profilecall(profiletype2:llvmtype, l:Lcode2, args:seq.int, callee:int, idx:int)Lcode2
  let base = regno.l
  let block = noblocks.l
  let p1 = C(ptr.i64, [ CONSTGEP, typ.profiletype2, typ.ptr.profiletype2, C."profclocks", typ.i32, C32.0, typ.i64, C64.idx])
@@ -315,7 +337,7 @@ function profilecall(profiletype2:llvmtype, l:Lcode, args:seq.int, callee:int, i
  + LOAD(base + 20, - base - 1, typ.i64, align8, 0)
  + BINOP(base + 21, - base - 20, C64.1, 1, typ.i64)
  + STORE(base + 22, - base - 1, - base - 21, align8, 0)
-  Lcode(code.l + c, lmap.l, noblocks.l + 3, regno.l + 21, poppush(args.l, length.args, - base - 19), blocks.l, tailphi.l, loopblock.l)
+  Lcode2(code.l + c, lmap.l, noblocks.l + 3, regno.l + 21, push(pop(args.l, length.args), - base - 19), blocks.l)
 
 Function encode(erecord.stat5, stat5)encoding.stat5 export
 
@@ -341,17 +363,17 @@ function callarc(a:stat5)seq.word [ caller.a, callee.a]
 
 Function profilearcs seq.word @(+, callarc,"", orderadded.statencoding)
 
-/type debug is encoding ipair.Lcode
+/type debug is encoding ipair.Lcode2
 
-/function hash(i:ipair.Lcode)int index.i
+/function hash(i:ipair.Lcode2)int index.i
 
-/function =(a:ipair.Lcode, b:ipair.Lcode)boolean index.a = index.b
+/function =(a:ipair.Lcode2, b:ipair.Lcode2)boolean index.a = index.b
 
-/function print(p:ipair.Lcode)seq.word let l = value.p {"
+/function print(p:ipair.Lcode2)seq.word let l = value.p {"
 &br"+ state.l +"regno ="+ toword.regno.l + @(+, toword,"", args.l)+ @(+, printL,"", blocks.l)}
 
 +"code"+ print.code.l }
 
-/function printL(x:Lcode)seq.word @(+, toword,"[", args.x)+"]"
+/function printL(x:Lcode2)seq.word @(+, toword,"[", args.x)+"]"
 
 /Function dump seq.word @(+, print,"", mapping.debug)

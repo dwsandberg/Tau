@@ -1,6 +1,6 @@
 Module doc
 
-use display
+/use display
 
 use displaytextgraph
 
@@ -14,7 +14,7 @@ use main2
 
 use seq.mytype
 
-use prettylib
+use newpretty 
 
 use stdlib
 
@@ -38,9 +38,9 @@ use tree.word
 
 Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html //
 let d = @(+, addselect,"", gettext."tools/doc.txt")
-let x1 = createfile("doc.html", [ htmlheader + processpara.d])
+  let x1 = createfile("doc.html",   htmlheader + processpara.d )  
  // let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])//
- let y1 = createfile("testall.html", [ htmlheader + processpara.htmlcode."testall"])
+   let y1 = createfile("testall.html",   htmlheader + processpara.htmlcode."testall")  
   d
 
 function addselect(s:seq.word)seq.word" &{ select X" + s + " &}"

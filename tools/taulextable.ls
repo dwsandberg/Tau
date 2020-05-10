@@ -20,7 +20,7 @@ use seq.seq.word
 
 use set.word
 
-use words
+/use words
 
 type lexaction1 is record w:word, tokenno:int, label:word
 

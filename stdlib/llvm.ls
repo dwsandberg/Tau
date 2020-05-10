@@ -84,13 +84,10 @@ function hash(a:llvmtypeele)int hash.toseq.a
 function assignencoding(l:int, a:llvmtypeele) int assignrandom(l,a)
 
 
-function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
+function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b 
 
 type llvmconst is record typ:int, toseq:seq.int
 
-/function llvmconst(typ:int, toseq:seq.int)llvmconst llvmconst(typ, toseq, 0)
-
-/function addindex(a:llvmconst, i:int)llvmconst llvmconst(typ.a, toseq.a, i)
 
 type llvmconsts is encoding llvmconst
 
@@ -232,8 +229,8 @@ function addrecord(abbrevlength:int, bits:bitpackedseq.bit, a:seq.int)bitpackeds
 type trackconst is record bits:bitpackedseq.bit, lasttype:int, blockstart:int
 
 function constrecords(z:trackconst, l:llvmconst)trackconst
- FORCEINLINE
- .// keep track of type of last const processed and add record when type changes //
+// FORCEINLINE
+ . // // keep track of type of last const processed and add record when type changes //
  let MODABBREVLEN = 3
  let TYPEABBREVLEN = 4
   if typ.l = -1 then

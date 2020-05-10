@@ -56,7 +56,9 @@ Function readonly(liblib)boolean export
 
 Function =(a:libsym, b:libsym)boolean fsig.a = fsig.b
 
-Function ?(a:libsym, b:libsym)ordering fsig.a ? fsig.b
+use otherseq.char
+
+Function ?(a:libsym, b:libsym)ordering decodeword.fsig.a ? decodeword.fsig.b
 
 function =(a:libmod, b:libmod)boolean modname.a = modname.b
 

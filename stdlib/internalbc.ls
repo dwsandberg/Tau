@@ -232,8 +232,8 @@ type internal2 is record state:int, offset:int, result:bitpackedseq.bit
 Function addtobitstream(offset:int, bs:bitpackedseq.bit, b:internalbc)bitpackedseq.bit result.@(add2.offset, identity, internal2(0, offset, bs), finish.b)
 
 function add2(offset:int, r:internal2, val:int)internal2
- FORCEINLINE
- .
+ // FORCEINLINE
+ . //
  let nobits = toint(bits.val ∧ bits.63)
  let bits = bits.val >> 6
  let newstate = if state.r = 0 ∧ nobits = 63 then val else 0

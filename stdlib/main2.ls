@@ -18,7 +18,8 @@ use seq.inst
 
 use intercode
 
-use libdescfunc
+
+use libdesc
 
 use process.liblib
 
@@ -66,24 +67,13 @@ use set.seq.word
 
 use set.word
 
-Function findlibclause(a:seq.seq.word, i:int)seq.word
- assert i < length.a report"No Library clause found"
- let s = a_i
-  if s_1 = "Library"_1 then s else findlibclause(a, i + 1)
-
-function gettext2(libname:word, e:seq.word, a:word)seq.seq.seq.word
- @(+
- , identity
- , empty:seq.seq.seq.word
- , groupparagraphs("module Module", gettext.[ merge([ libname] + "/" + a + ".ls")]))
-
-/function print2(l:libsym)seq.word // print.l +"mn:"+ //""+ fsig.l + instruction.l
 
 type libinfo is record known:symbolset, mods:seq.firstpass
 
 function addliblib(s:seq.word, a:libinfo, l:liblib)libinfo
  if(libname.l)_1 in s then
- libinfo(@(+, tosymbol, known.a, defines.last.mods.l), tofirstpass.l + mods.a)
+ let b=tofirstpass.l
+ libinfo(@(+, tosymbol, known.a, defines.last.mods.l), b + mods.a)
  else a
 
 function loadlibs(dependentlibs:seq.word, i:int, time:int)int
@@ -93,7 +83,7 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
    assert stamp ≥ time report"library" + dependentlibs_i + "is out of date" + toword.time + toword.stamp
     loadlibs(dependentlibs, i + 1, stamp)
 
-function subcompilelib(libname:word)seq.word
+function subcompilelib(libname:word,old:boolean)seq.word
  PROFILE
  .
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
@@ -104,24 +94,45 @@ function subcompilelib(libname:word)seq.word
  let filelist = subseq(s, 2, min(u - 1, e - 1))
  let exports = subseq(s, e + 1, length.s)
  let b = unloadlib.[ libname]
- let li = if libname in "newimp stdlib imp2"then libinfo(emptysymbolset, empty:seq.firstpass)
+ let li = if libname in "stdlibbak stdlib "then libinfo(emptysymbolset, empty:seq.firstpass)
  else
   let discard5 = loadlibs(dependentlibs, 1, timestamp.loadedlibs_1)
    @(addliblib.dependentlibs, identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
- let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
+// let allsrc = @(+, gettext2(s_2), empty:seq.seq.seq.word, filelist) //
+ let allsrc=groupparagraphs("module Module",getlibrarysrc.libname)
  let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
- let intercode = pass2(symset.p1, toseq.roots.p1, known.li)
- let bc = codegen5(intercode, libname, liblib([ libname], libdesc(roots.p1, intercode, mods.p1, symset.p1)))
+  let bc = if old then
+   let intercode2= pass2(symset.p1, toseq.roots.p1, known.li)
+   let libmods=libdesc(intercode2, mods.p1, symset.p1)
+   codegen5(addlibmods(libmods,intercode2), libname,  libmods)
+    else 
+      let intercode2 = pass2new(symset.p1, toseq.roots.p1, known.li)  
+  let libmods=libdesc(intercode2, mods.p1, symset.p1)
+   codegen(addlibmods(libmods,intercode2), libname,  libmods)
  let z2 = createlib(bc, libname, dependentlibs)
  let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1)
  let name = merge("pass1/" + libname + "." + print.currenttime + ".txt")
  let z = createfile([ name], save)
   "OK"
+  
+use pass2new
 
-Function compilelib2(libname:word)seq.word
+use codegennew
+
+Function mainnew(arg:seq.word) seq.word
+   let libname=arg_1 let modname=arg_2 let funcname=arg_3
+ let p = process.compilelib2(libname,false)
+ if aborted.p then message.p
+ else if subseq(result.p, 1, 1) = "OK" then
+ // execute function specified in arg //
+  let p2 = process.execute.mangle(funcname, mytype.[modname], empty:seq.mytype)
+   if aborted.p2 then message.p2 else result.p2
+ else result.p
+
+Function compilelib2(libname:word,old:boolean)seq.word
  PROFILE
  .
- let p1 = process.subcompilelib.libname
+ let p1 = process.subcompilelib(libname,old)
   if aborted.p1 then"COMPILATION ERROR:" + space + message.p1
   else
    let aa = result.p1
@@ -130,7 +141,7 @@ Function compilelib2(libname:word)seq.word
 Function main(arg:seq.int)outputformat
  let args = towords.UTF8(arg + 10 + 10)
  let libname = args_1
- let p = process.compilelib2.libname
+ let p = process.compilelib2(libname,false)
  let output = if aborted.p then message.p
  else if subseq(result.p, 1, 1) = "OK" ∧ length.args = 3 then
  // execute function specified in arg //
@@ -147,6 +158,7 @@ Function testcomp(s:seq.seq.word)seq.seq.word
  let li = @(addliblib."stdlib", identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
  let r = pass1(allsrc, exports, known.li, asset.mods.li)
   @(+, bindingformat.symset.r, empty:seq.seq.word, mods.r)
+  
 
 Function firstPass(libname:word)seq.seq.word
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
@@ -160,7 +172,8 @@ Function firstPass(libname:word)seq.seq.word
  else
   let discard5 = loadlibs(dependentlibs, 1, timestamp.loadedlibs_1)
    @(addliblib(dependentlibs), identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
- let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
+    let allsrc=groupparagraphs("module Module",getlibrarysrc.s_2)
+ // let allsrc = @(+, gettext2(s_2 ), empty:seq.seq.seq.word, filelist) //
  let r = pass1(allsrc, exports, known.li, asset.mods.li)
   @(+, bindingformat(symset.r), empty:seq.seq.word, mods.r)
 
@@ -240,7 +253,9 @@ Function secondPass(libname:word)seq.seq.word
  else
   let discard5 = loadlibs(dependentlibs, 1, timestamp.loadedlibs_1)
    @(addliblib.dependentlibs, identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
- let allsrc = @(+, gettext2(s_2, exports), empty:seq.seq.seq.word, filelist)
+      let allsrc=groupparagraphs("module Module",getlibrarysrc.s_2)
+ //
+ let allsrc = @(+, gettext2(s_2), empty:seq.seq.seq.word, filelist) //
  let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
  let p2 = pass2(symset.p1, toseq.roots.p1, known.li)
    print.p2 

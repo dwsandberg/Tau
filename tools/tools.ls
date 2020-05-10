@@ -8,7 +8,8 @@ tree.ls xxhash.ls ~/work/jstest
 
 different than stdlib.s packedseq.ls real.ls stdlib.ls UTF8.ls 
 
-Library tools bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph makeDAG prettylib prettyparagraph printbitcodes profile renamemodule svg svggraph taulextable testparser 
+Library tools bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph makeDAG 
+ printbitcodes profile  svg svggraph taulextable testparser 
  uses stdlib 
  exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph 
  makeDAG pretty prettylib printbitcodes profile svg svggraph taulextable testparser tools
@@ -23,15 +24,15 @@ run tools testprofile
 
 /run tools callgraphtest
 
-run tools stdlibdoc
+/run tools stdlibdoc
 
 /run doc createdoc
 
-run tools testhtmlcode
+/run tools testhtmlcode
 
-run genLR1 gentau2
+/run genLR1 gentau2
 
-run taulextable getlextable
+/run taulextable getlextable
 
 
 /run tools testprintBitCodes
@@ -46,7 +47,7 @@ use doc
 
 use main2
 
-use prettylib
+use newpretty 
 
 use printbitcodes
 
@@ -60,19 +61,20 @@ use stdlib
 
 Function testhtmlcode seq.word htmlcode."testall"
 
-Function prettytest seq.word prettylib("test4","")
+/Function prettytest seq.word prettylib("test4","")
 
 Function checkdoclib seq.word doclibrary."tools"
 
 Function testfirstpass seq.word @(+, +("&br &br "),"", firstPass("testall"_1))
 
 Function testprofile seq.word 
-   let a = compilelib2("stdlib"_1)
+   let a = compilelib2("stdlibbak"_1,false)
     a + profileresults."time"
 
 Function testprintBitCodes seq.word printBitCodes."test4.bc"
 
-Function callgraphtest seq.word callgraphbetween("stdlib","libdescfunc other main2")
+Function callgraphtest seq.word callgraphbetween("testall","test5  testall test2 stdlib")
 
 Function stdlibdoc seq.word // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
+
 

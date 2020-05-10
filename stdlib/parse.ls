@@ -247,8 +247,8 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  let thenpart = R_4
    assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)
     assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R)
-    let newcode = code.R_2 + code.R_4 + code.R_6
-     bindinfo(dict.R, newcode + "if", types.thenpart)
+    let newcode = code.R_2 +"LIT 2 LIT 3 BR 3"+ code.R_4 +"EXITBLOCK 1" + code.R_6 +"EXITBLOCK 1 BLOCK 3"
+     bindinfo(dict.R, newcode ,// + "if" // types.thenpart)
  else if ruleno = // E E^E // 18 then opaction(R, input)
  else if ruleno = // E E_E // 19 then opaction(R, input)
  else if ruleno = // E - E // 20 then unaryop(R, input, code.R_1, R_2)
@@ -273,17 +273,17 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
   let name =(code.R_2)_1
    assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:" + name, input, place.R)
    let newdict = dict.R + symbol(name, mytype."local", empty:seq.mytype,(types.e)_1,"")
-    bindinfo(newdict, code.e + "define" + name, types.e)
+    bindinfo(newdict, code.e + "DEFINE" + name, types.e)
  else if ruleno = // E A E // 33 then
  let t = code.R_1
   let f = lookup(dict.R, last.code.R_1, empty:seq.mytype)
    assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name" + last.code.R_1
-    bindinfo(dict.R_1 - f_1, subseq(t, 1, length.t - 2) + code.R_2 + "SET"
+    bindinfo(dict.R_1 - f_1, // subseq(t, 1, length.t - 2) // t + code.R_2 + "SET"
     + last.code.R_1, types.R_2)
  else if ruleno = // E assert E report E E // 34 then
  assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place.R)
    assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place.R)
-   let newcode = code.R_2 + code.R_5 + code.R_4 + "assertZbuiltinZwordzseq if"
+   let newcode= code.R_2 +"LIT 2 LIT 3 BR 3"+ code.R_5 +"EXITBLOCK 1" + code.R_4 +"assertZbuiltinZwordzseq EXITBLOCK 1 BLOCK 3"
     bindinfo(dict.R, newcode, types.R_5)
  else if ruleno = // E I // 35 then
  bindinfo(dict.R,"LIT" + code.R_1, [ mytype."int"])

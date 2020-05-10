@@ -18,27 +18,21 @@ use seq.seq.word
 
 use seq.word
 
-use words
+/use words
 
-Function defaultprec seq.seq.word ["_^","","* / mod ∪ ∩","in + - ∈ ∋","= < > ? ≤ ≠ ≥ >> <<","∧","∨"]
+Function type:characterwidths internaltype export
 
-Function type:prettycontrol internaltype export
 
-type prettycontrol is record preclist:seq.seq.word, chrwidths:seq.int
+type characterwidths is record widths:seq.int 
 
-Function preclist(prettycontrol)seq.seq.word export
-
-Function chrwidths(prettycontrol)seq.int export
-
-Function defaultcontrol prettycontrol prettycontrol(defaultprec, charwidths)
 
 function_(s:seq.int, c:char)int if toint.c = 0 then 0 else s_(toint.c)
 
-Function displaywidth(cw:seq.int, s:seq.word)int @(+,_(cw), 0, toseqint.toUTF8.s)
+Function displaywidth(cw:characterwidths, s:seq.word)int @(+,_(widths.cw), 0, toseqint.toUTF8.s)
 
-Function displaywidth(cw:seq.int, w:word)int @(+,_(cw), 0, decodeword.w)
+Function displaywidth(cw:characterwidths, w:word)int @(+,_(widths.cw), 0, decodeword.w)
 
-function charwidths seq.int dseq(60
+Function charwidths characterwidths characterwidths.dseq(60
 , [ 60, 60, 60, 60, 60, 60, 60, 60, 60, 60
 , 60, 60, 60, 60, 60, 60, 60, 60, 60, 60
 , 60, 60, 60, 60, 60, 60, 60, 60, 60, 60

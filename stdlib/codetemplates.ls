@@ -16,6 +16,7 @@ use intercode
 
 use internalbc
 
+use persistant
 
 use llvm
 
@@ -27,7 +28,7 @@ use deepcopy.match5
 
 use encoding.match5
 
-use process.seq.match5
+/use process.seq.match5
 
 use seq.match5
 
@@ -63,6 +64,8 @@ Function length(match5)int // no of instruction that return results // export
 Function action(match5)word export
 
 Function arg(match5)int export
+
+Function fullinst(match5) seq.word export
 
 
 Function inst(m:match5)word(fullinst.m)_1
@@ -179,12 +182,13 @@ Function buildtemplates(s:seq.match5,xx:inst) seq.match5
     s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0)
     else if inst in "CONSTANT "then
      let args=@(+,getarg.s, empty:seq.int,code.xx)
+       assert true &or length.args &ne 3 &or not(wordref."addZTzbitpackedseqZTzbitpackedseqZT"_1=args_1) report
+         "HERE addc"+@(+,toword,"",args)
      s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
     else if inst in "WORDS"then
       s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2(subseq(fullinst, 3, length.fullinst)))
     else if inst = "WORD"_1 then
-    let discard = registerword.instarg
-      s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.hash.instarg)
+       s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, wordref.instarg)
     else
      let noargs = toint.instarg
      let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)

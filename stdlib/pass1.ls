@@ -97,7 +97,8 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarysyms:symbolset,
   let knownsymbols1 = @(+, identity, librarysyms, toseq.@(∪, defines, empty:set.symbol, simple))
   let knownsymbols = @(+, identity, knownsymbols1, zx)
   let X = @(bind(templates, d2), identity, knownsymbols, simple)
-   linkage(X, sort(simple + abstractmods), asset.roots)
+    assert cardinality(asset.toseq.X &cap asset.toseq.templates)=0 report "CHECK"+toword.cardinality(asset.toseq.X &cap asset.toseq.templates)
+   linkage(@(+,identity,X,toseq.templates), sort(simple + abstractmods), asset.roots)
 
 function processtypedef(defined:set.symbol, undefined:seq.typedesc, i:int, newundefined:seq.typedesc, other:seq.symbol)seq.symbol
  if i > length.undefined then
@@ -354,7 +355,8 @@ function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsym
   else if code_i in "FROMSEQ51Zinternal1"then
   let mn = mangle("_"_1, modname.thissymbol, [ mytype("T" + abstracttype.resulttype.thissymbol), mytype."int"])
    let newknown = known.X(mn, org, dict, modpara, templates, knownsymbols)
-   let f1 ="PARAM 1 LIT 0 IDXUC FREF" + mn + "Q3DZbuiltinZintZint PARAM 1 LIT 0 LIT 0 RECORD 2 if"
+   let f1 ="PARAM 1 LIT 0 IDXUC FREF" + mn + "Q3DZbuiltinZintZint LIT 2 LIT 3 BR 3 PARAM 1 EXITBLOCK 1 LIT 0 LIT 0 RECORD 2 EXITBLOCK 1 
+   BLOCK 3"
     replace(newknown, changesrc(thissymbol, result + f1 + subseq(code, i + 1, length.code)))
   else postbind2(org, dict, modpara, templates, knownsymbols, code, i, result, thissymbol)
 
@@ -367,7 +369,7 @@ function postbind2(org:symbol, dict:set.symbol, modpara:mytype, templates:symbol
    postbind2(org, dict, modpara, templates, knownsymbols, code, i + l, result + subseq(code, i, i + l - 1), thissymbol)
  else if code_i = "COMMENT"_1 then
  postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2 + toint.code_(i + 1), result + subseq(code, i, i + 1 + toint.code_(i + 1)), thissymbol)
- else if code_i in "LIT APPLY RECORD SET PARAM PRECORD WORD"then
+ else if code_i in "LIT APPLY RECORD SET PARAM  WORD DEFINE EXITBLOCK BLOCK BR"then
  postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2, result + subseq(code, i, i + 1), thissymbol)
  else
   let z = X(code_i, org, dict, modpara, templates, knownsymbols)
@@ -375,7 +377,7 @@ function postbind2(org:symbol, dict:set.symbol, modpara:mytype, templates:symbol
 
 function checkforindex(t1:symbol, org:symbol, dict:set.symbol, templates:symbolset, knownsymbols:symbolset)symbolset
  let src = src.t1
-  if not(src_1 = "FREF"_1) ∨ abstracttype.resulttype.t1 = "erecord"_1 then
+  if length.src=0 &or not(src_1 = "FREF"_1) ∨ abstracttype.resulttype.t1 = "erecord"_1 then
   knownsymbols
   else known.X(src_2, org, dict, parameter.modname.t1, templates, knownsymbols)
 

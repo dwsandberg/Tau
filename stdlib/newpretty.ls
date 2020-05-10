@@ -30,6 +30,8 @@ use set.seq.word
 
 use seq.word
 
+use groupparagraphs
+
 
 Function test1 seq.word pretty(" stdlib
  UTF8 bitpackedseq bits blockseq 
@@ -51,6 +53,19 @@ Function gettexts(lib:word, file:word)seq.seq.word
 function gettext2(s:seq.word)seq.seq.word
  if length.s = 0 then empty:seq.seq.word
  else if s_1 in "Function function type use"then [ s]else empty:seq.seq.word
+ 
+ Function htmlcode(libname:seq.word)seq.word
+ let p=prettyfile.getlibrarysrc.libname_1
+ let modules = @(+, findmodules,"", p)
+ " &{ noformat <h1> Source code for Library" + libname + "</h1>  &}" + @(+, ref,"", modules) +
+ @(seperator." &p", identity,"",p)
+
+function ref(modname:word)seq.word
+ '  &{ noformat <a href ="' + merge.["#"_1, modname] + '"> ' + modname
+ + "</a>  &}"
+
+function findmodules(p:seq.word)seq.word if subseq(p,1,2) in[ "&{ noformat"]  then [ p_7]else""
+
 
 ____________________________
 
@@ -76,7 +91,7 @@ function prettyfile(l:seq.seq.word, i:int, uses:seq.seq.word, libbody:seq.seq.wo
    else if s_1 in "Function function type"then
    prettyfile(l, i + 1, uses, libbody + text.(toseq.parse.s)_1, result)
    else if s_1 in "module Module"then
-   let newresult = result + sortuse.uses + libbody + (" &keyword" + s)
+   let newresult = result + sortuse.uses + libbody + (' &{ noformat <hr id =" ' + s_2 + ' " >  &} &keyword ' + s)
      prettyfile(l, i + 1, empty:seq.seq.word, empty:seq.seq.word, newresult)
    else
     let temp = if s_1 in "Library library"then
