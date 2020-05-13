@@ -104,11 +104,11 @@ function subcompilelib(libname:word,old:boolean)seq.word
   let bc = if old then
    let intercode2= pass2(symset.p1, toseq.roots.p1, known.li)
    let libmods=libdesc(intercode2, mods.p1, symset.p1)
-   codegen5(addlibmods(libmods,intercode2), libname,  libmods)
+   codegen5(addlibmods(libmods,intercode2), libname)
     else 
       let intercode2 = pass2new(symset.p1, toseq.roots.p1, known.li)  
   let libmods=libdesc(intercode2, mods.p1, symset.p1)
-   codegen(addlibmods(libmods,intercode2), libname,  libmods)
+   codegen(addlibmods(libmods,intercode2), libname)
  let z2 = createlib(bc, libname, dependentlibs)
  let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1)
  let name = merge("pass1/" + libname + "." + print.currenttime + ".txt")
@@ -257,5 +257,5 @@ Function secondPass(libname:word)seq.seq.word
  //
  let allsrc = @(+, gettext2(s_2), empty:seq.seq.seq.word, filelist) //
  let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
- let p2 = pass2(symset.p1, toseq.roots.p1, known.li)
+ let p2 = pass2new(symset.p1, toseq.roots.p1, known.li)
    print.p2 

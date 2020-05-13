@@ -132,8 +132,10 @@ function ele4(t:encoding.T, a:encodingrep.T)seq.encodingrep.T
 Function decode(erec:erecord.T, t:encoding.T)T
  let inst = getinstance.erec
  let a = decode(inst, t)
-  assert length.a = 1 report"no such encoding" + toword.valueofencoding.t
+  assert length.a = 1 report"no such encoding" + toword.valueofencoding.t+stacktrace
    data.a_1
+
+use stacktrace 
 
 Function valueofencoding(encoding.T)int export
 

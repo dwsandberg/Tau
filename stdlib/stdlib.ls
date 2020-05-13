@@ -363,9 +363,9 @@ exclude stdlib seq
  parse pass1  symbol libdesc
 codetemplates pass2 persistant   llvm  
 reconstruct persistantseq opt2
-symbol parse libdesc internalbc intercode cvttoinst codegen
+symbol parse libdesc internalbc intercode cvttoinst codegen pass2new codegennew funcsig
 exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process  ipair deepcopy
-bitpackedseq packedseq fileio blockseq textio encoding words
+bitpackedseq packedseq fileio blockseq textio encoding words 
    
 
 

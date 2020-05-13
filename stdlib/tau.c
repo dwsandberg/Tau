@@ -64,7 +64,7 @@ struct pinfo2 { BT  deepcopyresult;
 //Start of space allocation
 
 #define blocksize 0xFFFFF
-#define noblocks 8000
+#define noblocks 16000
 #define noencodings 40
 
 
@@ -273,12 +273,6 @@ if (strcmp(libname,"stdlib")==0 ){
  }
 
         
-/* BT (* relocateoffset)(processinfo PD,BT *) = dlsym(RTLD_DEFAULT, "relocateoffsetZreconstructZintzseq");
-if (!relocateoffset) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-}      
-relocateoffset(&sharedspace,consts); */
 
     if (strcmp(libname,"stdlib")==0 ){
    BT (* loaddict)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"loaddictZmaindictZfileresult");

@@ -253,10 +253,7 @@ function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:se
       let t=tree("BLOCK 3",   [tree( "BR",[args_1,tree."LIT 2",tree."LIT 3"] ),
       tree("EXITBLOCK",[args_2]),tree("EXITBLOCK",[args_3])])
       buildcodetreeX(hasstate, push(pop(stk, 3), t), i + 1, src)
-   else if name in "CALLIDX"then
-   let specialnopara = 3
-     buildcodetreeX(hasstate, push(pop(stk, specialnopara), tree([ name], top(stk, specialnopara))), i + 1, src)
-    else if name in "IDXUC"then
+   else if name in "IDXUC"then
    buildcodetreeX(hasstate, push(pop(stk, 2), tree([ name], top(stk, 2))), i + 1, src)
    else if name = "SET"_1 then
    buildcodetreeX(hasstate, push(pop(stk, 2), tree(subseq(src, i, i + 1), top(stk, 2))), i + 2, src)
@@ -268,7 +265,7 @@ function buildcodetreeX(hasstate:boolean, stk:stack.tree.seq.word, i:int, src:se
    else if name = "DEFINE"_1 then 
    // assert false report "here define" //
    buildcodetreeX(hasstate, stk, i + 2, src)
-   else  if name in "RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD BLOCK EXITBLOCK BR"then
+   else  if name in "RECORD APPLY LOOPBLOCK   CONTINUE FINISHLOOP CRECORD BLOCK EXITBLOCK BR"then
      assert not(src_(i+1)="LIT"_1) report "KKK"+name+src
    let size = toint.src_(i + 1)
      assert length.toseq.stk ≥ size report"stack problem APPLY/RECORD" + src
@@ -321,7 +318,7 @@ function hexvalue(i:char)int
 Function calls(t:tree.seq.word)seq.word
  @(+, calls, empty:seq.word, sons.t)
  + if inst.t = "FREF"_1 then [ arg.t]
- else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX  CRECORD STKRECORD TESTOPT
+ else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if   CRECORD  TESTOPT
  BR EXITBLOCK BLOCK"then
  empty:seq.word
  else [ inst.t]
@@ -329,7 +326,7 @@ Function calls(t:tree.seq.word)seq.word
 Function calls(self:word, t:tree.seq.word)seq.arc.word
  @(+, calls.self, empty:seq.arc.word, sons.t)
  + if inst.t = "FREF"_1 then [ arc(self, arg.t)]
- else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX  CRECORD STKRECORD TESTOPT
+ else if inst.t in "WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET DEFINE FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if   CRECORD  TESTOPT
   BR EXITBLOCK BLOCK"then
  empty:seq.arc.word
  else
@@ -613,10 +610,10 @@ function template2(term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)s
   parainst(nopara1 + nopara2 + 1) + "LIT 0" + parainst(nopara1 + nopara2 + 2)
   + "LIT 1 LOOPBLOCK 4 LOCAL 3 LIT 0 IDXUC FREF"
   + ptyp
-  + "Q3DZbuiltinZintZint LOCAL 1 LOCAL 2 LOCAL 3 LIT 3 IDXUC STKRECORD 2 LOCAL 3 LIT 2 IDXUC CONTINUE 3 LOCAL 3 LIT 1 IDXUC LOCAL 1 LIT 1 LIT 6 LOOPBLOCK 3 LOCAL 7 LOCAL 5 Q3EZbuiltinZintZint LOCAL 6"
+  + "Q3DZbuiltinZintZint LOCAL 1 LOCAL 2 LOCAL 3 LIT 3 IDXUC STKRECORDZbuiltinZintZint LOCAL 3 LIT 2 IDXUC CONTINUE 3 LOCAL 3 LIT 1 IDXUC LOCAL 1 LIT 1 LIT 6 LOOPBLOCK 3 LOCAL 7 LOCAL 5 Q3EZbuiltinZintZint LOCAL 6"
   + TERM2PARA
   + "LOCAL 3 LIT 0 IDXUC LIT 0 Q3DZbuiltinZintZint LOCAL 3 LOCAL 7 LIT 1 Q2BZbuiltinZintZint 
-  IDXUC LOCAL 3 LIT 0 IDXUC LOCAL 3 LOCAL 7 CALLIDX if"
+  IDXUC LOCAL 3 LIT 0 IDXUC LOCAL 3 LOCAL 7 callidxZbuiltinZintZTzseqZint if"
   + CALLTERM2
   + TERM1PARA
   + "LOCAL 6 LOCAL 8"

@@ -54,9 +54,15 @@ function wordstype llvmtype array(-1, i64)
 
 Function conststype llvmtype array(-2, i64)
 
+Function profiletype llvmtype array(-3, i64)
+
+
 Function type:match5 internaltype export
 
-type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int
+type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int,code:seq.sig
+
+function match5 ( fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int) match5
+ match5(fullinst,length,parts,action,arg,empty:seq.sig)
 
 
 Function length(match5)int // no of instruction that return results // export
@@ -65,12 +71,21 @@ Function action(match5)word export
 
 Function arg(match5)int export
 
+Function code(match5) seq.sig export
+
+use seq.sig
+
+use seq.seq.sig
+
+Function lowerbits(sig) int export
+
+Function _(m:seq.match5,s:sig) match5   m_lowerbits.s
+
 Function fullinst(match5) seq.word export
 
 
 Function inst(m:match5)word(fullinst.m)_1
 
-Function instarg(m:match5)word(fullinst.m)_2
 
 function =(a:match5, b:match5)boolean fullinst.a = fullinst.b
 
@@ -130,18 +145,17 @@ match5("Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, t
 + GEP(3, 1, typ.i64, -2, C64.0)
 + STORE(4, -3, ibcsub3, align8, 0)
 + CAST(4, -1, typ.i64, 9))
-, match5("STKRECORD"_1, 3, ALLOCA(1, typ.ptr.i64, typ.i64, C64.2, 0) + STORE(2, -1, ibcsub1, align8, 0)
+, match5("STKRECORDZbuiltinZintZint"_1, 3, ALLOCA(1, typ.ptr.i64, typ.i64, C64.2, 0) + STORE(2, -1, ibcsub1, align8, 0)
 + GEP(2, 1, typ.i64, -1, C64.1)
 + STORE(3, -2, ibcsub2, align8, 0)
 + CAST(3, -1, typ.i64, CASTPTRTOINT))
-, match5("CALLIDX"_1, 2, CAST(1, ibcsub1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)
+,match5("callidxZbuiltinZintZTzseqZint"_1, 2, CAST(1, ibcsub1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)
 + CALL(2, 0, 32768, typ.function.[ i64, i64, i64, i64], -1, ibcfirstpara2, ibcsub2, ibcsub3))
-, match5("BR 4", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
- ,match5("EXITBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
- ,match5("EXITBLOCK 2", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
  ]
 let discard = @(+, addit, 0, t)
  t
+
+func:int, a:seq.T, b:int
 
 function addit(m:match5)int valueofencoding.encode(ematch5,m) 
 
@@ -160,28 +174,51 @@ function getarg(s:seq.match5,i:int) int
   let m=s_i
   assert action.m="ACTARG"_1 report "unexpected action"+action.m
   arg.m
+  
+function getarg(s:seq.match5,i:sig) int
+  getarg(s,lowerbits.i)
 
-Function buildtemplates(s:seq.match5,xx:inst) seq.match5
+  
+use seq.inst
+
+
+Function type:intercode internaltype export
+
+Function defines(intercode) seq.int export
+
+Function match5map(fs2:intercode,symlist:seq.word) seq.match5
+let declist=@(+, mangledname, "", @(+,_.coding.fs2, empty:seq.inst, defines.fs2))
+ let coding=coding.fs2
+ let defines=defines.fs2
+  let cxx = conststype
+  let discard = profiletype
+  let discard2 = @(+, C, 0, symlist+ declist)
+  let xy = table
+  @(buildtemplates, identity, empty:seq.match5, coding)
+
+function buildtemplates(s:seq.match5,xx:inst) seq.match5
  let fullinst=towords.xx
-  // let z10 = createfile("stat.txt", [ fullinst]+"start")//
+   // let z10 = createfile("stat.txt", [ fullinst]+"start")//
   let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
   let b = findencode(ematch5, a)
    // assert fullinst_1 in"WORD WORDS"∨ not("setfld2ZbuiltinZTzseqZintZT"_1 in fullinst)report"XXX"+ fullinst + if length.b = 0 then"NOT FOUND"else"FOUND"//
    if length.b = 0 then
    let inst = fullinst_1
     let instarg = fullinst_2
-    let m = if inst = "FREF"_1 then
+    let m =   if inst in "PARAM LOCAL DEFINE SET" &and checkinteger.instarg="WORD"_1 then
+      s + match5("SET 0", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
+    else if inst = "FREF"_1 then
     s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]))
     else if inst = "LIT"_1 then
     s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg)
     else if inst = "LOCAL"_1 then
     s + match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg)
-    else if inst in "PARAM FIRSTVAR"then
+    else if inst = "PARAM"_1 then
     s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg)
-    else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE BLOCK BR"then
-    s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0)
-    else if inst in "CONSTANT "then
-     let args=@(+,getarg.s, empty:seq.int,code.xx)
+    else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE BLOCK BR EXITBLOCK"then
+    s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, toint.instarg)
+    else if inst = "CONSTANT"_1 then
+     let args=@(+,getarg.s, empty:seq.int,cleancode.xx)
        assert true &or length.args &ne 3 &or not(wordref."addZTzbitpackedseqZTzbitpackedseqZT"_1=args_1) report
          "HERE addc"+@(+,toword,"",args)
      s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
@@ -192,7 +229,7 @@ Function buildtemplates(s:seq.match5,xx:inst) seq.match5
     else
      let noargs = toint.instarg
      let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
-      s + match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs)
+      s + match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs,cleancode.xx)
     let discard = encode(ematch5, last.m)
      m
    else // already have a match5 // s + b_1
@@ -207,7 +244,7 @@ function ematch5 erecord.match5 export
 
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
  let args = if inst.t in "WORD CONSTANT" ∨ action.t = "CALL"_1 then empty:seq.int
- else subseq(argstack, length.argstack - toint.instarg.t + 1, length.argstack)
+ else subseq(argstack, length.argstack - toint.(fullinst.t)_2 + 1, length.argstack)
   processtemplate(parts.t, deltaoffset, args)
 
 Function CASTZEXT int 1

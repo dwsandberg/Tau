@@ -71,10 +71,10 @@ function filter(  i:int,result:seq.word, src:seq.word) seq.word
  if i > length.src then result
   else
   let name = src_i
-   if name in "builtinZinternal1Zwordzseq builtinZinternal1Zinternal1 if CALLIDX IDXUC getinstanceZbuiltinZTzerecord
+   if name in "builtinZinternal1Zwordzseq builtinZinternal1Zinternal1 if  IDXUC getinstanceZbuiltinZTzerecord
    STATEZinternal1Zinternal1" then filter( i + 1,result, src)
    else if name in "SET LIT PARAM LOCAL WORD DEFINE
-    RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD BLOCK EXITBLOCK BR" then filter( i + 2, result,src)
+    RECORD APPLY LOOPBLOCK  CONTINUE FINISHLOOP CRECORD BLOCK EXITBLOCK BR" then filter( i + 2, result,src)
    else if name = "FREF"_1 then filter( i+2,result+src_(i+1),src)
    else  if name = "WORDS COMMENT"_1 then
    filter( i + toint.src_(i + 1) + 2,result, src)
@@ -90,7 +90,8 @@ function find(coding:seq.inst,i:int,mangledname:word)  seq.word
    if i > length.coding then "not found" else
    let ins=coding_i
    if mangledname= (towords.ins)_1 then 
-     let c=if  "SIMPLE"_1 in flags.ins then code.ins else empty:seq.int
+     let c=if   // "SIMPLE"_1 in flags.ins // length.cleancode.ins < 15   then 
+      // assert length.code.ins < 15 report "LEN"+toword.length.code.ins // cleancode.ins  else empty:seq.sig
      astext5(coding,c) 
     else 
       find(coding,i+1,mangledname) 
@@ -105,7 +106,7 @@ function find2(coding:seq.inst, known:symbolset, sym2:symbol) libsym
   if isempty.t then libsym(resulttype.sym2,mangledname,"")
   else t_1
   
- 
+ use seq.sig
   
 function find2(coding:seq.inst, known:symbolset, mangledname:word) seq.libsym
   let sym=lookupsymbol(known,mangledname) 
@@ -141,35 +142,35 @@ use seq.mytype
 function add(t:worddict.libsym,l:libsym) worddict.libsym  add(t,fsig.l,l) 
   
 
-function astext(s:seq.inst, i:int)seq.word
+function astext(s:seq.inst, ss:sig)seq.word
+ let i=lowerbits.ss
  let f = towords.s_i
-  if f_1 = "CONSTANT"_1 then   astext5(s,code.s_i)+"RECORD"+toword.length.code.s_i
+  if f_1 = "CONSTANT"_1 then   astext5(s,cleancode.s_i)+"RECORD"+toword.length.cleancode.s_i
   else if f_1 = "PARAM"_1 then"PARAM" + toword(- toint.f_2 - 1)
   else if f_1 in "SET WORD WORDS LOCAL LIT PARAM RECORD FREF EXITBLOCK BR BLOCK DEFINE"then f else [ f_1]
 
-function astext5(s:seq.inst, d:seq.int)seq.word @(+, astext.s,"", d)
+function astext5(s:seq.inst, d:seq.sig)seq.word @(+, astext.s,"", d)
 
 
 ----------------------------------
 
 function addlibsym(s:libsym) int
-      addconstant.[aseinst("WORD"+fsig.s,empty:seq.int) ,addwords.returntype.s ,addwords.instruction.s]
+      asinstconstant.[aseinst("WORD"+fsig.s) ,addwords.returntype.s ,addwords.instruction.s]
      
-function addconstant(t:seq.int) int aseinst("CONSTANT"+@(+,toword,"",t),t)
 
-function addwords(t:seq.word) int aseinst("WORDS"+toword.length.t+t,empty:seq.int)
+function addwords(t:seq.word) int aseinst("WORDS"+toword.length.t+t)
 
 function addmytype(t:mytype) int  addwords(towords.t)
 
 use seq.mytype
 
-function addseq(s:seq.int) int let t=[ aseinst("LIT 0",empty:seq.int), aseinst("LIT"+toword.length.s,empty:seq.int)]+s
- aseinst("CONSTANT"+@(+,toword,"",t),t)
+function addseq(s:seq.int) int let t=[ aseinst("LIT 0"), aseinst("LIT"+toword.length.s)]+s
+ asinstconstant.t
 
  
 function addlibmod(s:libmod) int 
-    addconstant.[aseinst("LIT"+if parameterized.s then "1" else "0",empty:seq.int)
-     ,aseinst("WORD"+modname.s,empty:seq.int)
+    asinstconstant.[aseinst("LIT"+if parameterized.s then "1" else "0")
+     ,aseinst("WORD"+modname.s)
      ,addseq.@(+,addlibsym,empty:seq.int,defines.s)
       ,addseq.@(+,addlibsym,empty:seq.int,exports.s)
     ,addseq.@(+,addmytype,empty:seq.int,uses.s)]

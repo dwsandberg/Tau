@@ -29,7 +29,7 @@ use seq.seq.seq.int
 
 use seq.seq.int
 
-use intercode
+/use intercode
 
 use ipair.internalbc
 
@@ -39,7 +39,6 @@ use internalbc
 
 use libscope
 
-use seq.libsym
 
 use llvm
 
@@ -65,31 +64,30 @@ use textio
 
 use seq.match5
 
-use seq.libmod
 
 use persistant
 
-function funcdec(f:inst)seq.int
- let discard = C.mangledname.f
-  [ MODULECODEFUNCTION, typ.function.constantseq(nopara.f + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+use seq.sig
 
-Function codegen(fs:intercode, thename:word, libmods:seq.libmod)seq.bits
+function funcdec(m:match5)seq.int
+ // let discard = C.mangledname.f //
+  let nopara=arg.m
+  [ MODULECODEFUNCTION, typ.function.constantseq(nopara + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+  
+  
+
+Function codegen(fs2:intercode, thename:word)seq.bits
  let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 "
  + merge."llvm.sqrt.f64"
  + merge."llvm.sin.f64"
  + merge."llvm.cos.f64"
-  let cxx = conststype
-  let discard = profiletype
-  let declist = @(+,_.coding.fs, empty:seq.inst, defines.fs)
-  let discard2 = @(+, C, 0, @(+, mangledname, symlist, declist))
-  let xy = table
-   // let zx2a = createfile("stat.txt", ["in codegen0.1"])//
-    // let zx2b = createfile("stat.txt", ["in codegen0.2"]+ aa)//
-    let match5map = @(buildtemplates, identity, empty:seq.match5, coding.fs)
+      let match5map = match5map(fs2,symlist)
+    // assert false report fullinst.last.match5map //
   let libmods2=arg.last.match5map
       // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
      // assert false report checkmap.match5map //
-     let bodies = @(+, addfuncdef(match5map, coding.fs), empty:seq.internalbc, defines.fs)
+     let defines2=@(+, _(match5map), empty:seq.match5, defines.fs2)
+     let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines2)
      let profilearcs2 = profilearcs
      let noprofileslots = length.profilearcs2 / 2
       // let libsyms = @(+, tolibsym(coding.fs, codes.fs), empty:seq.libsym, defines.fs)//
@@ -133,16 +131,24 @@ Function codegen(fs:intercode, thename:word, libmods:seq.libmod)seq.bits
       , // llvm.sqrt.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.sin.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.cos.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
-      + @(+, funcdec, empty:seq.seq.int, declist)
+      + @(+, funcdec, empty:seq.seq.int, defines2)
        llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 
-function profiletype llvmtype array(-3, i64)
 
-Function addfuncdef(match5map:seq.match5, coding:seq.inst, i:int)internalbc
- let f = coding_i
- let l = Lcode2(emptyinternalbc, paramap(nopara.f,empty:seq.localmap), 1, nopara.f + 1, empty:stack.int, empty:stack.Lcode2)
- let g5 =   if "PROFILE"_1 in flags.f then mangledname.f else"noprofile"_1
- let r = @(processnext.g5,_.match5map, l, (code.f))
+function addfuncdef(match5map:seq.match5,  m:match5)internalbc
+ let code=code.m
+ let mangledname= inst.m
+ let nopara=arg.m
+    let l = Lcode2(emptyinternalbc, paramap(nopara,empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
+ let g5 = // if"PROFILE"_1 in flags.f then //
+    if  mangledname in "pass1Zpass1ZwordzseqzseqzseqZwordzseqZsymbolsetZfirstpasszset
+   compilelib2Zmain2ZwordZboolean bbbfirstZpass2newZsymbolsetZwordzseqZwordzseqZprg
+   bindZpass1ZsymbolsetZfirstpasszsetZsymbolsetZfirstpass
+   subcompilelibZmain2ZwordZboolean pass2Zpass2ZsymbolsetZwordzseqZsymbolset
+   pass2newZpass2newZsymbolsetZwordzseqZsymbolset
+   bind2Zpass1ZsymbolsetZsymbolzsetZsymbolsetZsymbol" 
+   then mangledname else"noprofile"_1
+ let r = @(processnext.g5,_.match5map, l, (code))
   BLOCKCOUNT(1, noblocks.r) + code.r + RET(regno.r + 1, top.args.r)
 
 type Lcode2 is record code:internalbc, lmap:seq.localmap, noblocks:int, regno:int, args:stack.int,
@@ -167,8 +173,7 @@ use otherseq.Lcode2
 
 function processnext(profile:word, l:Lcode2, m:match5)Lcode2
  let inst = inst.m
- let instarg = instarg.m
- let action = action.m
+  let action = action.m
   if action = "CALL"_1 then
   let noargs = arg.m
    let args = top(args.l, noargs)
@@ -181,28 +186,27 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
   else if action = "ACTARG"_1 then 
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
   else if action = "LOCAL"_1 then 
-   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, getloc(lmap.l, toint.instarg, 1)), blocks.l)
+   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, getloc(lmap.l, arg.m, 1)), blocks.l)
   else if action = "TEMPLATE"_1 then
   let newcode = usetemplate(m, regno.l, toseq.args.l)
-    // assert inst ≠"CALLIDX"_1 report astext.addtobitstream(10000, empty:bitpackedseq.bit, newcode)//
-    let noargs = arg.m
+     let noargs = arg.m
      Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + length.m, push(pop(args.l, noargs), -(regno.l + length.m)), blocks.l)
   else
    assert action = "SPECIAL"_1 report"UNKNOWN ACTION" + action
     if inst in "EXITBLOCK" then
-           assert   instarg="1"_1 &and length.toseq.args.l > 0 report "fail 5e"+instarg
+           assert    length.toseq.args.l > 0 report "fail 5e"
      let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(args.l,0), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))
     else if inst in "BR"  then
-           assert   instarg="3"_1 &and length.toseq.args.l > 2 report "fail 5b"
+           assert    length.toseq.args.l > 2 report "fail 5b"
        let cond=
-        let newcode = CAST(regno.l + 1, top(args.l,toint.instarg)_1, typ.i1, CASTTRUNC)
+        let newcode = CAST(regno.l + 1, top(args.l,arg.m)_1, typ.i1, CASTTRUNC)
         Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + 1, push(args.l,1), blocks.l)
       Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l + 1, empty:stack.int, push(blocks.l,cond))
     else if inst in "BLOCK"  then
-     let no=toint.instarg 
+     let no=arg.m 
       let blks= top(blocks.l,no)
-      assert length.blks=no report "XXXXXX arg"+instarg+profile
+      assert length.blks=no report "XXXXXX arg"+profile
        let rblk = processblk(blks,1,empty:seq.localmap,BR(regno.l, noblocks.l- 1)) 
        //       assert length.phi.rblk > 3 report  "phi"+@(+,toword,"",phi.rblk) //
         let firstblkargs=args.blks_1
@@ -221,10 +225,10 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
       let newcode=code.rblk+phiinst(regno.last.blks, typ.i64, phi.rblk,1)
       Lcode2(newcode, lmap.l, noblocks.l , regno.l + 1,  newstack, pop(blocks.l, no))
     else if inst = "DEFINE"_1 then
-    Lcode2(code.l,  [localmap(toint.instarg, top.args.l)]+lmap.l, noblocks.l, regno.l, pop(args.l,1),  blocks.l)
+    Lcode2(code.l,  [localmap(arg.m, top.args.l)]+lmap.l, noblocks.l, regno.l, pop(args.l,1),  blocks.l)
     else if inst = "SET"_1 then l
      else if inst = "LOOPBLOCK"_1 then
-     let varcount = toint.instarg - 1
+     let varcount = arg.m - 1
      let firstvar = constvalue.top.args.l
      let bodymap = @(addloopmapentry(firstvar, regno.l), identity,lmap.l, arithseq(varcount, 1, 1))
      let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(push(args.l,varcount),2), blocks.l)
@@ -234,7 +238,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))  
     else 
      assert inst = "RECORD"_1 report"code gen SPECIAL" + inst
-     let noargs = toint.instarg
+     let noargs = arg.m
      let args = top(args.l, noargs)
      let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceZbuiltinZint", -1, C64.noargs)
      + CAST(regno.l + 2, -(regno.l + 1), typ.ptr.i64, CASTINTTOPTR)

@@ -29,7 +29,7 @@ Function_(a:seq.T, b:int)T
     getval(a, b + 1)
   else callidx(typ, a, b)
 
-function callidx(func:int, a:seq.T, b:int)T builtin."PARAM 1 PARAM 2 PARAM 3 CALLIDX"
+function callidx(func:int, a:seq.T, b:int)T builtin.usemangle
 
 function getval(a:seq.T, offset:int)T builtin."PARAM 1 PARAM 2 IDXUC"
 
