@@ -375,10 +375,10 @@ valueofencoding.emptyseqOp, [ lit0, lit0],"?","CONSTANT 15 15")
 , fsignrep("decode(T erecord, T encoding)","char seq encoding", plusOp + 10,"char seq","decodeZcharzseqzencodingZTzerecordZTzencoding 2")
 ]
 
+function startsiglength int 34
 
 
-
-Function assignencoding(l:int, s:fsignrep)int if l ≥ length.startsigs then l + upperbits.s else upperbits.s
+Function assignencoding(l:int, s:fsignrep)int if l ≥ startsiglength then l + upperbits.s else upperbits.s
 
 Function issimple(s:fsignrep)boolean issimple(nopara.s, code.s)
 
@@ -421,7 +421,7 @@ function =(a:bits, b:bits)boolean toint.a = toint.b
 
 Function lowerbits(s:sig)int valueofencoding.s - toint(bits.valueofencoding.s >> firstupperbit << firstupperbit)
 
-function lowerbits(s:int)int s - toint(bits.s >> firstupperbit << firstupperbit)
+Function lowerbits(s:int)int s - toint(bits.s >> firstupperbit << firstupperbit)
 
 function lowerbits2(s:sig) sig ecvt.lowerbits.s
 

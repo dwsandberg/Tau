@@ -14,7 +14,8 @@ use format
 
 use groupparagraphs
 
-use seq.inst
+use seq.fsignrep
+
 
 use intercode
 

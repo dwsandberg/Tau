@@ -179,7 +179,9 @@ function getarg(s:seq.match5,i:sig) int
   getarg(s,lowerbits.i)
 
   
-use seq.inst
+/use seq.inst
+
+use seq.fsignrep
 
 
 Function type:intercode internaltype export
@@ -187,16 +189,16 @@ Function type:intercode internaltype export
 Function defines(intercode) seq.int export
 
 Function match5map(fs2:intercode,symlist:seq.word) seq.match5
-let declist=@(+, mangledname, "", @(+,_.coding.fs2, empty:seq.inst, defines.fs2))
- let coding=coding.fs2
- let defines=defines.fs2
+  let declist=@(+, mangledname2, "", @(+,_.coding.fs2, empty:seq.fsignrep, defines.fs2))
+  let coding=coding.fs2
+  let defines=defines.fs2
   let cxx = conststype
   let discard = profiletype
   let discard2 = @(+, C, 0, symlist+ declist)
   let xy = table
   @(buildtemplates, identity, empty:seq.match5, coding)
 
-function buildtemplates(s:seq.match5,xx:inst) seq.match5
+function buildtemplates(s:seq.match5,xx:fsignrep) seq.match5
  let fullinst=towords.xx
    // let z10 = createfile("stat.txt", [ fullinst]+"start")//
   let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)

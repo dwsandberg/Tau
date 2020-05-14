@@ -23,13 +23,12 @@ use bits
 
 use codetemplates
 
-use seq.inst
+use seq.fsignrep
 
 use seq.seq.seq.int
 
 use seq.seq.int
 
-/use intercode
 
 use ipair.internalbc
 

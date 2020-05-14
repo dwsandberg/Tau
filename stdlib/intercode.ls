@@ -1,6 +1,5 @@
 Module intercode
 
-use seq.inst
 
 use otherseq.seq.int
 
@@ -19,127 +18,106 @@ use seq.tree.seq.word
 
 use tree.seq.word
 
-type intercode is record  coding:seq.inst, defines:seq.int
+use funcsig
+
+use seq.sig
+
+ use seq.fsignrep
+
+use encoding.fsignrep
+
+use seq.seq.sig
+
+use otherseq.seq.sig
+
+use set.word
+
+
+type intercode is record  xcoding:seq.fsignrep, defines:seq.int
 
 Defines are ipointers into coding that indicate which functions are defined.
 
 
 Codes give a seq of integers which are indices into coding
 
-function intercode(coding:seq.inst, defines:seq.int)intercode export
 
+ 
+Function  addtointercode(i:intercode) intercode
+ let a=orderadded 
+  intercode(  xcoding.i+subseq(a,length.coding.i+1,length.a),defines.i)
+  
+Function  intercode2(sigreps:seq.fsignrep,defines:seq.int) intercode
+   intercode(  sigreps  ,defines)
+   
+function orderadded seq.fsignrep  orderadded.efsignrep
 
-
-use funcsig
-
-use seq.sig
+function aseinst(f:fsignrep) sig sig.encode(efsignrep, f) 
 
 Function type:sig internaltype export
 
 Function lowerbits(sig) int export 
 
-Function cleancode(a:inst) seq.sig code.torep.a 
 
-function coding(intercode)seq.inst export
+Function coding(i:intercode)seq.fsignrep xcoding.i
+
 
 function defines(intercode)seq.int export
 
-Function type:inst internaltype export
+
+Function type:fsignrep internaltype export
+
 
 Function type:intercode internaltype export
 
 
-type inst is record torep:fsignrep
+Function cleancode(a:fsignrep) seq.sig code.a 
 
-function inst(towords:seq.word,returntype:mytype, code:seq.int) inst
-  inst.fsignrep( "", "", 1, @(+,ecvt,empty:seq.sig,code), towords.returntype,towords)
-  
-Function towords(a:inst) seq.word  towords.torep.a
+Function towords(a:fsignrep) seq.word  export
 
-Function returntype(a:inst) mytype  mytype.returntype.torep.a
+Function returntype(s:fsignrep)seq.word export
 
+Function mangledname2(a:fsignrep)word (towords.a)_1
 
+function aseinst(w:seq.word,code:seq.sig)sig aseinst(w,code,mytype."?")
 
-Function toinst(a:seq.fsignrep) seq.inst
-@(+,toinst,empty:seq.inst,a)
-
-
-
-function toinst(a:fsignrep) inst  let t=inst.lowerbits.a
-let b=encode(einst,t)
-t
-
-
- use seq.fsignrep
-
-use encoding.fsignrep
-
-function assignencoding(l:int, a:inst) int l+1 
-
-function aseinst(w:seq.word,code:seq.int)int 
-aseinst(w,code,mytype."?")
-
-Function aseinst(w:seq.word )int 
-  aseinst(w,empty:seq.int,mytype."?")
+Function aseinst(w:seq.word )sig aseinst(w,empty:seq.sig,mytype."?")
  
-function  aseinst(w:seq.word,code:seq.int,typ:mytype) int
-aseinst.inst(w,typ,code )
+function aseinst(w:seq.word,code:seq.sig,typ:mytype) sig
+ aseinst.fsignrep( "", "", 1,  code, towords.typ,w)
 
 
-Function aseinst(f:inst) int
- valueofencoding.encode(einst, f)
+Function asinstconstant(t:seq.sig) sig aseinst("CONSTANT"+@(+,toword,"",t),t)
 
-  lowerbits.sig.encode(efsignrep, torep.f) 
-
-Function asinstconstant(t:seq.int) int aseinst("CONSTANT"+@(+,toword,"",t),t)
-
+ function toword(s:sig) word  toword.lowerbits.valueofencoding.s
  
-function castsig(a:int) sig builtin."PARAM 1"
- 
- 
-Function mangledname(a:inst)word(towords.a)_1
-
-Function nopara(a:inst)int toint.(towords.a)_2
-
-
-function towords(a:inst)seq.word export
-
-function returntype(a:inst)mytype export
-
 _______________
 
-type einst is encoding inst
 
-function hash(a:inst)int hash.towords.torep.a
-
-function =(a:inst, b:inst)boolean towords.torep.a = towords.torep.b
-
-function addcodes(allfunctions:symbolset, a:seq.seq.int, f:symbol)seq.seq.int 
+function addcodes(allfunctions:symbolset, a:seq.seq.sig, f:symbol)seq.seq.sig 
 let t=prepb(allfunctions, codetree.f)
-replace(a, addfunction(allfunctions,mangledname.f),t )
-
-
-Function additionalinst(i:int) seq.inst subseq(orderadded.einst,i,length.orderadded.einst)
-
+replace(a,   lowerbits.valueofencoding.addfunction(allfunctions,mangledname.f),t )
 
 Function convert2(allfunctions:symbolset, s:seq.symbol)intercode
+ let discard=basesigs
  let ms=@(+,mangledname,"",s)
- let defines = @(+, addfunction.allfunctions, empty:seq.int, ms)
- let codes=@(addcodes.allfunctions, identity, dseq.empty:seq.int, s)
-  intercode(setcode(orderadded.einst,codes, 1,empty:seq.inst),defines)
+ let defines = @(add2, addfunction.allfunctions, empty:seq.int, ms)
+ let codes=@(addcodes.allfunctions, identity, dseq.empty:seq.sig, s)
+  intercode(setcode(orderadded,codes, 1,empty:seq.fsignrep),defines)
+  
+function  add2(s:seq.int,f:sig) seq.int   s+  lowerbits.valueofencoding.f
 
-use set.word
    
-function  setcode(coding:seq.inst,codes:seq.seq.int,i:int,result:seq.inst) seq.inst
+function  setcode(coding:seq.fsignrep,codes:seq.seq.sig,i:int,result:seq.fsignrep) seq.fsignrep
    if i > length.coding then result
    else  
     let a=coding_i
     if (towords.a)_1 in "CONSTANT FREF" then
       setcode(coding,codes,i+1,result+a)
     else
-     setcode(coding,codes,i+1,result+inst(towords.a,returntype.a,codes_i))
+     let t=fsignrep( fsig.a, module.a, 1,  codes_i,returntype.a,towords.a)
+     setcode(coding,codes,i+1,result+t)
 
-Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
+Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.sig
  let inst = inst.t
   if inst in "PARAM"then [ aseinst.[ inst, toword(- toint.arg.t - 1)]]
   else if inst in "LIT LOCAL   WORD  WORDS"then [ aseinst.label.t]
@@ -151,32 +129,32 @@ Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.int
   else  if inst = "LOOPBLOCK"_1 then
   // number of sons of loop block may have change with optimization //
    let firstvar = arg.last.sons.t
-    @(+, prepb.allfunctions, empty:seq.int, subseq(sons.t, 1, nosons.t - 1))
+    @(+, prepb.allfunctions, empty:seq.sig, subseq(sons.t, 1, nosons.t - 1))
     + aseinst("LIT" + firstvar)
     + aseinst.[ inst, toword.nosons.t]
   else if inst = "CRECORD"_1 then 
-       let z=   @(+, prepb.allfunctions, empty:seq.int, sons.t)
+       let z=   @(+, prepb.allfunctions, empty:seq.sig, sons.t)
        assert length.z=nosons.t report "???"
    [ asinstconstant.z]
    else if inst ="FREF"_1 then
     let z=addfunction(allfunctions,(label.t)_2)
    [ aseinst(label.t,[z])]
   else 
-   @(+, prepb.allfunctions, empty:seq.int, sons.t)
+   @(+, prepb.allfunctions, empty:seq.sig, sons.t)
    + if inst in "IDXUC    CONTINUE RECORD  FINISHLOOP   EXITBLOCK BLOCK BR"
    then [ aseinst.[ inst, toword.nosons.t]]
-   else if inst = "STATE"_1 then empty:seq.int
+   else if inst = "STATE"_1 then empty:seq.sig
    else [addfunction(allfunctions,inst)]
        
-function addfunction(     allfunctions:symbolset, mangled:word) int
+function addfunction(allfunctions:symbolset, mangled:word) sig
      let s2 = lookupsymbol(allfunctions, mangled)
-         let a = codedown.mangled
-            aseinst([ mangled, toword(length.a - 2)],empty:seq.int, resulttype.s2)   
+     let a = codedown.mangled
+     aseinst([ mangled, toword(length.a - 2)],empty:seq.sig, resulttype.s2)   
 
 
 /function astext(coding:seq.inst, i:int)seq.word towords.coding_lowerbits.i
 
-function astext(coding:seq.inst, i:sig)seq.word
+function astext(coding:seq.fsignrep, i:sig)seq.word
  let t = towords.coding_lowerbits.i
   if t_1 = "LIT"_1 then [ t_2]
   else if t_1 = "LOCAL"_1 then [ merge.["%"_1, t_2]]

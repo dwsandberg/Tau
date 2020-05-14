@@ -223,7 +223,7 @@ function addsymbol(p:program, mangledname:word)program
      let flags = flags.newsym
      let newp = program(replace(knownsymbols.p, newsym)
      , callgraph.p + @(+, arc.mangledname.caller, empty:seq.arc.word, toseq.calls3)
-     , if isrecusive ∨ not("SIMPLE"_1 in flags ∨ "INLINE"_1 in flags)then
+     , if isrecusive ∨ not("SIMPLE"_1 in flags ∨ "INLINE"_1 in flags) then
      inline.p
      else inline.p + mangledname.newsym
      , if"STATE"_1 in flags ∨ inst.tr0 = "STATE"_1 then
@@ -231,6 +231,8 @@ function addsymbol(p:program, mangledname:word)program
      else hasstate.p)
       @(addsymbol, identity, newp, toseq(calls3 - "APPLY"_1))
   else p
+  
+  einstZintercode
 
 function buildcodetree(src:seq.word)tree.seq.word
      if length.src=0 then tree("EXTERNAL") else 

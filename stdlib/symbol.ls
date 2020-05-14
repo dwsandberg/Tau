@@ -106,7 +106,7 @@ Function changecodetree(old:symbol, t:tree.seq.word)symbol
  let oldflags = flags.old
  let adjustedflags = flags.old + if inst.t = "STATE"_1 then"STATE"else""
  let functyp = if"FORCEINLINE"_1 in adjustedflags then"INLINE"
- else if"NOINLINE"_1 in adjustedflags then"NOINLINE"
+ else if"NOINLINE"_1 in adjustedflags &or mangledname.old in "einstZintercode" then"NOINLINE"
  else
   let a = ch1.t
    if nodecount.a > 15 then"COMPLEX"

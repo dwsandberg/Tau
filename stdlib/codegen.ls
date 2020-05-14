@@ -18,7 +18,7 @@ use bits
 
 use codetemplates
 
-use seq.inst
+use seq.fsignrep
 
 use seq.seq.seq.int
 
@@ -60,6 +60,8 @@ use seq.match5
 
 
 use persistant
+
+use seq.sig
 
 function funcdec(m:match5)seq.int
  // let discard = C.mangledname.f //
@@ -126,7 +128,6 @@ Function codegen5(fs2:intercode, thename:word)seq.bits
       + @(+, funcdec, empty:seq.seq.int, defines2)
        llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 
-use seq.sig
 
 function addfuncdef(match5map:seq.match5,  m:match5)internalbc
  let code=code.m

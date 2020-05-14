@@ -8,7 +8,8 @@ use symbol
 
 use seq.firstpass
 
-use seq.inst
+use seq.fsignrep
+
 
 use seq.seq.int
 
@@ -45,7 +46,7 @@ Function libdesc(intercode:intercode, mods:seq.firstpass, known:symbolset)seq.li
   @(+,libmod(z),abstract,mods)
 + libmod(false,"$other"_1, sort.d, empty:seq.libsym, empty:seq.mytype)
 
-function  abstractmods(coding:seq.inst, known:symbolset,f:firstpass) seq.libmod
+function  abstractmods(coding:seq.fsignrep, known:symbolset,f:firstpass) seq.libmod
   if not.exportmodule.f &or not.isabstract.modname.f then empty:seq.libmod
   else  
     let d=sort.@(+,aslibsym.known,empty:seq.libsym,toseq.defines.f)
@@ -86,7 +87,7 @@ function filter(  i:int,result:seq.word, src:seq.word) seq.word
    filter(1,"",instruction.a)
 
    
-function find(coding:seq.inst,i:int,mangledname:word)  seq.word
+function find(coding:seq.fsignrep,i:int,mangledname:word)  seq.word
    if i > length.coding then "not found" else
    let ins=coding_i
    if mangledname= (towords.ins)_1 then 
@@ -100,7 +101,7 @@ function stripparsedfunc(src:seq.word) seq.word
 if length.src > 0 ∧ (src)_1 = "parsedfunc"_1 then
          subseq(src ,toint.(src)_2 + 3, length.src) else src
       
-function find2(coding:seq.inst, known:symbolset, sym2:symbol) libsym
+function find2(coding:seq.fsignrep, known:symbolset, sym2:symbol) libsym
   let mangledname=mangledname.sym2
   let t=find2(coding,known,mangledname)
   if isempty.t then libsym(resulttype.sym2,mangledname,"")
@@ -108,7 +109,7 @@ function find2(coding:seq.inst, known:symbolset, sym2:symbol) libsym
   
  use seq.sig
   
-function find2(coding:seq.inst, known:symbolset, mangledname:word) seq.libsym
+function find2(coding:seq.fsignrep, known:symbolset, mangledname:word) seq.libsym
   let sym=lookupsymbol(known,mangledname) 
  // let ok=if isdefined.sym then true else let d=codedown.mangledname   length.d > 1 &and d_2 =   "builtin "
   assert  ok report "HJK"+mangledname //
@@ -142,43 +143,42 @@ use seq.mytype
 function add(t:worddict.libsym,l:libsym) worddict.libsym  add(t,fsig.l,l) 
   
 
-function astext(s:seq.inst, ss:sig)seq.word
+function astext(s:seq.fsignrep, ss:sig)seq.word
  let i=lowerbits.ss
  let f = towords.s_i
   if f_1 = "CONSTANT"_1 then   astext5(s,cleancode.s_i)+"RECORD"+toword.length.cleancode.s_i
   else if f_1 = "PARAM"_1 then"PARAM" + toword(- toint.f_2 - 1)
   else if f_1 in "SET WORD WORDS LOCAL LIT PARAM RECORD FREF EXITBLOCK BR BLOCK DEFINE"then f else [ f_1]
 
-function astext5(s:seq.inst, d:seq.sig)seq.word @(+, astext.s,"", d)
+function astext5(s:seq.fsignrep, d:seq.sig)seq.word @(+, astext.s,"", d)
 
 
 ----------------------------------
 
-function addlibsym(s:libsym) int
+function addlibsym(s:libsym) sig
       asinstconstant.[aseinst("WORD"+fsig.s) ,addwords.returntype.s ,addwords.instruction.s]
      
 
-function addwords(t:seq.word) int aseinst("WORDS"+toword.length.t+t)
+function addwords(t:seq.word) sig aseinst("WORDS"+toword.length.t+t)
 
-function addmytype(t:mytype) int  addwords(towords.t)
+function addmytype(t:mytype) sig  addwords(towords.t)
 
 use seq.mytype
 
-function addseq(s:seq.int) int let t=[ aseinst("LIT 0"), aseinst("LIT"+toword.length.s)]+s
+function addseq(s:seq.sig) sig let t=[ aseinst("LIT 0"), aseinst("LIT"+toword.length.s)]+s
  asinstconstant.t
 
  
-function addlibmod(s:libmod) int 
+function addlibmod(s:libmod) sig 
     asinstconstant.[aseinst("LIT"+if parameterized.s then "1" else "0")
      ,aseinst("WORD"+modname.s)
-     ,addseq.@(+,addlibsym,empty:seq.int,defines.s)
-      ,addseq.@(+,addlibsym,empty:seq.int,exports.s)
-    ,addseq.@(+,addmytype,empty:seq.int,uses.s)]
+     ,addseq.@(+,addlibsym,empty:seq.sig,defines.s)
+      ,addseq.@(+,addlibsym,empty:seq.sig,exports.s)
+    ,addseq.@(+,addmytype,empty:seq.sig,uses.s)]
 
 Function addlibmods(s:seq.libmod,i:intercode) intercode
-    let b=length.additionalinst.0
-    let last=addseq.@(+,addlibmod,empty:seq.int,s)
-    let c=additionalinst(b+1)
-    assert b=length.coding.i report "FAIL 15"
-    assert last=b+length.c report "FAIL 16"
-      intercode(  coding.i+c,defines.i)
+    let last=addseq.@(+,addlibmod,empty:seq.sig,s)
+     addtointercode(i)
+     
+        intercode(  coding.i+additionalinst(b+1),defines.i)
+      

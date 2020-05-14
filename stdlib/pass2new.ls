@@ -12,9 +12,10 @@ use seq.char
 
 use funcsig
 
-use otherseq.inst
+use otherseq.fsignrep
 
-use seq.inst
+use seq.fsignrep
+
 
 use otherseq.seq.int
 
@@ -89,11 +90,7 @@ Function pass2new(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)int
  let b = bbbfirst(knownsymbols, roots, "all", emptyprg,mytype."?")
   // assert false report"dumpprg"+ dumpprg.b //
   let sigreps=getfsignrep.b
-  let ic =   intercode( toinst.sigreps ,defines(compiled,sigreps,1,empty:seq.int))
-  // let discard=@(+,aseinst,0,coding.ic) //
-   assert length.additionalinst.0=length.coding.ic 
-   report "problem pass2new intercode problem"+toword.length.coding.ic
-   +toword.length.additionalinst.0
+  let ic =   intercode2( sigreps ,defines(compiled,sigreps,1,empty:seq.int))
   // assert false report @(seperator."&p",identity,"",print2.ic) //
    ic
    
