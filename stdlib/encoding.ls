@@ -54,10 +54,6 @@ Function hash(T)int unbound
 
 Function =(T, T)boolean unbound
 
-Function index(T)int unbound
-
-Function addindex(T, int)T unbound
-
 Function empty:encodingstate.T encodingstate.T
 let x = constantseq(4, empty:seq.encodingrep.T)
  encodingstate(0, x, x, empty:seq.encodingrep.T)
@@ -74,7 +70,7 @@ function addcode(code:encoding.T, hashsize:int, x:seq.encodingrep.T, e:encodingr
 
 type encoding is record valueofencoding:int
 
-Function toencoding:T(int)encoding.T builtin."PARAM 1"
+Function toencoding:T(int)encoding.T builtin."LOCAL 1"
 
 Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T
  // this is the add the is stored in the erecord //
@@ -169,14 +165,7 @@ Function findencode(erec:erecord.T, t:T)seq.T
  let r = lookuprep(t, getinstance.erec)
   if isempty.r then empty:seq.T else [ data.r_1]
 
-Function findindex(erec:erecord.T, t:T)int
- // works if type T has a integer field named index and a function setindex is defined to set the index value. If t is not in encoding will assign index to one plus current encoding size. If t is in the encoding it will return the index value.//
- let inst = getinstance.erec
- let a = lookuprep(t, inst)
-  if length.a = 0 then
-  let x = encode(erec, addindex(t, length.inst + 1))
-    length.inst + 1
-  else index.data.a_1
+
 
 Function analyze(t:encodingstate.T)seq.word
  "numele =" + toword.length.all.t + "encodecounts" + counts(encodetable.t, 1, 0, 0, 0)

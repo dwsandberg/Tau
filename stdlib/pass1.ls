@@ -190,13 +190,13 @@ function recordsize(src:seq.word, i:int)int
  if i > length.src then 0
  else if i = 1 ∧ src_i = "FREF"_1 then
  recordsize(src, i + 2) + 1
- else if src_i = "PARAM"_1 then recordsize(src, i + 2) + 1
+  else if src_i = "LOCAL"_1 then recordsize(src, i + 2) + 1
  else if src_i = "LIT"_1 then recordsize(src, i + 3)else 10000
 
 function removeflat(p:word, i:int)seq.word
  if i = -1 then""
  else
-  removeflat(p, i - 1) + "PARAM" + p + "LIT" + toword.i
+  removeflat(p, i - 1) + "LOCAL" + p + "LIT" + toword.i
   + "IDXUC"
 
 function resolveunboundexports(modset:set.firstpass)set.firstpass
@@ -293,7 +293,7 @@ function bind2(templates:symbolset, dict:set.symbol, knownsymbols:symbolset, s:s
  .
  let symsrc = src.s
   if symsrc_1 = "FREF"_1 then postbind(dict, mytype."", templates, knownsymbols, symsrc, s, s)
-  else if // length.symsrc = 2 &and // symsrc_1 = "PARAM"_1 ∨ symsrc_1 = "WORDS"_1 then
+  else if // length.symsrc = 2 &and //   symsrc_1 = "WORDS"_1 &or symsrc_1 = "LOCAL"_1 then
   knownsymbols
   else
    assert symsrc_1 in "Function function"report"internal error bind" + symsrc
@@ -312,12 +312,12 @@ function definestructure(kind:word, flds:seq.flddesc, i:int, ptype:seq.mytype, m
    let consrc ="FREF" + mn + constructor + "RECORD"
    + toword.recordsize("FREF" + mn + constructor, 1)
    let con = symbol(abstracttype.ptype_1, modname, paras, mytype(towords.parameter.modname + abstracttype.ptype_1), consrc)
-   let symtoseq = symbol("toseq"_1, modname, ptype, mytype(towords.parameter.modname + "seq"_1),"PARAM 1")
+   let symtoseq = symbol("toseq"_1, modname, ptype, mytype(towords.parameter.modname + "seq"_1),"LOCAL 1")
    let t ="1 seq." + print.parameter.modname
    let descsym = symbol(merge("type:" + print.resulttype.con), modname, empty:seq.mytype, mytype."internaltype","WORDS" + toword.length.t + t)
     symbols + symtoseq + con + descsym
   else
-   let consrc = if length.paras = 1 then"PARAM 1"else constructor + "RECORD" + toword.recordsize(constructor, 1)
+   let consrc = if length.paras = 1 then"LOCAL 1"else constructor + "RECORD" + toword.recordsize(constructor, 1)
    let con = symbol(abstracttype.ptype_1, modname, paras, mytype(towords.parameter.modname + abstracttype.ptype_1), consrc)
    let descsym = symbol(merge("type:" + print.resulttype.con), modname, empty:seq.mytype, mytype."internaltype","WORDS" + toword(length.desc + 1) + toword.offset + desc)
     symbols + con + descsym
@@ -326,19 +326,19 @@ function definestructure(kind:word, flds:seq.flddesc, i:int, ptype:seq.mytype, m
   let fldname = fldname.flds_i
   let tsize = toint.(desc.flds_i)_1
   let newoffset = if offset = 0 then tsize else offset + tsize
-  let fldsrc = if offset = 0 ∧ i + 1 > length.flds then"PARAM 1"
-  else if tsize = 1 then"PARAM 1 LIT" + toword.offset + "IDXUC"
+  let fldsrc = if offset = 0 ∧ i + 1 > length.flds then"LOCAL 1"
+  else if tsize = 1 then"LOCAL 1 LIT" + toword.offset + "IDXUC"
   else
    // should use a GEP instruction //
-   //"PARAM 1 LIT"+ toword.offset +"LIT"+ toword.tsize +"castZbuiltinZTzseqZintZint"//"PARAM 1 LIT"
+   //"LOCAL 1 LIT"+ toword.offset +"LIT"+ toword.tsize +"castZbuiltinZTzseqZintZint"//"LOCAL 1 LIT"
    + toword(8 * offset)
    + "Q2BZbuiltinZintZint"
   let fldsym = symbol(fldname, modname, ptype, fldtype, fldsrc)
-  let confld = if tsize = 1 then"PARAM" + toword(length.paras + 1)
+  let confld = if tsize = 1 then"LOCAL" + toword(length.paras + 1)
   else removeflat(toword(length.paras + 1), tsize - 1)
    definestructure(kind, flds, i + 1, ptype, modname, newoffset, paras + fldtype, constructor + confld, desc + subseq(desc.flds_i, 2, length.desc.flds_i), symbols + fldsym)
 
-function topara(i:int)seq.word"PARAM" + toword.i
+function topara(i:int)seq.word"LOCAL" + toword.i
 
 function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset, code:seq.word, thissymbol:symbol, org:symbol)symbolset
  let i = if code_1 = "parsedfunc"_1 then 3 + toint.code_2 else 1
@@ -355,7 +355,7 @@ function postbind(dict:set.symbol, modpara:mytype, templates:symbolset, knownsym
   else if code_i in "FROMSEQ51Zinternal1"then
   let mn = mangle("_"_1, modname.thissymbol, [ mytype("T" + abstracttype.resulttype.thissymbol), mytype."int"])
    let newknown = known.X(mn, org, dict, modpara, templates, knownsymbols)
-   let f1 ="PARAM 1 LIT 0 IDXUC FREF" + mn + "Q3DZbuiltinZintZint LIT 2 LIT 3 BR 3 PARAM 1 EXITBLOCK 1 LIT 0 LIT 0 RECORD 2 EXITBLOCK 1 
+   let f1 ="LOCAL 1 LIT 0 IDXUC FREF" + mn + "Q3DZbuiltinZintZint LIT 2 LIT 3 BR 3 LOCAL 1 EXITBLOCK 1 LIT 0 LIT 0 RECORD 2 EXITBLOCK 1 
    BLOCK 3"
     replace(newknown, changesrc(thissymbol, result + f1 + subseq(code, i + 1, length.code)))
   else postbind2(org, dict, modpara, templates, knownsymbols, code, i, result, thissymbol)
@@ -369,7 +369,7 @@ function postbind2(org:symbol, dict:set.symbol, modpara:mytype, templates:symbol
    postbind2(org, dict, modpara, templates, knownsymbols, code, i + l, result + subseq(code, i, i + l - 1), thissymbol)
  else if code_i = "COMMENT"_1 then
  postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2 + toint.code_(i + 1), result + subseq(code, i, i + 1 + toint.code_(i + 1)), thissymbol)
- else if code_i in "LIT APPLY RECORD SET PARAM  WORD DEFINE EXITBLOCK BLOCK BR"then
+ else if code_i in "LIT APPLY RECORD SET WORD DEFINE EXITBLOCK BLOCK BR LOCAL"then
  postbind2(org, dict, modpara, templates, knownsymbols, code, i + 2, result + subseq(code, i, i + 1), thissymbol)
  else
   let z = X(code_i, org, dict, modpara, templates, knownsymbols)
@@ -524,7 +524,7 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
 
 function definedeepcopy(dict:set.symbol, templates:symbolset, knownsymbols:symbolset, type:mytype, org:symbol)resultpair
  // assert towords.type in ["int seq","int","word3","stat5","word seq","llvmtypeele","word","llvmconst","const3","inst","flddesc seq","match5","flddesc","templatepart seq","templatepart","internalbc","persistant"]report"definedeepcopy"+ towords.type //
- let body = if abstracttype.type in "encoding int word"then resultpair(knownsymbols,"PARAM 1")
+ let body = if abstracttype.type in "encoding int word"then resultpair(knownsymbols,"LOCAL 1")
  else
   // assert length.print.type = 1 &or print.type in ["match5","seq.int","llvmconst","match5","inst","libsym","llvmtypeele","word3","const3","seq.word","stat5","seq.flddesc","flddesc","seq.templatepart","templatepart","set.mod2desc"]report"DDD"+ print.type //
   if abstracttype.type = "seq"_1 then
@@ -535,7 +535,7 @@ function definedeepcopy(dict:set.symbol, templates:symbolset, knownsymbols:symbo
    let blockittype = if abstracttype.parameter.type in "seq word char int"then mytype."int blockseq"
    else mytype(towords.type + "blockseq")
    let blockit = mangle("blockit"_1, blockittype, [ mytype."T seq"])
-    resultpair(knownsymbols,"LIT 0 LIT 0 RECORD 2 PARAM 1 FREF" + dc + "FREF" + cat + "FREF"
+    resultpair(knownsymbols,"LIT 0 LIT 0 RECORD 2 LOCAL 1 FREF" + dc + "FREF" + cat + "FREF"
     + pseqidx
     + "APPLY 5"
     + blockit)
@@ -546,7 +546,7 @@ function definedeepcopy(dict:set.symbol, templates:symbolset, knownsymbols:symbo
     let y = subfld(z, 2, 0, 2)
      resultpair(knownsymbols
      , if last.y = "1"_1 then
-     // only one element in record so type is not represent by actual record //"PARAM 1"
+     // only one element in record so type is not represent by actual record //"LOCAL 1"
       + subseq(y, 6, length.y - 2)
      else
       assert z_1 ≠ "1"_1 report"Err99a"
@@ -560,8 +560,8 @@ function subfld(desc:seq.word, i:int, fldno:int, starttype:int)seq.word
  subfld(desc, i + 2, fldno, starttype)
  else
   let fldtype = mytype.@(+,_.desc,"", arithseq((i - starttype + 2) / 2, -2, i))
-   {(if abstracttype.fldtype in "encoding int word"then"PARAM 1 LIT" + toword.fldno + "IDXUC"
+   {(if abstracttype.fldtype in "encoding int word"then"LOCAL 1 LIT" + toword.fldno + "IDXUC"
    else
     assert abstracttype.fldtype = "seq"_1 report"ERR99" + desc
-     "PARAM 1 LIT" + toword.fldno + "IDXUC" + deepcopymangle.fldtype)
+     "LOCAL 1 LIT" + toword.fldno + "IDXUC" + deepcopymangle.fldtype)
    + subfld(desc, i + 1, fldno + 1, i + 1)}

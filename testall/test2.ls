@@ -22,13 +22,12 @@ use textio
 
 use otherseq.wordfreq
 
-type indexedword is record w:word, index:int
+type indexedword is record w:word
 
-function addindex(a:indexedword, i:int)indexedword indexedword(w.a, i)
 
 type eword is encoding indexedword
 
-Function assignencoding(length:int,data:indexedword) int  (randomint.1)_1
+Function assignencoding(length:int,data:indexedword) int  length+1
 
 
 function hash(a:indexedword)int hash.w.a
@@ -42,7 +41,8 @@ function =(a:wordfreq, b:wordfreq)boolean false
 function ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b
 
 function count(s:seq.wordfreq, w:word)seq.wordfreq
- replace(s, findindex(eword, indexedword(w, 0)), wordfreq(count.s_findindex(eword, indexedword(w, 0)) + 1, w))
+let index=valueofencoding.encode(eword, indexedword(w))
+ replace(s, index, wordfreq(count.s_index + 1, w))
 
 function print(p:wordfreq)seq.word
  if count.p = 0 then empty:seq.word

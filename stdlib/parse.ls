@@ -34,11 +34,7 @@ use set.symbol
 
 use symbol
 
-use blockseq.seq.tree.seq.word
 
-use seq.tree.seq.word
-
-use tree.seq.word
 
 use set.word
 

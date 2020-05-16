@@ -30,16 +30,16 @@ use UTF8
 
 Function testopt seq.word
 let p2 = secondPass."testall"_1
-let cl = ["LIT 7","LIT 12","LIT 1","LIT 2","WORD FIRST","WORD AB","WORDS 2 A B","LIT 7","LIT 11","LIT 2"
-,"LIT 1","LIT 0","LIT 4607182418800017408","LIT 44","LIT 2","LIT 46","LIT 72"]
+let cl = ["7","12","1","2","WORD FIRST","WORD AB",'"A B"',"7","11","2"
+,"1","0","4607182418800017408"," 44"," 2"," 46"," 72"]
 let c2 = constantseq(99,"")
 + [
-"LOCAL 1 LOCAL 2 LIT 3 LOOPBLOCK 3 LOCAL 3 LIT 1 Q3DZbuiltinZintZint 2 LIT 3 LIT 4 BR 3 LOCAL 4 EXITBLOCK 1 
-    LOCAL 3 LIT 1 Q2DZbuiltinZintZint 2 LOCAL 3 LOCAL 4 Q2AZbuiltinZintZint 2 CONTINUE 2 BLOCK 4",
-"LOCAL 1 LIT 0 Q3EZbuiltinZintZint 2 LIT 2 LIT 3  BR 3 LIT 10 LOCAL 2 
-Q3EZbuiltinZintZint 2   EXITBLOCK 1  LIT 0  EXITBLOCK 1   BLOCK 3",
-"LOCAL 1 LIT 0 Q3EZbuiltinZintZint 2 LIT 2 LIT 3   BR 3 LIT 1 
- EXITBLOCK 1 LIT 10 LOCAL 2 Q3EZbuiltinZintZint 2 EXITBLOCK 1  BLOCK 3"]
+"%1 %2  3 LOOPBLOCK  3  &br %3  1 Q3DZbuiltinZintZint 2 3 4 BR 3  &br %4 EXITBLOCK 1 &br
+    %3 1 Q2DZbuiltinZintZint 2 %3 %4 Q2AZbuiltinZintZint 2 CONTINUE 2  &br BLOCK 4 &br",
+"%1  0 Q3EZbuiltinZintZint 2  2  3  BR 3  &br 10 %2 
+Q3EZbuiltinZintZint 2   EXITBLOCK 1   &br 0  EXITBLOCK 1  &br  BLOCK 3 &br",
+"%1  0 Q3EZbuiltinZintZint 2  2  3   BR 3  1  &br
+ EXITBLOCK 1  &br 10 %2 Q3EZbuiltinZintZint 2 EXITBLOCK 1  &br BLOCK 3 &br"]
 let r = @(+, getcode(p2,"", cl),"", arithseq(length.cl, 1, 1))
 + @(+, getcode(p2,"ZintZint", c2),"", arithseq(length.c2 - 99, 1, 100))
  if isempty.r then"PASS testopt"else"testopt" + r
@@ -50,7 +50,7 @@ Function getcode(p2:seq.seq.word, para:seq.word, codelist:seq.seq.word, no:int)s
  let name = merge.("optest" + toword.no + "Ztestopt" + para)
  let t = @(+, filter(name),"", p2)
  let code = subseq(t, 3, length.t)
-  if codelist_no = code then""else"&br FAIL" + toword.no + code
+  if codelist_no = code then""else"&br FAIL" + toword.no + code +"&p"+codelist_no
 
 Function optest1 int 3 + 4
 

@@ -14,9 +14,7 @@ use seq.symbol
 
 use symbol
 
-use seq.tree.seq.word
 
-use tree.seq.word
 
 use funcsig
 
@@ -57,6 +55,8 @@ Function type:sig internaltype export
 
 Function lowerbits(sig) int export 
 
+Function ?(a:sig,b:sig) ordering valueofencoding.a ? valueofencoding.b
+
 
 Function coding(i:intercode)seq.fsignrep xcoding.i
 
@@ -93,59 +93,7 @@ Function asinstconstant(t:seq.sig) sig aseinst("CONSTANT"+@(+,toword,"",t),t)
 _______________
 
 
-function addcodes(allfunctions:symbolset, a:seq.seq.sig, f:symbol)seq.seq.sig 
-let t=prepb(allfunctions, codetree.f)
-replace(a,   lowerbits.valueofencoding.addfunction(allfunctions,mangledname.f),t )
-
-Function convert2(allfunctions:symbolset, s:seq.symbol)intercode
- let discard=basesigs
- let ms=@(+,mangledname,"",s)
- let defines = @(add2, addfunction.allfunctions, empty:seq.int, ms)
- let codes=@(addcodes.allfunctions, identity, dseq.empty:seq.sig, s)
-  intercode(setcode(orderadded,codes, 1,empty:seq.fsignrep),defines)
-  
-function  add2(s:seq.int,f:sig) seq.int   s+  lowerbits.valueofencoding.f
-
-   
-function  setcode(coding:seq.fsignrep,codes:seq.seq.sig,i:int,result:seq.fsignrep) seq.fsignrep
-   if i > length.coding then result
-   else  
-    let a=coding_i
-    if (towords.a)_1 in "CONSTANT FREF" then
-      setcode(coding,codes,i+1,result+a)
-    else
-     let t=fsignrep( fsig.a, module.a, 1,  codes_i,returntype.a,towords.a)
-     setcode(coding,codes,i+1,result+t)
-
-Function prepb(allfunctions:symbolset, t:tree.seq.word)seq.sig
- let inst = inst.t
-  if inst in "PARAM"then [ aseinst.[ inst, toword(- toint.arg.t - 1)]]
-  else if inst in "LIT LOCAL   WORD  WORDS"then [ aseinst.label.t]
-   else  if inst = "DEFINE"_1 then
-  prepb(allfunctions, t_1) + aseinst(label.t)  
-  else  if inst = "SET"_1 then
-  prepb(allfunctions, t_1) + aseinst("DEFINE" + arg.t) + prepb(allfunctions, t_2)
-   + aseinst.[ inst, arg.t]
-  else  if inst = "LOOPBLOCK"_1 then
-  // number of sons of loop block may have change with optimization //
-   let firstvar = arg.last.sons.t
-    @(+, prepb.allfunctions, empty:seq.sig, subseq(sons.t, 1, nosons.t - 1))
-    + aseinst("LIT" + firstvar)
-    + aseinst.[ inst, toword.nosons.t]
-  else if inst = "CRECORD"_1 then 
-       let z=   @(+, prepb.allfunctions, empty:seq.sig, sons.t)
-       assert length.z=nosons.t report "???"
-   [ asinstconstant.z]
-   else if inst ="FREF"_1 then
-    let z=addfunction(allfunctions,(label.t)_2)
-   [ aseinst(label.t,[z])]
-  else 
-   @(+, prepb.allfunctions, empty:seq.sig, sons.t)
-   + if inst in "IDXUC    CONTINUE RECORD  FINISHLOOP   EXITBLOCK BLOCK BR"
-   then [ aseinst.[ inst, toword.nosons.t]]
-   else if inst = "STATE"_1 then empty:seq.sig
-   else [addfunction(allfunctions,inst)]
-       
+        
 function addfunction(allfunctions:symbolset, mangled:word) sig
      let s2 = lookupsymbol(allfunctions, mangled)
      let a = codedown.mangled
@@ -161,8 +109,7 @@ function astext(coding:seq.fsignrep, i:sig)seq.word
   else if t_1 = "WORDS"_1 then
   '"' + subseq(t, 3, length.t) + '"'
   else
-   // if t_1 ="SET"_1 then""else //
-   if t_1 in "BLOCK EXITBLOCK BR LOOPBLOCK FINISHLOOP CONTINUE"then t + " &br"else t
+    if t_1 in "BLOCK EXITBLOCK BR LOOPBLOCK FINISHLOOP CONTINUE"then t + " &br"else t
 
 function ithfunc(a:intercode, i:int)seq.word
  towords.(coding.a)_i + @(+, astext.coding.a,"",cleancode.(coding.a)_i) 

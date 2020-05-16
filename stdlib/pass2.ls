@@ -93,14 +93,13 @@ function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:wo
    if length.a > 1 ∧ a_2 = "builtin"then empty:seq.symbol
    else
     let f = lookupfunc(knownsymbols.p, mangledname)
-    let code1 = if false ∧ "TESTOPT"_1 in flags.f then
+    let code1 = // if false ∧ "TESTOPT"_1 in flags.f then
     let t = optswitch(mangledname, 0, codetree.f)
-      // assert t = codetree.f report [ mangledname]// t
-    else codetree.f
+     else // codetree.f
      // let code1 = if"TESTOPT"_1 in flags.f then hoistRecord.codetree.f else hoistRecord.codetree.f let code2 = //
      // remove result record in loop //
      // opt2.code1 let code3 = removerecords.code2 //
-     let q = inline(p, empty:set.word, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, code1)
+     let q = inline(p, empty:set.word, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, nopara.f+1, code1)
      let q2 = if"STATE"_1 in flags.f ∨ not(mangledname.f in stateChangingFuncs)then q
      else tree("STATE", [ q])
       [ changecodetree(f, q2)]
@@ -223,7 +222,8 @@ function addsymbol(p:program, mangledname:word)program
      let flags = flags.newsym
      let newp = program(replace(knownsymbols.p, newsym)
      , callgraph.p + @(+, arc.mangledname.caller, empty:seq.arc.word, toseq.calls3)
-     , if isrecusive ∨ not("SIMPLE"_1 in flags ∨ "INLINE"_1 in flags) then
+     , if isrecusive ∨ not("SIMPLE"_1 in flags ∨ "INLINE"_1 in flags
+     &or mangledname.caller in "wordsZencoding" ) then
      inline.p
      else inline.p + mangledname.newsym
      , if"STATE"_1 in flags ∨ inst.tr0 = "STATE"_1 then

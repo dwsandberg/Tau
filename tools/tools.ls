@@ -18,7 +18,7 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
 
 /run tools testfirstpass
 
-/run tools testprofile
+run tools testprofile
 
 /run tools prettytest
 
@@ -68,7 +68,7 @@ Function checkdoclib seq.word doclibrary."tools"
 Function testfirstpass seq.word @(+, +("&br &br "),"", firstPass("testall"_1))
 
 Function testprofile seq.word 
-   let a = compilelib2("stdlibbak"_1,false)
+   let a = compilelib2("stdlibbak"_1)
     a + profileresults."time"
 
 Function testprintBitCodes seq.word printBitCodes."test4.bc"

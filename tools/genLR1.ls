@@ -52,13 +52,11 @@ use set.word
 
 type estate is encoding state
 
-type state is record toset:set.dottedrule, index:int
+type state is record toset:set.dottedrule
 
-function state(a:set.dottedrule)state state(a, 0)
 
 type dottedrule is record place:int, rule:seq.word
 
-Function addindex(d:state, i:int)state state(toset.d, i)
 
 type action is record stateno:int, lookahead:word, codedaction:int
 
@@ -72,7 +70,7 @@ function ?(a:dottedrule, b:dottedrule)ordering rule.a ? rule.b ∧ place.a ? pla
 
 function hash(p:dottedrule)int hash.rule.p + place.p
 
-function assignencoding(l:int, a:state) int assignrandom(l,a)
+function assignencoding(l:int, a:state) int l+1
 
 
 function =(a:action, b:action)boolean lookahead.a = lookahead.b ∧ stateno.a = stateno.b
@@ -111,7 +109,7 @@ function reduce(stateno:int, lookahead:word, ruleno:int)action action(stateno, l
 
 function getaction(ruleprec:seq.seq.word, grammar:seq.seq.word, state:state, stateno:int, reductions:seq.seq.word, lookahead:word)action
  let newstate = advance(grammar, toset.state, lookahead)
- let newstateno = if not.isempty.newstate then findindex(estate, state.newstate)else 0
+ let newstateno = if not.isempty.newstate then valueofencoding.encode(estate, state.newstate)else 0
   if length.reductions = 0 ∧ newstateno ≠ 0 then shift(stateno, lookahead, newstateno)
   else if length.reductions = 1 ∧ newstateno = 0 then reduce(stateno, lookahead, ruleno(grammar, reductions_1))
   else
@@ -184,7 +182,7 @@ function shifts(s:state)seq.word toseq.asset.@(+, shifts, empty:seq.word, toseq.
 
 Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphabet:seq.word)seq.word
  let grammar2 = @(+, first, empty:seq.seq.word, grammarandact)
- let initialstateno = findindex(estate, state.initialstate.grammar2)
+ let initialstateno = valueofencoding.encode(estate, state.initialstate.grammar2)
  let missingsymbols = asset.alphabet - asset.alphabet.grammar2
   assert isempty.missingsymbols report"Symbols not included in alphabet" + toseq.missingsymbols
   let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)

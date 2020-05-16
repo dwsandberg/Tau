@@ -319,13 +319,11 @@ Function encode(erecord.stat5, stat5)encoding.stat5 export
 
 type statencoding is encoding stat5
 
-type stat5 is record caller:word, callee:word, index:int
+type stat5 is record caller:word, callee:word
 
-function stat5(caller:word, callee:word)stat5 stat5(caller, callee, 0)
 
-function addindex(s:stat5, i:int)stat5 stat5(caller.s, callee.s, i)
 
-function assignencoding(l:int, a:stat5) int assignrandom(l,a)
+function assignencoding(l:int, a:stat5) int l+1
 
 function hash(s:stat5)int abs(hash.caller.s + hash.callee.s)
 
@@ -333,7 +331,7 @@ function =(a:stat5, b:stat5)boolean caller.a = caller.b ∧ callee.a = callee.b
 
 Function profile(caller:word, callee:word)int
  if caller = callee ∨ caller = "noprofile"_1 then 0
- else findindex(statencoding, stat5(caller, callee)) + 1
+ else valueofencoding.encode(statencoding, stat5(caller, callee)) + 1
 
 function callarc(a:stat5)seq.word [ caller.a, callee.a]
 

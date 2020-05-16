@@ -2,8 +2,6 @@ Module main2
 
 use UTF8
 
-use codegen
-
 use fileio
 
 use seq.firstpass
@@ -39,8 +37,6 @@ use set.mytype
 use parse
 
 use pass1
-
-use pass2
 
 use prims
 
@@ -84,7 +80,7 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
    assert stamp ≥ time report"library" + dependentlibs_i + "is out of date" + toword.time + toword.stamp
     loadlibs(dependentlibs, i + 1, stamp)
 
-function subcompilelib(libname:word,old:boolean)seq.word
+function subcompilelib(libname:word)seq.word
  PROFILE
  .
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
@@ -102,14 +98,9 @@ function subcompilelib(libname:word,old:boolean)seq.word
 // let allsrc = @(+, gettext2(s_2), empty:seq.seq.seq.word, filelist) //
  let allsrc=groupparagraphs("module Module",getlibrarysrc.libname)
  let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
-  let bc = if old then
-   let intercode2= pass2(symset.p1, toseq.roots.p1, known.li)
-   let libmods=libdesc(intercode2, mods.p1, symset.p1)
-   codegen5(addlibmods(libmods,intercode2), libname)
-    else 
-      let intercode2 = pass2new(symset.p1, toseq.roots.p1, known.li)  
+       let intercode2 = pass2new(symset.p1, toseq.roots.p1, known.li)  
   let libmods=libdesc(intercode2, mods.p1, symset.p1)
-   codegen(addlibmods(libmods,intercode2), libname)
+   let bc=codegen(addlibmods(libmods,intercode2), libname)
  let z2 = createlib(bc, libname, dependentlibs)
  let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1)
  let name = merge("pass1/" + libname + "." + print.currenttime + ".txt")
@@ -122,7 +113,7 @@ use codegennew
 
 Function mainnew(arg:seq.word) seq.word
    let libname=arg_1 let modname=arg_2 let funcname=arg_3
- let p = process.compilelib2(libname,false)
+ let p = process.compilelib2(libname)
  if aborted.p then message.p
  else if subseq(result.p, 1, 1) = "OK" then
  // execute function specified in arg //
@@ -130,10 +121,10 @@ Function mainnew(arg:seq.word) seq.word
    if aborted.p2 then message.p2 else result.p2
  else result.p
 
-Function compilelib2(libname:word,old:boolean)seq.word
+Function compilelib2(libname:word)seq.word
  PROFILE
  .
- let p1 = process.subcompilelib(libname,old)
+ let p1 = process.subcompilelib(libname)
   if aborted.p1 then"COMPILATION ERROR:" + space + message.p1
   else
    let aa = result.p1
@@ -142,7 +133,7 @@ Function compilelib2(libname:word,old:boolean)seq.word
 Function main(arg:seq.int)outputformat
  let args = towords.UTF8(arg + 10 + 10)
  let libname = args_1
- let p = process.compilelib2(libname,true)
+ let p = process.compilelib2(libname)
  let output = if aborted.p then message.p
  else if subseq(result.p, 1, 1) = "OK" ∧ length.args = 3 then
  // execute function specified in arg //

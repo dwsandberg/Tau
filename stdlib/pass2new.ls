@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau
 
 Module pass2new
 
@@ -116,12 +115,18 @@ Function firstopt(p:prg, c:seq.seq.word, code:seq.sig)prg
  let s = sig(c_1, @(+, mytype, empty:seq.mytype, subseq(c, 3, length.c)), mytype.c_2, code2)
   // assert length.code < 10 report"UUU"+ print.code +"
 &p"+ print.code2 //
-  let a = handletail(code2, s)
-   // assert not(t_1 in"testoptZtestopt")report"PROCESSProC"+ toword.length.code2 + print.code //
+  let a = handletail(code2, s,c_1)
+    // assert not(t_1 in"testoptZtestopt")report"PROCESSProC"+ toword.length.code2 + print.code //
    let a2=value.yyy(p,a,1,nopara+1,pdict)
    add(p, s, a2)
 
-function handletail(code:seq.sig, self:sig)seq.sig
+function breaklines2(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int
+ if i > length.a then result
+ else if false then
+ breaklines2(a, i + 1, last, result )
+ else breaklines2(a, i + 1, last, result)
+ 
+function handletail(code:seq.sig, self:sig,xx:seq.word)seq.sig
  if length.code < 4 then code
  else if isblock.last.code then
  let i = length.code
@@ -142,6 +147,7 @@ function handletail(code:seq.sig, self:sig)seq.sig
         let code1 = adjustvar(code.args, nopara, 1, empty:seq.sig)
         let code2 = @(adjustbr.1, identity, code1, blks)
         let code3 = @(addcontinue.continue, identity, code2, reverse.b)
+        //  assert  not(xx="breaklines") report "DFG"+toword.length.b+"K"+print.code3 //
         let entry = plist + lit(nopara + 1) + loopblock(nopara + 1)
         let code4 = entry + subseq(code3, 1, length.code3 - 1) + block(length.blks + 1)
           code4
@@ -167,18 +173,19 @@ function addcontinue(continue:seq.sig, code:seq.sig, l:seq.int)seq.sig
 
 function adjustbr(delta:int, code:seq.sig, i:int)seq.sig
  if code_(i - 1) = br then
- let b = adjustlit(code, delta, 0, i - 2)
-  let a = adjustlit(code, delta, 0, i - 3)
+   let b = adjustlit(code, delta, 0, i - 2)
+   let a = adjustlit(code, delta, 0, i - 3)
    subseq(code, 1, i - 4) + [ a, b] + subseq(code, i - 1, length.code)
  else code
 
 function findtail(s:seq.sig, self:sig, i:int)seq.seq.int
- // assert i in [ 7, 9, 16, 17, 25, 35]report"KL"+ toword.i + print.subseq(s, i - 4, i - 1)print.s //
- if s_(i - 1) = exit ∧ s_(i - 2) = self then
- [ [ i - 2, i - 1]]
- else if subseq(s, i - 4, i - 1) = [ self, exit, skip, skip]then
- [ [ i - 4, i - 1]]
- else empty:seq.seq.int
+  if s_(i-1)=exit then
+   let j=skipskip(s,i-2)
+   if  s_(j) = self then [[j,i-1]] else  empty:seq.seq.int  
+else   empty:seq.seq.int
+ 
+ function  skipskip(s:seq.sig,i:int) int
+     if s_i=skip then skipskip(s, i-1) else  i 
 
 function print(s:seq.int)seq.word @(+, toword,"", s)
 
@@ -571,7 +578,7 @@ function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, process
     let f1=findencode(ecached, cached(subseq(s,i,i+1),eqOp)) 
      if not.isempty.f1  &and i < length.s then
        bbb(knowsymbols, s, i + 2, pending, processed, result + s.(f1_1))
-     else   let bb=if this ="LOCAL"_1 &or this=" PARAM"_1 then
+     else   let bb=if this ="LOCAL"_1  then
      sig( [ s_(i+1)], empty:seq.mytype, mytype."local", empty:seq.sig)
   else if this = "LIT"_1 then   lit.toint.s_(i+1)
   else if this = "WORD"_1 then

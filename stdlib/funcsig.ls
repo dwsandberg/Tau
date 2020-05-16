@@ -327,7 +327,7 @@ Function decodewordOp sig plusOp + 10
 
 
 
-Function ecvt(i:int)sig builtin."PARAM 1"
+Function ecvt(i:int)sig builtin."LOCAL 1"
 
 Function local1 sig ecvt(localbit + nographbit + 1 + parabits.0)
 
@@ -386,7 +386,6 @@ function issimple(nopara:int, code:seq.sig)boolean
   if between(length.code, 1, 15) ∧ between(nopara, 0, lastlocal)
  ∧ (nopara = 0 ∨ checksimple(code, 1, nopara, 0))
  then
-   assert not("einstintercode" _1 in print.code) report print.code
    if nopara > 0 then true
    else 
    if      length.code=1 &and isconst.code_1 then
@@ -394,14 +393,19 @@ function issimple(nopara:int, code:seq.sig)boolean
      if module.rep="$constant" &and length.code.rep= 3 then
          let arg1=  decode.(code.rep)_1
          let arg2=  decode.(code.rep)_2
-         let arg3=  decode.(code.rep)_2
-         assert not(fsig.arg3= "einstintercode" ) report "X"
-           not(module.arg1="$fref" &and module.arg2="$int" &and module.arg3="$word")
+         let arg3=  decode.(code.rep)_3
+         let t=  not(module.arg1="$fref" &and module.arg2="$int" &and module.arg3="$word")
+       //  assert t &or (fsig.arg3)_1 in "wordencodingwords mydatatestencoding
+         mydata2testencoding mydata3testencoding mydata4testencoding ewordtest2" report "INTLINE" +print.code.rep+
+          toword.(module.arg1="$fref")+toword(module.arg2="$int")+toword.(module.arg3="$word")
+         +toword.t // t
      else 
          assert length.code &ne 4 &or not.isrecord.code_4 report "JKL"+print.code
   true 
   else true
 else false
+
+function toword(a:boolean) seq.word if a then "T" else "F"
 
 function checksimple(code:seq.sig, i:int, nopara:int, last:int)boolean
  // check that the parameters occur in order and they occur only once //

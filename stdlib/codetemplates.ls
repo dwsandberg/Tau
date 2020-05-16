@@ -38,7 +38,7 @@ use blockseq.templatepart
 
 use blockseq.seq.templatepart
 
-use deepcopy.seq.templatepart
+/use deepcopy.seq.templatepart
 
 use seq.templatepart
 
@@ -46,9 +46,15 @@ use textio
 
 use blockseq.word
 
-use deepcopy.word
+/use deepcopy.word
 
-use deepcopy.seq.word
+/use deepcopy.seq.word
+
+use seq.sig
+
+use seq.seq.sig
+
+use seq.fsignrep
 
 function wordstype llvmtype array(-1, i64)
 
@@ -73,9 +79,8 @@ Function arg(match5)int export
 
 Function code(match5) seq.sig export
 
-use seq.sig
 
-use seq.seq.sig
+
 
 Function lowerbits(sig) int export
 
@@ -169,19 +174,13 @@ function match5(fullinst:seq.word, length:int, b:internalbc)match5
  let parts = getparts.b
  let nopara = @(max, parano, 0, parts)
   match5(fullinst, length, parts,"TEMPLATE"_1, nopara)
-
-function getarg(s:seq.match5,i:int) int
-  let m=s_i
-  assert action.m="ACTARG"_1 report "unexpected action"+action.m
-  arg.m
   
 function getarg(s:seq.match5,i:sig) int
-  getarg(s,lowerbits.i)
+ let m=s_lowerbits.i
+  assert action.m="ACTARG"_1 report "unexpected action" 
+  arg.m
 
-  
-/use seq.inst
 
-use seq.fsignrep
 
 
 Function type:intercode internaltype export
@@ -196,9 +195,31 @@ Function match5map(fs2:intercode,symlist:seq.word) seq.match5
   let discard = profiletype
   let discard2 = @(+, C, 0, symlist+ declist)
   let xy = table
-  @(buildtemplates, identity, empty:seq.match5, coding)
-
-function buildtemplates(s:seq.match5,xx:fsignrep) seq.match5
+//   assert false report "J"+toword.length.coding.fs2+toword.length.actuallyused.fs2 //
+buildtemplates(empty:seq.match5,coding, actuallyused.fs2,1)
+ 
+  
+ use set.sig
+ 
+ use set.int
+ 
+     
+function   actuallyused(fs:intercode,processed:set.int, toprocess:set.int) set.int
+   if isempty.toprocess then processed else 
+    let z= toseq.asset.@(+,cleancode,empty:seq.sig, @( +,   _(coding.fs)   ,empty:seq.fsignrep,     toseq.toprocess)
+  ) 
+   let p=asset.@(+,lowerbits,empty:seq.int,z)
+       actuallyused(fs,processed &cup toprocess, p-processed)
+  
+function actuallyused(fs:intercode) set.int
+   actuallyused(fs,empty:set.int,asset(defines.fs+length.coding.fs))
+ 
+ 
+function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq.match5
+ if i > length.coding then s
+ else let m5=   if not (i in used) then match5("SET 0", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
+ else  
+  let xx=coding_i
  let fullinst=towords.xx
    // let z10 = createfile("stat.txt", [ fullinst]+"start")//
   let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
@@ -207,34 +228,31 @@ function buildtemplates(s:seq.match5,xx:fsignrep) seq.match5
    if length.b = 0 then
    let inst = fullinst_1
     let instarg = fullinst_2
-    let m =   if inst in "PARAM LOCAL DEFINE SET" &and checkinteger.instarg="WORD"_1 then
-      s + match5("SET 0", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
+    let m =   if inst in "LOCAL DEFINE SET" &and checkinteger.instarg="WORD"_1 then
+       match5("SET 0", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
     else if inst = "FREF"_1 then
-    s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]))
+      match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]))
     else if inst = "LIT"_1 then
-    s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg)
+      match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg)
     else if inst = "LOCAL"_1 then
-    s + match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg)
-    else if inst = "PARAM"_1 then
-    s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg)
-    else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE BLOCK BR EXITBLOCK"then
-    s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, toint.instarg)
+     match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg)
+      else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE BLOCK BR EXITBLOCK"then
+      match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, toint.instarg)
     else if inst = "CONSTANT"_1 then
      let args=@(+,getarg.s, empty:seq.int,cleancode.xx)
-       assert true &or length.args &ne 3 &or not(wordref."addZTzbitpackedseqZTzbitpackedseqZT"_1=args_1) report
-         "HERE addc"+@(+,toword,"",args)
-     s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
+       match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
     else if inst in "WORDS"then
-      s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2(subseq(fullinst, 3, length.fullinst)))
+      match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2(subseq(fullinst, 3, length.fullinst)))
     else if inst = "WORD"_1 then
-       s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, wordref.instarg)
+      match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, wordref.instarg)
     else
      let noargs = toint.instarg
      let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
-      s + match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs,cleancode.xx)
-    let discard = encode(ematch5, last.m)
+        match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs,cleancode.xx)
+    let discard = encode(ematch5, m)
      m
-   else // already have a match5 // s + b_1
+   else // already have a match5 //  b_1
+   buildtemplates(s+m5,coding,used,i+1)
 
 /Function deepcopy2(m:match5)match5 let y0 = deepcopy.fullinst.m let y1 = deepcopy.length.m let y2 = deepcopy.parts.m let y3 = deepcopy.action.m let y4 = deepcopy.arg.m let y5 = deepcopy.consts.m match5(y0, y1, y2, y3, y4, y5)
 

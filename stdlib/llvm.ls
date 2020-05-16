@@ -69,19 +69,16 @@ Function typ(llvmconst)int export
 
 Function toseq(llvmconst)seq.int export
 
-type llvmtypeele is record toseq:seq.int, index:int
+type llvmtypeele is record toseq:seq.int
 
 type llvmtypes is encoding llvmtypeele
 
 type llvmtype is record index:int
 
-function llvmtypeele(toseq:seq.int)llvmtypeele llvmtypeele(toseq, 0)
-
-function addindex(l:llvmtypeele, i:int)llvmtypeele llvmtypeele(toseq.l, i)
 
 function hash(a:llvmtypeele)int hash.toseq.a
 
-function assignencoding(l:int, a:llvmtypeele) int assignrandom(l,a)
+function assignencoding(l:int, a:llvmtypeele) int l+1
 
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b 
@@ -181,7 +178,9 @@ Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, orderadded.llvmt
 
 Function typ(a:llvmtype)int index.a - 1
 
-Function llvmtype(s:seq.int)llvmtype llvmtype.findindex(llvmtypes, llvmtypeele.s)
+Function llvmtype(s:seq.int)llvmtype 
+llvmtype.valueofencoding.encode(llvmtypes,llvmtypeele.s) 
+
 
 Function double llvmtype llvmtype.[ TYPEDOUBLE]
 

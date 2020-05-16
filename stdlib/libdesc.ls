@@ -74,7 +74,7 @@ function filter(  i:int,result:seq.word, src:seq.word) seq.word
   let name = src_i
    if name in "builtinZinternal1Zwordzseq builtinZinternal1Zinternal1 if  IDXUC getinstanceZbuiltinZTzerecord
    STATEZinternal1Zinternal1" then filter( i + 1,result, src)
-   else if name in "SET LIT PARAM LOCAL WORD DEFINE
+   else if name in "SET LIT LOCAL WORD DEFINE
     RECORD APPLY LOOPBLOCK  CONTINUE FINISHLOOP CRECORD BLOCK EXITBLOCK BR" then filter( i + 2, result,src)
    else if name = "FREF"_1 then filter( i+2,result+src_(i+1),src)
    else  if name = "WORDS COMMENT"_1 then
@@ -90,8 +90,9 @@ function filter(  i:int,result:seq.word, src:seq.word) seq.word
 function find(coding:seq.fsignrep,i:int,mangledname:word)  seq.word
    if i > length.coding then "not found" else
    let ins=coding_i
+   if  mangledname="wordencodingZwords"_1 then "" else
    if mangledname= (towords.ins)_1 then 
-     let c=if   // "SIMPLE"_1 in flags.ins // length.cleancode.ins < 15   then 
+     let c=if   // "SIMPLE"_1 in flags.ins // length.cleancode.ins < 15  then 
       // assert length.code.ins < 15 report "LEN"+toword.length.code.ins // cleancode.ins  else empty:seq.sig
      astext5(coding,c) 
     else 
@@ -116,9 +117,7 @@ function find2(coding:seq.fsignrep, known:symbolset, mangledname:word) seq.libsy
   if last.towords.modname.sym in "builtin local para" then empty:seq.libsym else
   let t= find (coding,1,mangledname)
   let src=stripparsedfunc.if t="not found" then src.sym else t
-     let src2= if src="PARAM 1"+mangledname+"builtinZinternal1Zinternal1" then
-       "" else src
-     [libsym(resulttype.sym,mangledname,src2)]
+        [libsym(resulttype.sym,mangledname,src)]
     
 function close(intercode:intercode,   known:symbolset,toprocess:seq.libsym,have:set.word,processed:seq.libsym) seq.libsym 
      let more=asset.@(+,calls,"",toprocess)-have
@@ -147,8 +146,7 @@ function astext(s:seq.fsignrep, ss:sig)seq.word
  let i=lowerbits.ss
  let f = towords.s_i
   if f_1 = "CONSTANT"_1 then   astext5(s,cleancode.s_i)+"RECORD"+toword.length.cleancode.s_i
-  else if f_1 = "PARAM"_1 then"PARAM" + toword(- toint.f_2 - 1)
-  else if f_1 in "SET WORD WORDS LOCAL LIT PARAM RECORD FREF EXITBLOCK BR BLOCK DEFINE"then f else [ f_1]
+   else if f_1 in "SET WORD WORDS LOCAL LIT  RECORD FREF EXITBLOCK BR BLOCK DEFINE"then f else [ f_1]
 
 function astext5(s:seq.fsignrep, d:seq.sig)seq.word @(+, astext.s,"", d)
 

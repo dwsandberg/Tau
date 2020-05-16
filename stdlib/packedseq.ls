@@ -35,7 +35,7 @@ use stdlib
 
 Function cast(s:seq.T, offset:int, typ:int)T builtin.usemangle
 
-Function allocatespace:seq.T(i:int)seq.T builtin."PARAM 1 allocatespaceZbuiltinZint"
+Function allocatespace:seq.T(i:int)seq.T builtin."LOCAL 1 allocatespaceZbuiltinZint"
 
 
 function setfld2(s:seq.T, i:int, val:T)seq.T builtin.STATE.usemangle
@@ -51,6 +51,6 @@ Function append(ds:int, s:seq.T, val:T)seq.T @(append, fldof(val), s, arithseq(d
 
 Function relocate(a:seq.T, idx:int, relloc:int)seq.T setfld(a, idx, cast(a, relloc, 1))
 
-Function inttoT:T(int)T builtin."PARAM 1"
+Function inttoT:T(int)T builtin."LOCAL 1"
 
-Function fldof(T, offset:int)T builtin."PARAM 1 PARAM 2 IDXUC"
+Function fldof(T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUC"

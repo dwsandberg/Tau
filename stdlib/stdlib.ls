@@ -2,14 +2,18 @@
 
 Module stdlib 
 
-Library stdlib UTF8 bitpackedseq bits blockseq codegen codetemplates  deepcopy encoding fileio 
+Library stdlib UTF8 bitpackedseq bits blockseq codetemplates  deepcopy encoding fileio 
 format graph groupparagraphs intercode internalbc ipair libdesc libscope llvm main2  otherseq packedseq 
-parse pass1 pass2 persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
+parse pass1  persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
  timestamp maindict words   newpretty  codegennew pass2new intdict funcsig
 parsersupport  uses 
- exports UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
- internalbc ipair  libscope llvm main2  unsafe packedseq   process real   seq set stack stacktrace 
- stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode    otherseq words mangle
+ exports stdlib main2 maindict UTF8  
+ UTF8 bits blockseq  deepcopy encoding fileio format  
+  ipair   main2     process real   seq set stack stacktrace 
+ stdlib  textio  prims   maindict  otherseq tree graph packedseq unsafe words internalbc newpretty llvm
+ libscope worddict groupparagraphs timestamp ioseq dataio
+ 
+ groupparagraphs  timestamp ioseq dataio symbol intercode    mangle
  worddict  parsersupport parse pass1 newpretty  pass2 bitpackedseq    codegennew intdict libdesc
 
  

@@ -58,7 +58,7 @@ Function /(a:real, b:real)real builtin.usemangle
 
 Function representation(a:real)int export
 
-Function casttoreal(i:int)real builtin."PARAM 1"
+Function casttoreal(i:int)real builtin."LOCAL 1"
 
 Function^(i:real, n:int)real @(*, identity, 1.0, constantseq(n, i))
 
