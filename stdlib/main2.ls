@@ -18,7 +18,7 @@ use seq.fsignrep
 use intercode
 
 
-use libdesc
+/use libdesc
 
 use process.liblib
 
@@ -69,8 +69,7 @@ type libinfo is record known:symbolset, mods:seq.firstpass
 
 function addliblib(s:seq.word, a:libinfo, l:liblib)libinfo
  if(libname.l)_1 in s then
- let b=tofirstpass.l
- libinfo(@(+, tosymbol, known.a, defines.last.mods.l), b + mods.a)
+  libinfo(addknown( known.a,l), tofirstpass.l + mods.a)
  else a
 
 function loadlibs(dependentlibs:seq.word, i:int, time:int)int
@@ -96,11 +95,11 @@ function subcompilelib(libname:word)seq.word
   let discard5 = loadlibs(dependentlibs, 1, timestamp.loadedlibs_1)
    @(addliblib.dependentlibs, identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
 // let allsrc = @(+, gettext2(s_2), empty:seq.seq.seq.word, filelist) //
- let allsrc=groupparagraphs("module Module",getlibrarysrc.libname)
- let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
-       let intercode2 = pass2new(symset.p1, toseq.roots.p1, known.li)  
-  let libmods=libdesc(intercode2, mods.p1, symset.p1)
-   let bc=codegen(addlibmods(libmods,intercode2), libname)
+ let allsrc= getlibrarysrc.libname 
+ let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known.li, asset.mods.li)
+ let x = basesigs(allsrc)
+       let intercode2 = pass2new(symset.p1, mods.p1, known.li)  
+   let bc=codegen( intercode2 , libname)
  let z2 = createlib(bc, libname, dependentlibs)
  let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1)
  let name = merge("pass1/" + libname + "." + print.currenttime + ".txt")
@@ -111,15 +110,10 @@ use pass2new
 
 use codegennew
 
-Function mainnew(arg:seq.word) seq.word
-   let libname=arg_1 let modname=arg_2 let funcname=arg_3
- let p = process.compilelib2(libname)
- if aborted.p then message.p
- else if subseq(result.p, 1, 1) = "OK" then
- // execute function specified in arg //
-  let p2 = process.execute.mangle(funcname, mytype.[modname], empty:seq.mytype)
-   if aborted.p2 then message.p2 else result.p2
- else result.p
+use processOptions
+
+use libdesc
+
 
 Function compilelib2(libname:word)seq.word
  PROFILE
@@ -165,34 +159,13 @@ Function firstPass(libname:word)seq.seq.word
   let discard5 = loadlibs(dependentlibs, 1, timestamp.loadedlibs_1)
    @(addliblib(dependentlibs), identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
     let allsrc=groupparagraphs("module Module",getlibrarysrc.s_2)
- // let allsrc = @(+, gettext2(s_2 ), empty:seq.seq.seq.word, filelist) //
  let r = pass1(allsrc, exports, known.li, asset.mods.li)
   @(+, bindingformat(symset.r), empty:seq.seq.word, mods.r)
 
 function bindingformat(known:symbolset, m:firstpass)seq.seq.word
- if length.rawsrc.m = 0 then empty:seq.seq.word
- else
-  let header = moduleHeaderLines(rawsrc.m, 2)
-  let autouses = @(+, extractencoding, empty:seq.mytype, rawsrc.m)
-  let uses = @(+, formatuse, empty:set.seq.word, toseq(asset.uses.m - asset.autouses))
-  let dd = @(+, extractparsed(parameter.modname.m = mytype."T", known), empty:seq.seq.word, toseq.defines.m)
-   @(+, bindingfind(dd), ["module" + print.modname.m] + header + alphasort.toseq.uses, subseq(rawsrc.m, length.header + 2, length.rawsrc.m))
+     @(+, extractparsed(parameter.modname.m = mytype."T", known), empty:seq.seq.word, toseq.defines.m)
+  
 
-function moduleHeaderLines(s:seq.seq.word, i:int)seq.seq.word
- if i > length.s then empty:seq.seq.word
- else
-  let p = s_i
-   if length.p = 0 then ["skip"] + moduleHeaderLines(s, i + 1)
-   else if p_1 in "function Function type use"then empty:seq.seq.word
-   else
-    [ if p_1 = "Library"_1 then p else"skip" + p]
-    + moduleHeaderLines(s, i + 1)
-
-function extractencoding(s:seq.word)seq.mytype
- if length.s > 3 ∧ s_1 = "type"_1
- ∧ s_4 in "Encoding encoding"then
- [ mytype(towords.parameter.(types.parse(headdict, s))_1 + "encodingstate")]
- else empty:seq.mytype
 
 function extractparsed(abstract:boolean, known:symbolset, s:symbol)seq.seq.word
  let a = if abstract then src.s
@@ -205,33 +178,6 @@ function extractparsed(abstract:boolean, known:symbolset, s:symbol)seq.seq.word
     [ subseq(a, 1, headlength) + mangledname.s + subseq(a, headlength + 1, length.a)]
   else empty:seq.seq.word
 
-function formatuse(m:mytype)seq.word"use" + print.m
-
-function bindingfind(defines:seq.seq.word, s:seq.word)seq.seq.word
- if length.s = 0 then ["skip" + s]
- else if s_1 in "function Function"then bindingfind2(defines, 1, s)
- else if s_1 in "use Use"then empty:seq.seq.word
- else if s_1 = "Library"_1 then [ s]else ["skip" + s]
-
-function bindingfind2(defines:seq.seq.word, i:int, key:seq.word)seq.seq.word
- if i > length.defines then ["skip" + key]
- else
-  let d = defines_i
-  let l = toint.d_2
-   if subseq(d, 3, l + 2) = subseq(key, 1, l)then [ defines_i]
-   else bindingfind2(defines, i + 1, key)
-
-/function print5(s:symbol)seq.word let d = decode(mangledname.s)if isdefined.s &and(modname.s = mytype."internal"&or subseq(d, 1, 15)= decode("siQ7AeoftypeQ3A"_1))then"
-&br"+ print2.s else""
-
-/function print2(full:boolean, l:libsym)seq.word if full then"
-&br"+ fsig.l +":"+ print.mytype.returntype.l + instruction.l else [ fsig.l]
-
-/function print(l:libmod)seq.word"
-&br 
-&br"+ if parameterized.l then [ modname.l]+".T"else [ modname.l]+"
-&br defines:"+ @(+, print2(modname.l ="$other"_1),"", defines.l)+"
-&br exports:"+ @(+, print2(modname.l ="$other"_1),"", defines.l)
 
 Function secondPass(libname:word)seq.seq.word
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
@@ -245,9 +191,8 @@ Function secondPass(libname:word)seq.seq.word
  else
   let discard5 = loadlibs(dependentlibs, 1, timestamp.loadedlibs_1)
    @(addliblib.dependentlibs, identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
-      let allsrc=groupparagraphs("module Module",getlibrarysrc.s_2)
- //
- let allsrc = @(+, gettext2(s_2), empty:seq.seq.seq.word, filelist) //
- let p1 = pass1(allsrc, exports, known.li, asset.mods.li)
- let p2 = pass2new(symset.p1, toseq.roots.p1, known.li)
+      let allsrc =getlibrarysrc.s_2 
+ let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known.li, asset.mods.li)
+ let x = basesigs(allsrc)
+ let p2 = pass2new(symset.p1, mods.p1, known.li)
    print.p2 

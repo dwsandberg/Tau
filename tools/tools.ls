@@ -12,7 +12,7 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
  printbitcodes profile  svg svggraph taulextable testparser 
  uses stdlib 
  exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph 
- makeDAG pretty prettylib printbitcodes profile svg svggraph taulextable testparser tools
+ makeDAG pretty  printbitcodes profile svg svggraph taulextable testparser tools
 
 /run printbitcodes test1
 
@@ -74,7 +74,8 @@ Function testprofile seq.word
 Function testprintBitCodes seq.word printBitCodes."test4.bc"
 
 Function callgraphtest seq.word callgraphbetween("testall","test5  testall test2 stdlib")
++callgraphwithin("stdlib","llvm")
 
-Function stdlibdoc seq.word // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
+Function stdlibdoc seq.word    callgraphbetween("stdlib","codegennew persistant")+    doclibrary."stdlib"
 
 

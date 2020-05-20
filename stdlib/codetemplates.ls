@@ -79,17 +79,18 @@ Function arg(match5)int export
 
 Function code(match5) seq.sig export
 
+Function optionOp sig export
 
-
+Function =(sig,sig) boolean export
 
 Function lowerbits(sig) int export
 
 Function _(m:seq.match5,s:sig) match5   m_lowerbits.s
 
-Function fullinst(match5) seq.word export
 
-
-Function inst(m:match5)word(fullinst.m)_1
+Function inst(m:match5)word   let a=(fullinst.m)_1
+// assert false report "HJK"+a //
+a
 
 
 function =(a:match5, b:match5)boolean fullinst.a = fullinst.b
@@ -98,21 +99,29 @@ function hash(a:match5)int hash.fullinst.a
 
 function assignencoding(l:int, a:match5) int l+1
 
+Function options(match5map:seq.match5,m:match5) seq.word
+if  last.code.m=optionOp then 
+fullinst.match5map_((code.m)_1) else empty:seq.word
+
 
 type ematch5 is encoding match5
 
 Function table seq.match5
-let t = [ match5("IDXUC 2", 3, CAST(1, ibcsub1, typ.ptr.i64, 10) + GEP(2, 1, typ.i64, -1, ibcsub2)
+let t = [ 
+ match5("IDXUCZbuiltinZintZint 2", 3, CAST(1, ibcsub1, typ.ptr.i64, 10) + GEP(2, 1, typ.i64, -1, ibcsub2)
 + LOAD(3, -2, typ.i64, align8, 0))
 , match5(// ? //"Q3FZbuiltinZintZint 2", 5, CMP2(1, ibcsub1, ibcsub2, 39) + CAST(2, -1, typ.i64, CASTZEXT) + CMP2(3, ibcsub1, ibcsub2, 38)
 + CAST(4, -3, typ.i64, CASTZEXT)
 + BINOP(5, -2, -4, 0, typ.i64))
-, match5("castZbuiltinZTzseqZintZint 3", 2, BINOP(1, ibcsub2, C64.3, // shift left // 7, typ.i64) + BINOP(2, ibcsub1, -1, 0, typ.i64))
+, match5("castZbuiltinZTzseqZintZint 3", 3, 
+    BINOP(1, ibcsub2, C64.3, // shift left // 7, typ.i64) 
+    +BINOP(2, ibcsub3, -1, 0, typ.i64)
+    + BINOP(3, ibcsub1, -1, 0, typ.i64))
 , match5("Q3EZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 38) + CAST(2, -1, typ.i64, CASTZEXT))
 , match5("notZbuiltinZboolean 1", 1, BINOP(1, ibcsub1, C64.1, 12, typ.i64))
 , // include aborted here so does not show up in profile results match5("abortedZbuiltinZTzprocess"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."abortedZbuiltinZTzprocess", -1, ibcsub1)), Including this as a template causes subtle compile errors //
-match5("Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, typ.i64, CASTZEXT))
-, match5("EQL"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, typ.i64, CASTZEXT))
+match5(// = // "Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, typ.i64, CASTZEXT))
+, match5("EQL"_1, 2,               CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, typ.i64, CASTZEXT))
 , match5("Q2DZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 1, typ.i64))
 , match5(// + // "Q2BZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 0, typ.i64))
 , match5(// * // "Q2AZbuiltinZintZint 2", 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64))
@@ -160,7 +169,7 @@ match5("Q3DZbuiltinZintZint 2", 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, t
 let discard = @(+, addit, 0, t)
  t
 
-func:int, a:seq.T, b:int
+
 
 function addit(m:match5)int valueofencoding.encode(ematch5,m) 
 
@@ -187,8 +196,10 @@ Function type:intercode internaltype export
 
 Function defines(intercode) seq.int export
 
+
+
 Function match5map(fs2:intercode,symlist:seq.word) seq.match5
-  let declist=@(+, mangledname2, "", @(+,_.coding.fs2, empty:seq.fsignrep, defines.fs2))
+  let declist=@(+, mangledname, "", @(+,_.coding.fs2, empty:seq.fsignrep, defines.fs2))
   let coding=coding.fs2
   let defines=defines.fs2
   let cxx = conststype
@@ -217,54 +228,48 @@ function actuallyused(fs:intercode) set.int
  
 function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq.match5
  if i > length.coding then s
- else let m5=   if not (i in used) then match5("SET 0", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
+ else if not (i in used) then 
+     let m=match5("SET 0", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
+     buildtemplates(s+m,coding,used,i+1)
  else  
-  let xx=coding_i
- let fullinst=towords.xx
-   // let z10 = createfile("stat.txt", [ fullinst]+"start")//
-  let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
-  let b = findencode(ematch5, a)
-   // assert fullinst_1 in"WORD WORDS"∨ not("setfld2ZbuiltinZTzseqZintZT"_1 in fullinst)report"XXX"+ fullinst + if length.b = 0 then"NOT FOUND"else"FOUND"//
-   if length.b = 0 then
-   let inst = fullinst_1
-    let instarg = fullinst_2
-    let m =   if inst in "LOCAL DEFINE SET" &and checkinteger.instarg="WORD"_1 then
-       match5("SET 0", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
-    else if inst = "FREF"_1 then
-      match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg]))
-    else if inst = "LIT"_1 then
-      match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg)
-    else if inst = "LOCAL"_1 then
-     match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg)
-      else if inst in "CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE BLOCK BR EXITBLOCK"then
-      match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, toint.instarg)
-    else if inst = "CONSTANT"_1 then
-     let args=@(+,getarg.s, empty:seq.int,cleancode.xx)
-       match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
-    else if inst in "WORDS"then
-      match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2(subseq(fullinst, 3, length.fullinst)))
-    else if inst = "WORD"_1 then
-      match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, wordref.instarg)
-    else
-     let noargs = toint.instarg
-     let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
-        match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs,cleancode.xx)
+    let xx=coding_i
+     let b =  if     module.xx ="builtin"  then
+         findencode(ematch5, match5([mangledname.xx,toword.nopara.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
+       else empty:seq.match5
+    if length.b > 0 then 
+       buildtemplates(s+b_1,coding,used,i+1)
+    else 
+      let pkg=module.xx
+     let m =  if pkg = "$fref" then
+       match5(fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.(fsig.xx)_2, C.(fsig.xx)_2]))
+      else if pkg = "$int" then
+       match5("LIT"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.(fsig.xx)_1)
+      else if pkg="local" then
+       match5("LOCAL"+fsig.xx, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
+      else if pkg="$" then
+       match5(fsig.xx, 0, empty:seq.templatepart,"SPECIAL"_1, toint.(fsig.xx)_2)
+      else if pkg= "$constant" then
+        let args=@(+,getarg.s, empty:seq.int,cleancode.xx)
+        match5(fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
+      else if pkg="$words"then
+        match5("WORDS"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2.fsig.xx)
+      else if pkg="$word"then
+         match5("WORD"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
+      else
+        let noargs = nopara.xx
+        let name=mangledname.xx
+        let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ name], noargs + 1)
+        match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,cleancode.xx)
     let discard = encode(ematch5, m)
-     m
-   else // already have a match5 //  b_1
-   buildtemplates(s+m5,coding,used,i+1)
+   buildtemplates(s+m,coding,used,i+1)
 
-/Function deepcopy2(m:match5)match5 let y0 = deepcopy.fullinst.m let y1 = deepcopy.length.m let y2 = deepcopy.parts.m let y3 = deepcopy.action.m let y4 = deepcopy.arg.m let y5 = deepcopy.consts.m match5(y0, y1, y2, y3, y4, y5)
-
-/Function checkmap(s:seq.match5)seq.word @(+, hjk,"", s)
-
-/function hjk(m:match5)seq.word [ inst.m, toword.length.a.consts.m]
 
 function ematch5 erecord.match5 export
 
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
- let args = if inst.t in "WORD CONSTANT" ∨ action.t = "CALL"_1 then empty:seq.int
- else subseq(argstack, length.argstack - toint.(fullinst.t)_2 + 1, length.argstack)
+ let args = if  action.t = "CALL"_1 then empty:seq.int
+ else 
+ subseq(argstack, length.argstack - arg.t + 1, length.argstack)
   processtemplate(parts.t, deltaoffset, args)
 
 Function CASTZEXT int 1

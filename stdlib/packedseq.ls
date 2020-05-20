@@ -16,7 +16,7 @@ Function length(packedseq.T)int export
 
 Function_(a:packedseq.T, i:int)T
  let ds = sizeoftype:T
-  cast(toseq.a, 2 + ds * (i - 1), ds)
+  cast(toseq.a, 2 + ds * (i - 1), 1)
 
 Function packed(s:seq.T)seq.T
  let ds = sizeoftype:T
@@ -53,4 +53,4 @@ Function relocate(a:seq.T, idx:int, relloc:int)seq.T setfld(a, idx, cast(a, rell
 
 Function inttoT:T(int)T builtin."LOCAL 1"
 
-Function fldof(T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUC"
+Function fldof(T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUCZbuiltinZintZint"

@@ -11,7 +11,7 @@ parsersupport  uses
  UTF8 bits blockseq  deepcopy encoding fileio format  
   ipair   main2     process real   seq set stack stacktrace 
  stdlib  textio  prims   maindict  otherseq tree graph packedseq unsafe words internalbc newpretty llvm
- libscope worddict groupparagraphs timestamp ioseq dataio
+ libscope worddict groupparagraphs timestamp ioseq dataio intdict 
  
  groupparagraphs  timestamp ioseq dataio symbol intercode    mangle
  worddict  parsersupport parse pass1 newpretty  pass2 bitpackedseq    codegennew intdict libdesc
@@ -26,6 +26,21 @@ parsersupport  uses
  internalbc ipair  libscope llvm main2  unsafe packedseq   process real   seq set stack stacktrace 
  stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode   libdesc otherseq words mangle
  worddict  parsersupport parse pass1 newpretty  pass2 bitpackedseq    codegennew intdict
+
+ PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,symbolset,set.firstpass ) linkage
+ ,     pass1: bind(symbolset,set.firstpass,symbolset,firstpass)symbolset 
+      ,     pass1:bind2(symbolset,set.symbol,symbolset,symbol)symbolset 
+
+* PROFILE  main2:compilelib2(word) seq.word  
+
+* PROFILE main2:subcompilelib(word) seq.word 
+
+ PROFILE pass2new:bbbfirst(symbolset,seq.word,seq.word,prg,mytype) prg 
+
+ PROFILE pass2new:pass2new(symbolset,seq.firstpass,symbolset)intercode 
+ 
+  PROFILE codegennew :codegen( intercode,  word) seq.bits
+
 
 
 use UTF8

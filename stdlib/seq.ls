@@ -31,9 +31,9 @@ Function_(a:seq.T, b:int)T
 
 function callidx(func:int, a:seq.T, b:int)T builtin.usemangle
 
-function getval(a:seq.T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUC"
+function getval(a:seq.T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUCZbuiltinZintZint"
 
-Function getseqtype(a:seq.T)int builtin."LOCAL 1 LIT 0 IDXUC"
+Function getseqtype(a:seq.T)int builtin."LOCAL 1 LIT 0 IDXUCZbuiltinZintZint"
 
 Function length(a:seq.T)int export
 

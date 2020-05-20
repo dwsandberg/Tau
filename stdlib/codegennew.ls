@@ -133,20 +133,17 @@ Function codegen(fs2:intercode, thename:word)seq.bits
       + @(+, funcdec, empty:seq.seq.int, defines2)
        llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 
+use funcsig
 
 function addfuncdef(match5map:seq.match5,  m:match5)internalbc
- let code=code.m
+ let options=options(match5map,m)
+ let code= if length.options > 0  then  
+   subseq(code.m,2,length.code.m-1) else code.m
  let mangledname= inst.m
  let nopara=arg.m
     let l = Lcode2(emptyinternalbc, paramap(nopara,empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
- let g5 = // if"PROFILE"_1 in flags.f then //
-    if  mangledname in "pass1Zpass1ZwordzseqzseqzseqZwordzseqZsymbolsetZfirstpasszset
-   compilelib2Zmain2ZwordZboolean bbbfirstZpass2newZsymbolsetZwordzseqZwordzseqZprg
-   bindZpass1ZsymbolsetZfirstpasszsetZsymbolsetZfirstpass
-   subcompilelibZmain2ZwordZboolean pass2Zpass2ZsymbolsetZwordzseqZsymbolset
-   pass2newZpass2newZsymbolsetZwordzseqZsymbolset
-   bind2Zpass1ZsymbolsetZsymbolzsetZsymbolsetZsymbol" 
-   then mangledname else"noprofile"_1
+ let g5 = if "PROFILE"_1 in options then 
+   // assert false report  options(match5map,m) // mangledname else"noprofile"_1
  let r = @(processnext.g5,_.match5map, l, (code))
   BLOCKCOUNT(1, noblocks.r) + code.r + RET(regno.r + 1, top.args.r)
 

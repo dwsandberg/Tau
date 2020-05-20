@@ -1,6 +1,9 @@
+#!/usr/local/bin/tau
+
+
 Module doc
 
-/use display
+run doc testdoc
 
 use displaytextgraph
 
@@ -32,9 +35,7 @@ use svggraph.seq.word
 
 use set.word
 
-use seq.tree.word
 
-use tree.word
 
 Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html //
 let d = @(+, addselect,"", gettext."tools/doc.txt")
@@ -56,7 +57,7 @@ Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
  let g = newgraph.formcallgraph(firstPass.libname_1, 2)
  let nodestoinclude = @(∪, filterx(modulelist), empty:set.word, toseq.nodes.g)
  let g2 = @(deletenode, identity, g, toseq.nodestoinclude)
-  display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g2)
+ display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g2)
 
 function filterx(include:seq.word, w:word)set.word
  let p = codedown.w
@@ -93,19 +94,20 @@ Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word
 
 function addabstractpara(w:word)word merge([ w] + ".T")
 
+Function testdoc seq.word // callgraphwithin("stdlib","llvm")+ // doclibrary."tools"
+
+use groupparagraphs
+
 Function doclibrary(libname:seq.word)seq.word
  // create summary documentation for libraray. //
- let lib = firstPass.libname_1
- let r = @(+, findrestrict,"", lib)
- let g = newgraph.usegraph(lib,"mod"_1, 1,"?"_1, empty:seq.arc.word)
- let libclause = lib_1
- let e = findindex("exports"_1, libclause, 3)
- let exports = subseq(libclause, e + 1, length.libclause)
-  docmodule(g, exports, r, lib, 1,"","","")
+   let liba = getlibrarysrc.libname_1
+ let r = @(+, findrestrict,"", liba)
+ let g = newgraph.usegraph(liba,"mod"_1, 1,"?"_1, empty:seq.arc.word)
+ let exports= getlibraryinfo(libname_1)_3
+  docmodule(g, exports, r, liba, 1,"","","")
   + if length.r > 0 then""
   else" &{ select x &section Possibly Unused Functions  &}  &{ select x" + uncalledfunctions.libname + " &}"
 
-@(+, +(" &br  &br"),"", lib)
 
 * Paragraphs beginning with * are included in documentation.
 
@@ -114,7 +116,7 @@ Function doclibrary(libname:seq.word)seq.word
 * If a paragraph in the library is of the form:* usegraph exclude <list of modules> include <list of modules> then a use graph will be construction including and excluding the modules listed. Both the exclude and include are optional, but for a large library should be used to restrict the size of the graph. An example of a use graph is included at the end of this module.
 
 function findrestrict(s:seq.word)seq.word
- if subseq(s, 1, 3) = "skip * only document"then subseq(s, 4, length.s)else""
+ if subseq(s, 1, 3) = "* only document"then subseq(s, 4, length.s)else""
 
 function plist(t:seq.word, i:int, parano:int, names:seq.word)seq.word
  if i = 1 then
@@ -138,7 +140,9 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
  if length.types > 0 ∨ length.funcs > 0 then
   " &br defines types: " + types + funcs
   else""
- else if lib_i_1 = "module"_1 then
+ else if length.lib_i=0 then 
+   docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
+ else if lib_i_1 in "module Module"  then
  let modname = lib_i_2
    if not(modname in todoc ∨ length.todoc = 0)then
    docmodule(usegraph, exports, todoc, lib, i + 1,"", funcs, types)
@@ -155,8 +159,8 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
      + alphasort.@(+, tail,"", toseq.arcstopredecessors(usegraph, merge.name))
      + docmodule(usegraph, exports, todoc, lib, i + 1, subseq(lib_i, 2, length.lib_i),"","")}
  else if currentmod = ""then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
- else if subseq(lib_i, 1, 2) = "skip *"then
- let a = subseq(lib_i, 2, length.lib_i)
+ else if subseq(lib_i, 1, 1) = "*"then
+ let a = lib_i
   let toadd =(" &{ select x"
   + if a_2 = "usegraph"_1 then
   let l = findindex("include"_1, a)
@@ -165,18 +169,14 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
   else subseq(a, 2, length.a))
   + " &}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
- else if lib_i_1 in "Parsedfunc"then
- let z = lib_i
-  let nopara = toint.z_4
-  let headlength = toint.z_2
-  let toadd =" &{ select x  &keyword Function" + z_3
-  + plist(subseq(z, 5, headlength + 2 - nopara), 1, 1, subseq(z, headlength + 2 - nopara + 1, headlength + 2))
-  + " &}"
+ else if lib_i_1 in "Function"then
+ let z = getheader.lib_i
+   let x=if last.z in "export stub" then subseq(z,1,length.z-1) else z
+   let toadd =" &{ select x  &keyword " + x+
+    " &}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
- else if lib_i_1 in "record encoding sequence"then
+ else if subseq(lib_i, 1, 1) = "type"then
  docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_2)
- else if subseq(lib_i, 1, 2) = "skip type"then
- docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_3)
  else docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
 
 Function uncalledfunctions(libname:seq.word)seq.word
@@ -189,9 +189,9 @@ Function uncalledfunctions(libname:seq.word)seq.word
 
 function usegraph(lib:seq.seq.word, kind:word, i:int, currentmod:word, result:seq.arc.word)seq.arc.word
  if i > length.lib then result
- else
-  let key = lib_i_1
-   if key = "module"_1 then
+ else 
+  let key =  if length.lib_i > 1 then lib_i_1 else "empty"_1
+   if key in "module Module"  then
    usegraph(lib, kind, i + 1, merge.subseq(lib_i, 2, length.lib_i), result)
    else if key = "use"_1 then
    let m = if length.lib_i = 2 then lib_i_2
@@ -215,10 +215,12 @@ function formcallgraph(func:word, src:seq.word, i:int, result:seq.arc.word)seq.a
  if i > length.src then result
  else
   let name = src_i
-   if name in "IDXUC CALLIDX STATE PROCESS2 FREF EQL if VERYSIMPLE"then formcallgraph(func, src, i + 1, result)
-   else if name in "LIT PARAM LOCAL WORD SET define RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD PRECORD"then
+   if name in "IDXUC  STATE PROCESS2 FREF EQL if VERYSIMPLE"then formcallgraph(func, src, i + 1, result)
+   else if name in "LIT  LOCAL WORD SET define DEFINE RECORD APPLY LOOPBLOCK  CONTINUE BR EXITBLOCK BLOCK CRECORD PRECORD"
+   then
    formcallgraph(func, src, i + 2, result)
    else if name in "WORDS COMMENT"then
    formcallgraph(func, src, i + toint.src_(i + 1) + 2, result)
    else if name = func then formcallgraph(func, src, i + 1, result)
-   else formcallgraph(func, src, i + 1, result + arc(func, name))
+   else 
+    formcallgraph(func, src, i + 1, result + arc(func, name))

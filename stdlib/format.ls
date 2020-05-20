@@ -26,6 +26,24 @@ Function consumecomment(s:seq.word, i:int)int
   consumecomment(s,search("/ /",s,i+2)+2)
  else i
 
+Function getheader(s:seq.word)seq.word
+ if length.s < 3 then s
+ else
+  let endofname = if s_3 = ":"_1 then consumetype(s, 5)else 3
+  let startoftype = if s_endofname = "("_1 then findindex(")"_1, s, endofname + 1) + 1
+  else endofname
+  let afterreturntype = consumetype(s, startoftype + 1)
+  let aftercomments = consumecomment(s, afterreturntype)
+   if aftercomments ≤ length.s ∧ s_aftercomments in "unbound export"then s
+   else if aftercomments ≤ length.s ∧ s_aftercomments = "builtin"_1
+   ∧ last.s = "usemangle"_1 then
+   subseq(s, 1, aftercomments - 1) + "usemangle"
+   else subseq(s, 1, aftercomments - 1) + "stub"
+
+function consumetype(s:seq.word, i:int)int
+ if i > length.s then i
+ else if s_i = "."_1 then consumetype(s, i + 2)else i
+
 
 Function processpara(t:seq.word)seq.word processpara(t, 1, 1,"", push(empty:stack.seq.word,""))
 

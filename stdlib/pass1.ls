@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau
 
 run mylib test
 
@@ -54,8 +53,13 @@ use set.word
 
 use words
 
-Function replaceT(with:mytype, f:firstpass)firstpass
- firstpass(replaceT(with, modname.f), @(+, replaceT.with, empty:seq.mytype, uses.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.defines.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.exports.f), @(+, replaceT.with, empty:seq.symbol, unboundexports.f), asset.@(+, replaceT.with, empty:seq.symbol, toseq.unbound.f), false, rawsrc.f)
+use format
+
+Function replaceTfirstpass(with:mytype, f:firstpass)firstpass
+ firstpass(replaceT(with, modname.f), @(+, replaceT.with, empty:seq.mytype, uses.f), 
+ asset.@(+, replaceTsymbol.with, empty:seq.symbol, toseq.defines.f), asset.@(+, replaceTsymbol.with, empty:seq.symbol, 
+ toseq.exports.f), @(+, replaceTsymbol.with, empty:seq.symbol, unboundexports.f), 
+ asset.@(+, replaceTsymbol.with, empty:seq.symbol, toseq.unbound.f), false, rawsrc.f)
 
 function =(a:firstpass, b:firstpass)boolean modname.a = modname.b
 
@@ -70,13 +74,12 @@ Function find(modset:set.firstpass, name:mytype)set.firstpass
  findelement(firstpass(name, empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, false, empty:seq.seq.word)
  , modset)
 
-type linkage is record symset:symbolset, mods:seq.firstpass, roots:set.word
+type linkage is record symset:symbolset, mods:seq.firstpass
 
 Function symset(linkage)symbolset export
 
 Function mods(linkage)seq.firstpass export
 
-Function roots(linkage)set.word export
 
 Function type:linkage internaltype export
 
@@ -91,14 +94,14 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarysyms:symbolset,
   // assert deepcopy.ss = ss report"PROBLEM"//
   let d2 = asset.@(+, fixfirstpass.asset.zx, empty:seq.firstpass, toseq.d1)
   let simple = @(+, findsimple, empty:seq.firstpass, toseq.d2)
-  let roots = toseq.asset.@(+, roots,"", simple)
   let abstractmods = @(+, templates.d2, empty:seq.firstpass, toseq.d2)
   let templates = @(clean, identity, emptysymbolset, toseq.@(∪, defines, empty:set.symbol, abstractmods))
   let knownsymbols1 = @(+, identity, librarysyms, toseq.@(∪, defines, empty:set.symbol, simple))
   let knownsymbols = @(+, identity, knownsymbols1, zx)
   let X = @(bind(templates, d2), identity, knownsymbols, simple)
     assert cardinality(asset.toseq.X &cap asset.toseq.templates)=0 report "CHECK"+toword.cardinality(asset.toseq.X &cap asset.toseq.templates)
-   linkage(@(+,identity,X,toseq.templates), sort(simple + abstractmods), asset.roots)
+    linkage(@(+,identity,X,toseq.templates), sort(simple + abstractmods))
+
 
 function processtypedef(defined:set.symbol, undefined:seq.typedesc, i:int, newundefined:seq.typedesc, other:seq.symbol)seq.symbol
  if i > length.undefined then
@@ -243,7 +246,7 @@ function expanduse2(modset:set.firstpass, use:mytype)set.firstpass
    let template = find(modset, mytype("T" + abstracttype.use))
      assert not.isempty.template report"Cannot find module" + print.use
      + @(+, print,"", @(+, modname, empty:seq.mytype, toseq.modset))
-      modset + replaceT(parameter.use, template_1)
+      modset + replaceTfirstpass(parameter.use, template_1)
    else modset
   else
    assert not.isempty.x report"Cannot find module" + print.use
@@ -405,9 +408,10 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
       else // Compile options // resultpair(knownsymbols, down_1)
      else
       let params = @(+, mytype, empty:seq.mytype, subseq(down, 3, length.down))
-      let fullname = mangle(down_1_1, newmodname, params)
+       let fullname = mangle(down_1_1, newmodname, params)
       let t2 = lookupsymbol(knownsymbols, fullname)
-       if fullname ≠ mangledname ∧ isdefined.t2 then resultpair(checkforindex(t2, org, dict, templates, knownsymbols), [ fullname])
+       if fullname ≠ mangledname ∧ isdefined.t2 then 
+           resultpair(checkforindex(t2, org, dict, templates, knownsymbols), [ fullname])
        else
         let f = lookupsymbol(templates, mangle(down_1_1, mytype("T" + templatename), params))
          if isdefined.f then
@@ -415,14 +419,10 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
           let newknown = checkforindex(newsymbol, org, dict, templates, knownsymbols) + newsymbol
            resultpair(postbind(dict, newmodpara, templates, newknown, src.f, newsymbol, org), [ fullname])
          else
-          let params2 = @(+, replaceT.modpara, empty:seq.mytype, params)
-          let k2 = lookup(dict, down_1_1, params2)
-          let k = if cardinality.k2 = 0 then
-          // case for examples like frombits:T(bits)T which needs to find frombits:bit(bits)bit //
-           // assert down_1_1 in [ merge(frombits:T)]report [ down_1_1]//
-           lookup(dict, replaceTinname(newmodpara, down_1_1), params2)
-          else // often there is no T in the function name so a lookup assuming that is done first. // k2
-           assert cardinality.k = 1 report"cannot find template for" + down_1_1 + "("
+           let params2= @(+, replaceT.modpara, empty:seq.mytype, params) 
+           let k = lookup(dict, replaceTinname(newmodpara, down_1_1), params2)
+         // case for examples like frombits:T(bits)T which needs to find frombits:bit(bits)bit //
+          assert cardinality.k = 1 report"cannot find template for" + down_1_1 + "("
            + @(seperator.",", print,"", params2)
            + ")while process"
            + print.org
@@ -432,14 +432,13 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
            + fullname
            + "newmodpara:"
            + print.newmodpara
-           + toword.cardinality.k2
+           + toword.cardinality.k
             // + @(+, print,"", toseq.templates)//
             assert mangledname ≠ mangledname.k_1 report"ERR12" + mangledname + print2.k_1
              if not.isdefined.lookupsymbol(knownsymbols, mangledname.k_1)then
              X(mangledname.k_1, org, dict, mytype."T", templates, knownsymbols)
              else resultpair(knownsymbols, [ mangledname.k_1])
 
-function roots(f:firstpass)seq.word if exportmodule.f then @(+, mangledname,"", toseq.exports.f)else""
 
 Function headdict set.symbol
 let modulename = mytype."internal1"

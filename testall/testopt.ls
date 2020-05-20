@@ -31,7 +31,7 @@ use UTF8
 Function testopt seq.word
 let p2 = secondPass."testall"_1
 let cl = ["7","12","1","2","WORD FIRST","WORD AB",'"A B"',"7","11","2"
-,"1","0","4607182418800017408"," 44"," 2"," 46"," 72"]
+,"1","0","4607182418800017408"," 44"," 2"," 46"," 72","27","2","5"]
 let c2 = constantseq(99,"")
 + [
 "%1 %2  3 LOOPBLOCK  3  &br %3  1 Q3DZbuiltinZintZint 2 3 4 BR 3  &br %4 EXITBLOCK 1 &br
@@ -88,6 +88,15 @@ Function optest15 bits bits.11 >> 2
 Function optest16 int(optest16a.[ char.45, char.46])_2
 
 Function optest17 char(decodeword."HJK"_1)_1
+
+Function optest18 bits bits.10 &or bits.19
+
+Function optest19 bits bits.10 &and bits.19
+
+Function optest20 int parabits(3)
+
+Function parabits(nopara:int)int let b=nopara toint((bits.(  if b > 6 then 0 else   b + 1)) << 5)
+
 
 Function optest100(a:int, result:int)int
  // tail recursion // if a = 1 then result else optest100(a - 1, a * result)

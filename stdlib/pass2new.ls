@@ -84,16 +84,35 @@ use set.word
 
 use deepcopy.intercode
 
-Function pass2new(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)intercode
- let x = basesigs
- let b = bbbfirst(knownsymbols, roots, "all", emptyprg,mytype."?")
+use seq.symbol
+
+use set.symbol
+
+use seq.firstpass
+
+use libdesc
+
+use processOptions
+
+Function pass2new(knownsymbols:symbolset, mods:seq.firstpass, compiled:symbolset)intercode
+ let roots=getroots(mods) 
+  let roots2=@(+,mangledname,"",toseq.roots)
+ // let p1=if length.compiled2 > 0 then bbbfirst(knownsymbols, compiled2, "all", emptyprg,mytype."?")
+ else emptyprg //
+ let b = bbbfirst(knownsymbols, roots2, "all", emptyprg,mytype."?")
   // assert false report"dumpprg"+ dumpprg.b //
   let sigreps=getfsignrep.b
-  let ic =   intercode2( sigreps ,defines(compiled,sigreps,1,empty:seq.int))
-  // assert false report @(seperator."&p",identity,"",print2.ic) //
-   ic
-   
-        
+  let ic =   intercode( sigreps ,defines(compiled,sigreps,1,empty:seq.int))
+     let libmods=libdesc(b,ic, mods , knownsymbols)
+    addlibmods(libmods,ic) 
+    
+    
+ /function   toexport(p:prg,processed:set.sig, toprocess:set.sig) set.sig
+   if isempty.toprocess then processed else 
+    let p= toseq.asset.@(+,exportcode,empty:seq.sig,     toseq.toprocess)
+      toexport(fs,processed &cup toprocess, p-processed)
+
+      
 
 
 function defines(compiled:symbolset,ss:seq.fsignrep,i:int,result:seq.int) seq.int
@@ -112,7 +131,7 @@ Function firstopt(p:prg, c:seq.seq.word, code:seq.sig)prg
  let nopara = length.c - 2
  let pdict=addpara(empty:intdict.seq.sig, nopara)
  let code2 = value.yyy(p, code, 1, nopara + 1, pdict)
- let s = sig(c_1, @(+, mytype, empty:seq.mytype, subseq(c, 3, length.c)), mytype.c_2, code2)
+ let s = sig(c_1, @(+, mytype, empty:seq.mytype, subseq(c, 3, length.c)), mytype.c_2, code2,mytype."?")
   // assert length.code < 10 report"UUU"+ print.code +"
 &p"+ print.code2 //
   let a = handletail(code2, s,c_1)
@@ -303,9 +322,8 @@ function second(s:seq.int)int s_2
 
 function var(i:int)sig var.toword.i
 
-function var(w:word)sig fsignrep([ w], empty:seq.mytype, mytype."local")
+function var(w:word)sig  sig([ w], empty:seq.mytype, mytype."local",empty:seq.sig,mytype."?")
 
-function fsignrep(name:seq.word, args:seq.mytype, module:mytype)sig sig(name, args, module, empty:seq.sig)
 
 function addpara(map:intdict.seq.sig, i:int)intdict.seq.sig
  if i ≤ 0 then map
@@ -328,14 +346,28 @@ function yyy(p:prg, s:seq.sig, i:int, nextvar:int, map:intdict.seq.sig)ipair.seq
   else if isinline.s_i then
  let t = inline(p, s, i, nextvar)
    yyy(p, code.t, index.t, nextvar.t, map)
-else  if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
+else  
+if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
    let rep=decode.s_i
   if isdefine.s_i then
    if i > 1 ∧ (isconst.s_(i - 1) ∨ islocal.s_(i - 1))then
    yyy(p, replace(s, i - 1, 2, empty:seq.sig), i - 1, nextvar, replace(map, valueofencoding.(code.rep)_1, [ s_(i - 1)]))
    else
     yyy(p, replace(s, i, 1, [ define.toword.nextvar]), i + 1, nextvar + 1, replace(map, valueofencoding.(code.rep)_1, [ var.nextvar]))
- else if isloopblock.s_i then
+ else 
+  if  fsig.rep="BLOCK 3" then
+    let t = backparse(s, i - 1, 3, empty:seq.int) + i
+     let condidx=t_2-4
+     let cond=s_ condidx
+     if   s_( condidx+3)=br  &and isconst(cond) then
+        let keepblock=if value.cond=1 then value.s_(condidx+1) else value.s_(condidx+2)
+             let new=subseq(s,t_keepblock,t_(keepblock+1)-2)
+     // "BB"+print.subseq(s,t_1,i)
+      +"PP"+    print.subseq(s,t_keepblock,t_(keepblock+1)-2)//
+        yyy(p, replace(s, condidx, i-condidx+1, new), condidx+length.new, nextvar, map) 
+    else 
+     yyy(p, s, i + 1, nextvar, map)
+  else if isloopblock.s_i then
  let nopara = nopara.s_i - 1
   let firstvar = value.s_(i - 1)
    yyy(p, replace(s, i - 1, 1, [ lit.nextvar]), i + 1, nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0))
@@ -343,9 +375,7 @@ else  if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
  let nopara = nopara.s_i
   let args = subseq(s, i - nopara, i - 1)
    if @(∧, isconst, true, args) ∧ length.args = nopara then
-    let txt = @(+, toword,"", @(+, lowerbits, empty:seq.int, args))
-    let new = sig("CONSTANT" + txt, empty:seq.mytype, mytype."$constant", args)
-     yyy(p, replace(s, i - nopara, nopara + 1, [ new]), i - nopara, nextvar, map)
+     yyy(p, replace(s, i - nopara, nopara + 1, [ constant.args]), i - nopara, nextvar, map)
    else yyy(p, s, i + 1, nextvar, map)
  else if s_i = IDXUC ∧ i > 2 ∧ isconst.s_(i - 1)then
  if isconst.s_(i - 2)then
@@ -358,20 +388,19 @@ else  if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
  else if isapply.s_i then
  let t = applycode(p, nextvar, s, i)
    yyy(p, code.t, index.t, nextvar.t, map)
- else if s_i = makerealOp ∧ isconst.s_(i - 1)then
+ else if fsig.rep = "makereal(word seq)" ∧ isconst.s_(i - 1)then
  let arg1 = decode.s_(i - 1)
    if module.arg1 = "$words"then
    let  x=lit.representation.makereal.fsig.arg1 
      yyy(p, replace(s, i - 1, 2, [ x]), i, nextvar, map)
    else yyy(p, s, i + 1, nextvar, map)
- else if s_i = mergeOp ∧ isconst.s_(i - 1)then
+ else if fsig.rep = "merge(word seq)" ∧ isconst.s_(i - 1)then
  let arg1 = decode.s_(i - 1)
    if module.arg1 = "$words"then
-   let x = fsignrep([ merge.fsig.arg1], empty:seq.mytype, mytype."$word")
-     yyy(p, replace(s, i - 1, 2, [ x]), i, nextvar, map)
+     yyy(p, replace(s, i - 1, 2, [ wordsig.merge.fsig.arg1 ]), i, nextvar, map)
    else yyy(p, s, i + 1, nextvar, map)
- else if s_i = decodewordOp ∧ s_(i - 2) = wordEncodingOp ∧ isconst.s_(i - 1)then
- let arg1 = decode.s_(i - 1)
+ else if fsig.rep = "decode(T erecord, T encoding)" ∧ s_(i - 2) = wordEncodingOp ∧ isconst.s_(i - 1)then
+  let arg1 = decode.s_(i - 1)
    if module.arg1 = "$word"then
    let a1 = @(+, lit, empty:seq.sig, tointseq.decodeword.(fsig.arg1)_1)
     let d = [ lit.0, lit.length.a1] + a1 + RECORD(length.a1 + 2)
@@ -396,6 +425,15 @@ else  if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
  else if fsig.rep="=(int,int)"  then
    let new=replace(s, i - 2, 3, [ if value.s_(i - 2) = value.s_(i - 1)  then lit.1 else lit.0])
   yyy(p,new,i-1,nextvar,map)
+ else if fsig.rep=">(int,int)"  then
+   let new=replace(s, i - 2, 3, [ if value.s_(i - 2) > value.s_(i - 1)  then lit.1 else lit.0])
+  yyy(p,new,i-1,nextvar,map)
+   else if fsig.rep="∨ (bits, bits)" then
+  let new=replace(s, i - 2, 3, [ lit.toint(bits.value.s_(i - 2) &or bits.value.s_(i - 1))])
+  yyy(p,new,i-1,nextvar,map)
+  else if fsig.rep="∧ (bits, bits)" then
+  let new=replace(s, i - 2, 3, [ lit.toint(bits.value.s_(i - 2) &and bits.value.s_(i - 1))])
+  yyy(p,new,i-1,nextvar,map)
  else if fsig.rep="<<(bits, int)" then
   let new=replace(s, i - 2, 3, [ lit.toint(bits.value.s_(i - 2) << value.s_(i - 1))])
   yyy(p,new,i-1,nextvar,map)
@@ -412,8 +450,7 @@ else  if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
   let arg1 = decode.s_(i - 2)
   let words = name.arg1
    if module.arg1 = "$words" &and  between(idx, 1, length.words) then
-   let x = sig([ words_idx], empty:seq.mytype, mytype.["$word"_1], empty:seq.sig)
-     yyy(p, replace(s, i - 2, 3, [ x]), i - 1, nextvar, map)
+      yyy(p, replace(s, i - 2, 3, [ wordsig.words_idx]), i - 1, nextvar, map)
    else if    module.arg1 = "$constant" &and  between(idx, 1, length.code.arg1-2) then
       yyy(p, replace(s, i - 2, 3, [ (code.arg1)_(idx+2)]), i - 1, nextvar, map)
    else yyy(p, s, i + 1, nextvar, map)
@@ -421,8 +458,7 @@ else  if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
  let arg1 = decode.s_(i - 2)
   let arg2 = decode.s_(i - 1)
    if module.arg1 = "$words" ∧ module.arg2 = "$words"then
-   let x = fsignrep(name.arg1 + name.arg2, empty:seq.mytype, mytype."$words")
-     yyy(p, replace(s, i - 2, 3, [ x]), i - 1, nextvar, map)
+     yyy(p, replace(s, i - 2, 3, [ wordssig(name.arg1 + name.arg2)]), i - 1, nextvar, map)
    else yyy(p, s, i + 1, nextvar, map)
  else yyy(p, s, i + 1, nextvar, map)
 
@@ -454,7 +490,7 @@ function expandinline(s:seq.sig, t:seq.int, pmap:intdict.seq.sig, i:int, newcode
 function backparse(s:seq.sig, i:int, no:int, result:seq.int)seq.int
  if no = 0 then result
  else
-  assert i > 0 report"back parse 1" + toword.no
+  assert i > 0 report"back parse 1" + toword.no+print.s
    assert not.isdefine.s_i report"back parse 2" + print.s
    let nopara = nopara.s_i
     // if nopara = 0 then assert i = 1 &or not.isdefine.s_(i - 1)report"back parse 2a"+ print.s backparse(s, i - 1, no - 1, [ i]+ result)else //
@@ -501,6 +537,7 @@ function applycode(p:prg, nextvar:int, code:seq.sig, index:int)expandresult
  ∧ not((fsig.decode.term2_1)_1 = "deepcopy"_1)
   if noop then
   let new = subseq(code, 1, t_1 - 1) + subseq(code, t_2, index - 4)
+  // assert not(subseq(code, t_2, index - 4)=[var.1]) report "XXXX"+print.code+"/new/"+print.new //
     expandresult(nextvar, length.new + 1, new + subseq(code, index + 1, length.code))
   else
    let paras = adddefines2(code, t + (index - 3), 1, nopara1 + nopara2 + 2, empty:seq.sig, nextvar)
@@ -535,12 +572,10 @@ let stk = 6
 
 type rtype is record processed:prg, texts:seq.seq.word
 
-use deepcopy.prg 
 
 use deepcopy.seq.word
 
 function bbbfirst(knowsymbols:symbolset, s:seq.word,   pending:seq.word, processed:prg,rettyp:mytype)prg
-PROFILE.
 if length.s=0 &or last.s = "EXTERNAL"_1 then
  assert length.s=0 &or s in ["EXTERNAL", [ last.pending] + "STATE EXTERNAL"]report"EXT" + s
   let c = codedown.last.pending
@@ -550,10 +585,13 @@ else
 bbb(knowsymbols, deepcopy.removeflags(s,length.s), 1, pending  , processed, empty:seq.sig)
 
 function removeflags(s:seq.word,i:int) seq.word
-if s_i in "VERYSIMPLE SIMPLE INLINE FORCEINLINE PROFILE TESTOPT builtinZinternal1Zinternal1 
+if s_i in " PROFILE  builtinZinternal1Zinternal1 
 builtinZinternal1Zwordzseq NOINLINE STATEZinternal1Zinternal1"then
    removeflags(s,i-1)
-   else subseq(s,1,i)
+   else 
+   // assert isempty.(asset.subseq(s,i+1,length.s)-asset."NOINLINE builtinZinternal1Zwordzseq
+    builtinZinternal1Zinternal1 STATEZinternal1Zinternal1 PROFILE") report "XXX"+subseq(s,i+1,length.s) //
+   subseq(s,1,i)
 
 use seq.cached
 
@@ -569,6 +607,18 @@ use seq.cached
  function =(a:cached,b:cached) boolean key.a=key.b
  
  function hash(a:cached) int hash.key.a
+ 
+ /function  ( knowsymbols:symboleset,processed:prg,sy:symbol) processed
+  let q=mangledname.sy
+  let sym = lookupsymbol(knowsymbols, q)
+          assert isdefined.sym report"cannot locate" + q
+          let b = if length.src.sym > 1 &and (src.sym)_1 in "parsedfunc Parsedfunc"then
+          subseq(src.sym, 3 + toint.(src.sym)_2, length.src.sym)
+          else src.sym
+         let x=  bbbfirst(knowsymbols, b,  q, processed,resulttype.sym)
+        let sig =    sig(name.sym, paratypes.sym, modname.sym, empty:seq.sig)
+       let discard= encode(ecached,cached([q],sig))
+       x
 
 function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, processed:prg, result:seq.sig)prg
   if i > length.s then
@@ -576,20 +626,19 @@ function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, process
  else
    let this = s_i 
     let f1=findencode(ecached, cached(subseq(s,i,i+1),eqOp)) 
-     if not.isempty.f1  &and i < length.s then
+    if not.isempty.f1  &and i < length.s then
        bbb(knowsymbols, s, i + 2, pending, processed, result + s.(f1_1))
-     else   let bb=if this ="LOCAL"_1  then
-     sig( [ s_(i+1)], empty:seq.mytype, mytype."local", empty:seq.sig)
-  else if this = "LIT"_1 then   lit.toint.s_(i+1)
-  else if this = "WORD"_1 then
-    sig([ s_(i+1)], empty:seq.mytype, mytype."$word", empty:seq.sig)
-    else if this = "RECORD"_1 then  RECORD.toint.s_(i+1)
-   else if this = "APPLY"_1 then  apply.toint.s_(i+1)
-   else if this = "BLOCK"_1 then  block.toint.s_(i+1)
-   else if this = "EXITBLOCK"_1 then  exit
-   else if this = "BR"_1 then   br
-   else if this = "DEFINE"_1 then  define.s_(i+1) 
-   else eqOp
+    else   
+    let bb=if this ="LOCAL"_1  then sig( [ s_(i+1)], empty:seq.mytype, mytype."local", empty:seq.sig,mytype."?")
+      else if this = "LIT"_1 then   lit.toint.s_(i+1)
+      else if this = "WORD"_1 then wordsig.s_(i+1)
+      else if this = "RECORD"_1 then  RECORD.toint.s_(i+1)
+      else if this = "APPLY"_1 then  apply.toint.s_(i+1)
+      else if this = "BLOCK"_1 then  block.toint.s_(i+1)
+      else if this = "EXITBLOCK"_1 then  exit
+      else if this = "BR"_1 then   br
+      else if this = "DEFINE"_1 then  define.s_(i+1) 
+      else eqOp
    if not(bb=eqOp) then  
      let discard=encode(ecached,cached([this,s_(i+1)],bb))
      bbb(knowsymbols, s, i + 2, pending, processed, result + bb)
@@ -600,8 +649,7 @@ function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, process
    else if this = "WORDS"_1 then
     let l = toint.s_(i + 1)
     let name = subseq(s, i + 2, i + 1 + l)
-    let newsig = sig(name, empty:seq.mytype, mytype."$words", empty:seq.sig)
-     bbb(knowsymbols, s, i + 2 + toint.s_(i + 1), pending, processed, result + newsig)
+     bbb(knowsymbols, s, i + 2 + toint.s_(i + 1), pending, processed, result + wordssig.name)
     else   if this="builtinZinternal1Zwordzseq"_1 then 
    // comment keeps this from being striped off //
    bbb(knowsymbols, s, i + 1, pending, processed, result)
@@ -610,7 +658,7 @@ function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, process
       let f=findencode(ecached, cached([q],eqOp))  
       if not.isempty.f then  
       if this= "FREF"_1 then
-            let newsig = sig("FREF" + q, empty:seq.mytype, mytype."$fref", [ s.(f_1)])
+            let newsig = sig("FREF" + q, empty:seq.mytype, mytype."$fref", [ s.(f_1)],mytype."?")
         bbb(knowsymbols, s, i + 2, pending, processed, result + newsig)
       else 
         bbb(knowsymbols, s, i + 1, pending, processed, result + s.(f_1))
@@ -625,12 +673,12 @@ function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, process
           subseq(src.sym, 3 + toint.(src.sym)_2, length.src.sym)
           else src.sym
            bbbfirst(knowsymbols, b,  pending + q, processed,resulttype.sym)
-        let sig = if last.d_2 = "para"_1 then sig([ d_2_1], empty:seq.mytype, mytype."local", empty:seq.sig)
-                  else if d_2 = "local"then sig(d_1, empty:seq.mytype, mytype."local", empty:seq.sig)
-                  else      sig(d_1, @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)), mytype.d_2, empty:seq.sig)
+        let sig = if last.d_2 = "para"_1 then sig([ d_2_1], empty:seq.mytype, mytype."local", empty:seq.sig,mytype."?")
+                  else if d_2 = "local"then sig(d_1, empty:seq.mytype, mytype."local", empty:seq.sig,mytype."?")
+                  else      sig(d_1, @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)), mytype.d_2, empty:seq.sig,mytype."?")
        let discard= encode(ecached,cached([q],sig))
       if this= "FREF"_1 then
-            let newsig = sig("FREF" + q, empty:seq.mytype, mytype."$fref", [ sig])
+            let newsig = sig("FREF" + q, empty:seq.mytype, mytype."$fref", [ sig],mytype."?")
         bbb(knowsymbols, s, i + 2, pending, x, result + newsig)
       else 
         bbb(knowsymbols, s, i + 1, pending, x, result + sig)

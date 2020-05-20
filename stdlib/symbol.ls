@@ -53,6 +53,9 @@ Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a, b, 1)
 type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype,
  src:seq.word, mangledchars:seq.char
 
+Function symbol( mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype,
+ src:seq.word, mangledchars:seq.char) symbol export
+
 Function type:symbol internaltype export
 
 Function type:symbolset internaltype export
@@ -78,13 +81,6 @@ Function symbol(name:word, modname:mytype, paratypes:seq.mytype, resulttype:myty
  let mc = manglechars(name, modname, paratypes)
   symbol(encodeword.mc, resulttype, paratypes, name, modname, src,  mc)
 
-Function flags(s:symbol)seq.word flags(src.s, length.src.s)
-
-function flags(src:seq.word, i:int)seq.word
- if i = 0 then""
- else if src_i in "VERYSIMPLE EXTERNAL STATE NOINLINE INLINE SIMPLE COMPLEX FORCEINLINE PROFILE TESTOPT"then
- flags(src, i - 1) + src_i
- else if src_i in "STATEZinternal1Zinternal1"then flags(src, i - 1) + "STATE"else""
 
 Function isundefined(s:symbol)boolean mangledname.s = "undefinedsym"_1
 
@@ -112,18 +108,21 @@ Function print(s:symbol)seq.word
 
 Function replaceTinname(with:mytype, name:word)word
  let x = decodeword.name
+//  let i = findindex((decodeword."Z"_1)_1, x)
+   encodeword.replaceTmangled(with, x, i)
+//
   if subseq(x, length.x - 1, length.x)
   in [ //.T // [ char.46, char.84], //:T // [ char.58, char.84]]then
   encodeword(subseq(x, 1, length.x - 1) + @(+, decodeword, empty:seq.char, print.with))
   else name
 
-Function replaceT(with:mytype, s:symbol)symbol
+Function replaceTsymbol(with:mytype, s:symbol)symbol
  let newmodname = replaceT(with, modname.s)
  let newparas = @(+, replaceT.with, empty:seq.mytype, paratypes.s)
  let i = findindex((decodeword."Z"_1)_1, mangledchars.s)
  let n = if(mangledchars.s)_(i - 1) = // T // char.84 then replaceTinname(with, name.s)else name.s
  let z = replaceTmangled(with, mangledchars.s, i)
-  symbol(encodeword.z, replaceT(with, resulttype.s), newparas, n, newmodname, src.s,  z)
+  symbol(encodeword.z, replaceT(with, resulttype.s),  newparas , n, newmodname, src.s,  z)
 
 function replaceTmangled(with:mytype, c:seq.char, i:int)seq.char
  let ZTz = decodeword."ZTz"_1
@@ -173,21 +172,7 @@ Function +(a:symbolset, s:symbol)symbolset replace(a, s)
 /Function printcode(s:symbolset)seq.word
  "count:" + toword.@(+, count, 0, toseq.s) + @(+, print3,"", toseq.s)
 
-/function count(s:symbol)int if not(label.codetree.s = "default")then 1 else 0
 
-Function tosymbol(ls:libsym)symbol
- let d = codedown.fsig.ls
- assert length.d > 1 report "tosymbol"+fsig.ls
- let modname = mytype.d_2
- let paratypes = @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d))
- let mc = manglechars(d_1_1, modname, paratypes)
-  symbol(encodeword.mc, mytype.returntype.ls, @(+, replaceT.parameter.modname, empty:seq.mytype, paratypes), d_1_1, modname, instruction.ls, mc)
-
-function tofirstpass(m:libmod)firstpass
- firstpass(mytype.if parameterized.m then"T" + modname.m else [ modname.m], uses.m, 
- @(+, tosymbol, empty:set.symbol, defines.m), @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol, false)
-
-Function tofirstpass(l:liblib)seq.firstpass @(+, tofirstpass, empty:seq.firstpass, mods.l)
 
 use seq.libsym
 
