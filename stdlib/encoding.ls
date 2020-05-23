@@ -109,6 +109,9 @@ Function assignrandom(length:int,data:T) int  (randomint.1)_1
 
 Function add(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T @(add, identity, h, l)
 
+Function addseq(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T @(add, identity, h, l)
+
+
 Function add(erec:erecord.T, s:encodingrep.T)int builtin.STATE.usemangle
 
 Function add(erec:erecord.T, s:seq.encodingrep.T)int @(+, add.erec, 0, s)

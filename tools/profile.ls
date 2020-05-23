@@ -147,3 +147,10 @@ function +(g:labeledgraph.parc, p:profileresult)labeledgraph.parc @(+, toarc(p),
 type profileresult is record arcs:seq.word, counts:seq.int, clocks:seq.int, space:seq.int
 
 function profileinfo seq.profileresult builtin.usemangle
+
+function p2(a:parc) seq.word [tail.a,head.a,toword.counts.a]
+
+Function dumpprofileinfo seq.word
+ let p=profileinfo_1
+ let l=@(+, toarc(p), empty:seq.parc, arithseq(length.counts.p, 1, 1))
+ @(seperator."&br",p2,"",l)

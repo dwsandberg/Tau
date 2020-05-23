@@ -190,8 +190,7 @@ BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){
   return startencoding(PD,P2)->hashtable ;
 }
 
-
-
+ 
  BT addZbuiltinZTzerecordZTzencodingrep(processinfo PD,BT P1,BT P2){  
  struct einfo *e=startencoding(PD,P1)  ;
  struct cinfo *ee = (struct cinfo *) P1;
@@ -200,6 +199,9 @@ BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){
  assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
  return 0;
 } 
+
+// BT addZintzseqzencodingZintzseqzencodingstateZintzseqzencodingrepzseq(processinfo PD,BT P1,BT P2)
+//  { return addZbuiltinZTzerecordZTzencodingrep( PD, P1, P2);}
 
 // end of encoding support
 
@@ -286,16 +288,19 @@ if (strcmp(libname,"stdlib")==0 ){
      initialdict=(BT *)(  ((BT * )  (staticencodings[1]->hashtable)) [4]); 
 }
 
-     
-BT (* addwords)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, "addZintzseqzencodingZTzencodingstateZTzencodingrepzseq");
-   if (!addwords) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-        exit(EXIT_FAILURE);
-    }  
 
 BT wdrepseq= ((BT *) libdesc)[1];
-fprintf( stderr, "nowords %lld \n",  ((BT *)wdrepseq)[1]);   
-staticencodings[1]->hashtable=addwords(&sharedspace,staticencodings[1]->hashtable,wdrepseq); 
+fprintf( stderr, "nowords %lld \n",  ((BT *)wdrepseq)[1]); 
+
+ BT (* addwords2)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, 
+       "addwordsZwordsZcharzseqzencodingstateZcharzseqzencodingrepzseq");
+      if (!addwords2) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+        exit(EXIT_FAILURE);
+     }   
+ staticencodings[1]->hashtable= addwords2(&sharedspace,staticencodings[1]->hashtable,wdrepseq);  
+     
+
 fprintf( stderr, "nowords3 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);          
  
  

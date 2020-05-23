@@ -30,11 +30,6 @@ use libscope
 
 use mangle
 
-use otherseq.mytype
-
-use packedseq.seq.mytype
-
-use seq.seq.mytype
 
 use seq.mytype
 
@@ -54,15 +49,10 @@ use seq.seq.seq.sig
 
 use seq.seq.sig
 
-use stack.seq.sig
-
 use seq.sig
 
 use set.sig
 
-use encoding.fsignrep
-
-use seq.encodingrep.fsignrep
 
 use intdict.fsignrep
 
@@ -106,7 +96,16 @@ Function pass2new(knownsymbols:symbolset, mods:seq.firstpass, compiled:symbolset
      let libmods=libdesc(b,ic, mods , knownsymbols)
     addlibmods(libmods,ic) 
     
-    
+ 
+ Function pass2newa(knownsymbols:symbolset, mods:seq.firstpass, compiled:symbolset)intercode
+ let roots=getroots(mods) 
+  let roots2=@(+,mangledname,"",toseq.roots)
+ let b = bbbfirst(knownsymbols, roots2, "all", emptyprg,mytype."?")
+  let sigreps=getfsignrep.b
+  let ic =   intercode( sigreps ,defines(compiled,sigreps,1,empty:seq.int))
+     let libmods=libdesc(b,ic, mods , knownsymbols)
+    addlibmods(libmods,ic) 
+     
  /function   toexport(p:prg,processed:set.sig, toprocess:set.sig) set.sig
    if isempty.toprocess then processed else 
     let p= toseq.asset.@(+,exportcode,empty:seq.sig,     toseq.toprocess)
@@ -131,14 +130,33 @@ Function firstopt(p:prg, c:seq.seq.word, code:seq.sig)prg
  let nopara = length.c - 2
  let pdict=addpara(empty:intdict.seq.sig, nopara)
  let code2 = value.yyy(p, code, 1, nopara + 1, pdict)
- let s = sig(c_1, @(+, mytype, empty:seq.mytype, subseq(c, 3, length.c)), mytype.c_2, code2,mytype."?")
+   let s = sig(c_1, @(+, mytype, empty:seq.mytype, subseq(c, 3, length.c)), mytype.c_2, code2,mytype."?")  
+// let s=sigfromcodedown(c,code2,"?") //
   // assert length.code < 10 report"UUU"+ print.code +"
 &p"+ print.code2 //
   let a = handletail(code2, s,c_1)
     // assert not(t_1 in"testoptZtestopt")report"PROCESSProC"+ toword.length.code2 + print.code //
    let a2=value.yyy(p,a,1,nopara+1,pdict)
-   add(p, s, a2)
-
+//  let hh=process.testbackparse(a2)
+    assert not.aborted.hh report "fail backparse test"+c_1+message.hh +"&br code:"+print.code2+"&br codeafter:"+print.a 
+//    add(p, s, a2)
+   
+   use process.int
+   
+ function  testbackparse(code:seq.sig) int 
+  let b=backparse(code,length.code,1,empty:seq.int)
+   assert b_1=1 report "XX"+toword.b_1
+  if isblock.last.code then
+   let i = length.code
+  let blksize = nopara.code_i
+   let c= backparseblock(code, i - 1, blksize, empty:seq.seq.int) 
+     assert (places.c)_1=1 report "XXY"+toword.b_1
+   0
+  else
+  0
+    
+    
+ 
 function breaklines2(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int
  if i > length.a then result
  else if false then
@@ -149,7 +167,7 @@ function handletail(code:seq.sig, self:sig,xx:seq.word)seq.sig
  if length.code < 4 then code
  else if isblock.last.code then
  let i = length.code
-  let blksize = lownopara.code_i
+  let blksize = nopara.code_i
    assert blksize ≥ 0 report"BAK 6"
    let args = backparseblock(code, i - 1, blksize, empty:seq.seq.int)
    let blks = subseq(places.args, 2, length.places.args) + [ i]
@@ -290,7 +308,9 @@ function backparseblock(s:seq.sig, i:int, no:int, result:seq.seq.int)backresult
  // assert length.s < 17 &or [ i, no]in [ [ 60, 30]]report"KL"+ toword.i +"no:"+ toword.no + @(seperator."/", print,"", result)+"
 &br"+ print.subseq(s, 1, i)//
  if no = 0 then adjust(s, result, 1, 0, 0, true)
- else if s_i = br then
+ else 
+ assert between(i,1,length.s) &and no > 0  report "fail 456" +toword.i+toword.no
+  if s_i = br then
  let t = backparse2(s, i - 1, 3, empty:seq.int)
   let args = [ 1] + places.t
    backparseblock(code.t, args_2 - 1, no - 1, [ args + (i + 1)] + result)
@@ -322,7 +342,7 @@ function second(s:seq.int)int s_2
 
 function var(i:int)sig var.toword.i
 
-function var(w:word)sig  sig([ w], empty:seq.mytype, mytype."local",empty:seq.sig,mytype."?")
+function var(w:word)sig  sig([ w],  "local",empty:seq.sig,"?")
 
 
 function addpara(map:intdict.seq.sig, i:int)intdict.seq.sig
@@ -346,71 +366,96 @@ function yyy(p:prg, s:seq.sig, i:int, nextvar:int, map:intdict.seq.sig)ipair.seq
   else if isinline.s_i then
  let t = inline(p, s, i, nextvar)
    yyy(p, code.t, index.t, nextvar.t, map)
-else  
-if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
-   let rep=decode.s_i
+else  if s_i=skip then
+  yyy(p,replace(s,i,1,empty:seq.sig),i,nextvar,map)
+else 
+ //    let rep=decode.s_i
+      assert not((fsig.rep)_1="decode"_1)&or
+          fsig.rep="decode(char seq encodingstate, char seq encoding)" report "HERE"+fsig.rep +module.rep+decodebits.s_i
+//
+   if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
+     let rep=decode.s_i
   if isdefine.s_i then
    if i > 1 ∧ (isconst.s_(i - 1) ∨ islocal.s_(i - 1))then
    yyy(p, replace(s, i - 1, 2, empty:seq.sig), i - 1, nextvar, replace(map, valueofencoding.(code.rep)_1, [ s_(i - 1)]))
    else
     yyy(p, replace(s, i, 1, [ define.toword.nextvar]), i + 1, nextvar + 1, replace(map, valueofencoding.(code.rep)_1, [ var.nextvar]))
  else 
-  if  fsig.rep="BLOCK 3" then
-    let t = backparse(s, i - 1, 3, empty:seq.int) + i
-     let condidx=t_2-4
-     let cond=s_ condidx
-     if   s_( condidx+3)=br  &and isconst(cond) then
-        let keepblock=if value.cond=1 then value.s_(condidx+1) else value.s_(condidx+2)
-             let new=subseq(s,t_keepblock,t_(keepblock+1)-2)
-     // "BB"+print.subseq(s,t_1,i)
-      +"PP"+    print.subseq(s,t_keepblock,t_(keepblock+1)-2)//
-        yyy(p, replace(s, condidx, i-condidx+1, new), condidx+length.new, nextvar, map) 
-    else 
-     yyy(p, s, i + 1, nextvar, map)
-  else if isloopblock.s_i then
- let nopara = nopara.s_i - 1
-  let firstvar = value.s_(i - 1)
-   yyy(p, replace(s, i - 1, 1, [ lit.nextvar]), i + 1, nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0))
- else if isrecord.s_i ∧ i > 2 then
- let nopara = nopara.s_i
-  let args = subseq(s, i - nopara, i - 1)
-   if @(∧, isconst, true, args) ∧ length.args = nopara then
-     yyy(p, replace(s, i - nopara, nopara + 1, [ constant.args]), i - nopara, nextvar, map)
+   if module.rep="$" then optmodule$(p, s, i , nextvar, map,rep)
+ else 
+   let nopara= nopara.s_i 
+    if nopara=0 &or nopara > 2 &or not(isconst.s_(i - 1)) then yyy(p, s, i + 1, nextvar, map)
+ else 
+  // one or two parameters with last arg being constant //
+ if nopara = 1 then optoneop(p, s, i , nextvar, map,rep)
+ else // should add case of IDXUC with record as first arg //
+  // assert not((fsig.rep)_1="encode"_1) report "HERE"+fsig.rep //
+  if fsig.rep in[ "decode(T erecord, T encoding)","decode(char seq erecord, char seq encoding)"] ∧ s_(i - 2) = wordEncodingOp  
+ &and module.rep="char seq encoding" then
+  let arg1 = decode.s_(i - 1)
+   if module.arg1 = "$word"then
+   let a1 = @(+, lit, empty:seq.sig, tointseq.decodeword.(fsig.arg1)_1)
+    let d = [ lit.0, lit.length.a1] + a1 + RECORD(length.a1 + 2)
+  //  let k = replace(s, i - 2, 3, d) //
+     yyy(p, replace(s, i - 2, 3, d), i + length.d - 3, nextvar, map)
    else yyy(p, s, i + 1, nextvar, map)
- else if s_i = IDXUC ∧ i > 2 ∧ isconst.s_(i - 1)then
- if isconst.s_(i - 2)then
-  let j = value.s_(i - 1)
-   let x = decode.s_(i - 2)
-    if between(j, 0, length.code.x - 1)then
-    yyy(p, replace(s, i - 2, 3, [(code.x)_(j + 1)]), i - 1, nextvar, map)
-    else yyy(p, s, i + 1, nextvar, map)
-  else yyy(p, s, i + 1, nextvar, map)
- else if isapply.s_i then
- let t = applycode(p, nextvar, s, i)
-   yyy(p, code.t, index.t, nextvar.t, map)
- else if fsig.rep = "makereal(word seq)" ∧ isconst.s_(i - 1)then
+  else if fsig.rep  in[ "encode(T erecord,T)","encode(char seq erecord, char seq)"] ∧ s_(i - 2) = wordEncodingOp  
+    &and module.rep="char seq encoding" then
+  let arg1 = decode.s_(i - 1)
+   if module.arg1 = "$constant"then
+      let chseq=  @(+,  value,empty:seq.int,subseq(code.arg1,3,length.code.arg1))
+      // assert false report "in encode opt"+@(+,toword,"",chseq)  +module.rep //
+        assert  @(&and, islit,true,  subseq(code.arg1,3,length.code.arg1)) report "const problem" 
+       let new=   wordsig.encodeword.@(+,char,empty:seq.char,chseq)
+      yyy(p, replace(s, i - 2, 3, [new]), i - 2, nextvar, map)
+   else yyy(p, s, i + 1, nextvar, map)
+ else if not.isconst.s_(i - 2) then  yyy(p, s, i + 1, nextvar, map)
+ else  
+  //  two parameters with   constant  args //
+   if module.rep="builtin" then opttwoopbuiltin(p, s, i , nextvar, map,rep)
+   else  
+       //   assert not(last.module.rep="seq"_1) &or (fsig.rep)_1="+"_1 report "HERE"  +fsig.rep //
+    if  (fsig.rep)_1="_"_1 &and last.module.rep="seq"_1 then
+     // only checks name="_" in module seq with to arguments and assumes is index function. 
+      A better check is done when lookcloserbit is set on sig in upperbits //
+  let idx = value.s_(i - 1)
+  let arg1 = decode.s_(i - 2)
+  let words = name.arg1
+   if module.arg1 = "$words" &and  between(idx, 1, length.words) then
+      yyy(p, replace(s, i - 2, 3, [ wordsig.words_idx]), i - 1, nextvar, map)
+   else if    module.arg1 = "$constant" &and  between(idx, 1, length.code.arg1-2) then
+      yyy(p, replace(s, i - 2, 3, [ (code.arg1)_(idx+2)]), i - 1, nextvar, map)
+   else yyy(p, s, i + 1, nextvar, map)
+ else   if  fsig.rep in ["+(T seq, T seq)","+(word seq, word seq)"] &and module.rep="word seq" then
+ let arg1 = decode.s_(i - 2)
+  let arg2 = decode.s_(i - 1)
+   if module.arg1 = "$words" ∧ module.arg2 = "$words"then
+     yyy(p, replace(s, i - 2, 3, [ wordssig(name.arg1 + name.arg2)]), i - 1, nextvar, map)
+   else yyy(p, s, i + 1, nextvar, map)
+ else yyy(p, s, i + 1, nextvar, map)
+ 
+function optoneop(p:prg, s:seq.sig, i:int, nextvar:int, map:intdict.seq.sig,rep:fsignrep)ipair.seq.sig
+ if fsig.rep = "makereal(word seq)" then
  let arg1 = decode.s_(i - 1)
    if module.arg1 = "$words"then
    let  x=lit.representation.makereal.fsig.arg1 
      yyy(p, replace(s, i - 1, 2, [ x]), i, nextvar, map)
    else yyy(p, s, i + 1, nextvar, map)
- else if fsig.rep = "merge(word seq)" ∧ isconst.s_(i - 1)then
+ else if fsig.rep = "merge(word seq)" then
  let arg1 = decode.s_(i - 1)
    if module.arg1 = "$words"then
      yyy(p, replace(s, i - 1, 2, [ wordsig.merge.fsig.arg1 ]), i, nextvar, map)
    else yyy(p, s, i + 1, nextvar, map)
- else if fsig.rep = "decode(T erecord, T encoding)" ∧ s_(i - 2) = wordEncodingOp ∧ isconst.s_(i - 1)then
-  let arg1 = decode.s_(i - 1)
-   if module.arg1 = "$word"then
-   let a1 = @(+, lit, empty:seq.sig, tointseq.decodeword.(fsig.arg1)_1)
-    let d = [ lit.0, lit.length.a1] + a1 + RECORD(length.a1 + 2)
-    let k = replace(s, i - 2, 3, d)
-     yyy(p, replace(s, i - 2, 3, d), i + length.d - 3, nextvar, map)
-   else yyy(p, s, i + 1, nextvar, map)
- else if i > 2 ∧ (not.isconst.s_(i - 1) ∨ not.isconst.s_(i - 2))then
-   yyy(p, s, i + 1, nextvar, map)
- else     if module.rep="builtin" then
-  if s_i = plusOp then
+else yyy(p, s, i + 1, nextvar, map)
+
+function opttwoopbuiltin(p:prg, s:seq.sig, i:int, nextvar:int, map:intdict.seq.sig,rep:fsignrep)ipair.seq.sig
+ if s_i = IDXUC   then
+    let j = value.s_(i - 1)
+    let x = decode.s_(i - 2)
+    if between(j, 0, length.code.x - 1)then
+      yyy(p, replace(s, i - 2, 3, [(code.x)_(j + 1)]), i - 1, nextvar, map)
+    else yyy(p, s, i + 1, nextvar, map)
+ else  if s_i = plusOp then 
    let new= replace(s, i - 2, 3, [ lit(value.s_(i - 2) + value.s_(i - 1))])
    yyy(p,new,i-1,nextvar,map)
  else if fsig.rep="*(int,int)" then
@@ -423,7 +468,7 @@ if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
   let new=replace(s, i - 2, 3, [ lit(value.s_(i - 2) / value.s_(i - 1))])
    yyy(p, new, i - 1 , nextvar , map)
  else if fsig.rep="=(int,int)"  then
-   let new=replace(s, i - 2, 3, [ if value.s_(i - 2) = value.s_(i - 1)  then lit.1 else lit.0])
+   let new=replace(s, i - 2, 3, [ if  s_(i - 2) =  s_(i - 1)  then lit.1 else lit.0])
   yyy(p,new,i-1,nextvar,map)
  else if fsig.rep=">(int,int)"  then
    let new=replace(s, i - 2, 3, [ if value.s_(i - 2) > value.s_(i - 1)  then lit.1 else lit.0])
@@ -444,26 +489,45 @@ if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
   let new= replace(s, i - 2, 3, [ lit.representation(casttoreal.value.s_(i - 2) - casttoreal.value.s_(i - 1))])
   yyy(p,new,i-1,nextvar,map)
   else yyy(p, s, i + 1, nextvar, map)
- else 
- if  fsig.rep="_(T seq, int)"  then
-  let idx = value.s_(i - 1)
-  let arg1 = decode.s_(i - 2)
-  let words = name.arg1
-   if module.arg1 = "$words" &and  between(idx, 1, length.words) then
-      yyy(p, replace(s, i - 2, 3, [ wordsig.words_idx]), i - 1, nextvar, map)
-   else if    module.arg1 = "$constant" &and  between(idx, 1, length.code.arg1-2) then
-      yyy(p, replace(s, i - 2, 3, [ (code.arg1)_(idx+2)]), i - 1, nextvar, map)
+  
+function optmodule$(p:prg, s:seq.sig, i:int, nextvar:int, map:intdict.seq.sig,rep:fsignrep)ipair.seq.sig
+if  fsig.rep="BLOCK 3" then
+    let t = backparse(s, i - 1, 3, empty:seq.int) + i
+     let condidx=t_2-4
+     let cond=s_ condidx
+     if   s_( condidx+3)=br  &and isconst(cond) then
+        let keepblock=if value.cond=1 then value.s_(condidx+1) else value.s_(condidx+2)
+             let new=subseq(s,t_keepblock,t_(keepblock+1)-2)
+     // "BB"+print.subseq(s,t_1,i)
+      +"PP"+    print.subseq(s,t_keepblock,t_(keepblock+1)-2)//
+        yyy(p, replace(s, condidx, i-condidx+1, new), condidx+length.new, nextvar, map) 
+    else 
+     yyy(p, s, i + 1, nextvar, map)
+else if  (fsig.rep)_1="LOOPBLOCK"_1 then
+    let nopara = nopara.s_i - 1
+    let firstvar = value.s_(i - 1)
+   yyy(p, replace(s, i - 1, 1, [ lit.nextvar]), i + 1, nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0))
+else if (fsig.rep)_1="RECORD"_1 then
+ let nopara = nopara.s_i
+  let args = subseq(s, i - nopara, i - 1)
+   if @(∧, isconst, true, args) ∧ length.args = nopara then
+     yyy(p, replace(s, i - nopara, nopara + 1, [ constant.args]), i - nopara, nextvar, map)
    else yyy(p, s, i + 1, nextvar, map)
- else   if  fsig.rep="+(T seq, T seq)" &and module.rep="word seq" then
- let arg1 = decode.s_(i - 2)
-  let arg2 = decode.s_(i - 1)
-   if module.arg1 = "$words" ∧ module.arg2 = "$words"then
-     yyy(p, replace(s, i - 2, 3, [ wordssig(name.arg1 + name.arg2)]), i - 1, nextvar, map)
-   else yyy(p, s, i + 1, nextvar, map)
- else yyy(p, s, i + 1, nextvar, map)
+else if  (fsig.rep)_1="APPLY"_1 then
+   let t = applycode(p, nextvar, s, i)
+   yyy(p, code.t, index.t, nextvar.t, map)
+else yyy(p, s, i + 1, nextvar, map)
+
+ 
+ 
+function islit(s:sig) boolean   module.decode.s ="$int" 
 
 function inline(p:prg, s:seq.sig, i:int, nextvar:int)expandresult
  let k = lookuprep(p, s_i)
+   assert not(last.code.k=optionOp) report "inline with option"+print.code.k  
+   if (last.code.k=optionOp) then
+     expandresult(nextvar , i+1, s)
+else
   assert not((print.[ s_i])_1 = "message"_1)report print.[ s_i] + if issimple.k then"SIMPLE"else""
   let nopara = nopara.k
    if length.code.k = 1 ∧ code.k = [ var.1]then
@@ -579,10 +643,20 @@ function bbbfirst(knowsymbols:symbolset, s:seq.word,   pending:seq.word, process
 if length.s=0 &or last.s = "EXTERNAL"_1 then
  assert length.s=0 &or s in ["EXTERNAL", [ last.pending] + "STATE EXTERNAL"]report"EXT" + s
   let c = codedown.last.pending
-  let discard = sig(c_1, @(+, mytype, empty:seq.mytype, subseq(c, 3, length.c)), mytype.c_2, empty:seq.sig,rettyp)
+  let discard = sigfromcodedown(c,empty:seq.sig,towords.rettyp)
    processed
 else
-bbb(knowsymbols, deepcopy.removeflags(s,length.s), 1, pending  , processed, empty:seq.sig)
+ let newsrc=if   length.s > 0 &and s_1="FREF"_1  &and  s_(length.s-1)="RECORD"_1 &and
+   not(s_2="Q5FZbytezbitpackedseqZTzbitpackedseqZint"_1) &and
+    s_2 in "Q5FZllvmtypezotherseqZTzcseqZint        Q5FZintzotherseqZTzcseqZint   Q5FZintzotherseqZTzarithmeticseqZint
+" then
+   // handles T in index function in constructor for seq //
+  let d = codedown.s_2
+    let newpara=@(+, replaceT.parameter.mytype.d_2, empty:seq.mytype, @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)))
+    let m=mangle(d_1_1,mytype.d_2,newpara)
+    "FREF"+m+subseq(s,3,length.s)
+    else deepcopy.removeflags(s,length.s)
+bbb(knowsymbols, newsrc, 1, pending  , processed, empty:seq.sig)
 
 function removeflags(s:seq.word,i:int) seq.word
 if s_i in " PROFILE  builtinZinternal1Zinternal1 
@@ -611,7 +685,7 @@ use seq.cached
  /function  ( knowsymbols:symboleset,processed:prg,sy:symbol) processed
   let q=mangledname.sy
   let sym = lookupsymbol(knowsymbols, q)
-          assert isdefined.sym report"cannot locate" + q
+          assert isdefined.sym report"cannot locate" + q 
           let b = if length.src.sym > 1 &and (src.sym)_1 in "parsedfunc Parsedfunc"then
           subseq(src.sym, 3 + toint.(src.sym)_2, length.src.sym)
           else src.sym
@@ -619,6 +693,9 @@ use seq.cached
         let sig =    sig(name.sym, paratypes.sym, modname.sym, empty:seq.sig)
        let discard= encode(ecached,cached([q],sig))
        x
+
+use stacktrace 
+
 
 function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, processed:prg, result:seq.sig)prg
   if i > length.s then
@@ -629,7 +706,7 @@ function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, process
     if not.isempty.f1  &and i < length.s then
        bbb(knowsymbols, s, i + 2, pending, processed, result + s.(f1_1))
     else   
-    let bb=if this ="LOCAL"_1  then sig( [ s_(i+1)], empty:seq.mytype, mytype."local", empty:seq.sig,mytype."?")
+    let bb=if this ="LOCAL"_1  then sig( [ s_(i+1)],  "local", empty:seq.sig ,"?")
       else if this = "LIT"_1 then   lit.toint.s_(i+1)
       else if this = "WORD"_1 then wordsig.s_(i+1)
       else if this = "RECORD"_1 then  RECORD.toint.s_(i+1)
@@ -658,7 +735,7 @@ function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, process
       let f=findencode(ecached, cached([q],eqOp))  
       if not.isempty.f then  
       if this= "FREF"_1 then
-            let newsig = sig("FREF" + q, empty:seq.mytype, mytype."$fref", [ s.(f_1)],mytype."?")
+            let newsig = sig("FREF" + q,"$fref", [ s.(f_1)], "?")
         bbb(knowsymbols, s, i + 2, pending, processed, result + newsig)
       else 
         bbb(knowsymbols, s, i + 1, pending, processed, result + s.(f_1))
@@ -668,17 +745,22 @@ function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, process
         let x= if q in pending &or  d_2 = "builtin" &or d_2=" local" &or last.d_2 = "para"_1 then   processed
          else
           let sym = lookupsymbol(knowsymbols, q)
-          assert isdefined.sym report"cannot locate" + q
+          assert isdefined.sym report"cannot locate 2" + q +stacktrace+"&p"+s
           let b = if length.src.sym > 1 &and (src.sym)_1 in "parsedfunc Parsedfunc"then
           subseq(src.sym, 3 + toint.(src.sym)_2, length.src.sym)
           else src.sym
            bbbfirst(knowsymbols, b,  pending + q, processed,resulttype.sym)
-        let sig = if last.d_2 = "para"_1 then sig([ d_2_1], empty:seq.mytype, mytype."local", empty:seq.sig,mytype."?")
-                  else if d_2 = "local"then sig(d_1, empty:seq.mytype, mytype."local", empty:seq.sig,mytype."?")
-                  else      sig(d_1, @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)), mytype.d_2, empty:seq.sig,mytype."?")
+        let sig = if last.d_2 = "para"_1 then sig([ d_2_1], "local", empty:seq.sig,"?")
+                  else if d_2 = "local"then sig(d_1, "local", empty:seq.sig,"?")
+                  else      sigfromcodedown(d, empty:seq.sig, "?")
        let discard= encode(ecached,cached([q],sig))
       if this= "FREF"_1 then
-            let newsig = sig("FREF" + q, empty:seq.mytype, mytype."$fref", [ sig],mytype."?")
+       let sym = lookupsymbol(knowsymbols, q)
+             let newsig = sig("FREF" + q, "$fref", [ sig],"?")
         bbb(knowsymbols, s, i + 2, pending, x, result + newsig)
       else 
         bbb(knowsymbols, s, i + 1, pending, x, result + sig)
+        
+function sigfromcodedown(d:seq.seq.word,code:seq.sig,rettype:seq.word) sig
+// d is result from codedown //
+sig( if length.d=2 then d_1 else d_1+"("+@(seperator.",", identity, "", subseq(d, 3, length.d))+")", d_2, empty:seq.sig, "?")

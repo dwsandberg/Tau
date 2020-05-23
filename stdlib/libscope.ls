@@ -88,8 +88,6 @@ type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, e
 
 Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, uses:seq.mytype)libmod export
 
-/Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym)libmod libmod(parameterized, modname, defines, exports, empty:seq.mytype)
-
 Function parameterized(libmod)boolean export
 
 Function modname(libmod)word export

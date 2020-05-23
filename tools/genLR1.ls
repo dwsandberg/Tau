@@ -50,6 +50,8 @@ use seq.word
 
 use set.word
 
+use blockseq.int
+
 type estate is encoding state
 
 type state is record toset:set.dottedrule

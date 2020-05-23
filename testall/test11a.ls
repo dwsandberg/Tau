@@ -14,6 +14,8 @@ use seq.word
 
 use stdlib
 
+use blockseq.int
+
 Function test11a seq.word // testcomp2.["module testit","use stdlib","function f1(a:int)boolean [ a +"]//
 let z = [ compare("a + b + c","{(a + b)+ c }")
 , compare("a*b*c","{(a*b)*c }")

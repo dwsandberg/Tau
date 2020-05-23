@@ -32,7 +32,6 @@ Function asencoding(w:word)encoding.seq.char export
 
 Function word(encoding.seq.char)word export
 
-Function add(erecord.seq.char, seq.encodingrep.seq.char)int export
 
 Function encodeword(a:seq.char)word word.encode(wordencoding, a)
 
@@ -58,6 +57,11 @@ type alphaword is record toword:word
 Function alphaword(word)alphaword export
 
 Function toword(alphaword)word export
+
+use seq.encodingrep.seq.char
+
+Function addwords(a:encodingstate.seq.char, b:seq.encodingrep.seq.char) encodingstate.seq.char 
+ add(a,b)
 
 Function toalphaseq(a:seq.word)seq.alphaword
  // This is just a type change and the compiler recognizes this and does not generate code // @(+, alphaword, empty:seq.alphaword, a)

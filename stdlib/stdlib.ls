@@ -10,37 +10,40 @@ parsersupport  uses
  exports stdlib main2 maindict UTF8  
  UTF8 bits blockseq  deepcopy encoding fileio format  
   ipair   main2     process real   seq set stack stacktrace 
- stdlib  textio  prims   maindict  otherseq tree graph packedseq unsafe words internalbc newpretty llvm
- libscope worddict groupparagraphs timestamp ioseq dataio intdict 
- 
- groupparagraphs  timestamp ioseq dataio symbol intercode    mangle
- worddict  parsersupport parse pass1 newpretty  pass2 bitpackedseq    codegennew intdict libdesc
-
- 
+ stdlib  textio  prims   maindict  otherseq tree graph packedseq unsafe words 
+ internalbc newpretty llvm
+ libscope worddict groupparagraphs 
+ timestamp ioseq dataio intdict funcsig symbol pass2new parse libdesc
+ codegennew processOptions intercode 
  
  
-  UTF8    main2    seq stdlib   prims    maindict   tree set graph otherseq real bits fileio encoding textio
- ipair stacktrace deepcopy blockseq packedseq unsafe process newpretty internalbc libscope mangle stack format llvm words  
  
- UTF8 bits blockseq  deepcopy encoding fileio format graph groupparagraphs 
- internalbc ipair  libscope llvm main2  unsafe packedseq   process real   seq set stack stacktrace 
- stdlib  textio tree prims symbol timestamp ioseq dataio maindict symbol intercode   libdesc otherseq words mangle
- worddict  parsersupport parse pass1 newpretty  pass2 bitpackedseq    codegennew intdict
+ 
+ 
+ 
+ * PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,symbolset,set.firstpass ) linkage
+ 
+  PROFILE     pass1: bind(symbolset,set.firstpass,symbolset,firstpass)symbolset 
+ 
+  PROFILE  pass1:bind2(symbolset,set.symbol,symbolset,symbol)symbolset 
 
- PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,symbolset,set.firstpass ) linkage
- ,     pass1: bind(symbolset,set.firstpass,symbolset,firstpass)symbolset 
-      ,     pass1:bind2(symbolset,set.symbol,symbolset,symbol)symbolset 
+ *  PROFILE  main2:compilelib2(word) seq.word  
 
-* PROFILE  main2:compilelib2(word) seq.word  
+ *  PROFILE main2:subcompilelib(word) seq.word 
 
-* PROFILE main2:subcompilelib(word) seq.word 
+ *  PROFILE pass2new:bbbfirst(symbolset,seq.word,seq.word,prg,mytype) prg 
 
- PROFILE pass2new:bbbfirst(symbolset,seq.word,seq.word,prg,mytype) prg 
-
- PROFILE pass2new:pass2new(symbolset,seq.firstpass,symbolset)intercode 
+ *  PROFILE pass2new:pass2new(symbolset,seq.firstpass,symbolset)intercode 
  
   PROFILE codegennew :codegen( intercode,  word) seq.bits
 
+ PROFILE codetemplates : match5map( intercode, seq.word) seq.match5
+
+ PROFILE codetemplates : actuallyused( intercode, set.int, set.int) set.int
+
+ PROFILE  codetemplates : actuallyused( intercode) set.int
+
+ PROFILE codetemplates : buildtemplates( seq.match5, seq.fsignrep, set.int, int) seq.match5
 
 
 use UTF8

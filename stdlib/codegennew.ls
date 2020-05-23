@@ -135,9 +135,22 @@ Function codegen(fs2:intercode, thename:word)seq.bits
 
 use funcsig
 
-function addfuncdef(match5map:seq.match5,  m:match5)internalbc
+ 
+ function addfuncdef(match5map:seq.match5,  m:match5)internalbc
+ //   let hh=process.subaddfuncdef(match5map,m)
+    assert not.aborted.hh report "fail get"+ inst.m+ message.hh +"&br"+print.code.m
+    result.hh
+use process.internalbc
+function subaddfuncdef(match5map:seq.match5,  m:match5)internalbc //
  let options=options(match5map,m)
  let code= if length.options > 0  then  
+   assert  "PROFILE"_1 in options  report "PROFILE PROBLEM"
+  // assert  inst.m in "compilelib2Zmain2Zword subcompilelibZmain2Zword
+    bbbfirstZpass2newZsymbolsetZseqzQ2EzwordZseqzQ2EzwordZprgZmytype
+    pass2newZpass2newZsymbolsetZseqzQ2EzfirstpassZsymbolset
+    pass1Zpass1ZseqzQ2EzseqzQ2EzseqzQ2EzwordZseqzQ2EzwordZsymbolsetZsetzQ2Ezfirstpass
+    bindZpass1ZsymbolsetZsetzQ2EzfirstpassZsymbolsetZfirstpass
+    bind2Zpass1ZsymbolsetZsetzQ2EzsymbolZsymbolsetZsymbol" report  "P"+inst.m //
    subseq(code.m,2,length.code.m-1) else code.m
  let mangledname= inst.m
  let nopara=arg.m
@@ -177,7 +190,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
     let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [ -1] + args)
       Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
     else
-     // if callee ="PROCESS2"_1 then let discard = if noargs = 1 ∧ nosons(t_1)= 5 then profile(profile, arg.label(t_1_3))else Case of CONST insteand of record as arg 0 addcode(l.sons, c, -(regno.l.sons + 1), 1)else //
+      // if callee ="PROCESS2"_1 then let discard = if noargs = 1 ∧ nosons(t_1)= 5 then profile(profile, arg.label(t_1_3))else Case of CONST insteand of record as arg 0 addcode(l.sons, c, -(regno.l.sons + 1), 1)else //
      profilecall(profiletype, l, args, C.[ inst], profile(profile, inst))
   else if action = "ACTARG"_1 then 
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)

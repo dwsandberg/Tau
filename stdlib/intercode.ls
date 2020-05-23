@@ -101,6 +101,8 @@ Function getroots(s:seq.firstpass) set.symbol   @(&cup,getroots,empty:set.symbol
 
 function  getroots( f:firstpass) set.symbol  if exportmodule.f &and length.towords.modname.f = 1  then
   exports.f  else empty:set.symbol
+  
+  
  
 
   Function exportcode(f:fsignrep) seq.sig

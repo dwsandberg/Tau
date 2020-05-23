@@ -54,7 +54,6 @@ use timestamp
 
 use otherseq.word
 
-use deepcopy.seq.word
 
 use process.seq.word
 
@@ -65,12 +64,6 @@ use set.seq.word
 use set.word
 
 
-type libinfo is record known:symbolset, mods:seq.firstpass
-
-function addliblib(s:seq.word, a:libinfo, l:liblib)libinfo
- if(libname.l)_1 in s then
-  libinfo(addknown( known.a,l), tofirstpass.l + mods.a)
- else a
 
 function loadlibs(dependentlibs:seq.word, i:int, time:int)int
  if i > length.dependentlibs then time
@@ -80,8 +73,6 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
     loadlibs(dependentlibs, i + 1, stamp)
 
 function subcompilelib(libname:word)seq.word
- PROFILE
- .
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
  let s = findlibclause(a, 1)
  let u = findindex("uses"_1, s, 3)
@@ -90,16 +81,13 @@ function subcompilelib(libname:word)seq.word
  let filelist = subseq(s, 2, min(u - 1, e - 1))
  let exports = subseq(s, e + 1, length.s)
  let b = unloadlib.[ libname]
- let li = if libname in "stdlibbak stdlib "then libinfo(emptysymbolset, empty:seq.firstpass)
- else
-  let discard5 = loadlibs(dependentlibs, 1, timestamp.loadedlibs_1)
-   @(addliblib.dependentlibs, identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
-// let allsrc = @(+, gettext2(s_2), empty:seq.seq.seq.word, filelist) //
  let allsrc= getlibrarysrc.libname 
- let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known.li, asset.mods.li)
+ let libmods=  if libname in "stdlibbak stdlib " then empty:seq.firstpass else libfirstpass(dependentlibs)
+ let known = if libname in "stdlibbak stdlib " then emptysymbolset else libknown(dependentlibs)
+ let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known, asset.libmods)
  let x = basesigs(allsrc)
-       let intercode2 = pass2new(symset.p1, mods.p1, known.li)  
-   let bc=codegen( intercode2 , libname)
+ let intercode2 = pass2new(symset.p1, mods.p1, known)  
+ let bc=codegen( intercode2 , libname)
  let z2 = createlib(bc, libname, dependentlibs)
  let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1)
  let name = merge("pass1/" + libname + "." + print.currenttime + ".txt")
@@ -116,8 +104,6 @@ use libdesc
 
 
 Function compilelib2(libname:word)seq.word
- PROFILE
- .
  let p1 = process.subcompilelib(libname)
   if aborted.p1 then"COMPILATION ERROR:" + space + message.p1
   else
@@ -141,8 +127,9 @@ Function main(arg:seq.int)outputformat
 Function testcomp(s:seq.seq.word)seq.seq.word
  let exports ="testit"
  let allsrc = groupparagraphs("module Module", s)
- let li = @(addliblib."stdlib", identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
- let r = pass1(allsrc, exports, known.li, asset.mods.li)
+  let libmods=    libfirstpass("stdlib")
+ let known =   libknown("stdlib")
+ let r = pass1(allsrc, exports, known, asset.libmods)
   @(+, bindingformat.symset.r, empty:seq.seq.word, mods.r)
   
 
@@ -154,12 +141,10 @@ Function firstPass(libname:word)seq.seq.word
  let dependentlibs = subseq(s, u + 1, e - 1)
  let filelist = subseq(s, 2, min(u - 1, e - 1))
  let exports = subseq(s, e + 1, length.s)
- let li = if libname in "stdlib"then libinfo(emptysymbolset, empty:seq.firstpass)
- else
-  let discard5 = loadlibs(dependentlibs, 1, timestamp.loadedlibs_1)
-   @(addliblib(dependentlibs), identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
-    let allsrc=groupparagraphs("module Module",getlibrarysrc.s_2)
- let r = pass1(allsrc, exports, known.li, asset.mods.li)
+     let allsrc=groupparagraphs("module Module",getlibrarysrc.s_2)
+ let libmods=  if libname in " stdlib " then empty:seq.firstpass else libfirstpass(dependentlibs)
+ let known = if libname in " stdlib " then emptysymbolset else libknown(dependentlibs)
+ let r = pass1(allsrc, exports, known, asset.libmods )
   @(+, bindingformat(symset.r), empty:seq.seq.word, mods.r)
 
 function bindingformat(known:symbolset, m:firstpass)seq.seq.word
@@ -187,12 +172,10 @@ Function secondPass(libname:word)seq.seq.word
  let dependentlibs = subseq(s, u + 1, e - 1)
  let filelist = subseq(s, 2, min(u - 1, e - 1))
  let exports = subseq(s, e + 1, length.s)
- let li = if libname in "stdlib"then libinfo(emptysymbolset, empty:seq.firstpass)
- else
-  let discard5 = loadlibs(dependentlibs, 1, timestamp.loadedlibs_1)
-   @(addliblib.dependentlibs, identity, libinfo(emptysymbolset, empty:seq.firstpass), loadedlibs)
+ let libmods=  if libname in "stdlibbak stdlib " then empty:seq.firstpass else libfirstpass(dependentlibs)
+ let known = if libname in "stdlibbak stdlib " then emptysymbolset else libknown(dependentlibs)
       let allsrc =getlibrarysrc.s_2 
- let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known.li, asset.mods.li)
+ let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known , asset.libmods )
  let x = basesigs(allsrc)
- let p2 = pass2new(symset.p1, mods.p1, known.li)
+ let p2 = pass2new(symset.p1, mods.p1, known)
    print.p2 

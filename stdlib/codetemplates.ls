@@ -214,12 +214,12 @@ buildtemplates(empty:seq.match5,coding, actuallyused.fs2,1)
  
  use set.int
  
+  function usedsigs(        coding:seq.fsignrep  ,  i:int ) set.int
+           asset.@(+,lowerbits,empty:seq.int,  cleancode.coding_i)
      
 function   actuallyused(fs:intercode,processed:set.int, toprocess:set.int) set.int
    if isempty.toprocess then processed else 
-    let z= toseq.asset.@(+,cleancode,empty:seq.sig, @( +,   _(coding.fs)   ,empty:seq.fsignrep,     toseq.toprocess)
-  ) 
-   let p=asset.@(+,lowerbits,empty:seq.int,z)
+       let p= @(&cup,usedsigs.coding.fs,empty:set.int,toseq.toprocess)
        actuallyused(fs,processed &cup toprocess, p-processed)
   
 function actuallyused(fs:intercode) set.int
@@ -260,8 +260,7 @@ function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq
         let name=mangledname.xx
         let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ name], noargs + 1)
         match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,cleancode.xx)
-    let discard = encode(ematch5, m)
-   buildtemplates(s+m,coding,used,i+1)
+    buildtemplates(s+m,coding,used,i+1)
 
 
 function ematch5 erecord.match5 export

@@ -53,8 +53,6 @@ Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a, b, 1)
 type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype,
  src:seq.word, mangledchars:seq.char
 
-Function symbol( mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype,
- src:seq.word, mangledchars:seq.char) symbol export
 
 Function type:symbol internaltype export
 
@@ -149,6 +147,9 @@ type ch1result is record nodecount:int, para:seq.int
 Function emptysymbolset symbolset symbolset.emptyworddict:worddict.symbol
 
 Function replace(a:symbolset, sym:symbol)symbolset symbolset.replace(todict.a, mangledname.sym, sym)
+
+Function  mapsymbol(a:symbolset,mangledname:word,sym:symbol) symbolset
+ symbolset.replace(todict.a, mangledname, sym)
 
 type symbolset is record todict:worddict.symbol
 
