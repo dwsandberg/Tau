@@ -215,7 +215,7 @@ function resolveunboundexports(modset:set.firstpass)set.firstpass
    let newset = @(bindunboundexports, identity, modset, u)
    let newcount = @(+, totalunbound, 0, toseq.newset)
     if newcount = orgcount then
-    assert orgcount = 0 report"unresoslved exports" + @(+, print,"", @(+, unboundexports, empty:seq.symbol, u))
+    assert orgcount = 0 report"unresolved exports" + @(+, print,"", @(+, unboundexports, empty:seq.symbol, u))
       modset
     else resolveunboundexports.newset
 
@@ -317,10 +317,14 @@ function definestructure(kind:word, flds:seq.flddesc, i:int, ptype:seq.mytype, m
    let consrc ="FREF" + mn + constructor + "RECORD"
    + toword.recordsize("FREF" + mn + constructor, 1)
    let con = symbol(abstracttype.ptype_1, modname, paras, mytype(towords.parameter.modname + abstracttype.ptype_1), consrc)
-   let symtoseq = symbol("toseq"_1, modname, ptype, mytype(towords.parameter.modname + "seq"_1),"LOCAL 1")
+   let seqtype=mytype(towords.parameter.modname + "seq"_1)
+   let symtoseq = symbol("toseq"_1, modname, ptype, seqtype,"LOCAL 1")
+   let symfromseq=symbol(merge("to:"+print.ptype_1),modname,[seqtype],ptype_1,
+    "LOCAL 1 LIT 0 IDXUC FREF" + mn + "Q3DZbuiltinZintZint LIT 2 LIT 3 BR 3 LOCAL 1 EXITBLOCK 1 LIT 0 LIT 0 RECORD 2 EXITBLOCK 1 
+   BLOCK 3")
    let t ="1 seq." + print.parameter.modname
    let descsym = symbol(merge("type:" + print.resulttype.con), modname, empty:seq.mytype, mytype."internaltype","WORDS" + toword.length.t + t)
-    symbols + symtoseq + con + descsym
+    symbols + symtoseq + symfromseq+ con + descsym
   else
    let consrc = if length.paras = 1 then"LOCAL 1"else constructor + "RECORD" + toword.recordsize(constructor, 1)
    let con = symbol(abstracttype.ptype_1, modname, paras, mytype(towords.parameter.modname + abstracttype.ptype_1), consrc)
@@ -401,7 +405,7 @@ function checkforindex(t1:symbol, org:symbol, dict:set.symbol, templates:symbols
   if length.src=0 &or not(src_1 = "FREF"_1) ∨ abstracttype.resulttype.t1 = "erecord"_1 then
   knownsymbols
   else known.X(src_2, org, dict, parameter.modname.t1, templates, knownsymbols)
-
+  
 function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templates:symbolset, knownsymbols:symbolset)resultpair
  let t1 = lookupsymbol(knownsymbols, mangledname)
   if isdefined.t1 then resultpair(checkforindex(t1, org, dict, templates, knownsymbols), [ mangledname.t1])
@@ -453,7 +457,7 @@ function X(mangledname:word, org:symbol, dict:set.symbol, modpara:mytype, templa
            + "newmodpara:"
            + print.newmodpara
            + toword.cardinality.k
-            // + @(+, print,"", toseq.templates)//
+              + @(+, print,"", toseq.templates) 
             assert mangledname ≠ mangledname.k_1 report"ERR12" + mangledname + print2.k_1
              if not.isdefined.lookupsymbol(knownsymbols, mangledname.k_1)then
              X(mangledname.k_1, org, dict, mytype."T", templates, knownsymbols)
@@ -473,7 +477,8 @@ function gathersymbols(exported:seq.word, src:seq.seq.word)firstpass
 
 function wrapgathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, input:seq.word)firstpass gathersymbols(exported, stubdict, f, input)
 
-function definefld(src:seq.word, modname:mytype, t:seq.mytype, m:mytype)symbol symbol(abstracttype.m, modname, t, parameter.m, src)
+function definefld(src:seq.word, modname:mytype, t:seq.mytype, m:mytype)symbol 
+symbol(abstracttype.m, modname, t, parameter.m, src)
 
 function hasT(s:seq.word, i:int)boolean
  // used to determine it type T is specified somewhere in function sig //
@@ -515,7 +520,10 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
     let constructor = symbol(name, modname.f, @(+, parameter, empty:seq.mytype, types.b), t,"STUB")
     let syms = @(+, definefld("STUB", modname.f, [ t]), [ constructor, sizeofsym], types.b)
     + if kind = "sequence"_1 then
-    [ symbol("toseq"_1, modname.f, [ t], mytype(towords.parameter.t + "seq"_1),"STUB")]
+      let seqtype=mytype(towords.parameter.t + "seq"_1)
+    [ symbol("toseq"_1, modname.f, [ t], seqtype,"STUB"),
+       symbol(merge("to:"+print.t), modname.f, [ seqtype],t ,"STUB")
+    ]
     else empty:seq.symbol
      firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
  else if input_1 in "Function function"then

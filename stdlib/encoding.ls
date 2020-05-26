@@ -111,12 +111,11 @@ Function add(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T @(add, ident
 
 Function addseq(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T @(add, identity, h, l)
 
-
-Function add(erec:erecord.T, s:encodingrep.T)int builtin.STATE.usemangle
+Function add(erec:erecord.T, s:encodingrep.T)int builtin.usemangle
 
 Function add(erec:erecord.T, s:seq.encodingrep.T)int @(+, add.erec, 0, s)
 
-Function getinstance(erec:erecord.T)encodingstate.T builtin.STATE.usemangle
+Function getinstance(erec:erecord.T)encodingstate.T builtin.usemangle
 
 Function orderadded(erec:erecord.T)seq.T toseq.getinstance.erec
 

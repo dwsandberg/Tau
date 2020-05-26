@@ -38,7 +38,7 @@ Function cast(s:seq.T, offset:int, typ:int)T builtin.usemangle
 Function allocatespace:seq.T(i:int)seq.T builtin."LOCAL 1 allocatespaceZbuiltinZint"
 
 
-function setfld2(s:seq.T, i:int, val:T)seq.T builtin.STATE.usemangle
+function setfld2(s:seq.T, i:int, val:T)seq.T builtin.usemangle
 
 Function setfld(s:seq.T, i:int, val:T)seq.T   setfld2(s,i,val)
  

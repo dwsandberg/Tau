@@ -35,6 +35,8 @@ Function_(a:blockseq.T, i:int)T
 
 /function topackedseq(s:seq.T)packedseq.T builtin.FROMSEQ
 
+/function to:blockseq.T(s:seq.T) blockseq.T export
+
 /Function ispackedseq(s:seq.T)boolean(length.topackedseq.s &ne 0)
 
 /function toblockseq(s:seq.T)blockseq.T builtin.FROMSEQ

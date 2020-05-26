@@ -68,8 +68,8 @@ use persistant
 
 use seq.sig
 
-function funcdec(m:match5)seq.int
- // let discard = C.mangledname.f //
+function funcdec(map:seq.match5,i:sig)seq.int
+  let m=map_lowerbits.i
   let nopara=arg.m
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
   
@@ -85,8 +85,7 @@ Function codegen(fs2:intercode, thename:word)seq.bits
   let libmods2=arg.last.match5map
       // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
      // assert false report checkmap.match5map //
-     let defines2=@(+, _(match5map), empty:seq.match5, defines.fs2)
-     let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines2)
+      let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines.fs2)
      let profilearcs2 = profilearcs
      let noprofileslots = length.profilearcs2 / 2
       // let libsyms = @(+, tolibsym(coding.fs, codes.fs), empty:seq.libsym, defines.fs)//
@@ -130,13 +129,14 @@ Function codegen(fs2:intercode, thename:word)seq.bits
       , // llvm.sqrt.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.sin.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.cos.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
-      + @(+, funcdec, empty:seq.seq.int, defines2)
+      + @(+, funcdec.match5map, empty:seq.seq.int, defines.fs2)
        llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 
 use funcsig
 
  
- function addfuncdef(match5map:seq.match5,  m:match5)internalbc
+ function addfuncdef(match5map:seq.match5,  i:sig)internalbc
+   let m=(match5map_lowerbits.i) 
  //   let hh=process.subaddfuncdef(match5map,m)
     assert not.aborted.hh report "fail get"+ inst.m+ message.hh +"&br"+print.code.m
     result.hh
@@ -145,18 +145,10 @@ function subaddfuncdef(match5map:seq.match5,  m:match5)internalbc //
  let options=options(match5map,m)
  let code= if length.options > 0  then  
    assert  "PROFILE"_1 in options  report "PROFILE PROBLEM"
-  // assert  inst.m in "compilelib2Zmain2Zword subcompilelibZmain2Zword
-    bbbfirstZpass2newZsymbolsetZseqzQ2EzwordZseqzQ2EzwordZprgZmytype
-    pass2newZpass2newZsymbolsetZseqzQ2EzfirstpassZsymbolset
-    pass1Zpass1ZseqzQ2EzseqzQ2EzseqzQ2EzwordZseqzQ2EzwordZsymbolsetZsetzQ2Ezfirstpass
-    bindZpass1ZsymbolsetZsetzQ2EzfirstpassZsymbolsetZfirstpass
-    bind2Zpass1ZsymbolsetZsetzQ2EzsymbolZsymbolsetZsymbol" report  "P"+inst.m //
-   subseq(code.m,2,length.code.m-1) else code.m
- let mangledname= inst.m
+    subseq(code.m,2,length.code.m-1) else code.m
  let nopara=arg.m
     let l = Lcode2(emptyinternalbc, paramap(nopara,empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
- let g5 = if "PROFILE"_1 in options then 
-   // assert false report  options(match5map,m) // mangledname else"noprofile"_1
+ let g5 = if "PROFILE"_1 in options then  mangledname.m else"noprofile"_1
  let r = @(processnext.g5,_.match5map, l, (code))
   BLOCKCOUNT(1, noblocks.r) + code.r + RET(regno.r + 1, top.args.r)
 
@@ -181,17 +173,17 @@ function length(s:stack.int) int length.toseq.s
 use otherseq.Lcode2
 
 function processnext(profile:word, l:Lcode2, m:match5)Lcode2
- let inst = inst.m
-  let action = action.m
+   let action = action.m
   if action = "CALL"_1 then
+     let callee = mangledname.m  
   let noargs = arg.m
    let args = top(args.l, noargs)
-    if  profile = "noprofile"_1 ∨ profile = inst then
+    if  profile = "noprofile"_1 ∨ profile = callee then
     let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [ -1] + args)
       Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
     else
       // if callee ="PROCESS2"_1 then let discard = if noargs = 1 ∧ nosons(t_1)= 5 then profile(profile, arg.label(t_1_3))else Case of CONST insteand of record as arg 0 addcode(l.sons, c, -(regno.l.sons + 1), 1)else //
-     profilecall(profiletype, l, args, C.[ inst], profile(profile, inst))
+     profilecall(profiletype, l, args, C.[ callee], profile(profile, callee))
   else if action = "ACTARG"_1 then 
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
   else if action = "LOCAL"_1 then 
@@ -201,18 +193,18 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
      let noargs = arg.m
      Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + length.m, push(pop(args.l, noargs), -(regno.l + length.m)), blocks.l)
   else
-   assert action = "SPECIAL"_1 report"UNKNOWN ACTION" + action
-    if inst in "EXITBLOCK" then
+  // assert action = "SPECIAL"_1 report"UNKNOWN ACTION" + action //
+    if action = "EXITBLOCK"_1 then
            assert    length.toseq.args.l > 0 report "fail 5e"
      let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(args.l,0), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))
-    else if inst in "BR"  then
+    else if action = "BR"_1  then
            assert    length.toseq.args.l > 2 report "fail 5b"
        let cond=
         let newcode = CAST(regno.l + 1, top(args.l,arg.m)_1, typ.i1, CASTTRUNC)
         Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + 1, push(args.l,1), blocks.l)
       Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l + 1, empty:stack.int, push(blocks.l,cond))
-    else if inst in "BLOCK"  then
+    else if action = "BLOCK"_1  then
      let no=arg.m 
       let blks= top(blocks.l,no)
       assert length.blks=no report "XXXXXX arg"+profile
@@ -233,20 +225,20 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
        let newstack =push(pop(firstblkargs, popno)  , -(regno.l + 1))
       let newcode=code.rblk+phiinst(regno.last.blks, typ.i64, phi.rblk,1)
       Lcode2(newcode, lmap.l, noblocks.l , regno.l + 1,  newstack, pop(blocks.l, no))
-    else if inst = "DEFINE"_1 then
+    else if action = "DEFINE"_1 then
     Lcode2(code.l,  [localmap(arg.m, top.args.l)]+lmap.l, noblocks.l, regno.l, pop(args.l,1),  blocks.l)
-    else if inst = "SET"_1 then l
-     else if inst = "LOOPBLOCK"_1 then
+    else if action = "SET"_1 then l
+     else if action = "LOOPBLOCK"_1 then
      let varcount = arg.m - 1
      let firstvar = constvalue.top.args.l
      let bodymap = @(addloopmapentry(firstvar, regno.l), identity,lmap.l, arithseq(varcount, 1, 1))
      let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(push(args.l,varcount),2), blocks.l)
     Lcode2(emptyinternalbc, bodymap, noblocks.l + 1, regno.l+ varcount, empty:stack.int,  push( blocks.l,exitblock) )  
-    else  if inst = "CONTINUE"_1 then
+    else  if action = "CONTINUE"_1 then
     let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(args.l,3), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))  
     else 
-     assert inst = "RECORD"_1 report"code gen SPECIAL" + inst
+     assert action = "RECORD"_1 report"code gen SPECIAL" + action
      let noargs = arg.m
      let args = top(args.l, noargs)
      let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceZbuiltinZint", -1, C64.noargs)

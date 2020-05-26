@@ -247,17 +247,17 @@ BT initlib5(char * libname,BT  libdesc) {
 if (strcmp(libname,"stdlib")==0 ){
    fprintf(stderr,"init stdlib\n");
   /* only needed when initializing stdlib */
-    append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");
+ /*  append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");
     if (!append){
            fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
           exit(EXIT_FAILURE);
-    }
+    } */
     toUTF8 = dlsym(RTLD_DEFAULT, "toUTF8ZUTF8Zwordzseq");
     if (!toUTF8){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
-    byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZTzbitpackedseqZint");
+    byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZbitpackedseqzbitpackedseqZint");
     if (!byteseqencetype){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);

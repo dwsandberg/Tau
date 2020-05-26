@@ -87,7 +87,13 @@ Function_(s:pseq.T, i:int)T
 
 Function ispseq(s:seq.T)boolean not(length.topseq.s = 0)
 
-Function topseq(s:seq.T)pseq.T builtin.FROMSEQ
+Function topseq(s:seq.T)pseq.T  builtin.FROMSEQ
+
+to:pseq.T(s)
+
+ 
+
+Function to:pseq.T(s:seq.T)pseq.T export
 
 Function +(a:seq.T, b:seq.T)seq.T
  let la = length.a

@@ -6,7 +6,7 @@ Function deepcopy(a:T)T deepcopy.a
 
 /Function TESTOPT(a:T)T a
 
-Function PROFILE(a:T)T a
+/Function PROFILE(a:T)T a
 
 /Function FORCEINLINE(a:T)T a
 

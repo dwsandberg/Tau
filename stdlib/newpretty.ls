@@ -137,7 +137,7 @@ Function type:attribute internaltype export
 
 Function attribute(text:seq.word)attribute attribute.[ prettyresult(0, width.text, text)]
 
-Function attribute:attribute(text:seq.word)attribute attribute.[ prettyresult(0, width.text, text)]
+function attribute:attribute(text:seq.word)attribute attribute.[ prettyresult(0, width.text, text)]
 
 function forward(stk:attribute, token:attribute)attribute token
 

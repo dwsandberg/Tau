@@ -102,6 +102,7 @@ Function sig(name:seq.word, args:seq.mytype, module1:mytype, code:seq.sig,return
   name + "(" + @(seperator.",", towords,"", args)  + ")"
   sig(fsig,towords.module1,code,towords.returntype)
   
+  Function sig(f:fsignrep) sig sig(encode(efsignrep,f))
 
 Function sig(fsig:seq.word,modname:seq.word,code:seq.sig,rettype:seq.word) sig
  sig(encode(efsignrep,fsignrep(fsig,modname,code,rettype)))
@@ -161,7 +162,8 @@ if length.module = 2 ∧ module_2 = "para"_1
  
 Function lookuprep(p:prg, s:sig)fsignrep
  let a = lookup(translate.p, valueofencoding.s)
-  if isempty.a then decode.s else a_1
+  if isempty.a then 
+     decode.s else a_1
 
 Function add(p:prg, s:sig, code:seq.sig)prg
  let d = decode.s
@@ -212,6 +214,12 @@ Function print(p:prg, e:encodingrep.fsignrep)seq.word
  if isinline.sig.code.e then
   " &br"+bitflags + print.rep + @(+, print,"", code.rep)
   else ""
+  
+Function print(p:prg, s:sig)seq.word
+ let rep=lookuprep(p,s) 
+     print.rep + @(+, print,"", code.rep)
+   
+
 
 
 Function value(s:sig)int toint.(fsig.decode.s)_1
@@ -253,7 +261,7 @@ Function wordssig(w:seq.word) sig
  
 
 
-function print(s:sig)seq.word print.decode.s
+Function print(s:sig)seq.word print.decode.s
 
 
 function firstupperbit int 19
@@ -341,9 +349,9 @@ Function gtOp sig   baseupbits_(lastlocal+18)
 
 
 
-function ecvt(i:int)sig builtin."LOCAL 1"
+function ecvt(i:int)sig  sig.to:encoding.fsignrep(i)
 
-function ecvt(i:bits)sig builtin."LOCAL 1"
+function ecvt(i:bits)sig sig.to:encoding.fsignrep(toint.i)
 
 use processOptions 
 
@@ -522,18 +530,18 @@ sig("1","local", empty:seq.sig,"?")
 , sig("STKRECORD(int,int)","builtin", empty:seq.sig,"?")
 , sig("SET 1","$", empty:seq.sig,"?")
 , sig("0","$int", empty:seq.sig,"?")
-, sig("wordencoding","words", empty:seq.sig,"word encoding")
+, sig("wordencoding","words", empty:seq.sig," char seq erecord")
 , sig(// "CONSTANT" + toword.lowerbits.lit0  + toword.lowerbits.lit0 //  "CONSTANT 15 15","$constant" 
 , [ lit0, lit0],"?")  
 , sig("option(word seq,T)","builtin",empty:seq.sig,"$")  
 , sig("makereal(word seq)", "UTF8", empty:seq.sig,"real")
 , sig("add( T erecord ,  T encodingrep )","builtin", empty:seq.sig,"?")
 , sig("getinstance(T erecord)","builtin",empty:seq.sig,"?")
-, sig(" getfile(bits seq ) ","builtin",empty:seq.sig,"?")
+, sig(" getfile(bits seq ) ","builtin",empty:seq.sig,"fileresult")
 , sig("setfld2(T seq, int, T) ","builtin",empty:seq.sig,"?")
 , sig("+(int, int)","builtin", empty:seq.sig,"int")
-, sig("=(int, int)","builtin", empty:seq.sig,"int")
-, sig(">(int, int)","builtin", empty:seq.sig,"int")
+, sig("=(int, int)","builtin", empty:seq.sig,"boolean")
+, sig(">(int, int)","builtin", empty:seq.sig,"boolean")
 , sig("-(int, int)","builtin", empty:seq.sig,"int")
 , sig("*(int, int)","builtin", empty:seq.sig,"int")
 , sig("/(int, int)","builtin", empty:seq.sig,"int")
@@ -542,7 +550,7 @@ sig("1","local", empty:seq.sig,"?")
 , sig("<<(bits, int)","builtin", empty:seq.sig ,"bits")
 , sig(">>(bits, int)","builtin", empty:seq.sig,"bits")
 , sig("-(real, real)","builtin", empty:seq.sig,"real")
-, sig("+(T seq, T seq)","word seq", empty:seq.sig,"wordseq")
+, sig("+(T seq, T seq)","word seq", empty:seq.sig,"word seq")
 , sig("decode(T erecord, T encoding)","char seq encoding", empty:seq.sig,"char seq")
 , sig("merge(word seq)","words", empty:seq.sig,"word")
 , sig("encode(T erecord,T)","char seq encoding",empty:seq.sig,"char seq encoding") 
@@ -555,5 +563,9 @@ let discard2=@(+,processOption,"",allsrc)
 // assert false report @(seperator."&br",decodebits,"",b) //
 // assert false report "X"+toword.valueofencoding.optionOp //
 assert length.b=length.baseupbits report "basesig problem"
+let d1= sig([merge."empty:seq.word"]," word seq",[emptyseqOp]," word seq")
+let d2= sig([merge."empty:seq.seq.word"]," word seq seq",[emptyseqOp]," word seq seq") 
+let d3= sig([merge."empty:seq.char"]," char seq",[emptyseqOp]," char seq") 
+let d4= sig([merge."empty:seq.int"]," int seq",[emptyseqOp]," int seq") 
  0
 

@@ -55,7 +55,7 @@ Function createfile(name:seq.word, a:seq.int)int createfile(toCformat.name, bloc
 
 function createfile(name:seq.bits, data:seq.int)int builtin.usemangle
 
-function getfile(f:seq.bits)fileresult builtin.STATE.usemangle
+function getfile(f:seq.bits)fileresult builtin.usemangle
 
 function size(fileresult)int export
 

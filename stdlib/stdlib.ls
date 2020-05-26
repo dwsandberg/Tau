@@ -27,22 +27,23 @@ parsersupport  uses
  
   PROFILE  pass1:bind2(symbolset,set.symbol,symbolset,symbol)symbolset 
 
- *  PROFILE  main2:compilelib2(word) seq.word  
+  *  PROFILE  main2:compilelib2(word) seq.word  
 
- *  PROFILE main2:subcompilelib(word) seq.word 
+  *  PROFILE main2:subcompilelib(word) seq.word 
 
- *  PROFILE pass2new:bbbfirst(symbolset,seq.word,seq.word,prg,mytype) prg 
+  PROFILE pass2new:simplemods( symbolset, getrootsresult,  firstpass) getrootsresult 
+ 
+  PROFILE pass2new: bbb(symbolset,  seq.word,  int,  seq.word,  prg,  seq.sig) bbbresult2
 
  *  PROFILE pass2new:pass2new(symbolset,seq.firstpass,symbolset)intercode 
  
   PROFILE codegennew :codegen( intercode,  word) seq.bits
 
- PROFILE codetemplates : match5map( intercode, seq.word) seq.match5
+  PROFILE codetemplates : match5map( intercode, seq.word) seq.match5
 
- PROFILE codetemplates : actuallyused( intercode, set.int, set.int) set.int
+ PROFILE pass2new: firstopt( prg,  seq.seq.word, seq.sig, seq.word) bbbresult
 
- PROFILE  codetemplates : actuallyused( intercode) set.int
-
+ 
  PROFILE codetemplates : buildtemplates( seq.match5, seq.fsignrep, set.int, int) seq.match5
 
 
@@ -269,7 +270,7 @@ Function length(seq.int)int export
 
 Function findindex(word, seq.word)int export
 
-Function findindex(seq.word, seq.seq.word)int export
+/Function findindex(seq.word, seq.seq.word)int export
 
 Function findindex(word, seq.word, int)int export
 

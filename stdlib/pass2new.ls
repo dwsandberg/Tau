@@ -15,7 +15,6 @@ use otherseq.fsignrep
 
 use seq.fsignrep
 
-
 use otherseq.seq.int
 
 use seq.seq.int
@@ -84,62 +83,102 @@ use libdesc
 
 use processOptions
 
+
+type getrootsresult is record p:prg,mods:seq.expmod
+
+use seq.expmod
+
+function  simplemods(knownsymbols:symbolset,p:getrootsresult, f:firstpass) getrootsresult 
+  if not.exportmodule.f then p else 
+  if    ( length.towords.modname.f = 1)  then
+  let exp=@(+,cleansym.knownsymbols,"",toseq.exports.f ) 
+  let b=bbb(knownsymbols , exp, 1, "all", p.p, empty:seq.sig)
+  let m=expmod(abstracttype.modname.f,s.b,empty:seq.sig,empty:seq.mytype)
+    getrootsresult(p.b,mods.p+m)
+   else // if isabstract.modname.f then
+    let discard=@(+,tosig.knownsymbols,empty:seq.sig,toseq(exports.f &cup defines.f ) )
+    p 
+  else // p 
+  
+  function abstractmods(knownsymbols:symbolset,p:getrootsresult, f:firstpass) getrootsresult 
+  if not.exportmodule.f then p else 
+   if isabstract.modname.f  then
+    let defs=@(+,tosig.knownsymbols,empty:seq.sig,toseq.defines.f ) 
+    let exp=@(+,tosig.knownsymbols,empty:seq.sig,toseq.exports.f ) 
+         let m=expmod(abstracttype.modname.f,exp,defs,uses.f)
+    // assert   not(modname.m ="blockseq"_1)   
+     report let k=lookuprep(p.Rexp ,(s.Rexp )_4) print.[(s.Rexp )_4]+ mangledname.k +print.code.k // 
+       getrootsresult(p.p,mods.p+m)
+   else p 
+   
+   Function tosig(known:symbolset,symin:symbol) sig  
+     let sym2=lookupsymbol(known,mangledname.symin) 
+     let s= if isdefined.sym2 then  sym2 else symin  
+      let code= if length.src.s=0 then empty:seq.sig
+      else  
+       let src= if   (src.s)_1 = "parsedfunc"_1 then
+         subseq(src.s ,toint.(src.s)_2 + 3, length.src.s) else src.s
+        [exit,wordssig.src]
+     sig ([name.s] , paratypes.s, modname.s , code,resulttype.s)
+
+
+   function cleansym(known:symbolset,s:symbol) word
+      let sym2=lookupsymbol(known,mangledname.s) 
+      if isdefined.sym2 then mangledname.sym2 else mangledname.s
+     
+  
 Function pass2new(knownsymbols:symbolset, mods:seq.firstpass, compiled:symbolset)intercode
- let roots=getroots(mods) 
-  let roots2=@(+,mangledname,"",toseq.roots)
- // let p1=if length.compiled2 > 0 then bbbfirst(knownsymbols, compiled2, "all", emptyprg,mytype."?")
- else emptyprg //
- let b = bbbfirst(knownsymbols, roots2, "all", emptyprg,mytype."?")
-  // assert false report"dumpprg"+ dumpprg.b //
-  let sigreps=getfsignrep.b
-  let ic =   intercode( sigreps ,defines(compiled,sigreps,1,empty:seq.int))
-     let libmods=libdesc(b,ic, mods , knownsymbols)
-    addlibmods(libmods,ic) 
-    
- 
- Function pass2newa(knownsymbols:symbolset, mods:seq.firstpass, compiled:symbolset)intercode
- let roots=getroots(mods) 
-  let roots2=@(+,mangledname,"",toseq.roots)
- let b = bbbfirst(knownsymbols, roots2, "all", emptyprg,mytype."?")
-  let sigreps=getfsignrep.b
-  let ic =   intercode( sigreps ,defines(compiled,sigreps,1,empty:seq.int))
-     let libmods=libdesc(b,ic, mods , knownsymbols)
-    addlibmods(libmods,ic) 
-     
- /function   toexport(p:prg,processed:set.sig, toprocess:set.sig) set.sig
-   if isempty.toprocess then processed else 
-    let p= toseq.asset.@(+,exportcode,empty:seq.sig,     toseq.toprocess)
-      toexport(fs,processed &cup toprocess, p-processed)
-
-      
+let simple=@(simplemods(knownsymbols),identity,getrootsresult(emptyprg, empty:seq.expmod),mods)
+let abstract=@(abstractmods(knownsymbols),identity,getrootsresult(p.simple, empty:seq.expmod),mods)
+let p=p.abstract
+    let libmods=libdesc(p, knownsymbols,mods.simple,mods.abstract)
+   let rootsigs=@(+,exports,empty:seq.sig,mods.simple) 
+   let t=uses(p,empty:set.sig,asset.rootsigs+libmods)
+   let newdefines=@(+, defines2(p,compiled),empty:seq.sig,toseq.t )
+  // assert false report @( seperator."&br",print,"", @(+,check.p,empty:seq.sig,newdefines)) //
+           let sigreps=getfsignrep.p 
+    intercode( sigreps ,newdefines,t,libmods)
+  
+  function  uses(p:prg,s:sig) seq.sig
+  // if islocal.s then empty:seq.sig else //
+   code.lookuprep(p,s)
+   
+       
+function   uses(p:prg,processed:set.sig, toprocess:set.sig) set.sig
+   if isempty.toprocess then  processed else 
+    let q= asset.@(+,uses.p,empty:seq.sig,     toseq.toprocess)
+      uses(p,processed &cup toprocess, q-processed)
 
 
-function defines(compiled:symbolset,ss:seq.fsignrep,i:int,result:seq.int) seq.int
-if i > length.ss then result else let s=ss_i
+function defines2(p:prg,compiled:symbolset,ss:sig) seq.sig
+let s=lookuprep(p,ss)
 if (length.module.s=1 &and (module.s)_1 in "$  local $fref $constant $words $word $int" ) &or length.code.s=0 
- &or isdefined.lookupsymbol(compiled, mangledname.s) then
-   defines(compiled,ss,i+1,result)
-else  defines(compiled,ss,i+1,result+i)
-     
+ &or isdefined.lookupsymbol(compiled, mangledname.s) then empty:seq.sig
+else  if  isabstract.mytype.module.s then empty:seq.sig
+else 
+ [ss]
 
+function check(p:prg,ss:sig) seq.sig
+let  s=lookuprep(p,ss)
+if (length.module.s=1 &and (module.s)_1 in "$  local $fref $constant $words $word $int" ) 
+&or isabstract.mytype.module.s then empty:seq.sig
+else if  "T"_1 in fsig.s then [ss] else empty:seq.sig
 
+ 
   
 type backresult is record code:seq.sig, places:seq.int
 
-Function firstopt(p:prg, c:seq.seq.word, code:seq.sig)prg
+Function firstopt(p:prg, c:seq.seq.word, code:seq.sig,resulttype:seq.word) bbbresult
  let nopara = length.c - 2
  let pdict=addpara(empty:intdict.seq.sig, nopara)
  let code2 = value.yyy(p, code, 1, nopara + 1, pdict)
-   let s = sig(c_1, @(+, mytype, empty:seq.mytype, subseq(c, 3, length.c)), mytype.c_2, code2,mytype."?")  
-// let s=sigfromcodedown(c,code2,"?") //
-  // assert length.code < 10 report"UUU"+ print.code +"
-&p"+ print.code2 //
+  let s= sigfromcodedown(c, code2, resulttype  ) 
   let a = handletail(code2, s,c_1)
     // assert not(t_1 in"testoptZtestopt")report"PROCESSProC"+ toword.length.code2 + print.code //
    let a2=value.yyy(p,a,1,nopara+1,pdict)
 //  let hh=process.testbackparse(a2)
     assert not.aborted.hh report "fail backparse test"+c_1+message.hh +"&br code:"+print.code2+"&br codeafter:"+print.a 
-//    add(p, s, a2)
+//   bbbresult(  add(p, s, a2),s)
    
    use process.int
    
@@ -632,45 +671,16 @@ let stk = 6
  , block.4, define."7"_1, var.stk, lit.0, eqOp, lit.5, lit.6, br, var.7, exit
  , var.7, var.stk, lit.1, IDXUC, var.stk, lit.0, IDXUC, continue.3, block.6]
 
-
-
-type rtype is record processed:prg, texts:seq.seq.word
-
-
-use deepcopy.seq.word
-
-function bbbfirst(knowsymbols:symbolset, s:seq.word,   pending:seq.word, processed:prg,rettyp:mytype)prg
-if length.s=0 &or last.s = "EXTERNAL"_1 then
- assert length.s=0 &or s in ["EXTERNAL", [ last.pending] + "STATE EXTERNAL"]report"EXT" + s
-  let c = codedown.last.pending
-  let discard = sigfromcodedown(c,empty:seq.sig,towords.rettyp)
-   processed
-else
- let newsrc=if   length.s > 0 &and s_1="FREF"_1  &and  s_(length.s-1)="RECORD"_1 &and
-   not(s_2="Q5FZbytezbitpackedseqZTzbitpackedseqZint"_1) &and
-    s_2 in "Q5FZllvmtypezotherseqZTzcseqZint        Q5FZintzotherseqZTzcseqZint   Q5FZintzotherseqZTzarithmeticseqZint
-" then
-   // handles T in index function in constructor for seq //
-  let d = codedown.s_2
-    let newpara=@(+, replaceT.parameter.mytype.d_2, empty:seq.mytype, @(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)))
-    let m=mangle(d_1_1,mytype.d_2,newpara)
-    "FREF"+m+subseq(s,3,length.s)
-    else deepcopy.removeflags(s,length.s)
-bbb(knowsymbols, newsrc, 1, pending  , processed, empty:seq.sig)
-
+  
 function removeflags(s:seq.word,i:int) seq.word
-if s_i in " PROFILE  builtinZinternal1Zinternal1 
-builtinZinternal1Zwordzseq NOINLINE STATEZinternal1Zinternal1"then
+if s_i in " builtinZinternal1Zinternal1 builtinZinternal1Zwordzseq NOINLINE "then
    removeflags(s,i-1)
    else 
-   // assert isempty.(asset.subseq(s,i+1,length.s)-asset."NOINLINE builtinZinternal1Zwordzseq
-    builtinZinternal1Zinternal1 STATEZinternal1Zinternal1 PROFILE") report "XXX"+subseq(s,i+1,length.s) //
-   subseq(s,1,i)
+    subseq(s,1,i)
 
 use seq.cached
 
 
- 
    
  type cached is record      key:seq.word,s:sig
  
@@ -682,24 +692,18 @@ use seq.cached
  
  function hash(a:cached) int hash.key.a
  
- /function  ( knowsymbols:symboleset,processed:prg,sy:symbol) processed
-  let q=mangledname.sy
-  let sym = lookupsymbol(knowsymbols, q)
-          assert isdefined.sym report"cannot locate" + q 
-          let b = if length.src.sym > 1 &and (src.sym)_1 in "parsedfunc Parsedfunc"then
-          subseq(src.sym, 3 + toint.(src.sym)_2, length.src.sym)
-          else src.sym
-         let x=  bbbfirst(knowsymbols, b,  q, processed,resulttype.sym)
-        let sig =    sig(name.sym, paratypes.sym, modname.sym, empty:seq.sig)
-       let discard= encode(ecached,cached([q],sig))
-       x
+
 
 use stacktrace 
 
+type bbbresult is record p:prg,s:sig
 
-function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, processed:prg, result:seq.sig)prg
+type bbbresult2 is record p:prg,s:seq.sig
+
+
+function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, processed:prg, result:seq.sig) bbbresult2
   if i > length.s then
-   if pending = "all"then processed else firstopt(processed, codedown.last.pending, result)
+  bbbresult2(processed,result)
  else
    let this = s_i 
     let f1=findencode(ecached, cached(subseq(s,i,i+1),eqOp)) 
@@ -731,36 +735,55 @@ function bbb(knowsymbols:symbolset, s:seq.word, i:int, pending:seq.word, process
    // comment keeps this from being striped off //
    bbb(knowsymbols, s, i + 1, pending, processed, result)
    else 
-      let q=if this = "FREF"_1 then s_(i+1) else this
+    let newfref=this = "FREF"_1
+      let q=if newfref then s_(i+1) else this
       let f=findencode(ecached, cached([q],eqOp))  
       if not.isempty.f then  
-      if this= "FREF"_1 then
-            let newsig = sig("FREF" + q,"$fref", [ s.(f_1)], "?")
-        bbb(knowsymbols, s, i + 2, pending, processed, result + newsig)
+      if newfref then
+         bbb(knowsymbols, s, i + 2, pending, processed, result + FREFsig.s.(f_1) )
       else 
         bbb(knowsymbols, s, i + 1, pending, processed, result + s.(f_1))
      else  
-      let d = codedown.q
-     assert length.d > 1 report"BBB 3" + q
-        let x= if q in pending &or  d_2 = "builtin" &or d_2=" local" &or last.d_2 = "para"_1 then   processed
+       let d = codedown.q
+     assert length.d > 1 report"BBB 3" + q+s
+        if d_2=" local" then 
+           let newsig=sig(d_1, "local", empty:seq.sig,"?")
+                  //     let discard= encode(ecached,cached([q],newsig)) //
+           bbb(knowsymbols, s, i + 1, pending, processed, result + newsig)
+          else if last.d_2 = "para"_1 then
+             let newsig=sig([ d_2_1], "local", empty:seq.sig,"?")
+               //  let discard= encode(ecached,cached([q],newsig)) //
+              bbb(knowsymbols, s, i + 1, pending, processed, result + newsig)
+        else 
+        let sym = lookupsymbol(knowsymbols, q)
+         if not.isdefined.sym &and isabstract.mytype.d_2 then
+           assert not.newfref report "unexpected FREF"
+             bbb(knowsymbols, s, i + 1, pending, processed, result +sigfromcodedown(d, empty:seq.sig,"?" ))
+           else 
+         assert d_2 ="builtin" &or isdefined.sym report"cannot locate 2" + q +stacktrace+"&p"+s
+         if q in pending &or  d_2 = "builtin" &or length.src.sym=0 then 
+                   let newsig=  sigfromcodedown(d, empty:seq.sig,towords.resulttype.sym )
+                   let discard= encode(ecached,cached([q],newsig))
+                 bbb(knowsymbols, s, i + if newfref then 2 else 1, pending, processed, result + 
+                   if newfref then FREFsig.newsig  else newsig)
          else
-          let sym = lookupsymbol(knowsymbols, q)
-          assert isdefined.sym report"cannot locate 2" + q +stacktrace+"&p"+s
-          let b = if length.src.sym > 1 &and (src.sym)_1 in "parsedfunc Parsedfunc"then
-          subseq(src.sym, 3 + toint.(src.sym)_2, length.src.sym)
-          else src.sym
-           bbbfirst(knowsymbols, b,  pending + q, processed,resulttype.sym)
-        let sig = if last.d_2 = "para"_1 then sig([ d_2_1], "local", empty:seq.sig,"?")
-                  else if d_2 = "local"then sig(d_1, "local", empty:seq.sig,"?")
-                  else      sigfromcodedown(d, empty:seq.sig, "?")
-       let discard= encode(ecached,cached([q],sig))
-      if this= "FREF"_1 then
-       let sym = lookupsymbol(knowsymbols, q)
-             let newsig = sig("FREF" + q, "$fref", [ sig],"?")
-        bbb(knowsymbols, s, i + 2, pending, x, result + newsig)
-      else 
-        bbb(knowsymbols, s, i + 1, pending, x, result + sig)
+          let src=src.sym
+         let  newsrc = if  (src)_1 in "parsedfunc Parsedfunc"  then subseq(src, 3 + toint.(src)_2, length.src)  else src 
+            let b=bbb(knowsymbols, removeflags(newsrc,length.newsrc) , 1, pending+q  , processed, empty:seq.sig)
+           let r=   firstopt(p.b, d, s.b,towords.resulttype.sym)  
+       let discard= encode(ecached,cached([q],s.r))
+       bbb(knowsymbols, s, i + if newfref then 2 else 1, pending, p.r, result + 
+         if newfref then FREFsig.s.r else s.r)
+         
+         Q5FZbytezbitpackedseqZTzbitpackedseqZint
+         
+ function FREFsig(s:sig) sig  sig("FREF" + mangledname.decode.s, "$fref", [ s],"?")  
+          
+ function replaceT(with:seq.word,s:seq.word) seq.word
+   if  s_1="T"_1 then with+subseq(s,2,length.s) else s
         
 function sigfromcodedown(d:seq.seq.word,code:seq.sig,rettype:seq.word) sig
 // d is result from codedown //
-sig( if length.d=2 then d_1 else d_1+"("+@(seperator.",", identity, "", subseq(d, 3, length.d))+")", d_2, empty:seq.sig, "?")
+let paras= if d_1="builtin"  &or length.d_2 = 1 then subseq(d, 3, length.d)
+else  @(+,replaceT(subseq(d_2,2,length.d_2)),empty:seq.seq.word,subseq(d, 3, length.d))
+sig( if length.d=2 then d_1 else d_1+"("+@(seperator.",", identity, "", paras)+")", d_2, code,rettype)

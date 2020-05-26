@@ -28,7 +28,6 @@ use deepcopy.match5
 
 use encoding.match5
 
-/use process.seq.match5
 
 use seq.match5
 
@@ -45,10 +44,6 @@ use seq.templatepart
 use textio
 
 use blockseq.word
-
-/use deepcopy.word
-
-/use deepcopy.seq.word
 
 use seq.sig
 
@@ -87,12 +82,8 @@ Function lowerbits(sig) int export
 
 Function _(m:seq.match5,s:sig) match5   m_lowerbits.s
 
-
-Function inst(m:match5)word   let a=(fullinst.m)_1
-// assert false report "HJK"+a //
-a
-
-
+Function mangledname(m:match5)word    (fullinst.m)_1
+ 
 function =(a:match5, b:match5)boolean fullinst.a = fullinst.b
 
 function hash(a:match5)int hash.fullinst.a
@@ -194,37 +185,25 @@ function getarg(s:seq.match5,i:sig) int
 
 Function type:intercode internaltype export
 
-Function defines(intercode) seq.int export
 
+Function defines(i:intercode) seq.sig export
 
+function mangledname(ic:intercode,s:sig) word   mangledname((coding.ic)_lowerbits.s)
 
 Function match5map(fs2:intercode,symlist:seq.word) seq.match5
-  let declist=@(+, mangledname, "", @(+,_.coding.fs2, empty:seq.fsignrep, defines.fs2))
-  let coding=coding.fs2
-  let defines=defines.fs2
-  let cxx = conststype
-  let discard = profiletype
+  let declist=@(+, mangledname.fs2,"", defines.fs2)
+   let discard = conststype
+  let discard1 = profiletype
   let discard2 = @(+, C, 0, symlist+ declist)
-  let xy = table
-//   assert false report "J"+toword.length.coding.fs2+toword.length.actuallyused.fs2 //
-buildtemplates(empty:seq.match5,coding, actuallyused.fs2,1)
+  let discard3 = table
+ let actuallyused=asset.@(+,lowerbits,empty:seq.int,toseq.uses.fs2)
+ buildtemplates(empty:seq.match5,coding.fs2, actuallyused,1)
  
   
  use set.sig
  
  use set.int
- 
-  function usedsigs(        coding:seq.fsignrep  ,  i:int ) set.int
-           asset.@(+,lowerbits,empty:seq.int,  cleancode.coding_i)
      
-function   actuallyused(fs:intercode,processed:set.int, toprocess:set.int) set.int
-   if isempty.toprocess then processed else 
-       let p= @(&cup,usedsigs.coding.fs,empty:set.int,toseq.toprocess)
-       actuallyused(fs,processed &cup toprocess, p-processed)
-  
-function actuallyused(fs:intercode) set.int
-   actuallyused(fs,empty:set.int,asset(defines.fs+length.coding.fs))
- 
  
 function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq.match5
  if i > length.coding then s
@@ -247,7 +226,7 @@ function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq
       else if pkg="local" then
        match5("LOCAL"+fsig.xx, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
       else if pkg="$" then
-       match5(fsig.xx, 0, empty:seq.templatepart,"SPECIAL"_1, toint.(fsig.xx)_2)
+       match5(fsig.xx, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
       else if pkg= "$constant" then
         let args=@(+,getarg.s, empty:seq.int,cleancode.xx)
         match5(fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  

@@ -44,6 +44,8 @@ type dseq is sequence length:int, default:T, data:seq.T
 
 function todseq(s:seq.T)dseq.T builtin.FROMSEQ
 
+/Function to2dseq(s:seq.T)dseq.T export
+
 Function_(d:dseq.T, i:int)T if i > length.data.d then default.d else(data.d)_i
 
 Function replace(a:seq.T, b:int, v:T)seq.T
