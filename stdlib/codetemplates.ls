@@ -92,8 +92,9 @@ function assignencoding(l:int, a:match5) int l+1
 
 Function options(match5map:seq.match5,m:match5) seq.word
 if  last.code.m=optionOp then 
-fullinst.match5map_((code.m)_1) else empty:seq.word
+fullinst.match5map_((code.m)_(length.code.m-1)) else empty:seq.word
 
+use funcsig
 
 type ematch5 is encoding match5
 

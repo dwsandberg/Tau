@@ -29,15 +29,21 @@ use UTF8
 Function testopt seq.word
 let p2 = secondPass."testall"_1
 let cl = ["7","12","1","2","WORD FIRST","WORD AB",'"A B"',"7","11","2"
-,"1","0","4607182418800017408"," 44"," 2"," 46"," 72","27","2","5","65","1"]
+,"1","0","4607182418800017408"," 44"," 2"," 46"," 72","27","2","128","65","1","4"]
 let c2 = constantseq(99,"")
 + [
-"%1 %2  3 LOOPBLOCK  3  &br %3  1 Q3DZbuiltinZintZint 2 3 4 BR 3  &br %4 EXITBLOCK 1 &br
-    %3 1 Q2DZbuiltinZintZint 2 %3 %4 Q2AZbuiltinZintZint 2 CONTINUE 2  &br BLOCK 4 &br",
-"%1  0 Q3EZbuiltinZintZint 2  2  3  BR 3  &br 10 %2 
-Q3EZbuiltinZintZint 2   EXITBLOCK 1   &br 0  EXITBLOCK 1  &br  BLOCK 3 &br",
-"%1  0 Q3EZbuiltinZintZint 2  2  3   BR 3  1  &br
- EXITBLOCK 1  &br 10 %2 Q3EZbuiltinZintZint 2 EXITBLOCK 1  &br BLOCK 3 &br"]
+"%1 %2  3 LOOPBLOCK  3  
+&br %3  1 Q3DZbuiltinZintZint 2 3 4 BR 3 
+ &br %4 EXITBLOCK 1 
+ &br %3 1 Q2DZbuiltinZintZint 2 %3 %4 Q2AZbuiltinZintZint 2 CONTINUE 2  
+ &br BLOCK 4 &br",
+"%1  0 Q3EZbuiltinZintZint 2  2  3  BR 3  
+&br 10 %2 Q3EZbuiltinZintZint 2   EXITBLOCK 1  
+ &br 0  EXITBLOCK 1 
+  &br  BLOCK 3 &br",
+"%1  0 Q3EZbuiltinZintZint 2  2  3   BR 3  
+&br 1  EXITBLOCK 1  
+&br 10 %2 Q3EZbuiltinZintZint 2 EXITBLOCK 1  &br BLOCK 3 &br"]
 let r = @(+, getcode(p2,"", cl),"", arithseq(length.cl, 1, 1))
 + @(+, getcode(p2,"ZintZint", c2),"", arithseq(length.c2 - 99, 1, 100))
  if isempty.r then"PASS testopt"else"testopt" + r
@@ -97,7 +103,12 @@ Function optest21 char char1."AJK"
 
 Function optest22 boolean  "A"_1=encodeword.[ char.65]
 
+Function optest23 int optest23a(6,3)
+
 Function parabits(nopara:int)int let b=nopara toint((bits.(  if b > 6 then 0 else   b + 1)) << 5)
+
+Function optest23a(a:int,b:int) int (a+a) / b
+
 
 
 Function optest100(a:int, result:int)int

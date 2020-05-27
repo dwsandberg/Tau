@@ -387,7 +387,7 @@ function postbind2(org:symbol, dict:set.symbol, modpara:mytype, templates:symbol
   //  assert not(mangledname.thissymbol  in "test2Ztest2 " )report "HJK"+
         src.thissymbol  +"&br"+code //
    t
- else if code_i in "IDXUC FREF if assertZbuiltinZwordzseq NOINLINE TESTOPT"then
+ else if code_i in "IDXUC FREF if assertZbuiltinZwordzseq NOINLINE TESTOPT optionZbuiltinZTZwordzseq "then
  postbind2(org, dict, modpara, templates, knownsymbols, code, i + 1, result + code_i, thissymbol)
  else if code_i = "WORDS"_1 then
  let l = toint.code_(i + 1) + 2
@@ -511,7 +511,8 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
     let code =("FREF" + adde + if name = "wordencoding"_1 then"LIT 1"else"LIT 0")
     + "WORD"
     + merge([ name] + print.modname.f)
-    + "RECORD 3 NOINLINE"
+     + // "RECORD 3 NOINLINE" //
+      "RECORD 3 WORDS 2 NOINLINE STATE optionZbuiltinZTZwordzseq"   
     let sym = symbol(name, modname.f, empty:seq.mytype, mytype(towords.typ + "erecord"), code)
      firstpass(modname.f, uses.f + mytype(towords.typ + "encoding"), defines.f + sym, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
    else

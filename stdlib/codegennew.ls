@@ -144,8 +144,9 @@ use process.internalbc
 function subaddfuncdef(match5map:seq.match5,  m:match5)internalbc //
  let options=options(match5map,m)
  let code= if length.options > 0  then  
-   assert  "PROFILE"_1 in options  report "PROFILE PROBLEM"
-    subseq(code.m,2,length.code.m-1) else code.m
+  // assert  "PROFILE"_1 in options  report "PROFILE PROBLEM"+options //
+    subseq(code.m,1,length.code.m-2) else code.m
+    assert not (optionOp in code) report "optionOp in code"+print.code.m
  let nopara=arg.m
     let l = Lcode2(emptyinternalbc, paramap(nopara,empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
  let g5 = if "PROFILE"_1 in options then  mangledname.m else"noprofile"_1

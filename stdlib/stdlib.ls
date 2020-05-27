@@ -45,6 +45,8 @@ parsersupport  uses
 
  
  PROFILE codetemplates : buildtemplates( seq.match5, seq.fsignrep, set.int, int) seq.match5
+ 
+ * INLINE funcsig : parabits(int)int
 
 
 use UTF8

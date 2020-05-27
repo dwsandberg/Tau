@@ -13,6 +13,9 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
  uses stdlib 
  exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph 
  makeDAG pretty  printbitcodes profile svg svggraph taulextable testparser tools
+ 
+* STATE   profile profileinfo()  profileresult  
+
 
 /run printbitcodes test1
 

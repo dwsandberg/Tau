@@ -129,11 +129,14 @@ function  simplemods(knownsymbols:symbolset,p:getrootsresult, f:firstpass) getro
   
 Function pass2new(knownsymbols:symbolset, mods:seq.firstpass, compiled:symbolset)intercode
 let simple=@(simplemods(knownsymbols),identity,getrootsresult(emptyprg, empty:seq.expmod),mods)
+//  assert false report dumpprg.p.simple //
+// assert false report  "KL"+print(p.simple,sig( "parabits(int)", "funcsig",empty:seq.sig,"?") ) //
 let abstract=@(abstractmods(knownsymbols),identity,getrootsresult(p.simple, empty:seq.expmod),mods)
 let p=p.abstract
     let libmods=libdesc(p, knownsymbols,mods.simple,mods.abstract)
    let rootsigs=@(+,exports,empty:seq.sig,mods.simple) 
    let t=uses(p,empty:set.sig,asset.rootsigs+libmods)
+  // assert false report "NM"+@(+,print(p),"",toseq.t) //
    let newdefines=@(+, defines2(p,compiled),empty:seq.sig,toseq.t )
   // assert false report @( seperator."&br",print,"", @(+,check.p,empty:seq.sig,newdefines)) //
            let sigreps=getfsignrep.p 
@@ -561,22 +564,26 @@ else yyy(p, s, i + 1, nextvar, map)
  
 function islit(s:sig) boolean   module.decode.s ="$int" 
 
-function inline(p:prg, s:seq.sig, i:int, nextvar:int)expandresult
+
+ function inline(p:prg, s:seq.sig, i:int, nextvar:int)expandresult
  let k = lookuprep(p, s_i)
-   assert not(last.code.k=optionOp) report "inline with option"+print.code.k  
-   if (last.code.k=optionOp) then
-     expandresult(nextvar , i+1, s)
-else
-  assert not((print.[ s_i])_1 = "message"_1)report print.[ s_i] + if issimple.k then"SIMPLE"else""
+  let code =   if (last.code.k=optionOp) then subseq(code.k,1,length.code.k-2) else   code.k
+ // assert not((print.[ s_i])_1 = "message"_1)report print.[ s_i] + if issimple.k then"SIMPLE"else"" //
   let nopara = nopara.k
-   if length.code.k = 1 ∧ code.k = [ var.1]then
+   if length.code = 1 ∧ code = [ var.1]then
    // function just returns result // expandresult(nextvar, i, replace(s, i, 1, empty:seq.sig))
    else
     let t = backparse(s, i - 1, nopara, empty:seq.int) + i
-     assert length.t = nopara + 1 report"INLINE" + print.subseq(s, 1, i)
-     let new = if issimple.k then expandsimpleinline(s, t, empty:intdict.seq.sig, nopara, nextvar, code.k, p)
-     else expandinline(s, t, empty:intdict.seq.sig, nopara, empty:seq.sig, nextvar, code.k, p)
+     assert length.t = nopara + 1 report"INLINE PARA" + print.subseq(s, 1, i)
+     let new = if issimple.k then expandsimpleinline(s, t, empty:intdict.seq.sig, nopara, nextvar, code, p)
+     else 
+       let z= expandinline(s, t, empty:intdict.seq.sig, nopara, empty:seq.sig, nextvar, code, p)
+    //     assert false report "not simple inline"+print.z
+         +"&br -------------------"+print.subseq( s, t_1, i) //
+        z
       expandresult(nextvar + nopara, t_1 + length.new, replace(s, t_1, i - t_1 + 1, new))
+
+
 
 function expandsimpleinline(s:seq.sig, t:seq.int, pmap:intdict.seq.sig, i:int, nextvar:int, inlinecode:seq.sig, p:prg)seq.sig
  // when i > 0 then building paramenter map //
@@ -586,9 +593,10 @@ function expandsimpleinline(s:seq.sig, t:seq.int, pmap:intdict.seq.sig, i:int, n
 
 function expandinline(s:seq.sig, t:seq.int, pmap:intdict.seq.sig, i:int, newcode:seq.sig, nextvar:int, inlinecode:seq.sig, p:prg)seq.sig
  // when i > 0 then assigning parameters to new local variables //
- if i = 0 then value.yyy(p, inlinecode, 1, nextvar, pmap)
+ if i = 0 then newcode+value.yyy(p, inlinecode, 1, nextvar, pmap)
  else
-  expandinline(s, t, add(pmap, valueofencoding.var.i, [ var.nextvar]), i - 1, subseq(s, t_i, t_(i + 1) - 1) + define.toword.nextvar, nextvar + 1, inlinecode, p)
+  expandinline(s, t, add(pmap, valueofencoding.var.i, [ var.nextvar]), i - 1, 
+  subseq(s, t_i, t_(i + 1) - 1) + define.toword.nextvar +newcode, nextvar + 1, inlinecode, p)
 
 function backparse(s:seq.sig, i:int, no:int, result:seq.int)seq.int
  if no = 0 then result
@@ -634,12 +642,10 @@ function applycode(p:prg, nextvar:int, code:seq.sig, index:int)expandresult
  let map5 = add(map4, valueofencoding.var."FREFpseq"_1, [ pseq])
  let t = backparse(code, index - 4, nopara1 + nopara2 + 2, empty:seq.int)
  let noop = nopara1 + nopara2 = 0 ∧ checknoop.term2 ∧ t_2 - t_1 = 1
- ∧ code_(t_1) = emptyseqOp
- ∧ fsig.decode.term1_1 = "+(T seq, T)"
- ∧ last.module.decode.term1_1 = "seq"_1
+ ∧ code_(t_1) = emptyseqOp ∧ checkcat(decode.term1_1 )
  ∧ not((fsig.decode.term2_1)_1 = "deepcopy"_1)
   if noop then
-  let new = subseq(code, 1, t_1 - 1) + subseq(code, t_2, index - 4)
+   let new = subseq(code, 1, t_1 - 1) + subseq(code, t_2, index - 4)
   // assert not(subseq(code, t_2, index - 4)=[var.1]) report "XXXX"+print.code+"/new/"+print.new //
     expandresult(nextvar, length.new + 1, new + subseq(code, index + 1, length.code))
   else
@@ -657,6 +663,11 @@ function checknoop(s:seq.sig)boolean
  else
   // assert false report let t = code.decode.s_1 print.t + if t_1 = var.1 &and length.t = 1 then"T"else"F"//
   checknoop.code.decode.s_1
+  
+function checkcat(f:fsignrep) boolean
+ let p=subseq(module.f,1,length.module.f-1)
+  last.module.f = "seq"_1
+ ∧   fsig.f = "+("+p+  "seq,"+p+")"
 
 function applytemplate seq.sig
 let theseq = 5

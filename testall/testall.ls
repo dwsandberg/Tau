@@ -9,6 +9,11 @@
  /run testencoding testencoding 
  
 run testall testall 
+
+* INLINE testopt : parabits(int)int
+
+* INLINE testopt : optest23(int,int)int
+
  
  * usegraph exclude stdlib 
  

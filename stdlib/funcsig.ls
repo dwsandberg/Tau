@@ -91,10 +91,6 @@ Function sig(encoding.fsignrep)sig export
 
 type prg is record translate:intdict.fsignrep
 
-
-/use deepcopy.sig
-
- 
 Function sig(name:seq.word, args:seq.mytype, module1:mytype, code:seq.sig,returntype:mytype)sig
  // will not set code when sig is already present // 
  let fsig = if length.args = 0 then name
@@ -152,14 +148,20 @@ if length.module = 2 ∧ module_2 = "para"_1
  else 
   if module_1 in "builtin"then 1 + parabits.nopara + toint(nographbit  &or lookcloserbit)
  else
-   let state=@(&or,hasstate,false,code.f)
-   1 + parabits.nopara + 
-   toint.if state then statebit else 
-    // if between(length.code.f,2,14)  &and  isempty.@(+,filterinst,empty:seq.sig,code.f) then inlinebit
-    else // if    issimple(nopara , code.f)then inlinebit else bits.0
+   if length.code.f=0 then  1 + parabits.nopara +toint.statebit
+   else
+    let options= if  not(last.code.f=optionOp) then "" else fsig.decode.(code.f)_(length.code.f-1)  
+   let state=@(&or,hasstate,"STATE"_1 in options,code.f)
+   1 + parabits.nopara 
+    +  (toint.if state then statebit else     bits.0  )
+    +   toint.if    "INLINE"_1 in options  then inlinebit
+         else  if   "NOINLINE"_1 in options &or (length.code.f=3 &and length.options > 0   ) then bits.0
+         else  if  length.code.f < 15 &or issimple(nopara , code.f) then inlinebit
+         else bits.0
  
- not(last.code.f= // optionOp // 5767186 ) &and
- 
+      // if between(length.code.f,2,14)  &and  isempty.@(+,filterinst,empty:seq.sig,code.f) then inlinebit  
+    else  //
+    
 Function lookuprep(p:prg, s:sig)fsignrep
  let a = lookup(translate.p, valueofencoding.s)
   if isempty.a then 
@@ -171,8 +173,10 @@ Function add(p:prg, s:sig, code:seq.sig)prg
    &or isempty.@(+,filterinst,empty:seq.sig,code)
   report "KK"+print.@(+,filterinst,empty:seq.sig,code) //
  // assert hasstate.s &or not(  not.isinline.s &and issimple(nopara.d,code)) report "KK"+print.[s] //
-  let code2=if length.code.d =3 &and (code.d)_3=optionOp then 
-     [(code.d)_1]+code+optionOp  
+  let code2=if length.code.d =3 &and (code.d)_3=optionOp  then 
+       if  subseq(code,length.code-1,length.code) = subseq(code.d,length.code.d-1,length.code.d) then code
+       else
+      code+[(code.d)_2]+optionOp  
   else code
   if code2 = code.d then p
   else prg.add(translate.p, valueofencoding.encode(efsignrep, d), 
@@ -211,13 +215,19 @@ Function print(p:prg, e:encodingrep.fsignrep)seq.word
  let i = valueofencoding.code.e
  let bitflags =decodebits.i
  let rep = lookuprep(p, sig.code.e)
- if isinline.sig.code.e then
-  " &br"+bitflags + print.rep + @(+, print,"", code.rep)
-  else ""
+ if module.rep="pass1" &and nopara.sig.code.e > 3 then
+  " &br"+bitflags + print.rep else // + @(+, print,"", code.rep)
+  else // ""
   
 Function print(p:prg, s:sig)seq.word
+ if lowerbits.s &le length.baseupbits then "" else 
  let rep=lookuprep(p,s) 
-     print.rep + @(+, print,"", code.rep)
+  decodebits.s+ print.rep + @(+, print,"", code.rep)
+   
+ let a=upperbits.rep  
+ if a=b then "" else "&br"+decodebits.a+"/"+decodebits.b+print.rep+ @(+, print,"", code.rep)
+ 
+    decodebits.s+ print.rep + @(+, print,"", code.rep)
    
 
 
@@ -428,35 +438,21 @@ use processOptions
 Function issimple(s:fsignrep)boolean issimple(nopara.s, code.s)
 
 function issimple(nopara:int, code:seq.sig)boolean
-  if between(length.code, 1, 15) ∧ between(nopara, 0, lastlocal)
+    between(length.code, 1, 15) ∧ between(nopara, 0, lastlocal)
  ∧ (nopara = 0 ∨ checksimple(code, 1, nopara, 0))
- then
-   if nopara > 0 then true
-   else 
-   if      length.code=1 &and isconst.code_1 then
-     let rep= decode.code_1
-     if module.rep="$constant" &and length.code.rep= 3 then
-         let arg1=  decode.(code.rep)_1
-         let arg2=  decode.(code.rep)_2
-         let arg3=  decode.(code.rep)_3
-         let t=  not(module.arg1="$fref" &and module.arg2="$int" &and module.arg3="$word")
-       //  assert t &or (fsig.arg3)_1 in "wordencodingwords mydatatestencoding
-         mydata2testencoding mydata3testencoding mydata4testencoding ewordtest2" report "INTLINE" +print.code.rep+
-          toword.(module.arg1="$fref")+toword(module.arg2="$int")+toword.(module.arg3="$word")
-         +toword.t // t
-     else 
-         assert length.code &ne 4 &or not.isrecord.code_4 report "JKL"+print.code
-  true 
-  else true
-else false
-
+ 
 function toword(a:boolean) seq.word if a then "T" else "F"
 
 function checksimple(code:seq.sig, i:int, nopara:int, last:int)boolean
  // check that the parameters occur in order and they occur only once //
- // encodings of first three parameters is such that the encoding equals the parameter no. //
+ // encodings of first 8 parameters is such that the encoding equals the parameter no. //
+ // any op that may involve state must occur after all parameters //
  if i > length.code then true
  else
+  if  nopara < last &and // should also check for loopblock // hasstate.code_i then 
+   // state op between parameters //
+   false
+   else
   let low = lowerbits.code_i
    if low > nopara then checksimple(code, i + 1, nopara, last)
    else if low = last + 1 then checksimple(code, i + 1, nopara, last + 1)else false
@@ -484,8 +480,9 @@ use seq.seq.word
 
 
 function processOption(t:seq.word) seq.word
-  if not(subseq(t,1,2)="* PROFILE") then ""
-  else
+  if length.t < 4 &or not(t_1="*"_1) &or  not (t_2 in "PROFILE INLINE") then ""
+   else
+   let code=[lit.1,wordssig([t_2]),optionOp]
    let modend=findindex(":"_1,t,3)
    let nameend=  findindex("("_1,t,modend+1)
    let paraend= findindex( ")"_1,t,nameend+1)
@@ -494,7 +491,7 @@ function processOption(t:seq.word) seq.word
    let b=subseq(t,nameend+1,paraend-1)
    let args=if b="" then empty:seq.seq.word else gettypelist.subseq(t,nameend+1,paraend-1)
    let ret=(gettypelist.subseq(t,paraend+1,length.t))_1
-  let discard= [sig([name]+"("+@(seperator.",",identity,"",args)+")",modname,[wordssig("PROFILE"),lit.1,optionOp], ret)]
+  let discard= [sig([name]+"("+@(seperator.",",identity,"",args)+")",modname,code, ret)]
    "&br"+printastype.modname+":"+name+"("+@(seperator.",",printastype,"",args)+")"
   +printastype.ret
    
@@ -531,13 +528,12 @@ sig("1","local", empty:seq.sig,"?")
 , sig("SET 1","$", empty:seq.sig,"?")
 , sig("0","$int", empty:seq.sig,"?")
 , sig("wordencoding","words", empty:seq.sig," char seq erecord")
-, sig(// "CONSTANT" + toword.lowerbits.lit0  + toword.lowerbits.lit0 //  "CONSTANT 15 15","$constant" 
-, [ lit0, lit0],"?")  
-, sig("option(word seq,T)","builtin",empty:seq.sig,"$")  
+, sig("CONSTANT 15 15","$constant" , [ lit0, lit0],"?")  
+, sig("option(T,word seq)","builtin",empty:seq.sig,"$")  
 , sig("makereal(word seq)", "UTF8", empty:seq.sig,"real")
-, sig("add( T erecord ,  T encodingrep )","builtin", empty:seq.sig,"?")
+, sig("add(T erecord, T encodingrep)","builtin", empty:seq.sig,"?")
 , sig("getinstance(T erecord)","builtin",empty:seq.sig,"?")
-, sig(" getfile(bits seq ) ","builtin",empty:seq.sig,"fileresult")
+, sig("getfile(bits seq)","builtin",empty:seq.sig,"fileresult")
 , sig("setfld2(T seq, int, T) ","builtin",empty:seq.sig,"?")
 , sig("+(int, int)","builtin", empty:seq.sig,"int")
 , sig("=(int, int)","builtin", empty:seq.sig,"boolean")
@@ -563,9 +559,5 @@ let discard2=@(+,processOption,"",allsrc)
 // assert false report @(seperator."&br",decodebits,"",b) //
 // assert false report "X"+toword.valueofencoding.optionOp //
 assert length.b=length.baseupbits report "basesig problem"
-let d1= sig([merge."empty:seq.word"]," word seq",[emptyseqOp]," word seq")
-let d2= sig([merge."empty:seq.seq.word"]," word seq seq",[emptyseqOp]," word seq seq") 
-let d3= sig([merge."empty:seq.char"]," char seq",[emptyseqOp]," char seq") 
-let d4= sig([merge."empty:seq.int"]," int seq",[emptyseqOp]," int seq") 
- 0
+ 0 
 
