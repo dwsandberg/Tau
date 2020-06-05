@@ -196,7 +196,8 @@ function clean(b:symbolset, s:symbol)symbolset
 function recordsize(src:seq.word, i:int)int
  // bug if made tail recursive ? //
  if i > length.src then 0
- else if i = 1 ∧ src_i = "FREF"_1 then
+ else // following do nothing statement is required to compile // let t=src_i
+ if i = 1 ∧ src_i = "FREF"_1 then
  recordsize(src, i + 2) + 1
   else if src_i = "LOCAL"_1 then recordsize(src, i + 2) + 1
  else if src_i = "LIT"_1 then recordsize(src, i + 3)else 10000

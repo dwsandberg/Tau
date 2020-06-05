@@ -18,7 +18,7 @@ Function  search(pattern:seq.word,s:seq.word,i:int) int
       search(pattern, s,i+1)
 
 Function consumecomment(s:seq.word, i:int)int
-  // result will be pointer pointer to last word of comment //
+  // result will be pointer to last word of comment //
  if i > length.s then i
  else if s_i = "//"_1 &and not(s_i="/"_1) then
  consumecomment(s, findindex("//"_1, s, i + 1) + 1)

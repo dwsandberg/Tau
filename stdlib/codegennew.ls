@@ -201,9 +201,8 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))
     else if action = "BR"_1  then
            assert    length.toseq.args.l > 2 report "fail 5b"
-       let cond=
         let newcode = CAST(regno.l + 1, top(args.l,arg.m)_1, typ.i1, CASTTRUNC)
-        Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + 1, push(args.l,1), blocks.l)
+       let cond= Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + 1, push(args.l,1), blocks.l)
       Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l + 1, empty:stack.int, push(blocks.l,cond))
     else if action = "BLOCK"_1  then
      let no=arg.m 
@@ -220,9 +219,9 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
          assert  top.firstblkargs=2 report "Code Gen--not expecting first blk kind"+toword.kind+profile
            // stack from top is  kind,noexps,firstvar,  exps //
             top.pop.firstblkargs + 3
-         if length.phi.rblk=2 &and false then
+        // if length.phi.rblk=2 &and false then
           Lcode2(code.rblk, lmap.l, noblocks.l , regno.l,  push(pop(firstblkargs, popno),(phi.rblk)_2), pop(blocks.l, no))  
-         else 
+         else //
        let newstack =push(pop(firstblkargs, popno)  , -(regno.l + 1))
       let newcode=code.rblk+phiinst(regno.last.blks, typ.i64, phi.rblk,1)
       Lcode2(newcode, lmap.l, noblocks.l , regno.l + 1,  newstack, pop(blocks.l, no))
@@ -381,3 +380,6 @@ Function profilearcs seq.word @(+, callarc,"", orderadded.statencoding)
 /function printL(x:Lcode2)seq.word @(+, toword,"[", args.x)+"]"
 
 /Function dump seq.word @(+, print,"", mapping.debug)
+
+
+  

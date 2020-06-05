@@ -133,10 +133,8 @@ if length.module = 2 ∧ module_2 = "para"_1
   else if module = "$constant"then 1 + parabits.0 + toint.constbit
  else if module = "$fref"then 1 + parabits.0 + toint.constbit
  else if module ="$" then
-  if    name_1 in "BLOCK RECORD LOOPBLOCK APPLY" then
+  if    name_1 in "BLOCK RECORD LOOPBLOCK APPLY CONTINUE" then
   1 + parabits.toint.name_2+ toint(nographbit  &or lookcloserbit)
- else  if name_1 in "CONTINUE" then
-  1  + parabits.toint.name_2 + toint.nographbit
  else if   name_1 in "DEFINE" then
   1 + parabits.1 + toint(nographbit &or lookcloserbit )
  else   1 + parabits.toint.name_2
@@ -350,6 +348,8 @@ Function emptyseqOp sig    baseupbits_(lastlocal+9)
 
 Function optionOp sig baseupbits_(lastlocal+10)
 
+Function notOp sig baseupbits_(lastlocal+11)
+
 Function plusOp sig     baseupbits_(lastlocal+16 ) 
 
 Function eqOp sig   baseupbits_(lastlocal+17) 
@@ -400,7 +400,7 @@ use processOptions
 , // 7 // ecvt(bits.7 ∨ parabitsY.0 ∨ localbit ∨ nographbit) 
 , // 8 // ecvt(bits.8 ∨ parabitsY.0 ∨ localbit ∨ nographbit) 
 , // EXITBLOCK 1 // ecvt(bits.9 ∨ parabitsY.1 ∨ nographbit) 
-, // BR 3 // ecvt(bits.10 ∨ parabitsY.3 ∨ nographbit) 
+, // BR 3 // ecvt(bits.10 ∨ parabitsY.3 ∨ nographbit ) 
 , // IDXUC(int, int)// ecvt(bits.11 ∨ parabitsY.2 ∨ nographbit ∨ lookcloserbit) 
 , // callidx(int, T seq, int)// ecvt(bits.12 ∨ parabitsY.3 ∨ nographbit) 
 , // STKRECORD(int, int)// ecvt(bits.13 ∨ parabitsY.2 ∨ nographbit) 
@@ -409,7 +409,7 @@ use processOptions
 , // wordencoding // ecvt(bits.16 ∨ parabitsY.0 ∨ lookcloserbit) 
 , // CONSTANT 15 15 // ecvt(bits.17 ∨ parabitsY.0 ∨ constbit) 
 , // option(word seq, T)// ecvt(bits.18 ∨ parabitsY.2 ∨ nographbit &or statebit) 
-, // makereal(word seq)// ecvt(bits.19 ∨ parabitsY.1 ∨ lookcloserbit) 
+, // not(boolean)   //      ecvt(bits.19 ∨ parabitsY.1   )
 , // add(T erecord, T encodingrep)// ecvt(bits.20 ∨ parabitsY.2 ∨ statebit) 
 , // getinstance(T erecord)// ecvt(bits.21 ∨ parabitsY.1 ∨ statebit) 
 , // getfile(bits seq)// ecvt(bits.22 ∨ parabitsY.1 ∨ statebit) 
@@ -431,7 +431,10 @@ use processOptions
 ,ecvt(bits.38 ∨ parabitsY.2 ∨ nographbit ∨ lookcloserbit) 
 , // decode(T erecord, T encoding)// ecvt(bits.39 ∨ parabitsY.2 ∨ nographbit ∨ lookcloserbit) 
 ,ecvt(bits.40 ∨ parabitsY.2 ∨ nographbit ∨ lookcloserbit) 
-, // +(T seq, T seq)// ecvt(bits.41 ∨ parabitsY.2 ∨ nographbit ∨ lookcloserbit) 
+, // +(T seq, T seq)// ecvt(bits.41 ∨ parabitsY.2 ∨ nographbit ∨ lookcloserbit)
+, // makereal(word seq)// ecvt(bits.42 ∨ parabitsY.1 ∨ lookcloserbit) 
+, // in(int,int seq) //  ecvt(bits.43 ∨ parabitsY.2   ∨ lookcloserbit) 
+, // in(word,word seq) // ecvt(bits.44 ∨ parabitsY.2   ∨ lookcloserbit) 
 ]
 
 
@@ -530,7 +533,7 @@ sig("1","local", empty:seq.sig,"?")
 , sig("wordencoding","words", empty:seq.sig," char seq erecord")
 , sig("CONSTANT 15 15","$constant" , [ lit0, lit0],"?")  
 , sig("option(T,word seq)","builtin",empty:seq.sig,"$")  
-, sig("makereal(word seq)", "UTF8", empty:seq.sig,"real")
+,sig("not(boolean)","builtin",empty:seq.sig,"boolean")
 , sig("add(T erecord, T encodingrep)","builtin", empty:seq.sig,"?")
 , sig("getinstance(T erecord)","builtin",empty:seq.sig,"?")
 , sig("getfile(bits seq)","builtin",empty:seq.sig,"fileresult")
@@ -553,6 +556,9 @@ sig("1","local", empty:seq.sig,"?")
 , sig("decode(char seq erecord, char seq encoding)","char seq encoding", empty:seq.sig,"char seq")
 , sig("encode(char seq  erecord,char seq )","char seq encoding",empty:seq.sig,"char seq encoding") 
 , sig("+(word  seq, word  seq)","word seq", empty:seq.sig,"word seq")
+, sig("makereal(word seq)", "UTF8", empty:seq.sig,"real")
+, sig("in(int, int seq)","int seq", empty:seq.sig,"boolean")
+, sig("in(word, word seq)","word seq", empty:seq.sig,"boolean")
 ]
 let discard2=@(+,processOption,"",allsrc) 
 // assert false report discard2 //
@@ -561,3 +567,7 @@ let discard2=@(+,processOption,"",allsrc)
 assert length.b=length.baseupbits report "basesig problem"
  0 
 
+Function isinOp(s:sig) boolean
+   lookcloser.s &and (fsig.decode.s)_1 in "in ="
+ 
+ 

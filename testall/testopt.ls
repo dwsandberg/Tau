@@ -29,10 +29,13 @@ use UTF8
 Function testopt seq.word
 let p2 = secondPass."testall"_1
 let cl = ["7","12","1","2","WORD FIRST","WORD AB",'"A B"',"7","11","2"
-,"1","0","4607182418800017408"," 44"," 2"," 46"," 72","27","2","128","65","1","4"]
-let c2 = constantseq(99,"")
-+ [
-"%1 %2  3 LOOPBLOCK  3  
+,"1","0","4607182418800017408"," 44"," 2"," 46"," 72","27","2","128","65","1","4",
+// optest24 // "%1 5 Q3DZbuiltinZintZint 2 2 3 BR 3 
+ &br 24 EXITBLOCK 1 
+ &br 0 EXITBLOCK 1 
+ &br BLOCK 3  &br "
+ ,"25","26"
+,"%1 %2  3 LOOPBLOCK  3  
 &br %3  1 Q3DZbuiltinZintZint 2 3 4 BR 3 
  &br %4 EXITBLOCK 1 
  &br %3 1 Q2DZbuiltinZintZint 2 %3 %4 Q2AZbuiltinZintZint 2 CONTINUE 2  
@@ -43,18 +46,33 @@ let c2 = constantseq(99,"")
   &br  BLOCK 3 &br",
 "%1  0 Q3EZbuiltinZintZint 2  2  3   BR 3  
 &br 1  EXITBLOCK 1  
-&br 10 %2 Q3EZbuiltinZintZint 2 EXITBLOCK 1  &br BLOCK 3 &br"]
-let r = @(+, getcode(p2,"", cl),"", arithseq(length.cl, 1, 1))
-+ @(+, getcode(p2,"ZintZint", c2),"", arithseq(length.c2 - 99, 1, 100))
+&br 10 %2 Q3EZbuiltinZintZint 2 EXITBLOCK 1  &br BLOCK 3 &br"
+,// optest30 //"%1 WORD test Q3DZbuiltinZintZint 2 2 3 BR 3 
+&br %2 EXITBLOCK 1 
+&br %3 EXITBLOCK 1 
+&br BLOCK 3 &br","TEST30"]
+let r = @(+, getcode(p2,cl),"", arithseq(length.cl, 1, 1))
+// + @(+, getcode(p2,"ZintZint", c2),"", arithseq(length.c2 , 1, 1)) //
  if isempty.r then"PASS testopt"else"testopt" + r
 
 Function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
+
+function filter(a:seq.char,s:seq.word)seq.word 
+if subseq(decodeword.s_1,1,length.a)=a then s else ""
 
 Function getcode(p2:seq.seq.word, para:seq.word, codelist:seq.seq.word, no:int)seq.word
  let name = merge.("optest" + toword.no + "Ztestopt" + para)
  let t = @(+, filter(name),"", p2)
  let code = subseq(t, 3, length.t)
   if codelist_no = code then""else"&br FAIL" + toword.no + code +"&p"+codelist_no
+  
+Function getcode(p2:seq.seq.word,  codelist:seq.seq.word, no:int)seq.word
+ let name =  decodeword."optest"_1 + decodeword.toword.no + decodeword."Ztestopt"_1  
+ let t = @(+, filter(name),"", p2)
+ let code = subseq(t, 3, length.t)
+  if codelist_no = code then""else"&br FAIL" + toword.no + code +"&p"+codelist_no
+  
+  
 
 Function optest1 int 3 + 4
 
@@ -109,14 +127,30 @@ Function parabits(nopara:int)int let b=nopara toint((bits.(  if b > 6 then 0 els
 
 Function optest23a(a:int,b:int) int (a+a) / b
 
+Function optest24(i:int) int    if i in [5] then 24 else  0
 
+Function optest25  int  
+let b=   3 ^ 5  if   b=3333  &or   b in [5,8,9]   &or   b=10  then 24 else 2
 
-Function optest100(a:int, result:int)int
- // tail recursion // if a = 1 then result else optest100(a - 1, a * result)
+Function optest26 int 
+let x= [1, 3 ^ 5,3] 
+     assert length.x=3 report "XXXXXX arg" 
+           if length.x=2 &and false then
+ 5         else 10
+ 
+Function optest26(s:seq.word,i:int) int    if s_i = "xxx"_1 then 3 else if s_i in "a b" then 4 else if s_i in "c d" then 4 else 5
 
-Function optest101(a:int, b:int)boolean a > 0 ∧ b < 10
+Function optest27(a:int, result:int)int
+ // tail recursion // if a = 1 then result else optest27(a - 1, a * result)
 
-Function optest102(a:int, b:int)boolean a > 0 ∨ b < 10
+Function optest28(a:int, b:int)boolean a > 0 ∧ b < 10
+
+Function optest29(a:int, b:int)boolean a > 0 ∨ b < 10
+
+Function optest30(w:word,a:int,b:int) int    if    w  in "test"    then a else b
+
+Function optest31(s:seq.int,i:int) int    if    s_i  in [1,3] &or s_i =4    then 10 else 11
+
 
 Function optest16a(a:seq.char)seq.int
  // This is just a type change and the compiler recognizes this and does not generate code // @(+, toint, empty:seq.int, a)

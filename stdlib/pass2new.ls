@@ -1,7 +1,315 @@
 
 Module pass2new
 
-run mylib testnew
+run mylib test
+
+type block is record kind:word,blkno:int,label1:int,label2:int,code:seq.sig,subblks:seq.block
+
+
+function block(kind:word,blkno:int,label1:int,label2:int,code:seq.sig) block
+  block(kind,blkno,label1,label2,code,empty:seq.block)
+
+use seq.block
+
+use stack.block
+
+
+function breakblocks(code:seq.sig,self:sig) seq.sig  
+  let a=breakblocks(code,1,1,empty:seq.sig,empty:stack.block)
+  if length.a=1 then code.a_1 else 
+   if not(kind.a_1="LOOPBLOCK"_1) &and @(&or,tailrecursion.self,false,a) then
+    // tail recursion //
+     let nopara = nopara.decode.self
+     let a2=@(+,preparetail(nopara,self,continue.nopara),empty:seq.block,a)
+     let plist = @(+, var, empty:seq.sig, arithseq(nopara, 1, 1))
+     let entry = block("LOOPBLOCK"_1,0,blkno.a2_1,0, plist + lit(nopara + 1) + loopblock(nopara + 1))
+      ascode([entry]+a2)
+   else
+   ascode.a
+   
+function   preparetail(nopara:int,self:sig,continue:sig,t:block) block
+   let b=t
+    let code=adjustvar(code.b, nopara, 1, empty:seq.sig)
+     if kind.b="EXIT"_1 &and code_(length.code-1)=self then 
+       block("CONTINUE"_1,blkno.b,label1.b,label2.b,subseq(code, 1, length.code-2) + continue ) 
+     else block(kind.b,blkno.b,label1.b,label2.b,code)
+       
+function tailrecursion(self:sig,b:block) boolean
+   kind.b="EXIT"_1 &and (code.b)_(length.code.b-1)=self 
+   
+
+function adjustvar(s:seq.sig, delta:int, i:int, result:seq.sig)seq.sig
+ if i > length.s then result
+ else
+  let a = s_i
+   if islocal.a then
+   adjustvar(s, delta, i + 1, result + var(toint.(fsig.decode.a)_1 + delta))
+   else if isdefine.a then
+   adjustvar(s, delta, i + 1, result + define.toword(toint.(fsig.decode.a)_2 + delta))
+   else if isloopblock.a then
+   let b = subseq(result, 1, i - 2) + lit(value.s_(i - 1) + delta) + a
+     // assert length.b = i report"KLJ"+ toword.length.b + toword.i //
+     adjustvar(s, delta, i + 1, b)
+   else adjustvar(s, delta, i + 1, result + a)
+
+
+ function breakblocks(code:seq.sig,i:int,start:int,blkcode:seq.sig,blks:stack.block) seq.block
+   if i >  length.code   then 
+     [block("FINAL"_1,0,0,0,blkcode+subseq(code,start,i))]
+   else 
+     if code_i =br then breakblocks(code,i+1,i+1,empty:seq.sig,push(blks,block("BR"_1,i,0,0,blkcode+subseq(code,start,i))))
+     else if code_i=exit then  breakblocks(code,i+1,i+1,empty:seq.sig,push(blks,block("EXIT"_1,i,0,0,blkcode+subseq(code,start,i))))
+     else if not.lookcloser.code_i then breakblocks(code,i+1,start,blkcode,blks)
+     else
+       let rep=decode.code_i
+      if not ( module.rep = "$" ) then breakblocks(code,i+1,start,blkcode,blks)
+      else
+       let kind=(fsig.rep)_1
+       if kind in "CONTINUE LOOPBLOCK" then 
+         breakblocks(code,i+1,i+1,empty:seq.sig,push(blks,block(kind,i,0,0,blkcode+subseq(code,start,i))))
+       else  if not(kind  = "BLOCK"_1 ) then breakblocks(code,i+1,start,blkcode,blks)
+        else  let nopara=toint((fsig.rep)_2)
+          let args=top(blks,nopara)
+            let subblks=cvtlabels(args,1,empty:seq.block)
+          if i=length.code then 
+             subblks
+          else  if  code_(i+1)=exit &and not(kind.subblks_1="LOOPBLOCK"_1 )then
+                breakblocks(code,i+2,i+2,empty:seq.sig,push(pop(blks,nopara),
+               block("SEQBLKS"_1,blkno.subblks_1,0,0,empty:seq.sig,subblks)))
+          else  if i+3 &le length.code &and code_(i+3)=br &and kind.subblks_1="BR"_1 then
+                breakblocks(code,i+4,i+4,empty:seq.sig,push(pop(blks,nopara),
+               block("BRBLKS"_1,blkno.subblks_1,0,0,subseq(code,i+1,i+3),subblks))        )
+          else  
+             breakblocks(code,i+1,i+1, blkcode+ascode.subblks ,pop(blks,nopara))
+     
+ use seq.int
+ 
+ use otherseq.int
+ 
+ 
+ 
+function ascode(subblks1:seq.block) seq.sig
+ascode(subblks1,1,[subblks1_1],empty:seq.sig) 
+              
+
+function =(a:block,b:block) boolean blkno.a=blkno.b
+  
+function   checkforcase(blk:block) seq.sig
+   if not.iscaseblock.blk then empty:seq.sig
+   else 
+       let  t = backparse2(code.blk , length.code.blk-5, 1, empty:seq.int)
+       let exp=subseq(code.blk,t_1,length.code.blk-5)
+        if @(&or,hasstate,false,exp) then empty:seq.sig
+        else exp
+  
+function  ascode(l:seq.block,i:int,assigned:seq.block,result:seq.sig) seq.sig
+    if i > length.assigned then result+block.length.assigned else 
+    let   blk=assigned_i
+     if kind.blk in "BR " then
+      let a2=findblk2(l,1,label2.blk)
+                let exp=checkforcase.blk
+  if  not.isempty.exp   then  
+        let r=gathercase(l,blk,exp,empty:seq.caseblock)
+          if length.caseblks.r=1   then
+              // go ahead and process BR" //
+               let c=(caseblks.r)_1
+                      let a1=findblk2(l,1,label1.blk)
+               let l1=  findindex(a1,assigned)
+              let  assigned1=if  l1 > length.assigned then assigned+a1 else assigned
+                  let l2=  findindex(a2,assigned1)
+                 let  assigned2=if  l2 > length.assigned1 then assigned1+a2 else assigned1 
+                  ascode(l,i+1,assigned2,result+subseq( code.blk ,1,length.code.blk-5)+keysig.c+eqOp+lit.l1+lit.l2+br)
+            else // more than one case block //  
+              let var=if  islocal.last.exp then last.exp else var.1000
+            let prefix=  
+            if  islocal.last.exp then subseq((code.blk),1,length.code.blk-6)
+          else subseq((code.blk),1,length.code.blk-5) +define."1000"_1
+         let z= rearrangecase( caseblks.r, blkno.last.l+1,  defaultlabel.r,var)
+         let newl=  if blkno.last.l  < nextblklabel.z-1 then l+block("?"_1,nextblklabel.z-1,0,0,empty:seq.sig) else l
+         let first= (allocated.z)_1
+         let first1=if isempty.prefix then first else  block(kind.first,blkno.first,label1.first,label2.first,
+            prefix+code.first) 
+         ascode(newl,i,replace(assigned,i,first1)+subseq(allocated.z,2,length.allocated.z),result)
+     else 
+     let a1=findblk2(l,1,label1.blk)
+     let l1=  findindex(a1,assigned)
+     let  assigned1=if  l1 > length.assigned then assigned+a1 else assigned
+      let l2=  findindex(a2,assigned1)
+      let  assigned2=if  l2 > length.assigned1 then assigned1+a2 else assigned1 
+       ascode(l,i+1,assigned2,result+subseq(code.blk,1,length.code.blk-3)+    lit.l1 + lit.l2+br)
+    else if kind.blk in "BRC "    then
+        let l1=  findindex(label1.blk,1,assigned)
+        let assigned1=if l1 > length.assigned then        assigned+findblk2(l,1,label1.blk) else assigned
+        let l2=  findindex(label2.blk,1,assigned1)
+        let  assigned2=if  l2 > length.assigned1 then  assigned1+findblk2(l,1,label2.blk) else assigned1 
+        ascode(l,i+1,assigned2,result+subseq(code.blk,1,length.code.blk-3)+    lit.l1 + lit.l2+br)     
+    else   if kind.blk in " LOOPBLOCK  " then
+     let a1=findblk2(l,1,label1.blk)
+     let l1=  findindex(a1,assigned)
+     let  assigned1=if  l1 > length.assigned then assigned+a1 else assigned
+       ascode(l,i+1,assigned1,result+code.blk)
+    else
+      assert kind.blk in "EXIT CONTINUE" report "PROB 4"+kind.blk
+       ascode(l,i+1,assigned,result+code.blk)
+    
+function caseblock(truelabel:int,orgblkno:int,s:sig) caseblock
+  let rep =decode.s
+  let key= if module.rep="$int" then toint.(fsig.rep)_1
+       else 
+         assert module.rep="$word" report "unexpected const type"
+         hash.(fsig.rep)_1
+  caseblock(key,s,truelabel,orgblkno)
+  
+function caseblock(truelabel:int,orgblkno:int,w:word) caseblock
+  caseblock(hash.w,wordsig.w ,truelabel,orgblkno)
+  
+function findindex(label:int,i:int,a:seq.block) int
+   if i > length.a then i else 
+  if blkno.a_i=label then i else findindex(label,i+1,a)
+       
+    
+type caseblock is record  key:int,keysig:sig,truelabel:int,orgblkno:int
+
+function print(c:caseblock) seq.word
+"&br"+toword.key.c+print.[keysig.c]+toword.truelabel.c+toword.orgblkno.c
+
+use seq.caseblock
+
+function =(a:caseblock,b:caseblock) boolean  key.a=key.b
+
+function ?(a:caseblock,b:caseblock)  ordering key.a ? key.b
+
+function iscaseblock(blk:block) boolean
+   let code=code.blk
+   let len=length.code
+   len > 5 &and kind.blk="BR"_1  &and     isconst.code_(len-4) &and isinOp.code_(len-3)  
+   &and not(module.decode.code_(len-4)="$fref")
+
+
+           
+       
+ type gathercaseresult is record caseblks:seq.caseblock, defaultlabel:int
+        
+function gathercase(l:seq.block, blk:block,exp:seq.sig,   caseblks:seq.caseblock )  gathercaseresult
+     // blk is a caseblock but have not created the caseblks yet or check for following case blocks //
+   let code=code.blk
+   let len=length.code
+   let label=blkno.findblk2(l,1,label1.blk)
+     let t=  if code_(len-3)=eqOp then
+       [caseblock(label,blkno.blk,code_(len-4))]
+      else 
+       let rep=decode.code_(len-4)
+       if module.rep="$words" then
+           @(+,caseblock(label,0),empty:seq.caseblock, fsig.rep)
+       else 
+       assert length.code.rep > 2 &and (code.rep)_1=lit0 report
+        "not a standard seq"+print.code
+        @(+,caseblock(label,0),empty:seq.caseblock,subseq(code.rep,3,length.code.rep))
+// now check to see if following block is a case block //
+     let newblock=findblk2(l,1,label2.blk)
+     if iscaseblock(newblock) &and subseq(code.newblock,1,length.code.newblock-5)=exp then  gathercase(l,newblock,exp,  caseblks+t )
+      else  gathercaseresult(sort(caseblks+t),blkno.newblock) 
+      
+    
+  
+     
+      
+ use otherseq.caseblock   
+      
+ type     gggresult is record nextblklabel:int,allocated:seq.block  
+        
+function   rearrangecase( cbs:seq.caseblock, nextblklabel:int,defaultlabel:int,var:sig) gggresult
+        if length.cbs=1 then 
+           let blklabel=if orgblkno.cbs_1 > 0 then orgblkno.cbs_1 else nextblklabel
+                gggresult(if blklabel=nextblklabel then nextblklabel+1 else nextblklabel,
+                     [block("BRC"_1,blklabel,truelabel.cbs_1,defaultlabel,[var,keysig.cbs_1,eqOp,lit0,lit0,br])])
+        else if length.cbs=2 then
+              let blklabel1=if orgblkno.cbs_1 > 0 then orgblkno.cbs_1 else nextblklabel
+              let next1=if blklabel1=nextblklabel then nextblklabel+1 else nextblklabel
+              let blklabel2=if orgblkno.cbs_2 > 0 then orgblkno.cbs_2 else next1
+               let next2=if blklabel2=next1 then next1+1 else next1
+                 gggresult(next2,[block("BRC"_1,blklabel1,truelabel.cbs_1,blklabel2,[var,keysig.cbs_1,eqOp,lit0,lit0,br]),
+                       block("BRC"_1,blklabel2,truelabel.cbs_2,defaultlabel,[var,keysig.cbs_2,eqOp,lit0,lit0,br])] )
+        else 
+         let m=(length.cbs / 2)+1
+         let middle=cbs_m
+              let low= rearrangecase(subseq(cbs,1,m-1),nextblklabel+2,defaultlabel,var) 
+              let high=rearrangecase(subseq(cbs,m +1,length.cbs),nextblklabel.low,defaultlabel,var) 
+              let lowerlabel=  blkno.(allocated.low )_1
+              let upperlabel=  blkno.(allocated.high )_1
+               gggresult(nextblklabel.high,  
+               [ block("BRC"_1,nextblklabel,upperlabel,nextblklabel+1,[var,keysig.middle,gtOp,lit0,lit0,br]),
+               block("BRC"_1,nextblklabel+1,truelabel.middle,lowerlabel,[var,keysig.middle,eqOp,lit0,lit0,br])]
+               +allocated.low+allocated.high)
+               
+       
+      
+        
+    
+
+use otherseq.block            
+           
+        
+function findblk2( l:seq.block,i:int,blkno:int) block
+     assert  i &le length.l report "did not find block"   
+      let blk=l_i
+      if   blkno.blk=blkno then 
+        if kind.blk="JMP"_1 then  findblk2(l,1,label1.blk)  else blk
+    else findblk2(l,i+1,blkno)  
+       
+function  ascode( r:set.int,t:block) seq.sig
+          if not(blkno.t in r ) then empty:seq.sig
+          else  if  kind.t="BR"_1 then
+               subseq(code.t,1,length.code.t-3)+
+              lit.findindex(label1.t,toseq.r) + lit.findindex(label2.t,toseq.r)+br
+         else  
+           assert kind.t in "EXIT CONTINUE LOOPBLOCK" report "PROB 4"+kind.t
+           code.t
+      
+ function cvtlabels( blks:seq.block,i:int,result:seq.block)seq.block
+    // set block labels in BR //
+            if i > length.blks then 
+              let b=blks_1
+              if kind.b="LOOPBLOCK"_1 then
+                let label=blkno.blks_2
+                 [block("LOOPBLOCK"_1,blkno.b,label,label,code.b)]+subseq(result,2,length.result)
+              else
+              result else
+              let b=blks_i
+             let newtrees= if  kind.b="BR"_1 &and label1.b=0 then
+                       let len=length.code.b
+                     [ block(kind.b,blkno.b,blkno.blks_value.(code.b)_(len-2),
+                                                blkno.blks_value.(code.b)_(len-1),code.b) ]
+              else if kind.b="SEQBLKS"_1 then  
+                 subblks.blks_i 
+              else if kind.b="BRBLKS"_1 then
+                   assert length.code.b=3 report "OPT P"
+                   @(+,  convertexits(blkno.blks_value.(code.b)_1,blkno.blks_value.(code.b)_2),  
+                   empty:seq.block,subblks.b)
+               else [blks_i ]
+              cvtlabels(blks,i+1,result+newtrees)
+             
+        
+function       print(b:block) seq.word
+     "&br >>>>"+[kind.b,toword.blkno.b]+if kind.b in "BR BRC" then [toword.label1.b,toword.label2.b ] 
+      +print.//[(code.b)_(length.code.b-3)]// code.b 
+     else if kind.b="BRBLKS"_1 then "("+@(+,print,"",subblks.b)+")"
+     else if kind.b in "EXIT CONTINUE"  then print.code.b
+     else  if kind.b="JMP"_1 then [ toword.label1.b ]+print.code.b else "??"
+     
+          
+              
+function convertexits(    label1:int,label2:int,  b:block) block
+             if kind.b in "BR JMP"  then b
+             else assert kind.b="EXIT"_1 report "unexpected block type"+kind.b
+                  if length.code.b=2 &and isconst.(code.b)_1  
+                 then      let target=if lit0  =(code.b)_1 then label2 else label1
+                    block("JMP"_1,blkno.b,target,target,empty:seq.sig) 
+         else 
+                block("BR"_1,blkno.b,label1,label2, subseq(code.b,1,length.code.b-1)+[lit0,lit0,br])
+             
+               
+      
 
 use UTF8
 
@@ -27,7 +335,7 @@ use intercode
 
 use libscope
 
-use mangle
+/use mangle
 
 
 use seq.mytype
@@ -176,211 +484,14 @@ Function firstopt(p:prg, c:seq.seq.word, code:seq.sig,resulttype:seq.word) bbbre
  let pdict=addpara(empty:intdict.seq.sig, nopara)
  let code2 = value.yyy(p, code, 1, nopara + 1, pdict)
   let s= sigfromcodedown(c, code2, resulttype  ) 
-  let a = handletail(code2, s,c_1)
-    // assert not(t_1 in"testoptZtestopt")report"PROCESSProC"+ toword.length.code2 + print.code //
+  let a = breakblocks(code2,s)
    let a2=value.yyy(p,a,1,nopara+1,pdict)
-//  let hh=process.testbackparse(a2)
-    assert not.aborted.hh report "fail backparse test"+c_1+message.hh +"&br code:"+print.code2+"&br codeafter:"+print.a 
-//   bbbresult(  add(p, s, a2),s)
+   bbbresult(  add(p, s, a2),s)
    
    use process.int
-   
- function  testbackparse(code:seq.sig) int 
-  let b=backparse(code,length.code,1,empty:seq.int)
-   assert b_1=1 report "XX"+toword.b_1
-  if isblock.last.code then
-   let i = length.code
-  let blksize = nopara.code_i
-   let c= backparseblock(code, i - 1, blksize, empty:seq.seq.int) 
-     assert (places.c)_1=1 report "XXY"+toword.b_1
-   0
-  else
-  0
-    
-    
- 
-function breaklines2(a:seq.int, i:int, last:int, result:seq.seq.int)seq.seq.int
- if i > length.a then result
- else if false then
- breaklines2(a, i + 1, last, result )
- else breaklines2(a, i + 1, last, result)
- 
-function handletail(code:seq.sig, self:sig,xx:seq.word)seq.sig
- if length.code < 4 then code
- else if isblock.last.code then
- let i = length.code
-  let blksize = nopara.code_i
-   assert blksize ≥ 0 report"BAK 6"
-   let args = backparseblock(code, i - 1, blksize, empty:seq.seq.int)
-   let blks = subseq(places.args, 2, length.places.args) + [ i]
-    if isloopblock.code_(blks_1 - 1)then code.args
-    else
-     let b = @(+, findtail(code.args, self), empty:seq.seq.int, blks)
-      if length.b = 0 then code.args
-      else
-       // assert length.code &ne 184 report"PROCESSProC"+ print.code.args //
-       let nopara = nopara.decode.self
-       let plist = @(+, var, empty:seq.sig, arithseq(nopara, 1, 1))
-       let continue = [ continue.nopara]
-        // let code1 = @(+, adjustvar(nopara), empty:seq.sig, code.args)//
-        let code1 = adjustvar(code.args, nopara, 1, empty:seq.sig)
-        let code2 = @(adjustbr.1, identity, code1, blks)
-        let code3 = @(addcontinue.continue, identity, code2, reverse.b)
-        //  assert  not(xx="breaklines") report "DFG"+toword.length.b+"K"+print.code3 //
-        let entry = plist + lit(nopara + 1) + loopblock(nopara + 1)
-        let code4 = entry + subseq(code3, 1, length.code3 - 1) + block(length.blks + 1)
-          code4
- else code.backparse2(code, length.code, 1, empty:seq.int)
-
-function adjustvar(s:seq.sig, delta:int, i:int, result:seq.sig)seq.sig
- if i > length.s then result
- else
-  let a = s_i
-   if islocal.a then
-   adjustvar(s, delta, i + 1, result + var(toint.(fsig.decode.a)_1 + delta))
-   else if isdefine.a then
-   adjustvar(s, delta, i + 1, result + define.toword(toint.(fsig.decode.a)_2 + delta))
-   else if isloopblock.a then
-   let b = subseq(result, 1, i - 2) + lit(value.s_(i - 1) + delta) + a
-     // assert length.b = i report"KLJ"+ toword.length.b + toword.i //
-     adjustvar(s, delta, i + 1, b)
-   else adjustvar(s, delta, i + 1, result + a)
-
-function addcontinue(continue:seq.sig, code:seq.sig, l:seq.int)seq.sig
- let a = subseq(code, 1, l_1 - 1) + continue + subseq(code, l_2 + 1, length.code)
-  a
-
-function adjustbr(delta:int, code:seq.sig, i:int)seq.sig
- if code_(i - 1) = br then
-   let b = adjustlit(code, delta, 0, i - 2)
-   let a = adjustlit(code, delta, 0, i - 3)
-   subseq(code, 1, i - 4) + [ a, b] + subseq(code, i - 1, length.code)
- else code
-
-function findtail(s:seq.sig, self:sig, i:int)seq.seq.int
-  if s_(i-1)=exit then
-   let j=skipskip(s,i-2)
-   if  s_(j) = self then [[j,i-1]] else  empty:seq.seq.int  
-else   empty:seq.seq.int
- 
- function  skipskip(s:seq.sig,i:int) int
-     if s_i=skip then skipskip(s, i-1) else  i 
 
 function print(s:seq.int)seq.word @(+, toword,"", s)
 
-function adjust(code:seq.sig, blks:seq.seq.int, no:int, delta:int, after:int, blkinsert:boolean)backresult
- if no > length.blks then
- // assert @(seperator("/"), print,"", blks)="1 11 16 17 18 / 0 20 27 / 0 29 36"report"JK"+ @(seperator("/"), print,"", blks)//
-  let index = last.last.blks
-  let t = @(+, second, empty:seq.int, blks)
-   // assert false report print(subseq(code, index - 2, index + 2))//
-   // assert print([ code_index])in ["BLOCK 3"]report"JK"+ print([ code_index])+ @(seperator("/"), print,"", blks)//
-   let newcode = if isblock.code_index then
-   subseq(code, 1, index - 1) + block.length.blks + subseq(code, index + 1, length.code)
-   else code
-    // assert length.blks < 2 report"
-&br"+ @(seperator("/"), print,"", blks)+"
-&br"+ toword.length.code + print.newcode +"
-&br"+ print.[ code_last.last.blks]//
-    backresult(newcode, t)
- else
-  // assert @(seperator("/"), print,"", blks)="1 11 16 17 18 / 0 20 27 / 0 29 36"report"JKP"+ @(seperator("/"), print,"", blks)//
-  let blk = blks_no
-  let kind = blk_1
-   assert kind in [ 0, 1, 2]report"TTT" + toword.kind
-    if kind = 1 ∧ delta > 0 then
-    // adjust br labels //
-     let a = adjustlit(code, delta, after, blk_3)
-     let b = adjustlit(code, delta, after, blk_4)
-     let newcode = subseq(code, 1, blk_3 - 1) + [ a, b]
-     + subseq(code, blk_4 + 1, length.code)
-      // assert [ code_(blk_3), code_(blk_4)]= [ a, b]report"JKL"+ print.code +"
-&br"+ print.newcode //
-      adjust(newcode, blks, no + 1, delta, after, blkinsert)
-    else if kind = 2 ∧ blkinsert then
-    // block - - insert args in blks //
-     let addedblks = cvtblock(code, blk, 3, empty:seq.seq.int)
-      // assert false report print.blk //
-      let index = last.blk
-      let a = adjust(code, blks, 1, length.addedblks - 1, no, false)
-      let b = adjust(code.a, addedblks, 1, no - 1, 0, false)
-      let newblks = subseq(blks, 1, no - 1) + addedblks + subseq(blks, no + 1, length.blks)
-       adjust(code.b, newblks, no + length.addedblks, 0, 0, blkinsert)
-    else adjust(code, blks, no + 1, delta, after, blkinsert)
-
-function adjustlit(code:seq.sig, delta:int, after:int, index:int)sig
- let val = value.code_index
-  if val > after then lit(delta + val)else code_index
-
-function cvtblock(code:seq.sig, blks:seq.int, no:int, result:seq.seq.int)seq.seq.int
- if no > length.blks then result
- else
-  let i = blks_no
-  let kind = code_(i - 1)
-  let new = if kind = br then [ 1, blks_(no - 1), i - 3, i - 2]
-  else // assert kind in [ exit, block]report"check 5"// [ 0, blks_(no - 1), i]
-   cvtblock(code, blks, no + 1, result + new)
-
-function backparse2(s:seq.sig, i:int, no:int, result:seq.int)backresult
- // this will merge blocks //
- if no = 0 then backresult(s, result)
- else
-  assert i > 0 report"B" + print.s
-  let nopara = nopara.s_i
-   if isblock.s_i then
-   let args = backparseblock(s, i - 1, nopara, empty:seq.seq.int)
-    let t = includedefine2(code.args,(places.args)_1)
-     backparse2(value.t, index.t - 1, no - 1, [ index.t] + result)
-   else if nopara = 0 then
-   let t = includedefine2(s, i)
-     backparse2(value.t, index.t - 1, no - 1, [ index.t] + result)
-   else
-    let args = backparse2(s, i - 1, nopara, empty:seq.int)
-    let t = includedefine2(code.args,(places.args)_1)
-     backparse2(value.t, index.t - 1, no - 1, [ index.t] + result)
-
-function includedefine2(s:seq.sig, first:int)ipair.seq.sig
- if first = 1 then ipair(1, s)
- else if isdefine.s_(first - 1)then
- let t = backparse2(s, first - 2, 1, empty:seq.int)
-   includedefine2(code.t,(places.t)_1)
- else ipair(first, s)
-
-function backparseblock(s:seq.sig, i:int, no:int, result:seq.seq.int)backresult
- // assert length.s < 17 &or [ i, no]in [ [ 60, 30]]report"KL"+ toword.i +"no:"+ toword.no + @(seperator."/", print,"", result)+"
-&br"+ print.subseq(s, 1, i)//
- if no = 0 then adjust(s, result, 1, 0, 0, true)
- else 
- assert between(i,1,length.s) &and no > 0  report "fail 456" +toword.i+toword.no
-  if s_i = br then
- let t = backparse2(s, i - 1, 3, empty:seq.int)
-  let args = [ 1] + places.t
-   backparseblock(code.t, args_2 - 1, no - 1, [ args + (i + 1)] + result)
- else if s_i = exit ∧ isblock.s_(i - 1)then
- let t = backparseblock(s, i - 2, nopara.s_(i - 1), empty:seq.seq.int)
-   if s_((places.t)_2 - 1) = br then
-   let newcode = subseq(code.t, 1, i - 3) + skip + skip
-    + subseq(code.t, i, length.code.t)
-     // assert false report"JK"+ print.subseq(code.t, 1, i + 1)+"
-&br"+ print.subseq(newcode, 1, i + 1)+"
-&br"+ toword.i + print.places.t //
-     let args = [ 2] + places.t
-      backparseblock(newcode, args_2 - 1, no - 1, [ args + (i + 1)] + result)
-   else
-    // is loop - - cannot merge blocks //
-    let args = [ 0] + places.t
-     backparseblock(code.t, args_2 - 1, no - 1, [ args + (i + 1)] + result)
- else
-  assert s_i = exit ∨ (fsig.decode.s_i)_1 in "CONTINUE LOOPBLOCK"report"BAK 4" + toword.no + print.subseq(s, 1, i) 
-  + " &br <<<"
-  + print.subseq(s, i + 1, length.s)
-  + " &br"
-  + @(seperator."/", print,"", result)
-  let t = backparse2(s, i - 1, nopara.s_i, empty:seq.int)
-  let args = [ 0] + places.t
-   backparseblock(code.t, args_2 - 1, no - 1, [ args + (i + 1)] + result)
-
-function second(s:seq.int)int s_2
 
 function var(i:int)sig var.toword.i
 
@@ -410,6 +521,8 @@ function yyy(p:prg, s:seq.sig, i:int, nextvar:int, map:intdict.seq.sig)ipair.seq
    yyy(p, code.t, index.t, nextvar.t, map)
 else  if s_i=skip then
   yyy(p,replace(s,i,1,empty:seq.sig),i,nextvar,map)
+else  if s_i=br &and s_(i-3)=notOp then
+  yyy(p,replace(s,i-3,3,[s_(i-1),s_(i-2)]),i,nextvar,map)
 else 
  //    let rep=decode.s_i
       assert not((fsig.rep)_1="decode"_1)&or
@@ -616,6 +729,21 @@ function backparse(s:seq.sig, i:int, no:int, result:seq.int)seq.int
       c_1
     else first
      backparse(s, b - 1, no - 1, [ b] + result)
+
+function backparse2(s:seq.sig, i:int, no:int, result:seq.int)seq.int
+ if no = 0 then result
+ else
+  assert i > 0 report"back parse 1" + toword.no+print.s
+   assert not.isdefine.s_i report"back parse 2x" + print.s
+   let nopara = nopara.s_i
+    let first = if nopara = 0 then i
+    else
+     let args = backparse(s, i - 1, nopara, empty:seq.int)
+      assert length.args = nopara report"back parse 3" + print.[ s_i] + toword.nopara + "//"
+      + @(+, toword,"", args)
+       args_1
+    let b = first
+     backparse2(s, b - 1, no - 1, [ b] + result)
 
 function replace(s:seq.sig, start:int, length:int, value:seq.sig)seq.sig
  subseq(s, 1, start - 1) + value + subseq(s, start + length, length.s)

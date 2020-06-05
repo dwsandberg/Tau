@@ -13,7 +13,7 @@ parsersupport  uses
  stdlib  textio  prims   maindict  otherseq tree graph packedseq unsafe words 
  internalbc newpretty llvm
  libscope worddict groupparagraphs 
- timestamp ioseq dataio intdict funcsig symbol pass2new parse libdesc
+ timestamp ioseq dataio intdict funcsig symbol   parse libdesc
  codegennew processOptions intercode 
  
  
