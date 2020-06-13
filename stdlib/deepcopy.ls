@@ -10,4 +10,4 @@ Function deepcopy(a:T)T deepcopy.a
 
 /Function FORCEINLINE(a:T)T a
 
-Function sizeoftype:T int builtin."INTERNAL"
+/Function sizeoftype:T int builtin."INTERNAL"

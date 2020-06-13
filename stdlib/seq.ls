@@ -1,10 +1,8 @@
 Module seq.T
 
-use deepcopy.T
 
 use seq.T
 
-use deepcopy.boolean
 
 use stacktrace
 
@@ -12,7 +10,12 @@ use stdlib
 
 type seq is sequence length:int, x:T
 
-Function sizeoftype:T int export
+
+Function sizeoftype:T int builtin."INTERNAL"
+
+
+/Function deepcopy(a:T)T deepcopy.a
+
 
 Function type:seq.T internaltype export
 
@@ -31,9 +34,9 @@ Function_(a:seq.T, b:int)T
 
 function callidx(func:int, a:seq.T, b:int)T builtin.usemangle
 
-function getval(a:seq.T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUCZbuiltinZintZint"
+function getval(a:seq.T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUC"
 
-Function getseqtype(a:seq.T)int builtin."LOCAL 1 LIT 0 IDXUCZbuiltinZintZint"
+Function getseqtype(a:seq.T)int builtin."LOCAL 1 LIT 0 IDXUC"
 
 Function length(a:seq.T)int export
 
@@ -51,7 +54,7 @@ subin is helper function
 Function subin(a:T, s:seq.T, i:int)boolean
  if i = 0 then false else if a = s_i then true else subin(a, s, i - 1)
 
-Function in(a:T, s:seq.T)boolean // NOINLINE. // subin(a, s, length.s)
+Function in(a:T, s:seq.T)boolean  subin(a, s, length.s)
 
 Function identity(a:T)T a
 
@@ -93,7 +96,7 @@ to:pseq.T(s)
 
  
 
-Function to:pseq.T(s:seq.T)pseq.T export
+/Function to:pseq.T(s:seq.T)pseq.T export
 
 Function +(a:seq.T, b:seq.T)seq.T
  let la = length.a

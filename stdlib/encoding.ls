@@ -1,7 +1,5 @@
 Module encoding.T
 
-use deepcopy.T
-
 use blockseq.T
 
 use seq.T
@@ -16,6 +14,9 @@ use otherseq.encodingrep.T
 
 use otherseq.seq.encodingrep.T
 
+use process.T
+
+
 Function type:encoding.T internaltype export
 
 Function type:encodingstate.T internaltype export
@@ -28,7 +29,6 @@ Function encodetable(encodingstate.T)seq.seq.encodingrep.T export
 
 Function all(encodingstate.T)seq.encodingrep.T export
 
-function elecount(e:encodingstate.T)int length.e
 
 Function length(e:encodingstate.T)int export
 
@@ -47,6 +47,10 @@ Function encodingrep(code:encoding.T, data:T, hash:int)encodingrep.T export
 Function =(a:encodingrep.T, b:encodingrep.T)boolean
  hash.a = hash.b ∧ valueofencoding.code.a = valueofencoding.code.b
  ∧ data.a = data.b
+ 
+ 
+ Function ?(a:encodingrep.T, b:encodingrep.T)ordering valueofencoding.code.a ? valueofencoding.code.b
+
 
 Function check(h:encodingstate.T)seq.word [ toword.length.encodetable.h, toword.length.decodetable.h]
 
@@ -68,17 +72,18 @@ function addcode(code:encoding.T, hashsize:int, x:seq.encodingrep.T, e:encodingr
  x
  else x + e
 
-type encoding is record valueofencoding:int
+type encoding is record xvalueofencoding:int
 
-Function toencoding:T(int)encoding.T builtin."LOCAL 1"
+
+
 
 Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T
- // this is the add the is stored in the erecord //
+ // this is the add that is stored in the erecord //
  let tablesize = length.encodetable.h
-  if 3 * elecount.h > 2 * tablesize then
+  if 3 * length.h > 2 * tablesize then
   let t = encodetable.h
    let d = decodetable.h
-    add(encodingstate(elecount.h, t + t + t + t, d + d + d + d, all.h)
+    add(encodingstate(length.h, t + t + t + t, d + d + d + d, all.h)
     , v)
   else
    let datahash = hash.v
@@ -89,7 +94,7 @@ Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T
           let codeindex = valueofencoding.code.p mod tablesize + 1
      let l2 = @(addcode(code.p, tablesize), identity, [ p],(decodetable.h)_codeindex)
      let tnew = replace(encodetable.h, dataindex, @(+, adddata(p, tablesize), [ p],(encodetable.h)_dataindex))
-      encodingstate(elecount.h + 1, tnew, replace(decodetable.h, codeindex, l2), all.h + p)
+      encodingstate(length.h + 1, tnew, replace(decodetable.h, codeindex, l2), all.h + p)
 
 function used(t:encoding.T, a:encodingrep.T) int
  if t = code.a then 1  else 0
@@ -100,7 +105,7 @@ function used(t:encoding.T, a:encodingrep.T) int
     let code = code.v
      let codeindex = valueofencoding.code mod tablesize + 1
              let found=  valueofencoding.code.v ≤ 0 &or @(+, used.code.v,0,(decodetable.h)_(codeindex) ) > 0
-   if found then subadd(h, encodingrep(encoding.assignencoding(length.h,data.v), data.v, hash.v),count+1)
+   if found then subadd(h, encodingrep(to:encoding.T(assignencoding(length.h,data.v)), data.v, hash.v),count+1)
    else encodingrep(code.v, deepcopy.data.v, hash.v)
 
 Function assignencoding(length:int,data:T) int // (randomint.1)_1 // unbound
@@ -119,7 +124,7 @@ Function getinstance(erec:erecord.T)encodingstate.T builtin.usemangle
 
 Function orderadded(erec:erecord.T)seq.T toseq.getinstance.erec
 
-Function to:encoding.T (i:int)  encoding.T  encoding(i)
+Function to:encoding.T (i:int)  encoding.T  builtin."LOCAL 1"
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingrep.T
  @(+, ele4.t, empty:seq.encodingrep.T,(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1))
@@ -135,7 +140,7 @@ Function decode(erec:erecord.T, t:encoding.T)T
 
 use stacktrace 
 
-Function valueofencoding(encoding.T)int export
+Function valueofencoding(encoding.T)int builtin."LOCAL 1"
 
 Function =(a:encoding.T, b:encoding.T)boolean valueofencoding.a = valueofencoding.b
 
@@ -146,7 +151,7 @@ Function hash(a:encoding.T)int valueofencoding.a
 Function encode(erec:erecord.T, t:T)encoding.T
  let r = lookuprep(t, getinstance.erec)
   if isempty.r then
-  let discard = add(erec, encodingrep(encoding.0, t, hash.t))
+  let discard = add(erec, encodingrep(to:encoding.T(0), t, hash.t))
     encode(erec, t)
   else code.r_1
 

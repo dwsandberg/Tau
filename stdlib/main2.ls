@@ -18,7 +18,7 @@ use seq.fsignrep
 use intercode
 
 
-/use libdesc
+
 
 use process.liblib
 
@@ -84,9 +84,9 @@ function subcompilelib(libname:word)seq.word
  let allsrc= getlibrarysrc.libname 
  let libmods=  if libname in "stdlibbak stdlib " then empty:seq.firstpass else libfirstpass(dependentlibs)
  let known = if libname in "stdlibbak stdlib " then emptysymbolset else libknown(dependentlibs)
- let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known, asset.libmods)
  let x = basesigs(allsrc)
- let intercode2 = pass2new(symset.p1, mods.p1, known)  
+ let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known, asset.libmods)
+ let intercode2 = pass2new(symset.p1, mods.p1, known,result.p1)  
  let bc=codegen( intercode2 , libname)
  let z2 = createlib(bc, libname, dependentlibs)
  let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1)
@@ -100,7 +100,7 @@ use codegennew
 
 use processOptions
 
-use libdesc
+
 
 
 Function compilelib2(libname:word)seq.word
@@ -175,7 +175,7 @@ Function secondPass(libname:word)seq.seq.word
  let libmods=  if libname in "stdlibbak stdlib " then empty:seq.firstpass else libfirstpass(dependentlibs)
  let known = if libname in "stdlibbak stdlib " then emptysymbolset else libknown(dependentlibs)
       let allsrc =getlibrarysrc.s_2 
- let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known , asset.libmods )
  let x = basesigs(allsrc)
- let p2 = pass2new(symset.p1, mods.p1, known)
+ let p1 = pass1(groupparagraphs("module Module",allsrc), exports, known , asset.libmods )
+ let p2 = pass2new(symset.p1, mods.p1, known,result.p1)
    print.p2 

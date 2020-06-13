@@ -48,7 +48,6 @@ Function timestamplit(t:UTF8)timestamp
 Function totimestamp(year:int, month:int, day:int, hour:int, minute:int, second:int)timestamp
  timestamp(((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second)
 
-skip
 
 Function decompose(ts:timestamp)seq.int
  // returns sequence of year, month, day, hour, minute, second //

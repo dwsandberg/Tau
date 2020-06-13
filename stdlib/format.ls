@@ -36,9 +36,8 @@ Function getheader(s:seq.word)seq.word
   let aftercomments = consumecomment(s, afterreturntype)
    if aftercomments ≤ length.s ∧ s_aftercomments in "unbound export"then s
    else if aftercomments ≤ length.s ∧ s_aftercomments = "builtin"_1
-   ∧ last.s = "usemangle"_1 then
-   subseq(s, 1, aftercomments - 1) + "usemangle"
-   else subseq(s, 1, aftercomments - 1) + "stub"
+     then s
+    else subseq(s, 1, aftercomments - 1) + "stub"
 
 function consumetype(s:seq.word, i:int)int
  if i > length.s then i

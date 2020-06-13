@@ -10,9 +10,6 @@ use libscope
 
 use stdlib
 
-use seq.symbol
-
-use symbol
 
 
 
@@ -90,7 +87,6 @@ Function =(sig,sig) boolean export
 _______________
 
 
-use set.symbol
 
 use seq.firstpass
 
@@ -112,8 +108,6 @@ function uses(expmod)  seq.mytype export
 function expmod(modname:word, exports:seq.sig,defines:seq.sig,uses:seq.mytype) expmod export
     
 
-Function tosig(s:symbol) sig  
-     sig ([name.s] , paratypes.s, modname.s , empty:seq.sig,resulttype.s)
 
 function astext(coding:seq.fsignrep, i:sig)seq.word
  let t = towords2x.coding_lowerbits.i

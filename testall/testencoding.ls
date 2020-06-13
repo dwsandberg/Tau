@@ -10,11 +10,9 @@ use blockseq.seq.word
 
 use checking
 
-use deepcopy.int
+use process.set.int
 
-use deepcopy.set.int
-
-use deepcopy.testdeep
+use process.testdeep
 
 use encoding.testrecord
 
@@ -34,9 +32,9 @@ use stdlib
 
 use UTF8
 
-/use words
-
 use tree.seq.word
+
+use seq.seq.char
 
 Function +(i:int, b:int)int export
 

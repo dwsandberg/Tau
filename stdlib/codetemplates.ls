@@ -8,7 +8,6 @@ use bits
 
 use fileio
 
-use deepcopy.int
 
 use seq.seq.int
 
@@ -24,10 +23,8 @@ use otherseq.llvmtype
 
 use seq.llvmtype
 
-use deepcopy.match5
 
 use encoding.match5
-
 
 use seq.match5
 
@@ -36,8 +33,6 @@ use stdlib
 use blockseq.templatepart
 
 use blockseq.seq.templatepart
-
-/use deepcopy.seq.templatepart
 
 use seq.templatepart
 
@@ -56,6 +51,8 @@ function wordstype llvmtype array(-1, i64)
 Function conststype llvmtype array(-2, i64)
 
 Function profiletype llvmtype array(-3, i64)
+
+
 
 
 Function type:match5 internaltype export

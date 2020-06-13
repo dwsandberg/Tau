@@ -77,10 +77,6 @@ function assignencoding(l:int, a:const3) int assignrandom(l,a)
 Function wordref(w:word) int  
 let d = encode(word3encoding, word3.w)
  C64.hash.w
-
-  
-
-function ?(a:encodingrep.seq.char, b:encodingrep.seq.char)ordering valueofencoding.code.a ? valueofencoding.code.b
  
  Function addliblib( libname:seq.word,c:int) int
  // assert libname.t ="stdlib"report libname.t //

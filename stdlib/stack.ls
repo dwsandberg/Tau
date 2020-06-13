@@ -27,8 +27,6 @@ Function pop(f:stack.T)stack.T
 
 Function empty:stack.T stack.T stack.empty:seq.T
 
-Function stack(t:T)stack.T stack.[ t]
-
 Function isempty(f:stack.T)boolean length.toseq.f = 0
 
 Function undertop(f:stack.T, n:int)T(toseq.f)_(length.toseq.f - n)

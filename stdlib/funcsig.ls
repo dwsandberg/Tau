@@ -91,6 +91,9 @@ Function sig(encoding.fsignrep)sig export
 
 type prg is record translate:intdict.fsignrep
 
+ Function FREFsig(s:sig) sig  sig("FREF" + mangledname.decode.s, "$fref", [ s],"?")  
+
+
 Function sig(name:seq.word, args:seq.mytype, module1:mytype, code:seq.sig,returntype:mytype)sig
  // will not set code when sig is already present // 
  let fsig = if length.args = 0 then name
@@ -152,7 +155,8 @@ if length.module = 2 ∧ module_2 = "para"_1
    let state=@(&or,hasstate,"STATE"_1 in options,code.f)
    1 + parabits.nopara 
     +  (toint.if state then statebit else     bits.0  )
-    +   toint.if    "INLINE"_1 in options  then inlinebit
+    +   toint.if "PLACEHOLDER"_1 in options then placeholderbit else 
+            if    "INLINE"_1 in options  then inlinebit
          else  if   "NOINLINE"_1 in options &or (length.code.f=3 &and length.options > 0   ) then bits.0
          else  if  length.code.f < 15 &or issimple(nopara , code.f) then inlinebit
          else bits.0
@@ -222,12 +226,6 @@ Function print(p:prg, s:sig)seq.word
  let rep=lookuprep(p,s) 
   decodebits.s+ print.rep + @(+, print,"", code.rep)
    
- let a=upperbits.rep  
- if a=b then "" else "&br"+decodebits.a+"/"+decodebits.b+print.rep+ @(+, print,"", code.rep)
- 
-    decodebits.s+ print.rep + @(+, print,"", code.rep)
-   
-
 
 
 Function value(s:sig)int toint.(fsig.decode.s)_1
@@ -267,7 +265,7 @@ sig([ w], "$word", empty:seq.sig, "word")
 Function wordssig(w:seq.word) sig
    sig(w,"$words", empty:seq.sig, "word seq")
  
-
+Function local(i:int) sig   sig([ toword.i], "local", empty:seq.sig,"?")
 
 Function print(s:sig)seq.word print.decode.s
 
@@ -288,6 +286,8 @@ function lookcloserbit bits nographbit << 4
 
 function statebit   bits nographbit << 5
 
+function placeholderbit bits nographbit << 6
+
 function lownopara(s:sig)int toint(bits.valueofencoding.s >> paranobits ∧ bits.7) - 1
 
 Function parabits(nopara:int)int toint((bits.if nopara > 6 then 0 else nopara + 1) << paranobits)
@@ -299,6 +299,8 @@ Function parabitsY(nopara:int)bits
  
 
 Function isconst(s:sig)boolean( constbit ∧ bits.valueofencoding.s) =  constbit
+
+Function isplaceholder(s:sig)boolean ( placeholderbit ∧ bits.valueofencoding.s) =  placeholderbit
 
 Function islocal(s:sig)boolean( localbit ∧ bits.valueofencoding.s) =  localbit
 
@@ -327,6 +329,7 @@ function check(s:sig, kind:seq.word)boolean
 
 function lastlocal int 8
 
+Function local1 sig baseupbits_1
 
 Function exit sig  baseupbits_(lastlocal+1)
 
@@ -338,7 +341,6 @@ Function CALLIDX sig baseupbits_(lastlocal+4)
 
 Function STKRECORD sig baseupbits_(lastlocal+5)
 
-Function skip sig baseupbits_(lastlocal+6)
 
 Function lit0 sig baseupbits_(lastlocal+7)
 
@@ -404,7 +406,7 @@ use processOptions
 , // IDXUC(int, int)// ecvt(bits.11 ∨ parabitsY.2 ∨ nographbit ∨ lookcloserbit) 
 , // callidx(int, T seq, int)// ecvt(bits.12 ∨ parabitsY.3 ∨ nographbit) 
 , // STKRECORD(int, int)// ecvt(bits.13 ∨ parabitsY.2 ∨ nographbit) 
-, // SET 1 // ecvt(bits.14 ∨ parabitsY.1) 
+, // not used // ecvt(bits.14 ∨ parabitsY.1) 
 , // 0 // ecvt(bits.15 ∨ parabitsY.0 ∨ constbit ∨ nographbit) 
 , // wordencoding // ecvt(bits.16 ∨ parabitsY.0 ∨ lookcloserbit) 
 , // CONSTANT 15 15 // ecvt(bits.17 ∨ parabitsY.0 ∨ constbit) 
@@ -469,6 +471,9 @@ Function lowerbits(s:sig)int valueofencoding.s - toint(bits.valueofencoding.s >>
 Function lowerbits(s:int)int s - toint(bits.s >> firstupperbit << firstupperbit)
 
 function lowerbits2(s:sig) sig ecvt.lowerbits.s
+
+Function placeholder(name:seq.word,args:seq.mytype,modname:mytype ,returntype:mytype) sig
+ sig(name+"("+@(seperator.",",towords,"",args)+")*",towords.modname,[lit.1,wordssig("PLACEHOLDER"),optionOp], towords.returntype) 
 
 module processOptions
 

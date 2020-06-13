@@ -8,7 +8,7 @@ use ioseq.encodingrep.seq.char
 
 use blockseq.seq.encodingrep.seq.char
 
-use deepcopy.seq.encodingrep.seq.char
+use process.seq.encodingrep.seq.char
 
 use seq.encodingrep.seq.char
 
@@ -25,8 +25,6 @@ use stdlib
 use set.word
 
 use words
-
-function ?(a:encodingrep.seq.char, b:encodingrep.seq.char)ordering valueofencoding.code.a ? valueofencoding.code.b
 
 function +(p:place, r:encodingrep.seq.char)place
  p + valueofencoding.code.r + tointseq.data.r + hash.r
@@ -54,7 +52,7 @@ function get2(data:seq.int, i:int)seq.encodingrep.seq.char
  else get2(data, data_i) + getseq2:encodingrep.seq.char(data, i - 1)
 
 function getrecord:encodingrep.seq.char(data:seq.int, i:int)encodingrep.seq.char
- encodingrep(toencoding:seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1), getint(data, i + 2))
+ encodingrep(to:encoding.seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1), getint(data, i + 2))
 
 Function initialdict seq.encodingrep.seq.char builtin.usemangle
 
@@ -111,8 +109,6 @@ Function getreal(data:seq.int, i:int)real casttoreal.data_i
 Function next(p:place)int offset.p + length.data.p
 
 module ioseq.T
-
-use deepcopy.T
 
 use seq.T
 

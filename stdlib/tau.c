@@ -256,11 +256,13 @@ if (strcmp(libname,"stdlib")==0 ){
     if (!toUTF8){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
-    }
+    }                                    
     byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZbitpackedseqzbitpackedseqZint");
     if (!byteseqencetype){
+            byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZbytezbitpackedseqZint");
+            if (!byteseqencetype) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
+       exit(EXIT_FAILURE);}
     }
        decodeword= dlsym(RTLD_DEFAULT,"decodewordZstdlibZword");
     if (!decodeword){

@@ -53,4 +53,4 @@ Function relocate(a:seq.T, idx:int, relloc:int)seq.T setfld(a, idx, cast(a, rell
 
 Function inttoT:T(int)T builtin."LOCAL 1"
 
-Function fldof(T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUCZbuiltinZintZint"
+Function fldof(T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUC"

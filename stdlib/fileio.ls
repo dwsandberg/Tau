@@ -28,6 +28,9 @@ use stdlib
 
 use textio
 
+
+Function_(a:bitpackedseq.byte, idx:int)byte export
+
 Function type:outputformat internaltype export
 
 Function type:fileresult internaltype export

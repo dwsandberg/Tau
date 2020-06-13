@@ -12,8 +12,6 @@ use bits
 
 use fileio
 
-use deepcopy.internal2
-
 use seq.internal2
 
 use seq.internalbc

@@ -4,7 +4,6 @@ use seq.T
 
 use stdlib
 
-use deepcopy.T
 
 Function ≠(a:T, b:T)boolean not(a = b)
 

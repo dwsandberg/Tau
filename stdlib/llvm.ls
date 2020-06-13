@@ -56,7 +56,6 @@ use stacktrace
 
 use stdlib
 
-use deepcopy.trackconst
 
 use seq.trackconst
 

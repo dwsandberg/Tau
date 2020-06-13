@@ -81,6 +81,6 @@ Function testprintBitCodes seq.word printBitCodes."test4.bc"
 Function callgraphtest seq.word callgraphbetween("testall","test5  testall test2 stdlib")
 +callgraphwithin("stdlib","llvm")
 
-Function stdlibdoc seq.word    callgraphbetween("stdlib","codegennew persistant")+    doclibrary."stdlib"
+Function stdlibdoc seq.word   // callgraphbetween("stdlib","codegennew persistant")+ //    doclibrary."stdlib"
 
 

@@ -2,19 +2,19 @@
 
 Module stdlib 
 
-Library stdlib UTF8 bitpackedseq bits blockseq codetemplates  deepcopy encoding fileio 
+Library stdlib UTF8 bitpackedseq bits blockseq codetemplates   encoding fileio 
 format graph groupparagraphs intercode internalbc ipair libdesc libscope llvm main2  otherseq packedseq 
-parse pass1  persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
+parse pass1new  persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
  timestamp maindict words   newpretty  codegennew pass2new intdict funcsig
 parsersupport  uses 
  exports stdlib main2 maindict UTF8  
- UTF8 bits blockseq  deepcopy encoding fileio format  
+ UTF8 bits blockseq   encoding fileio format  
   ipair   main2     process real   seq set stack stacktrace 
  stdlib  textio  prims   maindict  otherseq tree graph packedseq unsafe words 
  internalbc newpretty llvm
  libscope worddict groupparagraphs 
- timestamp ioseq dataio intdict funcsig symbol   parse libdesc
- codegennew processOptions intercode 
+ timestamp ioseq dataio intdict funcsig     libdesc
+ codegennew processOptions intercode parsersupport mangle
  
  
  
@@ -25,7 +25,10 @@ parsersupport  uses
  
   PROFILE     pass1: bind(symbolset,set.firstpass,symbolset,firstpass)symbolset 
  
-  PROFILE  pass1:bind2(symbolset,set.symbol,symbolset,symbol)symbolset 
+ * PROFILE  pass1:postbind( symbolset, set.symbol, symbolset, set.word, seq.word, int,seq.symbol) symbolset 
+ 
+  * PROFILE  pass1:postbind2(   set.symbol,     seq.word,
+  int,  seq.word,  symbol, symbolset, set.word, symbolset)resultpb
 
   *  PROFILE  main2:compilelib2(word) seq.word  
 
@@ -389,7 +392,7 @@ exclude stdlib seq
 codetemplates pass2 persistant   llvm  
 reconstruct persistantseq opt2
 symbol parse libdesc internalbc intercode cvttoinst codegen pass2new codegennew funcsig
-exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process  ipair deepcopy
+exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process  ipair 
 bitpackedseq packedseq fileio blockseq textio encoding words 
    
 

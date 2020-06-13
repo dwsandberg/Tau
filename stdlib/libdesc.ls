@@ -4,7 +4,6 @@ Module libdesc
 
 use stdlib
 
-use symbol
 
 use seq.firstpass
 
@@ -21,9 +20,6 @@ use seq.seq.word
 
 use seq.word
 
-use seq.symbol
-
-use set.symbol
 
 use set.word
 
@@ -46,7 +42,7 @@ use seq.libmod
 
 use seq.mytype
 
-Function libdesc(p:prg, known:symbolset,simple:seq.expmod,abstract2:seq.expmod) sig
+Function libdesc(p:prg,simple:seq.expmod,abstract2:seq.expmod) sig
     let abstract3= @(+,tolibmod(p,true),empty:seq.libmod,abstract2)
   let rootsigs=@(+,exports,empty:seq.sig,simple)  
   let closed=toexport(p,empty:set.sig,asset.rootsigs)   
@@ -127,31 +123,4 @@ function addlibmod(s:libmod) sig
 _______________________________      
      
    
-   function tosymbol(ls:libsym)symbol
- let d = codedown.fsig.ls
- assert length.d > 1 report "tosymbol2"+fsig.ls
- symbol(d_1_1,mytype.d_2,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)),mytype.returntype.ls,instruction.ls)
  
-function tofirstpass(m:libmod)  seq.firstpass
- // if modname.m= "$other"_1 then empty:seq.firstpass
-  else //
- [ firstpass(mytype.if parameterized.m then"T" + modname.m else [ modname.m], uses.m, 
- @(+, tosymbol, empty:set.symbol, defines.m), 
- @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol, false )]
- 
-function addknown(a:symbolset,l:seq.liblib) symbolset   
- if isempty.l then a else @(+, tosymbol, a, defines.last.mods.l_1)
-
-
-function addfirstpass(s:seq.firstpass,l:seq.liblib) seq.firstpass  
- if isempty.l then s else  s+@(+, tofirstpass, empty:seq.firstpass, mods.l_1)
-
-Function libknown(dependentlibs:seq.word) symbolset 
-  @(addknown, filter(dependentlibs),emptysymbolset   , loadedlibs)
- 
-use seq.liblib
-
-Function libfirstpass(dependentlibs:seq.word) seq.firstpass
-  @(addfirstpass, filter(dependentlibs),empty:seq.firstpass   , loadedlibs)
-
-function filter(s:seq.word,l:liblib)  seq.liblib   if (libname.l)_1 in s then [l] else empty:seq.liblib
