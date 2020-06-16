@@ -88,7 +88,8 @@ function astext5(p:prg, d:seq.sig)seq.word @(+, astext(p),"", d)
 
 /use seq.char
 
-function tolibsym(p:prg,s:sig ) seq.libsym
+function tolibsym(p:prg,psig:sig ) seq.libsym
+   let s= if isplaceholder.psig then removeplaceholder.psig else psig
    let rep=lookuprep(p,s)
    if module.rep in ["$","$constant","$int","local","$word","$words","$fref"] 
    &or fsig.rep="xgetinstance(T erecord)" &or s=IDXUC then empty:seq.libsym else

@@ -1,5 +1,3 @@
-#!/usr/local/bin/tau
-
 run mylib test
 
 Module pass1
@@ -105,10 +103,9 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarysyms:symbolset,
    let aa=@(+,mangledname,"",toseq.@(∪, exports, empty:set.symbol, simple))
   let root= symbol("Wroot"_1, mytype."W",   empty:seq.mytype  , mytype."int", empty:seq.sig,aa)
     let result=postbind(templatemap,allsymbols,replace(source,root) ,empty:set.word,"WrootZW",1,empty:seq.symbol)
-    let X=  @(replace,identity,emptysymbolset,result)
-     assert cardinality(asset.toseq.X &cap asset.toseq.templates)=0 report 
-    "CHECK pass1"+@(+,mangledname,"",toseq.(asset.toseq.X &cap asset.toseq.templates))
-    linkage(@(+,identity,X,toseq.templates), sort(simple + abstractmods2),  result
+    //  assert cardinality(asset.result &cap asset.toseq.templates)=0 report 
+    "CHECK pass1"+@(+,mangledname,"",toseq.(asset.result &cap asset.toseq.templates)) //
+    linkage(emptysymbolset, sort(simple + abstractmods2),  result
  )
 
    function  maptemp(templates:symbolset,st:symbolset,  s:symbol) symbolset
@@ -116,17 +113,7 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarysyms:symbolset,
                   let s2=lookupsymbol(templates,template.s)
                  assert isdefined.s2 report "maptemp function:"+print2.s
                   mapsymbol(st,mangledname.s, changesrc(s, src.s2))
-                
-    
-    
-  /function  maptemp(templates:set.symbol,st:symbolset,  s:symbol) symbolset
-            if src.s="STUB" &or ( template.s="none"_1 &and not(parameter.modname.s=mytype."T") )  then st else 
-             let mn=if template.s="none"_1   then mangledname.s else template.s
-                 let s2=lookup(templates,mn) 
-                 assert cardinality.s2=1 report  "maptemp function"+ mn
-                  mapsymbol(st,mangledname.s, changesrc(s, src.s2_1))
-                 
-
+                                 
 function fldchanges(st:symbolset,s:symbol) symbolset
 if (towords.modname.s)_1 ="T"_1 &or length.towords.modname.s=0 then st else
    let newparams=  @(+,replaceT(parameter.modname.s),empty:seq.mytype,paratypes.s)
@@ -338,7 +325,7 @@ paras:seq.mytype, constructor2:seq.sig, desc:seq.word, symbols:seq.symbol)seq.sy
    BLOCK 3")
    let t ="1 seq." + print.parameter.modname
    let descsym = symbol(merge("type:" + print.resulttype.con), modname, empty:seq.mytype, mytype."internaltype","WORDS" + toword.length.t + t)
-    symbols +   symtoseq + // symfromseq+ // con + descsym
+    symbols +   symtoseq +  symfromseq+  con + descsym
   else
    let consrc2= if length.paras = 1 then[local1] else constructor2 + RECORD.countflds(constructor2,1,0)
    let con = symbol(abstracttype.ptype_1, modname, paras, mytype(towords.parameter.modname + abstracttype.ptype_1), consrc2,"")
@@ -385,12 +372,12 @@ function postbind(templatemap: symbolset,dict:set.symbol,source :symbolset,worki
  seq.word,i:int,result:seq.symbol) seq.symbol
   if i > length.toprocess then 
     result
-    else
+     else
       let s=toprocess_i
         let w=working+s
         if  cardinality.w=cardinality.working then 
-          postbind(templatemap,dict,source,w,toprocess,i+1,result)
-        else 
+      postbind(templatemap,dict,source,w,toprocess,i+1,result)
+     else 
      let sym= lookupsymbol(source,s) 
       assert isdefined.sym report "KJHG"+mangledname.sym+s  
      if   length.src.sym = 0 then 
@@ -402,23 +389,23 @@ function postbind(templatemap: symbolset,dict:set.symbol,source :symbolset,worki
      
 type resultpb is record calls:set.word,source:symbolset,sym:symbol
 
-function postbind2(  dict:set.symbol,     code:seq.word,
+function postbind2(dict:set.symbol,code:seq.word,
  i:int, result:seq.word, thissymbol:symbol,templatemap:symbolset,calls:set.word,source:symbolset)resultpb
   if i > length.code then  
     let newsym=changesrc(thissymbol, result)
     resultpb( calls, source,newsym)
-  else if code_i in "IDXUC FREF if assertZbuiltinZwordzseq NOINLINE TESTOPT optionZbuiltinZTZwordzseq allocatespaceZbuiltinZint"then
- postbind2(  dict,    code, i + 1, result + code_i, thissymbol,templatemap,calls,source)
+ else if code_i in "IDXUC FREF if assertZbuiltinZwordzseq NOINLINE TESTOPT optionZbuiltinZTZwordzseq allocatespaceZbuiltinZint"then
+     postbind2(  dict,    code, i + 1, result + code_i, thissymbol,templatemap,calls,source)
  else if code_i = "WORDS"_1 then
- let l = toint.code_(i + 1) + 2
-   postbind2(  dict,      code, i + l, result + subseq(code, i, i + l - 1), thissymbol,templatemap,calls,source)
+     let l = toint.code_(i + 1) + 2
+     postbind2(  dict,      code, i + l, result + subseq(code, i, i + l - 1), thissymbol,templatemap,calls,source)
  else if code_i = "COMMENT"_1 then
-   postbind2(  dict,      code, i + 2 + toint.code_(i + 1), result + subseq(code, i, i + 1 + toint.code_(i + 1)), thissymbol,templatemap,calls,source)
+     postbind2(  dict,      code, i + 2 + toint.code_(i + 1), result + subseq(code, i, i + 1 + toint.code_(i + 1)), thissymbol,templatemap,calls,source)
  else if code_i in "LIT APPLY RECORD SET WORD DEFINE EXITBLOCK BLOCK BR LOCAL"then
- postbind2(  dict,   code, i + 2, result + subseq(code, i, i + 1), thissymbol,templatemap,calls,source)
+     postbind2(  dict,   code, i + 2, result + subseq(code, i, i + 1), thissymbol,templatemap,calls,source)
  else if isdefined.lookupsymbol(source,code_i)  then
      postbind2( dict,    code, i + 1, result + code_i, thissymbol,templatemap,calls+code_i,source)
-  else 
+ else 
    let down=codedown(code_i)
     if down_2 in ["builtin ","local" ] &or last.down_2="para"_1 then
           postbind2( dict,   code, i + 1, result + code_i, thissymbol,templatemap,calls,source)
@@ -426,14 +413,14 @@ function postbind2(  dict:set.symbol,     code:seq.word,
        let modpara=parameter.modname.thissymbol
        let params2=   @(+, replaceT.modpara, empty:seq.mytype, @(+, mytype, empty:seq.mytype, subseq(down, 3, length.down))) 
       let z =X(replaceT(modpara, mytype.down_2),params2,code_i,down_1_1,thissymbol,dict,source,templatemap)
-    let name=mangledname.sym.z
-            assert noT.name report "postbind2"+name+code_i+print.modname.thissymbol  
+      let name=mangledname.sym.z
+      assert noT.name report "postbind2"+name+code_i+print.modname.thissymbol  
       if place.z="C" then  
-        let ssss=lookupsymbol(source,name) 
-          let newsource=if isdefined.ssss then source else replace(source, sym.z ) 
+         let ssss=lookupsymbol(source,name) 
+         let newsource=if isdefined.ssss then source else replace(source, sym.z ) 
          postbind2( dict,    code, i + 1, result + name, thissymbol,templatemap,calls+name,newsource)
-     else 
-     postbind2( dict,   code, i + 1, result + name, thissymbol,templatemap,calls+name,source)
+      else 
+         postbind2( dict,   code, i + 1, result + name, thissymbol,templatemap,calls+name,source)
 
        
 function noT(m:word) boolean let d=codedown.m  
@@ -445,34 +432,26 @@ type resultpair is record  sym:symbol,place:seq.word
     
 function X(newmodname:mytype,params2:seq.mytype,mangledname:word,name:word,org:symbol, dict:set.symbol,   knownsymbols:symbolset,templatemap:symbolset)resultpair
    let templatename = abstracttype.newmodname
-    let newmodpara = parameter.newmodname
+   let newmodpara = parameter.newmodname
       if name = "deepcopy"_1 &and  templatename in "process"  then
               resultpair(definedeepcopy(dict, params2_1,org),"C")
-           else
-       let f=lookupsymbol(templatemap,mangledname) 
-           if isdefined.f then
-               let newsym  =  if  length.src.f > 0 &and ((src.f)_1 = "FROMSEQ51Zinternal1"_1 )  then
-              let resulttype=replaceT(newmodpara, resulttype.f)
-             let mn = mangle("_"_1, newmodname, [ mytype(towords.newmodpara + abstracttype.resulttype), mytype."int"])
-             let newsrc ="LOCAL 1 LIT 0 IDXUC FREF" + mn + "Q3DZbuiltinZintZint LIT 2 LIT 3 BR 3 LOCAL 1 EXITBLOCK 1 LIT 0 LIT 0 RECORD 2 EXITBLOCK 1 
-                       BLOCK 3"
-                symbol(name, newmodname, params2, resulttype, newsrc)  
-              else if templatename="seq"_1 &and  name =   merge."sizeoftype:T"  then
+       else  if templatename in " process"  &and  name =   merge."sizeoftype:T"  then
                  let typeastext=print.newmodpara 
-               let z = if typeastext = "int"then"1"
+               let z = if typeastext = "int"then 1
                        else
                         let xx = lookup(dict, merge("type:" + typeastext), empty:seq.mytype)
                         assert cardinality.xx = 1 ∧ (src.xx_1)_1 = "WORDS"_1 report"can not find type sizeof" + typeastext + print.org
-                        subseq(src.xx_1, 3, length.src.xx_1)
-                        symbol(name, newmodname, empty:seq.mytype, mytype."int","LIT" + z_1)
-                else 
-                     symbol(name, newmodname, params2, replaceT(newmodpara, resulttype.f), src.f) 
-                  resultpair( newsym,"C" )
-         else
+                        toint.(src.xx_1)_3 
+                    resultpair(    symbol(name, newmodname, empty:seq.mytype, mytype."int",[lit.z],""),"C")
+    else     
+    let f=lookupsymbol(templatemap,mangledname) 
+    if isdefined.f then
+                resultpair(     symbol(name, newmodname, params2, replaceT(newmodpara, resulttype.f), src.f), "C" )
+     else
             let m2= mangle(name,newmodname,params2)          
             let sym10=if not (m2=mangledname)then lookupsymbol(knownsymbols,m2) else f
               if isdefined.sym10 then   resultpair(  sym10,"B" )
-            else    
+               else    
            let k = lookup(dict, replaceTinname( newmodpara, name), params2)
           // case for examples like frombits:T(bits)T which needs to find frombits:bit(bits)bit //
           assert cardinality.k = 1 report"cannot find template for" +  mangledname +
@@ -494,7 +473,7 @@ function X(newmodname:mytype,params2:seq.mytype,mangledname:word,name:word,org:s
              if not.isdefined.sym5 then
                 let down=codedown.mangledname.k_1
                   let paras=     @(+, mytype, empty:seq.mytype, subseq(down, 3, length.down) ) 
-                 X( mytype.down_2 ,paras,mangledname.k_1,down_1_1, org, dict , knownsymbols,templatemap)
+                    X( mytype.down_2 ,paras,mangledname.k_1,down_1_1, org, dict , knownsymbols,templatemap)
              else 
                resultpair(  k_1,"D" )
            
@@ -502,7 +481,12 @@ function X(newmodname:mytype,params2:seq.mytype,mangledname:word,name:word,org:s
 Function headdict set.symbol
 let modulename = mytype."internal1"
  asset
- .[ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal",""), symbol("STATE"_1, modulename, [ mytype."internal1"], mytype."internal1",""), symbol("FROMSEQ"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("export"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("unbound"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("stub"_1, modulename, empty:seq.mytype, mytype."internal1",""), symbol("usemangle"_1, modulename, empty:seq.mytype, mytype."internal1","")]
+ .[ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal",""), 
+ symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal",""), 
+  symbol("export"_1, modulename, empty:seq.mytype, mytype."internal1",""), 
+symbol("unbound"_1, modulename, empty:seq.mytype, mytype."internal1",""), 
+symbol("stub"_1, modulename, empty:seq.mytype, mytype."internal1",""), 
+symbol("usemangle"_1, modulename, empty:seq.mytype, mytype."internal1","")]
 
 function gathersymbols(exported:seq.word, src:seq.seq.word)firstpass
  @(wrapgathersymbols(exported, headdict)
@@ -557,10 +541,10 @@ function gathersymbols(exported:seq.word, stubdict:set.symbol, f:firstpass, inpu
     let syms = @(+, definefld("STUB", modname.f, [ t]), [ constructor, sizeofsym], types.b)
     + if kind = "sequence"_1 then
       let seqtype=mytype(towords.parameter.t + "seq"_1)
-    [ symbol("toseq"_1, modname.f, [ t], seqtype,"STUB") ] else //,
+    [ symbol("toseq"_1, modname.f, [ t], seqtype,"STUB")     ,
        symbol(merge("to:"+print.t), modname.f, [ seqtype],t ,"STUB")
     ]  
-    else // empty:seq.symbol
+    else   empty:seq.symbol
      firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, exportmodule.f, rawsrc.f)
  else if input_1 in "Function function"then
  let t = parse(stubdict, getheader.input)

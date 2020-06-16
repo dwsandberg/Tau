@@ -10,6 +10,8 @@ use seq.T
 
 use stdlib
 
+use process.T
+
 Function packed(seq.T)seq.T export
 
 Function type:seq.T internaltype export

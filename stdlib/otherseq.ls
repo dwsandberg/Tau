@@ -41,14 +41,12 @@ dseq lets a sequence have a default value even beyond the length of the seq.
 
 type dseq is sequence length:int, default:T, data:seq.T
 
-function todseq(s:seq.T)dseq.T builtin.FROMSEQ
 
-/Function to2dseq(s:seq.T)dseq.T export
 
 Function_(d:dseq.T, i:int)T if i > length.data.d then default.d else(data.d)_i
 
 Function replace(a:seq.T, b:int, v:T)seq.T
- let d = todseq.a
+ let d = to:dseq.T(a)
   if length.d = 0 then replace2(a, b, v)
   else
    let s = if b > length.a then
@@ -61,7 +59,7 @@ Function dseq(d:T)seq.T toseq.dseq(1, d, [ d])
 Function dseq(d:T, s:seq.T)seq.T toseq.dseq(1, d, s)
 
 function replace2(s:seq.T, index:int, value:T)seq.T
- let p = topseq.s
+ let p = to:pseq.T(s)
   if length.p = 0 then
   @(+,_.s, @(+,_.s, empty:seq.T, arithseq(index - 1, 1, 1)) + value, arithseq(length.s - index, 1, index + 1))
   else if index > length.a.p then

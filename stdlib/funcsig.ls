@@ -7,8 +7,6 @@ use bits
 
 use libscope
 
-
-
 use seq.mytype
 
 use seq.seq.sig
@@ -33,14 +31,16 @@ use otherseq.word
 
 use seq.seq.word
 
- 
-
 
 type efsignrep is encoding fsignrep
 
 Function efsignrep  erecord.fsignrep export
 
 Function emptyprg prg prg.empty:intdict.fsignrep
+
+Function keys(p:prg) seq.int  keys.translate.p
+
+Function data(p:prg) seq.fsignrep data.translate.p
 
 Function decode(s:sig)fsignrep decode(efsignrep, toencoding.s)
 
@@ -64,7 +64,15 @@ Function module(fsignrep)seq.word export
 
 type fsignrep is record fsig:seq.word, module:seq.word,  code:seq.sig, returntype:seq.word
 
-Function nopara(s:fsignrep)int
+
+ 
+ 
+ /Function noparafsignrep(s:fsignrep)int
+ if module.s="$" then  if (fsig.s)_1="DEFINE"_1 then 1 else toint((fsig.s)_2)  else 
+ if (module.s)_1 in "$words $int $word $constant $fref " &or not(last.fsig.s = ")"_1) then 0 else
+ @(counttrue, =(","_1), 1, fsig.s)
+
+Function noparafsignrep(s:fsignrep)int
  if module.s="$" then toint((fsig.s)_2)  else 
  @(counttrue, =(","_1), if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
 
@@ -72,7 +80,7 @@ Function nopara(s:sig)int
  let t = lownopara.s
   if t < 0 then
   let a = decode.s
-    if module.a = "$"then toint.(fsig.a)_2 else nopara.a
+    if module.a = "$"then toint.(fsig.a)_2 else noparafsignrep.a
   else t
 
 function counttrue(i:int, b:boolean)int if b then i + 1 else i
@@ -91,17 +99,50 @@ Function sig(encoding.fsignrep)sig export
 
 type prg is record translate:intdict.fsignrep
 
- Function FREFsig(s:sig) sig  sig("FREF" + mangledname.decode.s, "$fref", [ s],"?")  
+Function FREFsig(s:sig) sig  sig("FREF" + mangledname.decode.s, "$fref", [ s],"?")  
+
+Function fsignrep(name:seq.word, args:seq.mytype, module1:mytype, code:seq.sig,returntype:mytype)fsignrep
+ // will not set code when sig is already present // 
+   fsignrep(tofsig(name,args),towords.module1,code,towords.returntype)
 
 
 Function sig(name:seq.word, args:seq.mytype, module1:mytype, code:seq.sig,returntype:mytype)sig
  // will not set code when sig is already present // 
- let fsig = if length.args = 0 then name
- else
-  name + "(" + @(seperator.",", towords,"", args)  + ")"
-  sig(fsig,towords.module1,code,towords.returntype)
+   sig(tofsig(name,args),towords.module1,code,towords.returntype)
   
-  Function sig(f:fsignrep) sig sig(encode(efsignrep,f))
+  function tofsig(name:seq.word, args:seq.mytype) seq.word
+   if length.args = 0 then name else  name + "(" + @(seperator.",", towords,"", args)  + ")"
+   
+Function removePH(s:seq.word) seq.word
+  if subseq(s,length.s-1,length.s)="*)"   then 
+         subseq(s,1,length.s-2)+")"
+  else if last.s="*"_1 then subseq(s,1,length.s-1)
+  else s
+
+Function addPH(s:seq.word) seq.word
+  if last.s=")"_1 then subseq(s,1,length.s-1)+"*)"
+  else s+"*"
+  
+  Function placeholder(name:seq.word,args:seq.mytype,modname:mytype ,returntype:mytype) sig
+    if modname=mytype."builtin" then 
+      sig(  tofsig(name,args),towords.modname,empty:seq.sig, towords.returntype) 
+else
+ sig( addPH.tofsig(name,args),towords.modname,[lit.1,wordssig("PLACEHOLDER"),optionOp], towords.returntype) 
+ 
+Function removeplaceholder(s:sig) sig
+ if isplaceholder.s then
+    let rep=decode.s
+    if module.rep="$fref" then
+     FREFsig.removeplaceholder.(code.rep)_1
+    else 
+    sig(removePH(fsig.rep),module.rep,empty:seq.sig,returntype.rep)
+    else s 
+
+Function sigPH(f:fsignrep) sig sig(addPH.fsig.f,module.f,[lit.1,wordssig("PLACEHOLDER"),optionOp],returntype.f)
+  
+Function sig(f:fsignrep) sig sig(encode(efsignrep,f))
+
+Function findencode(f:fsignrep) seq.fsignrep   findencode(efsignrep,f)
 
 Function sig(fsig:seq.word,modname:seq.word,code:seq.sig,rettype:seq.word) sig
  sig(encode(efsignrep,fsignrep(fsig,modname,code,rettype)))
@@ -123,7 +164,8 @@ function break(w:word, a:seq.word, j:int)seq.seq.word
 Function assignencoding(l:int, s:fsignrep)int 
 if l < length.baseupbits then 
   valueofencoding.baseupbits_(l+1)
-else l+upperbits(s)
+else 
+l+upperbits(s)
  
   
 function upperbits(f:fsignrep) int
@@ -134,14 +176,15 @@ if length.module = 2 ∧ module_2 = "para"_1
  1 + parabits.0 + toint(localbit &or  nographbit )
  else if last.module in "$words $int $word"then 1 + parabits.0 + toint(constbit &or  nographbit )
   else if module = "$constant"then 1 + parabits.0 + toint.constbit
- else if module = "$fref"then 1 + parabits.0 + toint.constbit
+ else if module = "$fref"then 1 + parabits.0 +
+ if isplaceholder.(code.f)_1 then toint.placeholderbit else toint.constbit
  else if module ="$" then
   if    name_1 in "BLOCK RECORD LOOPBLOCK APPLY CONTINUE" then
   1 + parabits.toint.name_2+ toint(nographbit  &or lookcloserbit)
  else if   name_1 in "DEFINE" then
   1 + parabits.1 + toint(nographbit &or lookcloserbit )
  else   1 + parabits.toint.name_2
- else let nopara=nopara.f 
+ else let nopara=noparafsignrep.f 
  if  nopara=2 &and last.module="seq"_1 &and  (name="_(T seq,int)" &or name=
            "_("+subseq(module,1,length.module-1)+"seq,int)")
   then
@@ -160,36 +203,31 @@ if length.module = 2 ∧ module_2 = "para"_1
          else  if   "NOINLINE"_1 in options &or (length.code.f=3 &and length.options > 0   ) then bits.0
          else  if  length.code.f < 15 &or issimple(nopara , code.f) then inlinebit
          else bits.0
- 
-      // if between(length.code.f,2,14)  &and  isempty.@(+,filterinst,empty:seq.sig,code.f) then inlinebit  
-    else  //
-    
+     
 Function lookuprep(p:prg, s:sig)fsignrep
  let a = lookup(translate.p, valueofencoding.s)
   if isempty.a then 
      decode.s else a_1
+     
+     
+Function mapplaceholder(p:prg,name:seq.word,paras:seq.mytype,modname:mytype,resulttype:mytype,code:seq.sig) prg
+// add placeholder s to prg p mapped to fsignrep that is not placeholder) //
+// could rewrite to avoid decode of placeholder //
+ if modname=mytype."builtin" then p else
+ let f=fsignrep(tofsig(name,paras), towords.modname,  code,towords.resulttype)
+ prg.add(translate.p, valueofencoding.sigPH.f, f)
+    
 
 Function add(p:prg, s:sig, code:seq.sig)prg
  let d = decode.s
-  // assert hasstate.s &or length.code > 14 &or isinline.s &or length.code=1 
-   &or isempty.@(+,filterinst,empty:seq.sig,code)
-  report "KK"+print.@(+,filterinst,empty:seq.sig,code) //
- // assert hasstate.s &or not(  not.isinline.s &and issimple(nopara.d,code)) report "KK"+print.[s] //
   let code2=if length.code.d =3 &and (code.d)_3=optionOp  then 
        if  subseq(code,length.code-1,length.code) = subseq(code.d,length.code.d-1,length.code.d) then code
        else
       code+[(code.d)_2]+optionOp  
   else code
   if code2 = code.d then p
-  else prg.add(translate.p, valueofencoding.encode(efsignrep, d), 
-  fsignrep(fsig.d, module.d,  code2,returntype.d))
-  
- / Function filterinst(s:sig) seq.sig  if lowerbits.valueofencoding.s &le startsiglength  &or isconst.s
-  &or isblock.s  &or fsig.decode.s in ["<(T, T)","not(boolean)"]then empty:seq.sig else [s]
-  
-  hasstate.s &or length.code > 14 &or isinline.s &or length.code=1 
-   not.state &and between(length.code,2,14)  &and  isempty.@(+,filterinst,empty:seq.sig,code)
-  
+  else prg.add(translate.p, valueofencoding.encode(efsignrep, d), fsignrep(fsig.d, module.d,  code2,returntype.d))
+    
 
 Function =(a:sig, b:sig)boolean valueofencoding.a = valueofencoding.b
 
@@ -217,9 +255,8 @@ Function print(p:prg, e:encodingrep.fsignrep)seq.word
  let i = valueofencoding.code.e
  let bitflags =decodebits.i
  let rep = lookuprep(p, sig.code.e)
- if module.rep="pass1" &and nopara.sig.code.e > 3 then
-  " &br"+bitflags + print.rep else // + @(+, print,"", code.rep)
-  else // ""
+ " &br"+bitflags + print.rep   + @(+, print,"", code.rep)
+   
   
 Function print(p:prg, s:sig)seq.word
  if lowerbits.s &le length.baseupbits then "" else 
@@ -234,21 +271,15 @@ Function lit(i:int)sig
  let w = toword.i
   sig([ w],  "$int", empty:seq.sig, "?")
 
-Function block(i:int)sig
- sig([ "BLOCK"_1,toword.i],  "$", empty:seq.sig,  "?")
+Function block(i:int)sig sig([ "BLOCK"_1,toword.i],  "$", empty:seq.sig,  "?")
 
+Function RECORD(i:int)sig sig([ "RECORD"_1,toword.i],    "$", empty:seq.sig, "?")
 
-Function RECORD(i:int)sig
-  sig([ "RECORD"_1,toword.i],    "$", empty:seq.sig, "?")
+Function loopblock(i:int)sig sig([ "LOOPBLOCK"_1,toword.i],   "$", empty:seq.sig,  "?")
 
-Function loopblock(i:int)sig
-  sig([ "LOOPBLOCK"_1,toword.i],   "$", empty:seq.sig,  "?")
+Function apply(i:int)sig  sig([ "APPLY"_1,toword.i],   "$", empty:seq.sig,  "?")
 
-Function apply(i:int)sig
-  sig([ "APPLY"_1,toword.i],   "$", empty:seq.sig,  "?")
-
-Function continue(i:int)sig
- sig([ "CONTINUE"_1,toword.i],    "$", empty:seq.sig,  "?")
+Function continue(i:int)sig  sig([ "CONTINUE"_1,toword.i],    "$", empty:seq.sig,  "?")
 
 
 Function define(w:word)sig
@@ -259,16 +290,29 @@ Function constant(args:seq.sig) sig
     let txt = @(+, toword,"", @(+, lowerbits, empty:seq.int, args))
      sig("CONSTANT" + txt, "$constant", args, "?")
      
-Function wordsig(w:word) sig
-sig([ w], "$word", empty:seq.sig, "word")
+Function wordsig(w:word) sig sig([ w], "$word", empty:seq.sig, "word")
 
-Function wordssig(w:seq.word) sig
-   sig(w,"$words", empty:seq.sig, "word seq")
+Function wordssig(w:seq.word) sig sig(w,"$words", empty:seq.sig, "word seq")
  
+
+Function wordssig2(w:seq.word) sig 
+let f=fsignrep(w,"$words", empty:seq.sig, "word seq")
+let s=sig.f
+assert lownopara.s=0 report "PROB wordssig" 
++toword.lownopara.ecvt(upperbits2(f))
+s
+ 
+
+function upperbits2(f:fsignrep) int
+let module=module.f
+13 + parabits.0
+
++ toint(constbit &or  nographbit )
+ 
+  
 Function local(i:int) sig   sig([ toword.i], "local", empty:seq.sig,"?")
 
 Function print(s:sig)seq.word print.decode.s
-
 
 function firstupperbit int 19
 
@@ -361,7 +405,7 @@ Function gtOp sig   baseupbits_(lastlocal+18)
 
 
 
-function ecvt(i:int)sig  sig.to:encoding.fsignrep(i)
+Function ecvt(i:int)sig  sig.to:encoding.fsignrep(i)
 
 function ecvt(i:bits)sig sig.to:encoding.fsignrep(toint.i)
 
@@ -387,7 +431,8 @@ use processOptions
  + (if( localbit ∧ bits.i) = bits.0 then""else"∨ localbit")
  + (if( nographbit ∧ bits.i) = bits.0 then""else"∨ nographbit")
  + (if( statebit ∧ bits.i) = bits.0 then""else"∨ statebit")
- + if(lookcloserbit ∧ bits.i) = bits.0 then""else"∨ lookcloserbit" }
+ + (if(lookcloserbit ∧ bits.i) = bits.0 then""else"∨ lookcloserbit" )
+ + if(placeholderbit ∧ bits.i) = bits.0 then""else"∨ placeholderbit" }
  +")"
 
  Function baseupbits seq.sig 
@@ -440,7 +485,7 @@ use processOptions
 ]
 
 
-Function issimple(s:fsignrep)boolean issimple(nopara.s, code.s)
+Function issimple(s:fsignrep)boolean issimple(noparafsignrep.s, code.s)
 
 function issimple(nopara:int, code:seq.sig)boolean
     between(length.code, 1, 15) ∧ between(nopara, 0, lastlocal)
@@ -472,8 +517,8 @@ Function lowerbits(s:int)int s - toint(bits.s >> firstupperbit << firstupperbit)
 
 function lowerbits2(s:sig) sig ecvt.lowerbits.s
 
-Function placeholder(name:seq.word,args:seq.mytype,modname:mytype ,returntype:mytype) sig
- sig(name+"("+@(seperator.",",towords,"",args)+")*",towords.modname,[lit.1,wordssig("PLACEHOLDER"),optionOp], towords.returntype) 
+
+
 
 module processOptions
 
@@ -504,11 +549,9 @@ function processOption(t:seq.word) seq.word
   +printastype.ret
    
 function printastype(s:seq.word) seq.word
-  if length.s=1 then s
-  else [last.s,"."_1]+printastype.subseq(s,1,length.s-1)
+  if length.s=1 then s else [last.s,"."_1]+printastype.subseq(s,1,length.s-1)
 
-function gettypelist(s:seq.word) seq.seq.word
-      gettype(s,1,"",empty:seq.seq.word)
+function gettypelist(s:seq.word) seq.seq.word  gettype(s,1,"",empty:seq.seq.word)
 
 function  gettype( s:seq.word,i:int,result:seq.word,l:seq.seq.word) seq.seq.word
 if i > length.s then  l+result
@@ -564,7 +607,8 @@ sig("1","local", empty:seq.sig,"?")
 , sig("makereal(word seq)", "UTF8", empty:seq.sig,"real")
 , sig("in(int, int seq)","int seq", empty:seq.sig,"boolean")
 , sig("in(word, word seq)","word seq", empty:seq.sig,"boolean")
-]
+] 
+let w=wordssig2("this is a test")
 let discard2=@(+,processOption,"",allsrc) 
 // assert false report discard2 //
 // assert false report @(seperator."&br",decodebits,"",b) //

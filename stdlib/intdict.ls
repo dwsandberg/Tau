@@ -16,6 +16,9 @@ type intdict is record keys:seq.int, data:seq.T
 
 Function data(intdict.T)seq.T export
 
+Function keys(intdict.T)seq.int export 
+
+
 Function empty:intdict.T intdict.T intdict(empty:seq.int, empty:seq.T)
 
 Function add(dict:intdict.T, w:int, d:T)intdict.T

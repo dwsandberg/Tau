@@ -20,5 +20,4 @@ Function process(T)process.T builtin.usemangle
 
 Function deepcopy(a:T)T deepcopy.a
 
-
-______________
+Function sizeoftype:T int builtin."INTERNAL"

@@ -116,6 +116,8 @@ use dataio
 
 use stdlib
 
+use process.T
+
 type ioseq is sequence length:int, data:seq.int, offset:int, k:seq.T
 
 Function data(s:ioseq.T)seq.int export

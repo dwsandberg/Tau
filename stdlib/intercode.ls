@@ -72,7 +72,7 @@ Function returntype(s:fsignrep)seq.word export
 
 Function cleancode(a:fsignrep) seq.sig code.a 
 
-Function nopara(fsignrep) int export
+Function noparafsignrep(fsignrep) int export
 
 Function fsig(fsignrep) seq.word export
 
@@ -132,7 +132,7 @@ if  module="local" then "LOCAL"+fsig
    else if module="$words" then "WORDS"+toword.length.fsig+fsig
    else if module="$word" then "WORD"+fsig
    else if module in ["$"," $constant","$fref"] then fsig
-   else [mangledname.f,toword.nopara.f]
+   else [mangledname.f,toword.noparafsignrep.f]
 
 
 Function print(a:intercode)seq.seq.word @(+, ithfunc.a,empty:seq.seq.word, defines.a)

@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau
 
 Module parse
 
@@ -43,7 +42,7 @@ use set.word
 
 Function deepcopymangle(type:mytype)word 
 mangle("deepcopy"_1, mytype(towords.type + "process"), [ type])
- 
+
 
 Function type:bindinfo internaltype export
 
@@ -129,7 +128,7 @@ function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo, i
    assert(types.term3)_1 = resulttype.sym1 report errormessage("term3 not same as init" + print.(types.term3)_1 + print.resulttype.sym1, input, place)
    let pseqtype = mytype(towords.parameter.(types.term4)_1 + "pseq"_1)
     let idx=  mangle("_"_1, mytype(towords.parameter.(types.term4)_1 + "seq"_1), [ pseqtype , mytype."int"])
-    let x = lookupbysig(dict,"_"_1, [ pseqtype, mytype."int"], input, place)
+   let x = lookupbysig(dict,"_"_1, [ pseqtype, mytype."int"], input, place)
     bindinfo(dict, subseq(code.term1, 2, length.code.term1) + subseq(code.term2, 2, length.code.term2) + code.term3
     + code.term4
     + "FREF"

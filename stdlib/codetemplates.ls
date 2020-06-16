@@ -211,7 +211,7 @@ function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq
  else  
     let xx=coding_i
      let b =  if     module.xx ="builtin"  then
-         findencode(ematch5, match5([mangledname.xx,toword.nopara.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
+         findencode(ematch5, match5([mangledname.xx,toword.noparafsignrep.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
        else empty:seq.match5
     if length.b > 0 then 
        buildtemplates(s+b_1,coding,used,i+1)
@@ -233,7 +233,7 @@ function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq
       else if pkg="$word"then
          match5("WORD"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
       else
-        let noargs = nopara.xx
+        let noargs = noparafsignrep.xx
         let name=mangledname.xx
         let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ name], noargs + 1)
         match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,cleancode.xx)

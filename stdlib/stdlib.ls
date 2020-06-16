@@ -8,12 +8,13 @@ parse pass1new  persistant  prims process real   seq set stack stacktrace symbol
  timestamp maindict words   newpretty  codegennew pass2new intdict funcsig
 parsersupport  uses 
  exports stdlib main2 maindict UTF8  
- UTF8 bits blockseq   encoding fileio format  
-  ipair   main2     process real   seq set stack stacktrace 
- stdlib  textio  prims   maindict  otherseq tree graph packedseq unsafe words 
- internalbc newpretty llvm
- libscope worddict groupparagraphs 
- timestamp ioseq dataio intdict funcsig     libdesc
+  bits blockseq   encoding fileio format  
+  ipair       process real   seq set stack stacktrace 
+  textio  prims      otherseq tree graph packedseq unsafe words 
+  newpretty 
+  worddict groupparagraphs 
+ timestamp ioseq dataio intdict 
+ funcsig     libdesc libscope internalbc llvm
  codegennew processOptions intercode parsersupport mangle
  
  
@@ -34,11 +35,7 @@ parsersupport  uses
 
   *  PROFILE main2:subcompilelib(word) seq.word 
 
-  PROFILE pass2new:simplemods( symbolset, getrootsresult,  firstpass) getrootsresult 
- 
-  PROFILE pass2new: bbb(symbolset,  seq.word,  int,  seq.word,  prg,  seq.sig) bbbresult2
-
- *  PROFILE pass2new:pass2new(symbolset,seq.firstpass,symbolset)intercode 
+  *  PROFILE pass2new:pass2new(symbolset,seq.firstpass,symbolset, seq.symbol)intercode 
  
   PROFILE codegennew :codegen( intercode,  word) seq.bits
 

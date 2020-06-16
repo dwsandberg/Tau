@@ -11,11 +11,7 @@ use stdlib
 type seq is sequence length:int, x:T
 
 
-Function sizeoftype:T int builtin."INTERNAL"
-
-
-/Function deepcopy(a:T)T deepcopy.a
-
+/Function sizeoftype:T int builtin."INTERNAL"
 
 Function type:seq.T internaltype export
 
@@ -82,22 +78,16 @@ Function b(pseq.T)seq.T export
 Function_(s:pseq.T, i:int)T
  let len = length.a.s
   if i > len then
-  let x = topseq.b.s
+  let x = to:pseq.T(b.s)
     if length.x = 0 then(b.s)_(i - len)else x_(i - len)
   else
-   let x = topseq.a.s
+   let x = to:pseq.T(a.s)
     if length.x = 0 then(a.s)_i else x_i
 
-Function ispseq(s:seq.T)boolean not(length.topseq.s = 0)
+Function ispseq(s:seq.T)boolean not(length.to:pseq.T(s) = 0)
 
-Function topseq(s:seq.T)pseq.T  builtin.FROMSEQ
-
-to:pseq.T(s)
-
+Function to:pseq.T(s:seq.T)pseq.T export
  
-
-/Function to:pseq.T(s:seq.T)pseq.T export
-
 Function +(a:seq.T, b:seq.T)seq.T
  let la = length.a
   if la = 0 then b
@@ -108,9 +98,9 @@ Function +(a:seq.T, b:seq.T)seq.T
      let totallength = la + lb
       if totallength = 2 then [ a_1, b_1]
       else
-       let ta = topseq.a
+       let ta = to:pseq.T(a)
         if length.ta = 0 then
-        let tb = topseq.b
+        let tb = to:pseq.T(b)
           if length.tb = 0 then toseq.pseq(totallength, a, b)else cat3(totallength, a, a.tb, b.tb)
         else cat3(totallength, a.ta, b.ta, b)
 
@@ -141,7 +131,7 @@ Function subseq(s:seq.T, start:int, end:int)seq.T
  else if end > length.s then subseq(s, start, length.s)
  else if start = 1 ∧ length.s = end then s
  else
-  let x = topseq.s
+  let x = to:pseq.T(s)
    if length.x = 0 then
    @(+,_.s, empty:seq.T, arithseq(end - start + 1, 1, start))
    else subseq(x, start, end)

@@ -6,6 +6,8 @@ use unsafe.T
 
 use stdlib
 
+use process.T
+
 x is included in packedseq so the procedure to access the type with be different between instances of the scope.
 
 Function type:packedseq.T internaltype export
