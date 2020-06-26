@@ -18,6 +18,10 @@ Note:Must access result of process with function result rather than using field 
 
 Function process(T)process.T builtin.usemangle
 
+* Both deepcopy and sizoftype:T are treated specially by compiler 
+
 Function deepcopy(a:T)T deepcopy.a
 
-Function sizeoftype:T int builtin."INTERNAL"
+Function sizeoftype:T int 1
+
+

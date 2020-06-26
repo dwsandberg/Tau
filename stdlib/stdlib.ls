@@ -22,11 +22,13 @@ parsersupport  uses
  
  
  
- * PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,symbolset,set.firstpass ) linkage
+ * PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage
+ 
  
   PROFILE     pass1: bind(symbolset,set.firstpass,symbolset,firstpass)symbolset 
  
  * PROFILE  pass1:postbind( symbolset, set.symbol, symbolset, set.word, seq.word, int,seq.symbol) symbolset 
+ 
  
   * PROFILE  pass1:postbind2(   set.symbol,     seq.word,
   int,  seq.word,  symbol, symbolset, set.word, symbolset)resultpb
@@ -35,7 +37,9 @@ parsersupport  uses
 
   *  PROFILE main2:subcompilelib(word) seq.word 
 
-  *  PROFILE pass2new:pass2new(symbolset,seq.firstpass,symbolset, seq.symbol)intercode 
+  *  PROFILE   pass2new:pass2(   seq.expmod, seq.expmod,  prg, seq.sig) intercode
+
+
  
   PROFILE codegennew :codegen( intercode,  word) seq.bits
 

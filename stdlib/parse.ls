@@ -158,15 +158,9 @@ function lookupbysig(dict:set.symbol, name:word, paratypes:seq.mytype, input:seq
 /function backoffcomment(s:seq.token.bindinfo, match:word, i:int)seq.token.bindinfo if(text(s_i))_1 = match then subseq(s, 1, i - 1)else backoffcomment(s, match, i - 1)
 
 function createfunc(R:reduction.bindinfo, input:seq.token.bindinfo, funcname:seq.word, paralist:seq.mytype, functypebind:bindinfo, exp:bindinfo)bindinfo
- let dict = dict.R
  let functype = mytype.gettype.functypebind
   assert functype = (types.exp)_1 ∨ (types.exp)_1 in [ mytype."internal", mytype."internal1"]report errormessage("function type of" + print.functype + "does not match expression type" + print.(types.exp)_1, input, place.R)
-  let i = toint.(code.functypebind)_1
-  let header = // if(text(input_i))_1 in '"' then subseq(input, 1, i - 2)else //
-  subseq(input, 1, i - 1)
-  let textheader = @(+, text,"", header)
-  let newcode ="parsedfunc" + toword.length.textheader + textheader + code.exp
-   bindinfo(dict, newcode, [ mytype.funcname, functype] + paralist)
+  bindinfo(dict.R, code.exp, [ mytype.funcname, functype] + paralist)
 
 function isdefined(R:reduction.bindinfo, input:seq.token.bindinfo, typ:seq.word)bindinfo
  let dict = dict.R

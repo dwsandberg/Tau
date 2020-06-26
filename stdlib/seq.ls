@@ -11,8 +11,6 @@ use stdlib
 type seq is sequence length:int, x:T
 
 
-/Function sizeoftype:T int builtin."INTERNAL"
-
 Function type:seq.T internaltype export
 
 type pseq is sequence length:int, a:seq.T, b:seq.T

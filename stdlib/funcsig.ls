@@ -36,11 +36,11 @@ type efsignrep is encoding fsignrep
 
 Function efsignrep  erecord.fsignrep export
 
-Function emptyprg prg prg.empty:intdict.fsignrep
+Function emptyprg prg prg.empty:intdict.target
 
 Function keys(p:prg) seq.int  keys.translate.p
 
-Function data(p:prg) seq.fsignrep data.translate.p
+Function data(p:prg) seq.target data.translate.p
 
 Function decode(s:sig)fsignrep decode(efsignrep, toencoding.s)
 
@@ -64,13 +64,8 @@ Function module(fsignrep)seq.word export
 
 type fsignrep is record fsig:seq.word, module:seq.word,  code:seq.sig, returntype:seq.word
 
-
+Function fsignrep(fsig:seq.word, module:seq.word,  code:seq.sig, returntype:seq.word) fsignrep export
  
- 
- /Function noparafsignrep(s:fsignrep)int
- if module.s="$" then  if (fsig.s)_1="DEFINE"_1 then 1 else toint((fsig.s)_2)  else 
- if (module.s)_1 in "$words $int $word $constant $fref " &or not(last.fsig.s = ")"_1) then 0 else
- @(counttrue, =(","_1), 1, fsig.s)
 
 Function noparafsignrep(s:fsignrep)int
  if module.s="$" then toint((fsig.s)_2)  else 
@@ -97,9 +92,25 @@ Function toencoding(sig)encoding.fsignrep export
 
 Function sig(encoding.fsignrep)sig export
 
-type prg is record translate:intdict.fsignrep
+type prg is record translate:intdict.target
 
-Function FREFsig(s:sig) sig  sig("FREF" + mangledname.decode.s, "$fref", [ s],"?")  
+type target is record target:sig,code:seq.sig
+
+Function target(target) sig export
+
+Function code(target) seq.sig export
+
+Function target(sig,seq.sig) target export
+
+Function type:target internaltype export
+
+use intdict.target
+
+Function FREFsig(s:sig) sig  
+if isplaceholder.s then
+sig("FREF*" + mangledname.decode.s, "$fref", [ s],"?")  
+else 
+sig("FREF" + mangledname.decode.s, "$fref", [ s],"?")  
 
 Function fsignrep(name:seq.word, args:seq.mytype, module1:mytype, code:seq.sig,returntype:mytype)fsignrep
  // will not set code when sig is already present // 
@@ -148,12 +159,22 @@ Function sig(fsig:seq.word,modname:seq.word,code:seq.sig,rettype:seq.word) sig
  sig(encode(efsignrep,fsignrep(fsig,modname,code,rettype)))
 
 
-Function name(a:fsignrep)seq.word subseq(fsig.a, 1, findindex("("_1, fsig.a) - 1)
+Function name(a:fsignrep)seq.word 
+let j=findindex("("_1, fsig.a)  
+if j > length.fsig.a then
+ if length.fsig.a > 1 &and last.fsig.a="*"_1 then 
+ subseq(fsig.a,1,length.fsig.a-1) else fsig.a
+ else
+subseq(fsig.a, 1, j - 1)
 
 Function mangledname(a:fsignrep)word 
- let b = break(","_1, subseq(fsig.a, 1, length.fsig.a - 1), findindex("("_1, fsig.a) + 1)
-let parameters= @(+, mytype, empty:seq.mytype, b)
-mangle(merge.name.a, mytype.module.a, parameters)
+mangle(merge.name.a, mytype.module.a, paratypes.a)
+
+Function paratypes(f:fsignrep) seq.mytype
+let a=removePH(fsig.f)
+ let b = break(","_1, subseq(a, 1, length.a - 1), findindex("("_1, a) + 1 )
+ @(+, mytype, empty:seq.mytype, b)
+
 
 function break(w:word, a:seq.word, j:int)seq.seq.word
  let i = findindex(w, a, j)
@@ -205,28 +226,34 @@ if length.module = 2 ∧ module_2 = "para"_1
          else bits.0
      
 Function lookuprep(p:prg, s:sig)fsignrep
+ let f=decode.s
  let a = lookup(translate.p, valueofencoding.s)
   if isempty.a then 
-     decode.s else a_1
-     
-     
-Function mapplaceholder(p:prg,name:seq.word,paras:seq.mytype,modname:mytype,resulttype:mytype,code:seq.sig) prg
-// add placeholder s to prg p mapped to fsignrep that is not placeholder) //
-// could rewrite to avoid decode of placeholder //
- if modname=mytype."builtin" then p else
- let f=fsignrep(tofsig(name,paras), towords.modname,  code,towords.resulttype)
- prg.add(translate.p, valueofencoding.sigPH.f, f)
-    
+     f else  fsignrep(fsig.f,module.f,code.a_1,returntype.f) 
+
+Function lookupcode (p:prg, s:sig) seq.target
+  lookup(translate.p, valueofencoding.s)
+ 
+ Function map(p:prg,s:sig,code:seq.sig) prg
+   prg(add(translate.p,valueofencoding.s,target(s,code)))
+   
+ Function map(p:prg,s:sig,t:sig,code:seq.sig) prg
+   prg(add(translate.p,valueofencoding.s,target(t,code)))
+
+
+     use seq.target    
 
 Function add(p:prg, s:sig, code:seq.sig)prg
  let d = decode.s
-  let code2=if length.code.d =3 &and (code.d)_3=optionOp  then 
+  let code2=
+     if length.code.d =3 &and (code.d)_3=optionOp  then 
        if  subseq(code,length.code-1,length.code) = subseq(code.d,length.code.d-1,length.code.d) then code
        else
+        if isplaceholder.s then code else 
       code+[(code.d)_2]+optionOp  
   else code
-  if code2 = code.d then p
-  else prg.add(translate.p, valueofencoding.encode(efsignrep, d), fsignrep(fsig.d, module.d,  code2,returntype.d))
+  // if code2 = code.d then p
+  else // prg.add(translate.p, valueofencoding.s, target(s, code2 ))
     
 
 Function =(a:sig, b:sig)boolean valueofencoding.a = valueofencoding.b
@@ -236,7 +263,9 @@ Function print(s:seq.sig)seq.word @(+, print,"", s)
 
 function map(p:prg,d:encodingrep.fsignrep) fsignrep    
 let a=lookup(translate.p,valueofencoding.code.d )
-if isempty.a then data.d else a_1
+if isempty.a then data.d else
+fsignrep(fsig.data.d,module.data.d,code.a_1,returntype.data.d)
+
 
 Function getfsignrep(p:prg)  seq.fsignrep @(+,map.p, empty:seq.fsignrep,all.getinstance.efsignrep)
 
@@ -247,6 +276,8 @@ Function print(s:fsignrep)seq.word
  let t = module.s
   if t = "local"then [ merge("%" + fsig.s)]
   else if t = "$words"then '"' + fsig.s + '"'
+  else if t = "$constant" then   let tmp="CONSTANT{"+ print.code.s +"}" 
+     if tmp="CONSTANT{ 0 0 } " then "emptyseq"  else tmp
   else if last.t in "$int $ "then
   if(fsig.s)_1 in "EXITBLOCK LOOPBLOCK CONTINUE BR"then fsig.s + " &br"else fsig.s
   else fsig.s + "[" + t + "]"
@@ -517,6 +548,8 @@ Function lowerbits(s:int)int s - toint(bits.s >> firstupperbit << firstupperbit)
 
 function lowerbits2(s:sig) sig ecvt.lowerbits.s
 
+Function isinOp(s:sig) boolean
+   lookcloser.s &and (fsig.decode.s)_1 in "in ="
 
 
 
@@ -616,7 +649,5 @@ let discard2=@(+,processOption,"",allsrc)
 assert length.b=length.baseupbits report "basesig problem"
  0 
 
-Function isinOp(s:sig) boolean
-   lookcloser.s &and (fsig.decode.s)_1 in "in ="
  
  

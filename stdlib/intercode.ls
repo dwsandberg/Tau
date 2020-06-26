@@ -88,7 +88,7 @@ _______________
 
 
 
-use seq.firstpass
+/use seq.firstpass
 
 use seq.mytype
 
@@ -131,7 +131,8 @@ if  module="local" then "LOCAL"+fsig
    else if  module="$int"  then "LIT"+fsig
    else if module="$words" then "WORDS"+toword.length.fsig+fsig
    else if module="$word" then "WORD"+fsig
-   else if module in ["$"," $constant","$fref"] then fsig
+   else if module in ["$"," $constant"] then fsig
+   else if module in ["$fref"] then "FREF"+fsig_2
    else [mangledname.f,toword.noparafsignrep.f]
 
 

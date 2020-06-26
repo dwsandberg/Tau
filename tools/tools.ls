@@ -66,7 +66,7 @@ Function testhtmlcode seq.word htmlcode."testall"
 
 /Function prettytest seq.word prettylib("test4","")
 
-Function checkdoclib seq.word doclibrary."tools"
+Function checkdoclib seq.word doclibrary."stdlibbak"
 
 Function testfirstpass seq.word @(+, +("&br &br "),"", firstPass("testall"_1))
 

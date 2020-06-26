@@ -5,7 +5,7 @@ Module libdesc
 use stdlib
 
 
-use seq.firstpass
+/use seq.firstpass
 
 use seq.fsignrep
 
@@ -82,7 +82,7 @@ function astext(p:prg,s:sig)seq.word
  let rep= lookuprep(p,s)
  let f = towords2x.rep
   if f_1 = "CONSTANT"_1 then   astext5(p,cleancode.rep)+"RECORD"+toword.length.cleancode.rep
-   else if f_1 in "SET WORD WORDS LOCAL LIT  RECORD FREF EXITBLOCK BR BLOCK DEFINE"then f else [ f_1]
+   else if f_1 in "SET WORD WORDS LOCAL LIT APPLY RECORD FREF EXITBLOCK BR BLOCK DEFINE"then f else [ f_1]
 
 function astext5(p:prg, d:seq.sig)seq.word @(+, astext(p),"", d)
 
@@ -92,13 +92,9 @@ function tolibsym(p:prg,psig:sig ) seq.libsym
    let s= if isplaceholder.psig then removeplaceholder.psig else psig
    let rep=lookuprep(p,s)
    if module.rep in ["$","$constant","$int","local","$word","$words","$fref"] 
-   &or fsig.rep="xgetinstance(T erecord)" &or s=IDXUC then empty:seq.libsym else
-  // assert not("T"_1 in fsig.rep) &and( (fsig.rep)_1 in "EQ OPAQUE" &or
-    not(  char1.":" in  decodeword.(fsig.rep)_1))
-    report print.[s] //
- let t=astext5(p,if isabstract.mytype.module.rep then code.rep else exportcode.rep) 
- // assert length.t =0 &or not(t_1="EXITBLOCK"_1) report "KLP"+t //
- let t2= if length.t > 0 &and t_1="EXITBLOCK"_1 then subseq(t,5,length.t)
+    &or s=IDXUC then empty:seq.libsym else
+ let t=astext5(p,if isabstract.mytype.module.rep then code.rep else exportcode(p,s) )
+  let t2= if length.t > 0 &and t_1="EXITBLOCK"_1 then subseq(t,5,length.t)
   else t
             [ libsym(mytype.returntype.rep,mangledname.rep,t2)]
 
