@@ -67,11 +67,11 @@ function   toexport(p:prg,processed:set.sig, toprocess:set.sig) set.sig
       toexport(p,processed &cup toprocess, q-processed)
 
  Function exportcode(f:fsignrep) seq.sig
-           if length.code.f  < 15 then 
+           if length.cleancode.f  < 15 then 
              if fsig.f="wordencoding" &and module.f="words"  then 
                 empty:seq.sig
              else 
-             code.f else empty:seq.sig
+             cleancode.f else empty:seq.sig
            
     Function exportcode(p:prg,s:sig) seq.sig
        exportcode.lookuprep(p,s)
@@ -86,14 +86,13 @@ function astext(p:prg,s:sig)seq.word
 
 function astext5(p:prg, d:seq.sig)seq.word @(+, astext(p),"", d)
 
-/use seq.char
 
 function tolibsym(p:prg,psig:sig ) seq.libsym
-   let s= if isplaceholder.psig then removeplaceholder.psig else psig
+   let s=  removePH.psig  
    let rep=lookuprep(p,s)
    if module.rep in ["$","$constant","$int","local","$word","$words","$fref"] 
     &or s=IDXUC then empty:seq.libsym else
- let t=astext5(p,if isabstract.mytype.module.rep then code.rep else exportcode(p,s) )
+ let t=astext5(p,if isabstract.mytype.module.rep then cleancode.rep else exportcode(p,s) )
   let t2= if length.t > 0 &and t_1="EXITBLOCK"_1 then subseq(t,5,length.t)
   else t
             [ libsym(mytype.returntype.rep,mangledname.rep,t2)]

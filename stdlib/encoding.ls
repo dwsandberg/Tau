@@ -29,7 +29,6 @@ Function encodetable(encodingstate.T)seq.seq.encodingrep.T export
 
 Function all(encodingstate.T)seq.encodingrep.T export
 
-
 Function length(e:encodingstate.T)int export
 
 Function_(e:encodingstate.T, i:int)T data.(all.e)_i
@@ -171,8 +170,6 @@ function ele5(v:T, a:encodingrep.T)seq.encodingrep.T if v = data.a then [ a]else
 Function findencode(erec:erecord.T, t:T)seq.T
  let r = lookuprep(t, getinstance.erec)
   if isempty.r then empty:seq.T else [ data.r_1]
-
-
 
 Function analyze(t:encodingstate.T)seq.word
  "numele =" + toword.length.all.t + "encodecounts" + counts(encodetable.t, 1, 0, 0, 0)

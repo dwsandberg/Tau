@@ -218,7 +218,8 @@ function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq
     else 
       let pkg=module.xx
      let m =  if pkg = "$fref" then
-       match5(fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.(fsig.xx)_2, C.(fsig.xx)_2]))
+              let mn=  mangledname.coding_lowerbits.(constantcode.xx)_1
+       match5(fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.mn, C.mn]))
       else if pkg = "$int" then
        match5("LIT"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.(fsig.xx)_1)
       else if pkg="local" then
@@ -226,7 +227,7 @@ function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq
       else if pkg="$" then
        match5(fsig.xx, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
       else if pkg= "$constant" then
-        let args=@(+,getarg.s, empty:seq.int,cleancode.xx)
+        let args=@(+,getarg.s, empty:seq.int,constantcode.xx)
         match5(fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
       else if pkg="$words"then
         match5("WORDS"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2.fsig.xx)

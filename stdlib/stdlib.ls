@@ -27,10 +27,10 @@ parsersupport  uses
  
   PROFILE     pass1: bind(symbolset,set.firstpass,symbolset,firstpass)symbolset 
  
- * PROFILE  pass1:postbind( symbolset, set.symbol, symbolset, set.word, seq.word, int,seq.symbol) symbolset 
+  PROFILE  pass1:postbind( symbolset, set.symbol, symbolset, set.word, seq.word, int,seq.symbol) symbolset 
  
  
-  * PROFILE  pass1:postbind2(   set.symbol,     seq.word,
+   PROFILE  pass1:postbind2(   set.symbol,     seq.word,
   int,  seq.word,  symbol, symbolset, set.word, symbolset)resultpb
 
   *  PROFILE  main2:compilelib2(word) seq.word  

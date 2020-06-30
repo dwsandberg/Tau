@@ -52,9 +52,28 @@ Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering
 
 Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a, b, 1)
 
-type symbol is record mangledname:word, resulttype:mytype, paratypes:seq.mytype, name:word, modname:mytype,
- src:seq.word, code:seq.sig,template:word
+type symbol is record rep:fsignrep    
  
+Function symbol(name:word,modname:mytype, paratypes:seq.mytype,  resulttype:mytype) symbol
+  let rep= fsignrep2 ([name ] , paratypes , modname  ,resulttype )
+  let sym=symbol(rep)
+  assert resulttype=mytype.returntype.rep report  "GGG"+print.sym+print.rep +"&br"+ 
+ print.resulttype+"&br"+print.mytype.returntype.rep+stacktrace  
+ sym
+    
+Function toplaceholder( s:symbol) sig  sigPH.rep.s
+
+Function  placeholder2(name:seq.word,paratypes:seq.mytype,modname:mytype,resulttype:mytype) sig
+sigPH.fsignrep2( name   , paratypes , modname  ,resulttype )
+
+
+Function  fsignrep2(name:seq.word,paratypes:seq.mytype,modname:mytype,resulttype:mytype) fsignrep
+let b= (length.towords.modname > 1)  &and  not((towords.modname)_1="T"_1) &and not(abstracttype.modname="para"_1) 
+assert not.b &or not(abstracttype.modname="para"_1) report "?"+name+print.modname+if b then "T" else "F"
+fsignrep( name , if b then @(+,replaceT(parameter.modname),empty:seq.mytype,paratypes) else paratypes ,modname,   
+if b then    replaceT(parameter.modname,resulttype) else resulttype)
+
+
 
 use funcsig
 
@@ -63,44 +82,29 @@ use seq.sig
 Function type:symbol internaltype export
 
 
-Function =(a:symbol, b:symbol)boolean mangledname.a = mangledname.b
+Function =(a:symbol, b:symbol)boolean name.a = name.b ∧ paratypes.rep.a = paratypes.rep.b ∧ modname.a = modname.b
 
-Function src(symbol)seq.word export
 
-Function name(symbol)word export
+Function name(s:symbol)word  (name.rep.s)_1
 
-Function mangledname(symbol)word export
+Function mangledname(s:symbol)word mangledname.(rep.s)
 
-Function paratypes(symbol)seq.mytype export
+Function paratypes(s:symbol)seq.mytype paratypes.rep.s
 
-Function modname(symbol)mytype export
+Function modname(s:symbol)mytype mytype.module.rep.s
 
-Function resulttype(symbol)mytype export
+Function resulttype(s:symbol)mytype mytype.returntype.rep.s
 
-Function code(symbol)seq.sig export
-
-Function nopara(s:symbol)int length.paratypes.s
-
-Function symbol(name:word, modname:mytype, paratypes:seq.mytype, resulttype:mytype, src:seq.word)symbol
-   symbol(mangle (name, modname, paratypes), resulttype, paratypes, name, modname, src,  empty:seq.sig,"none"_1)
-
-  Function symbol(name:word, modname:mytype, paratypes:seq.mytype, resulttype:mytype, code:seq.sig,src:seq.word)symbol
-   symbol(mangle (name, modname, paratypes), resulttype, paratypes, name, modname,src,   code,"none"_1 )
-
-Function template(symbol) word export
-
-Function isundefined(s:symbol)boolean mangledname.s = "undefinedsym"_1
-
-Function isdefined(s:symbol)boolean mangledname.s ≠ "undefinedsym"_1
+Function nopara(s:symbol)int noparafsignrep.rep.s
 
 Function ?(a:symbol, b:symbol)ordering
- name.a ? name.b ∧ paratypes.a ? paratypes.b ∧ modname.a ? modname.b
+ name.a ? name.b ∧ paratypes.rep.a ? paratypes.rep.b ∧ modname.a ? modname.b
 
-Function ?2(a:symbol, b:symbol)ordering name.a ? name.b ∧ paratypes.a ? paratypes.b
+Function ?2(a:symbol, b:symbol)ordering name.a ? name.b ∧ paratypes.rep.a ? paratypes.rep.b
 
 
 Function lookup(dict:set.symbol, name:word, types:seq.mytype)set.symbol
- findelement2(dict, symbol(name, mytype."?", types, mytype."?",""))
+ findelement2(dict, symbol(name, mytype."?", types, mytype."?" ))
 
 Function printdict(s:set.symbol)seq.word @(+, print,"", toseq.s)
 
@@ -118,21 +122,41 @@ Function replaceTinname(with:mytype, name:word)word
   encodeword(subseq(x, 1, length.x - 1) + @(+, decodeword, empty:seq.char, print.with))
   else name
 
-Function replaceTsymbol(with:mytype, s:symbol)symbol
+
+type mapele is record   s:symbol, pair:seq.sig  
+
+Function type:mapele internaltype export
+
+Function s(mapele) symbol export
+
+Function pair(mapele) seq.sig export
+
+
+
+Function replaceTsymbol2(with:mytype, s:symbol) mapele
  let newmodname = replaceT(with, modname.s)
+// assert (length.towords.newmodname > 1) &and not((towords.newmodname)_1="T"_1)  report "HERE&*" //
+// let b= (length.towords.modname > 1)  &and   not((towords.modname)_1="T"_1) //
  let newparas = @(+, replaceT.with, empty:seq.mytype, paratypes.s)
  let n = replaceTinname(with, name.s)
-    symbol(mangle (n, newmodname, newparas), replaceT(with, resulttype.s),  newparas , n, newmodname, src.s,  code.s,mangledname.s)
-  
-Function print2(s:symbol)seq.word
- print.s + "mn:" + mangledname.s + "src" + src.s
+  let x=  symbol(n,newmodname, newparas ,replaceT(with, resulttype.s) )
+  mapele(x,[toplaceholder.x,toplaceholder.s ])
 
-function print3(s:symbol)seq.word if isdefined.s then" &br  &br" + print2.s else""
+type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
 
+Function myinternaltype(size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype) myinternaltype export
 
+Function size(myinternaltype) int export
 
+Function kind(myinternaltype) word export
 
+Function name(myinternaltype) word export
 
+Function modname(myinternaltype) mytype  export
+
+Function subflds(myinternaltype) seq.mytype export
+
+Function type:myinternaltype internaltype export 
 
 use seq.libsym
 
@@ -164,15 +188,18 @@ Function iscomplex(a:mytype)boolean export
 
 Function type:firstpass internaltype export
 
-type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol
+type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
+unbound:set.symbol,types:seq.myinternaltype
 
-Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol)firstpass
+Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
+unboundx:set.symbol,types:seq.myinternaltype) firstpass
  export
  
 /Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, 
 unboundexports:seq.symbol, unboundx:set.symbol,boolean)firstpass
 firstpass(modname,uses,defines,exports,unboundexports,unboundx)
 
+use seq.myinternaltype
 
 Function exportmodule(firstpass)boolean false
 
@@ -189,25 +216,45 @@ Function unboundexports(firstpass)seq.symbol export
 
 Function unbound(firstpass)set.symbol export
 
+Function types(firstpass) seq.myinternaltype export
+
 _______________________________      
      
    
 function tosymbol(ls:libsym)symbol
  let d = codedown.fsig.ls
  assert length.d > 1 report "tosymbol2"+fsig.ls
- if length.instruction.ls > 0 &and (instruction.ls)_1="type"_1 then 
-    symbol(d_1_1,mytype.d_2,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)),mytype.returntype.ls,instruction.ls) 
- else 
-   symbol(d_1_1,mytype.d_2,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)),mytype.returntype.ls,
- scannew(instruction.ls,1,empty:seq.sig),"")
+    symbol(d_1_1,mytype.d_2,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)),mytype.returntype.ls)
+ 
+ function  addlibsym(p:prg,ls:libsym) prg
+ let d = codedown.fsig.ls
+ assert length.d > 1 report "tosymbol2"+fsig.ls
+    map(p,placeholder(d_1 ,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)),mytype.d_2,mytype.returntype.ls),
+   scannew(instruction.ls,1,empty:seq.sig))
+
  
 function tofirstpass(m:libmod)  seq.firstpass
  // if modname.m= "$other"_1 then empty:seq.firstpass
   else //
  [ firstpass(mytype.if parameterized.m then"T" + modname.m else [ modname.m], uses.m, 
  @(+, tosymbol, empty:set.symbol, defines.m), 
- @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol)]
+ @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol,
+ @(+,libtypes,empty:seq.myinternaltype,defines.m))]
  
+ 
+ 
+  function alllibsym(l:liblib) seq.libsym    @(+,defines, empty:seq.libsym,mods.l)+@(+,exports, empty:seq.libsym,mods.l)
+
+ Function otherlibsyms(l:seq.liblib) prg    
+       @(addlibsym,identity,emptyprg,toseq(asset.@(+,alllibsym, empty:seq.libsym,l)-knownlibsyms.l))
+ 
+        function knownlibsyms(l:liblib) seq.libsym   defines.last.mods.l
+        
+        function knownlibsyms(l:seq.liblib) set.libsym asset.@(+,knownlibsyms, empty:seq.libsym,l)
+
+use set.libsym
+
+
 
 
 function addfirstpass(s:seq.firstpass,l:seq.liblib) seq.firstpass  
@@ -216,19 +263,26 @@ function addfirstpass(s:seq.firstpass,l:seq.liblib) seq.firstpass
 function addfirstpass(l: liblib) seq.firstpass  
  @(+, tofirstpass, empty:seq.firstpass, mods.l)
 
-
-Function libknown(dependentlibs:seq.word) seq.symbol 
-  libknown.dependentlibs(dependentlibs)  
   
 Function dependentlibs(dependentlibs:seq.word)   seq.liblib @(+,filter(dependentlibs),empty:seq.liblib   , loadedlibs)
 
-Function libknown(l:seq.liblib) seq.symbol @(+,addknown,empty:seq.symbol,l)
 
- 
+Function libsymbols(l:seq.liblib) prg  @(addknown,identity,emptyprg,l)
+
+
+function addknown(p:prg,l:liblib) prg  @(addlibsym,  identity, p, defines.last.mods.l)
+
+
 use seq.liblib
 
-Function libfirstpass(dependentlibs:seq.word) seq.firstpass
-          libfirstpass.dependentlibs(dependentlibs)
+function  libtypes(l:libsym)  seq.myinternaltype
+  if returntype.l="internaltype" &and  subseq(instruction.l,length.instruction.l-1,length.instruction.l)="RECORD 5" 
+  then 
+    [asmyinternaltype(scannew(instruction.l,1,empty:seq.sig))]
+   else empty:seq.myinternaltype
+
+     use seq.fsignrep
+
 
 Function libfirstpass(l:seq.liblib) seq.firstpass
   @(+,addfirstpass, empty:seq.firstpass   , l)
@@ -236,14 +290,26 @@ Function libfirstpass(l:seq.liblib) seq.firstpass
 
 function filter(s:seq.word,l:liblib)  seq.liblib   if (libname.l)_1 in s then [l] else empty:seq.liblib
 
-function addknown(l:liblib) seq.symbol    @(+, tosymbol, empty:seq.symbol, defines.last.mods.l)
-   
+   Function asmyinternaltype(     s:seq.sig) myinternaltype
+     let l=length.s
+     assert s_l =RECORD.5 report "internaltype"+print.s+stacktrace
+     let rep1=decode.s_(l-1)
+     assert (fsig.rep1)_1="RECORD"_1 report "internaltype"+print.s
+     let noflds=toint.(fsig.rep1)_2-2
+      let t1=@(+,decode,empty:seq.fsignrep,subseq(s,l-noflds-1,l-2))
+      let subflds=@(+,mytype,empty:seq.mytype,@(+,fsig,empty:seq.seq.word,t1))
+      let size=value.s_1
+      let kind=fsig.decode.s_2
+      let name=fsig.decode.s_3
+      let modname=fsig.decode.s_4
+      myinternaltype(size,kind_1,name_1,mytype.modname,subflds)
+
 
 Function scannew(s:seq.word,i:int,result:seq.sig) seq.sig
   if i > length.s then  result 
   else 
    let this = s_i 
-   if this ="LOCAL"_1  then          scannew(s,i+2,result+sig( [ s_(i+1)],  "local", empty:seq.sig ,"?"))
+   if this ="LOCAL"_1  then          scannew(s,i+2,result+sig( [ s_(i+1)],  "local" ,"?"))
       else if this = "LIT"_1 then    scannew(s,i+2,result+ lit.toint.s_(i+1))
       else if this = "WORD"_1 then   scannew(s,i+2,result+wordsig.s_(i+1))
       else if this = "RECORD"_1 then scannew(s,i+2,result+ RECORD.toint.s_(i+1))
@@ -269,9 +335,9 @@ Function scannew(s:seq.word,i:int,result:seq.sig) seq.sig
         let d = codedown.q
          assert length.d > 1 report"BBB 3" + q+s
        if d_2=" local" then 
-              scannew(s, i + 1,  result + sig(d_1, "local", empty:seq.sig,"?"))
+              scannew(s, i + 1,  result + sig(d_1, "local","?"))
           else if last.d_2 = "para"_1 then
-                 scannew( s, i + 1, result +sig([ d_2_1], "local", empty:seq.sig,"?"))
+                 scannew( s, i + 1, result +sig([ d_2_1], "local", "?"))
          else if  d_2="builtin" &and 
           q in "assertZbuiltinZwordzseq  IDXUCZbuiltinZintZint 
          callidxZbuiltinZintZTzseqZint abortedZbuiltinZTzprocess optionZbuiltinZTZwordzseq 
@@ -279,7 +345,7 @@ Function scannew(s:seq.word,i:int,result:seq.sig) seq.sig
          allocatespaceZbuiltinZint 
          setfld2ZbuiltinZTzseqZintZT getinstanceZbuiltinZTzerecord " then
           let newsig=
-sig( if length.d=2 then d_1 else d_1+"("+@(seperator.",", identity, "", subseq(d, 3, length.d))+")", d_2,empty:seq.sig,"?")
+sig( if length.d=2 then d_1 else d_1+"("+@(seperator.",", identity, "", subseq(d, 3, length.d))+")", d_2,"?")
             let discard= encode(e2cached,cached( q ,newsig))
                  scannew( s, i + if newfref then 2 else 1,  result + 
                    if newfref then FREFsig.newsig  else newsig)
