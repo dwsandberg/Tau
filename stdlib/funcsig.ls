@@ -31,6 +31,8 @@ use otherseq.word
 
 use seq.seq.word
 
+use mangle
+
 
 type efsignrep is encoding fsignrep
 
@@ -168,13 +170,19 @@ function addPH(s:seq.word) seq.word
   
   Function removePH(rep2:fsignrep) fsignrep
   fsignrep(removePH2.fsig.rep2, module.rep2,empty:seq.sig,returntype.rep2,bits.0)
-  
-  Function placeholder(name:seq.word,args:seq.mytype,modname:mytype ,returntype:mytype) sig
-        sigPH.fsignrep(  tofsig(name,args),towords.modname,empty:seq.sig, towords.returntype,bits.0) 
-        
+          
   Function placeholder(fsig:seq.word,modname:seq.word ,returntype:seq.word) sig
-        sigPH.fsignrep( fsig,modname,empty:seq.sig, returntype,bits.0) 
+        let f=fsignrep( fsig,modname,empty:seq.sig, returntype,bits.0) 
+        if modname in ["$","local","$int","$word","$words"] then sigOK.f
+        else if last.modname = "para"_1 then
+                  sigOK.fsignrep([ modname_1], "local",empty:seq.sig, "?",bits.0) 
+        else if modname="$fref" then
+           assert length.code.f=1 report "placeholder problem"+fsig+modname+stacktrace
+            FREFsig.sigPH.decode.(code.f)_1
+        else
+        sigPH.f 
 
+use stacktrace
  
 Function removePH(s:sig) sig
  if isplaceholder.s then
@@ -199,8 +207,12 @@ if j > length.fsig.a then fsig.a
  else
 subseq(fsig.a, 1, j - 1)
 
-Function mangledname(a:fsignrep)word 
+/Function mangledname(a:fsignrep)word 
 mangle(merge.name.a, mytype.module.a, paratypes.a)
+
+Function mangledname(s:fsignrep)word 
+mangle2( name.s ,  module.s, @(+,towords,empty:seq.seq.word,paratypes.s))
+
 
 Function paratypes(f:fsignrep) seq.mytype
 let a= fsig.f 
@@ -378,7 +390,7 @@ function firstupperbit int 19
 
 function paranobits int firstupperbit
 
-Function placeholderbit bits   (bits.1 << paranobits + 3 )
+function placeholderbit bits   (bits.1 << paranobits + 3 )
 
 function constbit bits placeholderbit << 1
 

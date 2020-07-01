@@ -42,6 +42,8 @@ use seq.word
 
 use words
 
+use mangle
+
 * To profile a function add a use clause"use options.<return type of /function >"and change /function so body is wrap by a call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the part of code of interest add a call to profileresults("time")to optain the result.
 
 * Profiling is accomplished by adding code to perform measurements before and after each procedure call and recording the difference.

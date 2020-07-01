@@ -10,7 +10,6 @@ use seq.libmod
 
 use seq.libsym
 
-use mangle
 
 use seq.mytype
 
@@ -38,7 +37,9 @@ Function type:libmod internaltype export
 
 Function type:mytype internaltype export
 
-type libsym is record fsig:word, returntype:seq.word, instruction:seq.word
+type libsym is record fsig:seq.word, module:seq.word, returntype:seq.word,zcode:seq.word,
+ instruction:seq.word
+
 
 type liblib is record libname:seq.word, words:seq.encodingrep.seq.char, mods:seq.libmod, timestamp:int, readonly:boolean
 
@@ -56,9 +57,9 @@ Function readonly(liblib)boolean export
 
 Function =(a:libsym, b:libsym)boolean fsig.a = fsig.b
 
-use otherseq.char
+use otherseq.word
 
-Function ?(a:libsym, b:libsym)ordering decodeword.fsig.a ? decodeword.fsig.b
+Function ?(a:libsym, b:libsym)ordering  fsig.a +module.a ?  fsig.b +module.b
 
 function =(a:libmod, b:libmod)boolean modname.a = modname.b
 
@@ -68,13 +69,17 @@ Function abstracttype(m:mytype)word(towords.m)_(length.towords.m)
 
 Function parameter(m:mytype)mytype mytype.subseq(towords.m, 1, length.towords.m - 1)
 
-Function libsym(returntype:mytype, manglename:word, inst:seq.word)libsym libsym(manglename, towords.returntype, inst)
+Function libsym(fsig:seq.word, module:seq.word, returntype:seq.word,zcode:seq.word,
+ instruction:seq.word)libsym export
+
+Function module(libsym)seq.word export
+
 
 Function returntype(libsym)seq.word export
 
 Function instruction(libsym)seq.word export
 
-Function fsig(libsym)word export
+Function fsig(libsym) seq.word export
 
 Function loadedlibs seq.liblib builtin.usemangle
 
@@ -104,9 +109,9 @@ function prt(s:seq.word, i:int)seq.word
  if i = 1 then [ s_1]
  else [ s_i] + "." + prt(s, i - 1)
 
-Function codedown(w:word)seq.seq.word export
+/Function codedown(w:word)seq.seq.word export
 
-Function mangle(name:word, modname:mytype, parameters:seq.mytype)word 
+/Function mangle(name:word, modname:mytype, parameters:seq.mytype)word 
 mangle2([name],towords.modname, @(+,towords,empty:seq.seq.word,parameters))
 
 
@@ -127,6 +132,28 @@ Function replaceT(with:mytype, m:mytype)mytype
 Function emptyliblib(libname:word)liblib
  let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, empty:seq.mytype)
   liblib([ libname], [ mymod])
+  
+type symbol is record  fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol,instruction:seq.word
+
+use seq.symbol
+
+Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol) symbol 
+symbol(fsig,module,returntype,zcode,"")
+
+function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol,instruction:seq.word) symbol 
+export
+
+Function fsig(symbol)seq.word export
+
+Function module(symbol)seq.word export
+
+Function returntype(symbol)seq.word export
+
+Function type:symbol internaltype export
+
+Function zcode(symbol)seq.symbol export
+
+
 
 module mangle
 
@@ -147,6 +174,8 @@ if isempty.acc then b else acc+sep+b
 
 Function codedown(w:word)seq.seq.word codedown(decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)
 
+Function changeit boolean false
+
 function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.word)seq.seq.word
  if i > length.l then
  let a = if isempty.w then words else words + encodeword.w
@@ -165,7 +194,7 @@ function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.
     char(((t * 16 + hexvalue.l_(i + 3)) * 16 + hexvalue.l_(i + 4))
     * 16
     + hexvalue.l_(i + 5))
-    if // ch in decodeword.".:"_1 // false then 
+    if  changeit &and  ch in decodeword.".:"_1   then 
       codedown(l, i + 1, empty:seq.char, words + encodeword.w+encodeword.[ch], result)
     else 
      codedown(l, i + inc, w + ch, words, result)
@@ -199,3 +228,5 @@ function hexdigit(val:bits, digit:int)char legal_(toint(val >> 4 * digit ∧ bit
 Function manglednopara(w:word)int @(+, count.char.90, -1, decodeword.w)
 
 function count(val:char, i:char)int if val = i then 1 else 0
+
+

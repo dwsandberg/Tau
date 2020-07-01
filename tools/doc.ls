@@ -35,6 +35,8 @@ use svggraph.seq.word
 
 use set.word
 
+use mangle
+
 
 
 Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html //

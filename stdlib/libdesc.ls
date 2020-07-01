@@ -51,9 +51,9 @@ Function libdesc(p:prg,simple:seq.expmod,abstract2:seq.expmod) sig
        + libmod(false,"$other"_1, sort.d, empty:seq.libsym, empty:seq.mytype)
 addseq.@(+,addlibmod,empty:seq.sig,libmods)
        
-function print(a:libsym) seq.word [fsig.a]+instruction.a
+/function print(a:libsym) seq.word [fsig.a]+instruction.a
 
-function print(a:libmod) seq.word  "&br &br define &br"+ @(seperator."&br",print,"",defines.a)+"&br &br export &br"+
+/function print(a:libmod) seq.word  "&br &br define &br"+ @(seperator."&br",print,"",defines.a)+"&br &br export &br"+
  @(seperator."&br",print,"",exports.a)
 
  function tolibmod(p:prg,abstract:boolean,m:expmod) libmod
@@ -95,12 +95,12 @@ function tolibsym(p:prg,psig:sig ) seq.libsym
  let t=astext5(p,if isabstract.mytype.module.rep then cleancode.rep else exportcode(p,s) )
   let t2= if length.t > 0 &and t_1="EXITBLOCK"_1 then subseq(t,5,length.t)
   else t
-            [ libsym(mytype.returntype.rep,mangledname.rep,t2)]
+            [ libsym(fsig.rep,module.rep, returntype.rep ,"",t2)]
 
 ----------------------------------
 
 function addlibsym(s:libsym) sig
-      constant.[wordsig.fsig.s  ,wordssig.returntype.s ,wordssig.instruction.s]
+      constant.[wordssig.fsig.s ,wordssig.module.s ,wordssig.returntype.s ,wordssig."",wordssig.instruction.s]
 
 function addmytype(t:mytype) sig  wordssig.(towords.t)
 

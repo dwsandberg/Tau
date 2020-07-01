@@ -93,6 +93,8 @@ _______________
 use seq.mytype
 
 
+
+
 type expmod is record modname:word, exports:seq.sig,defines:seq.sig,uses:seq.mytype
 
 function type:expmod internaltype export
