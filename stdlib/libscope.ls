@@ -106,13 +106,11 @@ function prt(s:seq.word, i:int)seq.word
 
 Function codedown(w:word)seq.seq.word export
 
-Function mangle(name:word, modname:mytype, parameters:seq.mytype)word encodeword.manglechars(name, modname, parameters)
+Function mangle(name:word, modname:mytype, parameters:seq.mytype)word 
+mangle2([name],towords.modname, @(+,towords,empty:seq.seq.word,parameters))
 
-Function manglechars(name:word, modname:mytype, parameters:seq.mytype)seq.char
- let nameandmodname = addword(empty:seq.char, name) + codeup.towords.modname
-  @(+, codeup, nameandmodname, parameters)
 
-function codeup(p:mytype)seq.char codeup.towords.p
+
 
 Function isabstract(a:mytype)boolean(towords.a)_1 = "T"_1
 
@@ -125,12 +123,6 @@ Function replaceT(with:mytype, m:mytype)mytype
  mytype(towords.with + subseq(towords.m, 2, length.towords.m))
  else m
 
-Function replaceT(with:mytype, name:word)word
- if name = merge."empty:seq.T"then merge("empty:seq." + print.with)
- else
-  let d = decodeword.name
-   assert subseq(d, length.d, length.d) = [ char.84]report"PROBLEM replacing T in word" + name + "with" + print.with
-    merge([ encodeword.subseq(d, 1, length.d - 1)] + print.with)
 
 Function emptyliblib(libname:word)liblib
  let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, empty:seq.mytype)
@@ -146,6 +138,13 @@ use stdlib
 
 use seq.word
 
+Function mangle2(name: seq.word,modname:seq.word, parameters:seq.seq.word) word
+ encodeword.@(seperator.char.charmajorseparator,codeup,empty:seq.char, [[merge.name],modname]+parameters)
+
+function seperator( sep:char,acc:seq.char,b:seq.char) seq.char
+if isempty.acc then b else acc+sep+b 
+
+
 Function codedown(w:word)seq.seq.word codedown(decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)
 
 function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.word)seq.seq.word
@@ -159,13 +158,17 @@ function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.
  else if l_i = char1."Q"then
  assert i + 2 ≤ length.l report"format problem with codedown for" + encodeword.l
   let first = hexvalue.l_(i + 1)
+  let inc=if first > 0 then // one hex digit // 3 else // two hex digit // 6
   let t = first * 16 + hexvalue.l_(i + 2)
-   if first > 0 then codedown(l, i + 3, w + char.t, words, result)
+   let ch=if inc=3 then  char.t  
    else
-    let t1 =((t * 16 + hexvalue.l_(i + 3)) * 16 + hexvalue.l_(i + 4))
+    char(((t * 16 + hexvalue.l_(i + 3)) * 16 + hexvalue.l_(i + 4))
     * 16
-    + hexvalue.l_(i + 5)
-     codedown(l, i + 6, w + char.t1, words, result)
+    + hexvalue.l_(i + 5))
+    if // ch in decodeword.".:"_1 // false then 
+      codedown(l, i + 1, empty:seq.char, words + encodeword.w+encodeword.[ch], result)
+    else 
+     codedown(l, i + inc, w + ch, words, result)
  else codedown(l, i + 1, w + l_i, words, result)
 
 function legal seq.char decodeword."0123456789ABCDEFGHIJKLMNOPRSTUVWXYabcdefghijklmnopqrstuvwxy"_1
@@ -174,9 +177,9 @@ function hexvalue(c:char)int
  let i = toint.c
   if between(i, 48, 57)then i - 48 else i - 65 + 10
 
-Function codeup(s:seq.word)seq.char // adds majorseparator before mytype // [ char.charmajorseparator] + @(addword, identity, empty:seq.char, s)
+function codeup(s:seq.word)seq.char @(addword, identity, empty:seq.char, s)
 
-Function addword(s:seq.char, w:word)seq.char
+function addword(s:seq.char, w:word)seq.char
  // adds minor separator between words //
  @(codeup, identity, if isempty.s then s else s + char.charminorseparator, decodeword.w)
 

@@ -27,13 +27,16 @@ type stkele is record stateno:int,place:int, attribute:T
  Function type:token.T internaltype export  
  
  
-Function attribute:T(seq.word) T  unbound
+function attribute:T(seq.word) T  unbound
 
-Function action(int, seq.token.T,reduction.T) T unbound
+function action(int, seq.token.T,reduction.T) T unbound
 
-Function text(T) seq.word unbound
+function text(T) seq.word unbound
 
-Function text(t:token.T) seq.word text.attribute.t
+function  forward(stk:T,T) T unbound
+
+
+function text2(t:token.T) seq.word text.attribute.t
 
 Function ?(a:token.T, b:token.T)ordering w.a ? w.b 
 
@@ -44,7 +47,7 @@ Function_(r:reduction.T, n:int) T  attribute.(toseq.r)_n
 Function last(r:reduction.T) T attribute.(toseq.r)_length.toseq.r 
 
 Function errormessage(message:seq.word,input:seq.token.T,place:int) seq.word
-message + "&br" +prettynoparse.@(+,text,"",subseq(input,1,place))
+message + "&br" +prettynoparse.@(+,text2,"",subseq(input,1,place))
 
 
   function tokenstream(lextab:seq.token.T, input:seq.word, i:int,  result:seq.token.T) seq.token.T
@@ -90,7 +93,6 @@ message + "&br" +prettynoparse.@(+,text,"",subseq(input,1,place))
        tokenstream(lextab,input,i+1,result+act )
        
        
-       function  forward(stk:T,T) T unbound
 
         function step(input:seq.token.T, stk:stack.stkele.T ,token:token.T) stack.stkele.T 
   let stateno = stateno.top.stk 

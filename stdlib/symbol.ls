@@ -52,16 +52,11 @@ Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering
 
 Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a, b, 1)
 
-type symbol is record rep:fsignrep    
+
+
  
-Function symbol(name:word,modname:mytype, paratypes:seq.mytype,  resulttype:mytype) symbol
-  let rep= fsignrep2 ([name ] , paratypes , modname  ,resulttype )
-  let sym=symbol(rep)
-  assert resulttype=mytype.returntype.rep report  "GGG"+print.sym+print.rep +"&br"+ 
- print.resulttype+"&br"+print.mytype.returntype.rep+stacktrace  
- sym
     
-Function toplaceholder( s:symbol) sig  sigPH.rep.s
+Function toplaceholder( s:symbol) sig   placeholder(fsig.s,module.s,returntype.s)
 
 Function  placeholder2(name:seq.word,paratypes:seq.mytype,modname:mytype,resulttype:mytype) sig
 sigPH.fsignrep2( name   , paratypes , modname  ,resulttype )
@@ -82,34 +77,80 @@ use seq.sig
 Function type:symbol internaltype export
 
 
-Function =(a:symbol, b:symbol)boolean name.a = name.b ∧ paratypes.rep.a = paratypes.rep.b ∧ modname.a = modname.b
+Function =(a:symbol, b:symbol)boolean fsig.a = fsig.b  ∧ modname.a = modname.b
 
 
-Function name(s:symbol)word  (name.rep.s)_1
+type symbol is record  fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol
 
-Function mangledname(s:symbol)word mangledname.(rep.s)
+Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word) symbol 
+ symbol(fsig,module,returntype,empty:seq.symbol)
 
-Function paratypes(s:symbol)seq.mytype paratypes.rep.s
+Function newsymbol(namein:seq.word,modname:mytype, paratypes:seq.mytype,  resulttype:mytype) symbol
+ let name=[merge(namein)]
+let b= (length.towords.modname > 1)  &and  not((towords.modname)_1="T"_1) &and not(abstracttype.modname="para"_1) 
+  let paratyps= if b then @(+,replaceT(parameter.modname),empty:seq.mytype,paratypes)  else paratypes
+  let sym=symbol(if length.paratyps = 0 then name else  name + "(" + @(seperator.",", towords,"", paratyps)  + ")"
+  ,towords.modname,
+  towords.if b then    replaceT(parameter.modname,resulttype) else resulttype
+  ,empty:seq.symbol)
+ sym
 
-Function modname(s:symbol)mytype mytype.module.rep.s
 
-Function resulttype(s:symbol)mytype mytype.returntype.rep.s
+Function name(s:symbol) seq.word  
+let j=findindex("("_1, fsig.s)  
+let n=if j > length.fsig.s then fsig.s
+ else
+subseq(fsig.s, 1, j - 1)
+n
 
-Function nopara(s:symbol)int noparafsignrep.rep.s
+
+
+
+
+Function paratypes(s:symbol)seq.mytype 
+ @(+, mytype, empty:seq.mytype, paratypesastext.s)
+
+function paratypesastext(s:symbol) seq.seq.word
+let a= fsig.s 
+  if length.a < 4 then empty:seq.seq.word
+  else 
+  break(","_1, subseq(a, 1, length.a - 1), findindex("("_1, a) + 1 )
+
+function break(w:word, a:seq.word, j:int)seq.seq.word
+ let i = findindex(w, a, j)
+  if i > length.a then
+  if j > length.a then empty:seq.seq.word else [ subseq(a, j, i)]
+  else [ subseq(a, j, i - 1)] + break(w, a, i + 1)
+  
+Function mangledname(s:symbol)word 
+mangle2( name.s ,  module.s, @(+,towords,empty:seq.seq.word,paratypes.s))
+
+
+Function modname(s:symbol)mytype mytype.module.s
+
+Function resulttype(s:symbol)mytype mytype.returntype.s
+
+Function nopara(s:symbol)int 
+ if module.s="$" then toint((fsig.s)_2)  else 
+ @(counttrue, =(","_1), if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
+
+function counttrue(i:int, b:boolean)int if b then i + 1 else i
+
+use otherseq.word
 
 Function ?(a:symbol, b:symbol)ordering
- name.a ? name.b ∧ paratypes.rep.a ? paratypes.rep.b ∧ modname.a ? modname.b
+ fsig.a ? fsig.b ∧  modname.a ? modname.b
 
-Function ?2(a:symbol, b:symbol)ordering name.a ? name.b ∧ paratypes.rep.a ? paratypes.rep.b
+Function ?2(a:symbol, b:symbol)ordering fsig.a ? fsig.b 
 
 
-Function lookup(dict:set.symbol, name:word, types:seq.mytype)set.symbol
- findelement2(dict, symbol(name, mytype."?", types, mytype."?" ))
+Function lookup(dict:set.symbol, name:seq.word, types:seq.mytype)set.symbol
+ findelement2(dict, newsymbol( name , mytype."?", types, mytype."?" ))
 
 Function printdict(s:set.symbol)seq.word @(+, print,"", toseq.s)
 
 Function print(s:symbol)seq.word
- [ name.s] + "(" + @(seperator.",", print,"", paratypes.s)
+   name.s  + "(" + @(seperator.",", print,"", paratypes.s)
  + ")"
  + print.resulttype.s
  + "module:"
@@ -138,8 +179,8 @@ Function replaceTsymbol2(with:mytype, s:symbol) mapele
 // assert (length.towords.newmodname > 1) &and not((towords.newmodname)_1="T"_1)  report "HERE&*" //
 // let b= (length.towords.modname > 1)  &and   not((towords.modname)_1="T"_1) //
  let newparas = @(+, replaceT.with, empty:seq.mytype, paratypes.s)
- let n = replaceTinname(with, name.s)
-  let x=  symbol(n,newmodname, newparas ,replaceT(with, resulttype.s) )
+ let n = replaceTinname(with, merge(name.s))
+  let x=  newsymbol([n],newmodname, newparas ,replaceT(with, resulttype.s) )
   mapele(x,[toplaceholder.x,toplaceholder.s ])
 
 type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
@@ -178,9 +219,6 @@ Function print(p:mytype)seq.word export
 
 Function =(t:mytype, b:mytype)boolean export
 
-Function mangle(name:word, modname:mytype, parameters:seq.mytype)word export
-
-Function codedown(w:word)seq.seq.word export
 
 Function replaceT(with:mytype, m:mytype)mytype export
 
@@ -195,10 +233,6 @@ Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:
 unboundx:set.symbol,types:seq.myinternaltype) firstpass
  export
  
-/Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, 
-unboundexports:seq.symbol, unboundx:set.symbol,boolean)firstpass
-firstpass(modname,uses,defines,exports,unboundexports,unboundx)
-
 use seq.myinternaltype
 
 Function exportmodule(firstpass)boolean false
@@ -224,7 +258,7 @@ _______________________________
 function tosymbol(ls:libsym)symbol
  let d = codedown.fsig.ls
  assert length.d > 1 report "tosymbol2"+fsig.ls
-    symbol(d_1_1,mytype.d_2,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)),mytype.returntype.ls)
+    newsymbol(d_1,mytype.d_2,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)),mytype.returntype.ls)
  
  function  addlibsym(p:prg,ls:libsym) prg
  let d = codedown.fsig.ls
@@ -369,3 +403,72 @@ use seq.cached
 let d= codedown.w
 placeholder(  d_1 ,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)), mytype.d_2,mytype."?")
   
+---------------
+
+Function deepcopysym (type:mytype) symbol
+newsymbol("deepcopy"  ,mytype(towords.type + "process"), [type], type)
+
+Function pseqidxsym(type:mytype) symbol
+    newsymbol("_" , mytype(towords.type + "seq"_1),[ mytype(towords.type + "pseq"_1), mytype."int"],type)
+    
+Function Record(i:int) symbol symbol([ "RECORD"_1,toword.i],    "$",  "?",empty:seq.symbol)
+
+Function Apply(i:int) symbol symbol([ "APPLY"_1,toword.i],    "$",  "?",empty:seq.symbol)
+
+Function Block(i:int) symbol symbol([ "BLOCK"_1,toword.i],    "$",  "?",empty:seq.symbol)
+
+
+Function Exit  symbol symbol(  "EXITBLOCK 1",    "$",  "?",empty:seq.symbol)
+
+Function Br    symbol symbol( "BR 3", "$",  "?",empty:seq.symbol)
+
+Function Lit(i:int)  symbol symbol(  [toword.i],    "$int",  "int",empty:seq.symbol)
+
+Function Words(s:seq.word) symbol  symbol(  s,    "$words",  "word seq",empty:seq.symbol)
+
+Function Word(s:word) symbol  symbol(  [s],    "$word",  "word",empty:seq.symbol)
+
+Function Fref(s:symbol) symbol symbol("FREF"+fsig.s+module.s,"$fref","?",[s])
+
+Function Lit2 symbol symbol(  "2",    "$int",  "int",empty:seq.symbol)
+
+Function Lit3 symbol symbol(  "3",    "$int",  "int",empty:seq.symbol)
+
+Function astext(s:seq.symbol) seq.word @(+,astext,"",s)
+
+Function astext(s:symbol) seq.word 
+if module.s = "$" then fsig.s
+else if module.s ="$int" then "LIT"+fsig.s
+else if module.s ="$words" then "WORDS"+toword.length.fsig.s+fsig.s
+else if module.s ="$word" then "WORD"+fsig.s
+else if module.s="$fref" then "FREF"+astext.(zcode.s)_1
+else [mangledname.s]
+
+
+
+use mangle
+
+------
+
+type program is  record toset:set.symbol
+
+type programele is record data:seq.symbol
+
+function target(a:programele) symbol (data.a)_1
+
+function code(a:programele) seq.symbol subseq(data.a,2,length.data.a)
+
+functiom isdefined(a:programele) boolean not.isempty.data.a
+
+
+function lookupcode(p:program,s:symbol) programele
+     let t=findelement(s,toset.p) 
+     if isempty.t then  programele.empty:seq.symbol else programele.zcode.t_1
+
+function  map(p:program,s:symbol,target:symbol,code:seq.symbol) program
+    program.replace(toset.p,symbol(fsig.s,module.s,returntype.s,[target]+code))
+
+
+
+
+ 

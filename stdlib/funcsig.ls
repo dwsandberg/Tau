@@ -171,6 +171,10 @@ function addPH(s:seq.word) seq.word
   
   Function placeholder(name:seq.word,args:seq.mytype,modname:mytype ,returntype:mytype) sig
         sigPH.fsignrep(  tofsig(name,args),towords.modname,empty:seq.sig, towords.returntype,bits.0) 
+        
+  Function placeholder(fsig:seq.word,modname:seq.word ,returntype:seq.word) sig
+        sigPH.fsignrep( fsig,modname,empty:seq.sig, returntype,bits.0) 
+
  
 Function removePH(s:sig) sig
  if isplaceholder.s then

@@ -136,9 +136,6 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
         
    
                  
-    function toPH(w:word) sig
-      let d= codedown.w
-placeholder(  d_1 ,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)), mytype.d_2,mytype."?")
                 
         use seq.target          
                                  
@@ -395,8 +392,8 @@ function bind2(dict:set.symbol,p:prg,s:symbol) prg
              let name = funcname.b
              let paratypes = funcparametertypes.b
              let code2=@(+, local,empty:seq.sig, arithseq(length.paratypes, 1, 1))+
-               sig([name],paratypes,mytype."builtin",funcreturntype.b)
-             @(+, topara,"", arithseq(length.paratypes , 1, 1)) + mangle(name, mytype."builtin", paratypes )
+               sig(name,paratypes,mytype."builtin",funcreturntype.b)
+             @(+, topara,"", arithseq(length.paratypes , 1, 1)) + mangle(merge.name, mytype."builtin", paratypes )
             else    if cd_1 = "WORDS"_1  &and (  
                let l = toint.cd_2 + 3
                l ≤ length.cd ∧ cd_l = "builtinZinternal1Zwordzseq"_1) then
@@ -508,7 +505,7 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.sig,
        let rep=decode.s
        let modpara=parameter.modname 
        let params2=   @(+, replaceT.modpara, empty:seq.mytype, paratypes.rep) 
-       let z =X(alltypes,replaceT(modpara, mytype.module.rep),params2,s,(fsig.rep)_1,org,dict,source,templatemap)
+       let z =X(alltypes,replaceT(modpara, mytype.module.rep),params2,s,name.rep,org,dict,source,templatemap)
          if place.z="C" then  
                     let ssss=lookupcode(source,ph.z) 
                     if not.isempty.ssss then 
@@ -527,32 +524,32 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.sig,
 type resultpair is record ph:sig,code:seq.sig,place:seq.word
   
     
-function X(alltypes:seq.myinternaltype,newmodname:mytype,params2:seq.mytype,s:sig,name:word,org:seq.word, dict:set.symbol,   knownsymbols:prg,templatemap:prg)resultpair
+function X(alltypes:seq.myinternaltype,newmodname:mytype,params2:seq.mytype,s:sig,name:seq.word,org:seq.word, dict:set.symbol,   knownsymbols:prg,templatemap:prg)resultpair
    let templatename = abstracttype.newmodname
    let newmodpara = parameter.newmodname
-      if name = "deepcopy"_1 &and  templatename in "process"  then
+      if name = "deepcopy" &and  templatename in "process"  then
                let type= params2_1
           resultpair( placeholder("deepcopy" ,  [type],mytype(towords.type + "process"), type),
          definedeepcopy(alltypes, type,org),"C")           
-       else  if templatename in " process"  &and  name =   merge."sizeoftype:T"  then
+       else  if templatename in " process"  &and  merge.name  =   merge."sizeoftype:T"  then
                  let typeastext=print.newmodpara 
                let z = if typeastext = "int"then 1
                        else
                          let typdesc=lookuptype(alltypes,newmodpara)
                           assert  not.isempty.typdesc  report"can not find type sizeof" + typeastext + org
                          size.typdesc_1 
-                    resultpair(  placeholder([name],  empty:seq.mytype,newmodname, mytype."int"),[lit.z] ,"C")
+                    resultpair(  placeholder( name ,  empty:seq.mytype,newmodname, mytype."int"),[lit.z] ,"C")
     else     
      let f=lookupcode(templatemap,s) 
     if not.isempty.f then
         let rep2=decode.target.f_1
-        resultpair(     placeholder([name],  params2,newmodname, replaceT(newmodpara, mytype.returntype.rep2)),code.f_1,  "C" )
+        resultpair(     placeholder( name ,  params2,newmodname, replaceT(newmodpara, mytype.returntype.rep2)),code.f_1,  "C" )
      else
-        let m2=  placeholder([name],  params2,newmodname, mytype."?")
+        let m2=  placeholder( name ,  params2,newmodname, mytype."?")
         let sym10=if not (m2=s)then lookupcode(knownsymbols,m2) else f
         if not.isempty.sym10 then   resultpair(  target.sym10_1,code.sym10_1,"B" )
         else    
-           let k = lookup(dict, replaceTinname( newmodpara, name), params2)
+           let k = lookup(dict, [replaceTinname( newmodpara, merge.name)], params2)
           // case for examples like frombits:T(bits)T which needs to find frombits:bit(bits)bit //
           assert cardinality.k = 1 report"cannot find template for" + 
           @(+,print,"",toseq.k)  
@@ -570,7 +567,7 @@ function X(alltypes:seq.myinternaltype,newmodname:mytype,params2:seq.mytype,s:si
               let sym5=lookupcode(knownsymbols, ph)
              if isempty.sym5 then
                 let rep=decode.ph
-                           X(alltypes, mytype.module.rep ,paratypes.rep,ph,(fsig.rep)_1, org, dict , knownsymbols,templatemap)
+                           X(alltypes, mytype.module.rep ,paratypes.rep,ph,name.rep, org, dict , knownsymbols,templatemap)
              else 
                resultpair(  ph,code.sym5_1,"D" )
            
@@ -578,12 +575,12 @@ function X(alltypes:seq.myinternaltype,newmodname:mytype,params2:seq.mytype,s:si
 Function headdict set.symbol
 let modulename = mytype."internal1"
  asset
- .[ symbol("builtin"_1, modulename, [ mytype."internal1"], mytype."internal" ), 
- symbol("builtin"_1, modulename, [ mytype."word seq"], mytype."internal" ), 
-  symbol("export"_1, modulename, empty:seq.mytype, mytype."internal1" ), 
-symbol("unbound"_1, modulename, empty:seq.mytype, mytype."internal1" ), 
-symbol("stub"_1, modulename, empty:seq.mytype, mytype."internal1" ), 
-symbol("usemangle"_1, modulename, empty:seq.mytype, mytype."internal1" )]
+ .[ newsymbol("builtin", modulename, [ mytype."internal1"], mytype."internal" ), 
+ newsymbol("builtin", modulename, [ mytype."word seq"], mytype."internal" ), 
+  newsymbol("export", modulename, empty:seq.mytype, mytype."internal1" ), 
+newsymbol("unbound", modulename, empty:seq.mytype, mytype."internal1" ), 
+newsymbol("stub", modulename, empty:seq.mytype, mytype."internal1" ), 
+newsymbol("usemangle", modulename, empty:seq.mytype, mytype."internal1" )]
 
 function gathersymbols(input:seq.seq.word)firstpass
  @(wrapgathersymbols( headdict)
@@ -594,7 +591,7 @@ function gathersymbols(input:seq.seq.word)firstpass
 function wrapgathersymbols( stubdict:set.symbol, f:firstpass, input:seq.word)firstpass gathersymbols( stubdict, f, input)
 
 function definefld( modname:mytype, t:seq.mytype, m:mytype)symbol 
-symbol(abstracttype.m, modname, t, parameter.m)
+newsymbol([abstracttype.m], modname, t, parameter.m)
 
 function hasT(s:seq.word, i:int)boolean
  // used to determine it type T is specified somewhere in function sig //
@@ -636,18 +633,18 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
      assert parameter.modname.f = mytype.""report"encoding in template?"
      let typ = parameter.(types.b)_1
      let it=myinternaltype(0,kind,name,modname.f,types.b)
-     let sym = symbol(name, modname.f, empty:seq.mytype, mytype(towords.typ + "erecord"))
+     let sym = newsymbol([name], modname.f, empty:seq.mytype, mytype(towords.typ + "erecord"))
        firstpass(modname.f, uses.f + mytype(towords.typ + "encoding"), defines.f + sym, exports.f, unboundexports.f, unbound.f,types.f+it)
    else
     assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
     let it=myinternaltype(0,kind,name,modname.f,types.b)
-    let sizeofsym = symbol(merge("type:" + print.t), modname.f, empty:seq.mytype, mytype."internaltype")
-    let constructor = symbol(name, modname.f, @(+, parameter, empty:seq.mytype, types.b), t)
+    let sizeofsym = newsymbol( "type:" + print.t , modname.f, empty:seq.mytype, mytype."internaltype")
+    let constructor = newsymbol([name], modname.f, @(+, parameter, empty:seq.mytype, types.b), t)
     let syms = @(+, definefld(modname.f, [ t]), [ constructor, sizeofsym], types.b)
     + if kind = "sequence"_1 then
       let seqtype=mytype(towords.parameter.t + "seq"_1)
-    [ symbol("toseq"_1, modname.f, [ t], seqtype )     ,
-       symbol(merge("to:"+print.t), modname.f, [ seqtype],t  )
+    [ newsymbol("toseq ", modname.f, [ t], seqtype )     ,
+       newsymbol( "to:"+print.t , modname.f, [ seqtype],t  )
     ]  
     else   empty:seq.symbol
      firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f,types.f+it)
@@ -657,8 +654,8 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
   let paratypes = funcparametertypes.t
   assert iscomplex.modname.f = hasT(input, 2)report"Must use type T in function name or parameters in parameterized module and T cannot be used in non - parameterized module" + getheader.input
      let sym =  if subseq(input,length.input-2,length.input) ="builtin.usemangle" then
-              symbol(name, mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t)
-      else   symbol(name, modname.f, paratypes, funcreturntype.t)  
+              newsymbol( name , mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t)
+      else   newsymbol( name , modname.f, paratypes, funcreturntype.t)  
       if last.input in "export" then
        firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f,types.f)
       else if last.input in "unbound" then
@@ -734,30 +731,8 @@ function abstractmods(exported:seq.word,templatemap:prg, f:firstpass) seq.expmod
        let ph=toplaceholder.s
        let t=lookupcode(templatemap,ph)
        let code2=if isempty.t then empty:seq.sig else code.t_1
-        sig58 ([name.s] , paratypes.s, modname.s , code2,resulttype.s)
+        sig58 (name.s , paratypes.s, modname.s , code2,resulttype.s)
    
-   -----------------------
-   
-/   Function prepare(s:seq.word,i:int,result:seq.word) seq.word
-  if i > length.s then  result 
-  else 
-   let this = s_i 
-   if this  in "LOCAL LIT WORD RECORD APPLY BLOCK EXITBLOCK BR DEFINE FREF"   then    prepare(s,i+2,result+[ this,s_(i+1)] )
-        else if this = "COMMENT"_1 then prepare(s, i + 2 + toint.s_(i + 1), result)
-      else if this = "IDXUC"_1 then   prepare( s, i + 1,  result + this)
-      else if this = "SET"_1 then prepare( s, i + 2,  result)
-      else if this = "WORDS"_1 then
-         let l = toint.s_(i + 1)
-         prepare( s, i + 2 + l,   result + subseq(s, i , i + 1 + l))
-    else     if this="builtinZinternal1Zwordzseq"_1 then 
-   // comment keeps this from being striped off //   prepare(s, i + 1,   result)
-    else      
-        let d = codedown.this
-         assert length.d > 1 report"BBBP 3" + this+s
-       if d_2=" local" then 
-              prepare(s, i + 1,  result +"LOCAL"+d_1)
-          else if last.d_2 = "para"_1 then
-                 prepare( s, i + 1, result + "LOCAL"+d_2_1)
-         else  prepare( s, i + 1,  result + this)
+
  
  
