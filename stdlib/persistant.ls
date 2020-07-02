@@ -24,7 +24,6 @@ use seq.libmod
 use libscope
 
 
-use seq.libsym
 
 
 use llvm

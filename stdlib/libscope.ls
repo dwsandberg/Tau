@@ -109,10 +109,6 @@ function prt(s:seq.word, i:int)seq.word
  if i = 1 then [ s_1]
  else [ s_i] + "." + prt(s, i - 1)
 
-/Function codedown(w:word)seq.seq.word export
-
-/Function mangle(name:word, modname:mytype, parameters:seq.mytype)word 
-mangle2([name],towords.modname, @(+,towords,empty:seq.seq.word,parameters))
 
 
 
@@ -129,9 +125,6 @@ Function replaceT(with:mytype, m:mytype)mytype
  else m
 
 
-Function emptyliblib(libname:word)liblib
- let mymod = libmod(false, libname, empty:seq.libsym, empty:seq.libsym, empty:seq.mytype)
-  liblib([ libname], [ mymod])
   
 type symbol is record  fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol,instruction:seq.word
 
@@ -153,7 +146,24 @@ Function type:symbol internaltype export
 
 Function zcode(symbol)seq.symbol export
 
+Function instruction(symbol)seq.word export
 
+type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
+
+function myinternaltype(size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype) myinternaltype
+export
+
+Function type:myinternaltype internaltype export
+
+Function size(myinternaltype)int export
+
+Function kind(myinternaltype)word export
+
+Function name(myinternaltype)word export
+
+Function modname(myinternaltype)mytype export
+
+Function subflds(myinternaltype)seq.mytype export
 
 module mangle
 

@@ -88,8 +88,7 @@ Function codegen(fs2:intercode, thename:word)seq.bits
       let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines.fs2)
      let profilearcs2 = profilearcs
      let noprofileslots = length.profilearcs2 / 2
-      // let libsyms = @(+, tolibsym(coding.fs, codes.fs), empty:seq.libsym, defines.fs)//
-      let profilearcs3 = addwordseq2( profilearcs2)
+       let profilearcs3 = addwordseq2( profilearcs2)
       let liblib = addliblib( [thename],  libmods2)
        let x = C(array(4, i64)
       , [ AGGREGATE, profilearcs3, C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), 

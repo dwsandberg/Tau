@@ -122,8 +122,7 @@ function counttrue(i:int, b:boolean)int if b then i + 1 else i
 
 use otherseq.word
 
-Function ?(a:symbol, b:symbol)ordering
- fsig.a ? fsig.b ∧  modname.a ? modname.b
+Function ?(a:symbol, b:symbol)ordering fsig.a ? fsig.b ∧  modname.a ? modname.b
 
 Function ?2(a:symbol, b:symbol)ordering fsig.a ? fsig.b 
 
@@ -190,7 +189,7 @@ Function replaceTsymbol(with:mytype, s:symbol) symbol
    symbol(replateTfsig(towords.with,fsig.s), replaceT(towords.with,module.s), replaceT(towords.with, returntype.s))
   
 
-type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
+/type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
 
 Function myinternaltype(size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype) myinternaltype export
 
@@ -226,7 +225,6 @@ Function print(p:mytype)seq.word export
 
 Function =(t:mytype, b:mytype)boolean export
 
-
 Function replaceT(with:mytype, m:mytype)mytype export
 
 Function iscomplex(a:mytype)boolean export
@@ -251,7 +249,6 @@ Function defines(firstpass)set.symbol export
 Function exports(firstpass)set.symbol export
 
 Function uses(firstpass)seq.mytype export
-
 
 Function unboundexports(firstpass)seq.symbol export
 
@@ -319,6 +316,10 @@ function  libtypes(l:libsym)  seq.myinternaltype
 
      use seq.fsignrep
 
+Function createplaceholders(l:seq.liblib) seq.sig 
+empty:seq.sig
+
+@(+,toplaceholder,empty:seq.sig,@(+,alllibsym, empty:seq.symbol,l) )
 
 Function libfirstpass(l:seq.liblib) seq.firstpass
   @(+,addfirstpass, empty:seq.firstpass   , l)

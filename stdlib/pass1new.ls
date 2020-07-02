@@ -87,6 +87,7 @@ use seq.liblib
 
 
 Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkage
+   let discardw=createplaceholders.libs
    let librarysyms=libsymbols.libs
    let librarymods=asset.libfirstpass.libs
 // assert false report print.librarysyms //

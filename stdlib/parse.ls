@@ -31,8 +31,6 @@ use set.symbol
 
 use symbol
 
-use funcsig
-
 use seq.sig
 
 use set.word
