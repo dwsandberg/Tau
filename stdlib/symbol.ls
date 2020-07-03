@@ -150,24 +150,22 @@ function replaceTinname(with:mytype, name:word)word
   encodeword(subseq(x, 1, length.x - 1) + @(+, decodeword, empty:seq.char, print.with))
   else name
 
-Function toplaceholders(  s:seq.symbol) seq.sig @(+,toplaceholder,empty:seq.sig,s)
-    
-Function toplaceholder( s:symbol) sig   
- if module.s="$fref" then   FREFsig.toplaceholder.(zcode.s)_1 else 
-placeholder(fsig.s,module.s,returntype.s)
 
 
 use funcsig
 
 use seq.sig
 
-type mapele is record   s:symbol, pair:seq.sig  
+type mapele is record   s:symbol,target:symbol  
 
 Function type:mapele internaltype export
 
 Function s(mapele) symbol export
 
-Function pair(mapele) seq.sig export
+Function key(a:mapele) symbol   s.a
+
+Function target(a:mapele) symbol  export
+
 
 function replaceT(with:seq.word,s:word) seq.word if "T"_1=s then with else [s]
 
@@ -178,32 +176,16 @@ if changeit then [fsig_1]+replaceT(  with,subseq(fsig,2,length.fsig)) else
 [replaceTinname(mytype.with, fsig_1)]+replaceT( with,subseq(fsig,2,length.fsig))
 
 Function replaceTsymbol2(with:mytype, s:symbol) mapele
-  if with=mytype."T" then mapele(s,[toplaceholder.s,toplaceholder.s ])
+  if with=mytype."T" then mapele(s,s )
  else
-   let x=symbol(replateTfsig(towords.with,fsig.s), replaceT(towords.with,module.s), replaceT(towords.with, returntype.s))
-  mapele(x,[toplaceholder.x,toplaceholder.s ])
+   let x=replaceTsymbol(with, s)
+  mapele(x,s )
   
 Function replaceTsymbol(with:mytype, s:symbol) symbol
   if with=mytype."T" then s
  else
-   symbol(replateTfsig(towords.with,fsig.s), replaceT(towords.with,module.s), replaceT(towords.with, returntype.s))
+   symbol(replateTfsig(towords.with,fsig.s), replaceT(towords.with,module.s), replaceT(towords.with, returntype.s),zcode.s)
   
-
-/type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
-
-Function myinternaltype(size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype) myinternaltype export
-
-Function size(myinternaltype) int export
-
-Function kind(myinternaltype) word export
-
-Function name(myinternaltype) word export
-
-Function modname(myinternaltype) mytype  export
-
-Function subflds(myinternaltype) seq.mytype export
-
-Function type:myinternaltype internaltype export 
 
 use seq.libsym
 
@@ -258,14 +240,14 @@ Function types(firstpass) seq.myinternaltype export
 
 _______________________________      
      
-   
+use set.libsym
+
 function tosymbol(ls:libsym)symbol
     symbol(fsig.ls,module.ls,returntype.ls)
-    
-  
-function  addlibsym(p:prg,ls:libsym) prg
-    map(p,toplaceholder.tosymbol.ls,
-   scannew(instruction.ls,1,empty:seq.sig))
+        
+function  addlibsym(dict:set.symbol,p:program,ls:libsym) program
+ let x=scannew(dict,instruction.ls,1,empty:seq.symbol)
+    map(p,tosymbol.ls, x)
 
  
 function tofirstpass(m:libmod)  seq.firstpass
@@ -274,20 +256,14 @@ function tofirstpass(m:libmod)  seq.firstpass
  @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol,
  @(+,libtypes,empty:seq.myinternaltype,defines.m))]
  
- 
- 
   function alllibsym(l:liblib) seq.libsym    @(+,defines, empty:seq.libsym,mods.l)+@(+,exports, empty:seq.libsym,mods.l)
 
- Function otherlibsyms(l:seq.liblib) prg    
-       @(addlibsym,identity,emptyprg,toseq(asset.@(+,alllibsym, empty:seq.libsym,l)-knownlibsyms.l))
+ Function otherlibsyms(dict:set.symbol,l:seq.liblib) program    
+      @(addlibsym.dict,identity,emptyprogram,toseq(asset.@(+,alllibsym, empty:seq.libsym,l)-knownlibsyms.l))
  
         function knownlibsyms(l:liblib) seq.libsym   defines.last.mods.l
         
         function knownlibsyms(l:seq.liblib) set.libsym asset.@(+,knownlibsyms, empty:seq.libsym,l)
-
-use set.libsym
-
-
 
 
 function addfirstpass(s:seq.firstpass,l:seq.liblib) seq.firstpass  
@@ -300,112 +276,89 @@ function addfirstpass(l: liblib) seq.firstpass
 Function dependentlibs(dependentlibs:seq.word)   seq.liblib @(+,filter(dependentlibs),empty:seq.liblib   , loadedlibs)
 
 
-Function libsymbols(l:seq.liblib) prg  @(addknown,identity,emptyprg,l)
+Function libsymbols(dict:set.symbol,l:seq.liblib) program 
+@(addknown.dict,identity,emptyprogram,l) 
+ 
+function =(a:target,b:target) boolean  
+ assert code.a=code.b &or fsig.decode.target.a in["getfile(bits seq)","getinstance(T erecord)"
+ ,"addvbr6(bits, int, bits, int seq, bit bitpackedseq, int *)" ]report "KK"+ print.[target.a]+"&br--------"+print.code.a+"&br--------"+ print.code.b 
+target.a=target.b 
 
 
-function addknown(p:prg,l:liblib) prg  @(addlibsym,  identity, p, defines.last.mods.l)
+
+function addknown(dict:set.symbol,p:program,l:liblib) program  @(addlibsym.dict,  identity, p, defines.last.mods.l)
 
 
 use seq.liblib
 
 function  libtypes(l:libsym)  seq.myinternaltype
+   let code=instruction.l
   if returntype.l="internaltype" &and  subseq(instruction.l,length.instruction.l-1,length.instruction.l)="RECORD 5" 
   then 
-    [asmyinternaltype(scannew(instruction.l,1,empty:seq.sig))]
-   else empty:seq.myinternaltype
-
-     use seq.fsignrep
-
-Function createplaceholders(l:seq.liblib) seq.sig 
-empty:seq.sig
-
-@(+,toplaceholder,empty:seq.sig,@(+,alllibsym, empty:seq.symbol,l) )
+     let size=toint.code_2
+     let kind= code_4
+     let name= code_6
+     let len=toint.code_8
+     let modname=mytype.subseq(code,9,9+len-1)
+     let subflds=gettypes(code,9+len+4,empty:seq.mytype)
+     [myinternaltype(size,kind,name,modname, subflds )]
+  else empty:seq.myinternaltype
+  
+      use seq.fsignrep
+     
+function     gettypes(code:seq.word,i:int,result:seq.mytype) seq.mytype
+     if code_i &ne "WORDS"_1 then result
+     else let l=toint.code_(i+1)
+       gettypes(code,i+2+l,    result+mytype.subseq(code,i+2,i+1+l))
 
 Function libfirstpass(l:seq.liblib) seq.firstpass
-  @(+,addfirstpass, empty:seq.firstpass   , l)
-
+  let t=@(+,addfirstpass, empty:seq.firstpass   , l)
+ let discard=@(+,toplaceholder,empty:seq.sig,toseq.@(&cup,defines, empty:set.symbol,t) )
+ t
 
 function filter(s:seq.word,l:liblib)  seq.liblib   if (libname.l)_1 in s then [l] else empty:seq.liblib
-
-   Function asmyinternaltype(     s:seq.sig) myinternaltype
-     let l=length.s
-     assert s_l =RECORD.5 report "internaltype"+print.s+stacktrace
-     let rep1=decode.s_(l-1)
-     assert (fsig.rep1)_1="RECORD"_1 report "internaltype"+print.s
-     let noflds=toint.(fsig.rep1)_2-2
-      let t1=@(+,decode,empty:seq.fsignrep,subseq(s,l-noflds-1,l-2))
-      let subflds=@(+,mytype,empty:seq.mytype,@(+,fsig,empty:seq.seq.word,t1))
-      let size=value.s_1
-      let kind=fsig.decode.s_2
-      let name=fsig.decode.s_3
-      let modname=fsig.decode.s_4
-      myinternaltype(size,kind_1,name_1,mytype.modname,subflds)
+    
 
 
-Function scannew(s:seq.word,i:int,result:seq.sig) seq.sig
+function scannew(dict:set.symbol,s:seq.word,i:int,result:seq.symbol) seq.symbol
   if i > length.s then  result 
   else 
    let this = s_i 
-   if this ="LOCAL"_1  then          scannew(s,i+2,result+sig( [ s_(i+1)],  "local" ,"?"))
-      else if this = "LIT"_1 then    scannew(s,i+2,result+ lit.toint.s_(i+1))
-      else if this = "WORD"_1 then   scannew(s,i+2,result+wordsig.s_(i+1))
-      else if this = "RECORD"_1 then scannew(s,i+2,result+ RECORD.toint.s_(i+1))
-      else if this = "APPLY"_1 then  scannew(s,i+2,result+ apply.toint.s_(i+1))
-      else if this = "BLOCK"_1 then  scannew(s,i+2,result+ block.toint.s_(i+1))
-      else if this = "EXITBLOCK"_1 then scannew(s,i+2,result+ exit)
-      else if this = "BR"_1 then     scannew(s,i+2,result+ br)
-      else if this = "DEFINE"_1 then scannew(s,i+2,result+ define.s_(i+1) )
-      else if this = "COMMENT"_1 then scannew(s, i + 2 + toint.s_(i + 1), result)
-      else if this = "IDXUC"_1 then   scannew( s, i + 1,  result + IDXUC)
-      else if this = "SET"_1 then scannew( s, i + 2,  result)
+   if this ="LOCAL"_1  then          scannew(dict,s,i+2,result+symbol( [ s_(i+1)],  "local" ,"?"))
+      else if this = "LIT"_1 then    scannew(dict,s,i+2,result+ Lit.toint.s_(i+1))
+      else if this = "WORD"_1 then   scannew(dict,s,i+2,result+Word.s_(i+1))
+      else if this = "RECORD"_1 then scannew(dict,s,i+2,result+ Record.toint.s_(i+1))
+      else if this = "APPLY"_1 then  scannew(dict,s,i+2,result+ Apply.toint.s_(i+1))
+      else if this = "BLOCK"_1 then  scannew(dict,s,i+2,result+ Block.toint.s_(i+1))
+      else if this = "EXITBLOCK"_1 then scannew(dict,s,i+2,result+ Exit)
+      else if this = "BR"_1 then     scannew(dict,s,i+2,result+ Br)
+      else if this = "DEFINE"_1 then scannew(dict,s,i+2,result+ Define.[s_(i+1)] )
+      else if this = "COMMENT"_1 then scannew(dict,s, i + 2 + toint.s_(i + 1), result)
+      else if this = "IDXUC"_1 then   scannew(dict,s, i + 1,  result + Idxuc)
+      else if this = "SET"_1 then scannew(dict,s, i + 2,  result)
       else if this = "WORDS"_1 then
          let l = toint.s_(i + 1)
-         scannew( s, i + 2 + l,   result + wordssig.subseq(s, i + 2, i + 1 + l))
+         scannew(dict,s, i + 2 + l,   result + Words.subseq(s, i + 2, i + 1 + l))
     else   if this="builtinZinternal1Zwordzseq"_1 then 
-   // comment keeps this from being striped off //   scannew(s, i + 1,   result)
-    else      let newfref=this = "FREF"_1
-      let q=if newfref then s_(i+1) else this
-      let f=findencode(e2cached, cached( q ,eqOp))  
-      if not.isempty.f then  
-          scannew(s, i + if newfref then 2 else 1,  result + if newfref then FREFsig.s.(f_1)  else s.(f_1))
-       else  
-        let d = codedown.q
-         assert length.d > 1 report"BBB 3" + q+s
-       if d_2=" local" then 
-              scannew(s, i + 1,  result + sig(d_1, "local","?"))
-          else if last.d_2 = "para"_1 then
-                 scannew( s, i + 1, result +sig([ d_2_1], "local", "?"))
-         else if  d_2="builtin" &and 
-          q in "assertZbuiltinZwordzseq  IDXUCZbuiltinZintZint 
+   // comment keeps this from being striped off //   scannew(dict,s, i + 1,   result)
+    else      
+      let d= codedown.if s_i = "FREF"_1 then  s_(i+1) else s_i
+      let newsymbol=
+          if d_2=" local" then   symbol(d_1, "local","?") 
+          else if last.d_2 = "para"_1 then symbol([ d_2_1], "local", "?") 
+          else newsymbol(  d_1, mytype.d_2 ,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)),mytype."?") 
+      let e=findelement(newsymbol,dict)
+      if s_i = "FREF"_1 then 
+             scannew(dict,s, i+2, result+Fref.if isempty.e then newsymbol else e_1 )
+   else  
+    scannew(dict, s, i+1, result+if isempty.e then newsymbol else e_1) 
+  
+  assertZbuiltinZwordzseq  IDXUCZbuiltinZintZint 
          callidxZbuiltinZintZTzseqZint abortedZbuiltinZTzprocess optionZbuiltinZTZwordzseq 
          addZbuiltinZTzerecordZTzencodingrep castZbuiltinZTzseqZintZint 
          allocatespaceZbuiltinZint 
-         setfld2ZbuiltinZTzseqZintZT getinstanceZbuiltinZTzerecord " then
-          let newsig=
-sig( if length.d=2 then d_1 else d_1+"("+@(seperator.",", identity, "", subseq(d, 3, length.d))+")", d_2,"?")
-            let discard= encode(e2cached,cached( q ,newsig))
-                 scannew( s, i + if newfref then 2 else 1,  result + 
-                   if newfref then FREFsig.newsig  else newsig)
-         else if s_i = "FREF"_1 then  scannew( s, i+2, result+FREFsig.toPH.s_(i+1) )
-  else  scannew( s, i+1, result+toPH.s_(i) )
-
-   type cached is record      key: word,s:sig
-  
- function assignencoding(l:int, s:cached)int assignrandom(l,s)
- 
- function =(a:cached,b:cached) boolean key.a=key.b
- 
- function hash(a:cached) int hash.key.a
- 
- type  e2cached is encoding cached
-
-use seq.cached 
-
-  
-  function toPH(w:word) sig
-let d= codedown.w
-toplaceholder.newsymbol(  d_1, mytype.d_2 ,@(+, mytype, empty:seq.mytype, subseq(d, 3, length.d)),mytype."?")
-  
+         setfld2ZbuiltinZTzseqZintZT getinstanceZbuiltinZTzerecord
+    
 ---------------
 
 Function deepcopysym (type:mytype) symbol
@@ -444,10 +397,14 @@ Function Fref(s:symbol) symbol symbol("FREF"+fsig.s+module.s,"$fref","?",[s])
 
 Function Lit0 symbol symbol(  "0",    "$int",  "int",empty:seq.symbol)
 
-
 Function Lit2 symbol symbol(  "2",    "$int",  "int",empty:seq.symbol)
 
 Function Lit3 symbol symbol(  "3",    "$int",  "int",empty:seq.symbol)
+
+Function Optionsym symbol symbol("option(T,word seq)","builtin","?") 
+
+Function EqOp symbol symbol("=(int,int)" ,"builtin","int") 
+
 
 Function astext(s:seq.symbol) seq.word @(+,astext,"",s)
 
@@ -468,6 +425,10 @@ use mangle
 
 type program is  record toset:set.symbol
 
+function toset(p:program) seq.symbol export
+
+function type:program internaltype export
+
 type programele is record data:seq.symbol
 
 function target(a:programele) symbol (data.a)_1
@@ -476,15 +437,62 @@ function code(a:programele) seq.symbol subseq(data.a,2,length.data.a)
 
 functiom isdefined(a:programele) boolean not.isempty.data.a
 
+Function emptyprogram program program.empty:set.symbol
 
 function lookupcode(p:program,s:symbol) programele
      let t=findelement(s,toset.p) 
      if isempty.t then  programele.empty:seq.symbol else programele.zcode.t_1
 
-function  map(p:program,s:symbol,target:symbol,code:seq.symbol) program
+Function  map(p:program,s:symbol,target:symbol,code:seq.symbol) program
     program.replace(toset.p,symbol(fsig.s,module.s,returntype.s,[target]+code))
+ 
+ Function  map(p:program,s:symbol ,code:seq.symbol) program
+    map(p,s,s,code)
+   
+    
+ Function toprg(p:program) prg 
+ @(cvt,identity,emptyprg,toseq.toset.p)
+    
+     function cvt(p:prg,s:symbol) prg
+       map(p,toplaceholder.s,toplaceholder.(zcode.s)_1,toplaceholders.subseq(zcode.s,2,length.zcode.s))
+    
+Function try(s:seq.sig) seq.sig s
 
+ toplaceholders.@(+,tosymbol,empty:seq.symbol,s)
 
+  function try2(sym:symbol,s:seq.sig) seq.sig
+    let p=process.try.s
+    assert not.aborted.p report "XX"+print.sym+print.s+@(+,ch,"",s)
+    result.p
+    
+    function ch(t:sig) seq.word
+     let s=decode.t
+     if (module.s="$fref")   then "&br"+print.(constantcode.s)_1   else ""
 
+use process.seq.sig
+
+Function map(p:prg,s:symbol,code:seq.sig) prg
+let discard=try(code)
+let ph=toplaceholder.s
+map(p,ph,ph,code)
+
+Function map(p:prg,s:symbol,target:symbol,code:seq.sig) prg
+map(p,toplaceholder.s,toplaceholder.target,code)
+
+Function map(p:prg,s:symbol,code:seq.symbol) prg
+  let discard=try2(s,toplaceholders.code)  
+let ph=toplaceholder.s
+map(p,ph,ph,toplaceholders.code)
+
+Function lookupcode(p:prg,s:symbol) seq.target
+ lookupcode(p,toplaceholder.s)
+
+use seq.target
+
+Function toplaceholders(  s:seq.symbol) seq.sig @(+,toplaceholder,empty:seq.sig,s)
+    
+Function toplaceholder( s:symbol) sig   
+ if module.s="$fref" then   FREFsig.toplaceholder.(zcode.s)_1 else 
+placeholder(fsig.s,module.s,returntype.s)
 
  

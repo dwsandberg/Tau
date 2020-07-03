@@ -173,7 +173,9 @@ function addPH(s:seq.word) seq.word
           
   Function placeholder(fsig:seq.word,modname:seq.word ,returntype:seq.word) sig
         let f=fsignrep( fsig,modname,empty:seq.sig, returntype,bits.0) 
-        if modname in ["$","local","$int","$word","$words"] then sigOK.f
+        if modname="$" &and  (fsig.f)_1="DEFINE"_1 then 
+          define.(fsig.f)_2
+         else if modname in ["$","local","$int","$word","$words"] then sigOK.f
         else if last.modname = "para"_1 then
                   sigOK.fsignrep([ modname_1], "local",empty:seq.sig, "?",bits.0) 
         else if modname="$fref" then
@@ -559,8 +561,12 @@ Function lowerbits(s:int)int s - toint(bits.s >> firstupperbit << firstupperbit)
 
 Function isinOp(s:sig) boolean
    lookcloser.s &and (fsig.decode.s)_1 in "in ="
+   
+Function tosymbol(s:sig) symbol
+   let f=decode.s
+   symbol(removePH2.fsig.f,module.f,returntype.f,if module.f="fref" then [tosymbol((constantcode.f)_1)] else empty:seq.symbol)
 
-
+use seq.symbol
 
 module processOptions
 
