@@ -1,5 +1,7 @@
 Module symbol
 
+use mytype
+
 use seq.seq.char
 
 use seq.char
@@ -116,6 +118,7 @@ Function resulttype(s:symbol)mytype mytype.returntype.s
 
 Function nopara(s:symbol)int 
  if module.s="$" then toint((fsig.s)_2)  else 
+ if module.s="$fref" then 0 else
  @(counttrue, =(","_1), if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
 
 function counttrue(i:int, b:boolean)int if b then i + 1 else i
@@ -152,9 +155,6 @@ function replaceTinname(with:mytype, name:word)word
 
 
 
-use funcsig
-
-use seq.sig
 
 type mapele is record   s:symbol,target:symbol  
 
@@ -187,9 +187,9 @@ Function replaceTsymbol(with:mytype, s:symbol) symbol
    symbol(replateTfsig(towords.with,fsig.s), replaceT(towords.with,module.s), replaceT(towords.with, returntype.s),zcode.s)
   
 
-use seq.libsym
 
-use seq.firstpass
+
+
 
 use seq.libmod
 
@@ -240,30 +240,30 @@ Function types(firstpass) seq.myinternaltype export
 
 _______________________________      
      
-use set.libsym
+use seq.firstpass
 
-function tosymbol(ls:libsym)symbol
+function tosymbol2(ls:symbol)symbol
     symbol(fsig.ls,module.ls,returntype.ls)
         
-function  addlibsym(dict:set.symbol,p:program,ls:libsym) program
+function  addlibsym(dict:set.symbol,p:program,ls:symbol) program
  let x=scannew(dict,instruction.ls,1,empty:seq.symbol)
-    map(p,tosymbol.ls, x)
+    map(p,tosymbol2.ls, x)
 
  
 function tofirstpass(m:libmod)  seq.firstpass
- [ firstpass(mytype.if parameterized.m then"T" + modname.m else [ modname.m], uses.m, 
- @(+, tosymbol, empty:set.symbol, defines.m), 
- @(+, tosymbol, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol,
+ [ firstpass( modname.m , uses.m, 
+ @(+, tosymbol2, empty:set.symbol, defines.m), 
+ @(+, tosymbol2, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol,
  @(+,libtypes,empty:seq.myinternaltype,defines.m))]
  
-  function alllibsym(l:liblib) seq.libsym    @(+,defines, empty:seq.libsym,mods.l)+@(+,exports, empty:seq.libsym,mods.l)
+  function alllibsym(l:liblib) seq.symbol   @(+,defines, empty:seq.symbol,mods.l)+@(+,exports, empty:seq.symbol,mods.l)
 
  Function otherlibsyms(dict:set.symbol,l:seq.liblib) program    
-      @(addlibsym.dict,identity,emptyprogram,toseq(asset.@(+,alllibsym, empty:seq.libsym,l)-knownlibsyms.l))
+      @(addlibsym.dict,identity,emptyprogram,toseq(asset.@(+,alllibsym, empty:seq.symbol,l)-knownlibsyms.l))
  
-        function knownlibsyms(l:liblib) seq.libsym   defines.last.mods.l
+        function knownlibsyms(l:liblib) seq.symbol   defines.last.mods.l
         
-        function knownlibsyms(l:seq.liblib) set.libsym asset.@(+,knownlibsyms, empty:seq.libsym,l)
+        function knownlibsyms(l:seq.liblib) set.symbol asset.@(+,knownlibsyms, empty:seq.symbol,l)
 
 
 function addfirstpass(s:seq.firstpass,l:seq.liblib) seq.firstpass  
@@ -279,10 +279,6 @@ Function dependentlibs(dependentlibs:seq.word)   seq.liblib @(+,filter(dependent
 Function libsymbols(dict:set.symbol,l:seq.liblib) program 
 @(addknown.dict,identity,emptyprogram,l) 
  
-function =(a:target,b:target) boolean  
- assert code.a=code.b &or fsig.decode.target.a in["getfile(bits seq)","getinstance(T erecord)"
- ,"addvbr6(bits, int, bits, int seq, bit bitpackedseq, int *)" ]report "KK"+ print.[target.a]+"&br--------"+print.code.a+"&br--------"+ print.code.b 
-target.a=target.b 
 
 
 
@@ -291,7 +287,7 @@ function addknown(dict:set.symbol,p:program,l:liblib) program  @(addlibsym.dict,
 
 use seq.liblib
 
-function  libtypes(l:libsym)  seq.myinternaltype
+function  libtypes(l:symbol)  seq.myinternaltype
    let code=instruction.l
   if returntype.l="internaltype" &and  subseq(instruction.l,length.instruction.l-1,length.instruction.l)="RECORD 5" 
   then 
@@ -312,9 +308,7 @@ function     gettypes(code:seq.word,i:int,result:seq.mytype) seq.mytype
        gettypes(code,i+2+l,    result+mytype.subseq(code,i+2,i+1+l))
 
 Function libfirstpass(l:seq.liblib) seq.firstpass
-  let t=@(+,addfirstpass, empty:seq.firstpass   , l)
- let discard=@(+,toplaceholder,empty:seq.sig,toseq.@(&cup,defines, empty:set.symbol,t) )
- t
+  @(+,addfirstpass, empty:seq.firstpass   , l)
 
 function filter(s:seq.word,l:liblib)  seq.liblib   if (libname.l)_1 in s then [l] else empty:seq.liblib
     
@@ -403,8 +397,9 @@ Function Lit3 symbol symbol(  "3",    "$int",  "int",empty:seq.symbol)
 
 Function Optionsym symbol symbol("option(T,word seq)","builtin","?") 
 
-Function EqOp symbol symbol("=(int,int)" ,"builtin","int") 
+Function EqOp symbol symbol("=(int,int)" ,"builtin","boolean") 
 
+Function PlusOp symbol symbol("+(int,int)" ,"builtin","int") 
 
 Function astext(s:seq.symbol) seq.word @(+,astext,"",s)
 
@@ -425,21 +420,21 @@ use mangle
 
 type program is  record toset:set.symbol
 
-function toset(p:program) seq.symbol export
+function toset(p:program) set.symbol export
 
 function type:program internaltype export
 
 type programele is record data:seq.symbol
 
-function target(a:programele) symbol (data.a)_1
+Function target(a:programele) symbol (data.a)_1
 
-function code(a:programele) seq.symbol subseq(data.a,2,length.data.a)
+Function code(a:programele) seq.symbol subseq(data.a,2,length.data.a)
 
-functiom isdefined(a:programele) boolean not.isempty.data.a
+Function isdefined(a:programele) boolean not.isempty.data.a
 
 Function emptyprogram program program.empty:set.symbol
 
-function lookupcode(p:program,s:symbol) programele
+Function lookupcode(p:program,s:symbol) programele
      let t=findelement(s,toset.p) 
      if isempty.t then  programele.empty:seq.symbol else programele.zcode.t_1
 
@@ -449,50 +444,6 @@ Function  map(p:program,s:symbol,target:symbol,code:seq.symbol) program
  Function  map(p:program,s:symbol ,code:seq.symbol) program
     map(p,s,s,code)
    
-    
- Function toprg(p:program) prg 
- @(cvt,identity,emptyprg,toseq.toset.p)
-    
-     function cvt(p:prg,s:symbol) prg
-       map(p,toplaceholder.s,toplaceholder.(zcode.s)_1,toplaceholders.subseq(zcode.s,2,length.zcode.s))
-    
-Function try(s:seq.sig) seq.sig s
-
- toplaceholders.@(+,tosymbol,empty:seq.symbol,s)
-
-  function try2(sym:symbol,s:seq.sig) seq.sig
-    let p=process.try.s
-    assert not.aborted.p report "XX"+print.sym+print.s+@(+,ch,"",s)
-    result.p
-    
-    function ch(t:sig) seq.word
-     let s=decode.t
-     if (module.s="$fref")   then "&br"+print.(constantcode.s)_1   else ""
-
-use process.seq.sig
-
-Function map(p:prg,s:symbol,code:seq.sig) prg
-let discard=try(code)
-let ph=toplaceholder.s
-map(p,ph,ph,code)
-
-Function map(p:prg,s:symbol,target:symbol,code:seq.sig) prg
-map(p,toplaceholder.s,toplaceholder.target,code)
-
-Function map(p:prg,s:symbol,code:seq.symbol) prg
-  let discard=try2(s,toplaceholders.code)  
-let ph=toplaceholder.s
-map(p,ph,ph,toplaceholders.code)
-
-Function lookupcode(p:prg,s:symbol) seq.target
- lookupcode(p,toplaceholder.s)
-
-use seq.target
-
-Function toplaceholders(  s:seq.symbol) seq.sig @(+,toplaceholder,empty:seq.sig,s)
-    
-Function toplaceholder( s:symbol) sig   
- if module.s="$fref" then   FREFsig.toplaceholder.(zcode.s)_1 else 
-placeholder(fsig.s,module.s,returntype.s)
-
  
+
+  

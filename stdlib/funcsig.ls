@@ -33,6 +33,8 @@ use seq.seq.word
 
 use mangle
 
+use mytype
+
 
 type efsignrep is encoding fsignrep
 
@@ -48,8 +50,7 @@ Function decode(s:sig)fsignrep decode(efsignrep, toencoding.s)
 
 Function hash(a:fsignrep)int  hash(fsig.a + module.a)   
 
-Function =(a:fsignrep, b:fsignrep)boolean   fsig.a = fsig.b ∧ module.a = module.b  &and 
-(placeholderbit &and extrabits.a)=(placeholderbit &and extrabits.b)
+Function =(a:fsignrep, b:fsignrep)boolean   fsig.a = fsig.b ∧ module.a = module.b  
 
 Function cleancode(s:fsignrep)seq.sig code.s
 
@@ -113,9 +114,6 @@ Function type:target internaltype export
 use intdict.target
 
 Function FREFsig(s:sig) sig  
-if isplaceholder.s then
-sigOK.fsignrep("FREF" + toword.valueofencoding.s, "$fref", [ s],"?",placeholderbit)  
-else 
 sig55("FREF" + toword.valueofencoding.s, "$fref", [ s],"?")  
 
 /function fsignrep(name:seq.word, args:seq.mytype, module1:mytype, code:seq.sig,returntype:mytype)fsignrep
@@ -158,49 +156,17 @@ Function sig55(fsig:seq.word,modname:seq.word,code:seq.sig,rettype:seq.word) sig
   function tofsig(name:seq.word, args:seq.mytype) seq.word
    if length.args = 0 then name else  name + "(" + @(seperator.",", towords,"", args)  + ")"
    
-function removePH2(s:seq.word) seq.word 
-  if subseq(s,length.s-1,length.s)="*)"   then 
-         subseq(s,1,length.s-2)+")"
-  else   s
-
-function addPH(s:seq.word) seq.word 
-  if last.s=")"_1 then subseq(s,1,length.s-1)+"*)"
-  else s
+ 
   
-  
-  Function removePH(rep2:fsignrep) fsignrep
-  fsignrep(removePH2.fsig.rep2, module.rep2,empty:seq.sig,returntype.rep2,bits.0)
-          
-  Function placeholder(fsig:seq.word,modname:seq.word ,returntype:seq.word) sig
-        let f=fsignrep( fsig,modname,empty:seq.sig, returntype,bits.0) 
-        if modname="$" &and  (fsig.f)_1="DEFINE"_1 then 
-          define.(fsig.f)_2
-         else if modname in ["$","local","$int","$word","$words"] then sigOK.f
-        else if last.modname = "para"_1 then
-                  sigOK.fsignrep([ modname_1], "local",empty:seq.sig, "?",bits.0) 
-        else if modname="$fref" then
-           assert length.code.f=1 report "placeholder problem"+fsig+modname+stacktrace
-            FREFsig.sigPH.decode.(code.f)_1
-        else
-        sigPH.f 
 
 use stacktrace
  
-Function removePH(s:sig) sig
- if isplaceholder.s then
-    let rep=decode.s
-    if module.rep="$fref" then
-     FREFsig.removePH.(constantcode.rep)_1
-    else 
-    sigOK.removePH.rep
-     else s 
-
-Function sigPH(f:fsignrep) sig 
-if module.f="builtin" then sigOK.f else
-sigOK.fsignrep(addPH.fsig.f,module.f,empty:seq.sig,returntype.f,placeholderbit)
   
 
 Function findencode(f:fsignrep) seq.fsignrep   findencode(efsignrep,f)
+
+Function findencode(s:symbol) seq.fsignrep   
+findencode(efsignrep,fsignrep(fsig.s,module.s,empty:seq.sig,returntype.s,bits.0))
 
 
 Function name(a:fsignrep)seq.word 
@@ -209,8 +175,6 @@ if j > length.fsig.a then fsig.a
  else
 subseq(fsig.a, 1, j - 1)
 
-/Function mangledname(a:fsignrep)word 
-mangle(merge.name.a, mytype.module.a, paratypes.a)
 
 Function mangledname(s:fsignrep)word 
 mangle2( name.s ,  module.s, @(+,towords,empty:seq.seq.word,paratypes.s))
@@ -249,7 +213,7 @@ if length.module = 2 ∧ module_2 = "para"_1
   else if module = "$constant"then 
   parabits.0  &or constbit
  else if module = "$fref"then 
-  parabits.0  &or if isplaceholder.(constantcode.f)_1 then placeholderbit else  constbit
+  parabits.0  &or  constbit
  else if module ="$" then
   if    name_1 in "BLOCK RECORD LOOPBLOCK APPLY CONTINUE" then
    parabits.toint.name_2 &or  lookcloserbit 
@@ -301,8 +265,7 @@ Function add(p:prg, s:sig, code:seq.sig)prg
   let code2=
      if length.code.d =3 &and (code.d)_3=optionOp  then 
        if  subseq(code,length.code-1,length.code) = subseq(code.d,length.code.d-1,length.code.d) then code
-       else
-        if isplaceholder.s then code else 
+       else 
       code+[(code.d)_2]+optionOp  
   else code
   prg.add(translate.p, valueofencoding.s, target(s, code2 ))
@@ -358,7 +321,7 @@ Function value(s:sig)int toint.(fsig.decode.s)_1
 
 Function lit(i:int)sig
  let w = toword.i
-  sig([ w],  "$int", "?")
+  sig([ w],  "$int", "int")
 
 Function block(i:int)sig sig([ "BLOCK"_1,toword.i],  "$",   "?")
 
@@ -392,17 +355,16 @@ function firstupperbit int 19
 
 function paranobits int firstupperbit
 
-function placeholderbit bits   (bits.1 << paranobits + 3 )
+Function statebit bits   (bits.1 << paranobits + 3 )
 
-function constbit bits placeholderbit << 1
+function constbit bits statebit << 1
 
-function localbit bits placeholderbit << 2
+function localbit bits statebit << 2
 
-function inlinebit bits placeholderbit << 3
+function inlinebit bits statebit << 3
 
-Function lookcloserbit bits placeholderbit << 4
+Function lookcloserbit bits statebit << 4
 
-Function statebit   bits placeholderbit << 5
 
 
 
@@ -418,7 +380,6 @@ Function parabitsY(nopara:int)bits
 
 Function isconst(s:sig)boolean( constbit ∧ bits.valueofencoding.s) =  constbit
 
-Function isplaceholder(s:sig)boolean ( placeholderbit ∧ bits.valueofencoding.s) =  placeholderbit
 
 Function islocal(s:sig)boolean( localbit ∧ bits.valueofencoding.s) =  localbit
 
@@ -503,7 +464,7 @@ use processOptions
  + (if( localbit ∧ bits.i) = bits.0 then""else"∨ localbit")
  + (if( statebit ∧ bits.i) = bits.0 then""else"∨ statebit")
  + (if(lookcloserbit ∧ bits.i) = bits.0 then""else"∨ lookcloserbit" )
- + if(placeholderbit ∧ bits.i) = bits.0 then""else"∨ placeholderbit" }
+  }
  +")"
 
  Function baseupbits seq.sig 
@@ -564,7 +525,19 @@ Function isinOp(s:sig) boolean
    
 Function tosymbol(s:sig) symbol
    let f=decode.s
-   symbol(removePH2.fsig.f,module.f,returntype.f,if module.f="fref" then [tosymbol((constantcode.f)_1)] else empty:seq.symbol)
+   if module.f="$fref" then
+     let arg=tosymbol((constantcode.f)_1)
+     let t= symbol("FREF"+fsig.arg+module.arg,"$fref","?",[arg])
+     t
+   else 
+   symbol(fsig.f,module.f,returntype.f, empty:seq.symbol)
+   
+   Function tosig( s:symbol) sig  
+          if module.s="$fref" then FREFsig.tosig.(zcode.s)_1 else 
+          if module.s="$" &and  (fsig.s)_1="DEFINE"_1 then     define.(fsig.s)_2
+       else   if last.module.s = "para"_1 then  sig([ (module.s)_1], "local", "?") 
+        else 
+           sig (fsig.s ,  module.s,returntype.s)
 
 use seq.symbol
 
@@ -627,7 +600,7 @@ sig("1","local", "?")
 , sig("callidx(int,T seq,int)","builtin", "?")
 , sig("STKRECORD(int,int)","builtin", "?")
 , sig("not(boolean)","builtin","boolean")
-, sig("0","$int", "?")
+, sig("0","$int", "int")
 , sig("wordencoding","words", " char seq erecord",lookcloserbit)
 , sig55(// "CONSTANT 13107215 13107215" // "CONSTANT 15 15","$constant" , [ lit0, lit0],"?")  
 , sig("option(T,word seq)","builtin","$",statebit)  

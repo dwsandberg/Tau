@@ -14,8 +14,8 @@ parsersupport  uses
   newpretty 
   worddict groupparagraphs 
  timestamp ioseq dataio intdict 
- funcsig     libdesc libscope internalbc llvm
- codegennew processOptions intercode parsersupport mangle
+ funcsig      libscope internalbc llvm
+ codegennew processOptions intercode parsersupport mangle mytype
  
  
  
@@ -25,19 +25,19 @@ parsersupport  uses
  * PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage
  
  
-  PROFILE     pass1: bind(symbolset,set.firstpass,symbolset,firstpass)symbolset 
+* PROFILE      pass1:postbind( seq.myinternaltype, set.symbol, set.symbol
+, seq.symbol,int, program, program, program) program
  
-  PROFILE  pass1:postbind( symbolset, set.symbol, symbolset, set.word, seq.word, int,seq.symbol) symbolset 
- 
- 
-   PROFILE  pass1:postbind2(   set.symbol,     seq.word,
-  int,  seq.word,  symbol, symbolset, set.word, symbolset)resultpb
+* PROFILE      pass1:postbind3( seq.myinternaltype, set.symbol, seq.symbol,
+int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
 
+ 
   *  PROFILE  main2:compilelib2(word) seq.word  
 
   *  PROFILE main2:subcompilelib(word) seq.word 
 
-  *  PROFILE   pass2new:pass2(   seq.expmod, seq.expmod,  prg, seq.sig) intercode
+  *  PROFILE   pass2new: pass2(   program,set.symbol
+ ,seq.symbol,seq.firstpass,program,seq.word) intercode
 
 
  

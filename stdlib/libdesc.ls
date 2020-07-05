@@ -4,8 +4,13 @@ Module libdesc
 
 use stdlib
 
+use symbol
 
-/use seq.firstpass
+use seq.symbol
+
+use set.symbol
+
+use seq.firstpass
 
 use seq.fsignrep
 
@@ -25,11 +30,6 @@ use set.word
 
 use seq.int
 
-use seq.libsym
-
-use otherseq.libsym
-
-use seq.expmod
 
 
 use funcsig
@@ -42,13 +42,14 @@ use seq.libmod
 
 use seq.mytype
 
-Function libdesc(p:prg,simple:seq.expmod,abstract2:seq.expmod) sig
-    let abstract3= @(+,tolibmod(p,true),empty:seq.libmod,abstract2)
-  let rootsigs=@(+,exports,empty:seq.sig,simple)  
-  let closed=toexport(p,empty:set.sig,asset.rootsigs)   
-  let d=@(+,tolibsym(p),empty:seq.libsym,toseq.closed )    
-  let libmods=    @(+,tolibmod(p,false),abstract3,simple)
-       + libmod(false,"$other"_1, sort.d, empty:seq.libsym, empty:seq.mytype)
+use mytype
+
+Function libdesc(p:prg,templates:program,mods:seq.firstpass,exports:seq.word,rootsigs:seq.sig) sig
+  let closed=toexport(p,empty:set.sig,asset.rootsigs)  
+  let simplesyms=@(+,tosymbol2,empty:seq.symbol,toseq.closed)
+  let d=@(+,tolibsym(p,templates),empty:seq.symbol,simplesyms )    
+    let libmods=  @(+,tolibmod(p,templates,exports),empty:seq.libmod,mods)
+       + libmod(false,"$other"_1, d, empty:seq.symbol, empty:seq.mytype)
 addseq.@(+,addlibmod,empty:seq.sig,libmods)
        
 /function print(a:libsym) seq.word [fsig.a]+instruction.a
@@ -56,10 +57,20 @@ addseq.@(+,addlibmod,empty:seq.sig,libmods)
 /function print(a:libmod) seq.word  "&br &br define &br"+ @(seperator."&br",print,"",defines.a)+"&br &br export &br"+
  @(seperator."&br",print,"",exports.a)
 
- function tolibmod(p:prg,abstract:boolean,m:expmod) libmod
-  let e=@(+,tolibsym.p,empty:seq.libsym,exports.m)
-   let d=@(+,tolibsym.p,empty:seq.libsym,defines.m)
-  libmod(abstract, modname.m,d,e, uses.m)
+ function tolibmod(p:prg,templates:program,exports:seq.word,m:firstpass) seq.libmod
+  if  not(   abstracttype.modname.m   in exports )  then empty:seq.libmod else
+  let abstract=isabstract.modname.m
+    let e=@(+,tolibsym(p,templates),empty:seq.symbol,toseq.exports.m)
+   let d=if abstract then @(+,tolibsym(p,templates),empty:seq.symbol,toseq.defines.m) else empty:seq.symbol
+  [libmod(modname.m,d,e, if abstract then uses.m else empty:seq.mytype)]
+
+
+
+function tosymbol2(s:sig) seq.symbol
+   let f=decode.s
+   if  module.f = "$constant" then empty:seq.symbol
+   else if module.f="$fref" then [Fref.tosymbol.(cleancode.f)_1]
+   else [symbol(fsig.f,module.f,returntype.f)]
 
 function   toexport(p:prg,processed:set.sig, toprocess:set.sig) set.sig
    if isempty.toprocess then  processed else 
@@ -76,30 +87,50 @@ function   toexport(p:prg,processed:set.sig, toprocess:set.sig) set.sig
     Function exportcode(p:prg,s:sig) seq.sig
        exportcode.lookuprep(p,s)
   
+  Function exportcode(p:prg,s:symbol) seq.sig
+    if fsig.s="wordencoding" &and module.s="words"  then  empty:seq.sig
+    else 
+      let f=lookuprep(p,tosig.s)
+           if length.cleancode.f  < 15 then 
+             cleancode.f else empty:seq.sig
+ 
+function astext(p:prg,s:symbol)seq.word
+ let module=module.s 
+ let fsig=fsig.s
+ let code=if  module="local" then "LOCAL"+fsig
+   else if  module="$int"  then "LIT"+fsig
+   else if module="$words" then "WORDS"+toword.length.fsig+fsig
+   else if module="$word" then "WORD"+fsig
+   else if module="$" then fsig
+   else if module in [ "$constant"] then 
+    assert false report "should not get here"+print.s
+     fsig
+   else if module in ["$fref"] then 
+     "FREF"+mangledname.(zcode.s)_1
+   else if last.module ="para"_1 then "LOCAL"+(module)_1
+   else [mangledname.s,toword.nopara.s]
+ if code_1 in "SET WORD WORDS LOCAL LIT APPLY RECORD 
+ FREF EXITBLOCK BR BLOCK DEFINE"then code else [ code_1]
 
        
 function astext(p:prg,s:sig)seq.word
  let rep= lookuprep(p,s)
  let f = towords2x.rep
-  if f_1 = "CONSTANT"_1 then   astext5(p,cleancode.rep)+"RECORD"+toword.length.cleancode.rep
+  if f_1 = "CONSTANT"_1 then   @(+, astext(p),"", cleancode.rep)+"RECORD"+toword.length.cleancode.rep
    else if f_1 in "SET WORD WORDS LOCAL LIT APPLY RECORD FREF EXITBLOCK BR BLOCK DEFINE"then f else [ f_1]
 
-function astext5(p:prg, d:seq.sig)seq.word @(+, astext(p),"", d)
-
-
-function tolibsym(p:prg,psig:sig ) seq.libsym
-   let s=  removePH.psig  
-   let rep=lookuprep(p,s)
-   if module.rep in ["$","$constant","$int","local","$word","$words","$fref"] 
-    &or s=IDXUC then empty:seq.libsym else
- let t=astext5(p,if isabstract.mytype.module.rep then cleancode.rep else exportcode(p,s) )
-  let t2= if length.t > 0 &and t_1="EXITBLOCK"_1 then subseq(t,5,length.t)
-  else t
-            [ libsym(fsig.rep,module.rep, returntype.rep ,"",t2)]
+function tolibsym(p:prg,templates:program,sym:symbol ) seq.symbol
+    if module.sym in ["$","$constant","$int","local","$word","$words","$fref"] 
+    then empty:seq.symbol else
+    let txt=if isabstract.mytype.module.sym then 
+     let t=lookupcode(templates,sym)
+          @(+, astext(p),"",  code.t)
+    else @(+, astext(p),"",exportcode(p,sym ))
+             [ symbol(fsig.sym,module.sym, returntype.sym ,empty:seq.symbol,txt )]
 
 ----------------------------------
 
-function addlibsym(s:libsym) sig
+function addlibsym(s:symbol) sig
       constant.[wordssig.fsig.s ,wordssig.module.s ,wordssig.returntype.s ,wordssig."",wordssig.instruction.s]
 
 function addmytype(t:mytype) sig  wordssig.(towords.t)
@@ -110,8 +141,8 @@ function addseq(s:seq.sig) sig
 constant.([ lit.0, lit.length.s ]+s )
 
 function addlibmod(s:libmod) sig 
-    constant.[lit.if parameterized.s then 1 else 0
-     ,wordsig.modname.s
+    constant.[lit.if isabstract.modname.s then 1 else 0
+     ,wordsig.abstracttype.modname.s
      ,addseq.@(+,addlibsym,empty:seq.sig,defines.s)
       ,addseq.@(+,addlibsym,empty:seq.sig,exports.s)
     ,addseq.@(+,addmytype,empty:seq.sig,uses.s)]

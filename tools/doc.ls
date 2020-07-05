@@ -13,6 +13,8 @@ use format
 
 use libscope
 
+use mytype
+
 use main2
 
 use seq.mytype

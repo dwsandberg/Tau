@@ -28,7 +28,6 @@ use seq.libmod
 
 use libscope
 
-use seq.libsym
 
 use seq.mytype
 
@@ -84,7 +83,7 @@ function subcompilelib(libname:word)seq.word
  let allsrc= getlibrarysrc.libname 
  let x = basesigs(allsrc)
    let p1 = pass1(groupparagraphs("module Module",allsrc), exports, dependentlibs )
- let intercode2 = pass2(abstractmods.p1,simplemods.p1,result.p1,compiled.p1)
+ let intercode2 = pass2(result.p1,compiled.p1,roots.p1,mods.p1,templates.p1,exports)
  let bc=codegen( intercode2 , libname)
  let z2 = createlib(bc, libname, subseq(s, u + 1, e - 1))
  // let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1) 
@@ -177,5 +176,5 @@ Function secondPass(libname:word)seq.seq.word
       let allsrc =getlibrarysrc.s_2 
  let x = basesigs(allsrc)
   let p1 = pass1(groupparagraphs("module Module",allsrc), exports, dependentlibs  )
- let p2 =  pass2(abstractmods.p1,simplemods.p1,result.p1,compiled.p1)
+ let p2 =  pass2(result.p1,compiled.p1,roots.p1,mods.p1,templates.p1,exports)
    print.p2 

@@ -6,6 +6,8 @@ run mylib testnew
 
 run mylib test
 
+use mytype
+
 type block is record kind:word,blkno:int,label1:int,label2:int,code:seq.sig,subblks:seq.block
 
 
@@ -382,18 +384,26 @@ use set.word
 use libdesc
 
 
-use seq.expmod
 
 use set.seq.word
-  
 
- Function pass2(  abstract:seq.expmod,firstsimple:seq.expmod, placehold:prg,compiled:seq.sig) intercode
-   let p= driver(  placehold ,1,emptyprg)  
-   let simple=removePH.firstsimple
-   let libmods=libdesc(p, simple, abstract)
-   let rootsigs=@(+,exports,empty:seq.sig,simple)  
-   let t=uses(p,empty:set.sig,asset.rootsigs+libmods)
-   let compiled2=asset.removePH.compiled
+use seq.symbol
+
+use symbol
+
+use seq.firstpass
+
+use set.symbol
+
+
+
+ Function pass2(   placehold:program,compiled:set.symbol
+ ,roots:seq.symbol,mods:seq.firstpass,templates:program,exports:seq.word) intercode
+    let p = @( depthfirst(placehold),identity,emptyprg,toseq.toset.placehold)
+      let rootsigs=@(+,tosig,empty:seq.sig,roots)  
+     let libmods=libdesc(p, templates,mods,exports,rootsigs)
+    let t=uses(p,empty:set.sig,asset.rootsigs+libmods)
+   let compiled2=asset.@(+,tosig,empty:seq.sig,toseq.compiled) 
    let defines2=@(+, defines2(p),empty:seq.sig,toseq.(t-compiled2 )) 
    let sigreps=getfsignrep.p 
     intercode( sigreps ,defines2,t,libmods)
@@ -405,24 +415,11 @@ use set.seq.word
        fsig.f+ print.cleancode.f 
   
      
-  function removePH(s:seq.sig) seq.sig 
-    @(+,removePH,empty:seq.sig,s)
-    
-  function removePH(m:expmod) expmod
- expmod(modname.m,removePH.exports.m,empty:seq.sig,empty:seq.mytype)
- 
- function removePH(s:seq.expmod) seq.expmod
-     @(+,removePH,empty:seq.expmod,s)
      
+      
 function  uses(p:prg,s:sig) seq.sig
- assert not.isplaceholder.s report "A placeholder"+print.s+stacktrace
-  // let t=lookupcode(p,s)
-  let a=if isempty.t then empty:seq.sig  
-  else  code.t_1 //
-   let b=cleancode.lookuprep(p,s)
-  // assert b=a report "JKL"+print.b+"&br -------------"+print.a //
-   b
-        
+    cleancode.lookuprep(p,s)
+         
 function   uses(p:prg,processed:set.sig, toprocess:set.sig) set.sig
    if isempty.toprocess then  processed else 
     let q= asset.@(+,uses.p,empty:seq.sig,     toseq.toprocess)
@@ -445,23 +442,12 @@ else if  "T"_1 in fsig.s then [ss] else empty:seq.sig
 
 type backresult is record code:seq.sig, places:seq.int
 
-
- 
-Function firstopt(p:prg, rep:fsignrep, code:seq.sig) prg
- let nopara = noparafsignrep.rep
- let pdict=addpara(empty:intdict.seq.sig, nopara)
- let code2 = value.yyy(p, code, 1, nopara + 1, pdict)
- let rep2=removePH.rep
- let s=sig55( fsig.rep2,module.rep2,code2,returntype.rep2)
- let a = breakblocks(code2,s)
- let a2=value.yyy(p,a,1,nopara+1,pdict)
-  add(p, s, a2) 
   
-/Function firstopt(p:prg, sin:sig, code:seq.sig) prg
- let nopara = nopara.sin
+Function firstopt(p:prg, rep:symbol, code:seq.sig) prg
+ let nopara = nopara.rep
  let pdict=addpara(empty:intdict.seq.sig, nopara)
  let code2 = value.yyy(p, code, 1, nopara + 1, pdict)
- let s=  removePH.sin
+  let s=sig55( fsig.rep,module.rep,code2,returntype.rep)
  let a = breakblocks(code2,s)
  let a2=value.yyy(p,a,1,nopara+1,pdict)
   add(p, s, a2) 
@@ -499,9 +485,9 @@ function yyy(p:prg, s:seq.sig, i:int, nextvar:int, map:intdict.seq.sig)ipair.seq
    yyy(p, code.t, index.t, nextvar.t, map)
 else   if s_i=br &and s_(i-3)=notOp then
   yyy(p,replace(s,i-3,3,[s_(i-1),s_(i-2)]),i,nextvar,map)
-else if isplaceholder.s_i then
+else // if isplaceholder.s_i then
             yyy(p,replace(s,i,1,[removePH.s_i]),i,nextvar,map)
-else    if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
+else  //  if not.lookcloser.s_i then yyy(p, s, i + 1, nextvar, map) else
      let rep=decode.s_i
   if isdefine.s_i then
    if i > 1 ∧ (isconst.s_(i - 1) ∨ islocal.s_(i - 1))then
@@ -786,38 +772,40 @@ let stk = 6
 
 use seq.target
   
-function driver(knownsymbols:prg,i:int,processed:prg) prg
-if i > length.keys.knownsymbols then processed
-else 
-    driver(knownsymbols,i+1,depthfirst(knownsymbols,processed,ecvt.(keys.knownsymbols)_i))
-    
 
-function depthfirst(knownsymbols:prg,processed:prg,s:sig) prg
-      // let f=lookuprep(knownsymbols,s) //
+function depthfirst(knownsymbols:program,processed:prg,s:symbol) prg
       let code=lookupcode(knownsymbols,s)
-      if isempty.code then knownsymbols else
-      depthfirst(knownsymbols,1,[s],processed,code.code_1,s)
+    //  if isempty.code then knownsymbols else //
+      depthfirst(knownsymbols,1,[s],processed,code.code,s)
 
 
-function     depthfirst(knownsymbols:prg,i:int,pending:seq.sig,processed:prg,code:seq.sig,s:sig) prg
+
+     
+function     depthfirst(knownsymbols:program,i:int,pending:seq.symbol,processed:prg,code:seq.symbol,s:symbol) prg
         if i > length.code then
-                 firstopt(processed,decode.s,code)
+                 firstopt(processed,s,@(+,tosig,empty:seq.sig,code))
         else 
-         let this=code_i
-  let newprg=if not.isplaceholder.this then   processed 
+         let sym=code_i
+     let newprg=     if  module.sym in ["$","local","$int","$word","$words","builtin"] &or last.module.sym="para"_1  then processed
     else 
-      let rep=  lookuprep(knownsymbols, this)
-     let q= if module.rep="$fref" then     (constantcode.rep)_1 else this
-      if    q in pending then 
-         processed  
-    else
-         let  rep2=if module.rep="$fref" then lookuprep(knownsymbols, q) else rep
-          let r= findencode(removePH.rep2)
-          if isempty.r &and  length.cleancode.rep2 > 0 then 
-          depthfirst(knownsymbols, 1,pending+q,processed,cleancode.rep2,q)
-          else processed
+      let sym2=if module.sym="$fref" then     (zcode.sym)_1 else sym
+      if   sym2 in pending then   processed  
+      else   let r= findencode(sym2)
+             if not.isempty.r then processed
+             else 
+               let rep2=  lookupcode(knownsymbols,  sym2) 
+              if  length.code.rep2  > 0 then 
+                depthfirst(knownsymbols, 1,pending+sym2,processed,code.rep2 ,sym2)
+              else processed
         depthfirst(knownsymbols,   i +  1, pending, newprg,code,s)
 
+
+
+/Function toprg(p:program) prg 
+ @(cvt,identity,emptyprg,toseq.toset.p)
+    
+/function cvt(p:prg,s:symbol) prg
+       map(p,toplaceholder.s,toplaceholder.(zcode.s)_1,toplaceholders.subseq(zcode.s,2,length.zcode.s))
 
 
 

@@ -95,20 +95,7 @@ use seq.mytype
 
 
 
-type expmod is record modname:word, exports:seq.sig,defines:seq.sig,uses:seq.mytype
 
-function type:expmod internaltype export
-
-function exports(expmod) seq.sig export
-
-function defines(expmod) seq.sig export
-
-function modname(expmod)  word export
-
-function uses(expmod)  seq.mytype export
-
-function expmod(modname:word, exports:seq.sig,defines:seq.sig,uses:seq.mytype) expmod export
-    
 
 
 function astext(coding:seq.fsignrep, i:sig)seq.word
@@ -135,6 +122,7 @@ if  module="local" then "LOCAL"+fsig
    else if module="$word" then "WORD"+fsig
    else if module in ["$"," $constant"] then fsig
    else if module in ["$fref"] then "FREF"+mangledname.decode.(constantcode.f)_1
+   else if last.module ="para"_1 then "LOCAL"+fsig+(module.f)_1
    else [mangledname.f,toword.noparafsignrep.f]
 
 

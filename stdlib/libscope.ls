@@ -1,4 +1,42 @@
+Module mytype
+
+use stdlib
+
+Function type:mytype internaltype export
+
+type mytype is record towords:seq.word
+
+Function mytype(seq.word)mytype export
+
+Function towords(mytype)seq.word export
+
+
+Function print(p:mytype)seq.word prt(towords.p, length.towords.p)
+
+function prt(s:seq.word, i:int)seq.word
+ if i = 1 then [ s_1]
+ else [ s_i] + "." + prt(s, i - 1)
+
+Function =(t:mytype, b:mytype)boolean towords.t = towords.b
+
+Function abstracttype(m:mytype)word(towords.m)_(length.towords.m)
+
+Function parameter(m:mytype)mytype mytype.subseq(towords.m, 1, length.towords.m - 1)
+
+Function isabstract(a:mytype)boolean(towords.a)_1 = "T"_1
+
+Function isinstance(a:mytype)boolean length.towords.a > 1 ∧ not(parameter.a = mytype."T")
+
+Function iscomplex(a:mytype)boolean length.towords.a > 1
+
+Function replaceT(with:mytype, m:mytype)mytype
+ if(towords.m)_1 = "T"_1 then
+ mytype(towords.with + subseq(towords.m, 2, length.towords.m))
+ else m
+
 Module libscope
+
+use mytype
 
 use encoding.seq.char
 
@@ -8,7 +46,6 @@ use seq.liblib
 
 use seq.libmod
 
-use seq.libsym
 
 
 use seq.mytype
@@ -19,26 +56,13 @@ use seq.seq.word
 
 use seq.word
 
-Function formatcall(modname:mytype, name:word, paratypes:seq.mytype)seq.word
- print.modname + ":" + name
- + if length.paratypes = 0 then""
- else"(" + @(seperator.",", print,"", paratypes) + ")"
 
-Function formatcall(name:word, paratypes:seq.mytype)seq.word
- [ name]
- + if length.paratypes = 0 then""
- else"(" + @(seperator.",", print,"", paratypes) + ")"
 
 Function type:liblib internaltype export
 
-Function type:libsym internaltype export
 
 Function type:libmod internaltype export
 
-Function type:mytype internaltype export
-
-type libsym is record fsig:seq.word, module:seq.word, returntype:seq.word,zcode:seq.word,
- instruction:seq.word
 
 
 type liblib is record libname:seq.word, words:seq.encodingrep.seq.char, mods:seq.libmod, timestamp:int, readonly:boolean
@@ -55,77 +79,35 @@ Function words(liblib)seq.encodingrep.seq.char export
 
 Function readonly(liblib)boolean export
 
-Function =(a:libsym, b:libsym)boolean fsig.a = fsig.b
 
 use otherseq.word
 
-Function ?(a:libsym, b:libsym)ordering  fsig.a +module.a ?  fsig.b +module.b
 
 function =(a:libmod, b:libmod)boolean modname.a = modname.b
 
-Function =(t:mytype, b:mytype)boolean towords.t = towords.b
-
-Function abstracttype(m:mytype)word(towords.m)_(length.towords.m)
-
-Function parameter(m:mytype)mytype mytype.subseq(towords.m, 1, length.towords.m - 1)
-
-Function libsym(fsig:seq.word, module:seq.word, returntype:seq.word,zcode:seq.word,
- instruction:seq.word)libsym export
-
-Function module(libsym)seq.word export
-
-
-Function returntype(libsym)seq.word export
-
-Function instruction(libsym)seq.word export
-
-Function fsig(libsym) seq.word export
+Function uses(libmod)seq.mytype export
 
 Function loadedlibs seq.liblib builtin.usemangle
 
-type mytype is record towords:seq.word
 
-Function mytype(seq.word)mytype export
+type libmod is record parameterized:boolean, modnamex:word, defines:seq.symbol, exports:seq.symbol, uses:seq.mytype
 
-Function towords(mytype)seq.word export
+Function libmod(parameterized:boolean, modname:word, defines:seq.symbol, exports:seq.symbol, uses:seq.mytype)libmod export
 
-type libmod is record parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, uses:seq.mytype
+Function libmod(modname:mytype, defines:seq.symbol, exports:seq.symbol, uses:seq.mytype)libmod 
+ libmod(isabstract.modname,abstracttype.modname,defines,exports,uses)
+ 
+Function modname(l:libmod)mytype  mytype.if parameterized.l then  "T"+modnamex.l else [modnamex.l]
 
-Function libmod(parameterized:boolean, modname:word, defines:seq.libsym, exports:seq.libsym, uses:seq.mytype)libmod export
 
-Function parameterized(libmod)boolean export
+Function defines(l:libmod)seq.symbol export
 
-Function modname(libmod)word export
-
-Function defines(libmod)seq.libsym export
-
-Function exports(libmod)seq.libsym export
-
-Function uses(libmod)seq.mytype export
-
-Function print(p:mytype)seq.word prt(towords.p, length.towords.p)
-
-function prt(s:seq.word, i:int)seq.word
- if i = 1 then [ s_1]
- else [ s_i] + "." + prt(s, i - 1)
+Function exports(l:libmod)seq.symbol export
 
 
 
 
 
-Function isabstract(a:mytype)boolean(towords.a)_1 = "T"_1
-
-Function isinstance(a:mytype)boolean length.towords.a > 1 ∧ not(parameter.a = mytype."T")
-
-Function iscomplex(a:mytype)boolean length.towords.a > 1
-
-Function replaceT(with:mytype, m:mytype)mytype
- if(towords.m)_1 = "T"_1 then
- mytype(towords.with + subseq(towords.m, 2, length.towords.m))
- else m
-
-
-  
 type symbol is record  fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol,instruction:seq.word
 
 use seq.symbol
