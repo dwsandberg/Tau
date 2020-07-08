@@ -52,16 +52,7 @@ Function conststype llvmtype array(-2, i64)
 
 Function profiletype llvmtype array(-3, i64)
 
-
-
-
 Function type:match5 internaltype export
-
-type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int,code:seq.sig
-
-function match5 ( fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int) match5
- match5(fullinst,length,parts,action,arg,empty:seq.sig)
-
 
 Function length(match5)int // no of instruction that return results // export
 
@@ -69,13 +60,19 @@ Function action(match5)word export
 
 Function arg(match5)int export
 
+
+type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int,code:seq.sig
+
+function match5 ( fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int) match5
+ match5(fullinst,length,parts,action,arg,empty:seq.sig)
+
 Function code(match5) seq.sig export
 
-Function optionOp sig export
+Function type:sig internaltype export
 
-Function =(sig,sig) boolean export
+Function type:fsignrep internaltype export
 
-Function lowerbits(sig) int export
+Function type:prg internaltype export
 
 Function _(m:seq.match5,s:sig) match5   m_lowerbits.s
 
@@ -91,11 +88,10 @@ Function options(match5map:seq.match5,m:match5) seq.word
 if  last.code.m=optionOp then 
 fullinst.match5map_((code.m)_(length.code.m-1)) else empty:seq.word
 
-use funcsig
 
 type ematch5 is encoding match5
 
-Function table seq.match5
+function table seq.match5
 let t = [ 
  match5("IDXUCZbuiltinZintZint 2", 3, CAST(1, ibcsub1, typ.ptr.i64, 10) + GEP(2, 1, typ.i64, -1, ibcsub2)
 + LOAD(3, -2, typ.i64, align8, 0))
@@ -181,46 +177,51 @@ function getarg(s:seq.match5,i:sig) int
 
 
 
-Function type:intercode internaltype export
 
 
-Function defines(i:intercode) seq.sig export
+ function mangledname(coding:seq.encodingrep.fsignrep,s:sig) word   mangledname(data.(coding )_lowerbits.s)
 
-function mangledname(ic:intercode,s:sig) word   mangledname((coding.ic)_lowerbits.s)
-
-Function match5map(fs2:intercode,symlist:seq.word) seq.match5
-  let declist=@(+, mangledname.fs2,"", defines.fs2)
+ 
+Function match5map( theprg:prg, defines:seq.sig, uses:set.sig,symlist:seq.word) seq.match5
+let  reps=getsigencoding
+  let declist=@(+, mangledname.reps,"", defines)
    let discard = conststype
   let discard1 = profiletype
   let discard2 = @(+, C, 0, symlist+ declist)
   let discard3 = table
- let actuallyused=asset.@(+,lowerbits,empty:seq.int,toseq.uses.fs2)
- buildtemplates(empty:seq.match5,coding.fs2, actuallyused,1)
+ let actuallyused=asset.@(+,lowerbits,empty:seq.int,toseq.uses )
+ buildtemplates(empty:seq.match5,reps , actuallyused,1,theprg)
  
   
  use set.sig
  
  use set.int
-     
  
-function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq.match5
+ use encoding.fsignrep
+ 
+ use seq.encodingrep.fsignrep
+ 
+ use seq.target
+ 
+ 
+function  buildtemplates(s:seq.match5,coding:seq.encodingrep.fsignrep,used:set.int,i:int,theprg:prg) seq.match5 
  if i > length.coding then s
  else if not (i in used) then 
      let m=match5("SET 0", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
-     buildtemplates(s+m,coding,used,i+1)
+     buildtemplates(s+m,coding,used,i+1,theprg)
  else  
-    let xx=coding_i
+    let xx=data.coding_i
      let b =  if     module.xx ="builtin"  then
          findencode(ematch5, match5([mangledname.xx,toword.noparafsignrep.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
        else empty:seq.match5
     if length.b > 0 then 
-       buildtemplates(s+b_1,coding,used,i+1)
+       buildtemplates(s+b_1,coding,used,i+1,theprg)
     else 
       let pkg=module.xx
      let m =  if pkg = "$fref" then
-              let mn=  mangledname.coding_lowerbits.(constantcode.xx)_1
+              let mn=  mangledname.data.coding_lowerbits.(constantcode.xx)_1
        match5(fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.mn, C.mn]))
-      else if pkg = "$int" then
+      else if pkg = "int $" then
        match5("LIT"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.(fsig.xx)_1)
       else if pkg="local" then
        match5("LOCAL"+fsig.xx, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
@@ -237,8 +238,11 @@ function buildtemplates(s:seq.match5,coding:seq.fsignrep,used:set.int,i:int) seq
         let noargs = noparafsignrep.xx
         let name=mangledname.xx
         let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ name], noargs + 1)
-        match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,cleancode.xx)
-    buildtemplates(s+m,coding,used,i+1)
+         let tmp=lookupcode(theprg, sig.code.coding_i)
+         let code=if isempty.tmp then empty:seq.sig else code.tmp_1
+        match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,code)
+    buildtemplates(s+m,coding,used,i+1,theprg)
+
 
 
 function ematch5 erecord.match5 export

@@ -121,8 +121,8 @@ function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo, i
   
 function addparameter(orgsize:int, input:seq.token.bindinfo, place:int, dict:set.symbol, m:mytype)set.symbol
  assert isempty.lookup(dict, [abstracttype.m], empty:seq.mytype) ∨ abstracttype.m = ":"_1 report errormessage("duplciate symbol:" + abstracttype.m, input, place)
- let parano = toword(cardinality.dict - orgsize + 1)
-  dict + newsymbol([abstracttype.m], mytype.[ parano,"para"_1], empty:seq.mytype, parameter.m)
+ let parano =  cardinality.dict - orgsize + 1 
+  dict + Parameter(abstracttype.m,parameter.m, parano)
 
 function lookupbysig(dict:set.symbol, name:seq.word, paratypes:seq.mytype, input:seq.token.bindinfo, place:int)symbol
  let f = lookup(dict, name, paratypes)
@@ -214,7 +214,7 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  let e = R_4
   let name =(tokentext.R_2)
    assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:" + name, input, place.R)
-   let newdict = dict.R + newsymbol(name, mytype."local", empty:seq.mytype,(types.e)_1)
+   let newdict = dict.R + Local(name, (types.e)_1)
     bindinfo(newdict, code.e + Define.name, types.e,tokentext.R_2)
  else if ruleno = // E A E // 33 then
    let name=(tokentext.R_1)

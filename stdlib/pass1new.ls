@@ -2,8 +2,7 @@ run mylib test
 
 Module pass1
 
-run main test1
-
+run mylib testnew
 
 use otherseq.firstpass
 
@@ -116,7 +115,8 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
   let templatemap=@( maptemp.temp34,identity,temp34,// toseq.allsymbols1 // map.expand1)
    let result=postbind(alltypes1,allsymbols1 ,empty:set.symbol, [ root],1,emptyprogram,source,templatemap)
    let compiled=(toset.librarysyms &cap toset.result)
-   linkage(result,compiled, roots,simple+abstract ,templatemap)
+  let result2= @( processOption,identity,result,@(+,identity,empty:seq.seq.word,allsrc) )
+   linkage(result2,compiled, roots,simple+abstract ,templatemap)
  
 
 
@@ -216,9 +216,6 @@ function  ascode(it:myinternaltype) seq.symbol
      +@(+,Words,empty:seq.symbol,@(+,towords,empty:seq.seq.word,subflds.it))
      +Record(length.subflds.it+2)+Record.5
      
-     use seq.fsignrep
-     
-
 function print(it:myinternaltype) seq.word
   [toword.size.it,kind.it,name.it]+print.modname.it+@(+,print,"",subflds.it)
 
@@ -465,7 +462,6 @@ function  countflds(s:seq.symbol,i:int,len:int) int
   if i > length.s then len else
    countflds(s,i+1, if islocal.s_i then len+1 else len)
 
-function islocal(s:symbol) boolean module.s="local"
 
    
 function postbind(alltypes:seq.myinternaltype,dict:set.symbol,working:set.symbol
@@ -501,7 +497,7 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,
    let x=code_i
    let isfref=module.x="$fref"
    let sym=if isfref then  (zcode.x)_1 else code_i
- if  module.sym in ["$","local","$int","$word","$words","builtin"] &or last.module.sym="para"_1  then
+ if  isnocall.sym  then
     postbind3(alltypes,dict,code,i+1,result+ code_i,modname,org, calls, sourceX ,tempX)
  else
    let lr1=lookupcode(sourceX,sym)

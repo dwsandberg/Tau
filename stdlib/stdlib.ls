@@ -14,8 +14,8 @@ parsersupport  uses
   newpretty 
   worddict groupparagraphs 
  timestamp ioseq dataio intdict 
- funcsig      libscope internalbc llvm
- codegennew processOptions intercode parsersupport mangle mytype
+     libscope internalbc llvm
+   parsersupport mangle mytype persistant bitpackedseq
  
  
  
@@ -50,7 +50,18 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
  
  PROFILE codetemplates : buildtemplates( seq.match5, seq.fsignrep, set.int, int) seq.match5
  
- * INLINE funcsig : parabits(int)int
+  INLINE funcsig : parabits(int)int
+
+* STATE builtin: add(  erecord.T, encodingrep.T ) int  
+
+* STATE builtin: getinstance( erecord.T)?
+
+* STATE builtin: getfile(seq.bits ) fileresult 
+
+* STATE builtin: setfld2(seq.T , int, T)  ? 
+
+* STATE  builtin: option(T,seq.word )T  
+
 
 
 use UTF8

@@ -66,26 +66,30 @@ use seq.match5
 
 use persistant
 
-use seq.sig
+use set.sig
+  
+  use seq.sig
 
 function funcdec(map:seq.match5,i:sig)seq.int
-  let m=map_lowerbits.i
+  let m=map_i
   let nopara=arg.m
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
   
+
+  
   
 
-Function codegen(fs2:intercode, thename:word)seq.bits
+Function codegen(theprg:prg, defines:seq.sig, uses:set.sig, thename:word)seq.bits
  let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 "
  + merge."llvm.sqrt.f64"
  + merge."llvm.sin.f64"
  + merge."llvm.cos.f64"
-      let match5map = match5map(fs2,symlist)
+      let match5map = match5map(theprg, defines , uses ,symlist)
     // assert false report fullinst.last.match5map //
   let libmods2=arg.last.match5map
       // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
      // assert false report checkmap.match5map //
-      let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines.fs2)
+      let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines)
      let profilearcs2 = profilearcs
      let noprofileslots = length.profilearcs2 / 2
        let profilearcs3 = addwordseq2( profilearcs2)
@@ -128,14 +132,13 @@ Function codegen(fs2:intercode, thename:word)seq.bits
       , // llvm.sqrt.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.sin.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.cos.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
-      + @(+, funcdec.match5map, empty:seq.seq.int, defines.fs2)
+      + @(+, funcdec.match5map, empty:seq.seq.int, defines)
        llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 
-use funcsig
 
  
  function addfuncdef(match5map:seq.match5,  i:sig)internalbc
-   let m=(match5map_lowerbits.i) 
+   let m=match5map_i 
  //   let hh=process.subaddfuncdef(match5map,m)
     assert not.aborted.hh report "fail get"+ inst.m+ message.hh +"&br"+print.code.m
     result.hh
@@ -145,7 +148,6 @@ function subaddfuncdef(match5map:seq.match5,  m:match5)internalbc //
  let code= if length.options > 0  then  
   // assert  "PROFILE"_1 in options  report "PROFILE PROBLEM"+options //
     subseq(code.m,1,length.code.m-2) else code.m
-    assert not (optionOp in code) report "optionOp in code"+print.code.m
  let nopara=arg.m
     let l = Lcode2(emptyinternalbc, paramap(nopara,empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
  let g5 = if "PROFILE"_1 in options then  mangledname.m else"noprofile"_1

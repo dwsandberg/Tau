@@ -1,4 +1,5 @@
 
+run mylib testnew
 
 Module libdesc
 
@@ -17,7 +18,6 @@ use seq.fsignrep
 
 use seq.seq.int
 
-use intercode
 
 use libscope
 
@@ -46,16 +46,18 @@ use mytype
 
 Function libdesc(p:prg,templates:program,mods:seq.firstpass,exports:seq.word,rootsigs:seq.sig) sig
   let closed=toexport(p,empty:set.sig,asset.rootsigs)  
-  let simplesyms=@(+,tosymbol2,empty:seq.symbol,toseq.closed)
+  let simplesyms=@(+,tosymbol,empty:seq.symbol,toseq.closed)
   let d=@(+,tolibsym(p,templates),empty:seq.symbol,simplesyms )    
     let libmods=  @(+,tolibmod(p,templates,exports),empty:seq.libmod,mods)
        + libmod(false,"$other"_1, d, empty:seq.symbol, empty:seq.mytype)
 addseq.@(+,addlibmod,empty:seq.sig,libmods)
        
-/function print(a:libsym) seq.word [fsig.a]+instruction.a
-
-/function print(a:libmod) seq.word  "&br &br define &br"+ @(seperator."&br",print,"",defines.a)+"&br &br export &br"+
- @(seperator."&br",print,"",exports.a)
+Function libdesc(p:prg,templates:program,mods:seq.firstpass,exports:seq.word,rootsigs:seq.symbol) sig
+  let closed=toexport(p,empty:set.symbol,asset.rootsigs)  
+  let d=@(+,tolibsym(p,templates),empty:seq.symbol,toseq.closed )    
+    let libmods=  @(+,tolibmod(p,templates,exports),empty:seq.libmod,mods)
+       + libmod(false,"$other"_1, d, empty:seq.symbol, empty:seq.mytype)
+addseq.@(+,addlibmod,empty:seq.sig,libmods)
 
  function tolibmod(p:prg,templates:program,exports:seq.word,m:firstpass) seq.libmod
   if  not(   abstracttype.modname.m   in exports )  then empty:seq.libmod else
@@ -64,74 +66,58 @@ addseq.@(+,addlibmod,empty:seq.sig,libmods)
    let d=if abstract then @(+,tolibsym(p,templates),empty:seq.symbol,toseq.defines.m) else empty:seq.symbol
   [libmod(modname.m,d,e, if abstract then uses.m else empty:seq.mytype)]
 
-
-
-function tosymbol2(s:sig) seq.symbol
-   let f=decode.s
-   if  module.f = "$constant" then empty:seq.symbol
-   else if module.f="$fref" then [Fref.tosymbol.(cleancode.f)_1]
-   else [symbol(fsig.f,module.f,returntype.f)]
-
 function   toexport(p:prg,processed:set.sig, toprocess:set.sig) set.sig
    if isempty.toprocess then  processed else 
     let q= asset.@(+,exportcode.p,empty:seq.sig,     toseq.toprocess)
       toexport(p,processed &cup toprocess, q-processed)
 
- Function exportcode(f:fsignrep) seq.sig
-           if length.cleancode.f  < 15 then 
-             if fsig.f="wordencoding" &and module.f="words"  then 
-                empty:seq.sig
-             else 
-             cleancode.f else empty:seq.sig
+function   toexport(p:prg,processed:set.symbol, toprocess:set.symbol) set.symbol
+   if isempty.toprocess then  processed else 
+    let q= asset.@(+,exportcode.p,empty:seq.symbol,     toseq.toprocess)
+      toexport(p,processed &cup toprocess, q-processed)
            
-    Function exportcode(p:prg,s:sig) seq.sig
-       exportcode.lookuprep(p,s)
+Function exportcode(p:prg,s:sig) seq.sig
+        let f=decode.s
+        if fsig.f="wordencoding" &and module.f="words"  then  empty:seq.sig else
+        let cd=lookupcode(p,s)
+        if isempty.cd then constantcode.f
+        else  
+           if length.code.cd_1   < 15 then  code.cd_1    else empty:seq.sig
+              
+use seq.target
   
-  Function exportcode(p:prg,s:symbol) seq.sig
-    if fsig.s="wordencoding" &and module.s="words"  then  empty:seq.sig
+  Function exportcode(p:prg,s:symbol) seq.symbol
+    if fsig.s="wordencoding" &and module.s="words"  then  empty:seq.symbol
     else 
-      let f=lookuprep(p,tosig.s)
-           if length.cleancode.f  < 15 then 
-             cleancode.f else empty:seq.sig
- 
-function astext(p:prg,s:symbol)seq.word
- let module=module.s 
- let fsig=fsig.s
- let code=if  module="local" then "LOCAL"+fsig
-   else if  module="$int"  then "LIT"+fsig
-   else if module="$words" then "WORDS"+toword.length.fsig+fsig
-   else if module="$word" then "WORD"+fsig
-   else if module="$" then fsig
-   else if module in [ "$constant"] then 
-    assert false report "should not get here"+print.s
-     fsig
-   else if module in ["$fref"] then 
-     "FREF"+mangledname.(zcode.s)_1
-   else if last.module ="para"_1 then "LOCAL"+(module)_1
-   else [mangledname.s,toword.nopara.s]
- if code_1 in "SET WORD WORDS LOCAL LIT APPLY RECORD 
- FREF EXITBLOCK BR BLOCK DEFINE"then code else [ code_1]
-
-       
-function astext(p:prg,s:sig)seq.word
- let rep= lookuprep(p,s)
- let f = towords2x.rep
-  if f_1 = "CONSTANT"_1 then   @(+, astext(p),"", cleancode.rep)+"RECORD"+toword.length.cleancode.rep
-   else if f_1 in "SET WORD WORDS LOCAL LIT APPLY RECORD FREF EXITBLOCK BR BLOCK DEFINE"then f else [ f_1]
-
+      let f=lookupcode(p,tosig.s)
+      if isempty.f  then empty:seq.symbol
+      else     if length.code.f_1  < 15 then 
+           @(+,sigtosyms.p,empty:seq.symbol,code.f_1) else empty:seq.symbol
+             
+             
+  function   sigtosyms(p:prg,s:sig) seq.symbol
+            let f=decode.s
+              if module.f ="$fref" then 
+                [Fref.sigtosyms(p,(constantcode.f)_1)_1]
+              else if module.f = "$constant" then
+               @(+,sigtosyms.p,empty:seq.symbol,constantcode.f)+Record.length.constantcode.f
+              else [tosymbol.s]
+                     
 function tolibsym(p:prg,templates:program,sym:symbol ) seq.symbol
-    if module.sym in ["$","$constant","$int","local","$word","$words","$fref"] 
+    if module.sym in ["$","$constant","int $","local","$word","$words","$fref"] 
     then empty:seq.symbol else
-    let txt=if isabstract.mytype.module.sym then 
+    if isabstract.mytype.module.sym then 
      let t=lookupcode(templates,sym)
-          @(+, astext(p),"",  code.t)
-    else @(+, astext(p),"",exportcode(p,sym ))
-             [ symbol(fsig.sym,module.sym, returntype.sym ,empty:seq.symbol,txt )]
+              [ symbol(fsig.sym,module.sym, returntype.sym ,[sym]+code.t )]
+    else 
+      let code=exportcode(p,sym )
+                  [ symbol(fsig.sym,module.sym, returntype.sym ,[sym]+code )]
+   
 
 ----------------------------------
 
 function addlibsym(s:symbol) sig
-      constant.[wordssig.fsig.s ,wordssig.module.s ,wordssig.returntype.s ,wordssig."",wordssig.instruction.s]
+      constant.[wordssig.fsig.s ,wordssig.module.s ,wordssig.returntype.s ,addseq.@(+,addlibsym,empty:seq.sig,zcode.s),lit.0]
 
 function addmytype(t:mytype) sig  wordssig.(towords.t)
 
@@ -147,7 +133,6 @@ function addlibmod(s:libmod) sig
       ,addseq.@(+,addlibsym,empty:seq.sig,exports.s)
     ,addseq.@(+,addmytype,empty:seq.sig,uses.s)]
 
-_______________________________      
-     
+
    
  

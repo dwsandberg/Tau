@@ -105,17 +105,17 @@ Function defines(l:libmod)seq.symbol export
 Function exports(l:libmod)seq.symbol export
 
 
+use bits
 
 
-
-type symbol is record  fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol,instruction:seq.word
+type symbol is record  fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol,extrabits:bits
 
 use seq.symbol
 
 Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol) symbol 
-symbol(fsig,module,returntype,zcode,"")
+symbol(fsig,module,returntype,zcode,bits.0)
 
-function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol,instruction:seq.word) symbol 
+function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol,extrabits:bits) symbol 
 export
 
 Function fsig(symbol)seq.word export
@@ -128,7 +128,7 @@ Function type:symbol internaltype export
 
 Function zcode(symbol)seq.symbol export
 
-Function instruction(symbol)seq.word export
+Function extrabits(symbol)bits export
 
 type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
 
@@ -146,6 +146,35 @@ Function name(myinternaltype)word export
 Function modname(myinternaltype)mytype export
 
 Function subflds(myinternaltype)seq.mytype export
+
+use seq.myinternaltype
+
+
+Function type:firstpass internaltype export
+
+type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
+unbound:set.symbol,types:seq.myinternaltype
+
+Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
+unboundx:set.symbol,types:seq.myinternaltype) firstpass
+ export
+ 
+
+Function exportmodule(firstpass)boolean false
+
+Function modname(firstpass)mytype export
+
+Function defines(firstpass)set.symbol export
+
+Function exports(firstpass)set.symbol export
+
+Function uses(firstpass)seq.mytype export
+
+Function unboundexports(firstpass)seq.symbol export
+
+Function unbound(firstpass)set.symbol export
+
+Function types(firstpass) seq.myinternaltype export
 
 module mangle
 

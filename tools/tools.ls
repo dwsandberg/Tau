@@ -14,14 +14,14 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
  exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph 
  makeDAG pretty  printbitcodes profile svg svggraph taulextable testparser tools
  
-* STATE   profile profileinfo()  profileresult  
+* STATE   builtin:profile profileinfo   profileresult  
 
 
 /run printbitcodes test1
 
 /run tools testfirstpass
 
-/run tools testprofile
+run tools testprofile
 
 /run tools prettytest
 
