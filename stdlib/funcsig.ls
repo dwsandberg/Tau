@@ -40,19 +40,15 @@ type efsignrep is encoding fsignrep
 
 Function efsignrep  erecord.fsignrep export
 
+Function decode(s:sig)fsignrep decode(efsignrep, toencoding.s)
+
+
 Function emptyprg prg prg.empty:intdict.target
 
-Function keys(p:prg) seq.int  keys.translate.p
-
-Function data(p:prg) seq.target data.translate.p
-
-Function decode(s:sig)fsignrep decode(efsignrep, toencoding.s)
 
 Function hash(a:fsignrep)int  hash(fsig.a + module.a)   
 
 Function =(a:fsignrep, b:fsignrep)boolean   fsig.a = fsig.b ∧ module.a = module.b  
-
-Function cleancode(s:fsignrep)seq.sig code.s
 
 Function returntype(s:fsignrep)seq.word export
 
@@ -67,7 +63,7 @@ type fsignrep is record fsig:seq.word, module:seq.word,  code:seq.sig, returntyp
 
  
 
-Function noparafsignrep(s:fsignrep)int
+Function nopara(s:fsignrep)int
  if module.s="$" then toint((fsig.s)_2)  else 
  @(counttrue, =(","_1), if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
 
@@ -75,10 +71,7 @@ Function nopara(s:sig)int
    let a = decode.s
     if module.a = "$"then toint.(fsig.a)_2 
     else if last.module.a in  "$constant $fref $words $word $ local"  then 0  
-    else noparafsignrep.a
- 
- 
- 
+    else nopara.a
   
 function counttrue(i:int, b:boolean)int if b then i + 1 else i
 
@@ -88,11 +81,9 @@ Function type:sig internaltype export
 
 Function type:prg internaltype export
 
-Function valueofencoding(s:sig)int valueofencoding.toencoding.s
 
-Function toencoding(sig)encoding.fsignrep export
+Function ?(a:sig,b:sig) ordering valueofencoding.toencoding.a ? valueofencoding.toencoding.b
 
-Function sig(encoding.fsignrep)sig export
 
 type prg is record translate:intdict.target
 
@@ -117,64 +108,49 @@ use stacktrace
 
 function  sigandmodule(s:sig) seq.word let x=decode.s  fsig.x+module.x
 
-Function sig(fsig:seq.word,modname:seq.word,rettype:seq.word,b:bits) sig
-  sig(encode(efsignrep,fsignrep(fsig,modname,empty:seq.sig,rettype,b)))
-
 Function sig(fsig:seq.word,module:seq.word,returntype:seq.word) sig
-      sig(fsig,module,returntype,bits.0)
+ sig(encode(efsignrep,fsignrep(fsig,module,empty:seq.sig,returntype,bits.0)))
 
-Function sig55(p:prg,fsig:seq.word,modname:seq.word,code:seq.sig,rettype:seq.word) sig
-  let t=fsignrep(fsig,modname,code,rettype,bits.0) 
-  let ex=if modname in ["$words", "int $", "$word","$constant","$fref","$", "builtin","local" ]then 
-  bits.0 else
-   if fsig="in(int, int seq)" &or  fsig="in(word, word seq)" then bits.0 else 
-  extrabits(code,noparafsignrep.t)
- sig(encode(efsignrep,fsignrep(fsig,modname,code,rettype,ex)))
+Function addoptions(code:seq.sig,options:seq.word) seq.sig
+ if options ="" then code
+ else  
+  let codewithoutoptions= if length.code > 0 &and  last.code=optionOp then subseq(code,1,length.code-2) else code
+    codewithoutoptions+wordssig.options+optionOp
 
-Function sig56(fsig:seq.word,modname:seq.word,code:seq.sig,rettype:seq.word) sig
- sig(encode(efsignrep,fsignrep(fsig,modname,code,rettype,bits.0)))
-   
-/Function sig55(p:prg,fsig:seq.word,modname:seq.word,code:seq.sig,rettype:seq.word) sig
-  let t=fsignrep(fsig,modname,code,rettype,bits.0) 
-  let caloptions=if modname in ["$words", "int $", "$word","$constant","$fref","$", "builtin","local" ]then 
-  "" else if fsig="in(int, int seq)" &or  fsig="in(word, word seq)" then "" else 
-           caloptions(p,code,noparafsignrep.t)
-  let ex= if "STATE"_1 in caloptions then statebit
-  else if "INLINE"_1 in caloptions then inlinebit
+
+Function options( code:seq.sig) seq.word  
+  if  length.code=0 &or not(last.code=optionOp) then "" else fsig.decode.(code)_(length.code-1)
+          
+Function   caloptions(p:prg,code:seq.sig,nopara:int,modname:seq.word,fsig:seq.word) seq.word
+           let options= options.code  
+         if length.code=0 then if  not(modname="builtin" ) then  "STATE" else ""
+         else if fsig="in(int, int seq)" &or  fsig="in(word, word seq)" then ""   
+         else
+           let codeonly= if   last.code=optionOp then subseq(code,1,length.code-2) else code
+             let newoptions =options+if not("STATE"_1 in options) &and  @(&or,hasstate,false  ,codeonly ) then "STATE" else ""
+        newoptions+if not("NOINLINE"_1 in options)   &and (length.code < 15 &or   issimple(nopara , codeonly )) then "INLINE"
+           else "" 
+         
+Function sig57(fsig:seq.word,modname:seq.word,rettype:seq.word,options:seq.word) sig
+ let ex= if "STATE"_1 in options then statebit
+  else if "INLINE"_1 in options then inlinebit
   else bits.0
-  let newcode=if caloptions ="" then code else
-    let codewithoutoptions= if length.code > 0 &and  last.code=optionOp then subseq(code,1,length.code-2) else code
-    codewithoutoptions+wordssig.caloptions+optionOp
- sig(encode(efsignrep,fsignrep(fsig,modname,newcode,rettype,ex)))
- 
- 
- 
-  
+ sig(encode(efsignrep,fsignrep(fsig,modname,empty:seq.sig,rettype,ex)))
 
-Function findencode(f:fsignrep) seq.fsignrep   findencode(efsignrep,f)
-
+ 
 Function findencode(s:symbol) seq.fsignrep   
 findencode(efsignrep,fsignrep(fsig.s,module.s,empty:seq.sig,returntype.s,bits.0))
 
-
-Function name(a:fsignrep)seq.word 
-let j=findindex("("_1, fsig.a)  
-if j > length.fsig.a then fsig.a
- else
-subseq(fsig.a, 1, j - 1)
-
-
 Function mangledname(s:fsignrep)word 
-mangle2( name.s ,  module.s, @(+,towords,empty:seq.seq.word,paratypes.s))
+let a=fsig.s
+let j=findindex("("_1, a)  
+let name=if j > length.a then a
+ else subseq(a, 1, j - 1)
+  if length.a < 4 then mangle2( name  ,  module.s,  empty:seq.seq.word )
+else
+ let b = break(","_1, subseq(a, 1, length.a - 1), j + 1 )
+mangle2( name  ,  module.s, b)
 
-
-Function paratypes(f:fsignrep) seq.mytype
-let a= fsig.f 
-  if length.a < 4 then empty:seq.mytype
-  else 
-  let i=if a_(length.a-1)="*"_1 then 2 else 1
- let b = break(","_1, subseq(a, 1, length.a - i), findindex("("_1, a) + 1 )
- @(+, mytype, empty:seq.mytype, b)
 
 
 function break(w:word, a:seq.word, j:int)seq.seq.word
@@ -188,18 +164,9 @@ l+1+toint(  extrabits.s)
  
  
   
-function   extrabits(code:seq.sig,nopara:int) bits
-     if length.code=0 then statebit else
-     let options= if  not(last.code=optionOp) then "" else fsig.decode.(code)_(length.code-1)  
-     let state=@(&or,hasstate,"STATE"_1 in options &or "PROFILE"_1 in options,code )
-        (if state then statebit else     bits.0  )
-     &or if    "INLINE"_1 in options  then inlinebit
-         else  if   "NOINLINE"_1 in options &or (length.code =3 &and length.options > 0   ) then bits.0
-         else  if  length.code  < 15 &or issimple(nopara , code ) then inlinebit
-         else bits.0
- 
+
 Function lookupcode (p:prg, s:sig) seq.target
-  lookup(translate.p, valueofencoding.s)
+  lookup(translate.p, valueofencoding.toencoding.s)
  
 
      use seq.target    
@@ -209,23 +176,15 @@ Function lookupcode (p:prg, s:sig) seq.target
 
 
 Function add(p:prg, s:sig, code:seq.sig)prg
- let d = decode.s
-  let code2=
-     if length.code.d =3 &and (code.d)_3=optionOp  then 
-       if  subseq(code,length.code-1,length.code) = subseq(code.d,length.code.d-1,length.code.d) then code
-       else 
-      code+[(code.d)_2]+optionOp  
-  else code
-  prg.add(translate.p, valueofencoding.s, target(s, code2 ))
+  prg.add(translate.p, valueofencoding.toencoding.s, target(s, code ))
     
 
-Function =(a:sig, b:sig)boolean valueofencoding.a = valueofencoding.b
+Function =(a:sig, b:sig)boolean valueofencoding.toencoding.a = valueofencoding.toencoding.b
 
 Function print(s:seq.sig)seq.word @(+, print,"", s)
 
 Function getsigencoding seq.encodingrep.fsignrep all.getinstance.efsignrep
 
-Function dumpprg(p:prg)seq.word @( +, print.p,"", all.getinstance.efsignrep)
 
 Function print(s:fsignrep)seq.word
  let t = module.s
@@ -237,24 +196,10 @@ Function print(s:fsignrep)seq.word
   if(fsig.s)_1 in "EXITBLOCK LOOPBLOCK CONTINUE BR"then fsig.s + " &br"else fsig.s
   else fsig.s + "[" + t + "]"
 
-Function print(p:prg, e:encodingrep.fsignrep)seq.word
- "NOT IMP"
-
- let i = valueofencoding.code.e
- let bitflags =decodebits.i
- let rep = lookuprep(p, sig.code.e)
- " &br"+bitflags + print.rep   + @(+, print,"", code.rep)
-   
-  
-Function print(p:prg, s:sig)seq.word
-  "NOT IMP"
-  
- let rep=lookuprep(p,s) 
-  decodebits.s+ print.rep + @(+, print,"", code.rep)
    
 
 Function FREFsig(s:sig) sig  
-sig56("FREF" + sigandmodule.s, "$fref", [ s],"?")  
+sig(encode(efsignrep,fsignrep("FREF" + sigandmodule.s, "$fref", [ s],"?",bits.0)))  
 
 
 Function value(s:sig)int toint.(fsig.decode.s)_1
@@ -283,9 +228,8 @@ Function local(w:word) sig   sig([ w], "local", "?")
 
 
 Function constant(args:seq.sig) sig
-   // let txt = @(+, toword,"",   @(+, lowerbits, empty:seq.int, args) ) //
-    let txt=@(+,sigandmodule,"",args)
-     sig56("CONSTANT" + txt, "$constant", args, "?")
+     let txt=@(+,sigandmodule,"",args)
+    sig(encode(efsignrep,fsignrep("CONSTANT" + txt, "$constant", args, "?",bits.0)))
      
 
 
@@ -305,10 +249,10 @@ module.decode.s in ["$words", "int $", "$word","$constant","$fref" ]
 Function islocal(s:sig)boolean module.decode.s="local"
 
 
-Function isinline(s:sig)boolean( inlinebit ∧ bits.valueofencoding.s) = inlinebit
+Function isinline(s:sig)boolean( inlinebit ∧ bits.valueofencoding.toencoding.s) = inlinebit
 
 
-Function hasstate(s:sig)boolean( statebit ∧ bits.valueofencoding.s) =  statebit
+Function hasstate(s:sig)boolean( statebit ∧ bits.valueofencoding.toencoding.s) =  statebit
 
 Function isblock(s:sig)boolean check(s,"BLOCK")
 
@@ -358,9 +302,8 @@ Function gtOp sig   sig(">(int, int)","builtin", "boolean")
 
   // statebit is set on option so that adding an option doesn't auto add a inline bit //
  
-Function issimple(s:fsignrep)boolean issimple(noparafsignrep.s, code.s)
-
-function issimple(nopara:int, code:seq.sig)boolean
+ 
+Function issimple(nopara:int, code:seq.sig)boolean
     between(length.code, 1, 15)  
  ∧ (nopara = 0 ∨ checksimple(code, 1, nopara, 0))
  
@@ -384,7 +327,6 @@ function checksimple(code:seq.sig, i:int, nopara:int, last:int)boolean
 
 function =(a:bits, b:bits)boolean toint.a = toint.b
 
-Function lowerbits(s:sig)int valueofencoding.s - toint(bits.valueofencoding.s >> firstupperbit << firstupperbit)
 
 Function isinOp(s:sig) boolean
        (fsig.decode.s) in ["in(int, int seq)","in(word, word seq)","=(int,int)","=(word,word)"]

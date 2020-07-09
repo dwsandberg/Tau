@@ -13,7 +13,7 @@ parsersupport  uses
   textio  prims      otherseq tree graph packedseq unsafe words 
   newpretty 
   worddict groupparagraphs 
- timestamp ioseq dataio intdict 
+ timestamp ioseq dataio intdict dict
      libscope internalbc llvm
    parsersupport mangle mytype persistant bitpackedseq
  

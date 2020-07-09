@@ -74,7 +74,15 @@ Function type:fsignrep internaltype export
 
 Function type:prg internaltype export
 
-Function _(m:seq.match5,s:sig) match5   m_lowerbits.s
+use funcsig
+
+Function _(m:seq.match5,s:sig) match5  
+let d=decode.s 
+let full=if module.d in ["$fref" ,  "int $" , "local", "$" ,"$constant" , "$words" ,"$word"] then
+    fsig.d+module.d else [mangledname.d,toword.nopara.d]
+ let e=  findencode(ematch5, match5(full, 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
+ assert not.isempty.e report "LL"+fsig.d+module.d
+e_1
 
 Function mangledname(m:match5)word    (fullinst.m)_1
  
@@ -169,79 +177,89 @@ function match5(fullinst:seq.word, length:int, b:internalbc)match5
  let nopara = @(max, parano, 0, parts)
   match5(fullinst, length, parts,"TEMPLATE"_1, nopara)
   
-function getarg(s:seq.match5,i:sig) int
- let m=s_lowerbits.i
-  assert action.m="ACTARG"_1 report "unexpected action" 
-  arg.m
 
-
-
-
-
-
- function mangledname(coding:seq.encodingrep.fsignrep,s:sig) word   mangledname(data.(coding )_lowerbits.s)
+ function mangledname(s:sig) word    mangledname.decode.s 
 
  
 Function match5map( theprg:prg, defines:seq.sig, uses:set.sig,symlist:seq.word) seq.match5
-let  reps=getsigencoding
-  let declist=@(+, mangledname.reps,"", defines)
+  let declist=@(+, mangledname,"", defines)
    let discard = conststype
   let discard1 = profiletype
   let discard2 = @(+, C, 0, symlist+ declist)
   let discard3 = table
- let actuallyused=asset.@(+,lowerbits,empty:seq.int,toseq.uses )
- buildtemplates(empty:seq.match5,reps , actuallyused,1,theprg)
- 
+  buildtemplates(toseq.uses,1,theprg,empty:seq.sig)
+  
   
  use set.sig
  
  use set.int
  
- use encoding.fsignrep
- 
- use seq.encodingrep.fsignrep
- 
+  
  use seq.target
  
+ use seq.int
  
-function  buildtemplates(s:seq.match5,coding:seq.encodingrep.fsignrep,used:set.int,i:int,theprg:prg) seq.match5 
- if i > length.coding then s
- else if not (i in used) then 
-     let m=match5("SET 0", 0, empty:seq.templatepart,"SPECIAL"_1, 0)
-     buildtemplates(s+m,coding,used,i+1,theprg)
- else  
-    let xx=data.coding_i
-     let b =  if     module.xx ="builtin"  then
-         findencode(ematch5, match5([mangledname.xx,toword.noparafsignrep.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
+ function   processconstargs( arglist:seq.sig,i:int,args:seq.int) seq.int
+    if i > length.arglist then   args
+    else 
+    let xx=decode.arglist_i
+    let e=    findencode(ematch5, match5(fsig.xx+module.xx, 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
+      if isempty.e then empty:seq.int
+      else
+         processconstargs( arglist,i+1,args+arg.e_1)
+   
+ function processconst(  toprocess:seq.sig,i:int, notprocessed:seq.sig) seq.match5
+   if i > length.toprocess then
+    if isempty.notprocessed then empty:seq.match5
+    else processconst( notprocessed,1,empty:seq.sig)
+ else let xx=decode.toprocess_i
+     let args=processconstargs(constantcode.xx,1,empty:seq.int)
+     if isempty.args then processconst(toprocess,i+1,notprocessed+toprocess_i)
+     else 
+      let discard= addit.match5(fsig.xx+module.xx, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)
+      processconst(toprocess,i+1,notprocessed)
+     
+ function  buildtemplates( used:seq.sig,i:int,theprg:prg,const:seq.sig) seq.match5 
+   if i > length.used then 
+     processconst(const,1,empty:seq.sig) 
+   else
+    let xx=decode.used_i
+    let pkg=module.xx
+     if pkg="$constant" then
+       buildtemplates(used,i+1,theprg,const+used_i)
+     else 
+     let b =  if     pkg ="builtin"  then
+         findencode(ematch5, match5([mangledname.xx,toword.nopara.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
        else empty:seq.match5
     if length.b > 0 then 
-       buildtemplates(s+b_1,coding,used,i+1,theprg)
+       buildtemplates( used,i+1,theprg,const)
     else 
-      let pkg=module.xx
      let m =  if pkg = "$fref" then
-              let mn=  mangledname.data.coding_lowerbits.(constantcode.xx)_1
-       match5(fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.mn, C.mn]))
+              let mn=  mangledname((constantcode.xx)_1)
+       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.mn, C.mn]))
       else if pkg = "int $" then
-       match5("LIT"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.(fsig.xx)_1)
+       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.(fsig.xx)_1)
       else if pkg="local" then
-       match5("LOCAL"+fsig.xx, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
+       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
       else if pkg="$" then
-       match5(fsig.xx, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
-      else if pkg= "$constant" then
-        let args=@(+,getarg.s, empty:seq.int,constantcode.xx)
-        match5(fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
-      else if pkg="$words"then
-        match5("WORDS"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2.fsig.xx)
+       match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
+      else // if pkg= "$constant" then
+        let args=@(+,getarg.empty:seq.match5, empty:seq.int,constantcode.xx)
+        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
+      else // if pkg="$words"then
+        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2.fsig.xx)
       else if pkg="$word"then
-         match5("WORD"+fsig.xx, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
+         match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
       else
-        let noargs = noparafsignrep.xx
+        let noargs = nopara.xx
         let name=mangledname.xx
         let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ name], noargs + 1)
-         let tmp=lookupcode(theprg, sig.code.coding_i)
+         let tmp=lookupcode(theprg, used_i)
          let code=if isempty.tmp then empty:seq.sig else code.tmp_1
-        match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,code)
-    buildtemplates(s+m,coding,used,i+1,theprg)
+       match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,code)
+       let discard4=addit.m
+    buildtemplates( used,i+1,theprg,const)
+
 
 
 

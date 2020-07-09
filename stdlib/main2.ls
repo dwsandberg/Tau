@@ -81,7 +81,7 @@ function subcompilelib(libname:word)seq.word
  let allsrc= getlibrarysrc.libname 
     let p1 = pass1(groupparagraphs("module Module",allsrc), exports, dependentlibs )
  let intercode2 = pass2(result.p1,compiled.p1,roots.p1,mods.p1,templates.p1,exports)
- let bc=codegen( theprg.intercode2 ,defines.intercode2,uses.intercode2,libname)
+ let bc=codegen( theprg.intercode2 ,defines.intercode2,uses.intercode2,libname,libdesc.intercode2)
  let z2 = createlib(bc, libname, subseq(s, u + 1, e - 1))
  // let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1) 
  let name = merge("pass1/" + libname + "." + print.currenttime + ".txt")

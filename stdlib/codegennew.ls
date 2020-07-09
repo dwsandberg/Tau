@@ -79,14 +79,14 @@ function funcdec(map:seq.match5,i:sig)seq.int
   
   
 
-Function codegen(theprg:prg, defines:seq.sig, uses:set.sig, thename:word)seq.bits
+Function codegen(theprg:prg, defines:seq.sig, uses:set.sig, thename:word,libdesc:sig)seq.bits
  let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 "
  + merge."llvm.sqrt.f64"
  + merge."llvm.sin.f64"
  + merge."llvm.cos.f64"
       let match5map = match5map(theprg, defines , uses ,symlist)
     // assert false report fullinst.last.match5map //
-  let libmods2=arg.last.match5map
+  let libmods2=arg.match5map_libdesc
       // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
      // assert false report checkmap.match5map //
       let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines)
