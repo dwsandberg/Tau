@@ -16,20 +16,14 @@ use encoding.const3
 use seq.const3
 
 
-use seq.liblib
-
-
-use seq.libmod
-
 use libscope
 
 
-
+use seq.liblib
 
 use llvm
 
 
-use seq.mytype
 
 use stdlib
 

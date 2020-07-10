@@ -21,7 +21,7 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
 
 /run tools testfirstpass
 
-run tools testprofile
+/run tools testprofile
 
 /run tools prettytest
 
@@ -66,7 +66,7 @@ Function testhtmlcode seq.word htmlcode."testall"
 
 /Function prettytest seq.word prettylib("test4","")
 
-Function checkdoclib seq.word doclibrary."stdlibbak"
+Function checkdoclib seq.word doclibrary."simpletest"
 
 Function testfirstpass seq.word @(+, +("&br &br "),"", firstPass("testall"_1))
 

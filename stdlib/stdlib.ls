@@ -3,9 +3,10 @@
 Module stdlib 
 
 Library stdlib UTF8 bitpackedseq bits blockseq codetemplates   encoding fileio 
-format graph groupparagraphs intercode internalbc ipair libdesc libscope llvm main2  otherseq packedseq 
+format graph groupparagraphs  internalbc ipair libdesc libscope llvm main2  otherseq packedseq 
 parse pass1new  persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
  timestamp maindict words   newpretty  codegennew pass2new intdict funcsig
+ mangle mytype
 parsersupport  uses 
  exports stdlib main2 maindict UTF8  
   bits blockseq   encoding fileio format  

@@ -140,14 +140,14 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
   
                  
                 
-        use seq.target          
+             
                                  
 function processtypedef(defined:seq.myinternaltype, undefined:seq.myinternaltype, i:int, newundefined:seq.myinternaltype)seq.myinternaltype
  if i > length.undefined then
  if length.newundefined = 0 then defined
   else
     assert length.undefined > length.newundefined 
-    report"ProBLEM" + @(seperator." &br",  name, "", newundefined)
+    report"PROBLEM" + @(seperator." &br",  print2, "", newundefined)
     processtypedef(defined, newundefined, 1, empty:seq.myinternaltype)
  else if "T"_1 in towords.modname.undefined_i then 
     processtypedef(defined , undefined, i + 1, newundefined)

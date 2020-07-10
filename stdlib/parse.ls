@@ -31,7 +31,7 @@ use set.symbol
 
 use symbol
 
-use seq.sig
+
 
 use set.word
 

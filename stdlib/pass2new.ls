@@ -335,13 +335,6 @@ use seq.int
 
 use set.int
 
-
-
-use libscope
-
-/use mangle
-
-
 use seq.mytype
 
 use real

@@ -13,7 +13,6 @@ use set.symbol
 
 use seq.firstpass
 
-use seq.fsignrep
 
 
 use seq.seq.int
@@ -52,12 +51,6 @@ Function libdesc(p:prg,templates:program,mods:seq.firstpass,exports:seq.word,roo
        + libmod(false,"$other"_1, d, empty:seq.symbol, empty:seq.mytype)
 addseq.@(+,addlibmod,empty:seq.sig,libmods)
        
-Function libdesc(p:prg,templates:program,mods:seq.firstpass,exports:seq.word,rootsigs:seq.symbol) sig
-  let closed=toexport(p,empty:set.symbol,asset.rootsigs)  
-  let d=@(+,tolibsym(p,templates),empty:seq.symbol,toseq.closed )    
-    let libmods=  @(+,tolibmod(p,templates,exports),empty:seq.libmod,mods)
-       + libmod(false,"$other"_1, d, empty:seq.symbol, empty:seq.mytype)
-addseq.@(+,addlibmod,empty:seq.sig,libmods)
 
  function tolibmod(p:prg,templates:program,exports:seq.word,m:firstpass) seq.libmod
   if  not(   abstracttype.modname.m   in exports )  then empty:seq.libmod else
@@ -71,10 +64,6 @@ function   toexport(p:prg,processed:set.sig, toprocess:set.sig) set.sig
     let q= asset.@(+,exportcode.p,empty:seq.sig,     toseq.toprocess)
       toexport(p,processed &cup toprocess, q-processed)
 
-function   toexport(p:prg,processed:set.symbol, toprocess:set.symbol) set.symbol
-   if isempty.toprocess then  processed else 
-    let q= asset.@(+,exportcode.p,empty:seq.symbol,     toseq.toprocess)
-      toexport(p,processed &cup toprocess, q-processed)
            
 Function exportcode(p:prg,s:sig) seq.sig
         let f=decode.s
@@ -86,7 +75,7 @@ Function exportcode(p:prg,s:sig) seq.sig
               
 use seq.target
   
-  Function exportcode(p:prg,s:symbol) seq.symbol
+ Function exportcode(p:prg,s:symbol) seq.symbol
     if fsig.s="wordencoding" &and module.s="words"  then  empty:seq.symbol
     else 
       let f=lookupcode(p,tosig.s)

@@ -36,8 +36,6 @@ use seq.internalbc
 
 use internalbc
 
-use libscope
-
 
 use llvm
 

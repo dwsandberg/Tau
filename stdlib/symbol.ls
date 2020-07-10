@@ -116,8 +116,11 @@ Function modname(s:symbol)mytype mytype.module.s
 Function resulttype(s:symbol)mytype mytype.returntype.s
 
 Function nopara(s:symbol)int 
- if module.s="$" then toint((fsig.s)_2)  else 
- if module.s="$fref" then 0 else
+ if module.s="$" then 
+  if  (fsig.s)_1= "DEFINE"_1 then 1 else 
+  toint((fsig.s)_2)  else 
+ if last.module.s in  "$constant $fref $words $word  local"  then 0  
+    else
  @(counttrue, =(","_1), if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
 
 function counttrue(i:int, b:boolean)int if b then i + 1 else i
@@ -139,11 +142,15 @@ Function lookupfsig(dict:set.symbol, fsig:seq.word)set.symbol
 Function printdict(s:set.symbol)seq.word @(+, print,"", toseq.s)
 
 Function print(s:symbol)seq.word
-   name.s  + "(" + @(seperator.",", print,"", paratypes.s)
- + ")"
- + print.resulttype.s
- + "module:"
- + print.modname.s
+ let t = module.s
+  if t = "local"then [ merge("%" + fsig.s)]
+  else if t = "$words"then '"' + fsig.s + '"'
+  else if t = "$constant" then   let tmp="CONSTANT{"+ @(+,print,"",zcode.s) +"}" 
+     if tmp="CONSTANT{ 0 0 } " then "emptyseq"  else tmp
+  else if last.t in " $ "then
+  if(fsig.s)_1 in "EXITBLOCK LOOPBLOCK CONTINUE BR"then fsig.s + " &br"else fsig.s
+  else fsig.s + "[" + t + "]"
+
 
 function replaceTinname(with:mytype, name:word)word
  let x = decodeword.name
@@ -389,6 +396,10 @@ Function PlusOp symbol symbol("+(int,int)" ,"builtin","int")
 Function isnocall(sym:symbol) boolean 
 module.sym in ["local","$word","$words","builtin"] &or last.module.sym ="$"_1   
 
+Function isinOp(s:symbol) boolean
+       (fsig.s) in ["in(int, int seq)","in(word, word seq)","=(int,int)","=(word,word)"]
+
+
 Function value(s:symbol)int toint.(fsig.s)_1
 
 
@@ -467,5 +478,31 @@ else
    let j=if  i < length.s &and s_(i+1)="."_1 then  i+2 else i+1 
   gettype(s,j,[s_i]+result,  l)
  
-     
+
+Function type:myinternaltype internaltype export
+
+Function size(myinternaltype)int export
+
+Function kind(myinternaltype)word export
+
+Function name(myinternaltype)word export
+
+Function modname(myinternaltype)mytype export
+
+Function subflds(myinternaltype)seq.mytype export
   
+function myinternaltype(size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype) myinternaltype
+export
+
+Function print2(i:myinternaltype) seq.word
+  [name.i]+"module:"+print.modname.i+"fld"+@(+,print,"",subflds.i)
+
+Function fsig(symbol)seq.word export
+
+Function module(symbol)seq.word export
+
+Function returntype(symbol)seq.word export
+
+Function type:symbol internaltype export
+
+Function zcode(symbol)seq.symbol export

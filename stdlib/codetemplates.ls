@@ -11,7 +11,7 @@ use fileio
 
 use seq.seq.int
 
-use intercode
+use funcsig
 
 use internalbc
 
