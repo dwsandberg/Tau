@@ -11,7 +11,7 @@ use fileio
 
 use format
 
-use libscope
+/use libscope
 
 use mytype
 

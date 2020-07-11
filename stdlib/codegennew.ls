@@ -23,7 +23,7 @@ use bits
 
 use codetemplates
 
-use seq.fsignrep
+use seq.symbol
 
 use seq.seq.seq.int
 
@@ -64,11 +64,10 @@ use seq.match5
 
 use persistant
 
-use set.sig
+use set.symbol
   
-  use seq.sig
 
-function funcdec(map:seq.match5,i:sig)seq.int
+function funcdec(map:seq.match5,i:symbol)seq.int
   let m=map_i
   let nopara=arg.m
   [ MODULECODEFUNCTION, typ.function.constantseq(nopara + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -77,7 +76,7 @@ function funcdec(map:seq.match5,i:sig)seq.int
   
   
 
-Function codegen(theprg:prg, defines:seq.sig, uses:set.sig, thename:word,libdesc:sig)seq.bits
+Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word,libdesc:symbol)seq.bits
  let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 "
  + merge."llvm.sqrt.f64"
  + merge."llvm.sin.f64"
@@ -135,7 +134,7 @@ Function codegen(theprg:prg, defines:seq.sig, uses:set.sig, thename:word,libdesc
 
 
  
- function addfuncdef(match5map:seq.match5,  i:sig)internalbc
+ function addfuncdef(match5map:seq.match5,  i:symbol)internalbc
    let m=match5map_i 
  //   let hh=process.subaddfuncdef(match5map,m)
     assert not.aborted.hh report "fail get"+ inst.m+ message.hh +"&br"+print.code.m

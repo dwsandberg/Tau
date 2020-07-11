@@ -24,7 +24,7 @@ use otherseq.int
 
 use seq.int
 
-use libscope
+/use libscope
 
 use stdlib
 

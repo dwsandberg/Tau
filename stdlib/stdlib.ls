@@ -3,9 +3,9 @@
 Module stdlib 
 
 Library stdlib UTF8 bitpackedseq bits blockseq codetemplates   encoding fileio 
-format graph groupparagraphs  internalbc ipair libdesc libscope llvm main2  otherseq packedseq 
+format graph groupparagraphs  internalbc ipair libdesc  llvm main2  otherseq packedseq 
 parse pass1new  persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
- timestamp maindict words   newpretty  codegennew pass2new intdict funcsig
+ timestamp maindict words   newpretty  codegennew pass2new intdict  
  mangle mytype
 parsersupport  uses 
  exports stdlib main2 maindict UTF8  
@@ -15,43 +15,39 @@ parsersupport  uses
   newpretty 
   worddict groupparagraphs 
  timestamp ioseq dataio intdict dict
-     libscope internalbc llvm
-   parsersupport mangle mytype persistant bitpackedseq
+       internalbc llvm 
+   parsersupport mangle mytype   bitpackedseq
  
  
  
  
  
  
- * PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage
+/ * PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage
  
  
-* PROFILE      pass1:postbind( seq.myinternaltype, set.symbol, set.symbol
+/ * PROFILE      pass1:postbind( seq.myinternaltype, set.symbol, set.symbol
 , seq.symbol,int, program, program, program) program
  
-* PROFILE      pass1:postbind3( seq.myinternaltype, set.symbol, seq.symbol,
+/ * PROFILE      pass1:postbind3( seq.myinternaltype, set.symbol, seq.symbol,
 int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
 
  
-  *  PROFILE  main2:compilelib2(word) seq.word  
+/  *  PROFILE  main2:compilelib2(word) seq.word  
 
-  *  PROFILE main2:subcompilelib(word) seq.word 
+/  *  PROFILE main2:subcompilelib(word) seq.word 
 
-  *  PROFILE   pass2new: pass2(   program,set.symbol
+/  *  PROFILE   pass2new: pass2(   program,set.symbol
  ,seq.symbol,seq.firstpass,program,seq.word) intercode
 
+*   PROFILE codegennew:codegen(program,  seq.symbol,  set.symbol,  word, symbol)seq.bits
 
+* PROFILE  codetemplates:match5map(  program,  seq.symbol,  set.symbol, seq.word) seq.match5
  
-  PROFILE codegennew :codegen( intercode,  word) seq.bits
+* PROFILE  codetemplates:  buildtemplates(  seq.symbol, int, program, seq.symbol) seq.match5 
 
-  PROFILE codetemplates : match5map( intercode, seq.word) seq.match5
+* PROFILE codetemplates: processconst(   seq.symbol, int,  seq.symbol) seq.match5
 
- PROFILE pass2new: firstopt( prg,  seq.seq.word, seq.sig, seq.word) bbbresult
-
- 
- PROFILE codetemplates : buildtemplates( seq.match5, seq.fsignrep, set.int, int) seq.match5
- 
-  INLINE funcsig : parabits(int)int
 
 * STATE builtin: add(  erecord.T, encodingrep.T ) int  
 

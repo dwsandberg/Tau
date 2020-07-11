@@ -16,7 +16,7 @@ use displaytextgraph
 
 use seq.int
 
-use libscope
+/use libscope
 
 use labeledgraph.parc
 

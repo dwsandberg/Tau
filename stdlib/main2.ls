@@ -23,7 +23,7 @@ use seq.liblib
 
 use seq.libmod
 
-use libscope
+use libdesc
 
 
 use seq.mytype

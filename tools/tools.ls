@@ -66,12 +66,12 @@ Function testhtmlcode seq.word htmlcode."testall"
 
 /Function prettytest seq.word prettylib("test4","")
 
-Function checkdoclib seq.word doclibrary."simpletest"
+Function checkdoclib seq.word doclibrary."mylib"
 
 Function testfirstpass seq.word @(+, +("&br &br "),"", firstPass("testall"_1))
 
 Function testprofile seq.word 
-   let a = compilelib2("stdlibbak"_1)
+   let a = compilelib2("mylib"_1)
     a + profileresults."time"
     
     +dumpprofileinfo

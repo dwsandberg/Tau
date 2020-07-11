@@ -6,8 +6,6 @@ use seq.seq.char
 
 use seq.char
 
-use libscope
-
 use seq.mytype
 
 use stacktrace
@@ -23,36 +21,8 @@ use set.word
 
 use seq.seq.word
 
-Function ?(a:mytype, b:mytype)ordering
- let y =(towords.a)_(length.towords.a) ? (towords.b)_(length.towords.b)
-  if y = EQ then
-  let x = length.towords.a ? length.towords.b
-    if x = EQ then
-    if length.towords.a = 2 ∧ (towords.a)_1 = "T"_1
-     ∧ not((towords.b)_1 = "T"_1)then
-     LT
-     else if length.towords.a = 2 ∧ (towords.b)_1 = "T"_1
-     ∧ not((towords.a)_1 = "T"_1)then
-     GT
-     else orderm(towords.a, towords.b, length.towords.a)
-    else x
-  else y
 
-function orderm(a:seq.word, b:seq.word, i:int)ordering
- if i = 1 then a_1 ? b_1
- else
-  let x = a_i ? b_i
-   if x = EQ then orderm(a, b, i - 1)else x
-
-Function ?(a:seq.mytype, b:seq.mytype, i:int)ordering
- let o1 = length.a ? length.b
-  if o1 = EQ ∧ length.a ≥ i then
-  let o2 = a_i ? b_i
-    if o2 = EQ then ?(a, b, i + 1)else o2
-  else o1
-
-Function ?(a:seq.mytype, b:seq.mytype)ordering ?(a, b, 1)
-
+ 
 
 
 
@@ -63,10 +33,16 @@ Function type:symbol internaltype export
 Function =(a:symbol, b:symbol)boolean fsig.a = fsig.b  ∧ modname.a = modname.b
 
 
-/type symbol is record  fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol
+
+type symbol is record  fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol 
+
 
 Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word) symbol 
  symbol(fsig,module,returntype,empty:seq.symbol)
+ 
+ Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol) symbol export
+
+
  
  Function fsig(symbol) seq.word export
 
@@ -127,7 +103,7 @@ function counttrue(i:int, b:boolean)int if b then i + 1 else i
 
 use otherseq.word
 
-Function ?(a:symbol, b:symbol)ordering fsig.a ? fsig.b ∧  modname.a ? modname.b
+Function ?(a:symbol, b:symbol)ordering fsig.a ? fsig.b ∧  module.a ? module.b
 
 Function ?2(a:symbol, b:symbol)ordering fsig.a ? fsig.b 
 
@@ -194,6 +170,7 @@ Function replaceTsymbol(with:mytype, s:symbol) symbol
   
 
 
+Function ?(a:mytype, b:mytype)ordering towords.a ? towords.b
 
 
 
@@ -206,6 +183,9 @@ Function towords(mytype)seq.word export
 Function mytype(seq.word)mytype export
 
 Function abstracttype(m:mytype)word export
+
+Function isabstract(a:mytype)boolean export
+
 
 Function parameter(m:mytype)mytype export
 
@@ -222,7 +202,7 @@ use seq.myinternaltype
 
 Function type:firstpass internaltype export
 
-/type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
+type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
 unbound:set.symbol,types:seq.myinternaltype
 
 Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
@@ -248,91 +228,7 @@ Function types(firstpass) seq.myinternaltype export
 
 _______________________________      
      
-use seq.firstpass
-
-function tosymbol2(ls:symbol)symbol
-    symbol(fsig.ls,module.ls,returntype.ls)
-        
-
- 
-function tofirstpass(m:libmod)  seq.firstpass
- [ firstpass( modname.m , uses.m, 
- @(+, tosymbol2, empty:set.symbol, defines.m), 
- @(+, tosymbol2, empty:set.symbol, exports.m), empty:seq.symbol, empty:set.symbol,
- @(+,libtypes,empty:seq.myinternaltype,defines.m))]
- 
-  function alllibsym(l:liblib) seq.symbol   @(+,defines, empty:seq.symbol,mods.l)+@(+,exports, empty:seq.symbol,mods.l)
-
- Function otherlibsyms(dict:set.symbol,l:seq.liblib) program   
-  program(asset.@(+,alllibsym, empty:seq.symbol,l)-knownlibsyms.l)
-  
-      @(addlibsym.dict,identity,emptyprogram,toseq(asset.@(+,alllibsym, empty:seq.symbol,l)-knownlibsyms.l))
- 
-        function knownlibsyms(l:liblib) seq.symbol   defines.last.mods.l
-        
-        function knownlibsyms(l:seq.liblib) set.symbol asset.@(+,knownlibsyms, empty:seq.symbol,l)
-
-
-function addfirstpass(s:seq.firstpass,l:seq.liblib) seq.firstpass  
-  if isempty.l then s else  s+@(+, tofirstpass, empty:seq.firstpass, mods.l_1)
-
-function addfirstpass(l: liblib) seq.firstpass  
- @(+, tofirstpass, empty:seq.firstpass, mods.l)
-
-  
-Function dependentlibs(dependentlibs:seq.word)   seq.liblib @(+,filter(dependentlibs),empty:seq.liblib   , loadedlibs)
-
-
-Function libsymbols(dict:set.symbol,l:seq.liblib) program 
-@(addknown.dict,identity,emptyprogram,l) 
- 
-
-
-
-function addknown(dict:set.symbol,p:program,l:liblib) program 
-  program(toset.p &cup asset.defines.last.mods.l)
-  
- @(addlibsym.dict,  identity, p, defines.last.mods.l)
-
-
-use seq.liblib
-
-
-  Function libtypes(     s:symbol) seq.myinternaltype
-     let code=zcode.s
-     let l=length.code
-     if returntype.s="internaltype" &and fsig.code_l="RECORD 5" &and (fsig.code_(l-1))_1="RECORD"_1 then
-      let noflds=toint.(fsig.code_(l-1))_2-2
-      let t1=subseq(code,l-noflds-1,l-2)
-      let subflds=@(+,mytype,empty:seq.mytype,@(+,fsig,empty:seq.seq.word,t1))
-      let size=value.code_2
-      let kind=fsig.code_3
-      let name=fsig.code_4
-      let modname=fsig.code_5
-      [myinternaltype(size,kind_1,name_1,mytype.modname,subflds)]
-     else empty:seq.myinternaltype
-
-
-  
-      
-function     gettypes(code:seq.word,i:int,result:seq.mytype) seq.mytype
-     if code_i &ne "WORDS"_1 then result
-     else let l=toint.code_(i+1)
-       gettypes(code,i+2+l,    result+mytype.subseq(code,i+2,i+1+l))
-
-Function libfirstpass(l:seq.liblib) seq.firstpass
-  @(+,addfirstpass, empty:seq.firstpass   , l)
-
-function filter(s:seq.word,l:liblib)  seq.liblib   if (libname.l)_1 in s then [l] else empty:seq.liblib
-    
-
-
-  
-  assertZbuiltinZwordzseq  IDXUCZbuiltinZintZint 
-         callidxZbuiltinZintZTzseqZint abortedZbuiltinZTzprocess optionZbuiltinZTZwordzseq 
-         addZbuiltinZTzerecordZTzencodingrep castZbuiltinZTzseqZintZint 
-         allocatespaceZbuiltinZint 
-         setfld2ZbuiltinZTzseqZintZT getinstanceZbuiltinZTzerecord
+Function program(s:set.symbol) program export
     
 ---------------
 
@@ -344,7 +240,7 @@ function ispara(s:mytype) boolean  ( towords.s)_1="para"_1 &and last.towords.s="
 Function deepcopysym (type:mytype) symbol
 newsymbol("deepcopy"  ,mytype(towords.type + "process"), [type], type)
 
-Function Idxuc symbol  symbol("IDXUC(int,int)","builtin", "?")
+Function IDXUC symbol  symbol("IDXUC(int,int)","builtin", "?")
 
 Function Emptyseq seq.symbol [Lit0,Lit0,Record.2]
 
@@ -356,6 +252,16 @@ Function Record(i:int) symbol symbol([ "RECORD"_1,toword.i],    "$",  "?",empty:
 Function Apply(i:int) symbol symbol([ "APPLY"_1,toword.i],    "$",  "?",empty:seq.symbol)
 
 Function Block(i:int) symbol symbol([ "BLOCK"_1,toword.i],    "$",  "?",empty:seq.symbol)
+
+Function constant(args:seq.symbol) symbol
+     let txt=@(+,sigandmodule,"",args)
+   symbol("CONSTANT" + txt, "$constant",  "?",args )
+ 
+Function isconst(s:symbol)boolean
+module.s in ["$words", "int $", "$word","$constant","$fref" ] 
+
+function  sigandmodule(s:symbol) seq.word   fsig.s+module.s
+
 
 
 Function Exit  symbol symbol(  "EXITBLOCK 1",    "$",  "?",empty:seq.symbol)
@@ -385,6 +291,9 @@ Function Word(s:word) symbol  symbol(  [s],    "$word",  "word",empty:seq.symbol
 
 Function Define(s:seq.word) symbol symbol("DEFINE"+s,"$","?")
 
+Function Define(w:word)symbol  symbol([ "DEFINE"_1,w],"$" ,"?")
+
+
 Function Fref(s:symbol) symbol symbol("FREF"+fsig.s+module.s,"$fref","?",[s])
 
 Function Optionsym symbol symbol("option(T,word seq)","builtin","?") 
@@ -394,7 +303,7 @@ Function EqOp symbol symbol("=(int,int)" ,"builtin","boolean")
 Function PlusOp symbol symbol("+(int,int)" ,"builtin","int") 
 
 Function isnocall(sym:symbol) boolean 
-module.sym in ["local","$word","$words","builtin"] &or last.module.sym ="$"_1   
+module.sym in ["local","$word","$words","builtin","$constant"] &or last.module.sym ="$"_1   
 
 Function isinOp(s:symbol) boolean
        (fsig.s) in ["in(int, int seq)","in(word, word seq)","=(int,int)","=(word,word)"]
@@ -404,6 +313,13 @@ Function value(s:symbol)int toint.(fsig.s)_1
 
 
 use mangle
+
+Function constantcode(s:symbol) seq.symbol
+ if module.s in ["$fref" ,"$constant"] then   zcode.s else empty:seq.symbol
+
+Function options( code:seq.symbol) seq.word  
+  if  length.code=0 &or not(last.code=Optionsym) then "" else fsig.(code)_(length.code-1)
+
 
 ------
 
@@ -478,6 +394,8 @@ else
    let j=if  i < length.s &and s_(i+1)="."_1 then  i+2 else i+1 
   gettype(s,j,[s_i]+result,  l)
  
+type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
+
 
 Function type:myinternaltype internaltype export
 

@@ -1,3 +1,7 @@
+#!/usr/local/bin/tau
+
+run mylib testnew 
+
 Module codetemplates
 
 use bitpackedseq.bit
@@ -10,8 +14,6 @@ use fileio
 
 
 use seq.seq.int
-
-use funcsig
 
 use internalbc
 
@@ -40,11 +42,10 @@ use textio
 
 use blockseq.word
 
-use seq.sig
+use seq.symbol
 
-use seq.seq.sig
+use seq.seq.symbol
 
-use seq.fsignrep
 
 function wordstype llvmtype array(-1, i64)
 
@@ -61,23 +62,21 @@ Function action(match5)word export
 Function arg(match5)int export
 
 
-type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int,code:seq.sig
+type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int,code:seq.symbol
 
 function match5 ( fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int) match5
- match5(fullinst,length,parts,action,arg,empty:seq.sig)
+ match5(fullinst,length,parts,action,arg,empty:seq.symbol)
 
-Function code(match5) seq.sig export
+Function code(match5) seq.symbol export
 
-Function type:sig internaltype export
+Function type:symbol internaltype export
 
-Function type:fsignrep internaltype export
+ 
+Function type:program internaltype export
 
-Function type:prg internaltype export
+use symbol
 
-use funcsig
-
-Function _(m:seq.match5,s:sig) match5  
-let d=decode.s 
+Function _(m:seq.match5,d:symbol) match5  
 let full=if module.d in ["$fref" ,  "int $" , "local", "$" ,"$constant" , "$words" ,"$word"] then
     fsig.d+module.d else [mangledname.d,toword.nopara.d]
  let e=  findencode(ematch5, match5(full, 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
@@ -93,7 +92,9 @@ function hash(a:match5)int hash.fullinst.a
 function assignencoding(l:int, a:match5) int l+1
 
 Function options(match5map:seq.match5,m:match5) seq.word
-if  last.code.m=optionOp then 
+options.code.m
+
+if  last.code.m=optiona.code.m then 
 fullinst.match5map_((code.m)_(length.code.m-1)) else empty:seq.word
 
 
@@ -177,53 +178,52 @@ function match5(fullinst:seq.word, length:int, b:internalbc)match5
  let nopara = @(max, parano, 0, parts)
   match5(fullinst, length, parts,"TEMPLATE"_1, nopara)
   
-
- function mangledname(s:sig) word    mangledname.decode.s 
-
  
-Function match5map( theprg:prg, defines:seq.sig, uses:set.sig,symlist:seq.word) seq.match5
+Function match5map( theprg:program, defines:seq.symbol, uses:set.symbol,symlist:seq.word) seq.match5
   let declist=@(+, mangledname,"", defines)
    let discard = conststype
   let discard1 = profiletype
   let discard2 = @(+, C, 0, symlist+ declist)
   let discard3 = table
-  buildtemplates(toseq.uses,1,theprg,empty:seq.sig)
+  buildtemplates(toseq.uses,1,theprg,empty:seq.symbol)
   
   
- use set.sig
+ use set.symbol
  
- use set.int
+ use symbol
  
-  
- use seq.target
+  use set.int
+ 
  
  use seq.int
  
- function   processconstargs( arglist:seq.sig,i:int,args:seq.int) seq.int
+ 
+ 
+ function   processconstargs( arglist:seq.symbol,i:int,args:seq.int) seq.int
     if i > length.arglist then   args
     else 
-    let xx=decode.arglist_i
+    let xx= arglist_i
     let e=    findencode(ematch5, match5(fsig.xx+module.xx, 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
       if isempty.e then empty:seq.int
       else
          processconstargs( arglist,i+1,args+arg.e_1)
    
- function processconst(  toprocess:seq.sig,i:int, notprocessed:seq.sig) seq.match5
+ function processconst(  toprocess:seq.symbol,i:int, notprocessed:seq.symbol) seq.match5
    if i > length.toprocess then
     if isempty.notprocessed then empty:seq.match5
-    else processconst( notprocessed,1,empty:seq.sig)
- else let xx=decode.toprocess_i
+    else processconst( notprocessed,1,empty:seq.symbol)
+ else let xx=toprocess_i
      let args=processconstargs(constantcode.xx,1,empty:seq.int)
      if isempty.args then processconst(toprocess,i+1,notprocessed+toprocess_i)
      else 
       let discard= addit.match5(fsig.xx+module.xx, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)
       processconst(toprocess,i+1,notprocessed)
      
- function  buildtemplates( used:seq.sig,i:int,theprg:prg,const:seq.sig) seq.match5 
+ function  buildtemplates( used:seq.symbol,i:int,theprg:program,const:seq.symbol) seq.match5 
    if i > length.used then 
-     processconst(const,1,empty:seq.sig) 
+     processconst(const,1,empty:seq.symbol) 
    else
-    let xx=decode.used_i
+    let xx= used_i
     let pkg=module.xx
      if pkg="$constant" then
        buildtemplates(used,i+1,theprg,const+used_i)
@@ -243,10 +243,7 @@ Function match5map( theprg:prg, defines:seq.sig, uses:set.sig,symlist:seq.word) 
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
       else if pkg="$" then
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
-      else // if pkg= "$constant" then
-        let args=@(+,getarg.empty:seq.match5, empty:seq.int,constantcode.xx)
-        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)  
-      else // if pkg="$words"then
+      else  if pkg="$words"then
         match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2.fsig.xx)
       else if pkg="$word"then
          match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
@@ -254,9 +251,8 @@ Function match5map( theprg:prg, defines:seq.sig, uses:set.sig,symlist:seq.word) 
         let noargs = nopara.xx
         let name=mangledname.xx
         let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ name], noargs + 1)
-         let tmp=lookupcode(theprg, used_i)
-         let code=if isempty.tmp then empty:seq.sig else code.tmp_1
-       match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,code)
+         let code=code.lookupcode(theprg, used_i)
+        match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,code)
        let discard4=addit.m
     buildtemplates( used,i+1,theprg,const)
 

@@ -16,7 +16,7 @@ use encoding.const3
 use seq.const3
 
 
-use libscope
+use libdesc
 
 
 use seq.liblib

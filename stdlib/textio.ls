@@ -41,7 +41,7 @@ Function breakparagraph(a:UTF8)seq.UTF8 breakparagraph(toseqint.a, 1, 1, empty:s
 
 function blankline(a:seq.int, i:int)int
  // returns 0 if no new line is found before next non white char otherwise returns index of newline //
- let t = a_i
+  if i > length.a then i else let t = a_i
   if t = 10 then i
   else if t > length.classifychar ∨ t = 0 then 0
   else if classifychar_t = "SPACE"_1 then blankline(a, i + 1)else 0

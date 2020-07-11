@@ -1,4 +1,5 @@
-run mylib test
+#!/usr/local/bin/tau
+
 
 Module pass1
 
@@ -16,7 +17,7 @@ use seq.flddesc
 
 use blockseq.int
 
-use libscope
+use libdesc
 
 use seq.mytype
 
@@ -72,7 +73,7 @@ roots:seq.symbol,mods:seq.firstpass,templates:program
 
 function result (linkage) prg export
 
-function compiled(linkage)seq.sig export
+function compiled(linkage)seq.symbol export
 
 function roots(linkage)seq.symbol export
 
@@ -224,7 +225,7 @@ function print(it:myinternaltype) seq.word
 function removeflat2(p:int, i:int)seq.symbol
  if i = -1 then empty:seq.symbol
  else
-  removeflat2(p, i - 1) + [Local.p ,Lit.i, Idxuc]
+  removeflat2(p, i - 1) + [Local.p ,Lit.i, IDXUC]
   
 type  unboundexport is  record modname:mytype,unbound:symbol
 
@@ -366,8 +367,8 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
               ,"LIT 0 LIT 0 RECORD 2"
               ,"LOCAL 1 allocatespaceZbuiltinZint"] report "unrecognized builtin txt2"
               let code=if txt2 ="LOCAL 1" then [Local.1]
-               else if txt2 ="LOCAL 1 LOCAL 2 IDXUC" then [Local.1,Local.2,Idxuc]
-                  else if txt2 ="LOCAL 1 LIT 0 IDXUC" then [Local.1,Lit.0,Idxuc]
+               else if txt2 ="LOCAL 1 LOCAL 2 IDXUC" then [Local.1,Local.2,IDXUC]
+                  else if txt2 ="LOCAL 1 LIT 0 IDXUC" then [Local.1,Lit.0,IDXUC]
                   else if txt2="LIT 0 LIT 0 RECORD 2" then Emptyseq
                   else assert txt2="LOCAL 1 allocatespaceZbuiltinZint" report "unrecognized builtin txt2"
                   [Local.1,symbol("allocatespace(int)","builtin","int")]
@@ -427,7 +428,7 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
    let seqtype=mytype(towords.parameter.modname + "seq"_1)
    let symtoseq = map(con,newsymbol("toseq" ,modname,  ptype, seqtype),[Local.1])
    let symfromseq=map(symtoseq,newsymbol( "to:"+print.ptype_1,modname ,[seqtype],ptype_1),
-    [Local.1,Lit.0,Idxuc,Fref.indexfunc,EqOp,Lit.2,Lit.3,Br,Local.1,Exit]+Emptyseq+[Exit,Block.3] )
+    [Local.1,Lit.0,IDXUC,Fref.indexfunc,EqOp,Lit.2,Lit.3,Br,Local.1,Exit]+Emptyseq+[Exit,Block.3] )
        symfromseq 
 
    
@@ -444,7 +445,7 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
     function fldsym(modname:mytype,ptype:seq.mytype,noflds:int,offsetcorrection:int,p:program,fld:flddesc) program
        let offset=offset.fld+offsetcorrection
   let fldcode = if fldno.fld=1  ∧  noflds =1 then [Local.1]
-  else if size.fld= 1 then [ Local.1, Lit.offset ,  Idxuc ]
+  else if size.fld= 1 then [ Local.1, Lit.offset ,  IDXUC ]
   else
    // should use a GEP instruction //
    //"LOCAL 1 LIT"+ toword.offset +"LIT"+ toword.tsize +"castZbuiltinZTzseqZintZint"//
@@ -693,10 +694,10 @@ function definedeepcopy(alltypes:seq.myinternaltype, type:mytype ,org:seq.word) 
 function subfld(flds:seq.mytype,fldno:int,result:seq.symbol) seq.symbol
   if fldno > length.flds then result+[Record.length.flds]
   else let fldtype=flds_fldno
-  let t=if abstracttype.fldtype in "encoding int word"then [ Local.1,Lit.(fldno-1),Idxuc ]  
+  let t=if abstracttype.fldtype in "encoding int word"then [ Local.1,Lit.(fldno-1),IDXUC ]  
    else
     assert abstracttype.fldtype = "seq"_1 report"ERR99" + print.fldtype
-     [ Local.1,Lit.(fldno-1),Idxuc,deepcopysym.fldtype]
+     [ Local.1,Lit.(fldno-1),IDXUC,deepcopysym.fldtype]
      subfld(flds,fldno+1,result+t) 
 
  
