@@ -59,6 +59,8 @@ use stdlib
 
 use seq.trackconst
 
+Function  add(encodingstate.llvmtypeele , encodingrep.llvmtypeele ) encodingstate.llvmtypeele export
+
 Function type:llvmtype internaltype export
 
 Function type:llvmconst internaltype export
@@ -77,7 +79,7 @@ type llvmtype is record index:int
 
 function hash(a:llvmtypeele)int hash.toseq.a
 
-function assignencoding(l:int, a:llvmtypeele) int l+1
+Function assignencoding(l:int, a:llvmtypeele) int l+1
 
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b 
@@ -91,10 +93,10 @@ Function listconsts seq.seq.int @(+, toseq, empty:seq.seq.int, orderadded.llvmco
 
 function hash(a:llvmconst)int hash.toseq.a
 
-function assignencoding(l:int, a:llvmconst) int l+1
+Function assignencoding(l:int, a:llvmconst) int l+1
 
 
-function =(a:llvmconst, b:llvmconst)boolean toseq.a = toseq.b ∧ typ.a = typ.b
+Function =(a:llvmconst, b:llvmconst)boolean toseq.a = toseq.b ∧ typ.a = typ.b
 
 Function getelementptr(type:llvmtype, name:seq.word, i:int)int
  C(ptr.i64, [ CONSTGEP, typ.type, typ.ptr.type, C.name, typ.i32, C32.0, typ.i64, C64.i])

@@ -23,30 +23,50 @@ parsersupport  uses
  
  
  
-/ * PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage
+  PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage
  
  
-/ * PROFILE      pass1:postbind( seq.myinternaltype, set.symbol, set.symbol
+  PROFILE      pass1:postbind( seq.myinternaltype, set.symbol, set.symbol
 , seq.symbol,int, program, program, program) program
  
-/ * PROFILE      pass1:postbind3( seq.myinternaltype, set.symbol, seq.symbol,
+  PROFILE      pass1:postbind3( seq.myinternaltype, set.symbol, seq.symbol,
 int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
 
  
-/  *  PROFILE  main2:compilelib2(word) seq.word  
+  *  PROFILE  main2:compilelib2(word) seq.word  
 
-/  *  PROFILE main2:subcompilelib(word) seq.word 
+ *  PROFILE main2:subcompilelib(word) seq.word 
 
-/  *  PROFILE   pass2new: pass2(   program,set.symbol
+ / *  PROFILE   pass2new: pass2(   program,set.symbol
  ,seq.symbol,seq.firstpass,program,seq.word) intercode
-
-*   PROFILE codegennew:codegen(program,  seq.symbol,  set.symbol,  word, symbol)seq.bits
-
-* PROFILE  codetemplates:match5map(  program,  seq.symbol,  set.symbol, seq.word) seq.match5
  
-* PROFILE  codetemplates:  buildtemplates(  seq.symbol, int, program, seq.symbol) seq.match5 
+  /*  PROFILE   pass2new:depthfirst(program, int, seq.symbol, program, seq.symbol, symbol) program
+     
+/ *   PROFILE pass2new:firstopt( program,  symbol,  seq.symbol) program
+  
+ /  *   PROFILE pass2new:yyy( program, seq.symbol,  int, seq.symbol, int,  worddict.seq.symbol)
+  
+  *  NOINLINE symbol: isconst( symbol)boolean
+  
+  *  NOINLINE symbol: islocal( symbol)boolean
+  
+  
+   *  NOINLINE pass2new: isskip( symbol)boolean
+   
+   
 
-* PROFILE codetemplates: processconst(   seq.symbol, int,  seq.symbol) seq.match5
+   
+/   * PROFILE pass2new: inline( program, seq.symbol, int, seq.symbol,   int, int, seq.symbol, worddict.seq.symbol)
+  
+
+
+/*   PROFILE codegennew:codegen(program,  seq.symbol,  set.symbol,  word, symbol)seq.bits
+
+/* PROFILE  codetemplates:match5map(  program,  seq.symbol,  set.symbol, seq.word) seq.match5
+ 
+/* PROFILE  codetemplates:  buildtemplates(  seq.symbol, int, program, seq.symbol) seq.match5 
+
+/* PROFILE codetemplates: processconst(   seq.symbol, int,  seq.symbol) seq.match5
 
 
 * STATE builtin: add(  erecord.T, encodingrep.T ) int  

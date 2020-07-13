@@ -21,7 +21,6 @@ use process.liblib
 
 use seq.liblib
 
-use seq.libmod
 
 use libdesc
 

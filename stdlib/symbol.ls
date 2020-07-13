@@ -30,18 +30,23 @@ use seq.seq.word
 Function type:symbol internaltype export
 
 
-Function =(a:symbol, b:symbol)boolean fsig.a = fsig.b  ∧ modname.a = modname.b
+Function =(a:symbol, b:symbol)boolean fsighash.a=fsighash.b &and fsig.a = fsig.b  ∧ modname.a = modname.b
 
 
 
-type symbol is record  fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol 
+type symbol is record  fsig:seq.word,module:seq.word,
+returntype:seq.word, zcode:seq.symbol ,fsighash:int
+
+Function fsighash(symbol) int export 
+
+
 
 
 Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word) symbol 
  symbol(fsig,module,returntype,empty:seq.symbol)
  
- Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol) symbol export
-
+ Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol) symbol 
+   symbol(fsig,module,returntype,zcode,if length.fsig=0 then 0 else hash.fsig)
 
  
  Function fsig(symbol) seq.word export
@@ -103,9 +108,9 @@ function counttrue(i:int, b:boolean)int if b then i + 1 else i
 
 use otherseq.word
 
-Function ?(a:symbol, b:symbol)ordering fsig.a ? fsig.b ∧  module.a ? module.b
+Function ?(a:symbol, b:symbol)ordering   fsighash.a ? fsighash.b &and   fsig.a ? fsig.b ∧  module.a ? module.b
 
-Function ?2(a:symbol, b:symbol)ordering fsig.a ? fsig.b 
+Function ?2(a:symbol, b:symbol)ordering   fsighash.a ? fsighash.b &and   fsig.a ? fsig.b 
 
 
 Function lookup(dict:set.symbol, name:seq.word, types:seq.mytype)set.symbol
@@ -174,7 +179,6 @@ Function ?(a:mytype, b:mytype)ordering towords.a ? towords.b
 
 
 
-use seq.libmod
 
 Function type:mytype internaltype export
 
@@ -254,15 +258,21 @@ Function Apply(i:int) symbol symbol([ "APPLY"_1,toword.i],    "$",  "?",empty:se
 Function Block(i:int) symbol symbol([ "BLOCK"_1,toword.i],    "$",  "?",empty:seq.symbol)
 
 Function constant(args:seq.symbol) symbol
-     let txt=@(+,sigandmodule,"",args)
+  let txt=     toword.valueofencoding.encode(constante,args)  
+    // @(+,sigandmodule,"",args)    //
    symbol("CONSTANT" + txt, "$constant",  "?",args )
+   
+
+function hash(s:seq.symbol) int hash.@(+,sigandmodule,"",s) 
+
+type constante is encoding seq.symbol
  
 Function isconst(s:symbol)boolean
 module.s in ["$words", "int $", "$word","$constant","$fref" ] 
 
 function  sigandmodule(s:symbol) seq.word   fsig.s+module.s
 
-
+function assignencoding(a:int, b:seq.symbol ) int assignrandom(a,b)
 
 Function Exit  symbol symbol(  "EXITBLOCK 1",    "$",  "?",empty:seq.symbol)
 
@@ -363,7 +373,7 @@ Function getoption(code:seq.symbol) seq.word
 
 
  Function processOption(p:program,t:seq.word) program
-  if length.t < 4 &or not(t_1="*"_1) &or  not (t_2 in "PROFILE INLINE STATE") then p
+  if length.t < 4 &or not(t_1="*"_1) &or  not (t_2 in "PROFILE INLINE STATE NOINLINE") then p
    else
     let modend=findindex(":"_1,t,3)
    let nameend=  findindex("("_1,t,modend+1)
