@@ -127,7 +127,7 @@ function addparameter(orgsize:int, input:seq.token.bindinfo, place:int, dict:set
 function lookupbysig(dict:set.symbol, name:seq.word, paratypes:seq.mytype, input:seq.token.bindinfo, place:int)symbol
  let f = lookup(dict, name, paratypes)
   assert not.isempty.f report errormessage("cannot find 1" + name + "(" + @(seperator(","), print,"", paratypes)
-  + ")", input, place)
+  + ")", input, place) // +@(+,print,"",toseq.dict) //
     assert cardinality.f = 1 report errormessage("found more that one" + @(+, print,"", toseq.f), input, place)
      f_1
 

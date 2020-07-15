@@ -118,15 +118,11 @@ Function main(arg:seq.int)outputformat
 use mangle
 
 Function testcomp(s:seq.seq.word)seq.seq.word
- ["not implemented"]
-
  let exports ="testit"
  let allsrc = groupparagraphs("module Module", s)
-  let libmods=    libfirstpass("stdlib")
- let known =   libknown("stdlib")
- let r = pass1(allsrc, exports, known, asset.libmods)
-  @(+, bindingformat.symset.r, empty:seq.seq.word, mods.r)
-  
+  let r = pass1(allsrc, exports,dependentlibs."stdlib")
+  @(+,print.result.r,empty:seq.seq.word, toseq.toset.result.r)
+ 
 
 Function firstPass(libname:word)seq.seq.word
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
@@ -138,26 +134,10 @@ Function firstPass(libname:word)seq.seq.word
  let exports = subseq(s, e + 1, length.s)
      let allsrc=groupparagraphs("module Module",getlibrarysrc.s_2)
  let r = pass1(allsrc, exports, dependentlibs )
-["NOT IMPLEMENtED"]
+ @(+,print.result.r,empty:seq.seq.word, toseq.toset.result.r)
  
- / @(+, bindingformat(symset.r), empty:seq.seq.word, mods.r)
-
-/function bindingformat(known:symbolset, m:firstpass)seq.seq.word
-     @(+, extractparsed(parameter.modname.m = mytype."T", known), empty:seq.seq.word, toseq.defines.m)
-  
-
-
-/function extractparsed(abstract:boolean, known:symbolset, s:symbol)seq.seq.word
- let a = if abstract then src.s
- else
-  let sy = lookupsymbol(known, mangledname.s)
-   // assert false report [ mangledname.s]+ src.sy // src.sy
-  if length.a > 0 ∧ a_1 = "parsedfunc"_1 then
-  // assert false report [ mangledname.s]+ src.sy //
-   let headlength = toint.a_2 + 2
-    [ subseq(a, 1, headlength) + mangledname.s + subseq(a, headlength + 1, length.a)]
-  else empty:seq.seq.word
-
+ 
+ 
 
 Function secondPass(libname:word)seq.seq.word
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
@@ -170,4 +150,5 @@ Function secondPass(libname:word)seq.seq.word
       let allsrc =getlibrarysrc.s_2 
   let p1 = pass1(groupparagraphs("module Module",allsrc), exports, dependentlibs  )
  let p2 =  pass2(result.p1,compiled.p1,roots.p1,mods.p1,templates.p1,exports)
-   print.p2 
+   @(+,print.theprg.p2,empty:seq.seq.word, defines.p2)
+ 

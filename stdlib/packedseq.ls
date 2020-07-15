@@ -18,7 +18,7 @@ Function length(packedseq.T)int export
 
 Function_(a:packedseq.T, i:int)T
  let ds = sizeoftype:T
-  cast(toseq.a, 2 + ds * (i - 1), 1)
+  cast(toseq.a, 2 + ds * (i - 1), ds)
 
 Function packed(s:seq.T)seq.T
  let ds = sizeoftype:T
@@ -40,18 +40,13 @@ Function cast(s:seq.T, offset:int, typ:int)T builtin.usemangle
 Function allocatespace:seq.T(i:int)seq.T builtin."LOCAL 1 allocatespaceZbuiltinZint"
 
 
-function setfld2(s:seq.T, i:int, val:T)seq.T builtin.usemangle
-
-Function setfld(s:seq.T, i:int, val:T)seq.T   setfld2(s,i,val)
- 
+Function setfld(s:seq.T, i:int, val:T)seq.T builtin.usemangle
  
 Function append(s:seq.T, val:T)seq.T
  let len = length.s + 1
   setfld(setfld(s, 1, inttoT:T(len)), len + 1, val)
 
 Function append(ds:int, s:seq.T, val:T)seq.T @(append, fldof(val), s, arithseq(ds, 1, 0))
-
-Function relocate(a:seq.T, idx:int, relloc:int)seq.T setfld(a, idx, cast(a, relloc, 1))
 
 Function inttoT:T(int)T builtin."LOCAL 1"
 

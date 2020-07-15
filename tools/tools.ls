@@ -29,7 +29,7 @@ run tools testprofile
 
 /run tools stdlibdoc
 
-/run doc createdoc
+run doc createdoc
 
 /run tools testhtmlcode
 

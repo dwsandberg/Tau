@@ -132,7 +132,6 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
         
    function  maptemp(templates:program,st:program,  s:mapele) program
                   let s2=lookupcode(templates,target.s)
-                 //  assert not.isempty.s2 report "maptemp function:"+print.key+print.target //
                   if isdefined.s2 then
                       map (st,key.s, target.s,code.s2 )
                    else                     map (st,key.s, target.s,empty:seq.symbol)
@@ -148,7 +147,7 @@ function processtypedef(defined:seq.myinternaltype, undefined:seq.myinternaltype
  if length.newundefined = 0 then defined
   else
     assert length.undefined > length.newundefined 
-    report"PROBLEM" + @(seperator." &br",  print2, "", newundefined)
+    report"unresolved types:" + @(seperator." &br",  print2, "", newundefined)
     processtypedef(defined, newundefined, 1, empty:seq.myinternaltype)
  else if "T"_1 in towords.modname.undefined_i then 
     processtypedef(defined , undefined, i + 1, newundefined)
@@ -332,6 +331,9 @@ function totalunbound(f:firstpass)int length.unboundexports.f
 
  use seq.seq.firstpass
  
+     use seq.symboltext
+
+ 
 function split(s:seq.firstpass,i:int,abstract:seq.firstpass,simple:seq.firstpass) seq.seq.firstpass
 if i > length.s then [abstract,simple] else 
  let f=s_i
@@ -346,7 +348,6 @@ if i > length.s then [abstract,simple] else
    let dict = builddict(modset, f) ∪ headdict
     @(bind2(dict),identity,p,   toseq.defines.f)
     
-    use seq.symboltext
        
 function bind2(dict:set.symbol,p:program,s:symbol) program
    let txt=findencode(esymboltext,symboltext(s,mytype."?","?"))
@@ -448,8 +449,8 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
   else if size.fld= 1 then [ Local.1, Lit.offset ,  IDXUC ]
   else
    // should use a GEP instruction //
-   //"LOCAL 1 LIT"+ toword.offset +"LIT"+ toword.tsize +"castZbuiltinZTzseqZintZint"//
-   [ Local.1, Lit(8 * offset) ,  PlusOp] 
+   [Local.1 ,Lit.offset,Lit.size.fld ,symbol("cast(T seq,int,int)","builtin","?") ]
+  //  [ Local.1, Lit(8 * offset) ,  PlusOp] //
    let sym= newsymbol([fldname.fld], modname,    ptype  ,fldtype.fld)
    map(p,sym,fldcode)
  
@@ -496,7 +497,7 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,
  resultpb(calls ,  result,sourceX)
  else 
    let x=code_i
-   let isfref=module.x="$fref"
+   let isfref=isFref.x
    let sym=if isfref then  (zcode.x)_1 else code_i
  if  isnocall.sym  then
     postbind3(alltypes,dict,code,i+1,result+ code_i,modname,org, calls, sourceX ,tempX)

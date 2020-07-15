@@ -44,20 +44,20 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
      
 / *   PROFILE pass2new:firstopt( program,  symbol,  seq.symbol) program
   
- /  *   PROFILE pass2new:yyy( program, seq.symbol,  int, seq.symbol, int,  worddict.seq.symbol)
+ /   *   PROFILE pass2new:yyy( program, seq.symbol,  int, seq.symbol, int,  worddict.seq.symbol)
   
-  *  NOINLINE symbol: isconst( symbol)boolean
+ / *  NOINLINE symbol: isconst( symbol)boolean
   
-  *  NOINLINE symbol: islocal( symbol)boolean
+ / *  NOINLINE symbol: isspecial( symbol)boolean
   
-  
-   *  NOINLINE pass2new: isskip( symbol)boolean
-   
-   
+  * INLINE pass2new :inline( program, seq.symbol, int, seq.symbol,   int, int, seq.symbol,worddict.seq.symbol)
+ expandresult
+ 
+  / * INLINE pass2new : applycode( program ,seq.symbol, int, seq.symbol,  int,    worddict.seq.symbol)  expandresult
 
-   
-/   * PROFILE pass2new: inline( program, seq.symbol, int, seq.symbol,   int, int, seq.symbol, worddict.seq.symbol)
-  
+ 
+ 
+     
 
 
 /*   PROFILE codegennew:codegen(program,  seq.symbol,  set.symbol,  word, symbol)seq.bits

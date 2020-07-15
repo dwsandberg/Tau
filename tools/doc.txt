@@ -18,16 +18,24 @@ Paragraphs that do NOT start with &keyword type, &keyword use, &keyword Library,
 
 Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. 
 The characters ()+,-.:=[]^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
-A word sequence literal is quoted like "This is a string Literal."   &quot is used to represent a double quote within a word sequence literal. 
+A word sequence literal is double or single quoted like "This is a string Literal." or 'This is a string Literal.'
 
-An integer literal is represented by a sequence of words where each word only contains digits. That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 0 0 and 10 01 are integers.
+An integer literal is represented by a sequence of words where each word only contains digits. 
+That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. 
+A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 0 0 and 10 01 are integers.
 
 For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ are  &le  &ge  &ne  &and  &or respectively.
 
 Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.
 
-Occasionally some unexpected lexical issues arise. (Example is no longer valid as tupes use notation . notation only.)
-Consider the  function definition &{ block &keyword function test int  (3 + 4)* 5 &} Here the return type becomes int(3 + 4)which is illegal. Grouping braces resolve the difficulty &{ block &keyword function test int {(3 + 4)* 5 } &}
+Occasionally some unexpected lexical issues arise.  The follow function looks good but will cause a syntax error:
+
+&keyword function f1 int &br let x=  56  &br  -4+x  
+ 
+Written on a single line, the problem becomes clear:  &keyword function f1 int  let x=  56    -4+x 
+
+The fix is &keyword function f1 int  let x=  56    (-4+x)
+
 
 When converting a sequence of words back to characters for output, an space is usually added after each word with the exceptions:
 &br 1. If the word is  "()-].:^  or is a space or a period followed by a space 
@@ -85,7 +93,6 @@ A sequence of characters in double quotes does not represent a sequence of chara
 
 The code [ “Hello”_1, ”World!”_1]is equivalent to “Hello World!”
 
-The word consisting of a single double quote can be represented within double quotes by &quot. "&quot Hello World! &quot"starts and ends with a double quote.
 
 ""represents an empty sequence of words. An empty sequences has a length of zero. Since the type of a empty sequence can not be inferred from the type of its elements the empty sequence of int is coded as empty:seq.int.
 
@@ -149,7 +156,7 @@ The types &em int and &em real are implement by the underlying hardware and have
 
 The type boolean has operators:&and &or &em not &em true and &em false. The second operator of &and and &or is evaluated if and only if the first operator does not determine the result.
 
-For working with total orderings a type &em ordering with the values &em LT &em EQ and &em GT is defined. An &and operator on orderings is defined as
+For working with total orderings a type &em ordering with the values &em LT &em EQ and &em GT is defined. An ∧ operator on orderings is defined as
 
 &keyword Function ∧(a:ordering, b:ordering)ordering 
  &keyword let x = a 
@@ -316,7 +323,7 @@ The type of the expression that defines a function much match the return type of
 
 &section Derived Operators
 
-The module seq.T also defines some derived operators. If = and > are defined on T, the module defines the binary operators <, ≤, ≥, ≠ in terms of = or >. The operator for comparision"?"could be defined as a derived operator but is not because a more effiecent definition may sometimes be coded than the derived one.
+The module otherseq.T also defines some derived operators. If = and > are defined on T, the module defines the binary operators <, ≤, ≥, ≠ in terms of = or >. The operator for comparision"?"could be defined as a derived operator but is not because a more effiecent definition may sometimes be coded than the derived one.
 
 Here is an example definition of one of the derived operators:
 
@@ -337,6 +344,11 @@ We must define a hash function and = function of the type.
 &keyword function =(a:factors, b:factors)boolean key.a = key.b
 
 Note that for a and b of the type factor ; a = b implies hash(a)= hash(b). This must be true for the hash to work correctly.
+
+We also need to specify how integers are to be assigned to the values of the type.  
+
+&keyword function assignencoding(numberPrevouslyEncoded:int, b:seq.symbol ) int assignrandom(numberPrevouslyEncoded,b)
+
 
 The declaration below with introduce a type encoding.factors with the name of myencoding.
 
@@ -378,7 +390,7 @@ Consider the sequence of calls, C, in the execution of the program to the functi
 
 Then &{ block S_i = S_j if and only if encoding(E_i)= encoding(E_j)&} and &{ block decode(E_i)is identical to S_j where j = min t where S_t = E_i &} and &{ encoding(E_i)> 0 &}
 
-Since the mapping is can be shared by multiple process, modification of the the mapping is a critical section. Also the mapping may contain values not assigned by the current process.
+Since the mapping  can be shared by multiple process, modification of  the mapping is a critical section. Also the mapping may contain values not assigned by the current process.
 
 &section Process statement
 

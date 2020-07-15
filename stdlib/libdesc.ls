@@ -68,7 +68,7 @@ function   toexport(p:program,processed:set.symbol, toprocess:set.symbol) set.sy
              
              
 function tolibsym(p:program,templates:program,sym:symbol ) seq.symbol
-    if module.sym in ["$","$constant","int $","local","$word","$words","$fref"] 
+    if isconstantorspecial.sym 
     then empty:seq.symbol else
     if isabstract.mytype.module.sym then 
      let t=lookupcode(templates,sym)
@@ -82,7 +82,7 @@ function tolibsym(p:program,templates:program,sym:symbol ) seq.symbol
 
 function addlibsym(s:symbol) symbol
       constant.[Words.fsig.s ,Words.module.s ,Words.returntype.s ,
-      addseq.@(+,addlibsym,empty:seq.symbol,zcode.s),Lit.fsighash.s ]
+      addseq.@(+,addlibsym,empty:seq.symbol,zcode.s),Lit.extrabits.s ]
 
 function addmytype(t:mytype) symbol  Words.(towords.t)
 

@@ -16,6 +16,17 @@ Function mangle2(name: seq.word,modname:seq.word, parameters:seq.seq.word) word
 function seperator( sep:char,acc:seq.char,b:seq.char) seq.char
 if isempty.acc then b else acc+sep+b 
 
+Function break(w:word, a:seq.word, j:int)seq.seq.word
+ let i = findindex(w, a, j)
+  if i > length.a then
+  if j > length.a then empty:seq.seq.word else [ subseq(a, j, i)]
+  else [ subseq(a, j, i - 1)] + break(w, a, i + 1)
+
+Function mangle(fsig:seq.word,module:seq.word) word
+ let i=findindex("("_1, fsig)  
+ mangle2(subseq(fsig,1,i-1),module, break(","_1, subseq(fsig, 1, length.fsig - 1), i + 1 ))
+
+
 
 Function codedown(w:word)seq.seq.word codedown(decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)
 

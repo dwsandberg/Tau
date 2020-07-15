@@ -207,24 +207,34 @@ function usegraph(lib:seq.seq.word, kind:word, i:int, currentmod:word, result:se
 
 function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
  if i > length.lib then empty:seq.arc.word
- else if lib_i_1 in "Parsedfunc parsedfunc"then
- let j = toint.lib_i_2 + 3
-   if lib_i_j = "unknown"_1 then formcallgraph(lib, i + 1)
-   else
-    formcallgraph(lib_i_j, lib_i, j + 1, empty:seq.arc.word)
-    + formcallgraph(lib, i + 1)
- else formcallgraph(lib, i + 1)
+ else 
+   let t=callarcs(lib_i,1,empty:seq.word)
+    @(+,  arc.t_1,empty:seq.arc.word,toseq(asset.subseq(t,2,length.t)-asset.subseq(t,1,1)))
+ + formcallgraph(lib, i + 1)
+ 
+  
+ use seq.char
+ 
 
-function formcallgraph(func:word, src:seq.word, i:int, result:seq.arc.word)seq.arc.word
- if i > length.src then result
- else
-  let name = src_i
-   if name in "IDXUC  STATE PROCESS2 FREF EQL if VERYSIMPLE"then formcallgraph(func, src, i + 1, result)
-   else if name in "LIT  LOCAL WORD SET define DEFINE RECORD APPLY LOOPBLOCK  CONTINUE BR EXITBLOCK BLOCK CRECORD PRECORD"
-   then
-   formcallgraph(func, src, i + 2, result)
-   else if name in "WORDS COMMENT"then
-   formcallgraph(func, src, i + toint.src_(i + 1) + 2, result)
-   else if name = func then formcallgraph(func, src, i + 1, result)
+ function callarcs(s:seq.word,i:int,result:seq.word) seq.word
+   if i+1 > length.s then result
    else 
-    formcallgraph(func, src, i + 1, result + arc(func, name))
+    let this=s_i
+     if this ='"'_1 then callarcs(s,findindex('"'_1,s,i+1)+1,result)
+    else if this ="'" _1 then callarcs(s,findindex("'"_1,s,i+1)+1,result)
+    else
+  let next=s_(i+1)
+    if next="("_1 then
+     let j=findindex(")"_1,s,i+1) 
+     let module=gathermod(s,j+2,[s_(j+1)])
+     let end= 2 *(length.module-1)+1+j+1 
+         callarcs(s,end, result+ mangle(subseq(s,i,j),module))
+     else if this in "RECORD DEFINE EXITBLOCK BR BLOCK APPLY WORD " then callarcs(s,i+2,result)
+    else if this in "&br FREF" then callarcs(s,i+1,result) else
+     assert char1.[this]in decodeword.merge."%-0123456789" report "call arcs problem"
+     callarcs(s,i+1,result)
+      
+    function gathermod(s:seq.word,i:int,result:seq.word) seq.word
+    if i > length.s &or not(s_i="."_1) then result
+    else gathermod(s,i+2,[s_(i+1)]+result) 
+

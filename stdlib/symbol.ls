@@ -30,24 +30,32 @@ use seq.seq.word
 Function type:symbol internaltype export
 
 
-Function =(a:symbol, b:symbol)boolean fsighash.a=fsighash.b &and fsig.a = fsig.b  ∧ modname.a = modname.b
+Function =(a:symbol, b:symbol)boolean flags.a=flags.b &and fsig.a = fsig.b  ∧ modname.a = modname.b
 
 
 
 type symbol is record  fsig:seq.word,module:seq.word,
-returntype:seq.word, zcode:seq.symbol ,fsighash:int
-
-Function fsighash(symbol) int export 
+returntype:seq.word, zcode:seq.symbol ,flags:bits
 
 
+Function extrabits(s:symbol) int toint.flags.s
 
+Function fsighash(s:symbol) int  toint(flags.s >> 4)
+
+Function extrabits(fsig:seq.word,flags:bits) bits 
+   bits.hash(fsig) << 4 &or flags
+ 
 
 Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word) symbol 
  symbol(fsig,module,returntype,empty:seq.symbol)
  
  Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, zcode:seq.symbol) symbol 
-   symbol(fsig,module,returntype,zcode,if length.fsig=0 then 0 else hash.fsig)
+    symbol(fsig,module,returntype,zcode,  extrabits(fsig,bits.0))
 
+Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, flag:bits) symbol 
+    symbol(fsig,module,returntype,empty:seq.symbol, extrabits(fsig,flag))
+ 
+ 
  
  Function fsig(symbol) seq.word export
 
@@ -82,11 +90,7 @@ let a= fsig.s
   else 
   break(","_1, subseq(a, 1, length.a - 1), findindex("("_1, a) + 1 )
 
-function break(w:word, a:seq.word, j:int)seq.seq.word
- let i = findindex(w, a, j)
-  if i > length.a then
-  if j > length.a then empty:seq.seq.word else [ subseq(a, j, i)]
-  else [ subseq(a, j, i - 1)] + break(w, a, i + 1)
+
   
 Function mangledname(s:symbol)word 
 mangle2( name.s ,  module.s, @(+,towords,empty:seq.seq.word,paratypes.s))
@@ -97,20 +101,19 @@ Function modname(s:symbol)mytype mytype.module.s
 Function resulttype(s:symbol)mytype mytype.returntype.s
 
 Function nopara(s:symbol)int 
- if module.s="$" then 
+ if isconst.s &or islocal.s then 0 else
+ if isspecial.s then 
   if  (fsig.s)_1= "DEFINE"_1 then 1 else 
   toint((fsig.s)_2)  else 
- if last.module.s in  "$constant $fref $words $word  local"  then 0  
-    else
  @(counttrue, =(","_1), if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
 
 function counttrue(i:int, b:boolean)int if b then i + 1 else i
 
 use otherseq.word
 
-Function ?(a:symbol, b:symbol)ordering   fsighash.a ? fsighash.b &and   fsig.a ? fsig.b ∧  module.a ? module.b
+Function ?(a:symbol, b:symbol)ordering    fsighash.a ? fsighash.b &and    fsig.a ? fsig.b ∧  module.a ? module.b
 
-Function ?2(a:symbol, b:symbol)ordering   fsighash.a ? fsighash.b &and   fsig.a ? fsig.b 
+Function ?2(a:symbol, b:symbol)ordering    fsighash.a ? fsighash.b &and    fsig.a ? fsig.b 
 
 
 Function lookup(dict:set.symbol, name:seq.word, types:seq.mytype)set.symbol
@@ -119,18 +122,8 @@ Function lookup(dict:set.symbol, name:seq.word, types:seq.mytype)set.symbol
 Function lookupfsig(dict:set.symbol, fsig:seq.word)set.symbol
  findelement2(dict,  symbol( fsig ,  "?",  "?" ))
 
-
 Function printdict(s:set.symbol)seq.word @(+, print,"", toseq.s)
 
-Function print(s:symbol)seq.word
- let t = module.s
-  if t = "local"then [ merge("%" + fsig.s)]
-  else if t = "$words"then '"' + fsig.s + '"'
-  else if t = "$constant" then   let tmp="CONSTANT{"+ @(+,print,"",zcode.s) +"}" 
-     if tmp="CONSTANT{ 0 0 } " then "emptyseq"  else tmp
-  else if last.t in " $ "then
-  if(fsig.s)_1 in "EXITBLOCK LOOPBLOCK CONTINUE BR"then fsig.s + " &br"else fsig.s
-  else fsig.s + "[" + t + "]"
 
 
 function replaceTinname(with:mytype, name:word)word
@@ -236,8 +229,10 @@ Function program(s:set.symbol) program export
     
 ---------------
 
+
+
 Function Parameter(name:word,type:mytype,parano:int) symbol
-newsymbol([name], mytype.[ "para"_1,toword.parano,"$"_1], empty:seq.mytype, type)
+symbol([name],[ "para"_1,toword.parano,"$"_1],towords.type,specialbit)
 
 function ispara(s:mytype) boolean  ( towords.s)_1="para"_1 &and last.towords.s="$"_1  
 
@@ -251,60 +246,87 @@ Function Emptyseq seq.symbol [Lit0,Lit0,Record.2]
 Function pseqidxsym(type:mytype) symbol
     newsymbol("_" , mytype(towords.type + "seq"_1),[ mytype(towords.type + "pseq"_1), mytype."int"],type)
     
-Function Record(i:int) symbol symbol([ "RECORD"_1,toword.i],    "$",  "?",empty:seq.symbol)
+Function Record(i:int) symbol   symbol([ "RECORD"_1,toword.i],    "$",  "?",specialbit)
 
-Function Apply(i:int) symbol symbol([ "APPLY"_1,toword.i],    "$",  "?",empty:seq.symbol)
+Function Apply(i:int) symbol     symbol([ "APPLY"_1,toword.i],    "$",  "?",specialbit)
 
-Function Block(i:int) symbol symbol([ "BLOCK"_1,toword.i],    "$",  "?",empty:seq.symbol)
+Function Block(i:int) symbol     symbol([ "BLOCK"_1,toword.i],    "$",  "?",specialbit)
+
+Function loopblock(i:int)symbol  symbol([ "LOOPBLOCK"_1,toword.i],   "$",  "?",specialbit)
+
+Function continue(i:int)symbol   symbol([ "CONTINUE"_1,toword.i],    "$",   "?",specialbit)
+
+
 
 Function constant(args:seq.symbol) symbol
-  let txt=     toword.valueofencoding.encode(constante,args)  
-    // @(+,sigandmodule,"",args)    //
-   symbol("CONSTANT" + txt, "$constant",  "?",args )
+  let fsig="CONSTANT" +     toword.valueofencoding.encode(constante,args)  
+   symbol(fsig , "$constant",  "?",args,extrabits(fsig,constbit) )
    
 
 function hash(s:seq.symbol) int hash.@(+,sigandmodule,"",s) 
 
 type constante is encoding seq.symbol
  
-Function isconst(s:symbol)boolean
-module.s in ["$words", "int $", "$word","$constant","$fref" ] 
+
+Function isconstantorspecial(s:symbol)boolean isconst.s &or isspecial.s
+
+Function isnocall(sym:symbol) boolean 
+isconst.sym &or isspecial.sym &or   module.sym ="builtin"  
+
+function specialbit bits bits.4
+
+function constbit bits bits(1)
+
+function =(a:bits,b:bits) boolean toint.a=toint.b
+
+Function isspecial(s:symbol) boolean (flags.s &and specialbit) = specialbit
+
+Function isconst(s:symbol)boolean (flags.s &and constbit) = constbit
+
+
+Function islit(s:symbol) boolean   module.s ="$int"
+
+Function isFref(s:symbol) boolean   module.s ="$fref"
 
 function  sigandmodule(s:symbol) seq.word   fsig.s+module.s
 
 function assignencoding(a:int, b:seq.symbol ) int assignrandom(a,b)
 
-Function Exit  symbol symbol(  "EXITBLOCK 1",    "$",  "?",empty:seq.symbol)
+Function Exit  symbol symbol(  "EXITBLOCK 1",    "$",  "?",specialbit)
 
-Function Br    symbol symbol( "BR 3", "$",  "?",empty:seq.symbol)
+Function Br    symbol symbol( "BR 3", "$",  "?",specialbit)
 
+use bits
 
-Function Local(i:int)  symbol symbol(  [toword.i],    "local",  "?",empty:seq.symbol)
+Function Local(i:int)  symbol Local.toword.i 
 
-Function Local(w:word)  symbol symbol(  [w] ,    "local",  "?",empty:seq.symbol)
+Function Local(w:word)  symbol symbol(  [w] ,    "local $",  "?",specialbit)
 
-Function Local(name:seq.word,type:mytype) symbol  symbol( name ,"local", towords.type,empty:seq.symbol)
+Function Local(name:seq.word,type:mytype) symbol  symbol( name ,"local $", towords.type,specialbit)
 
-Function islocal(s:symbol) boolean module.s="local"
-
-Function Lit(i:int)  symbol symbol(  [toword.i],    "int $",  "int",empty:seq.symbol)
-
-Function Lit0 symbol symbol(  "0",    "int $",  "int",empty:seq.symbol)
-
-Function Lit2 symbol symbol(  "2",    "int $",  "int",empty:seq.symbol)
-
-Function Lit3 symbol symbol(  "3",    "int $",  "int",empty:seq.symbol)
-
-Function Words(s:seq.word) symbol  symbol(  s,    "$words",  "word seq",empty:seq.symbol)
-
-Function Word(s:word) symbol  symbol(  [s],    "$word",  "word",empty:seq.symbol)
-
-Function Define(s:seq.word) symbol symbol("DEFINE"+s,"$","?")
-
-Function Define(w:word)symbol  symbol([ "DEFINE"_1,w],"$" ,"?")
+Function islocal(s:symbol) boolean module.s="local $"
 
 
-Function Fref(s:symbol) symbol symbol("FREF"+fsig.s+module.s,"$fref","?",[s])
+Function Lit(i:int)  symbol symbol(  [toword.i],    "$int",  "int",constbit)
+
+Function Lit0 symbol symbol(  "0",    "$int",  "int",constbit)
+
+Function Lit2 symbol symbol(  "2",    "$int",  "int",constbit)
+
+Function Lit3 symbol symbol(  "3",    "$int",  "int",constbit)
+
+Function Words(s:seq.word) symbol  symbol(  s,    "$words",  "word seq",constbit)
+
+Function Word(s:word) symbol  symbol(  [s],    "$word",  "word",constbit)
+
+Function Define(s:seq.word) symbol symbol("DEFINE"+s,"$","?",specialbit)
+
+Function Define(w:word)symbol  symbol([ "DEFINE"_1,w],"$" ,"?",specialbit)
+
+
+Function Fref(s:symbol) symbol 
+let fsig="FREF"+fsig.s+module.s
+symbol(fsig,"$fref","?",[s],extrabits(fsig,constbit))
 
 Function Optionsym symbol symbol("option(T,word seq)","builtin","?") 
 
@@ -312,8 +334,6 @@ Function EqOp symbol symbol("=(int,int)" ,"builtin","boolean")
 
 Function PlusOp symbol symbol("+(int,int)" ,"builtin","int") 
 
-Function isnocall(sym:symbol) boolean 
-module.sym in ["local","$word","$words","builtin","$constant"] &or last.module.sym ="$"_1   
 
 Function isinOp(s:symbol) boolean
        (fsig.s) in ["in(int, int seq)","in(word, word seq)","=(int,int)","=(word,word)"]
@@ -434,3 +454,21 @@ Function returntype(symbol)seq.word export
 Function type:symbol internaltype export
 
 Function zcode(symbol)seq.symbol export
+
+Function print(f:symbol)seq.word
+ let module=module.f 
+let fsig=fsig.f
+if  islocal.f &or ispara.mytype.module.f then [ merge.(["%"_1]+fsig)]
+   else if  islit.f then fsig
+   else if module="$words" then if '"'_1 in fsig then "'" + fsig + "'" else '"' + fsig + '"'
+   else if module="$word" then "WORD"+fsig
+    else if isspecial.f then 
+   if fsig_1 in "BLOCK EXITBLOCK BR LOOPBLOCK FINISHLOOP CONTINUE"then fsig + " &br"else fsig
+   else if module=" $constant"  then fsig 
+   else if isFref.f then "FREF"+print.(constantcode.f)_1
+    else   (if last.fsig=")"_1 then  fsig  else  fsig+"()")+print.mytype.module
+ 
+Function print(p:program, i:symbol)seq.word
+ let d=lookupcode(p,i) if not.isdefined.d then print(i) else print(i)+ @(+, print,"",code.d ) 
+
+

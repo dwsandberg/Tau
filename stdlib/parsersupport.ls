@@ -101,7 +101,7 @@ message + "&br" +prettynoparse.@(+,text2,"",subseq(input,1,place))
     if stateno=2 then stk else 
      push(stk, stkele(actioncode,place.top.stk+1, forward(attribute.top.stk,attribute.token)))
   else 
-  assert actioncode < 0 report errormessage( if w.token="#"_1 then "parse error:unexpected end of imput" else
+  assert actioncode < 0 report errormessage( if w.token="#"_1 then "parse error:unexpected end of paragraph" else
   "parse error state"+toword.stateno,input,place.top.stk)+expect:T(stateno)
   let ruleno=-actioncode
   let rulelen = rulelength:T_ruleno 

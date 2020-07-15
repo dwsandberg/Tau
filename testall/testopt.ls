@@ -30,64 +30,65 @@ Function testopt seq.word
 let p2 = secondPass."testall"_1
 let cl = ["7","12","1","2","WORD FIRST","WORD AB",'"A B"',"7","11","2"
 ,"1","0","4607182418800017408"," 44"," 2"," 46"," 72","27","2","128","65","1","4",
-// optest24   // "%1 5 Q3DZbuiltinZintZint  2 3 BR 3 
+// optest24   // "%1 5 =(int, int)builtin  2 3 BR 3 
  &br 24 EXITBLOCK 1 
  &br 0 EXITBLOCK 1 
  &br BLOCK 3  &br "  
  ,// optest25 // "
-  %1 3 Q5FZintzseqZintzseqZint  DEFINE 2 %2 9 Q3EZbuiltinZintZint  5 2 BR 3 
-&br %2 9 Q3DZbuiltinZintZint  7 3 BR 3 
-&br %2 5 Q3DZbuiltinZintZint  7 4 BR 3 
-&br %2 8 Q3DZbuiltinZintZint  7 8 BR 3 
-&br %2 10 Q3DZbuiltinZintZint  7 6 BR 3 
-&br %2 3333 Q3DZbuiltinZintZint  7 8 BR 3 
+  %1 3_(int seq, int)seq.int DEFINE 2 %2 9 >(int, int)builtin 5 2 BR 3 
+&br %2 9 =(int, int)builtin  7 3 BR 3 
+&br %2 5 =(int, int)builtin  7 4 BR 3 
+&br %2 8 =(int, int)builtin  7 8 BR 3 
+&br %2 10 =(int, int)builtin  7 6 BR 3 
+&br %2 3333 =(int, int)builtin  7 8 BR 3 
 &br 25 EXITBLOCK 1 
 &br 2 EXITBLOCK 1 
 &br BLOCK 8
 &br  "
  ,"26"
 ,"%1 %2  3 LOOPBLOCK  3  
-&br %3  1 Q3DZbuiltinZintZint  3 4 BR 3 
+&br %3  1 =(int, int)builtin  3 4 BR 3 
  &br %4 EXITBLOCK 1 
- &br %3 1 Q2DZbuiltinZintZint  %3 %4 Q2AZbuiltinZintZint  CONTINUE 2  
+ &br %3 1  -(int, int)builtin %3 %4 *(int, int)builtin  CONTINUE 2  
  &br BLOCK 4 &br",
-"%1  0 Q3EZbuiltinZintZint   2  3  BR 3  
-&br 10 %2 Q3EZbuiltinZintZint    EXITBLOCK 1  
+"%1  0 >(int, int)builtin   2  3  BR 3  
+&br 10 %2 >(int, int)builtin    EXITBLOCK 1  
  &br 0  EXITBLOCK 1 
   &br  BLOCK 3 &br",
-"%1  0 Q3EZbuiltinZintZint   2  3   BR 3  
+"%1  0 >(int, int)builtin   2  3   BR 3  
 &br 1  EXITBLOCK 1  
-&br 10 %2 Q3EZbuiltinZintZint  EXITBLOCK 1  &br BLOCK 3 &br"
-, //  optest30 // "%1 WORD test Q3DZbuiltinZintZint  2 3 BR 3  
+&br 10 %2 >(int, int)builtin  EXITBLOCK 1  &br BLOCK 3 &br"
+, //  optest30 // "%1 WORD test =(int, int)builtin  2 3 BR 3  
 &br %2 EXITBLOCK 1 
 &br %3 EXITBLOCK 1 
 &br BLOCK 3 &br"
-, // test 31 // "%1 %2 Q5FZintzseqZintzseqZint  DEFINE 3 %3 3 Q3EZbuiltinZintZint  4 2 BR 3 
-&br %3 3 Q3DZbuiltinZintZint  5 3 BR 3 
-&br %3 1 Q3DZbuiltinZintZint  5 6 BR 3 
-&br %3 4 Q3DZbuiltinZintZint  5 6 BR 3 
+, // test 31 // "%1 %2 _(int seq, int)seq.int  DEFINE 3 %3 3 >(int, int)builtin  4 2 BR 3 
+&br %3 3 =(int, int)builtin  5 3 BR 3 
+&br %3 1 =(int, int)builtin  5 6 BR 3 
+&br %3 4 =(int, int)builtin  5 6 BR 3 
 &br 10 EXITBLOCK 1 
 &br 11 EXITBLOCK 1 
-&br BLOCK 6 &br "  ]  
+&br BLOCK 6 &br "  
+,"32" ]  
 let r = @(+, getcode(p2,cl),"", arithseq(length.cl, 1, 1))
  if isempty.r then"PASS testopt"else"testopt" + r
 
-Function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
+function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
 
-function filter(a:seq.char,s:seq.word)seq.word 
-if subseq(decodeword.s_1,1,length.a)=a then s else ""
 
   
 Function getcode(p2:seq.seq.word,  codelist:seq.seq.word, no:int)seq.word
- let name =  decodeword."optest"_1 + decodeword.toword.no + decodeword."Ztestopt"_1  
- let t = @(+, filter(name),"", p2)
+ let t1 = @(+, filter.merge("optest"+toword.no),"", p2)
+  let t=subseq(t1,    findindex("testopt"_1,t1)+1,length.t1)
  let code = removeoptions(t,length.t)
+   //  assert false report t1+"&br"+t  +"&br"+code //
    if codelist_no = code then""else"&br FAIL" + toword.no + code +"&p"+codelist_no
   
  function removeoptions(s:seq.word,i:int) seq.word
-    if i=length.s then if not(s_i="optionZbuiltinZTZwordzseq"_1)then subseq(s,2,length.s) else removeoptions(s,i-2)
+    if i=length.s then if not( subseq(s,i-7,  i)="option(T, word seq)builtin " )
+       then s else removeoptions(s,i-9)
     else 
-    if not(s_i='"'_1) then removeoptions(s,i-1) else subseq(s,2,i-1)
+    if not(s_i='"'_1) then removeoptions(s,i-1) else subseq(s,1,i-1)
  
 
 Function optest1 int 3 + 4
@@ -175,6 +176,10 @@ Function optest29(a:int, b:int)boolean a > 0 ∨ b < 10
 Function optest30(w:word,a:int,b:int) int    if    w  in "test"    then a else b
 
 Function optest31(s:seq.int,i:int) int    if    s_i  in [1,3] &or s_i =4    then 10 else 11
+
+Function optest32(a:int,b:int,c:int,d:int) ordering optest32a(a ? b ,c ? d) 
+
+Function optest32a(a:ordering, b:ordering)ordering let x = a if x = EQ then b else x
 
 
 Function optest16a(a:seq.char)seq.int
