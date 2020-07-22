@@ -617,7 +617,11 @@ if (setjmp(q->env)!=0) {
         result= ((BT (*) (processinfo,BT,BT,BT))(q->d->func) )(q,q->d->args[0],q->d->args[1],q->d->args[2]); break;
      case 4:
         result= ((BT (*) (processinfo,BT,BT,BT,BT))(q->d->func) )(q,q->d->args[0],q->d->args[1],q->d->args[2],q->d->args[3]); break;
-     default: assert(0,"only 1 ,2,3 or 4 arguments to process are handled");
+    case 5:
+        result= ((BT (*) (processinfo,BT,BT,BT,BT,BT))(q->d->func) )(q,q->d->args[0],q->d->args[1],q->d->args[2],q->d->args[3],q->d->args[4]); break;
+    case 6:
+        result= ((BT (*) (processinfo,BT,BT,BT,BT,BT,BT))(q->d->func) )(q,q->d->args[0],q->d->args[1],q->d->args[2],q->d->args[3],q->d->args[4],q->d->args[5]); break;
+     default: assert(0,"only 1 ,2,3, 4 or 5 arguments to process are handled");
         
      }
      // fprintf(stderr,"start result copy \n"); //

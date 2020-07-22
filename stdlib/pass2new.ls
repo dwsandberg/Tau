@@ -521,7 +521,7 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
       if fsig.sym = "makereal(word seq)" &and module.sym="UTF8" then
          let arg1 =  last.result
          if module.arg1 = "$words"then
-            let  x=Lit.representation.makereal.fsig.arg1 
+            let  x=Reallit.representation.makereal.fsig.arg1 
             yyy(p,org,k+1,subseq(result,1,length.result-1)+x,   nextvar, map)
          else yyy(p,org,k+1,result+sym,   nextvar, map)
       else if fsig.sym = "merge(word seq)" &and module.sym="words" then
@@ -608,7 +608,7 @@ else if fsig.rep="<<(bits, int)" then
  else if  fsig.rep=">>(bits, int)"then
  yyy(p,org,k+1,subseq(result,1,i-3)+[ Lit.toint(bits.value.s_(i - 2) >>  value.s_(i - 1))],nextvar,map)
  else if fsig.rep="-(real,real)" then 
-  yyy(p,org,k+1,subseq(result,1,i-3)+[ Lit.representation(casttoreal.value.s_(i - 2) - casttoreal.value.s_(i - 1))],  nextvar,map)
+  yyy(p,org,k+1,subseq(result,1,i-3)+[ Reallit.representation(casttoreal.value.s_(i - 2) - casttoreal.value.s_(i - 1))],  nextvar,map)
   else yyy(p,org,k+1,result+rep,    nextvar, map)
   
 
@@ -827,19 +827,6 @@ Function print(s:seq.symbol)seq.word @(+, print,"", s)
 
 
 
-Function isblock(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="BLOCK"_1 
-
-Function isrecord(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="RECORD"_1
-
-Function isapply(s:symbol)boolean  module.s  = "$" ∧ (fsig.s)_1="APPLY"_1
-
-Function isloopblock(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="LOOPBLOCK"_1
-
-Function isdefine(s:symbol)boolean  module.s  = "$" ∧ (fsig.s)_1="DEFINE"_1
-
-Function isexit(s:symbol)boolean module.s =  "$" ∧  fsig.s ="EXITBLOCK 1"
-
-Function isbr(s:symbol)boolean module.s =  "$" ∧  fsig.s ="BR 3"
  
 function isnotOp(s:symbol) boolean    fsig.s="not(boolean)" &and module.s="builtin"  
 

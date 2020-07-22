@@ -121,25 +121,35 @@ bits
 
 use bits
 
-function checkbits seq.word check([ 878082210 = toint.rotl32(hex."A2345678"_1, 8), tohex32.(hex."D687F000"_1 ∧ hex."0FE00000"_1) = "0680 0000", tohex32.(hex."D687F001"_1 >> 2) = "35A1 FC00", tohex32.(hex."D687F001"_1 << 2) = "5A1F C004", tohex32.(hex."D687F000"_1 ∨ hex."0FE00000"_1) = "DFE7 F000", tohex32.xor(hex."D687F000"_1, hex."0FE00000"_1) = "D967 F000"]
-,"bits")
+use otherseq.char
+
+function hex(b:bits,result:seq.char) seq.char
+let hexdigit=  (decodeword."0123456789ABCDEF"_1)_(1+toint(b &and bits(15)))
+let rest= b >> 4 
+if toint.rest=0 then [hexdigit]+result else  hex(rest,[hexdigit]+result) 
+
+function print(b:bits) seq.word     group.hex(b,empty:seq.char)  
+
+function group(s:seq.char) seq.word
+  if length.s < 5 then [encodeword(s)]
+  else  group( subseq(s,1,length.s-4))+ encodeword.subseq(s,length.s-3,length.s)  
+
+function hex(s:seq.word) bits   @(hexdigit,identity,bits.0,@(+,decodeword,empty:seq.char,s))
+
+function hexdigit(b:bits,c:char) bits
+ let i= findindex(c,decodeword."0123456789ABCDEF"_1 )-1
+ assert i < 16 report "illegal hex digit"
+  b << 4 &or bits.i
+
+function checkbits seq.word check([ 878082210 = toint.rotl32(hex."A2345678" , 8), 
+print.(hex."D687F000"  ∧ hex."0FE00000" ) = "680 0000", 
+print.(hex."D687F001"  >> 2) = "35A1 FC00", 
+print.(hex."D687F001"  << 2) = "3 5A1F C004", 
+print.(hex."D687F000"  ∨ hex."0FE00000" ) = "DFE7 F000", 
+print.xor(hex."D687F000" , hex."0FE00000" ) = "D967 F000"]
+,"bits") 
 
 function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> 32 - n)
 
-function hexvalue(val:bits, i:char)bits
- val << 4
- ∨ bits
- .if between(toint.i, 48, 57)then toint.i - 48 else toint.i - 65 + 10
-
-function hex(w:word)bits @(hexvalue, identity, bits.0, decodeword.w)
-
-function tohex32(i:bits)seq.word [ int2seq(i >> 16, empty:seq.char, 4), int2seq(i, empty:seq.char, 4)]
-
-function tohex64(i:bits)seq.word tohex32.(i >> 32) + tohex32.i
-
 use seq.char
 
-function int2seq(n:bits, result:seq.char, digits:int)word
- if digits = 0 then encodeword.result
- else
-  int2seq(n >> 4, [(decodeword."0123456789ABCDEF"_1)_(toint.(n ∧ bits.15) + 1)] + result, digits - 1)

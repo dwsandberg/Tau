@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau
 
 module words
 
@@ -41,10 +40,11 @@ Function hash(a:word)int hash.asencoding.a
 
 function assignencoding(l:int, a:seq.char) int assignrandom(l,a)
 
-
 Function =(a:word, b:word)boolean asencoding.a = asencoding.b
 
 Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
+
+----
 
 Function merge(a:seq.word)word // make multiple words into a single word. // encodeword.@(+, decodeword, empty:seq.char, a)
 

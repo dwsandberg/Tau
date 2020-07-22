@@ -284,7 +284,7 @@ Function isspecial(s:symbol) boolean (flags.s &and specialbit) = specialbit
 Function isconst(s:symbol)boolean (flags.s &and constbit) = constbit
 
 
-Function islit(s:symbol) boolean   module.s ="$int"
+Function islit(s:symbol) boolean   module.s ="$int" &or module.s ="$real"
 
 Function isFref(s:symbol) boolean   module.s ="$fref"
 
@@ -305,6 +305,8 @@ Function Local(w:word)  symbol symbol(  [w] ,    "local $",  "?",specialbit)
 Function Local(name:seq.word,type:mytype) symbol  symbol( name ,"local $", towords.type,specialbit)
 
 Function islocal(s:symbol) boolean module.s="local $"
+
+Function Reallit(i:int)  symbol symbol(  [toword.i],    "$real",  "real",constbit)
 
 
 Function Lit(i:int)  symbol symbol(  [toword.i],    "$int",  "int",constbit)
@@ -338,6 +340,21 @@ Function PlusOp symbol symbol("+(int,int)" ,"builtin","int")
 Function isinOp(s:symbol) boolean
        (fsig.s) in ["in(int, int seq)","in(word, word seq)","=(int,int)","=(word,word)"]
 
+Function isblock(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="BLOCK"_1 
+
+Function isrecord(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="RECORD"_1
+
+Function isapply(s:symbol)boolean  module.s  = "$" ∧ (fsig.s)_1="APPLY"_1
+
+Function isloopblock(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="LOOPBLOCK"_1
+
+Function iscontinue(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="CONTINUE"_1
+
+Function isdefine(s:symbol)boolean  module.s  = "$" ∧ (fsig.s)_1="DEFINE"_1
+
+Function isexit(s:symbol)boolean module.s =  "$" ∧  fsig.s ="EXITBLOCK 1"
+
+Function isbr(s:symbol)boolean module.s =  "$" ∧  fsig.s ="BR 3"
 
 Function value(s:symbol)int toint.(fsig.s)_1
 
