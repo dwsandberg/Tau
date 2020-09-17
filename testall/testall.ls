@@ -2,7 +2,9 @@
  
  Module testall 
  
- Library testall checking myseq point randomphrase test11 test11a test2 test20 test5 testencoding testopt tree2 testmodules uses stdlib exports checking randomphrase test11 test11a test2 test5 testall testencoding testopt testmodules 
+ Library testall checking myseq point randomphrase test11 test11a test2 test20 test5 testencoding testopt 
+ tree2 testmodules testprocess
+ uses stdlib exports checking randomphrase test11 test11a test2 test5 testall testencoding testopt testmodules 
  
  /run randomphrase randomphrase 
  
@@ -34,7 +36,9 @@ run testall testall
  
  use testopt 
  
- Function testall seq.word // this is a comment // test5 + test11 + test11a + testencoding + testmodules + testopt 
+ use testprocess
+ 
+ Function testall seq.word // this is a comment // test5 + test11 + test11a + testencoding + testprocess+ testmodules + testopt 
  + check([ print(3, sqrt.2.0) = "1.414"
 , print(2, toreal.3) = "3.00"
 , intpart.3.1 = 3 
@@ -50,6 +54,7 @@ run testall testall
 , print(5, tan(pi / 4.0)) = "1.00000"
 , print(5, arcsin.sin.0.5) = "0.50000"
 , print(5, arccos.cos.0.5) = "0.50000"
+,"23.45000 - 18.45000"= print(5, 23.45) + print(5, 5.0 - 23.45)
 ,- 2^4 = -16 
 , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
  = "1 C addcomma function i int merge s segment seq seq toword toword word"

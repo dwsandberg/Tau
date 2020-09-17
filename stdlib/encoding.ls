@@ -62,7 +62,7 @@ let x = constantseq(4, empty:seq.encodingrep.T)
  encodingstate(0, x, x, empty:seq.encodingrep.T)
 
 function adddata(eletoadd:encodingrep.T, tablesize:int, a:encodingrep.T)seq.encodingrep.T
- if data.a = data.eletoadd ∨ hash.eletoadd mod tablesize ≠ hash.a mod tablesize then
+ if data.a = data.eletoadd &or hash.eletoadd mod tablesize ≠ hash.a mod tablesize then
  empty:seq.encodingrep.T
  else [ a]
 
@@ -74,7 +74,8 @@ function addcode(code:encoding.T, hashsize:int, x:seq.encodingrep.T, e:encodingr
 type encoding is record xvalueofencoding:int
 
 
-
+Function lastadded( h:encodingstate.T) encoding.T
+   code.last.all.h
 
 Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T
  // this is the add that is stored in the erecord //
@@ -91,27 +92,33 @@ Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T
     else 
      let p=subadd(h,v,1)
           let codeindex = valueofencoding.code.p mod tablesize + 1
-     let l2 = @(addcode(code.p, tablesize), identity, [ p],(decodetable.h)_codeindex)
-     let tnew = replace(encodetable.h, dataindex, @(+, adddata(p, tablesize), [ p],(encodetable.h)_dataindex))
-      encodingstate(length.h + 1, tnew, replace(decodetable.h, codeindex, l2), all.h + p)
+      let l1=@(addcode(code.p, tablesize), identity, [ p],(decodetable.h)_codeindex)
+     let l2= @(+, adddata(p, tablesize), [ p],(encodetable.h)_dataindex)
+     let newdecodetable = replace(decodetable.h, codeindex, l1)
+     let newencodetable = replace(encodetable.h, dataindex, l2)
+      encodingstate(length.h + 1, newencodetable,newdecodetable , all.h + p)
+
+
 
 function used(t:encoding.T, a:encodingrep.T) int
  if t = code.a then 1  else 0
  
  function subadd(h:encodingstate.T, v:encodingrep.T,count:int) encodingrep.T
     // assert count < 10 report "unable to assign encoding" //
-     let tablesize = length.encodetable.h
+    let tablesize = length.encodetable.h
     let code = code.v
-     let codeindex = valueofencoding.code mod tablesize + 1
-             let found=  valueofencoding.code.v ≤ 0 &or @(+, used.code.v,0,(decodetable.h)_(codeindex) ) > 0
-   if found then subadd(h, encodingrep(to:encoding.T(assignencoding(length.h,data.v)), data.v, hash.v),count+1)
-   else encodingrep(code.v, deepcopy.data.v, hash.v)
+    let codeindex = valueofencoding.code mod tablesize + 1
+    let found=  valueofencoding.code.v ≤ 0 &or @(+, used.code.v,0,(decodetable.h)_(codeindex) ) > 0
+    if found then subadd(h, encodingrep(to:encoding.T(assignencoding(length.h,data.v)), data.v, hash.v),count+1)
+     else encodingrep(code.v, deepcopy.data.v, hash.v)
 
 Function assignencoding(length:int,data:T) int // (randomint.1)_1 // unbound
 
 Function assignrandom(length:int,data:T) int  (randomint.1)_1
 
-Function add(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T @(add, identity, h, l)
+function rehash(a:encodingrep.T) encodingrep.T encodingrep(code.a,data.a,hash.data.a)
+
+Function add(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T @(add, rehash, h, l)
 
 Function addseq(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T @(add, identity, h, l)
 

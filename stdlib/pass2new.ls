@@ -111,7 +111,7 @@ function  ascode(p:program,l:seq.block,i:int,assigned:seq.block,result:seq.symbo
     if kind.blk in "BR " then
          let a2=findblk2(l,1,label2.blk)
           let exp=checkforcase(p,blk)
-  if   not.isempty.exp  then  
+  if    not.isempty.exp   then  
         let r=gathercase(l,blk,exp,empty:seq.caseblock)
             if length.caseblks.r=1   then
               // go ahead and process BR" //
@@ -620,7 +620,7 @@ else if fsig.rep="<<(bits, int)" then
 
  function inline(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int,nopara:int,code:seq.symbol, map:worddict.seq.symbol)
   expandresult
-      if length.code = 1 ∧ code = [ var.1]then
+      if length.code = 1 ∧ code = [ var.1] &and nopara=1 then
    // function just returns result // 
        yyy(p,org,k+1,result,nextvar,map)
     else
@@ -852,10 +852,9 @@ let d=lookupcode(p,s)
 
 
 function checksimple(p:program,code:seq.symbol, i:int, nopara:int, last:int)boolean
- // check that the parameters occur in order and they occur only once //
- // encodings of first 8 parameters is such that the encoding equals the parameter no. //
- // any op that may involve state must occur after all parameters //
- if i > length.code then true
+ // check that the parameters occur in order and they all occur exactly once //
+ // Any op that may involve state must occur after all parameters //
+ if i > length.code then last=nopara
  else
   if  nopara < last &and // should also check for loopblock // hasstate(p,code_i) then 
    // state op between parameters //

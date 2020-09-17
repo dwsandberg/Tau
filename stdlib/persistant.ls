@@ -43,13 +43,18 @@ type word3encoding is encoding word3
 
 function assignencoding(l:int, a:word3) int valueofencoding.asencoding.toword.a
 
+ if toword.a in "//" then valueofencoding.asencoding.toword.a else  
+toint(bits.assignrandom(l,a) &and  bits(toint( bits.1 << 31)-1))
+
+valueofencoding.asencoding.toword.a
+
 function =(a:word3, b:word3)boolean toword.a = toword.b
 
 function hash(a:word3)int hash.toword.a
 
 function eword2(w:word3)encodingrep.seq.char
- let a = decodeword.toword.w
-  encodingrep(asencoding.toword.w, a, hash.a)
+  let a = decodeword.toword.w
+  encodingrep(to:encoding.seq.char(valueofencoding.encode(word3encoding, w)), a, hash.a)
 
 
 Function constdata seq.int @(+,flds,empty:seq.int,orderadded.const3e)
@@ -69,7 +74,7 @@ function assignencoding(l:int, a:const3) int assignrandom(l,a)
   
 Function wordref(w:word) int  
 let d = encode(word3encoding, word3.w)
- C64.hash.w
+ C64.valueofencoding.d
  
  Function addliblib( libname:seq.word,c:int) int
  // assert libname.t ="stdlib"report libname.t //

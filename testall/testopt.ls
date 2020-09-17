@@ -69,7 +69,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB",'"A B"',"7","11","2"
 &br 10 EXITBLOCK 1 
 &br 11 EXITBLOCK 1 
 &br BLOCK 6 &br "  
-,"32" ]  
+,"32" ,"%1"]  
 let r = @(+, getcode(p2,cl),"", arithseq(length.cl, 1, 1))
  if isempty.r then"PASS testopt"else"testopt" + r
 
@@ -180,6 +180,12 @@ Function optest31(s:seq.int,i:int) int    if    s_i  in [1,3] &or s_i =4    then
 Function optest32(a:int,b:int,c:int,d:int) ordering optest32a(a ? b ,c ? d) 
 
 Function optest32a(a:ordering, b:ordering)ordering let x = a if x = EQ then b else x
+
+Function optest33(t:seq.word)seq.word  
+dropparameter(t,  "")
+
+function dropparameter(a:seq.word,   result:seq.word)seq.word
+a
 
 
 Function optest16a(a:seq.char)seq.int

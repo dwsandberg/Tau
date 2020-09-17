@@ -103,7 +103,7 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
    // no space before but space after // addspace(s, i + 1, false, result + char1.",")
    else
     let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
-     if this in ('()].:"_^. ' + space)then
+     if this in ('-()].:"_^. ' + space)then
      // no space before or after // addspace(s, i + 1, true, result + d)
      else
       addspace(s, i + 1, false, if nospace then result + d else result + char.32 + d)
@@ -130,7 +130,11 @@ function cvttoint(s:seq.char, i:int, val:int)int
 
 - - - - - - - - - - - - -
 
-Function hash(a:seq.char)int hash.tointseq.a
+Function hash(a:seq.char)int 
+if a=decodeword."//"_1 then hash.tointseq.a else
+finalmix32.@(hash32, identity, hashstart32.0, tointseq.a)
+
+use xxhash
 
 Function tointseq(a:seq.char)seq.int
  // This is just a type change and the compiler recognizes this and does not generate code // @(+, toint, empty:seq.int, a)

@@ -60,8 +60,8 @@ Function decompose(ts:timestamp)seq.int
 
 Function print(ts:timestamp)seq.word
  let d = decompose.ts
-  [ toword.d_1,"-"_1, toword.d_2,"-"_1, toword.d_3,"."_1, toword.d_4,":"_1, toword.d_5,":"_1
-  , toword.d_6]
+ [ merge.[ toword.d_1,"-"_1, toword.d_2,"-"_1, toword.d_3,"."_1, toword.d_4,":"_1, toword.d_5,":"_1
+  , toword.d_6]]
 
 Function currenttime timestamp builtin.usemangle
 

@@ -36,8 +36,12 @@ use randomphrase
 
 use test20
 
+use myseq.int
+
+use UTF8
+
 Function testmodules seq.word
-let y = [ t501, t502, t503, t504, t505, t506, t507, test20]
+let y = [ t501, t502, t503, t504, t505, t506, t507, test20,t044]
  check(y,"testmodules") + checkbits
 
 function print(a:seq.int)seq.word"[" + @(seperator(","), toword,"", a) + "]"
@@ -114,6 +118,11 @@ _____________
 Randomphrase
 
 Function t507 boolean"The umber ant ambles the opal nurse" = getphrase.20
+
+function t044 boolean
+let s = UTF8.[ 40, 50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
+ @(+, toword,"", myseq.toseqint.s) = "40 50 335 50 336"
+
 
 _____________
 

@@ -19,6 +19,8 @@ use encoding.seq.int
 
 use stdlib
 
+use bits
+
 Function type:word internaltype export
 
 type wordencoding is encoding seq.char
@@ -38,7 +40,7 @@ Function decodeword(w:word)seq.char decode(wordencoding, asencoding.w)
 
 Function hash(a:word)int hash.asencoding.a
 
-function assignencoding(l:int, a:seq.char) int assignrandom(l,a)
+function assignencoding(l:int, a:seq.char) int toint(bits.assignrandom(l,a) &and  bits(toint( bits.1 << 31)-1))
 
 Function =(a:word, b:word)boolean asencoding.a = asencoding.b
 

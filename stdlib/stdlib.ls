@@ -8,15 +8,15 @@ parse pass1new  persistant  prims process real   seq set stack stacktrace symbol
  timestamp maindict words   newpretty  codegennew pass2new intdict  
  mangle mytype
 parsersupport  uses 
- exports stdlib main2 maindict UTF8  
+ exports stdlib main2 maindict UTF8    words
   bits blockseq   encoding fileio format  
   ipair       process real   seq set stack stacktrace 
-  textio  prims      otherseq tree graph packedseq unsafe words 
+  textio  prims      otherseq tree graph packedseq unsafe  
   newpretty 
   worddict groupparagraphs 
  timestamp ioseq dataio intdict dict
        internalbc llvm 
-   parsersupport mangle mytype   bitpackedseq
+   parsersupport mangle mytype   bitpackedseq xxhash
  
  
  
