@@ -239,14 +239,26 @@ function ispara(s:mytype) boolean  ( towords.s)_1="para"_1 &and last.towords.s="
 Function deepcopysym (type:mytype) symbol
 newsymbol("deepcopy"  ,mytype(towords.type + "process"), [type], type)
 
-Function IDXUC symbol  symbol("IDXUC(int,int)","builtin", "?")
+
+Function IDXR symbol  symbol("IDXR(int,int)","builtin", "real")
+
+Function IDXI symbol  symbol("IDXI(int,int)","builtin", "int")
+
+Function IDXP symbol  symbol("IDXP(int,int)","builtin", "ptr")
+
+Function  CALLIDXI  symbol symbol("callidxI( T seq,int)","builtin", "int")
+
+Function  CALLIDXR  symbol symbol("callidxR( T seq,int)","builtin", "real")
+
+Function  CALLIDXP  symbol symbol("callidxP( T seq,int)","builtin", "ptr")
+
 
 Function Emptyseq seq.symbol [Lit0,Lit0,Record.2]
 
 Function pseqidxsym(type:mytype) symbol
     newsymbol("_" , mytype(towords.type + "seq"_1),[ mytype(towords.type + "pseq"_1), mytype."int"],type)
     
-Function Record(i:int) symbol   symbol([ "RECORD"_1,toword.i],    "$",  "?",specialbit)
+Function Record(i:int) symbol   symbol([ "RECORD"_1,toword.i],    "$",  "ptr",specialbit)
 
 Function Apply(i:int) symbol     symbol([ "APPLY"_1,toword.i],    "$",  "?",specialbit)
 
@@ -335,7 +347,6 @@ Function Optionsym symbol symbol("option(T,word seq)","builtin","?")
 Function EqOp symbol symbol("=(int,int)" ,"builtin","boolean") 
 
 Function PlusOp symbol symbol("+(int,int)" ,"builtin","int") 
-
 
 Function isinOp(s:symbol) boolean
        (fsig.s) in ["in(int, int seq)","in(word, word seq)","=(int,int)","=(word,word)"]

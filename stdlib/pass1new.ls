@@ -70,8 +70,7 @@ Function find(modset:set.firstpass, name:mytype)set.firstpass
 type linkage is record   result:program,compiled:set.symbol,
 roots:seq.symbol,mods:seq.firstpass,templates:program
 
-
-function result (linkage) prg export
+function result (linkage) program export
 
 function compiled(linkage)seq.symbol export
 
@@ -80,7 +79,6 @@ function roots(linkage)seq.symbol export
 function mods(linkage)seq.firstpass export
 
 function templates(linkage) program export
-
 
 Function type:linkage internaltype export
 
@@ -119,9 +117,6 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
   let result2= @( processOption,identity,result,@(+,identity,empty:seq.seq.word,allsrc) )
    linkage(result2,compiled, roots,simple+abstract ,templatemap)
  
-
-
- 
    function   mapabstracttype(p:program,it:myinternaltype) program
        if towords.parameter.modname.it="T" then 
          let sym=newsymbol("type:" + print.mytype(towords.parameter.modname.it + name.it),modname.it,
@@ -151,23 +146,32 @@ function processtypedef(defined:seq.myinternaltype, undefined:seq.myinternaltype
     processtypedef(defined, newundefined, 1, empty:seq.myinternaltype)
  else if "T"_1 in towords.modname.undefined_i then 
     processtypedef(defined , undefined, i + 1, newundefined)
- else if kind.undefined_i in "defined encoding"  then
+ else if kind.undefined_i in "int real seq address"  then
     processtypedef(defined + undefined_i, undefined, i + 1, newundefined)
  else
   let td = undefined_i
    let k2 = subflddefined(subflds.td, parameter.modname.td, 1, defined, empty:seq.flddesc)
    if length.k2 = 0 then processtypedef(defined, undefined, i + 1, newundefined + undefined_i)
    else
-    let modname = modname.td
-       let dd=if kind.td="sequence"_1 then
-         myinternaltype(1,"defined"_1,name.td,modname,[mytype(towords.parameter.modname + "seq"_1)])
-      else 
-         myinternaltype(offset.last.k2+ size.last.k2,"defined"_1,name.td,modname,@(+,flatflds,empty:seq.mytype,k2))
-     processtypedef(defined + dd, undefined, i + 1, newundefined )
+     processtypedef(defined + defineinternaltype(td,k2), undefined, i + 1, newundefined )
 
+function defineinternaltype(td:myinternaltype,k2:seq.flddesc) myinternaltype
+   let modname = modname.td
+        if kind.td="sequence"_1 then
+          myinternaltype(1,"seq"_1,name.td,modname,[mytype(towords.parameter.modname + "seq"_1)])
+      else if kind.td="encoding"_1 then
+        myinternaltype(1,kind.td,name.td,modname,@(+,flatflds,empty:seq.mytype,k2))
+       else 
+         let flat=@(+,flatflds,empty:seq.mytype,k2)
+         let def=if name.td="real"_1 then name.td else if flat=[mytype."int"] then "int"_1 
+            else if length.flat=1 &and abstracttype.flat_1="seq"_1 then "seq"_1 
+            else "address"_1
+         myinternaltype(offset.last.k2+ size.last.k2,def,name.td,modname,flat)
 
+function print(f:flddesc)  seq.word 
+"&br"+toword.offset.f +print.fldtype.f+toword.size.description.f
 
-
+NNNN
 
 type flddesc is record offset:int,fldno:int,description:myinternaltype, combined:mytype
 
@@ -191,15 +195,15 @@ function size(t:flddesc) int   size.description.t
   let typ = if t_1 = "T"_1 then mytype(towords.T + subseq(t, 2, length.t))
   else fldtype
   let offset=if isempty.result then 0 else offset.last.result+size.last.result
-   if abstracttype.typ in "word int seq"then
+   if abstracttype.typ in "int seq real"then
    subflddefined(s, T, i + 1, defined, result + flddesc(offset ,i,
-    myinternaltype(1,"defined"_1,abstracttype.typ,mytype."defined",[typ]), next))
+    myinternaltype(1, abstracttype.typ ,abstracttype.typ,mytype."defined",[typ]), next))
    else 
     let typdesc=lookuptype( defined,typ)
     if isempty.typdesc then empty:seq.flddesc
     else subflddefined(s, T, i + 1, defined, result + flddesc(offset,i,typdesc_1, next))
         
-function         lookuptype(defined:seq.myinternaltype,typ:mytype) seq.myinternaltype
+function  lookuptype(defined:seq.myinternaltype,typ:mytype) seq.myinternaltype
         findelement(    myinternaltype(0,"?"_1,abstracttype.typ,mytype(towords.parameter.typ+"?") ,empty:seq.mytype), defined)
   
         
@@ -221,10 +225,6 @@ function print(it:myinternaltype) seq.word
 
 
   
-function removeflat2(p:int, i:int)seq.symbol
- if i = -1 then empty:seq.symbol
- else
-  removeflat2(p, i - 1) + [Local.p ,Lit.i, IDXUC]
   
 type  unboundexport is  record modname:mytype,unbound:symbol
 
@@ -362,18 +362,11 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
            map(p,s,  code2)
             else if length.parsedcode.b=2 &and fsig.last.parsedcode.b="builtin(word seq)"   then
             let txt2=fsig.(parsedcode.b)_1
-              assert  txt2 in ["LOCAL 1"
-              ,"LOCAL 1 LOCAL 2 IDXUC"
-              ,"LOCAL 1 LIT 0 IDXUC"
-              ,"LIT 0 LIT 0 RECORD 2"
-              ,"LOCAL 1 allocatespaceZbuiltinZint"] report "unrecognized builtin txt2"
-              let code=if txt2 ="LOCAL 1" then [Local.1]
-               else if txt2 ="LOCAL 1 LOCAL 2 IDXUC" then [Local.1,Local.2,IDXUC]
-                  else if txt2 ="LOCAL 1 LIT 0 IDXUC" then [Local.1,Lit.0,IDXUC]
-                  else if txt2="LIT 0 LIT 0 RECORD 2" then Emptyseq
-                  else assert txt2="LOCAL 1 allocatespaceZbuiltinZint" report "unrecognized builtin txt2"
-                  [Local.1,symbol("allocatespace(int)","builtin","int")]
-              map(p,s,  code)
+                  let code=if txt2 ="LOCAL 1" then [Local.1]
+               else  if txt2 ="LOCAL 1 LIT 0 IDXI" then [Local.1,Lit.0,IDXI]
+                 else assert  txt2="LIT 0 LIT 0 RECORD 2" report "unrecognized builtin txt2"
+                   Emptyseq
+                 map(p,s,  code)
              else   
              map(p,s, parsedcode.b)
     else  
@@ -390,7 +383,7 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
     processtypedef(defined, newundefined, 1, empty:seq.myinternaltype, other)
  else if "T"_1 in towords.modname.undefined_i then 
     processtypedef(defined , undefined, i + 1, newundefined, other)
- else if kind.undefined_i = "defined"_1 then
+ else if kind.undefined_i in "int real seq address"  then
     processtypedef(defined + undefined_i, undefined, i + 1, newundefined, other)
  else if kind.undefined_i = "encoding"_1 then
  let td = undefined_i
@@ -407,21 +400,18 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
    if length.k2 = 0 then processtypedef(defined, undefined, i + 1, newundefined + undefined_i, other)
    else
     let modname = modname.td
-    let syms = if kind.td="sequence"_1 then definesequence(other,  k2,  name.td, modname )
-    else definerecord(other,  k2,  name.td, modname )
-      let dd=if kind.td="sequence"_1 then
-         myinternaltype(1,"defined"_1,name.td,modname,[mytype(towords.parameter.modname + "seq"_1)])
-      else 
-         myinternaltype(offset.last.k2+ size.last.k2,"defined"_1,name.td,modname,@(+,flatflds,empty:seq.mytype,k2))
-   let descsym = 
+    let dd=defineinternaltype(td,k2)
+    let syms = if kind.td="sequence"_1 then definesequence(other,  k2,  name.td, modname,    @(+,flatflds,empty:seq.mytype,k2) )
+    else definerecord(other,  k2,  name.td, modname,subflds.dd )
+    let descsym = 
      newsymbol( "type:" + print.mytype(towords.parameter.modname + name.td) ,modname,empty:seq.mytype, 
     mytype."internaltype")
      processtypedef(defined + dd, undefined, i + 1, newundefined, map(syms,descsym,ascode.dd))
 
-  function definesequence(other:program,flds:seq.flddesc,  name:word, modname:mytype)program
+  function definesequence(other:program,flds:seq.flddesc,  name:word, modname:mytype,flatflds:seq.mytype)program
     let ptype = [ mytype.if parameter.modname = mytype.""then [ name]else"T" + name]
-     let constructor2=@(+,confld,empty:seq.symbol,flds)
-   let paras=@(+,fldtype,empty:seq.mytype,flds) 
+     let constructor2=buildconstructor(flds,flatflds,1,1,0,empty:seq.symbol)
+    let paras=@(+,fldtype,empty:seq.mytype,flds) 
     let  symbols=@( fldsym(modname,ptype,length.flds,1), identity,other, flds)
    let indexfunc= newsymbol("_", modname, [mytype(towords.parameter.modname + name), mytype."int"],parameter.modname) 
    let concode2=[Fref.indexfunc]+constructor2+Record.countflds(constructor2,1,1)
@@ -429,36 +419,65 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
    let seqtype=mytype(towords.parameter.modname + "seq"_1)
    let symtoseq = map(con,newsymbol("toseq" ,modname,  ptype, seqtype),[Local.1])
    let symfromseq=map(symtoseq,newsymbol( "to:"+print.ptype_1,modname ,[seqtype],ptype_1),
-    [Local.1,Lit.0,IDXUC,Fref.indexfunc,EqOp,Lit.2,Lit.3,Br,Local.1,Exit]+Emptyseq+[Exit,Block.3] )
+    [Local.1,Lit.0,IDXP,Fref.indexfunc,EqOp,Lit.2,Lit.3,Br,Local.1,Exit]+Emptyseq+[Exit,Block.3] )
        symfromseq 
 
    
-   function definerecord(other:program, flds:seq.flddesc,  name:word, modname:mytype) program
+   function definerecord(other:program, flds:seq.flddesc,  name:word, modname:mytype,flatflds:seq.mytype) program
     let ptype = [ mytype.if parameter.modname = mytype.""then [ name]else"T" + name]
-    let constructor2=@(+,confld,empty:seq.symbol,flds)
-  let paras=@(+,fldtype,empty:seq.mytype,flds) 
+    let constructor2=buildconstructor(flds,flatflds,1,1,0,empty:seq.symbol)
+     let paras=@(+,fldtype,empty:seq.mytype,flds) 
     let  symbols=@( fldsym(modname,ptype,length.flds,0),identity,other,flds)
    let concode2= if length.paras = 1 then[Local.1] else constructor2 + Record.countflds(constructor2,1,0)
    let con = newsymbol([name],modname,  paras, mytype(towords.parameter.modname + name) )
       map ( symbols  ,con,concode2)
 
+   function IDXop(fld: flddesc) symbol  let kind=kind.description.fld
+    if  kind="int"_1 then  IDXI 
+    else if kind="real"_1 then IDXR
+    else
+     assert kind in "seq address"  report "XXX"+print.description.fld
+      IDXP 
    
     function fldsym(modname:mytype,ptype:seq.mytype,noflds:int,offsetcorrection:int,p:program,fld:flddesc) program
        let offset=offset.fld+offsetcorrection
-  let fldcode = if fldno.fld=1  ∧  noflds =1 then [Local.1]
-  else if size.fld= 1 then [ Local.1, Lit.offset ,  IDXUC ]
+  let fldcode =   if fldno.fld=1  ∧  noflds =1 then [Local.1]
+  else  if size.fld= 1  then 
+   [ Local.1, Lit.offset ,  IDXop.fld   ]
   else
+   if  fldname.fld="resultb"_1 &and abstracttype.modname="process"_1 then
+     // this is a special case for access process result //
+    [ Local.1, Lit.offset ,  IDXop.fld    ]
+    else
    // should use a GEP instruction //
-   [Local.1 ,Lit.offset,Lit.size.fld ,symbol("cast(T seq,int,int)","builtin","?") ]
+   [Local.1 ,Lit.offset,Lit.size.fld ,symbol("cast(T seq,int,int)","builtin","ptr") ]
   //  [ Local.1, Lit(8 * offset) ,  PlusOp] //
    let sym= newsymbol([fldname.fld], modname,    ptype  ,fldtype.fld)
    map(p,sym,fldcode)
  
       
- function    confld(fld:flddesc) seq.symbol
-     let tsize=size.fld
-     if tsize = 1 then [Local(fldno.fld)] else removeflat2(fldno.fld,tsize-1)
-     
+  
+ function buildconstructor(  flds:seq.flddesc,flatflds:seq.mytype,fldno:int,j:int,subfld:int,result:seq.symbol)
+ seq.symbol
+   if j > length.flatflds then result else 
+   let nextoffset=if length.flds > fldno then offset.flds_(fldno+1) else length.flatflds+1
+   let newresult=result+if size.flds_fldno=1 then  [Local.fldno] else 
+   let kind=abstracttype.flatflds_j 
+     let op=if kind="int"_1 then IDXI 
+         else if kind="seq"_1 then IDXP 
+         else
+     assert abstracttype.flatflds_j  in "real" report "PROBLEM X"+ print.flatflds_j
+      IDXR
+     [Local.fldno ,Lit.subfld, op]
+   if nextoffset=j then
+       buildconstructor(flds,flatflds,fldno+1,j+1,0, newresult)
+   else 
+       buildconstructor(flds,flatflds,fldno,j+1,subfld+1, newresult)
+ 
+
+ 
+
+   NNNN  
 
 function  countflds(s:seq.symbol,i:int,len:int) int
   if i > length.s then len else
@@ -528,11 +547,53 @@ type resultpair is record s:symbol,code:seq.symbol,place:seq.word
     
 function X(alltypes:seq.myinternaltype,modpara:mytype , oldsym:symbol, org:seq.word, dict:set.symbol,  
 tempX:program,sourceX:program)resultpair
-       let name=name.oldsym
+     let name=name.oldsym
      let newmodname= replaceT(modpara, modname.oldsym) 
      let templatename = abstracttype.newmodname
      let newmodpara = parameter.newmodname
-     if name = "deepcopy" &and  templatename in "process"  then
+     if name="callidx" &and templatename in " seq" then
+       let op=if modpara=mytype."int" then CALLIDXI 
+        else if modpara=mytype."real" then CALLIDXR
+       else 
+       let typedesc=lookuptype(alltypes, modpara) 
+       assert not.isempty.typedesc report "type not found"+print.modpara
+       let kind=kind.typedesc_1
+       if kind="int"_1 then CALLIDXI 
+       else if kind="real"_1 then CALLIDXR
+       else 
+         assert kind  in "address seq int" report "???"+kind 
+         CALLIDXP
+       resultpair(   replaceTsymbol(modpara,oldsym),[Local.1,Local.2,op] ,"C")
+      else if name="_" &and templatename in " process" then
+       let code=if modpara=mytype."int" then  [Local.1,Local.2,IDXI] 
+       else  if modpara=mytype."int" then [Local.1,Local.2,IDXR] 
+       else
+       let typedesc=lookuptype(alltypes, modpara) 
+       assert not.isempty.typedesc report "type not found"+print.modpara
+       let kind=kind.typedesc_1
+       if kind="int"_1 then [Local.1,Local.2,IDXI] 
+       else if kind="real"_1 then [Local.1,Local.2,IDXR] 
+       else       assert kind  in "address seq int" report "???"+kind 
+       let typesize=size.typedesc_1
+       if  typesize=1 then [Local.1,Local.2,IDXP] 
+       else 
+           [Local.1 , 
+            Local.2 , Lit.-1 ,PlusOp,Lit.typesize,  symbol("*(int,int)" ,"builtin","int") , Lit.2,PlusOp,
+            Lit.typesize ,symbol("cast(T seq,int,int)","builtin","ptr") ]
+       resultpair(   replaceTsymbol(modpara,oldsym),code ,"C")
+    else if name="memcpy" &and templatename in "process" then
+       let cpysym=replaceTsymbol(modpara,oldsym)
+        resultpair( cpysym,memcpycode.cpysym,"C" )
+    else  if   (name="packed2"    &and templatename in "process")  then
+          let typeastext=print.newmodpara 
+               let typesize = if typeastext = "int"then 1
+                       else
+                         let typdesc=lookuptype(alltypes,newmodpara)
+                          assert  not.isempty.typdesc  report"can not find type sizeof" + typeastext + org
+                         size.typdesc_1
+        resultpair(   replaceTsymbol(modpara,oldsym),
+         if typesize=1 then packed1code.towords.modpara else packed2code(towords.modpara,typesize) ,"C")
+     else if name = "deepcopy" &and  templatename in "process"  then
           resultpair( deepcopysym.newmodpara,definedeepcopy(alltypes, newmodpara,org),"C")           
        else  if templatename in " process"  &and  merge.name  =   merge."sizeoftype:T"  then
                  let typeastext=print.newmodpara 
@@ -569,18 +630,61 @@ tempX:program,sourceX:program)resultpair
                if isdefined.dd then resultpair(  k_1,code.dd,"D" ) 
                else
                              X(alltypes, mytype."T",      k_1,  org, dict ,  tempX,sourceX)
+                             
+function packed1code(typeT:seq.word) seq.symbol
+[Local.1,  Lit.1,IDXI, Lit.0 ,Local.1,  Lit.1,IDXI
+,symbol("allocateseq:seq.T(int, int, int)","builtin","ptr")
+,Define."newseq" 
+,Local."newseq"_1  
+,Lit.2 
+,Local.1
+, Fref.symbol(" identity("+typeT+")","seq"+typeT,typeT) 
+, Fref.symbol("setfld(T seq, int, T)","builtin","ptr")  
+, Fref.symbol("_("+typeT+"pseq, int)","seq"+typeT,typeT) 
+,Apply.6 
+,Define."d" 
+,Local."newseq"_1]
+
+function packed2code(typeT:seq.word,ds:int) seq.symbol
+   [Lit.ds, Local.1,  Lit.1,IDXI,symbol("*(int, int)","builtin","int") 
+    , Fref.symbol("_("+typeT+"packedseq, int)",typeT+"process",typeT)  
+    , Local.1,  Lit.1,IDXI
+    , symbol("allocateseq:seq.T(int, int, int)","builtin","ptr")  
+    , Define."newseq" 
+    , Lit.0
+    , Lit.ds
+    , Local.3
+    , Lit.2
+ , Local.1 
+ , Fref.symbol(" identity("+typeT+")","seq"+typeT,typeT)    
+ , Fref.symbol("memcpy(int, int, "+typeT+" seq, int, "+typeT+" seq)" ," process"+typeT ,"?")
+ , Fref.symbol("_("+typeT+"pseq, int)","seq"+typeT,typeT) 
+ ,Apply.8 
+,Define."d" 
+,Local."newseq"_1]
              
-           
+ function memcpycode(sym:symbol) seq.symbol
+// function memcpy(i:int,memsize:int, s:seq.T,idx:int, fromaddress:seq.T) int 
+if memsize=0 then idx else
+   memcpy(i+1,memsize-1,s,setfld(s,idx,getval(fromaddress,i)),fromaddress) //
+let i=1 let memsize=2 let s= 3 let idx=4 let fromaddress=5
+  [Local.memsize, Lit.0, EqOp, Lit.2, Lit.3, Br  
+  ,Local.idx, Exit
+,Local.i, Lit.1 ,PlusOp ,Local.memsize, Lit.1,
+symbol("-(int,int)" ,"builtin","int"),Local.s ,Local.s ,Local.idx ,Local.fromaddress ,Local.i,IDXI,
+ symbol( "setfld(T seq, int, T)","builtin","ptr") ,
+ Local.fromaddress,  sym,Exit 
+,Block.3 ]          
 
 Function headdict set.symbol
 let modulename = mytype."internal1"
  asset
  .[ newsymbol("builtin", modulename, [ mytype."internal1"], mytype."internal" ), 
- newsymbol("builtin", modulename, [ mytype."word seq"], mytype."internal" ), 
+  newsymbol("builtin", modulename, [ mytype."word seq"], mytype."internal" ), 
   newsymbol("export", modulename, empty:seq.mytype, mytype."internal1" ), 
-newsymbol("unbound", modulename, empty:seq.mytype, mytype."internal1" ), 
-newsymbol("stub", modulename, empty:seq.mytype, mytype."internal1" ), 
-newsymbol("usemangle", modulename, empty:seq.mytype, mytype."internal1" )]
+  newsymbol("unbound", modulename, empty:seq.mytype, mytype."internal1" ), 
+  newsymbol("stub", modulename, empty:seq.mytype, mytype."internal1" ), 
+  newsymbol("usemangle", modulename, empty:seq.mytype, mytype."internal1" )]
 
 function gathersymbols(input:seq.seq.word)firstpass
  @(wrapgathersymbols( headdict)
@@ -695,20 +799,14 @@ function definedeepcopy(alltypes:seq.myinternaltype, type:mytype ,org:seq.word) 
 function subfld(flds:seq.mytype,fldno:int,result:seq.symbol) seq.symbol
   if fldno > length.flds then result+[Record.length.flds]
   else let fldtype=flds_fldno
-  let t=if abstracttype.fldtype in "encoding int word"then [ Local.1,Lit.(fldno-1),IDXUC ]  
+  let t=if abstracttype.fldtype in "encoding int "then [ Local.1,Lit.(fldno-1),IDXI ] 
+    else if abstracttype.fldtype in " real"then [ Local.1,Lit.(fldno-1),IDXR ]   
+   else if abstracttype.fldtype in " word"then [ Local.1,Lit.(fldno-1),IDXP ]  
    else
     assert abstracttype.fldtype = "seq"_1 report"ERR99" + print.fldtype
-     [ Local.1,Lit.(fldno-1),IDXUC,deepcopysym.fldtype]
+     [ Local.1,Lit.(fldno-1),IDXP,deepcopysym.fldtype]
      subfld(flds,fldno+1,result+t) 
 
- 
-   
--------------------------
-
-
-
-
-  
   
 function roots(exported:seq.word,f:firstpass) seq.symbol
    if  not( abstracttype.modname.f in exported )   &or length.towords.modname.f &ne  1 then empty:seq.symbol 

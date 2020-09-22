@@ -231,7 +231,7 @@ function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
          callarcs(s,end, result+ mangle(subseq(s,i,j),module))
      else if this in "RECORD DEFINE EXITBLOCK BR BLOCK APPLY WORD " then callarcs(s,i+2,result)
     else if this in "&br FREF" then callarcs(s,i+1,result) else
-     assert char1.[this]in decodeword.merge."%-0123456789" report "call arcs problem"
+     assert char1.[this]in decodeword.merge."%-0123456789" report "call arcs problem"+this+s
      callarcs(s,i+1,result)
       
     function gathermod(s:seq.word,i:int,result:seq.word) seq.word

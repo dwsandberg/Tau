@@ -29,7 +29,7 @@ BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2);
 
 #define SEQTYPE(a) IDXUC(a,0)
 
-#define myalloc allocatespaceZbuiltinZint
+#define myalloc allocatespaceQ3AseqQ2ETZbuiltinZint
 
 void assert(int b,char *message);
 
@@ -81,8 +81,9 @@ int encnum=noencodings-1;  //protected by sharedspace_mutex
 
  BT spacecount=0;
 
+BT allocatespaceQ3AseqQ2ETZbuiltinZint(processinfo PD, BT i) /* { return allocatespaceZbuiltinZint(PD,  i);}
 
-BT allocatespaceZbuiltinZint(processinfo PD, BT i)   { struct  spaceinfo *sp =&PD->space;
+BT allocatespaceZbuiltinZint(processinfo PD, BT i) */  { struct  spaceinfo *sp =&PD->space;
    sp->nextone=sp->nextone+i*8;
     spacecount+=i;
     if ((sp->nextone)>(sp->lastone) ){int k,x;   BT *b;

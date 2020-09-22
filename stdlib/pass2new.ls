@@ -578,7 +578,7 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
 function opttwoopbuiltin(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map:worddict.seq.symbol,rep:symbol)expandresult
  let s=result
  let i=length.result+1
- if fsig.rep  =" IDXUC(int,int)"   then
+ if fsig.rep  in [" IDXI(int,int)", " IDXP(int,int)" ," IDXR(int,int)" ] then
     let j = value.s_(i - 1)
     let x =  s_(i - 2)
     if between(j, 0, length.constantcode.x - 1)then
@@ -714,10 +714,9 @@ function applycode(p:program,org:seq.symbol,k:int,result:seq.symbol, nextvar:int
        yyy(p,org,k+1,subseq(result, 1, t_1 - 1) + subseq(result, t_2, index - 4),  nextvar,map)
   else
    let paras = adddefines2(code, t + (index - 3), 1, nopara1 + nopara2 + 2, empty:seq.symbol, nextvar)
-   let a=applytemplate
-   let body = yyy(p,a,1,empty:seq.symbol,    nextvar + nopara1 + nopara2 + 2, map5)
+   let body = yyy(p,applytemplate,1,empty:seq.symbol,    nextvar + nopara1 + nopara2 + 2, map5)
    let new = paras + subseq(allpara, nopara1 + nopara2 + 1, length.allpara) + code.body
-yyy(p,org,k+1,subseq(result,1,t_1-1)+new,    nextvar.body, map)
+   yyy(p,org,k+1,subseq(result,1,t_1-1)+new,    nextvar.body, map)
   
 function checknoop(p:program,dd:seq.symbol)boolean
  let s =     if length.dd > 2 &and (last.dd=Optionsym) then subseq(dd,1,length.dd-2) else   dd
@@ -733,27 +732,23 @@ function checkcat(f:symbol) boolean
  ∧   fsig.f = "+("+p+  "seq,"+p+")"
 
 function applytemplate seq.symbol
-let CALLIDX =symbol("callidx(int,T seq,int)","builtin", "?")
+let CALLIDX =symbol("callidxI( T seq,int)","builtin", "?")
 let STKRECORD= symbol("STKRECORD(int,int)","builtin", "?")
 let theseq = 5
 let stk = 6
- [ Lit.0, Lit.4, loopblock.4, var.theseq, Lit.0, IDXUC, var."FREFpseq"_1, EqOp, Lit.3, Lit.4
- , Br, var.4, var.theseq, Lit.2, IDXUC, var.stk, var.theseq, Lit.3, IDXUC, STKRECORD
- , continue.3, var.theseq, Lit.1, IDXUC, Define."8"_1, var.4, Lit.1, Lit.9, loopblock.3, var.10
- , var.8, gtOp, Lit.3, Lit.4, Br, var.9, Exit, var."term2para"_1, var.theseq, Lit.0
- , IDXUC, Lit.0, EqOp, Lit.2, Lit.3, Br, var.theseq, var.10, Lit.1, PlusOp
- , IDXUC, Exit, var.theseq, Lit.0, IDXUC, var.theseq, var.10, CALLIDX, Exit, Block.3
- , var."term2"_1, Define."11"_1, var."term1para"_1, var.9, var.11, var."term1"_1, var.10, Lit.1, PlusOp, continue.2
+ [ Lit.0, Lit.4, loopblock.4, var.theseq, Lit.0, IDXI, var."FREFpseq"_1, EqOp, Lit.3, Lit.4
+ , Br, var.4, var.theseq, Lit.2, IDXP, var.stk, var.theseq, Lit.3, IDXP, STKRECORD, continue.3, 
+ var.theseq, Lit.1, IDXI, Define."8"_1, var.4, Lit.1, Lit.9, loopblock.3, 
+ var.10, var.8, gtOp, Lit.3, Lit.4, Br, var.9, Exit, 
+ var."term2para"_1, 
+   var.theseq, var.10, CALLIDX,  var."term2"_1, Define."11"_1, 
+   var."term1para"_1, var.9, var.11, var."term1"_1, var.10, Lit.1, PlusOp, continue.2
  , Block.4, Define."7"_1, var.stk, Lit.0, EqOp, Lit.5, Lit.6, Br, var.7, Exit
- , var.7, var.stk, Lit.1, IDXUC, var.stk, Lit.0, IDXUC, continue.3, Block.6]
+ , var.7, var.stk, Lit.1, IDXP, var.stk, Lit.0, IDXP, continue.3, Block.6]
 
-
-  
 
 function depthfirst(knownsymbols:program,processed:program,s:symbol) program
         depthfirst(knownsymbols,1,[s],processed,code.lookupcode(knownsymbols,s),s)
-
-
 
      
 function     depthfirst(knownsymbols:program,i:int,pending:seq.symbol,processed:program,code:seq.symbol,s:symbol) program

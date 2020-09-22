@@ -1,8 +1,5 @@
 Module blockseq.T
 
-use packedseq.T
-
-use packedseq.seq.T
 
 use seq.seq.T
 
@@ -11,6 +8,8 @@ use seq.T
 use stdlib
 
 use process.T
+
+use process.seq.T
 
 Function packed(seq.T)seq.T export
 

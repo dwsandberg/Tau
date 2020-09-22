@@ -18,19 +18,14 @@ type pseq is sequence length:int, a:seq.T, b:seq.T
 Function =(T, T)boolean unbound
 
 Function_(a:seq.T, b:int)T
-// NOINLINE
- . //
- let typ = getseqtype.a
-  if typ = 0 then
-  assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
-    getval(a, b + 1)
-  else callidx(typ, a, b)
+     assert not(getseqtype.a = 0) &or ( b > 0 ∧ b ≤ length.a) report"out of bounds" + stacktrace
+    callidx( a, b)
 
-function callidx(func:int, a:seq.T, b:int)T builtin.usemangle
+function callidx(a:seq.T, int)T  // treated specially by compiler // a_1
 
-function getval(a:seq.T, offset:int)T builtin."LOCAL 1 LOCAL 2 IDXUC"
+Function getseqtype(a:seq.T)int builtin.usemangle 
 
-Function getseqtype(a:seq.T)int builtin."LOCAL 1 LIT 0 IDXUC"
+"LOCAL 1 LIT 0 IDXI"
 
 Function length(a:seq.T)int export
 

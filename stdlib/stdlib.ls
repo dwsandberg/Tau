@@ -3,7 +3,7 @@
 Module stdlib 
 
 Library stdlib UTF8 bitpackedseq bits blockseq codetemplates   encoding fileio 
-format graph groupparagraphs  internalbc ipair libdesc  llvm main2  otherseq packedseq 
+format graph groupparagraphs  internalbc ipair libdesc  llvm main2  otherseq   
 parse pass1new  persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
  timestamp maindict words   newpretty  codegennew pass2new intdict  
  mangle mytype
@@ -11,15 +11,12 @@ parsersupport  uses
  exports stdlib main2 maindict UTF8    words
   bits blockseq   encoding fileio format  
   ipair       process real   seq set stack stacktrace 
-  textio  prims      otherseq tree graph packedseq unsafe  
+  textio  prims      otherseq tree graph   
   newpretty 
   worddict groupparagraphs 
  timestamp ioseq dataio intdict dict
        internalbc llvm 
    parsersupport mangle mytype   bitpackedseq xxhash
- 
- 
- 
  
  
  
@@ -56,7 +53,7 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
   / * INLINE pass2new : applycode( program ,seq.symbol, int, seq.symbol,  int,    worddict.seq.symbol)  expandresult
 
  
- 
+  * NOINLINE  process.symbol:packed(seq.symbol) seq.symbol
      
 
 
@@ -75,7 +72,7 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
 
 * STATE builtin: getfile(seq.bits ) fileresult 
 
-* STATE builtin: setfld2(seq.T , int, T)  ? 
+* STATE builtin: setfld(seq.T , int, seq.T)  int
 
 * STATE  builtin: option(T,seq.word )T  
 
@@ -407,7 +404,7 @@ use seq.char
   
 * usegraph include  xxhash encoding   bits  words real subreal
 stacktrace  textio reconstruct  UTF8  seq otherseq fileio
-blockseq packedseq stdlib exclude stdlib seq  
+blockseq  stdlib exclude stdlib seq  
 
 
 
@@ -422,7 +419,7 @@ codetemplates pass2 persistant   llvm
 reconstruct persistantseq opt2
 symbol parse libdesc internalbc intercode cvttoinst codegen pass2new codegennew funcsig
 exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process  ipair 
-bitpackedseq packedseq fileio blockseq textio encoding words 
+bitpackedseq   fileio blockseq textio encoding words 
    
 
 

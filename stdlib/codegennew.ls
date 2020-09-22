@@ -77,10 +77,12 @@ function funcdec(map:seq.match5,i:symbol)seq.int
   
 
 Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word,libdesc:symbol)seq.bits
- let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" + merge.[ thename,"$profileresult"_1] + "init22 "
+ let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" 
+ + merge.[ thename,"$profileresult"_1] + "init22 "
  + merge."llvm.sqrt.f64"
  + merge."llvm.sin.f64"
  + merge."llvm.cos.f64"
+ +"allocatespaceQ3AseqQ2ETZbuiltinZint"
       let match5map = match5map(theprg, defines , uses ,symlist)
     // assert false report fullinst.last.match5map //
   let libmods2=arg.match5map_libdesc
@@ -128,8 +130,9 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
       , // init22 // [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.sqrt.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // llvm.sin.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // llvm.cos.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
-      + @(+, funcdec.match5map, empty:seq.seq.int, defines)
+      , // llvm.cos.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+      , // allocatespaceQ3AseqQ2ETZbuiltinZint // [ MODULECODEFUNCTION, typ.function.[ i64, i64,i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
+     + @(+, funcdec.match5map, empty:seq.seq.int, defines)
        llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 
 
@@ -191,9 +194,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
   let newcode = usetemplate(m, regno.l, toseq.args.l)
      let noargs = arg.m
      Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + length.m, push(pop(args.l, noargs), -(regno.l + length.m)), blocks.l)
-  else
-  // assert action = "SPECIAL"_1 report"UNKNOWN ACTION" + action //
-    if action = "EXITBLOCK"_1 then
+  else if action = "EXITBLOCK"_1 then
            assert    length.toseq.args.l > 0 report "fail 5e"
      let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(args.l,0), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))
@@ -235,14 +236,15 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
     else  if action = "CONTINUE"_1 then
     let exitblock=       Lcode2(code.l, lmap.l, noblocks.l , regno.l, push(args.l,3), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))  
-    else 
-     assert action = "RECORD"_1 report"code gen SPECIAL" + action
-     let noargs = arg.m
+    else if  action = "RECORD"_1 then 
+      let noargs = arg.m
      let args = top(args.l, noargs)
-     let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceZbuiltinZint", -1, C64.noargs)
+     let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceQ3AseqQ2ETZbuiltinZint", -1, C64.noargs)
      + CAST(regno.l + 2, -(regno.l + 1), typ.ptr.i64, CASTINTTOPTR)
       Lcode2(value.@(setnextfld, identity, ipair(regno.l + 2, code.l + newcode), args), lmap.l, noblocks.l, regno.l + 2 + noargs, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
-
+    else 
+         assert action = "CALLIDX"_1 report"code gen unknown" + action
+        callidxcode( l , top(args.l,2))
 
 function processblk(blks:seq.Lcode2,i:int, map:seq.localmap,exitbr:internalbc) processblkresult
          processblk(blks,1,exitbr,emptyinternalbc,1,empty:seq.int,empty:seq.int) 
@@ -379,5 +381,25 @@ Function profilearcs seq.word @(+, callarc,"", orderadded.statencoding)
 
 /Function dump seq.word @(+, print,"", mapping.debug)
 
+function callidxcode( l:Lcode2, args:seq.int)Lcode2
+let theseq=args_1
+let idx=args_2
+ let base = regno.l
+ let block = noblocks.l  
+ let c = CAST(base +1, theseq, typ.ptr.i64, CASTINTTOPTR)
+ + LOAD(base +2, -base-1, typ.i64, align8, 0)
+ + CMP2(base + 3, - base - 2, C64.0, 32)
+ + BR(base + 4, block +1, block  , - base - 3)
+ + CAST(base +4, -base-2, typ.ptr.function.[ i64,  i64, i64, i64], CASTINTTOPTR)
+ +   CALL(base +5, 0, 32768, typ.function.[ i64,   i64, i64, i64], -base-4, -1, args)  
+  + BR(base + 6, block + 2)
+  + GEP(base +6  , 1, typ.i64, -base-1, idx) 
+  + GEP(base +7  , 1, typ.i64, -base-6,C64.1) 
+  + LOAD(base +8 , -base-7, typ.i64, align8, 0)
+  + BR(base + 9, block + 2)
+  + PHI(base + 9, typ.i64, - base - 5, block, - base - 8, block + 1)
+  Lcode2(code.l + c, lmap.l, noblocks.l+3  , regno.l + 9, push(pop(args.l, 2), - base - 9), blocks.l)
+
+ 
 
   

@@ -1,6 +1,6 @@
 #!/usr/local/bin/tau
 
-run jstest test2
+run testprocess testprocess
 
 Module testprocess
 
@@ -14,7 +14,13 @@ use checking
 
 use process.boolean
 
+use process.returntype
+
 use real
+
+type returntype is record a:int,b:int,c:seq.word
+
+function  testprocess3  returntype   returntype(  4 ,40,"a test")
 
 
  function isprefix(prefix:seq.word, s:seq.word)boolean subseq(s, 1, length.prefix)= prefix
@@ -41,6 +47,7 @@ let z = subseq("f red green",2,3)
  , result.process.redgreen=redgreen
  ,  result.process.arg4(1,2,3,4)=10
  , message.process.result.process.testout.4 ="no result of aborted process" 
+ , a.result.process.testprocess3=4 &and b.result.process.testprocess3=40
  ,t513,t514  ,isprefix("invalid digit", message.process.toint."0A"_1)
  ,t520
   ] 

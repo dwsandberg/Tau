@@ -8,10 +8,6 @@ use seq.real
 
 use stdlib
 
-type real is record representation:int
-
-Function type:real internaltype export
-
 Function -(r:real)real 0.0 - r
 
 Function abs(x:real)real if x < 0.0 then 0.0 - x else x
@@ -56,9 +52,9 @@ Function *(a:real, b:real)real builtin.usemangle
 
 Function /(a:real, b:real)real builtin.usemangle
 
-Function representation(a:real)int export
+Function representation(a:real)int builtin.usemangle
 
-Function casttoreal(i:int)real builtin."LOCAL 1"
+Function casttoreal(i:int)real builtin.usemangle
 
 Function^(i:real, n:int)real @(*, identity, 1.0, constantseq(n, i))
 
