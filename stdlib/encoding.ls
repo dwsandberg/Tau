@@ -71,7 +71,11 @@ function addcode(code:encoding.T, hashsize:int, x:seq.encodingrep.T, e:encodingr
  x
  else x + e
 
-type encoding is record xvalueofencoding:int
+type encoding is record valueofencoding:int
+
+Function valueofencoding(a:encoding.T)int export
+
+Function to:encoding.T (i:int)  encoding.T  encoding.i
 
 
 Function lastadded( h:encodingstate.T) encoding.T
@@ -130,7 +134,6 @@ Function getinstance(erec:erecord.T)encodingstate.T builtin.usemangle
 
 Function orderadded(erec:erecord.T)seq.T toseq.getinstance.erec
 
-Function to:encoding.T (i:int)  encoding.T  builtin."LOCAL 1"
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingrep.T
  @(+, ele4.t, empty:seq.encodingrep.T,(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1))
@@ -146,7 +149,6 @@ Function decode(erec:erecord.T, t:encoding.T)T
 
 use stacktrace 
 
-Function valueofencoding(encoding.T)int builtin."LOCAL 1"
 
 Function =(a:encoding.T, b:encoding.T)boolean valueofencoding.a = valueofencoding.b
 

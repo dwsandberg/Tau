@@ -35,11 +35,9 @@ function_(a:packedseq.T, i:int)T  // special handling by compiler // (toseq.a)_1
 function memcpy(i:int,memsize:int, s:seq.T,idx:int, fromaddress:seq.T) int 
  // returns next blank idx   handled by compiler //  0
  
-Function packed(s:seq.T)seq.T  packed2(s,-1)  
+Function packed(s:seq.T)seq.T  //  handled by compiler //  s 
 
-function packed2(s:seq.T,ds:int)seq.T //  handled by compiler //  s
 
-function packed2(s:seq.T )seq.T //  handled by compiler //  s
 
 Function type:packedseq.T internaltype export 
 

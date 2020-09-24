@@ -262,6 +262,13 @@ Function Record(i:int) symbol   symbol([ "RECORD"_1,toword.i],    "$",  "ptr",sp
 
 Function Apply(i:int) symbol     symbol([ "APPLY"_1,toword.i],    "$",  "?",specialbit)
 
+Function ApplyI(i:int) symbol     symbol([ "APPLYI"_1,toword.i],    "$",  "int",specialbit)
+
+Function ApplyR(i:int) symbol     symbol([ "APPLYR"_1,toword.i],    "$",  "real",specialbit)
+
+Function ApplyP(i:int) symbol     symbol([ "APPLYP"_1,toword.i],    "$",  "ptr",specialbit)
+
+
 Function Block(i:int) symbol     symbol([ "BLOCK"_1,toword.i],    "$",  "?",specialbit)
 
 Function loopblock(i:int)symbol  symbol([ "LOOPBLOCK"_1,toword.i],   "$",  "?",specialbit)
@@ -272,7 +279,7 @@ Function continue(i:int)symbol   symbol([ "CONTINUE"_1,toword.i],    "$",   "?",
 
 Function constant(args:seq.symbol) symbol
   let fsig="CONSTANT" +     toword.valueofencoding.encode(constante,args)  
-   symbol(fsig , "$constant",  "?",args,extrabits(fsig,constbit) )
+   symbol(fsig , "$constant",  "ptr",args,extrabits(fsig,constbit) )
    
 
 function hash(s:seq.symbol) int hash.@(+,sigandmodule,"",s) 
@@ -355,7 +362,7 @@ Function isblock(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="BLOCK"_1
 
 Function isrecord(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="RECORD"_1
 
-Function isapply(s:symbol)boolean  module.s  = "$" ∧ (fsig.s)_1="APPLY"_1
+Function isapply(s:symbol)boolean  module.s  = "$" ∧ (fsig.s)_1 in "APPLY APPLYI APPLYR APPLYP"
 
 Function isloopblock(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="LOOPBLOCK"_1
 
@@ -472,6 +479,13 @@ export
 
 Function print2(i:myinternaltype) seq.word
   [name.i]+"module:"+print.modname.i+"fld"+@(+,print,"",subflds.i)
+  
+  Function  lookuptype(defined:seq.myinternaltype,typ:mytype) seq.myinternaltype
+   if typ =mytype."int" &or typ=mytype."real"      then 
+   [ myinternaltype(1,abstracttype.typ,abstracttype.typ,mytype."builtin",empty:seq.mytype)]
+else
+     findelement(    myinternaltype(0,"?"_1,abstracttype.typ,mytype(towords.parameter.typ+"?") ,empty:seq.mytype), defined)
+
 
 Function fsig(symbol)seq.word export
 
@@ -500,3 +514,14 @@ Function print(p:program, i:symbol)seq.word
  let d=lookupcode(p,i) if not.isdefined.d then print(i) else print(i)+ @(+, print,"",code.d ) 
 
 
+    Function parakind(alltypes:seq.myinternaltype,type:mytype) word
+      if  abstracttype.type in  "none int ptr real" then abstracttype.type
+      else if  abstracttype.type in " encoding " then "int"_1
+      else if abstracttype.type in "seq erecord internaltype process encodingstate encodingrep"  then "ptr"_1
+      else 
+      let k=lookuptype(alltypes,type) 
+      assert not.isempty.k report "TYPE LOOKUP parakind"+print.type 
+      let kind=kind.k_1
+       assert kind in "int real ptr seq" 
+       report "unknown type parakind "+print.type +"place" 
+       if kind in "seq" then "ptr"_1 else    kind

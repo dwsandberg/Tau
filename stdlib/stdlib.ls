@@ -68,13 +68,14 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
 
 * STATE builtin: add(  erecord.T, encodingrep.T ) int  
 
-* STATE builtin: getinstance( erecord.T)?
+* STATE builtin: getinstance( erecord.T) ptr
 
 * STATE builtin: getfile(seq.bits ) fileresult 
 
 * STATE builtin: setfld(seq.T , int, seq.T)  int
 
 * STATE  builtin: option(T,seq.word )T  
+
 
 
 
@@ -142,7 +143,7 @@ Function-(i:int)int 0 - i
 
 Function ?(a:int, b:int)ordering builtin.usemangle
 
-Function process2(a:int) int builtin.usemangle
+/Function process2(a:int) int builtin.usemangle
 
 Function ?(a:ordering, b:ordering)ordering toint.a ? toint.b
 

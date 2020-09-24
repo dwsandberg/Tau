@@ -491,7 +491,7 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
       if @(∧, isconst, true, args) then
         yyy(p,org,k+1,subseq(result,1,len - nopara )+constant.args,   nextvar, map)
       else yyy(p,org,k+1,result+sym,    nextvar, map)
-    else if  (fsig.sym)_1="APPLY"_1 then
+    else if  (fsig.sym)_1 in "APPLY APPLYI APPLYR APPLYP"  then
        applycode(p,org,k,result, nextvar, map)
     else if  (module.sym)_1="local"_1  then 
        let t = lookup(map, (fsig.sym)_1)
@@ -714,7 +714,8 @@ function applycode(p:program,org:seq.symbol,k:int,result:seq.symbol, nextvar:int
        yyy(p,org,k+1,subseq(result, 1, t_1 - 1) + subseq(result, t_2, index - 4),  nextvar,map)
   else
    let paras = adddefines2(code, t + (index - 3), 1, nopara1 + nopara2 + 2, empty:seq.symbol, nextvar)
-   let body = yyy(p,applytemplate,1,empty:seq.symbol,    nextvar + nopara1 + nopara2 + 2, map5)
+  // assert  not (name.term2_1 ="print" ) report "X"+(fsig.(org_k)) + print.term1+print.term2
+ //  let body = yyy(p,applytemplate((fsig.(org_k))_1),1,empty:seq.symbol,    nextvar + nopara1 + nopara2 + 2, map5)
    let new = paras + subseq(allpara, nopara1 + nopara2 + 1, length.allpara) + code.body
    yyy(p,org,k+1,subseq(result,1,t_1-1)+new,    nextvar.body, map)
   
@@ -731,8 +732,10 @@ function checkcat(f:symbol) boolean
   last.module.f = "seq"_1
  ∧   fsig.f = "+("+p+  "seq,"+p+")"
 
-function applytemplate seq.symbol
-let CALLIDX =symbol("callidxI( T seq,int)","builtin", "?")
+function applytemplate(op:word) seq.symbol
+let CALLIDX =if op="APPLYI"_1 then symbol("callidxI( T seq,int)","builtin", "int")
+else if op="APPLYP"_1 then symbol("callidxP(T seq,int)","builtin", "ptr")
+else  symbol("callidxR(T seq,int)","builtin", "real")
 let STKRECORD= symbol("STKRECORD(int,int)","builtin", "?")
 let theseq = 5
 let stk = 6

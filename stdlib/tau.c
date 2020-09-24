@@ -672,6 +672,11 @@ BT process2ZbuiltinZint (processinfo PD,BT pin){
    return PROCESS3(PD,pin,0,NULL); 
 }
 
+BT process2ZbuiltinZptr (processinfo PD,BT pin){
+   return PROCESS3(PD,pin,0,NULL); 
+}
+
+
 
 BT PROCESS2(processinfo PD,BT pin){
    return PROCESS3(PD,pin,0,NULL); 

@@ -152,7 +152,23 @@ match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAS
 , match5(2,"Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // AND // 10, typ.i64))
 , match5(2,"Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // OR // 11, typ.i64))
 , match5(2,"xorZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // XOR // 12, typ.i64))
-, match5(3,"setfldZbuiltinZTzseqZintZT"_1, 5, 
+, match5(3,"setfldZbuiltinZTzseqZintZptr"_1, 5, 
+  CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR) 
++ BINOP(2, ibcsub2, C64.0, 0, typ.i64)
++ GEP(3, 1, typ.i64, -1, -2)
++ GEP(4, 1, typ.i64, -3, C64.0)
++ STORE(5, -4, ibcsub3, align8, 0)
++  BINOP(5, ibcsub2, C64.1, 0, typ.i64)
+)
+, match5(3,"setfldZbuiltinZTzseqZintZint"_1, 5, 
+  CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR) 
++ BINOP(2, ibcsub2, C64.0, 0, typ.i64)
++ GEP(3, 1, typ.i64, -1, -2)
++ GEP(4, 1, typ.i64, -3, C64.0)
++ STORE(5, -4, ibcsub3, align8, 0)
++  BINOP(5, ibcsub2, C64.1, 0, typ.i64)
+)
+, match5(3,"setfldZbuiltinZTzseqZintZreal"_1, 5, 
   CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR) 
 + BINOP(2, ibcsub2, C64.0, 0, typ.i64)
 + GEP(3, 1, typ.i64, -1, -2)

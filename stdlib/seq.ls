@@ -25,11 +25,10 @@ function callidx(a:seq.T, int)T  // treated specially by compiler // a_1
 
 Function getseqtype(a:seq.T)int builtin.usemangle 
 
-"LOCAL 1 LIT 0 IDXI"
 
 Function length(a:seq.T)int export
 
-Function empty:seq.T seq.T // empty seq // builtin."LIT 0 LIT 0 RECORD 2"
+Function empty:seq.T seq.T // empty seq // builtin.usemangle
 
 Function =(a:seq.T, b:seq.T)boolean
  if length.a = length.b then subequal(a, b, length.a)else false

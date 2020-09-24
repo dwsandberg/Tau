@@ -77,6 +77,10 @@ Function fastsubseq(s:seq.T, from:int, to:int)seq.T
  else if to > length.s then fastsubseq(s, from, length.s)
  else if to < 1 then fastsubseq(s, 1, to)
  else toseq.fastsubseq(to - from + 1, s, from - 1)
+ 
+Function to:fastsubseq.T(s:seq.T)fastsubseq.T export
+
+Function data(fastsubseq.T) seq.T export
 
 _____________
 

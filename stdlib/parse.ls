@@ -98,7 +98,7 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
   let newcode =  [Fref.deepcopysym.rt,Fref.deepcopysym.mytype."word seq",Fref.last.code.exp, 
    Lit.nopara   
   ]+subseq(code.exp, 1, length.code.exp - 1)
-  +[Record(nopara + 4),symbol("process2(int)","builtin","int")]
+  +[Record(nopara + 4),symbol("process2(ptr)","builtin","ptr")]
    bindinfo(dict.R, newcode, [ mytype(towords.rt + "process")],"")
  else
   let f = lookupbysig(dict.R, op , types.exp, input, place.R)
