@@ -529,28 +529,26 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
         if module.arg1 = "$words"then
            yyy(p,org,k+1,subseq(result,1,length.result-1)+Word.merge.fsig.arg1, nextvar, map)
          else yyy(p,org,k+1,result+sym,   nextvar, map)
+       else if fsig.sym ="decode(char seq encoding)"    &and module.sym="char seq encoding" then
+         let arg1 =result_len
+         if module.arg1 = "$word"then
+            let a1 = @(+, Lit, empty:seq.symbol, tointseq.decodeword.(fsig.arg1)_1)
+            let d = constant.([ Lit.0, Lit.length.a1] + a1)  
+            yyy(p,org,k+1,subseq(result,1,len-1)+d,    nextvar, map)
+         else yyy(p,org,k+1,result+sym,  nextvar, map)
+      else if fsig.sym ="encode(char seq)"    &and module.sym="char seq encoding" then
+        let arg1 = result_len
+        if module.arg1 = "$constant"then
+           let chseq=  @(+,  value,empty:seq.int,subseq(constantcode.arg1,3,length.constantcode.arg1))
+            assert  @(&and, islit,true,  subseq(constantcode.arg1,3,length.constantcode.arg1)) report "const problem" 
+           let new=   Word.encodeword.@(+,char,empty:seq.char,chseq)
+           yyy(p,org,k+1,subseq(result,1,len-1)+new,    nextvar, map)
+        else yyy(p,org,k+1,result+sym,    nextvar, map)
      else yyy(p,org,k+1,result+sym, nextvar, map)
  else 
   //  two parameters with  constant args //
   // should add case of IDXUC with record as first arg //
-   if fsig.sym ="decode(char seq erecord, char seq encoding)"  ∧ result_(len-1) = wordEncodingOp  
-      &and module.sym="char seq encoding" then
-  let arg1 =result_len
-   if module.arg1 = "$word"then
-   let a1 = @(+, Lit, empty:seq.symbol, tointseq.decodeword.(fsig.arg1)_1)
-    let d = constant.([ Lit.0, Lit.length.a1] + a1)  
-     yyy(p,org,k+1,subseq(result,1,len-2)+d,    nextvar, map)
-   else yyy(p,org,k+1,result+sym,  nextvar, map)
-  else if fsig.sym ="encode(char seq erecord, char seq)" ∧ result_(len-1) = wordEncodingOp  
-    &and module.sym="char seq encoding" then
-  let arg1 = result_len
-   if module.arg1 = "$constant"then
-      let chseq=  @(+,  value,empty:seq.int,subseq(constantcode.arg1,3,length.constantcode.arg1))
-        assert  @(&and, islit,true,  subseq(constantcode.arg1,3,length.constantcode.arg1)) report "const problem" 
-       let new=   Word.encodeword.@(+,char,empty:seq.char,chseq)
-      yyy(p,org,k+1,subseq(result,1,len-2)+new,    nextvar, map)
-   else yyy(p,org,k+1,result+sym,    nextvar, map)
- else if not.isconst.result_(len-1) then  yyy(p,org,k+1,result+sym,   nextvar, map)
+if not.isconst.result_(len-1) then  yyy(p,org,k+1,result+sym,   nextvar, map)
  else  
   //  two parameters with   constant  args //
    if module.sym="builtin" then 
@@ -827,8 +825,6 @@ Function print(s:seq.symbol)seq.word @(+, print,"", s)
 
  
 function isnotOp(s:symbol) boolean    fsig.s="not(boolean)" &and module.s="builtin"  
-
-Function wordEncodingOp symbol symbol("wordencoding","words", " char seq erecord")
 
 Function emptyseqOp symbol   constant.[ Lit0, Lit0]
 

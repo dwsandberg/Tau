@@ -61,12 +61,14 @@ function errormessage(message:seq.word, input:seq.word, place:int)seq.word messa
 
 Function parse(dict:set.symbol, input:seq.word)bindinfo parse(bindinfo(dict,empty:seq.symbol, empty:seq.mytype,""), input)
 
+Function  cachevalue seq.seq.token.bindinfo  encoding:seq.seq.token.bindinfo
+
 Function parse(b:bindinfo, input:seq.word)bindinfo
- let a = if length.orderadded.cachelex = 0 then
- let discard = encode(cachelex, sortedlextable:bindinfo)
-   {(orderadded.cachelex)_1 }
- else(orderadded.cachelex)_1
-  // let a = sortedlextable:bindinfo //
+   let a = if length.cachevalue = 0 then
+ let discard = encode(sortedlextable:bindinfo)
+   {(cachevalue)_1 }
+ else(cachevalue)_1  
+    // let a = sortedlextable:bindinfo  //
   // assert isempty.dict.b report @(+, print,"", toseq.dict.b)+ stacktrace //
   parse:bindinfo(b, a, input)
 
@@ -80,8 +82,8 @@ function hash(l:seq.token.bindinfo)int length.l
 
 function assignencoding(l:int, a:seq.token.bindinfo) int assignrandom(l,a)
 
+use encoding.seq.token.bindinfo
 
-type cachelex is encoding seq.token.bindinfo
 
 function opaction(R:reduction.bindinfo, input:seq.token.bindinfo)bindinfo
  let op =(tokentext.R_2)

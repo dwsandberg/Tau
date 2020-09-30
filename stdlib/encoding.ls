@@ -128,11 +128,44 @@ Function addseq(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T @(add, id
 
 Function add(erec:erecord.T, s:encodingrep.T)int builtin.usemangle
 
-Function add(erec:erecord.T, s:seq.encodingrep.T)int @(+, add.erec, 0, s)
-
 Function getinstance(erec:erecord.T)encodingstate.T builtin.usemangle
 
-Function orderadded(erec:erecord.T)seq.T toseq.getinstance.erec
+
+
+
+
+  
+  type erecord is record addfunc:int, number:int, name:word
+
+
+ 
+
+Function decode(t:encoding.T) T
+ let inst = getinstance:encodingstate.T
+ let a = decode(inst, t)
+  assert length.a = 1 report"no such encoding" + toword.valueofencoding.t+stacktrace
+   data.a_1
+
+use seq.encodingstate.T
+
+Function getinstance:encodingstate.T encodingstate.T  (empty:seq.encodingstate.T )_1
+
+ 
+
+Function primitiveadd(  s:encodingrep.T)  int 3
+
+
+Function encoding:seq.T seq.T toseq.getinstance:encodingstate.T
+
+
+Function encode(t:T)encoding.T
+ let r = lookuprep(t, getinstance:encodingstate.T)
+  if isempty.r then
+  let discard = primitiveadd( encodingrep(to:encoding.T(0), t, hash.t))
+    encode(t)
+  else code.r_1
+  
+
 
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingrep.T
@@ -141,14 +174,10 @@ function decode(h:encodingstate.T, t:encoding.T)seq.encodingrep.T
 function ele4(t:encoding.T, a:encodingrep.T)seq.encodingrep.T
  if t = code.a then [ a]else empty:seq.encodingrep.T
 
-Function decode(erec:erecord.T, t:encoding.T)T
- let inst = getinstance.erec
- let a = decode(inst, t)
-  assert length.a = 1 report"no such encoding" + toword.valueofencoding.t+stacktrace
-   data.a_1
+
+
 
 use stacktrace 
-
 
 Function =(a:encoding.T, b:encoding.T)boolean valueofencoding.a = valueofencoding.b
 
@@ -156,29 +185,24 @@ Function ?(a:encoding.T, b:encoding.T)ordering valueofencoding.a ? valueofencodi
 
 Function hash(a:encoding.T)int valueofencoding.a
 
-Function encode(erec:erecord.T, t:T)encoding.T
- let r = lookuprep(t, getinstance.erec)
-  if isempty.r then
-  let discard = add(erec, encodingrep(to:encoding.T(0), t, hash.t))
-    encode(erec, t)
-  else code.r_1
+
 
 function lookuprep(t:T, inst:encodingstate.T)seq.encodingrep.T
  @(+, ele5.t, empty:seq.encodingrep.T,(encodetable.inst)_(hash.t mod length.encodetable.inst + 1))
 
 function ele(v:T, a:encodingrep.T)int if v = data.a then valueofencoding.code.a else 0
 
-type erecord is record addfunc:int, number:int, name:word
 
-Function type:erecord.T internaltype export
 
 Function type:encodingrep.T internaltype export
 
 function ele5(v:T, a:encodingrep.T)seq.encodingrep.T if v = data.a then [ a]else empty:seq.encodingrep.T
 
-Function findencode(erec:erecord.T, t:T)seq.T
- let r = lookuprep(t, getinstance.erec)
+  
+  Function findencode( t:T)seq.T
+ let r = lookuprep(t, getinstance:encodingstate.T)
   if isempty.r then empty:seq.T else [ data.r_1]
+
 
 Function analyze(t:encodingstate.T)seq.word
  "numele =" + toword.length.all.t + "encodecounts" + counts(encodetable.t, 1, 0, 0, 0)

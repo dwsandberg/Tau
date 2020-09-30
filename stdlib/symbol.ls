@@ -278,13 +278,22 @@ Function continue(i:int)symbol   symbol([ "CONTINUE"_1,toword.i],    "$",   "?",
 
 
 Function constant(args:seq.symbol) symbol
-  let fsig="CONSTANT" +     toword.valueofencoding.encode(constante,args)  
+  let fsig="CONSTANT" +     toword.valueofencoding.encode(symbolconstant(args))  
    symbol(fsig , "$constant",  "ptr",args,extrabits(fsig,constbit) )
    
 
 function hash(s:seq.symbol) int hash.@(+,sigandmodule,"",s) 
 
-type constante is encoding seq.symbol
+function assignencoding(a:int, symbolconstant) int a+1
+
+
+type symbolconstant is record toseq:seq.symbol
+
+use encoding.symbolconstant
+
+function =(a:symbolconstant,b:symbolconstant) boolean  toseq.a=toseq.b
+
+function hash(a:symbolconstant) int hash(toseq.a)
  
 
 Function isconstantorspecial(s:symbol)boolean isconst.s &or isspecial.s
@@ -308,8 +317,6 @@ Function islit(s:symbol) boolean   module.s ="$int" &or module.s ="$real"
 Function isFref(s:symbol) boolean   module.s ="$fref"
 
 function  sigandmodule(s:symbol) seq.word   fsig.s+module.s
-
-function assignencoding(a:int, b:seq.symbol ) int assignrandom(a,b)
 
 Function Exit  symbol symbol(  "EXITBLOCK 1",    "$",  "?",specialbit)
 

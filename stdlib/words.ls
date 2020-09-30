@@ -23,20 +23,18 @@ use bits
 
 Function type:word internaltype export
 
-type wordencoding is encoding seq.char
-
-Function wordencoding erecord.seq.char export
-
 type word is record asencoding:encoding.seq.char
 
 Function asencoding(w:word)encoding.seq.char export
 
 Function word(encoding.seq.char)word export
 
+use encoding.seq.char
 
-Function encodeword(a:seq.char)word word.encode(wordencoding, a)
 
-Function decodeword(w:word)seq.char decode(wordencoding, asencoding.w)
+Function encodeword(a:seq.char)word word.encode( a)
+
+Function decodeword(w:word)seq.char decode( asencoding.w)
 
 Function hash(a:word)int hash.asencoding.a
 

@@ -4,6 +4,8 @@ run mylib testnew
 
 Module codetemplates
 
+use seq.myinternaltype
+
 use bitpackedseq.bit
 
 use seq.bit
@@ -46,6 +48,22 @@ use seq.symbol
 
 use seq.seq.symbol
 
+use seq.mytype
+
+Function tollvmtype(alltypes:seq.myinternaltype,s:symbol) llvmtype
+   if fsig.s="option(T, word seq)" &or not.check then    function.constantseq(nopara.s + 2, i64) else 
+  assert not( modname.s=mytype."builtin") report "llvmtype error "+print.s
+  function.@(+,tollvmtype.alltypes, [tollvmtype(alltypes,resulttype.s),i64],paratypes.s)
+  
+   assert not(mangledname.s="printZUTF8ZintZreal"_1 )report "here"+print.a
+   a
+ 
+    
+     function tollvmtype(alltypes:seq.myinternaltype,s:mytype) llvmtype
+        let kind=parakind(alltypes,s)
+          if  kind="int"_1 then i64
+          else if kind="real"_1 then   double   
+        else   // ptr. // i64
 
 function wordstype llvmtype array(-1, i64)
 
@@ -63,11 +81,14 @@ Function arg(match5)int export
 
 
 type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int,code:seq.symbol
+,functype:llvmtype
 
 function match5 ( fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int) match5
- match5(fullinst,length,parts,action,arg,empty:seq.symbol)
+ match5(fullinst,length,parts,action,arg,empty:seq.symbol,i64)
 
 Function code(match5) seq.symbol export
+
+Function functype(match5) llvmtype export
 
 Function type:symbol internaltype export
 
@@ -79,7 +100,7 @@ use symbol
 Function _(m:seq.match5,d:symbol) match5  
 let full=if isconstantorspecial.d then
     fsig.d+module.d else [mangledname.d,toword.nopara.d]
- let e=  findencode(ematch5, match5(full, 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
+ let e=  findencode(match5(full, 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
  assert not.isempty.e report "LL"+fsig.d+module.d
 e_1
 
@@ -94,9 +115,10 @@ function assignencoding(l:int, a:match5) int l+1
 Function options(match5map:seq.match5,m:match5) seq.word
 options.code.m
 
+use encoding.match5
 
 
-type ematch5 is encoding match5
+function check boolean false
 
 function table seq.match5
 let t = [   match5(1,"casttorealZbuiltinZint"_1, 0, emptyinternalbc)
@@ -139,13 +161,13 @@ match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAS
 , match5(1,"intpartZbuiltinZreal"_1, 2, CAST(1, ibcsub1, typ.double, 11) + CAST(2, -1, typ.i64, // fptosi double // 4))
 , match5(1,"torealZbuiltinZint"_1, 2, // sitofp // CAST(1, ibcsub1, typ.double, 6) + CAST(2, -1, typ.i64, 11))
 , match5(1,"sqrtZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)
-+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.sqrt.f64", -1)
++ CALL(2, 0, 32768, typ.function.[ double, double], symboltableentry(merge."llvm.sqrt.f64",function.[ double, double]),-1)
 + CAST(3, -2, typ.i64, 11))
 , match5(1,"sinZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)
-+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.sin.f64", -1)
++ CALL(2, 0, 32768, typ.function.[ double, double], symboltableentry(merge."llvm.sin.f64",function.[ double, double]), -1)
 + CAST(3, -2, typ.i64, 11))
 , match5(1,"cosZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)
-+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.cos.f64", -1)
++ CALL(2, 0, 32768, typ.function.[ double, double], symboltableentry(merge."llvm.cos.f64",function.[ double, double]), -1)
 + CAST(3, -2, typ.i64, 11))
 , match5(2,"Q3CQ3CZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // SHL // 7, typ.i64))
 , match5(2,"Q3EQ3EZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // LSHR // 8, typ.i64))
@@ -182,7 +204,7 @@ match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAS
 + CAST(3, -1, typ.i64, CASTPTRTOINT))
 , match5(3,"allocateseqQ3AseqQ2ETZbuiltinZintZintZint"_1,5, 
 BINOP(1, ibcsub1, C64.2, 0, typ.i64)
-+CALL(2, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceQ3AseqQ2ETZbuiltinZint", ibcfirstpara2, -1)
++CALL(2, 0, 32768, typ.function.[ i64, i64, i64], symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint",function.[ i64, i64, i64]), ibcfirstpara2, -1)
  + CAST(3, -2, typ.ptr.i64, CASTINTTOPTR)
  + STORE(4, -3, ibcsub2, align8, 0)
 + GEP(4, 1, typ.i64, -3, C64.1)
@@ -196,7 +218,7 @@ let discard = @(+, addit, 0, t)
 
 
 
-function addit(m:match5)int valueofencoding.encode(ematch5,m) 
+function addit(m:match5)int valueofencoding.encode(m) 
 
 
    
@@ -206,15 +228,17 @@ function match5(nopara:int,inst:word, length:int, b:internalbc)match5
 
    
  
-Function match5map( theprg:program, defines:seq.symbol, uses:set.symbol,symlist:seq.word) seq.match5
+Function match5map( theprg:program, defines:seq.symbol, uses:set.symbol,symlist:seq.word,alltypes:seq.myinternaltype) seq.match5
   let declist=@(+, mangledname,"", defines)
    let discard = conststype
   let discard1 = profiletype
-  let discard2 = @(+, C, 0, symlist+ declist)
+  let discard2 = @(+, symboltableentry, 0, symlist+ declist)
   let discard3 = table
-  buildtemplates(toseq.uses,1,theprg,empty:seq.symbol)
+  buildtemplates(toseq.uses,1,theprg,empty:seq.symbol,alltypes)
   
-  
+  function symboltableentry(name:word) int
+    symboltableentry(name,i64)
+ 
  use set.symbol
  
  use symbol
@@ -230,7 +254,7 @@ Function match5map( theprg:program, defines:seq.symbol, uses:set.symbol,symlist:
     if i > length.arglist then   args
     else 
     let xx= arglist_i
-    let e=    findencode(ematch5, match5(fsig.xx+module.xx, 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
+    let e=    findencode(match5(fsig.xx+module.xx, 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
       if isempty.e then empty:seq.int
       else
          processconstargs( arglist,i+1,args+arg.e_1)
@@ -246,25 +270,32 @@ Function match5map( theprg:program, defines:seq.symbol, uses:set.symbol,symlist:
       let discard= addit.match5(fsig.xx+module.xx, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)
       processconst(toprocess,i+1,notprocessed)
      
- function  buildtemplates( used:seq.symbol,i:int,theprg:program,const:seq.symbol) seq.match5 
+ function  buildtemplates( used:seq.symbol,i:int,theprg:program,const:seq.symbol,alltypes:seq.myinternaltype) seq.match5 
    if i > length.used then 
      processconst(const,1,empty:seq.symbol) 
    else
     let xx= used_i
     let pkg=module.xx
      if pkg="$constant" then
-       buildtemplates(used,i+1,theprg,const+used_i)
+       buildtemplates(used,i+1,theprg,const+used_i,alltypes)
      else 
      let b =  if     pkg ="builtin"  then
-         findencode(ematch5, match5([mangledname.xx,toword.nopara.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
+         findencode( match5([mangledname.xx,toword.nopara.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
        else empty:seq.match5
     if length.b > 0 then 
-       buildtemplates( used,i+1,theprg,const)
+       buildtemplates( used,i+1,theprg,const,alltypes)
     else 
      let m =  if isFref.xx then
               let mn=  mangledname((constantcode.xx)_1)
-       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.mn, C.mn]))
+                           let functyp=ptr.tollvmtype(alltypes,(constantcode.xx)_1)   
+       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, 
+       [ CONSTCECAST, 9,  typ.functyp, symboltableentry( mn,functyp) ])) 
       else if islit.xx then
+           if check then
+       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, if pkg="$real" then 
+       C(double,[CONSTCECAST, 9,typ.i64,C64.toint.(fsig.xx)_1])
+        else C64.toint.(fsig.xx)_1)
+       else 
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.(fsig.xx)_1)
       else if islocal.xx then
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
@@ -279,16 +310,16 @@ Function match5map( theprg:program, defines:seq.symbol, uses:set.symbol,symlist:
     else 
         let noargs = nopara.xx
         let name=mangledname.xx
-        let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ name], noargs + 1)
+        let functype= tollvmtype(alltypes,xx)
+        let newcode = CALLSTART(1, 0, 32768, typ.functype, symboltableentry(name ,functype), noargs + 1)
          let code=code.lookupcode(theprg, used_i)
-        match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,code)
+        match5([name,toword.noargs], 1, getparts.newcode,"CALL"_1, noargs,code,functype)
        let discard4=addit.m
-    buildtemplates( used,i+1,theprg,const)
+    buildtemplates( used,i+1,theprg,const,alltypes)
 
 
 
 
-function ematch5 erecord.match5 export
 
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
  let args = if  action.t = "CALL"_1 then empty:seq.int

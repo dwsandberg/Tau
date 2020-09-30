@@ -3,7 +3,7 @@
  Module testall 
  
  Library testall checking myseq point randomphrase test11 test11a test2 test20 test5 testencoding testopt 
- tree2 testmodules testprocess
+ tree2 testmodules testprocess testseq
  uses stdlib exports checking randomphrase test11 test11a test2 test5 testall testencoding testopt testmodules 
  
  /run randomphrase randomphrase 
@@ -38,6 +38,8 @@ run testall testall
  
  use testprocess
  
+ use testseq
+ 
  Function testall seq.word // this is a comment // test5 + test11 + test11a + testencoding + testprocess+ testmodules + testopt 
  + check([ print(3, sqrt.2.0) = "1.414"
 , print(2, toreal.3) = "3.00"
@@ -61,4 +63,4 @@ run testall testall
 , @(seperator("/"), identity,"", alphasort.["z b","a b","a a","test 23","test 20"])
  = "a a / a b / test 20 / test 23 / z b"]
 ,"real")
- + test2
+ + testseq+test2

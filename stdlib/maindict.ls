@@ -43,7 +43,7 @@ Function writedict(tin:seq.encodingrep.seq.char)int
 Function loaddict(file:fileresult)int
  if size.file > -1 then
  let data = data.file
-   add(wordencoding, deepcopy.get2(data, length.data))
+    @(+,primitiveadd  ,0, deepcopy.get2(data, length.data))
  else 0
 
 function get2(data:seq.int, i:int)seq.encodingrep.seq.char

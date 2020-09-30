@@ -61,9 +61,7 @@ function   toexport(p:program,processed:set.symbol, toprocess:set.symbol) set.sy
       
   
   Function exportcode(p:program,s:symbol) seq.symbol
-    if fsig.s="wordencoding" &and module.s="words"  then  empty:seq.symbol
-    else 
-      let code=code.lookupcode(p, s)
+       let code=code.lookupcode(p, s)
           if length.code  < 15 then code else empty:seq.symbol
              
              

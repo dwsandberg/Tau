@@ -150,27 +150,21 @@ struct einfo * neweinfo(processinfo PD){
    e->allocatein=PD ;
    return e;
 }
-
-/* cinfo describes the constant part of encoding description. This is info the compile gernerates and only one record is generated per encoding type.
-no is changed from 0 at runtime to an integer number of the encoding */
-struct cinfo{ BT (*add2)(processinfo,BT,BT);
-              BT no; 
-            };
              
 struct einfo *staticencodings[noencodings];
 
+struct einfo  *startencoding(processinfo PD,BT *encodingnumber)
+{  // assign encoding number 
 
-struct einfo  *startencoding(processinfo PD,BT P2)
-{ struct cinfo *ee = (struct cinfo *) P2;
-// assign encoding number 
-if (ee->no==0){
+
+if (*encodingnumber==0){ 
     assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-    ee->no =encnum--; 
+    *encodingnumber=encnum--;
     assert(encnum>1,"out of encoding numbers");
     assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
     }
 
- struct einfo *e= PD->encodings[ee->no];
+ struct einfo *e= PD->encodings[*encodingnumber];
  if (e==0) {
    if  ( PD->newencodings==0 && PD != &sharedspace) 
      { int i;
@@ -181,28 +175,23 @@ if (ee->no==0){
        PD->newencodings=1;  
        }
   e = neweinfo(PD);
-  PD->encodings[ee->no]=e;
+  PD->encodings[*encodingnumber]=e;
  }
  return e;
  }
 
 
-BT getinstanceZbuiltinZTzerecord(processinfo PD,BT P2){ 
-  return startencoding(PD,P2)->hashtable ;
+BT getinstanceZbuiltinZTzerecord(processinfo PD,BT *encodingnumber){ 
+  return startencoding(PD,encodingnumber)->hashtable ;
 }
 
- 
- BT addZbuiltinZTzerecordZTzencodingrep(processinfo PD,BT P1,BT P2){  
- struct einfo *e=startencoding(PD,P1)  ;
- struct cinfo *ee = (struct cinfo *) P1;
- assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
- e->hashtable=(ee->add2)(e->allocatein,e->hashtable,P2);
+ BT addZbuiltinZintzseqZintzseqZint(processinfo PD,BT *encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT)){  
+ struct einfo *e=startencoding(PD,encodingnumber)  ;
+  assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+ e->hashtable=(add2)(e->allocatein,e->hashtable,P2);
  assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
  return 0;
 } 
-
-// BT addZintzseqzencodingZintzseqzencodingstateZintzseqzencodingrepzseq(processinfo PD,BT P1,BT P2)
-//  { return addZbuiltinZTzerecordZTzencodingrep( PD, P1, P2);}
 
 // end of encoding support
 

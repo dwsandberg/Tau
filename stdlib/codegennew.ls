@@ -5,6 +5,10 @@ run mylib testnew
 
 Module codegennew
 
+use symbol
+
+use seq.myinternaltype
+
 use seq.int
 
 use ipair.Lcode2
@@ -67,23 +71,20 @@ use persistant
 use set.symbol
   
 
-function funcdec(map:seq.match5,i:symbol)seq.int
+function funcdec(alltypes:seq.myinternaltype,map:seq.match5,i:symbol)seq.int
   let m=map_i
   let nopara=arg.m
-  [ MODULECODEFUNCTION, typ.function.constantseq(nopara + 2, i64), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+  [ MODULECODEFUNCTION, typ.functype.m, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
   
 
   
   
 
-Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word,libdesc:symbol)seq.bits
+Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word,libdesc:symbol,alltypes:seq.myinternaltype)seq.bits
+ //   assert false report @(seperator."&br",tollvmtype.alltypes ,"",toseq.toset.theprg) //
  let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" 
  + merge.[ thename,"$profileresult"_1] + "init22 "
- + merge."llvm.sqrt.f64"
- + merge."llvm.sin.f64"
- + merge."llvm.cos.f64"
- +"allocatespaceQ3AseqQ2ETZbuiltinZint"
-      let match5map = match5map(theprg, defines , uses ,symlist)
+       let match5map = match5map(theprg, defines , uses ,symlist,alltypes)
     // assert false report fullinst.last.match5map //
   let libmods2=arg.match5map_libdesc
       // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
@@ -94,22 +95,22 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
        let profilearcs3 = addwordseq2( profilearcs2)
       let liblib = addliblib( [thename],  libmods2)
        let x = C(array(4, i64)
-      , [ AGGREGATE, profilearcs3, C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profcounts"]), 
-                                   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profclocks"]), 
-                                   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, C."profspace"])])
+      , [ AGGREGATE, profilearcs3, C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, symboltableentry("profcounts",ptr.profiletype)]), 
+                                   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, symboltableentry("profclocks",ptr.profiletype)]), 
+                                   C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, symboltableentry("profspace",ptr.profiletype)])])
        let libnametype = array(length.decodeword.thename + 1, i8)
-      let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype, C."libname", typ.i32, C32.0, typ.i32, C32.0])
+      let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype,symboltableentry("libname",ptr.libnametype), typ.i32, C32.0, typ.i32, C32.0])
       let bodytxts = [ BLOCKCOUNT(1, 1)
-      + RET(1, C(i64, [ CONSTCECAST, 9, typ.ptr.array(4, i64), C."profstat"]))
+      + RET(1, C(i64, [ CONSTCECAST, 9, typ.ptr.array(4, i64), symboltableentry("profstat",ptr.array(4, i64))]))
       , BLOCKCOUNT(1, 1)
-      + CALL(1, 0, 32768, typ.function.[ i64, ptr.i8,   i64], C."initlib5", libnameptr,  liblib )
-      + GEP(2, 1, typ.profiletype, C."profclocks", C64.0, C64.1)
+      + CALL(1, 0, 32768, typ.function.[ i64, ptr.i8,   i64], symboltableentry("initlib5" ,function.[ i64, ptr.i8,   i64]), libnameptr,  liblib )
+      + GEP(2, 1, typ.profiletype, symboltableentry("profclocks",ptr.profiletype), C64.0, C64.1)
       + STORE(3, -2, C64.noprofileslots, align8, 0)
-      + GEP(3, 1, typ.profiletype, C."profspace", C64.0, C64.1)
+      + GEP(3, 1, typ.profiletype, symboltableentry("profspace",ptr.profiletype), C64.0, C64.1)
       + STORE(4, -3, C64.noprofileslots, align8, 0)
-      + GEP(4, 1, typ.profiletype, C."profcounts", C64.0, C64.1)
+      + GEP(4, 1, typ.profiletype, symboltableentry("profcounts",ptr.profiletype), C64.0, C64.1)
       + STORE(5, -4, C64.noprofileslots, align8, 0)
-      + GEP(5, 1, typ.profiletype, C."profrefs", C64.0, C64.1)
+      + GEP(5, 1, typ.profiletype, symboltableentry("profrefs",ptr.profiletype), C64.0, C64.1)
       + STORE(6, -5, C64.noprofileslots, align8, 0)
       + RET.6]
       + bodies
@@ -128,11 +129,8 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
       , // spacecount // [ MODULECODEGLOBALVAR, typ.i64, 2, 0, 0, align8 + 1, 0]
       , // profileresult // [ MODULECODEFUNCTION, typ.function.[ i64], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
       , // init22 // [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // llvm.sqrt.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // llvm.sin.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // llvm.cos.f64 // [ MODULECODEFUNCTION, typ.function.[ double, double], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // allocatespaceQ3AseqQ2ETZbuiltinZint // [ MODULECODEFUNCTION, typ.function.[ i64, i64,i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
-     + @(+, funcdec.match5map, empty:seq.seq.int, defines)
+    ]
+     + @(+, funcdec(alltypes,match5map), empty:seq.seq.int, defines)
        llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
 
 
@@ -185,7 +183,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
       Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
     else
       // if callee ="PROCESS2"_1 then let discard = if noargs = 1 ∧ nosons(t_1)= 5 then profile(profile, arg.label(t_1_3))else Case of CONST insteand of record as arg 0 addcode(l.sons, c, -(regno.l.sons + 1), 1)else //
-     profilecall(profiletype, l, args, C.[ callee], profile(profile, callee))
+     profilecall(profiletype, l, args, symboltableentry( callee,functype.m), profile(profile, callee),functype.m)
   else if action = "ACTARG"_1 then 
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
   else if action = "LOCAL"_1 then 
@@ -239,7 +237,8 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
     else if  action = "RECORD"_1 then 
       let noargs = arg.m
      let args = top(args.l, noargs)
-     let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], C."allocatespaceQ3AseqQ2ETZbuiltinZint", -1, C64.noargs)
+     let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], 
+     symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint",function.[ i64, i64, i64]), -1, C64.noargs)
      + CAST(regno.l + 2, -(regno.l + 1), typ.ptr.i64, CASTINTTOPTR)
       Lcode2(value.@(setnextfld, identity, ipair(regno.l + 2, code.l + newcode), args), lmap.l, noblocks.l, regno.l + 2 + noargs, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
     else 
@@ -307,23 +306,23 @@ function getloc(l:seq.localmap, localno:int, i:int)int
 function addloopmapentry(baselocal:int, regbase:int,l:seq.localmap,i:int) seq.localmap
         [localmap(baselocal + i - 1, - regbase - i)]+l
  
-function profilecall(profiletype2:llvmtype, l:Lcode2, args:seq.int, callee:int, idx:int)Lcode2
+function profilecall(profiletype2:llvmtype, l:Lcode2, args:seq.int, callee:int, idx:int,functype:llvmtype)Lcode2
  let base = regno.l
  let block = noblocks.l
- let p1 = C(ptr.i64, [ CONSTGEP, typ.profiletype2, typ.ptr.profiletype2, C."profclocks", typ.i32, C32.0, typ.i64, C64.idx])
- let pspace = C(ptr.i64, [ CONSTGEP, typ.profiletype2, typ.ptr.profiletype2, C."profspace", typ.i32, C32.0, typ.i64, C64.idx])
- let pcount = C(ptr.i64, [ CONSTGEP, typ.profiletype2, typ.ptr.profiletype2, C."profcounts", typ.i32, C32.0, typ.i64, C64.idx])
- let c = GEP(base + 1, 1, typ.profiletype2, C."profrefs", C64.0, C64.idx)
+ let p1 = C(ptr.i64, [ CONSTGEP, typ.profiletype2, typ.ptr.profiletype2, symboltableentry("profclocks",ptr.profiletype2), typ.i32, C32.0, typ.i64, C64.idx])
+ let pspace = C(ptr.i64, [ CONSTGEP, typ.profiletype2, typ.ptr.profiletype2, symboltableentry("profspace",ptr.profiletype2), typ.i32, C32.0, typ.i64, C64.idx])
+ let pcount = C(ptr.i64, [ CONSTGEP, typ.profiletype2, typ.ptr.profiletype2, symboltableentry("profcounts",ptr.profiletype2), typ.i32, C32.0, typ.i64, C64.idx])
+ let c = GEP(base + 1, 1, typ.profiletype2,symboltableentry("profrefs",ptr.profiletype2), C64.0, C64.idx)
  + LOAD(base + 2, - base - 1, typ.i64, align8, 0)
  + BINOP(base + 3, - base - 2, C64.1, 0, typ.i64)
  + STORE(base + 4, - base - 1, - base - 3, align8, 0)
  + CMP2(base + 4, - base - 2, C64.0, 32)
  + BR(base + 5, block, block + 1, - base - 4)
- + CALL(base + 5, 0, 32768, typ.function.[ i64], C."clock")
- + LOAD(base + 6, C."spacecount", typ.i64, align8, 0)
+ + CALL(base + 5, 0, 32768, typ.function.[ i64], symboltableentry("clock",function.[ i64]))
+ + LOAD(base + 6, symboltableentry("spacecount",i64), typ.i64, align8, 0)
  + CALL(base + 7, 0, 32768, typ.function.constantseq(length.args + 2, i64), callee, -1, args)
- + CALL(base + 8, 0, 32768, typ.function.[ i64], C."clock")
- + LOAD(base + 9, C."spacecount", typ.i64, align8, 0)
+ + CALL(base + 8, 0, 32768, typ.function.[ i64], symboltableentry("clock",function.[ i64]))
+ + LOAD(base + 9, symboltableentry("spacecount",i64), typ.i64, align8, 0)
  + BINOP(base + 10, - base - 8, - base - 5, 1, typ.i64)
  + BINOP(base + 11, - base - 9, - base - 6, 1, typ.i64)
  + LOAD(base + 12, p1, typ.i64, align8, 0)
@@ -336,7 +335,7 @@ function profilecall(profiletype2:llvmtype, l:Lcode2, args:seq.int, callee:int, 
  + BINOP(base + 17, - base - 16, C64.1, 0, typ.i64)
  + STORE(base + 18, pcount, - base - 17, align8, 0)
  + BR(base + 18, block + 2)
- + CALL(base + 18, 0, 32768, typ.function.constantseq(length.args + 2, i64), callee, -1, args)
+ + CALL(base + 18, 0, 32768, typ.functype, callee, -1, args)
  + BR(base + 19, block + 2)
  + PHI(base + 19, typ.i64, - base - 7, block, - base - 18, block + 1)
  + LOAD(base + 20, - base - 1, typ.i64, align8, 0)
@@ -344,9 +343,8 @@ function profilecall(profiletype2:llvmtype, l:Lcode2, args:seq.int, callee:int, 
  + STORE(base + 22, - base - 1, - base - 21, align8, 0)
   Lcode2(code.l + c, lmap.l, noblocks.l + 3, regno.l + 21, push(pop(args.l, length.args), - base - 19), blocks.l)
 
-Function encode(erecord.stat5, stat5)encoding.stat5 export
 
-type statencoding is encoding stat5
+use seq.stat5
 
 type stat5 is record caller:word, callee:word 
 
@@ -360,11 +358,11 @@ function =(a:stat5, b:stat5)boolean caller.a = caller.b ∧ callee.a = callee.b
 
 Function profile(caller:word, callee:word)int
  if caller = callee ∨ caller = "noprofile"_1 then 0
- else valueofencoding.encode(statencoding, stat5(caller, callee)) + 1
+ else valueofencoding.encode(stat5(caller, callee)) + 1
 
 function callarc(a:stat5)seq.word [ caller.a, callee.a]
 
-Function profilearcs seq.word @(+, callarc,"", orderadded.statencoding)
+Function profilearcs seq.word @(+, callarc,"", encoding:seq.stat5)
 
 /type debug is encoding ipair.Lcode2
 

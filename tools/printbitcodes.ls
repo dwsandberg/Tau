@@ -246,7 +246,8 @@ function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, bl
 
 type decodename is record block:int, code:int, name:seq.word
 
-type nameencoding is encoding decodename
+use encoding.decodename
+
 
 function assignencoding(l:int, a:decodename) int assignrandom(l,a)
 
@@ -256,11 +257,11 @@ function =(a:decodename, b:decodename)boolean block.a = block.b ∧ code.a = cod
 function hash(a:decodename)int(block.a + 2) * (code.a + 2)
 
 function lookup(block:int, code:int)seq.word
- let a = encode(nameencoding, decodename(block, code,"// unknown //" + toword.code))
-  name.decode(nameencoding, a)
+ let a = encode(  decodename(block, code,"// unknown //" + toword.code))
+  name.decode(  a)
 
 function I(block:int, code:int, name:seq.word)int
- let a = encode(nameencoding, decodename(block, code, name))
+ let a = encode(  decodename(block, code, name))
   0
 
 function initnames int

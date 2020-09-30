@@ -39,7 +39,6 @@ use words
 type word3 is record toword:word
 
 
-type word3encoding is encoding word3
 
 function assignencoding(l:int, a:word3) int valueofencoding.asencoding.toword.a
 
@@ -54,15 +53,14 @@ function hash(a:word3)int hash.toword.a
 
 function eword2(w:word3)encodingrep.seq.char
   let a = decodeword.toword.w
-  encodingrep(to:encoding.seq.char(valueofencoding.encode(word3encoding, w)), a, hash.a)
+  encodingrep(to:encoding.seq.char(valueofencoding.encode( w)), a, hash.a)
 
 
-Function constdata seq.int @(+,flds,empty:seq.int,orderadded.const3e)
+Function constdata seq.int @(+,flds,empty:seq.int,encoding:seq.const3)
 
 type const3 is record place:int, flds:seq.int
 
 
-type const3e is encoding const3
 
 
 function =(a:const3, b:const3)boolean flds.a = flds.b
@@ -73,22 +71,22 @@ function assignencoding(l:int, a:const3) int assignrandom(l,a)
 
   
 Function wordref(w:word) int  
-let d = encode(word3encoding, word3.w)
+let d = encode(  word3.w)
  C64.valueofencoding.d
  
  Function addliblib( libname:seq.word,c:int) int
  // assert libname.t ="stdlib"report libname.t //
  let  a=addwordseq2(libname)
   let have = if libname = "stdlib"then empty:seq.encodingrep.seq.char else words.loadedlibs_1
- let used = @(+, eword2, empty:seq.encodingrep.seq.char, orderadded.word3encoding)
+ let used = @(+, eword2, empty:seq.encodingrep.seq.char, encoding:seq.word3 )
  let k=@(+,addrecord2,empty:seq.int,toseq(asset.used - asset.have))
  let d= addobject([C64.0 , C64.length.k]+k)
   addobject( [ a,d,c,C64.0,C64.0])
  
 Function addobject(flds:seq.int) int
-  let t=orderadded.const3e
+  let t=encoding:seq.const3
   let place=if length.t=0 then 0 else place.last.t+length.flds.last.t
-  let x = decode(const3e, encode(const3e, const3(place , flds )))
+  let x = decode(encode(const3(place , flds )))
  let idx=if place.x ≠ place  then place.x else   place
  let conststype = array(-2, i64)
     C(i64,[ CONSTCECAST, 9, typ.ptr.i64,getelementptr(conststype,"list", idx)])   
@@ -110,7 +108,7 @@ use encoding.llvmconst
 
 Function dump seq.word
   let c=constdata
-  let t=    (orderadded.llvmconsts)
+  let t=    (encoding:seq.llvmconst)
   bb(c,t,length.c-1000,empty:seq.word)
   
   @(seperator."&br",print.t,"",subseq(c,length.c-1000,length.c))

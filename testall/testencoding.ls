@@ -16,7 +16,6 @@ use process.testdeep
 
 use encoding.testrecord
 
-use process.int
 
 use seq.boolean
 
@@ -36,6 +35,18 @@ use tree.seq.word
 
 use seq.seq.char
 
+use encoding.testrecord
+
+use process.seq.testrecord
+
+use seq.seq.word
+
+use process.int
+
+use seq.seq.testrecord
+
+use blockseq.seq.testrecord
+
 Function +(i:int, b:int)int export
 
 run testencoding testencoding
@@ -46,50 +57,38 @@ Function print(a:testrecord)seq.word [ toword.key.a] + body.a
 
 function hash(a:testrecord)int key.a
 
-type mydata is encoding testrecord
-
-type mydata2 is encoding testrecord
-
-type mydata3 is encoding testrecord
-
-type mydata4 is encoding testrecord
-
-type mydata5 is encoding testrecord
 
 Function assignencoding(length:int,data:testrecord) int  (randomint.1)_1
 
 
-function add(z:erecord.testrecord, b:seq.word)int
- let d = orderadded.z
- let x = encode(z, testrecord(length.d + 1, b))
+function add(  b:seq.word)int
+ let d = encoding:seq.testrecord 
+ let x = encode(testrecord(length.d + 1, b))
   1
 
 type testrecord is record key:int, body:seq.word
 
+function list(a:seq.testrecord) seq.seq.word @(+,body,empty:seq.seq.word,a)
+
 Function testencoding seq.word // must export this module so encoding type can be figured out //
-let start = length.orderadded.mydata
-let start2 = length.orderadded.mydata2
-let start3 = length.orderadded.mydata3
-let z = @(+, add(mydata), 0, ["firstadd","secondadd"])
-let z2 = @(+, add(mydata2), 0, ["one","two","three"])
-let z3 = @(+, add(mydata3), 0, ["temp"])
 let p = process.process1
  if aborted.p then"Failed encoding" + message.p
  else
-  let plen = result.p
-  let final = length.orderadded.mydata
-  let final2 = length.orderadded.mydata2
-  let final3 = length.orderadded.mydata3
-  let final4 = length.orderadded.mydata4
-   check([ start3 = 0, start = 0, start2 = 0, final = start + 2, final2 = start2 + 3, final3 = 4, final4 = 0, plen = 54, 3 = deepcopy.3, asset.[ 3, 7, 9] = deepcopy.asset.[ 3, 7, 9]
+   let s1=list.result.p
+   let z = @(+, add, 0, ["firstadd","secondadd"])
+   let s2=  list.result.process.process1
+   let s3= list.encoding:seq.testrecord
+   check([s1=["A1","B2","C3","D4","E5"]
+     , s2 =["firstadd","secondadd"]+s1
+     , s3=s2, 3 = deepcopy.3, 
+     asset.[ 3, 7, 9] = deepcopy.asset.[ 3, 7, 9]
    , deepcopy.testdeep1 = testdeep1]
    ,"encoding")
 
-Function process1 int
-let z3 = @(+, add(mydata3), 0, ["A","B","C"])
-let z4 = @(+, add(mydata4), 0, ["A1","B2","C3","D4","E5"])
- length.orderadded.mydata4 * 10 + length.orderadded.mydata3
-
+Function process1 seq.testrecord
+  let discard=@(+, add, 0, ["A1","B2","C3","D4","E5"])
+    encoding:seq.testrecord
+  
 Function nextpower(i:int, base:int, start:int)int if i > start then nextpower(i, base, start * base)else start
 
 type testdeep is record fld1:seq.word, fld2:tree.seq.word, fld3:seq.char

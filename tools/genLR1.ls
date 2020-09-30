@@ -52,7 +52,8 @@ use set.word
 
 use blockseq.int
 
-type estate is encoding state
+use encoding.state
+
 
 type state is record toset:set.dottedrule
 
@@ -103,7 +104,7 @@ function ruleno(grammar:seq.seq.word, rule:seq.word)int
   assert ruleno ≤ length.grammar report"rule not found" + rule
    ruleno
 
-function state(stateno:int)state if stateno = 0 then state.empty:set.dottedrule else(orderadded.estate)_stateno
+function state(stateno:int)state if stateno = 0 then state.empty:set.dottedrule else(encoding:seq.state)_stateno
 
 function shift(stateno:int, lookahead:word, newstateno:int)action action(stateno, lookahead, newstateno)
 
@@ -111,7 +112,7 @@ function reduce(stateno:int, lookahead:word, ruleno:int)action action(stateno, l
 
 function getaction(ruleprec:seq.seq.word, grammar:seq.seq.word, state:state, stateno:int, reductions:seq.seq.word, lookahead:word)action
  let newstate = advance(grammar, toset.state, lookahead)
- let newstateno = if not.isempty.newstate then valueofencoding.encode(estate, state.newstate)else 0
+ let newstateno = if not.isempty.newstate then valueofencoding.encode( state.newstate)else 0
   if length.reductions = 0 ∧ newstateno ≠ 0 then shift(stateno, lookahead, newstateno)
   else if length.reductions = 1 ∧ newstateno = 0 then reduce(stateno, lookahead, ruleno(grammar, reductions_1))
   else
@@ -184,7 +185,7 @@ function shifts(s:state)seq.word toseq.asset.@(+, shifts, empty:seq.word, toseq.
 
 Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphabet:seq.word)seq.word
  let grammar2 = @(+, first, empty:seq.seq.word, grammarandact)
- let initialstateno = valueofencoding.encode(estate, state.initialstate.grammar2)
+ let initialstateno = valueofencoding.encode(  state.initialstate.grammar2)
  let missingsymbols = asset.alphabet - asset.alphabet.grammar2
   assert isempty.missingsymbols report"Symbols not included in alphabet" + toseq.missingsymbols
   let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
@@ -204,13 +205,13 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphab
    + " &br norules"
    + toword.length.grammarandact
    + " &br nostate"
-   + toword.length.orderadded.estate
+   + toword.length.encoding:seq.state
    + " &p function actiontable:T seq.int ["
    + @(seperator(","), toword,"", @(addaction(alphabet), identity, dseq.0, actions))
    + "]"
    + " &p follow"
    + @(seperator("|"), print,"", toseq.arcs.follow.graminfo)
-   + printstatefunc(orderadded.estate, 1,"")}
+   + printstatefunc(encoding:seq.state, 1,"")}
 
 function printstatefunc(s:seq.state, i:int, result:seq.word)seq.word
  if i > length.s then result + "]_stateno"
@@ -225,7 +226,7 @@ function isambiguous(a:action)seq.word
 function print(a:arc.word)seq.word [ tail.a] + ">" + head.a
 
 function closestate(graminfo:grammarinfo, stateno:int, result:seq.action)seq.action
- let m = orderadded.estate
+ let m = encoding:seq.state
   if stateno > length.m then result
   else
    let state = m_stateno

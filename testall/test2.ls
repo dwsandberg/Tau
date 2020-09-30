@@ -1,3 +1,5 @@
+#!/usr/local/bin/tau
+
 Module test2
 
 Count word frequence in text file. An indexed encoding is used to assign indexes to each distinct word in the file. Uses a dseq to provide a 0 count for words that have not yet been encountered and assigned an index. 
@@ -22,10 +24,10 @@ use textio
 
 use otherseq.wordfreq
 
+use encoding.indexedword
+
 type indexedword is record w:word
 
-
-type eword is encoding indexedword
 
 Function assignencoding(length:int,data:indexedword) int  length+1
 
@@ -41,7 +43,7 @@ function =(a:wordfreq, b:wordfreq)boolean false
 function ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b
 
 function count(s:seq.wordfreq, w:word)seq.wordfreq
-let index=valueofencoding.encode(eword, indexedword(w))
+let index=valueofencoding.encode(indexedword(w))
  replace(s, index, wordfreq(count.s_index + 1, w))
 
 function print(p:wordfreq)seq.word
