@@ -8,8 +8,6 @@ use fileio
 
 use encoding.seq.int
 
-use seq.encodingrep.seq.int
-
 use stdlib
 
 use seq.seq.word

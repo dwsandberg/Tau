@@ -59,7 +59,6 @@ use stdlib
 
 use seq.trackconst
 
-Function  add(encodingstate.llvmtypeele , encodingrep.llvmtypeele ) encodingstate.llvmtypeele export
 
 Function type:llvmtype internaltype export
 
@@ -86,9 +85,11 @@ function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
 type llvmconst is record typ:int, toseq:seq.int
 
+use seq.encodingpair.llvmconst
 
+function cvttorec( a:encodingpair.llvmconst ) seq.int  toseq.data.a
 
-Function listconsts seq.seq.int @(+, toseq, empty:seq.seq.int, encoding:seq.llvmconst)
+Function listconsts seq.seq.int @(+, cvttorec, empty:seq.seq.int, encoding:seq.encodingpair.llvmconst)
 
 function hash(a:llvmconst)int hash.symtabname.a
 
@@ -124,7 +125,7 @@ if tp = TYPEINTEGER then [ merge.("i" + toword.a_2)]
 Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits
  let MODABBREVLEN = 3
  let TYPEABBREVLEN = 4
- let offset = length.encoding:seq.llvmconst
+ let offset = length.encoding:seq.encodingpair.llvmconst
  let h = addblockheader(add(add(add(add(empty:bitpackedseq.bit, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8)
  , 2
  , MODULEBLOCK
@@ -150,14 +151,14 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
      // def list //
      let a5 = addrecords(a4, MODABBREVLEN, deflist)
       // const block //
-      let g = @(constrecords, identity, trackconst(a5, -1, 0), subseq(encoding:seq.llvmconst, length.deflist + 1, offset))
+      let g = @(constrecords, identity, trackconst(a5, -1, 0), subseq(encoding:seq.encodingpair.llvmconst, length.deflist + 1, offset))
       let a6 = finishblock(bits.g, blockstart.g, TYPEABBREVLEN)
        // function bodies //
        // assert length.trecords = length.typerecords report"X"//
        let a7 = @(addbody(offset, MODABBREVLEN), identity, a6, bodytxts)
         // sym table //
         let symtabheader = addblockheader(a7, MODABBREVLEN, VALUESYMTABBLOCK, TYPEABBREVLEN)
-        let a8 = finishblock(symentries(symtabheader, encoding:seq.llvmconst, 1), length.symtabheader, TYPEABBREVLEN)
+        let a8 = finishblock(symentries(symtabheader, encoding:seq.encodingpair.llvmconst, 1), length.symtabheader, TYPEABBREVLEN)
          // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN)
 
 Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
@@ -171,7 +172,7 @@ Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
 
 function symtabname(a:llvmconst)seq.int  subseq(toseq.a,2,length.toseq.a)
 
-function symtabtype(a:llvmconst) int // typ.getftype.encodeword.tocharseq.symtabname.a // (toseq.a)_1
+function symtabtype(a:llvmconst) int  (toseq.a)_1
 
 
 Function symboltableentry(name:seq.word,type:llvmtype) int symboltableentry(name_1,type)
@@ -179,9 +180,14 @@ Function symboltableentry(name:seq.word,type:llvmtype) int symboltableentry(name
 Function symboltableentry(name:word,type:llvmtype) int
 valueofencoding.encode( llvmconst(-1,  [typ.type]+  tointseq.decodeword.name)) - 1
 
+Function global(name:word,type:llvmtype) int
+valueofencoding.encode( llvmconst(-2,  [typ.type]+  tointseq.decodeword.name)) - 1
+
+use seq.encodingpair.llvmtypeele
+
 Function C64(i:int)int valueofencoding.encode( llvmconst(typ.i64, [ CONSTINTEGER, i])) - 1
 
-Function getllvmconst(i:int)seq.int toseq.(encoding:seq.llvmconst)_(i + 1)
+Function getllvmconst(i:int)seq.int cvttorec.(encoding:seq.encodingpair.llvmconst)_(i + 1)
 
 Function C32(i:int)int valueofencoding.encode( llvmconst(typ.i32, [ CONSTINTEGER, i])) - 1
 
@@ -193,9 +199,9 @@ Function constvalue(i:int) int    (toseq.decode(  to:encoding.llvmconst(i+1)))_2
 
 - - - - - - - - - - - - - - - - - - - - - - -
 
+function cvttorec( a:encodingpair.llvmtypeele ) seq.int  toseq.data.a
 
-
-Function typerecords seq.seq.int @(+, toseq, empty:seq.seq.int, encoding:seq.llvmtypeele)
+Function typerecords seq.seq.int @(+, cvttorec, empty:seq.seq.int, encoding:seq.encodingpair.llvmtypeele)
 
 Function typ(a:llvmtype)int index.a - 1
 
@@ -248,16 +254,24 @@ function addrecord(abbrevlength:int, bits:bitpackedseq.bit, a:seq.int)bitpackeds
 
 type trackconst is record bits:bitpackedseq.bit, lasttype:int, blockstart:int
 
-function constrecords(z:trackconst, l:llvmconst)trackconst
-// FORCEINLINE
- . // // keep track of type of last const processed and add record when type changes //
+ function ismoduleblock(l:llvmconst) boolean
+   typ.l < 0 
+   
+function islastmodule (l:trackconst) boolean
+   lasttype.l < 0 
+
+function constrecords(z:trackconst, lx:encodingpair.llvmconst)trackconst
+ // keep track of type of last const processed and add record when type changes //
+ let l=data.lx
  let MODABBREVLEN = 3
  let TYPEABBREVLEN = 4
-  if typ.l = -1 then
-  let bits = if lasttype.z ≠ -1 then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)else bits.z
-    trackconst(addrecord(MODABBREVLEN, bits, [ MODULECODEFUNCTION, symtabtype.l, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]), typ.l, 0)
+  if ismoduleblock.l   then
+  let bits = if not.islastmodule.z then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)else bits.z
+     let rec=if typ.l=-1 then [ MODULECODEFUNCTION, symtabtype.l, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+     else [ MODULECODEGLOBALVAR, symtabtype.l, 2, 0, 0, align8 + 1, 0]
+    trackconst(addrecord(MODABBREVLEN, bits, rec), typ.l, 0)
   else
-   let newblock = lasttype.z = -1 ∧ typ.l ≠ -1
+   let newblock = islastmodule.z  ∧ not.ismoduleblock.l 
    let bits = if newblock then addblockheader(bits.z, MODABBREVLEN, CONSTANTSBLOCK, TYPEABBREVLEN)else bits.z
    let bits2 = if lasttype.z = typ.l then bits
    else
@@ -272,11 +286,11 @@ function constrecords(z:trackconst, l:llvmconst)trackconst
      addvbr6(a1, subseq(toseq.l, 2, length.toseq.l))
     trackconst(bs, typ.l, if newblock then length.bits else blockstart.z)
 
-Function symentries(bits:bitpackedseq.bit, s:seq.llvmconst, i:int)bitpackedseq.bit
+Function symentries(bits:bitpackedseq.bit, s:seq.encodingpair.llvmconst, i:int)bitpackedseq.bit
  if i > length.s then bits
  else
-  let l = s_i
-  let bs = if typ.l = -1 then
+  let l = data.s_i
+  let bs = if ismoduleblock.l then
   let abbrevlength = 4
   let name=symtabname.l
    let a1 = addvbr6(addvbr6(addvbr6(addvbr(bits, 3, abbrevlength), ENTRY), length.name + 1), i - 1)
@@ -284,7 +298,6 @@ Function symentries(bits:bitpackedseq.bit, s:seq.llvmconst, i:int)bitpackedseq.b
   else bits
    symentries(bs, s, i + 1)
 
-Function getftype(w:word)llvmtype function.constantseq(manglednopara.w + 2, i64)
 
 Function STRUCTNAME int 19
 

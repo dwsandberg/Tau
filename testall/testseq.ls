@@ -52,11 +52,16 @@ function =(a:ccc, b:ccc) boolean key.a=key.b
 
 function hash(a:ccc) int key.a
 
+use seq.encodingpair.ccc
 
+use blockseq.seq.seq.encodingpair.ccc 
+
+
+use blockseq.seq.encodingpair.testrecord 
 
 Function getint(size:int) int  
 if false then  abs.(randomint.1 )_1  mod size  else 
-let p=last.encoding:seq.ccc 
+let p=data.last.encoding:seq.encodingpair.ccc 
 let d=pseudorandom( val.p) 
 let c=encode(ccc(key.p+1,d))
 d mod size

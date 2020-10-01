@@ -37,7 +37,7 @@ use seq.seq.char
 
 use encoding.testrecord
 
-use process.seq.testrecord
+use process.seq.encodingpair.testrecord
 
 use seq.seq.word
 
@@ -62,13 +62,17 @@ Function assignencoding(length:int,data:testrecord) int  (randomint.1)_1
 
 
 function add(  b:seq.word)int
- let d = encoding:seq.testrecord 
+ let d = encoding:seq.encodingpair.testrecord 
  let x = encode(testrecord(length.d + 1, b))
   1
 
 type testrecord is record key:int, body:seq.word
 
-function list(a:seq.testrecord) seq.seq.word @(+,body,empty:seq.seq.word,a)
+function body(x:encodingpair.testrecord) seq.seq.word body.x
+
+function list(a:seq.encodingpair.testrecord) seq.seq.word @(+,body,empty:seq.seq.word,a)
+
+use seq.encodingpair.testrecord
 
 Function testencoding seq.word // must export this module so encoding type can be figured out //
 let p = process.process1
@@ -77,7 +81,7 @@ let p = process.process1
    let s1=list.result.p
    let z = @(+, add, 0, ["firstadd","secondadd"])
    let s2=  list.result.process.process1
-   let s3= list.encoding:seq.testrecord
+   let s3= list.encoding:seq.encodingpair.testrecord
    check([s1=["A1","B2","C3","D4","E5"]
      , s2 =["firstadd","secondadd"]+s1
      , s3=s2, 3 = deepcopy.3, 
@@ -85,9 +89,9 @@ let p = process.process1
    , deepcopy.testdeep1 = testdeep1]
    ,"encoding")
 
-Function process1 seq.testrecord
+Function process1 seq.encodingpair.testrecord
   let discard=@(+, add, 0, ["A1","B2","C3","D4","E5"])
-    encoding:seq.testrecord
+    encoding:seq.encodingpair.testrecord
   
 Function nextpower(i:int, base:int, start:int)int if i > start then nextpower(i, base, start * base)else start
 

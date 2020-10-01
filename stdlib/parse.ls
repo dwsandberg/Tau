@@ -61,14 +61,18 @@ function errormessage(message:seq.word, input:seq.word, place:int)seq.word messa
 
 Function parse(dict:set.symbol, input:seq.word)bindinfo parse(bindinfo(dict,empty:seq.symbol, empty:seq.mytype,""), input)
 
-Function  cachevalue seq.seq.token.bindinfo  encoding:seq.seq.token.bindinfo
+/ Function  cachevalue seq.encodingpair.seq.token.bindinfo  encoding:seq.encodingpair.seq.token.bindinfo
+
+/ use seq.encodingpair.seq.token.bindinfo
+
+/ use encoding.seq.token.bindinfo
 
 Function parse(b:bindinfo, input:seq.word)bindinfo
-   let a = if length.cachevalue = 0 then
+   // let a = if length.cachevalue = 0 then
  let discard = encode(sortedlextable:bindinfo)
-   {(cachevalue)_1 }
- else(cachevalue)_1  
-    // let a = sortedlextable:bindinfo  //
+   {data.(cachevalue)_1 }
+ else data.(cachevalue)_1  //
+     let a = sortedlextable:bindinfo   
   // assert isempty.dict.b report @(+, print,"", toseq.dict.b)+ stacktrace //
   parse:bindinfo(b, a, input)
 

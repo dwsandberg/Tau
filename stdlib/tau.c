@@ -80,7 +80,7 @@ int encnum=noencodings-1;  //protected by sharedspace_mutex
 // myalloc does not zero memory so care is needed to initialize every fld when calling.
 
  BT spacecount=0;
-
+ 
 BT allocatespaceQ3AseqQ2ETZbuiltinZint(processinfo PD, BT i) /* { return allocatespaceZbuiltinZint(PD,  i);}
 
 BT allocatespaceZbuiltinZint(processinfo PD, BT i) */  { struct  spaceinfo *sp =&PD->space;
@@ -287,9 +287,14 @@ fprintf( stderr, "nowords %lld \n",  ((BT *)wdrepseq)[1]);
  BT (* addwords2)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, 
        "addwordsZwordsZcharzseqzencodingstateZcharzseqzencodingrepzseq");
       if (!addwords2) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-        exit(EXIT_FAILURE);
-     }   
+        BT (* addwords3)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT, 
+          "addwordsZwordsZcharzseqzencodingpairzseq");
+          if (!addwords3){
+               fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+              exit(EXIT_FAILURE);
+              }
+           staticencodings[1]->hashtable= addwords3(&sharedspace,wdrepseq);
+     }  else 
  staticencodings[1]->hashtable= addwords2(&sharedspace,staticencodings[1]->hashtable,wdrepseq);  
      
 

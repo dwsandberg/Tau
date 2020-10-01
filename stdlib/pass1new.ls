@@ -543,8 +543,9 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,
 
 function encodingrecord(name:seq.word,typ:mytype) seq.symbol  
   let encodingno=Lit.if typ = mytype."char seq" then 1 else 0
+  let    gl=symbol("global"+  print.typ ,"builtin",("int seq"))
        if name="primitiveadd"  then
-        let addefunc= newsymbol("add", mytype(towords.typ + "encoding"),[ mytype(towords.typ +" encodingstate"), mytype(towords.typ+"  encodingrep")]
+        let addefunc= newsymbol("add", mytype(towords.typ + "encoding"),[ mytype(towords.typ +" encodingstate"), mytype(towords.typ+"  encodingpair")]
       ,mytype(towords.typ +" encodingstate"))
        let add2=newsymbol("add",mytype."builtin",[mytype("int seq"),mytype("int seq"),mytype."int"],mytype."int")
 [encodingno,Word.merge( print.typ ), Record.2

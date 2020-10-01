@@ -344,7 +344,7 @@ function profilecall(profiletype2:llvmtype, l:Lcode2, args:seq.int, callee:int, 
   Lcode2(code.l + c, lmap.l, noblocks.l + 3, regno.l + 21, push(pop(args.l, length.args), - base - 19), blocks.l)
 
 
-use seq.stat5
+use seq.encodingpair.stat5
 
 type stat5 is record caller:word, callee:word 
 
@@ -360,9 +360,9 @@ Function profile(caller:word, callee:word)int
  if caller = callee ∨ caller = "noprofile"_1 then 0
  else valueofencoding.encode(stat5(caller, callee)) + 1
 
-function callarc(a:stat5)seq.word [ caller.a, callee.a]
+function callarc(a:encodingpair.stat5)seq.word [ caller.data.a, callee.data.a]
 
-Function profilearcs seq.word @(+, callarc,"", encoding:seq.stat5)
+Function profilearcs seq.word @(+, callarc,"", encoding:seq.encodingpair.stat5)
 
 /type debug is encoding ipair.Lcode2
 

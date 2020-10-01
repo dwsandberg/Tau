@@ -33,7 +33,7 @@ use seq.mytype
 
 use encoding.seq.char
 
-use seq.encodingrep.seq.char
+use seq.encodingpair.seq.char
 
 use seq.myinternaltype
 
@@ -104,9 +104,9 @@ Function type:liblib internaltype export
 
 
 
-type liblib is record libname:seq.word, words:seq.encodingrep.seq.char, mods:seq.firstpass, timestamp:int, readonly:boolean
+type liblib is record libname:seq.word, words:seq.encodingpair.seq.char, mods:seq.firstpass, timestamp:int, readonly:boolean
 
-Function liblib(a:seq.word, d:seq.firstpass)liblib liblib(a, empty:seq.encodingrep.seq.char, d, 0, false)
+Function liblib(a:seq.word, d:seq.firstpass)liblib liblib(a, empty:seq.encodingpair.seq.char, d, 0, false)
 
 Function timestamp(liblib)int export
 
@@ -114,7 +114,7 @@ Function libname(liblib)seq.word export
 
 Function mods(liblib)seq.firstpass export
 
-Function words(liblib)seq.encodingrep.seq.char export
+Function words(liblib)seq.encodingpair.seq.char export
 
 Function readonly(liblib)boolean export
 

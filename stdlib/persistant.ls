@@ -7,9 +7,9 @@ use bits
 use encoding.seq.char
 
 
-use seq.encodingrep.seq.char
+use seq.encodingpair.seq.char
 
-use set.encodingrep.seq.char
+use set.encodingpair.seq.char
 
 use encoding.const3
 
@@ -30,7 +30,7 @@ use stdlib
 
 use encoding.word3
 
-use seq.encodingrep.word3
+use seq.encodingpair.word3
 
 use seq.word3
 
@@ -51,16 +51,22 @@ function =(a:word3, b:word3)boolean toword.a = toword.b
 
 function hash(a:word3)int hash.toword.a
 
-function eword2(w:word3)encodingrep.seq.char
+function eword2(ww:encodingpair.word3)encodingpair.seq.char
+  let w=data.ww
   let a = decodeword.toword.w
-  encodingrep(to:encoding.seq.char(valueofencoding.encode( w)), a, hash.a)
+  encodingpair(to:encoding.seq.char(valueofencoding.encode( w))
+    , a
+    )
+  
+  
+  
+use seq.encodingpair.const3
 
-
-Function constdata seq.int @(+,flds,empty:seq.int,encoding:seq.const3)
+Function constdata seq.int @(+,flds,empty:seq.int,encoding:seq.encodingpair.const3)
 
 type const3 is record place:int, flds:seq.int
 
-
+function flds(p:encodingpair.const3) seq.int  flds.data.p
 
 
 function =(a:const3, b:const3)boolean flds.a = flds.b
@@ -77,22 +83,22 @@ let d = encode(  word3.w)
  Function addliblib( libname:seq.word,c:int) int
  // assert libname.t ="stdlib"report libname.t //
  let  a=addwordseq2(libname)
-  let have = if libname = "stdlib"then empty:seq.encodingrep.seq.char else words.loadedlibs_1
- let used = @(+, eword2, empty:seq.encodingrep.seq.char, encoding:seq.word3 )
+  let have = if libname = "stdlib"then empty:seq.encodingpair.seq.char else words.loadedlibs_1
+ let used = @(+, eword2, empty:seq.encodingpair.seq.char, encoding:seq.encodingpair.word3 )
  let k=@(+,addrecord2,empty:seq.int,toseq(asset.used - asset.have))
  let d= addobject([C64.0 , C64.length.k]+k)
   addobject( [ a,d,c,C64.0,C64.0])
  
 Function addobject(flds:seq.int) int
-  let t=encoding:seq.const3
-  let place=if length.t=0 then 0 else place.last.t+length.flds.last.t
+  let t=encoding:seq.encodingpair.const3
+  let place=if length.t=0 then 0 else place.data.last.t+length.flds.data.last.t
   let x = decode(encode(const3(place , flds )))
  let idx=if place.x ≠ place  then place.x else   place
  let conststype = array(-2, i64)
     C(i64,[ CONSTCECAST, 9, typ.ptr.i64,getelementptr(conststype,"list", idx)])   
 
 
-function addrecord2( e:encodingrep.seq.char) int
+function addrecord2( e:encodingpair.seq.char) int
  let s= tointseq.data.e
   let k=addobject(@(+, C64, [ C64.0, C64.length.s], s))
   addobject([C64.valueofencoding.code.e,k,C64.hash.e])
@@ -106,18 +112,20 @@ use seq.llvmconst
 
 use encoding.llvmconst
 
+use seq.encodingpair.llvmconst
+
 Function dump seq.word
   let c=constdata
-  let t=    (encoding:seq.llvmconst)
+  let t=    (encoding:seq.encodingpair.llvmconst)
   bb(c,t,length.c-1000,empty:seq.word)
   
   @(seperator."&br",print.t,"",subseq(c,length.c-1000,length.c))
    
-  function bb(c:seq.int,t:seq.llvmconst,i:int,result:seq.word) seq.word
+  function bb(c:seq.int,t:seq.encodingpair.llvmconst,i:int,result:seq.word) seq.word
     if i > length.c then result else 
      bb(c,t,i+1,result+"&br"+toword.(i-1)+print(t,c_i))
    
-   function print(s:seq.llvmconst,i:int) seq.word let t=s_(i+1) 
+   function print(s:seq.encodingpair.llvmconst,i:int) seq.word let t=data.s_(i+1) 
     let recargs=subseq(toseq.t,2,length.toseq.t)
     let rectype=(toseq.t)_1
       if typ.t=typ.i64 &and  rectype=CONSTINTEGER then "C64."+toword.(toseq.t)_2

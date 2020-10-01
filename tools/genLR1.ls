@@ -104,7 +104,7 @@ function ruleno(grammar:seq.seq.word, rule:seq.word)int
   assert ruleno ≤ length.grammar report"rule not found" + rule
    ruleno
 
-function state(stateno:int)state if stateno = 0 then state.empty:set.dottedrule else(encoding:seq.state)_stateno
+function state(stateno:int)state if stateno = 0 then state.empty:set.dottedrule else data.(encoding:seq.encodingpair.state)_stateno
 
 function shift(stateno:int, lookahead:word, newstateno:int)action action(stateno, lookahead, newstateno)
 
@@ -205,19 +205,19 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphab
    + " &br norules"
    + toword.length.grammarandact
    + " &br nostate"
-   + toword.length.encoding:seq.state
+   + toword.length.encoding:seq.encodingpair.state
    + " &p function actiontable:T seq.int ["
    + @(seperator(","), toword,"", @(addaction(alphabet), identity, dseq.0, actions))
    + "]"
    + " &p follow"
    + @(seperator("|"), print,"", toseq.arcs.follow.graminfo)
-   + printstatefunc(encoding:seq.state, 1,"")}
+   + printstatefunc(encoding:seq.encodingpair.state, 1,"")}
 
-function printstatefunc(s:seq.state, i:int, result:seq.word)seq.word
+function printstatefunc(s:seq.encodingpair.state, i:int, result:seq.word)seq.word
  if i > length.s then result + "]_stateno"
  else
   let a = if i > 1 then","else '  &p function printstate(stateno:int)seq.word  &br [ '
-  let b ="//" + toword.i + "//" + print.s_i
+  let b ="//" + toword.i + "//" + print.data(s_i)
    printstatefunc(s, i + 1, result + a + b)
 
 function isambiguous(a:action)seq.word
@@ -225,11 +225,15 @@ function isambiguous(a:action)seq.word
 
 function print(a:arc.word)seq.word [ tail.a] + ">" + head.a
 
+use seq.encodingpair.state
+
+use encoding.state
+
 function closestate(graminfo:grammarinfo, stateno:int, result:seq.action)seq.action
- let m = encoding:seq.state
+ let m = encoding:seq.encodingpair.state
   if stateno > length.m then result
   else
-   let state = m_stateno
+   let state = data.m_stateno
    let reductions = finished.state
    let follows = @(∪, successors(follow.graminfo), empty:set.word, @(+, first,"", reductions))
    let newresult = @(+, getaction(ruleprec.graminfo, grammar.graminfo, state, stateno, reductions), result, toseq(asset.shifts.state ∪ follows))

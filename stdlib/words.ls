@@ -58,10 +58,13 @@ Function alphaword(word)alphaword export
 
 Function toword(alphaword)word export
 
-use seq.encodingrep.seq.char
+ use encoding.seq.char
+ 
+ use seq.encodingpair.seq.char
+ 
+Function addwords(  b:seq.encodingpair.seq.char) encodingstate.seq.char 
+ addencodingpairs.b
 
-Function addwords(a:encodingstate.seq.char, b:seq.encodingrep.seq.char) encodingstate.seq.char 
- add(a,b)
 
 Function toalphaseq(a:seq.word)seq.alphaword
  // This is just a type change and the compiler recognizes this and does not generate code // @(+, alphaword, empty:seq.alphaword, a)

@@ -4,15 +4,15 @@ use UTF8
 
 use encoding.seq.char
 
-use ioseq.encodingrep.seq.char
+use ioseq.encodingpair.seq.char
 
-use blockseq.seq.encodingrep.seq.char
+use blockseq.seq.encodingpair.seq.char
 
-use process.seq.encodingrep.seq.char
+use process.seq.encodingpair.seq.char
 
-use seq.encodingrep.seq.char
+use seq.encodingpair.seq.char
 
-use set.encodingrep.seq.char
+use set.encodingpair.seq.char
 
 use seq.seq.char
 
@@ -26,10 +26,10 @@ use set.word
 
 use words
 
-function +(p:place, r:encodingrep.seq.char)place
+function +(p:place, r:encodingpair.seq.char)place
  p + valueofencoding.code.r + tointseq.data.r + hash.r
 
-Function writedict(tin:seq.encodingrep.seq.char)int
+Function writedict(tin:seq.encodingpair.seq.char)int
  let have = asset.initialdict
  let t = toseq(asset.tin - have)
   if isempty.t then 0
@@ -46,15 +46,15 @@ Function loaddict(file:fileresult)int
     @(+,primitiveadd  ,0, deepcopy.get2(data, length.data))
  else 0
 
-function get2(data:seq.int, i:int)seq.encodingrep.seq.char
+function get2(data:seq.int, i:int)seq.encodingpair.seq.char
  // file is built by append new data to the end followed by two words. The first is the start of the new data and the second is the size of the data before the new data was appended. To read the file the appended segements are combined into one long sequence. //
- if data_i = 0 then getseq2:encodingrep.seq.char(data, i - 1)
- else get2(data, data_i) + getseq2:encodingrep.seq.char(data, i - 1)
+ if data_i = 0 then getseq2:encodingpair.seq.char(data, i - 1)
+ else get2(data, data_i) + getseq2:encodingpair.seq.char(data, i - 1)
 
-function getrecord:encodingrep.seq.char(data:seq.int, i:int)encodingrep.seq.char
- encodingrep(to:encoding.seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1), getint(data, i + 2))
+function getrecord:encodingpair.seq.char(data:seq.int, i:int)encodingpair.seq.char
+ encodingpair(to:encoding.seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1) )
 
-Function initialdict seq.encodingrep.seq.char builtin.usemangle
+Function initialdict seq.encodingpair.seq.char builtin.usemangle
 
 module dataio
 
