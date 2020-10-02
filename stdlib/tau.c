@@ -139,6 +139,8 @@ BT getfileZbuiltinZbitszseq(processinfo PD,BT filename);
 
 //  encoding support
 
+
+
 struct einfo {BT hashtable;   processinfo allocatein; };
 
 struct einfo * neweinfo(processinfo PD){
@@ -181,10 +183,29 @@ if (*encodingnumber==0){
  }
 
 
+// old 
 BT getinstanceZbuiltinZTzerecord(processinfo PD,BT *encodingnumber){ 
   return startencoding(PD,encodingnumber)->hashtable ;
 }
 
+BT getinstanceZbuiltinZTzseq(processinfo PD,BT *encodingnumber){ 
+ BT no= ( encodingnumber < (BT *) 1000 ) ? * encodingnumber  : (BT) encodingnumber  ; 
+// BT no=*encodingnumber;
+  return startencoding(PD,encodingnumber)->hashtable ;
+}
+
+ BT addencodingZbuiltinZintzseqZintzseqZint(processinfo PD,BT *encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT)){  
+ BT no= ( encodingnumber < (BT *) 1000 ) ? * encodingnumber  : (BT) encodingnumber  ; 
+// BT no=*encodingnumber;
+ struct einfo *e=startencoding(PD,encodingnumber)  ;
+  assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+ e->hashtable=(add2)(e->allocatein,e->hashtable,P2);
+ assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+ return 0;
+} 
+
+
+// old
  BT addZbuiltinZintzseqZintzseqZint(processinfo PD,BT *encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT)){  
  struct einfo *e=startencoding(PD,encodingnumber)  ;
   assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
@@ -192,6 +213,9 @@ BT getinstanceZbuiltinZTzerecord(processinfo PD,BT *encodingnumber){
  assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
  return 0;
 } 
+
+ 
+
 
 // end of encoding support
 
@@ -229,12 +253,15 @@ return 0;
 
 BT unloadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){ return unloadlibZbuiltinZUTF8( PD, p_libname);}
 
+BT globalseqQ2EcharZbuiltin;  /* word encoding number */
+
 
 
 BT initlib5(char * libname,BT  libdesc) {
   // fprintf(stderr,"starting initlib4\n");
   fprintf(stderr,"initlib5 %s\n",libname);
 if (strcmp(libname,"stdlib")==0 ){
+ globalseqQ2EcharZbuiltin=1;
    fprintf(stderr,"init stdlib\n");
   /* only needed when initializing stdlib */
  /*  append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");

@@ -16,6 +16,7 @@ use otherseq.seq.encodingpair.T
 
 use process.T
 
+
 Function type:encodingpair.T internaltype export
 
 Function type:encoding.T internaltype export
@@ -119,12 +120,8 @@ Function addencodingpairs(l:seq.encodingpair.T) encodingstate.T
 
 function rehash(a:encodingpair.T) encodingpair.T encodingpair(code.a,data.a)
 
-Function add(erec:erecord.T, s:encodingpair.T)int builtin.usemangle
 
-Function getinstance(erec:erecord.T)encodingstate.T builtin.usemangle
-
-  
-  type erecord is record  number:int, name:word
+function getinstance(encodingnumber:seq.T)encodingstate.T builtin.usemangle
 
 
  
@@ -208,3 +205,26 @@ function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int)seq.w
    else if t = 1 then counts(s, i + 1, one + 1, two, big)
    else if t = 2 then counts(s, i + 1, one, two + 1, big)
    else counts(s, i + 1, one, two, big + 1)
+   
+   
+module assignencodingnumber 
+
+use stdlib
+
+use encoding.typename
+
+type  typename is record name:seq.word
+
+function =(a:typename,b:typename) boolean  name.a=name.b
+
+function hash(a:typename) int hash.name.a
+
+
+Function  encodingno(name:seq.word) int
+   if name="char seq" then 1
+   else if name="typename" then 2
+  else valueofencoding.encode.typename.name+2
+
+function assignencoding(a:int, typename) int
+   a+1
+   

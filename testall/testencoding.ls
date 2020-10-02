@@ -68,7 +68,7 @@ function add(  b:seq.word)int
 
 type testrecord is record key:int, body:seq.word
 
-function body(x:encodingpair.testrecord) seq.seq.word body.x
+function body(x:encodingpair.testrecord)  seq.word body.data.x
 
 function list(a:seq.encodingpair.testrecord) seq.seq.word @(+,body,empty:seq.seq.word,a)
 

@@ -8,7 +8,7 @@ parse pass1new  persistant  prims process real   seq set stack stacktrace symbol
  timestamp maindict words   newpretty  codegennew pass2new intdict  
  mangle mytype
 parsersupport  uses 
- exports stdlib main2 maindict UTF8    words
+ exports stdlib main2 maindict UTF8    words   assignencodingnumber
   bits blockseq   encoding fileio format  
   ipair       process real   seq set stack stacktrace 
   textio  prims      otherseq tree graph   
@@ -66,9 +66,9 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
 /* PROFILE codetemplates: processconst(   seq.symbol, int,  seq.symbol) seq.match5
 
 
-* STATE builtin: add(  erecord.T, encodingrep.T ) int  
+* STATE builtin: addencoding(  seq.T, encodingrep.T, int ) int  
 
-* STATE builtin: getinstance( erecord.T) ptr
+* STATE builtin: getinstance( seq.T) ptr
 
 * STATE builtin: getfile(seq.bits ) fileresult 
 

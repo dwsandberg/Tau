@@ -541,19 +541,29 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,
            let p2=if isfref then  Fref.s.z else   s.z 
            postbind3(alltypes, dict,code, i+1, result+p2 , modname,org,calls +s.z , sourceX ,tempX )
 
-function encodingrecord(name:seq.word,typ:mytype) seq.symbol  
-  let encodingno=Lit.if typ = mytype."char seq" then 1 else 0
-  let    gl=symbol("global"+  print.typ ,"builtin",("int seq"))
-       if name="primitiveadd"  then
-        let addefunc= newsymbol("add", mytype(towords.typ + "encoding"),[ mytype(towords.typ +" encodingstate"), mytype(towords.typ+"  encodingpair")]
-      ,mytype(towords.typ +" encodingstate"))
-       let add2=newsymbol("add",mytype."builtin",[mytype("int seq"),mytype("int seq"),mytype."int"],mytype."int")
-[encodingno,Word.merge( print.typ ), Record.2
-        ,Local.1,Fref.addefunc,add2,Words."NOINLINE STATE",Optionsym]
-          else     let get=newsymbol("getinstance", mytype(towords.typ + "encoding"),
-         [mytype("T erecord")],mytype(towords.typ +" encodingstate"))
-[encodingno, Word.merge( print.typ ), Record.2,
-         get,Words."NOINLINE STATE",Optionsym]
+   
+    
+  function encodingrecord(name:seq.word,typ:mytype) seq.symbol  
+     let gl=symbol("global"+  print.typ ,"builtin",("int seq"))
+     let setfld=symbol("setfld(T seq, int, int)","builtin","int")
+     let encodenosym=newsymbol ("encodingno",mytype("assignencodingnumber"),[mytype."word seq"],mytype."int")
+     let prefix=  if typ=mytype."typename" then  
+           [gl,Lit.0,Lit2,setfld,Define."xx",gl] 
+          else 
+           [gl,Lit.0,IDXI, Lit.0,EqOp,Lit.2,Lit.3,Br
+           ,gl,Exit,  
+           gl,Lit.0,Words.towords.typ,encodenosym,setfld,Define."xx",gl ,Exit,Block.3]   
+    prefix
+    + if name="primitiveadd"  then
+       let addefunc= newsymbol("add", mytype(towords.typ + "encoding"),[ mytype(towords.typ +" encodingstate"), mytype(towords.typ+"  encodingpair")]
+          ,mytype(towords.typ +" encodingstate"))
+       let add2=newsymbol("addencoding",mytype."builtin",[mytype("int seq"),mytype("int seq"),mytype."int"],mytype."int")
+       [Local.1,Fref.addefunc,add2,Words."NOINLINE STATE",Optionsym]
+    else     
+       let get=newsymbol("getinstance", mytype(towords.typ + "encoding"),
+         [mytype("T seq")],mytype(towords.typ +" encodingstate"))
+        [get,Words."NOINLINE STATE",Optionsym]  
+
 
 type resultpair is record s:symbol,code:seq.symbol,place:seq.word
     

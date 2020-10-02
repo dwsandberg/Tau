@@ -307,7 +307,9 @@ Function match5map( theprg:program, defines:seq.symbol, uses:set.symbol,symlist:
          match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
       else if fsig.xx in ["callidxI( T seq , int) ","callidxR( T seq , int)","callidxP( T seq , int)"] then
            match5([mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0)
-    else 
+    else   if (fsig.xx)_1="global"_1 &and  pkg = "builtin" then
+        match5(0,mangledname.xx, 2, GEP(1, 1, typ.i64, global(mangledname.xx,i64))+CAST(2, -1, typ.i64, CASTPTRTOINT))
+     else 
         let noargs = nopara.xx
         let name=mangledname.xx
         let functype= tollvmtype(alltypes,xx)

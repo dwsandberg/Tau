@@ -37,6 +37,10 @@ Function ALLOCA(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
 
 Function BR(slot:int, a1:int)internalbc addstartbits(INSTBR, 1, add(a1, emptyinternalbc))
 
+Function GEP(slot:int, a1:int, a2:int, a3:int)internalbc
+ addstartbits(INSTGEP, 3, add(a1, add(a2, addaddress(slot, a3, emptyinternalbc))))
+
+
 Function GEP(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
  addstartbits(INSTGEP, 4, add(a1, add(a2, addaddress(slot, a3, addaddress(slot, a4, emptyinternalbc)))))
 

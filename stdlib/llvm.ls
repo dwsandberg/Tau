@@ -268,8 +268,8 @@ function constrecords(z:trackconst, lx:encodingpair.llvmconst)trackconst
   if ismoduleblock.l   then
   let bits = if not.islastmodule.z then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)else bits.z
      let rec=if typ.l=-1 then [ MODULECODEFUNCTION, symtabtype.l, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-     else [ MODULECODEGLOBALVAR, symtabtype.l, 2, 0, 0, align8 + 1, 0]
-    trackconst(addrecord(MODABBREVLEN, bits, rec), typ.l, 0)
+     else [ MODULECODEGLOBALVAR, symtabtype.l, 2, 1+C64.0, 0, align8 + 1, 0]
+     trackconst(addrecord(MODABBREVLEN, bits, rec), typ.l, 0)
   else
    let newblock = islastmodule.z  ∧ not.ismoduleblock.l 
    let bits = if newblock then addblockheader(bits.z, MODABBREVLEN, CONSTANTSBLOCK, TYPEABBREVLEN)else bits.z
