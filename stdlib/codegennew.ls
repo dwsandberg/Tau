@@ -69,26 +69,20 @@ use seq.match5
 use persistant
 
 use set.symbol
-  
-
-function funcdec(alltypes:seq.myinternaltype,map:seq.match5,i:symbol)seq.int
-  let m=map_i
-  let nopara=arg.m
-  [ MODULECODEFUNCTION, typ.functype.m, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-  
-
-  
-  
-
+ 
 Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word,libdesc:symbol,alltypes:seq.myinternaltype)seq.bits
  //   assert false report @(seperator."&br",tollvmtype.alltypes ,"",toseq.toset.theprg) //
- let symlist ="libname initlib5 list profcounts profclocks profspace profrefs profstat spacecount" 
- + merge.[ thename,"$profileresult"_1] + "init22 "
-       let match5map = match5map(theprg, defines , uses ,symlist,alltypes)
-    // assert false report fullinst.last.match5map //
+  let tobepatched= typ.conststype+typ.profiletype+symboltableentry("list",i64)+symboltableentry("profstat",i64)
+    let discard4= @(+,funcdec.alltypes,0,defines)
+  let match5map = match5map(theprg,  uses ,alltypes)
   let libmods2=arg.match5map_libdesc
       // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
      // assert false report checkmap.match5map //
+   let discard3=    global(  "profcounts ",   profiletype , C(profiletype, [ CONSTNULL]) )
+       + global( "profclocks",   profiletype , C(profiletype, [ CONSTNULL]) )
+       +  global( "profspace",  profiletype , C(profiletype, [ CONSTNULL]) )
+       +  global( "profrefs",  profiletype , C(profiletype, [ CONSTNULL]) )
+        + modulerecord(  " spacecount ", [ MODULECODEGLOBALVAR, typ.i64,         2,         0,                           0, align8 + 1, 0]) 
       let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines)
      let profilearcs2 = profilearcs
      let noprofileslots = length.profilearcs2 / 2
@@ -99,39 +93,32 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
                                    C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, symboltableentry("profclocks",ptr.profiletype)]), 
                                    C(i64, [ CONSTCECAST, 9, typ.ptr.profiletype, symboltableentry("profspace",ptr.profiletype)])])
        let libnametype = array(length.decodeword.thename + 1, i8)
-      let libnameptr = C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype,symboltableentry("libname",ptr.libnametype), typ.i32, C32.0, typ.i32, C32.0])
-      let bodytxts = [ BLOCKCOUNT(1, 1)
+       let libslot= modulerecord("",[ MODULECODEGLOBALVAR, typ.libnametype, 2, C(libnametype, [ CONSTDATA] + tointseq.decodeword.thename + 0) + 1, 3, align4, 0])
+       let libnameptr =  C(ptr.i8, [ CONSTGEP, typ.libnametype, typ.ptr.libnametype,libslot, typ.i32, C32.0, typ.i32, C32.0])
+     let f1=   modulerecord( [merge.[ thename,"$profileresult"_1]], [ MODULECODEFUNCTION, typ.function.[ i64], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
+      let f2= modulerecord(" init22 ",      [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
+     let k=1
+     let bodytxts = bodies+[ BLOCKCOUNT(1, 1)
       + RET(1, C(i64, [ CONSTCECAST, 9, typ.ptr.array(4, i64), symboltableentry("profstat",ptr.array(4, i64))]))
       , BLOCKCOUNT(1, 1)
-      + CALL(1, 0, 32768, typ.function.[ i64, ptr.i8,   i64], symboltableentry("initlib5" ,function.[ i64, ptr.i8,   i64]), libnameptr,  liblib )
-      + GEP(2, 1, typ.profiletype, symboltableentry("profclocks",ptr.profiletype), C64.0, C64.1)
-      + STORE(3, -2, C64.noprofileslots, align8, 0)
-      + GEP(3, 1, typ.profiletype, symboltableentry("profspace",ptr.profiletype), C64.0, C64.1)
-      + STORE(4, -3, C64.noprofileslots, align8, 0)
-      + GEP(4, 1, typ.profiletype, symboltableentry("profcounts",ptr.profiletype), C64.0, C64.1)
-      + STORE(5, -4, C64.noprofileslots, align8, 0)
-      + GEP(5, 1, typ.profiletype, symboltableentry("profrefs",ptr.profiletype), C64.0, C64.1)
-      + STORE(6, -5, C64.noprofileslots, align8, 0)
+      + LOAD(1, libslot, typ.libnametype , align8, 0)
+       + CALL(k+1, 0, 32768, typ.function.[ i64, ptr.i8,   i64], symboltableentry("initlib5" ,function.[ i64, ptr.i8,   i64]),
+       libnameptr,  liblib )
+      + GEP(k+2, 1, typ.profiletype, symboltableentry("profclocks",ptr.profiletype), C64.0, C64.1)
+      + STORE(k+3, -2-k, C64.noprofileslots, align8, 0)
+      + GEP(k+3, 1, typ.profiletype, symboltableentry("profspace",ptr.profiletype), C64.0, C64.1)
+      + STORE(k+4, -3-k, C64.noprofileslots, align8, 0)
+      + GEP(k+4, 1, typ.profiletype, symboltableentry("profcounts",ptr.profiletype), C64.0, C64.1)
+      + STORE(k+5, -4-k, C64.noprofileslots, align8, 0)
+      + GEP(k+5, 1, typ.profiletype, symboltableentry("profrefs",ptr.profiletype), C64.0, C64.1)
+      + STORE(k+6, -5-k, C64.noprofileslots, align8, 0)
       + RET.6]
-      + bodies
                  let data = constdata                                   
       let adjust = [ 0, // consttype // length.data + 2, // profiletype // noprofileslots + 2 + 3]
-      let deflist = [ // libname //
-      [ MODULECODEGLOBALVAR, typ.libnametype, 2, C(libnametype, [ CONSTDATA] + tointseq.decodeword.thename + 0) + 1, 3, align4, 0]
-      , // lnitlib 5 //
-      [ MODULECODEFUNCTION, typ.function.[ i64, ptr.i8, i64], 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // list // [ MODULECODEGLOBALVAR, typ.conststype, 2,    C(conststype, [ AGGREGATE]  +  data)+ 1, 3, align8 + 1, 0]
-      , // profcounts // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0]
-      , // profclocks // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0]
-      , // profspace // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0]
-      , // profrefs // [ MODULECODEGLOBALVAR, typ.profiletype, 2, C(profiletype, [ CONSTNULL]) + 1, 3, align8 + 1, 0]
-      , // profstat // [ MODULECODEGLOBALVAR, typ.array(4, i64), 2, x + 1, 3, align8 + 1, 0]
-      , // spacecount // [ MODULECODEGLOBALVAR, typ.i64, 2, 0, 0, align8 + 1, 0]
-      , // profileresult // [ MODULECODEFUNCTION, typ.function.[ i64], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-      , // init22 // [ MODULECODEFUNCTION, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-    ]
-     + @(+, funcdec(alltypes,match5map), empty:seq.seq.int, defines)
-       llvm(deflist, bodytxts, adjust(typerecords, adjust, 1))
+      let patchlist = [  // list // [ MODULECODEGLOBALVAR, typ.conststype,        2,    C(conststype, [ AGGREGATE]  +  data)+ 1, 3, align8 + 1, 0]
+         , // profstat // [ MODULECODEGLOBALVAR, typ.array(4, i64), 2,    x + 1,                            3, align8 + 1, 0]
+     ]
+        llvm(patchlist, bodytxts, adjust(typerecords, adjust, 1))
 
 
  

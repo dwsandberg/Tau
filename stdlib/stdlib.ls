@@ -57,7 +57,7 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
      
 
 
-/*   PROFILE codegennew:codegen(program,  seq.symbol,  set.symbol,  word, symbol)seq.bits
+/* PROFILE codegennew:codegen(program,  seq.symbol,  set.symbol,  word, symbol)seq.bits
 
 /* PROFILE  codetemplates:match5map(  program,  seq.symbol,  set.symbol, seq.word) seq.match5
  

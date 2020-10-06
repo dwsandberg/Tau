@@ -95,7 +95,8 @@ Function addobject(flds:seq.int) int
   let x = decode(encode(const3(place , flds )))
  let idx=if place.x ≠ place  then place.x else   place
  let conststype = array(-2, i64)
-    C(i64,[ CONSTCECAST, 9, typ.ptr.i64,getelementptr(conststype,"list", idx)])   
+ let elementptr= C(ptr.i64, [ CONSTGEP, typ.conststype, typ.ptr.conststype, modulerecord("list", [0]), typ.i32, C32.0, typ.i64, C64.idx])
+ C(i64,[ CONSTCECAST, 9, typ.ptr.i64, elementptr])   
 
 
 function addrecord2( e:encodingpair.seq.char) int
@@ -114,18 +115,18 @@ use encoding.llvmconst
 
 use seq.encodingpair.llvmconst
 
-Function dump seq.word
+/Function dump seq.word
   let c=constdata
   let t=    (encoding:seq.encodingpair.llvmconst)
   bb(c,t,length.c-1000,empty:seq.word)
   
   @(seperator."&br",print.t,"",subseq(c,length.c-1000,length.c))
    
-  function bb(c:seq.int,t:seq.encodingpair.llvmconst,i:int,result:seq.word) seq.word
+ / function bb(c:seq.int,t:seq.encodingpair.llvmconst,i:int,result:seq.word) seq.word
     if i > length.c then result else 
      bb(c,t,i+1,result+"&br"+toword.(i-1)+print(t,c_i))
    
-   function print(s:seq.encodingpair.llvmconst,i:int) seq.word let t=data.s_(i+1) 
+/   function print(s:seq.encodingpair.llvmconst,i:int) seq.word let t=data.s_(i+1) 
     let recargs=subseq(toseq.t,2,length.toseq.t)
     let rectype=(toseq.t)_1
       if typ.t=typ.i64 &and  rectype=CONSTINTEGER then "C64."+toword.(toseq.t)_2

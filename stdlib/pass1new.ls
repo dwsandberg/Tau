@@ -548,11 +548,13 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,
      let setfld=symbol("setfld(T seq, int, int)","builtin","int")
      let encodenosym=newsymbol ("encodingno",mytype("assignencodingnumber"),[mytype."word seq"],mytype."int")
      let prefix=  if typ=mytype."typename" then  
-           [gl,Lit.0,Lit2,setfld,Define."xx",gl] 
+           [gl,Lit.0,Lit2,setfld,Define."xx",gl,Lit.0,IDXI] 
+          else if typ=mytype."char seq " then 
+                [gl,Lit.0,Lit.1,setfld,Define."xx",gl,Lit.0,IDXI] 
           else 
-           [gl,Lit.0,IDXI, Lit.0,EqOp,Lit.2,Lit.3,Br
-           ,gl,Exit,  
-           gl,Lit.0,Words.towords.typ,encodenosym,setfld,Define."xx",gl ,Exit,Block.3]   
+           [gl,Lit.0,IDXI, Lit.0,EqOp,Lit.3,Lit.2,Br
+           ,gl,Lit.0,IDXI,Exit,  
+           gl,Lit.0,Words.towords.typ,encodenosym,setfld,Define."xx",gl,Lit.0,IDXI ,Exit,Block.3]   
     prefix
     + if name="primitiveadd"  then
        let addefunc= newsymbol("add", mytype(towords.typ + "encoding"),[ mytype(towords.typ +" encodingstate"), mytype(towords.typ+"  encodingpair")]

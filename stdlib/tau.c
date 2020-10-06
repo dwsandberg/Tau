@@ -70,7 +70,6 @@ struct pinfo2 { BT  deepcopyresult;
 
 pthread_mutex_t sharedspace_mutex=PTHREAD_MUTEX_INITIALIZER;  //for shared space
 struct pinfo sharedspace={0,0,0,0,0,0};
-int encnum=noencodings-1;  //protected by sharedspace_mutex
 
 
 
@@ -155,18 +154,10 @@ struct einfo * neweinfo(processinfo PD){
              
 struct einfo *staticencodings[noencodings];
 
-struct einfo  *startencoding(processinfo PD,BT *encodingnumber)
+struct einfo  *startencoding(processinfo PD,BT no)
 {  // assign encoding number 
-
-
-if (*encodingnumber==0){ 
-    assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-    *encodingnumber=encnum--;
-    assert(encnum>1,"out of encoding numbers");
-    assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-    }
-
- struct einfo *e= PD->encodings[*encodingnumber];
+   assert(no > 0 && no< noencodings,"invalid encoding number");
+ struct einfo *e= PD->encodings[no];
  if (e==0) {
    if  ( PD->newencodings==0 && PD != &sharedspace) 
      { int i;
@@ -177,45 +168,25 @@ if (*encodingnumber==0){
        PD->newencodings=1;  
        }
   e = neweinfo(PD);
-  PD->encodings[*encodingnumber]=e;
+  PD->encodings[no]=e;
  }
  return e;
  }
 
 
-// old 
-BT getinstanceZbuiltinZTzerecord(processinfo PD,BT *encodingnumber){ 
-  return startencoding(PD,encodingnumber)->hashtable ;
-}
-
 BT getinstanceZbuiltinZTzseq(processinfo PD,BT *encodingnumber){ 
- BT no= ( encodingnumber < (BT *) 1000 ) ? * encodingnumber  : (BT) encodingnumber  ; 
-// BT no=*encodingnumber;
-  return startencoding(PD,encodingnumber)->hashtable ;
+ BT no= ( encodingnumber < (BT *) 1000 ) ?    (BT) encodingnumber  : * encodingnumber; 
+  return startencoding(PD,no)->hashtable ;
 }
 
  BT addencodingZbuiltinZintzseqZintzseqZint(processinfo PD,BT *encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT)){  
- BT no= ( encodingnumber < (BT *) 1000 ) ? * encodingnumber  : (BT) encodingnumber  ; 
-// BT no=*encodingnumber;
- struct einfo *e=startencoding(PD,encodingnumber)  ;
+ BT no= ( encodingnumber < (BT *) 1000 ) ?    (BT) encodingnumber  : * encodingnumber; 
+ struct einfo *e=startencoding(PD,no)  ;
   assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
  e->hashtable=(add2)(e->allocatein,e->hashtable,P2);
  assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
  return 0;
 } 
-
-
-// old
- BT addZbuiltinZintzseqZintzseqZint(processinfo PD,BT *encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT)){  
- struct einfo *e=startencoding(PD,encodingnumber)  ;
-  assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
- e->hashtable=(add2)(e->allocatein,e->hashtable,P2);
- assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
- return 0;
-} 
-
- 
-
 
 // end of encoding support
 
@@ -253,16 +224,13 @@ return 0;
 
 BT unloadlibZbuiltinZbitszseq(processinfo PD,BT p_libname){ return unloadlibZbuiltinZUTF8( PD, p_libname);}
 
-BT globalseqQ2EcharZbuiltin;  /* word encoding number */
-
 
 
 BT initlib5(char * libname,BT  libdesc) {
   // fprintf(stderr,"starting initlib4\n");
   fprintf(stderr,"initlib5 %s\n",libname);
 if (strcmp(libname,"stdlib")==0 ){
- globalseqQ2EcharZbuiltin=1;
-   fprintf(stderr,"init stdlib\n");
+    fprintf(stderr,"init stdlib\n");
   /* only needed when initializing stdlib */
  /*  append = dlsym(RTLD_DEFAULT, "Q2BZintzseqZTzseqZT");
     if (!append){
@@ -291,6 +259,7 @@ if (strcmp(libname,"stdlib")==0 ){
     }}
     
          staticencodings[1]=neweinfo(&sharedspace);
+          staticencodings[2]=neweinfo(&sharedspace); // encoding map for assigning encoding to an integer number
  }
 
         

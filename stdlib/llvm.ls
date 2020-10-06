@@ -66,9 +66,7 @@ Function type:llvmconst internaltype export
 
 Function type:llvmtypeele internaltype export
 
-Function typ(llvmconst)int export
 
-Function toseq(llvmconst)seq.int export
 
 type llvmtypeele is record toseq:seq.int
 
@@ -87,9 +85,6 @@ type llvmconst is record typ:int, toseq:seq.int
 
 use seq.encodingpair.llvmconst
 
-function cvttorec( a:encodingpair.llvmconst ) seq.int  toseq.data.a
-
-Function listconsts seq.seq.int @(+, cvttorec, empty:seq.seq.int, encoding:seq.encodingpair.llvmconst)
 
 function hash(a:llvmconst)int hash.symtabname.a
 
@@ -98,8 +93,6 @@ Function assignencoding(l:int, a:llvmconst) int l+1
 
 Function =(a:llvmconst, b:llvmconst)boolean  symtabname.a =  symtabname.b ∧ typ.a = typ.b
 
-Function getelementptr(type:llvmtype, name:seq.word, i:int)int
- C(ptr.i64, [ CONSTGEP, typ.type, typ.ptr.type, symboltableentry(name, type), typ.i32, C32.0, typ.i64, C64.i])
 
 
 type machineinfo is record triple:seq.int, datalayout:seq.int
@@ -170,24 +163,34 @@ Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
    else [ r_1, r_2 + adj_i] + subseq(r, 3, length.r)]
    + adjust(s, adj, i + 1)
 
-function symtabname(a:llvmconst)seq.int  subseq(toseq.a,2,length.toseq.a)
+function changenamerep boolean true
 
-function symtabtype(a:llvmconst) int  (toseq.a)_1
+function symtabname(a:llvmconst)seq.int  
+  if typ.a in [-1,-2] then 
+    subseq(toseq.a,2 , 1+ (toseq.a)_1)
+  else toseq.a
+
+function modulerecord(a:llvmconst) seq.int  
+if typ.a in [-1,-2] then 
+    subseq(toseq.a,  2+ (toseq.a)_1,length.toseq.a)
+  else toseq.a
 
 
-Function symboltableentry(name:seq.word,type:llvmtype) int symboltableentry(name_1,type)
+ 
 
-Function symboltableentry(name:word,type:llvmtype) int
-valueofencoding.encode( llvmconst(-1,  [typ.type]+  tointseq.decodeword.name)) - 1
 
-Function global(name:word,type:llvmtype) int
-valueofencoding.encode( llvmconst(-2,  [typ.type]+  tointseq.decodeword.name)) - 1
+Function modulerecord(name:seq.word,rec:seq.int) int
+let c=if name="" then
+   llvmconst(-3, rec )  
+else 
+let chars=tointseq.@(+,decodeword,empty:seq.char,name)
+  llvmconst(-1,  [length.chars]+ chars+rec)
+valueofencoding.encode.c-1
+
 
 use seq.encodingpair.llvmtypeele
 
 Function C64(i:int)int valueofencoding.encode( llvmconst(typ.i64, [ CONSTINTEGER, i])) - 1
-
-Function getllvmconst(i:int)seq.int cvttorec.(encoding:seq.encodingpair.llvmconst)_(i + 1)
 
 Function C32(i:int)int valueofencoding.encode( llvmconst(typ.i32, [ CONSTINTEGER, i])) - 1
 
@@ -267,9 +270,10 @@ function constrecords(z:trackconst, lx:encodingpair.llvmconst)trackconst
  let TYPEABBREVLEN = 4
   if ismoduleblock.l   then
   let bits = if not.islastmodule.z then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)else bits.z
-     let rec=if typ.l=-1 then [ MODULECODEFUNCTION, symtabtype.l, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-     else [ MODULECODEGLOBALVAR, symtabtype.l, 2, 1+C64.0, 0, align8 + 1, 0]
-     trackconst(addrecord(MODABBREVLEN, bits, rec), typ.l, 0)
+     // let rec=if typ.l=-1 then [ MODULECODEFUNCTION, symtabtype.l, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+     else  if   typ.l=-2 then [ MODULECODEGLOBALVAR, symtabtype.l, 2, 1+C64.0, 0, align8 + 1, 0]
+     else assert typ.l=-3 report "error in costrecords"  toseq.l //
+     trackconst(addrecord(MODABBREVLEN, bits, modulerecord.l), typ.l, 0)
   else
    let newblock = islastmodule.z  ∧ not.ismoduleblock.l 
    let bits = if newblock then addblockheader(bits.z, MODABBREVLEN, CONSTANTSBLOCK, TYPEABBREVLEN)else bits.z
@@ -290,7 +294,7 @@ Function symentries(bits:bitpackedseq.bit, s:seq.encodingpair.llvmconst, i:int)b
  if i > length.s then bits
  else
   let l = data.s_i
-  let bs = if ismoduleblock.l then
+  let bs = if ismoduleblock.l &and typ.l  &ne -3 then
   let abbrevlength = 4
   let name=symtabname.l
    let a1 = addvbr6(addvbr6(addvbr6(addvbr(bits, 3, abbrevlength), ENTRY), length.name + 1), i - 1)
