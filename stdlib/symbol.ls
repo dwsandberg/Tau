@@ -103,8 +103,11 @@ Function resulttype(s:symbol)mytype mytype.returntype.s
 Function nopara(s:symbol)int 
  if isconst.s &or islocal.s then 0 else
  if isspecial.s then 
-  if  (fsig.s)_1= "DEFINE"_1 then 1 else 
-  toint((fsig.s)_2)  else 
+  if  (fsig.s)_1= "DEFINE"_1 then 1 
+  else if (fsig.s)_1= "RECORD"_1 &and (fsig.s)_2="("_1 then
+     @(counttrue, =(","_1), 1, fsig.s)
+  else  toint((fsig.s)_2)  
+ else 
  @(counttrue, =(","_1), if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
 
 function counttrue(i:int, b:boolean)int if b then i + 1 else i
@@ -253,12 +256,22 @@ Function  CALLIDXR  symbol symbol("callidxR( T seq,int)","builtin", "real")
 Function  CALLIDXP  symbol symbol("callidxP( T seq,int)","builtin", "ptr")
 
 
-Function Emptyseq seq.symbol [Lit0,Lit0,Record.2]
+Function Emptyseq seq.symbol [Lit0,Lit0,symbol( "RECORD(int,int)",    "$",  "ptr",specialbit)
+]
 
 Function pseqidxsym(type:mytype) symbol
     newsymbol("_" , mytype(towords.type + "seq"_1),[ mytype(towords.type + "pseq"_1), mytype."int"],type)
     
+use otherseq.mytype
+
+ 
+Function  Sequence(len:int,typ:seq.word) symbol
+  Record([mytype."int",mytype."int"]+constantseq(len,mytype.typ))
+
 Function Record(i:int) symbol   symbol([ "RECORD"_1,toword.i],    "$",  "ptr",specialbit)
+
+Function Record(types:seq.mytype) symbol
+symbol( "RECORD("+@(seperator.",",towords,"",types)+")",    "$",  "ptr",specialbit)
 
 Function Apply(i:int) symbol     symbol([ "APPLY"_1,toword.i],    "$",  "?",specialbit)
 

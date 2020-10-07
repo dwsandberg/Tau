@@ -213,11 +213,11 @@ function =(a:myinternaltype,b:myinternaltype) boolean
 
 
 function isdefined(it:myinternaltype) boolean  size.it &ne 0 
-    
+
 function  ascode(it:myinternaltype) seq.symbol
      [Lit.size.it,Word.kind.it,Word.name.it,Words.towords.modname.it, Lit.0,Lit.length.subflds.it]
      +@(+,Words,empty:seq.symbol,@(+,towords,empty:seq.seq.word,subflds.it))
-     +Record(length.subflds.it+2)+Record.5
+     +Sequence(length.subflds.it,"ptr")+Record.[mytype."int",mytype."int",mytype."ptr",mytype."int",mytype."ptr"]
      
 function print(it:myinternaltype) seq.word
   [toword.size.it,kind.it,name.it]+print.modname.it+@(+,print,"",subflds.it)
@@ -402,7 +402,7 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
     let paras=@(+,fldtype,empty:seq.mytype,flds) 
     let  symbols=@( fldsym(modname,ptype,length.flds,1), identity,other, flds)
    let indexfunc= newsymbol("_", modname, [mytype(towords.parameter.modname + name), mytype."int"],parameter.modname) 
-   let concode2=[Fref.indexfunc]+constructor2+Record.countflds(constructor2,1,1)
+   let concode2=[Fref.indexfunc]+constructor2+Record([mytype."int"]+  flatflds)  
     let con =map(symbols, newsymbol([name],modname,  paras, mytype(towords.parameter.modname + name) ),concode2)
    let seqtype=mytype(towords.parameter.modname + "seq"_1)
    let symtoseq = map(con,newsymbol("toseq" ,modname,  ptype, seqtype),[Local.1])
@@ -416,8 +416,8 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
     let constructor2=buildconstructor(flds,flatflds,1,1,0,empty:seq.symbol)
      let paras=@(+,fldtype,empty:seq.mytype,flds) 
     let  symbols=@( fldsym(modname,ptype,length.flds,0),identity,other,flds)
-   let concode2= if length.paras = 1 then[Local.1] else constructor2 + Record.countflds(constructor2,1,0)
-   let con = newsymbol([name],modname,  paras, mytype(towords.parameter.modname + name) )
+   let concode2= if length.paras = 1 then[Local.1] else constructor2  + Record.flatflds
+  let con = newsymbol([name],modname,  paras, mytype(towords.parameter.modname + name) )
       map ( symbols  ,con,concode2)
 
    function IDXop(fld: flddesc) symbol  let kind=kind.description.fld
@@ -465,11 +465,6 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
 
  
 
-   NNNN  
-
-function  countflds(s:seq.symbol,i:int,len:int) int
-  if i > length.s then len else
-   countflds(s,i+1, if islocal.s_i then len+1 else len)
 
 
    
@@ -807,15 +802,15 @@ function definedeepcopy(alltypes:seq.myinternaltype, type:mytype ,org:seq.word) 
      let typedesc=lookuptype(alltypes, type)
     assert  not.isempty.typedesc  report"can not find type deepcopy" + print.type +org
       let y=subfld(subflds.typedesc_1,1,empty:seq.symbol)
-    if last.y = Record.1 then
+    if size.typedesc_1  = 1 then
      // only one element in record so type is not represent by actual record //[Local.1]
       + subseq(y, 4, length.y - 1)
      else
-      assert size.typedesc_1  ≠ 1 report"Err99a"
+      assert size.typedesc_1  ≠ 1 report"Err99a"+print.typedesc_1
        y
  
 function subfld(flds:seq.mytype,fldno:int,result:seq.symbol) seq.symbol
-  if fldno > length.flds then result+[Record.length.flds]
+  if fldno > length.flds then result+[Record.flds]
   else let fldtype=flds_fldno
   let t=if abstracttype.fldtype in "encoding int word"then [ Local.1,Lit.(fldno-1),IDXI ] 
     else if abstracttype.fldtype in " real"then [ Local.1,Lit.(fldno-1),IDXR ]   

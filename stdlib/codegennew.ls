@@ -73,18 +73,17 @@ use set.symbol
 Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word,libdesc:symbol,alltypes:seq.myinternaltype)seq.bits
  //   assert false report @(seperator."&br",tollvmtype.alltypes ,"",toseq.toset.theprg) //
   let tobepatched= typ.conststype+typ.profiletype+symboltableentry("list",i64)+symboltableentry("profstat",i64)
-    let discard4= @(+,funcdec.alltypes,0,defines)
+  let discard4= @(+,funcdec.alltypes,0,defines)
   let match5map = match5map(theprg,  uses ,alltypes)
   let libmods2=arg.match5map_libdesc
       // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
-     // assert false report checkmap.match5map //
-   let discard3=    global(  "profcounts ",   profiletype , C(profiletype, [ CONSTNULL]) )
+  let discard3=    global(  "profcounts ",   profiletype , C(profiletype, [ CONSTNULL]) )
        + global( "profclocks",   profiletype , C(profiletype, [ CONSTNULL]) )
        +  global( "profspace",  profiletype , C(profiletype, [ CONSTNULL]) )
        +  global( "profrefs",  profiletype , C(profiletype, [ CONSTNULL]) )
         + modulerecord(  " spacecount ", [ MODULECODEGLOBALVAR, typ.i64,         2,         0,                           0, align8 + 1, 0]) 
-      let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines)
-     let profilearcs2 = profilearcs
+  let bodies = @(+, addfuncdef(match5map), empty:seq.internalbc, defines)
+  let profilearcs2 = profilearcs
      let noprofileslots = length.profilearcs2 / 2
        let profilearcs3 = addwordseq2( profilearcs2)
       let liblib = addliblib( [thename],  libmods2)
@@ -224,10 +223,11 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
     else if  action = "RECORD"_1 then 
       let noargs = arg.m
      let args = top(args.l, noargs)
-     let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ i64, i64, i64], 
-     symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint",function.[ i64, i64, i64]), -1, C64.noargs)
-     + CAST(regno.l + 2, -(regno.l + 1), typ.ptr.i64, CASTINTTOPTR)
-      Lcode2(value.@(setnextfld, identity, ipair(regno.l + 2, code.l + newcode), args), lmap.l, noblocks.l, regno.l + 2 + noargs, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
+     let newcode = CALL(regno.l + 1, 0, 32768, typ.function.[ ptr.i64, i64, i64], 
+     symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint",function.[ ptr.i64, i64, i64]), -1, C64.noargs)
+     let fldbc=setnextfld(code.l + newcode,args,1,fullinst.m,3,regno.l+1,regno.l+1,0)
+     let newbc=value.fldbc+  CAST(index.fldbc + 1, -(regno.l + 1), typ.i64, CASTPTRTOINT) 
+      Lcode2(newbc, lmap.l, noblocks.l, index.fldbc+1, push(pop(args.l, noargs), -(index.fldbc + 1)), blocks.l)
     else 
          assert action = "CALLIDX"_1 report"code gen unknown" + action
         callidxcode( l , top(args.l,2))
@@ -280,12 +280,24 @@ function processblk(    blks:seq.Lcode2,i:int, exitbr:internalbc,code:internalbc
            let newcode=BR(regno.l + 1, noblocks.blks_(constvalue(args_2)- 1 ),   noblocks.blks_(constvalue(args_3)- 1 ),-regno.l)
          processblk(blks,i+1,exitbr,    code+code.l+ newcode, varcount,phi,tailphi) 
     
- 8XAT6qVV3qHJ9uLsowg2NmUa  
-
-Function setnextfld(p:ipair.internalbc, arg:int)ipair.internalbc
- let regno = index.p
-  ipair(regno + 1, value.p + STORE(regno + 1, - regno, arg, align8, 0)
-  + GEP(regno + 1, 1, typ.i64, - regno, C64.1))
+   
+Function setnextfld( bc:internalbc,args:seq.int,i:int,types:seq.word,j:int,regno:int,pint:int,preal:int) ipair.internalbc
+if i > length.args then ipair(regno,bc)
+else 
+   let newj=  if types_j in "$" then j else 
+   max(findindex(","_1,types)+1,length.types-1)
+   let typ=if length.types=3 then "int"_1 else types_(newj-1)
+   assert typ in  "int real seq"  report "unknown type gencode"+types
+    if preal =0 &and typ="real"_1 then   
+     setnextfld( bc+CAST(regno + 1, -pint, typ.ptr.double, 11)  
+            ,args,i,types,j,regno+1,pint ,regno+1)
+  else   
+let newbc=bc+ (if check &and typ="real"_1 then
+       GEP(regno + 1, 1, typ.double,- preal, C64.(i-1))
+       else        GEP(regno + 1, 1, typ.i64,  - pint, C64.(i-1))
+)
++STORE(regno + 2, - (regno+1), args_i, align8, if check &and typ="real"_1 then typ.double else typ.i64)
+  setnextfld(newbc,args,i+1,types,newj,regno+1,pint,preal)
 
 function getloc(l:seq.localmap, localno:int, i:int)int
  if localno.l_i = localno then regno.l_i else getloc(l, localno, i + 1)

@@ -92,6 +92,8 @@ Function functype(match5) llvmtype export
 
 Function type:symbol internaltype export
 
+Function fullinst(match5) seq.word export
+
  
 Function type:program internaltype export
 
@@ -118,7 +120,7 @@ options.code.m
 use encoding.match5
 
 
-function check boolean false
+Function check boolean false
 
 function table seq.match5
  let z=if check then
@@ -129,6 +131,10 @@ function table seq.match5
   ,  match5(1,"cosZbuiltinZreal"_1, 1, CALL(1, 0, 32768, typ.function.[ double, double], symboltableentry(merge."llvm.cos.f64",function.[ double, double]),ibcsub1))
 ,match5(1,"intpartZbuiltinZreal"_1, 1,   CAST(2, -1, typ.i64, // fptosi double // 4))
 ,match5(1,"torealZbuiltinZint"_1, 1, // sitofp // CAST(1, ibcsub1, typ.double, 6) )
+,  match5(2,"Q2DZbuiltinZrealZreal"_1, 1,   BINOP(1, ibcsub1, ibcsub2, 1))
+,  match5(2,// + //"Q2BZbuiltinZrealZreal"_1, 1,   BINOP(1, ibcsub1, ibcsub2, 0))
+,  match5(2,// * //"Q2AZbuiltinZrealZreal"_1, 1,   BINOP(1, ibcsub1, ibcsub2, 2))
+,  match5(2,// / op //"Q2FZbuiltinZrealZreal"_1, 1,   BINOP(1, ibcsub1, ibcsub2, 4))
 ]
  else 
    [match5(2,"IDXRZbuiltinZintZint"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR) + GEP(2, 1, typ.i64, -1, ibcsub2)+ LOAD(3, -2, typ.i64, align8, 0))
@@ -143,6 +149,10 @@ function table seq.match5
 + CAST(3, -2, typ.i64, 11))
 ,match5(1,"intpartZbuiltinZreal"_1, 2, CAST(1, ibcsub1, typ.double, 11) + CAST(2, -1, typ.i64, // fptosi double // 4))
 ,match5(1,"torealZbuiltinZint"_1, 2, // sitofp // CAST(1, ibcsub1, typ.double, 6) + CAST(2, -1, typ.i64, 11))
+,match5(2,          "Q2DZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 1)+ CAST(4, -3, typ.i64, 11))
+,match5(2,// + //   "Q2BZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 0)+ CAST(4, -3, typ.i64, 11))
+,match5(2,// * //   "Q2AZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 2)+ CAST(4, -3, typ.i64, 11))
+,match5(2,// / op //"Q2FZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 4)+ CAST(4, -3, typ.i64, 11))
 ]
 let t = z+ [   match5(1,"casttorealZbuiltinZint"_1, 0, emptyinternalbc)
  ,match5(1,"representationZbuiltinZreal"_1, 0, emptyinternalbc)
@@ -166,14 +176,6 @@ match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAS
 , match5(2,// + // "Q2BZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 0, typ.i64))
 , match5(2,// * // "Q2AZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64))
 , match5(2,// / op //"Q2FZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64))
-, match5(2,"Q2DZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 1)
-+ CAST(4, -3, typ.i64, 11))
-, match5(2,// + //"Q2BZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 0)
-+ CAST(4, -3, typ.i64, 11))
-, match5(2,// * //"Q2AZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 2)
-+ CAST(4, -3, typ.i64, 11))
-, match5(2,// / op //"Q2FZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 4)
-+ CAST(4, -3, typ.i64, 11))
 , match5(2,// ? //"Q3FZbuiltinZrealZreal"_1, 7, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + CMP2(3, -1, -2, 3)
 + CAST(4, -3, typ.i64, CASTZEXT)
 + CMP2(5, -1, -2, 2)
@@ -212,14 +214,23 @@ match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAS
 + GEP(2, 1, typ.i64, -1, C64.1)
 + STORE(3, -2, ibcsub2, align8, 0)
 + CAST(3, -1, typ.i64, CASTPTRTOINT))
-, match5(3,"allocateseqQ3AseqQ2ETZbuiltinZintZintZint"_1,5, 
-BINOP(1, ibcsub1, C64.2, 0, typ.i64)
+, // match5(3,"allocateseqQ3AseqQ2ETZbuiltinZintZintZint"_1,5, 
+ BINOP(1, ibcsub1, C64.2, 0, typ.i64)
 +CALL(2, 0, 32768, typ.function.[ i64, i64, i64], symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint",function.[ i64, i64, i64]), ibcfirstpara2, -1)
  + CAST(3, -2, typ.ptr.i64, CASTINTTOPTR)
  + STORE(4, -3, ibcsub2, align8, 0)
 + GEP(4, 1, typ.i64, -3, C64.1)
 + STORE(5, -4, ibcsub3, align8, 0)
 +CAST(5, -3, typ.i64, CASTPTRTOINT)
+  ) //
+  match5(3,"allocateseqQ3AseqQ2ETZbuiltinZintZintZint"_1,5, 
+BINOP(1, ibcsub1, C64.2, 0, typ.i64)
++CALL(2, 0, 32768, typ.function.[ ptr.i64, i64, i64], symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint",function.[ ptr.i64, i64, i64]), ibcfirstpara2, -1)
+ + GEP(3, 1, typ.i64, -2, C64.0)
+ + STORE(4, -3, ibcsub2, align8, 0)
++ GEP(4, 1, typ.i64, -2, C64.1)
++ STORE(5, -4, ibcsub3, align8, 0)
++CAST(5, -2, typ.i64, CASTPTRTOINT)
   )
  ]
 let discard = @(+, addit, 0, t)
@@ -312,14 +323,16 @@ modulerecord( name ,[ MODULECODEGLOBALVAR, typ.type, 2, 1+init, 0, align8 + 1, 0
       else if islit.xx then
            if check then
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, if pkg="$real" then 
-       C(double,[CONSTCECAST, 9,typ.i64,C64.toint.(fsig.xx)_1])
+       C(double,[CONSTCECAST, 11,typ.i64,C64.toint.(fsig.xx)_1])
         else C64.toint.(fsig.xx)_1)
        else 
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.(fsig.xx)_1)
       else if islocal.xx then
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
+      else if isdefine.xx then
+        match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
       else if isspecial.xx then
-       match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
+        match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1, nopara.xx )
       else  if pkg="$words"then
          // let ctype=array(length.fsig.xx+2,i64)
           let c=   C(ctype,@(+,wordref,[CONSTDATA,0,length.fsig.xx],fsig.xx))

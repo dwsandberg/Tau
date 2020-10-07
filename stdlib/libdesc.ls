@@ -177,8 +177,8 @@ use seq.liblib
      else
        let code=  removeconstant.if last.zcode.s=Optionsym then subseq(zcode.s,1,length.zcode.s-2) else  zcode.s 
      let l=length.code
-       if fsig.code_l="RECORD 5" &and (fsig.code_(l-1))_1="RECORD"_1 then
-      let noflds=toint.(fsig.code_(l-1))_2-2
+       if   // fsig.code_l="RECORD 5"  // isrecord.code_l &and nopara.code_l=5 &and (fsig.code_(l-1))_1="RECORD"_1 then
+      let noflds=nopara.code_(l-1)-2
       let t1=subseq(code,l-noflds-1,l-2)
       let subflds=@(+,mytype,empty:seq.mytype,@(+,fsig,empty:seq.seq.word,t1))
       let size=value.code_2

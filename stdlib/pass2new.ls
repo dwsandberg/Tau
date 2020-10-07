@@ -486,7 +486,7 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
       let firstvar = value.result_len
       yyy(p,org,k+1,subseq(result,1,len-1)+Lit.nextvar+sym,    nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0))
    else if (fsig.sym)_1="RECORD"_1 then
-      let nopara = toint.(fsig.sym)_2
+      let nopara = nopara.sym
       let args = subseq(result, len+1 - nopara, len)
       if @(∧, isconst, true, args) then
         yyy(p,org,k+1,subseq(result,1,len - nopara )+constant.args,   nextvar, map)
