@@ -53,7 +53,7 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
   / * INLINE pass2new : applycode( program ,seq.symbol, int, seq.symbol,  int,    worddict.seq.symbol)  expandresult
 
  
-  * NOINLINE  process.symbol:packed(seq.symbol) seq.symbol
+  * NOINLINE  seq.symbol:packed(seq.symbol) seq.symbol
      
 
 

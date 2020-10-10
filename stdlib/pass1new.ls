@@ -578,6 +578,10 @@ tempX:program,sourceX:program)resultpair
               else if kind="real"_1 then CALLIDXR
               else     CALLIDXP
        resultpair(   replaceTsymbol(modpara,oldsym),[Local.1,Local.2,op] ,"C")
+    else  if  name_1 in "packed" &and templatename in " seq"   then
+               let typdesc=lookuptype(alltypes,newmodpara)
+                assert  not.isempty.typdesc  report"can not find type packed" + print.newmodpara  + org
+               resultpair(   replaceTsymbol(modpara,oldsym),packedcode(towords.newmodpara, typdesc_1) ,"C")
       else if templatename in "encoding" then
          if (name="primitiveadd" &and nopara.oldsym=1 )
           &or name_1=merge("getinstance:encodingstate.T") then
@@ -601,11 +605,7 @@ tempX:program,sourceX:program)resultpair
        else if name="memcpy"   then
             let cpysym=replaceTsymbol(modpara,oldsym)
             resultpair( cpysym,memcpycode.cpysym,"C" )
-       else  if  name_1 in "packed"   then
-               let typdesc=lookuptype(alltypes,newmodpara)
-                assert  not.isempty.typdesc  report"can not find type packed" + print.newmodpara  + org
-               resultpair(   replaceTsymbol(modpara,oldsym),packedcode(towords.newmodpara, typdesc_1) ,"C")
-       else if name = "deepcopy"   then
+        else if name = "deepcopy"   then
             resultpair( deepcopysym.newmodpara,definedeepcopy(alltypes, newmodpara,org),"C")           
        else if    merge.name  =   merge."sizeoftype:T"  then
             let typdesc=lookuptype(alltypes,newmodpara)
@@ -666,7 +666,7 @@ if ds=1 then
 ,Local."newseq"_1]
 else 
    [Lit.ds, Local.1,  Lit.1,IDXI,symbol("*(int, int)","builtin","int") 
-    , Fref.symbol("_("+typeT+"packedseq, int)",typeT+"process",typeT)  
+    , // Fref.symbol("_("+typeT+"packedseq, int)",typeT+"process",typeT)  // Lit.ds
     , Local.1,  Lit.1,IDXI
     , symbol( [merge."allocateseq:seq.T"]+"(int, int, int)","builtin","ptr")  
     , Define."newseq" 

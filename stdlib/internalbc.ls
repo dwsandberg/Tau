@@ -600,8 +600,6 @@ Function AGGREGATE int 7
 
 Function CSTRING int 9
 
-
-
 Function ENTRY int 1
 
 Function align4 int 3

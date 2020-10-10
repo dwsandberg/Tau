@@ -386,21 +386,30 @@ function callidxcode( l:Lcode2, args:seq.int)Lcode2
 let theseq=args_1
 let idx=args_2
  let base = regno.l
- let block = noblocks.l  
+ let block = noblocks.l 
+ let last=15 
  let c = CAST(base +1, theseq, typ.ptr.i64, CASTINTTOPTR)
  + LOAD(base +2, -base-1, typ.i64, align8, 0)
  + CMP2(base + 3, - base - 2, C64.0, 32)
- + BR(base + 4, block +1, block  , - base - 3)
- + CAST(base +4, -base-2, typ.ptr.function.[ i64,  i64, i64, i64], CASTINTTOPTR)
- +   CALL(base +5, 0, 32768, typ.function.[ i64,   i64, i64, i64], -base-4, -1, args)  
-  + BR(base + 6, block + 2)
-  + GEP(base +6  , 1, typ.i64, -base-1, idx) 
-  + GEP(base +7  , 1, typ.i64, -base-6,C64.1) 
-  + LOAD(base +8 , -base-7, typ.i64, align8, 0)
-  + BR(base + 9, block + 2)
-  + PHI(base + 9, typ.i64, - base - 5, block, - base - 8, block + 1)
-  Lcode2(code.l + c, lmap.l, noblocks.l+3  , regno.l + 9, push(pop(args.l, 2), - base - 9), blocks.l)
-
- 
+ + BR(base + 4, block +2, block  , - base - 3)
+ + // block // // gt // CMP2(base + 4, - base - 2, C64.1000, 38)
+  +BR(base + 5, block +1, block+3  , - base - 4)
+ + // block 1 // CAST(base +5, -base-2, typ.ptr.function.[ i64,  i64, i64, i64], CASTINTTOPTR)
+ +   CALL(base +6, 0, 32768, typ.function.[ i64,   i64, i64, i64], -base-5, -1, args)  
+  + BR(base + 7, block + 4)
+  + // block 2 // GEP(base +7  , 1, typ.i64, -base-1, idx) 
+  + GEP(base +8  , 1, typ.i64, -base-7,C64.1) 
+  + LOAD(base +9 , -base-8, typ.i64, align8, 0)
+  + BR(base + 10, block + 4)
+  +  // block 3 // 
+    // first element start //   GEP(base +10  , 1, typ.i64, -base-1,C64.2) 
+  + BINOP(base+11,  idx, C64.1,1)
+  + BINOP(base+12,  -(base+11), -(base+2),  2)
+  + // objptr+2+ds*(idx-1) // GEP(base+13, 1, typ.i64, -base-10, -(base+12))
+  + CAST(base+14,-(base+13),typ.i64, CASTPTRTOINT)
+ + BR(base + last, block + 4)
+  + // block 4 //
+  PHI(base + last, typ.i64, - base - 6, block +1, - base - 9, block + 2,-(base+14), block+3)
+  Lcode2(code.l + c, lmap.l, noblocks.l+5  , regno.l + last, push(pop(args.l, 2), - base - last), blocks.l)
 
   

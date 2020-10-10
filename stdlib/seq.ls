@@ -140,3 +140,5 @@ Function last(a:seq.T)T a_(length.a)
 Function isempty(a:seq.T)boolean length.a = 0
 
 - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Function packed(s:seq.T)seq.T  //  handled by compiler //  s 
