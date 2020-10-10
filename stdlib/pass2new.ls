@@ -400,7 +400,7 @@ function   uses(p:program,processed:set.symbol, toprocess:set.symbol) set.symbol
 
 
 function defines2(p:program,s:symbol) seq.symbol
-if isconstantorspecial.s  &or module.s ="builtin"   &or  isabstract.mytype.module.s 
+if isconstantorspecial.s  &or module.s ="builtin"    &or  isabstract.mytype.module.s 
 then empty:seq.symbol 
 else 
 let d=code.lookupcode(p,s)

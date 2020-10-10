@@ -98,7 +98,7 @@ Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word
 
 function addabstractpara(w:word)word merge([ w] + ".T")
 
-Function testdoc seq.word // callgraphwithin("stdlib","llvm")+ // doclibrary."tools"
+Function testdoc seq.word // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
 
 use groupparagraphs
 
@@ -222,16 +222,30 @@ function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
     let this=s_i
      if this ='"'_1 then callarcs(s,findindex('"'_1,s,i+1)+1,result)
     else if this ="'" _1 then callarcs(s,findindex("'"_1,s,i+1)+1,result)
-    else
+    else 
   let next=s_(i+1)
-    if next="("_1 then
+      if next="("_1 then
      let j=findindex(")"_1,s,i+1) 
+     if this="RECORD"_1 then
+      callarcs(s,j+1,result)
+     else 
+     assert j < length.s report "JKL"+subseq(s,i,length.s)
      let module=gathermod(s,j+2,[s_(j+1)])
-     let end= 2 *(length.module-1)+1+j+1 
+    let end= 2 *(length.module-1)+1+j+1 
          callarcs(s,end, result+ mangle(subseq(s,i,j),module))
-     else if this in "RECORD DEFINE EXITBLOCK BR BLOCK APPLY WORD " then callarcs(s,i+2,result)
-    else if this in "&br FREF" then callarcs(s,i+1,result) else
-     assert char1.[this]in decodeword.merge."%-0123456789" report "call arcs problem"+this+s
+     else if this in "RECORD DEFINE EXITBLOCK BR BLOCK APPLY WORD APPLYP APPLYI APPLYR" then
+      callarcs(s,i+2,result)
+    else if this="global"_1 then
+     // global has strange format.  global atype () builtin //
+      let atype= gathermod(s,i+2,[next])
+      let end =2 *(length.atype-1)+1+i+1+// () builtin // 3
+    //  assert false report "JK"+subseq(s,end,length.s) //
+      callarcs(s,end,result)
+    else 
+      if this in "&br FREF" then callarcs(s,i+1,result) else
+     let chs=decodeword.this
+     assert length.chs > 0 &and   chs_1 in decodeword.merge."%-0123456789" 
+     report "call arcs problem"  +this+toword.i+"full text"+ s // @(seperator."!",identity,"",s) //
      callarcs(s,i+1,result)
       
     function gathermod(s:seq.word,i:int,result:seq.word) seq.word

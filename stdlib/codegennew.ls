@@ -43,6 +43,9 @@ use internalbc
 
 use llvm
 
+use llvmconstants
+
+
 use seq.llvmconst
 
 use otherseq.llvmtype
@@ -114,7 +117,8 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
       + RET.6]
                  let data = constdata                                   
       let adjust = [ 0, // consttype // length.data + 2, // profiletype // noprofileslots + 2 + 3]
-      let patchlist = [  // list // [ MODULECODEGLOBALVAR, typ.conststype,        2,    C(conststype, [ AGGREGATE]  +  data)+ 1, 3, align8 + 1, 0]
+      let patchlist = [  // list // [ MODULECODEGLOBALVAR, typ.conststype,        2,    
+  C(conststype, [ AGGREGATE]  +  data)+ 1, 3, align8 + 1, 0]
          , // profstat // [ MODULECODEGLOBALVAR, typ.array(4, i64), 2,    x + 1,                            3, align8 + 1, 0]
      ]
         llvm(patchlist, bodytxts, adjust(typerecords, adjust, 1))
@@ -313,7 +317,7 @@ function profilecall(profiletype2:llvmtype, l:Lcode2, args:seq.int, callee:int, 
  let pcount = C(ptr.i64, [ CONSTGEP, typ.profiletype2, typ.ptr.profiletype2, symboltableentry("profcounts",ptr.profiletype2), typ.i32, C32.0, typ.i64, C64.idx])
  let c = GEP(base + 1, 1, typ.profiletype2,symboltableentry("profrefs",ptr.profiletype2), C64.0, C64.idx)
  + LOAD(base + 2, - base - 1, typ.i64, align8, 0)
- + BINOP(base + 3, - base - 2, C64.1, 0, typ.i64)
+ + BINOP(base + 3, - base - 2, C64.1, 0 )
  + STORE(base + 4, - base - 1, - base - 3, align8, 0)
  + CMP2(base + 4, - base - 2, C64.0, 32)
  + BR(base + 5, block, block + 1, - base - 4)
@@ -322,23 +326,23 @@ function profilecall(profiletype2:llvmtype, l:Lcode2, args:seq.int, callee:int, 
  + CALL(base + 7, 0, 32768, typ.function.constantseq(length.args + 2, i64), callee, -1, args)
  + CALL(base + 8, 0, 32768, typ.function.[ i64], symboltableentry("clock",function.[ i64]))
  + LOAD(base + 9, symboltableentry("spacecount",i64), typ.i64, align8, 0)
- + BINOP(base + 10, - base - 8, - base - 5, 1, typ.i64)
- + BINOP(base + 11, - base - 9, - base - 6, 1, typ.i64)
+ + BINOP(base + 10, - base - 8, - base - 5, 1)
+ + BINOP(base + 11, - base - 9, - base - 6, 1 )
  + LOAD(base + 12, p1, typ.i64, align8, 0)
- + BINOP(base + 13, - base - 12, - base - 10, 0, typ.i64)
+ + BINOP(base + 13, - base - 12, - base - 10, 0 )
  + STORE(base + 14, p1, - base - 13, align8, 0)
  + LOAD(base + 14, pspace, typ.i64, align8, 0)
- + BINOP(base + 15, - base - 14, - base - 11, 0, typ.i64)
+ + BINOP(base + 15, - base - 14, - base - 11, 0 )
  + STORE(base + 16, pspace, - base - 15, align8, 0)
  + LOAD(base + 16, pcount, typ.i64, align8, 0)
- + BINOP(base + 17, - base - 16, C64.1, 0, typ.i64)
+ + BINOP(base + 17, - base - 16, C64.1, 0 )
  + STORE(base + 18, pcount, - base - 17, align8, 0)
  + BR(base + 18, block + 2)
  + CALL(base + 18, 0, 32768, typ.functype, callee, -1, args)
  + BR(base + 19, block + 2)
  + PHI(base + 19, typ.i64, - base - 7, block, - base - 18, block + 1)
  + LOAD(base + 20, - base - 1, typ.i64, align8, 0)
- + BINOP(base + 21, - base - 20, C64.1, 1, typ.i64)
+ + BINOP(base + 21, - base - 20, C64.1, 1 )
  + STORE(base + 22, - base - 1, - base - 21, align8, 0)
   Lcode2(code.l + c, lmap.l, noblocks.l + 3, regno.l + 21, push(pop(args.l, length.args), - base - 19), blocks.l)
 

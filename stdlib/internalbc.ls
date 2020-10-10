@@ -20,6 +20,8 @@ use stdlib
 
 use seq.templatepart
 
+use llvmconstants
+
 Function BLOCKCOUNT(slot:int, a1:int)internalbc addstartbits(1, 1, add(a1, emptyinternalbc))
 
 Function RET(slot:int, a1:int)internalbc addstartbits(INSTRET, 1, addaddress(slot, a1, emptyinternalbc))
@@ -49,9 +51,6 @@ Function GEP(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int)internalbc
 
 Function STORE(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
  addstartbits(INSTSTORE, 4, addaddress(slot, a1, addaddress(slot, a2, add(a3, add(a4, emptyinternalbc)))))
-
-Function BINOP(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
- addstartbits(INSTBINOP, 4, addaddress(slot, a1, addaddress(slot, a2, add(a3, add(a4, emptyinternalbc)))))
 
 Function BINOP(slot:int, a1:int, a2:int, a3:int)internalbc
  addstartbits(INSTBINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
@@ -281,33 +280,7 @@ function setoffset int 59
 
 Function ibcsubpara(i:int)int(i - 61) / 64 - 5000
 
-Function INSTCALL int 34
 
-Function INSTRET int 10
-
-Function INSTCAST int // CAST:[ opcode, ty, opty, opval]// 3
-
-Function INSTSELECT int 5
-
-Function INSTBR int 11
-
-Function INSTPHI int 16
-
-Function INSTCMP2 int 28
-
-Function INSTBINOP int 2
-
-Function INSTBLOCK int 1
-
-Function INSTNOPARA int -1
-
-Function INSTALLOCA int 19
-
-Function INSTLOAD int 20
-
-Function INSTSTORE int 44
-
-Function INSTGEP int 43
 
 Function type:templatepart internaltype export
 
@@ -391,3 +364,281 @@ Function addvbrsigned6(b:bitpackedseq.bit, val:int)bitpackedseq.bit
 Function align32(a:bitpackedseq.bit)bitpackedseq.bit
  let k = length.a mod 32
   if k = 0 then a else add(a, bits.0, 32 - k)
+  
+use seq.bitpackedseq.bit
+
+use bitpackedseq.bit
+
+use seq.seq.bit
+
+use seq.bit
+
+use seq.seq.bits
+
+use seq.bits
+
+use bits
+
+
+use blockseq.int
+
+use seq.seq.seq.int
+
+use seq.seq.int
+
+use seq.seq.internalbc
+
+use seq.internalbc
+
+use internalbc
+
+use seq.encoding.llvmconst
+
+use encoding.llvmconst
+
+use seq.llvmconst
+
+
+use stdlib
+
+use llvm
+
+use UTF8
+
+use seq.trackconst
+
+use llvmconstants
+
+use seq.encodingpair.llvmconst
+
+Function addblockheader(b:bitpackedseq.bit, currentabbrelength:int, blockid:int, abbrevlength:int)bitpackedseq.bit
+ addvbr(align32.addvbr(addvbr(addvbr(b, ENTERBLOCK, currentabbrelength), blockid, 8), abbrevlength, 4), 0, 32)
+
+Function finishblock(current:bitpackedseq.bit, headerplace:int, blockabbrevlength:int)bitpackedseq.bit
+ if headerplace = 0 then current
+ else
+  let bb = align32.addvbr(current, ENDBLOCK, blockabbrevlength)
+  let len =(length.bb - headerplace) / 32
+   // assert false report"X"+ toword(length.header -32)+ toword.len // patch(bb, headerplace - 31, len)
+
+Function addbody(offset:int, abbrevlen:int, m:bitpackedseq.bit, bodytxt:internalbc)bitpackedseq.bit
+ let header = addblockheader(m, abbrevlen, FUNCTIONBLOCK, 4)
+  finishblock(addtobitstream(offset, header, bodytxt), length.header, 4)
+
+Function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int)bitpackedseq.bit @(addrecord.abbrevlength, identity, bits, s)
+
+function addrecord(abbrevlength:int, bits:bitpackedseq.bit, a:seq.int)bitpackedseq.bit
+ let a1 = addvbr(bits, 3, abbrevlength)
+ let a2 = addvbr6(addvbr6(a1, a_1), length.a - 1)
+  @(addvbr6, identity, a2, subseq(a, 2, length.a))
+
+function ENDBLOCK int 0
+
+function ENTERBLOCK int 1
+
+Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits
+ let MODABBREVLEN = 3
+ let TYPEABBREVLEN = 4
+ let offset = length.encoding:seq.encodingpair.llvmconst
+ let h = addblockheader(add(add(add(add(empty:bitpackedseq.bit, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8)
+ , 2
+ , MODULEBLOCK
+ , MODABBREVLEN)
+ let info = getmachineinfo
+ let a = addrecords(h, MODABBREVLEN, [ [ 1, 1], [ MODULETRIPLE] + triple.info, [ MODULELAYOUT] + datalayout.info])
+  // type block //
+  let typeheader = addblockheader(a, MODABBREVLEN, TYPEBLOCK, TYPEABBREVLEN)
+  let a2 = addrecords(typeheader, TYPEABBREVLEN, [ [ ENTRY, length.trecords]] + trecords)
+  let a3 = finishblock(a2, length.typeheader, TYPEABBREVLEN)
+   // PARAGRPBLOCK //
+   let pgh = addblockheader(a3, MODABBREVLEN, PARAGRPBLOCK, TYPEABBREVLEN)
+   let pge = finishblock(addrecords(pgh
+   , TYPEABBREVLEN
+   , [ [ 3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18] + [ 3]
+   + tointseq.@(+, decodeword, empty:seq.char,"no - frame - pointer - elim - non - leaf")
+   + [ 0]])
+   , length.pgh
+   , TYPEABBREVLEN)
+    // para block //
+    let paraheader = addblockheader(pge, MODABBREVLEN, PARABLOCK, TYPEABBREVLEN)
+    let a4 = finishblock(addrecords(paraheader, TYPEABBREVLEN, [ [ 2, 0]]), length.paraheader, TYPEABBREVLEN)
+     // def list //
+     let a5 = addrecords(a4, MODABBREVLEN, deflist)
+      // const block //
+      let g = @(constrecords, identity, trackconst(a5, -1, 0), subseq(encoding:seq.encodingpair.llvmconst, length.deflist + 1, offset))
+      let a6 = finishblock(bits.g, blockstart.g, TYPEABBREVLEN)
+       // function bodies //
+       // assert length.trecords = length.typerecords report"X"//
+       let a7 = @(addbody(offset, MODABBREVLEN), identity, a6, bodytxts)
+        // sym table //
+        let symtabheader = addblockheader(a7, MODABBREVLEN, VALUESYMTABBLOCK, TYPEABBREVLEN)
+        let a8 = finishblock(symentries(symtabheader, encoding:seq.encodingpair.llvmconst, 1), length.symtabheader, TYPEABBREVLEN)
+         // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN)
+
+function constrecords(z:trackconst, lx:encodingpair.llvmconst)trackconst
+ // keep track of type of last const processed and add record when type changes //
+ let l=data.lx
+ let MODABBREVLEN = 3
+ let TYPEABBREVLEN = 4
+  if ismoduleblock.l   then
+  let bits = if not.islastmodule.z then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)else bits.z
+     // let rec=if typ.l=-1 then [ MODULECODEFUNCTION, symtabtype.l, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+     else  if   typ.l=-2 then [ MODULECODEGLOBALVAR, symtabtype.l, 2, 1+C64.0, 0, align8 + 1, 0]
+     else assert typ.l=-3 report "error in costrecords"  toseq.l //
+     trackconst(addrecord(MODABBREVLEN, bits, modulerecord.l), typ.l, 0)
+  else
+   let newblock = islastmodule.z  ∧ not.ismoduleblock.l 
+   let bits = if newblock then addblockheader(bits.z, MODABBREVLEN, CONSTANTSBLOCK, TYPEABBREVLEN)else bits.z
+   let bits2 = if lasttype.z = typ.l then bits
+   else
+    addvbr6(add(bits, bits((1 * 64 + 1) * 16 + 3), 16), typ.l)
+   let tp =(toseq.l)_1
+   let bs = if tp = CONSTINTEGER then
+   addvbrsigned6(add(bits2, bits((1 * 64 + CONSTINTEGER) * 16 + 3), 16),(toseq.l)_2)
+   else
+    let a1 = if length.toseq.l < 32 then
+    add(bits2, bits(((length.toseq.l - 1) * 64 + tp) * 16 + 3), 16)
+    else addvbr6(addvbr6(addvbr(bits2, 3, TYPEABBREVLEN), tp), length.toseq.l - 1)
+     addvbr6(a1, subseq(toseq.l, 2, length.toseq.l))
+    trackconst(bs, typ.l, if newblock then length.bits else blockstart.z)
+
+Function symentries(bits:bitpackedseq.bit, s:seq.encodingpair.llvmconst, i:int)bitpackedseq.bit
+ if i > length.s then bits
+ else
+  let l = data.s_i
+  let bs = if ismoduleblock.l &and typ.l  &ne -3 then
+  let abbrevlength = 4
+  let name=symtabname.l
+   let a1 = addvbr6(addvbr6(addvbr6(addvbr(bits, 3, abbrevlength), ENTRY), length.name + 1), i - 1)
+    addvbr6(a1, name)
+  else bits
+   symentries(bs, s, i + 1)
+
+type trackconst is record bits:bitpackedseq.bit, lasttype:int, blockstart:int
+
+function islastmodule (l:trackconst) boolean
+   lasttype.l < 0 
+
+type machineinfo is record triple:seq.int, datalayout:seq.int
+
+function getmachineinfo machineinfo builtin.usemangle
+
+
+
+
+module llvmconstants 
+
+use stdlib
+
+Function INSTCALL int 34
+
+Function INSTRET int 10
+
+Function INSTCAST int // CAST:[ opcode, ty, opty, opval]// 3
+
+Function INSTSELECT int 5
+
+Function INSTBR int 11
+
+Function INSTPHI int 16
+
+Function INSTCMP2 int 28
+
+Function INSTBINOP int 2
+
+Function INSTBLOCK int 1
+
+Function INSTNOPARA int -1
+
+Function INSTALLOCA int 19
+
+Function INSTLOAD int 20
+
+Function INSTSTORE int 44
+
+Function INSTGEP int 43
+
+Function STRUCTNAME int 19
+
+Function BLOCKINFOBLOCK int 0
+
+Function MODULEBLOCK int 8
+
+Function PARABLOCK int 9
+
+Function PARAGRPBLOCK int 10
+
+Function CONSTANTSBLOCK int 11
+
+Function FUNCTIONBLOCK int 12
+
+Function TYPEBLOCK int 17
+
+Function MODULETRIPLE int 2
+
+Function MODULELAYOUT int 3
+
+Function MODULECODEGLOBALVAR int 7
+
+Function MODULECODEFUNCTION int 8
+
+Function VALUESYMTABBLOCK int 14
+
+Function CONSTCECAST int 11
+
+Function CONSTINTEGER int 4
+
+Function CONSTSETTYPE int 1
+
+Function CONSTNULL int 2
+
+Function CONSTDATA int 22
+
+Function CONSTGEP int 20
+
+Function AGGREGATE int 7
+
+Function CSTRING int 9
+
+
+
+Function ENTRY int 1
+
+Function align4 int 3
+
+Function align8 int 4
+
+Function align16 int 5
+
+type typeop is record toint:int 
+
+Function decode(code:typeop)seq.word 
+let i = toint.code if between(i + 1, 1, 22)then 
+let r = ["? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"_(i + 1)]if not(r ="?")then r else"typeop"+ toword.i 
+else"typeop"+ toword.i 
+
+function toint(typeop)int export 
+
+function typeop(i:int)typeop export 
+
+function type:typeop internaltype export 
+
+Function =(a:typeop, b:typeop)boolean toint.a = toint.b 
+
+Function NumEle typeop typeop.1 
+
+Function TVOID typeop typeop.2 
+
+Function DOUBLE typeop typeop.4 
+
+Function OPAQUE typeop typeop.6 
+
+Function INTEGER typeop typeop.7 
+
+Function POINTER typeop typeop.8 
+
+Function ARRAY typeop typeop.11 
+
+Function FUNCTION typeop typeop.21 
+
+

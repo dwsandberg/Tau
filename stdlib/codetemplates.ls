@@ -23,6 +23,8 @@ use persistant
 
 use llvm
 
+use llvmconstants
+
 use otherseq.llvmtype
 
 use seq.llvmtype
@@ -52,7 +54,7 @@ use seq.mytype
 
 Function tollvmtype(alltypes:seq.myinternaltype,s:symbol) llvmtype
    if fsig.s="option(T, word seq)" &or not.check then    function.constantseq(nopara.s + 2, i64) else 
-  assert not( modname.s=mytype."builtin") report "llvmtype error "+print.s
+ // assert not( modname.s=mytype."builtin") report "llvmtype error "+print.s //
   function.@(+,tollvmtype.alltypes, [tollvmtype(alltypes,resulttype.s),i64],paratypes.s)
   
    assert not(mangledname.s="printZUTF8ZintZreal"_1 )report "here"+print.a
@@ -135,6 +137,8 @@ function table seq.match5
 ,  match5(2,// + //"Q2BZbuiltinZrealZreal"_1, 1,   BINOP(1, ibcsub1, ibcsub2, 0))
 ,  match5(2,// * //"Q2AZbuiltinZrealZreal"_1, 1,   BINOP(1, ibcsub1, ibcsub2, 2))
 ,  match5(2,// / op //"Q2FZbuiltinZrealZreal"_1, 1,   BINOP(1, ibcsub1, ibcsub2, 4))
+ , match5(1,"casttorealZbuiltinZint"_1, 0, CAST(1, ibcsub1, typ.double, 11))
+ ,match5(1,"representationZbuiltinZreal"_1, 1, CAST(2, -1, typ.i64, 11)) 
 ]
  else 
    [match5(2,"IDXRZbuiltinZintZint"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR) + GEP(2, 1, typ.i64, -1, ibcsub2)+ LOAD(3, -2, typ.i64, align8, 0))
@@ -153,10 +157,10 @@ function table seq.match5
 ,match5(2,// + //   "Q2BZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 0)+ CAST(4, -3, typ.i64, 11))
 ,match5(2,// * //   "Q2AZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 2)+ CAST(4, -3, typ.i64, 11))
 ,match5(2,// / op //"Q2FZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + BINOP(3, -1, -2, 4)+ CAST(4, -3, typ.i64, 11))
-]
-let t = z+ [   match5(1,"casttorealZbuiltinZint"_1, 0, emptyinternalbc)
+ , match5(1,"casttorealZbuiltinZint"_1, 0, emptyinternalbc)
  ,match5(1,"representationZbuiltinZreal"_1, 0, emptyinternalbc)
- ,match5(1,"getseqtypeZbuiltinZTzseq"_1, 2, CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR)  
+]
+let t = z+ [  match5(1,"getseqtypeZbuiltinZTzseq"_1, 2, CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR)  
 + LOAD(2, -1, typ.i64, align8, 0))
 , match5(2,"IDXIZbuiltinZintZint"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR) + GEP(2, 1, typ.i64, -1, ibcsub2)
 + LOAD(3, -2, typ.i64, align8, 0))
@@ -164,51 +168,51 @@ let t = z+ [   match5(1,"casttorealZbuiltinZint"_1, 0, emptyinternalbc)
 + LOAD(3, -2, typ.i64, align8, 0))
 , match5(2,// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(1, ibcsub1, ibcsub2, 39) + CAST(2, -1, typ.i64, CASTZEXT) + CMP2(3, ibcsub1, ibcsub2, 38)
 + CAST(4, -3, typ.i64, CASTZEXT)
-+ BINOP(5, -2, -4, 0, typ.i64))
++ BINOP(5, -2, -4, 0))
 , match5(3,"castZbuiltinZTzseqZintZint"_1, 2, 
-    BINOP(1, ibcsub2, C64.3, // shift left // 7, typ.i64) 
-    + BINOP(2, ibcsub1, -1, 0, typ.i64))
+    BINOP(1, ibcsub2, C64.3, // shift left // 7) 
+    + BINOP(2, ibcsub1, -1, 0))
 , match5(2,"Q3EZbuiltinZintZint "_1, 2, CMP2(1, ibcsub1, ibcsub2, 38) + CAST(2, -1, typ.i64, CASTZEXT))
-, match5(1,"notZbuiltinZboolean"_1, 1, BINOP(1, ibcsub1, C64.1, 12, typ.i64))
+, match5(1,"notZbuiltinZboolean"_1, 1, BINOP(1, ibcsub1, C64.1, 12))
 , // include aborted here so does not show up in profile results match5("abortedZbuiltinZTzprocess"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."abortedZbuiltinZTzprocess", -1, ibcsub1)), Including this as a template causes subtle compile errors //
 match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAST(2, -1, typ.i64, CASTZEXT))
-, match5(2, "Q2DZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 1, typ.i64))
-, match5(2,// + // "Q2BZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 0, typ.i64))
-, match5(2,// * // "Q2AZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64))
-, match5(2,// / op //"Q2FZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64))
+, match5(2, "Q2DZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 1 ))
+, match5(2,// + // "Q2BZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 0 ))
+, match5(2,// * // "Q2AZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 2 ))
+, match5(2,// / op //"Q2FZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 4 ))
 , match5(2,// ? //"Q3FZbuiltinZrealZreal"_1, 7, CAST(1, ibcsub1, typ.double, 11) + CAST(2, ibcsub2, typ.double, 11) + CMP2(3, -1, -2, 3)
 + CAST(4, -3, typ.i64, CASTZEXT)
 + CMP2(5, -1, -2, 2)
 + CAST(6, -5, typ.i64, CASTZEXT)
-+ BINOP(7, -4, -6, 0, typ.i64))
-, match5(2,"Q3CQ3CZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // SHL // 7, typ.i64))
-, match5(2,"Q3EQ3EZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // LSHR // 8, typ.i64))
-, match5(2,"Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // AND // 10, typ.i64))
-, match5(2,"Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // OR // 11, typ.i64))
-, match5(2,"xorZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // XOR // 12, typ.i64))
++ BINOP(7, -4, -6, 0 ))
+, match5(2,"Q3CQ3CZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // SHL // 7 ))
+, match5(2,"Q3EQ3EZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // LSHR // 8 ))
+, match5(2,"Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // AND // 10 ))
+, match5(2,"Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // OR // 11 ))
+, match5(2,"xorZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // XOR // 12 ))
 , match5(3,"setfldZbuiltinZTzseqZintZptr"_1, 5, 
   CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR) 
-+ BINOP(2, ibcsub2, C64.0, 0, typ.i64)
++ BINOP(2, ibcsub2, C64.0, 0)
 + GEP(3, 1, typ.i64, -1, -2)
 + GEP(4, 1, typ.i64, -3, C64.0)
 + STORE(5, -4, ibcsub3, align8, 0)
-+  BINOP(5, ibcsub2, C64.1, 0, typ.i64)
++  BINOP(5, ibcsub2, C64.1, 0)
 )
 , match5(3,"setfldZbuiltinZTzseqZintZint"_1, 5, 
   CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR) 
-+ BINOP(2, ibcsub2, C64.0, 0, typ.i64)
++ BINOP(2, ibcsub2, C64.0, 0)
 + GEP(3, 1, typ.i64, -1, -2)
 + GEP(4, 1, typ.i64, -3, C64.0)
 + STORE(5, -4, ibcsub3, align8, 0)
-+  BINOP(5, ibcsub2, C64.1, 0, typ.i64)
++  BINOP(5, ibcsub2, C64.1, 0)
 )
 , match5(3,"setfldZbuiltinZTzseqZintZreal"_1, 5, 
   CAST(1, ibcsub1, typ.ptr.i64, CASTINTTOPTR) 
-+ BINOP(2, ibcsub2, C64.0, 0, typ.i64)
++ BINOP(2, ibcsub2, C64.0, 0)
 + GEP(3, 1, typ.i64, -1, -2)
 + GEP(4, 1, typ.i64, -3, C64.0)
 + STORE(5, -4, ibcsub3, align8, 0)
-+  BINOP(5, ibcsub2, C64.1, 0, typ.i64)
++  BINOP(5, ibcsub2, C64.1, 0)
 )
 , match5(2,"STKRECORDZbuiltinZintZint"_1, 3, ALLOCA(1, typ.ptr.i64, typ.i64, C64.2, 0) + STORE(2, -1, ibcsub1, align8, 0)
 + GEP(2, 1, typ.i64, -1, C64.1)
@@ -224,7 +228,7 @@ match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32) + CAS
 +CAST(5, -3, typ.i64, CASTPTRTOINT)
   ) //
   match5(3,"allocateseqQ3AseqQ2ETZbuiltinZintZintZint"_1,5, 
-BINOP(1, ibcsub1, C64.2, 0, typ.i64)
+BINOP(1, ibcsub1, C64.2, 0)
 +CALL(2, 0, 32768, typ.function.[ ptr.i64, i64, i64], symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint",function.[ ptr.i64, i64, i64]), ibcfirstpara2, -1)
  + GEP(3, 1, typ.i64, -2, C64.0)
  + STORE(4, -3, ibcsub2, align8, 0)
@@ -373,37 +377,4 @@ Function CASTPTRTOINT int 9
 
 Function CASTINTTOPTR int 10
 
-type pp is record idx:int, val:int
-
-function getvbr(a:seq.bit, idx:int, size:int)pp getvbr(a, size, bits.0, 0, idx, 0)
-
-function getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp
- let b = toint.a_(idx + i)
-  if i = size - 1 then
-  if b = 0 then pp(idx + size, toint.val)else getvbr(a, size, val, nobits, idx + size, 0)
-  else getvbr(a, size, bits.b << nobits ∨ val, nobits + 1, idx, i + 1)
-
-function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, abbrvlen:int)seq.seq.int
- if length.r > 0 then
- // working on record //
-  if noargs = 0 then getinfo(b, 0, empty:seq.int, idx, recs + r, abbrvlen)
-  else
-   let next = getvbr(b, idx, 6)
-    getinfo(b, noargs - 1, r + val.next, idx.next, recs, abbrvlen)
- else
-  let t = getvbr(b, abbrvlen, bits.0, 0, idx, 0)
-   if val.t = 3 then
-   // record //
-    let inst = getvbr(b, idx.t, 6)
-    let args = getvbr(b, idx.inst, 6)
-     getinfo(b, val.args, [ val.inst], idx.args, recs, abbrvlen)
-   else recs
-
-function astext2(a:seq.int)seq.word"[" + @(+, toword,"", a) + "]"
-
-Function astext(a:bitpackedseq.bit)seq.word
- // @(+, toword,"", @(+, toint, empty:seq.int, toseq.a))+"
-&br"+ //
- let recs = getinfo(toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)
-  @(seperator." &br", astext2,"", recs)
   

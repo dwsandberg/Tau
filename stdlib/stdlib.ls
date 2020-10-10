@@ -9,15 +9,15 @@ parse pass1new  persistant  prims process real   seq set stack stacktrace symbol
  mangle mytype
 parsersupport  uses 
  exports stdlib main2 maindict UTF8    words   assignencodingnumber
-  bits blockseq   encoding fileio format  
+  bits blockseq   encoding fileio format  llvmconstants
   ipair       process real   seq set stack stacktrace 
   textio  prims      otherseq tree graph   
   newpretty 
   worddict groupparagraphs 
  timestamp ioseq dataio intdict dict
-       internalbc llvm 
-   parsersupport mangle mytype   bitpackedseq xxhash
- 
+    parsersupport mangle mytype   bitpackedseq xxhash
+     internalbc llvm 
+  
  
  
   PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage

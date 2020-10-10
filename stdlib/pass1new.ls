@@ -653,7 +653,7 @@ if ds=1 then
    assert kind.typdesc="seq"_1 report "packed problem"+print.typdesc
   symbol("setfld(T seq, int, ptr)","builtin","int")
 [Local.1,  Lit.1,IDXI, Lit.0 ,Local.1,  Lit.1,IDXI
-,symbol("allocateseq:seq.T(int, int, int)","builtin","ptr")
+,symbol([merge."allocateseq:seq.T"]+"(int, int, int)","builtin","ptr")
 ,Define."newseq" 
 ,Local."newseq"_1  
 ,Lit.2 
@@ -668,7 +668,7 @@ else
    [Lit.ds, Local.1,  Lit.1,IDXI,symbol("*(int, int)","builtin","int") 
     , Fref.symbol("_("+typeT+"packedseq, int)",typeT+"process",typeT)  
     , Local.1,  Lit.1,IDXI
-    , symbol("allocateseq:seq.T(int, int, int)","builtin","ptr")  
+    , symbol( [merge."allocateseq:seq.T"]+"(int, int, int)","builtin","ptr")  
     , Define."newseq" 
     , Lit.0
     , Lit.ds

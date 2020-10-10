@@ -23,7 +23,7 @@ use seq.liblib
 
 use llvm
 
-
+use llvmconstants
 
 use stdlib
 
@@ -80,23 +80,46 @@ Function wordref(w:word) int
 let d = encode(  word3.w)
  C64.valueofencoding.d
  
- Function addliblib( libname:seq.word,c:int) int
+ Function addliblib( libname:seq.word,mods:int) int
  // assert libname.t ="stdlib"report libname.t //
- let  a=addwordseq2(libname)
+ let  name=addwordseq2(libname)
   let have = if libname = "stdlib"then empty:seq.encodingpair.seq.char else words.loadedlibs_1
  let used = @(+, eword2, empty:seq.encodingpair.seq.char, encoding:seq.encodingpair.word3 )
  let k=@(+,addrecord2,empty:seq.int,toseq(asset.used - asset.have))
- let d= addobject([C64.0 , C64.length.k]+k)
-  addobject( [ a,d,c,C64.0,C64.0])
+ let wordreps= addobject([C64.0 , C64.length.k]+k) 
+// let wordreps=addobject("wordreps",[C64.0 , C64.length.k]+k) //
+ addobject("liblib",[ name,wordreps,mods,C64.0,C64.0])
+  
+
+function addobject(name:seq.word,data:seq.int) int
+let objtype=array(length.data,i64)
+let ll= global( "liblib",   objtype , C( objtype, [ AGGREGATE]  + data) )
+    C(i64,[ CONSTCECAST, 9, typ.ptr.i64, CGEP2(ll,0)]) 
+
+   
+ function global(name:seq.word,type:llvmtype,init:int) int
+modulerecord( name ,[ MODULECODEGLOBALVAR, typ.type, 2, 1+init, 0, align8 + 1, 0])
+
+ 
+function CGEP2( p:int ,b:int) int
+let t1 = consttype.p
+// assert typ.consttype.p=typ.t1 &or (b in [1280,1278,1303,1302])report "diff"+toword.b+toword.typ.consttype.p+toword.p //
+ C(ptr.i64, [ CONSTGEP, typ.t1, typ.ptr.t1, p, typ.i32, C32.0,typ.i64, C64.b] )
+  
  
 Function addobject(flds:seq.int) int
   let t=encoding:seq.encodingpair.const3
   let place=if length.t=0 then 0 else place.data.last.t+length.flds.data.last.t
   let x = decode(encode(const3(place , flds )))
  let idx=if place.x ≠ place  then place.x else   place
- let conststype = array(-2, i64)
- let elementptr= C(ptr.i64, [ CONSTGEP, typ.conststype, typ.ptr.conststype, modulerecord("list", [0]), typ.i32, C32.0, typ.i64, C64.idx])
- C(i64,[ CONSTCECAST, 9, typ.ptr.i64, elementptr])   
+  C(i64,[ CONSTCECAST, 9, typ.ptr.i64, CGEP(modulerecord("list", [0]),C32.0,C64.idx)])   
+
+function CGEP( p:int,a:int,b:int) int
+let t1 = array(-2, i64)
+// assert typ.consttype.p=typ.t1 &or (b in [1280,1278,1303,1302])report "diff"+toword.b+toword.typ.consttype.p+toword.p //
+ C(ptr.i64, [ CONSTGEP, 1, typ.ptr.t1, p, typ.consttype.a, a, typ.consttype.b, b] )
+ 
+ 
 
 
 function addrecord2( e:encodingpair.seq.char) int

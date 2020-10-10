@@ -2,36 +2,30 @@
 
 Module tools
 
-cd stdlib
-ln bits.ls blockseq.ls deepcopy.ls graph.ls ipair.ls oseq.ls process.ls  seq.ls set.ls
-tree.ls xxhash.ls ~/work/jstest
-
-different than stdlib.s packedseq.ls real.ls stdlib.ls UTF8.ls 
 
 Library tools bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph makeDAG 
- printbitcodes profile  svg svggraph taulextable testparser 
+  profile  svg svggraph taulextable testparser 
  uses stdlib 
  exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph 
- makeDAG pretty  printbitcodes profile svg svggraph taulextable testparser tools
+ makeDAG pretty   profile svg svggraph taulextable testparser tools
  
 * STATE   builtin:profile profileinfo   profileresult  
 
 
-/run printbitcodes test1
-
+ 
 /run tools testfirstpass
 
-run tools testprofile
+/run tools testprofile
 
 /run tools prettytest
 
 /run tools callgraphtest
 
-/run tools stdlibdoc
+run tools stdlibdoc
 
 /run doc createdoc
 
-/run tools testhtmlcode
+run tools testhtmlcode
 
 /run genLR1 gentau2
 
@@ -52,8 +46,7 @@ use main2
 
 use newpretty 
 
-use printbitcodes
-
+ 
 use profile
 
 use seq.seq.word
@@ -76,11 +69,10 @@ Function testprofile seq.word
     
     +dumpprofileinfo
 
-Function testprintBitCodes seq.word printBitCodes."test4.bc"
-
+ 
 Function callgraphtest seq.word callgraphbetween("testall","test5  testall test2 stdlib")
 +callgraphwithin("stdlib","llvm")
 
-Function stdlibdoc seq.word   // callgraphbetween("stdlib","codegennew persistant")+ //    doclibrary."stdlib"
+Function stdlibdoc seq.word       callgraphbetween("stdlib","llvmconstants llvm")+       doclibrary."stdlib"
 
 
