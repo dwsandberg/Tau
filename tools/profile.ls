@@ -1,10 +1,14 @@
+#!/usr/local/bin/tau
+
+/run profile dumpprofileinfo
+
+run tools testprofile
+
 Module profile
 
 Problems:Junk at top of graph
 
 Max space seems to be on node with head and tail blank!
-
-profileresult could return a sequence of packed parcs instead of four sequence.
 
 @(-, does not parse.
 
@@ -16,7 +20,7 @@ use displaytextgraph
 
 use seq.int
 
-/use libscope
+use libdesc
 
 use labeledgraph.parc
 
@@ -24,7 +28,6 @@ use seq.parc
 
 use set.parc
 
-use seq.profileresult
 
 use stdlib
 
@@ -57,7 +60,7 @@ function toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.wo
 Function profileresults(measure:seq.word)seq.word
  // Returns label graph of profile results. Measure is time, count, or space. //
  // let g = profileresults //
- let g = @(+, identity, empty:labeledgraph.parc, profileinfo)
+ let g = @(+, identity, empty:labeledgraph.parc, @(+,profiledata,empty:seq.parc,loadedlibs))
  let m = if measure = "time"then @(max, clocks, 0, toseq.arcs.g)
  else if measure = "count"then @(max, counts, 0, toseq.arcs.g)
  else
@@ -121,7 +124,6 @@ function differ(a:seq.seq.word, b:seq.seq.word, i:int)int
  if i > length.a ∨ i > length.b then i
  else if a_i = b_i then differ(a, b, i + 1)else i
 
-type parc is record head:word, tail:word, counts:int, clocks:int, space:int
 
 Function head(parc)word export
 
@@ -141,18 +143,10 @@ function reverse(a:parc)parc parc(tail.a, head.a, counts.a, clocks.a, space.a)
 
 function tonode(a:parc)parc parc(head.a, head.a, counts.a, clocks.a, space.a)
 
-function toarc(p:profileresult, i:int)parc
- parc((arcs.p)_(2 * i - 1),(arcs.p)_(2 * i),(counts.p)_i,(clocks.p)_i,(space.p)_i)
-
-function +(g:labeledgraph.parc, p:profileresult)labeledgraph.parc @(+, toarc(p), g, arithseq(length.counts.p, 1, 1))
-
-type profileresult is record arcs:seq.word, counts:seq.int, clocks:seq.int, space:seq.int
-
-function profileinfo seq.profileresult builtin.usemangle
 
 function p2(a:parc) seq.word [tail.a,head.a,toword.counts.a]
 
+use seq.liblib
+
 Function dumpprofileinfo seq.word
- let p=profileinfo_1
- let l=@(+, toarc(p), empty:seq.parc, arithseq(length.counts.p, 1, 1))
- @(seperator."&br",p2,"",l)
+ @(seperator."&br",p2,"",profiledata.loadedlibs_1)

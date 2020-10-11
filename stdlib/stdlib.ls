@@ -16,7 +16,7 @@ parsersupport  uses
   worddict groupparagraphs 
  timestamp ioseq dataio intdict dict
     parsersupport mangle mytype   bitpackedseq xxhash
-     internalbc llvm 
+     internalbc llvm persistant libdesc
   
  
  

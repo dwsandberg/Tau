@@ -149,7 +149,30 @@ Function C64(i:int)int valueofencoding.encode( llvmconst(typ.i64, [ CONSTINTEGER
 
 Function C32(i:int)int valueofencoding.encode( llvmconst(typ.i32, [ CONSTINTEGER, i])) - 1
 
-Function C(t:llvmtype, s:seq.int)int valueofencoding.encode( llvmconst(typ.t, s)) - 1
+function C(t:llvmtype, s:seq.int)int valueofencoding.encode( llvmconst(typ.t, s)) - 1
+
+Function DATA(t:llvmtype,data:seq.int) int
+valueofencoding.encode( llvmconst(typ.t, [CONSTDATA]+data)) - 1
+
+Function AGGREGATE( data:seq.int) int
+let t=array(length.data,i64)
+valueofencoding.encode( llvmconst(typ.t, [AGGREGATE]+data)) - 1
+
+Function ptrtoint(argtype:llvmtype,p:int) int
+C(i64,[ CONSTCECAST, 9, typ.argtype, p])
+
+Function CGEP( p:int,b:int ) int
+let t1 = // if p=0 then  array(-2, i64) else // consttype.p
+  C(ptr.i64, [ CONSTGEP, typ.t1, typ.ptr.t1, p, typ.i32, C32.0,typ.i64, C64.b] )
+
+Function CGEPi8( p:int,b:int ) int
+let t1 = if p=0 then  array(-2, i64) else consttype.p
+  C(ptr.i8, [ CONSTGEP, typ.t1, typ.ptr.t1, p, typ.i32, C32.0,typ.i64, C64.b] )
+
+Function zeroinit(profiletype:llvmtype) int C(profiletype, [ CONSTNULL])
+
+Function Creal(i:int) int
+C(double,[CONSTCECAST, 11,typ.i64,C64.i])
 
 Function Cprt(t:int, s:seq.int)int // used in print bitcodes tool // valueofencoding.encode( llvmconst(t, s)) - 1
 

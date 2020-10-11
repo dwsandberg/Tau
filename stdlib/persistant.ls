@@ -85,26 +85,34 @@ let d = encode(  word3.w)
  let  name=addwordseq2(libname)
   let have = if libname = "stdlib"then empty:seq.encodingpair.seq.char else words.loadedlibs_1
  let used = @(+, eword2, empty:seq.encodingpair.seq.char, encoding:seq.encodingpair.word3 )
- let k=@(+,addrecord2,empty:seq.int,toseq(asset.used - asset.have))
- let wordreps= addobject([C64.0 , C64.length.k]+k) 
-// let wordreps=addobject("wordreps",[C64.0 , C64.length.k]+k) //
+ let wordstoadd=toseq(asset.used - asset.have)
+ // build packed seq of word encodings //
+ let data=@(+,fldsofwordencoding,[C64.3 , C64.length.wordstoadd],wordstoadd) 
+   let wordreps= addobject.data
  addobject("liblib",[ name,wordreps,mods,C64.0,C64.0])
-  
+
+ Function addliblib( libname:seq.word,mods:int,profiledata:int) int
+ // assert libname.t ="stdlib"report libname.t //
+ let  name=addwordseq2(libname)
+  let have = if libname = "stdlib"then empty:seq.encodingpair.seq.char else words.loadedlibs_1
+ let used = @(+, eword2, empty:seq.encodingpair.seq.char, encoding:seq.encodingpair.word3 )
+ let wordstoadd=toseq(asset.used - asset.have)
+ // build packed seq of word encodings //
+ let data=@(+,fldsofwordencoding,[C64.3 , C64.length.wordstoadd],wordstoadd) 
+   let wordreps= addobject.data
+ addobject("liblib",[ name,wordreps,mods,C64.0,profiledata])
+
 
 function addobject(name:seq.word,data:seq.int) int
 let objtype=array(length.data,i64)
-let ll= global( "liblib",   objtype , C( objtype, [ AGGREGATE]  + data) )
-    C(i64,[ CONSTCECAST, 9, typ.ptr.i64, CGEP2(ll,0)]) 
+let ll= global( "liblib",   objtype ,  AGGREGATE.data  )
+    ptrtoint( ptr.i64, CGEP(ll,0)) 
 
    
  function global(name:seq.word,type:llvmtype,init:int) int
 modulerecord( name ,[ MODULECODEGLOBALVAR, typ.type, 2, 1+init, 0, align8 + 1, 0])
 
  
-function CGEP2( p:int ,b:int) int
-let t1 = consttype.p
-// assert typ.consttype.p=typ.t1 &or (b in [1280,1278,1303,1302])report "diff"+toword.b+toword.typ.consttype.p+toword.p //
- C(ptr.i64, [ CONSTGEP, typ.t1, typ.ptr.t1, p, typ.i32, C32.0,typ.i64, C64.b] )
   
  
 Function addobject(flds:seq.int) int
@@ -112,20 +120,16 @@ Function addobject(flds:seq.int) int
   let place=if length.t=0 then 0 else place.data.last.t+length.flds.data.last.t
   let x = decode(encode(const3(place , flds )))
  let idx=if place.x ≠ place  then place.x else   place
-  C(i64,[ CONSTCECAST, 9, typ.ptr.i64, CGEP(modulerecord("list", [0]),C32.0,C64.idx)])   
+  ptrtoint(ptr.i64, CGEP(modulerecord("list", [0]),idx))   
 
-function CGEP( p:int,a:int,b:int) int
-let t1 = array(-2, i64)
-// assert typ.consttype.p=typ.t1 &or (b in [1280,1278,1303,1302])report "diff"+toword.b+toword.typ.consttype.p+toword.p //
- C(ptr.i64, [ CONSTGEP, 1, typ.ptr.t1, p, typ.consttype.a, a, typ.consttype.b, b] )
  
  
 
 
-function addrecord2( e:encodingpair.seq.char) int
+function fldsofwordencoding( e:encodingpair.seq.char) seq.int
  let s= tointseq.data.e
   let k=addobject(@(+, C64, [ C64.0, C64.length.s], s))
-  addobject([C64.valueofencoding.code.e,k,C64.hash.e])
+    ([C64.valueofencoding.code.e,k,C64.hash.e]) 
  
  
 Function addwordseq2( a:seq.word) int

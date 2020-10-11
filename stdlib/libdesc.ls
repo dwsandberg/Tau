@@ -102,11 +102,24 @@ function addlibmod(s:firstpass) symbol
 
 Function type:liblib internaltype export
 
+Function type:parc internaltype export
 
+type liblib is record libname:seq.word, words:seq.encodingpair.seq.char, mods:seq.firstpass, timestamp:int, profiledata:seq.parc
 
-type liblib is record libname:seq.word, words:seq.encodingpair.seq.char, mods:seq.firstpass, timestamp:int, readonly:boolean
+type parc is record head:word, tail:word, counts:int, clocks:int, space:int
 
-Function liblib(a:seq.word, d:seq.firstpass)liblib liblib(a, empty:seq.encodingpair.seq.char, d, 0, false)
+function parc(head:word, tail:word, counts:int, clocks:int, space:int) export
+
+Function head(parc)word export
+
+Function tail(parc)word export
+
+Function counts(parc)int export
+
+Function clocks(parc)int export
+
+Function space(parc)int export
+
 
 Function timestamp(liblib)int export
 
@@ -116,7 +129,7 @@ Function mods(liblib)seq.firstpass export
 
 Function words(liblib)seq.encodingpair.seq.char export
 
-Function readonly(liblib)boolean export
+Function profiledata(liblib)seq.parc export
 
 
 use otherseq.word

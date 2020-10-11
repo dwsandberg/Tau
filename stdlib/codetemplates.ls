@@ -322,13 +322,10 @@ modulerecord( name ,[ MODULECODEGLOBALVAR, typ.type, 2, 1+init, 0, align8 + 1, 0
      let m =  if isFref.xx then
               let mn=  mangledname((constantcode.xx)_1)
                            let functyp=ptr.tollvmtype(alltypes,(constantcode.xx)_1)   
-       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, 
-       [ CONSTCECAST, 9,  typ.functyp, symboltableentry( mn,functyp) ])) 
+       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functyp, symboltableentry( mn,functyp) )) 
       else if islit.xx then
            if check then
-       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, if pkg="$real" then 
-       C(double,[CONSTCECAST, 11,typ.i64,C64.toint.(fsig.xx)_1])
-        else C64.toint.(fsig.xx)_1)
+       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, if pkg="$real" then  Creal.toint.(fsig.xx)_1  else C64.toint.(fsig.xx)_1)
        else 
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.(fsig.xx)_1)
       else if islocal.xx then
@@ -341,7 +338,7 @@ modulerecord( name ,[ MODULECODEGLOBALVAR, typ.type, 2, 1+init, 0, align8 + 1, 0
          // let ctype=array(length.fsig.xx+2,i64)
           let c=   C(ctype,@(+,wordref,[CONSTDATA,0,length.fsig.xx],fsig.xx))
            let d= modulerecord([ MODULECODEGLOBALVAR, typ.ctype, 2, c + 1, 3, align8 + 1, 0])  
-            let f=C(i64,[ CONSTCECAST, 9, typ.ptr.ctype,d])   //
+            let f=ptrtoint(ptr.ctype,d)   //
             match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1,      addwordseq2.fsig.xx     )
       else if pkg="$word"then
          match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
