@@ -103,7 +103,6 @@ Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
 
 -------------------------
 
-Function type:llvmconst internaltype export
 
 type llvmconst is record typ:int, toseq:seq.int
 
@@ -118,84 +117,105 @@ Function assignencoding(l:int, a:llvmconst) int l+1
 Function =(a:llvmconst, b:llvmconst)boolean  symtabname.a =  symtabname.b ∧ typ.a = typ.b
 
 
-Function symtabname(a:llvmconst)seq.int  
+function symtabname(a:llvmconst)seq.int  
   if typ.a in [-1,-2] then 
     subseq(toseq.a,2 , 1+ (toseq.a)_1)
   else toseq.a
 
-Function modulerecord(a:llvmconst) seq.int  
-if typ.a in [-1,-2] then 
-    subseq(toseq.a,  2+ (toseq.a)_1,length.toseq.a)
-  else toseq.a
 
-Function typ(a:llvmconst) int export
-
-Function toseq(a:llvmconst) seq.int export
  
 
-
-Function modulerecord(name:seq.word,rec:seq.int) int
-let c=if name="" then
-   llvmconst(-3, rec )  
+Function modulerecord(name:seq.word,rec:seq.int) slot
+let c=if name="" then llvmconst(-3, rec )  
 else 
 let chars=tointseq.@(+,decodeword,empty:seq.char,name)
   llvmconst(-1,  [length.chars]+ chars+rec)
-valueofencoding.encode.c-1
+slot(valueofencoding.encode.c-1)
 
 
 use seq.encodingpair.llvmtypeele
 
-Function C64(i:int)int valueofencoding.encode( llvmconst(typ.i64, [ CONSTINTEGER, i])) - 1
+Function C64(i:int)slot slot(valueofencoding.encode( llvmconst(typ.i64, [ toint.CINTEGER, i])) - 1)
 
-Function C32(i:int)int valueofencoding.encode( llvmconst(typ.i32, [ CONSTINTEGER, i])) - 1
+Function C32(i:int)slot slot(valueofencoding.encode( llvmconst(typ.i32, [ toint.CINTEGER, i])) - 1)
 
 function C(t:llvmtype, s:seq.int)int valueofencoding.encode( llvmconst(typ.t, s)) - 1
 
-Function DATA(t:llvmtype,data:seq.int) int
-valueofencoding.encode( llvmconst(typ.t, [CONSTDATA]+data)) - 1
+Function constantrecord(t:llvmtype, s:seq.int) slot slot(valueofencoding.encode( llvmconst(typ.t, s)) - 1)
 
-Function AGGREGATE( data:seq.int) int
+Function DATA(t:llvmtype,data:seq.int) slot
+slot(valueofencoding.encode( llvmconst(typ.t, [toint.CDATA]+data)) - 1)
+
+Function AGGREGATE( data:seq.slot) slot
 let t=array(length.data,i64)
-valueofencoding.encode( llvmconst(typ.t, [AGGREGATE]+data)) - 1
+slot(valueofencoding.encode.llvmconst(typ.t, [toint.CAGGREGATE]+@(+,toint,empty:seq.int,data))
+   - 1)
 
-Function ptrtoint(argtype:llvmtype,p:int) int
-C(i64,[ CONSTCECAST, 9, typ.argtype, p])
 
-Function CGEP( p:int,b:int ) int
+Function ptrtoint(argtype:llvmtype,p:slot) slot
+slot.C(i64,[ toint.CCAST, 9, typ.argtype, toint.p])
+
+Function CGEP( p:slot,b:int ) slot
 let t1 = // if p=0 then  array(-2, i64) else // consttype.p
-  C(ptr.i64, [ CONSTGEP, typ.t1, typ.ptr.t1, p, typ.i32, C32.0,typ.i64, C64.b] )
+  slot.C(ptr.i64, [ toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0,typ.i64, toint.C64.b] )
 
-Function CGEPi8( p:int,b:int ) int
-let t1 = if p=0 then  array(-2, i64) else consttype.p
-  C(ptr.i8, [ CONSTGEP, typ.t1, typ.ptr.t1, p, typ.i32, C32.0,typ.i64, C64.b] )
+Function CGEPi8( p:slot,b:int ) slot
+let t1 = // if p=0 then  array(-2, i64) else // consttype.p
+  slot.C(ptr.i8, [ toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0,typ.i64, toint.C64.b] )
 
-Function zeroinit(profiletype:llvmtype) int C(profiletype, [ CONSTNULL])
+/Function zeroinit(profiletype:llvmtype) int C(profiletype, [ toint,CNULL])
 
-Function Creal(i:int) int
-C(double,[CONSTCECAST, 11,typ.i64,C64.i])
+Function Creal(i:int) slot
+slot.C(double,[toint.CCAST, 11,typ.i64,toint.C64.i])
 
-Function Cprt(t:int, s:seq.int)int // used in print bitcodes tool // valueofencoding.encode( llvmconst(t, s)) - 1
-
-Function constvalue(i:int) int    (toseq.decode(  to:encoding.llvmconst(i+1)))_2
-
-Function ismoduleblock(l:llvmconst) boolean  typ.l < 0 
+use seq.slot
 
 
-Function constantrecords seq.encodingpair.llvmconst   encoding:seq.encodingpair.llvmconst
- 
-Function typ(a:encodingpair.llvmconst)  int typ.data.a
- 
-Function record(a:encodingpair.llvmconst) seq.int modulerecord.data.a
-   
-   
-Function symtablename(b:encodingpair.llvmconst) seq.char 
+Function constvalue(i:slot) int    (toseq.decode(  to:encoding.llvmconst(toint.i+1)))_2
+
+use seq.slotrecord
+
+Function constantrecords seq.slotrecord 
+@(+,slotrecord,empty:seq.slotrecord, encoding:seq.encodingpair.llvmconst)
+
+type  slotrecord is record cvt:encodingpair.llvmconst 
+
+Function type:slotrecord internaltype export
+
+Function record(b:slotrecord) seq.int 
+  let a=data.cvt.b
+ if typ.a = -1 then // name comes before record //
+    subseq(toseq.a,  2+ (toseq.a)_1,length.toseq.a)
+  else toseq.a
+
+
+Function symtablename(c:slotrecord) seq.char 
+let b=cvt.c
   let a=data.b 
   if typ.a in [-1,-2] then 
     tocharseq.subseq(toseq.a,2 , 1+ (toseq.a)_1)
   else empty:seq.char
 
-Function consttype(i:int) llvmtype
-       let l= decode.to:encoding.llvmconst(i+1)
-       if typ.l < 0 then  llvmtype(1+(modulerecord.l)_2 )  else 
-        llvmtype(typ.l+1)
+Function ismoduleblock(a:slotrecord) boolean  typ.data.cvt.a < 0 
 
+Function typ(s:slotrecord) int  typ.data.cvt.s 
+
+ 
+Function consttype(s:slot) llvmtype
+       let l= decode.to:encoding.llvmconst(toint.s+1)
+       llvmtype(1+if typ.l = -1 then  // must skip name to find record // 
+            (toseq.l)_(3+ (toseq.l)_1)
+        else if typ.l = -3 then (toseq.l)_2
+        else  typ.l )
+        
+ 
+
+type slot is record toint:int 
+
+function toint(slot) int export
+
+function slot(int)  slot export
+
+function type:slot internaltype export
+
+Function r(a:int) slot   slot.-a

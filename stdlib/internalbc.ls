@@ -1,3 +1,7 @@
+#!/usr/local/bin/tau
+
+/run llvmconstants generatecode
+
 Module internalbc
 
 * 64 + 2*3 instead of 64 + 2 * 3 does not give reasonable error message!
@@ -24,98 +28,90 @@ use llvmconstants
 
 Function BLOCKCOUNT(slot:int, a1:int)internalbc addstartbits(1, 1, add(a1, emptyinternalbc))
 
-Function RET(slot:int, a1:int)internalbc addstartbits(INSTRET, 1, addaddress(slot, a1, emptyinternalbc))
 
-Function RET(slot:int)internalbc addstartbits(INSTRET, 0, emptyinternalbc)
+Function ret internalbc addstartbits(toint.RET, 0, emptyinternalbc)
 
-Function CAST(slot:int, a1:int, a2:int, a3:int)internalbc
- addstartbits(INSTCAST, 3, addaddress(slot, a1, add(a2, add(a3, emptyinternalbc))))
+Function RET(slot:slot,  a1:slot)internalbc addstartbits(toint.RET, 1, addaddress(slot, a1, emptyinternalbc))
 
-Function BR(slot:int, a1:int, a2:int, a3:int)internalbc
- addstartbits(INSTBR, 3, add(a1, add(a2, addaddress(slot, a3, emptyinternalbc))))
-
-Function ALLOCA(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
- addstartbits(INSTALLOCA, 4, add(a1, add(a2, add(a3, add(a4, emptyinternalbc)))))
-
-Function BR(slot:int, a1:int)internalbc addstartbits(INSTBR, 1, add(a1, emptyinternalbc))
-
-Function GEP(slot:int, a1:int, a2:int, a3:int)internalbc
- addstartbits(INSTGEP, 3, add(a1, add(a2, addaddress(slot, a3, emptyinternalbc))))
+Function CAST(slot:slot, a1:slot, a2:llvmtype, a3:int)internalbc
+ addstartbits(toint.CAST, 3, addaddress(slot, a1, add(typ.a2, add(a3, emptyinternalbc))))
 
 
-Function GEP(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
- addstartbits(INSTGEP, 4, add(a1, add(a2, addaddress(slot, a3, addaddress(slot, a4, emptyinternalbc)))))
+Function BR(slot:slot, a1:int, a2:int, a3:slot)internalbc
+ addstartbits(toint.BR, 3, add(a1, add(a2, addaddress(slot, a3, emptyinternalbc))))
 
-Function GEP(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int)internalbc
- addstartbits(INSTGEP, 5, add(a1, add(a2, addaddress(slot, a3, addaddress(slot, a4, addaddress(slot, a5, emptyinternalbc))))))
+Function ALLOCA(slot:slot, a1:llvmtype, a2:llvmtype, a3:slot, a4:int)internalbc
+ addstartbits(toint.ALLOCA, 4, add(typ.a1, add(typ.a2, add( toint.a3, add(a4, emptyinternalbc)))))
 
-Function STORE(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
- addstartbits(INSTSTORE, 4, addaddress(slot, a1, addaddress(slot, a2, add(a3, add(a4, emptyinternalbc)))))
+Function BR( a1:int)internalbc addstartbits(toint.BR, 1, add(a1, emptyinternalbc))
 
-Function BINOP(slot:int, a1:int, a2:int, a3:int)internalbc
- addstartbits(INSTBINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
+Function GEP(slot:slot, a2:llvmtype, a3:slot)internalbc
+ addstartbits(toint.GEP, 3, add(1, add(typ.a2, addaddress(slot, a3, emptyinternalbc))))
 
-Function LOAD(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
- addstartbits(INSTLOAD, 4, addaddress(slot, a1, add(a2, add(a3, add(a4, emptyinternalbc)))))
+Function GEP(slot:slot,  a2:llvmtype, a3:slot, a4:slot)internalbc
+ addstartbits(toint.GEP, 4, add(1, add(typ.a2, addaddress(slot, a3, addaddress(slot, a4, emptyinternalbc)))))
+ 
+Function STORE(slot:slot,a1:slot, a2:slot) internalbc
+addstartbits(toint.STORE, 4, addaddress( slot, a1, addaddress( slot, a2, add(toint.align8, add(0, emptyinternalbc)))))
+ 
+Function LOAD(slot:slot, a1:slot, a2:llvmtype)internalbc
+ addstartbits(toint.LOAD, 4, addaddress(slot, a1, add(typ.a2, add(toint.align8, add(0, emptyinternalbc)))))
 
-Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int)internalbc
- addstartbits(INSTCALL, 4, add(a1, add(a2, add(a3, addaddress(slot, a4, emptyinternalbc)))))
+Function CMP2(slot:slot, a1:slot, a2:slot, a3:int)internalbc
+ addstartbits(toint.CMP2, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
 
-Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int)internalbc
- addstartbits(INSTCALL, 5, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, emptyinternalbc))))))
+function addaddress(loc:slot,a:slot,bc:internalbc) internalbc
+ addaddress(-toint.loc,toint.a,bc)
+ 
+ function addsignedaddress(loc:slot,a:slot,bc:internalbc) internalbc
+ addsignedaddress(-toint.loc,toint.a,bc)
 
-Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int)internalbc
- addstartbits(INSTCALL, 6, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, emptyinternalbc)))))))
 
-Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int)internalbc
- addstartbits(INSTCALL
- , 7
- , add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, emptyinternalbc))))))))
+/Function BINOP(slot:int, a1:int, a2:int, a3:int)internalbc
+ addstartbits(toint.BINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
 
-Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, a8:int)internalbc
- addstartbits(INSTCALL
- , 8
- , add(a1
- , add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, emptyinternalbc)))))))))
+Function BINOP(slot:slot, a1:slot, a2:slot, a3:binaryop)internalbc
+ addstartbits(toint.BINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(toint.a3, emptyinternalbc))))
 
-Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, a8:int, a9:int)internalbc
- addstartbits(INSTCALL
- , 9
- , add(a1
- , add(a2
- , add(a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, addaddress(slot, a9, emptyinternalbc))))))))))
+ 
+ Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot)internalbc
+ addstartbits(toint.CALL, 4, add(a1, add(a2, add(typ.a3, addaddress(slot, a4, emptyinternalbc)))))
 
-Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int, a8:int, a9:int
-, a10:int)internalbc
- addstartbits(INSTCALL
- , 10
- , add(a1
- , add(a2
- , add(a3
- , addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, addaddress(slot, a8, addaddress(slot, a9, addaddress(slot, a10, emptyinternalbc)))))))))))
+Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot)internalbc
+ addstartbits(toint.CALL, 5, add(a1, add(a2, add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, emptyinternalbc))))))
 
-Function CALL(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, rest:seq.int)internalbc
- addstartbits(INSTCALL, 5 + length.rest, add(a1, add(a2, add(a3, addaddress(slot, a4, addaddress(slot, a5, args(slot, emptyinternalbc, rest, length.rest)))))))
+Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, a6:slot)internalbc
+ addstartbits(toint.CALL, 6, add(a1, add(a2, add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, emptyinternalbc)))))))
+
+
+
+Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, rest:seq.slot)internalbc
+ addstartbits(toint.CALL, 5 + length.rest, add(a1, add(a2, add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, args(slot, emptyinternalbc, rest, length.rest)))))))
 
 Function CALLSTART(slot:int, a1:int, a2:int, a3:int, a4:int, noargs:int)internalbc
- addstartbits(INSTCALL, 4 + noargs, add(a1, add(a2, add(a3, addaddress(slot, a4, emptyinternalbc)))))
+ addstartbits(toint.CALL, 4 + noargs, add(a1, add(a2, add(a3, addaddress(slot, a4, emptyinternalbc)))))
 
 Function CALLFINISH(slot:int, rest:seq.int)internalbc args(slot, emptyinternalbc, rest, length.rest)
 
 function args(slot:int, t:internalbc, rest:seq.int, i:int)internalbc
  if i = 0 then t else args(slot, addaddress(slot, rest_i, t), rest, i - 1)
 
-Function CMP2(slot:int, a1:int, a2:int, a3:int)internalbc
- addstartbits(INSTCMP2, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
+use seq.slot
 
-Function PHI(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int, a6:int, a7:int)internalbc
- addstartbits(INSTPHI, 7, add(a1, addsignedaddress(slot, a2, add(a3, addsignedaddress(slot, a4, add(a5, addsignedaddress(slot, a6, add(a7, emptyinternalbc))))))))
+function args(slot:slot, t:internalbc, rest:seq.slot, i:int)internalbc
+ if i = 0 then t else args(slot, addaddress(slot, rest_i, t), rest, i - 1)
 
-Function PHI(slot:int, a1:int, a2:int, a3:int, a4:int, a5:int)internalbc
- addstartbits(INSTPHI, 5, add(a1, addsignedaddress(slot, a2, add(a3, addsignedaddress(slot, a4, add(a5, emptyinternalbc))))))
+ 
+ 
+
+Function PHI(slot:slot, a1:llvmtype, a2:slot, a3:int, a4:slot, a5:int, a6:slot, a7:int)internalbc
+ addstartbits(toint.PHI, 7, add(typ.a1, addsignedaddress(slot, a2, add(a3, addsignedaddress(slot, a4, add(a5, addsignedaddress(slot, a6, add(a7, emptyinternalbc))))))))
+
+Function PHI(slot:slot, a1:llvmtype, a2:slot, a3:int, a4:slot, a5:int)internalbc
+ addstartbits(toint.PHI, 5, add(typ.a1, addsignedaddress(slot, a2, add(a3, addsignedaddress(slot, a4, add(a5, emptyinternalbc))))))
 
 Function PHI(slot:int, a1:int, s:seq.int)internalbc
- addstartbits(INSTPHI, length.s + 1, add(a1, subphi(slot, emptyinternalbc, s, length.s)))
+ addstartbits(toint.PHI, length.s + 1, add(a1, subphi(slot, emptyinternalbc, s, length.s)))
 
 function subphi(slot:int, b:internalbc, s:seq.int, i:int)internalbc
  if i > 1 then
@@ -129,7 +125,7 @@ function addpair(tailphi:seq.int, slot:int, p:int, a:internalbc, b:int)internalb
 
 function phiinst(slot:int, typ:int, tailphi:seq.int, nopara:int, p:int)internalbc
  let t = @(addpair(tailphi, slot + p, p), identity, emptyinternalbc, arithseq(length.tailphi / (nopara + 1), - nopara - 1, length.tailphi - nopara))
-  addstartbits(INSTPHI, length.tailphi / (nopara + 1) * 2 + 1, add(typ, t))
+  addstartbits(toint.PHI, length.tailphi / (nopara + 1) * 2 + 1, add(typ, t))
 
 Function phiinst(slot:int, typ:int, tailphi:seq.int, nopara:int)internalbc
  @(+, phiinst(slot, typ, tailphi, nopara), emptyinternalbc, arithseq(nopara, 1, 1))
@@ -392,11 +388,8 @@ use seq.internalbc
 
 use internalbc
 
-use seq.encoding.llvmconst
 
-use encoding.llvmconst
-
-use seq.llvmconst
+use seq.slotrecord
 
 
 use stdlib
@@ -409,7 +402,6 @@ use seq.trackconst
 
 use llvmconstants
 
-use seq.encodingpair.llvmconst
 
 Function addblockheader(b:bitpackedseq.bit, currentabbrelength:int, blockid:int, abbrevlength:int)bitpackedseq.bit
  addvbr(align32.addvbr(addvbr(addvbr(b, ENTERBLOCK, currentabbrelength), blockid, 8), abbrevlength, 4), 0, 32)
@@ -422,7 +414,7 @@ Function finishblock(current:bitpackedseq.bit, headerplace:int, blockabbrevlengt
    // assert false report"X"+ toword(length.header -32)+ toword.len // patch(bb, headerplace - 31, len)
 
 Function addbody(offset:int, abbrevlen:int, m:bitpackedseq.bit, bodytxt:internalbc)bitpackedseq.bit
- let header = addblockheader(m, abbrevlen, FUNCTIONBLOCK, 4)
+ let header = addblockheader(m, abbrevlen, toint.FUNCTIONBLK, 4)
   finishblock(addtobitstream(offset, header, bodytxt), length.header, 4)
 
 Function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int)bitpackedseq.bit @(addrecord.abbrevlength, identity, bits, s)
@@ -439,19 +431,19 @@ function ENTERBLOCK int 1
 Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits
  let MODABBREVLEN = 3
  let TYPEABBREVLEN = 4
- let offset = length.encoding:seq.encodingpair.llvmconst
+ let offset = length.constantrecords
  let h = addblockheader(add(add(add(add(empty:bitpackedseq.bit, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8)
  , 2
- , MODULEBLOCK
+ , toint.MODULE
  , MODABBREVLEN)
  let info = getmachineinfo
- let a = addrecords(h, MODABBREVLEN, [ [ 1, 1], [ MODULETRIPLE] + triple.info, [ MODULELAYOUT] + datalayout.info])
+ let a = addrecords(h, MODABBREVLEN, [ [ 1, 1], [  toint.TRIPLE] + triple.info, [  toint.LAYOUT] + datalayout.info])
   // type block //
-  let typeheader = addblockheader(a, MODABBREVLEN, TYPEBLOCK, TYPEABBREVLEN)
-  let a2 = addrecords(typeheader, TYPEABBREVLEN, [ [ ENTRY, length.trecords]] + trecords)
+  let typeheader = addblockheader(a, MODABBREVLEN, toint.TYPES, TYPEABBREVLEN)
+  let a2 = addrecords(typeheader, TYPEABBREVLEN, [ [ toint.NumEle, length.trecords]] + trecords)
   let a3 = finishblock(a2, length.typeheader, TYPEABBREVLEN)
    // PARAGRPBLOCK //
-   let pgh = addblockheader(a3, MODABBREVLEN, PARAGRPBLOCK, TYPEABBREVLEN)
+   let pgh = addblockheader(a3, MODABBREVLEN, toint.PARAGRP, TYPEABBREVLEN)
    let pge = finishblock(addrecords(pgh
    , TYPEABBREVLEN
    , [ [ 3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18] + [ 3]
@@ -460,56 +452,57 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
    , length.pgh
    , TYPEABBREVLEN)
     // para block //
-    let paraheader = addblockheader(pge, MODABBREVLEN, PARABLOCK, TYPEABBREVLEN)
+    let paraheader = addblockheader(pge, MODABBREVLEN, toint.PARA, TYPEABBREVLEN)
     let a4 = finishblock(addrecords(paraheader, TYPEABBREVLEN, [ [ 2, 0]]), length.paraheader, TYPEABBREVLEN)
      // def list //
      let a5 = addrecords(a4, MODABBREVLEN, deflist)
       // const block //
-      let g = @(constrecords, identity, trackconst(a5, -1, 0), subseq(encoding:seq.encodingpair.llvmconst, length.deflist + 1, offset))
+      let g = @(constrecords, identity, trackconst(a5, -1, 0), subseq(constantrecords, length.deflist + 1, offset))
       let a6 = finishblock(bits.g, blockstart.g, TYPEABBREVLEN)
        // function bodies //
        // assert length.trecords = length.typerecords report"X"//
        let a7 = @(addbody(offset, MODABBREVLEN), identity, a6, bodytxts)
         // sym table //
-        let symtabheader = addblockheader(a7, MODABBREVLEN, VALUESYMTABBLOCK, TYPEABBREVLEN)
-        let a8 = finishblock(symentries(symtabheader, encoding:seq.encodingpair.llvmconst, 1), length.symtabheader, TYPEABBREVLEN)
+        let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
+        let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
          // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN)
 
-function constrecords(z:trackconst, lx:encodingpair.llvmconst)trackconst
+function constrecords(z:trackconst, l:slotrecord)trackconst
  // keep track of type of last const processed and add record when type changes //
- let l=data.lx
  let MODABBREVLEN = 3
  let TYPEABBREVLEN = 4
   if ismoduleblock.l   then
   let bits = if not.islastmodule.z then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)else bits.z
-     // let rec=if typ.l=-1 then [ MODULECODEFUNCTION, symtabtype.l, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-     else  if   typ.l=-2 then [ MODULECODEGLOBALVAR, symtabtype.l, 2, 1+C64.0, 0, align8 + 1, 0]
-     else assert typ.l=-3 report "error in costrecords"  toseq.l //
-     trackconst(addrecord(MODABBREVLEN, bits, modulerecord.l), typ.l, 0)
+      trackconst(addrecord(MODABBREVLEN, bits, record.l), typ.l, 0)
   else
    let newblock = islastmodule.z  ∧ not.ismoduleblock.l 
-   let bits = if newblock then addblockheader(bits.z, MODABBREVLEN, CONSTANTSBLOCK, TYPEABBREVLEN)else bits.z
+   let bits = if newblock then addblockheader(bits.z, MODABBREVLEN, toint.CONSTANTS , TYPEABBREVLEN)else bits.z
    let bits2 = if lasttype.z = typ.l then bits
    else
     addvbr6(add(bits, bits((1 * 64 + 1) * 16 + 3), 16), typ.l)
-   let tp =(toseq.l)_1
-   let bs = if tp = CONSTINTEGER then
-   addvbrsigned6(add(bits2, bits((1 * 64 + CONSTINTEGER) * 16 + 3), 16),(toseq.l)_2)
+    let rec=record.l
+   let tp =rec_1
+   let bs = if tp = toint.CINTEGER then
+   addvbrsigned6(add(bits2, bits((1 * 64 + toint.CINTEGER) * 16 + 3), 16),rec_2)
    else
-    let a1 = if length.toseq.l < 32 then
-    add(bits2, bits(((length.toseq.l - 1) * 64 + tp) * 16 + 3), 16)
-    else addvbr6(addvbr6(addvbr(bits2, 3, TYPEABBREVLEN), tp), length.toseq.l - 1)
-     addvbr6(a1, subseq(toseq.l, 2, length.toseq.l))
+    let a1 = if length.rec < 32 then
+    add(bits2, bits(((length.rec - 1) * 64 + tp) * 16 + 3), 16)
+    else addvbr6(addvbr6(addvbr(bits2, 3, TYPEABBREVLEN), tp), length.rec - 1)
+     addvbr6(a1, subseq(rec, 2, length.rec))
     trackconst(bs, typ.l, if newblock then length.bits else blockstart.z)
+    
+    use seq.int
 
-Function symentries(bits:bitpackedseq.bit, s:seq.encodingpair.llvmconst, i:int)bitpackedseq.bit
+Function symentries(bits:bitpackedseq.bit, s:seq.slotrecord, i:int)bitpackedseq.bit
  if i > length.s then bits
  else
-  let l = data.s_i
-  let bs = if ismoduleblock.l &and typ.l  &ne -3 then
+  let l = s_i
+  let bs = if ismoduleblock.l  then
   let abbrevlength = 4
-  let name=symtabname.l
-   let a1 = addvbr6(addvbr6(addvbr6(addvbr(bits, 3, abbrevlength), ENTRY), length.name + 1), i - 1)
+  let name=tointseq.symtablename.l
+  if isempty.name then bits
+  else 
+   let a1 = addvbr6(addvbr6(addvbr6(addvbr(bits, 3, abbrevlength),// rec type entry // 1), length.name + 1), i - 1)
     addvbr6(a1, name)
   else bits
    symentries(bs, s, i + 1)
@@ -530,83 +523,113 @@ module llvmconstants
 
 use stdlib
 
-Function INSTCALL int 34
+ function generatecode seq.word
+ // generates code in this module beyond --------- //
+   enumerate("align","unspecified  ? ? ? align8 align16 align32 align64")
+   +enumerate("instop","? BLOCK BINOP CAST ? SELECT ? ? ? ?   RET BR ? ? ? ? PHI ? ? ALLOCA LOAD
+? ? ?  ? ? ? ?  CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ?  GEP STORE")
+   +enumerate( "typeop","? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION")
+   +enumerate( "blockop",
+    "INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES")
+   +enumerate("moduleop","? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC")
+   +enumerate("constop", "? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT  CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST 
+ ? ? ? ? ? ? ? ? CGEP ? CDATA")
+    +enumerate("castop","trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast")
+    +enumerate("binaryop","add sub mul udiv sdiv urem srem shl lshr ashr and or xor")
+    +enumerate("cmp2op" ,"? ? ? ? ? ? ? ? ? ?
+   ? ? ? ? ? ? ? ? ? ?
+     ? ? ? ? ? ? ? ? ? ? ? ?
+    eq ? ? ? ? ?  sgt")
 
-Function INSTRET int 10
+  
 
-Function INSTCAST int // CAST:[ opcode, ty, opty, opval]// 3
+   
+function enumerate(type:seq.word,codes:seq.word) seq.word
+ "type"+type+"is record toint:int"+
+  "&br &br Function decode(code:" +type+ ") seq.word" 
+ +"&br let i=toint.code if between(i+ 1,1,"+toword.length.codes+")  then "
+ +   ' &br let r=[" ' +codes+ ' "_(i+1)]  if not(r= "?") then r else " ' + type+ ' " +toword.i '  
+ +  ' &br  else " ' + type+ ' " +toword.i ' 
+ +"&br &br function toint("+type+") int export"
+ +"&br &br function "+type+"(i:int) "+type+" export"
++"&br &br function type:"+type+" internaltype export"
++"&br &br Function =(a:"+type+",b:"+type+") boolean  toint.a=toint.b"
+ + @(+,dd(type,codes),"",arithseq(length.codes,1,1))
++"&br &br"
 
-Function INSTSELECT int 5
+ function dd(type:seq.word,w:seq.word,i:int) seq.word
+   if w_i ="?"_1 then "" else
+   "&br &br Function "+w_i +type + type+"."+toword.(i-1)
 
-Function INSTBR int 11
 
-Function INSTPHI int 16
 
-Function INSTCMP2 int 28
+--------------------------
 
-Function INSTBINOP int 2
+type align is record toint:int 
 
-Function INSTBLOCK int 1
+Function decode(code:align)seq.word 
+let i = toint.code if between(i + 1, 1, 8)then 
+let r = ["unspecified ? ? ? align8 align16 align32 align64"_(i + 1)]if not(r ="?")then r else"align"+ toword.i 
+else"align"+ toword.i 
 
-Function INSTNOPARA int -1
+function toint(align)int export 
 
-Function INSTALLOCA int 19
+function align(i:int)align export 
 
-Function INSTLOAD int 20
+function type:align internaltype export 
 
-Function INSTSTORE int 44
+Function =(a:align, b:align)boolean toint.a = toint.b 
 
-Function INSTGEP int 43
+Function unspecified align align.0 
 
-Function STRUCTNAME int 19
+Function align8 align align.4 
 
-Function BLOCKINFOBLOCK int 0
+Function align16 align align.5 
 
-Function MODULEBLOCK int 8
+Function align32 align align.6 
 
-Function PARABLOCK int 9
+Function align64 align align.7 
 
-Function PARAGRPBLOCK int 10
+type instop is record toint:int 
 
-Function CONSTANTSBLOCK int 11
+Function decode(code:instop)seq.word 
+let i = toint.code if between(i + 1, 1, 45)then 
+let r = ["? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"_(i + 1)]if not(r ="?")then r else"instop"+ toword.i 
+else"instop"+ toword.i 
 
-Function FUNCTIONBLOCK int 12
+function toint(instop)int export 
 
-Function TYPEBLOCK int 17
+function instop(i:int)instop export 
 
-Function MODULETRIPLE int 2
+function type:instop internaltype export 
 
-Function MODULELAYOUT int 3
+Function =(a:instop, b:instop)boolean toint.a = toint.b 
 
-Function MODULECODEGLOBALVAR int 7
+Function BLOCK instop instop.1 
 
-Function MODULECODEFUNCTION int 8
+Function BINOP instop instop.2 
 
-Function VALUESYMTABBLOCK int 14
+Function CAST instop instop.3 
 
-Function CONSTCECAST int 11
+Function SELECT instop instop.5 
 
-Function CONSTINTEGER int 4
+Function RET instop instop.10 
 
-Function CONSTSETTYPE int 1
+Function BR instop instop.11 
 
-Function CONSTNULL int 2
+Function PHI instop instop.16 
 
-Function CONSTDATA int 22
+Function ALLOCA instop instop.19 
 
-Function CONSTGEP int 20
+Function LOAD instop instop.20 
 
-Function AGGREGATE int 7
+Function CMP2 instop instop.28 
 
-Function CSTRING int 9
+Function CALL instop instop.34 
 
-Function ENTRY int 1
+Function GEP instop instop.43 
 
-Function align4 int 3
-
-Function align8 int 4
-
-Function align16 int 5
+Function STORE instop instop.44 
 
 type typeop is record toint:int 
 
@@ -639,4 +662,198 @@ Function ARRAY typeop typeop.11
 
 Function FUNCTION typeop typeop.21 
 
+type blockop is record toint:int 
 
+Function decode(code:blockop)seq.word 
+let i = toint.code if between(i + 1, 1, 18)then 
+let r = ["INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"_(i + 1)]if not(r ="?")then r else"blockop"+ toword.i 
+else"blockop"+ toword.i 
+
+function toint(blockop)int export 
+
+function blockop(i:int)blockop export 
+
+function type:blockop internaltype export 
+
+Function =(a:blockop, b:blockop)boolean toint.a = toint.b 
+
+Function INFOBLOCK blockop blockop.0 
+
+Function MODULE blockop blockop.8 
+
+Function PARA blockop blockop.9 
+
+Function PARAGRP blockop blockop.10 
+
+Function CONSTANTS blockop blockop.11 
+
+Function FUNCTIONBLK blockop blockop.12 
+
+Function VALUESYMTABLE blockop blockop.14 
+
+Function TYPES blockop blockop.17 
+
+type moduleop is record toint:int 
+
+Function decode(code:moduleop)seq.word 
+let i = toint.code if between(i + 1, 1, 9)then 
+let r = ["? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"_(i + 1)]if not(r ="?")then r else"moduleop"+ toword.i 
+else"moduleop"+ toword.i 
+
+function toint(moduleop)int export 
+
+function moduleop(i:int)moduleop export 
+
+function type:moduleop internaltype export 
+
+Function =(a:moduleop, b:moduleop)boolean toint.a = toint.b 
+
+Function Version moduleop moduleop.1 
+
+Function TRIPLE moduleop moduleop.2 
+
+Function LAYOUT moduleop moduleop.3 
+
+Function GLOBALVAR moduleop moduleop.7 
+
+Function FUNCTIONDEC moduleop moduleop.8 
+
+type constop is record toint:int 
+
+Function decode(code:constop)seq.word 
+let i = toint.code if between(i + 1, 1, 23)then 
+let r = ["? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"_(i + 1)]if not(r ="?")then r else"constop"+ toword.i 
+else"constop"+ toword.i 
+
+function toint(constop)int export 
+
+function constop(i:int)constop export 
+
+function type:constop internaltype export 
+
+Function =(a:constop, b:constop)boolean toint.a = toint.b 
+
+Function SETTYPE constop constop.1 
+
+Function CNULL constop constop.2 
+
+Function CUNDEF constop constop.3 
+
+Function CINTEGER constop constop.4 
+
+Function CWIDEINTEGER constop constop.5 
+
+Function CFLOAT constop constop.6 
+
+Function CAGGREGATE constop constop.7 
+
+Function CSTRING2 constop constop.8 
+
+Function CSTRING0 constop constop.9 
+
+Function CBINOP constop constop.10 
+
+Function CCAST constop constop.11 
+
+Function CGEP constop constop.20 
+
+Function CDATA constop constop.22 
+
+type castop is record toint:int 
+
+Function decode(code:castop)seq.word 
+let i = toint.code if between(i + 1, 1, 12)then 
+let r = ["trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"_(i + 1)]if not(r ="?")then r else"castop"+ toword.i 
+else"castop"+ toword.i 
+
+function toint(castop)int export 
+
+function castop(i:int)castop export 
+
+function type:castop internaltype export 
+
+Function =(a:castop, b:castop)boolean toint.a = toint.b 
+
+Function trunc castop castop.0 
+
+Function zext castop castop.1 
+
+Function sext castop castop.2 
+
+Function fptoui castop castop.3 
+
+Function fptosi castop castop.4 
+
+Function uitofp castop castop.5 
+
+Function sitofp castop castop.6 
+
+Function fptrunc castop castop.7 
+
+Function fpext castop castop.8 
+
+Function ptrtoint castop castop.9 
+
+Function inttoptr castop castop.10 
+
+Function bitcast castop castop.11 
+
+type binaryop is record toint:int 
+
+Function decode(code:binaryop)seq.word 
+let i = toint.code if between(i + 1, 1, 13)then 
+let r = ["add sub mul udiv sdiv urem srem shl lshr ashr and or xor"_(i + 1)]if not(r ="?")then r else"binaryop"+ toword.i 
+else"binaryop"+ toword.i 
+
+function toint(binaryop)int export 
+
+function binaryop(i:int)binaryop export 
+
+function type:binaryop internaltype export 
+
+Function =(a:binaryop, b:binaryop)boolean toint.a = toint.b 
+
+Function add binaryop binaryop.0 
+
+Function sub binaryop binaryop.1 
+
+Function mul binaryop binaryop.2 
+
+Function udiv binaryop binaryop.3 
+
+Function sdiv binaryop binaryop.4 
+
+Function urem binaryop binaryop.5 
+
+Function srem binaryop binaryop.6 
+
+Function shl binaryop binaryop.7 
+
+Function lshr binaryop binaryop.8 
+
+Function ashr binaryop binaryop.9 
+
+Function and binaryop binaryop.10 
+
+Function or binaryop binaryop.11 
+
+Function xor binaryop binaryop.12 
+
+type cmp2op is record toint:int 
+
+Function decode(code:cmp2op)seq.word 
+let i = toint.code if between(i + 1, 1, 39)then 
+let r = ["? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ? ? ? ? ? sgt"_(i + 1)]if not(r ="?")then r else"cmp2op"+ toword.i 
+else"cmp2op"+ toword.i 
+
+function toint(cmp2op)int export 
+
+function cmp2op(i:int)cmp2op export 
+
+function type:cmp2op internaltype export 
+
+Function =(a:cmp2op, b:cmp2op)boolean toint.a = toint.b 
+
+Function eq cmp2op cmp2op.32 
+
+Function sgt cmp2op cmp2op.38 

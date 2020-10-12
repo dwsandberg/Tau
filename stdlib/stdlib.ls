@@ -9,14 +9,14 @@ parse pass1new  persistant  prims process real   seq set stack stacktrace symbol
  mangle mytype
 parsersupport  uses 
  exports stdlib main2 maindict UTF8    words   assignencodingnumber
-  bits blockseq   encoding fileio format  llvmconstants
+  bits blockseq   encoding fileio format  llvmconstants llvm
   ipair       process real   seq set stack stacktrace 
   textio  prims      otherseq tree graph   
   newpretty 
   worddict groupparagraphs 
  timestamp ioseq dataio intdict dict
     parsersupport mangle mytype   bitpackedseq xxhash
-     internalbc llvm persistant libdesc
+        persistant libdesc
   
  
  
