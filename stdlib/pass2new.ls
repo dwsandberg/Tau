@@ -28,9 +28,9 @@ function breakblocks(p:program,code:seq.symbol,self:symbol) seq.symbol
      let a2=@(+,preparetail(nopara,self,continue.nopara),empty:seq.block,a)
      let plist = @(+, var, empty:seq.symbol, arithseq(nopara, 1, 1))
      let entry = block("LOOPBLOCK"_1,0,blkno.a2_1,0, plist + Lit(nopara + 1) + loopblock(nopara + 1))
-      ascode(p,[entry]+a2)
+      ascode(p,[entry]+a2,self)
    else
-   ascode(p,a)
+   ascode(p,a,self)
    
 function   preparetail(nopara:int,self:symbol,continue:symbol,b:block) block
     let code=adjustvar(code.b, nopara, 1, empty:seq.symbol)
@@ -71,7 +71,7 @@ function adjustvar(s:seq.symbol, delta:int, i:int, result:seq.symbol)seq.symbol
        if kind in "CONTINUE LOOPBLOCK" then 
          breakblocks(p,code,i+1,i+1,empty:seq.symbol,push(blks,block(kind,i,0,0,blkcode+subseq(code,start,i))))
        else  if not(kind  = "BLOCK"_1 ) then breakblocks(p,code,i+1,start,blkcode,blks)
-        else  let nopara=toint((fsig.rep)_2)
+        else  let nopara=nopara.rep 
           let args=top(blks,nopara)
           let subblks=cvtlabels(args,1,empty:seq.block)
           if i=length.code then 
@@ -83,7 +83,7 @@ function adjustvar(s:seq.symbol, delta:int, i:int, result:seq.symbol)seq.symbol
                 breakblocks(p,code,i+4,i+4,empty:seq.symbol,push(pop(blks,nopara),
                block("BRBLKS"_1,blkno.subblks_1,0,0,subseq(code,i+1,i+3),subblks))        )
           else 
-             breakblocks(p,code,i+1,i+1, blkcode+ascode(p,subblks) ,pop(blks,nopara))
+              breakblocks(p,code,i+1,i+1, blkcode+ascode(p,subblks,rep) ,pop(blks,nopara))
      
  use seq.int
  
@@ -91,9 +91,16 @@ function adjustvar(s:seq.symbol, delta:int, i:int, result:seq.symbol)seq.symbol
  
 
  
-function ascode(p:program,subblks1:seq.block) seq.symbol
-ascode(p,subblks1,1,[subblks1_1],empty:seq.symbol) 
-  
+function ascode(p:program,subblks1:seq.block,org:symbol) seq.symbol
+let x=ascode(p,subblks1,1,[subblks1_1],empty:seq.symbol) 
+let rrr=subseq(x,1,length.x-1)
+ let blksize= value.last.x
+ if isblock.org &and nopara.org=blksize then
+  // use original block //
+ rrr+org
+ else
+  let type="int"
+ rrr+Block(resulttype.org,blksize)
     
 function =(a:block,b:block) boolean blkno.a=blkno.b
   
@@ -106,7 +113,7 @@ function   checkforcase(p:program,blk:block) seq.symbol
         else exp
   
 function  ascode(p:program,l:seq.block,i:int,assigned:seq.block,result:seq.symbol) seq.symbol
-    if i > length.assigned then result+Block.length.assigned else 
+    if i > length.assigned then result+Lit.length.assigned else 
     let   blk=assigned_i
     if kind.blk in "BR " then
          let a2=findblk2(l,1,label2.blk)
@@ -463,10 +470,7 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
     if isconst.sym then yyy(p,org,k+1,result+sym,  nextvar, map)
  else
    if isspecial.sym then 
-    //  if (fsig.sym)_1 in "EXITBLOCK CONTINUE" then
-       yyy(p,org,k+1,result+sym,  nextvar, map)
- else //
-      if (fsig.sym)_1="BLOCK"_1 &and  fsig.sym="BLOCK 3" then
+    if (fsig.sym)_1="BLOCK"_1 &and  fsig.sym="BLOCK 3" then
      let t = backparse(result, len, 3, empty:seq.int) + [len+1]
      let condidx=t_2-4
      let cond=result_ condidx
@@ -734,6 +738,7 @@ function applytemplate(op:word) seq.symbol
 let CALLIDX =if op="APPLYI"_1 then symbol("callidxI( T seq,int)","builtin", "int")
 else if op="APPLYP"_1 then symbol("callidxP(T seq,int)","builtin", "ptr")
 else  symbol("callidxR(T seq,int)","builtin", "real")
+let resulttype=mytype.if op="APPLYI"_1 then "int" else if op="APPLYP"_1 then "ptr" else  "real"
 let STKRECORD= symbol("STKRECORD(int,int)","builtin", "?")
 let theseq = 5
 let stk = 6
@@ -744,8 +749,8 @@ let stk = 6
  var."term2para"_1, 
    var.theseq, var.10, CALLIDX,  var."term2"_1, Define."11"_1, 
    var."term1para"_1, var.9, var.11, var."term1"_1, var.10, Lit.1, PlusOp, continue.2
- , Block.4, Define."7"_1, var.stk, Lit.0, EqOp, Lit.5, Lit.6, Br, var.7, Exit
- , var.7, var.stk, Lit.1, IDXP, var.stk, Lit.0, IDXP, continue.3, Block.6]
+ , Block(resulttype,4), Define."7"_1, var.stk, Lit.0, EqOp, Lit.5, Lit.6, Br, var.7, Exit
+ , var.7, var.stk, Lit.1, IDXP, var.stk, Lit.0, IDXP, continue.3, Block(resulttype,6)]
 
 
 function depthfirst(knownsymbols:program,processed:program,s:symbol) program

@@ -12,6 +12,7 @@
  
 run testall testall 
 
+* STATE builtin: addencoding(  seq.int, seq.T, int ) int  
 
  
  * usegraph exclude stdlib 

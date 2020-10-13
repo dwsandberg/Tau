@@ -101,10 +101,11 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
  let nopara =nopara.last.code.exp
   let rt =(types.exp)_1
   let prt = mytype(towords.rt + "process")
+     let recordtyp=[mytype."int",mytype."int",mytype."int",mytype."int"]+paratypes.last.code.exp
   let newcode =  [Fref.deepcopysym.rt,Fref.deepcopysym.mytype."word seq",Fref.last.code.exp, 
    Lit.nopara   
   ]+subseq(code.exp, 1, length.code.exp - 1)
-  +[Record(nopara + 4),symbol("process2(ptr)","builtin","ptr")]
+  +[Record(recordtyp),symbol("process2(ptr)","builtin","ptr")]
    bindinfo(dict.R, newcode, [ mytype(towords.rt + "process")],"")
  else
   let f = lookupbysig(dict.R, op , types.exp, input, place.R)
@@ -195,7 +196,7 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  let thenpart = R_4
    assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)
     assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R)
-    let newcode = code.R_2 +[Lit2, Lit3, Br]+ code.R_4 +Exit + code.R_6 +[Exit,Block.3]
+    let newcode = code.R_2 +[Lit2, Lit3, Br]+ code.R_4 +Exit + code.R_6 +[Exit,Block3.(types.R_4)_1 ]
      bindinfo(dict.R, newcode ,types.thenpart,"")
  else if ruleno = // E E^E // 18 then opaction(R, input)
  else if ruleno = // E E_E // 19 then opaction(R, input)
@@ -214,7 +215,7 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  else if ruleno = // E [ L]// 31 then
  let types = types.R_2
    assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place.R)
-    bindinfo(dict.R,[Lit0,Lit.length.types] + code.R_2 + Record(length.types + 2)
+    bindinfo(dict.R,[Lit0,Lit.length.types] + code.R_2 + Record([mytype."int",mytype."int"]+types)   
    , [ mytype(towords.types_1 + "seq")],"")
  else if ruleno = // A let W = E // 32 then
  let e = R_4
@@ -231,7 +232,7 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place.R)
    assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place.R)
    let newcode= code.R_2 +[Lit2,Lit.3,Br] + code.R_5 +Exit + code.R_4 +
-    symbol("assert(word seq)","builtin","none")+Exit+Block.3  
+    symbol("assert(word seq)","builtin","none")+Exit+Block3((types.R_5)_1)  
     bindinfo(dict.R, newcode, types.R_5,"")
  else if ruleno = // E I // 35 then
  bindinfo(dict.R,[Lit.toint.(tokentext.R_1)_1], [ mytype."int"],"")

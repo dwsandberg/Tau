@@ -135,14 +135,19 @@ function table seq.match5
   ,  match5(1,"sqrtZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.sqrt.f64",function.[ double, double]),slot.ibcsub1))
   ,  match5(1,"sinZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.sin.f64",function.[ double, double]),slot.ibcsub1))
   ,  match5(1,"cosZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.cos.f64",function.[ double, double]),slot.ibcsub1))
-,match5(1,"intpartZbuiltinZreal"_1, 1,   CAST(r.2, r.1,  i64, // fptosi double // 4))
+,match5(1,"intpartZbuiltinZreal"_1, 1,   CAST(r.1, slot.ibcsub1,  i64, // fptosi double // 4))
 ,match5(1,"torealZbuiltinZint"_1, 1, // sitofp // CAST(r.1, slot.ibcsub1,  double, 6) )
 ,  match5(2,"Q2DZbuiltinZrealZreal"_1, 1,   BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sub))
 ,  match5(2,// + //"Q2BZbuiltinZrealZreal"_1, 1,   BINOP(r.1, slot.ibcsub1, slot.ibcsub2, add))
 ,  match5(2,// * //"Q2AZbuiltinZrealZreal"_1, 1,   BINOP(r.1, slot.ibcsub1, slot.ibcsub2, mul))
 ,  match5(2,// / op //"Q2FZbuiltinZrealZreal"_1, 1,   BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sdiv))
- , match5(1,"casttorealZbuiltinZint"_1, 0, CAST(r.1, slot.ibcsub1,  double, 11))
- ,match5(1,"representationZbuiltinZreal"_1, 1, CAST(r.2, r.1,  i64, 11)) 
+ , match5(1,"casttorealZbuiltinZint"_1, 1, CAST(r.1, slot.ibcsub1, double, 11))
+ ,match5(1,"representationZbuiltinZreal"_1, 1, CAST(r.1, slot.ibcsub1, i64, 11)) 
+ , match5(2,// ? //"Q3FZbuiltinZrealZreal"_1, 5,     CMP2(r.1,slot.ibcsub1, slot.ibcsub2, 3)
+ + CAST(r.2, r.1, i64, CASTZEXT)
++ CMP2(r.3 ,slot.ibcsub1, slot.ibcsub2, 2)
++ CAST(r.4, r.3,  i64, CASTZEXT)
++ BINOP(r.5, r.2, r.4, add ))
 ]
  else 
    [match5(2,"IDXRZbuiltinZintZint"_1, 3, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR) + GEP(r.2,  i64, r.1, slot.ibcsub2)+ LOAD(r.3, r.2,  i64 ))
@@ -163,7 +168,11 @@ function table seq.match5
 ,match5(2,// / op //"Q2FZbuiltinZrealZreal"_1, 4, CAST(r.1, slot.ibcsub1,  double, 11) + CAST(r.2, slot.ibcsub2,  double, 11) + BINOP(r.3, r.1, r.2,  sdiv)+ CAST(r.4, r.3,  i64, 11) )
  , match5(1,"casttorealZbuiltinZint"_1, 0, emptyinternalbc)
  ,match5(1,"representationZbuiltinZreal"_1, 0, emptyinternalbc)
-]
+ , match5(2,// ? //"Q3FZbuiltinZrealZreal"_1, 7, CAST(r.1, slot.ibcsub1,  double, 11) + CAST(r.2, slot.ibcsub2,  double, 11) + CMP2(r.3, r.1, r.2, 3)
++ CAST(r.4, r.3, i64, CASTZEXT)
++ CMP2(r.5, r.1, r.2, 2)
++ CAST(r.6, r.5,  i64, CASTZEXT)
++ BINOP(r.7, r.4, r.6, add ))]
 let t = z+ [  match5(1,"getseqtypeZbuiltinZTzseq"_1, 2, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)   
 + LOAD(r.2, r.1,  i64 ))
 , match5(2,"IDXIZbuiltinZintZint"_1, 3, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)  + GEP(r.2,  i64, r.1, slot.ibcsub2)
@@ -184,11 +193,6 @@ match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub
 , match5(2,// + // "Q2BZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, add ))
 , match5(2,// * // "Q2AZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2,mul ))
 , match5(2,// / op //"Q2FZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sdiv ))
-, match5(2,// ? //"Q3FZbuiltinZrealZreal"_1, 7, CAST(r.1, slot.ibcsub1,  double, 11) + CAST(r.2, slot.ibcsub2,  double, 11) + CMP2(r.3, r.1, r.2, 3)
-+ CAST(r.4, r.3, i64, CASTZEXT)
-+ CMP2(r.5, r.1, r.2, 2)
-+ CAST(r.6, r.5,  i64, CASTZEXT)
-+ BINOP(r.7, r.4, r.6, add ))
 , match5(2,"Q3CQ3CZbuiltinZbitsZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, shl ))
 , match5(2,"Q3EQ3EZbuiltinZbitsZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2,  lshr  ))
 , match5(2,"Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, and  ))
@@ -248,8 +252,6 @@ function match5(nopara:int,inst:word, length:int, b:internalbc)match5
 
 Function funcdec(alltypes:seq.myinternaltype,i:symbol) int
    toint.modulerecord([mangledname.i],[ toint.FUNCTIONDEC, typ.tollvmtype(alltypes,i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
-
-   
  
 Function match5map( theprg:program, uses:set.symbol,alltypes:seq.myinternaltype) seq.match5
   let discard3 = table
@@ -328,7 +330,10 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
       else if isdefine.xx then
         match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
-      else if isspecial.xx then
+      else if isblock.xx then
+         let typ=if not.check then i64 else tollvmtype(alltypes,resulttype.xx) 
+              match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1,  nopara.xx,empty:seq.symbol,typ)
+        else if isspecial.xx then
         match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1, nopara.xx )
       else  if pkg="$words"then
          //  let ctype=array(length.fsig.xx+2,i64)

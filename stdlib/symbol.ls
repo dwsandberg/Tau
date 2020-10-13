@@ -104,7 +104,7 @@ Function nopara(s:symbol)int
  if isconst.s &or islocal.s then 0 else
  if isspecial.s then 
   if  (fsig.s)_1= "DEFINE"_1 then 1 
-  else if (fsig.s)_1= "RECORD"_1 &and (fsig.s)_2="("_1 then
+  else if (fsig.s)_1 in "RECORD"   then
      @(counttrue, =(","_1), 1, fsig.s)
   else  toint((fsig.s)_2)  
  else 
@@ -256,7 +256,7 @@ Function  CALLIDXR  symbol symbol("callidxR( T seq,int)","builtin", "real")
 Function  CALLIDXP  symbol symbol("callidxP( T seq,int)","builtin", "ptr")
 
 
-Function Emptyseq seq.symbol [Lit0,Lit0,symbol( "RECORD(int,int)",    "$",  "ptr",specialbit)
+Function Emptyseq seq.symbol [Lit0,Lit0,symbol( "RECORD(int,int)",    "$record",  "ptr",specialbit)
 ]
 
 Function pseqidxsym(type:mytype) symbol
@@ -268,27 +268,33 @@ use otherseq.mytype
 Function  Sequence(len:int,typ:seq.word) symbol
   Record([mytype."int",mytype."int"]+constantseq(len,mytype.typ))
 
-Function Record(i:int) symbol   symbol([ "RECORD"_1,toword.i],    "$",  "ptr",specialbit)
-
 Function Record(types:seq.mytype) symbol
-symbol( "RECORD("+@(seperator.",",towords,"",types)+")",    "$",  "ptr",specialbit)
+symbol( "RECORD("+@(seperator.",",towords,"",types)+")",    "$record",  "ptr",specialbit)
 
-Function Apply(i:int) symbol     symbol([ "APPLY"_1,toword.i],    "$",  "?",specialbit)
+Function Apply(i:int) symbol     symbol([ "APPLY"_1,toword.i],    "? $apply",  "?",specialbit)
 
-Function ApplyI(i:int) symbol     symbol([ "APPLYI"_1,toword.i],    "$",  "int",specialbit)
+Function ApplyI(i:int) symbol     symbol([ "APPLYI"_1,toword.i],    "int $apply",  "int",specialbit)
 
-Function ApplyR(i:int) symbol     symbol([ "APPLYR"_1,toword.i],    "$",  "real",specialbit)
+Function ApplyR(i:int) symbol     symbol([ "APPLYR"_1,toword.i],    "real $apply",  "real",specialbit)
 
-Function ApplyP(i:int) symbol     symbol([ "APPLYP"_1,toword.i],    "$",  "ptr",specialbit)
-
-
-Function Block(i:int) symbol     symbol([ "BLOCK"_1,toword.i],    "$",  "?",specialbit)
-
-Function loopblock(i:int)symbol  symbol([ "LOOPBLOCK"_1,toword.i],   "$",  "?",specialbit)
-
-Function continue(i:int)symbol   symbol([ "CONTINUE"_1,toword.i],    "$",   "?",specialbit)
+Function ApplyP(i:int) symbol     symbol([ "APPLYP"_1,toword.i],    "ptr $apply",  "ptr",specialbit)
 
 
+
+Function Block(type:mytype ,i:int) symbol symbol( "BLOCK"+toword.i, towords.type+"$block",  towords.type,specialbit)
+
+
+Function Block3(type:mytype ) symbol symbol( "BLOCK 3",  towords.type+"$block",  towords.type,specialbit)
+
+function bpara(i:int,result:seq.word) seq.word
+  if i=1 then result else bpara(i-1,result+",?")
+
+
+Function loopblock(i:int)symbol  symbol([ "LOOPBLOCK"_1,toword.i],   "$loopblock",  "?",specialbit)
+
+Function continue(i:int)symbol   symbol([ "CONTINUE"_1,toword.i],    "$continue",   "?",specialbit)
+
+use otherseq.seq.word
 
 Function constant(args:seq.symbol) symbol
   let fsig="CONSTANT" +     toword.valueofencoding.encode(symbolconstant(args))  
@@ -331,9 +337,9 @@ Function isFref(s:symbol) boolean   module.s ="$fref"
 
 function  sigandmodule(s:symbol) seq.word   fsig.s+module.s
 
-Function Exit  symbol symbol(  "EXITBLOCK 1",    "$",  "?",specialbit)
+Function Exit  symbol symbol(  "EXITBLOCK 1",    "$exitblock",  "?",specialbit)
 
-Function Br    symbol symbol( "BR 3", "$",  "?",specialbit)
+Function Br    symbol symbol( "BR 3", "$br",  "?",specialbit)
 
 use bits
 
@@ -360,9 +366,9 @@ Function Words(s:seq.word) symbol  symbol(  s,    "$words",  "word seq",constbit
 
 Function Word(s:word) symbol  symbol(  [s],    "$word",  "word",constbit)
 
-Function Define(s:seq.word) symbol symbol("DEFINE"+s,"$","?",specialbit)
+Function Define(s:seq.word) symbol symbol("DEFINE"+s,"$define","?",specialbit)
 
-Function Define(w:word)symbol  symbol([ "DEFINE"_1,w],"$" ,"?",specialbit)
+Function Define(w:word)symbol  symbol([ "DEFINE"_1,w],"$define" ,"?",specialbit)
 
 
 Function Fref(s:symbol) symbol 
@@ -378,21 +384,21 @@ Function PlusOp symbol symbol("+(int,int)" ,"builtin","int")
 Function isinOp(s:symbol) boolean
        (fsig.s) in ["in(int, int seq)","in(word, word seq)","=(int,int)","=(word,word)"]
 
-Function isblock(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="BLOCK"_1 
+Function isblock(s:symbol)boolean  last.module.s="$block"_1  
 
-Function isrecord(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="RECORD"_1
+Function isrecord(s:symbol)boolean  module.s  = " $record"  
 
-Function isapply(s:symbol)boolean  module.s  = "$" ∧ (fsig.s)_1 in "APPLY APPLYI APPLYR APPLYP"
+Function isapply(s:symbol)boolean  last.module.s="$apply"_1  
 
-Function isloopblock(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="LOOPBLOCK"_1
+Function isloopblock(s:symbol)boolean  module.s  = "$loopblock"  
 
-Function iscontinue(s:symbol)boolean module.s  = "$" ∧ (fsig.s)_1="CONTINUE"_1
+Function iscontinue(s:symbol)boolean  module.s  = "$continue" 
 
-Function isdefine(s:symbol)boolean  module.s  = "$" ∧ (fsig.s)_1="DEFINE"_1
+Function isdefine(s:symbol)boolean   module.s  ="$define"  
 
-Function isexit(s:symbol)boolean module.s =  "$" ∧  fsig.s ="EXITBLOCK 1"
+Function isexit(s:symbol)boolean  module.s = "$exitblock" 
 
-Function isbr(s:symbol)boolean module.s =  "$" ∧  fsig.s ="BR 3"
+Function isbr(s:symbol)boolean   module.s =  "$br"  
 
 Function value(s:symbol)int toint.(fsig.s)_1
 

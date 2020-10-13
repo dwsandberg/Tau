@@ -205,7 +205,7 @@ function removeconstant(s:seq.symbol) seq.symbol
 @(+,removeconstant,empty:seq.symbol, s) 
 
 function removeconstant(s:symbol) seq.symbol
-if module.s="$constant" then  removeconstant.zcode.s +Record.length.zcode.s
+if module.s="$constant" then  removeconstant.zcode.s +Record.@(+,resulttype,empty:seq.mytype,zcode.s)
 else [s]
   
 
