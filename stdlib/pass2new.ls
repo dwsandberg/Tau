@@ -18,6 +18,8 @@ use seq.block
 
 use stack.block
 
+use otherseq.mytype
+
 
 function breakblocks(p:program,code:seq.symbol,self:symbol) seq.symbol  
   let a=breakblocks(p,code,1,1,empty:seq.symbol,empty:stack.block)
@@ -493,7 +495,7 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
       let nopara = nopara.sym
       let args = subseq(result, len+1 - nopara, len)
       if @(∧, isconst, true, args) then
-        yyy(p,org,k+1,subseq(result,1,len - nopara )+constant.args,   nextvar, map)
+        yyy(p,org,k+1,subseq(result,1,len - nopara )+Constant2(args+sym),   nextvar, map)
       else yyy(p,org,k+1,result+sym,    nextvar, map)
     else if  (fsig.sym)_1 in "APPLY APPLYI APPLYR APPLYP"  then
        applycode(p,org,k,result, nextvar, map)
@@ -516,7 +518,7 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
          let code =   if (last.dd=Optionsym) then subseq(dd,1,length.dd-2) else   dd
          if isempty.code then yyy(p,org,k+1,result+sym,   nextvar, map)
          else
-      inline(p,org,k,result, nextvar,nopara,code,map)
+      inline(p,org,k,result, nextvar,nopara,code,map,options.dd)
  else if nopara=0 &or nopara > 2 &or not(isconst.result_len) then yyy(p,org,k+1,result+sym,    nextvar, map)
  else 
   // one or two parameters with last arg being constant //
@@ -537,7 +539,7 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
          let arg1 =result_len
          if module.arg1 = "$word"then
             let a1 = @(+, Lit, empty:seq.symbol, tointseq.decodeword.(fsig.arg1)_1)
-            let d = constant.([ Lit.0, Lit.length.a1] + a1)  
+            let d = Constant2.( [ Lit.0, Lit.length.a1] + a1+Record.constantseq(length.a1+2,mytype."int"))  
             yyy(p,org,k+1,subseq(result,1,len-1)+d,    nextvar, map)
          else yyy(p,org,k+1,result+sym,  nextvar, map)
       else if fsig.sym ="encode(char seq)"    &and module.sym="char seq encoding" then
@@ -565,7 +567,7 @@ if not.isconst.result_(len-1) then  yyy(p,org,k+1,result+sym,   nextvar, map)
       let arg1 =  result_(len-1)
     if module.arg1 = "$words" &and  between(idx, 1, length.fsig.arg1) then
       yyy(p,org,k+1,subseq(result,1,len-2)+Word.(fsig.arg1)_idx,   nextvar, map)
-   else if    module.arg1 = "$constant" &and  between(idx, 1, length.constantcode.arg1-2) then
+   else if    isrecordconstant.arg1   &and  between(idx, 1, length.constantcode.arg1-2) then
       yyy(p,org,k+1,subseq(result,1,len-2)+(constantcode.arg1)_(idx+2),   nextvar, map)
    else yyy(p,org,k+1,result+sym,   nextvar, map)
  else   if  fsig.sym ="+(word seq, word seq)" &and module.sym="word seq" then
@@ -587,7 +589,7 @@ function opttwoopbuiltin(p:program,org:seq.symbol,k:int,result:seq.symbol,  next
       yyy(p,org,k+1,subseq(result,1,i-3)+[(constantcode.x)_(j + 1)],   nextvar, map)
     else yyy(p,org,k+1,result+rep,    nextvar, map)
  else  if fsig.rep = "+(int,int)" then 
-   if module.s_(i - 2)="$constant" then // address calculation //
+   if isrecordconstant.s_(i - 2)  then // address calculation //
      yyy(p,org,k+1,result+rep,    nextvar, map)
    else 
      yyy(p,org,k+1,subseq(result,1,i-3)+ Lit(value.s_(i - 2) + value.s_(i - 1)),nextvar,map)
@@ -620,7 +622,7 @@ else if fsig.rep="<<(bits, int)" then
  
 
 
- function inline(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int,nopara:int,code:seq.symbol, map:worddict.seq.symbol)
+ function inline(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int,nopara:int,code:seq.symbol, map:worddict.seq.symbol,options:seq.word)
   expandresult
       if length.code = 1 ∧ code = [ var.1] &and nopara=1 then
    // function just returns result // 
@@ -629,7 +631,7 @@ else if fsig.rep="<<(bits, int)" then
     let len=length.result
     let t = backparse(result, len, nopara, empty:seq.int) + [len+1]
      assert length.t = nopara + 1 report"INLINE PARA PROBLEM" 
-     let new = if issimple(p,nopara,code) then 
+     let new = if not("STATE"_1 in options) &and issimple(p,nopara,code) then 
          let pmap=simpleparamap(result, t, emptyworddict:worddict.seq.symbol, nopara)
          code.yyy(p,code,1,empty:seq.symbol,   nextvar, pmap)
     else 
@@ -700,6 +702,7 @@ function applycode(p:program,org:seq.symbol,k:int,result:seq.symbol, nextvar:int
  let term2 = constantcode.code_(index - 3)
  let nopara1 = nopara.term1_1 - 2
  let nopara2 = nopara.term2_1 - 1
+ let emptyseqOp = Constant2.Emptyseq
  let allpara = @(+, var, empty:seq.symbol, arithseq(nopara1 + nopara2 + 2, 1, nextvar))
  let map1 = add(emptyworddict:worddict.seq.symbol,  "term1para"_1, subseq(allpara, 1, nopara1))
  let map2 = add(map1,  "term2para"_1, subseq(allpara, nopara1 + 1, nopara1 + nopara2))
@@ -763,7 +766,7 @@ function     depthfirst(knownsymbols:program,i:int,pending:seq.symbol,processed:
         else 
          let sym=code_i
      let newprg=     
-      let sym2=if isFref.sym  then     (zcode.sym)_1 else sym
+      let sym2=basesym.sym
       if isnocall.sym2 then processed else 
       if   sym2 in pending then   processed  
       else      let r= lookupcode(processed,sym)
@@ -790,6 +793,8 @@ Function theprg(intercode) program export
 Function defines(i:intercode)seq.symbol  export
 
 Function libdesc(i:intercode) symbol  export
+
+Function type:intercode internaltype export 
 
  
 
@@ -831,7 +836,6 @@ Function print(s:seq.symbol)seq.word @(+, print,"", s)
  
 function isnotOp(s:symbol) boolean    fsig.s="not(boolean)" &and module.s="builtin"  
 
-Function emptyseqOp symbol   constant.[ Lit0, Lit0]
 
 Function gtOp symbol   symbol(">(int, int)","builtin", "boolean")
  

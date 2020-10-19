@@ -407,7 +407,7 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
    let seqtype=mytype(towords.parameter.modname + "seq"_1)
    let symtoseq = map(con,newsymbol("toseq" ,modname,  ptype, seqtype),[Local.1])
    let symfromseq=map(symtoseq,newsymbol( "to:"+print.ptype_1,modname ,[seqtype],ptype_1),
-    [Local.1,Lit.0,IDXP,Fref.indexfunc,EqOp,Lit.2,Lit.3,Br,Local.1,Exit]+Emptyseq+[Exit,Block3.mytype."ptr"] )
+    [Local.1,Lit.0,IDXP,Fref.indexfunc,EqOp,Lit.2,Lit.3,Br,Local.1,Exit]+Emptyseq+[Exit,Block(mytype."ptr",3)] )
        symfromseq 
 
    
@@ -416,7 +416,9 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
     let constructor2=buildconstructor(flds,flatflds,1,1,0,empty:seq.symbol)
      let paras=@(+,fldtype,empty:seq.mytype,flds) 
     let  symbols=@( fldsym(modname,ptype,length.flds,0),identity,other,flds)
-   let concode2= if length.paras = 1 then[Local.1] else constructor2  + Record.flatflds
+   let concode2= if length.paras = 1 then 
+   //     assert length.flatflds > 1 &or abstracttype(flatflds_1) in"seq int real"  report "HJK"+towords.flatflds_1 //
+     [Local.1] else constructor2  + Record.flatflds
   let con = newsymbol([name],modname,  paras, mytype(towords.parameter.modname + name) )
       map ( symbols  ,con,concode2)
 
@@ -502,7 +504,7 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,
  else 
    let x=code_i
    let isfref=isFref.x
-   let sym= if isfref then  (zcode.x)_1 else code_i
+   let sym= basesym.x
    if  isrecord.sym   then
       let a=Record.@(+,tokind(alltypes,parameter.modname),empty:seq.mytype,paratypes.sym)
          postbind3(alltypes,dict,code,i+1,result+ if isfref  then  Fref.a else   a ,modname,org, calls, sourceX ,tempX)
@@ -558,7 +560,7 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,
           else 
            [gl,Lit.0,IDXI, Lit.0,EqOp,Lit.3,Lit.2,Br
            ,gl,Lit.0,IDXI,Exit,  
-           gl,Lit.0,Words.towords.typ,encodenosym,setfld,Define."xx",gl,Lit.0,IDXI ,Exit,Block3.mytype."int"]   
+           gl,Lit.0,Words.towords.typ,encodenosym,setfld,Define."xx",gl,Lit.0,IDXI ,Exit,Block(mytype."int",3)]   
     prefix
     + if name="primitiveadd"  then
        let addefunc= newsymbol("add", mytype(towords.typ + "encoding"),[ mytype(towords.typ +" encodingstate"), mytype(towords.typ+"  encodingpair")]
@@ -702,7 +704,7 @@ let i=1 let memsize=2 let s= 3 let idx=4 let fromaddress=5
 symbol("-(int,int)" ,"builtin","int"),Local.s ,Local.s ,Local.idx ,Local.fromaddress ,Local.i,IDXP,
  symbol( "setfld(T seq, int, ptr)","builtin","int") ,
  Local.fromaddress,  sym,Exit 
-,Block3.mytype."int" ]          
+,Block(mytype."int",3) ]          
 
 Function headdict set.symbol
 let modulename = mytype."internal1"

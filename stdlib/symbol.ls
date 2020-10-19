@@ -25,6 +25,8 @@ use seq.seq.word
  
 
 
+Function type:programele internaltype export
+
 
 
 Function type:symbol internaltype export
@@ -284,7 +286,6 @@ Function ApplyP(i:int) symbol     symbol([ "APPLYP"_1,toword.i],    "ptr $apply"
 Function Block(type:mytype ,i:int) symbol symbol( "BLOCK"+toword.i, towords.type+"$block",  towords.type,specialbit)
 
 
-Function Block3(type:mytype ) symbol symbol( "BLOCK 3",  towords.type+"$block",  towords.type,specialbit)
 
 function bpara(i:int,result:seq.word) seq.word
   if i=1 then result else bpara(i-1,result+",?")
@@ -296,9 +297,17 @@ Function continue(i:int)symbol   symbol([ "CONTINUE"_1,toword.i],    "$continue"
 
 use otherseq.seq.word
 
-Function constant(args:seq.symbol) symbol
+/Function Constant(args:seq.symbol) symbol
   let fsig="CONSTANT" +     toword.valueofencoding.encode(symbolconstant(args))  
    symbol(fsig , "$constant",  "ptr",args,extrabits(fsig,constbit) )
+   
+Function Constant2(args:seq.symbol) symbol
+//  let args=subseq(argsin,1,length.argsin-1) //
+  let fsig="CONSTANT" +     toword.valueofencoding.encode(symbolconstant(args))  
+   symbol(fsig , "$constant",  "ptr",args,extrabits(fsig,constbit) )
+
+   
+Function isrecordconstant(s:symbol) boolean module.s= "$constant"
    
 
 function hash(s:seq.symbol) int hash.@(+,sigandmodule,"",s) 
@@ -406,7 +415,13 @@ Function value(s:symbol)int toint.(fsig.s)_1
 use mangle
 
 Function constantcode(s:symbol) seq.symbol
- if module.s in ["$fref" ,"$constant"] then   zcode.s else empty:seq.symbol
+ if isFref.s   then   zcode.s 
+else if isrecordconstant.s then   subseq(zcode.s ,1,length.zcode.s-1)
+ else empty:seq.symbol
+ 
+Function basesym(s:symbol) symbol
+   if  module.s="$fref" then  
+    (zcode.s)_1  else s
 
 Function options( code:seq.symbol) seq.word  
   if  length.code=0 &or not(last.code=Optionsym) then "" else fsig.(code)_(length.code-1)
@@ -415,6 +430,8 @@ Function options( code:seq.symbol) seq.word
 ------
 
 type program is  record toset:set.symbol
+
+Function &cap(p:program,a:set.symbol) program   program(toset.p &cap a)
 
 function toset(p:program) set.symbol export
 
@@ -533,6 +550,20 @@ if  islocal.f &or ispara.mytype.module.f then [ merge.(["%"_1]+fsig)]
     else if isspecial.f then 
    if fsig_1 in "BLOCK EXITBLOCK BR LOOPBLOCK FINISHLOOP CONTINUE"then fsig + " &br"else fsig
    else if module=" $constant"  then fsig 
+   else if isFref.f then "FREF"+print.(constantcode.f)_1
+    else   (if last.fsig=")"_1 then  fsig  else  fsig+"()")+print.mytype.module
+    
+   / Function print2(f:symbol)seq.word
+ let module=module.f 
+let fsig=fsig.f
+if  islocal.f &or ispara.mytype.module.f then [ merge.(["%"_1]+fsig)]
+   else if  islit.f then fsig
+   else if module="$words" then if '"'_1 in fsig then "'" + fsig + "'" else '"' + fsig + '"'
+   else if module="$word" then "WORD"+fsig
+    else if isspecial.f then 
+    if fsig_1 in "BLOCK" then fsig + module+ " &br"
+    else   if fsig_1 in "BLOCK EXITBLOCK BR LOOPBLOCK FINISHLOOP CONTINUE"then fsig + " &br"else fsig
+   else if module=" $constant"  then fsig+@(+,print,"",constantcode.f) 
    else if isFref.f then "FREF"+print.(constantcode.f)_1
     else   (if last.fsig=")"_1 then  fsig  else  fsig+"()")+print.mytype.module
  

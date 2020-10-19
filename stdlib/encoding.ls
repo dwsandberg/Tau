@@ -125,6 +125,10 @@ function getinstance(encodingnumber:seq.T)encodingstate.T builtin.usemangle
 
 
  
+Function lookupencodingpair(t:encoding.T) seq.encodingpair.T
+let inst = getinstance:encodingstate.T
+  decode(inst, t)
+ 
 
 Function decode(t:encoding.T) T
  let inst = getinstance:encodingstate.T

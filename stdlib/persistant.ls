@@ -75,34 +75,45 @@ function hash(a:const3)int hash.flds.a
 
 function assignencoding(l:int, a:const3) int assignrandom(l,a)
 
-  
+/use stacktrace
+
+use maindict
+
+/Function dumpword3 seq.word
+  let x=encoding:seq.encodingpair.word3
+  "len:"+toword.length.x+ @(+,toword, "", @(+,data,empty:seq.word3 ,x))
+
 Function wordref(w:word) int  
 let d = encode(  word3.w)
- toint.C64.valueofencoding.d
+  toint.C64.valueofencoding.d
  
- Function addliblib( libname:seq.word,mods:int) int
- // assert libname.t ="stdlib"report libname.t //
- let  name=addwordseq2(libname)
-  let have = if libname = "stdlib"then empty:seq.encodingpair.seq.char else words.loadedlibs_1
- let used = @(+, eword2, empty:seq.encodingpair.seq.char, encoding:seq.encodingpair.word3 )
- let wordstoadd=toseq(asset.used - asset.have)
- // build packed seq of word encodings //
- let data=@(+,fldsofwordencoding,[toint.C64.3 , toint.C64.length.wordstoadd],wordstoadd) 
-   let wordreps= addobject.data
- addobject("liblib",[ name,wordreps,mods,toint.C64.0,toint.C64.0])
-
+function wordcode(a:encodingpair.word3)  encoding.seq.char
+      asencoding.toword.data.a
+ 
  Function addliblib( libname:seq.word,mods:int,profiledata:int) int
  // assert libname.t ="stdlib"report libname.t //
  let  name=addwordseq2(libname)
-  let have = if libname = "stdlib"then empty:seq.encodingpair.seq.char else words.loadedlibs_1
- let used = @(+, eword2, empty:seq.encodingpair.seq.char, encoding:seq.encodingpair.word3 )
- let wordstoadd=toseq(asset.used - asset.have)
- // build packed seq of word encodings //
+  // assert libname= "stdlib" report @(+,toword, "", @(+,data,empty:seq.word3 ,encoding:seq.encodingpair.word3)) //
+  let have = if libname = "stdlib"then empty:set.encoding.seq.char else 
+  //  @(+,code,empty:set.encoding.seq.char,words.loadedlibs_1) //
+     @(+,code,empty:set.encoding.seq.char,initialdict)                              
+  let used=@(+,wordcode,empty:set.encoding.seq.char,encoding:seq.encodingpair.word3)
+  // build packed seq of word encodings //
+  let wordstoadd=toseq(used-have)
+  // let discard2 = if libname ="stdlib" then 0
+  else writedict(@(+,lookupencodingpair,empty:seq.encodingpair.seq.char,wordstoadd)) //
+ // assert libname= "stdlib" report dumpword3+"&br -------- &br"+ @(+,word,"",wordstoadd) //
  let data=@(+,fldsofwordencoding,[toint.C64.3 , toint.C64.length.wordstoadd],wordstoadd) 
    let wordreps= addobject.data
  addobject("liblib",[ name,wordreps,mods,toint.C64.0,profiledata])
 
 use seq.slot
+
+use seq.encoding.seq.char
+
+use set.encoding.seq.char 
+
+use encoding.seq.char
 
 function addobject(name:seq.word,data:seq.int) int
 let objtype=array(length.data,i64)
@@ -124,13 +135,12 @@ Function addobject(flds:seq.int) int
   toint.ptrtoint(ptr.i64, CGEP(modulerecord("list", [0]),idx))   
 
  
- 
-
-
-function fldsofwordencoding( e:encodingpair.seq.char) seq.int
- let s= tointseq.data.e
+ function fldsofwordencoding( code:encoding.seq.char) seq.int
+ let s= tointseq.decode.code
   let k=addobject(@(+,toint,empty:seq.int,@(+, C64, [ C64.0, C64.length.s], s)))
-    ([toint.C64.valueofencoding.code.e,k,toint.C64.hash.e]) 
+    ([toint.C64.valueofencoding.code,k,toint.C64.0]) 
+
+
  
  
 Function addwordseq2( a:seq.word) int

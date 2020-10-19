@@ -17,6 +17,7 @@ parsersupport  uses
  timestamp ioseq dataio intdict dict
     parsersupport mangle mytype   bitpackedseq xxhash
         persistant libdesc
+ pass1 pass2new   symbol internalbc
   
  
  
@@ -47,7 +48,7 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
   
  / *  NOINLINE symbol: isspecial( symbol)boolean
   
-  * INLINE pass2new :inline( program, seq.symbol, int, seq.symbol,   int, int, seq.symbol,worddict.seq.symbol)
+ / * INLINE pass2new :inline( program, seq.symbol, int, seq.symbol,   int, int, seq.symbol,worddict.seq.symbol)
  expandresult
  
   / * INLINE pass2new : applycode( program ,seq.symbol, int, seq.symbol,  int,    worddict.seq.symbol)  expandresult

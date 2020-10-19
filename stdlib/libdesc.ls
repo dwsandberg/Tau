@@ -38,9 +38,10 @@ use seq.encodingpair.seq.char
 use seq.myinternaltype
 
 
- Function libdesc(p:program,templates:program,mods:seq.firstpass,exports:seq.word,rootsigs:seq.symbol) symbol
-  let closed=toexport(p,empty:set.symbol,asset.rootsigs)  
-   let d=@(+,tolibsym(p,templates),empty:seq.symbol,toseq.closed )    
+ Function libdesc(pin:program,templates:program,mods:seq.firstpass,exports:seq.word,rootsigs:seq.symbol) symbol
+  let p=  pin &cap asset.rootsigs
+  let closed=asset.@(+,exportcode.p, rootsigs, rootsigs) 
+  let d=@(+,tolibsym(p,templates),empty:seq.symbol,toseq.closed )     
     let libmods=  @(+,tolibmod(p,templates,exports),empty:seq.firstpass,mods)
        + libmod(mytype."$other" , d, empty:seq.symbol, empty:seq.mytype)
 addseq.@(+,addlibmod,empty:seq.symbol,libmods)
@@ -52,49 +53,47 @@ addseq.@(+,addlibmod,empty:seq.symbol,libmods)
     let e=@(+,tolibsym(p,templates),empty:seq.symbol,toseq.exports.m)
    let d=if abstract then @(+,tolibsym(p,templates),empty:seq.symbol,toseq.defines.m) else empty:seq.symbol
   [libmod(modname.m,d,e, if abstract then uses.m else empty:seq.mytype)]
-
-function   toexport(p:program,processed:set.symbol, toprocess:set.symbol) set.symbol
-   if isempty.toprocess then  processed else 
-    let q= asset.@(+,exportcode.p,empty:seq.symbol,     toseq.toprocess)
-      toexport(p,processed &cup toprocess, q-processed)
-
       
   
   Function exportcode(p:program,s:symbol) seq.symbol
        let code=code.lookupcode(p, s)
-          if length.code  < 15 then code else empty:seq.symbol
+          if length.code  < 15 then removeconstant.code else empty:seq.symbol
              
              
 function tolibsym(p:program,templates:program,sym:symbol ) seq.symbol
     if isconstantorspecial.sym 
     then empty:seq.symbol else
-    if isabstract.mytype.module.sym then 
-     let t=lookupcode(templates,sym)
-              [ symbol(fsig.sym,module.sym, returntype.sym ,[sym]+code.t )]
-    else 
-      let code=removeconstant.exportcode(p,sym )
-                  [ symbol(fsig.sym,module.sym, returntype.sym ,[sym]+code )]
+    let cleansym= [if isempty.zcode.sym then sym else symbol(fsig.sym,module.sym,returntype.sym)]
+    let code=if isabstract.mytype.module.sym then 
+      code.lookupcode(templates,sym)
+     else 
+      removeconstant.exportcode(p,sym )
+                  [ symbol(fsig.sym,module.sym, returntype.sym ,cleansym+code )]
    
 
 ----------------------------------
 
 function addlibsym(s:symbol) symbol
-      constant.[Words.fsig.s ,Words.module.s ,Words.returntype.s ,
-      addseq.@(+,addlibsym,empty:seq.symbol,zcode.s),Lit.extrabits.s ]
+      Constant2.[Words.fsig.s ,Words.module.s ,Words.returntype.s ,
+      addseq.@(+,addlibsym,empty:seq.symbol,zcode.s),Lit.extrabits.s 
+      ,Record.[mytype."ptr",mytype."ptr",mytype."ptr",mytype."ptr",mytype."int"]]
 
 function addmytype(t:mytype) symbol  Words.(towords.t)
 
 use seq.mytype
 
+use otherseq.mytype
+
 function addseq(s:seq.symbol) symbol  
-constant.([ Lit.0, Lit.length.s ]+s )
+Constant2.([ Lit.0, Lit.length.s ]+s+Record( [mytype."int",mytype."int"]+constantseq(length.s,mytype."ptr") ))
 
 function addlibmod(s:firstpass) symbol 
-    constant.[addmytype.modname.s
+    Constant2.[addmytype.modname.s
      ,addseq.@(+,addmytype,empty:seq.symbol,uses.s)
      ,addseq.@(+,addlibsym,empty:seq.symbol,toseq.defines.s)
       ,addseq.@(+,addlibsym,empty:seq.symbol,toseq.exports.s)
       ,Words."" ,Words."" ,Words.""
+      ,Record.[mytype."ptr",mytype."ptr",mytype."ptr",mytype."ptr",mytype."ptr",mytype."ptr",mytype."ptr"]
 ]
 
 
@@ -188,9 +187,9 @@ use seq.liblib
   function libtypes(     s:symbol) seq.myinternaltype
      if not(returntype.s="internaltype") then empty:seq.myinternaltype
      else
-       let code=  removeconstant.if last.zcode.s=Optionsym then subseq(zcode.s,1,length.zcode.s-2) else  zcode.s 
-     let l=length.code
-       if   // fsig.code_l="RECORD 5"  // isrecord.code_l &and nopara.code_l=5 &and (fsig.code_(l-1))_1="RECORD"_1 then
+       let code=     zcode.s 
+       let l=length.code-if last.zcode.s=Optionsym  then 2 else 0 
+       if    isrecord.code_l &and nopara.code_l=5 &and (fsig.code_(l-1))_1="RECORD"_1 then
       let noflds=nopara.code_(l-1)-2
       let t1=subseq(code,l-noflds-1,l-2)
       let subflds=@(+,mytype,empty:seq.mytype,@(+,fsig,empty:seq.seq.word,t1))
@@ -205,7 +204,7 @@ function removeconstant(s:seq.symbol) seq.symbol
 @(+,removeconstant,empty:seq.symbol, s) 
 
 function removeconstant(s:symbol) seq.symbol
-if module.s="$constant" then  removeconstant.zcode.s +Record.@(+,resulttype,empty:seq.mytype,zcode.s)
+if module.s="$constant" then  removeconstant.zcode.s  
 else [s]
   
 
