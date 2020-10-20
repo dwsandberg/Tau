@@ -172,12 +172,7 @@ function table seq.match5
 + CAST(r.4, r.3, i64, CASTZEXT)
 + CMP2(r.5, r.1, r.2, 2)
 + CAST(r.6, r.5,  i64, CASTZEXT)
-+ BINOP(r.7, r.4, r.6, add ))
-,match5(1,"assertQ3AintZbuiltinZwordzseq"_1 ,  1, CALL(r.1, 0, 32768,  function.[ i64, i64], symboltableentry(merge."assertZbuiltinZwordzseq",function.[ i64, i64]),slot.ibcsub1))
-,match5(1,"assertQ3AptrZbuiltinZwordzseq"_1 ,  1, CALL(r.1, 0, 32768,  function.[ i64, i64], symboltableentry(merge."assertZbuiltinZwordzseq",function.[ i64, i64]),slot.ibcsub1))
-,match5(1,"assertQ3ArealZbuiltinZwordzseq"_1 ,  1, CALL(r.1, 0, 32768,  function.[ i64, i64], symboltableentry(merge."assertZbuiltinZwordzseq",function.[ i64, i64]),slot.ibcsub1))
-,match5(1,"assertQ3AseqZbuiltinZwordzseq"_1 ,  1, CALL(r.1, 0, 32768,  function.[ i64, i64], symboltableentry(merge."assertZbuiltinZwordzseq",function.[ i64, i64]),slot.ibcsub1))
-]
++ BINOP(r.7, r.4, r.6, add ))]
 let t = z+ [  match5(1,"getseqtypeZbuiltinZTzseq"_1, 2, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)   
 + LOAD(r.2, r.1,  i64 ))
 , match5(2,"IDXIZbuiltinZintZint"_1, 3, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)  + GEP(r.2,  i64, r.1, slot.ibcsub2)
@@ -316,7 +311,7 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
      if pkg="$constant" then
        buildtemplates(used,i+1,theprg,const+used_i,alltypes)
      else 
-     let b =  if     isbuiltin.pkg   then
+     let b =  if     pkg ="builtin"  then
          findencode( match5([mangledname.xx,toword.nopara.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
        else empty:seq.match5
     if length.b > 0 then 
@@ -350,7 +345,7 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
          match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
       else if fsig.xx in ["callidxI( T seq , int) ","callidxR( T seq , int)","callidxP( T seq , int)"] then
            match5([mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0)
-    else   if (fsig.xx)_1="global"_1 &and  isbuiltin.pkg   then
+    else   if (fsig.xx)_1="global"_1 &and  pkg = "builtin" then
         match5(0,mangledname.xx, 2, GEP(r.1,   i64, slot.global([mangledname.xx],i64,C64.0))
         +CAST(r.2, r.1,  i64, CASTPTRTOINT))
      else 

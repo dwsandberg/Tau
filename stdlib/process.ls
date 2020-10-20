@@ -22,15 +22,14 @@ Function process(T)process.T builtin.usemangle
 
 * Both deepcopy and sizoftype:T are treated specially by compiler 
 
-Function deepcopy(a:T)T builtin.usemangle
+Function deepcopy(a:T)T deepcopy.a
 
-Function sizeoftype:T int builtin.usemangle
+Function sizeoftype:T int 1
 
 ------------
 
 
-function memcpy(i:int,memsize:int, s:seq.T,idx:int, fromaddress:seq.T) int builtin.usemangle
- 
+function memcpy(i:int,memsize:int, s:seq.T,idx:int, fromaddress:seq.T) int 
  // returns next blank idx   handled by compiler //  0
  
 

@@ -409,7 +409,7 @@ function   uses(p:program,processed:set.symbol, toprocess:set.symbol) set.symbol
 
 
 function defines2(p:program,s:symbol) seq.symbol
-if isconstantorspecial.s  &or isbuiltin.module.s     &or  isabstract.mytype.module.s 
+if isconstantorspecial.s  &or module.s ="builtin"    &or  isabstract.mytype.module.s 
 then empty:seq.symbol 
 else 
 let d=code.lookupcode(p,s)
@@ -424,7 +424,7 @@ use blockseq.symbol
   
 Function firstopt(p:program, rep:symbol, code:seq.symbol) program
  let nopara=nopara.rep
- if isbuiltin.module.rep  then
+ if module.rep="builtin" then
   let options= caloptions(p,code,nopara,module.rep,fsig.rep)
   map(p,symbol(fsig.rep,module.rep,returntype.rep), addoptions(code,options)) 
  else 
@@ -557,7 +557,7 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
 if not.isconst.result_(len-1) then  yyy(p,org,k+1,result+sym,   nextvar, map)
  else  
   //  two parameters with   constant  args //
-   if isbuiltin.module.sym  then 
+   if module.sym="builtin" then 
       opttwoopbuiltin(p,org,k,result,  nextvar, map,sym)
    else  
       if   last.module.sym="seq"_1 &and 
@@ -813,7 +813,7 @@ Function addoptions(code:seq.symbol,options:seq.word) seq.symbol
           
 Function   caloptions(p:program,code:seq.symbol,nopara:int,modname:seq.word,fsig:seq.word) seq.word
            let options= options.code  
-         if length.code=0 then if  not.isbuiltin.modname    then  "STATE" else ""
+         if length.code=0 then if  not(modname="builtin" ) then  "STATE" else ""
          else if fsig="in(int, int seq)" &or  fsig="in(word, word seq)" 
          &or  fsig="_(int seq, int)"   &or  fsig="_(word seq, int)" then ""   
          else
@@ -834,7 +834,7 @@ Function print(s:seq.symbol)seq.word @(+, print,"", s)
 
 
  
-function isnotOp(s:symbol) boolean    fsig.s="not(boolean)" &and isbuiltin.module.s   
+function isnotOp(s:symbol) boolean    fsig.s="not(boolean)" &and module.s="builtin"  
 
 
 Function gtOp symbol   symbol(">(int, int)","builtin", "boolean")
@@ -851,7 +851,7 @@ Function hasstate(p:program,s:symbol) boolean
 if isconstantorspecial.s then false else
 if ( fsig.s=  "_(int seq, int)" &or fsig.s= "_(word seq,int)") then false else
 let d=lookupcode(p,s)
- if  isdefined.d then "STATE"_1 in options.code.d else not.isbuiltin.module.s  
+ if  isdefined.d then "STATE"_1 in options.code.d else not(module.s="builtin")
 
 
 function checksimple(p:program,code:seq.symbol, i:int, nopara:int, last:int)boolean

@@ -138,9 +138,9 @@ Function decode(t:encoding.T) T
 
 use seq.encodingstate.T
 
-Function getinstance:encodingstate.T encodingstate.T  builtin.usemangle
+Function getinstance:encodingstate.T encodingstate.T  (empty:seq.encodingstate.T )_1
 
-Function primitiveadd(s:encodingpair.T)  int builtin.usemangle
+Function primitiveadd(s:encodingpair.T)  int 3
 
 
 
