@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau
+/#!/usr/local/bin/tau
 
 
 Module pass1
@@ -354,12 +354,11 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
        let  symsrc2=     text.txt_1
        let b = parse( dict , symsrc2)
         if subseq(symsrc2,length.symsrc2-2,length.symsrc2) ="builtin.usemangle" then
-           if  ( (name.s)_1= merge("empty:seq.T" )  ) then map(p,s,  Emptyseq)
-           else 
+             let newmod= mytype.if iscomplex.modname.s   then "T builtin" else "builtin"
              let name = funcname.b
              let paratypes = funcparametertypes.b
              let code2=@(+, Local,empty:seq.symbol, arithseq(length.paratypes, 1, 1))+
-             newsymbol(name,mytype."builtin",paratypes,funcreturntype.b)  
+             newsymbol(name,newmod,paratypes,funcreturntype.b)  
              map(p,s,  code2)
         else 
             map(p,s, parsedcode.b)
@@ -482,7 +481,7 @@ function postbind(alltypes:seq.myinternaltype,dict:set.symbol,working:set.symbol
            let lr1=lookupcode(sourceX,s)
           assert isdefined.lr1 report "KJHG"+print.s
            let modname=mytype.module.s
-          if  modname = mytype."builtin" then 
+          if // isbuiltin //  modname=mytype."builtin"   then 
              postbind(alltypes, dict, w,toprocess,i+1,result,sourceX ,tempX )
           else 
            let r=postbind3(alltypes, dict,  code.lr1, 1, empty:seq.symbol,modname,print.s,empty:set.symbol
@@ -580,8 +579,30 @@ tempX:program,sourceX:program)resultpair
      let name=name.oldsym
      let newmodname= replaceT(modpara, modname.oldsym) 
      let templatename = abstracttype.newmodname
-     let newmodpara = parameter.newmodname
-    let result1= if name="callidx" &and templatename in " seq" then
+      let newmodpara = parameter.newmodname
+    if templatename in "process" &and name="deepcopy" then
+              resultpair( deepcopysym.newmodpara,definedeepcopy(alltypes, newmodpara,org),"C")           
+      else  if templatename="builtin"_1 then
+        let newsym= replaceTsymbol(modpara,oldsym) 
+        if name="getseqtype" then
+         resultpair(newsym,[Local.1,Lit.0,IDXI],"C")
+     else       if   name_1=merge."empty:seq.T" then
+           resultpair(newsym,Emptyseq,"C")
+     else   if fsig.oldsym="assert(word seq)" then
+                let typedesc=lookuptype(alltypes, newmodpara) 
+                 assert not.isempty.typedesc report "type not found uu"+print.modpara
+          let kind=kind.typedesc_1
+       //  assert false report "XXXX"+print.oldsym+print.modpara+kind  //
+           resultpair(newsym, [Local.1,symbol("assert:"+kind+"(word seq)", "builtin",[kind])],"C")  
+     else       if   name="aborted" then
+           resultpair(newsym, [Local.1,symbol("aborted(T process)","builtin","int")],"C")
+     else   if (name="primitiveadd" &and nopara.oldsym=1 )
+          &or name_1=merge("getinstance:encodingstate.T") then
+             resultpair(   replaceTsymbol(modpara,oldsym)
+         ,encodingrecord(name,newmodpara) ,"C") 
+     else       if   name="getinstance" then
+           resultpair(newsym, [Local.1,symbol("getinstance(T seq)","builtin","ptr")],"C")
+    else   if name="callidx"   then
        let typedesc=lookuptype(alltypes, modpara) 
        assert not.isempty.typedesc report "type not found"+print.modpara
        let kind=kind.typedesc_1
@@ -589,50 +610,27 @@ tempX:program,sourceX:program)resultpair
               else if kind="real"_1 then CALLIDXR
               else     CALLIDXP
        resultpair(   replaceTsymbol(modpara,oldsym),[Local.1,Local.2,op] ,"C")
-    else  if  name_1 in "packed" &and templatename in " seq"   then
+    else  if  name_1 in "packed"    then
                let typdesc=lookuptype(alltypes,newmodpara)
                 assert  not.isempty.typdesc  report"can not find type packed" + print.newmodpara  + org
                resultpair(   replaceTsymbol(modpara,oldsym),packedcode(towords.newmodpara, typdesc_1) ,"C")
-      else if templatename in "encoding" then
-         if (name="primitiveadd" &and nopara.oldsym=1 )
-          &or name_1=merge("getinstance:encodingstate.T") then
-             resultpair(   replaceTsymbol(modpara,oldsym)
-         ,encodingrecord(name,newmodpara) ,"C")  
-  else resultpair(Exit,empty:seq.symbol,"not special")
-      else if templatename in "process"  then
-        if name="_"   then
-            let typedesc=lookuptype(alltypes, modpara) 
-            assert not.isempty.typedesc report "type not found"+print.modpara
-            let kind=kind.typedesc_1
-            let typesize=size.typedesc_1
-            let code= if kind="int"_1 then [Local.1,Local.2,IDXI] 
-               else if kind="real"_1 then [Local.1,Local.2,IDXR] 
-               else if  typesize=1 then [Local.1,Local.2,IDXP] 
-               else 
-                 [Local.1 , 
-                  Local.2 , Lit.-1 ,PlusOp,Lit.typesize,  symbol("*(int,int)" ,"builtin","int") , Lit.2,PlusOp,
-                  Lit.typesize ,symbol("cast(T seq,int,int)","builtin","ptr") ]
-            resultpair(   replaceTsymbol(modpara,oldsym),code ,"C")
-       else if name="memcpy"   then
+    else        if name="memcpy"   then
             let cpysym=replaceTsymbol(modpara,oldsym)
             resultpair( cpysym,memcpycode.cpysym,"C" )
         else if name = "deepcopy"   then
             resultpair( deepcopysym.newmodpara,definedeepcopy(alltypes, newmodpara,org),"C")           
-       else if    merge.name  =   merge."sizeoftype:T"  then
+       else assert    merge.name  =   merge."sizeoftype:T"  report "builtin not handled"+print.oldsym
             let typdesc=lookuptype(alltypes,newmodpara)
             assert  not.isempty.typdesc  report"can not find type sizeof" + print.newmodpara + org
             resultpair(   newsymbol(name,newmodname,empty:seq.mytype,mytype."int"),[Lit.size.typdesc_1 ] ,"C")
-       else    resultpair(Exit,empty:seq.symbol,"not special")
-    else    resultpair(Exit,empty:seq.symbol,"not special")
-    if not(  place.result1="not special" ) then result1 
-    else
-     let newsym= replaceTsymbol(modpara,oldsym)   
+     else
+      let newsym= replaceTsymbol(modpara,oldsym) 
      let fx=lookupcode(tempX,oldsym)
-     if isdefined.fx then
+      if isdefined.fx then
          resultpair(newsymbol( name ,newmodname,  paratypes.newsym, replaceT(newmodpara, resulttype.target.fx))
            ,code.fx,  "C" )
      else
-        let  xxx=if not (newsym=oldsym)then lookupcode(sourceX, newsym) else fx
+         let  xxx=if not (newsym=oldsym)then lookupcode(sourceX, newsym) else fx
          if isdefined.xxx then   
           resultpair(  target.xxx,code.xxx,"B" )
         else    
@@ -781,8 +779,10 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
   let name = funcname.t
   let paratypes = funcparametertypes.t
   assert iscomplex.modname.f = hasT(input, 2)report"Must use type T in function name or parameters in parameterized module and T cannot be used in non - parameterized module" + getheader.input
-     let sym =  if subseq(input,length.input-2,length.input) ="builtin.usemangle" then
-              newsymbol( name , mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t)
+     let sym =  if subseq(input,length.input-2,length.input) ="builtin.usemangle"
+      &and not.iscomplex.modname.f 
+      then
+               newsymbol( name , mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t)
       else   newsymbol( name , modname.f, paratypes, funcreturntype.t)  
       if last.input in "export" then
        firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f,types.f)

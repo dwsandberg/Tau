@@ -21,7 +21,7 @@ Function_(a:seq.T, b:int)T
      assert not(getseqtype.a = 0) &or ( b > 0 ∧ b ≤ length.a) report"out of bounds" + stacktrace
     callidx( a, b)
 
-function callidx(a:seq.T, int)T  // treated specially by compiler // a_1
+function callidx(a:seq.T, int)T  builtin.usemangle 
 
 Function getseqtype(a:seq.T)int builtin.usemangle 
 
@@ -141,4 +141,4 @@ Function isempty(a:seq.T)boolean length.a = 0
 
 - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Function packed(s:seq.T)seq.T  //  handled by compiler //  s 
+Function packed(s:seq.T)seq.T  builtin.usemangle 

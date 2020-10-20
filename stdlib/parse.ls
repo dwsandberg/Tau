@@ -232,7 +232,7 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place.R)
    assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place.R)
    let newcode= code.R_2 +[Lit2,Lit.3,Br] + code.R_5 +Exit + code.R_4 +
-    symbol("assert(word seq)","builtin","none")+Exit+Block((types.R_5)_1,3)  
+    symbol("assert(word seq)", towords.(types.R_5)_1+"builtin","T" )+Exit+Block((types.R_5)_1,3)  
     bindinfo(dict.R, newcode, types.R_5,"")
  else if ruleno = // E I // 35 then
  bindinfo(dict.R,[Lit.toint.(tokentext.R_1)_1], [ mytype."int"],"")
