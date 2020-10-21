@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau
+/#!/usr/local/bin/tau
 
 
 Module pass1
@@ -354,9 +354,11 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
        let  symsrc2=     text.txt_1
        let b = parse( dict , symsrc2)
         if subseq(symsrc2,length.symsrc2-2,length.symsrc2) ="builtin.usemangle" then
-           if  ( (name.s)_1= merge("empty:seq.T" )  ) then map(p,s,  Emptyseq)
-           else 
              let name = funcname.b
+           if  name= "empty:seq.T"  then    map(p,s,  Emptyseq)
+           else if name= "getseqtype" then  map(p,s,[Local.1,Lit.0,IDXI])
+           else if name="aborted" then map(p,s,[Local.1,symbol("aborted(T process)","builtin","boolean")])
+            else 
              let paratypes = funcparametertypes.b
              let code2=@(+, Local,empty:seq.symbol, arithseq(length.paratypes, 1, 1))+
              newsymbol(name,mytype."builtin",paratypes,funcreturntype.b)  
@@ -482,7 +484,7 @@ function postbind(alltypes:seq.myinternaltype,dict:set.symbol,working:set.symbol
            let lr1=lookupcode(sourceX,s)
           assert isdefined.lr1 report "KJHG"+print.s
            let modname=mytype.module.s
-          if  modname = mytype."builtin" then 
+          if // isbuiltin //  modname=mytype."builtin"   then 
              postbind(alltypes, dict, w,toprocess,i+1,result,sourceX ,tempX )
           else 
            let r=postbind3(alltypes, dict,  code.lr1, 1, empty:seq.symbol,modname,print.s,empty:set.symbol
@@ -592,7 +594,7 @@ tempX:program,sourceX:program)resultpair
     else  if  name_1 in "packed" &and templatename in " seq"   then
                let typdesc=lookuptype(alltypes,newmodpara)
                 assert  not.isempty.typdesc  report"can not find type packed" + print.newmodpara  + org
-               resultpair(   replaceTsymbol(modpara,oldsym),packedcode(towords.newmodpara, typdesc_1) ,"C")
+               resultpair(   replaceTsymbol(modpara,oldsym),packedcode( typdesc_1) ,"C")
       else if templatename in "encoding" then
          if (name="primitiveadd" &and nopara.oldsym=1 )
           &or name_1=merge("getinstance:encodingstate.T") then
@@ -600,20 +602,7 @@ tempX:program,sourceX:program)resultpair
          ,encodingrecord(name,newmodpara) ,"C")  
   else resultpair(Exit,empty:seq.symbol,"not special")
       else if templatename in "process"  then
-        if name="_"   then
-            let typedesc=lookuptype(alltypes, modpara) 
-            assert not.isempty.typedesc report "type not found"+print.modpara
-            let kind=kind.typedesc_1
-            let typesize=size.typedesc_1
-            let code= if kind="int"_1 then [Local.1,Local.2,IDXI] 
-               else if kind="real"_1 then [Local.1,Local.2,IDXR] 
-               else if  typesize=1 then [Local.1,Local.2,IDXP] 
-               else 
-                 [Local.1 , 
-                  Local.2 , Lit.-1 ,PlusOp,Lit.typesize,  symbol("*(int,int)" ,"builtin","int") , Lit.2,PlusOp,
-                  Lit.typesize ,symbol("cast(T seq,int,int)","builtin","ptr") ]
-            resultpair(   replaceTsymbol(modpara,oldsym),code ,"C")
-       else if name="memcpy"   then
+         if name="memcpy"   then
             let cpysym=replaceTsymbol(modpara,oldsym)
             resultpair( cpysym,memcpycode.cpysym,"C" )
         else if name = "deepcopy"   then
@@ -625,14 +614,24 @@ tempX:program,sourceX:program)resultpair
        else    resultpair(Exit,empty:seq.symbol,"not special")
     else    resultpair(Exit,empty:seq.symbol,"not special")
     if not(  place.result1="not special" ) then result1 
-    else
-     let newsym= replaceTsymbol(modpara,oldsym)   
-     let fx=lookupcode(tempX,oldsym)
-     if isdefined.fx then
+     else
+       let newsym= replaceTsymbol(modpara,oldsym) 
+     if templatename in "builtin" &and fsig.oldsym="assert(word seq)" then
+           let typdesc=lookuptype(alltypes,resulttype.newsym)
+                     assert  not.isempty.typdesc  report"can not find type  " + print.newsym
+             let kind=kind.typdesc_1
+             let codesym=if kind="int"_1 then symbol("assert (word seq)","builtin","int")
+             else if kind="real"_1 then symbol("assert:real(word seq)","builtin","real")
+             else symbol("assert:real(word seq)","builtin","ptr")
+        resultpair(  newsym,[Local.1,codesym]   ,"C")      
+     else
+      assert not(templatename in "builtin") report "next expecting"+print.oldsym
+       let fx=lookupcode(tempX,oldsym)
+      if isdefined.fx then
          resultpair(newsymbol( name ,newmodname,  paratypes.newsym, replaceT(newmodpara, resulttype.target.fx))
            ,code.fx,  "C" )
      else
-        let  xxx=if not (newsym=oldsym)then lookupcode(sourceX, newsym) else fx
+         let  xxx=if not (newsym=oldsym)then lookupcode(sourceX, newsym) else fx
          if isdefined.xxx then   
           resultpair(  target.xxx,code.xxx,"B" )
         else    
@@ -655,7 +654,7 @@ tempX:program,sourceX:program)resultpair
                              
 
 
-function packedcode(typeT:seq.word,typdesc:myinternaltype) seq.symbol
+function packedcode(typdesc:myinternaltype) seq.symbol
   let ds=size.typdesc 
 if ds=1 then
    let set=if kind.typdesc="int"_1 then symbol("setfld(T seq, int, int)","builtin","int")
@@ -669,15 +668,15 @@ if ds=1 then
 ,Local."newseq"_1  
 ,Lit.2 
 ,Local.1
-, Fref.symbol(" identity("+typeT+")","seq"+typeT,typeT) 
+, Fref.symbol(" identity( int )","int seq" ,"int") 
 , Fref.set
-, Fref.symbol("_("+typeT+"pseq, int)","seq"+typeT,typeT) 
+, Fref.symbol("_( int pseq, int)","int seq" ,"int") 
 ,ApplyP.6 
 ,Define."d" 
 ,Local."newseq"_1]
 else 
    [Lit.ds, Local.1,  Lit.1,IDXI,symbol("*(int, int)","builtin","int") 
-    , // Fref.symbol("_("+typeT+"packedseq, int)",typeT+"process",typeT)  // Lit.ds
+    , // Fref.symbol("_( int packedseq, int)",typeT+"process",typeT)  // Lit.ds
     , Local.1,  Lit.1,IDXI
     , symbol( [merge."allocateseq:seq.T"]+"(int, int, int)","builtin","ptr")  
     , Define."newseq" 
@@ -686,14 +685,15 @@ else
     , Local."newseq"_1
     , Lit.2 
  , Local.1 
- , Fref.symbol(" identity("+typeT+")","seq"+typeT,typeT)    
- , Fref.symbol("memcpy(int, int, "+typeT+" seq, int, "+typeT+" seq)" ," process"+typeT ,"?")
- , Fref.symbol("_("+typeT+"pseq, int)","seq"+typeT,typeT) 
+ , Fref.symbol(" identity( int )","int seq" ,"int")    
+ , Fref.symbol("memcpy(int, int, int seq, int, int seq)" , "int"+" process" ,"?")
+ , Fref.symbol("_( int pseq, int)","int seq" ,"int") 
  ,ApplyP.8 
 ,Define."d" 
 ,Local."newseq"_1]
              
  function memcpycode(sym:symbol) seq.symbol
+  assert module.sym="int process" report "not expecting module other than process.int"+print.sym
 // function memcpy(i:int,memsize:int, s:seq.T,idx:int, fromaddress:seq.T) int 
 if memsize=0 then idx else
    memcpy(i+1,memsize-1,s,setfld(s,idx,getval(fromaddress,i)),fromaddress) //
@@ -707,14 +707,21 @@ symbol("-(int,int)" ,"builtin","int"),Local.s ,Local.s ,Local.idx ,Local.fromadd
 ,Block(mytype."int",3) ]          
 
 Function headdict set.symbol
-let modulename = mytype."internal1"
  asset
- .[ newsymbol("builtin", modulename, [ mytype."internal1"], mytype."internal" ), 
+ .[ symbol("builtin(internal)", "headdict",   "internal1" ), 
+  // symbol("builtin(word seq)", "headdict",    "internal" ), //
+  symbol("export", "headdict",   "internal1" ), 
+  symbol("unbound", "headdict",   "internal1" ), 
+  symbol("stub", "headdict", "internal1" ), 
+  symbol("usemangle", "headdict",   "internal" )]
+
+ 
+ newsymbol("builtin", modulename, [ mytype."internal"], mytype."internal1" ), 
   // newsymbol("builtin", modulename, [ mytype."word seq"], mytype."internal" ), //
   newsymbol("export", modulename, empty:seq.mytype, mytype."internal1" ), 
   newsymbol("unbound", modulename, empty:seq.mytype, mytype."internal1" ), 
   newsymbol("stub", modulename, empty:seq.mytype, mytype."internal1" ), 
-  newsymbol("usemangle", modulename, empty:seq.mytype, mytype."internal1" )]
+  newsymbol("usemangle", modulename, empty:seq.mytype, mytype."internal" )]
 
 function gathersymbols(input:seq.seq.word)firstpass
  @(wrapgathersymbols( headdict)
@@ -781,9 +788,7 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
   let name = funcname.t
   let paratypes = funcparametertypes.t
   assert iscomplex.modname.f = hasT(input, 2)report"Must use type T in function name or parameters in parameterized module and T cannot be used in non - parameterized module" + getheader.input
-     let sym =  if subseq(input,length.input-2,length.input) ="builtin.usemangle" then
-              newsymbol( name , mytype.if iscomplex.modname.f then"T builtin"else"builtin", paratypes, funcreturntype.t)
-      else   newsymbol( name , modname.f, paratypes, funcreturntype.t)  
+     let sym =  newsymbol( name , modname.f, paratypes, funcreturntype.t)  
       if last.input in "export" then
        firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f,types.f)
       else if last.input in "unbound" then

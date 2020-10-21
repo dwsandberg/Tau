@@ -21,7 +21,7 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
 
 /run tools callgraphtest
 
-/run tools stdlibdoc
+run tools stdlibdoc
 
 /run doc createdoc
 

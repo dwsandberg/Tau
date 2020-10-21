@@ -311,7 +311,7 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
      if pkg="$constant" then
        buildtemplates(used,i+1,theprg,const+used_i,alltypes)
      else 
-     let b =  if     pkg ="builtin"  then
+     let b =  if     isbuiltin.pkg   then
          findencode( match5([mangledname.xx,toword.nopara.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0))
        else empty:seq.match5
     if length.b > 0 then 
@@ -345,7 +345,7 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
          match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
       else if fsig.xx in ["callidxI( T seq , int) ","callidxR( T seq , int)","callidxP( T seq , int)"] then
            match5([mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0)
-    else   if (fsig.xx)_1="global"_1 &and  pkg = "builtin" then
+    else   if (fsig.xx)_1="global"_1 &and  isbuiltin.pkg   then
         match5(0,mangledname.xx, 2, GEP(r.1,   i64, slot.global([mangledname.xx],i64,C64.0))
         +CAST(r.2, r.1,  i64, CASTPTRTOINT))
      else 

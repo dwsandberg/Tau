@@ -266,7 +266,7 @@ if i > length.args then ipair(regno,bc)
 else 
    let newj=  if types_j in "$  $record" then 
     // we have reached the type in the module in the full instruction in the match5 record // j else 
-   max(findindex(","_1,types)+1,length.types-1)
+   min(findindex(","_1,types,j+1),length.types-1 )
    let typ=if length.types=3 then "int"_1 else types_(newj-1)
    assert typ in  "int real seq ptr"  report "unknown type gencode"+types
     if preal =0 &and typ="real"_1 then   

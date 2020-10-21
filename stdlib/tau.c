@@ -400,8 +400,19 @@ BT assertZbuiltinZwordzseq(processinfo PD,BT message)
     //dumpstack();
     longjmp(PD->env,1);
      return 1; }
-     
+ 
+BT assertQ3ArealZbuiltinZwordzseq(processinfo PD,BT message)
+{   PD->error =message;
+    //dumpstack();
+    longjmp(PD->env,1);
+     return 1; }
+    
 
+BT assertQ3AptrZbuiltinZwordzseq(processinfo PD,BT message)
+{   PD->error =message;
+    //dumpstack();
+    longjmp(PD->env,1);
+     return 1; }
 
                
 BT executecodeZbuiltinZUTF8Zintzseq(processinfo PD,BT funcname,BT P) {

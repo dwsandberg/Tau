@@ -40,12 +40,14 @@ use seq.myinternaltype
 
  Function libdesc(pin:program,templates:program,mods:seq.firstpass,exports:seq.word,rootsigs:seq.symbol) symbol
   let p=  pin &cap asset.rootsigs
-  let closed=asset.@(+,exportcode.p, rootsigs, rootsigs) 
-  let d=@(+,tolibsym(p,templates),empty:seq.symbol,toseq.closed )     
+  let closed=@(+,filterbuiltin,empty:seq.symbol,toseq.asset.@(+,exportcode.p, rootsigs, rootsigs) )
+  let d=@(+,tolibsym(p,templates),empty:seq.symbol, closed )     
     let libmods=  @(+,tolibmod(p,templates,exports),empty:seq.firstpass,mods)
        + libmod(mytype."$other" , d, empty:seq.symbol, empty:seq.mytype)
 addseq.@(+,addlibmod,empty:seq.symbol,libmods)
-       
+
+ 
+ function   filterbuiltin(s:symbol) seq.symbol if isbuiltin.module.s then empty:seq.symbol else [s]
 
  function tolibmod(p:program,templates:program,exports:seq.word,m:firstpass) seq.firstpass
   if  not(   abstracttype.modname.m   in exports )  then empty:seq.firstpass else

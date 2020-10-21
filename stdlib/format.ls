@@ -34,9 +34,7 @@ Function getheader(s:seq.word)seq.word
   let afterreturntype = consumetype(s, startoftype + 1)
   let aftercomments = consumecomment(s, afterreturntype)
    if aftercomments ≤ length.s ∧ s_aftercomments in "unbound export"then s
-   else if aftercomments ≤ length.s ∧ s_aftercomments = "builtin"_1
-     then s
-    else subseq(s, 1, aftercomments - 1) + "stub"
+   else  subseq(s, 1, aftercomments - 1) + "stub"
 
 function consumetype(s:seq.word, i:int)int
  if i > length.s then i

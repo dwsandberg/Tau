@@ -22,9 +22,6 @@ use set.word
 use seq.seq.word
 
 
- 
-
-
 Function type:programele internaltype export
 
 
@@ -297,9 +294,6 @@ Function continue(i:int)symbol   symbol([ "CONTINUE"_1,toword.i],    "$continue"
 
 use otherseq.seq.word
 
-/Function Constant(args:seq.symbol) symbol
-  let fsig="CONSTANT" +     toword.valueofencoding.encode(symbolconstant(args))  
-   symbol(fsig , "$constant",  "ptr",args,extrabits(fsig,constbit) )
    
 Function Constant2(args:seq.symbol) symbol
 //  let args=subseq(argsin,1,length.argsin-1) //
@@ -327,7 +321,7 @@ function hash(a:symbolconstant) int hash(toseq.a)
 Function isconstantorspecial(s:symbol)boolean isconst.s &or isspecial.s
 
 Function isnocall(sym:symbol) boolean 
-isconst.sym &or isspecial.sym &or   module.sym ="builtin"  
+isconst.sym &or isspecial.sym &or    module.sym="builtin"   
 
 function specialbit bits bits.4
 
@@ -469,6 +463,9 @@ Function getoption(code:seq.symbol) seq.word
   if not(last.code=Optionsym) then empty:seq.word
   else fsig.code_(length.code-1)
 
+Function isbuiltin(a:seq.word) boolean   a="builtin" 
+
+Function isbuiltin(a:mytype) boolean isbuiltin.towords.a 
 
  Function processOption(p:program,t:seq.word) program
   if length.t < 4 &or not(t_1="*"_1) &or  not (t_2 in "PROFILE INLINE STATE NOINLINE") then p
@@ -483,7 +480,7 @@ Function getoption(code:seq.symbol) seq.word
    let ret=(gettypelist.subseq(t,paraend+1,length.t))_1
   let sym= symbol( [name]+"("+@(seperator.",",identity,"",args)+")",modname,  ret) 
     let r=lookupcode(p,sym)
-    if modname="builtin"then
+    if isbuiltin.modname then
      map(p,sym,[Words.[t_2],Optionsym])
     else  
     assert isdefined.r report "Option problem"+t
