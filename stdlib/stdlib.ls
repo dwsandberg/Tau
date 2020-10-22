@@ -17,7 +17,7 @@ parsersupport  uses
  timestamp ioseq dataio intdict dict
     parsersupport mangle mytype   bitpackedseq xxhash
         persistant libdesc
- pass1 pass2new   symbol internalbc
+   pass2new   symbol internalbc parse
   
  
  

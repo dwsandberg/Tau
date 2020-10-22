@@ -239,7 +239,7 @@ symbol([name],[ "para"_1,toword.parano,"$"_1],towords.type,specialbit)
 function ispara(s:mytype) boolean  ( towords.s)_1="para"_1 &and last.towords.s="$"_1  
 
 Function deepcopysym (type:mytype) symbol
-newsymbol("deepcopy"  ,mytype(towords.type + "process"), [type], type)
+newsymbol("deepcopy"  ,mytype(towords.type + "builtin"), [type], type)
 
 
 Function IDXR symbol  symbol("IDXR(int,int)","builtin", "real")

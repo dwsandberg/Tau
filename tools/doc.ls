@@ -224,7 +224,7 @@ function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
     else if this ="'" _1 then callarcs(s,findindex("'"_1,s,i+1)+1,result)
     else 
   let next=s_(i+1)
-      if next="("_1 then
+      if next in "( :"  then
      let j=findindex(")"_1,s,i+1) 
      if this="RECORD"_1 then
       callarcs(s,j+1,result)

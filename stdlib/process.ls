@@ -18,20 +18,13 @@ Function result(p:process.T)T
  the elements are store at resultb and not a pointer to the type T. //
  resultb.p
  
-Function process(T)process.T builtin.usemangle
+/Function process(T)process.T builtin.usemangle
 
 * Both deepcopy and sizoftype:T are treated specially by compiler 
 
-Function deepcopy(a:T)T deepcopy.a
+Function deepcopy(a:T)T builtin.usemangle
 
-Function sizeoftype:T int 1
-
-------------
-
-
-function memcpy(i:int,memsize:int, s:seq.T,idx:int, fromaddress:seq.T) int 
- // returns next blank idx   handled by compiler //  0
- 
+Function sizeoftype:T int builtin.usemangle
 
 
 
