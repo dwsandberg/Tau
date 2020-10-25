@@ -52,6 +52,11 @@ use seq.seq.symbol
 
 use seq.mytype
 
+use mangle
+
+Function mangledname(s:symbol)word mangle(fsig.s,module.s)
+
+
 Function tollvmtype(alltypes:seq.myinternaltype,s:symbol) llvmtype
    if fsig.s="option(T, word seq)" &or not.check then    function.constantseq(nopara.s + 2, i64) else 
  // assert not( modname.s=mytype."builtin") report "llvmtype error "+print.s //

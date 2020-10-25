@@ -7,9 +7,9 @@ module bug7
 
 use stdlib
 
-use seq.slot
+use seq.slot2
 
-use encoding.slot
+use encoding.slot2
 
 use seq.llvmtypeele2
 
@@ -17,15 +17,15 @@ use encoding.llvmtypeele2
 
 use seq.seq.int
 
-type  slot is record type:int,rec:seq.int,name:seq.word
+type  slot2 is record type:int,rec:seq.int,name:seq.word
 
-function =(a:slot,b:slot) boolean rec.a=rec.b &and  type.a= type.b &and name.a=name.b
+function =(a:slot2,b:slot2) boolean rec.a=rec.b &and  type.a= type.b &and name.a=name.b
 
-function hash(a:slot) int hash(rec.a)
+function hash(a:slot2) int hash(rec.a)
 
-function assignencoding(a:int, slot) int a+1
+function assignencoding(a:int, slot2) int a+1
 
-Function c32(i:int) encoding.slot  encode(  slot(i32, [ 45, i] ,""))
+Function c32(i:int) encoding.slot2  encode(  slot2(i32, [ 45, i] ,""))
 
 Function testbug7 seq.word 
  // since encodings have side effects it is not safe to use simple inline expansion of functions

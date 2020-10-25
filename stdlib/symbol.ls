@@ -58,9 +58,8 @@ Function symbol(fsig:seq.word,module:seq.word,returntype:seq.word, flag:bits) sy
  
  Function fsig(symbol) seq.word export
 
-Function newsymbol(namein:seq.word,modname:mytype, paratypes:seq.mytype,  resulttype:mytype) symbol
- let name=if changeit then namein else [merge(namein)]
-let b= (length.towords.modname > 1)  &and  not((towords.modname)_1="T"_1) &and not(ispara.modname) 
+Function newsymbol(name:seq.word,modname:mytype, paratypes:seq.mytype,  resulttype:mytype) symbol
+  let b= (length.towords.modname > 1)  &and  not((towords.modname)_1="T"_1) &and not(ispara.modname) 
   let paratyps= if b then @(+,replaceT(parameter.modname),empty:seq.mytype,paratypes)  else paratypes
   let sym=symbol(if length.paratyps = 0 then name else  name + "(" + @(seperator.",", towords,"", paratyps)  + ")"
   ,towords.modname,
@@ -71,10 +70,10 @@ let b= (length.towords.modname > 1)  &and  not((towords.modname)_1="T"_1) &and n
 
 Function name(s:symbol) seq.word  
 let j=findindex("("_1, fsig.s)  
-let n=if j > length.fsig.s then fsig.s
+if j > length.fsig.s then fsig.s
  else
 subseq(fsig.s, 1, j - 1)
-n
+
 
 
 
@@ -91,8 +90,7 @@ let a= fsig.s
 
 
   
-Function mangledname(s:symbol)word 
-mangle2( name.s ,  module.s, @(+,towords,empty:seq.seq.word,paratypes.s))
+
 
 
 Function modname(s:symbol)mytype mytype.module.s
@@ -113,9 +111,10 @@ function counttrue(i:int, b:boolean)int if b then i + 1 else i
 
 use otherseq.word
 
-Function ?(a:symbol, b:symbol)ordering    fsighash.a ? fsighash.b &and    fsig.a ? fsig.b ∧  module.a ? module.b
+Function ?(a:symbol, b:symbol)ordering     fsighash.a ? fsighash.b   
+&and    fsig.a ? fsig.b ∧  module.a ? module.b
 
-Function ?2(a:symbol, b:symbol)ordering    fsighash.a ? fsighash.b &and    fsig.a ? fsig.b 
+Function ?2(a:symbol, b:symbol)ordering   fsighash.a ? fsighash.b   &and    fsig.a ? fsig.b 
 
 
 Function lookup(dict:set.symbol, name:seq.word, types:seq.mytype)set.symbol
@@ -125,16 +124,6 @@ Function lookupfsig(dict:set.symbol, fsig:seq.word)set.symbol
  findelement2(dict,  symbol( fsig ,  "?",  "?" ))
 
 Function printdict(s:set.symbol)seq.word @(+, print,"", toseq.s)
-
-
-
-function replaceTinname(with:mytype, name:word)word
- let x = decodeword.name
-  if subseq(x, length.x - 1, length.x)
-  in [ //.T // [ char.46, char.84], //:T // [ char.58, char.84]]then
-  encodeword(subseq(x, 1, length.x - 1) + @(+, decodeword, empty:seq.char, print.with))
-  else name
-
 
 
 
@@ -153,22 +142,17 @@ function replaceT(with:seq.word,s:word) seq.word if "T"_1=s then with else [s]
 
 function replaceT(with:seq.word,s:seq.word) seq.word @(+,replaceT.with,"",s)
 
-Function replateTfsig(with:seq.word,fsig:seq.word) seq.word
-if changeit then [fsig_1]+replaceT(  with,subseq(fsig,2,length.fsig)) else
-[replaceTinname(mytype.with, fsig_1)]+replaceT( with,subseq(fsig,2,length.fsig))
 
-Function replaceTsymbol2(with:mytype, s:symbol) mapele
-  if with=mytype."T" then mapele(s,s )
- else
-   let x=replaceTsymbol(with, s)
-  mapele(x,s )
+Function replaceTsymbol2(with:mytype, s:symbol) mapele  mapele(replaceTsymbol(with, s),s )
   
 Function replaceTsymbol(with:mytype, s:symbol) symbol
   if with=mytype."T" then s
  else
-   symbol(replateTfsig(towords.with,fsig.s), replaceT(towords.with,module.s), replaceT(towords.with, returntype.s),zcode.s)
+let newfsig=    
+    let j=findindex("("_1, fsig.s) 
+   replaceT (if towords.with="" then "" else print.with,  subseq(fsig.s,1,j-1)) +replaceT( towords.with,subseq(fsig.s,j,length.fsig.s))
+   symbol(newfsig, replaceT(towords.with,module.s), replaceT(towords.with, returntype.s),zcode.s)
   
-
 
 Function ?(a:mytype, b:mytype)ordering towords.a ? towords.b
 

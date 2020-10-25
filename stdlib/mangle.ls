@@ -10,8 +10,6 @@ use stdlib
 
 use seq.word
 
-Function mangle2(name: seq.word,modname:seq.word, parameters:seq.seq.word) word
- encodeword.@(seperator.char.charmajorseparator,codeup,empty:seq.char, [[merge.name],modname]+parameters)
 
 function seperator( sep:char,acc:seq.char,b:seq.char) seq.char
 if isempty.acc then b else acc+sep+b 
@@ -24,13 +22,13 @@ Function break(w:word, a:seq.word, j:int)seq.seq.word
 
 Function mangle(fsig:seq.word,module:seq.word) word
  let i=findindex("("_1, fsig)  
- mangle2(subseq(fsig,1,i-1),module, break(","_1, subseq(fsig, 1, length.fsig - 1), i + 1 ))
-
+ let modname=module
+ let parameters=break(","_1, subseq(fsig, 1, length.fsig - 1), i + 1 )
+  encodeword.@(seperator.char.charmajorseparator,codeup,empty:seq.char, [[merge.subseq(fsig,1,i-1)],module]+parameters)
 
 
 Function codedown(w:word)seq.seq.word codedown(decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)
 
-Function changeit boolean false
 
 function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.word)seq.seq.word
  if i > length.l then
@@ -50,7 +48,7 @@ function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.
     char(((t * 16 + hexvalue.l_(i + 3)) * 16 + hexvalue.l_(i + 4))
     * 16
     + hexvalue.l_(i + 5))
-    if  changeit &and  ch in decodeword.".:"_1   then 
+    if     ch in decodeword.".:"_1   then 
       codedown(l, i + 1, empty:seq.char, words + encodeword.w+encodeword.[ch], result)
     else 
      codedown(l, i + inc, w + ch, words, result)

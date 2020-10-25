@@ -261,7 +261,7 @@ use otherseq.block
            
     
 function findblk2( l:seq.block,i:int,blkno:int) block
-     assert  i &le length.l report "did not find block"   
+     assert  i &le length.l report "did not find block"  +stacktrace 
       let blk=l_i
       if   blkno.blk=blkno then 
         if kind.blk="JMP"_1 then  findblk2(l,1,label1.blk)  else blk

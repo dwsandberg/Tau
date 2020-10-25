@@ -108,7 +108,7 @@ Function main(arg:seq.int)outputformat
  let output = if aborted.p then message.p
  else if subseq(result.p, 1, 1) = "OK" ∧ length.args = 3 then
  // execute function specified in arg //
-  let p2 = process.execute.mangle2([args_3], [ args_2], empty:seq.seq.word)
+  let p2 = process.execute.mangle([args_3], [ args_2])
    if aborted.p2 then message.p2 else result.p2
  else if subseq(result.p, 1, 1) = "OK" ∧ not(length.args = 1)then
  "not correct number of args:" + args
