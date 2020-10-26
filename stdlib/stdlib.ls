@@ -4,10 +4,10 @@ Module stdlib
 
 Library stdlib UTF8 bitpackedseq bits blockseq codetemplates   encoding fileio 
 format graph groupparagraphs  internalbc ipair libdesc  llvm main2  otherseq   
-parse pass1new  persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
+parse pass1   persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
  timestamp maindict words   newpretty  codegennew pass2new intdict  
  mangle mytype
-parsersupport  uses 
+parsersupport postbind uses 
  exports stdlib main2 maindict UTF8    words   assignencodingnumber
   bits blockseq   encoding fileio format  llvmconstants llvm
   ipair       process real   seq set stack stacktrace 
@@ -22,7 +22,7 @@ parsersupport  uses
  
  
   PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage
- 
+
  
   PROFILE      pass1:postbind( seq.myinternaltype, set.symbol, set.symbol
 , seq.symbol,int, program, program, program) program
@@ -419,7 +419,7 @@ exclude stdlib seq
 
 * usegraph include  main2 libscope display constant codegen convert 
  parse pass1  symbol libdesc
-codetemplates pass2 persistant   llvm  
+codetemplates pass2 persistant   llvm  postbind
 reconstruct persistantseq opt2
 symbol parse libdesc internalbc intercode cvttoinst codegen pass2new codegennew funcsig
 exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process  ipair 

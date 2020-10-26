@@ -35,6 +35,9 @@ use symbol
 
 use set.word
 
+Function getheader(s:seq.word)seq.word export
+
+
 
 Function type:bindinfo internaltype export
 

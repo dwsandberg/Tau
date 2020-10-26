@@ -223,7 +223,8 @@ symbol([name],[ "para"_1,toword.parano,"$"_1],towords.type,specialbit)
 function ispara(s:mytype) boolean  ( towords.s)_1="para"_1 &and last.towords.s="$"_1  
 
 Function deepcopysym (type:mytype) symbol
-newsymbol("deepcopy"  ,mytype(towords.type + "builtin"), [type], type)
+symbol("deepcopy(T)",towords.type + "builtin","T")
+
 
 
 Function IDXR symbol  symbol("IDXR(int,int)","builtin", "real")
@@ -510,6 +511,8 @@ Function print2(i:myinternaltype) seq.word
 else
      findelement(    myinternaltype(0,"?"_1,abstracttype.typ,mytype(towords.parameter.typ+"?") ,empty:seq.mytype), defined)
 
+Function print(it:myinternaltype) seq.word
+  [toword.size.it,kind.it,name.it]+print.modname.it+@(+,print,"",subflds.it)
 
 Function fsig(symbol)seq.word export
 
