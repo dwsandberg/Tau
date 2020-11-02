@@ -1,6 +1,3 @@
-#!/usr/local/bin/tau
-
-/run llvmconstants generatecode
 
 Module internalbc
 
@@ -29,7 +26,7 @@ use llvmconstants
 Function BLOCKCOUNT(slot:int, a1:int)internalbc addstartbits(1, 1, add(a1, emptyinternalbc))
 
 
-Function ret internalbc addstartbits(toint.RET, 0, emptyinternalbc)
+Function RETURN internalbc addstartbits(toint.RET, 0, emptyinternalbc)
 
 Function RET(slot:slot,  a1:slot)internalbc addstartbits(toint.RET, 1, addaddress(slot, a1, emptyinternalbc))
 
@@ -123,12 +120,15 @@ function addpair(tailphi:seq.int, slot:int, p:int, a:internalbc, b:int)internalb
 
 (block1, p11, p12, p13, block2, p21, p22, p23)phi(p11, block1, p21, block2)
 
-function phiinst(slot:int, typ:int, tailphi:seq.int, nopara:int, p:int)internalbc
- let t = @(addpair(tailphi, slot + p, p), identity, emptyinternalbc, arithseq(length.tailphi / (nopara + 1), - nopara - 1, length.tailphi - nopara))
-  addstartbits(toint.PHI, length.tailphi / (nopara + 1) * 2 + 1, add(typ, t))
-
-Function phiinst(slot:int, typ:int, tailphi:seq.int, nopara:int)internalbc
+ 
+Function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int)internalbc
  @(+, phiinst(slot, typ, tailphi, nopara), emptyinternalbc, arithseq(nopara, 1, 1))
+
+function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int, p:int)internalbc
+ let t = @(addpair(tailphi, slot + p, p), identity, emptyinternalbc, arithseq(length.tailphi / (nopara + 1), - nopara - 1, length.tailphi - nopara))
+  addstartbits(toint.PHI, length.tailphi / (nopara + 1) * 2 + 1, add(typ_p, t))
+
+ 
 
 Function addstartbits(inst:int, noargs:int, b:internalbc)internalbc
  if noargs > 31 ∨ inst > 31 ∨ bitcount.b > 56 - 16 then
@@ -413,14 +413,19 @@ Function finishblock(current:bitpackedseq.bit, headerplace:int, blockabbrevlengt
   let len =(length.bb - headerplace) / 32
    // assert false report"X"+ toword(length.header -32)+ toword.len // patch(bb, headerplace - 31, len)
 
-Function addbody(offset:int, abbrevlen:int, m:bitpackedseq.bit, bodytxt:internalbc)bitpackedseq.bit
- let header = addblockheader(m, abbrevlen, toint.FUNCTIONBLK, 4)
-  finishblock(addtobitstream(offset, header, bodytxt), length.header, 4)
+Function addbody(offset:int,  m:bitpackedseq.bit, bodytxt:internalbc)bitpackedseq.bit
+ let header = addblockheader(m, MODABBREVLEN, toint.FUNCTIONBLK, FUNCABBRVLEN)
+  finishblock(addtobitstream(offset, header, bodytxt), length.header, FUNCABBRVLEN)
+  
+Function addbody( m:bitpackedseq.bit, bodytxt:seq.seq.int)bitpackedseq.bit
+ let header = addblockheader(m, MODABBREVLEN, toint.FUNCTIONBLK, FUNCABBRVLEN)
+  finishblock(addrecords( header, FUNCABBRVLEN,  bodytxt), length.header, FUNCABBRVLEN)
+
 
 Function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int)bitpackedseq.bit @(addrecord.abbrevlength, identity, bits, s)
 
 function addrecord(abbrevlength:int, bits:bitpackedseq.bit, a:seq.int)bitpackedseq.bit
- let a1 = addvbr(bits, 3, abbrevlength)
+ let a1 = addvbr(bits, UNABBREVRECORD, abbrevlength)
  let a2 = addvbr6(addvbr6(a1, a_1), length.a - 1)
   @(addvbr6, identity, a2, subseq(a, 2, length.a))
 
@@ -428,9 +433,36 @@ function ENDBLOCK int 0
 
 function ENTERBLOCK int 1
 
+function  UNABBREVRECORD  int 3
+
+function MODABBREVLEN int 3
+
+function TYPEABBREVLEN int 4
+
+function FUNCABBRVLEN int 4
+
 Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits
- let MODABBREVLEN = 3
- let TYPEABBREVLEN = 4
+let p=llvmpartial (deflist,trecords) 
+    let offset = length.constantrecords
+       let a7 = @(addbody(offset), identity, a6.p, bodytxts)
+        // sym table //
+        let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
+        let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
+         // finish module block // data2.align.finishblock(a8, length.h.p, MODABBREVLEN)
+
+Function llvm(   trecords:seq.seq.int,bodies:seq.seq.seq.int)seq.bits
+let p=llvmpartial (empty:seq.seq.int,trecords) 
+    let offset = length.constantrecords
+       let a7 = @(addbody, identity, a6.p, bodies)
+        // sym table //
+        let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
+        let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
+         // finish module block // data2.align.finishblock(a8, length.h.p, MODABBREVLEN)
+
+
+type llvmpartial is record a6:bitpackedseq.bit,h:bitpackedseq.bit
+
+Function llvmpartial (deflist:seq.seq.int,  trecords:seq.seq.int) llvmpartial 
  let offset = length.constantrecords
  let h = addblockheader(add(add(add(add(empty:bitpackedseq.bit, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8)
  , 2
@@ -459,18 +491,13 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
       // const block //
       let g = @(constrecords, identity, trackconst(a5, -1, 0), subseq(constantrecords, length.deflist + 1, offset))
       let a6 = finishblock(bits.g, blockstart.g, TYPEABBREVLEN)
-       // function bodies //
-       // assert length.trecords = length.typerecords report"X"//
-       let a7 = @(addbody(offset, MODABBREVLEN), identity, a6, bodytxts)
-        // sym table //
-        let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
-        let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
-         // finish module block // data2.align.finishblock(a8, length.h, MODABBREVLEN)
+      llvmpartial (a6,h)
+      
+  
+
 
 function constrecords(z:trackconst, l:slotrecord)trackconst
  // keep track of type of last const processed and add record when type changes //
- let MODABBREVLEN = 3
- let TYPEABBREVLEN = 4
   if ismoduleblock.l   then
   let bits = if not.islastmodule.z then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)else bits.z
       trackconst(addrecord(MODABBREVLEN, bits, record.l), typ.l, 0)
@@ -548,8 +575,8 @@ function enumerate(type:seq.word,codes:seq.word) seq.word
  "type"+type+"is record toint:int"+
   "&br &br Function decode(code:" +type+ ") seq.word" 
  +"&br let i=toint.code if between(i+ 1,1,"+toword.length.codes+")  then "
- +   ' &br let r=[" ' +codes+ ' "_(i+1)]  if not(r= "?") then r else " ' + type+ ' " +toword.i '  
- +  ' &br  else " ' + type+ ' " +toword.i ' 
+ +   ' &br let r=[" ' +codes+ ' "_(i+1)]  if not(r= "?") then r else " ' + type+ ' ." +toword.i '  
+ +  ' &br  else " ' + type+ ' ." +toword.i ' 
  +"&br &br function toint("+type+") int export"
  +"&br &br function "+type+"(i:int) "+type+" export"
 +"&br &br function type:"+type+" internaltype export"
@@ -843,8 +870,8 @@ type cmp2op is record toint:int
 
 Function decode(code:cmp2op)seq.word 
 let i = toint.code if between(i + 1, 1, 39)then 
-let r = ["? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ? ? ? ? ? sgt"_(i + 1)]if not(r ="?")then r else"cmp2op"+ toword.i 
-else"cmp2op"+ toword.i 
+let r = ["? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ? ? ? ? ? sgt"_(i + 1)]if not(r ="?")then r else"cmp2op."+ toword.i 
+else"cmp2op."+ toword.i 
 
 function toint(cmp2op)int export 
 

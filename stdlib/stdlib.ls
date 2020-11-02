@@ -16,7 +16,7 @@ parsersupport postbind uses
   worddict groupparagraphs 
  timestamp ioseq dataio intdict dict
     parsersupport mangle mytype   bitpackedseq xxhash
-        persistant libdesc
+        libdesc
    pass2new   symbol internalbc parse
   
  

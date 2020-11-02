@@ -125,7 +125,8 @@ function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo, i
    let pseqtype = mytype(towords.parameter.(types.term4)_1 + "pseq"_1)
     let idx=   pseqidxsym( parameter.(types.term4)_1 )
    let x = lookupbysig(dict,name.idx , paratypes.idx, input, place)
-      let b=[Fref.sym2,Fref.sym1,Fref.idx,Apply(length.types.term1 + length.types.term2 + 5)]
+      let b=[Fref.sym2,Fref.sym1,Fref.idx,Apply(length.types.term1 + length.types.term2 + 5,towords.last.sym2types,
+      towords.resulttype.sym1)]
     bindinfo(dict, code.term1 + code.term2 + code.term3+ code.term4+b, types.term3,"")
     
   

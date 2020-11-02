@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau
 
 run mylib testnew 
 
@@ -54,6 +53,14 @@ use seq.mytype
 
 use mangle
 
+
+Function constdata seq.slot export
+
+Function wordref(w:word) int  export 
+
+Function addliblib( libname:seq.word,mods:int,profiledata:int) int export
+
+
 Function mangledname(s:symbol)word mangle(fsig.s,module.s)
 
 
@@ -62,17 +69,12 @@ Function tollvmtype(alltypes:seq.myinternaltype,s:symbol) llvmtype
  // assert not( modname.s=mytype."builtin") report "llvmtype error "+print.s //
   function.@(+,tollvmtype.alltypes, [tollvmtype(alltypes,resulttype.s),i64],paratypes.s)
   
-   assert not(mangledname.s="printZUTF8ZintZreal"_1 )report "here"+print.a
-   a
- 
-    
-     function tollvmtype(alltypes:seq.myinternaltype,s:mytype) llvmtype
+function tollvmtype(alltypes:seq.myinternaltype,s:mytype) llvmtype
         let kind=parakind(alltypes,s)
           if  kind="int"_1 then i64
           else if kind="real"_1 then   double   
         else   // ptr. // i64
 
-function wordstype llvmtype array(-1, i64)
 
 Function conststype llvmtype array(-2, i64)
 
@@ -131,7 +133,7 @@ options.code.m
 use encoding.match5
 
 
-Function check boolean false
+Function check boolean true
 
 function table seq.match5
  let z=if check then
@@ -140,6 +142,9 @@ function table seq.match5
   ,  match5(1,"sqrtZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.sqrt.f64",function.[ double, double]),slot.ibcsub1))
   ,  match5(1,"sinZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.sin.f64",function.[ double, double]),slot.ibcsub1))
   ,  match5(1,"cosZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.cos.f64",function.[ double, double]),slot.ibcsub1))
+  ,  match5(1,"tanZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry("tan",function.[ double, double]),slot.ibcsub1))
+  ,  match5(1,"arcsinZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry("asin",function.[ double, double]),slot.ibcsub1))
+  ,  match5(1,"arccosZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry("acos",function.[ double, double]),slot.ibcsub1))
 ,match5(1,"intpartZbuiltinZreal"_1, 1,   CAST(r.1, slot.ibcsub1,  i64, // fptosi double // 4))
 ,match5(1,"torealZbuiltinZint"_1, 1, // sitofp // CAST(r.1, slot.ibcsub1,  double, 6) )
 ,  match5(2,"Q2DZbuiltinZrealZreal"_1, 1,   BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sub))
@@ -348,9 +353,11 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
             match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1,      addwordseq2.fsig.xx       )
       else if pkg="$word"then
          match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
+      else if check &and fsig.xx in [ "callidxR( T seq , int)" ] then
+           match5([mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0,empty:seq.symbol,tollvmtype(alltypes,resulttype.xx))
       else if fsig.xx in ["callidxI( T seq , int) ","callidxR( T seq , int)","callidxP( T seq , int)"] then
-           match5([mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0)
-    else   if (fsig.xx)_1="global"_1 &and  isbuiltin.pkg   then
+           match5([mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0,empty:seq.symbol,i64)
+    else   if (fsig.xx)_1="global"_1 &and isbuiltin.pkg  then
         match5(0,mangledname.xx, 2, GEP(r.1,   i64, slot.global([mangledname.xx],i64,C64.0))
         +CAST(r.2, r.1,  i64, CASTPTRTOINT))
      else 

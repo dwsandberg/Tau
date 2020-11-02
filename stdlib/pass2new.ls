@@ -1,6 +1,3 @@
-#!/usr/local/bin/tau
-
-
 Module pass2new
 
 run mylib testnew 
@@ -20,8 +17,10 @@ use stack.block
 
 use otherseq.mytype
 
+use seq.myinternaltype
 
-function breakblocks(p:program,code:seq.symbol,self:symbol) seq.symbol  
+
+function breakblocks(p:program,code:seq.symbol,self:symbol,alltypes:seq.myinternaltype) seq.symbol  
   let a=breakblocks(p,code,1,1,empty:seq.symbol,empty:stack.block)
   if length.a=1 then code.a_1 else 
    if not(kind.a_1="LOOPBLOCK"_1) &and @(&or,tailrecursion.self,false,a) then
@@ -29,7 +28,8 @@ function breakblocks(p:program,code:seq.symbol,self:symbol) seq.symbol
      let nopara = nopara.self
      let a2=@(+,preparetail(nopara,self,continue.nopara),empty:seq.block,a)
      let plist = @(+, var, empty:seq.symbol, arithseq(nopara, 1, 1))
-     let entry = block("LOOPBLOCK"_1,0,blkno.a2_1,0, plist + Lit(nopara + 1) + loopblock(nopara + 1))
+     let entry = block("LOOPBLOCK"_1,0,blkno.a2_1,0, plist + Lit(nopara + 1) + 
+     Loopblock(@(seperator.",",parakind.alltypes, "", paratypes.self)+",int)"))
       ascode(p,[entry]+a2,self)
    else
    ascode(p,a,self)
@@ -384,8 +384,8 @@ use set.symbol
 
 
  Function pass2(   placehold:program,compiled:set.symbol
- ,roots:seq.symbol,mods:seq.firstpass,templates:program,exports:seq.word) intercode
-    let p = @( depthfirst(placehold),identity,emptyprogram,toseq.toset.placehold)
+ ,roots:seq.symbol,mods:seq.firstpass,templates:program,exports:seq.word,alltypes:seq.myinternaltype) intercode
+    let p = @( depthfirst(placehold,alltypes),identity,emptyprogram,toseq.toset.placehold)
       let libmods=libdesc(p, templates,mods,exports,roots )
     let t=uses(p,empty:set.symbol,asset.roots+libmods)
     let defines2=@(+, defines2(p),empty:seq.symbol,toseq.(t-compiled )) 
@@ -421,7 +421,7 @@ type backresult is record code:seq.symbol, places:seq.int
 
 use blockseq.symbol
   
-Function firstopt(p:program, rep:symbol, code:seq.symbol) program
+Function firstopt(p:program, rep:symbol, code:seq.symbol,alltypes:seq.myinternaltype) program
  let nopara=nopara.rep
  if isbuiltin.module.rep  then
   let options= caloptions(p,code,nopara,module.rep,fsig.rep)
@@ -431,7 +431,7 @@ Function firstopt(p:program, rep:symbol, code:seq.symbol) program
   let code2 = code.yyy(p,blockit.code,1,empty:seq.symbol,    nopara + 1, pdict)
   let options= caloptions(p,code2,nopara,module.rep,fsig.rep)
   let s=symbol (fsig.rep,module.rep,returntype.rep )
- let a = breakblocks(p,blockit.code2,s)
+ let a = breakblocks(p,blockit.code2,s,alltypes)
  let a2=code.yyy(p,a,1,empty:seq.symbol, nopara+1,pdict)
   map(p, s, addoptions(a2,options)) 
    
@@ -486,8 +486,8 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
          yyy(p,org,k+1,subseq(result,1,length.result-1),    nextvar, replace(map, thelocal, [ result_len]))
        else
          yyy(p,org,k+1,result+  Define.toword.nextvar,     nextvar + 1, replace(map, thelocal, [ var.nextvar]))
-   else if  (fsig.sym)_1="LOOPBLOCK"_1 then
-      let nopara = toint.(fsig.sym)_2 - 1
+   else if isloopblock.sym  then
+      let nopara = nopara.sym  - 1
       let firstvar = value.result_len
       yyy(p,org,k+1,subseq(result,1,len-1)+Lit.nextvar+sym,    nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0))
    else if (fsig.sym)_1="RECORD"_1 then
@@ -719,7 +719,8 @@ function applycode(p:program,org:seq.symbol,k:int,result:seq.symbol, nextvar:int
   else
    let paras = adddefines2(code, t + (index - 3), 1, nopara1 + nopara2 + 2, empty:seq.symbol, nextvar)
   // assert  not (name.term2_1 ="print" ) report "X"+(fsig.(org_k)) + print.term1+print.term2
- //  let body = yyy(p,applytemplate((fsig.(org_k))_1),1,empty:seq.symbol,    nextvar + nopara1 + nopara2 + 2, map5)
+ //  
+   let body = yyy(p,applytemplate(org_k),1,empty:seq.symbol,    nextvar + nopara1 + nopara2 + 2, map5)
    let new = paras + subseq(allpara, nopara1 + nopara2 + 1, length.allpara) + code.body
    yyy(p,org,k+1,subseq(result,1,t_1-1)+new,    nextvar.body, map)
   
@@ -736,32 +737,36 @@ function checkcat(f:symbol) boolean
   last.module.f = "seq"_1
  ∧   fsig.f = "+("+p+  "seq,"+p+")"
 
-function applytemplate(op:word) seq.symbol
-let CALLIDX =if op="APPLYI"_1 then symbol("callidxI( T seq,int)","builtin", "int")
-else if op="APPLYP"_1 then symbol("callidxP(T seq,int)","builtin", "ptr")
-else  symbol("callidxR(T seq,int)","builtin", "real")
-let resulttype=mytype.if op="APPLYI"_1 then "int" else if op="APPLYP"_1 then "ptr" else  "real"
+function applytemplate(applysym:symbol) seq.symbol
+let CALLIDX =if (module.applysym)_1 ="int"_1 then symbol("callidxI( T seq,int)","builtin", "int")
+else   if (module.applysym)_1 ="real"_1 then symbol("callidxR(T seq,int)","builtin", "real")
+else   symbol("callidxP(T seq,int)","builtin", "ptr")
+let resulttype= if (returntype.applysym)_1 in "real int" then returntype.applysym 
+ else "ptr" 
 let STKRECORD= symbol("STKRECORD(int,int)","builtin", "?")
 let theseq = 5
 let stk = 6
- [ Lit.0, Lit.4, loopblock.4, var.theseq, Lit.0, IDXI, var."FREFpseq"_1, EqOp, Lit.3, Lit.4
+ [ Lit.0, Lit.4, Loopblock(resulttype+",ptr,ptr,int)"), var.theseq, Lit.0, IDXI, var."FREFpseq"_1, EqOp, Lit.3, Lit.4
  , Br, var.4, var.theseq, Lit.2, IDXP, var.stk, var.theseq, Lit.3, IDXP, STKRECORD, continue.3, 
- var.theseq, Lit.1, IDXI, Define."8"_1, var.4, Lit.1, Lit.9, loopblock.3, 
+ var.theseq, Lit.1, IDXI, Define."8"_1, var.4, Lit.1, Lit.9, Loopblock(resulttype+",int,int)"), 
  var.10, var.8, gtOp, Lit.3, Lit.4, Br, var.9, Exit, 
  var."term2para"_1, 
    var.theseq, var.10, CALLIDX,  var."term2"_1, Define."11"_1, 
    var."term1para"_1, var.9, var.11, var."term1"_1, var.10, Lit.1, PlusOp, continue.2
- , Block(resulttype,4), Define."7"_1, var.stk, Lit.0, EqOp, Lit.5, Lit.6, Br, var.7, Exit
- , var.7, var.stk, Lit.1, IDXP, var.stk, Lit.0, IDXP, continue.3, Block(resulttype,6)]
+ , Block(mytype.resulttype,4), 
+ Define."7"_1, var.stk, Lit.0, EqOp, Lit.5, Lit.6, Br, var.7, Exit
+ , var.7, var.stk, Lit.1, IDXP, var.stk, Lit.0, IDXP, continue.3,
+  Block(mytype.resulttype,6)]
 
 
-function depthfirst(knownsymbols:program,processed:program,s:symbol) program
-        depthfirst(knownsymbols,1,[s],processed,code.lookupcode(knownsymbols,s),s)
+
+function depthfirst(knownsymbols:program,alltypes:seq.myinternaltype,processed:program,s:symbol) program
+        depthfirst(knownsymbols,alltypes,1,[s],processed,code.lookupcode(knownsymbols,s),s)
 
      
-function     depthfirst(knownsymbols:program,i:int,pending:seq.symbol,processed:program,code:seq.symbol,s:symbol) program
+function     depthfirst(knownsymbols:program,alltypes:seq.myinternaltype,i:int,pending:seq.symbol,processed:program,code:seq.symbol,s:symbol) program
         if i > length.code then
-                 firstopt(processed,s, code )
+                 firstopt(processed,s, code ,alltypes)
         else 
          let sym=code_i
      let newprg=     
@@ -773,9 +778,9 @@ function     depthfirst(knownsymbols:program,i:int,pending:seq.symbol,processed:
              else 
                let rep2=  lookupcode(knownsymbols,  sym2) 
               if  length.code.rep2  > 0 then 
-                depthfirst(knownsymbols, 1,pending+sym2,processed,code.rep2 ,sym2)
+                depthfirst(knownsymbols,alltypes, 1,pending+sym2,processed,code.rep2 ,sym2)
               else processed
-        depthfirst(knownsymbols,   i +  1, pending, newprg,code,s)
+        depthfirst(knownsymbols,alltypes,   i +  1, pending, newprg,code,s)
 
 
 

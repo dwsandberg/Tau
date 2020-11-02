@@ -46,7 +46,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB",'"A B"',"7","11","2"
 &br BLOCK 8
 &br  "
  ,"26"
-,"%1 %2  3 LOOPBLOCK  3  
+,"%1 %2  3 LOOPBLOCK(int, int, int) 
 &br %3  1 =(int, int)builtin  3 4 BR 3 
  &br %4 EXITBLOCK 1 
  &br %3 1  -(int, int)builtin %3 %4 *(int, int)builtin  CONTINUE 2  

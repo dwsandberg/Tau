@@ -78,7 +78,7 @@ function subcompilelib(libname:word)seq.word
  let b = unloadlib.[ libname]
  let allsrc= getlibrarysrc.libname 
     let p1 = pass1(groupparagraphs("module Module",allsrc), exports, dependentlibs )
- let intercode2 = pass2(result.p1,compiled.p1,roots.p1,mods.p1,templates.p1,exports)
+ let intercode2 = pass2(result.p1,compiled.p1,roots.p1,mods.p1,templates.p1,exports,alltypes.p1)
  let bc=codegen( theprg.intercode2 ,defines.intercode2,uses.intercode2,libname,libdesc.intercode2,alltypes.p1)
  let z2 = createlib(bc, libname, subseq(s, u + 1, e - 1))
  // let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1) 
@@ -149,6 +149,6 @@ Function secondPass(libname:word)seq.seq.word
  let exports = subseq(s, e + 1, length.s)
       let allsrc =getlibrarysrc.s_2 
   let p1 = pass1(groupparagraphs("module Module",allsrc), exports, dependentlibs  )
- let p2 =  pass2(result.p1,compiled.p1,roots.p1,mods.p1,templates.p1,exports)
+ let p2 =  pass2(result.p1,compiled.p1,roots.p1,mods.p1,templates.p1,exports,alltypes.p1)
    @(+,print.theprg.p2,empty:seq.seq.word, defines.p2)
  

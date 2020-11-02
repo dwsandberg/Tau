@@ -54,6 +54,10 @@ use blockseq.int
 
 use encoding.state
 
+use stack.word
+
+use stack.seq.word
+
 
 type state is record toset:set.dottedrule
 

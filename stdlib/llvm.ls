@@ -33,6 +33,9 @@ Function type:llvmtypeele internaltype export
 
 Function type:llvmtype internaltype export
 
+Function type:llvmconst internaltype export
+
+
 type llvmtypeele is record toseq:seq.int
 
 
@@ -45,8 +48,6 @@ Function assignencoding(l:int, a:llvmtypeele) int l+1
 
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b 
-
-
 
 /Function print(t:llvmtype) seq.word
 let a=toseq.decode(to:encoding.llvmtypeele(index.t))
@@ -90,15 +91,6 @@ Function array(size:int, base:llvmtype)llvmtype llvmtype.[  toint.ARRAY, size, t
 Function ptr(base:llvmtype)llvmtype llvmtype.[  toint.POINTER, typ.base, 0]
 
 Function function(para:seq.llvmtype)llvmtype llvmtype.@(+, typ, [  toint.FUNCTION, 0], para)
-
-Function adjust(s:seq.seq.int, adj:seq.int, i:int)seq.seq.int
- // go back and adjust types to fillin the length of arrays that were not known at time of creation of type //
- if i > length.adj then subseq(s, i, length.s)
- else
-  let r = s_i
-   [ if length.r < 2 then r
-   else [ r_1, r_2 + adj_i] + subseq(r, 3, length.r)]
-   + adjust(s, adj, i + 1)
 
 
 -------------------------
@@ -168,6 +160,15 @@ let t1 = // if p=0 then  array(-2, i64) else // consttype.p
 Function Creal(i:int) slot
 slot.C(double,[toint.CCAST, 11,typ.i64,toint.C64.i])
 
+
+Function asi64(s:slot) slot
+       let l= decode.to:encoding.llvmconst(toint.s+1)
+       if typ.l=typ.i64 then s
+       else  
+       assert subseq(toseq.l,1,3)=[toint.CCAST, 11,typ.i64] report "asi64 problem"
+        slot.(toseq.l)_4 
+
+
 use seq.slot
 
 
@@ -208,7 +209,6 @@ Function consttype(s:slot) llvmtype
         else if typ.l = -3 then (toseq.l)_2
         else  typ.l )
         
- 
 
 type slot is record toint:int 
 

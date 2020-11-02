@@ -38,7 +38,11 @@ use words
  
 type word3 is record toword:word
 
+use seq.slot
 
+use seq.seq.slot
+
+use blockseq.seq.slot
 
 function assignencoding(l:int, a:word3) int valueofencoding.asencoding.toword.a
 
@@ -62,16 +66,18 @@ function eword2(ww:encodingpair.word3)encodingpair.seq.char
   
 use seq.encodingpair.const3
 
-Function constdata seq.int @(+,flds,empty:seq.int,encoding:seq.encodingpair.const3)
+Function constdata seq.slot @(+,flds,empty:seq.slot,encoding:seq.encodingpair.const3)
 
-type const3 is record place:int, flds:seq.int
+type const3 is record place:int, flds:seq.slot
 
-function flds(p:encodingpair.const3) seq.int  flds.data.p
+function flds(p:encodingpair.const3) seq.slot  flds.data.p
 
 
 function =(a:const3, b:const3)boolean flds.a = flds.b
 
-function hash(a:const3)int hash.flds.a  
+function =(a:slot,b:slot) boolean toint.a=toint.b
+
+function hash(a:const3)int hash.@(+,toint,empty:seq.int,flds.a)  
 
 function assignencoding(l:int, a:const3) int assignrandom(l,a)
 
@@ -125,9 +131,11 @@ let ll= global( "liblib",   objtype ,  toint.AGGREGATE.@(+,slot,empty:seq.slot,d
 toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+init, 0, toint.align8 + 1, 0])
 
  
-  
+ function  checkslot(i:int)  slot  asi64.slot.i
+      
  
-Function addobject(flds:seq.int) int
+Function addobject(fldsin:seq.int) int
+   let flds= @(+,checkslot,empty:seq.slot,fldsin)
   let t=encoding:seq.encodingpair.const3
   let place=if length.t=0 then 0 else place.data.last.t+length.flds.data.last.t
   let x = decode(encode(const3(place , flds )))

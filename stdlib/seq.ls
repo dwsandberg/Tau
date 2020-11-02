@@ -86,7 +86,9 @@ Function +(a:seq.T, b:seq.T)seq.T
   else
    let lb = length.b
     if lb = 0 then a
-    else
+    else catnonzero(a , b)
+    
+    
      let totallength = la + lb
       if totallength = 2 then [ a_1, b_1]
       else
@@ -97,9 +99,22 @@ Function +(a:seq.T, b:seq.T)seq.T
         else cat3(totallength, a.ta, b.ta, b)
 
 Function cat3(totallength:int, a:seq.T, b:seq.T, c:seq.T)seq.T
- if length.a > length.b then toseq.pseq(totallength, a, b + c)
- else if length.b < length.c then toseq.pseq(totallength, a + b, c)
- else toseq.pseq(totallength, toseq.pseq(length.a + length.b, a, b), c)
+   // if totallength=3 then [a_1,b_1,c_1]
+ else // if length.a > length.b then toseq.pseq(totallength, a,  catnonzero(b,c))
+ else if length.b < length.c then toseq.pseq(totallength, catnonzero(a , b), c)
+ else   toseq.pseq(totallength, toseq.pseq(length.a + length.b, a, b), c)
+ 
+Function catnonzero(a:seq.T, b:seq.T)seq.T
+    let totallength = length.a + length.b
+      if totallength = 2 then [ a_1, b_1]
+      else
+       let ta = to:pseq.T(a)
+        if length.ta = 0 then
+        let tb = to:pseq.T(b)
+          if length.tb = 0 then toseq.pseq(totallength, a, b)else 
+          cat3(totallength, a, a.tb, b.tb)
+        else cat3(totallength, a.ta, b.ta, b)
+
 
 Function largeseq(s:seq.T)seq.T
  let length = length.s

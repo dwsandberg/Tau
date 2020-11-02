@@ -99,13 +99,14 @@ Function resulttype(s:symbol)mytype mytype.returntype.s
 
 Function nopara(s:symbol)int 
  if isconst.s &or islocal.s then 0 else
- if isspecial.s then 
-  if  (fsig.s)_1= "DEFINE"_1 then 1 
-  else if (fsig.s)_1 in "RECORD"   then
-     @(counttrue, =(","_1), 1, fsig.s)
-  else  toint((fsig.s)_2)  
+ if isspecial.s &and not(last.module.s in "$record $loopblock" ) then 
+  //   assert last.module.s in  "$continue $block $apply $exitblock $br $record $loopblock $define"  report "X"+ module.s
+ // if  last.module.s= "$define"_1 then 1 
+  else toint((fsig.s)_2)  
  else 
  @(counttrue, =(","_1), if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
+ 
+ 
 
 function counttrue(i:int, b:boolean)int if b then i + 1 else i
 
@@ -223,7 +224,7 @@ symbol([name],[ "para"_1,toword.parano,"$"_1],towords.type,specialbit)
 function ispara(s:mytype) boolean  ( towords.s)_1="para"_1 &and last.towords.s="$"_1  
 
 Function deepcopysym (type:mytype) symbol
-symbol("deepcopy(T)",towords.type + "builtin","T")
+symbol("deepcopy("+towords.type+")",towords.type + "builtin",towords.type)
 
 
 
@@ -255,14 +256,9 @@ Function  Sequence(len:int,typ:seq.word) symbol
 Function Record(types:seq.mytype) symbol
 symbol( "RECORD("+@(seperator.",",towords,"",types)+")",    "$record",  "ptr",specialbit)
 
-Function Apply(i:int) symbol     symbol([ "APPLY"_1,toword.i],    "? $apply",  "?",specialbit)
 
-Function ApplyI(i:int) symbol     symbol([ "APPLYI"_1,toword.i],    "int $apply",  "int",specialbit)
-
-Function ApplyR(i:int) symbol     symbol([ "APPLYR"_1,toword.i],    "real $apply",  "real",specialbit)
-
-Function ApplyP(i:int) symbol     symbol([ "APPLYP"_1,toword.i],    "ptr $apply",  "ptr",specialbit)
-
+Function Apply(i:int,basetype:seq.word,returntype:seq.word) symbol     
+symbol([ "APPLY"_1,toword.i],   basetype +  "$apply",  returntype,specialbit)
 
 
 Function Block(type:mytype ,i:int) symbol symbol( "BLOCK"+toword.i, towords.type+"$block",  towords.type,specialbit)
@@ -272,8 +268,9 @@ Function Block(type:mytype ,i:int) symbol symbol( "BLOCK"+toword.i, towords.type
 function bpara(i:int,result:seq.word) seq.word
   if i=1 then result else bpara(i-1,result+",?")
 
+Function Loopblock(types:seq.word)symbol  
+symbol(  "LOOPBLOCK("+ types,   "$loopblock",  "?",specialbit)
 
-Function loopblock(i:int)symbol  symbol([ "LOOPBLOCK"_1,toword.i],   "$loopblock",  "?",specialbit)
 
 Function continue(i:int)symbol   symbol([ "CONTINUE"_1,toword.i],    "$continue",   "?",specialbit)
 
@@ -558,7 +555,7 @@ Function print(p:program, i:symbol)seq.word
     Function parakind(alltypes:seq.myinternaltype,type:mytype) word
       if  abstracttype.type in  "none int ptr real" then abstracttype.type
       else if  abstracttype.type in " encoding " then "int"_1
-      else if abstracttype.type in "seq erecord internaltype process encodingstate encodingrep"  then "ptr"_1
+      else if abstracttype.type in "seq erecord internaltype process encodingstate encodingrep pseq"  then "ptr"_1
       else 
       let k=lookuptype(alltypes,type) 
       assert not.isempty.k report "TYPE LOOKUP parakind"+print.type 
