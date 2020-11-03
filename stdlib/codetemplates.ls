@@ -65,7 +65,7 @@ Function mangledname(s:symbol)word mangle(fsig.s,module.s)
 
 
 Function tollvmtype(alltypes:seq.myinternaltype,s:symbol) llvmtype
-   if fsig.s="option(T, word seq)" &or not.check then    function.constantseq(nopara.s + 2, i64) else 
+   if fsig.s="option(T, word seq)" then    function.constantseq(nopara.s + 2, i64) else 
  // assert not( modname.s=mytype."builtin") report "llvmtype error "+print.s //
   function.@(+,tollvmtype.alltypes, [tollvmtype(alltypes,resulttype.s),i64],paratypes.s)
   
@@ -136,10 +136,10 @@ use encoding.match5
 Function check boolean true
 
 function table seq.match5
- let z=if check then
-  [ match5(2,"IDXRZbuiltinZintZint"_1, 4, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR) + GEP(r.2, i64, r.1, slot.ibcsub2)
-  + LOAD(r.3, r.2,  i64 )+CAST(r.4, r.3,  double, 11))
-  ,  match5(1,"sqrtZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.sqrt.f64",function.[ double, double]),slot.ibcsub1))
+let t = 
+  [  match5(1, "isnullZbuiltinZptr"_1, 2, CMP2(r.1, slot.ibcsub1, C64.0, 32) + CAST(r.2,r.1,  i64, CASTZEXT))
+   ,match5(0,"nullptrZbuiltin"_1, 1,   BINOP(r.1, C64.0, C64.0, add))
+  ,   match5(1,"sqrtZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.sqrt.f64",function.[ double, double]),slot.ibcsub1))
   ,  match5(1,"sinZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.sin.f64",function.[ double, double]),slot.ibcsub1))
   ,  match5(1,"cosZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.cos.f64",function.[ double, double]),slot.ibcsub1))
   ,  match5(1,"tanZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry("tan",function.[ double, double]),slot.ibcsub1))
@@ -158,38 +158,13 @@ function table seq.match5
 + CMP2(r.3 ,slot.ibcsub1, slot.ibcsub2, 2)
 + CAST(r.4, r.3,  i64, CASTZEXT)
 + BINOP(r.5, r.2, r.4, add ))
-]
- else 
-   [match5(2,"IDXRZbuiltinZintZint"_1, 3, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR) + GEP(r.2,  i64, r.1, slot.ibcsub2)+ LOAD(r.3, r.2,  i64 ))
-   ,  match5(1,"sqrtZbuiltinZreal"_1, 3, CAST(r.1, slot.ibcsub1, double, 11)
-+ CALL(r.2, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.sqrt.f64",function.[ double, double]),r.1)
-+ CAST(r.3, r.2,  i64, 11))
-, match5(1,"sinZbuiltinZreal"_1, 3, CAST(r.1, slot.ibcsub1,  double, 11)
-+ CALL(r.2, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.sin.f64",function.[ double, double]), r.1)
-+ CAST(r.3, r.2,  i64, 11))
-, match5(1,"cosZbuiltinZreal"_1, 3, CAST(r.1, slot.ibcsub1,  double, 11)
-+ CALL(r.2, 0, 32768,  function.[ double, double], symboltableentry(merge."llvm.cos.f64",function.[ double, double]), r.1)
-+ CAST(r.3, r.2,  i64, 11))
-,match5(1,"intpartZbuiltinZreal"_1, 2, CAST(r.1, slot.ibcsub1,  double, 11) + CAST(r.2, r.1,  i64, // fptosi double // 4))
-,match5(1,"torealZbuiltinZint"_1, 2, // sitofp // CAST(r.1, slot.ibcsub1,  double, 6) + CAST(r.2, r.1, i64, 11))
-,match5(2,          "Q2DZbuiltinZrealZreal"_1, 4, CAST(r.1, slot.ibcsub1,  double, 11) + CAST(r.2, slot.ibcsub2,  double, 11) + BINOP(r.3, r.1, r.2, sub)+ CAST(r.4, r.3,  i64, 11) )
-,match5(2,// + //   "Q2BZbuiltinZrealZreal"_1, 4, CAST(r.1, slot.ibcsub1,  double, 11) + CAST(r.2, slot.ibcsub2,  double, 11) + BINOP(r.3, r.1, r.2, add)+ CAST(r.4, r.3,  i64, 11) )
-,match5(2,// * //   "Q2AZbuiltinZrealZreal"_1, 4, CAST(r.1, slot.ibcsub1,  double, 11) + CAST(r.2, slot.ibcsub2,  double, 11) + BINOP(r.3, r.1, r.2, mul)+ CAST(r.4, r.3,  i64, 11) )
-,match5(2,// / op //"Q2FZbuiltinZrealZreal"_1, 4, CAST(r.1, slot.ibcsub1,  double, 11) + CAST(r.2, slot.ibcsub2,  double, 11) + BINOP(r.3, r.1, r.2,  sdiv)+ CAST(r.4, r.3,  i64, 11) )
- , match5(1,"casttorealZbuiltinZint"_1, 0, emptyinternalbc)
- ,match5(1,"representationZbuiltinZreal"_1, 0, emptyinternalbc)
- , match5(2,// ? //"Q3FZbuiltinZrealZreal"_1, 7, CAST(r.1, slot.ibcsub1,  double, 11) + CAST(r.2, slot.ibcsub2,  double, 11) + CMP2(r.3, r.1, r.2, 3)
-+ CAST(r.4, r.3, i64, CASTZEXT)
-+ CMP2(r.5, r.1, r.2, 2)
-+ CAST(r.6, r.5,  i64, CASTZEXT)
-+ BINOP(r.7, r.4, r.6, add ))]
-let t = z+ [  match5(1,"getseqtypeZbuiltinZTzseq"_1, 2, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)   
+, match5(1,"getseqtypeZbuiltinZTzseq"_1, 2, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)   
 + LOAD(r.2, r.1,  i64 ))
-, match5(2,"IDXIZbuiltinZintZint"_1, 3, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)  + GEP(r.2,  i64, r.1, slot.ibcsub2)
-+ LOAD(r.3, r.2,  i64 ))
-, match5(2,"IDXPZbuiltinZintZint"_1, 3, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)  + GEP(r.2,  i64, r.1, slot.ibcsub2)
-+ LOAD(r.3, r.2,  i64 ))
-, match5(2,// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 39) + CAST(r.2, r.1, i64, CASTZEXT) + CMP2(r.3, slot.ibcsub1, slot.ibcsub2, 38)
+, match5(2,"IDXZbuiltinZintzseqZint"_1, 3, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)  + GEP(r.2,  i64, r.1, slot.ibcsub2)+ LOAD(r.3, r.2,  i64 ))
+, match5(2,"IDXZbuiltinZptrzseqZint"_1, 3, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR)  + GEP(r.2,  i64, r.1, slot.ibcsub2)+ LOAD(r.3, r.2,  i64 ))
+, match5(2,"IDXZbuiltinZrealzseqZint"_1, 4, CAST(r.1, slot.ibcsub1,  ptr.i64, CASTINTTOPTR) + GEP(r.2, i64, r.1, slot.ibcsub2)
+  + LOAD(r.3, r.2,  i64 )+CAST(r.4, r.3,  double, 11))
+ , match5(2,// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 39) + CAST(r.2, r.1, i64, CASTZEXT) + CMP2(r.3, slot.ibcsub1, slot.ibcsub2, 38)
 + CAST(r.4, r.3, i64, CASTZEXT)
 + BINOP(r.5, r.2, r.4, add))
 , match5(3,"castZbuiltinZTzseqZintZint"_1, 2, 
@@ -232,7 +207,7 @@ match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub
 + STORE(r.5, r.4, slot.ibcsub3 )
 +  BINOP(r.5, slot.ibcsub2, C64.1, add)
 )
-, match5(2,"STKRECORDZbuiltinZintZint"_1, 3, ALLOCA(r.1,  ptr.i64,  i64, C64.2, 0) + STORE(r.2, r.1, slot.ibcsub1)
+, match5(2,"STKRECORDZbuiltinZptrZptr"_1, 3, ALLOCA(r.1,  ptr.i64,  i64, C64.2, 0) + STORE(r.2, r.1, slot.ibcsub1)
 + GEP(r.2,  i64, r.1, C64.1)
 + STORE(r.3, r.2, slot.ibcsub2)
 + CAST(r.3, r.1,  i64, CASTPTRTOINT))
@@ -332,16 +307,13 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
                            let functyp=ptr.tollvmtype(alltypes,(constantcode.xx)_1)   
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functyp, symboltableentry( mn,functyp) )) 
       else if islit.xx then
-           if check then
-       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, if pkg="$real" then  Creal.toint.(fsig.xx)_1  else C64.toint.(fsig.xx)_1)
-       else 
-       match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.(fsig.xx)_1)
-      else if islocal.xx then
+        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, if pkg="$real" then  Creal.toint.(fsig.xx)_1  else C64.toint.(fsig.xx)_1)
+       else if islocal.xx then
        match5(fsig.xx+pkg, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
       else if isdefine.xx then
         match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
       else if isblock.xx then
-         let typ=if not.check then i64 else tollvmtype(alltypes,resulttype.xx) 
+         let typ=tollvmtype(alltypes,resulttype.xx) 
               match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1,  nopara.xx,empty:seq.symbol,typ)
         else if isspecial.xx then
         match5(fsig.xx+pkg, 0, empty:seq.templatepart,(fsig.xx)_1, nopara.xx )
@@ -353,11 +325,9 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
             match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1,      addwordseq2.fsig.xx       )
       else if pkg="$word"then
          match5(fsig.xx+pkg, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
-      else if check &and fsig.xx in [ "callidxR( T seq , int)" ] then
-           match5([mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0,empty:seq.symbol,tollvmtype(alltypes,resulttype.xx))
-      else if fsig.xx in ["callidxI( T seq , int) ","callidxR( T seq , int)","callidxP( T seq , int)"] then
-           match5([mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0,empty:seq.symbol,i64)
-    else   if (fsig.xx)_1="global"_1 &and isbuiltin.pkg  then
+      else if (fsig.xx)_1="callidx"_1 &and isbuiltin.pkg  then 
+         match5([mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0,empty:seq.symbol,tollvmtype(alltypes,resulttype.xx))    
+       else   if (fsig.xx)_1="global"_1 &and isbuiltin.pkg  then
         match5(0,mangledname.xx, 2, GEP(r.1,   i64, slot.global([mangledname.xx],i64,C64.0))
         +CAST(r.2, r.1,  i64, CASTPTRTOINT))
      else 

@@ -173,15 +173,12 @@ struct einfo  *startencoding(processinfo PD,BT no)
  return e;
  }
 
-
-BT getinstanceZbuiltinZTzseq(processinfo PD,BT *encodingnumber){ 
- BT no= ( encodingnumber < (BT *) 1000 ) ?    (BT) encodingnumber  : * encodingnumber; 
-  return startencoding(PD,no)->hashtable ;
+BT getinstanceZbuiltinZint(processinfo PD,BT  encodingnumber){ 
+   return startencoding(PD,encodingnumber)->hashtable ;
 }
-
- BT addencodingZbuiltinZintzseqZintzseqZint(processinfo PD,BT *encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT)){  
- BT no= ( encodingnumber < (BT *) 1000 ) ?    (BT) encodingnumber  : * encodingnumber; 
- struct einfo *e=startencoding(PD,no)  ;
+ 
+BT addencodingZbuiltinZintZintzseqZint(processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT)){  
+ struct einfo *e=startencoding(PD, encodingnumber)  ;
   assert(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
  e->hashtable=(add2)(e->allocatein,e->hashtable,P2);
  assert(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");

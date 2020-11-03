@@ -211,7 +211,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
         
 function pushexptypes(s:seq.word,i:int,result:stack.int) stack.int
   if i + 4 > length.s then result else 
-   pushexptypes(s,i+2,push(result,if s_i in "real" &and check then typ.double else typ.i64))
+   pushexptypes(s,i+2,push(result,if s_i in "real" then typ.double else typ.i64))
 
 function processblk(phitype:llvmtype,blks:seq.Lcode2,i:int, map:seq.localmap,exitbr:internalbc) processblkresult
          processblk(phitype,blks,1,exitbr,emptyinternalbc,1,empty:seq.int,empty:seq.int) 
@@ -276,7 +276,7 @@ else
      setnextfld( bc+CAST(r(regno + 1), r.pint,  ptr.double, 11)  
             ,args,i,types,j,regno+1,pint ,regno+1)
   else   
-let newbc=bc+ (if check &and typ="real"_1 then
+let newbc=bc+ (if typ="real"_1 then
        GEP(r(regno + 1),  double,r.preal, C64.(i-1))
        else        GEP(r(regno + 1),  i64,  r.pint, C64.(i-1))
 )

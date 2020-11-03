@@ -59,6 +59,7 @@ run testall testall
 , print(5, tan(pi / 4.0)) = "1.00000"
 , print(5, arcsin.sin.0.5) = "0.50000"
 , print(5, arccos.cos.0.5) = "0.50000"
+, print(3, @(+, toreal , 0.0, [8,9,10,11] ) )="38.000"
 ,"23.45000 - 18.45000"= print(5, 23.45) + print(5, 5.0 - 23.45)
 ,- 2^4 = -16 
 , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"

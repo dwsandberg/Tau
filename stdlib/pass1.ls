@@ -375,7 +375,7 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
    let seqtype=mytype(towords.parameter.modname + "seq"_1)
    let symtoseq = map(con,newsymbol("toseq" ,modname,  ptype, seqtype),[Local.1])
    let symfromseq=map(symtoseq,newsymbol( "to:"+print.ptype_1,modname ,[seqtype],ptype_1),
-    [Local.1,Lit.0,IDXP,Fref.indexfunc,EqOp,Lit.2,Lit.3,Br,Local.1,Exit]+Emptyseq+[Exit,Block(mytype."ptr",3)] )
+    [Local.1,Lit.0,Idx."int"_1,Fref.indexfunc,EqOp,Lit.2,Lit.3,Br,Local.1,Exit]+Emptyseq+[Exit,Block(mytype."ptr",3)] )
        symfromseq 
 
    
@@ -390,45 +390,25 @@ function bind2(dict:set.symbol,p:program,s:symbol) program
   let con = newsymbol([name],modname,  paras, mytype(towords.parameter.modname + name) )
       map ( symbols  ,con,concode2)
 
-   function IDXop(fld: flddesc) symbol  let kind=kind.description.fld
-    if  kind="int"_1 then  IDXI 
-    else if kind="real"_1 then IDXR
-    else
-     assert kind in "seq address ptr"  report "XXX"+print.description.fld
-      IDXP 
-   
+      
     function fldsym(modname:mytype,ptype:seq.mytype,noflds:int,offsetcorrection:int,p:program,fld:flddesc) program
        let offset=offset.fld+offsetcorrection
   let fldcode =   if fldno.fld=1  ∧  noflds =1 then [Local.1]
-  else  if size.fld= 1  then 
-   [ Local.1, Lit.offset ,  IDXop.fld  ]
-  else
-   if  fldname.fld="resultb"_1 &and abstracttype.modname="process"_1 then
-     // this is a special case for access process result //
-    [ Local.1, Lit.offset ,  IDXop.fld ]
+  else  if size.fld= 1 &or // this is a special case for access process result // fldname.fld="resultb"_1 &and abstracttype.modname="process"_1  then 
+   [ Local.1, Lit.offset ,  Idx.kind.description.fld  ]
     else
    // should use a GEP instruction //
    [Local.1 ,Lit.offset,Lit.size.fld ,symbol("cast(T seq,int,int)","builtin","ptr") ]
-  //  [ Local.1, Lit(8 * offset) ,  PlusOp] //
    let sym= newsymbol([fldname.fld], modname,    ptype  ,fldtype.fld)
    map(p,sym,fldcode)
- 
-      ,  Words."VERYSIMPLE",Optionsym 
-      
-      
+    
   
  function buildconstructor(  flds:seq.flddesc,flatflds:seq.mytype,fldno:int,j:int,subfld:int,result:seq.symbol)
  seq.symbol
    if j > length.flatflds then result else 
    let nextoffset=if length.flds > fldno then offset.flds_(fldno+1) else length.flatflds+1
    let newresult=result+if size.flds_fldno=1 then  [Local.fldno] else 
-   let kind=abstracttype.flatflds_j 
-     let op=if kind="int"_1 then IDXI 
-         else if kind="seq"_1 then IDXP 
-         else
-     assert abstracttype.flatflds_j  in "real" report "PROBLEM X"+ print.flatflds_j
-      IDXR
-     [Local.fldno ,Lit.subfld, op]
+     [Local.fldno ,Lit.subfld, Idx.abstracttype.flatflds_j]
    if nextoffset=j then
        buildconstructor(flds,flatflds,fldno+1,j+1,0, newresult)
    else 

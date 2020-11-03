@@ -121,7 +121,6 @@ Function addencodingpairs(l:seq.encodingpair.T) encodingstate.T
 function rehash(a:encodingpair.T) encodingpair.T encodingpair(code.a,data.a)
 
 
-function getinstance(encodingnumber:seq.T)encodingstate.T builtin.usemangle
 
 
  

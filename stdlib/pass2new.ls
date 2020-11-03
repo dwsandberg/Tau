@@ -581,7 +581,7 @@ if not.isconst.result_(len-1) then  yyy(p,org,k+1,result+sym,   nextvar, map)
 function opttwoopbuiltin(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map:worddict.seq.symbol,rep:symbol)expandresult
  let s=result
  let i=length.result+1
- if fsig.rep  in [" IDXI(int,int)", " IDXP(int,int)" ," IDXR(int,int)" ] then
+ if isIdx.rep  then
     let j = value.s_(i - 1)
     let x =  s_(i - 2)
     if between(j, 0, length.constantcode.x - 1)then
@@ -738,24 +738,26 @@ function checkcat(f:symbol) boolean
  ∧   fsig.f = "+("+p+  "seq,"+p+")"
 
 function applytemplate(applysym:symbol) seq.symbol
-let CALLIDX =if (module.applysym)_1 ="int"_1 then symbol("callidxI( T seq,int)","builtin", "int")
-else   if (module.applysym)_1 ="real"_1 then symbol("callidxR(T seq,int)","builtin", "real")
-else   symbol("callidxP(T seq,int)","builtin", "ptr")
+let kind=(module.applysym)_1
 let resulttype= if (returntype.applysym)_1 in "real int" then returntype.applysym 
  else "ptr" 
-let STKRECORD= symbol("STKRECORD(int,int)","builtin", "?")
+let STKRECORD= symbol("STKRECORD(ptr,ptr)","builtin", "ptr")
 let theseq = 5
 let stk = 6
- [ Lit.0, Lit.4, Loopblock(resulttype+",ptr,ptr,int)"), var.theseq, Lit.0, IDXI, var."FREFpseq"_1, EqOp, Lit.3, Lit.4
- , Br, var.4, var.theseq, Lit.2, IDXP, var.stk, var.theseq, Lit.3, IDXP, STKRECORD, continue.3, 
- var.theseq, Lit.1, IDXI, Define."8"_1, var.4, Lit.1, Lit.9, Loopblock(resulttype+",int,int)"), 
+let idxp=Idx."ptr"_1
+let idxi=Idx."int"_1
+let nullptr=symbol("nullptr","builtin","ptr")
+let isnull=symbol("isnull(ptr)","builtin","int") 
+ [ nullptr, Lit.4, Loopblock(resulttype+",ptr,ptr,int)"), var.theseq, Lit.0, idxi, var."FREFpseq"_1, EqOp,
+  Lit.3, Lit.4, Br, var.4, var.theseq, Lit.2, idxp, var.stk, var.theseq, Lit.3, idxp, STKRECORD, continue.3, 
+ var.theseq, Lit.1, idxi, Define."8"_1, var.4, Lit.1, Lit.9, Loopblock(resulttype+",int,int)"), 
  var.10, var.8, gtOp, Lit.3, Lit.4, Br, var.9, Exit, 
  var."term2para"_1, 
-   var.theseq, var.10, CALLIDX,  var."term2"_1, Define."11"_1, 
+   var.theseq, var.10, Callidx.kind,  var."term2"_1, Define."11"_1, 
    var."term1para"_1, var.9, var.11, var."term1"_1, var.10, Lit.1, PlusOp, continue.2
  , Block(mytype.resulttype,4), 
- Define."7"_1, var.stk, Lit.0, EqOp, Lit.5, Lit.6, Br, var.7, Exit
- , var.7, var.stk, Lit.1, IDXP, var.stk, Lit.0, IDXP, continue.3,
+ Define."7"_1, var.stk, isnull, Lit.5, Lit.6, Br, var.7, Exit
+ , var.7, var.stk, Lit.1, idxp, var.stk, Lit.0, idxp, continue.3,
   Block(mytype.resulttype,6)]
 
 

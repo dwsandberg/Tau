@@ -120,11 +120,7 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i
             else if fsig.oldsym=" callidx(T seq, int)"   then
                let typedesc=lookuptype(alltypes, newmodpara) 
               assert not.isempty.typedesc report "type not found"+print.newmodpara
-              let kind=kind.typedesc_1
-              let op=if kind="int"_1 then CALLIDXI 
-              else if kind="real"_1 then CALLIDXR
-              else     CALLIDXP
-              [Local.1,Local.2,op]  
+               [Local.1,Local.2,Callidx.kind.typedesc_1] 
             else  if   fsig.oldsym="packed(T seq)"     then
                let typdesc=lookuptype(alltypes,newmodpara)
                assert  not.isempty.typdesc  report"can not find type packed" + print.newmodpara  + org
@@ -144,24 +140,23 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i
            else if  fsig.oldsym="empty:seq.T"  then    
              Emptyseq+[  Words."VERYSIMPLE",Optionsym ] 
            else if fsig.oldsym= " getseqtype(T seq) " then  
-           [Local.1,Lit.0,IDXI,Words."VERYSIMPLE",Optionsym ] 
+           [Local.1,Lit.0,Idx."int"_1,Words."VERYSIMPLE",Optionsym ] 
            else if fsig.oldsym="aborted(T process) " then 
             [Local.1,symbol("aborted(T process)","builtin","boolean")] 
-           else if fsig.oldsym="getinstance(T seq)" then [Local.1,symbol("getinstance(T seq)","builtin","ptr")]
-           else if fsig.oldsym="primitiveadd(T encodingpair)" then     
+            else if fsig.oldsym="primitiveadd(T encodingpair)" then     
                 let addefunc= newsymbol("add", mytype(towords.newmodpara + "encoding"),[ mytype(towords.newmodpara +" encodingstate"), mytype(towords.newmodpara+"  encodingpair")]
                    ,mytype(towords.newmodpara +" encodingstate"))
-                let add2=newsymbol("addencoding",mytype."builtin",[mytype("int seq"),mytype("int seq"),mytype."int"],mytype."int")
+                let add2=newsymbol("addencoding",mytype."builtin",[mytype("int"),mytype("int seq"),mytype."int"],mytype."int")
                 encodenocode(newmodpara)+[Local.1,Fref.addefunc,add2,Words."NOINLINE STATE",Optionsym]
             else    assert    fsig.oldsym= "getinstance:encodingstate.T" report "next expecting"+print.oldsym
-              let get=newsymbol("getinstance", mytype(towords.newmodpara + "encoding"),
-              [mytype("T seq")],mytype(towords.newmodpara +" encodingstate"))
+              let get=symbol("getinstance(int)", "builtin","ptr")
               encodenocode(newmodpara)+[get,Words."NOINLINE STATE",Optionsym]  
            
    function encodenocode(typ:mytype) seq.symbol
        let gl=symbol("global"+  print.typ ,"builtin",("int seq"))
      let setfld=symbol("setfld(T seq, int, int)","builtin","int")
      let encodenosym=newsymbol ("encodingno",mytype("assignencodingnumber"),[mytype."word seq"],mytype."int")
+     let IDXI=Idx."int"_1
        if typ=mytype."typename" then  
            [gl,Lit.0,Lit2,setfld,Define."xx",gl,Lit.0,IDXI] 
           else if typ=mytype."char seq " then 
@@ -174,12 +169,9 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i
 
 function packedcode(typdesc:myinternaltype) seq.symbol
   let ds=size.typdesc 
+  let IDXI=Idx."int"_1
 if ds=1 then
-   let set= // if kind.typdesc="int"_1 then // symbol("setfld(T seq, int, int)","builtin","int")
-  // else if kind.typdesc="real"_1 then symbol("setfld(T seq, int, real)","builtin","int")
-  else 
-   assert kind.typdesc="seq"_1 report "packed problem"+print.typdesc
-  symbol("setfld(T seq, int, ptr)","builtin","int") //
+   let set=  symbol("setfld(T seq, int, int)","builtin","int")
 [Local.1,  Lit.1,IDXI, Lit.0 ,Local.1,  Lit.1,IDXI
 ,symbol("allocateseq:seq.T(int, int, int)","builtin","ptr")
 ,Define."newseq" 
@@ -219,7 +211,7 @@ let i=1 let memsize=2 let s= 3 let idx=4 let fromaddress=5
   [Local.memsize, Lit.0, EqOp, Lit.2, Lit.3, Br  
   ,Local.idx, Exit
 ,Local.i, Lit.1 ,PlusOp ,Local.memsize, Lit.1,
-symbol("-(int,int)" ,"builtin","int"),Local.s ,Local.s ,Local.idx ,Local.fromaddress ,Local.i,IDXP,
+symbol("-(int,int)" ,"builtin","int"),Local.s ,Local.s ,Local.idx ,Local.fromaddress ,Local.i,Idx."ptr"_1,
  symbol( "setfld(T seq, int, ptr)","builtin","int") ,
  Local.fromaddress,  sym,Exit 
 ,Block(mytype."int",3) ]   
@@ -252,11 +244,11 @@ function definedeepcopy(alltypes:seq.myinternaltype, type:mytype ,org:seq.word) 
 function subfld(flds:seq.mytype,fldno:int,result:seq.symbol) seq.symbol
   if fldno > length.flds then result+[Record.flds]
   else let fldtype=flds_fldno
-  let t=if abstracttype.fldtype in "encoding int word"then [ Local.1,Lit.(fldno-1),IDXI ] 
-    else if abstracttype.fldtype in " real"then [ Local.1,Lit.(fldno-1),IDXR ]   
+  let t=if abstracttype.fldtype in "encoding int word"then "int"
+    else if abstracttype.fldtype in " real"then "real"   
     else
     assert abstracttype.fldtype = "seq"_1 report"ERR99" + print.fldtype
-     [ Local.1,Lit.(fldno-1),IDXP,deepcopysym.fldtype]
-     subfld(flds,fldno+1,result+t) 
+     "ptr"
+     subfld(flds,fldno+1,result+[ Local.1,Lit.(fldno-1),Idx.t_1,deepcopysym.fldtype]) 
  
  

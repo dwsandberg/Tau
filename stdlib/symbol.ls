@@ -226,19 +226,21 @@ function ispara(s:mytype) boolean  ( towords.s)_1="para"_1 &and last.towords.s="
 Function deepcopysym (type:mytype) symbol
 symbol("deepcopy("+towords.type+")",towords.type + "builtin",towords.type)
 
+Function isIdx(s:symbol) boolean
+  isbuiltin.module.s &and  (fsig.s)_1 in "IDX" 
+
+Function Idx (kind:word) symbol 
+ let t=if kind in "int real" then [kind] else "ptr" 
+    if t="int" then
+      symbol("IDX(int seq,int)","builtin", "int")
+    else if t="real" then
+    symbol("IDX(real seq,int)","builtin", "real")
+    else symbol("IDX(ptr seq,int)","builtin", "ptr")
 
 
-Function IDXR symbol  symbol("IDXR(int,int)","builtin", "real")
-
-Function IDXI symbol  symbol("IDXI(int,int)","builtin", "int")
-
-Function IDXP symbol  symbol("IDXP(int,int)","builtin", "ptr")
-
-Function  CALLIDXI  symbol symbol("callidxI( T seq,int)","builtin", "int")
-
-Function  CALLIDXR  symbol symbol("callidxR( T seq,int)","builtin", "real")
-
-Function  CALLIDXP  symbol symbol("callidxP( T seq,int)","builtin", "ptr")
+Function Callidx(kind:word) symbol 
+  let t=if kind in "int real" then [kind] else "ptr" 
+    symbol("callidx("+t+"seq,int)","builtin", t)
 
 
 Function Emptyseq seq.symbol [Lit0,Lit0,symbol( "RECORD(int,int)",    "$record",  "ptr",specialbit)
