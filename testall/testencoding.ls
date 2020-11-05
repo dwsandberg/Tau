@@ -45,7 +45,9 @@ use process.int
 
 use seq.seq.testrecord
 
-use blockseq.seq.testrecord
+use blockseq.seq.int
+
+use blockseq.tree.seq.word
 
 Function +(i:int, b:int)int export
 

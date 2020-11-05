@@ -87,8 +87,8 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
        let f2= modulerecord(" init22 ",      [ toint.FUNCTIONDEC, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
      let bodytxts = bodies+ 
        [BLOCKCOUNT(1, 1)
-      +  CALL(r.1, 0, 32768,  function.[ i64, ptr.i8,   i64], 
-       symboltableentry("initlib5" ,function.[ i64, ptr.i8,   i64]),
+      +  CALL(r.1, 0, 32768,  function.[ i64, ptr.i8,   ptr.i64], 
+       symboltableentry("initlib5" ,function.[ i64, ptr.i8,   ptr.i64]),
         CGEPi8( libslot, 0),  liblib ) + RETURN]
       let data =  constdata   
       let patchlist = [    [ toint.GLOBALVAR, typ.conststype,   2,    toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0]
@@ -202,16 +202,17 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
      let args = top(args.l, noargs)
      let newcode = CALL(r(regno.l + 1), 0, 32768,  function.[ ptr.i64, i64, i64], 
      symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint",function.[ ptr.i64, i64, i64]), r.1, C64.noargs)
-     let fldbc=setnextfld(code.l + newcode,args,1,fullinst.m,3,regno.l+1,regno.l+1,0)
-     let newbc=value.fldbc+  CAST(r(index.fldbc + 1), r(regno.l + 1),  i64, CASTPTRTOINT) 
-      Lcode2(newbc, lmap.l, noblocks.l, index.fldbc+1, push(pop(args.l, noargs), -(index.fldbc + 1)), blocks.l)
+     let fldbc=setnextfld(code.l + newcode,args,1,fullinst.m,3,regno.l+1,regno.l+1,0,0)
+          Lcode2(value.fldbc, lmap.l, noblocks.l, index.fldbc, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
     else 
          assert action in "CALLIDX" report"code gen unknown" + action
-        callidxcode( l , top(args.l,2),functype.m)
-        
+         if typ.functype.m = typ.ptr.i64 then callidxcodeptr ( l , top(args.l,2),functype.m)
+         else callidxcode(l,top(args.l,2),functype.m)  
+         
 function pushexptypes(s:seq.word,i:int,result:stack.int) stack.int
   if i + 4 > length.s then result else 
-   pushexptypes(s,i+2,push(result,if s_i in "real" then typ.double else typ.i64))
+   pushexptypes(s,i+2,push(result,if s_i in "real" then typ.double 
+     else if s_i in "int"  then  typ.i64 else typ.ptr.i64))
 
 function processblk(phitype:llvmtype,blks:seq.Lcode2,i:int, map:seq.localmap,exitbr:internalbc) processblkresult
          processblk(phitype,blks,1,exitbr,emptyinternalbc,1,empty:seq.int,empty:seq.int) 
@@ -264,7 +265,7 @@ function processblk(phitype:llvmtype,    blks:seq.Lcode2,i:int, exitbr:internalb
          processblk(phitype,blks,i+1,exitbr,    code+code.l+ newcode, varcount,phi,tailphi) 
     
    
-Function setnextfld( bc:internalbc,args:seq.int,i:int,types:seq.word,j:int,regno:int,pint:int,preal:int) ipair.internalbc
+Function setnextfld( bc:internalbc,args:seq.int,i:int,types:seq.word,j:int,regno:int,pint:int,preal:int,pptr:int) ipair.internalbc
 if i > length.args then ipair(regno,bc)
 else 
    let newj=  if types_j in "$  $record" then 
@@ -274,14 +275,22 @@ else
    assert typ in  "int real seq ptr"  report "unknown type gencode"+types
     if preal =0 &and typ="real"_1 then   
      setnextfld( bc+CAST(r(regno + 1), r.pint,  ptr.double, 11)  
-            ,args,i,types,j,regno+1,pint ,regno+1)
-  else   
-let newbc=bc+ (if typ="real"_1 then
-       GEP(r(regno + 1),  double,r.preal, C64.(i-1))
-       else        GEP(r(regno + 1),  i64,  r.pint, C64.(i-1))
+            ,args,i,types,j,regno+1,pint ,regno+1,pptr)
+  else 
+      if pptr =0 &and typ="ptr"_1 then   
+     setnextfld( bc+CAST(r(regno + 1), r.pint,  ptr.ptr.i64, 11)  
+            ,args,i,types,j,regno+1,pint ,preal,regno+1)
+  else     
+   let newbc=  (if typ="real"_1 then
+         GEP(r(regno + 1),  double,r.preal, C64.(i-1))
+       else     if typ="ptr"_1 then
+         GEP(r(regno + 1),  ptr.i64,r.pptr, C64.(i-1))
+       else        
+        assert typ="int"_1 report "setnextfld problem"
+         GEP(r(regno + 1),  i64,  r.pint, C64.(i-1))
 )
-+STORE(r(regno + 2), r.(regno+1), slot.args_i)
-  setnextfld(newbc,args,i+1,types,newj,regno+1,pint,preal)
+    +STORE(r(regno + 2), r.(regno+1), slot.args_i)
+  setnextfld(bc+newbc,args,i+1,types,newj,regno+1,pint,preal,pptr)
 
 function getloc(l:seq.localmap, localno:int, i:int)int
  if localno.l_i = localno then regno.l_i else getloc(l, localno, i + 1)
@@ -291,10 +300,12 @@ function addloopmapentry(baselocal:int, regbase:int,l:seq.localmap,i:int) seq.lo
  
 use seq.slot
 
+
+
 function profilecall( l:Lcode2, args:seq.int, callee:slot, idx:int,functype:llvmtype)Lcode2
  let base = regno.l
  let block = noblocks.l
-  let  pcount=   toint.CGEP(  symboltableentry("profiledata",ptr.profiletype),  2+6 * ( idx-2) + 2)
+ let  pcount=   toint.CGEP(  symboltableentry("profiledata",ptr.profiletype),  2+6 * ( idx-2) + 2)
  let  p1=  // pclocks // toint.CGEP(  symboltableentry("profiledata",ptr.profiletype),  2+6 * ( idx-2) + 3)
  let  pspace=   toint.CGEP(  symboltableentry("profiledata",ptr.profiletype),  2+6 * ( idx-2) + 4)
  let  prefs=   toint.CGEP(  symboltableentry("profiledata",ptr.profiletype),  2+6 * ( idx-2) + 5)
@@ -323,7 +334,7 @@ function profilecall( l:Lcode2, args:seq.int, callee:slot, idx:int,functype:llvm
  + BR( block + 2)
  + CALL(r(base + 18), 0, 32768,  functype, callee, r.1, @(+,slot,empty:seq.slot,args))
  + BR( block + 2)
- + PHI(r(base + 19),  i64, r(base +7), block, r( base +18), block + 1)
+ + PHI(r(base + 19),  returntype.functype, r(base +7), block, r( base +18), block + 1)
  + LOAD(r(base + 20), slot.prefs,  i64)
  + BINOP(r(base + 21), r( base +20), C64.1, sub )
  + STORE(r(base + 22), slot.prefs, r(base + 21))
@@ -373,56 +384,53 @@ Function profile(caller:word, callee:word)int
 
 /Function dump seq.word @(+, print,"", mapping.debug)
 
-function callidxcode( l:Lcode2, args:seq.int,functype:llvmtype)Lcode2
-if typ.functype=typ.double then callidxcodereal(l,args,functype) else
+function callidxcodeptr( l:Lcode2, args:seq.int,functype:llvmtype)Lcode2
 let theseq=args_1
 let idx=args_2
  let base = regno.l
  let block = noblocks.l 
- let last=15 
- let c = CAST(r(base +1), slot.theseq,  ptr.i64, CASTINTTOPTR)
- + LOAD(r(base +2), r(base+1),  i64 )
- + CMP2(r(base + 3), r(base + 2), C64.0, 32)
- + BR(r(base + 4), block +2, block  , r(base + 3))
- + // block // // gt // CMP2(r(base + 4), r(base + 2), C64.1000, 38)
-  +BR(r(base + 5), block +1, block+3  , r(base + 4))
- + // block 1 // CAST(r(base +5),r(base+2),  ptr.function.[ functype , i64, i64, i64], CASTINTTOPTR)
-  +   CALL(r(base +6), 0, 32768,  function.[ functype,   i64, i64, i64], r(base+5), r.1,  @(+,slot,empty:seq.slot,args))  
+ let c = 
+  LOAD(r(base +1), slot.theseq,  i64 )
+ + CMP2(r(base + 2), r(base + 1), C64.0, 32)
+ + BR(r(base + 3), block +2, block  , r(base + 2))
+ + // block // // gt // CMP2(r(base +3), r(base + 1), C64.1000, 38)
+  +BR(r(base + 4), block +1, block+3  , r(base + 3))
+ + // block 1 // CAST(r(base +4),r(base+1),  ptr.function.[ functype , i64, ptr.i64, i64], CASTINTTOPTR)
+  +   CALL(r(base +5), 0, 32768,  function.[ functype,   i64, ptr.i64, i64], r(base+4), r.1,  @(+,slot,empty:seq.slot,args))  
   + BR( block + 4)
-  + // block 2 // GEP(r(base +7) ,  i64, r(base+1), slot.idx) 
-  + GEP(r(base +8)  ,  i64, r(base+7),C64.1) 
-   + LOAD(r(base +9) , r(base+8), functype)
-  + BR( block + 4)
+  + // block 2 // GEP(r(base +6) ,  i64, slot.theseq, slot.idx) 
+  + GEP(r(base +7)  ,  i64, r(base+6),C64.1) 
+   +  LOAD(r(base +8) , r(base+7), i64) 
+   +CAST(r(base+9),r(base+8), functype, toint.inttoptr)
+   + BR( block + 4)
   +  // block 3 // 
-    // first element start //   GEP(r(base +10)  ,  i64, r(base+1),C64.2) 
+    // first element start //   GEP(r(base +10)  ,  i64, slot.theseq,C64.2) 
   + BINOP(r(base+11),  slot.idx, C64.1,sub)
-  + BINOP(r(base+12),  r(base+11), r(base+2),  mul)
+  + BINOP(r(base+12),  r(base+11), r(base+1),  mul)
   + // objptr+2+ds*(idx-1) // GEP(r(base+13),  i64, r(base+10), r(base+12))
-  + CAST(r(base+14),r(base+13), functype, CASTPTRTOINT)
  + BR( block + 4)
   + // block 4 //
-  PHI(r(base + last),  functype, r(base + 6), block +1, r( base + 9), block + 2,r(base+14), block+3)
-  Lcode2(code.l + c, lmap.l, noblocks.l+5  , regno.l + last, push(pop(args.l, 2), - base - last), blocks.l)
+  PHI(r(base + 14),  functype, r(base + 5), block +1, r( base + 9), block + 2,r(base+13), block+3)
+  Lcode2(code.l + c, lmap.l, noblocks.l+5  , regno.l + 14, push(pop(args.l, 2), - (base +14)), blocks.l)
 
- function callidxcodereal( l:Lcode2, args:seq.int,functype:llvmtype)Lcode2
+ function callidxcode( l:Lcode2, args:seq.int,functype:llvmtype)Lcode2
 let theseq=args_1
 let idx=args_2
  let base = regno.l
  let block = noblocks.l 
- let c = CAST(r(base +1), slot.theseq,  ptr.i64, CASTINTTOPTR)
- + LOAD(r(base +2), r(base+1),  i64 )
- + CMP2(r(base + 3), r(base + 2), C64.0, 32)
- + BR(r(base + 4), block +1, block  , r(base + 3))
- + // block // CAST(r(base +4),r(base+2),  ptr.function.[ functype , i64, i64, i64], CASTINTTOPTR)
-  +   CALL(r(base +5), 0, 32768,  function.[ functype,   i64, i64, i64], r(base+4), r.1,  @(+,slot,empty:seq.slot,args))  
+ let c = 
+  LOAD(r(base +1), slot.theseq,  i64 )
+ + CMP2(r(base + 2), r(base + 1), C64.0, 32)
+ + BR(r(base + 3), block +1, block  , r(base + 2))
+ + // block // CAST(r(base +3),r(base+1),  ptr.function.[ functype , i64, ptr.i64, i64], CASTINTTOPTR)
+  +   CALL(r(base +4), 0, 32768,  function.[ functype,   i64, ptr.i64, i64], r(base+3), r.1,  @(+,slot,empty:seq.slot,args))  
   + BR( block + 2)
   + // block 1 // 
-  CAST(r(base +6), slot.theseq,  ptr.double, CASTINTTOPTR)
-   + GEP(r(base +7) ,  functype, r(base+6), slot.idx) 
-  + GEP(r(base +8)  ,  functype, r(base+7),C64.1) 
-   + LOAD(r(base +9) , r(base+8), functype)
+  CAST(r(base +5), slot.theseq,  ptr.functype, toint.bitcast)
+   + GEP(r(base +6) ,  functype, r(base+5), slot.idx) 
+  + GEP(r(base +7 ) ,  functype, r(base+6),C64.1) 
+   + LOAD(r(base +8) , r(base+7), functype)
   + BR( block + 2)
   +  // block 2 // 
-   PHI(r(base + 10),  functype, r(base + 5), block , r( base + 9), block+1 )
-  Lcode2(code.l + c, lmap.l, noblocks.l+3  , regno.l + 10, push(pop(args.l, 2), - base - 10), blocks.l)
- 
+   PHI(r(base + 9),  functype, r(base + 4), block , r( base + 8), block+1 )
+  Lcode2(code.l + c, lmap.l, noblocks.l+3  , regno.l + 9, push(pop(args.l, 2), - base - 9), blocks.l)

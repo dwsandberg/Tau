@@ -49,24 +49,30 @@ Function assignencoding(l:int, a:llvmtypeele) int l+1
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b 
 
-/Function print(t:llvmtype) seq.word
+Function print(t:llvmtype) seq.word
 let a=toseq.decode(to:encoding.llvmtypeele(index.t))
-let tp=a_1
+let tp=typeop.a_1
 let b=@(+,llvmtype,empty:seq.llvmtype,@(+,+.1,empty:seq.int,a))
-if tp = TYPEINTEGER then [ merge.("i" + toword.a_2)]
-  else if tp = TYPEARRAY then
-  "[" + toword.a_2 + "x" + print(b_3) + "]"
-  else if tp = TYPEPOINTER then print(b_2) + "*"
-  else if tp = TYPEFUNCTION then
-    print(b_3)+"(" + @(seperator(","), print,"", subseq(b, 4, length.a))
+if tp =INTEGER then [ merge.("i" + toword.a_2)]
+  else if tp =ARRAY then
+  "array(" + toword.a_2 + "," + print(b_3) + ")"
+  else if tp = POINTER then "ptr."+print(b_2)  
+  else if tp =  FUNCTION then
+     "function(" + @(seperator(","), print,"", subseq(b, 3, length.a))
    + ")"
-  else if tp = TYPEVOID then"VOID"
-  else if tp = TYPEDOUBLE then "double"
+  else if tp =  TVOID then"VOID"
+  else if tp =  DOUBLE then "double"
   else"?"
 
 function cvttorec( a:encodingpair.llvmtypeele ) seq.int  toseq.data.a
 
 Function typerecords seq.seq.int @(+, cvttorec, empty:seq.seq.int, encoding:seq.encodingpair.llvmtypeele)
+
+Function returntype(func:llvmtype) llvmtype
+   let a=to:encoding.llvmtypeele(index.func)
+  llvmtype((toseq.decode.a)_3 +1)
+  
+typerecords_(typ.llvmtype+1)_3
 
 
 Function typ(a:llvmtype)int index.a - 1
@@ -164,8 +170,10 @@ slot.C(double,[toint.CCAST, 11,typ.i64,toint.C64.i])
 Function asi64(s:slot) slot
        let l= decode.to:encoding.llvmconst(toint.s+1)
        if typ.l=typ.i64 then s
+       else if typ.l=typ.ptr.i64 then
+         constantrecord(i64,[toint.CCAST, toint.ptrtoint,typ.ptr.i64,toint.s] )
        else  
-       assert subseq(toseq.l,1,3)=[toint.CCAST, 11,typ.i64] report "asi64 problem"
+       assert subseq(toseq.l,1,3)=[toint.CCAST, toint.bitcast,typ.i64] report "asi64 problem"
         slot.(toseq.l)_4 
 
 

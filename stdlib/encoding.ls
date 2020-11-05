@@ -16,6 +16,8 @@ use otherseq.seq.encodingpair.T
 
 use process.T
 
+use blockseq.encodingpair.T
+
 
 Function type:encodingpair.T internaltype export
 

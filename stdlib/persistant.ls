@@ -123,11 +123,10 @@ use encoding.seq.char
 
 function addobject(name:seq.word,data:seq.int) int
 let objtype=array(length.data,i64)
-let ll= global( "liblib",   objtype ,  toint.AGGREGATE.@(+,slot,empty:seq.slot,data)  )
-   toint.ptrtoint( ptr.i64, CGEP(slot.ll,0)) 
-
+let ll= global( "liblib",   objtype ,  toint.AGGREGATE.@(+,checkslot,empty:seq.slot,data)  )
+   toint.CGEP(slot.ll,0)  
    
- function global(name:seq.word,type:llvmtype,init:int) int
+function global(name:seq.word,type:llvmtype,init:int) int
 toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+init, 0, toint.align8 + 1, 0])
 
  
@@ -140,8 +139,7 @@ Function addobject(fldsin:seq.int) int
   let place=if length.t=0 then 0 else place.data.last.t+length.flds.data.last.t
   let x = decode(encode(const3(place , flds )))
  let idx=if place.x ≠ place  then place.x else   place
-  toint.ptrtoint(ptr.i64, CGEP(modulerecord("list", [0]),idx))   
-
+  toint.CGEP(modulerecord("list", [0]),idx)    
  
  function fldsofwordencoding( code:encoding.seq.char) seq.int
  let s= tointseq.decode.code

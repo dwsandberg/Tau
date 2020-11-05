@@ -52,6 +52,8 @@ use set.word
 
 use blockseq.int
 
+use blockseq.dottedrule
+
 use encoding.state
 
 use stack.word

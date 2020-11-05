@@ -49,7 +49,6 @@ use timestamp
 
 use otherseq.word
 
-
 use process.seq.word
 
 use seq.seq.seq.word
@@ -57,8 +56,6 @@ use seq.seq.seq.word
 use set.seq.word
 
 use set.word
-
-
 
 function loadlibs(dependentlibs:seq.word, i:int, time:int)int
  if i > length.dependentlibs then time

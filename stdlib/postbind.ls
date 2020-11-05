@@ -171,7 +171,6 @@ function packedcode(typdesc:myinternaltype) seq.symbol
   let ds=size.typdesc 
   let IDXI=Idx."int"_1
 if ds=1 then
-   let set=  symbol("setfld(T seq, int, int)","builtin","int")
 [Local.1,  Lit.1,IDXI, Lit.0 ,Local.1,  Lit.1,IDXI
 ,symbol("allocateseq:seq.T(int, int, int)","builtin","ptr")
 ,Define."newseq" 
@@ -179,9 +178,9 @@ if ds=1 then
 ,Lit.2 
 ,Local.1
 , Fref.symbol(" identity( int )","int seq" ,"int") 
-, Fref.set
+, Fref.symbol("setfld(T seq, int, int)","builtin","int")
 , Fref.symbol("_( int pseq, int)","int seq" ,"int") 
-,Apply(6,"int","ptr")
+,Apply(6,"int","int")
 ,Define."d" 
 ,Local."newseq"_1]
 else 
@@ -198,7 +197,7 @@ else
  , Fref.symbol(" identity( int seq )","int seq" ,"int seq")    
  , Fref.symbol("memcpy(int, int, int seq, int, int   seq)" , "int builtin" ,"int")
  , Fref.symbol("_( int pseq, int)","int seq" ,"int") 
- ,Apply(8,"ptr","ptr")
+ ,Apply(8,"ptr","int")
 ,Define."d" 
 ,Local."newseq"_1]
              
@@ -220,14 +219,14 @@ function definedeepcopy(alltypes:seq.myinternaltype, type:mytype ,org:seq.word) 
    if abstracttype.type in "encoding int word"then [Local.1]
  else
   if abstracttype.type = "seq"_1 then
-  let typepara = parameter.type
-  let kind=parakind(alltypes,typepara)
-   let dc =  deepcopysym.typepara 
+  let kind=parakind(alltypes,parameter.type)
+  let typepara = if kind in "int real" then mytype.[kind] else parameter.type
+  let seqtype=mytype(towords.typepara + "seq")
+    let dc =  deepcopysym.typepara 
    let pseqidx =  pseqidxsym.typepara
-   let cat =  newsymbol("+", mytype(towords.type + "seq"),  [ mytype(towords.type + "seq"),type],mytype(towords.type + "seq"))
-   let blockittype = if abstracttype.parameter.type in "seq word char int"then mytype."int blockseq"
-   else mytype(towords.type + "blockseq")
-   let blockit = newsymbol("blockit",blockittype,  [ mytype(towords.parameter.blockittype+"seq")],mytype(towords.parameter.blockittype+"seq"))
+   let cat =  newsymbol("+", seqtype,  [ seqtype,typepara],seqtype)
+   let blockittype =  if abstracttype.typepara="seq"_1 then  "int seq" else towords.typepara
+   let blockit = newsymbol("blockit",mytype(blockittype+"blockseq"),  [ mytype(blockittype+"seq")],mytype(blockittype+"seq"))
     Emptyseq+[  Local.1, Fref.dc ,Fref.cat, Fref.pseqidx,Apply(5,
     if kind="seq"_1 then "ptr" else [kind],"ptr"), blockit]
   else
