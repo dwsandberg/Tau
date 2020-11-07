@@ -12,7 +12,6 @@ use set.firstpass
 
 use seq.flddesc
 
-use blockseq.int
 
 use libdesc
 

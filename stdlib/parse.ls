@@ -13,7 +13,6 @@ use format
 
 use seq.int
 
-use blockseq.seq.mytype
 
 use seq.seq.mytype
 
@@ -21,7 +20,6 @@ use seq.mytype
 
 use stdlib
 
-use blockseq.seq.symbol
 
 use seq.seq.symbol
 
@@ -200,7 +198,7 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  let thenpart = R_4
    assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)
     assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R)
-    let newcode = code.R_2 +[Lit2, Lit3, Br]+ code.R_4 +Exit + code.R_6 +[Exit,Block((types.R_4)_1,3) ]
+    let newcode = code.R_2 +[Lit.2, Lit.3, Br]+ code.R_4 +Exit + code.R_6 +[Exit,Block((types.R_4)_1,3) ]
      bindinfo(dict.R, newcode ,types.thenpart,"")
  else if ruleno = // E E^E // 18 then opaction(R, input)
  else if ruleno = // E E_E // 19 then opaction(R, input)
@@ -219,7 +217,7 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  else if ruleno = // E [ L]// 31 then
  let types = types.R_2
    assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place.R)
-    bindinfo(dict.R,[Lit0,Lit.length.types] + code.R_2 + Record([mytype."int",mytype."int"]+types)   
+    bindinfo(dict.R,[Lit.0,Lit.length.types] + code.R_2 + Record([mytype."int",mytype."int"]+types)   
    , [ mytype(towords.types_1 + "seq")],"")
  else if ruleno = // A let W = E // 32 then
  let e = R_4
@@ -235,7 +233,7 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  else if ruleno = // E assert E report E E // 34 then
  assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place.R)
    assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place.R)
-   let newcode= code.R_2 +[Lit2,Lit.3,Br] + code.R_5 +Exit + code.R_4 +
+   let newcode= code.R_2 +[Lit.2,Lit.3,Br] + code.R_5 +Exit + code.R_4 +
     symbol("assert(word seq)", towords.(types.R_5)_1+"builtin", towords.(types.R_5)_1  )+Exit+Block((types.R_5)_1,3)  
     bindinfo(dict.R, newcode, types.R_5,"")
  else if ruleno = // E I // 35 then

@@ -4,9 +4,7 @@ Module testencoding
 
 Testing encodings
 
-use blockseq.seq.tree.seq.word
 
-use blockseq.seq.word
 
 use checking
 
@@ -45,9 +43,7 @@ use process.int
 
 use seq.seq.testrecord
 
-use blockseq.seq.int
 
-use blockseq.tree.seq.word
 
 Function +(i:int, b:int)int export
 

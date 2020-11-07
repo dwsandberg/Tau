@@ -42,7 +42,6 @@ use seq.slot
 
 use seq.seq.slot
 
-use blockseq.seq.slot
 
 function assignencoding(l:int, a:word3) int valueofencoding.asencoding.toword.a
 

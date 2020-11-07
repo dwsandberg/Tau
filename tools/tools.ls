@@ -12,10 +12,11 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
 * STATE   builtin:profile profileinfo   profileresult  
 
 
+/run tools testsecondpass
  
 /run tools testfirstpass
 
-run tools testprofile
+/run tools testprofile
 
 /run tools prettytest
 
@@ -62,6 +63,9 @@ Function testhtmlcode seq.word htmlcode."testall"
 Function checkdoclib seq.word doclibrary."mylib"
 
 Function testfirstpass seq.word @(+, +("&br &br "),"", firstPass("testall"_1))
+
+Function testsecondpass seq.word @(+, +("&br &br "),"", secondPass("simpletest"_1))
+
 
 Function testprofile seq.word 
    let a = compilelib2("mylib"_1)

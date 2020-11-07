@@ -1,15 +1,13 @@
-#!/usr/local/bin/tau
-
 Module stdlib 
 
-Library stdlib UTF8 bitpackedseq bits blockseq codetemplates   encoding fileio 
+Library stdlib UTF8 bitpackedseq bits  codetemplates   encoding fileio 
 format graph groupparagraphs  internalbc ipair libdesc  llvm main2  otherseq   
 parse pass1   persistant  prims process real   seq set stack stacktrace symbol textio tree worddict xxhash 
  timestamp maindict words   newpretty  codegennew pass2new intdict  
- mangle mytype
+ mangle mytype llvmconstants
 parsersupport postbind uses 
  exports stdlib main2 maindict UTF8    words   assignencodingnumber
-  bits blockseq   encoding fileio format  llvmconstants llvm
+  bits   encoding fileio format  llvmconstants llvm
   ipair       process real   seq set stack stacktrace 
   textio  prims      otherseq tree graph   
   newpretty 
@@ -17,7 +15,7 @@ parsersupport postbind uses
  timestamp ioseq dataio intdict dict
     parsersupport mangle mytype   bitpackedseq xxhash
         libdesc
-   pass2new   symbol internalbc parse
+      symbol internalbc pass1  codegennew
   
  
  
@@ -54,9 +52,9 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
   / * INLINE pass2new : applycode( program ,seq.symbol, int, seq.symbol,  int,    worddict.seq.symbol)  expandresult
 
  
-  * NOINLINE  seq.symbol:packed(seq.symbol) seq.symbol
+  * INLINE   symbol:Lit(int)  symbol
      
-
+  * NOINLINE  UTF8:toword(int) word 
 
 /* PROFILE codegennew:codegen(program,  seq.symbol,  set.symbol,  word, symbol)seq.bits
 
@@ -75,7 +73,7 @@ int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
 
 * STATE builtin: getfile(seq.bits ) fileresult 
 
-* STATE builtin: setfld(seq.T , int, seq.T)  int
+* STATE builtin: setfld(seq.int , int, seq.T)  int
 
 * STATE  builtin: option(T,seq.word )T  
 
@@ -408,7 +406,7 @@ use seq.char
   
 * usegraph include  xxhash encoding   bits  words real subreal
 stacktrace  textio reconstruct  UTF8  seq otherseq fileio
-blockseq  stdlib exclude stdlib seq  
+  stdlib exclude stdlib seq  
 
 
 
@@ -423,7 +421,7 @@ codetemplates pass2 persistant   llvm  postbind
 reconstruct persistantseq opt2
 symbol parse libdesc internalbc intercode cvttoinst codegen pass2new codegennew funcsig
 exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process  ipair 
-bitpackedseq   fileio blockseq textio encoding words 
+bitpackedseq   fileio   textio encoding words 
    
 
 

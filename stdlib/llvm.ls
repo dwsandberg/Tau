@@ -1,3 +1,5 @@
+#!/usr/local/bin/tau
+
 Module llvm
 
 In addition to the llvm bitcode format documentation, an useful file for reference is LLVMBitCodes.h
@@ -39,7 +41,7 @@ Function type:llvmconst internaltype export
 type llvmtypeele is record toseq:seq.int
 
 
-type llvmtype is record index:int
+type llvmtype is record index:encoding.llvmtypeele
 
 
 function hash(a:llvmtypeele)int hash.toseq.a
@@ -49,10 +51,13 @@ Function assignencoding(l:int, a:llvmtypeele) int l+1
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b 
 
+function inttollvmtype(i:int) llvmtype
+  llvmtype( to:encoding.llvmtypeele(i+1))
+
 Function print(t:llvmtype) seq.word
-let a=toseq.decode(to:encoding.llvmtypeele(index.t))
+let a=toseq.decode((index.t))
 let tp=typeop.a_1
-let b=@(+,llvmtype,empty:seq.llvmtype,@(+,+.1,empty:seq.int,a))
+let b=@(+,inttollvmtype,empty:seq.llvmtype,a)
 if tp =INTEGER then [ merge.("i" + toword.a_2)]
   else if tp =ARRAY then
   "array(" + toword.a_2 + "," + print(b_3) + ")"
@@ -69,16 +74,15 @@ function cvttorec( a:encodingpair.llvmtypeele ) seq.int  toseq.data.a
 Function typerecords seq.seq.int @(+, cvttorec, empty:seq.seq.int, encoding:seq.encodingpair.llvmtypeele)
 
 Function returntype(func:llvmtype) llvmtype
-   let a=to:encoding.llvmtypeele(index.func)
-  llvmtype((toseq.decode.a)_3 +1)
+   llvmtype(to:encoding.llvmtypeele((toseq.decode.index.func)_3 +1))
   
 typerecords_(typ.llvmtype+1)_3
 
 
-Function typ(a:llvmtype)int index.a - 1
+Function typ(a:llvmtype)int valueofencoding.index.a - 1
 
 Function llvmtype(s:seq.int)llvmtype 
-llvmtype.valueofencoding.encode(llvmtypeele.s) 
+llvmtype.encode.llvmtypeele.s
 
 Function double llvmtype llvmtype.[ toint.DOUBLE]
 
@@ -212,7 +216,7 @@ Function typ(s:slotrecord) int  typ.data.cvt.s
  
 Function consttype(s:slot) llvmtype
        let l= decode.to:encoding.llvmconst(toint.s+1)
-       llvmtype(1+if typ.l = -1 then  // must skip name to find record // 
+       llvmtype.to:encoding.llvmtypeele(1+if typ.l = -1 then  // must skip name to find record // 
             (toseq.l)_(3+ (toseq.l)_1)
         else if typ.l = -3 then (toseq.l)_2
         else  typ.l )

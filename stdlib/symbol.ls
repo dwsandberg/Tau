@@ -243,7 +243,7 @@ Function Callidx(kind:word) symbol
     symbol("callidx("+t+"seq,int)","builtin", t)
 
 
-Function Emptyseq seq.symbol [Lit0,Lit0,symbol( "RECORD(int,int)",    "$record",  "ptr",specialbit)
+Function Emptyseq seq.symbol [Lit.0,Lit.0,symbol( "RECORD(int,int)",    "$record",  "ptr",specialbit)
 ]
 
 Function pseqidxsym(type:mytype) symbol
@@ -344,10 +344,6 @@ Function Reallit(i:int)  symbol symbol(  [toword.i],    "$real",  "real",constbi
 Function Lit(i:int)  symbol symbol(  [toword.i],    "$int",  "int",constbit)
 
 Function Lit0 symbol symbol(  "0",    "$int",  "int",constbit)
-
-Function Lit2 symbol symbol(  "2",    "$int",  "int",constbit)
-
-Function Lit3 symbol symbol(  "3",    "$int",  "int",constbit)
 
 Function Words(s:seq.word) symbol  symbol(  s,    "$words",  "word seq",constbit)
 

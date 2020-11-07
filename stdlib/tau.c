@@ -29,7 +29,7 @@ BT encodeZbuiltinZTZTzerecord(processinfo PD,BT P1,BT P2);
 
 #define SEQTYPE(a) IDXUC(a,0)
 
-#define myalloc allocatespaceQ3AseqQ2ETZbuiltinZint
+#define myalloc allocatespaceZbuiltinZint
 
 void assert(int b,char *message);
 
@@ -80,9 +80,9 @@ struct pinfo sharedspace={0,0,0,0,0,0};
 
  BT spacecount=0;
  
-BT allocatespaceQ3AseqQ2ETZbuiltinZint(processinfo PD, BT i) /* { return allocatespaceZbuiltinZint(PD,  i);}
+BT allocatespaceQ3AseqQ2ETZbuiltinZint(processinfo PD, BT i)   { return allocatespaceZbuiltinZint(PD,  i);}
 
-BT allocatespaceZbuiltinZint(processinfo PD, BT i) */  { struct  spaceinfo *sp =&PD->space;
+BT allocatespaceZbuiltinZint(processinfo PD, BT i)   { struct  spaceinfo *sp =&PD->space;
    sp->nextone=sp->nextone+i*8;
     spacecount+=i;
     if ((sp->nextone)>(sp->lastone) ){int k,x;   BT *b;
@@ -547,6 +547,7 @@ char *name=(char *)&IDXUC(filename,2);
 return 0;
 }
 
+/*
 
 BT createfileZbuiltinZbitszseqZintzseq(processinfo PD,BT filename,BT t){ 
 //format of filename is  {struct  BT type=1; BT length;  char name[length]; char term=0; } 
@@ -560,7 +561,9 @@ char *name=(char *)&IDXUC(filename,2);
  f=open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
   //printf("%lld type: %lld\n",SEQLEN(t),IDXUC(t,0));
   if (IDXUC(t,0)==0) write(f, &IDXUC(t,2),8*SEQLEN(t) );
-  else  if (IDXUC(t,0)==1) write(f, &IDXUC(t,2), SEQLEN(t) );
+  else  if (IDXUC(t,0)==1) {
+   fprintf(stderr,"onefound\n");
+   write(f, &IDXUC(t,2), SEQLEN(t) );}
   else
    { BT l=IDXUC(t,1);
     BT  blocksz=IDXUC(t,2);
@@ -577,7 +580,7 @@ char *name=(char *)&IDXUC(filename,2);
   close(f);
 return 0;
 }
-
+*/
 //BT createfileZbuiltinZUTF8Zintzseq(processinfo PD,BT filename,BT t){ return createfileZbuiltinZintzseqZintzseq(PD,filename,t);}
 
 // end of file io
@@ -706,16 +709,14 @@ void createfilefromoutput(struct outputformat *t,int file)
                     write(file, (char *)  t->data->data, t->bytelength);
                    }
                 else {  
-                    int j; int length=t->bytelength;
-                           struct blockseq * blkseq=( struct blockseq *   )t->data ;
-                            struct bitsseq * blks=   blkseq->seqseq;
-                           int blockcount=blks->length; 
-                           int count = blkseq->blksize * 8;
-                        for(j=0; j < blockcount; j++)  { 
-                          write( file,(char *)(blks->data[j])+16,  length < count ? length:count );
-                          length=length-count;
-                      }
-                    
+                    int j; int length=t->bytelength; BT blksize=10000;
+                      int blockcount=length / blksize;
+                      int count =blksize * 8;
+                      for(j=0; j < blockcount; j++)  { 
+                              write( file,(char *)(t->data->data[j])+16,  length < count ? length:count );
+                             length=length-count;
+                       }
+                   
                 }}
                 
 
@@ -843,9 +844,6 @@ close(randomData);
   }
 
 
-BT tanZbuiltinZreal(processinfo PD, BT a)  {return asint(tan(asreal(a)));}
-BT arcsinZbuiltinZreal(processinfo PD, BT a)  {return asint(asin(asreal(a)));}
-BT arccosZbuiltinZreal(processinfo PD, BT a)  {return asint(acos(asreal(a)));}
 
 
 

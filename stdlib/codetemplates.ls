@@ -35,15 +35,10 @@ use seq.match5
 
 use stdlib
 
-use blockseq.templatepart
-
-use blockseq.seq.templatepart
-
 use seq.templatepart
 
 use textio
 
-use blockseq.word
 
 use seq.symbol
 
@@ -132,15 +127,19 @@ options.code.m
 
 use encoding.match5
 
+
 function table seq.match5
-let t=[match5(1, "isnullZbuiltinZptr"_1, 3, 
-  CAST(r.1, slot.ibcsub1,   i64, CASTPTRTOINT)   +CMP2(r.2, r.1, C64.0, 32) + CAST(r.3,r.2,  i64, CASTZEXT))
-, match5(0,"nullptrZbuiltin"_1, 1,   CAST(r.1, C64.0,  ptr.i64, CASTINTTOPTR))
+let t=[match5(1, "bitcastZbuiltinZintzseqzseq"_1, 0, emptyinternalbc)
+,match5(1, "isnullZbuiltinZptr"_1, 3, 
+  CAST(r.1, slot.ibcsub1,   i64, ptrtoint)   +CMP2(r.2, r.1, C64.0, 32) + CAST(r.3,r.2,  i64, zext))
+, match5(0,"nullptrZbuiltin"_1, 1,   CAST(r.1, C64.0,  ptr.i64, inttoptr))
 , match5(2,"IDXZbuiltinZintzseqZint"_1, 2, GEP(r.1,  i64, slot.ibcsub1, slot.ibcsub2)+ LOAD(r.2, r.1,  i64 ))
-, match5(2,"IDXZbuiltinZptrzseqZint"_1, 3, GEP(r.1,  i64, slot.ibcsub1, slot.ibcsub2)+ LOAD(r.2, r.1,  i64 )
- +CAST(r.3, r.2,  ptr.i64, CASTINTTOPTR))
+, match5(2,"IDXZbuiltinZintzseqzseqZint"_1,  3, GEP(r.1,  i64, slot.ibcsub1, slot.ibcsub2)+ LOAD(r.2, r.1,  i64 )
+ +CAST(r.3, r.2,  ptr.i64, inttoptr))
+ , match5(2,"IDXZbuiltinZptrzseqZint"_1, 3, GEP(r.1,  i64, slot.ibcsub1, slot.ibcsub2)+ LOAD(r.2, r.1,  i64 )
+ +CAST(r.3, r.2,  ptr.i64, inttoptr))
 , match5(2,"IDXZbuiltinZrealzseqZint"_1, 3,  GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2)
-  + LOAD(r.2, r.1,  i64 )+CAST(r.3, r.2,  double, 11))
+  + LOAD(r.2, r.1,  i64 )+CAST(r.3, r.2,  double, bitcast))
 , match5(1,"getseqtypeZbuiltinZTzseq"_1, 1,  LOAD(r.1, slot.ibcsub1,  i64 ))
 , match5(2,"STKRECORDZbuiltinZptrZptr"_1,3, ALLOCA(r.1,  ptr.ptr.i64,  i64, C64.2, 0) 
 + STORE(r.2, r.1, slot.ibcsub1)
@@ -153,27 +152,27 @@ let t=[match5(1, "isnullZbuiltinZptr"_1, 3,
   ,  match5(1,"tanZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry("tan",function.[ double, double]),slot.ibcsub1))
   ,  match5(1,"arcsinZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry("asin",function.[ double, double]),slot.ibcsub1))
   ,  match5(1,"arccosZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768,  function.[ double, double], symboltableentry("acos",function.[ double, double]),slot.ibcsub1))
-,match5(1,"intpartZbuiltinZreal"_1, 1,   CAST(r.1, slot.ibcsub1,  i64, // fptosi double // 4))
-,match5(1,"torealZbuiltinZint"_1, 1, // sitofp // CAST(r.1, slot.ibcsub1,  double, 6) )
+,match5(1,"intpartZbuiltinZreal"_1, 1,   CAST(r.1, slot.ibcsub1,  i64,   fptosi   ))
+,match5(1,"torealZbuiltinZint"_1, 1, CAST(r.1, slot.ibcsub1,  double, sitofp) )
 ,  match5(2,"Q2DZbuiltinZrealZreal"_1, 1,   BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sub))
 ,  match5(2,// + //"Q2BZbuiltinZrealZreal"_1, 1,   BINOP(r.1, slot.ibcsub1, slot.ibcsub2, add))
 ,  match5(2,// * //"Q2AZbuiltinZrealZreal"_1, 1,   BINOP(r.1, slot.ibcsub1, slot.ibcsub2, mul))
 ,  match5(2,// / op //"Q2FZbuiltinZrealZreal"_1, 1,   BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sdiv))
- , match5(1,"casttorealZbuiltinZint"_1, 1, CAST(r.1, slot.ibcsub1, double, 11))
- ,match5(1,"representationZbuiltinZreal"_1, 1, CAST(r.1, slot.ibcsub1, i64, 11)) 
+ , match5(1,"casttorealZbuiltinZint"_1, 1, CAST(r.1, slot.ibcsub1, double, bitcast))
+ ,match5(1,"representationZbuiltinZreal"_1, 1, CAST(r.1, slot.ibcsub1, i64, bitcast)) 
  , match5(2,// ? //"Q3FZbuiltinZrealZreal"_1, 5,     CMP2(r.1,slot.ibcsub1, slot.ibcsub2, 3)
- + CAST(r.2, r.1, i64, CASTZEXT)
+ + CAST(r.2, r.1, i64, zext)
 + CMP2(r.3 ,slot.ibcsub1, slot.ibcsub2, 2)
-+ CAST(r.4, r.3,  i64, CASTZEXT)
++ CAST(r.4, r.3,  i64, zext)
 + BINOP(r.5, r.2, r.4, add ))
- , match5(2,// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 39) + CAST(r.2, r.1, i64, CASTZEXT) + CMP2(r.3, slot.ibcsub1, slot.ibcsub2, 38)
-+ CAST(r.4, r.3, i64, CASTZEXT)
+ , match5(2,// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 39) + CAST(r.2, r.1, i64, zext) + CMP2(r.3, slot.ibcsub1, slot.ibcsub2, 38)
++ CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add))
 , match5(3,"castZbuiltinZTzseqZintZint"_1, 1,  GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2))
-, match5(2,"Q3EZbuiltinZintZint "_1, 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 38) + CAST(r.2, r.1,  i64, CASTZEXT))
+, match5(2,"Q3EZbuiltinZintZint "_1, 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 38) + CAST(r.2, r.1,  i64, zext))
 , match5(1,"notZbuiltinZboolean"_1, 1, BINOP(r.1, slot.ibcsub1, C64.1, xor))
 , // include aborted here so does not show up in profile results match5("abortedZbuiltinZTzprocess"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."abortedZbuiltinZTzprocess", -1, ibcsub1)), Including this as a template causes subtle compile errors //
-match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 32) + CAST(r.2,r.1,  i64, CASTZEXT))
+match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 32) + CAST(r.2,r.1,  i64, zext))
 , match5(2, "Q2DZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sub ))
 , match5(2,// + // "Q2BZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, add ))
 , match5(2,// * // "Q2AZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2,mul ))
@@ -183,26 +182,11 @@ match5(2,// = // "Q3DZbuiltinZintZint"_1, 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub
 , match5(2,"Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, and  ))
 , match5(2,"Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, or   ))
 , match5(2,"xorZbuiltinZbitsZbits"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, xor ))
-, match5(3,"setfldZbuiltinZTzseqZintZptr"_1,3, 
-  CAST(r.1, slot.ibcsub1,  ptr.ptr.i64, toint.bitcast)  
-+ GEP(r.2,  ptr.i64, r.1, slot.ibcsub2)
-+ STORE(r.3, r.2, slot.ibcsub3 )
-+  BINOP(r.3, slot.ibcsub2, C64.1, add)
-)
-, match5(3,"setfldZbuiltinZTzseqZintZint"_1, 2, 
+, match5(3,"setfldZbuiltinZintzseqZintZint"_1, 2, 
   GEP(r.1,  i64, slot.ibcsub1, slot.ibcsub2)
 + STORE(r.2, r.1, slot.ibcsub3)
 +  BINOP(r.2, slot.ibcsub2, C64.1, add)
 )
-,  match5(3,"allocateseqQ3AseqQ2ETZbuiltinZintZintZint"_1,4, 
-BINOP(r.1, slot.ibcsub1, C64.2, add)
-+CALL(r.2, 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint"
-,function.[ ptr.i64, i64, i64]), slot.ibcfirstpara2, r.1)
-+ GEP(r.3, i64, r.2, C64.1)
-+ STORE(r.4, r.3, slot.ibcsub3 )
- + GEP(r.4,  i64, r.2, C64.0)
- + STORE(r.5, r.4, slot.ibcsub2)
-  )
  ]
 let discard = @(+, addit, 0, t)
  t
@@ -312,7 +296,11 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
        else   if (fsig.xx)_1="global"_1 &and isbuiltin.pkg  then
         match5(0,mangledname.xx, 1, GEP(r.1,   i64, slot.global([mangledname.xx],i64,C64.0))
         )
-     else 
+        else if (fsig.xx)_1="blockindexfunc"_1 &and isbuiltin.pkg  then
+         let functype=ptr.function.[ i64, i64, ptr.i64, i64]
+         match5([mangledname.xx,"0"_1], 0, empty:seq.templatepart,"ACTARG"_1, 
+         ptrtoint(functype,symboltableentry("indexblocksZassignencodingnumberZintzseqzseqZint"_1, functype)))
+        else
         let noargs = nopara.xx
         let name=mangledname.xx
         let functype= tollvmtype(alltypes,xx)
@@ -325,19 +313,13 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
 
 
 
-
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
  let args = if  action.t = "CALL"_1 then empty:seq.int
  else 
  subseq(argstack, length.argstack - arg.t + 1, length.argstack)
   processtemplate(parts.t, deltaoffset, args)
 
-Function CASTZEXT int 1
 
-Function CASTTRUNC int 0
 
-Function CASTPTRTOINT int 9
-
-Function CASTINTTOPTR int 10
 
   

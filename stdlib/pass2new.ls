@@ -344,7 +344,6 @@ use real
 
 
 
-use blockseq.seq.symbol
 
 use worddict.seq.symbol
 
@@ -419,7 +418,6 @@ let d=code.lookupcode(p,s)
 
 type backresult is record code:seq.symbol, places:seq.int
 
-use blockseq.symbol
   
 Function firstopt(p:program, rep:symbol, code:seq.symbol,alltypes:seq.myinternaltype) program
  let nopara=nopara.rep
@@ -428,10 +426,10 @@ Function firstopt(p:program, rep:symbol, code:seq.symbol,alltypes:seq.myinternal
   map(p,symbol(fsig.rep,module.rep,returntype.rep), addoptions(code,options)) 
  else 
  let pdict=addpara(emptyworddict:worddict.seq.symbol, nopara)
-  let code2 = code.yyy(p,blockit.code,1,empty:seq.symbol,    nopara + 1, pdict)
+  let code2 = code.yyy(p,code,1,empty:seq.symbol,    nopara + 1, pdict)
   let options= caloptions(p,code2,nopara,module.rep,fsig.rep)
   let s=symbol (fsig.rep,module.rep,returntype.rep )
- let a = breakblocks(p,blockit.code2,s,alltypes)
+ let a = breakblocks(p,code2,s,alltypes)
  let a2=code.yyy(p,a,1,empty:seq.symbol, nopara+1,pdict)
   map(p, s, addoptions(a2,options)) 
    
@@ -523,7 +521,12 @@ function yyy(p:program,org:seq.symbol,k:int,result:seq.symbol,  nextvar:int, map
   // one or two parameters with last arg being constant //
  if nopara = 1 then 
      // one constant parameter //
-      if fsig.sym = "makereal(word seq)" &and module.sym="UTF8" then
+      if(  sym=symbol("toword(int)","UTF8","word" )) then
+       yyy(p,org,k+1,subseq(result,1,length.result-1)+Word.(fsig.last.result)_1,   nextvar, map)
+      else  if fsig.sym="hash(word seq)" &and module.sym="stdlib"  &and module.last.result="$words"  then
+              let  x=Lit.hash.fsig.last.result
+            yyy(p,org,k+1,subseq(result,1,length.result-1)+x,   nextvar, map)
+      else if fsig.sym = "makereal(word seq)" &and module.sym="UTF8" then
          let arg1 =  last.result
          if module.arg1 = "$words"then
             let  x=Reallit.representation.makereal.fsig.arg1 

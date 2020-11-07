@@ -6,8 +6,6 @@ use encoding.seq.char
 
 use ioseq.encodingpair.seq.char
 
-use blockseq.seq.encodingpair.seq.char
-
 use process.seq.encodingpair.seq.char
 
 use seq.encodingpair.seq.char

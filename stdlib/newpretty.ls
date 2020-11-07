@@ -34,7 +34,7 @@ use groupparagraphs
 
 
 Function test1 seq.word pretty(" stdlib
- UTF8 bitpackedseq bits blockseq 
+ UTF8 bitpackedseq bits  
  codegen codetemplates  deepcopy encoding fileio format graph
  groupparagraphs intercode internalbc ipair libdescfunc libscope
  llvm main2 opt2 oseq packedseq 

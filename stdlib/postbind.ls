@@ -124,8 +124,11 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i
             else  if   fsig.oldsym="packed(T seq)"     then
                let typdesc=lookuptype(alltypes,newmodpara)
                assert  not.isempty.typdesc  report"can not find type packed" + print.newmodpara  + org
-               packedcode( typdesc_1) 
-            else if fsig.oldsym="memcpy(int, int, int seq, int, int seq)"   then  memcpycode.newsym 
+                 let ds=size.typdesc_1
+if ds=1 then
+   [Local.1,symbol("packed1(int seq)","assignencodingnumber","int seq")]
+else 
+ [Lit.ds,Local.1,symbol("packed(int,int seq seq)","assignencodingnumber","int seq")]
             else if  (fsig.oldsym)_1  = "deepcopy"_1   then  
                 assert length.towords.parameter.modname.newsym > 0 report "DEEP"+print.newsym
                  definedeepcopy(alltypes, parameter.modname.newsym,org)          
@@ -153,12 +156,12 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i
               encodenocode(newmodpara)+[get,Words."NOINLINE STATE",Optionsym]  
            
    function encodenocode(typ:mytype) seq.symbol
-       let gl=symbol("global"+  print.typ ,"builtin",("int seq"))
-     let setfld=symbol("setfld(T seq, int, int)","builtin","int")
+       let gl=symbol("global"+  print.typ ,"builtin","int seq")
+     let setfld=symbol("setfld(int seq, int, int)","builtin","int")
      let encodenosym=newsymbol ("encodingno",mytype("assignencodingnumber"),[mytype."word seq"],mytype."int")
      let IDXI=Idx."int"_1
        if typ=mytype."typename" then  
-           [gl,Lit.0,Lit2,setfld,Define."xx",gl,Lit.0,IDXI] 
+           [gl,Lit.0,Lit.2,setfld,Define."xx",gl,Lit.0,IDXI] 
           else if typ=mytype."char seq " then 
                 [gl,Lit.0,Lit.1,setfld,Define."xx",gl,Lit.0,IDXI] 
           else 
@@ -167,68 +170,26 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i
            gl,Lit.0,Words.towords.typ,encodenosym,setfld,Define."xx",gl,Lit.0,IDXI ,Exit,Block(mytype."int",3)]   
 
 
-function packedcode(typdesc:myinternaltype) seq.symbol
-  let ds=size.typdesc 
-  let IDXI=Idx."int"_1
-if ds=1 then
-[Local.1,  Lit.1,IDXI, Lit.0 ,Local.1,  Lit.1,IDXI
-,symbol("allocateseq:seq.T(int, int, int)","builtin","ptr")
-,Define."newseq" 
-,Local."newseq"_1  
-,Lit.2 
-,Local.1
-, Fref.symbol(" identity( int )","int seq" ,"int") 
-, Fref.symbol("setfld(T seq, int, int)","builtin","int")
-, Fref.symbol("_( int pseq, int)","int seq" ,"int") 
-,Apply(6,"int","int")
-,Define."d" 
-,Local."newseq"_1]
-else 
-   [Lit.ds, Local.1,  Lit.1,IDXI,symbol("*(int, int)","builtin","int") 
-    , // Fref.symbol("_( int packedseq, int)",typeT+"process",typeT)  // Lit.ds
-    , Local.1,  Lit.1,IDXI
-    , symbol( "allocateseq:seq.T(int, int, int)","builtin","ptr")  
-    , Define."newseq" 
-    , Lit.0
-    , Lit.ds
-    , Local."newseq"_1
-    , Lit.2 
- , Local.1 
- , Fref.symbol(" identity( int seq )","int seq" ,"int seq")    
- , Fref.symbol("memcpy(int, int, int seq, int, int   seq)" , "int builtin" ,"int")
- , Fref.symbol("_( int pseq, int)","int seq" ,"int") 
- ,Apply(8,"ptr","int")
-,Define."d" 
-,Local."newseq"_1]
              
- function memcpycode(sym:symbol) seq.symbol
-  assert module.sym="int builtin" report "not expecting module other than process.int"+print.sym
-// function memcpy(i:int,memsize:int, s:seq.T,idx:int, fromaddress:seq.T) int 
-if memsize=0 then idx else
-   memcpy(i+1,memsize-1,s,setfld(s,idx,getval(fromaddress,i)),fromaddress) //
-let i=1 let memsize=2 let s= 3 let idx=4 let fromaddress=5
-  [Local.memsize, Lit.0, EqOp, Lit.2, Lit.3, Br  
-  ,Local.idx, Exit
-,Local.i, Lit.1 ,PlusOp ,Local.memsize, Lit.1,
-symbol("-(int,int)" ,"builtin","int"),Local.s ,Local.s ,Local.idx ,Local.fromaddress ,Local.i,Idx."ptr"_1,
- symbol( "setfld(T seq, int, ptr)","builtin","int") ,
- Local.fromaddress,  sym,Exit 
-,Block(mytype."int",3) ]   
-
+ 
 function definedeepcopy(alltypes:seq.myinternaltype, type:mytype ,org:seq.word) seq.symbol
    if abstracttype.type in "encoding int word"then [Local.1]
  else
   if abstracttype.type = "seq"_1 then
+        let typedesc=lookuptype(alltypes, type)
+    assert  not.isempty.typedesc  report"can not find type deepcopy" + print.type +org
+     let ds=size.typedesc_1
   let kind=parakind(alltypes,parameter.type)
   let typepara = if kind in "int real" then mytype.[kind] else parameter.type
   let seqtype=mytype(towords.typepara + "seq")
     let dc =  deepcopysym.typepara 
    let pseqidx =  pseqidxsym.typepara
    let cat =  newsymbol("+", seqtype,  [ seqtype,typepara],seqtype)
-   let blockittype =  if abstracttype.typepara="seq"_1 then  "int seq" else towords.typepara
-   let blockit = newsymbol("blockit",mytype(blockittype+"blockseq"),  [ mytype(blockittype+"seq")],mytype(blockittype+"seq"))
     Emptyseq+[  Local.1, Fref.dc ,Fref.cat, Fref.pseqidx,Apply(5,
-    if kind="seq"_1 then "ptr" else [kind],"ptr"), blockit]
+    if kind="seq"_1 then "ptr" else [kind],"ptr")]+ if ds=1 then
+   [symbol("packed1(int seq)","assignencodingnumber","int seq")]
+else 
+ [Local.1,Lit.ds,symbol("packed(int seq seq,ds)","assignencodingnumber","int seq")]
   else
      let typedesc=lookuptype(alltypes, type)
     assert  not.isempty.typedesc  report"can not find type deepcopy" + print.type +org

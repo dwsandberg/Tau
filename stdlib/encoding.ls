@@ -1,6 +1,5 @@
 Module encoding.T
 
-use blockseq.T
 
 use seq.T
 
@@ -16,7 +15,6 @@ use otherseq.seq.encodingpair.T
 
 use process.T
 
-use blockseq.encodingpair.T
 
 
 Function type:encodingpair.T internaltype export
@@ -216,6 +214,10 @@ module assignencodingnumber
 
 use stdlib
 
+use seq.int
+
+use seq.seq.int
+
 use encoding.typename
 
 type  typename is record name:seq.word
@@ -233,3 +235,64 @@ Function  encodingno(name:seq.word) int
 function assignencoding(a:int, typename) int
    a+1
    
+ function  IDX(seq.int  ,int) int builtin.usemangle
+  
+ function  setfld(seq.int  ,int,int) int builtin.usemangle
+ 
+ function allocatespace(i:int) seq.int builtin.usemangle
+
+  
+Function memcpy(i:int,memsize:int, s:seq.int,idx:int, fromaddress:seq.int) int 
+if memsize=0 then idx else
+   memcpy(i+1,memsize-1,s,setfld(s,idx,IDX(fromaddress,i)),fromaddress) 
+
+ Function packed1(s:seq.int) seq.int 
+  // for use where the element type is represented in 64bits. //
+ if length.s > blocksize then
+   let r=bitcast.packed(@(+, subblock(s), empty:seq.seq.int, arithseq((length.s + blocksize - 1) / blocksize, blocksize, 1)))
+   let k= setfld(r,setfld(r,0,blockindexfunc ) ,length.s)
+   r
+ else
+   let newseq=allocatespace(length.s+2)
+   let a=setfld(newseq,setfld(newseq,0,0),length.s)
+   let d=   @(setfld.newseq,identity,2 ,s)
+   newseq   
+
+Function packed(s:seq.seq.int,ds:int) seq.int packed(ds,s)
+   
+Function packed(ds:int,s:seq.seq.int) seq.int 
+  // for use where the element type is represented in ds * 64bits where ds > 1. //
+  // if the length <=blocksize then the result is represented as  <ds> <length> <fld1.s_1><fld2.s_1> ...  <fld1.s_2><fld2.s_2> .... //
+  // if the length > bloocksize then result is represented as 
+       <blockindexfunc> <length> <packed.subseq(s,1,blocksize)> <packed.subseq(s,blocksize+1,2*blocksize)> .....
+  //
+if length.s > blocksize then
+   let r=bitcast.packed(@(+, subblock(ds,s), empty:seq.seq.int, arithseq((length.s + blocksize - 1) / blocksize, blocksize, 1)))
+   let k= setfld(r,setfld(r,0,blockindexfunc ) ,length.s)
+   r
+ else
+   let newseq=allocatespace(length.s * ds +2)
+   let a=setfld(newseq,setfld(newseq,0,ds),length.s)
+   let d=   @(memcpy(0,ds,newseq),identity,2 ,s)
+   newseq
+   
+ function bitcast(a:seq.seq.int) seq.int builtin.usemangle
+ 
+ function  IDX(seq.seq.int,int) seq.int builtin.usemangle
+  
+  function  blockindexfunc int builtin.usemangle
+ 
+function blocksize int 10000
+
+Function indexblocks(a:seq.seq.int, i:int) int
+   assert between(i,1,length.a) report "out of bounds"  
+ IDX(a,  (i - 1) / blocksize  + 2  )
+ _((i - 1) mod blocksize  + 1)
+
+function subblock(s:seq.int, i:int)seq.int packed.subseq(s, i, i + blocksize - 1)
+ 
+function subblock(ds:int,s:seq.seq.int, i:int)seq.int packed(ds,subseq(s, i, i + blocksize - 1))
+
+ 
+
+

@@ -54,10 +54,8 @@ function hash(a:ccc) int key.a
 
 use seq.encodingpair.ccc
 
-use blockseq.seq.seq.encodingpair.ccc 
 
 
-use blockseq.seq.encodingpair.testrecord 
 
 Function getint(size:int) int  
 let p=data.last.encoding:seq.encodingpair.ccc 
@@ -113,7 +111,7 @@ Function check:seq.T seq.T
  let unpack=random:seq.T(17)
  let pack=packed.unpack
  let x=if sizeoftype:T=1 then "" else "packed"  
- assert length.unpack=length.pack &and seqkind.pack=x+toword.length.unpack report "ERROR"
+ assert length.unpack=length.pack &and (length.pack > 9999 &or seqkind.pack=x+toword.length.unpack) report "ERROR"
  unpack
 
 Function  random:seq.T(depth:int)  seq.T   

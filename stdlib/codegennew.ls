@@ -162,7 +162,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l,exitblock))
     else if action = "BR"_1  then
            assert    length.toseq.args.l > 2 report "fail 5b"
-        let newcode = CAST(r(regno.l + 1), slot.top(args.l,arg.m)_1,  i1, CASTTRUNC)
+        let newcode = CAST(r(regno.l + 1), slot.top(args.l,arg.m)_1,  i1, trunc)
        let cond= Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + 1, push(args.l,1), blocks.l)
       Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l + 1, empty:stack.int, push(blocks.l,cond))
     else if action = "BLOCK"_1  then
@@ -201,7 +201,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
       let noargs = arg.m
      let args = top(args.l, noargs)
      let newcode = CALL(r(regno.l + 1), 0, 32768,  function.[ ptr.i64, i64, i64], 
-     symboltableentry("allocatespaceQ3AseqQ2ETZbuiltinZint",function.[ ptr.i64, i64, i64]), r.1, C64.noargs)
+     symboltableentry("allocatespaceZbuiltinZint",function.[ ptr.i64, i64, i64]), r.1, C64.noargs)
      let fldbc=setnextfld(code.l + newcode,args,1,fullinst.m,3,regno.l+1,regno.l+1,0,0)
           Lcode2(value.fldbc, lmap.l, noblocks.l, index.fldbc, push(pop(args.l, noargs), -(regno.l + 1)), blocks.l)
     else 
@@ -274,11 +274,11 @@ else
    let typ=if length.types=3 then "int"_1 else types_(newj-1)
    assert typ in  "int real seq ptr"  report "unknown type gencode"+types
     if preal =0 &and typ="real"_1 then   
-     setnextfld( bc+CAST(r(regno + 1), r.pint,  ptr.double, 11)  
+     setnextfld( bc+CAST(r(regno + 1), r.pint,  ptr.double, bitcast)  
             ,args,i,types,j,regno+1,pint ,regno+1,pptr)
   else 
       if pptr =0 &and typ="ptr"_1 then   
-     setnextfld( bc+CAST(r(regno + 1), r.pint,  ptr.ptr.i64, 11)  
+     setnextfld( bc+CAST(r(regno + 1), r.pint,  ptr.ptr.i64, bitcast)  
             ,args,i,types,j,regno+1,pint ,preal,regno+1)
   else     
    let newbc=  (if typ="real"_1 then
@@ -395,13 +395,13 @@ let idx=args_2
  + BR(r(base + 3), block +2, block  , r(base + 2))
  + // block // // gt // CMP2(r(base +3), r(base + 1), C64.1000, 38)
   +BR(r(base + 4), block +1, block+3  , r(base + 3))
- + // block 1 // CAST(r(base +4),r(base+1),  ptr.function.[ functype , i64, ptr.i64, i64], CASTINTTOPTR)
+ + // block 1 // CAST(r(base +4),r(base+1),  ptr.function.[ functype , i64, ptr.i64, i64], inttoptr)
   +   CALL(r(base +5), 0, 32768,  function.[ functype,   i64, ptr.i64, i64], r(base+4), r.1,  @(+,slot,empty:seq.slot,args))  
   + BR( block + 4)
   + // block 2 // GEP(r(base +6) ,  i64, slot.theseq, slot.idx) 
   + GEP(r(base +7)  ,  i64, r(base+6),C64.1) 
    +  LOAD(r(base +8) , r(base+7), i64) 
-   +CAST(r(base+9),r(base+8), functype, toint.inttoptr)
+   +CAST(r(base+9),r(base+8), functype,  inttoptr)
    + BR( block + 4)
   +  // block 3 // 
     // first element start //   GEP(r(base +10)  ,  i64, slot.theseq,C64.2) 
@@ -422,11 +422,11 @@ let idx=args_2
   LOAD(r(base +1), slot.theseq,  i64 )
  + CMP2(r(base + 2), r(base + 1), C64.0, 32)
  + BR(r(base + 3), block +1, block  , r(base + 2))
- + // block // CAST(r(base +3),r(base+1),  ptr.function.[ functype , i64, ptr.i64, i64], CASTINTTOPTR)
+ + // block // CAST(r(base +3),r(base+1),  ptr.function.[ functype , i64, ptr.i64, i64], inttoptr)
   +   CALL(r(base +4), 0, 32768,  function.[ functype,   i64, ptr.i64, i64], r(base+3), r.1,  @(+,slot,empty:seq.slot,args))  
   + BR( block + 2)
   + // block 1 // 
-  CAST(r(base +5), slot.theseq,  ptr.functype, toint.bitcast)
+  CAST(r(base +5), slot.theseq,  ptr.functype, bitcast)
    + GEP(r(base +6) ,  functype, r(base+5), slot.idx) 
   + GEP(r(base +7 ) ,  functype, r(base+6),C64.1) 
    + LOAD(r(base +8) , r(base+7), functype)

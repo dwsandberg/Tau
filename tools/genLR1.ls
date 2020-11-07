@@ -10,7 +10,6 @@ run genLR1 gentaupretty
 
 use seq.action
 
-use blockseq.seq.dottedrule
 
 use seq.dottedrule
 
@@ -50,9 +49,7 @@ use seq.word
 
 use set.word
 
-use blockseq.int
 
-use blockseq.dottedrule
 
 use encoding.state
 

@@ -850,9 +850,7 @@ use seq(seq(int))
 
 use seq(seq(seq(int)))
 
-use packedseq.int
 
-use blockseq(int)
 
 use seq.int
 
@@ -4229,7 +4227,6 @@ use constant
 
 use seq.int
 
-use blockseq.word
 
 use seq.libtype
 

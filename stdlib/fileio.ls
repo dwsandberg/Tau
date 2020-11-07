@@ -2,13 +2,14 @@ Module fileio
 
 use seq.UTF8
 
+use seq.int
+
 use UTF8
 
 use bitpackedseq.bit
 
 use seq.bit
 
-use blockseq.bits
 
 use seq.seq.bits
 
@@ -20,7 +21,6 @@ use bitpackedseq.byte
 
 use seq.byte
 
-use blockseq.int
 
 use seq.seq.int
 
@@ -41,12 +41,13 @@ Function toCformat(s:seq.word)seq.bits
 
 type outputformat is record length:int, data:seq.bits
 
-Function outputformat(a:seq.int)outputformat outputformat(length.a, blockit.data2.@(add, byte, empty:bitpackedseq.byte, a))
+Function outputformat(a:seq.int)outputformat outputformat(length.a, packed.data2.@(add, byte, empty:bitpackedseq.byte, a))
 
 Function createbytefile(name:seq.word, a:seq.int)int createfile(toCformat.name, outputformat.a)
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
- createlib(toCformat.[ libname], toCformat.@(+, addsuffix.".dylib","", dependlibs), outputformat(length.b * 8, blockit.b))
+ createlib(toCformat.[ libname], toCformat.@(+, addsuffix.".dylib","", dependlibs), 
+ outputformat(length.b * 8, packed.b))
 
 function addsuffix(suffix:seq.word, a:word)seq.word [ a] + suffix
 
@@ -54,9 +55,9 @@ function createlib(name:seq.bits, libs:seq.bits, t:outputformat)int builtin.usem
 
 function createfile(name:seq.bits, data:outputformat)int builtin.usemangle
 
-Function createfile(name:seq.word, a:seq.int)int createfile(toCformat.name, blockit.a)
+Function createfile(name:seq.word, a:seq.int)int createfile(toCformat.name, 
+outputformat(length.a * 8, @(+,bits,empty:seq.bits,packed.a)))
 
-function createfile(name:seq.bits, data:seq.int)int builtin.usemangle
 
 function getfile(f:seq.bits)fileresult builtin.usemangle
 
@@ -89,7 +90,7 @@ Function fileexists(f:seq.word)boolean
 
 Function gettext(filename:seq.word)seq.seq.word @(+, towords, empty:seq.seq.word, breakparagraph.getUTF8file.filename)
 
-Function createfile(filename:seq.word, s:seq.seq.word)int createfile(filename, @(+, toUTF8plus, empty:seq.int, s))
+Function createfile(filename:seq.word, s:seq.seq.word)int createbytefile( filename, @(+, toUTF8plus, empty:seq.int, s))
 
 Function createfile(filename:seq.word, s:seq.word)int createbytefile(filename, toseqint.toUTF8.s)
 
@@ -102,5 +103,3 @@ function tobitpackedseq(s:seq.int)seq.byte @(+, byte, empty:seq.byte, s)
 function tobitpackedseqbit(s:seq.int)seq.bit @(+, bit, empty:seq.bit, s)
 
 function tointseq(s:seq.byte)seq.int @(+, toint, empty:seq.int, s)
-
-Blockit is exported so other deepcopy functions will compile

@@ -84,7 +84,8 @@ int scgi_sendtau( scgi_request *req, processinfo process)
                     }
                 else {  
                     int j; int length=t->bytelength;
-                           struct blockseq * blkseq=( struct blockseq *   )t->data ;
+                 /*        needs updating
+                    struct blockseq * blkseq=( struct blockseq *   )t->data ;
                             struct bitsseq * blks=   blkseq->seqseq;
                            int blockcount=blks->length; 
                            int count = blkseq->blksize * 8;
@@ -92,7 +93,7 @@ int scgi_sendtau( scgi_request *req, processinfo process)
                         for(j=0; j < blockcount; j++)  { 
                              memcpy( p,(char *)(blks->data[j])+16, length < count ? length:count  );
                            length=length-count;p+=count;
-                      }
+                      }*/
                     
                 }
   

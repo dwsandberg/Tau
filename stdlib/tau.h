@@ -38,15 +38,8 @@ BT allocatespaceZbuiltinZint(processinfo PD,BT i) ;
 BT encodewordZstdlibZintzseq(processinfo PD,BT P1);
 
 
-// Real Support
-union cvt {BRT r;BT i;};
-#define asreal(i) (((union cvt) (i)).r)
-#define asint(r) (((union cvt) (r)).i)
 
 
-//BT tanZbuiltinZreal(processinfo PD,BT P1);
-//BT  arcsinZbuiltinZreal(processinfo PD,BT P2);
-//BT  arccosZbuiltinZreal(processinfo PD,BT P3);
 
 
 struct str2 { BT  type;
@@ -64,7 +57,7 @@ struct outputformat { BT bytelength; struct bitsseq *data;};
 
 struct bitsseq  { BT type; BT length; BT  data[50]; };
 
-struct  blockseq  {BT type; BT length; BT blksize; struct bitsseq * seqseq;};
+
 
 void createfilefromoutput(struct outputformat *t,int file);
 
