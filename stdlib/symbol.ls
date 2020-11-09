@@ -141,7 +141,7 @@ Function target(a:mapele) symbol  export
 
 function replaceT(with:seq.word,s:word) seq.word if "T"_1=s then with else [s]
 
-function replaceT(with:seq.word,s:seq.word) seq.word @(+,replaceT.with,"",s)
+Function replaceT(with:seq.word,s:seq.word) seq.word @(+,replaceT.with,"",s)
 
 
 Function replaceTsymbol2(with:mytype, s:symbol) mapele  mapele(replaceTsymbol(with, s),s )
@@ -187,12 +187,16 @@ use seq.myinternaltype
 Function type:firstpass internaltype export
 
 type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
-unbound:set.symbol,types:seq.myinternaltype
+unbound:set.symbol,types:seq.myinternaltype,prg:program
 
 Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
 unboundx:set.symbol,types:seq.myinternaltype) firstpass
- export
+firstpass( modname , uses , defines , exports , unboundexports , 
+unboundx ,types,emptyprogram)
  
+Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
+unboundx:set.symbol,types:seq.myinternaltype,program) firstpass
+ export
 
 Function exportmodule(firstpass)boolean false
 
@@ -209,6 +213,8 @@ Function unboundexports(firstpass)seq.symbol export
 Function unbound(firstpass)set.symbol export
 
 Function types(firstpass) seq.myinternaltype export
+
+Function prg(firstpass) program export
 
 _______________________________      
      
@@ -257,6 +263,7 @@ Function  Sequence(len:int,typ:seq.word) symbol
 
 Function Record(types:seq.mytype) symbol
 symbol( "RECORD("+@(seperator.",",towords,"",types)+")",    "$record",  "ptr",specialbit)
+
 
 
 Function Apply(i:int,basetype:seq.word,returntype:seq.word) symbol     
@@ -407,6 +414,8 @@ type program is  record toset:set.symbol
 
 Function &cap(p:program,a:set.symbol) program   program(toset.p &cap a)
 
+Function &cup(p:program,a:program) program   program(toset.p &cup toset.a)
+
 function toset(p:program) set.symbol export
 
 function type:program internaltype export
@@ -508,6 +517,21 @@ else
 
 Function print(it:myinternaltype) seq.word
   [toword.size.it,kind.it,name.it]+print.modname.it+@(+,print,"",subflds.it)
+  
+Function print3(it:myinternaltype) seq.word
+  if size.it=0 then
+  " module: "+print.modname.it + "type"+ name.it+ "is"+ kind.it +  @(seperator.",",printfld,"",subflds.it)
+  else
+  [toword.size.it,kind.it,name.it]+print.modname.it+@(+,print,"",subflds.it)
+
+function printfld(f:mytype) seq.word  [abstracttype.f,":"_1]+print.parameter.f
+  
+  
+ Function  ascode(it:myinternaltype) seq.symbol
+     [Lit.size.it,Word.kind.it,Word.name.it,Words.towords.modname.it, Lit.0,Lit.length.subflds.it]
+     +@(+,Words,empty:seq.symbol,@(+,towords,empty:seq.seq.word,subflds.it))
+     +Sequence(length.subflds.it,"ptr")+Record.[mytype."int",mytype."int",mytype."ptr",mytype."int",mytype."ptr"]
+
 
 Function fsig(symbol)seq.word export
 

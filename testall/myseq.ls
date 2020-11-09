@@ -26,6 +26,10 @@ function +(T, T)T unbound
 
 We need to helper functions to calculate the length and find the ith element of the seq for this example.
 
+Function to:myseq.T(s:seq.T)myseq.T export
+
+Function toseq(myseq.T) seq.T export
+
 Function clength(s:seq.T, i:int)int
  if i > length.s then 0
  else

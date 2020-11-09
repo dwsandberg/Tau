@@ -14,9 +14,7 @@ parsersupport postbind uses
   worddict groupparagraphs 
  timestamp ioseq dataio intdict dict
     parsersupport mangle mytype   bitpackedseq xxhash
-        libdesc
-      symbol internalbc pass1  codegennew
-  
+      symbol internalbc     parse  libdesc
  
  
   PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage

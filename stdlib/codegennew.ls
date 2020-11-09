@@ -277,16 +277,16 @@ else
      setnextfld( bc+CAST(r(regno + 1), r.pint,  ptr.double, bitcast)  
             ,args,i,types,j,regno+1,pint ,regno+1,pptr)
   else 
-      if pptr =0 &and typ="ptr"_1 then   
+      if pptr =0 &and typ in "ptr seq"  then   
      setnextfld( bc+CAST(r(regno + 1), r.pint,  ptr.ptr.i64, bitcast)  
             ,args,i,types,j,regno+1,pint ,preal,regno+1)
   else     
    let newbc=  (if typ="real"_1 then
          GEP(r(regno + 1),  double,r.preal, C64.(i-1))
-       else     if typ="ptr"_1 then
+       else     if typ in "ptr seq"  then
          GEP(r(regno + 1),  ptr.i64,r.pptr, C64.(i-1))
        else        
-        assert typ="int"_1 report "setnextfld problem"
+        assert typ="int"_1 report "setnextfld problem"+typ
          GEP(r(regno + 1),  i64,  r.pint, C64.(i-1))
 )
     +STORE(r(regno + 2), r.(regno+1), slot.args_i)
