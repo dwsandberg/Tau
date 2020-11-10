@@ -46,9 +46,6 @@ use  postbind
  
  
  
- function replaceTmyinternaltype(with:mytype,it:myinternaltype) myinternaltype
- myinternaltype(size.it,kind.it,name.it,replaceT(with,modname.it),subflds.it)
-
 function =(a:firstpass, b:firstpass)boolean modname.a = modname.b
 
 Function ?(a:firstpass, b:firstpass)ordering toalphaseq.towords.modname.a ? toalphaseq.towords.modname.b
@@ -63,7 +60,7 @@ Function find(modset:set.firstpass, name:mytype)set.firstpass
  , modset)
 
 type linkage is record   result:program,compiled:set.symbol,
-roots:seq.symbol,mods:seq.firstpass,templates:program, alltypes:seq.myinternaltype
+roots:seq.symbol,mods:seq.firstpass,templates:program, alltypes:typedict
 
 function result (linkage) program export
 
@@ -75,7 +72,7 @@ function mods(linkage)seq.firstpass export
 
 function templates(linkage) program export
 
-Function alltypes(linkage) seq.myinternaltype export
+Function alltypes(linkage) typedict export
 
 Function type:linkage internaltype export
 
@@ -96,8 +93,8 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
   // let d1 = resolveunboundexports.u0 
   let allsymbols1=@(&cup,      defines,empty:set.symbol, toseq.d1)
   let alltypes0 = @(+,  types , empty:seq.myinternaltype,  toseq.d1)
-   let librarysyms=libsymbols(alllibsym,libs)
-    let alltypes = processtypedef(empty:seq.myinternaltype, alltypes0, 1, empty:seq.myinternaltype )
+  let librarysyms=libsymbols(alllibsym,libs)
+  let alltypes = processtypedef(empty:seq.myinternaltype, alltypes0, 1, empty:seq.myinternaltype )
  let abstractsimple1=split(toseq.d1,1,empty:seq.firstpass,empty:seq.firstpass)
   let simple =  abstractsimple1_2  
   let abstract=abstractsimple1_1
@@ -105,41 +102,29 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
   let root=newsymbol("Wroot",mytype."W",empty:seq.mytype,mytype."int")
   let roots=@(+,roots.exports,  empty:seq.symbol ,simple )
   let source= map(c3,root,roots) 
-  let temp33=@(mapabstracttype,identity,otherlibsyms(alllibsym,libs),alltypes)
-  let temp34= @(bind3(d1),identity,   temp33,abstract)
+  let temp34= @(bind3(d1),identity,   otherlibsyms(alllibsym,libs),abstract)
   let templates=@( maptemp.temp34,identity,temp34,// toseq.allsymbols1 // map.expand1)
    let result=postbind(alltypes,allsymbols1 ,empty:set.symbol, [ root],1,emptyprogram,source,templates)
     let compiled=(toset.librarysyms &cap toset.result)
   let result2= @( processOption,identity,result,@(+,identity,empty:seq.seq.word,allsrc) )
  linkage(result2,compiled, roots,simple+abstract ,templates,alltypes)
  
-   function   mapabstracttype(p:program,it:myinternaltype) program
-       if towords.parameter.modname.it="T" then 
-         let sym=newsymbol("type:" + print.mytype(towords.parameter.modname.it + name.it),modname.it,
-           empty:seq.mytype, mytype."internaltype")
-         map(p,sym,ascode.it)
-       else p
-
         
    function  maptemp(templates:program,st:program,  s:mapele) program
                   let s2=lookupcode(templates,target.s)
                   if isdefined.s2 then
                       map (st,key.s, target.s,code.s2 )
                    else                     map (st,key.s, target.s,empty:seq.symbol)
-
-
-
-
     
     use seq.myinternaltype
     
  function processtypedef(defined:seq.myinternaltype, undefined:seq.myinternaltype, i:int, newundefined:seq.myinternaltype
- ) seq.myinternaltype
+ ) typedict
  if i > length.undefined then
- if length.newundefined = 0 then  defined 
+ if length.newundefined = 0 then  typedict.defined 
   else
     assert length.undefined > length.newundefined 
-    report"unresolved types:" + @(seperator." &br",  print2, "", newundefined)
+    report"unresolved types:" + @(seperator." &br",  print3, "", newundefined)
      processtypedef(defined, newundefined, 1, empty:seq.myinternaltype )
  else if "T"_1 in towords.modname.undefined_i then 
     processtypedef(defined , undefined, i + 1, newundefined)
@@ -147,14 +132,14 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
     processtypedef(defined + undefined_i, undefined, i + 1, newundefined )
  else 
   let td = undefined_i
-   let flds = subflddefined(td,   1, defined, 0,empty:seq.mytype)
+   let flds = subflddefined(td,   1, typedict.defined, empty:seq.mytype)
    if length.flds = 0 then processtypedef(defined, undefined, i + 1, newundefined + undefined_i )
    else
         processtypedef(defined +  flds_1, undefined, i + 1, newundefined    )
 
  
- function subflddefined(td:myinternaltype,   i:int, defined:seq.myinternaltype, 
- size:int,flatflds:seq.mytype)seq.myinternaltype
+ function subflddefined(td:myinternaltype,   i:int, defined:typedict, 
+flatflds:seq.mytype)seq.myinternaltype
  // check to see all flds of type are defined. //
  if i > length.subflds.td then 
   // define myinternaltype //
@@ -165,7 +150,7 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
             else if length.flatflds=1 &and abstracttype.flatflds_1="seq"_1 then "seq"_1 
             else   if flatflds=[mytype."real"] then "real"_1 
             else "ptr"_1
-          myinternaltype(size,def,name.td,modname.td,flatflds)
+          myinternaltype(length.flatflds,def,name.td,modname.td,flatflds)
 ]
  else
   let next = (subflds.td)_i
@@ -173,11 +158,11 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkag
   let t = towords.fldtype
   let typ = if t_1 = "T"_1 then   mytype(towords.parameter.modname.td + subseq(t, 2, length.t))  else fldtype
   if abstracttype.typ in "int seq real"then
-     subflddefined(td,   i + 1, defined,size+1,flatflds+typ ) 
+     subflddefined(td,   i + 1, defined,flatflds+typ ) 
    else 
-    let typdesc=lookuptype( defined,typ)
-    if isempty.typdesc then empty:seq.myinternaltype
-    else subflddefined(td,   i + 1, defined, size+size.typdesc_1,flatflds+subflds.typdesc_1 ) 
+    let typdesc=findelement(  defined,typ )
+    if isempty.typdesc then // not defined // typdesc
+    else subflddefined(td,   i + 1, defined,flatflds+subflds.typdesc_1 ) 
     
 
         
@@ -185,17 +170,16 @@ function =(a:myinternaltype,b:myinternaltype) boolean
    name.a=name.b &and  parameter.modname.a=parameter.modname.b
 
 
-function isdefined(it:myinternaltype) boolean  size.it &ne 0 
 
 
   
   
 type  unboundexport is  record modname:mytype,unbound:symbol
 
-function getunboundexport(f: firstpass) seq.unboundexport
+/function getunboundexport(f: firstpass) seq.unboundexport
     @(+,unboundexport(modname.f),empty:seq.unboundexport, unboundexports.f)
     
-function  resolveexport( modset:set.firstpass,lastdict:set.symbol,lastmodname:mytype,toprocess:seq.unboundexport,i:int,
+/function  resolveexport( modset:set.firstpass,lastdict:set.symbol,lastmodname:mytype,toprocess:seq.unboundexport,i:int,
      unresolved:seq.unboundexport) set.firstpass
 if i > length.toprocess then 
       if length.unresolved=0 then  modset
@@ -425,7 +409,7 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
     let fldsyms=@(+, definefld(modname.f, [ t]), empty:seq.symbol, types.b)
       let prg1=  if towords.parameter.modname.f ="" then
         map(prg.f,sizeofsym,[symbol("internaltype",towords.t+"builtin","ptr")])
-       else map(prg.f,sizeofsym, ascode.it  )
+       else map(prg.f,sizeofsym, [Words.towords.it] )
     if kind = "sequence"_1 then
      let seqtype=mytype(towords.parameter.t + "seq"_1)
       let symtoseq=newsymbol("toseq", modname.f, [ t], seqtype )

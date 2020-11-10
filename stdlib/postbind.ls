@@ -23,7 +23,7 @@ use seq.mytype
 /function print3(s:symbol)  seq.word  if (zcode.s)_1=s then print.s else print.s+ "->" +print.(zcode.s)_1
 +if length.zcode.s=1 then "NO CODE" else "" 
    
-Function postbind(alltypes:seq.myinternaltype,dict:set.symbol,working:set.symbol
+Function postbind(alltypes:typedict,dict:set.symbol,working:set.symbol
 ,toprocess: seq.symbol,i:int,result:program,sourceX:program,tempX:program) program
 // assert true report @(seperator."&br",print3,"",toseq.toset.tempX) //
   if i > length.toprocess then   result
@@ -39,7 +39,7 @@ Function postbind(alltypes:seq.myinternaltype,dict:set.symbol,working:set.symbol
           if // isbuiltin //  modname=mytype."builtin"   then 
              postbind(alltypes, dict, w,toprocess,i+1,result,sourceX ,tempX )
           else 
-           let r=postbind3(alltypes, dict,  code.lr1, 1, empty:seq.symbol,parameter.modname,print.s,empty:set.symbol
+           let r=postbind3( alltypes, dict,  code.lr1, 1, empty:seq.symbol,parameter.modname,print.s,empty:set.symbol
            , sourceX,tempX )
             postbind(alltypes, dict,w,toseq(calls.r-w)+subseq(toprocess,i+1,length.toprocess),1,
            if  length.toprocess=1 &and toprocess_1=newsymbol("Wroot",mytype."W",empty:seq.mytype,mytype."int")    
@@ -48,18 +48,10 @@ Function postbind(alltypes:seq.myinternaltype,dict:set.symbol,working:set.symbol
      
 type resultpb is record calls:set.symbol,code:seq.symbol,sourceX:program
 
- function tokind(alltypes:seq.myinternaltype,x:mytype,p:mytype) mytype
-       mytype.[parakind(alltypes,replaceT(x,p))]
-
-type typeinfo  is record kind:word,subflds:seq.mytype,size:int
+ function tokind(alltypes:typedict,x:mytype,p:mytype) mytype
+       mytype.[kind.gettypeinfo( alltypes,replaceT(x,p))]
  
-function gettypeinfo(alltypes:seq.myinternaltype,type:mytype) typeinfo
- let t=lookuptype(alltypes,type)
-  assert length.t=1 report "type not found"+print.type
-  typeinfo(kind.t_1,subflds.t_1,size.t_1)
- 
- 
-function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i:int,result:seq.symbol, 
+function postbind3(alltypes:typedict,dict:set.symbol,code:seq.symbol,i:int,result:seq.symbol, 
   modpara:mytype,org:seq.word,calls:set.symbol,sourceX:program,tempX:program)resultpb
  if i > length.code then  
  resultpb(calls ,  result,sourceX)
@@ -74,8 +66,8 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i
       let a=Block(tokind(alltypes,modpara,resulttype.sym),nopara.sym)
       postbind3(alltypes,dict,code,i+1,result+ if isfref  then  Fref.a else   a ,modpara,org, calls, sourceX ,tempX)
    else if isapply.sym then
-        let newapply= Apply(nopara.sym,   [parakind(alltypes,replaceT(modpara,parameter.modname.sym))],
-   [parakind(alltypes,replaceT(modpara,resulttype.sym))])
+        let newapply= Apply(nopara.sym,   [kind.gettypeinfo(alltypes,replaceT(modpara,parameter.modname.sym))],
+   [kind.gettypeinfo(alltypes,replaceT(modpara,resulttype.sym))])
           postbind3(alltypes,dict,code,i+1,result+newapply,modpara,org, calls, sourceX ,tempX)     
    else  if  isnocall.sym  then
       postbind3(alltypes,dict,code,i+1,result+ code_i,modpara,org, calls, sourceX ,tempX)
@@ -110,9 +102,10 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i
          //    assert not( a_3 in "q") report "JKL"+toword.i+@(+,print,"",p2)+a //
                 postbind3( alltypes,dict,code, i+1, result+p2 , modpara,org,calls   , sourceX,tempX  ) 
         else if fsig.sym="internaltype"   then
-            let typdesc=lookuptype(alltypes,parameter.modname.sym)
+             let typ=parameter.modname.sym
+            let typdesc= findelement(    alltypes,typ)
             assert  not.isempty.typdesc  report"can not find type sizeof" + print.parameter.modname.sym + org
-             let p2=  ascode.typdesc_1    
+             let p2=    [Words.towords.typdesc_1] 
                 postbind3( alltypes,dict,code, i+1, result+p2 , modpara,org,calls   , sourceX,tempX  )      
        else 
        let codeforbuiltin = codeforbuiltin(alltypes, newsym, sym, org)
@@ -120,12 +113,13 @@ function postbind3(alltypes:seq.myinternaltype,dict:set.symbol,code:seq.symbol,i
        else handletemplates(alltypes, dict, code, i, result, isfref, newsym, modpara, org, calls, sourceX, tempX)
        
  
-function bbb(alltypes:seq.myinternaltype,a:seq.word) int   size.gettypeinfo(alltypes,mytype.a) 
+function bbb(alltypes:typedict,a:seq.word) int   size.gettypeinfo(alltypes,mytype.a) 
       
-function getinternaltype(alltypes:seq.myinternaltype,a:seq.word) typeinfo
+function getinternaltype(alltypes:typedict,a:seq.word) typeinfo
                 gettypeinfo(alltypes,mytype.a)
        
   use seq.typeinfo   
+  
   
    function buildconstructor( addfld:seq.mytype, flds:seq.typeinfo) seq.symbol
 buildconstructor(addfld,flds,empty:seq.mytype,1,1,0,empty:seq.symbol)
@@ -151,7 +145,7 @@ buildconstructor(addfld,flds,empty:seq.mytype,1,1,0,empty:seq.symbol)
        buildconstructor(addfld,flds,newflatflds,fldno,j+1,subfld+1, newresult)
      
        
- function handletemplates(alltypes:seq.myinternaltype, dict:set.symbol, code:seq.symbol, i:int, result:seq.symbol, isfref:boolean, oldsym:symbol, modpara:mytype, org:seq.word, calls:set.symbol
+ function handletemplates(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, result:seq.symbol, isfref:boolean, oldsym:symbol, modpara:mytype, org:seq.word, calls:set.symbol
 , sourceX:program, tempX:program)resultpb
    assert not(last.module.oldsym = "builtin"_1)report"ISb" + print.oldsym
    assert not("T"_1 in fsig.oldsym) ∧ not((module.oldsym)_1 = "T"_1)  ∧ not((returntype.oldsym)_1 = "T"_1)report"has T" + print.oldsym
@@ -171,7 +165,7 @@ buildconstructor(addfld,flds,empty:seq.mytype,1,1,0,empty:seq.symbol)
         handletemplates(alltypes, dict, code, i, result, isfref, k_1, modpara, org, calls, sourceX, tempX)
     
            
- function codeforbuiltin(alltypes:seq.myinternaltype,newsym:symbol ,oldsym:symbol,org:seq.word ) seq.symbol                          
+ function codeforbuiltin(alltypes:typedict,newsym:symbol ,oldsym:symbol,org:seq.word ) seq.symbol                          
            let newmodpara = parameter.modname.newsym 
              if     fsig.oldsym="sizeoftype:T"   then
               [Lit.size.gettypeinfo(alltypes,newmodpara)  ]
@@ -228,12 +222,12 @@ else
 
              
  
-function definedeepcopy(alltypes:seq.myinternaltype, type:mytype ,org:seq.word) seq.symbol
+function definedeepcopy(alltypes:typedict, type:mytype ,org:seq.word) seq.symbol
    if abstracttype.type in "encoding int word"then [Local.1]
  else
   if abstracttype.type = "seq"_1 then
      let ds=size.gettypeinfo(alltypes,type)
-  let kind=parakind(alltypes,parameter.type)
+  let kind=kind.gettypeinfo(alltypes,parameter.type)
   let typepara = if kind in "int real" then mytype.[kind] else parameter.type
   let seqtype=mytype(towords.typepara + "seq")
     let dc =  deepcopysym.typepara 

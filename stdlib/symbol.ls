@@ -475,7 +475,7 @@ Function isbuiltin(a:mytype) boolean isbuiltin.towords.a
     assert isdefined.r report "Option problem"+t
     addoption(p,sym,[t_2])
     
-function printastype(s:seq.word) seq.word
+/function printastype(s:seq.word) seq.word
   if length.s=1 then s else [last.s,"."_1]+printastype.subseq(s,1,length.s-1)
 
 function gettypelist(s:seq.word) seq.seq.word  gettype(s,1,"",empty:seq.seq.word)
@@ -487,13 +487,17 @@ if s_i=","_1 then gettype(s,i+1,"",l+result )
 else  
    let j=if  i < length.s &and s_(i+1)="."_1 then  i+2 else i+1 
   gettype(s,j,[s_i]+result,  l)
+  
+type typedict is record data:seq.myinternaltype 
  
 type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
 
 
 Function type:myinternaltype internaltype export
 
-Function size(myinternaltype)int export
+
+Function isdefined(it:myinternaltype) boolean  size.it &ne 0 
+
 
 Function kind(myinternaltype)word export
 
@@ -506,17 +510,25 @@ Function subflds(myinternaltype)seq.mytype export
 function myinternaltype(size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype) myinternaltype
 export
 
-Function print2(i:myinternaltype) seq.word
-  [name.i]+"module:"+print.modname.i+"fld"+@(+,print,"",subflds.i)
-  
-  Function  lookuptype(defined:seq.myinternaltype,typ:mytype) seq.myinternaltype
-   if typ =mytype."int" &or typ=mytype."real"      then 
-   [ myinternaltype(1,abstracttype.typ,abstracttype.typ,mytype."builtin",empty:seq.mytype)]
-else
-     findelement(    myinternaltype(0,"?"_1,abstracttype.typ,mytype(towords.parameter.typ+"?") ,empty:seq.mytype), defined)
+Function replaceTmyinternaltype(with:mytype,it:myinternaltype) myinternaltype
+myinternaltype(size.it,kind.it,name.it,replaceT(with,modname.it),subflds.it)
 
-Function print(it:myinternaltype) seq.word
+  
+Function towords(it:myinternaltype) seq.word
   [toword.size.it,kind.it,name.it]+print.modname.it+@(+,print,"",subflds.it)
+    
+Function tomyinternaltype(s:seq.word) myinternaltype
+let t= parseit( s, 2, [s_1], empty:seq.seq.word)
+   myinternaltype(toint.t_1_1,t_2_1,t_3_1,mytype.t_4,@(+,mytype,empty:seq.mytype,subseq(t,5,length.t)))
+
+function parseit(s:seq.word,i:int,fld:seq.word,flds:seq.seq.word) seq.seq.word
+ if i > length.s then flds+fld
+ else if s_i ="."_1 then 
+  parseit(s,i+2, [s_(i+1)]+fld ,flds)
+ else 
+  // end of fld //
+    parseit(s,i+1,[s_i], flds+fld)
+
   
 Function print3(it:myinternaltype) seq.word
   if size.it=0 then
@@ -527,11 +539,7 @@ Function print3(it:myinternaltype) seq.word
 function printfld(f:mytype) seq.word  [abstracttype.f,":"_1]+print.parameter.f
   
   
- Function  ascode(it:myinternaltype) seq.symbol
-     [Lit.size.it,Word.kind.it,Word.name.it,Words.towords.modname.it, Lit.0,Lit.length.subflds.it]
-     +@(+,Words,empty:seq.symbol,@(+,towords,empty:seq.seq.word,subflds.it))
-     +Sequence(length.subflds.it,"ptr")+Record.[mytype."int",mytype."int",mytype."ptr",mytype."int",mytype."ptr"]
-
+ 
 
 Function fsig(symbol)seq.word export
 
@@ -556,32 +564,37 @@ if  islocal.f &or ispara.mytype.module.f then [ merge.(["%"_1]+fsig)]
    else if isFref.f then "FREF"+print.(constantcode.f)_1
     else   (if last.fsig=")"_1 then  fsig  else  fsig+"()")+print.mytype.module
     
-   / Function print2(f:symbol)seq.word
- let module=module.f 
-let fsig=fsig.f
-if  islocal.f &or ispara.mytype.module.f then [ merge.(["%"_1]+fsig)]
-   else if  islit.f then fsig
-   else if module="$words" then if '"'_1 in fsig then "'" + fsig + "'" else '"' + fsig + '"'
-   else if module="$word" then "WORD"+fsig
-    else if isspecial.f then 
-    if fsig_1 in "BLOCK" then fsig + module+ " &br"
-    else   if fsig_1 in "BLOCK EXITBLOCK BR LOOPBLOCK FINISHLOOP CONTINUE"then fsig + " &br"else fsig
-   else if module=" $constant"  then fsig+@(+,print,"",constantcode.f) 
-   else if isFref.f then "FREF"+print.(constantcode.f)_1
-    else   (if last.fsig=")"_1 then  fsig  else  fsig+"()")+print.mytype.module
- 
+  
 Function print(p:program, i:symbol)seq.word
  let d=lookupcode(p,i) if not.isdefined.d then print(i) else print(i)+ @(+, print,"",code.d ) 
 
+type typeinfo  is record subflds:seq.mytype
 
-    Function parakind(alltypes:seq.myinternaltype,type:mytype) word
-      if  abstracttype.type in  "none int ptr real" then abstracttype.type
-      else if  abstracttype.type in " encoding " then "int"_1
-      else if abstracttype.type in "seq erecord internaltype process encodingstate encodingrep pseq"  then "ptr"_1
-      else 
-      let k=lookuptype(alltypes,type) 
-      assert not.isempty.k report "TYPE LOOKUP parakind"+print.type 
-      let kind=kind.k_1
-       assert kind in "int real ptr seq" 
-       report "unknown type parakind "+print.type +"place" 
-       if kind in "seq" then "ptr"_1 else    kind
+Function kind(t:typeinfo) word 
+ let z=subflds.t
+ if length.z > 1 &or abstracttype.z_1="seq"_1 then "ptr"_1 
+  else assert (towords.z_1)_1 in "int real ptr" report "unexpected fld in internal type"+@(+,print,"",z)
+  (towords.z_1)_1
+ 
+ Function subflds(typeinfo) seq.mytype export
+
+Function size(t:typeinfo) int length.subflds.t
+
+function type:typeinfo internaltype export
+
+Function findelement(d:typedict,type:mytype) seq.myinternaltype
+findelement(    myinternaltype(0,"?"_1,abstracttype.type,mytype(towords.parameter.type+"?") ,empty:seq.mytype), data.d)
+
+Function typedict(seq.myinternaltype)  typedict export
+
+Function type:typedict internaltype export
+ 
+Function gettypeinfo(d:typedict,type:mytype) typeinfo
+ if length.towords.type=1 &and (towords.type)_1 in "int real ptr"       then  typeinfo([type])
+ else if abstracttype.type="seq"_1 then typeinfo([type])
+  else 
+   let t=findelement(d,type)
+  assert length.t=1 report "type not found"+print.type
+   typeinfo(subflds.t_1)
+ 
+  

@@ -12,7 +12,7 @@
  
 run testall testall 
 
-
+use encoding.seq.char
  
  * usegraph exclude stdlib 
  

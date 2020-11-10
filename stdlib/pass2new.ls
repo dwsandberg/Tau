@@ -20,7 +20,7 @@ use otherseq.mytype
 use seq.myinternaltype
 
 
-function breakblocks(p:program,code:seq.symbol,self:symbol,alltypes:seq.myinternaltype) seq.symbol  
+function breakblocks(p:program,code:seq.symbol,self:symbol,alltypes:typedict) seq.symbol  
   let a=breakblocks(p,code,1,1,empty:seq.symbol,empty:stack.block)
   if length.a=1 then code.a_1 else 
    if not(kind.a_1="LOOPBLOCK"_1) &and @(&or,tailrecursion.self,false,a) then
@@ -29,10 +29,13 @@ function breakblocks(p:program,code:seq.symbol,self:symbol,alltypes:seq.myintern
      let a2=@(+,preparetail(nopara,self,continue.nopara),empty:seq.block,a)
      let plist = @(+, var, empty:seq.symbol, arithseq(nopara, 1, 1))
      let entry = block("LOOPBLOCK"_1,0,blkno.a2_1,0, plist + Lit(nopara + 1) + 
-     Loopblock(@(seperator.",",parakind.alltypes, "", paratypes.self)+",int)"))
+     Loopblock(@(seperator.",",parakind2.alltypes, "", paratypes.self)+",int)"))
       ascode(p,[entry]+a2,self)
    else
    ascode(p,a,self)
+   
+   function parakind2(alltypes:typedict,type:mytype) word
+      kind.gettypeinfo(alltypes,type)
    
 function   preparetail(nopara:int,self:symbol,continue:symbol,b:block) block
     let code=adjustvar(code.b, nopara, 1, empty:seq.symbol)
@@ -383,7 +386,7 @@ use set.symbol
 
 
  Function pass2(   placehold:program,compiled:set.symbol
- ,roots:seq.symbol,mods:seq.firstpass,templates:program,exports:seq.word,alltypes:seq.myinternaltype) intercode
+ ,roots:seq.symbol,mods:seq.firstpass,templates:program,exports:seq.word,alltypes:typedict) intercode
     let p = @( depthfirst(placehold,alltypes),identity,emptyprogram,toseq.toset.placehold)
       let libmods=libdesc(p, templates,mods,exports,roots )
     let t=uses(p,empty:set.symbol,asset.roots+libmods)
@@ -419,7 +422,7 @@ let d=code.lookupcode(p,s)
 type backresult is record code:seq.symbol, places:seq.int
 
   
-Function firstopt(p:program, rep:symbol, code:seq.symbol,alltypes:seq.myinternaltype) program
+Function firstopt(p:program, rep:symbol, code:seq.symbol,alltypes:typedict) program
  let nopara=nopara.rep
  if isbuiltin.module.rep  then
   let options= caloptions(p,code,nopara,module.rep,fsig.rep)
@@ -765,11 +768,11 @@ let isnull=symbol("isnull(ptr)","builtin","int")
 
 
 
-function depthfirst(knownsymbols:program,alltypes:seq.myinternaltype,processed:program,s:symbol) program
+function depthfirst(knownsymbols:program,alltypes:typedict,processed:program,s:symbol) program
         depthfirst(knownsymbols,alltypes,1,[s],processed,code.lookupcode(knownsymbols,s),s)
 
      
-function     depthfirst(knownsymbols:program,alltypes:seq.myinternaltype,i:int,pending:seq.symbol,processed:program,code:seq.symbol,s:symbol) program
+function     depthfirst(knownsymbols:program,alltypes:typedict,i:int,pending:seq.symbol,processed:program,code:seq.symbol,s:symbol) program
         if i > length.code then
                  firstopt(processed,s, code ,alltypes)
         else 

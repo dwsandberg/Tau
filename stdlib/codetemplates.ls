@@ -59,13 +59,15 @@ Function addliblib( libname:seq.word,mods:int,profiledata:int) int export
 Function mangledname(s:symbol)word mangle(fsig.s,module.s)
 
 
-Function tollvmtype(alltypes:seq.myinternaltype,s:symbol) llvmtype
+Function tollvmtype(alltypes:typedict,s:symbol) llvmtype
    if fsig.s="option(T, word seq)" then    function.constantseq(nopara.s + 2, i64) else 
  // assert not( modname.s=mytype."builtin") report "llvmtype error "+print.s //
   function.@(+,tollvmtype.alltypes, [tollvmtype(alltypes,resulttype.s),i64],paratypes.s)
   
-function tollvmtype(alltypes:seq.myinternaltype,s:mytype) llvmtype
-        let kind=parakind(alltypes,s)
+function tollvmtype(alltypes:typedict,s:mytype) llvmtype
+ if abstracttype.s in "seq erecord internaltype process encodingstate encodingrep pseq"  then ptr.i64
+      else 
+        let kind=kind.gettypeinfo(alltypes,s)
           if  kind="int"_1 then i64
           else if kind="real"_1 then   double   
         else  ptr.i64  
@@ -201,10 +203,10 @@ function addit(m:match5)int valueofencoding.encode(m)
 function match5(nopara:int,inst:word, length:int, b:internalbc)match5
   match5([ inst, toword.nopara], length, getparts.b,"TEMPLATE"_1, nopara)
 
-Function funcdec(alltypes:seq.myinternaltype,i:symbol) int
+Function funcdec(alltypes:typedict,i:symbol) int
    toint.modulerecord([mangledname.i],[ toint.FUNCTIONDEC, typ.tollvmtype(alltypes,i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
  
-Function match5map( theprg:program, uses:set.symbol,alltypes:seq.myinternaltype) seq.match5
+Function match5map( theprg:program, uses:set.symbol,alltypes:typedict) seq.match5
   let discard3 = table
   buildtemplates(toseq.uses,1,theprg,empty:seq.symbol,alltypes)
   
@@ -253,7 +255,7 @@ toint.modulerecord( name ,[ toint.GLOBALVAR, typ.type, 2, 1+toint.init, 0, toint
       let discard= addit.match5(fsig.xx+module.xx, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)
       processconst(toprocess,i+1,notprocessed)
      
- function  buildtemplates( used:seq.symbol,i:int,theprg:program,const:seq.symbol,alltypes:seq.myinternaltype) seq.match5 
+ function  buildtemplates( used:seq.symbol,i:int,theprg:program,const:seq.symbol,alltypes:typedict) seq.match5 
    if i > length.used then 
      processconst(const,1,empty:seq.symbol) 
    else

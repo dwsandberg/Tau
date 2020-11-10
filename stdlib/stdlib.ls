@@ -270,6 +270,11 @@ Function type:seq.seq.word  internaltype  export
 
 Function type:seq.int internaltype export
 
+Function type:seq.char  internaltype  export
+
+Function type:encoding.seq.char  internaltype  export
+
+use encoding.seq.char
 
 Function empty:seq.seq.word seq.seq.word  export
 

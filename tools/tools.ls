@@ -47,7 +47,8 @@ use main2
 
 use newpretty 
 
- 
+use encoding.seq.char
+
 use profile
 
 use seq.seq.word

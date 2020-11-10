@@ -71,7 +71,7 @@ use seq.match5
 
 use set.symbol
  
-Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word,libdesc:symbol,alltypes:seq.myinternaltype)seq.bits
+Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word,libdesc:symbol,alltypes:typedict)seq.bits
  //   assert false report @(seperator."&br",tollvmtype.alltypes ,"",toseq.toset.theprg) //
   let tobepatched= typ.conststype+typ.profiletype+toint.symboltableentry("list",conststype)+toint.symboltableentry("profiledata",profiletype)  
    let discard4= @(+,funcdec.alltypes,0,defines)

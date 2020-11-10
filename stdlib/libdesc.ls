@@ -181,27 +181,15 @@ Function libsymbols(dict:set.symbol,l:seq.liblib) program
 function addknown(dict:set.symbol,p:program,l:liblib) program 
   program(toset.p &cup defines.last.mods.l)
   
- 
-
 use seq.liblib
 
-
-  function libtypes(     s:symbol) seq.myinternaltype
-     if not(returntype.s="internaltype") then empty:seq.myinternaltype
-     else
+function libtypes(     s:symbol) seq.myinternaltype
+     if not(returntype.s="internaltype" &or (fsig.s)_1="type"_1 ) then empty:seq.myinternaltype
+     else 
        let code=     zcode.s 
-       let l=length.code-if last.zcode.s=Optionsym  then 2 else 0 
-       if    isrecord.code_l &and nopara.code_l=5 &and (fsig.code_(l-1))_1="RECORD"_1 then
-      let noflds=nopara.code_(l-1)-2
-      let t1=subseq(code,l-noflds-1,l-2)
-      let subflds=@(+,mytype,empty:seq.mytype,@(+,fsig,empty:seq.seq.word,t1))
-      let size=value.code_2
-      let kind=fsig.code_3
-      let name=fsig.code_4
-      let modname=fsig.code_5
-      [myinternaltype(size,kind_1,name_1,mytype.modname,subflds)]
-     else empty:seq.myinternaltype
-
+      assert module.code_2 ="$words" report "NON"+@(+,print,"",code)
+     [tomyinternaltype.fsig.code_2]
+ 
 function removeconstant(s:seq.symbol) seq.symbol
 @(+,removeconstant,empty:seq.symbol, s) 
 
