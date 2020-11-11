@@ -20,11 +20,11 @@ Function execute(name:word)seq.word executecode(toCformat.[ name], empty:seq.int
 
 Function unloadlib(a:seq.word)int unloadlib.toCformat.a
 
-function unloadlib(seq.bits)int builtin.usemangle
+builtin unloadlib(seq.bits)int  
 
 Function loadlibrary(a:word)int loadlib.toCformat.[ a]
 
-Function loadlib(seq.bits)int builtin.usemangle
+Builtin loadlib(seq.bits)int  
 
-Function executecode(seq.bits, para:seq.int)seq.word builtin.usemangle
+Builtin executecode(seq.bits, para:seq.int)seq.word  
 

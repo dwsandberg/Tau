@@ -31,9 +31,9 @@ use textio
 
 Function_(a:bitpackedseq.byte, idx:int)byte export
 
-Function type:outputformat internaltype export
+Export type:outputformat  
 
-Function type:fileresult internaltype export
+Export type:fileresult  
 
 Function toCformat(s:seq.word)seq.bits
  packed
@@ -51,15 +51,15 @@ Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
 
 function addsuffix(suffix:seq.word, a:word)seq.word [ a] + suffix
 
-function createlib(name:seq.bits, libs:seq.bits, t:outputformat)int builtin.usemangle
+builtin createlib(name:seq.bits, libs:seq.bits, t:outputformat)int  
 
-function createfile(name:seq.bits, data:outputformat)int builtin.usemangle
+builtin createfile(name:seq.bits, data:outputformat)int  
 
 Function createfile(name:seq.word, a:seq.int)int createfile(toCformat.name, 
 outputformat(length.a * 8, @(+,bits,empty:seq.bits,packed.a)))
 
 
-function getfile(f:seq.bits)fileresult builtin.usemangle
+builtin getfile(f:seq.bits)fileresult  
 
 function size(fileresult)int export
 

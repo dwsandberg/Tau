@@ -7,8 +7,6 @@ Module codegennew
 
 use symbol
 
-use seq.myinternaltype
-
 use seq.int
 
 use ipair.Lcode2

@@ -101,9 +101,9 @@ function addlibmod(s:firstpass) symbol
 
 --------------------------
 
-Function type:liblib internaltype export
+Export type:liblib  
 
-Function type:parc internaltype export
+Export type:parc  
 
 type liblib is record libname:seq.word, words:seq.encodingpair.seq.char, mods:seq.firstpass, timestamp:int, profiledata:seq.parc
 
@@ -137,7 +137,7 @@ use otherseq.word
 
 
  
-Function loadedlibs seq.liblib builtin.usemangle
+Builtin loadedlibs seq.liblib  
 
 
  
@@ -186,10 +186,12 @@ use seq.liblib
 function libtypes(     s:symbol) seq.myinternaltype
      if not(returntype.s="internaltype" &or (fsig.s)_1="type"_1 ) then empty:seq.myinternaltype
      else 
-       let code=     zcode.s 
-      assert module.code_2 ="$words" report "NON"+@(+,print,"",code)
-     [tomyinternaltype.fsig.code_2]
- 
+          let code=     zcode.s 
+        assert module.code_2 ="$words" report "NON"+@(+,print,"",code)
+       let a= if true &and  towords.parameter.modname.s in ["T",""]    then fsig.code_2
+       else  replaceT(print.parameter.modname.s,fsig.code_2)
+       [tomyinternaltype.a]
+      
 function removeconstant(s:seq.symbol) seq.symbol
 @(+,removeconstant,empty:seq.symbol, s) 
 

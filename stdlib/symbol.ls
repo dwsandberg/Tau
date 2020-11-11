@@ -22,11 +22,11 @@ use set.word
 use seq.seq.word
 
 
-Function type:programele internaltype export
+Export type:programele  
 
 
 
-Function type:symbol internaltype export
+Export type:symbol  
 
 
 Function =(a:symbol, b:symbol)boolean flags.a=flags.b &and fsig.a = fsig.b  ∧ modname.a = modname.b
@@ -130,7 +130,7 @@ Function printdict(s:set.symbol)seq.word @(+, print,"", toseq.s)
 
 type mapele is record   s:symbol,target:symbol  
 
-Function type:mapele internaltype export
+Export type:mapele  
 
 Function s(mapele) symbol export
 
@@ -158,9 +158,10 @@ let newfsig=
 Function ?(a:mytype, b:mytype)ordering towords.a ? towords.b
 
 
+Export type:set.symbol  
 
 
-Function type:mytype internaltype export
+Export type:mytype  
 
 Function towords(mytype)seq.word export
 
@@ -184,7 +185,7 @@ Function iscomplex(a:mytype)boolean export
 use seq.myinternaltype
 
 
-Function type:firstpass internaltype export
+Export type:firstpass  
 
 type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, 
 unbound:set.symbol,types:seq.myinternaltype,prg:program
@@ -212,7 +213,7 @@ Function unboundexports(firstpass)seq.symbol export
 
 Function unbound(firstpass)set.symbol export
 
-Function types(firstpass) seq.myinternaltype export
+Export types(firstpass) seq.myinternaltype  
 
 Function prg(firstpass) program export
 
@@ -418,7 +419,7 @@ Function &cup(p:program,a:program) program   program(toset.p &cup toset.a)
 
 function toset(p:program) set.symbol export
 
-function type:program internaltype export
+Export type:program  
 
 type programele is record data:seq.symbol
 
@@ -480,6 +481,10 @@ Function isbuiltin(a:mytype) boolean isbuiltin.towords.a
 
 function gettypelist(s:seq.word) seq.seq.word  gettype(s,1,"",empty:seq.seq.word)
 
+Function parsetype(s:seq.word)  mytype 
+ mytype.gettype(s,1,empty:seq.word,empty:seq.seq.word)_1
+ 
+
 function  gettype( s:seq.word,i:int,result:seq.word,l:seq.seq.word) seq.seq.word
 if i > length.s then  l+result
 else 
@@ -489,11 +494,15 @@ else
   gettype(s,j,[s_i]+result,  l)
   
 type typedict is record data:seq.myinternaltype 
+
+Function +(a:typedict,b:seq.myinternaltype) typedict   typedict(data.a+b)
+
+Function print(t:typedict) seq.word @(seperator."&br",towords,"",data.t)
  
 type myinternaltype is record size:int,kind:word,name:word,modname:mytype,subflds:seq.mytype
 
 
-Function type:myinternaltype internaltype export
+Export type:myinternaltype 
 
 
 Function isdefined(it:myinternaltype) boolean  size.it &ne 0 
@@ -547,7 +556,7 @@ Function module(symbol)seq.word export
 
 Function returntype(symbol)seq.word export
 
-Function type:symbol internaltype export
+Export type:symbol  
 
 Function zcode(symbol)seq.symbol export
 
@@ -580,14 +589,14 @@ Function kind(t:typeinfo) word
 
 Function size(t:typeinfo) int length.subflds.t
 
-function type:typeinfo internaltype export
+Export type:typeinfo 
 
 Function findelement(d:typedict,type:mytype) seq.myinternaltype
 findelement(    myinternaltype(0,"?"_1,abstracttype.type,mytype(towords.parameter.type+"?") ,empty:seq.mytype), data.d)
 
 Function typedict(seq.myinternaltype)  typedict export
 
-Function type:typedict internaltype export
+Export type:typedict  
  
 Function gettypeinfo(d:typedict,type:mytype) typeinfo
  if length.towords.type=1 &and (towords.type)_1 in "int real ptr"       then  typeinfo([type])

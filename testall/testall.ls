@@ -11,8 +11,6 @@
  /run testencoding testencoding 
  
 run testall testall 
-
-use encoding.seq.char
  
  * usegraph exclude stdlib 
  
@@ -42,6 +40,7 @@ use encoding.seq.char
  
  use bug7
  
+  
  Function testall seq.word // this is a comment // test5 + test11 
  + test11a + testencoding + testprocess+ testmodules +testbug7+ testopt 
  + check([ print(3, sqrt.2.0) = "1.414"

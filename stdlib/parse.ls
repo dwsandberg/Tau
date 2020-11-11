@@ -33,11 +33,11 @@ use symbol
 
 use set.word
 
-Function getheader(s:seq.word)seq.word export
+Export getheader(s:seq.word)seq.word  
 
 
 
-Function type:bindinfo internaltype export
+Export type:bindinfo  
 
 type bindinfo is record dict:set.symbol, code:seq.symbol, types:seq.mytype, tokentext:seq.word
 

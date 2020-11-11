@@ -2,11 +2,11 @@ Module bits
 
 use stdlib
 
-Function type:byte internaltype export
+Export type:byte    
 
-Function type:bits internaltype export
+Export type:bits  
 
-Function type:bit internaltype export
+Export type:bit   
 
 type bits is record toint:int
 
@@ -14,15 +14,15 @@ Function toint(bits)int export
 
 Function bits(int)bits export
 
-Function ∨(a:bits, bits)bits builtin.usemangle
+ Builtin ∨(a:bits, bits)bits  
 
-Function ∧(a:bits, bits)bits builtin.usemangle
+ Builtin ∧(a:bits, bits)bits  
 
-Function >>(a:bits, i:int)bits builtin.usemangle
+ Builtin >>(a:bits, i:int)bits  
 
-Function <<(a:bits, i:int)bits builtin.usemangle
+ Builtin <<(a:bits, i:int)bits  
 
-Function xor(a:bits, b:bits)bits builtin.usemangle
+ Builtin xor(a:bits, b:bits)bits  
 
 __________________
 

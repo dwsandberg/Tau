@@ -278,9 +278,9 @@ Function ibcsubpara(i:int)int(i - 61) / 64 - 5000
 
 
 
-Function type:templatepart internaltype export
+Export type:templatepart  
 
-Function type:internalbc internaltype export
+Export type:internalbc  
 
 type templatepart is record part:seq.int, loc:int, parano:int
 
@@ -540,7 +540,7 @@ function islastmodule (l:trackconst) boolean
 
 type machineinfo is record triple:seq.int, datalayout:seq.int
 
-function getmachineinfo machineinfo builtin.usemangle
+builtin getmachineinfo machineinfo 
 
 
 

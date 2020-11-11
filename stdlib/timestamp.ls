@@ -4,7 +4,7 @@ use UTF8
 
 use stdlib
 
-Function type:timestamp internaltype export
+Export type:timestamp  
 
 type timestamp is record toint:int
 
@@ -63,7 +63,7 @@ Function print(ts:timestamp)seq.word
  [ merge.[ toword.d_1,"-"_1, toword.d_2,"-"_1, toword.d_3,"."_1, toword.d_4,":"_1, toword.d_5,":"_1
   , toword.d_6]]
 
-Function currenttime timestamp builtin.usemangle
+Builtin currenttime timestamp  
 
 Function asseconds(t:timestamp)int toint.t
 

@@ -16,7 +16,7 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
  
 /run tools testfirstpass
 
-/run tools testprofile
+run tools testprofile
 
 /run tools prettytest
 
@@ -46,8 +46,6 @@ use doc
 use main2
 
 use newpretty 
-
-use encoding.seq.char
 
 use profile
 

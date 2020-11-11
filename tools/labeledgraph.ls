@@ -6,11 +6,11 @@ use set.T
 
 use stdlib
 
-function ?(a:T, b:T)ordering unbound
+unbound ?(a:T, b:T)ordering  
 
-function ?2(a:T, b:T)ordering unbound
+unbound ?2(a:T, b:T)ordering  
 
-function reverse(a:T)T unbound
+unbound reverse(a:T)T 
 
 Function type:labeledgraph.T internaltype export
 
@@ -27,7 +27,7 @@ Function empty:labeledgraph.T labeledgraph.T labeledgraph(empty:set.T, empty:set
 Function +(g:labeledgraph.T, a:T)labeledgraph.T
  labeledgraph(arcs.g + a, backarcs.g + reverse.a, nodes.g + tonode.a + tonode.reverse.a)
 
-function tonode(a:T)T unbound
+unbound tonode(a:T)T 
 
 Function arcstosuccessors(g:labeledgraph.T, node:T)set.T findelement2(arcs.g, node)
 

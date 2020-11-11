@@ -10,7 +10,7 @@ use otherseq.int
 
 use seq.int
 
-Function type:intdict.T internaltype export
+Export type:intdict.T  
 
 type intdict is record keys:seq.int, data:seq.T
 

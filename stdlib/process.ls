@@ -7,7 +7,7 @@ use seq.T
 
 type process is record abortedx:boolean, a:seq.word, resultb:T
 
-Function aborted(p:process.T)boolean builtin.usemangle
+Builtin aborted(p:process.T)boolean 
 
 Function message(p:process.T)seq.word if aborted.p then a.p else"normal exit"
 
@@ -19,9 +19,9 @@ Function result(p:process.T)T
  processresult.p
  
 
-Function deepcopy(a:T)T builtin.usemangle
+Builtin deepcopy(a:T)T  
 
-Function sizeoftype:T int builtin.usemangle
+Builtin sizeoftype:T int  
 
-function processresult(p:process.T) T builtin.usemangle
+Builtin processresult(p:process.T) T  
 

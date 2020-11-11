@@ -2,11 +2,11 @@ Module mytype
 
 use stdlib
 
-Function type:mytype internaltype export
+Export type:mytype  
 
 type mytype is record towords:seq.word
 
-Function mytype(seq.word)mytype export
+Export mytype(seq.word)mytype  
 
 Function towords(mytype)seq.word export
 

@@ -10,7 +10,7 @@ use stdlib
 
 type UTF8 is record toseqint:seq.int
 
-Function type:UTF8 internaltype export
+Export type:UTF8  
 
 Function emptyUTF8 UTF8 UTF8.empty:seq.int
 

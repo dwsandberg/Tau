@@ -14,15 +14,15 @@ All sequences must have the first element representing the length of the seqence
 
 We need some operations on T.T will be an int in this example so all these operations are define on int in the stdlib.
 
-function >(T, int)boolean unbound
+unbound >(T, int)boolean 
 
-function <(T, int)boolean unbound
+unbound <(T, int)boolean  
 
-function-(T, int)T unbound
+unbound-(T, int)T  
 
-function *(T, int)T unbound
+unbound *(T, int)T 
 
-function +(T, T)T unbound
+unbound+(T, T)T 
 
 We need to helper functions to calculate the length and find the ith element of the seq for this example.
 

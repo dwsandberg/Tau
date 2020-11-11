@@ -24,9 +24,9 @@ use stdlib
 
 type arc is record tail:T, head:T
 
-function type:arc.T internaltype export
+Export type:arc.T  
 
-function type:graph.T internaltype export
+Export type:graph.T  
 
 type graph is record arcs:set.arc.T, backarcs:set.arc.T, nodes:set.T
 
@@ -41,9 +41,9 @@ Function ?(a:arc.T, b:arc.T)ordering
 
 Function ?2(a:arc.T, b:arc.T)ordering tail.a ? tail.b
 
-Function =(a:T, b:T)boolean unbound
+unbound =(a:T, b:T)boolean  
 
-Function ?(a:T, b:T)ordering unbound
+unbound ?(a:T, b:T)ordering  
 
 Function head(arc.T)T export
 

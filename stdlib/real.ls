@@ -12,49 +12,49 @@ Function -(r:real)real 0.0 - r
 
 Function abs(x:real)real if x < 0.0 then 0.0 - x else x
 
-Function toreal(i:int)real builtin.usemangle
+Builtin toreal(i:int)real  
 
-Function intpart(a:real)int builtin.usemangle
+Builtin intpart(a:real)int  
 
 Function decpart(a:real)real a - toreal.intpart.a
 
-Function sqrt(a:real)real builtin.usemangle
+Builtin sqrt(a:real)real  
 
-Function sin(a:real)real builtin.usemangle
+Builtin sin(a:real)real  
 
-Function arccos(a:real)real builtin.usemangle
+Builtin arccos(a:real)real  
 
-Function arcsin(a:real)real builtin.usemangle
+Builtin arcsin(a:real)real 
 
-Function cos(a:real)real builtin.usemangle
+Builtin cos(a:real)real  
 
-Function tan(a:real)real builtin.usemangle
+Builtin tan(a:real)real  
 
 Function pi real 3.1415926535898
 
-Function ?(a:real, b:real)ordering builtin.usemangle
+Builtin ?(a:real, b:real)ordering  
 
 Function =(a:real, b:real)boolean(a ? b) = EQ
 
 Function >(a:real, b:real)boolean(a ? b) = GT
 
-Function <(a:real, b:real)boolean export
+Export <(a:real, b:real)boolean  
 
 Function max(a:real, b:real)real if(a ? b) = GT then a else b
 
 Function min(a:real, b:real)real if(a ? b) = LT then a else b
 
-Function +(a:real, b:real)real builtin.usemangle
+Builtin +(a:real, b:real)real 
 
-Function -(a:real, b:real)real builtin.usemangle
+Builtin -(a:real, b:real)real 
 
-Function *(a:real, b:real)real builtin.usemangle
+Builtin *(a:real, b:real)real  
 
-Function /(a:real, b:real)real builtin.usemangle
+Builtin /(a:real, b:real)real  
 
-Function representation(a:real)int builtin.usemangle
+Builtin representation(a:real)int  
 
-Function casttoreal(i:int)real builtin.usemangle
+Builtin casttoreal(i:int)real  
 
 Function^(i:real, n:int)real @(*, identity, 1.0, constantseq(n, i))
 

@@ -31,7 +31,7 @@ function enumerate(type:seq.word,codes:seq.word) seq.word
  +  ' &br  else " ' + type+ ' ." +toword.i ' 
  +"&br &br function toint("+type+") int export"
  +"&br &br function "+type+"(i:int) "+type+" export"
-+"&br &br function type:"+type+" internaltype export"
++"&br &br Export type:"+type
 +"&br &br Function =(a:"+type+",b:"+type+") boolean  toint.a=toint.b"
  + @(+,dd(type,codes),"",arithseq(length.codes,1,1))
 +"&br &br"
@@ -55,7 +55,7 @@ function toint(align)int export
 
 function align(i:int)align export 
 
-function type:align internaltype export 
+Export type:align  
 
 Function =(a:align, b:align)boolean toint.a = toint.b 
 
@@ -80,7 +80,7 @@ function toint(instop)int export
 
 function instop(i:int)instop export 
 
-function type:instop internaltype export 
+Export type:instop  
 
 Function =(a:instop, b:instop)boolean toint.a = toint.b 
 
@@ -121,7 +121,7 @@ function toint(typeop)int export
 
 function typeop(i:int)typeop export 
 
-function type:typeop internaltype export 
+Export type:typeop  
 
 Function =(a:typeop, b:typeop)boolean toint.a = toint.b 
 
@@ -152,7 +152,7 @@ function toint(blockop)int export
 
 function blockop(i:int)blockop export 
 
-function type:blockop internaltype export 
+Export type:blockop  
 
 Function =(a:blockop, b:blockop)boolean toint.a = toint.b 
 
@@ -183,7 +183,7 @@ function toint(moduleop)int export
 
 function moduleop(i:int)moduleop export 
 
-function type:moduleop internaltype export 
+Export type:moduleop  
 
 Function =(a:moduleop, b:moduleop)boolean toint.a = toint.b 
 
@@ -208,7 +208,7 @@ function toint(constop)int export
 
 function constop(i:int)constop export 
 
-function type:constop internaltype export 
+Export type:constop  
 
 Function =(a:constop, b:constop)boolean toint.a = toint.b 
 
@@ -249,7 +249,7 @@ function toint(castop)int export
 
 function castop(i:int)castop export 
 
-function type:castop internaltype export 
+Export type:castop  
 
 Function =(a:castop, b:castop)boolean toint.a = toint.b 
 
@@ -288,7 +288,7 @@ function toint(binaryop)int export
 
 function binaryop(i:int)binaryop export 
 
-function type:binaryop internaltype export 
+Export type:binaryop  
 
 Function =(a:binaryop, b:binaryop)boolean toint.a = toint.b 
 
@@ -329,7 +329,7 @@ function toint(cmp2op)int export
 
 function cmp2op(i:int)cmp2op export 
 
-function type:cmp2op internaltype export 
+Export type:cmp2op 
 
 Function =(a:cmp2op, b:cmp2op)boolean toint.a = toint.b 
 

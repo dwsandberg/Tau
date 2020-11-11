@@ -11,24 +11,24 @@ use stdlib
 type seq is sequence length:int, x:T
 
 
-Function type:seq.T internaltype export
+Export type:seq.T  
 
 type pseq is sequence length:int, a:seq.T, b:seq.T
 
-Function =(T, T)boolean unbound
+unbound =(T, T)boolean 
 
 Function_(a:seq.T, b:int)T
      assert not(getseqtype.a = 0) &or ( b > 0 ∧ b ≤ length.a) report"out of bounds" + stacktrace
     callidx( a, b)
 
-function callidx(a:seq.T, int)T  // treated specially by compiler // builtin.usemangle 
+builtin callidx(a:seq.T, int)T  // treated specially by compiler //  
 
-Function getseqtype(a:seq.T)int builtin.usemangle 
+Builtin getseqtype(a:seq.T)int   
 
 
 Function length(a:seq.T)int export
 
-Function empty:seq.T seq.T // empty seq // builtin.usemangle
+Builtin empty:seq.T seq.T // empty seq //  
 
 Function =(a:seq.T, b:seq.T)boolean
  if length.a = length.b then subequal(a, b, length.a)else false
@@ -46,7 +46,7 @@ Function in(a:T, s:seq.T)boolean  subin(a, s, length.s)
 
 Function identity(a:T)T a
 
-Function >(a:T, b:T)boolean unbound
+unbound >(a:T, b:T)boolean  
 
 Function findelement(w:T, s:seq.T)seq.T
  let idx = findindex(w, s, 1)
@@ -156,4 +156,4 @@ Function isempty(a:seq.T)boolean length.a = 0
 
 - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Function packed(s:seq.T)seq.T  builtin.usemangle  
+Builtin packed(s:seq.T)seq.T    

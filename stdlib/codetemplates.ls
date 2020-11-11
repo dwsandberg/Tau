@@ -3,7 +3,6 @@ run mylib testnew
 
 Module codetemplates
 
-use seq.myinternaltype
 
 use bitpackedseq.bit
 
@@ -77,7 +76,7 @@ Function conststype llvmtype array(-2, i64)
 
 Function profiletype llvmtype array(-3, i64)
 
-Function type:match5 internaltype export
+Export type:match5  
 
 Function length(match5)int // no of instruction that return results // export
 
@@ -100,12 +99,12 @@ Function code(match5) seq.symbol export
 
 Function functype(match5) llvmtype export
 
-Function type:symbol internaltype export
+Export type:symbol  
 
 Function fullinst(match5) seq.word export
 
  
-Function type:program internaltype export
+Export type:program  
 
 use symbol
 

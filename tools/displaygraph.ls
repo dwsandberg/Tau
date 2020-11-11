@@ -30,9 +30,9 @@ use display
 
 use stdlib
 
-function assignwidths(control:characterwidths , p:nodeinfo.T)nodeinfo.T unbound
+unbound assignwidths(control:characterwidths , p:nodeinfo.T)nodeinfo.T 
 
-Function nodetotext(a:T)seq.word unbound
+unbound nodetotext(a:T)seq.word  
 
 function restoredirection(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T, a:arc.T)seq.arcinfo.T
  let other = if head.a in nodes.org ∧ not(tail.a in nodes.org)then

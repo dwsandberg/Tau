@@ -17,11 +17,11 @@ use process.T
 
 
 
-Function type:encodingpair.T internaltype export
+Export type:encodingpair.T  
 
-Function type:encoding.T internaltype export
+Export type:encoding.T  
 
-Function type:encodingstate.T internaltype export
+Export type:encodingstate.T  
 
 type encodingstate is sequence length:int, encodetable:seq.seq.encodingpair.T, decodetable:seq.seq.encodingpair.T, all:seq.encodingpair.T
 
@@ -47,9 +47,9 @@ Function =(a:encodingpair.T, b:encodingpair.T)boolean
   
  Function ?(a:encodingpair.T, b:encodingpair.T)ordering valueofencoding.code.a ? valueofencoding.code.b
 
-Function hash(T)int unbound
+unbound hash(T)int  
 
-Function =(T, T)boolean unbound
+unbound =(T, T)boolean  
 
 Function empty:encodingstate.T encodingstate.T
 let x = constantseq(4, empty:seq.encodingpair.T)
@@ -110,7 +110,7 @@ function used(t:encoding.T, a:encodingpair.T) int
     if found then subadd(h, encodingpair(to:encoding.T(assignencoding(length.h,data.v)), data.v, hash.v),count+1)
      else encodingpair(code.v, deepcopy.data.v, hash.v)
 
-Function assignencoding(length:int,data:T) int // (randomint.1)_1 // unbound
+unbound assignencoding(length:int,data:T) int // (randomint.1)_1 //  
 
 Function assignrandom(length:int,data:T) int  (randomint.1)_1
 
@@ -137,9 +137,9 @@ Function decode(t:encoding.T) T
 
 use seq.encodingstate.T
 
-Function getinstance:encodingstate.T encodingstate.T  builtin.usemangle
+Builtin getinstance:encodingstate.T encodingstate.T   
 
-Function primitiveadd(s:encodingpair.T)  int builtin.usemangle
+Builtin primitiveadd(s:encodingpair.T)  int  
 
 
 
@@ -185,7 +185,7 @@ function ele(v:T, a:encodingpair.T)int if v = data.a then valueofencoding.code.a
 
 
 
-Function type:encodingpair.T internaltype export
+Export type:encodingpair.T  
 
 function ele5(v:T, a:encodingpair.T)seq.encodingpair.T if v = data.a then [ a]else empty:seq.encodingpair.T
 
@@ -235,11 +235,11 @@ Function  encodingno(name:seq.word) int
 function assignencoding(a:int, typename) int
    a+1
    
- function  IDX(seq.int  ,int) int builtin.usemangle
+ builtin IDX(seq.int  ,int) int  
   
- function  setfld(seq.int  ,int,int) int builtin.usemangle
+ builtin  setfld(seq.int  ,int,int) int 
  
- function allocatespace(i:int) seq.int builtin.usemangle
+ builtin allocatespace(i:int) seq.int  
 
   
 Function memcpy(i:int,memsize:int, s:seq.int,idx:int, fromaddress:seq.int) int 
@@ -276,11 +276,11 @@ if length.s > blocksize then
    let d=   @(memcpy(0,ds,newseq),identity,2 ,s)
    newseq
    
- function bitcast(a:seq.seq.int) seq.int builtin.usemangle
+ builtin bitcast(a:seq.seq.int) seq.int  
  
- function  IDX(seq.seq.int,int) seq.int builtin.usemangle
+ builtin  IDX(seq.seq.int,int) seq.int 
   
-  function  blockindexfunc int builtin.usemangle
+  builtin  blockindexfunc int  
  
 function blocksize int 10000
 

@@ -21,7 +21,7 @@ use stdlib
 
 use bits
 
-Function type:word internaltype export
+Export type:word s 
 
 type word is record asencoding:encoding.seq.char
 
@@ -50,7 +50,7 @@ Function merge(a:seq.word)word // make multiple words into a single word. // enc
 
 * Functions to perform alphabetical sorting
 
-Function type:alphaword internaltype export
+Export type:alphaword  s
 
 type alphaword is record toword:word
 

@@ -6,7 +6,7 @@ use stdlib
 
 use otherseq.word
 
-Function type:worddict.T internaltype export
+Export type:worddict.T  
 
 type worddict is record keys:seq.word, data:seq.T
 

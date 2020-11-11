@@ -6,9 +6,9 @@ use stdlib
 
 type tree is record label:T, sons:seq.tree.T
 
-Function type:tree.T internaltype export
+Export type:tree.T  
 
-Function =(T, T)boolean unbound
+unbound =(T, T)boolean 
 
 Function =(a:tree.T, b:tree.T)boolean
  if label.a = label.b then sons.a = sons.b else false

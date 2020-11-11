@@ -8,15 +8,15 @@ use bits
 
 use stdlib
 
-Function type:bitpackedseq.T internaltype export
+Export type:bitpackedseq.T  
 
 type bitpackedseq is sequence length:int, data:seq.T, part:bits
 
-function frombits:T(a:bits)T unbound
+unbound frombits:T(a:bits)T 
 
-function tobits(T)bits unbound
+unbound tobits(T)bits  
 
-function sizeinbits(T)int unbound
+unbound sizeinbits(T)int  
 
 Function bitpackedseq(int, seq.T, bits)bitpackedseq.T export
 

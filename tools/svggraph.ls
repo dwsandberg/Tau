@@ -54,7 +54,7 @@ Function nodeinfo(n:T, x:int, y:int)nodeinfo.T nodeinfo(n, x, y, 0, 1)
 
 Function nodeinfo(n:T, x:int, y:int, width:int, seperation:int)nodeinfo.T export
 
-function =(T, T)boolean unbound
+unbound =(T, T)boolean  
 
 function =(a:nodeinfo.T, b:nodeinfo.T)boolean n.a = n.b
 
@@ -144,9 +144,9 @@ Function ?(a:arcinfo.T, b:arcinfo.T)ordering
 
 Function ?2(a:arcinfo.T, b:arcinfo.T)ordering head.a.a ? head.a.b
 
-function ?(a:T, b:T)ordering unbound
+unbound ?(a:T, b:T)ordering  
 
-Function nodetotext(T)seq.word unbound
+unbound nodetotext(T)seq.word  
 
 function layerwidths(ws:seq.int, p:nodeinfo.T)seq.int
  let w = width.p

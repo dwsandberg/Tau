@@ -101,7 +101,7 @@ use otherseq.T
 
 use stacktrace
 
-function get:T T unbound
+unbound get:T T 
 
 use process.T
 

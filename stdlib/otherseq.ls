@@ -13,9 +13,9 @@ Function ≥(a:T, b:T)boolean not(b > a)
 
 Function <(a:T, b:T)boolean b > a
 
-Function =(T, T)boolean unbound
+unbound =(T, T)boolean 
 
-Function >(a:T, b:T)boolean unbound
+unbound >(a:T, b:T)boolean  
 
 Function reverse(s:seq.T)seq.T
  @(+,_(s), empty:seq.T, arithseq(length.s, 0 - 1, length.s))
@@ -86,9 +86,9 @@ _____________
 
 type arithmeticseq is sequence length:int, step:T, start:T
 
-Function +(T, T)T unbound
+unbound +(T, T)T  
 
-Function *(int, T)T unbound
+unbound *(int, T)T  
 
 Function length(s:arithmeticseq.T)int export
 
@@ -96,7 +96,7 @@ Function_(s:arithmeticseq.T, i:int)T start.s + (i - 1) * step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 
-Function ?(T, T)ordering unbound
+unbound ?(T, T)ordering 
 
 Function ?(a:seq.T, b:seq.T)ordering subcmp(a, b, 1)
 

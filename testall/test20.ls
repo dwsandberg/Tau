@@ -10,9 +10,9 @@ type p is record a:int, b:int, c:int
 
 type q is record d:int, e:p, f:int
 
-Function p(a:int, b:int, c:int)p export
+Export p(a:int, b:int, c:int)p export
 
-Function q(a:int, b:p, c:int)q export
+Export q(a:int, b:p, c:int)q export
 
 function z q q(1, p(2, 3, 4), 5)
 

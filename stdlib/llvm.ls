@@ -30,12 +30,13 @@ use stdlib
 
 use llvmconstants
 
+Export type:encodingpair.llvmconst 
 
-Function type:llvmtypeele internaltype export
+Export type:llvmtypeele  
 
-Function type:llvmtype internaltype export
+Export type:llvmtype  
 
-Function type:llvmconst internaltype export
+Export type:llvmconst  
 
 
 type llvmtypeele is record toseq:seq.int
@@ -193,7 +194,7 @@ Function constantrecords seq.slotrecord
 
 type  slotrecord is record cvt:encodingpair.llvmconst 
 
-Function type:slotrecord internaltype export
+Export type:slotrecord  
 
 Function record(b:slotrecord) seq.int 
   let a=data.cvt.b
@@ -228,6 +229,6 @@ function toint(slot) int export
 
 function slot(int)  slot export
 
-function type:slot internaltype export
+Export type:slot 
 
 Function r(a:int) slot   slot.-a

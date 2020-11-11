@@ -14,16 +14,16 @@ parsersupport postbind uses
   worddict groupparagraphs 
  timestamp ioseq dataio intdict dict
     parsersupport mangle mytype   bitpackedseq xxhash
-      symbol internalbc     parse  libdesc
+      symbol internalbc     parse   libdesc
  
  
   PROFILE      pass1:pass1(seq.seq.seq.word,seq.word ,seq.liblib ) linkage
 
  
-  PROFILE      pass1:postbind( seq.myinternaltype, set.symbol, set.symbol
+  PROFILE      pass1:postbind( typedict, set.symbol, set.symbol
 , seq.symbol,int, program, program, program) program
  
-  PROFILE      pass1:postbind3( seq.myinternaltype, set.symbol, seq.symbol,
+  PROFILE      pass1:postbind3( typedict, set.symbol, seq.symbol,
 int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
 
  
@@ -140,23 +140,22 @@ Function toint(boolean)int export
 
 Function-(i:int)int 0 - i
 
-Function ?(a:int, b:int)ordering builtin.usemangle
+ Builtin ?(a:int, b:int)ordering  
 
-/Function process2(a:int) int builtin.usemangle
 
 Function ?(a:ordering, b:ordering)ordering toint.a ? toint.b
 
-Function +(a:int, b:int)int builtin.usemangle
+ Builtin +(a:int, b:int)int  
 
-Function-(a:int, b:int)int builtin.usemangle
+ Builtin -(a:int, b:int)int  
 
-Function *(a:int, b:int)int builtin.usemangle
+ Builtin *(a:int, b:int)int  
 
-Function /(a:int, b:int)int builtin.usemangle
+ Builtin /(a:int, b:int)int  
 
 Function hash(i:int)int finalmix.hash(hashstart, i)
 
-Function =(a:int, b:int)boolean builtin.usemangle
+ Builtin =(a:int, b:int)boolean  
 
 Function =(a:ordering, b:ordering)boolean toint.a = toint.b
 
@@ -181,19 +180,19 @@ Function ∨(a:boolean, b:boolean)boolean
    boolean.1 
   else b
 
-Function not(a:boolean)boolean builtin.usemangle
+ Builtin not(a:boolean)boolean  
 
 Function abs(x:int)int if x < 0 then 0 - x else x
 
 Function mod(x:int, y:int)int if x < 0 then x - x / y * y + y else x - x / y * y
 
-Function >(a:int, b:int)boolean builtin.usemangle
+ Builtin >(a:int, b:int)boolean  
 
-Function <(a:int, b:int)boolean export
+Export <(a:int, b:int)boolean  
 
-Function ≤(a:int, b:int)boolean export
+Export ≤(a:int, b:int)boolean  
 
-Function ≥(a:int, b:int)boolean export
+Export  ≥(a:int, b:int)boolean  
 
 Function max(a:int, b:int)int if a > b then a else b
 
@@ -226,10 +225,9 @@ function addrandom(s:seq.int, i:int)seq.int s + pseudorandom(s_length.s)
 
 Function randomseq(seed:int, length:int)seq.int @(addrandom, identity, [ seed], constantseq(length - 1, 1))
 
-Function randomint(i:int)seq.int builtin.usemangle
+ Builtin randomint(i:int)seq.int  
 
-/Function lines(a:seq.word, b:seq.word)seq.word a + EOL + b
-
+ 
 Function seperator(sep:seq.word, s:seq.word, w:seq.word)seq.word 
  if length.s = 0 then w else s + sep + w
 
@@ -238,123 +236,123 @@ Function seperator(sep:seq.word, s:seq.word, w:word)seq.word
   if length.s = 0 then [ w]else s + sep + w
   
 
-Function hash(a:word)int export
+Export hash(a:word)int 
 
-Function ?(a:word, b:word)ordering export
+Export ?(a:word, b:word)ordering 
 
-Function =(a:word, b:word)boolean export
+Export =(a:word, b:word)boolean 
 
-Function ≠(a:word, b:word)boolean export
+Export ≠(a:word, b:word)boolean 
 
-Function ≠(a:int, b:int)boolean export
+Export ≠(a:int, b:int)boolean 
  
-Function toword(n:int)word 
+Export toword(n:int)word 
  // Covert integer to  a single word. // 
- export
  
-Function toint(w:word)int 
- // Convert an integer represented as a word to an int // export
  
-Function merge(a:seq.word)word 
- // make multiple words into a single word. // export
+Export toint(w:word)int 
+ // Convert an integer represented as a word to an int // 
+ 
+Export merge(a:seq.word)word 
+ // make multiple words into a single word. // 
 
-Function type:ordering internaltype  export
+Export type:ordering  
 
-Function type:boolean internaltype  export
+Export type:boolean  
 
-Function type:word  internaltype  export
+Export type:word   
 
-Function type:seq.word  internaltype  export
+Export type:seq.word   
 
-Function type:seq.seq.word  internaltype  export
+Export type:seq.seq.word     
 
-Function type:seq.int internaltype export
+Export type:seq.int  
 
-Function type:seq.char  internaltype  export
+Export type:seq.char    
 
-Function type:encoding.seq.char  internaltype  export
+Export type:encoding.seq.char    
 
 use encoding.seq.char
 
-Function empty:seq.seq.word seq.seq.word  export
+Export empty:seq.seq.word seq.seq.word  
 
-Function empty:seq.word  seq.word export
+Export empty:seq.word  seq.word 
 
-Function empty:seq.int  seq.int export
+Export empty:seq.int  seq.int 
 
-Function arithseq(int, int, int)seq.int export
+Export arithseq(int, int, int)seq.int 
 
-Function constantseq(len:int, element:int)seq.int export
+Export constantseq(len:int, element:int)seq.int 
 
-Function_(seq.word, int)word export
+Export _(seq.word, int)word 
 
-Function_(seq.seq.word, int)seq.word export
+Export _(seq.seq.word, int)seq.word 
 
-Function_(seq.int, int)int export
+Export _(seq.int, int)int 
 
-Function_(s:pseq.seq.word, i:int)seq.word export
+Export _(s:pseq.seq.word, i:int)seq.word 
 
-Function_(pseq.int, int)int export
+Export _(pseq.int, int)int 
 
-Function_(a:pseq.word, b:int)word export
+Export _(a:pseq.word, b:int)word 
 
-Function length(seq.word)int export
+Export length(seq.word)int 
 
-Function length(seq.seq.word)int export
+Export length(seq.seq.word)int 
 
-Function length(seq.int)int export
+Export length(seq.int)int 
 
-Function findindex(word, seq.word)int export
+Export findindex(word, seq.word)int 
 
-/Function findindex(seq.word, seq.seq.word)int export
+/Export findindex(seq.word, seq.seq.word)int 
 
-Function findindex(word, seq.word, int)int export
+Export findindex(word, seq.word, int)int 
 
-Function identity(seq.word)seq.word export
+Export identity(seq.word)seq.word 
 
-Function identity(word)word export
+Export identity(word)word 
 
-Function identity(int)int export
+Export identity(int)int 
 
-Function last(s:seq.word)word export
+Export last(s:seq.word)word 
 
-Function subseq(seq.seq.word, int, int)seq.seq.word export
+Export subseq(seq.seq.word, int, int)seq.seq.word 
 
-Function subseq(seq.word, int, int)seq.word export
+Export subseq(seq.word, int, int)seq.word 
 
-Function subseq(seq.int, int, int)seq.int export
+Export subseq(seq.int, int, int)seq.int 
 
-Function in(word, seq.word)boolean export
+Export in(word, seq.word)boolean 
 
-Function in(seq.word, seq.seq.word)boolean export
+Export in(seq.word, seq.seq.word)boolean 
 
-Function in(int, seq.int)boolean export
+Export in(int, seq.int)boolean 
 
-Function =(seq.word, seq.word)boolean export
+Export =(seq.word, seq.word)boolean 
 
-Function =(seq.int, seq.int)boolean export
+Export =(seq.int, seq.int)boolean 
 
-Function +(seq.word, word)seq.word export
+Export +(seq.word, word)seq.word 
 
-Function +(seq.int, seq.int)seq.int export
+Export +(seq.int, seq.int)seq.int 
 
-Function +(seq.int, int)seq.int export
+Export +(seq.int, int)seq.int 
 
-Function last(seq.int) int export
+Export last(seq.int) int 
 
-Function +(seq.seq.word, seq.word)seq.seq.word export
+Export +(seq.seq.word, seq.word)seq.seq.word 
 
-Function +(seq.seq.word, seq.seq.word)seq.seq.word export
+Export +(seq.seq.word, seq.seq.word)seq.seq.word 
 
-Function +(a:seq.word, b:seq.word)seq.word export
+Export +(a:seq.word, b:seq.word)seq.word 
 
-Function nbspchar char export
-
-
-Function alphasort(a:seq.word)seq.word export 
+Export nbspchar char 
 
 
-Function alphasort(a:seq.seq.word)seq.seq.word export
+Export alphasort(a:seq.word)seq.word  
+
+
+Export alphasort(a:seq.seq.word)seq.seq.word 
 
 type char is record toint:int
 
@@ -365,15 +363,15 @@ Function ?(a:char,b:char) ordering toint.a ? toint.b
 Function hash(a:char) int hash.toint.a
 
 
-Function type:char internaltype  export
+Export type:char  
 
-Function type:seq.char internaltype  export
+Export type:seq.char 
 
 Function length(seq.char) int export
 
 Function empty:seq.char seq.char export
 
-Function +(seq.char, seq.char) seq.char export
+Export +(seq.char, seq.char) seq.char  
 
 Function isempty(seq.char) boolean export
 

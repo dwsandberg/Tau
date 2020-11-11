@@ -14,8 +14,6 @@ use set.symbol
 
 use seq.symbol
 
-use seq.myinternaltype
-
 use symbol
 
 use seq.mytype
@@ -96,18 +94,12 @@ function postbind3(alltypes:typedict,dict:set.symbol,code:seq.symbol,i:int,resul
          else if (fsig.sym)_1 in "build" then
              let a=if length.towords.modpara > 0 then replaceT(towords.modpara,fsig.sym) else  fsig.sym
              let b=break(","_1,subseq(a,1,length.a-1),5)
-             let c=@(+,getinternaltype.alltypes,empty:seq.typeinfo,subseq(b,1,length.b))  
+             let c=@(+,gettypeinfo.alltypes,empty:seq.typeinfo,subseq(b,1,length.b))  
              assert length.b=length.c report "?"
              let p2= buildconstructor(if i=2 then [mytype."int"] else empty:seq.mytype,c)
          //    assert not( a_3 in "q") report "JKL"+toword.i+@(+,print,"",p2)+a //
                 postbind3( alltypes,dict,code, i+1, result+p2 , modpara,org,calls   , sourceX,tempX  ) 
-        else if fsig.sym="internaltype"   then
-             let typ=parameter.modname.sym
-            let typdesc= findelement(    alltypes,typ)
-            assert  not.isempty.typdesc  report"can not find type sizeof" + print.parameter.modname.sym + org
-             let p2=    [Words.towords.typdesc_1] 
-                postbind3( alltypes,dict,code, i+1, result+p2 , modpara,org,calls   , sourceX,tempX  )      
-       else 
+         else 
        let codeforbuiltin = codeforbuiltin(alltypes, newsym, sym, org)
          postbind3(alltypes, dict, code, i + 1, result + if isfref then Fref.newsym else newsym, modpara, org, calls + newsym, map(sourceX, newsym, codeforbuiltin), tempX)
        else handletemplates(alltypes, dict, code, i, result, isfref, newsym, modpara, org, calls, sourceX, tempX)
@@ -115,7 +107,7 @@ function postbind3(alltypes:typedict,dict:set.symbol,code:seq.symbol,i:int,resul
  
 function bbb(alltypes:typedict,a:seq.word) int   size.gettypeinfo(alltypes,mytype.a) 
       
-function getinternaltype(alltypes:typedict,a:seq.word) typeinfo
+function gettypeinfo(alltypes:typedict,a:seq.word) typeinfo
                 gettypeinfo(alltypes,mytype.a)
        
   use seq.typeinfo   
@@ -131,15 +123,15 @@ buildconstructor(addfld,flds,empty:seq.mytype,1,1,0,empty:seq.symbol)
   ,length.flatflds,length.flds]) //
    if fldno > length.flds then result+ Record(addfld+flatflds) 
    else 
-     let fldinternaltype=flds_fldno
+     let fldtype=flds_fldno
      let newflatflds=if j > length.flatflds then 
-        let t=if kind.fldinternaltype in "int real"then [mytype.[kind.fldinternaltype]] 
-            else if kind.fldinternaltype ="seq"_1 then [mytype."ptr"] else subflds.fldinternaltype 
-        // assert length.t > 0 report "proglem"+print.fldinternaltype //
+        let t=if kind.fldtype in "int real"then [mytype.[kind.fldtype]] 
+            else if kind.fldtype ="seq"_1 then [mytype."ptr"] else subflds.fldtype 
+        // assert length.t > 0 report "proglem"+print.fldtype //
         flatflds+t else flatflds
-     let newresult=result+if size.fldinternaltype=1 then  [Local.fldno] else 
+     let newresult=result+if size.fldtype=1 then  [Local.fldno] else 
      [Local.fldno ,Lit.subfld, Idx.abstracttype.newflatflds_j]
-   if subfld  = size.fldinternaltype-1 then
+   if subfld  = size.fldtype-1 then
        buildconstructor(addfld,flds,newflatflds,fldno+1,j+1,0, newresult)
    else 
        buildconstructor(addfld,flds,newflatflds,fldno,j+1,subfld+1, newresult)
@@ -223,27 +215,26 @@ else
              
  
 function definedeepcopy(alltypes:typedict, type:mytype ,org:seq.word) seq.symbol
-   if abstracttype.type in "encoding int word"then [Local.1]
- else
-  if abstracttype.type = "seq"_1 then
+ if abstracttype.type in "encoding int word"then [Local.1]
+ else if abstracttype.type = "seq"_1 then
      let ds=size.gettypeinfo(alltypes,type)
-  let kind=kind.gettypeinfo(alltypes,parameter.type)
-  let typepara = if kind in "int real" then mytype.[kind] else parameter.type
-  let seqtype=mytype(towords.typepara + "seq")
-    let dc =  deepcopysym.typepara 
-   let pseqidx =  pseqidxsym.typepara
-   let cat =  newsymbol("+", seqtype,  [ seqtype,typepara],seqtype)
-    Emptyseq+[  Local.1, Fref.dc ,Fref.cat, Fref.pseqidx,Apply(5,
-    if kind="seq"_1 then "ptr" else [kind],"ptr")]+ if ds=1 then
-   [symbol("packed1(int seq)","assignencodingnumber","int seq")]
-else 
- [Local.1,Lit.ds,symbol("packed(int seq seq,ds)","assignencodingnumber","int seq")]
-  else
-     let typedesc=gettypeinfo(alltypes, type)
-      let y=subfld(subflds.typedesc ,1,empty:seq.symbol)
+     let kind=kind.gettypeinfo(alltypes,parameter.type)
+     let typepara = if kind in "int real" then mytype.[kind] else parameter.type
+     let seqtype=mytype(towords.typepara + "seq")
+     let dc =  deepcopysym.typepara 
+     let pseqidx =  pseqidxsym.typepara
+     let cat =  newsymbol("+", seqtype,  [ seqtype,typepara],seqtype)
+        Emptyseq+[  Local.1, Fref.dc ,Fref.cat, Fref.pseqidx,Apply(5, [kind],"ptr")]
+     + if ds=1 then
+          [symbol("packed1(int seq)","assignencodingnumber","int seq")]
+        else 
+          [Local.1,Lit.ds,symbol("packed(int seq seq,ds)","assignencodingnumber","int seq")]
+ else
+    let typedesc=gettypeinfo(alltypes, type)
+    let y=subfld(subflds.typedesc ,1,empty:seq.symbol)
     if size.typedesc   = 1 then
-     // only one element in record so type is not represent by actual record //[Local.1]
-      + subseq(y, 4, length.y - 1)
+      // only one element in record so type is not represent by actual record //
+      [Local.1]  + subseq(y, 4, length.y - 1)
      else
       assert size.typedesc   ≠ 1 report"Err99a"+print.type
        y

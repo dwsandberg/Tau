@@ -52,7 +52,7 @@ function get2(data:seq.int, i:int)seq.encodingpair.seq.char
 function getrecord:encodingpair.seq.char(data:seq.int, i:int)encodingpair.seq.char
  encodingpair(to:encoding.seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1) )
 
-Function initialdict seq.encodingpair.seq.char builtin.usemangle
+Builtin initialdict seq.encodingpair.seq.char 
 
 module dataio
 
@@ -66,7 +66,7 @@ function newplace place place(empty:seq.int, 0, empty:seq.int)
 
 type place is record this:seq.int, offset:int, data:seq.int
 
-Function type:place internaltype export
+Export type:place 
 
 offset is offset to data
 
@@ -122,9 +122,9 @@ Function data(s:ioseq.T)seq.int export
 
 Function length(s:ioseq.T)int export
 
-Function getrecord:T(seq.int, int)T unbound
+unbound getrecord:T(seq.int, int)T 
 
-Function +(place, T)place unbound
+unbound +(place, T)place 
 
 Function_(a:ioseq.T, i:int)T
  let size = sizeoftype:T

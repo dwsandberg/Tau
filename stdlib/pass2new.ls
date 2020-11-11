@@ -17,7 +17,6 @@ use stack.block
 
 use otherseq.mytype
 
-use seq.myinternaltype
 
 
 function breakblocks(p:program,code:seq.symbol,self:symbol,alltypes:typedict) seq.symbol  
@@ -804,9 +803,9 @@ Function theprg(intercode) program export
 
 Function defines(i:intercode)seq.symbol  export
 
-Function libdesc(i:intercode) symbol  export
+Export libdesc(i:intercode) symbol   
 
-Function type:intercode internaltype export 
+Export type:intercode   
 
  
 

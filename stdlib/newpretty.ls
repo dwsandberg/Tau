@@ -89,7 +89,10 @@ function prettyfile(l:seq.seq.word, i:int, uses:seq.seq.word, libbody:seq.seq.wo
    if length.s = 0 then prettyfile(l, i + 1, uses, libbody, result)
    else if s_1 in "use"then prettyfile(l, i + 1, uses + reverse.s, libbody, result)
    else if s_1 in "Function function type"then
-   prettyfile(l, i + 1, uses, libbody + text.(toseq.parse.s)_1, result)
+   let tmp= text.(toseq.parse.s)_1
+   let tmp2=if s_1 in "Function function" &and last.tmp ="export"_1 then  "&keyword Export" + subseq(tmp,3,length.tmp-1)
+   else tmp
+   prettyfile(l, i + 1, uses, libbody + tmp2, result)
    else if s_1 in "module Module"then
    let newresult = result + sortuse.uses + libbody + (' &{ noformat <hr id =" ' + s_2 + ' " >  &} &keyword ' + s)
      prettyfile(l, i + 1, empty:seq.seq.word, empty:seq.seq.word, newresult)
@@ -133,9 +136,9 @@ type attribute is record toseq:seq.prettyresult
 
 function parse(l:seq.word)attribute parse:attribute(l)
 
-Function type:attribute internaltype export
+Export type:attribute  
 
-Function type:prettyresult internaltype export
+Export type:prettyresult  
 
 Function attribute(text:seq.word)attribute attribute.[ prettyresult(0, width.text, text)]
 

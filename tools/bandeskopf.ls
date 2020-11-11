@@ -22,7 +22,7 @@ use seq.int
 
 use stdlib
 
-function =(T, T)boolean unbound
+unbound =(T, T)boolean 
 
 Based on:Fast and Simple Horizontal Coordinate Assignment Ulrik Brandes and Boris Kopf, 2002
 

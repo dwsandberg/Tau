@@ -4,11 +4,11 @@ use mangle
 
 use stdlib
 
-Function callstack(n:int)seq.int builtin.usemangle
+Builtin callstack(n:int)seq.int  
 
 Function stacktrace seq.word @(+, decodeaddress,"", callstack.30)
 
-function addresstosymbol2(a:int)seq.char builtin.usemangle
+Builtin addresstosymbol2(a:int)seq.char  
 
 Function addresstosymbol(a:int)word encodeword.addresstosymbol2.a
 

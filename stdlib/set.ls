@@ -8,7 +8,7 @@ use stdlib
 
 type set is record toseq:seq.T
 
-Function type:set.T internaltype export
+Export type:set.T  
 
 Function empty:seq.T seq.T export
 
@@ -20,7 +20,7 @@ Function_(pseq.T, int)T export
 
 Function_(seq.T, int)T export
 
-function ?(T, T)ordering unbound
+unbound ?(T, T)ordering  
 
 Function asset(s:seq.T)set.T set.@(setinsert, identity, empty:seq.T, s)
 
@@ -120,7 +120,7 @@ Secondary ordering that allows a secondary search on a partial key.
 
 The following must be true ?2(a, b)≠ EQ implies ?(a, b)= ?2(a, b)
 
-function ?2(T, T)ordering unbound
+unbound ?2(T, T)ordering  
 
 Function findelement2(a:set.T, n:T)set.T
  let i = binarysearch2(toseq.a, 1, length.toseq.a, n)

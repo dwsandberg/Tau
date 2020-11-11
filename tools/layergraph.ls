@@ -65,4 +65,4 @@ function splitarc(g:graph.T, a:arc.T)graph.T
  let new = generatenode.nodes.g
   replacearcs(g, asset.[ a], asset.[ arc(tail.a, new), arc(new, head.a)])
 
-function generatenode(s:set.T)T unbound
+unbound generatenode(s:set.T)T

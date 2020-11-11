@@ -22,18 +22,18 @@ type stkele is record stateno:int,place:int, attribute:T
 
  type reduction is record toseq:seq.stkele.T
  
- Function type:reduction.T internaltype export  
+Export type:reduction.T   
  
- Function type:token.T internaltype export  
+Export type:token.T    
  
  
-function attribute:T(seq.word) T  unbound
+unbound attribute:T(seq.word) T   
 
-function action(int, seq.token.T,reduction.T) T unbound
+unbound action(int, seq.token.T,reduction.T) T  
 
-function text(T) seq.word unbound
+unbound text(T) seq.word  
 
-function  forward(stk:T,T) T unbound
+unbound  forward(stk:T,T) T  
 
 
 function text2(t:token.T) seq.word text.attribute.t
