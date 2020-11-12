@@ -41,7 +41,7 @@ Function writedict(tin:seq.encodingpair.seq.char)int
 Function loaddict(file:fileresult)int
  if size.file > -1 then
  let data = data.file
-    @(+,primitiveadd  ,0, deepcopy.get2(data, length.data))
+   @(+, primitiveadd, 0, deepcopy.get2(data, length.data))
  else 0
 
 function get2(data:seq.int, i:int)seq.encodingpair.seq.char
@@ -50,9 +50,9 @@ function get2(data:seq.int, i:int)seq.encodingpair.seq.char
  else get2(data, data_i) + getseq2:encodingpair.seq.char(data, i - 1)
 
 function getrecord:encodingpair.seq.char(data:seq.int, i:int)encodingpair.seq.char
- encodingpair(to:encoding.seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1) )
+ encodingpair(to:encoding.seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1))
 
-Builtin initialdict seq.encodingpair.seq.char 
+Builtin initialdict seq.encodingpair.seq.char
 
 module dataio
 
@@ -66,17 +66,17 @@ function newplace place place(empty:seq.int, 0, empty:seq.int)
 
 type place is record this:seq.int, offset:int, data:seq.int
 
-Export type:place 
+Export type:place
 
 offset is offset to data
 
-Function place(this:seq.int, offset:int, data:seq.int)place export
+Export place(this:seq.int, offset:int, data:seq.int)place
 
-Function this(place)seq.int export
+Export this(place)seq.int
 
-Function offset(place)int export
+Export offset(place)int
 
-Function data(place)seq.int export
+Export data(place)seq.int
 
 Function +(p:place, c:seq.int)place
  place(this.p + (next.p + 1), offset.p, data.p + [ 0, length.c] + c)
@@ -108,23 +108,23 @@ Function next(p:place)int offset.p + length.data.p
 
 module ioseq.T
 
+use process.T
+
 use seq.T
 
 use dataio
 
 use stdlib
 
-use process.T
-
 type ioseq is sequence length:int, data:seq.int, offset:int, k:seq.T
 
-Function data(s:ioseq.T)seq.int export
+Export data(s:ioseq.T)seq.int
 
-Function length(s:ioseq.T)int export
+Export length(s:ioseq.T)int
 
-unbound getrecord:T(seq.int, int)T 
+unbound getrecord:T(seq.int, int)T
 
-unbound +(place, T)place 
+unbound +(place, T)place
 
 Function_(a:ioseq.T, i:int)T
  let size = sizeoftype:T
@@ -133,7 +133,7 @@ Function_(a:ioseq.T, i:int)T
   assert between(i, 1,(data.a)_(offset.a + 1))report"out of bounds2" + @(+, toword,"", [ i, size, index] + data.a)
    getrecord:T(data.a, index)
 
-Function offset(ioseq.T)int export
+Export offset(ioseq.T)int
 
 Function getseq2:T(data:seq.int, seqpointer:int)seq.T
  let offset = data_seqpointer

@@ -8,9 +8,11 @@ use stacktrace
 
 use stdlib
 
+use xxhash
+
 type UTF8 is record toseqint:seq.int
 
-Export type:UTF8  
+Export type:UTF8
 
 Function emptyUTF8 UTF8 UTF8.empty:seq.int
 
@@ -20,9 +22,9 @@ Function +(a:UTF8, ch:char)UTF8 a + encodeUTF8.ch
 
 Function =(a:UTF8, b:UTF8)boolean toseqint.a = toseqint.b
 
-Function UTF8(seq.int)UTF8 export
+Export UTF8(seq.int)UTF8
 
-Function toseqint(UTF8)seq.int export
+Export toseqint(UTF8)seq.int
 
 Function commachar char char.44
 
@@ -35,7 +37,7 @@ Function doublequotechar char char.34
 Function nbspchar char // no break space character // char.160
 
 Function toUTF8(n:int)UTF8
- UTF8.if n < 0 then [ toint.hyphenchar] + toUTF8(n, 10)else toUTF8(- n, 10)
+ UTF8.if n < 0 then [ toint.hyphenchar] + toUTF8(n, 10)else toUTF8(-n, 10)
 
 function toUTF8(n:int, base:int)seq.int
  // n should always be negative.This is to handle the smallest integer in the twos complement representation of integers //
@@ -108,13 +110,13 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
      else
       addspace(s, i + 1, false, if nospace then result + d else result + char.32 + d)
 
-- - - - - - - - -
+---------
 
 Function toword(n:int)word // Covert integer to sequence of characters represented as a single word. // encodeword.tocharseq.toseqint.toUTF8.n
 
 /Function print(i:int)seq.word groupdigits.toUTF8.i
 
-/function groupdigits(u:UTF8)seq.word let s = tointseq.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = toint.hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s -3)+ [ encodeword.subseq(s, length.s -2, length.s)]
+/function groupdigits(u:UTF8)seq.word let s = tointseq.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = toint.hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s-3)+ [ encodeword.subseq(s, length.s-2, length.s)]
 
 Function toint(w:word)int // Convert an integer represented as a word to an int // cvttoint(decodeword.w, 1, 0)
 
@@ -122,19 +124,16 @@ Function intlit(s:UTF8)int cvttoint(tocharseq.toseqint.s, 1, 0)
 
 function cvttoint(s:seq.char, i:int, val:int)int
  if i = 1 ∧ s_1 = hyphenchar then cvttoint(s, i + 1, val)
- else if i > length.s then if s_1 = hyphenchar then - val else val
+ else if i > length.s then if s_1 = hyphenchar then-val else val
  else if s_i = nbspchar then cvttoint(s, i + 1, val)
  else
-  assert between(toint.s_i, 48, 57)report"invalid digit" +encodeword.s+ stacktrace
+  assert between(toint.s_i, 48, 57)report"invalid digit" + encodeword.s + stacktrace
    cvttoint(s, i + 1, val * 10 + toint.s_i - 48)
 
-- - - - - - - - - - - - -
+-------------
 
-Function hash(a:seq.char)int 
-if a=decodeword."//"_1 then hash.tointseq.a else
-finalmix32.@(hash32, identity, hashstart32.0, tointseq.a)
-
-use xxhash
+Function hash(a:seq.char)int
+ if a = decodeword."//"_1 then hash.tointseq.a else finalmix32.@(hash32, identity, hashstart32.0, tointseq.a)
 
 Function tointseq(a:seq.char)seq.int
  // This is just a type change and the compiler recognizes this and does not generate code // @(+, toint, empty:seq.int, a)
@@ -165,19 +164,19 @@ Function toUTF8(rin:real, decimals:int)UTF8
     + UTF8.lpad(decimals, 48, toseqint.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
    else toUTF8.intpart.r
 
-Function reallit(s:UTF8)real reallit(tocharseq.toseqint.s, -1, 1, 0, 1)
+Function reallit(s:UTF8)real reallit(tocharseq.toseqint.s,-1, 1, 0, 1)
 
-Function makereal(w:seq.word)real reallit(@(+, decodeword, empty:seq.char, w), -1, 1, 0, 1)
+Function makereal(w:seq.word)real reallit(@(+, decodeword, empty:seq.char, w),-1, 1, 0, 1)
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
  if i > length.s then
  let r = if decimals < 1 then toreal.val else toreal.val / toreal.decimals
-   if neg < 1 then -1.0 * r else r
+   if neg < 1 then-1.0 * r else r
  else if between(toint.s_i, 48, 57)then
- reallit(s, if decimals = -1 then -1 else decimals * 10, i + 1, 10 * val + toint.s_i - 48, neg)
+ reallit(s, if decimals = -1 then-1 else decimals * 10, i + 1, 10 * val + toint.s_i - 48, neg)
  else if s_i = char.32 ∨ s_i = commachar then
  reallit(s, decimals, i + 1, val, neg)
- else if i < 3 ∧ s_i = hyphenchar then reallit(s, decimals, i + 1, val, -1)
+ else if i < 3 ∧ s_i = hyphenchar then reallit(s, decimals, i + 1, val,-1)
  else if i < 3 ∧ s_i = char1."+"then
  reallit(s, decimals, i + 1, val, 1)
  else

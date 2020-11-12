@@ -1,23 +1,20 @@
-
- 
 Module intdict.T
 
 use seq.T
-
-use stdlib
 
 use otherseq.int
 
 use seq.int
 
-Export type:intdict.T  
+use stdlib
+
+Export type:intdict.T
 
 type intdict is record keys:seq.int, data:seq.T
 
-Function data(intdict.T)seq.T export
+Export data(intdict.T)seq.T
 
-Function keys(intdict.T)seq.int export 
-
+Export keys(intdict.T)seq.int
 
 Function empty:intdict.T intdict.T intdict(empty:seq.int, empty:seq.T)
 
@@ -25,9 +22,9 @@ Function add(dict:intdict.T, w:int, d:T)intdict.T
  let i = binarysearch(keys.dict, w)
   if i > 0 then dict
   else
-   intdict(subseq(keys.dict, 1, - i - 1) + [ w]
-   + subseq(keys.dict, - i, length.keys.dict), subseq(data.dict, 1, - i - 1) + [ d]
-   + subseq(data.dict, - i, length.keys.dict))
+   intdict(subseq(keys.dict, 1,-i - 1) + [ w]
+   + subseq(keys.dict,-i, length.keys.dict), subseq(data.dict, 1,-i - 1) + [ d]
+   + subseq(data.dict,-i, length.keys.dict))
 
 Function lookup(dict:intdict.T, w:int)seq.T
  let i = binarysearch(keys.dict, w)
@@ -36,12 +33,9 @@ Function lookup(dict:intdict.T, w:int)seq.T
 Function replace(dict:intdict.T, w:int, d:T)intdict.T
  let i = binarysearch(keys.dict, w)
   if i < 0 then
-  intdict(subseq(keys.dict, 1, - i - 1) + [ w]
-   + subseq(keys.dict, - i, length.keys.dict), subseq(data.dict, 1, - i - 1) + [ d]
-   + subseq(data.dict, - i, length.keys.dict))
+  intdict(subseq(keys.dict, 1,-i - 1) + [ w]
+   + subseq(keys.dict,-i, length.keys.dict), subseq(data.dict, 1,-i - 1) + [ d]
+   + subseq(data.dict,-i, length.keys.dict))
   else
    intdict(keys.dict, subseq(data.dict, 1, i - 1) + [ d]
    + subseq(data.dict, i + 1, length.keys.dict))
-   
-
-

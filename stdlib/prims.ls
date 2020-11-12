@@ -12,19 +12,16 @@ use stdlib
 
 use seq.seq.word
 
-function assignencoding(l:int, a:seq.int) int assignrandom(l,a)
-
+function assignencoding(l:int, a:seq.int)int assignrandom(l, a)
 
 Function execute(name:word)seq.word executecode(toCformat.[ name], empty:seq.int)
 
-
 Function unloadlib(a:seq.word)int unloadlib.toCformat.a
 
-builtin unloadlib(seq.bits)int  
+builtin unloadlib(seq.bits)int
 
 Function loadlibrary(a:word)int loadlib.toCformat.[ a]
 
-Builtin loadlib(seq.bits)int  
+Builtin loadlib(seq.bits)int
 
-Builtin executecode(seq.bits, para:seq.int)seq.word  
-
+Builtin executecode(seq.bits, para:seq.int)seq.word

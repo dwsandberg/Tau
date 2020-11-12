@@ -4,10 +4,10 @@ use stdlib
 
 type ipair is record index:int, value:T
 
-Export type:ipair.T  
+Export type:ipair.T
 
-Function index(ipair.T)int export
+Export index(ipair.T)int
 
-Function value(ipair.T)T export
+Export value(ipair.T)T
 
-Function ipair(i:int, t:T)ipair.T export
+Export ipair(i:int, t:T)ipair.T

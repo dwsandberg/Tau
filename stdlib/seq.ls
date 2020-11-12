@@ -1,8 +1,6 @@
 Module seq.T
 
-
 use seq.T
-
 
 use stacktrace
 
@@ -10,25 +8,23 @@ use stdlib
 
 type seq is sequence length:int, x:T
 
-
-Export type:seq.T  
+Export type:seq.T
 
 type pseq is sequence length:int, a:seq.T, b:seq.T
 
-unbound =(T, T)boolean 
+unbound =(T, T)boolean
 
 Function_(a:seq.T, b:int)T
-     assert not(getseqtype.a = 0) &or ( b > 0 ∧ b ≤ length.a) report"out of bounds" + stacktrace
-    callidx( a, b)
+ assert not(getseqtype.a = 0) ∨ b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
+  callidx(a, b)
 
-builtin callidx(a:seq.T, int)T  // treated specially by compiler //  
+builtin callidx(a:seq.T, int)T // treated specially by compiler //
 
-Builtin getseqtype(a:seq.T)int   
+Builtin getseqtype(a:seq.T)int
 
+Export length(a:seq.T)int
 
-Function length(a:seq.T)int export
-
-Builtin empty:seq.T seq.T // empty seq //  
+Builtin empty:seq.T seq.T // empty seq //
 
 Function =(a:seq.T, b:seq.T)boolean
  if length.a = length.b then subequal(a, b, length.a)else false
@@ -42,11 +38,11 @@ subin is helper function
 Function subin(a:T, s:seq.T, i:int)boolean
  if i = 0 then false else if a = s_i then true else subin(a, s, i - 1)
 
-Function in(a:T, s:seq.T)boolean  subin(a, s, length.s)
+Function in(a:T, s:seq.T)boolean subin(a, s, length.s)
 
 Function identity(a:T)T a
 
-unbound >(a:T, b:T)boolean  
+unbound >(a:T, b:T)boolean
 
 Function findelement(w:T, s:seq.T)seq.T
  let idx = findindex(w, s, 1)
@@ -59,13 +55,13 @@ Function findindex(w:T, s:seq.T, i:int)int
  if i > length.s then i
  else if s_i = w then i else findindex(w, s, i + 1)
 
-- - - - - - - - - - - - - - - - - - - - - - - - -
+-------------------------
 
-Function length(c:pseq.T)int export
+Export length(c:pseq.T)int
 
-Function a(pseq.T)seq.T export
+Export a(pseq.T)seq.T
 
-Function b(pseq.T)seq.T export
+Export b(pseq.T)seq.T
 
 Function_(s:pseq.T, i:int)T
  let len = length.a.s
@@ -78,43 +74,32 @@ Function_(s:pseq.T, i:int)T
 
 Function ispseq(s:seq.T)boolean not(length.to:pseq.T(s) = 0)
 
-Function to:pseq.T(s:seq.T)pseq.T export
- 
+Export to:pseq.T(s:seq.T)pseq.T
+
 Function +(a:seq.T, b:seq.T)seq.T
  let la = length.a
   if la = 0 then b
   else
    let lb = length.b
-    if lb = 0 then a
-    else catnonzero(a , b)
-    
-    
-     let totallength = la + lb
-      if totallength = 2 then [ a_1, b_1]
-      else
-       let ta = to:pseq.T(a)
-        if length.ta = 0 then
-        let tb = to:pseq.T(b)
-          if length.tb = 0 then toseq.pseq(totallength, a, b)else cat3(totallength, a, a.tb, b.tb)
-        else cat3(totallength, a.ta, b.ta, b)
+    if lb = 0 then a else catnonzero(a, b)
+
+let totallength = la + lb if totallength = 2 then [ a_1, b_1]else let ta = to:pseq.T(a)if length.ta = 0 then let tb = to:pseq.T(b)if length.tb = 0 then toseq.pseq(totallength, a, b)else cat3(totallength, a, a.tb, b.tb)else cat3(totallength, a.ta, b.ta, b)
 
 Function cat3(totallength:int, a:seq.T, b:seq.T, c:seq.T)seq.T
-   // if totallength=3 then [a_1,b_1,c_1]
- else // if length.a > length.b then toseq.pseq(totallength, a,  catnonzero(b,c))
- else if length.b < length.c then toseq.pseq(totallength, catnonzero(a , b), c)
- else   toseq.pseq(totallength, toseq.pseq(length.a + length.b, a, b), c)
- 
-Function catnonzero(a:seq.T, b:seq.T)seq.T
-    let totallength = length.a + length.b
-      if totallength = 2 then [ a_1, b_1]
-      else
-       let ta = to:pseq.T(a)
-        if length.ta = 0 then
-        let tb = to:pseq.T(b)
-          if length.tb = 0 then toseq.pseq(totallength, a, b)else 
-          cat3(totallength, a, a.tb, b.tb)
-        else cat3(totallength, a.ta, b.ta, b)
+ // if totallength = 3 then [ a_1, b_1, c_1]else //
+ if length.a > length.b then toseq.pseq(totallength, a, catnonzero(b, c))
+ else if length.b < length.c then toseq.pseq(totallength, catnonzero(a, b), c)
+ else toseq.pseq(totallength, toseq.pseq(length.a + length.b, a, b), c)
 
+Function catnonzero(a:seq.T, b:seq.T)seq.T
+ let totallength = length.a + length.b
+  if totallength = 2 then [ a_1, b_1]
+  else
+   let ta = to:pseq.T(a)
+    if length.ta = 0 then
+    let tb = to:pseq.T(b)
+      if length.tb = 0 then toseq.pseq(totallength, a, b)else cat3(totallength, a, a.tb, b.tb)
+    else cat3(totallength, a.ta, b.ta, b)
 
 Function largeseq(s:seq.T)seq.T
  let length = length.s
@@ -154,6 +139,6 @@ Function last(a:seq.T)T a_(length.a)
 
 Function isempty(a:seq.T)boolean length.a = 0
 
-- - - - - - - - - - - - - - - - - - - - - - - - - -
+--------------------------
 
-Builtin packed(s:seq.T)seq.T    
+Builtin packed(s:seq.T)seq.T

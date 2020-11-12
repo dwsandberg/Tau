@@ -1,5 +1,3 @@
-
-
 module mangle
 
 use bits
@@ -10,9 +8,8 @@ use stdlib
 
 use seq.word
 
-
-function seperator( sep:char,acc:seq.char,b:seq.char) seq.char
-if isempty.acc then b else acc+sep+b 
+function seperator(sep:char, acc:seq.char, b:seq.char)seq.char
+ if isempty.acc then b else acc + sep + b
 
 Function break(w:word, a:seq.word, j:int)seq.seq.word
  let i = findindex(w, a, j)
@@ -20,15 +17,14 @@ Function break(w:word, a:seq.word, j:int)seq.seq.word
   if j > length.a then empty:seq.seq.word else [ subseq(a, j, i)]
   else [ subseq(a, j, i - 1)] + break(w, a, i + 1)
 
-Function mangle(fsig:seq.word,module:seq.word) word
- let i=findindex("("_1, fsig)  
- let modname=module
- let parameters=break(","_1, subseq(fsig, 1, length.fsig - 1), i + 1 )
-  encodeword.@(seperator.char.charmajorseparator,codeup,empty:seq.char, [[merge.subseq(fsig,1,i-1)],module]+parameters)
-
+Function mangle(fsig:seq.word, module:seq.word)word
+ let i = findindex("("_1, fsig)
+ let modname = module
+ let parameters = break(","_1, subseq(fsig, 1, length.fsig - 1), i + 1)
+  encodeword
+  .@(seperator.char.charmajorseparator, codeup, empty:seq.char, [ [ merge.subseq(fsig, 1, i - 1)], module] + parameters)
 
 Function codedown(w:word)seq.seq.word codedown(decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)
-
 
 function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.word)seq.seq.word
  if i > length.l then
@@ -41,17 +37,16 @@ function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.
  else if l_i = char1."Q"then
  assert i + 2 ≤ length.l report"format problem with codedown for" + encodeword.l
   let first = hexvalue.l_(i + 1)
-  let inc=if first > 0 then // one hex digit // 3 else // two hex digit // 6
+  let inc = if first > 0 then // one hex digit // 3 else // two hex digit // 6
   let t = first * 16 + hexvalue.l_(i + 2)
-   let ch=if inc=3 then  char.t  
-   else
-    char(((t * 16 + hexvalue.l_(i + 3)) * 16 + hexvalue.l_(i + 4))
-    * 16
-    + hexvalue.l_(i + 5))
-    if     ch in decodeword.".:"_1   then 
-      codedown(l, i + 1, empty:seq.char, words + encodeword.w+encodeword.[ch], result)
-    else 
-     codedown(l, i + inc, w + ch, words, result)
+  let ch = if inc = 3 then char.t
+  else
+   char(((t * 16 + hexvalue.l_(i + 3)) * 16 + hexvalue.l_(i + 4))
+   * 16
+   + hexvalue.l_(i + 5))
+   if ch in decodeword.".:"_1 then
+   codedown(l, i + 1, empty:seq.char, words + encodeword.w + encodeword.[ ch], result)
+   else codedown(l, i + inc, w + ch, words, result)
  else codedown(l, i + 1, w + l_i, words, result)
 
 function legal seq.char decodeword."0123456789ABCDEFGHIJKLMNOPRSTUVWXYabcdefghijklmnopqrstuvwxy"_1
@@ -79,8 +74,6 @@ function codeup(l:seq.char, char:char)seq.char
 
 function hexdigit(val:bits, digit:int)char legal_(toint(val >> 4 * digit ∧ bits.15) + 1)
 
-Function manglednopara(w:word)int @(+, count.char.90, -1, decodeword.w)
+Function manglednopara(w:word)int @(+, count.char.90,-1, decodeword.w)
 
 function count(val:char, i:char)int if val = i then 1 else 0
-
-

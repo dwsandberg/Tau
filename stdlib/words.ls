@@ -1,4 +1,3 @@
-
 module words
 
 use UTF8
@@ -11,7 +10,13 @@ use seq.seq.alphaword
 
 use seq.alphaword
 
+use bits
+
 use otherseq.char
+
+use encoding.seq.char
+
+use seq.encodingpair.seq.char
 
 use otherseq.int
 
@@ -19,26 +24,22 @@ use encoding.seq.int
 
 use stdlib
 
-use bits
-
-Export type:word s 
+Export type:word s
 
 type word is record asencoding:encoding.seq.char
 
-Function asencoding(w:word)encoding.seq.char export
+Export asencoding(w:word)encoding.seq.char
 
-Function word(encoding.seq.char)word export
+Export word(encoding.seq.char)word
 
-use encoding.seq.char
+Function encodeword(a:seq.char)word word.encode.a
 
-
-Function encodeword(a:seq.char)word word.encode( a)
-
-Function decodeword(w:word)seq.char decode( asencoding.w)
+Function decodeword(w:word)seq.char decode.asencoding.w
 
 Function hash(a:word)int hash.asencoding.a
 
-function assignencoding(l:int, a:seq.char) int toint(bits.assignrandom(l,a) &and  bits(toint( bits.1 << 31)-1))
+function assignencoding(l:int, a:seq.char)int
+ toint(bits.assignrandom(l, a) ∧ bits(toint(bits.1 << 31) - 1))
 
 Function =(a:word, b:word)boolean asencoding.a = asencoding.b
 
@@ -50,21 +51,15 @@ Function merge(a:seq.word)word // make multiple words into a single word. // enc
 
 * Functions to perform alphabetical sorting
 
-Export type:alphaword  s
+Export type:alphaword s
 
 type alphaword is record toword:word
 
-Function alphaword(word)alphaword export
+Export alphaword(word)alphaword
 
-Function toword(alphaword)word export
+Export toword(alphaword)word
 
- use encoding.seq.char
- 
- use seq.encodingpair.seq.char
- 
-Function addwords(  b:seq.encodingpair.seq.char) encodingstate.seq.char 
- addencodingpairs.b
-
+Function addwords(b:seq.encodingpair.seq.char)encodingstate.seq.char addencodingpairs.b
 
 Function toalphaseq(a:seq.word)seq.alphaword
  // This is just a type change and the compiler recognizes this and does not generate code // @(+, alphaword, empty:seq.alphaword, a)
@@ -76,7 +71,7 @@ Function towordseq(a:seq.alphaword)seq.word @(+, toword, empty:seq.word, a)
 
 Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
 
-Function ?(a:seq.alphaword, b:seq.alphaword)ordering export
+Export ?(a:seq.alphaword, b:seq.alphaword)ordering
 
 Function alphasort(a:seq.seq.word)seq.seq.word
  let b = @(+, toalphaseq, empty:seq.seq.alphaword, a)

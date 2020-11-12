@@ -33,7 +33,7 @@ function breakcommas(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
    breakcommas(a, d + 2, d + 2, result + UTF8.subseq(a, i + 1, d - 1))
  else breakcommas(a, i + 1, last, result)
 
-- - - - - - - -
+--------
 
 handle files of paragraphs
 
@@ -41,10 +41,12 @@ Function breakparagraph(a:UTF8)seq.UTF8 breakparagraph(toseqint.a, 1, 1, empty:s
 
 function blankline(a:seq.int, i:int)int
  // returns 0 if no new line is found before next non white char otherwise returns index of newline //
-  if i > length.a then i else let t = a_i
-  if t = 10 then i
-  else if t > length.classifychar ∨ t = 0 then 0
-  else if classifychar_t = "SPACE"_1 then blankline(a, i + 1)else 0
+ if i > length.a then i
+ else
+  let t = a_i
+   if t = 10 then i
+   else if t > length.classifychar ∨ t = 0 then 0
+   else if classifychar_t = "SPACE"_1 then blankline(a, i + 1)else 0
 
 if classify(a_i)= 3 then if a_i = 10 then i else blankline(a, i + 1)else 0
 
@@ -60,7 +62,7 @@ Function breakparagraph(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
    else breakparagraph(a, i + 1, last, result)
  else breakparagraph(a, i + 1, last, result)
 
-Function classifychar seq.word ' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +, -.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ 0]^_'
+Function classifychar seq.word ' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ 0]^_'
 
 Function towords(a:UTF8)seq.word towords.decodeUTF8.a
 
@@ -79,14 +81,14 @@ function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
       if class = "0"_1 then towords2(a, i + 1, last, result)
       else if class = "SPACE"_1 then
       towords2(a, i + 1, i + 1, if last = i then result else result + encodeword.subseq(a, last, i - 1))
-      else // if class = "-"_1 ∧ i + 1 ≤ length.a ∧ between(toint.a_(i + 1), 48, 57)then
-       towords2(a, i + 2, i, if last = i then result else result + encodeword.subseq(a, last, i - 1))
-      else // if t = periodchar ∧ i + 1 ≤ length.a ∧ a_(i + 1) = spacechar then
-      towords2(a, i + 2, i + 2, if last = i then result + encodeword.[ periodchar, spacechar]
-       else result + encodeword.subseq(a, last, i - 1) + encodeword.[ periodchar, spacechar])
       else
-       towords2(a, i + 1, i + 1,(if last = i then result else result + encodeword.subseq(a, last, i - 1)) + class)
+       // if class ="-"_1 ∧ i + 1 ≤ length.a ∧ between(toint.a_(i + 1), 48, 57)then towords2(a, i + 2, i, if last = i then result else result + encodeword.subseq(a, last, i-1))else //
+       if t = periodchar ∧ i + 1 ≤ length.a ∧ a_(i + 1) = spacechar then
+       towords2(a, i + 2, i + 2, if last = i then result + encodeword.[ periodchar, spacechar]
+        else result + encodeword.subseq(a, last, i - 1) + encodeword.[ periodchar, spacechar])
+       else
+        towords2(a, i + 1, i + 1,(if last = i then result else result + encodeword.subseq(a, last, i - 1)) + class)
 
 ________
 
-- - - - - - - - - - - - - - - - - - -
+-------------------

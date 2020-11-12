@@ -4,7 +4,6 @@ use seq.T
 
 use stdlib
 
-
 Function ≠(a:T, b:T)boolean not(a = b)
 
 Function ≤(a:T, b:T)boolean not(a > b)
@@ -13,9 +12,9 @@ Function ≥(a:T, b:T)boolean not(b > a)
 
 Function <(a:T, b:T)boolean b > a
 
-unbound =(T, T)boolean 
+unbound =(T, T)boolean
 
-unbound >(a:T, b:T)boolean  
+unbound >(a:T, b:T)boolean
 
 Function reverse(s:seq.T)seq.T
  @(+,_(s), empty:seq.T, arithseq(length.s, 0 - 1, length.s))
@@ -35,13 +34,11 @@ Function_(s:cseq.T, i:int)T element.s
 
 Function constantseq(len:int, element:T)seq.T toseq.cseq(len, element)
 
-- - - - - - - - - - - - - - - - - - - -
+--------------------
 
 dseq lets a sequence have a default value even beyond the length of the seq.
 
 type dseq is sequence length:int, default:T, data:seq.T
-
-
 
 Function_(d:dseq.T, i:int)T if i > length.data.d then default.d else(data.d)_i
 
@@ -77,26 +74,26 @@ Function fastsubseq(s:seq.T, from:int, to:int)seq.T
  else if to > length.s then fastsubseq(s, from, length.s)
  else if to < 1 then fastsubseq(s, 1, to)
  else toseq.fastsubseq(to - from + 1, s, from - 1)
- 
-Function to:fastsubseq.T(s:seq.T)fastsubseq.T export
 
-Function data(fastsubseq.T) seq.T export
+Export to:fastsubseq.T(s:seq.T)fastsubseq.T
+
+Export data(fastsubseq.T)seq.T
 
 _____________
 
 type arithmeticseq is sequence length:int, step:T, start:T
 
-unbound +(T, T)T  
+unbound +(T, T)T
 
-unbound *(int, T)T  
+unbound *(int, T)T
 
-Function length(s:arithmeticseq.T)int export
+Export length(s:arithmeticseq.T)int
 
 Function_(s:arithmeticseq.T, i:int)T start.s + (i - 1) * step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 
-unbound ?(T, T)ordering 
+unbound ?(T, T)ordering
 
 Function ?(a:seq.T, b:seq.T)ordering subcmp(a, b, 1)
 
@@ -131,7 +128,7 @@ Function binarysearch(s:seq.T, val:T)int
  // binarysearch returns position in seq if found and the negation of the posistion if not found // binarysearch(s, 1, length.s, val)
 
 Function binarysearch(s:seq.T, b:int, a:int, val:T)int
- if a < b then -(a + 1)
+ if a < b then-(a + 1)
  else
   let p =(a + b) / 2
   let c = s_p ? val
@@ -141,7 +138,7 @@ Function binarysearch(s:seq.T, b:int, a:int, val:T)int
 Function setinsert(s:seq.T, val:T)seq.T
  let i = binarysearch(s, val)
   if i > 0 then s
-  else subseq(s, 1, - i - 1) + [ val] + subseq(s, - i, length.s)
+  else subseq(s, 1,-i - 1) + [ val] + subseq(s,-i, length.s)
 
 Function setdelete(s:seq.T, val:T)seq.T
  let i = binarysearch(s, val)
@@ -153,6 +150,6 @@ Function setreplaceorinsert(s:seq.T, val:T)seq.T
  let i = binarysearch(s, val)
   if i > 0 then
   subseq(s, 1, i - 1) + [ val] + subseq(s, i + 1, length.s)
-  else subseq(s, 1, - i - 1) + [ val] + subseq(s, - i, length.s)
+  else subseq(s, 1,-i - 1) + [ val] + subseq(s,-i, length.s)
 
 Function lpad(n:int, val:T, l:seq.T)seq.T constantseq(n - length.l, val) + l

@@ -4,7 +4,7 @@ use UTF8
 
 use stdlib
 
-Export type:timestamp  
+Export type:timestamp
 
 type timestamp is record toint:int
 
@@ -35,7 +35,7 @@ Function fromJuliantointseq(dt:int)seq.int
   [ c - if m > 2 then 4716 else 4715, m, d - e * 306001 / 10000]
 
 Function timestamplit(t:UTF8)timestamp
- // assumes t is in format 2019 -12 -12T12:48:11 //
+ // assumes t is in format 2019-12-12T12:48:11 //
  let year = intlit.subseq(t, 1, 4)
  let month = intlit.subseq(t, 6, 7)
  let day = intlit.subseq(t, 9, 10)
@@ -48,7 +48,6 @@ Function timestamplit(t:UTF8)timestamp
 Function totimestamp(year:int, month:int, day:int, hour:int, minute:int, second:int)timestamp
  timestamp(((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second)
 
-
 Function decompose(ts:timestamp)seq.int
  // returns sequence of year, month, day, hour, minute, second //
  let t = toint.ts
@@ -59,11 +58,11 @@ Function decompose(ts:timestamp)seq.int
   fromJuliantointseq(t / (24 * 60 * 60)) + [ hours, minutes, seconds]
 
 Function print(ts:timestamp)seq.word
- let d = decompose.ts
- [ merge.[ toword.d_1,"-"_1, toword.d_2,"-"_1, toword.d_3,"."_1, toword.d_4,":"_1, toword.d_5,":"_1
-  , toword.d_6]]
+ let d = decompose.ts [ merge
+ .[ toword.d_1,"-"_1, toword.d_2,"-"_1, toword.d_3,"."_1, toword.d_4,":"_1, toword.d_5,":"_1
+ , toword.d_6]]
 
-Builtin currenttime timestamp  
+Builtin currenttime timestamp
 
 Function asseconds(t:timestamp)int toint.t
 

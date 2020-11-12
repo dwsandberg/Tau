@@ -2,14 +2,13 @@ Module mytype
 
 use stdlib
 
-Export type:mytype  
+Export type:mytype
 
 type mytype is record towords:seq.word
 
-Export mytype(seq.word)mytype  
+Export mytype(seq.word)mytype
 
-Function towords(mytype)seq.word export
-
+Export towords(mytype)seq.word
 
 Function print(p:mytype)seq.word prt(towords.p, length.towords.p)
 
@@ -33,7 +32,3 @@ Function replaceT(with:mytype, m:mytype)mytype
  if(towords.m)_1 = "T"_1 then
  mytype(towords.with + subseq(towords.m, 2, length.towords.m))
  else m
-
-
-
-

@@ -8,21 +8,21 @@ use bits
 
 use stdlib
 
-Export type:bitpackedseq.T  
+Export type:bitpackedseq.T
 
 type bitpackedseq is sequence length:int, data:seq.T, part:bits
 
-unbound frombits:T(a:bits)T 
+unbound frombits:T(a:bits)T
 
-unbound tobits(T)bits  
+unbound tobits(T)bits
 
-unbound sizeinbits(T)int  
+unbound sizeinbits(T)int
 
-Function bitpackedseq(int, seq.T, bits)bitpackedseq.T export
+Export bitpackedseq(int, seq.T, bits)bitpackedseq.T
 
-Function toseq(a:bitpackedseq.T)seq.T export
+Export toseq(a:bitpackedseq.T)seq.T
 
-Function length(bitpackedseq.T)int export
+Export length(bitpackedseq.T)int
 
 Function empty:bitpackedseq.T bitpackedseq.T bitpackedseq(0, empty:seq.T, bits.0)
 
@@ -71,7 +71,8 @@ Function add(a:bitpackedseq.T, b:bits, count:int)bitpackedseq.T
  let slotsperword = 64 / nobits
  let slot = length.a mod slotsperword
  let slotstoadd = min(slotsperword - slot, count)
- let newpart =(b ∧ bits.-1 >> 64 - slotstoadd * nobits) << slot * nobits ∨ part.a
+ let newpart =(b ∧ bits.-1 >> 64 - slotstoadd * nobits) << slot * nobits
+ ∨ part.a
  let d = if slot + slotstoadd = slotsperword then
  bitpackedseq(length.a + slotstoadd, data.a + frombits:T(newpart), bits.0)
  else bitpackedseq(length.a + slotstoadd, data.a, newpart)

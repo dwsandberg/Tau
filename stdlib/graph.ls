@@ -24,9 +24,9 @@ use stdlib
 
 type arc is record tail:T, head:T
 
-Export type:arc.T  
+Export type:arc.T
 
-Export type:graph.T  
+Export type:graph.T
 
 type graph is record arcs:set.arc.T, backarcs:set.arc.T, nodes:set.T
 
@@ -41,17 +41,17 @@ Function ?(a:arc.T, b:arc.T)ordering
 
 Function ?2(a:arc.T, b:arc.T)ordering tail.a ? tail.b
 
-unbound =(a:T, b:T)boolean  
+unbound =(a:T, b:T)boolean
 
-unbound ?(a:T, b:T)ordering  
+unbound ?(a:T, b:T)ordering
 
-Function head(arc.T)T export
+Export head(arc.T)T
 
-Function tail(arc.T)T export
+Export tail(arc.T)T
 
-Function arcs(graph.T)set.arc.T export
+Export arcs(graph.T)set.arc.T
 
-Function nodes(graph.T)set.T export
+Export nodes(graph.T)set.T
 
 Function subgraph(g:graph.T, nodes:set.T)graph.T
  @(+, subgraph1(g, nodes), newgraph.empty:seq.arc.T, toseq.nodes)
@@ -63,7 +63,7 @@ function subgraph1(g:graph.T, nodes:set.T, n:T)seq.arc.T
 
 @(setinsert, b, @(setinsert, a, empty.T, arcs.g), arcs.g)
 
-Function arc(a:T, b:T)arc.T export
+Export arc(a:T, b:T)arc.T
 
 Function successors(g:graph.T, n:T)set.T
  @(+, head, empty:set.T, toseq.findelement2(arcs.g, arc(n, n)))

@@ -2,27 +2,27 @@ Module bits
 
 use stdlib
 
-Export type:byte    
+Export type:byte
 
-Export type:bits  
+Export type:bits
 
-Export type:bit   
+Export type:bit
 
 type bits is record toint:int
 
-Function toint(bits)int export
+Export toint(bits)int
 
-Function bits(int)bits export
+Export bits(int)bits
 
- Builtin ∨(a:bits, bits)bits  
+Builtin ∨(a:bits, bits)bits
 
- Builtin ∧(a:bits, bits)bits  
+Builtin ∧(a:bits, bits)bits
 
- Builtin >>(a:bits, i:int)bits  
+Builtin >>(a:bits, i:int)bits
 
- Builtin <<(a:bits, i:int)bits  
+Builtin <<(a:bits, i:int)bits
 
- Builtin xor(a:bits, b:bits)bits  
+Builtin xor(a:bits, b:bits)bits
 
 __________________
 
@@ -30,9 +30,9 @@ type bit is record toint:int
 
 Function =(a:bit, b:bit)boolean toint.a = toint.b
 
-Function toint(bit)int export
+Export toint(bit)int
 
-Function bit(int)bit export
+Export bit(int)bit
 
 Function sizeinbits(a:bit)int 1
 
@@ -50,8 +50,8 @@ Function tobits(a:byte)bits bits.toint.a
 
 Function frombits:byte(a:bits)byte byte.toint.a
 
-Function byte(int)byte export
+Export byte(int)byte
 
-Function toint(byte)int export
+Export toint(byte)int
 
 _______________

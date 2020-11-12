@@ -1,8 +1,4 @@
-#!/usr/local/bin/tau
-
 Module newpretty
-
-run newpretty test1
 
 use parsersupport.attribute
 
@@ -13,6 +9,8 @@ use seq.token.attribute
 use fileio
 
 use format
+
+use groupparagraphs
 
 use seq.int
 
@@ -30,18 +28,7 @@ use set.seq.word
 
 use seq.word
 
-use groupparagraphs
-
-
-Function test1 seq.word pretty(" stdlib
- UTF8 bitpackedseq bits  
- codegen codetemplates  deepcopy encoding fileio format graph
- groupparagraphs intercode internalbc ipair libdescfunc libscope
- llvm main2 opt2 oseq packedseq 
- parse pass1 pass2 persistant persistantseq prims process real
-  reconstruct seq set stack stacktrace symbol textio tree worddict xxhash 
- timestamp maindict words 
-" ,"junk") 
+Function test1 seq.word pretty("stdlib UTF8 bitpackedseq bits codegen codetemplates deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 oseq packedseq parse pass1 pass2new persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash timestamp maindict words","junk")
 
 Function gettexts(l:seq.word)seq.seq.word @(+, gettexts(l_1), empty:seq.seq.word, subseq(l, 2, length.l))
 
@@ -53,19 +40,19 @@ Function gettexts(lib:word, file:word)seq.seq.word
 function gettext2(s:seq.word)seq.seq.word
  if length.s = 0 then empty:seq.seq.word
  else if s_1 in "Function function type use"then [ s]else empty:seq.seq.word
- 
- Function htmlcode(libname:seq.word)seq.word
- let p=prettyfile.getlibrarysrc.libname_1
+
+Function htmlcode(libname:seq.word)seq.word
+ let p = prettyfile('  &{ noformat <hr id ="T">  &}  &keyword ', getlibrarysrc.libname_1)
  let modules = @(+, findmodules,"", p)
- " &{ noformat <h1> Source code for Library" + libname + "</h1>  &}" + @(+, ref,"", modules) +
- @(seperator." &p", identity,"",p)
+  " &{ noformat <h1> Source code for Library" + libname + "</h1>  &}" + @(+, ref,"", modules)
+  + @(seperator." &p", identity,"", p)
 
 function ref(modname:word)seq.word
  '  &{ noformat <a href ="' + merge.["#"_1, modname] + '"> ' + modname
  + "</a>  &}"
 
-function findmodules(p:seq.word)seq.word if subseq(p,1,2) in[ "&{ noformat"]  then [ p_7]else""
-
+function findmodules(p:seq.word)seq.word
+ if subseq(p, 1, 2) in [" &{ noformat"]then [ p_7]else""
 
 ____________________________
 
@@ -75,27 +62,31 @@ Function pretty(l:seq.word, targetdir:seq.word)seq.word
 
 function prettyfile(lib:word, newlibdir:word, file:word)seq.word
  let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
- let b = @(seperator." &p", identity,"", prettyfile.gettext.file2)
+ let b = @(seperator." &p", identity,"", prettyfile("", gettext.file2))
  let discard = createfile([ merge([ newlibdir] + "/" + file + ".ls")], processtotext.b)
   b
 
-Function prettyfile(s:seq.seq.word)seq.seq.word
- prettyfile(s, 1, empty:seq.seq.word, empty:seq.seq.word, empty:seq.seq.word)
+Function prettyfile(modhead:seq.word, s:seq.seq.word)seq.seq.word
+ prettyfile(modhead, s, 1, empty:seq.seq.word, empty:seq.seq.word, empty:seq.seq.word)
 
-function prettyfile(l:seq.seq.word, i:int, uses:seq.seq.word, libbody:seq.seq.word, result:seq.seq.word)seq.seq.word
+function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, libbody:seq.seq.word, result:seq.seq.word)seq.seq.word
  if i > length.l then result + sortuse.uses + libbody
  else
   let s = l_i
-   if length.s = 0 then prettyfile(l, i + 1, uses, libbody, result)
-   else if s_1 in "use"then prettyfile(l, i + 1, uses + reverse.s, libbody, result)
+   if length.s = 0 then prettyfile(modhead, l, i + 1, uses, libbody, result)
+   else if s_1 in "use"then prettyfile(modhead, l, i + 1, uses + reverse.s, libbody, result)
    else if s_1 in "Function function type"then
-   let tmp= text.(toseq.parse.s)_1
-   let tmp2=if s_1 in "Function function" &and last.tmp ="export"_1 then  "&keyword Export" + subseq(tmp,3,length.tmp-1)
-   else tmp
-   prettyfile(l, i + 1, uses, libbody + tmp2, result)
+   let tmp = text.(toseq.parse.s)_1
+    let tmp2 = if s_1 in "Function function" ∧ last.tmp = "export"_1 then
+    " &keyword Export" + subseq(tmp, 3, length.tmp - 1)
+    else tmp
+     prettyfile(modhead, l, i + 1, uses, libbody + tmp2, result)
    else if s_1 in "module Module"then
-   let newresult = result + sortuse.uses + libbody + (' &{ noformat <hr id =" ' + s_2 + ' " >  &} &keyword ' + s)
-     prettyfile(l, i + 1, empty:seq.seq.word, empty:seq.seq.word, newresult)
+   let target = if length.modhead > 1 then
+    subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
+    else empty:seq.word
+    let newresult = result + sortuse.uses + libbody + (target + s)
+     prettyfile(modhead, l, i + 1, empty:seq.seq.word, empty:seq.seq.word, newresult)
    else
     let temp = if s_1 in "Library library"then
     let p = s
@@ -106,8 +97,8 @@ function prettyfile(l:seq.seq.word, i:int, uses:seq.seq.word, libbody:seq.seq.wo
       + " &br  &keyword exports"
       + alphasort.subseq(p, e + 1, length.p)
     else escapeformat.s
-     if length.uses = 0 then prettyfile(l, i + 1, uses, libbody, result + temp)
-     else prettyfile(l, i + 1, uses, libbody + temp, result)
+     if length.uses = 0 then prettyfile(modhead, l, i + 1, uses, libbody, result + temp)
+     else prettyfile(modhead, l, i + 1, uses, libbody + temp, result)
 
 function formatuse(a:seq.word)seq.word" &keyword" + reverse.a
 
@@ -136,9 +127,9 @@ type attribute is record toseq:seq.prettyresult
 
 function parse(l:seq.word)attribute parse:attribute(l)
 
-Export type:attribute  
+Export type:attribute
 
-Export type:prettyresult  
+Export type:prettyresult
 
 Function attribute(text:seq.word)attribute attribute.[ prettyresult(0, width.text, text)]
 
@@ -281,11 +272,11 @@ Function action(ruleno:int, input:seq.token.attribute, R:reduction.attribute)att
   else pretty.[ R_1, R_2, attribute." &keyword then  &br", block.R_4, elseblock.R_6]
  else if ruleno = // E E^E // 18 then wrap(1, R_1, text.R_2, R_3)
  else if ruleno = // E E_E // 19 then wrap(1, R_1, text.R_2, R_3)
- else if ruleno = // E - E // 20 then unaryminus.R_2
+ else if ruleno = // E-E // 20 then unaryminus.R_2
  else if ruleno = // E W.E // 21 then wrap(3, R_1, text.R_2, R_3)
  else if ruleno = // E N.E // 22 then wrap(3, R_1, text.R_2, R_3)
  else if ruleno = // E E * E // 23 then wrap(4, R_1, text.R_2, R_3)
- else if ruleno = // E E - E // 24 then wrap(5, R_1, text.R_2, R_3)
+ else if ruleno = // E E-E // 24 then wrap(5, R_1, text.R_2, R_3)
  else if ruleno = // E E = E // 25 then wrap(6, R_1, text.R_2, R_3)
  else if ruleno = // E E > E // 26 then wrap(7, R_1, text.R_2, R_3)
  else if ruleno = // E E ∧ E // 27 then wrap(8, R_1, text.R_2, R_3)
@@ -312,7 +303,7 @@ Function action(ruleno:int, input:seq.token.attribute, R:reduction.attribute)att
   else t
    pretty.[ attribute.[ prettyresult(0, length.text.R_1, t2)], R_2]
  else if ruleno = // N_// 41 then R_1
- else if ruleno = // N - // 42 then R_1
+ else if ruleno = // N-// 42 then R_1
  else if ruleno = // N = // 43 then R_1
  else if ruleno = // N > // 44 then R_1
  else if ruleno = // N * // 45 then R_1
@@ -377,11 +368,11 @@ Function actionold(ruleno:int, input:seq.token.attribute, R:reduction.attribute)
   else pretty.[ R_1, R_2, attribute." &keyword then  &br", block.R_4, elseblock.R_6]
  else if ruleno = // E E^E // 23 then wrap(1, R_1, text.R_2, R_3)
  else if ruleno = // E E_E // 24 then wrap(1, R_1, text.R_2, R_3)
- else if ruleno = // E - E // 25 then unaryminus.R_2
+ else if ruleno = // E-E // 25 then unaryminus.R_2
  else if ruleno = // E W.E // 26 then wrap(3, R_1, text.R_2, R_3)
  else if ruleno = // E N.E // 27 then wrap(3, R_1, text.R_2, R_3)
  else if ruleno = // E E * E // 28 then wrap(4, R_1, text.R_2, R_3)
- else if ruleno = // E E - E // 29 then wrap(5, R_1, text.R_2, R_3)
+ else if ruleno = // E E-E // 29 then wrap(5, R_1, text.R_2, R_3)
  else if ruleno = // E E = E // 30 then wrap(6, R_1, text.R_2, R_3)
  else if ruleno = // E E > E // 31 then wrap(7, R_1, text.R_2, R_3)
  else if ruleno = // E E ∧ E // 32 then wrap(8, R_1, text.R_2, R_3)
@@ -411,7 +402,7 @@ Function actionold(ruleno:int, input:seq.token.attribute, R:reduction.attribute)
   else t
    pretty.[ attribute.[ prettyresult(0, length.text.R_1, t2)], R_2]
  else if ruleno = // N_// 47 then R_1
- else if ruleno = // N - // 48 then R_1
+ else if ruleno = // N-// 48 then R_1
  else if ruleno = // N = // 49 then R_1
  else if ruleno = // N > // 50 then R_1
  else if ruleno = // N * // 51 then R_1

@@ -1,16 +1,10 @@
-#!/usr/local/bin/tau 
+#!/usr/local/bin/tau testall testall
  
  Module testall 
  
  Library testall checking myseq point randomphrase test11 test11a test2 test20 test5 testencoding testopt 
  tree2 testmodules testprocess testseq bug7
  uses stdlib exports checking randomphrase test11 test11a test2 test5 testall testencoding testopt testmodules 
- 
- /run randomphrase randomphrase 
- 
- /run testencoding testencoding 
- 
-run testall testall 
  
  * usegraph exclude stdlib 
  

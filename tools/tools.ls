@@ -16,17 +16,17 @@ Library tools bandeskopf barycenter display displaygraph displaytextgraph doc ge
  
 /run tools testfirstpass
 
-run tools testprofile
+/run tools testprofile
 
 /run tools prettytest
 
 /run tools callgraphtest
 
-run tools stdlibdoc
+/run tools stdlibdoc
 
 /run doc createdoc
 
-/run tools testhtmlcode
+run tools testhtmlcode
 
 /run genLR1 gentau2
 
