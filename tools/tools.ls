@@ -1,4 +1,8 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau tools stdlibdoc
+
+tools testprofile
+
+tools stdlibdoc
 
 Module tools
 

@@ -32,3 +32,25 @@ Function replaceT(with:mytype, m:mytype)mytype
  if(towords.m)_1 = "T"_1 then
  mytype(towords.with + subseq(towords.m, 2, length.towords.m))
  else m
+ 
+Function typeint  mytype mytype."int"
+
+Function typeptr  mytype mytype."ptr"
+
+
+Function typeseq  mytype mytype."T seq"
+
+Function typepseq  mytype mytype."T pseq"
+
+Function typeencoding  mytype mytype."T encoding"
+
+Function typeencodingstate  mytype mytype."T encodingstate"
+
+Function typeencodingpair mytype mytype."T encodingpair"
+
+Function typeprocess mytype mytype."T process"
+
+
+
+Function +(a:mytype,b:mytype) mytype
+     mytype(towords.b+abstracttype.a  )

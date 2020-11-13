@@ -38,6 +38,53 @@ Export type:programele
 
 Export type:symbol
 
+Export typeint  mytype  
+
+Export typeint  mytype  
+
+Export typeseq  mytype  
+
+Export typeptr  mytype  
+
+Export typepseq  mytype  
+
+Export typeencoding  mytype 
+
+Export typeencodingstate  mytype  
+
+Export typeencodingpair mytype   
+
+Export typeprocess mytype  
+
+Export +(a:mytype,b:mytype) mytype
+
+Export type:set.symbol
+
+Export type:mytype
+
+
+Export mytype(seq.word)mytype
+
+Export abstracttype(m:mytype)word
+
+Export isabstract(a:mytype)boolean
+
+Export parameter(m:mytype)mytype
+
+Export print(p:mytype)seq.word
+
+Export =(t:mytype, b:mytype)boolean
+
+Export replaceT(with:mytype, m:mytype)mytype
+
+Export iscomplex(a:mytype)boolean
+
+Export type:firstpass
+
+Function typerep(m:mytype) seq.word towords.m
+
+Function abstracttype(w:word,parameter:mytype) mytype mytype(typerep.parameter+w)
+
 Function =(a:symbol, b:symbol)boolean
  flags.a = flags.b ∧ fsig.a = fsig.b ∧ modname.a = modname.b
 
@@ -132,29 +179,7 @@ Function replaceTsymbol(with:mytype, s:symbol)symbol
 
 Function ?(a:mytype, b:mytype)ordering towords.a ? towords.b
 
-Export type:set.symbol
 
-Export type:mytype
-
-Export towords(mytype)seq.word
-
-Export mytype(seq.word)mytype
-
-Export abstracttype(m:mytype)word
-
-Export isabstract(a:mytype)boolean
-
-Export parameter(m:mytype)mytype
-
-Export print(p:mytype)seq.word
-
-Export =(t:mytype, b:mytype)boolean
-
-Export replaceT(with:mytype, m:mytype)mytype
-
-Export iscomplex(a:mytype)boolean
-
-Export type:firstpass
 
 type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol, types:seq.myinternaltype, prg:program
 
@@ -212,16 +237,19 @@ Function Callidx(kind:word)symbol
 Function Emptyseq seq.symbol [ Lit.0, Lit.0, symbol("RECORD(int, int)","$record","ptr", specialbit)]
 
 Function pseqidxsym(type:mytype)symbol
- newsymbol("_", mytype(towords.type + "seq"_1), [ mytype(towords.type + "pseq"_1), mytype."int"], type)
+ newsymbol("_",  typeseq+  type  , [ typepseq+type  , typeint], type)
 
 Function Sequence(len:int, typ:seq.word)symbol
- Record([ mytype."int", mytype."int"] + constantseq(len, mytype.typ))
+ Record([ typeint, typeint] + constantseq(len, mytype.typ))
 
 Function Record(types:seq.mytype)symbol
  symbol("RECORD(" + @(seperator.",", towords,"", types) + ")","$record","ptr", specialbit)
 
 Function Apply(i:int, basetype:seq.word, returntype:seq.word)symbol
  symbol(["APPLY"_1, toword.i], basetype + "$apply", returntype, specialbit)
+ 
+Function Apply(i:int, basetype:mytype, returntype:mytype)symbol
+ symbol(["APPLY"_1, toword.i], towords.basetype + "$apply", towords.returntype, specialbit)
 
 Function Block(type:mytype, i:int)symbol
  symbol("BLOCK" + toword.i, towords.type + "$block", towords.type, specialbit)
@@ -431,7 +459,7 @@ Export type:myinternaltype
 
 Function isdefined(it:myinternaltype)boolean size.it ≠ 0
 
-Export kind(myinternaltype)word
+Function  typekind(t:myinternaltype)word kind.t
 
 Export name(myinternaltype)word
 
@@ -524,7 +552,7 @@ Function gettypeinfo(d:typedict, type:mytype)typeinfo
  if length.towords.type = 1 ∧ (towords.type)_1 in "int real ptr"then
  typeinfo.[ type]
  else if abstracttype.type = "seq"_1 then typeinfo.[ type]
- else if type = mytype."internaltype"then typeinfo.[ mytype."ptr"]
+ else if type = mytype."internaltype"then typeinfo.[ typeptr]
  else
   let t = findelement(d, type)
    assert length.t = 1 report"type not found" + print.type + stacktrace

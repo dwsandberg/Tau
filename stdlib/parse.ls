@@ -87,12 +87,11 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
  if op_1 = "process"_1 then
  let nopara = nopara.last.code.exp
   let rt =(types.exp)_1
-  let prt = mytype(towords.rt + "process")
-  let recordtyp = [ mytype."int", mytype."int", mytype."int", mytype."int"] + paratypes.last.code.exp
+  let recordtyp = [ typeint, typeint, typeint, typeint] + paratypes.last.code.exp
   let newcode = [ Fref.deepcopysym.rt, Fref.deepcopysym.mytype."word seq", Fref.last.code.exp, Lit.nopara]
   + subseq(code.exp, 1, length.code.exp - 1)
-  + [ newsymbol("kindrecord", mytype."T builtin", recordtyp, mytype."ptr"), symbol("process2(ptr)","builtin","ptr")]
-   bindinfo(dict.R, newcode, [ mytype(towords.rt + "process")],"")
+  + [ newsymbol("kindrecord", mytype."T builtin", recordtyp, typeptr), symbol("process2(ptr)","builtin","ptr")]
+   bindinfo(dict.R, newcode, [  typeprocess+rt],"")
  else
   let f = lookupbysig(dict.R, op, types.exp, input, place.R)
    bindinfo(dict.R, code.exp + f, [ resulttype.f],"")
@@ -105,10 +104,10 @@ function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo, i
   let sym1types = types.term1 + types.term3 + [ resulttype.sym2]
   let sym1 = lookupbysig(dict, text.term1, sym1types, input, place)
    assert(types.term3)_1 = resulttype.sym1 report errormessage("term3 not same as init" + print.(types.term3)_1 + print.resulttype.sym1, input, place)
-   let pseqtype = mytype(towords.parameter.(types.term4)_1 + "pseq"_1)
+   let pseqtype = typepseq+parameter.(types.term4)_1   
    let idx = pseqidxsym.parameter.(types.term4)_1
    let x = lookupbysig(dict, name.idx, paratypes.idx, input, place)
-   let b = [ Fref.sym2, Fref.sym1, Fref.idx, Apply(length.types.term1 + length.types.term2 + 5, towords.last.sym2types, towords.resulttype.sym1)]
+   let b = [ Fref.sym2, Fref.sym1, Fref.idx, Apply(length.types.term1 + length.types.term2 + 5,  last.sym2types, resulttype.sym1)]
     bindinfo(dict, code.term1 + code.term2 + code.term3 + code.term4 + b, types.term3,"")
 
 function addparameter(orgsize:int, input:seq.token.bindinfo, place:int, dict:set.symbol, m:mytype)set.symbol
@@ -127,12 +126,13 @@ function lookupbysig(dict:set.symbol, name:seq.word, paratypes:seq.mytype, input
 /function backoffcomment(s:seq.token.bindinfo, match:word, i:int)seq.token.bindinfo if(text(s_i))_1 = match then subseq(s, 1, i-1)else backoffcomment(s, match, i-1)
 
 function createfunc(R:reduction.bindinfo, input:seq.token.bindinfo, funcname:seq.word, paralist:seq.mytype, functypebind:bindinfo, exp:bindinfo)bindinfo
- let functype = mytype.gettype.functypebind
+ let functype = gettype.functypebind
   assert functype = (types.exp)_1 ∨ (types.exp)_1 in [ mytype."internal1"]report errormessage("function type of" + print.functype + "does not match expression type" + print.(types.exp)_1, input, place.R)
    bindinfo(dict.R, code.exp, [ mytype."unused", functype] + paralist, funcname)
 
-function isdefined(R:reduction.bindinfo, input:seq.token.bindinfo, typ:seq.word)bindinfo
+function isdefined(R:reduction.bindinfo, input:seq.token.bindinfo, type:mytype)bindinfo
  let dict = dict.R
+ let typ=typerep.type
   if cardinality.dict < 25 ∨ typ in ["T","int","real"]
   ∨ subseq(typ, 1, 1) = "T"then
   bindinfo(dict, empty:seq.symbol, [ mytype.typ],"")
@@ -141,7 +141,9 @@ function isdefined(R:reduction.bindinfo, input:seq.token.bindinfo, typ:seq.word)
     assert cardinality.a = 1 ∨ print.mytype.typ in ["?"]report errormessage("parameter type" + print.mytype.typ + "is undefined in", // + @(+, print,"", toseq.dict), // input, place.R)
      bindinfo(dict, empty:seq.symbol, [ mytype.typ],"")
 
-function gettype(b:bindinfo)seq.word towords.(types.b)_1
+
+function gettype(b:bindinfo)mytype (types.b)_1
+
 
 function dict(r:reduction.bindinfo)set.symbol dict.last.r
 
@@ -159,17 +161,17 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
  else if ruleno = // FP P // 6 then
  bindinfo(@(addparameter(cardinality.dict.R, input, place.R), identity, dict.R, types.R_1), empty:seq.symbol, types.R_1,"")
  else if ruleno = // P T // 7 then
- bindinfo(dict.R, empty:seq.symbol, [ mytype(gettype.R_1 + ":")],"")
+ bindinfo(dict.R, empty:seq.symbol, [ abstracttype(":"_1, gettype.R_1  )],"")
  else if ruleno = // P P, T // 8 then
- bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ mytype(gettype.R_3 + ":")],"")
+ bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype(":"_1, gettype.R_3)],"")
  else if ruleno = // P W:T // 9 then
- bindinfo(dict.R, empty:seq.symbol, [ mytype(gettype.R_3 + tokentext.R_1)],"")
+ bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_1)_1, gettype.R_3 ) ],"")
  else if ruleno = // P P, W:T // 10 then
- bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ mytype(gettype.R_5 + tokentext.R_3)],"")
+ bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype((tokentext.R_3)_1,gettype.R_5)],"")
  else if ruleno = // P comment W:T // 11 then
- bindinfo(dict.R, empty:seq.symbol, [ mytype(gettype.R_4 + tokentext.R_2)],"")
+ bindinfo(dict.R, empty:seq.symbol, [abstracttype((tokentext.R_2)_1,gettype.R_4)],"")
  else if ruleno = // P P, comment W:T // 12 then
- bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ mytype(gettype.R_6 + tokentext.R_4)],"")
+ bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype((tokentext.R_4)_1,gettype.R_6)],"")
  else if ruleno = // E NM // 13 then
  let id = tokentext.R_1
   let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place.R)
@@ -204,9 +206,9 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
    assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place.R)
     bindinfo(dict.R
     , [ Lit.0, Lit.length.types] + code.R_2
-    + // Record([ mytype."int", mytype."int"]+ types)//
-    newsymbol("kindrecord", mytype."T builtin", [ mytype."int", mytype."int"] + types, mytype."ptr")
-    , [ mytype(towords.types_1 + "seq")]
+    + // Record([ typeint, typeint]+ types)//
+    newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint] + types, typeptr)
+    , [ typeseq + types_1  ]
     ,"")
  else if ruleno = // A let W = E // 32 then
  let e = R_4
@@ -224,21 +226,21 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
    assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place.R)
    let newcode = code.R_2 + [ Lit.2, Lit.3, Br] + code.R_5 + Exit
    + code.R_4
-   + symbol("assert(word seq)", towords.(types.R_5)_1 + "builtin", towords.(types.R_5)_1)
+   + symbol("assert(word seq)", typerep.(types.R_5)_1 + "builtin", typerep.(types.R_5)_1)
    + Exit
    + Block((types.R_5)_1, 3)
     bindinfo(dict.R, newcode, types.R_5,"")
  else if ruleno = // E I // 35 then
- bindinfo(dict.R, [ Lit.toint.(tokentext.R_1)_1], [ mytype."int"],"")
+ bindinfo(dict.R, [ Lit.toint.(tokentext.R_1)_1], [ typeint],"")
  else if ruleno = // E I.I // 36 then
  bindinfo(dict.R
   , [ Words(tokentext.R_1 + "." + tokentext.R_3), symbol("makereal(word seq)","UTF8","real")]
   , [ mytype."real"]
   ,"")
- else if ruleno = // T W // 37 then isdefined(R, input, tokentext.R_1)
+ else if ruleno = // T W // 37 then isdefined(R, input, mytype.tokentext.R_1)
  else if ruleno = // T W.T // 38 then
- isdefined(R, input, towords.(types.R_3)_1 + tokentext.R_1)
- else if ruleno = // E $wordlist // 39 then
+ isdefined(R, input, abstracttype((tokentext.R_1)_1, (types.R_3)_1 ))
+ else  if ruleno = // E $wordlist // 39 then
  let s = tokentext.R_1
    bindinfo(dict.R, [ Words.subseq(s, 2, length.s - 1)], [ mytype."word seq"],"")
  else if ruleno = // E comment E // 40 then R_2

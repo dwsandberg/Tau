@@ -1,6 +1,5 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau test11 test11
 
-run test11 test11
 
 Module test11
 

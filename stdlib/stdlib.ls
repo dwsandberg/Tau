@@ -14,6 +14,9 @@ PROFILE pass1:postbind3(typedict, set.symbol, seq.symbol, int, seq.symbol, mytyp
 
 * PROFILE main2:subcompilelib(word)seq.word
 
+* PROFILE main2:subcompilelib (seq.word,word  ) seq.word
+
+
 / * PROFILE pass2new:pass2(program, set.symbol, seq.symbol, seq.firstpass, program, seq.word)intercode
 
 /* PROFILE pass2new:depthfirst(program, int, seq.symbol, program, seq.symbol, symbol)program
@@ -352,8 +355,12 @@ Export print(decimals:int, rin:real)seq.word
 
 Export checkinteger(w:word)word
 
-* usegraph include xxhash encoding bits words real subreal stacktrace textio reconstruct UTF8 seq otherseq fileio stdlib exclude stdlib seq
+* usegraph include xxhash encoding bits words real subreal stacktrace textio reconstruct UTF8 seq otherseq fileio stdlib 
+exclude stdlib seq
 
-* usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict exclude stdlib seq
+* usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict 
+exclude stdlib seq
 
-* usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 persistant llvm postbind reconstruct persistantseq opt2 symbol parse libdesc internalbc intercode cvttoinst codegen pass2new codegennew funcsig exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real process ipair bitpackedseq fileio textio encoding words
+* usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 persistant llvm postbind reconstruct persistantseq opt2 symbol parse libdesc internalbc intercode cvttoinst codegen pass2new codegennew funcsig 
+exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real ipair bitpackedseq 
+fileio textio encoding words

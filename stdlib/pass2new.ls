@@ -16,11 +16,9 @@ use seq.caseblock
 
 use seq.char
 
-use seq.firstpass
 
 use otherseq.int
 
-use process.int
 
 use otherseq.seq.int
 
@@ -30,7 +28,6 @@ use seq.int
 
 use set.int
 
-use libdesc
 
 use otherseq.mytype
 
@@ -345,28 +342,9 @@ function convertexits(label1:int, label2:int, b:block)block
    else
     block("BR"_1, blkno.b, label1, label2, subseq(code.b, 1, length.code.b - 1) + [ Lit0, Lit0, Br])
 
-Function pass2(placehold:program, compiled:set.symbol, roots:seq.symbol, mods:seq.firstpass, templates:program, exports:seq.word, alltypes:typedict)intercode
- let p = @(depthfirst(placehold, alltypes), identity, emptyprogram, toseq.toset.placehold)
- let libmods = libdesc(p, templates, mods, exports, roots)
- let t = uses(p, empty:set.symbol, asset.roots + libmods)
- let defines2 = @(+, defines2(p), empty:seq.symbol, toseq(t - compiled))
-  intercode(defines2, t, p, libmods)
 
-function uses(p:program, s:symbol)seq.symbol
- let d = code.lookupcode(p, s)
-  if isempty.d then constantcode.s else d
 
-function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
- if isempty.toprocess then processed
- else
-  let q = asset.@(+, uses.p, empty:seq.symbol, toseq.toprocess)
-   uses(p, processed ∪ toprocess, q - processed)
 
-function defines2(p:program, s:symbol)seq.symbol
- if isconstantorspecial.s ∨ isbuiltin.module.s ∨ isabstract.mytype.module.s then empty:seq.symbol
- else
-  let d = code.lookupcode(p, s)
-   if isempty.d then empty:seq.symbol else [ s]
 
 type backresult is record code:seq.symbol, places:seq.int
 
@@ -481,7 +459,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
          if module.arg1 = "$word"then
          let a1 = @(+, Lit, empty:seq.symbol, tointseq.decodeword.(fsig.arg1)_1)
           let d = Constant2([ Lit.0, Lit.length.a1] + a1
-          + Record.constantseq(length.a1 + 2, mytype."int"))
+          + Record.constantseq(length.a1 + 2, typeint))
            yyy(p, org, k + 1, subseq(result, 1, len - 1) + d, nextvar, map)
          else yyy(p, org, k + 1, result + sym, nextvar, map)
        else if fsig.sym = "encode(char seq)" ∧ module.sym = "char seq encoding"then
@@ -695,7 +673,7 @@ function applytemplate(applysym:symbol)seq.symbol
   , continue.2, Block(mytype.resulttype, 4), Define."7"_1, var.stk, isnull, Lit.5, Lit.6, Br, var.7, Exit
   , var.7, var.stk, Lit.1, idxp, var.stk, Lit.0, idxp, continue.3, Block(mytype.resulttype, 6)]
 
-function depthfirst(knownsymbols:program, alltypes:typedict, processed:program, s:symbol)program depthfirst(knownsymbols, alltypes, 1, [ s], processed, code.lookupcode(knownsymbols, s), s)
+Function depthfirst(knownsymbols:program, alltypes:typedict, processed:program, s:symbol)program depthfirst(knownsymbols, alltypes, 1, [ s], processed, code.lookupcode(knownsymbols, s), s)
 
 function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.symbol, processed:program, code:seq.symbol, s:symbol)program
  if i > length.code then firstopt(processed, s, code, alltypes)
@@ -713,19 +691,7 @@ function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.
        if length.code.rep2 > 0 then depthfirst(knownsymbols, alltypes, 1, pending + sym2, processed, code.rep2, sym2)else processed
    depthfirst(knownsymbols, alltypes, i + 1, pending, newprg, code, s)
 
-type intercode is record defines:seq.symbol, uses:set.symbol, theprg:program, libdesc:symbol
 
-Export intercode(defines:seq.symbol, uses:set.symbol, p:program, libdesc:symbol)intercode
-
-Export uses(i:intercode)set.symbol
-
-Export theprg(intercode)program
-
-Export defines(i:intercode)seq.symbol
-
-Export libdesc(i:intercode)symbol
-
-Export type:intercode
 
 ________________________________
 
@@ -786,3 +752,34 @@ function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boo
    let parano = toint.(fsig.rep)_1
      if parano = last + 1 then checksimple(p, code, i + 1, nopara, last + 1)else false
    else checksimple(p, code, i + 1, nopara, last)
+   
+ 
+   
+---------------------------
+
+Function pass2(placehold:program,alltypes:typedict) program 
+@(depthfirst(placehold, alltypes), identity, emptyprogram, toseq.toset.placehold)
+
+  
+Function uses(p:program, roots:set.symbol) set.symbol
+   uses(p, empty:set.symbol, roots)
+
+Function defines(p:program, roots:set.symbol) seq.symbol
+@(+, defines2(p), empty:seq.symbol, toseq(roots))
+  
+
+function uses(p:program, s:symbol)seq.symbol
+ let d = code.lookupcode(p, s)
+  if isempty.d then constantcode.s else d
+
+function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
+ if isempty.toprocess then processed
+ else
+  let q = asset.@(+, uses.p, empty:seq.symbol, toseq.toprocess)
+   uses(p, processed ∪ toprocess, q - processed)
+
+function defines2(p:program, s:symbol)seq.symbol
+ if isconstantorspecial.s ∨ isbuiltin.module.s ∨ isabstract.modname.s then empty:seq.symbol
+ else
+  let d = code.lookupcode(p, s)
+   if isempty.d then empty:seq.symbol else [ s]

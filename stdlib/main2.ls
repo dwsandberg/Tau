@@ -56,6 +56,8 @@ use set.seq.word
 
 use set.word
 
+use postbind
+
 function loadlibs(dependentlibs:seq.word, i:int, time:int)int
  if i > length.dependentlibs then time
  else
@@ -64,22 +66,41 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
     loadlibs(dependentlibs, i + 1, stamp)
 
 function subcompilelib(libname:word)seq.word
+subcompilelib("all",libname)_1
+
+
+function subcompilelib(option:seq.word,libname:word)seq.seq.word
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
  let s = findlibclause(a, 1)
  let u = findindex("uses"_1, s, 3)
  let e = findindex("exports"_1, s, 3)
- let dependentlibs = dependentlibs.if libname in "stdlibbak stdlib"then""else subseq(s, u + 1, e - 1)
+ let dependentlibs = subseq(s, u + 1, e - 1)
  let filelist = subseq(s, 2, min(u - 1, e - 1))
  let exports = subseq(s, e + 1, length.s)
- let b = unloadlib.[ libname]
- let allsrc = getlibrarysrc.libname
- let p1 = pass1(groupparagraphs("module Module", allsrc), exports, dependentlibs)
- let intercode2 = pass2(result.p1, compiled.p1, roots.p1, mods.p1, templates.p1, exports, alltypes.p1)
- let bc = codegen(theprg.intercode2, defines.intercode2, uses.intercode2, libname, libdesc.intercode2, alltypes.p1)
- let z2 = createlib(bc, libname, subseq(s, u + 1, e - 1))
-  // let save = @(+, bindingformat.symset.p1, empty:seq.seq.word, mods.p1)let name = merge("pass1/"+ libname +"."+ print.currenttime +".txt")let z = createfile([ name], save)//
-  "OK"
-
+ // let b = unloadlib.[ libname] //
+ let allsrc= getlibrarysrc.libname 
+ let link = pass1(groupparagraphs("module Module",allsrc), exports, dependentlibs.dependentlibs)
+ let prg2= postbind(alltypes.link, dict.link, roots.link,result.link,   templates.link)
+ let prg3=@(processOption, identity, prg2, @(+, identity, empty:seq.seq.word, allsrc))
+ if option="pass1" then  @(+,print.prg3,empty:seq.seq.word, toseq.toset.prg3)
+ else 
+  let prg4 = pass2(prg3,alltypes.link)
+  let libdesc = libdesc(prg4, templates.link, mods.link, exports, roots.link)
+  let uses = uses(prg4,asset.roots.link + libdesc)
+  let defines  = defines(prg4,  uses - compiled.link )
+ // let t= @(+,checkkind2(alltypes.link,prg3),"",toseq.toset.result.link)   
+     let t=@(+,checkkind2(alltypes.link,prg4),"",toseq.toset.prg4) 
+      assert  isempty.t report t  //
+ if option="pass2" then 
+    @(+,print.prg4,empty:seq.seq.word, defines)
+else   
+ let bc=codegen(prg4 ,defines ,uses ,libname,libdesc,alltypes.link)
+ let z2 = createlib(bc, libname, dependentlibs)
+ // let save = @(+, bindingformat.symset.link, empty:seq.seq.word, mods.link)
+ let name = merge("pass1/" + libname + "." + print.currenttime + ".txt") 
+ let z = createfile([ name], save) //
+ [ "OK" ]
+ 
 Function compilelib2(libname:word)seq.word
  let p1 = process.subcompilelib.libname
   if aborted.p1 then"COMPILATION ERROR:" + space + message.p1
@@ -108,26 +129,7 @@ Function testcomp(s:seq.seq.word)seq.seq.word
   @(+, print.result.r, empty:seq.seq.word, toseq.toset.result.r)
 
 Function firstPass(libname:word)seq.seq.word
- let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
- let s = findlibclause(a, 1)
- let u = findindex("uses"_1, s, 3)
- let e = findindex("exports"_1, s, 3)
- let dependentlibs = dependentlibs.if libname in "stdlibbak stdlib"then""else subseq(s, u + 1, e - 1)
- let filelist = subseq(s, 2, min(u - 1, e - 1))
- let exports = subseq(s, e + 1, length.s)
- let allsrc = groupparagraphs("module Module", getlibrarysrc.s_2)
- let r = pass1(allsrc, exports, dependentlibs)
-  @(+, print.result.r, empty:seq.seq.word, toseq.toset.result.r)
+ subcompilelib("pass1",libname)
 
 Function secondPass(libname:word)seq.seq.word
- let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
- let s = findlibclause(a, 1)
- let u = findindex("uses"_1, s, 3)
- let e = findindex("exports"_1, s, 3)
- let dependentlibs = dependentlibs.if libname in "stdlibbak stdlib"then""else subseq(s, u + 1, e - 1)
- let filelist = subseq(s, 2, min(u - 1, e - 1))
- let exports = subseq(s, e + 1, length.s)
- let allsrc = getlibrarysrc.s_2
- let p1 = pass1(groupparagraphs("module Module", allsrc), exports, dependentlibs)
- let p2 = pass2(result.p1, compiled.p1, roots.p1, mods.p1, templates.p1, exports, alltypes.p1)
-  @(+, print.theprg.p2, empty:seq.seq.word, defines.p2)
+ subcompilelib("pass2",libname)

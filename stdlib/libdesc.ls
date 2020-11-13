@@ -60,20 +60,20 @@ function tolibsym(p:program, templates:program, sym:symbol)seq.symbol
  if isconstantorspecial.sym then empty:seq.symbol
  else
   let cleansym = [ if isempty.zcode.sym then sym else symbol(fsig.sym, module.sym, returntype.sym)]
-  let code = if isabstract.mytype.module.sym then code.lookupcode(templates, sym)else removeconstant.exportcode(p, sym)
+  let code = if isabstract.modname.sym then code.lookupcode(templates, sym)else removeconstant.exportcode(p, sym)
    [ symbol(fsig.sym, module.sym, returntype.sym, cleansym + code)]
 
 ----------------------------------
 
 function addlibsym(s:symbol)symbol
  Constant2
- .[ Words.fsig.s, Words.module.s, Words.returntype.s, addseq.@(+, addlibsym, empty:seq.symbol, zcode.s), Lit.extrabits.s, Record.[ mytype."ptr", mytype."ptr", mytype."ptr", mytype."ptr", mytype."int"]]
+ .[ Words.fsig.s, Words.module.s, Words.returntype.s, addseq.@(+, addlibsym, empty:seq.symbol, zcode.s), Lit.extrabits.s, Record.[ typeptr, typeptr, typeptr, typeptr, typeint]]
 
-function addmytype(t:mytype)symbol Words.towords.t
+function addmytype(t:mytype)symbol Words.typerep.t
 
 function addseq(s:seq.symbol)symbol
  Constant2([ Lit.0, Lit.length.s] + s
- + Record([ mytype."int", mytype."int"] + constantseq(length.s, mytype."ptr")))
+ + Record([ typeint, typeint] + constantseq(length.s, typeptr)))
 
 function addlibmod(s:firstpass)symbol
  Constant2
@@ -85,7 +85,7 @@ function addlibmod(s:firstpass)symbol
  , Words.""
  , Words.""
  , Record
- .[ mytype."ptr", mytype."ptr", mytype."ptr", mytype."ptr", mytype."ptr", mytype."ptr", mytype."ptr"]]
+ .[ typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr]]
 
 --------------------------
 
@@ -154,7 +154,7 @@ function libtypes(s:symbol)seq.myinternaltype
  else
   let code = zcode.s
    assert module.code_2 = "$words"report"NON" + @(+, print,"", code)
-   let a = if true ∧ towords.parameter.modname.s in ["T",""]then fsig.code_2
+   let a = if true ∧ typerep.parameter.modname.s in ["T",""]then fsig.code_2
    else replaceT(print.parameter.modname.s, fsig.code_2)
     [ tomyinternaltype.a]
 

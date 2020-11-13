@@ -1,8 +1,7 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau testopt testopt
 
 Module testopt
 
-run testopt testopt
 
 use bits
 

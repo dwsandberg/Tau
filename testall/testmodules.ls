@@ -1,6 +1,5 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau testmodules testmodules
 
-run testmodules testmodules
 
 Module testmodules
 

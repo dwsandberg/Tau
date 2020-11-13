@@ -1,6 +1,4 @@
-#!/usr/local/bin/tau
-
-run testprocess testprocess
+#!/usr/local/bin/tau testprocess testprocess
 
 Module testprocess
 

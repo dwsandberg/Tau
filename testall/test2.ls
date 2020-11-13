@@ -1,10 +1,9 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau test2 test2
 
 Module test2
 
 Count word frequence in text file. An indexed encoding is used to assign indexes to each distinct word in the file. Uses a dseq to provide a 0 count for words that have not yet been encountered and assigned an index. 
 
-run test2 test2
 
 use encoding.indexedword
 
