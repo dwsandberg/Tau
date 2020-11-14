@@ -12,7 +12,7 @@ PROFILE pass1:postbind3(typedict, set.symbol, seq.symbol, int, seq.symbol, mytyp
 
 * PROFILE main2:compilelib2(word)seq.word
 
-* PROFILE main2:subcompilelib(word)seq.word
+/* PROFILE main2:subcompilelib(word)seq.word
 
 * PROFILE main2:subcompilelib (seq.word,word  ) seq.word
 

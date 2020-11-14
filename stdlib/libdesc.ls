@@ -34,33 +34,48 @@ use seq.word
 
 use set.word
 
-Function libdesc(pin:program, templates:program, mods:seq.firstpass, exports:seq.word, rootsigs:seq.symbol)symbol
- let p = pin ∩ asset.rootsigs
- let closed = @(+, filterbuiltin, empty:seq.symbol, toseq.asset.@(+, exportcode.p, rootsigs, rootsigs))
- let d = @(+, tolibsym(p, templates), empty:seq.symbol, closed)
- let libmods = @(+, tolibmod(p, templates, exports), empty:seq.firstpass, mods)
- + libmod(mytype."$other", d, empty:seq.symbol, empty:seq.mytype)
+Function libdesc(p:program, templates:program, mods:seq.firstpass, exports:seq.word)symbol
+ let mods2=@(+,tolibmod.exports,empty:seq.firstpass,mods)
+ let  defs=@(&cup,defines,empty:set.symbol,mods2) 
+ let  symstoexport= defs &cup @(&cup,exports,empty:set.symbol,mods2)
+  let libmods1 = @(+, tolibmod(p, templates,  symstoexport), empty:seq.firstpass, mods2)
+    let dd=toseq.@(&cup,roots,empty:set.symbol,libmods1)
+  let libmods=libmods1+ libmod(mytype."$other",   dd, empty:seq.symbol, empty:seq.mytype)
   addseq.@(+, addlibmod, empty:seq.symbol, libmods)
 
-function filterbuiltin(s:symbol)seq.symbol if isbuiltin.module.s then empty:seq.symbol else [ s]
+   function   roots(m :firstpass) set.symbol  if isabstract.modname.m  then empty:set.symbol else  exports.m    
 
-function tolibmod(p:program, templates:program, exports:seq.word, m:firstpass)seq.firstpass
- if not(abstracttype.modname.m in exports)then empty:seq.firstpass
- else
-  let abstract = isabstract.modname.m
-  let e = @(+, tolibsym(p, templates), empty:seq.symbol, toseq.exports.m)
-  let d = if abstract then @(+, tolibsym(p, templates), empty:seq.symbol, toseq.defines.m)else empty:seq.symbol
-   [ libmod(modname.m, d, e, if abstract then uses.m else empty:seq.mytype)]
-
-Function exportcode(p:program, s:symbol)seq.symbol
+Function exportcode(p:program, toexport:set.symbol, s:symbol)seq.symbol
  let code = code.lookupcode(p, s)
-  if length.code < 15 then removeconstant.code else empty:seq.symbol
+  if length.code < 15 then 
+   let x=removeconstant.code 
+    if @(+,filterx.toexport,0,x) =0 then x else empty:seq.symbol
+  else empty:seq.symbol
 
-function tolibsym(p:program, templates:program, sym:symbol)seq.symbol
+function tolibmod(p:program, templates:program, toexport:set.symbol,  m:firstpass)firstpass
+  let e = @(+, tolibsym(p,templates, toexport), empty:seq.symbol, toseq.exports.m)
+  let d =   @(+, tolibsym(p,templates,toexport), empty:seq.symbol, toseq.defines.m) 
+    libmod(modname.m, d, e,   uses.m  ) 
+
+function  tolibmod(exports:seq.word,m:firstpass) seq.firstpass
+  if not(abstracttype.modname.m in exports) then empty:seq.firstpass
+ else
+ [ if   isabstract.modname.m  then libmod(modname.m, toseq.defines.m, toseq.exports.m,  uses.m   )
+  else libmod(modname.m, empty:seq.symbol, toseq.exports.m,  empty:seq.mytype  )]
+
+   
+ 
+ function filterx(toexport:set.symbol, s:symbol) int 
+    if isconst.s then
+      if isFref.s then   @(+,filterx.toexport,0,constantcode.s) else 0
+    else if  isbuiltin.module.s &or isspecial.s  &or s in toexport then 0
+    else 1  
+
+function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)seq.symbol
  if isconstantorspecial.sym then empty:seq.symbol
  else
   let cleansym = [ if isempty.zcode.sym then sym else symbol(fsig.sym, module.sym, returntype.sym)]
-  let code = if isabstract.modname.sym then code.lookupcode(templates, sym)else removeconstant.exportcode(p, sym)
+  let code = if isabstract.modname.sym then code.lookupcode(templates, sym) else exportcode(p,toexport, sym)  
    [ symbol(fsig.sym, module.sym, returntype.sym, cleansym + code)]
 
 ----------------------------------
@@ -153,7 +168,7 @@ function libtypes(s:symbol)seq.myinternaltype
  empty:seq.myinternaltype
  else
   let code = zcode.s
-   assert module.code_2 = "$words"report"NON" + @(+, print,"", code)
+   assert length.code > 1 &and module.code_2 = "$words"report"NON" +print.s+"/"+ @(+, print,"", code)
    let a = if true ∧ typerep.parameter.modname.s in ["T",""]then fsig.code_2
    else replaceT(print.parameter.modname.s, fsig.code_2)
     [ tomyinternaltype.a]

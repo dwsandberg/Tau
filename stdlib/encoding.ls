@@ -185,6 +185,12 @@ use stdlib
 
 use encoding.typename
 
+use encoding.seq.char
+
+Export decode( encoding.seq.char) seq.char 
+
+Export encode(seq.char) encoding.seq.char
+
 type typename is record name:seq.word
 
 function =(a:typename, b:typename)boolean name.a = name.b

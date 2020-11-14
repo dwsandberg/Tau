@@ -94,7 +94,7 @@ Function extrabits(s:symbol)int toint.flags.s
 
 Function fsighash(s:symbol)int toint(flags.s >> 4)
 
-Function extrabits(fsig:seq.word, flags:bits)bits bits.hash.fsig << 4 ∨ flags
+function extrabits(fsig:seq.word, flags:bits)bits bits.hash.fsig << 4 ∨ flags
 
 Function symbol(fsig:seq.word, module:seq.word, returntype:seq.word)symbol symbol(fsig, module, returntype, empty:seq.symbol)
 
@@ -453,31 +453,41 @@ Function +(a:typedict, b:seq.myinternaltype)typedict typedict(data.a + b)
 
 Function print(t:typedict)seq.word @(seperator." &br", towords,"", data.t)
 
-type myinternaltype is record size:int, kind:word, name:word, modname:mytype, subflds:seq.mytype
+type myinternaltype is record kind:word, name:word, modname:mytype, subflds:seq.mytype
 
 Export type:myinternaltype
 
-Function isdefined(it:myinternaltype)boolean size.it ≠ 0
+Export name(myinternaltype) word
+
+Export modname(myinternaltype) mytype
+
+Function isdefined(it:myinternaltype)boolean kind.it="defined"_1
 
 Function  typekind(t:myinternaltype)word kind.t
 
-Export name(myinternaltype)word
 
-Export modname(myinternaltype)mytype
+Function modpara(t:myinternaltype) mytype parameter.modname.t
 
 Export subflds(myinternaltype)seq.mytype
 
-Export myinternaltype(size:int, kind:word, name:word, modname:mytype, subflds:seq.mytype)myinternaltype
+function =(a:myinternaltype, b:myinternaltype)boolean
+ name.a = name.b ∧ parameter.modname.a = parameter.modname.b
 
-Function replaceTmyinternaltype(with:mytype, it:myinternaltype)myinternaltype myinternaltype(size.it, kind.it, name.it, replaceT(with, modname.it), subflds.it)
+
+Function changesubflds(t:myinternaltype,subflds:seq.mytype) myinternaltype
+myinternaltype("defined"_1,name.t, modname.t,subflds)
+
+Export myinternaltype( kind:word, name:word, modname:mytype, subflds:seq.mytype ) myinternaltype
+
+Function replaceTmyinternaltype(with:mytype, it:myinternaltype)myinternaltype 
+myinternaltype( kind.it, name.it, replaceT(with, modname.it), subflds.it)
 
 Function towords(it:myinternaltype)seq.word
- [ toword.size.it, kind.it, name.it] + print.modname.it
- + @(+, print,"", subflds.it)
+ [  kind.it, name.it] + print.modname.it + @(+, print,"", subflds.it)
 
 Function tomyinternaltype(s:seq.word)myinternaltype
- let t = parseit(s, 2, [ s_1], empty:seq.seq.word)
-  myinternaltype(toint.t_1_1, t_2_1, t_3_1, mytype.t_4, @(+, mytype, empty:seq.mytype, subseq(t, 5, length.t)))
+ let t = parseit(s, 1, [ s_1], empty:seq.seq.word)
+  myinternaltype( t_2_1, t_3_1, mytype.t_4, @(+, mytype, empty:seq.mytype, subseq(t, 5, length.t)))
 
 function parseit(s:seq.word, i:int, fld:seq.word, flds:seq.seq.word)seq.seq.word
  if i > length.s then flds + fld
@@ -486,13 +496,12 @@ function parseit(s:seq.word, i:int, fld:seq.word, flds:seq.seq.word)seq.seq.word
  else // end of fld // parseit(s, i + 1, [ s_i], flds + fld)
 
 Function print3(it:myinternaltype)seq.word
- if size.it = 0 then
+ if not.isdefined.it   then
  "module:" + print.modname.it + "type" + name.it + "is"
   + kind.it
   + @(seperator.",", printfld,"", subflds.it)
  else
-  [ toword.size.it, kind.it, name.it] + print.modname.it
-  + @(+, print,"", subflds.it)
+  [  kind.it, name.it] + print.modname.it + @(+, print,"", subflds.it)
 
 function printfld(f:mytype)seq.word [ abstracttype.f,":"_1] + print.parameter.f
 
@@ -532,8 +541,10 @@ Function kind(t:typeinfo)word
  let z = subflds.t
   if length.z > 1 ∨ abstracttype.z_1 = "seq"_1 then"ptr"_1
   else
-   assert(towords.z_1)_1 in "int real ptr"report"unexpected fld in internal type" + @(+, print,"", z)
+   assert(towords.z_1)_1 in "int real ptr"report"unexpected fld in internal type" + @(+, print,"", z)+stacktrace // x //
     (towords.z_1)_1
+    
+    use stacktrace
 
 Export subflds(typeinfo)seq.mytype
 
@@ -542,17 +553,17 @@ Function size(t:typeinfo)int length.subflds.t
 Export type:typeinfo
 
 Function findelement(d:typedict, type:mytype)seq.myinternaltype
- findelement(myinternaltype(0,"?"_1, abstracttype.type, mytype(towords.parameter.type + "?"), empty:seq.mytype), data.d)
+ findelement(myinternaltype("?"_1, abstracttype.type, mytype(towords.parameter.type + "?"), empty:seq.mytype), data.d)
 
 Export typedict(seq.myinternaltype)typedict
 
 Export type:typedict
 
 Function gettypeinfo(d:typedict, type:mytype)typeinfo
- if length.towords.type = 1 ∧ (towords.type)_1 in "int real ptr"then
- typeinfo.[ type]
+ if type=typeint then typeinfo.[typeint]
+ else if type=mytype."real" then typeinfo.[mytype."real"]
  else if abstracttype.type = "seq"_1 then typeinfo.[ type]
- else if type = mytype."internaltype"then typeinfo.[ typeptr]
+ else if type = mytype."internaltype" &or type= typeptr then typeinfo.[ typeptr]
  else
   let t = findelement(d, type)
    assert length.t = 1 report"type not found" + print.type + stacktrace

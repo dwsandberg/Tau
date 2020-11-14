@@ -139,33 +139,29 @@ function processtypedef(defined:typedict, undefined:seq.myinternaltype, i:int, n
     processtypedef(defined, newundefined, 1, empty:seq.myinternaltype)
  else
   let td = undefined_i
-  let flds = subflddefined(td, 1, defined, empty:seq.mytype)
-   if length.flds = 0 then processtypedef(defined, undefined, i + 1, newundefined + undefined_i)
-   else processtypedef(defined + flds, undefined, i + 1, newundefined)
+  let flds = subflddefined(@(+,parameter,empty:seq.mytype,subflds.td), modpara.td, 1, defined, empty:seq.mytype)
+   if length.flds = 0 then 
+    // some fld is not defined //
+    processtypedef(defined, undefined, i + 1, newundefined + undefined_i)
+   else 
+    let new= if typekind.td = "sequence"_1 then
+           changesubflds( td,    [ mytype."int seq" ] +flds )
+    else 
+     assert typekind.td = "record"_1 report "<<<>?"
+    changesubflds(td,  flds)
+   processtypedef(defined + [new], undefined, i + 1, newundefined)
 
-function subflddefined(td:myinternaltype, i:int, defined:typedict, flatflds:seq.mytype)seq.myinternaltype
+function subflddefined(subflds:seq.mytype,modpara:mytype, i:int, defined:typedict, flatflds:seq.mytype)seq.mytype
  // check to see all flds of type are defined. //
- if i > length.subflds.td then
- // define myinternaltype //
-  [ if typekind.td = "sequence"_1 then
-       myinternaltype(1,"defined"_1, name.td, modname.td, 
-        [ mytype."int seq" ] +flatflds )
-  else myinternaltype(length.flatflds,"defined"_1, name.td, modname.td, flatflds)]
+ if i > length.subflds then  flatflds 
  else
-  let next =(subflds.td)_i
-  let fldtype = parameter.next
-  let t = typerep.fldtype
-  let typ = if t_1 = "T"_1 then
-  mytype(typerep.parameter.modname.td + subseq(t, 2, length.t))
-  else fldtype
-   if abstracttype.typ in "int seq real T"then subflddefined(td, i + 1, defined, flatflds + typ)
-   else if abstracttype.typ in "encoding"then subflddefined(td, i + 1, defined, flatflds + typeint)
+  let typ = replaceT(modpara, subflds_i)
+    if abstracttype.typ in "int seq real T"then subflddefined(subflds,modpara, i + 1, defined, flatflds + typ)
+   else if abstracttype.typ in "encoding"then subflddefined(subflds,modpara, i + 1, defined, flatflds + typeint)
    else
     let typdesc = findelement(defined, typ)
-     if isempty.typdesc then // not defined // typdesc else subflddefined(td, i + 1, defined, flatflds + subflds.typdesc_1)
+     if isempty.typdesc then // not defined // empty:seq.mytype else subflddefined(subflds,modpara, i + 1, defined, flatflds + subflds.typdesc_1)
 
-function =(a:myinternaltype, b:myinternaltype)boolean
- name.a = name.b ∧ parameter.modname.a = parameter.modname.b
 
 type unboundexport is record modname:mytype, unbound:symbol
 
@@ -343,7 +339,7 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
   let name = input_2
   let t = abstracttype(name, parameter.modname.f)
    assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
-   let it = myinternaltype(0, kind, name, modname.f, types.b)
+   let it = myinternaltype(kind, name, modname.f, types.b)
    let sizeofsym = newsymbol("type:" + print.t, modname.f, empty:seq.mytype, mytype."internaltype")
    let constructor = newsymbol([ name], modname.f, @(+, parameter, empty:seq.mytype, types.b), t)
    let fldsyms = @(+, definefld(modname.f, [ t]), empty:seq.symbol, types.b)

@@ -65,10 +65,6 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
    assert stamp ≥ time report"library" + dependentlibs_i + "is out of date" + toword.time + toword.stamp
     loadlibs(dependentlibs, i + 1, stamp)
 
-function subcompilelib(libname:word)seq.word
-subcompilelib("all",libname)_1
-
-
 function subcompilelib(option:seq.word,libname:word)seq.seq.word
  let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
  let s = findlibclause(a, 1)
@@ -85,7 +81,8 @@ function subcompilelib(option:seq.word,libname:word)seq.seq.word
  if option="pass1" then  @(+,print.prg3,empty:seq.seq.word, toseq.toset.prg3)
  else 
   let prg4 = pass2(prg3,alltypes.link)
-  let libdesc = libdesc(prg4, templates.link, mods.link, exports, roots.link)
+ //   assert false report  "XXX"+print(prg4, symbol("char1(word seq)","stdlib","char")) //
+  let libdesc = libdesc(prg4, templates.link, mods.link, exports)
   let uses = uses(prg4,asset.roots.link + libdesc)
   let defines  = defines(prg4,  uses - compiled.link )
  // let t= @(+,checkkind2(alltypes.link,prg3),"",toseq.toset.result.link)   
@@ -101,11 +98,13 @@ else
  let z = createfile([ name], save) //
  [ "OK" ]
  
+use process.seq.seq.word
+ 
 Function compilelib2(libname:word)seq.word
- let p1 = process.subcompilelib.libname
+ let p1 = process.subcompilelib("all",libname)
   if aborted.p1 then"COMPILATION ERROR:" + space + message.p1
   else
-   let aa = result.p1
+   let aa = (result.p1)_1
     if subseq(aa, 1, 1) = "OK"then aa else"COMPILATION ERROR:" + space + aa
 
 Function main(arg:seq.int)outputformat

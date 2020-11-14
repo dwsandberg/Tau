@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau tools stdlibdoc
+#!/usr/local/bin/tau tools testprofile
 
 tools testprofile
 

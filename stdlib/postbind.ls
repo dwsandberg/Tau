@@ -213,7 +213,7 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
    else [ Local.1, Lit.ds, symbol("packed(int seq seq, ds)","assignencodingnumber","int seq")]
  else
   let typedesc = gettypeinfo(alltypes, type)
-  let y = subfld(subflds.typedesc, 1, empty:seq.symbol)
+  let y = subfld(alltypes,subflds.typedesc, 1, empty:seq.symbol)
    if size.typedesc = 1 then
    // only one element in record so type is not represent by actual record // [ Local.1]
     + subseq(y, 4, length.y - 1)
@@ -221,13 +221,9 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
     assert size.typedesc ≠ 1 report"Err99a" + print.type
      y
 
-function subfld(flds:seq.mytype, fldno:int, result:seq.symbol)seq.symbol
+function subfld(alltypes:typedict,flds:seq.mytype, fldno:int, result:seq.symbol)seq.symbol
  if fldno > length.flds then result + [ Record.flds]
  else
   let fldtype = flds_fldno
-  let t = if abstracttype.fldtype in "encoding int word"then"int"
-  else if abstracttype.fldtype in "real"then"real"
-  else
-   assert abstracttype.fldtype = "seq"_1 report"ERR99" + print.fldtype
-    "ptr"
-   subfld(flds, fldno + 1, result + [ Local.1, Lit(fldno - 1), Idx.t_1, deepcopysym.fldtype])
+  let kind=kind.gettypeinfo(alltypes,fldtype)
+   subfld(alltypes,flds, fldno + 1, result + [ Local.1, Lit(fldno - 1), Idx.kind, deepcopysym.fldtype])
