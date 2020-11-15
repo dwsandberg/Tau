@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau tools testprofile
+#!/usr/local/bin/tau tools stdlibdoc
 
 tools testprofile
 
@@ -80,6 +80,6 @@ Function testprofile seq.word
 Function callgraphtest seq.word callgraphbetween("testall","test5  testall test2 stdlib")
 +callgraphwithin("stdlib","llvm")
 
-Function stdlibdoc seq.word    //   callgraphbetween("stdlib","codegennew persistant")+  //     doclibrary."stdlib"
+Function stdlibdoc seq.word        callgraphbetween("stdlib","main2 format")+        doclibrary."stdlib"
 
 

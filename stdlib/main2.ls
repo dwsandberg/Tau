@@ -26,8 +26,6 @@ use seq.mytype
 
 use set.mytype
 
-use parse
-
 use pass1
 
 use pass2new
@@ -75,7 +73,7 @@ function subcompilelib(option:seq.word,libname:word)seq.seq.word
  let exports = subseq(s, e + 1, length.s)
  // let b = unloadlib.[ libname] //
  let allsrc= getlibrarysrc.libname 
- let link = pass1(groupparagraphs("module Module",allsrc), exports, dependentlibs.dependentlibs)
+ let link = pass1(groupparagraphs("module Module",allsrc), exports, libmodules.dependentlibs)
  let prg2= postbind(alltypes.link, dict.link, roots.link,result.link,   templates.link)
  let prg3=@(processOption, identity, prg2, @(+, identity, empty:seq.seq.word, allsrc))
  if option="pass1" then  @(+,print.prg3,empty:seq.seq.word, toseq.toset.prg3)
@@ -124,7 +122,7 @@ Function main(arg:seq.int)outputformat
 Function testcomp(s:seq.seq.word)seq.seq.word
  let exports ="testit"
  let allsrc = groupparagraphs("module Module", s)
- let r = pass1(allsrc, exports, dependentlibs."stdlib")
+ let r = pass1(allsrc, exports, libmodules."stdlib")
   @(+, print.result.r, empty:seq.seq.word, toseq.toset.result.r)
 
 Function firstPass(libname:word)seq.seq.word

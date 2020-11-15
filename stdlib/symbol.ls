@@ -376,6 +376,8 @@ Function ∪(p:program, a:program)program program(toset.p ∪ toset.a)
 
 Export toset(p:program)set.symbol
 
+Export program(set.symbol) program
+
 Export type:program
 
 type programele is record data:seq.symbol
@@ -456,6 +458,8 @@ Function print(t:typedict)seq.word @(seperator." &br", towords,"", data.t)
 type myinternaltype is record kind:word, name:word, modname:mytype, subflds:seq.mytype
 
 Export type:myinternaltype
+
+Export kind(myinternaltype) word
 
 Export name(myinternaltype) word
 

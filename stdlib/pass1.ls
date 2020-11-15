@@ -10,10 +10,6 @@ use seq.firstpass
 
 use set.firstpass
 
-use libdesc
-
-use seq.liblib
-
 use seq.mapele
 
 use seq.myinternaltype
@@ -82,31 +78,35 @@ Function find(modset:set.firstpass, name:mytype)set.firstpass
  findelement(firstpass(name, empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, empty:seq.myinternaltype, emptyprogram)
  , modset)
 
-Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, libs:seq.liblib)linkage
- let librarymods = asset.libfirstpass.libs
- let alllibsym = @(∪, defines, empty:set.symbol, toseq.librarymods)
+function  issimple2(s:symbol) seq.symbol if isabstract.modname.s then empty:seq.symbol else [s]
+
+Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarymods:seq.firstpass)linkage
+  let alllibsym = 
+  @(∪, defines, empty:set.symbol, librarymods)
+  &cup  @(∪, exports, empty:set.symbol, librarymods)
+  let simplesym=asset.@(+,issimple2,empty:seq.symbol,toseq.alllibsym)
+ let libprg= program.simplesym
+ let libtemplates=program(alllibsym-simplesym) 
   // let discard = getinstance:encodingstate.symboltext //
-  let a = @(gathersymbols, identity, librarymods, allsrc)
+  let a = @(gathersymbols, identity, asset.librarymods, allsrc)
   let expand1 = expanduse.expanduseresult(a, empty:seq.mapele)
   let u0 = firstpasses.expand1
    // let u1 = @(+, getunboundexport, empty:seq.unboundexport, toseq.u0)let d1 = resolveexport(u0, empty:set.symbol, mytype."1", u1, 1, empty:seq.unboundexport)//
    let d1 = resolveunboundexports.u0
    let allsymbols1 = @(∪, defines, empty:set.symbol, toseq.d1)
    let alltypes0 = @(+, types, empty:seq.myinternaltype, toseq.d1)
-    // assert false report"XX"+ @(seperator."
-&br", towords,"", alltypes0)//
-    let librarysyms = libsymbols(alllibsym, libs)
-    let alltypes = processtypedef(typedict.empty:seq.myinternaltype, alltypes0, 1, empty:seq.myinternaltype)
+    // assert false report"XX"+ @(seperator."&br", towords,"", alltypes0)//
+     let alltypes = processtypedef(typedict.empty:seq.myinternaltype, alltypes0, 1, empty:seq.myinternaltype)
     let abstractsimple1 = split(toseq.d1, 1, empty:seq.firstpass, empty:seq.firstpass)
     let simple = abstractsimple1_2
     let abstract = abstractsimple1_1
-    let prg1 = @(bind3(alltypes, d1), identity, librarysyms, simple)
-    let temp34 = @(bind3(alltypes, d1), identity, otherlibsyms(alllibsym, libs), abstract)
-    let templates = @(maptemp.temp34, identity, temp34, // toseq.allsymbols1 // map.expand1)
+    let prg1 = @(bind3(alltypes, d1), identity, libprg, simple)
+     let templates0 = @(bind3(alltypes, d1), identity, libtemplates , abstract)
+    let templates = @(maptemp.templates0 , identity, templates0,   map.expand1)
      // assert false report @(seperator." &br", print,"", roots)//
      let prgx = @(definetypes.alltypes, identity, emptyprogram, toseq.@(∪, exports, empty:set.symbol, abstract))
      let roots = @(+, roots.exports, empty:seq.symbol, simple)
-     linkage(prg1, toset.librarysyms , roots, simple + abstract, templates, alltypes,allsymbols1)
+     linkage(prg1, toset.libprg , roots, simple + abstract, templates, alltypes,allsymbols1)
  
 
 
