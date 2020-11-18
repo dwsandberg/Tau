@@ -10,8 +10,6 @@ use stack.Lcode2
 
 use UTF8
 
-use bitpackedseq.bit
-
 use seq.seq.bits
 
 use seq.bits
@@ -252,7 +250,7 @@ Function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word, j:int, r
   let newj = if types_j in "$ $record"then // we have reached the type in the module in the full instruction in the match5 record // j
   else min(findindex(","_1, types, j + 1), length.types - 1)
   let typ = if length.types = 3 then"int"_1 else types_(newj - 1)
-   assert typ in "int real seq ptr"report"unknown type gencode" + types
+   assert typ in "int real ptr"report"unknown type gencode" + types
     if preal = 0 ∧ typ = "real"_1 then
     setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.double, bitcast), args, i, types, j, regno + 1, pint, regno + 1, pptr)
     else if pptr = 0 ∧ typ in "ptr seq"then

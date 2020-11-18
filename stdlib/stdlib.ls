@@ -1,8 +1,12 @@
 Module stdlib
 
-Library stdlib UTF8 bitpackedseq bits codegennew codetemplates encoding fileio format graph groupparagraphs intdict internalbc ipair libdesc llvm llvmconstants main2 maindict mangle mytype newpretty otherseq parse parsersupport pass1 pass2new persistant postbind prims process real seq set stack stacktrace symbol textio timestamp tree worddict words xxhash
+Library stdlib UTF8 bitpackedseq bits codegennew codetemplates encoding fileio format graph groupparagraphs intdict 
+internalbc interpreter ipair libdesc llvm llvmconstants main2 maindict mangle mytype newpretty otherseq parse parsersupport pass1 pass2new persistant postbind prims process real seq set stack stacktrace symbol textio timestamp tree worddict words xxhash
 uses
-exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format graph groupparagraphs intdict internalbc ioseq ipair libdesc llvm llvmconstants main2 maindict mangle mytype newpretty otherseq parse parsersupport prims process real seq set stack stacktrace stdlib symbol textio timestamp tree worddict words xxhash
+exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format 
+graph groupparagraphs intdict internalbc ioseq ipair libdesc llvm llvmconstants 
+main2 maindict mangle mytype newpretty otherseq parse parsersupport prims process 
+real seq set stack stacktrace stdlib symbol textio timestamp tree worddict words xxhash 
 
 PROFILE pass1:pass1(seq.seq.seq.word, seq.word, seq.liblib)linkage
 
@@ -78,6 +82,8 @@ use seq.word
 use words
 
 use xxhash
+
+/Function type:int(a:int) int a
 
 type ordering is record toint:int
 

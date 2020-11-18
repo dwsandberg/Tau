@@ -187,9 +187,15 @@ use encoding.typename
 
 use encoding.seq.char
 
+
 Export decode( encoding.seq.char) seq.char 
 
 Export encode(seq.char) encoding.seq.char
+
+  Function deepcopy(a:int) int a 
+  
+    Function deepcopy(a:real) real a 
+
 
 type typename is record name:seq.word
 

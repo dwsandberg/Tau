@@ -20,8 +20,6 @@ use process.liblib
 
 use seq.liblib
 
-use mangle
-
 use seq.mytype
 
 use set.mytype
@@ -80,7 +78,7 @@ function subcompilelib(option:seq.word,libname:word)seq.seq.word
  else 
   let prg4 = pass2(prg3,alltypes.link)
  //   assert false report  "XXX"+print(prg4, symbol("char1(word seq)","stdlib","char")) //
-  let libdesc = libdesc(prg4, templates.link, mods.link, exports)
+  let libdesc = libdesc(alltypes.link,prg4, templates.link, mods.link, exports)
   let uses = uses(prg4,asset.roots.link + libdesc)
   let defines  = defines(prg4,  uses - compiled.link )
  // let t= @(+,checkkind2(alltypes.link,prg3),"",toseq.toset.result.link)   
@@ -105,19 +103,27 @@ Function compilelib2(libname:word)seq.word
    let aa = (result.p1)_1
     if subseq(aa, 1, 1) = "OK"then aa else"COMPILATION ERROR:" + space + aa
 
+use otherseq.char
+
+use seq.seq.char
+
+use seq.seq.word
+
 Function main(arg:seq.int)outputformat
- let args = towords.UTF8(arg + 10 + 10)
- let libname = args_1
+ let args2=@(+,  towords,empty:seq.seq.word,break(char1(";"),decodeUTF8.UTF8(arg),1))
+ let libname = args2_1_1
  let p = process.compilelib2.libname
  let output = if aborted.p then message.p
- else if subseq(result.p, 1, 1) = "OK" ∧ length.args = 3 then
- // execute function specified in arg //
-  let p2 = process.execute.mangle([ args_3], [ args_2])
-   if aborted.p2 then message.p2 else result.p2
- else if subseq(result.p, 1, 1) = "OK" ∧ not(length.args = 1)then
- "not correct number of args:" + args
- else result.p
-  outputformat.toseqint.toUTF8(htmlheader + processpara.output)
+ else if length.args2=1 &or not( subseq(result.p, 1, 1) = "OK") then result.p
+ else // execute function specified in arg //
+ let p2=process.runit.args2
+ if aborted.p2 then message.p2 else  interpret(alltypes.result.p2,code.result.p2)
+ outputformat.toseqint.toUTF8(htmlheader + processpara.output)
+
+  
+    
+  use interpreter
+
 
 Function testcomp(s:seq.seq.word)seq.seq.word
  let exports ="testit"
@@ -130,3 +136,20 @@ Function firstPass(libname:word)seq.seq.word
 
 Function secondPass(libname:word)seq.seq.word
  subcompilelib("pass2",libname)
+ 
+
+use process.runitresult
+ 
+type runitresult is record code:seq.symbol,alltypes:typedict
+  
+ Function runit(b:seq.seq.word) runitresult
+    let lib=b_1
+   let src=["module $X","use stdlib"]+subseq(b,2,length.b-1)+[ " Function runitx seq.word "+b_length.b ] 
+   let link = pass1([src], "$X", libmodules("stdlib"+lib))
+   let prg2= postbind(alltypes.link, dict.link, roots.link,result.link,   templates.link)
+    runitresult(code.lookupcode(prg2,symbol("runitx","$X","word seq")),alltypes.link)
+
+ 
+ Function compile(option:seq.word, libname:seq.word )seq.seq.word
+   subcompilelib(option,libname_1)
+

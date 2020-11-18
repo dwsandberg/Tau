@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau testall testall
+#!/usr/local/bin/tau ; use testall ; testall
  
  Module testall 
  

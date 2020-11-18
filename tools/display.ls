@@ -20,7 +20,7 @@ use seq.word
 
 /use words
 
-Function type:characterwidths internaltype export
+Export type:characterwidths  s
 
 
 type characterwidths is record widths:seq.int 

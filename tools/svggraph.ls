@@ -34,7 +34,7 @@ use seq.seq.word
 
 type svgdraw is record width:int, height:int, a:seq.word
 
-Function type:nodeinfo.T internaltype export
+Export type:nodeinfo.T 
 
 type nodeinfo is record n:T, x:int, y:int, width:int, seperation:int
 
@@ -116,7 +116,7 @@ function toarcinfo(s:set.nodeinfo.T, a:arcinfo.T)arcinfo.T
   let start = y_1
    arcinfo(a.a, x.start + if width.start = 0 then 0 else width.start + 10, y.start, label.a, width.a, backarc.a)
 
-Function type:arcinfo.T internaltype export
+Export type:arcinfo.T  
 
 type arcinfo is record a:arc.T, x:int, y:int, label:seq.word, width:int, backarc:boolean
 

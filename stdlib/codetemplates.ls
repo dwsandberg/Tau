@@ -1,6 +1,5 @@
 Module codetemplates
 
-use bitpackedseq.bit
 
 use seq.bit
 
@@ -113,6 +112,8 @@ Function options(match5map:seq.match5, m:match5)seq.word options.code.m
 function table seq.match5
 let t = [ match5(1,"bitcastZbuiltinZintzseqzseq"_1, 0, emptyinternalbc)
 , match5(1,"bitcastZbuiltinZptr"_1, 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
+, match5(1,"bitcastZbuiltinZintzseq"_1, 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
+, match5(1,"bitcastZbuiltinZint"_1, 1, CAST(r.1, slot.ibcsub1, ptr.i64, inttoptr))
 , match5(1,"isnullZbuiltinZptr"_1, 3, CAST(r.1, slot.ibcsub1, i64, ptrtoint) + CMP2(r.2, r.1, C64.0, 32)
 + CAST(r.3, r.2, i64, zext))
 , match5(0,"nullptrZbuiltin"_1, 1, CAST(r.1, C64.0, ptr.i64, inttoptr))

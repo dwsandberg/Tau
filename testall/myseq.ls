@@ -8,7 +8,7 @@ use stdlib
 
 type myseq is sequence length:int, data:seq.T
 
-Function type:myseq.T internaltype export
+ Export type:myseq.T  
 
 All sequences must have the first element representing the length of the seqence.As with any parameterized scope any type must contain a element that use the parameter so that mutiple instances of the scope do not produce duplicate symbols.
 

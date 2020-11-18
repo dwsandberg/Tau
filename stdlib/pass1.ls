@@ -96,7 +96,7 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarymods:seq.firstp
    let allsymbols1 = @(∪, defines, empty:set.symbol, toseq.d1)
    let alltypes0 = @(+, types, empty:seq.myinternaltype, toseq.d1)
     // assert false report"XX"+ @(seperator."&br", towords,"", alltypes0)//
-     let alltypes = processtypedef(typedict.empty:seq.myinternaltype, alltypes0, 1, empty:seq.myinternaltype)
+     let alltypes = processtypedef(typedict.basetypes, alltypes0, 1, empty:seq.myinternaltype)
     let abstractsimple1 = split(toseq.d1, 1, empty:seq.firstpass, empty:seq.firstpass)
     let simple = abstractsimple1_2
     let abstract = abstractsimple1_1
@@ -104,27 +104,12 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarymods:seq.firstp
      let templates0 = @(bind3(alltypes, d1), identity, libtemplates , abstract)
     let templates = @(maptemp.templates0 , identity, templates0,   map.expand1)
      // assert false report @(seperator." &br", print,"", roots)//
-     let prgx = @(definetypes.alltypes, identity, emptyprogram, toseq.@(∪, exports, empty:set.symbol, abstract))
-     let roots = @(+, roots.exports, empty:seq.symbol, simple)
+    let roots = @(+, roots.exports, empty:seq.symbol, simple)
      linkage(prg1, toset.libprg , roots, simple + abstract, templates, alltypes,allsymbols1)
- 
 
+  function   basetypes seq.myinternaltype 
+  [myinternaltype("defined"_1,"int"_1, mytype("stdlib"), [typeint]) ]
 
-  function definetypes(alltypes:typedict, prg:program, s:symbol)program
- if resulttype.s = mytype."internaltype"then
- let t = findelement(alltypes, parsetype.subseq(fsig.s, 3, length.fsig.s))
-   if length.t > 0 ∧ isdefined.t_1 then map(prg, s, [ Words.towords.t_1])
-   else prg
- else prg
-
-function compare(prg:program, prg2:program, s:symbol)int
- if resulttype.s = mytype."internaltype"then
- let code = lookupcode(prg, s)
-  let code2 = lookupcode(prg2, s)
-   assert code.code = code.code2 report"diff" + print.s + @(+, print,"", code.code) + " &br"
-   + @(+, print,"", code.code2)
-    1
- else 0
 
 function maptemp(templates:program, st:program, s:mapele)program
  let s2 = lookupcode(templates, target.s)
@@ -139,16 +124,16 @@ function processtypedef(defined:typedict, undefined:seq.myinternaltype, i:int, n
     processtypedef(defined, newundefined, 1, empty:seq.myinternaltype)
  else
   let td = undefined_i
-  let flds = subflddefined(@(+,parameter,empty:seq.mytype,subflds.td), modpara.td, 1, defined, empty:seq.mytype)
+   let fldtypes= if kind.td in  "record sequence" then @(+,parameter,empty:seq.mytype,subflds.td) else subflds.td
+  let flds = subflddefined( fldtypes , modpara.td, 1, defined, empty:seq.mytype)
    if length.flds = 0 then 
     // some fld is not defined //
     processtypedef(defined, undefined, i + 1, newundefined + undefined_i)
    else 
-    let new= if typekind.td = "sequence"_1 then
-           changesubflds( td,    [ mytype."int seq" ] +flds )
-    else 
-     assert typekind.td = "record"_1 report "<<<>?"
-    changesubflds(td,  flds)
+    let new=  if  name.td in "bitpackedseq"  then   
+          changesubflds( td,    [ mytype."int seq" ] +flds )
+      else 
+          changesubflds(td,  flds)
    processtypedef(defined + [new], undefined, i + 1, newundefined)
 
 function subflddefined(subflds:seq.mytype,modpara:mytype, i:int, defined:typedict, flatflds:seq.mytype)seq.mytype
@@ -160,7 +145,7 @@ function subflddefined(subflds:seq.mytype,modpara:mytype, i:int, defined:typedic
    else if abstracttype.typ in "encoding"then subflddefined(subflds,modpara, i + 1, defined, flatflds + typeint)
    else
     let typdesc = findelement(defined, typ)
-     if isempty.typdesc then // not defined // empty:seq.mytype else subflddefined(subflds,modpara, i + 1, defined, flatflds + subflds.typdesc_1)
+    if isempty.typdesc then // not defined // empty:seq.mytype else subflddefined(subflds,modpara, i + 1, defined, flatflds + subflds.typdesc_1)
 
 
 type unboundexport is record modname:mytype, unbound:symbol
@@ -241,7 +226,7 @@ function split(s:seq.firstpass, i:int, abstract:seq.firstpass, simple:seq.firstp
  if i > length.s then [ abstract, simple]
  else
   let f = s_i
-   if length.typerep.modname.f = 1 ∧ length.uses.f > 0 then
+   if  not.iscomplex.modname.f  ∧ length.uses.f > 0 then
    split(s, i + 1, abstract, simple + f)
    else if parameter.modname.f = mytype."T"then split(s, i + 1, abstract + f, simple)
    else split(s, i + 1, abstract, simple)
@@ -280,30 +265,29 @@ function =(a:symboltext, b:symboltext)boolean ph.a = ph.b
 
 function assignencoding(l:int, s:symboltext)int assignrandom(l, s)
 
-function tokind(type:mytype)mytype
- mytype
- .[ if type = mytype."real"then"real"_1
+function tokind(type:mytype)word
+ if type = mytype."real"then"real"_1
  else if abstracttype.type in "seq"then"ptr"_1
  else assert type=typeint &or type=mytype."word" report "tokind" + print.type
-    "int"_1]
+    "int"_1 
 
-function fldcode(constructor:seq.symbol, syms:seq.symbol, i:int, knownoffset:int, offset:seq.word, prg:program)program
+function fldcode(constructor: symbol,indexfunc:seq.symbol, syms:seq.symbol, i:int, knownoffset:int, offset:seq.word, prg:program)program
  if i > length.syms then
  if offset = ""then
-  let args = @(+, Local, subseq(constructor, 2, 2), arithseq(length.syms, 1, 1))
-   let x = Record.@(+, tokind, if length.constructor = 2 then [ typeint]else empty:seq.mytype, paratypes.constructor_1)
-    map(prg, constructor_1, args + x)
+  let args = @(+, Local, indexfunc, arithseq(length.syms, 1, 1))
+   let x = Record.@(+, tokind, if not.isempty.indexfunc then "int" else "", paratypes.constructor)
+    map(prg, constructor , args + x)
   else
-   map(prg, constructor_1, subseq(constructor, 2, 2) + symbol("build." + fsig.constructor_1,"x builtin","ptr"))
+   map(prg, constructor, indexfunc + symbol("build." + fsig.constructor,"x builtin","ptr"))
  else
   let this = syms_i
    if i = 1 ∧ length.syms = 1 then
-   map(map(prg, this, [ Local.1]), constructor_1, [ Local.1])
+   map(map(prg, this, [ Local.1]), constructor, [ Local.1])
    else
     let fldtype = resulttype.this
     let offsetinc = if abstracttype.fldtype in "real int seq word encoding boolean"then 1 else 0
      if offset = "" ∧ offsetinc = 1 then
-     fldcode(constructor
+     fldcode(constructor,indexfunc
       , syms
       , i + 1
       , knownoffset + 1
@@ -317,12 +301,13 @@ function fldcode(constructor:seq.symbol, syms:seq.symbol, i:int, knownoffset:int
       let newoffset = if offsetinc = 0 then
       if offset = ""then typerep.fldtype else offset + "," + typerep.fldtype
       else offset
-       fldcode(constructor
+       fldcode(constructor,indexfunc
        , syms
        , i + 1
        , knownoffset + offsetinc
        , newoffset
-       , map(prg, this, [ Local.1, symbol("offsets", [ toword.knownoffset] + offset + "builtin", typerep.fldtype)]))
+       , map(prg, this, [ Local.1, symbol("offsets("+typerep.fldtype+","+offset+")", [ toword.knownoffset]  + "builtin", typerep.fldtype)]))
+
 
 function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpass
  if length.input = 0 then
@@ -340,25 +325,25 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
   let t = abstracttype(name, parameter.modname.f)
    assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
    let it = myinternaltype(kind, name, modname.f, types.b)
-   let sizeofsym = newsymbol("type:" + print.t, modname.f, empty:seq.mytype, mytype."internaltype")
-   let constructor = newsymbol([ name], modname.f, @(+, parameter, empty:seq.mytype, types.b), t)
+   let typesym =  // newsymbol("type:" + print.t, modname.f,[t], t) // typesym.it
+    let constructor = newsymbol([ name], modname.f, @(+, parameter, empty:seq.mytype, types.b), t)
    let fldsyms = @(+, definefld(modname.f, [ t]), empty:seq.symbol, types.b)
-   let prg1 = map(prg.f, sizeofsym, [ Words.towords.it])
+     let prg1 =prg.f //   map(prg.f, typesym,[Local.1,deepcopysym.t]) // 
     if kind = "sequence"_1 then
     let seqtype = typeseq+parameter.modname.f 
      let symtoseq = newsymbol("toseq", modname.f, [ t], seqtype)
      let symfromseq = newsymbol("to:" + print.t, modname.f, [ seqtype], t)
      let indexfunc = Fref
      .newsymbol("_", modname.f, [ mytype("T" + name), typeint], mytype."T")
-     let prg0 = fldcode([ constructor, indexfunc], fldsyms, 1, 1,"", prg1)
-     let syms = fldsyms + [ constructor, sizeofsym, symtoseq, symfromseq]
+     let prg0 = fldcode(  constructor ,[indexfunc], fldsyms, 1, 1,"", prg1)
+     let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]
      let prg = map(prg0, symtoseq, [ Local.1])
      let prg2 = map(prg, symfromseq, [ Local.1, Lit.0, Idx."int"_1, indexfunc, EqOp, Lit.2, Lit.3, Br, Local.1, Exit] + Emptyseq
      + [ Exit, Block(typeptr, 3)])
       firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, types.f + it, prg2)
     else
-     let prg2 = fldcode([ constructor], fldsyms, 1, 0,"", prg1)
-     let syms = fldsyms + [ constructor, sizeofsym]
+     let prg2 = fldcode( constructor,empty:seq.symbol, fldsyms, 1, 0,"", prg1)
+     let syms = fldsyms + [ constructor, typesym]
       firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, types.f + it, prg2)
  else if input_1 in "Function function Builtin builtin Export unbound"then
  let t = parse(stubdict, getheader.input)
@@ -385,6 +370,6 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
  else f
 
 function roots(exported:seq.word, f:firstpass)seq.symbol
- if not(abstracttype.modname.f in exported) ∨ length.typerep.modname.f ≠ 1 then
+ if not(abstracttype.modname.f in exported) ∨ iscomplex.modname.f  then
  empty:seq.symbol
  else toseq.exports.f

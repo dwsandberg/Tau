@@ -6,8 +6,6 @@ use seq.seq.char
 
 use seq.char
 
-use mangle
-
 use seq.myinternaltype
 
 use otherseq.mytype
@@ -107,16 +105,11 @@ Function symbol(fsig:seq.word, module:seq.word, returntype:seq.word, flag:bits)s
 Export fsig(symbol)seq.word
 
 Function newsymbol(name:seq.word, modname:mytype, paratypes:seq.mytype, resulttype:mytype)symbol
- let b = length.towords.modname > 1 ∧ not((towords.modname)_1 = "T"_1)
- ∧ not.ispara.modname
- let paratyps = if b then @(+, replaceT(parameter.modname), empty:seq.mytype, paratypes)else paratypes
- let sym = symbol(if length.paratyps = 0 then name
- else name + "(" + @(seperator.",", towords,"", paratyps) + ")", towords.modname, towords.if b then replaceT(parameter.modname, resulttype)else resulttype, empty:seq.symbol)
-  sym
-
-Function name(s:symbol)seq.word
- let j = findindex("("_1, fsig.s)
-  if j > length.fsig.s then fsig.s else subseq(fsig.s, 1, j - 1)
+   symbol(if length.paratypes = 0 then name
+ else name + "(" + @(seperator.",", typerep,"", paratypes) + ")", typerep.modname, 
+ typerep.resulttype, empty:seq.symbol)
+  
+Function name(s:symbol)seq.word subseq(fsig.s, 1, findindex("("_1, fsig.s) - 1)
 
 Function paratypes(s:symbol)seq.mytype @(+, mytype, empty:seq.mytype, paratypesastext.s)
 
@@ -218,9 +211,11 @@ Function Parameter(name:word, type:mytype, parano:int)symbol
 
 function ispara(s:mytype)boolean
  (towords.s)_1 = "para"_1 ∧ last.towords.s = "$"_1
+ 
+Function istypeexport(s:symbol) boolean
+  subseq(fsig.s,1,2) = "type:" 
 
-Function deepcopysym(type:mytype)symbol
- symbol("deepcopy(" + towords.type + ")", towords.type + "builtin", towords.type)
+ 
 
 Function isIdx(s:symbol)boolean isbuiltin.module.s ∧ (fsig.s)_1 in "IDX"
 
@@ -238,12 +233,10 @@ Function Emptyseq seq.symbol [ Lit.0, Lit.0, symbol("RECORD(int, int)","$record"
 
 Function pseqidxsym(type:mytype)symbol
  newsymbol("_",  typeseq+  type  , [ typepseq+type  , typeint], type)
+ 
+ Function Record(kinds:seq.word)symbol
+ symbol("RECORD(" + @(seperator.",", identity,"", kinds) + ")","$record","ptr", specialbit)
 
-Function Sequence(len:int, typ:seq.word)symbol
- Record([ typeint, typeint] + constantseq(len, mytype.typ))
-
-Function Record(types:seq.mytype)symbol
- symbol("RECORD(" + @(seperator.",", towords,"", types) + ")","$record","ptr", specialbit)
 
 Function Apply(i:int, basetype:seq.word, returntype:seq.word)symbol
  symbol(["APPLY"_1, toword.i], basetype + "$apply", returntype, specialbit)
@@ -453,7 +446,7 @@ type typedict is record data:seq.myinternaltype
 
 Function +(a:typedict, b:seq.myinternaltype)typedict typedict(data.a + b)
 
-Function print(t:typedict)seq.word @(seperator." &br", towords,"", data.t)
+Function print(t:typedict)seq.word @(seperator." &br", print3,"", data.t)
 
 type myinternaltype is record kind:word, name:word, modname:mytype, subflds:seq.mytype
 
@@ -485,9 +478,6 @@ Export myinternaltype( kind:word, name:word, modname:mytype, subflds:seq.mytype 
 
 Function replaceTmyinternaltype(with:mytype, it:myinternaltype)myinternaltype 
 myinternaltype( kind.it, name.it, replaceT(with, modname.it), subflds.it)
-
-Function towords(it:myinternaltype)seq.word
- [  kind.it, name.it] + print.modname.it + @(+, print,"", subflds.it)
 
 Function tomyinternaltype(s:seq.word)myinternaltype
  let t = parseit(s, 1, [ s_1], empty:seq.seq.word)
@@ -543,10 +533,11 @@ type typeinfo is record subflds:seq.mytype
 
 Function kind(t:typeinfo)word
  let z = subflds.t
-  if length.z > 1 ∨ abstracttype.z_1 = "seq"_1 then"ptr"_1
-  else
-   assert(towords.z_1)_1 in "int real ptr"report"unexpected fld in internal type" + @(+, print,"", z)+stacktrace // x //
-    (towords.z_1)_1
+   if length.z > 1 ∨ abstracttype.z_1 = "seq"_1 then"ptr"_1
+  else   
+   let k=(typerep.z_1)_1
+   assert k in "int real ptr"report"unexpected fld in internal type" + @(+, print,"", z)+stacktrace // x //
+    k
     
     use stacktrace
 
@@ -566,9 +557,39 @@ Export type:typedict
 Function gettypeinfo(d:typedict, type:mytype)typeinfo
  if type=typeint then typeinfo.[typeint]
  else if type=mytype."real" then typeinfo.[mytype."real"]
- else if abstracttype.type = "seq"_1 then typeinfo.[ type]
- else if type = mytype."internaltype" &or type= typeptr then typeinfo.[ typeptr]
+ else if abstracttype.type = "seq"_1  &or type = mytype."internaltype" &or type= typeptr  then typeinfo.[ typeptr]
  else
   let t = findelement(d, type)
    assert length.t = 1 report"type not found" + print.type + stacktrace
     typeinfo.subflds.t_1
+    
+Function typesym(it:myinternaltype) symbol
+   let t = abstracttype(name.it, parameter.modname.it)
+    newsymbol("type:" + print.t, modname.it,[t], t)
+    
+Function deepcopysym(d:typedict,type:mytype) symbol typesym(d,type)
+
+Function deepcopysymint symbol symbol("deepcopy(int)","assignencodingnumber","int")
+
+Function deepcopysymreal symbol symbol("deepcopy(real)","assignencodingnumber","real")
+ 
+ Function typesym( d:typedict,type:mytype) symbol
+   if type=typeint then deepcopysymint    
+   else   if type=mytype."real" then deepcopysymreal 
+   else  
+  let e=findelement(d,type)
+   assert length.e = 1 report"type not found" + print.type + stacktrace
+  let it=e_1
+   let t = abstracttype(name.it, parameter.modname.it)
+    newsymbol("type:" + print.t, modname.it,[t], t)
+
+ 
+use process.seq.bits
+
+use seq.bits
+
+Export deepcopy(seq.bits) seq.bits
+
+use process.seq.firstpass
+
+Export deepcopy(seq.firstpass) seq.firstpass

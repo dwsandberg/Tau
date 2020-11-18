@@ -25,12 +25,14 @@ Function consumecomment(s:seq.word, i:int)int
  consumecomment(s, search("/ /", s, i + 2) + 2)
  else i
 
+
 Function getheader(s:seq.word)seq.word
  if length.s < 3 then s
  else
   let endofname = if s_3 = ":"_1 then consumetype(s, 5)else 3
    if subseq(s, 1, 3) = "Export type:"then
-   subseq(s, 1, endofname - 1) + "internaltype stub"
+    let tt=subseq(s,4,endofname - 1)
+   subseq(s, 1, endofname - 1) +   "("+tt+")"+tt+" stub"   
    else
     let startoftype = if s_endofname = "("_1 then findindex(")"_1, s, endofname + 1) + 1
     else endofname

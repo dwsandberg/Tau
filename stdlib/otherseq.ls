@@ -2,6 +2,8 @@ Module otherseq.T
 
 use seq.T
 
+use seq.seq.T
+
 use stdlib
 
 Function ≠(a:T, b:T)boolean not(a = b)
@@ -153,3 +155,9 @@ Function setreplaceorinsert(s:seq.T, val:T)seq.T
   else subseq(s, 1,-i - 1) + [ val] + subseq(s,-i, length.s)
 
 Function lpad(n:int, val:T, l:seq.T)seq.T constantseq(n - length.l, val) + l
+
+Function break(w:T, a:seq.T, j:int)seq.seq.T
+ let i = findindex(w, a, j)
+  if i > length.a then
+  if j > length.a then empty:seq.seq.T else [ subseq(a, j, i)]
+  else [ subseq(a, j, i - 1)] + break(w, a, i + 1)

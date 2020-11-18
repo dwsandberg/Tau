@@ -34,38 +34,40 @@ use seq.word
 
 use set.word
 
-Function libdesc(p:program, templates:program, mods:seq.firstpass, exports:seq.word)symbol
- let mods2=@(+,tolibmod(p,templates,exports),empty:seq.firstpass,mods)
+Function libdesc(alltypes:typedict,p:program, templates:program, mods:seq.firstpass, exports:seq.word)symbol
+ let mods2=@(+,tolibmod(alltypes,p,templates,exports),empty:seq.firstpass,mods)
  let symstoexport= @(&cup,defines,empty:set.symbol,mods2) &cup @(&cup,exports,empty:set.symbol,mods2)
  let set2=asset.@(+, tolibsym(p,templates, symstoexport), empty:seq.symbol, toseq.symstoexport)
 addseq.@(+, addlibmod( set2),empty:seq.symbol,mods2)
 
-/function isinternaltype(s:symbol) set.symbol if (fsig.s)_1="type"_1 &and resulttype.s=mytype."internaltype" then asset.[s]
-else empty:set.symbol
 
-function  tolibmod(p:program, templates:program,exports:seq.word,m:firstpass) seq.firstpass
+function  tolibmod(alltypes:typedict,p:program, templates:program,exports:seq.word,m:firstpass) seq.firstpass
   if not(abstracttype.modname.m in exports) then empty:seq.firstpass
  else
    let defines=if isabstract.modname.m  then  defines.m else exports.m
-     let types   =@(+, libtypes2(p,templates), empty:seq.myinternaltype,  toseq.defines)  
+    let types   =@(+, libtypes2(alltypes,p,templates), empty:seq.myinternaltype,  toseq.defines)  
    let uses = if isabstract.modname.m  then uses.m else empty:seq.mytype  
-   [ firstpass(modname.m, uses,  defines,  exports.m, empty:seq.symbol, empty:set.symbol,empty:seq.myinternaltype)]
+   [ firstpass(modname.m, uses,  defines,  exports.m, empty:seq.symbol, empty:set.symbol,types)]
 
+
+function  printtotype(a:seq.word,i:int, result:seq.word) mytype
+  if isempty.result then printtotype(a,i+1,result+a_i)
+  else if i > length.a then mytype.result
+  else       printtotype(a,i+2,[a_(i+1)]+result)
    
-  function libtypes2(p:program,templates:program,s:symbol)seq.myinternaltype
- if not(returntype.s = "internaltype" ∨ (fsig.s)_1 = "type"_1)then
- empty:seq.myinternaltype
- else
-  let code =  if isabstract.modname.s then  code.lookupcode(templates,s) else code.lookupcode(p,s)
-    assert length.code > 0 &and module.code_1 = "$words"report"NON2" +print.s+"/"+ @(+, print,"", code)
-    let k=tomyinternaltype.fsig.code_1
-     [if isabstract.modname.s then
-       k
-     else 
-       if iscomplex.modname.k then  changesubflds(k,@(+,replaceT(parameter.modname.k),empty:seq.mytype,subflds.k))
-       else k 
-     ]
-      
+use set.mytype
+
+  
+   
+function libtypes2(alltypes:typedict,p:program,templates:program,s:symbol)seq.myinternaltype
+ if istypeexport.s   then 
+      let it=findelement(alltypes,resulttype.s)_1  
+  [   if  isabstract.modname.it then 
+    myinternaltype("undefined"_1,name.it,modname.it,subflds.it) 
+   else it]
+ else  empty:seq.myinternaltype
+    
+        
  
 function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol) symbol
    let cleansym = [ if isempty.zcode.sym then sym else symbol(fsig.sym, module.sym, returntype.sym)]
@@ -87,23 +89,20 @@ function filterx(toexport:set.symbol, s:symbol) int
 
 function addlibsym(s:symbol)symbol
  Constant2
- .[ Words.fsig.s, Words.module.s, Words.returntype.s, addseq.@(+, addlibsym, empty:seq.symbol, zcode.s), Lit.extrabits.s, Record.[ typeptr, typeptr, typeptr, typeptr, typeint]]
+ .[ Words.fsig.s, Words.module.s, Words.returntype.s, addseq.@(+, addlibsym, empty:seq.symbol, zcode.s), Lit.extrabits.s
+ , Record."ptr ptr ptr ptr ptr"]
 
 function addmytype(t:mytype)symbol Words.typerep.t
 
 function addseq(s:seq.symbol)symbol
  Constant2([ Lit.0, Lit.length.s] + s
- + Record([ typeint, typeint] + constantseq(length.s, typeptr)))
+ + Record("int,int" + constantseq(length.s, "ptr"_1)))
  
  function addlibmod( toexport:set.symbol,  m:firstpass) symbol
  // symbols in m are replaced with the symbol from toexport which has zcode to form programele // 
  let exports=  toexport &cap exports.m 
  let defines= if isabstract.modname.m then  toexport &cap defines.m  else exports
- let types=@(+, libtypes, empty:seq.myinternaltype, toseq.defines)
-// let a=@(seperator.";",towords,"",types) 
- let b=@(seperator.";",towords,"",types.m) 
-assert a=b &or subseq(a,1,3)="record UTF8 UTF8" report "DIFF"+a+"&br"+b //
-  let e= addseq.@(+, addlibsym, empty:seq.symbol, toseq.exports )
+   let e= addseq.@(+, addlibsym, empty:seq.symbol, toseq.exports )
  let d= if isabstract.modname.m then  addseq.@(+, addlibsym, empty:seq.symbol, toseq.defines )  else e
  Constant2
  .[ addmytype.modname.m 
@@ -112,22 +111,22 @@ assert a=b &or subseq(a,1,3)="record UTF8 UTF8" report "DIFF"+a+"&br"+b //
  , e
  , Words.""
  , Words.""
- , addseq.@(+, addinternaltype, empty:seq.symbol, types)
+ , addseq.@(+, addinternaltype, empty:seq.symbol, types.m)
  , Words.""
- , Record
- .[ typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr]]
- 
+ , Record."ptr ptr ptr ptr ptr ptr ptr ptr"]
+  
 function addinternaltype(t:myinternaltype) symbol
 Constant2.[ Word.kind.t,Word.name.t,addmytype.modname.t
  ,addseq.@(+, addmytype, empty:seq.symbol, subflds.t)
-, Record
- .[ typeint,typeint, typeptr, typeptr ]]
- 
+, Record."int int ptr ptr"]
+  
 --------------------------
 
 Export type:liblib
 
 Export type:parc
+
+use process.parc
 
 type liblib is record libname:seq.word, words:seq.encodingpair.seq.char, mods:seq.firstpass, timestamp:int, profiledata:seq.parc
 
@@ -162,18 +161,11 @@ Function libmodules(dependentlibs:seq.word)seq.firstpass @(+, libmodules(depende
  
 function libmodules(dependentlibs:seq.word, l:liblib) seq.firstpass if(libname.l)_1 in dependentlibs then mods.l else empty:seq.firstpass
 
-function libtypes(s:symbol)seq.myinternaltype
- if not(returntype.s = "internaltype" ∨ (fsig.s)_1 = "type"_1)then
- empty:seq.myinternaltype
- else
-  let code = zcode.s
-   assert length.code > 1 &and module.code_2 = "$words"report"NON" +print.s+"/"+ @(+, print,"", code)
-   let a = if true ∧ typerep.parameter.modname.s in ["T",""]then fsig.code_2
-   else replaceT(print.parameter.modname.s, fsig.code_2)
-    [ tomyinternaltype.a]
-
 function removeconstant(s:seq.symbol)seq.symbol @(+, removeconstant, empty:seq.symbol, s)
 
 function removeconstant(s:symbol)seq.symbol if module.s = "$constant"then removeconstant.zcode.s else [ s]
 
+use process.seq.parc
+
+Export deepcopy(seq.parc) seq.parc
 

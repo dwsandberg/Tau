@@ -459,7 +459,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
          if module.arg1 = "$word"then
          let a1 = @(+, Lit, empty:seq.symbol, tointseq.decodeword.(fsig.arg1)_1)
           let d = Constant2([ Lit.0, Lit.length.a1] + a1
-          + Record.constantseq(length.a1 + 2, typeint))
+          + Record.constantseq(length.a1 + 2, "int"_1))
            yyy(p, org, k + 1, subseq(result, 1, len - 1) + d, nextvar, map)
          else yyy(p, org, k + 1, result + sym, nextvar, map)
        else if fsig.sym = "encode(char seq)" ∧ module.sym = "char seq encoding"then
@@ -632,7 +632,6 @@ function applycode(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:
  let noop = nopara1 + nopara2 = 0 ∧ checknoop(p, term2) ∧ t_2 - t_1 = 1
  ∧ code_(t_1) = emptyseqOp
  ∧ checkcat.term1_1
- ∧ not((fsig.term2_1)_1 = "deepcopy"_1)
   if noop then
   let new = subseq(code, 1, t_1 - 1) + subseq(code, t_2, index - 4)
     // assert not(subseq(code, t_2, index-4)= [ var.1])report"XXXX"+ print.code +"/new/"+ print.new //

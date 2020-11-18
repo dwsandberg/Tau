@@ -38,7 +38,7 @@ struct spaceinfo { char * nextone,*lastone; BT *blocklist; };
 struct pinfo { BT kind; // 1 if aborted
     BT message; // message if aborted (seq.word)
     BT result;  // result returned by process
-    BT joined;  // has process been joined to parent?
+    BT joined;  // has process be joined to parent?
     struct spaceinfo space; //for space allocation
     jmp_buf env;
     BT error;
@@ -420,8 +420,7 @@ char *name=(char *)&IDXUC(funcname,2);
       return LIBFUNC(PD,F,P);
     }
     else { 
-      char *p=dlerror();
-    fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, p);
+     char *p=dlerror();
      char *p2 = "Unable to get symbol to execute ";
      int l=strlen(p);
      int l2=strlen(p2);
@@ -431,6 +430,7 @@ char *name=(char *)&IDXUC(funcname,2);
       while (*p2!=0) { *(q++)=*(p2++);}
       while (*p!=0) { *(q++)=*(p++);}
       
+      fprintf(stderr,"[%s] Unable to get symbol to execute: %s\n",__FILE__, dlerror());
      
        BT (*towords)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"towordsZtextioZUTF8"); 
        if (!towords) {
@@ -720,7 +720,48 @@ void createfilefromoutput(struct outputformat *t,int file)
                 }}
                 
 
-
+ processinfo  step (char * func,struct str2 *arg1, struct str2 *arg2,struct str2 *arg3 ) {
+ // Does not appear to allocate space correctly form pinfo as no space is given for the 3 parameters 
+ processinfo PD=&sharedspace;
+    int j; BT a1[4],a2[4],a3[4];
+    struct pinfo2 * pin =  (struct pinfo2 * )myalloc(PD,sizeof (struct pinfo2)/8+8+8 );
+      pin->deepcopyresult=(BT)noop;  
+      pin->deepcopyseqword= (BT)noop;
+      pin->func=(BT)dlsym(RTLD_DEFAULT, func);
+      if (!pin->func) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+    }
+      
+      pin->noargs=3;
+      pin->args[0]=fill(a1,arg1);
+      pin->args[1]= fill(a2,arg2);
+      pin->args[2]= fill(a3,arg3);
+      /* should be using myalloc below so space is reclaimed */
+      processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
+      initprocessinfo(p,PD,pin);
+      p->freespace=0;
+        processfunction(p);  
+       if (p->kind==1 )   { 
+          char *header = "Status: 500 Error\r\nContent-Type: text/html\r\n\r\n";
+        BT s=toUTF8(PD,p->message);
+        BT i,seqlen=IDXUC(s,1);
+        BT *r=(BT *)myalloc( PD,(2+strlen(header)+seqlen ));
+        r[1]=strlen(header)+seqlen;
+        r[0]=0;
+        BT *t=r+2;
+        while (*header !=0)   *(t++)=*(header++);
+        for (i=1; i<=seqlen;i++)
+         { BT tmp=IDX(PD,s,i);*(t++)=  tmp;}
+         p->message=(BT)r;
+       return  p;}
+      else 
+        {  
+                  
+  
+        return  p;
+        }
+}   
 
 // end of thread creation.
 
@@ -772,6 +813,21 @@ void inittau(int additional) {
 }
 
 
+struct str2  *   stepresult( BT x)
+    { processinfo p = (processinfo) x; 
+      return (struct str2 *)(p->kind==0?p->result:p->message);
+    }
+    
+
+void    stepfree ( BT x)
+    { processinfo p = (processinfo) x; 
+       fprintf(stderr,"space before %d\n",alloccount);
+      myfree(&p->space);
+       fprintf(stderr,"freed %lld\n",(BT)p->pid);
+       fprintf(stderr,"space used %d\n",alloccount);
+}
+
+
   
 BT randomintZbuiltinZint(processinfo PD,BT len){
 int randomData = open("/dev/urandom", O_RDONLY);
@@ -819,63 +875,4 @@ BT currenttimeZbuiltin() {
      seconds = time(NULL);
      return T1970+seconds;
 }
-
-
-
-int main(int argc, char **argv)    {   int i=0,count; 
-       struct str2 myarg;
-       // printf("argc %d\n",argc);
-       inittau(0);
-       for(count=1;argc > count; count++){
-       fprintf(stderr,"main args:%d %s\n", count,argv[count]);
-       int j=0;
-            while( argv[count][j] != 0 ) { myarg.data[i++]=argv[count][j++];}
-            myarg.data[i++]=' '; 
-     }
-       myarg.data[i]=0;
-       fprintf(stderr,"main args: %s\n",myarg.data);
-       myarg.length=i;
-       myarg.type =1;
-       
-       
-
- processinfo PD=&sharedspace;
-    int j; BT a1[4];
-    struct pinfo2 * pin =  (struct pinfo2 * )myalloc(PD,sizeof (struct pinfo2)/8+8+8 );
-      pin->deepcopyresult=(BT)noop;  
-      pin->deepcopyseqword= (BT)noop;
-      pin->func=(BT)dlsym(RTLD_DEFAULT, "mainZmain2Zintzseq");
-      if (!pin->func) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }
-      
-      pin->noargs=1;
-      pin->args[0]=fill(a1,&myarg);
-      /* should be using myalloc below so space is reclaimed */
-      processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
-      initprocessinfo(p,PD,pin);
-        p->freespace=0;
-        processfunction(p);  
-       if (p->kind==1 )   { 
-          char *header = "Status: 500 Error\r\nContent-Type: text/html\r\n\r\n";
-        BT s=toUTF8(PD,p->message);
-        BT i,seqlen=IDXUC(s,1);
-        BT *r=(BT *)myalloc( PD,(2+strlen(header)+seqlen ));
-        r[1]=strlen(header)+seqlen;
-        r[0]=0;
-        BT *t=r+2;
-        while (*header !=0)   *(t++)=*(header++);
-        for (i=1; i<=seqlen;i++)
-         { BT tmp=IDX(PD,s,i);*(t++)=  tmp;}
-         p->message=(BT)r;
-         }         
-         
-        fflush(stdout); 
-        createfilefromoutput( output(p ),/* stdout */ 1);
-       return 0;
-     }
-     
-     
-
 

@@ -28,7 +28,11 @@ use set.seq.word
 
 use seq.word
 
-Function test1 seq.word pretty("stdlib UTF8 bitpackedseq bits codegen codetemplates deepcopy encoding fileio format graph groupparagraphs intercode internalbc ipair libdescfunc libscope llvm main2 oseq packedseq parse pass1 pass2new persistant persistantseq prims process real reconstruct seq set stack stacktrace symbol textio tree worddict xxhash timestamp maindict words","junk")
+use process.seq.prettyresult
+
+Export deepcopy(seq.prettyresult) seq.prettyresult
+
+
 
 Function gettexts(l:seq.word)seq.seq.word @(+, gettexts(l_1), empty:seq.seq.word, subseq(l, 2, length.l))
 

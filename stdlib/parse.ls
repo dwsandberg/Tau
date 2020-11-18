@@ -88,7 +88,9 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
  let nopara = nopara.last.code.exp
   let rt =(types.exp)_1
   let recordtyp = [ typeint, typeint, typeint, typeint] + paratypes.last.code.exp
-  let newcode = [ Fref.deepcopysym.rt, Fref.deepcopysym.mytype."word seq", Fref.last.code.exp, Lit.nopara]
+  let deepcopyrt=deepcopysym(dict.R,rt,input,place.R   )
+  let deepcopyws=symbol("type:seq.word(word seq)","word seq","word seq")
+  let newcode = [ Fref.deepcopyrt, Fref.deepcopyws, Fref.last.code.exp, Lit.nopara]
   + subseq(code.exp, 1, length.code.exp - 1)
   + [ newsymbol("kindrecord", mytype."T builtin", recordtyp, typeptr), symbol("process2(ptr)","builtin","ptr")]
    bindinfo(dict.R, newcode, [  typeprocess+rt],"")
@@ -129,17 +131,25 @@ function createfunc(R:reduction.bindinfo, input:seq.token.bindinfo, funcname:seq
  let functype = gettype.functypebind
   assert functype = (types.exp)_1 ∨ (types.exp)_1 in [ mytype."internal1"]report errormessage("function type of" + print.functype + "does not match expression type" + print.(types.exp)_1, input, place.R)
    bindinfo(dict.R, code.exp, [ mytype."unused", functype] + paralist, funcname)
+   
+ Function deepcopysym(dict:set.symbol,type:mytype,input:seq.token.bindinfo, place:int) symbol
+     if type=typeint then deepcopysymint
+   else  if type=typeint then deepcopysymreal
+   else
+ let a = lookup(dict,"type:" + print.type, [type])
+    assert cardinality.a = 1  report errormessage("parameter type" + print.type + "is undefined in", // + @(+, print,"", toseq.dict), // input, place)
+ a_1
+
 
 function isdefined(R:reduction.bindinfo, input:seq.token.bindinfo, type:mytype)bindinfo
  let dict = dict.R
- let typ=typerep.type
-  if cardinality.dict < 25 ∨ typ in ["T","int","real"]
-  ∨ subseq(typ, 1, 1) = "T"then
-  bindinfo(dict, empty:seq.symbol, [ mytype.typ],"")
+  if cardinality.dict < 25 ∨ type in [mytype."T",typeint,mytype."real"]
+  ∨  isabstract.type then
+  bindinfo(dict, empty:seq.symbol, [type],"")
   else
-   let a = lookup(dict,"type:" + print.mytype.typ, empty:seq.mytype)
-    assert cardinality.a = 1 ∨ print.mytype.typ in ["?"]report errormessage("parameter type" + print.mytype.typ + "is undefined in", // + @(+, print,"", toseq.dict), // input, place.R)
-     bindinfo(dict, empty:seq.symbol, [ mytype.typ],"")
+   let a = lookup(dict,"type:" + print.type,  [type])
+    assert cardinality.a = 1  report errormessage("parameter type" + print.type + "is undefined in", // + @(+, print,"", toseq.dict), // input, place.R)
+     bindinfo(dict, empty:seq.symbol, [ type],"")
 
 
 function gettype(b:bindinfo)mytype (types.b)_1
@@ -206,7 +216,7 @@ Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindi
    assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place.R)
     bindinfo(dict.R
     , [ Lit.0, Lit.length.types] + code.R_2
-    + // Record([ typeint, typeint]+ types)//
+    + 
     newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint] + types, typeptr)
     , [ typeseq + types_1  ]
     ,"")

@@ -55,7 +55,7 @@ Function print(a:testrecord)seq.word [ toword.key.a] + body.a
 
 function hash(a:testrecord)int key.a
 
-Export type:testrecord internaltype export
+Export type:testrecord  
 
 
 Function assignencoding(length:int,data:testrecord) int  (randomint.1)_1

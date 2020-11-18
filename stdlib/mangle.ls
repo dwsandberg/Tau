@@ -8,10 +8,13 @@ use stdlib
 
 use seq.word
 
+use otherseq.word
+
 function seperator(sep:char, acc:seq.char, b:seq.char)seq.char
  if isempty.acc then b else acc + sep + b
 
-Function break(w:word, a:seq.word, j:int)seq.seq.word
+Export  break(w:word, a:seq.word, j:int)seq.seq.word
+
  let i = findindex(w, a, j)
   if i > length.a then
   if j > length.a then empty:seq.seq.word else [ subseq(a, j, i)]
