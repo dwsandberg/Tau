@@ -1,6 +1,6 @@
 Module encoding.T
 
-use otherseq.encodingpair.T
+/use otherseq.encodingpair.T
 
 use otherseq.seq.encodingpair.T
 

@@ -10,37 +10,35 @@ use checking
 
 use fileio
 
-
-use seq.word
-
-
 use otherseq.int
+
+use seq.int
 
 use stdlib
 
 use textio
 
-use seq.seq.word
-
 use ipair.word
 
+use seq.seq.word
+
+use seq.word
+
 Function test5 seq.word
-let y = [t5501, t5502,  t522,t509]
+let y = [ t5501, t5502, t522, t509]
  check(y,"test5")
 
-
-use seq.int
-
 function t5502 boolean
-let data=arithseq(30044, 2, 7)
-let f = createfile("testi.dat",data)
-let r=getfile2("testi.dat")
-  size.r / 8 = length.data &and data= [ word1.r, word2.r]+data.r
- 
+let data = arithseq(30044, 2, 7)
+let f = createfile("testi.dat", data)
+let r = getfile2."testi.dat"
+ size.r / 8 = length.data
+ ∧ data = [ word1.r, word2.r] + data.r
+
 function t5501 boolean
-let text=["this is a test","line 2"]
-let f = createfile("testw.txt",text)
-  gettext ("testw.txt")=text
+let text = ["this is a test","line 2"]
+let f = createfile("testw.txt", text)
+ gettext."testw.txt" = text
 
 function filetest(i:int)boolean
  let name ="test" + toword.i + ".txt"

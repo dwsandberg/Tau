@@ -486,7 +486,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
          let arg1 = result_(len - 1)
           if module.arg1 = "$words" ∧ between(idx, 1, length.fsig.arg1)then
           yyy(p, org, k + 1, subseq(result, 1, len - 2) + Word.(fsig.arg1)_idx, nextvar, map)
-          else if isrecordconstant.arg1 ∧ between(idx, 1, length.constantcode.arg1 - 2)then
+          else if isrecordconstant.arg1   ∧ (constantcode.arg1)_1=Lit.0 &and between(idx, 1, length.constantcode.arg1 - 2)then
           yyy(p, org, k + 1, subseq(result, 1, len - 2) + (constantcode.arg1)_(idx + 2), nextvar, map)
           else yyy(p, org, k + 1, result + sym, nextvar, map)
         else if fsig.sym = "+(word seq, word seq)" ∧ module.sym = "word seq"then

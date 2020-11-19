@@ -124,17 +124,15 @@ function processtypedef(defined:typedict, undefined:seq.myinternaltype, i:int, n
     processtypedef(defined, newundefined, 1, empty:seq.myinternaltype)
  else
   let td = undefined_i
-   let fldtypes= if kind.td in  "record sequence" then @(+,parameter,empty:seq.mytype,subflds.td) else subflds.td
+   let fldtypes= if kind.td in  "record " then @(+,parameter,empty:seq.mytype,subflds.td) 
+    else if kind.td in  "sequence" then @(+,parameter,[typeint],subflds.td) 
+   else subflds.td
   let flds = subflddefined( fldtypes , modpara.td, 1, defined, empty:seq.mytype)
    if length.flds = 0 then 
     // some fld is not defined //
     processtypedef(defined, undefined, i + 1, newundefined + undefined_i)
    else 
-    let new=  if  name.td in "bitpackedseq"  then   
-          changesubflds( td,    [ mytype."int seq" ] +flds )
-      else 
-          changesubflds(td,  flds)
-   processtypedef(defined + [new], undefined, i + 1, newundefined)
+    processtypedef(defined + [changesubflds(td,  flds)], undefined, i + 1, newundefined)
 
 function subflddefined(subflds:seq.mytype,modpara:mytype, i:int, defined:typedict, flatflds:seq.mytype)seq.mytype
  // check to see all flds of type are defined. //
@@ -328,7 +326,7 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
    let typesym =  // newsymbol("type:" + print.t, modname.f,[t], t) // typesym.it
     let constructor = newsymbol([ name], modname.f, @(+, parameter, empty:seq.mytype, types.b), t)
    let fldsyms = @(+, definefld(modname.f, [ t]), empty:seq.symbol, types.b)
-     let prg1 =prg.f //   map(prg.f, typesym,[Local.1,deepcopysym.t]) // 
+     let prg1 =prg.f  
     if kind = "sequence"_1 then
     let seqtype = typeseq+parameter.modname.f 
      let symtoseq = newsymbol("toseq", modname.f, [ t], seqtype)

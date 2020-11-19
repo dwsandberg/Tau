@@ -30,9 +30,9 @@ use display
 
 use stdlib
 
-unbound assignwidths(control:characterwidths , p:nodeinfo.T)nodeinfo.T 
+unbound assignwidths(control:characterwidths, p:nodeinfo.T)nodeinfo.T
 
-unbound nodetotext(a:T)seq.word  
+unbound nodetotext(a:T)seq.word
 
 function restoredirection(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T, a:arc.T)seq.arcinfo.T
  let other = if head.a in nodes.org ∧ not(tail.a in nodes.org)then
@@ -47,7 +47,7 @@ function restoredirection(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T, a
 Function restorearcs(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T)seq.arcinfo.T
  @(+, restoredirection(orgarc, org, modified), empty:seq.arcinfo.T, toseq.arcs.modified)
 
-Function displaygraph(control:characterwidths , arci:seq.arcinfo.T)seq.word
+Function displaygraph(control:characterwidths, arci:seq.arcinfo.T)seq.word
  let g = newgraph.@(+, a, empty:seq.arc.T, arci)
  let lg = layer.makeDAG.g
  let posistion = assignx(g.lg, nodes.g.lg - nodes.g, layers.lg)
@@ -55,7 +55,7 @@ Function displaygraph(control:characterwidths , arci:seq.arcinfo.T)seq.word
  let p3 = restorearcs(asset.arci, g, g.lg)
   // assert false report @(+, print,"", p3)// tosvg(p3, toseq.nodes.g, asset.p1)
 
-Function displaygraph(control:characterwidths , g:graph.T)seq.word
+Function displaygraph(control:characterwidths, g:graph.T)seq.word
  let arci = @(+, arcinfo, empty:seq.arcinfo.T, toseq.arcs.g)
  let lg = layer.makeDAG.g
  let posistion = assignx(g.lg, nodes.g.lg - nodes.g, layers.lg)

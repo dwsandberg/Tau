@@ -30,11 +30,11 @@ Function hasdigit(w:word)boolean
   ∨ l_1 = toint.hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)
 
 function tokenlist seq.word // tokenlist is from parser generator //
-".=():>]- { } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP"
+".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP"
 
 function actionlist seq.lexaction1 // most frequently used words in programs //
-let mostfrequentwords = ' //",(). :+_seq = a int if - then else Function let word 0 i T][ 2 use function mytype @ empty inst '
-let wordstoinclude = mostfrequentwords + tokenlist + "= < > ? ≤ ≠ ≥ >> << in + - ∈ ∋ * / mod ∪ ∩_^'"
+let mostfrequentwords = ' //",(). :+_seq = a int if-then else Function let word 0 i T][ 2 use function mytype @ empty inst '
+let wordstoinclude = mostfrequentwords + tokenlist + "= < > ? ≤ ≠ ≥ >> << in +-∈ ∋ * / mod ∪ ∩_^'"
 + prepreplacements("","","le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ contains ∋", 1)
  @(+, tolexaction, empty:seq.lexaction1, toseq.asset.wordstoinclude)
 
@@ -63,7 +63,7 @@ function tolexaction(next:word)lexaction1
  else
   let token = if next in ". ,():"then next
   else if next in "< > ? ≤ ≠ ≥ >> <<"then">"_1
-  else if next in "in + - ∈ ∋"then"-"_1
+  else if next in "in +-∈ ∋"then"-"_1
   else if next in "* / mod ∪ ∩"then"*"_1
   else if next in "_^"then"_"_1
   else if next in ".)]= {:},([ ∧ ∨ # if then else let assert report @ is"then next
@@ -100,5 +100,5 @@ function prepreplacements(old:seq.word, new:seq.word, pairs:seq.word, i:int)seq.
  else
   let val = merge("&" + pairs_i)
   let j = binarysearch(old, val)
-   prepreplacements(subseq(old, 1, - j - 1) + [ val] + subseq(old, - j, length.old), subseq(new, 1, - j - 1) + [ pairs_(i + 1)]
-   + subseq(new, - j, length.new), pairs, i + 2)
+   prepreplacements(subseq(old, 1,-j - 1) + [ val] + subseq(old,-j, length.old), subseq(new, 1,-j - 1) + [ pairs_(i + 1)]
+   + subseq(new,-j, length.new), pairs, i + 2)

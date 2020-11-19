@@ -161,11 +161,7 @@ Function libmodules(dependentlibs:seq.word)seq.firstpass @(+, libmodules(depende
  
 function libmodules(dependentlibs:seq.word, l:liblib) seq.firstpass if(libname.l)_1 in dependentlibs then mods.l else empty:seq.firstpass
 
-function removeconstant(s:seq.symbol)seq.symbol @(+, removeconstant, empty:seq.symbol, s)
+/function removeconstant(s:seq.symbol)seq.symbol @(+, removeconstant, empty:seq.symbol, s)
 
-function removeconstant(s:symbol)seq.symbol if module.s = "$constant"then removeconstant.zcode.s else [ s]
-
-use process.seq.parc
-
-Export deepcopy(seq.parc) seq.parc
+/function removeconstant(s:symbol)seq.symbol if module.s = "$constant"then removeconstant.zcode.s else [ s]
 

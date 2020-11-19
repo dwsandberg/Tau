@@ -18,11 +18,11 @@ use stdlib
 
 type layeredgraph is record g:graph.T, layers:seq.seq.T
 
-Function g(layeredgraph.T)graph.T export
+Export g(layeredgraph.T)graph.T
 
-Function layers(layeredgraph.T)seq.seq.T export
+Export layers(layeredgraph.T)seq.seq.T
 
-Function layeredgraph(g:graph.T, layers:seq.seq.T)layeredgraph.T export
+Export layeredgraph(g:graph.T, layers:seq.seq.T)layeredgraph.T
 
 Function layer(g:graph.T)layeredgraph.T
  // expect DAG as input //
@@ -43,7 +43,7 @@ Function issource(g:graph.T, n:T)seq.T
 
 Function sources(g:graph.T)seq.T @(+, issource(g), empty:seq.T, toseq.nodes.g)
 
-- - - - adddummy nodes - - -
+----adddummy nodes---
 
 add nodes so that arcs never cross layers.
 

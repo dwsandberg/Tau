@@ -22,12 +22,15 @@ use seq.int
 
 use libdesc
 
+use seq.liblib
+
+use mangle
+
 use labeledgraph.parc
 
 use seq.parc
 
 use set.parc
-
 
 use stdlib
 
@@ -45,8 +48,6 @@ use seq.word
 
 use words
 
-use mangle
-
 * To profile a function add a use clause"use options.<return type of /function >"and change /function so body is wrap by a call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the part of code of interest add a call to profileresults("time")to optain the result.
 
 * Profiling is accomplished by adding code to perform measurements before and after each procedure call and recording the difference.
@@ -60,7 +61,7 @@ function toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.wo
 Function profileresults(measure:seq.word)seq.word
  // Returns label graph of profile results. Measure is time, count, or space. //
  // let g = profileresults //
- let g = @(+, identity, empty:labeledgraph.parc, @(+,profiledata,empty:seq.parc,loadedlibs))
+ let g = @(+, identity, empty:labeledgraph.parc, @(+, profiledata, empty:seq.parc, loadedlibs))
  let m = if measure = "time"then @(max, clocks, 0, toseq.arcs.g)
  else if measure = "count"then @(max, counts, 0, toseq.arcs.g)
  else
@@ -124,16 +125,15 @@ function differ(a:seq.seq.word, b:seq.seq.word, i:int)int
  if i > length.a ∨ i > length.b then i
  else if a_i = b_i then differ(a, b, i + 1)else i
 
+Export head(parc)word
 
-Function head(parc)word export
+Export tail(parc)word
 
-Function tail(parc)word export
+Export counts(parc)int
 
-Function counts(parc)int export
+Export clocks(parc)int
 
-Function clocks(parc)int export
-
-Function space(parc)int export
+Export space(parc)int
 
 function ?(a:parc, b:parc)ordering head.a ? head.b ∧ tail.a ? tail.b
 
@@ -143,10 +143,6 @@ function reverse(a:parc)parc parc(tail.a, head.a, counts.a, clocks.a, space.a)
 
 function tonode(a:parc)parc parc(head.a, head.a, counts.a, clocks.a, space.a)
 
+function p2(a:parc)seq.word [ tail.a, head.a, toword.counts.a]
 
-function p2(a:parc) seq.word [tail.a,head.a,toword.counts.a]
-
-use seq.liblib
-
-Function dumpprofileinfo seq.word
- @(seperator."&br",p2,"",profiledata.loadedlibs_1)
+Function dumpprofileinfo seq.word @(seperator." &br", p2,"", profiledata.loadedlibs_1)

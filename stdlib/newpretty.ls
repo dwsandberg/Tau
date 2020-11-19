@@ -28,9 +28,6 @@ use set.seq.word
 
 use seq.word
 
-use process.seq.prettyresult
-
-Export deepcopy(seq.prettyresult) seq.prettyresult
 
 
 

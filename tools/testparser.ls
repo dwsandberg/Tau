@@ -46,8 +46,8 @@ function consumeinput(b:stepresult, next:word)stepresult
   stepresult(push(stk, stkele(actioncode, 0)), place.b + 1, if track then track.b + " &br next" + next + printstate.actioncode else track.b, 0,"")
   else
    assert actioncode < 0 report"parse error" + "place" + toword.place.b + toword.actioncode + track.b
-   let x = reduce(stk, - actioncode, place.b, track.b)
-    consumeinput(stepresult(x, place.b, if track then track.b + " &br reduce by" + toword.- actioncode + printstate.stateno.top.x
+   let x = reduce(stk,-actioncode, place.b, track.b)
+    consumeinput(stepresult(x, place.b, if track then track.b + " &br reduce by" + toword.-actioncode + printstate.stateno.top.x
     else track.b, tokenstate.b, string.b)
     , next)
 
@@ -69,12 +69,12 @@ function startstate int 1
 
 function actiontable seq.int [ 0, 0, 0, 0, 0, 0, 0, 0, 2, 0
 , 0, 3, 4, 5, 0, 6, 0, 7, 0, 0
-, 0, 0, 0, 0, 0, -3, -3, 0, 0, 0
-, 0, 0, 0, -2, 8, 0, 0, 0, 0, 0
-, 0, -5, -5, 0, 0, 0, 0, 0, 0, -4
-, -4, 0, 0, 0, 0, 0, 0, 0, 0, 0
+, 0, 0, 0, 0, 0,-3,-3, 0, 0, 0
+, 0, 0, 0,-2, 8, 0, 0, 0, 0, 0
+, 0,-5,-5, 0, 0, 0, 0, 0, 0,-4
+,-4, 0, 0, 0, 0, 0, 0, 0, 0, 0
 , 0, 0, 0, 0, 0, 0, 0, 3, 9, 5
-, 0, 6, 0, -6, 8]
+, 0, 6, 0,-6, 8]
 
 function reduce(stk:stack.stkele, ruleno:int, place:int, input:seq.word)stack.stkele
  // generated function //

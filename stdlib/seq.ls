@@ -1,6 +1,5 @@
 Module seq.T
 
-use seq.T
 
 use stacktrace
 

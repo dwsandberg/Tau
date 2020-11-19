@@ -20,11 +20,9 @@ use seq.word
 
 /use words
 
-Export type:characterwidths  s
+Export type:characterwidths s
 
-
-type characterwidths is record widths:seq.int 
-
+type characterwidths is record widths:seq.int
 
 function_(s:seq.int, c:char)int if toint.c = 0 then 0 else s_(toint.c)
 
@@ -32,7 +30,8 @@ Function displaywidth(cw:characterwidths, s:seq.word)int @(+,_(widths.cw), 0, to
 
 Function displaywidth(cw:characterwidths, w:word)int @(+,_(widths.cw), 0, decodeword.w)
 
-Function charwidths characterwidths characterwidths.dseq(60
+Function charwidths characterwidths characterwidths
+.dseq(60
 , [ 60, 60, 60, 60, 60, 60, 60, 60, 60, 60
 , 60, 60, 60, 60, 60, 60, 60, 60, 60, 60
 , 60, 60, 60, 60, 60, 60, 60, 60, 60, 60

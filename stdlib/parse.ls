@@ -86,11 +86,13 @@ function opaction(R:reduction.bindinfo, input:seq.token.bindinfo)bindinfo
 function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, exp:bindinfo)bindinfo
  if op_1 = "process"_1 then
  let nopara = nopara.last.code.exp
-  let rt =(types.exp)_1
-  let recordtyp = [ typeint, typeint, typeint, typeint] + paratypes.last.code.exp
-  let deepcopyrt=deepcopysym(dict.R,rt,input,place.R   )
-  let deepcopyws=symbol("type:seq.word(word seq)","word seq","word seq")
-  let newcode = [ Fref.deepcopyrt, Fref.deepcopyws, Fref.last.code.exp, Lit.nopara]
+ let rt =(types.exp)_1
+ let recordtyp = [ typeint, typeint, typeint, typeint] + paratypes.last.code.exp
+ let dcrt  = deepcopysym(dict.R,rt)
+  assert cardinality.dcrt = 1  report errormessage("parameter type" + print.rt+ "is undefined in",  input, place.R)
+ let dcws = deepcopysym(dict.R,mytype."word seq")
+  assert cardinality.dcws=1 report errormessage("type word seq is require for process in" ,  input, place.R)
+  let newcode = [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp, Lit.nopara]
   + subseq(code.exp, 1, length.code.exp - 1)
   + [ newsymbol("kindrecord", mytype."T builtin", recordtyp, typeptr), symbol("process2(ptr)","builtin","ptr")]
    bindinfo(dict.R, newcode, [  typeprocess+rt],"")
@@ -132,13 +134,6 @@ function createfunc(R:reduction.bindinfo, input:seq.token.bindinfo, funcname:seq
   assert functype = (types.exp)_1 ∨ (types.exp)_1 in [ mytype."internal1"]report errormessage("function type of" + print.functype + "does not match expression type" + print.(types.exp)_1, input, place.R)
    bindinfo(dict.R, code.exp, [ mytype."unused", functype] + paralist, funcname)
    
- Function deepcopysym(dict:set.symbol,type:mytype,input:seq.token.bindinfo, place:int) symbol
-     if type=typeint then deepcopysymint
-   else  if type=typeint then deepcopysymreal
-   else
- let a = lookup(dict,"type:" + print.type, [type])
-    assert cardinality.a = 1  report errormessage("parameter type" + print.type + "is undefined in", // + @(+, print,"", toseq.dict), // input, place)
- a_1
 
 
 function isdefined(R:reduction.bindinfo, input:seq.token.bindinfo, type:mytype)bindinfo

@@ -22,7 +22,7 @@ use seq.int
 
 use stdlib
 
-unbound =(T, T)boolean 
+unbound =(T, T)boolean
 
 Based on:Fast and Simple Horizontal Coordinate Assignment Ulrik Brandes and Boris Kopf, 2002
 
@@ -135,7 +135,7 @@ function findx(RtoL:boolean, q:nodeinfo.T, a:nodeinfo.T)int
  if RtoL then x.a - seperation.q else x.a + seperation.q
  else 0
 
-- - - - - - - - - - - - Helper functions for adding arcs for block graph in hrizontal alignment
+------------Helper functions for adding arcs for block graph in hrizontal alignment
 
 Function isroot(g:graph.T, n:T)seq.arc.T
  if isempty.predecessors(g, n)then arcsfromsuccesors(n, g, n)else empty:seq.arc.T
@@ -146,7 +146,7 @@ function arcsfromsuccesors(root:T, g:graph.T, n:T)seq.arc.T
   else [ arc(s_1, root)] + arcsfromsuccesors(root, g, s_1)
 
 Function layerarcsR(arcstoroots:set.arc.T, layer:seq.T)seq.arc.T
- @(+, layerarcsR(arcstoroots, layer), empty:seq.arc.T, arithseq(length.layer - 1, -1, length.layer))
+ @(+, layerarcsR(arcstoroots, layer), empty:seq.arc.T, arithseq(length.layer - 1,-1, length.layer))
 
 Function layerarcsR(arcstoroot:set.arc.T, layer:seq.T, i:int)seq.arc.T
  let arc1 = arc(layer_i, layer_(i - 1))
@@ -161,7 +161,7 @@ Function layerarcs(arcstoroot:set.arc.T, layer:seq.T, i:int)seq.arc.T
  let e = findelement2(arcstoroot, arc1)
   if isempty.e then [ arc1]else [ arc(head.e_1, head.arc1), arc1]
 
-- - - - - - - - - - -
+-----------
 
 For providing horizontal alignment.There is one for left and right directions.
 
@@ -195,9 +195,9 @@ function assignx(RtoL:boolean, layers:set.nodeinfo.T, list:seq.T, assigned:set.n
    if nodeinfo(node, 0, 0) in assigned then assignx(RtoL, layers, list, assigned, vertarcs, i + 1)
    else
     let q = findelement(nodeinfo(node, 0, 0), layers)_1
-     assignx(RtoL, layers, list, assignvert(RtoL, layers, vertarcs, assigned, q, if RtoL then -1 else 1, empty:seq.nodeinfo.T), vertarcs, i + 1)
+     assignx(RtoL, layers, list, assignvert(RtoL, layers, vertarcs, assigned, q, if RtoL then-1 else 1, empty:seq.nodeinfo.T), vertarcs, i + 1)
 
-- - - - - - - - - - - - - - - - - - - - - -
+----------------------
 
 Final step is to merge multiple layouts into one.
 

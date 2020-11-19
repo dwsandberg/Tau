@@ -6,28 +6,28 @@ use set.T
 
 use stdlib
 
-unbound ?(a:T, b:T)ordering  
+unbound ?(a:T, b:T)ordering
 
-unbound ?2(a:T, b:T)ordering  
+unbound ?2(a:T, b:T)ordering
 
-unbound reverse(a:T)T 
+unbound reverse(a:T)T
 
-Export type:labeledgraph.T  
+Export type:labeledgraph.T
 
 type labeledgraph is record arcs:set.T, backarcs:set.T, nodes:set.T
 
-Function arcs(labeledgraph.T)set.T export
+Export arcs(labeledgraph.T)set.T
 
-Function backarcs(labeledgraph.T)set.T export
+Export backarcs(labeledgraph.T)set.T
 
-Function nodes(labeledgraph.T)set.T export
+Export nodes(labeledgraph.T)set.T
 
 Function empty:labeledgraph.T labeledgraph.T labeledgraph(empty:set.T, empty:set.T, empty:set.T)
 
 Function +(g:labeledgraph.T, a:T)labeledgraph.T
  labeledgraph(arcs.g + a, backarcs.g + reverse.a, nodes.g + tonode.a + tonode.reverse.a)
 
-unbound tonode(a:T)T 
+unbound tonode(a:T)T
 
 Function arcstosuccessors(g:labeledgraph.T, node:T)set.T findelement2(arcs.g, node)
 

@@ -68,8 +68,8 @@ function interpret(alltypes:typedict,code:seq.symbol,i:int,stk:stack.int)  seq.w
           interpret(alltypes,code,i+1,push(pop(stk,nopara), representation.makereal(aswords.bitcast.top.stk)))  
   else  
     let t=dlsym.mangle(fsig.sym,module.sym)
-    let dcret=if resulttype.sym in [mytype."word",mytype."int",mytype."real"] then 
-     deepcopysym(alltypes,typeint)  else deepcopysym(alltypes,resulttype.sym)
+    let dcret=// if resulttype.sym in [mytype."word",mytype."int",mytype."real"] then 
+     deepcopysym(alltypes,typeint)  else // deepcopysym(alltypes,resulttype.sym)
     let adcret=dlsym.mangle(fsig.dcret,module.dcret)
     assert adcret > 0 report "Not handle by interperter"+ print.sym+"can not find"+print.dcret
      assert t > 0 report "Not handle by interperter"+ print.sym

@@ -8,27 +8,27 @@ use stdlib
 
 type myseq is sequence length:int, data:seq.T
 
- Export type:myseq.T  
+Export type:myseq.T
 
 All sequences must have the first element representing the length of the seqence.As with any parameterized scope any type must contain a element that use the parameter so that mutiple instances of the scope do not produce duplicate symbols.
 
 We need some operations on T.T will be an int in this example so all these operations are define on int in the stdlib.
 
-unbound >(T, int)boolean 
+unbound >(T, int)boolean
 
-unbound <(T, int)boolean  
+unbound <(T, int)boolean
 
-unbound-(T, int)T  
+unbound-(T, int)T
 
-unbound *(T, int)T 
+unbound *(T, int)T
 
-unbound+(T, T)T 
+unbound +(T, T)T
 
 We need to helper functions to calculate the length and find the ith element of the seq for this example.
 
-Function to:myseq.T(s:seq.T)myseq.T export
+Export to:myseq.T(s:seq.T)myseq.T
 
-Function toseq(myseq.T) seq.T export
+Export toseq(myseq.T)seq.T
 
 Function clength(s:seq.T, i:int)int
  if i > length.s then 0

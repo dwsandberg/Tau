@@ -16,7 +16,7 @@ use real
 
 use stdlib
 
-unbound =(T, T)boolean  
+unbound =(T, T)boolean
 
 type baryinfo is record avg:real, node:T
 

@@ -1,9 +1,10 @@
 #!/usr/local/bin/tau
 
-
 Module doc
 
 run doc testdoc
+
+use seq.char
 
 use displaytextgraph
 
@@ -11,15 +12,17 @@ use fileio
 
 use format
 
-/use libscope
-
-use mytype
+use groupparagraphs
 
 use main2
 
+use mangle
+
 use seq.mytype
 
-use newpretty 
+use mytype
+
+use newpretty
 
 use stdlib
 
@@ -37,15 +40,13 @@ use svggraph.seq.word
 
 use set.word
 
-use mangle
-
-
+/use libscope
 
 Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html //
 let d = @(+, addselect,"", gettext."tools/doc.txt")
-  let x1 = createfile("doc.html",   htmlheader + processpara.d )  
+let x1 = createfile("doc.html", htmlheader + processpara.d)
  // let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])//
-   let y1 = createfile("testall.html",   htmlheader + processpara.htmlcode."testall")  
+ let y1 = createfile("testall.html", htmlheader + processpara.htmlcode."testall")
   d
 
 function addselect(s:seq.word)seq.word" &{ select X" + s + " &}"
@@ -61,7 +62,7 @@ Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
  let g = newgraph.formcallgraph(firstPass.libname_1, 2)
  let nodestoinclude = @(∪, filterx(modulelist), empty:set.word, toseq.nodes.g)
  let g2 = @(deletenode, identity, g, toseq.nodestoinclude)
- display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g2)
+  display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g2)
 
 function filterx(include:seq.word, w:word)set.word
  let p = codedown.w
@@ -100,18 +101,15 @@ function addabstractpara(w:word)word merge([ w] + ".T")
 
 Function testdoc seq.word // callgraphwithin("stdlib","llvm")+ // doclibrary."stdlib"
 
-use groupparagraphs
-
 Function doclibrary(libname:seq.word)seq.word
  // create summary documentation for libraray. //
-   let liba = getlibrarysrc.libname_1
+ let liba = getlibrarysrc.libname_1
  let r = @(+, findrestrict,"", liba)
  let g = newgraph.usegraph(liba,"mod"_1, 1,"?"_1, empty:seq.arc.word)
- let exports= getlibraryinfo(libname_1)_3
+ let exports =(getlibraryinfo.libname_1)_3
   docmodule(g, exports, r, liba, 1,"","","")
   + if length.r > 0 then""
   else" &{ select x &section Possibly Unused Functions  &}  &{ select x" + uncalledfunctions.libname + " &}"
-
 
 * Paragraphs beginning with * are included in documentation.
 
@@ -144,9 +142,8 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
  if length.types > 0 ∨ length.funcs > 0 then
   " &br defines types: " + types + funcs
   else""
- else if length.lib_i=0 then 
-   docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
- else if lib_i_1 in "module Module"  then
+ else if length.lib_i = 0 then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
+ else if lib_i_1 in "module Module"then
  let modname = lib_i_2
    if not(modname in todoc ∨ length.todoc = 0)then
    docmodule(usegraph, exports, todoc, lib, i + 1,"", funcs, types)
@@ -175,9 +172,8 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
  else if lib_i_1 in "Function"then
  let z = getheader.lib_i
-   let x=if last.z in "export stub" then subseq(z,1,length.z-1) else z
-   let toadd =" &{ select x  &keyword " + x+
-    " &}"
+  let x = if last.z in "export stub"then subseq(z, 1, length.z - 1)else z
+  let toadd =" &{ select x  &keyword" + x + " &}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
  else if subseq(lib_i, 1, 1) = "type"then
  docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_2)
@@ -193,9 +189,9 @@ Function uncalledfunctions(libname:seq.word)seq.word
 
 function usegraph(lib:seq.seq.word, kind:word, i:int, currentmod:word, result:seq.arc.word)seq.arc.word
  if i > length.lib then result
- else 
-  let key =  if length.lib_i > 1 then lib_i_1 else "empty"_1
-   if key in "module Module"  then
+ else
+  let key = if length.lib_i > 1 then lib_i_1 else"empty"_1
+   if key in "module Module"then
    usegraph(lib, kind, i + 1, merge.subseq(lib_i, 2, length.lib_i), result)
    else if key = "use"_1 then
    let m = if length.lib_i = 2 then lib_i_2
@@ -207,48 +203,41 @@ function usegraph(lib:seq.seq.word, kind:word, i:int, currentmod:word, result:se
 
 function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
  if i > length.lib then empty:seq.arc.word
- else 
-   let t=callarcs(lib_i,1,empty:seq.word)
-    @(+,  arc.t_1,empty:seq.arc.word,toseq(asset.subseq(t,2,length.t)-asset.subseq(t,1,1)))
- + formcallgraph(lib, i + 1)
- 
-  
- use seq.char
- 
+ else
+  let t = callarcs(lib_i, 1, empty:seq.word)
+   @(+, arc.t_1, empty:seq.arc.word, toseq(asset.subseq(t, 2, length.t) - asset.subseq(t, 1, 1)))
+   + formcallgraph(lib, i + 1)
 
- function callarcs(s:seq.word,i:int,result:seq.word) seq.word
-   if i+1 > length.s then result
-   else 
-    let this=s_i
-     if this ='"'_1 then callarcs(s,findindex('"'_1,s,i+1)+1,result)
-    else if this ="'" _1 then callarcs(s,findindex("'"_1,s,i+1)+1,result)
-    else 
-  let next=s_(i+1)
-      if next in "( :"  then
-     let j=findindex(")"_1,s,i+1) 
-     if this="RECORD"_1 then
-      callarcs(s,j+1,result)
-     else 
-     assert j < length.s report "JKL"+subseq(s,i,length.s)
-     let module=gathermod(s,j+2,[s_(j+1)])
-    let end= 2 *(length.module-1)+1+j+1 
-         callarcs(s,end, result+ mangle(subseq(s,i,j),module))
-     else if this in "RECORD DEFINE EXITBLOCK BR BLOCK APPLY WORD APPLYP APPLYI APPLYR" then
-      callarcs(s,i+2,result)
-    else if this="global"_1 then
-     // global has strange format.  global atype () builtin //
-      let atype= gathermod(s,i+2,[next])
-      let end =2 *(length.atype-1)+1+i+1+// () builtin // 3
-    //  assert false report "JK"+subseq(s,end,length.s) //
-      callarcs(s,end,result)
-    else 
-      if this in "&br FREF" then callarcs(s,i+1,result) else
-     let chs=decodeword.this
-     assert length.chs > 0 &and   chs_1 in decodeword.merge."%-0123456789" 
-     report "call arcs problem"  +this+toword.i+"full text"+ s // @(seperator."!",identity,"",s) //
-     callarcs(s,i+1,result)
-      
-    function gathermod(s:seq.word,i:int,result:seq.word) seq.word
-    if i > length.s &or not(s_i="."_1) then result
-    else gathermod(s,i+2,[s_(i+1)]+result) 
+function callarcs(s:seq.word, i:int, result:seq.word)seq.word
+ if i + 1 > length.s then result
+ else
+  let this = s_i
+   if this = '"'_1 then
+   callarcs(s, findindex('"'_1, s, i + 1) + 1, result)
+   else if this = "'"_1 then
+   callarcs(s, findindex("'"_1, s, i + 1) + 1, result)
+   else
+    let next = s_(i + 1)
+     if next in "(:"then
+     let j = findindex(")"_1, s, i + 1)
+       if this = "RECORD"_1 then callarcs(s, j + 1, result)
+       else
+        assert j < length.s report"JKL" + subseq(s, i, length.s)
+        let module = gathermod(s, j + 2, [ s_(j + 1)])
+        let end = 2 * (length.module - 1) + 1 + j + 1
+         callarcs(s, end, result + mangle(subseq(s, i, j), module))
+     else if this in "RECORD DEFINE EXITBLOCK BR BLOCK APPLY WORD APPLYP APPLYI APPLYR"then callarcs(s, i + 2, result)
+     else if this = "global"_1 then
+     // global has strange format. global atype()builtin //
+      let atype = gathermod(s, i + 2, [ next])
+      let end = 2 * (length.atype - 1) + 1 + i + 1 + //()builtin // 3
+       // assert false report"JK"+ subseq(s, end, length.s)// callarcs(s, end, result)
+     else if this in " &br FREF"then callarcs(s, i + 1, result)
+     else
+      let chs = decodeword.this
+       assert length.chs > 0 ∧ chs_1 in decodeword.merge."%-0123456789"report"call arcs problem" + this + toword.i + "full text" + s
+        // @(seperator."!", identity,"", s)// callarcs(s, i + 1, result)
 
+function gathermod(s:seq.word, i:int, result:seq.word)seq.word
+ if i > length.s ∨ not(s_i = "."_1)then result
+ else gathermod(s, i + 2, [ s_(i + 1)] + result)

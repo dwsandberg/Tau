@@ -24,37 +24,37 @@ use otherseq.int
 
 use seq.int
 
-/use libscope
-
 use stdlib
 
 use svg
 
 use seq.seq.word
 
+/use libscope
+
 type svgdraw is record width:int, height:int, a:seq.word
 
-Export type:nodeinfo.T 
+Export type:nodeinfo.T
 
 type nodeinfo is record n:T, x:int, y:int, width:int, seperation:int
 
 seperation is"width"of node in layer.y is the layer value, x is the posistion within the layer.
 
-Function n(nodeinfo.T)T export
+Export n(nodeinfo.T)T
 
-Function x(nodeinfo.T)int export
+Export x(nodeinfo.T)int
 
-Function y(nodeinfo.T)int export
+Export y(nodeinfo.T)int
 
-Function width(a:nodeinfo.T)int export
+Export width(a:nodeinfo.T)int
 
-Function seperation(nodeinfo.T)int export
+Export seperation(nodeinfo.T)int
 
 Function nodeinfo(n:T, x:int, y:int)nodeinfo.T nodeinfo(n, x, y, 0, 1)
 
-Function nodeinfo(n:T, x:int, y:int, width:int, seperation:int)nodeinfo.T export
+Export nodeinfo(n:T, x:int, y:int, width:int, seperation:int)nodeinfo.T
 
-unbound =(T, T)boolean  
+unbound =(T, T)boolean
 
 function =(a:nodeinfo.T, b:nodeinfo.T)boolean n.a = n.b
 
@@ -116,7 +116,7 @@ function toarcinfo(s:set.nodeinfo.T, a:arcinfo.T)arcinfo.T
   let start = y_1
    arcinfo(a.a, x.start + if width.start = 0 then 0 else width.start + 10, y.start, label.a, width.a, backarc.a)
 
-Export type:arcinfo.T  
+Export type:arcinfo.T
 
 type arcinfo is record a:arc.T, x:int, y:int, label:seq.word, width:int, backarc:boolean
 
@@ -126,9 +126,9 @@ Function arcinfo(a:arc.T)arcinfo.T arcinfo(a,"", 0)
 
 Function setarc(a:arcinfo.T, b:arc.T, backarc:boolean)arcinfo.T arcinfo(b, x.a, y.a, label.a, width.a, backarc)
 
-Function a(arcinfo.T)arc.T export
+Export a(arcinfo.T)arc.T
 
-Function label(arcinfo.T)seq.word export
+Export label(arcinfo.T)seq.word
 
 /Function b(a:arc.T)T head.a
 
@@ -144,9 +144,9 @@ Function ?(a:arcinfo.T, b:arcinfo.T)ordering
 
 Function ?2(a:arcinfo.T, b:arcinfo.T)ordering head.a.a ? head.a.b
 
-unbound ?(a:T, b:T)ordering  
+unbound ?(a:T, b:T)ordering
 
-unbound nodetotext(T)seq.word  
+unbound nodetotext(T)seq.word
 
 function layerwidths(ws:seq.int, p:nodeinfo.T)seq.int
  let w = width.p

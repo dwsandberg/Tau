@@ -1,25 +1,14 @@
 #!/usr/local/bin/tau testmodules testmodules
 
-
 Module testmodules
 
-use graph.word
+use UTF8
 
-use seq.arc.word
+use bits
 
-use set.arc.word
+use otherseq.char
 
-use set.word
-
-use stdlib
-
-use tree.int
-
-use tree.word
-
-use seq.tree.word
-
-use seq.ordering
+use seq.char
 
 use checking
 
@@ -29,18 +18,34 @@ use set.arc.int
 
 use graph.int
 
+use myseq.int
+
 use set.int
+
+use tree.int
+
+use seq.ordering
 
 use randomphrase
 
+use stdlib
+
 use test20
 
-use myseq.int
+use seq.arc.word
 
-use UTF8
+use set.arc.word
+
+use graph.word
+
+use set.word
+
+use seq.tree.word
+
+use tree.word
 
 Function testmodules seq.word
-let y = [ t501, t502, t503, t504, t505, t506, t507, test20,t044]
+let y = [ t501, t502, t503, t504, t505, t506, t507, test20, t044]
  check(y,"testmodules") + checkbits
 
 function print(a:seq.int)seq.word"[" + @(seperator(","), toword,"", a) + "]"
@@ -120,46 +125,35 @@ Function t507 boolean"The umber ant ambles the opal nurse" = getphrase.20
 
 function t044 boolean
 let s = UTF8.[ 40, 50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
-let z=myseq.toseqint.s
- @(+, toword,"", z) = "40 50 335 50 336" &and not(length.toseq.to:myseq.int(z)=0) 
- &and length.toseq.to:myseq.int([1,2,3])=0
-
+let z = myseq.toseqint.s
+ @(+, toword,"", z) = "40 50 335 50 336"
+ ∧ not(length.toseq.to:myseq.int(z) = 0)
+ ∧ length.toseq.to:myseq.int([ 1, 2, 3]) = 0
 
 _____________
 
 bits
 
-use bits
+function hex(b:bits, result:seq.char)seq.char
+ let hexdigit =(decodeword."0123456789ABCDEF"_1)_(1 + toint(b ∧ bits.15))
+ let rest = b >> 4
+  if toint.rest = 0 then [ hexdigit] + result else hex(rest, [ hexdigit] + result)
 
-use otherseq.char
+function print(b:bits)seq.word group.hex(b, empty:seq.char)
 
-function hex(b:bits,result:seq.char) seq.char
-let hexdigit=  (decodeword."0123456789ABCDEF"_1)_(1+toint(b &and bits(15)))
-let rest= b >> 4 
-if toint.rest=0 then [hexdigit]+result else  hex(rest,[hexdigit]+result) 
+function group(s:seq.char)seq.word
+ if length.s < 5 then [ encodeword.s]
+ else
+  group.subseq(s, 1, length.s - 4) + encodeword.subseq(s, length.s - 3, length.s)
 
-function print(b:bits) seq.word     group.hex(b,empty:seq.char)  
+function hex(s:seq.word)bits @(hexdigit, identity, bits.0, @(+, decodeword, empty:seq.char, s))
 
-function group(s:seq.char) seq.word
-  if length.s < 5 then [encodeword(s)]
-  else  group( subseq(s,1,length.s-4))+ encodeword.subseq(s,length.s-3,length.s)  
+function hexdigit(b:bits, c:char)bits
+ let i = findindex(c, decodeword."0123456789ABCDEF"_1) - 1
+  assert i < 16 report"illegal hex digit"
+   b << 4 ∨ bits.i
 
-function hex(s:seq.word) bits   @(hexdigit,identity,bits.0,@(+,decodeword,empty:seq.char,s))
-
-function hexdigit(b:bits,c:char) bits
- let i= findindex(c,decodeword."0123456789ABCDEF"_1 )-1
- assert i < 16 report "illegal hex digit"
-  b << 4 &or bits.i
-
-function checkbits seq.word check([ 878082210 = toint.rotl32(hex."A2345678" , 8), 
-print.(hex."D687F000"  ∧ hex."0FE00000" ) = "680 0000", 
-print.(hex."D687F001"  >> 2) = "35A1 FC00", 
-print.(hex."D687F001"  << 2) = "3 5A1F C004", 
-print.(hex."D687F000"  ∨ hex."0FE00000" ) = "DFE7 F000", 
-print.xor(hex."D687F000" , hex."0FE00000" ) = "D967 F000"]
-,"bits") 
+function checkbits seq.word check([ 878082210 = toint.rotl32(hex."A2345678", 8), print(hex."D687F000" ∧ hex."0FE00000") = "680 0000", print(hex."D687F001" >> 2) = "35A1 FC00", print(hex."D687F001" << 2) = "3 5A1F C004", print(hex."D687F000" ∨ hex."0FE00000") = "DFE7 F000", print.xor(hex."D687F000", hex."0FE00000") = "D967 F000"]
+,"bits")
 
 function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> 32 - n)
-
-use seq.char
-

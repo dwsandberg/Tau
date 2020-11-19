@@ -12,7 +12,7 @@ type tree2 is record nodes:seq.treenode.T, subtree:int
 
 type treenode is record label:T, nosons:int, nonodes:int
 
-unbound =(T, T)boolean 
+unbound =(T, T)boolean
 
 Function =(a:treenode.T, b:treenode.T)boolean
  label.a = label.b ∧ nosons.a = nosons.b

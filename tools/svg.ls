@@ -18,8 +18,8 @@ Function svg(classes:seq.seq.word, body:seq.word, width:int, length:int)seq.word
   + "Your browser does not support inline SVG.</svg>"
 
 Function line(x:int, y:int, x2:int, y2:int, arrowstart:boolean, arrowend:boolean)seq.word
- let style =(if arrowend then"marker - end:url(#markerArrow);"else"")
- + if arrowstart then"marker - start:url(#markerArrow2);"else""
+ let style =(if arrowend then"marker-end:url(#markerArrow);"else"")
+ + if arrowstart then"marker-start:url(#markerArrow2);"else""
   {(' <path d ="M ' + toword.x + toword.y + "L" + toword.x2
   + toword.y2
   + '"stroke ="black"fill ="none"'

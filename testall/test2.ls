@@ -4,32 +4,25 @@ Module test2
 
 Count word frequence in text file. An indexed encoding is used to assign indexes to each distinct word in the file. Uses a dseq to provide a 0 count for words that have not yet been encountered and assigned an index. 
 
-
-use encoding.indexedword
-
 use fileio
 
-use otherseq.wordfreq
-
-use seq.seq.word
-
-use seq.word
-
-use seq.wordfreq
+use encoding.indexedword
 
 use stdlib
 
 use textio
 
+use seq.seq.word
+
+use seq.word
+
 use otherseq.wordfreq
 
-use encoding.indexedword
+use seq.wordfreq
 
 type indexedword is record w:word
 
-
-Function assignencoding(length:int,data:indexedword) int  length+1
-
+Function assignencoding(length:int, data:indexedword)int length + 1
 
 function hash(a:indexedword)int hash.w.a
 
@@ -42,14 +35,13 @@ function =(a:wordfreq, b:wordfreq)boolean false
 function ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b
 
 function count(s:seq.wordfreq, w:word)seq.wordfreq
-let index=valueofencoding.encode(indexedword(w))
- replace(s, index, wordfreq(count.s_index + 1, w))
+ let index = valueofencoding.encode.indexedword.w
+  replace(s, index, wordfreq(count.s_index + 1, w))
 
 function print(p:wordfreq)seq.word
  if count.p = 0 then empty:seq.word
  else
-  "&br the word" + w.p + "occurs" + toword.count.p + "times."
-  
+  " &br the word" + w.p + "occurs" + toword.count.p + "times."
 
 function removelowcount(mincount:int, p:wordfreq)seq.wordfreq if count.p < mincount then empty:seq.wordfreq else [ p]
 

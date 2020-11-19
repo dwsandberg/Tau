@@ -528,6 +528,11 @@ Function print(f:symbol)seq.word
 Function print(p:program, i:symbol)seq.word
  let d = lookupcode(p, i)
   if not.isdefined.d then print.i else print.i + @(+, print,"", code.d)
+  
+Function printwithoutconstants(p:program, i:symbol)seq.word
+ let d = lookupcode(p, i)
+  if not.isdefined.d then print.i else print.i + @(+, print,"", removeconstant.code.d)
+
 
 type typeinfo is record subflds:seq.mytype
 
@@ -567,15 +572,13 @@ Function typesym(it:myinternaltype) symbol
    let t = abstracttype(name.it, parameter.modname.it)
     newsymbol("type:" + print.t, modname.it,[t], t)
     
-Function deepcopysym(d:typedict,type:mytype) symbol typesym(d,type)
+Function deepcopysym(d:typedict,type:mytype) symbol 
+typesym(d,type)
 
-Function deepcopysymint symbol symbol("deepcopy(int)","assignencodingnumber","int")
-
-Function deepcopysymreal symbol symbol("deepcopy(real)","assignencodingnumber","real")
  
  Function typesym( d:typedict,type:mytype) symbol
-   if type=typeint then deepcopysymint    
-   else   if type=mytype."real" then deepcopysymreal 
+   if type=typeint then symbol("deepcopy(int)","assignencodingnumber","int")  
+   else   if type=mytype."real" then  symbol("deepcopy(real)","assignencodingnumber","real") 
    else  
   let e=findelement(d,type)
    assert length.e = 1 report"type not found" + print.type + stacktrace
@@ -583,13 +586,11 @@ Function deepcopysymreal symbol symbol("deepcopy(real)","assignencodingnumber","
    let t = abstracttype(name.it, parameter.modname.it)
     newsymbol("type:" + print.t, modname.it,[t], t)
 
- 
-use process.seq.bits
+ Function deepcopysym(dict:set.symbol,type:mytype) set.symbol
+    if type in[typeint,mytype."real"] then asset.[typesym(typedict.empty:seq.myinternaltype,type)]
+   else
+   lookup(dict,"type:" + print.type, [type])
+  
+Function removeconstant(s:seq.symbol)seq.symbol @(+, removeconstant, empty:seq.symbol, s)
 
-use seq.bits
-
-Export deepcopy(seq.bits) seq.bits
-
-use process.seq.firstpass
-
-Export deepcopy(seq.firstpass) seq.firstpass
+function removeconstant(s:symbol)seq.symbol if module.s = "$constant"then removeconstant.zcode.s else [ s]
