@@ -179,8 +179,8 @@ type firstpass is record modname:mytype, uses:seq.mytype, defines:set.symbol, ex
 Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, types:seq.myinternaltype)firstpass
  firstpass(modname, uses, defines, exports, unboundexports, unboundx, types, emptyprogram)
 
-Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, types:seq.myinternaltype, program)firstpass
- export
+Export firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, types:seq.myinternaltype, program)firstpass
+ 
 
 Function exportmodule(firstpass)boolean false
 

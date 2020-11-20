@@ -21,12 +21,19 @@ Export  break(w:word, a:seq.word, j:int)seq.seq.word
   else [ subseq(a, j, i - 1)] + break(w, a, i + 1)
 
 Function mangle(fsig:seq.word, module:seq.word)word
- let i = findindex("("_1, fsig)
+ if module="builtin" &and  fsig_1 in  "aborted loadedlibs loadlib createlib unloadlib allocatespace 
+ addencoding createfile getinstance dlsymbol getfile process2 process5 addresstosymbol2
+ randomint getmachineinfo currenttime callstack initialdict clock " then
+   fsig_1
+ else 
+ // assert not(module="builtin") &or fsig_1 in "* / + - xor > = >> << global arcsin arccos sqrt cos sin tan option intpart
+  blockindexfunc bitcast ∨ ∧ ? IDX representation toreal cast callidx casttoreal STKRECORD assert nullptr not setfld isnull" report "JKL"+fsig
+ // let i = findindex("("_1, fsig)
  let modname = module
  let parameters = break(","_1, subseq(fsig, 1, length.fsig - 1), i + 1)
   encodeword
   .@(seperator.char.charmajorseparator, codeup, empty:seq.char, [ [ merge.subseq(fsig, 1, i - 1)], module] + parameters)
-
+ 
 Function codedown(w:word)seq.seq.word codedown(decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)
 
 function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.word)seq.seq.word

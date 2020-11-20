@@ -174,7 +174,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
   else if action = "RECORD"_1 then
   let noargs = arg.m
    let args = top(args.l, noargs)
-   let newcode = CALL(r(regno.l + 1), 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespaceZbuiltinZint", function.[ ptr.i64, i64, i64]), r.1, C64.noargs)
+   let newcode = CALL(r(regno.l + 1), 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespace", function.[ ptr.i64, i64, i64]), r.1, C64.noargs)
    let fldbc = setnextfld(code.l + newcode, args, 1, fullinst.m, 3, regno.l + 1, regno.l + 1, 0, 0)
     Lcode2(value.fldbc, lmap.l, noblocks.l, index.fldbc, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
   else

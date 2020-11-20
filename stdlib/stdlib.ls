@@ -61,6 +61,8 @@ PROFILE pass1:postbind3(typedict, set.symbol, seq.symbol, int, seq.symbol, mytyp
 
 * STATE builtin:option(T, seq.word)T
 
+* STATE builtin:primitiveadd( encodingpair.T)int
+
 use UTF8
 
 use encoding.seq.char
@@ -367,6 +369,8 @@ exclude stdlib seq
 * usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict 
 exclude stdlib seq
 
-* usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 persistant llvm postbind reconstruct persistantseq opt2 symbol parse libdesc internalbc intercode cvttoinst codegen pass2new codegennew funcsig 
+* usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 
+persistant llvm postbind reconstruct persistantseq opt2 symbol parse libdesc internalbc 
+intercode cvttoinst codegen pass2new codegennew funcsig interpreter
 exclude seq set otherseq stdlib bits tree graph UTF8 stack stacktrace real ipair bitpackedseq 
-fileio textio encoding words
+fileio textio encoding words 

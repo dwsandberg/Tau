@@ -1,7 +1,5 @@
 Module encoding.T
 
-/use otherseq.encodingpair.T
-
 use otherseq.seq.encodingpair.T
 
 use seq.seq.encodingpair.T
@@ -9,8 +7,6 @@ use seq.seq.encodingpair.T
 use seq.encodingpair.T
 
 use seq.encodingstate.T
-
-use process.T
 
 use seq.T
 
@@ -24,7 +20,8 @@ Export type:encoding.T
 
 Export type:encodingstate.T
 
-type encodingstate is sequence length:int, encodetable:seq.seq.encodingpair.T, decodetable:seq.seq.encodingpair.T, all:seq.encodingpair.T
+type encodingstate is sequence length:int, encodetable:seq.seq.encodingpair.T, 
+decodetable:seq.seq.encodingpair.T, all:seq.encodingpair.T,lastadd:int
 
 Export length(e:encodingstate.T)int
 
@@ -52,7 +49,7 @@ unbound =(T, T)boolean
 
 Function empty:encodingstate.T encodingstate.T
 let x = constantseq(4, empty:seq.encodingpair.T)
- encodingstate(0, x, x, empty:seq.encodingpair.T)
+ encodingstate(0, x, x, empty:seq.encodingpair.T,0)
 
 function adddata(eletoadd:encodingpair.T, tablesize:int, a:encodingpair.T)seq.encodingpair.T
  if data.a = data.eletoadd ∨ hash.eletoadd mod tablesize ≠ hash.a mod tablesize then
@@ -73,26 +70,29 @@ Function to:encoding.T(i:int)encoding.T encoding.i
 Function lastadded(h:encodingstate.T)encoding.T code.last.all.h
 
 Function add(h:encodingstate.T, v:encodingpair.T)encodingstate.T
- // this is the add that is stored in the erecord //
+ // this is the add that is called by primitiveadd //
  let tablesize = length.encodetable.h
-  if 3 * length.h > 2 * tablesize then
-  let t = encodetable.h
-   let d = decodetable.h
-    add(encodingstate(length.h, t + t + t + t, d + d + d + d, all.h)
-    , v)
-  else
    let datahash = hash.v
    let dataindex = datahash mod tablesize + 1
-    if @(max, ele.data.v, 0,(encodetable.h)_dataindex) > 0 then // already present // h
+   let existingcode=@(+, ele5.data.v, empty:seq.encodingpair.T,(encodetable.h)_dataindex)
+    if not.isempty.existingcode   then // already present // 
+      let c=valueofencoding.code.existingcode_1
+     if  lastadd.h=c then h
+     else  encodingstate(length.h  ,   encodetable.h,  decodetable.h, all.h, c )
     else
      let p = subadd(h, v, 1)
      let codeindex = valueofencoding.code.p mod tablesize + 1
      let l1 = @(addcode(code.p, tablesize), identity, [ p],(decodetable.h)_codeindex)
      let l2 = @(+, adddata(p, tablesize), [ p],(encodetable.h)_dataindex)
-     let newdecodetable = replace(decodetable.h, codeindex, l1)
-     let newencodetable = replace(encodetable.h, dataindex, l2)
-      encodingstate(length.h + 1, newencodetable, newdecodetable, all.h + p)
-
+     let newdecode  = replace(decodetable.h, codeindex, l1)
+     let newencode  = replace(encodetable.h, dataindex, l2)
+     if 3 * length.h > 2 * tablesize then
+      let t=newencode
+      let d=newdecode
+      encodingstate(length.h + 1,t + t + t + t, d + d + d + d, all.h + p,valueofencoding.code.p)
+     else 
+          encodingstate(length.h + 1, newencode, newdecode , all.h + p,valueofencoding.code.p)   
+ 
 function used(t:encoding.T, a:encodingpair.T)int if t = code.a then 1 else 0
 
 function subadd(h:encodingstate.T, v:encodingpair.T, count:int)encodingpair.T
@@ -103,7 +103,7 @@ function subadd(h:encodingstate.T, v:encodingpair.T, count:int)encodingpair.T
  let found = valueofencoding.code.v ≤ 0 ∨ @(+, used.code.v, 0,(decodetable.h)_codeindex) > 0
   if found then
   subadd(h, encodingpair(to:encoding.T(assignencoding(length.h, data.v)), data.v, hash.v), count + 1)
-  else encodingpair(code.v, deepcopy.data.v, hash.v)
+  else encodingpair(code.v, data.v, hash.v)
 
 unbound assignencoding(length:int, data:T)int //(randomint.1)_1 //
 
@@ -129,11 +129,10 @@ Builtin primitiveadd(s:encodingpair.T)int
 
 Function encoding:seq.encodingpair.T seq.encodingpair.T all.getinstance:encodingstate.T
 
-Function encode(t:T)encoding.T
- let r = lookuprep(t, getinstance:encodingstate.T)
-  if isempty.r then
-  let discard = primitiveadd.encodingpair(to:encoding.T(0), t, hash.t)
-    encode.t
+Function encode(t:T)encoding.T 
+  let r = lookuprep(t, getinstance:encodingstate.T)
+  if isempty.r then 
+     to:encoding.T(primitiveadd.encodingpair(to:encoding.T(0), t, hash.t))   
   else code.r_1
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingpair.T
@@ -150,8 +149,6 @@ Function hash(a:encoding.T)int valueofencoding.a
 
 function lookuprep(t:T, inst:encodingstate.T)seq.encodingpair.T
  @(+, ele5.t, empty:seq.encodingpair.T,(encodetable.inst)_(hash.t mod length.encodetable.inst + 1))
-
-function ele(v:T, a:encodingpair.T)int if v = data.a then valueofencoding.code.a else 0
 
 Export type:encodingpair.T
 

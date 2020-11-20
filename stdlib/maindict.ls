@@ -41,7 +41,7 @@ Function writedict(tin:seq.encodingpair.seq.char)int
 Function loaddict(file:fileresult)int
  if size.file > -1 then
  let data = data.file
-   @(+, primitiveadd, 0, deepcopy.get2(data, length.data))
+   @(+, primitiveadd, 0, // deepcopy. // get2(data, length.data))
  else 0
 
 function get2(data:seq.int, i:int)seq.encodingpair.seq.char

@@ -33,11 +33,11 @@ Builtin bitcast(seq.int)int
 Builtin bitcast(int)seq.int
 
 
-Builtin dlsym(seq.bits) int
+Builtin dlsymbol(seq.bits) int
 
 Builtin process5(seq.int) process.int 
 
-Function dlsym(name:word)int  dlsym(toCformat.[ name])
+Function dlsymbol(name:word)int  dlsymbol(toCformat.[ name])
 
 
 function aswords(s:seq.int) seq.word
@@ -67,14 +67,13 @@ function interpret(alltypes:typedict,code:seq.symbol,i:int,stk:stack.int)  seq.w
     else if fsig.sym="makereal(word seq)" then
           interpret(alltypes,code,i+1,push(pop(stk,nopara), representation.makereal(aswords.bitcast.top.stk)))  
   else  
-    let t=dlsym.mangle(fsig.sym,module.sym)
-    let dcret=// if resulttype.sym in [mytype."word",mytype."int",mytype."real"] then 
-     deepcopysym(alltypes,typeint)  else // deepcopysym(alltypes,resulttype.sym)
-    let adcret=dlsym.mangle(fsig.dcret,module.dcret)
+    let t=dlsymbol.mangle(fsig.sym,module.sym)
+    let dcret= deepcopysym(alltypes,resulttype.sym)
+    let adcret=dlsymbol.mangle(fsig.dcret,module.dcret)
     assert adcret > 0 report "Not handle by interperter"+ print.sym+"can not find"+print.dcret
      assert t > 0 report "Not handle by interperter"+ print.sym
      let dc=deepcopysym(alltypes,mytype."word seq")
-     let adc=dlsym.mangle(fsig.dc,module.dc)
+     let adc=dlsymbol.mangle(fsig.dc,module.dc)
      assert adc > 0 report "?"
         let x=packed([adcret,adc,t,nopara]+ top(stk,nopara)   )
       let p=process5.x 

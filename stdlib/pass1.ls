@@ -349,14 +349,20 @@ function gathersymbols(stubdict:set.symbol, f:firstpass, input:seq.word)firstpas
   let paratypes = funcparametertypes.t
   let sym = newsymbol(name, modname.f, paratypes, funcreturntype.t)
    assert iscomplex.modname.f = "T"_1 in fsig.sym report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input
-    if last.input in "export" ∨ input_1 = "Export"_1 then
+    if input_1 = "Export"_1 then
     firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, types.f, prg.f)
     else if input_1 = "unbound"_1 then
     firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + sym, types.f, prg.f)
     else
      assert not(sym in defines.f)report"Function" + name.sym + "is defined twice in module" + print.modname.f
      let prg1 = if input_1 in "Builtin builtin"then
-     let code2 = @(+, Local, empty:seq.symbol, arithseq(length.paratypes, 1, 1))
+     let code2 =    if fsig.sym= "empty:seq.T"then Emptyseq + [ Words."VERYSIMPLE", Optionsym]
+  else if fsig.sym = "getseqtype(T seq)"then
+  [ Local.1, Lit.0, Idx."int"_1, Words."VERYSIMPLE", Optionsym]
+  else if fsig.sym = "aborted(T process)"then
+  [ Local.1, symbol("aborted(T process)","builtin","boolean")]
+else  
+     @(+, Local, empty:seq.symbol, arithseq(length.paratypes, 1, 1))
       + symbol(fsig.sym, if length.module.sym = 1 then"builtin"else"T builtin", returntype.sym)
        map(prg.f, sym, code2)
      else

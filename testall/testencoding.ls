@@ -24,6 +24,17 @@ use stdlib
 
 use process.testdeep
 
+use seq.testdeep
+
+use seq.set.int
+
+function deepcopy(a:testdeep) testdeep   result.process.identity.a
+
+function deepcopy(a:set.int) set.int  result.process.identity.a
+
+
+function deepcopy(a:int) int a
+
 use encoding.testrecord
 
 use process.seq.encodingpair.testrecord
@@ -73,8 +84,11 @@ let p = process.process1
   let z = @(+, add, 0, ["firstadd","secondadd"])
   let s2 = list.result.process.process1
   let s3 = list.encoding:seq.encodingpair.testrecord
-   check([ s1 = ["A1","B2","C3","D4","E5"], s2 = ["firstadd","secondadd"] + s1, s3 = s2, 3 = deepcopy.3, asset.[ 3, 7, 9] = deepcopy.asset.[ 3, 7, 9], deepcopy.testdeep1 = testdeep1]
+   check([ 
+    3 = deepcopy.3, asset.[ 3, 7, 9] = deepcopy.asset.[ 3, 7, 9], deepcopy.testdeep1 = testdeep1 , s1 = ["A1","B2","C3","D4","E5"], s2 = ["firstadd","secondadd"] + s1, s3 = s2 
+   ]
    ,"encoding")
+   
 
 Function process1 seq.encodingpair.testrecord
 let discard = @(+, add, 0, ["A1","B2","C3","D4","E5"])

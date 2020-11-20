@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use doc ; doclibrary."stdlibbak"
+#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
 
 ; use tools; testprofile."stdlibbak"
 
