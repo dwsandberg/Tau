@@ -168,8 +168,8 @@ function codeforbuiltin(alltypes:typedict, newsym:symbol, oldsym:symbol, org:seq
   else  if fsig.oldsym = "assert(word seq)"then
   let kind = kind.gettypeinfo(alltypes, resulttype.newsym)
    let codesym = if kind = "int"_1 then symbol("assert(word seq)","builtin","int")
-   else if kind = "real"_1 then symbol("assert:real(word seq)","builtin","real")
-   else symbol("assert:ptr(word seq)","builtin","ptr")
+   else if kind = "real"_1 then symbol("assertreal(real seq)","builtin","real")
+   else symbol("assertptr(word seq)","builtin","ptr")
     [ Local.1, codesym]
     else  if fsig.oldsym = "primitiveadd(T encodingpair)"then
   let addefunc = newsymbol("add", typeencoding+newmodpara  ,   [ typeencodingstate+newmodpara , typeencodingpair+newmodpara ] ,  typeencodingstate+newmodpara )

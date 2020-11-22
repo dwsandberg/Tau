@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau testprocess testprocess
+#!/usr/local/bin/tau ;use testprocess; testprocess
 
 Module testprocess
 
@@ -32,8 +32,21 @@ function arg4(a:int, b:int, c:int, d:int)int a + b + c + d
 
 Function testprocess seq.word
 let z = subseq("f red green", 2, 3)
-let y = [ not.isprefix("out of bounds","out"), isprefix("out of bounds", message.process.testout.0), isprefix("out of bounds", message.process.testout.-10), isprefix("out of bounds", message.process.testout.4), message.process.testout.1 = "normal exit", aborted.process.testout.5, not.aborted.process.testout.2, result.process.testout.3 = "three", result.process.isprefix("red", z), result.process.redgreen = redgreen
-, result.process.arg4(1, 2, 3, 4) = 10, message.process.result.process.testout.4 = "no result of aborted process", a.result.process.testprocess3 = 4 ∧ b.result.process.testprocess3 = 40, t513, t514, isprefix("invalid digit", message.process.toint."0A"_1), t520]
+let y = [ not.isprefix("out of bounds","out"),
+isprefix("out of bounds", message.process.testout.0), 
+isprefix("out of bounds", message.process.testout.-10), 
+isprefix("out of bounds", message.process.testout.4), 
+message.process.testout.1 = "normal exit" , 
+ aborted.process.testout.5, 
+ not.aborted.process.testout.2, 
+ result.process.testout.3 = "three", 
+ result.process.isprefix("red", z), 
+ result.process.redgreen = redgreen
+, result.process.arg4(1, 2, 3, 4) = 10,
+ message.process.result.process.testout.4 = "no result of aborted process" ,
+  a.result.process.testprocess3 = 4 ∧ b.result.process.testprocess3 = 40, t513, t514, 
+  isprefix("invalid digit", message.process.toint."0A"_1),  
+  t520]
  check(y,"testprocess")
 
 function t518 boolean isprefix("invalid digit", message.process.toint."0A"_1)

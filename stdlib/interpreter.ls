@@ -35,7 +35,8 @@ Builtin bitcast(int)seq.int
 
 Builtin dlsymbol(seq.bits) int
 
-Builtin process5(seq.int) process.int 
+
+Builtin createthread(int,int,int,seq.int) process.int
 
 Function dlsymbol(name:word)int  dlsymbol(toCformat.[ name])
 
@@ -75,8 +76,7 @@ function interpret(alltypes:typedict,code:seq.symbol,i:int,stk:stack.int)  seq.w
      let dc=deepcopysym(alltypes,mytype."word seq")
      let adc=dlsymbol.mangle(fsig.dc,module.dc)
      assert adc > 0 report "?"
-        let x=packed([adcret,adc,t,nopara]+ top(stk,nopara)   )
-      let p=process5.x 
+       let p=createthread(adcret,adc,t,packed.top(stk,nopara))
         if aborted.p then message.p else 
        interpret(alltypes,code,i+1, push(pop(stk,nopara),result.p))
        

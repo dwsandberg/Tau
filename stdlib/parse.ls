@@ -87,14 +87,15 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
  if op_1 = "process"_1 then
  let nopara = nopara.last.code.exp
  let rt =(types.exp)_1
- let recordtyp = [ typeint, typeint, typeint, typeint] + paratypes.last.code.exp
- let dcrt  = deepcopysym(dict.R,rt)
+  let dcrt  = deepcopysym(dict.R,rt)
   assert cardinality.dcrt = 1  report errormessage("parameter type" + print.rt+ "is undefined in",  input, place.R)
  let dcws = deepcopysym(dict.R,mytype."word seq")
   assert cardinality.dcws=1 report errormessage("type word seq is require for process in" ,  input, place.R)
-  let newcode = [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp, Lit.nopara]
-  + subseq(code.exp, 1, length.code.exp - 1)
-  + [ newsymbol("kindrecord", mytype."T builtin", recordtyp, typeptr), symbol("process2(ptr)","builtin","ptr")]
+   let newcode=  
+        [Fref.dcrt_1,Fref.dcws_1, Fref.last.code.exp,Lit.0,Lit.nopara]
+        + subseq(code.exp, 1, length.code.exp - 1)
+     +[newsymbol("kindrecord",mytype."T builtin",[typeint,typeint]+ paratypes.last.code.exp,typeptr)
+      ,symbol("createthread(int,int,int,ptr)","builtin","ptr")]
    bindinfo(dict.R, newcode, [  typeprocess+rt],"")
  else
   let f = lookupbysig(dict.R, op, types.exp, input, place.R)

@@ -55,9 +55,15 @@ Export addliblib(libname:seq.word, mods:int, profiledata:int)int
 
 Function mangledname(s:symbol)word mangle(fsig.s, module.s)
 
+Function isexternal(s:symbol) boolean
+   isbuiltin.module.s &and (fsig.s)_1 in "sqrt sin cos tan arcsin arccos loadedlibs" 
+
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
  if fsig.s = "option(T, word seq)"then function.constantseq(nopara.s + 2, i64)
- else function.@(+, tollvmtype.alltypes, [ tollvmtype(alltypes, resulttype.s), i64], paratypes.s)
+ else 
+ let starttypes=if isexternal.s   then [ tollvmtype(alltypes, resulttype.s)] else [ tollvmtype(alltypes, resulttype.s), i64]
+ function.@(+, tollvmtype.alltypes,starttypes
+ , paratypes.s)
 
 function tollvmtype(alltypes:typedict, s:mytype)llvmtype
  let kind = kind.gettypeinfo(alltypes, s)
@@ -75,13 +81,13 @@ Export action(match5)word
 
 Export arg(match5)int
 
-type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, code:seq.symbol, functype:llvmtype
+type match5 is record sym:symbol, length:int, parts:seq.templatepart, action:word, arg:int, code:seq.symbol, functype:llvmtype
+ 
+function match5(sym:symbol, length:int, parts:seq.templatepart, action:word, arg:slot)match5
+match5(sym, length, parts, action, toint.arg, empty:seq.symbol, i64)
 
-function match5(fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int)match5
- match5(fullinst, length, parts, action, arg, empty:seq.symbol, i64)
-
-function match5(fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:slot)match5
- match5(fullinst, length, parts, action, toint.arg, empty:seq.symbol, i64)
+function match5(sym:symbol, length:int, b:internalbc)match5
+ match5(sym, length, getparts.b,"TEMPLATE"_1, slot.nopara.sym)
 
 Export code(match5)seq.symbol
 
@@ -89,100 +95,83 @@ Export functype(match5)llvmtype
 
 Export type:symbol
 
-Export fullinst(match5)seq.word
+Function  parametertypes(m:match5)seq.word 
+// used for records and loopblock //
+fsig.sym.m+module.sym.m
 
 Export type:program
 
 Function_(m:seq.match5, d:symbol)match5
- let full = if isconstantorspecial.d then fsig.d + module.d else [ mangledname.d, toword.nopara.d]
- let e = findencode.match5(full, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
+ let e = findencode.match5(d, 0, empty:seq.templatepart,"NOTFOUND"_1, slot.0)
   assert not.isempty.e report"LL" + fsig.d + module.d
-   e_1
+    e_1
 
-Function mangledname(m:match5)word(fullinst.m)_1
+function =(a:match5, b:match5)boolean   sym.a=sym.b
 
-function =(a:match5, b:match5)boolean fullinst.a = fullinst.b
-
-function hash(a:match5)int hash.fullinst.a
+function hash(a:match5)int   fsighash.sym.a
 
 function assignencoding(l:int, a:match5)int l + 1
 
 Function options(match5map:seq.match5, m:match5)seq.word options.code.m
 
 function table seq.match5
-let t = [ match5(1,"bitcastZbuiltinZintzseqzseq"_1, 0, emptyinternalbc)
-, match5(1,"bitcastZbuiltinZptr"_1, 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
-, match5(1,"bitcastZbuiltinZintzseq"_1, 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
-, match5(1,"bitcastZbuiltinZint"_1, 1, CAST(r.1, slot.ibcsub1, ptr.i64, inttoptr))
-, match5(1,"isnullZbuiltinZptr"_1, 3, CAST(r.1, slot.ibcsub1, i64, ptrtoint) + CMP2(r.2, r.1, C64.0, 32)
+let t = [ match5(symbol("bitcast(int seq seq)","builtin","int seq"), 0, emptyinternalbc)
+, match5(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
+, match5(symbol("bitcast(int seq)","builtin","int"), 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
+, match5(symbol("bitcast(int)","builtin","int seq"), 1, CAST(r.1, slot.ibcsub1, ptr.i64, inttoptr))
+, match5(symbol("isnull(ptr)","builtin","boolean"), 3, CAST(r.1, slot.ibcsub1, i64, ptrtoint) + CMP2(r.2, r.1, C64.0, 32)
 + CAST(r.3, r.2, i64, zext))
-, match5(0,"nullptrZbuiltin"_1, 1, CAST(r.1, C64.0, ptr.i64, inttoptr))
-, match5(2,"IDXZbuiltinZintzseqZint"_1, 2, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64))
-, match5(2,"IDXZbuiltinZintzseqzseqZint"_1, 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
+, match5(symbol("nullptr","builtin","ptr"), 1, CAST(r.1, C64.0, ptr.i64, inttoptr))
+, match5(symbol("IDX(int seq,int)","builtin","int"), 2, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64))
+, match5(symbol("IDX(int seq seq,int)","builtin","int seq "), 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, ptr.i64, inttoptr))
-, match5(2,"IDXZbuiltinZptrzseqZint"_1, 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
+, match5(symbol("IDX(ptr seq,int)","builtin","ptr"), 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, ptr.i64, inttoptr))
-, match5(2,"IDXZbuiltinZrealzseqZint"_1, 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
+, match5(symbol("IDX(real seq,int)","builtin","real"), 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, double, bitcast))
-, match5(1,"getseqtypeZbuiltinZTzseq"_1, 1, LOAD(r.1, slot.ibcsub1, i64))
-, match5(2,"STKRECORDZbuiltinZptrZptr"_1, 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0) + STORE(r.2, r.1, slot.ibcsub1)
+  , // match5(1,"getseqtypeZbuiltinZTzseq"_1, 1, LOAD(r.1, slot.ibcsub1, i64))  
+, // match5(symbol("STKRECORD(ptr,ptr)","builtin","ptr"), 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0) + STORE(r.2, r.1, slot.ibcsub1)
 + GEP(r.2, ptr.i64, r.1, C64.1)
 + STORE(r.3, r.2, slot.ibcsub2)
 + GEP(r.3, ptr.i64, r.1, C64.0))
-, match5(1
-,"sqrtZbuiltinZreal"_1
-, 1
-, CALL(r.1, 0, 32768, function.[ double, double], symboltableentry(merge."llvm.sqrt.f64", function.[ double, double]), slot.ibcsub1))
-, match5(1
-,"sinZbuiltinZreal"_1
-, 1
-, CALL(r.1, 0, 32768, function.[ double, double], symboltableentry(merge."llvm.sin.f64", function.[ double, double]), slot.ibcsub1))
-, match5(1
-,"cosZbuiltinZreal"_1
-, 1
-, CALL(r.1, 0, 32768, function.[ double, double], symboltableentry(merge."llvm.cos.f64", function.[ double, double]), slot.ibcsub1))
-, match5(1,"tanZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768, function.[ double, double], symboltableentry("tan", function.[ double, double]), slot.ibcsub1))
-, match5(1,"arcsinZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768, function.[ double, double], symboltableentry("asin", function.[ double, double]), slot.ibcsub1))
-, match5(1,"arccosZbuiltinZreal"_1, 1, CALL(r.1, 0, 32768, function.[ double, double], symboltableentry("acos", function.[ double, double]), slot.ibcsub1))
-, match5(1,"intpartZbuiltinZreal"_1, 1, CAST(r.1, slot.ibcsub1, i64, fptosi))
-, match5(1,"torealZbuiltinZint"_1, 1, CAST(r.1, slot.ibcsub1, double, sitofp))
-, match5(2,"Q2DZbuiltinZrealZreal"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sub))
-, match5(2, // + //"Q2BZbuiltinZrealZreal"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, add))
-, match5(2, // * //"Q2AZbuiltinZrealZreal"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, mul))
-, match5(2, // / op //"Q2FZbuiltinZrealZreal"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sdiv))
-, match5(1,"casttorealZbuiltinZint"_1, 1, CAST(r.1, slot.ibcsub1, double, bitcast))
-, match5(1,"representationZbuiltinZreal"_1, 1, CAST(r.1, slot.ibcsub1, i64, bitcast))
-, match5(2, // ? //"Q3FZbuiltinZrealZreal"_1, 5, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 3) + CAST(r.2, r.1, i64, zext)
+, match5(symbol("intpart(real)","builtin","real"), 1, CAST(r.1, slot.ibcsub1, i64, fptosi))
+, match5(symbol("toreal(int)","builtin","real"), 1, CAST(r.1, slot.ibcsub1, double, sitofp))
+, match5(symbol("-(real,real)","builtin","real"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sub))
+, match5(symbol("+(real,real)","builtin","real"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, add))
+, match5(symbol("*(real,real)","builtin","real"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, mul))
+, match5(symbol("/(real,real)","builtin","real"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sdiv))
+, match5(symbol("casttoreal(int)","builtin","real"), 1, CAST(r.1, slot.ibcsub1, double, bitcast))
+, match5(symbol("representation(real)","builtin","int"),  1, CAST(r.1, slot.ibcsub1, i64, bitcast))
+, match5(symbol("?(real,real)","builtin","ordering"), 5, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 3) + CAST(r.2, r.1, i64, zext)
 + CMP2(r.3, slot.ibcsub1, slot.ibcsub2, 2)
 + CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add))
-, match5(2, // ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 39) + CAST(r.2, r.1, i64, zext)
+, match5(symbol("?(int,int)","builtin","ordering"), 5, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 39) + CAST(r.2, r.1, i64, zext)
 + CMP2(r.3, slot.ibcsub1, slot.ibcsub2, 38)
 + CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add))
-, match5(3,"castZbuiltinZTzseqZintZint"_1, 1, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2))
-, match5(2,"Q3EZbuiltinZintZint"_1, 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 38) + CAST(r.2, r.1, i64, zext))
-, match5(1,"notZbuiltinZboolean"_1, 1, BINOP(r.1, slot.ibcsub1, C64.1, xor))
+, match5(symbol("cast(T seq, int, int)","builtin","ptr"), 1, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2))
+, match5(symbol(">(int,int)","builtin","boolean"), 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 38) + CAST(r.2, r.1, i64, zext))
+, match5(symbol("not(boolean)","builtin","boolean"), 1, BINOP(r.1, slot.ibcsub1, C64.1, xor))
 , // include aborted here so does not show up in profile results match5("abortedZbuiltinZTzprocess"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."abortedZbuiltinZTzprocess",-1, ibcsub1)), Including this as a template causes subtle compile errors //
-match5(2, // = //"Q3DZbuiltinZintZint"_1, 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 32) + CAST(r.2, r.1, i64, zext))
-, match5(2,"Q2DZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sub))
-, match5(2, // + //"Q2BZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, add))
-, match5(2, // * //"Q2AZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, mul))
-, match5(2, // / op //"Q2FZbuiltinZintZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sdiv))
-, match5(2,"Q3CQ3CZbuiltinZbitsZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, shl))
-, match5(2,"Q3EQ3EZbuiltinZbitsZint"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, lshr))
-, match5(2,"Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, and))
-, match5(2,"Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, or))
-, match5(2,"xorZbuiltinZbitsZbits"_1, 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, xor))
-, match5(3,"setfldZbuiltinZintzseqZintZint"_1, 2, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + STORE(r.2, r.1, slot.ibcsub3)
+  match5(symbol("=(int,int)","builtin","boolean"), 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 32) + CAST(r.2, r.1, i64, zext))
+, match5(symbol("-(int,int)","builtin","int"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sub))
+, match5( symbol("+(int,int)","builtin","int"),1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, add))
+, match5(symbol("*(int,int)","builtin","int"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, mul))
+, match5(symbol("/(int,int)","builtin","int"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, sdiv))
+, match5(symbol("<<(bits,int)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, shl))
+, match5(symbol(">>(bits,int)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, lshr))
+, match5(symbol("∧(bits,bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, and))
+, match5(symbol("∨(bits,bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, or))
+, match5(symbol("xor(bits,bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, xor))
+, match5(symbol("setfld(int seq,int,int)","builtin","int"), 2, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + STORE(r.2, r.1, slot.ibcsub3)
 + BINOP(r.2, slot.ibcsub2, C64.1, add))]
 let discard = @(+, addit, 0, t)
  t
 
+
 function addit(m:match5)int valueofencoding.encode.m
 
-function match5(nopara:int, inst:word, length:int, b:internalbc)match5
- match5([ inst, toword.nopara], length, getparts.b,"TEMPLATE"_1, nopara)
 
 Function funcdec(alltypes:typedict, i:symbol)int
  toint
@@ -206,7 +195,7 @@ function processconstargs(arglist:seq.symbol, i:int, args:seq.int)seq.int
  if i > length.arglist then args
  else
   let xx = arglist_i
-  let e = findencode.match5(fsig.xx + module.xx, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
+  let e = findencode.match5(xx, 0, empty:seq.templatepart,"NOTFOUND"_1, slot.0)
    if isempty.e then empty:seq.int else processconstargs(arglist, i + 1, args + arg.e_1)
 
 function processconst(toprocess:seq.symbol, i:int, notprocessed:seq.symbol)seq.match5
@@ -217,7 +206,7 @@ function processconst(toprocess:seq.symbol, i:int, notprocessed:seq.symbol)seq.m
   let args = processconstargs(constantcode.xx, 1, empty:seq.int)
    if isempty.args then processconst(toprocess, i + 1, notprocessed + toprocess_i)
    else
-    let discard = addit.match5(fsig.xx + module.xx, 0, empty:seq.templatepart,"ACTARG"_1, addobject.args)
+    let discard = addit.match5(xx, 0, empty:seq.templatepart,"ACTARG"_1, slot.addobject.args)
      processconst(toprocess, i + 1, notprocessed)
 
 function buildtemplates(used:seq.symbol, i:int, theprg:program, const:seq.symbol, alltypes:typedict)seq.match5
@@ -228,45 +217,53 @@ function buildtemplates(used:seq.symbol, i:int, theprg:program, const:seq.symbol
    if pkg = "$constant"then buildtemplates(used, i + 1, theprg, const + used_i, alltypes)
    else
     let b = if isbuiltin.pkg then
-    findencode.match5([ mangledname.xx, toword.nopara.xx], 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
+    findencode.match5(xx, 0, empty:seq.templatepart,"NOTFOUND"_1, slot.0)
     else empty:seq.match5
      if length.b > 0 then buildtemplates(used, i + 1, theprg, const, alltypes)
      else
       let m = if isFref.xx then
       let mn = mangledname.(constantcode.xx)_1
        let functyp = ptr.tollvmtype(alltypes,(constantcode.xx)_1)
-        match5(fsig.xx + pkg, 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
+        match5(xx, 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
       else if islit.xx then
-      match5(fsig.xx + pkg, 0, empty:seq.templatepart,"ACTARG"_1, if pkg = "$real"then Creal.toint.(fsig.xx)_1 else C64.toint.(fsig.xx)_1)
+      match5(xx, 0, empty:seq.templatepart,"ACTARG"_1, if pkg = "$real"then Creal.toint.(fsig.xx)_1 
+      else C64.toint.(fsig.xx)_1)
       else if islocal.xx then
-      match5(fsig.xx + pkg, 0, empty:seq.templatepart,"LOCAL"_1, toint.(fsig.xx)_1)
+      match5(xx, 0, empty:seq.templatepart,"LOCAL"_1, slot.toint.(fsig.xx)_1)
       else if isdefine.xx then
-      match5(fsig.xx + pkg, 0, empty:seq.templatepart,(fsig.xx)_1, toint.(fsig.xx)_2)
+      match5(xx, 0, empty:seq.templatepart,(fsig.xx)_1, slot.toint.(fsig.xx)_2)
       else if isblock.xx then
       let typ = tollvmtype(alltypes, resulttype.xx)
-        match5(fsig.xx + pkg, 0, empty:seq.templatepart,(fsig.xx)_1, nopara.xx, empty:seq.symbol, typ)
-      else if isspecial.xx then match5(fsig.xx + pkg, 0, empty:seq.templatepart,(fsig.xx)_1, nopara.xx)
+        match5(xx, 0, empty:seq.templatepart,(fsig.xx)_1, nopara.xx, empty:seq.symbol, typ)
+      else if isspecial.xx then match5(xx , 0, empty:seq.templatepart,(fsig.xx)_1, slot.nopara.xx)
       else if pkg = "$words"then
       // let ctype = array(length.fsig.xx + 2, i64)let c = DATA(ctype, @(+, wordref, [ 0, length.fsig.xx], fsig.xx))let d = modulerecord("", [ toint.GLOBALVAR, typ.ctype, 2, c + 1, 3, toint.align8 + 1, 0])let f = ptrtoint(ptr.ctype, d)//
-       match5(fsig.xx + pkg, 0, empty:seq.templatepart,"ACTARG"_1, addwordseq2.fsig.xx)
+       match5(xx, 0, empty:seq.templatepart,"ACTARG"_1, slot.addwordseq2.fsig.xx)
       else if pkg = "$word"then
-      match5(fsig.xx + pkg, 0, empty:seq.templatepart,"ACTARG"_1, wordref.(fsig.xx)_1)
+      match5(xx, 0, empty:seq.templatepart,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
       else if(fsig.xx)_1 = "callidx"_1 ∧ isbuiltin.pkg then
-      match5([ mangledname.xx,"2"_1], 0, empty:seq.templatepart,"CALLIDX"_1, 0, empty:seq.symbol, tollvmtype(alltypes, resulttype.xx))
+      match5(xx, 0, empty:seq.templatepart,"CALLIDX"_1, 0, empty:seq.symbol, tollvmtype(alltypes, resulttype.xx))
       else if(fsig.xx)_1 = "global"_1 ∧ isbuiltin.pkg then
-      match5(0, mangledname.xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
+      match5(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
       else if(fsig.xx)_1 = "blockindexfunc"_1 ∧ isbuiltin.pkg then
       let functype = ptr.function.[ i64, i64, ptr.i64, i64]
-        match5([ mangledname.xx,"0"_1], 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functype, symboltableentry("indexblocksZassignencodingnumberZintzseqzseqZint"_1, functype)))
-      else
-       let noargs = nopara.xx
-       let name = mangledname.xx
-       let functype = tollvmtype(alltypes, xx)
-       let newcode = CALLSTART(1, 0, 32768, typ.functype, toint.symboltableentry(name, functype), noargs + 1)
+        match5(xx, 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functype, symboltableentry("indexblocksZassignencodingnumberZintzseqzseqZint"_1, functype)))
+      else if isexternal.xx then 
+            let symname=  if (fsig.xx)_1  in "arcsin" then "asin"_1 else if (fsig.xx)_1  in "arccos" then "acos"_1
+            else  (fsig.xx)_1
+            let functype = tollvmtype(alltypes, xx)
+       let newcode = CALLSTART(1, 0, 32768, typ.functype, toint.symboltableentry(symname, functype), nopara.xx )
        let code = code.lookupcode(theprg, used_i)
-        match5([ name, toword.noargs], 1, getparts.newcode,"CALL"_1, noargs, code, functype)
+       match5(xx, 1, getparts.newcode,"CALLE"_1, nopara.xx, code, functype)
+      else 
+       let functype = tollvmtype(alltypes, xx)
+       let newcode = CALLSTART(1, 0, 32768, typ.functype, toint.symboltableentry(mangledname.xx, functype), nopara.xx + 1)
+       let code = code.lookupcode(theprg, used_i)
+       match5(xx, 1, getparts.newcode,"CALL"_1, nopara.xx, code, functype)
       let discard4 = addit.m
        buildtemplates(used, i + 1, theprg, const, alltypes)
+       
+
 
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
  let args = if action.t = "CALL"_1 then empty:seq.int

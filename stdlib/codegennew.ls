@@ -92,17 +92,15 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
 
 function addfuncdef(match5map:seq.match5, i:symbol)internalbc
  let m = match5map_i
-  // let hh = process.subaddfuncdef(match5map, m)assert not.aborted.hh report"fail get"+ print.i + message.hh +"
-&br"+ @(+, print,"", code.m)result.hh use process.internalbc function subaddfuncdef(match5map:seq.match5, m:match5)internalbc //
-  let options = options(match5map, m)
+ let options = options(match5map, m)
   let code = if length.options > 0 then
   // assert"PROFILE"_1 in options report"PROFILE PROBLEM"+ options //
    subseq(code.m, 1, length.code.m - 2)
   else code.m
   let nopara = arg.m
   let l = Lcode2(emptyinternalbc, paramap(nopara, empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
-  let g5 = if"PROFILE"_1 in options then mangledname.m else"noprofile"_1
-  let r = @(processnext.g5,_.match5map, l, code)
+  let g5 = if"PROFILE"_1 in options then mangledname.i else"noprofile"_1
+  let r = @(processnext(g5,match5map),identity, l, code)
    BLOCKCOUNT(1, noblocks.r) + code.r
    + RET(r(regno.r + 1), slot.top.args.r)
 
@@ -115,14 +113,23 @@ function paramap(i:int, result:seq.localmap)seq.localmap
 
 function length(s:stack.int)int length.toseq.s
 
-function processnext(profile:word, l:Lcode2, m:match5)Lcode2
+function processnext(profile:word,match5map:seq.match5, l:Lcode2, s:symbol)Lcode2
+ let m=match5map_s
  let action = action.m
   if action = "CALL"_1 then
-  let callee = mangledname.m
+  let callee = mangledname.s
    let noargs = arg.m
    let args = top(args.l, noargs)
     if profile = "noprofile"_1 ∨ profile = callee then
-    let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [-1] + args)
+    let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [-1]+ args)
+      Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
+    else profilecall(l, args, symboltableentry(callee, functype.m), profile(profile, callee), functype.m)
+  else  if action = "CALLE"_1 then
+  let callee = mangledname.s
+   let noargs = arg.m
+   let args = top(args.l, noargs)
+    if profile = "noprofile"_1 ∨ profile = callee then
+    let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1,  args)
       Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
     else profilecall(l, args, symboltableentry(callee, functype.m), profile(profile, callee), functype.m)
   else if action = "ACTARG"_1 then
@@ -164,7 +171,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
   let varcount = arg.m - 1
    let firstvar = constvalue.slot.top.args.l
    let bodymap = @(addloopmapentry(firstvar, regno.l), identity, lmap.l, arithseq(varcount, 1, 1))
-   let newstk = push(push(pushexptypes(fullinst.m, 3, args.l), varcount), 2)
+   let newstk = push(push(pushexptypes(parametertypes.m, 3, args.l), varcount), 2)
     // stack from top is kind, noexps, firstvar, exptypes, exps //
     let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, newstk, blocks.l)
      Lcode2(emptyinternalbc, bodymap, noblocks.l + 1, regno.l + varcount, empty:stack.int, push(blocks.l, exitblock))
@@ -175,7 +182,7 @@ function processnext(profile:word, l:Lcode2, m:match5)Lcode2
   let noargs = arg.m
    let args = top(args.l, noargs)
    let newcode = CALL(r(regno.l + 1), 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespace", function.[ ptr.i64, i64, i64]), r.1, C64.noargs)
-   let fldbc = setnextfld(code.l + newcode, args, 1, fullinst.m, 3, regno.l + 1, regno.l + 1, 0, 0)
+   let fldbc = setnextfld(code.l + newcode, args, 1, parametertypes.m, 3, regno.l + 1, regno.l + 1, 0, 0)
     Lcode2(value.fldbc, lmap.l, noblocks.l, index.fldbc, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
   else
    assert action in "CALLIDX"report"code gen unknown" + action
@@ -247,8 +254,7 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
 Function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word, j:int, regno:int, pint:int, preal:int, pptr:int)ipair.internalbc
  if i > length.args then ipair(regno, bc)
  else
-  let newj = if types_j in "$ $record"then // we have reached the type in the module in the full instruction in the match5 record // j
-  else min(findindex(","_1, types, j + 1), length.types - 1)
+  let newj = min(findindex(","_1, types, j + 1), length.types - 1)
   let typ = if length.types = 3 then"int"_1 else types_(newj - 1)
    assert typ in "int real ptr"report"unknown type gencode" + types
     if preal = 0 ∧ typ = "real"_1 then

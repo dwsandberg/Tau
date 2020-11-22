@@ -40,14 +40,12 @@ struct pinfo { BT kind; // 1 if aborted
     BT (*finishprof)(BT idx,BT x);
     BT freespace;
     BT newencodings;
-    struct pinfo2 *d; // info needed to create process
-               };
-
-struct pinfo2 { BT  deepcopyresult;
-               BT  deepcopyseqword;
-               BT func;
-               BT noargs;
-               BT args[0];
+     // info needed to create thread
+    BT  deepcopyresult;
+    BT  deepcopyseqword;
+    BT func;
+    BT noargs;
+    BT *args;
                };
 
 
@@ -338,20 +336,21 @@ BT assert(processinfo PD,BT message)
     longjmp(PD->env,1);
      return 1; }
 
+BT assertreal(processinfo PD,BT message){ return assert(PD,message);}
+
+BT assertptr(processinfo PD,BT message){ return assert(PD,message);}
+
+
 BT aborted(processinfo PD,BT pin){
      processinfo q = ( processinfo)  pin;
     if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
     return (BT)( q->kind);
 }
 
-BT loadedlibs(processinfo PD)  // returns list of loaded libraries
+BT loadedlibs()  // returns list of loaded libraries
  {return (BT)loaded;}   
  
-BT assertZbuiltinZwordzseq(processinfo PD,BT message){ return assert(PD,message);}
-  
-BT assertQ3ArealZbuiltinZwordzseq(processinfo PD,BT message){ return assert(PD,message);}
 
-BT assertQ3AptrZbuiltinZwordzseq(processinfo PD,BT message){ return assert(PD,message);}
 
 
 BT loadlib(processinfo PD,BT p_libname){char *name=(char *)&IDXUC(p_libname,2);
@@ -434,35 +433,35 @@ return 0;
 
 //parent process must not terminate before child or space for parameters(encodings) may be dealocated
 
-void processfunction(struct pinfo *q){
+void threadbody(struct pinfo *q){
 if (setjmp(q->env)!=0) {
-       q->message= ((BT (*) (processinfo,BT))(q->d->deepcopyseqword) ) (q->spawningprocess,q->error);
+       q->message= ((BT (*) (processinfo,BT))(q->deepcopyseqword) ) (q->spawningprocess,q->error);
         q->kind = 1;}
     else {BT result;
-     // fprintf(stderr,"start processfunction\n");
+     // fprintf(stderr,"start threadbody\n");
      q->kind = 0;
-     switch( q->d->noargs){
+     switch( q->noargs){
          case 0:
-        result= ((BT (*) (processinfo))(q->d->func) )(q); break;
+        result= ((BT (*) (processinfo))(q->func) )(q); break;
   
       case 1:
-        result= ((BT (*) (processinfo,BT))(q->d->func) )(q,q->d->args[0]); break;
+        result= ((BT (*) (processinfo,BT))(q->func) )(q,q->args[0]); break;
      case 2:
-        result= ((BT (*) (processinfo,BT,BT))(q->d->func) )(q,q->d->args[0],q->d->args[1]); break;
+        result= ((BT (*) (processinfo,BT,BT))(q->func) )(q,q->args[0],q->args[1]); break;
      case 3:
-        result= ((BT (*) (processinfo,BT,BT,BT))(q->d->func) )(q,q->d->args[0],q->d->args[1],q->d->args[2]); break;
+        result= ((BT (*) (processinfo,BT,BT,BT))(q->func) )(q,q->args[0],q->args[1],q->args[2]); break;
      case 4:
-        result= ((BT (*) (processinfo,BT,BT,BT,BT))(q->d->func) )(q,q->d->args[0],q->d->args[1],q->d->args[2],q->d->args[3]); break;
+        result= ((BT (*) (processinfo,BT,BT,BT,BT))(q->func) )(q,q->args[0],q->args[1],q->args[2],q->args[3]); break;
     case 5:
-        result= ((BT (*) (processinfo,BT,BT,BT,BT,BT))(q->d->func) )(q,q->d->args[0],q->d->args[1],q->d->args[2],q->d->args[3],q->d->args[4]); break;
+        result= ((BT (*) (processinfo,BT,BT,BT,BT,BT))(q->func) )(q,q->args[0],q->args[1],q->args[2],q->args[3],q->args[4]); break;
     case 6:
-        result= ((BT (*) (processinfo,BT,BT,BT,BT,BT,BT))(q->d->func) )(q,q->d->args[0],q->d->args[1],q->d->args[2],q->d->args[3],q->d->args[4],q->d->args[5]); break;
+        result= ((BT (*) (processinfo,BT,BT,BT,BT,BT,BT))(q->func) )(q,q->args[0],q->args[1],q->args[2],q->args[3],q->args[4],q->args[5]); break;
      default: assertexit(0,"only 1 ,2,3, 4 or 5 arguments to process are handled");
         
      }
      // fprintf(stderr,"start result copy \n"); //
      assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-     q->result= ((BT (*) (processinfo,BT))(q->d->deepcopyresult) ) ( q->spawningprocess,result);
+     q->result= ((BT (*) (processinfo,BT))(q->deepcopyresult) ) ( q->spawningprocess,result);
      assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
      // fprintf(stderr,"finish result copy\n"); //
     }
@@ -470,11 +469,10 @@ if (setjmp(q->env)!=0) {
     if (q->profileindex > 0 )  (q->finishprof)(q->profileindex ,0);
 }
 
-void initprocessinfo(processinfo p,processinfo PD,struct pinfo2 * pin){
+void initprocessinfo(processinfo p,processinfo PD){
     p->spawningprocess =PD;
     p->encodings = PD->encodings;
     p->kind = 0;
-    p->d = pin;  
     p->pid = pthread_self ();
     p->joined =0 ;
     p->space.nextone =0;
@@ -488,7 +486,13 @@ void initprocessinfo(processinfo p,processinfo PD,struct pinfo2 * pin){
     p->newencodings=0;
 }
 
-BT PROCESS3(processinfo PD,BT *pin,BT profileidx, BT (*finishprof)(BT idx,BT x)){
+
+
+
+
+BT createthread(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args ){
+BT profileidx=0;
+BT (*finishprof)(BT idx,BT x) =NULL;
   pthread_attr_t 	stackSizeAttribute;
   size_t			stackSize = 0;
   pthread_attr_init (&stackSizeAttribute);
@@ -496,18 +500,19 @@ BT PROCESS3(processinfo PD,BT *pin,BT profileidx, BT (*finishprof)(BT idx,BT x))
   pthread_attr_getstacksize(&stackSizeAttribute, &stackSize); 
   /*  fprintf(stderr,"Stack size %d\n", stackSize);*/
   processinfo p=(processinfo)  myalloc(PD,(sizeof (struct pinfo)+7)/8);
-  initprocessinfo(p,PD,(struct pinfo2 *) pin);
+  initprocessinfo(p,PD);
+  p->deepcopyresult =  deepcopyresult; 
+    p->deepcopyseqword =  deepcopyseqword;
+    p->func= func;
+    p->noargs=args[1];
+    p->args= args+2;
+
   p->profileindex = profileidx; 
   p->finishprof=finishprof;
-  assertexit(0==pthread_create(&p->pid, &stackSizeAttribute, (void *(*)(void *) )processfunction,(void *) p),"ERROR");
+  assertexit(0==pthread_create(&p->pid, &stackSizeAttribute, (void *(*)(void *) )threadbody,(void *) p),"ERROR");
   return (BT)p;
 }
 
-
-
-BT process2 (processinfo PD,BT *pin){  return PROCESS3(PD,pin,0,NULL); } 
-
-BT process5(processinfo PD,BT *pin){ return PROCESS3(PD,pin+2,0,NULL); }
 
 BT noop(BT a,BT b) { return b;}
 
@@ -609,36 +614,31 @@ int main(int argc, char **argv)    {   int i=0,count;
        // printf("argc %d\n",argc);
        inittau(0);
        for(count=1;argc > count; count++){
-       fprintf(stderr,"main args:%d %s\n", count,argv[count]);
-       int j=0;
+        int j=0;
             while( argv[count][j] != 0 ) { myarg.data[i++]=argv[count][j++];}
             myarg.data[i++]=' '; 
      }
        myarg.data[i]=0;
-       fprintf(stderr,"main args: %s\n",myarg.data);
        myarg.length=i;
        myarg.type =1;
        
        
 
  processinfo PD=&sharedspace;
-    int j; BT a1[4];
-    struct pinfo2 * pin =  (struct pinfo2 * )myalloc(PD,sizeof (struct pinfo2)/8+8+8 );
-      pin->deepcopyresult=(BT)noop;  
-      pin->deepcopyseqword= (BT)noop;
-      pin->func=(BT)dlsym(RTLD_DEFAULT, "mainZmain2Zintzseq");
-      if (!pin->func) {
+      int j; BT a1[4]; BT args[1]={fill(a1,&myarg)};
+      processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
+      initprocessinfo(p,PD);
+      p->deepcopyresult = (BT)noop; 
+      p->deepcopyseqword = (BT)noop;
+      p->func=(BT)dlsym(RTLD_DEFAULT, "mainZmain2Zintzseq");
+      if (!p->func) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
-    }
-      
-      pin->noargs=1;
-      pin->args[0]=fill(a1,&myarg);
-      /* should be using myalloc below so space is reclaimed */
-      processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
-      initprocessinfo(p,PD,pin);
-        p->freespace=0;
-        processfunction(p);  
+      }
+       p->noargs=1;
+       p->args=args;
+       p->freespace=0;
+        threadbody(p);  
        if (p->kind==1 )   { 
           char *header = "Status: 500 Error\r\nContent-Type: text/html\r\n\r\n";
         BT s=toUTF8(PD,p->message);

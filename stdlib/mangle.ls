@@ -22,8 +22,8 @@ Export  break(w:word, a:seq.word, j:int)seq.seq.word
 
 Function mangle(fsig:seq.word, module:seq.word)word
  if module="builtin" &and  fsig_1 in  "aborted loadedlibs loadlib createlib unloadlib allocatespace 
- addencoding createfile getinstance dlsymbol getfile process2 process5 addresstosymbol2
- randomint getmachineinfo currenttime callstack initialdict clock " then
+ addencoding createfile getinstance dlsymbol getfile  addresstosymbol2
+ randomint getmachineinfo currenttime callstack initialdict clock createthread assertptr assertreal assert" then
    fsig_1
  else 
  // assert not(module="builtin") &or fsig_1 in "* / + - xor > = >> << global arcsin arccos sqrt cos sin tan option intpart
