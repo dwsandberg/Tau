@@ -24,6 +24,8 @@ use seq.seq.word
 
 use seq.word
 
+use dseq.int
+
 Function test5 seq.word
 let y = [ t5501, t5502, t522, t509]
  check(y,"test5")

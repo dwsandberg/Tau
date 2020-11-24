@@ -22,6 +22,8 @@ use textio
 
 use otherseq.word
 
+use dseq.word
+
 function t001 boolean 0 - 4 = 1 - 2 - 3
 
 function t002 boolean 2 = 24 / 4 / 3

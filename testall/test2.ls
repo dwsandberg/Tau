@@ -20,6 +20,10 @@ use otherseq.wordfreq
 
 use seq.wordfreq
 
+use dseq.wordfreq
+
+use dseq.int
+
 type indexedword is record w:word
 
 Function assignencoding(length:int, data:indexedword)int length + 1

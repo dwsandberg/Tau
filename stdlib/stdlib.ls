@@ -363,6 +363,11 @@ Export print(decimals:int, rin:real)seq.word
 
 Export checkinteger(w:word)word
 
+Export << (s:seq.word, i:int) seq.word   
+           
+Export >> (s:seq.word , i:int) seq.word   
+ 
+
 * usegraph include xxhash encoding bits words real subreal stacktrace textio reconstruct UTF8 seq otherseq fileio stdlib 
 exclude stdlib seq
 

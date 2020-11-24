@@ -185,7 +185,7 @@ function ascode(p:program, l:seq.block, i:int, assigned:seq.block, result:seq.sy
         else l
         let first =(allocated.z)_1
         let first1 = if isempty.prefix then first else block(kind.first, blkno.first, label1.first, label2.first, prefix + code.first)
-         ascode(p, newl, i, replace(assigned, i, first1) + subseq(allocated.z, 2, length.allocated.z), result)
+         ascode(p, newl, i, replaceZ(assigned, i, first1) + subseq(allocated.z, 2, length.allocated.z), result)
      else
       let a1 = findblk2(l, 1, label1.blk)
       let l1 = findindex(a1, assigned)
@@ -613,41 +613,59 @@ function adddefines2(s:seq.symbol, t:seq.int, i:int, nopara:int, newcode:seq.sym
 
 type expandresult is record nextvar:int, code:seq.symbol
 
+function printx(s:symbol) seq.word  
+ if abstracttype.modname.s in "$int $ $constant "   then print.s  else   
+ name.s+ "("+@(seperator.",",print,"",paratypes.s)+")" + returntype.s+"module:"+module.s
+ 
+ function checknoop2(p:program,  code:seq.symbol) boolean
+ let  term1=code_(length.code-2)
+ let  term2=code_(length.code-3)
+    nopara.term1=2 &and nopara.term2=1  ∧ checknoop(p,  term2 )  ∧ checkcat.term1 ∧ code_1 = Constant2.Emptyseq
+ 
+ 
+
 function applycode(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, map:worddict.seq.symbol)expandresult
  let index = length.result + 1
  let code = result
  let pseq = code_(index - 1)
- let term1 = constantcode.code_(index - 2)
- let term2 = constantcode.code_(index - 3)
- let nopara1 = nopara.term1_1 - 2
- let nopara2 = nopara.term2_1 - 1
- let emptyseqOp = Constant2.Emptyseq
- let allpara = @(+, var, empty:seq.symbol, arithseq(nopara1 + nopara2 + 2, 1, nextvar))
- let map1 = add(emptyworddict:worddict.seq.symbol,"term1para"_1, subseq(allpara, 1, nopara1))
- let map2 = add(map1,"term2para"_1, subseq(allpara, nopara1 + 1, nopara1 + nopara2))
- let map3 = add(map2,"term1"_1, term1)
- let map4 = add(map3,"term2"_1, term2)
- let map5 = add(map4,"FREFpseq"_1, [ pseq])
- let t = backparse(code, index - 4, nopara1 + nopara2 + 2, empty:seq.int)
- let noop = nopara1 + nopara2 = 0 ∧ checknoop(p, term2) ∧ t_2 - t_1 = 1
- ∧ code_(t_1) = emptyseqOp
- ∧ checkcat.term1_1
-  if noop then
-  let new = subseq(code, 1, t_1 - 1) + subseq(code, t_2, index - 4)
+ let term1 = // change // (constantcode.code_(index - 2))_1
+ let term2 = // change // (constantcode.code_(index - 3))_1
+ let nopara1 = nopara.term1 
+ let nopara2 = nopara.term2  
+ let allpara = @(+, var, empty:seq.symbol, arithseq(nopara1+nopara2-1, 1, nextvar))
+ let term1para=subseq(allpara, 1, (nopara1-2))
+ let term2para= subseq(allpara, (nopara1-2) + 1, nopara1+nopara2-3)
+ let seqtype=last.paratypes.term2
+ let resulttype=resulttype.term1
+  let t = backparse(code, index - 4, nopara1+nopara2-1, empty:seq.int)
+  let tt2=if nopara1+1 > length.t then empty:seq.symbol else subseq(code,t_(nopara1+1),index-5)
+  let tt1= subseq(code,t_1,index-5-length.tt2)
+  let newway=  
+            tt1
+            +newsymbol("initialacc",abstracttype("builtin"_1,parameter.resulttype),empty:seq.mytype,resulttype)
+            +tt2
+            +[ newsymbol("applyidx",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype)
+           , term2,term1,   pseq,newsymbol("apply2",mytype."builtin",[resulttype,seqtype,resulttype,typeint],resulttype)] 
+   if checknoop2(p,newway) then
+   let new = subseq(code, 1, t_1 - 1) + subseq(code, t_2, index - 4)
     // assert not(subseq(code, t_2, index-4)= [ var.1])report"XXXX"+ print.code +"/new/"+ print.new //
     yyy(p, org, k + 1, subseq(result, 1, t_1 - 1) + subseq(result, t_2, index - 4), nextvar, map)
   else
-   let paras = adddefines2(code, t + (index - 3), 1, nopara1 + nopara2 + 2, empty:seq.symbol, nextvar)
-    // assert not(name.term2_1 ="print")report"X"+(fsig.(org_k))+ print.term1 + print.term2 //
-    let body = yyy(p, applytemplate.org_k, 1, empty:seq.symbol, nextvar + nopara1 + nopara2 + 2, map5)
-    let new = paras + subseq(allpara, nopara1 + nopara2 + 1, length.allpara) + code.body
+   let map1 = add(emptyworddict:worddict.seq.symbol,"term2term1"_1,[term2, term1])
+  let map4=  add(map1, "term1term2para"_1,[Define."100000"_1]+term1para+ var."100000"_1+term2para )
+ let map5 = add(map4,"FREFpseq"_1, [ pseq])
+   let paras = adddefines2(code, t + (index - 3), 1, nopara1+nopara2-1, empty:seq.symbol, nextvar)
+    // assert not(name.term2 ="print")report"X"+(fsig.(org_k))+ print.term1 + print.term2 //
+    let body = yyy(p, applytemplate.org_k, 1, empty:seq.symbol, nextvar + nopara1+nopara2-1, map5)
+    let new = paras + subseq(allpara, nopara1+nopara2-2, length.allpara) + code.body
      yyy(p, org, k + 1, subseq(result, 1, t_1 - 1) + new, nextvar.body, map)
 
-function checknoop(p:program, dd:seq.symbol)boolean
- let s = if length.dd > 2 ∧ last.dd = Optionsym then subseq(dd, 1, length.dd - 2)
- else dd
-  if length.s ≠ 1 then false
-  else if s_1 = var.1 then true else checknoop(p, code.lookupcode(p, s_1))
+function checknoop(p:program,s:symbol) boolean
+  let dd=code.lookupcode(p, s)
+  let withoutoption=if length.dd > 2 ∧ last.dd = Optionsym then subseq(dd, 1, length.dd - 2) else dd
+if length.withoutoption ≠ 1 then false
+  else if withoutoption_1 = var.1 then true else checknoop(p,   withoutoption_1)
+
 
 function checkcat(f:symbol)boolean
  let p = subseq(module.f, 1, length.module.f - 1)
@@ -666,10 +684,14 @@ function applytemplate(applysym:symbol)seq.symbol
  let isnull = symbol("isnull(ptr)","builtin","int")
   [ nullptr, Lit.4, Loopblock(resulttype + ", ptr, ptr, int)"), var.theseq, Lit.0, idxi, var."FREFpseq"_1, EqOp, Lit.3, Lit.4
   , Br, var.4, var.theseq, Lit.2, idxp, var.stk, var.theseq, Lit.3, idxp, STKRECORD
-  , continue.3, var.theseq, Lit.1, idxi, Define."8"_1, var.4, Lit.1, Lit.9, Loopblock(resulttype + ", int, int)"), var.10
-  , var.8, gtOp, Lit.3, Lit.4, Br, var.9, Exit, var."term2para"_1, var.theseq, var.10
-  , Callidx.kind, var."term2"_1, Define."11"_1, var."term1para"_1, var.9, var.11, var."term1"_1, var.10, Lit.1, PlusOp
-  , continue.2, Block(mytype.resulttype, 4), Define."7"_1, var.stk, isnull, Lit.5, Lit.6, Br, var.7, Exit
+  , continue.3, var.theseq, Lit.1, idxi, Define."lastidx"_1
+  , var.4, Lit.1, Lit.9, Loopblock(resulttype + ", int, int)") 
+  , var.10, var."lastidx"_1, gtOp, Lit.3, Lit.4, Br
+  , var.9, Exit 
+  , var.theseq, var.10, Callidx.kind, Define."seqelement"_1
+  , var.9 , var."term1term2para"_1, var."seqelement"_1, var."term2term1"_1
+  , var.10, Lit.1, PlusOp, continue.2
+  , Block(mytype.resulttype, 4), Define."7"_1, var.stk, isnull, Lit.5, Lit.6, Br, var.7, Exit
   , var.7, var.stk, Lit.1, idxp, var.stk, Lit.0, idxp, continue.3, Block(mytype.resulttype, 6)]
 
 Function depthfirst(knownsymbols:program, alltypes:typedict, processed:program, s:symbol)program depthfirst(knownsymbols, alltypes, 1, [ s], processed, code.lookupcode(knownsymbols, s), s)

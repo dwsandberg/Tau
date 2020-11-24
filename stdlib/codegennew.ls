@@ -91,7 +91,11 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
    llvm(patchlist, bodytxts, adjust)
 
 function addfuncdef(match5map:seq.match5, i:symbol)internalbc
- let m = match5map_i
+  //  let hh = process.subaddfuncdef(match5map, i)assert not.aborted.hh report"fail get"+ print.i + message.hh 
+    result.hh 
+use process.internalbc 
+function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc  
+// let m = match5map_i
  let options = options(match5map, m)
   let code = if length.options > 0 then
   // assert"PROFILE"_1 in options report"PROFILE PROBLEM"+ options //

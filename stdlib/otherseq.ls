@@ -44,26 +44,28 @@ type dseq is sequence length:int, default:T, data:seq.T
 
 Function_(d:dseq.T, i:int)T if i > length.data.d then default.d else(data.d)_i
 
+ 
 Function replace(a:seq.T, b:int, v:T)seq.T
  let d = to:dseq.T(a)
-  if length.d = 0 then replace2(a, b, v)
+  if length.d = 0 then replaceZ(a, b, v)
   else
    let s = if b > length.a then
-   replace2(data.d + constantseq(b - length.a, default.d), b, v)
-   else replace2(data.d, b, v)
+   replaceZ(data.d + constantseq(b - length.a, default.d), b, v)
+   else replaceZ(data.d, b, v)
     toseq.dseq(length.s, default.d, s)
 
 Function dseq(d:T)seq.T toseq.dseq(1, d, [ d])
 
 Function dseq(d:T, s:seq.T)seq.T toseq.dseq(1, d, s)
 
-function replace2(s:seq.T, index:int, value:T)seq.T
+Function replaceZ(s:seq.T, index:int, value:T) seq.T
+// function replace2(s:seq.T, index:int, value:T)seq.T //
  let p = to:pseq.T(s)
   if length.p = 0 then
   @(+,_.s, @(+,_.s, empty:seq.T, arithseq(index - 1, 1, 1)) + value, arithseq(length.s - index, 1, index + 1))
   else if index > length.a.p then
-  a.p + replace2(b.p, index - length.a.p, value)
-  else replace2(a.p, index, value) + b.p
+  a.p + replaceZ(b.p, index - length.a.p, value)
+  else replaceZ(a.p, index, value) + b.p
 
 ______________________________________
 

@@ -28,9 +28,10 @@ use stdlib
 
 use svg
 
+ 
 use seq.seq.word
 
-/use libscope
+
 
 type svgdraw is record width:int, height:int, a:seq.word
 

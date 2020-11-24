@@ -84,8 +84,8 @@ Function add(h:encodingstate.T, v:encodingpair.T)encodingstate.T
      let codeindex = valueofencoding.code.p mod tablesize + 1
      let l1 = @(addcode(code.p, tablesize), identity, [ p],(decodetable.h)_codeindex)
      let l2 = @(+, adddata(p, tablesize), [ p],(encodetable.h)_dataindex)
-     let newdecode  = replace(decodetable.h, codeindex, l1)
-     let newencode  = replace(encodetable.h, dataindex, l2)
+     let newdecode  = replaceZ(decodetable.h, codeindex, l1)
+     let newencode  = replaceZ(encodetable.h, dataindex, l2)
      if 3 * length.h > 2 * tablesize then
       let t=newencode
       let d=newdecode
