@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau ; use genLR1 ; gentau2
 
 Module genLR1
 
@@ -262,71 +262,72 @@ function reduceline(grammerandact:seq.seq.seq.word, i:int)seq.word
    + "else"
 
 Function gentau2 seq.word // used to generater tau parser for Pass1 of the tau compiler. //
-let a = lr1parser(taurules2, tauruleprec,".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP NM")
+let a = lr1parser(taurules2, tauruleprec,".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist 
+@ A E G F W P N L I K FP NM D")
 let discard = createfile([ merge."junk/newgrammer.ls"], processtotext.a)
  a
 
 function tauruleprec seq.seq.word ["E E_E","_","E comment E","E W.E","E N.E",".","E-E","E E * E","*","E E-E"
 ,"-","E E > E","E E = E","=",">","E E ∧ E","∧","E E ∨ E","∨"]
 
-function taurules2 seq.seq.seq.word [ [ ' G F # ', ' R_1 ']
-, [ ' F W NM(FP)T E ', ' createfunc(R, input, code.R_2, types.R_4, R_6, R_7)']
-, [ ' F W NM T E ', ' createfunc(R, input, code.R_2, empty:seq.mytype, R_3, R_4)']
-, [ ' F W W is W P ', ' assert(code.R_4)_1 in"record encoding sequence"report errormessage("Expected record encoding or sequence after is in type definition got:"+ code.R_4, input, place.R)bindinfo(dict.R, code.R_4 + code.R_2 + code.R_5, types.R_5)']
-, [ ' F T ', ' bindinfo(dict.R, gettype.R_1, empty:seq.mytype)']
-, [ ' FP P ', ' bindinfo(@(addparameter(cardinality.dict.R, input, place.R), identity, dict.R, types.R_1),"", types.R_1)']
-, [ ' P T ', // use // ' bindinfo(dict.R,"", [ mytype(gettype.R_1 +":")])']
-, [ ' P P, T ', ' bindinfo(dict.R,"", types.R_1 + [ mytype(gettype.R_3 +":")])']
-, [ ' P W:T ', ' bindinfo(dict.R, code.R_1 + code.R_3, [ mytype(gettype.R_3 + code.R_1)])']
-, [ ' P P, W:T ', ' bindinfo(dict.R, code.R_1 + code.R_3 + code.R_5, types.R_1 + [ mytype(gettype.R_5 + code.R_3)])']
-, [ ' P comment W:T ', ' bindinfo(dict.R,"//"+ code.R_1 +"//"+ code.R_2 + code.R_4, [ mytype(gettype.R_4 + code.R_2)])']
-, [ ' P P, comment W:T ', ' bindinfo(dict.R,"//"+ code.R_3 +"//"+ code.R_1 + code.R_4 + code.R_6, types.R_1 + [ mytype(gettype.R_6 + code.R_4)])']
-, [ ' E NM ', ' let id = code.R_1 let f = lookupbysig(dict.R, id_1, empty:seq.mytype, input, place.R)bindinfo(dict.R, [ mangledname.f], [ resulttype.f])']
-, [ ' E NM(L)', ' unaryop(R, input, code.R_1, R_3)']
-, [ ' E(E)', ' R_2 ']
-, [ ' E { E } ', ' R_2 ']
-, [ ' E if E then E else E ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R)let newcode = code.R_2 + code.R_4 + code.R_6 bindinfo(dict.R, newcode +"if", types.thenpart)']
-, [ ' E E^E ', ' opaction(R, input)']
-, [ ' E E_E ', ' opaction(R, input)']
-, [ ' E-E ', ' unaryop(R, input, code.R_1, R_2)']
-, [ ' E W.E ', ' unaryop(R, input, code.R_1, R_3)']
-, [ ' E N.E ', ' unaryop(R, input, code.R_1, R_3)']
-, [ ' E E * E ', ' opaction(R, input)']
-, [ ' E E-E ', ' opaction(R, input)']
-, [ ' E E = E ', ' opaction(R, input)']
-, [ ' E E > E ', ' opaction(R, input)']
-, [ ' E E ∧ E ', ' opaction(R, input)']
-, [ ' E E ∨ E ', ' opaction(R, input)']
-, [ ' L E ', ' R_1 ']
-, [ ' L L, E ', ' bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3)']
-, [ ' E [ L]', ' let types = types.R_2 assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place.R)bindinfo(dict.R,"LIT 0 LIT"+ toword.length.types + code.R_2 +"RECORD"+ toword(length.types + 2), [ mytype(towords.types_1 +"seq")])']
-, [ ' A let W = E ', ' let e = R_4 let name =(code.R_2)_1 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place.R)let newdict = dict.R + symbol(name, mytype."local", empty:seq.mytype,(types.e)_1,"")bindinfo(newdict, code.e +"define"+ name, types.e)']
-, [ ' E A E ', ' let t = code.R_1 let f = lookup(dict.R, last.code.R_1, empty:seq.mytype)assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name"+ last.code.R_1 bindinfo(dict.R_1-f_1, subseq(t, 1, length.t-2)+ code.R_2 +"SET"+ last.code.R_1, types.R_2)']
-, [ ' E assert E report E E ', ' assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place.R)assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place.R)let newcode = code.R_2 + code.R_5 + code.R_4 +"assertZbuiltinZwordzseq if"bindinfo(dict.R, newcode, types.R_5)']
-, [ ' E I ', ' bindinfo(dict.R,"LIT"+ code.R_1, [ mytype."int"])']
-, [ ' E I.I ', ' bindinfo(dict.R,"WORDS 3"+ code.R_1 +"."+ code.R_3 +"makerealZUTF8Zwordzseq", [ mytype."real"])']
-, [ ' T W ', ' isdefined(R, input, code.R_1)']
-, [ ' T W.T ', ' isdefined(R, input, towords.(types.R_3)_1 + code.R_1)']
-, [ ' E $wordlist ', ' let s = code.R_1 bindinfo(dict.R,"WORDS"+ toword.(length.s-2)+ subseq(s, 2, length.s-1), [ mytype."word seq"])']
-, [ ' E comment E ', ' let s = code.R_1 bindinfo(dict.R, code.R_2 +"COMMENT"+ toword.(length.s-2)+ subseq(s, 2, length.s-1), types.R_2)']
-, [ ' N_', ' R_1 ']
-, [ ' N-', ' R_1 ']
-, [ ' N = ', ' R_1 ']
-, [ ' N > ', ' R_1 ']
-, [ ' N * ', ' R_1 ']
-, [ ' N ∧ ', ' R_1 ']
-, [ ' N ∨ ', ' R_1 ']
-, [ ' K W.E ', ' bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)']
-, [ ' K N.E ', ' bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)']
-, [ ' K NM(L)', ' bindinfo(dict.R, code.R_1 + code.R_3, types.R_3)']
-, [ ' K NM ', ' R_1 ']
-, [ ' NM W ', ' R_1 ']
-, [ ' NM N ', ' R_1 ']
-, [ ' NM W:T ', ' bindinfo(dict.R, [ merge(code.R_1 +":"+ print.(types.R_3)_1)], empty:seq.mytype)']
-, [ ' E @(K, K, E, E)', ' apply(R_3, R_5, R_7, R_9, input, place.R)']]
-
-M N M W M W:T K M K M(L)K W.E K N.E-K N-K W
-
+function taurules2 seq.seq.seq.word [[  ' G F # ', '  R_1 '] 
+, [ ' F W NM(FP)T E ', ' createfunc(R, input, tokentext.R_2, types.R_4, R_6, R_7)'] 
+, [ ' F W NM T E ', ' createfunc(R, input, tokentext.R_2, empty:seq.mytype, R_3, R_4)'] 
+, [ ' F W W is W P ', ' assert(tokentext.R_4)_1 in"record sequence"report errormessage("Expected record or sequence after is in type definition got:"+ tokentext.R_4, input, place.R)bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2)'] 
+, [ ' F T ', ' R_1 '] 
+, [ ' FP P ', ' bindinfo(@(addparameter(cardinality.dict.R, input, place.R), identity, dict.R, types.R_1), empty:seq.symbol, types.R_1,"")'] 
+, [ ' P T ', ' bindinfo(dict.R, empty:seq.symbol, [ abstracttype(":"_1, gettype.R_1)],"")'] 
+, [ ' P P, T ', ' bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype(":"_1, gettype.R_3)],"")'] 
+, [ ' P W:T ', ' bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_1)_1, gettype.R_3)],"")'] 
+, [ ' P P, W:T ', ' bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype((tokentext.R_3)_1, gettype.R_5)],"")'] 
+, [ ' P comment W:T ', ' bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_2)_1, gettype.R_4)],"")'] 
+, [ ' P P, comment W:T ', ' bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype((tokentext.R_4)_1, gettype.R_6)],"")'] 
+, [ ' E NM ', ' let id = tokentext.R_1 let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place.R)bindinfo(dict.R, [ f], [ resulttype.f],"")'] 
+, [ ' E NM(L)', ' unaryop(R, input, tokentext.R_1, R_3)'] 
+, [ ' E(E)', ' R_2 '] 
+, [ ' E { E } ', ' R_2 '] 
+, [ ' E if E then E else E ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
+, [ ' E E^E ', ' opaction(R, input)'] 
+, [ ' E E_E ', ' opaction(R, input)'] 
+, [ ' E-E ', ' unaryop(R, input, tokentext.R_1, R_2)'] 
+, [ ' E W.E ', ' unaryop(R, input, tokentext.R_1, R_3)'] 
+, [ ' E N.E ', ' unaryop(R, input, tokentext.R_1, R_3)'] 
+, [ ' E E * E ', ' opaction(R, input)'] 
+, [ ' E E-E ', ' opaction(R, input)'] 
+, [ ' E E = E ', ' opaction(R, input)'] 
+, [ ' E E > E ', ' opaction(R, input)'] 
+, [ ' E E ∧ E ', ' opaction(R, input)'] 
+, [ ' E E ∨ E ', ' opaction(R, input)'] 
+, [ ' L E ', ' R_1 '] 
+, [ ' L L, E ', ' bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"")'] 
+, [ ' E [ L]', ' let types = types.R_2 assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place.R)bindinfo(dict.R, [ Lit.0, Lit.length.types]+ code.R_2 + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint]+ types, typeptr), [ typeseq + types_1],"")'] 
+, [ ' A let W = E ', ' let e = R_4 let name = tokentext.R_2 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place.R)let newdict = dict.R + Local(name,(types.e)_1)bindinfo(newdict, code.e + Define.name, types.e, tokentext.R_2)'] 
+, [ ' E A E ', ' let name = tokentext.R_1 let f = lookup(dict.R, name, empty:seq.mytype)assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name"+ name bindinfo(dict.R_1-f_1, code.R_1 + code.R_2, // +"SET"+ name, // types.R_2,"")'] 
+, [ ' E assert E report E E ', ' assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place.R)assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place.R)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_5 + Exit + code.R_4 + symbol("assert(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"")'] 
+, [ ' E I ', ' bindinfo(dict.R, [ Lit.toint.(tokentext.R_1)_1], [ typeint],"")'] 
+, [ ' E I.I ', ' bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"")'] 
+, [ ' T W ', ' isdefined(R, input, mytype.tokentext.R_1)'] 
+, [ ' T W.T ', ' isdefined(R, input, abstracttype((tokentext.R_1)_1,(types.R_3)_1))'] 
+, [ ' E $wordlist ', ' let s = tokentext.R_1 bindinfo(dict.R, [ Words.subseq(s, 2, length.s-1)], [ mytype."word seq"],"")'] 
+, [ ' E comment E ', ' R_2 '] 
+, [ ' N_', ' R_1 '] 
+, [ ' N-', ' R_1 '] 
+, [ ' N = ', ' R_1 '] 
+, [ ' N > ', ' R_1 '] 
+, [ ' N * ', ' R_1 '] 
+, [ ' N ∧ ', ' R_1 '] 
+, [ ' N ∨ ', ' R_1 '] 
+, [ ' K W.E ', ' bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)'] 
+, [ ' K N.E ', ' bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)'] 
+, [ ' K NM(L)', ' bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)'] 
+, [ ' K NM ', ' R_1 '] 
+, [ ' NM W ', ' R_1 '] 
+, [ ' NM N ', ' R_1 '] 
+, [ ' NM W:T ', ' bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1)'] 
+,[ ' D E @ ', ' R_ 1 ' ]
+, [ ' E @(K, K, E, E)', ' apply(R_3, R_5, R_7, R_9, input, place.R)'] 
+, [ ' E D K ', ' apply(R_1, R_3, input, place.R)']]
+ 
 Function gentaupretty seq.word // used to generater tau parser for Pass1 of the tau compiler. //
 let a = lr1parser(tauprettyrules, tauruleprec,".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP")
 let discard = createfile("prettygrammer.ls", processtotext.a)
@@ -419,3 +420,7 @@ function extractgrammer(z:seq.word, i:int, state:seq.word, mark:int, result:seq.
  else if subseq(z, i, i + 4) in ["else if ruleno = //","else assert ruleno = //"]then
  extractgrammer(z, i + 5,"INRULE", i + 5, result + subseq(z, mark, i - 1) + "'] &br, [")
  else extractgrammer(z, i + 1, state, mark, result)
+ 
+ 
+ 
+ 
