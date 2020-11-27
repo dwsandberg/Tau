@@ -249,7 +249,7 @@ function add2(offset:int, r:internal2, val:int)internal2
  let newresult = if state.r = 0 then
  if nobits < 58 then add(result.r, bits, nobits)
   else if nobits = reloc then addvbr6(result.r, offset.r - (toint.bits - relocoffset))
-  else if val = firstpara2 then addvbr6(result.r, offset.r - offset + 1)else result.r
+  else if val = firstpara2 then addvbr6(result.r, offset.r - offset )else result.r
  else
   assert state.r = relocsigned report"invalid code" + toword.state.r
    addvbrsigned6(result.r, offset.r - val)

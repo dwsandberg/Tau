@@ -60,9 +60,6 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
    if isblock.sym then
    let a = Block(mytype.[kind(alltypes, modpara, resulttype.sym)], nopara.sym)
      postbind3(alltypes, dict, code, i + 1, result + if isfref then Fref.a else a, modpara, org, calls, sourceX, tempX)
-   else if isapply.sym then
-   let newapply = Apply(nopara.sym, [ kind.gettypeinfo(alltypes, replaceT(modpara, parameter.modname.sym))], [ kind.gettypeinfo(alltypes, replaceT(modpara, resulttype.sym))])
-     postbind3(alltypes, dict, code, i + 1, result + newapply, modpara, org, calls, sourceX, tempX)
    else if isnocall.sym then postbind3(alltypes, dict, code, i + 1, result + code_i, modpara, org, calls, sourceX, tempX)
    else
     let lr1 = lookupcode(sourceX, sym)
@@ -94,7 +91,11 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
       else if(fsig.sym)_1 in "kindrecord"then
       let p2 = Record.@(+, kind(alltypes, modpara), "", paratypes.sym)
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
-      else
+      else if (fsig.sym)_1 in " assert callidx   apply2 applyaccumalator applyelement"  then
+        let kind =   kind.gettypeinfo(alltypes,  parameter.modname.newsym) 
+          let p2=    symbol(fsig.newsym,[kind]+"builtin",returntype.newsym) 
+        postbind3(alltypes, dict, code, i + 1, result + p2 , modpara, org, calls, sourceX, tempX)
+      else   
        let codeforbuiltin = codeforbuiltin(alltypes, newsym, sym, org)
         postbind3(alltypes, dict, code, i + 1, result + if isfref then Fref.newsym else newsym, modpara, org, calls + newsym, map(sourceX, newsym, codeforbuiltin), tempX)
      else if subseq(fsig.sym,1,2)="type:" then
@@ -159,19 +160,11 @@ function codeforbuiltin(alltypes:typedict, newsym:symbol, oldsym:symbol, org:seq
   if fsig.oldsym = "sizeoftype:T"then [ Lit.size.gettypeinfo(alltypes, newmodpara)]
   else if fsig.oldsym = "processresult(T process)"then
   [ Local.1, Lit.2, Idx.kind.gettypeinfo(alltypes, newmodpara)]
-  else if fsig.oldsym = "callidx(T seq, int)"then
-  [ Local.1, Local.2, Callidx.kind.gettypeinfo(alltypes, newmodpara)]
   else if fsig.oldsym = "packed(T seq)"then
   let ds = size.gettypeinfo(alltypes, newmodpara)
     if ds = 1 then [ Local.1, symbol("packed1(int seq)","assignencodingnumber","int seq")]
     else [ Lit.ds, Local.1, symbol("packed(int, int seq seq)","assignencodingnumber","int seq")]
-  else  if fsig.oldsym = "assert(word seq)"then
-  let kind = kind.gettypeinfo(alltypes, resulttype.newsym)
-   let codesym = if kind = "int"_1 then symbol("assert(word seq)","builtin","int")
-   else if kind = "real"_1 then symbol("assertreal(real seq)","builtin","real")
-   else symbol("assertptr(word seq)","builtin","ptr")
-    [ Local.1, codesym]
-    else  if fsig.oldsym = "primitiveadd(T encodingpair)"then
+     else  if fsig.oldsym = "primitiveadd(T encodingpair)"then
   let addefunc = newsymbol("add", typeencoding+newmodpara  ,   [ typeencodingstate+newmodpara , typeencodingpair+newmodpara ] ,  typeencodingstate+newmodpara )
     let add2=newsymbol("addencoding",mytype."builtin",[typeint,mytype("int seq"),typeint, typeint], typeint)
        let dc=deepcopysym(alltypes,typeencodingpair+newmodpara)
@@ -204,7 +197,18 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
   let dc = deepcopysym(alltypes,typepara)
   let pseqidx = pseqidxsym.typepara
   let cat = newsymbol("+", seqtype, [ seqtype, typepara], seqtype)
-   Emptyseq + [ Local.1, Fref.dc, Fref.cat, Fref.pseqidx, Apply(5, [ kind],"ptr")]
+      let resulttype=mytype."ptr" 
+      let elementtype=mytype.[kind]
+   Emptyseq +
+   [Local.1, Lit.2,Loopblock("ptr,ptr,int)")
+     , newsymbol("applyaccumalator",abstracttype("builtin"_1,resulttype ),empty:seq.mytype,resulttype )
+     , newsymbol("applyelement",abstracttype("builtin"_1,elementtype),empty:seq.mytype,elementtype)
+     , dc
+     ,  cat
+     , Exit
+     ,Block(resulttype,2)
+     ,Fref.pseqidx
+     ,newsymbol("apply2",abstracttype("builtin"_1,resulttype ),[resulttype ,typeint],resulttype)] 
    + if ds = 1 then [ symbol("packed1(int seq)","assignencodingnumber","int seq")]
    else [ Local.1, Lit.ds, symbol("packed(int seq seq, ds)","assignencodingnumber","int seq")]
  else

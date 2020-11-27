@@ -227,7 +227,7 @@ Function Idx(kind:word)symbol
 
 Function Callidx(kind:word)symbol
  let t = if kind in "int real"then [ kind]else"ptr"
-  symbol("callidx(" + t + "seq, int)","builtin", t)
+  symbol("callidx(" + t + "seq, int)",t+"builtin", t)
 
 Function Emptyseq seq.symbol [ Lit.0, Lit.0, symbol("RECORD(int, int)","$record","ptr", specialbit)]
 
@@ -238,11 +238,6 @@ Function pseqidxsym(type:mytype)symbol
  symbol("RECORD(" + @(seperator.",", identity,"", kinds) + ")","$record","ptr", specialbit)
 
 
-Function Apply(i:int, basetype:seq.word, returntype:seq.word)symbol
- symbol(["APPLY"_1, toword.i], basetype + "$apply", returntype, specialbit)
- 
-Function Apply(i:int, basetype:mytype, returntype:mytype)symbol
- symbol(["APPLY"_1, toword.i], towords.basetype + "$apply", towords.returntype, specialbit)
 
 Function Block(type:mytype, i:int)symbol
  symbol("BLOCK" + toword.i, towords.type + "$block", towords.type, specialbit)
@@ -317,6 +312,9 @@ Function Define(s:seq.word)symbol symbol("DEFINE" + s,"$define","?", specialbit)
 
 Function Define(w:word)symbol symbol(["DEFINE"_1, w],"$define","?", specialbit)
 
+Function Define(w:int)symbol symbol(["DEFINE"_1, toword.w],"$define","?", specialbit)
+
+
 Function Fref(s:symbol)symbol
  let fsig ="FREF" + fsig.s + module.s
   symbol(fsig,"$fref","?", [ s], extrabits(fsig, constbit))
@@ -334,8 +332,6 @@ Function isinOp(s:symbol)boolean
 Function isblock(s:symbol)boolean last.module.s = "$block"_1
 
 Function isrecord(s:symbol)boolean module.s = "$record"
-
-Function isapply(s:symbol)boolean last.module.s = "$apply"_1
 
 Function isloopblock(s:symbol)boolean module.s = "$loopblock"
 

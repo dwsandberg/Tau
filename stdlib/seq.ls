@@ -13,16 +13,8 @@ type pseq is sequence length:int, a:seq.T, b:seq.T
 
 unbound =(T, T)boolean
 
-/Function_(a:seq.T, c:int)T
- let t=if  getseqtype.a = 0  then c
- else 
-   let len=length.a
-   let b =if c < 0 then  len+c+1 else c
- assert b &ne 0 ∧ b ≤ len report"out of bounds" + stacktrace
-   b
-  callidx(a, t)
-
-Function_(a:seq.T, b:int)T
+Function_(a:seq.T, c:int)T
+ let b=if c < 0 then  length.a+c+1 else c
  assert not(getseqtype.a = 0) ∨ b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
   callidx(a, b)
 
@@ -157,4 +149,4 @@ Function << (s:seq.T, i:int) seq.T
           
     Function >> (s:seq.T , i:int) seq.T   
  // if i < 0 then prefix of s of length.s+i else prefix of length.s-i //
-            subseq(s,1, if i < 0 then length.s+i  else length.s-i )
+            subseq(s,1, if i < 0 then -i  else length.s-i )

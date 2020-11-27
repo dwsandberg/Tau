@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use main2 ; use tools; testprofile."testall"
+#!/usr/local/bin/tau ; use main2;   use doc ; doclibrary."stdlib"
 
 
 ; use tools; testprofile."stdlibbak"

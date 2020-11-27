@@ -186,7 +186,14 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
 , addtemplate(symbol("∨(bits,bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, or))
 , addtemplate(symbol("xor(bits,bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, xor))
 , addtemplate(symbol("setfld(int seq,int,int)","builtin","int"), 2, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + STORE(r.2, r.1, slot.ibcsub3)
-+ BINOP(r.2, slot.ibcsub2, C64.1, add))]
++ BINOP(r.2, slot.ibcsub2, C64.1, add))
+, addtemplate(symbol("assert(word seq)"," int builtin","int"),  1, 
+CALL(r.1,0, 32768,function.[i64,i64,ptr.i64],  symboltableentry("assert"_1, function.[i64,i64,ptr.i64]),slot.ibcfirstpara2,slot.ibcsub1))
+, addtemplate(symbol("assert(word seq)"," real builtin","real"),  1, 
+CALL(r.1,0, 32768,function.[double,i64,ptr.i64],  symboltableentry("assertreal"_1, function.[double,i64,ptr.i64]),slot.ibcfirstpara2,slot.ibcsub1))
+, addtemplate(symbol("assert(word seq)"," ptr builtin","ptr"),  1, 
+CALL(r.1,0, 32768,function.[ptr.i64,i64,ptr.i64],  symboltableentry("assertptr"_1, function.[ptr.i64,i64,ptr.i64]),slot.ibcfirstpara2,slot.ibcsub1))
+]
  let const= @(+,buildtemplate (theprg,  alltypes),empty:seq.symbol,toseq.uses)
  let discard4=processconst(const, 1, empty:seq.symbol)
   empty:seq.match5
@@ -243,7 +250,8 @@ function buildtemplate( theprg:program,  alltypes:typedict,xx:symbol)seq.symbol
        addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, slot.addwordseq2.fsig.xx)
       else if pkg = "$word"then
       addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
-      else if not(abstracttype.modname.xx="builtin"_1)  then call(alltypes,xx,"CALL"_1,code.lookupcode(theprg, xx))
+      else if not(abstracttype.modname.xx="builtin"_1)  then 
+      call(alltypes,xx,"CALL"_1,code.lookupcode(theprg, xx),mangledname.xx)
       else // handle builtin package //
          let intable=findtemplate.xx
          if length.intable > 0 then  intable_1
@@ -254,19 +262,19 @@ function buildtemplate( theprg:program,  alltypes:typedict,xx:symbol)seq.symbol
       else if(fsig.xx)_1 = "blockindexfunc"_1   then
       let functype = ptr.function.[ i64, i64, ptr.i64, i64]
         addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functype, symboltableentry("indexblocksZassignencodingnumberZintzseqzseqZint"_1, functype)))
-      else if isexternal.xx then 
-          call(alltypes,xx,"CALLE"_1,empty:seq.symbol)
-      else 
-       call(alltypes,xx,"CALL"_1,code.lookupcode(theprg, xx))
-       empty:seq.symbol
-       
- 
-function call(alltypes:typedict,xx:symbol,type:word,code:seq.symbol)  match5
-       let symname= if type in "CALL" then mangledname.xx 
-                    else  if (fsig.xx)_1  in "arcsin" then "asin"_1
+      else    if isexternal.xx then 
+       let symname=  if (fsig.xx)_1  in "arcsin" then "asin"_1
                      else if (fsig.xx)_1  in "arccos" then "acos"_1
        else (fsig.xx)_1
-       let functype = tollvmtype(alltypes, xx)
+          call(alltypes,xx,"CALLE"_1,empty:seq.symbol,symname)
+      else 
+        let symname= if (fsig.xx)_1  in "assert xassertptr xassertreal" then "assert"_1 else mangledname.xx
+       call(alltypes,xx,"CALL"_1,code.lookupcode(theprg, xx),symname)
+       empty:seq.symbol
+
+
+function call(alltypes:typedict,xx:symbol,type:word,code:seq.symbol,symname:word)  match5
+           let functype = tollvmtype(alltypes, xx)
        let newcode = CALLSTART(1, 0, 32768, typ.functype, toint.symboltableentry(symname, functype), 
        if type="CALL"_1 then nopara.xx + 1 else nopara.xx)
        addtemplate(xx, 1, getparts.newcode,type, nopara.xx, code, functype)

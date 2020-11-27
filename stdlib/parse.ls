@@ -112,9 +112,22 @@ function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo, i
    let pseqtype = typepseq+parameter.(types.term4)_1   
    let idx = pseqidxsym.parameter.(types.term4)_1
    let x = lookupbysig(dict, name.idx, paratypes.idx, input, place)
-   let b = [ Fref.sym2, Fref.sym1, Fref.idx, Apply(length.types.term1 + length.types.term2 + 5,  last.sym2types, resulttype.sym1)]
-    bindinfo(dict, code.term1 + code.term2 + code.term3 + code.term4 + b, types.term3,"")
-
+   let seqtype=(types.term4)_1
+     let elementtype=parameter.seqtype
+     let looptypes= types.term1+resulttype.sym1+types.term2  +seqtype
+     let loopsym=Loopblock(@(seperator.",",typerep,"",looptypes)+",int)")
+     let newway= code.term1 +  code.term2+ code.term3 + code.term4
+       +[Lit(place * 100 ),loopsym] 
+       + @(+, Local, empty:seq.symbol,arithseq(length.types.term1, 1, place * 100))
+       +   newsymbol("applyaccumalator",abstracttype("builtin"_1,resulttype.sym1),empty:seq.mytype,resulttype.sym1)
+       + @(+, Local, empty:seq.symbol,arithseq(length.types.term2, 1, place * 100+length.types.term1))
+       + [  newsymbol("applyelement",abstracttype("builtin"_1,elementtype),empty:seq.mytype,elementtype)
+         , sym2,sym1,Exit,Block( resulttype.sym1,2),Fref.idx
+         ,newsymbol("apply2",abstracttype("builtin"_1,resulttype.sym1)
+           ,[resulttype.sym1,typeint],resulttype.sym1)] 
+   bindinfo(dict,     newway , types.term3,"")
+   
+  
 function addparameter(orgsize:int, input:seq.token.bindinfo, place:int, dict:set.symbol, m:mytype)set.symbol
  assert isempty.lookup(dict, [ abstracttype.m], empty:seq.mytype) ∨ abstracttype.m = ":"_1 report errormessage("duplciate symbol:" + abstracttype.m, input, place)
  let parano = cardinality.dict - orgsize + 1
