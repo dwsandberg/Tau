@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau test11 test11
+#!/usr/local/bin/tau ; use test11 ; test11
 
 Module test11
 
@@ -151,7 +151,7 @@ function showcodes(i:int)seq.word [ toword.i, encodeword.[ char.i]]
 Function t043 boolean"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
 = @(+, showcodes,"code glyph", arithseq(43, 1, 48))
 
-function t045 boolean '"()+,-.:= []^_' = standalonechars
+function t044 boolean '"()+,-.:= []^_' = standalonechars
 
 function ttt(c:int)seq.word
  let class = classifychar_c
@@ -159,7 +159,7 @@ function ttt(c:int)seq.word
 
 Function standalonechars seq.word @(+, ttt,"", arithseq(length.classifychar, 1, 1))
 
-Function t046 boolean // testing UNICODE to word conversion and no-break space in integer 8746 // decodeword."1 2∪"_1
+Function t045 boolean // testing UNICODE to word conversion and no-break space in integer 8746 // decodeword."1 2∪"_1
 = [ char.49, char.160, char.50, char.87 46]
 
 function testset set.int asset.[ 2, 5, 6, 9, 12, 15, 35, 36]
@@ -168,12 +168,24 @@ function ?2(a:int, b:int)ordering a / 10 ? b / 10
 
 function print(a:set.int)seq.word @(+, toword,"", toseq.a)
 
-function t047 boolean toseq.findelement2(testset, 36) = [ 35, 36] ∧ toseq.findelement2(testset, 15) = [ 12, 15]
+function t046 boolean toseq.findelement2(testset, 36) = [ 35, 36] ∧ toseq.findelement2(testset, 15) = [ 12, 15]
+
+type Tpair is record a:int,b:seq.word
+
+use seq.Tpair
+
 
 Function test11 seq.word
 let y = [ t001, t002, t003, t004, t005, t006, t007, t008, t009, t010
 , t011, t012, t013, t014, t015, t016, t017, t018, t019, t020
 , t021, t022, t023, t024, t025, t026, t027, t028, t029, t030
 , t031, t032, t033, t034, t035, t036, t037, t038, t039, t040
-, t041, t042, t043, t045, t046, t047]
+, t041, t042, t043, t044, t045, t046,
+ " this is a test " _-1 = "test"_1
+,   b.[Tpair(3,"three"),Tpair(4,"four"),Tpair(5,"five")]_-2 = "four"  
+   ,[1,2,4]_-3=1
+   , // 50 // "this is a test" << 2 = "a test"
+  ,    "this is a test" >> 3 ="this"
+  ,    "this is a test." >> -3="this is a"
+     ,    "this is a test." << -1="."]
  check(y,"test11")

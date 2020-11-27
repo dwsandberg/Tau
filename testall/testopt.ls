@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau testopt testopt
+#!/usr/local/bin/tau ; use testopt ; testopt
 
 Module testopt
 
@@ -42,7 +42,19 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br 25 EXITBLOCK 1 
 &br 2 EXITBLOCK 1 
 &br BLOCK 8 
-&br","26","%1 %2 3 LOOPBLOCK(int, int, int)
+&br","%1 %2_(word seq, int)seq.word DEFINE 3 %3 WORD c >(int, int)builtin 5 2 BR 3 
+&br %3 WORD c =(int, int)builtin 7 3 BR 3 
+&br %3 WORD xxx =(int, int)builtin 8 4 BR 3 
+&br %3 WORD b =(int, int)builtin 9 10 BR 3 
+&br %3 WORD a =(int, int)builtin 9 6 BR 3 
+&br %3 WORD d =(int, int)builtin 7 10 BR 3 
+&br 4 EXITBLOCK 1 
+&br 3 EXITBLOCK 1 
+&br 4 EXITBLOCK 1 
+&br 5 EXITBLOCK 1 
+&br BLOCK 10
+&br"
+,"%1 %2 3 LOOPBLOCK(int, int, int)
 &br %3 1 =(int, int)builtin 3 4 BR 3 
 &br %4 EXITBLOCK 1 
 &br %3 1-(int, int)builtin %3 %4 *(int, int)builtin CONTINUE 2 
@@ -69,7 +81,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br 10 EXITBLOCK 1 
 &br 11 EXITBLOCK 1 
 &br BLOCK 6 
-&br","32","%1"]
+&br","%1"]
 let r = @(+, getcode(p2, cl),"", arithseq(length.cl, 1, 1))
  if isempty.r then"PASS testopt"else"testopt" + r
 
@@ -80,8 +92,29 @@ Function getcode(p2:seq.seq.word, codelist:seq.seq.word, no:int)seq.word
  let t = subseq(t1, findindex("testopt"_1, t1) + 1, length.t1)
  let code = removeoptions(t, length.t)
   // assert false report t1 +" &br"+ t +" &br"+ code //
-  if codelist_no = code then""
-  else" &br FAIL" + toword.no + code + " &p" + codelist_no
+  if codelist_no = code  &or (no=26 &and
+   shuffletest.sameto( code,codelist_no,1,"")) then""
+  else
+  "&br  &{ literal FAILED  &} test" + toword.no + "in optest &br"  
+   + code + " &p" + codelist_no
+   +" &p diffs: "+sameto( code,codelist_no,1,"")
+   +"&p "+toseq.asset."a b c d xxx"
+   
+ function shuffletest(s:seq.word) boolean
+  s in ["17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 d a 85 8 9 92 xxx d 100 10 7 101 9 10 109 4 3 113 5 4 117 3 5"
+  ,"17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 xxx a 85 10 9 100 8 7 101 9 10 109 4 3 113 5 4 117 3 5"
+]
+
+
+   
+   use set.word
+
+function sameto(a:seq.word,b:seq.word,i:int,diffs:seq.word) seq.word
+   if i > length.a &or i > length.b  then diffs else
+  if  a_i=b_i then sameto(a,b,i+1,diffs) else sameto(a,b,i+1, diffs+[toword.i,a_i,b_i])
+  
+  
+  
 
 function removeoptions(s:seq.word, i:int)seq.word
  if i = length.s then
@@ -158,7 +191,6 @@ Function optest26(s:seq.word, i:int)int
  if s_i = "xxx"_1 then 3
  else if s_i in "a b"then 4 else if s_i in "c d"then 4 else 5
 
-/Function optest26(s:seq.word, i:int)int let a = s_i if a ="xxx"_1 then 3 else if a in"a b"then 4 else if a in"c d"then 4 else 5
 
 Function optest27(a:int, result:int)int
  // tail recursion // if a = 1 then result else optest27(a - 1, a * result)
@@ -172,15 +204,16 @@ Function optest30(w:word, a:int, b:int)int if w in "test"then a else b
 Function optest31(s:seq.int, i:int)int
  if s_i in [ 1, 3] ∨ s_i = 4 then 10 else 11
 
-Function optest32(a:int, b:int, c:int, d:int)ordering optest32a(a ? b, c ? d)
+Function optest32(t:seq.word)seq.word dropparameter(t,"")
 
-Function optest32a(a:ordering, b:ordering)ordering
+function dropparameter(a:seq.word, result:seq.word)seq.word a
+
+Function optest33(a:int, b:int, c:int, d:int)ordering optest33a(a ? b, c ? d)
+
+Function optest33a(a:ordering, b:ordering)ordering
  let x = a
   if x = EQ then b else x
 
-Function optest33(t:seq.word)seq.word dropparameter(t,"")
-
-function dropparameter(a:seq.word, result:seq.word)seq.word a
 
 Function optest16a(a:seq.char)seq.int
  // This is just a type change and the compiler recognizes this and does not generate code // @(+, toint, empty:seq.int, a)
