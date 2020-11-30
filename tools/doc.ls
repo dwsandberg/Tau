@@ -22,7 +22,7 @@ use seq.mytype
 
 use mytype
 
-use newpretty
+use pretty
 
 use stdlib
 

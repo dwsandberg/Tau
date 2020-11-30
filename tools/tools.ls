@@ -13,7 +13,7 @@
 
 ; use doc ; callgraphwithin("stdlib","llvm")
 
-; use newpretty ; htmlcode."testall"
+; use pretty ; htmlcode."testall"
 
 ; use main2 ; use tools ; asparagraphs.compile("pass1","testall")
 

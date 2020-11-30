@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use genLR1 ; gentau2
+#!/usr/local/bin/tau ; use genLR1 ;  gentau2
 
 Module genLR1
 
@@ -16,7 +16,6 @@ use seq.set.dottedrule
 
 use set.dottedrule
 
-use fileio
 
 use format
 
@@ -143,7 +142,12 @@ function cvt(grammar:seq.seq.word,ruleprec:seq.seq.word,i:int, rulelist:seq.int,
    else let line=ruleprec_i
   if length.line=1 then 
        cvt(grammar,ruleprec,i+1, rulelist,result+ruleprec(line_1,rulelist))
-  else cvt(grammar,ruleprec,i+1, rulelist+ruleno(grammar,line),result)
+  else 
+   // if rule is in rulelist remove; add rule to end of list // 
+   let r=ruleno(grammar,line)
+   let j=findindex(r,rulelist)
+   let   newrulelist =subseq(rulelist,1,j-1)+subseq(rulelist,j+1,length.rulelist)+r
+   cvt(grammar,ruleprec,i+1, newrulelist,result)
 
 function getaction( grammar:seq.seq.word, state:state, stateno:int, reductions:seq.seq.word, lookahead:word)seq.action
  let newstate = advance(grammar, toset.state, lookahead)
@@ -179,7 +183,7 @@ function resolveamb( ruleprec:seq.ruleprec,           a:seq.action) seq.action
      else 
       let c2actions=@(+,*.-1,empty:seq.int,cactions)
        let RP=rules.lookplace_1
-       let p=    @(min,findindex.RP ,length.RP+1,c2actions)
+        let p=    @(min,findindex.RP ,length.RP+1,c2actions)
        // assert false report "P"+toword.p+"M"+@(+,toword,"",cactions)+@(+,toword,"C2",c2actions)
        +@(+,toword,"RP",RP) //
       if not.between(p, 1,length.RP ) then  
@@ -253,6 +257,10 @@ function shifts(s:state)seq.word toseq.asset.@(+, shifts, empty:seq.word, toseq.
 
 use otherseq.action
 
+use otherseq.ruleprec
+
+
+
 
 Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphabet:seq.word)seq.word
  let grammar2 = @(+, first, empty:seq.seq.word, grammarandact)
@@ -262,10 +270,10 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphab
   assert isempty.missingsymbols report"Symbols not included in alphabet" + toseq.missingsymbols
   let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
   let actions = closestate(graminfo, 1, empty:seq.action)
-   let RP=cvt(grammar2,ruleprec,1,empty:seq.int,empty:seq.ruleprec)
+   let RP= cvt(grammar2,ruleprec,1,empty:seq.int,empty:seq.ruleprec)
   let actions2=@(+,resolveamb.RP,empty:seq.seq.action,dups(actions))
   let actions3=@(+,identity,empty:seq.action,actions2)
-  let amb = @(+,amb,"",actions2)
+   let amb = @(+,amb,"",actions2)
     {(if length.amb > 0 then"ambiguous actions:" + amb
    +"&br prec rules" +@(seperator."&br",print.grammar2,"", RP)  else
    print(grammar2,actions3))
@@ -359,18 +367,19 @@ function reduceline(grammerandact:seq.seq.seq.word, i:int)seq.word
    + "else"
 
 Function gentau2 seq.word // used to generater tau parser for Pass1 of the tau compiler. //
-let a = lr1parser(taurules2, tauruleprec,".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist 
-@ A E G F W P N L I K FP NM ")
-let discard = createfile([ merge."junk/newgrammer.ls"], processtotext.a)
- a
+ lr1parser(taurules2, tauruleprec,taualphabet)
 
+function taualphabet seq.word
+".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist 
+@ A E G F W P N L I K FP NM !"
+ 
 function tauruleprec seq.seq.word  
 // list of rules and lookaheads.  The position of the lookahead is noted.  Rule reductions  after are discard
 and rule the first rule listed before the position is used to reduce. //
-["E E_E","_","^", "E comment E", ' E I.I ', ' T W.T ',"E W .E ","K N.E ","K W.E "
+["E E_E","_","^", "E comment E", ' E I.I ', ' T W.T ',"E W .E ","K N.E ","K W.E ","E-E"
 , "."
 ,"E E * E"
-, "*" ,"E E-E","E-E","-","E E > E","E E = E","=",">","E E ∧ E","∧","E E ∨ E","∨","comment"
+, "*" ,"E E-E","E-E","E E ! W E","-","!","E E > E","E E = E","=",">","E E ∧ E","∧","E E ∨ E","∨","comment"
 ,":",",","]","if","A","report","let","then","$wordlist","else","assert","W","E","@","I","NM","[","{","(",")","}"
 ,' F W NM(FP)T E ',"F W NM is W P ","F W NM T E", ' F W N(FP)T E ',"L L, E ","E A E","E E ^ E "
 ,' E if E then E else E ',"A let W = E ","L E","T W","NM   W","K NM","E NM","FP P","K N"
@@ -435,76 +444,72 @@ function taurules2 seq.seq.seq.word [[  ' G F # ', '  R_1 ']
 , [ ' E @(K, K, E, E)', ' apply(R_3, R_5, R_7, R_9, input, place.R)'] 
   , [ ' D   E ', ' R_1 '] 
   , [ ' E  @ @(D, E) ', ' apply(R_1, R_3, input, place.R)']
+   , [ ' E E ! W E ', ' opaction(R, input)'] 
    ]
   
 
 Function gentaupretty seq.word // used to generater tau parser for Pass1 of the tau compiler. //
-let a = lr1parser(tauprettyrules, tauruleprec,".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP")
-let discard = createfile("prettygrammer.ls", processtotext.a)
- a
-
-function tauprettyrules seq.seq.seq.word [ ["G F #","R_1"]
-, ["F W NM(FP)T E","pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block(R_7)else R_7]"]
-, ["F W NM T E","pretty.[ key.R_1, R_2, R_3, R_4]"]
-, ["F W W is W P","pretty.[ key.R_1, R_2, R_3, R_4, list.R_5]"]
-, ["F T","// use // pretty.[ R_2]"]
-, ["FP P","list.R_1"]
-, ["P T","R_1"]
-, ["P P, T","R_1 + R_3"]
-, ["P W:T","pretty.[ R_1, R_2, R_3]"]
-, ["P P, W:T","R_1 + pretty.[ R_3, R_4, R_5]"]
-, ["P comment W:T","pretty.[ R_1, R_2, R_3, R_4]"]
-, ["P P, comment W:T","R_1 + pretty.[ R_3, R_4, R_5, R_6]"]
-, ["E NM","R_1"]
-, ["E NM(L)", ' if length.R_3 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]']
-, ["E(E)","R_2"]
-, ["E { E }","R_2"]
-, ["E if E then E else E", ' pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]else if width.R_2 + width.R_4 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]else pretty.[ R_1, R_2, attribute." &keyword then 
-&br", block.R_4, elseblock.R_6]']
-, ["E E^E","wrap(1, R_1, text.R_2, R_3)"]
-, ["E E_E","wrap(1, R_1, text.R_2, R_3)"]
-, ["E-E", ' unaryminus.R_2 ']
-, ["E W.E","wrap(3, R_1, text.R_2, R_3)"]
-, ["E N.E","wrap(3, R_1, text.R_2, R_3)"]
-, ["E E * E","wrap(4, R_1, text.R_2, R_3)"]
-, ["E E-E","wrap(5, R_1, text.R_2, R_3)"]
-, ["E E = E","wrap(6, R_1, text.R_2, R_3)"]
-, ["E E > E","wrap(7, R_1, text.R_2, R_3)"]
-, ["E E ∧ E","wrap(8, R_1, text.R_2, R_3)"]
-, ["E E ∨ E","wrap(9, R_1, text.R_2, R_3)"]
-, ["L E","R_1"]
-, ["L L, E","R_1 + R_3"]
-, ["E [ L]","pretty.[ R_1, list.R_2, R_3]"]
-, ["A let W = E", ' pretty.[ R_1, R_2, R_3, R_4]']
-, ["E A E", ' pretty.[ R_1, checkpara(R_1, block("
-&br let assert", R_2))']
-, ["E assert E report E E", ' pretty.[ R_1, R_2, key.R_3, R_4, block("
-&br let assert", R_5)]']
-, ["E I","R_1"]
-, ["E I.I","pretty.[ R_1, R_2, R_3]"]
-, ["T W","R_1"]
-, ["T W.T","pretty.[ R_1, R_2, R_3]"]
-, ["E $wordlist", ' attribute([ prettyresult(0, length.text.R_1,"
-&{ literal"+ escapeformat.text.R_1 +" &}")])']
-, ["E comment E", ' let t ="
-&{ comment"+ escapeformat.text.R_1 +" &}"let t2 = if width.R_1 + width.R_2 > 30 ∧(text.R_2)_1 ≠"
-&br"_1 then t +"
-&br"else t pretty.[ attribute.[ prettyresult(0, length.text.R_1, t2)], R_2]']
-, ["N_","R_1"]
-, ["N-","R_1"]
-, ["N =","R_1"]
-, ["N >","R_1"]
-, ["N *","R_1"]
-, ["N ∧","R_1"]
-, ["N ∨","R_1"]
-, ["K W.E","pretty.[ R_1, R_2, R_3]"]
-, ["K N.E","pretty.[ R_1, R_2, R_3]"]
-, ["K NM(L)","pretty.[ R_1, R_2, list.R_3, R_4]"]
-, [ ' K NM ', ' R_1 ']
-, [ ' NM W ', ' R_1 ']
-, [ ' NM N ', ' R_1 ']
-, [ ' NM W:T ',"pretty.[ R_1, R_2, R_3]"]
-, ["E @(K, K, E, E)","pretty.[ R_1, R_2, list(R_3 + R_5 + R_7 + R_9), R_10]"]]
+ lr1parser(tauprettyrules, tauruleprec,taualphabet)
+ 
+function tauprettyrules seq.seq.seq.word 
+ // after generator grammar change %%% to & //
+[ [  ' G F # ', ' R_1 '] 
+, [ ' F W NM(FP)T E ', ' pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]'] 
+, [ ' F W N(FP)T E ', ' pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]'] 
+, [ ' F W NM T E ', ' pretty.[ key.R_1, R_2, R_3, R_4]'] 
+, [ ' F W NM is W P ', ' pretty.[ key.R_1, R_2, R_3, R_4, list.R_5]'] 
+, [ ' F T ', ' // use // pretty.[ R_1]'] 
+, [ ' FP P ', ' list.R_1 '] 
+, [ ' P T ', ' R_1 '] 
+, [ ' P P, T ', ' R_1 + R_3 '] 
+, [ ' P W:T ', ' pretty.[ R_1, R_2, R_3]'] 
+, [ ' P P, W:T ', ' R_1 + pretty.[ R_3, R_4, R_5]'] 
+, [ ' P comment W:T ', ' pretty.[ R_1, R_2, R_3, R_4]'] 
+, [ ' P P, comment W:T ', ' R_1 + pretty.[ R_3, R_4, R_5, R_6]'] 
+, [ ' E NM ', ' R_1 '] 
+, [ ' E NM(L)', ' if length.R_3 = 1 ∧ length.text.R_1 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]'] 
+, [ ' E(E)', ' R_2 '] 
+, [ ' E { E } ', ' R_2 '] 
+, [ ' E if E then E else E ', ' // if width.R_2 + width.R_4 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]else pretty.[ R_1, R_2, attribute2."then", block.R_4, elseblock.R_6]else // if width.R_2 + width.R_4 + width.R_6 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]else if width.R_2 + width.R_4 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]else pretty.[ R_1, R_2, attribute."%%%keyword then %%%br", block.R_4, elseblock.R_6]'] 
+, [ ' E E^E ', ' wrap(1, R_1, text.R_2, R_3)'] 
+, [ ' E E_E ', ' wrap(1, R_1, text.R_2, R_3)'] 
+, [ ' E-E ', ' unaryminus.R_2 '] 
+, [ ' E W.E ', ' wrap(3, R_1, text.R_2, R_3)'] 
+, [ ' E E * E ', ' wrap(4, R_1, text.R_2, R_3)'] 
+, [ ' E E-E ', ' wrap(5, R_1, text.R_2, R_3)'] 
+, [ ' E E = E ', ' wrap(6, R_1, text.R_2, R_3)'] 
+, [ ' E E > E ', ' wrap(7, R_1, text.R_2, R_3)'] 
+, [ ' E E ∧ E ', ' wrap(8, R_1, text.R_2, R_3)'] 
+, [ ' E E ∨ E ', ' wrap(9, R_1, text.R_2, R_3)'] 
+, [ ' L E ', ' R_1 '] 
+, [ ' L L, E ', ' R_1 + R_3 '] 
+, [ ' E [ L]', ' pretty.[ R_1, list.R_2, R_3]'] 
+, [ ' A let W = E ', ' pretty.[ R_1, R_2, R_3, R_4]'] 
+, [ ' E A E ', ' checkpara(R_1, block("%%%br let assert", R_2))'] 
+, [ ' E assert E report E E ', ' pretty.[ R_1, R_2, key.R_3, R_4, block("%%%br let assert", R_5)]'] 
+, [ ' E I ', ' R_1 '] 
+, [ ' E I.I ', ' pretty.[ R_1, R_2, R_3]'] 
+, [ ' T W ', ' R_1 '] 
+, [ ' T W.T ', ' pretty.[ R_1, R_2, R_3]'] 
+, [ ' E $wordlist ', ' attribute2([ prettyresult(0, length.text.R_1,"%%%{ literal"+ escapeformat.text.R_1 +"%%%}")])'] 
+, [ ' E comment E ', ' let t ="%%%{ comment"+ escapeformat.text.R_1 +"%%%}"let t2 = if width.R_1 + width.R_2 > 30 ∧(text.R_2)_1 ≠"%%%br"_1 then t +"%%%br"else t pretty.[ attribute2.[ prettyresult(0, length.text.R_1, t2)], R_2]'] 
+, [ ' N_', ' R_1 '] 
+, [ ' N-', ' R_1 '] 
+, [ ' N = ', ' R_1 '] 
+, [ ' N > ', ' R_1 '] 
+, [ ' N * ', ' R_1 '] 
+, [ ' N ∧ ', ' R_1 '] 
+, [ ' N ∨ ', ' R_1 '] 
+, [ ' K W.E ', ' pretty.[ R_1, R_2, R_3]'] 
+, [ ' K N.E ', ' pretty.[ R_1, R_2, R_3]'] 
+, [ ' K N ', ' R_1 '] 
+, [ ' K NM(L)', ' pretty.[ R_1, R_2, list.R_3, R_4]'] 
+, [ ' K NM ', ' R_1 '] 
+, [ ' NM W ', ' R_1 '] 
+, [ ' NM W:T ', ' pretty.[ R_1, R_2, R_3]'] 
+, [ ' E @(K, K, E, E)', ' pretty.[ R_1, R_2, list(R_3 + R_5 + R_7 + R_9), R_10]'] 
+, [ ' D E ', ' R_1 '] 
+, [ ' E @ @(D, E)', ' pretty.[ R_1, R_2, list(R_4+ R_6  ), R_7]']]
 
 Function test11 seq.word extractgrammer
 .' Function action(ruleno:int, input:seq.token.attribute, R:reduction.attribute)attribute if ruleno = // G F # // 1 then R_1 else if ruleno = // F W W(FP)T E // 2 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]else if ruleno = // F W N(FP)T E // 3 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]else if ruleno = // F W W T E // 4 then pretty.[ key.R_1, R_2, R_3, R_4]else if ruleno = // F W W:T T E // 5 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6]else if ruleno = // F W W:T(FP)T E // 6 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9]else if ruleno = // F W W is W P // 7 then pretty.[ key.R_1, R_2, R_3, R_4, list.R_5]else if ruleno = // F W T // 8 then // use // pretty.[ key.R_1, R_2]else if ruleno = // FP P // 9 then list.R_1 else if ruleno = // P T // 10 then R_1 else if ruleno = // P P, T // 11 then R_1 + R_3 else if ruleno = // P W:T // 12 then pretty.[ R_1, R_2, R_3]else if ruleno = // P P, W:T // 13 then R_1 + pretty.[ R_3, R_4, R_5]else if ruleno = // P comment W:T // 14 then pretty.[ R_1, R_2, R_3, R_4]else if ruleno = // P P, comment W:T // 15 then R_1 + pretty.[ R_3, R_4, R_5, R_6]else if ruleno = // E W // 16 then R_1 else if ruleno = // E N(L)// 17 then if length.R_3 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]else if ruleno = // E W(L)// 18 then if length.R_3 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]else if ruleno = // E W:T(L)// 19 then pretty.[ R_1, R_2, R_3, R_4, list.R_5, R_6]else if ruleno = // E(E)// 20 then R_2 else if ruleno = // E { E } // 21 then R_2 else if ruleno = // E if E then E else E // 22 then if width.R_2 + width.R_4 + width.R_6 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]else if width.R_2 + width.R_4 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]else pretty.[ R_1, R_2, attribute." &keyword then 
@@ -533,11 +538,3 @@ function extractgrammer(z:seq.word, i:int, state:seq.word, mark:int, result:seq.
  
  
  
-
-
-
-
-
-
-
-

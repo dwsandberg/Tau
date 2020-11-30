@@ -28,7 +28,7 @@ Function hasdigit(w:word)boolean
   ∨ l_1 = toint.hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)
 
 function tokenlist seq.word // tokenlist is from parser generator //
-".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP NM D"
+".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP NM D !"
 
 
 function actionlist seq.lexaction1 // most frequently used words in programs //
@@ -65,7 +65,7 @@ function tolexaction(next:word)lexaction1
   else if next in "in +-∈ ∋"then"-"_1
   else if next in "* / mod ∪ ∩"then"*"_1
   else if next in "_^"then"_"_1
-  else if next in ".)]= {:},([ ∧ ∨ # if then else let assert report @ is"then next
+  else if next in ".)]= {:},([ ∧ ∨ # if then else let assert report @ is !"then next
   else if hasdigit.next then"I"_1 else"W"_1
    lexaction1(next, findindex(token, tokenlist), next)
 

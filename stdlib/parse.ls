@@ -102,8 +102,34 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
    bindinfo(dict.R, code.exp + f, [ resulttype.f],"")
 
 function apply(term1:bindinfo, term2:bindinfo,   input:seq.token.bindinfo, place:int)bindinfo
- assert false report "place hold"
+let i=backparse(code.term2,length.code.term2-1,1)
+ assert false report "place hold"+@(+,print,"",code.term2)
+ +"&br init"+@(+,print,"",subseq(code.term2,1,i ))
 term1
+
+function backparse(s:seq.symbol,i:int,noterms:int) int
+ if noterms=0 then i
+ else 
+ let sym=s_i
+ let  nopara=nopara.sym
+ if nopara=0 then backparse(s,i-1,noterms-1)
+ else 
+    let a=backparse(s,i-1,nopara)
+     backparse(s,a,noterms-1)
+ 
+  a b +
+  
+  "a b +",2,1 
+      0,1,0
+ 
+   a c d + +  , 4,1
+                3 2
+
+function declareapplyvars( term1:bindinfo, input:seq.token.bindinfo, place:int)bindinfo
+let seqtype=(types.term1)_1
+assert abstracttype.seqtype in "seq" report errormessage(" first term of apply must be sequence",input,place)
+let newdict = dict.term1 + newsymbol("@e",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype)
+bindinfo(newdict, code.term1 , types.term1, tokentext.term1)
 
 
 function apply(term1:bindinfo, term2:bindinfo, term3:bindinfo, term4:bindinfo, input:seq.token.bindinfo, place:int)bindinfo
@@ -174,30 +200,30 @@ function dict(r:reduction.bindinfo)set.symbol dict.last.r
 Function action(ruleno:int, input:seq.token.bindinfo, R:reduction.bindinfo)bindinfo
 if ruleno = // G F # // 1 then R_1 else 
 if ruleno = // F W NM(FP)T E // 2 then createfunc(R, input, tokentext.R_2, types.R_4, R_6, R_7)else 
-if ruleno = // F W NM T E // 3 then createfunc(R, input, tokentext.R_2, empty:seq.mytype, R_3, R_4)else 
-if ruleno = // F W W is W P // 4 then assert(tokentext.R_4)_1 in"record sequence"report errormessage("Expected record or sequence after is in type definition got:"+ tokentext.R_4, input, place.R)bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2)else 
-if ruleno = // F T // 5 then R_1 else 
-if ruleno = // FP P // 6 then bindinfo(@(addparameter(cardinality.dict.R, input, place.R), identity, dict.R, types.R_1), empty:seq.symbol, types.R_1,"")else 
-if ruleno = // P T // 7 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype(":"_1, gettype.R_1)],"")else 
-if ruleno = // P P, T // 8 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype(":"_1, gettype.R_3)],"")else 
-if ruleno = // P W:T // 9 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_1)_1, gettype.R_3)],"")else 
-if ruleno = // P P, W:T // 10 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype((tokentext.R_3)_1, gettype.R_5)],"")else 
-if ruleno = // P comment W:T // 11 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_2)_1, gettype.R_4)],"")else 
-if ruleno = // P P, comment W:T // 12 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype((tokentext.R_4)_1, gettype.R_6)],"")else 
-if ruleno = // E NM // 13 then 
+if ruleno = // F W N(FP)T E // 3 then createfunc(R, input, tokentext.R_2, types.R_4, R_6, R_7)else 
+if ruleno = // F W NM T E // 4 then createfunc(R, input, tokentext.R_2, empty:seq.mytype, R_3, R_4)else 
+if ruleno = // F W NM is W P // 5 then assert(tokentext.R_4)_1 in"record sequence"report errormessage("Expected record or sequence after is in type definition got:"+ tokentext.R_4, input, place.R)bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2)else 
+if ruleno = // F T // 6 then R_1 else 
+if ruleno = // FP P // 7 then bindinfo(@(addparameter(cardinality.dict.R, input, place.R), identity, dict.R, types.R_1), empty:seq.symbol, types.R_1,"")else 
+if ruleno = // P T // 8 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype(":"_1, gettype.R_1)],"")else 
+if ruleno = // P P, T // 9 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype(":"_1, gettype.R_3)],"")else 
+if ruleno = // P W:T // 10 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_1)_1, gettype.R_3)],"")else 
+if ruleno = // P P, W:T // 11 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype((tokentext.R_3)_1, gettype.R_5)],"")else 
+if ruleno = // P comment W:T // 12 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_2)_1, gettype.R_4)],"")else 
+if ruleno = // P P, comment W:T // 13 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype((tokentext.R_4)_1, gettype.R_6)],"")else 
+if ruleno = // E NM // 14 then 
  let id = tokentext.R_1
 let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place.R)bindinfo(dict.R, [ f], [ resulttype.f],"")else 
-if ruleno = // E NM(L)// 14 then unaryop(R, input, tokentext.R_1, R_3)else 
-if ruleno = // E(E)// 15 then R_2 else 
-if ruleno = // E { E } // 16 then R_2 else 
-if ruleno = // E if E then E else E // 17 then 
+if ruleno = // E NM(L)// 15 then unaryop(R, input, tokentext.R_1, R_3)else 
+if ruleno = // E(E)// 16 then R_2 else 
+if ruleno = // E { E } // 17 then R_2 else 
+if ruleno = // E if E then E else E // 18 then 
 let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R) 
 let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")else 
-if ruleno = // E E^E // 18 then opaction(R, input)else 
-if ruleno = // E E_E // 19 then opaction(R, input)else 
-if ruleno = // E-E // 20 then unaryop(R, input, tokentext.R_1, R_2)else 
-if ruleno = // E W.E // 21 then unaryop(R, input, tokentext.R_1, R_3)else 
-if ruleno = // E N.E // 22 then unaryop(R, input, tokentext.R_1, R_3)else 
+if ruleno = // E E^E // 19 then opaction(R, input)else 
+if ruleno = // E E_E // 20 then opaction(R, input)else 
+if ruleno = // E-E // 21 then unaryop(R, input, tokentext.R_1, R_2)else 
+if ruleno = // E W.E // 22 then unaryop(R, input, tokentext.R_1, R_3)else 
 if ruleno = // E E * E // 23 then opaction(R, input)else 
 if ruleno = // E E-E // 24 then opaction(R, input)else 
 if ruleno = // E E = E // 25 then opaction(R, input)else 
@@ -233,13 +259,12 @@ if ruleno = // N ∧ // 46 then R_1 else
 if ruleno = // N ∨ // 47 then R_1 else 
 if ruleno = // K W.E // 48 then bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)else 
 if ruleno = // K N.E // 49 then bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)else 
-if ruleno = // K NM(L)// 50 then bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)else 
-if ruleno = // K NM // 51 then R_1 else 
-if ruleno = // NM W // 52 then R_1 else 
-if ruleno = // NM N // 53 then R_1 else 
+if ruleno = // K N // 50 then  R_1 else 
+if ruleno = // K NM(L)// 51 then bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)else 
+if ruleno = // K NM // 52 then R_1 else 
+if ruleno = // NM W // 53 then R_1 else 
 if ruleno = // NM W:T // 54 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1)else 
 if ruleno = // E @(K, K, E, E)// 55 then apply(R_3, R_5, R_7, R_9, input, place.R)else 
-if ruleno = // D E @ // 56 then R_1 else 
-assert ruleno = // E D K // 57 report"invalid rule number"+ toword.ruleno 
-apply(R_1, R_3, input, place.R)
-
+if ruleno = // D E // 56 then declareapplyvars(R_1,input, place.R) else 
+assert ruleno = // E @ @(D, E)// 57 report"invalid rule number"+ toword.ruleno 
+apply(R_4, R_6, input, place.R)
