@@ -129,7 +129,7 @@ Function nopara(s:symbol)int
  // assert last.module.s in"$continue $block $apply $exitblock $br $record $loopblock $define"report"X"+ module.s //
   if last.module.s = "$define"_1 then 1 else toint.(fsig.s)_2
  else
-  @(counttrue, =(","_1), if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
+  @(counttrue, =.","_1, if last.fsig.s = ")"_1 then 1 else 0, fsig.s)
 
 function counttrue(i:int, b:boolean)int if b then i + 1 else i
 

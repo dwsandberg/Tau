@@ -43,7 +43,7 @@ use seq.seq.word
 
 use seq.word
 
-Function asparagraphs(a:seq.seq.word)seq.word @(+, +(" &br  &br"),"", a)
+Function asparagraphs(a:seq.seq.word)seq.word @(+, +." &br  &br","", a)
 
 Function testprofile(libname:seq.word)seq.word
  let a = asparagraphs.compile("all", libname)

@@ -207,7 +207,7 @@ if ruleno = // E E ∨ E // 28 then opaction(R, input)else
 if ruleno = // L E // 29 then R_1 else 
 if ruleno = // L L, E // 30 then bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"")else 
 if ruleno = // E [ L]// 31 then 
-let types = types.R_2 assert @(∧, =(types_1), true, types)report errormessage("types do not match in build", input, place.R)bindinfo(dict.R, [ Lit.0, Lit.length.types]+ code.R_2 + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint]+ types, typeptr), [ typeseq + types_1],"")else 
+let types = types.R_2 assert @(∧, =.types_1, true, types)report errormessage("types do not match in build", input, place.R)bindinfo(dict.R, [ Lit.0, Lit.length.types]+ code.R_2 + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint]+ types, typeptr), [ typeseq + types_1],"")else 
 if ruleno = // A let W = E // 32 then 
  let e = R_4
 let name = tokentext.R_2 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place.R) 

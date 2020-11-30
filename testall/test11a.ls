@@ -42,7 +42,7 @@ let z = [ compare("a + b + c","{(a + b)+ c }")
 
 Function testcomp2(s:seq.seq.word)seq.word
  let p = process.testcomp.s
-  if aborted.p then message.p else @(+, +(" &br  &br"),"", result.p)
+  if aborted.p then message.p else @(+, +." &br  &br","", result.p)
 
 Function compare(exp1:seq.word, exp2:seq.word)boolean
  let e1 = testcomp2

@@ -129,11 +129,11 @@ function print(a:seq.int)seq.word"[" + @(seperator(","), toword,"", a) + "]"
 
 function t035 boolean"[ 2, 3, 4, 5]" = print.[ 2, 3, 4, 5]
 
-function t036 boolean 10 = @(+, *(1), 0, [ 1, 2, 3, 4])
+function t036 boolean 10 = @(+, *.1, 0, [ 1, 2, 3, 4])
 
-function t037 boolean 24 = @(*, *(1), 1, [ 1, 2, 3, 4])
+function t037 boolean 24 = @(*, *.1, 1, [ 1, 2, 3, 4])
 
-function t038 boolean [ 1, 2, 3, 4] = @(+, +(empty:seq.int), empty:seq.int, [ 1, 2, 3, 4])
+function t038 boolean [ 1, 2, 3, 4] = @(+, +.empty:seq.int, empty:seq.int, [ 1, 2, 3, 4])
 
 function t039 boolean
 let a = 6 * 6

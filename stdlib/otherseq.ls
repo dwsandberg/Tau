@@ -19,7 +19,7 @@ unbound =(T, T)boolean
 unbound >(a:T, b:T)boolean
 
 Function reverse(s:seq.T)seq.T
- @(+,_(s), empty:seq.T, arithseq(length.s, 0 - 1, length.s))
+ @(+,_.s, empty:seq.T, arithseq(length.s, 0 - 1, length.s))
 
 Function removedups(a:seq.T, b:seq.T, c:int)seq.T
  if c = 0 then b
