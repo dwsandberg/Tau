@@ -176,21 +176,28 @@ function resolveamb( ruleprec:seq.ruleprec,           a:seq.action) seq.action
       let shift=@(+,findshift,empty:seq.int,cactions)
        let rules=@(+,*.-1,empty:seq.int,toseq(asset.cactions-asset.shift))
    //    assert false report "XXX"+@(+,print,"",a) //
-     let t= if isempty.lookplace then 
-          if not.isempty.shift &and  // isempty(   asset.rules  -    asset.rules.last.ruleprec  ) // true then 
-           [action(stateno.a_1,lookahead.a_1,shift_1)]
-          else a 
-     else 
-      let c2actions=@(+,*.-1,empty:seq.int,cactions)
-       let RP=rules.lookplace_1
+      let c1actions=@(+,*.-1,empty:seq.int,cactions)
+       let c2actions= if  asset.c1actions &cap asset.[20,23] = asset.[20,23] then
+         if  lookahead.a_1 in "*" then 
+           toseq(asset.c1actions - asset.[23])
+         else 
+           //  "comment else ] report let ) * # = > assert  D E - then , $wordlist W ( NM 
+         A if { @ } ∧ I ∨ _ @@ [ " //
+             toseq(asset.c1actions - asset.[20])
+        else c1actions
+       let RP= if isempty.lookplace then rules.last.ruleprec  else rules.lookplace_1
         let p=    @(min,findindex.RP ,length.RP+1,c2actions)
-       // assert false report "P"+toword.p+"M"+@(+,toword,"",cactions)+@(+,toword,"C2",c2actions)
-       +@(+,toword,"RP",RP) //
-      if not.between(p, 1,length.RP ) then  
-          @(+, xxx.rules.last.ruleprec ,empty:seq.action,a)
+              if not.between(p, 1,length.RP ) then  
+          // @(+, xxx.rules.last.ruleprec ,empty:seq.action,a) //
+           if  isempty.shift then 
+             if length.c2actions=1 then
+               [action(stateno.a_1,lookahead.a_1,-c2actions_1)]
+             else 
+               a
+           else [action(stateno.a_1,lookahead.a_1,shift_1)]
        else 
           [action(stateno.a_1,lookahead.a_1,-(RP)_p)]
-     t
+      
      
 function xxx(rules:seq.int,a: action ) seq.action
     if  codedaction.a > 0 &or not(-codedaction.a in rules)  then [a]
@@ -207,9 +214,9 @@ function alphabet(grammar:seq.seq.word)seq.word toseq.asset.@(+, identity,"", gr
 function addaction(alphabet:seq.word, table:seq.int, a:action)seq.int
  replace(table, findindex(lookahead.a, alphabet) + length.alphabet * stateno.a, codedaction.a)
 
-function first(a:seq.seq.word)seq.word a_1
+/function first(a:seq.seq.word)seq.word a_1
 
-function first(a:seq.word)word a_1
+/function first(a:seq.word)word a_1
 
 function tosubstate(state:seq.seq.word, rule:seq.word)seq.seq.word
  if rule in state then [ rule]else empty:seq.seq.word
@@ -270,13 +277,14 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphab
   assert isempty.missingsymbols report"Symbols not included in alphabet" + toseq.missingsymbols
   let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
   let actions = closestate(graminfo, 1, empty:seq.action)
+ // assert false report  print(grammar2,actions) //
    let RP= cvt(grammar2,ruleprec,1,empty:seq.int,empty:seq.ruleprec)
   let actions2=@(+,resolveamb.RP,empty:seq.seq.action,dups(actions))
   let actions3=@(+,identity,empty:seq.action,actions2)
-   let amb = @(+,amb,"",actions2)
+   let amb = @(+,amb.grammar2,"",actions2)
     {(if length.amb > 0 then"ambiguous actions:" + amb
-   +"&br prec rules" +@(seperator."&br",print.grammar2,"", RP)  else
-   print(grammar2,actions3))
+   +"&br prec rules" +@(seperator."&br",print.grammar2,"", RP)  else "")+
+   print(grammar2,actions3)  
    + generatereduce(grammarandact, alphabet,"attribute")
    + '  &p function tokenlist:T seq.word"'
    + alphabet
@@ -291,18 +299,25 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphab
    + toword.length.grammarandact
    + " &br nostate"
    + toword.length.encoding:seq.encodingpair.state
-   + " &p function actiontable:T seq.int ["
+   + { if length.amb=0 then " &p function actiontable:T seq.int ["
    + @(seperator(","), toword,"", @(addaction(alphabet), identity, dseq.0, 
    actions3))
-   + "]"
+   + "]" else "" }
    + " &p follow"
-   + @(seperator("|"), print,"", toseq.arcs.follow.graminfo)
+   +  // @(seperator("|"), print,"", toseq.arcs.follow.graminfo) // print.follow.graminfo
    + printstatefunc(encoding:seq.encodingpair.state, 1,"")}
    
+ 
+function print( a:graph.word ) seq.word
+    @(+,print2.a,"nodes",toseq.nodes.a)
+  
+ function print2( a:graph.word, node:word) seq.word
+    "&br"+node+ "followed by:"+ toseq.successors(a,node)
+ 
    use seq.seq.action
    
-function amb(s:seq.action) seq.word
-  if length.s > 1 then @(+,print,"&br >>>>",s) else empty:seq.word
+function amb(grammar:seq.seq.word,s:seq.action) seq.word
+  if length.s > 1 then   "&br >>>>"+print(grammar,s)  else empty:seq.word
 
    
 function dups(s:seq.action) seq.seq.action  if isempty.s then  empty:seq.seq.action
@@ -370,21 +385,43 @@ Function gentau2 seq.word // used to generater tau parser for Pass1 of the tau c
  lr1parser(taurules2, tauruleprec,taualphabet)
 
 function taualphabet seq.word
-".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist 
-@ A E G F W P N L I K FP NM !"
+".=():>]-{ } comment, [_is T if # then else let assert report ∧ ∨ * $wordlist 
+@  @@ A E G F W P N L I K FP NM D"
  
 function tauruleprec seq.seq.word  
 // list of rules and lookaheads.  The position of the lookahead is noted.  Rule reductions  after are discard
 and rule the first rule listed before the position is used to reduce. //
-["E E_E","_","^", "E comment E", ' E I.I ', ' T W.T ',"E W .E ","K N.E ","K W.E ","E-E"
-, "."
-,"E E * E"
-, "*" ,"E E-E","E-E","E E ! W E","-","!","E E > E","E E = E","=",">","E E ∧ E","∧","E E ∨ E","∨","comment"
-,":",",","]","if","A","report","let","then","$wordlist","else","assert","W","E","@","I","NM","[","{","(",")","}"
-,' F W NM(FP)T E ',"F W NM is W P ","F W NM T E", ' F W N(FP)T E ',"L L, E ","E A E","E E ^ E "
-,' E if E then E else E ',"A let W = E ","L E","T W","NM   W","K NM","E NM","FP P","K N"
-,' E assert E report E E ',"E I","D E "
+[ ".",":" , ",","(","T","W","NM","N","@@ ","$wordlist",
+ "E E _ E ","_",
+ " E W.E ",
+"E E * E", "*" 
+,"E E-E" ,"-" 
+,"E-E","E E > E","E E = E","=",">"
+,"E E ∧ E","∧","E E ∨ E","∨"]
+
+["_", 
+"E comment E", ' E I.I ', ' T W.T ',"E W .E ","K N.E ","K W.E ","E-E" , "."
+, " NM W:T " , '  FP P ',"P T","P W:T","P comment W:T ","P P, W:T ","P P , comment W :T ", "F T"
+,"E E * E", "*" 
+,"E E-E","E-E","-" 
+,"E E > E","E E = E","=",">"
+,"E E ∧ E","∧","E E ∨ E","∨"
+,"E A E","E E _ E "
+,' E if E then E else E ',"A let W = E ","FP P","K N"
+,' E assert E report E E '
+,"comment","if","A","report","let","then","$wordlist","else","assert","W","E","I","D","NM","[","{","(","}"
+,"L L, E ","L E",")",",","]",":"
+,"T W","NM   W","K NM","E NM","E I" 
+,"D E @@"," E D   N ( E, L )", " E D   NM ( E, L )" ,"@@",' E @(K, K, E, E)',"@"
+,' F W NM(FP)T E ',"F W NM is W P ","F W NM T E", ' F W N(FP)T E '
 ]
+
+[  "." , " NM W:T " , '  FP P ',"P T","P W:T","P comment W:T ","P P, W:T ","P P , comment W :T ", "F T" ,
+ "F W NM is W P "
+ ,":", " NM T " , "T W " 
+ ,"(", "E NM " 
+ ]
+
 
 
 function taurules2 seq.seq.seq.word [[  ' G F # ', '  R_1 '] 
@@ -405,7 +442,6 @@ function taurules2 seq.seq.seq.word [[  ' G F # ', '  R_1 ']
 , [ ' E(E)', ' R_2 '] 
 , [ ' E { E } ', ' R_2 '] 
 , [ ' E if E then E else E ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
-, [ ' E E^E ', ' opaction(R, input)'] 
 , [ ' E E_E ', ' opaction(R, input)'] 
 , [ ' E-E ', ' unaryop(R, input, tokentext.R_1, R_2)'] 
 , [ ' E W.E ', ' unaryop(R, input, tokentext.R_1, R_3)'] 
@@ -442,10 +478,11 @@ function taurules2 seq.seq.seq.word [[  ' G F # ', '  R_1 ']
 , [ ' NM W ', ' R_1 '] 
 , [ ' NM W:T ', ' bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1)'] 
 , [ ' E @(K, K, E, E)', ' apply(R_3, R_5, R_7, R_9, input, place.R)'] 
-  , [ ' D   E ', ' R_1 '] 
-  , [ ' E  @ @(D, E) ', ' apply(R_1, R_3, input, place.R)']
-   , [ ' E E ! W E ', ' opaction(R, input)'] 
-   ]
+, [ ' D   E @@ ', ' R_1 '] 
+, [ ' E  D  NM(E,L) ', ' apply2(R_1, R_3,R_5,R_7, input, place.R)']
+ , [ ' E  D N(E,L) ', ' apply2(R_1, R_3,R_5,R_7 ,input, place.R)']
+  ]
+  
   
 
 Function gentaupretty seq.word // used to generater tau parser for Pass1 of the tau compiler. //
@@ -537,4 +574,104 @@ function extractgrammer(z:seq.word, i:int, state:seq.word, mark:int, result:seq.
  else extractgrammer(z, i + 1, state, mark, result)
  
  
+ Function gentest seq.word // used to generater tau parser for Pass1 of the tau compiler. //
+ lr1parser(testrule2, testruleprec,testalphabet)
+
+function testalphabet seq.word
+""
+
+.=():>]-{ } comment, [_is T   #    ∧ ∨ * $wordlist 
+ @@  E G F W P N L   FP NM D
  
+function testruleprec seq.seq.word  
+// list of rules and lookaheads.  The position of the lookahead is noted.  Rule reductions  after are discard
+and rule the first rule listed before the position is used to reduce. //
+[ ".",":" ," E - E", ",","(","T","W","NM","N","_","@@ ", 
+"E E * E", "*" 
+,"E E-E" ,"-" 
+,"E E > E","E E = E","=",">"
+,"E E ∧ E","∧","E E ∨ E","∨"]
+
+[  "." , " NM W:T " , '  FP P ',"P T","P W:T","P comment W:T ","P P, W:T ","P P , comment W :T ", "F T" ,
+ "F W NM is W P "
+ ,":", " NM T " , "T W " 
+ ,"(", "E NM " 
+ ]
+
+"_", 
+"E comment E", ' E I.I ', ' T W.T ',"E W .E ","K N.E ","K W.E ","E-E" , "."
+,"E E * E", "*" 
+,"E E-E","E-E","-" 
+,"E E > E","E E = E","=",">"
+,"E E ∧ E","∧","E E ∨ E","∨"
+,"E A E","E E _ E "
+,' E if E then E else E ',"A let W = E ","FP P","K N"
+,' E assert E report E E '
+,"comment","if","A","report","let","then","$wordlist","else","assert","W","E","I","D","NM","[","{","(","}"
+,"L L, E ","L E",")",",","]"
+,"T W","NM   W","K NM","E NM","E I" 
+,"D E @@"," E D   N ( E, L )", " E D   NM ( E, L )" ,"@@",' E @(K, K, E, E)',"@"
+,' F W NM(FP)T E ',"F W NM is W P ","F W NM T E", ' F W N(FP)T E '
+]
+
+ 
+ 
+ function testrule2 seq.seq.seq.word [[  ' G F # ', '  R_1 '] 
+, [ ' F W NM(FP)T E ', ' createfunc(R, input, tokentext.R_2, types.R_4, R_6, R_7)'] 
+, [ ' F W N(FP)T E ', ' pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]'] 
+, [ ' F W NM T E ', ' pretty.[ key.R_1, R_2, R_3, R_4]'] 
+, [ ' F W NM is W P ', ' pretty.[ key.R_1, R_2, R_3, R_4, list.R_5]'] 
+, [ ' F T ', ' // use // pretty.[ R_1]'] 
+,[ '  T W  ', '  '] 
+,[ '  T T .W ', '  '] 
+, [ ' NM T ', '  '] 
+, [ ' NM W:T ', '  '] 
+, [ ' P T ', ' ']
+,  [ ' P  W :T  ' , ' ' ]
+,  [ ' P P , W :T  ', ' ' ]
+,  [ ' P  comment W:T  ' , ' ' ]
+,  [ ' P P , comment W :T  ', ' ' ]
+,  [ ' FP P '," " ]
+ , [ ' E NM ', ' R_1 '] 
+, [ ' E NM(L)', ' if length.R_3 = 1 ∧ length.text.R_1 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]'] 
+, [ ' E(E)', ' R_2 '] 
+, [ ' E { E } ', ' R_2 '] 
+, [ ' L L, E ', ' R_1 + R_3 '] 
+, [ ' E [ L]', ' pretty.[ R_1, list.R_2, R_3]'] 
+ , [ ' E I ', ' bindinfo(dict.R, [ Lit.toint.(tokentext.R_1)_1], [ typeint],"")'] 
+, [ ' E I.I ', ' bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"")'] 
+, [ ' E E_E ', ' opaction(R, input)'] 
+, [ ' E W.E ', ' wrap(3, R_1, text.R_2, R_3)']
+,   [ ' E -E ', ' ' ]
+,   [ ' E E * E ', ' opaction(R, input)'] 
+, [ ' E E - E ', ' opaction(R, input)']
+, [ ' E E = E ', ' wrap(6, R_1, text.R_2, R_3)'] 
+, [ ' E E > E ', ' wrap(7, R_1, text.R_2, R_3)'] 
+, [ ' E E ∧ E ', ' wrap(8, R_1, text.R_2, R_3)'] 
+, [ ' E E ∨ E ', ' wrap(9, R_1, text.R_2, R_3)']  
+, [ ' E $wordlist ', ' let s = tokentext.R_1 bindinfo(dict.R, [ Words.subseq(s, 2, length.s-1)], [ mytype."word seq"],"")'] 
+, [ ' E comment E ', ' R_2 '] 
+, [ ' E assert E report E E ', ' assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place.R)assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place.R)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_5 + Exit + code.R_4 + symbol("assert(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"")'] 
+,[ ' A let W = E ', ' let e = R_4 let name = tokentext.R_2 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place.R)let newdict = dict.R + Local(name,(types.e)_1)bindinfo(newdict, code.e + Define.name, types.e, tokentext.R_2)'] 
+, [ ' E A E ', ' let name = tokentext.R_1 let f = lookup(dict.R, name, empty:seq.mytype)assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name"+ name bindinfo(dict.R_1-f_1, code.R_1 + code.R_2,  types.R_2,"")'] 
+,[ ' E if E then E else E ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
+,  [ ' N_', ' R_1 '] 
+, [ ' N-', ' R_1 '] 
+, [ ' N = ', ' R_1 '] 
+, [ ' N > ', ' R_1 '] 
+, [ ' N * ', ' R_1 '] 
+, [ ' N ∧ ', ' R_1 '] 
+,  [ ' N ∨ ', ' R_1 '] 
+,  [ ' D   E @@ ', ' R_1 '] 
+, [ ' E  D  NM(E,L) ', ' apply2(R_1, R_3,R_5,R_7, input, place.R)']
+ , [ ' E  D N(E,L) ', ' apply2(R_1, R_3,R_5,R_7 ,input, place.R)']
+ ,   [ ' K W.E ', ' bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)'] 
+,  [ ' K N.E ', ' bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)'] 
+,  [ ' K N ', ' R_1 '] 
+,   [ ' K NM(L)', ' bindinfo(dict.R, code.R_3, types.R_3, tokentext.R_1)'] 
+, [ ' K NM ', ' R_1 '] 
+, [ ' E @(K, K, E, E)', ' pretty.[ R_1, R_2, list(R_3 + R_5 + R_7 + R_9), R_10]'] 
+]
+
+   
+  

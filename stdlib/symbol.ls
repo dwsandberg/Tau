@@ -308,11 +308,11 @@ Function Words(s:seq.word)symbol symbol(s,"$words","word seq", constbit)
 
 Function Word(s:word)symbol symbol([ s],"$word","word", constbit)
 
-Function Define(s:seq.word)symbol symbol("DEFINE" + s,"$define","?", specialbit)
+Function Define(s:seq.word)symbol Define.s_1
 
 Function Define(w:word)symbol symbol(["DEFINE"_1, w],"$define","?", specialbit)
 
-Function Define(w:int)symbol symbol(["DEFINE"_1, toword.w],"$define","?", specialbit)
+Function Define(w:int)symbol Define.toword.w
 
 
 Function Fref(s:symbol)symbol

@@ -28,12 +28,11 @@ Function hasdigit(w:word)boolean
   ∨ l_1 = toint.hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)
 
 function tokenlist seq.word // tokenlist is from parser generator //
-".=():>]-{ } comment, [_^is T if # then else let assert report ∧ ∨ * $wordlist @ A E G F W P N L I K FP NM D !"
-
+".=():>]-{ } comment, [_is T if # then else let assert report ∧ ∨ * $wordlist @ @@ A E G F W P N L I K FP NM D"
 
 function actionlist seq.lexaction1 // most frequently used words in programs //
 let mostfrequentwords = ' //",().:+_seq = a int if-then else Function let word 0 i T][ 2 use function mytype @ empty inst '
-let wordstoinclude = mostfrequentwords + tokenlist + "= < > ? ≤ ≠ ≥ >> << in +-∈ ∋ * / mod ∪ ∩_^'"
+let wordstoinclude = mostfrequentwords + tokenlist + "! = < > ? ≤ ≠ ≥ >> << in +-∈ ∋ * / mod ∪ ∩_^'"
 + prepreplacements("","","le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ contains ∋", 1)
  @(+, tolexaction, empty:seq.lexaction1, toseq.asset.wordstoinclude)
 

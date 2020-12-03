@@ -60,6 +60,11 @@ Function parse(dict:set.symbol, input:seq.word)bindinfo parse(bindinfo(dict, emp
 
 / use encoding.seq.token.bindinfo
 
+Function testparse seq.word  
+let b=parse(bindinfo(empty:set.symbol,empty:seq.symbol, empty:seq.mytype,""),
+' function a int  f("hi") '
+ )"OK"
+
 Function parse(b:bindinfo, input:seq.word)bindinfo
  // let a = if length.cachevalue = 0 then let discard = encode(sortedlextable:bindinfo){data.(cachevalue)_1 } else data.(cachevalue)_1 //
  let a = sortedlextable:bindinfo
@@ -80,7 +85,7 @@ function opaction(R:reduction.bindinfo, input:seq.token.bindinfo)bindinfo
  let op = tokentext.R_2
  let dict = dict.R_1
  let types = types.R_1 + types.R_3
- let f = lookupbysig(dict, op, types, input, place.R)
+ let f = lookupbysig(dict, [op_1], types, input, place.R)
   bindinfo(dict, code.R_1 + code.R_3 + f, [ resulttype.f],"")
 
 function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, exp:bindinfo)bindinfo
@@ -101,11 +106,63 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
   let f = lookupbysig(dict.R, op, types.exp, input, place.R)
    bindinfo(dict.R, code.exp + f, [ resulttype.f],"")
 
-function apply(term1:bindinfo, term2:bindinfo,   input:seq.token.bindinfo, place:int)bindinfo
-let i=backparse(code.term2,length.code.term2-1,1)
- assert false report "place hold"+@(+,print,"",code.term2)
- +"&br init"+@(+,print,"",subseq(code.term2,1,i ))
-term1
+function placehold(initseq:bindinfo, accsym:bindinfo, initacc:bindinfo, args:bindinfo, input:seq.token.bindinfo, place:int)bindinfo
+    let seqtype=first.types.initseq
+    let resulttype=first.types.initacc 
+    let xx=typerep.seqtype+typerep.resulttype+"/"+typerep.first.types.initacc+
+     typerep.first.types.args+text.accsym
+     assert xx="int seq int / int int +" report "JK"+typerep.seqtype+typerep.resulttype+"/"+typerep.first.types.initacc+
+     typerep.first.types.args+text.accsym
+    let op = lookupbysig(dict.initseq, text.accsym , types.initacc+types.args, input, place)
+     let paratypes=paratypes.op
+      assert abstracttype.seqtype in "seq" report errormessage(" first term of apply must be sequence",input,place)
+      assert length.paratypes > 1 &and  paratypes_1 = resulttype
+      report "First parameter must be the same as the result type in apply"
+           let z=if op=symbol("∧(boolean, boolean)","stdlib","boolean")
+        then symbol("∧(bits, bits)","bits","bits") 
+        else if op=symbol("∨(boolean, boolean)","stdlib","boolean")
+        then symbol("∨(bits, bits)","bits","bits") 
+        else op
+     // assert false report  "CHK"+    print.z //  
+  let newway=  code.initseq+Define."@seq"+   Local.first."@seq"+ code.initacc 
+    +  Local.first."@seq"
+    +newsymbol("@acc",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,resulttype)
+    +code.args+op
+     +Fref.pseqidxsym.parameter.seqtype 
+     +newsymbol("apply3",abstracttype("builtin"_1,resulttype )
+           ,[ seqtype,resulttype,seqtype,resulttype ,typeint],resulttype )
+   //   assert false report "place holdx"+@(+,print,"",newway)    //
+ bindinfo(dict.initseq,     newway , [resulttype.op],"")
+ 
+  assert false report "place hold"
+ initseq
+
+
+function apply(orgdict:set.symbol,term1:bindinfo, term2:bindinfo,   input:seq.token.bindinfo, place:int)bindinfo
+    let seqtype=(types.term1)_1
+      let resulttype=(types.term2)_1
+      let op=last.code.term2
+      let z=if op=symbol("∧(boolean, boolean)","stdlib","boolean")
+        then symbol("∧(bits, bits)","bits","bits") 
+        else if op=symbol("∨(boolean, boolean)","stdlib","boolean")
+        then symbol("∨(bits, bits)","bits","bits") 
+        else op
+     // assert false report  "CHK"+    print.z //  
+      let code2= (code.term2 >> 1 )+z
+      let paratypes=paratypes.op
+     assert length.paratypes > 1 &and  paratypes_1 = resulttype
+      report "Type first parameter must be the same as the result type in apply"
+      let i=backparse(  code2 ,length.code2-1,1)
+     // assert false report "XXXX"+toword.i+@(+,print,"",code.term2) //
+      let newway=  code.term1+Define."@seq"+ subseq(code2,1,i) 
+      +newsymbol("@acc",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,resulttype)
+      +subseq(code2,i+1,length.code2)
+       +[Fref.pseqidxsym.parameter.seqtype  ,newsymbol("apply3",abstracttype("builtin"_1,resulttype )
+           ,[ seqtype,resulttype,resulttype ,typeint],resulttype )] 
+    //  assert false report "place holdx"+@(+,print,"",newway)  //  
+ bindinfo(orgdict,     newway , [resulttype.op],"")
+ 
+
 
 function backparse(s:seq.symbol,i:int,noterms:int) int
  if noterms=0 then i
@@ -127,8 +184,8 @@ function backparse(s:seq.symbol,i:int,noterms:int) int
 
 function declareapplyvars( term1:bindinfo, input:seq.token.bindinfo, place:int)bindinfo
 let seqtype=(types.term1)_1
-assert abstracttype.seqtype in "seq" report errormessage(" first term of apply must be sequence",input,place)
-let newdict = dict.term1 + newsymbol("@e",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype)
+ let newdict = dict.term1 + newsymbol("@e",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype)
++ newsymbol("@i",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,typeint)
 bindinfo(newdict, code.term1 , types.term1, tokentext.term1)
 
 
@@ -266,5 +323,6 @@ if ruleno = // NM W // 53 then R_1 else
 if ruleno = // NM W:T // 54 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1)else 
 if ruleno = // E @(K, K, E, E)// 55 then apply(R_3, R_5, R_7, R_9, input, place.R)else 
 if ruleno = // D E // 56 then declareapplyvars(R_1,input, place.R) else 
-assert ruleno = // E @ @(D, E)// 57 report"invalid rule number"+ toword.ruleno 
-apply(R_4, R_6, input, place.R)
+if ruleno = // E E @@ W(D, L)// 57 then placehold(R_1, R_3, R_5, R_7, input, place.R) else 
+assert ruleno = // E E @@ N(D, L)// 58 report"invalid rule number"+ toword.ruleno 
+placehold(R_1, R_3, R_5, R_7, input, place.R)

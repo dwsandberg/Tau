@@ -185,7 +185,5 @@ let y = [ t001, t002, t003, t004, t005, t006, t007, t008, t009, t010
 ,   b.[Tpair(3,"three"),Tpair(4,"four"),Tpair(5,"five")]_-2 = "four"  
    ,[1,2,4]_-3=1
    , // 50 // "this is a test" << 2 = "a test"
-  ,    "this is a test" >> 3 ="this"
-  ,    "this is a test." >> -3="this is a"
-     ,    "this is a test." << -1="."]
+   ,    "this is a test" >> 3 ="this"]
  check(y,"test11")

@@ -206,12 +206,25 @@ Function randomseq(seed:int, length:int)seq.int @(addrandom, identity, [ seed], 
 
 Builtin randomint(i:int)seq.int
 
+Function list(acc:seq.word,seperator:seq.word,idx:int,ele:seq.word) seq.word
+  if idx=1 then acc+ele else acc+seperator+ele
+
+/Function list(acc:seq.word,seperator:seq.word,idx:int,ele:int) seq.word
+  (if idx=1 then acc  else acc+seperator)+toword.ele
+  
+  Function EOL seq.word "&br"  
+
+
 Function seperator(sep:seq.word, s:seq.word, w:seq.word)seq.word
  if length.s = 0 then w else s + sep + w
 
 Function seperator(sep:seq.word, s:seq.word, w:word)seq.word
  // Good for adding commas in seq of words. @(seperator(",", toword,"", [ 1, 2, 3])//
  if length.s = 0 then [ w]else s + sep + w
+ 
+Function >1(i:int,sep:seq.word ) seq.word
+ if i > 1 then sep else empty:seq.word  
+
 
 Export hash(a:word)int
 
@@ -286,6 +299,8 @@ Export identity(word)word
 Export identity(int)int
 
 Export last(s:seq.word)word
+
+Export first(s:seq.word) word
 
 Export subseq(seq.seq.word, int, int)seq.seq.word
 

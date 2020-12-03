@@ -91,9 +91,20 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
       else if(fsig.sym)_1 in "kindrecord"then
       let p2 = Record.@(+, kind(alltypes, modpara), "", paratypes.sym)
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
-      else if (fsig.sym)_1 in " assert callidx   apply2 applyaccumalator applyelement"  then
+      else if (fsig.sym)_1 in " assert callidx   apply2 applyaccumalator applyelement
+      @e @i @acc apply3"  then
         let kind =   kind.gettypeinfo(alltypes,  parameter.modname.newsym) 
-          let p2=    symbol(fsig.newsym,[kind]+"builtin",returntype.newsym) 
+          let p2=    
+         if (fsig.sym)_1 ="apply3"_1 then
+           let k= findindex(","_1,fsig.newsym)
+           let a=    kind.gettypeinfo(alltypes,mytype.subseq(fsig.newsym,3,k-2))
+           let newfsig="apply3("+a+"seq"+subseq(fsig.newsym,k,length.fsig.newsym)
+                let xx=
+                     symbol(newfsig,[kind]+"builtin",returntype.newsym) 
+                  //   assert false report "PPP"+fsig.xx+print.xx //
+                xx
+          else   
+          symbol(fsig.newsym,[kind]+"builtin",returntype.newsym) 
         postbind3(alltypes, dict, code, i + 1, result + p2 , modpara, org, calls, sourceX, tempX)
       else   
        let codeforbuiltin = codeforbuiltin(alltypes, newsym, sym, org)

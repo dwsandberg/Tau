@@ -137,16 +137,25 @@ Function subseq(p:pseq.T, start:int, end:int)seq.T
 
 Function last(a:seq.T)T a_(length.a)
 
+Function first(a:seq.T) T a_1
+
 Function isempty(a:seq.T)boolean length.a = 0
 
 --------------------------
 
 Builtin packed(s:seq.T)seq.T
 
+Function suffix (s:seq.T, len:int) seq.T  
+    subseq(s, length.s-len-1,length.s)
+    
+  
+
 Function << (s:seq.T, i:int) seq.T   
  // if i < 0 then postfix of s of length -i else postfix of length.s-i //
+    assert i &ge 0 report "FAIL << "+stacktrace
            subseq(s,if i < 0 then length.s+i+1 else i+1,length.s)
           
-    Function >> (s:seq.T , i:int) seq.T   
+    Function >> (s:seq.T , i:int) seq.T  
+      assert i &ge 0 report "FAIL >> "+stacktrace   
  // if i < 0 then prefix of s of length.s+i else prefix of length.s-i //
             subseq(s,1, if i < 0 then -i  else length.s-i )

@@ -45,7 +45,7 @@ function consumetype(s:seq.word, i:int)int
  if i > length.s then i
  else if s_i = "."_1 then consumetype(s, i + 2)else i
 
-Function EOL word encodeword.[ char.10]
+Function LF word encodeword.[ char.10]
 
 Function processpara(t:seq.word)seq.word processpara(t, 1, 1,"", push(empty:stack.seq.word,""))
 
@@ -65,18 +65,18 @@ function processpara(a:seq.word, j:int, i:int, result:seq.word, stk:stack.seq.wo
    processpara(a, j, i + 2, result + "<strong>" + subseq(a, i + 1, i + 1) + "</strong>", stk)
    else if this = " &row"_1 then
    if not.isempty.stk ∧ top.stk = "</caption>"then
-    processpara(a, j + 1, i + 1, result + EOL + ' </caption> <tr id ="' + toword.j
+    processpara(a, j + 1, i + 1, result + LF + ' </caption> <tr id ="' + toword.j
      + '"onclick ="cmd5(this)"><td> ', pop.stk)
     else
-     processpara(a, j + 1, i + 1, result + EOL + ' <tr id ="' + toword.j
+     processpara(a, j + 1, i + 1, result + LF + ' <tr id ="' + toword.j
      + '"onclick ="cmd5(this)"><td> ', stk)
    else if this = " &cell"_1 then
-   processpara(a, j, i + 1, result + EOL + "<td>", stk)
+   processpara(a, j, i + 1, result + LF + "<td>", stk)
    else if this = " &br"_1 then
    if subseq(a, i + 1, i + 2) = " &{ block"
     ∨ i > 1 ∧ subseq(a, i - 1, i - 1) = " &}"then
     processpara(a, j, i + 1, result, stk)
-    else processpara(a, j, i + 1, result + EOL + "<br>" + space, stk)
+    else processpara(a, j, i + 1, result + LF + "<br>" + space, stk)
    else if this = " &{"_1 ∧ i + 2 < length.a then
    let next = a_(i + 1)
      if next = "block"_1 then
@@ -88,11 +88,11 @@ function processpara(a:seq.word, j:int, i:int, result:seq.word, stk:stack.seq.wo
        processpara(a, j, t + 1, result + subseq(a, i + 2, t - 1), stk)
      else if next = "select"_1 then
      if i + 4 < length.a ∧ a_(i + 3) = "&section"_1 then
-      processpara(a, j, i + 4, result + EOL + "<h2 id =" + a_(i + 2)
+      processpara(a, j, i + 4, result + LF + "<h2 id =" + a_(i + 2)
        + ' onclick ="javascript:cmd5(this)"> '
        + space, push(stk,"</h2>"))
       else
-       processpara(a, j, i + 3, result + EOL + "<p id =" + a_(i + 2)
+       processpara(a, j, i + 3, result + LF + "<p id =" + a_(i + 2)
        + ' onclick ="javascript:cmd5(this)"> '
        + space, push(stk,"</p>"))
      else if next = "table"_1 then
@@ -126,10 +126,10 @@ Function escapeformat(s:seq.word)seq.word @(+, escapeformat.length.s,"", s)
 
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 
-function needsEOL(x:seq.word, i:int)boolean
- // adds EOL only if no EOL is present //
+function needsLF(x:seq.word, i:int)boolean
+ // adds LF only if no LF is present //
  if i = 0 then false
- else if x_i = space then needsEOL(x, i - 1)
+ else if x_i = space then needsLF(x, i - 1)
  else if x_i = " &br"_1 then false else true
 
 function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.word
@@ -147,7 +147,7 @@ function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.wo
 &{ noformat"+ escapeformat.subseq(a, i-2, i + 3)+" &}"+ result_(length.result-1)+"KL"//
      if // i + 2 &le length.a &and a_(i + 2)≠"
 &br"_1 ∧ //
-     needsEOL(result, length.result)then
+     needsLF(result, length.result)then
      processtotext(a, i + 2, result + " &br" + toseq.stk + space, push(stk, space))
      else processtotext(a, i + 2, result, push(stk, space))
     else if next = "noformat"_1 then
@@ -170,7 +170,7 @@ Function htmlheader seq.word // the format of the meta tag is carefully crafted 
 + ' span.literal { color:red ; } span.comment { color:green ; } '
 + ' span.block { padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ; } '
 + ' form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style> '
-+ EOL
++ LF
 
 Function prettynoparse(s:seq.word)seq.word // format function without first parsing it // prettynoparse(s, 1, 0,"")
 

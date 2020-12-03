@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau ; use testencoding ; testencoding
+
+
 
 Module testencoding
 
@@ -53,7 +55,6 @@ use tree.seq.word
 
 Export +(i:int, b:int)int
 
-run testencoding testencoding
 
 function =(a:testrecord, b:testrecord)boolean key.a = key.b
 
