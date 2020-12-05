@@ -45,20 +45,20 @@ function restoredirection(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T, a
   if isempty.both then [ arcinfo.a]else both
 
 Function restorearcs(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T)seq.arcinfo.T
- @(+, restoredirection(orgarc, org, modified), empty:seq.arcinfo.T, toseq.arcs.modified)
+ (toseq.arcs.modified)@@ +(empty:seq.arcinfo.T, restoredirection(orgarc, org, modified, @e))
 
 Function displaygraph(control:characterwidths, arci:seq.arcinfo.T)seq.word
- let g = newgraph.@(+, a, empty:seq.arc.T, arci)
+ let g = newgraph(arci @@ +(empty:seq.arc.T, a.@e))
  let lg = layer.makeDAG.g
  let posistion = assignx(g.lg, nodes.g.lg - nodes.g, layers.lg)
- let p1 = @(+, assignwidths(control), empty:seq.nodeinfo.T, toseq.posistion)
+ let p1 =(toseq.posistion)@@ +(empty:seq.nodeinfo.T, assignwidths(control, @e))
  let p3 = restorearcs(asset.arci, g, g.lg)
-  // assert false report @(+, print,"", p3)// tosvg(p3, toseq.nodes.g, asset.p1)
+   tosvg(p3, toseq.nodes.g, asset.p1)
 
 Function displaygraph(control:characterwidths, g:graph.T)seq.word
- let arci = @(+, arcinfo, empty:seq.arcinfo.T, toseq.arcs.g)
+ let arci =(toseq.arcs.g)@@ +(empty:seq.arcinfo.T, arcinfo.@e)
  let lg = layer.makeDAG.g
  let posistion = assignx(g.lg, nodes.g.lg - nodes.g, layers.lg)
- let p1 = @(+, assignwidths(control), empty:seq.nodeinfo.T, toseq.posistion)
+ let p1 =(toseq.posistion)@@ +(empty:seq.nodeinfo.T, assignwidths(control, @e))
  let p3 = restorearcs(asset.arci, g, g.lg)
-  // assert false report @(+, print,"", p3)// tosvg(p3, toseq.nodes.g, asset.p1)
+   tosvg(p3, toseq.nodes.g, asset.p1)

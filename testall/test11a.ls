@@ -6,6 +6,8 @@ use seq.boolean
 
 use checking
 
+use seq.checkprec
+
 use main2
 
 use stdlib
@@ -38,11 +40,11 @@ let z = [ compare("a + b + c","{(a + b)+ c }")
 , testerror("export return type missmatch", ["Export +(int, int)boolean "])
 , testerror("Cannot find module", ["use int.notdefined"])
 , testerror("Cannot find module", ["use notdefined"])]
- check(z,"test11a")
+ check(z,"test11a") + checkprec
 
 Function testcomp2(s:seq.seq.word)seq.word
  let p = process.testcomp.s
-  if aborted.p then message.p else @(+, +." &br  &br","", result.p)
+  if aborted.p then message.p else result.p @@ +(""," &br  &br" + @e)
 
 Function compare(exp1:seq.word, exp2:seq.word)boolean
  let e1 = testcomp2
@@ -60,3 +62,93 @@ Function testerror(m:seq.word, code:seq.seq.word)boolean
  let a = isprefix(m, r)
   assert isprefix(m, r)report"Fail test11a expected:" + m + " &br got:" + subseq(r, 1, length.m)
    a
+   
+type checkprec is record toseq:seq.word
+
+use seq.checkprec
+
+Function checkprec seq.word
+assert  - ( 1 * 1 )-5 =-6 report "Fail prec"  
+let a=[ (x.1+x.2+x.3), (x.1 * x.2 * x.3) ,(x.1)^(x.2 )^(x.3) , (x.1)_(x.2 )_(x.3)
+,- x.1 * (x.2) ^ x.3,
+ x.1 * x.2 + x.3,
+x.1 + x.2 * x.3,
+ x.1 + x.2 ! bi x.3,
+       x.1 ! bi x.2 + x.3,
+      x.1 ! bi x.2 + x.3,
+      uni.x.1 * x.2,
+      uni.(x.1) ^ x.2 , 
+       x.1 + x.2 = x.3,
+  x.1 = x.2 + x.3,
+ x.1 > x.2 = x.3,
+ x.1 = x.2 > x.3,
+ x.1 = x.2 &and x.3,
+ x.1  &and x.2 =x.3,
+ x.1 &and x.2  &or x.3,
+ x.1 &or x.2  &and x.3,
+ uni.(x.1) + x.2  
+]
+let b=
+["((1 + 2)+ 3)"," 
+((1 * 2)* 3)"," 
+((1^2)^3)"," 
+((1_2)_3)"," 
+((-1)*(2^3))"," 
+((1 * 2)+ 3)"," 
+(1 +(2 * 3))"," 
+((1 + 2)! 3)"," 
+((1 ! 2)+ 3)"," 
+((1 ! 2)+ 3)"," 
+((uni 1)* 2)"," 
+(uni(1^2))"," 
+((1 + 2)= 3)"," 
+(1 =(2 + 3))"," 
+((1 > 2)= 3)"," 
+((1 = 2)> 3)"," 
+((1 = 2)&and 3)"," 
+(1 &and(2 = 3))"," 
+((1 &and 2)&or 3)"," 
+(1 &or(2 &and 3))",
+"((uni 1)+ 2)"]
+ check(a @@ +(empty:seq.seq.word, toseq.@e), b,"precedence test")
+
+function check2(l:seq.seq.word, b:seq.seq.word, i:int)seq.word
+ if l_i = b_i then""else [ toword.i]
+
+Function check(y:seq.seq.word,b:seq.seq.word, testname:seq.word)seq.word
+ let x = arithseq(length.y, 1, 1)@@ +("", check2(y, b, @e))
+  if x = ""then"PASS" + testname
+  else" &{ literal FAILED  &} test" + x + "in" + testname
+
+function x(a:int) checkprec checkprec.[toword.a]
+
+function -(a:checkprec) checkprec checkprec("(-"+toseq.a+")")
+
+function uni(a:checkprec) checkprec checkprec("(uni"+toseq.a+")")
+
+function^(a:checkprec, b:checkprec)checkprec
+ checkprec("(" + toseq.a + "^" + toseq.b + ")")
+
+function_(a:checkprec, b:checkprec)checkprec
+ checkprec("(" + toseq.a + "_" + toseq.b + ")")
+
+function *(a:checkprec, b:checkprec)checkprec
+ checkprec("(" + toseq.a + "*" + toseq.b + ")")
+
+Function bi(a:checkprec, b:checkprec)checkprec
+ checkprec("(" + toseq.a + "!" + toseq.b + ")")
+
+function +(a:checkprec, b:checkprec)checkprec
+ checkprec("(" + toseq.a + "+" + toseq.b + ")")
+
+function =(a:checkprec, b:checkprec)checkprec
+ checkprec("(" + toseq.a + "=" + toseq.b + ")")
+ 
+function >(a:checkprec, b:checkprec)checkprec
+ checkprec("(" + toseq.a + ">" + toseq.b + ")")
+ 
+function ∧(a:checkprec, b:checkprec)checkprec
+ checkprec("(" + toseq.a + "&and" + toseq.b + ")")
+
+ function ∨(a:checkprec, b:checkprec)checkprec
+ checkprec("(" + toseq.a + "&or" + toseq.b + ")")

@@ -8,6 +8,8 @@ use fileio
 
 use encoding.indexedword
 
+use dseq.int
+
 use stdlib
 
 use textio
@@ -16,13 +18,11 @@ use seq.seq.word
 
 use seq.word
 
+use dseq.wordfreq
+
 use otherseq.wordfreq
 
 use seq.wordfreq
-
-use dseq.wordfreq
-
-use dseq.int
 
 type indexedword is record w:word
 
@@ -51,8 +51,8 @@ function removelowcount(mincount:int, p:wordfreq)seq.wordfreq if count.p < minco
 
 function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq
  sort
- .@(+, removelowcount(mincount), empty:seq.wordfreq, @(count, identity, dseq.wordfreq(0,"A"_1), a))
+ .(a @@ count(dseq.wordfreq(0,"A"_1), @e))@@ +(empty:seq.wordfreq, removelowcount(mincount, @e))
 
-Function test2 seq.word @(+, print, empty:seq.word, wordfreq(300, gettext."testall/input"))
+Function test2 seq.word wordfreq(300, gettext."testall/input")@@ +(empty:seq.word, print.@e)
 
-function count(s:seq.wordfreq, w:seq.word)seq.wordfreq @(count, identity, s, w)
+function count(s:seq.wordfreq, w:seq.word)seq.wordfreq w @@ count(s, @e)

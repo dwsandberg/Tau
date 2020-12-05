@@ -28,10 +28,7 @@ use stdlib
 
 use svg
 
- 
 use seq.seq.word
-
-
 
 type svgdraw is record width:int, height:int, a:seq.word
 
@@ -59,16 +56,17 @@ unbound =(T, T)boolean
 
 function =(a:nodeinfo.T, b:nodeinfo.T)boolean n.a = n.b
 
-Function maxx(a:seq.nodeinfo.T)int @(max, rightedge, 0, a)
+Function maxx(a:seq.nodeinfo.T)int a @@ max(0, rightedge.@e)
 
 function rightedge(a:nodeinfo.T)int x.a + width.a
 
-Function maxy(a:seq.nodeinfo.T)int @(max, y, 0, a)
+Function maxy(a:seq.nodeinfo.T)int a @@ max(0, y.@e)
 
 Function zerowidth(a:seq.T, b:nodeinfo.T)nodeinfo.T
  if n.b in a then b else nodeinfo(n.b, x.b, y.b, 0, seperation.b)
 
-Function zerowidth(a:seq.T, b:set.nodeinfo.T)set.nodeinfo.T @(+, zerowidth(a), empty:set.nodeinfo.T, toseq.b)
+Function zerowidth(a:seq.T, b:set.nodeinfo.T)set.nodeinfo.T
+ toseq.b @@ +(empty:set.nodeinfo.T, zerowidth(a, @e))
 
 Function posindegree(g:graph.T, layers:seq.seq.T, layer:int, node:T)nodeinfo.T
  let x = findindex(node, layers_layer)
@@ -82,27 +80,30 @@ Function pos(layers:seq.seq.T, layer:int, node:T)nodeinfo.T
   if x > length.layers_layer then pos(layers, layer + 1, node)else nodeinfo(node, x, layer)
 
 Function defaultpos(g:graph.T, layers:seq.seq.T)set.nodeinfo.T
- @(+, pos(layers, 1), empty:set.nodeinfo.T, @(+, identity, empty:seq.T, layers))
+ let a = layers @@ +(empty:seq.T, @e)
+  a @@ +(empty:set.nodeinfo.T, pos(layers, 1, @e))
 
 Function posindegree(g:graph.T, layers:seq.seq.T)set.nodeinfo.T
- @(+, posindegree(g, layers, 1), empty:set.nodeinfo.T, @(+, identity, empty:seq.T, layers))
+ let a = layers @@ +(empty:seq.T, @e)
+  a @@ +(empty:set.nodeinfo.T, posindegree(g, layers, 1, @e))
 
 Function tosvg(arcs:seq.arc.T, nodes:seq.T, positions:set.nodeinfo.T)seq.word
- let arci = @(+, arcinfo, empty:seq.arcinfo.T, arcs)
+ let arci = arcs @@ +(empty:seq.arcinfo.T, arcinfo.@e)
   tosvg(arci, nodes, positions)
 
 Function tosvg(arci:seq.arcinfo.T, nodes:seq.T, positions:set.nodeinfo.T)seq.word
  let r = zerowidth(nodes, positions)
- let minx = @(min, x, x.r_1, toseq.r)
+ let minx = toseq.r @@ min(x.r_1, x.@e)
  let vertnodesize = 16
- let p2 = @(+, adjust(vertnodesize, minx, @(layerwidths, identity, dseq.1, toseq.r)), empty:set.nodeinfo.T, toseq.r)
- let g = @(+, toarcinfo(p2), empty:set.arcinfo.T, arci)
-  svg(["text { fill:black }"], @(+, svgnode(vertnodesize, g, p2),"", toseq.p2), maxx.toseq.p2, maxy.toseq.p2)
+ let a =(toseq.r)@@ layerwidths(dseq.1, @e)
+ let p2 =(toseq.r)@@ +(empty:set.nodeinfo.T, adjust(vertnodesize, minx, a, @e))
+ let g = arci @@ +(empty:set.arcinfo.T, toarcinfo(p2, @e))
+  svg(["text { fill:black }"], toseq.p2 @@ +("", svgnode(vertnodesize, g, p2, @e)), maxx.toseq.p2, maxy.toseq.p2)
 
 Function svgnode(vertnodesize:int, info:set.arcinfo.T, s:set.nodeinfo.T, p:nodeinfo.T)seq.word
  let arcstonode = findelement2(info, arcinfo(arc(n.p, n.p),"", 0))
   {(if width.p > 0 then text("text", x.p, y.p, nodetotext.n.p)else"")
-  + @(+, drawarc(vertnodesize, p, toseq.arcstonode),"", arithseq(length.toseq.arcstonode, 1, 1))}
+  + arithseq(length.toseq.arcstonode, 1, 1)@@ +("", drawarc(vertnodesize, p, toseq.arcstonode, @e))}
 
 function drawarc(vertnodesize:int, stop:nodeinfo.T, s:seq.arcinfo.T, i:int)seq.word
  let a = s_i
@@ -154,10 +155,10 @@ function layerwidths(ws:seq.int, p:nodeinfo.T)seq.int
   if w > ws_(y.p)then replace(ws, y.p, w)else ws
 
 function adjust(vertnodesize:int, minx:int, layerwidths:seq.int, p:nodeinfo.T)nodeinfo.T
- assert true report"layer width" + @(+, toword,"", layerwidths)
+ assert true report"layer width" + layerwidths @@ +("", toword.@e)
  let interlayerspace = 500
  let y = if y.p = 1 then 0
- else @(+, identity, interlayerspace * (y.p - 1), subseq(layerwidths, 1, y.p - 1))
+ else subseq(layerwidths, 1, y.p - 1)@@ +(interlayerspace * (y.p - 1), @e)
   nodeinfo(n.p, 10 + y / 8, 10 + (x.p - minx) * vertnodesize, width.p / 8, seperation.p)
 
 ____________________________________

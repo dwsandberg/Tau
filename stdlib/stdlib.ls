@@ -3,12 +3,13 @@ Module stdlib
 Library stdlib UTF8 bitpackedseq bits codegennew codetemplates encoding fileio format graph groupparagraphs intdict 
 internalbc interpreter ipair libdesc llvm llvmconstants main2 maindict mangle mytype pretty otherseq parse parsersupport 
 pass1 pass2new persistant postbind prims process real seq set stack stacktrace symbol textio timestamp tree worddict words xxhash
+reduceorder
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format 
 graph groupparagraphs intdict internalbc ioseq ipair libdesc llvm llvmconstants 
 main2 maindict mangle mytype pretty otherseq  prims process 
 real seq set stack stacktrace stdlib symbol textio timestamp tree worddict words xxhash 
-codegennew codetemplates persistant
+codegennew codetemplates persistant reduceorder
 
 parse parsersupport
 
@@ -208,6 +209,10 @@ Builtin randomint(i:int)seq.int
 
 Function list(acc:seq.word,seperator:seq.word,idx:int,ele:seq.word) seq.word
   if idx=1 then acc+ele else acc+seperator+ele
+  
+Function list(acc:seq.word,seperator:seq.word,idx:int,ele:word) seq.word
+  if idx=1 then acc+ele else acc+seperator+[ele]
+
 
 /Function list(acc:seq.word,seperator:seq.word,idx:int,ele:int) seq.word
   (if idx=1 then acc  else acc+seperator)+toword.ele

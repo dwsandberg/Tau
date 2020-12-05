@@ -1,5 +1,4 @@
-#!/usr/local/bin/tau ; use main2;   use doc ; doclibrary."stdlib"
-
+#!/usr/local/bin/tau ; use tools; testprofile."testall"
 
 ; use tools; testprofile."stdlibbak"
 
@@ -43,7 +42,7 @@ use seq.seq.word
 
 use seq.word
 
-Function asparagraphs(a:seq.seq.word)seq.word @(+, +." &br  &br","", a)
+Function asparagraphs(a:seq.seq.word)seq.word a @@ +(""," &br  &br"+ @e)
 
 Function testprofile(libname:seq.word)seq.word
  let a = asparagraphs.compile("all", libname)

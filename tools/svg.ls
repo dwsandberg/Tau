@@ -6,7 +6,7 @@ use seq.seq.word
 
 Function svg(classes:seq.seq.word, body:seq.word, width:int, length:int)seq.word
  let classdefs = ' <style type ="text/css"> ' + merge."<! [ CDATA ["
- + @(+, identity,"", @(+, +." &br.", empty:seq.seq.word, classes))
+ + classes @@ +(empty:seq.seq.word," &br." + @e)@@ +("", @e)
  + "]]></style>"
   " &br <svg height =" + toword.length + "width =" + toword.width
   + ' > <defs> <marker id ="markerArrow2"markerWidth ="13"markerHeight ="13"refX ="2"refY ="7"orient ="auto"> <path d ="M8, 13 L8, 2 L2, 7 L8, 13"style ="fill:#000000 ;"/> </marker> '

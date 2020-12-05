@@ -384,7 +384,24 @@ if ruleno = // K NM(L)// 51 then pretty.[ R_1, R_2, list.R_3, R_4]else
 if ruleno = // K NM // 52 then R_1 else 
 if ruleno = // NM W // 53 then R_1 else 
 if ruleno = // NM W:T // 54 then pretty.[ R_1, R_2, R_3]else 
-if ruleno = // E @(K, K, E, E)// 55 then pretty.[ R_1, R_2, list(R_3 + R_5 + R_7 + R_9), R_10]else 
-if ruleno = // D E // 56 then R_1 else 
-assert ruleno = // E @ @(D, E)// 57 report"invalid rule number"+ toword.ruleno 
-pretty.[ R_1, R_2, list(R_4 + R_6), R_7]
+if ruleno = // E @(K, K, E, E)// 55 then  
+  let sq=if length.text.R_9 = 1 then text.R_9 else "("+text.R_9 +")"
+    let t2=text.R_5
+   let term2=if length.t2=1  then if t2="identity" then "@e"  else    t2+".@e"  
+     else if  t2_2 in "." then 
+       if first.t2 in "* + _" then (t2 << 2) +first.t2 +"@e" else  [first.t2]+"("+(t2 << 2) +",@e)"
+     else
+       (t2 >> 1) + ",@e)"
+    if length.text.R_3=1 then 
+    attribute( sq+"@@"+text.R_3+"("+text.R_7+","+term2+")")
+    else 
+     let t1=text.R_3
+    // assert t1=' seperator("/" )' report "NNNNN"+text.R_3  +toword.length.text.R_3+(text.R_3)_6 //
+      if length.t1 = 9 &and first.t1 in ' seperator '  &and t1_6 in ",/" then 
+     attribute( sq+"@@ list("+text.R_7+'  ," '+ t1_6 + ' ",@i, '+term2+")")
+else 
+pretty.[R_1, R_2, list(R_3 + R_5 + R_7 + R_9), R_10] else 
+if ruleno = // D E @@ // 56 then pretty.[ R_1, R_2] else 
+if ruleno = // E D NM(E, L)// 57 then pretty.[ R_1, R_2, R_3, list(R_4 + R_6), R_7]else 
+assert ruleno = // E D N(E, L)// 58 report"invalid rule number"+ toword.ruleno 
+pretty.[ R_1, R_2, R_3, list(R_4 + R_6), R_7]

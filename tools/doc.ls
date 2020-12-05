@@ -1,8 +1,6 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau ; use doc ; testdoc
 
 Module doc
-
-run doc testdoc
 
 use seq.char
 
@@ -43,7 +41,7 @@ use set.word
 /use libscope
 
 Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html //
-let d = @(+, addselect,"", gettext."tools/doc.txt")
+let d = gettext."tools/doc.txt"@@ +("", addselect.@e)
 let x1 = createfile("doc.html", htmlheader + processpara.d)
  // let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])//
  let y1 = createfile("testall.html", htmlheader + processpara.htmlcode."testall")
@@ -54,15 +52,16 @@ function addselect(s:seq.word)seq.word" &{ select X" + s + " &}"
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
  // Calls between modules in list of modules. //
  let z = formcallgraph(firstPass.libname_1, 2)
- let g = newgraph.@(+, modarc(@(+, mytype, empty:seq.mytype, modulelist)), empty:seq.arc.word, z)
-  display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g)
+ let a =modulelist @@ +(empty:seq.mytype, mytype.@e)
+ let arcs = z @@ +(empty:seq.arc.word, modarc(a, @e))
+  display((toseq.arcs.newgraph.arcs)@@ +(empty:seq.arcinfo.seq.word, toarcinfo.@e))
 
 Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
  // Calls within modules in list of modules. //
  let g = newgraph.formcallgraph(firstPass.libname_1, 2)
- let nodestoinclude = @(∪, filterx(modulelist), empty:set.word, toseq.nodes.g)
- let g2 = @(deletenode, identity, g, toseq.nodestoinclude)
-  display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g2)
+ let nodestoinclude = toseq.nodes.g @@ ∪(empty:set.word, filterx(modulelist, @e))
+ let g2 = toseq.nodestoinclude @@ deletenode(g, @e)
+  display(toseq.arcs.g2 @@ +(empty:seq.arcinfo.seq.word, toarcinfo.@e))
 
 function filterx(include:seq.word, w:word)set.word
  let p = codedown.w
@@ -85,17 +84,21 @@ function readable(fsig:word)seq.word
  let p = codedown.fsig
   if length.p = 1 then p_1
   else
-   let plist = @(+, mytype, empty:seq.mytype, subseq(p, 3, length.p))
+   let plist = subseq(p, 3, length.p)@@ +(empty:seq.mytype, mytype.@e)
     p_1 + ":" + print.mytype.p_2 + "("
-    + @(seperator(","), print,"", plist)
+    + plist @@ list("",",", @i, print.@e)
     + ")"
 
 Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word
- let g2 = @(deletenode, identity, g, exclude + @(+, addabstractpara,"", exclude))
+ let g1=(exclude + exclude @@ +("", addabstractpara.@e))
+ let g2 =g1 @@ deletenode(g, @e)
  let g3 = if include = ""then g2
  else
-  newgraph.toseq.@(∪, arcstosuccessors(g2), empty:set.arc.word, include + @(+, addabstractpara,"", include))
-  display.@(+, toarcinfo, empty:seq.arcinfo.seq.word, toseq.arcs.g3)
+  let a = include + include @@ +("", addabstractpara.@e)
+  let b = a @@ ∪(empty:set.arc.word, arcstosuccessors(g2, @e))
+  newgraph.toseq.b
+ let d =(toseq.arcs.g3)@@ +(empty:seq.arcinfo.seq.word, toarcinfo.@e)
+  display.d
 
 function addabstractpara(w:word)word merge([ w] + ".T")
 
@@ -104,7 +107,7 @@ Function testdoc seq.word // callgraphwithin("stdlib","llvm")+ // doclibrary."st
 Function doclibrary(libname:seq.word)seq.word
  // create summary documentation for libraray. //
  let liba = getlibrarysrc.libname_1
- let r = @(+, findrestrict,"", liba)
+ let r = liba @@ +("", findrestrict.@e)
  let g = newgraph.usegraph(liba,"mod"_1, 1,"?"_1, empty:seq.arc.word)
  let exports =(getlibraryinfo.libname_1)_3
   docmodule(g, exports, r, liba, 1,"","","")
@@ -157,7 +160,7 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
      + " &br Module"
      + name
      + "is used in modules: "
-     + alphasort.@(+, tail,"", toseq.arcstopredecessors(usegraph, merge.name))
+     + alphasort((toseq.arcstopredecessors(usegraph, merge.name))@@ +("", tail.@e))
      + docmodule(usegraph, exports, todoc, lib, i + 1, subseq(lib_i, 2, length.lib_i),"","")}
  else if currentmod = ""then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
  else if subseq(lib_i, 1, 1) = "*"then
@@ -182,8 +185,8 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
 Function uncalledfunctions(libname:seq.word)seq.word
  // List of functions may include indirectly called functions. //
  let g = newgraph.formcallgraph(firstPass.libname_1, 2)
- let sources = @(+, sources(g, empty:set.word),"", toseq.nodes.g)
-  @(seperator(" &br"), readable,"", alphasort.sources)
+ let sources = toseq.nodes.g @@ +("", sources(g, empty:set.word, @e))
+  alphasort.sources @@ list(""," &br",@i  ,readable.@e) 
 
 * usegraph exclude stdlib seq set
 
@@ -205,7 +208,7 @@ function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
  if i > length.lib then empty:seq.arc.word
  else
   let t = callarcs(lib_i, 1, empty:seq.word)
-   @(+, arc.t_1, empty:seq.arc.word, toseq(asset.subseq(t, 2, length.t) - asset.subseq(t, 1, 1)))
+   toseq(asset.subseq(t, 2, length.t) - asset.subseq(t, 1, 1))@@ +(empty:seq.arc.word, arc(t_1, @e))
    + formcallgraph(lib, i + 1)
 
 function callarcs(s:seq.word, i:int, result:seq.word)seq.word
@@ -236,7 +239,7 @@ function callarcs(s:seq.word, i:int, result:seq.word)seq.word
      else
       let chs = decodeword.this
        assert length.chs > 0 ∧ chs_1 in decodeword.merge."%-0123456789"report"call arcs problem" + this + toword.i + "full text" + s
-        // @(seperator."!", identity,"", s)// callarcs(s, i + 1, result)
+         callarcs(s, i + 1, result)
 
 function gathermod(s:seq.word, i:int, result:seq.word)seq.word
  if i > length.s ∨ not(s_i = "."_1)then result

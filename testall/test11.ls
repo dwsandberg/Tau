@@ -2,6 +2,8 @@
 
 Module test11
 
+use seq.Tpair
+
 use seq.boolean
 
 use checking
@@ -20,9 +22,9 @@ use stdlib
 
 use textio
 
-use otherseq.word
-
 use dseq.word
+
+use otherseq.word
 
 function t001 boolean 0 - 4 = 1 - 2 - 3
 
@@ -117,23 +119,24 @@ function t030 boolean [ false, false, true, true] = [ isbyte(0 - 1), isbyte.256,
 
 function isbyte(i:int)boolean between(i, 0, 255)
 
-function t031 boolean false = @(∧, isbyte, true, [ 0 - 1, 256, 255, 0])
+function t031 boolean false = [ 0 - 1, 256, 255, 0]@@ ∧(true, isbyte.@e)
 
-function t032 boolean @(∧, isbyte, true, [ 23, 4, 5, 255, 7, 2, 255])
+function t032 boolean [ 23, 4, 5, 255, 7, 2, 255]@@ ∧(true, isbyte.@e)
 
 function t033 boolean 6 = (toint.if true then"3"_1 else"5"_1) + 3
 
 function t034 boolean 3464 = (3456 + if true then 3 else 1) + 5
 
-function print(a:seq.int)seq.word"[" + @(seperator(","), toword,"", a) + "]"
+function print(a:seq.int)seq.word
+ "[" + a @@ list("",",", @i, toword.@e) + "]"
 
 function t035 boolean"[ 2, 3, 4, 5]" = print.[ 2, 3, 4, 5]
 
-function t036 boolean 10 = @(+, *.1, 0, [ 1, 2, 3, 4])
+function t036 boolean 10 = [ 1, 2, 3, 4]@@ +(0, 1 * @e)
 
-function t037 boolean 24 = @(*, *.1, 1, [ 1, 2, 3, 4])
+function t037 boolean 24 = [ 1, 2, 3, 4]@@ *(1, 1 * @e)
 
-function t038 boolean [ 1, 2, 3, 4] = @(+, +.empty:seq.int, empty:seq.int, [ 1, 2, 3, 4])
+function t038 boolean [ 1, 2, 3, 4] = [ 1, 2, 3, 4]@@ +(empty:seq.int, empty:seq.int + @e)
 
 function t039 boolean
 let a = 6 * 6
@@ -144,12 +147,12 @@ function t040 boolean"a b c d e 1 2 3 4 k"
 
 function t041 boolean"1 2 k 4 5" = replace("1 2 3 4 5", 3,"k"_1)
 
-function t042 boolean @(-, identity, 100, [ 1, 2]) = 97
+function t042 boolean [ 1, 2]@@-(100, @e) = 97
 
 function showcodes(i:int)seq.word [ toword.i, encodeword.[ char.i]]
 
 Function t043 boolean"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
-= @(+, showcodes,"code glyph", arithseq(43, 1, 48))
+= arithseq(43, 1, 48)@@ +("code glyph", showcodes.@e)
 
 function t044 boolean '"()+,-.:= []^_' = standalonechars
 
@@ -157,33 +160,27 @@ function ttt(c:int)seq.word
  let class = classifychar_c
   if class in "0 SPACE"then""else [ class]
 
-Function standalonechars seq.word @(+, ttt,"", arithseq(length.classifychar, 1, 1))
+Function standalonechars seq.word arithseq(length.classifychar, 1, 1)@@ +("", ttt.@e)
 
-Function t045 boolean // testing UNICODE to word conversion and no-break space in integer 8746 // decodeword."1 2∪"_1
-= [ char.49, char.160, char.50, char.87 46]
+Function t045 boolean // testing UNICODE to word conversion and no-break space in integer 8746 //
+decodeword."1 2∪"_1 = [ char.49, char.160, char.50, char.87 46]
 
 function testset set.int asset.[ 2, 5, 6, 9, 12, 15, 35, 36]
 
 function ?2(a:int, b:int)ordering a / 10 ? b / 10
 
-function print(a:set.int)seq.word @(+, toword,"", toseq.a)
+function print(a:set.int)seq.word toseq.a @@ +("", toword.@e)
 
 function t046 boolean toseq.findelement2(testset, 36) = [ 35, 36] ∧ toseq.findelement2(testset, 15) = [ 12, 15]
 
 type Tpair is record a:int,b:seq.word
-
-use seq.Tpair
-
 
 Function test11 seq.word
 let y = [ t001, t002, t003, t004, t005, t006, t007, t008, t009, t010
 , t011, t012, t013, t014, t015, t016, t017, t018, t019, t020
 , t021, t022, t023, t024, t025, t026, t027, t028, t029, t030
 , t031, t032, t033, t034, t035, t036, t037, t038, t039, t040
-, t041, t042, t043, t044, t045, t046,
- " this is a test " _-1 = "test"_1
-,   b.[Tpair(3,"three"),Tpair(4,"four"),Tpair(5,"five")]_-2 = "four"  
-   ,[1,2,4]_-3=1
-   , // 50 // "this is a test" << 2 = "a test"
-   ,    "this is a test" >> 3 ="this"]
+, t041, t042, t043, t044, t045, t046,"this is a test"_(-1) = "test"_1, b.[ Tpair(3,"three"), Tpair(4,"four"), Tpair(5,"five")]_(-2)
+= "four", [ 1, 2, 4]_(-3) = 1, // 50 //("this is a test" << 2) = "a test"
+,("this is a test" >> 3) = "this"]
  check(y,"test11")

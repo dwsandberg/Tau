@@ -52,7 +52,7 @@ function consumeinput(b:stepresult, next:word)stepresult
     , next)
 
 Function parse(input:seq.word)seq.word
- let a = @(consumeinput, identity, stepresult(push(empty:stack.stkele, stkele(startstate, 0)), 1,"", 0,""), input + "#")
+ let a =(input + "#")@@ consumeinput(stepresult(push(empty:stack.stkele, stkele(startstate, 0)), 1,"", 0,""), @e)
   [ toword.result.(toseq.stk.a)_2]
 
 function_(r:reduction, n:int)int result.(toseq.r)_n

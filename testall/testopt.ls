@@ -24,6 +24,8 @@ use seq.seq.word
 
 use seq.word
 
+use set.word
+
 Function testopt seq.word
 let p2 = secondPass."testall"_1
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
@@ -53,8 +55,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br 4 EXITBLOCK 1 
 &br 5 EXITBLOCK 1 
 &br BLOCK 10
-&br"
-,"%1 %2 3 LOOPBLOCK(int, int, int)
+&br","%1 %2 3 LOOPBLOCK(int, int, int)
 &br %3 1 =(int, int)builtin 3 4 BR 3 
 &br %4 EXITBLOCK 1 
 &br %3 1-(int, int)builtin %3 %4 *(int, int)builtin CONTINUE 2 
@@ -82,41 +83,34 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br 11 EXITBLOCK 1 
 &br BLOCK 6 
 &br","%1"]
-let r = @(+, getcode(p2, cl),"", arithseq(length.cl, 1, 1))
+let r = arithseq(length.cl, 1, 1)@@ +("", getcode(p2, cl, @e))
  if isempty.r then"PASS testopt"else"testopt" + r
 
 function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
 
 Function getcode(p2:seq.seq.word, codelist:seq.seq.word, no:int)seq.word
- let t1 = @(+, filter.merge("optest" + toword.no),"", p2)
+ let t1 = p2 @@ +("", filter(merge("optest" + toword.no), @e))
  let t = subseq(t1, findindex("testopt"_1, t1) + 1, length.t1)
  let code = removeoptions(t, length.t)
   // assert false report t1 +" &br"+ t +" &br"+ code //
-  if codelist_no = code  &or (no=26 &and
-   shuffletest.sameto( code,codelist_no,1,"")) then""
+  if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1,"")then
+  ""
   else
-  "&br  &{ literal FAILED  &} test" + toword.no + "in optest &br"  
-   + code + " &p" + codelist_no
-   +" &p diffs: "+sameto( code,codelist_no,1,"")
-   +"&p "+toseq.asset."a b c d xxx"
+   " &br  &{ literal FAILED  &} test" + toword.no + "in optest  &br" + code + " &p"
+   + codelist_no
+   + " &p diffs:"
+   + sameto(code, codelist_no, 1,"")
+   + " &p"
+   + toseq.asset."a b c d xxx"
    
  function shuffletest(s:seq.word) boolean
-  s in ["17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 d a 85 8 9 92 xxx d 100 10 7 101 9 10 109 4 3 113 5 4 117 3 5"
-  ,"17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 xxx a 85 10 9 100 8 7 101 9 10 109 4 3 113 5 4 117 3 5"
-  ,"47 b xxx 62 xxx b 85 8 9 109 4 3 113 3 4"
-  ,"17 xxx c 32 xxx c 47 b xxx 62 c b 85 8 9 100 9 7 105 3 4 109 4 3"
-]
-
-
-   
-   use set.word
+ s
+ in ["17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 d a 85 8 9 92 xxx d 100 10 7 101 9 10 109 4 3 113 5 4 117 3 5","17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 xxx a 85 10 9 100 8 7 101 9 10 109 4 3 113 5 4 117 3 5","47 b xxx 62 xxx b 85 8 9 109 4 3 113 3 4","17 xxx c 32 xxx c 47 b xxx 62 c b 85 8 9 100 9 7 105 3 4 109 4 3"]
 
 function sameto(a:seq.word,b:seq.word,i:int,diffs:seq.word) seq.word
-   if i > length.a &or i > length.b  then diffs else
-  if  a_i=b_i then sameto(a,b,i+1,diffs) else sameto(a,b,i+1, diffs+[toword.i,a_i,b_i])
-  
-  
-  
+ if i > length.a ∨ i > length.b then diffs
+ else if a_i = b_i then sameto(a, b, i + 1, diffs)
+ else sameto(a, b, i + 1, diffs + [ toword.i, a_i, b_i])
 
 function removeoptions(s:seq.word, i:int)seq.word
  if i = length.s then
@@ -193,7 +187,6 @@ Function optest26(s:seq.word, i:int)int
  if s_i = "xxx"_1 then 3
  else if s_i in "a b"then 4 else if s_i in "c d"then 4 else 5
 
-
 Function optest27(a:int, result:int)int
  // tail recursion // if a = 1 then result else optest27(a - 1, a * result)
 
@@ -216,6 +209,6 @@ Function optest33a(a:ordering, b:ordering)ordering
  let x = a
   if x = EQ then b else x
 
-
 Function optest16a(a:seq.char)seq.int
- // This is just a type change and the compiler recognizes this and does not generate code // @(+, toint, empty:seq.int, a)
+ // This is just a type change and the compiler recognizes this and does not generate code //
+ a @@ +(empty:seq.int, toint.@e)

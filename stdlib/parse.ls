@@ -109,11 +109,11 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
 function placehold(initseq:bindinfo, accsym:bindinfo, initacc:bindinfo, args:bindinfo, input:seq.token.bindinfo, place:int)bindinfo
     let seqtype=first.types.initseq
     let resulttype=first.types.initacc 
+    let s1=newsymbol("@e",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype)
+    let s2=newsymbol("@i",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,typeint)
     let xx=typerep.seqtype+typerep.resulttype+"/"+typerep.first.types.initacc+
      typerep.first.types.args+text.accsym
-     assert xx="int seq int / int int +" report "JK"+typerep.seqtype+typerep.resulttype+"/"+typerep.first.types.initacc+
-     typerep.first.types.args+text.accsym
-    let op = lookupbysig(dict.initseq, text.accsym , types.initacc+types.args, input, place)
+     let op = lookupbysig(dict.initseq, text.accsym , types.initacc+types.args, input, place)
      let paratypes=paratypes.op
       assert abstracttype.seqtype in "seq" report errormessage(" first term of apply must be sequence",input,place)
       assert length.paratypes > 1 &and  paratypes_1 = resulttype
@@ -132,7 +132,7 @@ function placehold(initseq:bindinfo, accsym:bindinfo, initacc:bindinfo, args:bin
      +newsymbol("apply3",abstracttype("builtin"_1,resulttype )
            ,[ seqtype,resulttype,seqtype,resulttype ,typeint],resulttype )
    //   assert false report "place holdx"+@(+,print,"",newway)    //
- bindinfo(dict.initseq,     newway , [resulttype.op],"")
+ bindinfo(dict.initseq-s1 -s2,     newway , [resulttype.op],"")
  
   assert false report "place hold"
  initseq
@@ -277,7 +277,7 @@ if ruleno = // E { E } // 17 then R_2 else
 if ruleno = // E if E then E else E // 18 then 
 let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place.R)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place.R) 
 let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")else 
-if ruleno = // E E^E // 19 then opaction(R, input)else 
+if ruleno = // E unused // 19 then  R_1 else 
 if ruleno = // E E_E // 20 then opaction(R, input)else 
 if ruleno = // E-E // 21 then unaryop(R, input, tokentext.R_1, R_2)else 
 if ruleno = // E W.E // 22 then unaryop(R, input, tokentext.R_1, R_3)else 
@@ -322,7 +322,8 @@ if ruleno = // K NM // 52 then R_1 else
 if ruleno = // NM W // 53 then R_1 else 
 if ruleno = // NM W:T // 54 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1)else 
 if ruleno = // E @(K, K, E, E)// 55 then apply(R_3, R_5, R_7, R_9, input, place.R)else 
-if ruleno = // D E // 56 then declareapplyvars(R_1,input, place.R) else 
-if ruleno = // E E @@ W(D, L)// 57 then placehold(R_1, R_3, R_5, R_7, input, place.R) else 
-assert ruleno = // E E @@ N(D, L)// 58 report"invalid rule number"+ toword.ruleno 
-placehold(R_1, R_3, R_5, R_7, input, place.R)
+if ruleno = // D E @@ // 56 then declareapplyvars(R_1, input, place.R)else 
+if ruleno = // E D NM(E, L)// 57 then placehold(R_1, R_2, R_4, R_6, input, place.R)else 
+assert ruleno = // E D N(E, L)// 58 report"invalid rule number"+ toword.ruleno 
+placehold(R_1, R_2, R_4, R_6, input, place.R)
+

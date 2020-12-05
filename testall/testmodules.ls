@@ -48,7 +48,8 @@ Function testmodules seq.word
 let y = [ t501, t502, t503, t504, t505, t506, t507, test20, t044]
  check(y,"testmodules") + checkbits
 
-function print(a:seq.int)seq.word"[" + @(seperator(","), toword,"", a) + "]"
+function print(a:seq.int)seq.word
+ "[" + a @@ list("",",", @i, toword.@e) + "]"
 
 ---
 
@@ -73,7 +74,9 @@ function print(t:tree.word)seq.word
  else
   [ label.t]
   + if nosons.t = 1 then"." + print.t_1
-  else"(" + @(seperator(","), print,"", sons.t) + ")"
+  else
+   "(" + (sons.t)@@ list("",",", @i, print.@e)
+   + ")"
 
 function t502 boolean [ GT, EQ, EQ]
 = [ tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree.1]
@@ -113,7 +116,7 @@ let g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4)]
 let closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
  closure = toseq.arcs.transitiveClosure.g
 
-function print(g:graph.int)seq.word"GRAPH:" + @(+, print,"", toseq.arcs.g)
+function print(g:graph.int)seq.word"GRAPH:" + toseq.arcs.g @@ +("", print.@e)
 
 function print(a:arc.int)seq.word"(" + toword.tail.a + toword.head.a + ")"
 
@@ -126,7 +129,7 @@ Function t507 boolean"The umber ant ambles the opal nurse" = getphrase.20
 function t044 boolean
 let s = UTF8.[ 40, 50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
 let z = myseq.toseqint.s
- @(+, toword,"", z) = "40 50 335 50 336"
+ z @@ +("", toword.@e) = "40 50 335 50 336"
  ∧ not(length.toseq.to:myseq.int(z) = 0)
  ∧ length.toseq.to:myseq.int([ 1, 2, 3]) = 0
 
@@ -146,7 +149,7 @@ function group(s:seq.char)seq.word
  else
   group.subseq(s, 1, length.s - 4) + encodeword.subseq(s, length.s - 3, length.s)
 
-function hex(s:seq.word)bits @(hexdigit, identity, bits.0, @(+, decodeword, empty:seq.char, s))
+function hex(s:seq.word)bits(s @@ +(empty:seq.char, decodeword.@e))@@ hexdigit(bits.0, @e)
 
 function hexdigit(b:bits, c:char)bits
  let i = findindex(c, decodeword."0123456789ABCDEF"_1) - 1
