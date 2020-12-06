@@ -128,7 +128,7 @@ function t033 boolean 6 = (toint.if true then"3"_1 else"5"_1) + 3
 function t034 boolean 3464 = (3456 + if true then 3 else 1) + 5
 
 function print(a:seq.int)seq.word
- "[" + a @@ list("",",", @i, toword.@e) + "]"
+ "[" + a @@ list("",",",   [toword.@e]) + "]"
 
 function t035 boolean"[ 2, 3, 4, 5]" = print.[ 2, 3, 4, 5]
 

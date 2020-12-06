@@ -59,18 +59,19 @@ function inttollvmtype(i:int)llvmtype llvmtype.to:encoding.llvmtypeele(i + 1)
 Function print(t:llvmtype)seq.word
  let a = toseq.decode.index.t
  let tp = typeop.a_1
- let b = @(+, inttollvmtype, empty:seq.llvmtype, a)
+ let b = a @@ +(empty:seq.llvmtype, inttollvmtype.@e)
   if tp = INTEGER then [ merge("i" + toword.a_2)]
   else if tp = ARRAY then
   "array(" + toword.a_2 + "," + print.b_3 + ")"
   else if tp = POINTER then"ptr." + print.b_2
   else if tp = FUNCTION then
-  "function(" + @(seperator(","), print,"", subseq(b, 3, length.a)) + ")"
+  "function(" + subseq(b, 3, length.a) @@ list("",",", print.@e)
+   + ")"
   else if tp = TVOID then"VOID"else if tp = DOUBLE then"double"else"?"
 
 function cvttorec(a:encodingpair.llvmtypeele)seq.int toseq.data.a
 
-Function typerecords seq.seq.int @(+, cvttorec, empty:seq.seq.int, encoding:seq.encodingpair.llvmtypeele)
+Function typerecords seq.seq.int encoding:seq.encodingpair.llvmtypeele @@ +(empty:seq.seq.int, cvttorec.@e)
 
 Function returntype(func:llvmtype)llvmtype llvmtype.to:encoding.llvmtypeele((toseq.decode.index.func)_3 + 1)
 
@@ -96,7 +97,7 @@ Function array(size:int, base:llvmtype)llvmtype llvmtype.[ toint.ARRAY, size, ty
 
 Function ptr(base:llvmtype)llvmtype llvmtype.[ toint.POINTER, typ.base, 0]
 
-Function function(para:seq.llvmtype)llvmtype llvmtype.@(+, typ, [ toint.FUNCTION, 0], para)
+Function function(para:seq.llvmtype)llvmtype llvmtype(para @@ +([ toint.FUNCTION, 0], typ.@e))
 
 -------------------------
 
@@ -115,7 +116,7 @@ function symtabname(a:llvmconst)seq.int
 Function modulerecord(name:seq.word, rec:seq.int)slot
  let c = if name = ""then llvmconst(-3, rec)
  else
-  let chars = tointseq.@(+, decodeword, empty:seq.char, name)
+  let chars = tointseq(name @@ +(empty:seq.char, decodeword.@e))
    llvmconst(-1, [ length.chars] + chars + rec)
   slot(valueofencoding.encode.c - 1)
 
@@ -132,7 +133,9 @@ Function DATA(t:llvmtype, data:seq.int)slot
 
 Function AGGREGATE(data:seq.slot)slot
  let t = array(length.data, i64)
-  slot(valueofencoding.encode.llvmconst(typ.t, [ toint.CAGGREGATE] + @(+, toint, empty:seq.int, data)) - 1)
+  slot(valueofencoding
+  .encode.llvmconst(typ.t, [ toint.CAGGREGATE] + data @@ +(empty:seq.int, toint.@e))
+  - 1)
 
 Function ptrtoint(argtype:llvmtype, p:slot)slot slot.C(i64, [ toint.CCAST, 9, typ.argtype, toint.p])
 
@@ -163,7 +166,7 @@ Function asi64(s:slot)slot
 
 Function constvalue(i:slot)int(toseq.decode.to:encoding.llvmconst(toint.i + 1))_2
 
-Function constantrecords seq.slotrecord @(+, slotrecord, empty:seq.slotrecord, encoding:seq.encodingpair.llvmconst)
+Function constantrecords seq.slotrecord encoding:seq.encodingpair.llvmconst @@ +(empty:seq.slotrecord, slotrecord.@e)
 
 type slotrecord is record cvt:encodingpair.llvmconst
 

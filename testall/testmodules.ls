@@ -49,7 +49,7 @@ let y = [ t501, t502, t503, t504, t505, t506, t507, test20, t044]
  check(y,"testmodules") + checkbits
 
 function print(a:seq.int)seq.word
- "[" + a @@ list("",",", @i, toword.@e) + "]"
+ "[" + a @@ list("",",",  [toword.@e]) + "]"
 
 ---
 
@@ -75,7 +75,7 @@ function print(t:tree.word)seq.word
   [ label.t]
   + if nosons.t = 1 then"." + print.t_1
   else
-   "(" + (sons.t)@@ list("",",", @i, print.@e)
+   "(" + (sons.t)@@ list("",",",   print.@e)
    + ")"
 
 function t502 boolean [ GT, EQ, EQ]

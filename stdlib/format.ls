@@ -25,14 +25,14 @@ Function consumecomment(s:seq.word, i:int)int
  consumecomment(s, search("/ /", s, i + 2) + 2)
  else i
 
-
 Function getheader(s:seq.word)seq.word
  if length.s < 3 then s
  else
   let endofname = if s_3 = ":"_1 then consumetype(s, 5)else 3
    if subseq(s, 1, 3) = "Export type:"then
-    let tt=subseq(s,4,endofname - 1)
-   subseq(s, 1, endofname - 1) +   "("+tt+")"+tt+" stub"   
+   let tt = subseq(s, 4, endofname - 1)
+     subseq(s, 1, endofname - 1) + "(" + tt + ")" + tt
+     + "stub"
    else
     let startoftype = if s_endofname = "("_1 then findindex(")"_1, s, endofname + 1) + 1
     else endofname
@@ -111,7 +111,7 @@ function match(s:seq.word, depth:int, i:int)int
  if depth = 0 then i else match(s, depth - 1, i + 1)
  else match(s, depth, i + 1)
 
-Function addamp(w:word)word encodeword.@(+, addamp, empty:seq.char, decodeword.w)
+Function addamp(w:word)word encodeword(decodeword.w @@ +(empty:seq.char, addamp.@e))
 
 Function addamp(ch:char)seq.char
  if ch = char1."<"then decodeword."&lt;"_1
@@ -122,7 +122,7 @@ function escapeformat(length:int, c:word)word
  if length > 20 then merge.[ encodeword.[ char.10], c]else merge.[ space, c]
  else if c in " &keyword  &}  &em  &strong  &cell"then merge.[ space, c]else c
 
-Function escapeformat(s:seq.word)seq.word @(+, escapeformat.length.s,"", s)
+Function escapeformat(s:seq.word)seq.word s @@ +("", escapeformat(length.s, @e))
 
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 
@@ -161,9 +161,8 @@ function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.wo
    else if this = " &p"_1 then processtotext(a, i + 1, result + " &br  &br", stk)
    else processtotext(a, i + 1, result + [ a_i], stk)
 
-Function htmlheader seq.word // the format of the meta tag is carefully crafted to get math unicode characters to display correctly //"<meta"
-+ merge.' http-equiv ="Content-Type"'
-+ ' content ="text/html; '
+Function htmlheader seq.word // the format of the meta tag is carefully crafted to get math unicode characters to display correctly //
+"<meta" + merge.' http-equiv ="Content-Type"' + ' content ="text/html; '
 + merge."charset = utf-8"
 + '"> <style type ="text/css"> <!--span.avoidwrap { display:inline-block ; } '
 + ' span.keyword { color:blue ; } span.keywords { color:blue ; } '

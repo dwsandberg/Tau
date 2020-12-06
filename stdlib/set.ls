@@ -22,7 +22,7 @@ Export_(seq.T, int)T
 
 unbound ?(T, T)ordering
 
-Function asset(s:seq.T)set.T set.@(setinsert, identity, empty:seq.T, s)
+Function asset(s:seq.T)set.T set(s @@ setinsert(empty:seq.T, @e))
 
 Function empty:set.T set.T set.empty:seq.T
 
@@ -126,8 +126,8 @@ Function findelement2(a:set.T, n:T)set.T
  let i = binarysearch2(toseq.a, 1, length.toseq.a, n)
   if i < 0 then asset.empty:seq.T
   else
-   asset
-   .@(+, identity, empty:seq.T, subseq(toseq.a, expandrangedown(toseq.a, n, i), expandrangeup(toseq.a, n, i)))
+   asset(subseq(toseq.a, expandrangedown(toseq.a, n, i), expandrangeup(toseq.a, n, i))
+   @@ +(empty:seq.T, @e))
 
 function expandrangedown(a:seq.T, n:T, l:int)int
  if l > 1 then

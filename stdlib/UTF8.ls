@@ -104,7 +104,7 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
    else if this = ","_1 then
    // no space before but space after // addspace(s, i + 1, false, result + char1.",")
    else
-    let d = @(+, encodeUTF8, emptyUTF8, decodeword.this)
+    let d = decodeword.this @@ +(emptyUTF8, encodeUTF8.@e)
      if this in ('-()].:"_^. ' + space)then
      // no space before or after // addspace(s, i + 1, true, result + d)
      else
@@ -133,14 +133,17 @@ function cvttoint(s:seq.char, i:int, val:int)int
 -------------
 
 Function hash(a:seq.char)int
- if a = decodeword."//"_1 then hash.tointseq.a else finalmix32.@(hash32, identity, hashstart32.0, tointseq.a)
+ if a = decodeword."//"_1 then hash.tointseq.a
+ else finalmix32(tointseq.a @@ hash32(hashstart32.0, @e))
 
 Function tointseq(a:seq.char)seq.int
- // This is just a type change and the compiler recognizes this and does not generate code // @(+, toint, empty:seq.int, a)
+ // This is just a type change and the compiler recognizes this and does not generate code //
+ a @@ +(empty:seq.int, toint.@e)
 
 Function tocharseq(a:seq.int)seq.char
  // builtin.NOOP //
- // This is just a type change and the compiler recognizes this and does not generate code // @(+, char, empty:seq.char, a)
+ // This is just a type change and the compiler recognizes this and does not generate code //
+ a @@ +(empty:seq.char, char.@e)
 
 _________________
 
@@ -166,7 +169,7 @@ Function toUTF8(rin:real, decimals:int)UTF8
 
 Function reallit(s:UTF8)real reallit(tocharseq.toseqint.s,-1, 1, 0, 1)
 
-Function makereal(w:seq.word)real reallit(@(+, decodeword, empty:seq.char, w),-1, 1, 0, 1)
+Function makereal(w:seq.word)real reallit(w @@ +(empty:seq.char, decodeword.@e),-1, 1, 0, 1)
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
  if i > length.s then

@@ -41,7 +41,7 @@ Function writedict(tin:seq.encodingpair.seq.char)int
 Function loaddict(file:fileresult)int
  if size.file > -1 then
  let data = data.file
-   @(+, primitiveadd, 0, // deepcopy. // get2(data, length.data))
+   // deepcopy. // get2(data, length.data) @@ +(0, primitiveadd.@e)
  else 0
 
 function get2(data:seq.int, i:int)seq.encodingpair.seq.char
@@ -90,9 +90,7 @@ Function +(p:place, w:word)place p + tointseq.decodeword.w
 Function getword(data:seq.int, i:int)word encodeword.tocharseq.getintseq(data, data_i)
 
 Function getrecord:word(data:seq.int, i:int)word
- // assert false report"JKLword"+ @(+, toword,"", [ i]+ data)//
  let y = getintseq(data, i)
-  // assert false report"JKLword"+ @(+, toword,"", [ i]+ data)+ @(+, toword,":", y)+ encodeword.y //
   encodeword.tocharseq.y
 
 Function getintseq(data:seq.int, seqpointer:int)seq.int
@@ -129,8 +127,7 @@ unbound +(place, T)place
 Function_(a:ioseq.T, i:int)T
  let size = sizeoftype:T
  let index = offset.a + size * (i - 1) + 2
-  // assert false report"JKLL"+ @(+, toword,"", [ i, size, index]+ data.a)//
-  assert between(i, 1,(data.a)_(offset.a + 1))report"out of bounds2" + @(+, toword,"", [ i, size, index] + data.a)
+  assert between(i, 1,(data.a)_(offset.a + 1))report"out of bounds2" + ([ i, size, index] + data.a) @@ +("", toword.@e)
    getrecord:T(data.a, index)
 
 Export offset(ioseq.T)int
@@ -142,5 +139,5 @@ Function getseq2:T(data:seq.int, seqpointer:int)seq.T
 Function +(p:place, s:seq.T)place
  let size = sizeoftype:T
  let q = place([ 0, length.s], next.p + length.s * size + 2, empty:seq.int)
- let r = @(+, identity, q, s)
+ let r = s @@ +(q, @e)
   place(this.p + (next.p + 1), offset.p, data.p + this.r + data.r)

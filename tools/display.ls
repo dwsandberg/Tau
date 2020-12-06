@@ -47,7 +47,7 @@ Function charwidths characterwidths characterwidths
 , 64, 64, 64, 43, 50, 36, 64, 64, 93, 64
 , 64, 57, 62, 26, 62, 70])
 
-Function checkwidths seq.word   arithseq(128 - 32, 1, 32)  @@ list("", " &br",@i,check.@e) 
+Function checkwidths seq.word   arithseq(128 - 32, 1, 32)  @@ list("", " &br",check.@e) 
 
 function check(i:int)seq.word
  let a = encodeword.tocharseq.constantseq(100, i)

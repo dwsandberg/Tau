@@ -42,8 +42,6 @@ Function reduceorder(input:seq.word) seq.int
   // assert isempty.dict.b report @(+, print,"", toseq.dict.b)+ stacktrace //
    parse:seq.int(empty:seq.int, a, input)
  
- @(+,toword,"", t)
-
 function forward(stk:seq.int, token:seq.int)seq.int  stk
 
 function attribute:seq.int(w:seq.word) seq.int empty:seq.int

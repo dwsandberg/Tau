@@ -61,7 +61,7 @@ function eword2(ww:encodingpair.word3)encodingpair.seq.char
  let a = decodeword.toword.w
   encodingpair(to:encoding.seq.char(valueofencoding.encode.w), a)
 
-Function constdata seq.slot @(+, flds, empty:seq.slot, encoding:seq.encodingpair.const3)
+Function constdata seq.slot encoding:seq.encodingpair.const3 @@ +(empty:seq.slot, flds.@e)
 
 type const3 is record place:int, flds:seq.slot
 
@@ -71,7 +71,7 @@ function =(a:const3, b:const3)boolean flds.a = flds.b
 
 function =(a:slot, b:slot)boolean toint.a = toint.b
 
-function hash(a:const3)int hash.@(+, toint, empty:seq.int, flds.a)
+function hash(a:const3)int hash(flds.a @@ +(empty:seq.int, toint.@e))
 
 function assignencoding(l:int, a:const3)int assignrandom(l, a)
 
@@ -92,21 +92,18 @@ Function addliblib(libname:seq.word, mods:int, profiledata:int)int
   let have = if libname = "stdlib"then empty:set.encoding.seq.char
   else
    // @(+, code, empty:set.encoding.seq.char, words.loadedlibs_1)//
-   @(+, code, empty:set.encoding.seq.char, initialdict)
-  let used = @(+, wordcode, empty:set.encoding.seq.char, encoding:seq.encodingpair.word3)
+   initialdict @@ +(empty:set.encoding.seq.char, code.@e)
+  let used = encoding:seq.encodingpair.word3 @@ +(empty:set.encoding.seq.char, wordcode.@e)
    // build packed seq of word encodings //
    let wordstoadd = toseq(used - have)
     // let discard2 = if libname ="stdlib"then 0 else writedict(@(+, lookupencodingpair, empty:seq.encodingpair.seq.char, wordstoadd))//
-    // assert libname ="stdlib"report dumpword3 +"
-&br--------
-&br"+ @(+, word,"", wordstoadd)//
-    let data = @(+, fldsofwordencoding, [ toint.C64.3, toint.C64.length.wordstoadd], wordstoadd)
+    let data = wordstoadd @@ +([ toint.C64.3, toint.C64.length.wordstoadd], fldsofwordencoding.@e)
     let wordreps = addobject.data
      addobject("liblib", [ name, wordreps, mods, toint.C64.0, profiledata])
 
 function addobject(name:seq.word, data:seq.int)int
  let objtype = array(length.data, i64)
- let ll = global("liblib", objtype, toint.AGGREGATE.@(+, checkslot, empty:seq.slot, data))
+ let ll = global("liblib", objtype, toint.AGGREGATE(data @@ +(empty:seq.slot, checkslot.@e)))
   toint.CGEP(slot.ll, 0)
 
 function global(name:seq.word, type:llvmtype, init:int)int
@@ -115,7 +112,7 @@ function global(name:seq.word, type:llvmtype, init:int)int
 function checkslot(i:int)slot asi64.slot.i
 
 Function addobject(fldsin:seq.int)int
- let flds = @(+, checkslot, empty:seq.slot, fldsin)
+ let flds = fldsin @@ +(empty:seq.slot, checkslot.@e)
  let t = encoding:seq.encodingpair.const3
  let place = if length.t = 0 then 0 else place.data.last.t + length.flds.data.last.t
  let x = decode.encode.const3(place, flds)
@@ -124,7 +121,9 @@ Function addobject(fldsin:seq.int)int
 
 function fldsofwordencoding(code:encoding.seq.char)seq.int
  let s = tointseq.decode.code
- let k = addobject.@(+, toint, empty:seq.int, @(+, C64, [ C64.0, C64.length.s], s))
+ let k = addobject(s @@ +([ C64.0, C64.length.s], C64.@e)
+ @@ +(empty:seq.int, toint.@e))
   [ toint.C64.valueofencoding.code, k, toint.C64.0]
 
-Function addwordseq2(a:seq.word)int addobject.@(+, wordref, [ toint.C64.0, toint.C64.length.a], a)
+Function addwordseq2(a:seq.word)int
+ addobject(a @@ +([ toint.C64.0, toint.C64.length.a], wordref.@e))

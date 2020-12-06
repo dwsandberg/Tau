@@ -86,7 +86,7 @@ function readable(fsig:word)seq.word
   else
    let plist = subseq(p, 3, length.p)@@ +(empty:seq.mytype, mytype.@e)
     p_1 + ":" + print.mytype.p_2 + "("
-    + plist @@ list("",",", @i, print.@e)
+    + plist @@ list("",",",  print.@e)
     + ")"
 
 Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word
@@ -186,7 +186,7 @@ Function uncalledfunctions(libname:seq.word)seq.word
  // List of functions may include indirectly called functions. //
  let g = newgraph.formcallgraph(firstPass.libname_1, 2)
  let sources = toseq.nodes.g @@ +("", sources(g, empty:set.word, @e))
-  alphasort.sources @@ list(""," &br",@i  ,readable.@e) 
+  alphasort.sources @@ list(""," &br",readable.@e) 
 
 * usegraph exclude stdlib seq set
 

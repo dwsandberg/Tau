@@ -25,7 +25,6 @@ PROFILE pass1:postbind3(typedict, set.symbol, seq.symbol, int, seq.symbol, mytyp
 
 * PROFILE main2:subcompilelib (seq.word,word  ) seq.word
 
-
 / * PROFILE pass2new:pass2(program, set.symbol, seq.symbol, seq.firstpass, program, seq.word)intercode
 
 /* PROFILE pass2new:depthfirst(program, int, seq.symbol, program, seq.symbol, symbol)program
@@ -189,11 +188,11 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
-Function hash(a:seq.int)int finalmix.@(hash, identity, hashstart, a)
+Function hash(a:seq.int)int finalmix(a @@ hash(hashstart, @e))
 
-Function hash(a:seq.word)int finalmix.@(hash, hash, hashstart, a)
+Function hash(a:seq.word)int finalmix(a @@ hash(hashstart, hash.@e))
 
-Function^(i:int, n:int)int @(*, identity, 1, constantseq(n, i))
+Function^(i:int, n:int)int constantseq(n, i) @@ *(1, @e)
 
 Function pseudorandom(seed:int)int
  let ah = 16807
@@ -203,34 +202,19 @@ Function pseudorandom(seed:int)int
 
 function addrandom(s:seq.int, i:int)seq.int s + pseudorandom.s_(length.s)
 
-Function randomseq(seed:int, length:int)seq.int @(addrandom, identity, [ seed], constantseq(length - 1, 1))
+Function randomseq(seed:int, length:int)seq.int constantseq(length - 1, 1) @@ addrandom([ seed], @e)
 
 Builtin randomint(i:int)seq.int
 
-Function list(acc:seq.word,seperator:seq.word,idx:int,ele:seq.word) seq.word
-  if idx=1 then acc+ele else acc+seperator+ele
-  
-Function list(acc:seq.word,seperator:seq.word,idx:int,ele:word) seq.word
-  if idx=1 then acc+ele else acc+seperator+[ele]
 
-
-/Function list(acc:seq.word,seperator:seq.word,idx:int,ele:int) seq.word
-  (if idx=1 then acc  else acc+seperator)+toword.ele
   
+Function list(a:seq.word,b:seq.word,c:seq.word) seq.word
+ if isempty.a then c else if isempty.c then a else a + (b + c)
+
   Function EOL seq.word "&br"  
 
 
-Function seperator(sep:seq.word, s:seq.word, w:seq.word)seq.word
- if length.s = 0 then w else s + sep + w
-
-Function seperator(sep:seq.word, s:seq.word, w:word)seq.word
- // Good for adding commas in seq of words. @(seperator(",", toword,"", [ 1, 2, 3])//
- if length.s = 0 then [ w]else s + sep + w
  
-Function >1(i:int,sep:seq.word ) seq.word
- if i > 1 then sep else empty:seq.word  
-
-
 Export hash(a:word)int
 
 Export ?(a:word, b:word)ordering

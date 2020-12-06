@@ -56,7 +56,7 @@ Builtin representation(a:real)int
 
 Builtin casttoreal(i:int)real
 
-Function^(i:real, n:int)real @(*, identity, 1.0, constantseq(n, i))
+Function^(i:real, n:int)real constantseq(n, i) @@ *(1.0, @e)
 
 Function *(a:int, b:real)real toreal.a * b
 

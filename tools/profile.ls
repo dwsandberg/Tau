@@ -114,10 +114,10 @@ function shorten(a:seq.seq.seq.word, i:int)seq.word
   else
    let z = subseq(a_i, 1, j)@@ +(empty:seq.seq.word, formattype.@e)
     z_1 + ":" + z_2 + "("
-    + (subseq(z, 2, length.z))@@ list("",",", @i, @e)
+    + (subseq(z, 2, length.z))@@ list("",",",   @e)
     + ")"
 
-function formattype(a:seq.word)seq.word reverse( a @@ list( "",  ".",@i,@e)  )
+function formattype(a:seq.word)seq.word reverse( a @@ list( "",  ".",[@e])  )
 
 function differ(a:seq.seq.word, b:seq.seq.word, i:int)int
  if i > length.a ∨ i > length.b then i
@@ -143,4 +143,4 @@ function tonode(a:parc)parc parc(head.a, head.a, counts.a, clocks.a, space.a)
 
 function p2(a:parc)seq.word [ tail.a, head.a, toword.counts.a]
 
-Function dumpprofileinfo seq.word profiledata.loadedlibs_1 @@ list( ""," &br",@i, p2.@e) 
+Function dumpprofileinfo seq.word profiledata.loadedlibs_1 @@ list( ""," &br", p2.@e) 
