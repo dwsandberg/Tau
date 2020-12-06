@@ -41,7 +41,7 @@ use set.word
 /use libscope
 
 Function createdoc seq.word // Creates html tau html documentation. Creates file taudocs.html //
-let d = gettext."tools/doc.txt"@@ +("", addselect.@e)
+let d = gettext."tools/doc.txt" @ +("", addselect.@e)
 let x1 = createfile("doc.html", htmlheader + processpara.d)
  // let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])//
  let y1 = createfile("testall.html", htmlheader + processpara.htmlcode."testall")

@@ -50,9 +50,9 @@ function print(p:wordfreq)seq.word
 function removelowcount(mincount:int, p:wordfreq)seq.wordfreq if count.p < mincount then empty:seq.wordfreq else [ p]
 
 function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq
- sort
- .(a @@ count(dseq.wordfreq(0,"A"_1), @e))@@ +(empty:seq.wordfreq, removelowcount(mincount, @e))
+ sort(a @ count(dseq.wordfreq(0,"A"_1), @e))
+ @ +(empty:seq.wordfreq, removelowcount(mincount, @e))
 
-Function test2 seq.word wordfreq(300, gettext."testall/input")@@ +(empty:seq.word, print.@e)
+Function test2 seq.word wordfreq(300, gettext."testall/input") @ +(empty:seq.word, print.@e)
 
-function count(s:seq.wordfreq, w:seq.word)seq.wordfreq w @@ count(s, @e)
+function count(s:seq.wordfreq, w:seq.word)seq.wordfreq w @ count(s, @e)

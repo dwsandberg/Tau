@@ -32,7 +32,7 @@ Function label(t:tree2.T)T label.(nodes.t)_(subtree.t)
 Function sons(t:tree2.T)seq.tree2.T level(t, subtree.t, nosons.t)
 
 Function tree2(l:T, s:seq.tree2.T)tree2.T
- let n = s @@ +(empty:seq.treenode.T, intreenodes.@e)
+ let n = s @ +(empty:seq.treenode.T, intreenodes.@e)
   tree2(n + [ treenode(l, length.s, length.n + 1)], length.n + 1)
 
 function intreenodes(t:tree2.T)seq.treenode.T subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)
@@ -56,10 +56,12 @@ function son(t:tree2.T, i:int, remainingsons:int)tree2.T
  else son(t, i - nonodes.(nodes.t)_(i - 1), remainingsons - 1)
 
 Function replace(t:tree2.T, with:T, a:T)tree2.T
- tree2(subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)@@ +(empty:seq.treenode.T, replace(with, a, @e)), nonodes.t)
+ tree2(subseq(nodes.t, subtree.t - nonodes.t + 1, subtree.t)
+ @ +(empty:seq.treenode.T, replace(with, a, @e)), nonodes.t)
 
 function replace(replacement:T, match:T, a:treenode.T)treenode.T
  if label.a = match then treenode(replacement, nosons.a, nonodes.a)else a
 
 Function postorder(a:tree2.T)seq.tree2.T
- arithseq(nonodes.a, 1, subtree.a - nonodes.a + 1)@@ +(empty:seq.tree2.T, tree2(nodes.a, @e))
+ arithseq(nonodes.a, 1, subtree.a - nonodes.a + 1)
+ @ +(empty:seq.tree2.T, tree2(nodes.a, @e))

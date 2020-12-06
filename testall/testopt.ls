@@ -83,13 +83,13 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br 11 EXITBLOCK 1 
 &br BLOCK 6 
 &br","%1"]
-let r = arithseq(length.cl, 1, 1)@@ +("", getcode(p2, cl, @e))
+let r = arithseq(length.cl, 1, 1) @ +("", getcode(p2, cl, @e))
  if isempty.r then"PASS testopt"else"testopt" + r
 
 function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
 
 Function getcode(p2:seq.seq.word, codelist:seq.seq.word, no:int)seq.word
- let t1 = p2 @@ +("", filter(merge("optest" + toword.no), @e))
+ let t1 = p2 @ +("", filter(merge("optest" + toword.no), @e))
  let t = subseq(t1, findindex("testopt"_1, t1) + 1, length.t1)
  let code = removeoptions(t, length.t)
   // assert false report t1 +" &br"+ t +" &br"+ code //
@@ -211,4 +211,4 @@ Function optest33a(a:ordering, b:ordering)ordering
 
 Function optest16a(a:seq.char)seq.int
  // This is just a type change and the compiler recognizes this and does not generate code //
- a @@ +(empty:seq.int, toint.@e)
+ a @ +(empty:seq.int, toint.@e)

@@ -26,10 +26,9 @@ type characterwidths is record widths:seq.int
 
 function_(s:seq.int, c:char)int if toint.c = 0 then 0 else s_(toint.c)
 
-Function displaywidth(cw:characterwidths, s:seq.word)int
-(toseqint.toUTF8.s)@@ +(0, (widths.cw)_@e)
+Function displaywidth(cw:characterwidths, s:seq.word)int toseqint.toUTF8.s @ +(0,(widths.cw)_@e)
 
-Function displaywidth(cw:characterwidths, w:word)int(decodeword.w)@@ +(0, (widths.cw)_@e)
+Function displaywidth(cw:characterwidths, w:word)int decodeword.w @ +(0,(widths.cw)_@e)
 
 Function charwidths characterwidths characterwidths
 .dseq(60
@@ -47,7 +46,7 @@ Function charwidths characterwidths characterwidths
 , 64, 64, 64, 43, 50, 36, 64, 64, 93, 64
 , 64, 57, 62, 26, 62, 70])
 
-Function checkwidths seq.word   arithseq(128 - 32, 1, 32)  @@ list("", " &br",check.@e) 
+Function checkwidths seq.word arithseq(128 - 32, 1, 32) @ list(""," &br", check.@e)
 
 function check(i:int)seq.word
  let a = encodeword.tocharseq.constantseq(100, i)

@@ -24,7 +24,7 @@ Function testparser seq.word // runs the parser on a sample string. // parse."1 
 
 Function gentestgrammar seq.word // generates the tables used in this test //
 let testgrammar = [ ["G F #","R_1"], ["F E","R_1"], ["E 1","1"], ["E 2","2"], ["E 3","3"], ["E E + E","R_1 + R_3"]]
- lr1parser(testgrammar, empty:seq.seq.word,"F # + 1 E 3 G 2")
+ lr1parser(testgrammar, empty:seq.seq.word,"F # + 1 E 3 G 2","attribute")
 
 type stepresult is record stk:stack.stkele, place:int, track:seq.word, tokenstate:int, string:seq.word
 
@@ -52,7 +52,8 @@ function consumeinput(b:stepresult, next:word)stepresult
     , next)
 
 Function parse(input:seq.word)seq.word
- let a =(input + "#")@@ consumeinput(stepresult(push(empty:stack.stkele, stkele(startstate, 0)), 1,"", 0,""), @e)
+ let a =(input + "#")
+ @ consumeinput(stepresult(push(empty:stack.stkele, stkele(startstate, 0)), 1,"", 0,""), @e)
   [ toword.result.(toseq.stk.a)_2]
 
 function_(r:reduction, n:int)int result.(toseq.r)_n

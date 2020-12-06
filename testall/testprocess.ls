@@ -70,10 +70,10 @@ let b = process.countprimes(c + 1, 2 * c)
  [ 1228, 1033] = [ result.a, result.b]
 
 function findprimes(start:int, end:int)seq.word
- arithseq((end - start + 2) / 2, 2, start)@@ +("", isprime3.@e)
+ arithseq((end - start + 2) / 2, 2, start) @ +("", isprime3.@e)
 
 function countprimes(start:int, end:int)int
- arithseq((end - start + 2) / 2, 2, start)@@ +(0, isprime4.@e)
+ arithseq((end - start + 2) / 2, 2, start) @ +(0, isprime4.@e)
 
 function isprime3(i:int)seq.word if isprime.i then [ toword.i]else""
 

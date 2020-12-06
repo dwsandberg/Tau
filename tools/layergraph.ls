@@ -36,12 +36,12 @@ function sublayer(g:graph.T)seq.seq.T
  else
   let r = sources.g
    assert not.isempty.r report"NOT A DAG"
-    [ r] + sublayer(r @@ deletenode(g, @e))
+    [ r] + sublayer(r @ deletenode(g, @e))
 
 Function issource(g:graph.T, n:T)seq.T
  if cardinality.predecessors(g, n) = 0 then [ n]else empty:seq.T
 
-Function sources(g:graph.T)seq.T(toseq.nodes.g)@@ +(empty:seq.T, issource(g, @e))
+Function sources(g:graph.T)seq.T toseq.nodes.g @ +(empty:seq.T, issource(g, @e))
 
 ----adddummy nodes---
 
@@ -51,7 +51,8 @@ function adddummynodes(y2:layeredgraph.T)layeredgraph.T d2(y2, g.y2, 2, asset.(l
 
 function d2(org:layeredgraph.T, g:graph.T, i:int, ok:set.T, layerout:seq.seq.T)layeredgraph.T
  let ok1 = ok ∪ asset.(layers.org)_i
- let gnew =((layerout_(i - 1))@@ +(empty:seq.arc.T, splitarcs(g, ok1, @e)))@@ splitarc(g, @e)
+ let gnew = layerout_(i - 1) @ +(empty:seq.arc.T, splitarcs(g, ok1, @e))
+ @ splitarc(g, @e)
  let newnodes = nodes.gnew - nodes.g
  let newout = layerout + [(layers.org)_i + toseq.newnodes]
   if i < length.layers.org then
