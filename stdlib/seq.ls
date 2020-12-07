@@ -14,7 +14,7 @@ unbound =(T, T)boolean
 
 Function_(a:seq.T, c:int)T
  let b = if c < 0 then length.a + c + 1 else c
-  assert not(getseqtype.a = 0) ∨ b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
+  assert  getseqtype.a >  100  ∨ b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
    callidx(a, b)
 
 builtin callidx(a:seq.T, int)T // treated specially by compiler //
@@ -38,6 +38,9 @@ Function subin(a:T, s:seq.T, i:int)boolean
  if i = 0 then false else if a = s_i then true else subin(a, s, i - 1)
 
 Function in(a:T, s:seq.T)boolean subin(a, s, length.s)
+
+Function ∈(a:T, s:seq.T)boolean subin(a, s, length.s)
+
 
 Function identity(a:T)T a
 
@@ -71,7 +74,7 @@ Function_(s:pseq.T, i:int)T
    let x = to:pseq.T(a.s)
     if length.x = 0 then(a.s)_i else x_i
 
-Function ispseq(s:seq.T)boolean not(length.to:pseq.T(s) = 0)
+Function ispseq(s:seq.T)boolean  length.to:pseq.T(s) &ne 0 
 
 Export to:pseq.T(s:seq.T)pseq.T
 
@@ -98,7 +101,7 @@ function catnonzero(a:seq.T, b:seq.T)seq.T
       if length.tb = 0 then toseq.pseq(totallength, a, b)else cat3(totallength, a, a.tb, b.tb)
     else cat3(totallength, a.ta, b.ta, b)
 
-Function largeseq(s:seq.T)seq.T
+/Function largeseq(s:seq.T)seq.T
  let length = length.s
   if length < 64 then
   if length > 16 then s

@@ -54,8 +54,8 @@ function tolexaction(next:word)lexaction1
  lexaction1(next, findindex("*"_1, tokenlist),"∪"_1)
  else if next = merge("&" + "cap")then
  lexaction1(next, findindex("*"_1, tokenlist),"∩"_1)
- else if next = merge("&" + "contains")then
- lexaction1(next, findindex("-"_1, tokenlist),"∋"_1)
+ else if next = merge("&" + "nin")then
+ lexaction1(next, findindex("-"_1, tokenlist),"∉"_1)
  else if next = merge("&" + "in")then
  lexaction1(next, findindex("-"_1, tokenlist),"∈"_1)
  else

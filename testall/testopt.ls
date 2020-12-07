@@ -114,9 +114,9 @@ function sameto(a:seq.word,b:seq.word,i:int,diffs:seq.word) seq.word
 
 function removeoptions(s:seq.word, i:int)seq.word
  if i = length.s then
- if not(subseq(s, i - 7, i) = "option(T, word seq)builtin")then s
+ if subseq(s, i - 7, i) &ne "option(T, word seq)builtin" then s
   else removeoptions(s, i - 9)
- else if not(s_i = '"'_1)then removeoptions(s, i - 1)
+ else if  s_i &ne '"'_1 then removeoptions(s, i - 1)
  else subseq(s, 1, i - 1)
 
 Function optest1 int 3 + 4

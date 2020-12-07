@@ -251,7 +251,8 @@ function gathercase(l:seq.block, blk:block, exp:seq.symbol, caseblks:seq.caseblo
   let rep = code_(len - 4)
    if module.rep = "$words"then fsig.rep @@ +(empty:seq.caseblock, caseblock(label, 0, @e))
    else
-    assert length.constantcode.rep > 2 ∧ (constantcode.rep)_1 = Lit0 report"not a standard seq" + print.code
+    assert length.constantcode.rep > 2 ∧ (  (constantcode.rep)_1 = Lit0  &or (constantcode.rep)_1 =Lit.1)
+    report"not a standard seq" + print.code
      subseq(constantcode.rep, 3, length.constantcode.rep) @@ +(empty:seq.caseblock, caseblock(label, 0, @e))
   // now check to see if following block is a case block //
   let newblock = findblk2(l, 1, label2.blk)
@@ -381,14 +382,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
   let sym = org_k
   let len = length.result
    if isconst.sym then yyy(p, org, k + 1, result + sym, nextvar, map)
-   else if // isdefine // module.sym = "$define"then
-   // bug this code should not be needed. something is going on with isspecial //
-    let thelocal =(fsig.sym)_2
-     if len > 0 ∧ (isconst.result_len ∨ islocal.result_len)then
-     yyy(p, org, k + 1, subseq(result, 1, length.result - 1), nextvar, replace(map, thelocal, [ result_len]))
-     else
-      yyy(p, org, k + 1, result + Define.toword.nextvar, nextvar + 1, replace(map, thelocal, [ var.nextvar]))
-   else if isspecial.sym then
+   else  if isspecial.sym then
    if(fsig.sym)_1 = "BLOCK"_1 ∧ fsig.sym = "BLOCK 3"then
     let t = backparse(result, len, 3, empty:seq.int) + [ len + 1]
      let condidx = t_2 - 4
@@ -442,11 +436,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
       // one constant parameter //
        if sym = symbol("toword(int)","UTF8","word")then
        yyy(p, org, k + 1, subseq(result, 1, length.result - 1) + Word.(fsig.last.result)_1, nextvar, map)
-       else if fsig.sym = "hash(word seq)" ∧ module.sym = "stdlib"
-       ∧ module.last.result = "$words"then
-       let x = Lit.hash.fsig.last.result
-         yyy(p, org, k + 1, subseq(result, 1, length.result - 1) + x, nextvar, map)
-       else if fsig.sym = "makereal(word seq)" ∧ module.sym = "UTF8"then
+       else  if fsig.sym = "makereal(word seq)" ∧ module.sym = "UTF8"then
        let arg1 = last.result
          if module.arg1 = "$words"then
          let x = Reallit.representation.makereal.fsig.arg1
@@ -461,7 +451,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
        let arg1 = result_len
          if module.arg1 = "$word"then
          let a1 = tointseq.decodeword.(fsig.arg1)_1 @@ +(empty:seq.symbol, Lit.@e)
-          let d = Constant2([ Lit.0, Lit.length.a1] + a1
+          let d = Constant2([ Stdseq, Lit.length.a1] + a1
           + Record.constantseq(length.a1 + 2,"int"_1))
            yyy(p, org, k + 1, subseq(result, 1, len - 1) + d, nextvar, map)
          else yyy(p, org, k + 1, result + sym, nextvar, map)
@@ -489,7 +479,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
          let arg1 = result_(len - 1)
           if module.arg1 = "$words" ∧ between(idx, 1, length.fsig.arg1)then
           yyy(p, org, k + 1, subseq(result, 1, len - 2) + Word.(fsig.arg1)_idx, nextvar, map)
-          else if isrecordconstant.arg1 ∧ (constantcode.arg1)_1 = Lit.0
+          else if isrecordconstant.arg1 ∧  ( (constantcode.arg1)_1 = Lit.0 &or (constantcode.arg1)_1 = Lit.1)
           ∧ between(idx, 1, length.constantcode.arg1 - 2)then
           yyy(p, org, k + 1, subseq(result, 1, len - 2) + (constantcode.arg1)_(idx + 2), nextvar, map)
           else yyy(p, org, k + 1, result + sym, nextvar, map)

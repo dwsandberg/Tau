@@ -84,8 +84,21 @@ function opaction(R:reduction.bindinfo, input:seq.token.bindinfo)bindinfo
  let op = tokentext.R_2
  let dict = dict.R_1
  let types = types.R_1 + types.R_3
+  if  op="≠" then 
+    let f = lookupbysig(dict, "=", types, input, place.R)
+         bindinfo(dict, code.R_1 + code.R_3 + f+symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
+  else if op="∉" then
+    let f = lookupbysig(dict, "∈", types, input, place.R)
+         bindinfo(dict, code.R_1 + code.R_3 + f+symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")  
+ else if op="≥" then
+    let f = lookupbysig(dict, "<", types, input, place.R)
+         bindinfo(dict, code.R_1 + code.R_3 + f+symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")  
+ else if op="≤" then
+    let f = lookupbysig(dict, ">", types, input, place.R)
+         bindinfo(dict, code.R_1 + code.R_3 + f+symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")  
+    else 
  let f = lookupbysig(dict, [op_1], types, input, place.R)
-  bindinfo(dict, code.R_1 + code.R_3 + f, [ resulttype.f],"")
+   bindinfo(dict, code.R_1 + code.R_3 + f, [ resulttype.f],"")
 
 function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, exp:bindinfo)bindinfo
  if op_1 = "process"_1 then
@@ -95,7 +108,7 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
   assert cardinality.dcrt = 1  report errormessage("parameter type" + print.rt+ "is undefined in",  input, place.R)
  let dcws = deepcopysym(dict.R,mytype."word seq")
   assert cardinality.dcws=1 report errormessage("type word seq is require for process in" ,  input, place.R)
-    let newcode = [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp, Lit.0, Lit.nopara]
+    let newcode = [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp, Stdseq, Lit.nopara]
         + subseq(code.exp, 1, length.code.exp - 1)
     + [ newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint] + paratypes.last.code.exp, typeptr), symbol("createthread(int, int, int, ptr)","builtin","ptr")]
    bindinfo(dict.R, newcode, [  typeprocess+rt],"")
@@ -205,7 +218,8 @@ else if ruleno = // L E // 28 then R_1
 else if ruleno = // L L, E // 29 then bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"") 
 else if ruleno = // E [ L]// 30 then 
  let types = types.R_2
-assert types @@ ∧(true,(types_1 = @e))report errormessage("types do not match in build", input, place.R)bindinfo(dict.R, [ Lit.0, Lit.length.types]+ code.R_2 + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint]+ types, typeptr), [ typeseq + types_1],"") 
+assert types @@ ∧(true,(types_1 = @e))report errormessage("types do not match in build", input, place.R)
+bindinfo(dict.R, [ Stdseq, Lit.length.types]+ code.R_2 + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint]+ types, typeptr), [ typeseq + types_1],"") 
 else if ruleno = // A let W = E // 31 then 
  let e = R_4
   let name = tokentext.R_2

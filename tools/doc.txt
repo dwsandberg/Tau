@@ -14,11 +14,12 @@ Functional languages tend to use recursion to replace the control structures of 
 
 A program is represented as a sequence of characters. The character encoding is assume to be unicode represented in UTF8 format. The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.
 
-Paragraphs that do NOT start with &keyword type, &keyword use, &keyword Library, &keyword module, &keyword Function, or &keyword function are always treated as comments.
+Paragraphs that do NOT start with &keyword type, &keyword use, &keyword Library,
+ &keyword module, &keyword Function &keyword function, &keyword unbound,  or &keyword Export are always treated as comments.
 
 Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. 
 The characters ()+,-.:=[]^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
-A word sequence literal is double or single quoted like "This is a string Literal." or 'This is a string Literal.'
+A word sequence literal is double or single quoted like "This is a string Literal." or ' This is a string Literal.'
 
 An integer literal is represented by a sequence of words where each word only contains digits. 
 That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. 
@@ -50,34 +51,33 @@ Here is a list of infix binary operators. The operators on the same line are the
 &br _^
 &br unary minus
 &br * / mod ∪ ∩ 
-&br in +-∈ ∋
+&br in +-∈ ∉
 &br = < > ? ≤ ≥ ≠ >> <<
 &br ∧
 &br ∨
 
 ()or {} are used to override the default precedence. Procedure calls are of the form f1(p1, p2, …, pn). f1()is illegal and should be written f1. To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1. The precedence of. is between the_and the *.
 
-Infix operators are simply another notation for function calls. a + 3 * b is equivalent to +(a, *(3, b))
+ The operators ≤ ≥ ≠ are abbreviations for   not(a > b) , not ( a < b ), not(a = b) respectively. 
+
 
 The computation unit in tau is  a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word &keyword module.
 
-A paragraph is a sequence of words. Paragraphs that do NOT start with type, use, module, Library, Function or function are always treated as comments.
+A paragraph is a sequence of words. Paragraphs that do NOT start with type, use, module, Library, Function, unbound, Export, or function are always treated as comments.
 
 The syntax for non-comment paragraphs is &{ block <paragraph>::= <module definition> | <definition> | &keyword use <type> &br <module definition>::= &keyword module <word>(T)| &keyword module <word> 
 &br <name list>:= <word>:<type> | <name list>, <word>:<type> 
+&br <definition type > ::= &keyword Function  | &keyword function | &keyword Export | &keyword unbound  
 &br <definition>::= &keyword type <word> &keyword is &keyword record <name list> 
 &br | &keyword type <word> &keyword is &keyword sequence <name list> 
-&br | &keyword type <word> &keyword is &keyword encoding <type>
-&br <definition>::= &keyword function <function name>(<name list>)<type> <exp> 
-&br | &keyword function <function name> <type> <exp> 
-&br | &keyword Function <function name>(<name list>)<type> <exp> 
-&br | &keyword Function <function name> <type> <exp> &br <function name>::= <word> 
+&br | <definition type >  <function name>(<name list>)<type> <exp> 
+&br | <definition type >  <function name> <type> <exp> 
 &br <let name>::= <word> &br <parameter name>::= <word> &br <type>::= <word> 
 &br <type>::= <word>.<type> &br <function call>::= <function name> | <function name>(<exp list>)
 &br <exp>::= <function call> |<parameter name> |<let name> 
 &br <exp>::= &keyword if <exp> &keyword then <exp> &keyword else <exp> 
 &br <exp>::=(<exp>)&br <exp>::= {<exp>} &br <exp>::= <exp> <binary op> <exp> 
-&br <exp>::=-<exp> &br <exp>::= <word>.<exp> &br <exp>::= <sequence constructor> &br <sequence constructor>::= [ <exp list>]&br <exp list>::= <exp> | <exp list>, <exp> &br <exp>::= @(<function call>, <function call>, <exp>, <exp>)&br <exp>::= &keyword let <let name> = <exp> exp &br <exp>::= &keyword assert <exp> &keyword report <exp> exp &br <exp>::= // < one or more words not containing / /> // exp &br <exp>::= process.<function call> | process(<function call>)&}
+&br <exp>::=-<exp> &br <exp>::= <word>.<exp> &br <exp>::= <sequence constructor> &br <sequence constructor>::= [ <exp list>]&br <exp list>::= <exp> | <exp list>, <exp> &br <exp>::=  exp @ <function name>(<exp list>)&br <exp>::= &keyword let <let name> = <exp> exp &br <exp>::= &keyword assert <exp> &keyword report <exp> exp &br <exp>::= // < one or more words not containing / /> // exp &br <exp>::= process.<function call> | process(<function call>)&}
 
 Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
 
@@ -88,6 +88,8 @@ Sequence, S, is a function whose domain is the integers and whose range is some 
 &keyword function test1 seq.int [ 2, 4, 8, 16, 32]
 
 The type for a sequence of integers is seq.int. The length of the sequence can be obtained by calling the function length. In this case the length(test1)is 5. There is a subscript operator_that can obtain the elements of the list:test1_1 is 2 and test1_5 is 32.
+
+Negative values for the sequence count the elements from the end of the sequence: test1_-1 is the last element in the sequence, 32.
 
 A sequence of characters in double quotes does not represent a sequence of characters but a sequence of words.“Hello World!” represent two words.
 
@@ -187,48 +189,43 @@ We can use arithseq(n, 1, 1) to represent the sequence 1 to n.   The arguments o
 
 The sum above can equivalantly   be expressed as follows sigma(0, arithseq(n,1,1), 1)where
 
-&keyword function term2(n:int)int n + 1
 
-&keyword function term1(a:int, b:int)int a + b
+&keyword function term1(a:int, b:int)int a + n+1
 
 &keyword function sigma(acc:int, s:seq.int, i:int)int 
- &br &keyword if i > length.s &keyword then acc &keyword else sigma(term1(acc, term2(s_i)), s, i + 1)
+ &br &keyword if i > length.s &keyword then acc &keyword else sigma(term1(acc, term1(s_i)), s, i + 1)
 
-Using aggregation this can be express as @(term1, term2, 0, arithseq(n,1,1))or
- @(+, +.1, 0, arithseq(n,1,1))
+Using aggregation this can be express as arithseq(n,1,1) @ term1(0,@e)or
+ arithseq(n,1,1)@+(0,@e+1)
 
-More generally @(term1, term2, exp1, exp2)where exp1 is of type <resulttype> and exp is of type seq.<elementtype> is defined as
+More generally  exp1 @ term1(exp2, exp3) where exp2 is of type <resulttype> and exp1 is of type seq.<elementtype> is defined as
 
 apply(exp1, exp2)
 
 where
+ 
+&keyword function thunk(acc:<resulttype>,@e:<elementtype>) <resulttype>
+term1(acc, explist )
 
  &keyword function apply(acc:<resulttype>, s:seq(<elementtype>), i:int)<resulttype> 
- &br &keyword if i > length.s &keyword then acc &keyword else apply(term1(acc, term2(s_i)), s, i + 1)
+ &br &keyword if i > length.s &keyword then acc &keyword else apply(thunk(acc,  s_i), s, i + 1)
 
-Term1 and term2 can have parameters.@(term1(p1), term2(p2), exp1, exp2)is defined as
 
-apply2(exp1, exp2)
+Using this form the example sigma sum above where n=10 is 
+[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] @ +(0,@e + 1) 
 
-where
+An expression for summing a sequence is [ 1, 2, 3, 4] @ +(0, @e) = 0 + 1*1 + 1*2 + 1*3 + 1*4 = 10
 
-&keyword function apply2(acc:resulttype, s:seq(elementtype), i:int)resulttype 
-&br &keyword if i > length.s &keyword then acc &keyword else apply2(p1, term1(acc, term2(p2, s_i)), s, i + 1)
+A product for the elements in a sequence is [ 1, 2, 3, 4] @ *(0, @e) = 24
 
-Using this form the example sigma sum above where n=10 is @(+, +.1, 0, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-
-An expression for summing a sequence is @(+, *.1, 0, [ 1, 2, 3, 4])= 0 + 1*1 + 1*2 + 1*3 + 1*4 = 10
-
-A product for the elements in a sequence is @(*, *.1, 1, [ 1, 2, 3, 4])= 24
-
-The following gives back the same sequence @(+, identity, empty:int, [ 1, 2, 3, 4])evaluates to [ 1, 2, 3, 4]. "+"is the concatenation operator.
+The following gives back the same sequence [ 1, 2, 3, 4] @ +(empty:int,@e)   evaluates to [ 1, 2, 3, 4]. "+"is the concatenation operator.
 
 One can print a sequence of integers with
 
 &keyword function print(a:seq.int)seq.word 
-&br {"["+ @(separator.",", print,"", a)+"]"}
+&br {"["+ a @ list(",", [toward.@e]) +"]"}
 
-&keyword function separator(sep:seq.word, a:seq.word, b:seq.word)seq.word 
+&keyword function list (a:seq.word, sep:seq.word, b:seq.word)seq.word 
 &br  &keyword if length.a = 0 &keyword then b &keyword else a +sep+ b
 
 &section Parameterized Module
@@ -321,13 +318,7 @@ A function call f1(<exp1>, <exp2>,...)must match exactly one visible function de
 
 The type of the expression that defines a function much match the return type of the function.
 
-&section Derived Operators
 
-The module otherseq.T also defines some derived operators. If = and > are defined on T, the module defines the binary operators <, ≤, ≥, ≠ in terms of = or >. The operator for comparision"?"could be defined as a derived operator but is not because a more effiecent definition may sometimes be coded than the derived one.
-
-Here is an example definition of one of the derived operators:
-
-&keyword  Function ≠(a:T, b:T)boolean not(a = b)
 
 &section Encodings
 
@@ -361,9 +352,9 @@ Two parameterized types are involved in a encoding:&em encoding and &em erecord.
 
 The parameterized module &em seq defines the following functions for working with encodings. 
 
-&keyword Function encode(T, erecord.T)encoding.T // will return the encoding // ;
+&keyword Function encode(T)encoding.T // will return the encoding // ;
 
-&keyword  Function decode(encoding.T, erecord.T)T // will return the value that was encoded // ;
+&keyword  Function decode(encoding.T)T // will return the value that was encoded // ;
 
 &keyword Function findencode(t:T, erecord.T)seq.T // will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.// ;
 

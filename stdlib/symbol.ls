@@ -123,7 +123,7 @@ Function resulttype(s:symbol)mytype mytype.returntype.s
 
 Function nopara(s:symbol)int
  if isconst.s ∨ islocal.s then 0
- else if isspecial.s ∧ not(last.module.s in "$record $loopblock")then
+ else if isspecial.s ∧ (last.module.s &nin "$record $loopblock")then
  // assert last.module.s in"$continue $block $apply $exitblock $br $record $loopblock $define"report"X"+ module.s //
   if last.module.s = "$define"_1 then 1 else toint.(fsig.s)_2
  else
@@ -222,7 +222,9 @@ Function Callidx(kind:word)symbol
  let t = if kind in "int real"then [ kind]else"ptr"
   symbol("callidx(" + t + "seq, int)", t + "builtin", t)
 
-Function Emptyseq seq.symbol [ Lit.0, Lit.0, symbol("RECORD(int, int)","$record","ptr", specialbit)]
+Function Emptyseq seq.symbol [ Stdseq, Lit.0, symbol("RECORD(int, int)","$record","ptr", specialbit)]
+
+Function Stdseq  symbol Lit.0 
 
 Function pseqidxsym(type:mytype)symbol newsymbol("_", typeseq + type, [ typepseq + type, typeint], type)
 
@@ -341,7 +343,7 @@ Function constantcode(s:symbol)seq.symbol
 Function basesym(s:symbol)symbol if module.s = "$fref"then(zcode.s)_1 else s
 
 Function options(code:seq.symbol)seq.word
- if length.code = 0 ∨ not(last.code = Optionsym)then""
+ if length.code = 0 ∨  (last.code ≠ Optionsym)then""
  else fsig.code_(length.code - 1)
 
 ------
@@ -386,14 +388,14 @@ Function addoption(p:program, s:symbol, option:seq.word)program
     map(p, s, newcode)
 
 Function getoption(code:seq.symbol)seq.word
- if not(last.code = Optionsym)then empty:seq.word else fsig.code_(length.code - 1)
+ if  (last.code &ne Optionsym)then empty:seq.word else fsig.code_(length.code - 1)
 
 Function isbuiltin(a:seq.word)boolean a = "builtin"
 
 Function isbuiltin(a:mytype)boolean isbuiltin.towords.a
 
 Function processOption(p:program, t:seq.word)program
- if length.t < 4 ∨ not(t_1 = "*"_1)
+ if length.t < 4 ∨  (t_1 &ne "*"_1)
  ∨ not(t_2 in "PROFILE INLINE STATE NOINLINE")then
  p
  else

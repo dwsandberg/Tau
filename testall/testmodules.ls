@@ -129,7 +129,7 @@ function t044 boolean
 let s = UTF8.[ 40, 50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
 let z = myseq.toseqint.s
  z @ +("", toword.@e) = "40 50 335 50 336"
- ∧ not(length.toseq.to:myseq.int(z) = 0)
+ ∧  length.toseq.to:myseq.int(z) &ne 0 
  ∧ length.toseq.to:myseq.int([ 1, 2, 3]) = 0
 
 _____________

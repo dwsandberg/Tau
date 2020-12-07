@@ -206,13 +206,13 @@ function assignencoding(a:int, typename)int a + 1
 
 builtin IDX(seq.int, int)int
 
-builtin setfld(seq.int, int, int)int
+/builtin setfld(seq.int, int, int)int
 
 builtin allocatespace(i:int)seq.int
 
 Function memcpy(idx:int,i:int, memsize:int, s:seq.int,  fromaddress:seq.int)int
  if memsize = 0 then idx
- else memcpy(setfld(s, idx, IDX(fromaddress, i)),i + 1, memsize - 1, s,  fromaddress)
+ else memcpy(setfld( idx, s, IDX(fromaddress, i)),i + 1, memsize - 1, s,  fromaddress)
 
 Function packed1(s:seq.int)seq.int
  // for use where the element type is represented in 64bits. //
@@ -220,15 +220,15 @@ Function packed1(s:seq.int)seq.int
  let r = bitcast
   .packed(arithseq((length.s + blocksize - 1) / blocksize, blocksize, 1)
   @@ +(empty:seq.seq.int, subblock(s, @e)))
-  let k = setfld(r, setfld(r, 0, blockindexfunc), length.s)
+  let k = setfld(setfld(  0,r, blockindexfunc),r, length.s)
    r
  else
   let newseq = allocatespace(length.s + 2)
-  let a = setfld(newseq, setfld(newseq, 0, 0), length.s)
+  let a = setfld( setfld(0,newseq,   0),newseq, length.s)
   let d = s @@  setfld(2,newseq,@e)  
    newseq
 
-function setfld(i:int,s:seq.int,val:int)  int setfld(s,i,val)
+builtin setfld(i:int,s:seq.int,val:int)  int  
 
 Function packed(s:seq.seq.int, ds:int)seq.int packed(ds, s)
 
@@ -240,11 +240,11 @@ Function packed(ds:int, s:seq.seq.int)seq.int
  let r = bitcast
   .packed(arithseq((length.s + blocksize - 1) / blocksize, blocksize, 1)
   @@ +(empty:seq.seq.int, subblock(ds, s, @e)))
-  let k = setfld(r, setfld(r, 0, blockindexfunc), length.s)
+  let k = setfld( setfld( 0,r, blockindexfunc),r, length.s)
    r
  else
   let newseq = allocatespace(length.s * ds + 2)
-  let a = setfld(newseq, setfld(newseq, 0, ds), length.s)
+  let a = setfld( setfld( 0,newseq, ds),newseq, length.s)
   let d = s @@ memcpy( 2,0, ds, newseq,@e) 
    newseq
 

@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use doc ; testdoc
+#!/usr/local/bin/tau ; use doc ; createdoc
 
 Module doc
 

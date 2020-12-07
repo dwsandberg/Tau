@@ -2,8 +2,6 @@ Module real
 
 use UTF8
 
-use otherseq.real
-
 use seq.real
 
 use stdlib
@@ -38,7 +36,8 @@ Function =(a:real, b:real)boolean(a ? b) = EQ
 
 Function >(a:real, b:real)boolean(a ? b) = GT
 
-Export <(a:real, b:real)boolean
+Function <(a:real, b:real)boolean b > a
+
 
 Function max(a:real, b:real)real if(a ? b) = GT then a else b
 
@@ -56,7 +55,13 @@ Builtin representation(a:real)int
 
 Builtin casttoreal(i:int)real
 
-Function^(i:real, n:int)real constantseq(n, i) @@ *(1.0, @e)
+Function^(a:real, n:int)real 
+ if n =0 then 1.0 else 
+ if n =1 then a 
+ else if n < 0 then 1.0 / a ^ -n
+ else 
+   let d= n / 2 
+    a ^ d  *  a ^  ( n - d ) 
 
 Function *(a:int, b:real)real toreal.a * b
 

@@ -169,15 +169,15 @@ function codeforbuiltin(alltypes:typedict, newsym:symbol, oldsym:symbol, org:seq
 
 function encodenocode(typ:mytype)seq.symbol
  let gl = symbol("global" + print.typ,"builtin","int seq")
- let setfld = symbol("setfld(int seq, int, int)","builtin","int")
+ let setfld = symbol("setfld(int,int seq,   int)","builtin","int")
  let encodenosym = newsymbol("encodingno", mytype."assignencodingnumber", [ mytype."word seq"], typeint)
  let IDXI = Idx."int"_1
-  if typ = mytype."typename"then [ gl, Lit.0, Lit.2, setfld, Define."xx", gl, Lit.0, IDXI]
+  if typ = mytype."typename"then [ Lit.0, gl,  Lit.2, setfld, Define."xx", gl, Lit.0, IDXI]
   else if typ = mytype."char seq"then
-  [ gl, Lit.0, Lit.1, setfld, Define."xx", gl, Lit.0, IDXI]
+  [ Lit.0, gl,  Lit.1, setfld, Define."xx", gl, Lit.0, IDXI]
   else
    [ gl, Lit.0, IDXI, Lit.0, EqOp, Lit.3, Lit.2, Br, gl, Lit.0
-   , IDXI, Exit, gl, Lit.0, Words.typerep.typ, encodenosym, setfld, Define."xx", gl, Lit.0
+   , IDXI, Exit, Lit.0, gl,  Words.typerep.typ, encodenosym, setfld, Define."xx", gl, Lit.0
    , IDXI, Exit, Block(typeint, 3)]
 
 function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol

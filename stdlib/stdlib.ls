@@ -61,7 +61,9 @@ PROFILE pass1:postbind3(typedict, set.symbol, seq.symbol, int, seq.symbol, mytyp
 
 * STATE builtin:getfile(seq.bits)fileresult
 
-* STATE builtin:setfld(seq.int, int, seq.T)int
+
+* STATE builtin:setfld( int,seq.int, seq.T)int
+
 
 * STATE builtin:option(T, seq.word)T
 
@@ -174,11 +176,8 @@ Function mod(x:int, y:int)int
 
 Builtin >(a:int, b:int)boolean
 
-Export <(a:int, b:int)boolean
+Function <(a:int, b:int)boolean b > a
 
-Export ≤(a:int, b:int)boolean
-
-Export ≥(a:int, b:int)boolean
 
 Function max(a:int, b:int)int if a > b then a else b
 
@@ -221,9 +220,6 @@ Export ?(a:word, b:word)ordering
 
 Export =(a:word, b:word)boolean
 
-Export ≠(a:word, b:word)boolean
-
-Export ≠(a:int, b:int)boolean
 
 Export toword(n:int)word // Covert integer to a single word. //
 
@@ -302,6 +298,13 @@ Export in(word, seq.word)boolean
 Export in(seq.word, seq.seq.word)boolean
 
 Export in(int, seq.int)boolean
+
+Export ∈(word, seq.word)boolean
+
+Export ∈(seq.word, seq.seq.word)boolean
+
+Export ∈(int, seq.int)boolean
+
 
 Export =(seq.word, seq.word)boolean
 

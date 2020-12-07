@@ -6,18 +6,6 @@ use seq.T
 
 use stdlib
 
-Function ≠(a:T, b:T)boolean not(a = b)
-
-Function ≤(a:T, b:T)boolean not(a > b)
-
-Function ≥(a:T, b:T)boolean not(b > a)
-
-Function <(a:T, b:T)boolean b > a
-
-unbound =(T, T)boolean
-
-unbound >(a:T, b:T)boolean
-
 Function reverse(s:seq.T)seq.T
  arithseq(length.s, 0 - 1, length.s) @@ +(empty:seq.T, s_@e)
 

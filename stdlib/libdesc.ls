@@ -87,7 +87,7 @@ function addlibsym(s:symbol)symbol
 function addmytype(t:mytype)symbol Words.typerep.t
 
 function addseq(s:seq.symbol)symbol
- Constant2([ Lit.0, Lit.length.s] + s
+ Constant2([ Stdseq, Lit.length.s] + s
  + Record("int, int" + constantseq(length.s,"ptr"_1)))
 
 function addlibmod(toexport:set.symbol, m:firstpass)symbol
