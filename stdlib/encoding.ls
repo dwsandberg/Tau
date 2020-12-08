@@ -172,6 +172,13 @@ function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int)seq.w
    else if t = 2 then counts(s, i + 1, one, two + 1, big)
    else counts(s, i + 1, one, two, big + 1)
 
+
+module taubuiltinsupport.T
+
+use seq.T
+
+Builtin IDX(seq.T, int) T
+
 module assignencodingnumber
 
 use encoding.seq.char
@@ -179,6 +186,10 @@ use encoding.seq.char
 use seq.seq.int
 
 use seq.int
+
+use taubuiltinsupport.int
+
+use taubuiltinsupport.seq.int
 
 use stdlib
 
@@ -204,11 +215,15 @@ Function encodingno(name:seq.word)int
 
 function assignencoding(a:int, typename)int a + 1
 
-builtin IDX(seq.int, int)int
-
-/builtin setfld(seq.int, int, int)int
-
 builtin allocatespace(i:int)seq.int
+
+builtin setfld(i:int,s:seq.int,val:int)  int  
+
+builtin bitcast(a:seq.seq.int)seq.int
+
+builtin blockindexfunc int
+
+function blocksize int 10000
 
 Function memcpy(idx:int,i:int, memsize:int, s:seq.int,  fromaddress:seq.int)int
  if memsize = 0 then idx
@@ -217,9 +232,9 @@ Function memcpy(idx:int,i:int, memsize:int, s:seq.int,  fromaddress:seq.int)int
 Function packed1(s:seq.int)seq.int
  // for use where the element type is represented in 64bits. //
  if length.s > blocksize then
- let r = bitcast
-  .packed(arithseq((length.s + blocksize - 1) / blocksize, blocksize, 1)
-  @@ +(empty:seq.seq.int, subblock(s, @e)))
+ let r =  
+  packed1.bitcast(arithseq((length.s + blocksize - 1) / blocksize, blocksize, 1)
+  @@ +(empty:seq.seq.int,   packed1.subseq(s, @e, @e + blocksize - 1)))
   let k = setfld(setfld(  0,r, blockindexfunc),r, length.s)
    r
  else
@@ -228,18 +243,14 @@ Function packed1(s:seq.int)seq.int
   let d = s @@  setfld(2,newseq,@e)  
    newseq
 
-builtin setfld(i:int,s:seq.int,val:int)  int  
-
-Function packed(s:seq.seq.int, ds:int)seq.int packed(ds, s)
-
 Function packed(ds:int, s:seq.seq.int)seq.int
  // for use where the element type is represented in ds * 64bits where ds > 1. //
  // if the length < = blocksize then the result is represented as <ds> <length> <fld1.s_1><fld2.s_1>... <fld1.s_2><fld2.s_2>.... //
  // if the length > bloocksize then result is represented as <blockindexfunc> <length> <packed.subseq(s, 1, blocksize)> <packed.subseq(s, blocksize + 1, 2*blocksize)>.....//
  if length.s > blocksize then
- let r = bitcast
-  .packed(arithseq((length.s + blocksize - 1) / blocksize, blocksize, 1)
-  @@ +(empty:seq.seq.int, subblock(ds, s, @e)))
+ let r = packed1.bitcast
+  (arithseq((length.s + blocksize - 1) / blocksize, blocksize, 1)
+  @@ +(empty:seq.seq.int,   packed(ds, subseq(s, @e, @e + blocksize - 1))))
   let k = setfld( setfld( 0,r, blockindexfunc),r, length.s)
    r
  else
@@ -248,19 +259,7 @@ Function packed(ds:int, s:seq.seq.int)seq.int
   let d = s @@ memcpy( 2,0, ds, newseq,@e) 
    newseq
 
-builtin bitcast(a:seq.seq.int)seq.int
-
-builtin IDX(seq.seq.int, int)seq.int
-
-builtin blockindexfunc int
-
-function blocksize int 10000
 
 Function indexblocks(a:seq.seq.int, i:int)int
  assert between(i, 1, length.a)report"out of bounds"
   IDX(a,(i - 1) / blocksize + 2)_((i - 1) mod blocksize + 1)
-
-function subblock(s:seq.int, i:int)seq.int packed.subseq(s, i, i + blocksize - 1)
-
-function subblock(ds:int, s:seq.seq.int, i:int)seq.int
- packed(ds, subseq(s, i, i + blocksize - 1))

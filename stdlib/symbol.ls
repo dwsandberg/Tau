@@ -213,10 +213,7 @@ Function istypeexport(s:symbol)boolean subseq(fsig.s, 1, 2) = "type:"
 Function isIdx(s:symbol)boolean isbuiltin.module.s ∧ (fsig.s)_1 in "IDX"
 
 Function Idx(kind:word)symbol
- let t = if kind in "int real"then [ kind]else"ptr"
-  if t = "int"then symbol("IDX(int seq, int)","builtin","int")
-  else if t = "real"then symbol("IDX(real seq, int)","builtin","real")
-  else symbol("IDX(ptr seq, int)","builtin","ptr")
+  symbol("IDX(T seq, int)",[kind]+"builtin","T")
 
 Function Callidx(kind:word)symbol
  let t = if kind in "int real"then [ kind]else"ptr"

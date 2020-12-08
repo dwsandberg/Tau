@@ -12,9 +12,18 @@ type pseq is sequence length:int, a:seq.T, b:seq.T
 
 unbound =(T, T)boolean
 
+
+builtin IDX(seq.T,int) T
+
 Function_(a:seq.T, c:int)T
  let b = if c < 0 then length.a + c + 1 else c
-  assert  getseqtype.a >  100  ∨ b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
+ let typ=getseqtype.a
+  if typ < 100 then
+    assert    b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
+   if typ=0 then IDX( a,b+1) 
+   else    
+    IDX(a, typ * (b-1) +2  )  
+else 
    callidx(a, b)
 
 builtin callidx(a:seq.T, int)T // treated specially by compiler //
