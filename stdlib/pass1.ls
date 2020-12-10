@@ -315,7 +315,7 @@ function gathersymbols(f:firstpass,stubdict:set.symbol,  input:seq.word)firstpas
   let t = abstracttype(name, parameter.modname.f)
    assert parameter.modname.f in [ mytype."", mytype."T"]report"KLJKL"
    let it = myinternaltype(kind, name, modname.f, types.b)
-   let typesym = // newsymbol("type:"+ print.t, modname.f, [ t], t)// typesym.it
+   let typesym = typesym.it
    let constructor = newsymbol([ name], modname.f, types.b @@ +(empty:seq.mytype, parameter.@e), t)
    let fldsyms = types.b @@ +(empty:seq.symbol, definefld(modname.f, [ t], @e))
    let prg1 = prg.f
@@ -323,7 +323,8 @@ function gathersymbols(f:firstpass,stubdict:set.symbol,  input:seq.word)firstpas
     let seqtype = typeseq + parameter.modname.f
      let symtoseq = newsymbol("toseq", modname.f, [ t], seqtype)
      let symfromseq = newsymbol("to:" + print.t, modname.f, [ seqtype], t)
-     let indexfunc = Fref.newsymbol("_", modname.f, [ mytype("T" + name), typeint], mytype."T")
+     let t1=if name="pseq"_1 then "int" else "T"
+     let indexfunc = Fref.newsymbol("_", modname.f, [ mytype(t1 + name), typeint], mytype.t1)
      let prg0 = fldcode(constructor, [ indexfunc], fldsyms, 1, 1,"", prg1)
      let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]
      let prg = map(prg0, symtoseq, [ Local.1])

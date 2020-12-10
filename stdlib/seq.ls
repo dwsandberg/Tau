@@ -15,18 +15,19 @@ unbound =(T, T)boolean
 
 builtin IDX(seq.T,int) T
 
-Function_(a:seq.T, c:int)T
- let b = if c < 0 then length.a + c + 1 else c
- let typ=getseqtype.a
-  if typ < 100 then
-    assert    b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
-   if typ=0 then IDX( a,b+1) 
-   else    
-    IDX(a, typ * (b-1) +2  )  
-else 
-   callidx(a, b)
+builtin IDX2(seq.T,int) T
 
-builtin callidx(a:seq.T, int)T // treated specially by compiler //
+Function _(a:seq.T, c:int)T
+  let b = if c < 0 then length.a + c + 1 else c
+  let typ=getseqtype.a
+  if typ > 1000 then callidx(a, b)
+  else
+    assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
+    if typ > 1 then IDX2(a, b) else  IDX( a,b+1)     
+              
+
+
+builtin callidx(a:seq.T, int)T  
 
 Builtin getseqtype(a:seq.T)int
 
@@ -35,11 +36,14 @@ Export length(a:seq.T)int
 Builtin empty:seq.T seq.T // empty seq //
 
 Function =(a:seq.T, b:seq.T)boolean
- if length.a = length.b then subequal(a, b, length.a)else false
+ if length.a = length.b then    subequal(a, b, length.a)   else false
 
-Function subequal(a:seq.T, b:seq.T, i:int)boolean
+function subequal(a:seq.T, b:seq.T, i:int)boolean
  if i = 0 then true
  else if a_i = b_i then subequal(a, b, i - 1)else false
+
+   a @  &and ( true, @e = b_@i ) 
+ 
 
 subin is helper function
 

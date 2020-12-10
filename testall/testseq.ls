@@ -1,6 +1,5 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau ; use testseq ; testseq
 
-run testseq testseq
 
 module testseq
 
@@ -70,14 +69,19 @@ function get:word word toword.getint.1000
 
 function get:seq.word seq.word constantseq(getint.10, get:word)
 
+function xx(i:int) typerec2  typerec2( i,i * 2 )
+
 Function testseq seq.word
 let a = encode.ccc(1, 987)
- // @(+, toword,"", [ getint(10000), getint(10000)])//
- let z = check:seq.typerec2
- let y = check:seq.word
- let w = check:seq.typereal
+  let w = check:seq.typereal  
  let x = check:seq.seq.word
-  [ toword.length.z, toword.length.y, toword.length.w, toword.length.x]
+ let y = check:seq.word
+    let z = check:seq.typerec2  
+ if not ("FAIL"_1 in (w+x+y+z)) then "PASS testseq" else "FAIL testseq"+w+x+y+z
+
+  
+
+
 
 module testpackedseq.T
 
@@ -95,14 +99,16 @@ use testseq
 
 unbound get:T T
 
-Function check:seq.T seq.T
-let unpack = random:seq.T(17)
+unbound =(T,T) boolean
+
+ 
+Function check:seq.T seq.word
+let unpack = random:seq.T(18)
 let pack = packed.unpack
 let x = if sizeoftype:T = 1 then""else"packed"
- assert length.unpack = length.pack
- ∧ (length.pack > 9999 ∨ seqkind.pack = x + toword.length.unpack)report"ERROR"
-  unpack
-
+  if (length.pack > 9999 ∨ seqkind.pack = x + toword.length.unpack) &and pack=unpack then "PASS"+toword.length.pack
+  else "FAIL"+toword.length.pack
+  
 Function random:seq.T(depth:int)seq.T
  if depth ≤ 0 then base:seq.T
  else
@@ -110,8 +116,6 @@ Function random:seq.T(depth:int)seq.T
   + random:seq.T(depth - 1 - getint.2)
    if length.r < 50 ∨ getint.10 ≠ 2 then r
    else fastsubseq(r, 2, length.r - 1)
-
-getint(depth / 3)
 
 Function base:seq.T seq.T
 let i = getint.6
@@ -141,4 +145,4 @@ Function seqstruct(a:seq.T)seq.word
   else if kind = "fastsub"then
   let p = to:fastsubseq.T(a)
     "(" + "fastsub" + seqstruct.data.p + ")"
-  else kind
+  else kind 

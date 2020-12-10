@@ -644,7 +644,16 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
  let newmasteridx = Local(nextvar + 10)
  let Defineseqelement = Define(nextvar + 11)
  let seqelement = Local(nextvar + 11)
- let pseq = code_(-1)
+ let pseq = Fref.symbol("_(int pseq,int)", "int seq","int")
+ let typesize=value.code_(-1)
+ // let pl=paratypes.applysym
+  let x=  [toword.typesize]+seqelementkind+resulttype 
+    assert  x in [
+    " 1 int int" ,"4 ptr ptr" ,"4 ptr int","5 ptr ptr","1 ptr ptr", "1 ptr int",
+    " 1 int real"," 1 int ptr    ",  "3 ptr int","3 ptr ptr","5 ptr int"
+  ,"  2 ptr ptr   "
+  ]  
+  report  "x"+x  //
  let sym = code_(-2)
  let t = backparse(code, length.code - 2, nopara.code_(length.code - 1), empty:seq.int)
  let thunk0 = code >> 1 << t_1 - 1
@@ -665,6 +674,16 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
   else empty:seq.symbol
    if not.isempty.checknoop then yyy(p, org, k + 1, checknoop, nextvar, map)
    else
+    let zz0=parameter.(paratypes.applysym)_3
+    let zz=abstracttype.zz0
+    let change=  seqelementkind in "real"  //  &or 
+    zz &nin "encodingpair   word    symbol  myinternaltype block firstpass"
+      &or ( zz in "encodingpair" &and print.parameter.zz0 in 
+    ["symboltext","typename","llvmtypeele","symbolconstant","const3","stat5","llvmconst","match5"]) 
+    assert change &or  not(zz in "encodingpair") &or  print.parameter.zz0 in ["seq.char"
+  ,"word3"] 
+     report "XJK"+print.zz0   //
+   let fiveor9=if change then Lit.5 else Lit.9
     let part1 = subseq(code, 1, t_1 - 1) + [ Lit.1, Idx."int"_1, Define.totallength]
     let b = subthunk2(thunk0, 1, [ seqelement, masteridx], empty:seq.symbol)
     let thunk = [ acc] + (b << 1)
@@ -672,36 +691,22 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
     // 1 // Loopblock("ptr," + resulttype + ", int, int, int, ptr,int, int)"), 
     // 2 if not(lastidx < idx){ idx < = lastidx then // lastidx, idx, GtOp, Lit.9
     , Lit.3, Br, 
-    // 3 if not(masteridx > totallength )then exit // masteridx,Local.totallength,  GtOp, Lit.4, Lit.5, Br, 
+    // 3 if not(masteridx > totallength )then exit // masteridx,Local.totallength,  GtOp, Lit.4, fiveor9, Br, 
     // 4 // acc, Exit
     , // 5 if descleft then // lastidx, descleft, EqOp, Lit.7, Lit.6, Br, 
     // 6 pop pseq continue(  b.top(stk),acc, masteridx,idx,descleft,pop(stk),seqtype // 
       stk, Lit.1, idxp, Lit.3 , idxp, acc, masteridx, idx, descleft, stk, Lit.0, idxi, seqtype, continue.7, 
     // 7 else descleft if not.ispseq.theseq then // 
-    theseq , Lit.0, idxi, pseq, EqOp, Lit.9, Lit.8, Br, 
+    theseq, Lit.0, idxi, pseq, EqOp, Lit.10, Lit.8, Br, 
     // 8 start new seq ; continue( theseq,acc, masteridx, Lit.0, length.theseq, stk)// 
     theseq, acc, masteridx, Lit.0, theseq, Lit.1, idxi, stk,    
-            theseq, Lit.0, idxi, Lit.0, EqOp, Lit.2, Lit.3,Br,
-             Lit.1,Exit,
-           theseq , Lit.0 ,idxi,  Exit,
-        Block(typeint,3), 
+            theseq, Lit.0, idxi, 
      continue.7, 
     // 9 else--body--let newidx = idx + +, let newmasteridx = masteridx + +, let sequenceele = seq_(idx)continue(thunk, masteridx, idx, lastidx, seq, stk)//
     idx, Lit.1, PlusOp, Definenewidx
-    , masteridx, Lit.1, PlusOp, Definenewmasteridx
-    ,  // let seqelement= if seqtype > 1000 then  Callidx(theseq,newidx) //
-          seqtype ,Lit.1000, GtOp, Lit.2, Lit.2,Br,
-           theseq, newidx, Callidx.seqelementkind,Exit,
-           // else IDX(theseq, typ * (newidx-1) +2  ) //
-            theseq,
-                  newidx, Lit.-1,PlusOp, 
-                  seqtype
-               , symbol("*(int,int)","builtin","int")
-               ,Lit.2
-             ,PlusOp
-           ,Idx.seqelementkind,Exit,
-        Block(mytype.[seqelementkind],3),Defineseqelement]
-    + theseq
+    , masteridx, Lit.1, PlusOp, Definenewmasteridx]
+    +subblock(theseq,idx,seqtype,newidx, seqelementkind,typesize ,change )  
+        +[Defineseqelement, theseq]
     + thunk
     + [ //, acc, seqelement, PlusOp, // newmasteridx, newidx, lastidx, stk, 
     seqtype, continue.7,
@@ -709,11 +714,35 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
         theseq, Lit.2, idxp, acc,masteridx, newidx,  descleft,  stk ,theseq,STKRECORD
         ,Lit.0, continue.7,
    Block(mytype.resulttype, 10)]
-     assert true report thunk @@ +("", print.@e) + (part1 + kk) @@ +(" &br result", print.@e)
-     + t @@ +(" &br t", toword.@e)
-     + code @@ +(" &br code", print.@e)
-     + org @@ +(" &br org", print.@e)
-      yyy(p, org, k + 1, part1 + kk, nextvar + 12, map)
+   //  assert subseq(x,1,3) = "1 int ptr" report  (part1 + kk) @@ +(" &br result", print.@e)
+   //   yyy(p, org, k + 1, part1 + kk, nextvar + 12, map)
+   
+   // zz &in "seq char mytype int token templatepart  myinternaltype UTF8 encoding llvmtype
+    Lcode2 slotrecord mapele liblib parc attribute2 prettyresult internalbc"  //
+
+function  subblock(theseq:symbol,idx:symbol,
+seqtype:symbol,newidx:symbol, seqelementkind:word ,typesize:int
+,change:boolean ) seq.symbol  
+     let threeor2=if change then Lit.3 else Lit.2
+  let GtOp = symbol(">(int, int)","builtin","boolean")
+   if typesize > 1  then
+  [ seqtype ,Lit.1000, GtOp, Lit.2, threeor2,Br,
+           theseq, newidx, Callidx.seqelementkind,Exit,
+           // 3 else if  not(seq > 1 )   then  Idx(theseq,idx) //
+                  seqtype,Lit.1,  GtOp, Lit.5,Lit.4,Br,
+                 theseq,newidx,Lit.1,PlusOp,Idx.seqelementkind,Exit,
+            // else //  
+            theseq
+                 ,idx, seqtype, symbol("*(int,int)","builtin","int")
+                 ,Lit.2
+             ,PlusOp
+           , Lit.0,symbol("cast(T seq, int, int)","builtin","ptr"),Exit,
+        Block(mytype.[seqelementkind],5)]
+    else 
+   [ seqtype ,Lit.1000, GtOp, Lit.2, threeor2,Br,
+           theseq, newidx, Callidx.seqelementkind,Exit,
+           theseq,newidx,Lit.1,PlusOp,Idx.seqelementkind,Exit,
+        Block(mytype.[seqelementkind],3)]  
 
 function subthunk2(s:seq.symbol, i:int, with:seq.symbol, found:seq.symbol)seq.symbol
  if i > length.s then found + s

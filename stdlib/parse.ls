@@ -144,7 +144,7 @@ function applypart2( part1:bindinfo,args:bindinfo,input:seq.token.bindinfo, plac
         else op
  let newcode=code.part1+code.args
     + op
-     +Fref.pseqidxsym.parameter.seqtype 
+     +  Lit.0
     + newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint], resulttype)
     bindinfo(dict.args-s1 -s2,     newcode, [resulttype.op],"")
 

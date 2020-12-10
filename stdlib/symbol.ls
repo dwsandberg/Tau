@@ -223,7 +223,6 @@ Function Emptyseq seq.symbol [ Stdseq, Lit.0, symbol("RECORD(int, int)","$record
 
 Function Stdseq  symbol Lit.0 
 
-Function pseqidxsym(type:mytype)symbol newsymbol("_", typeseq + type, [ typepseq + type, typeint], type)
 
 Function Record(kinds:seq.word)symbol
  symbol("RECORD(" + kinds @@ list("",",", [@e])    + ")","$record","ptr", specialbit)

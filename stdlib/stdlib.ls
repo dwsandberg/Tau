@@ -62,7 +62,7 @@ PROFILE pass1:postbind3(typedict, set.symbol, seq.symbol, int, seq.symbol, mytyp
 * STATE builtin:getfile(seq.bits)fileresult
 
 
-* STATE builtin:setfld( int,seq.int, seq.T)int
+* STATE builtin:setfld(i:int,s:seq.T,val:T)  int  
 
 
 * STATE builtin:option(T, seq.word)T

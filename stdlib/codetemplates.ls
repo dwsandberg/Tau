@@ -166,8 +166,21 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("∧(bits, bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, and))
  , addtemplate(symbol("∨(bits, bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, or))
  , addtemplate(symbol("xor(bits, bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, xor))
- , addtemplate(symbol("setfld( int, int seq, int)","builtin","int"), 2, GEP(r.1, i64, slot.ibcsub2, slot.ibcsub1) + STORE(r.2, r.1, slot.ibcsub3)
- + BINOP(r.2, slot.ibcsub1, C64.1, add))
+ , addtemplate(symbol("setfirst(   int seq, int, int )","builtin","int seq"), 3, 
+    GEP(r.1, i64, slot.ibcsub1, C64.1)+ STORE(r.2, r.1, slot.ibcsub3)
+    + GEP(r.2, i64, slot.ibcsub1, C64.0) + STORE(r.3, r.2, slot.ibcsub2) 
+    +GEP(r.3, i64, slot.ibcsub1, C64.0))
+, addtemplate(symbol("setfld( int, T seq, T)","int builtin","int"), 2, 
+    GEP(r.1, i64, slot.ibcsub2, slot.ibcsub1) + STORE(r.2, r.1, slot.ibcsub3)
+    + BINOP(r.2, slot.ibcsub1, C64.1, add))
+ , addtemplate(symbol("setfld( int, T seq, T)","real builtin","int"), 3, 
+    CAST(r.1, slot.ibcsub3, i64, bitcast)
+    +GEP(r.2, i64, slot.ibcsub2, slot.ibcsub1) + STORE(r.3, r.2, r.1)
+    + BINOP(r.3, slot.ibcsub1, C64.1, add))
+  , addtemplate(symbol("setfld( int, T seq, T)","ptr builtin","int"), 3, 
+    CAST(r.1, slot.ibcsub2, ptr.ptr.i64,bitcast)
+    +GEP(r.2, ptr.i64, r.1, slot.ibcsub1) + STORE(r.3, r.2, slot.ibcsub3)
+    + BINOP(r.3, slot.ibcsub1, C64.1, add))
 , addtemplate(symbol("assert(word seq)","int builtin","int")
  , 1
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1))
@@ -238,10 +251,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
      addtemplate(xx, 0, empty:seq.templatepart,"CALLIDX"_1, 0, empty:seq.symbol, tollvmtype(alltypes, resulttype.xx))
      else if(fsig.xx)_1 = "global"_1 then
      addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
-     else if(fsig.xx)_1 = "blockindexfunc"_1 then
-     let functype = ptr.function.[ i64, i64, ptr.i64, i64]
-       addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functype, symboltableentry("indexblocksZassignencodingnumberZintzseqzseqZint"_1, functype)))
-     else if isexternal.xx then
+     else  if isexternal.xx then
      let symname = if(fsig.xx)_1 in "arcsin"then"asin"_1
       else if(fsig.xx)_1 in "arccos"then"acos"_1 else(fsig.xx)_1
        call(alltypes, xx,"CALLE"_1, empty:seq.symbol, symname)

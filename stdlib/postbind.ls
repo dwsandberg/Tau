@@ -86,16 +86,29 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
       else if(fsig.sym)_1 in "kindrecord"then
       let p2 = Record(paratypes.sym @@ +("", kind(alltypes, modpara, @e)))
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
-      else if(fsig.sym)_1 in "assert callidx  @e @i @acc apply3 IDX"then
-      let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
-       let p2 = if(fsig.sym)_1 = "apply3"_1 then
-       let k = findindex(","_1, fsig.newsym)
-        let a = kind.gettypeinfo(alltypes, mytype.subseq(fsig.newsym, 3, k - 2))
-        let newfsig ="apply3(" + a + "seq" + subseq(fsig.newsym, k, length.fsig.newsym)
-          symbol(newfsig, [ kind] + "builtin", returntype.newsym)
-        else symbol(fsig.sym, [ kind] + "builtin",  returntype.newsym)
+      else if fsig.sym="IDX2(T seq, int)" then
+      let info= gettypeinfo(alltypes, parameter.modname.newsym)
+      let p2=if size.info > 1 then
+         let multop=symbol("*(int,int)","builtin","int")
+           [  Lit.-1,PlusOp, Lit.size.info, multop,Lit.2,PlusOp,    Lit.size.info,symbol("cast(T seq, int, int)","builtin","ptr")]
+         else [symbol("IDX(T seq, int)", [ kind.info] + "builtin",  returntype.newsym)]
           postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
-      else
+      else if(fsig.sym)_1 in "  apply3  " then
+            let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
+          let k = findindex(","_1, fsig.newsym)
+        let info=gettypeinfo(alltypes, mytype.subseq(fsig.newsym, 3, k - 2))
+        let a = kind.info
+        let newfsig ="apply3(" + a + "seq" + subseq(fsig.newsym, k, length.fsig.newsym)
+          let p2 =   symbol(newfsig, [ kind] + "builtin", returntype.newsym)
+            postbind3(alltypes, dict, code, i + 1, (result  >> 1 )+Lit.size.info+ p2, modpara, org, calls, sourceX, tempX)    
+        else if(fsig.sym)_1 in "assert callidx  @e @i @acc   IDX" 
+          &or fsig.sym = "setfld(int, T seq, T)" then
+       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
+       let p2 =  symbol(fsig.sym, [ kind] + "builtin",  returntype.newsym)
+          postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
+      else if fsig.sym in ["bitcast(T blockseq)", "bitcast(T  seq seq)" ,"bitcast(T)" ]then
+          postbind3(alltypes, dict, code, i + 1, result , modpara, org, calls, sourceX, tempX)   
+      else 
        let codeforbuiltin = codeforbuiltin(alltypes, newsym, sym, org)
         postbind3(alltypes, dict, code, i + 1, result + if isfref then Fref.newsym else newsym, modpara, org, calls + newsym, map(sourceX, newsym, codeforbuiltin), tempX)
      else if subseq(fsig.sym, 1, 2) = "type:"then
@@ -125,9 +138,6 @@ function buildconstructor(alltypes:typedict, addfld:seq.word, flds:seq.seq.mytyp
 
 function handletemplates(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, result:seq.symbol, isfref:boolean, oldsym:symbol, modpara:mytype, org:seq.word, calls:set.symbol
 , sourceX:program, tempX:program)resultpb
- assert not(last.module.oldsym = "builtin"_1)report"ISb" + print.oldsym
-  assert not("T"_1 in fsig.oldsym) ∧ not((module.oldsym)_1 = "T"_1)
-  ∧ not((returntype.oldsym)_1 = "T"_1)report"has T" + print.oldsym
   let fx = lookupcode(tempX, oldsym)
    if isdefined.fx then
    let newsource = if isdefined.lookupcode(sourceX, oldsym)then sourceX else map(sourceX, oldsym, code.fx)
@@ -149,13 +159,14 @@ function handletemplates(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:
 
 function codeforbuiltin(alltypes:typedict, newsym:symbol, oldsym:symbol, org:seq.word)seq.symbol
  let newmodpara = parameter.modname.newsym
-  if fsig.oldsym = "sizeoftype:T"then [ Lit.size.gettypeinfo(alltypes, newmodpara)]
+ if fsig.oldsym = "setfirst(T seq,int,int)"  then
+  [Local.1,Local.2,Local.3,symbol("setfirst(int seq,int,int)","builtin","int seq")]
+  else if fsig.oldsym = "allocatespace:T(int)" then [Local.1,symbol("allocatespace(int)","builtin","int seq")]
+  else if fsig.oldsym = "sizeoftype:T"then [ Lit.size.gettypeinfo(alltypes, newmodpara)]
   else if fsig.oldsym = "processresult(T process)"then
   [ Local.1, Lit.2, Idx.kind.gettypeinfo(alltypes, newmodpara)]
   else if fsig.oldsym = "packed(T seq)"then
-  let ds = size.gettypeinfo(alltypes, newmodpara)
-    if ds = 1 then [ Local.1, symbol("packed1(int seq)","assignencodingnumber","int seq")]
-    else [ Lit.ds, Local.1, symbol("packed(int, int seq seq)","assignencodingnumber","int seq")]
+    [Local.1]+blocksym.gettypeinfo(alltypes, newmodpara)
   else if fsig.oldsym = "primitiveadd(T encodingpair)"then
   let addefunc = newsymbol("add", typeencoding + newmodpara, [ typeencodingstate + newmodpara, typeencodingpair + newmodpara], typeencodingstate + newmodpara)
    let add2 = newsymbol("addencoding", mytype."builtin", [ typeint, mytype."int seq", typeint, typeint], typeint)
@@ -166,9 +177,18 @@ function codeforbuiltin(alltypes:typedict, newsym:symbol, oldsym:symbol, org:seq
    let get = symbol("getinstance(int)","builtin","ptr")
     encodenocode.newmodpara + [ get, Words."NOINLINE STATE", Optionsym]
 
+function  blocksym(info:typeinfo) seq.symbol
+ let ds = size.info
+    if kind.info="real"_1 then 
+      [   symbol("blockit(real seq)","assignencodingnumber","real seq")]
+    else  if ds = 1 then [  symbol("blockit(int seq)","assignencodingnumber","int seq")]
+    else [ Lit.ds, symbol("blockit( char seq encodingpair seq,int)","assignencodingnumber","char seq encodingpair seq")]
+   
+ 
+
 function encodenocode(typ:mytype)seq.symbol
  let gl = symbol("global" + print.typ,"builtin","int seq")
- let setfld = symbol("setfld(int,int seq,   int)","builtin","int")
+ let setfld = symbol("setfld(int,T seq,   T)"," int builtin","int")
  let encodenosym = newsymbol("encodingno", mytype."assignencodingnumber", [ mytype."word seq"], typeint)
  let IDXI = Idx."int"_1
   if typ = mytype."typename"then [ Lit.0, gl,  Lit.2, setfld, Define."xx", gl, Lit.0, IDXI]
@@ -183,21 +203,23 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
  if abstracttype.type in "encoding int word"then [ Local.1]
  else if abstracttype.type = "seq"_1 then
  let ds = size.gettypeinfo(alltypes, type)
-  let kind = kind.gettypeinfo(alltypes, parameter.type)
+ let info=gettypeinfo(alltypes, parameter.type)
+  let kind = kind.info
   let typepara = if kind in "int real"then mytype.[ kind]else parameter.type
   let seqtype = typeseq + typepara
   let dc = deepcopysym(alltypes, typepara)
-  let pseqidx = pseqidxsym.typepara
-  let cat = newsymbol("+", seqtype, [ seqtype, typepara], seqtype)
+   let cat = newsymbol("+", seqtype, [ seqtype, typepara], seqtype)
   let resulttype = mytype."ptr"
   let elementtype = mytype.[ kind]
      let symEle=newsymbol("@e",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype)
     let symAcc=newsymbol("@acc",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,resulttype)
-   [Local.1]+Emptyseq+[Local.1,symAcc,  symEle, dc,cat   , Fref.pseqidx     
+   [Local.1]+Emptyseq+[Local.1,symAcc,  symEle, dc,cat   , Lit.size.info    
    , newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint]
 , resulttype)]
-   + if ds = 1 then [ symbol("packed1(int seq)","assignencodingnumber","int seq")]
-   else [ Local.1, Lit.ds, symbol("packed(int seq seq, ds)","assignencodingnumber","int seq")]
+   + // if ds = 1 then 
+     [ symbol("blockit(int seq)","assignencodingnumber","int seq")]
+   else [ Local.1, Lit.ds, symbol("packed(int seq seq, ds)","assignencodingnumber","int seq")] //
+     blocksym.info
  else
   let typedesc = gettypeinfo(alltypes, type)
   let y = subfld(alltypes, subflds.typedesc, 1,"", empty:seq.symbol)

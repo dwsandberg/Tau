@@ -4,7 +4,8 @@ Module testall
 
 Library testall bug7 checking myseq point randomphrase test11 test11a test2 test20 test5 testencoding testmodules testopt testprocess testseq tree2
 uses stdlib
-exports bug7 checking point randomphrase test11 test11a test2 test5 testall testencoding testmodules testopt testprocess tree2
+exports bug7 checking point randomphrase test11 test11a test2 test5 testall testencoding testmodules testopt 
+testprocess tree2 testseq
 
 * usegraph exclude stdlib
 
