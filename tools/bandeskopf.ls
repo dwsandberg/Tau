@@ -32,14 +32,14 @@ function contains(a:set.T, w:T)set.T findelement(w, a)
 
 function iis(g:graph.T, dummy:set.T, node:T)seq.T
  // returns upper nieghbor of inner segment ending at node //
- if not(node in dummy)then empty:seq.T
+ if not(node ∈ dummy)then empty:seq.T
  else
-  let p =(toseq.predecessors(g, node))@@ ∪(empty:set.T, contains(dummy, @e))
+  let p = toseq.predecessors(g, node) @ ∪(empty:set.T, contains(dummy, @e))
    if isempty.p then empty:seq.T else [ p_1]
 
 Function type1conflicts(g:graph.T, dummy:set.T, layers:seq.seq.T)seq.arc.T
  // find type 1 conflicts, that is arcs that cross a inner arc //
- (arithseq(length.layers - 2, 1, 2))@@ +(empty:seq.arc.T, marklayer(g, dummy, layers, @e))
+ arithseq(length.layers - 2, 1, 2) @ +(empty:seq.arc.T, marklayer(g, dummy, layers, @e))
 
 function marklayer(g:graph.T, dummy:set.T, layers:seq.seq.T, l:int)seq.arc.T
  marklayer(g, dummy, layers_l, layers_(l + 1), 0, 0, 1)
@@ -55,11 +55,12 @@ function marklayer(g:graph.T, dummy:set.T, upperlayer:seq.T, currentlayer:seq.T,
 
 function crossings(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l:int, l1:int)seq.arc.T
  //(k0, l)and(k1, l1)both inner.crossings of(k0, l)have been found for(?, j)for j< k0.find arcs(?, n)where n > l and n < l1 that cross(k0, l)or(k1, l1)//
- (arithseq(l1 - 1 - (l + 1) + 1, 1, l + 1))@@ +(empty:seq.arc.T, w1(g, upperlayer, k0, k1, currentlayer, @e))
+ arithseq(l1 - 1 - (l + 1) + 1, 1, l + 1)
+ @ +(empty:seq.arc.T, w1(g, upperlayer, k0, k1, currentlayer, @e))
 
 function w1(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l0:int)seq.arc.T
  // crossings of cross(k0, l)or(k1, l1)for arcs incident to l0 where l0 is between l and l1 //
- (toseq.predecessors(g, currentlayer_l0))@@ +(empty:seq.arc.T, w1(upperlayer, k0, k1, currentlayer_l0, @e))
+ toseq.predecessors(g, currentlayer_l0) @ +(empty:seq.arc.T, w1(upperlayer, k0, k1, currentlayer_l0, @e))
 
 function w1(upperlayer:seq.T, k0:int, k1:int, end:T, start:T)seq.arc.T
  let k = findindex(start, upperlayer)
@@ -75,12 +76,12 @@ Function findvertarcsUL(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x
   let node = currentlayer_x
   let preds = toseq.predecessors(g, node)
    if length.preds > 0 then
-   let upperidx = preds @@ +(empty:seq.int, findidx(lastlayer, @e))
+   let upperidx = preds @ +(empty:seq.int, findidx(lastlayer, @e))
     let medianleft = upperidx_((length.upperidx + 1) / 2)
     let medianright = upperidx_((length.upperidx + 1) / 2)
-     if r < medianleft ∧ not(lastlayer_medianleft in assigned)then
+     if r < medianleft ∧ not(lastlayer_medianleft ∈ assigned)then
      findvertarcsUL(g, currentlayer, lastlayer, medianleft, x + 1, assigned + lastlayer_medianleft) + arc(lastlayer_medianleft, node)
-     else if r < medianright ∧ not(lastlayer_medianright in assigned)then
+     else if r < medianright ∧ not(lastlayer_medianright ∈ assigned)then
      findvertarcsUL(g, currentlayer, lastlayer, medianright, x + 1, assigned + lastlayer_medianright) + arc(lastlayer_medianright, node)
      else findvertarcsUL(g, currentlayer, lastlayer, r, x + 1, assigned)
    else findvertarcsUL(g, currentlayer, lastlayer, r, x + 1, assigned)
@@ -89,10 +90,10 @@ Function findvertarcsUL(g:graph.T, layers:seq.seq.T, l:int)seq.arc.T
  findvertarcsUL(g, layers_l, layers_(l - 1), 0, 1, empty:seq.T)
 
 Function findvertarcsUL(g:graph.T, layers:seq.seq.T)seq.arc.T
- (arithseq(length.layers - 1, 1, 2))@@ +(empty:seq.arc.T, findvertarcsUL(g, layers, @e))
+ arithseq(length.layers - 1, 1, 2) @ +(empty:seq.arc.T, findvertarcsUL(g, layers, @e))
 
 Function findvertarcsUR(g:graph.T, layers:seq.seq.T)seq.arc.T
- (arithseq(length.layers - 1, 1, 2))@@ +(empty:seq.arc.T, findvertarcsUR(g, layers, @e))
+ arithseq(length.layers - 1, 1, 2) @ +(empty:seq.arc.T, findvertarcsUR(g, layers, @e))
 
 Function findvertarcsUR(g:graph.T, layers:seq.seq.T, l:int)seq.arc.T
  findvertarcsUR(g, layers_l, layers_(l - 1), length.layers_l + 1, length.layers_l, empty:seq.T)
@@ -103,12 +104,12 @@ Function findvertarcsUR(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x
   let node = currentlayer_x
   let preds = toseq.predecessors(g, node)
    if length.preds > 0 then
-   let upperidx = preds @@ +(empty:seq.int, findidx(lastlayer, @e))
+   let upperidx = preds @ +(empty:seq.int, findidx(lastlayer, @e))
     let medianleft = upperidx_((length.upperidx + 1) / 2)
     let medianright = upperidx_((length.upperidx + 1) / 2)
-     if r > medianright ∧ not(lastlayer_medianright in assigned)then
+     if r > medianright ∧ not(lastlayer_medianright ∈ assigned)then
      findvertarcsUR(g, currentlayer, lastlayer, medianright, x - 1, assigned + lastlayer_medianright) + arc(lastlayer_medianright, node)
-     else if r > medianleft ∧ not(lastlayer_medianleft in assigned)then
+     else if r > medianleft ∧ not(lastlayer_medianleft ∈ assigned)then
      findvertarcsUR(g, currentlayer, lastlayer, medianleft, x - 1, assigned + lastlayer_medianleft) + arc(lastlayer_medianleft, node)
      else findvertarcsUR(g, currentlayer, lastlayer, r, x - 1, assigned)
    else findvertarcsUR(g, currentlayer, lastlayer, r, x - 1, assigned)
@@ -119,10 +120,10 @@ _________________
 
 Function assignvert(RtoL:boolean, layers:set.nodeinfo.T, vertarcs:seq.arc.T, assigned:set.nodeinfo.T, q:nodeinfo.T, x:int, result:seq.nodeinfo.T)set.nodeinfo.T
  // look for other nodes in vertical assignment.Do this recursively to assign all nodes in vertical assignmentnodes collecting the max value of x in each layer Vertarcs always increate level by 1.The final value of x is assigned to all nodes in the vertical assignment //
- let lastassignedx = if RtoL then(toseq.assigned)@@ min(x, findx(RtoL, q, @e))
- else(toseq.assigned)@@ max(x, findx(RtoL, q, @e))
- let newq = vertarcs @@ +(empty:seq.nodeinfo.T, findy(q, @e))
-  if isempty.newq then(result + q)@@ +(assigned, setx(lastassignedx, @e))
+ let lastassignedx = if RtoL then toseq.assigned @ min(x, findx(RtoL, q, @e))
+ else toseq.assigned @ max(x, findx(RtoL, q, @e))
+ let newq = vertarcs @ +(empty:seq.nodeinfo.T, findy(q, @e))
+  if isempty.newq then(result + q) @ +(assigned, setx(lastassignedx, @e))
   else assignvert(RtoL, layers, vertarcs, assigned, findelement(newq_1, layers)_1, lastassignedx, result + q)
 
 function setx(x:int, q:nodeinfo.T)nodeinfo.T nodeinfo(n.q, x, y.q)
@@ -147,7 +148,8 @@ function arcsfromsuccesors(root:T, g:graph.T, n:T)seq.arc.T
   else [ arc(s_1, root)] + arcsfromsuccesors(root, g, s_1)
 
 Function layerarcsR(arcstoroots:set.arc.T, layer:seq.T)seq.arc.T
- (arithseq(length.layer - 1,-1, length.layer))@@ +(empty:seq.arc.T, layerarcsR(arcstoroots, layer, @e))
+ arithseq(length.layer - 1,-1, length.layer)
+ @ +(empty:seq.arc.T, layerarcsR(arcstoroots, layer, @e))
 
 Function layerarcsR(arcstoroot:set.arc.T, layer:seq.T, i:int)seq.arc.T
  let arc1 = arc(layer_i, layer_(i - 1))
@@ -155,7 +157,7 @@ Function layerarcsR(arcstoroot:set.arc.T, layer:seq.T, i:int)seq.arc.T
   if isempty.e then [ arc1]else [ arc(head.e_1, head.arc1), arc1]
 
 Function layerarcs(arcstoroots:set.arc.T, layer:seq.T)seq.arc.T
- (arithseq(length.layer - 1, 1, 2))@@ +(empty:seq.arc.T, layerarcs(arcstoroots, layer, @e))
+ arithseq(length.layer - 1, 1, 2) @ +(empty:seq.arc.T, layerarcs(arcstoroots, layer, @e))
 
 Function layerarcs(arcstoroot:set.arc.T, layer:seq.T, i:int)seq.arc.T
  let arc1 = arc(layer_(i - 1), layer_i)
@@ -169,8 +171,8 @@ For providing horizontal alignment.There is one for left and right directions.
 Function alignUL(g:graph.T, layers:seq.seq.T, marked:set.arc.T, layerX:set.nodeinfo.T)set.nodeinfo.T
  let vertarcs = findvertarcsUL(deletearcs(g, marked), layers)
  let g3 = newgraph.vertarcs
- let arcstoroots = asset.(toseq.nodes.g3 @@ +(empty:seq.arc.T, isroot(g3, @e)))
- let layerarcs = asset.(layers @@ +(toseq.arcstoroots, layerarcsR(arcstoroots, @e)))
+ let arcstoroots = asset(toseq.nodes.g3 @ +(empty:seq.arc.T, isroot(g3, @e)))
+ let layerarcs = asset(layers @ +(toseq.arcstoroots, layerarcsR(arcstoroots, @e)))
  let a = newgraph.toseq.layerarcs
  let b = sinksfirst.a + singlenodelayers.layers
   assignx(false, layerX, b, empty:set.nodeinfo.T, vertarcs, 1)
@@ -178,22 +180,22 @@ Function alignUL(g:graph.T, layers:seq.seq.T, marked:set.arc.T, layerX:set.nodei
 Function alignUR(g:graph.T, layers:seq.seq.T, marked:set.arc.T, layerX:set.nodeinfo.T)set.nodeinfo.T
  let vertarcs = findvertarcsUR(deletearcs(g, marked), layers)
  let g3 = newgraph.vertarcs
- let arcstoroots = asset((toseq.nodes.g3)@@ +(empty:seq.arc.T, isroot(g3, @e)))
- let layerarcs = asset(layers @@ +(toseq.arcstoroots, layerarcs(arcstoroots, @e)))
+ let arcstoroots = asset(toseq.nodes.g3 @ +(empty:seq.arc.T, isroot(g3, @e)))
+ let layerarcs = asset(layers @ +(toseq.arcstoroots, layerarcs(arcstoroots, @e)))
  let a = newgraph.toseq.layerarcs
  let b = sinksfirst.a + singlenodelayers.layers
   assignx(true, layerX, b, empty:set.nodeinfo.T, vertarcs, 1)
 
 function singlenodelayers(a:seq.T)seq.T if length.a = 1 then a else empty:seq.T
 
-function singlenodelayers(a:seq.seq.T)seq.T a @@ +(empty:seq.T, singlenodelayers.@e)
+function singlenodelayers(a:seq.seq.T)seq.T a @ +(empty:seq.T, singlenodelayers.@e)
 
 function assignx(RtoL:boolean, layers:set.nodeinfo.T, list:seq.T, assigned:set.nodeinfo.T, vertarcs:seq.arc.T, i:int)set.nodeinfo.T
  // assign x values.Direction can either be Right to left or left to Right.Negative x's are assign when RtoL //
  if i > length.list then assigned
  else
   let node = list_i
-   if nodeinfo(node, 0, 0) in assigned then assignx(RtoL, layers, list, assigned, vertarcs, i + 1)
+   if nodeinfo(node, 0, 0) ∈ assigned then assignx(RtoL, layers, list, assigned, vertarcs, i + 1)
    else
     let q = findelement(nodeinfo(node, 0, 0), layers)_1
      assignx(RtoL, layers, list, assignvert(RtoL, layers, vertarcs, assigned, q, if RtoL then-1 else 1, empty:seq.nodeinfo.T), vertarcs, i + 1)
@@ -207,9 +209,8 @@ Function assignx(g:graph.T, dummy:set.T, layers:seq.seq.T)set.nodeinfo.T
    let layerX = posindegree(g, layers)
   let UL = alignUL(g, layers, marked, layerX)
   let UR = alignUR(g, layers, marked, layerX)
-  let m =(toseq.UR)@@ min(0, x.@e)
-   asset
-   .(arithseq(cardinality.UL, 1, 1) @@ +(empty:seq.nodeinfo.T, merge(UL, UR, m, @e)))
+ let m = toseq.UR @ min(0, x.@e)
+  asset(arithseq(cardinality.UL, 1, 1) @ +(empty:seq.nodeinfo.T, merge(UL, UR, m, @e)))
 
 function merge(UL:set.nodeinfo.T, UR:set.nodeinfo.T, m:int, i:int)nodeinfo.T
  let ul = UL_i

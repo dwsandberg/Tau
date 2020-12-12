@@ -44,7 +44,7 @@ Builtin createthread(int, int, int, seq.int)process.int
 
 Function dlsymbol(name:word)int dlsymbol.toCformat.[ name]
 
-function aswords(s:seq.int)seq.word s @@ +("", word.to:encoding.seq.char(@e))
+function aswords(s:seq.int)seq.word s @ +("", word.to:encoding.seq.char(@e))
 
 Function interpret(alltypes:typedict, code:seq.symbol)seq.word interpret(alltypes, code, 1, empty:stack.int)
 
@@ -54,7 +54,7 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)seq.
   let sym = code_i
   let nopara = nopara.sym
    if module.sym = "$words"then
-   let a = fsig.sym @@ +(empty:seq.int, hash.@e)
+   let a = fsig.sym @ +(empty:seq.int, hash.@e)
      interpret(alltypes, code, i + 1, push(stk, bitcast.a))
    else if module.sym = "$int"then
    interpret(alltypes, code, i + 1, push(stk, toint.(fsig.sym)_1))

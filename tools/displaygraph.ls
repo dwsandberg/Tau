@@ -35,7 +35,7 @@ unbound assignwidths(control:characterwidths, p:nodeinfo.T)nodeinfo.T
 unbound nodetotext(a:T)seq.word
 
 function restoredirection(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T, a:arc.T)seq.arcinfo.T
- let other = if head.a in nodes.org ∧ not(tail.a in nodes.org)then
+ let other = if head.a ∈ nodes.org ∧ not(tail.a ∈ nodes.org)then
  expandback(org, modified, tail.a)
  else tail.a
  let for = findelement(arcinfo.arc(other, head.a), orgarc)

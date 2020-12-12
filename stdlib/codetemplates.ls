@@ -56,13 +56,13 @@ Function mangledname(s:symbol)word mangle(fsig.s, module.s)
 
 Function isexternal(s:symbol)boolean
  isbuiltin.module.s
- ∧ not((fsig.s)_1 in "aborted loadlib createlib unloadlib allocatespace addencoding createfile getinstance dlsymbol getfile addresstosymbol2 randomint getmachineinfo currenttime callstack initialdict createthread assertptr assertreal assert")
+ ∧ not((fsig.s)_1 ∈ "aborted loadlib createlib unloadlib allocatespace addencoding createfile getinstance dlsymbol getfile addresstosymbol2 randomint getmachineinfo currenttime callstack initialdict createthread assertptr assertreal assert")
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
  if fsig.s = "option(T, word seq)"then function.constantseq(nopara.s + 2, i64)
  else
   let starttypes = if isexternal.s then [ tollvmtype(alltypes, resulttype.s)]else [ tollvmtype(alltypes, resulttype.s), i64]
-   function(paratypes.s @@ +(starttypes, tollvmtype(alltypes, @e)))
+   function(paratypes.s @ +(starttypes, tollvmtype(alltypes, @e)))
 
 function tollvmtype(alltypes:typedict, s:mytype)llvmtype
  let kind = kind.gettypeinfo(alltypes, s)
@@ -126,13 +126,13 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
  , addtemplate(symbol("bitcast(int seq)","builtin","int"), 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
  , addtemplate(symbol("bitcast(int)","builtin","int seq"), 1, CAST(r.1, slot.ibcsub1, ptr.i64, inttoptr))
-  , addtemplate(symbol("nullptr","builtin","ptr"), 1, CAST(r.1, C64.0, ptr.i64, inttoptr))
-  , addtemplate(symbol("IDX(T seq, int)","int builtin","int"), 2, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64))
- , addtemplate(symbol("IDX(T seq, int)"," ptr builtin","ptr"), 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
-  + CAST(r.3, r.2, ptr.i64, inttoptr))
-, addtemplate(symbol("IDX(T seq, int)","real builtin","real"), 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
+ , addtemplate(symbol("nullptr","builtin","ptr"), 1, CAST(r.1, C64.0, ptr.i64, inttoptr))
+ , addtemplate(symbol("IDX(T seq, int)","int builtin","int"), 2, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64))
+ , addtemplate(symbol("IDX(T seq, int)","ptr builtin","ptr"), 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
+ + CAST(r.3, r.2, ptr.i64, inttoptr))
+ , addtemplate(symbol("IDX(T seq, int)","real builtin","real"), 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
  + CAST(r.3, r.2, double, bitcast))
- ,addtemplate(symbol("STKRECORD(ptr, ptr)","builtin","ptr"), 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0) + STORE(r.2, r.1, slot.ibcsub1)
+ , addtemplate(symbol("STKRECORD(ptr, ptr)","builtin","ptr"), 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0) + STORE(r.2, r.1, slot.ibcsub1)
  + GEP(r.2, ptr.i64, r.1, C64.1)
  + STORE(r.3, r.2, slot.ibcsub2)
  + GEP(r.3, ptr.i64, r.1, C64.0))
@@ -166,22 +166,19 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("∧(bits, bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, and))
  , addtemplate(symbol("∨(bits, bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, or))
  , addtemplate(symbol("xor(bits, bits)","builtin","bits"), 1, BINOP(r.1, slot.ibcsub1, slot.ibcsub2, xor))
- , addtemplate(symbol("setfirst(   int seq, int, int )","builtin","int seq"), 3, 
-    GEP(r.1, i64, slot.ibcsub1, C64.1)+ STORE(r.2, r.1, slot.ibcsub3)
-    + GEP(r.2, i64, slot.ibcsub1, C64.0) + STORE(r.3, r.2, slot.ibcsub2) 
-    +GEP(r.3, i64, slot.ibcsub1, C64.0))
-, addtemplate(symbol("setfld( int, T seq, T)","int builtin","int"), 2, 
-    GEP(r.1, i64, slot.ibcsub2, slot.ibcsub1) + STORE(r.2, r.1, slot.ibcsub3)
-    + BINOP(r.2, slot.ibcsub1, C64.1, add))
- , addtemplate(symbol("setfld( int, T seq, T)","real builtin","int"), 3, 
-    CAST(r.1, slot.ibcsub3, i64, bitcast)
-    +GEP(r.2, i64, slot.ibcsub2, slot.ibcsub1) + STORE(r.3, r.2, r.1)
-    + BINOP(r.3, slot.ibcsub1, C64.1, add))
-  , addtemplate(symbol("setfld( int, T seq, T)","ptr builtin","int"), 3, 
-    CAST(r.1, slot.ibcsub2, ptr.ptr.i64,bitcast)
-    +GEP(r.2, ptr.i64, r.1, slot.ibcsub1) + STORE(r.3, r.2, slot.ibcsub3)
-    + BINOP(r.3, slot.ibcsub1, C64.1, add))
-, addtemplate(symbol("assert(word seq)","int builtin","int")
+ , addtemplate(symbol("setfirst(int seq, int, int)","builtin","int seq"), 3, GEP(r.1, i64, slot.ibcsub1, C64.1) + STORE(r.2, r.1, slot.ibcsub3)
+ + GEP(r.2, i64, slot.ibcsub1, C64.0)
+ + STORE(r.3, r.2, slot.ibcsub2)
+ + GEP(r.3, i64, slot.ibcsub1, C64.0))
+ , addtemplate(symbol("setfld(int, T seq, T)","int builtin","int"), 2, GEP(r.1, i64, slot.ibcsub2, slot.ibcsub1) + STORE(r.2, r.1, slot.ibcsub3)
+ + BINOP(r.2, slot.ibcsub1, C64.1, add))
+ , addtemplate(symbol("setfld(int, T seq, T)","real builtin","int"), 3, CAST(r.1, slot.ibcsub3, i64, bitcast) + GEP(r.2, i64, slot.ibcsub2, slot.ibcsub1)
+ + STORE(r.3, r.2, r.1)
+ + BINOP(r.3, slot.ibcsub1, C64.1, add))
+ , addtemplate(symbol("setfld(int, T seq, T)","ptr builtin","int"), 3, CAST(r.1, slot.ibcsub2, ptr.ptr.i64, bitcast) + GEP(r.2, ptr.i64, r.1, slot.ibcsub1)
+ + STORE(r.3, r.2, slot.ibcsub3)
+ + BINOP(r.3, slot.ibcsub1, C64.1, add))
+ , addtemplate(symbol("assert(word seq)","int builtin","int")
  , 1
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1))
  , addtemplate(symbol("assert(word seq)","real builtin","real")
@@ -190,7 +187,7 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("assert(word seq)","ptr builtin","ptr")
  , 1
  , CALL(r.1, 0, 32768, function.[ ptr.i64, i64, ptr.i64], symboltableentry("assertptr"_1, function.[ ptr.i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1))]
- let const = toseq.uses @@ +(empty:seq.symbol, buildtemplate(theprg, alltypes, @e))
+ let const = toseq.uses @ +(empty:seq.symbol, buildtemplate(theprg, alltypes, @e))
  let discard4 = processconst(const, 1, empty:seq.symbol)
   empty:seq.match5
 
@@ -251,12 +248,12 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
      addtemplate(xx, 0, empty:seq.templatepart,"CALLIDX"_1, 0, empty:seq.symbol, tollvmtype(alltypes, resulttype.xx))
      else if(fsig.xx)_1 = "global"_1 then
      addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
-     else  if isexternal.xx then
-     let symname = if(fsig.xx)_1 in "arcsin"then"asin"_1
-      else if(fsig.xx)_1 in "arccos"then"acos"_1 else(fsig.xx)_1
+     else if isexternal.xx then
+     let symname = if(fsig.xx)_1 ∈ "arcsin"then"asin"_1
+      else if(fsig.xx)_1 ∈ "arccos"then"acos"_1 else(fsig.xx)_1
        call(alltypes, xx,"CALLE"_1, empty:seq.symbol, symname)
      else
-      let symname = if(fsig.xx)_1 in "assert xassertptr xassertreal"then"assert"_1 else mangledname.xx
+      let symname = if(fsig.xx)_1 ∈ "assert xassertptr xassertreal"then"assert"_1 else mangledname.xx
        call(alltypes, xx,"CALL"_1, code.lookupcode(theprg, xx), symname)
     empty:seq.symbol
 

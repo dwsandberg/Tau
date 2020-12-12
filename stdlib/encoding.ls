@@ -55,7 +55,7 @@ function adddata(eletoadd:encodingpair.T, tablesize:int, a:encodingpair.T)seq.en
  empty:seq.encodingpair.T
  else [ a]
 
-function addcode(x:seq.encodingpair.T,code:encoding.T, hashsize:int,  e:encodingpair.T)seq.encodingpair.T
+function addcode(x:seq.encodingpair.T, code:encoding.T, hashsize:int, e:encodingpair.T)seq.encodingpair.T
  if code.e = code ∨ valueofencoding.code mod hashsize ≠ valueofencoding.code.e mod hashsize then
  x
  else x + e
@@ -73,7 +73,7 @@ Function add(h:encodingstate.T, v:encodingpair.T)encodingstate.T
  let tablesize = length.encodetable.h
  let datahash = hash.v
  let dataindex = datahash mod tablesize + 1
- let existingcode =(encodetable.h)_dataindex @@ +(empty:seq.encodingpair.T, ele5(data.v, @e))
+ let existingcode =(encodetable.h)_dataindex @ +(empty:seq.encodingpair.T, ele5(data.v, @e))
   if not.isempty.existingcode then
   // already present //
    let c = valueofencoding.code.existingcode_1
@@ -81,10 +81,10 @@ Function add(h:encodingstate.T, v:encodingpair.T)encodingstate.T
   else
    let p = subadd(h, v, 1)
    let codeindex = valueofencoding.code.p mod tablesize + 1
-   let l1 = (decodetable.h)_codeindex @@ addcode([p],code.p, tablesize,@e) 
-   let l2 =(encodetable.h)_dataindex @@ +([ p], adddata(p, tablesize, @e))
-   let newdecode = replaceZ(decodetable.h, codeindex, l1)
-   let newencode = replaceZ(encodetable.h, dataindex, l2)
+   let l1 =(decodetable.h)_codeindex @ addcode([ p], code.p, tablesize, @e)
+   let l2 =(encodetable.h)_dataindex @ +([ p], adddata(p, tablesize, @e))
+   let newdecode = replace(decodetable.h, codeindex, l1)
+   let newencode = replace(encodetable.h, dataindex, l2)
     if 3 * length.h > 2 * tablesize then
     let t = newencode
      let d = newdecode
@@ -99,7 +99,7 @@ function subadd(h:encodingstate.T, v:encodingpair.T, count:int)encodingpair.T
  let code = code.v
  let codeindex = valueofencoding.code mod tablesize + 1
  let found = valueofencoding.code.v ≤ 0
- ∨ (decodetable.h)_codeindex @@ +(0, used(code.v, @e)) > 0
+ ∨ (decodetable.h)_codeindex @ +(0, used(code.v, @e)) > 0
   if found then
   subadd(h, encodingpair(to:encoding.T(assignencoding(length.h, data.v)), data.v, hash.v), count + 1)
   else encodingpair(code.v, data.v, hash.v)
@@ -108,7 +108,7 @@ unbound assignencoding(length:int, data:T)int //(randomint.1)_1 //
 
 Function assignrandom(length:int, data:T)int(randomint.1)_1
 
-Function addencodingpairs(l:seq.encodingpair.T)encodingstate.T l @@ add(getinstance:encodingstate.T, rehash.@e)
+Function addencodingpairs(l:seq.encodingpair.T)encodingstate.T l @ add(getinstance:encodingstate.T, rehash.@e)
 
 function rehash(a:encodingpair.T)encodingpair.T encodingpair(code.a, data.a)
 
@@ -135,7 +135,7 @@ Function encode(t:T)encoding.T
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingpair.T
  (decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1)
- @@ +(empty:seq.encodingpair.T, ele4(t, @e))
+ @ +(empty:seq.encodingpair.T, ele4(t, @e))
 
 function ele4(t:encoding.T, a:encodingpair.T)seq.encodingpair.T
  if t = code.a then [ a]else empty:seq.encodingpair.T
@@ -148,7 +148,7 @@ Function hash(a:encoding.T)int valueofencoding.a
 
 function lookuprep(t:T, inst:encodingstate.T)seq.encodingpair.T
  (encodetable.inst)_(hash.t mod length.encodetable.inst + 1)
- @@ +(empty:seq.encodingpair.T, ele5(t, @e))
+ @ +(empty:seq.encodingpair.T, ele5(t, @e))
 
 Export type:encodingpair.T
 
@@ -164,7 +164,7 @@ Function analyze(t:encodingstate.T)seq.word
  + counts(decodetable.t, 1, 0, 0, 0)
 
 function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int)seq.word
- if i > length.s then [ length.s, one, two, big] @@ +("", toword.@e)
+ if i > length.s then [ length.s, one, two, big] @ +("", toword.@e)
  else
   let t = length.s_i
    if t = 0 then counts(s, i + 1, one, two, big)
@@ -176,123 +176,113 @@ module XXX2.T
 
 use seq.T
 
-Builtin IDX(seq.T, int) T
+Builtin IDX(seq.T, int)T
+
+Builtin IDXSEQ(seq.T, int, int)T
+
+Builtin allocatespace:T(i:int)seq.T
+
+Builtin setfld(i:int, s:seq.T, val:T)int
 
 module taubuiltinsupport.T
 
-use XXX2.seq.T
-
 use XXX2.T
- 
-use seq.T
+
+use XXX2.seq.T
 
 use seq.seq.T
 
+use seq.T
+
 use stdlib
 
-use assignencodingnumber
+Builtin callidx(a:seq.T, int)T
 
+builtin bitcast(blockseq.T)seq.seq.T
 
+builtin bitcast(seq.seq.T)seq.T
 
-Builtin callidx(a:seq.T, int)T  
+builtin bitcast(T)seq.T
 
-builtin bitcast(blockseq.T) seq.seq.T
-
-builtin bitcast(seq.seq.T) seq.T
-
-builtin bitcast(T) seq.T
-
- function memcpy(idx:int,i:int, memsize:int, s:seq.T,  fromaddress:T)int
+function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:T)int
  if memsize = 0 then idx
- else memcpy(setfld( idx, s, IDX(bitcast.fromaddress, i)),i + 1, memsize - 1, s,  fromaddress)
- 
+ else memcpy(setfld(idx, s, IDX(bitcast.fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
 
-builtin setfld(i:int,s:seq.T,val:T)  int  
+builtin setfirst(r:seq.T, fld0:int, fld1:int)seq.T
 
-
-builtin setfirst(r:seq.T, fld0:int,fld1:int) seq.T
-
-
-type blockseq is sequence length:int,dummy:seq.T
-
-builtin allocatespace:T(i:int) seq.T
+type blockseq is sequence length:int, dummy:seq.T
 
 function blocksize:T int 10000
 
-Function _(a:blockseq.T, i:int)T
-   assert between(i, 1, length.a)report"out of bounds"
-    let data=bitcast.a
-   let ds=max(   getseqtype.dummy.a,1)
-        //        assert false report "where"+toword.ds  //
-    let blksz=blocksize:T / ds
-    let blk= IDX( data ,(i - 1) / blksz   +2)
-    blk_( (i - 1) mod blksz  + 1)
+Function_(a:blockseq.T, i:int)T
+ assert between(i, 1, length.a)report"out of bounds"
+ let data = bitcast.a
+ let typ = getseqtype.dummy.a
+ let ds = max(typ, 1)
+  // assert false report"where"+ toword.ds //
+  let blksz = blocksize:T / ds
+  let blk = IDX(data,(i - 1) / blksz + 2)
+  let b =(i - 1) mod blksz + 1
+   if typ > 1000 then callidx(blk, b)
+   else if typ > 1 then IDXSEQ(blk, typ, b)else IDX(blk, b + 1)
 
-Function blockit( ds:int ,s:seq.T ) seq.T  
-   let blksz=blocksize:T / ds
-    if length.s &le blksz then 
-       let newseq = allocatespace:T(length.s * ds + 2)
-        let d=      if ds > 1 then 
-       s @@ memcpy( 2,0, ds, newseq,@e)  
-    else    
-         s @@  setfld(2,newseq,@e)   
-     setfirst(newseq,  ds, length.s)
-    else 
-     let blockseqtype=getseqtype.toseq.blockseq(1,empty:seq.T)
-     let r= bitcast.packed.(arithseq((length.s + blksz - 1) / blksz, blksz, 1)
-        @@ +(empty:seq.seq.T,   blockit(ds, subseq(s, @e, @e + blksz - 1))))
-  setfirst(  r, blockseqtype , length.s)
-     
-  
-  Function blockit( s:seq.T ) seq.T  
-   let blksz=blocksize:T  
-    if length.s &le blksz then 
-       let newseq = allocatespace:T(length.s  + 2)
-       let d=  s @@  setfld(2,newseq,@e)   
-       setfirst(newseq,  0, length.s)
-    else 
-     let blockseqtype=getseqtype.toseq.blockseq(1,empty:seq.T)
-     let r= bitcast.packed.(arithseq((length.s + blksz - 1) / blksz, blksz, 1)
-        @@ +(empty:seq.seq.T,   blockit(subseq(s, @e, @e + blksz - 1))))
-      setfirst(  r, blockseqtype , length.s)
-  
+blk_((i-1)mod blksz + 1)
+
+Function blockit(s:seq.T, ds:int)seq.T
+ let blksz = blocksize:T / ds
+  if length.s ≤ blksz then
+  let newseq = allocatespace:T(length.s * ds + 2)
+   let d = if ds > 1 then s @ memcpy(2, 0, ds, newseq, @e)else s @ setfld(2, newseq, @e)
+    setfirst(newseq, ds, length.s)
+  else
+   let noblks =(length.s + blksz - 1) / blksz
+   let blkseq = allocatespace:seq.T(noblks + 2)
+   let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
+   let discard = arithseq(noblks, blksz, 1) @ setfld(2, blkseq, blockit(subseq(s, @e, @e + blksz - 1), ds))
+    setfirst(bitcast.blkseq, blockseqtype, length.s)
+
+Function blockit(s:seq.T)seq.T
+ let blksz = blocksize:T
+  if length.s ≤ blksz then
+  let newseq = allocatespace:T(length.s + 2)
+   let d = s @ setfld(2, newseq, @e)
+    setfirst(newseq, 0, length.s)
+  else
+   let noblks =(length.s + blksz - 1) / blksz
+   let blkseq = allocatespace:seq.T(noblks + 2)
+   let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
+   let discard = arithseq(noblks, blksz, 1) @ setfld(2, blkseq, blockit.subseq(s, @e, @e + blksz - 1))
+    setfirst(bitcast.blkseq, blockseqtype, length.s)
 
 module assignencodingnumber
 
-
 use encoding.seq.char
+
+use seq.encodingpair.seq.char
+
+use taubuiltinsupport.encodingpair.seq.char
 
 use seq.seq.int
 
 use seq.int
 
-use taubuiltinsupport.real
-
-
 use taubuiltinsupport.int
 
-use taubuiltinsupport.encodingpair.seq.char
+use taubuiltinsupport.real
 
 use stdlib
 
 use encoding.typename
 
-Export blockit(seq.int) seq.int
+Export blockit(seq.int)seq.int
 
-use seq.encodingpair.seq.char
+Export blockit(s:seq.encodingpair.seq.char, ds:int)seq.encodingpair.seq.char // for use where the element type is represented in ds * 64bits where ds > 1. // // if the length < = blocksize then the result is represented as <ds> <length> <fld1.s_1><fld2.s_1>... <fld1.s_2><fld2.s_2>.... // // if the length > bloocksize then result is represented as <blockindexfunc> <length> <packed.subseq(s, 1, blocksize)> <packed.subseq(s, blocksize + 1, 2*blocksize)>.....//
 
-Function blockit(s:seq.encodingpair.seq.char,ds:int) seq.encodingpair.seq.char
- // for use where the element type is represented in ds * 64bits where ds > 1. //
- // if the length < = blocksize then the result is represented as <ds> <length> <fld1.s_1><fld2.s_1>... <fld1.s_2><fld2.s_2>.... //
- // if the length > bloocksize then result is represented as <blockindexfunc> <length> <packed.subseq(s, 1, blocksize)> <packed.subseq(s, blocksize + 1, 2*blocksize)>.....//
-     blockit(ds,s)
+Export blockit(seq.real)seq.real
 
-Export blockit(seq.real) seq.real
+Export_(blockseq.int, int)int
 
-
-Export _(blockseq.int,int) int
-
-Export _(seq.int,int) int
+Export_(seq.int, int)int
 
 Export decode(encoding.seq.char)seq.char
 
@@ -313,7 +303,3 @@ Function encodingno(name:seq.word)int
  else if name = "typename"then 2 else valueofencoding.encode.typename.name + 2
 
 function assignencoding(a:int, typename)int a + 1
- 
-
-
-

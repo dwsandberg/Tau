@@ -22,7 +22,7 @@ Export_(seq.T, int)T
 
 unbound ?(T, T)ordering
 
-Function asset(s:seq.T)set.T set(s @@ setinsert(empty:seq.T, @e))
+Function asset(s:seq.T)set.T set(s @ setinsert(empty:seq.T, @e))
 
 Function empty:set.T set.T set.empty:seq.T
 
@@ -105,8 +105,6 @@ Export toseq(set.T)seq.T
 
 Function isempty(a:set.T)boolean length.toseq.a = 0
 
-Function in(val:T, a:set.T)boolean binarysearch(toseq.a, val) > 0
-
 Function ∈(val:T, a:set.T)boolean binarysearch(toseq.a, val) > 0
 
 Function cardinality(a:set.T)int length.toseq.a
@@ -127,7 +125,7 @@ Function findelement2(a:set.T, n:T)set.T
   if i < 0 then asset.empty:seq.T
   else
    asset(subseq(toseq.a, expandrangedown(toseq.a, n, i), expandrangeup(toseq.a, n, i))
-   @@ +(empty:seq.T, @e))
+   @ +(empty:seq.T, @e))
 
 function expandrangedown(a:seq.T, n:T, l:int)int
  if l > 1 then

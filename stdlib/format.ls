@@ -38,7 +38,7 @@ Function getheader(s:seq.word)seq.word
     else endofname
     let afterreturntype = consumetype(s, startoftype + 1)
     let aftercomments = consumecomment(s, afterreturntype)
-     if aftercomments ≤ length.s ∧ s_aftercomments in "unbound export"then s
+     if aftercomments ≤ length.s ∧ s_aftercomments ∈ "unbound export"then s
      else subseq(s, 1, aftercomments - 1) + "stub"
 
 function consumetype(s:seq.word, i:int)int
@@ -111,18 +111,18 @@ function match(s:seq.word, depth:int, i:int)int
  if depth = 0 then i else match(s, depth - 1, i + 1)
  else match(s, depth, i + 1)
 
-Function addamp(w:word)word encodeword(decodeword.w @@ +(empty:seq.char, addamp.@e))
+Function addamp(w:word)word encodeword(decodeword.w @ +(empty:seq.char, addamp.@e))
 
 Function addamp(ch:char)seq.char
  if ch = char1."<"then decodeword."&lt;"_1
  else if ch = char1."&"then decodeword."&amp;"_1 else [ ch]
 
 function escapeformat(length:int, c:word)word
- if c in " &{  &br  &p  &row"then
+ if c ∈ " &{  &br  &p  &row"then
  if length > 20 then merge.[ encodeword.[ char.10], c]else merge.[ space, c]
- else if c in " &keyword  &}  &em  &strong  &cell"then merge.[ space, c]else c
+ else if c ∈ " &keyword  &}  &em  &strong  &cell"then merge.[ space, c]else c
 
-Function escapeformat(s:seq.word)seq.word s @@ +("", escapeformat(length.s, @e))
+Function escapeformat(s:seq.word)seq.word s @ +("", escapeformat(length.s, @e))
 
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 
@@ -180,19 +180,19 @@ function prettynoparse(s:seq.word, i:int, lastbreak:int, result:seq.word)seq.wor
    if x = '"'_1 then
    let t = findindex('"'_1, s, i + 1)
      prettynoparse(s, t + 1, lastbreak + t - i, result + " &{ literal" + subseq(s, i, t) + " &}")
-   else if x in "// /"then
+   else if x ∈ "// /"then
    let t = consumecomment(s, i)
      if t > i then
      prettynoparse(s, t, t - i, result + " &br  &{ comment" + subseq(s, i, t - 1) + " &}")
      else prettynoparse(s, i + 1, lastbreak + 1, result + x)
-   else if x in "if then else let assert function Function type"then
+   else if x ∈ "if then else let assert function Function type"then
    let t = if lastbreak > 0 then result + " &br"else result
      prettynoparse(s, i + 1, 0, t + " &keyword" + x)
-   else if x in "report"then
+   else if x ∈ "report"then
    prettynoparse(s, i + 1, lastbreak + 1, result + " &keyword" + x)
-   else if lastbreak > 20 ∧ x in ")]"
-   ∨ lastbreak > 40 ∧ x in ","then
+   else if lastbreak > 20 ∧ x ∈ ")]"
+   ∨ lastbreak > 40 ∧ x ∈ ","then
    prettynoparse(s, i + 1, 0, result + x + " &br")
-   else if lastbreak > 20 ∧ x in "["then
+   else if lastbreak > 20 ∧ x ∈ "["then
    prettynoparse(s, i + 1, 0, result + " &br" + x)
    else prettynoparse(s, i + 1, lastbreak + 1, result + x)

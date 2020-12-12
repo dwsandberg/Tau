@@ -24,6 +24,8 @@ use otherseq.int
 
 use seq.int
 
+use sparseseq.int
+
 use stdlib
 
 use svg
@@ -63,7 +65,7 @@ function rightedge(a:nodeinfo.T)int x.a + width.a
 Function maxy(a:seq.nodeinfo.T)int a @ max(0, y.@e)
 
 Function zerowidth(a:seq.T, b:nodeinfo.T)nodeinfo.T
- if n.b in a then b else nodeinfo(n.b, x.b, y.b, 0, seperation.b)
+ if n.b ∈ a then b else nodeinfo(n.b, x.b, y.b, 0, seperation.b)
 
 Function zerowidth(a:seq.T, b:set.nodeinfo.T)set.nodeinfo.T
  toseq.b @ +(empty:set.nodeinfo.T, zerowidth(a, @e))
@@ -95,7 +97,7 @@ Function tosvg(arci:seq.arcinfo.T, nodes:seq.T, positions:set.nodeinfo.T)seq.wor
  let r = zerowidth(nodes, positions)
  let minx = toseq.r @ min(x.r_1, x.@e)
  let vertnodesize = 16
- let a = toseq.r @ layerwidths(dseq.1, @e)
+ let a = toseq.r @ layerwidths(sparseseq.1, @e)
  let p2 = toseq.r @ +(empty:set.nodeinfo.T, adjust(vertnodesize, minx, a, @e))
  let g = arci @ +(empty:set.arcinfo.T, toarcinfo(p2, @e))
   svg(["text { fill:black }"], toseq.p2 @ +("", svgnode(vertnodesize, g, p2, @e)), maxx.toseq.p2, maxy.toseq.p2)
@@ -152,7 +154,7 @@ unbound nodetotext(T)seq.word
 
 function layerwidths(ws:seq.int, p:nodeinfo.T)seq.int
  let w = width.p
-  if w > ws_(y.p)then replace(ws, y.p, w)else ws
+  if w > ws_(y.p)then replaceS(ws, y.p, [w])else ws
 
 function adjust(vertnodesize:int, minx:int, layerwidths:seq.int, p:nodeinfo.T)nodeinfo.T
  assert true report"layer width" + layerwidths @ +("", toword.@e)

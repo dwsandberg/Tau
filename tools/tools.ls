@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use tools; testprofile."testall"
+#!/usr/local/bin/tau ;  use doc ; callgraphbetween("stdlib","codetemplates encoding graph intdict libdesc otherseq  ")
 
 ; use tools; testprofile."stdlibbak"
 
@@ -8,7 +8,7 @@
 
 ; use doc ; doclibrary."stdlib"
 
-; use doc ; callgraphbetween("stdlib","main2 format")
+; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq  ")
 
 ; use doc ; callgraphwithin("stdlib","llvm")
 

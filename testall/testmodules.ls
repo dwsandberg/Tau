@@ -129,7 +129,7 @@ function t044 boolean
 let s = UTF8.[ 40, 50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
 let z = myseq.toseqint.s
  z @ +("", toword.@e) = "40 50 335 50 336"
- ∧  length.toseq.to:myseq.int(z) &ne 0 
+ ∧ length.toseq.to:myseq.int(z) ≠ 0
  ∧ length.toseq.to:myseq.int([ 1, 2, 3]) = 0
 
 _____________
@@ -148,7 +148,8 @@ function group(s:seq.char)seq.word
  else
   group.subseq(s, 1, length.s - 4) + encodeword.subseq(s, length.s - 3, length.s)
 
-function hex(s:seq.word)bits(s @@ +(empty:seq.char, decodeword.@e))@@ hexdigit(bits.0, @e)
+function hex(s:seq.word)bits
+ s @ +(empty:seq.char, decodeword.@e) @ hexdigit(bits.0, @e)
 
 function hexdigit(b:bits, c:char)bits
  let i = findindex(c, decodeword."0123456789ABCDEF"_1) - 1

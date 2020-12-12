@@ -10,7 +10,7 @@ use seq.seq.seq.word
 
 function findparagraph(break:seq.word, a:seq.seq.word, i:int)int
  // find paragraph starting with a word in break and return its index //
- if length.a_i > 0 ∧ a_i_1 in break then i else 0
+ if length.a_i > 0 ∧ a_i_1 ∈ break then i else 0
 
 function addpair(a:seq.seq.int, newbeginning:int)seq.seq.int
  // a is a seq of seq of length 2. A new pair is added by this function. //
@@ -27,8 +27,8 @@ function extractblock(a:seq.seq.word, p:seq.int)seq.seq.word subseq(a, p_1, p_2)
 
 Function groupparagraphs(break:seq.word, a:seq.seq.word)seq.seq.seq.word
  // Looks for paragraphs beginning with a word in break and returns seq of subsequences of paragraphs making up each block. In does this by creating a sequence of pairs of integers. Each pair contains beginning and end of a subsequence making up the block. //
- finishpair(arithseq(length.a, 1, 1) @@ addpair(empty:seq.seq.int, findparagraph(break, a, @e)), length.a)
- @@ +(empty:seq.seq.seq.word, extractblock(a, @e))
+ finishpair(arithseq(length.a, 1, 1) @ addpair(empty:seq.seq.int, findparagraph(break, a, @e)), length.a)
+ @ +(empty:seq.seq.seq.word, extractblock(a, @e))
 
 Function findlibclause(a:seq.seq.word, i:int)seq.word
  assert i < length.a report"No Library clause found"
@@ -44,7 +44,7 @@ Function getlibraryinfo(libname:word)seq.seq.word
 
 Function getlibrarysrc(libname:word)seq.seq.word
  let filelist =(getlibraryinfo.libname)_2
-  filelist @@ +(empty:seq.seq.word, gettext2a(libname, @e))
+  filelist @ +(empty:seq.seq.word, gettext2a(libname, @e))
 
 function gettext2a(libname:word, a:word)seq.seq.word
  gettext.[ merge([ libname] + "/" + a + ".ls")]

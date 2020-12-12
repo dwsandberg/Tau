@@ -2,8 +2,6 @@ Module codegennew
 
 use ipair.Lcode2
 
-use otherseq.Lcode2
-
 use seq.Lcode2
 
 use stack.Lcode2
@@ -36,8 +34,6 @@ use llvm
 
 use llvmconstants
 
-use otherseq.llvmtype
-
 use seq.llvmtype
 
 use seq.localmap
@@ -68,12 +64,12 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
  // assert false report @(seperator."
 &br", tollvmtype.alltypes,"", toseq.toset.theprg)//
  let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
- let discard4 = defines @@ +(0, funcdec(alltypes, @e))
+ let discard4 = defines @ +(0, funcdec(alltypes, @e))
  let match5map = match5map(theprg, uses, alltypes)
  let libmods2 = arg.match5map_libdesc
   // let zx2c = createfile("stat.txt", ["in codegen0.3"])//
   let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
-  let bodies = defines @@ +(empty:seq.internalbc, addfuncdef(match5map, @e))
+  let bodies = defines @ +(empty:seq.internalbc, addfuncdef(match5map, @e))
   let xxx = profiledata
   let liblib = slot.addliblib([ thename], libmods2, toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0)))
   let libnametype = array(length.decodeword.thename + 1, i8)
@@ -100,8 +96,8 @@ function addfuncdef(match5map:seq.match5, i:symbol)internalbc
  else code.m
  let nopara = arg.m
  let l = Lcode2(emptyinternalbc, paramap(nopara, empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
- let g5 = if"PROFILE"_1 in options then mangledname.i else"noprofile"_1
- let r =  code @@ processnext(l,g5, match5map,@e) 
+ let g5 = if"PROFILE"_1 ∈ options then mangledname.i else"noprofile"_1
+ let r = code @ processnext(l, g5, match5map, @e)
   BLOCKCOUNT(1, noblocks.r) + code.r
   + RET(r(regno.r + 1), slot.top.args.r)
 
@@ -114,7 +110,7 @@ function paramap(i:int, result:seq.localmap)seq.localmap
 
 function length(s:stack.int)int length.toseq.s
 
-function processnext(l:Lcode2,profile:word, match5map:seq.match5,  s:symbol)Lcode2
+function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcode2
  let m = match5map_s
  let action = action.m
   if action = "CALL"_1 then
@@ -171,7 +167,7 @@ function processnext(l:Lcode2,profile:word, match5map:seq.match5,  s:symbol)Lcod
   else if action = "LOOPBLOCK"_1 then
   let varcount = arg.m - 1
    let firstvar = constvalue.slot.top.args.l
-   let bodymap = arithseq(varcount, 1, 1) @@  addloopmapentry( lmap.l,firstvar, regno.l,@e) 
+   let bodymap = arithseq(varcount, 1, 1) @ addloopmapentry(lmap.l, firstvar, regno.l, @e)
    let newstk = push(push(pushexptypes(parametertypes.m, 3, args.l), varcount), 2)
     // stack from top is kind, noexps, firstvar, exptypes, exps //
     let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, newstk, blocks.l)
@@ -186,7 +182,7 @@ function processnext(l:Lcode2,profile:word, match5map:seq.match5,  s:symbol)Lcod
    let fldbc = setnextfld(code.l + newcode, args, 1, parametertypes.m, 3, regno.l + 1, regno.l + 1, 0, 0)
     Lcode2(value.fldbc, lmap.l, noblocks.l, index.fldbc, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
   else
-   assert action in "CALLIDX"report"code gen unknown" + action
+   assert action ∈ "CALLIDX"report"code gen unknown" + action
     if typ.functype.m = typ.ptr.i64 then callidxcodeptr(l, top(args.l, 2), functype.m)
     else callidxcode(l, top(args.l, 2), functype.m)
 
@@ -195,8 +191,8 @@ function pushexptypes(s:seq.word, i:int, result:stack.int)stack.int
  else
   pushexptypes(s
   , i + 2
-  , push(result, if s_i in "real"then typ.double
-  else if s_i in "int"then typ.i64 else typ.ptr.i64))
+  , push(result, if s_i ∈ "real"then typ.double
+  else if s_i ∈ "int"then typ.i64 else typ.ptr.i64))
 
 function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, map:seq.localmap, exitbr:internalbc)processblkresult
  processblk(phitype, blks, 1, exitbr, emptyinternalbc, 1, empty:seq.int, empty:seq.int)
@@ -234,7 +230,7 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
        processblk(phitype, blks, i + 1, exitbr, code, varcount, phi, newtailphi)
     else if kind = 3 then
     // CONTINUE //
-     assert kind.blks_1 = "2"_1 report"incorrect format on block" + blks @@ +("", kind.@e)
+     assert kind.blks_1 = "2"_1 report"incorrect format on block" + blks @ +("", kind.@e)
      let noargs = top.pop.args.blks_1
       // assert false report"C"+ @(+, toword,"", args.blks_1)+"noargs:"+ toword.noargs //
       let newtailphi = tailphi + [ noblocks.l - 1] + top(pop.args.l, noargs)
@@ -243,7 +239,7 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
     else
      // br block //
      assert kind = 1 report"expecting br block" + toword.kind
-      assert length.args.l > 3 report"check m" + ([ kind] + toseq.args.l) @@ +("", toword.@e)
+      assert length.args.l > 3 report"check m" + ([ kind] + toseq.args.l) @ +("", toword.@e)
       let args = top(args.l, 4)
        assert between(constvalue.slot.args_2 - 1, 1, length.blks)
        ∧ between(constvalue.slot.args_3 - 1, 1, length.blks)report"check mm"
@@ -255,15 +251,15 @@ Function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word, j:int, r
  else
   let newj = min(findindex(","_1, types, j + 1), length.types - 1)
   let typ = if length.types = 3 then"int"_1 else types_(newj - 1)
-   assert typ in "int real ptr"report"unknown type gencode" + types
+   assert typ ∈ "int real ptr"report"unknown type gencode" + types
     if preal = 0 ∧ typ = "real"_1 then
     setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.double, bitcast), args, i, types, j, regno + 1, pint, regno + 1, pptr)
-    else if pptr = 0 ∧ typ in "ptr seq"then
+    else if pptr = 0 ∧ typ ∈ "ptr seq"then
     setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.ptr.i64, bitcast), args, i, types, j, regno + 1, pint, preal, regno + 1)
     else
      let newbc =(if typ = "real"_1 then
      GEP(r(regno + 1), double, r.preal, C64(i - 1))
-     else if typ in "ptr seq"then
+     else if typ ∈ "ptr seq"then
      GEP(r(regno + 1), ptr.i64, r.pptr, C64(i - 1))
      else
       assert typ = "int"_1 report"setnextfld problem" + typ
@@ -274,7 +270,7 @@ Function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word, j:int, r
 function getloc(l:seq.localmap, localno:int, i:int)int
  if localno.l_i = localno then regno.l_i else getloc(l, localno, i + 1)
 
-function addloopmapentry(l:seq.localmap,baselocal:int, regbase:int,  i:int)seq.localmap
+function addloopmapentry(l:seq.localmap, baselocal:int, regbase:int, i:int)seq.localmap
  [ localmap(baselocal + i - 1,-regbase - i)] + l
 
 function profilecall(l:Lcode2, args:seq.int, callee:slot, idx:int, functype:llvmtype)Lcode2
@@ -293,7 +289,7 @@ function profilecall(l:Lcode2, args:seq.int, callee:slot, idx:int, functype:llvm
  + BR(r(base + 5), block, block + 1, r(base + 4))
  + CALL(r(base + 5), 0, 32768, function.[ i64], symboltableentry("clock", function.[ i64]))
  + LOAD(r(base + 6), symboltableentry("spacecount", i64), i64)
- + CALL(r(base + 7), 0, 32768, functype, callee, r.1, args @@ +(empty:seq.slot, slot.@e))
+ + CALL(r(base + 7), 0, 32768, functype, callee, r.1, args @ +(empty:seq.slot, slot.@e))
  + CALL(r(base + 8), 0, 32768, function.[ i64], symboltableentry("clock", function.[ i64]))
  + LOAD(r(base + 9), symboltableentry("spacecount", i64), i64)
  + BINOP(r(base + 10), r(base + 8), r(base + 5), sub)
@@ -308,7 +304,7 @@ function profilecall(l:Lcode2, args:seq.int, callee:slot, idx:int, functype:llvm
  + BINOP(r(base + 17), r(base + 16), C64.1, add)
  + STORE(r(base + 18), slot.pcount, r(base + 17))
  + BR(block + 2)
- + CALL(r(base + 18), 0, 32768, functype, callee, r.1, args @@ +(empty:seq.slot, slot.@e))
+ + CALL(r(base + 18), 0, 32768, functype, callee, r.1, args @ +(empty:seq.slot, slot.@e))
  + BR(block + 2)
  + PHI(r(base + 19), returntype.functype, r(base + 7), block, r(base + 18), block + 1)
  + LOAD(r(base + 20), slot.prefs, i64)
@@ -323,7 +319,7 @@ function profilerepA(zero:slot, a:encodingpair.stat5)seq.slot
 
 function profiledata slot
 let d = encoding:seq.encodingpair.stat5
-let data = d @@ +([ C64.6, C64.length.d], profilerepA(C64.0, @e))
+let data = d @ +([ C64.6, C64.length.d], profilerepA(C64.0, @e))
  AGGREGATE.data
 
 function profiledatalen int length.encoding:seq.encodingpair.stat5 * 6 + 2
@@ -352,7 +348,7 @@ function callidxcodeptr(l:Lcode2, args:seq.int, functype:llvmtype)Lcode2
  + BR(r(base + 4), block + 1, block + 3, r(base + 3))
  + // block 1 //
  CAST(r(base + 4), r(base + 1), ptr.function.[ functype, i64, ptr.i64, i64], inttoptr)
- + CALL(r(base + 5), 0, 32768, function.[ functype, i64, ptr.i64, i64], r(base + 4), r.1, args @@ +(empty:seq.slot, slot.@e))
+ + CALL(r(base + 5), 0, 32768, function.[ functype, i64, ptr.i64, i64], r(base + 4), r.1, args @ +(empty:seq.slot, slot.@e))
  + BR(block + 4)
  + // block 2 //
  GEP(r(base + 6), i64, slot.theseq, slot.idx)
@@ -382,7 +378,7 @@ function callidxcode(l:Lcode2, args:seq.int, functype:llvmtype)Lcode2
  + BR(r(base + 3), block + 1, block, r(base + 2))
  + // block //
  CAST(r(base + 3), r(base + 1), ptr.function.[ functype, i64, ptr.i64, i64], inttoptr)
- + CALL(r(base + 4), 0, 32768, function.[ functype, i64, ptr.i64, i64], r(base + 3), r.1, args @@ +(empty:seq.slot, slot.@e))
+ + CALL(r(base + 4), 0, 32768, function.[ functype, i64, ptr.i64, i64], r(base + 3), r.1, args @ +(empty:seq.slot, slot.@e))
  + BR(block + 2)
  + // block 1 //
  CAST(r(base + 5), slot.theseq, ptr.functype, bitcast)

@@ -8,6 +8,8 @@ use otherseq.int
 
 use seq.int
 
+use sparseseq.int
+
 use stdlib
 
 use otherseq.word
@@ -31,7 +33,8 @@ Function displaywidth(cw:characterwidths, s:seq.word)int toseqint.toUTF8.s @ +(0
 Function displaywidth(cw:characterwidths, w:word)int decodeword.w @ +(0,(widths.cw)_@e)
 
 Function charwidths characterwidths characterwidths
-.dseq(60
+.replaceS(sparseseq.60
+, 1
 , [ 60, 60, 60, 60, 60, 60, 60, 60, 60, 60
 , 60, 60, 60, 60, 60, 60, 60, 60, 60, 60
 , 60, 60, 60, 60, 60, 60, 60, 60, 60, 60

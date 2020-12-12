@@ -1,6 +1,5 @@
 #!/usr/local/bin/tau ; use testseq ; testseq
 
-
 module testseq
 
 use encoding.ccc
@@ -14,6 +13,8 @@ use seq.seq.int
 use seq.int
 
 use set.int
+
+use sparseseq.int
 
 use real
 
@@ -77,11 +78,27 @@ let a = encode.ccc(1, 987)
  let x = check:seq.seq.word
  let y = check:seq.word
     let z = check:seq.typerec2  
- if not ("FAIL"_1 in (w+x+y+z)) then "PASS testseq" else "FAIL testseq"+w+x+y+z
+ sparsecheck
+ + if not("FAIL"_1 ∈ (w + x + y + z))then"PASS testseq"
+ else"FAIL testseq" + w + x + y + z
 
-  
+Function sparsecheck seq.word 
+let b = subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200) @ check(sparseseq.101, @e)
+"Pass Sparse Sequence"
 
-
+function  check(s:seq.int,r:seq.int) seq.int
+     let i=r_1 mod 30+1 
+      let c=replaceS(s,i,r)
+  assert subseq(s, 1, i - 1) = subseq(c, 1, min(i - 1, length.s))report"FAIL1" 
+   assert  subseq(s, i+length.r,length.r) =subseq(c, i+length.r,length.r) report "FAIL2"
+    assert subseq(c, i, i + length.r - 1) = r report"FAIL3" 
+      c
+      
+ function random (s:seq.int,i:int,result:seq.seq.int) seq.seq.int
+    if i > length.s then result
+ else
+  let len = s_i mod 5 + 2
+       random( s, i+len, result+subseq(s,i,i+len-1)) 
 
 module testpackedseq.T
 
@@ -101,12 +118,12 @@ unbound get:T T
 
 unbound =(T,T) boolean
 
- 
 Function check:seq.T seq.word
 let unpack = random:seq.T(18)
 let pack = packed.unpack
 let x = if sizeoftype:T = 1 then""else"packed"
-  if (length.pack > 9999 ∨ seqkind.pack = x + toword.length.unpack) &and pack=unpack then "PASS"+toword.length.pack
+ if(length.pack > 9999 ∨ seqkind.pack = x + toword.length.unpack) ∧ pack = unpack then
+ "PASS" + toword.length.pack
   else "FAIL"+toword.length.pack
   
 Function random:seq.T(depth:int)seq.T

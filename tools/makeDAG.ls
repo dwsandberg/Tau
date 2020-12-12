@@ -26,10 +26,10 @@ function make(g:graph.T, reversed:seq.arc.T, l:seq.T, nodes:set.T, i:int)graph.T
    make(g, toseq.arcstosuccessors(g, n) @ +(reversed, filter(nodes, @e)), l, nodes + n, i + 1)
 
 function filter(n:set.T, a:arc.T)seq.arc.T
- if head.a in n then [ a]else empty:seq.arc.T
+ if head.a ∈ n then [ a]else empty:seq.arc.T
 
 Function expandback(org:graph.T, modified:graph.T, n:T)T
- if n in nodes.org then n else expandback(org, modified,(toseq.predecessors(modified, n))_1)
+ if n ∈ nodes.org then n else expandback(org, modified,(toseq.predecessors(modified, n))_1)
 
 Function sinks2(g:graph.T, b:set.T, n:T)set.T
  if cardinality(successors(g, n) - b) = 0 then asset.[ n]else empty:set.T

@@ -40,7 +40,7 @@ Function parsedcode(b:bindinfo)seq.symbol code.b
 
 Export types(bindinfo)seq.mytype
 
-Function funcparametertypes(t:bindinfo)seq.mytype subseq(types.t, 3, length.types.t) @@ +(empty:seq.mytype, parameter.@e)
+Function funcparametertypes(t:bindinfo)seq.mytype subseq(types.t, 3, length.types.t) @ +(empty:seq.mytype, parameter.@e)
 
 Function funcname(t:bindinfo)seq.word text.t
 
@@ -61,8 +61,7 @@ Function parse(dict:set.symbol, input:seq.word)bindinfo parse(bindinfo(dict, emp
 / use encoding.seq.token.bindinfo
 
 Function testparse seq.word  
-let b = parse(bindinfo(empty:set.symbol, empty:seq.symbol, empty:seq.mytype,""), 
-' function a(b:seq.int) int  b @ +(0,@i) ')
+let b = parse(bindinfo(empty:set.symbol, empty:seq.symbol, empty:seq.mytype,""), ' function a(b:seq.int)int b @ +(0, @i)')
  "OK"
 
 Function parse(b:bindinfo, input:seq.word)bindinfo
@@ -86,16 +85,20 @@ function opaction(R:reduction.bindinfo, input:seq.token.bindinfo)bindinfo
  let types = types.R_1 + types.R_3
   if  op="≠" then 
     let f = lookupbysig(dict, "=", types, input, place.R)
-         bindinfo(dict, code.R_1 + code.R_3 + f+symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
+    bindinfo(dict, code.R_1 + code.R_3 + f
+    + symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
   else if op="∉" then
     let f = lookupbysig(dict, "∈", types, input, place.R)
-         bindinfo(dict, code.R_1 + code.R_3 + f+symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")  
+    bindinfo(dict, code.R_1 + code.R_3 + f
+    + symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
  else if op="≥" then
     let f = lookupbysig(dict, "<", types, input, place.R)
-         bindinfo(dict, code.R_1 + code.R_3 + f+symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")  
+    bindinfo(dict, code.R_1 + code.R_3 + f
+    + symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
  else if op="≤" then
     let f = lookupbysig(dict, ">", types, input, place.R)
-         bindinfo(dict, code.R_1 + code.R_3 + f+symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")  
+    bindinfo(dict, code.R_1 + code.R_3 + f
+    + symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
     else 
  let f = lookupbysig(dict, [op_1], types, input, place.R)
    bindinfo(dict, code.R_1 + code.R_3 + f, [ resulttype.f],"")
@@ -135,16 +138,14 @@ function applypart2( part1:bindinfo,args:bindinfo,input:seq.token.bindinfo, plac
     let s2=newsymbol("@i",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,typeint)
         let op = lookupbysig(dict.part1,  opname , [resulttype]+types.args, input, place)
        let paratypes=paratypes.op
-      assert abstracttype.seqtype in "seq" report errormessage(" first term of apply must be sequence",input,place)
+  assert abstracttype.seqtype ∈ "seq"report errormessage("first term of apply must be sequence", input, place)
    assert length.paratypes > 1 ∧ paratypes_1 = resulttype report"First parameter must be the same as the result type in apply"
    let z = if op = symbol("∧(boolean, boolean)","stdlib","boolean")then
    symbol("∧(bits, bits)","bits","bits")
    else if op = symbol("∨(boolean, boolean)","stdlib","boolean")then
    symbol("∨(bits, bits)","bits","bits")
         else op
- let newcode=code.part1+code.args
-    + op
-     +  Lit.0
+   let newcode = code.part1 + code.args + op + Lit.0
     + newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint], resulttype)
     bindinfo(dict.args-s1 -s2,     newcode, [resulttype.op],"")
 
@@ -155,20 +156,21 @@ function addparameter(dict:set.symbol,orgsize:int, input:seq.token.bindinfo, pla
 
 function lookupbysig(dict:set.symbol, name:seq.word, paratypes:seq.mytype, input:seq.token.bindinfo, place:int)symbol
  let f = lookup(dict, name, paratypes)
-  assert not.isempty.f report errormessage("cannot find 1" + name + "(" + paratypes @@ list("",",", print.@e)
+  assert not.isempty.f report errormessage("cannot find 1" + name + "("
+  + paratypes @ list("",",", print.@e)
   + ")", input, place)
    // + @(+, print,"", toseq.dict)//
-   assert cardinality.f = 1 report errormessage("found more that one" + toseq.f @@ +("", print.@e), input, place)
+   assert cardinality.f = 1 report errormessage("found more that one" + toseq.f @ +("", print.@e), input, place)
     f_1
 
 function createfunc(R:reduction.bindinfo, input:seq.token.bindinfo, funcname:seq.word, paralist:seq.mytype, functypebind:bindinfo, exp:bindinfo)bindinfo
  let functype = gettype.functypebind
-  assert functype = (types.exp)_1 ∨ (types.exp)_1 in [ mytype."internal1"]report errormessage("function type of" + print.functype + "does not match expression type" + print.(types.exp)_1, input, place.R)
+  assert functype = (types.exp)_1 ∨ (types.exp)_1 ∈ [ mytype."internal1"]report errormessage("function type of" + print.functype + "does not match expression type" + print.(types.exp)_1, input, place.R)
    bindinfo(dict.R, code.exp, [ mytype."unused", functype] + paralist, funcname)
    
 function isdefined(R:reduction.bindinfo, input:seq.token.bindinfo, type:mytype)bindinfo
  let dict = dict.R
-  if cardinality.dict < 25 ∨ type in [ mytype."T", typeint, mytype."real"] ∨ isabstract.type then
+  if cardinality.dict < 25 ∨ type ∈ [ mytype."T", typeint, mytype."real"] ∨ isabstract.type then
   bindinfo(dict, empty:seq.symbol, [type],"")
   else
    let a = lookup(dict,"type:" + print.type,  [type])
@@ -185,9 +187,10 @@ else if ruleno = // F W NM(FP)T E // 2 then createfunc(R, input, tokentext.R_2, 
 else if ruleno = // F W N(FP)T E // 3 then createfunc(R, input, tokentext.R_2, types.R_4, R_6, R_7) 
 else if ruleno = // F W NM T E // 4 then createfunc(R, input, tokentext.R_2, empty:seq.mytype, R_3, R_4) 
  else if ruleno = // F W NM is W P // 5 then
-assert(tokentext.R_4)_1 in"record sequence"report errormessage("Expected record or sequence after is in type definition got:"+ tokentext.R_4, input, place.R)bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2) 
+ assert(tokentext.R_4)_1 ∈ "record sequence"report errormessage("Expected record or sequence after is in type definition got:" + tokentext.R_4, input, place.R)
+   bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2)
  else if ruleno = // F T // 6 then R_1
-else if ruleno = // FP P // 7 then bindinfo(types.R_1 @@ addparameter(dict.R, cardinality.dict.R, input, place.R, @e), empty:seq.symbol, types.R_1,"") 
+else if ruleno = // FP P // 7 then bindinfo(types.R_1 @ addparameter(dict.R, cardinality.dict.R, input, place.R, @e), empty:seq.symbol, types.R_1,"") 
 else if ruleno = // P T // 8 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype(":"_1, gettype.R_1)],"") 
 else if ruleno = // P P, T // 9 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype(":"_1, gettype.R_3)],"") 
 else if ruleno = // P W:T // 10 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_1)_1, gettype.R_3)],"") 
@@ -218,7 +221,7 @@ else if ruleno = // L E // 28 then R_1
 else if ruleno = // L L, E // 29 then bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"") 
 else if ruleno = // E [ L]// 30 then 
  let types = types.R_2
-assert types @@ ∧(true,(types_1 = @e))report errormessage("types do not match in build", input, place.R)
+assert types @ ∧(true,(types_1 = @e))report errormessage("types do not match in build", input, place.R)
 bindinfo(dict.R, [ Stdseq, Lit.length.types]+ code.R_2 + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint]+ types, typeptr), [ typeseq + types_1],"") 
 else if ruleno = // A let W = E // 31 then 
  let e = R_4
@@ -252,7 +255,7 @@ else if ruleno = // N ∧ // 45 then R_1
 else if ruleno = // N ∨ // 46 then R_1 
 else if ruleno = // NM W // 47 then R_1 
 else if ruleno = // NM W:T // 48 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1) 
-else if ruleno = // D E @@ NM(E, // 49 then applypart1(R_1, R_3,R_5, input, place.R) 
-else if ruleno = // D E @@ N(E, // 50 then applypart1(R_1, R_3,R_5, input, place.R) 
+else if ruleno = // D E @ NM(E, // 49 then applypart1(R_1, R_3,R_5, input, place.R) 
+else if ruleno = // D E @ N(E, // 50 then applypart1(R_1, R_3,R_5, input, place.R) 
 else assert ruleno = // E D L)// 51 report"invalid rule number"+ toword.ruleno 
 applypart2(R_1, R_2, input, place.R)

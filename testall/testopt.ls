@@ -105,7 +105,7 @@ Function getcode(p2:seq.seq.word, codelist:seq.seq.word, no:int)seq.word
    
  function shuffletest(s:seq.word) boolean
  s
- in ["17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 d a 85 8 9 92 xxx d 100 10 7 101 9 10 109 4 3 113 5 4 117 3 5","17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 xxx a 85 10 9 100 8 7 101 9 10 109 4 3 113 5 4 117 3 5","47 b xxx 62 xxx b 85 8 9 109 4 3 113 3 4","17 xxx c 32 xxx c 47 b xxx 62 c b 85 8 9 100 9 7 105 3 4 109 4 3"]
+ ∈ ["17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 d a 85 8 9 92 xxx d 100 10 7 101 9 10 109 4 3 113 5 4 117 3 5","17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 xxx a 85 10 9 100 8 7 101 9 10 109 4 3 113 5 4 117 3 5","47 b xxx 62 xxx b 85 8 9 109 4 3 113 3 4","17 xxx c 32 xxx c 47 b xxx 62 c b 85 8 9 100 9 7 105 3 4 109 4 3"]
 
 function sameto(a:seq.word,b:seq.word,i:int,diffs:seq.word) seq.word
  if i > length.a ∨ i > length.b then diffs
@@ -114,9 +114,9 @@ function sameto(a:seq.word,b:seq.word,i:int,diffs:seq.word) seq.word
 
 function removeoptions(s:seq.word, i:int)seq.word
  if i = length.s then
- if subseq(s, i - 7, i) &ne "option(T, word seq)builtin" then s
+ if subseq(s, i - 7, i) ≠ "option(T, word seq)builtin"then s
   else removeoptions(s, i - 9)
- else if  s_i &ne '"'_1 then removeoptions(s, i - 1)
+ else if s_i ≠ '"'_1 then removeoptions(s, i - 1)
  else subseq(s, 1, i - 1)
 
 Function optest1 int 3 + 4
@@ -174,10 +174,10 @@ function parabits(nopara:int)int
 
 Function optest23a(a:int, b:int)int(a + a) / b
 
-Function optest24(i:int)int if i in [ 5]then 24 else 0
+Function optest24(i:int)int if i ∈ [ 5]then 24 else 0
 
 Function optest25(b:seq.int)int
- if b_3 = 3333 ∨ b_3 in [ 5, 8, 9] ∨ b_3 = 10 then
+ if b_3 = 3333 ∨ b_3 ∈ [ 5, 8, 9] ∨ b_3 = 10 then
  25
  else 2
 
@@ -185,7 +185,7 @@ Function optest25(b:seq.int)int
 
 Function optest26(s:seq.word, i:int)int
  if s_i = "xxx"_1 then 3
- else if s_i in "a b"then 4 else if s_i in "c d"then 4 else 5
+ else if s_i ∈ "a b"then 4 else if s_i ∈ "c d"then 4 else 5
 
 Function optest27(a:int, result:int)int
  // tail recursion // if a = 1 then result else optest27(a - 1, a * result)
@@ -194,10 +194,10 @@ Function optest28(a:int, b:int)boolean a > 0 ∧ b < 10
 
 Function optest29(a:int, b:int)boolean a > 0 ∨ b < 10
 
-Function optest30(w:word, a:int, b:int)int if w in "test"then a else b
+Function optest30(w:word, a:int, b:int)int if w ∈ "test"then a else b
 
 Function optest31(s:seq.int, i:int)int
- if s_i in [ 1, 3] ∨ s_i = 4 then 10 else 11
+ if s_i ∈ [ 1, 3] ∨ s_i = 4 then 10 else 11
 
 Function optest32(t:seq.word)seq.word dropparameter(t,"")
 

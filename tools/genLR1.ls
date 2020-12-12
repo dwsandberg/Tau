@@ -28,6 +28,8 @@ use seq.int
 
 use set.int
 
+use sparseseq.int
+
 use otherseq.ruleprec
 
 use seq.ruleprec
@@ -111,16 +113,17 @@ function follow1(s:seq.word, i:int)arc.word
   arc(s_i, s_(i + 1))
 
 function follow2(rule:seq.word)seq.arc.word
- (arithseq(length.rule - 2, 1, 2))@@ +(empty:seq.arc.word, follow1(rule, @e))
+ arithseq(length.rule - 2, 1, 2) @ +(empty:seq.arc.word, follow1(rule, @e))
 
-function follow(grammar:seq.seq.word)graph.word follow(newgraph(grammar @@ +(empty:seq.arc.word, follow2.@e)), grammar)
+function follow(grammar:seq.seq.word)graph.word
+ follow(newgraph(grammar @ +(empty:seq.arc.word, follow2.@e)), grammar)
 
 function follow3(g:graph.word, rule:seq.word)seq.arc.word
- let a =(toseq.successors(g, rule_1))@@ +(empty:seq.arc.word, arc(last.rule, @e))
-  {(toseq.predecessors(g, rule_1))@@ +(a, backarc(rule_2, @e))}
+ let a = toseq.successors(g, rule_1) @ +(empty:seq.arc.word, arc(last.rule, @e))
+  toseq.predecessors(g, rule_1) @ +(a, backarc(rule_2, @e))
 
 function follow(g:graph.word, grammar:seq.seq.word)graph.word
- let g2 = grammar @@ +(g, follow3(g, @e))
+ let g2 = grammar @ +(g, follow3(g, @e))
   if g = g2 then g else follow(g2, grammar)
 
 function ruleno(grammar:seq.seq.word, rule:seq.word)int
@@ -138,8 +141,7 @@ function reduce(stateno:int, lookahead:word, ruleno:int)action action(stateno, l
 type ruleprec is record  lookahead:word, rules:seq.int
 
 function print(grammar:seq.seq.word, p:ruleprec)seq.word
- "lookahead:" + lookahead.p + rules.p @@ list("","|",
- grammar_@e)
+ "lookahead:" + lookahead.p + rules.p @ list("","|", grammar_@e)
   
 function cvt(grammar:seq.seq.word,ruleprec:seq.seq.word,i:int, rulelist:seq.int,result:seq.ruleprec) seq.ruleprec
   // could use simpler format of rule prec //
@@ -157,7 +159,8 @@ function cvt(grammar:seq.seq.word,ruleprec:seq.seq.word,i:int, rulelist:seq.int,
 function getaction( grammar:seq.seq.word, state:state, stateno:int, reductions:seq.seq.word, lookahead:word)seq.action
  let newstate = advance(grammar, toset.state, lookahead)
   let newstateno = if not.isempty.newstate then valueofencoding.encode.state.newstate else 0
-  {(reductions @@ +(empty:seq.int, ruleno(grammar, @e)))@@ +(if newstateno = 0 then empty:seq.action else [ shift(stateno, lookahead, newstateno)], reduce(stateno, lookahead, @e))}
+  reductions @ +(empty:seq.int, ruleno(grammar, @e))
+  @ +(if newstateno = 0 then empty:seq.action else [ shift(stateno, lookahead, newstateno)], reduce(stateno, lookahead, @e))
              
 function =(a:ruleprec,b:ruleprec) boolean  lookahead.a=lookahead.b 
 
@@ -169,12 +172,12 @@ function resolveamb( ruleprec:seq.ruleprec,unaryop:int,addop:int,           a:se
      if length.a < 2 then a
     else 
       let lookplace = findelement(ruleprec(lookahead.a_1,empty:seq.int) , ruleprec)
-  let cactions = a @@ +(empty:seq.int, codedaction.@e)
-  let shift = cactions @@ +(empty:seq.int, findshift.@e)
-  let rules =(toseq(asset.cactions - asset.shift))@@ +(empty:seq.int,-1 * @e)
+  let cactions = a @ +(empty:seq.int, codedaction.@e)
+  let shift = cactions @ +(empty:seq.int, findshift.@e)
+  let rules = toseq(asset.cactions - asset.shift) @ +(empty:seq.int,-1 * @e)
    //    assert false report "XXX"+@(+,print,"",a) //
-   let c1actions = cactions @@ +(empty:seq.int,-1 * @e)
-    if lookahead.a_1 in "*" ∧ unaryop in c1actions then
+   let c1actions = cactions @ +(empty:seq.int,-1 * @e)
+    if lookahead.a_1 ∈ "*" ∧ unaryop ∈ c1actions then
     // assert stateno.a_1 in [ 68, 137]report"XXX"+ @(+, toword,""+ lookahead.a_1 + toword.stateno.a_1, c1actions)//
      [ action(stateno.a_1, lookahead.a_1,-unaryop)]
        else 
@@ -183,7 +186,7 @@ function resolveamb( ruleprec:seq.ruleprec,unaryop:int,addop:int,           a:se
                toseq(asset.c1actions - asset.[unaryop])
         else c1actions
        let RP= if isempty.lookplace then rules.last.ruleprec  else rules.lookplace_1
-     let p = c2actions @@ min(length.RP + 1, findindex(RP, @e))
+     let p = c2actions @ min(length.RP + 1, findindex(RP, @e))
               if not.between(p, 1,length.RP ) then  
           // @(+, xxx.rules.last.ruleprec ,empty:seq.action,a) //
            if  isempty.shift then 
@@ -192,33 +195,33 @@ function resolveamb( ruleprec:seq.ruleprec,unaryop:int,addop:int,           a:se
       else [ action(stateno.a_1, lookahead.a_1,-RP_p)]
      
 function xxx(rules:seq.int,a: action ) seq.action
- if codedaction.a > 0 ∨ not(-codedaction.a in rules)then [ a]else empty:seq.action
+ if codedaction.a > 0 ∨ not(-codedaction.a ∈ rules)then [ a]else empty:seq.action
    
-function print(a:seq.seq.word)seq.word a @@ list (""," &br",@e) 
+function print(a:seq.seq.word)seq.word a @ list(""," &br", @e)
 
 function printstate(stateno:int)seq.word [ toword.stateno]
 
-function alphabet(grammar:seq.seq.word)seq.word toseq.asset(grammar @@ +("", @e))
+function alphabet(grammar:seq.seq.word)seq.word toseq.asset(grammar @ +("", @e))
 
 function addaction(alphabet:seq.word, table:seq.int, a:action)seq.int
- replace(table, findindex(lookahead.a, alphabet) + length.alphabet * stateno.a, codedaction.a)
+ replaceS(table, findindex(lookahead.a, alphabet) + length.alphabet * stateno.a, [codedaction.a])
 
 function addaction(table:seq.int,alphabet:seq.word,   a:action)seq.int
- replace(table, findindex(lookahead.a, alphabet) + length.alphabet * stateno.a, codedaction.a)
+ replaceS(table, findindex(lookahead.a, alphabet) + length.alphabet * stateno.a, [codedaction.a])
 
 /function first(a:seq.seq.word)seq.word a_1
 
 /function first(a:seq.word)word a_1
 
 function tosubstate(state:seq.seq.word, rule:seq.word)seq.seq.word
- if rule in state then [ rule]else empty:seq.seq.word
+ if rule ∈ state then [ rule]else empty:seq.seq.word
 
 function print(p:dottedrule)seq.word
  subseq(rule.p, 1, place.p - 1) + "'"
  + subseq(rule.p, place.p, length.rule.p)
 
 function print(s:state)seq.word
- '  &br"' + (toseq.toset.s)@@ list("","|",  print.@e)
+ '  &br"' + toseq.toset.s @ list("","|", print.@e)
  + '  &br"'
 
 Function initialstate(grammar:seq.seq.word)set.dottedrule close(grammar, asset.[ dottedrule(2,"G F #")])
@@ -226,18 +229,18 @@ Function initialstate(grammar:seq.seq.word)set.dottedrule close(grammar, asset.[
 Function finalstate(grammar:seq.seq.word)set.dottedrule close(grammar, asset.[ dottedrule(3,"G F #")])
 
 function close(g:seq.seq.word, s:set.dottedrule)set.dottedrule
- let newset =(toseq.s)@@ ∪(s, close(g, @e))
+ let newset = toseq.s @ ∪(s, close(g, @e))
   if s = newset then s else close(g, newset)
 
 function close(g:seq.seq.word, p:dottedrule)set.dottedrule
  if place.p > length.rule.p then empty:set.dottedrule
- else asset(g @@ +(empty:seq.dottedrule, startswith((rule.p)_(place.p), @e)))
+ else asset(g @ +(empty:seq.dottedrule, startswith((rule.p)_(place.p), @e)))
 
 function startswith(first:word, x:seq.word)seq.dottedrule
  if x_1 = first then [ dottedrule(2, x)]else empty:seq.dottedrule
 
 function advance(g:seq.seq.word, state:set.dottedrule, next:word)set.dottedrule
- close(g, asset((toseq.state)@@ +(empty:seq.dottedrule, advance(next, @e))))
+ close(g, asset(toseq.state @ +(empty:seq.dottedrule, advance(next, @e))))
 
 function advance(next:word, p:dottedrule)seq.dottedrule
  if place.p ≤ length.rule.p ∧ (rule.p)_(place.p) = next then
@@ -247,29 +250,30 @@ function advance(next:word, p:dottedrule)seq.dottedrule
 function finished(p:dottedrule)seq.seq.word
  if place.p = length.rule.p + 1 then [ rule.p]else empty:seq.seq.word
 
-function finished(s:state)seq.seq.word(toseq.toset.s)@@ +(empty:seq.seq.word, finished.@e)
+function finished(s:state)seq.seq.word toseq.toset.s @ +(empty:seq.seq.word, finished.@e)
 
 function shifts(p:dottedrule)seq.word
  if place.p = length.rule.p + 1 then empty:seq.word else [(rule.p)_(place.p)]
 
-function shifts(s:state)seq.word toseq.asset  ((toseq.toset.s)@@ +(empty:seq.word, shifts.@e))
+function shifts(s:state)seq.word toseq.asset(toseq.toset.s @ +(empty:seq.word, shifts.@e))
 
 Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphabet:seq.word,attributename:seq.word)seq.word
- let grammar2 = grammarandact @@ +(empty:seq.seq.word, first.@e)
+ let grammar2 = grammarandact @ +(empty:seq.seq.word, first.@e)
  let initialstateno = valueofencoding.encode.state.initialstate.grammar2
  let finalstateno=valueofencoding.encode.state.finalstate.grammar2  
  let missingsymbols = asset.alphabet - asset.alphabet.grammar2
-  assert isempty.missingsymbols report"Symbols not included in alphabet" + toseq.missingsymbols
-  let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
+ // assert isempty.missingsymbols report"Symbols not included in alphabet" + toseq.missingsymbols
+ // let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
   let actions = closestate(graminfo, 1, empty:seq.action)
  // assert false report  print(grammar2,actions) //
    let RP= cvt(grammar2,ruleprec,1,empty:seq.int,empty:seq.ruleprec)
-   let actions2 =(dups.actions)@@ +(empty:seq.seq.action, resolveamb(RP, ruleno(grammar2,"E-E"), ruleno(grammar2,"E E-E"), @e))
-   let actions3 = actions2 @@ +(empty:seq.action, @e)
-   let amb = actions2 @@ +("", amb(grammar2, @e))
-    {(if length.amb > 0 then"ambiguous actions:" + amb
-   +"&br prec rules" 
-   +RP @@ list("","&br", print(grammar2,@e))
+   let actions2 = dups.actions
+   @ +(empty:seq.seq.action, resolveamb(RP, ruleno(grammar2,"E-E"), ruleno(grammar2,"E E-E"), @e))
+   let actions3 = actions2 @ +(empty:seq.action, @e)
+   let amb = actions2 @ +("", amb(grammar2, @e))
+    {((if length.amb > 0 then
+    "ambiguous actions:" + amb + " &br prec rules"
+     + RP @ list(""," &br", print(grammar2, @e))
     else "")
    + print(grammar2,actions3)  
    + generatereduce(grammarandact, alphabet,attributename)
@@ -288,18 +292,16 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, alphab
    + toword.length.grammarandact
    + " &br nostate"
    + toword.length.encoding:seq.encodingpair.state
-   + { if length.amb = 0 then 
-     let  x=actions3 @@ addaction(dseq.0,alphabet,@e)
-   " &p function actiontable:T seq.int ["
-   + x @@ list("",",",[toword.@e]) 
+    + if length.amb = 0 then
+    let x = actions3 @ addaction(sparseseq.0, alphabet, @e)
+      " &p function actiontable:T seq.int [" + x @ list("",",", [ toword.@e])
    + "]" 
-   else "" }
+    else"")
    + " &p follow"
-    + 
-    print.follow.graminfo + printstatefunc(encoding:seq.encodingpair.state, 1,"")}
-    
+    + print.follow.graminfo
+    + printstatefunc(encoding:seq.encodingpair.state, 1,"")}
  
-function print(a:graph.word)seq.word(toseq.nodes.a)@@ +("nodes", print2(a, @e))
+function print(a:graph.word)seq.word toseq.nodes.a @ +("nodes", print2(a, @e))
   
  function print2( a:graph.word, node:word) seq.word
     "&br"+node+ "followed by:"+ toseq.successors(a,node)
@@ -330,8 +332,8 @@ function closestate(graminfo:grammarinfo, stateno:int, result:seq.action)seq.act
   else
    let state = data.m_stateno
    let reductions = finished.state
-   let follows =(reductions @@ +("", first.@e))@@ ∪(empty:set.word, successors(follow.graminfo, @e))
-   let newresult =(toseq(asset.shifts.state ∪ follows))@@ +(result, getaction(grammar.graminfo, state, stateno, reductions, @e))
+   let follows = reductions @ +("", first.@e) @ ∪(empty:set.word, successors(follow.graminfo, @e))
+   let newresult = toseq(asset.shifts.state ∪ follows) @ +(result, getaction(grammar.graminfo, state, stateno, reductions, @e))
     closestate(graminfo, stateno + 1, newresult)
 
 Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attribute:seq.word)seq.word
@@ -339,34 +341,29 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attri
  + attribute
  + ")"
  + attribute
- +  grammarandact @@ +("", reduceline(@e, @i,length.grammarandact))
+ + grammarandact @ +("", reduceline(@e, @i, length.grammarandact))
  + " &p function rulelength:T seq.int ["
- + grammarandact @@ list("",",",  [rulelength.@e])
+ + grammarandact @ list("",",", [ rulelength.@e])
  + "] &p function leftside:T seq.int ["
- + grammarandact @@ list("",",",  [leftside(alphabet, @e)])
+ + grammarandact @ list("",",", [ leftside(alphabet, @e)])
  + ']'
 
 function rulelength(a:seq.seq.word)word toword(length.a_1 - 1)
 
 function leftside(alphabet:seq.word, a:seq.seq.word)word toword.findindex(a_1_1, alphabet)
 
-function replace$(w:word)seq.word if w in  "let assert"  then " &br"+w  else [ w]
+function replace$(w:word)seq.word if w ∈ "let assert"then" &br" + w else [ w]
 
 function reduceline(grammerandact:seq.seq.word, i:int,last:int)seq.word
  let s = grammerandact 
-  let prefix= if i= 1 then "&br if "
-   else if i = last then
-    "&br else assert"
-   else 
-     "&br else if "  
-  let part2=" ruleno = //" + s_1 + "//" + toword.i +if i = last then
-   ' report"invalid rule number"+ toword.ruleno  &br '
-    else   "then"
-  prefix+part2 + (s_2)@@ +("", replace$.@e)
+ let prefix = if i = 1 then" &br if"else if i = last then" &br else assert"else" &br else if"
+ let part2 ="ruleno = //" + s_1 + "//" + toword.i
+ + if i = last then ' report"invalid rule number"+ toword.ruleno  &br ' else"then"
+  prefix + part2 + s_2 @ +("", replace$.@e)
    
 Function gentau2 seq.word // used to generater tau parser for Pass1 of the tau compiler. // lr1parser(taurules2, tauruleprec, taualphabet,"bindinfo")
  
-function taualphabet seq.word".=():>]-{ } comment, [_@@ is T if # then else let assert report ∧ ∨ * $wordlist   A E G F W P N L I  FP NM D"
+function taualphabet seq.word".=():>]-{ } comment, [_@ is T if # then else let assert report ∧ ∨ * $wordlist   A E G F W P N L I  FP NM D"
 
 function tauruleprec seq.seq.word  
 // list of rules and lookaheads.  The position of the lookahead is noted.  Rule reductions  after are discard
@@ -374,7 +371,7 @@ and rule the first rule listed before the position is used to reduce. //
 [ ".",":" , ",","(","T","W","NM","N","$wordlist",
  "E E _ E ","_",
  " E W.E ",
-"E E * E",' D   E @@ NM ( E ,' , "*" ,"@@ "
+"E E * E",' D   E @ NM ( E ,' , "*" ,"@ "
 ,"E-E","E E-E" ,"-" 
 ,"E-E","E E > E","E E = E","=",">"
 ,"E E ∧ E","∧","E E ∨ E","∨"]
@@ -384,10 +381,9 @@ function taurules2 seq.seq.seq.word [[  ' G F # ', '  R_1 ']
 , [ ' F W NM(FP)T E ', ' createfunc(R, input, tokentext.R_2, types.R_4, R_6, R_7)'] 
 , [ ' F W N(FP)T E ', ' createfunc(R, input, tokentext.R_2, types.R_4, R_6, R_7)'] 
 , [ ' F W NM T E ', ' createfunc(R, input, tokentext.R_2, empty:seq.mytype, R_3, R_4)'] 
-, [ ' F W NM is W P ', ' assert(tokentext.R_4)_1 in"record sequence"report errormessage("Expected record or sequence after is in type definition got:"+ tokentext.R_4, input, place.R)bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2)'] 
+, [ ' F W NM is W P ', ' assert(tokentext.R_4)_1 ∈"record sequence"report errormessage("Expected record or sequence after is in type definition got:"+ tokentext.R_4, input, place.R)bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2)'] 
 , [ ' F T ', ' R_1 '] 
-, [ ' FP P ', '  bindinfo( types.R_1  @@ addparameter(dict.R ,cardinality.dict.R, input, place.R,@e), empty:seq.symbol, types.R_1,"")
-'] 
+, [ ' FP P ', ' bindinfo(types.R_1 @ addparameter(dict.R, cardinality.dict.R, input, place.R, @e), empty:seq.symbol, types.R_1,"")']
 , [ ' P T ', ' bindinfo(dict.R, empty:seq.symbol, [ abstracttype(":"_1, gettype.R_1)],"")'] 
 , [ ' P P, T ', ' bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype(":"_1, gettype.R_3)],"")'] 
 , [ ' P W:T ', ' bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_1)_1, gettype.R_3)],"")'] 
@@ -411,7 +407,7 @@ function taurules2 seq.seq.seq.word [[  ' G F # ', '  R_1 ']
 , [ ' L E ', ' R_1 '] 
 , [ ' L L, E ', ' bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"")'] 
 , [ ' E [ L]', '  let types = types.R_2
-   assert types @@ ∧(true, (types_1 = @e))report errormessage("types do not match in build", input, place.R)
+   assert types @ ∧(true, (types_1 = @e))report errormessage("types do not match in build", input, place.R)
     bindinfo(dict.R, [ Lit.0, Lit.length.types] + code.R_2
     + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint] + types, typeptr), [ typeseq + types_1],"")
 '] 
@@ -433,13 +429,11 @@ function taurules2 seq.seq.seq.word [[  ' G F # ', '  R_1 ']
 ,  [ ' N ∨ ', ' R_1 '] 
 , [ ' NM W ', ' R_1 '] 
 , [ ' NM W:T ', ' bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1)'] 
-, [ ' D   E @@ NM ( E , ', ' applypart1(R_1,R_3,R_5,input, place.R) '] 
-, [ ' D   E @@ N ( E , ', ' applypart1(R_1,R_3,R_5,input, place.R) '] 
+, [ ' D   E @ NM ( E , ', ' applypart1(R_1,R_3,R_5,input, place.R) '] 
+, [ ' D   E @ N ( E , ', ' applypart1(R_1,R_3,R_5,input, place.R) '] 
 , [ ' E D L)', ' applypart2(R_1, R_2 , input, place.R) ']]
 
-
-Function gentaupretty seq.word // used to generater tau parser for Pass1 of the tau compiler. // 
-lr1parser(tauprettyrules, tauruleprec, taualphabet,"attribute2")
+Function gentaupretty seq.word // used to generater tau parser for Pass1 of the tau compiler. // lr1parser(tauprettyrules, tauruleprec, taualphabet,"attribute2")
  
 function tauprettyrules seq.seq.seq.word // after generator grammar change %%% to & //
 [ [  ' G F # ', ' R_1 '] 
@@ -490,15 +484,10 @@ function tauprettyrules seq.seq.seq.word // after generator grammar change %%% t
 , [ ' N ∨ ', ' R_1 '] 
 , [ ' NM W ', ' R_1 '] 
 , [ ' NM W:T ', ' pretty.[ R_1, R_2, R_3]'] 
-, [ ' D   E @@ NM ( E , ', '  wrap(4, R_1,"@", pretty.[   R_3,R_4,R_5,R_6  ]) '] 
-, [ ' D   E @@ N ( E , ', ' wrap(4, R_1,"@", pretty.[   R_3,R_4,R_5,R_6  ])   '] 
+, [ ' D   E @ NM ( E , ', '  wrap(4, R_1,"@", pretty.[   R_3,R_4,R_5,R_6  ]) '] 
+, [ ' D   E @ N ( E , ', ' wrap(4, R_1,"@", pretty.[   R_3,R_4,R_5,R_6  ])   '] 
 , [ ' E D L)', ' pretty.[R_1,R_2,R_3] ']]
 
-
-, [ ' E @(K, K, E, E)', ' pretty.[ R_1, R_2, list(R_3 + R_5 + R_7 + R_9), R_10]'] 
-, [ ' D   E @@ ', '  R_1  '] 
-, [ ' E  D  NM(E,L) ', ' wrap(4, R_1,"@", pretty.[ R_2, R_3, list(R_4 + R_6), R_7]) ']
-, [ ' E D N(E, L)', ' wrap(4, R_1,"@@", pretty.[ R_2, R_3, list(R_4 + R_6), R_7]) ']]
 
 Function test11 seq.word extractgrammer
 .' Function action(ruleno:int, input:seq.token.attribute, R:reduction.attribute)attribute if ruleno = // G F # // 1 then R_1 else if ruleno = // F W W(FP)T E // 2 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]else if ruleno = // F W N(FP)T E // 3 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]else if ruleno = // F W W T E // 4 then pretty.[ key.R_1, R_2, R_3, R_4]else if ruleno = // F W W:T T E // 5 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6]else if ruleno = // F W W:T(FP)T E // 6 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9]else if ruleno = // F W W is W P // 7 then pretty.[ key.R_1, R_2, R_3, R_4, list.R_5]else if ruleno = // F W T // 8 then // use // pretty.[ key.R_1, R_2]else if ruleno = // FP P // 9 then list.R_1 else if ruleno = // P T // 10 then R_1 else if ruleno = // P P, T // 11 then R_1 + R_3 else if ruleno = // P W:T // 12 then pretty.[ R_1, R_2, R_3]else if ruleno = // P P, W:T // 13 then R_1 + pretty.[ R_3, R_4, R_5]else if ruleno = // P comment W:T // 14 then pretty.[ R_1, R_2, R_3, R_4]else if ruleno = // P P, comment W:T // 15 then R_1 + pretty.[ R_3, R_4, R_5, R_6]else if ruleno = // E W // 16 then R_1 else if ruleno = // E N(L)// 17 then if length.R_3 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]else if ruleno = // E W(L)// 18 then if length.R_3 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]else if ruleno = // E W:T(L)// 19 then pretty.[ R_1, R_2, R_3, R_4, list.R_5, R_6]else if ruleno = // E(E)// 20 then R_2 else if ruleno = // E { E } // 21 then R_2 else if ruleno = // E if E then E else E // 22 then if width.R_2 + width.R_4 + width.R_6 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]else if width.R_2 + width.R_4 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]else pretty.[ R_1, R_2, attribute." &keyword then 
@@ -521,8 +510,6 @@ function extractgrammer(z:seq.word, i:int, state:seq.word, mark:int, result:seq.
   else if state = "INRULE"then
   extractgrammer(z, i + 3,"INACTION", i + 3, result + "'" + subseq(z, mark, i - 1) + "', '")
   else extractgrammer(z, i + 1, state, mark, result)
- else if subseq(z, i, i + 4) in ["else if ruleno = //","else assert ruleno = //"]then
+ else if subseq(z, i, i + 4) ∈ ["else if ruleno = //","else assert ruleno = //"]then
  extractgrammer(z, i + 5,"INRULE", i + 5, result + subseq(z, mark, i - 1) + "'] &br, [")
  else extractgrammer(z, i + 1, state, mark, result)
- 
- 

@@ -184,7 +184,7 @@ function ascode(p:program, l:seq.block, i:int, assigned:seq.block, result:seq.sy
         else l
         let first =(allocated.z)_1
         let first1 = if isempty.prefix then first else block(kind.first, blkno.first, label1.first, label2.first, prefix + code.first)
-         ascode(p, newl, i, replaceZ(assigned, i, first1) + subseq(allocated.z, 2, length.allocated.z), result)
+         ascode(p, newl, i, replace(assigned, i, first1) + subseq(allocated.z, 2, length.allocated.z), result)
      else
       let a1 = findblk2(l, 1, label1.blk)
       let l1 = findindex(a1, assigned)
@@ -676,7 +676,8 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    else
     let zz0=parameter.(paratypes.applysym)_3
     let zz=abstracttype.zz0
-    let change=  seqelementkind in "real"  //  &or 
+     let change = seqelementkind ∈ "real"
+     //  &or 
     zz &nin "encodingpair   word    symbol  myinternaltype block firstpass"
       &or ( zz in "encodingpair" &and print.parameter.zz0 in 
     ["symboltext","typename","llvmtypeele","symbolconstant","const3","stat5","llvmconst","match5"]) 
@@ -749,7 +750,7 @@ function subthunk2(s:seq.symbol, i:int, with:seq.symbol, found:seq.symbol)seq.sy
  else if abstracttype.modname.s_i ≠ "builtin"_1 then subthunk2(s, i + 1, with, found)
  else
   let t = findindex((fsig.s_i)_1,"@e @i @exit")
-  let news = if t > 3 then s else replaceZ(s, i, with_t)
+  let news = if t > 3 then s else replace(s, i, with_t)
    subthunk2(news, i + 1, with, if t ∈ [ 3] ∧ isempty.found then found + s_i else found)
 
 function maxvarused(code:seq.symbol)int maxvarused(code, 1, 0)
@@ -794,6 +795,8 @@ Function caloptions(p:program, code:seq.symbol, nopara:int, modname:seq.word, fs
  let options = options.code
   if length.code = 0 then if not.isbuiltin.modname then"STATE"else""
   else if fsig = "in(int, int seq)" ∨ fsig = "in(word, word seq)"
+  ∨ fsig = "∈(int, int seq)"
+  ∨ fsig = "∈(word, word seq)"
   ∨ fsig = "_(int seq, int)"
   ∨ fsig = "_(word seq, int)"then
   ""

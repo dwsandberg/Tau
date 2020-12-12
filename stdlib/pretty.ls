@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau 
 
 Module pretty
 
@@ -31,40 +31,40 @@ use set.seq.word
 use seq.word
 
 Function gettexts(l:seq.word)seq.seq.word
- subseq(l, 2, length.l) @@ +(empty:seq.seq.word, gettexts(l_1, @e))
+ subseq(l, 2, length.l) @ +(empty:seq.seq.word, gettexts(l_1, @e))
 
 Function gettexts(lib:word, file:word)seq.seq.word
  let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
- let b = gettext.file2 @@ +(empty:seq.seq.word, gettext2.@e)
+ let b = gettext.file2 @ +(empty:seq.seq.word, gettext2.@e)
   b
 
 function gettext2(s:seq.word)seq.seq.word
  if length.s = 0 then empty:seq.seq.word
- else if s_1 in "Function function type use"then [ s]else empty:seq.seq.word
+ else if s_1 ∈ "Function function type use"then [ s]else empty:seq.seq.word
 
 Function htmlcode(libname:seq.word)seq.word
  let p = prettyfile('  &{ noformat <hr id ="T">  &}  &keyword ', getlibrarysrc.libname_1)
- let modules = p @@ +("", findmodules.@e)
+ let modules = p @ +("", findmodules.@e)
   " &{ noformat <h1> Source code for Library" + libname + "</h1>  &}"
-  + modules @@ +("", ref.@e)
-  + p @@ list(""," &p",@e) 
+  + modules @ +("", ref.@e)
+  + p @ list(""," &p", @e)
 
 function ref(modname:word)seq.word
  '  &{ noformat <a href ="' + merge.["#"_1, modname] + '"> ' + modname
  + "</a>  &}"
 
 function findmodules(p:seq.word)seq.word
- if subseq(p, 1, 2) in [" &{ noformat"]then [ p_7]else""
+ if subseq(p, 1, 2) ∈ [" &{ noformat"]then [ p_7]else""
 
 ____________________________
 
 Function pretty(l:seq.word, targetdir:seq.word)seq.word
  // first item in list is library and others are files with library to pretty //
- subseq(l, 2, length.l) @@ +("", prettyfile(l_1, targetdir_1, @e))
+ subseq(l, 2, length.l) @ +("", prettyfile(l_1, targetdir_1, @e))
 
 function prettyfile(lib:word, newlibdir:word, file:word)seq.word
  let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
- let b = prettyfile("", gettext.file2) @@ list(""," &p",@e)   
+ let b = prettyfile("", gettext.file2) @ list(""," &p", @e)
  let discard = createfile([ merge([ newlibdir] + "/" + file + ".ls")], processtotext.b)
   b
 
@@ -76,21 +76,21 @@ function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, 
  else
   let s = l_i
    if length.s = 0 then prettyfile(modhead, l, i + 1, uses, libbody, result)
-   else if s_1 in "use"then prettyfile(modhead, l, i + 1, uses + reverse.s, libbody, result)
-   else if s_1 in "Function function type"then
+   else if s_1 ∈ "use"then prettyfile(modhead, l, i + 1, uses + reverse.s, libbody, result)
+   else if s_1 ∈ "Function function type"then
    let tmp = text.(toseq.parse.s)_1
-    let tmp2 = if s_1 in "Function function" ∧ last.tmp = "export"_1 then
+    let tmp2 = if s_1 ∈ "Function function" ∧ last.tmp = "export"_1 then
     " &keyword Export" + subseq(tmp, 3, length.tmp - 1)
     else tmp
      prettyfile(modhead, l, i + 1, uses, libbody + tmp2, result)
-   else if s_1 in "module Module"then
+   else if s_1 ∈ "module Module"then
    let target = if length.modhead > 1 then
     subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
     else empty:seq.word
     let newresult = result + sortuse.uses + libbody + (target + s)
      prettyfile(modhead, l, i + 1, empty:seq.seq.word, empty:seq.seq.word, newresult)
    else
-    let temp = if s_1 in "Library library"then
+    let temp = if s_1 ∈ "Library library"then
     let p = s
      let u = findindex("uses"_1, p, 3)
      let e = findindex("exports"_1, p, 3)
@@ -104,17 +104,18 @@ function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, 
 
 function formatuse(a:seq.word)seq.word" &keyword" + reverse.a
 
-function sortuse(a:seq.seq.word)seq.seq.word alphasort.toseq.asset.a @@ +(empty:seq.seq.word, formatuse.@e)
+function sortuse(a:seq.seq.word)seq.seq.word
+ alphasort.toseq.asset.a @ +(empty:seq.seq.word, formatuse.@e)
 
 function pretty(b:seq.attribute2)attribute2
- let a = b @@ +(empty:seq.prettyresult, toseq.@e)
- let text = a @@ +("", text.@e)
+ let a = b @ +(empty:seq.prettyresult, toseq.@e)
+ let text = a @ +("", text.@e)
   assert true report"preety&{ noformat" + text + " &}"
-  + a @@ +(empty:seq.int, prec.@e) @@ +("", toword.@e)
+  + a @ +(empty:seq.int, prec.@e) @ +("", toword.@e)
    attribute2
-   .[ if text_1 in "let if else"then
-   prettyresult(100, a @@ +(0, width.@e),(if text_1 = "if"_1 then""else" &br") + " &keyword" + text)
-   else prettyresult(prec.a_1, a @@ +(0, width.@e), text)]
+   .[ if text_1 ∈ "let if else"then
+   prettyresult(100, a @ +(0, width.@e),(if text_1 = "if"_1 then""else" &br") + " &keyword" + text)
+   else prettyresult(prec.a_1, a @ +(0, width.@e), text)]
 
 function checkpara(e1:attribute2, e2:attribute2)attribute2
  let e3 = if subseq(text.e2, 1, 3) = " &{ block("then
@@ -150,32 +151,33 @@ function +(a:attribute2, b:attribute2)attribute2 attribute2(toseq.a + toseq.b)
 function length(a:attribute2)int length.toseq.a
 
 function list(a:attribute2)attribute2
- let totwidth = toseq.a @@ +(0, width.@e)
+ let totwidth = toseq.a @ +(0, width.@e)
   attribute2
   .[ prettyresult(0
   , if totwidth ≥ 30 then 10000 else totwidth
-  , if totwidth < 30 then toseq.a @@ list("",",",  text.@e)
-  else if toseq.a @@ max(0, width.@e) < 30 * 10 then
-  divideseq(toseq.a @@ +(empty:seq.seq.word, text.@e), 10)
-  else toseq.a @@ list(""," &br,",text.@e)) ]
+  , if totwidth < 30 then toseq.a @ list("",",", text.@e)
+  else if toseq.a @ max(0, width.@e) < 30 * 10 then
+  divideseq(toseq.a @ +(empty:seq.seq.word, text.@e), 10)
+  else toseq.a @ list(""," &br,", text.@e))]
 
 function divideseq(b:seq.seq.word, n:int)seq.word
  let l =(length.b + n - 1) / n
-   arithseq(l, n, 1) @@ list(""," &br," , breakup(b,n,@e))  
+  arithseq(l, n, 1) @ list(""," &br,", breakup(b, n, @e))
 
 function breakup(b:seq.seq.word, len:int, i:int)seq.word
- subseq(b, i, i + len - 1) @@ list("",",", @e)
+ subseq(b, i, i + len - 1) @ list("",",", @e)
 
 function left(i:int)int // exp precedence when use on left of operator // if i < 100 then i else 99
 
 function right(i:int)int // exp precedence when use on right of operator // if i < 100 then i else i - 100
 
-function wrap(prec:int, prein:attribute2, binary:seq.word, postin:attribute2)attribute2
+function wrap(prec:int, prein:attribute2, binary1:seq.word, postin:attribute2)attribute2
+let binary=if binary1="in" then "∈" else binary1
  let pre =(toseq.prein)_1
  let post =(toseq.postin)_1
  let x = if width.pre + width.post > 30 then
- " &br" + if binary in [".","_","^"]then binary else binary + space
- else if binary in [".","_","^"]then binary else [ space] + binary + space
+ " &br" + if binary ∈ [".","_","^"]then binary else binary + space
+ else if binary ∈ [".","_","^"]then binary else [ space] + binary + space
  let pre1 = if left.prec.pre > prec then"(" + text.pre + ")"else text.pre
  let a = [ if right.prec.post > prec ∨ prec ≠ 3 ∧ prec = right.prec.post then
  prettyresult(prec, width.pre + width.x + width.post,(pre1 + if binary = "."then"("else x + "(") + text.post
@@ -200,7 +202,7 @@ function block(keys:seq.word, b:attribute2)attribute2
  let a =(toseq.b)_1
  let txt = text.a
   attribute2
-  .[ if length.txt > 3 ∧ txt_3 in keys then a else prettyresult(prec.a, 10000, block.txt)]
+  .[ if length.txt > 3 ∧ txt_3 ∈ keys then a else prettyresult(prec.a, 10000, block.txt)]
 
 function block(txt:seq.word)seq.word
  let txt2 = if txt_1 = " &br"_1 then subseq(txt, 2, length.txt)else txt
@@ -290,9 +292,9 @@ else if ruleno = // N ∧ // 45 then R_1
 else if ruleno = // N ∨ // 46 then R_1 
 else if ruleno = // NM W // 47 then R_1 
 else if ruleno = // NM W:T // 48 then pretty.[ R_1, R_2, R_3] 
-else if ruleno = // D E @@ NM(E, // 49 then    
-   attribute2( [R_1,  pretty.[R_3, R_4, R_5,R_6] ] @@ +(empty:seq.prettyresult, toseq.@e))
-else if ruleno = // D E @@ N(E, // 50 then  
-   attribute2( [R_1,  pretty.[R_3, R_4, R_5,R_6] ] @@ +(empty:seq.prettyresult, toseq.@e)) 
+else if ruleno = // D E @ NM(E, // 49 then    
+   attribute2( [R_1,  pretty.[R_3, R_4, R_5,R_6] ] @ +(empty:seq.prettyresult, toseq.@e))
+else if ruleno = // D E @ N(E, // 50 then  
+   attribute2( [R_1,  pretty.[R_3, R_4, R_5,R_6] ] @ +(empty:seq.prettyresult, toseq.@e)) 
 else assert ruleno = // E D L)// 51 report"invalid rule number"+ toword.ruleno
      wrap(4,attribute2.[(toseq.R_1)_1],"@", pretty.[ attribute2.[(toseq.R_1)_2], list.R_2 ,R_3]) 

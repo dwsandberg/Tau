@@ -3,13 +3,13 @@ Module stdlib
 Library stdlib UTF8 bitpackedseq bits codegennew codetemplates encoding fileio format graph groupparagraphs intdict 
 internalbc interpreter ipair libdesc llvm llvmconstants main2 maindict mangle mytype pretty otherseq parse parsersupport 
 pass1 pass2new persistant postbind prims process real seq set stack stacktrace symbol textio timestamp tree worddict words xxhash
-reduceorder
+ sparseseq
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format 
 graph groupparagraphs intdict internalbc ioseq ipair libdesc llvm llvmconstants 
 main2 maindict mangle mytype pretty otherseq  prims process 
 real seq set stack stacktrace stdlib symbol textio timestamp tree worddict words xxhash 
-codegennew codetemplates persistant reduceorder
+codegennew codetemplates persistant  sparseseq
 
 parse parsersupport
 
@@ -61,9 +61,7 @@ PROFILE pass1:postbind3(typedict, set.symbol, seq.symbol, int, seq.symbol, mytyp
 
 * STATE builtin:getfile(seq.bits)fileresult
 
-
 * STATE builtin:setfld(i:int,s:seq.T,val:T)  int  
-
 
 * STATE builtin:option(T, seq.word)T
 
@@ -178,7 +176,6 @@ Builtin >(a:int, b:int)boolean
 
 Function <(a:int, b:int)boolean b > a
 
-
 Function max(a:int, b:int)int if a > b then a else b
 
 Function min(a:int, b:int)int if a < b then a else b
@@ -187,11 +184,11 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
-Function hash(a:seq.int)int finalmix(a @@ hash(hashstart, @e))
+Function hash(a:seq.int)int finalmix(a @ hash(hashstart, @e))
 
-Function hash(a:seq.word)int finalmix(a @@ hash(hashstart, hash.@e))
+Function hash(a:seq.word)int finalmix(a @ hash(hashstart, hash.@e))
 
-Function^(i:int, n:int)int constantseq(n, i) @@ *(1, @e)
+Function^(i:int, n:int)int constantseq(n, i) @ *(1, @e)
 
 Function pseudorandom(seed:int)int
  let ah = 16807
@@ -201,25 +198,20 @@ Function pseudorandom(seed:int)int
 
 function addrandom(s:seq.int, i:int)seq.int s + pseudorandom.s_(length.s)
 
-Function randomseq(seed:int, length:int)seq.int constantseq(length - 1, 1) @@ addrandom([ seed], @e)
+Function randomseq(seed:int, length:int)seq.int constantseq(length - 1, 1) @ addrandom([ seed], @e)
 
 Builtin randomint(i:int)seq.int
 
-
-  
 Function list(a:seq.word,b:seq.word,c:seq.word) seq.word
  if isempty.a then c else if isempty.c then a else a + (b + c)
 
   Function EOL seq.word "&br"  
 
-
- 
 Export hash(a:word)int
 
 Export ?(a:word, b:word)ordering
 
 Export =(a:word, b:word)boolean
-
 
 Export toword(n:int)word // Covert integer to a single word. //
 
@@ -259,12 +251,6 @@ Export_(seq.seq.word, int)seq.word
 
 Export_(seq.int, int)int
 
-Export_(s:pseq.seq.word, i:int)seq.word
-
-Export_(pseq.int, int)int
-
-Export_(a:pseq.word, b:int)word
-
 Export length(seq.word)int
 
 Export length(seq.seq.word)int
@@ -273,15 +259,7 @@ Export length(seq.int)int
 
 Export findindex(word, seq.word)int
 
-/Export findindex(seq.word, seq.seq.word)int
-
 Export findindex(word, seq.word, int)int
-
-Export identity(seq.word)seq.word
-
-Export identity(word)word
-
-Export identity(int)int
 
 Export last(s:seq.word)word
 
@@ -293,18 +271,11 @@ Export subseq(seq.word, int, int)seq.word
 
 Export subseq(seq.int, int, int)seq.int
 
-Export in(word, seq.word)boolean
-
-Export in(seq.word, seq.seq.word)boolean
-
-Export in(int, seq.int)boolean
-
 Export ∈(word, seq.word)boolean
 
 Export ∈(seq.word, seq.seq.word)boolean
 
 Export ∈(int, seq.int)boolean
-
 
 Export =(seq.word, seq.word)boolean
 

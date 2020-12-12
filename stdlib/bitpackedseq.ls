@@ -28,7 +28,7 @@ Function empty:bitpackedseq.T bitpackedseq.T bitpackedseq(0, empty:seq.T, bits.0
 
 Function bitpackedseq2(len:int, d:seq.T, part:bits)seq.T toseq.bitpackedseq(len, d, part)
 
-Function data2(a:bitpackedseq.T)seq.bits data.align.a @@ +(empty:seq.bits, tobits.@e)
+Function data2(a:bitpackedseq.T)seq.bits data.align.a @ +(empty:seq.bits, tobits.@e)
 
 Function_(a:bitpackedseq.T, idx:int)T
  let nobits = sizeinbits.frombits:T(bits.0)

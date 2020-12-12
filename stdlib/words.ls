@@ -48,7 +48,7 @@ Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
 ----
 
 Function merge(a:seq.word)word
- // make multiple words into a single word. // encodeword(a @@ +(empty:seq.char, decodeword.@e))
+ // make multiple words into a single word. // encodeword(a @ +(empty:seq.char, decodeword.@e))
 
 * Functions to perform alphabetical sorting
 
@@ -64,20 +64,20 @@ Function addwords(b:seq.encodingpair.seq.char)encodingstate.seq.char addencoding
 
 Function toalphaseq(a:seq.word)seq.alphaword
  // This is just a type change and the compiler recognizes this and does not generate code //
- a @@ +(empty:seq.alphaword, alphaword.@e)
+ a @ +(empty:seq.alphaword, alphaword.@e)
 
 Function ?(a:alphaword, b:alphaword)ordering
  if toword.a = toword.b then EQ else decodeword.toword.a ? decodeword.toword.b
 
-Function towordseq(a:seq.alphaword)seq.word a @@ +(empty:seq.word, toword.@e)
+Function towordseq(a:seq.alphaword)seq.word a @ +(empty:seq.word, toword.@e)
 
 Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
 
 Export ?(a:seq.alphaword, b:seq.alphaword)ordering
 
 Function alphasort(a:seq.seq.word)seq.seq.word
- let b = a @@ +(empty:seq.seq.alphaword, toalphaseq.@e)
-  sort.b @@ +(empty:seq.seq.word, towordseq.@e)
+ let b = a @ +(empty:seq.seq.alphaword, toalphaseq.@e)
+  sort.b @ +(empty:seq.seq.word, towordseq.@e)
 
 Function checkinteger(w:word)word
  let l = decodeword.w

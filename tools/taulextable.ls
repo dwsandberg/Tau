@@ -28,17 +28,17 @@ Function hasdigit(w:word)boolean
   ∨ l_1 = toint.hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)
 
 function tokenlist seq.word // tokenlist is from parser generator //
-".=():>]-{ } comment, [_@@ is T if # then else let assert report ∧ ∨ * $wordlist   A E G F W P N L I  FP NM D"
+".=():>]-{ } comment, [_@ is T if # then else let assert report ∧ ∨ * $wordlist   A E G F W P N L I  FP NM D"
 
 function actionlist seq.lexaction1 // most frequently used words in programs //
 let mostfrequentwords = ' //",().:+_seq = a int if-then else Function let word 0 i T][ 2 use function mytype @ empty inst '
-let wordstoinclude = mostfrequentwords + tokenlist + "! = < > ? ≤ ≠ ≥ >> << in +-∈ ∋ * / mod ∪ ∩_^'"
-+ prepreplacements("","","le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ contains ∋", 1)
+let wordstoinclude = mostfrequentwords + tokenlist + "! = < > ? ≤ ≠ ≥ >> << in +-∈  * / mod ∪ ∩_^'"
++ prepreplacements("","","le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ nin ∉", 1)
  toseq.asset.wordstoinclude @ +(empty:seq.lexaction1, tolexaction.@e)
 
 function tolexaction(next:word)lexaction1
  // user supplied procedure to convert a word into a lex action //
- if next in '"// ' then lexaction1(next, 0, next)
+ if next ∈ '"// ' then lexaction1(next, 0, next)
  else if next = "'"_1 then lexaction1(next, 0, next)
  else if next = merge("&" + "le")then
  lexaction1(next, findindex(">"_1, tokenlist),"≤"_1)
@@ -59,12 +59,12 @@ function tolexaction(next:word)lexaction1
  else if next = merge("&" + "in")then
  lexaction1(next, findindex("-"_1, tokenlist),"∈"_1)
  else
-  let token = if next in ". ,():"then next
-  else if next in "< > ? ≤ ≠ ≥ >> <<"then">"_1
-  else if next in "in +-∈ ∋"then"-"_1
-  else if next in "* / mod ∪ ∩"then"*"_1
-  else if next in "_^"then"_"_1
-  else if next in ".)]= {:},([ ∧ ∨ # if then else let assert report @ is ! @@"then
+  let token = if next ∈ ". ,():"then next
+  else if next ∈ "< > ? ≤ ≠ ≥ >> <<"then">"_1
+  else if next ∈ "in +-∈ ∉"then"-"_1
+  else if next ∈ "* / mod ∪ ∩"then"*"_1
+  else if next ∈ "_^"then"_"_1
+  else if next ∈ ".)]= {:},([ ∧ ∨ # if then else let assert report @ is ! "then
   next
   else if hasdigit.next then"I"_1 else"W"_1
     let idx= findindex(token ,tokenlist)

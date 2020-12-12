@@ -22,8 +22,6 @@ use stdlib
 
 use textio
 
-use dseq.word
-
 use otherseq.word
 
 function t001 boolean 0 - 4 = 1 - 2 - 3
@@ -85,7 +83,7 @@ function t016 boolean [ true, true, true, false] = [ true ∨ true, true ∨ fal
 test on in
 
 function t017 boolean [ true, true, false]
-= [ 2 in [ 1, 2, 3], 3 in [ 1, 2, 3], 5 in [ 1, 2, 3]]
+= [ 2 ∈ [ 1, 2, 3], 3 ∈ [ 1, 2, 3], 5 ∈ [ 1, 2, 3]]
 
 test of + using functional notation pretty printer messes up this example this should be 3 = +(1, 2).
 
@@ -159,7 +157,7 @@ function t044 boolean '"()+,-.:= []^_' = standalonechars
 
 function ttt(c:int)seq.word
  let class = classifychar_c
-  if class in "0 SPACE"then""else [ class]
+  if class ∈ "0 SPACE"then""else [ class]
 
 Function standalonechars seq.word arithseq(length.classifychar, 1, 1)@ +("", ttt.@e)
 

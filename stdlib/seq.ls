@@ -12,22 +12,19 @@ type pseq is sequence length:int, a:seq.T, b:seq.T
 
 unbound =(T, T)boolean
 
+builtin IDX(seq.T, int)T
 
-builtin IDX(seq.T,int) T
+builtin IDXSEQ(a:seq.T, int, c:int)T
 
-builtin IDX2(seq.T,int) T
-
-Function _(a:seq.T, c:int)T
-  let b = if c < 0 then length.a + c + 1 else c
-  let typ=getseqtype.a
+Function_(a:seq.T, c:int)T
+ let b = if c < 0 then length.a + c + 1 else c
+ let typ = getseqtype.a
   if typ > 1000 then callidx(a, b)
   else
-    assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
-    if typ > 1 then IDX2(a, b) else  IDX( a,b+1)     
-              
+   assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
+    if typ > 1 then IDXSEQ(a, typ, b)else IDX(a, b + 1)
 
-
-builtin callidx(a:seq.T, int)T  
+builtin callidx(a:seq.T, int)T
 
 Builtin getseqtype(a:seq.T)int
 
@@ -36,29 +33,22 @@ Export length(a:seq.T)int
 Builtin empty:seq.T seq.T // empty seq //
 
 Function =(a:seq.T, b:seq.T)boolean
- if length.a = length.b then    subequal(a, b, length.a)   else false
+ if length.a = length.b then subequal(a, b, length.a)else false
 
 function subequal(a:seq.T, b:seq.T, i:int)boolean
  if i = 0 then true
  else if a_i = b_i then subequal(a, b, i - 1)else false
 
-   a @  &and ( true, @e = b_@i ) 
- 
+a @ &and(true, @e = b_@i)
 
 subin is helper function
 
-Function subin(a:T, s:seq.T, i:int)boolean
+function subin(a:T, s:seq.T, i:int)boolean
  if i = 0 then false else if a = s_i then true else subin(a, s, i - 1)
-
-Function in(a:T, s:seq.T)boolean subin(a, s, length.s)
 
 Function ∈(a:T, s:seq.T)boolean subin(a, s, length.s)
 
-
-Function identity(a:T)T a
-
-unbound >(a:T, b:T)boolean
-
+ 
 Function findelement(w:T, s:seq.T)seq.T
  let idx = findindex(w, s, 1)
   if idx > length.s then empty:seq.T else [ s_idx]
@@ -87,7 +77,7 @@ Function_(s:pseq.T, i:int)T
    let x = to:pseq.T(a.s)
     if length.x = 0 then(a.s)_i else x_i
 
-Function ispseq(s:seq.T)boolean  length.to:pseq.T(s) &ne 0 
+Function ispseq(s:seq.T)boolean length.to:pseq.T(s) ≠ 0
 
 Export to:pseq.T(s:seq.T)pseq.T
 
@@ -114,19 +104,7 @@ function catnonzero(a:seq.T, b:seq.T)seq.T
       if length.tb = 0 then toseq.pseq(totallength, a, b)else cat3(totallength, a, a.tb, b.tb)
     else cat3(totallength, a.ta, b.ta, b)
 
-/Function largeseq(s:seq.T)seq.T
- let length = length.s
-  if length < 64 then
-  if length > 16 then s
-   else if length > 8 then
-   if length = 16 then
-    [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_10
-     , s_11, s_12, s_13, s_14, s_15, s_16]
-    else s
-   else if length = 8 then
-   [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8]
-   else if length = 4 then [ s_1, s_2, s_3, s_4]else s
-  else s
+/Function largeseq(s:seq.T)seq.T let length = length.s if length < 64 then if length > 16 then s else if length > 8 then if length = 16 then [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_10, s_11, s_12, s_13, s_14, s_15, s_16]else s else if length = 8 then [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8]else if length = 4 then [ s_1, s_2, s_3, s_4]else s else s
 
 Function +(l:seq.T, a:T)seq.T l + [ a]
 
@@ -138,10 +116,10 @@ Function subseq(s:seq.T, start:int, end:int)seq.T
  else
   let x = to:pseq.T(s)
    if length.x = 0 then
-   arithseq(end - start + 1, 1, start) @@ +(empty:seq.T, s_@e)
+   arithseq(end - start + 1, 1, start) @ +(empty:seq.T, s_@e)
    else subseq(x, start, end)
 
-Function subseq(p:pseq.T, start:int, end:int)seq.T
+function subseq(p:pseq.T, start:int, end:int)seq.T
  if start > length.a.p then
  subseq(b.p, start - length.a.p, end - length.a.p)
  else if end > length.a.p then
@@ -161,11 +139,9 @@ Builtin packed(s:seq.T)seq.T
 Function suffix(s:seq.T, len:int)seq.T subseq(s, length.s - len - 1, length.s)
 
 Function <<(s:seq.T, i:int)seq.T
- // if i < 0 then postfix of s of length-i else postfix of length.s-i //
  assert i ≥ 0 report"FAIL <<" + stacktrace
   subseq(s, if i < 0 then length.s + i + 1 else i + 1, length.s)
 
 Function >>(s:seq.T, i:int)seq.T
  assert i ≥ 0 report"FAIL >>" + stacktrace
-  // if i < 0 then prefix of s of length.s + i else prefix of length.s-i //
   subseq(s, 1, if i < 0 then-i else length.s - i)

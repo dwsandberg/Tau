@@ -48,6 +48,10 @@ function deepcopy(a:testdeep)testdeep result.process.identity.a
 
 function deepcopy(a:set.int)set.int result.process.identity.a
 
+function identity(a:set.int) set.int a
+
+function identity(a:testdeep) testdeep a
+
 function deepcopy(a:int)int a
 
 Export +(i:int, b:int)int

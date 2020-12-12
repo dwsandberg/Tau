@@ -8,8 +8,6 @@ use fileio
 
 use encoding.indexedword
 
-use dseq.int
-
 use stdlib
 
 use textio
@@ -18,11 +16,11 @@ use seq.seq.word
 
 use seq.word
 
-use dseq.wordfreq
-
 use otherseq.wordfreq
 
 use seq.wordfreq
+
+use sparseseq.wordfreq
 
 type indexedword is record w:word
 
@@ -40,7 +38,7 @@ function ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b
 
 function count(s:seq.wordfreq, w:word)seq.wordfreq
  let index = valueofencoding.encode.indexedword.w
-  replace(s, index, wordfreq(count.s_index + 1, w))
+  replaceS(s, index, [wordfreq(count.s_index + 1, w)])
 
 function print(p:wordfreq)seq.word
  if count.p = 0 then empty:seq.word
@@ -50,7 +48,7 @@ function print(p:wordfreq)seq.word
 function removelowcount(mincount:int, p:wordfreq)seq.wordfreq if count.p < mincount then empty:seq.wordfreq else [ p]
 
 function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq
- sort(a @ count(dseq.wordfreq(0,"A"_1), @e))
+ sort(a @ count(sparseseq.wordfreq(0,"A"_1), @e))
  @ +(empty:seq.wordfreq, removelowcount(mincount, @e))
 
 Function test2 seq.word wordfreq(300, gettext."testall/input") @ +(empty:seq.word, print.@e)

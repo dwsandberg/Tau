@@ -35,16 +35,17 @@ Export type:fileresult
 Function toCformat(s:seq.word)seq.bits
  packed
  .data2
- .add(toseqint.toUTF8.s @@ add(bitpackedseq(0, empty:seq.byte, bits.0), byte.@e), byte.0)
+ .add(toseqint.toUTF8.s @ add(bitpackedseq(0, empty:seq.byte, bits.0), byte.@e), byte.0)
 
 type outputformat is record length:int, data:seq.bits
 
-Function outputformat(a:seq.int)outputformat outputformat(length.a, packed.data2(a @@ add(empty:bitpackedseq.byte, byte.@e)))
+Function outputformat(a:seq.int)outputformat
+ outputformat(length.a, packed.data2(a @ add(empty:bitpackedseq.byte, byte.@e)))
 
 Function createbytefile(name:seq.word, a:seq.int)int createfile(toCformat.name, outputformat.a)
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
- createlib(toCformat.[ libname], toCformat(dependlibs @@ +("", addsuffix(".dylib", @e))), outputformat(length.b * 8, packed.b))
+ createlib(toCformat.[ libname], toCformat(dependlibs @ +("", addsuffix(".dylib", @e))), outputformat(length.b * 8, packed.b))
 
 function addsuffix(suffix:seq.word, a:word)seq.word [ a] + suffix
 
@@ -53,7 +54,7 @@ builtin createlib(name:seq.bits, libs:seq.bits, t:outputformat)int
 builtin createfile(name:seq.bits, data:outputformat)int
 
 Function createfile(name:seq.word, a:seq.int)int
- createfile(toCformat.name, outputformat(length.a * 8, packed.a @@ +(empty:seq.bits, bits.@e)))
+ createfile(toCformat.name, outputformat(length.a * 8, packed.a @ +(empty:seq.bits, bits.@e)))
 
 builtin getfile(f:seq.bits)fileresult
 
@@ -84,10 +85,10 @@ Function fileexists(f:seq.word)boolean
  let file = getfile.toCformat.f
   size.file > -1
 
-Function gettext(filename:seq.word)seq.seq.word breakparagraph.getUTF8file.filename @@ +(empty:seq.seq.word, towords.@e)
+Function gettext(filename:seq.word)seq.seq.word breakparagraph.getUTF8file.filename @ +(empty:seq.seq.word, towords.@e)
 
 Function createfile(filename:seq.word, s:seq.seq.word)int
- createbytefile(filename, s @@ +(empty:seq.int, toUTF8plus.@e))
+ createbytefile(filename, s @ +(empty:seq.int, toUTF8plus.@e))
 
 Function createfile(filename:seq.word, s:seq.word)int createbytefile(filename, toseqint.toUTF8.s)
 
@@ -95,8 +96,8 @@ function toUTF8plus(s:seq.word)seq.int toseqint.toUTF8.s + [ 10, 10]
 
 Function getUTF8file(filename:seq.word)UTF8 UTF8.getfile.filename
 
-function tobitpackedseq(s:seq.int)seq.byte s @@ +(empty:seq.byte, byte.@e)
+function tobitpackedseq(s:seq.int)seq.byte s @ +(empty:seq.byte, byte.@e)
 
-function tobitpackedseqbit(s:seq.int)seq.bit s @@ +(empty:seq.bit, bit.@e)
+function tobitpackedseqbit(s:seq.int)seq.bit s @ +(empty:seq.bit, bit.@e)
 
-function tointseq(s:seq.byte)seq.int s @@ +(empty:seq.int, toint.@e)
+function tointseq(s:seq.byte)seq.int s @ +(empty:seq.int, toint.@e)

@@ -7,11 +7,11 @@ use seq.T
 use stdlib
 
 Function reverse(s:seq.T)seq.T
- arithseq(length.s, 0 - 1, length.s) @@ +(empty:seq.T, s_@e)
+ arithseq(length.s, 0 - 1, length.s) @ +(empty:seq.T, s_@e)
 
 Function removedups(a:seq.T, b:seq.T, c:int)seq.T
  if c = 0 then b
- else if a_c in b then removedups(a, b, c - 1)
+ else if a_c ∈ b then removedups(a, b, c - 1)
  else removedups(a, b + a_c, c - 1)
 
 Function removedups(a:seq.T)seq.T removedups(a, empty:seq.T, length.a)
@@ -26,34 +26,15 @@ Function constantseq(len:int, element:T)seq.T toseq.cseq(len, element)
 
 --------------------
 
-dseq lets a sequence have a default value even beyond the length of the seq.
-
-type dseq is sequence length:int, default:T, data:seq.T
-
-Function_(d:dseq.T, i:int)T if i > length.data.d then default.d else(data.d)_i
-
-Function replace(a:seq.T, b:int, v:T)seq.T
- let d = to:dseq.T(a)
-  if length.d = 0 then replaceZ(a, b, v)
-  else
-   let s = if b > length.a then
-   replaceZ(data.d + constantseq(b - length.a, default.d), b, v)
-   else replaceZ(data.d, b, v)
-    toseq.dseq(length.s, default.d, s)
-
-Function dseq(d:T)seq.T toseq.dseq(1, d, [ d])
-
-Function dseq(d:T, s:seq.T)seq.T toseq.dseq(1, d, s)
-
-Function replaceZ(s:seq.T, index:int, value:T)seq.T
+Function replace(s:seq.T, index:int, value:T)seq.T
  // function replace2(s:seq.T, index:int, value:T)seq.T //
  let p = to:pseq.T(s)
   if length.p = 0 then
-  let b = arithseq(index - 1, 1, 1) @@ +(empty:seq.T, s_@e)
-    arithseq(length.s - index, 1, index + 1) @@ +(b + value, s_@e)
+  let b = arithseq(index - 1, 1, 1) @ +(empty:seq.T, s_@e)
+    arithseq(length.s - index, 1, index + 1) @ +(b + value, s_@e)
   else if index > length.a.p then
-  a.p + replaceZ(b.p, index - length.a.p, value)
-  else replaceZ(a.p, index, value) + b.p
+  a.p + replace(b.p, index - length.a.p, value)
+  else replace(a.p, index, value) + b.p
 
 ______________________________________
 
