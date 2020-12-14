@@ -51,14 +51,14 @@ function addselect(s:seq.word)seq.word" &{ select X" + s + " &}"
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
  // Calls between modules in list of modules. //
- let z = formcallgraph(firstPass.libname_1, 2)
+ let z = formcallgraph(firstPass.libname, 2)
  let a = modulelist @ +(empty:seq.mytype, mytype.@e)
  let arcs = z @ +(empty:seq.arc.word, modarc(a, @e))
   display(toseq.arcs.newgraph.arcs @ +(empty:seq.arcinfo.seq.word, toarcinfo.@e))
 
 Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
  // Calls within modules in list of modules. //
- let g = newgraph.formcallgraph(firstPass.libname_1, 2)
+ let g = newgraph.formcallgraph(firstPass.libname, 2)
  let nodestoinclude = toseq.nodes.g @ ∪(empty:set.word, filterx(modulelist, @e))
  let g2 = toseq.nodestoinclude @ deletenode(g, @e)
   display(toseq.arcs.g2 @ +(empty:seq.arcinfo.seq.word, toarcinfo.@e))
@@ -184,7 +184,7 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
 
 Function uncalledfunctions(libname:seq.word)seq.word
  // List of functions may include indirectly called functions. //
- let g = newgraph.formcallgraph(firstPass.libname_1, 2)
+ let g = newgraph.formcallgraph(firstPass.libname, 2)
  let sources = toseq.nodes.g @ +("", sources(g, empty:set.word, @e))
   alphasort.sources @ list(""," &br", readable.@e)
 

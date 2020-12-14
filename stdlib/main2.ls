@@ -73,34 +73,30 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
    assert stamp ≥ time report"library" + dependentlibs_i + "is out of date" + toword.time + toword.stamp
     loadlibs(dependentlibs, i + 1, stamp)
 
-function subcompilelib(option:seq.word, libname:word)seq.seq.word
- let a = gettext.[ merge([ libname] + "/" + libname + ".ls")]
- let s = findlibclause(a, 1)
- let u = findindex("uses"_1, s, 3)
- let e = findindex("exports"_1, s, 3)
- let dependentlibs = subseq(s, u + 1, e - 1)
- let filelist = subseq(s, 2, min(u - 1, e - 1))
- let exports = subseq(s, e + 1, length.s)
+function subcompilelib(option:seq.word, libname :seq.word)seq.seq.word
+ let info=getlibraryinfo.libname
+ let dependentlibs =  info_1   
+ let filelist = info_2  
+ let exports =  info_3  
   // let b = unloadlib.[ libname]//
   let allsrc = getlibrarysrc.libname
   let link = pass1(groupparagraphs("module Module", allsrc), exports, libmodules.dependentlibs)
-  let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
-  let prg3 = allsrc @ +(empty:seq.seq.word, @e) @ processOption(prg2, @e)
-   if option = "pass1"then
+  let prg2 = allsrc @ +(empty:seq.seq.word, @e) @ processOption(result.link, @e)
+  let prg3 = postbind(alltypes.link, dict.link, roots.link, prg2, templates.link)
+    if option = "pass1"then
    toseq.toset.prg3 @ +(empty:seq.seq.word, print(prg3, @e))
    else
     let prg4 = pass2(prg3, alltypes.link)
-     // assert false report"XXX"+ print(prg4, symbol("char1(word seq)","stdlib","char"))//
      let libdesc = libdesc(alltypes.link, prg4, templates.link, mods.link, exports)
      let uses = uses(prg4, asset.roots.link + libdesc)
      let defines = defines(prg4, uses - compiled.link)
       if option = "pass2"then defines @ +(empty:seq.seq.word, print(prg4, @e))
       else
-       let bc = codegen(prg4, defines, uses, libname, libdesc, alltypes.link)
-       let z2 = createlib(bc, libname, dependentlibs)
+       let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link,isempty.dependentlibs)
+       let z2 = createlib(bc, last.libname, dependentlibs)
         ["OK"]
 
-Function compilelib2(libname:word)seq.word
+Function compilelib2(libname:seq.word)seq.word
  let p1 = process.subcompilelib("all", libname)
   if aborted.p1 then"COMPILATION ERROR:" + space + message.p1
   else
@@ -109,10 +105,12 @@ Function compilelib2(libname:word)seq.word
 
 Function main(arg:seq.int)outputformat
  let args2 = break(char1.";", decodeUTF8.UTF8.arg, 1) @ +(empty:seq.seq.word, towords.@e)
- let libname = args2_1_1
- let p = process.compilelib2.libname
- let output = if aborted.p then message.p
- else if length.args2 = 1 ∨ not(subseq(result.p, 1, 1) = "OK")then result.p
+ let libname = args2_1
+ let compileresult=if first.libname=first."L" then "OK"
+  else 
+   let p = process.compilelib2.libname
+    if aborted.p then message.p else result.p   
+ let output = if length.args2 = 1 ∨  subseq(compileresult, 1, 1) &ne "OK" then compileresult
  else
   // execute function specified in arg //
   let p2 = process.runit.args2
@@ -125,9 +123,9 @@ Function testcomp(s:seq.seq.word)seq.seq.word
  let r = pass1(allsrc, exports, libmodules."stdlib")
   toseq.toset.result.r @ +(empty:seq.seq.word, print(result.r, @e))
 
-Function firstPass(libname:word)seq.seq.word subcompilelib("pass1", libname)
+Function firstPass(libname:seq.word)seq.seq.word subcompilelib("pass1", libname)
 
-Function secondPass(libname:word)seq.seq.word subcompilelib("pass2", libname)
+Function secondPass(libname:seq.word)seq.seq.word subcompilelib("pass2", libname)
 
 type runitresult is record code:seq.symbol, alltypes:typedict
 
@@ -139,4 +137,4 @@ Function runit(b:seq.seq.word)runitresult
  let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
   runitresult(code.lookupcode(prg2, symbol("runitx","$X","word seq")), alltypes.link)
 
-Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname_1)
+Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname)

@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ;  use doc ; callgraphbetween("stdlib","codetemplates encoding graph intdict libdesc otherseq  ")
+#!/usr/local/bin/tau ;  ; use doc ; doclibrary."stdlib"
 
 ; use tools; testprofile."stdlibbak"
 
@@ -22,9 +22,11 @@
 
 Module tools
 
-Library tools bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph makeDAG profile svg svggraph taulextable testparser
+Library tools bandeskopf barycenter display displaygraph displaytextgraph 
+doc  labeledgraph layergraph makeDAG profile svg svggraph 
 uses stdlib
-exports bandeskopf barycenter display displaygraph displaytextgraph doc genLR1 labeledgraph layergraph makeDAG pretty profile svg svggraph taulextable testparser tools
+exports bandeskopf barycenter display displaygraph displaytextgraph doc 
+labeledgraph layergraph makeDAG pretty profile svg svggraph  tools
 
 * STATE builtin:profile profileinfo profileresult
 

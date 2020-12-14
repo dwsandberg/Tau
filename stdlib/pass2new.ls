@@ -831,7 +831,8 @@ Function hasstate(p:program, s:symbol)boolean
  false
  else
   let d = lookupcode(p, s)
-   if isdefined.d then"STATE"_1 ∈ options.code.d else not.isbuiltin.module.s
+   if isdefined.d then"STATE"_1 ∈ options.code.d else 
+     if isbuiltin.module.s &and fsig.s &ne "setfld(int, T seq, T)" then false else true
 
 function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boolean
  // check that the parameters occur in order and they all occur exactly once //

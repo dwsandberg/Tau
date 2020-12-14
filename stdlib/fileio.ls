@@ -45,9 +45,8 @@ Function outputformat(a:seq.int)outputformat
 Function createbytefile(name:seq.word, a:seq.int)int createfile(toCformat.name, outputformat.a)
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
- createlib(toCformat.[ libname], toCformat(dependlibs @ +("", addsuffix(".dylib", @e))), outputformat(length.b * 8, packed.b))
+ createlib(toCformat.[ libname], toCformat(dependlibs @ +("", [@e]+".dylib" )), outputformat(length.b * 8, packed.b))
 
-function addsuffix(suffix:seq.word, a:word)seq.word [ a] + suffix
 
 builtin createlib(name:seq.bits, libs:seq.bits, t:outputformat)int
 
@@ -88,11 +87,10 @@ Function fileexists(f:seq.word)boolean
 Function gettext(filename:seq.word)seq.seq.word breakparagraph.getUTF8file.filename @ +(empty:seq.seq.word, towords.@e)
 
 Function createfile(filename:seq.word, s:seq.seq.word)int
- createbytefile(filename, s @ +(empty:seq.int, toUTF8plus.@e))
+ createbytefile(filename, s @ +(empty:seq.int, toseqint.toUTF8.@e + [ 10, 10]))
 
 Function createfile(filename:seq.word, s:seq.word)int createbytefile(filename, toseqint.toUTF8.s)
 
-function toUTF8plus(s:seq.word)seq.int toseqint.toUTF8.s + [ 10, 10]
 
 Function getUTF8file(filename:seq.word)UTF8 UTF8.getfile.filename
 

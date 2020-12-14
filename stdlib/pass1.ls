@@ -369,3 +369,26 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
 
 function roots(exported:seq.word, f:firstpass)seq.symbol
  if not(abstracttype.modname.f ∈ exported) ∨ iscomplex.modname.f then empty:seq.symbol else toseq.exports.f
+ 
+ 
+Function processOption(p:program, txt:seq.word)program
+   if length.txt < 3 &or  first.txt &nin "option" then p
+   else
+  let modname=  getmod(txt,2 )
+  let dict=asset.[symbol("STATE","headdict","internal1"),
+  symbol("PROFILE","headdict","internal1"),
+  symbol("INLINE","headdict","internal1"),
+  symbol("NOINLINE","headdict","internal1")]
+ let t= parse( dict , txt << (2 * length.modname))
+  let name = funcname.t
+  let paratypes = funcparametertypes.t
+  let sym = newsymbol(name, mytype.modname, paratypes, funcreturntype.t)
+  let r = lookupcode(p, sym)
+  let option=fsig.(parsedcode.t)_1
+   if   isbuiltin.modname  &and not.isdefined.r then map(p, sym, [ Words.option , Optionsym])
+   else
+     assert isdefined.r report"Option problem" + txt  
+     addoption(p, sym, option)
+
+function getmod(s:seq.word,i:int)  seq.word
+ if s_i &in "." then [s_(i+1)]+getmod(s,i+2) else empty:seq.word

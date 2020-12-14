@@ -56,7 +56,8 @@ Function mangledname(s:symbol)word mangle(fsig.s, module.s)
 
 Function isexternal(s:symbol)boolean
  isbuiltin.module.s
- ∧ not((fsig.s)_1 ∈ "aborted loadlib createlib unloadlib allocatespace addencoding createfile getinstance dlsymbol getfile addresstosymbol2 randomint getmachineinfo currenttime callstack initialdict createthread assertptr assertreal assert")
+ ∧ not((fsig.s)_1 ∈ "aborted loadlib createlib unloadlib allocatespace addencoding createfile getinstance dlsymbol getfile addresstosymbol2 randomint 
+ getmachineinfo currenttime callstack initialdict createthread  assert")
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
  if fsig.s = "option(T, word seq)"then function.constantseq(nopara.s + 2, i64)
@@ -182,11 +183,16 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , 1
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1))
  , addtemplate(symbol("assert(word seq)","real builtin","real")
- , 1
- , CALL(r.1, 0, 32768, function.[ double, i64, ptr.i64], symboltableentry("assertreal"_1, function.[ double, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1))
+ , 2
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
+   function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1)
+   +CAST(r.2, r.1, double, sitofp))
  , addtemplate(symbol("assert(word seq)","ptr builtin","ptr")
- , 1
- , CALL(r.1, 0, 32768, function.[ ptr.i64, i64, ptr.i64], symboltableentry("assertptr"_1, function.[ ptr.i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1))]
+ , 2
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
+ function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1)
+ +CAST(r.2, r.1,ptr.i64, inttoptr))
+ ]
  let const = toseq.uses @ +(empty:seq.symbol, buildtemplate(theprg, alltypes, @e))
  let discard4 = processconst(const, 1, empty:seq.symbol)
   empty:seq.match5
@@ -253,7 +259,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
       else if(fsig.xx)_1 ∈ "arccos"then"acos"_1 else(fsig.xx)_1
        call(alltypes, xx,"CALLE"_1, empty:seq.symbol, symname)
      else
-      let symname = if(fsig.xx)_1 ∈ "assert xassertptr xassertreal"then"assert"_1 else mangledname.xx
+      let symname = if(fsig.xx)_1 ∈ "assert"then"assert"_1 else mangledname.xx
        call(alltypes, xx,"CALL"_1, code.lookupcode(theprg, xx), symname)
     empty:seq.symbol
 

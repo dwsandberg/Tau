@@ -171,8 +171,7 @@ function left(i:int)int // exp precedence when use on left of operator // if i <
 
 function right(i:int)int // exp precedence when use on right of operator // if i < 100 then i else i - 100
 
-function wrap(prec:int, prein:attribute2, binary1:seq.word, postin:attribute2)attribute2
-let binary=if binary1="in" then "∈" else binary1
+function wrap(prec:int, prein:attribute2, binary:seq.word, postin:attribute2)attribute2
  let pre =(toseq.prein)_1
  let post =(toseq.postin)_1
  let x = if width.pre + width.post > 30 then

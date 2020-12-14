@@ -60,7 +60,7 @@ use symbol
 
 use textio
 
-Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict)seq.bits
+Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict,isbase:boolean)seq.bits
  // assert false report @(seperator."
 &br", tollvmtype.alltypes,"", toseq.toset.theprg)//
  let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
@@ -78,7 +78,8 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
   let f2 = modulerecord("init22", [ toint.FUNCTIONDEC, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
   let bodytxts = bodies
   + [ BLOCKCOUNT(1, 1)
-  + CALL(r.1, 0, 32768, function.[ i64, ptr.i8, ptr.i64], symboltableentry("initlib5", function.[ i64, ptr.i8, ptr.i64]), CGEPi8(libslot, 0), liblib)
+  + CALL(r.1, 0, 32768, function.[ i64, ptr.i8, ptr.i64,i64], symboltableentry("initlib5", 
+  function.[ i64, ptr.i8, ptr.i64,i64]), CGEPi8(libslot, 0),[ liblib,C64.toint.isbase])
   + RETURN]
   let data = constdata
   let patchlist = [ [ toint.GLOBALVAR, typ.conststype, 2, toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0], [ toint.GLOBALVAR, typ.profiletype, 2, toint.xxx + 1, 3, toint.align8 + 1, 0]]

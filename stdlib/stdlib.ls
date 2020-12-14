@@ -9,63 +9,41 @@ exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio 
 graph groupparagraphs intdict internalbc ioseq ipair libdesc llvm llvmconstants 
 main2 maindict mangle mytype pretty otherseq  prims process 
 real seq set stack stacktrace stdlib symbol textio timestamp tree worddict words xxhash 
-codegennew codetemplates persistant  sparseseq
+codegennew codetemplates persistant  sparseseq parse
 
 parse parsersupport
 
-PROFILE pass1:pass1(seq.seq.seq.word, seq.word, seq.liblib)linkage
 
-PROFILE pass1:postbind(typedict, set.symbol, set.symbol, seq.symbol, int, program, program, program)program
 
-PROFILE pass1:postbind3(typedict, set.symbol, seq.symbol, int, seq.symbol, mytype, seq.word, set.symbol, program, program)resultpb
 
-* PROFILE main2:compilelib2(word)seq.word
+option.main2 subcompilelib(seq.word, seq.word)seq.word PROFILE
 
-/* PROFILE main2:subcompilelib(word)seq.word
+option.main2 compilelib2(seq.word)seq.word PROFILE
 
-* PROFILE main2:subcompilelib (seq.word,word  ) seq.word
+ 
+/option.builtin option(T, x:seq.word)T STATE
+ 
+option.fileio getfile(seq.bits)fileresult STATE
 
-/ * PROFILE pass2new:pass2(program, set.symbol, seq.symbol, seq.firstpass, program, seq.word)intercode
+option.fileio createlib(name:seq.bits, libs:seq.bits, t:outputformat)int STATE
 
-/* PROFILE pass2new:depthfirst(program, int, seq.symbol, program, seq.symbol, symbol)program
+option.fileio createfile(name:seq.bits, data:outputformat)int STATE
 
-/ * PROFILE pass2new:firstopt(program, symbol, seq.symbol)program
+option.timestamp   currenttime timestamp STATE
 
-/ * PROFILE pass2new:yyy(program, seq.symbol, int, seq.symbol, int, worddict.seq.symbol)
+ 
 
-/ * NOINLINE symbol:isconst(symbol)boolean
 
-/ * NOINLINE symbol:isspecial(symbol)boolean
 
-/ * INLINE pass2new:inline(program, seq.symbol, int, seq.symbol, int, int, seq.symbol, worddict.seq.symbol)expandresult
+option.symbol Lit(int)symbol INLINE
+ 
 
-/ * INLINE pass2new:applycode(program, seq.symbol, int, seq.symbol, int, worddict.seq.symbol)expandresult
 
-* INLINE symbol:Lit(int)symbol
+ 
 
-* NOINLINE UTF8:toword(int)word
-
-/* PROFILE codegennew:codegen(program, seq.symbol, set.symbol, word, symbol)seq.bits
-
-/* PROFILE codetemplates:match5map(program, seq.symbol, set.symbol, seq.word)seq.match5
-
-/* PROFILE codetemplates:buildtemplates(seq.symbol, int, program, seq.symbol)seq.match5
-
-/* PROFILE codetemplates:processconst(seq.symbol, int, seq.symbol)seq.match5
-
-* STATE builtin:addencoding(seq.T, encodingrep.T, int)int
-
-* STATE builtin:addencoding(int, seq.T, int)int
-
-* STATE builtin:getinstance(seq.T)ptr
-
-* STATE builtin:getfile(seq.bits)fileresult
-
-* STATE builtin:setfld(i:int,s:seq.T,val:T)  int  
-
-* STATE builtin:option(T, seq.word)T
-
-* STATE builtin:primitiveadd( encodingpair.T)int
+ 
+ 
+option.UTF8 toword(int)word NOINLINE  
 
 use UTF8
 
@@ -321,6 +299,8 @@ Export +(seq.char, seq.char)seq.char
 
 Export isempty(seq.char)boolean
 
+Export isempty(seq.word)boolean
+
 Export_(seq.char, int)char
 
 Export_(pseq.char, int)char
@@ -348,7 +328,6 @@ Export checkinteger(w:word)word
 Export << (s:seq.word, i:int) seq.word   
            
 Export >> (s:seq.word , i:int) seq.word   
- 
 
 * usegraph include xxhash encoding bits words real subreal stacktrace textio reconstruct UTF8 seq otherseq fileio stdlib 
 exclude stdlib seq

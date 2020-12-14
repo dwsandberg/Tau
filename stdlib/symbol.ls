@@ -392,41 +392,6 @@ Function isbuiltin(a:seq.word)boolean a = "builtin"
 
 Function isbuiltin(a:mytype)boolean isbuiltin.towords.a
 
-Function processOption(p:program, t:seq.word)program
- if length.t < 4 ∨ t_1 ≠ "*"_1
- ∨ not(t_2 ∈ "PROFILE INLINE STATE NOINLINE")then
- p
- else
-  let modend = findindex(":"_1, t, 3)
-  let nameend = findindex("("_1, t, modend + 1)
-  let paraend = findindex(")"_1, t, nameend + 1)
-  let modname =(gettypelist.subseq(t, 3, modend - 1))_1
-  let name =(gettypelist.subseq(t, modend + 1, nameend - 1))_1_1
-  let b = subseq(t, nameend + 1, paraend - 1)
-  let args = if b = ""then empty:seq.seq.word else gettypelist.subseq(t, nameend + 1, paraend - 1)
-  let ret =(gettypelist.subseq(t, paraend + 1, length.t))_1
-  let sym = symbol([ name] + "(" + args @ list("",",", @e) + ")", modname, ret)
-  let r = lookupcode(p, sym)
-   if isbuiltin.modname then map(p, sym, [ Words.[ t_2], Optionsym])
-   else
-    assert isdefined.r report"Option problem" + t
-     addoption(p, sym, [ t_2])
-
-/function printastype(s:seq.word)seq.word if length.s = 1 then s else [ last.s,"."_1]+ printastype.subseq(s, 1, length.s-1)
-
-function gettypelist(s:seq.word)seq.seq.word gettype(s, 1,"", empty:seq.seq.word)
-
-Function parsetype(s:seq.word)mytype mytype.gettype(s, 1, empty:seq.word, empty:seq.seq.word)_1
-
-function gettype(s:seq.word, i:int, result:seq.word, l:seq.seq.word)seq.seq.word
- if i > length.s then l + result
- else if s_i = ","_1 then gettype(s, i + 1,"", l + result)
- else
-  let j = if i < length.s ∧ s_(i + 1) = "."_1 then
-  i + 2
-  else i + 1
-   gettype(s, j, [ s_i] + result, l)
-
 type typedict is record data:seq.myinternaltype
 
 Function +(a:typedict, b:seq.myinternaltype)typedict typedict(data.a + b)

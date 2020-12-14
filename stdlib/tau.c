@@ -207,40 +207,31 @@ return 0;
 
 
 
-BT initlib5(char * libname,BT  libdesc) {
+BT initlib5(char * libname,BT  libdesc,BT baselib) {
   // fprintf(stderr,"starting initlib4\n");
-  fprintf(stderr,"initlib5 %s\n",libname);
-if (strcmp(libname,"stdlib")==0 ){
-    fprintf(stderr,"init stdlib\n");
-  /* only needed when initializing stdlib */
+  fprintf(stderr,"initlib5 %s %lld \n",libname,baselib); 
+if ( baselib==1 ){
+  /* only needed when initializing base lib */
     toUTF8 = dlsym(RTLD_DEFAULT, "toUTF8ZUTF8Zwordzseq");
     if (!toUTF8){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }                                    
-    byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZbitpackedseqzbitpackedseqZint");
-    if (!byteseqencetype){
-            byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZbytezbitpackedseqZint");
-            if (!byteseqencetype) {
+     byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZbytezbitpackedseqZint");
+     if (!byteseqencetype) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);}
-    }
-       decodeword= dlsym(RTLD_DEFAULT,"decodewordZstdlibZword");
+    
+
+    decodeword= dlsym(RTLD_DEFAULT,"decodewordZwordsZword");
     if (!decodeword){
-           decodeword= dlsym(RTLD_DEFAULT,"decodewordZwordsZword");
-    if (!decodeword){
-   
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
-    }}
+    }
     
-         staticencodings[1]=neweinfo(&sharedspace);
-          staticencodings[2]=neweinfo(&sharedspace); // encoding map for assigning encoding to an integer number
- }
+    staticencodings[1]=neweinfo(&sharedspace);
+    staticencodings[2]=neweinfo(&sharedspace); // encoding map for assigning encoding to an integer number
 
-        
-
-    if (strcmp(libname,"stdlib")==0 ){
    BT (* loaddict)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"loaddictZmaindictZfileresult");
     if (!loaddict){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
@@ -336,9 +327,6 @@ BT assert(processinfo PD,BT message)
     longjmp(PD->env,1);
      return 1; }
 
-BT assertreal(processinfo PD,BT message){ return assert(PD,message);}
-
-BT assertptr(processinfo PD,BT message){ return assert(PD,message);}
 
 
 BT aborted(processinfo PD,BT pin){
@@ -517,19 +505,6 @@ BT (*finishprof)(BT idx,BT x) =NULL;
 BT noop(BT a,BT b) { return b;}
 
 
-BT  fill(BT *a1,struct str2 *arg1) {
-arg1->type=(BT)byteseqencetype;
-          //   fprintf(stderr,"KL%lld %lld %lld %s\n",arg1->type,arg1->length,(arg1->length+7 )/ 8-1,arg1->data);
-      a1[0]=(BT)byteseqencetype;
-      a1[1]=arg1->length;
-      a1[2]=(BT)arg1;
-      a1[3]=((BT *) (arg1-> data))[(arg1->length+7 )/ 8-1];
-      arg1->length=(arg1->length) / 8 ;
-      arg1->type=0;
-      return (BT)a1;
-    }
-
-
 struct outputformat *output(processinfo p) {return(struct outputformat *) (p->result);}
 
 
@@ -571,29 +546,6 @@ fatal_error_signal (int sig)
 }
 
 
-
- 
-
-struct pinfo mainprocess={0,0};
-
-
-void inittau(int additional) {
-  int i;
-  // initialize main process
-    sharedspace.encodings = staticencodings;
-    for(i=0; i<noencodings;i++) sharedspace.encodings[i]=0;
-
-    signal(SIGSEGV,fatal_error_signal);
-   // signal(SIGBUS,fatal_error_signal);
-   // signal(SIGILL,fatal_error_signal);
-    loadlibrary(&sharedspace,"stdlib");
- if (additional==1)  loadlibrary(&sharedspace,"basic");
- 
-}
-
-
-  
-
 struct byteseq { BT type,length,*seq,type2,length2; char data[8];};
 
 BT  tobyteseq ( processinfo PD,char *str) {
@@ -610,22 +562,33 @@ BT  tobyteseq ( processinfo PD,char *str) {
 
 
 int main(int argc, char **argv)    {   int i=0,count; 
-       struct str2 myarg;
-       // printf("argc %d\n",argc);
-       inittau(0);
-       for(count=1;argc > count; count++){
+        char argstr[500]; {int i;
+           // initialize main process
+    sharedspace.encodings = staticencodings;
+    for(i=0; i<noencodings;i++) sharedspace.encodings[i]=0;
+    signal(SIGSEGV,fatal_error_signal);
+     signal(SIGBUS,fatal_error_signal);
+    signal(SIGILL,fatal_error_signal);
+  } 
+       for(count=1;argc > count; count++){ // combine arguements
         int j=0;
-            while( argv[count][j] != 0 ) { myarg.data[i++]=argv[count][j++];}
-            myarg.data[i++]=' '; 
+            while( argv[count][j] != 0 ) { argstr[i++]=argv[count][j++];}
+            argstr[i++]=' '; 
+     }   
+     argstr[i++]=0;
+     {  // load the library  
+       char libstr[100]="stdlib";
+       int k=0;
+       i=0; while( argstr[i]==' ') i++;
+       if (argstr[i]=='L' ) { i++;
+         while( argstr[i]==' ') i++;
+         while( argstr[i]!=' ' & argstr[i]!=0) libstr[k++]=argstr[i++]; 
+         libstr[k]=0;
+       }
+        loadlibrary(&sharedspace,libstr);  
      }
-       myarg.data[i]=0;
-       myarg.length=i;
-       myarg.type =1;
-       
-       
-
- processinfo PD=&sharedspace;
-      int j; BT a1[4]; BT args[1]={fill(a1,&myarg)};
+        processinfo PD=&sharedspace;
+      int j;  
       processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
       initprocessinfo(p,PD);
       p->deepcopyresult = (BT)noop; 
@@ -635,8 +598,9 @@ int main(int argc, char **argv)    {   int i=0,count;
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
       }
+      BT argsx=tobyteseq ( p, argstr);
        p->noargs=1;
-       p->args=args;
+       p->args=&argsx;
        p->freespace=0;
         threadbody(p);  
        if (p->kind==1 )   { 
