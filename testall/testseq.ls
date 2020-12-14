@@ -18,7 +18,7 @@ use sparseseq.int
 
 use real
 
-use stdlib
+use standard
 
 use seq.typereal
 
@@ -36,7 +36,6 @@ use seq.seq.word
 
 use testpackedseq.seq.word
 
-use seq.word
 
 use testpackedseq.word
 
@@ -110,7 +109,7 @@ use seq.T
 
 use stacktrace
 
-use stdlib
+use standard
 
 use testseq
 

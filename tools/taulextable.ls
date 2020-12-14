@@ -10,7 +10,7 @@ use seq.char
 
 use seq.lexaction1
 
-use stdlib
+use standard
 
 use otherseq.word
 

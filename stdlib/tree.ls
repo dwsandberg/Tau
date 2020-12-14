@@ -2,7 +2,7 @@ Module tree.T
 
 use seq.tree.T
 
-use stdlib
+use standard
 
 type tree is record label:T, sons:seq.tree.T
 

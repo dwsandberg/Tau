@@ -1,6 +1,6 @@
 Module randomphrase
 
-use stdlib
+use standard
 
 Function testrandomphrase seq.word if"The umber ant ambles the opal nurse" = getphrase.20 then"PASS"else"FAIL randomphrase"
 

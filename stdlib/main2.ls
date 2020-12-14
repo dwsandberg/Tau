@@ -40,7 +40,7 @@ use prims
 
 use process.runitresult
 
-use stdlib
+use standard
 
 use seq.symbol
 
@@ -131,7 +131,7 @@ type runitresult is record code:seq.symbol, alltypes:typedict
 
 Function runit(b:seq.seq.word)runitresult
  let lib = b_1
- let src = ["module $X","use stdlib"] + subseq(b, 2, length.b - 1)
+ let src = ["module $X","use standard"] + subseq(b, 2, length.b - 1)
  + ["Function runitx seq.word" + b_(length.b)]
  let link = pass1([ src],"$X", libmodules("stdlib" + lib))
  let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)

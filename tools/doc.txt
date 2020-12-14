@@ -120,7 +120,7 @@ Here is a simple type definition that introduces a new type with two components.
 
 The follow paragraph that begins with use allows reference to functions defined in another module. In this case, the standard library functions.
 
-&keyword use stdlib
+&keyword use standard
 
 The follow three paragraphs allow access to the function automatically defined by the type definition in other types that “use” this module. If these paragraphs are omitted the functions would not be available outside of this module. If a function starts with “function” instead of “Function” the function is also not available outside the module.
 
@@ -236,7 +236,7 @@ Generic unbound functions on the type T may be included by using the word unboun
 
 &keyword module extendseq(T)
 
-&keyword use stdlib
+&keyword use standard
 
 &keyword use seq.T
 
@@ -260,7 +260,7 @@ Here is a use of this type
 
 &keyword use extendseq.point2d
 
-&keyword use stdlib
+&keyword use standard
 
 &keyword function test seq.int reverse.[ 1, 3, 4, 5]
 
@@ -294,7 +294,7 @@ Consider the following code:
 
 &keyword use B
 
-&keyword use stdlib
+&keyword use standard
 
 &keyword Function f1(p1:int)int 
  &br &keyword let l1 = p1 * TWO 
@@ -427,7 +427,7 @@ We use the example of myseq which is a start on a user defined sequence to decod
 
 All sequences must be in a parameterized Module.
 
-&keyword use stdlib
+&keyword use standard
 
 &keyword use seq(T)
 
@@ -473,7 +473,7 @@ Every sequence must have a_function defined on it which is below for mseq.T
 
 &keyword module testmyseq
 
-&keyword use stdlib
+&keyword use standard
 
 &keyword use UTF8
 

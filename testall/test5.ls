@@ -14,7 +14,7 @@ use otherseq.int
 
 use seq.int
 
-use stdlib
+use standard
 
 use textio
 

@@ -14,13 +14,12 @@ use format
 
 use groupparagraphs
 
-use seq.int
 
 use seq.seq.prettyresult
 
 use seq.prettyresult
 
-use stdlib
+use standard
 
 use otherseq.word
 
@@ -28,7 +27,6 @@ use seq.seq.word
 
 use set.seq.word
 
-use seq.word
 
 Function gettexts(l:seq.word)seq.seq.word
  subseq(l, 2, length.l) @ +(empty:seq.seq.word, gettexts(l_1, @e))

@@ -10,13 +10,12 @@ use seq.checkprec
 
 use main2
 
-use stdlib
+use standard
 
 use process.seq.seq.word
 
-use seq.word
 
-Function test11a seq.word // testcomp2.["module testit","use stdlib","function f1(a:int)boolean [ a +"]//
+Function test11a seq.word 
 let z = [ compare("a + b + c","{(a + b)+ c }")
 , compare("a * b * c","{(a * b)* c }")
 , compare("a + b * c","a +(b * c)")
@@ -48,9 +47,9 @@ Function testcomp2(s:seq.seq.word)seq.word
 
 Function compare(exp1:seq.word, exp2:seq.word)boolean
  let e1 = testcomp2
- .["module testit","use stdlib","Function f1(a:int, b:int, c:int)int" + exp1]
+ .["module testit","use standard","Function f1(a:int, b:int, c:int)int" + exp1]
  let e2 = testcomp2
- .["module testit","use stdlib","Function f1(a:int, b:int, c:int)int" + exp2]
+ .["module testit","use standard","Function f1(a:int, b:int, c:int)int" + exp2]
  let i1 = findindex("f1ZtestitZintZintZint"_1, e1)
  let i2 = findindex("f1ZtestitZintZintZint"_1, e2)
   e1 = e2
@@ -58,7 +57,7 @@ Function compare(exp1:seq.word, exp2:seq.word)boolean
 Function isprefix(p:seq.word, s:seq.word)boolean subseq(s, 1, length.p) = p
 
 Function testerror(m:seq.word, code:seq.seq.word)boolean
- let r = testcomp2(["module testit","use stdlib"] + code)
+ let r = testcomp2(["module testit","use standard"] + code)
  let a = isprefix(m, r)
   assert isprefix(m, r)report"Fail test11a expected:" + m + " &br got:" + subseq(r, 1, length.m)
    a

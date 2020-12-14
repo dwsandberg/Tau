@@ -7,7 +7,7 @@ uses stdlib
 exports bug7 checking point randomphrase test11 test11a test2 test5 testall testencoding testmodules testopt 
 testprocess tree2 testseq
 
-* usegraph exclude stdlib
+* usegraph include checking point test11 bug7 testencoding exclude stdlib
 
 use bug7
 
@@ -15,7 +15,7 @@ use checking
 
 use real
 
-use stdlib
+use standard
 
 use test11
 

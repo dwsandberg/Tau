@@ -4,7 +4,7 @@ use otherseq.word
 
 use seq.T
 
-use stdlib
+use standard
 
 type worddict is record keys:seq.word, data:seq.T
 

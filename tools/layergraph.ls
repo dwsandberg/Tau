@@ -14,7 +14,7 @@ use seq.T
 
 use set.T
 
-use stdlib
+use standard
 
 type layeredgraph is record g:graph.T, layers:seq.seq.T
 

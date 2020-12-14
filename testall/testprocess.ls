@@ -14,7 +14,7 @@ use real
 
 use process.returntype
 
-use stdlib
+use standard
 
 use process.seq.word
 

@@ -1,6 +1,6 @@
 Module bits
 
-use stdlib
+use standard
 
 Export type:byte
 

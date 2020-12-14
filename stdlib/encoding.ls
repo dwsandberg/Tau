@@ -12,7 +12,7 @@ use seq.T
 
 use stacktrace
 
-use stdlib
+use standard
 
 Export type:encodingpair.T
 
@@ -194,7 +194,7 @@ use seq.seq.T
 
 use seq.T
 
-use stdlib
+use standard
 
 Builtin callidx(a:seq.T, int)T
 
@@ -264,13 +264,13 @@ use taubuiltinsupport.encodingpair.seq.char
 
 use seq.seq.int
 
-use seq.int
+
 
 use taubuiltinsupport.int
 
 use taubuiltinsupport.real
 
-use stdlib
+use standard
 
 use encoding.typename
 

@@ -24,7 +24,6 @@ use seq.seq.seq.int
 
 use seq.seq.int
 
-use seq.int
 
 use seq.internal2
 
@@ -42,7 +41,7 @@ use seq.slot
 
 use seq.slotrecord
 
-use stdlib
+use standard
 
 use seq.templatepart
 

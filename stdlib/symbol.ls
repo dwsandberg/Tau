@@ -16,7 +16,7 @@ use mytype
 
 use stacktrace
 
-use stdlib
+use standard
 
 use seq.symbol
 
@@ -311,6 +311,8 @@ Function Fref(s:symbol)symbol
 Function Optionsym symbol symbol("option(T, word seq)","builtin","?")
 
 Function EqOp symbol symbol("=(int, int)","builtin","boolean")
+
+Function NotOp symbol symbol("not(boolean)","builtin","boolean") 
 
 Function PlusOp symbol symbol("+(int, int)","builtin","int")
 

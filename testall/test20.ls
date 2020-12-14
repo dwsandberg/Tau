@@ -4,7 +4,7 @@ use seq.int
 
 use seq.q
 
-use stdlib
+use standard
 
 type p is record a:int, b:int, c:int
 

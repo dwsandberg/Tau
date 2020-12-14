@@ -2,7 +2,7 @@ Module xxhash
 
 use bits
 
-use stdlib
+use standard
 
 Function rotateleft(x:bits, n:int)bits x << n ∨ x >> 64 - n
 

@@ -14,7 +14,7 @@ use encoding.slot2
 
 use seq.slot2
 
-use stdlib
+use standard
 
 type slot2 is record type:int, rec:seq.int, name:seq.word
 
@@ -52,7 +52,7 @@ for testing not standard sequence optimization. new([ 1, 128])should be reduce t
 
 use seq.T
 
-use stdlib
+use standard
 
 type seq8 is sequence length:int, flda:seq.T, fldb:int
 

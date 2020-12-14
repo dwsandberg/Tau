@@ -28,7 +28,7 @@ use svggraph.T
 
 use display
 
-use stdlib
+use standard
 
 unbound assignwidths(control:characterwidths, p:nodeinfo.T)nodeinfo.T
 

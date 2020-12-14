@@ -22,7 +22,6 @@ use otherseq.seq.int
 
 use seq.seq.int
 
-use seq.int
 
 use set.int
 
@@ -34,7 +33,7 @@ use real
 
 use stacktrace
 
-use stdlib
+use standard
 
 use otherseq.symbol
 
@@ -56,7 +55,7 @@ use seq.seq.word
 
 use set.seq.word
 
-use seq.word
+use seq.int
 
 use set.word
 

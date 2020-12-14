@@ -6,7 +6,7 @@ use seq.tree2.T
 
 use seq.treenode.T
 
-use stdlib
+use standard
 
 type tree2 is record nodes:seq.treenode.T, subtree:int
 

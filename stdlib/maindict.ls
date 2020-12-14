@@ -18,7 +18,7 @@ use dataio
 
 use fileio
 
-use stdlib
+use standard
 
 use set.word
 
@@ -60,7 +60,7 @@ use UTF8
 
 use real
 
-use stdlib
+use standard
 
 function newplace place place(empty:seq.int, 0, empty:seq.int)
 
@@ -112,7 +112,7 @@ use seq.T
 
 use dataio
 
-use stdlib
+use standard
 
 type ioseq is sequence length:int, data:seq.int, offset:int, k:seq.T
 

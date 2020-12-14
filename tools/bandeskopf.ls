@@ -20,7 +20,7 @@ use svggraph.T
 
 use seq.int
 
-use stdlib
+use standard
 
 unbound =(T, T)boolean
 

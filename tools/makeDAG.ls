@@ -10,7 +10,7 @@ use seq.T
 
 use set.T
 
-use stdlib
+use standard
 
 Function makeDAG(g:graph.T)graph.T
  // Turn directed graph into DAG by reversing arcs //

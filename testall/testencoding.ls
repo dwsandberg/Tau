@@ -22,7 +22,7 @@ use seq.set.int
 
 use set.int
 
-use stdlib
+use standard
 
 use process.testdeep
 

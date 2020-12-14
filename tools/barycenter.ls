@@ -14,7 +14,7 @@ use set.T
 
 use real
 
-use stdlib
+use standard
 
 unbound =(T, T)boolean
 

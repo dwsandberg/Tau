@@ -2,7 +2,7 @@ Module process.T
 
 use seq.T
 
-use stdlib
+use standard
 
 type process is record abortedx:boolean, a:seq.word, resultb:T
 

@@ -1,6 +1,6 @@
 Module mytype
 
-use stdlib
+use standard
 
 Export type:mytype
 

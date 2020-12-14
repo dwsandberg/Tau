@@ -10,13 +10,12 @@ use seq.token.bindinfo
 
 use format
 
-use seq.int
 
 use seq.seq.mytype
 
 use seq.mytype
 
-use stdlib
+use standard
 
 use seq.seq.symbol
 
@@ -86,19 +85,16 @@ function opaction(R:reduction.bindinfo, input:seq.token.bindinfo)bindinfo
   if  op="≠" then 
     let f = lookupbysig(dict, "=", types, input, place.R)
     bindinfo(dict, code.R_1 + code.R_3 + f
-    + symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
+    + NotOp, [ resulttype.f],"")
   else if op="∉" then
     let f = lookupbysig(dict, "∈", types, input, place.R)
-    bindinfo(dict, code.R_1 + code.R_3 + f
-    + symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
+    bindinfo(dict, code.R_1 + code.R_3 + f+ NotOp, [ resulttype.f],"")
  else if op="≥" then
     let f = lookupbysig(dict, "<", types, input, place.R)
-    bindinfo(dict, code.R_1 + code.R_3 + f
-    + symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
+    bindinfo(dict, code.R_1 + code.R_3 + f  + NotOp, [ resulttype.f],"")
  else if op="≤" then
     let f = lookupbysig(dict, ">", types, input, place.R)
-    bindinfo(dict, code.R_1 + code.R_3 + f
-    + symbol("not(boolean)","stdlib","boolean"), [ resulttype.f],"")
+    bindinfo(dict, code.R_1 + code.R_3 + f + NotOp, [ resulttype.f],"")
     else 
  let f = lookupbysig(dict, [op_1], types, input, place.R)
    bindinfo(dict, code.R_1 + code.R_3 + f, [ resulttype.f],"")
@@ -140,9 +136,9 @@ function applypart2( part1:bindinfo,args:bindinfo,input:seq.token.bindinfo, plac
        let paratypes=paratypes.op
   assert abstracttype.seqtype ∈ "seq"report errormessage("first term of apply must be sequence", input, place)
    assert length.paratypes > 1 ∧ paratypes_1 = resulttype report"First parameter must be the same as the result type in apply"
-   let z = if op = symbol("∧(boolean, boolean)","stdlib","boolean")then
+   let z = if  op=symbol("∧(boolean, boolean)","standard","boolean") then
    symbol("∧(bits, bits)","bits","bits")
-   else if op = symbol("∨(boolean, boolean)","stdlib","boolean")then
+   else if  op=symbol("∨(boolean, boolean)","standard","boolean") then
    symbol("∨(bits, bits)","bits","bits")
         else op
    let newcode = code.part1 + code.args + op + Lit.0

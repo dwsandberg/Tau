@@ -1,6 +1,6 @@
 Module svg
 
-use stdlib
+use standard
 
 use seq.seq.word
 

@@ -1,6 +1,6 @@
 Module ipair.T
 
-use stdlib
+use standard
 
 type ipair is record index:int, value:T
 

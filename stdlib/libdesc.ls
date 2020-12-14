@@ -8,7 +8,6 @@ use seq.firstpass
 
 use seq.seq.int
 
-use seq.int
 
 use seq.liblib
 
@@ -22,7 +21,7 @@ use set.mytype
 
 use process.parc
 
-use stdlib
+use standard
 
 use seq.symbol
 
@@ -34,7 +33,6 @@ use otherseq.word
 
 use seq.seq.word
 
-use seq.word
 
 use set.word
 

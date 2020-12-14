@@ -2,7 +2,7 @@ Module stacktrace
 
 use mangle
 
-use stdlib
+use standard
 
 Builtin callstack(n:int)seq.int
 

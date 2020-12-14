@@ -4,7 +4,7 @@ All sequences must be in parameterized scopes.
 
 use seq.T
 
-use stdlib
+use standard
 
 type myseq is sequence length:int, data:seq.T
 

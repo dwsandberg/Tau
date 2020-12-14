@@ -2,7 +2,7 @@ Module worddict.T
 
 use seq.T
 
-use stdlib
+use standard
 
 use otherseq.word
 

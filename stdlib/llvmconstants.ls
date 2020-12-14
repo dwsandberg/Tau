@@ -1,6 +1,6 @@
 module llvmconstants
 
-use stdlib
+use standard
 
 function generatecode seq.word // generates code in this module beyond---------//
 enumerate("align","unspecified ? ? ? align8 align16 align32 align64")

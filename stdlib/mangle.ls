@@ -4,11 +4,10 @@ use bits
 
 use seq.char
 
-use stdlib
+use standard
 
 use otherseq.word
 
-use seq.word
 
 function seperator(acc:seq.char, sep:char, b:seq.char)seq.char
  if isempty.acc then b else acc + sep + b

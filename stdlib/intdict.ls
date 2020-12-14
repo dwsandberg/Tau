@@ -4,9 +4,8 @@ use seq.T
 
 use otherseq.int
 
-use seq.int
 
-use stdlib
+use standard
 
 Export type:intdict.T
 

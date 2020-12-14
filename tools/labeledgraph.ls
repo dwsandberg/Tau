@@ -4,7 +4,7 @@ use seq.T
 
 use set.T
 
-use stdlib
+use standard
 
 unbound ?(a:T, b:T)ordering
 

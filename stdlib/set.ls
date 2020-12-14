@@ -4,7 +4,7 @@ use otherseq.T
 
 use seq.T
 
-use stdlib
+use standard
 
 type set is record toseq:seq.T
 

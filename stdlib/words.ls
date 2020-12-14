@@ -22,7 +22,7 @@ use otherseq.int
 
 use encoding.seq.int
 
-use stdlib
+use standard
 
 Export type:word s
 

@@ -8,7 +8,7 @@ use otherseq.sparseele.T
 
 use seq.sparseele.T
 
-use stdlib
+use standard
 
 type sparseele is record start:int, edata:seq.T
 

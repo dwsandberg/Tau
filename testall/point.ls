@@ -1,6 +1,6 @@
 Module point.T
 
-use stdlib
+use standard
 
 type point is record x:T, y:T, z:T
 

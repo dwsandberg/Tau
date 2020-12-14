@@ -20,7 +20,7 @@ use parse
 
 use stacktrace
 
-use stdlib
+use standard
 
 use seq.symbol
 
@@ -103,7 +103,7 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarymods:seq.firstp
     let roots = simple @ +(empty:seq.symbol, roots(exports, @e))
      linkage(prg1, toset.libprg, roots, simple + abstract, templates, alltypes, allsymbols1)
 
-function basetypes seq.myinternaltype [ myinternaltype("defined"_1,"int"_1, mytype."stdlib", [ typeint])]
+function basetypes seq.myinternaltype [ myinternaltype("defined"_1,"int"_1, mytype."standard", [ typeint])]
 
 function maptemp(st:program, templates:program, s:mapele)program
  let s2 = lookupcode(templates, target.s)

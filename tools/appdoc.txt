@@ -1,6 +1,6 @@
 Module doc2
 
-use stdlib
+use standard
 
 use sid
 

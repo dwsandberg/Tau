@@ -2,7 +2,7 @@ Module timestamp
 
 use UTF8
 
-use stdlib
+use standard
 
 Export type:timestamp
 

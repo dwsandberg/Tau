@@ -10,7 +10,7 @@ use seq.token.T
 
 use format
 
-use stdlib
+use standard
 
 use set.word
 

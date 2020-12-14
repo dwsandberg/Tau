@@ -34,7 +34,7 @@ use seq.seq.slot
 
 use seq.slot
 
-use stdlib
+use standard
 
 use encoding.word3
 
@@ -85,19 +85,16 @@ Function wordref(w:word)int
 
 function wordcode(a:encodingpair.word3)encoding.seq.char asencoding.toword.data.a
 
-Function addliblib(libname:seq.word, mods:int, profiledata:int)int
- // assert libname.t ="stdlib"report libname.t //
+Function addliblib(libname:seq.word, mods:int, profiledata:int,isbase:boolean)int
  let name = addwordseq2.libname
-  // assert libname ="stdlib"report @(+, toword,"", @(+, data, empty:seq.word3, encoding:seq.encodingpair.word3))//
-  let have = if libname = "stdlib"then empty:set.encoding.seq.char
+  let have = if isbase then empty:set.encoding.seq.char
   else
    // @(+, code, empty:set.encoding.seq.char, words.loadedlibs_1)//
    initialdict @ +(empty:set.encoding.seq.char, code.@e)
   let used = encoding:seq.encodingpair.word3 @ +(empty:set.encoding.seq.char, wordcode.@e)
    // build packed seq of word encodings //
    let wordstoadd = toseq(used - have)
-    // let discard2 = if libname ="stdlib"then 0 else writedict(@(+, lookupencodingpair, empty:seq.encodingpair.seq.char, wordstoadd))//
-    let data = wordstoadd @ +([ toint.C64.3, toint.C64.length.wordstoadd], fldsofwordencoding.@e)
+      let data = wordstoadd @ +([ toint.C64.3, toint.C64.length.wordstoadd], fldsofwordencoding.@e)
     let wordreps = addobject.data
      addobject("liblib", [ name, wordreps, mods, toint.C64.0, profiledata])
 

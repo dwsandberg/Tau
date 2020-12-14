@@ -28,7 +28,7 @@ use seq.ordering
 
 use randomphrase
 
-use stdlib
+use standard
 
 use test20
 

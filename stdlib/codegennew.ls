@@ -20,7 +20,6 @@ use seq.seq.seq.int
 
 use seq.seq.int
 
-use seq.int
 
 use stack.int
 
@@ -50,7 +49,7 @@ use seq.encodingpair.stat5
 
 use seq.stat5
 
-use stdlib
+use standard
 
 use seq.symbol
 
@@ -71,7 +70,7 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
   let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
   let bodies = defines @ +(empty:seq.internalbc, addfuncdef(match5map, @e))
   let xxx = profiledata
-  let liblib = slot.addliblib([ thename], libmods2, toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0)))
+  let liblib = slot.addliblib([ thename], libmods2, toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0)),isbase)
   let libnametype = array(length.decodeword.thename + 1, i8)
   let libslot = modulerecord(""
   , [ toint.GLOBALVAR, typ.libnametype, 2, toint.DATA(libnametype, tointseq.decodeword.thename + 0) + 1, 3, toint.align8, 0])

@@ -22,7 +22,7 @@ use mytype
 
 use pretty
 
-use stdlib
+use standard
 
 use textio
 
@@ -106,10 +106,10 @@ Function testdoc seq.word // callgraphwithin("stdlib","llvm")+ // doclibrary."st
 
 Function doclibrary(libname:seq.word)seq.word
  // create summary documentation for libraray. //
- let liba = getlibrarysrc.libname_1
+ let liba = getlibrarysrc.libname 
  let r = liba @ +("", findrestrict.@e)
  let g = newgraph.usegraph(liba,"mod"_1, 1,"?"_1, empty:seq.arc.word)
- let exports =(getlibraryinfo.libname_1)_3
+ let exports =(getlibraryinfo.libname )_3
   docmodule(g, exports, r, liba, 1,"","","")
   + if length.r > 0 then""
   else" &{ select x &section Possibly Unused Functions  &}  &{ select x" + uncalledfunctions.libname + " &}"

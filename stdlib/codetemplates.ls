@@ -8,8 +8,6 @@ use fileio
 
 use seq.seq.int
 
-use seq.int
-
 use set.int
 
 use internalbc
@@ -32,7 +30,7 @@ use seq.mytype
 
 use persistant
 
-use stdlib
+use standard
 
 use seq.seq.symbol
 
@@ -50,7 +48,7 @@ Export constdata seq.slot
 
 Export wordref(w:word)int
 
-Export addliblib(libname:seq.word, mods:int, profiledata:int)int
+Export addliblib(libname:seq.word, mods:int, profiledata:int,isbase:boolean)int
 
 Function mangledname(s:symbol)word mangle(fsig.s, module.s)
 

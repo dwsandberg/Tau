@@ -2,7 +2,7 @@ Module format
 
 use set.int
 
-use stdlib
+use standard
 
 use seq.seq.word
 

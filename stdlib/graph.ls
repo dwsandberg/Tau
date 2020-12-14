@@ -20,7 +20,7 @@ use seq.T
 
 use set.T
 
-use stdlib
+use standard
 
 type arc is record tail:T, head:T
 

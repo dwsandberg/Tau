@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ;  ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau ;  ; use doc ; doclibrary."stdlib.small"
 
 ; use tools; testprofile."stdlibbak"
 
@@ -32,13 +32,13 @@ labeledgraph layergraph makeDAG pretty profile svg svggraph  tools
 
 * only document printbitcodes profile prettylib doc
 
-* usegraph exclude stdlib seq set
+* usegraph exclude standard seq set
 
 use main2
 
 use profile
 
-use stdlib
+use standard
 
 use seq.seq.word
 

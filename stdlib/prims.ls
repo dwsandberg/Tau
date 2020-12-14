@@ -6,7 +6,7 @@ use bits
 
 use fileio
 
-use stdlib
+use standard
 
 Function unloadlib(a:seq.word)int unloadlib.toCformat.a
 

@@ -4,7 +4,7 @@ use seq.seq.T
 
 use seq.T
 
-use stdlib
+use standard
 
 Function reverse(s:seq.T)seq.T
  arithseq(length.s, 0 - 1, length.s) @ +(empty:seq.T, s_@e)

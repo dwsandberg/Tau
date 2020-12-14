@@ -10,7 +10,7 @@ use seq.int
 
 use sparseseq.int
 
-use stdlib
+use standard
 
 use otherseq.word
 

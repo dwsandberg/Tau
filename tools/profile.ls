@@ -30,7 +30,7 @@ use seq.parc
 
 use set.parc
 
-use stdlib
+use standard
 
 use otherseq.word
 

@@ -2,7 +2,7 @@ Module seq.T
 
 use stacktrace
 
-use stdlib
+use standard
 
 type seq is sequence length:int, x:T
 

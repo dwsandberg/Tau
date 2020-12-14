@@ -4,7 +4,7 @@ use fileio
 
 use seq.seq.int
 
-use stdlib
+use standard
 
 use seq.seq.seq.word
 

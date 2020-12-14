@@ -12,9 +12,9 @@ use process.int
 
 use process.seq.int
 
-use seq.seq.int
-
 use seq.int
+
+use seq.seq.int
 
 use stack.int
 
@@ -26,7 +26,7 @@ use pass1
 
 use real
 
-use stdlib
+use standard
 
 use seq.symbol
 

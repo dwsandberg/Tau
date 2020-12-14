@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau test2 test2
+#!/usr/local/bin/tau ; use test2 ; test2
 
 Module test2
 
@@ -8,13 +8,12 @@ use fileio
 
 use encoding.indexedword
 
-use stdlib
+use standard
 
 use textio
 
 use seq.seq.word
 
-use seq.word
 
 use otherseq.wordfreq
 

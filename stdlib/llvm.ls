@@ -34,7 +34,7 @@ use seq.slot
 
 use seq.slotrecord
 
-use stdlib
+use standard
 
 Export type:encodingpair.llvmconst
 

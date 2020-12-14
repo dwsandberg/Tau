@@ -18,7 +18,7 @@ use set.int
 
 use seq.ordering
 
-use stdlib
+use standard
 
 use textio
 

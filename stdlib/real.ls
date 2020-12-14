@@ -4,7 +4,7 @@ use UTF8
 
 use seq.real
 
-use stdlib
+use standard
 
 Function-(r:real)real 0.0 - r
 

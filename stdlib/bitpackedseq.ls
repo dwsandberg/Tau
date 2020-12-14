@@ -6,7 +6,7 @@ use seq.bits
 
 use bits
 
-use stdlib
+use standard
 
 Export type:bitpackedseq.T
 

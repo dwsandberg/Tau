@@ -14,7 +14,7 @@ use main2
 
 use real
 
-use stdlib
+use standard
 
 use textio
 
@@ -22,7 +22,6 @@ use otherseq.seq.word
 
 use seq.seq.word
 
-use seq.word
 
 use set.word
 

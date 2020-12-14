@@ -6,7 +6,7 @@ use seq.seq.mytype
 
 use seq.mytype
 
-use stdlib
+use standard
 
 use seq.symbol
 

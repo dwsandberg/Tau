@@ -4,7 +4,7 @@ use seq.T
 
 use stacktrace
 
-use stdlib
+use standard
 
 type stack is record toseq:seq.T
 

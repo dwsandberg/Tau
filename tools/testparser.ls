@@ -10,7 +10,7 @@ run testparser testparser
 
 use genLR1
 
-use stdlib
+use standard
 
 use seq.stepresult
 

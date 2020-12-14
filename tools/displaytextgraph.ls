@@ -2,7 +2,7 @@ Module displaytextgraph
 
 use display
 
-use stdlib
+use standard
 
 use otherseq.word
 

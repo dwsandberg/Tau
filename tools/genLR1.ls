@@ -40,7 +40,7 @@ use seq.encodingpair.state
 
 use seq.state
 
-use stdlib
+use standard
 
 use seq.arc.word
 
