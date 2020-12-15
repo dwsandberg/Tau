@@ -1,6 +1,6 @@
 #!/usr/local/bin/tau ; use test2 ; test2
 
-Module test2
+Module wordfreq
 
 Count word frequence in text file. An indexed encoding is used to assign indexes to each distinct word in the file. Uses a dseq to provide a 0 count for words that have not yet been encountered and assigned an index. 
 
@@ -50,6 +50,6 @@ function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq
  sort(a @ count(sparseseq.wordfreq(0,"A"_1), @e))
  @ +(empty:seq.wordfreq, removelowcount(mincount, @e))
 
-Function test2 seq.word wordfreq(300, gettext."testall/input") @ +(empty:seq.word, print.@e)
+Function testwordfreq seq.word wordfreq(300, gettext."stdlib/pass2new.ls") @ +(empty:seq.word, print.@e)
 
 function count(s:seq.wordfreq, w:seq.word)seq.wordfreq w @ count(s, @e)

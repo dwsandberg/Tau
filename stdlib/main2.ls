@@ -66,6 +66,11 @@ use set.seq.word
 
 use set.word
 
+/use maindict
+
+Function loaddictionary(file:fileresult)int
+// loaddict(file) // 0
+
 function loadlibs(dependentlibs:seq.word, i:int, time:int)int
  if i > length.dependentlibs then time
  else
@@ -138,3 +143,5 @@ Function runit(b:seq.seq.word)runitresult
   runitresult(code.lookupcode(prg2, symbol("runitx","$X","word seq")), alltypes.link)
 
 Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname)
+
+Function print(a:seq.seq.word)seq.word a @ +(""," &br  &br" + @e)

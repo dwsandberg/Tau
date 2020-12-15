@@ -1,6 +1,6 @@
-#!/usr/local/bin/tau ;  ; use doc ; doclibrary."stdlib.small"
+#!/usr/local/bin/tau    ; use doc ; callgraphwithin("stdlib:testoptconfig","testopt")
 
-; use tools; testprofile."stdlibbak"
+; use tools; testprofile."solardataall"
 
 ; use doc ; doclibrary."tools"
 
@@ -22,11 +22,11 @@
 
 Module tools
 
-Library tools bandeskopf barycenter display displaygraph displaytextgraph 
-doc  labeledgraph layergraph makeDAG profile svg svggraph 
+Library tools  
+doc    profile     
 uses stdlib
 exports bandeskopf barycenter display displaygraph displaytextgraph doc 
-labeledgraph layergraph makeDAG pretty profile svg svggraph  tools
+labeledgraph layergraph makeDAG pretty profile  svggraph  tools
 
 * STATE builtin:profile profileinfo profileresult
 
@@ -44,10 +44,9 @@ use seq.seq.word
 
 use seq.word
 
-Function asparagraphs(a:seq.seq.word)seq.word a @ +(""," &br  &br" + @e)
-
+ 
 Function testprofile(libname:seq.word)seq.word
- let a = asparagraphs.compile("all", libname)
+ let a = print.compile("all", libname)
   a + profileresults."time"
 
 + dumpprofileinfo

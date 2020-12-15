@@ -28,7 +28,7 @@ use llvm
 
 use llvmconstants
 
-use maindict
+// use maindict //
 
 use seq.seq.slot
 
@@ -43,6 +43,9 @@ use seq.encodingpair.word3
 use seq.word3
 
 use words
+
+Builtin initialdict seq.encodingpair.seq.char
+
 
 type word3 is record toword:word
 

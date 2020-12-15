@@ -1,5 +1,5 @@
 
-Library stdlib UTF8 bitpackedseq bits codegennew codetemplates encoding fileio format graph groupparagraphs intdict 
+Library tauconfig stdlib UTF8 bitpackedseq bits codegennew codetemplates encoding fileio format graph groupparagraphs intdict 
 internalbc interpreter ipair libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
 pass1 pass2new persistant postbind prims process real seq set stack stacktrace symbol textio timestamp tree worddict words xxhash
  sparseseq standard maindict
@@ -10,24 +10,12 @@ pass1 pass2new persistant postbind prims process real seq set stack stacktrace s
  testsCompile/testall
  testsCompile/testopt
  testsCompile/test11a
- graphs/svg
- graphs/svggraph
- graphs/makeDAG
- graphs/layergraph
- graphs/labeledgraph
- graphs/display
- graphs/displaygraph
- graphs/displaytextgraph
- graphs/barycenter
- graphs/bandeskopf
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format 
 graph groupparagraphs intdict internalbc ioseq ipair libdesc llvm llvmconstants 
 main2 maindict mangle mytype pretty otherseq  prims process 
 real seq set stack stacktrace  symbol textio timestamp tree worddict words xxhash 
 codegennew codetemplates persistant  sparseseq parse standard testall
-svg svggraph displaygraph displaytextgraph display
-barycenter bandeskopf makeDAG layergraph labeledgraph
 
 * Removed maindict 
 
@@ -50,9 +38,4 @@ option.symbol Lit(int)symbol INLINE
  
 option.UTF8 toword(int)word NOINLINE  
 
-module newway
-
-use standard
-
-Function newway boolean  false
-
+ 

@@ -26,7 +26,7 @@ use seq.seq.word
 use set.word
 
 Function testopt seq.word
-let p2 = secondPass."testall"
+let p2 = secondPass."stdlib.testoptconfig"
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 ,"1","0","4607182418800017408","44","2","46","72","27","2","128"
 ,"65","1","4", // optest24 //"%1 5 =(int, int)builtin 2 3 BR 3 

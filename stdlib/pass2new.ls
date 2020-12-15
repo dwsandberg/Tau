@@ -675,7 +675,7 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    else
     let zz0=parameter.(paratypes.applysym)_3
     let zz=abstracttype.zz0
-     let change = seqelementkind ∈ "real"
+     let change = seqelementkind ∈ "real" &or newway
      //  &or 
     zz &nin "encodingpair   word    symbol  myinternaltype block firstpass"
       &or ( zz in "encodingpair" &and print.parameter.zz0 in 
@@ -719,6 +719,8 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    
    // zz &in "seq char mytype int token templatepart  myinternaltype UTF8 encoding llvmtype
     Lcode2 slotrecord mapele liblib parc attribute2 prettyresult internalbc"  //
+    
+    use newway
 
 function  subblock(theseq:symbol,idx:symbol,
 seqtype:symbol,newidx:symbol, seqelementkind:word ,typesize:int

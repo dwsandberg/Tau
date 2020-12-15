@@ -232,7 +232,7 @@ if ( baselib==1 ){
     staticencodings[1]=neweinfo(&sharedspace);
     staticencodings[2]=neweinfo(&sharedspace); // encoding map for assigning encoding to an integer number
 
-   BT (* loaddict)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"loaddictZmaindictZfileresult");
+   BT (* loaddict)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"loaddictionaryZmain2Zfileresult");
     if (!loaddict){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
