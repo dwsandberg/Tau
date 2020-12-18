@@ -78,7 +78,6 @@ function hash(a:const3)int hash(flds.a @ +(empty:seq.int, toint.@e))
 
 function assignencoding(l:int, a:const3)int assignrandom(l, a)
 
-/use stacktrace
 
 /Function dumpword3 seq.word let x = encoding:seq.encodingpair.word3"len:"+ toword.length.x + @(+, toword,"", @(+, data, empty:seq.word3, x))
 

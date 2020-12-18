@@ -2,7 +2,6 @@
 
 Module taulextable
 
-#!/usr/local/bin/tau
 
 use UTF8
 
@@ -60,9 +59,9 @@ function tolexaction(next:word)lexaction1
  lexaction1(next, findindex("-"_1, tokenlist),"∈"_1)
  else
   let token = if next ∈ ". ,():"then next
-  else if next ∈ "< > ? ≤ ≠ ≥ >> <<"then">"_1
+  else if next ∈ "< > ? ≤ ≠ ≥ "then">"_1
   else if next ∈ "in +-∈ ∉"then"-"_1
-  else if next ∈ "* / mod ∪ ∩"then"*"_1
+  else if next ∈ "* / mod ∪ ∩ >> <<"then"*"_1
   else if next ∈ "_^"then"_"_1
   else if next ∈ ".)]= {:},([ ∧ ∨ # if then else let assert report @ is ! "then
   next

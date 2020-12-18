@@ -18,8 +18,6 @@ use set.mytype
 
 use parse
 
-use stacktrace
-
 use standard
 
 use seq.symbol

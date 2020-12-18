@@ -2,8 +2,6 @@ Module stack.T
 
 use seq.T
 
-use stacktrace
-
 use standard
 
 type stack is record toseq:seq.T

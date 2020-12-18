@@ -4,7 +4,7 @@ use bits
 
 use standard
 
-Function rotateleft(x:bits, n:int)bits x << n ∨ x >> 64 - n
+Function rotateleft(x:bits, n:int)bits x << n ∨ x >> (64 - n)
 
 Function hash(acc:bits, x:int)bits
  // after xxhash //
@@ -30,7 +30,7 @@ Function finalmix(acc:bits)int
  let acc2 = bits(toint.xor(acc1, acc1 >> 29) * PRIME3)
   abs.toint.xor(acc2, acc2 >> 32)
 
-Function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> 32 - n)
+Function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> (32 - n))
 
 Function hash32(hash:bits, key:int)bits
  rotl32(bits(toint.hash + toint(bits.2246822519 * key)), 13) * 2654435761

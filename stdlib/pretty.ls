@@ -58,7 +58,13 @@ ____________________________
 
 Function pretty(l:seq.word, targetdir:seq.word)seq.word
  // first item in list is library and others are files with library to pretty //
- subseq(l, 2, length.l) @ +("", prettyfile(l_1, targetdir_1, @e))
+ subseq(l, 2, length.l) @ +("", pprettyfile(l_1, targetdir_1, @e))
+ 
+function pprettyfile(lib:word, newlibdir:word, file:word) seq.word
+  let p=process.prettyfile(lib,newlibdir,file)
+  if aborted.p then message.p else result.p
+
+use process.seq.word
 
 function prettyfile(lib:word, newlibdir:word, file:word)seq.word
  let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]

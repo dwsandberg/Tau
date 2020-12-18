@@ -14,8 +14,6 @@ use seq.mytype
 
 use mytype
 
-use stacktrace
-
 use standard
 
 use seq.symbol
@@ -264,8 +262,6 @@ function specialbit bits bits.4
 
 function constbit bits bits.1
 
-function =(a:bits, b:bits)boolean toint.a = toint.b
-
 Function isspecial(s:symbol)boolean(flags.s ∧ specialbit) = specialbit
 
 Function isconst(s:symbol)boolean(flags.s ∧ constbit) = constbit
@@ -312,8 +308,10 @@ Function Optionsym symbol symbol("option(T, word seq)","builtin","?")
 
 Function EqOp symbol symbol("=(int, int)","builtin","boolean")
 
-Function NotOp symbol symbol("not(boolean)","builtin","boolean") 
+Function NotOp symbol symbol("not(boolean)","builtin","boolean")
 
+Function GtOp symbol symbol(">(int, int)","builtin","boolean")
+ 
 Function PlusOp symbol symbol("+(int, int)","builtin","int")
 
 Function isinOp(s:symbol)boolean
@@ -523,8 +521,8 @@ Function typesym(it:myinternaltype)symbol
 Function deepcopysym(d:typedict, type:mytype)symbol typesym(d, type)
 
 Function typesym(d:typedict, type:mytype)symbol
- if type = typeint then symbol("deepcopy(int)","assignencodingnumber","int")
- else if type = mytype."real"then symbol("deepcopy(real)","assignencodingnumber","real")
+ if type = typeint then symbol("deepcopy(int)","tausupport","int")
+ else if type = mytype."real"then symbol("deepcopy(real)","tausupport","real")
  else
   let e = findelement(d, type)
    assert length.e = 1 report"type not found" + print.type + stacktrace

@@ -1,4 +1,12 @@
-#!/usr/local/bin/tau    ; use doc ; callgraphwithin("stdlib:testoptconfig","testopt")
+#!/usr/local/bin/tau   ; use taulextable ; getlextable
+
+ ; use main2  ; print.compile("pass2","bug9.core")
+
+
+; use main2 ;   print.compile("pass2","bug9.core")
+
+
+; use doc ; doclibrary."stdlib:small"
 
 ; use tools; testprofile."solardataall"
 

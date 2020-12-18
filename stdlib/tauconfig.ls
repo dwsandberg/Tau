@@ -1,21 +1,14 @@
 
-Library tauconfig stdlib UTF8 bitpackedseq bits codegennew codetemplates encoding fileio format graph groupparagraphs intdict 
-internalbc interpreter ipair libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
-pass1 pass2new persistant postbind prims process real seq set stack stacktrace symbol textio timestamp tree worddict words xxhash
- sparseseq standard maindict
-  tests/test11 tests/checking tests/point tests/testencoding  
- tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
- tests/testprocess tests/test5 tests/testseq
- tests/wordfreq
- testsCompile/testall
- testsCompile/testopt
- testsCompile/test11a
+Library tauconfig stdlib UTF8 bitpackedseq bits codegennew codetemplates encoding fileio format  groupparagraphs intdict 
+internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
+pass1 pass2new persistant postbind prims process real seq set stack   symbol textio timestamp tree worddict words xxhash
+ sparseseq standard maindict tausupport breakblocks
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format 
-graph groupparagraphs intdict internalbc ioseq ipair libdesc llvm llvmconstants 
-main2 maindict mangle mytype pretty otherseq  prims process 
-real seq set stack stacktrace  symbol textio timestamp tree worddict words xxhash 
-codegennew codetemplates persistant  sparseseq parse standard testall
+ groupparagraphs intdict   ioseq libdesc  
+main2   mangle mytype pretty otherseq  prims process 
+real seq set stack   symbol textio timestamp tree worddict words xxhash 
+     standard 
 
 * Removed maindict 
 

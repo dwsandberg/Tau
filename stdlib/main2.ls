@@ -32,7 +32,7 @@ use set.mytype
 
 use pass1
 
-use pass2new
+use pass2
 
 use postbind
 

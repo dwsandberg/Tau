@@ -74,7 +74,7 @@ function codeup(l:seq.char, char:char)seq.char
   [ 1, 0] @ +(l + charQ, hexdigit(bits.toint.char, @e))
   else [ 4, 3, 2, 1, 0] @ +(l + charQ, hexdigit(bits.toint.char, @e))
 
-function hexdigit(val:bits, digit:int)char legal_(toint(val >> 4 * digit ∧ bits.15) + 1)
+function hexdigit(val:bits, digit:int)char legal_(toint(val >> (4 * digit) ∧ bits.15) + 1)
 
 Function manglednopara(w:word)int decodeword.w @ +(-1, count(char.90, @e))
 

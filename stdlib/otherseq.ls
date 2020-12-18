@@ -35,23 +35,7 @@ Function replace(s:seq.T, index:int, value:T)seq.T
   else if index > length.a.p then
   a.p + replace(b.p, index - length.a.p, value)
   else replace(a.p, index, value) + b.p
-
-______________________________________
-
-type fastsubseq is sequence length:int, data:seq.T, begin:int
-
-Function_(a:fastsubseq.T, i:int)T(data.a)_(i + begin.a)
-
-Function fastsubseq(s:seq.T, from:int, to:int)seq.T
- if to < from then empty:seq.T
- else if to > length.s then fastsubseq(s, from, length.s)
- else if to < 1 then fastsubseq(s, 1, to)
- else toseq.fastsubseq(to - from + 1, s, from - 1)
-
-Export to:fastsubseq.T(s:seq.T)fastsubseq.T
-
-Export data(fastsubseq.T)seq.T
-
+  
 _____________
 
 type arithmeticseq is sequence length:int, step:T, start:T

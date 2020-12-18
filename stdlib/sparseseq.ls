@@ -45,13 +45,13 @@ Function replaceS(a:seq.T, i:int, b:seq.T)seq.T
 
 function removeoverlap(end:int, s:seq.sparseele.T, i:int)seq.sparseele.T
  if i > length.s then empty:seq.sparseele.T
- else if end < start.s_i then s << i - 1
+ else if end < start.s_i then s << (i - 1)
  else
   let this = s_i
   let thisend = start.this + length.edata.this - 1
    if end ≥ thisend then removeoverlap(end, s, i + 1)
    else
-    [ sparseele(end + 1, edata.this << end - start.this)] + (s << i)
+    [ sparseele(end + 1, edata.this << (end - start.this))] + (s << i)
 
 function *(a:seq.sparseele.T, e:sparseele.T)seq.sparseele.T
  if isempty.a then [ e]

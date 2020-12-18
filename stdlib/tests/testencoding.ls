@@ -44,15 +44,15 @@ use seq.tree.seq.word
 
 use tree.seq.word
 
-function deepcopy(a:testdeep)testdeep result.process.identity.a
+function deepcopytest(a:testdeep)testdeep result.process.identity.a
 
-function deepcopy(a:set.int)set.int result.process.identity.a
+function deepcopytest(a:set.int)set.int result.process.identity.a
 
 function identity(a:set.int) set.int a
 
 function identity(a:testdeep) testdeep a
 
-function deepcopy(a:int)int a
+function deepcopytest(a:int)int a
 
 Export +(i:int, b:int)int
 
@@ -85,8 +85,9 @@ let p = process.process1
   let z = ["firstadd","secondadd"] @ +(0, add.@e)
   let s2 = list.result.process.process1
   let s3 = list.encoding:seq.encodingpair.testrecord
-   check([ 3 = deepcopy.3, asset.[ 3, 7, 9] = deepcopy.asset.[ 3, 7, 9], deepcopy.testdeep1 = testdeep1, s1 = ["A1","B2","C3","D4","E5"], s2 = ["firstadd","secondadd"] + s1, s3 = s2]
+   check([ 3 = deepcopytest.3, asset.[ 3, 7, 9] = deepcopytest.asset.[ 3, 7, 9], deepcopytest.testdeep1 = testdeep1, s1 = ["A1","B2","C3","D4","E5"], s2 = ["firstadd","secondadd"] + s1, s3 = s2]
    ,"encoding")
+
    
 Function process1 seq.encodingpair.testrecord
 let discard = ["A1","B2","C3","D4","E5"] @ +(0, add.@e)

@@ -49,7 +49,11 @@ function removelowcount(mincount:int, p:wordfreq)seq.wordfreq if count.p < minco
 function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq
  sort(a @ count(sparseseq.wordfreq(0,"A"_1), @e))
  @ +(empty:seq.wordfreq, removelowcount(mincount, @e))
+ 
+Function testwordfreq(count:int,text:seq.seq.word) seq.word
+  wordfreq(count, text) @ +(empty:seq.word, print.@e)
 
-Function testwordfreq seq.word wordfreq(300, gettext."stdlib/pass2new.ls") @ +(empty:seq.word, print.@e)
+
+Function testwordfreq seq.word wordfreq(300, gettext."stdlib/pass2.ls") @ +(empty:seq.word, print.@e)
 
 function count(s:seq.wordfreq, w:seq.word)seq.wordfreq w @ count(s, @e)

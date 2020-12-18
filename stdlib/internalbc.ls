@@ -330,11 +330,11 @@ Function processtemplate(s:seq.templatepart, deltaoffset:int, args:seq.int)inter
 _____________________________
 
 Function addvbr(b:bitpackedseq.bit, newbits:int, bitcount:int)bitpackedseq.bit
- let limit = toint(bits.1 << bitcount - 1)
+ let limit = toint(bits.1 << (bitcount - 1))
   if newbits < limit then add(b, bits.newbits, bitcount)
   else
    let firstchunk = bits(limit - 1) ∧ bits.newbits ∨ bits.limit
-   let secondchunk = bits.newbits >> bitcount - 1
+   let secondchunk = bits.newbits >> (bitcount - 1)
     assert toint.secondchunk < limit report"vbr encoding for value is not handled" + toword.newbits + toword.limit
      add(b, secondchunk << bitcount ∨ firstchunk, bitcount * 2)
 

@@ -84,7 +84,7 @@ Function fileexists(f:seq.word)boolean
  let file = getfile.toCformat.f
   size.file > -1
 
-Function gettext(filename:seq.word)seq.seq.word breakparagraph.getUTF8file.filename @ +(empty:seq.seq.word, towords.@e)
+Function gettext(filename:seq.word)seq.seq.word breakparagraph.getUTF8file.filename  
 
 Function createfile(filename:seq.word, s:seq.seq.word)int
  createbytefile(filename, s @ +(empty:seq.int, toseqint.toUTF8.@e + [ 10, 10]))

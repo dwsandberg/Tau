@@ -1,7 +1,5 @@
 Module codegennew
 
-use ipair.Lcode2
-
 use seq.Lcode2
 
 use stack.Lcode2
@@ -23,7 +21,6 @@ use seq.seq.int
 
 use stack.int
 
-use ipair.internalbc
 
 use seq.internalbc
 
@@ -40,8 +37,6 @@ use seq.localmap
 use seq.match5
 
 use seq.slot
-
-use stacktrace
 
 use encoding.stat5
 
@@ -180,7 +175,7 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
    let args = top(args.l, noargs)
    let newcode = CALL(r(regno.l + 1), 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespace", function.[ ptr.i64, i64, i64]), r.1, C64.noargs)
    let fldbc = setnextfld(code.l + newcode, args, 1, parametertypes.m, 3, regno.l + 1, regno.l + 1, 0, 0)
-    Lcode2(value.fldbc, lmap.l, noblocks.l, index.fldbc, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
+    Lcode2(bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
   else
    assert action ∈ "CALLIDX"report"code gen unknown" + action
     if typ.functype.m = typ.ptr.i64 then callidxcodeptr(l, top(args.l, 2), functype.m)
@@ -246,8 +241,10 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
        let newcode = BR(r(regno.l + 1), noblocks.blks_(constvalue.slot.args_2 - 1), noblocks.blks_(constvalue.slot.args_3 - 1), r.regno.l)
         processblk(phitype, blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, tailphi)
 
-Function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word, j:int, regno:int, pint:int, preal:int, pptr:int)ipair.internalbc
- if i > length.args then ipair(regno, bc)
+type setfldresult is record regno:int, bc:internalbc 
+
+Function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word, j:int, regno:int, pint:int, preal:int, pptr:int) setfldresult
+ if i > length.args then setfldresult(regno, bc)
  else
   let newj = min(findindex(","_1, types, j + 1), length.types - 1)
   let typ = if length.types = 3 then"int"_1 else types_(newj - 1)

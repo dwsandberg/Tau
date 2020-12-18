@@ -1,6 +1,6 @@
 
    
-Module pass2
+Module pass2 
 
 use breakblocks
 
@@ -331,7 +331,7 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
  let sym = code_(-2)
  let t = backparse(code, length.code - 2, nopara.code_(length.code - 1), empty:seq.int)
  let thunk0 = subseq(code,t_1,length.code-1) 
-  assert fsig.thunk0_1 = "@acc"report"apply error" + t @ +("", toword.@e)
+   assert fsig.thunk0_1 = "@acc"report"apply error" + t @ +("", toword.@e)
   + code @ +(" &br code:", print.@e)
   + thunk0 @ +(" &br code:", print.@e)
   + " &br nopara"
@@ -350,7 +350,7 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    else
     let zz0=parameter.(paratypes.applysym)_3
     let zz=abstracttype.zz0
-     let change = seqelementkind ∈ "real"  &or true
+     let change = seqelementkind ∈ "real"  
      //  &or 
     zz &nin "encodingpair   word    symbol  myinternaltype block firstpass"
       &or ( zz in "encodingpair" &and print.parameter.zz0 in 

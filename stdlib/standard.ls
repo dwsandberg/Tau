@@ -23,6 +23,10 @@ use words
 
 use xxhash
 
+use tausupport
+
+Export stacktrace seq.word 
+
 /Function type:int(a:int) int a
 
 type ordering is record toint:int
@@ -277,7 +281,7 @@ Export << (s:seq.word, i:int) seq.word
            
 Export >> (s:seq.word , i:int) seq.word   
 
-* usegraph include xxhash encoding bits words real subreal stacktrace textio reconstruct UTF8 seq otherseq fileio standard 
+* usegraph include xxhash encoding bits words real subreal   textio reconstruct UTF8 seq otherseq fileio standard 
 exclude standard seq
 
 * usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict 
@@ -285,8 +289,8 @@ exclude standard seq
 
 * usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 
 persistant llvm postbind reconstruct persistantseq opt2 symbol parse libdesc internalbc 
-intercode cvttoinst codegen pass2new codegennew funcsig interpreter
-exclude seq set otherseq standard bits tree graph UTF8 stack stacktrace real ipair bitpackedseq 
+intercode cvttoinst codegen pass2  codegennew funcsig interpreter
+exclude seq set otherseq standard bits tree graph UTF8 stack real ipair bitpackedseq 
 fileio textio encoding words 
 
 *

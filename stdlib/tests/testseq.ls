@@ -107,11 +107,13 @@ use process.T
 
 use seq.T
 
-use stacktrace
 
 use standard
 
 use testseq
+
+use tausupport
+
 
 unbound get:T T
 
@@ -128,10 +130,9 @@ let x = if sizeoftype:T = 1 then""else"packed"
 Function random:seq.T(depth:int)seq.T
  if depth ≤ 0 then base:seq.T
  else
-  let r = random:seq.T(depth - 1 - getint.2)
+ random:seq.T(depth - 1 - getint.2)
   + random:seq.T(depth - 1 - getint.2)
-   if length.r < 50 ∨ getint.10 ≠ 2 then r
-   else fastsubseq(r, 2, length.r - 1)
+   
 
 Function base:seq.T seq.T
 let i = getint.6
@@ -148,9 +149,9 @@ function seqkind(a:seq.T)seq.word
   else if t = getseqtype.constantseq(1, get:T)then"const"
   else if ispseq.a then"pseq"
   else if t = getseqtype.packed.constantseq(1, get:T)then"packed" + toword.length.a
-  else if t = getseqtype.fastsubseq(constantseq(100, get:T), 3, 800)then"fastsub"
-  else
-   "unknown" + decodeaddress.getseqtype.a + "//"
+  else 
+   "unknown" 
+   + decodeaddress.getseqtype.a + "//"
    + decodeaddress.getseqtype(constantseq(1, get:T) + constantseq(1, get:T))
 
 Function seqstruct(a:seq.T)seq.word
@@ -158,7 +159,4 @@ Function seqstruct(a:seq.T)seq.word
   if kind = "pseq"then
   let p = to:pseq.T(a)
     "(" + seqstruct.a.p + seqstruct.b.p + ")"
-  else if kind = "fastsub"then
-  let p = to:fastsubseq.T(a)
-    "(" + "fastsub" + seqstruct.data.p + ")"
-  else kind 
+  else  kind 

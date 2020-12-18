@@ -18,8 +18,6 @@ use standard
 
 use textio
 
-use ipair.word
-
 use seq.seq.word
 
 use seq.word
@@ -50,8 +48,6 @@ Function t522 boolean arithseq(9, 1, 4) @ ∧(true, filetest.@e)
 function modr(a:int, b:int)int b mod a + 1
 
 function incrementcount(s:seq.int, i:int)seq.int replace(s, i, s_i + 1)
-
-function print(i:ipair.word)seq.word [ toword.index.i] + ":" + value.i
 
 function t509 boolean
 let s = randomseq(3456, 100001) @ +(empty:seq.int, modr(100, @e))

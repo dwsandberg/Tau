@@ -1,7 +1,5 @@
 Module seq.T
 
-use stacktrace
-
 use standard
 
 type seq is sequence length:int, x:T
@@ -23,8 +21,21 @@ Function_(a:seq.T, c:int)T
   else
    assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
     if typ > 1 then IDXSEQ(a, typ, b)else IDX(a, b + 1)
+    
+/Function idx2(a:seq.T, c:int)T
+ let b = if c < 0 then length.a + c + 1 else c
+ let typ = getseqtype.a
+  if typ > 1000 then callidx2(a, b)
+  else
+   assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
+    if typ > 1 then IDXSEQ(a, typ, b)else IDX(a, b + 1)
+
+/builtin callidx2(a:seq.T, int)T
+
 
 builtin callidx(a:seq.T, int)T
+
+
 
 Builtin getseqtype(a:seq.T)int
 

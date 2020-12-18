@@ -24,6 +24,12 @@ Builtin <<(a:bits, i:int)bits
 
 Builtin xor(a:bits, b:bits)bits
 
+Function =(a:bits, b:bits)boolean toint.a = toint.b
+
+/Builtin ∨(a:bits, b:int)bits   a ∨ bits.b
+
+/Builtin ∧(a:bits, b:int )bits a ∧ bits.b
+
 __________________
 
 type bit is record toint:int

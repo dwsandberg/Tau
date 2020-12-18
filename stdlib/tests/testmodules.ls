@@ -159,4 +159,4 @@ function hexdigit(b:bits, c:char)bits
 function checkbits seq.word check([ 878082210 = toint.rotl32(hex."A2345678", 8), print(hex."D687F000" ∧ hex."0FE00000") = "680 0000", print(hex."D687F001" >> 2) = "35A1 FC00", print(hex."D687F001" << 2) = "3 5A1F C004", print(hex."D687F000" ∨ hex."0FE00000") = "DFE7 F000", print.xor(hex."D687F000", hex."0FE00000") = "D967 F000"]
 ,"bits")
 
-function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> 32 - n)
+function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> (32 - n))

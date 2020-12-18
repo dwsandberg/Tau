@@ -37,7 +37,7 @@ function breakcommas(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
 
 handle files of paragraphs
 
-Function breakparagraph(a:UTF8)seq.UTF8 breakparagraph(toseqint.a, 1, 1, empty:seq.UTF8)
+Function breakparagraph(a:UTF8)seq.seq.word  breakparagraph(toseqint.a, 1, 1, empty:seq.seq.word)
 
 function blankline(a:seq.int, i:int)int
  // returns 0 if no new line is found before next non white char otherwise returns index of newline //
@@ -48,17 +48,14 @@ function blankline(a:seq.int, i:int)int
    else if t > length.classifychar ∨ t = 0 then 0
    else if classifychar_t = "SPACE"_1 then blankline(a, i + 1)else 0
 
-if classify(a_i)= 3 then if a_i = 10 then i else blankline(a, i + 1)else 0
-
-Function breakparagraph(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
+Function breakparagraph(a:seq.int, i:int, last:int, result:seq.seq.word)seq.seq.word
  if i ≥ length.a then
- if last < length.a then result + UTF8.fastsubseq(a, last, length.a)else result
+ if last < length.a then result + towords.decodeUTF8(a, last, length.a)else result
  else if a_i = 10 then
  let j = blankline(a, i + 1)
    if j > 0 then
-   let paragraph = fastsubseq(a, last, i - 1)
-     if length.paragraph = 0 then breakparagraph(a, j + 1, j + 1, result)
-     else breakparagraph(a, j + 1, j + 1, result + UTF8.paragraph)
+      if   i-1 < last then breakparagraph(a, j + 1, j + 1, result)
+     else breakparagraph(a, j + 1, j + 1, result + towords.decodeUTF8(a, last, i - 1))
    else breakparagraph(a, i + 1, last, result)
  else breakparagraph(a, i + 1, last, result)
 
@@ -89,6 +86,3 @@ function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
        else
         towords2(a, i + 1, i + 1,(if last = i then result else result + encodeword.subseq(a, last, i - 1)) + class)
 
-________
-
--------------------

@@ -510,18 +510,19 @@ struct outputformat *output(processinfo p) {return(struct outputformat *) (p->re
 
 void createfilefromoutput(struct outputformat *t,int file)
               {       if (t->data->type == 0) {
+                  //  data is stored in one sequence  
                     write(file, (char *)  t->data->data, t->bytelength);
                    }
                 else {  
-                    int j; int length=t->bytelength; BT blksize=10000;
-                      int blockcount=length / blksize;
-                      int count =blksize * 8;
-                      for(j=0; j < blockcount; j++)  { 
-                              write( file,(char *)(t->data->data[j])+16,  length < count ? length:count );
-                             length=length-count;
-                       }
-                   
-                }}
+                   // data is stored as seq.seq.int:  Each of the subseq may be of different length // 
+                    int j=0; int length=t->bytelength;
+                      while ( length > 0 )   { 
+                         BT len= ((BT *) t->data->data[j]) [1];
+                         write( file,(char *)(t->data->data[j])+16,  len * 8 );
+                             length=length-len * 8; j++;
+                       }          
+                }
+                 }
                 
 
 

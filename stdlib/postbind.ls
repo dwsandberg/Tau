@@ -155,7 +155,7 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
        let newfsig ="apply3(" + a + "seq" + subseq(fsig.newsym, k, length.fsig.newsym)
        let p2 = symbol(newfsig, [ kind] + "builtin", returntype.newsym)
         postbind3(alltypes, dict, code, i + 1,(result >> 1) + Lit.size.info + p2, modpara, org, calls, sourceX, tempX)
-      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX"
+      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2"
       ∨ fsig.sym = "setfld(int, T seq, T)"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let p2 = symbol(fsig.sym, [ kind] + "builtin", returntype.newsym)
@@ -189,14 +189,14 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
 function blocksym(info:typeinfo)seq.symbol
  let ds = size.info
   if kind.info = "real"_1 then
-  [ symbol("blockit(real seq)","assignencodingnumber","real seq")]
-  else if ds = 1 then [ symbol("blockit(int seq)","assignencodingnumber","int seq")]
-  else [ Lit.ds, symbol("blockit(char seq encodingpair seq, int)","assignencodingnumber","char seq encodingpair seq")]
+  [ symbol("blockit(real seq)","tausupport","real seq")]
+  else if ds = 1 then [ symbol("blockit(int seq)","tausupport","int seq")]
+  else [ Lit.ds, symbol("blockit(char seq encodingpair seq, int)","tausupport","char seq encodingpair seq")]
 
 function encodenocode(typ:mytype)seq.symbol
  let gl = symbol("global" + print.typ,"builtin","int seq")
  let setfld = symbol("setfld(int, T seq, T)","int builtin","int")
- let encodenosym = newsymbol("encodingno", mytype."assignencodingnumber", [ mytype."word seq"], typeint)
+ let encodenosym = newsymbol("encodingno", mytype."tausupport", [ mytype."word seq"], typeint)
  let IDXI = Idx."int"_1
   if typ = mytype."typename"then [ Lit.0, gl, Lit.2, setfld, Define."xx", gl, Lit.0, IDXI]
   else if typ = mytype."char seq"then
@@ -222,8 +222,7 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
   let symAcc = newsymbol("@acc", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, resulttype)
    [ Local.1] + Emptyseq
    + [ Local.1, symAcc, symEle, dc, cat, Lit.size.info, newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint], resulttype)]
-   + // if ds = 1 then [ symbol("blockit(int seq)","assignencodingnumber","int seq")]else [ Local.1, Lit.ds, symbol("packed(int seq seq, ds)","assignencodingnumber","int seq")]//
-   blocksym.info
+   +   blocksym.info
  else
   let typedesc = gettypeinfo(alltypes, type)
   let y = subfld(alltypes, subflds.typedesc, 1,"", empty:seq.symbol)
