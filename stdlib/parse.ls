@@ -78,6 +78,18 @@ function hash(l:seq.token.bindinfo)int length.l
 
 function assignencoding(l:int, a:seq.token.bindinfo)int assignrandom(l, a)
 
+use seq.char 
+
+use UTF8
+
+function bindlit(R:reduction.bindinfo) bindinfo
+    let chars=decodeword.first.text.R_1 
+    if length.chars > 1 &and chars_2 &in decodeword.first."Xx" then
+      bindinfo(dict.R, [ Lit.cvttoint.chars], [ mytype."bits"],"") 
+    else 
+      bindinfo(dict.R, [ Lit.cvttoint.chars], [ typeint],"") 
+
+
 function opaction(R:reduction.bindinfo, input:seq.token.bindinfo)bindinfo
  let op = tokentext.R_2
  let dict = dict.R_1
@@ -118,6 +130,8 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
 function applypart1( initseq:bindinfo,  name:bindinfo, initacc:bindinfo ,input:seq.token.bindinfo, place:int)bindinfo
    let seqtype=(types.initseq)_1
    let resulttype=(types.initacc)_1
+   assert   abstracttype.seqtype =first."seq" report 
+      " first operhand of @ must be seq: "+print.seqtype
     let s1=newsymbol("@e",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype)
     let s2=newsymbol("@i",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,typeint)
  let newdict = dict.initseq + s1 + s2
@@ -155,7 +169,6 @@ function lookupbysig(dict:set.symbol, name:seq.word, paratypes:seq.mytype, input
   assert not.isempty.f report errormessage("cannot find 1" + name + "("
   + paratypes @ list("",",", print.@e)
   + ")", input, place)
-   // + @(+, print,"", toseq.dict)//
    assert cardinality.f = 1 report errormessage("found more that one" + toseq.f @ +("", print.@e), input, place)
     f_1
 
@@ -235,7 +248,7 @@ assert(types.R_4)_1 = mytype."word seq"report errormessage("report in
 assert must be seq of word in:", input, place.R) 
 let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_5 + Exit + code.R_4 + symbol(" 
 assert(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"") 
-else if ruleno = // E I // 34 then bindinfo(dict.R, [ Lit.toint.(tokentext.R_1)_1], [ typeint],"") 
+else if ruleno = // E I // 34 then  bindlit.R
 else if ruleno = // E I.I // 35 then bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"") 
 else if ruleno = // T W // 36 then isdefined(R, input, mytype.tokentext.R_1) 
 else if ruleno = // T W.T // 37 then isdefined(R, input, abstracttype((tokentext.R_1)_1,(types.R_3)_1)) 

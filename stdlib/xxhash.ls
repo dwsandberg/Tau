@@ -30,21 +30,23 @@ Function finalmix(acc:bits)int
  let acc2 = bits(toint.xor(acc1, acc1 >> 29) * PRIME3)
   abs.toint.xor(acc2, acc2 >> 32)
 
-Function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> (32 - n))
+Function rotl32(x:bits, n:int)bits 0xFFFF FFFF ∧ (x << n ∨ x >> (32 - n))
 
 Function hash32(hash:bits, key:int)bits
  rotl32(bits(toint.hash + toint(bits.2246822519 * key)), 13) * 2654435761
 
 Function *(a:bits, b:int)bits
  let m = toint(bits.b ∨ bits.0)
- let nlo = toint(a ∧ bits.65535)
- let nhi = toint(a ∧ bits.65535 << 16)
-  bits(toint(bits(nhi * m) ∧ bits.4294967295) + nlo * m) ∧ bits.4294967295
+ let nlo = toint(a ∧ 0xFFFF)
+ let nhi = toint(a ∧ 0xFFFF << 16) 
+  bits(toint(bits(nhi * m) ∧ 0xFFFF FFFF) + nlo * m) ∧ 0xFFFF FFFF
+  
+  0xFFFF FFFF
 
 Function finalmix32(hash:bits)int
  let h32c = xor(hash, hash >> 15) * 668265263
  let h32d = xor(h32c, h32c >> 13) * 374761393
-  abs.toint(xor(h32d, h32d >> 16) ∧ bits.4294967295)
+  abs.toint(xor(h32d, h32d >> 16) ∧ 0xFFFF FFFF)
 
 Function hashstart32(seed:int)bits
  let PRIME5 = 374761393

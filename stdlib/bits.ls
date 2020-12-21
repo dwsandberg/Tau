@@ -30,6 +30,14 @@ Function =(a:bits, b:bits)boolean toint.a = toint.b
 
 /Builtin ∧(a:bits, b:int )bits a ∧ bits.b
 
+function  hexdigit(b:bits)  char (decodeword."0123456789ABCDEF"_1)_(1 + toint(b ∧  0x0F))
+
+function hexword(b:bits) word 
+      encodeword.[hexdigit(b >> 12), hexdigit(b >> 8),      hexdigit(b >> 4),  hexdigit.b]
+    
+Function print(b:bits) seq.word
+    [ hexword(b >> 48)  ,  hexword(b >> 32) , hexword(b >> 16),  hexword(b )]
+
 __________________
 
 type bit is record toint:int

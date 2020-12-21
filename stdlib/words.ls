@@ -79,12 +79,16 @@ Function alphasort(a:seq.seq.word)seq.seq.word
  let b = a @ +(empty:seq.seq.alphaword, toalphaseq.@e)
   sort.b @ +(empty:seq.seq.word, towordseq.@e)
 
-Function checkinteger(w:word)word
+ 
+ use seq.char
+ 
+ Function checkinteger(w:word)word
  let l = decodeword.w
- let i = if l_1 = char1."-" ∧ length.l > 1 then 2 else 1
-  if not.between(toint.l_i, 48, 57)then"WORD"_1 else checkalldigits(l, i)
-
-function checkalldigits(l:seq.char, i:int)word
- if i > length.l then"INTEGER"_1
- else if between(toint.l_i, 48, 57) ∨ l_i = nbspchar then checkalldigits(l, i + 1)
- else"ILLEGAL"_1
+ let validdigits = decodeword.first."0123456789" + nbspchar
+ let validhex=decodeword.first."0123456789ABCDEFabcdef"+ nbspchar 
+    if length.l > 2 &and l_1=char1."0" &and l_2 &in decodeword.first."xX" then
+     if  l << 2 @ &and(true, binarysearch(validhex,@e) > 0 ) then "INTEGER"_1 else "ILLEGAL"_1
+    else 
+     let i = if length.l > 1 ∧ l_1 = char1."-"   then 2 else 1
+      if not.between(toint.l_i, 48, 57)then"WORD"_1 else
+    if  l << (i-1) @ &and(true, binarysearch(validdigits,@e) > 0 ) then "INTEGER"_1 else "ILLEGAL"_1

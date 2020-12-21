@@ -362,21 +362,24 @@ function addvbr6(b:bits, bitstoadd:int, leftover:bits, s:seq.int, r:bitpackedseq
    else
     addvbr6(b ∨ (bits.v ∧ bits.31 ∨ bits.32) << bitstoadd, bitstoadd + 6, bits.v >> 5, s, r, i + 1)
 
-Function addvbr6(b:bitpackedseq.bit, s:seq.int)bitpackedseq.bit addvbr6(bits.0, 0, bits.0, s, b, 1)
+function addvbr6(b:bitpackedseq.bit, s:seq.int)bitpackedseq.bit addvbr6(bits.0, 0, bits.0, s, b, 1)
 
 Function addvbr6(b:bitpackedseq.bit, v:int)bitpackedseq.bit addvbr6(bits.0, 0, bits.0, [ v], b, 1)
 
-Function addvbrsigned6(b:bitpackedseq.bit, val:int)bitpackedseq.bit
+  Function addvbrsigned6(b:bitpackedseq.bit, val:int)bitpackedseq.bit
  if val < 0 then
  if val > -16 then addvbr6(b, 2 * -val + 1)
   else
-   let chunk = bits(32 + -val mod 16 * 2 + 1)
-    addvbr6(chunk, 6, bits.-val >> 4, empty:seq.int, b, 1)
+   let tmp= toint( bits.val   &or 0xFFFF << 48  )
+   let first6bits=  bits.-tmp << 1 &and 0x1F  &or 0x21 
+    addvbr6(first6bits, 6, bits(-(val / 16)), empty:seq.int, b, 1)
  else if val < 16 then addvbr6(b, 2 * val)
  else
-  let chunk = bits(32 + val mod 16 * 2)
-   addvbr6(chunk, 6, bits.val >> 4, empty:seq.int, b, 1)
+   let first6bits=  bits.val << 1 &and 0x1F  &or 0x20 
+   addvbr6(first6bits, 6, bits.val >> 4, empty:seq.int, b, 1)
 
+
+   
 Function align32(a:bitpackedseq.bit)bitpackedseq.bit
  let k = length.a mod 32
   if k = 0 then a else add(a, bits.0, 32 - k)

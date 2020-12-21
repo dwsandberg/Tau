@@ -136,27 +136,20 @@ _____________
 
 bits
 
-function hex(b:bits, result:seq.char)seq.char
- let hexdigit =(decodeword."0123456789ABCDEF"_1)_(1 + toint(b ∧ bits.15))
- let rest = b >> 4
-  if toint.rest = 0 then [ hexdigit] + result else hex(rest, [ hexdigit] + result)
 
-function print(b:bits)seq.word group.hex(b, empty:seq.char)
-
-function group(s:seq.char)seq.word
- if length.s < 5 then [ encodeword.s]
- else
-  group.subseq(s, 1, length.s - 4) + encodeword.subseq(s, length.s - 3, length.s)
-
-function hex(s:seq.word)bits
- s @ +(empty:seq.char, decodeword.@e) @ hexdigit(bits.0, @e)
-
-function hexdigit(b:bits, c:char)bits
- let i = findindex(c, decodeword."0123456789ABCDEF"_1) - 1
-  assert i < 16 report"illegal hex digit"
-   b << 4 ∨ bits.i
-
-function checkbits seq.word check([ 878082210 = toint.rotl32(hex."A2345678", 8), print(hex."D687F000" ∧ hex."0FE00000") = "680 0000", print(hex."D687F001" >> 2) = "35A1 FC00", print(hex."D687F001" << 2) = "3 5A1F C004", print(hex."D687F000" ∨ hex."0FE00000") = "DFE7 F000", print.xor(hex."D687F000", hex."0FE00000") = "D967 F000"]
+Function checkbits seq.word 
+    let min64integer=toint(0x1 << 63 )
+     let max64integer=toint( bits.-1 >> 1)
+ check([toint.toword.min64integer=min64integer 
+       , toint.toword.max64integer=max64integer  
+      , min64integer+1 =-max64integer 
+      , 0xD=bits.13, 
+ 878082210 = toint.rotl32(0xA2345678, 8) ,  
+ print(0xD687F000 ∧ 0x0FE00000) = "0000 0000 0680 0000", 
+ print(0xD687F001 >> 2) = "0000 0000 35A1 FC00", 
+  print(0xD687F001 << 2) = "0000 0003 5A1F C004",
+  print(0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000", 
+  print.xor(0xD687F000, 0x0FE00000) = "0000 0000 D967 F000"]
 ,"bits")
 
 function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> (32 - n))

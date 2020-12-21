@@ -121,18 +121,42 @@ Function toword(n:int)word // Covert integer to sequence of characters represent
 
 /function groupdigits(u:UTF8)seq.word let s = tointseq.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = toint.hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s-3)+ [ encodeword.subseq(s, length.s-2, length.s)]
 
-Function toint(w:word)int // Convert an integer represented as a word to an int // cvttoint(decodeword.w, 1, 0)
+Function toint(w:word)int // Convert an integer represented as a word to an int // cvttoint.decodeword.w 
 
-Function intlit(s:UTF8)int cvttoint(tocharseq.toseqint.s, 1, 0)
+Function intlit(s:UTF8)int cvttoint.tocharseq.toseqint.s 
 
-function cvttoint(s:seq.char, i:int, val:int)int
- if i = 1 ∧ s_1 = hyphenchar then cvttoint(s, i + 1, val)
- else if i > length.s then if s_1 = hyphenchar then-val else val
- else if s_i = nbspchar then cvttoint(s, i + 1, val)
- else
-  assert between(toint.s_i, 48, 57)report"invalid digit" + encodeword.s + stacktrace
-   cvttoint(s, i + 1, val * 10 + toint.s_i - 48)
+Function cvttoint(s:seq.char) int
+   // Hex values starting with 0x or 0X are allowed. //
+       if length.s > 2 &and s_2 &in decodeword.first."Xx" then
+         toint( s @ hexdigit(0x0, @e))
+       else 
+         let val=s @ decimaldigit(0, @e) 
+         // Since there are more negative numbers in twos-complement we calculate using negative values. //  
+          if s_1=char1."-" then  val else -val
+         
 
+function hexdigit(b:bits, c:char)bits 
+    let validhex=decodeword.first."0123456789ABCDEFabcdef" 
+       let i0 = binarysearch(validhex,c) 
+       let i=if i0 > 16 then i0-6 else i0
+        if i > 0 then ( b << 4 )∨ bits(i-1) 
+        else assert  c &in [char1."x",char1."X",nbspchar] report"invalid hex digit"+ encodeword.[c ] 
+         b 
+       
+       
+function decimaldigit(val:int, c:char)int
+    let validdigits = decodeword.first."0123456789" 
+        let i = binarysearch(validdigits,c)
+         if i > 0 then ( val * 10 ) - (i-1)   
+        else assert c &in [char1."-", nbspchar] report "invalid   digit" + encodeword.[c ] 
+        val
+        
+use bits
+
+use otherseq.char
+
+use seq.char
+        
 -------------
 
 Function hash(a:seq.char)int
