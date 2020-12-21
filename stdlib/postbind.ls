@@ -139,14 +139,6 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
       else if(fsig.sym)_1 ∈ "kindrecord"then
       let p2 = Record(paratypes.sym @ +("", kind(alltypes, modpara, @e)))
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
-      else if fsig.sym = "IDXSEQ(T seq, int, int)"then
-      // 2nd arg is datasize and 3 arg is idx. //
-       let multop = symbol("*(int, int)","builtin","int")
-       let info = gettypeinfo(alltypes, parameter.modname.newsym)
-       let p2 = if size.info > 1 then
-       [ Lit.-1, PlusOp, multop, Lit.2, PlusOp, Lit.0, symbol("cast(T seq, int, int)","builtin","ptr")]
-       else [ PlusOp, symbol("IDX(T seq, int)", [ kind.info] + "builtin", returntype.newsym)]
-        postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
       else if(fsig.sym)_1 ∈ "apply3"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let k = findindex(","_1, fsig.newsym)
@@ -155,7 +147,7 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
        let newfsig ="apply3(" + a + "seq" + subseq(fsig.newsym, k, length.fsig.newsym)
        let p2 = symbol(newfsig, [ kind] + "builtin", returntype.newsym)
         postbind3(alltypes, dict, code, i + 1,(result >> 1) + Lit.size.info + p2, modpara, org, calls, sourceX, tempX)
-      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2"
+      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2 callidx3"
       ∨ fsig.sym = "setfld(int, T seq, T)"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let p2 = symbol(fsig.sym, [ kind] + "builtin", returntype.newsym)

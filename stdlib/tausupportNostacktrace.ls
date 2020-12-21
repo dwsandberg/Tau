@@ -55,6 +55,9 @@ Function_(a:blockseq.T, i:int)T
 blk_((i-1)mod blksz + 1)
 
 Function blockit(s:seq.T, ds:int)seq.T
+ blockit(s)
+ 
+
  let blksz = blocksize:T / ds
   if length.s ≤ blksz then
   let newseq = allocatespace:T(length.s * ds + 2)

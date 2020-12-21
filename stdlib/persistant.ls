@@ -96,9 +96,11 @@ Function addliblib(libname:seq.word, mods:int, profiledata:int,isbase:boolean)in
   let used = encoding:seq.encodingpair.word3 @ +(empty:set.encoding.seq.char, wordcode.@e)
    // build packed seq of word encodings //
    let wordstoadd = toseq(used - have)
-      let data = wordstoadd @ +([ toint.C64.3, toint.C64.length.wordstoadd], fldsofwordencoding.@e)
+      let data = wordstoadd @ +([ toint.C64.0, toint.C64.length.wordstoadd], addobject.fldsofwordencoding.@e)
     let wordreps = addobject.data
      addobject("liblib", [ name, wordreps, mods, toint.C64.0, profiledata])
+     
+     
 
 function addobject(name:seq.word, data:seq.int)int
  let objtype = array(length.data, i64)

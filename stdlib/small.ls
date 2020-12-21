@@ -2,6 +2,15 @@
 Library small   UTF8 bitpackedseq bits  encoding tausupportNostacktrace   fileio format  
      otherseq  
  process real seq set stack  textio  tree  words xxhash standard
+ tests/randomphrase  
+   tests/wordfreq
+ sparseseq 
+uses
+exports UTF8 main2 words tausupport bitpackedseq       
+ 
+ "Library small   UTF8 bitpackedseq bits  encoding tausupportNostacktrace   fileio format  
+     otherseq  
+ process real seq set stack  textio  tree  words xxhash standard
  tests/test11 tests/checking tests/point tests/testencoding  
  tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
  tests/testprocess tests/test5 tests/testseq tests/wordfreq
@@ -9,7 +18,7 @@ Library small   UTF8 bitpackedseq bits  encoding tausupportNostacktrace   fileio
  graphs/graph
  sparseseq 
 uses
-exports UTF8 main2 words tausupport bitpackedseq     
+exports UTF8 main2 words tausupport bitpackedseq   "  
   
 option.fileio getfile(seq.bits)fileresult STATE
 

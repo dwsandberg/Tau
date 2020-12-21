@@ -20,8 +20,6 @@ unbound sizeinbits(T)int
 
 Export bitpackedseq(int, seq.T, bits)bitpackedseq.T
 
-Export toseq(a:bitpackedseq.T)seq.T
-
 Export length(bitpackedseq.T)int
 
 Function empty:bitpackedseq.T bitpackedseq.T bitpackedseq(0, empty:seq.T, bits.0)

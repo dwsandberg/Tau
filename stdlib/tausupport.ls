@@ -4,7 +4,6 @@ use seq.T
 
 Builtin IDX(seq.T, int)T
 
-Builtin IDXSEQ(seq.T, int, int)T
 
 Builtin allocatespace:T(i:int)seq.T
 
@@ -22,7 +21,7 @@ use seq.T
 
 use standard
 
-Builtin callidx(a:seq.T, int)T
+Builtin callidx3(a:seq.T, int)T
 
 builtin bitcast(blockseq.T)seq.seq.T
 
@@ -49,12 +48,14 @@ Function_(a:blockseq.T, i:int)T
   let blksz = blocksize:T / ds
   let blk = IDX(data,(i - 1) / blksz + 2)
   let b =(i - 1) mod blksz + 1
-   if typ > 1000 then callidx(blk, b)
-   else if typ > 1 then IDXSEQ(blk, typ, b)else IDX(blk, b + 1)
+   if typ > 1000 then callidx3(blk, b)
+   else  IDX(blk, b + 1)
 
 blk_((i-1)mod blksz + 1)
 
 Function blockit(s:seq.T, ds:int)seq.T
+   blockit.s
+
  let blksz = blocksize:T / ds
   if length.s ≤ blksz then
   let newseq = allocatespace:T(length.s * ds + 2)

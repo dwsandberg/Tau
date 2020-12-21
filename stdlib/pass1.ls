@@ -253,10 +253,10 @@ function assignencoding(l:int, s:symboltext)int assignrandom(l, s)
 
 function tokind(type:mytype)word
  if type = mytype."real"then"real"_1
- else if abstracttype.type ∈ "seq"then"ptr"_1
+ else if abstracttype.type ∈ "seq encoding"then"ptr"_1
  else
-  assert type = typeint ∨ type = mytype."word"report"tokind" + print.type
-   "int"_1
+  assert type = typeint ∨ type = mytype."word" ∨ type = mytype."boolean" report"tokind" + print.type+stacktrace
+   "int"_1 
 
 function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:int, knownoffset:int, offset:seq.word, prg:program)program
  if i > length.syms then

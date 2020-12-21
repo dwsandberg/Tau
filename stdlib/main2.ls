@@ -108,7 +108,7 @@ Function compilelib2(libname:seq.word)seq.word
    let aa =(result.p1)_1
     if subseq(aa, 1, 1) = "OK"then aa else"COMPILATION ERROR:" + space + aa
 
-Function main(arg:seq.int)outputformat
+Function main(arg:seq.int) int 
  let args2 = break(char1.";", decodeUTF8.UTF8.arg, 1) @ +(empty:seq.seq.word, towords.@e)
  let libname = args2_1
  let compileresult=if first.libname=first."L" then "OK"
@@ -120,8 +120,10 @@ Function main(arg:seq.int)outputformat
   // execute function specified in arg //
   let p2 = process.runit.args2
    if aborted.p2 then message.p2 else interpret(alltypes.result.p2, code.result.p2)
-  outputformat.toseqint.toUTF8(htmlheader + processpara.output)
+     createhtmlfile("stdout",   output  )
+  
 
+  
 Function testcomp(s:seq.seq.word)seq.seq.word
  let exports ="testit"
  let allsrc = groupparagraphs("module Module", s)
@@ -145,3 +147,6 @@ Function runit(b:seq.seq.word)runitresult
 Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname)
 
 Function print(a:seq.seq.word)seq.word a @ +(""," &br  &br" + @e)
+
+_______________
+

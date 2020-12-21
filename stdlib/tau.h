@@ -21,12 +21,9 @@ typedef  struct pinfo *processinfo;
 
 struct str2 { BT  type; BT  length; char data[500]; };  
 
-struct outputformat { BT bytelength; struct bitsseq *data;};
 
 struct bitsseq  { BT type; BT length; BT  data[50]; };
 
-void createfilefromoutput(struct outputformat *t,int file);
 
-struct outputformat *output(processinfo p);
 
 void inittau(int additional); /* defined in tau.c */

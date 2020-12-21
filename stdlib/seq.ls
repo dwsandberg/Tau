@@ -6,34 +6,24 @@ type seq is sequence length:int, x:T
 
 Export type:seq.T
 
-type pseq is sequence length:int, a:seq.T, b:seq.T
 
 unbound =(T, T)boolean
 
 builtin IDX(seq.T, int)T
 
-builtin IDXSEQ(a:seq.T, int, c:int)T
 
 Function_(a:seq.T, c:int)T
  let b = if c < 0 then length.a + c + 1 else c
  let typ = getseqtype.a
-  if typ > 1000 then callidx(a, b)
+  if  typ &ne 0 then 
+    assert  typ > 1000 report "indexproblem"+stacktrace
+    callidx3(a, b)
   else
    assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
-    if typ > 1 then IDXSEQ(a, typ, b)else IDX(a, b + 1)
+     IDX(a, b + 1)
     
-/Function idx2(a:seq.T, c:int)T
- let b = if c < 0 then length.a + c + 1 else c
- let typ = getseqtype.a
-  if typ > 1000 then callidx2(a, b)
-  else
-   assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
-    if typ > 1 then IDXSEQ(a, typ, b)else IDX(a, b + 1)
+builtin callidx3(a:seq.T, int)T
 
-/builtin callidx2(a:seq.T, int)T
-
-
-builtin callidx(a:seq.T, int)T
 
 
 
@@ -79,7 +69,19 @@ Export a(pseq.T)seq.T
 
 Export b(pseq.T)seq.T
 
-Function_(s:pseq.T, i:int)T
+Export to:pseq.T(s:seq.T)pseq.T
+
+
+type pseq is sequence length:int, a:seq.T, b:seq.T,start:int
+
+Export pseq(length:int, a:seq.T, b:seq.T,start:int) pseq.T
+
+Export toseq(pseq.T) seq.T
+
+Export start(a:pseq.T) int  
+
+Function_(s:pseq.T, ii:int)T
+ let i=ii+start.s
  let len = length.a.s
   if i > len then
   let x = to:pseq.T(b.s)
@@ -90,7 +92,6 @@ Function_(s:pseq.T, i:int)T
 
 Function ispseq(s:seq.T)boolean length.to:pseq.T(s) ≠ 0
 
-Export to:pseq.T(s:seq.T)pseq.T
 
 Function +(a:seq.T, b:seq.T)seq.T
  let la = length.a
@@ -99,11 +100,15 @@ Function +(a:seq.T, b:seq.T)seq.T
    let lb = length.b
     if lb = 0 then a else catnonzero(a, b)
 
+/Function largeseq(s:seq.T)seq.T let length = length.s if length < 64 then if length > 16 then s else if length > 8 then if length = 16 then [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_10, s_11, s_12, s_13, s_14, s_15, s_16]else s else if length = 8 then [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8]else if length = 4 then [ s_1, s_2, s_3, s_4]else s else s
+
+Function +(l:seq.T, a:T)seq.T l + [ a]
+
 function cat3(totallength:int, a:seq.T, b:seq.T, c:seq.T)seq.T
  // if totallength = 3 then [ a_1, b_1, c_1]else //
- if length.a > length.b then toseq.pseq(totallength, a, catnonzero(b, c))
- else if length.b < length.c then toseq.pseq(totallength, catnonzero(a, b), c)
- else toseq.pseq(totallength, toseq.pseq(length.a + length.b, a, b), c)
+ if length.a > length.b then toseq.pseq(totallength, a, catnonzero(b, c),0)
+ else if length.b < length.c then toseq.pseq(totallength, catnonzero(a, b), c,0)
+ else toseq.pseq(totallength, toseq.pseq(length.a + length.b, a, b,0), c,0)
 
 function catnonzero(a:seq.T, b:seq.T)seq.T
  let totallength = length.a + length.b
@@ -112,12 +117,9 @@ function catnonzero(a:seq.T, b:seq.T)seq.T
    let ta = to:pseq.T(a)
     if length.ta = 0 then
     let tb = to:pseq.T(b)
-      if length.tb = 0 then toseq.pseq(totallength, a, b)else cat3(totallength, a, a.tb, b.tb)
+      if length.tb = 0 then toseq.pseq(totallength, a, b,0)else cat3(totallength, a, a.tb, b.tb)
     else cat3(totallength, a.ta, b.ta, b)
 
-/Function largeseq(s:seq.T)seq.T let length = length.s if length < 64 then if length > 16 then s else if length > 8 then if length = 16 then [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_10, s_11, s_12, s_13, s_14, s_15, s_16]else s else if length = 8 then [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8]else if length = 4 then [ s_1, s_2, s_3, s_4]else s else s
-
-Function +(l:seq.T, a:T)seq.T l + [ a]
 
 Function subseq(s:seq.T, start:int, end:int)seq.T
  if start > end then empty:seq.T
@@ -127,7 +129,7 @@ Function subseq(s:seq.T, start:int, end:int)seq.T
  else
   let x = to:pseq.T(s)
    if length.x = 0 then
-   arithseq(end - start + 1, 1, start) @ +(empty:seq.T, s_@e)
+   arithseq(end - start + 1, 1, start)   @ +(empty:seq.T, s_@e)
    else subseq(x, start, end)
 
 function subseq(p:pseq.T, start:int, end:int)seq.T

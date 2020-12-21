@@ -54,8 +54,8 @@ Function mangledname(s:symbol)word mangle(fsig.s, module.s)
 
 Function isexternal(s:symbol)boolean
  isbuiltin.module.s
- ∧ not((fsig.s)_1 ∈ "aborted loadlib createlib unloadlib allocatespace addencoding createfile getinstance dlsymbol getfile addresstosymbol2 randomint 
- getmachineinfo currenttime callstack initialdict createthread  assert")
+ ∧ not((fsig.s)_1 ∈ "aborted loadlib createlib createlib2  unloadlib allocatespace addencoding createfile getinstance dlsymbol getfile addresstosymbol2 randomint 
+ getmachineinfo currenttime callstack initialdict createthread  assert callidx3")
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
  if fsig.s = "option(T, word seq)"then function.constantseq(nopara.s + 2, i64)
@@ -193,12 +193,14 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
  function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1)
  +CAST(r.2, r.1,ptr.i64, inttoptr))
- , addtemplate(symbol("callidx2(T seq,int)","int builtin","int"),4
+ ,//  
+   Did not work because ibcfirstpara2 was not working correctly 
+   addtemplate(symbol("callidx2(T seq,int)","int builtin","int"),4
  , GEP(r.1, i64, slot.ibcsub1, C64.0) 
  + LOAD(r.2, r.1, i64) 
  + CAST(r.3, r.2, ptr.function.[  i64, i64,ptr.i64, i64], inttoptr)
  + CALL(r.4, 0, 32768, function.[ i64, i64, ptr.i64, i64], r.3, 
-  slot(ibcfirstpara2), [slot.ibcsub1, slot.ibcsub2]))
+  slot.ibcfirstpara2 , slot.ibcsub1, slot.ibcsub2 ))
 , addtemplate(symbol("callidx2(T seq,int) ","real builtin","real"),4
  , GEP(r.1, i64, slot.ibcsub1, C64.0) 
  + LOAD(r.2, r.1, i64) 
@@ -210,11 +212,26 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + LOAD(r.2, r.1, i64) 
  + CAST(r.3, r.2, ptr.function.[  ptr.i64, i64,ptr.i64, i64], inttoptr)
  + CALL(r.4, 0, 32768, function.[ ptr.i64, i64, ptr.i64, i64], r.3, 
-  slot.ibcfirstpara2, [slot.ibcsub1, slot.ibcsub2]))
+  slot.ibcfirstpara2, [slot.ibcsub1, slot.ibcsub2])) //
+   addtemplate(symbol("callidx3(T seq,int)","int builtin","int")
+ , 1
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64, i64], symboltableentry("callidx3"_1, 
+ function.[ i64, i64, ptr.i64, i64]), slot.ibcfirstpara2, slot.ibcsub1,slot.ibcsub2))
+ , addtemplate(symbol("callidx3(T seq,int)","real builtin","real")
+ , 2
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64, i64], symboltableentry("callidx3"_1, 
+   function.[ i64, i64, ptr.i64, i64]), slot.ibcfirstpara2, slot.ibcsub1 ,slot.ibcsub2)
+   +CAST(r.2, r.1, double, sitofp))
+ , addtemplate(symbol("callidx3(T seq,int)","ptr builtin","ptr")
+ , 2
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64, i64], symboltableentry("callidx3"_1, 
+ function.[ i64, i64, ptr.i64, i64]), slot.ibcfirstpara2, slot.ibcsub1,slot.ibcsub2)
+ +CAST(r.2, r.1,ptr.i64, inttoptr))
  ]
  let const = toseq.uses @ +(empty:seq.symbol, buildtemplate(theprg, alltypes, @e))
  let discard4 = processconst(const, 1, empty:seq.symbol)
   empty:seq.match5
+  
 
 function symboltableentry(name:word)slot symboltableentry(name, i64)
 
@@ -269,9 +286,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
     // handle builtin package //
     let intable = findtemplate.xx
      if length.intable > 0 then intable_1
-     else if(fsig.xx)_1 = "callidx"_1 then
-     addtemplate(xx, 0, empty:seq.templatepart,"CALLIDX"_1, 0, empty:seq.symbol, tollvmtype(alltypes, resulttype.xx))
-     else if(fsig.xx)_1 = "global"_1 then
+      else if(fsig.xx)_1 = "global"_1 then
      addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
      else if isexternal.xx then
      let symname = if(fsig.xx)_1 ∈ "arcsin"then"asin"_1

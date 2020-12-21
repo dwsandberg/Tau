@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau   ; use taulextable ; getlextable
+#!/usr/local/bin/tau   ; use tools ; testprofile."bug9" 
 
  ; use main2  ; print.compile("pass2","bug9.core")
 
@@ -33,8 +33,7 @@ Module tools
 Library tools  
 doc    profile     
 uses stdlib
-exports bandeskopf barycenter display displaygraph displaytextgraph doc 
-labeledgraph layergraph makeDAG pretty profile  svggraph  tools
+exports  doc   profile    tools
 
 * STATE builtin:profile profileinfo profileresult
 

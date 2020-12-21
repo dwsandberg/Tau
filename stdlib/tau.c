@@ -341,7 +341,8 @@ BT loadedlibs()  // returns list of loaded libraries
 
 
 
-BT loadlib(processinfo PD,BT p_libname){char *name=(char *)&IDXUC(p_libname,2);
+BT loadlib(processinfo PD,BT p_libname)
+{char *name=(char *)&IDXUC(p_libname,2);
 int i = looklibraryname(name) ;
 if (i >= 0)
 {   fprintf(stderr,"did not load %s as it was loaded\n",name) ; 
@@ -349,24 +350,53 @@ if (i >= 0)
 return  loadlibrary(PD,name) ;  
 }
 
-BT createlib(processinfo PD,BT libname,BT otherlib,struct outputformat *t){
-  char *name=(char *)&IDXUC(libname,2),buff[200];
-     char *libs=(char *)&IDXUC(otherlib,2) ;
-    /* create the .bc file */
-     int f;
-    sprintf(buff,"%s.bc",name);
-     fprintf(stderr,"create %s\n",buff);
-      f=open(buff,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
-    createfilefromoutput( t,f);
-     close(f);
-     
-   /* compile to .bc file */ 
-  sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",name,libs,name);
+BT loadlib2(processinfo PD,char *libname)
+{ 
+int i = looklibraryname(libname) ;
+if (i >= 0)
+{   fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
+  return ((BT*)loaded[i+2])[3];}
+return  loadlibrary(PD,libname) ;  
+}
+
+  BT createfile2(BT bytelength, struct bitsseq *data, char * name) 
+              {    int file=1;
+                      if (!( strcmp("stdout",name)==0 ))  { 
+                      file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
+                       fprintf(stderr,"createfile %s %d\n",name,file);
+                     }
+                 if ( data->type == 0) {
+                  //  data is stored in one sequence  
+                    write(file, (char *)  data->data, bytelength);
+                   }
+                else {  
+                   // data is stored as seq.seq.int:  Each of the subseq may be of different length // 
+                    int j=0; int length=bytelength;
+                      while ( length > 0 )   { 
+                         BT len= ((BT *) data->data[j]) [1];
+                         write( file,(char *)(data->data[j])+16,  len * 8 );
+                             length=length-len * 8; j++;
+                       }          
+                }
+                 if (file!=1) close(file);
+                 return 1;
+                 }
+
+BT createlib2(processinfo PD,char * libname,char * otherlib, BT bytelength, struct bitsseq *data ){
+     char buff[200];
+     /* create the .bc file */
+       sprintf(buff,"%s.bc",libname);
+  
+        createfile2( bytelength , data,buff);
+     /* compile to .bc file */ 
+  sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",libname,otherlib,libname);
    fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else {loadlib(PD,libname); return 1;}
+  else {loadlib2(PD,libname); return 1;}
 }
+
+
 
 
 // start of file io
@@ -403,15 +433,7 @@ BT getfile(processinfo PD,BT filename){
     return org;
 }
 
-BT createfile(processinfo PD,BT filename,struct outputformat * t){ 
-int f;
-char *name=(char *)&IDXUC(filename,2);
-  fprintf(stderr,"createfile %s\n",name);
- f=open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
-  createfilefromoutput( t,f);
-  close(f);
-return 0;
-}
+
 
 // end of file io
 
@@ -504,27 +526,7 @@ BT (*finishprof)(BT idx,BT x) =NULL;
 
 BT noop(BT a,BT b) { return b;}
 
-
-struct outputformat *output(processinfo p) {return(struct outputformat *) (p->result);}
-
-
-void createfilefromoutput(struct outputformat *t,int file)
-              {       if (t->data->type == 0) {
-                  //  data is stored in one sequence  
-                    write(file, (char *)  t->data->data, t->bytelength);
-                   }
-                else {  
-                   // data is stored as seq.seq.int:  Each of the subseq may be of different length // 
-                    int j=0; int length=t->bytelength;
-                      while ( length > 0 )   { 
-                         BT len= ((BT *) t->data->data[j]) [1];
-                         write( file,(char *)(t->data->data[j])+16,  len * 8 );
-                             length=length-len * 8; j++;
-                       }          
-                }
-                 }
-                
-
+  
 
 
 // end of thread creation.
@@ -619,10 +621,11 @@ int main(int argc, char **argv)    {   int i=0,count;
          }         
          
         fflush(stdout); 
-        createfilefromoutput( output(p ),/* stdout */ 1);
-       return 0;
+         return 0;
      }
      
+ 
+ 
  
  BT getmachineinfo(processinfo PD) 
 {  BT a = myalloc(PD,2);
@@ -681,3 +684,13 @@ BT callstack(processinfo PD,BT maxsize){
      
 BT dlsymbol(processinfo PD,BT funcname) 
 {return (BT) dlsym(RTLD_DEFAULT, (char *)&IDXUC(funcname,2));}
+
+
+BT toscreen(BT outputnibble ) {
+return write( /* stdout */ 1,(char *) &outputnibble+1,  outputnibble & 7  );
+}
+
+BT callidx3(BT PD, BT * seq, BT idx)  
+ {   if (seq[0]==0 )  return seq[idx+1];
+ BT (* callit)(BT,BT *,BT ) = (  BT (*)(BT,BT * ,BT )  ) seq[0];
+    return  (callit)(PD,seq,idx);}

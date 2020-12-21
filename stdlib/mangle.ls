@@ -16,7 +16,8 @@ Export break(w:word, a:seq.word, j:int)seq.seq.word
 
 Function mangle(fsig:seq.word, module:seq.word)word
  if module = "builtin"
- ∧ fsig_1 ∈ "aborted loadedlibs loadlib createlib unloadlib allocatespace addencoding createfile getinstance dlsymbol getfile addresstosymbol2 randomint getmachineinfo currenttime callstack initialdict clock createthread     assert"then
+ ∧ fsig_1 ∈ "aborted loadedlibs loadlib createlib createlib2  unloadlib allocatespace addencoding createfile getinstance dlsymbol getfile addresstosymbol2 randomint getmachineinfo currenttime callstack initialdict clock createthread     assert
+  callidx3"then
  fsig_1
  else
   let i = findindex("("_1, fsig)

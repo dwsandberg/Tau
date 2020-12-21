@@ -126,7 +126,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
     else if len > 2 ∧ isnotOp.result_(len - 2) ∧ fsig.sym = "BR 3"then
     yyy(p, org, k + 1, subseq(result, 1, len - 3) + [ result_len, result_(len - 1), Br], nextvar, map)
     else yyy(p, org, k + 1, result + sym, nextvar, map)
-   else if(fsig.sym)_1 ∈ "apply3"then applycode3(p, org, k, result, nextvar, map)
+   else if(fsig.sym)_1 ∈ "apply3"then applycode4(p, org, k, result, nextvar, map)
    else
     let nopara = nopara.sym
     let dd = code.lookupcode(p, sym)
@@ -294,7 +294,7 @@ function dfg(s:symbol)seq.word
   let a = last.module.s
    [ a, if a ∈ "$define local"then first."?"else first.fsig.s]
 
-function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol)expandresult
+'function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol)expandresult
  // should do multiply once at start of seq instead of at access to every element. Replace will add of stride //
  let totallength = nextvar + 1
  let applysym = org_k
@@ -396,7 +396,7 @@ function applycode3(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
     Lcode2 slotrecord mapele liblib parc attribute2 prettyresult internalbc"  //
     
 
-function  subblock(theseq:symbol,idx:symbol,
+/function  subblock(theseq:symbol,idx:symbol,
 seqtype:symbol,newidx:symbol, seqelementkind:word ,typesize:int
 ,change:boolean ) seq.symbol  
      let threeor2=if change then Lit.3 else Lit.2
@@ -417,7 +417,7 @@ seqtype:symbol,newidx:symbol, seqelementkind:word ,typesize:int
    [ seqtype ,Lit.1000, GtOp, Lit.2, threeor2,Br,
            theseq, newidx, Callidx.seqelementkind,Exit,
            theseq,newidx,Lit.1,PlusOp,Idx.seqelementkind,Exit,
-        Block(mytype.[seqelementkind],3)]  
+        Block(mytype.[seqelementkind],3)]  '
 
 function subthunk2(s:seq.symbol, i:int, with:seq.symbol, found:seq.symbol)seq.symbol
  if i > length.s then found + s
@@ -426,6 +426,73 @@ function subthunk2(s:seq.symbol, i:int, with:seq.symbol, found:seq.symbol)seq.sy
   let t = findindex((fsig.s_i)_1,"@e @i @exit")
   let news = if t > 3 then s else replace(s, i, with_t)
    subthunk2(news, i + 1, with, if t ∈ [ 3] ∧ isempty.found then found + s_i else found)
+
+function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol)expandresult
+ // should do multiply once at start of seq instead of at access to every element. Replace will add of stride //
+ let totallength = nextvar + 1
+ let applysym = org_k
+ let seqelementkind =(typerep.parameter.(paratypes.applysym)_1)_1
+ let resulttype = [(module.applysym)_1]
+ let STKRECORD = symbol("STKRECORD(ptr, ptr)","builtin","ptr")
+ let nullptr = symbol("nullptr","builtin","ptr")
+ let idxp = Idx."ptr"_1
+ let idxi = Idx."int"_1
+ let descleft = Lit.-2
+ let theseq = Local(nextvar + 2)
+ let acc = Local(nextvar + 3)
+ let masteridx = Local(nextvar + 4)
+ let Definenewmasteridx = Define(nextvar + 10)
+ let newmasteridx = Local(nextvar + 10)
+ let Defineseqelement = Define(nextvar + 11)
+ let seqelement = Local(nextvar + 11)
+  let sym = code_(-2)
+ let t = backparse(code, length.code - 2, nopara.code_(length.code - 1), empty:seq.int)
+ let thunk0 = subseq(code,t_1,length.code-1) 
+  assert fsig.thunk0_1 = "@acc"report"apply error" + t @ +("", toword.@e)
+  + code @ +(" &br code:", print.@e)
+  + thunk0 @ +(" &br code:", print.@e)
+  + " &br nopara"
+  + toword.nopara.code_(length.code - 1)
+  + " &br"
+  + t @ +("", toword.@e)
+  let checknoop = if length.thunk0 = 10
+  ∧ thunk0 @ +("", dfg.@e)
+  = "builtin @acc $define ? builtin @e $define ? % $int 0 $int 1 % $record RECORD seq +"then
+  let b2 = backparse(code, t_1 - 1, 2, empty:seq.int)
+    if subseq(code, b2_1, b2_2 - 1) = [ Constant2.Emptyseq]then
+    subseq(code, 1, b2_1 - 1)
+    else empty:seq.symbol
+  else empty:seq.symbol
+   if not.isempty.checknoop then yyy(p, org, k + 1, checknoop, nextvar, map)
+   else
+    let zz0=parameter.(paratypes.applysym)_3
+    let zz=abstracttype.zz0
+       let part1 = subseq(code, 1, t_1 - 1) + [ Lit.1, Idx."int"_1, Define.totallength]
+    let b = subthunk2(thunk0, 1, [ seqelement, masteridx], empty:seq.symbol)
+    let thunk = [ acc] + (b << 1)
+    let kk = [ Lit.1,Lit(nextvar + 2), 
+    //  loop(seq, acc, masteridx)//
+    // 1 // Loopblock("ptr," + resulttype + ", int,  int)"), 
+    // 2  if  masteridx > totallength  then exit // 
+        masteridx,Local.totallength,  GtOp, Lit.3, Lit.4, Br, 
+    // 3 // acc, Exit,
+      // 4 else  let newmasteridx = masteridx + 1, 
+    let sequenceele = seq_(idx)
+     continue(thseqeq,thunk,newmasteridx) //
+         masteridx, Lit.1, PlusOp, Definenewmasteridx,
+          theseq, Lit.0,idxi, Lit.0, EqOp ,Lit.2,Lit.3, Br,
+         theseq, newmasteridx, Idx.seqelementkind, Exit, 
+          theseq, masteridx, Callidx.seqelementkind ,   Exit,
+         Block(mytype.[seqelementkind],3),   Defineseqelement, theseq]
+    + thunk
++ [  newmasteridx, continue.3,   Block(mytype.resulttype, 4)]
+   //  assert subseq(x,1,3) = "1 int ptr" report  (part1 + kk) @@ +(" &br result", print.@e)
+   //   yyy(p, org, k + 1, part1 + kk, nextvar + 12, map)
+   
+   // zz &in "seq char mytype int token templatepart  myinternaltype UTF8 encoding llvmtype
+    Lcode2 slotrecord mapele liblib parc attribute2 prettyresult internalbc"  //
+    
+
 
 function maxvarused(code:seq.symbol)int maxvarused(code, 1, 0)
 

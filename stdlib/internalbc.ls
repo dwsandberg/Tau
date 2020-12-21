@@ -79,9 +79,6 @@ Function LOAD(slot:slot, a1:slot, a2:llvmtype)internalbc
 Function CMP2(slot:slot, a1:slot, a2:slot, a3:int)internalbc
  addstartbits(toint.CMP2, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
 
-function addaddress(loc:slot, a:slot, bc:internalbc)internalbc addaddress(-toint.loc, toint.a, bc)
-
-function addsignedaddress(loc:slot, a:slot, bc:internalbc)internalbc addsignedaddress(-toint.loc, toint.a, bc)
 
 /Function BINOP(slot:int, a1:int, a2:int, a3:int)internalbc addstartbits(toint.BINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
 
@@ -96,6 +93,11 @@ Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot)internalb
 
 Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, a6:slot)internalbc
  addstartbits(toint.CALL, 6, add(a1, add(a2, add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, emptyinternalbc)))))))
+
+Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, a6:slot,a7:slot)internalbc
+ addstartbits(toint.CALL, 7, add(a1, add(a2, add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, addaddress(slot, a6, addaddress(slot, a7, emptyinternalbc))))))))
+
+
 
 Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, rest:seq.slot)internalbc
  addstartbits(toint.CALL
@@ -195,8 +197,15 @@ Function +(a:internalbc, b:internalbc)internalbc
 Function finish(b:internalbc)seq.int
  if bitcount.b = 0 then done.b
  else [ bits.b * 64 + bitcount.b] + done.b
+ 
+ 
+function addsignedaddress(loc:slot, a:slot, bc:internalbc)internalbc addsignedaddress(-toint.loc, toint.a, bc)
 
-Function addaddress(slot:int, a:int, b:internalbc)internalbc
+function addaddress(locin:slot, a:slot, bc:internalbc)internalbc 
+  let slot=-toint.locin 
+ addaddress(slot, toint.a, bc) 
+ 
+function addaddress(slot:int, a:int, b:internalbc)internalbc  
  if-a > slot then
  if a = ibcfirstpara2 then internalbc(0, 0, [ firstpara2] + finish.b)
   else
@@ -213,7 +222,7 @@ Function addaddress(slot:int, a:int, b:internalbc)internalbc
  else
   internalbc(0, 0, [ reloc + 64 * (relocoffset + a - slot + 1)] + finish.b)
 
-Function addsignedaddress(slot:int, a:int, b:internalbc)internalbc
+function addsignedaddress(slot:int, a:int, b:internalbc)internalbc
  if a ≤ 0 then
  let v = slot + a
   let c = if v ≥ 0 then 2 * v else 2 * -v + 1
