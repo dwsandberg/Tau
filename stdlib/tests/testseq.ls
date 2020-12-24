@@ -120,7 +120,7 @@ unbound get:T T
 unbound =(T,T) boolean
 
 Function check:seq.T seq.word
-let unpack = random:seq.T(18)
+let unpack = random:seq.T(16)
 let pack = packed.unpack
 let x = if sizeoftype:T = 1 then""else"packed"
  if(length.pack > 9999 ∨ seqkind.pack = x + toword.length.unpack) ∧ pack = unpack then
@@ -146,6 +146,7 @@ let i = getint.6
 function seqkind(a:seq.T)seq.word
  let t = getseqtype.a
   if t = 0 then [ toword.length.a]
+  else if t =1 then "packed" + toword.length.a
   else if t = getseqtype.constantseq(1, get:T)then"const"
   else if ispseq.a then"pseq"
   else if t = getseqtype.packed.constantseq(1, get:T)then"packed" + toword.length.a

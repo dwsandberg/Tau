@@ -1,4 +1,8 @@
-#!/usr/local/bin/tau   ; use tools ; testprofile."bug9" 
+#!/usr/local/bin/tau   ; use tools; testprofile."solardataall"
+
+
+; use doc ; doclibrary."tools"
+
 
  ; use main2  ; print.compile("pass2","bug9.core")
 

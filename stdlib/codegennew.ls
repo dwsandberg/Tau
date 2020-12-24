@@ -307,12 +307,10 @@ function profilecall(l:Lcode2, args:seq.int, callee:slot, idx:int, functype:llvm
 
 type stat5 is record caller:word, callee:word
 
-function profilerepA(zero:slot, a:encodingpair.stat5)seq.slot
- [ slot.wordref.caller.data.a, slot.wordref.callee.data.a, zero, zero, zero, zero]
-
 function profiledata slot
 let d = encoding:seq.encodingpair.stat5
-let data = d @ +([ C64.6, C64.length.d], profilerepA(C64.0, @e))
+let data = d @ +([ C64.1, C64.length.d]
+    , [ slot.wordref.caller.data.@e, slot.wordref.callee.data.@e, C64.0, C64.0, C64.0, C64.0])
  AGGREGATE.data
 
 function profiledatalen int length.encoding:seq.encodingpair.stat5 * 6 + 2

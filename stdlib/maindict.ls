@@ -38,7 +38,7 @@ Function writedict(tin:seq.encodingpair.seq.char)int
      place(d, length.d, empty:seq.int)
     createfile("maindictionary.data", [ 0, 0] + data(p + t) + [ length.data.p + 1, length.data.p])
 
-Function loaddict(file:fileresult)int
+/Function loaddict(file:fileresult)int
  if size.file > -1 then
  let data = data.file
    // deepcopy. // get2(data, length.data) @ +(0, primitiveadd.@e)

@@ -18,8 +18,6 @@ use seq.bits
 
 use bits
 
-use fileio
-
 use seq.seq.seq.int
 
 use seq.seq.int
@@ -31,7 +29,6 @@ use seq.seq.internalbc
 
 use seq.internalbc
 
-use internalbc
 
 use llvm
 

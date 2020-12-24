@@ -4,7 +4,6 @@
  
 #include <stdio.h>
 #include <stdlib.h>
-#include "tau.h"
 #include "math.h"
 #include <dlfcn.h>
 #include <execinfo.h>
@@ -16,17 +15,25 @@
 #include <strings.h>
 #include <signal.h>
 #include <time.h>
+#include <setjmp.h>
+#include <pthread.h>
+#include <errno.h>
 
 
-void assertexit(int b,char *message);
-
-
+#define  BT long long int
+#define IDXUC(a,b)  (*(BT *)((a)+8*(b)))
+#define STRLEN(a)  IDXUC(a,1)
 #define myalloc allocatespace
+
+
+
+
+typedef  struct pinfo *processinfo;
 
 
 struct spaceinfo { char * nextone,*lastone; BT *blocklist; };
 
-struct pinfo { BT kind; // 1 if aborted
+struct pinfo { BT aborted; // 1 if aborted
     BT message; // message if aborted (seq.word)
     BT result;  // result returned by process
     BT joined;  // has process been joined to parent?
@@ -47,7 +54,16 @@ struct pinfo { BT kind; // 1 if aborted
     BT noargs;
     BT *args;
                };
+               
+void assertexit(int b,char *message);
 
+BT getfile(processinfo PD,BT filename);
+
+BT loadlibrary(struct pinfo *PD,char *lib_name_root);
+
+BT (*toUTF8)(struct pinfo *,BT );
+
+BT *byteseqencetype;
 
 
 //Start of space allocation
@@ -59,15 +75,12 @@ struct pinfo { BT kind; // 1 if aborted
 
 pthread_mutex_t sharedspace_mutex=PTHREAD_MUTEX_INITIALIZER;  //for shared space
 struct pinfo sharedspace={0,0,0,0,0,0};
-
-
-
- static pthread_mutex_t memmutex=PTHREAD_MUTEX_INITIALIZER;
- static int alloccount=0;
+static pthread_mutex_t memmutex=PTHREAD_MUTEX_INITIALIZER;
+static int alloccount=0;
 
 // myalloc does not zero memory so care is needed to initialize every fld when calling.
 
- BT spacecount=0;
+BT spacecount=0;
  
 
 BT allocatespace(processinfo PD, BT i)   { struct  spaceinfo *sp =&PD->space;
@@ -103,29 +116,26 @@ void myfree(struct spaceinfo *sp) {int i; i =0;
 // End of space allocation
 
 
-BT (*toUTF8)(struct pinfo *,BT );
-
-BT *byteseqencetype;
-
-BT (*  decodeword)(processinfo PD,BT P1);
-
-BT loadlibrary(struct pinfo *PD,char *lib_name_root);
 
 
-BT getfile(processinfo PD,BT filename);
-
-//  encoding support
+// start  encoding support
 
 
 
-struct einfo {BT hashtable;   processinfo allocatein; };
+struct einfo {BT encodingstate;   processinfo allocatein;  };
 
-struct einfo * neweinfo(processinfo PD){
+struct einfo * neweinfo(processinfo PD,BT encodingnumber){
    static const BT x1[]={0,0};
    static const BT empty4[]={0,4,(BT) x1,(BT) x1,(BT) x1,(BT) x1};
-   static const BT inverted[]={0,0,(BT) empty4,(BT) empty4,(BT) x1};
+    BT *emptyencodingstate=(BT *)myalloc(PD,6);
+    emptyencodingstate[0]=encodingnumber;
+    emptyencodingstate[1]=0;
+    emptyencodingstate[2]=(BT) empty4;
+    emptyencodingstate[3]=(BT) empty4;
+    emptyencodingstate[4]=(BT)x1;
+    emptyencodingstate[5]=(BT) 0;
    struct einfo *e=(struct einfo *)myalloc(PD,sizeof (struct einfo)/8);
-   e->hashtable=(BT)inverted;
+   e->encodingstate=(BT)emptyencodingstate;
    e->allocatein=PD ;
    return e;
 }
@@ -145,22 +155,22 @@ struct einfo  *startencoding(processinfo PD,BT no)
        PD->encodings = cpy;
        PD->newencodings=1;  
        }
-  e = neweinfo(PD);
+  e = neweinfo(PD,no);
   PD->encodings[no]=e;
  }
  return e;
  }
 
 BT getinstance(processinfo PD,BT  encodingnumber){ 
-   return startencoding(PD,encodingnumber)->hashtable ;
+   return startencoding(PD,encodingnumber)->encodingstate ;
 }
  
 BT addencoding(processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
  struct einfo *e=startencoding(PD, encodingnumber)  ;
   assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
   BT encodingpair=   (e->allocatein == PD ) ? P2 : (deepcopy)(e->allocatein,P2)  ;
-  BT newtable=(add2)(e->allocatein,e->hashtable,encodingpair);
-  e->hashtable=newtable;
+  BT newtable=(add2)(e->allocatein,e->encodingstate,encodingpair);
+  e->encodingstate=newtable;
  assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
  // return  encoding
  return (( BT *) newtable)[5];
@@ -169,6 +179,7 @@ BT addencoding(processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,
 
 // end of encoding support
 
+// start of library support //
 
 BT loaded[20]={0,0};
 char libnames[20][100];
@@ -179,6 +190,8 @@ BT* initialdictionary=empty;
 
 BT* initialdict() { return initialdictionary; }
 
+BT loadedlibs()  // returns list of loaded libraries
+ {return (BT)loaded;}   
 
 
 int looklibraryname(char* name) { int i;
@@ -222,47 +235,31 @@ if ( baselib==1 ){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);}
     
-
-    decodeword= dlsym(RTLD_DEFAULT,"decodewordZwordsZword");
-    if (!decodeword){
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }
     
-    staticencodings[1]=neweinfo(&sharedspace);
-    staticencodings[2]=neweinfo(&sharedspace); // encoding map for assigning encoding to an integer number
+    staticencodings[1]=neweinfo(&sharedspace,1);  // word encodings //
+    staticencodings[2]=neweinfo(&sharedspace,2); // encoding map for assigning encoding to an integer number
 
-   BT (* loaddict)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"loaddictionaryZmain2Zfileresult");
+/*   BT (* loaddict)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"loaddictionaryZmain2Zfileresult");
     if (!loaddict){
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
     }
-   loaddict(&sharedspace,getfile(&sharedspace,(BT)"1234567812345678maindictionary.data")); 
-   fprintf( stderr, "nowords2 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);          
+    loaddict(&sharedspace,getfile(&sharedspace,(BT)"1234567812345678maindictionary.data")); 
+*/
 
-     initialdictionary=(BT *)(  ((BT * )  (staticencodings[1]->hashtable)) [4]); 
+    initialdictionary=(BT *)(  ((BT * )  (staticencodings[1]->encodingstate)) [4]); 
 }
 
 
 BT wdrepseq= ((BT *) libdesc)[1];
-fprintf( stderr, "nowords %lld \n",  ((BT *)wdrepseq)[1]); 
 
- BT (* addwords2)(processinfo PD,BT ,BT ) = dlsym(RTLD_DEFAULT, 
-       "addwordsZwordsZcharzseqzencodingstateZcharzseqzencodingrepzseq");
-      if (!addwords2) {
-        BT (* addwords3)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT, 
-          "addwordsZwordsZcharzseqzencodingpairzseq");
-          if (!addwords3){
-               fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-              exit(EXIT_FAILURE);
-              }
-           staticencodings[1]->hashtable= addwords3(&sharedspace,wdrepseq);
-     }  else 
- staticencodings[1]->hashtable= addwords2(&sharedspace,staticencodings[1]->hashtable,wdrepseq);  
-     
+BT (* addlibrarywords)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT,  "addlibrarywordsZmain2Zliblib");
+if (!addlibrarywords){
+    fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+    exit(EXIT_FAILURE);
+}
 
-fprintf( stderr, "nowords3 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1]);          
- 
+addlibrarywords(&sharedspace,libdesc);
  
  // register library 
      { int i =loaded[1]++;
@@ -275,8 +272,8 @@ fprintf( stderr, "nowords3 %lld \n",  ((BT *) (staticencodings[1]->hashtable))[1
     strcpy(libnames[i+2],libname);
     }
 
-  fprintf(stderr,"finish initlib5  \n");
- return 0;
+fprintf(stderr,"finish initlib5  \n");
+return 0;
   
 }
 
@@ -298,6 +295,27 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
   return sbuf.st_mtimespec.tv_sec;
       
 }
+
+ 
+BT loadlib(processinfo PD,BT p_libname)
+{char *name=(char *)&IDXUC(p_libname,2);
+int i = looklibraryname(name) ;
+if (i >= 0)
+{   fprintf(stderr,"did not load %s as it was loaded\n",name) ; 
+  return ((BT*)loaded[i+2])[3];}
+return  loadlibrary(PD,name) ;  
+}
+
+BT loadlib2(processinfo PD,char *libname)
+{ 
+int i = looklibraryname(libname) ;
+if (i >= 0)
+{   fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
+  return ((BT*)loaded[i+2])[3];}
+return  loadlibrary(PD,libname) ;  
+}
+
+// end of library support 
 
 
 void dumpstack()
@@ -332,34 +350,16 @@ BT assert(processinfo PD,BT message)
 BT aborted(processinfo PD,BT pin){
      processinfo q = ( processinfo)  pin;
     if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
-    return (BT)( q->kind);
+    return (BT)( q->aborted);
 }
 
-BT loadedlibs()  // returns list of loaded libraries
- {return (BT)loaded;}   
- 
 
 
+// start of file io
 
-BT loadlib(processinfo PD,BT p_libname)
-{char *name=(char *)&IDXUC(p_libname,2);
-int i = looklibraryname(name) ;
-if (i >= 0)
-{   fprintf(stderr,"did not load %s as it was loaded\n",name) ; 
-  return ((BT*)loaded[i+2])[3];}
-return  loadlibrary(PD,name) ;  
-}
+struct bitsseq  { BT type; BT length; BT  data[50]; };
 
-BT loadlib2(processinfo PD,char *libname)
-{ 
-int i = looklibraryname(libname) ;
-if (i >= 0)
-{   fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
-  return ((BT*)loaded[i+2])[3];}
-return  loadlibrary(PD,libname) ;  
-}
-
-  BT createfile2(BT bytelength, struct bitsseq *data, char * name) 
+BT createfile2(BT bytelength, struct bitsseq *data, char * name) 
               {    int file=1;
                       if (!( strcmp("stdout",name)==0 ))  { 
                       file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
@@ -396,12 +396,6 @@ BT createlib2(processinfo PD,char * libname,char * otherlib, BT bytelength, stru
   else {loadlib2(PD,libname); return 1;}
 }
 
-
-
-
-// start of file io
-
-#include <errno.h>
 
 BT getfile(processinfo PD,BT filename){
     int fd;
@@ -446,10 +440,10 @@ BT getfile(processinfo PD,BT filename){
 void threadbody(struct pinfo *q){
 if (setjmp(q->env)!=0) {
        q->message= ((BT (*) (processinfo,BT))(q->deepcopyseqword) ) (q->spawningprocess,q->error);
-        q->kind = 1;}
+        q->aborted = 1;}
     else {BT result;
      // fprintf(stderr,"start threadbody\n");
-     q->kind = 0;
+     q->aborted = 0;
      switch( q->noargs){
          case 0:
         result= ((BT (*) (processinfo))(q->func) )(q); break;
@@ -482,7 +476,7 @@ if (setjmp(q->env)!=0) {
 void initprocessinfo(processinfo p,processinfo PD){
     p->spawningprocess =PD;
     p->encodings = PD->encodings;
-    p->kind = 0;
+    p->aborted = 0;
     p->pid = pthread_self ();
     p->joined =0 ;
     p->space.nextone =0;
@@ -606,19 +600,7 @@ int main(int argc, char **argv)    {   int i=0,count;
        p->args=&argsx;
        p->freespace=0;
         threadbody(p);  
-       if (p->kind==1 )   { 
-          char *header = "Status: 500 Error\r\nContent-Type: text/html\r\n\r\n";
-        BT s=toUTF8(PD,p->message);
-        BT i,seqlen=IDXUC(s,1);
-        BT *r=(BT *)myalloc( PD,(2+strlen(header)+seqlen ));
-        r[1]=strlen(header)+seqlen;
-        r[0]=0;
-        BT *t=r+2;
-        while (*header !=0)   *(t++)=*(header++);
-        for (i=1; i<=seqlen;i++)
-         { BT tmp=IDX(PD,s,i);*(t++)=  tmp;}
-         p->message=(BT)r;
-         }         
+       if (p->aborted==1 )       fprintf(stderr,"FATAL ERROR");                   
          
         fflush(stdout); 
          return 0;

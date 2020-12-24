@@ -54,13 +54,12 @@ Function_(a:blockseq.T, i:int)T
 blk_((i-1)mod blksz + 1)
 
 Function blockit(s:seq.T, ds:int)seq.T
-   blockit.s
-
- let blksz = blocksize:T / ds
+  assert ds > 1 report "blockit problem"
+  let blksz = blocksize:T / ds
   if length.s ≤ blksz then
-  let newseq = allocatespace:T(length.s * ds + 2)
-   let d = if ds > 1 then s @ memcpy(2, 0, ds, newseq, @e)else s @ setfld(2, newseq, @e)
-    setfirst(newseq, ds, length.s)
+   let newseq = allocatespace:T(length.s * ds + 2)
+   let d =  s @ memcpy(2, 0, ds, newseq, @e) 
+    setfirst(newseq, 1, length.s)
   else
    let noblks =(length.s + blksz - 1) / blksz
    let blkseq = allocatespace:seq.T(noblks + 2)

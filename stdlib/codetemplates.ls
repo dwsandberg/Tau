@@ -155,6 +155,7 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + CAST(r.4, r.3, i64, zext)
  + BINOP(r.5, r.2, r.4, add))
  , addtemplate(symbol("cast(T seq, int, int)","builtin","ptr"), 1, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2))
+  , addtemplate(symbol("GEP(T seq, int)","ptr builtin","ptr"), 1, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2))
  , addtemplate(symbol(">(int, int)","builtin","boolean"), 2, CMP2(r.1, slot.ibcsub1, slot.ibcsub2, 38) + CAST(r.2, r.1, i64, zext))
  , addtemplate(symbol("not(boolean)","builtin","boolean"), 1, BINOP(r.1, slot.ibcsub1, C64.1, xor))
  , // include aborted here so does not show up in profile results addtemplate("abortedZbuiltinZTzprocess"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."abortedZbuiltinZTzprocess",-1, ibcsub1)), Including this as a template causes subtle compile errors //

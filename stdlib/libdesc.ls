@@ -110,9 +110,11 @@ Export type:parc
 
 type liblib is record libname:seq.word, words:seq.encodingpair.seq.char, mods:seq.firstpass, timestamp:int, profiledata:seq.parc
 
-type parc is record head:word, tail:word, counts:int, clocks:int, space:int
+type parc is record head:word, tail:word, counts:int, clocks:int, space:int, unused:int
 
-Export parc(head:word, tail:word, counts:int, clocks:int, space:int)parc
+
+Function parc(head:word, tail:word, counts:int, clocks:int, spacex:int )parc
+  parc(head,tail,counts,clocks,spacex,0)
 
 Export head(parc)word
 
@@ -139,3 +141,4 @@ Builtin loadedlibs seq.liblib
 Function libmodules(dependentlibs:seq.word)seq.firstpass loadedlibs @ +(empty:seq.firstpass, libmodules(dependentlibs, @e))
 
 function libmodules(dependentlibs:seq.word, l:liblib)seq.firstpass if(libname.l)_1 ∈ dependentlibs then mods.l else empty:seq.firstpass
+

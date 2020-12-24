@@ -143,11 +143,11 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let k = findindex(","_1, fsig.newsym)
        let info = gettypeinfo(alltypes, mytype.subseq(fsig.newsym, 3, k - 2))
-       let a = kind.info
+       let a=if size.info > 1 then toword.size.info else kind.info
        let newfsig ="apply3(" + a + "seq" + subseq(fsig.newsym, k, length.fsig.newsym)
        let p2 = symbol(newfsig, [ kind] + "builtin", returntype.newsym)
         postbind3(alltypes, dict, code, i + 1,(result >> 1) + Lit.size.info + p2, modpara, org, calls, sourceX, tempX)
-      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2 callidx3"
+      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2 callidx3 GEP"
       ∨ fsig.sym = "setfld(int, T seq, T)"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let p2 = symbol(fsig.sym, [ kind] + "builtin", returntype.newsym)
@@ -162,16 +162,20 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)  
       else if fsig.sym =        "sizeoftype:T"then 
        let p2=   Lit.size.gettypeinfo(alltypes, parameter.modname.newsym)
-        postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)         
+        postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
+      else if  fsig.sym="∧(T, bits)" then
+        let p2=symbol("∧(bits, bits)","builtin","bits")
+         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)             
       else
        let codeforbuiltin = if fsig.sym = "processresult(T process)"then
   [ Local.1, Lit.2, Idx.kind.gettypeinfo(alltypes, parameter.modname.newsym)]
   else if fsig.sym = "packed(T seq)"then [ Local.1] + blocksym.gettypeinfo(alltypes, parameter.modname.newsym)
-  else if fsig.sym = "primitiveadd(T encodingpair)"then
-  let addefunc = newsymbol("add", typeencoding + parameter.modname.newsym, [ typeencodingstate + parameter.modname.newsym, typeencodingpair + parameter.modname.newsym], typeencodingstate + parameter.modname.newsym)
+  else if  fsig.sym = "primitiveadd(int,T encodingpair)" then
+  let addefunc = newsymbol("add", typeencoding + parameter.modname.newsym, 
+  [ typeencodingstate + parameter.modname.newsym, typeencodingpair + parameter.modname.newsym], typeencodingstate + parameter.modname.newsym)
    let add2 = newsymbol("addencoding", mytype."builtin", [ typeint, mytype."int seq", typeint, typeint], typeint)
    let dc = deepcopysym(alltypes, typeencodingpair + parameter.modname.newsym)
-    encodenocode.parameter.modname.newsym + [ Local.1, Fref.addefunc, Fref.dc, add2, Words."NOINLINE STATE", Optionsym]
+     [Local.1, Local.2, Fref.addefunc, Fref.dc, add2, Words."NOINLINE STATE", Optionsym]
   else
    assert fsig.sym = "getinstance:encodingstate.T"report"not expecting" + print.sym
    let get = symbol("getinstance(int)","builtin","ptr")

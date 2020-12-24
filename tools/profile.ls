@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau
+#!/usr/local/bin/tau ; use tools; testprofile."solardataall"
 
 /run profile dumpprofileinfo
 
@@ -142,4 +142,5 @@ function reverse(a:parc)parc parc(tail.a, head.a, counts.a, clocks.a, space.a)
 
 function tonode(a:parc)parc parc(head.a, head.a, counts.a, clocks.a, space.a)
 
-Function dumpprofileinfo seq.word profiledata.loadedlibs_1 @ list(""," &br", [ tail.@e, head.@e, toword.counts.@e])
+Function dumpprofileinfo seq.word let e=(profiledata.loadedlibs_1 ) 
+profiledata.loadedlibs_1 @ list(""," &br", [ tail.@e, head.@e, toword.counts.@e])

@@ -150,3 +150,6 @@ Function print(a:seq.seq.word)seq.word a @ +(""," &br  &br" + @e)
 
 _______________
 
+Function addlibrarywords(l:liblib) int let discard=addencodingpairs(words.l) 1
+
+use encoding.seq.char

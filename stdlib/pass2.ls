@@ -431,7 +431,8 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
  // should do multiply once at start of seq instead of at access to every element. Replace will add of stride //
  let totallength = nextvar + 1
  let applysym = org_k
- let seqelementkind =(typerep.parameter.(paratypes.applysym)_1)_1
+ let ds=(typerep.parameter.(paratypes.applysym)_1)_1
+ let seqelementkind =if ds &in "int real" then ds else "ptr"_1
  let resulttype = [(module.applysym)_1]
  let STKRECORD = symbol("STKRECORD(ptr, ptr)","builtin","ptr")
  let nullptr = symbol("nullptr","builtin","ptr")
@@ -441,6 +442,8 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
  let theseq = Local(nextvar + 2)
  let acc = Local(nextvar + 3)
  let masteridx = Local(nextvar + 4)
+ let seqtype= Local(nextvar + 8)
+ let Defineseqtype = Define(nextvar+8)
  let Definenewmasteridx = Define(nextvar + 10)
  let newmasteridx = Local(nextvar + 10)
  let Defineseqelement = Define(nextvar + 11)
@@ -480,10 +483,20 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
     let sequenceele = seq_(idx)
      continue(thseqeq,thunk,newmasteridx) //
          masteridx, Lit.1, PlusOp, Definenewmasteridx,
-          theseq, Lit.0,idxi, Lit.0, EqOp ,Lit.2,Lit.3, Br,
-         theseq, newmasteridx, Idx.seqelementkind, Exit, 
-          theseq, masteridx, Callidx.seqelementkind ,   Exit,
-         Block(mytype.[seqelementkind],3),   Defineseqelement, theseq]
+         theseq, Lit.0,idxi,Defineseqtype ,
+          seqtype, Lit.0, EqOp ,Lit.2,Lit.3, Br,
+         theseq, newmasteridx, Idx.seqelementkind, Exit]+ // 
+          [theseq, masteridx, Callidx.seqelementkind ,   Exit,
+         Block(mytype.[seqelementkind],3)   ] +//
+         ( if ds &in "int real ptr"   then
+              [ theseq, masteridx, Callidx.seqelementkind ,   Exit,
+         Block(mytype.[seqelementkind],3)]      
+         else 
+          [seqtype,     Lit.1, EqOp ,Lit.4,Lit.5, Br,
+             theseq, masteridx ,Lit.-1,PlusOp ]+ packedtype(toint.ds)+[Exit,
+           theseq, masteridx, Callidx.seqelementkind ,   Exit,
+         Block(mytype.[seqelementkind],5)])      
+        +    [  Defineseqelement, theseq]
     + thunk
 + [  newmasteridx, continue.3,   Block(mytype.resulttype, 4)]
    //  assert subseq(x,1,3) = "1 int ptr" report  (part1 + kk) @@ +(" &br result", print.@e)
@@ -492,6 +505,22 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    // zz &in "seq char mytype int token templatepart  myinternaltype UTF8 encoding llvmtype
     Lcode2 slotrecord mapele liblib parc attribute2 prettyresult internalbc"  //
     
+        
+         
+   function  packedtype(ds:int) seq.symbol
+     let multOp=symbol("*(int,int)","builtin","int")
+     let rightOp=symbol("<<(bits,int)","builtin","bits")
+       let andOp=symbol("∧(bits,bits)","builtin","bits")
+           let GEP=symbol("GEP(T seq, int)","ptr builtin","ptr")
+       if ds > 1 then // element represented by multiple words //
+           //   GEPa , (b-1) * sizeoftype:T + 2 ) //
+        [    Lit.ds,multOp, Lit.2, PlusOp ,GEP]
+         else   if ds= -1 then // IDX(a,(b-1)  / 64)  &and 0x1  // 
+              [ Lit.6,rightOp, Idx."int"_1,Lit.1, andOp ]
+     else   assert    ds=-8 report "type size not handled in index"
+      //       IDX(a,(b-1) / 8) &and 0xFF //
+              [ Lit.3,rightOp, Idx."int"_1,Lit.255, andOp ]
+
 
 
 function maxvarused(code:seq.symbol)int maxvarused(code, 1, 0)

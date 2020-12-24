@@ -11,21 +11,32 @@ unbound =(T, T)boolean
 
 builtin IDX(seq.T, int)T
 
+builtin GEP(seq.T, int)T
+
 
 Function_(a:seq.T, c:int)T
  let b = if c < 0 then length.a + c + 1 else c
  let typ = getseqtype.a
-  if  typ &ne 0 then 
-    assert  typ > 1000 report "indexproblem"+stacktrace
-    callidx3(a, b)
-  else
-   assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
+   if typ > 1 then  callidx3(a, b)
+    else
+     assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace 
+    if  typ = 0  then  // element per word //
      IDX(a, b + 1)
-    
+  else 
+    if sizeoftype:T > 1 then // element represented by multiple words //
+          GEP(a , (b-1) * sizeoftype:T + 2 )
+     else   if sizeoftype:T= -1 then
+            IDX(a,(b-1)  / 64)  &and 0x1  
+     else   assert    sizeoftype:T=-8 report "type size not handled in index package seq.T"
+           IDX(a,(b-1) / 8) &and 0xFF
+     
+builtin sizeoftype:T int
+
+builtin  &and(a:T,b:bits) T 
+
 builtin callidx3(a:seq.T, int)T
 
-
-
+Builtin packed(s:seq.T)seq.T
 
 Builtin getseqtype(a:seq.T)int
 
@@ -69,16 +80,11 @@ Export a(pseq.T)seq.T
 
 Export b(pseq.T)seq.T
 
+Export start(a:pseq.T) int  
+
 Export to:pseq.T(s:seq.T)pseq.T
 
-
 type pseq is sequence length:int, a:seq.T, b:seq.T,start:int
-
-Export pseq(length:int, a:seq.T, b:seq.T,start:int) pseq.T
-
-Export toseq(pseq.T) seq.T
-
-Export start(a:pseq.T) int  
 
 Function_(s:pseq.T, ii:int)T
  let i=ii+start.s
@@ -104,7 +110,7 @@ Function +(a:seq.T, b:seq.T)seq.T
 
 Function +(l:seq.T, a:T)seq.T l + [ a]
 
-function cat3(totallength:int, a:seq.T, b:seq.T, c:seq.T)seq.T
+ function cat3(totallength:int, a:seq.T, b:seq.T, c:seq.T)seq.T
  // if totallength = 3 then [ a_1, b_1, c_1]else //
  if length.a > length.b then toseq.pseq(totallength, a, catnonzero(b, c),0)
  else if length.b < length.c then toseq.pseq(totallength, catnonzero(a, b), c,0)
@@ -116,9 +122,15 @@ function catnonzero(a:seq.T, b:seq.T)seq.T
   else
    let ta = to:pseq.T(a)
     if length.ta = 0 then
-    let tb = to:pseq.T(b)
-      if length.tb = 0 then toseq.pseq(totallength, a, b,0)else cat3(totallength, a, a.tb, b.tb)
-    else cat3(totallength, a.ta, b.ta, b)
+      let tb = to:pseq.T(b)
+      if length.tb = 0 &or  length.a.tb+ length.b.tb  &ne length.tb then toseq.pseq(totallength, a, b,0)
+       else 
+         cat3(totallength, a, a.tb, b.tb)
+    else 
+       if  length.a.ta+ length.b.ta  &ne length.ta then 
+       toseq.pseq(totallength, a, b,0)
+      else 
+      cat3(totallength, a.ta, b.ta, b)
 
 
 Function subseq(s:seq.T, start:int, end:int)seq.T
@@ -126,18 +138,26 @@ Function subseq(s:seq.T, start:int, end:int)seq.T
  else if start < 1 then subseq(s, 1, end)
  else if end > length.s then subseq(s, start, length.s)
  else if start = 1 ∧ length.s = end then s
+ else if start = end+1 then [ s_start,s_end ] 
+ else if start +1 &ge  end  then 
+  if  start=end then [s_start]  else  [ s_start,s_end ] 
  else
-  let x = to:pseq.T(s)
+    let x = to:pseq.T(s)
    if length.x = 0 then
-   arithseq(end - start + 1, 1, start)   @ +(empty:seq.T, s_@e)
-   else subseq(x, start, end)
+       toseq.pseq(end - start + 1,s,s,start-1)     
+    else subseq(x, start, end)
+   
 
 function subseq(p:pseq.T, start:int, end:int)seq.T
- if start > length.a.p then
- subseq(b.p, start - length.a.p, end - length.a.p)
- else if end > length.a.p then
- subseq(a.p, start, length.a.p) + subseq(b.p, 1, end - length.a.p)
- else subseq(a.p, start, end)
+  let adjstart=start+start.p-length.a.p
+  let adjend=start.p+end - length.a.p
+ if  adjstart > 0 then  
+    // all in part b //  subseq(b.p, adjstart , adjend)
+ else if adjend > 0 then 
+     subseq(a.p, start.p+start, length.a.p) + subseq(b.p, 1, adjend)
+ else // all in part a // 
+   subseq(a.p, start.p+start, start.p+end)
+
 
 Function last(a:seq.T)T a_(length.a)
 
@@ -147,7 +167,6 @@ Function isempty(a:seq.T)boolean length.a = 0
 
 --------------------------
 
-Builtin packed(s:seq.T)seq.T
 
 Function suffix(s:seq.T, len:int)seq.T subseq(s, length.s - len - 1, length.s)
 
@@ -158,3 +177,8 @@ Function <<(s:seq.T, i:int)seq.T
 Function >>(s:seq.T, i:int)seq.T
  assert i ≥ 0 report"FAIL >>" + stacktrace
   subseq(s, 1, if i < 0 then-i else length.s - i)
+  
+  
+
+
+
