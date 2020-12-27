@@ -54,7 +54,8 @@ Function mangledname(s:symbol)word mangle(fsig.s, module.s)
 
 Function isexternal(s:symbol)boolean
  isbuiltin.module.s
- ∧ not((fsig.s)_1 ∈ "aborted loadlib createlib createlib2  unloadlib allocatespace addencoding createfile getinstance dlsymbol getfile addresstosymbol2 randomint 
+ ∧ not((fsig.s)_1 ∈ "aborted loadlib createlib createlib2    allocatespace addencoding createfile getinstance dlsymbol 
+ getfile getbytefile getbitfile addresstosymbol2 randomint 
  getmachineinfo currenttime callstack initialdict createthread  assert callidx3")
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
@@ -122,9 +123,30 @@ Function funcdec(alltypes:typedict, i:symbol)int
 
 Function match5map(
 theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
- let discard3 = [ addtemplate(symbol("tocstr(bits seq)","builtin","cstr"), 2,
+ let discard3 = [  addtemplate(symbol("extractbyte(T seq,int)","int builtin","T"),8,
+    BINOP(r.1,slot.ibcsub2,C64.3,lshr)
+   +BINOP(r.2,r.1,C64.2,add)
+   + GEP(r.3, i64, slot.ibcsub1, r.2) 
+   + LOAD(r.4, r.3, i64)
+  +BINOP(r.5, slot.ibcsub2, C64.7, and)
+  +BINOP(r.6, r.5, C64.3, shl)
+  +BINOP(r.7,r.4,r.6,lshr)
+  +BINOP(r.8,r.7,C64.255,and)
+  )
+  ,addtemplate(symbol("extractbit(T seq,int)","int builtin","T"),7,
+    BINOP(r.1,slot.ibcsub2,C64.6,lshr)
+      +BINOP(r.2,r.1,C64.2,add)
+   + GEP(r.3, i64, slot.ibcsub1, r.2) 
+   + LOAD(r.4, r.3, i64)
+   +BINOP(r.5, slot.ibcsub2, C64.63, and)
+   +BINOP(r.6,r.4,r.5,lshr)
+  +BINOP(r.7,r.6,C64.1,and)
+  )
+ ,addtemplate(symbol("tocstr(bits seq)","builtin","cstr"), 2,
    GEP(r.1, i64, slot.ibcsub1, C64.2)  + CAST(r.2, r.1,  i64, ptrtoint))
  , addtemplate(symbol("bitcast(int seq seq)","builtin","int seq"), 0, emptyinternalbc)
+, addtemplate(symbol("toint(byte)","builtin","int"), 0, emptyinternalbc)
+, addtemplate(symbol("toint(bit)","builtin","int"), 0, emptyinternalbc)
  , addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
  , addtemplate(symbol("bitcast(int seq)","builtin","int"), 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
  , addtemplate(symbol("bitcast(int)","builtin","int seq"), 1, CAST(r.1, slot.ibcsub1, ptr.i64, inttoptr))

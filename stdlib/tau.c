@@ -57,13 +57,8 @@ struct pinfo { BT aborted; // 1 if aborted
                
 void assertexit(int b,char *message);
 
-BT getfile(processinfo PD,BT filename);
+//BT loadlibrary(struct pinfo *PD,char *lib_name_root);
 
-BT loadlibrary(struct pinfo *PD,char *lib_name_root);
-
-BT (*toUTF8)(struct pinfo *,BT );
-
-BT *byteseqencetype;
 
 
 //Start of space allocation
@@ -202,7 +197,7 @@ int looklibraryname(char* name) { int i;
    return -1;}
 
 
-BT unloadlib(processinfo PD,BT p_libname){char *libname=(char *)&IDXUC(p_libname,2);
+BT unloadlib(processinfo PD,char *libname){ 
 int libidx = looklibraryname(libname);
 // fprintf(stderr,"unload library %s %d\n",libname,libidx);
 if (libidx > 0 ) {
@@ -225,17 +220,7 @@ BT initlib5(char * libname,BT  libdesc,BT baselib) {
   fprintf(stderr,"initlib5 %s %lld \n",libname,baselib); 
 if ( baselib==1 ){
   /* only needed when initializing base lib */
-    toUTF8 = dlsym(RTLD_DEFAULT, "toUTF8ZUTF8Zwordzseq");
-    if (!toUTF8){
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }                                    
-     byteseqencetype= dlsym(RTLD_DEFAULT,"Q5FZbytezbitpackedseqZbytezbitpackedseqZint");
-     if (!byteseqencetype) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);}
-    
-    
+      
     staticencodings[1]=neweinfo(&sharedspace,1);  // word encodings //
     staticencodings[2]=neweinfo(&sharedspace,2); // encoding map for assigning encoding to an integer number
 
@@ -297,16 +282,7 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
 }
 
  
-BT loadlib(processinfo PD,BT p_libname)
-{char *name=(char *)&IDXUC(p_libname,2);
-int i = looklibraryname(name) ;
-if (i >= 0)
-{   fprintf(stderr,"did not load %s as it was loaded\n",name) ; 
-  return ((BT*)loaded[i+2])[3];}
-return  loadlibrary(PD,name) ;  
-}
-
-BT loadlib2(processinfo PD,char *libname)
+BT loadlib(processinfo PD,char *libname)
 { 
 int i = looklibraryname(libname) ;
 if (i >= 0)
@@ -314,6 +290,16 @@ if (i >= 0)
   return ((BT*)loaded[i+2])[3];}
 return  loadlibrary(PD,libname) ;  
 }
+
+BT loadlib22(processinfo PD,char *libname)
+{ 
+int i = looklibraryname(libname) ;
+if (i >= 0)
+{   fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
+  return ((BT*)loaded[i+2])[3];}
+return  loadlibrary(PD,libname) ;  
+}
+ 
 
 // end of library support 
 
@@ -393,17 +379,21 @@ BT createlib2(processinfo PD,char * libname,char * otherlib, BT bytelength, stru
    fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else {loadlib2(PD,libname); return 1;}
+  else {loadlib(PD,libname); return 1;}
 }
 
 
-BT getfile(processinfo PD,BT filename){
-    int fd;
-    char *name=(char *)&IDXUC(filename,2);
+
+
+    
+    
+BT subgetfile(processinfo PD,  char *name,BT seqtype){
+       int fd;
     char *filedata;
     struct stat sbuf;
+    static const BT empty[]={0,0};
     BT *data2,org;
-  //fprintf(stderr,"openning %s\n",name);
+ // fprintf(stderr,"openning %s\n",name); //
         org=myalloc(PD,4);
      IDXUC(org,0)=-1;
      IDXUC(org,1)=0;
@@ -415,17 +405,31 @@ BT getfile(processinfo PD,BT filename){
     
     if ((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) == (caddr_t)(-1)) return org;
     data2=(long long *) filedata;
-    org=myalloc(PD,4);
+    org=myalloc(PD,7);
      IDXUC(org,0)=sbuf.st_size;
-     IDXUC(org,1)=data2[0];
-     IDXUC(org,2)=data2[1];
-     IDXUC(org,3)=(BT) data2;
-    data2[0]=0;
-    data2[1]=sbuf.st_size > 16 ? (sbuf.st_size+7-16)/8 : 0;
+     IDXUC(org,1)=(BT)((BT * )org+3);
+     IDXUC(org,2)= (BT )(sbuf.st_size <= 16 ?empty:  data2);
+      IDXUC(org,3)=seqtype==0?0:1;
+     IDXUC(org,4)= seqtype==0?2:seqtype==-1?128: 16 ;
+     IDXUC(org,5)=data2[0];
+     IDXUC(org,6)=data2[1];
+     
+    data2[0]=seqtype==0?0:1;
+    if (seqtype==0)   data2[1]= (sbuf.st_size+7-16)/8 ;
+    else if (seqtype==-8)     data2[1]=sbuf.st_size -16 ;
+    else if (seqtype==-1)  data2[1]=(sbuf.st_size -16 ) * 8  ; 
     close(fd);
   //  fprintf(stderr,"filename %s address %lld\n",name,(long long ) filedata);
     return org;
 }
+
+  
+BT getfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,0); }
+
+
+BT getbytefile(processinfo PD,char * filename){  return  subgetfile (PD,filename,-8); }
+
+BT getbitfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,-1); }
 
 
 
@@ -543,23 +547,21 @@ fatal_error_signal (int sig)
 }
 
 
-struct byteseq { BT type,length,*seq,type2,length2; char data[8];};
+
+struct byteseq { BT type,length; char data[8];};
 
 BT  tobyteseq ( processinfo PD,char *str) {
    int len=strlen(str);
-   struct byteseq   *b=(struct byteseq   *)myalloc(PD,5+(len+7)/8);
-     b->type=(BT)byteseqencetype;
+   struct byteseq   *b=(struct byteseq   *)myalloc(PD,2+(len+7)/8);
+     b->type=1;
      b->length=len;
-     b->seq =(BT *) &(b->type2);
-     b->type2=0;
-     b->length2=(len+7)/8;
-     memcpy(b->data,str,len);
+      memcpy(b->data,str,len);
      return (BT) b;
 }
 
 
 int main(int argc, char **argv)    {   int i=0,count; 
-        char argstr[500]; {int i;
+          char argstr [500]; {int i;
            // initialize main process
     sharedspace.encodings = staticencodings;
     for(i=0; i<noencodings;i++) sharedspace.encodings[i]=0;
@@ -590,12 +592,12 @@ int main(int argc, char **argv)    {   int i=0,count;
       initprocessinfo(p,PD);
       p->deepcopyresult = (BT)noop; 
       p->deepcopyseqword = (BT)noop;
-      p->func=(BT)dlsym(RTLD_DEFAULT, "mainZmain2Zintzseq");
+      p->func=(BT)dlsym(RTLD_DEFAULT, "mainZmain2Zbytezseq");
       if (!p->func) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
       }
-      BT argsx=tobyteseq ( p, argstr);
+      BT argsx=tobyteseq ( p, argstr);  
        p->noargs=1;
        p->args=&argsx;
        p->freespace=0;
@@ -606,9 +608,6 @@ int main(int argc, char **argv)    {   int i=0,count;
          return 0;
      }
      
- 
- 
- 
  BT getmachineinfo(processinfo PD) 
 {  BT a = myalloc(PD,2);
    IDXUC(a,0)=tobyteseq(PD,"x86_64-apple-macosx10.15.0");
@@ -664,8 +663,8 @@ BT callstack(processinfo PD,BT maxsize){
       //  fprintf(stderr,"CALLStACK %d\n",frames);
      return r;}
      
-BT dlsymbol(processinfo PD,BT funcname) 
-{return (BT) dlsym(RTLD_DEFAULT, (char *)&IDXUC(funcname,2));}
+BT dlsymbol(processinfo PD,char * funcname) 
+{return (BT) dlsym(RTLD_DEFAULT,  funcname );}
 
 
 BT toscreen(BT outputnibble ) {
@@ -676,3 +675,6 @@ BT callidx3(BT PD, BT * seq, BT idx)
  {   if (seq[0]==0 )  return seq[idx+1];
  BT (* callit)(BT,BT *,BT ) = (  BT (*)(BT,BT * ,BT )  ) seq[0];
     return  (callit)(PD,seq,idx);}
+    
+BT * testdata (){ static const BT x[]={1, 64,0x0F0E0D0C0B0A0908}; return (BT *) x;
+}

@@ -40,32 +40,33 @@ Function print(b:bits) seq.word
 
 __________________
 
-type bit is record toint:int
+type bit is record rep:int
 
 Function =(a:bit, b:bit)boolean toint.a = toint.b
 
-Export toint(bit)int
+Function  toint(b:bit) int rep.b
 
 Export bit(int)bit
 
 Function sizeinbits(a:bit)int 1
 
-Function tobits(a:bit)bits bits.toint.a
+Function tobits(a:bit)bits bits.rep.a
 
 Function frombits:bit(a:bits)bit bit.toint.a
 
 _________________
 
-type byte is record toint:int
+type byte is record rep:int
 
 Function sizeinbits(a:byte)int 8
 
-Function tobits(a:byte)bits bits.toint.a
+Function tobits(a:byte)bits bits.rep.a
 
 Function frombits:byte(a:bits)byte byte.toint.a
 
 Export byte(int)byte
 
-Export toint(byte)int
+Builtin  toint(b:byte)int  // use builtin rather than rep.b so  abyteseq @ +(empty:seq.int,toint.@e) does 
+not become an noop since abytseq may contain packed sequences of bytes // 
 
 _______________

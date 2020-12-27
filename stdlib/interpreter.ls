@@ -38,11 +38,12 @@ Builtin bitcast(seq.int)int
 
 Builtin bitcast(int)seq.int
 
-Builtin dlsymbol(seq.bits)int
+Builtin dlsymbol(cstr)int
 
 Builtin createthread(int, int, int, seq.int)process.int
 
-Function dlsymbol(name:word)int dlsymbol.toCformat.[ name]
+Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
+
 
 function aswords(s:seq.int)seq.word s @ +("", word.to:encoding.seq.char(@e))
 

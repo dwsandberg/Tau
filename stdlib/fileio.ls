@@ -28,59 +28,67 @@ use textio
 
 Export_(a:bitpackedseq.byte, idx:int)byte
 
+Function tocstr(s:seq.word) cstr tocstr.packed
+ .data2((toseqint.toUTF8.s + 0) @ add(bitpackedseq(0, empty:seq.byte, bits.0), byte.@e)) 
 
-Export type:fileresult
-
-Function toCformat(s:seq.word)seq.bits
- packed
- .data2
- .add(toseqint.toUTF8.s @ add(bitpackedseq(0, empty:seq.byte, bits.0), byte.@e), byte.0)
-
+Export type:cstr
 
 Function   createfile( name:seq.word,  a:bitpackedseq.byte) int
-createfile2(length.a,packed.data2.a, tocstr.toCformat.name)
+createfile2(length.a,packed.data2.a, tocstr.name)
 
 Function createbytefile(name:seq.word, a:seq.int)int 
 let t= packed.data2(a @ add(empty:bitpackedseq.byte, byte.@e))
-    createfile2(length.a,t , tocstr.toCformat.name)
+    createfile2(length.a,t , tocstr.name)
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
-  createlib2(tocstr.toCformat.[ libname], tocstr.toCformat(dependlibs @ +("", [@e]+".dylib" ))
+  createlib2(tocstr.[ libname], tocstr(dependlibs @ +("", [@e]+".dylib" ))
 ,  length.b * 8, packed.b)  
 
 builtin createlib2(name:cstr, libs:cstr, length:int,data:seq.bits)int
 
 Function createfile(name:seq.word, a:seq.int)int
-   createfile2(length.a * 8 ,packed.a @ +(empty:seq.bits, bits.@e), tocstr.toCformat.name)
+   createfile2(length.a * 8 ,packed.a @ +(empty:seq.bits, bits.@e), tocstr.name)
+
+type fileresult is record size:int, start:seq.int, data:seq.int 
+
+type fileresultbit is record size:int, start:seq.bit, data:seq.bit 
+
+type fileresultbyte is record size:int, start:seq.byte, data:seq.byte
 
 
-builtin getfile(f:seq.bits)fileresult
+builtin getfile(name:cstr)fileresult
 
-Export size(fileresult)int
+builtin getbytefile(cstr) fileresultbyte
 
-Export word1(fileresult)int
+builtin getbitfile(cstr)  fileresultbit
 
-Export word2(fileresult)int
 
-Export data(fileresult)seq.int
+Function getfile:int(name:seq.word) seq.int  
+let file = getfile.tocstr.name
+start.file  + data.file
 
-Function getfile2(name:seq.word)fileresult getfile.toCformat.name
+Function getfile:byte(name:seq.word) seq.byte
+ let file = getbytefile.tocstr.name
+  assert size.file > -1 report"Error opening file" + name
+      start.file  + data.file 
 
-type fileresult is record size:int, word1:int, word2:int, data:seq.int
 
-Function getfile(name:seq.word)seq.int
+Function getfile:bit(name:seq.word)  seq.bit
+let file = getbitfile.tocstr.name
+  assert size.file > -1 report"Error opening file" + name
+      start.file  + data.file 
+
+
+
+function getfile2(name:seq.word)seq.int
  // as file byte //
- let file = getfile.toCformat.name
+ let file = getfile.tocstr.name
   assert size.file > -1 report"Error opening file" + name
-   tointseq.bitpackedseq2(size.file, tobitpackedseq([ word1.file, word2.file] + data.file), bits.0)
+   tointseq.bitpackedseq2(size.file, tobitpackedseq(  start.file  + data.file), bits.0)
 
-Function getbitfile(name:seq.word)seq.bit
- let file = getfile.toCformat.name
-  assert size.file > -1 report"Error opening file" + name
-    bitpackedseq2(size.file * 8, tobitpackedseqbit([ word1.file, word2.file] + data.file), bits.0)
 
-Function fileexists(f:seq.word)boolean
- let file = getfile.toCformat.f
+Function fileexists(name:seq.word)boolean
+ let file = getfile.tocstr.name
   size.file > -1
 
 Function gettext(filename:seq.word)seq.seq.word breakparagraph.getUTF8file.filename  
@@ -91,7 +99,7 @@ Function createfile(filename:seq.word, s:seq.seq.word)int
 Function createfile(filename:seq.word, s:seq.word)int createbytefile(filename, toseqint.toUTF8.s)
 
 
-Function getUTF8file(filename:seq.word)UTF8 UTF8.getfile.filename
+Function getUTF8file(filename:seq.word)UTF8 UTF8.getfile2.filename
 
 function tobitpackedseq(s:seq.int)seq.byte s @ +(empty:seq.byte, byte.@e)
 

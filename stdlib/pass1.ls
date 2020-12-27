@@ -323,7 +323,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
     let seqtype = typeseq + parameter.modname.f
      let symtoseq = newsymbol("toseq", modname.f, [ t], seqtype)
      let symfromseq = newsymbol("to:" + print.t, modname.f, [ seqtype], t)
-     let t1 = if name = "pseq"_1 then"int"else"T"
+     let t1 = // if name = "pseq"_1 then"int"else // "T"
      let indexfunc = Fref.newsymbol("_", modname.f, [ mytype(t1 + name), typeint], mytype.t1)
      let prg0 = fldcode(constructor, [ indexfunc], fldsyms, 1, 1,"", prg1)
      let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]

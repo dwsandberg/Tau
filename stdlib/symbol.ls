@@ -42,8 +42,6 @@ Export typeseq mytype
 
 Export typeptr mytype
 
-Export typepseq mytype
-
 Export typeencoding mytype
 
 Export typeencodingstate mytype

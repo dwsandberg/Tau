@@ -26,13 +26,15 @@ Function_(a:seq.T, c:int)T
     if sizeoftype:T > 1 then // element represented by multiple words //
           GEP(a , (b-1) * sizeoftype:T + 2 )
      else   if sizeoftype:T= -1 then
-            IDX(a,(b-1)  / 64)  &and 0x1  
-     else   assert    sizeoftype:T=-8 report "type size not handled in index package seq.T"
-           IDX(a,(b-1) / 8) &and 0xFF
+            extractbit(a,b-1)  
+     else   assert    sizeoftype:T=-8 report "type size not handled in index package seq.T"+toword.sizeoftype:T
+           extractbyte(a,b-1)
      
 builtin sizeoftype:T int
 
-builtin  &and(a:T,b:bits) T 
+  builtin extractbit(seq.T,int) T
+
+ builtin extractbyte(seq.T,int) T
 
 builtin callidx3(a:seq.T, int)T
 
@@ -83,6 +85,8 @@ Export b(pseq.T)seq.T
 Export start(a:pseq.T) int  
 
 Export to:pseq.T(s:seq.T)pseq.T
+
+Export type:pseq.T 
 
 type pseq is sequence length:int, a:seq.T, b:seq.T,start:int
 

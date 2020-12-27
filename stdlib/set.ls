@@ -16,7 +16,6 @@ Export +(seq.T, T)seq.T
 
 Export +(seq.T, seq.T)seq.T
 
-Export_(pseq.T, int)T
 
 Export_(seq.T, int)T
 

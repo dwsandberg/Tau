@@ -1,7 +1,7 @@
 
 Library stdlib UTF8 bitpackedseq bits codegennew codetemplates encoding fileio format   groupparagraphs intdict 
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
-pass1 pass2 breakblocks persistant postbind prims process real seq set stack  symbol textio timestamp tree worddict words xxhash
+pass1 pass2 breakblocks persistant postbind   process real seq set stack  symbol textio timestamp tree worddict words xxhash
  sparseseq standard maindict tausupport outstream
   tests/test11 tests/checking tests/point tests/testencoding  
  tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
@@ -24,7 +24,7 @@ pass1 pass2 breakblocks persistant postbind prims process real seq set stack  sy
  graphs/graph
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format 
-graph groupparagraphs intdict internalbc ioseq ipair libdesc llvm llvmconstants 
+graph groupparagraphs intdict   ioseq ipair libdesc llvm llvmconstants 
 main2 maindict mangle mytype pretty otherseq  prims process 
 real seq set stack   symbol textio timestamp tree worddict words xxhash 
 codegennew codetemplates persistant  sparseseq parse standard testall
@@ -41,7 +41,7 @@ option.main2 compilelib2(seq.word)seq.word PROFILE
  
 /option.builtin option(T, x:seq.word)T STATE
  
-option.fileio getfile(seq.bits)fileresult STATE
+/option.fileio getfile(seq.bits)fileresult STATE
 
 /option.fileio createlib(name:seq.bits, libs:seq.bits, t:outputformat)int STATE
 

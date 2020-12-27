@@ -22,6 +22,8 @@ Export bitpackedseq(int, seq.T, bits)bitpackedseq.T
 
 Export length(bitpackedseq.T)int
 
+Export toseq(bitpackedseq.T) seq.T 
+
 Function empty:bitpackedseq.T bitpackedseq.T bitpackedseq(0, empty:seq.T, bits.0)
 
 Function bitpackedseq2(len:int, d:seq.T, part:bits)seq.T toseq.bitpackedseq(len, d, part)

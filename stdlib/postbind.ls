@@ -142,12 +142,14 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
       else if(fsig.sym)_1 ∈ "apply3"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let k = findindex(","_1, fsig.newsym)
+       let eletype=mytype.subseq(fsig.newsym, 3, k - 2)
        let info = gettypeinfo(alltypes, mytype.subseq(fsig.newsym, 3, k - 2))
-       let a=if size.info > 1 then toword.size.info else kind.info
+       let a=if size.info > 1 then toword.size.info else 
+         if  eletype &in[mytype."byte",mytype."bit"]  then  abstracttype.eletype else kind.info
        let newfsig ="apply3(" + a + "seq" + subseq(fsig.newsym, k, length.fsig.newsym)
        let p2 = symbol(newfsig, [ kind] + "builtin", returntype.newsym)
         postbind3(alltypes, dict, code, i + 1,(result >> 1) + Lit.size.info + p2, modpara, org, calls, sourceX, tempX)
-      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2 callidx3 GEP"
+      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2 callidx3 GEP extractbyte extractbit"
       ∨ fsig.sym = "setfld(int, T seq, T)"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let p2 = symbol(fsig.sym, [ kind] + "builtin", returntype.newsym)
@@ -161,12 +163,12 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
          let p2=symbol("allocatespace(int)","builtin","int seq")
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)  
       else if fsig.sym =        "sizeoftype:T"then 
-       let p2=   Lit.size.gettypeinfo(alltypes, parameter.modname.newsym)
+       let size= if parameter.modname.newsym=mytype."byte" then -8  
+        else  if parameter.modname.newsym=mytype."bit" then -1  
+        else size.gettypeinfo(alltypes, parameter.modname.newsym)
+      let p2=   Lit.size 
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
-      else if  fsig.sym="∧(T, bits)" then
-        let p2=symbol("∧(bits, bits)","builtin","bits")
-         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)             
-      else
+        else 
        let codeforbuiltin = if fsig.sym = "processresult(T process)"then
   [ Local.1, Lit.2, Idx.kind.gettypeinfo(alltypes, parameter.modname.newsym)]
   else if fsig.sym = "packed(T seq)"then [ Local.1] + blocksym.gettypeinfo(alltypes, parameter.modname.newsym)

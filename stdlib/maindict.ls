@@ -24,6 +24,8 @@ use set.word
 
 use words
 
+use seq.int
+
 function +(p:place, r:encodingpair.seq.char)place
  p + valueofencoding.code.r + tointseq.data.r + hash.r
 
@@ -34,7 +36,7 @@ Function writedict(tin:seq.encodingpair.seq.char)int
   else
    let p = if isempty.have then place(empty:seq.int, 0, empty:seq.int)
    else
-    let d = data.getfile2."maindictionary.data"
+    let d =  getfile:int("maindictionary.data") << 2
      place(d, length.d, empty:seq.int)
     createfile("maindictionary.data", [ 0, 0] + data(p + t) + [ length.data.p + 1, length.data.p])
 

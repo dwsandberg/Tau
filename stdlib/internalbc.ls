@@ -446,7 +446,8 @@ Function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int)llvmpartial
  , toint.MODULE
  , MODABBREVLEN)
  let info = getmachineinfo
- let a = addrecords(h, MODABBREVLEN, [ [ 1, 1], [ toint.TRIPLE] + triple.info, [ toint.LAYOUT] + datalayout.info])
+ let a = addrecords(h, MODABBREVLEN, [ [ 1, 1], [ toint.TRIPLE] + triple.info @+(empty:seq.int,toint.@e) ,
+   [ toint.LAYOUT] + datalayout.info  @+(empty:seq.int,toint.@e)])
   // type block //
   let typeheader = addblockheader(a, MODABBREVLEN, toint.TYPES, TYPEABBREVLEN)
   let a2 = addrecords(typeheader, TYPEABBREVLEN, [ [ toint.NumEle, length.trecords]] + trecords)
@@ -510,6 +511,6 @@ type trackconst is record bits:bitpackedseq.bit, lasttype:int, blockstart:int
 
 function islastmodule(l:trackconst)boolean lasttype.l < 0
 
-type machineinfo is record triple:seq.int, datalayout:seq.int
+type machineinfo is record triple:seq.byte, datalayout:seq.byte
 
 builtin getmachineinfo machineinfo

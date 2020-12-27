@@ -255,8 +255,6 @@ Export isempty(seq.int)boolean
 
 Export_(seq.char, int)char
 
-Export_(pseq.char, int)char
-
 Export subseq(seq.char, int, int)seq.char
 
 Export =(seq.char, seq.char)boolean

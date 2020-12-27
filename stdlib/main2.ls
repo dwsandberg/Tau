@@ -36,8 +36,6 @@ use pass2
 
 use postbind
 
-use prims
-
 use process.runitresult
 
 use standard
@@ -68,7 +66,7 @@ use set.word
 
 /use maindict
 
-Function loaddictionary(file:fileresult)int
+/Function loaddictionary(file:fileresult)int
 // loaddict(file) // 0
 
 function loadlibs(dependentlibs:seq.word, i:int, time:int)int
@@ -107,8 +105,13 @@ Function compilelib2(libname:seq.word)seq.word
   else
    let aa =(result.p1)_1
     if subseq(aa, 1, 1) = "OK"then aa else"COMPILATION ERROR:" + space + aa
-
-Function main(arg:seq.int) int 
+  
+ use bits
+ 
+ use seq.byte 
+  
+Function main(argin:seq.byte) int 
+ let arg=argin @+(empty:seq.int,toint.@e) 
  let args2 = break(char1.";", decodeUTF8.UTF8.arg, 1) @ +(empty:seq.seq.word, towords.@e)
  let libname = args2_1
  let compileresult=if first.libname=first."L" then "OK"
@@ -121,7 +124,6 @@ Function main(arg:seq.int) int
   let p2 = process.runit.args2
    if aborted.p2 then message.p2 else interpret(alltypes.result.p2, code.result.p2)
      createhtmlfile("stdout",   output  )
-  
 
   
 Function testcomp(s:seq.seq.word)seq.seq.word
@@ -149,6 +151,14 @@ Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(op
 Function print(a:seq.seq.word)seq.word a @ +(""," &br  &br" + @e)
 
 _______________
+
+Function unloadlib(a:seq.word)int unloadlib.tocstr.a
+
+builtin unloadlib(cstr)int
+
+Function loadlibrary(a:word)int loadlib.tocstr.[ a]
+
+Builtin loadlib(cstr)int
 
 Function addlibrarywords(l:liblib) int let discard=addencodingpairs(words.l) 1
 
