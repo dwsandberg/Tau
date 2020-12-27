@@ -4,11 +4,14 @@ use UTF8
 
 use standard
 
+use seq.byte
+
+
 Export type:timestamp
 
 type timestamp is record toint:int
 
-function subseq(a:UTF8, i:int, j:int)UTF8 UTF8.subseq(toseqint.a, i, j)
+function subseq(a:UTF8, i:int, j:int)UTF8 UTF8.subseq(toseqbyte.a, i, j)
 
 Function testjulian boolean [ tojulian(2000, 1, 1), tojulian(1999, 1, 1), tojulian(1987, 1, 27), tojulian(1987, 6, 19), tojulian(1988, 1, 27), tojulian(1988, 6, 19), tojulian(1900, 1, 1), tojulian(1600, 1, 1), tojulian(1600, 12, 31)]
 = [ 2451544, 2451179, 2446822, 2446965, 2447187, 2447331, 2415020, 2305447, 2305812]

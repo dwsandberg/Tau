@@ -481,7 +481,7 @@ Every sequence must have a_function defined on it which is below for mseq.T
 
 &keyword Function testmyseq seq.word 
  &br keyword  let s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
- &br @(+, toword,"", myseq.toseqint.s)
+ &br @(+, toword,"", myseq(toseqbyte.s @ +(empty:seq.int,toint.@e) ))
 
 &section Tail Recursion
 

@@ -10,26 +10,30 @@ use seq.seq.seq.int
 
 use seq.int
 
+use seq.byte
+
+use bits
+
 use standard
 
 use seq.seq.seq.word
 
-Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqint.a, 2, 1, empty:seq.UTF8)
-
-function breaklines(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
+Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
+ 
+ function breaklines(a:seq.byte, i:int, last:int, result:seq.UTF8)seq.UTF8
  if i > length.a then result
- else if a_i = 10 then
- breaklines(a, i + 1, i + 1, result + UTF8.subseq(a, last, i - if a_(i - 1) = 13 then 2 else 1))
+ else if toint.a_i =  10 then
+ breaklines(a, i + 1, i + 1, result + UTF8.subseq(a, last, i - if toint.a_(i - 1) =  13 then 2 else 1))
  else breaklines(a, i + 1, last, result)
 
-Function breakcommas(a:UTF8)seq.UTF8 breakcommas(toseqint.a, 1, 1, empty:seq.UTF8)
+Function breakcommas(a:UTF8)seq.UTF8 breakcommas(toseqbyte.a, 1, 1, empty:seq.UTF8)
 
-function breakcommas(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
+function breakcommas(a:seq.byte, i:int, last:int, result:seq.UTF8)seq.UTF8
  if i > length.a then result + UTF8.subseq(a, last, i - 1)
- else if a_i = toint.commachar then
+ else if toint.a_i =  toint.commachar then
  breakcommas(a, i + 1, i + 1, result + UTF8.subseq(a, last, i - 1))
- else if a_i = toint.doublequotechar then
- let d = findindex(toint.doublequotechar, a, i + 2)
+ else if toint.a_i =  toint.doublequotechar then
+ let d = findindex(byte.toint.doublequotechar, a, i + 2)
    breakcommas(a, d + 2, d + 2, result + UTF8.subseq(a, i + 1, d - 1))
  else breakcommas(a, i + 1, last, result)
 
@@ -37,27 +41,32 @@ function breakcommas(a:seq.int, i:int, last:int, result:seq.UTF8)seq.UTF8
 
 handle files of paragraphs
 
-Function breakparagraph(a:UTF8)seq.seq.word  breakparagraph(toseqint.a, 1, 1, empty:seq.seq.word)
 
-function blankline(a:seq.int, i:int)int
+Function breakparagraph(a:UTF8)seq.seq.word  breakparagraph(a, 1, 1, empty:seq.seq.word)
+
+   
+function blankline(a:UTF8, i:int)int
  // returns 0 if no new line is found before next non white char otherwise returns index of newline //
  if i > length.a then i
  else
-  let t = a_i
+  let t = toint.a_i
    if t = 10 then i
    else if t > length.classifychar ∨ t = 0 then 0
    else if classifychar_t = "SPACE"_1 then blankline(a, i + 1)else 0
 
-Function breakparagraph(a:seq.int, i:int, last:int, result:seq.seq.word)seq.seq.word
- if i ≥ length.a then
- if last < length.a then result + towords.decodeUTF8(a, last, length.a)else result
- else if a_i = 10 then
- let j = blankline(a, i + 1)
+ 
+ Function breakparagraph(u:UTF8, i:int, last:int, result:seq.seq.word)seq.seq.word
+ if i ≥ length.u then
+ if last < length.u then result + towords.decodeUTF8(u, last, length.u)else result
+ else 
+   if toint.u_i = 10 then
+ let j = blankline(u, i + 1)
    if j > 0 then
-      if   i-1 < last then breakparagraph(a, j + 1, j + 1, result)
-     else breakparagraph(a, j + 1, j + 1, result + towords.decodeUTF8(a, last, i - 1))
-   else breakparagraph(a, i + 1, last, result)
- else breakparagraph(a, i + 1, last, result)
+      if   i-1 < last then breakparagraph(u,  j + 1, j + 1, result)
+     else breakparagraph(u,  j + 1, j + 1, result + towords.decodeUTF8(u, last, i - 1))
+   else breakparagraph(u,  i + 1, last, result)
+ else breakparagraph(u,  i + 1, last, result)
+
 
 Function classifychar seq.word ' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ 0]^_'
 
@@ -71,7 +80,7 @@ function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
   if last > length.a then result else result + [ encodeword.subseq(a, last, length.a)]
   else
    let t = a_i
-    if toint.t > length.classifychar ∨ t = char.0 then
+    if not.between(toint.t,1, length.classifychar  ) then
     towords2(a, i + 1, last, result)
     else
      let class = classifychar_(toint.t)

@@ -127,7 +127,7 @@ Function t507 boolean"The umber ant ambles the opal nurse" = getphrase.20
 
 function t044 boolean
 let s = UTF8.[ 40, 50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
-let z = myseq.toseqint.s
+let z =  myseq(toseqbyte.s @ +(empty:seq.int,toint.@e) )
  z @ +("", toword.@e) = "40 50 335 50 336"
  ∧ length.toseq.to:myseq.int(z) ≠ 0
  ∧ length.toseq.to:myseq.int([ 1, 2, 3]) = 0

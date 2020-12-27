@@ -29,7 +29,7 @@ use textio
 Export_(a:bitpackedseq.byte, idx:int)byte
 
 Function tocstr(s:seq.word) cstr tocstr.packed
- .data2((toseqint.toUTF8.s + 0) @ add(bitpackedseq(0, empty:seq.byte, bits.0), byte.@e)) 
+ .data2((toseqbyte.toUTF8.s + byte.0) @ add(bitpackedseq(0, empty:seq.byte, bits.0),  @e)) 
 
 Export type:cstr
 
@@ -38,6 +38,10 @@ createfile2(length.a,packed.data2.a, tocstr.name)
 
 Function createbytefile(name:seq.word, a:seq.int)int 
 let t= packed.data2(a @ add(empty:bitpackedseq.byte, byte.@e))
+    createfile2(length.a,t , tocstr.name)
+    
+Function createbytefile(name:seq.word, a:seq.byte)int 
+let t= packed.data2(a @ add(empty:bitpackedseq.byte,  @e))
     createfile2(length.a,t , tocstr.name)
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
@@ -79,33 +83,18 @@ let file = getbitfile.tocstr.name
       start.file  + data.file 
 
 
-
-function getfile2(name:seq.word)seq.int
- // as file byte //
- let file = getfile.tocstr.name
-  assert size.file > -1 report"Error opening file" + name
-   tointseq.bitpackedseq2(size.file, tobitpackedseq(  start.file  + data.file), bits.0)
-
-
 Function fileexists(name:seq.word)boolean
- let file = getfile.tocstr.name
+ let file = getbitfile.tocstr.name
   size.file > -1
 
-Function gettext(filename:seq.word)seq.seq.word breakparagraph.getUTF8file.filename  
+Function gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)  
 
 Function createfile(filename:seq.word, s:seq.seq.word)int
- createbytefile(filename, s @ +(empty:seq.int, toseqint.toUTF8.@e + [ 10, 10]))
+ createbytefile(filename, s @ +(empty:seq.byte, toseqbyte.toUTF8.@e + [ byte.10, byte.10]))
 
-Function createfile(filename:seq.word, s:seq.word)int createbytefile(filename, toseqint.toUTF8.s)
+Function createfile(filename:seq.word, s:seq.word)int createbytefile(filename, toseqbyte.toUTF8.s)
 
-
-Function getUTF8file(filename:seq.word)UTF8 UTF8.getfile2.filename
-
-function tobitpackedseq(s:seq.int)seq.byte s @ +(empty:seq.byte, byte.@e)
-
-function tobitpackedseqbit(s:seq.int)seq.bit s @ +(empty:seq.bit, bit.@e)
-
-function tointseq(s:seq.byte)seq.int s @ +(empty:seq.int, toint.@e)
+Function getfileaslines(filename:seq.word) seq.UTF8  breaklines.UTF8.getfile:byte(filename)
 
 
 builtin tocstr(seq.bits) cstr

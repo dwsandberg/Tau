@@ -158,7 +158,7 @@ use seq.byte
     function  +(z:out23,c:char) out23 
   //  clears nospace flag //
    out23(false, if toint.c > 255 then 
-       toseqint.encodeUTF8.c @ add(a.z, byte.@e) 
+       toseqbyte.encodeUTF8.c @ add(a.z,  @e) 
    else   
        add(a.z,byte.toint.c))
        

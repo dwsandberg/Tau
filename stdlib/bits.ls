@@ -62,6 +62,9 @@ Function sizeinbits(a:byte)int 8
 
 Function tobits(a:byte)bits bits.rep.a
 
+Function =(a:byte, b:byte)boolean toint.a = toint.b
+
+
 Function frombits:byte(a:bits)byte byte.toint.a
 
 Export byte(int)byte

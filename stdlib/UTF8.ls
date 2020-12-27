@@ -8,21 +8,32 @@ use standard
 
 use xxhash
 
-type UTF8 is record toseqint:seq.int
+use seq.byte
 
+use bits
+
+type UTF8 is record toseqbyte:seq.byte
+
+Function length(a:UTF8)  int length.toseqbyte.a
+
+Function _(a:UTF8,i:int) byte  (toseqbyte.a)_i
+ 
 Export type:UTF8
+
+Export UTF8(seq.byte) UTF8
+
+Export toseqbyte(UTF8) seq.byte
 
 Function emptyUTF8 UTF8 UTF8.empty:seq.int
 
-Function +(a:UTF8, b:UTF8)UTF8 UTF8(toseqint.a + toseqint.b)
+Function +(a:UTF8, b:UTF8)UTF8 UTF8(toseqbyte.a + toseqbyte.b)
 
 Function +(a:UTF8, ch:char)UTF8 a + encodeUTF8.ch
 
-Function =(a:UTF8, b:UTF8)boolean toseqint.a = toseqint.b
+Function =(a:UTF8, b:UTF8)boolean toseqbyte.a = toseqbyte.b
 
-Export UTF8(seq.int)UTF8
+Function  UTF8(s:seq.int)UTF8   UTF8(s @ +(empty:seq.byte,byte.@e))
 
-Export toseqint(UTF8)seq.int
 
 Function commachar char char.44
 
@@ -55,46 +66,49 @@ function subUTF8(n:int, c:int)seq.int
  else subUTF8(n + 1, c / 64) + [ 128 + c mod 64]
 
 Function decodeUTF8(b:UTF8)seq.char
- // converts UTF8 encoded sequence into a sequence of integers(chars)// tocharseq.xx(toseqint.b, 1, length.toseqint.b, empty:seq.int)
+ // converts UTF8 encoded sequence into a sequence of integers(chars)// 
+ decodeUTF8(b,1,length.b)
+ 
+ 
+Function decodeUTF8(a:UTF8,start:int,end:int) seq.char 
+tocharseq.xx(toseqbyte.a,max(1,start),min(end,length.toseqbyte.a),empty:seq.int)
 
-Function decodeUTF8(a:seq.int,start:int,end:int) seq.char  
- // converts  converts UTF8 encoded sequence into a sequence of  chars //
-tocharseq.xx(a,max(1,start),min(end,length.a),empty:seq.int)
+ 
 
-function xx(b:seq.int, i:int, end:int, result:seq.int)seq.int
+
+function xx(b:seq.byte, i:int, end:int, result:seq.int)seq.int
  if i > end then result
  else
-  let x = b_i
+  let x = toint.b_i
    if x < 128 then xx(b, i + 1, end, result + x)
    else if x < 224 then
-   xx(b, i + 2, end, result + ((x - 194) * 64 + b_(i + 1)))
+   xx(b, i + 2, end, result + ((x - 194) * 64 + toint.b_(i + 1)))
    else if x < 240 then
    xx(b, i + 3, end, result
-    + ((x - 224) * 64^2 + (b_(i + 1) - 128) * 64
-    + b_(i + 2)
+    + ((x - 224) * 64^2 + (toint.b_(i + 1) - 128) * 64
+    + toint.b_(i + 2)
     - 128))
    else if x < 248 then
    xx(b, i + 4, end,result
-    + ((x - 240) * 64^3 + (b_(i + 1) - 128) * 64^2
-    + (b_(i + 2) - 128) * 64
-    + b_(i + 3)
+    + ((x - 240) * 64^3 + (toint.b_(i + 1) - 128) * 64^2
+    + (toint.b_(i + 2) - 128) * 64
+    + toint.b_(i + 3)
     - 128))
    else if x < 252 then
    xx(b, i + 5, end, result
-    + ((x - 248) * 64^4 + (b_(i + 1) - 128) * 64^3
-    + (b_(i + 2) - 128) * 64^2
-    + (b_(i + 3) - 128) * 64
-    + b_(i + 4)
+    + ((x - 248) * 64^4 + (toint.b_(i + 1) - 128) * 64^3
+    + (toint.b_(i + 2) - 128) * 64^2
+    + (toint.b_(i + 3) - 128) * 64
+    + toint.b_(i + 4)
     - 128))
    else
     xx(b, i + 6,end, result
-    + ((x - 252) * 64^5 + (b_(i + 1) - 128) * 64^4
-    + (b_(i + 2) - 128) * 64^3
-    + (b_(i + 3) - 128) * 64^2
-    + (b_(i + 4) - 128) * 64
-    + b_(i + 5)
+    + ((x - 252) * 64^5 + (toint.b_(i + 1) - 128) * 64^4
+    + (toint.b_(i + 2) - 128) * 64^3
+    + (toint.b_(i + 3) - 128) * 64^2
+    + (toint.b_(i + 4) - 128) * 64
+    + toint.b_(i + 5)
     - 128))
-
 
 Function toUTF8(a:seq.word)UTF8 addspace(a, 1, true, emptyUTF8)
 
@@ -115,7 +129,8 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
 
 ---------
 
-Function toword(n:int)word // Covert integer to sequence of characters represented as a single word. // encodeword.tocharseq.toseqint.toUTF8.n
+Function toword(n:int)word // Covert integer to sequence of characters represented as a single word. // 
+encodeword.decodeUTF8.toUTF8.n
 
 /Function print(i:int)seq.word groupdigits.toUTF8.i
 
@@ -123,7 +138,7 @@ Function toword(n:int)word // Covert integer to sequence of characters represent
 
 Function toint(w:word)int // Convert an integer represented as a word to an int // cvttoint.decodeword.w 
 
-Function intlit(s:UTF8)int cvttoint.tocharseq.toseqint.s 
+Function intlit(s:UTF8)int cvttoint.decodeUTF8.s 
 
 Function cvttoint(s:seq.char) int
    // Hex values starting with 0x or 0X are allowed. //
@@ -132,7 +147,7 @@ Function cvttoint(s:seq.char) int
        else 
          let val=s @ decimaldigit(0, @e) 
          // Since there are more negative numbers in twos-complement we calculate using negative values. //  
-          if s_1=char1."-" then  val else -val
+          if val=0 &or s_1=char1."-" then  val else -val
          
 
 function hexdigit(b:bits, c:char)bits 
@@ -180,7 +195,7 @@ Function print(decimals:int, rin1:real)seq.word
  let a = 10^decimals
  let r = rin + 1.0 / toreal(a * 2)
  let r2 = if decimals > 0 then
- [ toword.intpart.r,"."_1, encodeword.tocharseq.lpad(decimals, 48, toseqint.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))]
+ [ toword.intpart.r,"."_1, encodeword.lpad(decimals, char.48, decodeUTF8.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))]
  else [ toword.intpart.r]
   if neg then"-" + r2 else r2
 
@@ -191,12 +206,14 @@ Function toUTF8(rin:real, decimals:int)UTF8
   let r = rin + 1.0 / toreal(a * 2)
    if decimals > 0 then
    toUTF8.intpart.r + encodeUTF8.periodchar
-    + UTF8.lpad(decimals, 48, toseqint.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
+    + UTF8.lpad(decimals, byte.48, toseqbyte.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
    else toUTF8.intpart.r
 
-Function reallit(s:UTF8)real reallit(tocharseq.toseqint.s,-1, 1, 0, 1)
+Function reallit(s:UTF8)real reallit(decodeUTF8.s,-1, 1, 0, 1)
 
 Function makereal(w:seq.word)real reallit(w @ +(empty:seq.char, decodeword.@e),-1, 1, 0, 1)
+
+use otherseq.byte
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
  if i > length.s then

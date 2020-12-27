@@ -28,7 +28,9 @@ type characterwidths is record widths:seq.int
 
 function_(s:seq.int, c:char)int if toint.c = 0 then 0 else s_(toint.c)
 
-Function displaywidth(cw:characterwidths, s:seq.word)int toseqint.toUTF8.s @ +(0,(widths.cw)_@e)
+Function displaywidth(cw:characterwidths, s:seq.word)int  
+// does not account for spaces //
+s @ +(0,displaywidth(cw, @e))
 
 Function displaywidth(cw:characterwidths, w:word)int decodeword.w @ +(0,(widths.cw)_@e)
 

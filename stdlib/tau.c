@@ -406,18 +406,22 @@ BT subgetfile(processinfo PD,  char *name,BT seqtype){
     if ((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) == (caddr_t)(-1)) return org;
     data2=(long long *) filedata;
     org=myalloc(PD,7);
-     IDXUC(org,0)=sbuf.st_size;
+     BT  filesize=sbuf.st_size,noelements; 
+     int elementsin128bits;
+      if (seqtype==0)  { noelements= (filesize+7)/8 ;   elementsin128bits= 2;  }
+      else if (seqtype==-8)   {  noelements=filesize   ; elementsin128bits= 16; }
+      else if (seqtype==-1) { noelements=(filesize  ) * 8  ; elementsin128bits= 128; }
+   
+     IDXUC(org,0)=filesize;
      IDXUC(org,1)=(BT)((BT * )org+3);
-     IDXUC(org,2)= (BT )(sbuf.st_size <= 16 ?empty:  data2);
+     IDXUC(org,2)= (BT )(filesize <= 16 ?empty:  data2);
       IDXUC(org,3)=seqtype==0?0:1;
-     IDXUC(org,4)= seqtype==0?2:seqtype==-1?128: 16 ;
+       IDXUC(org,4)= filesize < 16 ?noelements:elementsin128bits ;
      IDXUC(org,5)=data2[0];
      IDXUC(org,6)=data2[1];
      
     data2[0]=seqtype==0?0:1;
-    if (seqtype==0)   data2[1]= (sbuf.st_size+7-16)/8 ;
-    else if (seqtype==-8)     data2[1]=sbuf.st_size -16 ;
-    else if (seqtype==-1)  data2[1]=(sbuf.st_size -16 ) * 8  ; 
+      data2[1]= noelements-elementsin128bits ;
     close(fd);
   //  fprintf(stderr,"filename %s address %lld\n",name,(long long ) filedata);
     return org;
