@@ -4,8 +4,7 @@ use seq.UTF8
 
 use UTF8
 
-use bitpackedseq.bit
-
+ 
 use seq.bit
 
 use seq.seq.bits
@@ -14,8 +13,7 @@ use seq.bits
 
 use bits
 
-use bitpackedseq.byte
-
+ 
 use seq.byte
 
 use seq.seq.int
@@ -26,23 +24,23 @@ use standard
 
 use textio
 
-Export_(a:bitpackedseq.byte, idx:int)byte
+ 
+Function tocstr(s:seq.word) cstr 
+tocstr.packed.bits((toseqbyte.toUTF8.s + byte.0) @ add(empty:bitstream,bits.toint.@e,8))
 
-Function tocstr(s:seq.word) cstr tocstr.packed
- .data2((toseqbyte.toUTF8.s + byte.0) @ add(bitpackedseq(0, empty:seq.byte, bits.0),  @e)) 
 
 Export type:cstr
 
-Function   createfile( name:seq.word,  a:bitpackedseq.byte) int
-createfile2(length.a,packed.data2.a, tocstr.name)
 
 Function createbytefile(name:seq.word, a:seq.int)int 
-let t= packed.data2(a @ add(empty:bitpackedseq.byte, byte.@e))
-    createfile2(length.a,t , tocstr.name)
+  createfile2(length.a,packed.bits(a @ add(empty:bitstream,bits.@e,8)) , tocstr.name)
     
 Function createbytefile(name:seq.word, a:seq.byte)int 
-let t= packed.data2(a @ add(empty:bitpackedseq.byte,  @e))
-    createfile2(length.a,t , tocstr.name)
+    createfile2(length.a,packed.bits(a @ add(empty:bitstream,bits.toint.@e,8)) , tocstr.name)
+
+          
+use bitstream
+
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
   createlib2(tocstr.[ libname], tocstr(dependlibs @ +("", [@e]+".dylib" ))

@@ -1,12 +1,16 @@
+x#!/usr/local/bin/tau  ;use data; test2
+
+
 Module internalbc
 
-* 64 + 2*3 instead of 64 + 2 * 3 does not give reasonable error message!
+
+use bitstream
+
+
 
 use UTF8
 
-use seq.bitpackedseq.bit
-
-use bitpackedseq.bit
+use seq.bitstream
 
 use seq.seq.bit
 
@@ -150,7 +154,7 @@ Function addstartbits(inst:int, noargs:int, b:internalbc)internalbc
  else
   internalbc(((bits.b * 64 + noargs) * 64 + inst) * 16 + 3, bitcount.b + (6 + 6 + 4), done.b)
 
-/ function asbits(k:internalbc)seq.word let s = toseq.addtobitstream(10000, empty:bitpackedseq.bit, k)@(+, toword,"", @(+, toint, empty:seq.int, s))
+/ function asbits(k:internalbc)seq.word let s = toseq.addtobitstream(10000, empty:bitstream, k)@(+, toword,"", @(+, toint, empty:seq.int, s))
 
 /use seq.bit
 
@@ -243,9 +247,9 @@ function addvbr6help(bits:int, bitcount:int, done:seq.int, c:seq.bits, i:int)int
   else if i = 1 then internalbc(bits * 64 + toint.c_1, newbitcount, done)
   else addvbr6help(bits * 64 + toint.c_i, newbitcount, done, c, i - 1)
 
-type internal2 is record state:int, offset:int, result:bitpackedseq.bit
+type internal2 is record state:int, offset:int, result:bitstream
 
-Function addtobitstream(offset:int, bs:bitpackedseq.bit, b:internalbc)bitpackedseq.bit
+Function addtobitstream(offset:int, bs:bitstream, b:internalbc)bitstream
  result(finish.b @ add2(internal2(0, offset, bs), offset, @e))
 
 function add2(r:internal2, offset:int, val:int)internal2
@@ -335,7 +339,7 @@ Function processtemplate(s:seq.templatepart, deltaoffset:int, args:seq.int)inter
 
 _____________________________
 
-Function addvbr(b:bitpackedseq.bit, newbits:int, bitcount:int)bitpackedseq.bit
+Function addvbr(b:bitstream, newbits:int, bitcount:int)bitstream
  let limit = toint(bits.1 << (bitcount - 1))
   if newbits < limit then add(b, bits.newbits, bitcount)
   else
@@ -344,7 +348,7 @@ Function addvbr(b:bitpackedseq.bit, newbits:int, bitcount:int)bitpackedseq.bit
     assert toint.secondchunk < limit report"vbr encoding for value is not handled" + toword.newbits + toword.limit
      add(b, secondchunk << bitcount ∨ firstchunk, bitcount * 2)
 
-function addvbr6(b:bits, bitstoadd:int, leftover:bits, s:seq.int, r:bitpackedseq.bit, i:int)bitpackedseq.bit
+function addvbr6(b:bits, bitstoadd:int, leftover:bits, s:seq.int, r:bitstream, i:int)bitstream
  if bitstoadd > 58 then addvbr6(bits.0, 0, leftover, s, add(r, b, bitstoadd), i)
  else if toint.leftover > 0 then
  if toint.leftover < 32 then
@@ -359,11 +363,11 @@ function addvbr6(b:bits, bitstoadd:int, leftover:bits, s:seq.int, r:bitpackedseq
    else
     addvbr6(b ∨ (bits.v ∧ bits.31 ∨ bits.32) << bitstoadd, bitstoadd + 6, bits.v >> 5, s, r, i + 1)
 
-function addvbr6(b:bitpackedseq.bit, s:seq.int)bitpackedseq.bit addvbr6(bits.0, 0, bits.0, s, b, 1)
+function addvbr6(b:bitstream, s:seq.int)bitstream addvbr6(bits.0, 0, bits.0, s, b, 1)
 
-Function addvbr6(b:bitpackedseq.bit, v:int)bitpackedseq.bit addvbr6(bits.0, 0, bits.0, [ v], b, 1)
+Function addvbr6(b:bitstream, v:int)bitstream addvbr6(bits.0, 0, bits.0, [ v], b, 1)
 
-  Function addvbrsigned6(b:bitpackedseq.bit, val:int)bitpackedseq.bit
+  Function addvbrsigned6(b:bitstream, val:int)bitstream
  if val < 0 then
  if val > -16 then addvbr6(b, 2 * -val + 1)
   else
@@ -377,14 +381,14 @@ Function addvbr6(b:bitpackedseq.bit, v:int)bitpackedseq.bit addvbr6(bits.0, 0, b
 
 
    
-Function align32(a:bitpackedseq.bit)bitpackedseq.bit
+Function align32(a:bitstream)bitstream
  let k = length.a mod 32
   if k = 0 then a else add(a, bits.0, 32 - k)
 
-Function addblockheader(b:bitpackedseq.bit, currentabbrelength:int, blockid:int, abbrevlength:int)bitpackedseq.bit
+Function addblockheader(b:bitstream, currentabbrelength:int, blockid:int, abbrevlength:int)bitstream
  addvbr(align32.addvbr(addvbr(addvbr(b, ENTERBLOCK, currentabbrelength), blockid, 8), abbrevlength, 4), 0, 32)
 
-Function finishblock(current:bitpackedseq.bit, headerplace:int, blockabbrevlength:int)bitpackedseq.bit
+Function finishblock(current:bitstream, headerplace:int, blockabbrevlength:int)bitstream
  if headerplace = 0 then current
  else
   let bb = align32.addvbr(current, ENDBLOCK, blockabbrevlength)
@@ -392,17 +396,17 @@ Function finishblock(current:bitpackedseq.bit, headerplace:int, blockabbrevlengt
    // assert false report"X"+ toword(length.header-32)+ toword.len //
    patch(bb, headerplace - 31, len)
 
-Function addbody(m:bitpackedseq.bit, offset:int, bodytxt:internalbc)bitpackedseq.bit
+Function addbody(m:bitstream, offset:int, bodytxt:internalbc)bitstream
  let header = addblockheader(m, MODABBREVLEN, toint.FUNCTIONBLK, FUNCABBRVLEN)
   finishblock(addtobitstream(offset, header, bodytxt), length.header, FUNCABBRVLEN)
 
-Function addbody(m:bitpackedseq.bit, bodytxt:seq.seq.int)bitpackedseq.bit
+Function addbody(m:bitstream, bodytxt:seq.seq.int)bitstream
  let header = addblockheader(m, MODABBREVLEN, toint.FUNCTIONBLK, FUNCABBRVLEN)
   finishblock(addrecords(header, FUNCABBRVLEN, bodytxt), length.header, FUNCABBRVLEN)
 
-Function addrecords(bits:bitpackedseq.bit, abbrevlength:int, s:seq.seq.int)bitpackedseq.bit s @ addrecord(bits, abbrevlength, @e)
+Function addrecords(bits:bitstream, abbrevlength:int, s:seq.seq.int)bitstream s @ addrecord(bits, abbrevlength, @e)
 
-function addrecord(bits:bitpackedseq.bit, abbrevlength:int, a:seq.int)bitpackedseq.bit
+function addrecord(bits:bitstream, abbrevlength:int, a:seq.int)bitstream
  let a1 = addvbr(bits, UNABBREVRECORD, abbrevlength)
  let a2 = addvbr6(addvbr6(a1, a_1), length.a - 1)
   subseq(a, 2, length.a) @ addvbr6(a2, @e)
@@ -426,7 +430,7 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
   // sym table //
   let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
   let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
-   // finish module block // data2.align.finishblock(a8, length.h.p, MODABBREVLEN)
+   // finish module block // bits.finishblock(a8, length.h.p, MODABBREVLEN)
 
 Function llvm(trecords:seq.seq.int, bodies:seq.seq.seq.int)seq.bits
  let p = llvmpartial(empty:seq.seq.int, trecords)
@@ -435,13 +439,13 @@ Function llvm(trecords:seq.seq.int, bodies:seq.seq.seq.int)seq.bits
   // sym table //
   let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
   let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
-   // finish module block // data2.align.finishblock(a8, length.h.p, MODABBREVLEN)
+   // finish module block // bits.finishblock(a8, length.h.p, MODABBREVLEN)
 
-type llvmpartial is record a6:bitpackedseq.bit, h:bitpackedseq.bit
+type llvmpartial is record a6:bitstream, h:bitstream
 
 Function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int)llvmpartial
  let offset = length.constantrecords
- let h = addblockheader(add(add(add(add(empty:bitpackedseq.bit, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8)
+ let h = addblockheader(add(add(add(add(empty:bitstream, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8)
  , 2
  , toint.MODULE
  , MODABBREVLEN)
@@ -493,7 +497,7 @@ function constrecords(z:trackconst, l:slotrecord)trackconst
     addvbr6(a1, subseq(rec, 2, length.rec))
    trackconst(bs, typ.l, if newblock then length.bits else blockstart.z)
 
-Function symentries(bits:bitpackedseq.bit, s:seq.slotrecord, i:int)bitpackedseq.bit
+Function symentries(bits:bitstream, s:seq.slotrecord, i:int)bitstream
  if i > length.s then bits
  else
   let l = s_i
@@ -507,7 +511,7 @@ Function symentries(bits:bitpackedseq.bit, s:seq.slotrecord, i:int)bitpackedseq.
   else bits
    symentries(bs, s, i + 1)
 
-type trackconst is record bits:bitpackedseq.bit, lasttype:int, blockstart:int
+type trackconst is record bits:bitstream, lasttype:int, blockstart:int
 
 function islastmodule(l:trackconst)boolean lasttype.l < 0
 

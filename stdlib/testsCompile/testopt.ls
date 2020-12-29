@@ -83,6 +83,8 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br BLOCK 6 
 &br","%1"]
 let r = arithseq(length.cl, 1, 1) @ +("", getcode(p2, cl, @e))
++if [40, 20, 30 ,20 ]=[multitarget(4,true,false),multitarget(4,false,false),multitarget(3,false,true), multitarget(2,false,false)]
+then "" else "fail multitarget"
  if isempty.r then"PASS testopt"else"testopt" + r
 
 function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
@@ -117,6 +119,17 @@ function removeoptions(s:seq.word, i:int)seq.word
   else removeoptions(s, i - 9)
  else if s_i ≠ '"'_1 then removeoptions(s, i - 1)
  else subseq(s, 1, i - 1)
+ 
+      Function multitarget(  value1:int,a:boolean,b:boolean ) int
+       // check to see optimization handles this case correctly //
+     if   if value1  =4  then       a else false   then  40 
+   else   if  if value1  =  3 then    b else false then  30
+   else
+     20
+    
+   
+ 
+
 
 Function optest1 int 3 + 4
 

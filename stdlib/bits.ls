@@ -48,24 +48,16 @@ Function  toint(b:bit) int rep.b
 
 Export bit(int)bit
 
-Function sizeinbits(a:bit)int 1
-
 Function tobits(a:bit)bits bits.rep.a
-
-Function frombits:bit(a:bits)bit bit.toint.a
 
 _________________
 
 type byte is record rep:int
 
-Function sizeinbits(a:byte)int 8
-
 Function tobits(a:byte)bits bits.rep.a
 
 Function =(a:byte, b:byte)boolean toint.a = toint.b
 
-
-Function frombits:byte(a:bits)byte byte.toint.a
 
 Export byte(int)byte
 

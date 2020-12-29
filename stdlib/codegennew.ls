@@ -233,7 +233,7 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
       assert length.args.l > 3 report"check m" + ([ kind] + toseq.args.l) @ +("", toword.@e)
       let args = top(args.l, 4)
        assert between(constvalue.slot.args_2 - 1, 1, length.blks)
-       ∧ between(constvalue.slot.args_3 - 1, 1, length.blks)report"check mm"
+       ∧ between(constvalue.slot.args_3 - 1, 1, length.blks)report"codegen error: jmp to unknown block"
        let newcode = BR(r(regno.l + 1), noblocks.blks_(constvalue.slot.args_2 - 1), noblocks.blks_(constvalue.slot.args_3 - 1), r.regno.l)
         processblk(phitype, blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, tailphi)
 

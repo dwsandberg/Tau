@@ -198,7 +198,7 @@ function ascode(p:program, l:seq.block, i:int, assigned:seq.block, result:seq.sy
    if kind.blk ∈ "BR"then
    let a2 = findblk2(l, 1, label2.blk)
     let exp = checkforcase(p, blk)
-     if false &and not.isempty.exp then
+     if // false &and // not.isempty.exp then
      let r = gathercase(l, blk, exp, empty:seq.caseblock)
        if length.caseblks.r = 1 then
        // go ahead and process BR"//
@@ -304,7 +304,8 @@ function gathercase(l:seq.block, blk:block, exp:seq.symbol, caseblks:seq.caseblo
      subseq(constantcode.rep, 3, length.constantcode.rep) @ +(empty:seq.caseblock, caseblock(label, 0, @e))
   // now check to see if following block is a case block //
   let newblock = findblk2(l, 1, label2.blk)
-   if iscaseblock.newblock ∧ subseq(code.newblock, 1, length.code.newblock - 5) = exp then
+   if iscaseblock.newblock ∧ subseq(code.newblock, 1, length.code.newblock - 5) = exp 
+    &and  l @ +(0, indegree(blkno.newblock,@e))=1 then
    gathercase(l, newblock, exp, caseblks + t)
    else gathercaseresult(sort(caseblks + t), blkno.newblock)
 
@@ -333,11 +334,16 @@ function rearrangecase(cbs:seq.caseblock, nextblklabel:int, defaultlabel:int, va
    + allocated.low
    + allocated.high)
    
-/function print(b:block)seq.word
- " &br >>>>" + [ kind.b, toword.blkno.b]
+function   indegree(label:int,b:block) int
+   if kind.b ="JMP"_1 then if label1.b=label then 1 else 0
+   else if kind.b ∈ "BR BRC "then  if label1.b=label &or label2.b=label  then 1 else 0 
+   else 0
+   
+function print(b:block)seq.word
+ " &br >>>>" + toword.blkno.b +":" +kind.b   
  + if kind.b ∈ "BR BRC"then
  [ toword.label1.b, toword.label2.b]
-  + print.// [(code.b)_(length.code.b-3)]// code.b
+  + print.code.b
  else if kind.b = "BRBLKS"_1 then
  "(" + subblks.b @ +("", print.@e) + ")"
  else if kind.b ∈ "EXIT CONTINUE"then print.code.b

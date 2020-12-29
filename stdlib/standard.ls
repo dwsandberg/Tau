@@ -279,7 +279,8 @@ Export << (s:seq.word, i:int) seq.word
            
 Export >> (s:seq.word , i:int) seq.word   
 
-* usegraph include xxhash encoding bits words real subreal   textio reconstruct UTF8 seq otherseq fileio standard 
+* usegraph include xxhash encoding bits words real    
+ textio reconstruct UTF8 seq otherseq fileio standard bitstream
 exclude standard seq
 
 * usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict 
