@@ -139,7 +139,7 @@ function prettynoparse(s:seq.word, i:int, lastbreak:int, result:seq.word)seq.wor
 _____________________________
 
 Function  createhtmlfile(name:seq.word,output:seq.word ) int
-   createbytefile(name, a.processpara (htmlheader @ addspace(emptyout23,@e), output   ))
+   createfile(name, a.processpara (htmlheader @ addspace(emptyout23,@e), output   ))
    
  
  
@@ -158,10 +158,10 @@ use seq.byte
  
     function  +(z:out23,c:char) out23 
   //  clears nospace flag //
-   out23(false, if toint.c > 255 then 
+   out23(false, if toint.c > 127 then 
        a.z+toseqbyte.encodeUTF8.c   
    else   
-       a.z+byte.toint.c )
+       a.z+tobyte.toint.c )
        
    function setnospace(   a:out23 ) out23  out23(true,a.a)
 

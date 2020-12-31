@@ -22,6 +22,11 @@ use seq.seq.word
 
 use seq.word
 
+use bits
+
+use seq.byte
+
+
 Function test5 seq.word
 let y = [ t5501, t5502, t522, t509]
  check(y,"test5")
@@ -38,13 +43,10 @@ let text = ["this is a test","line 2"]
 let f = createfile("testw.txt", text)
  gettext."testw.txt" = text
 
-use bits
-
-use seq.byte
 
 function filetest(i:int)boolean
  let name ="test" + toword.i + ".txt"
- let a = createbytefile(name, arithseq(i, 1, 48))
+ let a = createfile(name, arithseq(i, 1, 48) @ +(empty:seq.byte,tobyte.@e))
   fileexists.name ∧ i = length.getfile:byte(name)
 
 Function t522 boolean arithseq(9, 1, 4) @ ∧(true, filetest.@e)

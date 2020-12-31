@@ -33,7 +33,7 @@ function breakcommas(a:seq.byte, i:int, last:int, result:seq.UTF8)seq.UTF8
  else if toint.a_i =  toint.commachar then
  breakcommas(a, i + 1, i + 1, result + UTF8.subseq(a, last, i - 1))
  else if toint.a_i =  toint.doublequotechar then
- let d = findindex(byte.toint.doublequotechar, a, i + 2)
+ let d = findindex(tobyte.toint.doublequotechar, a, i + 2)
    breakcommas(a, d + 2, d + 2, result + UTF8.subseq(a, i + 1, d - 1))
  else breakcommas(a, i + 1, last, result)
 

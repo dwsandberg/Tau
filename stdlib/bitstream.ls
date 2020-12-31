@@ -67,7 +67,7 @@ function print(x:bitstream) seq.word
    Function index(s:bitstream,i:int, sizebits:int) bits
     endpart.(subseq(s,   (i-1) * sizebits + 1 ,(i) * sizebits  ) )
   
-   Function _(s:bitstream,i:int) byte        byte.toint(index(s,i,8))
+   Function _(s:bitstream,i:int) byte        tobyte.toint(index(s,i,8))
       
           
  Function subseq(s:bitstream,start:int,end:int)  bitstream  

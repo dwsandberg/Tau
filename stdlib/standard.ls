@@ -132,8 +132,17 @@ Builtin randomint(i:int)seq.int
 Function list(a:seq.word,b:seq.word,c:seq.word) seq.word
  if isempty.a then c else if isempty.c then a else a + (b + c)
 
-  Function EOL seq.word "&br"  
+Function print(n:int) seq.word 
+ let s=decodeUTF8.toUTF8.n
+   let sign=if n < 0 then "-" else "" 
+   let t =(if n < 0 then s << 1 else s)
+   sign+encodeword.if length.s < 5 then  s else 
+    s @ +(empty:seq.char, 
+       if (length.s-@i) mod 3 =2 &and @i &ne 1 then [char.160,@e] else [ @e ])  
 
+
+  Function EOL seq.word "&br"  
+  
 Export hash(a:word)int
 
 Export ?(a:word, b:word)ordering

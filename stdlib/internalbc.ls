@@ -162,15 +162,10 @@ Function addstartbits(inst:int, noargs:int, b:internalbc)internalbc
 
 type internalbc is record bits:int, bitcount:int, done:seq.int
 
-Export done(internalbc)seq.int
 
-Export bitcount(internalbc)int
+/Function print(a:internalbc)seq.word print1(finish.a, 1,"")
 
-Export bits(internalbc)int
-
-Function print(a:internalbc)seq.word print1(finish.a, 1,"")
-
-function print1(a:seq.int, i:int, result:seq.word)seq.word
+/function print1(a:seq.int, i:int, result:seq.word)seq.word
  if i > length.a then result
  else
   let val = a_i
@@ -195,7 +190,7 @@ Function +(a:internalbc, b:internalbc)internalbc
  else
   internalbc(bits.b * 2^(bitcount.a) + bits.a, bitcount.a + bitcount.b, done.b)
 
-Function finish(b:internalbc)seq.int
+function finish(b:internalbc)seq.int
  if bitcount.b = 0 then done.b
  else [ bits.b * 64 + bitcount.b] + done.b
  

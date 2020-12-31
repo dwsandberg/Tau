@@ -32,7 +32,7 @@ Function +(a:UTF8, ch:char)UTF8 a + encodeUTF8.ch
 
 Function =(a:UTF8, b:UTF8)boolean toseqbyte.a = toseqbyte.b
 
-Function  UTF8(s:seq.int)UTF8   UTF8(s @ +(empty:seq.byte,byte.@e))
+Function  UTF8(s:seq.int)UTF8   UTF8(s @ +(empty:seq.byte,tobyte.@e))
 
 
 Function commachar char char.44
@@ -132,10 +132,6 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
 Function toword(n:int)word // Covert integer to sequence of characters represented as a single word. // 
 encodeword.decodeUTF8.toUTF8.n
 
-/Function print(i:int)seq.word groupdigits.toUTF8.i
-
-/function groupdigits(u:UTF8)seq.word let s = tointseq.u if length.s < 5 ∧(length.s < 4 ∨ s_1 = toint.hyphenchar)then [ encodeword.s]else groupdigits.UTF8.subseq(s, 1, length.s-3)+ [ encodeword.subseq(s, length.s-2, length.s)]
-
 Function toint(w:word)int // Convert an integer represented as a word to an int // cvttoint.decodeword.w 
 
 Function intlit(s:UTF8)int cvttoint.decodeUTF8.s 
@@ -206,8 +202,10 @@ Function toUTF8(rin:real, decimals:int)UTF8
   let r = rin + 1.0 / toreal(a * 2)
    if decimals > 0 then
    toUTF8.intpart.r + encodeUTF8.periodchar
-    + UTF8.lpad(decimals, byte.48, toseqbyte.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
+    + UTF8.lpad(decimals, tobyte.48, toseqbyte.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
    else toUTF8.intpart.r
+
+
 
 Function reallit(s:UTF8)real reallit(decodeUTF8.s,-1, 1, 0, 1)
 

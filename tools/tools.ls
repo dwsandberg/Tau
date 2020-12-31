@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau   ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau   ; use doc ; doclibrary."stdlib:small"
 
 
 ; use doc ; doclibrary."tools"

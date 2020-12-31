@@ -144,9 +144,8 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
   )
  ,addtemplate(symbol("tocstr(bits seq)","builtin","cstr"), 2,
    GEP(r.1, i64, slot.ibcsub1, C64.2)  + CAST(r.2, r.1,  i64, ptrtoint))
- , addtemplate(symbol("bitcast(int seq seq)","builtin","int seq"), 0, emptyinternalbc)
-, addtemplate(symbol("toint(byte)","builtin","int"), 0, emptyinternalbc)
-, addtemplate(symbol("toint(bit)","builtin","int"), 0, emptyinternalbc)
+ , addtemplate(symbol("toint(byte)","builtin","int"), 1, BINOP(r.1, slot.ibcsub1, C64.0, add))
+ , addtemplate(symbol("toint(bit)","builtin","int"), 1, BINOP(r.1, slot.ibcsub1, C64.0, add))
  , addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
  , addtemplate(symbol("bitcast(int seq)","builtin","int"), 1, CAST(r.1, slot.ibcsub1, i64, ptrtoint))
  , addtemplate(symbol("bitcast(int)","builtin","int seq"), 1, CAST(r.1, slot.ibcsub1, ptr.i64, inttoptr))
@@ -216,8 +215,8 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
  function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1)
  +CAST(r.2, r.1,ptr.i64, inttoptr))
- ,//  
-   Did not work because ibcfirstpara2 was not working correctly 
+ ,  
+  // Did not work because ibcfirstpara2 was not working correctly //
    addtemplate(symbol("callidx2(T seq,int)","int builtin","int"),4
  , GEP(r.1, i64, slot.ibcsub1, C64.0) 
  + LOAD(r.2, r.1, i64) 
@@ -235,8 +234,8 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + LOAD(r.2, r.1, i64) 
  + CAST(r.3, r.2, ptr.function.[  ptr.i64, i64,ptr.i64, i64], inttoptr)
  + CALL(r.4, 0, 32768, function.[ ptr.i64, i64, ptr.i64, i64], r.3, 
-  slot.ibcfirstpara2, [slot.ibcsub1, slot.ibcsub2])) //
-   addtemplate(symbol("callidx3(T seq,int)","int builtin","int")
+  slot.ibcfirstpara2, [slot.ibcsub1, slot.ibcsub2]))  
+  , addtemplate(symbol("callidx3(T seq,int)","int builtin","int")
  , 1
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64, i64], symboltableentry("callidx3"_1, 
  function.[ i64, i64, ptr.i64, i64]), slot.ibcfirstpara2, slot.ibcsub1,slot.ibcsub2))

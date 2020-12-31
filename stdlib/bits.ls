@@ -12,6 +12,8 @@ type bits is record toint:int
 
 Export toint(bits)int
 
+Function tobits(a:int) bits bits.a
+
 Export bits(int)bits
 
 Builtin ∨(a:bits, bits)bits
@@ -37,6 +39,10 @@ function hexword(b:bits) word
     
 Function print(b:bits) seq.word
     [ hexword(b >> 48)  ,  hexword(b >> 32) , hexword(b >> 16),  hexword(b )]
+    
+Function print(b:byte) seq.word 
+      [encodeword.[      hexdigit(tobits.b >> 4),  hexdigit.tobits.b]]
+
 
 __________________
 
@@ -44,24 +50,25 @@ type bit is record rep:int
 
 Function =(a:bit, b:bit)boolean toint.a = toint.b
 
-Function  toint(b:bit) int rep.b
+Builtin    toint(b:bit) int  
 
-Export bit(int)bit
+Function  tobit(a:int)bit bit.a
 
-Function tobits(a:bit)bits bits.rep.a
+Function tobits(a:bit)bits   tobits.toint.a
 
 _________________
 
 type byte is record rep:int
 
-Function tobits(a:byte)bits bits.rep.a
-
 Function =(a:byte, b:byte)boolean toint.a = toint.b
 
-
-Export byte(int)byte
+Function tobits(a:byte)bits tobits.toint.a
 
 Builtin  toint(b:byte)int  // use builtin rather than rep.b so  abyteseq @ +(empty:seq.int,toint.@e) does 
-not become an noop since abytseq may contain packed sequences of bytes // 
+not become an noop since a bytseq may contain packed sequences of bytes // 
+
+
+Function  tobyte(a:int) byte byte.a
+
 
 _______________

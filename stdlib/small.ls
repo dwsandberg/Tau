@@ -1,12 +1,15 @@
 
-Library small   UTF8 bitpackedseq bits  encoding tausupportNostacktrace   fileio format  
-     otherseq  
+Library small   UTF8  bitstream bits  encoding tausupportNostacktrace    fileio format  
+     otherseq  outstream
  process real seq set stack  textio  tree  words xxhash standard
- tests/randomphrase  
-   tests/wordfreq
+ tests/test11 tests/checking tests/point tests/testencoding  
+ tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
+ tests/testprocess tests/test5 tests/testseq tests/wordfreq
+ graphs/ipair
+ graphs/graph
  sparseseq 
 uses
-exports UTF8 main2 words tausupport bitpackedseq       
+exports UTF8 main2 words tausupport    testmodules   
  
  "Library small   UTF8 bitpackedseq bits  encoding tausupportNostacktrace   fileio format  
      otherseq  
@@ -20,11 +23,11 @@ exports UTF8 main2 words tausupport bitpackedseq
 uses
 exports UTF8 main2 words tausupport bitpackedseq   "  
   
-option.fileio getfile(seq.bits)fileresult STATE
+/option.fileio getfile(seq.bits)fileresult STATE
 
-option.fileio createlib(name:seq.bits, libs:seq.bits, t:outputformat)int STATE
+/option.fileio createlib(name:seq.bits, libs:seq.bits, t:outputformat)int STATE
 
-option.fileio createfile(name:seq.bits, data:outputformat)int STATE
+/option.fileio createfile(name:seq.bits, data:outputformat)int STATE
  
 option.UTF8 toword(int)word NOINLINE 
 
@@ -38,38 +41,41 @@ use format
 
 use UTF8
 
-/use test11
+use bits
 
-/use testencoding
+use seq.byte
 
-/use bug7
+use test11
 
-/use testmodules
+use testencoding
 
-/use testprocess
+ use bug7
 
-/use test5
+use testmodules
 
-/use testseq 
+use testprocess
+
+ use test5
+
+use testseq 
 
 use wordfreq
 
-/use real
+ use real
 
-* usegraph exclude standard seq 
+use encoding.seq.char
 
-Function loaddictionary(file:fileresult)int 0
+* usegraph exclude standard seq  test11 test5 testmodules testprocess testseq wordfreq testencoding
 
-Function main(arg:seq.int)outputformat
-   outputformat.toseqint.toUTF8(htmlheader +testwordfreq(300, 
-    subseq(gettext."stdlib/pass2.ls" ,1, 90))
-   )
-
-/Function main(arg:seq.int)outputformat
-   outputformat.toseqint.toUTF8(htmlheader + test11+ 
-   test5+testencoding + testprocess + testmodules + testbug7
+ 
+Function main(arg:seq.byte) int
+   let output=test11+test5+testencoding+testprocess + testmodules+ testbug7
    +testreal+testseq+testwordfreq
-   )
+    createhtmlfile("stdout",   output  )
+ 
+ Function addlibrarywords(l:liblib) int let discard=addencodingpairs(words.l) 1
+
+type liblib is record libname:seq.word, words:seq.encodingpair.seq.char
 
 
 

@@ -4,7 +4,7 @@ use seq.T
 
 Builtin IDX(seq.T, int)T
 
-Builtin IDXSEQ(seq.T, int, int)T
+Builtin GEP(seq.T, int)T
 
 Builtin allocatespace:T(i:int)seq.T
 
@@ -22,7 +22,8 @@ use seq.T
 
 use standard
 
-Builtin callidx(a:seq.T, int)T
+builtin sizeoftype:T int
+
 
 builtin bitcast(blockseq.T)seq.seq.T
 
@@ -35,6 +36,8 @@ function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:T)int
  else memcpy(setfld(idx, s, IDX(bitcast.fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
 
 builtin setfirst(r:seq.T, fld0:int, fld1:int)seq.T
+
+Builtin callidx3(a:seq.T, int)T
 
 type blockseq is sequence length:int, dummy:seq.T
 
@@ -49,20 +52,30 @@ Function_(a:blockseq.T, i:int)T
   let blksz = blocksize:T / ds
   let blk = IDX(data,(i - 1) / blksz + 2)
   let b =(i - 1) mod blksz + 1
-   if typ > 1000 then callidx(blk, b)
-   else if typ > 1 then IDXSEQ(blk, typ, b)else IDX(blk, b + 1)
+   if typ > 1000 then callidx3(blk, b)
+   else  IDX(blk, b + 1)
 
-blk_((i-1)mod blksz + 1)
+ 
+ 
+ let blksz =length.IDX(data,1)
+ let blk = IDX(data,(i - 1) / blksz + 2)
+ let b =(i - 1) mod blksz + 1
+    if sizeoftype:T > 1 then 
+    let ds=blksz / blocksize:T
+     GEP(blk, (b-1) * ds + 2)  
+   else  
+     IDX(blk, b + 1)
 
-Function blockit(s:seq.T, ds:int)seq.T
- blockit(s)
+
  
 
+Function blockit(s:seq.T, ds:int)seq.T
+  assert ds > 1 report "blockit problem"
  let blksz = blocksize:T / ds
   if length.s ≤ blksz then
   let newseq = allocatespace:T(length.s * ds + 2)
-   let d = if ds > 1 then s @ memcpy(2, 0, ds, newseq, @e)else s @ setfld(2, newseq, @e)
-    setfirst(newseq, ds, length.s)
+   let d =  s @ memcpy(2, 0, ds, newseq, @e) 
+    setfirst(newseq, 1, length.s)
   else
    let noblks =(length.s + blksz - 1) / blksz
    let blkseq = allocatespace:seq.T(noblks + 2)
@@ -94,7 +107,6 @@ use taubuiltinsupport.encodingpair.seq.char
 use seq.seq.int
 
 
-
 use taubuiltinsupport.int
 
 use taubuiltinsupport.real
@@ -102,6 +114,10 @@ use taubuiltinsupport.real
 use standard
 
 use encoding.typename
+
+use seq.byte
+
+Export _(pseq.byte,int) byte
 
 Export blockit(seq.int)seq.int
 
