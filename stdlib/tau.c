@@ -2,7 +2,7 @@
  * Tests libRatings.A.dylib 1.0 as a runtime-loaded library.
  ***********************************************************/
  
-#include <stdio.h>
+#include "tau.h"
 #include <stdlib.h>
 #include "math.h"
 #include <dlfcn.h>
@@ -15,8 +15,6 @@
 #include <strings.h>
 #include <signal.h>
 #include <time.h>
-#include <setjmp.h>
-#include <pthread.h>
 #include <errno.h>
 
 
@@ -31,29 +29,6 @@
 typedef  struct pinfo *processinfo;
 
 
-struct spaceinfo { char * nextone,*lastone; BT *blocklist; };
-
-struct pinfo { BT aborted; // 1 if aborted
-    BT message; // message if aborted (seq.word)
-    BT result;  // result returned by process
-    BT joined;  // has process been joined to parent?
-    struct spaceinfo space; //for space allocation
-    jmp_buf env;
-    BT error;
-    pthread_t pid;
-    struct einfo **encodings;
-    processinfo spawningprocess;
-    BT profileindex;
-    BT (*finishprof)(BT idx,BT x);
-    BT freespace;
-    BT newencodings;
-     // info needed to create thread
-    BT  deepcopyresult;
-    BT  deepcopyseqword;
-    BT func;
-    BT noargs;
-    BT *args;
-               };
                
 void assertexit(int b,char *message);
 
@@ -440,99 +415,7 @@ BT getbitfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,-
 // end of file io
 
 
-
-// thread creation
-
-//parent process must not terminate before child or space for parameters(encodings) may be dealocated
-
-void threadbody(struct pinfo *q){
-if (setjmp(q->env)!=0) {
-       q->message= ((BT (*) (processinfo,BT))(q->deepcopyseqword) ) (q->spawningprocess,q->error);
-        q->aborted = 1;}
-    else {BT result;
-     // fprintf(stderr,"start threadbody\n");
-     q->aborted = 0;
-     switch( q->noargs){
-         case 0:
-        result= ((BT (*) (processinfo))(q->func) )(q); break;
-  
-      case 1:
-        result= ((BT (*) (processinfo,BT))(q->func) )(q,q->args[0]); break;
-     case 2:
-        result= ((BT (*) (processinfo,BT,BT))(q->func) )(q,q->args[0],q->args[1]); break;
-     case 3:
-        result= ((BT (*) (processinfo,BT,BT,BT))(q->func) )(q,q->args[0],q->args[1],q->args[2]); break;
-     case 4:
-        result= ((BT (*) (processinfo,BT,BT,BT,BT))(q->func) )(q,q->args[0],q->args[1],q->args[2],q->args[3]); break;
-    case 5:
-        result= ((BT (*) (processinfo,BT,BT,BT,BT,BT))(q->func) )(q,q->args[0],q->args[1],q->args[2],q->args[3],q->args[4]); break;
-    case 6:
-        result= ((BT (*) (processinfo,BT,BT,BT,BT,BT,BT))(q->func) )(q,q->args[0],q->args[1],q->args[2],q->args[3],q->args[4],q->args[5]); break;
-     default: assertexit(0,"only 1 ,2,3, 4 or 5 arguments to process are handled");
-        
-     }
-     // fprintf(stderr,"start result copy \n"); //
-     assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-     q->result= ((BT (*) (processinfo,BT))(q->deepcopyresult) ) ( q->spawningprocess,result);
-     assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-     // fprintf(stderr,"finish result copy\n"); //
-    }
-    if (q->freespace )  myfree(&q->space); 
-    if (q->profileindex > 0 )  (q->finishprof)(q->profileindex ,0);
-}
-
-void initprocessinfo(processinfo p,processinfo PD){
-    p->spawningprocess =PD;
-    p->encodings = PD->encodings;
-    p->aborted = 0;
-    p->pid = pthread_self ();
-    p->joined =0 ;
-    p->space.nextone =0;
-    p->space.lastone =0;
-    p->space.blocklist = 0;
-    p->error =0;
-    p->message =0;
-    p->result =0;
-    p->profileindex = 0;
-    p->freespace=1;
-    p->newencodings=0;
-}
-
-
-
-
-
-BT createthread(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args ){
-BT profileidx=0;
-BT (*finishprof)(BT idx,BT x) =NULL;
-  pthread_attr_t 	stackSizeAttribute;
-  size_t			stackSize = 0;
-  pthread_attr_init (&stackSizeAttribute);
-  pthread_attr_setstacksize (&stackSizeAttribute, 1024 * 1024 * 12 *8 );
-  pthread_attr_getstacksize(&stackSizeAttribute, &stackSize); 
-  /*  fprintf(stderr,"Stack size %d\n", stackSize);*/
-  processinfo p=(processinfo)  myalloc(PD,(sizeof (struct pinfo)+7)/8);
-  initprocessinfo(p,PD);
-  p->deepcopyresult =  deepcopyresult; 
-    p->deepcopyseqword =  deepcopyseqword;
-    p->func= func;
-    p->noargs=args[1];
-    p->args= args+2;
-
-  p->profileindex = profileidx; 
-  p->finishprof=finishprof;
-  assertexit(0==pthread_create(&p->pid, &stackSizeAttribute, (void *(*)(void *) )threadbody,(void *) p),"ERROR");
-  return (BT)p;
-}
-
-
 BT noop(BT a,BT b) { return b;}
-
-  
-
-
-// end of thread creation.
-
 
 volatile sig_atomic_t fatal_error_in_progress = 0;
 
@@ -602,11 +485,15 @@ int main(int argc, char **argv)    {   int i=0,count;
        exit(EXIT_FAILURE);
       }
       BT argsx=tobyteseq ( p, argstr);  
-       p->noargs=1;
+       p->argtype=4;
        p->args=&argsx;
        p->freespace=0;
         threadbody(p);  
-       if (p->aborted==1 )       fprintf(stderr,"FATAL ERROR");                   
+       if (p->aborted==1 )      { fprintf(stderr,"FATAL ERROR");  
+         printf(  "FATAL ERROR");
+          fflush(stdout); 
+         return 1;
+       }               
          
         fflush(stdout); 
          return 0;
@@ -680,5 +567,7 @@ BT callidx3(BT PD, BT * seq, BT idx)
  BT (* callit)(BT,BT *,BT ) = (  BT (*)(BT,BT * ,BT )  ) seq[0];
     return  (callit)(PD,seq,idx);}
     
-BT * testdata (){ static const BT x[]={1, 64,0x0F0E0D0C0B0A0908}; return (BT *) x;
-}
+double callidxreal(BT PD, BT * seq, BT idx)  
+ {   if (seq[0]==0 )  return seq[idx+1];
+ double (* callit)(BT,BT *,BT ) = (  double (*)(BT,BT * ,BT )  ) seq[0];
+    return  (callit)(PD,seq,idx);}

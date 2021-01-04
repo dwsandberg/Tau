@@ -121,7 +121,9 @@ function unaryop(R:reduction.bindinfo, input:seq.token.bindinfo, op:seq.word, ex
   assert cardinality.dcws=1 report errormessage("type word seq is require for process in" ,  input, place.R)
     let newcode = [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp, Stdseq, Lit.nopara]
         + subseq(code.exp, 1, length.code.exp - 1)
-    + [ newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint] + paratypes.last.code.exp, typeptr), symbol("createthread(int, int, int, ptr)","builtin","ptr")]
+    + 
+     newsymbol("createthreadX",mytype." int builtin",[typeint,typeint,typeint,typeint,typeint]+paratypes.last.code.exp
+     ,abstracttype("process"_1,resulttype.last.code.exp)) 
    bindinfo(dict.R, newcode, [  typeprocess+rt],"")
  else
   let f = lookupbysig(dict.R, op, types.exp, input, place.R)

@@ -56,17 +56,21 @@ Function isexternal(s:symbol)boolean
  isbuiltin.module.s
  ∧ not((fsig.s)_1 ∈ "aborted loadlib createlib createlib2    allocatespace addencoding createfile getinstance dlsymbol 
  getfile getbytefile getbitfile addresstosymbol2 randomint 
- getmachineinfo currenttime callstack initialdict createthread  assert callidx3")
+ getmachineinfo currenttime callstack initialdict createthread   assert callidx3")
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
  if fsig.s = "option(T, word seq)"then function.constantseq(nopara.s + 2, i64)
  else
   let starttypes = if isexternal.s then [ tollvmtype(alltypes, resulttype.s)]else [ tollvmtype(alltypes, resulttype.s), i64]
    function(paratypes.s @ +(starttypes, tollvmtype(alltypes, @e)))
+   
+Function tollvmtypelist(alltypes:typedict, s:symbol) seq.llvmtype
+  let starttypes = if isexternal.s then [ tollvmtype(alltypes, resulttype.s)]else [ tollvmtype(alltypes, resulttype.s), i64]
+paratypes.s @ +(starttypes, tollvmtype(alltypes, @e))
 
 function tollvmtype(alltypes:typedict, s:mytype)llvmtype
  let kind = kind.gettypeinfo(alltypes, s)
-  if kind = "int"_1 then i64 else if kind = "real"_1 then double else ptr.i64
+  if kind = "int boolean"_1 then i64 else if kind = "real"_1 then double else ptr.i64
 
 Function conststype llvmtype array(-2, i64)
 
@@ -115,7 +119,7 @@ function hash(a:match5)int fsighash.sym.a
 
 function assignencoding(l:int, a:match5)int l + 1
 
-Function options(match5map:seq.match5, m:match5)seq.word options.code.m
+Function options(match5map:seq.match5, m:match5)seq.word getoption.code.m
 
 Function funcdec(alltypes:typedict, i:symbol)int
  toint
@@ -151,6 +155,7 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("bitcast(int)","builtin","int seq"), 1, CAST(r.1, slot.ibcsub1, ptr.i64, inttoptr))
  , addtemplate(symbol("nullptr","builtin","ptr"), 1, CAST(r.1, C64.0, ptr.i64, inttoptr))
  , addtemplate(symbol("IDX(T seq, int)","int builtin","int"), 2, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64))
+ , addtemplate(symbol("IDX(T seq, int)","boolean builtin","boolean"), 2, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64))
  , addtemplate(symbol("IDX(T seq, int)","ptr builtin","ptr"), 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
  + CAST(r.3, r.2, ptr.i64, inttoptr))
  , addtemplate(symbol("IDX(T seq, int)","real builtin","real"), 3, GEP(r.1, i64, slot.ibcsub1, slot.ibcsub2) + LOAD(r.2, r.1, i64)
@@ -196,6 +201,8 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + GEP(r.3, i64, slot.ibcsub1, C64.0))
  , addtemplate(symbol("setfld(int, T seq, T)","int builtin","int"), 2, GEP(r.1, i64, slot.ibcsub2, slot.ibcsub1) + STORE(r.2, r.1, slot.ibcsub3)
  + BINOP(r.2, slot.ibcsub1, C64.1, add))
+, addtemplate(symbol("setfld(int, T seq, T)","boolean builtin","boolean"), 2, GEP(r.1, i64, slot.ibcsub2, slot.ibcsub1) + STORE(r.2, r.1, slot.ibcsub3)
+ + BINOP(r.2, slot.ibcsub1, C64.1, add))
  , addtemplate(symbol("setfld(int, T seq, T)","real builtin","int"), 3, CAST(r.1, slot.ibcsub3, i64, bitcast) + GEP(r.2, i64, slot.ibcsub2, slot.ibcsub1)
  + STORE(r.3, r.2, r.1)
  + BINOP(r.3, slot.ibcsub1, C64.1, add))
@@ -203,6 +210,9 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + STORE(r.3, r.2, slot.ibcsub3)
  + BINOP(r.3, slot.ibcsub1, C64.1, add))
  , addtemplate(symbol("assert(word seq)","int builtin","int")
+ , 1
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1))
+ , addtemplate(symbol("assert(word seq)","boolean builtin","boolean")
  , 1
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, slot.ibcsub1))
  , addtemplate(symbol("assert(word seq)","real builtin","real")
@@ -239,11 +249,14 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , 1
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64, i64], symboltableentry("callidx3"_1, 
  function.[ i64, i64, ptr.i64, i64]), slot.ibcfirstpara2, slot.ibcsub1,slot.ibcsub2))
- , addtemplate(symbol("callidx3(T seq,int)","real builtin","real")
- , 2
+  , addtemplate(symbol("callidx3(T seq,int)","boolean builtin","boolean")
+ , 1
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64, i64], symboltableentry("callidx3"_1, 
-   function.[ i64, i64, ptr.i64, i64]), slot.ibcfirstpara2, slot.ibcsub1 ,slot.ibcsub2)
-   +CAST(r.2, r.1, double, sitofp))
+ function.[ i64, i64, ptr.i64, i64]), slot.ibcfirstpara2, slot.ibcsub1,slot.ibcsub2))
+ , addtemplate(symbol("callidx3(T seq,int)","real builtin","real")
+ , 1
+ , CALL(r.1, 0, 32768, function.[  double, i64, ptr.i64, i64], symboltableentry("callidxreal"_1, 
+   function.[  double, i64, ptr.i64, i64]), slot.ibcfirstpara2, slot.ibcsub1 ,slot.ibcsub2))
  , addtemplate(symbol("callidx3(T seq,int)","ptr builtin","ptr")
  , 2
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64, i64], symboltableentry("callidx3"_1, 
@@ -282,18 +295,26 @@ function processconst(toprocess:seq.symbol, i:int, notprocessed:seq.symbol)seq.m
    else
     let discard = encode.addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, slot.addobject.args)
      processconst(toprocess, i + 1, notprocessed)
-
+     
+     function =(a:llvmtype,b:llvmtype) boolean typ.a=typ.b
+     
+  
 function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
  let pkg = module.xx
   if pkg = "$constant"then [ xx]
   else
    let discard1 = if isFref.xx then
-   let mn = mangledname.(constantcode.xx)_1
-    let functyp = ptr.tollvmtype(alltypes,(constantcode.xx)_1)
+     let f1=(constantcode.xx)_1
+   //  assert  double &nin tollvmtypelist(alltypes,f1) 
+       &or fsig.f1 &in [
+       "_(typereal pseq, int)","_(real pseq, int)","_(real blockseq, int)","_(typereal cseq, int)"]
+       report "FREF to real function"+print.xx //
+   let mn = mangledname.f1
+    let functyp = ptr.tollvmtype(alltypes,f1)
      addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
    else if islit.xx then
-   addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, if pkg = "$real"then Creal.toint.(fsig.xx)_1 else C64.toint.(fsig.xx)_1)
-   else if islocal.xx then addtemplate(xx, 0, empty:seq.templatepart,"LOCAL"_1, slot.toint.(fsig.xx)_1)
+   addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, if pkg = "$real"then Creal.value.xx else C64.value.xx)
+   else if islocal.xx then addtemplate(xx, 0, empty:seq.templatepart,"LOCAL"_1, slot.value.xx)
    else if isdefine.xx then addtemplate(xx, 0, empty:seq.templatepart,(fsig.xx)_1, slot.toint.(fsig.xx)_2)
    else if isblock.xx then
    let typ = tollvmtype(alltypes, resulttype.xx)

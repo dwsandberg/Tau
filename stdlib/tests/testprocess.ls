@@ -18,6 +18,8 @@ use standard
 
 use process.seq.word
 
+use process.real
+
 type returntype is record a:int, b:int, c:seq.word
 
 function testprocess3 returntype returntype(4, 40,"a test")
@@ -25,6 +27,13 @@ function testprocess3 returntype returntype(4, 40,"a test")
 function isprefix(prefix:seq.word, s:seq.word)boolean subseq(s, 1, length.prefix) = prefix
 
 function testout(i:int)seq.word ["one two three"_i]
+
+function square(a:real) real  a * a
+
+function square(a:int) real  toreal.a * toreal.a 
+
+function  /(a:real,b:int) real   a /  toreal.b
+ 
 
 function redgreen seq.word"red green"
 
@@ -47,6 +56,13 @@ isprefix("out of bounds", message.process.testout.4),
 message.process.testout.1 = "normal exit" , 
  aborted.process.testout.5, 
  not.aborted.process.testout.2, 
+ result.process.square(3.0)=9.0,
+ result.process.pi=pi,
+ result.process.intpart(3.1)=3,
+ result.process.square(4)=16.0,
+ result.process.print(3,3.0)="3.000",
+  result.process( 3 * 4.0 )=12.0,
+ result.process( 12.0 / 3 )=4.0,
  result.process.testout.3 = "three", 
  result.process.isprefix("red", z), 
  result.process.redgreen = redgreen

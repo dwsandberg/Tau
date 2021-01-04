@@ -24,19 +24,19 @@ use encoding.seq.int
 
 use standard
 
-Export type:word s
+Export type:word  
 
 type word is record asencoding:encoding.seq.char
 
-Export asencoding(w:word)encoding.seq.char
-
-Export word(encoding.seq.char)word
+ Function wordencodingtoword(i:int) word word(to:encoding.seq.char(i))
 
 Function encodeword(a:seq.char)word word.encode.a
 
 Function decodeword(w:word)seq.char decode.asencoding.w
 
 Function hash(a:word)int hash.asencoding.a
+
+Function encoding(w:word) int valueofencoding.asencoding.w
 
 function assignencoding(l:int, a:seq.char)int
  toint(bits.assignrandom(l, a) ∧ bits(toint(bits.1 << 31) - 1))

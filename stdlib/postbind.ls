@@ -26,7 +26,7 @@ function postbind(alltypes:typedict, dict:set.symbol, working:set.symbol, toproc
  if i > length.toprocess then result
  else
   let s = toprocess_i
-  let w = working + toprocess_i
+  let w = working + s
    if cardinality.w = cardinality.working then postbind(alltypes, dict, w, toprocess, i + 1, result, sourceX, tempX)
    else
     let lr1 = lookupcode(sourceX, s)
@@ -62,10 +62,10 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
     let lr1 = lookupcode(sourceX, sym)
     let newsym = if isdefined.lr1 then sym else replaceTsymbol(modpara, sym)
     let xx4 = if newsym = sym then lr1 else // check to see if template already has been processed // lookupcode(sourceX, newsym)
-     if isdefined.xx4 then
-     if not.isfref ∧ "VERYSIMPLE"_1 ∈ options.code.xx4 then
+    if isdefined.xx4 then
+     if not.isfref ∧ "VERYSIMPLE"_1 ∈ getoption.code.xx4 then
       let p2 = subseq(code.xx4, nopara.newsym + 1, length.code.xx4 - 2)
-        postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
+        postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls+target.xx4, sourceX, tempX)
       else
        let p2 = if isfref then Fref.target.xx4 else target.xx4
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls + target.xx4, sourceX, tempX)
@@ -119,6 +119,9 @@ function handletemplates(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:
        // handles parameterized unbound cases like ?(int arc, int arc)graph.int"//
        handletemplates(alltypes, dict, code, i, result, isfref, k_1, modpara, org, calls, sourceX, tempX)
 
+function buildcode(acc:int, w:word) int     
+   acc * 2 +if w=first."real" then 1 else 0 
+
 function codeforbuiltin(alltypes:typedict, dict:set.symbol,code:seq.symbol,i:int,result:seq.symbol,
 calls:set.symbol,sourceX:program,tempX:program,
 newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
@@ -139,7 +142,13 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
       else if(fsig.sym)_1 ∈ "kindrecord"then
       let p2 = Record(paratypes.sym @ +("", kind(alltypes, modpara, @e)))
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
-      else if(fsig.sym)_1 ∈ "apply3"then
+      else if first.fsig.sym  = first."createthreadX"  then
+         let  kindlist= paratypes.sym << 5 @ +("", kind(alltypes, modpara, @e))
+         let paracode= (kindlist+kind(alltypes,modpara,parameter.resulttype.sym) ) @ buildcode(1,@e)
+         let p2= [Record("int int"+kindlist),Lit.paracode,newsymbol("createthread" , mytype."builtin", 
+          [typeint,typeint,typeint,typeptr,typeint],typeptr)]
+        postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
+       else if(fsig.sym)_1 ∈ "apply3"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let k = findindex(","_1, fsig.newsym)
        let eletype=mytype.subseq(fsig.newsym, 3, k - 2)

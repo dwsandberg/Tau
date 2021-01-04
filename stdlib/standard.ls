@@ -31,7 +31,7 @@ Export stacktrace seq.word
 
 type ordering is record toint:int
 
-type boolean is record toint:int
+type boolean is record tointx:int
 
 * Useful constants
 
@@ -45,13 +45,14 @@ Function GT ordering ordering.2
 
 Function LT ordering ordering.0
 
-Function true boolean boolean.1
-
-Function false boolean boolean.0
 
 -----------------
 
-Export toint(boolean)int
+Builtin true boolean  
+
+Builtin false boolean  
+
+Builtin not(a:boolean)boolean
 
 Function-(i:int)int 0 - i
 
@@ -71,9 +72,12 @@ Function hash(i:int)int finalmix.hash(hashstart, i)
 
 Builtin =(a:int, b:int)boolean
 
-Function =(a:ordering, b:ordering)boolean toint.a = toint.b
+Function =(a:ordering, b:ordering)boolean toint.a = toint.b  
 
-Function =(a:boolean, b:boolean)boolean toint.a = toint.b
+Function =(a:boolean, b:boolean)boolean  (a &and b) &or (not.a &and not.b)
+
+if a then if b then  true else false else if b then false else  true
+
 
 Function toword(o:ordering)word"LT EQ GT"_(toint.o + 1)
 
@@ -83,15 +87,16 @@ Function ∧(a:ordering, b:ordering)ordering
 
 --------------------
 
-Function ?(a:boolean, b:boolean)ordering toint.a ? toint.b
 
-Function ∧(a:boolean, b:boolean)boolean if a then b else // false // boolean.0
+Function ?(a:boolean, b:boolean)ordering  if a then if b then // T T // EQ else // T F //  GT else if b then // F T // LT else // F F // EQ
+
+
+Function ∧(a:boolean, b:boolean)boolean if a then b else  false  
 
 Function ∨(a:boolean, b:boolean)boolean
- if a then // true is not use so simple inline expansion is used to produce short circuit evaluation // boolean.1 else b
+ if a then true else b
 
  
-Builtin not(a:boolean)boolean
 
 Function abs(x:int)int if x < 0 then 0 - x else x
 

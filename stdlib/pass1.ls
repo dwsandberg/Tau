@@ -252,8 +252,9 @@ function =(a:symboltext, b:symboltext)boolean ph.a = ph.b
 function assignencoding(l:int, s:symboltext)int assignrandom(l, s)
 
 function tokind(type:mytype)word
- if type = mytype."real"then"real"_1
- else if abstracttype.type ∈ "seq encoding"then"ptr"_1
+ if type = mytype."real"then  first."real" 
+ else if abstracttype.type ∈ "seq encoding"then first."ptr" 
+ else if type= mytype."boolean" then first."boolean"
  else
   assert type = typeint ∨ type = mytype."word" ∨ type = mytype."boolean" report"tokind" + print.type+stacktrace
    "int"_1 
@@ -353,7 +354,11 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
       [ Local.1, Lit.0, Idx."int"_1, Words."VERYSIMPLE", Optionsym]
       else if fsig.sym = "aborted(T process)"then
       [ Local.1, symbol("aborted(T process)","builtin","boolean")]
-      else
+      else if fsig.sym="true" then
+           [   Littrue,   Words."VERYSIMPLE", Optionsym]  
+       else if fsig.sym="false" then
+           [   Litfalse,   Words."VERYSIMPLE", Optionsym]  
+        else
        arithseq(length.paratypes, 1, 1) @ +(empty:seq.symbol, Local.@e)
        + symbol(fsig.sym, if length.module.sym = 1 then"builtin"else"T builtin", returntype.sym)
        map(prg.f, sym, code2)
@@ -375,6 +380,7 @@ Function processOption(p:program, txt:seq.word)program
   let modname=  getmod(txt,2 )
   let dict=asset.[symbol("STATE","headdict","internal1"),
   symbol("PROFILE","headdict","internal1"),
+  symbol("COMPILETIME","headdict","internal1"),
   symbol("INLINE","headdict","internal1"),
   symbol("NOINLINE","headdict","internal1")]
  let t= parse( dict , txt << (2 * length.modname))

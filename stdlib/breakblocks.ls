@@ -27,7 +27,7 @@ Function hasstate(p:program, s:symbol)boolean
  false
  else
   let d = lookupcode(p, s)
-   if isdefined.d then"STATE"_1 ∈ options.code.d else 
+   if isdefined.d then"STATE"_1 ∈ getoption.code.d else 
      if isbuiltin.module.s &and fsig.s &ne "setfld(int, T seq, T)" then false else true
 
 
@@ -133,10 +133,10 @@ function convertexits(label1:int, label2:int, b:block)block
  else
   assert kind.b = "EXIT"_1 report"unexpected block type" + kind.b
    if length.code.b = 2 ∧ isconst.(code.b)_1 then
-   let target = if Lit0 = (code.b)_1 then label2 else label1
+   let target = if Lit0 = (code.b)_1 &or Litfalse = (code.b)_1 then label2 else label1
      block("JMP"_1, blkno.b, target, target, empty:seq.symbol)
    else
-    block("BR"_1, blkno.b, label1, label2, subseq(code.b, 1, length.code.b - 1) + [ Lit0, Lit0, Br])
+    block("BR"_1, blkno.b, label1, label2, subseq(code.b, 1, length.code.b - 1) + [ Lit.0, Lit.0, Br])
 
 
 function ascode(p:program, subblks1:seq.block, org:symbol)seq.symbol
@@ -257,7 +257,7 @@ function findblk2(l:seq.block, i:int, blkno:int)block
 
 
 function caseblock(truelabel:int, orgblkno:int, rep:symbol)caseblock
- let key = if islit.rep then toint.(fsig.rep)_1
+ let key = if islit.rep then value.rep
  else
   assert module.rep = "$word"report"unexpected const type"
    hash.(fsig.rep)_1
@@ -300,7 +300,7 @@ function gathercase(l:seq.block, blk:block, exp:seq.symbol, caseblks:seq.caseblo
    fsig.rep @ +(empty:seq.caseblock, caseblock(label, 0, @e))
    else
     assert length.constantcode.rep > 2
-    ∧ ((constantcode.rep)_1 = Lit0 ∨ (constantcode.rep)_1 = Lit.1)report"not a standard seq" + print.code
+    ∧ ((constantcode.rep)_1 = Lit.0 ∨ (constantcode.rep)_1 = Lit.1)report"not a standard seq" + print.code
      subseq(constantcode.rep, 3, length.constantcode.rep) @ +(empty:seq.caseblock, caseblock(label, 0, @e))
   // now check to see if following block is a case block //
   let newblock = findblk2(l, 1, label2.blk)

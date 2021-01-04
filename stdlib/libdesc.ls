@@ -40,8 +40,9 @@ Function libdesc(alltypes:typedict, p:program, templates:program, mods:seq.first
  let mods2 = mods @ +(empty:seq.firstpass, tolibmod(alltypes, p, templates, exports, @e))
  let symstoexport = mods2 @ ∪(empty:set.symbol, defines.@e)
  ∪ (mods2 @ ∪(empty:set.symbol, exports.@e))
- let set2 = asset(toseq.symstoexport @ +(empty:seq.symbol, tolibsym(p, templates, symstoexport, @e)))
-  addseq(mods2 @ +(empty:seq.symbol, addlibmod(set2, @e)))
+  let set2 = asset(toseq.symstoexport @ +(empty:seq.symbol, tolibsym(p, templates, symstoexport, @e)))
+ // assert symbol("false","standard","boolean") &in set2 report "missing false" //
+ addseq(mods2 @ +(empty:seq.symbol, addlibmod(set2, @e)))
 
 function tolibmod(alltypes:typedict, p:program, templates:program, exports:seq.word, m:firstpass)seq.firstpass
  if not(abstracttype.modname.m ∈ exports)then empty:seq.firstpass
@@ -71,11 +72,12 @@ function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)
    let x = removeconstant.code
      if x @ +(0, filterx(toexport, @e)) = 0 then x else empty:seq.symbol
    else empty:seq.symbol
-  symbol(fsig.sym, module.sym, returntype.sym, cleansym + code)
+   symbol(fsig.sym, module.sym, returntype.sym, cleansym + code)
 
 function filterx(toexport:set.symbol, s:symbol)int
  if isconst.s then if isFref.s then constantcode.s @ +(0, filterx(toexport, @e))else 0
- else if isbuiltin.module.s ∨ isspecial.s ∨ s ∈ toexport then 0 else 1
+ else 
+ if isbuiltin.module.s ∨ isspecial.s ∨ s ∈ toexport then 0 else 1
 
 ----------------------------------
 
@@ -92,7 +94,8 @@ function addseq(s:seq.symbol)symbol
 function addlibmod(toexport:set.symbol, m:firstpass)symbol
  // symbols in m are replaced with the symbol from toexport which has zcode to form programele //
  let exports = toexport ∩ exports.m
- let defines = if isabstract.modname.m then toexport ∩ defines.m else exports
+  // assert not(modname.m=mytype."standard") report "HHH"+print.modname.m+toseq.exports @ +("",print.@e)
+// let defines = if isabstract.modname.m then toexport ∩ defines.m else exports
  let e = addseq(toseq.exports @ +(empty:seq.symbol, addlibsym.@e))
  let d = if isabstract.modname.m then addseq(toseq.defines @ +(empty:seq.symbol, addlibsym.@e))else e
   Constant2

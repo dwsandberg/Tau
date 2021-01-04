@@ -52,6 +52,9 @@ use seq.int
 use set.word
 
 Function firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)program
+ if  isempty.removeoptions.code   then  
+    map(p, rep, code)
+else
  let nopara = nopara.rep
   if isbuiltin.module.rep then
   let options = caloptions(p, code, nopara, module.rep, fsig.rep)
@@ -82,6 +85,10 @@ function addlooplocals(map:worddict.seq.symbol, firstvar:int, nextvar:int, nopar
  else
   addlooplocals(replace(map, toword(firstvar + i), [ var(nextvar + i)]), firstvar, nextvar, nopara, i + 1)
 
+use interpreter
+
+use words
+
 function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, map:worddict.seq.symbol)expandresult
  if k > length.org then expandresult(nextvar, result)
  else
@@ -89,15 +96,22 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
   let len = length.result
    if isconst.sym then yyy(p, org, k + 1, result + sym, nextvar, map)
    else  if isspecial.sym then
-   if(fsig.sym)_1 = "BLOCK"_1 ∧ fsig.sym = "BLOCK 3"then
+   if fsig.sym = "BLOCK 3"then
     let t = backparse(result, len, 3, empty:seq.int) + [ len + 1]
      let condidx = t_2 - 4
      let cond = result_condidx
-      if isbr.result_(condidx + 3) ∧ isconst.cond then
-      let keepblock = if value.cond = 1 then value.result_(condidx + 1)else value.result_(condidx + 2)
-       let new = subseq(result, t_keepblock, t_(keepblock + 1) - 2)
-        yyy(p, org, k + 1, subseq(result, 1, condidx - 1) + new, nextvar, map)
-      else yyy(p, org, k + 1, result + sym, nextvar, map)
+  let newresult=    if not.isbr.result_(condidx + 3)  then
+        result + sym 
+      else
+       if cond=Litfalse   then
+         let keepblock=value.result_(condidx + 2)
+         subseq(result, 1, condidx - 1) +subseq(result, t_keepblock, t_(keepblock + 1) - 2)
+        else if cond=Littrue   then
+         let keepblock=value.result_(condidx + 1)
+         subseq(result, 1, condidx - 1) +subseq(result, t_keepblock, t_(keepblock + 1) - 2)
+         else  
+         result+sym
+         yyy(p, org, k + 1, newresult, nextvar, map)
     else if // isdefine //(fsig.sym)_1 = "DEFINE"_1 then
     let thelocal =(fsig.sym)_2
       if len > 0 ∧ (isconst.result_len ∨ islocal.result_len)then
@@ -130,10 +144,15 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
    else
     let nopara = nopara.sym
     let dd = code.lookupcode(p, sym)
-     if not.isempty.dd ∧ "INLINE"_1 ∈ options.dd then
+    let options=getoption.dd
+       if first."COMPILETIME"  ∈ options &and subseq(result,len-nopara+1,len) @ &and(true,isconst.@e)   then   
+         let newcode= interpret(subseq(result,len-nopara+1,len)+sym)
+         let newconst=if length.newcode > 1 then Constant2.newcode else first.newcode
+           yyy(p, org, k + 1, result >> nopara + newconst, nextvar, map)
+     else if  "INLINE"_1 ∈ options  &or first."VERYSIMPLE" ∈ options then
      let code = if last.dd = Optionsym then subseq(dd, 1, length.dd - 2)else dd
        if isempty.code then yyy(p, org, k + 1, result + sym, nextvar, map)
-       else inline(p, org, k, result, nextvar, nopara, code, map, options.dd)
+       else inline(p, org, k, result, nextvar, nopara, code, map, getoption.dd)
      else if nopara = 0 ∨ nopara > 2 ∨ not.isconst.result_len then
      yyy(p, org, k + 1, result + sym, nextvar, map)
      else
@@ -143,7 +162,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
        if sym = symbol("toword(int)","UTF8","word")then
        yyy(p, org, k + 1, subseq(result, 1, length.result - 1) + Word.(fsig.last.result)_1, nextvar, map)
        else  if fsig.sym = "makereal(word seq)" ∧ module.sym = "UTF8"then
-       let arg1 = last.result
+        let arg1 = last.result
          if module.arg1 = "$words"then
          let x = Reallit.representation.makereal.fsig.arg1
            yyy(p, org, k + 1, subseq(result, 1, length.result - 1) + x, nextvar, map)
@@ -222,10 +241,10 @@ function opttwoopbuiltin(p:program, org:seq.symbol, k:int, result:seq.symbol, ne
    + Lit(value.s_(i - 2) / value.s_(i - 1)), nextvar, map)
   else if fsig.rep = "=(int, int)"then
   yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + if s_(i - 2) = s_(i - 1)then Lit.1 else Lit.0, nextvar, map)
+   + if s_(i - 2) = s_(i - 1)then Littrue else Litfalse, nextvar, map)
   else if fsig.rep = ">(int, int)"then
   yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + if value.s_(i - 2) > value.s_(i - 1)then Lit.1 else Lit.0, nextvar, map)
+   + if value.s_(i - 2) > value.s_(i - 1)then Littrue else Litfalse, nextvar, map)
   else if fsig.rep = "∨(bits, bits)"then
   yyy(p, org, k + 1, subseq(result, 1, i - 3)
    + [ Lit.toint(bits.value.s_(i - 2) ∨ bits.value.s_(i - 1))], nextvar, map)
@@ -541,11 +560,11 @@ function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.
   let sym = code_i
   let newprg =
   let sym2 = basesym.sym
-   if isnocall.sym2 then processed
+     if isnocall.sym2 then processed
    else if sym2 ∈ pending then processed
    else
-    let r = lookupcode(processed, sym)
-     if isdefined.r then processed
+     let r = lookupcode(processed, sym)
+      if isdefined.r then processed
      else
       let rep2 = lookupcode(knownsymbols, sym2)
        if length.code.rep2 > 0 then depthfirst(knownsymbols, alltypes, 1, pending + sym2, processed, code.rep2, sym2)else processed
@@ -561,10 +580,9 @@ Function addoptions(code:seq.symbol, options:seq.word)seq.symbol
    codewithoutoptions + Words.options + Optionsym
 
 Function caloptions(p:program, code:seq.symbol, nopara:int, modname:seq.word, fsig:seq.word)seq.word
- let options = options.code
+ let options = getoption.code
   if length.code = 0 then if not.isbuiltin.modname then"STATE"else""
-  else if fsig = "in(int, int seq)" ∨ fsig = "in(word, word seq)"
-  ∨ fsig = "∈(int, int seq)"
+  else if fsig = "∈(int, int seq)"
   ∨ fsig = "∈(word, word seq)"
   ∨ fsig = "_(int seq, int)"
   ∨ fsig = "_(word seq, int)"then
@@ -601,7 +619,7 @@ function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boo
  else
   let rep = code_i
    if islocal.rep then
-   let parano = toint.(fsig.rep)_1
+   let parano = value.rep
      if parano = last + 1 then checksimple(p, code, i + 1, nopara, last + 1)else false
    else checksimple(p, code, i + 1, nopara, last)
 
@@ -610,6 +628,10 @@ function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boo
 Function pass2(placehold:program, alltypes:typedict)program toseq.toset.placehold @ depthfirst(emptyprogram, placehold, alltypes, @e)
 
 Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
+
+ Function removeoptions(code:seq.symbol )seq.symbol
+  if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)
+  else code
 
 Function defines(p:program, roots:set.symbol)seq.symbol toseq.roots @ +(empty:seq.symbol, defines2(p, @e))
 

@@ -49,11 +49,8 @@ Builtin initialdict seq.encodingpair.seq.char
 
 type word3 is record toword:word
 
-function assignencoding(l:int, a:word3)int valueofencoding.asencoding.toword.a
+function assignencoding(l:int, a:word3)int encoding.toword.a
 
-if toword.a in"//"then valueofencoding.asencoding.toword.a else toint(bits.assignrandom(l, a)&and bits(toint(bits.1 << 31)-1))
-
-valueofencoding.asencoding.toword.a
 
 function =(a:word3, b:word3)boolean toword.a = toword.b
 
@@ -85,7 +82,7 @@ Function wordref(w:word)int
  let d = encode.word3.w
   toint.C64.valueofencoding.d
 
-function wordcode(a:encodingpair.word3)encoding.seq.char asencoding.toword.data.a
+function wordcode(a:encodingpair.word3)encoding.seq.char to:encoding.seq.char( encoding.toword.data.a)
 
 Function addliblib(libname:seq.word, mods:int, profiledata:int,isbase:boolean)int
  let name = addwordseq2.libname
@@ -104,16 +101,15 @@ Function addliblib(libname:seq.word, mods:int, profiledata:int,isbase:boolean)in
 
 function addobject(name:seq.word, data:seq.int)int
  let objtype = array(length.data, i64)
- let ll = global("liblib", objtype, toint.AGGREGATE(data @ +(empty:seq.slot, checkslot.@e)))
+ let ll = global("liblib", objtype, toint.AGGREGATE(data @ +(empty:seq.slot, asi64.slot.@e)))
   toint.CGEP(slot.ll, 0)
 
 function global(name:seq.word, type:llvmtype, init:int)int
  toint.modulerecord(name, [ toint.GLOBALVAR, typ.type, 2, 1 + init, 0, toint.align8 + 1, 0])
 
-function checkslot(i:int)slot asi64.slot.i
 
 Function addobject(fldsin:seq.int)int
- let flds = fldsin @ +(empty:seq.slot, checkslot.@e)
+ let flds = fldsin @ +(empty:seq.slot, asi64.slot.@e)
  let t = encoding:seq.encodingpair.const3
  let place = if length.t = 0 then 0 else place.data.last.t + length.flds.data.last.t
  let x = decode.encode.const3(place, flds)

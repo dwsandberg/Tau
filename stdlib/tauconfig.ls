@@ -1,9 +1,9 @@
 
-Library tauconfig stdlib UTF8   bits codegennew codetemplates encoding fileio format  groupparagraphs intdict 
+Library tauconfig 
+stdlib UTF8   bits codegennew codetemplates encoding fileio format  groupparagraphs intdict 
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
-pass1 pass2 persistant postbind   process real seq set stack   symbol textio timestamp tree worddict words xxhash
- sparseseq standard maindict tausupportNostacktrace breakblocks
- bitstream outstream
+pass1 pass2 breakblocks persistant postbind   process real seq set stack   symbol textio timestamp tree worddict words xxhash
+ sparseseq standard maindict outstream bitstream tausupportNostacktrace 
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format 
  groupparagraphs intdict   ioseq libdesc  
@@ -17,7 +17,6 @@ option.main2 subcompilelib(seq.word, seq.word)seq.word PROFILE
 
 option.main2 compilelib2(seq.word)seq.word PROFILE
 
- 
 /option.builtin option(T, x:seq.word)T STATE
  
 /option.fileio getfile(seq.bits)fileresult STATE

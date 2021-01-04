@@ -73,7 +73,8 @@ Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:wo
   let bodytxts = bodies
   + [ BLOCKCOUNT(1, 1)
   + CALL(r.1, 0, 32768, function.[ i64, ptr.i8, ptr.i64,i64], symboltableentry("initlib5", 
-  function.[ i64, ptr.i8, ptr.i64,i64]), CGEPi8(libslot, 0),[ liblib,C64.toint.isbase])
+  function.[ i64, ptr.i8, ptr.i64,i64]), CGEPi8(libslot, 0),[ liblib,
+    if isbase then C64.1 else C64.0])
   + RETURN]
   let data = constdata
   let patchlist = [ [ toint.GLOBALVAR, typ.conststype, 2, toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0], [ toint.GLOBALVAR, typ.profiletype, 2, toint.xxx + 1, 3, toint.align8 + 1, 0]]
@@ -183,7 +184,7 @@ function pushexptypes(s:seq.word, i:int, result:stack.int)stack.int
   pushexptypes(s
   , i + 2
   , push(result, if s_i ∈ "real"then typ.double
-  else if s_i ∈ "int"then typ.i64 else typ.ptr.i64))
+  else if s_i ∈ "int boolean"then typ.i64 else typ.ptr.i64))
 
 function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, map:seq.localmap, exitbr:internalbc)processblkresult
  processblk(phitype, blks, 1, exitbr, emptyinternalbc, 1, empty:seq.int, empty:seq.int)
@@ -244,7 +245,7 @@ Function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word, j:int, r
  else
   let newj = min(findindex(","_1, types, j + 1), length.types - 1)
   let typ = if length.types = 3 then"int"_1 else types_(newj - 1)
-   assert typ ∈ "int real ptr"report"unknown type gencode" + types
+   assert typ ∈ "int boolean real ptr "report"unknown type gencode" + types
     if preal = 0 ∧ typ = "real"_1 then
     setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.double, bitcast), args, i, types, j, regno + 1, pint, regno + 1, pptr)
     else if pptr = 0 ∧ typ ∈ "ptr seq"then
@@ -255,7 +256,7 @@ Function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word, j:int, r
      else if typ ∈ "ptr seq"then
      GEP(r(regno + 1), ptr.i64, r.pptr, C64(i - 1))
      else
-      assert typ = "int"_1 report"setnextfld problem" + typ
+      assert typ ∈ "int boolean"  report"setnextfld problem" + typ
        GEP(r(regno + 1), i64, r.pint, C64(i - 1)))
      + STORE(r(regno + 2), r(regno + 1), slot.args_i)
       setnextfld(bc + newbc, args, i + 1, types, newj, regno + 1, pint, preal, pptr)

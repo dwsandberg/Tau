@@ -178,8 +178,6 @@ Function firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:
 
 Export firstpass(modname:mytype, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, types:seq.myinternaltype, program)firstpass
 
-Function exportmodule(firstpass)boolean false
-
 Export modname(firstpass)mytype
 
 Export defines(firstpass)set.symbol
@@ -265,7 +263,7 @@ Function isspecial(s:symbol)boolean(flags.s ∧ specialbit) = specialbit
 
 Function isconst(s:symbol)boolean(flags.s ∧ constbit) = constbit
 
-Function islit(s:symbol)boolean module.s = "$int" ∨ module.s = "$real"
+Function islit(s:symbol)boolean module.s = "$int" ∨ module.s = "$real" ∨ module.s = "$boolean"
 
 Function isFref(s:symbol)boolean module.s = "$fref"
 
@@ -286,6 +284,10 @@ Function islocal(s:symbol)boolean module.s = "local $"
 Function Reallit(i:int)symbol symbol([ toword.i],"$real","real", constbit)
 
 Function Lit(i:int)symbol symbol([ toword.i],"$int","int", constbit)
+
+Function Littrue symbol symbol("1","$boolean","boolean", constbit)
+
+Function Litfalse symbol symbol("0","$boolean","boolean", constbit)
 
 Function Lit0 symbol symbol("0","$int","int", constbit)
 
@@ -338,10 +340,10 @@ Function constantcode(s:symbol)seq.symbol
  else if isrecordconstant.s then subseq(zcode.s, 1, length.zcode.s - 1)else empty:seq.symbol
 
 Function basesym(s:symbol)symbol if module.s = "$fref"then(zcode.s)_1 else s
+  
+ Function getoption(code:seq.symbol)seq.word
+ if isempty.code &or last.code ≠ Optionsym then empty:seq.word else fsig.code_(length.code - 1)
 
-Function options(code:seq.symbol)seq.word
- if length.code = 0 ∨ last.code ≠ Optionsym then""
- else fsig.code_(length.code - 1)
 
 ------
 
@@ -384,8 +386,6 @@ Function addoption(p:program, s:symbol, option:seq.word)program
    let newcode = code + Words.toseq(current ∪ asset.option) + Optionsym
     map(p, s, newcode)
 
-Function getoption(code:seq.symbol)seq.word
- if last.code ≠ Optionsym then empty:seq.word else fsig.code_(length.code - 1)
 
 Function isbuiltin(a:seq.word)boolean a = "builtin"
 
