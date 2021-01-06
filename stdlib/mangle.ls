@@ -18,7 +18,7 @@ Function mangle(fsig:seq.word, module:seq.word)word
  if module = "builtin"
  ∧ fsig_1 ∈ "aborted loadedlibs loadlib createlib createlib2   allocatespace addencoding createfile getinstance dlsymbol 
    getbytefile getbitfile getfile addresstosymbol2 randomint getmachineinfo currenttime callstack initialdict clock createthread     assert
-  callidx3"then
+  "then
  fsig_1
  else
   let i = findindex("("_1, fsig)

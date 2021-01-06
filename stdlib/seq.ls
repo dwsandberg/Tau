@@ -17,7 +17,7 @@ builtin GEP(seq.T, int)T
 Function_(a:seq.T, c:int)T
  let b = if c < 0 then length.a + c + 1 else c
  let typ = getseqtype.a
-   if typ > 1 then  callidx3(a, b)
+   if typ > 1 then  callidx2(a, b)
     else
      assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace 
     if  typ = 0  then  // element per word //
@@ -36,7 +36,7 @@ builtin sizeoftype:T int
 
  builtin extractbyte(seq.T,int) T
 
-builtin callidx3(a:seq.T, int)T
+builtin callidx2(a:seq.T, int)T
 
 Builtin packed(s:seq.T)seq.T
 

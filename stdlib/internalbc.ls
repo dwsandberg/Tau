@@ -44,7 +44,6 @@ type internalbc is record bits:int, bitcount:int, done:seq.int
 
 Function emptyinternalbc internalbc internalbc(0, 0, empty:seq.int)
 
-Function isempty(a:internalbc)boolean bitcount.a = 0 ∧ length.done.a = 0
 
 Function addstartbits(inst:int, noargs:int, b:internalbc)internalbc
  if noargs > 31 ∨ inst > 31 ∨ bitcount.b > 56 - 16 then
@@ -64,29 +63,9 @@ function finish(b:internalbc)seq.int
  if bitcount.b = 0 then done.b
  else [ bits.b * 64 + bitcount.b] + done.b
  
-Function addaddress(slot:int, a:int, b:internalbc)internalbc  
- if-a > slot then
- if a = ibcfirstpara2 then internalbc(0, 0, [ firstpara2] + finish.b)
-  else
-   internalbc(0
-   , 0
-   , [ if a = ibcsub1 then subpara(1,slot)
-   else if a = ibcsub2 then subpara(2,slot)
-   else
-    assert a = ibcsub3 report"unknown code in addaddress"
-     subpara(3,slot)
-    ]
-   + finish.b)
- else if a < 0 then add(slot + a, b)
- else
-  internalbc(0, 0, [ reloc + 64 * (relocoffset + a - slot + 1)] + finish.b)
+Function addplaceholder( placeholdertype:int,b:internalbc) internalbc
+    internalbc(0,0, [placeholdertype ]+finish.b)
 
-Function addsignedaddress(slot:int, a:int, b:internalbc)internalbc
- if a ≤ 0 then
- let v = slot + a
-  let c = if v ≥ 0 then 2 * v else 2 * -v + 1
-   add(c, b)
- else internalbc(0, 0, [ relocsigned+64 * (a - slot + 1 )] + finish.b)
 
 Function add(val:int, b:internalbc)internalbc
  if val < 32 ∧ bitcount.b < 51 then
@@ -108,62 +87,41 @@ function addvbr6help(bits:int, bitcount:int, done:seq.int, c:seq.bits, i:int)int
  
  
    Function addtobitstream(offset:int, bs:bitstream, b:internalbc)bitstream
-add2(finish.b,1,offset,offset,bs) 
+   finish.b @ add2(bs,offset,@e)
+
+add2(finish.b,1,offset,bs) 
   
-function  add2(done:seq.int,i:int,offset:int,slot:int,result:bitstream) bitstream
+/function  add2(done:seq.int,i:int,offset:int, result:bitstream) bitstream
  if i > length.done then result else
    let val=done_i
   let nobits = toint(bits.val ∧ bits.63)
  let bits = bits.val >> 6
-  let newoffset = if nobits = setoffset   then offset + toint.bits else slot
- let newresult =  
+  let newresult =  
  if nobits < 58 then add(result, bits, nobits)
-  else if nobits = reloc then addvbr6(result, slot - (toint.bits - relocoffset))
-  else if val = firstpara2 then addvbr6(result, slot - offset)
+  else if nobits = reloc then addvbr6(result, offset - (toint.bits - relocoffset))
+  else if nobits = firstpara2 then 
+      addvbr6(result, offset+toint.bits - offset)
     else if nobits=relocsigned then   
      let t=toint.if val < 0 then bits &or 0xFC00000000000000 else bits
-        addvbrsigned6(result, slot - t)
+        addvbrsigned6(result, offset - t)
   else result
-   add2(done,i+1,offset,newoffset,newresult )
-
-Function relocoffset int 1024 * 1024 * 1024 * 1024
-
- function subpara(parano:int,slot:int) int  61 +64 * parano + 1024 * slot  
- 
-Function ibcsubpara(i:int)int  (i - 61) / 64 mod 16
-
-Function ibcsubslot(i:int)int   i / 1024
-
-Function ibcfirstpara2 int // must be big enough value so-ibcirstpart2 > max slot number in function // 
-   - 6400000
-  
-  Function ibcsub1 int   - 6400001
-
-Function ibcsub2 int   - 6400002
-
-Function ibcsub3 int  - 6400003
-
-Function firstpara2 int 58
-
-Function setoffset int 59
-
-Function reloc int 60
-
-function relocsigned int 63  
-
-
-
-Export type:templatepart
-
-Export type:internalbc
+   add2(done,i+1,offset,offset,newresult )
+   
+   
+ function  add2(result:bitstream,offset:int,val:int  ) bitstream
+     let nobits = toint(bits.val ∧ bits.63)
+ let bits = bits.val >> 6
+  if nobits < 58 then add(result, bits, nobits)
+  else if nobits = reloc then addvbr6(result, offset - (toint.bits - relocoffset))
+  else if nobits = firstpara2 then 
+      addvbr6(result, offset+toint.bits - offset)
+    else if nobits=relocsigned then   
+     let t=toint.if val < 0 then bits &or 0xFC00000000000000 else bits
+        addvbrsigned6(result, offset - t)
+  else result
+      
 
 type templatepart is record part:seq.int, val:int
-
-function parano(t:templatepart) int   ibcsubpara.val.t
-
-function loc(t:templatepart) int  ibcsubslot.val.t
-
-Export parano(templatepart)int
 
  
 Function getparts(a:internalbc)seq.templatepart 
@@ -185,22 +143,90 @@ function subgetparts(a:seq.int,   lastindex:int, i:int)seq.templatepart
   else subgetparts(a,  lastindex, i + 1)
   
   
+/function   addtemplatepart(a:internalbc, deltaoffset:int,args:seq.int,t:templatepart) internalbc
+      let b= a+internalbc(0,0,part.t)
+     let bits = toint(bits.val.t ∧ bits.63)
+  if bits = 61 then
+  let arg = args_(parano.t)
+    if arg < 0 then  add(deltaoffset + loc.t + arg, b)
+     else addplaceholder(reloc + 64 * (relocoffset + arg - loc.t + 1 ),b)
+  else if bits &ge 58 then addplaceholder(val.t,b)
+  else b
+  
 
 function processtemplatepart(deltaoffset:int, args:seq.int, t:templatepart)seq.int
    let bits = toint(bits.val.t ∧ bits.63)
   if bits = 61 then
   let arg = args_(parano.t)
   part.t+ (if arg < 0 then finish.add(deltaoffset + loc.t + arg, emptyinternalbc)
-   else [ reloc + 64 * (relocoffset + arg - loc.t + 1 )])
-  else if bits &in [reloc,relocsigned] then part.t+(val.t )
-  else  if bits &ge 58 then part.t+val.t
+   else [ reloc + 64 * (relocoffset + arg - loc.t -deltaoffset + 1 )])
   else  
+    assert bits &in [0,reloc,firstpara2] report "bits"+toword.bits
+    if bits=reloc   then
+        part.t+(val.t- 64 * deltaoffset)
+   else if   bits=firstpara2 then
+        part.t+(val.t+64 * deltaoffset )
+   else  
     part.t
-
+    
+ 
 Function processtemplate(s:seq.templatepart, deltaoffset:int, args:seq.int)internalbc
- internalbc(0, 0,  
-    s @ +(  [ setoffset + 64 * deltaoffset]   , processtemplatepart(deltaoffset, args, @e))
-   +   setoffset )
+//  addplaceholder(setoffset, s @ addtemplatepart( addplaceholder(setoffset + 64 * deltaoffset,emptyinternalbc),deltaoffset,args,@e)) 
+  // internalbc(0, 0,  
+    s @ +(  empty:seq.int  , processtemplatepart(deltaoffset, args, @e))
+    )
+  
+
+Function addaddress(slot:int, a:int, b:internalbc)internalbc  
+ if a < 0   then add(slot + a, b)
+ else let newval=
+  if a &ge relocoffset then
+    if a = ibcfirstpara2 then   
+    //  assert slot=1 report "slot"+print.slot //
+         firstpara2  +64 * (slot-1)
+      else  subpara( a-relocoffset,slot)
+ else 
+     reloc + 64 * (relocoffset + a - slot + 1) 
+ addplaceholder(newval,b)
+  
+  
+Function addsignedaddress(slot:int, a:int, b:internalbc)internalbc
+ if a ≤ 0 then
+ let v = slot + a
+  let c = if v ≥ 0 then 2 * v else 2 * -v + 1
+   add(c, b)
+ else addplaceholder( relocsigned+64 * (a - slot + 1 ),b)
+
+Function relocoffset int 1024 * 1024 * 1024 * 1024
+
+ function subpara(parano:int,slot:int) int  61 +relocoffset * parano + 64 * slot  
+ 
+Function ibcsubpara(i:int)int   i   / relocoffset mod 16
+
+Function ibcsubslot(i:int)int   i / 64 mod relocoffset
+
+Function ibcfirstpara2 int // must be big enough value so-ibcirstpart2 > max slot number in function // 
+     relocoffset
+     
+Function ibcsub(i:int) slot  slot(relocoffset+i)
+ 
+Function firstpara2 int 58
+
+Function reloc int 60
+
+function relocsigned int 63  
+
+
+
+Export type:templatepart
+
+Export type:internalbc
+
+function parano(t:templatepart) int   ibcsubpara.val.t
+
+function loc(t:templatepart) int  ibcsubslot.val.t
+
+Export parano(templatepart)int
 
 _____________________________
 

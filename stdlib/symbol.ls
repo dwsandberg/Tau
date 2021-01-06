@@ -214,7 +214,7 @@ Function Idx(kind:word)symbol symbol("IDX(T seq, int)", [ kind] + "builtin","T")
 
 Function Callidx(kind:word)symbol
  let t = if kind ∈ "int real"then [ kind]else"ptr"
-  symbol("callidx3( T  seq, int)", t + "builtin", t)
+  symbol("callidx2( T  seq, int)", t + "builtin", t)
 
  
 Function Emptyseq seq.symbol [ Stdseq, Lit.0, symbol("RECORD(int, int)","$record","ptr", specialbit)]

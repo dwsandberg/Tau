@@ -562,12 +562,4 @@ BT toscreen(BT outputnibble ) {
 return write( /* stdout */ 1,(char *) &outputnibble+1,  outputnibble & 7  );
 }
 
-BT callidx3(BT PD, BT * seq, BT idx)  
- {   if (seq[0]==0 )  return seq[idx+1];
- BT (* callit)(BT,BT *,BT ) = (  BT (*)(BT,BT * ,BT )  ) seq[0];
-    return  (callit)(PD,seq,idx);}
     
-double callidxreal(BT PD, BT * seq, BT idx)  
- {   if (seq[0]==0 )  return seq[idx+1];
- double (* callit)(BT,BT *,BT ) = (  double (*)(BT,BT * ,BT )  ) seq[0];
-    return  (callit)(PD,seq,idx);}

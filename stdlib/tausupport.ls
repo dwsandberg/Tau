@@ -37,7 +37,7 @@ function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:T)int
 
 builtin setfirst(r:seq.T, fld0:int, fld1:int)seq.T
 
-Builtin callidx3(a:seq.T, int)T
+Builtin callidx2(a:seq.T, int)T
 
 type blockseq is sequence length:int, dummy:seq.T
 
@@ -52,7 +52,7 @@ Function_(a:blockseq.T, i:int)T
   let blksz = blocksize:T / ds
   let blk = IDX(data,(i - 1) / blksz + 2)
   let b =(i - 1) mod blksz + 1
-   if typ > 1000 then callidx3(blk, b)
+   if typ > 1000 then callidx2(blk, b)
    else  IDX(blk, b + 1)
 
  

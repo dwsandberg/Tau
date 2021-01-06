@@ -158,7 +158,7 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
        let newfsig ="apply3(" + a + "seq" + subseq(fsig.newsym, k, length.fsig.newsym)
        let p2 = symbol(newfsig, [ kind] + "builtin", returntype.newsym)
         postbind3(alltypes, dict, code, i + 1,(result >> 1) + Lit.size.info + p2, modpara, org, calls, sourceX, tempX)
-      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2 callidx3 GEP extractbyte extractbit"
+      else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2  GEP extractbyte extractbit"
       ∨ fsig.sym = "setfld(int, T seq, T)"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let p2 = symbol(fsig.sym, [ kind] + "builtin", returntype.newsym)
