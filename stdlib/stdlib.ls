@@ -31,7 +31,7 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 codegennew codetemplates persistant  sparseseq parse standard testall
 svg svggraph displaygraph displaytextgraph display
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport
-pass1 postbind breakblocks   interpreter
+pass1 postbind breakblocks   interpreter internalbc
 
 * Removed maindict 
 

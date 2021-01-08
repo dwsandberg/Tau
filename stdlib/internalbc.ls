@@ -40,193 +40,136 @@ use seq.slotrecord
 
 use seq.trackconst
 
-type internalbc is record bits:int, bitcount:int, done:seq.int
-
-Function emptyinternalbc internalbc internalbc(0, 0, empty:seq.int)
-
-
-Function addstartbits(inst:int, noargs:int, b:internalbc)internalbc
- if noargs > 31 ∨ inst > 31 ∨ bitcount.b > 56 - 16 then
- let c = add(inst, add(noargs, b))
-   if bitcount.c > 56 - 4 then internalbc(3, 4, finish.c)
-   else internalbc(bits.c * 16 + 3, bitcount.c + 4, done.c)
- else
-  internalbc(((bits.b * 64 + noargs) * 64 + inst) * 16 + 3, bitcount.b + (6 + 6 + 4), done.b)
-
-Function +(a:internalbc, b:internalbc)internalbc
- if length.done.a > 0 ∨ bitcount.a + bitcount.b > 56 then
- internalbc(bits.a, bitcount.a, done.a + finish.b)
- else
-  internalbc(bits.b * 2^(bitcount.a) + bits.a, bitcount.a + bitcount.b, done.b)
-
-function finish(b:internalbc)seq.int
- if bitcount.b = 0 then done.b
- else [ bits.b * 64 + bitcount.b] + done.b
+type templatepart is record val:bits
  
-Function addplaceholder( placeholdertype:int,b:internalbc) internalbc
-    internalbc(0,0, [placeholdertype ]+finish.b)
+function  bits(b:templatepart) bits     (val.b >> 6) 
 
+function  bitcount(b:templatepart) int    toint( val.b &and 0x3F) 
 
-Function add(val:int, b:internalbc)internalbc
- if val < 32 ∧ bitcount.b < 51 then
- internalbc(bits.b * 64 + val, bitcount.b + 6, done.b)
- else
-  let c = chunks.bits.val
-   addvbr6help(bits.b, bitcount.b, done.b, c, length.c)
+function templatepart(bits:int,bitcount:int)  templatepart 
+   templatepart(tobits.bits << 6   &or bits.bitcount)
+   
+function templatepart( para:int, slot:int,bitcount:int) templatepart 
+     templatepart( tobits.para << 6 &or bits.bitcount &or bits.slot << 10)
+      
+ 
+function signedvalue(valx:templatepart) int
+    toint.if toint.val.valx < 0 then bits.valx &or 0xFC00000000000000 else bits.valx
 
-function chunks(val:bits)seq.bits
- if toint.val < 32 then [ val]
- else [ val ∧ bits.31 ∨ bits.32] + chunks(val >> 5)
-
-function addvbr6help(bits:int, bitcount:int, done:seq.int, c:seq.bits, i:int)internalbc
- let newbitcount = 6 + bitcount
-  if newbitcount > 56 then addvbr6help(0, 0, [ bits * 64 + bitcount] + done, c, i)
-  else if i = 1 then internalbc(bits * 64 + toint.c_1, newbitcount, done)
-  else addvbr6help(bits * 64 + toint.c_i, newbitcount, done, c, i - 1)
+function ibcsubpara(a:templatepart)int   toint( val.a >> 6 &and 0xF)
 
  
- 
-   Function addtobitstream(offset:int, bs:bitstream, b:internalbc)bitstream
-   finish.b @ add2(bs,offset,@e)
+function ibcsubslot(a:templatepart)int   toint(val.a >> 10)
 
-add2(finish.b,1,offset,bs) 
+ 
+
+function Reloc int 60
+
+function Substitue int 61
+
+function Firstpara int 62
+
+function Relocsigned int 63  
+
+Function ibcfirstpara2 int   toint( 0x1 << 40)
+     
+Function ibcsub(i:int) slot  slot(ibcfirstpara2+i)
+
+ 
+
+type internalbc is record parts:seq.templatepart
+
+function tail(b:internalbc) seq.templatepart  parts.b << 1
+
+function val(b:internalbc) templatepart first.parts.b
+
+Function emptyinternalbc internalbc internalbc.empty:seq.templatepart
+
+
+function  bits(b:internalbc) bits    if isempty.parts.b then 0x0 else  bits.val.b   
+
+function  bitcount(b:internalbc) int  if isempty.parts.b then 0 else  bitcount.val.b 
+
+function  internalbc(bits:int,bitcount:int,tail:seq.templatepart) internalbc 
+   internalbc( [ templatepart(bits, bitcount)] + tail  )
   
-/function  add2(done:seq.int,i:int,offset:int, result:bitstream) bitstream
- if i > length.done then result else
-   let val=done_i
-  let nobits = toint(bits.val ∧ bits.63)
- let bits = bits.val >> 6
-  let newresult =  
- if nobits < 58 then add(result, bits, nobits)
-  else if nobits = reloc then addvbr6(result, offset - (toint.bits - relocoffset))
-  else if nobits = firstpara2 then 
-      addvbr6(result, offset+toint.bits - offset)
-    else if nobits=relocsigned then   
-     let t=toint.if val < 0 then bits &or 0xFC00000000000000 else bits
-        addvbrsigned6(result, offset - t)
-  else result
-   add2(done,i+1,offset,offset,newresult )
+function  internalbc(bits:bits,bitcount:int,tail:seq.templatepart) internalbc 
+   internalbc( [templatepart(toint.bits, bitcount)]+ tail )
+ 
+Function +(a:internalbc, b:internalbc)internalbc
+ if length.parts.a > 1 ∨ bitcount.a + bitcount.b > 56 then
+ internalbc(bits.a, bitcount.a, tail.a + parts.b)
+ else
+  internalbc(bits.b <<  bitcount.a &or bits.a, bitcount.a + bitcount.b, tail.b)
+ 
+function addplaceholder(t:templatepart,b:internalbc) internalbc
+    internalbc([  t ]+parts.b)
+
+function add6bits(val:int,b:internalbc) internalbc
+    if  bitcount.b > 56-6  then  internalbc(  val,   6, parts.b)
+    else internalbc(bits.b << 6 &or tobits.val, bitcount.b + 6, tail.b)
+
+function add4bits(val:int,b:internalbc) internalbc
+    if  bitcount.b > 56-4  then  internalbc(  val,   4, parts.b)
+    else internalbc(bits.b << 4 &or tobits.val, bitcount.b + 4, tail.b)
+
+Function addtobitstream(offset:int, bs:bitstream, b:internalbc)bitstream
+   parts.b @ add2(bs,offset,@e)
    
-   
- function  add2(result:bitstream,offset:int,val:int  ) bitstream
-     let nobits = toint(bits.val ∧ bits.63)
- let bits = bits.val >> 6
-  if nobits < 58 then add(result, bits, nobits)
-  else if nobits = reloc then addvbr6(result, offset - (toint.bits - relocoffset))
-  else if nobits = firstpara2 then 
-      addvbr6(result, offset+toint.bits - offset)
-    else if nobits=relocsigned then   
-     let t=toint.if val < 0 then bits &or 0xFC00000000000000 else bits
-        addvbrsigned6(result, offset - t)
+ function  add2(result:bitstream,offset:int,valx:templatepart  ) bitstream
+  let nobits =  bitcount.valx  
+  if nobits < 58 then add(result, bits.valx, nobits)
+  else if nobits = Reloc then addvbr6(result, offset -  signedvalue.valx  )
+  else if nobits = Firstpara then   addvbr6(result,  toint.bits.valx  )
+  else if nobits=Relocsigned then         addvbrsigned6(result, offset - signedvalue.valx)
   else result
       
+function add(val:int, b:internalbc)internalbc 
+ if val < 32 then add6bits( val,b)
+ else    add6bits(   toint( bits.val ∧ bits.31 ∨ bits.32) ,add( val / 32,b) )
 
-type templatepart is record part:seq.int, val:int
-
- 
-Function getparts(a:internalbc)seq.templatepart 
-subgetparts(finish.a,1,1)
+function addstartbits(inst:int, noargs:int, b:internalbc)internalbc
+      add4bits(3,add(inst, add(noargs, b))  )
 
   
-function subgetparts(a:seq.int,   lastindex:int, i:int)seq.templatepart
- // finds template parameters and breaks template into parts. //
- if i > length.a then [ templatepart(subseq(a, lastindex, i - 1), 0)]
- else
-  let val = a_i
-  let bits = toint(bits.val ∧ bits.63)
-  if bits = 61 then
-      [ templatepart(subseq(a, lastindex, i - 1),  val)]
-       + subgetparts(a, i + 1, i + 1)
- else if bits &ge 58 then
-       [ templatepart(subseq(a, lastindex, i-1  ), val)]
-       + subgetparts(a, i + 1, i + 1)  
-  else subgetparts(a,  lastindex, i + 1)
   
-  
-/function   addtemplatepart(a:internalbc, deltaoffset:int,args:seq.int,t:templatepart) internalbc
-      let b= a+internalbc(0,0,part.t)
-     let bits = toint(bits.val.t ∧ bits.63)
-  if bits = 61 then
-  let arg = args_(parano.t)
-    if arg < 0 then  add(deltaoffset + loc.t + arg, b)
-     else addplaceholder(reloc + 64 * (relocoffset + arg - loc.t + 1 ),b)
-  else if bits &ge 58 then addplaceholder(val.t,b)
-  else b
-  
-
-function processtemplatepart(deltaoffset:int, args:seq.int, t:templatepart)seq.int
-   let bits = toint(bits.val.t ∧ bits.63)
-  if bits = 61 then
-  let arg = args_(parano.t)
-  part.t+ (if arg < 0 then finish.add(deltaoffset + loc.t + arg, emptyinternalbc)
-   else [ reloc + 64 * (relocoffset + arg - loc.t -deltaoffset + 1 )])
-  else  
-    assert bits &in [0,reloc,firstpara2] report "bits"+toword.bits
-    if bits=reloc   then
-        part.t+(val.t- 64 * deltaoffset)
-   else if   bits=firstpara2 then
-        part.t+(val.t+64 * deltaoffset )
-   else  
-    part.t
+function processtemplatepart(deltaoffset:int, args:seq.int, t:templatepart)seq.templatepart
+   let bits = bitcount.t
+   if bits < 58 then [ t]
+   else if bits = Substitue  then
+    let arg = args_(ibcsubpara.t)
+    if arg < 0 then  parts.add(deltaoffset + ibcsubslot.t + arg, emptyinternalbc) 
+     else  [ templatepart( (  arg -ibcsubslot.t -deltaoffset + 1 ),Reloc) ]
+  else  if bits=Reloc   then
+      [  templatepart.tobits(toint.val.t - 64 * deltaoffset) ]   
+    else assert bits=Firstpara report "Problem with code templates"
+      [templatepart.tobits(toint.val.t + 64 * deltaoffset)]  
     
- 
-Function processtemplate(s:seq.templatepart, deltaoffset:int, args:seq.int)internalbc
-//  addplaceholder(setoffset, s @ addtemplatepart( addplaceholder(setoffset + 64 * deltaoffset,emptyinternalbc),deltaoffset,args,@e)) 
-  // internalbc(0, 0,  
-    s @ +(  empty:seq.int  , processtemplatepart(deltaoffset, args, @e))
-    )
-  
 
-Function addaddress(slot:int, a:int, b:internalbc)internalbc  
+Function processtemplate(s:internalbc, deltaoffset:int, args:seq.int)internalbc
+    internalbc(parts.s  @ +(  empty:seq.templatepart  , processtemplatepart(deltaoffset, args,  @e))
+   )
+   
+   
+function addaddress(slot:int, a:int, b:internalbc)internalbc  
  if a < 0   then add(slot + a, b)
- else let newval=
-  if a &ge relocoffset then
-    if a = ibcfirstpara2 then   
-    //  assert slot=1 report "slot"+print.slot //
-         firstpara2  +64 * (slot-1)
-      else  subpara( a-relocoffset,slot)
- else 
-     reloc + 64 * (relocoffset + a - slot + 1) 
- addplaceholder(newval,b)
+ else  
+   let d= a-ibcfirstpara2
+   if d < 0 then addplaceholder(  templatepart(  a - slot + 1 ,Reloc), b)
+   else if d=0 then addplaceholder(  templatepart(   slot-1 ,Firstpara),b)
+   else  addplaceholder( templatepart(    d ,slot , Substitue),b)
+      
   
-  
-Function addsignedaddress(slot:int, a:int, b:internalbc)internalbc
+function addsignedaddress(slot:int, a:int, b:internalbc)internalbc
  if a ≤ 0 then
- let v = slot + a
+  let v = slot + a
   let c = if v ≥ 0 then 2 * v else 2 * -v + 1
    add(c, b)
- else addplaceholder( relocsigned+64 * (a - slot + 1 ),b)
+ else addplaceholder( templatepart(   a - slot + 1 ,Relocsigned),b)
 
-Function relocoffset int 1024 * 1024 * 1024 * 1024
-
- function subpara(parano:int,slot:int) int  61 +relocoffset * parano + 64 * slot  
- 
-Function ibcsubpara(i:int)int   i   / relocoffset mod 16
-
-Function ibcsubslot(i:int)int   i / 64 mod relocoffset
-
-Function ibcfirstpara2 int // must be big enough value so-ibcirstpart2 > max slot number in function // 
-     relocoffset
-     
-Function ibcsub(i:int) slot  slot(relocoffset+i)
- 
-Function firstpara2 int 58
-
-Function reloc int 60
-
-function relocsigned int 63  
-
-
-
-Export type:templatepart
 
 Export type:internalbc
 
-function parano(t:templatepart) int   ibcsubpara.val.t
-
-function loc(t:templatepart) int  ibcsubslot.val.t
-
-Export parano(templatepart)int
 
 _____________________________
 

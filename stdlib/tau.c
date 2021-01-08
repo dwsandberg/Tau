@@ -501,7 +501,7 @@ int main(int argc, char **argv)    {   int i=0,count;
      
  BT getmachineinfo(processinfo PD) 
 {  BT a = myalloc(PD,2);
-   IDXUC(a,0)=tobyteseq(PD,"x86_64-apple-macosx10.15.0");
+   IDXUC(a,0)=tobyteseq(PD,/* "x86_64-apple-macosx10.15.0" */ "arm64-apple-macosx11.0.0");
    IDXUC(a,1)=tobyteseq(PD,"e-m:o-i64:64-f80:128-n8:16:32:64-S128");
    return a;
  }

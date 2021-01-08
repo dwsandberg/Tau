@@ -40,7 +40,7 @@ use set.symbol
 
 use symbol
 
-use seq.templatepart
+use internalbc
 
 use textio
 
@@ -84,19 +84,19 @@ Export action(match5)word
 
 Export arg(match5)int
 
-type match5 is record sym:symbol, length:int, parts:seq.templatepart, action:word, arg:int, code:seq.symbol, functype:llvmtype
+type match5 is record sym:symbol, length:int, parts:internalbc, action:word, arg:int, code:seq.symbol, functype:llvmtype
 
-function addtemplate(sym:symbol, length:int, parts:seq.templatepart, action:word, arg:int, code:seq.symbol, functype:llvmtype)match5
+function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:int, code:seq.symbol, functype:llvmtype)match5
  let m = match5(sym, length, parts, action, arg, code, functype)
  let discard = encode.m
   m
 
-function addtemplate(sym:symbol, length:int, parts:seq.templatepart, action:word, arg:slot)match5
+function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:slot)match5
  addtemplate(sym, length, parts, action, toint.arg, empty:seq.symbol, i64)
 
-function addtemplate(sym:symbol, length:int, b:internalbc)match5 addtemplate(sym, length, getparts.b,"TEMPLATE"_1, slot.nopara.sym)
+function addtemplate(sym:symbol, length:int, b:internalbc)match5 addtemplate(sym, length,  b,"TEMPLATE"_1, slot.nopara.sym)
 
-function findtemplate(d:symbol)seq.match5 findencode.match5(d, 0, empty:seq.templatepart,"NOTFOUND"_1, 0, empty:seq.symbol, i64)
+function findtemplate(d:symbol)seq.match5 findencode.match5(d, 0, emptyinternalbc,"NOTFOUND"_1, 0, empty:seq.symbol, i64)
 
 Export code(match5)seq.symbol
 
@@ -274,7 +274,7 @@ function processconst(toprocess:seq.symbol, i:int, notprocessed:seq.symbol)seq.m
   let args = processconstargs(constantcode.xx, 1, empty:seq.int)
    if isempty.args then processconst(toprocess, i + 1, notprocessed + toprocess_i)
    else
-    let discard = encode.addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, slot.addobject.args)
+    let discard = encode.addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args)
      processconst(toprocess, i + 1, notprocessed)
      
      function =(a:llvmtype,b:llvmtype) boolean typ.a=typ.b
@@ -292,18 +292,18 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
        report "FREF to real function"+print.xx //
    let mn = mangledname.f1
     let functyp = ptr.tollvmtype(alltypes,f1)
-     addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
+     addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
    else if islit.xx then
-   addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, if pkg = "$real"then Creal.value.xx else C64.value.xx)
-   else if islocal.xx then addtemplate(xx, 0, empty:seq.templatepart,"LOCAL"_1, slot.value.xx)
-   else if isdefine.xx then addtemplate(xx, 0, empty:seq.templatepart,(fsig.xx)_1, slot.toint.(fsig.xx)_2)
+   addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, if pkg = "$real"then Creal.value.xx else C64.value.xx)
+   else if islocal.xx then addtemplate(xx, 0, emptyinternalbc,"LOCAL"_1, slot.value.xx)
+   else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, slot.toint.(fsig.xx)_2)
    else if isblock.xx then
    let typ = tollvmtype(alltypes, resulttype.xx)
-     addtemplate(xx, 0, empty:seq.templatepart,(fsig.xx)_1, nopara.xx, empty:seq.symbol, typ)
-   else if isspecial.xx then addtemplate(xx, 0, empty:seq.templatepart,(fsig.xx)_1, slot.nopara.xx)
-   else if pkg = "$words"then addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, slot.addwordseq2.fsig.xx)
+     addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, typ)
+   else if isspecial.xx then addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, slot.nopara.xx)
+   else if pkg = "$words"then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.fsig.xx)
    else if pkg = "$word"then
-   addtemplate(xx, 0, empty:seq.templatepart,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
+   addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
    else if not(abstracttype.modname.xx = "builtin"_1)then
    call(alltypes, xx,"CALL"_1, code.lookupcode(theprg, xx), mangledname.xx)
    else
@@ -324,7 +324,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
 function call(alltypes:typedict, xx:symbol, type:word, code:seq.symbol, symname:word)match5
  let functype = tollvmtype(alltypes, xx)
  let newcode = CALLSTART(1, 0, 32768, typ.functype, toint.symboltableentry(symname, functype), if type = "CALL"_1 then nopara.xx + 1 else nopara.xx)
-  addtemplate(xx, 1, getparts.newcode, type, nopara.xx, code, functype)
+  addtemplate(xx, 1,  newcode, type, nopara.xx, code, functype)
 
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
  let args = if action.t = "CALL"_1 then empty:seq.int
