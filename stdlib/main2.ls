@@ -112,7 +112,7 @@ Function compilelib2(libname:seq.word)seq.word
   
 Function main(argin:seq.byte) int 
  let arg=argin @+(empty:seq.int,toint.@e) 
- let args2 = break(char1.";", decodeUTF8.UTF8.arg, 1) @ +(empty:seq.seq.word, towords.@e)
+ let args2 = break(char1.";",empty:seq.char, decodeUTF8.UTF8.arg) @ +(empty:seq.seq.word, towords.@e)
  let libname = args2_1
  let compileresult=if first.libname=first."L" then "OK"
   else 
@@ -122,7 +122,10 @@ Function main(argin:seq.byte) int
  else
   // execute function specified in arg //
   let p2 = process.runit.args2
-   if aborted.p2 then message.p2 else interpret(alltypes.result.p2, code.result.p2)
+   if aborted.p2 then message.p2 
+   else 
+     let p3=process.interpret(alltypes.result.p2, code.result.p2)
+      if aborted.p3 then message.p3 else result.p3
      createhtmlfile("stdout",   output  )
 
   

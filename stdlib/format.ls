@@ -10,20 +10,17 @@ use stack.seq.word
 
 use stack.word
 
-Function search(pattern:seq.word, s:seq.word, i:int)int
+/Function search(pattern:seq.word, s:seq.word, i:int)int
  if i > length.s then i
  else if subseq(s, i, i + length.pattern - 1) = pattern then i
  else search(pattern, s, i + 1)
 
-Function consumecomment(s:seq.word, i:int)int
+function consumecomment(s:seq.word, i:int)int
  // result will be pointer to last word of comment //
  if i > length.s then i
  else if s_i = "//"_1 ∧ not(s_i = "/"_1)then
- consumecomment(s, findindex("//"_1, s, i + 1) + 1)
- else if s_i = "/"_1 ∧ i < length.s
- ∧ s_(i + 1) = "/"_1 then
- consumecomment(s, search("/ /", s, i + 2) + 2)
- else i
+ consumecomment(s, findindex2("//"_1, s, i + 1) + 1)
+ else  i
 
 Function getheader(s:seq.word)seq.word
  if length.s < 3 then s
@@ -34,7 +31,7 @@ Function getheader(s:seq.word)seq.word
      subseq(s, 1, endofname - 1) + "(" + tt + ")" + tt
      + "stub"
    else
-    let startoftype = if s_endofname = "("_1 then findindex(")"_1, s, endofname + 1) + 1
+    let startoftype = if s_endofname = "("_1 then findindex2(")"_1, s, endofname + 1) + 1
     else endofname
     let afterreturntype = consumetype(s, startoftype + 1)
     let aftercomments = consumecomment(s, afterreturntype)
@@ -109,32 +106,40 @@ Function htmlheader seq.word // the format of the meta tag is carefully crafted 
 + ' form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style> '
 + EOL
 
-Function prettynoparse(s:seq.word)seq.word // format function without first parsing it // prettynoparse(s, 1, 0,"")
+  type  pnpstate is record lastbreak:int,result:seq.word,matchthis:word, instring:boolean
+ 
 
-function prettynoparse(s:seq.word, i:int, lastbreak:int, result:seq.word)seq.word
- if i > length.s then result
- else
-  let x = s_i
-   if x = '"'_1 then
-   let t = findindex('"'_1, s, i + 1)
-     prettynoparse(s, t + 1, lastbreak + t - i, result + " &{ literal" + subseq(s, i, t) + " &}")
-   else if x ∈ "// /"then
-   let t = consumecomment(s, i)
-     if t > i then
-     prettynoparse(s, t, t - i, result + " &br  &{ comment" + subseq(s, i, t - 1) + " &}")
-     else prettynoparse(s, i + 1, lastbreak + 1, result + x)
-   else if x ∈ "if then else let assert function Function type"then
-   let t = if lastbreak > 0 then result + " &br"else result
-     prettynoparse(s, i + 1, 0, t + " &keyword" + x)
-   else if x ∈ "report"then
-   prettynoparse(s, i + 1, lastbreak + 1, result + " &keyword" + x)
-   else if lastbreak > 20 ∧ x ∈ ")]"
-   ∨ lastbreak > 40 ∧ x ∈ ","then
-   prettynoparse(s, i + 1, 0, result + x + " &br")
-   else if lastbreak > 20 ∧ x ∈ "["then
-   prettynoparse(s, i + 1, 0, result + " &br" + x)
-   else prettynoparse(s, i + 1, lastbreak + 1, result + x)
-   
+ Function prettynoparse(s:seq.word)seq.word // format function without first parsing it //
+   result(s @ advancepnp(pnpstate(0,"","//"_1,false),@e) )
+
+
+function advancepnp(state:pnpstate,this:word) pnpstate
+   let lastbreak=lastbreak.state
+   let result=result.state
+   let matchthis= matchthis.state
+   let instring=instring.state
+   let  newinstring=  if instring then this &ne  matchthis 
+                  else this  = "//"_1 &or this  = "'"_1 &or this  =  '"'_1
+   let newmatchthis = if instring then matchthis else this 
+   let c=  if newinstring then 0
+  else  if this ∈ "if then else let assert function Function type"then 1
+     else if this ∈ "report"then 2
+     else if lastbreak > 20 ∧ this ∈ ")]"  ∨ lastbreak > 40 ∧ this ∈ "," then 3
+    else if lastbreak > 20 ∧ this ∈ "[" then 4
+    else 5
+    let newresult=  
+        if instring  then  if this =  matchthis then   result+this+ " &}" else result+this  
+        else  if c=0 then
+           result+(if this &in ('"' +"'") then    " &{ literal" else " &br  &{ comment")+this
+       else if c=1 then
+              (if lastbreak > 20 then result + " &br"else result)+ " &keyword" + this
+              else if c=2 then result + " &keyword" + this
+        else if c=3  then   result + this + " &br"
+        else if c = 4 then result + " &br" + this
+        else   result+this 
+    let newlastbreak =  if  c &in [3,4 ]   then 0 else lastbreak +1  
+   pnpstate(newlastbreak,newresult,newmatchthis,newinstring)
+  
    
 _____________________________
 

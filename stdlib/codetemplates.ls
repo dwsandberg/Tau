@@ -94,7 +94,8 @@ function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:
 function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:slot)match5
  addtemplate(sym, length, parts, action, toint.arg, empty:seq.symbol, i64)
 
-function addtemplate(sym:symbol, length:int, b:internalbc)match5 addtemplate(sym, length,  b,"TEMPLATE"_1, slot.nopara.sym)
+function addtemplate(sym:symbol, length:int, b:internalbc)match5 
+addtemplate(sym, length,    b,"TEMPLATE"_1, slot.nopara.sym)
 
 function findtemplate(d:symbol)seq.match5 findencode.match5(d, 0, emptyinternalbc,"NOTFOUND"_1, 0, empty:seq.symbol, i64)
 
@@ -279,6 +280,7 @@ function processconst(toprocess:seq.symbol, i:int, notprocessed:seq.symbol)seq.m
      
      function =(a:llvmtype,b:llvmtype) boolean typ.a=typ.b
      
+     use set.mytype
   
 function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
  let pkg = module.xx
@@ -299,8 +301,16 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
    else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, slot.toint.(fsig.xx)_2)
    else if isblock.xx then
    let typ = tollvmtype(alltypes, resulttype.xx)
-     addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, typ)
-   else if isspecial.xx then addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, slot.nopara.xx)
+      addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, typ)
+   else if isspecial.xx then 
+  //   assert  (fsig.xx)_1 &ne "RECORD"_1 
+      &or isempty(asset.paratypes.xx -asset([typeint,mytype."real",mytype."ptr",mytype."boolean"]))
+      report "XXX"+  toseq(asset.paratypes.xx -asset([typeint])) @ +("",print.@e)
+   //  if (fsig.xx)_1 = "RECORD"_1  &and nopara.xx < 10 then 
+      let fldbc=recordcode(arithseq(nopara.xx,1, ibcfirstpara2+1),fsig.xx,0,true)
+     addtemplate(xx, regno.fldbc, bc.fldbc)
+     else 
+      addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, slot.nopara.xx)
    else if pkg = "$words"then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.fsig.xx)
    else if pkg = "$word"then
    addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
@@ -330,3 +340,41 @@ Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
  let args = if action.t = "CALL"_1 then empty:seq.int
  else subseq(argstack, length.argstack - arg.t + 1, length.argstack)
   processtemplate(parts.t, deltaoffset, args)
+  
+type recordcoderesult is record regno:int, bc:internalbc 
+
+Export regno(recordcoderesult) int
+
+Export bc(recordcoderesult) internalbc
+
+
+function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word,  regno:int, pint:int, preal:int, pptr:int) 
+recordcoderesult
+ if i > length.args then recordcoderesult(regno, bc)
+ else
+    let typ = types_(i * 2 + 1)
+    if typ = "real"_1 then
+        if preal=0 then
+           setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.double, bitcast), args, i, types,  regno + 1, pint, regno + 1, pptr)
+        else 
+           let newbc = GEP(r(regno + 1), double, r.preal, C64(i - 1))+ STORE(r(regno + 2), r(regno + 1), slot.args_i)
+           setnextfld(bc + newbc, args, i + 1, types,  regno + 1, pint, preal, pptr)
+     else if typ ∈ "ptr"then
+      if pptr=0 then 
+          setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.ptr.i64, bitcast), args, i, types,   regno + 1, pint, preal, regno + 1)
+      else 
+        let newbc = GEP(r(regno + 1), ptr.i64, r.pptr, C64(i - 1))+ STORE(r(regno + 2), r(regno + 1), slot.args_i)
+         setnextfld(bc + newbc, args, i + 1, types,  regno + 1, pint, preal, pptr)
+     else
+        assert typ ∈ "int boolean"  report"setnextfld problem" + typ
+       let newbc = GEP(r(regno + 1), i64, r.pint, C64(i - 1))+ STORE(r(regno + 2), r(regno + 1), slot.args_i)
+           setnextfld(bc + newbc, args, i + 1, types,  regno + 1, pint, preal, pptr)
+
+Function   recordcode  (args:seq.int,   types:seq.word, lastreg:int, template:boolean) recordcoderesult
+   let firstpara=if template then   slot.ibcfirstpara2 else r.1
+   let newcode = CALL(r(lastreg + 1), 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespace", function.[ ptr.i64, i64, i64]), firstpara, C64.length.args)
+    let c= setnextfld( newcode, args, 1, types,  lastreg + 1, lastreg + 1, 0, 0)
+     if template then   recordcoderesult( regno.c+1,bc.c+GEP(r(regno.c+1),i64,r(lastreg+1),C64.0))
+     else c
+     
+     

@@ -55,24 +55,26 @@ function subequal(a:seq.T, b:seq.T, i:int)boolean
 
 a @ &and(true, @e = b_@i)
 
-subin is helper function
 
-function subin(a:T, s:seq.T, i:int)boolean
- if i = 0 then false else if a = s_i then true else subin(a, s, i - 1)
+Function ∈(a:T, s:seq.T)boolean 
+ findindex(a,s) &le length.s 
 
-Function ∈(a:T, s:seq.T)boolean subin(a, s, length.s)
 
- 
+
 Function findelement(w:T, s:seq.T)seq.T
- let idx = findindex(w, s, 1)
+ let idx = findindex(w, s)
   if idx > length.s then empty:seq.T else [ s_idx]
 
 Function findindex(w:T, s:seq.T)int
- // result > length.s when element is not found.Otherwise results is location in sequence // findindex(w, s, 1)
+  // result > length.s when element is not found.Otherwise results is location in sequence // 
+  let t= s @ +(0,if w=@e then @i else 0)(w=@e)
+  if t=0 then length.s+1 else t
+ 
+ findindex2(w, s, 1)
 
-Function findindex(w:T, s:seq.T, i:int)int
+Function findindex2(w:T, s:seq.T, i:int)int
  if i > length.s then i
- else if s_i = w then i else findindex(w, s, i + 1)
+ else if s_i = w then i else findindex2(w, s, i + 1)
 
 -------------------------
 

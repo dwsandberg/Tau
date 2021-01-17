@@ -12,8 +12,6 @@ use otherseq.word
 function seperator(acc:seq.char, sep:char, b:seq.char)seq.char
  if isempty.acc then b else acc + sep + b
 
-Export break(w:word, a:seq.word, j:int)seq.seq.word
-
 Function mangle(fsig:seq.word, module:seq.word)word
  if module = "builtin"
  ∧ fsig_1 ∈ "aborted loadedlibs loadlib createlib createlib2   allocatespace addencoding createfile getinstance dlsymbol 
@@ -23,7 +21,7 @@ Function mangle(fsig:seq.word, module:seq.word)word
  else
   let i = findindex("("_1, fsig)
   let modname = module
-  let parameters = break(","_1, subseq(fsig, 1, length.fsig - 1), i + 1)
+  let parameters = break(","_1,"", subseq(fsig, i+1, length.fsig - 1) )
    encodeword(([ [ merge.subseq(fsig, 1, i - 1)], module] + parameters)
    @ seperator(empty:seq.char, char.charmajorseparator, codeup.@e))
 

@@ -77,27 +77,25 @@ function print(x:bitstream) seq.word
   let endword=toint(bits(end-1) >> 6 )+1
   let startshift=  toint( bits.(start-1) &and bits.63 )
    let endshift=toint( bits(end-1) &and bits.63 )
-    let startpart= (s ! ithword startword ) >> startshift
+    let startpart= ithword(s , startword ) >> startshift
   let endpartmask=   bits.-1 >> (63-  partbits)
   if len  &le 64 then 
        if len &le 0 then empty:bitstream 
       else   if  startword=endword  then 
         bitstream(len,    startpart &and endpartmask ,empty:seq.bits)
         else 
-          let endpart= (s ! ithword endword)  << (64-startshift) &and endpartmask 
+          let endpart= ithword(s ,  endword)  << (64-startshift) &and endpartmask 
             bitstream(len, startpart &or endpart   ,empty:seq.bits)
    else  if startshift=0 then
-      let endpart= (s ! ithword  endword ) &and endpartmask
+      let endpart= ithword(s ,  endword ) &and endpartmask
           bitstream(len, endpart, subseq(fullwords.s,startword,endword-1 ))
     else 
       let endpart=  if  endshift &ge startshift then 
           // all bits in endpart come from endword  //
-             (s ! ithword   endword   )  >> (64-startshift)   &and endpartmask
+              ithword(s,   endword   )  >> (64-startshift)   &and endpartmask
         else 
-          ( (s ! ithword    endword  )    << (64-startshift)   &and endpartmask)
-           &or  (s ! ithword   (endword-1)   ) >> (64-startshift)        
-  //     let endpart=        (s ! ithword if endshift=63 then endword  else endword-1  )  >> (64-startshift) 
-         &and endpartmask  //
+          (  ithword(s ,    endword  )    << (64-startshift)   &and endpartmask)
+           &or   ithword (s,   endword-1   ) >> (64-startshift)        
       let  firstpart = subseq(fullwords.s+endpart.s,startword,if endshift=63 then endword  else endword-1)
     bitstream(len, endpart, shiftleft( 2,startpart,firstpart,startshift,empty:seq.bits) )
     

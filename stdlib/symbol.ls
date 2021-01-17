@@ -113,9 +113,13 @@ Function paratypes(s:symbol)seq.mytype paratypesastext.s @ +(empty:seq.mytype, m
 
 function paratypesastext(s:symbol)seq.seq.word
  let a = fsig.s
-  if length.a < 4 then empty:seq.seq.word
-  else
-   break(","_1, subseq(a, 1, length.a - 1), findindex("("_1, a) + 1)
+  if last.a &ne ")"_1 then empty:seq.seq.word
+  else break(","_1,"", subseq(a, findindex("("_1, a) + 1, length.a - 1))
+  
+   let z= break(","_1, subseq(a, findindex("("_1, a) + 1, length.a - 1))
+   let x= break(","_1,"", subseq(a, findindex("("_1, a) + 1, length.a - 1))
+   assert z=x report "L"+ z @ list("",EOL,">"+@e)+EOL+"new"+x @ list("",EOL,">"+@e)+a+stacktrace
+   z
 
 Function modname(s:symbol)mytype mytype.module.s
 

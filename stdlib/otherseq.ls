@@ -44,6 +44,8 @@ unbound +(T, T)T
 
 unbound *(int, T)T
 
+unbound =(T,T) boolean
+
 Export length(s:arithmeticseq.T)int
 
 Function_(s:arithmeticseq.T, i:int)T start.s + (i - 1) * step.s
@@ -111,8 +113,63 @@ Function setreplaceorinsert(s:seq.T, val:T)seq.T
 
 Function lpad(n:int, val:T, l:seq.T)seq.T constantseq(n - length.l, val) + l
 
-Function break(w:T, a:seq.T, j:int)seq.seq.T
- let i = findindex(w, a, j)
-  if i > length.a then
-  if j > length.a then empty:seq.seq.T else [ subseq(a, j, i)]
-  else [ subseq(a, j, i - 1)] + break(w, a, i + 1)
+Function break(w:T, a:seq.T )seq.seq.T break(w,empty:seq.T,a)
+
+  
+Function  break(seperator:T,quotes:seq.T,a:seq.T) seq.seq.T
+  let b= a @+(empty:seq.int,if @e &in ([seperator]+quotes)  then [@i] else empty:seq.int)
+  if isempty.b then [a] else 
+  break(empty:seq.T,seperator,seperator,a,b,1,1,empty:seq.seq.T)
+     
+
+function break(str:seq.T, currentquote:T,seperator:T, a:seq.T,b:seq.int, j:int, start:int,result:seq.seq.T) seq.seq.T
+   if j > length.b then  result+(str+subseq(a,start,length.a ))
+   else
+   let i=b_j
+      if currentquote &ne seperator  then // in quoted string //
+       if a_i= seperator then 
+            break(str ,currentquote,seperator,a,b,j+1,start,result)
+       else if a_i = currentquote &and i=length.a   then     
+           result+(str+subseq(a,start,i-1))
+       else      if a_i = currentquote  &and a_(i+1) =currentquote then 
+           break(subseq(a,start,i) ,currentquote,seperator,a,b,j+2,i+2,result)
+        else  assert  a_i &ne seperator  &and a_(i+1)=seperator report  "format problem"
+         break(empty:seq.T,seperator,seperator,a,b,j+2,i+2,result+(str+subseq(a,start,i-1)))
+      else  // not in quoted string //
+      if a_i = seperator then
+         break(empty:seq.T,seperator,seperator,a,b,j+1,i+1,result+(str+subseq(a,start,i-1)))
+   else
+      assert isempty(str+subseq(a,start,i-1)) report "format problem"
+         break(str,a_i,seperator,a,b,j+1,i+1,result)
+  
+
+
+
+
+ /function break(str:seq.T, currentquote:T,seperator:T, a:seq.T,b:seq.int, j:int, start:int,result:seq.seq.T) seq.seq.T
+   if j > length.b then  result+(str+subseq(a,start,length.a ))
+   else
+   let i=b_j
+      if a_i=seperator &and currentquote=seperator then
+          break(empty:seq.T,currentquote,seperator,a,b,j+1,i+1,result+(str+subseq(a,start,i-1)))
+    else  if a_i=currentquote &and i < length.a &and a_(i+1)= currentquote then
+          break(subseq(a,start,i) ,currentquote,seperator,a,b,j+2,i+2,result)
+    else  if  a_i=currentquote &and i=length.a   then     
+         result+(str+subseq(a,start,i-1))
+    else  if  a_i=currentquote &and    a_(i+1)= seperator then
+          break(empty:seq.T,seperator,seperator,a,b,j+2,i+2,result+(str+subseq(a,start,i-1)))
+    else 
+     if a_i=seperator then
+         break(str,seperator,seperator,a,b, j+1,start,result)
+    else 
+      let yy=if currentquote=seperator then a_(i) else currentquote
+      if  i > 1 &and (j = 1 &or  b_(j-1) &ne i-1 &or a_(i-1) &ne seperator)  then   
+              let zz =[if isempty.result &or last.last.result &ne seperator then  seperator  else a_i ]
+             if  currentquote=seperator then
+                   break(str,a_i,seperator,a,b,  j+1 ,i+1,result+(str+subseq(a,start,i-1)+seperator))  
+             else if a_i=currentquote then
+                    break(str,seperator,seperator,a,b,  j+1 ,i+1,result+(str+subseq(a,start,i-1)+a_i))  
+              else 
+               break(empty:seq.T,currentquote,seperator,a,b,  j+1 ,start,result )  
+         else 
+       break(str,yy,seperator,a,b,  j+1 ,i+1,result) 

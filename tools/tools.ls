@@ -1,14 +1,11 @@
-#!/usr/local/bin/tau   ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau   ; use genLR1 ; gentau2
 
 
 ; use doc ; doclibrary."tools"
 
-
- ; use main2  ; print.compile("pass2","bug9.core")
-
+; use main2  ; print.compile("pass2","bug9.core")
 
 ; use main2 ;   print.compile("pass2","bug9.core")
-
 
 ; use doc ; doclibrary."stdlib:small"
 

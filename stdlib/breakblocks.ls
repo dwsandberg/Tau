@@ -176,7 +176,10 @@ Function backparse(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
  if no = 0 then result
  else
   assert i > 0 report"back parse 1:" + toword.no + print.s + stacktrace
-   assert not.isdefine.s_i report"back parse 2" + print.s
+   if isdefine.s_i then
+     let args=backparse(s,i-1,1,empty:seq.int) 
+      backparse(s,args_1,no,result)
+   else 
    let nopara = nopara.s_i
     let first = if nopara = 0 then i
     else

@@ -129,6 +129,7 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
      if(fsig.sym)_1 ∈ "offsets"then
       // symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)//
        let paratypes = paratypes.sym
+  //     assert not.isempty.typerep.last.paratypes report "XXX"+print.sym //
        let offset = subseq(paratypes, 2, length.paratypes) @ +(toint.(module.sym)_1, Size(alltypes, modpara, @e))
        let resultinfo = gettypeinfo(alltypes, replaceT(modpara, resulttype.sym))
        let p2 = if size.resultinfo = 1 then [ Lit.offset, Idx.kind.resultinfo]
@@ -152,12 +153,12 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let k = findindex(","_1, fsig.newsym)
        let eletype=mytype.subseq(fsig.newsym, 3, k - 2)
-       let info = gettypeinfo(alltypes, mytype.subseq(fsig.newsym, 3, k - 2))
+       let info = gettypeinfo(alltypes, eletype)
        let a=if size.info > 1 then toword.size.info else 
          if  eletype &in[mytype."byte",mytype."bit"]  then  abstracttype.eletype else kind.info
        let newfsig ="apply3(" + a + "seq" + subseq(fsig.newsym, k, length.fsig.newsym)
        let p2 = symbol(newfsig, [ kind] + "builtin", returntype.newsym)
-        postbind3(alltypes, dict, code, i + 1,(result >> 1) + Lit.size.info + p2, modpara, org, calls, sourceX, tempX)
+        postbind3(alltypes, dict, code, i + 1,result + p2, modpara, org, calls, sourceX, tempX)
       else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc IDX callidx2  GEP extractbyte extractbit"
       ∨ fsig.sym = "setfld(int, T seq, T)"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
@@ -228,7 +229,8 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
   let symEle = newsymbol("@e", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, parameter.seqtype)
   let symAcc = newsymbol("@acc", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, resulttype)
    [ Local.1] + Emptyseq
-   + [ Local.1, symAcc, symEle, dc, cat, Lit.size.info, newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint], resulttype)]
+   + [ Local.1, symAcc, symEle, dc, cat, Lit.0, 
+   newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint], resulttype)]
    +   blocksym.info
  else
   let typedesc = gettypeinfo(alltypes, type)

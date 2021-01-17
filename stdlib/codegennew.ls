@@ -172,11 +172,9 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, 3), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l, exitblock))
   else assert action = "RECORD"_1 report"code gen unknown" + action 
-  let noargs = arg.m
-   let args = top(args.l, noargs)
-   let newcode = CALL(r(regno.l + 1), 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespace", function.[ ptr.i64, i64, i64]), r.1, C64.noargs)
-   let fldbc = setnextfld(code.l + newcode, args, 1, parametertypes.m, 3, regno.l + 1, regno.l + 1, 0, 0)
-    Lcode2(bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
+  let fldbc= recordcode  (top(args.l, arg.m),   parametertypes.m, regno.l, false)
+  Lcode2(code.l +bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
+
    
 function pushexptypes(s:seq.word, i:int, result:stack.int)stack.int
  if i + 4 > length.s then result
@@ -195,14 +193,12 @@ type processblkresult is record code:internalbc, phi:seq.int
 
 function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc, code:internalbc, varcount:int, phi:seq.int, tailphi:seq.int)processblkresult
  if i > length.blks then
- let firstblk = blks_1
+  let firstblk = blks_1
   let code1 = if top.args.firstblk = // loopblock // 2 then
-  let noargs = top.pop.args.firstblk
-    // assert false report"JKL"+ @(+, toword,"", top(args.firstblk, noargs + 2))//
-    code.firstblk + BR.noblocks.firstblk + phiinst(regno.firstblk, top(args.firstblk, noargs + 2), tailphi, noargs)
-    + code
+    let noargs = top.pop.args.firstblk
+    code.firstblk + BR.noblocks.firstblk + phiinst(regno.firstblk, top(args.firstblk, noargs + 2), tailphi, noargs) + code
   else code
-   // code1 + phiinst(regno.last.blks, typ.i64, phi, varcount)// processblkresult(code1, phi)
+    processblkresult(code1, phi)
  else
   let l = blks_i
    assert length.toseq.args.l > 0 report"XXXXXX" + toword.length.blks + toword.i
@@ -238,28 +234,6 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
        let newcode = BR(r(regno.l + 1), noblocks.blks_(constvalue.slot.args_2 - 1), noblocks.blks_(constvalue.slot.args_3 - 1), r.regno.l)
         processblk(phitype, blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, tailphi)
 
-type setfldresult is record regno:int, bc:internalbc 
-
-Function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.word, j:int, regno:int, pint:int, preal:int, pptr:int) setfldresult
- if i > length.args then setfldresult(regno, bc)
- else
-  let newj = min(findindex(","_1, types, j + 1), length.types - 1)
-  let typ = if length.types = 3 then"int"_1 else types_(newj - 1)
-   assert typ ∈ "int boolean real ptr "report"unknown type gencode" + types
-    if preal = 0 ∧ typ = "real"_1 then
-    setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.double, bitcast), args, i, types, j, regno + 1, pint, regno + 1, pptr)
-    else if pptr = 0 ∧ typ ∈ "ptr seq"then
-    setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.ptr.i64, bitcast), args, i, types, j, regno + 1, pint, preal, regno + 1)
-    else
-     let newbc =(if typ = "real"_1 then
-     GEP(r(regno + 1), double, r.preal, C64(i - 1))
-     else if typ ∈ "ptr seq"then
-     GEP(r(regno + 1), ptr.i64, r.pptr, C64(i - 1))
-     else
-      assert typ ∈ "int boolean"  report"setnextfld problem" + typ
-       GEP(r(regno + 1), i64, r.pint, C64(i - 1)))
-     + STORE(r(regno + 2), r(regno + 1), slot.args_i)
-      setnextfld(bc + newbc, args, i + 1, types, newj, regno + 1, pint, preal, pptr)
 
 function getloc(l:seq.localmap, localno:int, i:int)int
  if localno.l_i = localno then regno.l_i else getloc(l, localno, i + 1)

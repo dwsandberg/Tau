@@ -96,8 +96,8 @@ function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, 
    else
     let temp = if s_1 ∈ "Library library"then
     let p = s
-     let u = findindex("uses"_1, p, 3)
-     let e = findindex("exports"_1, p, 3)
+     let u = findindex("uses"_1, p)
+     let e = findindex("exports"_1, p)
       " &keyword Library" + p_2 + alphasort.subseq(p, 3, u - 1) + " &br  &keyword"
       + subseq(p, u, e - 1)
       + " &br  &keyword exports"
@@ -221,22 +221,6 @@ function elseblock(a:attribute2)attribute2
    prettyresult(0, 10000," &br  &keyword else" + text.exp)
    else prettyresult(0, 10000," &br  &keyword else" + block.text.exp)]
 
-function fixstring(s:seq.word, i:int)seq.word
- if i = 1 then
- if s_i = "'"_1 then s
-  else
-   let j = findindex(merge("&" + "quot"), s, 2)
-    if j > length.s then s else fixstring(s, j)
- else
-  let t = subseq(s, 1, i - 1) + '"' + subseq(s, i + 1, length.s)
-   assert true report t + toword.i + "/" + subseq(s, 1, i - 1) + "/"
-   + subseq(s, i + 1, length.s)
-   let j = findindex(merge("&" + "quot"), t, i + 1)
-    if j > length.t then
-    "'" + subseq(t, 2, length.t - 1) + "'"
-    else
-     assert i < j report"XXXY"
-      fixstring(t, j)
 
 function key(a:attribute2)attribute2 attribute(" &keyword" + text.a)
 
@@ -244,7 +228,7 @@ function width(s:seq.word)int length.s
 
 Below is generated from parser generator.
 
-Function action(ruleno:int, input:seq.token.attribute2, R:reduction.attribute2)attribute2 
+Function action(ruleno:int,  input:seq.word,place:int, R:reduction.attribute2)attribute2 
 if ruleno = // G F # // 1 then R_1 
 else if ruleno = // F W NM(FP)T E // 2 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7] 
 else if ruleno = // F W N(FP)T E // 3 then pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7] 

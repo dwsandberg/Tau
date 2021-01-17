@@ -287,8 +287,12 @@ function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:in
       else if abstracttype.fldtype ∈ "seq"then"ptr"_1 else"int"_1]))
      else
       let newoffset = if offsetinc = 0 then
-      if offset = ""then typerep.fldtype else offset + "," + typerep.fldtype
+      if isempty.offset  then typerep.fldtype else offset + "," + typerep.fldtype
       else offset
+    //    assert not.isempty.offset report "problem X"+typerep.fldtype+"idxfunc"+"constr"+print.constructor +stacktrace
+    //  let code=  [ Local.1
+       , symbol("offsets(" + typerep.fldtype + if isempty.offset then ")" else  "," +  offset + ")", 
+           [ toword.knownoffset] + "builtin", typerep.fldtype)]
        fldcode(constructor
        , indexfunc
        , syms
@@ -297,8 +301,7 @@ function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:in
        , newoffset
        , map(prg
        , this
-       , [ Local.1
-       , symbol("offsets(" + typerep.fldtype + "," + offset + ")", [ toword.knownoffset] + "builtin", typerep.fldtype)]))
+       , code))
 
 function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpass
  if length.input = 0 then

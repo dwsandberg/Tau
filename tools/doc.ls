@@ -216,13 +216,13 @@ function callarcs(s:seq.word, i:int, result:seq.word)seq.word
  else
   let this = s_i
    if this = '"'_1 then
-   callarcs(s, findindex('"'_1, s, i + 1) + 1, result)
+   callarcs(s, findindex2('"'_1, s, i + 1) + 1, result)
    else if this = "'"_1 then
-   callarcs(s, findindex("'"_1, s, i + 1) + 1, result)
+   callarcs(s, findindex2("'"_1, s, i + 1) + 1, result)
    else
     let next = s_(i + 1)
      if next ∈ "(:"then
-     let j = findindex(")"_1, s, i + 1)
+     let j = findindex2(")"_1, s, i + 1)
        if this = "RECORD"_1 then callarcs(s, j + 1, result)
        else
         assert j < length.s report"JKL" + subseq(s, i, length.s)

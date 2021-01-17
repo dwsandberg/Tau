@@ -25,17 +25,11 @@ Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8
  else if toint.a_i =  10 then
  breaklines(a, i + 1, i + 1, result + UTF8.subseq(a, last, i - if toint.a_(i - 1) =  13 then 2 else 1))
  else breaklines(a, i + 1, last, result)
+ 
+use otherseq.byte
 
-Function breakcommas(a:UTF8)seq.UTF8 breakcommas(toseqbyte.a, 1, 1, empty:seq.UTF8)
-
-function breakcommas(a:seq.byte, i:int, last:int, result:seq.UTF8)seq.UTF8
- if i > length.a then result + UTF8.subseq(a, last, i - 1)
- else if toint.a_i =  toint.commachar then
- breakcommas(a, i + 1, i + 1, result + UTF8.subseq(a, last, i - 1))
- else if toint.a_i =  toint.doublequotechar then
- let d = findindex(tobyte.toint.doublequotechar, a, i + 2)
-   breakcommas(a, d + 2, d + 2, result + UTF8.subseq(a, i + 1, d - 1))
- else breakcommas(a, i + 1, last, result)
+Function breakcommas(a:UTF8)seq.UTF8 
+break(tobyte.toint.char1.",",[tobyte.toint.char1.'"'], toseqbyte.a) @ +(empty:seq.UTF8,UTF8.@e)
 
 --------
 

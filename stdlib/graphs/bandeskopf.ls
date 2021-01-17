@@ -76,7 +76,7 @@ Function findvertarcsUL(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x
   let node = currentlayer_x
   let preds = toseq.predecessors(g, node)
    if length.preds > 0 then
-   let upperidx = preds @ +(empty:seq.int, findidx(lastlayer, @e))
+   let upperidx = preds @ +(empty:seq.int, findindex(@e,lastlayer ))
     let medianleft = upperidx_((length.upperidx + 1) / 2)
     let medianright = upperidx_((length.upperidx + 1) / 2)
      if r < medianleft ∧ not(lastlayer_medianleft ∈ assigned)then
@@ -104,7 +104,7 @@ Function findvertarcsUR(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x
   let node = currentlayer_x
   let preds = toseq.predecessors(g, node)
    if length.preds > 0 then
-   let upperidx = preds @ +(empty:seq.int, findidx(lastlayer, @e))
+   let upperidx = preds @ +(empty:seq.int, findindex(@e,lastlayer ))
     let medianleft = upperidx_((length.upperidx + 1) / 2)
     let medianright = upperidx_((length.upperidx + 1) / 2)
      if r > medianright ∧ not(lastlayer_medianright ∈ assigned)then
@@ -113,8 +113,6 @@ Function findvertarcsUR(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x
      findvertarcsUR(g, currentlayer, lastlayer, medianleft, x - 1, assigned + lastlayer_medianleft) + arc(lastlayer_medianleft, node)
      else findvertarcsUR(g, currentlayer, lastlayer, r, x - 1, assigned)
    else findvertarcsUR(g, currentlayer, lastlayer, r, x - 1, assigned)
-
-function findidx(s:seq.T, a:T)int findindex(a, s)
 
 _________________
 

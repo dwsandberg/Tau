@@ -200,7 +200,7 @@ Export length(seq.int)int
 
 Export findindex(word, seq.word)int
 
-Export findindex(word, seq.word, int)int
+Export findindex2(word, seq.word, int)int
 
 Export last(s:seq.word)word
 
