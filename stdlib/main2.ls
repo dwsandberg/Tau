@@ -84,8 +84,8 @@ function subcompilelib(option:seq.word, libname :seq.word)seq.seq.word
   // let b = unloadlib.[ libname]//
   let allsrc = getlibrarysrc.libname
   let link = pass1(groupparagraphs("module Module", allsrc), exports, libmodules.dependentlibs)
-  let prg2 = allsrc @ +(empty:seq.seq.word, @e) @ processOption(result.link, @e)
-  let prg3 = postbind(alltypes.link, dict.link, roots.link, prg2, templates.link)
+  let prg2 = postbind(alltypes.link, dict.link, roots.link,result.link, templates.link)
+   let prg3 = allsrc @ +(empty:seq.seq.word, @e) @ processOption(prg2, @e)
     if option = "pass1"then
    toseq.toset.prg3 @ +(empty:seq.seq.word, print(prg3, @e))
    else
@@ -155,13 +155,7 @@ Function print(a:seq.seq.word)seq.word a @ +(""," &br  &br" + @e)
 
 _______________
 
-Function unloadlib(a:seq.word)int unloadlib.tocstr.a
 
-builtin unloadlib(cstr)int
-
-Function loadlibrary(a:word)int loadlib.tocstr.[ a]
-
-Builtin loadlib(cstr)int
 
 Function addlibrarywords(l:liblib) int let discard=addencodingpairs(words.l) 1
 

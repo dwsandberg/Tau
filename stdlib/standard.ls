@@ -11,13 +11,9 @@ use otherseq.int
 
 use seq.seq.int
 
-use seq.int
-
 use otherseq.word
 
 use seq.seq.word
-
-use seq.word
 
 use words
 
@@ -26,8 +22,6 @@ use xxhash
 use tausupport
 
 Export stacktrace seq.word 
-
-/Function type:int(a:int) int a
 
 type ordering is record toint:int
 
@@ -132,7 +126,7 @@ function addrandom(s:seq.int, i:int)seq.int s + pseudorandom.s_(length.s)
 
 Function randomseq(seed:int, length:int)seq.int constantseq(length - 1, 1) @ addrandom([ seed], @e)
 
-Builtin randomint(i:int)seq.int
+Export randomint(i:int)seq.int
 
 Function list(a:seq.word,b:seq.word,c:seq.word) seq.word
  if isempty.a then c else if isempty.c then a else a + (b + c)
@@ -147,6 +141,12 @@ Function print(n:int) seq.word
 
 
   Function EOL seq.word "&br"  
+  
+Function    break(s:seq.word,seperators: seq.word,includeseperator:boolean) seq.seq.word
+  let  nosep=if includeseperator then 0 else 1
+       let l= s @ +(empty:seq.int,if @e &in seperators then [@i] else empty:seq.int)
+      {(l+ (length.s+1))}   @   +(empty:seq.seq.word,   subseq(s,if @i=1 then 1 else l_(@i-1)+nosep,@e-1)  )
+
   
 Export hash(a:word)int
 
@@ -200,7 +200,6 @@ Export length(seq.int)int
 
 Export findindex(word, seq.word)int
 
-Export findindex2(word, seq.word, int)int
 
 Export last(s:seq.word)word
 

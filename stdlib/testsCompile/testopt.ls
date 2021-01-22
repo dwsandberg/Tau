@@ -29,55 +29,55 @@ Function testopt seq.word
 let p2 = secondPass."stdlib.testoptconfig"
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 ,"1","0","4607182418800017408","44","2","46","72","27","2","128"
-,"65","1","4", // optest24 //"%1 5 =(int, int)builtin 2 3 BR 3 
+,"65","Littrue","4", // optest24 //"%1 5 =(int,int)standard 2 3 BR 3 
 &br 24 EXITBLOCK 1 
 &br 0 EXITBLOCK 1 
 &br BLOCK 3 
 &br", // optest25 //
-"%1 3_(int seq, int)seq.int DEFINE 2 %2 9 >(int, int)builtin 5 2 BR 3 
-&br %2 9 =(int, int)builtin 7 3 BR 3 
-&br %2 5 =(int, int)builtin 7 4 BR 3 
-&br %2 8 =(int, int)builtin 7 8 BR 3 
-&br %2 10 =(int, int)builtin 7 6 BR 3 
-&br %2 3333 =(int, int)builtin 7 8 BR 3 
+"%1 3_(int seq, int)seq.int DEFINE 2 %2 9 >(int,int)standard 5 2 BR 3 
+&br %2 9 =(int,int)standard 7 3 BR 3 
+&br %2 5 =(int,int)standard 7 4 BR 3 
+&br %2 8 =(int,int)standard 7 8 BR 3 
+&br %2 10 =(int,int)standard 7 6 BR 3 
+&br %2 3333 =(int,int)standard 7 8 BR 3 
 &br 25 EXITBLOCK 1 
 &br 2 EXITBLOCK 1 
 &br BLOCK 8 
-&br","%1 %2_(word seq, int)seq.word DEFINE 3 %3 WORD c >(int, int)builtin 5 2 BR 3 
-&br %3 WORD c =(int, int)builtin 7 3 BR 3 
-&br %3 WORD xxx =(int, int)builtin 8 4 BR 3 
-&br %3 WORD b =(int, int)builtin 9 10 BR 3 
-&br %3 WORD a =(int, int)builtin 9 6 BR 3 
-&br %3 WORD d =(int, int)builtin 7 10 BR 3 
+&br","%1 %2_(word seq, int)seq.word DEFINE 3 %3 WORD c >(int,int)standard 5 2 BR 3 
+&br %3 WORD c =(int,int)standard 7 3 BR 3 
+&br %3 WORD xxx =(int,int)standard 8 4 BR 3 
+&br %3 WORD b =(int,int)standard 9 10 BR 3 
+&br %3 WORD a =(int,int)standard 9 6 BR 3 
+&br %3 WORD d =(int,int)standard 7 10 BR 3 
 &br 4 EXITBLOCK 1 
 &br 3 EXITBLOCK 1 
 &br 4 EXITBLOCK 1 
 &br 5 EXITBLOCK 1 
 &br BLOCK 10
 &br","%1 %2 3 LOOPBLOCK(int, int, int)
-&br %3 1 =(int, int)builtin 3 4 BR 3 
+&br %3 1 =(int,int)standard 3 4 BR 3 
 &br %4 EXITBLOCK 1 
-&br %3 1-(int, int)builtin %3 %4 *(int, int)builtin CONTINUE 2 
+&br %3 1-(int,int)standard %3 %4 *(int, int)standard CONTINUE 2 
 &br BLOCK 4 
-&br","%1 0 >(int, int)builtin 2 3 BR 3 
-&br 10 %2 >(int, int)builtin EXITBLOCK 1 
-&br 0 EXITBLOCK 1 
+&br","%1 0 >(int,int)standard 2 3 BR 3 
+&br 10 %2 >(int,int)standard EXITBLOCK 1 
+&br Litfalse EXITBLOCK 1 
 &br BLOCK 3 
-&br","%1 0 >(int, int)builtin 2 3 BR 3 
-&br 1 EXITBLOCK 1 
-&br 10 %2 >(int, int)builtin EXITBLOCK 1 
+&br","%1 0 >(int,int)standard 2 3 BR 3 
+&br Littrue EXITBLOCK 1 
+&br 10 %2 >(int,int)standard EXITBLOCK 1 
 &br BLOCK 3 
 &br", // optest30 //
-"%1 WORD test =(int, int)builtin 2 3 BR 3 
+"%1 WORD test =(int,int)standard 2 3 BR 3 
 &br %2 EXITBLOCK 1 
 &br %3 EXITBLOCK 1 
 &br BLOCK 3 
 &br"
 , // test 31 //
-"%1 %2_(int seq, int)seq.int DEFINE 3 %3 3 >(int, int)builtin 4 2 BR 3 
-&br %3 3 =(int, int)builtin 5 3 BR 3 
-&br %3 1 =(int, int)builtin 5 6 BR 3 
-&br %3 4 =(int, int)builtin 5 6 BR 3 
+"%1 %2_(int seq, int)seq.int DEFINE 3 %3 3 >(int,int)standard 4 2 BR 3 
+&br %3 3 =(int,int)standard 5 3 BR 3 
+&br %3 1 =(int,int)standard 5 6 BR 3 
+&br %3 4 =(int,int)standard 5 6 BR 3 
 &br 10 EXITBLOCK 1 
 &br 11 EXITBLOCK 1 
 &br BLOCK 6 
@@ -115,8 +115,8 @@ function sameto(a:seq.word,b:seq.word,i:int,diffs:seq.word) seq.word
 
 function removeoptions(s:seq.word, i:int)seq.word
  if i = length.s then
- if subseq(s, i - 7, i) ≠ "option(T, word seq)builtin"then s
-  else removeoptions(s, i - 9)
+ if subseq(s, i - 9, i) ≠ "option(T, word seq)builtin.int"then s
+  else removeoptions(s, i - 11)
  else if s_i ≠ '"'_1 then removeoptions(s, i - 1)
  else subseq(s, 1, i - 1)
  

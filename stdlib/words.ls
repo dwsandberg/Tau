@@ -6,10 +6,6 @@ use otherseq.alphaword
 
 use otherseq.seq.alphaword
 
-use seq.seq.alphaword
-
-use seq.alphaword
-
 use bits
 
 use otherseq.char
@@ -64,8 +60,10 @@ Function toalphaseq(a:seq.word)seq.alphaword
  // This is just a type change and the compiler recognizes this and does not generate code //
  a @ +(empty:seq.alphaword, alphaword.@e)
 
+Function ?alpha(a:char,b:char)  ordering  a ? b
+
 Function ?(a:alphaword, b:alphaword)ordering
- if toword.a = toword.b then EQ else decodeword.toword.a ? decodeword.toword.b
+ if toword.a = toword.b then EQ else ?alpha (decodeword.toword.a, decodeword.toword.b)
 
 Function towordseq(a:seq.alphaword)seq.word a @ +(empty:seq.word, toword.@e)
 

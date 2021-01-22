@@ -26,6 +26,8 @@ use words
 
 use seq.int
 
+use tausupport
+
 function +(p:place, r:encodingpair.seq.char)place
  p + valueofencoding.code.r + tointseq.data.r + hash.r
 
@@ -54,7 +56,6 @@ function get2(data:seq.int, i:int)seq.encodingpair.seq.char
 function getrecord:encodingpair.seq.char(data:seq.int, i:int)encodingpair.seq.char
  encodingpair(to:encoding.seq.char(getint(data, i)), tocharseq.getintseq(data, i + 1))
 
-Builtin initialdict seq.encodingpair.seq.char
 
 module dataio
 

@@ -210,6 +210,11 @@ function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
    toseq(asset.subseq(t, 2, length.t) - asset.subseq(t, 1, 1))
    @ +(empty:seq.arc.word, arc(t_1, @e))
    + formcallgraph(lib, i + 1)
+   
+function findindex2(w:word, s:seq.word, i:int)int
+ if i > length.s then i
+ else if s_i = w then i else findindex2(w, s, i + 1)
+
 
 function callarcs(s:seq.word, i:int, result:seq.word)seq.word
  if i + 1 > length.s then result
@@ -229,13 +234,13 @@ function callarcs(s:seq.word, i:int, result:seq.word)seq.word
         let module = gathermod(s, j + 2, [ s_(j + 1)])
         let end = 2 * (length.module - 1) + 1 + j + 1
          callarcs(s, end, result + mangle(subseq(s, i, j), module))
-     else if this ∈ "RECORD DEFINE EXITBLOCK BR BLOCK APPLY WORD APPLYP APPLYI APPLYR"then callarcs(s, i + 2, result)
+     else if this ∈ "RECORD DEFINE EXITBLOCK BR BLOCK APPLY WORD APPLYP APPLYI APPLYR "then callarcs(s, i + 2, result)
      else if this = "global"_1 then
      // global has strange format. global atype()builtin //
       let atype = gathermod(s, i + 2, [ next])
       let end = 2 * (length.atype - 1) + 1 + i + 1 + //()builtin // 3
        // assert false report"JK"+ subseq(s, end, length.s)// callarcs(s, end, result)
-     else if this ∈ " &br FREF"then callarcs(s, i + 1, result)
+     else if this ∈ " &br FREF Litfalse Littrue "then callarcs(s, i + 1, result)
      else
       let chs = decodeword.this
        assert length.chs > 0 ∧ chs_1 ∈ decodeword.merge."%-0123456789"report"call arcs problem" + this + toword.i + "full text" + s

@@ -45,7 +45,9 @@ builtin getbitfile(cstr)  fileresultbit
 
 builtin tocstr(seq.bits) cstr
 
-builtin createfile2(byteLength:int,data:seq.bits,cstr) int  
+builtin createfile(byteLength:int,data:seq.bits,cstr) int 
+
+function createfile3(byteLength:int,data:seq.bits,name:cstr) int createfile(byteLength,data,name )
 
 
 Function getfile:int(name:seq.word) seq.int  
@@ -79,7 +81,7 @@ Function createfile(filename:seq.word, s:seq.seq.word)int
 Function createfile(filename:seq.word, s:seq.word)int createfile(filename, toseqbyte.toUTF8.s)
 
 Function createfile(name:seq.word, a:seq.byte)int 
-  createfile2(length.a,packed.bits(a @ add(empty:bitstream,bits.toint.@e,8)) , tocstr.name)
+  createfile3(length.a,packed.bits(a @ add(empty:bitstream,bits.toint.@e,8)) , tocstr.name)
 
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
@@ -87,6 +89,6 @@ Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
 ,  length.b * 8, packed.b)  
 
 Function createfile(name:seq.word, a:seq.int)int
-   createfile2(length.a * 8 ,packed.a @ +(empty:seq.bits, bits.@e), tocstr.name)
+   createfile3(length.a * 8 ,packed.a @ +(empty:seq.bits, bits.@e), tocstr.name)
 
 

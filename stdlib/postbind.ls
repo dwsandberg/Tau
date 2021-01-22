@@ -31,9 +31,10 @@ function postbind(alltypes:typedict, dict:set.symbol, working:set.symbol, toproc
    else
     let lr1 = lookupcode(sourceX, s)
      assert isdefined.lr1 report"postbind:expected to be defined:" + print.s
-     let modname = mytype.module.s
-      if // isbuiltin // modname = mytype."builtin"then postbind(alltypes, dict, w, toprocess, i + 1, result, sourceX, tempX)
+       if   "BUILTIN"_1 &in getoption.code.lr1 then 
+         postbind(alltypes, dict, w, toprocess, i + 1, map(result,s,code.lr1), sourceX, tempX)
       else
+       let modname = mytype.module.s
        let r = postbind3(alltypes, dict, code.lr1, 1, empty:seq.symbol, parameter.modname, print.s, empty:set.symbol, sourceX, tempX)
           postbind(alltypes
         , dict
@@ -57,10 +58,10 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
    if isblock.sym then
    let a = Block(mytype.[ kind(alltypes, modpara, resulttype.sym)], nopara.sym)
      postbind3(alltypes, dict, code, i + 1, result + if isfref then Fref.a else a, modpara, org, calls, sourceX, tempX)
-   else if isconst.sym ∨ isspecial.sym   ∨ module.sym = "builtin"  then   postbind3(alltypes, dict, code, i + 1, result + code_i, modpara, org, calls, sourceX, tempX)
+   else if isconst.sym ∨ isspecial.sym   ∨   module.sym="builtin"    then   postbind3(alltypes, dict, code, i + 1, result + code_i, modpara, org, calls, sourceX, tempX)
    else
     let lr1 = lookupcode(sourceX, sym)
-    let newsym = if isdefined.lr1 then sym else replaceTsymbol(modpara, sym)
+    let newsym = if   isempty.typerep.modpara &or isdefined.lr1 then sym else replaceTsymbol(modpara, sym)
     let xx4 = if newsym = sym then lr1 else // check to see if template already has been processed // lookupcode(sourceX, newsym)
     if isdefined.xx4 then
      if not.isfref ∧ "VERYSIMPLE"_1 ∈ getoption.code.xx4 then
@@ -69,7 +70,7 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
       else
        let p2 = if isfref then Fref.target.xx4 else target.xx4
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls + target.xx4, sourceX, tempX)
-     else if abstracttype.modname.sym ∈ "builtin"then
+     else if isabstractbuiltin.sym then
         codeforbuiltin(alltypes , dict ,code ,i ,result ,calls ,sourceX ,tempX ,newsym , sym ,
       org ,modpara ,isfref ) 
      else if subseq(fsig.sym, 1, 2) = "type:"then
@@ -126,7 +127,9 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol,code:seq.symbol,i:int
 calls:set.symbol,sourceX:program,tempX:program,
 newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
 ) resultpb
-     if(fsig.sym)_1 ∈ "offsets"then
+     if  fsig.sym="option(T, word seq)" then 
+           postbind3(alltypes, dict, code, i + 1, result + sym, modpara, org, calls, sourceX, tempX)
+     else if(fsig.sym)_1 ∈ "offsets"then
       // symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)//
        let paratypes = paratypes.sym
   //     assert not.isempty.typerep.last.paratypes report "XXX"+print.sym //
@@ -146,8 +149,8 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
       else if first.fsig.sym  = first."createthreadX"  then
          let  kindlist= paratypes.sym << 5 @ +("", kind(alltypes, modpara, @e))
          let paracode= (kindlist+kind(alltypes,modpara,parameter.resulttype.sym) ) @ buildcode(1,@e)
-         let p2= [Record("int int"+kindlist),Lit.paracode,newsymbol("createthread" , mytype."builtin", 
-          [typeint,typeint,typeint,typeptr,typeint],typeptr)]
+         let p2= [Record("int int"+kindlist),Lit.paracode,newsymbol("createthread" , mytype."tausupport", 
+          [typeint,typeint,typeint,mytype."int seq",typeint],typeptr)]
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
        else if(fsig.sym)_1 ∈ "apply3"then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
@@ -170,7 +173,7 @@ newsym:symbol, sym:symbol, org:seq.word,modpara:mytype,isfref:boolean
          let p2=symbol("setfirst(int seq, int, int)","builtin","int seq")
          postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)       
       else if fsig.sym = "allocatespace:T(int)"then
-         let p2=symbol("allocatespace(int)","builtin","int seq")
+         let p2=symbol("allocatespace(int)","tausupport","int seq")
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)  
       else if fsig.sym =        "sizeoftype:T"then 
        let size= if parameter.modname.newsym=mytype."byte" then -8  
@@ -226,10 +229,8 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
   let cat = newsymbol("+", seqtype, [ seqtype, typepara], seqtype)
   let resulttype = mytype."ptr"
   let elementtype = mytype.[ kind]
-  let symEle = newsymbol("@e", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, parameter.seqtype)
-  let symAcc = newsymbol("@acc", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, resulttype)
-   [ Local.1] + Emptyseq
-   + [ Local.1, symAcc, symEle, dc, cat, Lit.0, 
+    [ Local.1] + Emptyseq
+   + [ Local.1, symAcc(seqtype,resulttype), symEle.seqtype, dc, cat, Lit.0, 
    newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint], resulttype)]
    +   blocksym.info
  else

@@ -13,12 +13,6 @@ function seperator(acc:seq.char, sep:char, b:seq.char)seq.char
  if isempty.acc then b else acc + sep + b
 
 Function mangle(fsig:seq.word, module:seq.word)word
- if module = "builtin"
- ∧ fsig_1 ∈ "aborted loadedlibs loadlib createlib createlib2   allocatespace addencoding createfile getinstance dlsymbol 
-   getbytefile getbitfile getfile addresstosymbol2 randomint getmachineinfo currenttime callstack initialdict clock createthread     assert
-  "then
- fsig_1
- else
   let i = findindex("("_1, fsig)
   let modname = module
   let parameters = break(","_1,"", subseq(fsig, i+1, length.fsig - 1) )

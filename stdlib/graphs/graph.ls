@@ -2,21 +2,15 @@ Module graph.T
 
 use otherseq.arc.T
 
-use seq.arc.T
-
 use set.arc.T
 
 use graph.T
 
 use otherseq.ipair.T
 
-use seq.ipair.T
-
 use ipair.T
 
 use otherseq.T
-
-use seq.T
 
 use set.T
 

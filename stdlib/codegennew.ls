@@ -54,9 +54,20 @@ use symbol
 
 use textio
 
-Function codegen(theprg:program, defines:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict,isbase:boolean)seq.bits
+
+function f100(theprg:program,ele:symbol) seq.symbol
+  if   fsig.ele &in // BBB // builtinlist  then  [ele]
+else 
+ let d = code.lookupcode(theprg, ele)
+   if isempty.d &or  "BUILTIN"_1 &in getoption.d then  empty:seq.symbol
+   else     [ ele] 
+ 
+
+Function codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict,isbase:boolean)seq.bits
  // assert false report @(seperator."
 &br", tollvmtype.alltypes,"", toseq.toset.theprg)//
+// assert PlusOp &nin definesWithBuiltins report "XXXX"+ code.lookupcode(theprg,PlusOp) @ +("",print.@e) //
+ let   defines = definesWithBuiltins @ +(empty:seq.symbol, f100(theprg,@e))
  let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
  let discard4 = defines @ +(0, funcdec(alltypes, @e))
  let match5map = match5map(theprg, uses, alltypes)
@@ -86,10 +97,13 @@ function addfuncdef(match5map:seq.match5, i:symbol)internalbc
  // let hh = process.subaddfuncdef(match5map, i)assert not.aborted.hh report"fail get"+ print.i + message.hh result.hh use process.internalbc function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc //
  let m = match5map_i
  let options = options(match5map, m)
- let code = if length.options > 0 then
+ let codet = if length.options > 0 then
  // assert"PROFILE"_1 in options report"PROFILE PROBLEM"+ options //
   subseq(code.m, 1, length.code.m - 2)
  else code.m
+  let code=if isempty.codet then arithseq(nopara.i, 1, 1) @ +(empty:seq.symbol, Local.@e)+i
+  else codet
+// assert not.isempty.code.m report "xxxx"+print.i //
  let nopara = arg.m
  let l = Lcode2(emptyinternalbc, paramap(nopara, empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
  let g5 = if"PROFILE"_1 ∈ options then mangledname.i else"noprofile"_1
@@ -118,13 +132,10 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
       Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
     else profilecall(l, args, symboltableentry(callee, functype.m), profile(profile, callee), functype.m)
   else if action = "CALLE"_1 then
-  let callee = mangledname.s
    let noargs = arg.m
    let args = top(args.l, noargs)
-    if profile = "noprofile"_1 ∨ profile = callee then
     let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, args)
       Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
-    else profilecall(l, args, symboltableentry(callee, functype.m), profile(profile, callee), functype.m)
   else if action = "ACTARG"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
   else if action = "LOCAL"_1 then

@@ -117,6 +117,23 @@ use encoding.typename
 
 use seq.byte
 
+use fileio
+
+Builtin initialdict seq.encodingpair.seq.char
+
+
+builtin dlsymbol(cstr)int
+
+ 
+Builtin createthread(int, int, int, seq.int,int)process.int
+
+
+Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
+
+
+Builtin randomint(i:int)seq.int
+
+
 Export _(pseq.byte,int) byte
 
 Export blockit(seq.int)seq.int

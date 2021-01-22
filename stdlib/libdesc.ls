@@ -15,8 +15,6 @@ use seq.myinternaltype
 
 use otherseq.mytype
 
-use seq.mytype
-
 use set.mytype
 
 use process.parc
@@ -41,6 +39,10 @@ Function libdesc(alltypes:typedict, p:program, templates:program, mods:seq.first
  let symstoexport = mods2 @ ∪(empty:set.symbol, defines.@e)
  ∪ (mods2 @ ∪(empty:set.symbol, exports.@e))
   let set2 = asset(toseq.symstoexport @ +(empty:seq.symbol, tolibsym(p, templates, symstoexport, @e)))
+  let t1=  asset(  toseq.set2 @ +(empty:seq.symbol,zcode.@e)) 
+ // assert false report "libsymbols"+ toseq.t1  @+("", if isconst.@e &or islocal.@e &or isspecial.@e 
+  &or @e &in set2 
+  &or  (fsig.@e )_1 &in "apply3" then "" else EOL+ print.@e) //
  // assert symbol("false","standard","boolean") &in set2 report "missing false" //
  addseq(mods2 @ +(empty:seq.symbol, addlibmod(set2, @e)))
 
@@ -69,16 +71,14 @@ function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)
  else
   let code = code.lookupcode(p, sym)
    if length.code < 15 then
-   let x = removeconstant.code
-     if x @ +(0, filterx(toexport, @e)) = 0 then x else empty:seq.symbol
+     let x = removeconstant.code
+     if  x @ &and(true,   isconst.@e ∨     module.@e &in [ " int builtin", "real builtin"] ∨ isspecial.@e  ∨ islocal.@e 
+     ∨  @e &in toexport)   then x 
+     else  
+      empty:seq.symbol  
    else empty:seq.symbol
    symbol(fsig.sym, module.sym, returntype.sym, cleansym + code)
-
-function filterx(toexport:set.symbol, s:symbol)int
- if isconst.s then if isFref.s then constantcode.s @ +(0, filterx(toexport, @e))else 0
- else 
- if isbuiltin.module.s ∨ isspecial.s ∨ s ∈ toexport then 0 else 1
-
+  
 ----------------------------------
 
 function addlibsym(s:symbol)symbol
@@ -139,9 +139,20 @@ Export words(liblib)seq.encodingpair.seq.char
 
 Export profiledata(liblib)seq.parc
 
-Builtin loadedlibs seq.liblib
+builtin loadedlibs2 seq.liblib
 
-Function libmodules(dependentlibs:seq.word)seq.firstpass loadedlibs @ +(empty:seq.firstpass, libmodules(dependentlibs, @e))
+Function loadedLibs seq.liblib loadedlibs2
+
+Function libmodules(dependentlibs:seq.word)seq.firstpass loadedLibs @ +(empty:seq.firstpass, libmodules(dependentlibs, @e))
 
 function libmodules(dependentlibs:seq.word, l:liblib)seq.firstpass if(libname.l)_1 ∈ dependentlibs then mods.l else empty:seq.firstpass
 
+Function unloadlib(a:seq.word)int unloadlib.tocstr.a
+
+builtin unloadlib(cstr)int
+
+Function loadlibrary(a:word)int loadlib.tocstr.[ a]
+
+builtin loadlib(cstr)int
+
+use fileio

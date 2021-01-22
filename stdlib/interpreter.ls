@@ -30,17 +30,12 @@ use symbol
 
 use words
 
+use tausupport
+
 Builtin bitcast(seq.int)int
 
 Builtin bitcast(int)seq.int
 
-Builtin dlsymbol(cstr)int
-
- 
-Builtin createthread(int, int, int, seq.int,int)process.int
-
-
-Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
 
          
 use seq.myinternaltype
@@ -50,7 +45,8 @@ use seq.myinternaltype
     ,myinternaltype(first."x", "seq"_1, mytype."char seq", empty:seq.mytype)
     ,myinternaltype(first."x", "seq"_1, mytype."int seq", empty:seq.mytype)
    , myinternaltype(first."x", "word"_1, mytype."words", empty:seq.mytype)
-    , myinternaltype(first."x", "boolean"_1, mytype."standard", empty:seq.mytype)
+    , myinternaltype(first."x", "boolean"_1, mytype."standard", [typeint])
+      , myinternaltype(first."x", "bits"_1, mytype."bits", [typeint])
    ]
              let r=interpret(typedict.t,removeconstant.code,1,empty:stack.int)
         tocode(r,resulttype.last.code)
@@ -58,7 +54,8 @@ use seq.myinternaltype
   function    tocode( r:int, typ:mytype) seq.symbol     
           if typ=mytype."word" then 
                [ Word.wordencodingtoword(r) ]
-               else if abstracttype.typ &in "int bits char boolean" then [ Lit.r]
+               else if abstracttype.typ &in "int bits char" then [ Lit.r]
+               else if abstracttype.typ ="boolean"_1 then [if r=1 then Littrue else Litfalse]
                else if typ =mytype."word seq" then [ Words.aswords.bitcast.r ]
                else if typ = mytype."real" then   [ Reallit.r ]
                else assert abstracttype.typ &in "seq" report  "resulttype not handled"+print.typ
@@ -102,7 +99,7 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int) int
     let dcret = deepcopysym(alltypes, resulttype.sym)
     let adcret = dlsymbol.mangle(fsig.dcret, module.dcret)
      assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret
-      assert t > 0 report"Not handle by interperter" + print.sym
+      assert t > 0 report"Not handle by interperter" + print.sym+"mangle:"+mangle(fsig.sym, module.sym)
       let dc = deepcopysym(alltypes, mytype."word seq")
       let adc = dlsymbol.mangle(fsig.dc, module.dc)
        assert adc > 0 report"?"

@@ -95,14 +95,12 @@ function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, 
      prettyfile(modhead, l, i + 1, empty:seq.seq.word, empty:seq.seq.word, newresult)
    else
     let temp = if s_1 ∈ "Library library"then
-    let p = s
-     let u = findindex("uses"_1, p)
-     let e = findindex("exports"_1, p)
-      " &keyword Library" + p_2 + alphasort.subseq(p, 3, u - 1) + " &br  &keyword"
-      + subseq(p, u, e - 1)
+    let parts=  break(s,"uses exports",true)
+     " &keyword Library" + s_2 + alphasort(parts_1 << 2) + " &br  &keyword"
+      + parts_2  
       + " &br  &keyword exports"
-      + alphasort.subseq(p, e + 1, length.p)
-    else escapeformat.s
+      + alphasort.(parts_1 << 1)
+     else escapeformat.s
      if length.uses = 0 then prettyfile(modhead, l, i + 1, uses, libbody, result + temp)
      else prettyfile(modhead, l, i + 1, uses, libbody + temp, result)
 

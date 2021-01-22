@@ -20,8 +20,6 @@ use llvmconstants
 
 use otherseq.llvmtype
 
-use seq.llvmtype
-
 use encoding.llvmtypeele
 
 use seq.encodingpair.llvmtypeele

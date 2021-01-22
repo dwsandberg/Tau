@@ -44,7 +44,9 @@ use seq.word3
 
 use words
 
-Builtin initialdict seq.encodingpair.seq.char
+use tausupport
+
+Export initialdict seq.encodingpair.seq.char
 
 
 type word3 is record toword:word

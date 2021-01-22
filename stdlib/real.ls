@@ -16,17 +16,27 @@ Builtin intpart(a:real)int
 
 Function decpart(a:real)real a - toreal.intpart.a
 
-Builtin sqrt(a:real)real
 
-Builtin sin(a:real)real
+Function  sin(a:real)real sinTau.a
+
+Function  cos(a:real)real cosTau.a
+
+Function  sqrt (a:real)real sqrtTau.a
+
+Function  tan(a:real)real tanTau.a
+
+builtin sinTau(a:real)real
+
+builtin cosTau(a:real)real
+
+builtin tanTau(a:real)real
+
+builtin sqrtTau(a:real)real
 
 Builtin arccos(a:real)real
 
 Builtin arcsin(a:real)real
 
-Builtin cos(a:real)real
-
-Builtin tan(a:real)real
 
 Function pi real 3.1415926535898
 

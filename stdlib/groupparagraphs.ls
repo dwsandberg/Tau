@@ -38,10 +38,11 @@ Function findlibclause(a:seq.seq.word, i:int)seq.word
 Function getlibraryinfo(libname:seq.word)seq.seq.word
  let a = gettext.[ merge([ first.libname] + "/" +   last.libname+ ".ls")]
  let s = findlibclause(a, 1)
- let u = findindex("uses"_1, s )
- let e = findindex("exports"_1, s )
-  [ // dependentlibs // subseq(s, u + 1, e - 1), // filelist // subseq(s, 2, min(u - 1, e - 1))
-  , // exports // subseq(s, e + 1, length.s)]
+ let l=  break(s,"uses exports",true)
+      assert length.l=3 &and l_2_1="uses"_1 &and l_3_1="exports"_1 report "lib clause problem"
+[ // dependentlibs // l_2 << 1, // filelist // l_1 << 1 
+  , // exports // l_3 << 1 ]
+
 
 Function getlibrarysrc(libname:seq.word)seq.seq.word
  let filelist =(getlibraryinfo.libname)_2

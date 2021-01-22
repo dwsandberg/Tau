@@ -1,4 +1,7 @@
-#!/usr/local/bin/tau   ; use genLR1 ; gentau2
+#!/usr/local/bin/tau  ; use doc ; doclibrary."stdlib"
+
+
+; use doc ; doclibrary."stdlib"
 
 
 ; use doc ; doclibrary."tools"
@@ -56,5 +59,4 @@ use seq.word
 Function testprofile(libname:seq.word)seq.word
  let a = print.compile("all", libname)
   a + profileresults."time"
-
 + dumpprofileinfo

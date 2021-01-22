@@ -10,37 +10,48 @@ use stack.seq.word
 
 use stack.word
 
-/Function search(pattern:seq.word, s:seq.word, i:int)int
- if i > length.s then i
- else if subseq(s, i, i + length.pattern - 1) = pattern then i
- else search(pattern, s, i + 1)
-
-function consumecomment(s:seq.word, i:int)int
- // result will be pointer to last word of comment //
- if i > length.s then i
- else if s_i = "//"_1 ∧ not(s_i = "/"_1)then
- consumecomment(s, findindex2("//"_1, s, i + 1) + 1)
- else  i
-
-Function getheader(s:seq.word)seq.word
- if length.s < 3 then s
- else
-  let endofname = if s_3 = ":"_1 then consumetype(s, 5)else 3
-   if subseq(s, 1, 3) = "Export type:"then
-   let tt = subseq(s, 4, endofname - 1)
-     subseq(s, 1, endofname - 1) + "(" + tt + ")" + tt
+ 
+  function changestate(state:int,ele:word,idx:int,early:boolean) int 
+   let start=0
+   let startname=-1
+   let extendname=-2
+   let findend=-3
+   let extendtype=-4
+   let extendtype2=-5
+   let incomment=-6
+   let unknown=-7
+    if state > 0 then state else
+    if state=start then startname
+  else if state=startname then extendname
+  else if state=extendname  then
+    if  ele &in  ":." then startname
+    else if early then idx-1 else
+     if ele &in "(" then findend
+    else extendtype
+  else if state=findend  then 
+       if ele &in  ")" then extendtype2
+        else findend
+  else if state=extendtype then 
+        if  ele &in  "." then extendtype2
+        else if ele &in  "//" then incomment
+        else // done // idx-1
+  else if state=extendtype2 then extendtype
+  else if state=incomment then
+      if ele &in  "//" then extendtype 
+        else incomment
+  else unknown
+       
+  
+ 
+ Function getheader(s: seq.word )seq.word
+     let istype=subseq(s, 1, 3) = "Export type:"
+    let t= s @ changestate( 0 ,@e,@i,istype)
+    let end= if t < 1 then length.s else t
+    if istype then 
+    let tt = subseq(s, 4, end  )
+     subseq(s, 1, end   ) + "(" + tt + ")" + tt
      + "stub"
-   else
-    let startoftype = if s_endofname = "("_1 then findindex2(")"_1, s, endofname + 1) + 1
-    else endofname
-    let afterreturntype = consumetype(s, startoftype + 1)
-    let aftercomments = consumecomment(s, afterreturntype)
-     if aftercomments ≤ length.s ∧ s_aftercomments ∈ "unbound export"then s
-     else subseq(s, 1, aftercomments - 1) + "stub"
-
-function consumetype(s:seq.word, i:int)int
- if i > length.s then i
- else if s_i = "."_1 then consumetype(s, i + 2)else i
+    else subseq(s,1,end) +"stub"
 
 
 
@@ -170,7 +181,6 @@ use seq.byte
        
    function setnospace(   a:out23 ) out23  out23(true,a.a)
 
-builtin createfile2(byteLength:int,data:seq.bits,cstr) int  
 
  
  function emptyout23 out23 out23(false,empty:seq.byte )

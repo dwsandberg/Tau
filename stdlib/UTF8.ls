@@ -8,9 +8,13 @@ use standard
 
 use xxhash
 
-use seq.byte
 
+use otherseq.byte
+ 
 use bits
+
+use otherseq.char
+
 
 type UTF8 is record toseqbyte:seq.byte
 
@@ -162,11 +166,6 @@ function decimaldigit(val:int, c:char)int
         else assert c &in [char1."-", nbspchar] report "invalid   digit" + encodeword.[c ] 
         val
         
-use bits
-
-use otherseq.char
-
-use seq.char
         
 -------------
 
@@ -211,7 +210,6 @@ Function reallit(s:UTF8)real reallit(decodeUTF8.s,-1, 1, 0, 1)
 
 Function makereal(w:seq.word)real reallit(w @ +(empty:seq.char, decodeword.@e),-1, 1, 0, 1)
 
-use otherseq.byte
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
  if i > length.s then

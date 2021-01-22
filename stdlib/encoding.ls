@@ -2,8 +2,6 @@ Module encoding.T
 
 use otherseq.seq.encodingpair.T
 
-use seq.seq.encodingpair.T
-
 use seq.encodingpair.T
 
 use seq.encodingstate.T

@@ -10,6 +10,8 @@ use seq.seq.T
 
 use seq.T
 
+use otherseq.T
+
 use set.T
 
 use real
@@ -24,11 +26,10 @@ function =(a:baryinfo.T, b:baryinfo.T)boolean node.a = node.b
 
 Function ?(a:baryinfo.T, b:baryinfo.T)ordering avg.a ? avg.b
 
-function findindex(s:seq.T, a:T)int findindex(a, s)
 
 function averagepred(g:graph.T, layer1:seq.T, node:T)baryinfo.T
  let pred = toseq.predecessors(g, node)
- let a = pred @ +(0, findindex(layer1, @e))
+ let a = pred @ +(0, findindex(@e,layer1 ))
   baryinfo(toreal.a / toreal.length.pred, node)
 
 function baryinfo(g:graph.T, layer1:seq.T, layer2:seq.T)seq.T

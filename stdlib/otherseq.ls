@@ -54,16 +54,36 @@ Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, 
 
 unbound ?(T, T)ordering
 
-Function ?(a:seq.T, b:seq.T)ordering subcmp(a, b, 1)
+Function ?(a:seq.T, b:seq.T)ordering 
+let lengtha = length.a
+ let lengthb = length.b
+ if lengtha > lengthb then GT
+ else if lengtha < lengthb then LT 
+ else   // a @  ? ( EQ, @e ? b_@i) (  (@e ? b_@i) &ne EQ) //
+subcmp(a, b, 1)
+
+   a @  ? ( EQ, @e ? b_@i) (  (@e ? b_@i) &ne EQ)
 
 function subcmp(a:seq.T, b:seq.T, i:int)ordering
+  if i > length.a then EQ else 
+   let c = a_i ? b_i
+    if c = EQ then subcmp(a, b, i + 1)else c
+    
+    unbound ?alpha(T, T)ordering
+
+    
+ Function ?alpha(a:seq.T, b:seq.T)ordering 
+ subcmpalpha(a, b, 1)
+   
+function subcmpalpha(a:seq.T, b:seq.T, i:int)ordering
  let lengtha = length.a
  let lengthb = length.b
   if i = lengtha + 1 then lengtha ? lengthb
-  else if(i ? lengthb) = GT then GT
+  else if i  >   lengthb  then GT
   else
-   let c = a_i ? b_i
-    if c = EQ then subcmp(a, b, i + 1)else c
+   let c = ?alpha(a_i , b_i)
+    if c = EQ then subcmpalpha(a, b, i + 1)else c
+
 
 Function sort(a:seq.T)seq.T
  if length.a < 2 then a
@@ -120,7 +140,6 @@ Function  break(seperator:T,quotes:seq.T,a:seq.T) seq.seq.T
   let b= a @+(empty:seq.int,if @e &in ([seperator]+quotes)  then [@i] else empty:seq.int)
   if isempty.b then [a] else 
   break(empty:seq.T,seperator,seperator,a,b,1,1,empty:seq.seq.T)
-     
 
 function break(str:seq.T, currentquote:T,seperator:T, a:seq.T,b:seq.int, j:int, start:int,result:seq.seq.T) seq.seq.T
    if j > length.b then  result+(str+subseq(a,start,length.a ))
@@ -142,34 +161,45 @@ function break(str:seq.T, currentquote:T,seperator:T, a:seq.T,b:seq.int, j:int, 
       assert isempty(str+subseq(a,start,i-1)) report "format problem"
          break(str,a_i,seperator,a,b,j+1,i+1,result)
   
+   
 
+Function suffix(s:seq.T, len:int)seq.T subseq(s, length.s - len - 1, length.s)
 
+Function findindex(w:T, s:seq.T)int
+  // result > length.s when element is not found.Otherwise results is location in sequence // 
+  let t= s @ +(0,if w=@e then @i else 0)(w=@e)
+  if t=0 then length.s+1 else t
+  
+Export type:seq.T
 
+Export length(a:seq.T) int
 
- /function break(str:seq.T, currentquote:T,seperator:T, a:seq.T,b:seq.int, j:int, start:int,result:seq.seq.T) seq.seq.T
-   if j > length.b then  result+(str+subseq(a,start,length.a ))
-   else
-   let i=b_j
-      if a_i=seperator &and currentquote=seperator then
-          break(empty:seq.T,currentquote,seperator,a,b,j+1,i+1,result+(str+subseq(a,start,i-1)))
-    else  if a_i=currentquote &and i < length.a &and a_(i+1)= currentquote then
-          break(subseq(a,start,i) ,currentquote,seperator,a,b,j+2,i+2,result)
-    else  if  a_i=currentquote &and i=length.a   then     
-         result+(str+subseq(a,start,i-1))
-    else  if  a_i=currentquote &and    a_(i+1)= seperator then
-          break(empty:seq.T,seperator,seperator,a,b,j+2,i+2,result+(str+subseq(a,start,i-1)))
-    else 
-     if a_i=seperator then
-         break(str,seperator,seperator,a,b, j+1,start,result)
-    else 
-      let yy=if currentquote=seperator then a_(i) else currentquote
-      if  i > 1 &and (j = 1 &or  b_(j-1) &ne i-1 &or a_(i-1) &ne seperator)  then   
-              let zz =[if isempty.result &or last.last.result &ne seperator then  seperator  else a_i ]
-             if  currentquote=seperator then
-                   break(str,a_i,seperator,a,b,  j+1 ,i+1,result+(str+subseq(a,start,i-1)+seperator))  
-             else if a_i=currentquote then
-                    break(str,seperator,seperator,a,b,  j+1 ,i+1,result+(str+subseq(a,start,i-1)+a_i))  
-              else 
-               break(empty:seq.T,currentquote,seperator,a,b,  j+1 ,start,result )  
-         else 
-       break(str,yy,seperator,a,b,  j+1 ,i+1,result) 
+Export empty:seq.T  seq.T  
+
+Export _(a:seq.T, c:int)T
+
+Export =(a:seq.T, b:seq.T)boolean
+
+Export ∈(a:T, s:seq.T)boolean
+
+Export findelement(w:T, s:seq.T)seq.T
+
+Export _(s:pseq.T, ii:int)T
+
+Export ispseq(s:seq.T)boolean
+
+Export +(a:seq.T, b:seq.T)seq.T
+
+Export +(l:seq.T, a:T)seq.T
+
+Export subseq(s:seq.T, start:int, end:int)seq.T
+
+Export last(a:seq.T)T
+
+Export first(a:seq.T)T
+
+Export isempty(a:seq.T)boolean
+
+Export <<(s:seq.T, i:int)seq.T
+
+Export >>(s:seq.T, i:int)seq.T

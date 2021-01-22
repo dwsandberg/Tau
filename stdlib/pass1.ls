@@ -101,7 +101,8 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarymods:seq.firstp
     let roots = simple @ +(empty:seq.symbol, roots(exports, @e))
      linkage(prg1, toset.libprg, roots, simple + abstract, templates, alltypes, allsymbols1)
 
-function basetypes seq.myinternaltype [ myinternaltype("defined"_1,"int"_1, mytype."standard", [ typeint])]
+function basetypes seq.myinternaltype [ myinternaltype("defined"_1,"int"_1, mytype."standard", [ typeint]),
+myinternaltype("defined"_1,"boolean"_1, mytype."standard", [ typeint])]
 
 function maptemp(st:program, templates:program, s:mapele)program
  let s2 = lookupcode(templates, target.s)
@@ -128,7 +129,7 @@ function subflddefined(subflds:seq.mytype, modpara:mytype, i:int, defined:typedi
  if i > length.subflds then flatflds
  else
   let typ = replaceT(modpara, subflds_i)
-   if abstracttype.typ ∈ "int seq real T"then subflddefined(subflds, modpara, i + 1, defined, flatflds + typ)
+   if abstracttype.typ ∈ "int seq real boolean T"then subflddefined(subflds, modpara, i + 1, defined, flatflds + typ)
    else if abstracttype.typ ∈ "encoding"then subflddefined(subflds, modpara, i + 1, defined, flatflds + typeint)
    else
     let typdesc = findelement(defined, typ)
@@ -363,7 +364,8 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
            [   Litfalse,   Words."VERYSIMPLE", Optionsym]  
         else
        arithseq(length.paratypes, 1, 1) @ +(empty:seq.symbol, Local.@e)
-       + symbol(fsig.sym, if length.module.sym = 1 then"builtin"else"T builtin", returntype.sym)
+       +   if length.module.sym = 1 then [sym,Words."BUILTIN", Optionsym]
+            else [symbol(fsig.sym,  "T builtin", returntype.sym)]
        map(prg.f, sym, code2)
      else
       let discard = encode.symboltext(sym, modname.f, input)
@@ -375,8 +377,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
 
 function roots(exported:seq.word, f:firstpass)seq.symbol
  if not(abstracttype.modname.f ∈ exported) ∨ iscomplex.modname.f then empty:seq.symbol else toseq.exports.f
- 
- 
+  
 Function processOption(p:program, txt:seq.word)program
    if length.txt < 3 &or  first.txt &nin "option" then p
    else
@@ -392,10 +393,9 @@ Function processOption(p:program, txt:seq.word)program
   let sym = newsymbol(name, mytype.modname, paratypes, funcreturntype.t)
   let r = lookupcode(p, sym)
   let option=fsig.(parsedcode.t)_1
-   if   isbuiltin.modname  &and not.isdefined.r then map(p, sym, [ Words.option , Optionsym])
-   else
-     assert isdefined.r report"Option problem" + txt  
-     addoption(p, sym, option)
+     assert isdefined.r report"Option problem" + modname+print.sym+EOL
+      +toseq.toset.p   @+("", if  (fsig.@e)_1 &in "findelement"  then EOL+module.@e + fsig.@e else "" )   
+       addoption(p, sym, option)
 
 function getmod(s:seq.word,i:int)  seq.word
- if s_i &in "." then [s_(i+1)]+getmod(s,i+2) else empty:seq.word
+ if s_i &in "." then  getmod(s,i+2)+s_(i+1) else empty:seq.word

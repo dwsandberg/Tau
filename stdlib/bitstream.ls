@@ -7,7 +7,7 @@
   
   use seq.byte
   
-  use seq.bits
+  /use seq.bits
   
   use otherseq.bits
   

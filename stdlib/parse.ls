@@ -134,16 +134,25 @@ function applypart1( initseq:bindinfo,  name:bindinfo, initacc:bindinfo ,input:s
    let resulttype=(types.initacc)_1
    assert   abstracttype.seqtype =first."seq" report 
       " first operhand of @ must be seq: "+print.seqtype
-    let s1=newsymbol("@e",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype)
-    let s2=newsymbol("@i",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,typeint)
- let newdict = dict.initseq + s1 + s2
+    let s1=symEle.seqtype 
+    let s2=symIdx.seqtype
+    let acc=symAcc( seqtype ,resulttype)
+ let newdict = dict.initseq + s1 + s2+acc
  let newcode = code.initseq+Define."@seq"+   Local.first."@seq"+ code.initacc 
-    +  Local.first."@seq"
-    +newsymbol("@acc",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,resulttype)
+    +  Local.first."@seq"+acc
   bindinfo(newdict,newcode,types.initseq+types.initacc,tokentext.name)
+  
+function firstdiff(a:seq.symbol,b:seq.symbol) int
+subseq(a,1,length.b) @  +(0,if    @e &ne b_@i  then @i else 0)  (     @e &ne b_@i )  
   
 function applypart2( part1:bindinfo,args:bindinfo,exit:bindinfo, input:seq.word, place:int) bindinfo
   assert  (types.exit)_1=mytype."boolean" report "apply exit condiciton must be of type boolean"
+  let a= code.args
+  let b= code.exit
+  //  assert    firstdiff( code.args,code.exit)=0   
+   report "args:"+ code.args @ +("",print.@e)+"exitexp:"+ code.exit @ +("",print.@e)
+   +EOL+print.firstdiff( code.args,code.exit) 
+   +"&p"+input //
   applypart2( part1,args,code.exit,input , place )  
   
 function applypart2( part1:bindinfo,args:bindinfo,exit:seq.symbol,input:seq.word, place:int) bindinfo
@@ -151,19 +160,30 @@ function applypart2( part1:bindinfo,args:bindinfo,exit:seq.symbol,input:seq.word
    let resulttype=(types.part1)_2
    assert abstracttype.seqtype ∈ "seq"report errormessage("first term of apply must be sequence", input, place)
    let opname=tokentext.part1
-   let s1=newsymbol("@e",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype)
-   let s2=newsymbol("@i",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,typeint)
-   let op = lookupbysig(dict.part1,  opname , [resulttype]+types.args, input, place)
+    let s1=symEle.seqtype 
+    let s2=symIdx.seqtype
+    let acc=symAcc( seqtype ,resulttype)   
+    let op = lookupbysig(dict.part1,  opname , [resulttype]+types.args, input, place)
       assert  resulttype.op = resulttype report"First parameter must be the same as the result type in apply"
    let z = if  op=symbol("∧(boolean, boolean)","standard","boolean") then
    symbol("∧(bits, bits)","bits","bits")
    else if  op=symbol("∨(boolean, boolean)","standard","boolean") then
    symbol("∨(bits, bits)","bits","bits")
-        else 
+        else    
         op
-   let newcode = code.part1 + code.args + op + exit
-    + newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint], resulttype)
-    bindinfo(dict.args-s1 -s2,     newcode, [resulttype.op],"")
+   let applysym=newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint], resulttype)
+   let newcode = 
+     if length.exit=1 then code.part1 + code.args + op + exit +applysym
+     else 
+    if   firstdiff( code.args,exit )=0  then
+         if length.code.args &ge length.exit then
+         code.part1 + subseq(code.args,1,length.exit) +Define."@commonexit"+Local."@commonexit"_1+ code.args << length.exit
+          + op+Local."@commonexit"_1+applysym
+          else 
+           code.part1 +  code.args  +Define."@commonexit"+Local."@commonexit"_1
+           +op+Local."@commonexit"_1 + code.args << length.code.args+applysym
+     else code.part1 + code.args + op + exit +applysym
+       bindinfo(dict.args-s1 -s2-acc,     newcode, [resulttype.op],"")
 
 function addparameter(dict:set.symbol,orgsize:int, input:seq.word, place:int,  m:mytype)set.symbol
  assert isempty.lookup(dict, [ abstracttype.m], empty:seq.mytype) ∨ abstracttype.m = ":"_1 report errormessage("duplciate symbol:" + abstracttype.m, input, place)

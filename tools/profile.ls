@@ -59,7 +59,7 @@ function toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.wo
 Function profileresults(measure:seq.word)seq.word
  // Returns label graph of profile results. Measure is time, count, or space. //
  // let g = profileresults //
- let g = loadedlibs @ +(empty:seq.parc, profiledata.@e) @ +(empty:labeledgraph.parc, @e)
+ let g = loadedLibs @ +(empty:seq.parc, profiledata.@e) @ +(empty:labeledgraph.parc, @e)
  let m = if measure = "time"then toseq.arcs.g @ max(0, clocks.@e)
  else if measure = "count"then toseq.arcs.g @ max(0, counts.@e)
  else
@@ -142,5 +142,5 @@ function reverse(a:parc)parc parc(tail.a, head.a, counts.a, clocks.a, space.a)
 
 function tonode(a:parc)parc parc(head.a, head.a, counts.a, clocks.a, space.a)
 
-Function dumpprofileinfo seq.word let e=(profiledata.loadedlibs_1 ) 
-profiledata.loadedlibs_1 @ list(""," &br", [ tail.@e, head.@e, toword.counts.@e])
+Function dumpprofileinfo seq.word let e=(profiledata.loadedLibs_1 ) 
+profiledata.loadedLibs_1 @ list(""," &br", [ tail.@e, head.@e, toword.counts.@e])

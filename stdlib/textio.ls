@@ -8,9 +8,7 @@ use otherseq.int
 
 use seq.seq.seq.int
 
-use seq.int
-
-use seq.byte
+use otherseq.byte
 
 use bits
 
@@ -26,7 +24,6 @@ Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8
  breaklines(a, i + 1, i + 1, result + UTF8.subseq(a, last, i - if toint.a_(i - 1) =  13 then 2 else 1))
  else breaklines(a, i + 1, last, result)
  
-use otherseq.byte
 
 Function breakcommas(a:UTF8)seq.UTF8 
 break(tobyte.toint.char1.",",[tobyte.toint.char1.'"'], toseqbyte.a) @ +(empty:seq.UTF8,UTF8.@e)

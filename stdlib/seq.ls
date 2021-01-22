@@ -47,35 +47,21 @@ Export length(a:seq.T)int
 Builtin empty:seq.T seq.T // empty seq //
 
 Function =(a:seq.T, b:seq.T)boolean
- if length.a = length.b then subequal(a, b, length.a)else false
-
-function subequal(a:seq.T, b:seq.T, i:int)boolean
+ if length.a = length.b then  // subequal(a, b, length.a)  // a @ &and(true, not(@e &ne b_@i))(@e &ne b_@i)
+  else false
+  
+   
+/function subequal(a:seq.T, b:seq.T, i:int)boolean
  if i = 0 then true
  else if a_i = b_i then subequal(a, b, i - 1)else false
 
-a @ &and(true, @e = b_@i)
-
-
 Function ∈(a:T, s:seq.T)boolean 
- findindex(a,s) &le length.s 
-
-
-
-Function findelement(w:T, s:seq.T)seq.T
- let idx = findindex(w, s)
-  if idx > length.s then empty:seq.T else [ s_idx]
-
-Function findindex(w:T, s:seq.T)int
-  // result > length.s when element is not found.Otherwise results is location in sequence // 
-  let t= s @ +(0,if w=@e then @i else 0)(w=@e)
-  if t=0 then length.s+1 else t
+ s @ &or(false,  a=@e  )(a=@e)
  
- findindex2(w, s, 1)
+Function findelement(w:T, s:seq.T)seq.T
+  s @ +(empty:seq.T,if w=@e then [@e] else empty:seq.T) ( w=@e)
 
-Function findindex2(w:T, s:seq.T, i:int)int
- if i > length.s then i
- else if s_i = w then i else findindex2(w, s, i + 1)
-
+ 
 -------------------------
 
 Export length(c:pseq.T)int
@@ -174,7 +160,6 @@ Function isempty(a:seq.T)boolean length.a = 0
 --------------------------
 
 
-Function suffix(s:seq.T, len:int)seq.T subseq(s, length.s - len - 1, length.s)
 
 Function <<(s:seq.T, i:int)seq.T
  assert i ≥ 0 report"FAIL <<" + stacktrace

@@ -107,19 +107,21 @@ Function newsymbol(name:seq.word, modname:mytype, paratypes:seq.mytype, resultty
  , typerep.resulttype
  , empty:seq.symbol)
 
-Function name(s:symbol)seq.word subseq(fsig.s, 1, findindex("("_1, fsig.s) - 1)
-
+Function name(s:symbol)seq.word 
+  if last.fsig.s  &nin ")" then fsig.s 
+  else 
+   break( fsig.s >> 1,"(",false) _1
+ 
 Function paratypes(s:symbol)seq.mytype paratypesastext.s @ +(empty:seq.mytype, mytype.@e)
 
 function paratypesastext(s:symbol)seq.seq.word
  let a = fsig.s
   if last.a &ne ")"_1 then empty:seq.seq.word
-  else break(","_1,"", subseq(a, findindex("("_1, a) + 1, length.a - 1))
+  else 
+   break( a >> 1,",(",false) << 1
+   
   
-   let z= break(","_1, subseq(a, findindex("("_1, a) + 1, length.a - 1))
-   let x= break(","_1,"", subseq(a, findindex("("_1, a) + 1, length.a - 1))
-   assert z=x report "L"+ z @ list("",EOL,">"+@e)+EOL+"new"+x @ list("",EOL,">"+@e)+a+stacktrace
-   z
+  
 
 Function modname(s:symbol)mytype mytype.module.s
 
@@ -130,7 +132,7 @@ Function nopara(s:symbol)int
  else if isspecial.s ∧ last.module.s ∉ "$record $loopblock"then
  // assert last.module.s in"$continue $block $apply $exitblock $br $record $loopblock $define"report"X"+ module.s //
   if last.module.s = "$define"_1 then 1 else toint.(fsig.s)_2
- else
+ else if last.fsig.s &ne ")"_1 then 0 else
   fsig.s
   @ counttrue(if last.fsig.s = ")"_1 then 1 else 0,","_1 = @e)
 
@@ -158,20 +160,23 @@ Function key(a:mapele)symbol s.a
 
 Export target(a:mapele)symbol
 
-function replaceT(with:seq.word, s:word)seq.word if"T"_1 = s then with else [ s]
-
-Function replaceT(with:seq.word, s:seq.word)seq.word s @ +("", replaceT(with, @e))
-
 Function replaceTsymbol2(with:mytype, s:symbol)mapele mapele(replaceTsymbol(with, s), s)
 
 Function replaceTsymbol(with:mytype, s:symbol)symbol
  if with = mytype."T"then s
  else
-  let newfsig =
-  let j = findindex("("_1, fsig.s)
-   replaceT(if towords.with = ""then""else print.with, subseq(fsig.s, 1, j - 1))
-   + replaceT(towords.with, subseq(fsig.s, j, length.fsig.s))
-   symbol(newfsig, replaceT(towords.with, module.s), replaceT(towords.with, returntype.s), zcode.s)
+   let fsig=fsig.s 
+   let parts=if last.fsig &ne ")"_1 then [fsig]
+  else 
+   break( fsig >> 1,",(",false) 
+     let name=parts_1
+   let newname=if last.name="T"_1 then   name >> 1 +  if typerep.with = ""then""else print.with else name
+   let newfsig=  if length.parts=1 then newname else newname+"("+
+     parts << 1 @ list ("",",", typerep.replaceT(with,mytype.@e)) +")"
+   symbol(newfsig,  typerep.replaceT( with, modname.s), typerep.replaceT( with, resulttype.s), zcode.s)
+
+ 
+
 
 Function ?(a:mytype, b:mytype)ordering towords.a ? towords.b
 
@@ -212,7 +217,7 @@ function ispara(s:mytype)boolean
 
 Function istypeexport(s:symbol)boolean subseq(fsig.s, 1, 2) = "type:"
 
-Function isIdx(s:symbol)boolean isbuiltin.module.s ∧ (fsig.s)_1 ∈ "IDX"
+Function isIdx(s:symbol)boolean  module.s="builtin" ∧ (fsig.s)_1 ∈ "IDX"
 
 Function Idx(kind:word)symbol symbol("IDX(T seq, int)", [ kind] + "builtin","T")
 
@@ -257,7 +262,7 @@ function hash(a:symbolconstant)int hash.toseq.a
 
 Function isconstantorspecial(s:symbol)boolean isconst.s ∨ isspecial.s
 
-Function isnocall(sym:symbol)boolean isconst.sym ∨ isspecial.sym ∨ module.sym = "builtin"
+Function isnocall(sym:symbol)boolean isconst.sym ∨ isspecial.sym ∨ module.sym ="builtin"
 
 function specialbit bits bits.4
 
@@ -309,19 +314,33 @@ Function Fref(s:symbol)symbol
  let fsig ="FREF" + fsig.s + module.s
   symbol(fsig,"$fref","?", [ s], extrabits(fsig, constbit))
 
-Function Optionsym symbol symbol("option(T, word seq)","builtin","?")
+Function Optionsym symbol symbol("option(T, word seq)","int builtin","?")
 
-Function EqOp symbol symbol("=(int, int)","builtin","boolean")
+Function  STKRECORDOp  symbol symbol("STKRECORD(ptr, ptr)","builtin","ptr")
 
-Function NotOp symbol symbol("not(boolean)","builtin","boolean")
+Function    NullptrOp  symbol  symbol("nullptr","builtin","ptr")
 
-Function GtOp symbol symbol(">(int, int)","builtin","boolean")
+Function  symEle(seqtype:mytype) symbol  newsymbol("@e", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, parameter.seqtype)
+
+Function symIdx(seqtype:mytype) symbol  newsymbol("@i",abstracttype("builtin"_1,parameter.seqtype),empty:seq.mytype,typeint)
+
+Function symAcc(seqtype:mytype,resulttype:mytype) symbol
+ newsymbol("@acc", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, resulttype)
  
-Function PlusOp symbol symbol("+(int, int)","builtin","int")
+Function isabstractbuiltin(s:symbol) boolean
+   length.module.s > 1 &and last.module.s="builtin"_1 
+
+Function EqOp symbol symbol("=(int, int)","standard","boolean")
+
+Function NotOp symbol symbol("not(boolean)","standard","boolean")
+
+Function GtOp symbol symbol(">(int, int)","standard","boolean")
+ 
+Function PlusOp symbol symbol("+(int, int)","standard","int")
 
 Function isinOp(s:symbol)boolean
  fsig.s
- ∈ ["∈(int, int seq)","∈(word, word seq)","in(int, int seq)","in(word, word seq)","=(int, int)","=(word, word)"]
+ ∈ ["∈(int, int seq)","∈(word, word seq)", "=(int, int)","=(word, word)"]
 
 Function isblock(s:symbol)boolean last.module.s = "$block"_1
 
@@ -390,10 +409,9 @@ Function addoption(p:program, s:symbol, option:seq.word)program
    let newcode = code + Words.toseq(current ∪ asset.option) + Optionsym
     map(p, s, newcode)
 
+ 
 
-Function isbuiltin(a:seq.word)boolean a = "builtin"
 
-Function isbuiltin(a:mytype)boolean isbuiltin.towords.a
 
 type typedict is record data:seq.myinternaltype
 
@@ -463,7 +481,10 @@ Function print(f:symbol)seq.word
  let module = module.f
  let fsig = fsig.f
   if islocal.f ∨ ispara.mytype.module.f then [ merge(["%"_1] + fsig)]
-  else if islit.f then fsig
+  else if islit.f then 
+    if module="$boolean" then 
+      if fsig="0" then "Litfalse"  else "Littrue"
+      else fsig 
   else if module = "$words"then
   if '"'_1 ∈ fsig then"'" + fsig + "'"
    else '"' + fsig + '"'
@@ -537,6 +558,5 @@ Function deepcopysym(dict:set.symbol, type:mytype)set.symbol
  if type ∈ [ typeint, mytype."real"]then asset.[ typesym(typedict.empty:seq.myinternaltype, type)]
  else lookup(dict,"type:" + print.type, [ type])
 
-Function removeconstant(s:seq.symbol)seq.symbol s @ +(empty:seq.symbol, removeconstant.@e)
+Function removeconstant(s:seq.symbol)seq.symbol s @ +(empty:seq.symbol, if module.@e = "$constant"then removeconstant.zcode.@e else [ @e])
 
-function removeconstant(s:symbol)seq.symbol if module.s = "$constant"then removeconstant.zcode.s else [ s]

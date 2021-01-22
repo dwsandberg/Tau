@@ -14,6 +14,8 @@ use seq.seq.T
 
 use seq.T
 
+use otherseq.T
+
 use set.T
 
 use svggraph.T

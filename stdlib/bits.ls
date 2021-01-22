@@ -28,9 +28,6 @@ Builtin xor(a:bits, b:bits)bits
 
 Function =(a:bits, b:bits)boolean toint.a = toint.b
 
-/Builtin ∨(a:bits, b:int)bits   a ∨ bits.b
-
-/Builtin ∧(a:bits, b:int )bits a ∧ bits.b
 
 function  hexdigit(b:bits)  char (decodeword."0123456789ABCDEF"_1)_(1 + toint(b ∧  0x0F))
 

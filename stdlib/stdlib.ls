@@ -31,13 +31,45 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 codegennew codetemplates persistant  sparseseq parse standard testall
 svg svggraph displaygraph displaytextgraph display
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport
-pass1 postbind breakblocks   interpreter internalbc
+pass1 postbind breakblocks   interpreter internalbc  
 
 * Removed maindict 
 
 option.main2 subcompilelib(seq.word, seq.word)seq.word PROFILE
 
 option.main2 compilelib2(seq.word)seq.word PROFILE
+
+option.pass1 pass1( seq.seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
+
+option.pass1 maptemp(st:program, templates:program, s:mapele)program PROFILE
+
+option.symbol lookupcode(p:program, s:symbol)programele PROFILE
+
+option.set.symbol findelement(val:symbol, s:set.symbol)set.symbol PROFILE
+
+
+
+option.standard +(int,int) int COMPILETIME
+
+option.standard -(int,int) int COMPILETIME
+
+option.standard /(int,int) int COMPILETIME
+
+option.standard *(int,int) int COMPILETIME
+
+option.standard =(int,int) boolean COMPILETIME
+
+option.standard >(int,int) boolean COMPILETIME
+
+option.bits  ∧(a:bits, bits)bits COMPILETIME
+
+option.bits ∨(a:bits, bits)bits COMPILETIME
+
+option.bits  >>(a:bits, i:int)bits COMPILETIME
+
+option.bits  <<(a:bits, i:int)bits COMPILETIME
+
+
 
 /option.builtin option(T, x:seq.word)T STATE
  

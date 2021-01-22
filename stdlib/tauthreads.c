@@ -47,6 +47,8 @@ BT (*finishprof)(BT idx,BT x) =NULL;
   return (BT)p;
 } 
 
+BT createthreadZtausupportZintZintZintZintzseqZint(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype ){
+return createthread(PD,   deepcopyresult  ,  deepcopyseqword  , func,  args, argtype);}
 
 /*
 

@@ -50,22 +50,23 @@ Export wordref(w:word)int
 
 Export addliblib(libname:seq.word, mods:int, profiledata:int,isbase:boolean)int
 
-Function mangledname(s:symbol)word mangle(fsig.s, module.s)
+Function builtinlist seq.seq.word  ["+(real,real)","*(real,real)"
+,"-(real,real)","/(real,real)","?(real,real)",">>(bits, int)","<<(bits, int)"
+,"∧(bits, bits)","∨(bits, bits)","xor(bits, bits)","-(int,int)","+(int,int)","*(int, int)","/(int,int)" 
+,"=(int,int)",">(int,int)","?(int,int)"  ,"representation(real)", "casttoreal(int)","not(boolean)" 
+,"toint(byte)","toint(bit)","toreal(int)","intpart(real)" ,"tocstr(bits seq)"
+,"bitcast(int seq)","bitcast(int)","false","true"]
 
-Function isexternal(s:symbol)boolean
- isbuiltin.module.s
- ∧ not((fsig.s)_1 ∈ "aborted loadlib createlib createlib2    allocatespace addencoding createfile getinstance dlsymbol 
- getfile getbytefile getbitfile addresstosymbol2 randomint 
- getmachineinfo currenttime callstack initialdict createthread   assert ")
+Function mangledname(s:symbol)word  mangle(fsig.s, module.s)
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
  if fsig.s = "option(T, word seq)"then function.constantseq(nopara.s + 2, i64)
  else
-  let starttypes = if isexternal.s then [ tollvmtype(alltypes, resulttype.s)]else [ tollvmtype(alltypes, resulttype.s), i64]
-   function(paratypes.s @ +(starttypes, tollvmtype(alltypes, @e)))
+   function.tollvmtypelist(alltypes,s)
    
 Function tollvmtypelist(alltypes:typedict, s:symbol) seq.llvmtype
-  let starttypes = if isexternal.s then [ tollvmtype(alltypes, resulttype.s)]else [ tollvmtype(alltypes, resulttype.s), i64]
+  let starttypes = //  if      fsig.s &in Externalsyms   then  [ tollvmtype(alltypes, resulttype.s)]
+  else  // [ tollvmtype(alltypes, resulttype.s), i64]
 paratypes.s @ +(starttypes, tollvmtype(alltypes, @e))
 
 function tollvmtype(alltypes:typedict, s:mytype)llvmtype
@@ -147,55 +148,54 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
    +BINOP(r.6,r.4,r.5,lshr)
   +BINOP(r.7,r.6,C64.1,and)
   )
- ,addtemplate(symbol("tocstr(bits seq)","builtin","cstr"), 2,
+ ,addtemplate(symbol("tocstr(bits seq)","fileio","cstr"), 2,
    GEP(r.1, i64, ibcsub.1, C64.2)  + CAST(r.2, r.1,  i64, ptrtoint))
- , addtemplate(symbol("toint(byte)","builtin","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
- , addtemplate(symbol("toint(bit)","builtin","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
- , addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint))
- , addtemplate(symbol("bitcast(int seq)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint))
- , addtemplate(symbol("bitcast(int)","builtin","int seq"), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
- , addtemplate(symbol("nullptr","builtin","ptr"), 1, CAST(r.1, C64.0, ptr.i64, inttoptr))
+ , addtemplate(symbol("toint(byte)","bits","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
+ , addtemplate(symbol("toint(bit)","bits","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
+ , // addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr))
+ ,  addtemplate( STKRECORDOp, 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0) + STORE(r.2, r.1, ibcsub.1)
+ + GEP(r.2, ptr.i64, r.1, C64.1)
+ + STORE(r.3, r.2, ibcsub.2)
+ + GEP(r.3, ptr.i64, r.1, C64.0))
+ ,addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint))
+ , // addtemplate(symbol("bitcast(int seq)","interpreter","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint))
+ , addtemplate(symbol("bitcast(int)","interpreter","int seq"), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
  , addtemplate(symbol("IDX(T seq, int)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
  , addtemplate(symbol("IDX(T seq, int)","boolean builtin","boolean"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
  , addtemplate(symbol("IDX(T seq, int)","ptr builtin","ptr"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
  + CAST(r.3, r.2, ptr.i64, inttoptr))
  , addtemplate(symbol("IDX(T seq, int)","real builtin","real"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
  + CAST(r.3, r.2, double, bitcast))
- , addtemplate(symbol("STKRECORD(ptr, ptr)","builtin","ptr"), 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0) + STORE(r.2, r.1, ibcsub.1)
- + GEP(r.2, ptr.i64, r.1, C64.1)
- + STORE(r.3, r.2, ibcsub.2)
- + GEP(r.3, ptr.i64, r.1, C64.0))
- , addtemplate(symbol("intpart(real)","builtin","real"), 1, CAST(r.1, ibcsub.1, i64, fptosi))
- , addtemplate(symbol("toreal(int)","builtin","real"), 1, CAST(r.1, ibcsub.1, double, sitofp))
- , addtemplate(symbol("-(real, real)","builtin","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
- , addtemplate(symbol("+(real, real)","builtin","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, add))
- , addtemplate(symbol("*(real, real)","builtin","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, mul))
- , addtemplate(symbol("/(real, real)","builtin","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv))
- , addtemplate(symbol("casttoreal(int)","builtin","real"), 1, CAST(r.1, ibcsub.1, double, bitcast))
- , addtemplate(symbol("representation(real)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, bitcast))
- , addtemplate(symbol("?(real, real)","builtin","ordering"), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext)
+ ,  addtemplate(symbol("intpart(real)","real","real"), 1, CAST(r.1, ibcsub.1, i64, fptosi))
+ , addtemplate(symbol("toreal(int)","real","real"), 1, CAST(r.1, ibcsub.1, double, sitofp))
+ , addtemplate(symbol("-(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
+  , addtemplate(symbol("+(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, add))
+  , addtemplate(symbol("*(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, mul))
+ , addtemplate(symbol("/(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv))
+ , addtemplate(symbol("casttoreal(int)","real","real"), 1, CAST(r.1, ibcsub.1, double, bitcast))
+ , addtemplate(symbol("representation(real)","real","int"), 1, CAST(r.1, ibcsub.1, i64, bitcast))
+ , addtemplate(symbol("?(real, real)","real","ordering"), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext)
  + CMP2(r.3, ibcsub.1, ibcsub.2, 2)
  + CAST(r.4, r.3, i64, zext)
  + BINOP(r.5, r.2, r.4, add))
- , addtemplate(symbol("?(int, int)","builtin","ordering"), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext)
+ , addtemplate(symbol("?(int, int)","standard","ordering"), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext)
  + CMP2(r.3, ibcsub.1, ibcsub.2, 38)
  + CAST(r.4, r.3, i64, zext)
  + BINOP(r.5, r.2, r.4, add))
  , addtemplate(symbol("cast(T seq, int, int)","builtin","ptr"), 1, GEP(r.1, i64, ibcsub.1, ibcsub.2))
   , addtemplate(symbol("GEP(T seq, int)","ptr builtin","ptr"), 1, GEP(r.1, i64, ibcsub.1, ibcsub.2))
- , addtemplate(symbol(">(int, int)","builtin","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 38) + CAST(r.2, r.1, i64, zext))
- , addtemplate(symbol("not(boolean)","builtin","boolean"), 1, BINOP(r.1, ibcsub.1, C64.1, xor))
- , // include aborted here so does not show up in profile results addtemplate("abortedZbuiltinZTzprocess"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."abortedZbuiltinZTzprocess",-1, ibcsub1)), Including this as a template causes subtle compile errors //
- addtemplate(symbol("=(int, int)","builtin","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext))
- , addtemplate(symbol("-(int, int)","builtin","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
- , addtemplate(symbol("+(int, int)","builtin","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, add))
- , addtemplate(symbol("*(int, int)","builtin","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, mul))
- , addtemplate(symbol("/(int, int)","builtin","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv))
- , addtemplate(symbol("<<(bits, int)","builtin","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, shl))
- , addtemplate(symbol(">>(bits, int)","builtin","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, lshr))
- , addtemplate(symbol("∧(bits, bits)","builtin","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, and))
- , addtemplate(symbol("∨(bits, bits)","builtin","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, or))
- , addtemplate(symbol("xor(bits, bits)","builtin","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, xor))
+ , addtemplate(symbol("not(boolean)","standard","boolean"), 1, BINOP(r.1, ibcsub.1, C64.1, xor))
+ , addtemplate(symbol(">(int, int)","standard","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 38) + CAST(r.2, r.1, i64, zext))
+ , addtemplate(symbol("=(int, int)","standard","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext))
+,  addtemplate(symbol("-(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
+ ,addtemplate(symbol("+(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, add))
+ ,   addtemplate(symbol("*(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, mul))
+ ,   addtemplate(symbol("/(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv))  
+,   addtemplate(symbol("<<(bits, int)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, shl))
+ , addtemplate(symbol(">>(bits, int)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, lshr))
+ , addtemplate(symbol("∧(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, and))
+ , addtemplate(symbol("∨(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, or))
+ , addtemplate(symbol("xor(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, xor))
  , addtemplate(symbol("setfirst(int seq, int, int)","builtin","int seq"), 3, GEP(r.1, i64, ibcsub.1, C64.1) + STORE(r.2, r.1, ibcsub.3)
  + GEP(r.2, i64, ibcsub.1, C64.0)
  + STORE(r.3, r.2, ibcsub.2)
@@ -302,33 +302,25 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
    else if isblock.xx then
    let typ = tollvmtype(alltypes, resulttype.xx)
       addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, typ)
-   else if isspecial.xx then 
-  //   assert  (fsig.xx)_1 &ne "RECORD"_1 
-      &or isempty(asset.paratypes.xx -asset([typeint,mytype."real",mytype."ptr",mytype."boolean"]))
-      report "XXX"+  toseq(asset.paratypes.xx -asset([typeint])) @ +("",print.@e)
-   //  if (fsig.xx)_1 = "RECORD"_1  &and nopara.xx < 10 then 
+   else if isspecial.xx then   if (fsig.xx)_1 = "RECORD"_1  &and nopara.xx < 10 then 
       let fldbc=recordcode(arithseq(nopara.xx,1, ibcfirstpara2+1),fsig.xx,0,true)
      addtemplate(xx, regno.fldbc, bc.fldbc)
      else 
       addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, slot.nopara.xx)
    else if pkg = "$words"then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.fsig.xx)
    else if pkg = "$word"then
-   addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
-   else if not(abstracttype.modname.xx = "builtin"_1)then
-   call(alltypes, xx,"CALL"_1, code.lookupcode(theprg, xx), mangledname.xx)
+      addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
    else
     // handle builtin package //
     let intable = findtemplate.xx
      if length.intable > 0 then intable_1
-      else if(fsig.xx)_1 = "global"_1 then
+      else if(fsig.xx)_1 = "global"_1  &and module.xx="builtin" then
      addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
-     else if isexternal.xx then
-     let symname = if(fsig.xx)_1 ∈ "arcsin"then"asin"_1
-      else if(fsig.xx)_1 ∈ "arccos"then"acos"_1 else(fsig.xx)_1
-       call(alltypes, xx,"CALLE"_1, empty:seq.symbol, symname)
-     else
-      let symname = if(fsig.xx)_1 ∈ "assert"then"assert"_1 else mangledname.xx
-       call(alltypes, xx,"CALL"_1, code.lookupcode(theprg, xx), symname)
+     else //
+       if   fsig.xx &in   Externalsyms then 
+         call(alltypes, xx,"CALLE"_1, empty:seq.symbol, mangledname.xx) 
+       else //
+           call(alltypes, xx,"CALL"_1, code.lookupcode(theprg, xx), mangledname.xx)
     empty:seq.symbol
 
 function call(alltypes:typedict, xx:symbol, type:word, code:seq.symbol, symname:word)match5

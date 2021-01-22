@@ -51,15 +51,11 @@ use seq.int
 
 use set.word
 
-Function firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)program
- if  isempty.removeoptions.code   then  
-    map(p, rep, code)
-else
+function firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)program
  let nopara = nopara.rep
-  if isbuiltin.module.rep then
-  let options = caloptions(p, code, nopara, module.rep, fsig.rep)
-    map(p, symbol(fsig.rep, module.rep, returntype.rep), addoptions(code, options))
-  else
+    if isempty.removeoptions.code then
+    map(p, rep,code)
+ else
    let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
    let code2 = code.yyy(p, code, 1, empty:seq.symbol, nopara + 1, pdict)
    let options = caloptions(p, code2, nopara, module.rep, fsig.rep)
@@ -137,7 +133,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
      let t = lookup(map,(fsig.sym2)_1)
       if isempty.t then yyy(p, org, k + 1, result + sym2, nextvar, map)
       else yyy(p, org, k + 1, result + t_1, nextvar, map)
-    else if len > 2 ∧ isnotOp.result_(len - 2) ∧ fsig.sym = "BR 3"then
+    else if len > 2 ∧  result_(len - 2) = NotOp ∧ fsig.sym = "BR 3"then
     yyy(p, org, k + 1, subseq(result, 1, len - 3) + [ result_len, result_(len - 1), Br], nextvar, map)
     else yyy(p, org, k + 1, result + sym, nextvar, map)
    else if(fsig.sym)_1 ∈ "apply3"then applycode4(p, org, k, result, nextvar, map)
@@ -145,8 +141,11 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
     let nopara = nopara.sym
     let dd = code.lookupcode(p, sym)
     let options=getoption.dd
-       if first."COMPILETIME"  ∈ options &and subseq(result,len-nopara+1,len) @ &and(true,isconst.@e)   then   
-         let newcode= interpret(subseq(result,len-nopara+1,len)+sym)
+   //   if first."BUILTIN"  ∈ options &and nopara=2 &and subseq(result,len-nopara+1,len) @ &and(true,isconst.@e)   then 
+        opttwoopbuiltin(p, org, k, result, nextvar, map, sym)
+     else //
+       if first."COMPILETIME"  ∈ options &and subseq(result,len-nopara+1,len) @ &and(true,isconst.@e)   then 
+           let newcode= interpret(subseq(result,len-nopara+1,len)+sym)
          let newconst=if length.newcode > 1 then Constant2.newcode else first.newcode
            yyy(p, org, k + 1, result >> nopara + newconst, nextvar, map)
      else if  "INLINE"_1 ∈ options  &or first."VERYSIMPLE" ∈ options then
@@ -194,8 +193,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
        if not.isconst.result_(len - 1)then yyy(p, org, k + 1, result + sym, nextvar, map)
        else
         // two parameters with constant args //
-        if isbuiltin.module.sym then opttwoopbuiltin(p, org, k, result, nextvar, map, sym)
-        else if last.module.sym = "seq"_1
+        if last.module.sym = "seq"_1
         ∧ (fsig.sym = "_(T seq, int)"
         ∨ fsig.sym
         = "_(" + subseq(module.sym, 1, length.module.sym - 1) + "seq, int)")then
@@ -219,26 +217,24 @@ function opttwoopbuiltin(p:program, org:seq.symbol, k:int, result:seq.symbol, ne
  let s = result
  let i = length.result + 1
   if isIdx.rep then
+   assert false report "here in isIdx"
   let j = value.s_(i - 1)
    let x = s_(i - 2)
     if between(j, 0, length.constantcode.x - 1)then
     yyy(p, org, k + 1, subseq(result, 1, i - 3) + [(constantcode.x)_(j + 1)], nextvar, map)
     else yyy(p, org, k + 1, result + rep, nextvar, map)
-  else if fsig.rep = "+(int, int)"then
-  if isrecordconstant.s_(i - 2)then
-   // address calculation // yyy(p, org, k + 1, result + rep, nextvar, map)
-   else
-    yyy(p, org, k + 1, subseq(result, 1, i - 3)
-    + Lit(value.s_(i - 2) + value.s_(i - 1)), nextvar, map)
-  else if fsig.rep = "*(int, int)"then
+   else  if fsig.rep = "+(int, int)"then
   yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + Lit(value.s_(i - 2) * value.s_(i - 1)), nextvar, map)
-  else if fsig.rep = "-(int, int)"then
+   + Lit(value.s_(i - 2) + value.s_(i - 1)), nextvar, map)
+ else  if fsig.rep = "-(int, int)"then
   yyy(p, org, k + 1, subseq(result, 1, i - 3)
    + Lit(value.s_(i - 2) - value.s_(i - 1)), nextvar, map)
-  else if fsig.rep = "/(int, int)" ∧ value.s_(i - 1) ≠ 0 then
+ else  if fsig.rep = "*(int, int)"then
   yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + Lit(value.s_(i - 2) / value.s_(i - 1)), nextvar, map)
+   + Lit(value.s_(i - 2) * value.s_(i - 1)), nextvar, map)
+ else  if fsig.rep = "/(int, int)"then
+  yyy(p, org, k + 1, subseq(result, 1, i - 3)
+   + Lit(value.s_(i - 2)/ value.s_(i - 1)), nextvar, map)
   else if fsig.rep = "=(int, int)"then
   yyy(p, org, k + 1, subseq(result, 1, i - 3)
    + if s_(i - 2) = s_(i - 1)then Littrue else Litfalse, nextvar, map)
@@ -320,7 +316,7 @@ function simpleAcc(thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:s
    let acc = Local(lastvar +1)
    let masteridx1 = Local(lastvar +2)
    let x2=  thunk @+( empty:seq.symbol,  
-      if abstracttype.modname.@e ≠ "builtin"_1 then @e
+      if not.isabstractbuiltin.@e then @e
         else if  fsig.@e="@e"  then seqelement
         else if  fsig.@e="@i"  then masteridx1
         else if fsig.@e="@acc"  then acc
@@ -363,7 +359,7 @@ let pmap= paratypes.accfunc << 1 @ add(x , toword.(@i+1), [Local.( masteridx+@i)
   let nextvar=   masteridx+nopara.accfunc 
    let r = yyy(p, subseq(code,4 * length.mylist+1,length.code-1), 1, empty:seq.symbol, nextvar, pmap)
     let thunkcode=    subseq(thunk,2,length.thunk-1)  @+( empty:seq.symbol,  
-      if abstracttype.modname.@e ≠ "builtin"_1 then @e
+      if not.isabstractbuiltin.@e then @e
         else if  fsig.@e="@e"  then seqelement
         else if  fsig.@e="@i"  then Local.masteridx
         else  @e)+
@@ -394,9 +390,7 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
  let seqelementkind =if ds &in "int real" then ds else 
   if ds &in "bit byte" then "int"_1 else "ptr"_1
  let resulttype = [(module.applysym)_1]
- // let STKRECORD = symbol("STKRECORD(ptr, ptr)","builtin","ptr")
- let nullptr = symbol("nullptr","builtin","ptr")
-//  let idxp = Idx."ptr"_1
+  let idxp = Idx."ptr"_1
  let idxi = Idx."int"_1
 // let descleft = Lit.-2 //
  let seqtype= Local(nextvar + 2)
@@ -411,6 +405,10 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
   let sym = code_(exitstart-1)
  let t = backparse(code, exitstart - 2, nopara.sym, empty:seq.int)
  let thunk0 = subseq(code,t_1,exitstart-1) 
+// assert code_-1 =Lit.0 &or print.exitexp &in ["%1 @e()builtin.int =(int, int)builtin",
+ "%1 @e()builtin.ptr =(myinternaltype, myinternaltype)symbol"
+ ]
+  report "thunk0"+print.thunk0 +EOL+"exitexp:"+print.exitexp //
   let checknoop = if length.thunk0 = 10 &and exitexp=[Lit.0] 
   ∧ thunk0 @ +("", dfg.@e)
   = "builtin @acc $define ? builtin @e $define ? % $int 0 $int 1 % $record RECORD seq +"then
@@ -423,7 +421,8 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
        let part1 = subseq(code, 1, t_1 - 1) + [ Lit.1, Idx."int"_1, Define.totallength]
      let codeparts= breakAccumalator(p ,thunk0,resulttype, value.theseq,seqelement,newmasteridx) 
      let masteridx=masteridx.codeparts
-      let exitexp2=if exitexp=[Lit.0] then empty:seq.symbol else  exitexp @ +(empty:seq.symbol,if abstracttype.modname.@e ≠ "builtin"_1 then @e
+      let exitexp2=if exitexp=[Lit.0] then empty:seq.symbol else  exitexp @ +(empty:seq.symbol,
+         if not.isabstractbuiltin.@e then @e
         else if  fsig.@e="@e"  then seqelement
         else if  fsig.@e="@i"  then masteridx
         else  @e) +[ Lit.2 ,Lit.3, Br, Local.totallength , Lit.1,PlusOp,Exit,newmasteridx,Exit,  Block(typeint,3)]
@@ -464,7 +463,7 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
         
          
    function  packedtype( ds:word) seq.symbol
-     let multOp=symbol("*(int,int)","builtin","int")
+     let multOp=symbol("*(int,int)","standard","int")
              let GEP=symbol("GEP(T seq, int)","ptr builtin","ptr")
         if ds &in "bit" then   
                 [symbol("extractbit(T seq,int)","int builtin","T")]  
@@ -492,10 +491,9 @@ function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.
  if i > length.code then firstopt(processed, s, code, alltypes)
  else
   let sym = code_i
-  let newprg =
   let sym2 = basesym.sym
-     if isnocall.sym2 then processed
-   else if sym2 ∈ pending then processed
+  let newprg =
+   if isnocall.sym2 &or sym2 ∈ pending then processed
    else
      let r = lookupcode(processed, sym)
       if isdefined.r then processed
@@ -514,14 +512,13 @@ Function addoptions(code:seq.symbol, options:seq.word)seq.symbol
    codewithoutoptions + Words.options + Optionsym
 
 Function caloptions(p:program, code:seq.symbol, nopara:int, modname:seq.word, fsig:seq.word)seq.word
- let options = getoption.code
-  if length.code = 0 then if not.isbuiltin.modname then"STATE"else""
-  else if fsig = "∈(int, int seq)"
+  if fsig = "∈(int, int seq)"
   ∨ fsig = "∈(word, word seq)"
   ∨ fsig = "_(int seq, int)"
   ∨ fsig = "_(word seq, int)"then
   ""
   else
+   let options = getoption.code
    let codeonly = if last.code = Optionsym then subseq(code, 1, length.code - 2)else code
    let newoptions = options
    + if"STATE"_1 ∉ options ∧ codeonly @ ∨(false, hasstate(p, @e))then"STATE"
@@ -531,12 +528,9 @@ Function caloptions(p:program, code:seq.symbol, nopara:int, modname:seq.word, fs
     ""
     else"INLINE"
 
-function checkself(fsig:seq.word, module:seq.word, s:symbol)boolean fsig = fsig.s ∧ module = module.s
 
-function checkself(fsig:seq.word, module:seq.word, s:seq.symbol)boolean s @ ∨(false, checkself(fsig, module, @e))
+function checkself(fsig:seq.word, module:seq.word, s:seq.symbol)boolean s @ ∨(false, fsig = fsig.@e ∧ module = module.@e)
 
-
-function isnotOp(s:symbol)boolean fsig.s = "not(boolean)" ∧ isbuiltin.module.s
 
 
 // statebit is set on option so that adding an option doesn't auto add a inline bit //
@@ -559,7 +553,11 @@ function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boo
 
 ---------------------------
 
-Function pass2(placehold:program, alltypes:typedict)program toseq.toset.placehold @ depthfirst(emptyprogram, placehold, alltypes, @e)
+Function pass2(placehold:program, alltypes:typedict)program 
+let bin=  toseq.toset.placehold @+(empty:seq.symbol,     
+ let  d=lookupcode(placehold,@e)
+   if  "BUILTIN"_1 &in getoption.code.d then [@e] else empty:seq.symbol )
+toseq.toset.placehold @ depthfirst(program.asset.bin, placehold, alltypes, @e)
 
 Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
 
@@ -567,20 +565,16 @@ Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, r
   if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)
   else code
 
-Function defines(p:program, roots:set.symbol)seq.symbol toseq.roots @ +(empty:seq.symbol, defines2(p, @e))
+Function defines(p:program, roots:set.symbol)seq.symbol toseq.roots @ +(empty:seq.symbol, 
+if isconstantorspecial.@e ∨   isabstract.modname.@e then empty:seq.symbol
+ else [@e])
+ 
 
-function uses(p:program, s:symbol)seq.symbol
- let d = code.lookupcode(p, s)
-  if isempty.d then constantcode.s else d
 
 function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
  if isempty.toprocess then processed
  else
-  let q = asset(toseq.toprocess @ +(empty:seq.symbol, uses(p, @e)))
+  let q = asset(toseq.toprocess @ +(empty:seq.symbol, let d = code.lookupcode(p, @e)
+  if isempty.d then constantcode.@e else d))
    uses(p, processed ∪ toprocess, q - processed)
 
-function defines2(p:program, s:symbol)seq.symbol
- if isconstantorspecial.s ∨ isbuiltin.module.s ∨ isabstract.modname.s then empty:seq.symbol
- else
-  let d = code.lookupcode(p, s)
-   if isempty.d then empty:seq.symbol else [ s]

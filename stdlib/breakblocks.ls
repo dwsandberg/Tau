@@ -28,13 +28,11 @@ Function hasstate(p:program, s:symbol)boolean
  else
   let d = lookupcode(p, s)
    if isdefined.d then"STATE"_1 ∈ getoption.code.d else 
-     if isbuiltin.module.s &and fsig.s &ne "setfld(int, T seq, T)" then false else true
-
+     if  fsig.s &ne "setfld(int, T seq, T)" then false else true
 
 type block is record kind:word, blkno:int, label1:int, label2:int, code:seq.symbol, subblks:seq.block
 
 function block(kind:word, blkno:int, label1:int, label2:int, code:seq.symbol)block block(kind, blkno, label1, label2, code, empty:seq.block)
-
 
 Function breakblocks(p:program, code:seq.symbol, self:symbol, alltypes:typedict)seq.symbol
  let a = breakblocks(p, code, 1, 1, empty:seq.symbol, empty:stack.block)
@@ -296,7 +294,7 @@ function gathercase(l:seq.block, blk:block, exp:seq.symbol, caseblks:seq.caseblo
  let code = code.blk
  let len = length.code
  let label = blkno.findblk2(l, 1, label1.blk)
- let t = if code_(len - 3) = EqOp then [ caseblock(label, blkno.blk, code_(len - 4))]
+ let t = if fsig.code_(len - 3)  &in ["=(int, int)","=(word,word)"] then [ caseblock(label, blkno.blk, code_(len - 4))]
  else
   let rep = code_(len - 4)
    if module.rep = "$words"then
