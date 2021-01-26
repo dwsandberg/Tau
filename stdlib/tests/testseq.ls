@@ -122,7 +122,7 @@ unbound =(T,T) boolean
 Function check:seq.T seq.word
 let unpack = random:seq.T(16)
 let pack = packed.unpack
-let x = if sizeoftype:T = 1 then""else"packed"
+let x = if  getseqtype.pack = 1 then"packed"else""
  if(length.pack > 9999 ∨ seqkind.pack = x + toword.length.unpack) ∧ pack = unpack then
  "PASS" + toword.length.pack
   else "FAIL"+toword.length.pack

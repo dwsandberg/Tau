@@ -9,10 +9,9 @@ Export type:seq.T
 
 unbound =(T, T)boolean
 
-builtin IDX(seq.T, int)T
-
-builtin GEP(seq.T, int)T
-
+use abstractBuiltin.T
+ 
+builtin indexseq(seq.T, int)T
 
 Function_(a:seq.T, c:int)T
  let b = if c < 0 then length.a + c + 1 else c
@@ -24,19 +23,15 @@ Function_(a:seq.T, c:int)T
      IDX(a, b + 1)
   else 
     if sizeoftype:T > 1 then // element represented by multiple words //
-          GEP(a , (b-1) * sizeoftype:T + 2 )
+          indexseq(a,b-1) 
      else   if sizeoftype:T= -1 then
-            extractbit(a,b-1)  
+            indexseq(a,b-1)  
      else   assert    sizeoftype:T=-8 report "type size not handled in index package seq.T"+toword.sizeoftype:T
-           extractbyte(a,b-1)
+           indexseq(a,b-1)
      
 builtin sizeoftype:T int
 
-  builtin extractbit(seq.T,int) T
-
- builtin extractbyte(seq.T,int) T
-
-builtin callidx2(a:seq.T, int)T
+ 
 
 Builtin packed(s:seq.T)seq.T
 

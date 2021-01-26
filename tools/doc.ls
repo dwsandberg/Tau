@@ -235,11 +235,6 @@ function callarcs(s:seq.word, i:int, result:seq.word)seq.word
         let end = 2 * (length.module - 1) + 1 + j + 1
          callarcs(s, end, result + mangle(subseq(s, i, j), module))
      else if this ∈ "RECORD DEFINE EXITBLOCK BR BLOCK APPLY WORD APPLYP APPLYI APPLYR "then callarcs(s, i + 2, result)
-     else if this = "global"_1 then
-     // global has strange format. global atype()builtin //
-      let atype = gathermod(s, i + 2, [ next])
-      let end = 2 * (length.atype - 1) + 1 + i + 1 + //()builtin // 3
-       // assert false report"JK"+ subseq(s, end, length.s)// callarcs(s, end, result)
      else if this ∈ " &br FREF Litfalse Littrue "then callarcs(s, i + 1, result)
      else
       let chs = decodeword.this

@@ -17,21 +17,13 @@ Builtin intpart(a:real)int
 Function decpart(a:real)real a - toreal.intpart.a
 
 
-Function  sin(a:real)real sinTau.a
+Builtin sin(a:real)real sinTau.a
 
-Function  cos(a:real)real cosTau.a
+Builtin cos(a:real)real cosTau.a
 
-Function  sqrt (a:real)real sqrtTau.a
+Builtin  sqrt (a:real)real sqrtTau.a
 
-Function  tan(a:real)real tanTau.a
-
-builtin sinTau(a:real)real
-
-builtin cosTau(a:real)real
-
-builtin tanTau(a:real)real
-
-builtin sqrtTau(a:real)real
+Builtin  tan(a:real)real tanTau.a
 
 Builtin arccos(a:real)real
 

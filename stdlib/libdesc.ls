@@ -69,15 +69,27 @@ function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)
  let cleansym = [ if isempty.zcode.sym then sym else symbol(fsig.sym, module.sym, returntype.sym)]
  let code = if isabstract.modname.sym then code.lookupcode(templates, sym)
  else
-  let code = code.lookupcode(p, sym)
-   if length.code < 15 then
+  let code1 = code.lookupcode(p, sym)
+  let code=removeoptions.code1
+  let z = if length.code < 15 then
      let x = removeconstant.code
      if  x @ &and(true,   isconst.@e ∨     module.@e &in [ " int builtin", "real builtin"] ∨ isspecial.@e  ∨ islocal.@e 
      ∨  @e &in toexport)   then x 
-     else  
-      empty:seq.symbol  
+      else    empty:seq.symbol  
    else empty:seq.symbol
-   symbol(fsig.sym, module.sym, returntype.sym, cleansym + code)
+     let optionsx = getoption.code1
+    // assert isempty.optionsx &or optionsx &in ["STATE","INLINE","VERYSIMPLE INLINE","STATE INLINE"
+    ,"BUILTIN","BUILTIN COMPILETIME","PROFILE","STATE BUILTIN","COMPILETIME STATE","COMPILETIME"
+    ,"PROFILE STATE","INLINE STATE","NOINLINE STATE"] report "X"+optionsx
+    z //
+    if "BUILTIN"_1 &in optionsx &or "COMPILETIME"_1 &in optionsx &or not.isempty.z then z+Words.optionsx+Optionsym
+    else z
+    symbol(fsig.sym, module.sym, returntype.sym, cleansym + code)
+   
+    function removeoptions(code:seq.symbol )seq.symbol
+  if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)
+  else code
+
   
 ----------------------------------
 

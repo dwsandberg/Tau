@@ -24,7 +24,7 @@ pass1 pass2 breakblocks persistant postbind   process real seq set stack  symbol
  graphs/ipair
  graphs/graph
 uses
-exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format 
+exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format abstractBuiltin
 graph groupparagraphs intdict   ioseq ipair libdesc llvm llvmconstants 
 main2 maindict mangle mytype pretty otherseq  prims process 
 real seq set stack   symbol textio timestamp tree worddict words xxhash 
@@ -61,6 +61,8 @@ option.standard =(int,int) boolean COMPILETIME
 
 option.standard >(int,int) boolean COMPILETIME
 
+option.standard =(int,int) boolean COMPILETIME
+
 option.bits  ∧(a:bits, bits)bits COMPILETIME
 
 option.bits ∨(a:bits, bits)bits COMPILETIME
@@ -69,15 +71,40 @@ option.bits  >>(a:bits, i:int)bits COMPILETIME
 
 option.bits  <<(a:bits, i:int)bits COMPILETIME
 
+option.real -(real,real) int COMPILETIME
+
+option.seq.word +(seq.word,seq.word) seq.word COMPILETIME
+
+option.words merge(seq.word )  word COMPILETIME
+
+option.UTF8 makereal(seq.word) real COMPILETIME
+
+option.fileio getfile(name:cstr)fileresult STATE
+
+option.fileio getbytefile(cstr) fileresultbyte STATE
+
+option.fileio getbitfile(cstr)  fileresultbit STATE
+
+option.fileio createfile(byteLength:int,data:seq.bits,cstr) int STATE
+
+option.fileio  createfile3(byteLength:int,data:seq.bits,name:cstr) int  STATE
 
 
-/option.builtin option(T, x:seq.word)T STATE
+
+/option.builtin.int Assert(seq.word) int STATE
+
+/option.UTF8 toword(int) word COMPILETIME
+
+/option.encoding.seq.char decode(encoding.seq.char) seq.char COMPILETIME
+
+option.words encodeword( seq.char) word COMPILETIME
+
+/option.words  decodeword( word) seq.char COMPILETIME
+
+option.seq.word _(seq.word,int) word COMPILETIME
+
+/option.seq.int IDX(seq.T, int) int   COMPILETIME
  
-/option.fileio getfile(seq.bits)fileresult STATE
-
-/option.fileio createlib(name:seq.bits, libs:seq.bits, t:outputformat)int STATE
-
-/option.fileio createfile(name:seq.bits, data:outputformat)int STATE
 
 option.timestamp   currenttime timestamp STATE
 

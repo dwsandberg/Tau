@@ -686,18 +686,14 @@ BT dlsymbolZtausupportZcstr (processinfo PD,char * funcname)
 BT toscreen(BT outputnibble ) {
 return write( /* stdout */ 1,(char *) &outputnibble+1,  outputnibble & 7  );
 }
+double sinZrealZreal(processinfo PD, double arg )   { return sin(arg); }
 
-double arcsin(processinfo PD, double arg)  { return asin(arg); }
-  
-double arccos(processinfo PD, double arg)   { return acos(arg); }
+double cosZrealZreal(processinfo PD, double arg)  { return cos(arg); }
 
-double sinTau(processinfo PD, double arg )   { return sin(arg); }
+double tanZrealZreal(processinfo PD, double arg)  { return tan(arg); }
 
-double cosTau(processinfo PD, double arg)  { return cos(arg); }
+double sqrtZrealZreal(processinfo PD, double arg)  { return sqrt(arg); }
 
-double tanTau(processinfo PD, double arg)  { return tan(arg); }
-
-double sqrtTau(processinfo PD, double arg)  { return sqrt(arg); }
 
  double arcsinZrealZreal(processinfo PD, double arg)  { return asin(arg); }
   

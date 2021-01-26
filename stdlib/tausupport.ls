@@ -1,20 +1,23 @@
-module XXX2.T
+module abstractBuiltin.T
 
 use seq.T
 
 Builtin IDX(seq.T, int)T
 
-Builtin GEP(seq.T, int)T
+/Builtin IDX2(seq.T, int)T
 
 Builtin allocatespace:T(i:int)seq.T
 
 Builtin setfld(i:int, s:seq.T, val:T)int
 
+Builtin callidx2(a:seq.T, int)T
+
+
 module taubuiltinsupport.T
 
-use XXX2.T
+use abstractBuiltin.T
 
-use XXX2.seq.T
+use abstractBuiltin.seq.T
 
 use seq.seq.T
 
@@ -22,7 +25,7 @@ use seq.T
 
 use standard
 
-builtin sizeoftype:T int
+builtin setfirst(r:seq.T, fld0:int, fld1:int)seq.T
 
 
 builtin bitcast(blockseq.T)seq.seq.T
@@ -35,9 +38,6 @@ function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:T)int
  if memsize = 0 then idx
  else memcpy(setfld(idx, s, IDX(bitcast.fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
 
-builtin setfirst(r:seq.T, fld0:int, fld1:int)seq.T
-
-Builtin callidx2(a:seq.T, int)T
 
 type blockseq is sequence length:int, dummy:seq.T
 
@@ -57,14 +57,7 @@ Function_(a:blockseq.T, i:int)T
 
  
  
- let blksz =length.IDX(data,1)
- let blk = IDX(data,(i - 1) / blksz + 2)
- let b =(i - 1) mod blksz + 1
-    if sizeoftype:T > 1 then 
-    let ds=blksz / blocksize:T
-     GEP(blk, (b-1) * ds + 2)  
-   else  
-     IDX(blk, b + 1)
+ 
    
 
   
@@ -106,7 +99,6 @@ use taubuiltinsupport.encodingpair.seq.char
 
 use seq.seq.int
 
-
 use taubuiltinsupport.int
 
 use taubuiltinsupport.real
@@ -121,18 +113,17 @@ use fileio
 
 Builtin initialdict seq.encodingpair.seq.char
 
-
 builtin dlsymbol(cstr)int
 
- 
 Builtin createthread(int, int, int, seq.int,int)process.int
 
+builtin callstack(n:int)seq.int
 
-Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
-
+builtin addresstosymbol2(a:int)seq.char
 
 Builtin randomint(i:int)seq.int
 
+Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
 
 Export _(pseq.byte,int) byte
 
@@ -170,11 +161,10 @@ function assignencoding(a:int, typename)int a + 1
 
 use mangle
 
-builtin callstack(n:int)seq.int
+
 
 Function stacktrace seq.word callstack.30 @ +("", decodeaddress.@e)
 
-builtin addresstosymbol2(a:int)seq.char
 
 Function addresstosymbol(a:int)word encodeword.addresstosymbol2.a
 

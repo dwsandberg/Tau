@@ -127,6 +127,8 @@ unbound getrecord:T(seq.int, int)T
 
 unbound +(place, T)place
 
+builtin sizeoftype:T int
+
 Function_(a:ioseq.T, i:int)T
  let size = sizeoftype:T
  let index = offset.a + size * (i - 1) + 2

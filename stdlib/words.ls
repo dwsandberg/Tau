@@ -16,7 +16,7 @@ use seq.encodingpair.seq.char
 
 use otherseq.int
 
-use encoding.seq.int
+/use encoding.seq.int
 
 use standard
 

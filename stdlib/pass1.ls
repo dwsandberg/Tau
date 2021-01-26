@@ -229,7 +229,10 @@ function bind3(p:program, alltypes:typedict, modset:set.firstpass, f:firstpass)p
 
 function bind2(p:program, alltypes:typedict, dict:set.symbol, s:symbol)program
  let txt = findencode.symboltext(s, mytype."?","?")
-  if not.isempty.txt then map(p, s, parsedcode.parse(dict, text.txt_1))
+  if not.isempty.txt then 
+    let code=parsedcode.parse(dict, text.txt_1)
+    map(p, s,  if length.code = 1 &and  isconst.code_1 then code+[Words."VERYSIMPLE", Optionsym] else code
+    )
   else if parameter.modname.s = mytype."T" ∧ not(s ∈ toset.p)then
   map(p, s, empty:seq.symbol)
   else p
@@ -365,7 +368,15 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
         else
        arithseq(length.paratypes, 1, 1) @ +(empty:seq.symbol, Local.@e)
        +   if length.module.sym = 1 then [sym,Words."BUILTIN", Optionsym]
-            else [symbol(fsig.sym,  "T builtin", returntype.sym)]
+             else if fsig.sym &in  ["setfld2(int, T seq, T)"," IDX2(T seq, int) "] then
+                      [sym,Words."ABSTRACTBUILTIN", Optionsym]  
+            else 
+         //    assert fsig.sym &in ["getinstance:encodingstate.T","packed(T seq)","primitiveadd(int, T encodingpair)"
+            ,"sizeoftype:T  ","processresult(T process)","IDX(T seq, int)","GEP(T seq, int) "
+            ,"extractbit(T seq, int)", "indexseq(T seq, int)","callidx2(T seq, int)"
+            ,"allocatespace:T(int)","setfld(int, T seq, T)",
+            "bitcast(T blockseq)","bitcast(T seq seq)","bitcast(T)","setfirst(T seq, int, int)"] report "XX"+print.sym //
+             [symbol(fsig.sym,  "T builtin", returntype.sym),Words."ABSTRACTBUILTIN", Optionsym]  
        map(prg.f, sym, code2)
      else
       let discard = encode.symboltext(sym, modname.f, input)

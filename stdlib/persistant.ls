@@ -103,11 +103,11 @@ Function addliblib(libname:seq.word, mods:int, profiledata:int,isbase:boolean)in
 
 function addobject(name:seq.word, data:seq.int)int
  let objtype = array(length.data, i64)
- let ll = global("liblib", objtype, toint.AGGREGATE(data @ +(empty:seq.slot, asi64.slot.@e)))
+ let ll = global("liblib", objtype,  AGGREGATE(data @ +(empty:seq.slot, asi64.slot.@e)))
   toint.CGEP(slot.ll, 0)
 
-function global(name:seq.word, type:llvmtype, init:int)int
- toint.modulerecord(name, [ toint.GLOBALVAR, typ.type, 2, 1 + init, 0, toint.align8 + 1, 0])
+Function global(name:seq.word, type:llvmtype, init:slot)int
+ toint.modulerecord(name, [ toint.GLOBALVAR, typ.type, 2, 1 + toint.init, 0, toint.align8 + 1, 0])
 
 
 Function addobject(fldsin:seq.int)int

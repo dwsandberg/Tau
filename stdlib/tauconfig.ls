@@ -17,7 +17,6 @@ option.main2 subcompilelib(seq.word, seq.word)seq.word PROFILE
 
 option.main2 compilelib2(seq.word)seq.word PROFILE
 
-/option.builtin option(T, x:seq.word)T STATE
  
 /option.fileio getfile(seq.bits)fileresult STATE
 

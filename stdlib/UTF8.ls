@@ -163,7 +163,7 @@ function decimaldigit(val:int, c:char)int
     let validdigits = decodeword.first."0123456789" 
         let i = binarysearch(validdigits,c)
          if i > 0 then ( val * 10 ) - (i-1)   
-        else assert c &in [char1."-", nbspchar] report "invalid   digit" + encodeword.[c ] 
+        else assert c &in [char1."-", nbspchar] report "invalid digit" + encodeword.[c ] +stacktrace
         val
         
         

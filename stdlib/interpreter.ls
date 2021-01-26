@@ -44,12 +44,15 @@ use seq.myinternaltype
     let t=[myinternaltype(first."x", "seq"_1, mytype."word seq", empty:seq.mytype)
     ,myinternaltype(first."x", "seq"_1, mytype."char seq", empty:seq.mytype)
     ,myinternaltype(first."x", "seq"_1, mytype."int seq", empty:seq.mytype)
-   , myinternaltype(first."x", "word"_1, mytype."words", empty:seq.mytype)
+    ,myinternaltype(first."x", "seq"_1, mytype."char seq encoding", empty:seq.mytype)
+   , myinternaltype(first."x", "word"_1, mytype."words", [typeint ])
     , myinternaltype(first."x", "boolean"_1, mytype."standard", [typeint])
       , myinternaltype(first."x", "bits"_1, mytype."bits", [typeint])
    ]
              let r=interpret(typedict.t,removeconstant.code,1,empty:stack.int)
         tocode(r,resulttype.last.code)
+        
+        encoding.seq.char
                             
   function    tocode( r:int, typ:mytype) seq.symbol     
           if typ=mytype."word" then 
@@ -63,8 +66,10 @@ use seq.myinternaltype
                  s @ +([Lit.0,Lit.length.s],tocode(@e,parameter.typ))
 
         
-  function buildcode(acc:int,typ:mytype,alltypes:typedict) int     
-   acc * 2 +if kind.gettypeinfo(alltypes, typ)=first."real" then 1 else 0 
+  function buildcode(acc:int,typ:mytype,alltypes:typedict) int  
+      let xx=gettypeinfo(alltypes, typ)
+        assert not.isempty.subflds.xx report "XXX"+typerep.typ
+     acc * 2 +if kind.xx=first."real" then 1 else 0 
   
 
 function aswords(s:seq.int)seq.word s @ +("", wordencodingtoword(@e))
@@ -88,7 +93,7 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int) int
    else if module.sym = "$words"then
    let a = fsig.sym @ +(empty:seq.int, hash.@e)
      interpret(alltypes, code, i + 1, push(stk, bitcast.a))
-   else if module.sym = "$int"then
+   else if module.sym = "$int" &or module.sym = "$real" then
    interpret(alltypes, code, i + 1, push(stk, toint.(fsig.sym)_1))
    else if module.sym = "$record" ∧ subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
    interpret(alltypes, code, i + 1, push(pop(stk, nopara), bitcast.top(stk, nopara - 2)))

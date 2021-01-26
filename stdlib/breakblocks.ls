@@ -28,7 +28,8 @@ Function hasstate(p:program, s:symbol)boolean
  else
   let d = lookupcode(p, s)
    if isdefined.d then"STATE"_1 ∈ getoption.code.d else 
-     if  fsig.s &ne "setfld(int, T seq, T)" then false else true
+       fsig.s = "setfld(int, T seq, T)" 
+        
 
 type block is record kind:word, blkno:int, label1:int, label2:int, code:seq.symbol, subblks:seq.block
 

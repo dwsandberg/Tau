@@ -338,6 +338,8 @@ Function GtOp symbol symbol(">(int, int)","standard","boolean")
  
 Function PlusOp symbol symbol("+(int, int)","standard","int")
 
+Function MultOp symbol symbol("*(int,int)","standard","int")
+
 Function isinOp(s:symbol)boolean
  fsig.s
  ∈ ["∈(int, int seq)","∈(word, word seq)", "=(int, int)","=(word, word)"]
@@ -512,7 +514,7 @@ Function kind(t:typeinfo)word
   if length.z > 1 ∨ abstracttype.z_1 = "seq"_1 then"ptr"_1
   else
    let k =(typerep.z_1)_1
-    assert k ∈ "int real ptr"report"unexpected fld in internal type" + z @ +("", print.@e) + stacktrace
+     assert k ∈ "int real ptr"report"unexpected fld in internal type" + z @ +("", print.@e) + stacktrace
      // x // k
 
 Export subflds(typeinfo)seq.mytype

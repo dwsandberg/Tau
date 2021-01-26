@@ -272,7 +272,7 @@ assert must be boolean in:", input, place)
 assert(types.R_4)_1 = mytype."word seq"report errormessage("report in 
 assert must be seq of word in:", input, place) 
 let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_5 + Exit + code.R_4 + symbol(" 
-assert(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"") 
+Assert(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"") 
 else if ruleno = // E I // 34 then bindlit.R 
 else if ruleno = // E I.I // 35 then bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"") 
 else if ruleno = // T W // 36 then isdefined(R, input, place, mytype.tokentext.R_1) 

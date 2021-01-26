@@ -160,6 +160,7 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  ,addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint))
  , // addtemplate(symbol("bitcast(int seq)","interpreter","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint))
  , addtemplate(symbol("bitcast(int)","interpreter","int seq"), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
+ , addtemplate(symbol("IDX2(int seq, int)","int abstractBuiltin","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
  , addtemplate(symbol("IDX(T seq, int)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
  , addtemplate(symbol("IDX(T seq, int)","boolean builtin","boolean"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
  , addtemplate(symbol("IDX(T seq, int)","ptr builtin","ptr"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
@@ -182,7 +183,6 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + CMP2(r.3, ibcsub.1, ibcsub.2, 38)
  + CAST(r.4, r.3, i64, zext)
  + BINOP(r.5, r.2, r.4, add))
- , addtemplate(symbol("cast(T seq, int, int)","builtin","ptr"), 1, GEP(r.1, i64, ibcsub.1, ibcsub.2))
   , addtemplate(symbol("GEP(T seq, int)","ptr builtin","ptr"), 1, GEP(r.1, i64, ibcsub.1, ibcsub.2))
  , addtemplate(symbol("not(boolean)","standard","boolean"), 1, BINOP(r.1, ibcsub.1, C64.1, xor))
  , addtemplate(symbol(">(int, int)","standard","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 38) + CAST(r.2, r.1, i64, zext))
@@ -196,11 +196,21 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("∧(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, and))
  , addtemplate(symbol("∨(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, or))
  , addtemplate(symbol("xor(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, xor))
- , addtemplate(symbol("setfirst(int seq, int, int)","builtin","int seq"), 3, GEP(r.1, i64, ibcsub.1, C64.1) + STORE(r.2, r.1, ibcsub.3)
+ , addtemplate(symbol("setfirst(T seq, int, int)","real builtin","T seq"), 3, GEP(r.1, i64, ibcsub.1, C64.1) + STORE(r.2, r.1, ibcsub.3)
+  + GEP(r.2, i64, ibcsub.1, C64.0)
+ + STORE(r.3, r.2, ibcsub.2)
+ + GEP(r.3, i64, ibcsub.1, C64.0))
+ , addtemplate(symbol("setfirst(T seq, int, int)","ptr builtin","T seq"), 3, GEP(r.1, i64, ibcsub.1, C64.1) + STORE(r.2, r.1, ibcsub.3)
+ + GEP(r.2, i64, ibcsub.1, C64.0)
+ + STORE(r.3, r.2, ibcsub.2)
+ + GEP(r.3, i64, ibcsub.1, C64.0))
+ , addtemplate(symbol("setfirst(T seq, int, int)","int builtin","T seq"), 3, GEP(r.1, i64, ibcsub.1, C64.1) + STORE(r.2, r.1, ibcsub.3)
  + GEP(r.2, i64, ibcsub.1, C64.0)
  + STORE(r.3, r.2, ibcsub.2)
  + GEP(r.3, i64, ibcsub.1, C64.0))
  , addtemplate(symbol("setfld(int, T seq, T)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
+ + BINOP(r.2, ibcsub.1, C64.1, add))
+ , addtemplate(symbol("setfld2(int, int seq, int)","int nnn","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
  + BINOP(r.2, ibcsub.1, C64.1, add))
 , addtemplate(symbol("setfld(int, T seq, T)","boolean builtin","boolean"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
  + BINOP(r.2, ibcsub.1, C64.1, add))
@@ -222,6 +232,22 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
    function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
    +CAST(r.2, r.1, double, sitofp))
  , addtemplate(symbol("assert(word seq)","ptr builtin","ptr")
+ , 2
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
+ function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
+ +CAST(r.2, r.1,ptr.i64, inttoptr))
+ , addtemplate(symbol("Assert(word seq)","int builtin","int")
+ , 1
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1))
+ , addtemplate(symbol("Assert(word seq)","boolean builtin","boolean")
+ , 1
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1))
+ , addtemplate(symbol("Assert(word seq)","real builtin","real")
+ , 2
+ , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
+   function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
+   +CAST(r.2, r.1, double, sitofp))
+ , addtemplate(symbol("Assert(word seq)","ptr builtin","ptr")
  , 2
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
  function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
@@ -257,8 +283,6 @@ Function symboltableentry(name:word, type:llvmtype)slot symboltableentry([ name]
 Function symboltableentry(name:seq.word, type:llvmtype)slot
  modulerecord(name, [ toint.FUNCTIONDEC, typ.type, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
-Function global(name:seq.word, type:llvmtype, init:slot)int
- toint.modulerecord(name, [ toint.GLOBALVAR, typ.type, 2, 1 + toint.init, 0, toint.align8 + 1, 0])
 
 function processconstargs(arglist:seq.symbol, i:int, args:seq.int)seq.int
  if i > length.arglist then args
@@ -314,7 +338,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
     // handle builtin package //
     let intable = findtemplate.xx
      if length.intable > 0 then intable_1
-      else if(fsig.xx)_1 = "global"_1  &and module.xx="builtin" then
+      else if(fsig.xx)_1 = "global"_1  &and module.xx="$global" then
      addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
      else //
        if   fsig.xx &in   Externalsyms then 

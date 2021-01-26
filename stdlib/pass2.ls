@@ -57,12 +57,13 @@ function firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)prog
     map(p, rep,code)
  else
    let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
-   let code2 = code.yyy(p, code, 1, empty:seq.symbol, nopara + 1, pdict)
-   let options = caloptions(p, code2, nopara, module.rep, fsig.rep)
+   let code2 = code.yyy(p, code, 1, empty:seq.symbol, nopara + 1, pdict,true)
    let s = symbol(fsig.rep, module.rep, returntype.rep)
    let a = breakblocks(p, code2, s, alltypes)
-   let a2 = code.yyy(p, a, 1, empty:seq.symbol, nopara + 1, pdict)
-    map(p, s, addoptions(a2, options))
+   let a2 = code.yyy(p, a, 1, empty:seq.symbol, nopara + 1, pdict,true)
+     addf(p, s, a2 )
+    
+
 
 function print(s:seq.int)seq.word s @ +("", toword.@e)
 
@@ -85,12 +86,12 @@ use interpreter
 
 use words
 
-function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, map:worddict.seq.symbol)expandresult
+function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, map:worddict.seq.symbol,papply:boolean)expandresult
  if k > length.org then expandresult(nextvar, result)
  else
   let sym = org_k
   let len = length.result
-   if isconst.sym then yyy(p, org, k + 1, result + sym, nextvar, map)
+   if isconst.sym then yyy(p, org, k + 1, result + sym, nextvar, map, papply)
    else  if isspecial.sym then
    if fsig.sym = "BLOCK 3"then
     let t = backparse(result, len, 3, empty:seq.int) + [ len + 1]
@@ -107,182 +108,104 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
          subseq(result, 1, condidx - 1) +subseq(result, t_keepblock, t_(keepblock + 1) - 2)
          else  
          result+sym
-         yyy(p, org, k + 1, newresult, nextvar, map)
+         yyy(p, org, k + 1, newresult, nextvar, map, papply)
     else if // isdefine //(fsig.sym)_1 = "DEFINE"_1 then
     let thelocal =(fsig.sym)_2
       if len > 0 ∧ (isconst.result_len ∨ islocal.result_len)then
-      yyy(p, org, k + 1, subseq(result, 1, length.result - 1), nextvar, replace(map, thelocal, [ result_len]))
+      yyy(p, org, k + 1, subseq(result, 1, length.result - 1), nextvar, replace(map, thelocal, [ result_len]),papply)
       else
-       yyy(p, org, k + 1, result + Define.toword.nextvar, nextvar + 1, replace(map, thelocal, [ var.nextvar]))
+       yyy(p, org, k + 1, result + Define.toword.nextvar, nextvar + 1, replace(map, thelocal, [ var.nextvar]),papply)
     else if isloopblock.sym then
     let nopara = nopara.sym - 1
      let firstvar = value.result_len
-      yyy(p, org, k + 1, subseq(result, 1, len - 1) + Lit.nextvar + sym, nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0))
+      yyy(p, org, k + 1, subseq(result, 1, len - 1) + Lit.nextvar + sym, nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0),papply)
     else if(fsig.sym)_1 = "RECORD"_1 then
     let nopara = nopara.sym
      let args = subseq(result, len + 1 - nopara, len)
       if args @ ∧(true, isconst.@e)then
-      yyy(p, org, k + 1, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
-      else yyy(p, org, k + 1, result + sym, nextvar, map)
+      yyy(p, org, k + 1, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map, papply)
+      else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
     else if(module.sym)_1 = "local"_1 then
     let t = lookup(map,(fsig.sym)_1)
-      if isempty.t then yyy(p, org, k + 1, result + sym, nextvar, map)
-      else yyy(p, org, k + 1, result + t_1, nextvar, map)
+      if isempty.t then yyy(p, org, k + 1, result + sym, nextvar, map, papply)
+      else yyy(p, org, k + 1, result + t_1, nextvar, map, papply)
     else if(module.sym)_1 = "para"_1 then
     let sym2 = Local.(module.sym)_2
      let t = lookup(map,(fsig.sym2)_1)
-      if isempty.t then yyy(p, org, k + 1, result + sym2, nextvar, map)
-      else yyy(p, org, k + 1, result + t_1, nextvar, map)
+      if isempty.t then yyy(p, org, k + 1, result + sym2, nextvar, map, papply)
+      else yyy(p, org, k + 1, result + t_1, nextvar, map, papply)
     else if len > 2 ∧  result_(len - 2) = NotOp ∧ fsig.sym = "BR 3"then
-    yyy(p, org, k + 1, subseq(result, 1, len - 3) + [ result_len, result_(len - 1), Br], nextvar, map)
-    else yyy(p, org, k + 1, result + sym, nextvar, map)
-   else if(fsig.sym)_1 ∈ "apply3"then applycode4(p, org, k, result, nextvar, map)
+    yyy(p, org, k + 1, subseq(result, 1, len - 3) + [ result_len, result_(len - 1), Br], nextvar, map, papply)
+    else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
+   else if papply &and (fsig.sym)_1 ∈ "apply3"then applycode4(p, org, k, result, nextvar, map, papply)
    else
     let nopara = nopara.sym
     let dd = code.lookupcode(p, sym)
     let options=getoption.dd
-   //   if first."BUILTIN"  ∈ options &and nopara=2 &and subseq(result,len-nopara+1,len) @ &and(true,isconst.@e)   then 
-        opttwoopbuiltin(p, org, k, result, nextvar, map, sym)
-     else //
-       if first."COMPILETIME"  ∈ options &and subseq(result,len-nopara+1,len) @ &and(true,isconst.@e)   then 
+        if first."COMPILETIME"  ∈ options &and subseq(result,len-nopara+1,len) @ &and(true,isconst.@e)   then 
            let newcode= interpret(subseq(result,len-nopara+1,len)+sym)
          let newconst=if length.newcode > 1 then Constant2.newcode else first.newcode
-           yyy(p, org, k + 1, result >> nopara + newconst, nextvar, map)
+           yyy(p, org, k + 1, result >> nopara + newconst, nextvar, map, papply)
      else if  "INLINE"_1 ∈ options  &or first."VERYSIMPLE" ∈ options then
      let code = if last.dd = Optionsym then subseq(dd, 1, length.dd - 2)else dd
-       if isempty.code then yyy(p, org, k + 1, result + sym, nextvar, map)
-       else inline(p, org, k, result, nextvar, nopara, code, map, getoption.dd)
-     else if nopara = 0 ∨ nopara > 2 ∨ not.isconst.result_len then
-     yyy(p, org, k + 1, result + sym, nextvar, map)
-     else
-      // one or two parameters with last arg being constant //
-      if nopara = 1 then
+       if isempty.code then yyy(p, org, k + 1, result + sym, nextvar, map, papply)
+       else inline(p, org, k, result, nextvar, nopara, code, map, getoption.dd,papply)
+     else  if nopara = 1 &and isconst.result_len then
       // one constant parameter //
        if sym = symbol("toword(int)","UTF8","word")then
-       yyy(p, org, k + 1, subseq(result, 1, length.result - 1) + Word.(fsig.last.result)_1, nextvar, map)
-       else  if fsig.sym = "makereal(word seq)" ∧ module.sym = "UTF8"then
-        let arg1 = last.result
-         if module.arg1 = "$words"then
-         let x = Reallit.representation.makereal.fsig.arg1
-           yyy(p, org, k + 1, subseq(result, 1, length.result - 1) + x, nextvar, map)
-         else yyy(p, org, k + 1, result + sym, nextvar, map)
-       else if fsig.sym = "merge(word seq)" ∧ module.sym = "words"then
-       let arg1 = last.result
-         if module.arg1 = "$words"then
-         yyy(p, org, k + 1, subseq(result, 1, length.result - 1) + Word.merge.fsig.arg1, nextvar, map)
-         else yyy(p, org, k + 1, result + sym, nextvar, map)
-       else if fsig.sym = "decode(char seq encoding)" ∧ module.sym = "char seq encoding"then
+       yyy(p, org, k + 1, subseq(result, 1, length.result - 1) + Word.(fsig.last.result)_1, nextvar, map, papply)
+       else  if fsig.sym = "decode(char seq encoding)" ∧ module.sym = "char seq encoding"then
        let arg1 = result_len
          if module.arg1 = "$word"then
          let a1 = tointseq.decodeword.(fsig.arg1)_1 @ +(empty:seq.symbol, Lit.@e)
           let d = Constant2([ Stdseq, Lit.length.a1] + a1 + Record.constantseq(length.a1 + 2,"int"_1))
-           yyy(p, org, k + 1, subseq(result, 1, len - 1) + d, nextvar, map)
-         else yyy(p, org, k + 1, result + sym, nextvar, map)
-       else if fsig.sym = "encode(char seq)" ∧ module.sym = "char seq encoding"then
-       let arg1 = result_len
-         if module.arg1 = "$constant"then
-         let chseq = subseq(constantcode.arg1, 3, length.constantcode.arg1) @ +(empty:seq.int, value.@e)
-           assert subseq(constantcode.arg1, 3, length.constantcode.arg1) @ ∧(true, islit.@e)report"const problem"
-           let new = Word.encodeword(chseq @ +(empty:seq.char, char.@e))
-            yyy(p, org, k + 1, subseq(result, 1, len - 1) + new, nextvar, map)
-         else yyy(p, org, k + 1, result + sym, nextvar, map)
-       else yyy(p, org, k + 1, result + sym, nextvar, map)
-      else
+           yyy(p, org, k + 1, subseq(result, 1, len - 1) + d, nextvar, map, papply)
+         else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
+          else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
+      else  if nopara=2 &and last.module.sym = "seq"_1 &and isconst.result_len &and isconst.result_(len - 1) 
+        ∧ ( fsig.sym  = "_(" + subseq(module.sym, 1, length.module.sym - 1) + "seq, int)") then 
        // two parameters with constant args //
        // should add case of IDXUC with record as first arg //
-       if not.isconst.result_(len - 1)then yyy(p, org, k + 1, result + sym, nextvar, map)
-       else
-        // two parameters with constant args //
-        if last.module.sym = "seq"_1
-        ∧ (fsig.sym = "_(T seq, int)"
-        ∨ fsig.sym
-        = "_(" + subseq(module.sym, 1, length.module.sym - 1) + "seq, int)")then
+         // two parameters with constant args //
+           assert   module.sym &in ["word seq", "char seq","int seq","Tpair seq"] 
+          report "here pass2"+print.sym
         let idx = value.result_len
          let arg1 = result_(len - 1)
           if module.arg1 = "$words" ∧ between(idx, 1, length.fsig.arg1)then
-          yyy(p, org, k + 1, subseq(result, 1, len - 2) + Word.(fsig.arg1)_idx, nextvar, map)
+          yyy(p, org, k + 1, subseq(result, 1, len - 2) + Word.(fsig.arg1)_idx, nextvar, map, papply)
           else if isrecordconstant.arg1 ∧ ((constantcode.arg1)_1 = Lit.0 ∨ (constantcode.arg1)_1 = Lit.1)
           ∧ between(idx, 1, length.constantcode.arg1 - 2)then
-          yyy(p, org, k + 1, subseq(result, 1, len - 2) + (constantcode.arg1)_(idx + 2), nextvar, map)
-          else yyy(p, org, k + 1, result + sym, nextvar, map)
-        else if fsig.sym = "+(word seq, word seq)" ∧ module.sym = "word seq"then
-        let arg1 = result_(len - 1)
-         let arg2 = result_len
-          if module.arg1 = "$words" ∧ module.arg2 = "$words"then
-          yyy(p, org, k + 1, subseq(result, 1, len - 2) + Words(fsig.arg1 + fsig.arg2), nextvar, map)
-          else yyy(p, org, k + 1, result + sym, nextvar, map)
-        else yyy(p, org, k + 1, result + sym, nextvar, map)
+          yyy(p, org, k + 1, subseq(result, 1, len - 2) + (constantcode.arg1)_(idx + 2), nextvar, map, papply)
+          else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
+        else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
 
-function opttwoopbuiltin(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, map:worddict.seq.symbol, rep:symbol)expandresult
- let s = result
- let i = length.result + 1
-  if isIdx.rep then
-   assert false report "here in isIdx"
-  let j = value.s_(i - 1)
-   let x = s_(i - 2)
-    if between(j, 0, length.constantcode.x - 1)then
-    yyy(p, org, k + 1, subseq(result, 1, i - 3) + [(constantcode.x)_(j + 1)], nextvar, map)
-    else yyy(p, org, k + 1, result + rep, nextvar, map)
-   else  if fsig.rep = "+(int, int)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + Lit(value.s_(i - 2) + value.s_(i - 1)), nextvar, map)
- else  if fsig.rep = "-(int, int)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + Lit(value.s_(i - 2) - value.s_(i - 1)), nextvar, map)
- else  if fsig.rep = "*(int, int)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + Lit(value.s_(i - 2) * value.s_(i - 1)), nextvar, map)
- else  if fsig.rep = "/(int, int)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + Lit(value.s_(i - 2)/ value.s_(i - 1)), nextvar, map)
-  else if fsig.rep = "=(int, int)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + if s_(i - 2) = s_(i - 1)then Littrue else Litfalse, nextvar, map)
-  else if fsig.rep = ">(int, int)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + if value.s_(i - 2) > value.s_(i - 1)then Littrue else Litfalse, nextvar, map)
-  else if fsig.rep = "∨(bits, bits)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + [ Lit.toint(bits.value.s_(i - 2) ∨ bits.value.s_(i - 1))], nextvar, map)
-  else if fsig.rep = "∧(bits, bits)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + [ Lit.toint(bits.value.s_(i - 2) ∧ bits.value.s_(i - 1))], nextvar, map)
-  else if fsig.rep = "<<(bits, int)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + [ Lit.toint(bits.value.s_(i - 2) << value.s_(i - 1))], nextvar, map)
-  else if fsig.rep = ">>(bits, int)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + [ Lit.toint(bits.value.s_(i - 2) >> value.s_(i - 1))], nextvar, map)
-  else if fsig.rep = "-(real, real)"then
-  yyy(p, org, k + 1, subseq(result, 1, i - 3)
-   + [ Reallit.representation(casttoreal.value.s_(i - 2) - casttoreal.value.s_(i - 1))], nextvar, map)
-  else yyy(p, org, k + 1, result + rep, nextvar, map)
 
-function inline(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, nopara:int, code:seq.symbol, map:worddict.seq.symbol, options:seq.word)expandresult
+function inline(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, nopara:int, code:seq.symbol, map:worddict.seq.symbol, options:seq.word,papply:boolean)expandresult
  if length.code = 1 ∧ code = [ var.1] ∧ nopara = 1 then
- // function just returns result // yyy(p, org, k + 1, result, nextvar, map)
+ // function just returns result // yyy(p, org, k + 1, result, nextvar, map,papply)
  else
   let len = length.result
   let t = backparse(result, len, nopara, empty:seq.int) + [ len + 1]
    assert length.t = nopara + 1 report"INLINE PARA PROBLEM"
    let new = if"STATE"_1 ∉ options ∧ issimple(p, nopara, code)then
    let pmap = simpleparamap(result, t, emptyworddict:worddict.seq.symbol, nopara)
-     yyy(p, code, 1, empty:seq.symbol, nextvar, pmap)
-   else expandinlineX(result, t, emptyworddict:worddict.seq.symbol, nopara, empty:seq.symbol, nextvar, code, p)
-    yyy(p, org, k + 1, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
+     yyy(p, code, 1, empty:seq.symbol, nextvar, pmap,papply)
+   else expandinlineX(result, t, emptyworddict:worddict.seq.symbol, nopara, empty:seq.symbol, nextvar, code, p,papply)
+    yyy(p, org, k + 1, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map,papply)
 
 function simpleparamap(s:seq.symbol, t:seq.int, pmap:worddict.seq.symbol, i:int)worddict.seq.symbol
  if i = 0 then pmap
  else
   simpleparamap(s, t, add(pmap, toword.i, subseq(s, t_i, t_(i + 1) - 1)), i - 1)
 
-function expandinlineX(s:seq.symbol, t:seq.int, pmap:worddict.seq.symbol, i:int, newcode:seq.symbol, nextvar:int, inlinecode:seq.symbol, p:program)expandresult
+function expandinlineX(s:seq.symbol, t:seq.int, pmap:worddict.seq.symbol, i:int, newcode:seq.symbol, nextvar:int, 
+inlinecode:seq.symbol, p:program,papply:boolean)expandresult
  // when i > 0 then assigning parameters to new local variables //
  if i = 0 then
- let r = yyy(p, inlinecode, 1, empty:seq.symbol, nextvar, pmap)
+ let r = yyy(p, inlinecode, 1, empty:seq.symbol, nextvar, pmap,papply)
    expandresult(nextvar.r, newcode + code.r)
  else
-  expandinlineX(s, t, add(pmap, toword.i, [ var.nextvar]), i - 1, subseq(s, t_i, t_(i + 1) - 1) + Define.toword.nextvar + newcode, nextvar + 1, inlinecode, p)
+  expandinlineX(s, t, add(pmap, toword.i, [ var.nextvar]), i - 1, subseq(s, t_i, t_(i + 1) - 1) + Define.toword.nextvar + newcode, nextvar + 1, inlinecode, p,papply)
 
 
 
@@ -310,17 +233,19 @@ function dfg(s:symbol)seq.word
    [ a, if a ∈ "$define local"then first."?"else first.fsig.s]
 
 
-
+function subapply( thunk:seq.symbol,    e:symbol,i:symbol,acc:symbol ) seq.symbol
+  thunk @ +(empty:seq.symbol,
+   if  length.module.@e &le 1 &or last.module.@e &ne "builtin"_1  then @e 
+        else if  fsig.@e="@e"  then e
+        else if  fsig.@e="@i"  then i
+        else if fsig.@e="@acc"  then acc
+        else @e)
+  
 function simpleAcc(thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:symbol
 ,newmasteridx:symbol) breakresult
    let acc = Local(lastvar +1)
    let masteridx1 = Local(lastvar +2)
-   let x2=  thunk @+( empty:seq.symbol,  
-      if not.isabstractbuiltin.@e then @e
-        else if  fsig.@e="@e"  then seqelement
-        else if  fsig.@e="@i"  then masteridx1
-        else if fsig.@e="@acc"  then acc
-        else @e)
+   let x2=   subapply(thunk,seqelement,masteridx1,acc ) 
     breakresult([ Lit.1,Lit.lastvar,Loopblock("ptr," + resulttype + ", int,  int)")],
         x2+ [  newmasteridx, continue.3],
      [acc],
@@ -342,7 +267,7 @@ function simpleAcc(thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:s
           
    
  function breakAccumalator(p:program,thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:symbol
-,newmasteridx:symbol) breakresult
+,newmasteridx:symbol,papply:boolean) breakresult
  //  lastvar+1 to lastvar+nopara.last.code are accumalators //
  //  lastvar+1+nopara.last.code lastvar+nopara.last.code+nopara.accfunc-1 are location of parameters for lastvar //
  let accfunc=last.thunk
@@ -357,12 +282,10 @@ let mylist=if isempty.code &or not.isrecord.last.code   then "" else
  let x= mylist @ add(emptyworddict:worddict.seq.symbol ,   @e, [Local.( lastvar+@i)]) 
 let pmap= paratypes.accfunc << 1 @ add(x , toword.(@i+1), [Local.( masteridx+@i)]) 
   let nextvar=   masteridx+nopara.accfunc 
-   let r = yyy(p, subseq(code,4 * length.mylist+1,length.code-1), 1, empty:seq.symbol, nextvar, pmap)
-    let thunkcode=    subseq(thunk,2,length.thunk-1)  @+( empty:seq.symbol,  
-      if not.isabstractbuiltin.@e then @e
-        else if  fsig.@e="@e"  then seqelement
-        else if  fsig.@e="@i"  then Local.masteridx
-        else  @e)+
+   let r = yyy(p, subseq(code,4 * length.mylist+1,length.code-1), 1, empty:seq.symbol, nextvar, pmap,papply)
+    let thunkcode=      
+      subapply(subseq(thunk,2,length.thunk-1) ,seqelement,Local.masteridx,Lit.0 ) 
+      +
         arithseq(nopara.accfunc-1,-1,nextvar-1) @+( empty:seq.symbol, 
          Define.toword(@e))+code.r + newmasteridx+continue.(length.mylist+2)    
     let orgacc=   nextvar.r
@@ -381,9 +304,8 @@ function print(b:breakresult) seq.word
   +EOL+"nextvar:"+print.nextvar.b
    
    
-
-function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol)expandresult
- let totallength = nextvar + 1
+function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol,papply:boolean)expandresult
+  let totallength = nextvar + 1
  let applysym = org_k
  let ds=(typerep.parameter.(paratypes.applysym)_1)_1
 //   assert  code_-1 =Lit.0   report  print.code_-1+ ds  +print.org //
@@ -405,27 +327,23 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
   let sym = code_(exitstart-1)
  let t = backparse(code, exitstart - 2, nopara.sym, empty:seq.int)
  let thunk0 = subseq(code,t_1,exitstart-1) 
-// assert code_-1 =Lit.0 &or print.exitexp &in ["%1 @e()builtin.int =(int, int)builtin",
- "%1 @e()builtin.ptr =(myinternaltype, myinternaltype)symbol"
- ]
-  report "thunk0"+print.thunk0 +EOL+"exitexp:"+print.exitexp //
-  let checknoop = if length.thunk0 = 10 &and exitexp=[Lit.0] 
-  ∧ thunk0 @ +("", dfg.@e)
-  = "builtin @acc $define ? builtin @e $define ? % $int 0 $int 1 % $record RECORD seq +"then
-     let b2 = backparse(code, t_1 - 1, 2, empty:seq.int)
+// assert false report "XXX"+thunk0 @ +("", dfg.@e)+EOL+thunk0 @+("",print.@e)+EOL+toword.length.thunk0
+//  let checknoop = if length.thunk0 &in[ 10,6] &and exitexp=[Lit.0] 
+     ∧ thunk0 @ +("", dfg.@e)  &in[ "builtin @acc $define ? builtin @e $define ? % $int 0 $int 1 % $record RECORD seq +"
+   ,"builtin @acc $int 0 $int 1 builtin @e $record RECORD seq +"]
+   then
+      let b2 = backparse(code, t_1 - 1, 2, empty:seq.int)
      if subseq(code, b2_1, b2_2 - 1) = [ Constant2.Emptyseq]then subseq(code, 1, b2_1 - 1)
     else empty:seq.symbol
   else empty:seq.symbol
-   if not.isempty.checknoop then yyy(p, org, k + 1, checknoop, nextvar, map)
+   if not.isempty.checknoop then   yyy(p, org, k + 1, checknoop, nextvar, map,papply)
    else
        let part1 = subseq(code, 1, t_1 - 1) + [ Lit.1, Idx."int"_1, Define.totallength]
-     let codeparts= breakAccumalator(p ,thunk0,resulttype, value.theseq,seqelement,newmasteridx) 
+     let codeparts= breakAccumalator(p ,thunk0,resulttype, value.theseq,seqelement,newmasteridx,papply) 
      let masteridx=masteridx.codeparts
-      let exitexp2=if exitexp=[Lit.0] then empty:seq.symbol else  exitexp @ +(empty:seq.symbol,
-         if not.isabstractbuiltin.@e then @e
-        else if  fsig.@e="@e"  then seqelement
-        else if  fsig.@e="@i"  then masteridx
-        else  @e) +[ Lit.2 ,Lit.3, Br, Local.totallength , Lit.1,PlusOp,Exit,newmasteridx,Exit,  Block(typeint,3)]
+      let exitexp2=if exitexp=[Lit.0] then empty:seq.symbol else   
+       subapply( exitexp,seqelement,masteridx,Lit.0 )
+       +[ Lit.2 ,Lit.3, Br, Local.totallength , Lit.1,PlusOp,Exit,newmasteridx,Exit,  Block(typeint,3)]
   //   assert false report "JJ"+print.exitexp2+"??"+print.exitexp   //
       let thunkcode=   if isempty.exitexp2 then thunkcode.codeparts
            else let a= thunkcode.codeparts
@@ -455,7 +373,7 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
         + thunkcode+
  [   Block(mytype.resulttype, 4)]
    //  assert length.finalcode.codeparts=1 report  "check apply"+ print.codeparts+EOL+print.(part1+kk)
-   //    yyy(p, org, k + 1, part1 + kk, nextvar.codeparts, map)
+   //    yyy(p, org, k + 1, part1 + kk, nextvar.codeparts, map,papply)
    
    // zz &in "seq char mytype int token templatepart  myinternaltype UTF8 encoding llvmtype
     Lcode2 slotrecord mapele liblib parc attribute2 prettyresult internalbc"  //
@@ -463,14 +381,13 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
         
          
    function  packedtype( ds:word) seq.symbol
-     let multOp=symbol("*(int,int)","standard","int")
              let GEP=symbol("GEP(T seq, int)","ptr builtin","ptr")
         if ds &in "bit" then   
                 [symbol("extractbit(T seq,int)","int builtin","T")]  
      else  if ds &in  "byte" then
                [symbol("extractbyte(T seq,int)","int builtin","T")]
       else  // element represented by multiple words //
-         [    Lit.toint.ds,multOp, Lit.2, PlusOp ,GEP]
+         [    Lit.toint.ds,MultOp, Lit.2, PlusOp ,GEP]
       
 
 
@@ -499,38 +416,35 @@ function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.
       if isdefined.r then processed
      else
       let rep2 = lookupcode(knownsymbols, sym2)
-       if length.code.rep2 > 0 then depthfirst(knownsymbols, alltypes, 1, pending + sym2, processed, code.rep2, sym2)else processed
-   depthfirst(knownsymbols, alltypes, i + 1, pending, newprg, code, s)
+       if length.code.rep2 > 0 then 
+       depthfirst(knownsymbols, alltypes, 1, pending + sym2, processed, code.rep2, sym2)else processed
+       depthfirst(knownsymbols, alltypes, i + 1, pending, newprg, code, s)
 
 ________________________________
-
-Function addoptions(code:seq.symbol, options:seq.word)seq.symbol
- if options = ""then code
- else
-  let codewithoutoptions = if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)
-  else code
-   codewithoutoptions + Words.options + Optionsym
-
-Function caloptions(p:program, code:seq.symbol, nopara:int, modname:seq.word, fsig:seq.word)seq.word
-  if fsig = "∈(int, int seq)"
+ 
+ 
+function addf(p:program,s:symbol,code0:seq.symbol) program
+let options = getoption.code0
+   let code=removeoptions.code0
+    let fsig=fsig.s
+let newoptions=  if fsig = "∈(int, int seq)"
   ∨ fsig = "∈(word, word seq)"
   ∨ fsig = "_(int seq, int)"
   ∨ fsig = "_(word seq, int)"then
   ""
   else
-   let options = getoption.code
-   let codeonly = if last.code = Optionsym then subseq(code, 1, length.code - 2)else code
-   let newoptions = options
-   + if"STATE"_1 ∉ options ∧ codeonly @ ∨(false, hasstate(p, @e))then"STATE"
-   else""
-    newoptions
-    + if"NOINLINE"_1 ∈ options ∨ length.code > 20 ∨ checkself(fsig, modname, codeonly)then
-    ""
-    else"INLINE"
-
-
-function checkself(fsig:seq.word, module:seq.word, s:seq.symbol)boolean s @ ∨(false, fsig = fsig.@e ∧ module = module.@e)
-
+    let state=    code @ state100(state100(false,false,false),p,@e,s)
+    options+(  if hasstate.state &and  "STATE"_1 &nin options  then "STATE" else "" )
+    +if length.code < 20 &and not.callsself.state &and "NOINLINE"_1 &nin options then "INLINE" else ""
+ // let options2=caloptions2(p,code0,s) 
+ let state=removeoptions.code0 @ state100(state100(false,false,false),p,@e,s)
+ assert options=options2 report "DIFF"+options+"/"+options2+EOL+print.s+code0 @+("",print.@e) 
+ +(if hasstate.state then "STATE" else "") 
+ +(if hasunknown.state then "UNKNOWN"else "") 
+ +(if callsself.state then "R"else "")  //
+      map(p, s, if newoptions = ""then code else code + Words.newoptions + Optionsym
+ )
+ 
 
 
 // statebit is set on option so that adding an option doesn't auto add a inline bit //
@@ -554,10 +468,80 @@ function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boo
 ---------------------------
 
 Function pass2(placehold:program, alltypes:typedict)program 
-let bin=  toseq.toset.placehold @+(empty:seq.symbol,     
- let  d=lookupcode(placehold,@e)
-   if  "BUILTIN"_1 &in getoption.code.d then [@e] else empty:seq.symbol )
-toseq.toset.placehold @ depthfirst(program.asset.bin, placehold, alltypes, @e)
+let bin0=  toseq.toset.placehold @ filterp(filterp(emptyprogram,emptyprogram ), @e
+,     code.lookupcode(placehold,@e),alltypes)
+let bin=  toseq.toset.complex.bin0 @ filterp(filterp(emptyprogram,simple.bin0 ), @e
+,     code.lookupcode(complex.bin0,@e),alltypes)
+  //  assert false report checkt( bin0)
+           assert false report print.length.toseq.toset.complex.bin + print.length.toseq.toset.simple.bin  
+  //     toseq.toset.complex.bin   @ depthfirst(simple.bin, placehold, alltypes, @e)
+
+function checkt(s:filterp) seq.word
+  let t1 =toseq.toset.complex.s @+(empty:seq.symbol,    let t=code.lookupcode(complex.s,@e)
+     if length.t < 20 then t else empty:seq.symbol)
+   "CHECK"+toseq.asset.t1 @+("" ,  //  if isconst.@e &or isspecial.@e &or islocal.@e then "" else   print.@e ) //
+   if xyy(simple.s,@e) then  print.@e else "")
+    
+    function xyy(p:program,s:symbol) boolean
+      hasunknown([s] @ state100(state100(false,false,false),p,@e,Lit.0))
+
+ toseq.toset.complex.bin  @ xxx(simple.bin,alltypes,@e)
+  
+type filterp is  record complex:program,simple:program 
+ 
+function  filterp(p:filterp,s:symbol,code:seq.symbol, alltypes:typedict) filterp
+  let complex= complex.p let simple= simple.p  
+ let options=getoption.code 
+ if isempty.code &or  "BUILTIN"_1 &in options &or "VERYSIMPLE"_1 &in options 
+    &or "ABSTRACTBUILTIN"_1 &in options then
+     filterp(complex,map(simple,s,code) ) 
+ else 
+     if length.code < 30 then
+        // 10 is choosen to be min size of code with apply3 //
+      let nopara=nopara.s
+      let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
+      let code2 = code.yyy(simple, code, 1, empty:seq.symbol, nopara + 1, pdict,false)
+      if  (length.code2=3 &and code2_1=Local.1 &and fsig(code2_3)_1="IDX"_1 &and isconst.code2_2) 
+      &or (length.code2=1 &and nopara=1 &and  code2_1=Local.1 )  then 
+        filterp(complex,map(simple,s,code2+[ Words."VERYSIMPLE", Optionsym]) )
+     else
+        let state=   removeoptions.code2 @ state100(state100(false,false,false),simple,@e,s)
+        if  hasunknown.state then 
+            filterp( addf  (complex, s, code),simple ) 
+        else 
+            filterp( complex, firstopt(simple,s,code2,alltypes))
+     else  
+      filterp(map(complex,s,code),simple )
+      
+      
+      
+ 
+type state100 is record hasstate:boolean,hasunknown:boolean,callsself:boolean 
+       
+function state100(a:state100,p:program, s:symbol,self:symbol) state100
+        let state=hasstate.a
+        let unknown=hasunknown.a
+        let callsself=callsself.a
+    let options=  if  ( state &and unknown) &or isspecial.s &or isconst.s &or islocal.s &or s=self 
+     &or module.s="$define"  then ""
+      else if   fsig.s = "setfld(int, T seq, T)" &or module.s ="$global"  then "STATE" else
+              let d = lookupcode(p, s)
+        if  isdefined.d then  getoption.code.d else 
+      //  assert first.fsig.s &in "length = allocatespace * + - / seq8 replaceT lextable
+        gettypeinfo subflds empty bitstream to parts aborted _ IDX" report "U"+print.s  //
+         "undefined"   
+     state100(  state &or    "STATE"_1 &in options  , 
+         unknown &or "undefined"_1 &in options,
+           callsself     &or   self=s)
+         
+     
+
+ 
+  function  xxx(p:program,alltypes:typedict, s:symbol) program
+        let code=code.lookupcode(p,s)
+        if isempty.code then p
+        else 
+        firstopt(p , s, code, alltypes)     
 
 Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
 
