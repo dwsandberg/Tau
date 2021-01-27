@@ -217,13 +217,30 @@ function ispara(s:mytype)boolean
 
 Function istypeexport(s:symbol)boolean subseq(fsig.s, 1, 2) = "type:"
 
-Function isIdx(s:symbol)boolean  module.s="builtin" ∧ (fsig.s)_1 ∈ "IDX"
 
-Function Idx(kind:word)symbol symbol("IDX(T seq, int)", [ kind] + "builtin","T")
+Function Idx(kind:word)symbol 
+  if kind="int"_1 then IdxInt
+else   if kind="ptr"_1 then IdxPtr
+else   if kind="real"_1 then IdxReal
+else   assert kind="boolean"_1 report "unexpected type in Idx:"+kind
+IdxBoolean
 
+Function IdxInt symbol symbol("IDX2(int seq, int)",  " int abstractBuiltin","int")
+
+Function IdxPtr symbol symbol("IDX2(ptr seq, int)",  " ptr abstractBuiltin","ptr")
+
+Function IdxReal symbol symbol("IDX2(real seq, int)",  " real abstractBuiltin","real")
+
+Function IdxBoolean symbol symbol("IDX2(boolean seq, int)",  " boolean abstractBuiltin","boolean")
+
+ 
+ 
 Function Callidx(kind:word)symbol
  let t = if kind ∈ "int real"then [ kind]else"ptr"
   symbol("callidx2( T  seq, int)", t + "builtin", t)
+  
+   symbol("callidx("+t+" seq, int)", "$internal", t)
+
 
  
 Function Emptyseq seq.symbol [ Stdseq, Lit.0, symbol("RECORD(int, int)","$record","ptr", specialbit)]
@@ -368,6 +385,11 @@ Function basesym(s:symbol)symbol if module.s = "$fref"then(zcode.s)_1 else s
   
  Function getoption(code:seq.symbol)seq.word
  if isempty.code &or last.code ≠ Optionsym then empty:seq.word else fsig.code_(length.code - 1)
+ 
+  Function removeoptions(code:seq.symbol )seq.symbol
+  if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)
+  else code
+
 
 
 ------
@@ -408,7 +430,7 @@ Function addoption(p:program, s:symbol, option:seq.word)program
  let current = asset.getoption.code
   if current = asset.option then p
   else
-   let newcode = code + Words.toseq(current ∪ asset.option) + Optionsym
+   let newcode = removeoptions.code + Words.toseq(current ∪ asset.option) + Optionsym
     map(p, s, newcode)
 
  

@@ -1,16 +1,52 @@
+
+
+module $internal
+
+use seq.int
+
+use seq.real
+
+use seq.ptr
+
+use seq.boolean
+
+Builtin extractbit(seq.int,int) int
+
+Builtin extractbyte(seq.int,int) int
+
+Builtin GEP(seq.ptr, int) ptr
+
+Builtin callidx(seq.int,int) int 
+
+Builtin callidx(seq.real,int) real
+
+Builtin callidx(seq.ptr,int) ptr 
+ 
+Builtin setfld(int, seq.int, int) int
+
+Builtin setfld(int, seq.real, real) int
+
+Builtin setfld(int, seq.ptr, ptr) int
+
+Builtin setfld(int, seq.boolean, boolean) int
+
 module abstractBuiltin.T
 
 use seq.T
 
 Builtin IDX(seq.T, int)T
 
-/Builtin IDX2(seq.T, int)T
+Builtin IDX2(seq.T, int)T
 
 Builtin allocatespace:T(i:int)seq.T
 
 Builtin setfld(i:int, s:seq.T, val:T)int
 
+
+
 Builtin callidx2(a:seq.T, int)T
+
+Builtin callidx(a:seq.T, int)T
 
 
 module taubuiltinsupport.T
@@ -26,7 +62,6 @@ use seq.T
 use standard
 
 builtin setfirst(r:seq.T, fld0:int, fld1:int)seq.T
-
 
 builtin bitcast(blockseq.T)seq.seq.T
 
@@ -110,6 +145,26 @@ use encoding.typename
 use seq.byte
 
 use fileio
+
+use abstractBuiltin.ptr
+
+use abstractBuiltin.real
+
+use abstractBuiltin.int
+
+use abstractBuiltin.boolean
+
+
+type ptr is record xx:int
+
+Export IDX2(seq.ptr, int) ptr
+
+Export IDX2(seq.real, int) real
+
+Export IDX2(seq.boolean,int) boolean
+
+Export IDX2(seq.int,int) int 
+
 
 Builtin initialdict seq.encodingpair.seq.char
 

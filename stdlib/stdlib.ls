@@ -4,6 +4,7 @@ stdlib UTF8   bits codegennew codetemplates encoding fileio format   groupparagr
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
 pass1 pass2 breakblocks persistant postbind   process real seq set stack  symbol textio timestamp tree worddict words xxhash
  sparseseq standard maindict  outstream bitstream tausupport
+ basetypecheck
   tests/test11 tests/checking tests/point tests/testencoding  
  tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
  tests/testprocess tests/test5 tests/testseq
@@ -59,6 +60,8 @@ option.standard *(int,int) int COMPILETIME
 
 option.standard =(int,int) boolean COMPILETIME
 
+option.standard =(boolean,boolean) boolean COMPILETIME
+
 option.standard >(int,int) boolean COMPILETIME
 
 option.standard =(int,int) boolean COMPILETIME
@@ -71,13 +74,17 @@ option.bits  >>(a:bits, i:int)bits COMPILETIME
 
 option.bits  <<(a:bits, i:int)bits COMPILETIME
 
-option.real -(real,real) int COMPILETIME
+option.real -(real,real) real COMPILETIME
 
 option.seq.word +(seq.word,seq.word) seq.word COMPILETIME
 
 option.words merge(seq.word )  word COMPILETIME
 
 option.UTF8 makereal(seq.word) real COMPILETIME
+
+/option.abstractBuiltin.int IDX2(seq.int,int) int  COMPILETIME
+
+
 
 option.fileio getfile(name:cstr)fileresult STATE
 

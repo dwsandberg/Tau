@@ -50,12 +50,14 @@ Export wordref(w:word)int
 
 Export addliblib(libname:seq.word, mods:int, profiledata:int,isbase:boolean)int
 
-Function builtinlist seq.seq.word  ["+(real,real)","*(real,real)"
+Function isbuiltinlist(sym:symbol) boolean  
+ fsig.sym &in  ["+(real,real)","*(real,real)"
 ,"-(real,real)","/(real,real)","?(real,real)",">>(bits, int)","<<(bits, int)"
 ,"∧(bits, bits)","∨(bits, bits)","xor(bits, bits)","-(int,int)","+(int,int)","*(int, int)","/(int,int)" 
-,"=(int,int)",">(int,int)","?(int,int)"  ,"representation(real)", "casttoreal(int)","not(boolean)" 
+,"=(int,int)","=(boolean,boolean)",">(int,int)","?(int,int)"  ,"representation(real)", "casttoreal(int)","not(boolean)" 
 ,"toint(byte)","toint(bit)","toreal(int)","intpart(real)" ,"tocstr(bits seq)"
-,"bitcast(int seq)","bitcast(int)","false","true"]
+,"bitcast(int seq)","bitcast(int)","GEP(int seq, int)","false","true"]
+&or  module.sym="$internal"
 
 Function mangledname(s:symbol)word  mangle(fsig.s, module.s)
 
@@ -129,7 +131,7 @@ Function funcdec(alltypes:typedict, i:symbol)int
 
 Function match5map(
 theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
- let discard3 = [  addtemplate(symbol("extractbyte(T seq,int)","int builtin","T"),8,
+ let discard3 = [ addtemplate(symbol("extractbyte(int seq,int)","internal","int"),8,
     BINOP(r.1,ibcsub.2,C64.3,lshr)
    +BINOP(r.2,r.1,C64.2,add)
    + GEP(r.3, i64, ibcsub.1, r.2) 
@@ -139,7 +141,7 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
   +BINOP(r.7,r.4,r.6,lshr)
   +BINOP(r.8,r.7,C64.255,and)
   )
-  ,addtemplate(symbol("extractbit(T seq,int)","int builtin","T"),7,
+  ,addtemplate(symbol("extractbit(int seq,int)","internal","int"),7,
     BINOP(r.1,ibcsub.2,C64.6,lshr)
       +BINOP(r.2,r.1,C64.2,add)
    + GEP(r.3, i64, ibcsub.1, r.2) 
@@ -158,15 +160,16 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + STORE(r.3, r.2, ibcsub.2)
  + GEP(r.3, ptr.i64, r.1, C64.0))
  ,addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint))
- , // addtemplate(symbol("bitcast(int seq)","interpreter","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint))
- , addtemplate(symbol("bitcast(int)","interpreter","int seq"), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
+ ,  addtemplate(symbol("bitcast(int seq)","interpreter","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint))
+ , // addtemplate(symbol("GEP(int seq, int)","interpreter","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2)
+ +CAST(r.2, r.1, i64, ptrtoint))
+, addtemplate(symbol("bitcast(int)","interpreter","int seq"), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
  , addtemplate(symbol("IDX2(int seq, int)","int abstractBuiltin","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
- , addtemplate(symbol("IDX(T seq, int)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
- , addtemplate(symbol("IDX(T seq, int)","boolean builtin","boolean"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
- , addtemplate(symbol("IDX(T seq, int)","ptr builtin","ptr"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
- + CAST(r.3, r.2, ptr.i64, inttoptr))
- , addtemplate(symbol("IDX(T seq, int)","real builtin","real"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
- + CAST(r.3, r.2, double, bitcast))
+  , addtemplate(symbol("IDX2(boolean seq, int)","boolean abstractBuiltin","boolean"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplate(symbol("IDX2(ptr seq, int)","ptr abstractBuiltin","ptr"), 3, 
+   GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)+ CAST(r.3, r.2, ptr.i64, inttoptr))
+ , addtemplate(symbol("IDX2(real seq, int)","real abstractBuiltin","real"), 3, 
+ GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)+ CAST(r.3, r.2, double, bitcast))
  ,  addtemplate(symbol("intpart(real)","real","real"), 1, CAST(r.1, ibcsub.1, i64, fptosi))
  , addtemplate(symbol("toreal(int)","real","real"), 1, CAST(r.1, ibcsub.1, double, sitofp))
  , addtemplate(symbol("-(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
@@ -183,9 +186,10 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + CMP2(r.3, ibcsub.1, ibcsub.2, 38)
  + CAST(r.4, r.3, i64, zext)
  + BINOP(r.5, r.2, r.4, add))
-  , addtemplate(symbol("GEP(T seq, int)","ptr builtin","ptr"), 1, GEP(r.1, i64, ibcsub.1, ibcsub.2))
- , addtemplate(symbol("not(boolean)","standard","boolean"), 1, BINOP(r.1, ibcsub.1, C64.1, xor))
+   , addtemplate(symbol("GEP(ptr seq, int)","internal","ptr"), 1, GEP(r.1, i64, ibcsub.1, ibcsub.2))
+  , addtemplate(symbol("not(boolean)","standard","boolean"), 1, BINOP(r.1, ibcsub.1, C64.1, xor))
  , addtemplate(symbol(">(int, int)","standard","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 38) + CAST(r.2, r.1, i64, zext))
+ , addtemplate(symbol("=(boolean, boolean)","standard","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext))
  , addtemplate(symbol("=(int, int)","standard","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext))
 ,  addtemplate(symbol("-(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
  ,addtemplate(symbol("+(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, add))
@@ -208,9 +212,17 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + GEP(r.2, i64, ibcsub.1, C64.0)
  + STORE(r.3, r.2, ibcsub.2)
  + GEP(r.3, i64, ibcsub.1, C64.0))
- , addtemplate(symbol("setfld(int, T seq, T)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
+  , addtemplate(symbol("setfld(int, int seq, int)","$internal","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
  + BINOP(r.2, ibcsub.1, C64.1, add))
- , addtemplate(symbol("setfld2(int, int seq, int)","int nnn","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
+ , addtemplate(symbol("setfld(int, boolean seq, boolean)","$internal","boolean"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
+ + BINOP(r.2, ibcsub.1, C64.1, add))
+ , addtemplate(symbol("setfld(int, real seq, real)","$internal","int"), 3, CAST(r.1, ibcsub.3, i64, bitcast) + GEP(r.2, i64, ibcsub.2, ibcsub.1)
+ + STORE(r.3, r.2, r.1)
+ + BINOP(r.3, ibcsub.1, C64.1, add))
+  , addtemplate(symbol("setfld(int, ptr seq, ptr)","$internal","int"), 3, CAST(r.1, ibcsub.2, ptr.ptr.i64, bitcast) + GEP(r.2, ptr.i64, r.1, ibcsub.1)
+ + STORE(r.3, r.2, ibcsub.3)
+ + BINOP(r.3, ibcsub.1, C64.1, add))
+, addtemplate(symbol("setfld(int, T seq, T)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
  + BINOP(r.2, ibcsub.1, C64.1, add))
 , addtemplate(symbol("setfld(int, T seq, T)","boolean builtin","boolean"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
  + BINOP(r.2, ibcsub.1, C64.1, add))
@@ -265,6 +277,24 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + CALL(r.4, 0, 32768, function.[ double, i64, ptr.i64, i64], r.3, 
   slot.ibcfirstpara2, [ibcsub.1, ibcsub.2]))
 , addtemplate(symbol("callidx2(T seq,int) ","ptr builtin","ptr"),4
+ , GEP(r.1, i64, ibcsub.1, C64.0) 
+ + LOAD(r.2, r.1, i64) 
+ + CAST(r.3, r.2, ptr.function.[  ptr.i64, i64,ptr.i64, i64], inttoptr)
+ + CALL(r.4, 0, 32768, function.[ ptr.i64, i64, ptr.i64, i64], r.3, 
+  slot.ibcfirstpara2, [ibcsub.1, ibcsub.2]))  
+ ,     addtemplate(symbol("callidx(int seq,int)","$internal","int"),4
+ , GEP(r.1, i64, ibcsub.1, C64.0) 
+ + LOAD(r.2, r.1, i64) 
+ + CAST(r.3, r.2, ptr.function.[  i64, i64,ptr.i64, i64], inttoptr)
+ + CALL(r.4, 0, 32768, function.[ i64, i64, ptr.i64, i64], r.3, 
+  slot.ibcfirstpara2 , ibcsub.1, ibcsub.2 ))
+, addtemplate(symbol("callidx(real seq,int) ","$internal","real"),4
+ , GEP(r.1, i64, ibcsub.1, C64.0) 
+ + LOAD(r.2, r.1, i64) 
+ + CAST(r.3, r.2, ptr.function.[  double, i64,ptr.i64, i64], inttoptr)
+ + CALL(r.4, 0, 32768, function.[ double, i64, ptr.i64, i64], r.3, 
+  slot.ibcfirstpara2, [ibcsub.1, ibcsub.2]))
+, addtemplate(symbol("callidx(ptr,int) ","$internal","ptr"),4
  , GEP(r.1, i64, ibcsub.1, C64.0) 
  + LOAD(r.2, r.1, i64) 
  + CAST(r.3, r.2, ptr.function.[  ptr.i64, i64,ptr.i64, i64], inttoptr)

@@ -286,9 +286,9 @@ function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:in
       , offset
       , map(prg
       , this
-      , [ Local.1, Lit.knownoffset, Idx
-      .if fldtype = mytype."real"then"real"_1
-      else if abstracttype.fldtype ∈ "seq"then"ptr"_1 else"int"_1]))
+      , [ Local.1, Lit.knownoffset,  
+      if fldtype = mytype."real"then IdxReal else if abstracttype.fldtype ∈ "seq"then IdxPtr else IdxInt 
+      ]))
      else
       let newoffset = if offsetinc = 0 then
       if isempty.offset  then typerep.fldtype else offset + "," + typerep.fldtype
@@ -336,7 +336,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
      let prg0 = fldcode(constructor, [ indexfunc], fldsyms, 1, 1,"", prg1)
      let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]
      let prg = map(prg0, symtoseq, [ Local.1])
-     let prg2 = map(prg, symfromseq, [ Local.1, Lit.0, Idx."int"_1, indexfunc, EqOp, Lit.2, Lit.3, Br, Local.1, Exit] + Emptyseq
+     let prg2 = map(prg, symfromseq, [ Local.1, Lit.0, IdxInt, indexfunc, EqOp, Lit.2, Lit.3, Br, Local.1, Exit] + Emptyseq
      + [ Exit, Block(typeptr, 3)])
       firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, types.f + it, prg2)
     else
@@ -358,7 +358,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
      let prg1 = if input_1 ∈ "Builtin builtin"then
      let code2 = if fsig.sym = "empty:seq.T"then Emptyseq + [ Words."VERYSIMPLE", Optionsym]
       else if fsig.sym = "getseqtype(T seq)"then
-      [ Local.1, Lit.0, Idx."int"_1, Words."VERYSIMPLE", Optionsym]
+      [ Local.1, Lit.0, IdxInt, Words."VERYSIMPLE", Optionsym]
       else if fsig.sym = "aborted(T process)"then
       [ Local.1, symbol("aborted(T process)","builtin","boolean")]
       else if fsig.sym="true" then
@@ -368,7 +368,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
         else
        arithseq(length.paratypes, 1, 1) @ +(empty:seq.symbol, Local.@e)
        +   if length.module.sym = 1 then [sym,Words."BUILTIN", Optionsym]
-             else if fsig.sym &in  ["setfld2(int, T seq, T)"," IDX2(T seq, int) "] then
+             else if fsig.sym &in  [" IDX2(T seq, int) "] then
                       [sym,Words."ABSTRACTBUILTIN", Optionsym]  
             else 
          //    assert fsig.sym &in ["getinstance:encodingstate.T","packed(T seq)","primitiveadd(int, T encodingpair)"

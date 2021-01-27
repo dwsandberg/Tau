@@ -64,6 +64,8 @@ use set.seq.word
 
 use set.word
 
+use baseTypeCheck
+
 /use maindict
 
 /Function loaddictionary(file:fileresult)int
@@ -94,6 +96,8 @@ function subcompilelib(option:seq.word, libname :seq.word)seq.seq.word
      let uses = uses(prg4, asset.roots.link + libdesc)
      let defines = defines(prg4, uses - compiled.link)
       if option = "pass2"then defines @ +(empty:seq.seq.word, print(prg4, @e))
+      else if option ="baseTypeCheck" then 
+       toseq.toset.prg4 @ +(["base type check"], baseTypeCheck(alltypes.link, prg4,@e))  
       else
        let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link,isempty.dependentlibs)
        let z2 = createlib(bc, last.libname, dependentlibs)

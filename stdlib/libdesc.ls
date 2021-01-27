@@ -17,7 +17,7 @@ use otherseq.mytype
 
 use set.mytype
 
-use process.parc
+use seq.parc
 
 use standard
 
@@ -86,10 +86,7 @@ function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)
     else z
     symbol(fsig.sym, module.sym, returntype.sym, cleansym + code)
    
-    function removeoptions(code:seq.symbol )seq.symbol
-  if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)
-  else code
-
+  
   
 ----------------------------------
 

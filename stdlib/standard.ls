@@ -68,7 +68,7 @@ Builtin =(a:int, b:int)boolean
 
 Function =(a:ordering, b:ordering)boolean toint.a = toint.b  
 
-Function =(a:boolean, b:boolean)boolean  (a &and b) &or (not.a &and not.b)
+Builtin =(a:boolean, b:boolean)boolean  // (a &and b) &or (not.a &and not.b) //
 
 if a then if b then  true else false else if b then false else  true
 
@@ -297,7 +297,7 @@ Export >> (s:seq.word , i:int) seq.word
 exclude standard seq
 
 * usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict 
-exclude standard seq
+tausupport exclude standard seq
 
 * usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 
 persistant llvm postbind reconstruct persistantseq opt2 symbol parse libdesc internalbc 

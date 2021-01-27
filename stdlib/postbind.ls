@@ -29,6 +29,9 @@ function postbind(alltypes:typedict, dict:set.symbol, working:set.symbol, toproc
   let w = working + s
    if cardinality.w = cardinality.working then postbind(alltypes, dict, w, toprocess, i + 1, result, sourceX, tempX)
    else
+  //   if  (fsig.s)_1 &in "indexseq" then 
+         postbind(alltypes, dict, w, toprocess, i + 1, result, sourceX, tempX)
+    else //
     let lr1 = lookupcode(sourceX, s)
      assert isdefined.lr1 report"postbind:expected to be defined:" + print.s
        if   "BUILTIN"_1 &in getoption.code.lr1 then 
@@ -72,9 +75,7 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
        let p2 = if isfref then Fref.target.xx4 else target.xx4
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls + target.xx4, sourceX, tempX)
      else if "ABSTRACTBUILTIN"_1 ∈ options &or isabstractbuiltin.sym then
-      //  assert "ABSTRACTBUILTIN"_1 ∈ options &or fsig.sym &in ["@e","@acc","@i","assert(word seq)"]
-         &or (fsig.sym)_1 &in "apply3 kindrecord IDX GEP option" report "XXX"+print.sym //
-        codeforbuiltin(alltypes , dict ,code ,i ,result ,isfref ,newsym , sym ,  org ,modpara ,calls ,sourceX ,tempX ) 
+         codeforbuiltin(alltypes , dict ,code ,i ,result ,isfref ,newsym , sym ,  org ,modpara ,calls ,sourceX ,tempX ) 
      else if subseq(fsig.sym, 1, 2) = "type:"then
      let p2 = definedeepcopy(alltypes, resulttype.newsym, org)
        // assert false report"XXX"+ print.newsym //
@@ -140,7 +141,7 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol,code:seq.symbol,i:int
        let resultinfo = gettypeinfo(alltypes, replaceT(modpara, resulttype.sym))
        let p2 = if size.resultinfo = 1 then [ Lit.offset, Idx.kind.resultinfo]
        else
-        [ Lit.offset,   symbol("GEP(T seq, int)","ptr builtin","ptr")]
+        [ Lit.offset,   symbol("GEP(ptr seq, int)","internal","ptr")]
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
       else if(fsig.sym)_1 ∈ "build"then
       let c = paratypes.sym @ +(empty:seq.seq.mytype, subflds(alltypes, modpara, @e))
@@ -168,17 +169,25 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol,code:seq.symbol,i:int
       else if fsig.sym=" indexseq(T seq, int)" then
           let  elementtype=parameter.modname.newsym
            let p2=if elementtype=mytype."byte" then
-            [symbol("extractbyte(T seq,int)","int builtin","T")]
+            [symbol("extractbyte(int seq,int)","internal","int")]
           else if elementtype=mytype."bit" then
-             [symbol("extractbit(T seq,int)","int builtin","T")]
+             [symbol("extractbit(int seq,int)","internal","int")]
           else 
+            let  info=gettypeinfo(alltypes, elementtype)
             let size=size.gettypeinfo(alltypes, elementtype)
-                  [Lit.size,MultOp,Lit.2,PlusOp,symbol("GEP(T seq, int)","ptr builtin","ptr")]
+                  [Lit.size,MultOp,Lit.2,PlusOp,symbol("GEP(ptr seq, int)","internal","ptr")]
           postbind3(alltypes, dict, code, i + 1,result + p2, modpara, org, calls, sourceX, tempX)
- else if fsig.sym ∈ ["setfld2(int, T seq, T)"," IDX2(T seq, int) " ] then
+  else if   (fsig.sym)_1  &in "callidx " then
+      let  sym2=  replaceTsymbol(mytype.[kind.gettypeinfo(alltypes, parameter.modname.newsym)],sym)
+       let p2=    symbol(fsig.sym2,"$internal",returntype.sym2)
+          postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
+ else if fsig.sym ∈ [" IDX2(T seq, int) " ] then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
           postbind3(alltypes, dict, code, i + 1, result + replaceTsymbol(mytype.[kind],sym), modpara, org, calls, sourceX, tempX)
- else if(fsig.sym)_1 ∈ "Assert assert callidx @e @i @acc IDX callidx2  GEP extractbyte extractbit"
+else if fsig.sym ="IDX(T seq, int)" then 
+   let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
+         postbind3(alltypes, dict, code, i + 1, result + Idx.kind, modpara, org, calls, sourceX, tempX)
+ else if(fsig.sym)_1 ∈ "Assert assert callidx @e @i @acc   callidx2  GEP extractbyte extractbit"
       ∨ fsig.sym ∈ ["setfld(int, T seq, T)","setfirst(T seq, int, int)"]then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let p2 = symbol(fsig.sym, [ kind] + "builtin", returntype.newsym)
@@ -219,16 +228,15 @@ function blocksym(info:typeinfo)seq.symbol
 
 function encodenocode(typ:mytype)seq.symbol
  let gl = symbol("global:" + print.typ,"$global","int seq")
- let setfld = symbol("setfld(int, T seq, T)","int builtin","int")
+ let setfld = symbol("setfld(int, int seq, int)","$internal","int")
  let encodenosym = newsymbol("encodingno", mytype."tausupport", [ mytype."word seq"], typeint)
- let IDXI = Idx."int"_1
-  if typ = mytype."typename"then [ Lit.0, gl, Lit.2, setfld, Define."xx", gl, Lit.0, IDXI]
+ if typ = mytype."typename"then [ Lit.0, gl, Lit.2, setfld, Define."xx", gl, Lit.0, IdxInt]
   else if typ = mytype."char seq"then
-  [ Lit.0, gl, Lit.1, setfld, Define."xx", gl, Lit.0, IDXI]
+  [ Lit.0, gl, Lit.1, setfld, Define."xx", gl, Lit.0, IdxInt]
   else
-   [ gl, Lit.0, IDXI, Lit.0, EqOp, Lit.3, Lit.2, Br, gl, Lit.0
-   , IDXI, Exit, Lit.0, gl, Words.typerep.typ, encodenosym, setfld, Define."xx", gl, Lit.0
-   , IDXI, Exit, Block(typeint, 3)]
+   [ gl, Lit.0, IdxInt, Lit.0, EqOp, Lit.3, Lit.2, Br, gl, Lit.0
+   , IdxInt, Exit, Lit.0, gl, Words.typerep.typ, encodenosym, setfld, Define."xx", gl, Lit.0
+   , IdxInt, Exit, Block(typeint, 3)]
 
 function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
  if abstracttype.type ∈ "encoding int word"then [ Local.1]

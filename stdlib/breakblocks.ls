@@ -21,15 +21,31 @@ use otherseq.block
 
 Function print(s:seq.symbol)seq.word s @ +("", print.@e)
 
-Function hasstate(p:program, s:symbol)boolean
- if isconstantorspecial.s then false
- else if fsig.s = "_(int seq, int)" ∨ fsig.s = "_(word seq, int)"then
- false
- else
-  let d = lookupcode(p, s)
-   if isdefined.d then"STATE"_1 ∈ getoption.code.d else 
-       fsig.s = "setfld(int, T seq, T)" 
         
+Function state100(s:seq.symbol,p:program,self:symbol) state100      s @ state100(state100(false,false,false),p,@e,self) 
+ 
+type state100 is record hasstate:boolean,hasunknown:boolean,callsself:boolean 
+
+Export hasstate(state100) boolean
+
+Export hasunknown(state100) boolean
+
+Export callsself(state100) boolean
+
+      
+function state100(a:state100,p:program, s:symbol,self:symbol) state100
+        let state=hasstate.a
+        let unknown=hasunknown.a
+        let callsself=callsself.a
+    let options=  if  ( state &and unknown) &or isspecial.s &or isconst.s &or islocal.s &or s=self 
+     &or module.s="$define"  then ""
+      else if   (fsig.s)_1 &in "setfld" &or module.s ="$global"  then "STATE" else
+              let d = lookupcode(p, s)
+        if  isdefined.d then  getoption.code.d else 
+         "undefined"   
+     state100(  state &or    "STATE"_1 &in options  , 
+         unknown &or "undefined"_1 &in options,
+           callsself     &or   self=s)
 
 type block is record kind:word, blkno:int, label1:int, label2:int, code:seq.symbol, subblks:seq.block
 
@@ -154,7 +170,7 @@ function checkforcase(p:program, blk:block)seq.symbol
  else
   let t = backparse2(code.blk, length.code.blk - 5, 1, empty:seq.int)
   let exp = subseq(code.blk, t_1, length.code.blk - 5)
-   if exp @ ∨(false, hasstate(p, @e))then empty:seq.symbol else exp
+   if // exp @ ∨(false, hasstate(p, @e)) // hasstate.state100(exp,p,Lit0) then empty:seq.symbol else exp
    
 function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
  if no = 0 then result

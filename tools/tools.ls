@@ -1,4 +1,7 @@
-#!/usr/local/bin/tau  ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau  ; use main2 ;   print.compile("baseTypeCheck","stdlib")
+
+
+; use doc ; doclibrary."stdlib"
 
 
 ; use doc ; doclibrary."stdlib"

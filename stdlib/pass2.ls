@@ -147,9 +147,9 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
          let newconst=if length.newcode > 1 then Constant2.newcode else first.newcode
            yyy(p, org, k + 1, result >> nopara + newconst, nextvar, map, papply)
      else if  "INLINE"_1 ∈ options  &or first."VERYSIMPLE" ∈ options then
-     let code = if last.dd = Optionsym then subseq(dd, 1, length.dd - 2)else dd
+     let code = removeoptions.dd
        if isempty.code then yyy(p, org, k + 1, result + sym, nextvar, map, papply)
-       else inline(p, org, k, result, nextvar, nopara, code, map, getoption.dd,papply)
+       else inline(p, org, k, result, nextvar, nopara, code, map, options,papply)
      else  if nopara = 1 &and isconst.result_len then
       // one constant parameter //
        if sym = symbol("toword(int)","UTF8","word")then
@@ -167,8 +167,8 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
        // two parameters with constant args //
        // should add case of IDXUC with record as first arg //
          // two parameters with constant args //
-           assert   module.sym &in ["word seq", "char seq","int seq","Tpair seq"] 
-          report "here pass2"+print.sym
+          // assert   module.sym &in ["word seq", "char seq","int seq","Tpair seq"] 
+          report "here pass2"+print.sym //
         let idx = value.result_len
          let arg1 = result_(len - 1)
           if module.arg1 = "$words" ∧ between(idx, 1, length.fsig.arg1)then
@@ -258,13 +258,28 @@ function simpleAcc(thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:s
        else if i mod 4 =0 then
          if isdefine.s then result+(fsig.s)_2 else "fail"
         else      
-         if   s &in [ [Local.1],[Lit.(i / 4)],[symbol("IDX(T seq, int)","int builtin","int"),
-         symbol("IDX(T seq, int)","real builtin","real"),
-         symbol("IDX(T seq, int)","ptr builtin","ptr"),
-         symbol("IDX(T seq, int)","boolean builtin","boolean")
-         ]]_(i mod 4) then
+         if   s &in [ [Local.1],[Lit.(i / 4)],[IdxInt,IdxReal,IdxPtr,IdxBoolean     ]]_(i mod 4) then
           result  else "fail"
           
+type compoundAC is record state:word,result:seq.symbol,fldno:int 
+
+    
+function chkAcc(a:compoundAC,next:symbol,fldvar:seq.symbol) compoundAC
+    let state=state.a 
+     let newstate=  if state="start"_1 then
+        if next=Local.1 then "local1"_1
+        else  "start"_1
+     else if state="local1"_1 then 
+        if  not.islit.next then "fail"_1
+        else   
+         "idx"_1
+     else if state ="idx"_1 then if next &in [IdxInt,IdxReal,IdxPtr] then "start"_1 else "fail"_1
+      else "fail"_1
+     let newresult=if newstate="start"_1 then
+         if state="start"_1 then  result.a+next
+         else   result.a +   fldvar_(fldno.a +1)
+         else result.a    
+    compoundAC(newstate,newresult, if islit.next then value.next else fldno.a)
    
  function breakAccumalator(p:program,thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:symbol
 ,newmasteridx:symbol,papply:boolean) breakresult
@@ -273,25 +288,26 @@ function simpleAcc(thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:s
  let accfunc=last.thunk
 let  ttt=lookupcode(p,last.thunk)
 let code=removeoptions.code.ttt
-let mylist=if isempty.code &or not.isrecord.last.code   then "" else
-      let t=code @  checkCompoundAcc("", @e,@i,nopara.last.code)
-      if "fail"_1 &in t then "" else t
- if isempty.mylist then simpleAcc(thunk,resulttype,lastvar,seqelement,newmasteridx )
+if isempty.code &or not.isrecord.last.code then simpleAcc(thunk,resulttype,lastvar,seqelement,newmasteridx )
+else 
+   let noAccumlators=nopara.last.code
+       let mylist= code @  checkCompoundAcc("", @e,@i,noAccumlators)
+ if  "fail"_1 &in  mylist  then simpleAcc(thunk,resulttype,lastvar,seqelement,newmasteridx )
  else 
- let masteridx=lastvar+length.mylist+1
  let x= mylist @ add(emptyworddict:worddict.seq.symbol ,   @e, [Local.( lastvar+@i)]) 
+  let masteridx=lastvar+noAccumlators+1
 let pmap= paratypes.accfunc << 1 @ add(x , toword.(@i+1), [Local.( masteridx+@i)]) 
   let nextvar=   masteridx+nopara.accfunc 
-   let r = yyy(p, subseq(code,4 * length.mylist+1,length.code-1), 1, empty:seq.symbol, nextvar, pmap,papply)
+   let r = yyy(p, subseq(code,4 * noAccumlators+1,length.code-1), 1, empty:seq.symbol, nextvar, pmap,papply)
     let thunkcode=      
       subapply(subseq(thunk,2,length.thunk-1) ,seqelement,Local.masteridx,Lit.0 ) 
       +
         arithseq(nopara.accfunc-1,-1,nextvar-1) @+( empty:seq.symbol, 
-         Define.toword(@e))+code.r + newmasteridx+continue.(length.mylist+2)    
+         Define.toword(@e))+code.r + newmasteridx+continue.(noAccumlators+2)    
     let orgacc=   nextvar.r
    let loopcode = arithseq(nopara.last.code,4,2) @+  ([Define.orgacc], [Local.orgacc]+ subseq(code,@e,@e+1))+
     [ Lit.1,Lit.lastvar,Loopblock("ptr," + subseq(fsig.last.code,3,length.fsig.last.code-1) + ", int,  int)")]
-   let finalcode= arithseq(length.mylist,1,lastvar+1) @ +(empty:seq.symbol,(Local.@e))+last.code
+   let finalcode= arithseq(noAccumlators,1,lastvar+1) @ +(empty:seq.symbol,(Local.@e))+last.code
     breakresult(loopcode,thunkcode,finalcode,orgacc+1,Local.masteridx)
  
 type breakresult is record loopcode:seq.symbol,thunkcode:seq.symbol,finalcode:seq.symbol,nextvar:int,
@@ -312,8 +328,6 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
  let seqelementkind =if ds &in "int real" then ds else 
   if ds &in "bit byte" then "int"_1 else "ptr"_1
  let resulttype = [(module.applysym)_1]
-  let idxp = Idx."ptr"_1
- let idxi = Idx."int"_1
 // let descleft = Lit.-2 //
  let seqtype= Local(nextvar + 2)
  let Defineseqtype = Define(nextvar+2)
@@ -338,7 +352,7 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
   else empty:seq.symbol
    if not.isempty.checknoop then   yyy(p, org, k + 1, checknoop, nextvar, map,papply)
    else
-       let part1 = subseq(code, 1, t_1 - 1) + [ Lit.1, Idx."int"_1, Define.totallength]
+       let part1 = subseq(code, 1, t_1 - 1) + [ Lit.1, IdxInt, Define.totallength]
      let codeparts= breakAccumalator(p ,thunk0,resulttype, value.theseq,seqelement,newmasteridx,papply) 
      let masteridx=masteridx.codeparts
       let exitexp2=if exitexp=[Lit.0] then empty:seq.symbol else   
@@ -358,7 +372,7 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
     let sequenceele = seq_(idx)
      continue(thseqeq,thunk,newmasteridx) //
          masteridx, Lit.1, PlusOp, Definenewmasteridx,
-         theseq, Lit.0,idxi,Defineseqtype ,
+         theseq, Lit.0,IdxInt,Defineseqtype ,
           seqtype, Lit.0, EqOp ,Lit.2,Lit.3, Br,
          theseq, newmasteridx, Idx.seqelementkind, Exit]+ 
          ( if ds &in "int real ptr"   then
@@ -381,11 +395,11 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
         
          
    function  packedtype( ds:word) seq.symbol
-             let GEP=symbol("GEP(T seq, int)","ptr builtin","ptr")
+             let GEP=symbol("GEP(ptr seq, int)","internal","ptr")
         if ds &in "bit" then   
-                [symbol("extractbit(T seq,int)","int builtin","T")]  
+                [symbol("extractbit(int seq,int)","internal","int")]  
      else  if ds &in  "byte" then
-               [symbol("extractbyte(T seq,int)","int builtin","T")]
+               [symbol("extractbyte(int seq,int)","internal","int")]
       else  // element represented by multiple words //
          [    Lit.toint.ds,MultOp, Lit.2, PlusOp ,GEP]
       
@@ -433,16 +447,10 @@ let newoptions=  if fsig = "∈(int, int seq)"
   ∨ fsig = "_(word seq, int)"then
   ""
   else
-    let state=    code @ state100(state100(false,false,false),p,@e,s)
+    let state=state100(code ,p,s)
     options+(  if hasstate.state &and  "STATE"_1 &nin options  then "STATE" else "" )
     +if length.code < 20 &and not.callsself.state &and "NOINLINE"_1 &nin options then "INLINE" else ""
- // let options2=caloptions2(p,code0,s) 
- let state=removeoptions.code0 @ state100(state100(false,false,false),p,@e,s)
- assert options=options2 report "DIFF"+options+"/"+options2+EOL+print.s+code0 @+("",print.@e) 
- +(if hasstate.state then "STATE" else "") 
- +(if hasunknown.state then "UNKNOWN"else "") 
- +(if callsself.state then "R"else "")  //
-      map(p, s, if newoptions = ""then code else code + Words.newoptions + Optionsym
+       map(p, s, if newoptions = ""then code else code + Words.newoptions + Optionsym
  )
  
 
@@ -456,13 +464,14 @@ Function issimple(p:program, nopara:int, code:seq.symbol)boolean
 function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boolean
  // check that the parameters occur in order and they all occur exactly once //
  // Any op that may involve state must occur after all parameters //
+ // should also check for loopblock //
  if i > length.code then last = nopara
- else if nopara < last ∧ // should also check for loopblock // hasstate(p, code_i)then // state op between parameters // false
  else
   let rep = code_i
    if islocal.rep then
    let parano = value.rep
-     if parano = last + 1 then checksimple(p, code, i + 1, nopara, last + 1)else false
+     if parano = last + 1 &and (nopara &ne parano &or not.hasstate.state100(subseq(code,1,i-1),p,rep))
+           then checksimple(p, code, i + 1, nopara, last + 1)else false
    else checksimple(p, code, i + 1, nopara, last)
 
 ---------------------------
@@ -476,14 +485,12 @@ let bin=  toseq.toset.complex.bin0 @ filterp(filterp(emptyprogram,simple.bin0 ),
            assert false report print.length.toseq.toset.complex.bin + print.length.toseq.toset.simple.bin  
   //     toseq.toset.complex.bin   @ depthfirst(simple.bin, placehold, alltypes, @e)
 
-function checkt(s:filterp) seq.word
+/function checkt(s:filterp) seq.word
   let t1 =toseq.toset.complex.s @+(empty:seq.symbol,    let t=code.lookupcode(complex.s,@e)
      if length.t < 20 then t else empty:seq.symbol)
    "CHECK"+toseq.asset.t1 @+("" ,  //  if isconst.@e &or isspecial.@e &or islocal.@e then "" else   print.@e ) //
-   if xyy(simple.s,@e) then  print.@e else "")
+   if hasunknown.state100([@e],simple.s,Lit.0) then  print.@e else "")
     
-    function xyy(p:program,s:symbol) boolean
-      hasunknown([s] @ state100(state100(false,false,false),p,@e,Lit.0))
 
  toseq.toset.complex.bin  @ xxx(simple.bin,alltypes,@e)
   
@@ -501,12 +508,11 @@ function  filterp(p:filterp,s:symbol,code:seq.symbol, alltypes:typedict) filterp
       let nopara=nopara.s
       let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
       let code2 = code.yyy(simple, code, 1, empty:seq.symbol, nopara + 1, pdict,false)
-      if  (length.code2=3 &and code2_1=Local.1 &and fsig(code2_3)_1="IDX"_1 &and isconst.code2_2) 
+      if  (length.code2=3 &and code2_1=Local.1 &and fsig(code2_3)_1 &in "IDX2"  &and isconst.code2_2) 
       &or (length.code2=1 &and nopara=1 &and  code2_1=Local.1 )  then 
         filterp(complex,map(simple,s,code2+[ Words."VERYSIMPLE", Optionsym]) )
      else
-        let state=   removeoptions.code2 @ state100(state100(false,false,false),simple,@e,s)
-        if  hasunknown.state then 
+         if  hasunknown.state100(removeoptions.code2 ,simple,s)  then 
             filterp( addf  (complex, s, code),simple ) 
         else 
             filterp( complex, firstopt(simple,s,code2,alltypes))
@@ -514,25 +520,7 @@ function  filterp(p:filterp,s:symbol,code:seq.symbol, alltypes:typedict) filterp
       filterp(map(complex,s,code),simple )
       
       
-      
- 
-type state100 is record hasstate:boolean,hasunknown:boolean,callsself:boolean 
-       
-function state100(a:state100,p:program, s:symbol,self:symbol) state100
-        let state=hasstate.a
-        let unknown=hasunknown.a
-        let callsself=callsself.a
-    let options=  if  ( state &and unknown) &or isspecial.s &or isconst.s &or islocal.s &or s=self 
-     &or module.s="$define"  then ""
-      else if   fsig.s = "setfld(int, T seq, T)" &or module.s ="$global"  then "STATE" else
-              let d = lookupcode(p, s)
-        if  isdefined.d then  getoption.code.d else 
-      //  assert first.fsig.s &in "length = allocatespace * + - / seq8 replaceT lextable
-        gettypeinfo subflds empty bitstream to parts aborted _ IDX" report "U"+print.s  //
-         "undefined"   
-     state100(  state &or    "STATE"_1 &in options  , 
-         unknown &or "undefined"_1 &in options,
-           callsself     &or   self=s)
+
          
      
 
@@ -545,9 +533,6 @@ function state100(a:state100,p:program, s:symbol,self:symbol) state100
 
 Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
 
- Function removeoptions(code:seq.symbol )seq.symbol
-  if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)
-  else code
 
 Function defines(p:program, roots:set.symbol)seq.symbol toseq.roots @ +(empty:seq.symbol, 
 if isconstantorspecial.@e ∨   isabstract.modname.@e then empty:seq.symbol

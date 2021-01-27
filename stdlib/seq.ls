@@ -21,7 +21,8 @@ Function_(a:seq.T, c:int)T
      assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace 
     if  typ = 0  then  // element per word //
      IDX(a, b + 1)
-  else 
+  else indexseq(a,b-1) 
+  
     if sizeoftype:T > 1 then // element represented by multiple words //
           indexseq(a,b-1) 
      else   if sizeoftype:T= -1 then

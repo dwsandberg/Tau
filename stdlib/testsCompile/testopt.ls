@@ -28,7 +28,7 @@ use set.word
 Function testopt seq.word
 let p2 = secondPass."stdlib.testoptconfig"
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
-,"1","0","4607182418800017408","44","2","46","72","27","2","128"
+,"1","Litfalse","4607182418800017408","44","2","46","72","27","2","128"
 ,"65","Littrue","4", // optest24 //"%1 5 =(int,int)standard 2 3 BR 3 
 &br 24 EXITBLOCK 1 
 &br 0 EXITBLOCK 1 
@@ -81,7 +81,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br 10 EXITBLOCK 1 
 &br 11 EXITBLOCK 1 
 &br BLOCK 6 
-&br","%1"]
+&br","%1", // test 33 //"33"]
 let r = arithseq(length.cl, 1, 1) @ +("", getcode(p2, cl, @e))
 +if [40, 20, 30 ,20 ]=[multitarget(4,true,false),multitarget(4,false,false),multitarget(3,false,true), multitarget(2,false,false)]
 then "" else "fail multitarget"
@@ -215,11 +215,15 @@ Function optest32(t:seq.word)seq.word dropparameter(t,"")
 
 function dropparameter(a:seq.word, result:seq.word)seq.word a
 
-Function optest33(a:int, b:int, c:int, d:int)ordering optest33a(a ? b, c ? d)
+Function optest33 int  // does IDX work //  length.[3,4,5,6]+29
 
-Function optest33a(a:ordering, b:ordering)ordering
+
+Function optest34(a:int, b:int, c:int, d:int)ordering optest34a(a ? b, c ? d)
+
+Function optest34a(a:ordering, b:ordering)ordering
  let x = a
   if x = EQ then b else x
+  
 
 Function optest16a(a:seq.char)seq.int
  // This is just a type change and the compiler recognizes this and does not generate code //

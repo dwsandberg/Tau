@@ -56,7 +56,7 @@ use textio
 
 
 function f100(theprg:program,ele:symbol) seq.symbol
-  if   fsig.ele &in // BBB // builtinlist  then  [ele]
+  if    isbuiltinlist.ele then  [ele]
 else 
  let d = code.lookupcode(theprg, ele)
    if isempty.d &or  "BUILTIN"_1 &in getoption.d then  empty:seq.symbol

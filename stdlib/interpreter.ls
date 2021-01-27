@@ -32,10 +32,9 @@ use words
 
 use tausupport
 
-Builtin bitcast(seq.int)int
-
 Builtin bitcast(int)seq.int
 
+Builtin GEP(seq.int,int) int 
 
          
 use seq.myinternaltype
@@ -48,6 +47,7 @@ use seq.myinternaltype
    , myinternaltype(first."x", "word"_1, mytype."words", [typeint ])
     , myinternaltype(first."x", "boolean"_1, mytype."standard", [typeint])
       , myinternaltype(first."x", "bits"_1, mytype."bits", [typeint])
+      , myinternaltype(first."x", "ptr"_1, mytype."ptr", [typeint])
    ]
              let r=interpret(typedict.t,removeconstant.code,1,empty:stack.int)
         tocode(r,resulttype.last.code)
@@ -92,11 +92,14 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int) int
       interpret(alltypes, code, i + 1, push(stk,  hash.first.fsig.sym))
    else if module.sym = "$words"then
    let a = fsig.sym @ +(empty:seq.int, hash.@e)
-     interpret(alltypes, code, i + 1, push(stk, bitcast.a))
-   else if module.sym = "$int" &or module.sym = "$real" then
+     interpret(alltypes, code, i + 1, push(stk, GEP(a,0)))
+   else if module.sym = "$int" &or module.sym = "$real" &or module.sym = "$boolean" then
    interpret(alltypes, code, i + 1, push(stk, toint.(fsig.sym)_1))
-   else if module.sym = "$record" ∧ subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
-   interpret(alltypes, code, i + 1, push(pop(stk, nopara), bitcast.top(stk, nopara - 2)))
+   else if module.sym = "$record"  then
+     if  subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
+      interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara - 2),0)))
+     else 
+      interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara ),2)))
    else if fsig.sym = "makereal(word seq)"then
    interpret(alltypes, code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
    else
