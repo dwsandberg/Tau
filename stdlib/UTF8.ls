@@ -178,7 +178,6 @@ Function tointseq(a:seq.char)seq.int
  a @ +(empty:seq.int, toint.@e)
 
 Function tocharseq(a:seq.int)seq.char
- // builtin.NOOP //
  // This is just a type change and the compiler recognizes this and does not generate code //
  a @ +(empty:seq.char, char.@e)
 

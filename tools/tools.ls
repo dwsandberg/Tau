@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau  ; use main2 ;   print.compile("baseTypeCheck","stdlib")
+#!/usr/local/bin/tau  ; use pretty ;   pretty("printbitcodes printbitcodes bitcodesupport  runcode ","junk")
+
+print.compile("baseTypeCheck","stdlib")
 
 
 ; use doc ; doclibrary."stdlib"

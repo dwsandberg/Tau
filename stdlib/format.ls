@@ -43,9 +43,9 @@ use stack.word
        
   
  
- Function getheader(s: seq.word )seq.word
+  Function getheader(s: seq.word )seq.word
      let istype=subseq(s, 1, 3) = "Export type:"
-    let t= s @ changestate( 0 ,@e,@i,istype)
+    let t=  for ( ele &in s, state=0,idx,state > 0) changestate( state ,ele,idx,istype)
     let end= if t < 1 then length.s else t
     if istype then 
     let tt = subseq(s, 4, end  )

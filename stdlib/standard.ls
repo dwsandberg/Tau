@@ -136,16 +136,19 @@ Function print(n:int) seq.word
    let sign=if n < 0 then "-" else "" 
    let t =(if n < 0 then s << 1 else s)
    sign+encodeword.if length.s < 5 then  s else 
-    s @ +(empty:seq.char, 
-       if (length.s-@i) mod 3 =2 &and @i &ne 1 then [char.160,@e] else [ @e ])  
+     for (e &in s ,acc=empty:seq.char,i,false) 
+       acc+if (length.s-i) mod 3 =2 &and i &ne 1 then [char.160,e] else [ e ] 
 
 
   Function EOL seq.word "&br"  
   
+
 Function    break(s:seq.word,seperators: seq.word,includeseperator:boolean) seq.seq.word
   let  nosep=if includeseperator then 0 else 1
-       let l= s @ +(empty:seq.int,if @e &in seperators then [@i] else empty:seq.int)
-      {(l+ (length.s+1))}   @   +(empty:seq.seq.word,   subseq(s,if @i=1 then 1 else l_(@i-1)+nosep,@e-1)  )
+     let l=  for (e &in s ,acc=empty:seq.int,i,false)
+       ( acc+ if e &in seperators then [i] else empty:seq.int )
+        for ( ele &in l+ (length.s+1),acc=empty:seq.seq.word,i,false)
+          acc+subseq(s,if i=1 then 1 else l_(i-1)+nosep,ele-1)  
 
   
 Export hash(a:word)int

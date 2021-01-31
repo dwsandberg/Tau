@@ -137,7 +137,7 @@ Function break(w:T, a:seq.T )seq.seq.T break(w,empty:seq.T,a)
 
   
 Function  break(seperator:T,quotes:seq.T,a:seq.T) seq.seq.T
-  let b= a @+(empty:seq.int,if @e &in ([seperator]+quotes)  then [@i] else empty:seq.int)
+  let b= for ( e &in a,acc=empty:seq.int,i,false)  acc+if e &in ([seperator]+quotes)  then [i] else empty:seq.int 
   if isempty.b then [a] else 
   break(empty:seq.T,seperator,seperator,a,b,1,1,empty:seq.seq.T)
 
@@ -167,9 +167,8 @@ Function suffix(s:seq.T, len:int)seq.T subseq(s, length.s - len - 1, length.s)
 
 Function findindex(w:T, s:seq.T)int
   // result > length.s when element is not found.Otherwise results is location in sequence // 
-  let t= s @ +(0,if w=@e then @i else 0)(w=@e)
-  if t=0 then length.s+1 else t
-  
+  for (e &in s ,idx=length.s+1,i,w=e) if w=e then i else idx
+      
 Export type:seq.T
 
 Export length(a:seq.T) int

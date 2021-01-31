@@ -117,7 +117,9 @@ function pretty(b:seq.attribute2)attribute2
    attribute2
    .[ if text_1 ∈ "let if else"then
    prettyresult(100, a @ +(0, width.@e),(if text_1 = "if"_1 then""else" &br") + " &keyword" + text)
-   else prettyresult(prec.a_1, a @ +(0, width.@e), text)]
+   else 
+    let prec= if text_1 ∈ "for " then 100 else prec.first.a
+   prettyresult(prec, a @ +(0, width.@e), text)]
 
 function checkpara(e1:attribute2, e2:attribute2)attribute2
  let e3 = if subseq(text.e2, 1, 3) = " &{ block("then
@@ -197,6 +199,9 @@ function unaryminus(exp:attribute2)attribute2
   else
    prettyresult(if prec.post ≥ 100 then prec + 100 else prec, 1 + width.post,"-" + text.post)]
 
+
+
+
 function block(b:attribute2)attribute2 block("", b)
 
 function block(keys:seq.word, b:attribute2)attribute2
@@ -266,7 +271,7 @@ else if ruleno = // T W // 36 then R_1
 else if ruleno = // T W.T // 37 then pretty.[ R_1, R_2, R_3] 
 else if ruleno = // E $wordlist // 38 then attribute2([ prettyresult(0, length.text.R_1,"&{ literal"+ escapeformat.text.R_1 +"&}")]) 
 else if ruleno = // E comment E // 39 then 
-let t ="&{ comment"+ escapeformat.text.R_1 +"&}" 
+let t ="&{ comment \\ "+ escapeformat.text.R_1 << 1 >> 1 +"\\ &}" 
 let t2 = if width.R_1 + width.R_2 > 30 ∧(text.R_2)_1 ≠"&br"_1 then t +"&br"else t pretty.[ attribute2.[ prettyresult(0, length.text.R_1, t2)], R_2] 
 else if ruleno = // N_// 40 then R_1 
 else if ruleno = // N-// 41 then R_1 
@@ -278,6 +283,19 @@ else if ruleno = // N ∨ // 46 then R_1
 else if ruleno = // NM W // 47 then R_1 
 else if ruleno = // NM W:T // 48 then pretty.[ R_1, R_2, R_3] 
 else if ruleno = // D E @ NM(E, // 49 then    
+pretty.[ attribute."(for(@e ∈", R_1, attribute.", acc =", R_5, attribute.")", R_3,attribute."(acc,"] 
+else if ruleno = // D E @ N(E, // 50 then 
+pretty.[ attribute."((for(@e ∈", R_1, attribute.", acc =", R_5, attribute.") acc", R_3] 
+else if ruleno = // E D L)// 51 then pretty.[ R_1, list.R_2, R_3,R_3] 
+else if ruleno = // E D L)(E)// 52 then pretty.[ R_1, R_2, R_3] 
+else if ruleno = // B for(W-E, W = E, W // 53 then pretty.[ R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9, R_10, R_11] 
+else if ruleno = // B for(W-E, W = E // 54 then pretty.[ R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9] 
+else if ruleno = // E B)E // 55 then pretty.[ R_1, R_2, R_3] 
+else assert ruleno = // E B, E)E // 56 report"invalid rule number"+ toword.ruleno 
+pretty.[ R_1, R_2, R_3, R_4, R_5]
+
+
+
    attribute2( [R_1,  pretty.[R_3, R_4, R_5,R_6] ] @ +(empty:seq.prettyresult, toseq.@e))
 else if ruleno = // D E @ N(E, // 50 then  
    attribute2( [R_1,  pretty.[R_3, R_4, R_5,R_6] ] @ +(empty:seq.prettyresult, toseq.@e)) 

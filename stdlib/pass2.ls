@@ -138,6 +138,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
     yyy(p, org, k + 1, subseq(result, 1, len - 3) + [ result_len, result_(len - 1), Br], nextvar, map, papply)
     else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
    else if papply &and (fsig.sym)_1 ∈ "apply3"then applycode4(p, org, k, result, nextvar, map, papply)
+    else if papply &and (fsig.sym)_1 ∈ "apply5"then applycode5(p, org, k, result, nextvar, map, papply)
    else
     let nopara = nopara.sym
     let dd = code.lookupcode(p, sym)
@@ -241,6 +242,11 @@ function subapply( thunk:seq.symbol,    e:symbol,i:symbol,acc:symbol ) seq.symbo
         else if fsig.@e="@acc"  then acc
         else @e)
   
+function substitute (s:seq.symbol,old:seq.symbol,new:seq.symbol) seq.symbol
+     s @ +(empty:seq.symbol, let i=findindex( @e,old)
+        if between(i,1,length.old) then new_i   else @e)
+        
+
 function simpleAcc(thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:symbol
 ,newmasteridx:symbol) breakresult
    let acc = Local(lastvar +1)
@@ -252,14 +258,6 @@ function simpleAcc(thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:s
      lastvar+3,masteridx1)
  
 
- function    checkCompoundAcc(result:seq.word,s:symbol,i:int,noflds:int) seq.word
-        if i > 4 * noflds then
-        if s=Local.1 then  "fail" else result
-       else if i mod 4 =0 then
-         if isdefine.s then result+(fsig.s)_2 else "fail"
-        else      
-         if   s &in [ [Local.1],[Lit.(i / 4)],[IdxInt,IdxReal,IdxPtr,IdxBoolean     ]]_(i mod 4) then
-          result  else "fail"
           
 type compoundAC is record state:word,result:seq.symbol,fldno:int 
 
@@ -281,26 +279,27 @@ function chkAcc(a:compoundAC,next:symbol,fldvar:seq.symbol) compoundAC
          else result.a    
     compoundAC(newstate,newresult, if islit.next then value.next else fldno.a)
    
- function breakAccumalator(p:program,thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:symbol
-,newmasteridx:symbol,papply:boolean) breakresult
+ /function breakAccumalator5(p:program,thunk:seq.symbol,resulttype:seq.word,lastvar:int,seqelement:symbol
+,newmasteridx:symbol,papply:boolean,thunkplaceholders:seq.symbol) breakresult
  //  lastvar+1 to lastvar+nopara.last.code are accumalators //
  //  lastvar+1+nopara.last.code lastvar+nopara.last.code+nopara.accfunc-1 are location of parameters for lastvar //
  let accfunc=last.thunk
-let  ttt=lookupcode(p,last.thunk)
+  let  ttt=lookupcode(p,last.thunk)
 let code=removeoptions.code.ttt
-if isempty.code &or not.isrecord.last.code then simpleAcc(thunk,resulttype,lastvar,seqelement,newmasteridx )
+if isempty.code &or not.isrecord.last.code then issimple
 else 
    let noAccumlators=nopara.last.code
-       let mylist= code @  checkCompoundAcc("", @e,@i,noAccumlators)
- if  "fail"_1 &in  mylist  then simpleAcc(thunk,resulttype,lastvar,seqelement,newmasteridx )
- else 
- let x= mylist @ add(emptyworddict:worddict.seq.symbol ,   @e, [Local.( lastvar+@i)]) 
+       let fldnames= paratypes.last.code @+("", merge([toword.@i]+typerep.@e))
+      let fldsyms= fldnames @+(empty:seq.symbol,Local.@e)
+      let t5=code  @ chkAcc(compoundAC("start"_1,empty:seq.symbol,0),@e,fldsyms)
+   if  state.t5="fail"_1   then issimple
+ else  
+  let x= fldnames @ add(emptyworddict:worddict.seq.symbol ,   @e, [Local.( lastvar+@i)]) 
   let masteridx=lastvar+noAccumlators+1
-let pmap= paratypes.accfunc << 1 @ add(x , toword.(@i+1), [Local.( masteridx+@i)]) 
+  let pmap= paratypes.accfunc << 1 @ add(x , toword.(@i+1), [Local.( masteridx+@i)]) 
   let nextvar=   masteridx+nopara.accfunc 
-   let r = yyy(p, subseq(code,4 * noAccumlators+1,length.code-1), 1, empty:seq.symbol, nextvar, pmap,papply)
-    let thunkcode=      
-      subapply(subseq(thunk,2,length.thunk-1) ,seqelement,Local.masteridx,Lit.0 ) 
+   let r = yyy(p, result.t5, 1, empty:seq.symbol, nextvar, pmap,papply)
+    let thunkcode=   substitute(subseq(thunk,2,length.thunk-1),thunkplaceholders,[seqelement,Lit.0 ,Local.masteridx])   
       +
         arithseq(nopara.accfunc-1,-1,nextvar-1) @+( empty:seq.symbol, 
          Define.toword(@e))+code.r + newmasteridx+continue.(noAccumlators+2)    
@@ -313,12 +312,100 @@ let pmap= paratypes.accfunc << 1 @ add(x , toword.(@i+1), [Local.( masteridx+@i)
 type breakresult is record loopcode:seq.symbol,thunkcode:seq.symbol,finalcode:seq.symbol,nextvar:int,
      masteridx:symbol
 
+function  issimple breakresult breakresult(empty:seq.symbol,empty:seq.symbol,empty:seq.symbol,0,Lit.0)
+
 function print(b:breakresult) seq.word
    "loopcode:"+print.loopcode.b
    +EOL+"thunkcode:"+print.thunkcode.b
   +EOL+"finalcode:"+print.finalcode.b
   +EOL+"nextvar:"+print.nextvar.b
    
+function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol,papply:boolean)expandresult
+  let totallength = nextvar + 1
+   let seqtype= Local(nextvar + 2)
+ let Defineseqtype = Define(nextvar+2)
+ let Definenewmasteridx = Define(nextvar + 3)
+ let newmasteridx = Local(nextvar + 3)
+ let Defineseqelement = Define(nextvar + 4)
+ let seqelement = Local(nextvar + 4)
+ let Defineinitacc=Define(nextvar + 5)
+ let initacc=Local(nextvar + 5)
+ let theseq = Local(nextvar + 6)
+ let lastUsed=nextvar+6
+  let applysym = org_k
+  let ds=(typerep.parameter.(paratypes.applysym)_2)_1
+  let seqelementkind =
+  if ds &in "int real" then ds else 
+  if ds &in "bit byte" then "int"_1 else "ptr"_1
+  let resulttype =  (paratypes.applysym)_1 
+  let exitstart=backparse(code, length.code , 1, empty:seq.int)_1
+  let exitexp=subseq(code,exitstart,length.code)
+  let t = backparse(code, exitstart - 1, 1, empty:seq.int)
+  let thunk0 = subseq(code,t_1,exitstart-1) 
+   let accfunc = last.thunk0
+  let thunkplaceholders=subseq(code,t_1-3,t_1-1)
+  let initseq=code_(t_1-4)
+  let isnoop=
+   exitexp=[Litfalse] 
+   &and length.thunk0=6 
+   &and first.fsig.accfunc="+"_1 
+   &and isrecord.thunk0_5
+   &and  thunk0 >> 2 =[thunkplaceholders_2,Lit.0,Lit.1,thunkplaceholders_1]  
+   &and   code_(t_1-5) =Constant2.Emptyseq  
+  if isnoop then   yyy(p, org, k + 1, code >> 12 +initseq, nextvar, map,papply)
+   else
+       let part1 = subseq(code, 1, t_1 - 5) + [Defineinitacc,initseq, Lit.1, IdxInt, Define.totallength
+       ,initseq,initacc] 
+ let checkCompound = // if typerep.resulttype = " ptr"  &and length.thunk0 > 2 &and first.thunk0=thunkplaceholders_2
+     then    may have compound accumalator  
+        breakAccumalator5(p ,thunk0,typerep.resulttype, lastUsed,seqelement,newmasteridx,papply,thunkplaceholders) 
+      else // issimple 
+ let  codeparts=   if nextvar.checkCompound=nextvar.issimple then 
+  \\ simple acc \\
+   let acc = Local(lastUsed +1)
+   let masteridx1 = Local(lastUsed +2)
+   breakresult([ Lit.1,Lit.lastUsed,Loopblock("ptr," + typerep.resulttype + ", int,  int)")],
+        substitute(thunk0,thunkplaceholders,[seqelement,acc,masteridx1])+ [  newmasteridx, continue.3],
+     [acc],
+     lastUsed+3,masteridx1)
+   else checkCompound 
+        let masteridx=masteridx.codeparts
+      let exitexp2=if exitexp=[Litfalse] then empty:seq.symbol else   
+       substitute( exitexp,thunkplaceholders,[ seqelement,// needs attention // Lit.0,masteridx] )
+       +[ Lit.2 ,Lit.3, Br, Local.totallength , Lit.1,PlusOp,Exit,newmasteridx,Exit,  Block(typeint,3)]
+      let thunkcode=   if isempty.exitexp2 then thunkcode.codeparts
+           else let a= thunkcode.codeparts
+              a >> 2 + exitexp2 + last.a
+     let kk =  
+    //  loop(seq, acc, masteridx)//
+    // 1 // loopcode.codeparts+  
+    // 2  if  masteridx > totallength  then exit // 
+        [masteridx,Local.totallength,  GtOp, Lit.3, Lit.4, Br]+ 
+    // 3 // finalcode.codeparts +[ Exit,
+      // 4 else  let newmasteridx = masteridx + 1, 
+    let sequenceele = seq_(idx)
+     continue(thseqeq,thunk,newmasteridx) //
+         masteridx, Lit.1, PlusOp, Definenewmasteridx,
+         theseq, Lit.0,IdxInt,Defineseqtype ,
+          seqtype, Lit.0, EqOp ,Lit.2,Lit.3, Br,
+         theseq, newmasteridx, Idx.seqelementkind, Exit]+ 
+         ( if ds &in "int real ptr"   then
+              [ theseq, masteridx, Callidx.seqelementkind ,   Exit,
+         Block(mytype.[seqelementkind],3)]      
+         else 
+          [seqtype,     Lit.1, EqOp ,Lit.4,Lit.5, Br,
+             theseq, masteridx ,Lit.-1,PlusOp ]+ packedtype( ds)+[Exit,
+           theseq, masteridx, Callidx.seqelementkind ,   Exit,
+         Block(mytype.[seqelementkind],5)])      
+        +    [  Defineseqelement, theseq]
+        + thunkcode+
+ [   Block(resulttype, 4)]
+       yyy(p, org, k + 1, part1 + kk, nextvar.codeparts, map,papply)
+   
+
+ yyy(p, org, k + 1, code, nextvar , map,papply)
+ 
+ for(e &in s,acc=empty:seq.T,i,false) acc+e 
    
 function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol,papply:boolean)expandresult
   let totallength = nextvar + 1
@@ -353,7 +440,7 @@ function applycode4(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    if not.isempty.checknoop then   yyy(p, org, k + 1, checknoop, nextvar, map,papply)
    else
        let part1 = subseq(code, 1, t_1 - 1) + [ Lit.1, IdxInt, Define.totallength]
-     let codeparts= breakAccumalator(p ,thunk0,resulttype, value.theseq,seqelement,newmasteridx,papply) 
+      let codeparts= simpleAcc(thunk0,resulttype,value.theseq,seqelement,newmasteridx )
      let masteridx=masteridx.codeparts
       let exitexp2=if exitexp=[Lit.0] then empty:seq.symbol else   
        subapply( exitexp,seqelement,masteridx,Lit.0 )
@@ -424,7 +511,7 @@ function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.
   let sym = code_i
   let sym2 = basesym.sym
   let newprg =
-   if isnocall.sym2 &or sym2 ∈ pending then processed
+   if  isconst.sym2 ∨ isspecial.sym2   &or sym2 ∈ pending then processed
    else
      let r = lookupcode(processed, sym)
       if isdefined.r then processed

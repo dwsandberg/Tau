@@ -87,14 +87,8 @@ Function_(a:blockseq.T, i:int)T
   let blksz = blocksize:T / ds
   let blk = IDX(data,(i - 1) / blksz + 2)
   let b =(i - 1) mod blksz + 1
-   if typ > 1000 then callidx2(blk, b)
+   if typ > 1000 then callidx(blk, b)
    else  IDX(blk, b + 1)
-
- 
- 
- 
-   
-
   
 
 Function blockit(s:seq.T, ds:int)seq.T
@@ -132,11 +126,13 @@ use seq.encodingpair.seq.char
 
 use taubuiltinsupport.encodingpair.seq.char
 
-use seq.seq.int
-
 use taubuiltinsupport.int
 
 use taubuiltinsupport.real
+
+
+use seq.seq.int
+
 
 use standard
 
@@ -184,7 +180,9 @@ Export _(pseq.byte,int) byte
 
 Export blockit(seq.int)seq.int
 
-Export blockit(s:seq.encodingpair.seq.char, ds:int)seq.encodingpair.seq.char // for use where the element type is represented in ds * 64bits where ds > 1. // // if the length < = blocksize then the result is represented as <ds> <length> <fld1.s_1><fld2.s_1>... <fld1.s_2><fld2.s_2>.... // // if the length > bloocksize then result is represented as <blockindexfunc> <length> <packed.subseq(s, 1, blocksize)> <packed.subseq(s, blocksize + 1, 2*blocksize)>.....//
+Export blockit(s:seq.encodingpair.seq.char, ds:int)seq.encodingpair.seq.char 
+// for use where the element type is represented in ds * 64bits where ds > 1. // 
+// if the length < = blocksize then the result is represented as <ds> <length> <fld1.s_1><fld2.s_1>... <fld1.s_2><fld2.s_2>.... // // if the length > bloocksize then result is represented as <blockindexfunc> <length> <packed.subseq(s, 1, blocksize)> <packed.subseq(s, blocksize + 1, 2*blocksize)>.....//
 
 Export blockit(seq.real)seq.real
 

@@ -43,20 +43,14 @@ Export length(a:seq.T)int
 Builtin empty:seq.T seq.T // empty seq //
 
 Function =(a:seq.T, b:seq.T)boolean
- if length.a = length.b then  // subequal(a, b, length.a)  // a @ &and(true, not(@e &ne b_@i))(@e &ne b_@i)
+ if length.a = length.b then  for ( e &in a ,acc=true,i,e &ne b_i) not(e &ne b_i)
   else false
   
-   
-/function subequal(a:seq.T, b:seq.T, i:int)boolean
- if i = 0 then true
- else if a_i = b_i then subequal(a, b, i - 1)else false
-
 Function ∈(a:T, s:seq.T)boolean 
- s @ &or(false,  a=@e  )(a=@e)
+  for( e &in s ,acc=false,i,a=e) a=e
  
 Function findelement(w:T, s:seq.T)seq.T
-  s @ +(empty:seq.T,if w=@e then [@e] else empty:seq.T) ( w=@e)
-
+ for( e &in s ,acc=empty:seq.T,i ,w=e)  if w=e then [e] else empty:seq.T 
  
 -------------------------
 

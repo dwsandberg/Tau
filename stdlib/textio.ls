@@ -59,7 +59,7 @@ function blankline(a:UTF8, i:int)int
  else breakparagraph(u,  i + 1, last, result)
 
 
-Function classifychar seq.word ' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ 0]^_'
+Function classifychar seq.word ' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ \ ]^_'
 
 Function towords(a:UTF8)seq.word towords.decodeUTF8.a
 
@@ -83,6 +83,9 @@ function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
        if t = periodchar ∧ i + 1 ≤ length.a ∧ a_(i + 1) = spacechar then
        towords2(a, i + 2, i + 2, if last = i then result + encodeword.[ periodchar, spacechar]
         else result + encodeword.subseq(a, last, i - 1) + encodeword.[ periodchar, spacechar])
+       else if t=char1."\" &and i + 1 ≤ length.a ∧ a_(i + 1) = char1."\" then 
+             towords2(a, i + 2, i + 2, if last = i then result + "\\"_1
+        else result + encodeword.subseq(a, last, i - 1) + "\\"_1)
        else
         towords2(a, i + 1, i + 1,(if last = i then result else result + encodeword.subseq(a, last, i - 1)) + class)
 

@@ -232,34 +232,18 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("setfld(int, T seq, T)","ptr builtin","int"), 3, CAST(r.1, ibcsub.2, ptr.ptr.i64, bitcast) + GEP(r.2, ptr.i64, r.1, ibcsub.1)
  + STORE(r.3, r.2, ibcsub.3)
  + BINOP(r.3, ibcsub.1, C64.1, add))
- , addtemplate(symbol("assert(word seq)","int builtin","int")
+ , addtemplate(symbol("assert:int(word seq)","builtin","int")
  , 1
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1))
- , addtemplate(symbol("assert(word seq)","boolean builtin","boolean")
+ , addtemplate(symbol("assert:boolean(word seq)","builtin","boolean")
  , 1
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1))
- , addtemplate(symbol("assert(word seq)","real builtin","real")
+ , addtemplate(symbol("assert:real(word seq)","builtin","real")
  , 2
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
    function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
    +CAST(r.2, r.1, double, sitofp))
- , addtemplate(symbol("assert(word seq)","ptr builtin","ptr")
- , 2
- , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
- function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
- +CAST(r.2, r.1,ptr.i64, inttoptr))
- , addtemplate(symbol("Assert(word seq)","int builtin","int")
- , 1
- , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1))
- , addtemplate(symbol("Assert(word seq)","boolean builtin","boolean")
- , 1
- , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1))
- , addtemplate(symbol("Assert(word seq)","real builtin","real")
- , 2
- , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
-   function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
-   +CAST(r.2, r.1, double, sitofp))
- , addtemplate(symbol("Assert(word seq)","ptr builtin","ptr")
+ , addtemplate(symbol("assert:ptr(word seq)","builtin","ptr")
  , 2
  , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, 
  function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
@@ -301,7 +285,7 @@ theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + CALL(r.4, 0, 32768, function.[ ptr.i64, i64, ptr.i64, i64], r.3, 
   slot.ibcfirstpara2, [ibcsub.1, ibcsub.2]))  
  ]
- let const = toseq.uses @ +(empty:seq.symbol, buildtemplate(theprg, alltypes, @e))
+ let const = toseq.(uses -asset.[Optionsym]) @ +(empty:seq.symbol, buildtemplate(theprg, alltypes, @e))
  let discard4 = processconst(const, 1, empty:seq.symbol)
   empty:seq.match5
   
@@ -412,7 +396,7 @@ recordcoderesult
         let newbc = GEP(r(regno + 1), ptr.i64, r.pptr, C64(i - 1))+ STORE(r(regno + 2), r(regno + 1), slot.args_i)
          setnextfld(bc + newbc, args, i + 1, types,  regno + 1, pint, preal, pptr)
      else
-        assert typ ∈ "int boolean"  report"setnextfld problem" + typ
+        assert typ ∈ "int boolean byte"  report"setnextfld problem" + typ
        let newbc = GEP(r(regno + 1), i64, r.pint, C64(i - 1))+ STORE(r(regno + 2), r(regno + 1), slot.args_i)
            setnextfld(bc + newbc, args, i + 1, types,  regno + 1, pint, preal, pptr)
 

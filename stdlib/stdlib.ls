@@ -29,10 +29,10 @@ exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio 
 graph groupparagraphs intdict   ioseq ipair libdesc llvm llvmconstants 
 main2 maindict mangle mytype pretty otherseq  prims process 
 real seq set stack   symbol textio timestamp tree worddict words xxhash 
-codegennew codetemplates persistant  sparseseq parse standard testall
+codegennew codetemplates persistant  sparseseq   standard testall
 svg svggraph displaygraph displaytextgraph display
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport
-pass1 postbind breakblocks   interpreter internalbc  
+   breakblocks   interpreter internalbc  
 
 * Removed maindict 
 

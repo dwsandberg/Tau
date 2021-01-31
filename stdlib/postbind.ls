@@ -61,7 +61,10 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
    if isblock.sym then
    let a = Block(mytype.[ kind(alltypes, modpara, resulttype.sym)], nopara.sym)
      postbind3(alltypes, dict, code, i + 1, result + if isfref then Fref.a else a, modpara, org, calls, sourceX, tempX)
-   else if isconst.sym ∨ isspecial.sym     ∨   module.sym &in ["builtin","$global"]   then   postbind3(alltypes, dict, code, i + 1, result + code_i, modpara, org, calls, sourceX, tempX)
+   else if isconst.sym ∨ isspecial.sym     ∨   module.sym &in ["builtin","$global","$for"]   then 
+  //     assert module.sym &ne "builtin"  
+       &or fsig.sym &in [ "addencoding(int, int seq, int, int)","aborted(T process)","getinstance(int)","option(int, word seq)"]  report "builtinX" +print.sym
+ //     postbind3(alltypes, dict, code, i + 1, result + code_i, modpara, org, calls, sourceX, tempX)
    else
     let lr1 = lookupcode(sourceX, sym)
     let newsym = if   isempty.typerep.modpara &or isdefined.lr1 then sym else replaceTsymbol(modpara, sym)
@@ -74,7 +77,11 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
       else
        let p2 = if isfref then Fref.target.xx4 else target.xx4
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls + target.xx4, sourceX, tempX)
-     else if "ABSTRACTBUILTIN"_1 ∈ options &or isabstractbuiltin.sym then
+     else if "ABSTRACTBUILTIN"_1 ∈ options &or   last.module.sym="builtin"_1  then
+     //    assert ("ABSTRACTBUILTIN"_1 ∈ options ) =  (last.module.sym="builtin"_1  ) 
+          &or first.module.sym="T"_1
+          &or (fsig.sym)_1 &in "@acc @e @i apply3  kindrecord  offsets build assert
+          createthreadX" report "BBBBBB"+print.sym //
          codeforbuiltin(alltypes , dict ,code ,i ,result ,isfref ,newsym , sym ,  org ,modpara ,calls ,sourceX ,tempX ) 
      else if subseq(fsig.sym, 1, 2) = "type:"then
      let p2 = definedeepcopy(alltypes, resulttype.newsym, org)
@@ -131,9 +138,7 @@ function buildcode(acc:int, w:word) int
 function codeforbuiltin(alltypes:typedict, dict:set.symbol,code:seq.symbol,i:int,result:seq.symbol
 ,isfref:boolean,newsym:symbol, sym:symbol, org:seq.word,modpara:mytype
 , calls:set.symbol,sourceX:program,tempX:program) resultpb
-     if  fsig.sym="option(T, word seq)" then 
-           postbind3(alltypes, dict, code, i + 1, result + sym, modpara, org, calls, sourceX, tempX)
-     else if(fsig.sym)_1 ∈ "offsets"then
+     if(fsig.sym)_1 ∈ "offsets"then
       // symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)//
        let paratypes = paratypes.sym
   //     assert not.isempty.typerep.last.paratypes report "XXX"+print.sym //
@@ -177,6 +182,20 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol,code:seq.symbol,i:int
             let size=size.gettypeinfo(alltypes, elementtype)
                   [Lit.size,MultOp,Lit.2,PlusOp,symbol("GEP(ptr seq, int)","internal","ptr")]
           postbind3(alltypes, dict, code, i + 1,result + p2, modpara, org, calls, sourceX, tempX)
+  else if   (fsig.sym)_1  =" apply5"_1 then
+        let  paras=paratypes.newsym
+    let eletype= paras_3
+    let resulttype= mytype.[kind.gettypeinfo(alltypes, paras_4)]
+     let info = gettypeinfo(alltypes, eletype)
+       let neweletype=mytype.[if size.info > 1 then toword.size.info else 
+         if  eletype &in[mytype."byte",mytype."bit"]  then  abstracttype.eletype else kind.info]
+        let p2=  newsymbol( "apply5",mytype."builtin",
+        [resulttype, abstracttype("seq"_1,neweletype), neweletype,resulttype,typeint,resulttype,mytype."boolean"],resulttype)
+          postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
+  else if   (fsig.sym)_1  &in "assert " then
+      let  sym2=  replaceTsymbol(mytype.[kind.gettypeinfo(alltypes, parameter.modname.newsym)],sym)
+       let p2=    symbol(fsig.sym2,"builtin",returntype.sym2)
+          postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
   else if   (fsig.sym)_1  &in "callidx " then
       let  sym2=  replaceTsymbol(mytype.[kind.gettypeinfo(alltypes, parameter.modname.newsym)],sym)
        let p2=    symbol(fsig.sym2,"$internal",returntype.sym2)
@@ -187,7 +206,7 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol,code:seq.symbol,i:int
 else if fsig.sym ="IDX(T seq, int)" then 
    let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
          postbind3(alltypes, dict, code, i + 1, result + Idx.kind, modpara, org, calls, sourceX, tempX)
- else if(fsig.sym)_1 ∈ "Assert assert callidx @e @i @acc   callidx2  GEP extractbyte extractbit"
+ else if(fsig.sym)_1 ∈ "assert callidx @e @i @acc   callidx2  GEP extractbyte extractbit"
       ∨ fsig.sym ∈ ["setfld(int, T seq, T)","setfirst(T seq, int, int)"]then
       let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
        let p2 = symbol(fsig.sym, [ kind] + "builtin", returntype.newsym)

@@ -38,9 +38,9 @@ function restoredirection(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T, a
  let other = if head.a ∈ nodes.org ∧ not(tail.a ∈ nodes.org)then
  expandback(org, modified, tail.a)
  else tail.a
- let for = findelement(arcinfo.arc(other, head.a), orgarc)
+ let for2 = findelement(arcinfo.arc(other, head.a), orgarc)
  let back = findelement(arcinfo.arc(head.a, other), orgarc)
- let both =(if not.isempty.for then [ setarc(for_1, a, false)]else empty:seq.arcinfo.T)
+ let both =(if not.isempty.for2 then [ setarc(for2_1, a, false)]else empty:seq.arcinfo.T)
  + if not.isempty.back then [ setarc(back_1, a, true)]else empty:seq.arcinfo.T
   if isempty.both then [ arcinfo.a]else both
 

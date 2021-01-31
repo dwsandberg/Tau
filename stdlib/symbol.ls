@@ -219,7 +219,7 @@ Function istypeexport(s:symbol)boolean subseq(fsig.s, 1, 2) = "type:"
 
 
 Function Idx(kind:word)symbol 
-  if kind="int"_1 then IdxInt
+  if kind="int"_1 &or kind="byte"_1 then IdxInt
 else   if kind="ptr"_1 then IdxPtr
 else   if kind="real"_1 then IdxReal
 else   assert kind="boolean"_1 report "unexpected type in Idx:"+kind
@@ -237,7 +237,7 @@ Function IdxBoolean symbol symbol("IDX2(boolean seq, int)",  " boolean abstractB
  
 Function Callidx(kind:word)symbol
  let t = if kind ∈ "int real"then [ kind]else"ptr"
-  symbol("callidx2( T  seq, int)", t + "builtin", t)
+   symbol("callidx2( T  seq, int)", t + "builtin", t)
   
    symbol("callidx("+t+" seq, int)", "$internal", t)
 
@@ -279,7 +279,7 @@ function hash(a:symbolconstant)int hash.toseq.a
 
 Function isconstantorspecial(s:symbol)boolean isconst.s ∨ isspecial.s
 
-Function isnocall(sym:symbol)boolean isconst.sym ∨ isspecial.sym ∨ module.sym ="builtin"
+
 
 function specialbit bits bits.4
 
@@ -331,11 +331,11 @@ Function Fref(s:symbol)symbol
  let fsig ="FREF" + fsig.s + module.s
   symbol(fsig,"$fref","?", [ s], extrabits(fsig, constbit))
 
-Function Optionsym symbol symbol("option(T, word seq)","int builtin","?")
+Function Optionsym symbol symbol("option(int, word seq)","builtin","?")
 
-Function  STKRECORDOp  symbol symbol("STKRECORD(ptr, ptr)","builtin","ptr")
+/Function  STKRECORDOp  symbol symbol("STKRECORD(ptr, ptr)","builtin","ptr")
 
-Function    NullptrOp  symbol  symbol("nullptr","builtin","ptr")
+/Function    NullptrOp  symbol  symbol("nullptr","builtin","ptr")
 
 Function  symEle(seqtype:mytype) symbol  newsymbol("@e", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, parameter.seqtype)
 
@@ -536,7 +536,7 @@ Function kind(t:typeinfo)word
   if length.z > 1 ∨ abstracttype.z_1 = "seq"_1 then"ptr"_1
   else
    let k =(typerep.z_1)_1
-     assert k ∈ "int real ptr"report"unexpected fld in internal type" + z @ +("", print.@e) + stacktrace
+     assert k ∈ "int real ptr byte"report"unexpected fld in internal type" + z @ +("", print.@e) + stacktrace
      // x // k
 
 Export subflds(typeinfo)seq.mytype
@@ -555,7 +555,8 @@ Export type:typedict
 Function gettypeinfo(d:typedict, type:mytype)typeinfo
  if type = typeint then typeinfo.[ typeint]
  else if type = mytype."real"then typeinfo.[ mytype."real"]
- else if abstracttype.type = "seq"_1 ∨ type = mytype."internaltype" ∨ type = typeptr then
+ else  // if type = mytype."byte"then typeinfo.[type]
+ else // if abstracttype.type = "seq"_1 ∨ type = mytype."internaltype" ∨ type = typeptr then
  typeinfo.[ typeptr]
  else
   let t = findelement(d, type)
