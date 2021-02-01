@@ -6,10 +6,6 @@ use UTF8
 
 use bits
 
-use seq.char
-
-use seq.int
-
 use main2
 
 use real
@@ -18,22 +14,25 @@ use standard
 
 use textio
 
+use seq.char
+
+use seq.int
+
+use set.word
+
 use otherseq.seq.word
 
 use seq.seq.word
-
-
-use set.word
 
 Function testopt seq.word
 let p2 = secondPass."stdlib.testoptconfig"
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 ,"1","Litfalse","4607182418800017408","44","2","46","72","27","2","128"
-,"65","Littrue","4", // optest24 //"%1 5 =(int,int)standard 2 3 BR 3 
+,"65","Littrue","4", \\ optest24 \\"%1 5 =(int, int)standard 2 3 BR 3 
 &br 24 EXITBLOCK 1 
 &br 0 EXITBLOCK 1 
 &br BLOCK 3 
-&br", // optest25 //
+&br", \\ optest25 \\
 "%1 3_(int seq, int)seq.int DEFINE 2 %2 9 >(int,int)standard 5 2 BR 3 
 &br %2 9 =(int,int)standard 7 3 BR 3 
 &br %2 5 =(int,int)standard 7 4 BR 3 
@@ -67,13 +66,13 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br Littrue EXITBLOCK 1 
 &br 10 %2 >(int,int)standard EXITBLOCK 1 
 &br BLOCK 3 
-&br", // optest30 //
+&br", \\ optest30 \\
 "%1 WORD test =(int,int)standard 2 3 BR 3 
 &br %2 EXITBLOCK 1 
 &br %3 EXITBLOCK 1 
 &br BLOCK 3 
 &br"
-, // test 31 //
+, \\ test 31 \\
 "%1 %2_(int seq, int)seq.int DEFINE 3 %3 3 >(int,int)standard 4 2 BR 3 
 &br %3 3 =(int,int)standard 5 3 BR 3 
 &br %3 1 =(int,int)standard 5 6 BR 3 
@@ -81,19 +80,21 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br 10 EXITBLOCK 1 
 &br 11 EXITBLOCK 1 
 &br BLOCK 6 
-&br","%1", // test 33 //"33"]
-let r = arithseq(length.cl, 1, 1) @ +("", getcode(p2, cl, @e))
-+if [40, 20, 30 ,20 ]=[multitarget(4,true,false),multitarget(4,false,false),multitarget(3,false,true), multitarget(2,false,false)]
-then "" else "fail multitarget"
+&br","%1", \\ test 33 \\"33"]
+let r = {(for(@e ∈ arithseq(length.cl, 1, 1), acc ="")acc + getcode(p2, cl, @e))}
++ if [ 40, 20, 30, 20]
+= [ multitarget(4, true, false), multitarget(4, false, false), multitarget(3, false, true), multitarget(2, false, false)]then
+""
+else"fail multitarget"
  if isempty.r then"PASS testopt"else"testopt" + r
 
 function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
 
 Function getcode(p2:seq.seq.word, codelist:seq.seq.word, no:int)seq.word
- let t1 = p2 @ +("", filter(merge("optest" + toword.no), @e))
+ let t1 = {(for(@e ∈ p2, acc ="")acc + filter(merge("optest" + toword.no), @e))}
  let t = subseq(t1, findindex("testopt"_1, t1) + 1, length.t1)
  let code = removeoptions(t, length.t)
-  // assert false report t1 +" &br"+ t +" &br"+ code //
+  \\ assert false report t1 +" &br"+ t +" &br"+ code \\
   if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1,"")then
   ""
   else
@@ -121,15 +122,9 @@ function removeoptions(s:seq.word, i:int)seq.word
  else subseq(s, 1, i - 1)
  
       Function multitarget(  value1:int,a:boolean,b:boolean ) int
-       // check to see optimization handles this case correctly //
+ \\ check to see optimization handles this case correctly \\
      if   if value1  =4  then       a else false   then  40 
-   else   if  if value1  =  3 then    b else false then  30
-   else
-     20
-    
-   
- 
-
+ else if if value1 = 3 then b else false then 30 else 20
 
 Function optest1 int 3 + 4
 
@@ -200,7 +195,7 @@ Function optest26(s:seq.word, i:int)int
  else if s_i ∈ "a b"then 4 else if s_i ∈ "c d"then 4 else 5
 
 Function optest27(a:int, result:int)int
- // tail recursion // if a = 1 then result else optest27(a - 1, a * result)
+ \\ tail recursion \\ if a = 1 then result else optest27(a - 1, a * result)
 
 Function optest28(a:int, b:int)boolean a > 0 ∧ b < 10
 
@@ -215,8 +210,7 @@ Function optest32(t:seq.word)seq.word dropparameter(t,"")
 
 function dropparameter(a:seq.word, result:seq.word)seq.word a
 
-Function optest33 int  // does IDX work //  length.[3,4,5,6]+29
-
+Function optest33 int \\ does IDX work \\ length.[ 3, 4, 5, 6] + 29
 
 Function optest34(a:int, b:int, c:int, d:int)ordering optest34a(a ? b, c ? d)
 
@@ -224,7 +218,6 @@ Function optest34a(a:ordering, b:ordering)ordering
  let x = a
   if x = EQ then b else x
   
-
 Function optest16a(a:seq.char)seq.int
- // This is just a type change and the compiler recognizes this and does not generate code //
- a @ +(empty:seq.int, toint.@e)
+ \\ This is just a type change and the compiler recognizes this and does not generate code \\
+ {(for(@e ∈ a, acc = empty:seq.int)acc + toint.@e)}

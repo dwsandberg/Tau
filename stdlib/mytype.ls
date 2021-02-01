@@ -13,8 +13,8 @@ Export towords(mytype)seq.word
 Function print(p:mytype)seq.word prt(towords.p, length.towords.p)
 
 function prt(s:seq.word, i:int)seq.word
- if length.s=0 then "?" else 
- if i = 1 then [ s_1]
+ if length.s = 0 then"?"
+ else if i = 1 then [ s_1]
  else [ s_i] + "." + prt(s, i - 1)
 
 Function =(t:mytype, b:mytype)boolean towords.t = towords.b

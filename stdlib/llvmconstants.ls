@@ -2,8 +2,8 @@ module llvmconstants
 
 use standard
 
-function generatecode seq.word // generates code in this module beyond---------//
-// cmp2op found llvm/IR/InstrTypes.h //
+function generatecode seq.word \\ generates code in this module beyond---------\\
+\\ cmp2op found llvm/IR/InstrTypes.h \\
 enumerate("align","unspecified ? ? ? align8 align16 align32 align64")
 + enumerate("instop","? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE")
 + enumerate("typeop","? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION")
@@ -14,12 +14,10 @@ enumerate("align","unspecified ? ? ? align8 align16 align32 align64")
 + enumerate("binaryop","add sub mul udiv sdiv urem srem shl lshr ashr and or xor")
 + enumerate("cmp2op","? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle")
 
-
-    
 function enumerate(type:seq.word, codes:seq.word)seq.word
  "type" + type + "is record toint:int" + " &br  &br Function decode(code:" + type
  + ")seq.word"
- + " &br let i = toint.code &br if between(i + 1, 1,"
+ + " &br let i = toint.code  &br if between(i + 1, 1,"
  + toword.length.codes
  + ")then"
  + '  &br let r = ["'
@@ -32,7 +30,7 @@ function enumerate(type:seq.word, codes:seq.word)seq.word
  + '."+ toword.i '
  + " &br  &br Export toint("
  + type
- + ")int  "
+ + ")int"
  + " &br  &br Export"
  + type
  + "(i:int)"
@@ -44,7 +42,7 @@ function enumerate(type:seq.word, codes:seq.word)seq.word
  + ", b:"
  + type
  + ")boolean toint.a = toint.b"
- + arithseq(length.codes, 1, 1) @ +("", dd(type, codes, @e))
+ + ((for(@e ∈ arithseq(length.codes, 1, 1), acc ="")acc + dd(type, codes, @e)))
  + " &br  &br"
 
 function dd(type:seq.word, w:seq.word, i:int)seq.word
@@ -350,8 +348,10 @@ type cmp2op is record toint:int
 
 Function decode(code:cmp2op)seq.word
  let i = toint.code
-if between(i + 1, 1, 42)then 
-let r = ["? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle"_(i + 1)]if not(r ="?")then r else"cmp2op."+ toword.i 
+  if between(i + 1, 1, 42)then
+  let r = ["? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle"
+   _(i + 1)]
+    if not(r = "?")then r else"cmp2op." + toword.i
   else"cmp2op." + toword.i
 
 Export toint(cmp2op)int
@@ -362,34 +362,34 @@ Export type:cmp2op
 
 Function =(a:cmp2op, b:cmp2op)boolean toint.a = toint.b
 
-Function Feq cmp2op cmp2op.1 
+Function Feq cmp2op cmp2op.1
 
-Function Fgt cmp2op cmp2op.2 
+Function Fgt cmp2op cmp2op.2
 
-Function Fge cmp2op cmp2op.3 
+Function Fge cmp2op cmp2op.3
 
-Function Flt cmp2op cmp2op.4 
+Function Flt cmp2op cmp2op.4
 
-Function Fle cmp2op cmp2op.5 
+Function Fle cmp2op cmp2op.5
 
-Function Fne cmp2op cmp2op.6 
+Function Fne cmp2op cmp2op.6
 
 Function eq cmp2op cmp2op.32
 
-Function ne cmp2op cmp2op.33 
+Function ne cmp2op cmp2op.33
 
-Function ugt cmp2op cmp2op.34 
+Function ugt cmp2op cmp2op.34
 
-Function uge cmp2op cmp2op.35 
+Function uge cmp2op cmp2op.35
 
-Function ult cmp2op cmp2op.36 
+Function ult cmp2op cmp2op.36
 
-Function ule cmp2op cmp2op.37 
+Function ule cmp2op cmp2op.37
 
 Function sgt cmp2op cmp2op.38
 
-Function sge cmp2op cmp2op.39 
+Function sge cmp2op cmp2op.39
 
-Function slt cmp2op cmp2op.40 
+Function slt cmp2op cmp2op.40
 
-Function sle cmp2op cmp2op.41 
+Function sle cmp2op cmp2op.41

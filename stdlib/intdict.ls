@@ -1,11 +1,10 @@
 Module intdict.T
 
+use standard
+
 use seq.T
 
 use otherseq.int
-
-
-use standard
 
 Export type:intdict.T
 

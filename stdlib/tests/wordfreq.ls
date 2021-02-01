@@ -6,20 +6,19 @@ Count word frequence in text file. An indexed encoding is used to assign indexes
 
 use fileio
 
-use encoding.indexedword
-
 use standard
 
 use textio
 
-use seq.seq.word
-
+use encoding.indexedword
 
 use otherseq.wordfreq
 
 use seq.wordfreq
 
 use sparseseq.wordfreq
+
+use seq.seq.word
 
 type indexedword is record w:word
 
@@ -47,13 +46,11 @@ function print(p:wordfreq)seq.word
 function removelowcount(mincount:int, p:wordfreq)seq.wordfreq if count.p < mincount then empty:seq.wordfreq else [ p]
 
 function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq
- sort(a @ count(sparseseq.wordfreq(0,"A"_1), @e))
- @ +(empty:seq.wordfreq, removelowcount(mincount, @e))
+ ((for(@e ∈ sort.(for(@e ∈ a, acc = sparseseq.wordfreq(0,"A"_1))count(acc, @e)), acc = empty:seq.wordfreq)acc + removelowcount(mincount, @e)))
  
 Function testwordfreq(count:int,text:seq.seq.word) seq.word
-  wordfreq(count, text) @ +(empty:seq.word, print.@e)
+ ((for(@e ∈ wordfreq(count, text), acc = empty:seq.word)acc + print.@e))
 
+Function testwordfreq seq.word((for(@e ∈ wordfreq(300, gettext."stdlib/pass2.ls"), acc = empty:seq.word)acc + print.@e))
 
-Function testwordfreq seq.word wordfreq(300, gettext."stdlib/pass2.ls") @ +(empty:seq.word, print.@e)
-
-function count(s:seq.wordfreq, w:seq.word)seq.wordfreq w @ count(s, @e)
+function count(s:seq.wordfreq, w:seq.word)seq.wordfreq(for(@e ∈ w, acc = s)count(acc, @e))

@@ -2,7 +2,7 @@
 
 module bug7
 
-use seq.seq.int
+use standard
 
 use seq8.int
 
@@ -14,7 +14,7 @@ use encoding.slot2
 
 use seq.slot2
 
-use standard
+use seq.seq.int
 
 type slot2 is record type:int, rec:seq.int, name:seq.word
 
@@ -27,7 +27,7 @@ function assignencoding(a:int, slot2)int a + 1
 
 Function c32(i:int)encoding.slot2 encode.slot2(i32, [ 45, i],"")
 
-Function testbug7 seq.word // since encodings have side effects it is not safe to use simple inline expansion of functions since the order of evaluation becomes important. Function c32 is the candiate for inline expansion. //
+Function testbug7 seq.word \\ since encodings have side effects it is not safe to use simple inline expansion of functions since the order of evaluation becomes important. Function c32 is the candiate for inline expansion. \\
 let discard0 = [ i64, i32]
 let z = c32.0
  if [ i64, i32] = [ 1, 2] ∧ 128 = (newseq8.[ 1, 128])_2 then
@@ -50,9 +50,9 @@ Module seq8.T
 
 for testing not standard sequence optimization. new([ 1, 128])should be reduce to constant and if non standard sequence is not detected will give new([ 1, 128])_2 instead of 128. 
 
-use seq.T
-
 use standard
+
+use seq.T
 
 type seq8 is sequence length:int, flda:seq.T, fldb:int
 

@@ -4,27 +4,17 @@ In addition to the llvm bitcode format documentation, an useful file for referen
 
 use UTF8
 
-use seq.seq.seq.int
+use llvmconstants
 
-use seq.seq.int
-
-use seq.encoding.llvmconst
+use standard
 
 use encoding.llvmconst
 
-use seq.encodingpair.llvmconst
-
 use seq.llvmconst
-
-use llvmconstants
 
 use otherseq.llvmtype
 
 use encoding.llvmtypeele
-
-use seq.encodingpair.llvmtypeele
-
-use seq.seq.llvmtypeele
 
 use seq.llvmtypeele
 
@@ -32,7 +22,17 @@ use seq.slot
 
 use seq.slotrecord
 
-use standard
+use seq.seq.int
+
+use seq.encoding.llvmconst
+
+use seq.encodingpair.llvmconst
+
+use seq.encodingpair.llvmtypeele
+
+use seq.seq.llvmtypeele
+
+use seq.seq.seq.int
 
 Export type:encodingpair.llvmconst
 
@@ -57,19 +57,20 @@ function inttollvmtype(i:int)llvmtype llvmtype.to:encoding.llvmtypeele(i + 1)
 Function print(t:llvmtype)seq.word
  let a = toseq.decode.index.t
  let tp = typeop.a_1
- let b = a @ +(empty:seq.llvmtype, inttollvmtype.@e)
+ let b =((for(@e ∈ a, acc = empty:seq.llvmtype)acc + inttollvmtype.@e))
   if tp = INTEGER then [ merge("i" + toword.a_2)]
   else if tp = ARRAY then
   "array(" + toword.a_2 + "," + print.b_3 + ")"
   else if tp = POINTER then"ptr." + print.b_2
   else if tp = FUNCTION then
-  "function(" + subseq(b, 3, length.a) @ list("",",", print.@e)
+  "function("
+   + (for(@e ∈ subseq(b, 3, length.a), acc ="")list(acc,",", print.@e))
    + ")"
   else if tp = TVOID then"VOID"else if tp = DOUBLE then"double"else"?"
 
 function cvttorec(a:encodingpair.llvmtypeele)seq.int toseq.data.a
 
-Function typerecords seq.seq.int encoding:seq.encodingpair.llvmtypeele @ +(empty:seq.seq.int, cvttorec.@e)
+Function typerecords seq.seq.int((for(@e ∈ encoding:seq.encodingpair.llvmtypeele, acc = empty:seq.seq.int)acc + cvttorec.@e))
 
 Function returntype(func:llvmtype)llvmtype llvmtype.to:encoding.llvmtypeele((toseq.decode.index.func)_3 + 1)
 
@@ -95,7 +96,8 @@ Function array(size:int, base:llvmtype)llvmtype llvmtype.[ toint.ARRAY, size, ty
 
 Function ptr(base:llvmtype)llvmtype llvmtype.[ toint.POINTER, typ.base, 0]
 
-Function function(para:seq.llvmtype)llvmtype llvmtype(para @ +([ toint.FUNCTION, 0], typ.@e))
+Function function(para:seq.llvmtype)llvmtype
+ llvmtype.((for(@e ∈ para, acc = [ toint.FUNCTION, 0])acc + typ.@e))
 
 -------------------------
 
@@ -114,7 +116,7 @@ function symtabname(a:llvmconst)seq.int
 Function modulerecord(name:seq.word, rec:seq.int)slot
  let c = if name = ""then llvmconst(-3, rec)
  else
-  let chars = tointseq(name @ +(empty:seq.char, decodeword.@e))
+  let chars = tointseq.((for(@e ∈ name, acc = empty:seq.char)acc + decodeword.@e))
    llvmconst(-1, [ length.chars] + chars + rec)
   slot(valueofencoding.encode.c - 1)
 
@@ -133,19 +135,19 @@ Function AGGREGATE(data:seq.slot)slot
  let t = array(length.data, i64)
   slot(valueofencoding
   .encode
-  .llvmconst(typ.t, [ toint.CAGGREGATE] + data @ +(empty:seq.int, toint.@e))
+  .llvmconst(typ.t, [ toint.CAGGREGATE] + ((for(@e ∈ data, acc = empty:seq.int)acc + toint.@e)))
   - 1)
 
 Function ptrtoint(argtype:llvmtype, p:slot)slot slot.C(i64, [ toint.CCAST, 9, typ.argtype, toint.p])
 
 Function CGEP(p:slot, b:int)slot
- let t1 = // if p = 0 then array(-2, i64)else // consttype.p
+ let t1 = \\ if p = 0 then array(-2, i64)else \\ consttype.p
   slot
   .C(ptr.i64
   , [ toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b])
 
 Function CGEPi8(p:slot, b:int)slot
- let t1 = // if p = 0 then array(-2, i64)else // consttype.p
+ let t1 = \\ if p = 0 then array(-2, i64)else \\ consttype.p
   slot
   .C(ptr.i8
   , [ toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b])
@@ -165,7 +167,7 @@ Function asi64(s:slot)slot
 
 Function constvalue(i:slot)int(toseq.decode.to:encoding.llvmconst(toint.i + 1))_2
 
-Function constantrecords seq.slotrecord encoding:seq.encodingpair.llvmconst @ +(empty:seq.slotrecord, slotrecord.@e)
+Function constantrecords seq.slotrecord((for(@e ∈ encoding:seq.encodingpair.llvmconst, acc = empty:seq.slotrecord)acc + slotrecord.@e))
 
 type slotrecord is record cvt:encodingpair.llvmconst
 
@@ -174,7 +176,7 @@ Export type:slotrecord
 Function record(b:slotrecord)seq.int
  let a = data.cvt.b
   if typ.a = -1 then
-  // name comes before record // subseq(toseq.a, 2 + (toseq.a)_1, length.toseq.a)
+  \\ name comes before record \\ subseq(toseq.a, 2 + (toseq.a)_1, length.toseq.a)
   else toseq.a
 
 Function symtablename(c:slotrecord)seq.char
@@ -192,7 +194,7 @@ Function consttype(s:slot)llvmtype
  let l = decode.to:encoding.llvmconst(toint.s + 1)
   llvmtype
   .to:encoding.llvmtypeele(1
-  + if typ.l = -1 then // must skip name to find record //(toseq.l)_(3 + (toseq.l)_1)
+  + if typ.l = -1 then \\ must skip name to find record \\(toseq.l)_(3 + (toseq.l)_1)
   else if typ.l = -3 then(toseq.l)_2 else typ.l)
 
 type slot is record toint:int

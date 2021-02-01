@@ -1,10 +1,10 @@
 Module labeledgraph.T
 
+use standard
+
 use seq.T
 
 use set.T
-
-use standard
 
 unbound ?(a:T, b:T)ordering
 
@@ -33,7 +33,8 @@ Function arcstosuccessors(g:labeledgraph.T, node:T)set.T findelement2(arcs.g, no
 
 Function backarcstopredecessors(g:labeledgraph.T, node:T)set.T findelement2(backarcs.g, node)
 
-Function sinks(g:labeledgraph.T)seq.T toseq.nodes.g @ +(empty:seq.T, sinks(g, @e))
+Function sinks(g:labeledgraph.T)seq.T
+ ((for(@e ∈ toseq.nodes.g, acc = empty:seq.T)acc + sinks(g, @e)))
 
 Function sinks(g:labeledgraph.T, n:T)seq.T
  if cardinality.arcstosuccessors(g, n) = 0 then [ n]else empty:seq.T
@@ -42,5 +43,5 @@ Function subdelete(a:set.T, b:T)set.T a - b
 
 Function deletenode(g:labeledgraph.T, n:T)labeledgraph.T
  let b = backarcstopredecessors(g, n)
- let a = toseq.b @ subdelete(arcs.g, reverse.@e)
+ let a =(for(@e ∈ toseq.b, acc = arcs.g)subdelete(acc, reverse.@e))
   labeledgraph(a, backarcs.g - b, nodes.g - n)

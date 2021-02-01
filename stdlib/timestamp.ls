@@ -6,7 +6,6 @@ use standard
 
 use seq.byte
 
-
 Export type:timestamp
 
 type timestamp is record toint:int
@@ -38,7 +37,7 @@ Function fromJuliantointseq(dt:int)seq.int
   [ c - if m > 2 then 4716 else 4715, m, d - e * 306001 / 10000]
 
 Function timestamplit(t:UTF8)timestamp
- // assumes t is in format 2019-12-12T12:48:11 //
+ \\ assumes t is in format 2019-12-12T12:48:11 \\
  let year = intlit.subseq(t, 1, 4)
  let month = intlit.subseq(t, 6, 7)
  let day = intlit.subseq(t, 9, 10)
@@ -52,7 +51,7 @@ Function totimestamp(year:int, month:int, day:int, hour:int, minute:int, second:
  timestamp(((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second)
 
 Function decompose(ts:timestamp)seq.int
- // returns sequence of year, month, day, hour, minute, second //
+ \\ returns sequence of year, month, day, hour, minute, second \\
  let t = toint.ts
  let a = t mod (24 * 60 * 60)
  let seconds = a mod 60

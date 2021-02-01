@@ -2,13 +2,13 @@ Module sparseseq.T
 
 * lets a sequence have a default value even beyond the length of the seq.
 
+use standard
+
 use seq.T
 
 use otherseq.sparseele.T
 
 use seq.sparseele.T
-
-use standard
 
 type sparseele is record start:int, edata:seq.T
 
@@ -51,7 +51,7 @@ function removeoverlap(end:int, s:seq.sparseele.T, i:int)seq.sparseele.T
   let thisend = start.this + length.edata.this - 1
    if end ≥ thisend then removeoverlap(end, s, i + 1)
    else
-    [ sparseele(end + 1, edata.this << (end - start.this))] + (s << i)
+    [ sparseele(end + 1, edata.this << (end - start.this))] + s << i
 
 function *(a:seq.sparseele.T, e:sparseele.T)seq.sparseele.T
  if isempty.a then [ e]
@@ -60,5 +60,5 @@ function *(a:seq.sparseele.T, e:sparseele.T)seq.sparseele.T
   let lastend = start.last + length.edata.last - 1
    if lastend < start.e then a + e
    else
-    (a >> 1)
+    a >> 1
     * sparseele(start.last, subseq(edata.last, 1, start.e - start.last) + edata.e)

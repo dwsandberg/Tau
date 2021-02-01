@@ -1,10 +1,10 @@
 Module test20
 
+use standard
+
 use seq.int
 
 use seq.q
-
-use standard
 
 type p is record a:int, b:int, c:int
 

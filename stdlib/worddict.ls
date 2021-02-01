@@ -1,8 +1,8 @@
 Module worddict.T
 
-use seq.T
-
 use standard
+
+use seq.T
 
 use otherseq.word
 

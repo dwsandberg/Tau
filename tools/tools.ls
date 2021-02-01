@@ -1,13 +1,12 @@
-#!/usr/local/bin/tau  ; use pretty ;   pretty("printbitcodes printbitcodes bitcodesupport  runcode ","junk")
+#!/usr/local/bin/tau  ; use doc ; doclibrary."stdlib"
+
+; use pretty ;   pretty("printbitcodes printbitcodes bitcodesupport  runcode ","junk")
 
 print.compile("baseTypeCheck","stdlib")
 
-
 ; use doc ; doclibrary."stdlib"
 
-
 ; use doc ; doclibrary."stdlib"
-
 
 ; use doc ; doclibrary."tools"
 
@@ -39,8 +38,7 @@ print.compile("baseTypeCheck","stdlib")
 
 Module tools
 
-Library tools  
-doc    profile     
+Library tools doc profile
 uses stdlib
 exports  doc   profile    tools
 

@@ -82,7 +82,7 @@ let a = encode.ccc(1, 987)
  else"FAIL testseq" + w + x + y + z
 
 Function sparsecheck seq.word 
-let b = subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200) @ check(sparseseq.101, @e)
+let b =(for(@e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200), acc = sparseseq.101)check(acc, @e))
 "Pass Sparse Sequence"
 
 function  check(s:seq.int,r:seq.int) seq.int

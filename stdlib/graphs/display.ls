@@ -2,6 +2,8 @@ Module display
 
 use UTF8
 
+use standard
+
 use seq.char
 
 use otherseq.int
@@ -10,15 +12,13 @@ use seq.int
 
 use sparseseq.int
 
-use standard
-
 use otherseq.word
 
-use seq.seq.seq.word
+use seq.word
 
 use seq.seq.word
 
-use seq.word
+use seq.seq.seq.word
 
 /use words
 
@@ -28,11 +28,10 @@ type characterwidths is record widths:seq.int
 
 function_(s:seq.int, c:char)int if toint.c = 0 then 0 else s_(toint.c)
 
-Function displaywidth(cw:characterwidths, s:seq.word)int  
-// does not account for spaces //
-s @ +(0,displaywidth(cw, @e))
+Function displaywidth(cw:characterwidths, s:seq.word)int
+ \\ does not account for spaces \\((for(@e ∈ s, acc = 0)acc + displaywidth(cw, @e)))
 
-Function displaywidth(cw:characterwidths, w:word)int decodeword.w @ +(0,(widths.cw)_@e)
+Function displaywidth(cw:characterwidths, w:word)int((for(@e ∈ decodeword.w, acc = 0)acc +(widths.cw)_@e))
 
 Function charwidths characterwidths characterwidths
 .replaceS(sparseseq.60
@@ -51,7 +50,7 @@ Function charwidths characterwidths characterwidths
 , 64, 64, 64, 43, 50, 36, 64, 64, 93, 64
 , 64, 57, 62, 26, 62, 70])
 
-Function checkwidths seq.word arithseq(128 - 32, 1, 32) @ list(""," &br", check.@e)
+Function checkwidths seq.word(for(@e ∈ arithseq(128 - 32, 1, 32), acc ="")list(acc," &br", check.@e))
 
 function check(i:int)seq.word
  let a = encodeword.tocharseq.constantseq(100, i)

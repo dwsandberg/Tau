@@ -1,27 +1,26 @@
 Module standard
 
-
 use UTF8
 
-use encoding.seq.char
-
-use seq.char
-
-use otherseq.int
-
-use seq.seq.int
-
-use otherseq.word
-
-use seq.seq.word
+use tausupport
 
 use words
 
 use xxhash
 
-use tausupport
+use seq.char
 
-Export stacktrace seq.word 
+use otherseq.int
+
+use otherseq.word
+
+use encoding.seq.char
+
+use seq.seq.int
+
+use seq.seq.word
+
+Export stacktrace seq.word
 
 type ordering is record toint:int
 
@@ -39,12 +38,11 @@ Function GT ordering ordering.2
 
 Function LT ordering ordering.0
 
-
 -----------------
 
-Builtin true boolean  
+Builtin true boolean
 
-Builtin false boolean  
+Builtin false boolean
 
 Builtin not(a:boolean)boolean
 
@@ -66,12 +64,11 @@ Function hash(i:int)int finalmix.hash(hashstart, i)
 
 Builtin =(a:int, b:int)boolean
 
-Function =(a:ordering, b:ordering)boolean toint.a = toint.b  
+Function =(a:ordering, b:ordering)boolean toint.a = toint.b
 
-Builtin =(a:boolean, b:boolean)boolean  // (a &and b) &or (not.a &and not.b) //
+Builtin =(a:boolean, b:boolean)boolean //(a &and b)&or(not.a &and not.b)//
 
-if a then if b then  true else false else if b then false else  true
-
+if a then if b then true else false else if b then false else true
 
 Function toword(o:ordering)word"LT EQ GT"_(toint.o + 1)
 
@@ -81,16 +78,13 @@ Function ∧(a:ordering, b:ordering)ordering
 
 --------------------
 
+Function ?(a:boolean, b:boolean)ordering
+ if a then if b then \\ T T \\ EQ else \\ T F \\ GT
+ else if b then \\ F T \\ LT else \\ F F \\ EQ
 
-Function ?(a:boolean, b:boolean)ordering  if a then if b then // T T // EQ else // T F //  GT else if b then // F T // LT else // F F // EQ
+Function ∧(a:boolean, b:boolean)boolean if a then b else false
 
-
-Function ∧(a:boolean, b:boolean)boolean if a then b else  false  
-
-Function ∨(a:boolean, b:boolean)boolean
- if a then true else b
-
- 
+Function ∨(a:boolean, b:boolean)boolean if a then true else b
 
 Function abs(x:int)int if x < 0 then 0 - x else x
 
@@ -110,11 +104,11 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
-Function hash(a:seq.int)int finalmix(a @ hash(hashstart, @e))
+Function hash(a:seq.int)int finalmix.(for(@e ∈ a, acc = hashstart)hash(acc, @e))
 
-Function hash(a:seq.word)int finalmix(a @ hash(hashstart, hash.@e))
+Function hash(a:seq.word)int finalmix.(for(@e ∈ a, acc = hashstart)hash(acc, hash.@e))
 
-Function^(i:int, n:int)int constantseq(n, i) @ *(1, @e)
+Function^(i:int, n:int)int((for(@e ∈ constantseq(n, i), acc = 1)acc * @e))
 
 Function pseudorandom(seed:int)int
  let ah = 16807
@@ -124,33 +118,34 @@ Function pseudorandom(seed:int)int
 
 function addrandom(s:seq.int, i:int)seq.int s + pseudorandom.s_(length.s)
 
-Function randomseq(seed:int, length:int)seq.int constantseq(length - 1, 1) @ addrandom([ seed], @e)
+Function randomseq(seed:int, length:int)seq.int
+ (for(@e ∈ constantseq(length - 1, 1), acc = [ seed])addrandom(acc, @e))
 
 Export randomint(i:int)seq.int
 
-Function list(a:seq.word,b:seq.word,c:seq.word) seq.word
+Function list(a:seq.word, b:seq.word, c:seq.word)seq.word
  if isempty.a then c else if isempty.c then a else a + (b + c)
 
-Function print(n:int) seq.word 
- let s=decodeUTF8.toUTF8.n
-   let sign=if n < 0 then "-" else "" 
-   let t =(if n < 0 then s << 1 else s)
-   sign+encodeword.if length.s < 5 then  s else 
-     for (e &in s ,acc=empty:seq.char,i,false) 
-       acc+if (length.s-i) mod 3 =2 &and i &ne 1 then [char.160,e] else [ e ] 
+Function print(n:int)seq.word
+ let s = decodeUTF8.toUTF8.n
+ let sign = if n < 0 then"-"else""
+ let t = if n < 0 then s << 1 else s
+  sign
+  + encodeword
+  .if length.s < 5 then s
+  else
+   for(e ∈ s, acc = empty:seq.char, i, false)acc
+   + if(length.s - i) mod 3 = 2 ∧ i ≠ 1 then [ char.160, e]
+   else [ e]
 
+Function EOL seq.word" &br"
 
-  Function EOL seq.word "&br"  
-  
+Function break(s:seq.word, seperators:seq.word, includeseperator:boolean)seq.seq.word
+ let nosep = if includeseperator then 0 else 1
+ let l = for(e ∈ s, acc = empty:seq.int, i, false)acc + if e ∈ seperators then [ i]else empty:seq.int
+  for(ele ∈ l + (length.s + 1), acc = empty:seq.seq.word, i, false)acc
+  + subseq(s, if i = 1 then 1 else l_(i - 1) + nosep, ele - 1)
 
-Function    break(s:seq.word,seperators: seq.word,includeseperator:boolean) seq.seq.word
-  let  nosep=if includeseperator then 0 else 1
-     let l=  for (e &in s ,acc=empty:seq.int,i,false)
-       ( acc+ if e &in seperators then [i] else empty:seq.int )
-        for ( ele &in l+ (length.s+1),acc=empty:seq.seq.word,i,false)
-          acc+subseq(s,if i=1 then 1 else l_(i-1)+nosep,ele-1)  
-
-  
 Export hash(a:word)int
 
 Export ?(a:word, b:word)ordering
@@ -203,10 +198,9 @@ Export length(seq.int)int
 
 Export findindex(word, seq.word)int
 
-
 Export last(s:seq.word)word
 
-Export first(s:seq.word) word
+Export first(s:seq.word)word
 
 Export subseq(seq.seq.word, int, int)seq.seq.word
 
@@ -268,7 +262,6 @@ Export isempty(seq.word)boolean
 
 Export isempty(seq.int)boolean
 
-
 Export_(seq.char, int)char
 
 Export subseq(seq.char, int, int)seq.char
@@ -291,21 +284,12 @@ Export print(decimals:int, rin:real)seq.word
 
 Export checkinteger(w:word)word
 
-Export << (s:seq.word, i:int) seq.word   
-           
-Export >> (s:seq.word , i:int) seq.word   
+Export <<(s:seq.word, i:int)seq.word
 
-* usegraph include xxhash encoding bits words real    
- textio reconstruct UTF8 seq otherseq fileio standard bitstream
-exclude standard seq
+Export >>(s:seq.word, i:int)seq.word
 
-* usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict 
-tausupport exclude standard seq
+* usegraph include xxhash encoding bits words real textio reconstruct UTF8 seq otherseq fileio standard bitstream exclude standard seq
 
-* usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 
-persistant llvm postbind reconstruct persistantseq opt2 symbol parse libdesc internalbc 
-intercode cvttoinst codegen pass2  codegennew funcsig interpreter
-exclude seq set otherseq standard bits tree graph UTF8 stack real ipair bitpackedseq 
-fileio textio encoding words 
+* usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict tausupport exclude standard seq
 
-*
+* usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 persistant llvm postbind reconstruct persistantseq opt2 symbol parse libdesc internalbc intercode cvttoinst codegen pass2 codegennew funcsig interpreter exclude seq set otherseq standard bits tree graph UTF8 stack real ipair bitpackedseq fileio textio encoding words

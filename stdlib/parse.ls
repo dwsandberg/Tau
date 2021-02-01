@@ -1,31 +1,34 @@
 Module parse
 
-use parsersupport.bindinfo
-
-use encoding.seq.token.bindinfo
-
-use seq.seq.token.bindinfo
-
-use seq.token.bindinfo
+use UTF8
 
 use format
 
-
-use seq.seq.mytype
-
-use seq.mytype
-
 use standard
 
-use seq.seq.symbol
+use symbol
+
+use parsersupport.bindinfo
+
+use seq.char
+
+use seq.mytype
 
 use seq.symbol
 
 use set.symbol
 
-use symbol
-
 use set.word
+
+use seq.token.bindinfo
+
+use seq.seq.mytype
+
+use seq.seq.symbol
+
+use encoding.seq.token.bindinfo
+
+use seq.seq.token.bindinfo
 
 Export getheader(s:seq.word)seq.word
 
@@ -39,7 +42,8 @@ Function parsedcode(b:bindinfo)seq.symbol code.b
 
 Export types(bindinfo)seq.mytype
 
-Function funcparametertypes(t:bindinfo)seq.mytype subseq(types.t, 3, length.types.t) @ +(empty:seq.mytype, parameter.@e)
+Function funcparametertypes(t:bindinfo)seq.mytype
+ ((for(@e ∈ subseq(types.t, 3, length.types.t), acc = empty:seq.mytype)acc + parameter.@e))
 
 Function funcname(t:bindinfo)seq.word text.t
 
@@ -49,7 +53,8 @@ Function funcreturntype(t:bindinfo)mytype(types.t)_2
 
 /function kk(stateno:int, token:int)seq.word if 0 ≠ actiontable_(length.tokenlist * stateno + token)then [ tokenlist_token]else empty:seq.word
 
-function errormessage(message:seq.word, input:seq.word, place:int)seq.word  "&{ literal"+ message+ "&} "+ prettynoparse.subseq(input, 1, place)
+function errormessage(message:seq.word, input:seq.word, place:int)seq.word
+ " &{ literal" + message + " &}" + prettynoparse.subseq(input, 1, place)
 
 Function parse(dict:set.symbol, input:seq.word)bindinfo parse(bindinfo(dict, empty:seq.symbol, empty:seq.mytype,""), input)
 
@@ -59,10 +64,8 @@ Function parse(dict:set.symbol, input:seq.word)bindinfo parse(bindinfo(dict, emp
 
 / use encoding.seq.token.bindinfo
 
-
-
 Function parse(b:bindinfo, input:seq.word)bindinfo
- // let a = if length.cachevalue = 0 then let discard = encode(sortedlextable:bindinfo){data.(cachevalue)_1 } else data.(cachevalue)_1 //
+ \\ let a = if length.cachevalue = 0 then let discard = encode(sortedlextable:bindinfo){data.(cachevalue)_1 } else data.(cachevalue)_1 \\
  let a = sortedlextable:bindinfo
   parse:bindinfo(b, a, input)
 
@@ -76,17 +79,11 @@ function hash(l:seq.token.bindinfo)int length.l
 
 function assignencoding(l:int, a:seq.token.bindinfo)int assignrandom(l, a)
 
-use seq.char 
-
-use UTF8
-
 function bindlit(R:reduction.bindinfo) bindinfo
     let chars=decodeword.first.text.R_1 
-    if length.chars > 1 &and chars_2 &in decodeword.first."Xx" then
+  if length.chars > 1 ∧ chars_2 ∈ decodeword.first."Xx"then
       bindinfo(dict.R, [ Lit.cvttoint.chars], [ mytype."bits"],"") 
-    else 
-      bindinfo(dict.R, [ Lit.cvttoint.chars], [ typeint],"") 
-
+  else bindinfo(dict.R, [ Lit.cvttoint.chars], [ typeint],"")
 
 function opaction(R:reduction.bindinfo, input:seq.word,place:int)bindinfo
  let op = tokentext.R_2
@@ -94,8 +91,7 @@ function opaction(R:reduction.bindinfo, input:seq.word,place:int)bindinfo
  let types = types.R_1 + types.R_3
   if  op="≠" then 
     let f = lookupbysig(dict, "=", types, input, place)
-    bindinfo(dict, code.R_1 + code.R_3 + f
-    + NotOp, [ resulttype.f],"")
+    bindinfo(dict, code.R_1 + code.R_3 + f + NotOp, [ resulttype.f],"")
   else if op="∉" then
     let f = lookupbysig(dict, "∈", types, input, place)
     bindinfo(dict, code.R_1 + code.R_3 + f+ NotOp, [ resulttype.f],"")
@@ -119,26 +115,20 @@ function unaryop(R:reduction.bindinfo, input:seq.word,place:int, op:seq.word, ex
   assert cardinality.dcws=1 report errormessage("type word seq is require for process in" ,  input, place)
     let newcode = [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp, Stdseq, Lit.nopara]
         + subseq(code.exp, 1, length.code.exp - 1)
-    + 
-     newsymbol("createthreadX",mytype." int builtin",[typeint,typeint,typeint,typeint,typeint]+paratypes.last.code.exp
-     ,abstracttype("process"_1,resulttype.last.code.exp)) 
+    + newsymbol("createthreadX", mytype."int builtin", [ typeint, typeint, typeint, typeint, typeint] + paratypes.last.code.exp, abstracttype("process"_1, resulttype.last.code.exp))
    bindinfo(dict.R, newcode, [  typeprocess+rt],"")
  else
   let f = lookupbysig(dict.R, op, types.exp, input, place)
    bindinfo(dict.R, code.exp + f, [ resulttype.f],"")
 
-function forpart1( elename:word,  initseq:bindinfo, accname:word,initacc:bindinfo ,idxname:word,
-input:seq.word, place:int)bindinfo  
+function forpart1(elename:word, initseq:bindinfo, accname:word, initacc:bindinfo, idxname:word, input:seq.word, place:int)bindinfo
    let seqtype=(types.initseq)_1
    let resulttype=(types.initacc)_1
-   assert   abstracttype.seqtype =first."seq" report 
-      " first operhand of @ must be seq: "+print.seqtype
-      // should generat name for @seq // 
-   let newvars = [newsymbol([elename], mytype."$for",empty:seq.mytype,parameter.seqtype)
-                 ,newsymbol([accname], mytype."$for",empty:seq.mytype,resulttype)
-                 ,newsymbol([idxname], mytype."$for",empty:seq.mytype,typeint)  ]  
+  assert abstracttype.seqtype = first."seq"report"first operhand of @ must be seq:" + print.seqtype
+   \\ should generat name for @seq \\
+   let newvars = [ newsymbol([ elename], abstracttype("$for"_1, parameter.seqtype), empty:seq.mytype, parameter.seqtype), newsymbol([ accname], abstracttype("$for"_1, resulttype), empty:seq.mytype, resulttype), newsymbol([ idxname], mytype."$for", empty:seq.mytype, typeint)]
     let newcode = code.initseq+Define."@seq"+   code.initacc  +  Local.first."@seq"+newvars
-   bindinfo(dict.initseq &cup asset.newvars,newcode,types.initseq+types.initacc, "" )
+    bindinfo(dict.initseq ∪ asset.newvars, newcode, types.initseq + types.initacc,"")
  
 function  forpart2( part1:bindinfo, exit:bindinfo,thunk:bindinfo, input:seq.word, place:int) bindinfo 
   assert  (types.exit)_1=mytype."boolean" report "apply exit condiciton must be of type boolean"
@@ -147,77 +137,25 @@ function  forpart2( part1:bindinfo, exit:bindinfo,thunk:bindinfo, input:seq.word
      assert   resulttype =  (types.thunk)_1 report "Expression type "+print.(types.thunk)_1 +" must equal accumalator type"+print.resulttype
    let newcode = 
      let lenExit=length.code.exit
-     if lenExit=1 &or firstdiff( code.thunk,code.exit ) &ne 0  then 
+   if lenExit = 1 ∨ firstdiff(code.thunk, code.exit) ≠ 0 then
          code.part1 + code.thunk + code.exit 
-     else  if length.code.thunk &ge lenExit then
-          // exit is a prefix of thunk //
-         code.part1 + code.exit +Define."@commonexit"
-         +Local."@commonexit"_1+ code.thunk << lenExit +Local."@commonexit"_1
+   else if length.code.thunk ≥ lenExit then
+   \\ exit is a prefix of thunk \\
+    code.part1 + code.exit + Define."@commonexit" + Local."@commonexit"_1
+    + code.thunk << lenExit
+    + Local."@commonexit"_1
      else 
            code.part1 +  code.thunk  +Define."@commonexit"+Local."@commonexit"_1
-            +Local."@commonexit"_1 + code.exit << length.code.thunk
-    let applysym= newsymbol("apply5", mytype."int builtin", 
-        [  resulttype, seqtype,parameter.seqtype,resulttype,typeint,resulttype, mytype."boolean"], resulttype)
-     bindinfo(dict.thunk-(code.part1)_-1 -(code.part1)_-2-(code.part1)_-3,     newcode+applysym, [resulttype],"")
+    + Local."@commonexit"_1
+    + code.exit << length.code.thunk
+  let applysym = newsymbol("apply5", mytype."int builtin", [ resulttype, seqtype, parameter.seqtype, resulttype, typeint, resulttype, mytype."boolean"], resulttype)
+   bindinfo(dict.thunk - (code.part1)_(-1) - (code.part1)_(-2) - (code.part1)_(-3), newcode + applysym, [ resulttype],"")
 
-
-function applypart1( initseq:bindinfo,  name:bindinfo, initacc:bindinfo ,input:seq.word, place:int)bindinfo
-   let seqtype=(types.initseq)_1
-   let resulttype=(types.initacc)_1
-   assert   abstracttype.seqtype =first."seq" report 
-      " first operhand of @ must be seq: "+print.seqtype
-    let s1=symEle.seqtype 
-    let s2=symIdx.seqtype
-    let acc=symAcc( seqtype ,resulttype)
- let newdict = dict.initseq + s1 + s2+acc
- let newcode = code.initseq+Define."@seq"+   Local.first."@seq"+ code.initacc 
-    +  Local.first."@seq"+acc
-  bindinfo(newdict,newcode,types.initseq+types.initacc,tokentext.name)
   
 function firstdiff(a:seq.symbol,b:seq.symbol) int
-// returns 0 if b is a prefix of a &pr a is a prefix of b //
-for (e &in subseq(a,1,length.b),acc=0,i,e &ne b_i)
-  acc+if    e &ne b_i  then i else 0
+ \\ returns 0 if b is a prefix of a &pr a is a prefix of b \\
+ for(e ∈ subseq(a, 1, length.b), acc = 0, i, e ≠ b_i)acc + if e ≠ b_i then i else 0
   
-function applypart2( part1:bindinfo,args:bindinfo,exit:bindinfo, input:seq.word, place:int) bindinfo
-  assert  (types.exit)_1=mytype."boolean" report "apply exit condiciton must be of type boolean"
-  let a= code.args
-  let b= code.exit
-  //  assert    firstdiff( code.args,code.exit)=0   
-   report "args:"+ code.args @ +("",print.@e)+"exitexp:"+ code.exit @ +("",print.@e)
-   +EOL+print.firstdiff( code.args,code.exit) 
-   +"&p"+input //
-  applypart2( part1,args,code.exit,input , place )  
-  
-function applypart2( part1:bindinfo,args:bindinfo,exit:seq.symbol,input:seq.word, place:int) bindinfo
-   let seqtype=(types.part1)_1
-   let resulttype=(types.part1)_2
-   assert abstracttype.seqtype ∈ "seq"report errormessage("first term of apply must be sequence", input, place)
-   let opname=tokentext.part1
-    let s1=symEle.seqtype 
-    let s2=symIdx.seqtype
-    let acc=symAcc( seqtype ,resulttype)   
-    let op = lookupbysig(dict.part1,  opname , [resulttype]+types.args, input, place)
-      assert  resulttype.op = resulttype report"First parameter must be the same as the result type in apply"
-   let z = if  op=symbol("∧(boolean, boolean)","standard","boolean") then
-   symbol("∧(bits, bits)","bits","bits")
-   else if  op=symbol("∨(boolean, boolean)","standard","boolean") then
-   symbol("∨(bits, bits)","bits","bits")
-        else    
-        op
-   let applysym=newsymbol("apply3", abstracttype("builtin"_1, resulttype), [ seqtype, resulttype, seqtype, resulttype, typeint], resulttype)
-   let newcode = 
-     if length.exit=1 then code.part1 + code.args + op + exit +applysym
-     else 
-    if   firstdiff( code.args,exit )=0  then
-         if length.code.args &ge length.exit then
-         code.part1 + subseq(code.args,1,length.exit) +Define."@commonexit"+Local."@commonexit"_1+ code.args << length.exit
-          + op+Local."@commonexit"_1+applysym
-          else 
-           code.part1 +  code.args  +Define."@commonexit"+Local."@commonexit"_1
-           +op+Local."@commonexit"_1 + code.args << length.code.args+applysym
-     else code.part1 + code.args + op + exit +applysym
-       bindinfo(dict.args-s1 -s2-acc,     newcode, [resulttype.op],"")
 
 function addparameter(dict:set.symbol,orgsize:int, input:seq.word, place:int,  m:mytype)set.symbol
  assert isempty.lookup(dict, [ abstracttype.m], empty:seq.mytype) ∨ abstracttype.m = ":"_1 report errormessage("duplciate symbol:" + abstracttype.m, input, place)
@@ -227,9 +165,9 @@ function addparameter(dict:set.symbol,orgsize:int, input:seq.word, place:int,  m
 function lookupbysig(dict:set.symbol, name:seq.word, paratypes:seq.mytype, input:seq.word, place:int)symbol
  let f = lookup(dict, name, paratypes)
   assert not.isempty.f report errormessage("cannot find 1" + name + "("
-  + paratypes @ list("",",", print.@e)
+  + (for(@e ∈ paratypes, acc ="")list(acc,",", print.@e))
   + ")", input, place)
-   assert cardinality.f = 1 report errormessage("found more that one" + toseq.f @ +("", print.@e), input, place)
+   assert cardinality.f = 1 report errormessage("found more that one" + ((for(@e ∈ toseq.f, acc ="")acc + print.@e)), input, place)
     f_1
 
 function createfunc(R:reduction.bindinfo, input:seq.word,place:int, funcname:seq.word, paralist:seq.mytype, functypebind:bindinfo, exp:bindinfo)bindinfo
@@ -250,7 +188,6 @@ function gettype(b:bindinfo)mytype (types.b)_1
 
 function dict(r:reduction.bindinfo)set.symbol dict.last.r
 
-
 function action(ruleno:int, input:seq.word,place:int, R:reduction.bindinfo)bindinfo 
 if ruleno = // G F # // 1 then R_1 
 else if ruleno = // F W NM(FP)T E // 2 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
@@ -259,7 +196,7 @@ else if ruleno = // F W NM T E // 4 then createfunc(R, input, place, tokentext.R
 else if ruleno = // F W NM is W P // 5 then 
 assert(tokentext.R_4)_1 ∈"record sequence"report errormessage("Expected record or sequence after is in type definition got:"+ tokentext.R_4, input, place)bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2) 
 else if ruleno = // F T // 6 then R_1 
-else if ruleno = // FP P // 7 then bindinfo(types.R_1 @ addparameter(dict.R, cardinality.dict.R, input, place, @e), empty:seq.symbol, types.R_1,"") 
+else if ruleno = // FP P // 7 then bindinfo((for(@e ∈ types.R_1, acc = dict.R)addparameter(acc, cardinality.dict.R, input, place, @e)), empty:seq.symbol, types.R_1,"")
 else if ruleno = // P T // 8 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype(":"_1, gettype.R_1)],"") 
 else if ruleno = // P P, T // 9 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ abstracttype(":"_1, gettype.R_3)],"") 
 else if ruleno = // P W:T // 10 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype((tokentext.R_1)_1, gettype.R_3)],"") 
@@ -290,8 +227,11 @@ else if ruleno = // L E // 28 then R_1
 else if ruleno = // L L, E // 29 then bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"") 
 else if ruleno = // E [ L]// 30 then 
 let types = types.R_2 
-assert types @ ∧(true,(types_1 = @e))report errormessage("types do not match in build", input, place)bindinfo(dict.R, [ Stdseq, Lit.length.types]+ code.R_2 + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint]+ types, typeptr), [ typeseq + types_1],"") 
-else if ruleno = // A let W = E // 31 then 
+   assert((for(@e ∈ types, acc = true)acc ∧ types_1 = @e))
+   report errormessage("types do not match in build", input, place)
+    bindinfo(dict.R, [ Stdseq, Lit.length.types] + code.R_2
+    + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint] + types, typeptr), [ typeseq + types_1],"")
+ else if ruleno = \\ A let W = E \\ 31 then
 let e = R_4 
 let name = tokentext.R_2 
 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
@@ -323,14 +263,13 @@ else if ruleno = // N ∧ // 45 then R_1
 else if ruleno = // N ∨ // 46 then R_1 
 else if ruleno = // NM W // 47 then R_1 
 else if ruleno = // NM W:T // 48 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1) 
-else if ruleno = // D E @ NM(E, // 49 then applypart1(R_1, R_3, R_5, input, place) 
-else if ruleno = // D E @ N(E, // 50 then applypart1(R_1, R_3, R_5, input, place) 
-else if ruleno = // E D L)// 51 then applypart2(R_1, R_2,[Lit.0], input, place) 
+else if ruleno = // D E @ NM(E, // 49 then assert false report errormessage("old format" , input, place) R_1
+else if ruleno = // D E @ N(E, // 50 then assert false report errormessage("old format" , input, place) R_1
+else if ruleno = // E D L)// 51 then assert false report errormessage("old format" , input, place) R_1 
 else if ruleno = // E D L)(E)// 52 then 
-assert false report errormessage("old format" , input, place) 
-applypart2(R_1, R_2,R_5, input, place)
+assert false report errormessage("old format" , input, place) R_1
 else if ruleno = // B for(W-E, W = E, W // 53 then forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first.tokentext.R_11, input, place) 
-else if ruleno = // B for(W-E, W = E // 54 then forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first.".", input, place) 
+else if ruleno = // B for(W-E, W = E // 54 then forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first."^", input, place) 
 else if ruleno = // E B)E // 55 then forpart2(R_1, bindinfo(dict.R,[ Litfalse], [ mytype."boolean"],""), R_3, input, place) 
 else assert ruleno = // E B, E)E // 56 report"invalid rule number"+ toword.ruleno 
 forpart2(R_1, R_3, R_5, input, place)

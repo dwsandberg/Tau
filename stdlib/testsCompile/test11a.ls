@@ -2,18 +2,17 @@
 
 Module test11a
 
-use seq.boolean
-
 use checking
-
-use seq.checkprec
 
 use main2
 
 use standard
 
-use process.seq.seq.word
+use seq.boolean
 
+use seq.checkprec
+
+use process.seq.seq.word
 
 Function test11a seq.word 
 let z = [ compare("a + b + c","{(a + b)+ c }")
@@ -43,7 +42,8 @@ let z = [ compare("a + b + c","{(a + b)+ c }")
 
 Function testcomp2(s:seq.seq.word)seq.word
  let p = process.testcomp.s
-  if aborted.p then message.p else result.p @ +(""," &br  &br" + @e)
+  if aborted.p then message.p
+  else {(for(@e ∈ result.p, acc ="")acc +" &br  &br" + @e)}
 
 Function compare(exp1:seq.word, exp2:seq.word)boolean
  let e1 = testcomp2
@@ -103,13 +103,13 @@ let b=
 ((1 &and 2)&or 3)"," 
 (1 &or(2 &and 3))",
 "((uni 1)+ 2)"]
- check(a @ +(empty:seq.seq.word, toseq.@e), b,"precedence test")
+  check({(for(@e ∈ a, acc = empty:seq.seq.word)acc + toseq.@e)}, b,"precedence test")
 
 function check2(l:seq.seq.word, b:seq.seq.word, i:int)seq.word
  if l_i = b_i then""else [ toword.i]
 
 Function check(y:seq.seq.word,b:seq.seq.word, testname:seq.word)seq.word
- let x = arithseq(length.y, 1, 1) @ +("", check2(y, b, @e))
+ let x = {(for(@e ∈ arithseq(length.y, 1, 1), acc ="")acc + check2(y, b, @e))}
   if x = ""then"PASS" + testname
   else" &{ literal FAILED  &} test" + x + "in" + testname
 

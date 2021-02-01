@@ -2,9 +2,9 @@ Module real
 
 use UTF8
 
-use seq.real
-
 use standard
+
+use seq.real
 
 Function-(r:real)real 0.0 - r
 
@@ -16,19 +16,17 @@ Builtin intpart(a:real)int
 
 Function decpart(a:real)real a - toreal.intpart.a
 
-
 Builtin sin(a:real)real sinTau.a
 
 Builtin cos(a:real)real cosTau.a
 
-Builtin  sqrt (a:real)real sqrtTau.a
+Builtin sqrt(a:real)real sqrtTau.a
 
-Builtin  tan(a:real)real tanTau.a
+Builtin tan(a:real)real tanTau.a
 
 Builtin arccos(a:real)real
 
 Builtin arcsin(a:real)real
-
 
 Function pi real 3.1415926535898
 

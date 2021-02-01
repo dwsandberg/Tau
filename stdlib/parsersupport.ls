@@ -1,5 +1,11 @@
 Module parsersupport.T
 
+use format
+
+use standard
+
+use set.word
+
 use seq.stkele.T
 
 use stack.stkele.T
@@ -7,12 +13,6 @@ use stack.stkele.T
 use otherseq.token.T
 
 use seq.token.T
-
-use format
-
-use standard
-
-use set.word
 
 type token is record w:word, tokenno:int, attribute:T
 
@@ -32,7 +32,6 @@ unbound text(T)seq.word
 
 unbound forward(stk:T, T)T
 
-
 Function ?(a:token.T, b:token.T)ordering w.a ? w.b
 
 Function =(a:token.T, b:token.T)boolean w.a = w.b
@@ -43,50 +42,41 @@ Function last(r:reduction.T)T attribute.(toseq.r)_(length.toseq.r)
 
 Function errormessage:T(message:seq.word, input:seq.word, place:int)seq.word
  let m="&{ literal" +message+"&} "
-  m + " &br  &br" + prettynoparse(subseq(input, 1, place) )
-  + " &br"
-  + m
-
+  m + " &br  &br" + prettynoparse.subseq(input, 1, place) + " &br" + m
      
 type lrstate is record     lrpart:stack.stkele.T, matchthis: word, last:int,instring:boolean
 
- 
 function advance(state:lrstate.T,this:word,idx:int,input:seq.word,lextab:seq.token.T) lrstate.T
     let lrpart=lrpart.state
     let matchthis= matchthis.state
     let last=last.state
     let instring=instring.state
-    let  newinstring=  if instring then this &ne  matchthis 
-                  else this  = "//"_1 &or this  = "'"_1 &or this  =  '"'_1 &or this="\\"_1
+ let newinstring = if instring then this ≠ matchthis
+ else
+  this = "//"_1 ∨ this = "'"_1 ∨ this = '"'_1
+  ∨ this = "\\"_1
     let newlast =  if instring then last else idx
     let newmatchthis = if instring then matchthis else this 
-    let newlrpart= if newinstring then 
-     // in comment or string //
-       lrpart  
-    else  let lexindex = binarysearch(lextab, token(this, 0, attribute:T("")))
+ let newlrpart = if newinstring then \\ in comment or string \\ lrpart
+ else
+  let lexindex = binarysearch(lextab, token(this, 0, attribute:T("")))
           if lexindex < 0 then
-             // next is not in lex table //
+   \\ next is not in lex table \\
             let kind = checkinteger.this
-            assert  kind &ne "ILLEGAL"_1  report  "Illegal character in Integer" + this
-             step(lrpart,input
-                   ,attribute:T([ this])
-                   ,if kind="WORD"_1 then Wtoken:T else Itoken:T
-                   ,idx) 
+     assert kind ≠ "ILLEGAL"_1 report"Illegal character in Integer" + this
+      step(lrpart, input, attribute:T([ this]), if kind = "WORD"_1 then Wtoken:T else Itoken:T, idx)
          else    
             let tok=   lextab_lexindex  
             step(lrpart,input, if instring then attribute:T(subseq(input, last, idx)) else attribute.tok,tokenno.tok,idx) 
       lrstate( newlrpart,newmatchthis,newlast,newinstring)
            
-
 function step( stk:stack.stkele.T,input:seq.word, attrib:T,tokenno:int,place:int)stack.stkele.T
  let stateno = stateno.top.stk
  let actioncode = actiontable:T_(tokenno  + length.tokenlist:T * stateno)
   if actioncode > 0 then
-  if stateno = 2 then stk
-   else push(stk, stkele(actioncode,   forward(attribute.top.stk, attrib )))
+  if stateno = 2 then stk else push(stk, stkele(actioncode, forward(attribute.top.stk, attrib)))
   else
-   assert actioncode < 0 report errormessage:T(if text.attrib = "#"  then"parse error:unexpected end of paragraph"
-   else"parse error state",  input, place )
+   assert actioncode < 0 report errormessage:T(if text.attrib = "#"then"parse error:unexpected end of paragraph"else"parse error state", input, place)
    + " &br"
    + expect:T(stateno)
    let ruleno =-actioncode
@@ -98,25 +88,21 @@ function step( stk:stack.stkele.T,input:seq.word, attrib:T,tokenno:int,place:int
      step( push(newstk, newstkele),input, attrib,tokenno,place)
 
 function expect:T(stateno:int)seq.word
- let l = arithseq(length.tokenlist:T, 1, 1) @ +("", kk:T(stateno, @e))
+ let l =((for(@e ∈ arithseq(length.tokenlist:T, 1, 1), acc ="")acc + kk:T(stateno, @e)))
   "Expecting:" + toseq(asset.l ∩ asset."]})else then report")
 
 function kk:T(stateno:int, token:int)seq.word
  if 0 ≠ actiontable:T_(length.tokenlist:T * stateno + token)then [ tokenlist:T_token]
  else empty:seq.word
 
-
 function tokenx(tokenno:int, attribute:T)token.T token("??"_1, tokenno, attribute)
 
 Function parse:T(input:seq.word)T
- // if parse is called many times caching lextable improves performance // 
- parse:T(attribute:T(""), sort.lextable:T, input)
+ \\ if parse is called many times caching lextable improves performance \\ parse:T(attribute:T(""), sort.lextable:T, input)
 
 Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
-let state0=lrstate(push(empty:stack.stkele.T, stkele(startstate:T,   initial))
-    , "'"_1,0,false)
- let state=  
-  for( e &in input + "#" ,acc=state0,i,false) advance(acc,e,i,input,lextable)
+ let state0 = lrstate(push(empty:stack.stkele.T, stkele(startstate:T, initial)),"'"_1, 0, false)
+ let state = for(e ∈ input + "#", acc = state0, i, false)advance(acc, e, i, input, lextable)
  attribute.top.lrpart.state 
  
 Function sortedlextable:T seq.token.T sort.lextable:T

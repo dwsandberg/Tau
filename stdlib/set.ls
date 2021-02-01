@@ -1,10 +1,10 @@
 Module set.T
 
+use standard
+
 use otherseq.T
 
 use seq.T
-
-use standard
 
 type set is record toseq:seq.T
 
@@ -16,12 +16,11 @@ Export +(seq.T, T)seq.T
 
 Export +(seq.T, seq.T)seq.T
 
-
 Export_(seq.T, int)T
 
 unbound ?(T, T)ordering
 
-Function asset(s:seq.T)set.T set(s @ setinsert(empty:seq.T, @e))
+Function asset(s:seq.T)set.T set.(for(@e ∈ s, acc = empty:seq.T)setinsert(acc, @e))
 
 Function empty:set.T set.T set.empty:seq.T
 
@@ -70,7 +69,7 @@ function union(a:seq.T, b:seq.T, i:int, j:int, result:seq.T)seq.T
     union(a, b,-p, j + 1, result + subseq(a, i,-p - 1) + [ b_j])
 
 Function-(a:set.T, b:set.T)set.T
- // elements in a but not in b // set.diff(toseq.a, toseq.b, 1, 1)
+ \\ elements in a but not in b \\ set.diff(toseq.a, toseq.b, 1, 1)
 
 Function-(a:set.T, b:T)set.T set.setdelete(toseq.a, b)
 
@@ -85,7 +84,7 @@ function diff(a:seq.T, b:seq.T, i:int, j:int)seq.T
 Function replace(a:set.T, b:set.T)set.T set.replace(toseq.a, toseq.b, 1, 1, empty:seq.T)
 
 function replace(a:seq.T, b:seq.T, i:int, j:int, result:seq.T)seq.T
- // if in a and b then b else a //
+ \\ if in a and b then b else a \\
  if i > length.a then result
  else if j > length.b then result + subseq(a, i, length.a)
  else
@@ -123,8 +122,8 @@ Function findelement2(a:set.T, n:T)set.T
  let i = binarysearch2(toseq.a, 1, length.toseq.a, n)
   if i < 0 then asset.empty:seq.T
   else
-   asset(subseq(toseq.a, expandrangedown(toseq.a, n, i), expandrangeup(toseq.a, n, i))
-   @ +(empty:seq.T, @e))
+   asset
+   .((for(@e ∈ subseq(toseq.a, expandrangedown(toseq.a, n, i), expandrangeup(toseq.a, n, i)), acc = empty:seq.T)acc + @e))
 
 function expandrangedown(a:seq.T, n:T, l:int)int
  if l > 1 then

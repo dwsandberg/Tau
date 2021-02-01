@@ -2,11 +2,15 @@
 
 Module test11
 
+use checking
+
+use standard
+
+use textio
+
 use seq.Tpair
 
 use seq.boolean
-
-use checking
 
 use otherseq.int
 
@@ -17,10 +21,6 @@ use seq.int
 use set.int
 
 use seq.ordering
-
-use standard
-
-use textio
 
 use otherseq.word
 
@@ -48,7 +48,7 @@ function t007 boolean [ 2, 3] = [ 2] + [ 3]
 
 function ff(seed:int, x:int)int if x = 1 then pseudorandom.seed else ff(pseudorandom.seed, x - 1)
 
-function t008 boolean // testing random number generator // 1043618065 = ff(1, 10000)
+function t008 boolean \\ testing random number generator \\ 1043618065 = ff(1, 10000)
 
 function gen(n:int)seq.int
  if n = 1 then [ n]else gen(n - 1) + [ n * n]
@@ -117,28 +117,27 @@ function t030 boolean [ false, false, true, true] = [ isbyte(0 - 1), isbyte.256,
 
 function isbyte(i:int)boolean between(i, 0, 255)
 
-function t031 boolean false =  for (e &in [ 0 - 1, 256, 255, 0], acc=true ) acc  ∧ isbyte.e  
+function t031 boolean false = for(e ∈ [ 0 - 1, 256, 255, 0], acc = true)acc ∧ isbyte.e
 
-function t032 boolean  for (e &in [ 23, 4, 5, 255, 7, 2, 255],acc=true) acc &or isbyte.e
+function t032 boolean for(e ∈ [ 23, 4, 5, 255, 7, 2, 255], acc = true)acc ∨ isbyte.e
 
 function t033 boolean 6 = (toint.if true then"3"_1 else"5"_1) + 3
 
 function t034 boolean 3464 = (3456 + if true then 3 else 1) + 5
 
 function print(a:seq.int)seq.word
- "[" +  (for ( e &in a,  acc="")  (seperator(acc,",") + toword.e)) + "]"
-                                 
+ ("[" + for(e ∈ a, acc ="")seperator(acc,",") + toword.e)
+ + "]"
 
 function seperator(acc:seq.word,sep:seq.word) seq.word if isempty.acc then acc else acc+sep
 
 function t035 boolean"[ 2, 3, 4, 5]" = print.[ 2, 3, 4, 5]
 
-function t036 boolean 10 =  for ( e &in [ 1, 2, 3, 4], acc=0)  acc + e
+function t036 boolean 10 = for(e ∈ [ 1, 2, 3, 4], acc = 0)acc + e
 
-function t037 boolean 24 = for ( e &in [ 1, 2, 3, 4], acc=1)  acc * e
+function t037 boolean 24 = for(e ∈ [ 1, 2, 3, 4], acc = 1)acc * e
 
-function t038 boolean [ 1, 2, 3, 4]
-= for ( e &in [ 1, 2, 3, 4], acc=empty:seq.int) acc + e
+function t038 boolean [ 1, 2, 3, 4] = for(e ∈ [ 1, 2, 3, 4], acc = empty:seq.int)acc + e
 
 function t039 boolean
 let a = 6 * 6
@@ -149,8 +148,7 @@ function t040 boolean"a b c d e 1 2 3 4 k"
 
 function t041 boolean"1 2 k 4 5" = replace("1 2 3 4 5", 3,"k"_1)
 
-function t042 boolean  97 = for ( e &in [ 1, 2], acc=100)   acc- e  
-
+function t042 boolean 97 = for(e ∈ [ 1, 2], acc = 100)acc - e
 
 Function t043 boolean"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
 =   for ( e &in arithseq(43, 1, 48), acc=  "code glyph ")  acc+[ toword.e, encodeword.[ char.e] ]

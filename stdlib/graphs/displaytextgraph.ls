@@ -6,7 +6,7 @@ use standard
 
 use otherseq.word
 
-use seq.arcinfo.seq.word
+use seq.word
 
 use barycenter.seq.word
 
@@ -20,7 +20,7 @@ use set.seq.word
 
 use svggraph.seq.word
 
-use seq.word
+use seq.arcinfo.seq.word
 
 Function display(z2:seq.arcinfo.seq.word)seq.word" &{ noformat" + displaygraph(charwidths, z2) + " &}"
 

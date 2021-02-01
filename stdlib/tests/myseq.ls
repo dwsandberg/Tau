@@ -2,9 +2,9 @@ Module myseq.T
 
 All sequences must be in parameterized scopes.
 
-use seq.T
-
 use standard
+
+use seq.T
 
 type myseq is sequence length:int, data:seq.T
 
