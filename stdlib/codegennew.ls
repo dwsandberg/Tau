@@ -62,8 +62,6 @@ else
    if isempty.d ∨ "BUILTIN"_1 ∈ getoption.d then empty:seq.symbol else [ ele]
 
 Function codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict,isbase:boolean)seq.bits
- \\ assert false report @(seperator."
-&br", tollvmtype.alltypes,"", toseq.toset.theprg)\\
  let defines =((for(@e ∈ definesWithBuiltins, acc = empty:seq.symbol)acc + f100(theprg, @e)))
  let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
  let discard4 =((for(@e ∈ defines, acc = 0)acc + funcdec(alltypes, @e)))

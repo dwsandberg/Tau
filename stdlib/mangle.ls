@@ -8,8 +8,19 @@ use seq.char
 
 use otherseq.word
 
+use seq.seq.word
+
 function seperator(acc:seq.char, sep:char, b:seq.char)seq.char
  if isempty.acc then b else acc + sep + b
+
+Function printmangled(w:word)seq.word
+ let d=codedown.w
+ let para = for(e ∈ d << 2, acc ="") if acc ="" then printtype.e else acc + ","+printtype.e
+    d_1 +  (if isempty.para then "" else "("+para+  ")")+
+    if length.d > 1 then  " &keyword module:"+ printtype.d_2 else ""
+ 
+function printtype  (a:  seq.word ) seq.word
+     for(e &in a ,acc="")  if acc="" then acc+e else [e ]+"."+acc         
 
 Function mangle(fsig:seq.word, module:seq.word)word
  let i = findindex("("_1, fsig)

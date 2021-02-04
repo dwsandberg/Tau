@@ -44,7 +44,7 @@ Builtin callidx2(a:seq.T, int)T
 
 Builtin callidx(a:seq.T, int)T
 
-module taubuiltinsupport.T
+module taublockseq.T
 
 use standard
 
@@ -55,6 +55,8 @@ use seq.T
 use abstractBuiltin.seq.T
 
 use seq.seq.T
+
+Export type:seq.T
 
 builtin setfirst(r:seq.T, fld0:int, fld1:int)seq.T
 
@@ -118,19 +120,17 @@ use mangle
 
 use standard
 
-use abstractBuiltin.boolean
-
 use seq.byte
 
 use abstractBuiltin.int
-
-use taubuiltinsupport.int
 
 use abstractBuiltin.ptr
 
 use abstractBuiltin.real
 
-use taubuiltinsupport.real
+use abstractBuiltin.boolean
+
+
 
 use encoding.typename
 
@@ -140,7 +140,29 @@ use seq.seq.int
 
 use seq.encodingpair.seq.char
 
-use taubuiltinsupport.encodingpair.seq.char
+use taublockseq.real
+
+use taublockseq.int
+
+use taublockseq.packed2
+
+use taublockseq.packed3
+
+use taublockseq.packed4
+
+use taublockseq.packed5
+
+use taublockseq.ptr
+
+
+type packed2 is record fld1:int,fld2:int
+
+type packed3 is record fld1:int,fld2:int,fld3:int
+
+type packed4 is record fld1:int,fld2:int,fld3:int,fld4:int 
+
+type packed5 is record fld1:int,fld2:int,fld3:int,fld4:int,fld5:int
+
 
 type ptr is record xx:int
 
@@ -170,9 +192,18 @@ Export_(pseq.byte, int)byte
 
 Export blockit(seq.int)seq.int
 
-Export blockit(s:seq.encodingpair.seq.char, ds:int)seq.encodingpair.seq.char // for use where the element type is represented in ds * 64bits where ds > 1. // // if the length < = blocksize then the result is represented as <ds> <length> <fld1.s_1><fld2.s_1>... <fld1.s_2><fld2.s_2>.... // // if the length > bloocksize then result is represented as <blockindexfunc> <length> <packed.subseq(s, 1, blocksize)> <packed.subseq(s, blocksize + 1, 2*blocksize)>.....//
-
 Export blockit(seq.real)seq.real
+
+Export    blockit(s:seq.ptr ) seq.ptr
+
+Function blockit(s:seq.packed2) seq.packed2  blockit(s,2)
+
+Function blockit(s:seq.packed3 ) seq.packed3  blockit(s,3)
+
+Function blockit(s:seq.packed4 ) seq.packed4  blockit(s,4)
+
+Function blockit(s:seq.packed5 ) seq.packed5 blockit(s,5)
+
 
 Export_(blockseq.int, int)int
 
@@ -198,11 +229,15 @@ Function encodingno(name:seq.word)int
 
 function assignencoding(a:int, typename)int a + 1
 
+use seq.int
+
 -----------
 
-Function stacktrace seq.word((for(@e ∈ callstack.30, acc ="")acc + decodeaddress.@e))
+Function stacktrace seq.word((for(@e ∈ callstack.30 << 2 , acc ="")acc +"&br"+printmangled.addresstosymbol.@e))
 
 Function addresstosymbol(a:int)word encodeword.addresstosymbol2.a
 
-Function decodeaddress(address:int)seq.word
- " &br" + ((for(@e ∈ codedown.addresstosymbol.address, acc ="")acc + @e))
+ 
+ 
+ 
+ 

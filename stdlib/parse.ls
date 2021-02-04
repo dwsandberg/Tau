@@ -263,15 +263,10 @@ else if ruleno = // N ∧ // 45 then R_1
 else if ruleno = // N ∨ // 46 then R_1 
 else if ruleno = // NM W // 47 then R_1 
 else if ruleno = // NM W:T // 48 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1) 
-else if ruleno = // D E @ NM(E, // 49 then assert false report errormessage("old format" , input, place) R_1
-else if ruleno = // D E @ N(E, // 50 then assert false report errormessage("old format" , input, place) R_1
-else if ruleno = // E D L)// 51 then assert false report errormessage("old format" , input, place) R_1 
-else if ruleno = // E D L)(E)// 52 then 
-assert false report errormessage("old format" , input, place) R_1
-else if ruleno = // B for(W-E, W = E, W // 53 then forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first.tokentext.R_11, input, place) 
-else if ruleno = // B for(W-E, W = E // 54 then forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first."^", input, place) 
-else if ruleno = // E B)E // 55 then forpart2(R_1, bindinfo(dict.R,[ Litfalse], [ mytype."boolean"],""), R_3, input, place) 
-else assert ruleno = // E B, E)E // 56 report"invalid rule number"+ toword.ruleno 
+else if ruleno = // B for(W-E, W = E, W // 49 then forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first.tokentext.R_11, input, place) 
+else if ruleno = // B for(W-E, W = E // 50 then forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first."^", input, place) 
+else if ruleno = // E B)E // 51 then forpart2(R_1, bindinfo(dict.R,[ Litfalse], [ mytype."boolean"],""), R_3, input, place) 
+else assert ruleno = // E B, E)E // 52 report"invalid rule number"+ toword.ruleno 
 forpart2(R_1, R_3, R_5, input, place)
  
 

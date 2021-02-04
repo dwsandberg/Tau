@@ -140,7 +140,8 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + BINOP(r.6, r.4, r.5, lshr)
  + BINOP(r.7, r.6, C64.1, and))
  , addtemplate(symbol("tocstr(bits seq)","fileio","cstr"), 2, GEP(r.1, i64, ibcsub.1, C64.2) + CAST(r.2, r.1, i64, ptrtoint))
- , addtemplate(symbol("toint(byte)","bits","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
+  , addtemplate(symbol("tobyte(int)","bits","byte"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
+, addtemplate(symbol("toint(byte)","bits","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
  , addtemplate(symbol("toint(bit)","bits","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
  , \\ addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0)+ STORE(r.2, r.1, ibcsub.1)+ GEP(r.2, ptr.i64, r.1, C64.1)+ STORE(r.3, r.2, ibcsub.2)+ GEP(r.3, ptr.i64, r.1, C64.0)), addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint)), addtemplate(symbol("bitcast(int seq)","interpreter","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint)), \\
  addtemplate(symbol("GEP(int seq, int)","interpreter","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + CAST(r.2, r.1, i64, ptrtoint))

@@ -18,14 +18,14 @@ Paragraphs that do NOT start with &keyword type, &keyword use, &keyword Library,
  &keyword module, &keyword Function &keyword function, &keyword unbound,  or &keyword Export are always treated as comments.
 
 Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. 
-The characters ()+,-.:=[]^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
+The characters ()+,-.:=[\]^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
 A word sequence literal is double or single quoted like "This is a string Literal." or ' This is a string Literal.'
 
 An integer literal is represented by a sequence of words where each word only contains digits. 
 That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. 
 A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 0 0 and 10 01 are integers.
 
-For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ are  &le  &ge  &ne  &and  &or respectively.
+For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨  ∈ ∉ ∩ ∪ are  &le  &ge  &ne  &and  &or &in &nin &cap &cup respectively.
 
 Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.
 
@@ -51,7 +51,7 @@ Here is a list of infix binary operators. The operators on the same line are the
 &br _^
 &br unary minus
 &br * / mod ∪ ∩ 
-&br in +-∈ ∉
+&br  +-∈ ∉
 &br = < > ? ≤ ≥ ≠ >> <<
 &br ∧
 &br ∨
@@ -77,7 +77,10 @@ The syntax for non-comment paragraphs is &{ block <paragraph>::= <module definit
 &br <exp>::= <function call> |<parameter name> |<let name> 
 &br <exp>::= &keyword if <exp> &keyword then <exp> &keyword else <exp> 
 &br <exp>::=(<exp>)&br <exp>::= {<exp>} &br <exp>::= <exp> <binary op> <exp> 
-&br <exp>::=-<exp> &br <exp>::= <word>.<exp> &br <exp>::= <sequence constructor> &br <sequence constructor>::= [ <exp list>]&br <exp list>::= <exp> | <exp list>, <exp> &br <exp>::=  exp @ <function name>(<exp list>)&br <exp>::= &keyword let <let name> = <exp> exp &br <exp>::= &keyword assert <exp> &keyword report <exp> exp &br <exp>::= // < one or more words not containing / /> // exp &br <exp>::= process.<function call> | process(<function call>)&}
+&br <exp>::=-<exp> &br <exp>::= <word>.<exp> &br <exp>::= <sequence constructor> &br <sequence constructor>::= [ <exp list>]&br <exp list>::= <exp> | <exp list>, <exp> 
+&br <exp>::=  &keyword  for ( word ∈ E,word = E) E   
+&br <exp>::=  &keyword  for ( word ∈ E,word = E,word,E) E   
+&br <exp>::= &keyword let <let name> = <exp> exp &br <exp>::= &keyword assert <exp> &keyword report <exp> exp &br <exp>::= // < one or more words not containing / /> // exp &br <exp>::= process.<function call> | process(<function call>)&}
 
 Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
 
@@ -137,7 +140,7 @@ The following two paragraphs defines an addition and subtraction function on poi
 &keyword Function-(a:point2d, b:point2d)point2d point2d(x.a - x.b, y.a - y.b)
 
 &keyword Function print(p:point2d)seq.word 
- {"("+ toword.x.p +","+ toword.y.p +")"}
+ "("+ toword.x.p +","+ toword.y.p +")"
 
 
 &keyword Function testpoint seq.word print(point2d(2, 3)+ point2d(4, 5))
@@ -178,6 +181,36 @@ One can always remove a let statement from a program by defining an additional f
  
 
 &section Aggregation
+
+An operation can be performed on each element of a sequence.
+
+for ( e ∈ [ 1,2,3,4], accumalator=0 )  accumalator+e 
+
+The general form for the for statement is 
+
+for ( <e> ∈ <theseq>, <accumalator>=<initacc>,<idx>,<exit>)  <body exp>
+
+where <theseq> is a seq and <exit> is a boolean expression and the type of the <initacc> is same as the <body exp>.
+The type of the whole for statement is the type of the <body exp> 
+
+the ",<idx>,<exit>" may be omitted.  The <idx> is the location in the seqence of the <e>.  
+If the <exit> expression evaluates to true the remaining elements in the sequence are not processed. 
+
+The for statement is equivalent to declaring a function  
+
+
+function  f1( <theseq>:seq.int, <accumalator>:int, <idx>:int)  <type of body exp>   
+   if <idx> > length.theseq then <accumalator>
+   else 
+   let <e>=<theseq>_<idx>
+   let tmp= accumalator+<e>
+   if <exit> then tmp else   f1(<theseq>,<bode exp>,<idx>+1)
+   
+and calling it with 
+
+f1(<theseq>,<initacc>,1> 
+
+    
 
 The Aggregation operator(@)is a generalization of the sigma operator in mathematics. The motivation behind introducing this control operator is to replace the use of recursive calls in many cases.
 

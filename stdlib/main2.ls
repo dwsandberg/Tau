@@ -94,7 +94,7 @@ function subcompilelib(option:seq.word, libname:seq.word)seq.seq.word
   let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
   let prg3 =(for(@e ∈((for(@e ∈ allsrc, acc = empty:seq.seq.word)acc + @e)), acc = prg2)processOption(acc, @e))
    if option = "pass1"then
-   ((for(@e ∈ toseq.toset.prg3, acc = empty:seq.seq.word)acc + print(prg3, @e)))
+   ((for(@e ∈ toseq.prg3, acc = empty:seq.seq.word)acc + print(prg3, @e)))
    else
     let prg4 = pass2(prg3, alltypes.link)
     let libdesc = libdesc(alltypes.link, prg4, templates.link, mods.link, exports)
@@ -104,7 +104,7 @@ function subcompilelib(option:seq.word, libname:seq.word)seq.seq.word
      ((for(@e ∈ defines, acc = empty:seq.seq.word)acc + print(prg4, @e)))
      else if option = "baseTypeCheck"then
      ["base type check"
-      + for(e ∈ toseq.toset.prg4, acc ="")acc + baseTypeCheck(alltypes.link, prg4, e)]
+      + for(e ∈ toseq.prg4, acc ="")acc + baseTypeCheck(alltypes.link, prg4, e)]
      else
       let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link, isempty.dependentlibs)
       let z2 = createlib(bc, last.libname, dependentlibs)
@@ -139,7 +139,7 @@ Function testcomp(s:seq.seq.word)seq.seq.word
  let exports ="testit"
  let allsrc = groupparagraphs("module Module", s)
  let r = pass1(allsrc, exports, libmodules."stdlib")
-  {((for(@e ∈ toseq.toset.result.r, acc = empty:seq.seq.word)acc + print(result.r, @e)))}
+  {((for(@e ∈ toseq.result.r, acc = empty:seq.seq.word)acc + print(result.r, @e)))}
 
 Function firstPass(libname:seq.word)seq.seq.word subcompilelib("pass1", libname)
 

@@ -277,23 +277,9 @@ else if ruleno = \\ N ∧ \\ 45 then R_1
 else if ruleno = \\ N ∨ \\ 46 then R_1 
 else if ruleno = \\ NM W \\ 47 then R_1 
 else if ruleno = \\ NM W:T \\ 48 then pretty.[ R_1, R_2, R_3] 
-else if ruleno = \\ D E @ NM(E, \\ 49 then    
-pretty.[ attribute."{for(@e ∈", R_1, attribute.", acc =", R_5, attribute.")", R_3,attribute."(acc,"] 
-else if ruleno = \\ D E @ N(E, \\ 50 then 
-pretty.[ attribute."{(for(@e ∈", R_1, attribute.", acc =", R_5, attribute.") acc", R_3] 
- else if ruleno = \\ E D L)\\ 51 then
- pretty.[ R_1, list.R_2, R_3, attribute."}"]
-else if ruleno = \\ E D L)(E)\\ 52 then pretty.[ R_1, R_2, R_3] 
-else if ruleno = \\ B for(W-E, W = E, W \\ 53 then pretty.[ R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9, R_10, R_11] 
-else if ruleno = \\ B for(W-E, W = E \\ 54 then pretty.[ R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9] 
-else if ruleno = \\ E B)E \\ 55 then pretty.[ R_1, R_2, R_3] 
-else assert ruleno = \\ E B, E)E \\ 56 report"invalid rule number"+ toword.ruleno 
+else if ruleno = // B for(W-E, W = E, W // 49 then pretty.[ R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9, R_10, R_11] 
+else if ruleno = // B for(W-E, W = E // 50 then pretty.[ R_1, R_2, R_3, R_4, R_5, R_6, R_7, R_8, R_9] 
+else if ruleno = // E B)E // 51 then pretty.[ R_1, R_2, R_3] 
+else assert ruleno = // E B, E)E // 52 report"invalid rule number"+ toword.ruleno 
 pretty.[ R_1, R_2, R_3, R_4, R_5]
 
-
-
-   attribute2( [R_1,  pretty.[R_3, R_4, R_5,R_6] ] @ +(empty:seq.prettyresult, toseq.@e))
-else if ruleno = // D E @ N(E, // 50 then  
-   attribute2( [R_1,  pretty.[R_3, R_4, R_5,R_6] ] @ +(empty:seq.prettyresult, toseq.@e)) 
-else assert ruleno = // E D L)// 51 report"invalid rule number"+ toword.ruleno
-     wrap(4,attribute2.[(toseq.R_1)_1],"@", pretty.[ attribute2.[(toseq.R_1)_2], list.R_2 ,R_3]) 

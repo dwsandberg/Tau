@@ -60,9 +60,11 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
    let a = Block(mytype.[ kind(alltypes, modpara, resulttype.sym)], nopara.sym)
      postbind3(alltypes, dict, code, i + 1, result + if isfref then Fref.a else a, modpara, org, calls, sourceX, tempX)
    else if isconst.sym ∨ isspecial.sym ∨ module.sym = "builtin"
-   ∨ last.module.sym ∈ "$global $for"then
+   ∨ last.module.sym ∈ "$global "then
    \\ assert module.sym &ne"builtin"&or fsig.sym &in ["addencoding(int, int seq, int, int)","aborted(T process)","getinstance(int)","option(int, word seq)"]report"builtinX"+ print.sym \\
     postbind3(alltypes, dict, code, i + 1, result + code_i, modpara, org, calls, sourceX, tempX)
+   else if  last.module.sym ∈ "$for"then
+    postbind3(alltypes, dict, code, i + 1, result + replaceTsymbol(modpara, sym), modpara, org, calls, sourceX, tempX)
    else
     let lr1 = lookupcode(sourceX, sym)
     let newsym = if isempty.typerep.modpara ∨ isdefined.lr1 then sym else replaceTsymbol(modpara, sym)
@@ -173,8 +175,8 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:i
   let p2 = newsymbol("apply5", mytype."builtin", [ resulttype, abstracttype("seq"_1, neweletype), neweletype, resulttype, typeint, resulttype, mytype."boolean"], resulttype)
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
  else if(fsig.sym)_1 ∈ "assert"then
- let sym2 = replaceTsymbol(mytype.[ kind.gettypeinfo(alltypes, parameter.modname.newsym)], sym)
-  let p2 = symbol(fsig.sym2,"builtin", returntype.sym2)
+  let kind=[kind.gettypeinfo(alltypes, parameter.modname.newsym)]
+   let p2 = symbol("assert:"+kind+"(word seq)","builtin", kind)
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
  else if(fsig.sym)_1 ∈ "callidx"then
  let sym2 = replaceTsymbol(mytype.[ kind.gettypeinfo(alltypes, parameter.modname.newsym)], sym)
@@ -221,8 +223,13 @@ function blocksym(info:typeinfo)seq.symbol
  let ds = size.info
   if kind.info = "real"_1 then
   [ symbol("blockit(real seq)","tausupport","real seq")]
-  else if ds = 1 then [ symbol("blockit(int seq)","tausupport","int seq")]
-  else [ Lit.ds, symbol("blockit(char seq encodingpair seq, int)","tausupport","char seq encodingpair seq")]
+  else if ds = 1   then [ symbol("blockit(int seq)","tausupport","int seq")]
+  else  if ds < 6 then
+      let  xx=[ merge("packed"+toword.ds)]
+          [symbol("blockit("+xx+"seq)","tausupport",xx+"seq")]
+      else [symbol("blockit( ptr seq)","tausupport", "ptr seq")]
+      
+    
 
 function encodenocode(typ:mytype)seq.symbol
  let gl = symbol("global:" + print.typ,"$global","int seq")
@@ -248,7 +255,10 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
   let cat = newsymbol("+", seqtype, [ seqtype, typepara], seqtype)
   let resulttype = mytype."ptr"
   let elementtype = mytype.[ kind]
-   [ Local.1] + Emptyseq +[ Local.1,Local.2,Local.3,Local.4,Local.3,Local.2,dc,cat,Lit.0,
+  let element= newsymbol("element", abstracttype("$for"_1, elementtype), empty:seq.mytype, elementtype) 
+  let acc=     newsymbol("acc", abstracttype("$for"_1, mytype."ptr"), empty:seq.mytype, mytype."ptr")
+  let idx=     newsymbol("idx", mytype."$for", empty:seq.mytype, typeint)
+   Emptyseq +[ Local.1,element,acc,idx,acc,element,dc,cat,Litfalse,
      newsymbol("apply5", mytype."builtin", [ resulttype, abstracttype("seq"_1, elementtype), elementtype, resulttype, typeint, resulttype, mytype."boolean"], resulttype)
 ]
    + blocksym.info
@@ -261,10 +271,6 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
    else
     assert size.typedesc ≠ 1 report"Err99a" + print.type
      y
-
-  let newvars = [ newsymbol([ elename], abstracttype("$for"_1, parameter.seqtype), empty:seq.mytype, parameter.seqtype), 
-                  newsymbol([ accname], abstracttype("$for"_1, resulttype), empty:seq.mytype, resulttype)
-                  , newsymbol([ idxname], mytype."$for", empty:seq.mytype, typeint)]
  
 
 function subfld(alltypes:typedict, flds:seq.mytype, fldno:int, fldkinds:seq.word, result:seq.symbol)seq.symbol

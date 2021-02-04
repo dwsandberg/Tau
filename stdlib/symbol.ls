@@ -125,15 +125,15 @@ Function modname(s:symbol)mytype mytype.module.s
 Function resulttype(s:symbol)mytype mytype.returntype.s
 
 Function nopara(s:symbol)int
- if isconst.s ∨ islocal.s then 0
+ if isconst.s ∨ islocal.s &or isparameter.s then 0
  else if isspecial.s ∧ last.module.s ∉ "$record $loopblock"then
  \\ assert last.module.s in"$continue $block $apply $exitblock $br $record $loopblock $define"report"X"+ module.s \\
-  if last.module.s = "$define"_1 then 1 else toint.(fsig.s)_2
+  if last.module.s = "$define"_1 then 1 else 
+   assert length.fsig.s > 1 report "define problem"+fsig.s+module.s
+   toint.(fsig.s)_2
  else if last.fsig.s ≠ ")"_1 then 0
  else
-  (for(@e ∈ fsig.s, acc = if last.fsig.s = ")"_1 then 1 else 0)counttrue(acc,","_1 = @e))
-
-function counttrue(i:int, b:boolean)int if b then i + 1 else i
+  for( e ∈ fsig.s, acc = if last.fsig.s = ")"_1 then 1 else 0)  if ","_1 = e then acc + 1 else acc
 
 Function ?(a:symbol, b:symbol)ordering
  fsighash.a ? fsighash.b ∧ fsig.a ? fsig.b ∧ module.a ? module.b
@@ -202,15 +202,14 @@ Export prg(firstpass)program
 
 _______________________________
 
-Export program(s:set.symbol)program
 
----------------
 
 Function Parameter(name:word, type:mytype, parano:int)symbol
  symbol([ name], ["para"_1, toword.parano,"$"_1], towords.type, specialbit)
 
-function ispara(s:mytype)boolean
- (towords.s)_1 = "para"_1 ∧ last.towords.s = "$"_1
+ 
+Function isparameter(s:symbol) boolean
+ ( module.s)_1 = "para"_1 ∧ last.module.s = "$"_1 
 
 Function istypeexport(s:symbol)boolean subseq(fsig.s, 1, 2) = "type:"
 
@@ -241,7 +240,7 @@ Function Emptyseq seq.symbol [ Stdseq, Lit.0, symbol("RECORD(int, int)","$record
 Function Stdseq symbol Lit.0
 
 Function Record(kinds:seq.word)symbol
- symbol("RECORD(" + (for(@e ∈ kinds, acc ="")list(acc,",", [ @e]))
+ symbol("RECORD(" + (for(e ∈ kinds, acc ="")list(acc,",", [ e]))
  + ")","$record","ptr", specialbit)
 
 Function Block(type:mytype, i:int)symbol
@@ -261,7 +260,7 @@ Function Constant2(args:seq.symbol)symbol
 
 Function isrecordconstant(s:symbol)boolean module.s = "$constant"
 
-function hash(s:seq.symbol)int hash.((for(@e ∈ s, acc ="")acc + sigandmodule.@e))
+function hash(s:seq.symbol)int hash.((for(e ∈ s, acc ="")acc + sigandmodule.e))
 
 function assignencoding(a:int, symbolconstant)int a + 1
 
@@ -330,11 +329,8 @@ Function Optionsym symbol symbol("option(int, word seq)","builtin","?")
 
 /Function NullptrOp symbol symbol("nullptr","builtin","ptr")
 
-Function symEle(seqtype:mytype)symbol newsymbol("@e", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, parameter.seqtype)
 
-Function symIdx(seqtype:mytype)symbol newsymbol("@i", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, typeint)
-
-Function symAcc(seqtype:mytype, resulttype:mytype)symbol newsymbol("@acc", abstracttype("builtin"_1, parameter.seqtype), empty:seq.mytype, resulttype)
+ 
 
 Function isabstractbuiltin(s:symbol)boolean length.module.s > 1 ∧ last.module.s = "builtin"_1
 
@@ -383,15 +379,9 @@ Function removeoptions(code:seq.symbol)seq.symbol
 
 ------
 
-type program is record toset:set.symbol
+Function hash(s:symbol) int  toint(flags.s >> 4)
 
-Function ∩(p:program, a:set.symbol)program program(toset.p ∩ a)
-
-Function ∪(p:program, a:program)program program(toset.p ∪ toset.a)
-
-Export toset(p:program)set.symbol
-
-Export program(set.symbol)program
+use hashset.symbol
 
 Export type:program
 
@@ -403,16 +393,46 @@ Function code(a:programele)seq.symbol subseq(data.a, 2, length.data.a)
 
 Function isdefined(a:programele)boolean not.isempty.data.a
 
-Function emptyprogram program program.empty:set.symbol
+Function emptyprogram program program2.empty:set.symbol
+
+type program is record toset:set.symbol , tohashset:hashset.symbol
+
+
+Function ∪(p:program, a:program)program 
+\\ let z=tohashset.p ∪ tohashset.a \\
+program(toset.p ∪ toset.a,empty:hashset.symbol)
+
+Function toseq(p:program) seq.symbol  toseq.toset.p
+
+Function &in(s:symbol,p:program) boolean  s &in toset.p
+
+Function program2(a:set.symbol)program program(a,for(s &in toseq.a,acc=empty:hashset.symbol) acc+s)
+
 
 Function lookupcode(p:program, s:symbol)programele
  let t = findelement(s, toset.p)
   if isempty.t then programele.empty:seq.symbol else programele.zcode.t_1
 
 Function map(p:program, s:symbol, target:symbol, code:seq.symbol)program
- program.replace(toset.p, symbol(fsig.s, module.s, returntype.s, [ target] + code))
+let sym=symbol(fsig.s, module.s, returntype.s, [ target] + code)
+ program(replace(toset.p, sym)
+ ,tohashset.p +sym)
 
+
+/Function ∪(p:program, a:program)program program(tohashset.p ∪ tohashset.a)
+
+/Function toseq(p:program) seq.symbol  toseq.asset.toseq.tohashset.p
+
+/Function &in(s:symbol,p:program) boolean  not.isempty.findelement(s ,tohashset.p)
+
+
+/Function lookupcode(p:program, s:symbol)programele
+ let t = findelement(s, tohashset.p)
+  if isempty.t then programele.empty:seq.symbol else programele.zcode.t_1
+
+ 
 Function map(p:program, s:symbol, code:seq.symbol)program map(p, s, s, code)
+
 
 Function addoption(p:program, s:symbol, option:seq.word)program
  let code = code.lookupcode(p, s)
@@ -426,7 +446,7 @@ type typedict is record data:seq.myinternaltype
 
 Function +(a:typedict, b:seq.myinternaltype)typedict typedict(data.a + b)
 
-Function print(t:typedict)seq.word(for(@e ∈ data.t, acc ="")list(acc," &br", print3.@e))
+Function print(t:typedict)seq.word(for(e ∈ data.t, acc ="")list(acc," &br", print3.e))
 
 type myinternaltype is record kind:word, name:word, modname:mytype, subflds:seq.mytype
 
@@ -457,7 +477,7 @@ Function replaceTmyinternaltype(with:mytype, it:myinternaltype)myinternaltype my
 
 Function tomyinternaltype(s:seq.word)myinternaltype
  let t = parseit(s, 1, [ s_1], empty:seq.seq.word)
-  myinternaltype(t_2_1, t_3_1, mytype.t_4,((for(@e ∈ subseq(t, 5, length.t), acc = empty:seq.mytype)acc + mytype.@e)))
+  myinternaltype(t_2_1, t_3_1, mytype.t_4,((for(e ∈ subseq(t, 5, length.t), acc = empty:seq.mytype)acc + mytype.e)))
 
 function parseit(s:seq.word, i:int, fld:seq.word, flds:seq.seq.word)seq.seq.word
  if i > length.s then flds + fld
@@ -469,10 +489,10 @@ Function print3(it:myinternaltype)seq.word
  if not.isdefined.it then
  "module:" + print.modname.it + "type" + name.it + "is"
   + kind.it
-  + (for(@e ∈ subflds.it, acc ="")list(acc,",", printfld.@e))
+  + (for(e ∈ subflds.it, acc ="")list(acc,",", printfld.e))
  else
   [ kind.it, name.it] + print.modname.it
-  + ((for(@e ∈ subflds.it, acc ="")acc + print.@e))
+  + ((for(e ∈ subflds.it, acc ="")acc + print.e))
 
 function printfld(f:mytype)seq.word [ abstracttype.f,":"_1] + print.parameter.f
 
@@ -489,7 +509,7 @@ Export zcode(symbol)seq.symbol
 Function print(f:symbol)seq.word
  let module = module.f
  let fsig = fsig.f
-  if islocal.f ∨ ispara.mytype.module.f then [ merge(["%"_1] + fsig)]
+  if islocal.f ∨ isparameter.f then [ merge(["%"_1] + fsig)]
   else if islit.f then
   if module = "$boolean"then if fsig = "0"then"Litfalse"else"Littrue"else fsig
   else if module = "$words"then
@@ -521,7 +541,7 @@ Function kind(t:typeinfo)word
   if length.z > 1 ∨ abstracttype.z_1 = "seq"_1 then"ptr"_1
   else
    let k =(typerep.z_1)_1
-    assert k ∈ "int real ptr byte"report"unexpected fld in internal type" + ((for(@e ∈ z, acc ="")acc + print.@e))
+    assert k ∈ "int real ptr byte boolean"report"unexpected fld in internal type" + ((for(@e ∈ z, acc ="")acc + print.@e))
     + stacktrace
      \\ x \\ k
 
@@ -538,10 +558,13 @@ Export typedict(seq.myinternaltype)typedict
 
 Export type:typedict
 
+ 
+
 Function gettypeinfo(d:typedict, type:mytype)typeinfo
  if type = typeint then typeinfo.[ typeint]
  else if type = mytype."real"then typeinfo.[ mytype."real"]
- else
+ else \\ if type = mytype."boolean"then typeinfo.[ mytype."boolean"]
+ else \\
   \\ if type = mytype."byte"then typeinfo.[ type]else \\
   if abstracttype.type = "seq"_1 ∨ type = mytype."internaltype" ∨ type = typeptr then
   typeinfo.[ typeptr]
@@ -572,3 +595,57 @@ Function deepcopysym(dict:set.symbol, type:mytype)set.symbol
 
 Function removeconstant(s:seq.symbol)seq.symbol
  ((for(@e ∈ s, acc = empty:seq.symbol)acc + if module.@e = "$constant"then removeconstant.zcode.@e else [ @e]))
+ 
+ module hashset.T
+
+ use standard
+ 
+ use bits
+ 
+ use seq.T
+ 
+ use otherseq.seq.T
+ 
+ use seq.seq.T
+ 
+ type hashset  is record table:seq.seq.T ,cardinality:int,mask:bits
+ 
+ unbound hash(T)int
+
+unbound =(T, T)boolean
+
+    Function &cup (a:hashset.T, b:hashset.T) hashset.T
+    if cardinality.b > cardinality.a then b &cup  a 
+    else 
+     for( e &in toseq.b ,acc=a)acc+e
+
+    function clean( s:seq.T,mask:bits,idx:int) seq.T
+      let currenthash=tobits(idx-1)
+     for(e &in s , acc=empty:seq.T) if e &in acc &or (tobits.hash.e &and mask) &ne  currenthash then acc
+     else acc+e 
+     
+    Function +(s: hashset.T ,a:T) hashset.T
+       let idx=toint.(tobits.hash.a &and mask.s)+1
+       assert between(idx,1,length.table.s) report "XXX"+print.idx+print.length.table.s+print.mask.s
+       let list=(table.s)_idx
+        let t=replace(table.s,idx,clean([a]+list,mask.s,idx))
+        assert not.isempty.clean([a]+list,mask.s,idx) report "XX"
+        if a &in list then  hashset(t,cardinality.s,mask.s)
+       else 
+        let newmask= bits.-1 >> (64-floorlog2( (cardinality.s +1)* 3 / 2  ) )
+        if toint.newmask &le toint.mask.s then hashset(t,cardinality.s+1,mask.s)
+        else  hashset(t+t,cardinality.s+1,mask.s << 1 &or 0x1)
+          
+   Function  findelement(ele:T,s:hashset.T) seq.T
+       let idx=toint.(tobits.hash.ele &and mask.s)+1
+       findelement(ele,(table.s)_idx)
+    
+    Function toseq(s:hashset.T) seq.T
+      for ( e &in table.s,acc=empty:seq.T,idx,false)  acc+clean(e,mask.s,idx)  
+      
+    Function empty:hashset.T hashset.T hashset( [empty:seq.T,empty:seq.T,empty:seq.T,empty:seq.T],0,0x3)
+
+Export type:hashset.T
+
+
+Export cardinality(hashset.T) int

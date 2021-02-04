@@ -50,51 +50,52 @@ unbound assignencoding(length:int, data:T)int
 
 /Function empty:encodingstate.T encodingstate.T let x = constantseq(4, empty:seq.encodingpair.T)encodingstate(0, 0, x, x, empty:seq.encodingpair.T, 0)
 
-function adddata(eletoadd:encodingpair.T, tablesize:int, a:encodingpair.T)seq.encodingpair.T
- if data.a = data.eletoadd ∨ hash.eletoadd mod tablesize ≠ hash.a mod tablesize then
- empty:seq.encodingpair.T
- else [ a]
-
-function addcode(x:seq.encodingpair.T, code:encoding.T, hashsize:int, e:encodingpair.T)seq.encodingpair.T
- if code.e = code ∨ valueofencoding.code mod hashsize ≠ valueofencoding.code.e mod hashsize then
- x
- else x + e
+use bits
 
 Function lastadded(h:encodingstate.T)encoding.T code.last.all.h
+
+
+function notsamehash:T( a:int,b:int,mask:bits) boolean (bits.a &and mask) ≠ (bits.b &and mask)
+
 
 Function add(h:encodingstate.T, v:encodingpair.T)encodingstate.T
  \\ this is the add that is called by primitiveadd \\
  let tablesize = length.encodetable.h
- let datahash = hash.v
- let dataindex = datahash mod tablesize + 1
- let existingcode =((for(@e ∈(encodetable.h)_dataindex, acc = empty:seq.encodingpair.T)acc + ele5(data.v, @e)))
+  let mask=bits.-1 >> (65-floorlog2.tablesize)
+  let dataindex = toint( tobits.hash.v &and mask )+ 1
+ let existingcode =lookuprep(data.v,(encodetable.h)_dataindex)
   if not.isempty.existingcode then
   \\ already present \\
    let c = valueofencoding.code.existingcode_1
     if lastadd.h = c then h else encodingstate(encodingno.h, length.h, encodetable.h, decodetable.h, all.h, c)
   else
-   let p = subadd(h, v, 1)
-   let codeindex = valueofencoding.code.p mod tablesize + 1
-   let l1 =(for(@e ∈(decodetable.h)_codeindex, acc = [ p])addcode(acc, code.p, tablesize, @e))
-   let l2 =((for(@e ∈(encodetable.h)_dataindex, acc = [ p])acc + adddata(p, tablesize, @e)))
-   let newdecode = replace(decodetable.h, codeindex, l1)
-   let newencode = replace(encodetable.h, dataindex, l2)
+   let p = subadd(mask,h, v, 1)
+   let code=code.p
+   let codeindex = toint(tobits.valueofencoding.code &and mask) + 1
+   let listdecode = 
+     for(e ∈(decodetable.h)_codeindex, acc = [ p])
+      if code.e = code ∨ notsamehash:T(valueofencoding.code , valueofencoding.code.e, mask) then acc  else acc + e
+   let  listencode =
+     for(e ∈(encodetable.h)_dataindex, acc = [ p])
+      if data.e = data.p ∨  notsamehash:T(hash.p,hash.e, mask) then acc else acc+e
+   let newdecode = replace(decodetable.h, codeindex, listdecode)
+   let newencode = replace(encodetable.h, dataindex, listencode)
     if 3 * length.h > 2 * tablesize then
     let t = newencode
      let d = newdecode
       encodingstate(encodingno.h, length.h + 1, t + t + t + t, d + d + d + d, all.h + p, valueofencoding.code.p)
     else encodingstate(encodingno.h, length.h + 1, newencode, newdecode, all.h + p, valueofencoding.code.p)
 
-function subadd(h:encodingstate.T, v:encodingpair.T, count:int)encodingpair.T
+function subadd(mask:bits, h:encodingstate.T,v:encodingpair.T, count:int)encodingpair.T
  \\ assert count < 10 report"unable to assign encoding"\\
- let tablesize = length.encodetable.h
- let code = code.v
- let codeindex = valueofencoding.code mod tablesize + 1
+  let code = code.v
+ let codeindex = toint(tobits.valueofencoding.code &and mask) + 1
  let found = valueofencoding.code.v ≤ 0
  ∨ ((for(@e ∈(decodetable.h)_codeindex, acc = false)acc ∨ code.v = code.@e))
   if found then
-  subadd(h, encodingpair(to:encoding.T(assignencoding(length.h, data.v)), data.v, hash.v), count + 1)
+  subadd(mask,h, encodingpair(to:encoding.T(assignencoding(length.h, data.v)), data.v, hash.v), count + 1)
   else encodingpair(code.v, data.v, hash.v)
+
 
 Function assignrandom(length:int, data:T)int(randomint.1)_1
 
@@ -109,8 +110,7 @@ Function lookupencodingpair(t:encoding.T)seq.encodingpair.T
   decode(inst, t)
 
 Function decode(t:encoding.T)T
- let inst = getinstance:encodingstate.T
- let a = decode(inst, t)
+ let a = lookupencodingpair.t
   assert length.a = 1 report"no such encoding" + toword.valueofencoding.t + stacktrace
    data.a_1
 
@@ -128,11 +128,10 @@ Function encode(t:T)encoding.T
   else code.r_1
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingpair.T
- ((for(@e ∈(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1), acc = empty:seq.encodingpair.T)acc + ele4(t, @e)))
+ for(e ∈(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1), acc = empty:seq.encodingpair.T)
+  if t = code.e then  acc+ e   else acc
 
-function ele4(t:encoding.T, a:encodingpair.T)seq.encodingpair.T
- if t = code.a then [ a]else empty:seq.encodingpair.T
-
+ 
 Function =(a:encoding.T, b:encoding.T)boolean valueofencoding.a = valueofencoding.b
 
 Function ?(a:encoding.T, b:encoding.T)ordering valueofencoding.a ? valueofencoding.b
@@ -140,9 +139,11 @@ Function ?(a:encoding.T, b:encoding.T)ordering valueofencoding.a ? valueofencodi
 Function hash(a:encoding.T)int valueofencoding.a
 
 function lookuprep(t:T, inst:encodingstate.T)seq.encodingpair.T
- ((for(@e ∈(encodetable.inst)_(hash.t mod length.encodetable.inst + 1), acc = empty:seq.encodingpair.T)acc + ele5(t, @e)))
-
-function ele5(v:T, a:encodingpair.T)seq.encodingpair.T if v = data.a then [ a]else empty:seq.encodingpair.T
+  lookuprep(t,(encodetable.inst)_(hash.t mod length.encodetable.inst + 1))
+ 
+function lookuprep(t:T,s:seq.encodingpair.T) seq.encodingpair.T
+ for(e ∈ s , acc = empty:seq.encodingpair.T)  if t = data.e then acc+ e else acc
+ 
 
 Function findencode(t:T)seq.T
  let r = lookuprep(t, getinstance:encodingstate.T)

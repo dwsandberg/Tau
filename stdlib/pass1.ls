@@ -79,8 +79,8 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarymods:seq.firstp
  let alllibsym =((for(@e ∈ librarymods, acc = empty:set.symbol)acc ∪ defines.@e))
  ∪ ((for(@e ∈ librarymods, acc = empty:set.symbol)acc ∪ exports.@e))
  let simplesym = asset.((for(@e ∈ toseq.alllibsym, acc = empty:seq.symbol)acc + issimple2.@e))
- let libprg = program.simplesym
- let libtemplates = program(alllibsym - simplesym)
+ let libprg = program2.simplesym
+ let libtemplates = program2(alllibsym - simplesym)
   \\ let discard = getinstance:encodingstate.symboltext \\
   let a =(for(@e ∈ allsrc, acc = asset.librarymods)gathersymbols(acc, @e))
   let expand1 = expanduse.expanduseresult(a, empty:seq.mapele)
@@ -99,7 +99,7 @@ Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarymods:seq.firstp
     let templates0 =(for(@e ∈ abstract, acc = libtemplates)bind3(acc, alltypes, d1, @e))
     let templates =(for(@e ∈ map.expand1, acc = templates0)maptemp(acc, templates0, @e))
     let roots =((for(@e ∈ simple, acc = empty:seq.symbol)acc + roots(exports, @e)))
-     linkage(prg1, toset.libprg, roots, simple + abstract, templates, alltypes, allsymbols1)
+     linkage(prg1, asset.toseq.libprg, roots, simple + abstract, templates, alltypes, allsymbols1)
 
 function basetypes seq.myinternaltype [ myinternaltype("defined"_1,"int"_1, mytype."standard", [ typeint]), myinternaltype("defined"_1,"boolean"_1, mytype."standard", [ typeint])]
 
@@ -131,7 +131,7 @@ function subflddefined(subflds:seq.mytype, modpara:mytype, i:int, defined:typedi
  if i > length.subflds then flatflds
  else
   let typ = replaceT(modpara, subflds_i)
-   if abstracttype.typ ∈ "int seq real boolean T"then subflddefined(subflds, modpara, i + 1, defined, flatflds + typ)
+   if abstracttype.typ ∈ "int seq real boolean T byte bit"then subflddefined(subflds, modpara, i + 1, defined, flatflds + typ)
    else if abstracttype.typ ∈ "encoding"then subflddefined(subflds, modpara, i + 1, defined, flatflds + typeint)
    else
     let typdesc = findelement(defined, typ)
@@ -225,7 +225,7 @@ function split(s:seq.firstpass, i:int, abstract:seq.firstpass, simple:seq.firstp
    else split(s, i + 1, abstract, simple)
 
 function print(p2:program)seq.word
- (for(@e ∈ toseq.toset.p2, acc ="")list(acc," &br  &br", print(p2, @e)))
+ (for(@e ∈ toseq.p2, acc ="")list(acc," &br  &br", print(p2, @e)))
 
 function bind3(p:program, alltypes:typedict, modset:set.firstpass, f:firstpass)program
  let dict = builddict(modset, f) ∪ headdict
@@ -236,7 +236,7 @@ function bind2(p:program, alltypes:typedict, dict:set.symbol, s:symbol)program
   if not.isempty.txt then 
     let code=parsedcode.parse(dict, text.txt_1)
     map(p, s, if length.code = 1 ∧ isconst.code_1 then code + [ Words."VERYSIMPLE", Optionsym]else code)
-  else if parameter.modname.s = mytype."T" ∧ not(s ∈ toset.p)then
+  else if parameter.modname.s = mytype."T" ∧ not(s ∈  p)then
   map(p, s, empty:seq.symbol)
   else p
 
@@ -290,7 +290,9 @@ function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:in
       , offset
       , map(prg
       , this
-      , [ Local.1, Lit.knownoffset, if fldtype = mytype."real"then IdxReal else if abstracttype.fldtype ∈ "seq"then IdxPtr else IdxInt]))
+      , [ Local.1, Lit.knownoffset, if fldtype = mytype."real"then IdxReal 
+      else if fldtype = mytype."boolean"then IdxBoolean
+       else  if abstracttype.fldtype ∈ "seq"then IdxPtr else IdxInt]))
      else
       let newoffset = if offsetinc = 0 then if isempty.offset then typerep.fldtype else offset + "," + typerep.fldtype
       else offset
@@ -358,8 +360,8 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
         else
        ((for(@e ∈ arithseq(length.paratypes, 1, 1), acc = empty:seq.symbol)acc + Local.@e))
        +   if length.module.sym = 1 then [sym,Words."BUILTIN", Optionsym]
-       else if fsig.sym ∈ ["IDX2(T seq, int)"]then [ sym, Words."ABSTRACTBUILTIN", Optionsym]
-            else 
+       else  if fsig.sym ∈ ["IDX2(T seq, int)"]then [ sym, Words."ABSTRACTBUILTIN", Optionsym]
+            else  
         \\ assert fsig.sym &in ["getinstance:encodingstate.T","packed(T seq)","primitiveadd(int, T encodingpair)","sizeoftype:T","processresult(T process)","IDX(T seq, int)","GEP(T seq, int)","extractbit(T seq, int)","indexseq(T seq, int)","callidx2(T seq, int)","allocatespace:T(int)","setfld(int, T seq, T)","bitcast(T blockseq)","bitcast(T seq seq)","bitcast(T)","setfirst(T seq, int, int)"]report"XX"+ print.sym \\
              [symbol(fsig.sym,  "T builtin", returntype.sym),Words."ABSTRACTBUILTIN", Optionsym]  
        map(prg.f, sym, code2)
@@ -387,7 +389,7 @@ Function processOption(p:program, txt:seq.word)program
   let r = lookupcode(p, sym)
   let option=fsig.(parsedcode.t)_1
      assert isdefined.r report"Option problem" + modname+print.sym+EOL
-   + ((for(@e ∈ toseq.toset.p, acc ="")acc + if(fsig.@e)_1 ∈ "findelement"then EOL + module.@e + fsig.@e else""))
+   + ((for(@e ∈ toseq.p, acc ="")acc + if(fsig.@e)_1 ∈ "findelement"then EOL + module.@e + fsig.@e else""))
        addoption(p, sym, option)
 
 function getmod(s:seq.word,i:int)  seq.word

@@ -39,7 +39,14 @@ Builtin bitcast(int)seq.int
 Builtin GEP(seq.int, int)int
 
 Function interpret(code:seq.symbol)seq.symbol
- let t = [ myinternaltype(first."x","seq"_1, mytype."word seq", empty:seq.mytype), myinternaltype(first."x","seq"_1, mytype."char seq", empty:seq.mytype), myinternaltype(first."x","seq"_1, mytype."int seq", empty:seq.mytype), myinternaltype(first."x","seq"_1, mytype."char seq encoding", empty:seq.mytype), myinternaltype(first."x","word"_1, mytype."words", [ typeint]), myinternaltype(first."x","boolean"_1, mytype."standard", [ typeint]), myinternaltype(first."x","bits"_1, mytype."bits", [ typeint]), myinternaltype(first."x","ptr"_1, mytype."ptr", [ typeint])]
+ let t = [ myinternaltype(first."x","seq"_1, mytype."word seq", empty:seq.mytype), 
+    myinternaltype(first."x","seq"_1, mytype."char seq", empty:seq.mytype), 
+    myinternaltype(first."x","seq"_1, mytype."int seq", empty:seq.mytype), 
+     myinternaltype(first."x","word"_1, mytype."words", [ typeint]),
+      myinternaltype(first."x","boolean"_1, mytype."standard", [ typeint]), 
+      myinternaltype(first."x","char"_1, mytype."standard", [ typeint]), 
+      myinternaltype(first."x","bits"_1, mytype."bits", [ typeint]),
+       myinternaltype(first."x","ptr"_1, mytype."ptr", [ typeint])]
  let r = interpret(typedict.t, removeconstant.code, 1, empty:stack.int)
   tocode(r, resulttype.last.code)
 
@@ -58,7 +65,7 @@ function tocode(r:int, typ:mytype)seq.symbol
 
 function buildcode(acc:int, typ:mytype, alltypes:typedict)int
  let xx = gettypeinfo(alltypes, typ)
-  assert not.isempty.subflds.xx report"XXX" + typerep.typ
+  assert not.isempty.subflds.xx report"XXX buildcode" + typerep.typ
    acc * 2 + if kind.xx = first."real"then 1 else 0
 
 function aswords(s:seq.int)seq.word((for(@e ∈ s, acc ="")acc + wordencodingtoword.@e))

@@ -42,7 +42,7 @@ Function createdoc seq.word \\ Creates html tau html documentation. Creates file
 let d = {(for(@e ∈ gettext."tools/doc.txt", acc ="")acc + addselect.@e)}
 let x1 = createhtmlfile("doc.html", d)
  \\ let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])\\
- let y1 = createhtmlfile("testall.html", htmlcode."testall")
+ // let y1 = createhtmlfile("testall.html", htmlcode."testall") //
   d
 
 function addselect(s:seq.word)seq.word" &{ select X" + s + " &}"

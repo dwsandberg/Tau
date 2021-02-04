@@ -128,56 +128,30 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
     else if len > 2 ∧  result_(len - 2) = NotOp ∧ fsig.sym = "BR 3"then
     yyy(p, org, k + 1, subseq(result, 1, len - 3) + [ result_len, result_(len - 1), Br], nextvar, map, papply)
     else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
-   else if papply ∧ (fsig.sym)_1 ∈ "apply5"then applycode5(p, org, k, result, nextvar, map, papply)
+   else if papply ∧ (fsig.sym)_1 ∈ "apply5" then applycode5(p, org, k, result, nextvar, map, papply)
    else
     let nopara = nopara.sym
     let dd = code.lookupcode(p, sym)
     let options=getoption.dd
-     if first."COMPILETIME" ∈ options
+     if (first."COMPILETIME" ∈ options &or fsig.sym ="_(word seq, int)" )
      ∧ ((for(@e ∈ subseq(result, len - nopara + 1, len), acc = true)acc ∧ isconst.@e))then
-           let newcode= interpret(subseq(result,len-nopara+1,len)+sym)
-         let newconst=if length.newcode > 1 then Constant2.newcode else first.newcode
+            let newcode= interpret(subseq(result,len-nopara+1,len)+sym)
+          let newconst=if length.newcode > 1 then Constant2.newcode else first.newcode
            yyy(p, org, k + 1, result >> nopara + newconst, nextvar, map, papply)
-     else if"INLINE"_1 ∈ options ∨ first."VERYSIMPLE" ∈ options then
-     let code = removeoptions.dd
-       if isempty.code then yyy(p, org, k + 1, result + sym, nextvar, map, papply)
-       else inline(p, org, k, result, nextvar, nopara, code, map, options,papply)
-     else if nopara = 1 ∧ isconst.result_len then
-     \\ one constant parameter \\
-       if sym = symbol("toword(int)","UTF8","word")then
-       yyy(p, org, k + 1, subseq(result, 1, length.result - 1) + Word.(fsig.last.result)_1, nextvar, map, papply)
-       else  if fsig.sym = "decode(char seq encoding)" ∧ module.sym = "char seq encoding"then
-       let arg1 = result_len
-         if module.arg1 = "$word"then
-        let a1 =((for(@e ∈ tointseq.decodeword.(fsig.arg1)_1, acc = empty:seq.symbol)acc + Lit.@e))
+     else if  fsig.sym=" decodeword( word)"   &and module.result_len = "$word" then
+          let arg1=result_len
+           let a1 =((for(@e ∈ tointseq.decodeword.(fsig.arg1)_1, acc = empty:seq.symbol)acc + Lit.@e))
           let d = Constant2([ Stdseq, Lit.length.a1] + a1 + Record.constantseq(length.a1 + 2,"int"_1))
-           yyy(p, org, k + 1, subseq(result, 1, len - 1) + d, nextvar, map, papply)
-         else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
-          else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
-     else if nopara = 2 ∧ last.module.sym = "seq"_1 ∧ isconst.result_len
-     ∧ isconst.result_(len - 1)
-     ∧ fsig.sym
-     = "_(" + subseq(module.sym, 1, length.module.sym - 1) + "seq, int)"then
-     \\ two parameters with constant args \\
-      \\ should add case of IDXUC with record as first arg \\
-      \\ two parameters with constant args \\
-      \\ assert module.sym &in ["word seq","char seq","int seq","Tpair seq"]report"here pass2"+ print.sym \\
-        let idx = value.result_len
-         let arg1 = result_(len - 1)
-          if module.arg1 = "$words" ∧ between(idx, 1, length.fsig.arg1)then
-          yyy(p, org, k + 1, subseq(result, 1, len - 2) + Word.(fsig.arg1)_idx, nextvar, map, papply)
-          else if isrecordconstant.arg1 ∧ ((constantcode.arg1)_1 = Lit.0 ∨ (constantcode.arg1)_1 = Lit.1)
-          ∧ between(idx, 1, length.constantcode.arg1 - 2)then
-          yyy(p, org, k + 1, subseq(result, 1, len - 2) + (constantcode.arg1)_(idx + 2), nextvar, map, papply)
-          else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
-        else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
-
-function inline(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, nopara:int, code:seq.symbol, map:worddict.seq.symbol, options:seq.word,papply:boolean)expandresult
- if length.code = 1 ∧ code = [ var.1] ∧ nopara = 1 then
- \\ function just returns result \\ yyy(p, org, k + 1, result, nextvar, map, papply)
- else
-  let len = length.result
-  let t = backparse(result, len, nopara, empty:seq.int) + [ len + 1]
+           yyy(p, org, k + 1,  result >> 1 + d, nextvar, map, papply)
+     else if not("INLINE"_1 ∈ options ∨ first."VERYSIMPLE" ∈ options)  then
+     yyy(p, org, k + 1, result + sym, nextvar, map, papply)
+     else 
+        let code = removeoptions.dd
+        if isempty.code then yyy(p, org, k + 1, result + sym, nextvar, map, papply)
+        else if length.code = 1 ∧ code = [ var.1] ∧ nopara = 1 then
+         \\ function just returns result \\ yyy(p, org, k + 1, result, nextvar, map, papply)
+        else 
+         let t = backparse(result, len, nopara, empty:seq.int) + [ len + 1]
    assert length.t = nopara + 1 report"INLINE PARA PROBLEM"
    let new = if"STATE"_1 ∉ options ∧ issimple(p, nopara, code)then
    let pmap = simpleparamap(result, t, emptyworddict:worddict.seq.symbol, nopara)
@@ -339,7 +313,7 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    (finalcode.codeparts
    + [ Exit, \\ 4 else let newmasteridx = masteridx + 1, let sequenceele = seq_(idx)continue(thseqeq, thunk, newmasteridx)\\ masteridx, Lit.1, PlusOp, Definenewmasteridx, theseq, Lit.0, IdxInt, Defineseqtype, seqtype
    , Lit.0, EqOp, Lit.2, Lit.3, Br, theseq, newmasteridx, Idx.seqelementkind, Exit]
-   + if ds ∈ "int real ptr"then [ theseq, masteridx, Callidx.seqelementkind, Exit, Block(mytype.[ seqelementkind], 3)]
+   + if ds ∈ "int real ptr boolean"then [ theseq, masteridx, Callidx.seqelementkind, Exit, Block(mytype.[ seqelementkind], 3)]
    else
     [ seqtype, Lit.1, EqOp, Lit.4, Lit.5, Br, theseq, masteridx, Lit.-1, PlusOp] + packedtype.ds
     + [ Exit, theseq, masteridx, Callidx.seqelementkind, Exit, Block(mytype.[ seqelementkind], 5)])
@@ -401,7 +375,7 @@ let options = getoption.code0
    else""}
   map(p, s, if newoptions = ""then code else code + Words.newoptions + Optionsym)
 
-// statebit is set on option so that adding an option doesn't auto add a inline bit //
+// statebit is set on option so that adding an option doesn't auto add a inline bit ' //
 
 Function issimple(p:program, nopara:int, code:seq.symbol)boolean
  between(length.code, 1, 15) ∧ (nopara = 0 ∨ checksimple(p, code, 1, nopara, 0))
@@ -424,10 +398,10 @@ function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boo
 ---------------------------
 
 Function pass2(placehold:program, alltypes:typedict)program 
- let bin0 =(for(@e ∈ toseq.toset.placehold, acc = filterp(emptyprogram, emptyprogram))filterp(acc, @e, code.lookupcode(placehold, @e), alltypes))
- let bin =(for(@e ∈ toseq.toset.complex.bin0, acc = filterp(emptyprogram, simple.bin0))filterp(acc, @e, code.lookupcode(complex.bin0, @e), alltypes))
-  \\ assert false report checkt(bin0)assert false report print.length.toseq.toset.complex.bin + print.length.toseq.toset.simple.bin \\
-  (for(@e ∈ toseq.toset.complex.bin, acc = simple.bin)depthfirst(acc, placehold, alltypes, @e))
+ let bin0 =(for(@e ∈ toseq.placehold, acc = filterp(emptyprogram, emptyprogram))filterp(acc, @e, code.lookupcode(placehold, @e), alltypes))
+ let bin =(for(@e ∈ toseq.complex.bin0, acc = filterp(emptyprogram, simple.bin0))filterp(acc, @e, code.lookupcode(complex.bin0, @e), alltypes))
+  \\ assert false report checkt(bin0)assert false report print.length.toseq.complex.bin + print.length.toseq.simple.bin \\
+  (for(@e ∈ toseq.complex.bin, acc = simple.bin)depthfirst(acc, placehold, alltypes, @e))
     
 
    
@@ -438,9 +412,10 @@ function  filterp(p:filterp,s:symbol,code:seq.symbol, alltypes:typedict) filterp
  let simple = simple.p
  let options=getoption.code 
   if isempty.code ∨ "BUILTIN"_1 ∈ options ∨ "VERYSIMPLE"_1 ∈ options
-  ∨ "ABSTRACTBUILTIN"_1 ∈ options then
+  ∨ "ABSTRACTBUILTIN"_1 ∈ options     then  
      filterp(complex,map(simple,s,code) ) 
-  else if length.code < 30 then
+  else 
+   if length.code < 30 &or ( "COMPILETIME"_1 ∈ options  ) then
   \\ 10 is choosen to be min size of code with apply3 \\
       let nopara=nopara.s
       let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
@@ -450,9 +425,12 @@ function  filterp(p:filterp,s:symbol,code:seq.symbol, alltypes:typedict) filterp
     ∧ isconst.code2_2
     ∨ length.code2 = 1 ∧ nopara = 1 ∧ code2_1 = Local.1 then
         filterp(complex,map(simple,s,code2+[ Words."VERYSIMPLE", Optionsym]) )
-    else if hasunknown.state100(removeoptions.code2, simple, s)then filterp(addf(complex, s, code), simple)
-    else filterp(complex, firstopt(simple, s, code2, alltypes))
-  else filterp(map(complex, s, code), simple)
+    else if hasunknown.state100(removeoptions.code2, simple, s) &and "COMPILETIME"_1 &nin options  then 
+        filterp(addf(complex, s, code), simple)
+    else 
+      filterp(complex, firstopt(simple, s, code2, alltypes))
+  else  
+  filterp(map(complex, s, code), simple)
  
   function  xxx(p:program,alltypes:typedict, s:symbol) program
         let code=code.lookupcode(p,s)
@@ -469,5 +447,9 @@ function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
   let q = asset
   .((for(@e ∈ toseq.toprocess, acc = empty:seq.symbol)acc +
   let d = code.lookupcode(p, @e)
+\\  assert not.containspara.d report "has p "+print.@e+print.d \\
   if isempty.d then constantcode.@e else d))
    uses(p, processed ∪ toprocess, q - processed)
+   
+   
+ function containspara(code:seq.symbol) boolean      for(e &in code,hasparameter=false)  hasparameter &or    isparameter.e 

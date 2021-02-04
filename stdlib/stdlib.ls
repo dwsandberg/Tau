@@ -1,11 +1,12 @@
 
+
 Library 
 stdlib UTF8   bits codegennew codetemplates encoding fileio format   groupparagraphs intdict 
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
 pass1 pass2 breakblocks persistant postbind   process real seq set stack  symbol textio timestamp tree worddict words xxhash
  sparseseq standard maindict  outstream bitstream tausupport
  basetypecheck
-  tests/test11 tests/checking tests/point tests/testencoding  
+   tests/test11 tests/checking tests/point tests/testencoding  
  tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
  tests/testprocess tests/test5 tests/testseq
  tests/wordfreq
@@ -26,13 +27,13 @@ pass1 pass2 breakblocks persistant postbind   process real seq set stack  symbol
  graphs/graph
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format abstractBuiltin
-graph groupparagraphs intdict   ioseq ipair libdesc llvm llvmconstants 
-main2 maindict mangle mytype pretty otherseq  prims process 
+graph groupparagraphs intdict   ioseq ipair libdesc  
+main2 maindict mangle mytype pretty otherseq    process 
 real seq set stack   symbol textio timestamp tree worddict words xxhash 
-codegennew codetemplates persistant  sparseseq   standard testall
+  sparseseq   standard testall
 svg svggraph displaygraph displaytextgraph display
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport
-   breakblocks   interpreter internalbc  
+  interpreter  llvm llvmconstants internalbc codegennew codetemplates persistant breakblocks
 
 * Removed maindict 
 
@@ -46,7 +47,7 @@ option.pass1 maptemp(st:program, templates:program, s:mapele)program PROFILE
 
 option.symbol lookupcode(p:program, s:symbol)programele PROFILE
 
-option.set.symbol findelement(val:symbol, s:set.symbol)set.symbol PROFILE
+/option.set.symbol findelement(val:symbol, s:set.symbol)set.symbol PROFILE
 
 
 
@@ -98,20 +99,24 @@ option.fileio  createfile3(byteLength:int,data:seq.bits,name:cstr) int  STATE
 
 
 
-/option.builtin.int Assert(seq.word) int STATE
+ 
+option.UTF8 toword(int) word COMPILETIME
 
-/option.UTF8 toword(int) word COMPILETIME
-
-/option.encoding.seq.char decode(encoding.seq.char) seq.char COMPILETIME
 
 option.words encodeword( seq.char) word COMPILETIME
 
 /option.words  decodeword( word) seq.char COMPILETIME
 
+option.words  decodeword( word) seq.char NOINLINE
+
 option.seq.word _(seq.word,int) word COMPILETIME
 
-/option.seq.int IDX(seq.T, int) int   COMPILETIME
- 
+option.seq.int _(seq.int,int) int COMPILETIME
+
+option.seq.char _(seq.char,int) char COMPILETIME
+
+
+  
 
 option.timestamp   currenttime timestamp STATE
 

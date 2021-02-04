@@ -1,4 +1,8 @@
-#!/usr/local/bin/tau  ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau  ;  use tools; testprofile."solardataall"
+
+
+
+doclibrary."stdlib"
 
 ; use pretty ;   pretty("printbitcodes printbitcodes bitcodesupport  runcode ","junk")
 
