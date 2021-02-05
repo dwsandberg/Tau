@@ -365,7 +365,7 @@ function reduceline(grammerandact:seq.seq.word, i:int,last:int)seq.word
    
 Function gentau2 seq.word \\ used to generater tau parser for Pass1 of the tau compiler. \\ lr1parser(taurules2, tauruleprec, taualphabet,"bindinfo")
  
-function taualphabet seq.word".=():>]-{ } comment, [_@ is T if # then else let assert report ∧ ∨ * $wordlist   A E G F W P N L I  FP NM D for B"
+function taualphabet seq.word".=():>]-{ } comment, [_; is T if # then else let assert report ∧ ∨ * $wordlist   A E G F W P N L I  FP NM D for B"
 
 function tauruleprec seq.seq.word  
 // list of rules and lookaheads.  The position of the lookahead is noted.  Rule reductions  after are discard
@@ -396,7 +396,7 @@ function taurules2 seq.seq.seq.word [ [  ' G F # ', ' R_1 ']
 , [ ' E NM(L)', ' unaryop(R, input, place, tokentext.R_1, R_3)'] 
 , [ ' E(E)', ' R_2 '] 
 , [ ' E { E } ', ' R_2 '] 
-, [ ' E if E then E else E ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
+, [ ' E if E then E else D ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
 , [ ' E E_E ', ' opaction(R, input, place)'] 
 , [ ' E-E ', ' unaryop(R, input, place, tokentext.R_1, R_2)'] 
 , [ ' E W.E ', ' unaryop(R, input, place, tokentext.R_1, R_3)'] 
@@ -409,9 +409,9 @@ function taurules2 seq.seq.seq.word [ [  ' G F # ', ' R_1 ']
 , [ ' L E ', ' R_1 '] 
 , [ ' L L, E ', ' bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"")'] 
 , [ ' E [ L]', ' let types = types.R_2 assert (for(@e ∈ types, acc = true)acc ∧ types_1 = @e))report errormessage("types do not match in build", input, place)bindinfo(dict.R, [ Stdseq, Lit.length.types]+ code.R_2 + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint]+ types, typeptr), [ typeseq + types_1],"")'] 
-, [ ' A let W = E ', ' let e = R_4 let name = tokentext.R_2 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place)let newdict = dict.R + Local(name,(types.e)_1)bindinfo(newdict, code.e + Define.name, types.e, tokentext.R_2)'] 
+, [ ' A let W = D ', ' let e = R_4 let name = tokentext.R_2 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place)let newdict = dict.R + Local(name,(types.e)_1)bindinfo(newdict, code.e + Define.name, types.e, tokentext.R_2)'] 
 , [ ' E A E ', ' let name = tokentext.R_1 let f = lookup(dict.R, name, empty:seq.mytype)assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name"+ name bindinfo(dict.R_1-f_1, code.R_1 + code.R_2, // +"SET"+ name, // types.R_2,"")'] 
-, [ ' E assert E report E E ', ' assert:T(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place)assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_5 + Exit + code.R_4 + symbol("assert(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"")'] 
+, [ ' E assert E report D E ', ' assert:T(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place)assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_5 + Exit + code.R_4 + symbol("assert(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"")'] 
 , [ ' E I ', ' bindlit.R '] 
 , [ ' E I.I ', ' bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"")'] 
 , [ ' T W ', ' isdefined(R, input, place, mytype.tokentext.R_1)'] 
@@ -430,9 +430,17 @@ function taurules2 seq.seq.seq.word [ [  ' G F # ', ' R_1 ']
 ,[ ' B for (W - E , W = E , W ',' forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first.tokentext.R_11, input, place) ']
 ,[ ' B for (W - E , W = E  ',' forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first."^", input, place) ']
 ,   [ ' E B) E ' ,' forpart2( R_1, bindinfo(dict.R,[Litfalse],[mytype."boolean"],""),R_3, input, place) ']
-, [ ' E B, E)E ', ' forpart2(R_1, R_3, R_5, input, place)']]
-      
-Function gentaupretty seq.word \\ used to generater tau parser for Pass1 of the tau compiler. \\ lr1parser(tauprettyrules, tauruleprec, taualphabet,"attribute2")
+, [ ' E B, E)E ', ' forpart2(R_1, R_3, R_5, input, place)']
+,[ ' B for  W - E , W = E , W ',' forpart1(first.tokentext.R_2, R_4, first.tokentext.R_6, R_8, first.tokentext.R_10, input, place) ']
+,[ ' B for  W - E , W = E  ','    forpart1(first.tokentext.R_2, R_4, first.tokentext.R_6, R_8, first."^", input, place) ']
+,  [ ' E B ; D ' ,' forpart2( R_1, bindinfo(dict.R,[Litfalse],[mytype."boolean"],""),R_3, input, place) ']
+, [ ' E B, E ; D ', ' forpart2(R_1, R_3, R_5, input, place)']      
+,[' D E ', ' R_1 ' ]
+,[' D E ; ' ,' R_1 ' ] ]
+
+
+Function gentaupretty seq.word \\ used to generater tau parser for Pass1 of the tau compiler. \\ 
+lr1parser(tauprettyrules, tauruleprec, taualphabet,"attribute2")
 
 function tauprettyrules seq.seq.seq.word \\ after generator grammar change %%% to & \\
 [ [  ' G F # ', ' R_1 '] 
@@ -452,7 +460,7 @@ function tauprettyrules seq.seq.seq.word \\ after generator grammar change %%% t
 , [ ' E NM(L)', ' if length.R_3 = 1 ∧ length.text.R_1 = 1 then wrap(3, R_1,".", R_3)else pretty.[ R_1, R_2, list.R_3, R_4]'] 
 , [ ' E(E)', ' R_2 '] 
 , [ ' E { E } ', ' R_2 '] 
-, [ ' E if E then E else E ', ' // if width.R_2 + width.R_4 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]else pretty.[ R_1, R_2, attribute2."then", block.R_4, elseblock.R_6]else // if width.R_2 + width.R_4 + width.R_6 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]else if width.R_2 + width.R_4 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]else pretty.[ R_1, R_2, attribute."%%%keyword then %%%br", block.R_4, elseblock.R_6]'] 
+, [ ' E if E then E else D ', '  if width.R_2 + width.R_4 + width.R_6 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, key.R_5, R_6]else if width.R_2 + width.R_4 < 30 then pretty.[ R_1, R_2, key.R_3, R_4, elseblock.R_6]else pretty.[ R_1, R_2, attribute."%%%keyword then %%%br", block.R_4, elseblock.R_6]'] 
 , [ ' E E_E ', ' wrap(1, R_1, text.R_2, R_3)'] 
 , [ ' E-E ', ' unaryminus.R_2 '] 
 , [ ' E W.E ', ' wrap(3, R_1, text.R_2, R_3)'] 
@@ -465,9 +473,9 @@ function tauprettyrules seq.seq.seq.word \\ after generator grammar change %%% t
 , [ ' L E ', ' R_1 '] 
 , [ ' L L, E ', ' R_1 + R_3 '] 
 , [ ' E [ L]', ' pretty.[ R_1, list.R_2, R_3]'] 
-, [ ' A let W = E ', ' pretty.[ R_1, R_2, R_3, R_4]'] 
+, [ ' A let W = D ', ' pretty.[ R_1, R_2, R_3, R_4]'] 
 , [ ' E A E ', ' checkpara(R_1, block("%%%br let assert", R_2))'] 
-, [ ' E assert E report E E ', ' pretty.[ R_1, R_2, key.R_3, R_4, block("%%%br let assert", R_5)]'] 
+, [ ' E assert E report D E ', ' pretty.[ R_1, R_2, key.R_3, R_4, block("%%%br let assert", R_5)]'] 
 , [ ' E I ', ' R_1 '] 
 , [ ' E I.I ', ' pretty.[ R_1, R_2, R_3]'] 
 , [ ' T W ', ' R_1 '] 
@@ -486,7 +494,14 @@ function tauprettyrules seq.seq.seq.word \\ after generator grammar change %%% t
 ,[ ' B for (W - E , W = E , W ',' pretty.[R_1,R_2,R_3,R_4,R_5,R_6,R_7,R_8,R_9,R_10,R_11]  ']
 ,[ ' B for (W - E , W = E  ',' pretty.[R_1,R_2,R_3,R_4,R_5,R_6,R_7,R_8,R_9] ']
 ,   [ ' E B) E ' ,' pretty.[R_1,R_2,R_3] ']
-, [ ' E B, E)E ', ' pretty.[ R_1, R_2, R_3, R_4, R_5]']]
+, [ ' E B, E)E ', ' pretty.[ R_1, R_2, R_3, R_4, R_5]']
+,[ ' B for  W - E , W = E , W ','  pretty.[R_1,R_2,R_3,R_4,R_5,R_6,R_7,R_8,R_9,R_10] ']
+,[ ' B for  W - E , W = E  ','    pretty.[R_1,R_2,R_3,R_4,R_5,R_6,R_7,R_8,R_9] ']
+,  [ ' E B ; D ' ,' pretty.[R_1,R_2,R_3] ']
+, [ ' E B, E ; D ', ' pretty.[ R_1, R_2, R_3, R_4, R_5] ']      
+,[' D E ', ' R_1 ' ]
+,[' D E ; ' ,' R_1 ' ] 
+]
 
  
 Function test11 seq.word extractgrammer

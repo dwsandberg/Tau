@@ -110,7 +110,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
     let nopara = nopara.sym - 1
      let firstvar = value.result_len
       yyy(p, org, k + 1, subseq(result, 1, len - 1) + Lit.nextvar + sym, nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0),papply)
-    else if(fsig.sym)_1 = "RECORD"_1 then
+    else if isRecord.sym   then
     let nopara = nopara.sym
      let args = subseq(result, len + 1 - nopara, len)
       if((for(@e ∈ args, acc = true)acc ∧ isconst.@e))then
@@ -141,7 +141,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
      else if  fsig.sym=" decodeword( word)"   &and module.result_len = "$word" then
           let arg1=result_len
            let a1 =((for(@e ∈ tointseq.decodeword.(fsig.arg1)_1, acc = empty:seq.symbol)acc + Lit.@e))
-          let d = Constant2([ Stdseq, Lit.length.a1] + a1 + Record.constantseq(length.a1 + 2,"int"_1))
+          let d = Constant2.Sequence(typeint,a1) 
            yyy(p, org, k + 1,  result >> 1 + d, nextvar, map, papply)
      else if not("INLINE"_1 ∈ options ∨ first."VERYSIMPLE" ∈ options)  then
      yyy(p, org, k + 1, result + sym, nextvar, map, papply)
@@ -217,7 +217,7 @@ function breakAccumalator5(p:program, thunk:seq.symbol, resulttype:seq.word, las
  let accfunc=last.thunk
   let  ttt=lookupcode(p,last.thunk)
 let code=removeoptions.code.ttt
-  if isempty.code ∨ not.isrecord.last.code then issimple
+  if isempty.code ∨ not.isRecord.last.code then issimple
 else 
    let noAccumlators=nopara.last.code
    let fldnames =((for(@e ∈ paratypes.last.code, acc ="",@i,false)acc + merge([ toword.@i] + typerep.@e)))
@@ -281,9 +281,9 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
   let thunkplaceholders=subseq(code,t_1-3,t_1-1)
   let initseq=code_(t_1-4)
  let isnoop = exitexp = [ Litfalse] ∧ length.thunk0 = 6 ∧ first.fsig.accfunc = "+"_1
- ∧ isrecord.thunk0_5
+ ∧ isRecord.thunk0_5
  ∧ thunk0 >> 2 = [ thunkplaceholders_2, Lit.0, Lit.1, thunkplaceholders_1]
- ∧ code_(t_1 - 5) = Constant2.Emptyseq
+ ∧ code_(t_1 - 5) = Constant2.Emptyseq.typeint
   if isnoop then   yyy(p, org, k + 1, code >> 12 +initseq, nextvar, map,papply)
    else
    let part1 = subseq(code, 1, t_1 - 5) + [ Defineinitacc, initseq, Lit.1, IdxInt, Define.totallength, initseq, initacc]

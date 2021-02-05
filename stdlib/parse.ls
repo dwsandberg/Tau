@@ -229,8 +229,7 @@ else if ruleno = // E [ L]// 30 then
 let types = types.R_2 
    assert((for(@e ∈ types, acc = true)acc ∧ types_1 = @e))
    report errormessage("types do not match in build", input, place)
-    bindinfo(dict.R, [ Stdseq, Lit.length.types] + code.R_2
-    + newsymbol("kindrecord", mytype."T builtin", [ typeint, typeint] + types, typeptr), [ typeseq + types_1],"")
+        bindinfo(dict.R,  Sequence(types_1,length.types,code.R_2),[ typeseq + types_1] ,"")  
  else if ruleno = \\ A let W = E \\ 31 then
 let e = R_4 
 let name = tokentext.R_2 
@@ -266,6 +265,19 @@ else if ruleno = // NM W:T // 48 then bindinfo(dict.R, empty:seq.symbol, empty:s
 else if ruleno = // B for(W-E, W = E, W // 49 then forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first.tokentext.R_11, input, place) 
 else if ruleno = // B for(W-E, W = E // 50 then forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first."^", input, place) 
 else if ruleno = // E B)E // 51 then forpart2(R_1, bindinfo(dict.R,[ Litfalse], [ mytype."boolean"],""), R_3, input, place) 
+else if ruleno = // E B, E)E // 52 then forpart2(R_1, R_3, R_5, input, place) 
+else if ruleno = // B for W-E, W = E, W // 53 then forpart1(first.tokentext.R_2, R_4, first.tokentext.R_6, R_8, first.tokentext.R_10, input, place) 
+else if ruleno = // B for W-E, W = E // 54 then forpart1(first.tokentext.R_2, R_4, first.tokentext.R_6, R_8, first."^", input, place) 
+else if ruleno = // E B ; D // 55 then forpart2(R_1, bindinfo(dict.R, [ Litfalse], [ mytype."boolean"],""), R_3, input, place) 
+else if ruleno = // E B, E ; D // 56 then forpart2(R_1, R_3, R_5, input, place) 
+else if ruleno = // D E // 57 then R_1 
+else assert ruleno = // D E ; // 58 report"invalid rule number"+ toword.ruleno 
+R_1
+
+
+
+
+
 else assert ruleno = // E B, E)E // 52 report"invalid rule number"+ toword.ruleno 
 forpart2(R_1, R_3, R_5, input, place)
  

@@ -93,8 +93,7 @@ function addlibsym(s:symbol)symbol
 function addmytype(t:mytype)symbol Words.typerep.t
 
 function addseq(s:seq.symbol)symbol
- Constant2([ Stdseq, Lit.length.s] + s
- + Record("int, int" + constantseq(length.s,"ptr"_1)))
+ Constant2(  Sequence( mytype."ptr", s ) )
 
 function addlibmod(toexport:set.symbol, m:firstpass)symbol
  \\ symbols in m are replaced with the symbol from toexport which has zcode to form programele \\

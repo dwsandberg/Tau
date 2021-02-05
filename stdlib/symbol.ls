@@ -235,7 +235,6 @@ Function Callidx(kind:word)symbol
 
 symbol("callidx("+ t +"seq, int)","$internal", t)
 
-Function Emptyseq seq.symbol [ Stdseq, Lit.0, symbol("RECORD(int, int)","$record","ptr", specialbit)]
 
 Function Stdseq symbol Lit.0
 
@@ -257,6 +256,18 @@ Function Constant2(args:seq.symbol)symbol
  \\ let args = subseq(argsin, 1, length.argsin-1)\\
  let fsig ="CONSTANT" + toword.valueofencoding.encode.symbolconstant.args
   symbol(fsig,"$constant","ptr", args, extrabits(fsig, constbit))
+  
+Function Sequence(type:mytype,  a1:seq.symbol) seq.symbol
+[ Stdseq, Lit.length.a1] + a1 + Record( "int int" +constantseq(length.a1 ,(typerep.type)_1))
+
+Function Sequence(type:mytype, length:int, code:seq.symbol) seq.symbol
+[ Stdseq, Lit.length] + code + newsymbol("kindrecord", abstracttype("$sequence"_1,type) , [ typeint, typeint] +
+ constantseq(length, type ), typeptr)
+ 
+
+
+Function Emptyseq(type:mytype)  seq.symbol Sequence(type,empty:seq.symbol)
+
 
 Function isrecordconstant(s:symbol)boolean module.s = "$constant"
 
@@ -350,7 +361,7 @@ Function isinOp(s:symbol)boolean
 
 Function isblock(s:symbol)boolean last.module.s = "$block"_1
 
-Function isrecord(s:symbol)boolean module.s = "$record"
+Function isRecord(s:symbol)boolean module.s = "$record"
 
 Function isloopblock(s:symbol)boolean module.s = "$loopblock"
 

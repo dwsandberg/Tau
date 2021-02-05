@@ -270,8 +270,7 @@ function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:in
  if i > length.syms then
  if offset = ""then
   let args =((for(@e ∈ arithseq(length.syms, 1, 1), acc = indexfunc)acc + Local.@e))
-   let x = Record
-   .((for(@e ∈ paratypes.constructor, acc = if not.isempty.indexfunc then"int"else"")acc + tokind.@e))
+   let x = Record.for(@e ∈ paratypes.constructor, acc = if not.isempty.indexfunc then"int"else"")acc + tokind.@e
     map(prg, constructor, args + x)
   else map(prg, constructor, indexfunc + symbol("build." + fsig.constructor,"x builtin","ptr"))
  else
@@ -331,7 +330,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
      let prg0 = fldcode(constructor, [ indexfunc], fldsyms, 1, 1,"", prg1)
      let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]
      let prg = map(prg0, symtoseq, [ Local.1])
-     let prg2 = map(prg, symfromseq, [ Local.1, Lit.0, IdxInt, indexfunc, EqOp, Lit.2, Lit.3, Br, Local.1, Exit] + Emptyseq
+     let prg2 = map(prg, symfromseq, [ Local.1, Lit.0, IdxInt, indexfunc, EqOp, Lit.2, Lit.3, Br, Local.1, Exit] + Emptyseq.typeptr
      + [ Exit, Block(typeptr, 3)])
       firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, types.f + it, prg2)
     else
@@ -351,7 +350,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
     else
      assert not(sym ∈ defines.f)report"Function" + name.sym + "is defined twice in module" + print.modname.f
      let prg1 = if input_1 ∈ "Builtin builtin"then
-     let code2 = if fsig.sym = "empty:seq.T"then Emptyseq + [ Words."VERYSIMPLE", Optionsym]
+     let code2 = if fsig.sym = "empty:seq.T"then Emptyseq.typeint + [ Words."VERYSIMPLE", Optionsym]
       else if fsig.sym = "getseqtype(T seq)"then [ Local.1, Lit.0, IdxInt, Words."VERYSIMPLE", Optionsym]
       else if fsig.sym = "aborted(T process)"then
       [ Local.1, symbol("aborted(T process)","builtin","boolean")]

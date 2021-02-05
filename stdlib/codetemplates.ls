@@ -299,7 +299,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
    let typ = tollvmtype(alltypes, resulttype.xx)
      addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, typ)
    else if isspecial.xx then
-   if(fsig.xx)_1 = "RECORD"_1 ∧ nopara.xx < 10 then
+   if isRecord.xx  ∧ nopara.xx < 10 then
     let fldbc = recordcode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1), fsig.xx, 0, true)
       addtemplate(xx, regno.fldbc, bc.fldbc)
     else addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, slot.nopara.xx)

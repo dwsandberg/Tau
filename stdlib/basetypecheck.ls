@@ -21,7 +21,6 @@ use worddict.word
 use process.seq.word
 
 Function baseTypeCheck(alltypes:typedict, result2:program, s:symbol)seq.word
- \\ if not(fsig.s ="encode(indexedword erecord, indexedword)")then""else \\
  \\ assert not(name.s ="packed2")report @(+, print,"", code.lookupcode(result2, s))\\
  let p = process.checkkind(alltypes, result2, s)
   if aborted.p then
@@ -77,7 +76,7 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.word, localtyp
    else if module.s = "$real"then ccc(alltypes, code, i + 1, push(stk,"real"_1), localtypes)
    else if(module.s)_1 ∈ "$word $int $fref"then
    ccc(alltypes, code, i + 1, push(stk,"int"_1), localtypes)
-    else if isrecord.s then
+    else if isRecord.s then
     assert length.toseq.stk ≥ nopara.s report"stack underflow record"
       ccc(alltypes, code, i + 1, push(pop(stk, nopara.s),"ptr"_1), localtypes)
     else if isexit.s then ccc(alltypes, code, i + 1, stk, localtypes)

@@ -50,10 +50,16 @@ function postbind(alltypes:typedict, dict:set.symbol, working:set.symbol, toproc
 
 type resultpb is record calls:set.symbol, code:seq.symbol, sourceX:program
 
+use otherseq.word
+
 function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, result:seq.symbol, modpara:mytype, org:seq.word, calls:set.symbol, sourceX:program, tempX:program)resultpb
  if i > length.code then resultpb(calls, result, sourceX)
  else
   let x = code_i
+   if last.module.x="$sequence"_1 then
+         let a=    Record("int int"+ constantseq((nopara.x-2),kind(alltypes, modpara, parameter.modname.x)))
+         postbind3(alltypes, dict, code, i + 1, result +  a  , modpara, org, calls, sourceX, tempX)
+   else 
   let isfref = isFref.x
   let sym = basesym.x
    if isblock.sym then
@@ -78,7 +84,7 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
        let p2 = if isfref then Fref.target.xx4 else target.xx4
         postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls + target.xx4, sourceX, tempX)
      else if"ABSTRACTBUILTIN"_1 ∈ options ∨ last.module.sym = "builtin"_1 then
-     \\ assert("ABSTRACTBUILTIN"_1 ∈ options)=(last.module.sym ="builtin"_1)&or first.module.sym ="T"_1 &or(fsig.sym)_1 &in"  kindrecord offsets build assert createthreadX"report"BBBBBB"+ print.sym \\
+     \\ assert("ABSTRACTBUILTIN"_1 ∈ options)=(last.module.sym ="builtin"_1)&or first.module.sym ="T"_1 &or(fsig.sym)_1 &in"  offsets build assert createthreadX"report"BBBBBB"+ print.sym \\
       codeforbuiltin(alltypes, dict, code, i, result, isfref, newsym, sym, org, modpara, calls, sourceX, tempX)
      else if subseq(fsig.sym, 1, 2) = "type:"then
      let p2 = definedeepcopy(alltypes, resulttype.newsym, org)
@@ -147,13 +153,11 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:i
  let c =((for(@e ∈ paratypes.sym, acc = empty:seq.seq.mytype)acc + subflds(alltypes, modpara, @e)))
   let p2 = buildconstructor(alltypes, if i = 2 then \\ for seq index func \\"int"else"", c,"", 1, 1, 0, empty:seq.symbol)
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
- else if(fsig.sym)_1 ∈ "kindrecord"then
- let p2 = Record.((for(@e ∈ paratypes.sym, acc ="")acc + kind(alltypes, modpara, @e)))
-   postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
  else if first.fsig.sym = first."createthreadX"then
  let kindlist =((for(@e ∈ paratypes.sym << 5, acc ="")acc + kind(alltypes, modpara, @e)))
   let paracode =(for(@e ∈ kindlist + kind(alltypes, modpara, parameter.resulttype.sym), acc = 1)buildcode(acc, @e))
-  let p2 = [ Record("int int" + kindlist), Lit.paracode, newsymbol("createthread", mytype."tausupport", [ typeint, typeint, typeint, mytype."int seq", typeint], typeptr)]
+  let p2 = [ Record("int int" + kindlist), Lit.paracode, 
+  newsymbol("createthread", mytype."tausupport", [ typeint, typeint, typeint, mytype."int seq", typeint], typeptr)]
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
  else if fsig.sym = "indexseq(T seq, int)"then
  let elementtype = parameter.modname.newsym
@@ -258,7 +262,7 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
   let element= newsymbol("element", abstracttype("$for"_1, elementtype), empty:seq.mytype, elementtype) 
   let acc=     newsymbol("acc", abstracttype("$for"_1, mytype."ptr"), empty:seq.mytype, mytype."ptr")
   let idx=     newsymbol("idx", mytype."$for", empty:seq.mytype, typeint)
-   Emptyseq +[ Local.1,element,acc,idx,acc,element,dc,cat,Litfalse,
+   Emptyseq.mytype."ptr" +[ Local.1,element,acc,idx,acc,element,dc,cat,Litfalse,
      newsymbol("apply5", mytype."builtin", [ resulttype, abstracttype("seq"_1, elementtype), elementtype, resulttype, typeint, resulttype, mytype."boolean"], resulttype)
 ]
    + blocksym.info
