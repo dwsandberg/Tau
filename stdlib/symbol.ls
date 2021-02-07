@@ -220,6 +220,22 @@ Function Idx(kind:word)symbol
  else
   assert kind = "boolean"_1 report"unexpected type in Idx:" + kind
    IdxBoolean
+   
+Function Idx(type:mytype )symbol
+  let kind=(typerep.type)_-2
+ if kind = "int"_1 ∨ kind = "byte"_1 then IdxInt
+ else if kind = "ptr"_1 then IdxPtr
+ else if kind = "real"_1 then IdxReal
+ else
+  assert kind = "boolean"_1 report"unexpected type in Idx:" + kind
+   IdxBoolean
+   
+Function IdxS(type:mytype)symbol
+  let kind=(typerep.type)_-2
+ if kind &in  "int byte bit" then IdxInt
+ else if kind = "real"_1 then IdxReal
+ else if kind = "boolean"_1 then  IdxBoolean
+ else IdxPtr
 
 Function IdxInt symbol symbol("IDX2(int seq, int)","int abstractBuiltin","int")
 
@@ -229,11 +245,25 @@ Function IdxReal symbol symbol("IDX2(real seq, int)","real abstractBuiltin","rea
 
 Function IdxBoolean symbol symbol("IDX2(boolean seq, int)","boolean abstractBuiltin","boolean")
 
-Function Callidx(kind:word)symbol
- let t = if kind ∈ "int real"then [ kind]else"ptr"
-  symbol("callidx2(T seq, int)", t + "builtin", t)
 
-symbol("callidx("+ t +"seq, int)","$internal", t)
+
+Function Callidx(type:mytype)symbol
+  let  kind= abstracttype.parameter.type 
+  let t= if  kind ∈ "int boolean byte bit" then "int"
+    else if kind  ∈ "real" then "real"
+    else "ptr"
+  symbol("callidx2(T seq, int)", t + "builtin", t)
+  
+  Function  packedindex2( type:mytype) seq.symbol
+     let ds=if length.typerep.type > 2 then "ptr"_1 else (typerep.type )_1
+     if ds ∈ "2 3 4 5 6 " then [symbol("packedindex("+ds+"seq, int)","internal","ptr")]
+    else if ds ∈ "byte"then  
+    [ Lit.-1, PlusOp, symbol("extractbyte(int seq, int)","internal","int")]
+       else
+        [ Lit.-1, PlusOp, symbol("extractbit(int seq, int)","internal","int")] 
+          
+       
+
 
 
 Function Stdseq symbol Lit.0
@@ -242,13 +272,20 @@ Function Record(kinds:seq.word)symbol
  symbol("RECORD(" + (for(e ∈ kinds, acc ="")list(acc,",", [ e]))
  + ")","$record","ptr", specialbit)
 
-Function Block(type:mytype, i:int)symbol
+Function Block(r1:mytype, i:int)symbol
+let type=if abstracttype.r1= "seq"_1  then typeptr 
+         else if   typerep.r1="boolean" then typeint else r1
  symbol("BLOCK" + toword.i, towords.type + "$block", towords.type, specialbit)
 
-function bpara(i:int, result:seq.word)seq.word
- if i = 1 then result else bpara(i - 1, result + ", ?")
+Function Loopblock(types:seq.mytype)symbol 
+symbol( for t &in types,acc="LOOPBLOCK("; 
+let r1=typerep.t
+acc+[if last.r1= "seq"_1  then "ptr"_1
+         else if   r1="boolean" then "int"_1 else r1_1  ]
++",";+"int)" ,"$loopblock","?", specialbit)
 
-Function Loopblock(types:seq.word)symbol symbol("LOOPBLOCK(" + types,"$loopblock","?", specialbit)
+Function maybepacked(t:mytype) boolean
+  abstracttype.t="seq"_1 &and abstracttype.parameter.t  &in "byte bit 2 3 4 5 6 "
 
 Function continue(i:int)symbol symbol(["CONTINUE"_1, toword.i],"$continue","?", specialbit)
 
@@ -552,7 +589,7 @@ Function kind(t:typeinfo)word
   if length.z > 1 ∨ abstracttype.z_1 = "seq"_1 then"ptr"_1
   else
    let k =(typerep.z_1)_1
-    assert k ∈ "int real ptr byte boolean"report"unexpected fld in internal type" + ((for(@e ∈ z, acc ="")acc + print.@e))
+    assert k ∈ "int real ptr  boolean"report"unexpected fld in internal type" + ((for(@e ∈ z, acc ="")acc + print.@e))
     + stacktrace
      \\ x \\ k
 
@@ -569,20 +606,48 @@ Export typedict(seq.myinternaltype)typedict
 
 Export type:typedict
 
- 
+Function getbasetype(d:typedict,type:mytype) mytype 
+getbasetype(d,type,true)
+
+function  getbasetype(d:typedict,type:mytype,top:boolean) mytype
+if abstracttype.type &in "packed2 packed3 packed4 packed5 packed6" then typeptr else
+  if abstracttype.type &in "int boolean real ptr" then type
+  else if abstracttype.type ="seq"_1 then 
+     if abstracttype.parameter.type &in "int boolean real ptr bit byte" then type
+     else  
+       abstracttype("seq"_1,getbasetype(d,parameter.type,false))
+  else if type = mytype."internaltype"  then typeptr 
+  else  let t = findelement(d, type)
+    assert length.t = 1 report"type not found" + print.type + stacktrace
+       let size=length.subflds.t_1
+      if size > 1 then 
+        if size > 6 then typeptr
+        else if top then typeptr else
+         mytype.[toword.size]
+      else 
+        let basetype=(subflds.t_1)_1
+        if abstracttype.basetype ="seq"_1 then getbasetype(d,basetype,true)
+        else basetype
+
 
 Function gettypeinfo(d:typedict, type:mytype)typeinfo
  if type = typeint then typeinfo.[ typeint]
  else if type = mytype."real"then typeinfo.[ mytype."real"]
  else \\ if type = mytype."boolean"then typeinfo.[ mytype."boolean"]
  else \\
-  \\ if type = mytype."byte"then typeinfo.[ type]else \\
   if abstracttype.type = "seq"_1 ∨ type = mytype."internaltype" ∨ type = typeptr then
   typeinfo.[ typeptr]
   else
    let t = findelement(d, type)
     assert length.t = 1 report"type not found" + print.type + stacktrace
      typeinfo.subflds.t_1
+     
+Function buildargcode(alltypes:typedict,sym:symbol) int 
+// needed because the call interface implementation for  reals  may be passed  than other types //
+for(typ ∈ paratypes.sym + resulttype.sym, acc = 1)
+    acc * 2 + if kind.gettypeinfo(alltypes, typ) = first."real"then 1 else 0
+  
+    
 
 Function typesym(it:myinternaltype)symbol
  let t = abstracttype(name.it, parameter.modname.it)

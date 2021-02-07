@@ -131,7 +131,7 @@ function subflddefined(subflds:seq.mytype, modpara:mytype, i:int, defined:typedi
  if i > length.subflds then flatflds
  else
   let typ = replaceT(modpara, subflds_i)
-   if abstracttype.typ ∈ "int seq real boolean T byte bit"then subflddefined(subflds, modpara, i + 1, defined, flatflds + typ)
+   if abstracttype.typ ∈ "int seq real boolean T "then subflddefined(subflds, modpara, i + 1, defined, flatflds + typ)
    else if abstracttype.typ ∈ "encoding"then subflddefined(subflds, modpara, i + 1, defined, flatflds + typeint)
    else
     let typdesc = findelement(defined, typ)
@@ -361,7 +361,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
        +   if length.module.sym = 1 then [sym,Words."BUILTIN", Optionsym]
        else  if fsig.sym ∈ ["IDX2(T seq, int)"]then [ sym, Words."ABSTRACTBUILTIN", Optionsym]
             else  
-        \\ assert fsig.sym &in ["getinstance:encodingstate.T","packed(T seq)","primitiveadd(int, T encodingpair)","sizeoftype:T","processresult(T process)","IDX(T seq, int)","GEP(T seq, int)","extractbit(T seq, int)","indexseq(T seq, int)","callidx2(T seq, int)","allocatespace:T(int)","setfld(int, T seq, T)","bitcast(T blockseq)","bitcast(T seq seq)","bitcast(T)","setfirst(T seq, int, int)"]report"XX"+ print.sym \\
+        \\ assert fsig.sym &in ["getinstance:encodingstate.T","packed(T seq)","primitiveadd(int, T encodingpair)","sizeoftype:T","processresult(T process)","IDX(T seq, int)","GEP(T seq, int)" , ,"callidx2(T seq, int)","allocatespace:T(int)","setfld(int, T seq, T)","bitcast(T blockseq)","bitcast(T seq seq)","bitcast(T)","setfirst(T seq, int, int)"]report"XX"+ print.sym \\
              [symbol(fsig.sym,  "T builtin", returntype.sym),Words."ABSTRACTBUILTIN", Optionsym]  
        map(prg.f, sym, code2)
      else

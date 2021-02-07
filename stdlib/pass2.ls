@@ -236,9 +236,8 @@ else
      + newmasteridx
      + continue(noAccumlators + 2)
     let orgacc=   nextvar.r
-     let loopcode =((for(@e ∈ arithseq(nopara.last.code, 4, 2), acc = [ Define.orgacc])acc + [ Local.orgacc] + subseq(code, @e, @e + 1)))
-     + [ Lit.1, Lit.lastvar, Loopblock("ptr," + subseq(fsig.last.code, 3, length.fsig.last.code - 1)
-     + ", int, int)")]
+    let loopcode =((for(@e ∈ arithseq(nopara.last.code, 4, 2), acc = [ Define.orgacc])acc + [ Local.orgacc] + subseq(code, @e, @e + 1)))
+     + [ Lit.1, Lit.lastvar, Loopblock([typeptr]+paratypes.last.code+typeint)]
      let finalcode =((for(@e ∈ arithseq(noAccumlators, 1, lastvar + 1), acc = empty:seq.symbol)acc + Local.@e))
      + last.code
     breakresult(loopcode,thunkcode,finalcode,orgacc+1,Local.masteridx)
@@ -255,6 +254,8 @@ function print(b:breakresult) seq.word
  + EOL
  + "nextvar:"
  + print.nextvar.b
+ 
+  
    
 function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol,papply:boolean)expandresult
   let totallength = nextvar + 1
@@ -269,10 +270,11 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
  let theseq = Local(nextvar + 6)
  let lastUsed=nextvar+6
   let applysym = org_k
-  let ds=(typerep.parameter.(paratypes.applysym)_2)_1
- let seqelementkind = if ds ∈ "int real"then ds
- else if ds ∈ "bit byte"then"int"_1 else"ptr"_1
-  let resulttype =  (paratypes.applysym)_1 
+    let resulttype= (paratypes.applysym)_1  
+    let theseqtype=(paratypes.applysym)_2
+   let elementtype = if abstracttype.parameter.theseqtype ∈ " real"then  mytype."real"
+   else if abstracttype.parameter.theseqtype ∈ "int bit byte boolean"then typeint
+   else typeptr
   let exitstart=backparse(code, length.code , 1, empty:seq.int)_1
   let exitexp=subseq(code,exitstart,length.code)
   let t = backparse(code, exitstart - 1, 1, empty:seq.int)
@@ -293,7 +295,7 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
   \\ simple acc \\
    let acc = Local(lastUsed +1)
    let masteridx1 = Local(lastUsed +2)
-     breakresult([ Lit.1, Lit.lastUsed, Loopblock("ptr," + typerep.resulttype + ", int, int)")], substitute(thunk0, thunkplaceholders, [ seqelement, acc, masteridx1]) + [ newmasteridx, continue.3], [ acc], lastUsed + 3, masteridx1)
+    breakresult([ Lit.1, Lit.lastUsed, Loopblock([typeptr, resulttype,typeint])], substitute(thunk0, thunkplaceholders, [ seqelement, acc, masteridx1]) + [ newmasteridx, continue.3], [ acc], lastUsed + 3, masteridx1)
    else checkCompound 
         let masteridx=masteridx.codeparts
    let exitexp2 = if exitexp = [ Litfalse]then empty:seq.symbol
@@ -304,32 +306,26 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    else
     let a = thunkcode.codeparts
               a >> 2 + exitexp2 + last.a
-   let kk = \\ loop(seq, acc, masteridx)\\
+   let packedseq=maybepacked.theseqtype
+    let kk = \\ loop(seq, acc, masteridx)\\
    \\ 1 \\
    loopcode.codeparts
    + \\ 2 if masteridx > totallength then exit \\
    [ masteridx, Local.totallength, GtOp, Lit.3, Lit.4, Br]
    + \\ 3 \\
-   (finalcode.codeparts
+     finalcode.codeparts
    + [ Exit, \\ 4 else let newmasteridx = masteridx + 1, let sequenceele = seq_(idx)continue(thseqeq, thunk, newmasteridx)\\ masteridx, Lit.1, PlusOp, Definenewmasteridx, theseq, Lit.0, IdxInt, Defineseqtype, seqtype
-   , Lit.0, EqOp, Lit.2, Lit.3, Br, theseq, newmasteridx, Idx.seqelementkind, Exit]
-   + if ds ∈ "int real ptr boolean"then [ theseq, masteridx, Callidx.seqelementkind, Exit, Block(mytype.[ seqelementkind], 3)]
-   else
-    [ seqtype, Lit.1, EqOp, Lit.4, Lit.5, Br, theseq, masteridx, Lit.-1, PlusOp] + packedtype.ds
-    + [ Exit, theseq, masteridx, Callidx.seqelementkind, Exit, Block(mytype.[ seqelementkind], 5)])
-        +    [  Defineseqelement, theseq]
+   , Lit.0, EqOp, Lit.2, Lit.3, Br, theseq, newmasteridx, IdxS.theseqtype, Exit]
+   + if  packedseq then  
+        [ seqtype, Lit.1, EqOp, Lit.4, Lit.5, Br, theseq, masteridx] + packedindex2.theseqtype + [ Exit ] 
+     else empty:seq.symbol
+   ;
+        +    [ theseq, masteridx, Callidx.theseqtype , Exit, 
+              Block(elementtype, if packedseq then 5 else 3), Defineseqelement, theseq]
    + thunkcode
    + [ Block(resulttype, 4)]
        yyy(p, org, k + 1, part1 + kk, nextvar.codeparts, map,papply)
    
-    
-         
-   function  packedtype( ds:word) seq.symbol
-             let GEP=symbol("GEP(ptr seq, int)","internal","ptr")
-  if ds ∈ "bit"then [ symbol("extractbit(int seq, int)","internal","int")]
-  else if ds ∈ "byte"then [ symbol("extractbyte(int seq, int)","internal","int")]
-  else \\ element represented by multiple words \\ [ Lit.toint.ds, MultOp, Lit.2, PlusOp, GEP]
-
 function maxvarused(code:seq.symbol)int maxvarused(code, 1, 0)
 
 function maxvarused(code:seq.symbol, i:int, lastused:int)int

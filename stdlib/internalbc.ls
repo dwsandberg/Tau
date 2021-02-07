@@ -71,6 +71,8 @@ Function ibcsub(i:int)slot slot(ibcfirstpara2 + i)
 
 type internalbc is record parts:seq.templatepart
 
+Function print(bc:internalbc) seq.word           for e &in parts.bc,      acc="" ; acc+print.val.e 
+
 function tail(b:internalbc)seq.templatepart parts.b << 1
 
 function val(b:internalbc)templatepart first.parts.b

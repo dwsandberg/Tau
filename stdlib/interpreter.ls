@@ -63,10 +63,14 @@ function tocode(r:int, typ:mytype)seq.symbol
   let s = bitcast.r
    {((for(@e ∈ s, acc = [ Lit.0, Lit.length.s])acc + tocode(@e, parameter.typ)))}
 
-function buildcode(acc:int, typ:mytype, alltypes:typedict)int
- let xx = gettypeinfo(alltypes, typ)
-  assert not.isempty.subflds.xx report"XXX buildcode" + typerep.typ
-   acc * 2 + if kind.xx = first."real"then 1 else 0
+/function buildcode(acc:int, typ:mytype, alltypes:typedict)int
+   acc * 2 + if kind.gettypeinfo(alltypes, typ) = first."real"then 1 else 0
+   
+function buildcode(alltypes:typedict,sym:symbol) int 
+for(typ ∈ paratypes.sym + resulttype.sym, acc = 1)
+    acc * 2 + if kind.gettypeinfo(alltypes, typ) = first."real"then 1 else 0
+  
+ 
 
 function aswords(s:seq.int)seq.word((for(@e ∈ s, acc ="")acc + wordencodingtoword.@e))
 
@@ -101,6 +105,6 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)int
       let dc = deepcopysym(alltypes, mytype."word seq")
       let adc = dlsymbol.mangle(fsig.dc, module.dc)
        assert adc > 0 report"?"
-       let p = createthread(adcret, adc, t, packed.top(stk, nopara),(for(@e ∈ paratypes.sym + resulttype.sym, acc = 1)buildcode(acc, @e, alltypes)))
+       let p = createthread(adcret, adc, t, packed.top(stk, nopara),buildcode(alltypes,sym))
         assert not.aborted.p report message.p
          interpret(alltypes, code, i + 1, push(pop(stk, nopara), result.p))

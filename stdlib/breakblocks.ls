@@ -48,6 +48,8 @@ type block is record kind:word, blkno:int, label1:int, label2:int, code:seq.symb
 
 function block(kind:word, blkno:int, label1:int, label2:int, code:seq.symbol)block block(kind, blkno, label1, label2, code, empty:seq.block)
 
+use seq.mytype
+
 Function breakblocks(p:program, code:seq.symbol, self:symbol, alltypes:typedict)seq.symbol
  let a = breakblocks(p, code, 1, 1, empty:seq.symbol, empty:stack.block)
   if length.a = 1 then code.a_1
@@ -55,11 +57,11 @@ Function breakblocks(p:program, code:seq.symbol, self:symbol, alltypes:typedict)
   ∧ ((for(@e ∈ a, acc = false)acc ∨ tailrecursion(self, @e)))then
   \\ tail recursion \\
    let nopara = nopara.self
-   let a2 =((for(@e ∈ a, acc = empty:seq.block)acc + preparetail(nopara, self, continue.nopara, @e)))
+   let a2 =for(@e ∈ a, acc = empty:seq.block)acc + preparetail(nopara, self, continue.nopara, @e)
    let plist =((for(e2 ∈ arithseq(nopara, 1, 1), acc = empty:seq.symbol)acc + Local.e2))
    let entry = block("LOOPBLOCK"_1, 0, blkno.a2_1, 0, plist + Lit(nopara + 1)
-   + Loopblock((for(e3 ∈ paratypes.self, acc ="")list(acc,",", [ kind.gettypeinfo(alltypes, e3)]))
-   + ", int)"))
+   + Loopblock.for e3 ∈ paratypes.self, acc =empty:seq.mytype ;  acc+   getbasetype(alltypes,e3)
+   )
     ascode(p, [ entry] + a2, self)
   else ascode(p, a, self)
   

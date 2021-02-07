@@ -2,27 +2,11 @@ Module seq.T
 
 use standard
 
-use abstractBuiltin.T
+unbound =(T, T)boolean
 
 type seq is sequence length:int, x:T
 
 Export type:seq.T
-
-unbound =(T, T)boolean
-
-builtin indexseq(seq.T, int)T
-
-Function_(a:seq.T, c:int)T
- let b = if c < 0 then length.a + c + 1 else c
- let typ = getseqtype.a
-  if typ > 1 then callidx2(a, b)
-  else
-   assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
-    if typ = 0 then \\ element per word \\ IDX(a, b + 1)else indexseq(a, b - 1)
-
-if sizeoftype:T > 1 then // element represented by multiple words // indexseq(a, b-1)else if sizeoftype:T =-1 then indexseq(a, b-1)else assert sizeoftype:T =-8 report"type size not handled in index package seq.T"+ toword.sizeoftype:T indexseq(a, b-1)
-
-builtin sizeoftype:T int
 
 Builtin packed(s:seq.T)seq.T
 
@@ -31,6 +15,20 @@ Builtin getseqtype(a:seq.T)int
 Export length(a:seq.T)int
 
 Builtin empty:seq.T seq.T // empty seq //
+
+builtin packedindex(seq.T, int)T
+
+builtin unpackedindex(seq.T, int)T
+
+builtin callidx(seq.T, int)T
+
+Function_(a:seq.T, c:int)T
+ let b = if c < 0 then length.a + c + 1 else c
+ let typ = getseqtype.a
+  if typ > 1 then callidx(a, b)
+  else
+   assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
+    if typ = 0 then \\ element per word \\ unpackedindex(a,b)  else packedindex(a, b  )
 
 Function =(a:seq.T, b:seq.T)boolean
  if length.a = length.b then

@@ -1,32 +1,3 @@
-module $internal
-
-use seq.boolean
-
-use seq.int
-
-use seq.ptr
-
-use seq.real
-
-Builtin extractbit(seq.int, int)int
-
-Builtin extractbyte(seq.int, int)int
-
-Builtin GEP(seq.ptr, int)ptr
-
-Builtin callidx(seq.int, int)int
-
-Builtin callidx(seq.real, int)real
-
-Builtin callidx(seq.ptr, int)ptr
-
-Builtin setfld(int, seq.int, int)int
-
-Builtin setfld(int, seq.real, real)int
-
-Builtin setfld(int, seq.ptr, ptr)int
-
-Builtin setfld(int, seq.boolean, boolean)int
 
 module abstractBuiltin.T
 
@@ -40,9 +11,8 @@ Builtin allocatespace:T(i:int)seq.T
 
 Builtin setfld(i:int, s:seq.T, val:T)int
 
-Builtin callidx2(a:seq.T, int)T
-
 Builtin callidx(a:seq.T, int)T
+
 
 module taublockseq.T
 
@@ -152,6 +122,9 @@ use taublockseq.packed4
 
 use taublockseq.packed5
 
+use taublockseq.packed6
+
+
 use taublockseq.ptr
 
 
@@ -163,6 +136,7 @@ type packed4 is record fld1:int,fld2:int,fld3:int,fld4:int
 
 type packed5 is record fld1:int,fld2:int,fld3:int,fld4:int,fld5:int
 
+type packed6 is record fld1:int,fld2:int,fld3:int,fld4:int,fld5:int,fld6:int
 
 type ptr is record xx:int
 
@@ -173,6 +147,9 @@ Export IDX2(seq.real, int)real
 Export IDX2(seq.boolean, int)boolean
 
 Export IDX2(seq.int, int)int
+
+Export setfld(int, seq.int, int)int
+
 
 Builtin initialdict seq.encodingpair.seq.char
 
@@ -203,6 +180,9 @@ Function blockit(s:seq.packed3 ) seq.packed3  blockit(s,3)
 Function blockit(s:seq.packed4 ) seq.packed4  blockit(s,4)
 
 Function blockit(s:seq.packed5 ) seq.packed5 blockit(s,5)
+
+Function blockit(s:seq.packed6 ) seq.packed6 blockit(s,6)
+
 
 
 Export_(blockseq.int, int)int

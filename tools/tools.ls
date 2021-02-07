@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau  ;  use tools; testprofile."solardataall"
+#!/usr/local/bin/tau  ;  use standard; "hi"
+
+use tools; testprofile."solardataall"
 
 
 

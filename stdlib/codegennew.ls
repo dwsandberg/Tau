@@ -152,7 +152,7 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   let no = arg.m
    let blks = top(blocks.l, no)
     assert length.blks = no report"XXXXXX arg" + profile
-    let rblk = processblk(functype.m, blks, 1, empty:seq.localmap, BR(noblocks.l - 1))
+    let rblk = processblk(first.llvmtypelist.m, blks, 1, empty:seq.localmap, BR(noblocks.l - 1))
      \\ assert length.phi.rblk > 3 report"phi"+ @(+, toword,"", phi.rblk)\\
      let firstblkargs = args.blks_1
      let kind = top.firstblkargs
@@ -161,7 +161,7 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
       assert top.firstblkargs = 2 report"Code Gen--not expecting first blk kind" + toword.kind + profile
        \\ stack from top is kind, noexps, firstvar, exptypes, exps \\ 2 * top.pop.firstblkargs + 3
      let newstack = push(pop(firstblkargs, popno),-(regno.l + 1))
-     let newcode = code.rblk + phiinst(regno.last.blks, [ typ.functype.m], phi.rblk, 1)
+     let newcode = code.rblk + phiinst(regno.last.blks, [ typ.first.llvmtypelist.m], phi.rblk, 1)
       Lcode2(newcode, lmap.l, noblocks.l, regno.l + 1, newstack, pop(blocks.l, no))
   else if action = "DEFINE"_1 then
   Lcode2(code.l, [ localmap(arg.m, top.args.l)] + lmap.l, noblocks.l, regno.l, pop(args.l, 1), blocks.l)
@@ -179,7 +179,7 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l, exitblock))
   else
    assert action = "RECORD"_1 report"code gen unknown" + action
-  let fldbc= recordcode  (top(args.l, arg.m),   parametertypes.m, regno.l, false)
+  let fldbc= recordcode  (top(args.l, arg.m),   llvmtypelist.m, regno.l, false)
   Lcode2(code.l +bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
 
 function pushexptypes(s:seq.word, i:int, result:stack.int)stack.int
