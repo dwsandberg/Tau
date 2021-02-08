@@ -88,7 +88,7 @@ function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)
 
 function addlibsym(s:symbol)symbol
  Constant2
- .[ Words.fsig.s, Words.module.s, Words.returntype.s, addseq.((for(@e ∈ zcode.s, acc = empty:seq.symbol)acc + addlibsym.@e)), Lit.extrabits.s, Record."ptr ptr ptr ptr ptr"]
+ .[ Words.fsig.s, Words.module.s, Words.returntype.s, addseq.((for(@e ∈ zcode.s, acc = empty:seq.symbol)acc + addlibsym.@e)), Lit.extrabits.s, Record.[typeptr, typeptr, typeptr, typeptr, typeptr] ]
 
 function addmytype(t:mytype)symbol Words.typerep.t
 
@@ -105,11 +105,12 @@ function addlibmod(toexport:set.symbol, m:firstpass)symbol
   addseq.((for(@e ∈ toseq.defines, acc = empty:seq.symbol)acc + addlibsym.@e))
   else e
   Constant2
-   .[ addmytype.modname.m, addseq.((for(@e ∈ uses.m, acc = empty:seq.symbol)acc + addmytype.@e)), d, e, Words."", Words."", addseq.((for(@e ∈ types.m, acc = empty:seq.symbol)acc + addinternaltype.@e)), Words."", Record."ptr ptr ptr ptr ptr ptr ptr ptr"]
+   .[ addmytype.modname.m, addseq.((for(@e ∈ uses.m, acc = empty:seq.symbol)acc + addmytype.@e)), d, e, Words."", Words."", addseq.((for(@e ∈ types.m, acc = empty:seq.symbol)acc + addinternaltype.@e)), Words."", 
+   Record.[typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr]]
 
 function addinternaltype(t:myinternaltype)symbol
  Constant2
- .[ Word.kind.t, Word.name.t, addmytype.modname.t, addseq.((for(@e ∈ subflds.t, acc = empty:seq.symbol)acc + addmytype.@e)), Record."int int ptr ptr"]
+ .[ Word.kind.t, Word.name.t, addmytype.modname.t, addseq.((for(@e ∈ subflds.t, acc = empty:seq.symbol)acc + addmytype.@e)), Record.[typeint,typeint,typeptr,typeptr] ]
 
 --------------------------
 

@@ -5,7 +5,8 @@ use seq.T
 
 Builtin IDX(seq.T, int)T
 
-Builtin IDX2(seq.T, int)T
+
+Builtin IDX:T(ptr,int)T
 
 Builtin allocatespace:T(i:int)seq.T
 
@@ -140,13 +141,14 @@ type packed6 is record fld1:int,fld2:int,fld3:int,fld4:int,fld5:int,fld6:int
 
 type ptr is record xx:int
 
-Export IDX2(seq.ptr, int)ptr
+Export IDX:ptr(ptr, int)ptr
 
-Export IDX2(seq.real, int)real
+ Export IDX:real(ptr, int)real
 
-Export IDX2(seq.boolean, int)boolean
+ Export IDX:boolean(ptr, int)boolean
 
-Export IDX2(seq.int, int)int
+ Export IDX:int(ptr, int)int
+
 
 Export setfld(int, seq.int, int)int
 

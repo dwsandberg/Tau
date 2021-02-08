@@ -258,21 +258,10 @@ function =(a:symboltext, b:symboltext)boolean ph.a = ph.b
 
 function assignencoding(l:int, s:symboltext)int assignrandom(l, s)
 
-function tokind(type:mytype)word
- if type = mytype."real"then  first."real" 
- else if abstracttype.type ∈ "seq encoding"then first."ptr" 
- else if type= mytype."boolean" then first."boolean"
- else
-  assert type = typeint ∨ type = mytype."word" ∨ type = mytype."boolean" report"tokind" + print.type+stacktrace
-   "int"_1 
-
 function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:int, knownoffset:int, offset:seq.word, prg:program)program
  if i > length.syms then
- if offset = ""then
-  let args =((for(@e ∈ arithseq(length.syms, 1, 1), acc = indexfunc)acc + Local.@e))
-   let x = Record.for(@e ∈ paratypes.constructor, acc = if not.isempty.indexfunc then"int"else"")acc + tokind.@e
-    map(prg, constructor, args + x)
-  else map(prg, constructor, indexfunc + symbol("build." + fsig.constructor,"x builtin","ptr"))
+  // if offset ="" then  could build access function for type here but does not seem to impact overall performance to delay //
+   map(prg, constructor, indexfunc + symbol("build." + fsig.constructor,"x builtin","ptr"))
  else
   let this = syms_i
    if i = 1 ∧ length.syms = 1 then
@@ -359,10 +348,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
         else
        ((for(@e ∈ arithseq(length.paratypes, 1, 1), acc = empty:seq.symbol)acc + Local.@e))
        +   if length.module.sym = 1 then [sym,Words."BUILTIN", Optionsym]
-       else  if fsig.sym ∈ ["IDX2(T seq, int)"]then [ sym, Words."ABSTRACTBUILTIN", Optionsym]
-            else  
-        \\ assert fsig.sym &in ["getinstance:encodingstate.T","packed(T seq)","primitiveadd(int, T encodingpair)","sizeoftype:T","processresult(T process)","IDX(T seq, int)","GEP(T seq, int)" , ,"callidx2(T seq, int)","allocatespace:T(int)","setfld(int, T seq, T)","bitcast(T blockseq)","bitcast(T seq seq)","bitcast(T)","setfirst(T seq, int, int)"]report"XX"+ print.sym \\
-             [symbol(fsig.sym,  "T builtin", returntype.sym),Words."ABSTRACTBUILTIN", Optionsym]  
+       else    [symbol(fsig.sym,  "T builtin", returntype.sym),Words."ABSTRACTBUILTIN", Optionsym]  
        map(prg.f, sym, code2)
      else
       let discard = encode.symboltext(sym, modname.f, input)

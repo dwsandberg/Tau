@@ -315,7 +315,7 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    + \\ 3 \\
      finalcode.codeparts
    + [ Exit, \\ 4 else let newmasteridx = masteridx + 1, let sequenceele = seq_(idx)continue(thseqeq, thunk, newmasteridx)\\ masteridx, Lit.1, PlusOp, Definenewmasteridx, theseq, Lit.0, IdxInt, Defineseqtype, seqtype
-   , Lit.0, EqOp, Lit.2, Lit.3, Br, theseq, newmasteridx, IdxS.theseqtype, Exit]
+   , Lit.0, EqOp, Lit.2, Lit.3, Br, theseq, masteridx,IdxS.theseqtype,Exit]
    + if  packedseq then  
         [ seqtype, Lit.1, EqOp, Lit.4, Lit.5, Br, theseq, masteridx] + packedindex2.theseqtype + [ Exit ] 
      else empty:seq.symbol
@@ -417,7 +417,7 @@ function  filterp(p:filterp,s:symbol,code:seq.symbol, alltypes:typedict) filterp
       let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
       let code2 = code.yyy(simple, code, 1, empty:seq.symbol, nopara + 1, pdict,false)
     if length.code2 = 3 ∧ code2_1 = Local.1
-    ∧ (fsig.code2_3)_1 ∈ "IDX2"
+    ∧ (fsig.code2_3)_1 ∈ "IDX"
     ∧ isconst.code2_2
     ∨ length.code2 = 1 ∧ nopara = 1 ∧ code2_1 = Local.1 then
         filterp(complex,map(simple,s,code2+[ Words."VERYSIMPLE", Optionsym]) )

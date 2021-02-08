@@ -83,7 +83,6 @@ option.words merge(seq.word )  word COMPILETIME
 
 option.UTF8 makereal(seq.word) real COMPILETIME
 
-/option.abstractBuiltin.int IDX2(seq.int,int) int  COMPILETIME
 
 
 

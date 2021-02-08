@@ -16,6 +16,8 @@ use seq.typeinfo
 
 use seq.seq.mytype
 
+use otherseq.mytype
+
 /function print3(s:symbol)seq.word if(zcode.s)_1 = s then print.s else print.s +"->"+ print.(zcode.s)_1 + if length.zcode.s = 1 then"NO CODE"else""
 
 Function postbind(alltypes:typedict, dict:set.symbol, roots:seq.symbol, theprg:program, templates:program)program
@@ -55,9 +57,13 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
  if i > length.code then resultpb(calls, result, sourceX)
  else
   let x = code_i
-   if last.module.x="$sequence"_1 then
-         let a=    Record("int int"+ constantseq((nopara.x-2),kind.gettypeinfo(alltypes,replaceT(modpara, parameter.modname.x))))
+   if last.module.x="$sequence2"_1 then
+       //  let a = Sequence(kind.gettypeinfo(alltypes,replaceT(modpara, parameter.modname.x)) //
+         let a=    Record([typeint,typeint]+ constantseq((nopara.x-2),getbasetype(alltypes,replaceT(modpara, parameter.modname.x))))
          postbind3(alltypes, dict, code, i + 1, result +  a  , modpara, org, calls, sourceX, tempX)
+   else if last.module.x="$sequence3"_1 then
+          let a = Sequence(mytype.[kind.gettypeinfo(alltypes,replaceT(modpara, parameter.modname.x))],(nopara.x-2) ) 
+          postbind3(alltypes, dict, code, i + 1, result +  a  , modpara, org, calls, sourceX, tempX)
    else 
   let isfref = isFref.x
   let sym = basesym.x
@@ -92,18 +98,19 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
      else handletemplates(alltypes, dict, code, i, result, isfref, newsym, modpara, org, calls, sourceX, tempX)
 
 
-function buildconstructor(alltypes:typedict, addfld:seq.word, flds:seq.seq.mytype, flatflds:seq.word, fldno:int, j:int, subfld:int, result:seq.symbol)seq.symbol
+function buildconstructor(alltypes:typedict, addfld:seq.mytype, flds:seq.seq.mytype, flatflds:seq.mytype, fldno:int, j:int, subfld:int, result:seq.symbol)seq.symbol
  if fldno > length.flds then result + Record(addfld + flatflds)
  else
   let fldsubfields = flds_fldno
   let newflatflds = if j > length.flatflds then
-  flatflds +  for(@e ∈ fldsubfields, acc ="")acc + kind.gettypeinfo(alltypes, @e) 
+  flatflds +  for(@e ∈ fldsubfields, acc =empty:seq.mytype)acc + getbasetype(alltypes, @e) 
   else flatflds
   let newresult = result
   + if length.fldsubfields = 1 then [ Local.fldno]else [ Local.fldno, Lit.subfld, Idx.newflatflds_j]
    if subfld = length.fldsubfields - 1 then
    buildconstructor(alltypes, addfld, flds, newflatflds, fldno + 1, j + 1, 0, newresult)
    else buildconstructor(alltypes, addfld, flds, newflatflds, fldno, j + 1, subfld + 1, newresult)
+
 
 function handletemplates(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, result:seq.symbol, isfref:boolean, sym:symbol, modpara:mytype, org:seq.word, calls:set.symbol
 , sourceX:program, tempX:program)resultpb
@@ -137,30 +144,30 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:i
    let offset = for(@e ∈ subseq(paratypes, 2, length.paratypes), acc = toint.(module.sym)_1) 
       acc +   size.gettypeinfo(alltypes, replaceT(modpara, @e))
    let resultinfo = gettypeinfo(alltypes, replaceT(modpara, resulttype.sym))
-   let p2 = if size.resultinfo = 1 then [ Lit.offset, Idx.kind.resultinfo]
+   let p2 = if size.resultinfo = 1 then [ Lit.offset, 
+    Idx.getbasetype(alltypes, replaceT(modpara, resulttype.sym))]
    else [ Lit.offset, symbol("GEP(ptr seq, int)","internal","ptr")]
     postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
  else if(fsig.sym)_1 ∈ "build"then
  let c = for(@e ∈ paratypes.sym, acc = empty:seq.seq.mytype)acc + 
   subflds.gettypeinfo(alltypes, replaceT(modpara, @e))   
-  let p2 = buildconstructor(alltypes, if i = 2 then \\ for seq index func \\"int"else"", c,"", 1, 1, 0, empty:seq.symbol)
+   let p2 = buildconstructor(alltypes, if i = 2 then \\ for seq index func \\ [ typeint ] 
+   else empty:seq.mytype, c,empty:seq.mytype, 1, 1, 0, empty:seq.symbol)
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
  else if first.fsig.sym = first."createthreadX"then
  let paracode=buildargcode(alltypes,newsymbol("dummy",typeint, paratypes.newsym << 5 ,parameter.resulttype.newsym))
- let kindlist =((for(@e ∈ paratypes.sym << 5, acc ="")acc + kind.gettypeinfo(alltypes,replaceT(modpara, @e))))
-   let p2 = [ Record("int int" + kindlist), Lit.paracode, 
+ let kindlist =((for(@e ∈ paratypes.sym << 5, acc =empty:seq.mytype)acc + getbasetype(alltypes,replaceT(modpara, @e))))
+   let p2 = [ Record([typeint,typeint] + kindlist), Lit.paracode, 
   newsymbol("createthread", mytype."tausupport", [ typeint, typeint, typeint, mytype."int seq", typeint], typeptr)]
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
- else   if (fsig.sym)_1 ∈ " callidx2  callidx"  then
+ else   if (fsig.sym)_1 ∈ "  callidx"  then
      postbind3(alltypes, dict, code, i + 1, result +Callidx.getbasetype(alltypes,(paratypes.newsym)_1), modpara, org, calls, sourceX, tempX)
  else if fsig.sym = "unpackedindex(T seq, int)"then
-  let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
+  let kind = getbasetype(alltypes, parameter.modname.newsym)
      postbind3(alltypes, dict, code, i + 1, result +[Lit.1,PlusOp, Idx.kind], modpara, org, calls, sourceX, tempX)
 else if   fsig.sym="packedindex (T seq, int)"then
    let z=getbasetype(alltypes,(paratypes.newsym)_1)
-  let p2 =  if   maybepacked.z then packedindex2.z else 
-    let kind=(typerep.z)_-2
-   [Lit.1,PlusOp,Idx.if kind="seq"_1 then "ptr"_1 else kind]
+  let p2 =  if   maybepacked.z then packedindex2.z else  [ IdxS.z ]
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
   else if fsig.sym = "packed(T seq)"then
   let p2= blocksym(alltypes,(paratypes.newsym)_1)
@@ -175,12 +182,9 @@ else if   fsig.sym="packedindex (T seq, int)"then
   let kind=[kind.gettypeinfo(alltypes, parameter.modname.newsym)]
    let p2 = symbol("assert:"+kind+"(word seq)","builtin", kind)
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
- else if fsig.sym ∈ ["IDX2(T seq, int)"]then
- let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
-   postbind3(alltypes, dict, code, i + 1, result + replaceTsymbol(mytype.[ kind], sym), modpara, org, calls, sourceX, tempX)
- else if fsig.sym = "IDX(T seq, int)"then
- let kind = kind.gettypeinfo(alltypes, parameter.modname.newsym)
-   postbind3(alltypes, dict, code, i + 1, result + Idx.kind, modpara, org, calls, sourceX, tempX)
+ else  if   (fsig.sym)_1 ∈ "IDX " then
+ let p2 = Idx.getbasetype(alltypes, parameter.modname.newsym)
+   postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
 else if(fsig.sym)_1 ∈ " setfirst setfld " then
    postbind3(alltypes, dict, code, i + 1, result + newsym, modpara, org, calls, sourceX, tempX)
  else if fsig.sym ∈ ["bitcast(T blockseq)","bitcast(T seq seq)","bitcast(T)"]then
@@ -193,7 +197,7 @@ else if(fsig.sym)_1 ∈ " setfirst setfld " then
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
  else
   let codeforbuiltin = if fsig.sym = "processresult(T process)"then
-  [ Local.1, Lit.2, Idx.kind.gettypeinfo(alltypes, parameter.modname.newsym)]
+  [ Local.1, Lit.2, Idx.getbasetype(alltypes, parameter.modname.newsym)]
   else if fsig.sym = "primitiveadd(int, T encodingpair)"then
   let addefunc = newsymbol("add", typeencoding + parameter.modname.newsym, [ typeencodingstate + parameter.modname.newsym, typeencodingpair + parameter.modname.newsym], typeencodingstate + parameter.modname.newsym)
    let add2 = newsymbol("addencoding", mytype."builtin", [ typeint, mytype."int seq", typeint, typeint], typeint)
@@ -262,7 +266,7 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
    + blocksym(alltypes,type)
  else
   let typedesc = gettypeinfo(alltypes, type)
-  let y = subfld(alltypes, subflds.typedesc, 1,"", empty:seq.symbol)
+  let y = subfld(alltypes, subflds.typedesc, 1,empty:seq.mytype, empty:seq.symbol)
    if size.typedesc = 1 then
    \\ only one element in record so type is not represent by actual record \\
     [ Local.1] + subseq(y, 4, length.y - 1)
@@ -270,10 +274,10 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
     assert size.typedesc ≠ 1 report"Err99a" + print.type
      y
  
-
-function subfld(alltypes:typedict, flds:seq.mytype, fldno:int, fldkinds:seq.word, result:seq.symbol)seq.symbol
+function subfld(alltypes:typedict, flds:seq.mytype, fldno:int, fldkinds:seq.mytype, result:seq.symbol)seq.symbol
  if fldno > length.flds then result + [ Record.fldkinds]
  else
   let fldtype = flds_fldno
-  let kind = kind.gettypeinfo(alltypes, fldtype)
+  let kind =  getbasetype(alltypes, fldtype)
    subfld(alltypes, flds, fldno + 1, fldkinds + kind, result + [ Local.1, Lit(fldno - 1), Idx.kind, deepcopysym(alltypes, fldtype)])
+   

@@ -126,7 +126,7 @@ Function resulttype(s:symbol)mytype mytype.returntype.s
 
 Function nopara(s:symbol)int
  if isconst.s ∨ islocal.s &or isparameter.s then 0
- else if isspecial.s ∧ last.module.s ∉ "$record $loopblock"then
+ else if isspecial.s ∧ last.module.s ∉ "$record $loopblock "then
  \\ assert last.module.s in"$continue $block $apply $exitblock $br $record $loopblock $define"report"X"+ module.s \\
   if last.module.s = "$define"_1 then 1 else 
    assert length.fsig.s > 1 report "define problem"+fsig.s+module.s
@@ -213,46 +213,44 @@ Function isparameter(s:symbol) boolean
 
 Function istypeexport(s:symbol)boolean subseq(fsig.s, 1, 2) = "type:"
 
-Function Idx(kind:word)symbol
- if kind = "int"_1 ∨ kind = "byte"_1 then IdxInt
- else if kind = "ptr"_1 then IdxPtr
- else if kind = "real"_1 then IdxReal
- else
-  assert kind = "boolean"_1 report"unexpected type in Idx:" + kind
-   IdxBoolean
    
 Function Idx(type:mytype )symbol
-  let kind=(typerep.type)_-2
+  let kind=abstracttype.type
  if kind = "int"_1 ∨ kind = "byte"_1 then IdxInt
  else if kind = "ptr"_1 then IdxPtr
+ else if kind = "boolean"_1 then IdxBoolean
  else if kind = "real"_1 then IdxReal
  else
-  assert kind = "boolean"_1 report"unexpected type in Idx:" + kind
-   IdxBoolean
+  assert   kind &in "ptr seq 2 3 4 5 6"   report"unexpected type in Idx:" + kind
+   IdxPtr
    
-Function IdxS(type:mytype)symbol
-  let kind=(typerep.type)_-2
- if kind &in  "int byte bit" then IdxInt
- else if kind = "real"_1 then IdxReal
- else if kind = "boolean"_1 then  IdxBoolean
- else IdxPtr
+ function seqeletype(type:mytype) seq.word
+ let para=typerep.parameter.type
+   if length.para > 1 then para else
+     if   para_1 &in "int byte bit boolean" then "int"
+     else  if para="real" then "real" else "ptr"
 
-Function IdxInt symbol symbol("IDX2(int seq, int)","int abstractBuiltin","int")
+   
+Function IdxS(type:mytype) symbol
+  let para=typerep.parameter.type
+     symbol("idxseq("+para+" seq, int)", para+" builtin",seqeletype.type) 
+  
+ 
 
-Function IdxPtr symbol symbol("IDX2(ptr seq, int)","ptr abstractBuiltin","ptr")
 
-Function IdxReal symbol symbol("IDX2(real seq, int)","real abstractBuiltin","real")
+Function IdxInt symbol symbol("IDX:int(ptr,int)","int builtin","int")
 
-Function IdxBoolean symbol symbol("IDX2(boolean seq, int)","boolean abstractBuiltin","boolean")
+Function IdxReal symbol symbol("IDX:real(ptr,int)","real builtin","real")
 
+Function IdxPtr symbol symbol("IDX:ptr(ptr,int)","ptr builtin","ptr")
+
+Function IdxBoolean symbol symbol("IDX:boolean(ptr,int)","boolean builtin","boolean")
 
 
 Function Callidx(type:mytype)symbol
-  let  kind= abstracttype.parameter.type 
-  let t= if  kind ∈ "int boolean byte bit" then "int"
-    else if kind  ∈ "real" then "real"
-    else "ptr"
-  symbol("callidx2(T seq, int)", t + "builtin", t)
+    assert abstracttype.parameter.type &in "seq real int boolean byte bit 2 3 4 5 6 ptr" report "callidx"+print.type
+  let t=  typerep.parameter.type
+  symbol("callidx( "+t +" seq, int)", t + "builtin", seqeletype.type)
   
   Function  packedindex2( type:mytype) seq.symbol
      let ds=if length.typerep.type > 2 then "ptr"_1 else (typerep.type )_1
@@ -262,15 +260,25 @@ Function Callidx(type:mytype)symbol
        else
         [ Lit.-1, PlusOp, symbol("extractbit(int seq, int)","internal","int")] 
           
-       
-
-
 
 Function Stdseq symbol Lit.0
 
-Function Record(kinds:seq.word)symbol
+function Record(kinds:seq.word)symbol
  symbol("RECORD(" + (for(e ∈ kinds, acc ="")list(acc,",", [ e]))
  + ")","$record","ptr", specialbit)
+ 
+ Function Record(types:seq.mytype)symbol
+ symbol("RECORD(" + (for(e ∈ types, acc ="")list(acc,",",   typerep.e ))
+ + ")","$record","ptr", specialbit)
+
+ 
+Function Sequence(eletype:mytype,length:int )symbol
+ symbol("SEQUENCE" +toword.length, typerep.eletype+"$sequence", typerep.eletype+"seq ")
+
+
+Function Sequence(type:mytype,  a1:seq.symbol) seq.symbol
+[ Stdseq, Lit.length.a1] + a1 + Record( "int int" +constantseq(length.a1 ,(typerep.type)_1))
+
 
 Function Block(r1:mytype, i:int)symbol
 let type=if abstracttype.r1= "seq"_1  then typeptr 
@@ -294,11 +302,9 @@ Function Constant2(args:seq.symbol)symbol
  let fsig ="CONSTANT" + toword.valueofencoding.encode.symbolconstant.args
   symbol(fsig,"$constant","ptr", args, extrabits(fsig, constbit))
   
-Function Sequence(type:mytype,  a1:seq.symbol) seq.symbol
-[ Stdseq, Lit.length.a1] + a1 + Record( "int int" +constantseq(length.a1 ,(typerep.type)_1))
 
 Function Sequence(type:mytype, length:int, code:seq.symbol) seq.symbol
-[ Stdseq, Lit.length] + code + newsymbol("kindrecord", abstracttype("$sequence"_1,type) , [ typeint, typeint] +
+[ Stdseq, Lit.length] + code + newsymbol("kindrecord", abstracttype("$sequence2"_1,type) , [ typeint, typeint] +
  constantseq(length, type ), typeptr)
  
 
@@ -400,6 +406,8 @@ Function isblock(s:symbol)boolean last.module.s = "$block"_1
 
 Function isRecord(s:symbol)boolean module.s = "$record"
 
+Function isSequence(s:symbol)boolean last.module.s = "$sequence"_1
+
 Function isloopblock(s:symbol)boolean module.s = "$loopblock"
 
 Function iscontinue(s:symbol)boolean module.s = "$continue"
@@ -443,18 +451,17 @@ Function isdefined(a:programele)boolean not.isempty.data.a
 
 Function emptyprogram program program2.empty:set.symbol
 
-type program is record toset:set.symbol , tohashset:hashset.symbol
+type program is record toset:set.symbol 
 
 
 Function ∪(p:program, a:program)program 
-\\ let z=tohashset.p ∪ tohashset.a \\
-program(toset.p ∪ toset.a,empty:hashset.symbol)
+program(toset.p ∪ toset.a)
 
 Function toseq(p:program) seq.symbol  toseq.toset.p
 
 Function &in(s:symbol,p:program) boolean  s &in toset.p
 
-Function program2(a:set.symbol)program program(a,for(s &in toseq.a,acc=empty:hashset.symbol) acc+s)
+Function program2(a:set.symbol)program program(a)
 
 
 Function lookupcode(p:program, s:symbol)programele
@@ -463,9 +470,11 @@ Function lookupcode(p:program, s:symbol)programele
 
 Function map(p:program, s:symbol, target:symbol, code:seq.symbol)program
 let sym=symbol(fsig.s, module.s, returntype.s, [ target] + code)
- program(replace(toset.p, sym)
- ,tohashset.p +sym)
+ program(replace(toset.p, sym))
 
+/type program is record toset:set.symbol 
+
+/Function program2(a:set.symbol)program program(for(s &in toseq.a,acc=empty:hashset.symbol) acc+s)
 
 /Function ∪(p:program, a:program)program program(tohashset.p ∪ tohashset.a)
 

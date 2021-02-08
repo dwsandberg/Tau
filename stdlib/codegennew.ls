@@ -177,7 +177,10 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   else if action = "CONTINUE"_1 then
   let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, 3), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l, exitblock))
-  else
+    else if action = "SEQUENCE"_1 then
+     let fldbc= sequencecode  (top(args.l, arg.m),   first.llvmtypelist.m, regno.l, false)
+  Lcode2(code.l +bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
+else
    assert action = "RECORD"_1 report"code gen unknown" + action
   let fldbc= recordcode  (top(args.l, arg.m),   llvmtypelist.m, regno.l, false)
   Lcode2(code.l +bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
