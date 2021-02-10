@@ -137,7 +137,9 @@ function buildcode(acc:int, w:word)int acc * 2 + if w = first."real"then 1 else 
 
 function codeforbuiltin(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, result:seq.symbol, isfref:boolean, newsym:symbol, sym:symbol, org:seq.word, modpara:mytype
 , calls:set.symbol, sourceX:program, tempX:program)resultpb
- if(fsig.sym)_1 ∈ "offsets"then
+ if  (fsig.sym)_1 ∈ "bs" then
+           postbind3(alltypes, dict, code, i + 1, result +Sequence(first.paratypes.newsym,nopara.newsym), modpara, org, calls, sourceX, tempX)
+ else if(fsig.sym)_1 ∈ "offsets"then
  \\ symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)\\
   let paratypes = paratypes.sym
    \\ assert not.isempty.typerep.last.paratypes report"XXX"+ print.sym \\
@@ -163,7 +165,7 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:i
  else   if (fsig.sym)_1 ∈ "  callidx"  then
      postbind3(alltypes, dict, code, i + 1, result +Callidx.getbasetype(alltypes,(paratypes.newsym)_1), modpara, org, calls, sourceX, tempX)
  else if fsig.sym = "unpackedindex(T seq, int)"then
-  let kind = getbasetype(alltypes, parameter.modname.newsym)
+  let kind =  seqeletype.getbasetype(alltypes, first.paratypes.newsym)
      postbind3(alltypes, dict, code, i + 1, result +[Lit.1,PlusOp, Idx.kind], modpara, org, calls, sourceX, tempX)
 else if   fsig.sym="packedindex (T seq, int)"then
    let z=getbasetype(alltypes,(paratypes.newsym)_1)
@@ -219,17 +221,9 @@ function blocksym(alltypes:typedict,type:mytype)symbol
      symbol("blockit(int seq)","int taublockseq","int seq")
      else if kind &in "ptr seq" then
      symbol("blockit( ptr seq)"," ptr taublockseq", "ptr seq")
-     else  if kind &in "2" then 
-      symbol("blockit( packed2 seq)","tausupport", "packed2 seq")
-         else  if kind &in "3" then 
-      symbol("blockit( packed3 seq)","tausupport","packed3 seq")
-       else  if kind &in "4" then 
-      symbol("blockit( packed4 seq)","tausupport", "packed4 seq")
-        else  if kind &in "5" then 
-      symbol("blockit( packed5 seq)","tausupport", "packed5 seq")
-      else assert kind &in "6" report "blocksym problem"
-       symbol("blockit( packed6 seq)","tausupport", "packed6 seq")
-      
+     else  assert  kind &in "  packed2 packed3 packed4 packed5 packed6" report "blocksym problem" 
+      symbol("blockit("+kind+ "seq)","tausupport", [kind,"seq"_1])
+        
 
     
 

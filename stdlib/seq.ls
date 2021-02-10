@@ -4,13 +4,13 @@ use standard
 
 unbound =(T, T)boolean
 
-type seq is sequence length:int, x:T
+type seq is record sequence, x:T
 
 Export type:seq.T
 
 Builtin packed(s:seq.T)seq.T
 
-Builtin getseqtype(a:seq.T)int
+Export getseqtype(a:seq.T)int
 
 Export length(a:seq.T)int
 
@@ -43,7 +43,6 @@ Function findelement(w:T, s:seq.T)seq.T
 
 -------------------------
 
-Export length(c:pseq.T)int
 
 Export a(pseq.T)seq.T
 
@@ -55,19 +54,19 @@ Export to:pseq.T(s:seq.T)pseq.T
 
 Export type:pseq.T
 
-type pseq is sequence length:int, a:seq.T, b:seq.T, start:int
+type pseq is record sequence, a:seq.T, b:seq.T, start:int
 
 Function_(s:pseq.T, ii:int)T
  let i = ii + start.s
  let len = length.a.s
   if i > len then
   let x = to:pseq.T(b.s)
-    if length.x = 0 then(b.s)_(i - len)else x_(i - len)
+    if length.toseq.x = 0 then(b.s)_(i - len)else x_(i - len)
   else
    let x = to:pseq.T(a.s)
-    if length.x = 0 then(a.s)_i else x_i
+    if length.toseq.x = 0 then(a.s)_i else x_i
 
-Function ispseq(s:seq.T)boolean length.to:pseq.T(s) ≠ 0
+Function ispseq(s:seq.T)boolean length.toseq.to:pseq.T(s) ≠ 0
 
 Function +(a:seq.T, b:seq.T)seq.T
  let la = length.a
@@ -91,12 +90,12 @@ function catnonzero(a:seq.T, b:seq.T)seq.T
   if totallength = 2 then [ a_1, b_1]
   else
    let ta = to:pseq.T(a)
-    if length.ta = 0 then
+    if length.toseq.ta = 0 then
     let tb = to:pseq.T(b)
-      if length.tb = 0 ∨ length.a.tb + length.b.tb ≠ length.tb then
+      if length.toseq.tb = 0 ∨ length.a.tb + length.b.tb ≠ length.toseq.tb then
       toseq.pseq(totallength, a, b, 0)
       else cat3(totallength, a, a.tb, b.tb)
-    else if length.a.ta + length.b.ta ≠ length.ta then toseq.pseq(totallength, a, b, 0)
+    else if length.a.ta + length.b.ta ≠ length.toseq.ta then toseq.pseq(totallength, a, b, 0)
     else cat3(totallength, a.ta, b.ta, b)
 
 Function subseq(s:seq.T, start:int, end:int)seq.T
@@ -109,7 +108,7 @@ Function subseq(s:seq.T, start:int, end:int)seq.T
  if start = end then [ s_start]else [ s_start, s_end]
  else
   let x = to:pseq.T(s)
-   if length.x = 0 then toseq.pseq(end - start + 1, s, s, start - 1)
+   if length.toseq.x = 0 then toseq.pseq(end - start + 1, s, s, start - 1)
    else subseq(x, start, end)
 
 function subseq(p:pseq.T, start:int, end:int)seq.T

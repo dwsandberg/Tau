@@ -112,11 +112,10 @@ use process.T
 
 use seq.T
 
-type ioseq is sequence length:int, data:seq.int, offset:int, k:seq.T
+type ioseq is record sequence, data:seq.int, offset:int, k:seq.T
 
 Export data(s:ioseq.T)seq.int
 
-Export length(s:ioseq.T)int
 
 unbound getrecord:T(seq.int, int)T
 

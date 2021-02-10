@@ -203,7 +203,7 @@ function chkAcc(a:compoundAC,next:symbol,fldvar:seq.symbol) compoundAC
  if next = Local.1 then"local1"_1 else"start"_1
  else if state = "local1"_1 then if not.islit.next then"fail"_1 else"idx"_1
  else if state = "idx"_1 then
- if next ∈ [ IdxInt, IdxReal, IdxPtr]then"start"_1 else"fail"_1
+ if isIdx.next  then"start"_1 else"fail"_1
       else "fail"_1
      let newresult=if newstate="start"_1 then
          if state="start"_1 then  result.a+next
@@ -211,9 +211,12 @@ function chkAcc(a:compoundAC,next:symbol,fldvar:seq.symbol) compoundAC
          else result.a    
     compoundAC(newstate,newresult, if islit.next then value.next else fldno.a)
    
-function breakAccumalator5(p:program, thunk:seq.symbol, resulttype:seq.word, lastvar:int, seqelement:symbol, newmasteridx:symbol, papply:boolean, thunkplaceholders:seq.symbol)breakresult
+function breakAccumalator5(p:program, thunk:seq.symbol, resulttype:mytype, lastvar:int, seqelement:symbol, newmasteridx:symbol, papply:boolean, thunkplaceholders:seq.symbol)breakresult
  \\ lastvar + 1 to lastvar + nopara.last.code are accumalators \\
  \\ lastvar + 1 + nopara.last.code lastvar + nopara.last.code + nopara.accfunc-1 are location of parameters for lastvar \\
+ if not( typerep.resulttype ="ptr"&and length.thunk > 2   &and first.thunk = thunkplaceholders_2    
+ &and resulttype.thunkplaceholders_2=resulttype.last.thunk) then    issimple
+ else
  let accfunc=last.thunk
   let  ttt=lookupcode(p,last.thunk)
 let code=removeoptions.code.ttt
@@ -223,13 +226,25 @@ else
    let fldnames =((for(@e ∈ paratypes.last.code, acc ="",@i,false)acc + merge([ toword.@i] + typerep.@e)))
    let fldsyms =((for(@e ∈ fldnames, acc = empty:seq.symbol)acc + Local.@e))
    let t5 =(for(@e ∈ code, acc = compoundAC("start"_1, empty:seq.symbol, 0))chkAcc(acc, @e, fldsyms))
-   if  state.t5="fail"_1   then issimple
+   let  xx=for e ∈ result.t5 ,acc=empty:seq.symbol ;(  let i= findindex(e,fldsyms) 
+      acc+if i > noAccumlators then [e] else  [ Local.1,Lit.(i-1),Idx.(paratypes.last.code)_i ])
+    \\  assert state.t5="fail"_1 &or xx=code report "DIFF"+print.accfunc +EOL+print.xx+EOL+state.t5+print.result.t5 \\
+  \\  assert  print.accfunc &in ["+(int graph, int arc)graph.int","advancepnp(pnpstate, word)format"
+  ,"advance(bindinfo lrstate, word, int, word seq, bindinfo token seq)parsersupport.bindinfo"
+  ,"advance(attribute2 lrstate, word, int, word seq, attribute2 token seq)parsersupport.attribute2"
+  ,"state100(state100, program, symbol, symbol)breakblocks"
+  ,"chkAcc(compoundAC, symbol, symbol seq)pass2","+(out23, char)format"
+  ,"deletearc(word seq graph, word seq arc)graph.seq.word"
+  ,"+(word seq graph, word seq arc)graph.seq.word"
+  ,"+(place, char seq encodingpair)maindict"
+  ] report "ZZZZZ"+print.accfunc+EOL+state.t5+print.result.t5+EOL+EOL+print.code   \\
+   if   state.t5="fail"_1   then issimple
  else  
-     let x =(for(@e ∈ fldnames, acc = emptyworddict:worddict.seq.symbol,@i,false)add(acc, @e, [ Local(lastvar + @i)]))
+  let x =(for(@e ∈ fldnames, acc = emptyworddict:worddict.seq.symbol,@i,false)add(acc, @e, [ Local(lastvar + @i)]))
   let masteridx=lastvar+noAccumlators+1
-     let pmap =(for(@e ∈ paratypes.accfunc << 1, acc = x,@i,false)add(acc, toword(@i + 1), [ Local(masteridx + @i)]))
+  let pmap =(for(@e ∈ paratypes.accfunc << 1, acc = x,@i,false)add(acc, toword(@i + 1), [ Local(masteridx + @i)]))
   let nextvar=   masteridx+nopara.accfunc 
-   let r = yyy(p, result.t5, 1, empty:seq.symbol, nextvar, pmap,papply)
+   let r = yyy(p, result.t5 >> 1, 1, empty:seq.symbol, nextvar, pmap,papply)
     let thunkcode=   substitute(subseq(thunk,2,length.thunk-1),thunkplaceholders,[seqelement,Lit.0 ,Local.masteridx])   
      + ((for(@e ∈ arithseq(nopara.accfunc - 1,-1, nextvar - 1), acc = empty:seq.symbol)acc + Define.toword.@e))
      + code.r
@@ -240,6 +255,8 @@ else
      + [ Lit.1, Lit.lastvar, Loopblock([typeptr]+paratypes.last.code+typeint)]
      let finalcode =((for(@e ∈ arithseq(noAccumlators, 1, lastvar + 1), acc = empty:seq.symbol)acc + Local.@e))
      + last.code
+    if true then issimple
+     else
     breakresult(loopcode,thunkcode,finalcode,orgacc+1,Local.masteridx)
  
 type breakresult is record loopcode:seq.symbol, thunkcode:seq.symbol, finalcode:seq.symbol, nextvar:int, masteridx:symbol
@@ -255,11 +272,9 @@ function print(b:breakresult) seq.word
  + "nextvar:"
  + print.nextvar.b
  
-  
-   
 function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol,papply:boolean)expandresult
-  let totallength = nextvar + 1
-   let seqtype= Local(nextvar + 2)
+ let totallength = nextvar + 1
+ let seqtype= Local(nextvar + 2)
  let Defineseqtype = Define(nextvar+2)
  let Definenewmasteridx = Define(nextvar + 3)
  let newmasteridx = Local(nextvar + 3)
@@ -269,44 +284,55 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
  let initacc=Local(nextvar + 5)
  let theseq = Local(nextvar + 6)
  let lastUsed=nextvar+6
-  let applysym = org_k
-    let resulttype= (paratypes.applysym)_1  
-    let theseqtype=(paratypes.applysym)_2
-   let elementtype = if abstracttype.parameter.theseqtype ∈ " real"then  mytype."real"
+ let applysym = org_k
+ let resulttype= (paratypes.applysym)_1  
+ let theseqtype=(paratypes.applysym)_2
+ let elementtype = if abstracttype.parameter.theseqtype ∈ " real"then  mytype."real"
    else if abstracttype.parameter.theseqtype ∈ "int bit byte boolean"then typeint
    else typeptr
-  let exitstart=backparse(code, length.code , 1, empty:seq.int)_1
-  let exitexp=subseq(code,exitstart,length.code)
-  let t = backparse(code, exitstart - 1, 1, empty:seq.int)
-  let thunk0 = subseq(code,t_1,exitstart-1) 
-   let accfunc = last.thunk0
-  let thunkplaceholders=subseq(code,t_1-3,t_1-1)
-  let initseq=code_(t_1-4)
- let isnoop = exitexp = [ Litfalse] ∧ length.thunk0 = 6 ∧ first.fsig.accfunc = "+"_1
- ∧ isRecord.thunk0_5
- ∧ thunk0 >> 2 = [ thunkplaceholders_2, Lit.0, Lit.1, thunkplaceholders_1]
- ∧ code_(t_1 - 5) = Constant2.Emptyseq.typeint
-  if isnoop then   yyy(p, org, k + 1, code >> 12 +initseq, nextvar, map,papply)
-   else
+ let exitstart=backparse(code, length.code , 1, empty:seq.int)_1
+ let exitexp=subseq(code,exitstart,length.code)
+ let t = backparse(code, exitstart - 1, 1, empty:seq.int)
+ let thunk0 = subseq(code,t_1,exitstart-1) 
+ let accfunc = last.thunk0
+ let thunkplaceholders=subseq(code,t_1-3,t_1-1)
+ let initseq=code_(t_1-4)
+  let maybenoop= exitexp = [ Litfalse] &and length.thunk0 &in [ 3,6] 
+    &and abstracttype.resulttype.accfunc="seq"_1 ∧ first.fsig.accfunc = "+"_1 
+    &and code_(t_1 - 5) = Constant2.Emptyseq.typeint
+ if  maybenoop &and thunk0  = [thunkplaceholders_2,thunkplaceholders_1,accfunc]
+ &and module.accfunc="bits seq"
+  then
+ //  assert false report "symbol("+fsig.accfunc+'","'+module.accfunc+'","'+ returntype.accfunc +")" //
+   yyy(p, org, k + 1, code >> 9 +initseq, nextvar, map,papply)
+  else if  maybenoop ∧ length.thunk0 = 6 
+    ∧ isRecord.thunk0_5
+    ∧ thunk0 >> 2 = [ thunkplaceholders_2, Lit.0, Lit.1, thunkplaceholders_1]
+ then   yyy(p, org, k + 1, code >> 12 +initseq, nextvar, map,papply)
+ else
    let part1 = subseq(code, 1, t_1 - 5) + [ Defineinitacc, initseq, Lit.1, IdxInt, Define.totallength, initseq, initacc]
-   let checkCompound = \\ if typerep.resulttype ="ptr"&and length.thunk0 > 2 &and first.thunk0 = thunkplaceholders_2 then may have compound accumalator breakAccumalator5(p, thunk0, typerep.resulttype, lastUsed, seqelement, newmasteridx, papply, thunkplaceholders)else \\
-   issimple
- let  codeparts=   if nextvar.checkCompound=nextvar.issimple then 
-  \\ simple acc \\
-   let acc = Local(lastUsed +1)
-   let masteridx1 = Local(lastUsed +2)
-    breakresult([ Lit.1, Lit.lastUsed, Loopblock([typeptr, resulttype,typeint])], substitute(thunk0, thunkplaceholders, [ seqelement, acc, masteridx1]) + [ newmasteridx, continue.3], [ acc], lastUsed + 3, masteridx1)
-   else checkCompound 
-        let masteridx=masteridx.codeparts
-   let exitexp2 = if exitexp = [ Litfalse]then empty:seq.symbol
-   else
-    substitute(exitexp, thunkplaceholders, [ seqelement, \\ needs attention \\ Lit.0, masteridx])
+   let checkCompound = breakAccumalator5(p, thunk0, resulttype, lastUsed, seqelement, newmasteridx, papply, thunkplaceholders) 
+   let codeparts=   
+     if nextvar.checkCompound=nextvar.issimple then 
+      \\ simple acc \\
+      let acc = Local(lastUsed +1)
+      let masteridx1 = Local(lastUsed +2)
+      breakresult([ Lit.1, Lit.lastUsed, Loopblock([typeptr, resulttype,typeint])], substitute(thunk0, thunkplaceholders, [ seqelement, acc, masteridx1]) + [ newmasteridx, continue.3], [ acc], lastUsed + 3, masteridx1)
+     else checkCompound 
+   let masteridx=masteridx.codeparts
+   let exitexp2 = 
+     if exitexp = [ Litfalse]then empty:seq.symbol
+     else
+      substitute(exitexp, thunkplaceholders, [ seqelement, \\ needs attention \\ Lit.0, masteridx])
        +[ Lit.2 ,Lit.3, Br, Local.totallength , Lit.1,PlusOp,Exit,newmasteridx,Exit,  Block(typeint,3)]
-      let thunkcode=   if isempty.exitexp2 then thunkcode.codeparts
-   else
-    let a = thunkcode.codeparts
-              a >> 2 + exitexp2 + last.a
+   let thunkcode=   
+      if isempty.exitexp2 then thunkcode.codeparts
+      else
+        let a = thunkcode.codeparts
+        a >> 2 + exitexp2 + last.a
    let packedseq=maybepacked.theseqtype
+  // let u= backparse([Lit.1]+thunkcode,length.thunkcode+1,1,empty:seq.int)
+    assert u_1=1 report  "XXX"+print.u_1 +print.thunkcode //
     let kk = \\ loop(seq, acc, masteridx)\\
    \\ 1 \\
    loopcode.codeparts
@@ -337,7 +363,6 @@ function maxvarused(code:seq.symbol, i:int, lastused:int)int
    , max(lastused, if abstracttype.modname.s = "local"_1 then toint.(fsig.s)_1
    else if abstracttype.modname.s = "$define"_1 then toint.(fsig.s)_2 else 0))
 
-Function depthfirst(processed:program, knownsymbols:program, alltypes:typedict, s:symbol)program depthfirst(knownsymbols, alltypes, 1, [ s], processed, code.lookupcode(knownsymbols, s), s)
 
 function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.symbol, processed:program, code:seq.symbol, s:symbol)program
  if i > length.code then firstopt(processed, s, code, alltypes)
@@ -393,12 +418,13 @@ function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boo
 
 ---------------------------
 
-Function pass2(placehold:program, alltypes:typedict)program 
- let bin0 =(for(@e ∈ toseq.placehold, acc = filterp(emptyprogram, emptyprogram))filterp(acc, @e, code.lookupcode(placehold, @e), alltypes))
+Function pass2(knownsymbols:program, alltypes:typedict)program 
+ let bin0 =(for(@e ∈ toseq.knownsymbols, acc = filterp(emptyprogram, emptyprogram))filterp(acc, @e, code.lookupcode(knownsymbols, @e), alltypes))
  let bin =(for(@e ∈ toseq.complex.bin0, acc = filterp(emptyprogram, simple.bin0))filterp(acc, @e, code.lookupcode(complex.bin0, @e), alltypes))
   \\ assert false report checkt(bin0)assert false report print.length.toseq.complex.bin + print.length.toseq.simple.bin \\
-  (for(@e ∈ toseq.complex.bin, acc = simple.bin)depthfirst(acc, placehold, alltypes, @e))
-    
+   for(sym ∈ toseq.complex.bin, acc = simple.bin) // depthfirst(acc, knownsymbols, alltypes, sym) 
+Function depthfirst(acc:program, knownsymbols:program, alltypes:typedict, sym:symbol)program //
+depthfirst(acc, alltypes, 1, [ sym], acc, code.lookupcode(knownsymbols, sym), sym)
 
    
 type filterp is  record complex:program,simple:program 

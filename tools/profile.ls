@@ -51,7 +51,7 @@ use seq.seq.seq.word
 * Profiling is accomplished by adding code to perform measurements before and after each procedure call and recording the difference.
 
 function toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.word
- let label = toword(if measure = "time"then clocks.a else if measure = "count"then counts.a else space.a ;
+ let label = toword(if measure = "time"then clocks.a else if measure = "count"then counts.a else space.a ; ;
  * 100
  / max)
   arcinfo(shorten(map, head.a), shorten(map, tail.a), [ label])

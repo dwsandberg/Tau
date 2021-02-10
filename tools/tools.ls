@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau  ;  use standard; "hi"
+#!/usr/local/bin/tau  ;  use tools; testprofile."stdlib"
 
 use tools; testprofile."solardataall"
 

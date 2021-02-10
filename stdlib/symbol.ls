@@ -213,27 +213,27 @@ Function isparameter(s:symbol) boolean
 
 Function istypeexport(s:symbol)boolean subseq(fsig.s, 1, 2) = "type:"
 
-   
+Function isIdx(s:symbol) boolean   last.module.s ="builtin"_1 &and (fsig.s)_1="IDX"_1
+
 Function Idx(type:mytype )symbol
   let kind=abstracttype.type
  if kind = "int"_1 ∨ kind = "byte"_1 then IdxInt
  else if kind = "ptr"_1 then IdxPtr
- else if kind = "boolean"_1 then IdxBoolean
+ else if kind = "boolean"_1 then symbol("IDX:boolean(ptr,int)","boolean builtin","boolean")
  else if kind = "real"_1 then IdxReal
- else
-  assert   kind &in "ptr seq 2 3 4 5 6"   report"unexpected type in Idx:" + kind
-   IdxPtr
+ else  symbol("IDX:"+print.type+"(ptr,int)",typerep.type+"builtin",typerep.type)
+      
    
- function seqeletype(type:mytype) seq.word
+ Function seqeletype(type:mytype) mytype
  let para=typerep.parameter.type
-   if length.para > 1 then para else
+   mytype.if length.para > 1 then para else
      if   para_1 &in "int byte bit boolean" then "int"
      else  if para="real" then "real" else "ptr"
 
    
 Function IdxS(type:mytype) symbol
   let para=typerep.parameter.type
-     symbol("idxseq("+para+" seq, int)", para+" builtin",seqeletype.type) 
+     symbol("idxseq("+para+" seq, int)", para+" builtin",typerep.seqeletype.type) 
   
  
 
@@ -244,17 +244,15 @@ Function IdxReal symbol symbol("IDX:real(ptr,int)","real builtin","real")
 
 Function IdxPtr symbol symbol("IDX:ptr(ptr,int)","ptr builtin","ptr")
 
-Function IdxBoolean symbol symbol("IDX:boolean(ptr,int)","boolean builtin","boolean")
 
 
 Function Callidx(type:mytype)symbol
-    assert abstracttype.parameter.type &in "seq real int boolean byte bit 2 3 4 5 6 ptr" report "callidx"+print.type
-  let t=  typerep.parameter.type
-  symbol("callidx( "+t +" seq, int)", t + "builtin", seqeletype.type)
+   let t=  typerep.parameter.type
+  symbol("callidx( "+t +" seq, int)", t + "builtin", typerep.seqeletype.type)
   
   Function  packedindex2( type:mytype) seq.symbol
      let ds=if length.typerep.type > 2 then "ptr"_1 else (typerep.type )_1
-     if ds ∈ "2 3 4 5 6 " then [symbol("packedindex("+ds+"seq, int)","internal","ptr")]
+     if ds ∈ "packed2 packed3 packed4 packed5 packed6" then [symbol("packedindex("+ds+"seq, int)","internal","ptr")]
     else if ds ∈ "byte"then  
     [ Lit.-1, PlusOp, symbol("extractbyte(int seq, int)","internal","int")]
        else
@@ -273,7 +271,7 @@ function Record(kinds:seq.word)symbol
 
  
 Function Sequence(eletype:mytype,length:int )symbol
- symbol("SEQUENCE" +toword.length, typerep.eletype+"$sequence", typerep.eletype+"seq ")
+ symbol("SEQUENCE" +toword.length, typerep.eletype+"$sequence", typerep.eletype+"seq ", specialbit)
 
 
 Function Sequence(type:mytype,  a1:seq.symbol) seq.symbol
@@ -293,7 +291,7 @@ acc+[if last.r1= "seq"_1  then "ptr"_1
 +",";+"int)" ,"$loopblock","?", specialbit)
 
 Function maybepacked(t:mytype) boolean
-  abstracttype.t="seq"_1 &and abstracttype.parameter.t  &in "byte bit 2 3 4 5 6 "
+  abstracttype.t="seq"_1 &and abstracttype.parameter.t  &in "byte bit  packed2 packed3 packed4 packed5 packed6"
 
 Function continue(i:int)symbol symbol(["CONTINUE"_1, toword.i],"$continue","?", specialbit)
 
@@ -453,7 +451,6 @@ Function emptyprogram program program2.empty:set.symbol
 
 type program is record toset:set.symbol 
 
-
 Function ∪(p:program, a:program)program 
 program(toset.p ∪ toset.a)
 
@@ -462,7 +459,6 @@ Function toseq(p:program) seq.symbol  toseq.toset.p
 Function &in(s:symbol,p:program) boolean  s &in toset.p
 
 Function program2(a:set.symbol)program program(a)
-
 
 Function lookupcode(p:program, s:symbol)programele
  let t = findelement(s, toset.p)
@@ -630,9 +626,13 @@ if abstracttype.type &in "packed2 packed3 packed4 packed5 packed6" then typeptr 
     assert length.t = 1 report"type not found" + print.type + stacktrace
        let size=length.subflds.t_1
       if size > 1 then 
-        if size > 6 then typeptr
-        else if top then typeptr else
-         mytype.[toword.size]
+         if top then typeptr 
+         else if size=2 then mytype."packed2"
+         else if size=3 then mytype."packed3"
+         else if size=4 then mytype."packed4"
+         else if size=5 then mytype."packed5"
+         else if size=6 then mytype."packed6"
+         else typeptr
       else 
         let basetype=(subflds.t_1)_1
         if abstracttype.basetype ="seq"_1 then getbasetype(d,basetype,true)

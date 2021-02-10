@@ -173,11 +173,11 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + BINOP(r.7, r.5, r.6, lshr)
  + BINOP(r.8, r.7, C64.1, and))
  , \\ 
- addtemplate(symbol("packedindex(2 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.2, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
-  , addtemplate(symbol("packedindex(3 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.3, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
-, addtemplate(symbol("packedindex(4 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.4, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
-, addtemplate(symbol("packedindex(5 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.5, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
-, addtemplate(symbol("packedindex(6 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.6, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
+  addtemplate(symbol("packedindex(packed2 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.2, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
+  , addtemplate(symbol("packedindex(packed3 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.3, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
+, addtemplate(symbol("packedindex(packed4 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.4, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
+, addtemplate(symbol("packedindex(packed5 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.5, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
+, addtemplate(symbol("packedindex(packed6 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) +BINOP(r.2, r.1, C64.6, mul)+BINOP(r.3, r.2, C64.2, add) + GEP(r.4, i64, ibcsub.1, r.3) )
  , addtemplate(symbol("tocstr(bits seq)","fileio","cstr"), 2, GEP(r.1, i64, ibcsub.1, C64.2) + CAST(r.2, r.1, i64, ptrtoint))
 , addtemplate(symbol("toint(byte)","bits","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
  , addtemplate(symbol("toint(bit)","bits","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
@@ -245,7 +245,7 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("callidx(real seq, int)","real builtin","real"), 4, GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
  + CAST(r.3, r.2, ptr.function.[ double, i64, ptr.i64, i64], inttoptr)
  + CALL(r.4, 0, 32768, function.[ double, i64, ptr.i64, i64], r.3, slot.ibcfirstpara2, [ ibcsub.1, ibcsub.2]))
- , addtemplates("ptr 2 3 4 5 6 ",symbol("callidx(T seq, int)","T builtin","ptr"), 4 , GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
+ , addtemplates("ptr packed2 packed3 packed4 packed5 packed6",symbol("callidx(T seq, int)","T builtin","ptr"), 4 , GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
  + CAST(r.3, r.2, ptr.function.[ ptr.i64, i64, ptr.i64, i64], inttoptr)
  + CALL(r.4, 0, 32768, function.[ ptr.i64, i64, ptr.i64, i64], r.3, slot.ibcfirstpara2, [ ibcsub.1, ibcsub.2]))
  , addtemplates( "int byte boolean bit", symbol("idxseq(T seq, int)","T builtin","int"), 3
@@ -254,6 +254,8 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , BINOP(r.1, ibcsub.2, C64.1, add)+GEP(r.2, i64, ibcsub.1, r.1) + LOAD(r.3, r.2, i64)+ CAST(r.4, r.3, double, bitcast))
   , addtemplate(  symbol("idxseq(ptr seq, int)","ptr builtin","ptr"), 4
  , BINOP(r.1, ibcsub.2, C64.1, add)+GEP(r.2, i64, ibcsub.1, r.1) + LOAD(r.3, r.2, i64)+ CAST(r.4, r.3,ptr.i64, inttoptr))
+ , addtemplate(symbol("getseqlength(ptr )","builtin","int"), 2, GEP(r.1, i64, ibcsub.1, C64.1) + LOAD(r.2, r.1, i64))
+ , addtemplate(symbol("getseqtype(ptr )","builtin","int"), 1, LOAD(r.1, ibcsub.1, i64))
  , addtemplate(symbol("IDX:int(ptr,int)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
  , addtemplate(symbol("IDX:boolean(ptr ,int)","boolean builtin","boolean"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
  , addtemplate(symbol("IDX:ptr(ptr,int)","ptr builtin","ptr"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
@@ -319,7 +321,8 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
              addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, tollvmtypelist(alltypes, xx) << 2)
          else if isSequence.xx  then
            if  nopara.xx < 10 then
-            let fldbc = sequencecode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1), tollvmtype(alltypes, parameter.modname.xx) , 0, true)
+            let fldbc = 
+            sequencecode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1), tollvmtype(alltypes, parameter.modname.xx) , 0, true)
             addtemplate(xx, regno.fldbc, bc.fldbc)
            else 
             addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, [tollvmtype(alltypes, parameter.modname.xx) ])
@@ -330,6 +333,11 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
     \\ handle builtin package \\
     let intable = findtemplate.xx
      if length.intable > 0 then intable_1
+     else if (fsig.xx)_1="IDX"_1   ∧ last.module.xx = "builtin"_1 then 
+          let resulttype= if  (module.xx)_-2 &in "real boolean int " then [(module.xx)_-2] else "ptr" 
+          let intable2=
+           findtemplate.symbol("IDX:"+resulttype+"(ptr, int)", resulttype+"builtin" ,resulttype)
+         addtemplate(xx,length.intable2_1,parts.intable2_1)
      else if (fsig.xx)_1="idxseq"_1   ∧ last.module.xx = "builtin"_1 then 
          let intable2=findtemplate.symbol("idxseq(ptr seq, int)","ptr builtin","ptr")
          addtemplate(xx,length.intable2_1,parts.intable2_1)

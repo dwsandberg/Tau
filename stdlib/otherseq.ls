@@ -16,9 +16,7 @@ Function removedups(a:seq.T, b:seq.T, c:int)seq.T
 
 Function removedups(a:seq.T)seq.T removedups(a, empty:seq.T, length.a)
 
-type cseq is sequence len:int, element:T
-
-Function length(c:cseq.T)int len.c
+type cseq is record sequence, element:T
 
 Function_(s:cseq.T, i:int)T element.s
 
@@ -27,26 +25,24 @@ Function constantseq(len:int, element:T)seq.T toseq.cseq(len, element)
 --------------------
 
 Function replace(s:seq.T, index:int, value:T)seq.T
- \\ function replace2(s:seq.T, index:int, value:T)seq.T \\
- let p = to:pseq.T(s)
-  if length.p = 0 then
+  if not.ispseq.s  then
   let b =((for(@e ∈ arithseq(index - 1, 1, 1), acc = empty:seq.T)acc + s_@e))
     {((for(@e ∈ arithseq(length.s - index, 1, index + 1), acc = b + value)acc + s_@e))}
-  else if index > length.a.p then
+  else 
+   let p = to:pseq.T(s)
+   if index > length.a.p then
   a.p + replace(b.p, index - length.a.p, value)
   else replace(a.p, index, value) + b.p
 
 _____________
 
-type arithmeticseq is sequence length:int, step:T, start:T
+type arithmeticseq is record sequence, step:T, start:T
 
 unbound +(T, T)T
 
 unbound *(int, T)T
 
 unbound =(T, T)boolean
-
-Export length(s:arithmeticseq.T)int
 
 Function_(s:arithmeticseq.T, i:int)T start.s + (i - 1) * step.s
 

@@ -194,7 +194,7 @@ else if ruleno = // F W NM(FP)T E // 2 then createfunc(R, input, place, tokentex
 else if ruleno = // F W N(FP)T E // 3 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
 else if ruleno = // F W NM T E // 4 then createfunc(R, input, place, tokentext.R_2, empty:seq.mytype, R_3, R_4) 
 else if ruleno = // F W NM is W P // 5 then 
-assert(tokentext.R_4)_1 ∈"record sequence"report errormessage("Expected record or sequence after is in type definition got:"+ tokentext.R_4, input, place)bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2) 
+assert(tokentext.R_4)_1 ∈"record "report errormessage("Expected record or sequence after is in type definition got:"+ tokentext.R_4, input, place)bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2) 
 else if ruleno = // F T // 6 then R_1 
 else if ruleno = // FP P // 7 then bindinfo((for(@e ∈ types.R_1, acc = dict.R)addparameter(acc, cardinality.dict.R, input, place, @e)), empty:seq.symbol, types.R_1,"")
 else if ruleno = // P T // 8 then bindinfo(dict.R, empty:seq.symbol, [ abstracttype(":"_1, gettype.R_1)],"") 

@@ -12,9 +12,10 @@ use seq.sparseele.T
 
 type sparseele is record start:int, edata:seq.T
 
-type sparse is sequence length:int, sdata:seq.sparseele.T, default:T
+type sparse is record sequence, sdata:seq.sparseele.T, default:T
 
 function ?(a:sparseele.T, b:sparseele.T)ordering start.a ? start.b
+
 
 function_(s:sparse.T, i:int)T
  let place = binarysearch(sdata.s, sparseele(i, empty:seq.T))
@@ -29,7 +30,7 @@ Function sparseseq(a:T)seq.T toseq.sparse(1, empty:seq.sparseele.T, a)
 
 Function replaceS(a:seq.T, i:int, b:seq.T)seq.T
  let d = to:sparse.T(a)
-  if length.d = 0 then
+  if length.toseq.d = 0 then
   subseq(a, 1, i - 1) + b + subseq(a, i + length.b, length.a)
   else
    let ele = sparseele(i, b)

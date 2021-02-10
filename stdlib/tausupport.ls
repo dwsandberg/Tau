@@ -41,12 +41,12 @@ function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:T)int
  if memsize = 0 then idx
  else memcpy(setfld(idx, s, IDX(bitcast.fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
 
-type blockseq is sequence length:int, dummy:seq.T
+type blockseq is record sequence, dummy:seq.T
 
 function blocksize:T int 10000
 
 Function_(a:blockseq.T, i:int)T
- assert between(i, 1, length.a)report"out of bounds"
+ assert between(i, 1, length.toseq.a)report"out of bounds"
  let data = bitcast.a
  let typ = getseqtype.dummy.a
  let ds = max(typ, 1)

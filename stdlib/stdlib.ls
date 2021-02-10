@@ -43,12 +43,21 @@ option.main2 compilelib2(seq.word)seq.word PROFILE
 
 option.pass1 pass1( seq.seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
 
-option.pass1 maptemp(st:program, templates:program, s:mapele)program PROFILE
+option.pass2 pass2(placehold:program, alltypes:typedict)program PROFILE
+
+option.codegennew codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict,isbase:boolean)seq.bits PROFILE
+
+/option.pass1 maptemp(s: seq.mapele, templates:program) program PROFILE
 
 option.symbol lookupcode(p:program, s:symbol)programele PROFILE
 
 /option.set.symbol findelement(val:symbol, s:set.symbol)set.symbol PROFILE
 
+option.pass2 depthfirst(knownsymbols:program, alltypes:typedict, i:int, 
+pending:seq.symbol, processed:program, code:seq.symbol, s:symbol)program
+PROFILE
+
+option.pass2 firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)program PROFILE
 
 
 option.standard +(int,int) int COMPILETIME
