@@ -48,9 +48,9 @@ function deepcopytest(a:testdeep)testdeep result.process.identity.a
 
 function deepcopytest(a:set.int)set.int result.process.identity.a
 
-function identity(a:set.int) set.int a
+function identity(a:set.int)set.int a
 
-function identity(a:testdeep) testdeep a
+function identity(a:testdeep)testdeep a
 
 function deepcopytest(a:int)int a
 
@@ -75,22 +75,21 @@ type testrecord is record key:int, body:seq.word
 
 function body(x:encodingpair.testrecord)seq.word body.data.x
 
-function list(a:seq.encodingpair.testrecord)seq.seq.word
- ((for(@e ∈ a, acc = empty:seq.seq.word)acc + body.@e))
+function list(a:seq.encodingpair.testrecord)seq.seq.word for @e ∈ a, acc = empty:seq.seq.word ; acc + body.@e
 
 Function testencoding seq.word \\ must export this module so encoding type can be figured out \\
 let p = process.process1
  if aborted.p then"Failed encoding" + message.p
  else
   let s1 = list.result.p
-  let z =((for(@e ∈ ["firstadd","secondadd"], acc = 0)acc + add.@e))
+  let z = for @e ∈ ["firstadd","secondadd"], acc = 0 ; acc + add.@e
   let s2 = list.result.process.process1
   let s3 = list.encoding:seq.encodingpair.testrecord
    check([ 3 = deepcopytest.3, asset.[ 3, 7, 9] = deepcopytest.asset.[ 3, 7, 9], deepcopytest.testdeep1 = testdeep1, s1 = ["A1","B2","C3","D4","E5"], s2 = ["firstadd","secondadd"] + s1, s3 = s2]
    ,"encoding")
 
 Function process1 seq.encodingpair.testrecord
-let discard =((for(@e ∈ ["A1","B2","C3","D4","E5"], acc = 0)acc + add.@e))
+let discard = for @e ∈ ["A1","B2","C3","D4","E5"], acc = 0 ; acc + add.@e
  encoding:seq.encodingpair.testrecord
 
 Function nextpower(i:int, base:int, start:int)int if i > start then nextpower(i, base, start * base)else start

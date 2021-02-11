@@ -43,7 +43,7 @@ function changestate(state:int, ele:word, idx:int, early:boolean)int
 
 Function getheader(s:seq.word)seq.word
  let istype = subseq(s, 1, 3) = "Export type:"
- let t = for(ele ∈ s, state = 0, idx, state > 0)changestate(state, ele, idx, istype)
+ let t = for ele ∈ s, state = 0, idx, state > 0 ; changestate(state, ele, idx, istype)
  let end = if t < 1 then length.s else t
   if istype then
   let tt = subseq(s, 4, end)
@@ -62,7 +62,7 @@ function escapeformat(length:int, c:word)word
  if length > 20 then merge.[ encodeword.[ char.10], c]else merge.[ space, c]
  else if c ∈ " &keyword  &}  &em  &strong  &cell"then merge.[ space, c]else c
 
-Function escapeformat(s:seq.word)seq.word((for(@e ∈ s, acc ="")acc + escapeformat(length.s, @e)))
+Function escapeformat(s:seq.word)seq.word for @e ∈ s, acc =""; acc + escapeformat(length.s, @e)
 
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 
@@ -115,7 +115,7 @@ type pnpstate is record lastbreak:int, result:seq.word, matchthis:word, instring
 
 Function prettynoparse(s:seq.word)seq.word
  \\ format function without first parsing it \\
- result.(for(@e ∈ s, acc = pnpstate(0,"","//"_1, false))advancepnp(acc, @e))
+ result.for @e ∈ s, acc = pnpstate(0,"","//"_1, false); advancepnp(acc, @e)
 
 function advancepnp(state:pnpstate, this:word)pnpstate
  let lastbreak = lastbreak.state
@@ -135,10 +135,10 @@ function advancepnp(state:pnpstate, this:word)pnpstate
  else if lastbreak > 20 ∧ this ∈ "["then 4 else 5
  let newresult = if instring then if this = matchthis then result + this + " &}"else result + this
  else if c = 0 then
- (result + if this ∈ ('"' + "'")then" &{ literal"else" &br  &{ comment")
+ result + if this ∈ ('"' + "'")then" &{ literal"else" &br  &{ comment";
   + this
  else if c = 1 then
- (if lastbreak > 20 then result + " &br"else result) + " &keyword" + this
+ if lastbreak > 20 then result + " &br"else result ; + " &keyword" + this
  else if c = 2 then result + " &keyword" + this
  else if c = 3 then result + this + " &br"
  else if c = 4 then result + " &br" + this else result + this
@@ -148,7 +148,7 @@ function advancepnp(state:pnpstate, this:word)pnpstate
 _____________________________
 
 Function createhtmlfile(name:seq.word, output:seq.word)int
- createfile(name, a.processpara((for(@e ∈ htmlheader, acc = emptyout23)addspace(acc, @e)), output))
+ createfile(name, a.processpara(for @e ∈ htmlheader, acc = emptyout23 ; addspace(acc, @e), output))
 
 type out23 is record nospace:boolean, a:seq.byte
 

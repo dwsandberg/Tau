@@ -11,14 +11,13 @@ Function hash(acc:bits, x:int)bits
  \\ example use to hash x and y finalmix(hash(hash(hashstart(seed), x), y))\\
  let PRIME1 = 11400714785074694791
  let PRIME2 = 14029467366897019727
- let PRIME4 = 9650029242287828579
-  bits(toint
-  .rotateleft(xor(acc, bits(toint.rotateleft(bits(toint.acc + x * PRIME2), 31) * PRIME1)), 27)
+ let PRIME4 = 9650029242287828579 ;
+  bits(toint.rotateleft(xor(acc, bits(toint.rotateleft(bits(toint.acc + x * PRIME2), 31) * PRIME1)), 27)
   * PRIME1
   + PRIME4)
 
 Function hashstart(seed:int)bits
- let PRIME5 = 2870177450012600261
+ let PRIME5 = 2870177450012600261 ;
   bits(seed + PRIME5 + 64)
 
 Function hashstart bits hashstart.0
@@ -49,5 +48,5 @@ Function finalmix32(hash:bits)int
   abs.toint(xor(h32d, h32d >> 16) ∧ 0xFFFF FFFF)
 
 Function hashstart32(seed:int)bits
- let PRIME5 = 374761393
+ let PRIME5 = 374761393 ;
   bits(seed + PRIME5)

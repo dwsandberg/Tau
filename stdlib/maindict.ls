@@ -28,6 +28,9 @@ use set.encodingpair.seq.char
 
 use process.seq.encodingpair.seq.char
 
+Function iosize:encodingpair.seq.char int 3
+
+
 function +(p:place, r:encodingpair.seq.char)place
  p + valueofencoding.code.r + tointseq.data.r + hash.r
 
@@ -116,18 +119,18 @@ type ioseq is record sequence, data:seq.int, offset:int, k:seq.T
 
 Export data(s:ioseq.T)seq.int
 
-
 unbound getrecord:T(seq.int, int)T
 
 unbound +(place, T)place
 
-builtin sizeoftype:T int
+unbound iosize:T int 
+
 
 Function_(a:ioseq.T, i:int)T
- let size = sizeoftype:T
+ let size = iosize:T
  let index = offset.a + size * (i - 1) + 2
   assert between(i, 1,(data.a)_(offset.a + 1))report"out of bounds2"
-  + ((for(@e ∈ [ i, size, index] + data.a, acc ="")acc + toword.@e))
+  + for @e ∈ [ i, size, index] + data.a, acc =""; acc + toword.@e
    getrecord:T(data.a, index)
 
 Export offset(ioseq.T)int
@@ -137,7 +140,7 @@ Function getseq2:T(data:seq.int, seqpointer:int)seq.T
   toseq.ioseq(data_(offset + 1), data, offset, empty:seq.T)
 
 Function +(p:place, s:seq.T)place
- let size = sizeoftype:T
+ let size = iosize:T
  let q = place([ 0, length.s], next.p + length.s * size + 2, empty:seq.int)
- let r =((for(@e ∈ s, acc = q)acc + @e))
+ let r = for @e ∈ s, acc = q ; acc + @e
   place(this.p + (next.p + 1), offset.p, data.p + this.r + data.r)

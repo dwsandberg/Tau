@@ -12,8 +12,6 @@ use test11
 
 use test11a
 
-use wordfreq
-
 use test5
 
 use testencoding
@@ -26,8 +24,9 @@ use testprocess
 
 use testseq
 
-Function testall seq.word // this is a comment //
-test5 + test11 + test11a + testencoding + testprocess + testmodules + testbug7 + testopt
-+ testreal
+use wordfreq
+
+Function testall seq.word \\ this is a comment \\
+test5 + test11 + test11a + testencoding + testprocess + testmodules + testbug7 + testopt + testreal
 + testseq
 + testwordfreq

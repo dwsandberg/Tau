@@ -15,19 +15,19 @@ function seperator(acc:seq.char, sep:char, b:seq.char)seq.char
 
 Function printmangled(w:word)seq.word
  let d=codedown.w
- let para = for(e ∈ d << 2, acc ="") if acc ="" then printtype.e else acc + ","+printtype.e
-    d_1 +  (if isempty.para then "" else "("+para+  ")")+
-    if length.d > 1 then  " &keyword module:"+ printtype.d_2 else ""
+ let para = for e ∈ d << 2, acc =""; if acc = ""then printtype.e else acc + "," + printtype.e
+  d_1 + if isempty.para then""else"(" + para + ")";
+  + if length.d > 1 then" &keyword module:" + printtype.d_2 else""
  
 function printtype  (a:  seq.word ) seq.word
-     for(e &in a ,acc="")  if acc="" then acc+e else [e ]+"."+acc         
+ for e ∈ a, acc =""; if acc = ""then acc + e else [ e] + "." + acc
 
 Function mangle(fsig:seq.word, module:seq.word)word
  let i = findindex("("_1, fsig)
  let modname = module
  let parameters = break(","_1,"", subseq(fsig, i + 1, length.fsig - 1))
-  encodeword
-  .(for(@e ∈ [ [ merge.subseq(fsig, 1, i - 1)], module] + parameters, acc = empty:seq.char)seperator(acc, char.charmajorseparator, codeup.@e))
+  encodeword.for @e ∈ [ [ merge.subseq(fsig, 1, i - 1)], module] + parameters, acc = empty:seq.char ;
+   seperator(acc, char.charmajorseparator, codeup.@e)
 
 Function codedown(w:word)seq.seq.word codedown(decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)
 
@@ -60,11 +60,11 @@ function hexvalue(c:char)int
  let i = toint.c
   if between(i, 48, 57)then i - 48 else i - 65 + 10
 
-function codeup(s:seq.word)seq.char(for(@e ∈ s, acc = empty:seq.char)addword(acc, @e))
+function codeup(s:seq.word)seq.char for @e ∈ s, acc = empty:seq.char ; addword(acc, @e)
 
 function addword(s:seq.char, w:word)seq.char
  \\ adds minor separator between words \\
- (for(@e ∈ decodeword.w, acc = if isempty.s then s else s + char.charminorseparator)codeup(acc, @e))
+ for @e ∈ decodeword.w, acc = if isempty.s then s else s + char.charminorseparator ; ; codeup(acc, @e)
 
 function charmajorseparator int \\ Z \\ 90
 
@@ -75,12 +75,12 @@ function codeup(l:seq.char, char:char)seq.char
  let charQ = char.81
   if char ∈ legal then l + char
   else if toint.char < 256 then
-  ((for(@e ∈ [ 1, 0], acc = l + charQ)acc + hexdigit(bits.toint.char, @e)))
+  for @e ∈ [ 1, 0], acc = l + charQ ; acc + hexdigit(bits.toint.char, @e)
   else
-   ((for(@e ∈ [ 4, 3, 2, 1, 0], acc = l + charQ)acc + hexdigit(bits.toint.char, @e)))
+   for @e ∈ [ 4, 3, 2, 1, 0], acc = l + charQ ; acc + hexdigit(bits.toint.char, @e)
 
 function hexdigit(val:bits, digit:int)char legal_(toint(val >> (4 * digit) ∧ bits.15) + 1)
 
-Function manglednopara(w:word)int((for(@e ∈ decodeword.w, acc =-1)acc + count(char.90, @e)))
+Function manglednopara(w:word)int for @e ∈ decodeword.w, acc =-1 ; acc + count(char.90, @e)
 
 function count(val:char, i:char)int if val = i then 1 else 0

@@ -26,7 +26,8 @@ function breaklines(a:seq.byte, i:int, last:int, result:seq.UTF8)seq.UTF8
  else breaklines(a, i + 1, last, result)
 
 Function breakcommas(a:UTF8)seq.UTF8
- ((for(@e ∈ break(tobyte.toint.char1.",", [ tobyte.toint.char1.'"'], toseqbyte.a), acc = empty:seq.UTF8)acc + UTF8.@e))
+ for @e ∈ break(tobyte.toint.char1.",", [ tobyte.toint.char1.'"'], toseqbyte.a), acc = empty:seq.UTF8 ;
+  acc + UTF8.@e
 
 --------
 
@@ -83,4 +84,4 @@ function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
        towords2(a, i + 2, i + 2, if last = i then result + "\\"_1
         else result + encodeword.subseq(a, last, i - 1) + "\\"_1)
        else
-        towords2(a, i + 1, i + 1,(if last = i then result else result + encodeword.subseq(a, last, i - 1)) + class)
+        towords2(a, i + 1, i + 1, if last = i then result else result + encodeword.subseq(a, last, i - 1); + class)

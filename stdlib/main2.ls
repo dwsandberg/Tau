@@ -92,19 +92,18 @@ function subcompilelib(option:seq.word, libname:seq.word)seq.seq.word
   let allsrc = getlibrarysrc.libname
   let link = pass1(groupparagraphs("module Module", allsrc), exports, libmodules.dependentlibs)
   let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
-  let prg3 =(for(@e ∈((for(@e ∈ allsrc, acc = empty:seq.seq.word)acc + @e)), acc = prg2)processOption(acc, @e))
+  let prg3 = for @e ∈ for @e ∈ allsrc, acc = empty:seq.seq.word ; acc + @e, acc = prg2 ; processOption(acc, @e)
    if option = "pass1"then
-   ((for(@e ∈ toseq.prg3, acc = empty:seq.seq.word)acc + print(prg3, @e)))
+   for @e ∈ toseq.prg3, acc = empty:seq.seq.word ; acc + print(prg3, @e)
    else
     let prg4 = pass2(prg3, alltypes.link)
     let libdesc = libdesc(alltypes.link, prg4, templates.link, mods.link, exports)
     let uses = uses(prg4, asset.roots.link + libdesc)
     let defines = defines(prg4, uses - compiled.link)
      if option = "pass2"then
-     ((for(@e ∈ defines, acc = empty:seq.seq.word)acc + print(prg4, @e)))
+     for @e ∈ defines, acc = empty:seq.seq.word ; acc + print(prg4, @e)
      else if option = "baseTypeCheck"then
-     ["base type check"
-      + for(e ∈ toseq.prg4, acc ="")acc + baseTypeCheck(alltypes.link, prg4, e)]
+     ["base type check" + for e ∈ toseq.prg4, acc =""; acc + baseTypeCheck(alltypes.link, prg4, e)]
      else
       let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link, isempty.dependentlibs)
       let z2 = createlib(bc, last.libname, dependentlibs)
@@ -118,8 +117,9 @@ Function compilelib2(libname:seq.word)seq.word
     if subseq(aa, 1, 1) = "OK"then aa else"COMPILATION ERROR:" + space + aa
 
 Function main(argin:seq.byte)int
- let arg =((for(@e ∈ argin, acc = empty:seq.int)acc + toint.@e))
- let args2 =((for(@e ∈ break(char1.";", empty:seq.char, decodeUTF8.UTF8.arg), acc = empty:seq.seq.word)acc + towords.@e))
+ let arg = for @e ∈ argin, acc = empty:seq.int ; acc + toint.@e
+ let args2 = for @e ∈ break(char1.";", empty:seq.char, decodeUTF8.UTF8.arg), acc = empty:seq.seq.word ;
+  acc + towords.@e
  let libname = args2_1
  let compileresult = if first.libname = first."L"then"OK"
  else
@@ -139,7 +139,7 @@ Function testcomp(s:seq.seq.word)seq.seq.word
  let exports ="testit"
  let allsrc = groupparagraphs("module Module", s)
  let r = pass1(allsrc, exports, libmodules."stdlib")
-  {((for(@e ∈ toseq.result.r, acc = empty:seq.seq.word)acc + print(result.r, @e)))}
+  for @e ∈ toseq.result.r, acc = empty:seq.seq.word ; acc + print(result.r, @e)
 
 Function firstPass(libname:seq.word)seq.seq.word subcompilelib("pass1", libname)
 
@@ -157,8 +157,7 @@ Function runit(b:seq.seq.word)runitresult
 
 Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname)
 
-Function print(a:seq.seq.word)seq.word
- ((for(@e ∈ a, acc ="")acc +" &br  &br" + @e))
+Function print(a:seq.seq.word)seq.word for @e ∈ a, acc =""; acc + " &br  &br" + @e
 
 _______________
 

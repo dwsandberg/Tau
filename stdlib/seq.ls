@@ -14,7 +14,7 @@ Export getseqtype(a:seq.T)int
 
 Export length(a:seq.T)int
 
-Builtin empty:seq.T seq.T // empty seq //
+Builtin empty:seq.T seq.T \\ empty seq \\
 
 builtin packedindex(seq.T, int)T
 
@@ -28,21 +28,19 @@ Function_(a:seq.T, c:int)T
   if typ > 1 then callidx(a, b)
   else
    assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
-    if typ = 0 then \\ element per word \\ unpackedindex(a,b)  else packedindex(a, b  )
+    if typ = 0 then \\ element per word \\ unpackedindex(a, b)else packedindex(a, b)
 
 Function =(a:seq.T, b:seq.T)boolean
  if length.a = length.b then
- for(e ∈ a, acc = true, i, e ≠ b_i)not(e ≠ b_i)
+ for e ∈ a, acc = true, i, e ≠ b_i ; not(e ≠ b_i)
  else false
 
-Function ∈(a:T, s:seq.T)boolean
- for(e ∈ s, acc = false, i, a = e)a = e
+Function ∈(a:T, s:seq.T)boolean for e ∈ s, acc = false, i, a = e ; a = e
 
 Function findelement(w:T, s:seq.T)seq.T
- for(e ∈ s, acc = empty:seq.T, i, w = e)if w = e then [ e]else empty:seq.T
+ for e ∈ s, acc = empty:seq.T, i, w = e ; if w = e then [ e]else empty:seq.T
 
 -------------------------
-
 
 Export a(pseq.T)seq.T
 
@@ -95,7 +93,8 @@ function catnonzero(a:seq.T, b:seq.T)seq.T
       if length.toseq.tb = 0 ∨ length.a.tb + length.b.tb ≠ length.toseq.tb then
       toseq.pseq(totallength, a, b, 0)
       else cat3(totallength, a, a.tb, b.tb)
-    else if length.a.ta + length.b.ta ≠ length.toseq.ta then toseq.pseq(totallength, a, b, 0)
+    else if length.a.ta + length.b.ta ≠ length.toseq.ta then
+    toseq.pseq(totallength, a, b, 0)
     else cat3(totallength, a.ta, b.ta, b)
 
 Function subseq(s:seq.T, start:int, end:int)seq.T
@@ -108,7 +107,8 @@ Function subseq(s:seq.T, start:int, end:int)seq.T
  if start = end then [ s_start]else [ s_start, s_end]
  else
   let x = to:pseq.T(s)
-   if length.toseq.x = 0 then toseq.pseq(end - start + 1, s, s, start - 1)
+   if length.toseq.x = 0 then
+   toseq.pseq(end - start + 1, s, s, start - 1)
    else subseq(x, start, end)
 
 function subseq(p:pseq.T, start:int, end:int)seq.T

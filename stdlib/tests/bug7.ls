@@ -54,7 +54,7 @@ use standard
 
 use seq.T
 
-type seq8 is  record sequence, flda:seq.T, fldb:int
+type seq8 is record sequence, flda:seq.T, fldb:int
 
 function_(a:seq8.T, i:int)T(flda.a)_i
 

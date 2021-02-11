@@ -158,10 +158,10 @@ function cvt(grammar:seq.seq.word,ruleprec:seq.seq.word,i:int, rulelist:seq.int,
 function getaction( grammar:seq.seq.word, state:state, stateno:int, reductions:seq.seq.word, lookahead:word)seq.action
  let newstate = advance(grammar, toset.state, lookahead)
   let newstateno = if not.isempty.newstate then valueofencoding.encode.state.newstate else 0
-  for(@e ∈(
-  for(@e ∈ reductions, acc = empty:seq.int)acc + ruleno(grammar, @e)
+  for @e ∈(
+  for @e ∈ reductions, acc = empty:seq.int ; acc + ruleno(grammar, @e)
   ), acc = if newstateno = 0 then empty:seq.action 
-  else [ shift(stateno, lookahead, newstateno)])
+  else [ shift(stateno, lookahead, newstateno)] ; ;
   acc + reduce(stateno, lookahead, @e) 
              
 function =(a:ruleprec,b:ruleprec) boolean  lookahead.a=lookahead.b 

@@ -43,16 +43,17 @@ let f = createfile("testw.txt", text)
 
 function filetest(i:int)boolean
  let name ="test" + toword.i + ".txt"
- let a = createfile(name,((for(@e ∈ arithseq(i, 1, 48), acc = empty:seq.byte)acc + tobyte.@e)))
+ let a = createfile(name, for @e ∈ arithseq(i, 1, 48), acc = empty:seq.byte ; acc + tobyte.@e)
   fileexists.name ∧ i = length.getfile:byte(name)
 
-Function t522 boolean((for(@e ∈ arithseq(9, 1, 4), acc = true)acc ∧ filetest.@e))
+Function t522 boolean for @e ∈ arithseq(9, 1, 4), acc = true ; acc ∧ filetest.@e
 
 function modr(a:int, b:int)int b mod a + 1
 
 function incrementcount(s:seq.int, i:int)seq.int replace(s, i, s_i + 1)
 
 function t509 boolean
-let s =(for(@e ∈((for(@e ∈ randomseq(3456, 100001), acc = empty:seq.int)acc + modr(100, @e))), acc = constantseq(100, 0))incrementcount(acc, @e))
-let totalcounts =((for(@e ∈ s, acc = 0)acc + @e))
+let s = for @e ∈ for @e ∈ randomseq(3456, 100001), acc = empty:seq.int ; acc + modr(100, @e), acc = constantseq(100, 0);
+ incrementcount(acc, @e)
+let totalcounts = for @e ∈ s, acc = 0 ; acc + @e
  length.s = 100 ∧ totalcounts = 100001

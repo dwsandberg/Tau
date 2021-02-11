@@ -1,34 +1,32 @@
 Module codegennew
 
-use seq.Lcode2
-
-use stack.Lcode2
-
 use UTF8
-
-use seq.seq.bits
-
-use seq.bits
 
 use bits
 
 use codetemplates
-
-use seq.seq.seq.int
-
-use seq.seq.int
-
-
-use stack.int
-
-
-use seq.internalbc
 
 use internalbc
 
 use llvm
 
 use llvmconstants
+
+use standard
+
+use symbol
+
+use textio
+
+use seq.Lcode2
+
+use stack.Lcode2
+
+use seq.bits
+
+use stack.int
+
+use seq.internalbc
 
 use seq.llvmtype
 
@@ -40,38 +38,37 @@ use seq.slot
 
 use encoding.stat5
 
-use seq.encodingpair.stat5
-
 use seq.stat5
-
-use standard
 
 use seq.symbol
 
 use set.symbol
 
-use symbol
+use seq.seq.bits
 
-use textio
+use seq.seq.int
 
+use seq.encodingpair.stat5
 
-function f100(theprg:program,ele:symbol) seq.symbol
-  if    isbuiltinlist.ele then  [ele]
-else 
- let d = code.lookupcode(theprg, ele)
+use seq.seq.seq.int
+
+function f100(theprg:program, ele:symbol)seq.symbol
+ if isbuiltinlist.ele then [ ele]
+ else
+  let d = code.lookupcode(theprg, ele)
    if isempty.d ∨ "BUILTIN"_1 ∈ getoption.d then empty:seq.symbol else [ ele]
 
-Function codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict,isbase:boolean)seq.bits
- let defines =((for(@e ∈ definesWithBuiltins, acc = empty:seq.symbol)acc + f100(theprg, @e)))
+Function codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict, isbase:boolean)seq.bits
+ let defines = for @e ∈ definesWithBuiltins, acc = empty:seq.symbol ; acc + f100(theprg, @e)
  let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
- let discard4 =((for(@e ∈ defines, acc = 0)acc + funcdec(alltypes, @e)))
+ let discard4 = for @e ∈ defines, acc = 0 ; acc + funcdec(alltypes, @e)
  let match5map = match5map(theprg, uses, alltypes)
  let libmods2 = arg.match5map_libdesc
   \\ let zx2c = createfile("stat.txt", ["in codegen0.3"])\\
   let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
-  let bodies =((for(@e ∈ defines, acc = empty:seq.internalbc)acc + addfuncdef(match5map, @e)))
+  let bodies = for @e ∈ defines, acc = empty:seq.internalbc ; acc + addfuncdef(match5map, @e)
   let xxx = profiledata
-  let liblib = slot.addliblib([ thename], libmods2, toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0)),isbase)
+  let liblib = slot.addliblib([ thename], libmods2, toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0)), isbase)
   let libnametype = array(length.decodeword.thename + 1, i8)
   let libslot = modulerecord(""
   , [ toint.GLOBALVAR, typ.libnametype, 2, toint.DATA(libnametype, tointseq.decodeword.thename + 0) + 1, 3, toint.align8, 0])
@@ -95,16 +92,15 @@ function addfuncdef(match5map:seq.match5, i:symbol)internalbc
   subseq(code.m, 1, length.code.m - 2)
  else code.m
  let code = if isempty.codet then
- ((for(e9 ∈ arithseq(nopara.i, 1, 1), acc = empty:seq.symbol)acc + Local.e9))
-  + i
-  else codet
+ for e9 ∈ arithseq(nopara.i, 1, 1), acc = empty:seq.symbol ; acc + Local.e9 ; + i
+ else codet
   \\ assert not.isempty.code.m report"xxxx"+ print.i \\
- let nopara = arg.m
- let l = Lcode2(emptyinternalbc, paramap(nopara, empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
- let g5 = if"PROFILE"_1 ∈ options then mangledname.i else"noprofile"_1
-  let r =(for(@e ∈ code, acc = l)processnext(acc, g5, match5map, @e))
-  BLOCKCOUNT(1, noblocks.r) + code.r
-  + RET(r(regno.r + 1), slot.top.args.r)
+  let nopara = arg.m
+  let l = Lcode2(emptyinternalbc, paramap(nopara, empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
+  let g5 = if"PROFILE"_1 ∈ options then mangledname.i else"noprofile"_1
+  let r = for @e ∈ code, acc = l ; processnext(acc, g5, match5map, @e)
+   BLOCKCOUNT(1, noblocks.r) + code.r
+   + RET(r(regno.r + 1), slot.top.args.r)
 
 type Lcode2 is record code:internalbc, lmap:seq.localmap, noblocks:int, regno:int, args:stack.int, blocks:stack.Lcode2
 
@@ -127,10 +123,10 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
       Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
     else profilecall(l, args, symboltableentry(callee, functype.m), profile(profile, callee), functype.m)
   else if action = "CALLE"_1 then
-   let noargs = arg.m
+  let noargs = arg.m
    let args = top(args.l, noargs)
-    let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, args)
-      Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
+   let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, args)
+    Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
   else if action = "ACTARG"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
   else if action = "LOCAL"_1 then
@@ -169,7 +165,7 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   else if action = "LOOPBLOCK"_1 then
   let varcount = arg.m - 1
    let firstvar = constvalue.slot.top.args.l
-   let bodymap =(for(@e ∈ arithseq(varcount, 1, 1), acc = lmap.l)addloopmapentry(acc, firstvar, regno.l, @e))
+   let bodymap = for @e ∈ arithseq(varcount, 1, 1), acc = lmap.l ; addloopmapentry(acc, firstvar, regno.l, @e)
    let newstk = push(push(pushexptypes(parametertypes.m, 3, args.l), varcount), 2)
     \\ stack from top is kind, noexps, firstvar, exptypes, exps \\
     let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, newstk, blocks.l)
@@ -177,13 +173,13 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   else if action = "CONTINUE"_1 then
   let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, 3), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l, exitblock))
-    else if action = "SEQUENCE"_1 then
-     let fldbc= sequencecode  (top(args.l, arg.m),   first.llvmtypelist.m, regno.l, false)
-  Lcode2(code.l +bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
-else
+  else if action = "SEQUENCE"_1 then
+  let fldbc = sequencecode(top(args.l, arg.m), first.llvmtypelist.m, regno.l, false)
+    Lcode2(code.l + bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
+  else
    assert action = "RECORD"_1 report"code gen unknown" + action
-  let fldbc= recordcode  (top(args.l, arg.m),   llvmtypelist.m, regno.l, false)
-  Lcode2(code.l +bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
+   let fldbc = recordcode(top(args.l, arg.m), llvmtypelist.m, regno.l, false)
+    Lcode2(code.l + bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
 
 function pushexptypes(s:seq.word, i:int, result:stack.int)stack.int
  if i + 4 > length.s then result
@@ -202,13 +198,13 @@ type processblkresult is record code:internalbc, phi:seq.int
 
 function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc, code:internalbc, varcount:int, phi:seq.int, tailphi:seq.int)processblkresult
  if i > length.blks then
-  let firstblk = blks_1
+ let firstblk = blks_1
   let code1 = if top.args.firstblk = \\ loopblock \\ 2 then
-    let noargs = top.pop.args.firstblk
+  let noargs = top.pop.args.firstblk
     code.firstblk + BR.noblocks.firstblk + phiinst(regno.firstblk, top(args.firstblk, noargs + 2), tailphi, noargs)
     + code
   else code
-    processblkresult(code1, phi)
+   processblkresult(code1, phi)
  else
   let l = blks_i
    assert length.toseq.args.l > 0 report"XXXXXX" + toword.length.blks + toword.i
@@ -228,7 +224,7 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
        processblk(phitype, blks, i + 1, exitbr, code, varcount, phi, newtailphi)
     else if kind = 3 then
     \\ CONTINUE \\
-     assert kind.blks_1 = "2"_1 report"incorrect format on block" + ((for(@e ∈ blks, acc ="")acc + kind.@e))
+     assert kind.blks_1 = "2"_1 report"incorrect format on block" + for @e ∈ blks, acc =""; acc + kind.@e
      let noargs = top.pop.args.blks_1
       \\ assert false report"C"+ @(+, toword,"", args.blks_1)+"noargs:"+ toword.noargs \\
       let newtailphi = tailphi + [ noblocks.l - 1] + top(pop.args.l, noargs)
@@ -238,10 +234,10 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
      \\ br block \\
      assert kind = 1 report"expecting br block" + toword.kind
       assert length.args.l > 3 report"check m"
-      + ((for(@e ∈ [ kind] + toseq.args.l, acc ="")acc + toword.@e))
+      + for @e ∈ [ kind] + toseq.args.l, acc =""; acc + toword.@e
       let args = top(args.l, 4)
        assert between(constvalue.slot.args_2 - 1, 1, length.blks)
-       ∧ between(constvalue.slot.args_3 - 1, 1, length.blks)report"codegen error: jmp to unknown block"
+       ∧ between(constvalue.slot.args_3 - 1, 1, length.blks)report"codegen error:jmp to unknown block"
        let newcode = BR(r(regno.l + 1), noblocks.blks_(constvalue.slot.args_2 - 1), noblocks.blks_(constvalue.slot.args_3 - 1), r.regno.l)
         processblk(phitype, blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, tailphi)
 
@@ -267,7 +263,7 @@ function profilecall(l:Lcode2, args:seq.int, callee:slot, idx:int, functype:llvm
  + BR(r(base + 5), block, block + 1, r(base + 4))
  + CALL(r(base + 5), 0, 32768, function.[ i64], symboltableentry("clock", function.[ i64]))
  + LOAD(r(base + 6), symboltableentry("spacecount", i64), i64)
- + CALL(r(base + 7), 0, 32768, functype, callee, r.1,((for(@e ∈ args, acc = empty:seq.slot)acc + slot.@e)))
+ + CALL(r(base + 7), 0, 32768, functype, callee, r.1, for @e ∈ args, acc = empty:seq.slot ; acc + slot.@e)
  + CALL(r(base + 8), 0, 32768, function.[ i64], symboltableentry("clock", function.[ i64]))
  + LOAD(r(base + 9), symboltableentry("spacecount", i64), i64)
  + BINOP(r(base + 10), r(base + 8), r(base + 5), sub)
@@ -282,7 +278,7 @@ function profilecall(l:Lcode2, args:seq.int, callee:slot, idx:int, functype:llvm
  + BINOP(r(base + 17), r(base + 16), C64.1, add)
  + STORE(r(base + 18), slot.pcount, r(base + 17))
  + BR(block + 2)
- + CALL(r(base + 18), 0, 32768, functype, callee, r.1,((for(@e ∈ args, acc = empty:seq.slot)acc + slot.@e)))
+ + CALL(r(base + 18), 0, 32768, functype, callee, r.1, for @e ∈ args, acc = empty:seq.slot ; acc + slot.@e)
  + BR(block + 2)
  + PHI(r(base + 19), returntype.functype, r(base + 7), block, r(base + 18), block + 1)
  + LOAD(r(base + 20), slot.prefs, i64)
@@ -294,7 +290,8 @@ type stat5 is record caller:word, callee:word
 
 function profiledata slot
 let d = encoding:seq.encodingpair.stat5
-let data =((for(@e ∈ d, acc = [ C64.1, C64.length.d])acc + [ slot.wordref.caller.data.@e, slot.wordref.callee.data.@e, C64.0, C64.0, C64.0, C64.0]))
+let data = for @e ∈ d, acc = [ C64.1, C64.length.d]; acc
++ [ slot.wordref.caller.data.@e, slot.wordref.callee.data.@e, C64.0, C64.0, C64.0, C64.0]
  AGGREGATE.data
 
 function profiledatalen int length.encoding:seq.encodingpair.stat5 * 6 + 2

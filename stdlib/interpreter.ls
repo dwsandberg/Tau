@@ -39,14 +39,7 @@ Builtin bitcast(int)seq.int
 Builtin GEP(seq.int, int)int
 
 Function interpret(code:seq.symbol)seq.symbol
- let t = [ myinternaltype(first."x","seq"_1, mytype."word seq", empty:seq.mytype), 
-    myinternaltype(first."x","seq"_1, mytype."char seq", empty:seq.mytype), 
-    myinternaltype(first."x","seq"_1, mytype."int seq", empty:seq.mytype), 
-     myinternaltype(first."x","word"_1, mytype."words", [ typeint]),
-      myinternaltype(first."x","boolean"_1, mytype."standard", [ typeint]), 
-      myinternaltype(first."x","char"_1, mytype."standard", [ typeint]), 
-      myinternaltype(first."x","bits"_1, mytype."bits", [ typeint]),
-       myinternaltype(first."x","ptr"_1, mytype."ptr", [ typeint])]
+ let t = [ myinternaltype(first."x","seq"_1, mytype."word seq", empty:seq.mytype), myinternaltype(first."x","seq"_1, mytype."char seq", empty:seq.mytype), myinternaltype(first."x","seq"_1, mytype."int seq", empty:seq.mytype), myinternaltype(first."x","word"_1, mytype."words", [ typeint]), myinternaltype(first."x","boolean"_1, mytype."standard", [ typeint]), myinternaltype(first."x","char"_1, mytype."standard", [ typeint]), myinternaltype(first."x","bits"_1, mytype."bits", [ typeint]), myinternaltype(first."x","ptr"_1, mytype."ptr", [ typeint])]
  let r = interpret(typedict.t, removeconstant.code, 1, empty:stack.int)
   tocode(r, resulttype.last.code)
 
@@ -61,13 +54,11 @@ function tocode(r:int, typ:mytype)seq.symbol
  else
   assert abstracttype.typ ∈ "seq"report"resulttype not handled" + print.typ
   let s = bitcast.r
-   {((for(@e ∈ s, acc = [ Lit.0, Lit.length.s])acc + tocode(@e, parameter.typ)))}
+   for @e ∈ s, acc = [ Lit.0, Lit.length.s]; acc + tocode(@e, parameter.typ)
 
-   acc * 2 + if kind.gettypeinfo(alltypes, typ) = first."real"then 1 else 0
-   
- 
+acc * 2 + if kind.gettypeinfo(alltypes, typ)= first."real"then 1 else 0
 
-function aswords(s:seq.int)seq.word((for(@e ∈ s, acc ="")acc + wordencodingtoword.@e))
+function aswords(s:seq.int)seq.word for @e ∈ s, acc =""; acc + wordencodingtoword.@e
 
 Function interpret(alltypes:typedict, code:seq.symbol)seq.word aswords.bitcast.interpret(alltypes, code, 1, empty:stack.int)
 
@@ -81,10 +72,12 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)int
    if module.sym = "$word"then
    interpret(alltypes, code, i + 1, push(stk, hash.first.fsig.sym))
    else if module.sym = "$words"then
-   let a =((for(@e ∈ fsig.sym, acc = empty:seq.int)acc + hash.@e))
+   let a = for @e ∈ fsig.sym, acc = empty:seq.int ; acc + hash.@e
      interpret(alltypes, code, i + 1, push(stk, GEP(a, 0)))
    else if module.sym = "$int" ∨ module.sym = "$real" ∨ module.sym = "$boolean"then
    interpret(alltypes, code, i + 1, push(stk, toint.(fsig.sym)_1))
+   else if last.module.sym = "$sequence"_1 then
+   interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 0)))
    else if module.sym = "$record"then
    if subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
     interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara - 2), 0)))
@@ -96,10 +89,11 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)int
     let dcret = deepcopysym(alltypes, resulttype.sym)
     let adcret = dlsymbol.mangle(fsig.dcret, module.dcret)
      assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret
-      assert t > 0 report"Not handle by interperter" + print.sym + "mangle:" + mangle(fsig.sym, module.sym)
+      assert t > 0 report"Not handle by interperter" + fsig.sym + module.sym + "mangle:"
+      + mangle(fsig.sym, module.sym)
       let dc = deepcopysym(alltypes, mytype."word seq")
       let adc = dlsymbol.mangle(fsig.dc, module.dc)
        assert adc > 0 report"?"
-       let p = createthread(adcret, adc, t, packed.top(stk, nopara),buildargcode(alltypes,sym))
+       let p = createthread(adcret, adc, t, packed.top(stk, nopara), buildargcode(alltypes, sym))
         assert not.aborted.p report message.p
          interpret(alltypes, code, i + 1, push(pop(stk, nopara), result.p))

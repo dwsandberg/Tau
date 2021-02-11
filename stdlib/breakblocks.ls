@@ -16,31 +16,33 @@ use otherseq.caseblock
 
 use seq.caseblock
 
+use seq.mytype
+
 use seq.symbol
 
-Function print(s:seq.symbol)seq.word((for(@e ∈ s, acc ="")acc + print.@e))
-        
+Function print(s:seq.symbol)seq.word for @e ∈ s, acc =""; acc + print.@e
+
 Function state100(s:seq.symbol, p:program, self:symbol)state100
- (for(@e ∈ s, acc = state100(false, false, false))state100(acc, p, @e, self))
- 
-type state100 is record hasstate:boolean,hasunknown:boolean,callsself:boolean 
+ for @e ∈ s, acc = state100(false, false, false); state100(acc, p, @e, self)
 
-Export hasstate(state100) boolean
+type state100 is record hasstate:boolean, hasunknown:boolean, callsself:boolean
 
-Export hasunknown(state100) boolean
+Export hasstate(state100)boolean
 
-Export callsself(state100) boolean
+Export hasunknown(state100)boolean
 
-function state100(a:state100,p:program, s:symbol,self:symbol) state100
-        let state=hasstate.a
-        let unknown=hasunknown.a
-        let callsself=callsself.a
+Export callsself(state100)boolean
+
+function state100(a:state100, p:program, s:symbol, self:symbol)state100
+ let state = hasstate.a
+ let unknown = hasunknown.a
+ let callsself = callsself.a
  let options = if state ∧ unknown ∨ isspecial.s ∨ isconst.s ∨ islocal.s ∨ s = self
  ∨ module.s = "$define"then
  ""
  else if(fsig.s)_1 ∈ "setfld" ∨ module.s = "$global"then"STATE"
  else
-              let d = lookupcode(p, s)
+  let d = lookupcode(p, s)
    if isdefined.d then getoption.code.d else"undefined"
   state100(state ∨ "STATE"_1 ∈ options, unknown ∨ "undefined"_1 ∈ options, callsself ∨ self = s)
 
@@ -48,26 +50,23 @@ type block is record kind:word, blkno:int, label1:int, label2:int, code:seq.symb
 
 function block(kind:word, blkno:int, label1:int, label2:int, code:seq.symbol)block block(kind, blkno, label1, label2, code, empty:seq.block)
 
-use seq.mytype
-
 Function breakblocks(p:program, code:seq.symbol, self:symbol, alltypes:typedict)seq.symbol
  let a = breakblocks(p, code, 1, 1, empty:seq.symbol, empty:stack.block)
   if length.a = 1 then code.a_1
   else if kind.a_1 ≠ "LOOPBLOCK"_1
-  ∧ ((for(@e ∈ a, acc = false)acc ∨ tailrecursion(self, @e)))then
+  ∧ for @e ∈ a, acc = false ; acc ∨ tailrecursion(self, @e)then
   \\ tail recursion \\
    let nopara = nopara.self
-   let a2 =for(@e ∈ a, acc = empty:seq.block)acc + preparetail(nopara, self, continue.nopara, @e)
-   let plist =((for(e2 ∈ arithseq(nopara, 1, 1), acc = empty:seq.symbol)acc + Local.e2))
+   let a2 = for @e ∈ a, acc = empty:seq.block ; acc + preparetail(nopara, self, continue.nopara, @e)
+   let plist = for e2 ∈ arithseq(nopara, 1, 1), acc = empty:seq.symbol ; acc + Local.e2
    let entry = block("LOOPBLOCK"_1, 0, blkno.a2_1, 0, plist + Lit(nopara + 1)
-   + Loopblock.for e3 ∈ paratypes.self, acc =empty:seq.mytype ;  acc+   getbasetype(alltypes,e3)
-   )
+   + Loopblock.for e3 ∈ paratypes.self, acc = empty:seq.mytype ; acc + getbasetype(alltypes, e3))
     ascode(p, [ entry] + a2, self)
   else ascode(p, a, self)
-  
+
 function tailrecursion(self:symbol, b:block)boolean
  kind.b = "EXIT"_1 ∧ (code.b)_(length.code.b - 1) = self
- 
+
 function preparetail(nopara:int, self:symbol, continue:symbol, b:block)block
  let code = adjustvar(code.b, nopara, 1, empty:seq.symbol)
   if kind.b = "EXIT"_1 ∧ code_(length.code - 1) = self then
@@ -136,7 +135,7 @@ function cvtlabels(blks:seq.block, i:int, result:seq.block)seq.block
   else if kind.b = "SEQBLKS"_1 then subblks.blks_i
   else if kind.b = "BRBLKS"_1 then
   assert length.code.b = 3 report"OPT P"
-    ((for(@e ∈ subblks.b, acc = empty:seq.block)acc + convertexits(blkno.blks_(value.(code.b)_1), blkno.blks_(value.(code.b)_2), @e)))
+    for @e ∈ subblks.b, acc = empty:seq.block ; acc + convertexits(blkno.blks_(value.(code.b)_1), blkno.blks_(value.(code.b)_2), @e)
   else [ blks_i]
    cvtlabels(blks, i + 1, result + newtrees)
 
@@ -166,8 +165,8 @@ function checkforcase(p:program, blk:block)seq.symbol
  else
   let t = backparse2(code.blk, length.code.blk - 5, 1, empty:seq.int)
   let exp = subseq(code.blk, t_1, length.code.blk - 5)
-   if  hasstate.state100(exp,p,Lit0) then empty:seq.symbol else exp
-   
+   if hasstate.state100(exp, p, Lit0)then empty:seq.symbol else exp
+
 function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
  if no = 0 then result
  else
@@ -178,25 +177,25 @@ function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
    else
     let args = backparse(s, i - 1, nopara, empty:seq.int)
      assert length.args = nopara report"back parse 3" + print.[ s_i] + toword.nopara + "//"
-     + ((for(@e ∈ args, acc ="")acc + toword.@e))
+     + for @e ∈ args, acc =""; acc + toword.@e
       args_1
    let b = first
     backparse2(s, b - 1, no - 1, [ b] + result)
-    
+
 Function backparse(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
  if no = 0 then result
  else
   assert i > 0 report"back parse 1:" + toword.no + print.s + stacktrace
    if isdefine.s_i then
-     let args=backparse(s,i-1,1,empty:seq.int) 
-      backparse(s,args_1,no,result)
-   else 
-   let nopara = nopara.s_i
+   let args = backparse(s, i - 1, 1, empty:seq.int)
+     backparse(s, args_1, no, result)
+   else
+    let nopara = nopara.s_i
     let first = if nopara = 0 then i
     else
      let args = backparse(s, i - 1, nopara, empty:seq.int)
       assert length.args = nopara report"back parse 3" + print.[ s_i] + toword.nopara + "//"
-      + ((for(@e ∈ args, acc ="")acc + toword.@e))
+      + for @e ∈ args, acc =""; acc + toword.@e
        args_1
     let b = if first > 1 ∧ isdefine.s_(first - 1)then
     let c = backparse(s, first - 2, 1, empty:seq.int)
@@ -214,7 +213,7 @@ function ascode(p:program, l:seq.block, i:int, assigned:seq.block, result:seq.sy
      if \\ false &and \\ not.isempty.exp then
      let r = gathercase(l, blk, exp, empty:seq.caseblock)
        if length.caseblks.r = 1 then
-       \\ go ahead and process BR\\
+       \\ go ahead and process BR \\
         let c =(caseblks.r)_1
         let a1 = findblk2(l, 1, label1.blk)
         let l1 = findindex(a1, assigned)
@@ -310,15 +309,15 @@ function gathercase(l:seq.block, blk:block, exp:seq.symbol, caseblks:seq.caseblo
  else
   let rep = code_(len - 4)
    if module.rep = "$words"then
-   ((for(e6 ∈ fsig.rep, acc = empty:seq.caseblock)acc + caseblock(label, 0, e6)))
+   for e6 ∈ fsig.rep, acc = empty:seq.caseblock ; acc + caseblock(label, 0, e6)
    else
     assert length.constantcode.rep > 2
     ∧ ((constantcode.rep)_1 = Lit.0 ∨ (constantcode.rep)_1 = Lit.1)report"not a standard seq" + print.code
-     {(for(@e ∈ subseq(constantcode.rep, 3, length.constantcode.rep), acc = empty:seq.caseblock)acc + caseblock(label, 0, @e))}
+     for @e ∈ subseq(constantcode.rep, 3, length.constantcode.rep), acc = empty:seq.caseblock ; acc + caseblock(label, 0, @e)
   \\ now check to see if following block is a case block \\
   let newblock = findblk2(l, 1, label2.blk)
-   if iscaseblock.newblock ∧ subseq(code.newblock, 1, length.code.newblock - 5) = exp 
-   ∧ ((for(e5 ∈ l, acc = 0)acc + indegree(blkno.newblock, e5))) = 1 then
+   if iscaseblock.newblock ∧ subseq(code.newblock, 1, length.code.newblock - 5) = exp
+   ∧ for e5 ∈ l, acc = 0 ; acc + indegree(blkno.newblock, e5); = 1 then
    gathercase(l, newblock, exp, caseblks + t)
    else gathercaseresult(sort(caseblks + t), blkno.newblock)
 
@@ -346,19 +345,18 @@ function rearrangecase(cbs:seq.caseblock, nextblklabel:int, defaultlabel:int, va
    , [ block("BRC"_1, nextblklabel, upperlabel, nextblklabel + 1, [ var, keysig.middle, GtOp, Lit0, Lit0, Br]), block("BRC"_1, nextblklabel + 1, truelabel.middle, lowerlabel, [ var, keysig.middle, EqOp, Lit0, Lit0, Br])]
    + allocated.low
    + allocated.high)
-   
-function   indegree(label:int,b:block) int
-   if kind.b ="JMP"_1 then if label1.b=label then 1 else 0
+
+function indegree(label:int, b:block)int
+ if kind.b = "JMP"_1 then if label1.b = label then 1 else 0
  else if kind.b ∈ "BR BRC"then
  if label1.b = label ∨ label2.b = label then 1 else 0
-   else 0
-   
+ else 0
+
 function print(b:block)seq.word
- " &br >>>>" + toword.blkno.b +":" +kind.b   
+ " &br >>>>" + toword.blkno.b + ":" + kind.b
  + if kind.b ∈ "BR BRC"then
  [ toword.label1.b, toword.label2.b] + print.code.b
  else if kind.b = "BRBLKS"_1 then
- "(" + ((for(@e ∈ subblks.b, acc ="")acc + print.@e))
-  + ")"
+ "(" + for @e ∈ subblks.b, acc =""; acc + print.@e ; + ")"
  else if kind.b ∈ "EXIT CONTINUE"then print.code.b
  else if kind.b = "JMP"_1 then [ toword.label1.b] + print.code.b else"??"
