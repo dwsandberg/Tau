@@ -56,7 +56,6 @@ function tocode(r:int, typ:mytype)seq.symbol
   let s = bitcast.r
    for @e ∈ s, acc = [ Lit.0, Lit.length.s]; acc + tocode(@e, parameter.typ)
 
-acc * 2 + if kind.gettypeinfo(alltypes, typ)= first."real"then 1 else 0
 
 function aswords(s:seq.int)seq.word for @e ∈ s, acc =""; acc + wordencodingtoword.@e
 

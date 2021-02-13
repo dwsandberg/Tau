@@ -59,7 +59,6 @@ Function ?(a:seq.T, b:seq.T)ordering
    \\ a @ ?(EQ, @e ? b_@i)((@e ? b_@i)&ne EQ)\\
    subcmp(a, b, 1)
 
-a @ ?(EQ, @e ? b_@i)((@e ? b_@i)&ne EQ)
 
 function subcmp(a:seq.T, b:seq.T, i:int)ordering
  if i > length.a then EQ

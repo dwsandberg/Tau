@@ -306,9 +306,10 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
      let t1 = \\ if name ="pseq"_1 then"int"else \\"T"
      let indexfunc = Fref.newsymbol("_", modname.f, [ mytype(t1 + name), typeint], mytype.t1)
      let prg1 = fldcode(constructor, [ indexfunc], fldsyms, 1, 2,"", prg.f)
-     let prg2 = map(prg1, symtoseq, [ Local.1])
-     let prg3 = map(prg2, symfromseq, [ Local.1, GetSeqType, indexfunc, EqOp, Lit.2, Lit.3, Br, Local.1, Exit] + Emptyseq.typeptr
-     + [ Exit, Block(typeptr, 3)])
+     let prg2 = map(prg1, symtoseq, [ Local.1 ,newsymbol("toseqX:T",mytype." T builtin",[typeptr],mytype."T seq")])
+     let prg3 = map(prg2, symfromseq, 
+     [ Local.1, GetSeqType, indexfunc, EqOp, Lit.2, Lit.3, Br, Local.1, Exit,
+        Lit0,Lit0,Record.[typeint,typeint], Exit, Block(typeptr, 3), symbol("bitcast(ptr)","builtin","ptr")])
      let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]
       if name ≠ "seq"_1 then
       firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, types.f + it, prg3)
@@ -337,7 +338,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
     else
      assert not(sym ∈ defines.f)report"Function" + name.sym + "is defined twice in module" + print.modname.f
      let prg1 = if input_1 ∈ "Builtin builtin"then
-     let code2 = if fsig.sym = "empty:seq.T"then Emptyseq.typeint + [ Words."VERYSIMPLE", Optionsym]
+     let code2 = if fsig.sym = "empty:seq.T"then  Emptyseq.mytype."T" 
       else if fsig.sym = "aborted(T process)"then
       [ Local.1, symbol("aborted(T process)","builtin","boolean")]
       else if fsig.sym = "true"then [ Littrue, Words."VERYSIMPLE", Optionsym]

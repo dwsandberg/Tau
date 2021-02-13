@@ -103,7 +103,7 @@ function subcompilelib(option:seq.word, libname:seq.word)seq.seq.word
      if option = "pass2"then
      for @e ∈ defines, acc = empty:seq.seq.word ; acc + print(prg4, @e)
      else if option = "baseTypeCheck"then
-     ["base type check" + for e ∈ toseq.prg4, acc =""; acc + baseTypeCheck(alltypes.link, prg4, e)]
+     [  baseTypeCheck(alltypes.link, prg4 )]
      else
       let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link, isempty.dependentlibs)
       let z2 = createlib(bc, last.libname, dependentlibs)

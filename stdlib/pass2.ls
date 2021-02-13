@@ -290,7 +290,7 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
  let maybenoop = exitexp = [ Litfalse] ∧ length.thunk0 ∈ [ 3, 6]
  ∧ abstracttype.resulttype.accfunc = "seq"_1
  ∧ first.fsig.accfunc = "+"_1
- ∧ code_(t_1 - 5) = Constant2.Emptyseq.typeint
+ ∧ code_(t_1 - 5) = Constant2.Emptyseq.elementtype
   if maybenoop ∧ thunk0 = [ thunkplaceholders_2, thunkplaceholders_1, accfunc] ∧ module.accfunc = "bits seq"then
   \\ assert false report"symbol("+ fsig.accfunc + '","' + module.accfunc + '","' + returntype.accfunc +")"\\
    yyy(p, org, k + 1, code >> 9 + initseq, nextvar, map, papply)
@@ -298,7 +298,7 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
   ∧ thunk0 >> 2 = [ thunkplaceholders_2, Lit.0, Lit.1, thunkplaceholders_1]then
   yyy(p, org, k + 1, code >> 12 + initseq, nextvar, map, papply)
   else
-   let part1 = subseq(code, 1, t_1 - 5) + [ Defineinitacc, initseq, Lit.1, IdxInt, Define.totallength, initseq, initacc]
+   let part1 = subseq(code, 1, t_1 - 5) + [ Defineinitacc, initseq, GetSeqLength, Define.totallength, initseq, initacc]
    let checkCompound = breakAccumalator5(p, thunk0, resulttype, lastUsed, seqelement, newmasteridx, papply, thunkplaceholders)
    let codeparts = if nextvar.checkCompound = nextvar.issimple then
    \\ simple acc \\
@@ -324,7 +324,7 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
     [ masteridx, Local.totallength, GtOp, Lit.3, Lit.4, Br]
     + \\ 3 \\
     finalcode.codeparts
-    + [ Exit, \\ 4 else let newmasteridx = masteridx + 1, let sequenceele = seq_(idx)continue(thseqeq, thunk, newmasteridx)\\ masteridx, Lit.1, PlusOp, Definenewmasteridx, theseq, Lit.0, IdxInt, Defineseqtype, seqtype
+    + [ Exit, \\ 4 else let newmasteridx = masteridx + 1, let sequenceele = seq_(idx)continue(thseqeq, thunk, newmasteridx)\\ masteridx, Lit.1, PlusOp, Definenewmasteridx, theseq, GetSeqType, Defineseqtype, seqtype
     , Lit.0, EqOp, Lit.2, Lit.3, Br, theseq, masteridx, IdxS.theseqtype, Exit]
     + if packedseq then [ seqtype, Lit.1, EqOp, Lit.4, Lit.5, Br, theseq, masteridx] + packedindex2.theseqtype + [ Exit]
     else empty:seq.symbol ;
@@ -414,7 +414,6 @@ function filterp(p:filterp, s:symbol, code:seq.symbol, alltypes:typedict)filterp
   if isempty.code ∨ "BUILTIN"_1 ∈ options ∨ "VERYSIMPLE"_1 ∈ options then
   filterp(complex, map(simple, s, code))
   else if length.code < 30 ∨ "COMPILETIME"_1 ∈ options then
-  \\ 10 is choosen to be min size of code with apply3 \\
    let nopara = nopara.s
    let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
    let code2 = code.yyy(simple, code, 1, empty:seq.symbol, nopara + 1, pdict, false)

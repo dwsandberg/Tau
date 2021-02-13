@@ -38,7 +38,7 @@ function state100(a:state100, p:program, s:symbol, self:symbol)state100
  let unknown = hasunknown.a
  let callsself = callsself.a
  let options = if state ∧ unknown ∨ isspecial.s ∨ isconst.s ∨ islocal.s ∨ s = self
- ∨ module.s = "$define"then
+ ∨ module.s = "$define" &or module.s="builtin" &and first.fsig.s &in "toseq" then
  ""
  else if(fsig.s)_1 ∈ "setfld" ∨ module.s = "$global"then"STATE"
  else
@@ -210,7 +210,7 @@ function ascode(p:program, l:seq.block, i:int, assigned:seq.block, result:seq.sy
    if kind.blk ∈ "BR"then
    let a2 = findblk2(l, 1, label2.blk)
     let exp = checkforcase(p, blk)
-     if \\ false &and \\ not.isempty.exp then
+     if  not.isempty.exp then
      let r = gathercase(l, blk, exp, empty:seq.caseblock)
        if length.caseblks.r = 1 then
        \\ go ahead and process BR \\

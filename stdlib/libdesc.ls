@@ -40,8 +40,6 @@ Function libdesc(alltypes:typedict, p:program, templates:program, mods:seq.first
  ∪ for @e ∈ mods2, acc = empty:set.symbol ; acc ∪ exports.@e
  let set2 = asset.for @e ∈ toseq.symstoexport, acc = empty:seq.symbol ; acc + tolibsym(p, templates, symstoexport, @e)
  let t1 = asset.for @e ∈ toseq.set2, acc = empty:seq.symbol ; acc + zcode.@e
-  \\ assert false report"libsymbols"+ toseq.t1 @ +("", if isconst.@e &or islocal.@e &or isspecial.@e &or @e &in set2 &or(fsig.@e)_1 &in"apply3"then""else EOL + print.@e)\\
-  \\ assert symbol("false","standard","boolean")&in set2 report"missing false"\\
   addseq.for @e ∈ mods2, acc = empty:seq.symbol ; acc + addlibmod(set2, @e)
 
 function tolibmod(alltypes:typedict, p:program, templates:program, exports:seq.word, m:firstpass)seq.firstpass

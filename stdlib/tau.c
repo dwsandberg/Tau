@@ -169,6 +169,18 @@ BT addencodingZbuiltinZintZintzseqZintZint
  return (( BT *) newtable)[5];
 } 
 
+BT addencodingZbuiltinZintZptrZintZint
+ (processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
+ struct einfo *e=startencoding(PD, encodingnumber)  ;
+  assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+  BT encodingpair=   (e->allocatein == PD ) ? P2 : (deepcopy)(e->allocatein,P2)  ;
+  BT newtable=(add2)(e->allocatein,e->encodingstate,encodingpair);
+  e->encodingstate=newtable;
+ assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+ // return  encoding
+ return (( BT *) newtable)[5];
+} 
+
 // end of encoding support
 
 // start of library support //

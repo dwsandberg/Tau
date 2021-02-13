@@ -132,6 +132,8 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   else if action = "LOCAL"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, getloc(lmap.l, arg.m, 1)), blocks.l)
   else if action = "TEMPLATE"_1 then
+  if length.m=0 then l
+  else
   let newcode = usetemplate(m, regno.l, toseq.args.l)
    let noargs = arg.m
     Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + length.m, push(pop(args.l, noargs),-(regno.l + length.m)), blocks.l)

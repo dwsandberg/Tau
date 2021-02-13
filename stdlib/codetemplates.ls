@@ -131,13 +131,13 @@ Function funcdec(alltypes:typedict, i:symbol)int
  toint.modulerecord([ mangledname.i], [ toint.FUNCTIONDEC, typ.tollvmtype(alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
 Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
- let discard3 = [ addtemplate(symbol("extractbit(int seq, int)","internal","int"), 7, BINOP(r.1, ibcsub.2, C64.6, lshr) + BINOP(r.2, r.1, C64.2, add)
+ let discard3 = [ addtemplate(symbol("extractbit(bit seq, int)","internal","int"), 7, BINOP(r.1, ibcsub.2, C64.6, lshr) + BINOP(r.2, r.1, C64.2, add)
  + GEP(r.3, i64, ibcsub.1, r.2)
  + LOAD(r.4, r.3, i64)
  + BINOP(r.5, ibcsub.2, C64.63, and)
  + BINOP(r.6, r.4, r.5, lshr)
  + BINOP(r.7, r.6, C64.1, and))
- , addtemplate(symbol("extractbyte(int seq, int)","internal","int"), 8, BINOP(r.1, ibcsub.2, C64.3, lshr) + BINOP(r.2, r.1, C64.2, add)
+ , addtemplate(symbol("extractbyte(byte seq, int)","internal","int"), 8, BINOP(r.1, ibcsub.2, C64.3, lshr) + BINOP(r.2, r.1, C64.2, add)
  + GEP(r.3, i64, ibcsub.1, r.2)
  + LOAD(r.4, r.3, i64)
  + BINOP(r.5, ibcsub.2, C64.7, and)
@@ -161,11 +161,15 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  + BINOP(r.3, r.2, C64.2, add)
  + GEP(r.4, i64, ibcsub.1, r.3))
  , addtemplate(symbol("tocstr(bits seq)","fileio","cstr"), 2, GEP(r.1, i64, ibcsub.1, C64.2) + CAST(r.2, r.1, i64, ptrtoint))
- , addtemplate(symbol("toint(byte)","bits","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
- , addtemplate(symbol("toint(bit)","bits","int"), 1, BINOP(r.1, ibcsub.1, C64.0, add))
+ , addtemplate(symbol("toint(byte)","bits","int"),  0, emptyinternalbc)
+ , addtemplate(symbol("toint(bit)","bits","int"),  0, emptyinternalbc)
  , \\ addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0)+ STORE(r.2, r.1, ibcsub.1)+ GEP(r.2, ptr.i64, r.1, C64.1)+ STORE(r.3, r.2, ibcsub.2)+ GEP(r.3, ptr.i64, r.1, C64.0)), addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint)), addtemplate(symbol("bitcast(int seq)","interpreter","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint)), \\
  addtemplate(symbol("GEP(int seq, int)","interpreter","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + CAST(r.2, r.1, i64, ptrtoint))
  , addtemplate(symbol("bitcast(int)","interpreter","int seq"), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
+ , addtemplate(symbol("bitcast(ptr)","builtin","ptr"), 1, GEP(r.1, i64, ibcsub.1, C64.0))
+ , addtemplate(symbol("toseqX:seq.int(ptr)","tausupport","int seq"),0, emptyinternalbc)
+  , addtemplates("bit byte int ptr real packed2 packed3 packed4 packed5 packed6",
+  symbol("toseq:seq.T(ptr)","builtin","ptr"),0, emptyinternalbc)
  , addtemplate(symbol("intpart(real)","real","real"), 1, CAST(r.1, ibcsub.1, i64, fptosi))
  , addtemplate(symbol("toreal(int)","real","real"), 1, CAST(r.1, ibcsub.1, double, sitofp))
  , addtemplate(symbol("-(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
@@ -254,7 +258,8 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("IDX:ptr(ptr, int)","ptr builtin","ptr"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
  + CAST(r.3, r.2, ptr.i64, inttoptr))
  , addtemplate(symbol("IDX:real(ptr, int)","real builtin","real"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
- + CAST(r.3, r.2, double, bitcast))]
+ + CAST(r.3, r.2, double, bitcast))
+]
  let const = for @e ∈ toseq(uses - asset.[ Optionsym]), acc = empty:seq.symbol ; acc + buildtemplate(theprg, alltypes, @e)
  let discard4 = processconst(const, 1, empty:seq.symbol)
   empty:seq.match5
@@ -291,7 +296,6 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
  else
   let discard1 = if isFref.xx then
   let f1 =(constantcode.xx)_1
-    \\ assert double &nin tollvmtypelist(alltypes, f1)&or fsig.f1 &in ["_(typereal pseq, int)","_(real pseq, int)","_(real blockseq, int)","_(typereal cseq, int)"]report"FREF to real function"+ print.xx \\
     let mn = mangledname.f1
     let functyp = ptr.tollvmtype(alltypes, f1)
      addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
@@ -331,6 +335,12 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
     else if(fsig.xx)_1 = "callidx"_1 ∧ last.module.xx = "builtin"_1 then
     let intable2 = findtemplate.symbol("callidx(ptr seq, int)","ptr builtin","ptr")
       addtemplate(xx, length.intable2_1, parts.intable2_1)
+    else if(fsig.xx)_1 = "toseq"_1 ∧ last.module.xx = "builtin"_1 then
+      addtemplate(xx,  0, emptyinternalbc)
+    else if(fsig.xx)_1 = "allocatespace"_1 ∧ last.module.xx = "builtin"_1 then
+      addtemplate(xx,    1
+ , CALL(r.1, 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespace", function.[ ptr.i64, i64, i64])
+  , slot.ibcfirstpara2, ibcsub.1))
     else if(fsig.xx)_1 = "global"_1 ∧ module.xx = "$global"then
     addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
     else
