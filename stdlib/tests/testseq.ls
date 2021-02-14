@@ -38,7 +38,7 @@ use seq.seq.word
 
 use testpackedseq.seq.word
 
-type ccc is record key:int, val:int
+type ccc is key:int, val:int
 
 function assignencoding(a:int, b:ccc)int assignrandom(a, b)
 
@@ -52,13 +52,13 @@ Function getint(size:int)int
  let c = encode.ccc(key.p + 1, d)
   d mod size
 
-type typerec2 is record a:int, b:int
+type typerec2 is a:int, b:int
 
 function get:typerec2 typerec2 typerec2(getint.1000, getint.1000)
 
 function =(x:typerec2, y:typerec2)boolean a.x = a.y ∧ b.x = b.y
 
-type typereal is record a:real
+type typereal is a:real
 
 function get:typereal typereal typereal.toreal.getint.1000
 
@@ -81,7 +81,7 @@ let z = check:seq.typerec2
  else"FAIL testseq" + w + x + y + z
 
 Function sparsecheck seq.word
-let b = for @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200), acc = sparseseq.101 ;
+let b = for @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200), acc = sparseseq.101 ,,,
  check(acc, @e)
  "Pass Sparse Sequence"
 

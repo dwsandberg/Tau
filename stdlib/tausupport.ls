@@ -38,7 +38,7 @@ function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:T)int
  if memsize = 0 then idx
  else memcpy(setfld(idx, s, IDX(bitcast.fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
 
-type blockseq is record sequence, dummy:seq.T
+type blockseq is sequence, dummy:seq.T
 
 function blocksize:T int 10000
 
@@ -58,26 +58,26 @@ Function blockit(s:seq.T, ds:int)seq.T
  let blksz = blocksize:T / ds
   if length.s ≤ blksz then
   let newseq = allocatespace:T(length.s * ds + 2)
-   let d = for @e ∈ s, acc = 2 ; memcpy(acc, 0, ds, newseq, @e)
+   let d = for @e ∈ s, acc = 2 ,,, memcpy(acc, 0, ds, newseq, @e)
     setfirst(newseq, 1, length.s)
   else
    let noblks =(length.s + blksz - 1) / blksz
    let blkseq = allocatespace:seq.T(noblks + 2)
    let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
-   let discard = for @e ∈ arithseq(noblks, blksz, 1), acc = 2 ; setfld(acc, blkseq, blockit(subseq(s, @e, @e + blksz - 1), ds))
+   let discard = for @e ∈ arithseq(noblks, blksz, 1), acc = 2 ,,, setfld(acc, blkseq, blockit(subseq(s, @e, @e + blksz - 1), ds))
     setfirst(bitcast.blkseq, blockseqtype, length.s)
 
 Function blockit(s:seq.T)seq.T
  let blksz = blocksize:T
   if length.s ≤ blksz then
   let newseq = allocatespace:T(length.s + 2)
-   let d = for @e ∈ s, acc = 2 ; setfld(acc, newseq, @e)
+   let d = for @e ∈ s, acc = 2 ,,, setfld(acc, newseq, @e)
     setfirst(newseq, 0, length.s)
   else
    let noblks =(length.s + blksz - 1) / blksz
    let blkseq = allocatespace:seq.T(noblks + 2)
    let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
-   let discard = for @e ∈ arithseq(noblks, blksz, 1), acc = 2 ; setfld(acc, blkseq, blockit.subseq(s, @e, @e + blksz - 1))
+   let discard = for @e ∈ arithseq(noblks, blksz, 1), acc = 2 ,,, setfld(acc, blkseq, blockit.subseq(s, @e, @e + blksz - 1))
     setfirst(bitcast.blkseq, blockseqtype, length.s)
 
 module tausupport
@@ -124,17 +124,17 @@ use seq.seq.int
 
 use seq.encodingpair.seq.char
 
-type packed2 is record fld1:int, fld2:int
+type packed2 is fld1:int, fld2:int
 
-type packed3 is record fld1:int, fld2:int, fld3:int
+type packed3 is fld1:int, fld2:int, fld3:int
 
-type packed4 is record fld1:int, fld2:int, fld3:int, fld4:int
+type packed4 is fld1:int, fld2:int, fld3:int, fld4:int
 
-type packed5 is record fld1:int, fld2:int, fld3:int, fld4:int, fld5:int
+type packed5 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int
 
-type packed6 is record fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
+type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
 
-type ptr is record xx:int
+type ptr is xx:int
 
 Export IDX:ptr(ptr, int)ptr
 
@@ -194,7 +194,7 @@ Function deepcopy(a:int)int a
 
 Function deepcopy(a:real)real a
 
-type typename is record name:seq.word
+type typename is name:seq.word
 
 function =(a:typename, b:typename)boolean name.a = name.b
 
@@ -208,6 +208,6 @@ function assignencoding(a:int, typename)int a + 1
 
 -----------
 
-Function stacktrace seq.word for @e ∈ callstack.30 << 2, acc =""; acc + " &br" + printmangled.addresstosymbol.@e
+Function stacktrace seq.word for @e ∈ callstack.30 << 2, acc ="",,, acc + " &br" + printmangled.addresstosymbol.@e
 
 Function addresstosymbol(a:int)word encodeword.addresstosymbol2.a

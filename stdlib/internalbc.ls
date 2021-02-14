@@ -40,7 +40,7 @@ use seq.seq.internalbc
 
 use seq.seq.seq.int
 
-type templatepart is record val:bits
+type templatepart is val:bits
 
 function bits(b:templatepart)bits val.b >> 6
 
@@ -69,9 +69,9 @@ Function ibcfirstpara2 int toint(0x1 << 40)
 
 Function ibcsub(i:int)slot slot(ibcfirstpara2 + i)
 
-type internalbc is record parts:seq.templatepart
+type internalbc is parts:seq.templatepart
 
-Function print(bc:internalbc)seq.word for e ∈ parts.bc, acc =""; acc + print.val.e
+Function print(bc:internalbc)seq.word for e ∈ parts.bc, acc ="",,, acc + print.val.e
 
 function tail(b:internalbc)seq.templatepart parts.b << 1
 
@@ -103,7 +103,7 @@ function add4bits(val:int, b:internalbc)internalbc
  if bitcount.b > 56 - 4 then internalbc(val, 4, parts.b)
  else internalbc(bits.b << 4 ∨ tobits.val, bitcount.b + 4, tail.b)
 
-Function addtobitstream(offset:int, bs:bitstream, b:internalbc)bitstream for @e ∈ parts.b, acc = bs ; add2(acc, offset, @e)
+Function addtobitstream(offset:int, bs:bitstream, b:internalbc)bitstream for @e ∈ parts.b, acc = bs ,,, add2(acc, offset, @e)
 
 function add2(result:bitstream, offset:int, valx:templatepart)bitstream
  let nobits = bitcount.valx
@@ -131,7 +131,7 @@ function processtemplatepart(deltaoffset:int, args:seq.int, t:templatepart)seq.t
     [ templatepart.tobits(toint.val.t + 64 * deltaoffset)]
 
 Function processtemplate(s:internalbc, deltaoffset:int, args:seq.int)internalbc
- internalbc.for @e ∈ parts.s, acc = empty:seq.templatepart ; acc + processtemplatepart(deltaoffset, args, @e)
+ internalbc.for @e ∈ parts.s, acc = empty:seq.templatepart ,,, acc + processtemplatepart(deltaoffset, args, @e)
 
 function addaddress(slot:int, a:int, b:internalbc)internalbc
  if a < 0 then add(slot + a, b)
@@ -240,11 +240,11 @@ function addpair(a:internalbc, tailphi:seq.int, slot:int, p:int, b:int)internalb
 (block1, p11, p12, p13, block2, p21, p22, p23)phi(p11, block1, p21, block2)
 
 Function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int)internalbc
- for @e ∈ arithseq(nopara, 1, 1), acc = emptyinternalbc ; acc + phiinst(slot, typ, tailphi, nopara, @e)
+ for @e ∈ arithseq(nopara, 1, 1), acc = emptyinternalbc ,,, acc + phiinst(slot, typ, tailphi, nopara, @e)
 
 function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int, p:int)internalbc
  \\ let t = @(addpair(tailphi, slot + p, p), identity, emptyinternalbc, arithseq(length.tailphi /(nopara + 1),-nopara-1, length.tailphi-nopara))\\
- let t = for @e ∈ arithseq(length.tailphi / (nopara + 1),-nopara - 1, length.tailphi - nopara), acc = emptyinternalbc ;
+ let t = for @e ∈ arithseq(length.tailphi / (nopara + 1),-nopara - 1, length.tailphi - nopara), acc = emptyinternalbc ,,,
   addpair(acc, tailphi, slot + p, p, @e)
   addstartbits(toint.PHI, length.tailphi / (nopara + 1) * 2 + 1, add(typ_p, t))
 
@@ -317,12 +317,12 @@ Function addbody(m:bitstream, bodytxt:seq.seq.int)bitstream
  let header = addblockheader(m, MODABBREVLEN, toint.FUNCTIONBLK, FUNCABBRVLEN)
   finishblock(addrecords(header, FUNCABBRVLEN, bodytxt), length.header, FUNCABBRVLEN)
 
-Function addrecords(bits:bitstream, abbrevlength:int, s:seq.seq.int)bitstream for @e ∈ s, acc = bits ; addrecord(acc, abbrevlength, @e)
+Function addrecords(bits:bitstream, abbrevlength:int, s:seq.seq.int)bitstream for @e ∈ s, acc = bits ,,, addrecord(acc, abbrevlength, @e)
 
 function addrecord(bits:bitstream, abbrevlength:int, a:seq.int)bitstream
  let a1 = addvbr(bits, UNABBREVRECORD, abbrevlength)
  let a2 = addvbr6(addvbr6(a1, a_1), length.a - 1)
-  for @e ∈ subseq(a, 2, length.a), acc = a2 ; addvbr6(acc, @e)
+  for @e ∈ subseq(a, 2, length.a), acc = a2 ,,, addvbr6(acc, @e)
 
 function ENDBLOCK int 0
 
@@ -339,7 +339,7 @@ function FUNCABBRVLEN int 4
 Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits
  let p = llvmpartial(deflist, trecords)
  let offset = length.constantrecords
- let a7 = for @e ∈ bodytxts, acc = a6.p ; addbody(acc, offset, @e)
+ let a7 = for @e ∈ bodytxts, acc = a6.p ,,, addbody(acc, offset, @e)
   \\ sym table \\
   let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
   let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
@@ -348,13 +348,13 @@ Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int
 Function llvm(trecords:seq.seq.int, bodies:seq.seq.seq.int)seq.bits
  let p = llvmpartial(empty:seq.seq.int, trecords)
  let offset = length.constantrecords
- let a7 = for @e ∈ bodies, acc = a6.p ; addbody(acc, @e)
+ let a7 = for @e ∈ bodies, acc = a6.p ,,, addbody(acc, @e)
   \\ sym table \\
   let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
   let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
    \\ finish module block \\ bits.finishblock(a8, length.h.p, MODABBREVLEN)
 
-type llvmpartial is record a6:bitstream, h:bitstream
+type llvmpartial is a6:bitstream, h:bitstream
 
 Function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int)llvmpartial
  let offset = length.constantrecords
@@ -362,7 +362,7 @@ Function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int)llvmpartial
  let info = getmachineinfo
  let a = addrecords(h
  , MODABBREVLEN
- , [ [ 1, 1], [ toint.TRIPLE] + for @e ∈ triple.info, acc = empty:seq.int ; acc + toint.@e, [ toint.LAYOUT] + for @e ∈ datalayout.info, acc = empty:seq.int ; acc + toint.@e])
+ , [ [ 1, 1], [ toint.TRIPLE] + for @e ∈ triple.info, acc = empty:seq.int ,,, acc + toint.@e, [ toint.LAYOUT] + for @e ∈ datalayout.info, acc = empty:seq.int ,,, acc + toint.@e])
   \\ type block \\
   let typeheader = addblockheader(a, MODABBREVLEN, toint.TYPES, TYPEABBREVLEN)
   let a2 = addrecords(typeheader, TYPEABBREVLEN, [ [ toint.NumEle, length.trecords]] + trecords)
@@ -372,7 +372,7 @@ Function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int)llvmpartial
    let pge = finishblock(addrecords(pgh
    , TYPEABBREVLEN
    , [ [ 3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18] + [ 3]
-   + tointseq.for @e ∈"no-frame-pointer-elim-non-leaf", acc = empty:seq.char ; acc + decodeword.@e ;
+   + tointseq.for @e ∈"no-frame-pointer-elim-non-leaf", acc = empty:seq.char ,,, acc + decodeword.@e ;
    + [ 0]])
    , length.pgh
    , TYPEABBREVLEN)
@@ -382,7 +382,7 @@ Function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int)llvmpartial
      \\ def list \\
      let a5 = addrecords(a4, MODABBREVLEN, deflist)
       \\ const block \\
-      let g = for @e ∈ subseq(constantrecords, length.deflist + 1, offset), acc = trackconst(a5,-1, 0); constrecords(acc, @e)
+      let g = for @e ∈ subseq(constantrecords, length.deflist + 1, offset), acc = trackconst(a5,-1, 0),,, constrecords(acc, @e)
       let a6 = finishblock(bits.g, blockstart.g, TYPEABBREVLEN)
        llvmpartial(a6, h)
 
@@ -422,10 +422,10 @@ Function symentries(bits:bitstream, s:seq.slotrecord, i:int)bitstream
   else bits
    symentries(bs, s, i + 1)
 
-type trackconst is record bits:bitstream, lasttype:int, blockstart:int
+type trackconst is bits:bitstream, lasttype:int, blockstart:int
 
 function islastmodule(l:trackconst)boolean lasttype.l < 0
 
-type machineinfo is record triple:seq.byte, datalayout:seq.byte
+type machineinfo is triple:seq.byte, datalayout:seq.byte
 
 builtin getmachineinfo machineinfo

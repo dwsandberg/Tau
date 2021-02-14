@@ -8,7 +8,7 @@ use otherseq.int
 
 Export type:intdict.T
 
-type intdict is record keys:seq.int, data:seq.T
+type intdict is keys:seq.int, data:seq.T
 
 Export data(intdict.T)seq.T
 

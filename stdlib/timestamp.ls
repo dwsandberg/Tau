@@ -8,7 +8,7 @@ use seq.byte
 
 Export type:timestamp
 
-type timestamp is record toint:int
+type timestamp is toint:int
 
 function subseq(a:UTF8, i:int, j:int)UTF8 UTF8.subseq(toseqbyte.a, i, j)
 

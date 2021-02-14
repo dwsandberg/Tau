@@ -23,15 +23,15 @@ use seq.int
 Export type:cstr
 
 Function tocstr(s:seq.word)cstr
- tocstr.packed.bits.for @e ∈ toseqbyte.toUTF8.s + tobyte.0, acc = empty:bitstream ; add(acc, bits.toint.@e, 8)
+ tocstr.packed.bits.for @e ∈ toseqbyte.toUTF8.s + tobyte.0, acc = empty:bitstream ,,, add(acc, bits.toint.@e, 8)
 
-type fileresult is record size:int, start:seq.int, data:seq.int
+type fileresult is size:int, start:seq.int, data:seq.int
 
-type fileresultbit is record size:int, start:seq.bit, data:seq.bit
+type fileresultbit is size:int, start:seq.bit, data:seq.bit
 
-type fileresultbyte is record size:int, start:seq.byte, data:seq.byte
+type fileresultbyte is size:int, start:seq.byte, data:seq.byte
 
-type cstr is record dummy:int
+type cstr is dummy:int
 
 builtin createlib2(name:cstr, libs:cstr, length:int, data:seq.bits)int
 
@@ -70,15 +70,15 @@ Function gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte
 Function getfileaslines(filename:seq.word)seq.UTF8 breaklines.UTF8.getfile:byte(filename)
 
 Function createfile(filename:seq.word, s:seq.seq.word)int
- createfile(filename, for @e ∈ s, acc = empty:seq.byte ; acc + toseqbyte.toUTF8.@e + [ tobyte.10, tobyte.10])
+ createfile(filename, for @e ∈ s, acc = empty:seq.byte ,,, acc + toseqbyte.toUTF8.@e + [ tobyte.10, tobyte.10])
 
 Function createfile(filename:seq.word, s:seq.word)int createfile(filename, toseqbyte.toUTF8.s)
 
 Function createfile(name:seq.word, a:seq.byte)int
- createfile3(length.a, packed.bits.for @e ∈ a, acc = empty:bitstream ; add(acc, bits.toint.@e, 8), tocstr.name)
+ createfile3(length.a, packed.bits.for @e ∈ a, acc = empty:bitstream ,,, add(acc, bits.toint.@e, 8), tocstr.name)
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
- createlib2(tocstr.[ libname], tocstr.for @e ∈ dependlibs, acc =""; acc + [ @e] + ".dylib", length.b * 8, packed.b)
+ createlib2(tocstr.[ libname], tocstr.for @e ∈ dependlibs, acc ="",,, acc + [ @e] + ".dylib", length.b * 8, packed.b)
 
 Function createfile(name:seq.word, a:seq.int)int
- createfile3(length.a * 8, for @e ∈ packed.a, acc = empty:seq.bits ; acc + bits.@e, tocstr.name)
+ createfile3(length.a * 8, for @e ∈ packed.a, acc = empty:seq.bits ,,, acc + bits.@e, tocstr.name)

@@ -8,9 +8,9 @@ use seq.treenode.T
 
 use standard
 
-type tree2 is record nodes:seq.treenode.T, subtree:int
+type tree2 is nodes:seq.treenode.T, subtree:int
 
-type treenode is record label:T, nosons:int, nonodes:int
+type treenode is label:T, nosons:int, nonodes:int
 
 unbound =(T, T)boolean
 

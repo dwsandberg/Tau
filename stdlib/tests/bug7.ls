@@ -16,7 +16,7 @@ use seq.slot2
 
 use seq.seq.int
 
-type slot2 is record type:int, rec:seq.int, name:seq.word
+type slot2 is type:int, rec:seq.int, name:seq.word
 
 function =(a:slot2, b:slot2)boolean
  rec.a = rec.b ∧ type.a = type.b ∧ name.a = name.b
@@ -34,7 +34,7 @@ let z = c32.0
  "PASS bug7"
  else"FAIL bug 7"
 
-type llvmtypeele2 is record toseq:seq.int
+type llvmtypeele2 is toseq:seq.int
 
 function hash(a:llvmtypeele2)int hash.toseq.a
 
@@ -54,7 +54,7 @@ use standard
 
 use seq.T
 
-type seq8 is record sequence, flda:seq.T, fldb:int
+type seq8 is sequence, flda:seq.T, fldb:int
 
 function_(a:seq8.T, i:int)T(flda.a)_i
 

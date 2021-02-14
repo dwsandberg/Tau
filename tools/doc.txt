@@ -119,7 +119,7 @@ The following paragraph starts a new module. A module is a collection of functio
 
 Here is a simple type definition that introduces a new type with two components.
 
-&keyword type point2d is record x:int, y:int
+&keyword type point2d is x:int, y:int
 
 The follow paragraph that begins with use allows reference to functions defined in another module. In this case, the standard library functions.
 
@@ -359,7 +359,7 @@ A type can be mapped to positive integers in an encoding. As an example consider
 
 We need a type to encode:
 
-&keyword type factors is record key:int, factors:seq.int
+&keyword type factors is key:int, factors:seq.int
 
 We must define a hash function and = function of the type.
 

@@ -58,7 +58,7 @@ Export alltypes(linkage)typedict
 
 Export type:linkage internaltype
 
-type linkage is record result:program, compiled:set.symbol, roots:seq.symbol, mods:seq.firstpass, templates:program, alltypes:typedict, dict:set.symbol
+type linkage is result:program, compiled:set.symbol, roots:seq.symbol, mods:seq.firstpass, templates:program, alltypes:typedict, dict:set.symbol
 
 function =(a:firstpass, b:firstpass)boolean modname.a = modname.b
 
@@ -76,35 +76,35 @@ Function find(modset:set.firstpass, name:mytype)set.firstpass
 function issimple2(s:symbol)seq.symbol if isabstract.modname.s then empty:seq.symbol else [ s]
 
 Function pass1(allsrc:seq.seq.seq.word, exports:seq.word, librarymods:seq.firstpass)linkage
- let alllibsym = for @e ∈ librarymods, acc = empty:set.symbol ; acc ∪ defines.@e ;
- ∪ for @e ∈ librarymods, acc = empty:set.symbol ; acc ∪ exports.@e
- let simplesym = asset.for @e ∈ toseq.alllibsym, acc = empty:seq.symbol ; acc + issimple2.@e
+ let alllibsym = for @e ∈ librarymods, acc = empty:set.symbol ,,, acc ∪ defines.@e ;
+ ∪ for @e ∈ librarymods, acc = empty:set.symbol ,,, acc ∪ exports.@e
+ let simplesym = asset.for @e ∈ toseq.alllibsym, acc = empty:seq.symbol ,,, acc + issimple2.@e
  let libprg = program2.simplesym
  let libtemplates = program2(alllibsym - simplesym)
   \\ let discard = getinstance:encodingstate.symboltext \\
-  let a = for @e ∈ allsrc, acc = asset.librarymods ; gathersymbols(acc, @e)
+  let a = for @e ∈ allsrc, acc = asset.librarymods ,,, gathersymbols(acc, @e)
   let expand1 = expanduse.expanduseresult(a, empty:seq.mapele)
   let u0 = firstpasses.expand1
    \\ let u1 = @(+, getunboundexport, empty:seq.unboundexport, toseq.u0)let d1 = resolveexport(u0, empty:set.symbol, mytype."1", u1, 1, empty:seq.unboundexport)\\
    let d1 = resolveunboundexports.u0
-   let allsymbols1 = for @e ∈ toseq.d1, acc = empty:set.symbol ; acc ∪ defines.@e
-   let alltypes0 = for @e ∈ toseq.d1, acc = empty:seq.myinternaltype ; acc + types.@e
+   let allsymbols1 = for @e ∈ toseq.d1, acc = empty:set.symbol ,,, acc ∪ defines.@e
+   let alltypes0 = for @e ∈ toseq.d1, acc = empty:seq.myinternaltype ,,, acc + types.@e
     \\ assert false report"XX"+ @(seperator."
 &br", towords,"", alltypes0)\\
     let alltypes = processtypedef(typedict.basetypes, alltypes0, 1, empty:seq.myinternaltype)
     let abstractsimple1 = split(toseq.d1, 1, empty:seq.firstpass, empty:seq.firstpass)
     let simple = abstractsimple1_2
     let abstract = abstractsimple1_1
-    let prg1 = for @e ∈ simple, acc = libprg ; bind3(acc, alltypes, d1, @e)
-    let templates0 = for @e ∈ abstract, acc = libtemplates ; bind3(acc, alltypes, d1, @e)
+    let prg1 = for @e ∈ simple, acc = libprg ,,, bind3(acc, alltypes, d1, @e)
+    let templates0 = for @e ∈ abstract, acc = libtemplates ,,, bind3(acc, alltypes, d1, @e)
     let templates = maptemp(map.expand1, templates0)
-    let roots = for @e ∈ simple, acc = empty:seq.symbol ; acc + roots(exports, @e)
+    let roots = for @e ∈ simple, acc = empty:seq.symbol ,,, acc + roots(exports, @e)
      linkage(prg1, asset.toseq.libprg, roots, simple + abstract, templates, alltypes, allsymbols1)
 
 function basetypes seq.myinternaltype [ myinternaltype("defined"_1,"int"_1, mytype."standard", [ typeint]), myinternaltype("defined"_1,"boolean"_1, mytype."standard", [ typeint])]
 
 function maptemp(map:seq.mapele, templates:program)program
- for e ∈ map, st = templates ;
+ for e ∈ map, st = templates ,,,
  let s2 = lookupcode(templates, target.e)
   if isdefined.s2 then map(st, key.e, target.e, code.s2)
   else map(st, key.e, target.e, empty:seq.symbol)
@@ -113,15 +113,15 @@ function processtypedef(defined:typedict, undefined:seq.myinternaltype, i:int, n
  if i > length.undefined then
  if length.newundefined = 0 then defined
   else
-   assert length.undefined > length.newundefined report"unresolved types:" + for @e ∈ newundefined, acc =""; list(acc," &br", print3.@e)
+   assert length.undefined > length.newundefined report"unresolved types:" + for @e ∈ newundefined, acc ="",,, list(acc," &br", print3.@e)
     processtypedef(defined, newundefined, 1, empty:seq.myinternaltype)
  else
   let td = undefined_i
   let fldtypes = if kind.td ∈ "record"then
-  for @e ∈ subflds.td, acc = empty:seq.mytype ; acc + parameter.@e
-  else if kind.td ∈ "sequence"then for @e ∈ subflds.td, acc = [ typeint]; acc + parameter.@e
+  for @e ∈ subflds.td, acc = empty:seq.mytype ,,, acc + parameter.@e
+  else if kind.td ∈ "sequence"then for @e ∈ subflds.td, acc = [ typeint],,, acc + parameter.@e
   else subflds.td
-  let flds = for fld ∈ fldtypes, acc = empty:seq.mytype, idx, false ;
+  let flds = for fld ∈ fldtypes, acc = empty:seq.mytype, idx, ,
   let tmp = subflddefined(defined, replaceT(modpara.td, fld))
    if idx = 1 ∨ isempty.tmp then tmp else if isempty.acc then acc else acc + tmp
    if length.flds = 0 then
@@ -135,7 +135,7 @@ function subflddefined(defined:typedict, typ:mytype)seq.mytype
   let typdesc = findelement(defined, typ)
    if isempty.typdesc then \\ not defined \\ empty:seq.mytype else subflds.typdesc_1
 
-type unboundexport is record modname:mytype, unbound:symbol
+type unboundexport is modname:mytype, unbound:symbol
 
 /function getunboundexport(f:firstpass)seq.unboundexport @(+, unboundexport(modname.f), empty:seq.unboundexport, unboundexports.f)
 
@@ -144,15 +144,15 @@ type unboundexport is record modname:mytype, unbound:symbol
 function print(x:unboundexport)seq.word" &br" + print.modname.x + print.unbound.x
 
 function resolveunboundexports(modset:set.firstpass)set.firstpass
- let u = for @e ∈ toseq.modset, acc = empty:seq.firstpass ; acc + hasunbound.@e
- let orgcount = for @e ∈ u, acc = 0 ; acc + totalunbound.@e
+ let u = for @e ∈ toseq.modset, acc = empty:seq.firstpass ,,, acc + hasunbound.@e
+ let orgcount = for @e ∈ u, acc = 0 ,,, acc + totalunbound.@e
   if orgcount = 0 then modset
   else
-   let newset = for @e ∈ u, acc = modset ; bindunboundexports(acc, @e)
-   let newcount = for @e ∈ toseq.newset, acc = 0 ; acc + totalunbound.@e
+   let newset = for @e ∈ u, acc = modset ,,, bindunboundexports(acc, @e)
+   let newcount = for @e ∈ toseq.newset, acc = 0 ,,, acc + totalunbound.@e
     if newcount = orgcount then
     assert orgcount = 0 report"unresolved exports"
-     + for @e ∈ for @e ∈ u, acc = empty:seq.symbol ; acc + unboundexports.@e, acc =""; acc + print.@e
+     + for @e ∈ for @e ∈ u, acc = empty:seq.symbol ,,, acc + unboundexports.@e, acc ="",,, acc + print.@e
       modset
     else resolveunboundexports.newset
 
@@ -161,14 +161,14 @@ function builddict(modset:set.firstpass, use:mytype)set.symbol
   if isempty.e then empty:set.symbol else exports.e_1
 
 function builddict(modset:set.firstpass, f:firstpass)set.symbol
- for @e ∈ uses.f, acc = defines.f ∪ unbound.f ; acc ∪ builddict(modset, @e)
+ for @e ∈ uses.f, acc = defines.f ∪ unbound.f ,,, acc ∪ builddict(modset, @e)
 
 function bindunboundexports(modset:set.firstpass, f:firstpass)set.firstpass
  if length.unboundexports.f = 0 then modset
  else
   let dict = builddict(modset, f)
   let acc0 = firstpass(modname.f, uses.f, defines.f, exports.f, empty:seq.symbol, unbound.f, types.f, prg.f)
-  let new = for @e ∈ unboundexports.f, acc = acc0 ; resolveexport(acc, dict, @e)
+  let new = for @e ∈ unboundexports.f, acc = acc0 ,,, resolveexport(acc, dict, @e)
    replace(modset, new)
 
 function resolveexport(f:firstpass, dict:set.symbol, s:symbol)firstpass
@@ -181,11 +181,11 @@ function resolveexport(f:firstpass, dict:set.symbol, s:symbol)firstpass
 
 function expanduse(acc2:expanduseresult)expanduseresult
  let modset = firstpasses.acc2
- let newset = for @e ∈ toseq.asset.for @e ∈ toseq.modset, acc = empty:seq.mytype ; acc + uses.@e, acc = acc2 ;
+ let newset = for @e ∈ toseq.asset.for @e ∈ toseq.modset, acc = empty:seq.mytype ,,, acc + uses.@e, acc = acc2 ,,,
   expanduse2(acc, @e)
   if cardinality.firstpasses.newset > cardinality.modset then expanduse.newset else acc2
 
-type expanduseresult is record firstpasses:set.firstpass, map:seq.mapele
+type expanduseresult is firstpasses:set.firstpass, map:seq.mapele
 
 function expanduse2(acc2:expanduseresult, use:mytype)expanduseresult
  let modset = firstpasses.acc2
@@ -196,11 +196,11 @@ function expanduse2(acc2:expanduseresult, use:mytype)expanduseresult
      assert not.isempty.template report"Cannot find module" + print.use
      let f = template_1
      let with = parameter.use
-     let defs = for @e ∈ toseq.defines.f, acc = empty:seq.mapele ; acc + replaceTsymbol2(with, @e)
-     let exps = for @e ∈ toseq.exports.f, acc = empty:seq.mapele ; acc + replaceTsymbol2(with, @e)
-     let unb = for @e ∈ unboundexports.f, acc = empty:seq.mapele ; acc + replaceTsymbol2(with, @e)
+     let defs = for @e ∈ toseq.defines.f, acc = empty:seq.mapele ,,, acc + replaceTsymbol2(with, @e)
+     let exps = for @e ∈ toseq.exports.f, acc = empty:seq.mapele ,,, acc + replaceTsymbol2(with, @e)
+     let unb = for @e ∈ unboundexports.f, acc = empty:seq.mapele ,,, acc + replaceTsymbol2(with, @e)
       expanduseresult(modset
-      + firstpass(replaceT(with, modname.f), for @e ∈ uses.f, acc = empty:seq.mytype ; acc + replaceT(with, @e), asset.for @e ∈ defs, acc = empty:seq.symbol ; acc + s.@e, asset.for @e ∈ exps, acc = empty:seq.symbol ; acc + s.@e, for @e ∈ unb, acc = empty:seq.symbol ; acc + s.@e, empty:set.symbol, for @e ∈ types.f, acc = empty:seq.myinternaltype ; acc + replaceTmyinternaltype(with, @e), prg.f)
+      + firstpass(replaceT(with, modname.f), for @e ∈ uses.f, acc = empty:seq.mytype ,,, acc + replaceT(with, @e), asset.for @e ∈ defs, acc = empty:seq.symbol ,,, acc + s.@e, asset.for @e ∈ exps, acc = empty:seq.symbol ,,, acc + s.@e, for @e ∈ unb, acc = empty:seq.symbol ,,, acc + s.@e, empty:set.symbol, for @e ∈ types.f, acc = empty:seq.myinternaltype ,,, acc + replaceTmyinternaltype(with, @e), prg.f)
       , map.acc2 + defs + exps + unb)
    else acc2
   else
@@ -220,11 +220,11 @@ function split(s:seq.firstpass, i:int, abstract:seq.firstpass, simple:seq.firstp
    else if parameter.modname.f = mytype."T"then split(s, i + 1, abstract + f, simple)
    else split(s, i + 1, abstract, simple)
 
-function print(p2:program)seq.word for @e ∈ toseq.p2, acc =""; list(acc," &br  &br", print(p2, @e))
+function print(p2:program)seq.word for @e ∈ toseq.p2, acc ="",,, list(acc," &br  &br", print(p2, @e))
 
 function bind3(p:program, alltypes:typedict, modset:set.firstpass, f:firstpass)program
  let dict = builddict(modset, f) ∪ headdict
-  for @e ∈ toseq.defines.f, acc = p ∪ prg.f ; bind2(acc, alltypes, dict, @e)
+  for @e ∈ toseq.defines.f, acc = p ∪ prg.f ,,, bind2(acc, alltypes, dict, @e)
 
 function bind2(p:program, alltypes:typedict, dict:set.symbol, s:symbol)program
  let txt = findencode.symboltext(s, mytype."?","?")
@@ -239,11 +239,11 @@ Function headdict set.symbol asset.[ symbol("export","headdict","internal1"), sy
 
 function gathersymbols(mods:set.firstpass, input:seq.seq.word)set.firstpass
  let acc0 = firstpass(mytype."?", empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, empty:seq.myinternaltype, emptyprogram)
- let r = for @e ∈ input, acc = acc0 ; gathersymbols(acc, headdict, @e)
+ let r = for @e ∈ input, acc = acc0 ,,, gathersymbols(acc, headdict, @e)
   assert not(r ∈ mods)report"duplicate module name:" + print.modname.r
    mods + r
 
-type symboltext is record ph:symbol, modname:mytype, text:seq.word
+type symboltext is ph:symbol, modname:mytype, text:seq.word
 
 function hash(s:symboltext)int hash(fsig.ph.s + module.ph.s)
 
@@ -298,8 +298,8 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
    else myinternaltype("record"_1, name, modname.f, types.b)
    let typesym = typesym.it
     if kind.it = "sequence"_1 then
-    let constructor = newsymbol([ name], modname.f, for @e ∈ subflds.it << 1, acc = [ typeint]; acc + parameter.@e, t)
-     let fldsyms = for m ∈ subflds.it << 1, acc = empty:seq.symbol ; acc + newsymbol([ abstracttype.m], modname.f, [ t], parameter.m)
+    let constructor = newsymbol([ name], modname.f, for @e ∈ subflds.it << 1, acc = [ typeint],,, acc + parameter.@e, t)
+     let fldsyms = for m ∈ subflds.it << 1, acc = empty:seq.symbol ,,, acc + newsymbol([ abstracttype.m], modname.f, [ t], parameter.m)
      let seqtype = addabstract("seq"_1, parameter.modname.f)
      let symtoseq = newsymbol("toseq", modname.f, [ t], seqtype)
      let symfromseq = newsymbol("to:" + print.t, modname.f, [ seqtype], t)
@@ -320,8 +320,8 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
        let prg5 = map(prg4, symgettype, [ Local.1, GetSeqType, Words."VERYSIMPLE", Optionsym])
         firstpass(modname.f, uses.f, defines.f ∪ asset(syms + symlen + symgettype), exports.f, unboundexports.f, unbound.f, types.f + it, prg5)
     else
-     let constructor = newsymbol([ name], modname.f, for @e ∈ subflds.it, acc = empty:seq.mytype ; acc + parameter.@e, t)
-     let fldsyms = for m ∈ types.b, acc = empty:seq.symbol ; acc + newsymbol([ abstracttype.m], modname.f, [ t], parameter.m)
+     let constructor = newsymbol([ name], modname.f, for @e ∈ subflds.it, acc = empty:seq.mytype ,,, acc + parameter.@e, t)
+     let fldsyms = for m ∈ types.b, acc = empty:seq.symbol ,,, acc + newsymbol([ abstracttype.m], modname.f, [ t], parameter.m)
      let prg2 = fldcode(constructor, empty:seq.symbol, fldsyms, 1, 0,"", prg.f)
      let syms = fldsyms + [ constructor, typesym]
       firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, types.f + it, prg2)
@@ -344,7 +344,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
       else if fsig.sym = "true"then [ Littrue, Words."VERYSIMPLE", Optionsym]
       else if fsig.sym = "false"then [ Litfalse, Words."VERYSIMPLE", Optionsym]
       else
-       for @e ∈ arithseq(length.paratypes, 1, 1), acc = empty:seq.symbol ; acc + Local.@e ;
+       for @e ∈ arithseq(length.paratypes, 1, 1), acc = empty:seq.symbol ,,, acc + Local.@e ;
        + if length.module.sym = 1 then [ sym, Words."BUILTIN", Optionsym]
        else [ symbol(fsig.sym,"T builtin", returntype.sym)]
        map(prg.f, sym, code2)
@@ -371,7 +371,7 @@ Function processOption(p:program, txt:seq.word)program
   let r = lookupcode(p, sym)
   let option = fsig.(parsedcode.t)_1
    assert isdefined.r report"Option problem" + modname + print.sym + EOL
-   + for @e ∈ toseq.p, acc =""; acc
+   + for @e ∈ toseq.p, acc ="",,, acc
    + if(fsig.@e)_1 ∈ "findelement"then EOL + module.@e + fsig.@e else""
     addoption(p, sym, option)
 

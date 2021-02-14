@@ -6,7 +6,7 @@ use standard
 
 use seq.T
 
-type myseq is record sequence, data:seq.T
+type myseq is sequence, data:seq.T
 
 Export type:myseq.T
 

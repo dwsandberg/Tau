@@ -16,7 +16,7 @@ use set.arc.T
 
 use seq.seq.T
 
-type layeredgraph is record g:graph.T, layers:seq.seq.T
+type layeredgraph is g:graph.T, layers:seq.seq.T
 
 Export g(layeredgraph.T)graph.T
 
@@ -36,13 +36,13 @@ function sublayer(g:graph.T)seq.seq.T
  else
   let r = sources.g
    assert not.isempty.r report"NOT A DAG"
-    [ r] + sublayer.for @e ∈ r, acc = g ; deletenode(acc, @e)
+    [ r] + sublayer.for @e ∈ r, acc = g ,,, deletenode(acc, @e)
 
 Function issource(g:graph.T, n:T)seq.T
  if cardinality.predecessors(g, n) = 0 then [ n]else empty:seq.T
 
 Function sources(g:graph.T)seq.T
- for @e ∈ toseq.nodes.g, acc = empty:seq.T ; acc + issource(g, @e)
+ for @e ∈ toseq.nodes.g, acc = empty:seq.T ,,, acc + issource(g, @e)
 
 ----adddummy nodes---
 
@@ -52,7 +52,7 @@ function adddummynodes(y2:layeredgraph.T)layeredgraph.T d2(y2, g.y2, 2, asset.(l
 
 function d2(org:layeredgraph.T, g:graph.T, i:int, ok:set.T, layerout:seq.seq.T)layeredgraph.T
  let ok1 = ok ∪ asset.(layers.org)_i
- let gnew = for @e ∈ for @e ∈ layerout_(i - 1), acc = empty:seq.arc.T ; acc + splitarcs(g, ok1, @e), acc = g ;
+ let gnew = for @e ∈ for @e ∈ layerout_(i - 1), acc = empty:seq.arc.T ,,, acc + splitarcs(g, ok1, @e), acc = g ,,,
   splitarc(acc, @e)
  let newnodes = nodes.gnew - nodes.g
  let newout = layerout + [(layers.org)_i + toseq.newnodes]

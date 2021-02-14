@@ -6,7 +6,7 @@ use seq.T
 
 use standard
 
-type worddict is record keys:seq.word, data:seq.T
+type worddict is keys:seq.word, data:seq.T
 
 Function data(worddict.T)seq.T export
 

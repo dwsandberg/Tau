@@ -6,7 +6,7 @@ use otherseq.T
 
 use seq.T
 
-type set is record toseq:seq.T
+type set is toseq:seq.T
 
 Export type:set.T
 
@@ -20,7 +20,7 @@ Export_(seq.T, int)T
 
 unbound ?(T, T)ordering
 
-Function asset(s:seq.T)set.T set.for @e ∈ s, acc = empty:seq.T ; setinsert(acc, @e)
+Function asset(s:seq.T)set.T set.for @e ∈ s, acc = empty:seq.T ,,, setinsert(acc, @e)
 
 Function empty:set.T set.T set.empty:seq.T
 
@@ -122,7 +122,7 @@ Function findelement2(a:set.T, n:T)set.T
  let i = binarysearch2(toseq.a, 1, length.toseq.a, n)
   if i < 0 then asset.empty:seq.T
   else
-   asset.for @e ∈ subseq(toseq.a, expandrangedown(toseq.a, n, i), expandrangeup(toseq.a, n, i)), acc = empty:seq.T ;
+   asset.for @e ∈ subseq(toseq.a, expandrangedown(toseq.a, n, i), expandrangeup(toseq.a, n, i)), acc = empty:seq.T ,,,
     acc + @e
 
 function expandrangedown(a:seq.T, n:T, l:int)int

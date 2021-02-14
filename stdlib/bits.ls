@@ -8,7 +8,7 @@ Export type:bits
 
 Export type:bit
 
-type bits is record toint:int
+type bits is toint:int
 
 Export toint(bits)int
 
@@ -56,7 +56,7 @@ Function floorlog2(a:int)int
 
 __________________
 
-type bit is record rep:int
+type bit is rep:int
 
 Function =(a:bit, b:bit)boolean toint.a = toint.b
 
@@ -68,7 +68,7 @@ Function tobits(a:bit)bits tobits.toint.a
 
 _________________
 
-type byte is record rep:int
+type byte is rep:int
 
 Function =(a:byte, b:byte)boolean toint.a = toint.b
 

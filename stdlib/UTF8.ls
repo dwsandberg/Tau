@@ -14,7 +14,7 @@ use otherseq.char
 
 use otherseq.int
 
-type UTF8 is record toseqbyte:seq.byte
+type UTF8 is toseqbyte:seq.byte
 
 Function length(a:UTF8)int length.toseqbyte.a
 
@@ -34,7 +34,7 @@ Function +(a:UTF8, ch:char)UTF8 a + encodeUTF8.ch
 
 Function =(a:UTF8, b:UTF8)boolean toseqbyte.a = toseqbyte.b
 
-Function UTF8(s:seq.int)UTF8 UTF8.for @e ∈ s, acc = empty:seq.byte ; acc + tobyte.@e
+Function UTF8(s:seq.int)UTF8 UTF8.for @e ∈ s, acc = empty:seq.byte ,,, acc + tobyte.@e
 
 Function commachar char char.44
 
@@ -115,7 +115,7 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
    else if this = ","_1 then
    \\ no space before but space after \\ addspace(s, i + 1, false, result + char1.",")
    else
-    let d = for @e ∈ decodeword.this, acc = emptyUTF8 ; acc + encodeUTF8.@e
+    let d = for @e ∈ decodeword.this, acc = emptyUTF8 ,,, acc + encodeUTF8.@e
      if this ∈ ('-()].:"_^. ' + space)then
      \\ no space before or after \\ addspace(s, i + 1, true, result + d)
      else
@@ -132,9 +132,9 @@ Function intlit(s:UTF8)int cvttoint.decodeUTF8.s
 Function cvttoint(s:seq.char)int
  \\ Hex values starting with 0x or 0X are allowed. \\
  if length.s > 2 ∧ s_2 ∈ decodeword.first."Xx"then
- toint.for @e ∈ s, acc = 0x0 ; hexdigit(acc, @e)
+ toint.for @e ∈ s, acc = 0x0 ,,, hexdigit(acc, @e)
  else
-  let val = for @e ∈ s, acc = 0 ; decimaldigit(acc, @e)
+  let val = for @e ∈ s, acc = 0 ,,, decimaldigit(acc, @e)
    \\ Since there are more negative numbers in twos-complement we calculate using negative values. \\
    if val = 0 ∨ s_1 = char1."-"then val else-val
 
@@ -159,15 +159,15 @@ function decimaldigit(val:int, c:char)int
 
 Function hash(a:seq.char)int
  if a = decodeword."//"_1 then hash.tointseq.a
- else finalmix32.for @e ∈ tointseq.a, acc = hashstart32.0 ; hash32(acc, @e)
+ else finalmix32.for @e ∈ tointseq.a, acc = hashstart32.0 ,,, hash32(acc, @e)
 
 Function tointseq(a:seq.char)seq.int
  \\ This is just a type change and the compiler recognizes this and does not generate code \\
- for @e ∈ a, acc = empty:seq.int ; acc + toint.@e
+ for @e ∈ a, acc = empty:seq.int ,,, acc + toint.@e
 
 Function tocharseq(a:seq.int)seq.char
  \\ This is just a type change and the compiler recognizes this and does not generate code \\
- for @e ∈ a, acc = empty:seq.char ; acc + char.@e
+ for @e ∈ a, acc = empty:seq.char ,,, acc + char.@e
 
 _________________
 
@@ -194,7 +194,7 @@ Function toUTF8(rin:real, decimals:int)UTF8
 Function reallit(s:UTF8)real reallit(decodeUTF8.s,-1, 1, 0, 1)
 
 Function makereal(w:seq.word)real
- reallit(for @e ∈ w, acc = empty:seq.char ; acc + decodeword.@e,-1, 1, 0, 1)
+ reallit(for @e ∈ w, acc = empty:seq.char ,,, acc + decodeword.@e,-1, 1, 0, 1)
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
  if i > length.s then

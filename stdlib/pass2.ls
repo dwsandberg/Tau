@@ -63,7 +63,7 @@ function firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)prog
    let a2 = code.yyy(p, a, 1, empty:seq.symbol, nopara + 1, pdict, true)
     addf(p, s, a2)
 
-function print(s:seq.int)seq.word for @e ∈ s, acc =""; acc + toword.@e
+function print(s:seq.int)seq.word for @e ∈ s, acc ="",,, acc + toword.@e
 
 function var(i:int)symbol Local.i
 
@@ -113,7 +113,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
     else if isRecord.sym ∨ isSequence.sym then
     let nopara = nopara.sym
      let args = subseq(result, len + 1 - nopara, len)
-      if for @e ∈ args, acc = true ; acc ∧ isconst.@e then
+      if for @e ∈ args, acc = true ,,, acc ∧ isconst.@e then
       yyy(p, org, k + 1, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map, papply)
       else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
     else if(module.sym)_1 = "local"_1 then
@@ -134,13 +134,13 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
     let dd = code.lookupcode(p, sym)
     let options = getoption.dd
      if(first."COMPILETIME" ∈ options ∨ fsig.sym = "_(word seq, int)")
-     ∧ for @e ∈ subseq(result, len - nopara + 1, len), acc = true ; acc ∧ isconst.@e then
+     ∧ for @e ∈ subseq(result, len - nopara + 1, len), acc = true ,,, acc ∧ isconst.@e then
      let newcode = interpret(subseq(result, len - nopara + 1, len) + sym)
       let newconst = if length.newcode > 1 then Constant2.newcode else first.newcode
        yyy(p, org, k + 1, result >> nopara + newconst, nextvar, map, papply)
      else if fsig.sym = "decodeword(word)" ∧ module.result_len = "$word"then
      let arg1 = result_len
-      let a1 = for @e ∈ tointseq.decodeword.(fsig.arg1)_1, acc = empty:seq.symbol ; acc + Lit.@e
+      let a1 = for @e ∈ tointseq.decodeword.(fsig.arg1)_1, acc = empty:seq.symbol ,,, acc + Lit.@e
       let d = Constant2(a1 + Sequence(typeint, length.a1))
        yyy(p, org, k + 1, result >> 1 + d, nextvar, map, papply)
      else if not("INLINE"_1 ∈ options ∨ first."VERYSIMPLE" ∈ options)then
@@ -181,7 +181,7 @@ function adddefines2(s:seq.symbol, t:seq.int, i:int, nopara:int, newcode:seq.sym
   adddefines2(s, t, i + 1, nopara, newcode + subseq(s, t_i, t_(i + 1) - 1)
   + Define.toword(nextvar + i - 1), nextvar)
 
-type expandresult is record nextvar:int, code:seq.symbol
+type expandresult is nextvar:int, code:seq.symbol
 
 function definepara(code:seq.symbol, t:seq.int, i:int, nextvar:int, newcode:seq.symbol)seq.symbol
  if i = 0 then newcode
@@ -189,12 +189,12 @@ function definepara(code:seq.symbol, t:seq.int, i:int, nextvar:int, newcode:seq.
   definepara(code, t, i - 1, nextvar - 1, subseq(code, t_i, t_(i + 1) - 1) + Define.toword.nextvar + newcode)
 
 function substitute(s:seq.symbol, old:seq.symbol, new:seq.symbol)seq.symbol
- for @e ∈ s, acc = empty:seq.symbol ; acc
+ for @e ∈ s, acc = empty:seq.symbol ,,, acc
  + 
  let i = findindex(@e, old)
   if between(i, 1, length.old)then new_i else @e
 
-type compoundAC is record state:word, result:seq.symbol, fldno:int
+type compoundAC is state:word, result:seq.symbol, fldno:int
 
 function chkAcc(a:compoundAC, next:symbol, fldvar:seq.symbol)compoundAC
  let state = state.a
@@ -222,10 +222,10 @@ function breakAccumalator5(p:program, thunk:seq.symbol, resulttype:mytype, lastv
    if isempty.code ∨ not.isRecord.last.code then issimple
    else
     let noAccumlators = nopara.last.code
-    let fldnames = for @e ∈ paratypes.last.code, acc ="", @i, false ; acc + merge([ toword.@i] + typerep.@e)
-    let fldsyms = for @e ∈ fldnames, acc = empty:seq.symbol ; acc + Local.@e
-    let t5 = for @e ∈ code, acc = compoundAC("start"_1, empty:seq.symbol, 0); chkAcc(acc, @e, fldsyms)
-    let xx = for e ∈ result.t5, acc = empty:seq.symbol ;
+    let fldnames = for @e ∈ paratypes.last.code, acc ="", @i, , acc + merge([ toword.@i] + typerep.@e)
+    let fldsyms = for @e ∈ fldnames, acc = empty:seq.symbol ,,, acc + Local.@e
+    let t5 = for @e ∈ code, acc = compoundAC("start"_1, empty:seq.symbol, 0),,, chkAcc(acc, @e, fldsyms)
+    let xx = for e ∈ result.t5, acc = empty:seq.symbol ,,,
     let i = findindex(e, fldsyms)
      acc
      + if i > noAccumlators then [ e]else [ Local.1, Lit(i - 1), Idx.(paratypes.last.code)_i]
@@ -233,24 +233,24 @@ function breakAccumalator5(p:program, thunk:seq.symbol, resulttype:mytype, lastv
      \\ assert print.accfunc &in ["+(int graph, int arc)graph.int","advancepnp(pnpstate, word)format","advance(bindinfo lrstate, word, int, word seq, bindinfo token seq)parsersupport.bindinfo","advance(attribute2 lrstate, word, int, word seq, attribute2 token seq)parsersupport.attribute2","state100(state100, program, symbol, symbol)breakblocks","chkAcc(compoundAC, symbol, symbol seq)pass2","+(out23, char)format","deletearc(word seq graph, word seq arc)graph.seq.word","+(word seq graph, word seq arc)graph.seq.word","+(place, char seq encodingpair)maindict"]report"ZZZZZ"+ print.accfunc + EOL + state.t5 + print.result.t5 + EOL + EOL + print.code \\
      if state.t5 = "fail"_1 then issimple
      else
-      let x = for @e ∈ fldnames, acc = emptyworddict:worddict.seq.symbol, @i, false ; add(acc, @e, [ Local(lastvar + @i)])
+      let x = for @e ∈ fldnames, acc = emptyworddict:worddict.seq.symbol, @i, , add(acc, @e, [ Local(lastvar + @i)])
       let masteridx = lastvar + noAccumlators + 1
-      let pmap = for @e ∈ paratypes.accfunc << 1, acc = x, @i, false ; add(acc, toword(@i + 1), [ Local(masteridx + @i)])
+      let pmap = for @e ∈ paratypes.accfunc << 1, acc = x, @i, , add(acc, toword(@i + 1), [ Local(masteridx + @i)])
       let nextvar = masteridx + nopara.accfunc
       let r = yyy(p, result.t5 >> 1, 1, empty:seq.symbol, nextvar, pmap, papply)
       let thunkcode = substitute(subseq(thunk, 2, length.thunk - 1), thunkplaceholders, [ seqelement, Lit.0, Local.masteridx])
-      + for @e ∈ arithseq(nopara.accfunc - 1,-1, nextvar - 1), acc = empty:seq.symbol ; acc + Define.toword.@e ;
+      + for @e ∈ arithseq(nopara.accfunc - 1,-1, nextvar - 1), acc = empty:seq.symbol ,,, acc + Define.toword.@e ;
       + code.r
       + newmasteridx
       + continue(noAccumlators + 2)
       let orgacc = nextvar.r
-      let loopcode = for @e ∈ arithseq(nopara.last.code, 4, 2), acc = [ Define.orgacc]; acc + [ Local.orgacc] + subseq(code, @e, @e + 1);
+      let loopcode = for @e ∈ arithseq(nopara.last.code, 4, 2), acc = [ Define.orgacc],,, acc + [ Local.orgacc] + subseq(code, @e, @e + 1);
       + [ Lit.1, Lit.lastvar, Loopblock([ typeptr] + paratypes.last.code + typeint)]
-      let finalcode = for @e ∈ arithseq(noAccumlators, 1, lastvar + 1), acc = empty:seq.symbol ; acc + Local.@e ;
+      let finalcode = for @e ∈ arithseq(noAccumlators, 1, lastvar + 1), acc = empty:seq.symbol ,,, acc + Local.@e ;
       + last.code
        if true then issimple else breakresult(loopcode, thunkcode, finalcode, orgacc + 1, Local.masteridx)
 
-type breakresult is record loopcode:seq.symbol, thunkcode:seq.symbol, finalcode:seq.symbol, nextvar:int, masteridx:symbol
+type breakresult is loopcode:seq.symbol, thunkcode:seq.symbol, finalcode:seq.symbol, nextvar:int, masteridx:symbol
 
 function issimple breakresult breakresult(empty:seq.symbol, empty:seq.symbol, empty:seq.symbol, 0, Lit.0)
 
@@ -399,13 +399,13 @@ function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boo
 ---------------------------
 
 Function pass2(knownsymbols:program, alltypes:typedict)program
- let bin0 = for @e ∈ toseq.knownsymbols, acc = filterp(emptyprogram, emptyprogram); filterp(acc, @e, code.lookupcode(knownsymbols, @e), alltypes)
- let bin = for @e ∈ toseq.complex.bin0, acc = filterp(emptyprogram, simple.bin0); filterp(acc, @e, code.lookupcode(complex.bin0, @e), alltypes)
+ let bin0 = for @e ∈ toseq.knownsymbols, acc = filterp(emptyprogram, emptyprogram),,, filterp(acc, @e, code.lookupcode(knownsymbols, @e), alltypes)
+ let bin = for @e ∈ toseq.complex.bin0, acc = filterp(emptyprogram, simple.bin0),,, filterp(acc, @e, code.lookupcode(complex.bin0, @e), alltypes)
   \\ assert false report checkt(bin0)assert false report print.length.toseq.complex.bin + print.length.toseq.simple.bin \\
-  for sym ∈ toseq.complex.bin, acc = simple.bin ; \\ depthfirst(acc, knownsymbols, alltypes, sym)Function depthfirst(acc:program, knownsymbols:program, alltypes:typedict, sym:symbol)program \\
+  for sym ∈ toseq.complex.bin, acc = simple.bin ,,, \\ depthfirst(acc, knownsymbols, alltypes, sym)Function depthfirst(acc:program, knownsymbols:program, alltypes:typedict, sym:symbol)program \\
   depthfirst(acc, alltypes, 1, [ sym], acc, code.lookupcode(knownsymbols, sym), sym)
 
-type filterp is record complex:program, simple:program
+type filterp is complex:program, simple:program
 
 function filterp(p:filterp, s:symbol, code:seq.symbol, alltypes:typedict)filterp
  let complex = complex.p
@@ -434,16 +434,16 @@ function xxx(p:program, alltypes:typedict, s:symbol)program
 Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
 
 Function defines(p:program, roots:set.symbol)seq.symbol
- for @e ∈ toseq.roots, acc = empty:seq.symbol ; acc + if isconstantorspecial.@e ∨ isabstract.modname.@e then empty:seq.symbol else [ @e]
+ for @e ∈ toseq.roots, acc = empty:seq.symbol ,,, acc + if isconstantorspecial.@e ∨ isabstract.modname.@e then empty:seq.symbol else [ @e]
 
 function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
  if isempty.toprocess then processed
  else
-  let q = asset.for @e ∈ toseq.toprocess, acc = empty:seq.symbol ; acc
+  let q = asset.for @e ∈ toseq.toprocess, acc = empty:seq.symbol ,,, acc
   + 
   let d = code.lookupcode(p, @e)
    \\ assert not.containspara.d report"has p"+ print.@e + print.d \\
    if isempty.d then constantcode.@e else d
    uses(p, processed ∪ toprocess, q - processed)
 
-function containspara(code:seq.symbol)boolean for e ∈ code, hasparameter = false ; hasparameter ∨ isparameter.e
+function containspara(code:seq.symbol)boolean for e ∈ code, hasparameter = false ,,, hasparameter ∨ isparameter.e

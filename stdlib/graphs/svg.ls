@@ -6,7 +6,7 @@ use seq.seq.word
 
 Function svg(classes:seq.seq.word, body:seq.word, width:int, length:int)seq.word
  let classdefs = ' <style type ="text/css"> ' + merge."<! [ CDATA ["
- + for @e ∈ for @e ∈ classes, acc = empty:seq.seq.word ; acc + " &br." + @e, acc ="";
+ + for @e ∈ for @e ∈ classes, acc = empty:seq.seq.word ,,, acc + " &br." + @e, acc ="",,,
   acc + @e ;
  + "]]></style>"
   " &br <svg height =" + toword.length + "width =" + toword.width

@@ -65,7 +65,7 @@ Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
 
 Function tollvmtypelist(alltypes:typedict, s:symbol)seq.llvmtype
  let starttypes = [ tollvmtype(alltypes, resulttype.s), i64]
-  for @e ∈ paratypes.s, acc = starttypes ; acc + tollvmtype(alltypes, @e)
+  for @e ∈ paratypes.s, acc = starttypes ,,, acc + tollvmtype(alltypes, @e)
 
 function tollvmtype(alltypes:typedict, s:mytype)llvmtype
  if abstracttype.s ∈ "seq"then ptr.i64
@@ -87,7 +87,7 @@ Export arg(match5)int
 
 Export llvmtypelist(match5)seq.llvmtype
 
-type match5 is record sym:symbol, length:int, parts:internalbc, action:word, arg:int, code:seq.symbol, llvmtypelist:seq.llvmtype
+type match5 is sym:symbol, length:int, parts:internalbc, action:word, arg:int, code:seq.symbol, llvmtypelist:seq.llvmtype
 
 Function functype(m:match5)llvmtype function.llvmtypelist.m
 
@@ -102,7 +102,7 @@ function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:
 function addtemplate(sym:symbol, length:int, b:internalbc)match5 addtemplate(sym, length, b,"TEMPLATE"_1, slot.nopara.sym)
 
 function addtemplates(t:seq.word, sym:symbol, length:int, b:internalbc)match5
- first.for e ∈ t, acc = empty:seq.match5 ; [ addtemplate(replaceTsymbol(mytype.[ e], sym), length, b)]
+ first.for e ∈ t, acc = empty:seq.match5 ,,, [ addtemplate(replaceTsymbol(mytype.[ e], sym), length, b)]
 
 function findtemplate(d:symbol)seq.match5 findencode.match5(d, 0, emptyinternalbc,"NOTFOUND"_1, 0, empty:seq.symbol, [ i64])
 
@@ -260,7 +260,7 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("IDX:real(ptr, int)","real builtin","real"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
  + CAST(r.3, r.2, double, bitcast))
 ]
- let const = for @e ∈ toseq(uses - asset.[ Optionsym]), acc = empty:seq.symbol ; acc + buildtemplate(theprg, alltypes, @e)
+ let const = for @e ∈ toseq(uses - asset.[ Optionsym]), acc = empty:seq.symbol ,,, acc + buildtemplate(theprg, alltypes, @e)
  let discard4 = processconst(const, 1, empty:seq.symbol)
   empty:seq.match5
 
@@ -359,7 +359,7 @@ Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
  else subseq(argstack, length.argstack - arg.t + 1, length.argstack)
   processtemplate(parts.t, deltaoffset, args)
 
-type recordcoderesult is record regno:int, bc:internalbc
+type recordcoderesult is regno:int, bc:internalbc
 
 Export regno(recordcoderesult)int
 

@@ -32,7 +32,7 @@ let z = [ compare("a + b + c","(a + b)+ c ")
 , testerror(" &{ literal report in assert must be seq of word in:", ["function f1(a:int)int assert true report 2 3"])
 , testerror(" &{ literal parameter type hhh is undefined", ["function f1(z:hhh)int 3"])
 , testerror(" &{ literal parameter type xxx is undefined", ["function f1(z:int)xxx 3"])
-, testerror("unresolved types:module:testit type testtype is record fld1:testtype", ["type testtype is record fld1:testtype"])
+, testerror("unresolved types:module:testit type testtype is record fld1:testtype", ["type testtype is fld1:testtype"])
 , testerror("unresolved exports", ["Export f1(int, int)int"])
 , testerror("export return type missmatch", ["Export +(int, int)boolean"])
 , testerror("Cannot find module", ["use int.notdefined"])
@@ -42,7 +42,7 @@ let z = [ compare("a + b + c","(a + b)+ c ")
 Function testcomp2(s:seq.seq.word)seq.word
  let p = process.testcomp.s
   if aborted.p then message.p
-  else for @e ∈ result.p, acc =""; acc + " &br  &br" + @e
+  else for @e ∈ result.p, acc ="",,, acc + " &br  &br" + @e
 
 Function compare(exp1:seq.word, exp2:seq.word)boolean
  let e1 = testcomp2.["module testit","use standard","Function f1(a:int, b:int, c:int)int" + exp1]
@@ -59,20 +59,20 @@ Function testerror(m:seq.word, code:seq.seq.word)boolean
   assert isprefix(m, r)report"Fail test11a expected:" + m + " &br got:" + subseq(r, 1, length.m)
    a
 
-type checkprec is record toseq:seq.word
+type checkprec is toseq:seq.word
 
 Function checkprec seq.word assert-(1 * 1) - 5 = -6 report"Fail prec"
 let a = [ x.1 + x.2 + x.3, x.1 * x.2 * x.3,(x.1)^(x.2)^(x.3),(x.1)_(x.2)_(x.3),-x.1 * (x.2)^(x.3), x.1 * x.2 + x.3, x.1 + x.2 * x.3, uni.x.1 * x.2, uni.(x.1)^(x.2), x.1 + x.2 = x.3
 , x.1 = x.2 + x.3,(x.1 > x.2) = x.3, x.1 = x.2 > x.3, x.1 = x.2 ∧ x.3, x.1 ∧ x.2 = x.3, x.1 ∧ x.2 ∨ x.3, x.1 ∨ x.2 ∧ x.3, uni.x.1 + x.2]
 let b = ["((1 + 2)+ 3)","((1 * 2)* 3)","((1^2)^3)","((1_2)_3)","((-1)*(2^3))","((1 * 2)+ 3)","(1 +(2 * 3))","((uni 1)* 2)","(uni(1^2))","((1 + 2)= 3)"
 ,"(1 =(2 + 3))","((1 > 2)= 3)","((1 = 2)> 3)","((1 = 2)&and 3)","(1 &and(2 = 3))","((1 &and 2)&or 3)","(1 &or(2 &and 3))","((uni 1)+ 2)"]
- check(for @e ∈ a, acc = empty:seq.seq.word ; acc + toseq.@e, b,"precedence test")
+ check(for @e ∈ a, acc = empty:seq.seq.word ,,, acc + toseq.@e, b,"precedence test")
 
 function check2(l:seq.seq.word, b:seq.seq.word, i:int)seq.word
  if l_i = b_i then""else [ toword.i]
 
 Function check(y:seq.seq.word, b:seq.seq.word, testname:seq.word)seq.word
- let x = for @e ∈ arithseq(length.y, 1, 1), acc =""; acc + check2(y, b, @e)
+ let x = for @e ∈ arithseq(length.y, 1, 1), acc ="",,, acc + check2(y, b, @e)
   if x = ""then"PASS" + testname
   else" &{ literal FAILED  &} test" + x + "in" + testname
 

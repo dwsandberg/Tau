@@ -10,9 +10,9 @@ use otherseq.sparseele.T
 
 use seq.sparseele.T
 
-type sparseele is record start:int, edata:seq.T
+type sparseele is start:int, edata:seq.T
 
-type sparse is record sequence, sdata:seq.sparseele.T, default:T
+type sparse is sequence, sdata:seq.sparseele.T, default:T
 
 function ?(a:sparseele.T, b:sparseele.T)ordering start.a ? start.b
 

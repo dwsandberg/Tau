@@ -24,17 +24,17 @@ Export hash(a:encodingpair.T)int
 
 Export valueofencoding(a:encoding.T)int
 
-type encoding is record valueofencoding:int
+type encoding is valueofencoding:int
 
 Function to:encoding.T(i:int)encoding.T encoding.i
 
-type encodingstate is record encodingno:int, length:int, encodetable:seq.seq.encodingpair.T, decodetable:seq.seq.encodingpair.T, all:seq.encodingpair.T, lastadd:int
+type encodingstate is encodingno:int, length:int, encodetable:seq.seq.encodingpair.T, decodetable:seq.seq.encodingpair.T, all:seq.encodingpair.T, lastadd:int
 
 /function encodingstate(length:int, encodetable:seq.seq.encodingpair.T, decodetable:seq.seq.encodingpair.T, all:seq.encodingpair.T, lastadd:int)encodingstate.T encodingstate(0, length, encodetable, decodetable, all, lastadd)
 
 /function_(e:encodingstate.T, i:int)T data.(all.e)_i
 
-type encodingpair is record code:encoding.T, data:T, hash:int
+type encodingpair is code:encoding.T, data:T, hash:int
 
 Function encodingpair(code:encoding.T, data:T)encodingpair.T encodingpair(code, data, hash.data)
 
@@ -70,9 +70,9 @@ Function add(h:encodingstate.T, v:encodingpair.T)encodingstate.T
    let p = subadd(mask, h, v, 1)
    let code = code.p
    let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
-   let listdecode = for e ∈(decodetable.h)_codeindex, acc = [ p]; if code.e = code ∨ notsamehash:T(valueofencoding.code, valueofencoding.code.e, mask)then acc
+   let listdecode = for e ∈(decodetable.h)_codeindex, acc = [ p],,, if code.e = code ∨ notsamehash:T(valueofencoding.code, valueofencoding.code.e, mask)then acc
    else acc + e
-   let listencode = for e ∈(encodetable.h)_dataindex, acc = [ p]; if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask)then acc
+   let listencode = for e ∈(encodetable.h)_dataindex, acc = [ p],,, if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask)then acc
    else acc + e
    let newdecode = replace(decodetable.h, codeindex, listdecode)
    let newencode = replace(encodetable.h, dataindex, listencode)
@@ -87,7 +87,7 @@ function subadd(mask:bits, h:encodingstate.T, v:encodingpair.T, count:int)encodi
  let code = code.v
  let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
  let found = valueofencoding.code.v ≤ 0
- ∨ for @e ∈(decodetable.h)_codeindex, acc = false ; acc ∨ code.v = code.@e
+ ∨ for @e ∈(decodetable.h)_codeindex, acc = false ,,, acc ∨ code.v = code.@e
   if found then
   subadd(mask, h, encodingpair(to:encoding.T(assignencoding(length.h, data.v)), data.v, hash.v), count + 1)
   else encodingpair(code.v, data.v, hash.v)
@@ -96,7 +96,7 @@ Function assignrandom(length:int, data:T)int(randomint.1)_1
 
 Function addencodingpairs(l:seq.encodingpair.T)int
  let inst = getinstance:encodingstate.T
-  for @e ∈ l, acc = 0 ; acc + primitiveadd(encodingno.inst, rehash.@e)
+  for @e ∈ l, acc = 0 ,,, acc + primitiveadd(encodingno.inst, rehash.@e)
 
 function rehash(a:encodingpair.T)encodingpair.T encodingpair(code.a, data.a)
 
@@ -123,7 +123,7 @@ Function encode(t:T)encoding.T
   else code.r_1
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingpair.T
- for e ∈(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1), acc = empty:seq.encodingpair.T ;
+ for e ∈(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1), acc = empty:seq.encodingpair.T ,,,
   if t = code.e then acc + e else acc
 
 Function =(a:encoding.T, b:encoding.T)boolean valueofencoding.a = valueofencoding.b
@@ -136,7 +136,7 @@ function lookuprep(t:T, inst:encodingstate.T)seq.encodingpair.T
  lookuprep(t,(encodetable.inst)_(hash.t mod length.encodetable.inst + 1))
 
 function lookuprep(t:T, s:seq.encodingpair.T)seq.encodingpair.T
- for e ∈ s, acc = empty:seq.encodingpair.T ; if t = data.e then acc + e else acc
+ for e ∈ s, acc = empty:seq.encodingpair.T ,,, if t = data.e then acc + e else acc
 
 Function findencode(t:T)seq.T
  let r = lookuprep(t, getinstance:encodingstate.T)
@@ -149,7 +149,7 @@ function analyze(t:encodingstate.T)seq.word
 
 function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int)seq.word
  if i > length.s then
- for @e ∈ [ length.s, one, two, big], acc =""; acc + toword.@e
+ for @e ∈ [ length.s, one, two, big], acc ="",,, acc + toword.@e
  else
   let t = length.s_i
    if t = 0 then counts(s, i + 1, one, two, big)

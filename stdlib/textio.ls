@@ -26,7 +26,7 @@ function breaklines(a:seq.byte, i:int, last:int, result:seq.UTF8)seq.UTF8
  else breaklines(a, i + 1, last, result)
 
 Function breakcommas(a:UTF8)seq.UTF8
- for @e ∈ break(tobyte.toint.char1.",", [ tobyte.toint.char1.'"'], toseqbyte.a), acc = empty:seq.UTF8 ;
+ for @e ∈ break(tobyte.toint.char1.",", [ tobyte.toint.char1.'"'], toseqbyte.a), acc = empty:seq.UTF8 ,,,
   acc + UTF8.@e
 
 --------

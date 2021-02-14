@@ -8,7 +8,7 @@ use otherseq.word
 
 Export type:worddict.T
 
-type worddict is record keys:seq.word, data:seq.T
+type worddict is keys:seq.word, data:seq.T
 
 Export data(worddict.T)seq.T
 

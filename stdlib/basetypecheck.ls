@@ -21,9 +21,9 @@ use process.seq.word
 use seq.seq.word
 
 Function baseTypeCheck(alltypes:typedict,prg4:program) seq.word
- let r= for @e ∈ toseq.prg4, acc =empty:seq.seq.word ; acc + baseTypeCheck(alltypes, prg4, @e)   
+ let r= for @e ∈ toseq.prg4, acc =empty:seq.seq.word ,,, acc + baseTypeCheck(alltypes, prg4, @e)   
  if isempty.r then "Passed Base Type Check"
- else "Base Type Check Failed "+print.length.r+"Times"+for e &in r ,a="" ; a+e 
+ else "Base Type Check Failed "+print.length.r+"Times"+for e &in r ,a="" ,,, a+e 
  
 
 function baseTypeCheck(alltypes:typedict, result2:program, s:symbol)seq.seq.word
@@ -34,7 +34,7 @@ function baseTypeCheck(alltypes:typedict, result2:program, s:symbol)seq.seq.word
   let x = print.s
     [" &p ERROR:" + x + " &br" + message.p 
     + " &br fullcode"
-     + ( for @e ∈ code.lookupcode(result2, s), acc ="" ; acc + print.@e) ]
+     + ( for @e ∈ code.lookupcode(result2, s), acc ="" ,,, acc + print.@e) ]
    else if isempty.result.p then empty:seq.seq.word else [result.p]
 
   
@@ -44,7 +44,7 @@ function checkkind(alltypes:typedict, result2:program, s:symbol)seq.word
   if length.codeonly = 0 then""
   else
    assert last.codeonly ≠ Optionsym report"more than one option symbol"
-   let localdict =(for @e ∈ arithseq(nopara.s, 1, 1), acc = emptyworddict:worddict.mytype ; addpara(acc, alltypes, paratypes.s, @e))
+   let localdict =(for @e ∈ arithseq(nopara.s, 1, 1), acc = emptyworddict:worddict.mytype ,,, addpara(acc, alltypes, paratypes.s, @e))
     \\ assert not(fsig.s ="packed2(typerec2 seq, int)")report"HERE"\\
     if length.code = 2 ∧ fsig.code_2 = "getinstance(T seq)"then""
     else
@@ -64,7 +64,7 @@ function addlocals(localtypes:worddict.mytype, para:seq.mytype, localno:int, i:i
  if i > 0 then addlocals(replace(localtypes, toword.localno, para_i), para, localno - 1, i - 1)
  else localtypes
  
-function print(s:seq.mytype) seq.word for e &in s,a=""; a+print.e
+function print(s:seq.mytype) seq.word for e &in s,a="",,, a+print.e
 
 function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localtypes:worddict.mytype)seq.word
  if i > length.code then
@@ -92,7 +92,7 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
       ccc(alltypes, code, i + 1, push(pop(stk, nopara.s),mytype."none"), localtypes)   
    else if isblock.s then
     assert length.toseq.stk ≥ nopara.s report"stack underflow block"
-       + ((for @e ∈ subseq(code, 1, i + 1), acc =""; acc + print.@e))
+       + ((for @e ∈ subseq(code, 1, i + 1), acc ="",,, acc + print.@e))
        + EOL
        + "point of underflow failure"
     let subblocktypes = asset.top(stk, nopara.s) - asset.[mytype."none"]
@@ -101,9 +101,9 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
     else if cardinality.subblocktypes=2 &and match(subblocktypes_1,subblocktypes_2) then
        ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), 
        if subblocktypes_1=typeptr then subblocktypes_2 else subblocktypes_1 ), localtypes)   
-    else  "blockfailure" +  for e &in top(stk, nopara.s),a=""; a+print.e
+    else  "blockfailure" +  for e &in top(stk, nopara.s),a="",,, a+print.e
     else if isbr.s  then
-      assert top(stk, 3) = [mytype."boolean",typeint,typeint  ]  report "if problem"+for e &in top(stk, 3) ,a=""; a+print.e 
+      assert top(stk, 3) = [mytype."boolean",typeint,typeint  ]  report "if problem"+for e &in top(stk, 3) ,a="",,, a+print.e 
     ccc(alltypes, code, i + 1, push(pop(stk, 3),mytype."none"), localtypes)
     else if isloopblock.s then
     let firstlocal = toint.(fsig.code_(i - 1))_1
@@ -130,12 +130,12 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
            let rt= if  length.typerep.top.stk > 2 then  parameter.top.stk else typeptr
               ccc(alltypes, code, i + 1, push(pop(stk),rt), localtypes)
     else
-     let parakinds =((for @e ∈ paratypes.s, acc =empty:seq.mytype ; acc + getbasetype(alltypes, @e)))
+     let parakinds =((for @e ∈ paratypes.s, acc =empty:seq.mytype ,,, acc + getbasetype(alltypes, @e)))
      if top(stk, nopara.s) =parakinds then
      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), getbasetype(  alltypes, resulttype.s)), localtypes)
       else 
      " &br symbol type missmatch for" + print.s + "at"+ 
-     (for @e ∈ subseq(code, i-6,i-1), acc =""; acc + print.@e)
+     (for @e ∈ subseq(code, i-6,i-1), acc ="",,, acc + print.@e)
      +" &br stktop"
      + print.top(stk, nopara.s)
        + " &br parabasetypes"

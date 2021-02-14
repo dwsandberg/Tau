@@ -42,9 +42,9 @@ Export type:llvmtype
 
 Export type:llvmconst
 
-type llvmtypeele is record toseq:seq.int
+type llvmtypeele is toseq:seq.int
 
-type llvmtype is record index:encoding.llvmtypeele
+type llvmtype is index:encoding.llvmtypeele
 
 function hash(a:llvmtypeele)int hash.toseq.a
 
@@ -57,20 +57,20 @@ function inttollvmtype(i:int)llvmtype llvmtype.to:encoding.llvmtypeele(i + 1)
 Function print(t:llvmtype)seq.word
  let a = toseq.decode.index.t
  let tp = typeop.a_1
- let b = for @e ∈ a, acc = empty:seq.llvmtype ; acc + inttollvmtype.@e
+ let b = for @e ∈ a, acc = empty:seq.llvmtype ,,, acc + inttollvmtype.@e
   if tp = INTEGER then [ merge("i" + toword.a_2)]
   else if tp = ARRAY then
   "array(" + toword.a_2 + "," + print.b_3 + ")"
   else if tp = POINTER then"ptr." + print.b_2
   else if tp = FUNCTION then
   "function("
-   + for @e ∈ subseq(b, 3, length.a), acc =""; list(acc,",", print.@e);
+   + for @e ∈ subseq(b, 3, length.a), acc ="",,, list(acc,",", print.@e);
    + ")"
   else if tp = TVOID then"VOID"else if tp = DOUBLE then"double"else"?"
 
 function cvttorec(a:encodingpair.llvmtypeele)seq.int toseq.data.a
 
-Function typerecords seq.seq.int for @e ∈ encoding:seq.encodingpair.llvmtypeele, acc = empty:seq.seq.int ; acc + cvttorec.@e
+Function typerecords seq.seq.int for @e ∈ encoding:seq.encodingpair.llvmtypeele, acc = empty:seq.seq.int ,,, acc + cvttorec.@e
 
 Function returntype(func:llvmtype)llvmtype llvmtype.to:encoding.llvmtypeele((toseq.decode.index.func)_3 + 1)
 
@@ -96,11 +96,11 @@ Function array(size:int, base:llvmtype)llvmtype llvmtype.[ toint.ARRAY, size, ty
 
 Function ptr(base:llvmtype)llvmtype llvmtype.[ toint.POINTER, typ.base, 0]
 
-Function function(para:seq.llvmtype)llvmtype llvmtype.for @e ∈ para, acc = [ toint.FUNCTION, 0]; acc + typ.@e
+Function function(para:seq.llvmtype)llvmtype llvmtype.for @e ∈ para, acc = [ toint.FUNCTION, 0],,, acc + typ.@e
 
 -------------------------
 
-type llvmconst is record typ:int, toseq:seq.int
+type llvmconst is typ:int, toseq:seq.int
 
 function hash(a:llvmconst)int hash.symtabname.a
 
@@ -115,8 +115,8 @@ function symtabname(a:llvmconst)seq.int
 Function modulerecord(name:seq.word, rec:seq.int)slot
  let c = if name = ""then llvmconst(-3, rec)
  else
-  let chars = tointseq.for @e ∈ name, acc = empty:seq.char ; acc + decodeword.@e
-   llvmconst(-1, [ length.chars] + chars + rec);
+  let chars = tointseq.for @e ∈ name, acc = empty:seq.char ,,, acc + decodeword.@e
+   llvmconst(-1, [ length.chars] + chars + rec)
   slot(valueofencoding.encode.c - 1)
 
 Function C64(i:int)slot slot(valueofencoding.encode.llvmconst(typ.i64, [ toint.CINTEGER, i]) - 1)
@@ -131,8 +131,8 @@ Function DATA(t:llvmtype, data:seq.int)slot
  slot(valueofencoding.encode.llvmconst(typ.t, [ toint.CDATA] + data) - 1)
 
 Function AGGREGATE(data:seq.slot)slot
- let t = array(length.data, i64);
-  slot(valueofencoding.encode.llvmconst(typ.t, [ toint.CAGGREGATE] + for @e ∈ data, acc = empty:seq.int ; acc + toint.@e)
+ let t = array(length.data, i64)
+  slot(valueofencoding.encode.llvmconst(typ.t, [ toint.CAGGREGATE] + for @e ∈ data, acc = empty:seq.int ,,, acc + toint.@e)
   - 1)
 
 Function ptrtoint(argtype:llvmtype, p:slot)slot slot.C(i64, [ toint.CCAST, 9, typ.argtype, toint.p])
@@ -162,9 +162,9 @@ Function asi64(s:slot)slot
 
 Function constvalue(i:slot)int(toseq.decode.to:encoding.llvmconst(toint.i + 1))_2
 
-Function constantrecords seq.slotrecord for @e ∈ encoding:seq.encodingpair.llvmconst, acc = empty:seq.slotrecord ; acc + slotrecord.@e
+Function constantrecords seq.slotrecord for @e ∈ encoding:seq.encodingpair.llvmconst, acc = empty:seq.slotrecord ,,, acc + slotrecord.@e
 
-type slotrecord is record cvt:encodingpair.llvmconst
+type slotrecord is cvt:encodingpair.llvmconst
 
 Export type:slotrecord
 
@@ -191,7 +191,7 @@ Function consttype(s:slot)llvmtype
   + if typ.l = -1 then \\ must skip name to find record \\(toseq.l)_(3 + (toseq.l)_1)
   else if typ.l = -3 then(toseq.l)_2 else typ.l)
 
-type slot is record toint:int
+type slot is toint:int
 
 Export toint(slot)int
 

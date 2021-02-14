@@ -22,9 +22,9 @@ use seq.seq.word
 
 Export stacktrace seq.word
 
-type ordering is record toint:int
+type ordering is toint:int
 
-type boolean is record tointx:int
+type boolean is tointx:int
 
 * Useful constants
 
@@ -104,11 +104,11 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
-Function hash(a:seq.int)int finalmix.for @e ∈ a, acc = hashstart ; hash(acc, @e)
+Function hash(a:seq.int)int finalmix.for @e ∈ a, acc = hashstart ,,, hash(acc, @e)
 
-Function hash(a:seq.word)int finalmix.for @e ∈ a, acc = hashstart ; hash(acc, hash.@e)
+Function hash(a:seq.word)int finalmix.for @e ∈ a, acc = hashstart ,,, hash(acc, hash.@e)
 
-Function^(i:int, n:int)int for @e ∈ constantseq(n, i), acc = 1 ; acc * @e
+Function^(i:int, n:int)int for @e ∈ constantseq(n, i), acc = 1 ,,, acc * @e
 
 Function pseudorandom(seed:int)int
  let ah = 16807
@@ -118,7 +118,7 @@ Function pseudorandom(seed:int)int
 
 function addrandom(s:seq.int, i:int)seq.int s + pseudorandom.s_(length.s)
 
-Function randomseq(seed:int, length:int)seq.int for @e ∈ constantseq(length - 1, 1), acc = [ seed]; addrandom(acc, @e)
+Function randomseq(seed:int, length:int)seq.int for @e ∈ constantseq(length - 1, 1), acc = [ seed],,, addrandom(acc, @e)
 
 Export randomint(i:int)seq.int
 
@@ -132,7 +132,7 @@ Function print(n:int)seq.word
   sign
   + encodeword.if length.s < 5 then s
   else
-   for e ∈ s, acc = empty:seq.char, i, false ; acc
+   for e ∈ s, acc = empty:seq.char, i, , acc
    + if(length.s - i) mod 3 = 2 ∧ i ≠ 1 then [ char.160, e]
    else [ e]
 
@@ -140,8 +140,8 @@ Function EOL seq.word" &br"
 
 Function break(s:seq.word, seperators:seq.word, includeseperator:boolean)seq.seq.word
  let nosep = if includeseperator then 0 else 1
- let l = for e ∈ s, acc = empty:seq.int, i, false ; acc + if e ∈ seperators then [ i]else empty:seq.int
-  for ele ∈ l + (length.s + 1), acc = empty:seq.seq.word, i, false ; acc
+ let l = for e ∈ s, acc = empty:seq.int, i, , acc + if e ∈ seperators then [ i]else empty:seq.int
+  for ele ∈ l + (length.s + 1), acc = empty:seq.seq.word, i, , acc
   + subseq(s, if i = 1 then 1 else l_(i - 1) + nosep, ele - 1)
 
 Export hash(a:word)int
@@ -236,7 +236,7 @@ Export alphasort(a:seq.word)seq.word
 
 Export alphasort(a:seq.seq.word)seq.seq.word
 
-type char is record toint:int
+type char is toint:int
 
 Function =(a:char, b:char)boolean toint.a = toint.b
 

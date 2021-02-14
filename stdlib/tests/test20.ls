@@ -6,9 +6,9 @@ use seq.int
 
 use seq.q
 
-type p is record a:int, b:int, c:int
+type p is a:int, b:int, c:int
 
-type q is record d:int, e:p, f:int
+type q is d:int, e:p, f:int
 
 Export p(a:int, b:int, c:int)p export
 

@@ -4,7 +4,7 @@ use standard
 
 Export type:mytype
 
-type mytype is record towords:seq.word
+type mytype is towords:seq.word
 
 Export mytype(seq.word)mytype
 

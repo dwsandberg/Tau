@@ -43,7 +43,7 @@ function changestate(state:int, ele:word, idx:int, early:boolean)int
 
 Function getheader(s:seq.word)seq.word
  let istype = subseq(s, 1, 3) = "Export type:"
- let t = for ele ∈ s, state = 0, idx, state > 0 ; changestate(state, ele, idx, istype)
+ let t = for ele ∈ s, state = 0, idx, state > 0 , changestate(state, ele, idx, istype)
  let end = if t < 1 then length.s else t
   if istype then
   let tt = subseq(s, 4, end)
@@ -62,7 +62,7 @@ function escapeformat(length:int, c:word)word
  if length > 20 then merge.[ encodeword.[ char.10], c]else merge.[ space, c]
  else if c ∈ " &keyword  &}  &em  &strong  &cell"then merge.[ space, c]else c
 
-Function escapeformat(s:seq.word)seq.word for @e ∈ s, acc =""; acc + escapeformat(length.s, @e)
+Function escapeformat(s:seq.word)seq.word for @e ∈ s, acc ="",,, acc + escapeformat(length.s, @e)
 
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 
@@ -111,11 +111,11 @@ Function htmlheader seq.word \\ the format of the meta tag is carefully crafted 
 + ' form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style> '
 + EOL
 
-type pnpstate is record lastbreak:int, result:seq.word, matchthis:word, instring:boolean
+type pnpstate is lastbreak:int, result:seq.word, matchthis:word, instring:boolean
 
 Function prettynoparse(s:seq.word)seq.word
  \\ format function without first parsing it \\
- result.for @e ∈ s, acc = pnpstate(0,"","//"_1, false); advancepnp(acc, @e)
+ result.for @e ∈ s, acc = pnpstate(0,"","//"_1, false),,, advancepnp(acc, @e)
 
 function advancepnp(state:pnpstate, this:word)pnpstate
  let lastbreak = lastbreak.state
@@ -148,9 +148,9 @@ function advancepnp(state:pnpstate, this:word)pnpstate
 _____________________________
 
 Function createhtmlfile(name:seq.word, output:seq.word)int
- createfile(name, a.processpara(for @e ∈ htmlheader, acc = emptyout23 ; addspace(acc, @e), output))
+ createfile(name, a.processpara(for @e ∈ htmlheader, acc = emptyout23 ,,, addspace(acc, @e), output))
 
-type out23 is record nospace:boolean, a:seq.byte
+type out23 is nospace:boolean, a:seq.byte
 
 function +(z:out23, c:char)out23
  \\ clears nospace flag \\

@@ -14,7 +14,7 @@ unbound reverse(a:T)T
 
 Export type:labeledgraph.T
 
-type labeledgraph is record arcs:set.T, backarcs:set.T, nodes:set.T
+type labeledgraph is arcs:set.T, backarcs:set.T, nodes:set.T
 
 Export arcs(labeledgraph.T)set.T
 
@@ -34,7 +34,7 @@ Function arcstosuccessors(g:labeledgraph.T, node:T)set.T findelement2(arcs.g, no
 Function backarcstopredecessors(g:labeledgraph.T, node:T)set.T findelement2(backarcs.g, node)
 
 Function sinks(g:labeledgraph.T)seq.T
- for @e ∈ toseq.nodes.g, acc = empty:seq.T ; acc + sinks(g, @e)
+ for @e ∈ toseq.nodes.g, acc = empty:seq.T ,,, acc + sinks(g, @e)
 
 Function sinks(g:labeledgraph.T, n:T)seq.T
  if cardinality.arcstosuccessors(g, n) = 0 then [ n]else empty:seq.T
@@ -43,5 +43,5 @@ Function subdelete(a:set.T, b:T)set.T a - b
 
 Function deletenode(g:labeledgraph.T, n:T)labeledgraph.T
  let b = backarcstopredecessors(g, n)
- let a = for @e ∈ toseq.b, acc = arcs.g ; subdelete(acc, reverse.@e)
+ let a = for @e ∈ toseq.b, acc = arcs.g ,,, subdelete(acc, reverse.@e)
   labeledgraph(a, backarcs.g - b, nodes.g - n)

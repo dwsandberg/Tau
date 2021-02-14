@@ -4,7 +4,7 @@ use standard
 
 use seq.T
 
-type stack is record toseq:seq.T
+type stack is toseq:seq.T
 
 Export type:stack.T
 

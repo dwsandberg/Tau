@@ -20,12 +20,12 @@ use seq.mytype
 
 use seq.symbol
 
-Function print(s:seq.symbol)seq.word for @e ∈ s, acc =""; acc + print.@e
+Function print(s:seq.symbol)seq.word for @e ∈ s, acc ="",,, acc + print.@e
 
 Function state100(s:seq.symbol, p:program, self:symbol)state100
- for @e ∈ s, acc = state100(false, false, false); state100(acc, p, @e, self)
+ for @e ∈ s, acc = state100(false, false, false),,, state100(acc, p, @e, self)
 
-type state100 is record hasstate:boolean, hasunknown:boolean, callsself:boolean
+type state100 is hasstate:boolean, hasunknown:boolean, callsself:boolean
 
 Export hasstate(state100)boolean
 
@@ -46,7 +46,7 @@ function state100(a:state100, p:program, s:symbol, self:symbol)state100
    if isdefined.d then getoption.code.d else"undefined"
   state100(state ∨ "STATE"_1 ∈ options, unknown ∨ "undefined"_1 ∈ options, callsself ∨ self = s)
 
-type block is record kind:word, blkno:int, label1:int, label2:int, code:seq.symbol, subblks:seq.block
+type block is kind:word, blkno:int, label1:int, label2:int, code:seq.symbol, subblks:seq.block
 
 function block(kind:word, blkno:int, label1:int, label2:int, code:seq.symbol)block block(kind, blkno, label1, label2, code, empty:seq.block)
 
@@ -54,13 +54,13 @@ Function breakblocks(p:program, code:seq.symbol, self:symbol, alltypes:typedict)
  let a = breakblocks(p, code, 1, 1, empty:seq.symbol, empty:stack.block)
   if length.a = 1 then code.a_1
   else if kind.a_1 ≠ "LOOPBLOCK"_1
-  ∧ for @e ∈ a, acc = false ; acc ∨ tailrecursion(self, @e)then
+  ∧ for @e ∈ a, acc = false ,,, acc ∨ tailrecursion(self, @e)then
   \\ tail recursion \\
    let nopara = nopara.self
-   let a2 = for @e ∈ a, acc = empty:seq.block ; acc + preparetail(nopara, self, continue.nopara, @e)
-   let plist = for e2 ∈ arithseq(nopara, 1, 1), acc = empty:seq.symbol ; acc + Local.e2
+   let a2 = for @e ∈ a, acc = empty:seq.block ,,, acc + preparetail(nopara, self, continue.nopara, @e)
+   let plist = for e2 ∈ arithseq(nopara, 1, 1), acc = empty:seq.symbol ,,, acc + Local.e2
    let entry = block("LOOPBLOCK"_1, 0, blkno.a2_1, 0, plist + Lit(nopara + 1)
-   + Loopblock.for e3 ∈ paratypes.self, acc = empty:seq.mytype ; acc + getbasetype(alltypes, e3))
+   + Loopblock.for e3 ∈ paratypes.self, acc = empty:seq.mytype ,,, acc + getbasetype(alltypes, e3))
     ascode(p, [ entry] + a2, self)
   else ascode(p, a, self)
 
@@ -135,7 +135,7 @@ function cvtlabels(blks:seq.block, i:int, result:seq.block)seq.block
   else if kind.b = "SEQBLKS"_1 then subblks.blks_i
   else if kind.b = "BRBLKS"_1 then
   assert length.code.b = 3 report"OPT P"
-    for @e ∈ subblks.b, acc = empty:seq.block ; acc + convertexits(blkno.blks_(value.(code.b)_1), blkno.blks_(value.(code.b)_2), @e)
+    for @e ∈ subblks.b, acc = empty:seq.block ,,, acc + convertexits(blkno.blks_(value.(code.b)_1), blkno.blks_(value.(code.b)_2), @e)
   else [ blks_i]
    cvtlabels(blks, i + 1, result + newtrees)
 
@@ -177,7 +177,7 @@ function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
    else
     let args = backparse(s, i - 1, nopara, empty:seq.int)
      assert length.args = nopara report"back parse 3" + print.[ s_i] + toword.nopara + "//"
-     + for @e ∈ args, acc =""; acc + toword.@e
+     + for @e ∈ args, acc ="",,, acc + toword.@e
       args_1
    let b = first
     backparse2(s, b - 1, no - 1, [ b] + result)
@@ -195,7 +195,7 @@ Function backparse(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
     else
      let args = backparse(s, i - 1, nopara, empty:seq.int)
       assert length.args = nopara report"back parse 3" + print.[ s_i] + toword.nopara + "//"
-      + for @e ∈ args, acc =""; acc + toword.@e
+      + for @e ∈ args, acc ="",,, acc + toword.@e
        args_1
     let b = if first > 1 ∧ isdefine.s_(first - 1)then
     let c = backparse(s, first - 2, 1, empty:seq.int)
@@ -280,7 +280,7 @@ function findindex(label:int, i:int, a:seq.block)int
  if i > length.a then i
  else if blkno.a_i = label then i else findindex(label, i + 1, a)
 
-type caseblock is record key:int, keysig:symbol, truelabel:int, orgblkno:int
+type caseblock is key:int, keysig:symbol, truelabel:int, orgblkno:int
 
 function print(c:caseblock)seq.word
  " &br" + toword.key.c + print.[ keysig.c] + toword.truelabel.c
@@ -297,7 +297,7 @@ function iscaseblock(blk:block)boolean
   ∧ isinOp.code_(len - 3)
   ∧ not.isFref.code_(len - 4)
 
-type gathercaseresult is record caseblks:seq.caseblock, defaultlabel:int
+type gathercaseresult is caseblks:seq.caseblock, defaultlabel:int
 
 function gathercase(l:seq.block, blk:block, exp:seq.symbol, caseblks:seq.caseblock)gathercaseresult
  \\ blk is a caseblock but have not created the caseblks yet or check for following case blocks \\
@@ -309,19 +309,19 @@ function gathercase(l:seq.block, blk:block, exp:seq.symbol, caseblks:seq.caseblo
  else
   let rep = code_(len - 4)
    if module.rep = "$words"then
-   for e6 ∈ fsig.rep, acc = empty:seq.caseblock ; acc + caseblock(label, 0, e6)
+   for e6 ∈ fsig.rep, acc = empty:seq.caseblock ,,, acc + caseblock(label, 0, e6)
    else
     assert length.constantcode.rep > 2
     ∧ ((constantcode.rep)_1 = Lit.0 ∨ (constantcode.rep)_1 = Lit.1)report"not a standard seq" + print.code
-     for @e ∈ subseq(constantcode.rep, 3, length.constantcode.rep), acc = empty:seq.caseblock ; acc + caseblock(label, 0, @e)
+     for @e ∈ subseq(constantcode.rep, 3, length.constantcode.rep), acc = empty:seq.caseblock ,,, acc + caseblock(label, 0, @e)
   \\ now check to see if following block is a case block \\
   let newblock = findblk2(l, 1, label2.blk)
    if iscaseblock.newblock ∧ subseq(code.newblock, 1, length.code.newblock - 5) = exp
-   ∧ for e5 ∈ l, acc = 0 ; acc + indegree(blkno.newblock, e5); = 1 then
+   ∧ 1=for e5 ∈ l, acc = 0 ,,, acc + indegree(blkno.newblock, e5)  then
    gathercase(l, newblock, exp, caseblks + t)
    else gathercaseresult(sort(caseblks + t), blkno.newblock)
 
-type gggresult is record nextblklabel:int, allocated:seq.block
+type gggresult is nextblklabel:int, allocated:seq.block
 
 function rearrangecase(cbs:seq.caseblock, nextblklabel:int, defaultlabel:int, var:symbol)gggresult
  if length.cbs = 1 then
@@ -357,6 +357,6 @@ function print(b:block)seq.word
  + if kind.b ∈ "BR BRC"then
  [ toword.label1.b, toword.label2.b] + print.code.b
  else if kind.b = "BRBLKS"_1 then
- "(" + for @e ∈ subblks.b, acc =""; acc + print.@e ; + ")"
+ "(" + (for @e ∈ subblks.b, acc ="",,, acc + print.@e ) + ")"
  else if kind.b ∈ "EXIT CONTINUE"then print.code.b
  else if kind.b = "JMP"_1 then [ toword.label1.b] + print.code.b else"??"

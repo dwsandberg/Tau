@@ -2,7 +2,7 @@ Module ipair.T
 
 use standard
 
-type ipair is record index:int, value:T
+type ipair is index:int, value:T
 
 Export type:ipair.T
 

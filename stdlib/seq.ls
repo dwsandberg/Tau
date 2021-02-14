@@ -4,7 +4,7 @@ use standard
 
 unbound =(T, T)boolean
 
-type seq is record sequence, x:T
+type seq is sequence, x:T
 
 Export type:seq.T
 
@@ -32,13 +32,13 @@ Function_(a:seq.T, c:int)T
 
 Function =(a:seq.T, b:seq.T)boolean
  if length.a = length.b then
- for e ∈ a, acc = true, i, e ≠ b_i ; not(e ≠ b_i)
+ for e ∈ a, acc = true, i, e ≠ b_i , not(e ≠ b_i)
  else false
 
-Function ∈(a:T, s:seq.T)boolean for e ∈ s, acc = false, i, a = e ; a = e
+Function ∈(a:T, s:seq.T)boolean for e ∈ s, acc = false, i, a = e , a = e
 
 Function findelement(w:T, s:seq.T)seq.T
- for e ∈ s, acc = empty:seq.T, i, w = e ; if w = e then [ e]else empty:seq.T
+ for e ∈ s, acc = empty:seq.T, i, w = e , if w = e then [ e]else empty:seq.T
 
 -------------------------
 
@@ -52,7 +52,7 @@ Export to:pseq.T(s:seq.T)pseq.T
 
 Export type:pseq.T
 
-type pseq is record sequence, a:seq.T, b:seq.T, start:int
+type pseq is sequence, a:seq.T, b:seq.T, start:int
 
 Function_(s:pseq.T, ii:int)T
  let i = ii + start.s

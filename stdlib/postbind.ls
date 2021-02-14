@@ -50,7 +50,7 @@ function postbind(alltypes:typedict, dict:set.symbol, working:set.symbol, toproc
         , sourceX.r
         , tempX)
 
-type resultpb is record calls:set.symbol, code:seq.symbol, sourceX:program
+type resultpb is calls:set.symbol, code:seq.symbol, sourceX:program
 
 function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, result:seq.symbol, modpara:mytype, org:seq.word, calls:set.symbol, sourceX:program, tempX:program)resultpb
  if i > length.code then resultpb(calls, result, sourceX)
@@ -97,7 +97,7 @@ function buildconstructor(alltypes:typedict, addfld:seq.mytype, flds:seq.seq.myt
  else
   let fldsubfields = flds_fldno
   let newflatflds = if j > length.flatflds then
-  flatflds + for @e ∈ fldsubfields, acc = empty:seq.mytype ; acc + getbasetype(alltypes, @e)
+  flatflds + for @e ∈ fldsubfields, acc = empty:seq.mytype ,,, acc + getbasetype(alltypes, @e)
   else flatflds
   let newresult = result
   + if length.fldsubfields = 1 then [ Local.fldno]else [ Local.fldno, Lit.subfld, Idx.newflatflds_j]
@@ -114,7 +114,7 @@ function handletemplates(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:
   else
    let k = lookup(dict, name.sym, paratypes.sym)
     assert cardinality.k = 1 report"Cannot find template for" + name.sym + "("
-    + for @e ∈ paratypes.sym, acc =""; list(acc,",", print.@e);
+    + for @e ∈ paratypes.sym, acc ="",,, list(acc,",", print.@e);
     + ")"
     + "while processing"
     + org
@@ -134,18 +134,18 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:i
  \\ symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)\\
   let paratypes = paratypes.sym
    \\ assert not.isempty.typerep.last.paratypes report"XXX"+ print.sym \\
-   let offset = for @e ∈ subseq(paratypes, 2, length.paratypes), acc = toint.(module.sym)_1 ; acc + length.getsubflds(alltypes, replaceT(modpara, @e))
+   let offset = for @e ∈ subseq(paratypes, 2, length.paratypes), acc = toint.(module.sym)_1 ,,, acc + length.getsubflds(alltypes, replaceT(modpara, @e))
    let  singlefld= 1 =length.getsubflds(alltypes, replaceT(modpara, resulttype.sym))
    let p2 = if singlefld then [ Lit.offset, Idx.getbasetype(alltypes, replaceT(modpara, resulttype.sym))]
    else [ Lit.offset, symbol("GEP(ptr seq, int)","internal","ptr")]
     postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
  else if(fsig.sym)_1 ∈ "build"then
- let c = for @e ∈ paratypes.sym, acc = empty:seq.seq.mytype ; acc + getsubflds(alltypes, replaceT(modpara, @e))
+ let c = for @e ∈ paratypes.sym, acc = empty:seq.seq.mytype ,,, acc + getsubflds(alltypes, replaceT(modpara, @e))
   let p2 = buildconstructor(alltypes, if i = 2 then \\ for seq index func \\ [ typeint]else empty:seq.mytype, c, empty:seq.mytype, 1, 1, 0, empty:seq.symbol)
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
  else if first.fsig.sym = first."createthreadX"then
  let paracode = buildargcode(alltypes, newsymbol("dummy", typeint, paratypes.newsym << 5, parameter.resulttype.newsym))
-  let kindlist = for @e ∈ paratypes.sym << 5, acc = empty:seq.mytype ; acc + getbasetype(alltypes, replaceT(modpara, @e))
+  let kindlist = for @e ∈ paratypes.sym << 5, acc = empty:seq.mytype ,,, acc + getbasetype(alltypes, replaceT(modpara, @e))
   let p2 = [ Record([ typeint, typeint] + kindlist), symbol("toseqX:seq.int(ptr)","tausupport","int seq"), Lit.paracode, 
     newsymbol("createthread", mytype."tausupport", [ typeint, typeint, typeint, mytype."int seq", typeint], typeptr)]
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)

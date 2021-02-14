@@ -49,7 +49,7 @@ let y = [ t501, t502, t503, t504, t505, t506, t507, test20, t044]
  check(y,"testmodules") + checkbits
 
 function print(a:seq.int)seq.word
- "[" + for @e ∈ a, acc =""; list(acc,",", [ toword.@e]);
+ "[" + for @e ∈ a, acc ="",,, list(acc,",", [ toword.@e]);
  + "]"
 
 ---
@@ -76,7 +76,7 @@ function print(t:tree.word)seq.word
   [ label.t]
   + if nosons.t = 1 then"." + print.t_1
   else
-   "(" + for @e ∈ sons.t, acc =""; list(acc,",", print.@e);
+   "(" + for @e ∈ sons.t, acc ="",,, list(acc,",", print.@e);
    + ")"
 
 function t502 boolean [ GT, EQ, EQ]
@@ -117,7 +117,7 @@ let closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
  closure = toseq.arcs.transitiveClosure.g
 
 function print(g:graph.int)seq.word
- "GRAPH:" + for @e ∈ toseq.arcs.g, acc =""; acc + print.@e
+ "GRAPH:" + for @e ∈ toseq.arcs.g, acc ="",,, acc + print.@e
 
 function print(a:arc.int)seq.word"(" + toword.tail.a + toword.head.a + ")"
 
@@ -129,8 +129,8 @@ Function t507 boolean"The umber ant ambles the opal nurse" = getphrase.20
 
 function t044 boolean
 let s = UTF8.[ 40, 50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
-let z = myseq.for @e ∈ toseqbyte.s, acc = empty:seq.int ; acc + toint.@e
- for @e ∈ z, acc =""; acc + toword.@e ; = "40 50 335 50 336"
+let z = myseq.for @e ∈ toseqbyte.s, acc = empty:seq.int ,,, acc + toint.@e
+ for @e ∈ z, acc ="",,, acc + toword.@e ; = "40 50 335 50 336"
  ∧ length.toseq.to:myseq.int(z) ≠ 0
  ∧ length.toseq.to:myseq.int([ 1, 2, 3]) = 0
 

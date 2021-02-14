@@ -7,7 +7,7 @@ use seq.T
 use seq.seq.T
 
 Function reverse(s:seq.T)seq.T
- for @e ∈ arithseq(length.s, 0 - 1, length.s), acc = empty:seq.T ; acc + s_@e
+ for @e ∈ arithseq(length.s, 0 - 1, length.s), acc = empty:seq.T ,,, acc + s_@e
 
 Function removedups(a:seq.T, b:seq.T, c:int)seq.T
  if c = 0 then b
@@ -16,7 +16,7 @@ Function removedups(a:seq.T, b:seq.T, c:int)seq.T
 
 Function removedups(a:seq.T)seq.T removedups(a, empty:seq.T, length.a)
 
-type cseq is record sequence, element:T
+type cseq is sequence, element:T
 
 Function_(s:cseq.T, i:int)T element.s
 
@@ -26,8 +26,8 @@ Function constantseq(len:int, element:T)seq.T toseq.cseq(len, element)
 
 Function replace(s:seq.T, index:int, value:T)seq.T
  if not.ispseq.s then
- let b = for @e ∈ arithseq(index - 1, 1, 1), acc = empty:seq.T ; acc + s_@e
-   for @e ∈ arithseq(length.s - index, 1, index + 1), acc = b + value ; acc + s_@e
+ let b = for @e ∈ arithseq(index - 1, 1, 1), acc = empty:seq.T ,,, acc + s_@e
+   for @e ∈ arithseq(length.s - index, 1, index + 1), acc = b + value ,,, acc + s_@e
  else
   let p = to:pseq.T(s)
    if index > length.a.p then
@@ -36,7 +36,7 @@ Function replace(s:seq.T, index:int, value:T)seq.T
 
 _____________
 
-type arithmeticseq is record sequence, step:T, start:T
+type arithmeticseq is sequence, step:T, start:T
 
 unbound +(T, T)T
 
@@ -130,7 +130,7 @@ Function lpad(n:int, val:T, l:seq.T)seq.T constantseq(n - length.l, val) + l
 Function break(w:T, a:seq.T)seq.seq.T break(w, empty:seq.T, a)
 
 Function break(seperator:T, quotes:seq.T, a:seq.T)seq.seq.T
- let b = for e ∈ a, acc = empty:seq.int, i, false ; acc + if e ∈ ([ seperator] + quotes)then [ i]else empty:seq.int
+ let b = for e ∈ a, acc = empty:seq.int, i, , acc + if e ∈ ([ seperator] + quotes)then [ i]else empty:seq.int
   if isempty.b then [ a]else break(empty:seq.T, seperator, seperator, a, b, 1, 1, empty:seq.seq.T)
 
 function break(str:seq.T, currentquote:T, seperator:T, a:seq.T, b:seq.int, j:int, start:int, result:seq.seq.T)seq.seq.T
@@ -159,7 +159,7 @@ Function suffix(s:seq.T, len:int)seq.T subseq(s, length.s - len - 1, length.s)
 
 Function findindex(w:T, s:seq.T)int
  \\ result > length.s when element is not found.Otherwise results is location in sequence \\
- for e ∈ s, idx = length.s + 1, i, w = e ; if w = e then i else idx
+ for e ∈ s, idx = length.s + 1, i, w = e  , if w = e then i else idx
 
 Export type:seq.T
 

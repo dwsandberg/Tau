@@ -2,7 +2,7 @@ Module point.T
 
 use standard
 
-type point is record x:T, y:T, z:T
+type point is x:T, y:T, z:T
 
 unbound +(T, T)T
 

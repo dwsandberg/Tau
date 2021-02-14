@@ -26,9 +26,9 @@ Function gentestgrammar seq.word \\ generates the tables used in this test \\
 let testgrammar = [ ["G F #","R_1"], ["F E","R_1"], ["E 1","1"], ["E 2","2"], ["E 3","3"], ["E E + E","R_1 + R_3"]]
  lr1parser(testgrammar, empty:seq.seq.word,"F # + 1 E 3 G 2","attribute")
 
-type stepresult is record stk:stack.stkele, place:int, track:seq.word, tokenstate:int, string:seq.word
+type stepresult is stk:stack.stkele, place:int, track:seq.word, tokenstate:int, string:seq.word
 
-type stkele is record stateno:int, result:int
+type stkele is stateno:int, result:int
 
 function dict(result:int)int \\ dict is not used in this example. In more complicated example the result fld of the stkele would be a record \\ 0
 
@@ -52,13 +52,13 @@ function consumeinput(b:stepresult, next:word)stepresult
     , next)
 
 Function parse(input:seq.word)seq.word
- let a = for @e ∈ input + "#", acc = stepresult(push(empty:stack.stkele, stkele(startstate, 0)), 1,"", 0,"");
+ let a = for @e ∈ input + "#", acc = stepresult(push(empty:stack.stkele, stkele(startstate, 0)), 1,"", 0,""),,,
   consumeinput(acc, @e)
   [ toword.result.(toseq.stk.a)_2]
 
 function_(r:reduction, n:int)int result.(toseq.r)_n
 
-type reduction is record toseq:seq.stkele, input:seq.word, place:int
+type reduction is toseq:seq.stkele, input:seq.word, place:int
 
 Below is generated from parser generator.
 

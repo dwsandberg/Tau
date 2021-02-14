@@ -4,7 +4,7 @@ use standard
 
 use seq.T
 
-type process is record abortedx:boolean, a:seq.word, resultb:T
+type process is abortedx:boolean, a:seq.word, resultb:T
 
 Builtin aborted(p:process.T)boolean
 

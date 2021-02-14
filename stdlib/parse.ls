@@ -34,7 +34,7 @@ Export getheader(s:seq.word)seq.word
 
 Export type:bindinfo
 
-type bindinfo is record dict:set.symbol, code:seq.symbol, types:seq.mytype, tokentext:seq.word
+type bindinfo is dict:set.symbol, code:seq.symbol, types:seq.mytype, tokentext:seq.word
 
 Export dict(bindinfo)set.symbol
 
@@ -43,7 +43,7 @@ Function parsedcode(b:bindinfo)seq.symbol code.b
 Export types(bindinfo)seq.mytype
 
 Function funcparametertypes(t:bindinfo)seq.mytype
- for @e ∈ subseq(types.t, 3, length.types.t), acc = empty:seq.mytype ; acc + parameter.@e
+ for @e ∈ subseq(types.t, 3, length.types.t), acc = empty:seq.mytype ,,, acc + parameter.@e
 
 Function funcname(t:bindinfo)seq.word text.t
 
@@ -153,7 +153,7 @@ function forpart2(part1:bindinfo, exit:bindinfo, thunk:bindinfo, input:seq.word,
 
 function firstdiff(a:seq.symbol, b:seq.symbol)int
  \\ returns 0 if b is a prefix of a &pr a is a prefix of b \\
- for e ∈ subseq(a, 1, length.b), acc = 0, i, e ≠ b_i ; acc + if e ≠ b_i then i else 0
+ for e ∈ subseq(a, 1, length.b), acc = 0, i, e ≠ b_i , acc + if e ≠ b_i then i else 0
 
 function addparameter(dict:set.symbol, orgsize:int, input:seq.word, place:int, m:mytype)set.symbol
  assert isempty.lookup(dict, [ abstracttype.m], empty:seq.mytype) ∨ abstracttype.m = ":"_1 report errormessage("duplciate symbol:" + abstracttype.m, input, place)
@@ -163,9 +163,9 @@ function addparameter(dict:set.symbol, orgsize:int, input:seq.word, place:int, m
 function lookupbysig(dict:set.symbol, name:seq.word, paratypes:seq.mytype, input:seq.word, place:int)symbol
  let f = lookup(dict, name, paratypes)
   assert not.isempty.f report errormessage("cannot find 1" + name + "("
-  + for @e ∈ paratypes, acc =""; list(acc,",", print.@e);
+  + for @e ∈ paratypes, acc ="",,, list(acc,",", print.@e);
   + ")", input, place)
-   assert cardinality.f = 1 report errormessage("found more that one" + for @e ∈ toseq.f, acc =""; acc + print.@e, input, place)
+   assert cardinality.f = 1 report errormessage("found more that one" + for @e ∈ toseq.f, acc ="",,, acc + print.@e, input, place)
     f_1
 
 function createfunc(R:reduction.bindinfo, input:seq.word, place:int, funcname:seq.word, paralist:seq.mytype, functypebind:bindinfo, exp:bindinfo)bindinfo
@@ -188,121 +188,77 @@ function dict(r:reduction.bindinfo)set.symbol dict.last.r
 
 function action(ruleno:int, input:seq.word, place:int, R:reduction.bindinfo)bindinfo
  if ruleno = \\ G F # \\ 1 then R_1
- else if ruleno = \\ F W NM(FP)T E \\ 2 then
- createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
- else if ruleno = \\ F W N(FP)T E \\ 3 then
- createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
- else if ruleno = \\ F W NM T E \\ 4 then
- createfunc(R, input, place, tokentext.R_2, empty:seq.mytype, R_3, R_4)
- else if ruleno = \\ F W NM is W P \\ 5 then
- assert(tokentext.R_4)_1 ∈ "record"report errormessage("Expected record or sequence after is in type definition got:" + tokentext.R_4, input, place)
-   bindinfo(dict.R, empty:seq.symbol, types.R_5, tokentext.R_4 + tokentext.R_2)
- else if ruleno = \\ F T \\ 6 then R_1
- else if ruleno = \\ FP P \\ 7 then
- bindinfo(for @e ∈ types.R_1, acc = dict.R ; addparameter(acc, cardinality.dict.R, input, place, @e), empty:seq.symbol, types.R_1,"")
- else if ruleno = \\ P T \\ 8 then
- bindinfo(dict.R, empty:seq.symbol, [ addabstract(":"_1, gettype.R_1)],"")
- else if ruleno = \\ P P, T \\ 9 then
- bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ addabstract(":"_1, gettype.R_3)],"")
- else if ruleno = \\ P W:T \\ 10 then
- bindinfo(dict.R, empty:seq.symbol, [ addabstract((tokentext.R_1)_1, gettype.R_3)],"")
- else if ruleno = \\ P P, W:T \\ 11 then
- bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ addabstract((tokentext.R_3)_1, gettype.R_5)],"")
- else if ruleno = \\ P comment W:T \\ 12 then
- bindinfo(dict.R, empty:seq.symbol, [ addabstract((tokentext.R_2)_1, gettype.R_4)],"")
- else if ruleno = \\ P P, comment W:T \\ 13 then
- bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ addabstract((tokentext.R_4)_1, gettype.R_6)],"")
- else if ruleno = \\ E NM \\ 14 then
+else if ruleno = \\ F W NM(FP)T E \\ 2 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
+else if ruleno = \\ F W_(FP)T E \\ 3 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
+else if ruleno = \\ F W-(FP)T E \\ 4 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
+else if ruleno = \\ F W =(FP)T E \\ 5 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
+else if ruleno = \\ F W >(FP)T E \\ 6 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
+else if ruleno = \\ F W *(FP)T E \\ 7 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
+else if ruleno = \\ F W ∧(FP)T E \\ 8 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
+else if ruleno = \\ F W ∨(FP)T E \\ 9 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
+else if ruleno = \\ F W NM T E \\ 10 then createfunc(R, input, place, tokentext.R_2, empty:seq.mytype, R_3, R_4) 
+else if ruleno = \\ F W NM is P \\ 11 then bindinfo(dict.R, empty:seq.symbol, types.R_4,"record"+ tokentext.R_2) 
+else if ruleno = \\ F T \\ 12 then R_1 
+else if ruleno = \\ FP P \\ 13 then bindinfo(for @e ∈ types.R_1, acc = dict.R,,, addparameter(acc, cardinality.dict.R, input, place, @e), empty:seq.symbol, types.R_1,"") 
+else if ruleno = \\ P T \\ 14 then bindinfo(dict.R, empty:seq.symbol, [ addabstract(":"_1, gettype.R_1)],"") 
+else if ruleno = \\ P P, T \\ 15 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ addabstract(":"_1, gettype.R_3)],"") 
+else if ruleno = \\ P W:T \\ 16 then bindinfo(dict.R, empty:seq.symbol, [ addabstract((tokentext.R_1)_1, gettype.R_3)],"") 
+else if ruleno = \\ P P, W:T \\ 17 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ addabstract((tokentext.R_3)_1, gettype.R_5)],"") 
+else if ruleno = \\ P comment W:T \\ 18 then bindinfo(dict.R, empty:seq.symbol, [ addabstract((tokentext.R_2)_1, gettype.R_4)],"") 
+else if ruleno = \\ P P, comment W:T \\ 19 then bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ addabstract((tokentext.R_4)_1, gettype.R_6)],"") 
+else if ruleno = \\ E NM \\ 20 then 
  let id = tokentext.R_1
-  let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place)
-   bindinfo(dict.R, [ f], [ resulttype.f],"")
- else if ruleno = \\ E NM(L)\\ 15 then unaryop(R, input, place, tokentext.R_1, R_3)
- else if ruleno = \\ E(E)\\ 16 then R_2
- else if ruleno = \\ E { E } \\ 17 then  assert false report errormessage("uses { }", input, place) R_2
- else if ruleno = \\ E if E then E else E \\ 18 then
+let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place)bindinfo(dict.R, [ f], [ resulttype.f],"") 
+else if ruleno = \\ E NM(L)\\ 21 then unaryop(R, input, place, tokentext.R_1, R_3) 
+else if ruleno = \\ E(E)\\ 22 then R_2 
+else if ruleno = \\ E if E then E else D \\ 23 then 
  let thenpart = R_4
    assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)
     assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)
-    let newcode = code.R_2 + [ Lit.2, Lit.3, Br] + code.R_4 + Exit
-    + code.R_6
-    + [ Exit, Block((types.R_4)_1, 3)]
-     bindinfo(dict.R, newcode, types.thenpart,"")
- else if ruleno = \\ E E_E \\ 19 then opaction(R, input, place)
- else if ruleno = \\ E-E \\ 20 then unaryop(R, input, place, tokentext.R_1, R_2)
- else if ruleno = \\ E W.E \\ 21 then unaryop(R, input, place, tokentext.R_1, R_3)
- else if ruleno = \\ E E * E \\ 22 then opaction(R, input, place)
- else if ruleno = \\ E E-E \\ 23 then opaction(R, input, place)
- else if ruleno = \\ E E = E \\ 24 then opaction(R, input, place)
- else if ruleno = \\ E E > E \\ 25 then opaction(R, input, place)
- else if ruleno = \\ E E ∧ E \\ 26 then opaction(R, input, place)
- else if ruleno = \\ E E ∨ E \\ 27 then opaction(R, input, place)
- else if ruleno = \\ L E \\ 28 then R_1
- else if ruleno = \\ L L, E \\ 29 then
- bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"")
- else if ruleno = \\ E [ L]\\ 30 then
+let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"") 
+else if ruleno = \\ E E_E \\ 24 then opaction(R, input, place) 
+else if ruleno = \\ E-E \\ 25 then unaryop(R, input, place, tokentext.R_1, R_2) 
+else if ruleno = \\ E W.E \\ 26 then unaryop(R, input, place, tokentext.R_1, R_3) 
+else if ruleno = \\ E E * E \\ 27 then opaction(R, input, place) 
+else if ruleno = \\ E E-E \\ 28 then opaction(R, input, place) 
+else if ruleno = \\ E E = E \\ 29 then opaction(R, input, place) 
+else if ruleno = \\ E E > E \\ 30 then opaction(R, input, place) 
+else if ruleno = \\ E E ∧ E \\ 31 then opaction(R, input, place) 
+else if ruleno = \\ E E ∨ E \\ 32 then opaction(R, input, place) 
+else if ruleno = \\ L E \\ 33 then R_1 
+else if ruleno = \\ L L, E \\ 34 then bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"") 
+else if ruleno = \\ E [ L]\\ 35 then 
  let types = types.R_2
-   assert for @e ∈ types, acc = true ; acc ∧ types_1 = @e report errormessage("types do not match in build", input, place)
-    bindinfo(dict.R, code.R_2 + Sequence(types_1, length.types), [ addabstract("seq"_1, types_1)],"")
- else if ruleno = \\ A let W = E \\ 31 then
- let e = R_4
-  let name = tokentext.R_2
-   assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:" + name, input, place)
-   let newdict = dict.R + Local(name,(types.e)_1)
-    bindinfo(newdict, code.e + Define.name, types.e, tokentext.R_2)
- else if ruleno = \\ E A E \\ 32 then
+assert for @e ∈ types, acc = true ,,, acc ∧ types_1 = @e report errormessage("types do not match in build", input, place)bindinfo(dict.R, code.R_2 + Sequence(types_1, length.types), [ addabstract("seq"_1, types_1)],"") 
+else if ruleno = \\ A let W = D \\ 36 then 
+let e = R_4 
+let name = tokentext.R_2 
+assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
+let newdict = dict.R + Local(name,(types.e)_1)bindinfo(newdict, code.e + Define.name, types.e, tokentext.R_2) 
+else if ruleno = \\ E A E \\ 37 then 
  let name = tokentext.R_1
   let f = lookup(dict.R, name, empty:seq.mytype)
-   assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name" + name
-    bindinfo(dict.R_1 - f_1, code.R_1 + code.R_2, \\ +"SET"+ name, \\ types.R_2,"")
- else if ruleno = \\ E assert E report E E \\ 33 then
- assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place)
-   assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place)
-   let newcode = code.R_2 + [ Lit.2, Lit.3, Br] + code.R_5 + Exit
-   + code.R_4
-   + symbol("assert:T(word seq)", typerep.(types.R_5)_1 + "builtin", typerep.(types.R_5)_1)
-   + Exit
-   + Block((types.R_5)_1, 3)
-    bindinfo(dict.R, newcode, types.R_5,"")
- else if ruleno = \\ E I \\ 34 then bindlit.R
- else if ruleno = \\ E I.I \\ 35 then
- bindinfo(dict.R
-  , [ Words(tokentext.R_1 + "." + tokentext.R_3), symbol("makereal(word seq)","UTF8","real")]
-  , [ mytype."real"]
-  ,"")
- else if ruleno = \\ T W \\ 36 then isdefined(R, input, place, mytype.tokentext.R_1)
- else if ruleno = \\ T W.T \\ 37 then
- isdefined(R, input, place, addabstract((tokentext.R_1)_1,(types.R_3)_1))
- else if ruleno = \\ E $wordlist \\ 38 then
- let s = tokentext.R_1
-   bindinfo(dict.R, [ Words.subseq(s, 2, length.s - 1)], [ mytype."word seq"],"")
- else if ruleno = \\ E comment E \\ 39 then R_2
- else if ruleno = \\ N_\\ 40 then R_1
- else if ruleno = \\ N-\\ 41 then R_1
- else if ruleno = \\ N = \\ 42 then R_1
- else if ruleno = \\ N > \\ 43 then R_1
- else if ruleno = \\ N * \\ 44 then R_1
- else if ruleno = \\ N ∧ \\ 45 then R_1
- else if ruleno = \\ N ∨ \\ 46 then R_1
- else if ruleno = \\ NM W \\ 47 then R_1
- else if ruleno = \\ NM W:T \\ 48 then
- bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 + ":" + print.(types.R_3)_1)
- else if ruleno = \\ B for(W-E, W = E, W \\ 49 then assert false report errormessage("uses for(", input, place) 
- forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first.tokentext.R_11, input, place)
- else if ruleno = \\ B for(W-E, W = E \\ 50 then assert false report errormessage("uses for(", input, place) 
- forpart1(first.tokentext.R_3, R_5, first.tokentext.R_7, R_9, first."^", input, place)
- else if ruleno = \\ E B)E \\ 51 then
- forpart2(R_1, bindinfo(dict.R, [ Litfalse], [ mytype."boolean"],""), R_3, input, place)
- else if ruleno = \\ E B, E)E \\ 52 then forpart2(R_1, R_3, R_5, input, place)
- else if ruleno = \\ B for W-E, W = E, W \\ 53 then
- forpart1(first.tokentext.R_2, R_4, first.tokentext.R_6, R_8, first.tokentext.R_10, input, place)
- else if ruleno = \\ B for W-E, W = E \\ 54 then
- forpart1(first.tokentext.R_2, R_4, first.tokentext.R_6, R_8, first."^", input, place)
- else if ruleno = \\ E B ; D \\ 55 then
- forpart2(R_1, bindinfo(dict.R, [ Litfalse], [ mytype."boolean"],""), R_3, input, place)
- else if ruleno = \\ E B, E ; D \\ 56 then forpart2(R_1, R_3, R_5, input, place)
- else if ruleno = \\ D E \\ 57 then R_1
- else
-  assert ruleno = \\ D E ; \\ 58 report"invalid rule number" + toword.ruleno
+assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name"+ name bindinfo(dict.R_1-f_1, code.R_1 + code.R_2, \\ +"SET"+ name, \\ types.R_2,"") 
+else if ruleno = \\ E assert E report D E \\ 38 then 
+assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in 
+assert must be boolean in:", input, place) 
+assert(types.R_4)_1 = mytype."word seq"report errormessage("report in 
+assert must be seq of word in:", input, place) 
+let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_5 + Exit + code.R_4 + symbol(" 
+assert:T(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"") 
+else if ruleno = \\ E I \\ 39 then bindlit.R 
+else if ruleno = \\ E I.I \\ 40 then bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"") 
+else if ruleno = \\ T W \\ 41 then isdefined(R, input, place, mytype.tokentext.R_1) 
+else if ruleno = \\ T W.T \\ 42 then isdefined(R, input, place, addabstract((tokentext.R_1)_1,(types.R_3)_1)) 
+else if ruleno = \\ E $wordlist \\ 43 then 
+let s = tokentext.R_1 bindinfo(dict.R, [ Words.subseq(s, 2, length.s-1)], [ mytype."word seq"],"") 
+else if ruleno = \\ E comment E \\ 44 then R_2 
+else if ruleno = \\ NM W \\ 45 then R_1 
+else if ruleno = \\ NM W:T \\ 46 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1) 
+else if ruleno = \\ B for W-E, W = E, W, \\ 47 then forpart1(first.tokentext.R_2, R_4, first.tokentext.R_6, R_8, first.tokentext.R_10, input, place) 
+else if ruleno = \\ B for W-E, W = E,, \\ 48 then forpart1(first.tokentext.R_2, R_4, first.tokentext.R_6, R_8, first."^", input, place) 
+else if ruleno = \\ E B, D \\ 49 then forpart2(R_1, bindinfo(dict.R, [ Litfalse], [ mytype."boolean"],""), R_3, input, place) 
+else if ruleno = \\ E B E, D \\ 50 then forpart2(R_1, R_2, R_4, input, place) 
+else if ruleno = \\ D E \\ 51 then R_1 
+else assert ruleno = \\ D E ; \\ 52 report"invalid rule number"+ toword.ruleno 
    R_1
-
-else assert ruleno = // E B, E)E // 52 report"invalid rule number"+ toword.ruleno forpart2(R_1, R_3, R_5, input, place)

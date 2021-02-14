@@ -15,7 +15,7 @@ enumerate("align","unspecified ? ? ? align8 align16 align32 align64")
 + enumerate("cmp2op","? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle")
 
 function enumerate(type:seq.word, codes:seq.word)seq.word
- "type" + type + "is record toint:int" + " &br  &br Function decode(code:" + type
+ "type" + type + "is toint:int" + " &br  &br Function decode(code:" + type
  + ")seq.word"
  + " &br let i = toint.code  &br if between(i + 1, 1,"
  + toword.length.codes
@@ -42,7 +42,7 @@ function enumerate(type:seq.word, codes:seq.word)seq.word
  + ", b:"
  + type
  + ")boolean toint.a = toint.b"
- + for @e ∈ arithseq(length.codes, 1, 1), acc =""; acc + dd(type, codes, @e);
+ + for @e ∈ arithseq(length.codes, 1, 1), acc ="",,, acc + dd(type, codes, @e);
  + " &br  &br"
 
 function dd(type:seq.word, w:seq.word, i:int)seq.word
@@ -53,7 +53,7 @@ function dd(type:seq.word, w:seq.word, i:int)seq.word
 
 --------------------------
 
-type align is record toint:int
+type align is toint:int
 
 Function decode(code:align)seq.word
  let i = toint.code
@@ -80,7 +80,7 @@ Function align32 align align.6
 
 Function align64 align align.7
 
-type instop is record toint:int
+type instop is toint:int
 
 Function decode(code:instop)seq.word
  let i = toint.code
@@ -124,7 +124,7 @@ Function GEP instop instop.43
 
 Function STORE instop instop.44
 
-type typeop is record toint:int
+type typeop is toint:int
 
 Function decode(code:typeop)seq.word
  let i = toint.code
@@ -157,7 +157,7 @@ Function ARRAY typeop typeop.11
 
 Function FUNCTION typeop typeop.21
 
-type blockop is record toint:int
+type blockop is toint:int
 
 Function decode(code:blockop)seq.word
  let i = toint.code
@@ -190,7 +190,7 @@ Function VALUESYMTABLE blockop blockop.14
 
 Function TYPES blockop blockop.17
 
-type moduleop is record toint:int
+type moduleop is toint:int
 
 Function decode(code:moduleop)seq.word
  let i = toint.code
@@ -217,7 +217,7 @@ Function GLOBALVAR moduleop moduleop.7
 
 Function FUNCTIONDEC moduleop moduleop.8
 
-type constop is record toint:int
+type constop is toint:int
 
 Function decode(code:constop)seq.word
  let i = toint.code
@@ -260,7 +260,7 @@ Function CGEP constop constop.20
 
 Function CDATA constop constop.22
 
-type castop is record toint:int
+type castop is toint:int
 
 Function decode(code:castop)seq.word
  let i = toint.code
@@ -301,7 +301,7 @@ Function inttoptr castop castop.10
 
 Function bitcast castop castop.11
 
-type binaryop is record toint:int
+type binaryop is toint:int
 
 Function decode(code:binaryop)seq.word
  let i = toint.code
@@ -344,7 +344,7 @@ Function or binaryop binaryop.11
 
 Function xor binaryop binaryop.12
 
-type cmp2op is record toint:int
+type cmp2op is toint:int
 
 Function decode(code:cmp2op)seq.word
  let i = toint.code

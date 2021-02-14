@@ -81,7 +81,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br 11 EXITBLOCK 1 
 &br BLOCK 6 
 &br","%1", \\ test 33 \\"33"]
-let r = for @e ∈ arithseq(length.cl, 1, 1), acc =""; acc + getcode(p2, cl, @e);
+let r = for @e ∈ arithseq(length.cl, 1, 1), acc ="",,, acc + getcode(p2, cl, @e);
 + if [ 40, 20, 30, 20]
 = [ multitarget(4, true, false), multitarget(4, false, false), multitarget(3, false, true), multitarget(2, false, false)]then
 ""
@@ -91,7 +91,7 @@ else"fail multitarget"
 function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
 
 Function getcode(p2:seq.seq.word, codelist:seq.seq.word, no:int)seq.word
- let t1 = for @e ∈ p2, acc =""; acc + filter(merge("optest" + toword.no), @e)
+ let t1 = for @e ∈ p2, acc ="",,, acc + filter(merge("optest" + toword.no), @e)
  let t = subseq(t1, findindex("testopt"_1, t1) + 1, length.t1)
  let code = removeoptions(t, length.t)
   \\ assert false report t1 +" &br"+ t +" &br"+ code \\
@@ -220,4 +220,4 @@ Function optest34a(a:ordering, b:ordering)ordering
 
 Function optest16a(a:seq.char)seq.int
  \\ This is just a type change and the compiler recognizes this and does not generate code \\
- for @e ∈ a, acc = empty:seq.int ; acc + toint.@e
+ for @e ∈ a, acc = empty:seq.int ,,, acc + toint.@e

@@ -75,7 +75,7 @@ Function main(arg:seq.byte) int
  
  Function addlibrarywords(l:liblib) int let discard=addencodingpairs(words.l) 1
 
-type liblib is record libname:seq.word, words:seq.encodingpair.seq.char
+type liblib is libname:seq.word, words:seq.encodingpair.seq.char
 
 
 

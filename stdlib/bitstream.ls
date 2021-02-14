@@ -12,7 +12,7 @@ use seq.char
 
 Export type:bitstream
 
-type bitstream is record length:int, endpart:bits, fullwords:seq.bits
+type bitstream is length:int, endpart:bits, fullwords:seq.bits
 
 Export length(bitstream)int
 
@@ -37,7 +37,7 @@ function print(x:bitstream)seq.word
   let start = print.endpart.x << (3 - j)
   let k = i mod 16 + 1
   let part = if k = 16 then start else [ toword.k] + "bits of" + start
-   part + for @e ∈ reverse.fullwords.x, acc =""; acc + print.@e
+   part + for @e ∈ reverse.fullwords.x, acc ="",,, acc + print.@e
 
 function firstword(x:bitstream)bits if isempty.fullwords.x then endpart.x else first.fullwords.x
 
@@ -115,7 +115,7 @@ Function add(a:bitstream, b:bits, nobits:int)bitstream
 
 Function +(a:bitstream, b:byte)bitstream add(a, tobits.b, 8)
 
-Function +(a:bitstream, b:seq.byte)bitstream for @e ∈ b, acc = a ; acc + @e
+Function +(a:bitstream, b:seq.byte)bitstream for @e ∈ b, acc = a ,,, acc + @e
 
 function shiftleft(i:int, leftover:bits, allwords:seq.bits, shiftleft:int, result:seq.bits)seq.bits
  if i > length.allwords then result

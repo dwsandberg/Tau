@@ -20,7 +20,7 @@ use process.returntype
 
 use process.seq.word
 
-type returntype is record a:int, b:int, c:seq.word
+type returntype is a:int, b:int, c:seq.word
 
 function testprocess3 returntype returntype(4, 40,"a test")
 
@@ -53,14 +53,14 @@ Function testreal seq.word check([ print(3, sqrt.2.0) = "1.414"
 , print(5, tan(pi / 4.0)) = "1.00000"
 , print(5, arcsin.sin.0.5) = "0.50000"
 , print(5, arccos.cos.0.5) = "0.50000"
-, print(3, for @e ∈ [ 8, 9, 10, 11], acc = 0.0 ; acc + toreal.@e)
+, print(3, for @e ∈ [ 8, 9, 10, 11], acc = 0.0 ,,, acc + toreal.@e)
 = "38.000"
 ,"23.45000-18.45000"
 = print(5, 23.45) + print(5, 5.0 - 23.45)
 ,-2^4 = -16
 , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
 = "1 C addcomma function i int merge s segment seq seq toword toword word"
-, for @e ∈ alphasort.["z b","a b","a a","test 23","test 20"], acc ="";
+, for @e ∈ alphasort.["z b","a b","a a","test 23","test 20"], acc ="",,,
  list(acc,"/", @e);
 = "a a / a b / test 20 / test 23 / z b"]
 ,"real")
@@ -93,10 +93,10 @@ let b = process.countprimes(c + 1, 2 * c)
  [ 1228, 1033] = [ result.a, result.b]
 
 function findprimes(start:int, end:int)seq.word
- for @e ∈ arithseq((end - start + 2) / 2, 2, start), acc =""; acc + isprime3.@e
+ for @e ∈ arithseq((end - start + 2) / 2, 2, start), acc ="",,, acc + isprime3.@e
 
 function countprimes(start:int, end:int)int
- for @e ∈ arithseq((end - start + 2) / 2, 2, start), acc = 0 ; acc + isprime4.@e
+ for @e ∈ arithseq((end - start + 2) / 2, 2, start), acc = 0 ,,, acc + isprime4.@e
 
 function isprime3(i:int)seq.word if isprime.i then [ toword.i]else""
 
