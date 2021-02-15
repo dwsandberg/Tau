@@ -253,16 +253,8 @@ Function Block(type:mytype, i:int)symbol
  symbol("BLOCK" + toword.i, towords.type + "$block", towords.type, specialbit)
 
 Function Loopblock(types:seq.mytype)symbol 
- symbol(for t ∈ types, acc ="LOOPBLOCK(",,,
-let r1=typerep.t
-  acc
-  + [ if last.r1 = "seq"_1 then"ptr"_1
-         else if   r1="boolean" then "int"_1 else r1_1  ]
-  + ",";
- + "int)"
- ,"$loopblock"
- ,"?"
- , specialbit)
+ let fsig=for t ∈ types, acc ="LOOPBLOCK(",,,acc+ typerep.t+ ","; + "int)"
+ symbol(fsig,"$loopblock","?", specialbit)
 
 Function maybepacked(t:mytype) boolean
  abstracttype.t = "seq"_1 ∧ abstracttype.parameter.t ∈ "byte bit packed2 packed3 packed4 packed5 packed6"

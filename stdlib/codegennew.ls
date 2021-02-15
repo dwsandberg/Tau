@@ -168,7 +168,8 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   let varcount = arg.m - 1
    let firstvar = constvalue.slot.top.args.l
    let bodymap = for @e ∈ arithseq(varcount, 1, 1), acc = lmap.l ,,, addloopmapentry(acc, firstvar, regno.l, @e)
-   let newstk = push(push(pushexptypes(parametertypes.m, 3, args.l), varcount), 2)
+   let pushexptypes= for e &in llvmtypelist.m   ,acc=args.l,,, push(acc,typ.e)
+   let newstk = push(push(pushexptypes, varcount), 2)
     \\ stack from top is kind, noexps, firstvar, exptypes, exps \\
     let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, newstk, blocks.l)
      Lcode2(emptyinternalbc, bodymap, noblocks.l + 1, regno.l + varcount, empty:stack.int, push(blocks.l, exitblock))
@@ -182,14 +183,6 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
    assert action = "RECORD"_1 report"code gen unknown" + action
    let fldbc = recordcode(top(args.l, arg.m), llvmtypelist.m, regno.l, false)
     Lcode2(code.l + bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
-
-function pushexptypes(s:seq.word, i:int, result:stack.int)stack.int
- if i + 4 > length.s then result
- else
-  pushexptypes(s
-  , i + 2
-  , push(result, if s_i ∈ "real"then typ.double
-  else if s_i ∈ "int boolean"then typ.i64 else typ.ptr.i64))
 
 function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, map:seq.localmap, exitbr:internalbc)processblkresult
  processblk(phitype, blks, 1, exitbr, emptyinternalbc, 1, empty:seq.int, empty:seq.int)

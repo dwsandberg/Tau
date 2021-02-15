@@ -55,13 +55,14 @@ type resultpb is calls:set.symbol, code:seq.symbol, sourceX:program
 function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, result:seq.symbol, modpara:mytype, org:seq.word, calls:set.symbol, sourceX:program, tempX:program)resultpb
  if i > length.code then resultpb(calls, result, sourceX)
  else
+         let coretypes=false
   let x = code_i
     if isspecial.x then 
    if isSequence.x then
     let a = Sequence(parameter.getbasetype(alltypes,replaceT(modpara,resulttype.x)), nopara.x)
      postbind3(alltypes, dict, code, i + 1, result + a, modpara, org, calls, sourceX, tempX)
    else  if isblock.x then
-      let a = Block( getbasetype(alltypes,replaceT(modpara,resulttype.x)), nopara.x)  
+      let a = Block( getbasetype(coretypes,alltypes,replaceT(modpara,resulttype.x)), nopara.x)  
      postbind3(alltypes, dict, code, i + 1, result + a, modpara, org, calls, sourceX, tempX)
    else       postbind3(alltypes, dict, code, i + 1, result + x, modpara, org, calls, sourceX, tempX)
    else 
@@ -84,8 +85,16 @@ function postbind3(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, r
          let p2 = if isfref then Fref.target.xx4 else target.xx4
           postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls + target.xx4, sourceX, tempX)
        else if last.module.sym = "builtin"_1 then
-       \\ &in"offsets build assert createthreadX"report"BBBBBB"+ print.sym \\
-        codeforbuiltin(alltypes, dict, code, i, result, isfref, newsym, sym, org, modpara, calls, sourceX, tempX)
+      if(fsig.sym)_1 ∈ "offsets"then
+ \\ symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)\\
+  let paratypes = paratypes.sym
+     let offset = for @e ∈ subseq(paratypes, 2, length.paratypes), acc = toint.(module.sym)_1 ,,, acc + length.getsubflds(alltypes, replaceT(modpara, @e))
+   let  singlefld= 1 =length.getsubflds(alltypes, replaceT(modpara, resulttype.sym))
+   let p2 = if singlefld then [ Lit.offset, Idx.getbasetype(coretypes,alltypes, replaceT(modpara, resulttype.sym))]
+   else [ Lit.offset, symbol("GEP(ptr seq, int)","internal","ptr")]
+    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
+ else 
+          codeforbuiltin(alltypes, dict, code, i, result, isfref, newsym, sym, org, modpara, calls, sourceX, tempX)
        else if subseq(fsig.sym, 1, 2) = "type:"then
        let p2 = definedeepcopy(alltypes, resulttype.newsym, org)
          \\ assert false report"XXX"+ print.newsym \\
@@ -128,18 +137,14 @@ function handletemplates(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:
 
 function buildcode(acc:int, w:word)int acc * 2 + if w = first."real"then 1 else 0
 
+function getbasetype(coretypes :boolean,alltypes:typedict,t:mytype) mytype
+let a=getbasetype(alltypes, t)
+if length.typerep.a > 2 &and coretypes then typeptr
+else a
+
 function codeforbuiltin(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:int, result:seq.symbol, isfref:boolean, newsym:symbol, sym:symbol, org:seq.word, modpara:mytype
 , calls:set.symbol, sourceX:program, tempX:program)resultpb
- if(fsig.sym)_1 ∈ "offsets"then
- \\ symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)\\
-  let paratypes = paratypes.sym
-   \\ assert not.isempty.typerep.last.paratypes report"XXX"+ print.sym \\
-   let offset = for @e ∈ subseq(paratypes, 2, length.paratypes), acc = toint.(module.sym)_1 ,,, acc + length.getsubflds(alltypes, replaceT(modpara, @e))
-   let  singlefld= 1 =length.getsubflds(alltypes, replaceT(modpara, resulttype.sym))
-   let p2 = if singlefld then [ Lit.offset, Idx.getbasetype(alltypes, replaceT(modpara, resulttype.sym))]
-   else [ Lit.offset, symbol("GEP(ptr seq, int)","internal","ptr")]
-    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
- else if(fsig.sym)_1 ∈ "build"then
+ if(fsig.sym)_1 ∈ "build"then
  let c = for @e ∈ paratypes.sym, acc = empty:seq.seq.mytype ,,, acc + getsubflds(alltypes, replaceT(modpara, @e))
   let p2 = buildconstructor(alltypes, if i = 2 then \\ for seq index func \\ [ typeint]else empty:seq.mytype, c, empty:seq.mytype, 1, 1, 0, empty:seq.symbol)
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)

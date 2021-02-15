@@ -286,8 +286,8 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
    else
     firstpass(modname.f, uses.f, defines.f, exports.f ∪ k, toseq(asset.unboundexports.f - k), unbound.f, types.f, prg.f)
  else if input_1 ∈ "use"then
- let t = parse(empty:set.symbol, subseq(input, 2, length.input))
-   firstpass(modname.f, uses.f + (types.t)_1, defines.f, exports.f, unboundexports.f, unbound.f, types.f, prg.f)
+  let t = parse(empty:set.symbol, "type type is"+input << 1)
+   firstpass(modname.f, uses.f +  parameter.(types.t)_1, defines.f, exports.f, unboundexports.f, unbound.f, types.f, prg.f)
  else if input_1 ∈ "type"then
  let b = parse(empty:set.symbol, input)
   let name = input_2

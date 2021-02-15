@@ -119,6 +119,12 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
        let localtype=lookup(localtypes,(name.s)_1)
        assert not.isempty.localtype report "local not defined"+name.s
        ccc(alltypes, code, i + 1, push(stk, localtype_1), localtypes)
+    else if (fsig.s)  &in ["IDX(packed2 seq,int)","IDX(packed3 seq,int)","IDX(packed4 seq,int)","IDX(packed5 seq,int)","IDX(packed6 seq,int)"
+    ,"callidx(packed2 seq, int)","callidx(packed3 seq, int)","callidx(packed4 seq, int)","callidx(packed5 seq, int)","callidx(packed6 seq, int)"
+    ] then 
+                   ccc(alltypes, code, i + 1, push(pop(stk,nopara.s) ,typeptr), localtypes)    
+   else if (fsig.s)  &in ["length(packed2 seq)", "length(packed3 seq)", "length(packed3 seq)"] then 
+                   ccc(alltypes, code, i + 1, push(pop(stk,nopara.s) ,typeint), localtypes)    
     else if (fsig.s)_1 &in "getseqlength getseqtype setfld blockit setfirst memcpy toseq" then
                ccc(alltypes, code, i + 1, push(pop(stk,nopara.s) ,resulttype.s), localtypes)
      else  if (fsig.s)_1  &in "IDX GEP idxseq callidx"  &and length.top(stk,2)=2 &and top.stk=typeint  

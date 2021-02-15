@@ -304,7 +304,7 @@ function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:i
    \\ simple acc \\
     let acc = Local(lastUsed + 1)
     let masteridx1 = Local(lastUsed + 2)
-     breakresult([ Lit.1, Lit.lastUsed, Loopblock.[ typeptr, resulttype, typeint]], substitute(thunk0, thunkplaceholders, [ seqelement, acc, masteridx1]) + [ newmasteridx, continue.3], [ acc], lastUsed + 3, masteridx1)
+     breakresult([ Lit.1, Lit.lastUsed, Loopblock.[ theseqtype, resulttype, typeint]], substitute(thunk0, thunkplaceholders, [ seqelement, acc, masteridx1]) + [ newmasteridx, continue.3], [ acc], lastUsed + 3, masteridx1)
    else checkCompound
    let masteridx = masteridx.codeparts
    let exitexp2 = if exitexp = [ Litfalse]then empty:seq.symbol

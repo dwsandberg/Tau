@@ -230,15 +230,16 @@ else if ruleno = \\ L L, E \\ 34 then bindinfo(dict.R, code.R_1 + code.R_3, type
 else if ruleno = \\ E [ L]\\ 35 then 
  let types = types.R_2
 assert for @e ∈ types, acc = true ,,, acc ∧ types_1 = @e report errormessage("types do not match in build", input, place)bindinfo(dict.R, code.R_2 + Sequence(types_1, length.types), [ addabstract("seq"_1, types_1)],"") 
-else if ruleno = \\ A let W = D \\ 36 then 
-let e = R_4 
-let name = tokentext.R_2 
-assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
-let newdict = dict.R + Local(name,(types.e)_1)bindinfo(newdict, code.e + Define.name, types.e, tokentext.R_2) 
-else if ruleno = \\ E A E \\ 37 then 
+else if ruleno = \\ A W = E \\ 36 then 
+let e = R_3 
  let name = tokentext.R_1
+assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
+let newdict = dict.R + Local(name,(types.e)_1)bindinfo(newdict, code.e , types.e, name) 
+else if ruleno = \\ E let A E \\ 37 then 
+let name = tokentext.R_2 
   let f = lookup(dict.R, name, empty:seq.mytype)
-assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name"+ name bindinfo(dict.R_1-f_1, code.R_1 + code.R_2, \\ +"SET"+ name, \\ types.R_2,"") 
+assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name"
++ name bindinfo(dict.R_2-f_1, code.R_2 + Define.name +code.R_3, types.R_3,"") 
 else if ruleno = \\ E assert E report D E \\ 38 then 
 assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in 
 assert must be boolean in:", input, place) 

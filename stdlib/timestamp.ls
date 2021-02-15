@@ -17,7 +17,7 @@ Function testjulian boolean [ tojulian(2000, 1, 1), tojulian(1999, 1, 1), tojuli
 
 Function tojulian(year:int, month:int, day:int)int
  let ayear = if month > 2 then year else year - 1
- let amonth = if month > 2 then month else month + 12 ;
+ let amonth = if month > 2 then month else month + 12 
   (amonth + 1) * 306001 / 10000 + day + 1720994 + 2 - ayear / 100
   + ayear / 100 / 4
   + 1461 * ayear / 4
@@ -44,7 +44,7 @@ Function timestamplit(t:UTF8)timestamp
  let hour = intlit.subseq(t, 12, 13)
  let minutes = intlit.subseq(t, 15, 16)
  let second = intlit.subseq(t, 18, 19)
- let date = tojulian(year, month, day);
+ let date = tojulian(year, month, day) 
   timestamp(((date * 24 + hour) * 60 + minutes) * 60 + second)
 
 Function totimestamp(year:int, month:int, day:int, hour:int, minute:int, second:int)timestamp

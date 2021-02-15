@@ -110,8 +110,6 @@ Export code(match5)seq.symbol
 
 Export type:symbol
 
-Function parametertypes(m:match5)seq.word \\ used for records and loopblock \\ fsig.sym.m + module.sym.m
-
 Export type:program
 
 Function_(m:seq.match5, d:symbol)match5
@@ -318,7 +316,11 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
       addtemplate(xx, regno.fldbc, bc.fldbc)
     else
      addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, [ tollvmtype(alltypes, parameter.modname.xx)])
-   else addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, [ i64])
+   else if isloopblock.xx then
+     addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, 
+     for @e ∈ paratypes.xx >> 1, acc =empty:seq.llvmtype ,,, acc + tollvmtype(alltypes, @e))
+    else 
+      addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, [ i64])
   else if module.xx = "$words"then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.fsig.xx)
   else if module.xx = "$word"then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
   else

@@ -176,7 +176,7 @@ Function optest22 boolean"A"_1 = encodeword.[ char.65]
 Function optest23 int optest23a(6, 3)
 
 function parabits(nopara:int)int
- let b = nopara ;
+ let b = nopara 
   toint(bits.if b > 6 then 0 else b + 1 ; << 5)
 
 Function optest23a(a:int, b:int)int(a + a) / b
