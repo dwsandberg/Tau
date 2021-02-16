@@ -229,8 +229,8 @@ function callarcs(s:seq.word, i:int, result:seq.word)seq.word
        else
         assert j < length.s report"JKL" + subseq(s, i, length.s)
         let module = gathermod(s, j + 2, [ s_(j + 1)])
-        let end = 2 * (length.module - 1) + 1 + j + 1
-         callarcs(s, end, result + mangle(subseq(s, i, j), module))
+        let theend = 2 * (length.module - 1) + 1 + j + 1
+         callarcs(s, theend, result + mangle(subseq(s, i, j), module))
      else if this ∈ "DEFINE EXITBLOCK BR BLOCK APPLY WORD "then callarcs(s, i + 2, result)
      else if this ∈ " &br FREF Litfalse Littrue SEQUENCE"then callarcs(s, i + 1, result)
      else

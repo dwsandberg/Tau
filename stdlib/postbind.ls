@@ -172,6 +172,9 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:i
   let seqtype = getbasetype(alltypes, paras_2)
   let p2 = newsymbol("apply5", mytype."builtin", [ resulttype, seqtype, parameter.seqtype, resulttype, typeint, resulttype, mytype."boolean"], resulttype)
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
+else if(fsig.sym)_1 = "forexp"_1 then
+ let paras = for p &in paratypes.newsym ,acc=empty:seq.mytype,,, acc+getbasetype(alltypes,p) 
+   postbind3(alltypes, dict, code, i + 1, result + newsymbol("forexp", mytype."builtin",   paras,last.paras), modpara, org, calls, sourceX, tempX)
  else if(fsig.sym)_1 ∈ "assert"then
     let t=getbasetype(alltypes, parameter.modname.newsym)
    let kind= if abstracttype.t &in "seq" then "ptr" else typerep.t

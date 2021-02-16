@@ -25,12 +25,13 @@ Function hasdigit(w:word)boolean
 
 
 function terminals  seq.word  
-".=():>]-for * comment, [_; is I if # then else let assert report ∧ ∨ $wordlist  until end   W     "
+".=():>]-for * comment, [_; is I if # then else let assert report ∧ ∨ $wordlist  while endx   W  do   "
 
 
 function tolexaction(next:word)lexaction1
  \\ user supplied procedure to convert a word into a lex action \\
- if next ∈ ('"\\ ' +"'") then lexaction1(next, findindex("$wordlist"_1, terminals), next)
+ \\ assumes W for word I for Integer and comments map to 'comment' \\
+ if next ∈ ('"' +"'") then lexaction1(next, findindex("$wordlist"_1, terminals), next)
  else if next = merge("&" + "le")then
  lexaction1(next, findindex(">"_1, terminals),"≤"_1)
  else if next = merge("&" + "ge")then
@@ -50,11 +51,10 @@ function tolexaction(next:word)lexaction1
  else if next = merge("&" + "in")then
  lexaction1(next, findindex("-"_1, terminals),"∈"_1)
  else if next ="comment"_1 then
- lexaction1("\\"_1, findindex("-"_1, terminals),"\\"_1)  
+ lexaction1("\\"_1, findindex("comment"_1, terminals),"\\"_1)  
  else
-  let token = if next ∈ ". ,():"then next
-  else if next ∈ "< > ? ≤ ≠ ≥ "then">"_1
-  else if next ∈ "in +-∈ ∉"then"-"_1
+  let token =  if next ∈ "< > ? ≤ ≠ ≥ "then">"_1
+  else if next ∈ " +-∈ ∉"then"-"_1
   else if next ∈ "* / mod ∪ ∩ >> <<"then"*"_1
   else if next ∈ "_^"then"_"_1
   else if next ∈ terminals then next

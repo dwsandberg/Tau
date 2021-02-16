@@ -319,7 +319,7 @@ function reduceline(grammerandact:seq.seq.word, i:int,last:int)seq.word
    
 Function gentau2 seq.word \\ used to generater tau parser for Pass1 of the tau compiler. \\ lr1parser(taurules2, tauruleprec, taualphabet,"bindinfo")
  
-function taualphabet seq.word".=():>]-for * comment, [_; is I if # then else let assert report ∧ ∨ $wordlist  until end   W     "
+function taualphabet seq.word".=():>]-for * comment, [_; is I if # then else let assert report ∧ ∨ $wordlist  while endx   W  do   "
 
 
 function tauruleprec seq.seq.word \\ list of rules and lookaheads. 
@@ -343,7 +343,7 @@ function taurules2 seq.seq.seq.word [
 , [ ' F W NM T E ', ' createfunc(R, input, place, tokentext.R_2, empty:seq.mytype, R_3, R_4)'] 
 , [ ' F W NM is  P ', ' bindinfo(dict.R, empty:seq.symbol, types.R_4, "record"+ tokentext.R_2) 
 '] 
-, [ ' F until end ', ' R_1 '] 
+, [ ' F ))', ' R_1 '] 
 , [ ' FP P ', ' bindinfo(for @e ∈ types.R_1, acc = dict.R ,,, addparameter(acc, cardinality.dict.R, input, place, @e), empty:seq.symbol, types.R_1,"")'] 
 , [ ' P T ', ' bindinfo(dict.R, empty:seq.symbol, [ addabstract(":"_1, gettype.R_1)],"")'] 
 , [ ' P P, T ', ' bindinfo(dict.R, empty:seq.symbol, types.R_1 + [ addabstract(":"_1, gettype.R_3)],"")'] 
@@ -384,11 +384,16 @@ function taurules2 seq.seq.seq.word [
 , [ ' E B E , D ', ' forpart2(R_1, R_2, R_4, input, place)']      
 ,[' D E ', ' R_1 ' ]
 ,[' D E ; ' ,' R_1 ' ] 
-,[ ' A1 A ',' R_1 ' ] 
-,[ ' A1 A1 , A  ',' R_1 ' ] 
-,[ ' B1  for ( A1 )  ',' R_1 ' ] 
-,[ ' E  B1   E end (E)   ',' R_1 ' ] 
-,[ ' E  B1   E until (E) E end (E)   ',' R_1 ' ] 
+, [ ' F1  W = E ',' let name = tokentext.R_1 
+assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
+ bindinfo(dict.R_1, code.R_3  , types.e, name) 
+' ] 
+,[' F1  F1 , W = E ',' let name = tokentext.R_3 
+assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
+  bindinfo(dict.R, code.R_1 +code.R_5, types.R_1+types.R_5,tokentext.R_1+tokentext.R_3)' ] 
+,[ ' F2   F1    ',' forlocaldeclare(R_1) ' ] 
+,[ ' E  for  F2  do    E endx (E)   ','  forbody(dict.R_1,R_2,R_4,R_1,R_7) ' ] 
+,[ ' E  for  F2  while (E )   E   endx (E)   ','  forbody(dict.R_1,R_2,R_5,R_7,R_10) '] 
 ]
 
 Function gentaupretty seq.word \\ used to generater tau parser for Pass1 of the tau compiler. \\ lr1parser(tauprettyrules, tauruleprec, taualphabet,"attribute2")

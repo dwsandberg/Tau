@@ -97,27 +97,27 @@ function catnonzero(a:seq.T, b:seq.T)seq.T
     toseq.pseq(totallength, a, b, 0)
     else cat3(totallength, a.ta, b.ta, b)
 
-Function subseq(s:seq.T, start:int, end:int)seq.T
- if start > end then empty:seq.T
- else if start < 1 then subseq(s, 1, end)
- else if end > length.s then subseq(s, start, length.s)
- else if start = 1 ∧ length.s = end then s
- else if start = end + 1 then [ s_start, s_end]
- else if start + 1 ≥ end then
- if start = end then [ s_start]else [ s_start, s_end]
+Function subseq(s:seq.T, start:int, finish:int)seq.T
+ if start > finish then empty:seq.T
+ else if start < 1 then subseq(s, 1, finish)
+ else if finish > length.s then subseq(s, start, length.s)
+ else if start = 1 ∧ length.s = finish then s
+ else if start = finish + 1 then [ s_start, s_finish]
+ else if start + 1 ≥ finish then
+ if start = finish then [ s_start]else [ s_start, s_finish]
  else
   let x = to:pseq.T(s)
    if length.toseq.x = 0 then
-   toseq.pseq(end - start + 1, s, s, start - 1)
-   else subseq(x, start, end)
+   toseq.pseq(finish - start + 1, s, s, start - 1)
+   else subseq(x, start, finish)
 
-function subseq(p:pseq.T, start:int, end:int)seq.T
+function subseq(p:pseq.T, start:int, finish:int)seq.T
  let adjstart = start + start.p - length.a.p
- let adjend = start.p + end - length.a.p
-  if adjstart > 0 then \\ all in part b \\ subseq(b.p, adjstart, adjend)
-  else if adjend > 0 then
-  subseq(a.p, start.p + start, length.a.p) + subseq(b.p, 1, adjend)
-  else \\ all in part a \\ subseq(a.p, start.p + start, start.p + end)
+ let adjfinish = start.p + finish - length.a.p
+  if adjstart > 0 then \\ all in part b \\ subseq(b.p, adjstart, adjfinish)
+  else if adjfinish > 0 then
+  subseq(a.p, start.p + start, length.a.p) + subseq(b.p, 1, adjfinish)
+  else \\ all in part a \\ subseq(a.p, start.p + start, start.p + finish)
 
 Function last(a:seq.T)T a_(length.a)
 

@@ -64,9 +64,9 @@ function w1(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l0:
  \\ crossings of cross(k0, l)or(k1, l1)for arcs incident to l0 where l0 is between l and l1 \\
  for @e ∈ toseq.predecessors(g, currentlayer_l0), acc = empty:seq.arc.T ,,, acc + w1(upperlayer, k0, k1, currentlayer_l0, @e)
 
-function w1(upperlayer:seq.T, k0:int, k1:int, end:T, start:T)seq.arc.T
+function w1(upperlayer:seq.T, k0:int, k1:int, finish:T, start:T)seq.arc.T
  let k = findindex(start, upperlayer)
-  if k < k0 ∨ k > k1 then [ arc(start, end)]else empty:seq.arc.T
+  if k < k0 ∨ k > k1 then [ arc(start, finish)]else empty:seq.arc.T
 
 ______________
 

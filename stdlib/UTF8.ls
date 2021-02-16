@@ -67,36 +67,36 @@ function subUTF8(n:int, c:int)seq.int
 
 Function decodeUTF8(b:UTF8)seq.char \\ converts UTF8 encoded sequence into a sequence of integers(chars)\\ decodeUTF8(b, 1, length.b)
 
-Function decodeUTF8(a:UTF8, start:int, end:int)seq.char
- tocharseq.xx(toseqbyte.a, max(1, start), min(end, length.toseqbyte.a), empty:seq.int)
+Function decodeUTF8(a:UTF8, start:int, finish:int)seq.char
+ tocharseq.xx(toseqbyte.a, max(1, start), min(finish, length.toseqbyte.a), empty:seq.int)
 
-function xx(b:seq.byte, i:int, end:int, result:seq.int)seq.int
- if i > end then result
+function xx(b:seq.byte, i:int, finish:int, result:seq.int)seq.int
+ if i > finish then result
  else
   let x = toint.b_i
-   if x < 128 then xx(b, i + 1, end, result + x)
+   if x < 128 then xx(b, i + 1, finish, result + x)
    else if x < 224 then
-   xx(b, i + 2, end, result + ((x - 194) * 64 + toint.b_(i + 1)))
+   xx(b, i + 2, finish, result + ((x - 194) * 64 + toint.b_(i + 1)))
    else if x < 240 then
-   xx(b, i + 3, end, result
+   xx(b, i + 3, finish, result
     + ((x - 224) * 64^2 + (toint.b_(i + 1) - 128) * 64
     + toint.b_(i + 2)
     - 128))
    else if x < 248 then
-   xx(b, i + 4, end, result
+   xx(b, i + 4, finish, result
     + ((x - 240) * 64^3 + (toint.b_(i + 1) - 128) * 64^2
     + (toint.b_(i + 2) - 128) * 64
     + toint.b_(i + 3)
     - 128))
    else if x < 252 then
-   xx(b, i + 5, end, result
+   xx(b, i + 5, finish, result
     + ((x - 248) * 64^4 + (toint.b_(i + 1) - 128) * 64^3
     + (toint.b_(i + 2) - 128) * 64^2
     + (toint.b_(i + 3) - 128) * 64
     + toint.b_(i + 4)
     - 128))
    else
-    xx(b, i + 6, end, result
+    xx(b, i + 6, finish, result
     + ((x - 252) * 64^5 + (toint.b_(i + 1) - 128) * 64^4
     + (toint.b_(i + 2) - 128) * 64^3
     + (toint.b_(i + 3) - 128) * 64^2

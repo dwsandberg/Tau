@@ -92,11 +92,11 @@ let a = process.countprimes(3, c)
 let b = process.countprimes(c + 1, 2 * c)
  [ 1228, 1033] = [ result.a, result.b]
 
-function findprimes(start:int, end:int)seq.word
- for @e ∈ arithseq((end - start + 2) / 2, 2, start), acc ="",,, acc + isprime3.@e
+function findprimes(start:int, finish:int)seq.word
+ for @e ∈ arithseq((finish - start + 2) / 2, 2, start), acc ="",,, acc + isprime3.@e
 
-function countprimes(start:int, end:int)int
- for @e ∈ arithseq((end - start + 2) / 2, 2, start), acc = 0 ,,, acc + isprime4.@e
+function countprimes(start:int, finish:int)int
+ for @e ∈ arithseq((finish - start + 2) / 2, 2, start), acc = 0 ,,, acc + isprime4.@e
 
 function isprime3(i:int)seq.word if isprime.i then [ toword.i]else""
 

@@ -44,11 +44,11 @@ function changestate(state:int, ele:word, idx:int, early:boolean)int
 Function getheader(s:seq.word)seq.word
  let istype = subseq(s, 1, 3) = "Export type:"
  let t = for ele ∈ s, state = 0, idx, state > 0 , changestate(state, ele, idx, istype)
- let end = if t < 1 then length.s else t
+ let theend = if t < 1 then length.s else t
   if istype then
-  let tt = subseq(s, 4, end)
-    subseq(s, 1, end) + "(" + tt + ")" + tt + "stub"
-  else subseq(s, 1, end) + "stub"
+  let tt = subseq(s, 4, theend)
+    subseq(s, 1, theend) + "(" + tt + ")" + tt + "stub"
+  else subseq(s, 1, theend) + "stub"
 
 function match(s:seq.word, depth:int, i:int)int
  if i > length.s then i

@@ -231,15 +231,10 @@ else if ruleno = \\ E [ L]\\ 35 then
  let types = types.R_2
 assert for @e ∈ types, acc = true ,,, acc ∧ types_1 = @e report errormessage("types do not match in build", input, place)bindinfo(dict.R, code.R_2 + Sequence(types_1, length.types), [ addabstract("seq"_1, types_1)],"") 
 else if ruleno = \\ A W = E \\ 36 then 
-let e = R_3 
  let name = tokentext.R_1
 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
-let newdict = dict.R + Local(name,(types.e)_1)bindinfo(newdict, code.e , types.e, name) 
-else if ruleno = \\ E let A E \\ 37 then 
-let name = tokentext.R_2 
-  let f = lookup(dict.R, name, empty:seq.mytype)
-assert not.isempty.f report"internal error/could not find local symbol to delete from dict with name"
-+ name bindinfo(dict.R_2-f_1, code.R_2 + Define.name +code.R_3, types.R_3,"") 
+let newdict = dict.R + Local(name,(types.R_3 )_1)bindinfo(newdict, code.R_3 + Define.name , types.R_3, name) 
+else if ruleno = \\ E let A E \\ 37 then  bindinfo(dict.R_1, code.R_2  +code.R_3, types.R_3,"") 
 else if ruleno = \\ E assert E report D E \\ 38 then 
 assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in 
 assert must be boolean in:", input, place) 
@@ -261,5 +256,38 @@ else if ruleno = \\ B for W-E, W = E,, \\ 48 then forpart1(first.tokentext.R_2, 
 else if ruleno = \\ E B, D \\ 49 then forpart2(R_1, bindinfo(dict.R, [ Litfalse], [ mytype."boolean"],""), R_3, input, place) 
 else if ruleno = \\ E B E, D \\ 50 then forpart2(R_1, R_2, R_4, input, place) 
 else if ruleno = \\ D E \\ 51 then R_1 
-else assert ruleno = \\ D E ; \\ 52 report"invalid rule number"+ toword.ruleno 
-   R_1
+else if ruleno = \\ D E ; \\ 52 then R_1 
+else if ruleno = \\ F1 W = E \\ 53 then 
+let name = tokentext.R_1 
+assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place)
+bindinfo(dict.R_1, code.R_3, types.R_3, name) 
+else if ruleno = \\ F1 F1, W = E \\ 54 then 
+let name = tokentext.R_3 
+assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place)
+bindinfo(dict.R, code.R_1 + code.R_5, types.R_1 + types.R_5, tokentext.R_1 + tokentext.R_3) 
+else if ruleno = \\ F2 F1 \\ 55 then forlocaldeclare(R_1,input, place) 
+else if ruleno = \\ E for F2 do E endx(E)\\ 56 then forbody(dict.R_1, R_2, R_4, R_1, R_7) 
+else assert ruleno = \\ E for F2 while(E)E endx(E)\\ 57 report"invalid rule number"+ toword.ruleno 
+forbody(dict.R_1, R_2, R_5, R_7, R_10)
+
+function forlocaldeclare(a:bindinfo, input:seq.word, place:int) bindinfo
+  let seqtype=last.types.a
+  assert abstracttype.seqtype ="seq"_1 report "final expression in for list must be a sequence but it is of type:"+print.seqtype
+  assert length.types.a &ne 1 report 
+  errormessage("For must have at least one accumulator"+print.length.types.a,input,place)
+  let elename= [last.tokentext.a  ] 
+  let elesym= newsymbol(elename,mytype."$for",empty:seq.mytype,parameter.seqtype )
+  let resultsym= if length.types.a > 1 then [newsymbol(elename,mytype."$for",types.a >> 1,typeptr)] else empty:seq.symbol
+ let accumulators=for   name &in tokentext.a >> 1,acc=empty:seq.symbol,i,, acc+newsymbol([name],mytype."$for",empty:seq.mytype,(types.a)_i)
+  bindinfo(dict.a &cup asset(accumulators+elesym + resultsym), code.a+accumulators+elesym, types.a, elename) 
+
+function forbody(dict:set.symbol ,vars:bindinfo,forbody:bindinfo,exitexp:bindinfo,endexp:bindinfo) bindinfo 
+   assert length.types.vars > 2 &or first.types.vars= first.types.forbody 
+    report "Type of body expression"+print.first.types.vars+" must match accumaltor type"+print.first.types.forbody 
+   assert  tokentext.exitexp="for" &or first.types.exitexp=mytype."boolean" report "while expresssion type must be boolean" 
+   let resulttype=first.types.endexp
+   let sym= newsymbol("forexp",mytype."int builtin",   
+      types.vars+types.vars >> 1 + parameter.last.types.vars +typeptr+mytype."boolean"+resulttype
+    , resulttype)
+  let newcode=   code.vars+code.forbody+(if tokentext.exitexp="for" then [Litfalse ]else code.exitexp)+ code.endexp+sym
+  bindinfo(dict,newcode,[resulttype],"")

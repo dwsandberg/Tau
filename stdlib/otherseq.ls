@@ -183,7 +183,7 @@ Export +(a:seq.T, b:seq.T)seq.T
 
 Export +(l:seq.T, a:T)seq.T
 
-Export subseq(s:seq.T, start:int, end:int)seq.T
+Export subseq(s:seq.T, start:int, finish:int)seq.T
 
 Export last(a:seq.T)T
 

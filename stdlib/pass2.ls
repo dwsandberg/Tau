@@ -129,6 +129,7 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
     yyy(p, org, k + 1, subseq(result, 1, len - 3) + [ result_len, result_(len - 1), Br], nextvar, map, papply)
     else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
    else if papply ∧ (fsig.sym)_1 ∈ "apply5"then applycode5(p, org, k, result, nextvar, map, papply)
+   else if papply ∧ (fsig.sym)_1 ∈ "forexp"then forexpcode (p, org, k, result, nextvar, map, papply)
    else
     let nopara = nopara.sym
     let dd = code.lookupcode(p, sym)
@@ -230,7 +231,16 @@ function breakAccumalator5(p:program, thunk:seq.symbol, resulttype:mytype, lastv
      acc
      + if i > noAccumlators then [ e]else [ Local.1, Lit(i - 1), Idx.(paratypes.last.code)_i]
      \\ assert state.t5 ="fail"_1 &or xx = code report"DIFF"+ print.accfunc + EOL + print.xx + EOL + state.t5 + print.result.t5 \\
-     \\ assert print.accfunc &in ["+(int graph, int arc)graph.int","advancepnp(pnpstate, word)format","advance(bindinfo lrstate, word, int, word seq, bindinfo token seq)parsersupport.bindinfo","advance(attribute2 lrstate, word, int, word seq, attribute2 token seq)parsersupport.attribute2","state100(state100, program, symbol, symbol)breakblocks","chkAcc(compoundAC, symbol, symbol seq)pass2","+(out23, char)format","deletearc(word seq graph, word seq arc)graph.seq.word","+(word seq graph, word seq arc)graph.seq.word","+(place, char seq encodingpair)maindict"]report"ZZZZZ"+ print.accfunc + EOL + state.t5 + print.result.t5 + EOL + EOL + print.code \\
+     \\ assert print.accfunc &in [
+     "+(int graph, int arc)graph.int",
+     "advancepnp(pnpstate, word)format",
+     "advance(bindinfo lrstate, word, int, word seq, bindinfo token seq)parsersupport.bindinfo",
+     "advance(attribute2 lrstate, word, int, word seq, attribute2 token seq)parsersupport.attribute2",
+     "state100(state100, program, symbol, symbol)breakblocks","chkAcc(compoundAC, symbol, symbol seq)pass2",
+     "+(out23, char)format",
+     "deletearc(word seq graph, word seq arc)graph.seq.word",
+     "+(word seq graph, word seq arc)graph.seq.word",
+     "+(place, char seq encodingpair)maindict"]report"ZZZZZ"+ print.accfunc + EOL + state.t5 + print.result.t5 + EOL + EOL + print.code \\
      if state.t5 = "fail"_1 then issimple
      else
       let x = for @e ∈ fldnames, acc = emptyworddict:worddict.seq.symbol, @i, , add(acc, @e, [ Local(lastvar + @i)])
@@ -262,6 +272,68 @@ function print(b:breakresult)seq.word
  + EOL
  + "nextvar:"
  + print.nextvar.b
+
+function forexpcode(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, 
+map:worddict.seq.symbol, papply:boolean)expandresult
+let forsym = org_k
+let t= backparse(code, length.code, 4, empty:seq.int)
+let endexp=subseq(code,t_-1,length.code)
+let exitexp=subseq(code,t_-2, t_-1 -1)
+let bodyexp=subseq(code,t_-3, t_-2 -1)
+let endofsymbols=t_-3-1
+let startofsymbols=endofsymbols-   (nopara.forsym - 3) / 2  +1
+let syms=subseq(code,startofsymbols,endofsymbols)
+let tmp=for s &in syms >> 1,acc=empty:seq.symbol,i,,acc+Local(nextvar+i-1 )
+let masteridx=Local.(value.last.tmp+1)
+let seqelement = Local(value.masteridx+1)
+let nextvar1=value.seqelement+1
+let Defineseqelement = Define(fsig.seqelement)
+let newsyms=tmp+seqelement
+let theseqtype=(paratypes.org_k)_length.newsyms
+ let elementtype = if abstracttype.parameter.theseqtype ∈ "real"then mytype."real"
+ else if abstracttype.parameter.theseqtype ∈ "int bit byte boolean"then typeint else typeptr
+let packedseq = maybepacked.theseqtype
+let theseq=Local.nextvar1
+let totallength=Local.(nextvar1+1)
+ let seqtype = Local(nextvar1 + 2)
+ let Defineseqtype = Define(nextvar1 + 2)
+let part1= subseq(code,1,startofsymbols-1)+Define.nextvar1+theseq+GetSeqLength+Define.(nextvar1+1)
++Lit.1+Lit.nextvar+Loopblock( subseq(paratypes.forsym,1,length.syms-1)+typeint)
+   + \\ 2 if masteridx > totallength then exit \\
+    [ masteridx, totallength, GtOp, Lit.3, Lit.4, Br]
+     + \\ 3  exit loop \\
+      replace$for(endexp,newsyms,syms) 
+    + [ Exit, \\ 4 else   let sequenceele = seq_(idx)\\
+      theseq, GetSeqType, Defineseqtype, seqtype
+    , Lit.0, EqOp, Lit.2, Lit.3, Br, theseq, masteridx, IdxS.theseqtype, Exit]
+     + if packedseq then [ seqtype, Lit.1, EqOp, Lit.4, Lit.5, Br, theseq, masteridx] + packedindex2.theseqtype + [ Exit]
+    else empty:seq.symbol ;
+    + [ theseq, masteridx, Callidx.theseqtype, Exit, Block(elementtype, if packedseq then 5 else 3)]
+    +[ Defineseqelement ]
+    +\\ 4  while condition \\ replace$for(exitexp,newsyms,syms) + [Lit.3, Lit.5, Br]
+    + \\ 5  do body and continue\\ 
+    replace$for(bodyexp,newsyms,syms,[masteridx,Lit.1,PlusOp,continue.length.syms])
+    + if length.syms=2 then [masteridx,Lit.1,PlusOp,continue.2] else empty:seq.symbol ; 
+    + [ Block(resulttype.forsym, 5)]
+\\   assert false report print.forsym+ print.startofsymbols+print.endofsymbols +EOL+
+  print.endexp
+  +EOL+"exit:"+print.exitexp
+  +EOL+"body:"+print.bodyexp
+  +EOL+"syms"+print.subseq(code,startofsymbols,endofsymbols)
+  +EOL+"part1"+print.part1 \\
+   yyy(p, org, k + 1, part1  , nextvar1 + 2, map, papply)
+
+function replace$for(code:seq.symbol,new:seq.symbol,old:seq.symbol)  seq.symbol
+  replace$for(code ,new ,old ,empty:seq.symbol)
+
+function replace$for(code:seq.symbol,new:seq.symbol,old:seq.symbol,cont:seq.symbol)  seq.symbol
+  for s &in code,acc=empty:seq.symbol,,,
+    if module.s="$for" then
+       acc+if nopara.s > 0  then cont
+       else 
+         [new_findindex(s,old)]
+    else acc+s 
+
 
 function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol, papply:boolean)expandresult
  let totallength = nextvar + 1

@@ -50,31 +50,31 @@ Function index(s:bitstream, i:int, sizebits:int)bits
 
 Function_(s:bitstream, i:int)byte tobyte.toint.index(s, i, 8)
 
-Function subseq(s:bitstream, start:int, end:int)bitstream
- let len = end - start + 1
+Function subseq(s:bitstream, start:int, finish:int)bitstream
+ let len = finish - start + 1
  let partbits = toint(bits(len - 1) ∧ bits.63)
  let startword = toint(bits(start - 1) >> 6) + 1
- let endword = toint(bits(end - 1) >> 6) + 1
+ let finishword = toint(bits(finish - 1) >> 6) + 1
  let startshift = toint(bits(start - 1) ∧ bits.63)
- let endshift = toint(bits(end - 1) ∧ bits.63)
+ let finishshift = toint(bits(finish - 1) ∧ bits.63)
  let startpart = ithword(s, startword) >> startshift
- let endpartmask = bits.-1 >> (63 - partbits)
+ let finishpartmask = bits.-1 >> (63 - partbits)
   if len ≤ 64 then
   if len ≤ 0 then empty:bitstream
-   else if startword = endword then bitstream(len, startpart ∧ endpartmask, empty:seq.bits)
+   else if startword = finishword then bitstream(len, startpart ∧ finishpartmask, empty:seq.bits)
    else
-    let endpart = ithword(s, endword) << (64 - startshift) ∧ endpartmask
+    let endpart = ithword(s, finishword) << (64 - startshift) ∧ finishpartmask
      bitstream(len, startpart ∨ endpart, empty:seq.bits)
   else if startshift = 0 then
-  let endpart = ithword(s, endword) ∧ endpartmask
-    bitstream(len, endpart, subseq(fullwords.s, startword, endword - 1))
+  let endpart = ithword(s, finishword) ∧ finishpartmask
+    bitstream(len, endpart, subseq(fullwords.s, startword, finishword - 1))
   else
-   let endpart = if endshift ≥ startshift then
-   \\ all bits in endpart come from endword \\ ithword(s, endword) >> (64 - startshift) ∧ endpartmask
+   let endpart = if finishshift ≥ startshift then
+   \\ all bits in endpart come from finishword \\ ithword(s, finishword) >> (64 - startshift) ∧ finishpartmask
    else
-    ithword(s, endword) << (64 - startshift) ∧ endpartmask
-    ∨ ithword(s, endword - 1) >> (64 - startshift)
-   let firstpart = subseq(fullwords.s + endpart.s, startword, if endshift = 63 then endword else endword - 1)
+    ithword(s, finishword) << (64 - startshift) ∧ finishpartmask
+    ∨ ithword(s, finishword - 1) >> (64 - startshift)
+   let firstpart = subseq(fullwords.s + endpart.s, startword, if finishshift = 63 then finishword else finishword - 1)
     bitstream(len, endpart, shiftleft(2, startpart, firstpart, startshift, empty:seq.bits))
 
 /function cmp(a:bitstream, b:bitstream, i:int, offseta:int)boolean if i > length.b then true else if singlebit(a, i + offseta)= singlebit(b, i)then cmp(a, b, i + 1, offseta)else false
