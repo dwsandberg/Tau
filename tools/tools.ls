@@ -1,14 +1,12 @@
-#!/usr/local/bin/tau  ;  ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau    ; use tools; testprofile."solardataall"
 
 testprofile."stdlib"
 
 use tools; testprofile."solardataall"
 
-
-
 doclibrary."stdlib"
 
-; use pretty ;   pretty("printbitcodes printbitcodes bitcodesupport  runcode ","junk")
+; use pretty ; pretty("printbitcodes printbitcodes bitcodesupport runcode","junk")
 
 print.compile("baseTypeCheck","stdlib")
 
@@ -62,12 +60,10 @@ use profile
 
 use standard
 
-use seq.seq.word
-
 use seq.word
 
+use seq.seq.word
  
 Function testprofile(libname:seq.word)seq.word
- let a = print.compile("all", libname)
-  a + profileresults."time"
-+ dumpprofileinfo
+let a = print.compile("all", libname)
+ a + profileresults."time" + dumpprofileinfo

@@ -54,10 +54,9 @@ function tocode(r:int, typ:mytype)seq.symbol
  else
   assert abstracttype.typ ∈ "seq"report"resulttype not handled" + print.typ
   let s = bitcast.r
-   for @e ∈ s, acc = [ Lit.0, Lit.length.s],,, acc + tocode(@e, parameter.typ)
+   for acc = [ Lit.0, Lit.length.s], @e = s do acc + tocode(@e, parameter.typ)end(acc)
 
-
-function aswords(s:seq.int)seq.word for @e ∈ s, acc ="",,, acc + wordencodingtoword.@e
+function aswords(s:seq.int)seq.word for acc ="", @e = s do acc + wordencodingtoword.@e end(acc)
 
 Function interpret(alltypes:typedict, code:seq.symbol)seq.word aswords.bitcast.interpret(alltypes, code, 1, empty:stack.int)
 
@@ -71,7 +70,7 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)int
    if module.sym = "$word"then
    interpret(alltypes, code, i + 1, push(stk, hash.first.fsig.sym))
    else if module.sym = "$words"then
-   let a = for @e ∈ fsig.sym, acc = empty:seq.int ,,, acc + hash.@e
+   let a = for acc = empty:seq.int, @e = fsig.sym do acc + hash.@e end(acc)
      interpret(alltypes, code, i + 1, push(stk, GEP(a, 0)))
    else if module.sym = "$int" ∨ module.sym = "$real" ∨ module.sym = "$boolean"then
    interpret(alltypes, code, i + 1, push(stk, toint.(fsig.sym)_1))

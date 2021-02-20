@@ -26,7 +26,7 @@ Export UTF8(seq.byte)UTF8
 
 Export toseqbyte(UTF8)seq.byte
 
-Function emptyUTF8 UTF8 UTF8.empty:seq.int
+Function emptyUTF8 UTF8 UTF8.empty:seq.byte
 
 Function +(a:UTF8, b:UTF8)UTF8 UTF8(toseqbyte.a + toseqbyte.b)
 
@@ -34,7 +34,11 @@ Function +(a:UTF8, ch:char)UTF8 a + encodeUTF8.ch
 
 Function =(a:UTF8, b:UTF8)boolean toseqbyte.a = toseqbyte.b
 
-Function UTF8(s:seq.int)UTF8 UTF8.for @e ∈ s, acc = empty:seq.byte ,,, acc + tobyte.@e
+/Function UTF8(s:seq.int)UTF8
+ UTF8.for acc = empty:seq.byte, @e = s do acc + tobyte.@e end(acc)
+
+/function UTF8x(s:seq.int)UTF8
+ UTF8.for acc = empty:seq.byte, @e = s do acc + tobyte.@e end(acc)
 
 Function commachar char char.44
 
@@ -47,23 +51,23 @@ Function doublequotechar char char.34
 Function nbspchar char \\ no break space character \\ char.160
 
 Function toUTF8(n:int)UTF8
- UTF8.if n < 0 then [ toint.hyphenchar] + toUTF8(n, 10)else toUTF8(-n, 10)
+ UTF8.if n < 0 then [ tobyte.toint.hyphenchar] + toUTF8(n, 10)else toUTF8(-n, 10)
 
-function toUTF8(n:int, base:int)seq.int
+function toUTF8(n:int, base:int)seq.byte
  \\ n should always be negative.This is to handle the smallest integer in the twos complement representation of integers \\
- if base + n > 0 then [ 48 - n]
+ if base + n > 0 then [ tobyte(48 - n)]
  else
-  toUTF8(n / base, base) + [ 48 + n / base * base - n]
+  toUTF8(n / base, base) +  tobyte(48 + n / base * base - n)
 
 Function encodeUTF8(ch:char)UTF8
  \\ convert to UTF8 byte encoding of unicode character \\
  let i = toint.ch
-  UTF8.if i < 128 then [ i]
-  else subUTF8(2, i / 64) + [ 128 + i mod 64]
+  UTF8.if i < 128 then [ tobyte.i]
+  else   subUTF8(2, i / 64) +   tobyte(128 + i mod 64)  
 
-function subUTF8(n:int, c:int)seq.int
- if c < 2^(7 - n)then [ 256 - 2^(8 - n) + c]
- else subUTF8(n + 1, c / 64) + [ 128 + c mod 64]
+function subUTF8(n:int, c:int)seq.byte
+ if c < 2^(7 - n) then  [tobyte(256 - 2^(8 - n) + c)]
+ else subUTF8(n + 1, c / 64) +  tobyte(128 + c mod 64)
 
 Function decodeUTF8(b:UTF8)seq.char \\ converts UTF8 encoded sequence into a sequence of integers(chars)\\ decodeUTF8(b, 1, length.b)
 
@@ -115,7 +119,7 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
    else if this = ","_1 then
    \\ no space before but space after \\ addspace(s, i + 1, false, result + char1.",")
    else
-    let d = for @e ∈ decodeword.this, acc = emptyUTF8 ,,, acc + encodeUTF8.@e
+    let d = for acc = emptyUTF8, @e = decodeword.this do acc + encodeUTF8.@e end(acc)
      if this ∈ ('-()].:"_^. ' + space)then
      \\ no space before or after \\ addspace(s, i + 1, true, result + d)
      else
@@ -132,9 +136,9 @@ Function intlit(s:UTF8)int cvttoint.decodeUTF8.s
 Function cvttoint(s:seq.char)int
  \\ Hex values starting with 0x or 0X are allowed. \\
  if length.s > 2 ∧ s_2 ∈ decodeword.first."Xx"then
- toint.for @e ∈ s, acc = 0x0 ,,, hexdigit(acc, @e)
+ toint.for acc = 0x0, @e = s do hexdigit(acc, @e)end(acc)
  else
-  let val = for @e ∈ s, acc = 0 ,,, decimaldigit(acc, @e)
+  let val = for acc = 0, @e = s do decimaldigit(acc, @e)end(acc)
    \\ Since there are more negative numbers in twos-complement we calculate using negative values. \\
    if val = 0 ∨ s_1 = char1."-"then val else-val
 
@@ -159,15 +163,15 @@ function decimaldigit(val:int, c:char)int
 
 Function hash(a:seq.char)int
  if a = decodeword."//"_1 then hash.tointseq.a
- else finalmix32.for @e ∈ tointseq.a, acc = hashstart32.0 ,,, hash32(acc, @e)
+ else finalmix32.for acc = hashstart32.0, @e = tointseq.a do hash32(acc, @e)end(acc)
 
 Function tointseq(a:seq.char)seq.int
  \\ This is just a type change and the compiler recognizes this and does not generate code \\
- for @e ∈ a, acc = empty:seq.int ,,, acc + toint.@e
+ for acc = empty:seq.int, @e = a do acc + toint.@e end(acc)
 
 Function tocharseq(a:seq.int)seq.char
  \\ This is just a type change and the compiler recognizes this and does not generate code \\
- for @e ∈ a, acc = empty:seq.char ,,, acc + char.@e
+ for acc = empty:seq.char, @e = a do acc + char.@e end(acc)
 
 _________________
 
@@ -194,7 +198,7 @@ Function toUTF8(rin:real, decimals:int)UTF8
 Function reallit(s:UTF8)real reallit(decodeUTF8.s,-1, 1, 0, 1)
 
 Function makereal(w:seq.word)real
- reallit(for @e ∈ w, acc = empty:seq.char ,,, acc + decodeword.@e,-1, 1, 0, 1)
+ reallit(for acc = empty:seq.char, @e = w do acc + decodeword.@e end(acc),-1, 1, 0, 1)
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
  if i > length.s then

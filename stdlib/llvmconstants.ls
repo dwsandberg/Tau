@@ -42,7 +42,7 @@ function enumerate(type:seq.word, codes:seq.word)seq.word
  + ", b:"
  + type
  + ")boolean toint.a = toint.b"
- + for @e ∈ arithseq(length.codes, 1, 1), acc ="",,, acc + dd(type, codes, @e);
+ + for acc ="", @e = arithseq(length.codes, 1, 1)do acc + dd(type, codes, @e)end(acc)
  + " &br  &br"
 
 function dd(type:seq.word, w:seq.word, i:int)seq.word

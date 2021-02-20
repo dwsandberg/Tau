@@ -17,7 +17,7 @@ Function testjulian boolean [ tojulian(2000, 1, 1), tojulian(1999, 1, 1), tojuli
 
 Function tojulian(year:int, month:int, day:int)int
  let ayear = if month > 2 then year else year - 1
- let amonth = if month > 2 then month else month + 12 
+let amonth = if month > 2 then month else month + 12 ;
   (amonth + 1) * 306001 / 10000 + day + 1720994 + 2 - ayear / 100
   + ayear / 100 / 4
   + 1461 * ayear / 4
@@ -34,7 +34,7 @@ Function fromJuliantointseq(dt:int)seq.int
  let d = b - 1461 * c / 4
  let e = d * 10000 / 306001
  let m = e - if e > 13 then 13 else 1
-  [ c - if m > 2 then 4716 else 4715, m, d - e * 306001 / 10000]
+ [ c - if m > 2 then 4716 else 4715, m, d - e * 306001 / 10000]
 
 Function timestamplit(t:UTF8)timestamp
  \\ assumes t is in format 2019-12-12T12:48:11 \\
@@ -62,7 +62,8 @@ Function decompose(ts:timestamp)seq.int
 Function print(ts:timestamp)seq.word
  let d = decompose.ts
   [ merge.[ toword.d_1,"-"_1, toword.d_2,"-"_1, toword.d_3,"."_1, toword.d_4,":"_1, toword.d_5,":"_1
-  , toword.d_6]]
+ , toword.d_6]
+ ]
 
 Builtin currenttime timestamp
 

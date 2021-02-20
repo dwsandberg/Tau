@@ -51,54 +51,62 @@ use seq.seq.seq.word
 * Profiling is accomplished by adding code to perform measurements before and after each procedure call and recording the difference.
 
 function toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.word
- let label = toword(if measure = "time"then clocks.a else if measure = "count"then counts.a else space.a ; ;
- * 100
- / max)
+ let label = toword(
+ (if measure = "time"then clocks.a
+ else if measure = "count"then counts.a else space.a ) * 100
+ / max
+ )
   arcinfo(shorten(map, head.a), shorten(map, tail.a), [ label])
 
 Function profileresults(measure:seq.word)seq.word
  \\ Returns label graph of profile results. Measure is time, count, or space. \\
  \\ let g = profileresults \\
- let g = for @e ∈ for @e ∈ loadedLibs, acc = empty:seq.parc ,,, acc + profiledata.@e, acc = empty:labeledgraph.parc ,,,
+ let g = for acc = empty:labeledgraph.parc, @e = for acc = empty:seq.parc, @e = loadedLibs do acc + profiledata.@e end(acc)do
   acc + @e
- let m = if measure = "time"then for @e ∈ toseq.arcs.g, acc = 0 ,,, max(acc, clocks.@e)
- else if measure = "count"then for @e ∈ toseq.arcs.g, acc = 0 ,,, max(acc, counts.@e)
+ end(acc)
+ let m = if measure = "time"then
+ for acc = 0, @e = toseq.arcs.g do max(acc, clocks.@e)end(acc)
+ else if measure = "count"then
+ for acc = 0, @e = toseq.arcs.g do max(acc, counts.@e)end(acc)
  else
   assert measure = "space"report"unknown profile measure"
-   for @e ∈ toseq.arcs.g, acc = 0 ,,, max(acc, space.@e)
+   for acc = 0, @e = toseq.arcs.g do max(acc, space.@e)end(acc)
  let g3 = removesmall(g, measure, m)
   \\ shorten the names of the functions and then build and display labeled graph \\
-  let nodemap = shorten.for @e ∈ toseq.nodes.g3, acc ="",,, acc + head.@e
-  let z2 = for @e ∈ toseq.arcs.g3, acc = empty:seq.arcinfo.seq.word ,,, acc + toarcinfo(measure, m, nodemap, @e)
+  let nodemap = shorten.for acc ="", @e = toseq.nodes.g3 do acc + head.@e end(acc)
+  let z2 = for acc = empty:seq.arcinfo.seq.word, @e = toseq.arcs.g3 do
+   acc + toarcinfo(measure, m, nodemap, @e)
+  end(acc)
    " &br" + measure + toword.m + " &br" + display.z2 + " &br"
    + measure
    + toword.m
 
 function removesmall(g:labeledgraph.parc, measure:seq.word, m:int)labeledgraph.parc
- let g2 = if measure = "time"then
- for @e ∈ toseq.nodes.g, acc = g ,,, removesmallclocks(acc, m / 100, @e)
- else if measure = "space"then
- for @e ∈ toseq.nodes.g, acc = g ,,, removesmallspace(acc, m / 100, @e)
- else for @e ∈ toseq.nodes.g, acc = g ,,, removesmallcount(acc, m / 100, @e)
-  if cardinality.arcs.g = cardinality.arcs.g2 then g2 else removesmall(g2, measure, m)
+let g2 = if measure = "time"then
+for acc = g, @e = toseq.nodes.g do removesmallclocks(acc, m / 100, @e)end(acc)
+else if measure = "space"then
+for acc = g, @e = toseq.nodes.g do removesmallspace(acc, m / 100, @e)end(acc)
+else
+ for acc = g, @e = toseq.nodes.g do removesmallcount(acc, m / 100, @e)end(acc)
+ if cardinality.arcs.g = cardinality.arcs.g2 then g2 else removesmall(g2, measure, m)
 
 function removesmallclocks(g:labeledgraph.parc, limit:int, node:parc)labeledgraph.parc
  if cardinality.arcstosuccessors(g, node) = 0 then
- if for @e ∈ toseq.backarcstopredecessors(g, node), acc = 0 ,,, acc + clocks.@e ; < limit then
+ if for acc = 0, @e = toseq.backarcstopredecessors(g, node)do acc + clocks.@e end(acc) < limit then
   deletenode(g, node)
   else g
  else g
 
 function removesmallspace(g:labeledgraph.parc, limit:int, node:parc)labeledgraph.parc
  if cardinality.arcstosuccessors(g, node) = 0 then
- if for @e ∈ toseq.backarcstopredecessors(g, node), acc = 0 ,,, acc + space.@e ; < limit then
+ if for acc = 0, @e = toseq.backarcstopredecessors(g, node)do acc + space.@e end(acc) < limit then
   deletenode(g, node)
   else g
  else g
 
 function removesmallcount(g:labeledgraph.parc, limit:int, node:parc)labeledgraph.parc
  if cardinality.arcstosuccessors(g, node) = 0 then
- if for @e ∈ toseq.backarcstopredecessors(g, node), acc = 0 ,,, acc + counts.@e ; < limit then
+ if for acc = 0, @e = toseq.backarcstopredecessors(g, node)do acc + counts.@e end(acc) < limit then
   assert false report [ head.node]
     deletenode(g, node)
   else g
@@ -107,9 +115,9 @@ function removesmallcount(g:labeledgraph.parc, limit:int, node:parc)labeledgraph
 Function shorten(pnodes:seq.word)nodemap
  \\ This procedure produces a map that takes fsigs and shortens them keeping them distinct. The following procedure uses this result to map the figs to the new ones. \\
  let nodes = sort.toalphaseq.pnodes
- let c = for @e ∈ towordseq.nodes, acc = [ empty:seq.seq.word],,, acc + codedown.@e ;
+ let c = for acc = [ empty:seq.seq.word], @e = towordseq.nodes do acc + codedown.@e end(acc)
  + [ empty:seq.seq.word]
- let short = for @e ∈ arithseq(length.c - 2, 1, 2), acc = empty:seq.seq.word ,,, acc + shorten(c, @e)
+ let short = for acc = empty:seq.seq.word, @e = arithseq(length.c - 2, 1, 2)do acc + shorten(c, @e)end(acc)
   nodemap(nodes, short)
 
 Function shorten(map:nodemap, w:word)seq.word(short.map)_binarysearch(org.map, alphaword.w)
@@ -120,12 +128,13 @@ function shorten(a:seq.seq.seq.word, i:int)seq.word
  let j = max(differ(a_(i - 1), a_i, 1), differ(a_i, a_(i + 1), 1))
   if j = 1 then a_i_1
   else
-   let z = for @e ∈ subseq(a_i, 1, j), acc = empty:seq.seq.word ,,, acc + formattype.@e
+   let z = for acc = empty:seq.seq.word, @e = subseq(a_i, 1, j)do acc + formattype.@e end(acc)
     z_1 + ":" + z_2 + "("
-    + for @e ∈ subseq(z, 2, length.z), acc ="",,, list(acc,",", @e);
+    + for acc ="", @e = subseq(z, 2, length.z)do list(acc,",", @e)end(acc)
     + ")"
 
-function formattype(a:seq.word)seq.word reverse.for @e ∈ a, acc ="",,, list(acc,".", [ @e])
+function formattype(a:seq.word)seq.word
+ reverse.for acc ="", @e = a do list(acc,".", [ @e])end(acc)
 
 function differ(a:seq.seq.word, b:seq.seq.word, i:int)int
  if i > length.a ∨ i > length.b then i
@@ -151,4 +160,4 @@ function tonode(a:parc)parc parc(head.a, head.a, counts.a, clocks.a, space.a)
 
 Function dumpprofileinfo seq.word
 let e = profiledata.loadedLibs_1
- for @e ∈ profiledata.loadedLibs_1, acc ="",,, list(acc," &br", [ tail.@e, head.@e, toword.counts.@e])
+ for acc ="", @e = profiledata.loadedLibs_1 do list(acc," &br", [ tail.@e, head.@e, toword.counts.@e])end(acc)

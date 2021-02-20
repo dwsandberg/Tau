@@ -29,9 +29,9 @@ type characterwidths is widths:seq.int
 function_(s:seq.int, c:char)int if toint.c = 0 then 0 else s_(toint.c)
 
 Function displaywidth(cw:characterwidths, s:seq.word)int
- \\ does not account for spaces \\ for @e ∈ s, acc = 0 ,,, acc + displaywidth(cw, @e)
+ \\ does not account for spaces \\ for acc = 0, @e = s do acc + displaywidth(cw, @e)end(acc)
 
-Function displaywidth(cw:characterwidths, w:word)int for @e ∈ decodeword.w, acc = 0 ,,, acc + (widths.cw)_@e
+Function displaywidth(cw:characterwidths, w:word)int for acc = 0, @e = decodeword.w do acc + (widths.cw)_@e end(acc)
 
 Function charwidths characterwidths characterwidths.replaceS(sparseseq.60
 , 1
@@ -49,9 +49,9 @@ Function charwidths characterwidths characterwidths.replaceS(sparseseq.60
 , 64, 64, 64, 43, 50, 36, 64, 64, 93, 64
 , 64, 57, 62, 26, 62, 70])
 
-Function checkwidths seq.word for @e ∈ arithseq(128 - 32, 1, 32), acc ="",,, list(acc," &br", check.@e)
+Function checkwidths seq.word for acc ="", @e = arithseq(128 - 32, 1, 32)do list(acc," &br", check.@e)end(acc)
 
 function check(i:int)seq.word
- let a = encodeword.tocharseq.constantseq(100, i)
- let l = displaywidth(charwidths, a)
-  [ a] + toword.l + " &br" + merge.constantseq(l / 100,"m"_1)
+let a = encodeword.tocharseq.constantseq(100, i)
+let l = displaywidth(charwidths, a)
+ [ a] + toword.l + " &br" + merge.constantseq(l / 100,"m"_1)

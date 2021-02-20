@@ -47,7 +47,7 @@ Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
 
 Function merge(a:seq.word)word
  \\ make multiple words into a single word. \\
- encodeword.for @e ∈ a, acc = empty:seq.char ,,, acc + decodeword.@e
+ encodeword.for acc = empty:seq.char, @e = a do acc + decodeword.@e end(acc)
 
 * Functions to perform alphabetical sorting
 
@@ -61,22 +61,22 @@ Export toword(alphaword)word
 
 Function toalphaseq(a:seq.word)seq.alphaword
  \\ This is just a type change and the compiler recognizes this and does not generate code \\
- for @e ∈ a, acc = empty:seq.alphaword ,,, acc + alphaword.@e
+ for acc = empty:seq.alphaword, @e = a do acc + alphaword.@e end(acc)
 
 Function ?alpha(a:char, b:char)ordering a ? b
 
 Function ?(a:alphaword, b:alphaword)ordering
  if toword.a = toword.b then EQ else ?alpha(decodeword.toword.a, decodeword.toword.b)
 
-Function towordseq(a:seq.alphaword)seq.word for @e ∈ a, acc = empty:seq.word ,,, acc + toword.@e
+Function towordseq(a:seq.alphaword)seq.word for acc = empty:seq.word, @e = a do acc + toword.@e end(acc)
 
 Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
 
 Export ?(a:seq.alphaword, b:seq.alphaword)ordering
 
 Function alphasort(a:seq.seq.word)seq.seq.word
- let b = for @e ∈ a, acc = empty:seq.seq.alphaword ,,, acc + toalphaseq.@e
-  for @e ∈ sort.b, acc = empty:seq.seq.word ,,, acc + towordseq.@e
+let b = for acc = empty:seq.seq.alphaword, @e = a do acc + toalphaseq.@e end(acc)
+ for acc = empty:seq.seq.word, @e = sort.b do acc + towordseq.@e end(acc)
 
 Function checkinteger(w:word)word
  let l = decodeword.w
@@ -84,12 +84,12 @@ Function checkinteger(w:word)word
  let validhex = decodeword.first."0123456789ABCDEFabcdef" + nbspchar
   if length.l > 2 ∧ l_1 = char1."0"
   ∧ l_2 ∈ decodeword.first."xX"then
-  if for @e ∈ l << 2, acc = true ,,, acc ∧ binarysearch(validhex, @e) > 0 then
+ if for acc = true, @e = l << 2 do acc ∧ binarysearch(validhex, @e) > 0 end(acc)then
    "INTEGER"_1
    else"ILLEGAL"_1
   else
    let i = if length.l > 1 ∧ l_1 = char1."-"then 2 else 1
     if not.between(toint.l_i, 48, 57)then"WORD"_1
-    else if for @e ∈ l << (i - 1), acc = true ,,, acc ∧ binarysearch(validdigits, @e) > 0 then
+   else if for acc = true, @e = l << (i - 1)do acc ∧ binarysearch(validdigits, @e) > 0 end(acc)then
     "INTEGER"_1
     else"ILLEGAL"_1

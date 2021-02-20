@@ -23,14 +23,14 @@ Function addspace(a:T, this:word, escapehtml:boolean)T
     let d = decodeword.this
     let a1 = if nospace.a then a else a + char.32
      if escapehtml then
-     for @e ∈ d, acc = a1 ,,, acc
+     for acc = a1, @e = d do acc
       + if @e = char1."<"then decodeword.first."&lt;"
-      else if @e = char1."&"then decodeword.first."&amp;"else [ @e]
-     else for @e ∈ d, acc = a1 ,,, acc + @e
+      else if @e = char1."&"then decodeword.first."&amp;"else [ @e] end(acc)
+     else for acc = a1, @e = d do acc + @e end(acc)
 
-function +(a:T, s:seq.char)T for @e ∈ s, acc = a ,,, acc + @e
+function +(a:T, s:seq.char)T for acc = a, @e = s do acc + @e end(acc)
 
-function +(a:T, s:seq.word)T for @e ∈ s, acc = a ,,, addspace(acc, @e)
+function +(a:T, s:seq.word)T for acc = a, @e = s do addspace(acc, @e)end(acc)
 
 function +(a:T, w:word)T addspace(a, w)
 

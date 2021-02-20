@@ -31,14 +31,13 @@ Function_(a:seq.T, c:int)T
     if typ = 0 then \\ element per word \\ unpackedindex(a, b)else packedindex(a, b)
 
 Function =(a:seq.T, b:seq.T)boolean
- if length.a = length.b then
- for e ∈ a, acc = true, i, e ≠ b_i , not(e ≠ b_i)
- else false
+  for isequal=length.a = length.b , i=1,e = a while    isequal do  next(e=b_i,i+1) end (isequal)
 
-Function ∈(a:T, s:seq.T)boolean for e ∈ s, acc = false, i, a = e , a = e
+Function ∈(a:T, s:seq.T)boolean  
+for found=false,e =s while   not.found do    a=e end(found)
 
-Function findelement(w:T, s:seq.T)seq.T
- for e ∈ s, acc = empty:seq.T, i, w = e , if w = e then [ e]else empty:seq.T
+Function findelement(a:T, s:seq.T)seq.T
+for found=empty:seq.T,e =s while   isempty.found do   if    a=e then found+e else found end(found)
 
 -------------------------
 
@@ -69,8 +68,7 @@ Function ispseq(s:seq.T)boolean length.toseq.to:pseq.T(s) ≠ 0
 Function +(a:seq.T, b:seq.T)seq.T
  let la = length.a
   if length.a = 0 then b
-  else
-   let lb = length.b
+ else let lb = length.b
     if lb = 0 then a else catnonzero(a, b)
 
 /Function largeseq(s:seq.T)seq.T let length = length.s if length < 64 then if length > 16 then s else if length > 8 then if length = 16 then [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_10, s_11, s_12, s_13, s_14, s_15, s_16]else s else if length = 8 then [ s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8]else if length = 4 then [ s_1, s_2, s_3, s_4]else s else s

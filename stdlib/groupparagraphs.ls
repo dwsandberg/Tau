@@ -27,8 +27,8 @@ function extractblock(a:seq.seq.word, p:seq.int)seq.seq.word subseq(a, p_1, p_2)
 
 Function groupparagraphs(break:seq.word, a:seq.seq.word)seq.seq.seq.word
  \\ Looks for paragraphs beginning with a word in break and returns seq of subsequences of paragraphs making up each block. In does this by creating a sequence of pairs of integers. Each pair contains beginning and end of a subsequence making up the block. \\
- for @e ∈ finishpair(for @e ∈ arithseq(length.a, 1, 1), acc = empty:seq.seq.int ,,, addpair(acc, findparagraph(break, a, @e)), length.a), acc = empty:seq.seq.seq.word ,,,
-  acc + extractblock(a, @e)
+ for acc = empty:seq.seq.seq.word, @e = finishpair(for acc = empty:seq.seq.int, @e = arithseq(length.a, 1, 1)do addpair(acc, findparagraph(break, a, @e))end(acc), length.a)do
+  acc + extractblock(a, @e)end(acc)
 
 Function findlibclause(a:seq.seq.word, i:int)seq.word
  assert i < length.a report"No Library clause found"
@@ -45,7 +45,7 @@ Function getlibraryinfo(libname:seq.word)seq.seq.word
 
 Function getlibrarysrc(libname:seq.word)seq.seq.word
  let filelist =(getlibraryinfo.libname)_2
-  for @e ∈ filelist, acc = empty:seq.seq.word ,,, acc + gettext.[ merge([ first.libname] + "/" + @e + ".ls")]
+ for acc = empty:seq.seq.word, @e = filelist do acc + gettext.[ merge([ first.libname] + "/" + @e + ".ls")]end(acc)
 
 Function getlibraryinfo(libname:word)seq.seq.word getlibraryinfo.[ libname]
 

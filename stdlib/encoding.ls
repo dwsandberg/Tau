@@ -70,10 +70,14 @@ Function add(h:encodingstate.T, v:encodingpair.T)encodingstate.T
    let p = subadd(mask, h, v, 1)
    let code = code.p
    let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
-   let listdecode = for e ∈(decodetable.h)_codeindex, acc = [ p],,, if code.e = code ∨ notsamehash:T(valueofencoding.code, valueofencoding.code.e, mask)then acc
-   else acc + e
-   let listencode = for e ∈(encodetable.h)_dataindex, acc = [ p],,, if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask)then acc
-   else acc + e
+   let listdecode = for acc = [ p], e =(decodetable.h)_codeindex do
+    if code.e = code ∨ notsamehash:T(valueofencoding.code, valueofencoding.code.e, mask)then acc
+    else acc + e
+   end(acc)
+   let listencode = for acc = [ p], e =(encodetable.h)_dataindex do
+    if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask)then acc
+    else acc + e
+   end(acc)
    let newdecode = replace(decodetable.h, codeindex, listdecode)
    let newencode = replace(encodetable.h, dataindex, listencode)
     if 3 * length.h > 2 * tablesize then
@@ -87,7 +91,7 @@ function subadd(mask:bits, h:encodingstate.T, v:encodingpair.T, count:int)encodi
  let code = code.v
  let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
  let found = valueofencoding.code.v ≤ 0
- ∨ for @e ∈(decodetable.h)_codeindex, acc = false ,,, acc ∨ code.v = code.@e
+ ∨ for acc = false, @e =(decodetable.h)_codeindex do acc ∨ code.v = code.@e end(acc)
   if found then
   subadd(mask, h, encodingpair(to:encoding.T(assignencoding(length.h, data.v)), data.v, hash.v), count + 1)
   else encodingpair(code.v, data.v, hash.v)
@@ -96,12 +100,11 @@ Function assignrandom(length:int, data:T)int(randomint.1)_1
 
 Function addencodingpairs(l:seq.encodingpair.T)int
  let inst = getinstance:encodingstate.T
-  for @e ∈ l, acc = 0 ,,, acc + primitiveadd(encodingno.inst, rehash.@e)
+ for acc = 0, @e = l do acc + primitiveadd(encodingno.inst, rehash.@e)end(acc)
 
 function rehash(a:encodingpair.T)encodingpair.T encodingpair(code.a, data.a)
 
-Function lookupencodingpair(t:encoding.T)seq.encodingpair.T
- let inst = getinstance:encodingstate.T
+Function lookupencodingpair(t:encoding.T)seq.encodingpair.T let inst = getinstance:encodingstate.T
   decode(inst, t)
 
 Function decode(t:encoding.T)T
@@ -123,8 +126,9 @@ Function encode(t:T)encoding.T
   else code.r_1
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingpair.T
- for e ∈(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1), acc = empty:seq.encodingpair.T ,,,
+ for acc = empty:seq.encodingpair.T, e =(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1)do
   if t = code.e then acc + e else acc
+ end(acc)
 
 Function =(a:encoding.T, b:encoding.T)boolean valueofencoding.a = valueofencoding.b
 
@@ -136,7 +140,9 @@ function lookuprep(t:T, inst:encodingstate.T)seq.encodingpair.T
  lookuprep(t,(encodetable.inst)_(hash.t mod length.encodetable.inst + 1))
 
 function lookuprep(t:T, s:seq.encodingpair.T)seq.encodingpair.T
- for e ∈ s, acc = empty:seq.encodingpair.T ,,, if t = data.e then acc + e else acc
+ for acc = empty:seq.encodingpair.T, e = s do
+  if t = data.e then acc + e else acc
+ end(acc)
 
 Function findencode(t:T)seq.T
  let r = lookuprep(t, getinstance:encodingstate.T)
@@ -149,7 +155,7 @@ function analyze(t:encodingstate.T)seq.word
 
 function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int)seq.word
  if i > length.s then
- for @e ∈ [ length.s, one, two, big], acc ="",,, acc + toword.@e
+ for acc ="", @e = [ length.s, one, two, big]do acc + toword.@e end(acc)
  else
   let t = length.s_i
    if t = 0 then counts(s, i + 1, one, two, big)

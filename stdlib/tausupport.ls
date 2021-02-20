@@ -58,26 +58,30 @@ Function blockit(s:seq.T, ds:int)seq.T
  let blksz = blocksize:T / ds
   if length.s ≤ blksz then
   let newseq = allocatespace:T(length.s * ds + 2)
-   let d = for @e ∈ s, acc = 2 ,,, memcpy(acc, 0, ds, newseq, @e)
+  let d = for acc = 2, @e = s do memcpy(acc, 0, ds, newseq, @e)end(acc)
     setfirst(newseq, 1, length.s)
   else
    let noblks =(length.s + blksz - 1) / blksz
    let blkseq = allocatespace:seq.T(noblks + 2)
    let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
-   let discard = for @e ∈ arithseq(noblks, blksz, 1), acc = 2 ,,, setfld(acc, blkseq, blockit(subseq(s, @e, @e + blksz - 1), ds))
+   let discard = for acc = 2, @e = arithseq(noblks, blksz, 1)do
+    setfld(acc, blkseq, blockit(subseq(s, @e, @e + blksz - 1), ds))
+   end(acc)
     setfirst(bitcast.blkseq, blockseqtype, length.s)
 
 Function blockit(s:seq.T)seq.T
  let blksz = blocksize:T
   if length.s ≤ blksz then
   let newseq = allocatespace:T(length.s + 2)
-   let d = for @e ∈ s, acc = 2 ,,, setfld(acc, newseq, @e)
+ let d = for acc = 2, @e = s do setfld(acc, newseq, @e)end(acc)
     setfirst(newseq, 0, length.s)
   else
    let noblks =(length.s + blksz - 1) / blksz
    let blkseq = allocatespace:seq.T(noblks + 2)
    let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
-   let discard = for @e ∈ arithseq(noblks, blksz, 1), acc = 2 ,,, setfld(acc, blkseq, blockit.subseq(s, @e, @e + blksz - 1))
+  let discard = for acc = 2, @e = arithseq(noblks, blksz, 1)do
+   setfld(acc, blkseq, blockit.subseq(s, @e, @e + blksz - 1))
+  end(acc)
     setfirst(bitcast.blkseq, blockseqtype, length.s)
 
 module tausupport
@@ -107,6 +111,8 @@ use taublockseq.packed4
 use taublockseq.packed5
 
 use taublockseq.packed6
+
+use taublockseq.byte
 
 use abstractBuiltin.ptr
 
@@ -172,6 +178,8 @@ Export blockit(seq.real)seq.real
 
 Export blockit(s:seq.ptr)seq.ptr
 
+/Export blockit(s:seq.byte) seq.byte
+
 Function blockit(s:seq.packed2)seq.packed2 blockit(s, 2)
 
 Function blockit(s:seq.packed3)seq.packed3 blockit(s, 3)
@@ -208,6 +216,6 @@ function assignencoding(a:int, typename)int a + 1
 
 -----------
 
-Function stacktrace seq.word for @e ∈ callstack.30 << 2, acc ="",,, acc + " &br" + printmangled.addresstosymbol.@e
+Function stacktrace seq.word for acc ="", @e = callstack.30 << 2 do acc + " &br" + printmangled.addresstosymbol.@e end(acc)
 
 Function addresstosymbol(a:int)word encodeword.addresstosymbol2.a

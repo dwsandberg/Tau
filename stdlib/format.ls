@@ -37,13 +37,14 @@ function changestate(state:int, ele:word, idx:int, early:boolean)int
    else if early then idx - 1 else if ele ∈ "("then findend else extendtype
   else if state = findend then if ele ∈ ")"then extendtype2 else findend
   else if state = extendtype then
-  if ele ∈ "."then extendtype2 else if ele ∈ "//"then incomment else \\ done \\ idx - 1
+ if ele ∈ "."then extendtype2
+  else if ele ∈ "//"then incomment else \\ done \\ idx - 1
   else if state = extendtype2 then extendtype
-  else if state = incomment then if ele ∈ "//"then extendtype else incomment else unknown
+ else if state = incomment then if ele ∈ "//"then extendtype else incomment else unknown
 
 Function getheader(s:seq.word)seq.word
  let istype = subseq(s, 1, 3) = "Export type:"
- let t = for ele ∈ s, state = 0, idx, state > 0 , changestate(state, ele, idx, istype)
+let t = for state = 0, idx = 1, ele = s while   state ≤ 0 do next(changestate(state, ele, idx, istype), idx + 1)end(state)
  let theend = if t < 1 then length.s else t
   if istype then
   let tt = subseq(s, 4, theend)
@@ -62,7 +63,8 @@ function escapeformat(length:int, c:word)word
  if length > 20 then merge.[ encodeword.[ char.10], c]else merge.[ space, c]
  else if c ∈ " &keyword  &}  &em  &strong  &cell"then merge.[ space, c]else c
 
-Function escapeformat(s:seq.word)seq.word for @e ∈ s, acc ="",,, acc + escapeformat(length.s, @e)
+Function escapeformat(s:seq.word)seq.word
+ for acc ="", @e = s do acc + escapeformat(length.s, @e)end(acc)
 
 Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 
@@ -95,7 +97,8 @@ function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.wo
       processtotext(a, t + 1, result + subseq(a, i + 2, t - 1), stk)
     else processtotext(a, i + 2, result, push(stk, space))
    else if not.isempty.stk ∧ this = " &}"_1 then
-   processtotext(a, i + 1, result + if top.stk = "endtable"_1 then")]"else"", pop.stk)
+    processtotext(a, i + 1, result
+    + if top.stk = "endtable"_1 then")]"else"", pop.stk)
    else if this = " &keyword"_1 then processtotext(a, i + 2, result + [ next], stk)
    else if this = " &em"_1 then processtotext(a, i + 2, result + [ next], stk)
    else if this = " &p"_1 then processtotext(a, i + 1, result + " &br  &br", stk)
@@ -115,7 +118,7 @@ type pnpstate is lastbreak:int, result:seq.word, matchthis:word, instring:boolea
 
 Function prettynoparse(s:seq.word)seq.word
  \\ format function without first parsing it \\
- result.for @e ∈ s, acc = pnpstate(0,"","//"_1, false),,, advancepnp(acc, @e)
+ result.for acc = pnpstate(0,"","//"_1, false), @e = s do advancepnp(acc, @e)end(acc)
 
 function advancepnp(state:pnpstate, this:word)pnpstate
  let lastbreak = lastbreak.state
@@ -133,9 +136,11 @@ function advancepnp(state:pnpstate, this:word)pnpstate
  ∨ lastbreak > 40 ∧ this ∈ ","then
  3
  else if lastbreak > 20 ∧ this ∈ "["then 4 else 5
- let newresult = if instring then if this = matchthis then result + this + " &}"else result + this
+let newresult = if instring then
+ if this = matchthis then result + this + " &}"else result + this
  else if c = 0 then
- result + if this ∈ ('"' + "'")then" &{ literal"else" &br  &{ comment";
+ result
+ + if this ∈ ('"' + "'")then" &{ literal"else" &br  &{ comment";
   + this
  else if c = 1 then
  if lastbreak > 20 then result + " &br"else result ; + " &keyword" + this
@@ -148,7 +153,7 @@ function advancepnp(state:pnpstate, this:word)pnpstate
 _____________________________
 
 Function createhtmlfile(name:seq.word, output:seq.word)int
- createfile(name, a.processpara(for @e ∈ htmlheader, acc = emptyout23 ,,, addspace(acc, @e), output))
+ createfile(name, a.processpara(for acc = emptyout23, @e = htmlheader do addspace(acc, @e)end(acc), output))
 
 type out23 is nospace:boolean, a:seq.byte
 

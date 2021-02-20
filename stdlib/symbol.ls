@@ -90,17 +90,20 @@ Export fsig(symbol)seq.word
 Function newsymbol(name:seq.word, modname:mytype, paratypes:seq.mytype, resulttype:mytype)symbol
  symbol(if length.paratypes = 0 then name
  else
-  name + "(" + for @e ∈ paratypes, acc ="",,, list(acc,",", typerep.@e);
+  name + "("
+  + for acc ="", @e = paratypes do list(acc,",", typerep.@e)end(acc)
   + ")"
  , typerep.modname
  , typerep.resulttype
- , empty:seq.symbol)
+ , empty:seq.symbol
+ )
 
 Function name(s:symbol)seq.word
  if last.fsig.s ∉ ")"then fsig.s
  else break(fsig.s >> 1,"(", false)_1
 
-Function paratypes(s:symbol)seq.mytype for @e ∈ paratypesastext.s, acc = empty:seq.mytype ,,, acc + mytype.@e
+Function paratypes(s:symbol)seq.mytype
+ for acc = empty:seq.mytype, @e = paratypesastext.s do acc + mytype.@e end(acc)
 
 function paratypesastext(s:symbol)seq.seq.word
  let a = fsig.s
@@ -121,7 +124,9 @@ Function nopara(s:symbol)int
    toint.(fsig.s)_2
  else if last.fsig.s ≠ ")"_1 then 0
  else
-  for e ∈ fsig.s, acc = if last.fsig.s = ")"_1 then 1 else 0 ,,, if","_1 = e then acc + 1 else acc
+  for acc = if last.fsig.s = ")"_1 then 1 else 0 , e = fsig.s do
+   if","_1 = e then acc + 1 else acc
+  end(acc)
 
 Function ?(a:symbol, b:symbol)ordering
  fsighash.a ? fsighash.b ∧ fsig.a ? fsig.b ∧ module.a ? module.b
@@ -133,7 +138,8 @@ Function lookup(dict:set.symbol, name:seq.word, types:seq.mytype)set.symbol
 
 Function lookupfsig(dict:set.symbol, fsig:seq.word)set.symbol findelement2(dict, symbol(fsig,"?","?"))
 
-Function printdict(s:set.symbol)seq.word for @e ∈ toseq.s, acc ="",,, acc + print.@e
+Function printdict(s:set.symbol)seq.word
+ for acc ="", @e = toseq.s do acc + print.@e end(acc)
 
 type mapele is s:symbol, target:symbol
 
@@ -154,12 +160,13 @@ Function replaceTsymbol(with:mytype, s:symbol)symbol
   let parts = if last.fsig ≠ ")"_1 then [ fsig]else break(fsig >> 1,",(", false)
   let name = parts_1
   let newname = if last.name = "T"_1 then
-  name >> 1 + if typerep.with = ""then""else print.with
+   name >> 1
+   + if typerep.with = ""then""else print.with
   else name
   let newfsig = if length.parts = 1 then newname
   else
    newname + "("
-   + for @e ∈ parts << 1, acc ="",,, list(acc,",", typerep.replaceT(with, mytype.@e));
+   + for acc ="", @e = parts << 1 do list(acc,",", typerep.replaceT(with, mytype.@e))end(acc)
    + ")"
    symbol(newfsig, typerep.replaceT(with, modname.s), typerep.replaceT(with, resulttype.s), zcode.s)
 
@@ -212,9 +219,8 @@ Function Idx(type:mytype )symbol
    
  Function seqeletype(type:mytype) mytype
  let para=typerep.parameter.type
-  mytype.if length.para > 1 &or para_1 &in "int real boolean"  then para
-  else if para_1 ∈ "int byte bit "then"int"
-      else "ptr"
+ mytype.if length.para > 1 ∨ para_1 ∈ "int real boolean"then para
+ else if para_1 ∈ "int byte bit"then"int"else"ptr"
 
 Function IdxS(type:mytype) symbol
   let para=typerep.parameter.type
@@ -241,10 +247,14 @@ Function Callidx(type:mytype)symbol
 Function Stdseq symbol Lit.0
 
 function Record(kinds:seq.word)symbol
- symbol("RECORD(" + for e ∈ kinds, acc ="",,, list(acc,",", [ e]); + ")","$record","ptr", specialbit)
+ symbol("RECORD("
+ + for acc ="", e = kinds do list(acc,",", [ e])end(acc)
+ + ")","$record","ptr", specialbit)
  
  Function Record(types:seq.mytype)symbol
- symbol("RECORD(" + for e ∈ types, acc ="",,, list(acc,",", typerep.e); + ")","$record","ptr", specialbit)
+ symbol("RECORD("
+ + for acc ="", e = types do list(acc,",", typerep.e)end(acc)
+ + ")","$record","ptr", specialbit)
  
 Function Sequence(eletype:mytype,length:int )symbol
  symbol("SEQUENCE" +toword.length, typerep.eletype+"$sequence", typerep.eletype+"seq ", specialbit)
@@ -253,7 +263,8 @@ Function Block(type:mytype, i:int)symbol
  symbol("BLOCK" + toword.i, towords.type + "$block", towords.type, specialbit)
 
 Function Loopblock(types:seq.mytype)symbol 
- let fsig=for t ∈ types, acc ="LOOPBLOCK(",,,acc+ typerep.t+ ","; + "int)"
+let fsig = for acc ="LOOPBLOCK(", t = types do acc + typerep.t + ","end(acc)
++ "int)"
  symbol(fsig,"$loopblock","?", specialbit)
 
 Function maybepacked(t:mytype) boolean
@@ -264,13 +275,14 @@ Function continue(i:int)symbol symbol(["CONTINUE"_1, toword.i],"$continue","?", 
 Function Constant2(args:seq.symbol)symbol
  \\ let args = subseq(argsin, 1, length.argsin-1)\\
  let fsig ="CONSTANT" + toword.valueofencoding.encode.symbolconstant.args
- symbol(fsig,"$constant",if isSequence.last.args then returntype.last.args else "ptr", args, extrabits(fsig, constbit))
+  symbol(fsig,"$constant", if isSequence.last.args then returntype.last.args else"ptr", args, extrabits(fsig, constbit))
    
 Function Emptyseq(type:mytype)  seq.symbol [Sequence(type,0)]
 
 Function isrecordconstant(s:symbol)boolean  module.s = "$constant" 
 
-function hash(s:seq.symbol)int hash.for e ∈ s, acc ="",,, acc + sigandmodule.e
+function hash(s:seq.symbol)int
+ hash.for acc ="", e = s do acc + sigandmodule.e end(acc)
 
 function assignencoding(a:int, symbolconstant)int a + 1
 
@@ -455,7 +467,8 @@ type typedict is data:seq.myinternaltype
 
 Function +(a:typedict, b:seq.myinternaltype)typedict typedict(data.a + b)
 
-Function print(t:typedict)seq.word for e ∈ data.t, acc ="",,, list(acc," &br", print3.e)
+Function print(t:typedict)seq.word
+ for acc ="", e = data.t do list(acc," &br", print3.e)end(acc)
 
 type myinternaltype is kind:word, name:word, modname:mytype, subflds:seq.mytype
 
@@ -486,7 +499,7 @@ Function replaceTmyinternaltype(with:mytype, it:myinternaltype)myinternaltype my
 
 Function tomyinternaltype(s:seq.word)myinternaltype
  let t = parseit(s, 1, [ s_1], empty:seq.seq.word)
-  myinternaltype(t_2_1, t_3_1, mytype.t_4, for e ∈ subseq(t, 5, length.t), acc = empty:seq.mytype ,,, acc + mytype.e)
+ myinternaltype(t_2_1, t_3_1, mytype.t_4, for acc = empty:seq.mytype, e = subseq(t, 5, length.t)do acc + mytype.e end(acc))
 
 function parseit(s:seq.word, i:int, fld:seq.word, flds:seq.seq.word)seq.seq.word
  if i > length.s then flds + fld
@@ -498,10 +511,10 @@ Function print3(it:myinternaltype)seq.word
  if not.isdefined.it then
  "module:" + print.modname.it + "type" + name.it + "is"
   + kind.it
-  + for e ∈ subflds.it, acc ="",,, list(acc,",", printfld.e)
+  + for acc ="", e = subflds.it do list(acc,",", printfld.e)end(acc)
  else
   [ kind.it, name.it] + print.modname.it
-  + for e ∈ subflds.it, acc ="",,, acc + print.e
+  + for acc ="", e = subflds.it do acc + print.e end(acc)
 
 function printfld(f:mytype)seq.word [ abstracttype.f,":"_1] + print.parameter.f
 
@@ -520,7 +533,9 @@ Function print(f:symbol)seq.word
  let fsig = fsig.f
   if islocal.f ∨ isparameter.f then [ merge(["%"_1] + fsig)]
   else if islit.f then
-  if module = "$boolean"then if fsig = "0"then"Litfalse"else"Littrue"else fsig
+  if module = "$boolean"then
+   if fsig = "0"then"Litfalse"else"Littrue"
+  else fsig
   else if module = "$words"then
   if '"'_1 ∈ fsig then"'" + fsig + "'"
    else '"' + fsig + '"'
@@ -529,19 +544,21 @@ Function print(f:symbol)seq.word
   if fsig_1 ∈ "BLOCK EXITBLOCK BR LOOPBLOCK FINISHLOOP CONTINUE"then fsig + " &br"else fsig
   else if isrecordconstant.f then fsig
   else if isFref.f then"FREF" + print.(constantcode.f)_1
-  else if last.fsig = ")"_1 then fsig else fsig + "()"; + print.mytype.module
+ else if last.fsig = ")"_1 then fsig else fsig + "()";
+ + print.mytype.module
 
 Function print(p:program, i:symbol)seq.word
  let d = lookupcode(p, i)
   if not.isdefined.d then print.i
-  else print.i + for @e ∈ code.d, acc ="",,, acc + print.@e
+ else
+  print.i + for acc ="", @e = code.d do acc + print.@e end(acc)
 
 Function printwithoutconstants(p:program, i:symbol)seq.word
  let d = lookupcode(p, i)
   if not.isdefined.d then print.i
-  else print.i + for @e ∈ removeconstant.code.d, acc ="",,, acc + print.@e
-
-
+ else
+  print.i
+  + for acc ="", @e = removeconstant.code.d do acc + print.@e end(acc)
 
 Function findelement(d:typedict, type:mytype)seq.myinternaltype
  findelement(myinternaltype("?"_1, abstracttype.type, mytype(towords.parameter.type + "?"), empty:seq.mytype), data.d)
@@ -568,15 +585,13 @@ function  getbasetype(d:typedict,type:mytype,top:boolean) mytype
          else if size = 2 then mytype."packed2"
          else if size = 3 then mytype."packed3"
          else if size = 4 then mytype."packed4"
-         else if size = 5 then mytype."packed5"
-         else if size = 6 then mytype."packed6"
-         else typeptr
+     else if size = 5 then mytype."packed5"else if size = 6 then mytype."packed6"else typeptr
       else 
         let basetype=(subflds.t_1)_1
       if abstracttype.basetype = "seq"_1 then getbasetype(d, basetype, true)else basetype
 
 Function getsubflds(d:typedict, type:mytype) seq.mytype
- if type = typeint &or type=mytype."real" ∨ type = typeptr  then [type]
+ if type = typeint ∨ type = mytype."real" ∨ type = typeptr then [ type]
   else
   \\ if type = mytype."boolean"then typeinfo.[ mytype."boolean"]else \\
   if abstracttype.type = "seq"_1 ∨ type = mytype."internaltype" then  [typeptr ]
@@ -585,12 +600,11 @@ Function getsubflds(d:typedict, type:mytype) seq.mytype
     assert length.t = 1 report"type not found" + print.type + stacktrace
       subflds.t_1
 
-
-     
 Function buildargcode(alltypes:typedict,sym:symbol) int 
  \\ needed because the call interface implementation for reals is different than other types is some implementations \\
- for typ ∈ paratypes.sym + resulttype.sym, acc = 1 ,,, acc * 2 + 
-    if  getbasetype(alltypes, typ) = mytype."real"then 1 else 0
+ for acc = 1, typ = paratypes.sym + resulttype.sym do
+  acc * 2 + if getbasetype(alltypes, typ) = mytype."real"then 1 else 0
+ end(acc)
 
 Function typesym(it:myinternaltype)symbol
  let t = addabstract(name.it, parameter.modname.it)
@@ -613,7 +627,9 @@ Function deepcopysym(dict:set.symbol, type:mytype)set.symbol
  else lookup(dict,"type:" + print.type, [ type])
 
 Function removeconstant(s:seq.symbol)seq.symbol
- for @e ∈ s, acc = empty:seq.symbol ,,, acc + if isrecordconstant.@e then removeconstant.zcode.@e else [ @e]
+ for acc = empty:seq.symbol, @e = s do
+  acc + if isrecordconstant.@e then removeconstant.zcode.@e else [ @e]
+ end(acc)
  
  module hashset.T
 
@@ -635,11 +651,13 @@ unbound =(T, T)boolean
 
 Function ∪(a:hashset.T, b:hashset.T)hashset.T
  if cardinality.b > cardinality.a then b ∪ a
- else for e ∈ toseq.b, acc = a ,,, acc + e
+ else for acc = a, e = toseq.b do acc + e end(acc)
 
     function clean( s:seq.T,mask:bits,idx:int) seq.T
       let currenthash=tobits(idx-1)
-  for e ∈ s, acc = empty:seq.T ,,, if e ∈ acc ∨ (tobits.hash.e ∧ mask) ≠ currenthash then acc else acc + e
+ for acc = empty:seq.T, e = s do
+  if e ∈ acc ∨ (tobits.hash.e ∧ mask) ≠ currenthash then acc else acc + e
+ end(acc)
      
     Function +(s: hashset.T ,a:T) hashset.T
  let idx = toint(tobits.hash.a ∧ mask.s) + 1
@@ -658,7 +676,9 @@ Function ∪(a:hashset.T, b:hashset.T)hashset.T
        findelement(ele,(table.s)_idx)
     
     Function toseq(s:hashset.T) seq.T
- for e ∈ table.s, acc = empty:seq.T, idx, , acc + clean(e, mask.s, idx)
+ for acc = empty:seq.T, idx = 1, e = table.s do
+  next(acc + clean(e, mask.s, idx), idx + 1)
+ end(acc)
       
     Function empty:hashset.T hashset.T hashset( [empty:seq.T,empty:seq.T,empty:seq.T,empty:seq.T],0,0x3)
 

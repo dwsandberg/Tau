@@ -60,67 +60,71 @@ unbound =(T, T)boolean
 
 function =(a:nodeinfo.T, b:nodeinfo.T)boolean n.a = n.b
 
-Function maxx(a:seq.nodeinfo.T)int for @e ∈ a, acc = 0 ,,, max(acc, rightedge.@e)
+Function maxx(a:seq.nodeinfo.T)int
+ for acc = 0, @e = a do max(acc, rightedge.@e)end(acc)
 
 function rightedge(a:nodeinfo.T)int x.a + width.a
 
-Function maxy(a:seq.nodeinfo.T)int for @e ∈ a, acc = 0 ,,, max(acc, y.@e)
+Function maxy(a:seq.nodeinfo.T)int
+ for acc = 0, @e = a do max(acc, y.@e)end(acc)
 
 Function zerowidth(a:seq.T, b:nodeinfo.T)nodeinfo.T
  if n.b ∈ a then b else nodeinfo(n.b, x.b, y.b, 0, seperation.b)
 
 Function zerowidth(a:seq.T, b:set.nodeinfo.T)set.nodeinfo.T
- for @e ∈ toseq.b, acc = empty:set.nodeinfo.T ,,, acc + zerowidth(a, @e)
+ for acc = empty:set.nodeinfo.T, @e = toseq.b do acc + zerowidth(a, @e)end(acc)
 
 Function posindegree(g:graph.T, layers:seq.seq.T, layer:int, node:T)nodeinfo.T
- let x = findindex(node, layers_layer)
-  if x > length.layers_layer then posindegree(g, layers, layer + 1, node)
-  else
-   let d = length.toseq.predecessors(g, node)
-    nodeinfo(node, x, layer, 0, if d > 2 then d else 1)
+let x = findindex(node, layers_layer)
+ if x > length.layers_layer then posindegree(g, layers, layer + 1, node)
+ else
+  let d = length.toseq.predecessors(g, node)
+   nodeinfo(node, x, layer, 0, if d > 2 then d else 1 )
 
 Function pos(layers:seq.seq.T, layer:int, node:T)nodeinfo.T
- let x = findindex(node, layers_layer)
-  if x > length.layers_layer then pos(layers, layer + 1, node)else nodeinfo(node, x, layer)
+let x = findindex(node, layers_layer)
+ if x > length.layers_layer then pos(layers, layer + 1, node)else nodeinfo(node, x, layer)
 
 Function defaultpos(g:graph.T, layers:seq.seq.T)set.nodeinfo.T
- let a = for @e ∈ layers, acc = empty:seq.T ,,, acc + @e
-  for @e ∈ a, acc = empty:set.nodeinfo.T ,,, acc + pos(layers, 1, @e)
+let a = for acc = empty:seq.T, @e = layers do acc + @e end(acc)
+ for acc = empty:set.nodeinfo.T, @e = a do acc + pos(layers, 1, @e)end(acc)
 
 Function posindegree(g:graph.T, layers:seq.seq.T)set.nodeinfo.T
- let a = for @e ∈ layers, acc = empty:seq.T ,,, acc + @e
-  for @e ∈ a, acc = empty:set.nodeinfo.T ,,, acc + posindegree(g, layers, 1, @e)
+let a = for acc = empty:seq.T, @e = layers do acc + @e end(acc)
+ for acc = empty:set.nodeinfo.T, @e = a do acc + posindegree(g, layers, 1, @e)end(acc)
 
 Function tosvg(arcs:seq.arc.T, nodes:seq.T, positions:set.nodeinfo.T)seq.word
- let arci = for @e ∈ arcs, acc = empty:seq.arcinfo.T ,,, acc + arcinfo.@e
-  tosvg(arci, nodes, positions)
+let arci = for acc = empty:seq.arcinfo.T, @e = arcs do acc + arcinfo.@e end(acc)
+ tosvg(arci, nodes, positions)
 
 Function tosvg(arci:seq.arcinfo.T, nodes:seq.T, positions:set.nodeinfo.T)seq.word
- let r = zerowidth(nodes, positions)
- let minx = for @e ∈ toseq.r, acc = x.r_1 ,,, min(acc, x.@e)
- let vertnodesize = 16
- let a = for @e ∈ toseq.r, acc = sparseseq.1 ,,, layerwidths(acc, @e)
- let p2 = for @e ∈ toseq.r, acc = empty:set.nodeinfo.T ,,, acc + adjust(vertnodesize, minx, a, @e)
- let g = for @e ∈ arci, acc = empty:set.arcinfo.T ,,, acc + toarcinfo(p2, @e)
-  svg(["text { fill:black }"], for @e ∈ toseq.p2, acc ="",,, acc + svgnode(vertnodesize, g, p2, @e), maxx.toseq.p2, maxy.toseq.p2)
+let r = zerowidth(nodes, positions)
+let minx = for acc = x.r_1, @e = toseq.r do min(acc, x.@e)end(acc)
+let vertnodesize = 16
+let a = for acc = sparseseq.1, @e = toseq.r do layerwidths(acc, @e)end(acc)
+let p2 = for acc = empty:set.nodeinfo.T, @e = toseq.r do acc + adjust(vertnodesize, minx, a, @e)end(acc)
+let g = for acc = empty:set.arcinfo.T, @e = arci do acc + toarcinfo(p2, @e)end(acc)
+ svg(["text { fill:black }"], for acc ="", @e = toseq.p2 do acc + svgnode(vertnodesize, g, p2, @e)end(acc), maxx.toseq.p2, maxy.toseq.p2)
 
 Function svgnode(vertnodesize:int, info:set.arcinfo.T, s:set.nodeinfo.T, p:nodeinfo.T)seq.word
- let arcstonode = findelement2(info, arcinfo(arc(n.p, n.p),"", 0))
-  if width.p > 0 then text("text", x.p, y.p, nodetotext.n.p)else"";
-  + for @e ∈ arithseq(length.toseq.arcstonode, 1, 1), acc ="",,, acc + drawarc(vertnodesize, p, toseq.arcstonode, @e)
+let arcstonode = findelement2(info, arcinfo(arc(n.p, n.p),"", 0))
+ if width.p > 0 then text("text", x.p, y.p, nodetotext.n.p)else"";
+ + for acc ="", @e = arithseq(length.toseq.arcstonode, 1, 1)do
+  acc + drawarc(vertnodesize, p, toseq.arcstonode, @e)
+ end(acc)
 
 function drawarc(vertnodesize:int, stop:nodeinfo.T, s:seq.arcinfo.T, i:int)seq.word
- let a = s_i
- let xstop = if width.a = 0 then x.stop else x.stop - width.a / 8 - 5
-  line(x.a, y.a, xstop, y.stop + (i - 1) * if width.a = 0 then 0 else vertnodesize, backarc.a, false)
-  + " &br"
-  + text("text", xstop, y.stop + (i - 1) * vertnodesize, label.a)
+let a = s_i
+let xstop = if width.a = 0 then x.stop else x.stop - width.a / 8 - 5
+ line(x.a, y.a, xstop, y.stop + (i - 1) * if width.a = 0 then 0 else vertnodesize, backarc.a, false)
+ + " &br"
+ + text("text", xstop, y.stop + (i - 1) * vertnodesize, label.a)
 
 function toarcinfo(s:set.nodeinfo.T, a:arcinfo.T)arcinfo.T
- let y = findelement(nodeinfo(tail.a.a, 0, 0), s)
-  assert not.isempty.y report"node not found" + nodetotext.tail.a.a
-  let start = y_1
-   arcinfo(a.a, x.start + if width.start = 0 then 0 else width.start + 10, y.start, label.a, width.a, backarc.a)
+let y = findelement(nodeinfo(tail.a.a, 0, 0), s)
+ assert not.isempty.y report"node not found" + nodetotext.tail.a.a
+ let start = y_1
+  arcinfo(a.a, x.start + if width.start = 0 then 0 else width.start + 10, y.start, label.a, width.a, backarc.a)
 
 Export type:arcinfo.T
 
@@ -155,15 +159,17 @@ unbound ?(a:T, b:T)ordering
 unbound nodetotext(T)seq.word
 
 function layerwidths(ws:seq.int, p:nodeinfo.T)seq.int
- let w = width.p
-  if w > ws_(y.p)then replaceS(ws, y.p, [ w])else ws
+let w = width.p
+ if w > ws_(y.p)then replaceS(ws, y.p, [ w])else ws
 
 function adjust(vertnodesize:int, minx:int, layerwidths:seq.int, p:nodeinfo.T)nodeinfo.T
- assert true report"layer width" + for @e ∈ layerwidths, acc ="",,, acc + toword.@e
+ assert true report"layer width" + for acc ="", @e = layerwidths do acc + toword.@e end(acc)
  let interlayerspace = 500
  let y = if y.p = 1 then 0
  else
-  for @e ∈ subseq(layerwidths, 1, y.p - 1), acc = interlayerspace * (y.p - 1),,, acc + @e
+  for acc = interlayerspace * (y.p - 1), @e = subseq(layerwidths, 1, y.p - 1)do
+   acc + @e
+  end(acc)
   nodeinfo(n.p, 10 + y / 8, 10 + (x.p - minx) * vertnodesize, width.p / 8, seperation.p)
 
 ____________________________________

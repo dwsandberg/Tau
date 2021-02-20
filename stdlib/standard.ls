@@ -72,9 +72,8 @@ if a then if b then true else false else if b then false else true
 
 Function toword(o:ordering)word"LT EQ GT"_(toint.o + 1)
 
-Function ∧(a:ordering, b:ordering)ordering
- let x = a
-  if x = EQ then b else x
+Function ∧(a:ordering, b:ordering)ordering let x = a
+ if x = EQ then b else x
 
 --------------------
 
@@ -104,21 +103,24 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
-Function hash(a:seq.int)int finalmix.for @e ∈ a, acc = hashstart ,,, hash(acc, @e)
+Function hash(a:seq.int)int finalmix.for acc = hashstart, @e = a do hash(acc, @e)end(acc)
 
-Function hash(a:seq.word)int finalmix.for @e ∈ a, acc = hashstart ,,, hash(acc, hash.@e)
+Function hash(a:seq.word)int
+ finalmix.for acc = hashstart, @e = a do hash(acc, hash.@e)end(acc)
 
-Function^(i:int, n:int)int for @e ∈ constantseq(n, i), acc = 1 ,,, acc * @e
+Function^(i:int, n:int)int
+ for acc = 1, @e = constantseq(n, i)do acc * @e end(acc)
 
 Function pseudorandom(seed:int)int
- let ah = 16807
- let mh = 2147483647
- let test = ah * (seed mod (mh / ah)) - mh mod ah * (seed / (mh / ah))
-  if test > 0 then test else test + mh
+let ah = 16807
+let mh = 2147483647
+let test = ah * (seed mod (mh / ah)) - mh mod ah * (seed / (mh / ah))
+ if test > 0 then test else test + mh
 
 function addrandom(s:seq.int, i:int)seq.int s + pseudorandom.s_(length.s)
 
-Function randomseq(seed:int, length:int)seq.int for @e ∈ constantseq(length - 1, 1), acc = [ seed],,, addrandom(acc, @e)
+Function randomseq(seed:int, length:int)seq.int
+ for acc = [ seed], @e = constantseq(length - 1, 1)do addrandom(acc, @e)end(acc)
 
 Export randomint(i:int)seq.int
 
@@ -126,23 +128,31 @@ Function list(a:seq.word, b:seq.word, c:seq.word)seq.word
  if isempty.a then c else if isempty.c then a else a + (b + c)
 
 Function print(n:int)seq.word
- let s = decodeUTF8.toUTF8.n
- let sign = if n < 0 then"-"else""
- let t = if n < 0 then s << 1 else s
-  sign
-  + encodeword.if length.s < 5 then s
-  else
-   for e ∈ s, acc = empty:seq.char, i, , acc
-   + if(length.s - i) mod 3 = 2 ∧ i ≠ 1 then [ char.160, e]
-   else [ e]
+let s = decodeUTF8.toUTF8.n
+let sign = if n < 0 then"-"else""
+let t = if n < 0 then s << 1 else s
+ sign
+ + encodeword.if length.s < 5 then s
+ else
+  for acc = empty:seq.char, i = 1, e = s do
+   next(acc
+  + if(length.s - i) mod 3 = 2 ∧ i ≠ 1 then [ char.160, e]
+   else [ e], i + 1)
+  end(acc)
 
 Function EOL seq.word" &br"
 
 Function break(s:seq.word, seperators:seq.word, includeseperator:boolean)seq.seq.word
- let nosep = if includeseperator then 0 else 1
- let l = for e ∈ s, acc = empty:seq.int, i, , acc + if e ∈ seperators then [ i]else empty:seq.int
-  for ele ∈ l + (length.s + 1), acc = empty:seq.seq.word, i, , acc
+let nosep = if includeseperator then 0 else 1
+let l = for acc = empty:seq.int, i = 1, e = s do
+ next(acc + if e ∈ seperators then [ i]else empty:seq.int, i + 1)
+end(acc)
+ for acc = empty:seq.seq.word, i = 1, ele = l + (length.s + 1)do
+  next(acc
   + subseq(s, if i = 1 then 1 else l_(i - 1) + nosep, ele - 1)
+  , i + 1
+  )
+ end(acc)
 
 Export hash(a:word)int
 

@@ -16,8 +16,7 @@ Function hash(acc:bits, x:int)bits
   * PRIME1
   + PRIME4)
 
-Function hashstart(seed:int)bits
- let PRIME5 = 2870177450012600261 
+Function hashstart(seed:int)bits let PRIME5 = 2870177450012600261
   bits(seed + PRIME5 + 64)
 
 Function hashstart bits hashstart.0
@@ -47,6 +46,5 @@ Function finalmix32(hash:bits)int
  let h32d = xor(h32c, h32c >> 13) * 374761393
   abs.toint(xor(h32d, h32d >> 16) ∧ 0xFFFF FFFF)
 
-Function hashstart32(seed:int)bits
- let PRIME5 = 374761393 
+Function hashstart32(seed:int)bits let PRIME5 = 374761393
   bits(seed + PRIME5)

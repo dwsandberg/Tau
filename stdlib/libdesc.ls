@@ -35,18 +35,18 @@ use seq.seq.word
 use seq.encodingpair.seq.char
 
 Function libdesc(alltypes:typedict, p:program, templates:program, mods:seq.firstpass, exports:seq.word)symbol
- let mods2 = for @e ∈ mods, acc = empty:seq.firstpass ,,, acc + tolibmod(alltypes, p, templates, exports, @e)
- let symstoexport = for @e ∈ mods2, acc = empty:set.symbol ,,, acc ∪ defines.@e ;
- ∪ for @e ∈ mods2, acc = empty:set.symbol ,,, acc ∪ exports.@e
- let set2 = asset.for @e ∈ toseq.symstoexport, acc = empty:seq.symbol ,,, acc + tolibsym(p, templates, symstoexport, @e)
- let t1 = asset.for @e ∈ toseq.set2, acc = empty:seq.symbol ,,, acc + zcode.@e
-  addseq.for @e ∈ mods2, acc = empty:seq.symbol ,,, acc + addlibmod(set2, @e)
+let mods2 = for acc = empty:seq.firstpass, @e = mods do acc + tolibmod(alltypes, p, templates, exports, @e)end(acc)
+let symstoexport = for acc = empty:set.symbol, @e = mods2 do acc ∪ defines.@e end(acc)
+∪ for acc = empty:set.symbol, @e = mods2 do acc ∪ exports.@e end(acc)
+let set2 = asset.for acc = empty:seq.symbol, @e = toseq.symstoexport do acc + tolibsym(p, templates, symstoexport, @e)end(acc)
+let t1 = asset.for acc = empty:seq.symbol, @e = toseq.set2 do acc + zcode.@e end(acc)
+ addseq.for acc = empty:seq.symbol, @e = mods2 do acc + addlibmod(set2, @e)end(acc)
 
 function tolibmod(alltypes:typedict, p:program, templates:program, exports:seq.word, m:firstpass)seq.firstpass
  if not(abstracttype.modname.m ∈ exports)then empty:seq.firstpass
  else
   let defines = if isabstract.modname.m then defines.m else exports.m
-  let types = for @e ∈ toseq.defines, acc = empty:seq.myinternaltype ,,, acc + libtypes2(alltypes, p, templates, @e)
+  let types = for acc = empty:seq.myinternaltype, @e = toseq.defines do acc + libtypes2(alltypes, p, templates, @e)end(acc)
   let uses = if isabstract.modname.m then uses.m else empty:seq.mytype
    [ firstpass(modname.m, uses, defines, exports.m, empty:seq.symbol, empty:set.symbol, types)]
 
@@ -69,10 +69,10 @@ function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)
   let code = removeoptions.code1
   let z = if length.code < 15 then
   let x = removeconstant.code
-    if for @e ∈ x, acc = true ,,, acc
+  if for acc = true, @e = x do acc
     ∧ (isconst.@e ∨ module.@e ∈ ["int builtin","real builtin"] ∨ isspecial.@e
     ∨ islocal.@e
-    ∨ @e ∈ toexport)then
+  ∨ @e ∈ toexport)end(acc)then
     x
     else empty:seq.symbol
   else empty:seq.symbol
@@ -86,7 +86,7 @@ function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)
 ----------------------------------
 
 function addlibsym(s:symbol)symbol
- Constant2.[ Words.fsig.s, Words.module.s, Words.returntype.s, addseq.for @e ∈ zcode.s, acc = empty:seq.symbol ,,, acc + addlibsym.@e, Lit.extrabits.s, Record.[ typeptr, typeptr, typeptr, typeptr, typeptr]]
+ Constant2.[ Words.fsig.s, Words.module.s, Words.returntype.s, addseq.for acc = empty:seq.symbol, @e = zcode.s do acc + addlibsym.@e end(acc), Lit.extrabits.s, Record.[ typeptr, typeptr, typeptr, typeptr, typeptr]]
 
 function addmytype(t:mytype)symbol Words.typerep.t
 
@@ -97,13 +97,14 @@ function addlibmod(toexport:set.symbol, m:firstpass)symbol
  let exports = toexport ∩ exports.m
   \\ assert not(modname.m = mytype."standard")report"HHH"+ print.modname.m + toseq.exports @ +("", print.@e)\\
   let defines = if isabstract.modname.m then toexport ∩ defines.m else exports
-  let e = addseq.for @e ∈ toseq.exports, acc = empty:seq.symbol ,,, acc + addlibsym.@e
-  let d = if isabstract.modname.m then addseq.for @e ∈ toseq.defines, acc = empty:seq.symbol ,,, acc + addlibsym.@e
+  let e = addseq.for acc = empty:seq.symbol, @e = toseq.exports do acc + addlibsym.@e end(acc)
+  let d = if isabstract.modname.m then
+  addseq.for acc = empty:seq.symbol, @e = toseq.defines do acc + addlibsym.@e end(acc)
   else e
-   Constant2.[ addmytype.modname.m, addseq.for @e ∈ uses.m, acc = empty:seq.symbol ,,, acc + addmytype.@e, d, e, Words."", Words."", addseq.for @e ∈ types.m, acc = empty:seq.symbol ,,, acc + addinternaltype.@e, Words."", Record.[ typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr]]
+   Constant2.[ addmytype.modname.m, addseq.for acc = empty:seq.symbol, @e = uses.m do acc + addmytype.@e end(acc), d, e, Words."", Words."", addseq.for acc = empty:seq.symbol, @e = types.m do acc + addinternaltype.@e end(acc), Words."", Record.[ typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr]]
 
 function addinternaltype(t:myinternaltype)symbol
- Constant2.[ Word.kind.t, Word.name.t, addmytype.modname.t, addseq.for @e ∈ subflds.t, acc = empty:seq.symbol ,,, acc + addmytype.@e, Record.[ typeint, typeint, typeptr, typeptr]]
+ Constant2.[ Word.kind.t, Word.name.t, addmytype.modname.t, addseq.for acc = empty:seq.symbol, @e = subflds.t do acc + addmytype.@e end(acc), Record.[ typeint, typeint, typeptr, typeptr]]
 
 --------------------------
 
@@ -141,9 +142,11 @@ builtin loadedlibs2 seq.liblib
 
 Function loadedLibs seq.liblib loadedlibs2
 
-Function libmodules(dependentlibs:seq.word)seq.firstpass for @e ∈ loadedLibs, acc = empty:seq.firstpass ,,, acc + libmodules(dependentlibs, @e)
+Function libmodules(dependentlibs:seq.word)seq.firstpass
+ for acc = empty:seq.firstpass, @e = loadedLibs do acc + libmodules(dependentlibs, @e)end(acc)
 
-function libmodules(dependentlibs:seq.word, l:liblib)seq.firstpass if(libname.l)_1 ∈ dependentlibs then mods.l else empty:seq.firstpass
+function libmodules(dependentlibs:seq.word, l:liblib)seq.firstpass
+ if(libname.l)_1 ∈ dependentlibs then mods.l else empty:seq.firstpass
 
 Function unloadlib(a:seq.word)int unloadlib.tocstr.a
 

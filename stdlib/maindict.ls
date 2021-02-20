@@ -30,7 +30,6 @@ use process.seq.encodingpair.seq.char
 
 Function iosize:encodingpair.seq.char int 3
 
-
 function +(p:place, r:encodingpair.seq.char)place
  p + valueofencoding.code.r + tointseq.data.r + hash.r
 
@@ -90,8 +89,7 @@ Function +(p:place, w:word)place p + tointseq.decodeword.w
 
 Function getword(data:seq.int, i:int)word encodeword.tocharseq.getintseq(data, data_i)
 
-Function getrecord:word(data:seq.int, i:int)word
- let y = getintseq(data, i)
+Function getrecord:word(data:seq.int, i:int)word let y = getintseq(data, i)
   encodeword.tocharseq.y
 
 Function getintseq(data:seq.int, seqpointer:int)seq.int
@@ -125,12 +123,11 @@ unbound +(place, T)place
 
 unbound iosize:T int 
 
-
 Function_(a:ioseq.T, i:int)T
  let size = iosize:T
  let index = offset.a + size * (i - 1) + 2
   assert between(i, 1,(data.a)_(offset.a + 1))report"out of bounds2"
-  + for @e ∈ [ i, size, index] + data.a, acc ="",,, acc + toword.@e
+ + for acc ="", @e = [ i, size, index] + data.a do acc + toword.@e end(acc)
    getrecord:T(data.a, index)
 
 Export offset(ioseq.T)int
@@ -142,5 +139,5 @@ Function getseq2:T(data:seq.int, seqpointer:int)seq.T
 Function +(p:place, s:seq.T)place
  let size = iosize:T
  let q = place([ 0, length.s], next.p + length.s * size + 2, empty:seq.int)
- let r = for @e ∈ s, acc = q ,,, acc + @e
+let r = for acc = q, @e = s do acc + @e end(acc)
   place(this.p + (next.p + 1), offset.p, data.p + this.r + data.r)

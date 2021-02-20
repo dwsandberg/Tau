@@ -35,8 +35,8 @@ function =(a:wordfreq, b:wordfreq)boolean false
 function ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b
 
 function count(s:seq.wordfreq, w:word)seq.wordfreq
- let index = valueofencoding.encode.indexedword.w
-  replaceS(s, index, [ wordfreq(count.s_index + 1, w)])
+let index = valueofencoding.encode.indexedword.w
+ replaceS(s, index, [ wordfreq(count.s_index + 1, w)])
 
 function print(p:wordfreq)seq.word
  if count.p = 0 then empty:seq.word
@@ -46,12 +46,12 @@ function print(p:wordfreq)seq.word
 function removelowcount(mincount:int, p:wordfreq)seq.wordfreq if count.p < mincount then empty:seq.wordfreq else [ p]
 
 function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq
- for @e ∈ sort.for @e ∈ a, acc = sparseseq.wordfreq(0,"A"_1),,, count(acc, @e), acc = empty:seq.wordfreq ,,,
-  acc + removelowcount(mincount, @e)
+ for acc = empty:seq.wordfreq, @e = sort.for acc = sparseseq.wordfreq(0,"A"_1), @e = a do count(acc, @e)end(acc)do
+  acc + removelowcount(mincount, @e)end(acc)
 
 Function testwordfreq(count:int, text:seq.seq.word)seq.word
- for @e ∈ wordfreq(count, text), acc = empty:seq.word ,,, acc + print.@e
+ for acc = empty:seq.word, @e = wordfreq(count, text)do acc + print.@e end(acc)
 
-Function testwordfreq seq.word for @e ∈ wordfreq(300, gettext."stdlib/pass2.ls"), acc = empty:seq.word ,,, acc + print.@e
+Function testwordfreq seq.word for acc = empty:seq.word, @e = wordfreq(300, gettext."stdlib/pass2.ls")do acc + print.@e end(acc)
 
-function count(s:seq.wordfreq, w:seq.word)seq.wordfreq for @e ∈ w, acc = s ,,, count(acc, @e)
+function count(s:seq.wordfreq, w:seq.word)seq.wordfreq for acc = s, @e = w do count(acc, @e)end(acc)

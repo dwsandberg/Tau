@@ -23,7 +23,7 @@ use seq.int
 Export type:cstr
 
 Function tocstr(s:seq.word)cstr
- tocstr.packed.bits.for @e ∈ toseqbyte.toUTF8.s + tobyte.0, acc = empty:bitstream ,,, add(acc, bits.toint.@e, 8)
+ tocstr.packed.bits.for acc = empty:bitstream, @e = toseqbyte.toUTF8.s + tobyte.0 do add(acc, bits.toint.@e, 8)end(acc)
 
 type fileresult is size:int, start:seq.int, data:seq.int
 
@@ -47,8 +47,7 @@ builtin createfile(byteLength:int, data:seq.bits, cstr)int
 
 function createfile3(byteLength:int, data:seq.bits, name:cstr)int createfile(byteLength, data, name)
 
-Function getfile:int(name:seq.word)seq.int
- let file = getfile.tocstr.name
+Function getfile:int(name:seq.word)seq.int let file = getfile.tocstr.name
   start.file + data.file
 
 Function getfile:byte(name:seq.word)seq.byte
@@ -61,8 +60,7 @@ Function getfile:bit(name:seq.word)seq.bit
   assert size.file > -1 report"Error opening file" + name
    start.file + data.file
 
-Function fileexists(name:seq.word)boolean
- let file = getbitfile.tocstr.name
+Function fileexists(name:seq.word)boolean let file = getbitfile.tocstr.name
   size.file > -1
 
 Function gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
@@ -70,15 +68,15 @@ Function gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte
 Function getfileaslines(filename:seq.word)seq.UTF8 breaklines.UTF8.getfile:byte(filename)
 
 Function createfile(filename:seq.word, s:seq.seq.word)int
- createfile(filename, for @e ∈ s, acc = empty:seq.byte ,,, acc + toseqbyte.toUTF8.@e + [ tobyte.10, tobyte.10])
+ createfile(filename, for acc = empty:seq.byte, @e = s do acc + toseqbyte.toUTF8.@e + [ tobyte.10, tobyte.10]end(acc))
 
 Function createfile(filename:seq.word, s:seq.word)int createfile(filename, toseqbyte.toUTF8.s)
 
 Function createfile(name:seq.word, a:seq.byte)int
- createfile3(length.a, packed.bits.for @e ∈ a, acc = empty:bitstream ,,, add(acc, bits.toint.@e, 8), tocstr.name)
+ createfile3(length.a, packed.bits.for acc = empty:bitstream, @e = a do add(acc, bits.toint.@e, 8)end(acc), tocstr.name)
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
- createlib2(tocstr.[ libname], tocstr.for @e ∈ dependlibs, acc ="",,, acc + [ @e] + ".dylib", length.b * 8, packed.b)
+ createlib2(tocstr.[ libname], tocstr.for acc ="", @e = dependlibs do acc + [ @e] + ".dylib"end(acc), length.b * 8, packed.b)
 
 Function createfile(name:seq.word, a:seq.int)int
- createfile3(length.a * 8, for @e ∈ packed.a, acc = empty:seq.bits ,,, acc + bits.@e, tocstr.name)
+ createfile3(length.a * 8, for acc = empty:seq.bits, @e = packed.a do acc + bits.@e end(acc), tocstr.name)

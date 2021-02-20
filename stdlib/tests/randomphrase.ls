@@ -4,19 +4,18 @@ use standard
 
 Function testrandomphrase seq.word if"The umber ant ambles the opal nurse" = getphrase.20 then"PASS"else"FAIL randomphrase"
 
-Function randomphrase seq.word
-let a = randomint.1
+Function randomphrase seq.word let a = randomint.1
 let seed = if a_1 < 0 then-a_1 + 1 else a_1
  getphrase.seed
 
 Function getphrase(seed:int)seq.word
- let a = randomseq(seed, 6)
-  "The" + adjectives_(a_1 mod 140 + 1)
-  + nouns_(a_2 mod 140 + 1)
-  + verbs_(a_3 mod 140 + 1)
-  + "the"
-  + adjectives_(a_4 mod 140 + 1)
-  + nouns_(a_5 mod 140 + 1)
+let a = randomseq(seed, 6)
+ "The" + adjectives_(a_1 mod 140 + 1)
+ + nouns_(a_2 mod 140 + 1)
+ + verbs_(a_3 mod 140 + 1)
+ + "the"
+ + adjectives_(a_4 mod 140 + 1)
+ + nouns_(a_5 mod 140 + 1)
 
 Function verbs seq.word"adds binds calls destroys eats fences golfs hates illustrates jumps kisses odorizes mangles nets owes plays quits registers sails takes undresses votes walks xeroxes yanks zeros ambles blows bends bombs battles brushes bubbles empties agitates aids censors circles chews dangles combs climbs dumps cycles dwindles cracks eclipses edges cuts effaces enriches zones ejects elects dips drinks dyes fights frees foils flies grows heats hobbles fails ignores aligns infects idles guards fuels imagines gains generates gives gleans issues irons knocks jilts jerks jacks jogs keeps lathers lugs lynches offers obeys meets mills occupies mocks nips mutes nags levels nurses lives notes loves pries posts pitches rolls rules phones sets rhymes races push scrapes skips sings slithers rigs snips shows splashes sows tests squirts stacks smells throws touches summons appoints swims ties travels vacums tumbles weeps wraps arouses ascends winds works whips yells"
 

@@ -35,26 +35,27 @@ function dict(result:int)int \\ dict is not used in this example. In more compli
 function getactioncode(stateno:int, lookahead:word)int actiontable_(findindex(lookahead, tokenlist) + length.tokenlist * stateno)
 
 function consumeinput(b:stepresult, next:word)stepresult
- let stk = stk.b
- let track = true
- let stateno = stateno.top.stk
- let commenttoken = 1
- let stringtoken = 2
- let token = next
- let actioncode = getactioncode(stateno, token)
-  if actioncode > 0 then
-  stepresult(push(stk, stkele(actioncode, 0)), place.b + 1, if track then track.b + " &br next" + next + printstate.actioncode else track.b, 0,"")
-  else
-   assert actioncode < 0 report"parse error" + "place" + toword.place.b + toword.actioncode + track.b
-   let x = reduce(stk,-actioncode, place.b, track.b)
-    consumeinput(stepresult(x, place.b, if track then track.b + " &br reduce by" + toword.-actioncode + printstate.stateno.top.x
-    else track.b, tokenstate.b, string.b)
-    , next)
+let stk = stk.b
+let track = true
+let stateno = stateno.top.stk
+let commenttoken = 1
+let stringtoken = 2
+let token = next
+let actioncode = getactioncode(stateno, token)
+ if actioncode > 0 then
+ stepresult(push(stk, stkele(actioncode, 0)), place.b + 1, if track then track.b + " &br next" + next + printstate.actioncode else track.b ;, 0,"")
+ else
+  assert actioncode < 0 report"parse error" + "place" + toword.place.b + toword.actioncode + track.b
+  let x = reduce(stk,-actioncode, place.b, track.b)
+   consumeinput(stepresult(x, place.b, if track then track.b + " &br reduce by" + toword.-actioncode + printstate.stateno.top.x
+   else track.b ;, tokenstate.b, string.b)
+   , next)
 
 Function parse(input:seq.word)seq.word
- let a = for @e ∈ input + "#", acc = stepresult(push(empty:stack.stkele, stkele(startstate, 0)), 1,"", 0,""),,,
-  consumeinput(acc, @e)
-  [ toword.result.(toseq.stk.a)_2]
+let a = for acc = stepresult(push(empty:stack.stkele, stkele(startstate, 0)), 1,"", 0,""), @e = input + "#"do
+ consumeinput(acc, @e)
+end(acc)
+ [ toword.result.(toseq.stk.a)_2]
 
 function_(r:reduction, n:int)int result.(toseq.r)_n
 

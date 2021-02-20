@@ -15,5 +15,4 @@ Function result(p:process.T)T
   \\ The compiler has a special case to handle accessing process resultb because if the type T is a structure of more than one element, then compiler would normally assume the elements are store at resultb and not a pointer to the type T. \\
   processresult.p
 
-
 Builtin processresult(p:process.T)T

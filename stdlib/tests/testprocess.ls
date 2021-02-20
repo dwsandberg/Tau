@@ -53,20 +53,22 @@ Function testreal seq.word check([ print(3, sqrt.2.0) = "1.414"
 , print(5, tan(pi / 4.0)) = "1.00000"
 , print(5, arcsin.sin.0.5) = "0.50000"
 , print(5, arccos.cos.0.5) = "0.50000"
-, print(3, for @e ∈ [ 8, 9, 10, 11], acc = 0.0 ,,, acc + toreal.@e)
+, print(3, for acc = 0.0, @e = [ 8, 9, 10, 11]do acc + toreal.@e end(acc))
 = "38.000"
 ,"23.45000-18.45000"
 = print(5, 23.45) + print(5, 5.0 - 23.45)
 ,-2^4 = -16
 , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
 = "1 C addcomma function i int merge s segment seq seq toword toword word"
-, for @e ∈ alphasort.["z b","a b","a a","test 23","test 20"], acc ="",,,
- list(acc,"/", @e);
-= "a a / a b / test 20 / test 23 / z b"]
-,"real")
+, for acc ="", @e = alphasort.["z b","a b","a a","test 23","test 20"]do
+ list(acc,"/", @e)
+end(acc)
+= "a a / a b / test 20 / test 23 / z b"
+]
+,"real"
+)
 
-Function testprocess seq.word
-let z = subseq("f red green", 2, 3)
+Function testprocess seq.word let z = subseq("f red green", 2, 3)
 let y = [ not.isprefix("out of bounds","out"), isprefix("out of bounds", message.process.testout.0), isprefix("out of bounds", message.process.testout.-10), isprefix("out of bounds", message.process.testout.4), message.process.testout.1 = "normal exit", aborted.process.testout.5, not.aborted.process.testout.2, result.process.square.3.0 = 9.0, result.process.pi = pi, result.process.intpart.3.1 = 3
 , result.process.square.4 = 16.0, result.process.print(3, 3.0) = "3.000", result.process(3 * 4.0) = 12.0, result.process(12.0 / 3) = 4.0, result.process.testout.3 = "three", result.process.isprefix("red", z), result.process.redgreen = redgreen, result.process.arg4(1, 2, 3, 4) = 10, message.process.result.process.testout.4 = "no result of aborted process", a.result.process.testprocess3 = 4 ∧ b.result.process.testprocess3 = 40
 , t513, t514, isprefix("invalid digit", message.process.toint."0A"_1), t520]
@@ -74,11 +76,8 @@ let y = [ not.isprefix("out of bounds","out"), isprefix("out of bounds", message
 
 function t518 boolean isprefix("invalid digit", message.process.toint."0A"_1)
 
-function t520 boolean
-let s = message.process.subtest520.merge."45t6.3"
+function t520 boolean let s = message.process.makereal."45t6.3"
  isprefix("unexpected character in real literal", s)
-
-function subtest520(t:word)int intpart.reallit.UTF8.tointseq.decodeword.t
 
 _________
 
@@ -86,17 +85,20 @@ Primes
 
 function t513 boolean"3 5 7 11 13 17 19 23 29 31 37" = findprimes(3, 40)
 
-function t514 boolean
-let c = 10000
+function t514 boolean let c = 10000
 let a = process.countprimes(3, c)
 let b = process.countprimes(c + 1, 2 * c)
  [ 1228, 1033] = [ result.a, result.b]
 
 function findprimes(start:int, finish:int)seq.word
- for @e ∈ arithseq((finish - start + 2) / 2, 2, start), acc ="",,, acc + isprime3.@e
+ for acc ="", @e = arithseq((finish - start + 2) / 2, 2, start)do
+  acc + isprime3.@e
+ end(acc)
 
 function countprimes(start:int, finish:int)int
- for @e ∈ arithseq((finish - start + 2) / 2, 2, start), acc = 0 ,,, acc + isprime4.@e
+ for acc = 0, @e = arithseq((finish - start + 2) / 2, 2, start)do
+  acc + isprime4.@e
+ end(acc)
 
 function isprime3(i:int)seq.word if isprime.i then [ toword.i]else""
 

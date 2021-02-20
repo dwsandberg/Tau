@@ -24,8 +24,7 @@ use otherseq.seq.word
 
 use seq.seq.word
 
-Function testopt seq.word
-let p2 = secondPass."stdlib.testoptconfig"
+Function testopt seq.word let p2 = secondPass."stdlib.testoptconfig"
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 ,"1","Litfalse","4607182418800017408","44","2","46","72","27","2","128"
 ,"65","Littrue","4", \\ optest24 \\"%1 5 =(int, int)standard 2 3 BR 3 
@@ -81,7 +80,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br 11 EXITBLOCK 1 
 &br BLOCK 6 
 &br","%1", \\ test 33 \\"33"]
-let r = for @e ∈ arithseq(length.cl, 1, 1), acc ="",,, acc + getcode(p2, cl, @e);
+let r = for acc ="", @e = arithseq(length.cl, 1, 1)do acc + getcode(p2, cl, @e)end(acc)
 + if [ 40, 20, 30, 20]
 = [ multitarget(4, true, false), multitarget(4, false, false), multitarget(3, false, true), multitarget(2, false, false)]then
 ""
@@ -91,19 +90,19 @@ else"fail multitarget"
 function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
 
 Function getcode(p2:seq.seq.word, codelist:seq.seq.word, no:int)seq.word
- let t1 = for @e ∈ p2, acc ="",,, acc + filter(merge("optest" + toword.no), @e)
- let t = subseq(t1, findindex("testopt"_1, t1) + 1, length.t1)
- let code = removeoptions(t, length.t)
-  \\ assert false report t1 +" &br"+ t +" &br"+ code \\
-  if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1,"")then
-  ""
-  else
-   " &br  &{ literal FAILED  &} test" + toword.no + "in optest  &br" + code + " &p"
-   + codelist_no
-   + " &p diffs:"
-   + sameto(code, codelist_no, 1,"")
-   + " &p"
-   + toseq.asset."a b c d xxx"
+let t1 = for acc ="", @e = p2 do acc + filter(merge("optest" + toword.no), @e)end(acc)
+let t = subseq(t1, findindex("testopt"_1, t1) + 1, length.t1)
+let code = removeoptions(t, length.t)
+ \\ assert false report t1 +" &br"+ t +" &br"+ code \\
+ if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1,"")then
+ ""
+ else
+  " &br  &{ literal FAILED  &} test" + toword.no + "in optest  &br" + code + " &p"
+  + codelist_no
+  + " &p diffs:"
+  + sameto(code, codelist_no, 1,"")
+  + " &p"
+  + toseq.asset."a b c d xxx"
 
 function shuffletest(s:seq.word)boolean
  s
@@ -142,8 +141,7 @@ Function optest7 seq.word"A" + "B"
 
 Function optest8 int [ 1, 2, 3 + 4]_3
 
-Function optest9 int
-let a = 5
+Function optest9 int let a = 5
 let c = 6
  a + c
 
@@ -176,8 +174,8 @@ Function optest22 boolean"A"_1 = encodeword.[ char.65]
 Function optest23 int optest23a(6, 3)
 
 function parabits(nopara:int)int
- let b = nopara 
-  toint(bits.if b > 6 then 0 else b + 1 ; << 5)
+let b = nopara
+ toint(bits.if b > 6 then 0 else b + 1 ; << 5)
 
 Function optest23a(a:int, b:int)int(a + a) / b
 
@@ -192,7 +190,8 @@ Function optest25(b:seq.int)int
 
 Function optest26(s:seq.word, i:int)int
  if s_i = "xxx"_1 then 3
- else if s_i ∈ "a b"then 4 else if s_i ∈ "c d"then 4 else 5
+ else if s_i ∈ "a b"then 4
+ else if s_i ∈ "c d"then 4 else 5
 
 Function optest27(a:int, result:int)int
  \\ tail recursion \\ if a = 1 then result else optest27(a - 1, a * result)
@@ -214,10 +213,9 @@ Function optest33 int \\ does IDX work \\ length.[ 3, 4, 5, 6] + 29
 
 Function optest34(a:int, b:int, c:int, d:int)ordering optest34a(a ? b, c ? d)
 
-Function optest34a(a:ordering, b:ordering)ordering
- let x = a
-  if x = EQ then b else x
+Function optest34a(a:ordering, b:ordering)ordering let x = a
+ if x = EQ then b else x
 
 Function optest16a(a:seq.char)seq.int
  \\ This is just a type change and the compiler recognizes this and does not generate code \\
- for @e ∈ a, acc = empty:seq.int ,,, acc + toint.@e
+ for acc = empty:seq.int, @e = a do acc + toint.@e end(acc)
