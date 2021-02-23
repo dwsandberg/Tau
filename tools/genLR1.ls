@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use genLR1 ;  gentaupretty
+#!/usr/local/bin/tau ; use genLR1 ;  gentau2
 
 Module genLR1
 
@@ -159,7 +159,7 @@ type ruleprec is  lookahead:word, rules:seq.int
 
 function print(grammar:seq.seq.word, p:ruleprec)seq.word
  "lookahead:" + lookahead.p
- + for acc ="", @e = rules.p do list(acc,"|", grammar_@e)end(acc)
+ + for acc ="", @e = rules.p do list(acc,"&br |", grammar_@e)end(acc)
         
 function =(a:ruleprec,b:ruleprec) boolean  lookahead.a=lookahead.b 
    
@@ -172,7 +172,7 @@ function print(p:dottedrule)seq.word
 
 function print(s:state)seq.word
  '  &br '
- + for acc ="", dotrule = toseq.toset.s do list(acc,"|", print.dotrule)end(acc)
+ + for acc ="", dotrule = toseq.toset.s do list(acc,"&br |", print.dotrule)end(acc)
 
 Function initialstate(grammar:seq.seq.word)set.dottedrule close2(grammar, asset.[ dottedrule(2,"G F #")])
 
@@ -190,15 +190,12 @@ function close(grammar:seq.seq.word, p:dottedrule)set.dottedrule
   end(acc)
  
 function advance(g:seq.seq.word, state:set.dottedrule, next:word)set.dottedrule
-let z = close2(g, asset.for acc = empty:seq.dottedrule, p = toseq.state do
+ close2(g, asset.for acc = empty:seq.dottedrule, p = toseq.state do
   if place.p ≤ length.rule.p ∧ (rule.p)_(place.p) = next then
   acc+ dottedrule(place.p + 1, rule.p) 
  else acc
  end(acc))
-  assert  dottedrule(4,"  E E - E ")  &nin z &or dottedrule(2,"E - E ") &in  z report  
-  for acc="", r = toseq.z do acc+"|"+print.place.r+print.r end(acc)
-  z
-
+  
 
 function finished(s:state)seq.seq.word
  for acc = empty:seq.seq.word, p = toseq.toset.s do
@@ -215,7 +212,7 @@ function shifts(s:state)seq.word
  
 function resolveamb(ruleprec:seq.seq.word,grammar:seq.seq.word,dup:seq.action) seq.action
     if length.dup=1 then dup else 
-     if false &and length.dup =2 &and codedaction.dup_1 < 0 &and  codedaction.dup_2 < 0 then
+     if   length.dup &ge 2 &and codedaction.dup_1 < 0 &and  codedaction.dup_2 < 0 then
        \\ contains reduce reduce conflict \\
          let rule1=grammar_-(codedaction.dup_1)
          let rule2=grammar_-(codedaction.dup_2)
@@ -354,11 +351,10 @@ function taualphabet seq.word".=():>]-for * comment, [_; is I if # then else let
 
 function tauruleprec seq.seq.word \\ list of rules and lookaheads. 
 The position of the lookahead is noted. Rule reductions after are discard and rule the first rule listed 
-before the position is used to reduce. \\
-["(","T","T W", "W","NM","E NM","E E_E"
-,"_","E W.E","E E * E","E-E","*","E E-E","-","E-E","E E > E","E E = E"
-,"=",">","E E ∧ E","∧","E E ∨ E","∨","E let A E ","A  W = E", "E assert E report D E",
-"E if E then E else D",";","end","D E",' E comment E ']
+before the position is used to reduce. \\ \\ [""] \\
+["(","E NM","E E_E","_","E W.E","E E * E","E-E","*","E E-E","-","E E > E","E E = E"
+,"=",">","E E ∧ E","∧","E E ∨ E","∨" 
+]+[";","E if E then E else E",' E comment E ', "E assert E report D E","A  W = E","E let A E","D E" ]
 
 function taurules2 seq.seq.seq.word [
 [  ' G F # ', ' R_1 '] 
@@ -383,7 +379,8 @@ function taurules2 seq.seq.seq.word [
 , [ ' E NM ', ' let id = tokentext.R_1 let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place)bindinfo(dict.R, [ f], [ resulttype.f],"")'] 
 , [ ' E NM(L)', ' unaryop(R, input, place, tokentext.R_1, R_3)'] 
 , [ ' E(E)', ' R_2 '] 
-, [ ' E if E then E else D ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
+, [ ' E if E then E else E ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
+, [ ' E if E then E else E ; ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
 , [ ' E E_E ', ' opaction(R, input, place)'] 
 , [ ' E-E ', ' unaryop(R, input, place, tokentext.R_1, R_2)'] 
 , [ ' E W.E ', ' unaryop(R, input, place, tokentext.R_1, R_3)'] 
@@ -412,8 +409,6 @@ let newdict = dict.R + Local(name,(types.R_3 )_1)bindinfo(newdict, code.R_3 + De
 , [ ' E comment E ', ' R_2 '] 
 , [ ' NM W ', ' R_1 '] 
 , [ ' NM W:T ', ' bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1)'] 
-,[' D E ', ' R_1 ' ]
-,[' D E ;  ' ,' R_1 ' ] 
 , [ ' F1  W = E ',' let name = tokentext.R_1 
 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
  bindinfo(dict.R_1, code.R_3  , types.R_3, name) 
@@ -424,7 +419,7 @@ assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplic
 ,[ ' F2   F1    ',' forlocaldeclare(R_1,input, place)  ' ] 
 ,[ ' E  for  F2  do    E end (E)   ','  forbody(dict.R_1, R_2, R_4, R_1, R_7, input, place) ' ] 
 ,[ ' E  for  F2  while E  do   E   end (E)   ','  forbody(dict.R_1, R_2,  R_6,R_4, R_9,input, place) '] 
-]
+,[ ' D E ',"R_1"]]
 
 
 
@@ -483,8 +478,8 @@ function tauprettyrules seq.seq.seq.word \\ after generator grammar change %%% t
 , [ ' F1 F1, W = E ', ' pretty.[ R_1, R_2, R_3, R_4, R_5]'] 
 , [ ' F2 F1 ', ' R_1 '] 
 , [ ' E for F2 do E end(E)', ' if width.R_2 + width.R_4 < 30 then pretty.[ key.R_1, list.R_2, attribute("%%%keyword do"+ removeclose.text.R_4 +"%%%keyword end"), R_6, R_7, R_8]else pretty.[ key.R_1, list.R_2, attribute("%%%keyword do"+ removeclose.text.block.R_4 +"%%%br %%%keyword end"), R_6, R_7, R_8]'] 
-, [ ' E for F2 while(E)E end(E)', ' toword.ruleno pretty.[ key.R_1, list.R_2, attribute("%%%keyword while("+ text.R_5 +")"+ removeclose.text.R_7 +"%%%keyword end"), R_9, R_10, R_11]'
-]]
+, [ ' E for F2 while(E)E end(E)', ' toword.ruleno pretty.[ key.R_1, list.R_2, attribute("%%%keyword while("+ text.R_5 +")"+ removeclose.text.R_7 +"%%%keyword end"), R_9, R_10, R_11]']
+  ]
 
  
  

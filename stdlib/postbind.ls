@@ -160,12 +160,6 @@ function codeforbuiltin(alltypes:typedict, dict:set.symbol, code:seq.symbol, i:i
  else if fsig.sym = "packed(T seq)"then
  let p2 = blocksym(alltypes,(paratypes.newsym)_1)
    postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
- else if(fsig.sym)_1 = "apply5"_1 then
- let paras = paratypes.newsym
-  let resulttype = getbasetype(alltypes, paras_4)
-  let seqtype = getbasetype(alltypes, paras_2)
-  let p2 = newsymbol("apply5", mytype."builtin", [ resulttype, seqtype, parameter.seqtype, resulttype, typeint, resulttype, mytype."boolean"], resulttype)
-   postbind3(alltypes, dict, code, i + 1, result + p2, modpara, org, calls, sourceX, tempX)
 else if(fsig.sym)_1 = "forexp"_1 then
  let paras = for acc = empty:seq.mytype, p = paratypes.newsym do acc + getbasetype(alltypes, p)end(acc)
   postbind3(alltypes, dict, code, i + 1, result + newsymbol("forexp", mytype."builtin", paras, last.paras), modpara, org, calls, sourceX, tempX
@@ -244,16 +238,14 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
     let acc = newsymbol("acc", addabstract("$for"_1, mytype."ptr"), empty:seq.mytype, mytype."ptr")
     let idx = newsymbol("idx", mytype."$for", empty:seq.mytype, typeint)
      Emptyseq.elementtype
-     + [ Local.1
-     , element
-     , acc
-     , idx
-     , acc
-     , element
-     , deepcopysym(alltypes, parameter.type)
-     , cat
-     , Litfalse
-    , newsymbol("apply5", mytype."builtin", [ resulttype, addabstract("seq"_1, elementtype), elementtype, resulttype, typeint, resulttype, mytype."boolean"], resulttype)
+   +      [ Local.1 
+        , acc 
+        , element
+        , acc, element, deepcopysym(alltypes,parameter.type), cat
+        , Littrue
+        , acc
+        ,  newsymbol("forexp", mytype."int builtin", 
+         [ resulttype,resulttype,resulttype, elementtype, typeptr, mytype."boolean",resulttype], resulttype)
     ]
      + blocksym(alltypes, type)
  else

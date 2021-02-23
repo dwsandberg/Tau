@@ -152,6 +152,45 @@ function gettype(b:bindinfo)mytype(types.b)_1
 
 function dict(r:reduction.bindinfo)set.symbol dict.last.r
 
+function ifexp(R:reduction.bindinfo,  ifpart:bindinfo, thenpart:bindinfo,elsepart:bindinfo,input:seq.word,place:int) bindinfo
+assert(types.ifpart)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place) 
+assert types.thenpart = types.elsepart report errormessage("then and else types are different", input, place) 
+bindinfo(dict.R, ifexp(code.ifpart,code.thenpart,code.elsepart,(types.thenpart)_1 ), types.thenpart,"") 
+
+function blockcount(code:seq.symbol,i:int)  int 
+ if i=0 then 1 else  toint.(fsig.code_i)_3
+       
+function  removestart(code:seq.symbol)  int
+ \\ returns 0 if cannot merge and location of startblock if can merge. \\
+ if module.last.code="$mark"  then length.code-toint.first.fsig.last.code
+ else 0 
+
+function  thecode(code:seq.symbol,i:int)  seq.symbol
+  if i=0 then code+Exit2
+  else subseq(code,1,i-1)+subseq(code,i+1,length.code-1)
+
+function ifexp(codeif:seq.symbol,thencode :seq.symbol, elsecode:seq.symbol,type:mytype ) seq.symbol
+   let E=removestart.elsecode
+   let T=removestart.thencode 
+   let thencount=blockcount(thencode,T)
+   let t=[startblk(type,1+thencount+blockcount(elsecode,E))]+codeif +br(1,1+thencount)+    thecode(thencode,T) +thecode(elsecode,E )  
+  t +Mark(length.t) 
+ 
+       
+\function  removestart(code:seq.symbol)  int
+  if module.last.code="$mark"  &and length.code-toint.first.fsig.last.code=1 then
+    toint.(fsig.first.code)_3
+  else 1
+       
+\function ifexp(codeif:seq.symbol,thencode :seq.symbol, elsecode:seq.symbol,type:mytype ) seq.symbol
+   let elsecount=removestart.elsecode
+   let thencount=removestart.thencode 
+   let t=[startblk(type,1+thencount+elsecount)]+codeif +br(1,1+thencount)+ 
+        if thencount > 1 then subseq(thencode,2,length.thencode-1) else thencode+Exit2 ;
+    +      if elsecount > 1 then subseq(elsecode,2,length.elsecode-1) else elsecode+Exit2  
+  t+Mark(length.t) 
+   
+
 function action(ruleno:int, input:seq.word, place:int, R:reduction.bindinfo)bindinfo
 if ruleno = \\ G F # \\ 1 then R_1 
 else if ruleno = \\ F W NM(FP)T E \\ 2 then createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7) 
@@ -176,58 +215,54 @@ else if ruleno = \\ E NM \\ 19 then
 let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place)bindinfo(dict.R, [ f], [ resulttype.f],"") 
 else if ruleno = \\ E NM(L)\\ 20 then unaryop(R, input, place, tokentext.R_1, R_3) 
 else if ruleno = \\ E(E)\\ 21 then R_2 
-else if ruleno = \\ E if E then E else D \\ 22 then 
-let thenpart = R_4 
-assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place) 
-assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place) 
-let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"") 
-else if ruleno = \\ E E_E \\ 23 then opaction(R, input, place) 
-else if ruleno = \\ E-E \\ 24 then unaryop(R, input, place, tokentext.R_1, R_2) 
-else if ruleno = \\ E W.E \\ 25 then unaryop(R, input, place, tokentext.R_1, R_3) 
-else if ruleno = \\ E E * E \\ 26 then opaction(R, input, place) 
-else if ruleno = \\ E E-E \\ 27 then opaction(R, input, place) 
-else if ruleno = \\ E E = E \\ 28 then opaction(R, input, place) 
-else if ruleno = \\ E E > E \\ 29 then opaction(R, input, place) 
-else if ruleno = \\ E E ∧ E \\ 30 then opaction(R, input, place) 
-else if ruleno = \\ E E ∨ E \\ 31 then opaction(R, input, place) 
-else if ruleno = \\ L E \\ 32 then R_1 
-else if ruleno = \\ L L, E \\ 33 then bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"") 
-else if ruleno = \\ E [ L]\\ 34 then 
+else if ruleno = \\ E if E then E else E \\ 22 then ifexp(R,R_2,R_4,R_6, input, place)
+else if ruleno = \\ E if E then E else E ; \\ 23 then ifexp(R,R_2,R_4,R_6, input, place)
+else if ruleno = \\ E E_E \\ 24 then opaction(R, input, place) 
+else if ruleno = \\ E-E \\ 25 then unaryop(R, input, place, tokentext.R_1, R_2) 
+else if ruleno = \\ E W.E \\ 26 then unaryop(R, input, place, tokentext.R_1, R_3) 
+else if ruleno = \\ E E * E \\ 27 then opaction(R, input, place) 
+else if ruleno = \\ E E-E \\ 28 then opaction(R, input, place) 
+else if ruleno = \\ E E = E \\ 29 then opaction(R, input, place) 
+else if ruleno = \\ E E > E \\ 30 then opaction(R, input, place) 
+else if ruleno = \\ E E ∧ E \\ 31 then opaction(R, input, place) 
+else if ruleno = \\ E E ∨ E \\ 32 then opaction(R, input, place) 
+else if ruleno = \\ L E \\ 33 then R_1 
+else if ruleno = \\ L L, E \\ 34 then bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"") 
+else if ruleno = \\ E [ L]\\ 35 then 
 let types = types.R_2 
   assert for acc = true, @e = types do acc ∧ types_1 = @e end(acc)report errormessage("types do not match in build", input, place) bindinfo(dict.R, code.R_2 + Sequence(types_1, length.types), [ addabstract("seq"_1, types_1)],"")
-else if ruleno = \\ A W = E \\ 35 then 
+else if ruleno = \\ A W = E \\ 36 then 
 let name = tokentext.R_1 
 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
 let newdict = dict.R + Local(name,(types.R_3 )_1)bindinfo(newdict, code.R_3 + Define.name , types.R_3, name) 
-else if ruleno = \\ E let A E \\ 36 then bindinfo(dict.R_1, code.R_2 + code.R_3, types.R_3,"") 
-else if ruleno = \\ E assert E report D E \\ 37 then 
+else if ruleno = \\ E let A E \\ 37 then bindinfo(dict.R_1, code.R_2 + code.R_3, types.R_3,"") 
+else if ruleno = \\ E assert E report E E \\ 38 then 
 assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in 
 assert must be boolean in:", input, place) 
 assert(types.R_4)_1 = mytype."word seq"report errormessage("report in 
 assert must be seq of word in:", input, place) 
-let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_5 + Exit + code.R_4 + symbol(" 
-assert:T(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"") 
-else if ruleno = \\ E I \\ 38 then bindlit.R 
-else if ruleno = \\ E I.I \\ 39 then bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"") 
-else if ruleno = \\ T W \\ 40 then isdefined(R, input, place, mytype.tokentext.R_1) 
-else if ruleno = \\ T W.T \\ 41 then isdefined(R, input, place, addabstract((tokentext.R_1)_1,(types.R_3)_1)) 
-else if ruleno = \\ E $wordlist \\ 42 then 
+let assertsym=symbol(" assert:T(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)
+bindinfo(dict.R, ifexp(code.R_2,code.R_5,code.R_4+assertsym,(types.R_5)_1), types.R_5,"") 
+else if ruleno = \\ E I \\ 39 then bindlit.R 
+else if ruleno = \\ E I.I \\ 40 then bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"") 
+else if ruleno = \\ T W \\ 41 then isdefined(R, input, place, mytype.tokentext.R_1) 
+else if ruleno = \\ T W.T \\ 42 then isdefined(R, input, place, addabstract((tokentext.R_1)_1,(types.R_3)_1)) 
+else if ruleno = \\ E $wordlist \\ 43 then 
 let s = tokentext.R_1 bindinfo(dict.R, [ Words.subseq(s, 2, length.s-1)], [ mytype."word seq"],"") 
-else if ruleno = \\ E comment E \\ 43 then R_2 
-else if ruleno = \\ NM W \\ 44 then R_1 
-else if ruleno = \\ NM W:T \\ 45 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1) 
-else if ruleno = \\ D E \\ 46 then R_1 
-else if ruleno = \\ D E ; \\ 47 then R_1 
-else if ruleno = \\ F1 W = E \\ 48 then 
+else if ruleno = \\ E comment E \\ 44 then R_2 
+else if ruleno = \\ NM W \\ 45 then R_1 
+else if ruleno = \\ NM W:T \\ 46 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 +":"+ print.(types.R_3)_1) 
+else if ruleno = \\ F1 W = E \\ 47 then 
 let name = tokentext.R_1 
 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) bindinfo(dict.R_1, code.R_3, types.R_3, name) 
-else if ruleno = \\ F1 F1, W = E \\ 49 then 
+else if ruleno = \\ F1 F1, W = E \\ 48 then 
 let name = tokentext.R_3 
 assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) bindinfo(dict.R, code.R_1 + code.R_5, types.R_1 + types.R_5, tokentext.R_1 + tokentext.R_3) 
-else if ruleno = \\ F2 F1 \\ 50 then forlocaldeclare(R_1, input, place) 
-else if ruleno = \\ E for F2 do E end(E)\\ 51 then forbody(dict.R_1, R_2, R_4, R_1, R_7, input, place) 
-else assert ruleno = \\ E for F2 while E do E end(E)\\ 52 report"invalid rule number"+ toword.ruleno 
-forbody(dict.R_1, R_2, R_6, R_4, R_9, input, place) 
+else if ruleno = \\ F2 F1 \\ 49 then forlocaldeclare(R_1, input, place) 
+else if ruleno = \\ E for F2 do E end(E)\\ 50 then forbody(dict.R_1, R_2, R_4, R_1, R_7, input, place) 
+else if ruleno = \\ E for F2 while E do E end(E)\\ 51 then forbody(dict.R_1, R_2, R_6, R_4, R_9, input, place) 
+else assert ruleno = \\ D E \\ 52 report"invalid rule number"+ toword.ruleno 
+R_1
 
 function forlocaldeclare(a:bindinfo, input:seq.word, place:int) bindinfo
   let seqtype=last.types.a
@@ -237,7 +272,7 @@ function forlocaldeclare(a:bindinfo, input:seq.word, place:int) bindinfo
   let elesym= newsymbol(elename,addabstract("$for"_1,parameter.seqtype),empty:seq.mytype,parameter.seqtype )
    let  dict1= if length.types.a  >  1 then 
        \\ keep track so right next is used in nested fors \\
-   let resultsym = newsymbol("next", mytype."$for", types.a >> 1, mytype.[ toword.place,"$for"_1])
+   let resultsym = newsymbol("next", mytype."$for", types.a >> 1, mytype.[ toword.place,"$base"_1])
          let nestingsym=  newsymbol("for",resulttype.resultsym,empty:seq.mytype,resulttype.resultsym)
          let oldnesting= lookup(dict.a, "for", empty:seq.mytype)
     if isempty.oldnesting then dict.a else dict.a - oldnesting ; + resultsym + nestingsym
@@ -260,20 +295,7 @@ let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = mytype."
       else "while expresssion type must be boolean" 
    assert isempty.checktypes report errormessage(checktypes,input,place)
     let resulttype=first.types.endexp
-    if  true  &and fsig.(code.endexp)_1 = "oldacc" then
-      let seqtype= (types.vars)_2 
-       let applysym=newsymbol("apply5", mytype."int builtin", 
-        [ resulttype, seqtype, parameter.seqtype, resulttype, typeint, resulttype, mytype."boolean"], 
-        resulttype)
-        let newcode=  [Local."initseq"_1,Define."@seq"_1,Local."initacc"_1,
-     Local."@seq"_1]
-        +(code.vars)_-1+(code.vars)_-2+newsymbol("^", mytype."$for", empty:seq.mytype, typeint)
-        +code.forbody + Litfalse+applysym
-          let ll1=for x="",e=(newcode ) do x+print.e end(x)
-  \\     assert false report ll1 \\
-        bindinfo(dict,newcode,[resulttype],"")
-       else 
- let sym = newsymbol("forexp", mytype."int builtin", types.vars + types.vars >> 1 + parameter.last.types.vars + typeptr
+     let sym = newsymbol("forexp", mytype."int builtin", types.vars + types.vars >> 1 + parameter.last.types.vars + typeptr
  + mytype."boolean"
  + resulttype, resulttype)
  let newcode = code.vars + code.forbody

@@ -160,4 +160,4 @@ function tonode(a:parc)parc parc(head.a, head.a, counts.a, clocks.a, space.a)
 
 Function dumpprofileinfo seq.word
 let e = profiledata.loadedLibs_1
- for acc ="", @e = profiledata.loadedLibs_1 do list(acc," &br", [ tail.@e, head.@e, toword.counts.@e])end(acc)
+ for acc ="", @e = profiledata.loadedLibs_1 do list(acc," &br", [ tail.@e, head.@e, toword.clocks.@e])end(acc)

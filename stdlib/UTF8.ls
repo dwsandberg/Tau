@@ -34,11 +34,6 @@ Function +(a:UTF8, ch:char)UTF8 a + encodeUTF8.ch
 
 Function =(a:UTF8, b:UTF8)boolean toseqbyte.a = toseqbyte.b
 
-/Function UTF8(s:seq.int)UTF8
- UTF8.for acc = empty:seq.byte, @e = s do acc + tobyte.@e end(acc)
-
-/function UTF8x(s:seq.int)UTF8
- UTF8.for acc = empty:seq.byte, @e = s do acc + tobyte.@e end(acc)
 
 Function commachar char char.44
 

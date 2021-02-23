@@ -230,10 +230,12 @@ function bind3(p:program, alltypes:typedict, modset:set.firstpass, f:firstpass)p
  let dict = builddict(modset, f) ∪ headdict
  for acc = p ∪ prg.f, @e = toseq.defines.f do bind2(acc, alltypes, dict, @e)end(acc)
 
+
 function bind2(p:program, alltypes:typedict, dict:set.symbol, s:symbol)program
  let txt = findencode.symboltext(s, mytype."?","?")
   if not.isempty.txt then
-  let code = parsedcode.parse(dict, text.txt_1)
+  let t=parsedcode.parse(dict, text.txt_1)
+  let code = blockconversion.t
     map(p, s, if length.code = 1 ∧ isconst.code_1 then code + [ Words."VERYSIMPLE", Optionsym]else code)
   else if parameter.modname.s = mytype."T" ∧ not(s ∈ p)then
   map(p, s, empty:seq.symbol)

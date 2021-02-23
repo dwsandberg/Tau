@@ -128,7 +128,6 @@ function yyy(p:program, org:seq.symbol, k:int, result:seq.symbol, nextvar:int, m
     else if len > 2 ∧ result_(len - 2) = NotOp ∧ fsig.sym = "BR 3"then
     yyy(p, org, k + 1, subseq(result, 1, len - 3) + [ result_len, result_(len - 1), Br], nextvar, map, papply)
     else yyy(p, org, k + 1, result + sym, nextvar, map, papply)
-   else if papply ∧ (fsig.sym)_1 ∈ "apply5"then applycode5(p, org, k, result, nextvar, map, papply)
    else if papply ∧ (fsig.sym)_1 ∈ "forexp"then forexpcode(p, org, k, result, nextvar, map, papply)
    else
     let nopara = nopara.sym
@@ -189,13 +188,6 @@ function definepara(code:seq.symbol, t:seq.int, i:int, nextvar:int, newcode:seq.
  else
   definepara(code, t, i - 1, nextvar - 1, subseq(code, t_i, t_(i + 1) - 1) + Define.toword.nextvar + newcode)
 
-function substitute(s:seq.symbol, old:seq.symbol, new:seq.symbol)seq.symbol
- for acc = empty:seq.symbol, @e = s do
-  acc
- + let i = findindex(@e, old)
-   if between(i, 1, length.old)then new_i else @e
- end(acc)
-
 compound accumaltor possiblities
 +(int graph, int arc)graph.int
 ,"advancepnp(pnpstate, word)format"
@@ -247,6 +239,25 @@ let initacc = subseq(code, t2_1, t2_2 - 1)
 else empty:seq.symbol
  if not.isempty.isnoop then yyy(p, org, k + 1, isnoop, nextvar1 + 2, map, papply)
  else
+  let blkadjust=if isblock.last.bodyexp &and abstracttype.parameter.modname.last.bodyexp ="$base"_1 then
+           nopara.last.bodyexp -1 else 0
+  let bodyexp2=replace$for(bodyexp, newsyms, syms)
+  let bodyexp3=if length.syms = 2 then 
+         bodyexp2+[ masteridx, Lit.1, PlusOp, continue.2]
+         else if blkadjust=0 then
+          bodyexp2  >> 1+[ masteridx, Lit.1, PlusOp, continue.length.syms]
+         else 
+            let back2=   backparse(bodyexp2, length.bodyexp2-1, blkadjust+1, empty:seq.int) +length.bodyexp2
+            for acc=empty:seq.symbol,last=length.bodyexp2, b = back2  do  
+              let clause=subseq(bodyexp2,last,b-1)
+              let clause2=if length.clause=0 then clause
+                  else if last.clause=Br then
+                     clause >> 3+[Lit(4+value.clause_-3),Lit(4+value.clause_-2),Br]
+                  else if last.clause=Exit then 
+                     clause >> 2 + [ masteridx, Lit.1, PlusOp, continue.length.syms]
+                  else clause 
+                next(acc+ clause2 ,b)
+            end (acc)
   let part1 = subseq(code, 1, startofsymbols - 1) + Define.nextvar1 + theseq + GetSeqLength
   + Define(nextvar1 + 1)
   + Lit.1
@@ -265,68 +276,23 @@ else empty:seq.symbol
   + \\ 4 while condition \\
   replace$for(exitexp, newsyms, syms) + [ Lit.5, Lit.3, Br]
   + \\ 5 do body and continue \\
-  replace$for(bodyexp, newsyms, syms, [ masteridx, Lit.1, PlusOp, continue.length.syms])
-  + if length.syms = 2 then [ masteridx, Lit.1, PlusOp, continue.2]else empty:seq.symbol ;
-  + [ Block(resulttype.forsym, 5)]
-   \\ assert false report print.forsym + print.startofsymbols + print.endofsymbols + EOL + print.endexp + EOL +"exit:"+ print.exitexp + EOL +"body:"+ print.bodyexp + EOL +"syms"+ print.subseq(code, startofsymbols, endofsymbols)+ EOL +"part1"+ print.part1 \\
-   yyy(p, org, k + 1, part1, nextvar1 + 2, map, papply)
+    bodyexp3
+   + [ Block(resulttype.forsym, 5+blkadjust)]
+  \\   assert false report print.forsym + print.startofsymbols + print.endofsymbols + EOL + print.endexp + EOL +"exit:"+ print.exitexp + EOL +"body:"+ print.bodyexp + EOL +"syms"+ print.subseq(code, startofsymbols, endofsymbols)+ EOL +"part1"+ print.part1 
+  \\  yyy(p, org, k + 1, part1, nextvar1 + 3, map, papply)
 
-function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol replace$for(code, new, old, empty:seq.symbol)
-
-function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol, cont:seq.symbol)seq.symbol
- for acc = empty:seq.symbol, s = code do 
-  if last.module.s = "$for"_1 then
-   acc
-  + if nopara.s > 0 then cont
-  else
-   let i = findindex(s, old)
-    if i ≤ length.new then [ new_findindex(s, old)]
-    else \\ this is a nested for and $for variable is from outer loop \\ [ s]
-  else if last.module.s = "for"_1 then acc + cont else acc + s
+function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol 
+for acc = empty:seq.symbol,  s = code do 
+      acc+if last.module.s = "$for"_1 then
+        let i = findindex(s, old)
+         if i ≤ length.new then [ new_findindex(s, old)]
+         else \\  this is for one of two cases 1: a nested for and $for variable is from outer loop 
+           2: the next expresion \\ [ s]
+      else [s]
  end(acc)
+        
+     
 
-function applycode5(p:program, org:seq.symbol, k:int, code:seq.symbol, nextvar:int, map:worddict.seq.symbol, papply:boolean)expandresult
-let totallength = nextvar + 1
-let seqtype = Local(nextvar + 2)
-let Defineseqtype = Define(nextvar + 2)
-let Definenewmasteridx = Define(nextvar + 3)
-let newmasteridx = Local(nextvar + 3)
-let Defineseqelement = Define(nextvar + 4)
-let seqelement = Local(nextvar + 4)
-let Defineinitacc = Define(nextvar + 5)
-let initacc = Local(nextvar + 5)
-let theseq = Local(nextvar + 6)
-let lastUsed = nextvar + 6
-let applysym = org_k
-let resulttype =(paratypes.applysym)_1
-let theseqtype =(paratypes.applysym)_2
-let elementtype = if abstracttype.parameter.theseqtype ∈ "real"then mytype."real"
-else if abstracttype.parameter.theseqtype ∈ "int bit byte boolean"then typeint else typeptr
-let exitstart = backparse(code, length.code, 1, empty:seq.int)_1
-let t = backparse(code, exitstart - 1, 1, empty:seq.int)
-let thunk0 = subseq(code, t_1, exitstart - 1)
-let accfunc = last.thunk0
-let thunkplaceholders = subseq(code, t_1 - 3, t_1 - 1)
-let initseq = code_(t_1 - 4)
-  let part1 = subseq(code, 1, t_1 - 5) + [ Defineinitacc, initseq, GetSeqLength, Define.totallength, initseq, initacc]
-  let acc = Local(lastUsed + 1)
-   let masteridx = Local(lastUsed + 2)
-   let thunkcode =       substitute(thunk0, thunkplaceholders, [ seqelement, acc, masteridx]) + [ newmasteridx, continue.3]
-  let packedseq = maybepacked.theseqtype
-   let kk = \\ loop(seq, acc, masteridx)\\
-   \\ 1 \\ 
-   [ Lit.1, Lit.lastUsed, Loopblock.[ theseqtype, resulttype, typeint]]
-   + \\ 2 if masteridx > totallength then exit \\
-   [ masteridx, Local.totallength, GtOp, Lit.3, Lit.4, Br]
-   + \\ 3 \\
-[ acc, Exit, \\ 4 else let newmasteridx = masteridx + 1, let sequenceele = seq_(idx)continue(thseqeq, thunk, newmasteridx)\\ masteridx, Lit.1, PlusOp, Definenewmasteridx, theseq, GetSeqType, Defineseqtype, seqtype
-, Lit.0, EqOp, Lit.2, Lit.3, Br, theseq, masteridx, IdxS.theseqtype, Exit]
-   + if packedseq then [ seqtype, Lit.1, EqOp, Lit.4, Lit.5, Br, theseq, masteridx] + packedindex2.theseqtype + [ Exit]
-   else empty:seq.symbol ;
-   + [ theseq, masteridx, Callidx.theseqtype, Exit, Block(elementtype, if packedseq then 5 else 3), Defineseqelement, theseq]
-   + thunkcode
-   + [ Block(resulttype, 4)]
-    yyy(p, org, k + 1, part1 + kk, lastUsed + 3, map, papply)
 
 function maxvarused(code:seq.symbol)int maxvarused(code, 1, 0)
 
@@ -398,10 +364,8 @@ function checksimple(p:program, code:seq.symbol, i:int, nopara:int, last:int)boo
 ---------------------------
 
 Function pass2(knownsymbols:program, alltypes:typedict)program
-let bin0 = for acc = filterp(emptyprogram, emptyprogram), @e = toseq.knownsymbols do filterp(acc, @e, code.lookupcode(knownsymbols, @e), alltypes)end(acc)
-let bin = for acc = filterp(emptyprogram, simple.bin0), @e = toseq.complex.bin0 do
- filterp(acc, @e, code.lookupcode(complex.bin0, @e), alltypes)
-end(acc)
+let bin0 =       filterp2(emptyprogram, emptyprogram,toseq.knownsymbols, knownsymbols,alltypes)
+let bin =   filterp2(emptyprogram, simple.bin0,toseq.complex.bin0, complex.bin0,alltypes)
  \\ assert false report checkt(bin0)assert false report print.length.toseq.complex.bin + print.length.toseq.simple.bin \\
  for acc = simple.bin, sym = toseq.complex.bin do
   \\ depthfirst(acc, knownsymbols, alltypes, sym)Function depthfirst(acc:program, knownsymbols:program, alltypes:typedict, sym:symbol)program \\
@@ -410,29 +374,30 @@ end(acc)
 
 type filterp is complex:program, simple:program
 
-function filterp(p:filterp, s:symbol, code:seq.symbol, alltypes:typedict)filterp
-let complex = complex.p
-let simple = simple.p
+function filterp2(complex1:program,simple1:program,q:seq.symbol,z:program,alltypes:typedict) filterp
+    for complex=complex1, simple=simple1 , s = q do  
+     let code=code.lookupcode(z, s)
 let options = getoption.code
  if isempty.code ∨ "BUILTIN"_1 ∈ options ∨ "VERYSIMPLE"_1 ∈ options then
- filterp(complex, map(simple, s, code))
+          next(complex, map(simple, s, code))
  else if length.code < 30 ∨ "COMPILETIME"_1 ∈ options then
  let nopara = nopara.s
  let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
  let code2 = code.yyy(simple, code, 1, empty:seq.symbol, nopara + 1, pdict, false)
-  if length.code2 = 3 ∧ code2_1 = Local.1
+         if length.code2 = 3 ∧ code2_1 = Local.1
   ∧ (fsig.code2_3)_1 ∈ "IDX"
   ∧ isconst.code2_2
   ∨ length.code2 = 1 ∧ nopara = 1 ∧ code2_1 = Local.1 then
-  filterp(complex, map(simple, s, code2 + [ Words."VERYSIMPLE", Optionsym]))
+            next(complex, map(simple, s, code2 + [ Words."VERYSIMPLE", Optionsym]))
   else if hasunknown.state100(removeoptions.code2, simple, s) ∧ "COMPILETIME"_1 ∉ options then
-  filterp(addf(complex, s, code), simple)
-  else filterp(complex, firstopt(simple, s, code2, alltypes))
- else filterp(map(complex, s, code), simple)
+            next(addf(complex, s, code), simple)
+        else next(complex, firstopt(simple, s, code2, alltypes))
+     else 
+       next(map(complex, s, code), simple)
+     end(filterp(complex,simple))
 
-function xxx(p:program, alltypes:typedict, s:symbol)program
-let code = code.lookupcode(p, s)
- if isempty.code then p else firstopt(p, s, code, alltypes)
+
+
 
 Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
 

@@ -114,9 +114,9 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
      let x = lookup(localtypes,(module.s)_2)
       if isempty.x then"NOT FOUND PARA"else ccc(alltypes, code, i + 1, push(stk, x_1), localtypes)
     else if islocal.s then
-    assert not.isempty.name.s report"ill formed local"
-     let localtype = lookup(localtypes,(name.s)_1)
-      assert not.isempty.localtype report"local not defined" + name.s
+       assert not.isempty.name.s report"ill formed local"
+       let localtype = lookup(localtypes,(name.s)_1)
+       assert not.isempty.localtype report"local not defined" + name.s
        ccc(alltypes, code, i + 1, push(stk, localtype_1), localtypes)
     else if(fsig.s)_1 ∈ "packed blockit" ∧ nopara.s = 1 then
        ccc(alltypes, code, i + 1, stk, localtypes)   

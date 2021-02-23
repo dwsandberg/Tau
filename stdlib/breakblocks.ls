@@ -20,10 +20,21 @@ use seq.mytype
 
 use seq.symbol
 
-Function print(s:seq.symbol)seq.word for acc ="", @e = s do acc + print.@e end(acc)
+\Function print(s:seq.symbol)seq.word for acc ="", @e = s do acc + print.@e end(acc)
 
 Function state100(s:seq.symbol, p:program, self:symbol)state100
- for acc = state100(false, false, false), @e = s do state100(acc, p, @e, self)end(acc)
+    for  state=false, unknown=false,callsself=false,sym=s do
+      let options = 
+        if state ∧ unknown ∨ isspecial.sym ∨ isconst.sym ∨ islocal.sym ∨ sym = self
+        ∨ module.sym = "$define"
+        ∨ module.sym = "builtin" ∧ first.fsig.sym ∈ "toseq"then ""
+      else if(fsig.sym)_1 ∈ "setfld" ∨ module.sym = "$global"then"STATE"
+     else
+      let d = lookupcode(p, sym)
+        if isdefined.d then getoption.code.d else"undefined"
+     next(state ∨ "STATE"_1 ∈ options, unknown ∨ "undefined"_1 ∈ options, callsself ∨ self = sym)
+     end (state100(state,unknown,callsself))
+    
 
 type state100 is hasstate:boolean, hasunknown:boolean, callsself:boolean
 
@@ -33,19 +44,6 @@ Export hasunknown(state100)boolean
 
 Export callsself(state100)boolean
 
-function state100(a:state100, p:program, s:symbol, self:symbol)state100
-let state = hasstate.a
-let unknown = hasunknown.a
-let callsself = callsself.a
-let options = if state ∧ unknown ∨ isspecial.s ∨ isconst.s ∨ islocal.s ∨ s = self
-∨ module.s = "$define"
-∨ module.s = "builtin" ∧ first.fsig.s ∈ "toseq"then
-""
-else if(fsig.s)_1 ∈ "setfld" ∨ module.s = "$global"then"STATE"
-else
- let d = lookupcode(p, s)
-  if isdefined.d then getoption.code.d else"undefined"
- state100(state ∨ "STATE"_1 ∈ options, unknown ∨ "undefined"_1 ∈ options, callsself ∨ self = s)
 
 type block is kind:word, blkno:int, label1:int, label2:int, code:seq.symbol, subblks:seq.block
 

@@ -261,6 +261,10 @@ Function Sequence(eletype:mytype,length:int )symbol
 
 Function Block(type:mytype, i:int)symbol
  symbol("BLOCK" + toword.i, towords.type + "$block", towords.type, specialbit)
+ 
+Function br(t:int,f:int) symbol
+ symbol(["branch"_1,toword.t,toword.f]+"(boolean)","$branch" ,"?")
+     
 
 Function Loopblock(types:seq.mytype)symbol 
 let fsig = for acc ="LOOPBLOCK(", t = types do acc + typerep.t + ","end(acc)
@@ -572,21 +576,26 @@ Function getbasetype(d:typedict, type:mytype)mytype getbasetype(d, type, true)
 function  getbasetype(d:typedict,type:mytype,top:boolean) mytype
  if abstracttype.type ∈ "packed2 packed3 packed4 packed5 packed6"then typeptr
  else if abstracttype.type ∈ "int boolean real ptr"then type
-  else if abstracttype.type ="seq"_1 then 
- if abstracttype.parameter.type ∈ "int boolean real ptr bit byte packed2 packed3 packed4 packed5 packed6"then type
+ else if abstracttype.type ="seq"_1 then 
+  if abstracttype.parameter.type ∈ "int boolean real ptr bit byte packed2 packed3 packed4 packed5 packed6"then type
   else addabstract("seq"_1, getbasetype(d, parameter.type, false))
-  else if type = mytype."internaltype"  then typeptr 
+ else if type = mytype."internaltype"  then typeptr 
+ else if abstracttype.type="$base"_1 then 
+ \\ used for type of next in for expression \\
+ type
  else
-  let t = findelement(d, type)
+    let t = findelement(d, type)
     assert length.t = 1 report"type not found" + print.type + stacktrace
-       let size=length.subflds.t_1
-      if size > 1 then 
+    let size=length.subflds.t_1
+    if size > 1 then 
          if top then typeptr 
          else if size = 2 then mytype."packed2"
          else if size = 3 then mytype."packed3"
          else if size = 4 then mytype."packed4"
-     else if size = 5 then mytype."packed5"else if size = 6 then mytype."packed6"else typeptr
-      else 
+         else if size = 5 then mytype."packed5"
+         else if size = 6 then mytype."packed6"
+         else typeptr
+    else 
         let basetype=(subflds.t_1)_1
       if abstracttype.basetype = "seq"_1 then getbasetype(d, basetype, true)else basetype
 
@@ -630,6 +639,45 @@ Function removeconstant(s:seq.symbol)seq.symbol
  for acc = empty:seq.symbol, @e = s do
   acc + if isrecordconstant.@e then removeconstant.zcode.@e else [ @e]
  end(acc)
+ 
+ _______________________________________________
+ 
+ Function startblk(type:mytype,i:int) symbol  symbol("startblock:"+toword.i,typerep.type+"$start",typerep.type)
+
+Function Mark(place:int)  symbol     symbol(   [toword.place],"$mark","?") 
+
+Function Exit2 symbol symbol(   "Exit2","$exit2","?") 
+
+ type blockconversion is count:int,need:int,blocktype:mytype 
+
+use stack.blockconversion
+
+Function print(s:seq.symbol) seq.word  for acc="",e = s do acc
++   if last.module.e &in"$branch $exit2 $start" then fsig.e+EOL
+  else print.e end(acc)
+
+ 
+Function blockconversion(a:seq.symbol) seq.symbol
+ \\ changed from parse format of blocks to back end format \\
+ for acc=empty:seq.symbol,count=1,need =0,stk=empty:stack.blockconversion,   e= a  do 
+        if count=need &and e=Exit2 then    \\ end block \\
+            next(acc+[Exit,Block(blocktype.top.stk,need) ],count.top.stk,need.top.stk,pop.stk) 
+      else if last.module.e &in " $mark"    then 
+         next(acc,count,need,stk)  
+      else if last.module.e="$start"_1 then
+         next(acc,1,0,push(stk,blockconversion(count,need,resulttype.e)))
+      else if module.e="$branch" then
+         next (acc+[Lit(toint.(fsig.e)_2+count),Lit(toint.(fsig.e)_3+count),Br]
+         , count+1
+         , max(need,toint.(fsig.e)_3+count)
+         ,stk)
+      else if e=Exit2 then 
+           next(acc+Exit,count+1,need,stk)
+      else 
+       next(acc+e,count,need,stk) 
+    end ( acc)
+    
+ ___________________________________________________________
  
  module hashset.T
 
