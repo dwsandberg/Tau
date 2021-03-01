@@ -17,7 +17,7 @@ Function testjulian boolean [ tojulian(2000, 1, 1), tojulian(1999, 1, 1), tojuli
 
 Function tojulian(year:int, month:int, day:int)int
  let ayear = if month > 2 then year else year - 1
-let amonth = if month > 2 then month else month + 12 ;
+let amonth = if month > 2 then month else month + 12 fi
   (amonth + 1) * 306001 / 10000 + day + 1720994 + 2 - ayear / 100
   + ayear / 100 / 4
   + 1461 * ayear / 4

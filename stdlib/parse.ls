@@ -186,7 +186,7 @@ function ifexp(codeif:seq.symbol,thencode :seq.symbol, elsecode:seq.symbol,type:
    let elsecount=removestart.elsecode
    let thencount=removestart.thencode 
    let t=[startblk(type,1+thencount+elsecount)]+codeif +br(1,1+thencount)+ 
-        if thencount > 1 then subseq(thencode,2,length.thencode-1) else thencode+Exit2 ;
+        if thencount > 1 then subseq(thencode,2,length.thencode-1) else thencode+Exit2 fi
     +      if elsecount > 1 then subseq(elsecode,2,length.elsecode-1) else elsecode+Exit2  
   t+Mark(length.t) 
    
@@ -216,7 +216,7 @@ let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place)bindinfo(dict.R, 
 else if ruleno = \\ E NM(L)\\ 20 then unaryop(R, input, place, tokentext.R_1, R_3) 
 else if ruleno = \\ E(E)\\ 21 then R_2 
 else if ruleno = \\ E if E then E else E \\ 22 then ifexp(R,R_2,R_4,R_6, input, place)
-else if ruleno = \\ E if E then E else E ; \\ 23 then ifexp(R,R_2,R_4,R_6, input, place)
+else if ruleno = \\ E if E then E else E fi \\ 23 then ifexp(R,R_2,R_4,R_6, input, place)
 else if ruleno = \\ E E_E \\ 24 then opaction(R, input, place) 
 else if ruleno = \\ E-E \\ 25 then unaryop(R, input, place, tokentext.R_1, R_2) 
 else if ruleno = \\ E W.E \\ 26 then unaryop(R, input, place, tokentext.R_1, R_3) 
@@ -275,7 +275,7 @@ function forlocaldeclare(a:bindinfo, input:seq.word, place:int) bindinfo
    let resultsym = newsymbol("next", mytype."$for", types.a >> 1, mytype.[ toword.place,"$base"_1])
          let nestingsym=  newsymbol("for",resulttype.resultsym,empty:seq.mytype,resulttype.resultsym)
          let oldnesting= lookup(dict.a, "for", empty:seq.mytype)
-    if isempty.oldnesting then dict.a else dict.a - oldnesting ; + resultsym + nestingsym
+    if isempty.oldnesting then dict.a else dict.a - oldnesting fi + resultsym + nestingsym
       else dict.a 
   let accumulators = for acc = empty:seq.symbol, i = 1, name = tokentext.a >> 1 do
    next(acc + newsymbol([ name], addabstract("$for"_1,(types.a)_i) , empty:seq.mytype,(types.a)_i), i + 1)
@@ -299,7 +299,7 @@ let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = mytype."
  + mytype."boolean"
  + resulttype, resulttype)
  let newcode = code.vars + code.forbody
- + if tokentext.exitexp = "for"then [ Littrue]else code.exitexp ;
+ + if tokentext.exitexp = "for"then [ Littrue]else code.exitexp fi
  + code.endexp
  + sym
   bindinfo(dict,newcode,[resulttype],"")

@@ -55,7 +55,7 @@ Function isbuiltinlist(sym:symbol)boolean
  ∈ ["+(real, real)","*(real, real)","-(real, real)","/(real, real)","?(real, real)",">>(bits, int)","<<(bits, int)","∧(bits, bits)","∨(bits, bits)","xor(bits, bits)"
  ,"-(int, int)","+(int, int)","*(int, int)","/(int, int)","=(int, int)","=(boolean, boolean)",">(int, int)","?(int, int)","representation(real)","casttoreal(int)"
  ,"not(boolean)","toint(byte)","toint(bit)","toreal(int)","intpart(real)","tocstr(bits seq)","bitcast(int seq)","bitcast(int)","GEP(int seq, int)","false"
- ,"true"]
+ ,"true","getseqlength(ptr)","getseqtype(ptr)"]
 
 Function mangledname(s:symbol)word mangle(fsig.s, module.s)
 
@@ -263,8 +263,18 @@ Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
  , addtemplate(symbol("IDX:real(ptr, int)","real builtin","real"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
  + CAST(r.3, r.2, double, bitcast))
 ]
-let const = for acc = empty:seq.symbol, @e = toseq(uses - asset.[ Optionsym])do acc + buildtemplate(theprg, alltypes, @e)end(acc)
- let discard4 = processconst(const, 1, empty:seq.symbol)
+let const = for acc = empty:seq.symbol, e = toseq(uses - asset.[ Optionsym])do 
+    if   isconst.e then
+            if isrecordconstant.e then acc+e
+             else  \\let  discard= buildrecordconst(e,alltypes)  acc  
+            else \\
+          let discard= buildconst(e,alltypes)
+           acc
+       else
+       let discard5= buildtemplate(theprg, alltypes, e)
+       acc
+    end(acc)
+  let discard4 = processconst(const)
   empty:seq.match5
 
 function symboltableentry(name:word)slot symboltableentry(name, i64)
@@ -273,38 +283,54 @@ Function symboltableentry(name:word, type:llvmtype)slot symboltableentry([ name]
 
 Function symboltableentry(name:seq.word, type:llvmtype)slot
  modulerecord(name, [ toint.FUNCTIONDEC, typ.type, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
-
-function processconstargs(arglist:seq.symbol, i:int, args:seq.int)seq.int
- if i > length.arglist then args
- else
-  let xx = arglist_i
-  let e = findtemplate.xx
-   if isempty.e then empty:seq.int else processconstargs(arglist, i + 1, args + arg.e_1)
-
-function processconst(toprocess:seq.symbol, i:int, notprocessed:seq.symbol)seq.match5
- if i > length.toprocess then
- if isempty.notprocessed then empty:seq.match5 else processconst(notprocessed, 1, empty:seq.symbol)
- else
-  let xx = toprocess_i
-  let args = processconstargs(constantcode.xx, 1, empty:seq.int)
-   if isempty.args then processconst(toprocess, i + 1, notprocessed + toprocess_i)
-   else
-    let discard = encode.addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args)
-     processconst(toprocess, i + 1, notprocessed)
+      
+ 
+ function processconst(toprocess:seq.symbol) int
+   if isempty.toprocess then 0 else 
+   processconst.
+   for    notprocessed=empty:seq.symbol,  xx = toprocess do   
+      for args=empty:seq.int, defined=true, ele = constantcode.xx while defined do
+      let   tp=findtemplate.ele
+       if isempty.tp then
+         next(empty:seq.int,false)
+        else
+         next(args+arg.tp_1,true)
+      end (if defined then let discard = addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args)
+        notprocessed else notprocessed +xx)
+    end (notprocessed)
+    
+ \ function buildrecordconst(s:symbol,alltypes:typedict) match5
+         for args=empty:seq.int , ele = constantcode.s  do
+           let   tp=findtemplate.ele
+          args+if isempty.tp then
+                let discard= if isrecordconstant.ele then arg.buildrecordconst(ele,alltypes ) 
+                 else arg.buildconst(ele,alltypes)
+                 arg.(findtemplate.ele)_1
+             else  arg.tp_1   
+          end (addtemplate(ele, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args))
+    
+  
 
 function =(a:llvmtype, b:llvmtype)boolean typ.a = typ.b
 
-function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
- if isrecordconstant.xx then [ xx]
- else
-  let discard1 = if isFref.xx then
+function buildconst(xx:symbol,alltypes:typedict) match5
+if isFref.xx then
   let f1 =(constantcode.xx)_1
     let mn = mangledname.f1
     let functyp = ptr.tollvmtype(alltypes, f1)
      addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
   else if islit.xx then
   addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, if module.xx = "$real"then Creal.value.xx else C64.value.xx)
-  else if islocal.xx then addtemplate(xx, 0, emptyinternalbc,"LOCAL"_1, slot.value.xx)
+  else if module.xx = "$words"then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.fsig.xx)
+  else assert module.xx = "$word" report "not a constant"
+   addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
+
+
+
+
+function buildtemplate(theprg:program, alltypes:typedict, xx:symbol) match5
+\\  xx will not be  constant \\
+   if islocal.xx then addtemplate(xx, 0, emptyinternalbc,"LOCAL"_1, slot.value.xx)
   else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, slot.toint.(fsig.xx)_2)
   else if isblock.xx then
   let typ = tollvmtype(alltypes, resulttype.xx)
@@ -327,8 +353,6 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
      addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, 
        for oldacc=initacc,e20=initseq do oldacc + tollvmtype(alltypes, e20) end( oldacc))
     else addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, [ i64])
-  else if module.xx = "$words"then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.fsig.xx)
-  else if module.xx = "$word"then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.(fsig.xx)_1)
   else
    \\ handle builtin package \\
    let intable = findtemplate.xx
@@ -355,7 +379,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)seq.symbol
     else
      \\ if fsig.xx &in Externalsyms then call(alltypes, xx,"CALLE"_1, empty:seq.symbol, mangledname.xx)else \\
      call(alltypes, xx,"CALL"_1, code.lookupcode(theprg, xx), mangledname.xx)
-   empty:seq.symbol
+   
 
 function call(alltypes:typedict, xx:symbol, type:word, code:seq.symbol, symname:word)match5
  let list = tollvmtypelist(alltypes, xx)

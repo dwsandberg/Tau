@@ -19,7 +19,7 @@ let para = for acc ="", e = d << 2 do
  if acc = ""then printtype.e else acc + "," + printtype.e
 end(acc)
  d_1
- + if isempty.para then""else"(" + para + ")";
+ + if isempty.para then""else"(" + para + ")" fi
   + if length.d > 1 then" &keyword module:" + printtype.d_2 else""
  
 function printtype  (a:  seq.word ) seq.word
@@ -71,7 +71,7 @@ function codeup(s:seq.word)seq.char
 
 function addword(s:seq.char, w:word)seq.char
  \\ adds minor separator between words \\
- for acc = if isempty.s then s else s + char.charminorseparator ;, @e = decodeword.w do
+ for acc = if isempty.s then s else s + char.charminorseparator , @e = decodeword.w do
   codeup(acc, @e)
  end(acc)
 

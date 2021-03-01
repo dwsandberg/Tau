@@ -123,9 +123,9 @@ function t031 boolean false
 
 function t032 boolean for acc = true, e = [ 23, 4, 5, 255, 7, 2, 255]do acc ∨ isbyte.e end(acc)
 
-function t033 boolean 6 = toint.if true then"3"_1 else"5"_1 ; + 3
+function t033 boolean 6 = toint.if true then"3"_1 else"5"_1 fi + 3
 
-function t034 boolean 3464 = 3456 + if true then 3 else 1 ; + 5
+function t034 boolean 3464 = 3456 + if true then 3 else 1 fi + 5
 
 function print(a:seq.int)seq.word
  "["

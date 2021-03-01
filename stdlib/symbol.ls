@@ -367,7 +367,7 @@ Function PlusOp symbol symbol("+(int, int)","standard","int")
 
 Function MultOp symbol symbol("*(int, int)","standard","int")
 
-Function GetSeqLength symbol symbol("getseqlength(ptr)","builtin","int")
+Function GetSeqLength symbol symbol("getseqlength(ptr)","tausupport","int")
 
 Function GetSeqType symbol symbol("getseqtype(ptr)","tausupport","int")
 
@@ -548,7 +548,7 @@ Function print(f:symbol)seq.word
   if fsig_1 ∈ "BLOCK EXITBLOCK BR LOOPBLOCK FINISHLOOP CONTINUE"then fsig + " &br"else fsig
   else if isrecordconstant.f then fsig
   else if isFref.f then"FREF" + print.(constantcode.f)_1
- else if last.fsig = ")"_1 then fsig else fsig + "()";
+ else if last.fsig = ")"_1 then fsig else fsig + "()" fi 
  + print.mytype.module
 
 Function print(p:program, i:symbol)seq.word

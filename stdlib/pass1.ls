@@ -326,7 +326,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
       else
        let symlen = newsymbol("length", modname.f, [ t], typeint)
        let symgettype = newsymbol("getseqtype", modname.f, [ t], typeint)
-       let prg4 = map(prg3, symlen, [ Local.1, GetSeqLength])
+       let prg4 = map(prg3, symlen, [ Local.1, GetSeqLength, Words."VERYSIMPLE", Optionsym])
        let prg5 = map(prg4, symgettype, [ Local.1, GetSeqType, Words."VERYSIMPLE", Optionsym])
         firstpass(modname.f, uses.f, defines.f ∪ asset(syms + symlen + symgettype), exports.f, unboundexports.f, unbound.f, types.f + it, prg5)
     else

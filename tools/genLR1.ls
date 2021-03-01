@@ -110,7 +110,7 @@ function print (grammar:seq.seq.word,a:seq.action,i:int,laststate:int,lastaction
  else
  let this=a_i
   let p1 = if laststate ≠ stateno.this then
-  if laststate > 0 then print.decode.to:encoding.state(laststate)else""; 
+  if laststate > 0 then print.decode.to:encoding.state(laststate)else"" fi
    + " &br state:"
    + toword.stateno.this
   else""
@@ -128,7 +128,7 @@ function follow(grammar:seq.seq.word)graph.word
  let allarcs = for acc = empty:seq.arc.word, rule = grammar do 
  acc
  + for arcs = empty:seq.arc.word, i = 1, e = rule do 
-   next(if i > 2 then arcs + arc(rule_(i - 1), rule_i)else arcs ;, i + 1)
+   next(if i > 2 then arcs + arc(rule_(i - 1), rule_i)else arcs , i + 1)
   end(arcs)
  end(acc)
   follow(newgraph.allarcs, grammar)
@@ -268,7 +268,7 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, termin
     if length.amb > 0 then
     "ambiguous actions:" + amb + " &br prec rules"
         + for acc ="", @e = ruleprec do acc + "|" + @e end(acc)
-    else"";
+    else"" fi
    + print(grammar2,actions3)  
    + generatereduce(grammarandact, alphabet,attributename)
    + '  &p function tokenlist:T seq.word"'
@@ -291,7 +291,7 @@ Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, termin
       " &p function actiontable:T seq.int ["
          + for acc ="", @e = x do list(acc,",", [ toword.@e])end(acc)
    + "]" 
-    else"";
+    else"" fi
    + " &p follow"
     + print.follow.graminfo
    
@@ -346,7 +346,7 @@ function reduceline(grammerandact:seq.seq.word, i:int,last:int)seq.word
    
 Function gentau2 seq.word \\ used to generater tau parser for Pass1 of the tau compiler. \\ lr1parser(taurules2, tauruleprec, taualphabet,"bindinfo")
  
-function taualphabet seq.word".=():>]-for * comment, [_; is I if # then else let assert report ∧ ∨ $wordlist  while end   W  do   "
+function taualphabet seq.word".=():>]-for * comment, [_fi is I if # then else let assert report ∧ ∨ $wordlist  while end   W  do   "
 
 
 function tauruleprec seq.seq.word \\ list of rules and lookaheads. 
@@ -354,7 +354,7 @@ The position of the lookahead is noted. Rule reductions after are discard and ru
 before the position is used to reduce. \\ \\ [""] \\
 ["(","E NM","E E_E","_","E W.E","E E * E","E-E","*","E E-E","-","E E > E","E E = E"
 ,"=",">","E E ∧ E","∧","E E ∨ E","∨" 
-]+[";","E if E then E else E",' E comment E ', "E assert E report D E","A  W = E","E let A E","D E" ]
+]+["end","fi","E if E then E else E",  ' E comment E ', "E assert E report D E","A  W = E","E let A E","D E"    ]
 
 function taurules2 seq.seq.seq.word [
 [  ' G F # ', ' R_1 '] 
@@ -380,7 +380,7 @@ function taurules2 seq.seq.seq.word [
 , [ ' E NM(L)', ' unaryop(R, input, place, tokentext.R_1, R_3)'] 
 , [ ' E(E)', ' R_2 '] 
 , [ ' E if E then E else E ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
-, [ ' E if E then E else E ; ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
+, [ ' E if E then E else E fi ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
 , [ ' E E_E ', ' opaction(R, input, place)'] 
 , [ ' E-E ', ' unaryop(R, input, place, tokentext.R_1, R_2)'] 
 , [ ' E W.E ', ' unaryop(R, input, place, tokentext.R_1, R_3)'] 
@@ -419,7 +419,9 @@ assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplic
 ,[ ' F2   F1    ',' forlocaldeclare(R_1,input, place)  ' ] 
 ,[ ' E  for  F2  do    E end (E)   ','  forbody(dict.R_1, R_2, R_4, R_1, R_7, input, place) ' ] 
 ,[ ' E  for  F2  while E  do   E   end (E)   ','  forbody(dict.R_1, R_2,  R_6,R_4, R_9,input, place) '] 
-,[ ' D E ',"R_1"]]
+,[ ' D E ',"R_1"]
+, [ ' E if E then E else E end if ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
+]
 
 
 
@@ -472,8 +474,6 @@ function tauprettyrules seq.seq.seq.word \\ after generator grammar change %%% t
 , [ ' E comment E ', ' let t ="%%%{ comment \\"+ escapeformat.text.R_1 << 1 >> 1 +"\\ %%%}"let t2 = if width.R_1 + width.R_2 > 30 ∧(text.R_2)_1 ≠"%%%br"_1 then t +"%%%br"else t pretty.[ attribute2.[ prettyresult(0, length.text.R_1, t2)], R_2]'] 
 , [ ' NM W ', ' R_1 '] 
 , [ ' NM W:T ', ' pretty.[ R_1, R_2, R_3]'] 
-, [ ' D E ', ' R_1 '] 
-, [ ' D E ; ', ' R_1 '] 
 , [ ' F1 W = E ', ' pretty.[ R_1, R_2, R_3]'] 
 , [ ' F1 F1, W = E ', ' pretty.[ R_1, R_2, R_3, R_4, R_5]'] 
 , [ ' F2 F1 ', ' R_1 '] 

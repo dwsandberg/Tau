@@ -23,7 +23,7 @@ let l = tointseq.decodeword.w
  between(l_1, 48, 57)
  ∨ l_1 = toint.hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)
 
-function terminals seq.word".=():>]-for * comment, [_; is I if # then else let assert report ∧ ∨ $wordlist while end W do"
+function terminals seq.word".=():>]-for * comment, [_fi is I if # then else let assert report ∧ ∨ $wordlist while end W do"
 
 function tolexaction(next:word)lexaction1
  \\ user supplied procedure to convert a word into a lex action \\

@@ -43,7 +43,10 @@ Function interpret(code:seq.symbol)seq.symbol
  let r = interpret(typedict.t, removeconstant.code, 1, empty:stack.int)
   tocode(r, resulttype.last.code)
 
-encoding.seq.char
+Function interpretCompileTime(alltypes:typedict,code:seq.symbol)seq.symbol
+ let r = interpret(alltypes, removeconstant.code, 1, empty:stack.int)
+  tocode(r, resulttype.last.code)
+
 
 function tocode(r:int, typ:mytype)seq.symbol
  if typ = mytype."word"then [ Word.wordencodingtoword.r]

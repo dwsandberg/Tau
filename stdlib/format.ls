@@ -140,10 +140,10 @@ let newresult = if instring then
  if this = matchthis then result + this + " &}"else result + this
  else if c = 0 then
  result
- + if this ∈ ('"' + "'")then" &{ literal"else" &br  &{ comment";
+ + if this ∈ ('"' + "'")then" &{ literal"else" &br  &{ comment" fi
   + this
  else if c = 1 then
- if lastbreak > 20 then result + " &br"else result ; + " &keyword" + this
+ if lastbreak > 20 then result + " &br"else result fi + " &keyword" + this
  else if c = 2 then result + " &keyword" + this
  else if c = 3 then result + this + " &br"
  else if c = 4 then result + " &br" + this else result + this

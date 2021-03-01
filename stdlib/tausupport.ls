@@ -166,6 +166,8 @@ Builtin randomint(i:int)seq.int
 
 Builtin getseqtype(ptr) int
 
+Builtin getseqlength(ptr) int
+
 Builtin toseqX:seq.int(ptr) seq.int
 
 Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]

@@ -43,12 +43,12 @@ let stringtoken = 2
 let token = next
 let actioncode = getactioncode(stateno, token)
  if actioncode > 0 then
- stepresult(push(stk, stkele(actioncode, 0)), place.b + 1, if track then track.b + " &br next" + next + printstate.actioncode else track.b ;, 0,"")
+ stepresult(push(stk, stkele(actioncode, 0)), place.b + 1, if track then track.b + " &br next" + next + printstate.actioncode else track.b , 0,"")
  else
   assert actioncode < 0 report"parse error" + "place" + toword.place.b + toword.actioncode + track.b
   let x = reduce(stk,-actioncode, place.b, track.b)
    consumeinput(stepresult(x, place.b, if track then track.b + " &br reduce by" + toword.-actioncode + printstate.stateno.top.x
-   else track.b ;, tokenstate.b, string.b)
+   else track.b , tokenstate.b, string.b)
    , next)
 
 Function parse(input:seq.word)seq.word

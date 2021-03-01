@@ -78,10 +78,9 @@ Function deletenode(g:graph.T, n:T)graph.T
 Function toarcs(n:T, s:seq.T)seq.arc.T
  for acc = empty:seq.arc.T, @e = s do acc + arc(n, @e)end(acc)
 
-function toarcs(s:seq.T, n:T)seq.arc.T
- for acc = empty:seq.arc.T, @e = s do acc + arcr(n, @e)end(acc)
+Function toarcs(s:seq.T, n:T)seq.arc.T
+ for acc = empty:seq.arc.T, @e = s do acc + arc(@e,n )end(acc)
 
-function arcr(a:T, b:T)arc.T arc(b, a)
 
 Function backarc(a:arc.T)arc.T arc(head.a, tail.a)
 
@@ -145,10 +144,11 @@ Function breathfirst(g:graph.T)seq.T \\ will not return nodes involved in a cycl
 ____________________
 
 Function nodesbyoutdegree(g:graph.T)seq.T
- for acc = empty:seq.T, @e = sort.for acc = empty:seq.ipair.T, @e = toseq.nodes.g do acc + subnodesbyoutdegree(g, @e)end(acc)do
+ for acc = empty:seq.T, @e = sort.for acc = empty:seq.ipair.T, n = toseq.nodes.g do 
+ acc + ipair(outdegree(g, n), n) end(acc)do
   acc + value.@e end(acc)
 
-Function subnodesbyoutdegree(g:graph.T, n:T)ipair.T ipair(outdegree(g, n), n)
+
 
 Function outdegree(g:graph.T, n:T)int cardinality.successors(g, n)
 
@@ -158,16 +158,13 @@ Function =(a:graph.T, b:graph.T)boolean
  cardinality.arcs.a = cardinality.arcs.b ∧ nodes.a = nodes.b
  ∧ arcs.a = arcs.b
 
-Function transitiveClosure(g:graph.T)graph.T
+Function transitiveClosure(gin:graph.T)graph.T
  \\ add arcs to graph so if node is reachable, it can be reached with single arc \\
- for acc = g, @e = toseq.nodes.g do addclosure(acc, @e)end(acc)
+ for g = gin, n = toseq.nodes.gin do 
+  \\ add arcs to graph so path does not need to go through n \\
+   for arcs= empty:seq.arc.T, p = toseq.predecessors(g, n) do   
+     for acc2 = empty:seq.arc.T, s = toseq.successors(g, n) do acc2 + arc(p, s)end(arcs+acc2)
+ end(g+arcs)
+   end(g)
 
-function addclosure(g:graph.T, n:T)graph.T
- \\ add arcs to graph so path does not need to go through n \\
- g + toarcs(toseq.predecessors(g, n), toseq.successors(g, n))
-
-Function toarcs(a:seq.T, b:seq.T)seq.arc.T
- for acc = empty:seq.arc.T, @e = a do acc + toarcs2(b, @e)end(acc)
-
-Function toarcs2(b:seq.T, a:T)seq.arc.T
- for acc = empty:seq.arc.T, @e = b do acc + arc(a, @e)end(acc)
+ 

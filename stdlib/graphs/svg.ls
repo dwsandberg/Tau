@@ -19,12 +19,12 @@ let classdefs = ' <style type ="text/css"> ' + merge."<! [ CDATA ["
  + "Your browser does not support inline SVG.</svg>"
 
 Function line(x:int, y:int, x2:int, y2:int, arrowstart:boolean, arrowend:boolean)seq.word
-let style = if arrowend then"marker-end:url(#markerArrow);"else"";
+let style = if arrowend then"marker-end:url(#markerArrow);"else"" fi
 + if arrowstart then"marker-start:url(#markerArrow2);"else""
  ' <path d ="M ' + toword.x + toword.y + "L" + toword.x2
  + toword.y2
  + '"stroke ="black"fill ="none"'
- + if style = ""then"/>"else ' style ="' + style + '"/> ' ;
+ + if style = ""then"/>"else ' style ="' + style + '"/> ' fi
  + " &br"
 
 Function text(class:seq.word, x:int, y:int, w:seq.word)seq.word

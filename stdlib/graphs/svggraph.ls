@@ -108,7 +108,7 @@ let g = for acc = empty:set.arcinfo.T, @e = arci do acc + toarcinfo(p2, @e)end(a
 
 Function svgnode(vertnodesize:int, info:set.arcinfo.T, s:set.nodeinfo.T, p:nodeinfo.T)seq.word
 let arcstonode = findelement2(info, arcinfo(arc(n.p, n.p),"", 0))
- if width.p > 0 then text("text", x.p, y.p, nodetotext.n.p)else"";
+ if width.p > 0 then text("text", x.p, y.p, nodetotext.n.p)else"" fi
  + for acc ="", @e = arithseq(length.toseq.arcstonode, 1, 1)do
   acc + drawarc(vertnodesize, p, toseq.arcstonode, @e)
  end(acc)

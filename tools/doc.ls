@@ -124,7 +124,7 @@ function plist(t:seq.word, i:int, parano:int, names:seq.word)seq.word
  if i = 1 then
  if length.names > 0 then
   "("
-   + if names_parano = ":"_1 then""else [ names_parano] + ":";
+   + if names_parano = ":"_1 then""else [ names_parano] + ":" fi
    + t_i
    + plist(t, i + 1, parano + 1, names)
   else t
@@ -132,7 +132,7 @@ function plist(t:seq.word, i:int, parano:int, names:seq.word)seq.word
  subseq(t, i, i + 1) + plist(t, i + 2, parano, names)
  else if parano ≤ length.names then
  ","
-  + if names_parano = ":"_1 then""else [ names_parano] + ":";
+  + if names_parano = ":"_1 then""else [ names_parano] + ":"fi
   + t_i
   + plist(t, i + 1, parano + 1, names)
  else")" + subseq(t, i, length.t)
@@ -153,7 +153,7 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
     else""
     let name = [ modname] + if length.lib_i > 2 then".T"else""
      leftover + " &{ select x &section  &keyword module" + name + " &}"
-     + if modname ∈ exports then"Module" + name + "is exported from library. "else"";
+     + if modname ∈ exports then"Module" + name + "is exported from library. "else"" fi
      + " &br Module"
      + name
      + "is used in modules: "
@@ -167,7 +167,7 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
   let l = findindex("include"_1, a)
    let k = findindex("exclude"_1, a)
     usegraph(usegraph, subseq(a, l + 1, k), subseq(a, k + 1, length.a))
-  else subseq(a, 2, length.a);
+  else subseq(a, 2, length.a) fi
   + " &}"
    docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
  else if lib_i_1 ∈ "Function"then
