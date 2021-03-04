@@ -77,10 +77,11 @@ Function fsighash(s:symbol)int toint(flags.s >> 4)
 
 function extrabits(fsig:seq.word, flags:bits)bits bits.hash.fsig << 4 ∨ flags
 
-Function symbol(fsig:seq.word, module:seq.word, returntype:seq.word)symbol symbol(fsig, module, returntype, empty:seq.symbol)
+Function symbol(fsig:seq.word, module:seq.word, returntype:seq.word)symbol 
+ symbol(fsig, module, returntype, empty:seq.symbol)
 
 Function symbol(fsig:seq.word, module:seq.word, returntype:seq.word, zcode:seq.symbol)symbol
- symbol(fsig, module, returntype, zcode, extrabits(fsig, bits.0))
+symbol(fsig, module, returntype, zcode, extrabits(fsig, bits.0))
 
 Function symbol(fsig:seq.word, module:seq.word, returntype:seq.word, flag:bits)symbol
  symbol(fsig, module, returntype, empty:seq.symbol, extrabits(fsig, flag))
@@ -264,12 +265,20 @@ Function Block(type:mytype, i:int)symbol
  
 Function br(t:int,f:int) symbol
  symbol(["branch"_1,toword.t,toword.f]+"(boolean)","$branch" ,"?")
+ 
+ Function newway boolean true
      
+Function Loopblock(types:seq.mytype,noblocks:int,firstvar:int)  symbol 
+  let fsig = for acc ="LOOPBLOCK:"+toword.firstvar+"(", t = types do acc + typerep.t + ","
+ end( acc >> 1 +")"  )
+   symbol(fsig,"$loopblock",[toword.noblocks], specialbit) 
+  
 
-Function Loopblock(types:seq.mytype)symbol 
-let fsig = for acc ="LOOPBLOCK(", t = types do acc + typerep.t + ","end(acc)
-+ "int)"
- symbol(fsig,"$loopblock","?", specialbit)
+Function firstvar(a: symbol) int 
+toint.(fsig.a )_3 
+    
+Function noblocks(a:symbol) int  toint.first.returntype.a 
+      
 
 Function maybepacked(t:mytype) boolean
  abstracttype.t = "seq"_1 ∧ abstracttype.parameter.t ∈ "byte bit packed2 packed3 packed4 packed5 packed6"

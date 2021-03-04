@@ -168,10 +168,10 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   Lcode2(code.l, [ localmap(arg.m, top.args.l)] + lmap.l, noblocks.l, regno.l, pop(args.l, 1), blocks.l)
   else if action = "SET"_1 then l
   else if action = "LOOPBLOCK"_1 then
-  let varcount = arg.m - 1
-   let firstvar = constvalue.slot.top.args.l
- let bodymap = for acc = lmap.l, @e = arithseq(varcount, 1, 1)do addloopmapentry(acc, firstvar, regno.l, @e)end(acc)
- let pushexptypes = for acc = args.l, e = llvmtypelist.m do push(acc, typ.e)end(acc)
+  let varcount =   arg.m  
+  let argstk=  \\ this value added is never used \\ push(args.l,0)  
+ let bodymap = for acc = lmap.l, @e = arithseq(varcount, 1, 1)do addloopmapentry(acc, firstvar.m, regno.l, @e)end(acc)
+ let pushexptypes = for acc = argstk, e = llvmtypelist.m do push(acc, typ.e)end(acc)
    let newstk = push(push(pushexptypes, varcount), 2)
     \\ stack from top is kind, noexps, firstvar, exptypes, exps \\
     let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, newstk, blocks.l)

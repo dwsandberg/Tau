@@ -85,13 +85,14 @@ function tailrecusion(nodes:seq.bbnode,self:symbol) seq.symbol
       else 
    let plist = for acc = empty:seq.symbol, e2 = arithseq(nopara, 1, 1)do 
       acc + Local.e2 end(acc)
-   let entrynode= bbnode(0,  plist + Lit(nopara + 1)+Loopblock.paratypes.self,"loop"_1,0,0 )
  for acc=empty:seq.bbnode , n= nodes  do
       acc+if kind.n="exit"_1 &and (code.n)_-2 =self then
       bbnode(nodeno.n,adjustvar(code.n >> 2,nopara)+continue.nopara,"continue"_1,0,0)
       else 
       bbnode(nodeno.n,adjustvar(code.n,nopara),kind.n,brt.n,brf.n)
- end  (   flattennodes(acc+entrynode,resulttype.self))
+ end  (    let entrynode= bbnode(0,  plist 
+ +Loopblock(paratypes.self,length.acc+1,nopara+1 ),"loop"_1,0,0 )
+  flattennodes(acc+entrynode,resulttype.self))
      
  use seq.bbnode    
     
@@ -102,7 +103,7 @@ function adjustvar(s:seq.symbol, delta:int)seq.symbol
    else if isdefine.a then
       acc+Define.toword(toint.(fsig.a)_2 + delta) 
    else if isloopblock.a then
-       acc >> 1 + Lit(value.last.acc + delta) + a
+      acc+Loopblock(paratypes.a,noblocks.a,firstvar.a + delta)
      else acc+a
     end  (acc)
 
@@ -123,6 +124,17 @@ function addlooplocals(map:worddict.seq.symbol, firstvar:int, nextvar:int, nopar
  else
   addlooplocals(replace(map, toword(firstvar + i), [ var(nextvar + i)]), firstvar, nextvar, nopara, i + 1)
 
+function  reducebr( result:seq.symbol) seq.symbol
+    let t=result_-3 
+    if t=NotOp then
+        reducebr(result >> 3+result_-1+result_-2)
+    else if not.isconst.t then result
+    else 
+      let branch=if t=Litfalse then result_-1
+      else result_-2
+       result >> 2 +[branch,branch]
+     
+
 function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, mapX:worddict.seq.symbol
 , apply:boolean,self:symbol)expandresult
      for   callsself=false,option="INLINE"_1,result=empty:seq.symbol,nextvar=nextvarX ,map=mapX, sym = org do
@@ -136,9 +148,13 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
      else
       next(callsself,option, result + Define.toword.nextvar, nextvar + 1, replace(map, thelocal, [ var.nextvar]))
     else if isloopblock.sym then
-    let nopara = nopara.sym - 1
-    let firstvar = value.result_len
-     next(callsself,option, subseq(result, 1, len - 1) + Lit.nextvar + sym, nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0))
+      assert first.fsig.sym="LOOPBLOCK"_1 report "XXX"+fsig.sym
+     let firstvar=if first.fsig.self="memcpy"_1 then 6   else
+     assert  (fsig.sym)_3 &ne first."(" report "???} self:"+print.self+EOL+print.org
+     firstvar.sym
+    let nopara = nopara.sym
+       next(callsself,option,  result+ Loopblock(paratypes.sym,noblocks.sym,nextvar )
+     , nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0))
     else if isRecord.sym ∨ isSequence.sym then
     let nopara = nopara.sym
     let args = subseq(result, len + 1 - nopara, len)
@@ -153,17 +169,13 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
     let t = lookup(map,(fsig.sym2)_1)
      if isempty.t then next(callsself,option, result +if isempty.t then [sym] else  t_1, nextvar, map)
      else next(callsself,option, result + t_1, nextvar, map)
-    else if sym=Br &and fsig.result_-3 = "∈(word, word seq)" &and module.result_-4 ="$words"  &and length.fsig.result_-4=1  
-         then
-        let newresult=  result >> 4 +Word.first.fsig.result_-4+EqOp+subseq(result,len-1,len)
-        +Br
-          next(callsself,option, newresult, nextvar, map)
-    else \\
-          if  fsig.result_-3 ∈ ["∈(int, int seq)","∈(word, word seq)"] &and  isconst.result_-4 
-        &and islocal.result_-5 then
+    else if sym = Br then
+          next(callsself,option, reducebr.result + sym, nextvar, map)
+    else 
               next(callsself,option, result + sym, nextvar, map) 
-    else   next(callsself,option, result + sym, nextvar, map)
-     else \\ next(callsself,option, result + sym, nextvar, map)
+   else  if length.result > 2 &and isconst.last.result &and  islocal.result_-2
+    &and fsig.sym ∈ ["∈(int, int seq)","∈(word, word seq)"] then 
+     next(callsself,option ,result >> 2 +removeismember(last.result,result_-2),nextvar,map)
    else if apply ∧ (fsig.sym)_1 ∈ "forexp"then 
     let f=forexpcode(sym, result, nextvar)
     next(callsself,option, code.f, nextvar.f, map)
@@ -330,8 +342,7 @@ let newcode= if not.isempty.isnoop then isnoop
   subseq(code, 1, startofsymbols - 1) + Define.nextvar1 + theseq + GetSeqLength
   + Define(nextvar1 + 1)
   + Lit.1
-  + Lit.nextvar
-  + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint)
+  + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint,5+blkadjust,nextvar)
   + \\ 2 if masteridx > totallength then exit \\
   [ masteridx, totallength, GtOp, Lit.4, Lit.3, Br]
   +\\ 3 else let sequenceele = seq_(idx)\\ 
@@ -480,6 +491,24 @@ function backparse(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
     else first
      backparse(s, b - 1, no - 1, [ b] + result)
 
+function removeismember(c:symbol,var:symbol) seq.symbol
+ if module.c="$words" then 
+    let words= fsig.c
+    if isempty.words then [Litfalse] else 
+    let t=length.words+1
+    if length.words=1 then [var,Word.words_1,EqOp] 
+    else
+     for acc=empty:seq.symbol,idx=2,w = words >> 1   do 
+         next(acc+[var,Word.w,EqOp,Lit.t,Lit(idx), Br] ,idx+1)
+     end(acc+[var,Word.last.words,EqOp,Exit,Littrue,Exit,Block(mytype."boolean",t)])
+  else
+     let z=constantcode.c << 2
+     if isempty.z then [Litfalse] else
+     let t=length.z+1
+     for acc=empty:seq.symbol,idx=2,w = z >> 1   do 
+       next(acc+[var,w,EqOp,  Lit.t,Lit(idx), Br] ,idx+1)
+      end(acc+[var, last.z,EqOp,   Exit,Littrue,Exit
+              ,Block(mytype."boolean",t)])
 
 
 Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)

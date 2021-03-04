@@ -86,6 +86,8 @@ Export action(match5)word
 
 Export arg(match5)int
 
+Function firstvar(a:match5) int length.a
+
 Export llvmtypelist(match5)seq.llvmtype
 
 type match5 is sym:symbol, length:int, parts:internalbc, action:word, arg:int, code:seq.symbol, llvmtypelist:seq.llvmtype
@@ -348,10 +350,8 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol) match5
     else
      addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, [ tollvmtype(alltypes, parameter.modname.xx)])
    else if isloopblock.xx then
-     let initacc= empty:seq.llvmtype 
-     let initseq=paratypes.xx >> 1
-     addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, 
-       for oldacc=initacc,e20=initseq do oldacc + tollvmtype(alltypes, e20) end( oldacc))
+       addtemplate(xx, firstvar.xx, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, 
+       for oldacc=empty:seq.llvmtype,e20= paratypes.xx      do oldacc + tollvmtype(alltypes, e20) end( oldacc))
     else addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, [ i64])
   else
    \\ handle builtin package \\

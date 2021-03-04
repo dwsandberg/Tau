@@ -131,28 +131,26 @@ Function intlit(s:UTF8)int cvttoint.decodeUTF8.s
 Function cvttoint(s:seq.char)int
  \\ Hex values starting with 0x or 0X are allowed. \\
  if length.s > 2 ∧ s_2 ∈ decodeword.first."Xx"then
- toint.for acc = 0x0, @e = s do hexdigit(acc, @e)end(acc)
- else
-  let val = for acc = 0, @e = s do decimaldigit(acc, @e)end(acc)
-   \\ Since there are more negative numbers in twos-complement we calculate using negative values. \\
-   if val = 0 ∨ s_1 = char1."-"then val else-val
-
-function hexdigit(b:bits, c:char)bits
- let validhex = decodeword.first."0123456789ABCDEFabcdef"
+ toint.for b = 0x0, c = s do  let validhex = decodeword.first."0123456789ABCDEFabcdef"
  let i0 = binarysearch(validhex, c)
  let i = if i0 > 16 then i0 - 6 else i0
   if i > 0 then b << 4 ∨ bits(i - 1)
   else
-   assert c ∈ [ char1."x", char1."X", nbspchar]report"invalid hex digit" + encodeword.[ c]
+   assert c ∈ [ char1."x", char1."X", nbspchar]report"invalid hex digit" + encodeword.s
     b
-
-function decimaldigit(val:int, c:char)int
- let validdigits = decodeword.first."0123456789"
- let i = binarysearch(validdigits, c)
-  if i > 0 then val * 10 - (i - 1)
-  else
-   assert c ∈ [ char1."-", nbspchar]report"invalid digit" + encodeword.[ c] + stacktrace
+ end(b)
+ else
+  let validdigits = decodeword.first."0123456789"
+  let val = for val = 0, c = s do 
+         let i = binarysearch(validdigits, c)
+         if i > 0 then val * 10 - (i - 1)
+        else
+   assert c ∈ [ char1."-", nbspchar]report"invalid digit" + encodeword.s + stacktrace
     val
+end(val)
+   \\ Since there are more negative numbers in twos-complement we calculate using negative values. \\
+   if val = 0 ∨ s_1 = char1."-"then val else-val
+
 
 -------------
 
@@ -197,7 +195,7 @@ Function makereal(w:seq.word)real
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
  if i > length.s then
- let r = if decimals < 1 then toreal.val else toreal.val / toreal.decimals
+   let r = if decimals < 1 then toreal.val else toreal.val / toreal.decimals
    if neg < 1 then-1.0 * r else r
  else if between(toint.s_i, 48, 57)then
  reallit(s, if decimals = -1 then-1 else decimals * 10, i + 1, 10 * val + toint.s_i - 48, neg)
