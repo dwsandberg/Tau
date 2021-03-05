@@ -57,24 +57,24 @@ use graph.bbnode
 
 use set.bbnode
 
-function firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)program
-let nopara = nopara.rep
- if isempty.removeoptions.code then map(p, rep, code)
+function firstopt(p:program, s:symbol, code:seq.symbol, alltypes:typedict)seq.symbol
+ if isempty.removeoptions.code then   code 
  else
+  let nopara = nopara.s
   let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
   let code1= removeoptions.code
-  let s = symbol(fsig.rep, module.rep, returntype.rep)
-   let b= tailrecusion(xxx(alltypes,p,toseq.nodes.mergeblocks.code1,s,pdict,length.code1),s)
+  let b= tailrecusion(xxx(alltypes,p,toseq.nodes.mergeblocks.code1,s,pdict,length.code1),s)
   let a2 = scancode(alltypes,p, b, nopara + 1, pdict, true,s)
-    addf(p, s, a2,getoption.code)
-       
+     fixoptions(s, a2,getoption.code) 
+     
 function xxx(alltypes:typedict,p:program,nodes:seq.bbnode,s:symbol,pdict:worddict.seq.symbol
 ,len:int) seq.bbnode
    let a=scancode(alltypes,p,  flattennodes(nodes,resulttype.s), nopara.s + 1, pdict, true,s)
    let r=   toseq.nodes.mergeblocks.code.a
-   if len=length.code.a then r
+   if   len=length.code.a &and (len > 20 &or  for same= length.nodes=length.r, idx=1, n = r while same do
+         next( code.n=code.nodes_idx,idx+1) end (same))  then r
    else xxx(alltypes,p,r,s,pdict,length.code.a)
-       
+     
 function tailrecusion(nodes:seq.bbnode,self:symbol) seq.symbol 
        let nopara=nopara.self      
        let norecursion=for  norecursion=true ,n= nodes  while norecursion do 
@@ -124,29 +124,27 @@ function addlooplocals(map:worddict.seq.symbol, firstvar:int, nextvar:int, nopar
  else
   addlooplocals(replace(map, toword(firstvar + i), [ var(nextvar + i)]), firstvar, nextvar, nopara, i + 1)
 
-function  reducebr( result:seq.symbol) seq.symbol
-    let t=result_-3 
-    if t=NotOp then
-        reducebr(result >> 3+result_-1+result_-2)
-    else if not.isconst.t then result
-    else 
-      let branch=if t=Litfalse then result_-1
-      else result_-2
-       result >> 2 +[branch,branch]
-     
-
-function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, mapX:worddict.seq.symbol
+   function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, mapX:worddict.seq.symbol
 , apply:boolean,self:symbol)expandresult
      for   callsself=false,option="INLINE"_1,result=empty:seq.symbol,nextvar=nextvarX ,map=mapX, sym = org do
   let len = length.result
-   if isconst.sym then next(callsself,option, result + sym, nextvar, map)
+   if isconst.sym then 
+      next(callsself, \\ if   isFref.sym &and not.isdefined.lookupcode(p, sym) then   "HASUNKNOWN"_1 else \\option, result + sym, nextvar, map)
    else if isspecial.sym then
      if \\ isdefine \\(fsig.sym)_1 = "DEFINE"_1 then
     let thelocal =(fsig.sym)_2
      if len > 0 ∧ (isconst.result_len ∨ islocal.result_len)then
      next(callsself,option, subseq(result, 1, length.result - 1), nextvar, replace(map, thelocal, [ result_len]))
      else
-      next(callsself,option, result + Define.toword.nextvar, nextvar + 1, replace(map, thelocal, [ var.nextvar]))
+      next(callsself,option, result + Define.toword.nextvar, nextvar + 1, replace(map, thelocal, [ var.nextvar])) 
+    else if isbr.sym then
+       let hasnot=last.result=NotOp 
+      let  sym1= if hasnot then Br2(brf.sym,brt.sym)  else sym
+      let  result1 = if hasnot then result >> 1 else result
+       let newsym=   if last.result1=Litfalse then Br2(brf.sym1,brf.sym1)
+      else if last.result1=Littrue then Br2(brt.sym1,brt.sym1)
+       else   sym1
+         next(callsself,option,   result1 + newsym, nextvar, map)     
     else if isloopblock.sym then
       assert first.fsig.sym="LOOPBLOCK"_1 report "XXX"+fsig.sym
      let firstvar=if first.fsig.self="memcpy"_1 then 6   else
@@ -158,7 +156,11 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
     else if isRecord.sym ∨ isSequence.sym then
     let nopara = nopara.sym
     let args = subseq(result, len + 1 - nopara, len)
-     if for acc = true, @e = args do acc ∧ isconst.@e end(acc)then
+      let constargs=for acc = true, @e = args while acc do 
+            isconst.@e end(acc) \\  &and   
+            not.isFref.@e &or    isdefined.lookupcode(p,(constantcode.@e)_1) 
+          end(acc) \\
+     if constargs then
      next(callsself,option, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
      else next(callsself,option, result + sym, nextvar, map)
     else if(module.sym)_1 = "local"_1 then
@@ -169,16 +171,19 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
     let t = lookup(map,(fsig.sym2)_1)
      if isempty.t then next(callsself,option, result +if isempty.t then [sym] else  t_1, nextvar, map)
      else next(callsself,option, result + t_1, nextvar, map)
-    else if sym = Br then
-          next(callsself,option, reducebr.result + sym, nextvar, map)
-    else 
-              next(callsself,option, result + sym, nextvar, map) 
+    else  next(callsself,option, result + sym, nextvar, map) 
    else  if length.result > 2 &and isconst.last.result &and  islocal.result_-2
     &and fsig.sym ∈ ["∈(int, int seq)","∈(word, word seq)"] then 
      next(callsself,option ,result >> 2 +removeismember(last.result,result_-2),nextvar,map)
-   else if apply ∧ (fsig.sym)_1 ∈ "forexp"then 
+   else if   (fsig.sym)_1 ∈ "forexp"then 
+     let noop=forexpisnoop(sym,result)
+    if not.isempty.noop then 
+       next(callsself,option, noop, nextvar, map)
+    else    if apply then 
     let f=forexpcode(sym, result, nextvar)
     next(callsself,option, code.f, nextvar.f, map)
+    else
+    next(callsself,option,   result + sym, nextvar, map)
    else if sym=self then  next(true,option ,result+sym,nextvar,map)
    else
     let nopara = nopara.sym
@@ -192,6 +197,7 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
     let options = getoption.dd
      if(first."COMPILETIME" ∈ options ∨ fsig.sym = "_(word seq, int)")
      ∧ for acc = true, @e = subseq(result, len - nopara + 1, len)do acc ∧ isconst.@e end(acc)then
+    \\ assert  fsig.sym &ne "_(word seq, int)"  report "XXXXXXX" \\
      let newcode = interpretCompileTime(alltypes,subseq(result, len - nopara + 1, len) + sym)
      let newconst = if length.newcode > 1 then Constant2.newcode else first.newcode
        next(callsself,option, result >> nopara + newconst, nextvar, map)
@@ -272,6 +278,24 @@ compound accumaltor possiblities
 ,"+(word seq graph, word seq arc)graph.seq.word"
 ,"+(place, char seq encodingpair)maindict"] 
 
+
+function forexpisnoop (forsym:symbol,code:seq.symbol) seq.symbol
+if nopara.forsym=7  ∧ code_(-2) = Littrue 
+   ∧  abstracttype.resulttype.last.code = "seq"_1  
+ ∧  name.code_-3 = "+"
+ ∧  last.module.code_-3 = "seq"_1
+ ∧ name.code_-4 = "SEQUENCE 1" 
+ ∧ last.code = code_-8
+ ∧ last.code = code_-6
+ &and  code_-7=code_-5 then 
+let t2 = backparse(code, length.code-8, 2, empty:seq.int)
+let initacc = subseq(code, t2_1, t2_2 - 1)
+ if length.initacc = 1 ∧ isrecordconstant.initacc_1
+ ∧ constantcode.initacc_1 = [ Lit.0, Lit.0]then
+ subseq(code, 1, t2_1 - 1) + subseq(code, t2_2, length.code-8)
+ else empty:seq.symbol
+else empty:seq.symbol
+
 function forexpcode( forsym:symbol, code:seq.symbol, nextvar:int)expandresult
 let t = backparse(code, length.code, 4, empty:seq.int)
 let endexp = subseq(code, t_(-1), length.code)
@@ -296,23 +320,6 @@ let theseq = Local.nextvar1
 let totallength = Local(nextvar1 + 1)
 let seqtype = Local(nextvar1 + 2)
 let Defineseqtype = Define(nextvar1 + 2)
-let isnoop = if length.syms = 2 ∧ length.bodyexp = 4
-∧ abstracttype.resulttype.first.syms = "seq"_1
-∧ subseq(bodyexp, 1, 2) = syms
-∧ name.last.bodyexp = "+"
-∧ last.module.last.bodyexp = "seq"_1
-∧ name.bodyexp_3 = "SEQUENCE 1"
-∧ last.code = first.syms
-∧ code_(-2) = Littrue then
-let t2 = backparse(code, startofsymbols - 1, 2, empty:seq.int)
-let initacc = subseq(code, t2_1, t2_2 - 1)
- if length.initacc = 1 ∧ isrecordconstant.initacc_1
- ∧ constantcode.initacc_1 = [ Lit.0, Lit.0]then
- subseq(code, 1, t2_1 - 1) + subseq(code, t2_2, startofsymbols - 1)
- else empty:seq.symbol
-else empty:seq.symbol
-let newcode= if not.isempty.isnoop then isnoop
- else
   let blkadjust=if isblock.last.bodyexp &and abstracttype.parameter.modname.last.bodyexp ="$base"_1 then
            nopara.last.bodyexp -1 else 0
   let bodyexp2=replace$for(bodyexp, newsyms, syms)
@@ -325,8 +332,8 @@ let newcode= if not.isempty.isnoop then isnoop
             for acc=empty:seq.symbol,last=length.bodyexp2, b = back2  do  
               let clause=subseq(bodyexp2,last,b-1)
               let clause2=if length.clause=0 then clause
-                  else if last.clause=Br then
-                     clause >> 3+[Lit(4+value.clause_-3),Lit(4+value.clause_-2),Br]
+                  else if isbr.last.clause  then
+                               clause >> 1+Br2( 4+brt.last.clause , 4+brf.last.clause)
                   else if last.clause=Exit then 
                    clause >> 2 +if module.clause_-2="$for" then
                        [ masteridx, Lit.1, PlusOp, continue.length.syms]
@@ -339,23 +346,24 @@ let newcode= if not.isempty.isnoop then isnoop
                   else clause 
                 next(acc+ clause2 ,b)
             end (acc)
-  subseq(code, 1, startofsymbols - 1) + Define.nextvar1 + theseq + GetSeqLength
+let newcode=  
+ subseq(code, 1, startofsymbols - 1) + Define.nextvar1 + theseq + GetSeqLength
   + Define(nextvar1 + 1)
   + Lit.1
   + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint,5+blkadjust,nextvar)
   + \\ 2 if masteridx > totallength then exit \\
-  [ masteridx, totallength, GtOp, Lit.4, Lit.3, Br]
+  [ masteridx, totallength, GtOp ]+Br2(4,3)  
   +\\ 3 else let sequenceele = seq_(idx)\\ 
-       [theseq, GetSeqType, Defineseqtype, seqtype, Lit.0, EqOp, Lit.2, Lit.3, Br
-  , theseq, masteridx, IdxS.theseqtype, Exit]
-  + if packedseq then [ seqtype, Lit.1, EqOp, Lit.4, Lit.5, Br,
-        theseq, masteridx] + packedindex2.theseqtype + [ Exit]
+       [theseq, GetSeqType, Defineseqtype, seqtype, Lit.0, EqOp]+Br2(2,3)  
+   +[ theseq, masteridx, IdxS.theseqtype, Exit]
+  + if packedseq then [ seqtype, Lit.1, EqOp]+Br2(4,5)  
+    +   [ theseq, masteridx] + packedindex2.theseqtype + [ Exit]
   else empty:seq.symbol fi
   + [ theseq, masteridx, Callidx.theseqtype, Exit, 
      Block(elementtype, if packedseq then 5 else 3)]
   + [ Defineseqelement]
   + \\ 3 while condition \\
-  replace$for(exitexp, newsyms, syms) + [ Lit.5, Lit.4, Br]
+  replace$for(exitexp, newsyms, syms) +Br2(5,4)  
    + \\ 4 exit loop \\
   replace$for(endexp, newsyms, syms)+  Exit
   + \\ 5 do body and continue \\
@@ -394,7 +402,8 @@ function maxvarused(code:seq.symbol, i:int, lastused:int)int
    )
 
 function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.symbol, processed:program, code:seq.symbol, s:symbol)program
- if i > length.code then firstopt(processed, s, code, alltypes)
+ if i > length.code then 
+   map(processed,s,firstopt(processed, s, code, alltypes))
  else
   let sym = code_i
   let sym2 = basesym.sym
@@ -405,12 +414,17 @@ function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.
     if isdefined.r then processed
     else
      let rep2 = lookupcode(knownsymbols, sym2)
-      if length.code.rep2 > 0 then depthfirst(knownsymbols, alltypes, 1, pending + sym2, processed, code.rep2, sym2)else processed
+      if length.code.rep2 > 0 then 
+   depthfirst(knownsymbols, alltypes, 1, pending + sym2, processed, code.rep2, sym2)
+   else processed
    depthfirst(knownsymbols, alltypes, i + 1, pending, newprg, code, s)
+   
+   
 
 ________________________________
 
-function addf(p:program, s:symbol, e:expandresult,options:seq.word)program
+
+function fixoptions( s:symbol, e:expandresult,options:seq.word) seq.symbol
 let code0=code.e
 let code = removeoptions.code0
 let fsig = fsig.s
@@ -425,50 +439,65 @@ else
        "INLINE"
     else ""
      options+c
- map(p, s, if newoptions = ""then code else code + Words.newoptions + Optionsym)
-
+  if newoptions = ""then code else code + Words.newoptions + Optionsym 
 
  
 
 ---------------------------
 
 Function pass2(knownsymbols:program, alltypes:typedict)program
+  \\  ttt1(knownsymbols,alltypes,emptyprogram,emptyprogram)    \\
 let bin0 =       filterp2(emptyprogram, emptyprogram,toseq.knownsymbols, knownsymbols,alltypes)
-let bin =   filterp2(emptyprogram, simple.bin0,toseq.complex.bin0, complex.bin0,alltypes)
- \\ assert false report checkt(bin0)assert false report print.length.toseq.complex.bin + print.length.toseq.simple.bin \\
- for acc = simple.bin, sym = toseq.complex.bin do
+let bin =   filterp2(emptyprogram, core.bin0,toseq.big.bin0, big.bin0,alltypes)
+ \\ assert false report checkt(bin0)assert false report print.length.toseq.big.bin + print.length.toseq.core.bin \\
+ for acc = core.bin, sym = toseq.big.bin do
   \\ depthfirst(acc, knownsymbols, alltypes, sym)Function depthfirst(acc:program, knownsymbols:program, alltypes:typedict, sym:symbol)program \\
   depthfirst(acc, alltypes, 1, [ sym], acc, code.lookupcode(knownsymbols, sym), sym)
  end(acc)
 
-type filterp is complex:program, simple:program
+type filterp is big:program, small:program,core:program
 
-function filterp2(complex1:program,simple1:program,q:seq.symbol,z:program,alltypes:typedict) filterp
-    for complex=complex1, simple=simple1 , s = q do  
-     let codex=code.lookupcode(z, s)
-     let options = getoption.codex
-     let  code       = removeoptions.codex
+function filterp2(big1:program,core1:program,q:seq.symbol,z:program,alltypes:typedict) filterp
+    for big=big1,small=emptyprogram, core=core1 , s = q do  
+     let fullcode=code.lookupcode(z, s)
+     let options = getoption.fullcode
+     let  code       = removeoptions.fullcode
  if isempty.code ∨ "BUILTIN"_1 ∈ options ∨ "VERYSIMPLE"_1 ∈ options then
-          next(complex, map(simple, s, codex))
+          next(big, small,map(core, s, fullcode))
  else if length.code < 30 ∨ "COMPILETIME"_1 ∈ options then
- let nopara = nopara.s
- let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
-        let scanresults=scancode(alltypes,simple, code,   nopara + 1, pdict, false,s)
-        let code2 = code.scanresults
-         if length.code2 = 3 ∧ code2_1 = Local.1
-  ∧ (fsig.code2_3)_1 ∈ "IDX"
-  ∧ isconst.code2_2
-  ∨ length.code2 = 1 ∧ nopara = 1 ∧ code2_1 = Local.1 then
-            next(complex, map(simple, s, code2 + [ Words."VERYSIMPLE", Optionsym]))
-  else 
-  if  last.options.scanresults ="HASUNKNOWN"_1 ∧ "COMPILETIME"_1 ∉ options then
-            next(addf(complex, s, scanresults, options), simple)
+    let code4=firstopt(core, s, fullcode, alltypes)
+    if   "STATE"_1 &in getoption.code4  ∧ "COMPILETIME"_1 ∉ options then
+         next(map(big,s,code4),small, core)
         else 
-          let code3=if isempty.options then code2 else code2+codex_-2+Optionsym
-          next(complex, firstopt(simple, s, code3, alltypes))
+          next(big,small, map(core,s,code4))
      else 
-       next(map(complex, s, code), simple)
-     end(filterp(complex,simple))
+       next(map(big, s, code),small, core)
+     end(filterp(big,core,core))
+     
+function ttt1(   z:program,alltypes:typedict,bigin:program,corein:program)  program
+  let r=  for  big=bigin,small=emptyprogram,core=corein,s=toseq.z do
+           let fullcode=code.lookupcode(z, s)
+           let options = getoption.fullcode
+           let  code       = removeoptions.fullcode
+        if isempty.code ∨ "BUILTIN"_1 ∈ options ∨ "VERYSIMPLE"_1 ∈ options then
+              next(big,small, map(core, s, fullcode))
+           else  if length.fullcode < 30 &or  "COMPILETIME"_1 &in options then
+              let code4=firstopt(small,s,fullcode,alltypes)
+              let newoption= getoption.code4
+              if "STATE"_1 &in newoption ∧ "COMPILETIME"_1 ∉ options &or length.code4 &ge 30
+                then
+                  next(big,map(small,s,code4),core) 
+                else  
+                  next(big,map(small,s,code4),map(core,s,code4)) 
+            else next(map(big,s,fullcode),small,core)
+       end( filterp(big,small,core))
+        if  length.toseq.corein &ne length.toseq.core.r then
+               ttt1(small.r,alltypes,big.r,core.r)
+             else 
+    let p=big.r &cup small.r
+for acc = core.r, sym = toseq.p do
+   depthfirst(acc, alltypes, 1, [ sym], acc, code.lookupcode(p, sym), sym)
+ end(acc)     
 
 function backparse(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
  if no = 0 then result
@@ -499,16 +528,17 @@ function removeismember(c:symbol,var:symbol) seq.symbol
     if length.words=1 then [var,Word.words_1,EqOp] 
     else
      for acc=empty:seq.symbol,idx=2,w = words >> 1   do 
-         next(acc+[var,Word.w,EqOp,Lit.t,Lit(idx), Br] ,idx+1)
+         next(acc+[var,Word.w,EqOp]+Br2(t,idx) ,idx+1)
      end(acc+[var,Word.last.words,EqOp,Exit,Littrue,Exit,Block(mytype."boolean",t)])
   else
      let z=constantcode.c << 2
      if isempty.z then [Litfalse] else
      let t=length.z+1
      for acc=empty:seq.symbol,idx=2,w = z >> 1   do 
-       next(acc+[var,w,EqOp,  Lit.t,Lit(idx), Br] ,idx+1)
+       next(acc+[var,w,EqOp]+  Br2( t, idx  ) ,idx+1)
       end(acc+[var, last.z,EqOp,   Exit,Littrue,Exit
               ,Block(mytype."boolean",t)])
+ 
 
 
 Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)

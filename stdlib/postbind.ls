@@ -153,11 +153,11 @@ function codeforbuiltin(alltypes:typedict, issequence:boolean,  newsym:symbol, s
   if(fsig.sym)_1 ∈ "offsets"then
  \\ symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)\\
   let paratypes = paratypes.sym
-         let offset = for acc = toint.(module.sym)_1, @e = subseq(paratypes, 2, length.paratypes)do acc + length.getsubflds(alltypes, replaceT(modpara, @e))end(acc)
+   let offset = for acc = toint.(module.sym)_1, @e = subseq(paratypes, 2, length.paratypes)do acc + length.getsubflds(alltypes, replaceT(modpara, @e))end(acc)
    let  singlefld= 1 =length.getsubflds(alltypes, replaceT(modpara, resulttype.sym))
-   if singlefld then [ Lit.offset, Idx.getbasetype(coretypes,alltypes, replaceT(modpara, resulttype.sym))]
-   else [ Lit.offset, symbol("GEP(ptr seq, int)","internal","ptr")]
-        else if(fsig.sym)_1 ∈ "build"then
+   if singlefld then [ Lit.offset, Idx.getbasetype(coretypes,alltypes, replaceT(modpara, resulttype.sym)),Words."VERYSIMPLE", Optionsym]
+   else [ Lit.offset, symbol("GEP(ptr seq, int)","internal","ptr"),Words."VERYSIMPLE", Optionsym] fi 
+ else if(fsig.sym)_1 ∈ "build"then
  let c = for acc = empty:seq.seq.mytype, @e = paratypes.sym do acc + getsubflds(alltypes, replaceT(modpara, @e))end(acc)
    buildconstructor(alltypes, if issequence then \\ for seq index func \\ [ typeint]else empty:seq.mytype, c, empty:seq.mytype, 1, 1, 0, empty:seq.symbol)
  else if fsig.sym = "unpackedindex(T seq, int)"then
@@ -212,7 +212,7 @@ function encodenocode(typ:mytype)seq.symbol
   else if typ = mytype."char seq"then
   [ Lit.0, gl, Lit.1, setfld, Define."xx", gl, Lit.0, IdxInt]
   else
-   [ gl, Lit.0, IdxInt, Lit.0, EqOp, Lit.3, Lit.2, Br, gl, Lit.0
+   [ gl, Lit.0, IdxInt, Lit.0, EqOp]+Br2( 3,  2)+[ gl, Lit.0
    , IdxInt, Exit, Lit.0, gl, Words.typerep.typ, encodenosym, setfld, Define."xx", gl, Lit.0
    , IdxInt, Exit, Block(typeint, 3)]
 

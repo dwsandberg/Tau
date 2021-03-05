@@ -117,9 +117,11 @@ option.UTF8 toword(int) word COMPILETIME
 
 option.words encodeword( seq.char) word COMPILETIME
 
-/option.words  decodeword( word) seq.char COMPILETIME
 
 option.words  decodeword( word) seq.char NOINLINE
+
+\option.words  decodeword( word) seq.char COMPILETIME
+
 
 option.seq.word _(seq.word,int) word COMPILETIME
 

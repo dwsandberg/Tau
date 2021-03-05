@@ -317,7 +317,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
      let prg2 = map(prg1, symtoseq, [ Local.1 ,newsymbol("toseqX:T",mytype." T builtin",[typeptr],mytype."T seq")])
    let prg3 = map(prg2
    , symfromseq
-   , [ Local.1, GetSeqType, indexfunc, EqOp, Lit.2, Lit.3, Br, Local.1, Exit, Lit0
+   , [ Local.1, GetSeqType, indexfunc, EqOp]+Br2( 2, 3)+[Local.1, Exit, Lit0
    , Lit0, Record.[ typeint, typeint], Exit, Block(typeptr, 3), symbol("bitcast(ptr)","builtin","ptr")]
    )
      let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]

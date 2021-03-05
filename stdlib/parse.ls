@@ -177,19 +177,6 @@ function ifexp(codeif:seq.symbol,thencode :seq.symbol, elsecode:seq.symbol,type:
   t +Mark(length.t) 
  
        
-\function  removestart(code:seq.symbol)  int
-  if module.last.code="$mark"  &and length.code-toint.first.fsig.last.code=1 then
-    toint.(fsig.first.code)_3
-  else 1
-       
-\function ifexp(codeif:seq.symbol,thencode :seq.symbol, elsecode:seq.symbol,type:mytype ) seq.symbol
-   let elsecount=removestart.elsecode
-   let thencount=removestart.thencode 
-   let t=[startblk(type,1+thencount+elsecount)]+codeif +br(1,1+thencount)+ 
-        if thencount > 1 then subseq(thencode,2,length.thencode-1) else thencode+Exit2 fi
-    +      if elsecount > 1 then subseq(elsecode,2,length.elsecode-1) else elsecode+Exit2  
-  t+Mark(length.t) 
-   
 
 function action(ruleno:int, input:seq.word, place:int, R:reduction.bindinfo)bindinfo
 if ruleno = \\ G F # \\ 1 then R_1 

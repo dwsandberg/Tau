@@ -119,8 +119,8 @@ Function nopara(s:symbol)int
  if isconst.s ∨ islocal.s ∨ isparameter.s then 0
  else if isspecial.s ∧ last.module.s ∉ "$record $loopblock "then
  \\ assert last.module.s in"$continue $block $apply $exitblock $br $record $loopblock $define"report"X"+ module.s \\
-  if last.module.s = "$define"_1 then 1
-  else
+  if last.module.s = "$define"_1 &or isbr.s  then 1
+   else 
    assert length.fsig.s > 1 report "define problem"+fsig.s+module.s
    toint.(fsig.s)_2
  else if last.fsig.s ≠ ")"_1 then 0
@@ -266,7 +266,6 @@ Function Block(type:mytype, i:int)symbol
 Function br(t:int,f:int) symbol
  symbol(["branch"_1,toword.t,toword.f]+"(boolean)","$branch" ,"?")
  
- Function newway boolean true
      
 Function Loopblock(types:seq.mytype,noblocks:int,firstvar:int)  symbol 
   let fsig = for acc ="LOOPBLOCK:"+toword.firstvar+"(", t = types do acc + typerep.t + ","
@@ -324,7 +323,14 @@ function sigandmodule(s:symbol)seq.word fsig.s + module.s
 
 Function Exit symbol symbol("EXITBLOCK 1","$exitblock","?", specialbit)
 
-Function Br symbol symbol("BR 3","$br","?", specialbit)
+
+
+Function Br2(t:int,f:int)  symbol  symbol("BR2:"+toword.t+toword.f+"(boolean)","$br","?", specialbit) 
+
+ 
+Function brt(s:symbol) int    toint.(fsig.s)_3
+
+Function brf(s:symbol) int   toint.(fsig.s)_4
 
 Function Local(i:int)symbol Local.toword.i
 
@@ -405,7 +411,6 @@ Function value(s:symbol)int toint.(fsig.s)_1
 Function constantcode(s:symbol)seq.symbol
  if isFref.s then zcode.s
  else if isrecordconstant.s then 
- assert module.s = "$constant" ∧ length.zcode.s > 0 report"XXX" + module.s
    if isSequence.last.zcode.s then 
        [Lit.0,Lit.nopara.last.zcode.s]+ zcode.s >> 1  
    else zcode.s >> 1  
@@ -446,12 +451,15 @@ Function ∈(s:symbol, p:program)boolean s ∈ toset.p
 
 Function program2(a:set.symbol)program program.a
 
+        
+
 Function lookupcode(p:program, s:symbol)programele
  let t = findelement(s, toset.p)
   if isempty.t then programele.empty:seq.symbol else programele.zcode.t_1
 
 Function map(p:program, s:symbol, target:symbol, code:seq.symbol)program
-let sym=symbol(fsig.s, module.s, returntype.s, [ target] + code)
+\\ let t = if isempty.zcode.target then target else symbol(fsig.target, module.target, returntype.target)  
+\\ let sym=symbol(fsig.s, module.s, returntype.s, [ target] + code)
   program.replace(toset.p, sym)
 
 /type program is toset:set.symbol 
@@ -676,7 +684,7 @@ Function blockconversion(a:seq.symbol) seq.symbol
       else if last.module.e="$start"_1 then
          next(acc,1,0,push(stk,blockconversion(count,need,resulttype.e)))
       else if module.e="$branch" then
-         next (acc+[Lit(toint.(fsig.e)_2+count),Lit(toint.(fsig.e)_3+count),Br]
+         next (acc+Br2( toint.(fsig.e)_2+count, toint.(fsig.e)_3+count)
          , count+1
          , max(need,toint.(fsig.e)_3+count)
          ,stk)

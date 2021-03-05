@@ -102,11 +102,11 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
       else
        "blockfailure" + for a ="", e = top(stk, nopara.s)do a + print.e end(a)
     else if isbr.s then
-    assert top(stk, 3) = [ mytype."boolean", typeint, typeint]report"if problem" + for a ="", e = top(stk, 3)do a + print.e end(a)
-      ccc(alltypes, code, i + 1, push(pop(stk, 3), mytype."none"), localtypes)
+        assert top(stk) =  mytype."boolean" report"if problem" + for a ="", e = top(stk, 1)do a + print.e end(a)
+      ccc(alltypes, code, i + 1, push(pop(stk ), mytype."none"), localtypes)
     else if isloopblock.s then
-    let firstlocal =  firstvar.s 
-    let no = nopara.s
+    let firstlocal = toint.(fsig.code_(i - 1))_1
+    let no = nopara.s - 1
     let loc = addlocals(localtypes, top(stk, nopara.s), firstlocal + no - 1, no)
      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), mytype."none"), loc)
     else if(module.s)_1 = "para"_1 then

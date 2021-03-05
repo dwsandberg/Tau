@@ -20,25 +20,14 @@ use seq.bbnode
  
  use otherseq.int      
      
-
 use set.arc.bbnode
 
-  use otherseq.bbnode
+use otherseq.bbnode
   
-  use set.bbnode
+use set.bbnode
 
 type   bbnode  is nodeno:int,code:seq.symbol,kind:word,brt:int,brf:int
 
-function  nodebr(idx:int, code:seq.symbol,t:int,f:int ) bbnode
-  let exp=last.code
-  if  exp=NotOp then
-   nodebr(idx,code >> 1 ,f,t)
-else if exp=Littrue then 
-   bbnode(idx,code >> 1 ,"br"_1,t,t)
-else if exp=Litfalse then 
-    bbnode(idx,code >> 1 ,"br"_1,f,f)
-else   bbnode(idx,code,"br"_1,t,f)
- 
 function arc(b:bbnode) seq.arc.bbnode  [arc(b,b)]
 
 
@@ -76,8 +65,8 @@ Function mergeblocks(code:seq.symbol)  graph.bbnode
            let a=bbnode(idx,empty:seq.symbol,"brz"_1,toint.(fsig.sym)_2 ,toint.(fsig.sym)_3 )
                   let noblks=nopara.lastsymbol
                 push(pop(stk,noblks ),toarcs(lastsymbol,top(stk, noblks))+arc.a)
-          else if sym=Br then
-              push(stk1, arc.nodebr(idx, bbcode1+subseq(code,start,idx-3),value.code_(idx-2),value.code_(idx-1))   )
+          else if isbr.sym  then
+               push(stk1, arc.bbnode(idx, bbcode1+subseq(code,start,idx-1),"br"_1,brt.sym,brf.sym)   )
            else if  isloopblock.sym then
              push(stk1, arc.bbnode(idx,  bbcode1+subseq(code,start,idx ),"loop"_1,0,0 ))
            else if  iscontinue.sym then
@@ -137,7 +126,7 @@ function  toarcs   (sym:symbol,nodes:seq.seq.arc.bbnode) seq.arc.bbnode
                   else if code.head.arc >> 1 =[Litfalse] then
                    acc2+arc(tail.arc,brancht)
                   else 
-                 let new=nodebr(nodeno.head.arc,code.head.arc >> 1,nodeno.brancht,
+                 let new=bbnode (nodeno.head.arc,code.head.arc >> 1,"br"_1,nodeno.brancht,
                  nodeno.branchf)
                    acc2+  arc(tail.arc,new)+arc(new,brancht)+arc(new,branchf)    
                else acc2+arc
@@ -186,16 +175,16 @@ Function flattennodes( nodes:seq.bbnode,type:mytype) seq.symbol
 else  let blocksize=length.nodes
     let nodenumbers=for  acc=empty:seq.int, n = nodes do  [nodeno.n]+acc end(acc)
     for acc=empty:seq.symbol,n =nodes do
-           if kind.n="br"_1 then  code.n +Lit.findindex(brt.n,nodenumbers )+Lit.findindex(brf.n,nodenumbers )+Br  else  
+           if kind.n="br"_1 then  code.n +Br2(findindex(brt.n,nodenumbers ),findindex(brf.n,nodenumbers ))  else  
           code.n fi+acc
        end (acc+Block(type,length.nodenumbers) )
 
 function removechain(     g:graph.bbnode,n:bbnode,code:seq.symbol,pred:set.bbnode,
  org:int) graph.bbnode
-      let newcode=code+code.n
+      let newcode=code+code.n 
      let s=successors(g,n)
      if cardinality.s = 1  &and cardinality.predecessors(g,s_1)=1 then  
-        removechain( deletenode(g,n),s_1,newcode,pred,org)
+        removechain( deletenode(g,n),s_1,newcode >> 1,pred,org)
      else 
        let newnode= \\if isempty.code then n else \\bbnode( org,newcode,kind.n,brt.n,brf.n)
         deletenode(g,n)+newnode+toarcs(toseq.pred,newnode)+toarcs(newnode,toseq.s)
