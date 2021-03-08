@@ -1,197 +1,164 @@
-#!/usr/local/bin/tau  ; use bug9; xxx33
+module mergeblocks2
 
-module mergeblocks
-
-use standard 
-
-use graph.bbnode
-
-use seq.arc.bbnode
+use standard
 
 use symbol
 
 use seq.symbol
+             
+use stack.int
 
-use seq.bbnode
+use otherseq.symbol
 
- use stack.seq.arc.bbnode
- 
- use otherseq.seq.arc.bbnode
- 
- use otherseq.int      
-     
-use set.arc.bbnode
+Function cvtR(s:seq.symbol) seq.symbol
+   for acc=empty:seq.symbol,stk=push(empty:stack.int,0) ,sym =s do
+    if isloopblock.sym &or sym=Exit &or isbr.sym &or iscontinue.sym then 
+      next(acc+sym,push(stk,length.acc+1) )
+    else if not.isblock.sym then 
+      next(acc+sym,stk )
+    else 
+     let k=top(stk,nopara.sym)
+     let modbr=for  acc2=acc,   idx=1,   n=k do
+        let new= if isbr.acc2_n then  
+           replace(acc2, n,Rbr(brt.acc2_n-idx,brf.acc2_n-idx))
+         else  acc2
+          next(new,idx+1)
+        end (acc2)
+         let j=undertop(stk,nopara.sym)
+         if   isloopblock.modbr_first.k then
+            next(modbr+sym,pop(stk,nopara.sym))
+          else 
+      next(subseq(modbr,1,j)+start(resulttype.sym)+subseq(modbr,j+1,length.modbr)+
+      Block(resulttype.sym,nopara.sym+1)
+      ,pop(stk,nopara.sym))
+    end(acc)
 
-use otherseq.bbnode
-  
-use set.bbnode
+type  p56 is  count:int,type:mytype
 
-type   bbnode  is nodeno:int,code:seq.symbol,kind:word,brt:int,brf:int
+use stack.p56
 
-function arc(b:bbnode) seq.arc.bbnode  [arc(b,b)]
-
-
-function print(a:set.bbnode) seq.word for acc="",t =toseq.a do acc+print.nodeno.t end(acc) 
- 
-Function =(a:bbnode,b:bbnode) boolean nodeno.b = nodeno.a
-
-Function ?(a:bbnode,b:bbnode) ordering nodeno.b ? nodeno.a
+Function  undoR(s:seq.symbol ) seq.symbol
+  undoR(s,false)
 
 
-Function mergeblocks(code:seq.symbol)  graph.bbnode
-  for   start=1,idx=1
-     ,stk=empty:stack.seq.arc.bbnode
-     ,lastsymbol=Lit.0
-     ,bbcode=empty:seq.symbol
-     , sym=code do 
-        if isblock.sym then
-         \\ do not include block symbol in basic block \\
-          next( idx+1,idx+1,stk ,sym, empty:seq.symbol )
-        else 
-        \\ handle block followed by exit or Br differently than block not followed by Exit or Br \\
-          let merge=  isblock.lastsymbol &and (sym=Exit &or isbrz.sym )
-             &and  kind.head.first.first.top(stk, nopara.lastsymbol) &ne "loop"_1
-        \\  deal with last symbol being block if we are not merging it. \\
-          let stk1 = if merge then stk
-                      else if isblock.lastsymbol   then 
-                        pop(stk,nopara.lastsymbol)
-                     else stk
-            let  bbcode1=if merge then empty:seq.symbol 
-               else if isblock.lastsymbol   then 
-               bbcode+flattennodes(toseq.nodes.makegraph.toarcs(lastsymbol,top(stk, nopara.lastsymbol)),resulttype.lastsymbol)  
-               else bbcode
-          \\ now deal with sym and merge \\
-          let stk2= if isbrz.sym then 
-           let a=bbnode(idx,empty:seq.symbol,"brz"_1,toint.(fsig.sym)_2 ,toint.(fsig.sym)_3 )
-                  let noblks=nopara.lastsymbol
-                push(pop(stk,noblks ),toarcs(lastsymbol,top(stk, noblks))+arc.a)
-          else if isbr.sym  then
-               push(stk1, arc.bbnode(idx, bbcode1+subseq(code,start,idx-1),"br"_1,brt.sym,brf.sym)   )
-           else if  isloopblock.sym then
-             push(stk1, arc.bbnode(idx,  bbcode1+subseq(code,start,idx ),"loop"_1,0,0 ))
-           else if  iscontinue.sym then
-             push(stk1, arc.bbnode(idx,  bbcode1+subseq(code,start,idx ),"continue"_1,0,0 ))
-           else if sym=Exit then
-             if  merge then 
-               let noblks=nopara.lastsymbol
-               push(pop(stk,noblks ),toarcs(lastsymbol,top(stk, noblks)))
-             else 
-               push(stk1, arc.bbnode(idx,  bbcode1+subseq(code,start,idx ),"exit"_1,0,0 ))
-           else stk1 
-          let start2= if length.toseq.stk1=length.toseq.stk2 then start else idx+1
-          let bbcode2= if length.toseq.stk1=length.toseq.stk2 &or merge then 
-            bbcode1 else 
-           empty:seq.symbol 
-         next( start2,idx+1,stk2,sym, bbcode2)
-    end (  
-    if isblock.lastsymbol then makegraph.toarcs(lastsymbol,top(stk, nopara.lastsymbol)  )
-      else 
-      let t= (arc.bbnode(idx,  bbcode+subseq(code,start,idx )+Exit,"exit"_1,0,0 )) _1
-       deletearc(newgraph.[t] ,t))
-           
+Function  undoR(s:seq.symbol,fixblockcount:boolean) seq.symbol
+ for acc=empty:seq.symbol,stk=empty:stack.p56,count=1,sym =s do 
+     if  isstart.sym  then
+         if fixblockcount then
+          next(acc+sym,push( stk,p56( count,resulttype.sym)),2) 
+         else 
+          next(acc,push( stk,p56( count,resulttype.sym)),1) 
+     else     if  isloopblock.sym then
+          next(acc+sym,push( stk,p56( count,resulttype.sym)),2) 
+     else if isbr.sym then
+          if fixblockcount then
+                next(acc+Br2(brt.sym ,brf.sym ),stk,count+1)
+          else 
+        next(acc+Br2(brt.sym+count,brf.sym+count),stk,count+1)
+     else if  last.module.sym &in "$exitblock $continue" then
+         next(acc+sym,stk,count+1)
+     else if isblock.sym then 
+        next(acc+Block( type.top.stk ,count-1),pop(stk ),count.top.stk)
+     else next(acc+sym,stk,count)
+end( acc)
 
-function   print(a:seq.seq.arc.bbnode) seq.word 
-   for acc="",t = a do  acc+"{"+print.t+"}" end(acc)
- 
-   
- 
-function print(a:seq.arc.bbnode ) seq.word
-     for acc="",t =  a do
-  acc+"("+print.nodeno.tail.t+print.nodeno.head.t+")"
-   end(acc)
-   
-function  toarcs   (sym:symbol,nodes:seq.seq.arc.bbnode) seq.arc.bbnode
-    for  acc=empty:seq.arc.bbnode,blkno=nopara.sym,nodelist=empty:seq.bbnode , nl=reverse.nodes do 
-         let n=tail.nl_1
-         if  length.nl=1 &and head.nl_1=n then
-         let kind= kind.n
-          if kind="br"_1 then 
-                let brancht=  nodelist_(brt.n - blkno)
-                let branchf=  nodelist_(brf.n - blkno)
-                let new=  bbnode( nodeno.n,code.n,kind.n,nodeno.brancht,nodeno.branchf)
-              next(  acc+[arc(new,brancht),arc(new,branchf)],blkno-1,[new]+nodelist)
-           else if kind="loop"_1 then
-              next( acc+arc(n,first.nodelist),blkno-1, [n]+nodelist)
-            else \\ exit continue\\
-             next(acc,blkno-1, [n]+nodelist) 
-        else 
-          let toadd= if kind.head.last.nl &ne "brz"_1 then nl else 
-            let bb=head.last.nl
-          let brancht=   nodelist_(brt.bb - blkno)
-          let branchf=   nodelist_(brf.bb - blkno) 
-           for acc2=empty:seq.arc.bbnode, arc = nl >> 1 do
-               if kind.head.arc="exit"_1 then 
-                  if code.head.arc >> 1 =[Littrue] then
-                   acc2+arc(tail.arc,branchf)
-                  else if code.head.arc >> 1 =[Litfalse] then
-                   acc2+arc(tail.arc,brancht)
-                  else 
-                 let new=bbnode (nodeno.head.arc,code.head.arc >> 1,"br"_1,nodeno.brancht,
-                 nodeno.branchf)
-                   acc2+  arc(tail.arc,new)+arc(new,brancht)+arc(new,branchf)    
-               else acc2+arc
-            end(  acc2)
-           next(acc+toadd,blkno-1,[n]+nodelist)
-        end  (acc)
-        
-Export kind(bbnode) word
+use seq.int
 
-Export code(bbnode) seq.symbol 
+type ggg is code:seq.symbol,stk:stack.int
 
-Export type:bbnode     
-
-Export brt(bbnode) int
-
- Export brf(bbnode) int
- 
- Export bbnode(int, seq.symbol, word, int, int) bbnode
- 
- Export nodeno(bbnode) int
- 
-   
-function  makegraph(a:seq.arc.bbnode) graph.bbnode
-  let g0=newgraph.a
-    \\ remove unreachable nodes \\
-  let b=      for g=g0,n=toseq(nodes.g0-reachable(g0, [last.toseq.nodes.g0] ) ) do deletenode(g,n) end (g)
-  \\ remove chains \\
-   for  g=b, n = toseq.nodes.b   do 
-         if kind.n="loop"_1 then g else 
-        let s=successors(g,n)
-       if cardinality.s &ne 1 then g
-       else 
-         \\ n may not be the same as predcessors(g,s_1)_1 as the nodes of b might not have 
-         identicial information to the nodes in g \\
-             removechain(g,predecessors(g,s_1)_1,empty:seq.symbol,predecessors(g,n),nodeno.n) 
-    end(g)
-
-use otherseq.seq.int
-   
-     
-Function flattennodes( nodes:seq.bbnode,type:mytype) seq.symbol
- \\ nodes are numbered in order they appear in orignal code.  This many be different from the order they appear in the funcion parameter
- which is the reverse order they will appear in the output \\
- if length.nodes=1 then   
-         code.(nodes)_1  >> 1 
-else  let blocksize=length.nodes
-    let nodenumbers=for  acc=empty:seq.int, n = nodes do  [nodeno.n]+acc end(acc)
-    for acc=empty:seq.symbol,n =nodes do
-           if kind.n="br"_1 then  code.n +Br2(findindex(brt.n,nodenumbers ),findindex(brf.n,nodenumbers ))  else  
-          code.n fi+acc
-       end (acc+Block(type,length.nodenumbers) )
-
-function removechain(     g:graph.bbnode,n:bbnode,code:seq.symbol,pred:set.bbnode,
- org:int) graph.bbnode
-      let newcode=code+code.n 
-     let s=successors(g,n)
-     if cardinality.s = 1  &and cardinality.predecessors(g,s_1)=1 then  
-        removechain( deletenode(g,n),s_1,newcode >> 1,pred,org)
-     else 
-       let newnode= \\if isempty.code then n else \\bbnode( org,newcode,kind.n,brt.n,brf.n)
-        deletenode(g,n)+newnode+toarcs(toseq.pred,newnode)+toarcs(newnode,toseq.s)
-           
-Function Brz(t:int,f:int) symbol   symbol( "brz"+toword.t+toword.f+"(boolean)" ,"$brz","none")
+Function optB(s:seq.symbol,self:symbol) seq.symbol
+   for acc=empty:seq.symbol,stk= empty:stack.int ,lastsymbol=Lit.0 ,sym =s do
+  if isblock.lastsymbol then
+        let noblocks=countnodes(stk)
+        let nodes=top(stk,noblocks)
+        let stk1=pop(stk,noblocks)
+      if isloopblock.acc_-first.nodes then
+          next(acc+sym,stk1,sym)
+     else    if false &and isbr.sym then
+           \\ adjust br in enclosing block  \\
+          let code0=adjust(acc >> 1,stk1,  noblocks-2)
+         \\ remove start of block   \\
+           let code1=subseq(code0,1,-first.nodes-1)
+           + subseq(code0,-first.nodes+1,length.code0)
+               \\  replace exit by br sym \\
+        let t=for   code2=code1,stk2=stk1 ,adjust=noblocks-2 , n1 = nodes << 1
+        do 
+          let n=n1-1
+            next(  if code2_n=Exit then replace(code2,n,  Rbr(brt.sym+adjust,brf.sym+adjust)  ) else code2,push(stk2,n)
+            ,adjust-1)
+         end( ggg(code2, stk2 )  )
+         next(code.t,stk.t,sym)
+     else   if sym=Exit then 
+         \\  adjust br in enclosing block  \\
+          let code0=adjust(acc >> 1,stk1, noblocks-2)
+        \\ remove start of block   \\
+           let code1=subseq(code0,1,-first.nodes-1)
+           + subseq(code0,-first.nodes+1,length.code0)
+         \\   build new stk  \\
+       let stk2=  for stk2=stk1 ,  n = nodes << 1 do           push(stk2,n-1) 
+         end( stk2)
+         next(code1,stk2,sym)
+     else   if first.module.sym &in "  $br  $exitblock $continue " then
+          next(acc+sym,push(stk1,length.acc+1),sym)
+     else if isstartorloop.sym  then
+          next(acc+sym,push(stk1,-length.acc-1),sym)
+     else next(acc+sym,stk1,sym)
+ else   
+    if isstartorloop.sym then
+     next(acc+sym,push(stk,-length.acc-1),sym)
+    else if first.module.sym &in " $br  $exitblock $continue" then
+        next(acc+sym,push(stk,length.acc+1),sym)
+    else  \\  if isblock.sym then
+        assert false report for acc2=print.length.acc+print.countnodes(stk),i=toseq.stk do acc2+print.i end(acc2)
+       next(acc+sym,pop(stk,nopara.sym),sym)
+ else  \\ next(acc+sym,stk,sym)
+       end( if isblock.lastsymbol &and not.isconst.self
+          &and first.toseq.stk=-1 then tailR(acc,self,stk)
+          else 
+           acc
+        )
+         
+    function tailR(code:seq.symbol,self:symbol,stk:stack.int) seq.symbol
+      let l= for l=empty:seq.int,ss=toseq.stk do  
+           if ss > 0 &and code_ss = Exit &and code_(ss-1)=self then  [ss]+l  else l 
+        end(l)
+        if isempty.l then code else
+        let nopara=nopara.self
+        let plist = for acc = empty:seq.symbol, e2 = arithseq(nopara, 1, 1)do   acc + Local.e2 end(acc)
+        let code2=  for code2=code, i = l do
+             subseq(code2,1,i-2)+continue.nopara+subseq(code2,i+1,length.code2)
+           end(code2)
+         plist 
+ +Loopblock(paratypes.self,nopara+1 ,resulttype.self) + adjustvar(code2 << 1,nopara)
        
-function isbrz(s:symbol) boolean module.s="$brz"
+function adjustvar(s:seq.symbol, delta:int)seq.symbol
+ for  acc=empty:seq.symbol, a =s do
+    if islocal.a then
+      acc+Local(toint.(fsig.a)_1 + delta) 
+   else if isdefine.a then
+      acc+Define.toword(toint.(fsig.a)_2 + delta) 
+   else if isloopblock.a then
+      acc+Loopblock(paratypes.a,firstvar.a + delta,resulttype.a)
+     else acc+a
+    end  (acc)
+    
+function adjust(code:seq.symbol,stk:stack.int, adjust:int) seq.symbol
+     let c=countnodes.stk -1
+     for acc=code,     blockcount=c   , i=top( stk,c) do
+      let sym=code_i
+      if  isbr.sym &and (brt.sym > blockcount &or brf.sym > blockcount) then
+        let newt=if brt.sym > blockcount  then brt.sym+adjust else brt.sym
+        let newf=if brf.sym > blockcount  then brf.sym+adjust else brf.sym
+        assert true report "here"+ print.newf+print.brf.sym+print.adjust+print.blockcount
+         +for l="stk",e= toseq.stk do l+print.e end(l)
+         next( replace(code,top.stk,Rbr(newt,newf)),blockcount-1)
+      else 
+         next( code,blockcount-1)
+    end(acc)         
 
+function countnodes(s:stack.int) int
+    if top.s < 0 then 1 else 1+countnodes(pop.s)
 
-
+Function mergeblocks2(s:seq.symbol,self:symbol) seq.symbol
+   undoR.optB(cvtR.s,self) 
+  

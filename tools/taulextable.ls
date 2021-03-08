@@ -19,9 +19,11 @@ use seq.seq.word
 type lexaction1 is w:word, tokenno:int, label:word
 
 Function hasdigit(w:word)boolean
-let l = tointseq.decodeword.w
- between(l_1, 48, 57)
- ∨ l_1 = toint.hyphenchar ∧ length.l > 1 ∧ between(l_2, 48, 57)
+ let l = tointseq.decodeword.w
+  between(l_1, 48, 57) ∨     l_1 = toint.hyphenchar  ∧  length.l > 1
+   ∧   between(l_2, 48, 57)  
+   
+
 
 function terminals seq.word".=():>]-for * comment, [_fi is I if # then else let assert report ∧ ∨ $wordlist while end W do"
 
@@ -54,7 +56,8 @@ function tolexaction(next:word)lexaction1
   else if next ∈ "+-∈ ∉"then"-"_1
   else if next ∈ "* / mod ∪ ∩ >> <<"then"*"_1
   else if next ∈ "_^"then"_"_1
-  else if next ∈ terminals then next else if hasdigit.next then"I"_1 else"W"_1
+  else if next ∈ terminals then next else 
+   if hasdigit.next then"I"_1 else"W"_1
   let idx = findindex(token, terminals)
   let action = if idx > length.terminals then findindex("W"_1, terminals)else idx
    lexaction1(next, action, next)

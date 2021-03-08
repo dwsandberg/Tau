@@ -267,17 +267,8 @@ Function br(t:int,f:int) symbol
  symbol(["branch"_1,toword.t,toword.f]+"(boolean)","$branch" ,"?")
  
      
-Function Loopblock(types:seq.mytype,noblocks:int,firstvar:int)  symbol 
-  let fsig = for acc ="LOOPBLOCK:"+toword.firstvar+"(", t = types do acc + typerep.t + ","
- end( acc >> 1 +")"  )
-   symbol(fsig,"$loopblock",[toword.noblocks], specialbit) 
   
-
-Function firstvar(a: symbol) int 
-toint.(fsig.a )_3 
-    
-Function noblocks(a:symbol) int  toint.first.returntype.a 
-      
+       
 
 Function maybepacked(t:mytype) boolean
  abstracttype.t = "seq"_1 ∧ abstracttype.parameter.t ∈ "byte bit packed2 packed3 packed4 packed5 packed6"
@@ -325,7 +316,35 @@ Function Exit symbol symbol("EXITBLOCK 1","$exitblock","?", specialbit)
 
 
 
-Function Br2(t:int,f:int)  symbol  symbol("BR2:"+toword.t+toword.f+"(boolean)","$br","?", specialbit) 
+Function Br2(t:int,f:int)  symbol  
+symbol("BR2:"+toword.t+toword.f+"(boolean)","$br","?", specialbit) 
+
+Function start(t:mytype) symbol symbol("/start",typerep.t+"$loopblock",typerep.t
+, specialbit)
+
+Function isstartorloop(sym:symbol) boolean last.module.sym &in "$loopblock   "
+
+Function isstart(sym:symbol)  boolean   
+last.module.sym = "$loopblock"_1 &and (fsig.sym)_1 &ne "LOOPBLOCK"_1
+
+
+last.module.sym = "$start"_1
+
+Function isloopblock(s:symbol)boolean  
+last.module.s = "$loopblock"_1 &and (fsig.s)_1="LOOPBLOCK"_1
+
+  
+Function Loopblock(types:seq.mytype, firstvar:int,resulttype:mytype)  symbol 
+  let fsig = for acc ="LOOPBLOCK:"+toword.firstvar+"(", t = types do acc + typerep.t + ","
+ end( acc >> 1 +")"  )
+   symbol(fsig, typerep.resulttype+ "$loopblock",typerep.resulttype, specialbit) 
+
+Function firstvar(a: symbol) int 
+toint.(fsig.a )_3 
+  
+
+Function Rbr(t:int,f:int) symbol 
+symbol("/br:"+ toword.t+toword.f+"(boolean)","$br","none", specialbit)
 
  
 Function brt(s:symbol) int    toint.(fsig.s)_3
@@ -396,7 +415,6 @@ Function isRecord(s:symbol)boolean module.s = "$record"
 
 Function isSequence(s:symbol)boolean last.module.s = "$sequence"_1
 
-Function isloopblock(s:symbol)boolean module.s = "$loopblock"
 
 Function iscontinue(s:symbol)boolean module.s = "$continue"
 
@@ -562,7 +580,9 @@ Function print(f:symbol)seq.word
    else '"' + fsig + '"'
   else if module = "$word"then"WORD" + fsig
   else if isspecial.f then
-  if fsig_1 ∈ "BLOCK EXITBLOCK BR LOOPBLOCK FINISHLOOP CONTINUE"then fsig + " &br"else fsig
+   if   fsig_1="BLOCK"_1     then  fsig +"("+print.resulttype.f+")"
+   else if fsig_1 ∈ "/br /start BLOCK  EXITBLOCK BR2 LOOPBLOCK   CONTINUE"then fsig + " &br"
+   else fsig
   else if isrecordconstant.f then fsig
   else if isFref.f then"FREF" + print.(constantcode.f)_1
  else if last.fsig = ")"_1 then fsig else fsig + "()" fi 

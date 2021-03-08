@@ -51,11 +51,9 @@ use set.seq.word
 
 use seq.seq.seq.symbol
 
-use mergeblocks
 
-use graph.bbnode
+use mergeblocks2
 
-use set.bbnode
 
 function firstopt(p:program, s:symbol, code:seq.symbol, alltypes:typedict)seq.symbol
  if isempty.removeoptions.code then   code 
@@ -63,49 +61,23 @@ function firstopt(p:program, s:symbol, code:seq.symbol, alltypes:typedict)seq.sy
   let nopara = nopara.s
   let pdict = addpara(emptyworddict:worddict.seq.symbol, nopara)
   let code1= removeoptions.code
-  let b= tailrecusion(xxx(alltypes,p,toseq.nodes.mergeblocks.code1,s,pdict,length.code1),s)
-  let a2 = scancode(alltypes,p, b, nopara + 1, pdict, true,s)
-     fixoptions(s, a2,getoption.code) 
+  fixoptions(s, xxx(alltypes,p,code1,s,pdict,true),getoption.code) 
      
-function xxx(alltypes:typedict,p:program,nodes:seq.bbnode,s:symbol,pdict:worddict.seq.symbol
-,len:int) seq.bbnode
-   let a=scancode(alltypes,p,  flattennodes(nodes,resulttype.s), nopara.s + 1, pdict, true,s)
-   let r=   toseq.nodes.mergeblocks.code.a
-   if   len=length.code.a &and (len > 20 &or  for same= length.nodes=length.r, idx=1, n = r while same do
-         next( code.n=code.nodes_idx,idx+1) end (same))  then r
-   else xxx(alltypes,p,r,s,pdict,length.code.a)
-     
-function tailrecusion(nodes:seq.bbnode,self:symbol) seq.symbol 
-       let nopara=nopara.self      
-       let norecursion=for  norecursion=true ,n= nodes  while norecursion do 
-            kind.n &ne "exit"_1 &or (code.n)_-2 &ne  self  
-       end (norecursion)
-      if length.nodes=1  &or kind.(nodes)_1="loop"_1 &or norecursion &or nopara=0 then
-         flattennodes(nodes,resulttype.self)
-      else 
-   let plist = for acc = empty:seq.symbol, e2 = arithseq(nopara, 1, 1)do 
-      acc + Local.e2 end(acc)
- for acc=empty:seq.bbnode , n= nodes  do
-      acc+if kind.n="exit"_1 &and (code.n)_-2 =self then
-      bbnode(nodeno.n,adjustvar(code.n >> 2,nopara)+continue.nopara,"continue"_1,0,0)
-      else 
-      bbnode(nodeno.n,adjustvar(code.n,nopara),kind.n,brt.n,brf.n)
- end  (    let entrynode= bbnode(0,  plist 
- +Loopblock(paratypes.self,length.acc+1,nopara+1 ),"loop"_1,0,0 )
-  flattennodes(acc+entrynode,resulttype.self))
-     
- use seq.bbnode    
+ function xxx(alltypes:typedict,p:program,code:seq.symbol,s:symbol,
+ pdict:worddict.seq.symbol,first:boolean
+) expandresult
+     let a=scancode(alltypes,p,  code, nopara.s + 1, pdict, false,s)
+      let a1= if first then cvtR.code.a else code.a
+      let new0=optB(a1,Lit.1)
+      let new=undoR.new0 
+     if  length.code=length.new &and length.code > 20 &or new=code then 
+        \\ expandresult(nextvar.a,undoR.optB(cvtR.code.z,s),options.z) \\ 
+         let t= if  first.options.a ="CALLSSELF"_1 then optB(new0,s) else new0
+       \\ expandresult(nextvar.a,expandforexp(undoR.t,nextvar.a) ,options.a)\\
+                 scancode(alltypes,p,  undoR.t, nopara.s + 1, pdict, true,s)
+     else 
+     xxx(alltypes,p,new,s,pdict,true)
     
-function adjustvar(s:seq.symbol, delta:int)seq.symbol
- for  acc=empty:seq.symbol, a =s do
-    if islocal.a then
-      acc+Local(toint.(fsig.a)_1 + delta) 
-   else if isdefine.a then
-      acc+Define.toword(toint.(fsig.a)_2 + delta) 
-   else if isloopblock.a then
-      acc+Loopblock(paratypes.a,noblocks.a,firstvar.a + delta)
-     else acc+a
-    end  (acc)
 
 function print(s:seq.int)seq.word for acc ="", @e = s do acc + toword.@e end(acc)
 
@@ -151,7 +123,7 @@ function addlooplocals(map:worddict.seq.symbol, firstvar:int, nextvar:int, nopar
      assert  (fsig.sym)_3 &ne first."(" report "???} self:"+print.self+EOL+print.org
      firstvar.sym
     let nopara = nopara.sym
-       next(callsself,option,  result+ Loopblock(paratypes.sym,noblocks.sym,nextvar )
+       next(callsself,option,  result+ Loopblock(paratypes.sym,nextvar,resulttype.sym )
      , nextvar + nopara, addlooplocals(map, firstvar, nextvar, nopara, 0))
     else if isRecord.sym ∨ isSequence.sym then
     let nopara = nopara.sym
@@ -278,6 +250,13 @@ compound accumaltor possiblities
 ,"+(word seq graph, word seq arc)graph.seq.word"
 ,"+(place, char seq encodingpair)maindict"] 
 
+function expandforexp(code:seq.symbol,nextvarin:int) seq.symbol
+  for  result=empty:seq.symbol, nextvar=nextvarin,sym=code do
+   if last.module.sym="builtin"_1   &and  (fsig.sym)_1 = "forexp"_1 then 
+    let   f=forexpcode(sym, result, nextvar)
+   next(  code.f, nextvar.f) 
+   else next(result+sym,nextvar)
+ end(result)
 
 function forexpisnoop (forsym:symbol,code:seq.symbol) seq.symbol
 if nopara.forsym=7  ∧ code_(-2) = Littrue 
@@ -313,8 +292,10 @@ let nextvar1 = value.seqelement + 1
 let Defineseqelement = Define.fsig.seqelement
 let newsyms = tmp + seqelement
 let theseqtype =(paratypes.forsym)_(length.newsyms)
-let elementtype = if abstracttype.parameter.theseqtype ∈ "real"then mytype."real"
-else if abstracttype.parameter.theseqtype ∈ "int bit byte boolean"then typeint else typeptr
+let temp=abstracttype.parameter.theseqtype
+let elementtype = if temp ∈ "real boolean"then mytype.[temp]
+else if temp ∈ "int bit byte boolean"then typeint 
+else typeptr
 let packedseq = maybepacked.theseqtype
 let theseq = Local.nextvar1
 let totallength = Local(nextvar1 + 1)
@@ -350,7 +331,7 @@ let newcode=
  subseq(code, 1, startofsymbols - 1) + Define.nextvar1 + theseq + GetSeqLength
   + Define(nextvar1 + 1)
   + Lit.1
-  + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint,5+blkadjust,nextvar)
+  + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint,nextvar,resulttype.forsym)
   + \\ 2 if masteridx > totallength then exit \\
   [ masteridx, totallength, GtOp ]+Br2(4,3)  
   +\\ 3 else let sequenceele = seq_(idx)\\ 
@@ -378,7 +359,7 @@ function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol
 for acc = empty:seq.symbol,  s = code do 
       acc+if last.module.s = "$for"_1 then
         let i = findindex(s, old)
-         if i ≤ length.new then [ new_findindex(s, old)]
+         if i ≤ length.new then [ new_i]
          else \\  this is for one of two cases 1: a nested for and $for variable is from outer loop 
            2: the next expresion \\ [ s]
       else [s]
@@ -387,19 +368,7 @@ for acc = empty:seq.symbol,  s = code do
      
 
 
-function maxvarused(code:seq.symbol)int maxvarused(code, 1, 0)
 
-function maxvarused(code:seq.symbol, i:int, lastused:int)int
- if i > length.code then lastused
- else
-  let s = code_i
-   maxvarused(code
-   , i + 1
-   , max(lastused
-   , if abstracttype.modname.s = "local"_1 then toint.(fsig.s)_1
-   else if abstracttype.modname.s = "$define"_1 then toint.(fsig.s)_2 else 0
-   )
-   )
 
 function depthfirst(knownsymbols:program, alltypes:typedict, i:int, pending:seq.symbol, processed:program, code:seq.symbol, s:symbol)program
  if i > length.code then 
@@ -560,3 +529,6 @@ function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
    uses(p, processed ∪ toprocess, q - processed)
 
 function containspara(code:seq.symbol)boolean for hasparameter = false, e = code do hasparameter ∨ isparameter.e end(hasparameter)
+
+ 
+

@@ -57,7 +57,13 @@ function match(a:mytype, b:mytype)boolean
  a = b ∨ a = typeptr ∧ abstracttype.b = "seq"_1
  ∨ b = typeptr ∧ abstracttype.a = "seq"_1
 
-function addpara(dict:worddict.mytype, alltypes:typedict, paratypes:seq.mytype, i:int)worddict.mytype add(dict, toword.i, getbasetype(alltypes, paratypes_i))
+function  match(a:seq.mytype,b:seq.mytype) boolean
+  for match=length.a=length.b, idx=1,e=a while match do 
+     next(match(e,b_idx),idx+1)
+  end(match)
+
+function addpara(dict:worddict.mytype, alltypes:typedict, paratypes:seq.mytype, i:int)worddict.mytype 
+add(dict, toword.i, getbasetype(alltypes, paratypes_i))
 
 function addlocals(localtypes:worddict.mytype, para:seq.mytype, localno:int, i:int)worddict.mytype
  if i > 0 then addlocals(replace(localtypes, toword.localno, para_i), para, localno - 1, i - 1)
@@ -84,7 +90,8 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
       ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), typeptr), localtypes)
     else if isSequence.s then
     assert length.toseq.stk ≥ nopara.s report"stack underflow sequence"
-      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), addabstract("seq"_1, parameter.modname.s)), localtypes)
+      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), 
+       getbasetype(alltypes,addabstract("seq"_1, parameter.modname.s))), localtypes)
     else if isexit.s then ccc(alltypes, code, i + 1, stk, localtypes)
     else if iscontinue.s then
     assert length.toseq.stk ≥ nopara.s report"stack underflow continue"
@@ -94,20 +101,22 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
      + for acc ="", @e = subseq(code, 1, i + 1)do acc + print.@e end(acc)
      + EOL
      + "point of underflow failure"
-     let subblocktypes = asset.top(stk, nopara.s) - asset.[ mytype."none"]
+     let resulttype=getbasetype(alltypes,resulttype.s) 
+     let subblocktypes = asset(top(stk, nopara.s)+resulttype) - asset.[ mytype."none"]
       if cardinality.subblocktypes = 1 then
       ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), subblocktypes_1), localtypes)
       else if cardinality.subblocktypes = 2 ∧ match(subblocktypes_1, subblocktypes_2)then
       ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), if subblocktypes_1 = typeptr then subblocktypes_2 else subblocktypes_1), localtypes)
       else
        "blockfailure" + for a ="", e = top(stk, nopara.s)do a + print.e end(a)
+       + "resulttype:"+print.resulttype
+       +EOL+EOL+print.subseq(code,1,i)
     else if isbr.s then
         assert top(stk) =  mytype."boolean" report"if problem" + for a ="", e = top(stk, 1)do a + print.e end(a)
       ccc(alltypes, code, i + 1, push(pop(stk ), mytype."none"), localtypes)
     else if isloopblock.s then
-    let firstlocal = toint.(fsig.code_(i - 1))_1
-    let no = nopara.s - 1
-    let loc = addlocals(localtypes, top(stk, nopara.s), firstlocal + no - 1, no)
+    let no = nopara.s  
+    let loc = addlocals(localtypes, top(stk, nopara.s), firstvar.s + no - 1, no)
      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), mytype."none"), loc)
     else if(module.s)_1 = "para"_1 then
     assert length.module.s > 1 report"illform para"
@@ -127,7 +136,7 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
     else if fsig.s ∈ ["length(packed2 seq)","length(packed3 seq)","length(packed3 seq)"]then
     ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), typeint), localtypes)
     else if(fsig.s)_1 ∈ "getseqlength getseqtype setfld blockit setfirst memcpy toseq"then
-    ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), resulttype.s), localtypes)
+    ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), getbasetype(alltypes,resulttype.s)), localtypes)
     else if(fsig.s)_1 ∈ "IDX GEP idxseq callidx" ∧ length.top(stk, 2) = 2
     ∧ top.stk = typeint
     ∧ top(stk, 2)_1 ∈ [ first.paratypes.s, typeptr]then
@@ -136,12 +145,12 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
     ∧ top.stk = typeint
     ∧ abstracttype.top(stk, 2)_1 ∈ "ptr seq"then
     ccc(alltypes, code, i + 1, push(pop(stk, 2), parameter.modname.s), localtypes)
-    else if(fsig.s)_1 = "bitcast"_1 ∧ module.s ≠ "interpreter"then
+    else if(fsig.s)_1 = "bitcast"_1 ∧ module.s ≠ "interpreter" &and nopara.s &ne 0 then
     let rt = if length.typerep.top.stk > 2 then parameter.top.stk else typeptr
      ccc(alltypes, code, i + 1, push(pop.stk, rt), localtypes)
     else
      let parakinds = for acc = empty:seq.mytype, @e = paratypes.s do acc + getbasetype(alltypes, @e)end(acc)
-      if top(stk, nopara.s) = parakinds then
+      if  match(top(stk, nopara.s) , parakinds) then
       ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), getbasetype(alltypes, resulttype.s)), localtypes)
       else
        " &br symbol type missmatch for" + print.s + "at"
