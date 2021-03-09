@@ -157,7 +157,8 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
      \\ assert length.phi.rblk > 3 report"phi"+ @(+, toword,"", phi.rblk)\\
      let firstblkargs = args.blks_1
      let kind = top.firstblkargs
-     let popno = if kind = 1 then \\ stack from top is kind, br label, br label, cond exp \\ 4
+     let popno = if kind=55 then \\ stack from top is kind \\  1
+     else if kind = 1 then \\ stack from top is kind, br label, br label, cond exp \\ 4
      else
       assert top.firstblkargs = 2 report"Code Gen--not expecting first blk kind" + toword.kind + profile
        \\ stack from top is kind, noexps, firstvar, exptypes, exps \\ 2 * top.pop.firstblkargs + 3
@@ -176,6 +177,9 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
     \\ stack from top is kind, noexps, firstvar, exptypes, exps \\
     let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, newstk, blocks.l)
      Lcode2(emptyinternalbc, bodymap, noblocks.l + 1, regno.l + varcount, empty:stack.int, push(blocks.l, exitblock))
+  else if action = "/start"_1 then
+  let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, 55), blocks.l)
+    Lcode2(emptyinternalbc, lmap.l, noblocks.l , regno.l, empty:stack.int, push(blocks.l, exitblock))
   else if action = "CONTINUE"_1 then
   let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, 3), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l, exitblock))
@@ -229,7 +233,9 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
       let newtailphi = tailphi + [ noblocks.l - 1] + top(pop.args.l, noargs)
       let newcode = BR.noblocks.blks_1
        processblk(phitype, blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, newtailphi)
-    else
+     else if kind = 55 then \\/start\\
+       processblk(phitype, blks, i + 1, exitbr, code + code.l , varcount, phi, tailphi)
+   else
      \\ br block \\
      assert kind = 1 report"expecting br block" + toword.kind
       assert length.args.l > 3 report"check m"
@@ -237,9 +243,7 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
       let args = top(args.l, 4)
      \\  assert between(constvalue.slot.args_2 - 1, 1, length.blks)
        ∧ between(constvalue.slot.args_3 - 1, 1, length.blks)report"codegen error:jmp to unknown block"
-     \\  let newcode = BR(r(regno.l + 1)
-     , noblocks.blks_ \\(constvalue.slot.args_2 - 1)\\ args_2
-     , noblocks.blks_\\(constvalue.slot.args_3 - 1)\\ args_3, r.regno.l)
+     \\  let newcode = BR(r(regno.l + 1)  , noblocks.blks_   (args_2) , noblocks.blks_ ( args_3), r.regno.l)
         processblk(phitype, blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, tailphi)
 
 function getloc(l:seq.localmap, localno:int, i:int)int

@@ -121,7 +121,7 @@ Export type:program
 
 Function_(m:seq.match5, d:symbol)match5
  let e = findtemplate.d
-  assert not.isempty.e report"LL" + fsig.d + module.d
+  assert not.isempty.e report"LL codetemplates" + fsig.d + module.d+stacktrace
    e_1
 
 function =(a:match5, b:match5)boolean sym.a = sym.b

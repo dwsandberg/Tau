@@ -314,6 +314,8 @@ function sigandmodule(s:symbol)seq.word fsig.s + module.s
 
 Function Exit symbol symbol("EXITBLOCK 1","$exitblock","?", specialbit)
 
+Function ifthenelse(c:seq.symbol,t:seq.symbol,e:seq.symbol,type:mytype) seq.symbol
+   c+Br2(2,3)+t+Exit+e+Exit+Block(type,3)
 
 
 Function Br2(t:int,f:int)  symbol  
@@ -469,7 +471,10 @@ Function ∈(s:symbol, p:program)boolean s ∈ toset.p
 
 Function program2(a:set.symbol)program program.a
 
-        
+use seq.programele
+
+Function toseqprogramele( p:program ) seq.programele
+     for acc=empty:seq.programele,e=toseq.toset.p do acc+programele(zcode.e) end(acc)
 
 Function lookupcode(p:program, s:symbol)programele
  let t = findelement(s, toset.p)
@@ -679,22 +684,24 @@ Function removeconstant(s:seq.symbol)seq.symbol
  
  _______________________________________________
  
- Function startblk(type:mytype,i:int) symbol  symbol("startblock:"+toword.i,typerep.type+"$start",typerep.type)
-
-Function Mark(place:int)  symbol     symbol(   [toword.place],"$mark","?") 
-
-Function Exit2 symbol symbol(   "Exit2","$exit2","?") 
-
- type blockconversion is count:int,need:int,blocktype:mytype 
-
-use stack.blockconversion
-
 Function print(s:seq.symbol) seq.word  for acc="",e = s do acc
-+   if last.module.e &in"$branch $exit2 $start" then fsig.e+EOL
-  else print.e end(acc)
++  \\ if last.module.e &in"$branch $exit2 $start" then fsig.e+EOL
+  else \\ print.e end(acc)
+
+\ Function startblk(type:mytype,i:int) symbol  symbol("startblock:"+toword.i,typerep.type+"$start",typerep.type)
+
+\Function Mark(place:int)  symbol     symbol(   [toword.place],"$mark","?") 
+
+\Function Exit2 symbol symbol(   "Exit2","$exit2","?") 
+
+\ type blockconversion is count:int,need:int,blocktype:mytype 
+
+\use stack.blockconversion
+
 
  
-Function blockconversion(a:seq.symbol) seq.symbol
+\Function blockconversion(a:seq.symbol) seq.symbol a
+
  \\ changed from parse format of blocks to back end format \\
  for acc=empty:seq.symbol,count=1,need =0,stk=empty:stack.blockconversion,   e= a  do 
         if count=need &and e=Exit2 then    \\ end block \\

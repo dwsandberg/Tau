@@ -234,8 +234,7 @@ function bind3(p:program, alltypes:typedict, modset:set.firstpass, f:firstpass)p
 function bind2(p:program, alltypes:typedict, dict:set.symbol, s:symbol)program
  let txt = findencode.symboltext(s, mytype."?","?")
   if not.isempty.txt then
-  let t=parsedcode.parse(dict, text.txt_1)
-  let code = blockconversion.t
+  let code = parsedcode.parse(dict, text.txt_1)
     map(p, s, if length.code = 1 ∧ isconst.code_1 then code + [ Words."VERYSIMPLE", Optionsym]else code)
   else if parameter.modname.s = mytype."T" ∧ not(s ∈ p)then
   map(p, s, empty:seq.symbol)
@@ -317,8 +316,10 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
      let prg2 = map(prg1, symtoseq, [ Local.1 ,newsymbol("toseqX:T",mytype." T builtin",[typeptr],mytype."T seq")])
    let prg3 = map(prg2
    , symfromseq
-   , [ Local.1, GetSeqType, indexfunc, EqOp]+Br2( 2, 3)+[Local.1, Exit, Lit0
-   , Lit0, Record.[ typeint, typeint], Exit, Block(typeptr, 3), symbol("bitcast(ptr)","builtin","ptr")]
+   , 
+   ifthenelse( [ Local.1, GetSeqType, indexfunc, EqOp]
+   ,[Local.1], [Lit0, Lit0, Record.[ typeint, typeint]]
+   , typeptr)+ symbol("bitcast(ptr)","builtin","ptr") 
    )
      let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]
       if name ≠ "seq"_1 then

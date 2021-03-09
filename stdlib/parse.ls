@@ -155,21 +155,21 @@ function dict(r:reduction.bindinfo)set.symbol dict.last.r
 function ifexp(R:reduction.bindinfo,  ifpart:bindinfo, thenpart:bindinfo,elsepart:bindinfo,input:seq.word,place:int) bindinfo
 assert(types.ifpart)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place) 
 assert types.thenpart = types.elsepart report errormessage("then and else types are different", input, place) 
-bindinfo(dict.R, ifexp(code.ifpart,code.thenpart,code.elsepart,(types.thenpart)_1 ), types.thenpart,"") 
+bindinfo(dict.R, ifthenelse(code.ifpart,code.thenpart,code.elsepart,(types.thenpart)_1 ), types.thenpart,"") 
 
-function blockcount(code:seq.symbol,i:int)  int 
+\function blockcount(code:seq.symbol,i:int)  int 
  if i=0 then 1 else  toint.(fsig.code_i)_3
        
-function  removestart(code:seq.symbol)  int
+\function  removestart(code:seq.symbol)  int
  \\ returns 0 if cannot merge and location of startblock if can merge. \\
  if module.last.code="$mark"  then length.code-toint.first.fsig.last.code
  else 0 
 
-function  thecode(code:seq.symbol,i:int)  seq.symbol
+\function  thecode(code:seq.symbol,i:int)  seq.symbol
   if i=0 then code+Exit2
   else subseq(code,1,i-1)+subseq(code,i+1,length.code-1)
 
-function ifexp(codeif:seq.symbol,thencode :seq.symbol, elsecode:seq.symbol,type:mytype ) seq.symbol
+\function ifexp(codeif:seq.symbol,thencode :seq.symbol, elsecode:seq.symbol,type:mytype ) seq.symbol
    let E=removestart.elsecode
    let T=removestart.thencode 
    let thencount=blockcount(thencode,T)
@@ -229,7 +229,7 @@ assert must be boolean in:", input, place)
 assert(types.R_4)_1 = mytype."word seq"report errormessage("report in 
 assert must be seq of word in:", input, place) 
 let assertsym=symbol(" assert:T(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)
-bindinfo(dict.R, ifexp(code.R_2,code.R_5,code.R_4+assertsym,(types.R_5)_1), types.R_5,"") 
+bindinfo(dict.R, ifthenelse(code.R_2,code.R_5,code.R_4+assertsym,(types.R_5)_1), types.R_5,"") 
 else if ruleno = \\ E I \\ 39 then bindlit.R 
 else if ruleno = \\ E I.I \\ 40 then bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"") 
 else if ruleno = \\ T W \\ 41 then isdefined(R, input, place, mytype.tokentext.R_1) 

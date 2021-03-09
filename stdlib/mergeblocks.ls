@@ -12,7 +12,7 @@ use otherseq.symbol
 
 Function cvtR(s:seq.symbol) seq.symbol
    for acc=empty:seq.symbol,stk=push(empty:stack.int,0) ,sym =s do
-    if isloopblock.sym &or sym=Exit &or isbr.sym &or iscontinue.sym then 
+    if isstartorloop.sym &or sym=Exit &or isbr.sym &or iscontinue.sym then 
       next(acc+sym,push(stk,length.acc+1) )
     else if not.isblock.sym then 
       next(acc+sym,stk )
@@ -25,7 +25,7 @@ Function cvtR(s:seq.symbol) seq.symbol
           next(new,idx+1)
         end (acc2)
          let j=undertop(stk,nopara.sym)
-         if   isloopblock.modbr_first.k then
+         if   isstartorloop.modbr_first.k then
             next(modbr+sym,pop(stk,nopara.sym))
           else 
       next(subseq(modbr,1,j)+start(resulttype.sym)+subseq(modbr,j+1,length.modbr)+
@@ -51,9 +51,9 @@ Function  undoR(s:seq.symbol,fixblockcount:boolean) seq.symbol
      else     if  isloopblock.sym then
           next(acc+sym,push( stk,p56( count,resulttype.sym)),2) 
      else if isbr.sym then
-          if fixblockcount then
+        \\  if fixblockcount then
                 next(acc+Br2(brt.sym ,brf.sym ),stk,count+1)
-          else 
+          else \\
         next(acc+Br2(brt.sym+count,brf.sym+count),stk,count+1)
      else if  last.module.sym &in "$exitblock $continue" then
          next(acc+sym,stk,count+1)
@@ -108,10 +108,7 @@ Function optB(s:seq.symbol,self:symbol) seq.symbol
      next(acc+sym,push(stk,-length.acc-1),sym)
     else if first.module.sym &in " $br  $exitblock $continue" then
         next(acc+sym,push(stk,length.acc+1),sym)
-    else  \\  if isblock.sym then
-        assert false report for acc2=print.length.acc+print.countnodes(stk),i=toseq.stk do acc2+print.i end(acc2)
-       next(acc+sym,pop(stk,nopara.sym),sym)
- else  \\ next(acc+sym,stk,sym)
+    else next(acc+sym,stk,sym)
        end( if isblock.lastsymbol &and not.isconst.self
           &and first.toseq.stk=-1 then tailR(acc,self,stk)
           else 

@@ -211,11 +211,11 @@ function encodenocode(typ:mytype)seq.symbol
   if typ = mytype."typename"then [ Lit.0, gl, Lit.2, setfld, Define."xx", gl, Lit.0, IdxInt]
   else if typ = mytype."char seq"then
   [ Lit.0, gl, Lit.1, setfld, Define."xx", gl, Lit.0, IdxInt]
-  else
-   [ gl, Lit.0, IdxInt, Lit.0, EqOp]+Br2( 3,  2)+[ gl, Lit.0
-   , IdxInt, Exit, Lit.0, gl, Words.typerep.typ, encodenosym, setfld, Define."xx", gl, Lit.0
-   , IdxInt, Exit, Block(typeint, 3)]
-
+  else ifthenelse([ gl, Lit.0, IdxInt, Lit.0, EqOp]
+     ,[ Lit.0, gl, Words.typerep.typ, encodenosym, setfld, Define."xx", gl, Lit.0, IdxInt]
+     ,[ gl, Lit.0 , IdxInt]
+     ,typeint)
+  
 function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
  if abstracttype.type ∈ "encoding int word"then [ Local.1]
  else if abstracttype.type = "seq"_1 then

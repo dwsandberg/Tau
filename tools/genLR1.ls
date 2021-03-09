@@ -379,8 +379,8 @@ function taurules2 seq.seq.seq.word [
 , [ ' E NM ', ' let id = tokentext.R_1 let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place)bindinfo(dict.R, [ f], [ resulttype.f],"")'] 
 , [ ' E NM(L)', ' unaryop(R, input, place, tokentext.R_1, R_3)'] 
 , [ ' E(E)', ' R_2 '] 
-, [ ' E if E then E else E ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
-, [ ' E if E then E else E fi ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
+, [ ' E if E then E else E ', ' ifexp(R,R_2,R_4,R_6, input, place)']
+, [ ' E if E then E else E fi ', ' ifexp(R,R_2,R_4,R_6, input, place)']
 , [ ' E E_E ', ' opaction(R, input, place)'] 
 , [ ' E-E ', ' unaryop(R, input, place, tokentext.R_1, R_2)'] 
 , [ ' E W.E ', ' unaryop(R, input, place, tokentext.R_1, R_3)'] 
@@ -400,7 +400,12 @@ assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplic
 let newdict = dict.R + Local(name,(types.R_3 )_1)bindinfo(newdict, code.R_3 + Define.name , types.R_3, name) 
 '] 
 , [ ' E let A E ', '  bindinfo(dict.R_1, code.R_2  +code.R_3, types.R_3,"") '] 
-, [ ' E assert E report D E ', ' assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place)assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_5 + Exit + code.R_4 + symbol("assert:T(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)+ Exit + Block((types.R_5)_1, 3)bindinfo(dict.R, newcode, types.R_5,"")'] 
+, [ ' E assert E report D E ', ' assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in 
+assert must be boolean in:", input, place) 
+assert(types.R_4)_1 = mytype."word seq"report errormessage("report in 
+assert must be seq of word in:", input, place) 
+let assertsym=symbol(" assert:T(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)
+bindinfo(dict.R, ifexp(code.R_2,code.R_5,code.R_4+assertsym,(types.R_5)_1), types.R_5,"") '] 
 , [ ' E I ', ' bindlit.R '] 
 , [ ' E I.I ', ' bindinfo(dict.R, [ Words(tokentext.R_1 +"."+ tokentext.R_3), symbol("makereal(word seq)","UTF8","real")], [ mytype."real"],"")'] 
 , [ ' T W ', ' isdefined(R, input, place, mytype.tokentext.R_1)'] 
@@ -420,7 +425,7 @@ assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplic
 ,[ ' E  for  F2  do    E end (E)   ','  forbody(dict.R_1, R_2, R_4, R_1, R_7, input, place) ' ] 
 ,[ ' E  for  F2  while E  do   E   end (E)   ','  forbody(dict.R_1, R_2,  R_6,R_4, R_9,input, place) '] 
 ,[ ' D E ',"R_1"]
-, [ ' E if E then E else E end if ', ' let thenpart = R_4 assert(types.R_2)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place)assert types.R_4 = types.R_6 report errormessage("then and else types are different", input, place)let newcode = code.R_2 + [ Lit.2, Lit.3, Br]+ code.R_4 + Exit + code.R_6 + [ Exit, Block((types.R_4)_1, 3)]bindinfo(dict.R, newcode, types.thenpart,"")'] 
+, [ ' E if E then E else E end if ',  ' ifexp(R,R_2,R_4,R_6, input, place) '] 
 ]
 
 
