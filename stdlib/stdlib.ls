@@ -61,7 +61,7 @@ option.symbol lookupcode(p:program, s:symbol)programele PROFILE
 
 /option.set.symbol findelement(val:symbol, s:set.symbol)set.symbol PROFILE
 
-option.pass2 depthfirst(knownsymbols:program, alltypes:typedict, i:int, 
+\option.pass2 depthfirst(knownsymbols:program, alltypes:typedict, 
 pending:seq.symbol, processed:program, code:seq.symbol, s:symbol)program
 PROFILE
 

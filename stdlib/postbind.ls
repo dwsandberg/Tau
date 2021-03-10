@@ -86,11 +86,7 @@ function postbind3b(alltypes:typedict, dict:set.symbol, code:seq.symbol,modpara:
    let get = symbol("getinstance(int)","builtin","ptr")
   let codeforbuiltin =  encodenocode.parameter.modname.newsym + [ get, Words."NOINLINE STATE", Optionsym]
            next(result + if isfref then Fref.newsym else newsym,calls + newsym, map(sourceX, newsym, codeforbuiltin))
-   else if fsig.sym = "packedindex(T seq, int)"then
- let z = getbasetype(alltypes,(paratypes.newsym)_1)
-  let p2 = if maybepacked.z then packedindex2.z else [ IdxS.z]
-   next(result + p2,    calls, sourceX )
- else let p2=codeforbuiltin(alltypes,   length.result > 0,   newsym, sym,modpara )
+  else let p2=codeforbuiltin(alltypes,   length.result > 0,   newsym, sym,modpara )
        next(result + p2,    calls, sourceX )
        else if subseq(fsig.sym, 1, 2) = "type:"then
        let p2 = definedeepcopy(alltypes, resulttype.newsym, org)
@@ -103,7 +99,7 @@ function postbind3b(alltypes:typedict, dict:set.symbol, code:seq.symbol,modpara:
   end (resultpb(calls, result, sourceX))
 
 
-
+ 
 
 function buildconstructor(alltypes:typedict, addfld:seq.mytype, flds:seq.seq.mytype, flatflds:seq.mytype, fldno:int, j:int, subfld:int, result:seq.symbol)seq.symbol
  if fldno > length.flds then result + Record(addfld + flatflds)
@@ -160,17 +156,15 @@ function codeforbuiltin(alltypes:typedict, issequence:boolean,  newsym:symbol, s
  else if(fsig.sym)_1 ∈ "build"then
  let c = for acc = empty:seq.seq.mytype, @e = paratypes.sym do acc + getsubflds(alltypes, replaceT(modpara, @e))end(acc)
    buildconstructor(alltypes, if issequence then \\ for seq index func \\ [ typeint]else empty:seq.mytype, c, empty:seq.mytype, 1, 1, 0, empty:seq.symbol)
- else if fsig.sym = "unpackedindex(T seq, int)"then
- let kind = seqeletype.getbasetype(alltypes, first.paratypes.newsym)
-    [ Lit.1, PlusOp, Idx.kind]
- else if first.fsig.sym = first."createthreadX"then
+ else  if first.fsig.sym = first."createthreadX"then
  let paracode = buildargcode(alltypes, newsymbol("dummy", typeint, paratypes.newsym << 5, parameter.resulttype.newsym))
  let kindlist = for acc = empty:seq.mytype, @e = paratypes.sym << 5 do acc + getbasetype(alltypes, replaceT(modpara, @e))end(acc)
  [ Record([ typeint, typeint] + kindlist), symbol("toseqX:seq.int(ptr)","tausupport","int seq"), Lit.paracode, newsymbol("createthread", mytype."tausupport", [ typeint, typeint, typeint, mytype."int seq", typeint], typeptr)]
- else if(fsig.sym)_1 ∈ "callidx"then
-  [Callidx.getbasetype(alltypes,(paratypes.newsym)_1)]
- else if fsig.sym = "packed(T seq)"then
+  else if fsig.sym = "packed(T seq)"then
     [blocksym(alltypes,(paratypes.newsym)_1)]
+ else if fsig.sym="indexseq44(int,T seq,int)" then
+    let seqtype=getbasetype(alltypes,(paratypes.newsym)_2)
+    [newsymbol("indexseq44", mytype."builtin", [typeint,seqtype,typeint],seqeletype.seqtype)]
 else  if(fsig.sym)_1 = "forexp"_1 then
  let paras = for acc = empty:seq.mytype, p = paratypes.newsym do acc + getbasetype(alltypes, p)end(acc)
    [ newsymbol("forexp", mytype."builtin", paras, last.paras) ]

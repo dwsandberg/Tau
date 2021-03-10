@@ -16,20 +16,14 @@ Export length(a:seq.T)int
 
 Builtin empty:seq.T seq.T \\ empty seq \\
 
-builtin packedindex(seq.T, int)T
-
-builtin unpackedindex(seq.T, int)T
-
-builtin callidx(seq.T, int)T
+builtin indexseq44(seqtype:int,s:seq.T,i:int) T
 
 Function_(a:seq.T, c:int)T
  let b = if c < 0 then length.a + c + 1 else c
  let typ = getseqtype.a
-  if typ > 1 then callidx(a, b)
-  else
-   assert b > 0 ∧ b ≤ length.a report"out of bounds" + stacktrace
-    if typ = 0 then \\ element per word \\ unpackedindex(a, b)else packedindex(a, b)
-
+   assert  typ > 1 &or (b > 0 ∧ b ≤ length.a) report"out of bounds" + stacktrace
+   indexseq44(typ,a,b)
+   
 Function =(a:seq.T, b:seq.T)boolean
   for isequal=length.a = length.b , i=1,e = a while    isequal do  next(e=b_i,i+1) end (isequal)
 

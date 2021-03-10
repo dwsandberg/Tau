@@ -28,17 +28,39 @@ Function cvtR(s:seq.symbol) seq.symbol
          if   isstartorloop.modbr_first.k then
             next(modbr+sym,pop(stk,nopara.sym))
           else 
-      next(subseq(modbr,1,j)+start(resulttype.sym)+subseq(modbr,j+1,length.modbr)+
-      Block(resulttype.sym,nopara.sym+1)
-      ,pop(stk,nopara.sym))
+           assert isbr.modbr_first.k report "cvtR"
+            let j2= backparse(modbr,first.k,1,empty:seq.int)_1  -1
+            let g= subseq(modbr,1,j2)+start(resulttype.sym)+subseq(modbr,j2+1,length.modbr)+Block(resulttype.sym,nopara.sym+1)
+      next(g ,pop(stk,nopara.sym))
     end(acc)
+
+function backparse(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
+ if i > 0 &and isdefine.s_i then
+   let args = backparse(s, i - 1, 1, empty:seq.int)
+    backparse(s, args_1, no, result)
+   else
+   if no = 0 then result
+ else
+  assert i > 0 report"back parse 1:" + toword.no + print.s + stacktrace
+    let nopara = nopara.s_i
+    let first = if nopara = 0 then 
+    i
+    else
+     let args = backparse(s, i - 1, nopara, empty:seq.int)
+      assert length.args = nopara report"back parse 3" + print.[ s_i] + toword.nopara + "//"
+      + for acc ="", @e = args do acc + toword.@e end(acc)
+       args_1
+    let b = if first > 1 ∧ isdefine.s_(first - 1)then
+    let c = backparse(s, first - 2, 1, empty:seq.int)
+     c_1
+    else first
+     backparse(s, b - 1, no - 1, [ b] + result)
+ 
 
 type  p56 is  count:int,type:mytype
 
 use stack.p56
 
-Function  undoR(s:seq.symbol ) seq.symbol
-  undoR(s,false)
 
 
 Function  undoR(s:seq.symbol,fixblockcount:boolean) seq.symbol
@@ -72,8 +94,23 @@ Function optB(s:seq.symbol,self:symbol) seq.symbol
         let noblocks=countnodes(stk)
         let nodes=top(stk,noblocks)
         let stk1=pop(stk,noblocks)
-      if isloopblock.acc_-first.nodes then
+        let blkstart=-first.nodes
+      if isloopblock.acc_blkstart then
           next(acc+sym,stk1,sym)
+     else  
+       let secondnode=acc_(nodes_2) 
+       if isbr.secondnode &and brt.secondnode =brf.secondnode 
+         &and Exit=acc_(nodes_(2+brt.secondnode)) then
+              let newacc= 
+            subseq(acc,1,blkstart-1)+
+            subseq(acc,blkstart+1,(nodes_2)-2)+ subseq(acc, nodes_(1+brt.secondnode)+1,nodes_(2+brt.secondnode)-1)
+           \\     assert false report 
+            "NLES"+print.newacc +EOL+EOL+EOL+print.acc  \\
+        if first.module.sym &in "  $br  $exitblock $continue " then
+          next(newacc+sym,push(stk1,length.newacc+1),sym)
+        else if isstartorloop.sym  then
+          next(newacc+sym,push(stk1,-length.newacc-1),sym)
+        else next(newacc+sym,stk1,sym)
      else    if false &and isbr.sym then
            \\ adjust br in enclosing block  \\
           let code0=adjust(acc >> 1,stk1,  noblocks-2)
@@ -156,6 +193,4 @@ function adjust(code:seq.symbol,stk:stack.int, adjust:int) seq.symbol
 function countnodes(s:stack.int) int
     if top.s < 0 then 1 else 1+countnodes(pop.s)
 
-Function mergeblocks2(s:seq.symbol,self:symbol) seq.symbol
-   undoR.optB(cvtR.s,self) 
   
