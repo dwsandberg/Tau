@@ -10,52 +10,21 @@ use stack.int
 
 use otherseq.symbol
 
-Function cvtR(s:seq.symbol) seq.symbol
-   for acc=empty:seq.symbol,stk=push(empty:stack.int,0) ,sym =s do
-    if isstartorloop.sym &or sym=Exit &or isbr.sym &or iscontinue.sym then 
-      next(acc+sym,push(stk,length.acc+1) )
-    else if not.isblock.sym then 
-      next(acc+sym,stk )
-    else 
-     let k=top(stk,nopara.sym)
-     let modbr=for  acc2=acc,   idx=1,   n=k do
-        let new= if isbr.acc2_n then  
-           replace(acc2, n,Rbr(brt.acc2_n-idx,brf.acc2_n-idx))
-         else  acc2
-          next(new,idx+1)
-        end (acc2)
-         let j=undertop(stk,nopara.sym)
-         if   isstartorloop.modbr_first.k then
-            next(modbr+sym,pop(stk,nopara.sym))
-          else 
-           assert isbr.modbr_first.k report "cvtR"
-            let j2= backparse(modbr,first.k,1,empty:seq.int)_1  -1
-            let g= subseq(modbr,1,j2)+start(resulttype.sym)+subseq(modbr,j2+1,length.modbr)+Block(resulttype.sym,nopara.sym+1)
-      next(g ,pop(stk,nopara.sym))
-    end(acc)
 
-function backparse(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
- if i > 0 &and isdefine.s_i then
-   let args = backparse(s, i - 1, 1, empty:seq.int)
-    backparse(s, args_1, no, result)
-   else
-   if no = 0 then result
- else
-  assert i > 0 report"back parse 1:" + toword.no + print.s + stacktrace
-    let nopara = nopara.s_i
-    let first = if nopara = 0 then 
-    i
-    else
-     let args = backparse(s, i - 1, nopara, empty:seq.int)
-      assert length.args = nopara report"back parse 3" + print.[ s_i] + toword.nopara + "//"
-      + for acc ="", @e = args do acc + toword.@e end(acc)
-       args_1
-    let b = if first > 1 ∧ isdefine.s_(first - 1)then
-    let c = backparse(s, first - 2, 1, empty:seq.int)
-     c_1
-    else first
-     backparse(s, b - 1, no - 1, [ b] + result)
- 
+ Function cvtR(s:seq.symbol) seq.symbol
+   for acc=empty:seq.symbol,stk= empty:stack.int,count=0, sym =s do
+    if isstartorloop.sym then
+       next(acc+sym,  push (stk,count),2)
+    else 
+    if sym=Exit &or iscontinue.sym then 
+      next(acc+sym,stk,count+1 )
+    else if isbr.sym then 
+     next( acc+Rbr(brt.sym-count,brf.sym-count),stk,count+1)
+    else if isblock.sym then 
+      next(acc+sym,pop(stk),top.stk)
+    else 
+      next(acc+sym,stk,count )
+    end(acc)
 
 type  p56 is  count:int,type:mytype
 
@@ -80,7 +49,7 @@ Function  undoR(s:seq.symbol,fixblockcount:boolean) seq.symbol
      else if  last.module.sym &in "$exitblock $continue" then
          next(acc+sym,stk,count+1)
      else if isblock.sym then 
-        next(acc+Block( type.top.stk ,count-1),pop(stk ),count.top.stk)
+        next(acc+EndBlock,pop(stk ),count.top.stk)
      else next(acc+sym,stk,count)
 end( acc)
 

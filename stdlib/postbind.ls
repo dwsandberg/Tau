@@ -49,10 +49,10 @@ function postbind3b(alltypes:typedict, dict:set.symbol, code:seq.symbol,modpara:
       if isspecial.x then 
      let a=if isSequence.x then
         Sequence(parameter.getbasetype(alltypes,replaceT(modpara,resulttype.x)), nopara.x)
-   else  if isblock.x then
-         Block( getbasetype(coretypes,alltypes,replaceT(modpara,resulttype.x)), nopara.x)  
-      else  x   
-       next(result+a,calls,sourceX )  
+   else if isstart.x then
+         start(getbasetype(coretypes,alltypes,replaceT(modpara,resulttype.x)))
+     else  x   
+       next(result+a,calls,sourceX )      
     else 
     let isfref = isFref.x
     let sym = basesym.x

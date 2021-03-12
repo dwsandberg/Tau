@@ -338,7 +338,9 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol) match5
 \\  xx will not be  constant \\
    if islocal.xx then addtemplate(xx, 0, emptyinternalbc,"LOCAL"_1, slot.value.xx)
   else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, slot.toint.(fsig.xx)_2)
-  else if isblock.xx then
+  else if isblock.xx   then
+     addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, 0, empty:seq.symbol, [i64])
+ else if   isstart.xx then
   let typ = tollvmtype(alltypes, resulttype.xx)
     addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, [ typ])
   else if isspecial.xx then
@@ -357,7 +359,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol) match5
       addtemplate(xx, brt.xx, emptyinternalbc,(fsig.xx)_1, brf.xx, empty:seq.symbol, [ i64])
    else if isloopblock.xx then
        addtemplate(xx, firstvar.xx, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, 
-       for oldacc=empty:seq.llvmtype,e20= paratypes.xx      do oldacc + tollvmtype(alltypes, e20) end( oldacc))
+       for oldacc=[tollvmtype(alltypes, resulttype.xx)],e20= paratypes.xx      do oldacc + tollvmtype(alltypes, e20) end( oldacc))
     else addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol, [ i64])
   else
    \\ handle builtin package \\

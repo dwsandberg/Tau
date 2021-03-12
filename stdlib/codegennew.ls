@@ -150,20 +150,21 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
    let cond = Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + 1, newargs, blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l + 1, empty:stack.int, push(blocks.l, cond))
   else if action = "BLOCK"_1 then
-  let no = arg.m
-   let blks = top(blocks.l, no)
+  let no = \\ arg.m \\ countnodes(blocks.l)
+    let blks = top(blocks.l, no)
     assert length.blks = no report"XXXXXX arg" + profile
-    let rblk = processblk(first.llvmtypelist.m, blks, 1, empty:seq.localmap, BR(noblocks.l - 1))
+    let rblk = processblk( blks, 1, empty:seq.localmap, BR(noblocks.l - 1))
      \\ assert length.phi.rblk > 3 report"phi"+ @(+, toword,"", phi.rblk)\\
      let firstblkargs = args.blks_1
      let kind = top.firstblkargs
-     let popno = if kind=55 then \\ stack from top is kind \\  1
-     else if kind = 1 then \\ stack from top is kind, br label, br label, cond exp \\ 4
-     else
+     let popno = if kind=55 then \\ stack from top is kind resulttype\\  2
+     else 
       assert top.firstblkargs = 2 report"Code Gen--not expecting first blk kind" + toword.kind + profile
        \\ stack from top is kind, noexps, firstvar, exptypes, exps \\ 2 * top.pop.firstblkargs + 3
+     let rt=if kind=55 then  top.pop.args.blks_1
+         else  undertop(firstblkargs,top.pop.firstblkargs + 2)
      let newstack = push(pop(firstblkargs, popno),-(regno.l + 1))
-     let newcode = code.rblk + phiinst(regno.last.blks, [ typ.first.llvmtypelist.m], phi.rblk, 1)
+     let newcode = code.rblk + phiinst(regno.last.blks, [ rt], phi.rblk, 1)
       Lcode2(newcode, lmap.l, noblocks.l, regno.l + 1, newstack, pop(blocks.l, no))
   else if action = "DEFINE"_1 then
   Lcode2(code.l, [ localmap(arg.m, top.args.l)] + lmap.l, noblocks.l, regno.l, pop(args.l, 1), blocks.l)
@@ -172,13 +173,13 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   let varcount =   arg.m  
   let argstk=  \\ this value added is never used \\ push(args.l,0)  
  let bodymap = for acc = lmap.l, @e = arithseq(varcount, 1, 1)do addloopmapentry(acc, firstvar.m, regno.l, @e)end(acc)
- let pushexptypes = for acc = argstk, e = llvmtypelist.m do push(acc, typ.e)end(acc)
+ let pushexptypes = for acc = args.l, e = llvmtypelist.m do push(acc, typ.e)end(acc)
    let newstk = push(push(pushexptypes, varcount), 2)
     \\ stack from top is kind, noexps, firstvar, exptypes, exps \\
     let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, newstk, blocks.l)
      Lcode2(emptyinternalbc, bodymap, noblocks.l + 1, regno.l + varcount, empty:stack.int, push(blocks.l, exitblock))
   else if action = "/start"_1 then
-  let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, 55), blocks.l)
+  let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(push(args.l,typ.first.llvmtypelist.m), 55), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l , regno.l, empty:stack.int, push(blocks.l, exitblock))
   else if action = "CONTINUE"_1 then
   let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, 3), blocks.l)
@@ -190,15 +191,18 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
    assert action = "RECORD"_1 report"code gen unknown" + action
    let fldbc = recordcode(top(args.l, arg.m), llvmtypelist.m, regno.l, false)
     Lcode2(code.l + bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
+    
+function countnodes(s:stack.Lcode2) int
+    if  top.args.top.s &in [55,2] then 1 else 1+countnodes(pop.s)
 
-function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, map:seq.localmap, exitbr:internalbc)processblkresult
- processblk(phitype, blks, 1, exitbr, emptyinternalbc, 1, empty:seq.int, empty:seq.int)
+function processblk( blks:seq.Lcode2, i:int, map:seq.localmap, exitbr:internalbc)processblkresult
+ processblk( blks, 1, exitbr, emptyinternalbc, 1, empty:seq.int, empty:seq.int)
 
 function kind(a:Lcode2)word toword.top.args.a
 
 type processblkresult is code:internalbc, phi:seq.int
 
-function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc, code:internalbc, varcount:int, phi:seq.int, tailphi:seq.int)processblkresult
+function processblk(  blks:seq.Lcode2, i:int, exitbr:internalbc, code:internalbc, varcount:int, phi:seq.int, tailphi:seq.int)processblkresult
  if i > length.blks then
  let firstblk = blks_1
   let code1 = if top.args.firstblk = \\ loopblock \\ 2 then
@@ -216,14 +220,14 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
      assert length.args.l ≥ 2 report"check l"
      let t = top(args.l, varcount + 1)
      let t2 = subseq(t, 1, varcount)
-      processblk(phitype, blks, i + 1, exitbr, code + code.l + exitbr, varcount, phi + [ noblocks.l - 1] + t2, tailphi)
+      processblk(  blks, i + 1, exitbr, code + code.l + exitbr, varcount, phi + [ noblocks.l - 1] + t2, tailphi)
     else if kind = 2 then
     \\ LOOPBLOCK \\
      \\ assert false report"L"+ @(+, toword,"", args.l)\\
      let noargs = top.pop.args.l
       \\ let firstvar = top.pop.args.l \\
       let newtailphi = [ noblocks.l - 1] + top(pop(args.l, 3 + noargs), noargs)
-       processblk(phitype, blks, i + 1, exitbr, code, varcount, phi, newtailphi)
+       processblk(  blks, i + 1, exitbr, code, varcount, phi, newtailphi)
     else if kind = 3 then
     \\ CONTINUE \\
      assert kind.blks_1 = "2"_1 report"incorrect format on block" 
@@ -232,9 +236,9 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
       \\ assert false report"C"+ @(+, toword,"", args.blks_1)+"noargs:"+ toword.noargs \\
       let newtailphi = tailphi + [ noblocks.l - 1] + top(pop.args.l, noargs)
       let newcode = BR.noblocks.blks_1
-       processblk(phitype, blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, newtailphi)
+       processblk(  blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, newtailphi)
      else if kind = 55 then \\/start\\
-       processblk(phitype, blks, i + 1, exitbr, code + code.l , varcount, phi, tailphi)
+       processblk(  blks, i + 1, exitbr, code + code.l , varcount, phi, tailphi)
    else
      \\ br block \\
      assert kind = 1 report"expecting br block" + toword.kind
@@ -244,7 +248,7 @@ function processblk(phitype:llvmtype, blks:seq.Lcode2, i:int, exitbr:internalbc,
      \\  assert between(constvalue.slot.args_2 - 1, 1, length.blks)
        ∧ between(constvalue.slot.args_3 - 1, 1, length.blks)report"codegen error:jmp to unknown block"
      \\  let newcode = BR(r(regno.l + 1)  , noblocks.blks_   (args_2) , noblocks.blks_ ( args_3), r.regno.l)
-        processblk(phitype, blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, tailphi)
+        processblk(  blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, tailphi)
 
 function getloc(l:seq.localmap, localno:int, i:int)int
  if localno.l_i = localno then regno.l_i else getloc(l, localno, i + 1)

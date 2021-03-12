@@ -10,8 +10,6 @@ use otherseq.word
 
 use seq.seq.word
 
-function seperator(acc:seq.char, sep:char, b:seq.char)seq.char
- if isempty.acc then b else acc + sep + b
 
 Function printmangled(w:word)seq.word
  let d=codedown.w
@@ -32,7 +30,7 @@ Function mangle(fsig:seq.word, module:seq.word)word
  let modname = module
  let parameters = break(","_1,"", subseq(fsig, i + 1, length.fsig - 1))
  encodeword.for acc = empty:seq.char, @e = [ [ merge.subseq(fsig, 1, i - 1)], module] + parameters do
-  seperator(acc, char.charmajorseparator, codeup.@e)
+   if isempty.acc then codeup.@e else acc + char.charmajorseparator + codeup.@e
  end(acc)
 
 Function codedown(w:word)seq.seq.word codedown(decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)

@@ -113,15 +113,17 @@ function paratypesastext(s:symbol)seq.seq.word
 
 Function modname(s:symbol)mytype mytype.module.s
 
-Function resulttype(s:symbol)mytype mytype.returntype.s
+Function resulttype(s:symbol)mytype 
+mytype.returntype.s
+
 
 Function nopara(s:symbol)int
  if isconst.s ∨ islocal.s ∨ isparameter.s then 0
  else if isspecial.s ∧ last.module.s ∉ "$record $loopblock "then
  \\ assert last.module.s in"$continue $block $apply $exitblock $br $record $loopblock $define"report"X"+ module.s \\
   if last.module.s = "$define"_1 &or isbr.s  then 1
-   else 
-   assert length.fsig.s > 1 report "define problem"+fsig.s+module.s
+   else  
+   assert length.fsig.s > 1 report "define problem"+fsig.s+module.s+stacktrace
    toint.(fsig.s)_2
  else if last.fsig.s ≠ ")"_1 then 0
  else
@@ -259,17 +261,7 @@ function Record(kinds:seq.word)symbol
  
 Function Sequence(eletype:mytype,length:int )symbol
  symbol("SEQUENCE" +toword.length, typerep.eletype+"$sequence", typerep.eletype+"seq ", specialbit)
-
-Function Block(type:mytype, i:int)symbol
- symbol("BLOCK" + toword.i, towords.type + "$block", towords.type, specialbit)
  
-Function br(t:int,f:int) symbol
- symbol(["branch"_1,toword.t,toword.f]+"(boolean)","$branch" ,"?")
- 
-     
-  
-       
-
 Function maybepacked(t:mytype) boolean
  abstracttype.t = "seq"_1 ∧ abstracttype.parameter.t ∈ "byte bit packed2 packed3 packed4 packed5 packed6"
 
@@ -315,14 +307,17 @@ function sigandmodule(s:symbol)seq.word fsig.s + module.s
 Function Exit symbol symbol("EXITBLOCK 1","$exitblock","?", specialbit)
 
 Function ifthenelse(c:seq.symbol,t:seq.symbol,e:seq.symbol,type:mytype) seq.symbol
-   c+Br2(2,3)+t+Exit+e+Exit+Block(type,3)
-
-
+ [start(type)]+c+Br2(3,4)+t+Exit+e+Exit+EndBlock 
+ 
 Function Br2(t:int,f:int)  symbol  
 symbol("BR2:"+toword.t+toword.f+"(boolean)","$br","?", specialbit) 
 
 Function start(t:mytype) symbol symbol("/start",typerep.t+"$loopblock",typerep.t
 , specialbit)
+
+Function EndBlock symbol
+ symbol("BLOCK 0" , "int $block", "int", specialbit)
+
 
 Function isstartorloop(sym:symbol) boolean last.module.sym &in "$loopblock   "
 
@@ -688,38 +683,6 @@ Function print(s:seq.symbol) seq.word  for acc="",e = s do acc
 +  \\ if last.module.e &in"$branch $exit2 $start" then fsig.e+EOL
   else \\ print.e end(acc)
 
-\ Function startblk(type:mytype,i:int) symbol  symbol("startblock:"+toword.i,typerep.type+"$start",typerep.type)
-
-\Function Mark(place:int)  symbol     symbol(   [toword.place],"$mark","?") 
-
-\Function Exit2 symbol symbol(   "Exit2","$exit2","?") 
-
-\ type blockconversion is count:int,need:int,blocktype:mytype 
-
-\use stack.blockconversion
-
-
- 
-\Function blockconversion(a:seq.symbol) seq.symbol a
-
- \\ changed from parse format of blocks to back end format \\
- for acc=empty:seq.symbol,count=1,need =0,stk=empty:stack.blockconversion,   e= a  do 
-        if count=need &and e=Exit2 then    \\ end block \\
-            next(acc+[Exit,Block(blocktype.top.stk,need) ],count.top.stk,need.top.stk,pop.stk) 
-      else if last.module.e &in " $mark"    then 
-         next(acc,count,need,stk)  
-      else if last.module.e="$start"_1 then
-         next(acc,1,0,push(stk,blockconversion(count,need,resulttype.e)))
-      else if module.e="$branch" then
-         next (acc+Br2( toint.(fsig.e)_2+count, toint.(fsig.e)_3+count)
-         , count+1
-         , max(need,toint.(fsig.e)_3+count)
-         ,stk)
-      else if e=Exit2 then 
-           next(acc+Exit,count+1,need,stk)
-      else 
-       next(acc+e,count,need,stk) 
-    end ( acc)
     
  ___________________________________________________________
  

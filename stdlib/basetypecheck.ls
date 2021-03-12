@@ -92,32 +92,23 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
     assert length.toseq.stk ≥ nopara.s report"stack underflow sequence"
       ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), 
        getbasetype(alltypes,addabstract("seq"_1, parameter.modname.s))), localtypes)
-    else if isexit.s then ccc(alltypes, code, i + 1, stk, localtypes)
+    else if isexit.s then 
+      assert match(top.stk,top.pop.stk) report "exit type does not match block type"+print.top.stk+print.top.pop.stk
+    ccc(alltypes, code, i + 1, pop.stk, localtypes)
+    else if isblock.s then
+      ccc(alltypes, code, i + 1,  stk, localtypes)
     else if iscontinue.s then
     assert length.toseq.stk ≥ nopara.s report"stack underflow continue"
-      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), mytype."none"), localtypes)
-    else if isblock.s then
-    assert length.toseq.stk ≥ nopara.s report"stack underflow block"
-     + for acc ="", @e = subseq(code, 1, i + 1)do acc + print.@e end(acc)
-     + EOL
-     + "point of underflow failure"
-     let resulttype=getbasetype(alltypes,resulttype.s) 
-     let subblocktypes = asset(top(stk, nopara.s)+resulttype) - asset.[ mytype."none"]
-      if cardinality.subblocktypes = 1 then
-      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), subblocktypes_1), localtypes)
-      else if cardinality.subblocktypes = 2 ∧ match(subblocktypes_1, subblocktypes_2)then
-      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), if subblocktypes_1 = typeptr then subblocktypes_2 else subblocktypes_1), localtypes)
-      else
-       "blockfailure" + for a ="", e = top(stk, nopara.s)do a + print.e end(a)
-       + "resulttype:"+print.resulttype
-       +EOL+EOL+print.subseq(code,1,i)
+      ccc(alltypes, code, i + 1,  pop(stk, nopara.s), localtypes)
+    else    if isstart.s then
+         ccc(alltypes, code, i + 1,  push(stk, resulttype.s), localtypes)   
     else if isbr.s then
         assert top(stk) =  mytype."boolean" report"if problem" + for a ="", e = top(stk, 1)do a + print.e end(a)
-      ccc(alltypes, code, i + 1, push(pop(stk ), mytype."none"), localtypes)
+      ccc(alltypes, code, i + 1,  pop(stk ) , localtypes)
     else if isloopblock.s then
     let no = nopara.s  
     let loc = addlocals(localtypes, top(stk, nopara.s), firstvar.s + no - 1, no)
-     ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), mytype."none"), loc)
+     ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), getbasetype(alltypes,resulttype.s)), loc)
     else if(module.s)_1 = "para"_1 then
     assert length.module.s > 1 report"illform para"
      let x = lookup(localtypes,(module.s)_2)
