@@ -46,7 +46,7 @@ option.pass1 pass1( seq.seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
 
 option.pass2 pass2(placehold:program, alltypes:typedict)program PROFILE
 
-\option.pass2 xxx(alltypes:typedict,p:program,code:seq.symbol,s:symbol,
+option.pass2 xxx(alltypes:typedict,p:program,code:seq.symbol,s:symbol,
  pdict:worddict.seq.symbol,first:boolean
 ) expandresult PROFILE
 

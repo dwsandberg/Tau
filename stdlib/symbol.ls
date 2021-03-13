@@ -306,8 +306,11 @@ function sigandmodule(s:symbol)seq.word fsig.s + module.s
 
 Function Exit symbol symbol("EXITBLOCK 1","$exitblock","?", specialbit)
 
+  
+
+
 Function ifthenelse(c:seq.symbol,t:seq.symbol,e:seq.symbol,type:mytype) seq.symbol
- [start(type)]+c+Br2(3,4)+t+Exit+e+Exit+EndBlock 
+  [start(type)]+c+Br2(1,2)+t+Exit+e+Exit+EndBlock 
  
 Function Br2(t:int,f:int)  symbol  
 symbol("BR2:"+toword.t+toword.f+"(boolean)","$br","?", specialbit) 
@@ -340,8 +343,6 @@ Function firstvar(a: symbol) int
 toint.(fsig.a )_3 
   
 
-Function Rbr(t:int,f:int) symbol 
-symbol("/br:"+ toword.t+toword.f+"(boolean)","$br","none", specialbit)
 
  
 Function brt(s:symbol) int    toint.(fsig.s)_3
@@ -580,13 +581,18 @@ Function print(f:symbol)seq.word
    else '"' + fsig + '"'
   else if module = "$word"then"WORD" + fsig
   else if isspecial.f then
-   if   fsig_1="BLOCK"_1     then  fsig +"("+print.resulttype.f+")"
-   else if fsig_1 ∈ "/br /start BLOCK  EXITBLOCK BR2 LOOPBLOCK   CONTINUE"then fsig + " &br"
-   else fsig
+     if   fsig_1="/start"_1     then  fsig +"("+print.resulttype.f+") &br"
+     else if   fsig_1="BLOCK"_1     then  "EndBLock  &br"
+     else if   fsig_1="EXITBLOCK"_1     then  "Exit &br"
+     else if  isbr.f then fsig+ " &br"
+     else if fsig_1 ∈ "  EXITBLOCK BR2 LOOPBLOCK   CONTINUE"then fsig + " &br"
+     else fsig
   else if isrecordconstant.f then fsig
   else if isFref.f then"FREF" + print.(constantcode.f)_1
  else if last.fsig = ")"_1 then fsig else fsig + "()" fi 
  + print.mytype.module
+
+ 
 
 Function print(p:program, i:symbol)seq.word
  let d = lookupcode(p, i)

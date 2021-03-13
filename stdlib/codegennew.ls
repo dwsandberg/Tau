@@ -144,7 +144,7 @@ function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcod
   assert length.toseq.args.l > 0 report"fail 5e"
    let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, 0), blocks.l)
     Lcode2(emptyinternalbc, lmap.l, noblocks.l + 1, regno.l, empty:stack.int, push(blocks.l, exitblock))
-  else  if action = "BR2"_1 then
+  else  if action = "BR2"_1  then
    let newargs=push(push(push( args.l ,brt.m-1) ,brf.m-1) ,1)
    let newcode = CAST(r(regno.l + 1), slot.top.args.l, i1, trunc)
    let cond = Lcode2(code.l + newcode, lmap.l, noblocks.l, regno.l + 1, newargs, blocks.l)
@@ -245,10 +245,10 @@ function processblk(  blks:seq.Lcode2, i:int, exitbr:internalbc, code:internalbc
       assert length.args.l > 3 report"check m"
       + for acc ="", @e = [ kind] + toseq.args.l do acc + toword.@e end(acc)
       let args = top(args.l, 4)
-     \\  assert between(constvalue.slot.args_2 - 1, 1, length.blks)
-       ∧ between(constvalue.slot.args_3 - 1, 1, length.blks)report"codegen error:jmp to unknown block"
-     \\  let newcode = BR(r(regno.l + 1)  , noblocks.blks_   (args_2) , noblocks.blks_ ( args_3), r.regno.l)
-        processblk(  blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, tailphi)
+       assert between(i+args_2, 1, length.blks)
+       ∧ between(i+args_3, 1, length.blks)report"codegen error:jmp to unknown block"
+      let newcode =    BR(r(regno.l + 1)  , noblocks.blks_(i+args_2) , noblocks.blks_(i+ args_3), r.regno.l)
+          processblk(  blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, tailphi)
 
 function getloc(l:seq.localmap, localno:int, i:int)int
  if localno.l_i = localno then regno.l_i else getloc(l, localno, i + 1)
