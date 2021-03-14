@@ -27,10 +27,11 @@ use seq.seq.word
 Function testopt seq.word let p2 = secondPass."stdlib.testoptconfig"
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 ,"1","Litfalse","4607182418800017408","44","2","46","72","27","2","128"
-,"65","Littrue","4", \\ optest24 \\"%1 5 =(int, int)standard 2 3 BR 3 
-&br 24 EXITBLOCK 1 
-&br 0 EXITBLOCK 1 
-&br BLOCK 3 
+,"65","Littrue","4", \\ optest24 \\"/start(int)
+&br %1 5 =(int, int)standard Br2(1,2) 
+&br 24 Exit 
+&br 0 Exit 
+&br EndBlock 
 &br", \\ optest25 \\
 "%1 3_(int seq, int)seq.int DEFINE 2 %2 9 >(int, int)standard 5 2 BR 3 
 &br %2 9 =(int, int)standard 7 3 BR 3 
@@ -38,46 +39,49 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 &br %2 8 =(int, int)standard 7 8 BR 3 
 &br %2 10 =(int, int)standard 7 6 BR 3 
 &br %2 3333 =(int, int)standard 7 8 BR 3 
-&br 25 EXITBLOCK 1 
-&br 2 EXITBLOCK 1 
-&br BLOCK 8 
+&br 25 Exit 
+&br 2 Exit 
+&br EndBlock 
 &br","%1 %2_(word seq, int)seq.word DEFINE 3 %3 WORD c >(int, int)standard 5 2 BR 3 
 &br %3 WORD c =(int, int)standard 7 3 BR 3 
 &br %3 WORD xxx =(int, int)standard 8 4 BR 3 
 &br %3 WORD b =(int, int)standard 9 10 BR 3 
 &br %3 WORD a =(int, int)standard 9 6 BR 3 
 &br %3 WORD d =(int, int)standard 7 10 BR 3 
-&br 4 EXITBLOCK 1 
-&br 3 EXITBLOCK 1 
-&br 4 EXITBLOCK 1 
-&br 5 EXITBLOCK 1 
-&br BLOCK 10 
-&br","%1 %2 3 LOOPBLOCK(int, int, int)
-&br %3 1 =(int, int)standard 3 4 BR 3 
-&br %4 EXITBLOCK 1 
+&br 4 Exit 
+&br 3 Exit 
+&br 4 Exit 
+&br 5 Exit 
+&br EndBlock 
+&br","%1 %2 LOOPBLOCK:3(int, int )
+&br %3 1 =(int, int)standard Br2(1,2) 
+&br %4 Exit 
 &br %3 1-(int, int)standard %3 %4 *(int, int)standard CONTINUE 2 
-&br BLOCK 4 
-&br","%1 0 >(int, int)standard 2 3 BR 3 
-&br 10 %2 >(int, int)standard EXITBLOCK 1 
-&br Litfalse EXITBLOCK 1 
-&br BLOCK 3 
-&br","%1 0 >(int, int)standard 2 3 BR 3 
-&br Littrue EXITBLOCK 1 
-&br 10 %2 >(int, int)standard EXITBLOCK 1 
-&br BLOCK 3 
+&br EndBlock
+&br","/start(boolean)
+&br %1 0 >(int, int)standard Br2(1,2) 
+&br 10 %2 >(int, int)standard Exit 
+&br Litfalse Exit 
+&br EndBlock 
+&br","/start(boolean)
+&br %1 0 >(int, int)standard Br2(1,2) 
+&br Littrue Exit 
+&br 10 %2 >(int, int)standard Exit 
+&br EndBlock 
 &br", \\ optest30 \\
-"%1 WORD test =(int, int)standard 2 3 BR 3 
-&br %2 EXITBLOCK 1 
-&br %3 EXITBLOCK 1 
-&br BLOCK 3 
+"/start(int)
+&br %1 WORD test =(int, int)standard Br2(1,2) 
+&br %2 Exit 
+&br %3 Exit 
+&br EndBlock 
 &br"
 , \\ test 31 \\
 "%1 %2_(int seq, int)seq.int DEFINE 3 %3 3 >(int, int)standard 4 2 BR 3 
 &br %3 3 =(int, int)standard 5 3 BR 3 
 &br %3 1 =(int, int)standard 5 6 BR 3 
 &br %3 4 =(int, int)standard 5 6 BR 3 
-&br 10 EXITBLOCK 1 
-&br 11 EXITBLOCK 1 
+&br 10 Exit 
+&br 11 Exit 
 &br BLOCK 6 
 &br","%1", \\ test 33 \\"33"]
 let r = for acc ="", @e = arithseq(length.cl, 1, 1)do acc + getcode(p2, cl, @e)end(acc)

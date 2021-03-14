@@ -582,10 +582,10 @@ Function print(f:symbol)seq.word
   else if module = "$word"then"WORD" + fsig
   else if isspecial.f then
      if   fsig_1="/start"_1     then  fsig +"("+print.resulttype.f+") &br"
-     else if   fsig_1="BLOCK"_1     then  "EndBLock  &br"
+     else if   fsig_1="BLOCK"_1     then  "EndBlock  &br"
      else if   fsig_1="EXITBLOCK"_1     then  "Exit &br"
-     else if  isbr.f then fsig+ " &br"
-     else if fsig_1 ∈ "  EXITBLOCK BR2 LOOPBLOCK   CONTINUE"then fsig + " &br"
+     else if  isbr.f then "Br2("+ fsig_3+","+fsig_4+")  &br"
+     else if fsig_1 ∈ "    BR2 LOOPBLOCK   CONTINUE"then fsig + " &br"
      else fsig
   else if isrecordconstant.f then fsig
   else if isFref.f then"FREF" + print.(constantcode.f)_1

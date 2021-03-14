@@ -238,7 +238,7 @@ function callarcs(s:seq.word, i:int, result:seq.word)seq.word
         let theend = 2 * (length.module - 1) + 1 + j + 1
          callarcs(s, theend, result + mangle(subseq(s, i, j), module))
      else   if this ∈ "DEFINE EXITBLOCK BR BLOCK APPLY WORD "then callarcs(s, i + 2, result)
-     else if this ∈ " &br FREF Litfalse Littrue SEQUENCE /start"then callarcs(s, i + 1, result)
+     else if this ∈ " &br FREF Litfalse Littrue SEQUENCE /start Exit EndBlock"then callarcs(s, i + 1, result)
      else
       let chs = decodeword.this
        assert length.chs > 0 ∧ chs_1 ∈ decodeword.merge."%-0123456789"

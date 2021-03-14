@@ -152,9 +152,13 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
     else  next(flags, result + sym, nextvar, map) 
    else if sym=NotOp &and last.result=NotOp then
         next(flags, result >> 1, nextvar, map) 
-   else  if length.result > 2 &and isconst.last.result &and  islocal.result_-2
+   else  if length.result > 2 &and isconst.last.result  
     &and fsig.sym ∈ ["∈(int, int seq)","∈(word, word seq)"] then 
-     next(flags, result >> 2 +removeismember(last.result,result_-2),nextvar,map)
+     let arg=result_-2
+     if islocal.arg &or isconst.arg then 
+       next(flags, result >> 2 +removeismember(last.result,arg),nextvar,map)
+     else
+       next(flags,  result >> 1+Define.nextvar +removeismember(last.result,Local.nextvar),nextvar,map)
    else if   (fsig.sym)_1 ∈ "forexp" &and module.sym="builtin"  then 
      let noop=forexpisnoop(sym,result)
     if not.isempty.noop then 
