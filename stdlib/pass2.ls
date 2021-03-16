@@ -55,42 +55,65 @@ use seq.seq.seq.symbol
 use mergeblocks2
 
 
-function firstopt(p:program, s:symbol, code:seq.symbol, alltypes:typedict) expandresult
-    let pdict= for   pmap=emptyworddict:worddict.seq.symbol,parano=1, e=constantseq(10000,1) while  parano &le nopara.s do 
+function firstopt(p:program, s:symbol, code:seq.symbol, alltypes:typedict,options:seq.word,first:boolean) seq.symbol
+     let pdict= for   pmap=emptyworddict:worddict.seq.symbol,parano=1, e=constantseq(10000,1) while  parano &le nopara.s do 
            next(add(pmap, toword.parano, [ Local.parano]),parano+1)
      end(pmap)
-  xxx(alltypes,p,removeoptions.code,s,pdict,true)
-   
-     
-function xxx(alltypes:typedict,p:program,code:seq.symbol,s:symbol,pdict:worddict.seq.symbol,first:boolean
+let a=xxx(alltypes,p,removeoptions.code,s,pdict )
+let t=  if first then a else 
+    if Hasfor &in flags.a  &or Callself &in  flags.a   then
+            let ty= if Hasfor &in flags.a  then expandforexp(code.a,nextvar.a) else code.a
+           let t2= if Callself &in  flags.a   &and  (fsig.s)_1 &ne"subpass2"_1 then optB(ty,s) else ty 
+           expandresult(nextvar.a, t2,flags.a)
+        else  a
+let newoptions=   if length.code.t < 22 ∧ Callself &nin flags.t  
+ ∧ Hasfor &nin flags.t    ∧ "NOINLINE"_1 ∉ options  ∧ "INLINE"_1 ∉ options   
+   then   if isverysimple(nopara.s,code.t) &and (fsig.s)_1 &nin "headdict ispseq get"  then  
+       "INLINE VERYSIMPLE"+options 
+       else
+        assert not(length.code.t=2 &and \\ isconst.first.code &and \\ first.fsig.(code.t)_2 &in "Lit" ) report 
+         "HJK"+print.s +print.code.t
+     "INLINE"+options  
+    else  
+     options 
+ if newoptions = ""then code.t else code.t + Words.newoptions + Optionsym 
+ 
+ function isverysimple(nopara:int,code:seq.symbol) boolean 
+ let t=    for isverysimple=  length.code &ge nopara ,     idx=1,    sym =code while isverysimple do
+              next (if idx &le nopara then  sym=Local.1 else
+                  not.isbr.sym  &and not.isdefine.sym &and not.islocal.sym,idx+1) 
+      end(isverysimple)
+      nopara > 1 &and t
+      
+      if nopara > 1 then t
+      else  if  isconst.first.code &and length.code=1  
+        &or length.code=3 &and first.code =Local.1 &and isconst.code_2 &and first.fsig.code_3 &in "IDX_+" 
+        then true
+        else  if not.t then false
+        else if nopara=1 then length.code=1
+          else
+         assert true &or  length.code &ne 2 &or not.isconst.first.code &or first.fsig.code_2 &in "stack Lit" report "XXXX"+first.fsig.code_2+"???"+print.code
+         length.code &nin [3,4,5,6,7,8,9,10,11]
+        
+  
+function xxx(alltypes:typedict,p:program,code:seq.symbol,s:symbol,pdict:worddict.seq.symbol 
 ) expandresult
        let a=scancode(alltypes,p,  code, nopara.s + 1, pdict, s)
            let new=if Hasmerge &in flags.a then  optB(code.a ,Lit.1)  else code.a
     if  length.code=length.new &and length.code > 20 &or new=code then 
-        if Hasfor &in flags.a  &or Callself &in  flags.a   then
-            let ty= if Hasfor &in flags.a  then expandforexp(new,nextvar.a) else new
-           let t2= if Callself &in  flags.a   &and  (fsig.s)_1 &ne"subpass2"_1 then optB(ty,s) else ty 
-           expandresult(nextvar.a, t2,flags.a)
-        else 
            expandresult(nextvar.a,  new  ,flags.a)
      else 
-     xxx(alltypes,p,new,s,pdict,false)
+     xxx(alltypes,p,new,s,pdict )
+     
+     
       
 
 function print(s:seq.int)seq.word for acc ="", @e = s do acc + toword.@e end(acc)
 
  
-    
-
-function addlooplocals(map:worddict.seq.symbol, firstvar:int, nextvar:int, nopara:int)worddict.seq.symbol
-     for   pmap=map,parano=1, e=constantseq(10000,1) while  parano &le nopara  do 
-           next(replace(pmap, toword(firstvar+parano-1), [ Local(nextvar+parano-1)]),parano+1)
-     end(pmap)
-
   
  Function  Callself bits bits.1
  
- Function Hasunknown bits bits.2
  
  Function State bits bits.4
  
@@ -105,7 +128,7 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
      for   flags=bits.0,result=empty:seq.symbol,nextvar=nextvarX ,map=mapX, sym = org do
   let len = length.result
    if isconst.sym then 
-      next(flags, \\ if   isFref.sym &and not.isdefined.lookupcode(p, sym) then   "HASUNKNOWN"_1 else \\ result + sym, nextvar, map)
+      next(flags,  result + sym, nextvar, map)
    else if isspecial.sym then
      if \\ isdefine \\(fsig.sym)_1 = "DEFINE"_1 then
     let thelocal =(fsig.sym)_2
@@ -129,8 +152,11 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
       next(  flags &or Hasmerge , result+sym,nextvar,map)  
     else if isloopblock.sym then
       let nopara = nopara.sym
+       let addlooplocals=   for   pmap=map,parano=1, e=constantseq(10000,1) while  parano &le nopara  do 
+           next(replace(pmap, toword(firstvar.sym+parano-1), [ Local(nextvar+parano-1)]),parano+1)
+     end(pmap)
        next(flags,  result+ Loopblock(paratypes.sym,nextvar,resulttype.sym )
-     , nextvar + nopara, addlooplocals(map, firstvar.sym, nextvar, nopara ))
+     , nextvar + nopara, addlooplocals )
     else if isRecord.sym ∨ isSequence.sym then
     let nopara = nopara.sym
     let args = subseq(result, len + 1 - nopara, len)
@@ -173,7 +199,6 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
     let dd1=lookupcode(p, sym)
     if not.isdefined.dd1   then 
           let newflags=if  (fsig.sym)_1 ∈ "setfld" ∨ module.sym = "$global" then State else bits.0 fi 
-         &or if sym=Optionsym &or first.fsig.sym ∈ "toseq" then bits.0 else Hasunknown    
          next(flags &or newflags ,result+sym,nextvar,map)
        else 
     let dd = code.dd1
@@ -189,7 +214,9 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
      let a1 = for acc = empty:seq.symbol, @e = tointseq.decodeword.(fsig.arg1)_1 do acc + Lit.@e end(acc)
      let d = Constant2(a1 + Sequence(typeint, length.a1))
       next(flags, result >> 1 + d, nextvar, map)
-     else if not("INLINE"_1 ∈ options ∨ first."VERYSIMPLE" ∈ options)then
+     else if first."VERYSIMPLE" ∈ options then
+           next(flags,result+ removeoptions.dd << nopara.sym ,nextvar,map)
+     else if not("INLINE"_1 ∈ options )then
          let  newflags= if "STATE"_1 ∈ options ∨(fsig.sym)_1 ∈ "setfld" ∨ module.sym = "$global"
          then State &or flags else flags
      next( newflags,   result + sym, nextvar, map)
@@ -201,35 +228,18 @@ function scancode(alltypes:typedict,p:program, org:seq.symbol, nextvarX:int, map
        else
         let t = backparse2(result, len, nopara, empty:seq.int) + [ len + 1]
         \\ assert length.t = nopara + 1 report"INLINE PARA PROBLEM" \\
-         let new = if issimple( nopara, code)then
-            for  simpleparamap=emptyworddict:worddict.seq.symbol,     parano=1,  lastidx=t_1,  idx = t << 1 do
-               next(  add(simpleparamap,toword.parano,subseq(result, lastidx,idx-1)),parano+1,idx) 
-            end(scancode(alltypes,p, code,  nextvar, simpleparamap,self))
-         else expandinline(alltypes,result, t, nextvar, code, p,self)
+         let new =  expandinline(alltypes,result, t, nextvar, code, p,self)
            next( flags &or flags.new,subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
-    end( 
-      let match=if (flags &and Hasunknown ) =Hasunknown then "HASUNKNOWN" else 
-         if (flags &and State) = State then "STATE" else "INLINE" 
-       expandresult(nextvar, result,flags))
-
-function issimple( nopara:int, code:seq.symbol)boolean
-    for   last=0, rep =code  while last > -1 do 
-      if islocal.rep then
-        let parano = value.rep
-         if parano = last + 1  &and parano &le nopara then  parano 
-         else  -1 
-       else if isdefine.rep &or isloopblock.rep then -1
-       else  last 
-    end (     last = nopara     )
+    end(     expandresult(nextvar, result,flags))
 
    
- function expandinline(alltypes:typedict,s:seq.symbol, t:seq.int, nextvarin:int, inlinecode:seq.symbol, p:program, self:symbol)expandresult 
-  for  pmap=emptyworddict:worddict.seq.symbol,  code=empty:seq.symbol, nextvar=nextvarin,  parano=1,  lastidx=t_1,  idx = t << 1 do
+ function expandinline(alltypes:typedict,result:seq.symbol, t:seq.int, nextvarin:int,  code:seq.symbol, p:program, self:symbol)expandresult 
+  for  pmap=emptyworddict:worddict.seq.symbol,  paracode=empty:seq.symbol, nextvar=nextvarin,  parano=1,  lastidx=t_1,  idx = t << 1 do
        next(  add(pmap,toword.parano,[Local.nextvar])
-       ,code+subseq(s, lastidx,idx-1) + Define.toword.nextvar  
+       ,paracode+subseq(result, lastidx,idx-1) + Define.toword.nextvar  
        ,nextvar+1,parano+1,idx) end(
-        let r=scancode(alltypes,p, inlinecode, nextvar, pmap, self) 
-          expandresult(nextvar.r, code + code.r,flags.r)  )
+        let r=scancode(alltypes,p,  code, nextvar, pmap, self) 
+          expandresult(nextvar.r, paracode + code.r,flags.r)  )
    
 
 function replace(s:seq.symbol, start:int, length:int, value:seq.symbol)seq.symbol
@@ -386,22 +396,6 @@ for acc = empty:seq.symbol,  s = code do
 ________________________________
 
 
-function fixoptions( s:symbol, e:expandresult,options:seq.word) seq.symbol
-let code0=code.e
-let code = removeoptions.code0
-let fsig = fsig.s
-let newoptions = if fsig = "∈(int, int seq)" ∨ fsig = "∈(word, word seq)"
-∨ fsig = "_(int seq, int)"
-∨ fsig = "_(word seq, int)"then
-""
-else
- let c= if  (State &in flags.e &or Hasunknown &in flags.e )  ∧ "STATE"_1 ∉ options then "STATE" else "" fi
-     + if length.code < 20 ∧ Callself &nin flags.e    ∧ "NOINLINE"_1 ∉ options 
-      ∧ "INLINE"_1 ∉ options   then
-       "INLINE"
-    else ""
-     options+c
-  if newoptions = ""then code else code + Words.newoptions + Optionsym 
 
  
 
@@ -435,20 +429,20 @@ function  subpass2(  alltypes:typedict,  bigin:seq.programele,corein:program,top
     if isempty.code ∨ "BUILTIN"_1 ∈ options ∨ "VERYSIMPLE"_1 ∈ options then
            next(big,small,map(core, s, fullcode))
      else if "COMPILETIME"_1 ∈ options then
-       let code4=fixoptions(s,firstopt(core, s, fullcode, alltypes),options)
+       let code4= firstopt(core, s, fullcode, alltypes,options,true) 
         next(big,small,map(core, s, code4))
      else if length.code < 30 then 
-         let t=firstopt(core, s, fullcode, alltypes)  
-           if   Hasunknown  &nin  flags.t   then 
-              next(big,small,map(core,s,fixoptions(s,t,options)) )
-           else 
-             next(big,map(small,s, if isempty.options then  code.t else  code.t+subseq(fullcode,length.fullcode-1,length.fullcode)),core)
-     else next(big+pele,small,core)
+              let t=firstopt(core, s, fullcode, alltypes,options,true)
+              if "INLINE"_1 &in getoption.t  then
+               next(big,small,map(core,s, t) )
+               else 
+                next(big, map(small,s, t),core )
+     else  next(big+pele,small,core)
   end( if   length.toseq.corein=length.toseq.core  then
     for acc = core , prgele=toseqprogramele.core+toseqprogramele.small+ big do
        let code3=code.prgele let sym3=target.prgele 
        if isempty.code3 then   map(acc,sym3,code3) else
-       map(acc,sym3,fixoptions(sym3,firstopt(acc, sym3, code3, alltypes),getoption.code3))
+       map(acc,sym3, firstopt(acc, sym3, code3, alltypes , getoption.code3,false))
  end(acc)
         else subpass2(alltypes,big,core,small,count+1))
 

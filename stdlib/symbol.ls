@@ -247,8 +247,6 @@ Function Callidx(type:mytype)symbol
     [ Lit.-1, PlusOp, symbol("extractbyte(byte seq, int)","internal","int")]
   else [ Lit.-1, PlusOp, symbol("extractbit(bit seq, int)","internal","int")]
 
-Function Stdseq symbol Lit.0
-
 function Record(kinds:seq.word)symbol
  symbol("RECORD("
  + for acc ="", e = kinds do list(acc,",", [ e])end(acc)
@@ -364,8 +362,6 @@ Function Lit(i:int)symbol symbol([ toword.i],"$int","int", constbit)
 Function Littrue symbol symbol("1","$boolean","boolean", constbit)
 
 Function Litfalse symbol symbol("0","$boolean","boolean", constbit)
-
-Function Lit0 symbol symbol("0","$int","int", constbit)
 
 Function Words(s:seq.word)symbol symbol(s,"$words","word seq", constbit)
 

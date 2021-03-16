@@ -14,7 +14,7 @@ use seq.int
 
 type ggg is code:seq.symbol,stk:stack.int
 
-    function countnodes2(s:stack.int) int
+function countnodes2(s:stack.int) int
     if top.s =2 then 1 else 1+countnodes2(pop.s)
 
     
@@ -98,7 +98,7 @@ let firstpart=reorg(subseq(sorted,1,mid-1), brf,var,nodes,offset.lastpart )
     reorgresult(new, offset.firstpart-2)
     
 
-function findcases(code:seq.symbol,nodes:seq.int,casenodes:seq.int,dead:seq.int,nextvar:int) seq.symbol
+function findcases(code:seq.symbol,nodes:seq.int,casenodes:seq.int,dead:seq.int,nextvar:int,reorgwhen:int) seq.symbol
   for  cases=empty:seq.casenode,last=-nodes_1,nodeno=2,nextcase=0,first=empty:seq.symbol,eqivs=empty:seq.symbol  ,
      e=nodes << 1 do 
            if nodeno &nin casenodes then next(cases,e,nodeno+1,nextcase-1,first,eqivs) else 
@@ -131,7 +131,7 @@ else
                    +newcasecode +subseq(code,loc+1,length.code)
     let newnodes=for l=nodesBeforeStartOfCase+arithseq(nonewnodes,4,loc+length.settestvar+4),n=nodes << locnode do
           l+[length.newcasecode+n] end(l)
-    let newunreached=for l=dead,n= cases do  
+    let newunreached=for l=for x=empty:seq.int,y=dead do x+(nonewnodes+y) end(x) ,n= cases do  
               let n2=nodeno.n+nonewnodes
                if isempty.l then [n2]
               else  if last.l > n2 then  l+n2
@@ -141,9 +141,10 @@ else
               end(l2)  
         end(l)
    \\ nodes_node.first.cases \\
-    assert true report "KK"+print.length.code.t+print.offset.t+print.nodeno.first.cases
-    +print.newcode+EOL+   for l = EOL, c=newnodes do l+print.newcode_abs.c end(l) +EOL
+    assert true report "cases"+for l = EOL, c=cases do l+print.nodeno.c end(l) 
+    +print.newcode+EOL+ \\  for l = EOL, c=newnodes do l+print.newcode_abs.c end(l) + \\EOL
      +for l = "dead"+EOL, c=newunreached do l+print.c end(l) +EOL
+      +for l = "deadin"+EOL, c=dead do l+print.c end(l) +EOL    
      +for l = "olddead"+EOL, c=cases do l+print.nodeno.c end(l) +EOL
      +print.nonewnodes
      +EOL+print.removedead(newcode,newnodes,newunreached)
@@ -151,7 +152,7 @@ else
     )
 
   
- function unreached(code:seq.symbol,nodes:seq.int,nextvar:int) seq.symbol 
+function unreached(code:seq.symbol,nodes:seq.int,nextvar:int,reorgwhen:int) seq.symbol 
    for unreached=empty:seq.int,multpred=empty:seq.int , cases=empty:seq.int,targets=asset.[2],count=2, n=nodes << 1 do
        let sym=code_n
        if  count &nin targets then
@@ -188,10 +189,9 @@ else
             + subseq(code, nodes_(1+brt.secondnode)+1,nodes_(2+brt.secondnode)-1)
   else  
     if length.cases < reorgwhen then    removedead(code,nodes,unreached)  
-    else  findcases(code,nodes,cases,unreached,nextvar)
+    else  findcases(code,nodes,cases,unreached,nextvar,reorgwhen)
    )
       
-  function reorgwhen int 30
 
 
   function removedead(code:seq.symbol,nodes:seq.int,dead:seq.int ) seq.symbol
@@ -203,6 +203,7 @@ else
 
 
 Function optB(s:seq.symbol,self:symbol) seq.symbol
+let reorgwhen=11000
 for acc=empty:seq.symbol,stk= empty:stack.int , nextvar=length.s,lastsymbol=Lit.0 ,sym =s do
    if (lastsymbol =Littrue &or lastsymbol=Litfalse) &and isbr.sym &and top.stk=length.acc-1 then 
    \\ patch previous br's so they skip over this block \\
@@ -217,7 +218,7 @@ for acc=empty:seq.symbol,stk= empty:stack.int , nextvar=length.s,lastsymbol=Lit.
         let stk1=pop(stk,noblocks)
         let blkstart=-first.nodes
         if isloopblock.acc_blkstart  &or  ( sym &ne Exit &and not.isbr.sym) then 
-           let code0=unreached(acc,nodes,nextvar) 
+           let code0=unreached(acc,nodes,nextvar,reorgwhen) 
            next(code0+sym,newstk(sym,stk1,code0),nextvar+1,sym) 
      else   if   isbr.sym  then    
       \\  assert  noblocks &ne 4 report "X"+print.noblocks +print.length.s  \\
@@ -256,7 +257,7 @@ for acc=empty:seq.symbol,stk= empty:stack.int , nextvar=length.s,lastsymbol=Lit.
          next(code1,stk2,nextvar,sym)
        end( if isblock.lastsymbol then
            if  not.isconst.self &and first.toseq.stk=-1 then tailR(acc+lastsymbol,self,stk)
-           else unreached(acc,toseq.stk,nextvar)
+           else unreached(acc,toseq.stk,nextvar,reorgwhen)
           else 
            acc
         )

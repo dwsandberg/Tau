@@ -10,7 +10,6 @@ Builtin allocatespace:T(i:int)seq.T
 
 Builtin setfld(i:int, s:seq.T, val:T)int
 
-
 Builtin indexseq44(seqtype:int,s:seq.T,i:int) T
 
 module taublockseq.T

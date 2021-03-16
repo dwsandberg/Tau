@@ -46,9 +46,12 @@ option.pass1 pass1( seq.seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
 
 option.pass2 pass2(placehold:program, alltypes:typedict)program PROFILE
 
-option.pass2 xxx(alltypes:typedict,p:program,code:seq.symbol,s:symbol,
+
+\option.pass2 xxx(alltypes:typedict,p:program,code:seq.symbol,s:symbol,
  pdict:worddict.seq.symbol,first:boolean
 ) expandresult PROFILE
+
+\option.pass2 firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)program PROFILE
 
 option.pass2 subpass2(  alltypes:typedict,  bigin:seq.programele,corein:program,toprocess:program,count:int) program
  PROFILE
@@ -65,7 +68,6 @@ option.symbol lookupcode(p:program, s:symbol)programele PROFILE
 pending:seq.symbol, processed:program, code:seq.symbol, s:symbol)program
 PROFILE
 
-option.pass2 firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)program PROFILE
 
 
 option.standard +(int,int) int COMPILETIME

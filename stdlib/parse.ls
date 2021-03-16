@@ -84,12 +84,16 @@ function bindlit(R:reduction.bindinfo)bindinfo
   if length.chars > 1 ∧ chars_2 ∈ decodeword.first."Xx"then
   bindinfo(dict.R, [ Lit.cvttoint.chars], [ mytype."bits"],"")
   else bindinfo(dict.R, [ Lit.cvttoint.chars], [ typeint],"")
-
+  
 function opaction(R:reduction.bindinfo, input:seq.word, place:int)bindinfo
  let op = tokentext.R_2
  let dict = dict.R_1
  let types = types.R_1 + types.R_3
-  if op = "≠"then
+ if op= "∧" &and types=[mytype."boolean",mytype."boolean"] then
+     bindinfo(dict,  ifthenelse(code.R_1, code.R_3 ,[Litfalse],mytype."boolean"), [ mytype."boolean"],"")
+  else if op= "∨" &and types=[mytype."boolean",mytype."boolean"] then
+     bindinfo(dict,  ifthenelse(code.R_1, [Littrue] , code.R_3 ,mytype."boolean"), [ mytype."boolean"],"")
+ else if op = "≠"then
   let f = lookupbysig(dict,"=", types, input, place)
     bindinfo(dict, code.R_1 + code.R_3 + f + NotOp, [ resulttype.f],"")
   else if op = "∉"then
@@ -113,7 +117,7 @@ function unaryop(R:reduction.bindinfo, input:seq.word, place:int, op:seq.word, e
    assert cardinality.dcrt = 1 report errormessage("parameter type" + print.rt + "is undefined in", input, place)
    let dcws = deepcopysym(dict.R, mytype."word seq")
     assert cardinality.dcws = 1 report errormessage("type word seq is require for process in", input, place)
-    let newcode = [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp, Stdseq, Lit.nopara]
+    let newcode = [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp, Lit.0, Lit.nopara]
     + subseq(code.exp, 1, length.code.exp - 1)
     + newsymbol("createthreadX", mytype."int builtin", [ typeint, typeint, typeint, typeint, typeint] + paratypes.last.code.exp, addabstract("process"_1, resulttype.last.code.exp))
      bindinfo(dict.R, newcode, [ addabstract("process"_1, rt)],"")
@@ -156,27 +160,6 @@ function ifexp(R:reduction.bindinfo,  ifpart:bindinfo, thenpart:bindinfo,elsepar
 assert(types.ifpart)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place) 
 assert types.thenpart = types.elsepart report errormessage("then and else types are different", input, place) 
 bindinfo(dict.R, ifthenelse(code.ifpart,code.thenpart,code.elsepart,(types.thenpart)_1 ), types.thenpart,"") 
-
-\function blockcount(code:seq.symbol,i:int)  int 
- if i=0 then 1 else  toint.(fsig.code_i)_3
-       
-\function  removestart(code:seq.symbol)  int
- \\ returns 0 if cannot merge and location of startblock if can merge. \\
- if module.last.code="$mark"  then length.code-toint.first.fsig.last.code
- else 0 
-
-\function  thecode(code:seq.symbol,i:int)  seq.symbol
-  if i=0 then code+Exit2
-  else subseq(code,1,i-1)+subseq(code,i+1,length.code-1)
-
-\function ifexp(codeif:seq.symbol,thencode :seq.symbol, elsecode:seq.symbol,type:mytype ) seq.symbol
-   let E=removestart.elsecode
-   let T=removestart.thencode 
-   let thencount=blockcount(thencode,T)
-   let t=[startblk(type,1+thencount+blockcount(elsecode,E))]+codeif +br(1,1+thencount)+    thecode(thencode,T) +thecode(elsecode,E )  
-  t +Mark(length.t) 
- 
-       
 
 function action(ruleno:int, input:seq.word, place:int, R:reduction.bindinfo)bindinfo
 if ruleno = \\ G F # \\ 1 then R_1 

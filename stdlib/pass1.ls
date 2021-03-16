@@ -318,7 +318,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
    , symfromseq
    , 
    ifthenelse( [ Local.1, GetSeqType, indexfunc, EqOp]
-   ,[Local.1], [Lit0, Lit0, Record.[ typeint, typeint]]
+   ,[Local.1], Emptyseq(typeint)   
    , typeptr)+ symbol("bitcast(ptr)","builtin","ptr") 
    )
      let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]
