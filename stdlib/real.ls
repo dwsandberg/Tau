@@ -59,7 +59,7 @@ Function^(a:real, n:int)real
  else if n = 1 then a
  else if n < 0 then 1.0 / a^(-n)
  else let d = n / 2
-   a^d * a^(n - d)
+  a^d * a^(n - d)
 
 Function *(a:int, b:real)real toreal.a * b
 

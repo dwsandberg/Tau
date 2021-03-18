@@ -31,7 +31,7 @@ Function iscomplex(a:mytype)boolean length.towords.a > 1
 
 Function replaceT(with:mytype, m:mytype)mytype
  if(towords.m)_1 = "T"_1 then
- mytype(towords.with + subseq(towords.m, 2, length.towords.m))
+  mytype(towords.with + subseq(towords.m, 2, length.towords.m))
  else m
 
 Function typeint mytype mytype."int"

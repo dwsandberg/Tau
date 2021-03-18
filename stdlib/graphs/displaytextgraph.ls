@@ -22,7 +22,7 @@ use svggraph.seq.word
 
 use seq.arcinfo.seq.word
 
-Function display(z2:seq.arcinfo.seq.word)seq.word" &{ noformat" + displaygraph(charwidths, z2) + " &}"
+Function display(z2:seq.arcinfo.seq.word)seq.word" /< noformat" + displaygraph(charwidths, z2) + " />"
 
 Function arcinfo(tail:seq.word, head:seq.word, arclabel:seq.word)arcinfo.seq.word arcinfo(arc(tail, head), arclabel, displaywidth(charwidths, arclabel))
 

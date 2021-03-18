@@ -34,7 +34,7 @@ Function arcstosuccessors(g:labeledgraph.T, node:T)set.T findelement2(arcs.g, no
 Function backarcstopredecessors(g:labeledgraph.T, node:T)set.T findelement2(backarcs.g, node)
 
 Function sinks(g:labeledgraph.T)seq.T
- for acc = empty:seq.T, @e = toseq.nodes.g do acc + sinks(g, @e)end(acc)
+ for acc = empty:seq.T, @e = toseq.nodes.g do acc + sinks(g, @e)/for(acc)
 
 Function sinks(g:labeledgraph.T, n:T)seq.T
  if cardinality.arcstosuccessors(g, n) = 0 then [ n]else empty:seq.T
@@ -43,5 +43,5 @@ Function subdelete(a:set.T, b:T)set.T a - b
 
 Function deletenode(g:labeledgraph.T, n:T)labeledgraph.T
 let b = backarcstopredecessors(g, n)
-let a = for acc = arcs.g, @e = toseq.b do subdelete(acc, reverse.@e)end(acc)
+let a = for acc = arcs.g, @e = toseq.b do subdelete(acc, reverse.@e)/for(acc)
  labeledgraph(a, backarcs.g - b, nodes.g - n)

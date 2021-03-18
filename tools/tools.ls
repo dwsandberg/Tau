@@ -48,9 +48,9 @@ print.compile("baseTypeCheck","stdlib")
 
 Module tools
 
-Library tools doc profile genLR1 taulextable
+Library tools doc genLR1 profile taulextable
 uses stdlib 
-exports  doc   profile    tools genLR1 taulextable
+exports doc genLR1 profile taulextable tools
 
 * STATE builtin:profile profileinfo profileresult
 

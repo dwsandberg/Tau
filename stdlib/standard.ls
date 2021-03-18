@@ -66,7 +66,7 @@ Builtin =(a:int, b:int)boolean
 
 Function =(a:ordering, b:ordering)boolean toint.a = toint.b
 
-Builtin =(a:boolean, b:boolean)boolean \\(a &and b)&or(not.a &and not.b)\\
+Builtin =(a:boolean, b:boolean)boolean
 
 if a then if b then true else false else if b then false else true
 
@@ -78,8 +78,8 @@ Function ∧(a:ordering, b:ordering)ordering let x = a
 --------------------
 
 Function ?(a:boolean, b:boolean)ordering
- if a then if b then \\ T T \\ EQ else \\ T F \\ GT
- else if b then \\ F T \\ LT else \\ F F \\ EQ
+ if a then if b then { T T } EQ else { T F } GT
+ else if b then { F T } LT else { F F } EQ
 
 Function ∧(a:boolean, b:boolean)boolean if a then b else false
 
@@ -103,13 +103,13 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 ---------------------------
 
-Function hash(a:seq.int)int finalmix.for acc = hashstart, @e = a do hash(acc, @e)end(acc)
+Function hash(a:seq.int)int finalmix.for acc = hashstart, @e = a do hash(acc, @e)/for(acc)
 
 Function hash(a:seq.word)int
- finalmix.for acc = hashstart, @e = a do hash(acc, hash.@e)end(acc)
+ finalmix.for acc = hashstart, @e = a do hash(acc, hash.@e)/for(acc)
 
 Function^(i:int, n:int)int
- for acc = 1, @e = constantseq(n, i)do acc * @e end(acc)
+ for acc = 1, @e = constantseq(n, i)do acc * @e /for(acc)
 
 Function pseudorandom(seed:int)int
 let ah = 16807
@@ -120,7 +120,7 @@ let test = ah * (seed mod (mh / ah)) - mh mod ah * (seed / (mh / ah))
 function addrandom(s:seq.int, i:int)seq.int s + pseudorandom.s_(length.s)
 
 Function randomseq(seed:int, length:int)seq.int
- for acc = [ seed], @e = constantseq(length - 1, 1)do addrandom(acc, @e)end(acc)
+ for acc = [ seed], @e = constantseq(length - 1, 1)do addrandom(acc, @e)/for(acc)
 
 Export randomint(i:int)seq.int
 
@@ -136,23 +136,23 @@ let t = if n < 0 then s << 1 else s
  else
   for acc = empty:seq.char, i = 1, e = s do
    next(acc
-  + if(length.s - i) mod 3 = 2 ∧ i ≠ 1 then [ char.160, e]
+   + if(length.s - i) mod 3 = 2 ∧ i ≠ 1 then [ char.160, e]
    else [ e], i + 1)
-  end(acc)
+  /for(acc)
 
-Function EOL seq.word" &br"
+Function EOL seq.word" /br"
 
 Function break(s:seq.word, seperators:seq.word, includeseperator:boolean)seq.seq.word
 let nosep = if includeseperator then 0 else 1
 let l = for acc = empty:seq.int, i = 1, e = s do
  next(acc + if e ∈ seperators then [ i]else empty:seq.int, i + 1)
-end(acc)
+/for(acc)
  for acc = empty:seq.seq.word, i = 1, ele = l + (length.s + 1)do
   next(acc
   + subseq(s, if i = 1 then 1 else l_(i - 1) + nosep, ele - 1)
   , i + 1
   )
- end(acc)
+ /for(acc)
 
 Export hash(a:word)int
 

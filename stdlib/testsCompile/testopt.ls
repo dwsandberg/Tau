@@ -27,85 +27,86 @@ use seq.seq.word
 Function testopt seq.word let p2 = secondPass."stdlib.testoptconfig"
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 ,"1","Litfalse","4607182418800017408","44","2","46","72","27","2","128"
-,"65","Littrue","4", \\ optest24 \\"/start(int)
-&br %1 5 =(int, int)standard Br2(1,2) 
-&br 24 Exit 
-&br 0 Exit 
-&br EndBlock 
-&br", \\ optest25 \\
-"%1 3_(int seq, int)seq.int DEFINE 2 %2 9 >(int, int)standard 5 2 BR 3 
-&br %2 9 =(int, int)standard 7 3 BR 3 
-&br %2 5 =(int, int)standard 7 4 BR 3 
-&br %2 8 =(int, int)standard 7 8 BR 3 
-&br %2 10 =(int, int)standard 7 6 BR 3 
-&br %2 3333 =(int, int)standard 7 8 BR 3 
-&br 25 Exit 
-&br 2 Exit 
-&br EndBlock 
-&br","%1 %2_(word seq, int)seq.word DEFINE 3 %3 WORD c >(int, int)standard 5 2 BR 3 
-&br %3 WORD c =(int, int)standard 7 3 BR 3 
-&br %3 WORD xxx =(int, int)standard 8 4 BR 3 
-&br %3 WORD b =(int, int)standard 9 10 BR 3 
-&br %3 WORD a =(int, int)standard 9 6 BR 3 
-&br %3 WORD d =(int, int)standard 7 10 BR 3 
-&br 4 Exit 
-&br 3 Exit 
-&br 4 Exit 
-&br 5 Exit 
-&br EndBlock 
-&br","%1 %2 LOOPBLOCK:3(int, int )
-&br %3 1 =(int, int)standard Br2(1,2) 
-&br %4 Exit 
-&br %3 1-(int, int)standard %3 %4 *(int, int)standard CONTINUE 2 
-&br EndBlock
-&br","/start(boolean)
-&br %1 0 >(int, int)standard Br2(1,2) 
-&br 10 %2 >(int, int)standard Exit 
-&br Litfalse Exit 
-&br EndBlock 
-&br","/start(boolean)
-&br %1 0 >(int, int)standard Br2(1,2) 
-&br Littrue Exit 
-&br 10 %2 >(int, int)standard Exit 
-&br EndBlock 
-&br", \\ optest30 \\
+,"65","Littrue","4", { optest24 }
 "/start(int)
-&br %1 WORD test =(int, int)standard Br2(1,2) 
-&br %2 Exit 
-&br %3 Exit 
-&br EndBlock 
-&br"
-, \\ test 31 \\
+/br %1 5 =(int, int)standard Br2(1, 2)
+/br 24 Exit 
+/br 0 Exit 
+/br EndBlock 
+/br", { optest25 }
+"%1 3_(int seq, int)seq.int DEFINE 2 %2 9 >(int, int)standard 5 2 BR 3 
+/br %2 9 =(int, int)standard 7 3 BR 3 
+/br %2 5 =(int, int)standard 7 4 BR 3 
+/br %2 8 =(int, int)standard 7 8 BR 3 
+/br %2 10 =(int, int)standard 7 6 BR 3 
+/br %2 3333 =(int, int)standard 7 8 BR 3 
+/br 25 Exit 
+/br 2 Exit 
+/br EndBlock 
+/br","%1 %2_(word seq, int)seq.word DEFINE 3 %3 WORD c >(int, int)standard 5 2 BR 3 
+/br %3 WORD c =(int, int)standard 7 3 BR 3 
+/br %3 WORD xxx =(int, int)standard 8 4 BR 3 
+/br %3 WORD b =(int, int)standard 9 10 BR 3 
+/br %3 WORD a =(int, int)standard 9 6 BR 3 
+/br %3 WORD d =(int, int)standard 7 10 BR 3 
+/br 4 Exit 
+/br 3 Exit 
+/br 4 Exit 
+/br 5 Exit 
+/br EndBlock 
+/br","%1 %2 LOOPBLOCK:3(int, int)
+/br %3 1 =(int, int)standard Br2(1, 2)
+/br %4 Exit 
+/br %3 1-(int, int)standard %3 %4 *(int, int)standard CONTINUE 2 
+/br EndBlock 
+/br","/start(boolean)
+/br %1 0 >(int, int)standard Br2(1, 2)
+/br 10 %2 >(int, int)standard Exit 
+/br Litfalse Exit 
+/br EndBlock 
+/br","/start(boolean)
+/br %1 0 >(int, int)standard Br2(1, 2)
+/br Littrue Exit 
+/br 10 %2 >(int, int)standard Exit 
+/br EndBlock 
+/br", { optest30 }
+"/start(int)
+/br %1 WORD test =(int, int)standard Br2(1, 2)
+/br %2 Exit 
+/br %3 Exit 
+/br EndBlock 
+/br"
+, { test 31 }
 "%1 %2_(int seq, int)seq.int DEFINE 3 %3 3 >(int, int)standard 4 2 BR 3 
-&br %3 3 =(int, int)standard 5 3 BR 3 
-&br %3 1 =(int, int)standard 5 6 BR 3 
-&br %3 4 =(int, int)standard 5 6 BR 3 
-&br 10 Exit 
-&br 11 Exit 
-&br BLOCK 6 
-&br","%1", \\ test 33 \\"33"]
-let r = for acc ="", @e = arithseq(length.cl, 1, 1)do acc + getcode(p2, cl, @e)end(acc)
+/br %3 3 =(int, int)standard 5 3 BR 3 
+/br %3 1 =(int, int)standard 5 6 BR 3 
+/br %3 4 =(int, int)standard 5 6 BR 3 
+/br 10 Exit 
+/br 11 Exit 
+/br BLOCK 6 
+/br","%1", { test 33 }"33"]
+let r = for acc ="", @e = arithseq(length.cl, 1, 1)do acc + getcode(p2, cl, @e)/for(acc)
 + if [ 40, 20, 30, 20]
 = [ multitarget(4, true, false), multitarget(4, false, false), multitarget(3, false, true), multitarget(2, false, false)]then
-""
+ ""
 else"fail multitarget"
  if isempty.r then"PASS testopt"else"testopt" + r
 
 function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
 
 Function getcode(p2:seq.seq.word, codelist:seq.seq.word, no:int)seq.word
-let t1 = for acc ="", @e = p2 do acc + filter(merge("optest" + toword.no), @e)end(acc)
+let t1 = for acc ="", @e = p2 do acc + filter(merge("optest" + toword.no), @e)/for(acc)
 let t = subseq(t1, findindex("testopt"_1, t1) + 1, length.t1)
 let code = removeoptions(t, length.t)
- \\ assert false report t1 +" &br"+ t +" &br"+ code \\
+ { assert false report t1 +" /br"+ t +" /br"+ code }
  if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1,"")then
- ""
+  ""
  else
-  " &br  &{ literal FAILED  &} test" + toword.no + "in optest  &br" + code + " &p"
+  " /br  /< literal FAILED  /> test" + toword.no + "in optest  /br" + code + " /p"
   + codelist_no
-  + " &p diffs:"
+  + " /p diffs:"
   + sameto(code, codelist_no, 1,"")
-  + " &p"
+  + " /p"
   + toseq.asset."a b c d xxx"
 
 function shuffletest(s:seq.word)boolean
@@ -119,13 +120,13 @@ function sameto(a:seq.word, b:seq.word, i:int, diffs:seq.word)seq.word
 
 function removeoptions(s:seq.word, i:int)seq.word
  if i = length.s then
- if subseq(s, i - 7, i) ≠ "option(int, word seq)builtin"then s
+  if subseq(s, i - 7, i) ≠ "option(int, word seq)builtin"then s
   else removeoptions(s, i - 9)
  else if s_i ≠ '"'_1 then removeoptions(s, i - 1)
  else subseq(s, 1, i - 1)
 
 Function multitarget(value1:int, a:boolean, b:boolean)int
- \\ check to see optimization handles this case correctly \\
+ { check to see optimization handles this case correctly }
  if if value1 = 4 then a else false then 40
  else if if value1 = 3 then b else false then 30 else 20
 
@@ -179,7 +180,7 @@ Function optest23 int optest23a(6, 3)
 
 function parabits(nopara:int)int
 let b = nopara
- toint(bits.if b > 6 then 0 else b + 1 fi << 5)
+ toint(bits.if b > 6 then 0 else b + 1 /if << 5)
 
 Function optest23a(a:int, b:int)int(a + a) / b
 
@@ -187,10 +188,10 @@ Function optest24(i:int)int if i ∈ [ 5]then 24 else 0
 
 Function optest25(b:seq.int)int
  if b_3 = 3333 ∨ b_3 ∈ [ 5, 8, 9] ∨ b_3 = 10 then
- 25
+  25
  else 2
 
-/Function optest26 int let x = [ 1, 3^5, 3]assert length.x = 3 report"XXXXXX arg"if length.x = 2 &and false then 5 else 10
+/Function optest26 int let x = [ 1, 3^5, 3]assert length.x = 3 report"XXXXXX arg"if length.x = 2 ∧ false then 5 else 10
 
 Function optest26(s:seq.word, i:int)int
  if s_i = "xxx"_1 then 3
@@ -198,7 +199,7 @@ Function optest26(s:seq.word, i:int)int
  else if s_i ∈ "c d"then 4 else 5
 
 Function optest27(a:int, result:int)int
- \\ tail recursion \\ if a = 1 then result else optest27(a - 1, a * result)
+ { tail recursion } if a = 1 then result else optest27(a - 1, a * result)
 
 Function optest28(a:int, b:int)boolean a > 0 ∧ b < 10
 
@@ -213,7 +214,7 @@ Function optest32(t:seq.word)seq.word dropparameter(t,"")
 
 function dropparameter(a:seq.word, result:seq.word)seq.word a
 
-Function optest33 int \\ does IDX work \\ length.[ 3, 4, 5, 6] + 29
+Function optest33 int { does IDX work } length.[ 3, 4, 5, 6] + 29
 
 Function optest34(a:int, b:int, c:int, d:int)ordering optest34a(a ? b, c ? d)
 
@@ -221,5 +222,5 @@ Function optest34a(a:ordering, b:ordering)ordering let x = a
  if x = EQ then b else x
 
 Function optest16a(a:seq.char)seq.int
- \\ This is just a type change and the compiler recognizes this and does not generate code \\
- for acc = empty:seq.int, @e = a do acc + toint.@e end(acc)
+ { This is just a type change and the compiler recognizes this and does not generate code }
+ for acc = empty:seq.int, @e = a do acc + toint.@e /for(acc)

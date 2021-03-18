@@ -41,7 +41,7 @@ Function clength(s:seq.T, i:int)int
 
 Function cindex(s:seq.T, i:int, idx:int)T
  if idx = 1 then
- if s_i < 128 then s_i
+  if s_i < 128 then s_i
   else s_(i + 1) - 128 + (s_i - 128 - 64) * 64
  else cindex(s, i + if s_i < 128 then 1 else 2, idx - 1)
 

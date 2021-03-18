@@ -53,7 +53,7 @@ Function testreal seq.word check([ print(3, sqrt.2.0) = "1.414"
 , print(5, tan(pi / 4.0)) = "1.00000"
 , print(5, arcsin.sin.0.5) = "0.50000"
 , print(5, arccos.cos.0.5) = "0.50000"
-, print(3, for acc = 0.0, @e = [ 8, 9, 10, 11]do acc + toreal.@e end(acc))
+, print(3, for acc = 0.0, @e = [ 8, 9, 10, 11]do acc + toreal.@e /for(acc))
 = "38.000"
 ,"23.45000-18.45000"
 = print(5, 23.45) + print(5, 5.0 - 23.45)
@@ -62,7 +62,7 @@ Function testreal seq.word check([ print(3, sqrt.2.0) = "1.414"
 = "1 C addcomma function i int merge s segment seq seq toword toword word"
 , for acc ="", @e = alphasort.["z b","a b","a a","test 23","test 20"]do
  list(acc,"/", @e)
-end(acc)
+/for(acc)
 = "a a / a b / test 20 / test 23 / z b"
 ]
 ,"real"
@@ -93,12 +93,12 @@ let b = process.countprimes(c + 1, 2 * c)
 function findprimes(start:int, finish:int)seq.word
  for acc ="", @e = arithseq((finish - start + 2) / 2, 2, start)do
   acc + isprime3.@e
- end(acc)
+ /for(acc)
 
 function countprimes(start:int, finish:int)int
  for acc = 0, @e = arithseq((finish - start + 2) / 2, 2, start)do
   acc + isprime4.@e
- end(acc)
+ /for(acc)
 
 function isprime3(i:int)seq.word if isprime.i then [ toword.i]else""
 
@@ -108,7 +108,7 @@ function isprime(i:int)boolean
  if i mod 2 = 0 then i = 2
  else
   let a = i / 2
-   \\ intpart.sqrt.toreal.i \\
+   { intpart.sqrt.toreal.i }
    let b =(a + i / a) / 2
     subisprime(i, 3, b)
 

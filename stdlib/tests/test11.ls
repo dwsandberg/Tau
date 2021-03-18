@@ -49,7 +49,7 @@ function t007 boolean [ 2, 3] = [ 2] + [ 3]
 function ff(seed:int, x:int)int
  if x = 1 then pseudorandom.seed else ff(pseudorandom.seed, x - 1)
 
-function t008 boolean \\ testing random number generator \\ 1043618065 = ff(1, 10000)
+function t008 boolean { testing random number generator } 1043618065 = ff(1, 10000)
 
 function gen(n:int)seq.int
  if n = 1 then [ n]else gen(n - 1) + [ n * n]
@@ -119,29 +119,29 @@ function t030 boolean [ false, false, true, true] = [ isbyte(0 - 1), isbyte.256,
 function isbyte(i:int)boolean between(i, 0, 255)
 
 function t031 boolean false
-= for acc = true, e = [ 0 - 1, 256, 255, 0]do acc ∧ isbyte.e end(acc)
+= for acc = true, e = [ 0 - 1, 256, 255, 0]do acc ∧ isbyte.e /for(acc)
 
-function t032 boolean for acc = true, e = [ 23, 4, 5, 255, 7, 2, 255]do acc ∨ isbyte.e end(acc)
+function t032 boolean for acc = true, e = [ 23, 4, 5, 255, 7, 2, 255]do acc ∨ isbyte.e /for(acc)
 
-function t033 boolean 6 = toint.if true then"3"_1 else"5"_1 fi + 3
+function t033 boolean 6 = toint.if true then"3"_1 else"5"_1 /if + 3
 
-function t034 boolean 3464 = 3456 + if true then 3 else 1 fi + 5
+function t034 boolean 3464 = 3456 + if true then 3 else 1 /if + 5
 
 function print(a:seq.int)seq.word
  "["
- + for acc ="", e = a do seperator(acc,",") + toword.e end(acc)
+ + for acc ="", e = a do seperator(acc,",") + toword.e /for(acc)
  + "]"
 
 function seperator(acc:seq.word, sep:seq.word)seq.word if isempty.acc then acc else acc + sep
 
 function t035 boolean"[ 2, 3, 4, 5]" = print.[ 2, 3, 4, 5]
 
-function t036 boolean 10 = for acc = 0, e = [ 1, 2, 3, 4]do acc + e end(acc)
+function t036 boolean 10 = for acc = 0, e = [ 1, 2, 3, 4]do acc + e /for(acc)
 
-function t037 boolean 24 = for acc = 1, e = [ 1, 2, 3, 4]do acc * e end(acc)
+function t037 boolean 24 = for acc = 1, e = [ 1, 2, 3, 4]do acc * e /for(acc)
 
 function t038 boolean [ 1, 2, 3, 4]
-= for acc = empty:seq.int, e = [ 1, 2, 3, 4]do acc + e end(acc)
+= for acc = empty:seq.int, e = [ 1, 2, 3, 4]do acc + e /for(acc)
 
 function t039 boolean let a = 6 * 6
  a + a = 72
@@ -151,29 +151,29 @@ function t040 boolean"a b c d e 1 2 3 4 k"
 
 function t041 boolean"1 2 k 4 5" = replace("1 2 3 4 5", 3,"k"_1)
 
-function t042 boolean 97 = for acc = 100, e = [ 1, 2]do acc - e end(acc)
+function t042 boolean 97 = for acc = 100, e = [ 1, 2]do acc - e /for(acc)
 
 Function t043 boolean"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
 = for acc ="code glyph", e = arithseq(43, 1, 48)do
  acc + [ toword.e, encodeword.[ char.e]]
-end(acc)
+/for(acc)
 
 function t044 boolean '"()+,-.:= [ \]^_' = standalonechars
 
 Function standalonechars seq.word for acc ="", e = arithseq(length.classifychar, 1, 1)do
 let class = classifychar_e
  if class ∈ "0 SPACE"then acc else acc + [ class]
-end(acc)
+/for(acc)
 
-Function t045 boolean \\ testing UNICODE to word conversion and no-break space in integer 8746 \\
-decodeword."1 2∪"_1 = [ char.49, char.160, char.50, char.87 46]
+Function t045 boolean { testing UNICODE to word conversion and no-break space in integer 8746 } decodeword."1 2∪"_1
+= [ char.49, char.160, char.50, char.87 46]
 
 function testset set.int asset.[ 2, 5, 6, 9, 12, 15, 35, 36]
 
 function ?2(a:int, b:int)ordering a / 10 ? b / 10
 
 function print(a:set.int)seq.word
- for acc ="", e = toseq.a do acc + toword.e end(acc)
+ for acc ="", e = toseq.a do acc + toword.e /for(acc)
 
 function t046 boolean toseq.findelement2(testset, 36) = [ 35, 36] ∧ toseq.findelement2(testset, 15) = [ 12, 15]
 
@@ -184,6 +184,6 @@ Function test11 seq.word let y = [ t001, t002, t003, t004, t005, t006, t007, t00
 , t021, t022, t023, t024, t025, t026, t027, t028, t029, t030
 , t031, t032, t033, t034, t035, t036, t037, t038, t039, t040
 , t041, t042, t043, t044, t045, t046,"this is a test"_(-1) = "test"_1, b.[ Tpair(3,"three"), Tpair(4,"four"), Tpair(5,"five")]_(-2)
-= "four", [ 1, 2, 4]_(-3) = 1, \\ 50 \\"this is a test" << 2 = "a test"
+= "four", [ 1, 2, 4]_(-3) = 1, { 50 }"this is a test" << 2 = "a test"
 ,"this is a test" >> 3 = "this"]
  check(y,"test11")

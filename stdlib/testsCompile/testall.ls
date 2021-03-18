@@ -26,7 +26,8 @@ use testseq
 
 use wordfreq
 
-Function testall seq.word \\ this is a comment \\
-test5 + test11 + test11a + testencoding + testprocess + testmodules + testbug7 + testopt + testreal
+Function testall seq.word { this is a comment } test5 + test11 + test11a + testencoding + testprocess + testmodules + testbug7
++ testopt
++ testreal
 + testseq
 + testwordfreq

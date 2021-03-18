@@ -80,7 +80,8 @@ let z = check:seq.typerec2
  else"FAIL testseq" + w + x + y + z
 
 Function sparsecheck seq.word let b = for acc = sparseseq.101, @e = subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)do
- check(acc, @e)end(acc)
+ check(acc, @e)
+/for(acc)
  "Pass Sparse Sequence"
 
 function check(s:seq.int, r:seq.int)seq.int
@@ -119,7 +120,7 @@ Function check:seq.T seq.word let unpack = random:seq.T(16)
 let pack = packed.unpack
 let x = if getseqtype.pack = 1 then"packed"else""
  if(length.pack > 9999 ∨ seqkind.pack = x + toword.length.unpack) ∧ pack = unpack then
- "PASS" + toword.length.pack
+  "PASS" + toword.length.pack
  else"FAIL" + toword.length.pack
 
 Function random:seq.T(depth:int)seq.T

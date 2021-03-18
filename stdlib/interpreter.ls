@@ -38,11 +38,9 @@ Builtin bitcast(int)seq.int
 
 Builtin GEP(seq.int, int)int
 
-
-Function interpretCompileTime(alltypes:typedict,code:seq.symbol)seq.symbol
- let r = interpret(alltypes, removeconstant.code, 1, empty:stack.int)
-  tocode(r, resulttype.last.code)
-
+Function interpretCompileTime(alltypes:typedict, code:seq.symbol)seq.symbol
+let r = interpret(alltypes, removeconstant.code, 1, empty:stack.int)
+ tocode(r, resulttype.last.code)
 
 function tocode(r:int, typ:mytype)seq.symbol
  if typ = mytype."word"then [ Word.wordencodingtoword.r]
@@ -53,9 +51,9 @@ function tocode(r:int, typ:mytype)seq.symbol
  else
   assert abstracttype.typ ∈ "seq"report"resulttype not handled" + print.typ
   let s = bitcast.r
-   for acc = [ Lit.0, Lit.length.s], @e = s do acc + tocode(@e, parameter.typ)end(acc)
+   for acc = [ Lit.0, Lit.length.s], @e = s do acc + tocode(@e, parameter.typ)/for(acc)
 
-function aswords(s:seq.int)seq.word for acc ="", @e = s do acc + wordencodingtoword.@e end(acc)
+function aswords(s:seq.int)seq.word for acc ="", @e = s do acc + wordencodingtoword.@e /for(acc)
 
 Function interpret(alltypes:typedict, code:seq.symbol)seq.word aswords.bitcast.interpret(alltypes, code, 1, empty:stack.int)
 
@@ -67,20 +65,20 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)int
   let sym = code_i
   let nopara = nopara.sym
    if module.sym = "$word"then
-   interpret(alltypes, code, i + 1, push(stk, hash.first.fsig.sym))
+    interpret(alltypes, code, i + 1, push(stk, hash.first.fsig.sym))
    else if module.sym = "$words"then
-   let a = for acc = empty:seq.int, @e = fsig.sym do acc + hash.@e end(acc)
-     interpret(alltypes, code, i + 1, push(stk, GEP(a, 0)))
+   let a = for acc = empty:seq.int, @e = fsig.sym do acc + hash.@e /for(acc)
+    interpret(alltypes, code, i + 1, push(stk, GEP(a, 0)))
    else if module.sym = "$int" ∨ module.sym = "$real" ∨ module.sym = "$boolean"then
-   interpret(alltypes, code, i + 1, push(stk, toint.(fsig.sym)_1))
+    interpret(alltypes, code, i + 1, push(stk, toint.(fsig.sym)_1))
    else if last.module.sym = "$sequence"_1 then
-   interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 0)))
+    interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 0)))
    else if module.sym = "$record"then
-   if subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
-    interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara - 2), 0)))
+    if subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
+     interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara - 2), 0)))
     else interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 2)))
    else if fsig.sym = "makereal(word seq)"then
-   interpret(alltypes, code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
+    interpret(alltypes, code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
    else
     let t = dlsymbol.mangle(fsig.sym, module.sym)
     let dcret = deepcopysym(alltypes, resulttype.sym)

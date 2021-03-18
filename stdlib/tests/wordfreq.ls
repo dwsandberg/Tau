@@ -41,17 +41,19 @@ let index = valueofencoding.encode.indexedword.w
 function print(p:wordfreq)seq.word
  if count.p = 0 then empty:seq.word
  else
-  " &br the word" + w.p + "occurs" + toword.count.p + "times."
+  " /br the word" + w.p + "occurs" + toword.count.p + "times."
 
 function removelowcount(mincount:int, p:wordfreq)seq.wordfreq if count.p < mincount then empty:seq.wordfreq else [ p]
 
 function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq
- for acc = empty:seq.wordfreq, @e = sort.for acc = sparseseq.wordfreq(0,"A"_1), @e = a do count(acc, @e)end(acc)do
-  acc + removelowcount(mincount, @e)end(acc)
+ for acc = empty:seq.wordfreq, @e = sort.for acc = sparseseq.wordfreq(0,"A"_1), @e = a do count(acc, @e)/for(acc)do
+  acc + removelowcount(mincount, @e)
+ /for(acc)
 
 Function testwordfreq(count:int, text:seq.seq.word)seq.word
- for acc = empty:seq.word, @e = wordfreq(count, text)do acc + print.@e end(acc)
+ for acc = empty:seq.word, @e = wordfreq(count, text)do acc + print.@e /for(acc)
 
-Function testwordfreq seq.word for acc = empty:seq.word, @e = wordfreq(300, gettext."stdlib/pass2.ls")do acc + print.@e end(acc)
+Function testwordfreq seq.word for acc = empty:seq.word, @e = wordfreq(300, gettext."stdlib/pass2.ls")do acc + print.@e /for(acc)
 
-function count(s:seq.wordfreq, w:seq.word)seq.wordfreq for acc = s, @e = w do count(acc, @e)end(acc)
+function count(s:seq.wordfreq, w:seq.word)seq.wordfreq
+ for acc = s, @e = w do count(acc, @e)/for(acc)

@@ -26,11 +26,11 @@ Function_(t:tree.T, i:int)tree.T(sons.t)_i
 Function nosons(t:tree.T)int length.sons.t
 
 Function postorder(a:tree.T)seq.tree.T
- for acc = empty:seq.tree.T, @e = sons.a do acc + postorder.@e end(acc)
+ for acc = empty:seq.tree.T, @e = sons.a do acc + postorder.@e /for(acc)
  + a
 
 Function replace(with:T, a:T, t:tree.T)tree.T
- let newlabel = if label.t = a then with else label.t
- tree(newlabel, for acc = empty:seq.tree.T, @e = sons.t do acc + replace(with, a, @e)end(acc))
+let newlabel = if label.t = a then with else label.t
+ tree(newlabel, for acc = empty:seq.tree.T, @e = sons.t do acc + replace(with, a, @e)/for(acc))
 
 ------------------

@@ -28,12 +28,12 @@ Function ?(a:baryinfo.T, b:baryinfo.T)ordering avg.a ? avg.b
 
 function averagepred(g:graph.T, layer1:seq.T, node:T)baryinfo.T
 let pred = toseq.predecessors(g, node)
-let a = for acc = 0, @e = pred do acc + findindex(@e, layer1)end(acc)
+let a = for acc = 0, @e = pred do acc + findindex(@e, layer1)/for(acc)
  baryinfo(toreal.a / toreal.length.pred, node)
 
 function baryinfo(g:graph.T, layer1:seq.T, layer2:seq.T)seq.T
-let a = for acc = empty:seq.baryinfo.T, @e = layer2 do acc + averagepred(g, layer1, @e)end(acc)
- for acc = empty:seq.T, @e = sort.a do acc + node.@e end(acc)
+let a = for acc = empty:seq.baryinfo.T, @e = layer2 do acc + averagepred(g, layer1, @e)/for(acc)
+ for acc = empty:seq.T, @e = sort.a do acc + node.@e /for(acc)
 
 function baryinfo(g:graph.T, layers:seq.seq.T, i:int, result:seq.seq.T)seq.seq.T
  if i < length.layers then

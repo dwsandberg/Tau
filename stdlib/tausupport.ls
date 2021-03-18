@@ -10,7 +10,7 @@ Builtin allocatespace:T(i:int)seq.T
 
 Builtin setfld(i:int, s:seq.T, val:T)int
 
-Builtin indexseq44(seqtype:int,s:seq.T,i:int) T
+Builtin indexseq44(seqtype:int, s:seq.T, i:int)T
 
 module taublockseq.T
 
@@ -47,43 +47,42 @@ Function_(a:blockseq.T, i:int)T
  let data = bitcast.a
  let typ = getseqtype.dummy.a
  let ds = max(typ, 1)
-  \\ assert false report"where"+ toword.ds \\
+  { assert false report"where"+ toword.ds }
   let blksz = blocksize:T / ds
   let blk = IDX(data,(i - 1) / blksz + 2)
   let b =(i - 1) mod blksz + 1
-   indexseq44(typ,blk,b)   
-
+   indexseq44(typ, blk, b)
 
 Function blockit(s:seq.T, ds:int)seq.T
  assert ds > 1 report"blockit problem"
  let blksz = blocksize:T / ds
   if length.s ≤ blksz then
   let newseq = allocatespace:T(length.s * ds + 2)
-  let d = for acc = 2, @e = s do memcpy(acc, 0, ds, newseq, @e)end(acc)
-    setfirst(newseq, 1, length.s)
+  let d = for acc = 2, @e = s do memcpy(acc, 0, ds, newseq, @e)/for(acc)
+   setfirst(newseq, 1, length.s)
   else
    let noblks =(length.s + blksz - 1) / blksz
    let blkseq = allocatespace:seq.T(noblks + 2)
    let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
    let discard = for acc = 2, @e = arithseq(noblks, blksz, 1)do
     setfld(acc, blkseq, blockit(subseq(s, @e, @e + blksz - 1), ds))
-   end(acc)
+   /for(acc)
     setfirst(bitcast.blkseq, blockseqtype, length.s)
 
 Function blockit(s:seq.T)seq.T
- let blksz = blocksize:T
-  if length.s ≤ blksz then
-  let newseq = allocatespace:T(length.s + 2)
- let d = for acc = 2, @e = s do setfld(acc, newseq, @e)end(acc)
-    setfirst(newseq, 0, length.s)
-  else
-   let noblks =(length.s + blksz - 1) / blksz
-   let blkseq = allocatespace:seq.T(noblks + 2)
-   let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
+let blksz = blocksize:T
+ if length.s ≤ blksz then
+ let newseq = allocatespace:T(length.s + 2)
+ let d = for acc = 2, @e = s do setfld(acc, newseq, @e)/for(acc)
+  setfirst(newseq, 0, length.s)
+ else
+  let noblks =(length.s + blksz - 1) / blksz
+  let blkseq = allocatespace:seq.T(noblks + 2)
+  let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
   let discard = for acc = 2, @e = arithseq(noblks, blksz, 1)do
    setfld(acc, blkseq, blockit.subseq(s, @e, @e + blksz - 1))
-  end(acc)
-    setfirst(bitcast.blkseq, blockseqtype, length.s)
+  /for(acc)
+   setfirst(bitcast.blkseq, blockseqtype, length.s)
 
 module tausupport
 
@@ -96,6 +95,8 @@ use standard
 use abstractBuiltin.boolean
 
 use seq.byte
+
+use taublockseq.byte
 
 use abstractBuiltin.int
 
@@ -112,8 +113,6 @@ use taublockseq.packed4
 use taublockseq.packed5
 
 use taublockseq.packed6
-
-use taublockseq.byte
 
 use abstractBuiltin.ptr
 
@@ -165,11 +164,11 @@ builtin addresstosymbol2(a:int)seq.char
 
 Builtin randomint(i:int)seq.int
 
-Builtin getseqtype(ptr) int
+Builtin getseqtype(ptr)int
 
-Builtin getseqlength(ptr) int
+Builtin getseqlength(ptr)int
 
-Builtin toseqX:seq.int(ptr) seq.int
+Builtin toseqX:seq.int(ptr)seq.int
 
 Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
 
@@ -181,7 +180,7 @@ Export blockit(seq.real)seq.real
 
 Export blockit(s:seq.ptr)seq.ptr
 
-/Export blockit(s:seq.byte) seq.byte
+/Export blockit(s:seq.byte)seq.byte
 
 Function blockit(s:seq.packed2)seq.packed2 blockit(s, 2)
 
@@ -219,6 +218,6 @@ function assignencoding(a:int, typename)int a + 1
 
 -----------
 
-Function stacktrace seq.word for acc ="", @e = callstack.30 << 2 do acc + " &br" + printmangled.addresstosymbol.@e end(acc)
+Function stacktrace seq.word for acc ="", @e = callstack.30 << 2 do acc + " /br" + printmangled.addresstosymbol.@e /for(acc)
 
 Function addresstosymbol(a:int)word encodeword.addresstosymbol2.a

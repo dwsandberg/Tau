@@ -48,7 +48,8 @@ Function testmodules seq.word let y = [ t501, t502, t503, t504, t505, t506, t507
  check(y,"testmodules") + checkbits
 
 function print(a:seq.int)seq.word
- "[" + for acc ="", @e = a do list(acc,",", [ toword.@e])end(acc)
+ "["
+ + for acc ="", @e = a do list(acc,",", [ toword.@e])/for(acc)
  + "]"
 
 ---
@@ -66,7 +67,7 @@ function ?(a:tree.int, b:tree.int)ordering
 
 function subx(a:tree.int, b:tree.int, i:int, o:ordering)ordering
  if o = EQ ∧ i ≤ nosons.a then
- subx(a, b, i + 1, a_i ? b_i)
+  subx(a, b, i + 1, a_i ? b_i)
  else o
 
 function print(t:tree.word)seq.word
@@ -75,7 +76,8 @@ function print(t:tree.word)seq.word
   [ label.t]
   + if nosons.t = 1 then"." + print.t_1
   else
-   "(" + for acc ="", @e = sons.t do list(acc,",", print.@e)end(acc)
+   "("
+   + for acc ="", @e = sons.t do list(acc,",", print.@e)/for(acc)
    + ")"
 
 function t502 boolean [ GT, EQ, EQ]
@@ -114,7 +116,8 @@ let closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
  closure = toseq.arcs.transitiveClosure.g
 
 function print(g:graph.int)seq.word
- "GRAPH:" + for acc ="", @e = toseq.arcs.g do acc + print.@e end(acc)
+ "GRAPH:"
+ + for acc ="", @e = toseq.arcs.g do acc + print.@e /for(acc)
 
 function print(a:arc.int)seq.word"(" + toword.tail.a + toword.head.a + ")"
 
@@ -124,9 +127,11 @@ Randomphrase
 
 Function t507 boolean"The umber ant ambles the opal nurse" = getphrase.20
 
-function t044 boolean let s = UTF8.[ tobyte.40, tobyte.50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
-let z = myseq.for acc = empty:seq.int, @e = toseqbyte.s do acc + toint.@e end(acc)
- for acc ="", @e = z do acc + toword.@e end(acc) = "40 50 335 50 336"
+function t044 boolean let s = UTF8.[ tobyte.40, tobyte.50] + encodeUTF8.char.335 + encodeUTF8.char.50
++ encodeUTF8.char.336
+let z = myseq.for acc = empty:seq.int, @e = toseqbyte.s do acc + toint.@e /for(acc)
+ for acc ="", @e = z do acc + toword.@e /for(acc)
+ = "40 50 335 50 336"
  ∧ length.toseq.to:myseq.int(z) ≠ 0
  ∧ length.toseq.to:myseq.int([ 1, 2, 3]) = 0
 
@@ -136,7 +141,9 @@ bits
 
 Function checkbits seq.word let min64integer = toint(0x1 << 63)
 let max64integer = toint(bits.-1 >> 1)
- check([ toint.toword.min64integer = min64integer, toint.toword.max64integer = max64integer, min64integer + 1 = -max64integer, 0xD = bits.13, 878082210 = toint.rotl32(0xA2345678, 8), print(0xD687F000 ∧ 0x0FE00000) = "0000 0000 0680 0000", print(0xD687F001 >> 2) = "0000 0000 35A1 FC00", print(0xD687F001 << 2) = "0000 0003 5A1F C004", print(0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000", print.xor(0xD687F000, 0x0FE00000) = "0000 0000 D967 F000"]
- ,"bits")
+ check([ toint.toword.min64integer = min64integer, toint.toword.max64integer = max64integer, min64integer + 1 = -max64integer, 0xD = bits.13, 878082210 = toint.rotl32(0xA2345678, 8), print(0xD687F000 ∧ 0x0FE00000) = "0000 0000 0680 0000", print(0xD687F001 >> 2) = "0000 0000 35A1 FC00", print(0xD687F001 << 2) = "0000 0003 5A1F C004", print(0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000", print.xor(0xD687F000, 0x0FE00000) = "0000 0000 D967 F000"
+ ]
+ ,"bits"
+ )
 
 function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> (32 - n))

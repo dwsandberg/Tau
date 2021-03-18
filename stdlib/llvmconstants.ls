@@ -2,9 +2,8 @@ module llvmconstants
 
 use standard
 
-function generatecode seq.word \\ generates code in this module beyond---------\\
-\\ cmp2op found llvm/IR/InstrTypes.h \\
-enumerate("align","unspecified ? ? ? align8 align16 align32 align64")
+function generatecode seq.word { generates code in this module beyond---------}
+{ cmp2op found llvm/IR/InstrTypes.h } enumerate("align","unspecified ? ? ? align8 align16 align32 align64")
 + enumerate("instop","? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE")
 + enumerate("typeop","? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION")
 + enumerate("blockop","INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES")
@@ -15,40 +14,40 @@ enumerate("align","unspecified ? ? ? align8 align16 align32 align64")
 + enumerate("cmp2op","? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle")
 
 function enumerate(type:seq.word, codes:seq.word)seq.word
- "type" + type + "is toint:int" + " &br  &br Function decode(code:" + type
+ "type" + type + "is toint:int" + " /br  /br Function decode(code:" + type
  + ")seq.word"
- + " &br let i = toint.code  &br if between(i + 1, 1,"
+ + " /br let i = toint.code  /br if between(i + 1, 1,"
  + toword.length.codes
  + ")then"
- + '  &br let r = ["'
+ + '  /br let r = ["'
  + codes
  + '"_(i + 1)]if not(r ="?")then r else"'
  + type
  + '."+ toword.i '
- + '  &br else"'
+ + '  /br else"'
  + type
  + '."+ toword.i '
- + " &br  &br Export toint("
+ + " /br  /br Export toint("
  + type
  + ")int"
- + " &br  &br Export"
+ + " /br  /br Export"
  + type
  + "(i:int)"
  + type
- + " &br  &br Export type:"
+ + " /br  /br Export type:"
  + type
- + " &br  &br Function =(a:"
+ + " /br  /br Function =(a:"
  + type
  + ", b:"
  + type
  + ")boolean toint.a = toint.b"
- + for acc ="", @e = arithseq(length.codes, 1, 1)do acc + dd(type, codes, @e)end(acc)
- + " &br  &br"
+ + for acc ="", @e = arithseq(length.codes, 1, 1)do acc + dd(type, codes, @e)/for(acc)
+ + " /br  /br"
 
 function dd(type:seq.word, w:seq.word, i:int)seq.word
  if w_i = "?"_1 then""
  else
-  " &br  &br Function" + w_i + type + type + "."
+  " /br  /br Function" + w_i + type + type + "."
   + toword(i - 1)
 
 --------------------------
@@ -56,11 +55,11 @@ function dd(type:seq.word, w:seq.word, i:int)seq.word
 type align is toint:int
 
 Function decode(code:align)seq.word
- let i = toint.code
-  if between(i + 1, 1, 8)then
-  let r = ["unspecified ? ? ? align8 align16 align32 align64"_(i + 1)]
-    if not(r = "?")then r else"align" + toword.i
-  else"align" + toword.i
+let i = toint.code
+ if between(i + 1, 1, 8)then
+ let r = ["unspecified ? ? ? align8 align16 align32 align64"_(i + 1)]
+  if not(r = "?")then r else"align" + toword.i
+ else"align" + toword.i
 
 Export toint(align)int
 
@@ -83,12 +82,12 @@ Function align64 align align.7
 type instop is toint:int
 
 Function decode(code:instop)seq.word
- let i = toint.code
-  if between(i + 1, 1, 45)then
-  let r = ["? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
-   _(i + 1)]
-    if not(r = "?")then r else"instop" + toword.i
-  else"instop" + toword.i
+let i = toint.code
+ if between(i + 1, 1, 45)then
+ let r = ["? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
+ _(i + 1)]
+  if not(r = "?")then r else"instop" + toword.i
+ else"instop" + toword.i
 
 Export toint(instop)int
 
@@ -127,11 +126,11 @@ Function STORE instop instop.44
 type typeop is toint:int
 
 Function decode(code:typeop)seq.word
- let i = toint.code
-  if between(i + 1, 1, 22)then
-  let r = ["? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"_(i + 1)]
-    if not(r = "?")then r else"typeop" + toword.i
-  else"typeop" + toword.i
+let i = toint.code
+ if between(i + 1, 1, 22)then
+ let r = ["? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"_(i + 1)]
+  if not(r = "?")then r else"typeop" + toword.i
+ else"typeop" + toword.i
 
 Export toint(typeop)int
 
@@ -160,11 +159,11 @@ Function FUNCTION typeop typeop.21
 type blockop is toint:int
 
 Function decode(code:blockop)seq.word
- let i = toint.code
-  if between(i + 1, 1, 18)then
-  let r = ["INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"_(i + 1)]
-    if not(r = "?")then r else"blockop" + toword.i
-  else"blockop" + toword.i
+let i = toint.code
+ if between(i + 1, 1, 18)then
+ let r = ["INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"_(i + 1)]
+  if not(r = "?")then r else"blockop" + toword.i
+ else"blockop" + toword.i
 
 Export toint(blockop)int
 
@@ -193,11 +192,11 @@ Function TYPES blockop blockop.17
 type moduleop is toint:int
 
 Function decode(code:moduleop)seq.word
- let i = toint.code
-  if between(i + 1, 1, 9)then
-  let r = ["? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"_(i + 1)]
-    if not(r = "?")then r else"moduleop" + toword.i
-  else"moduleop" + toword.i
+let i = toint.code
+ if between(i + 1, 1, 9)then
+ let r = ["? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC"_(i + 1)]
+  if not(r = "?")then r else"moduleop" + toword.i
+ else"moduleop" + toword.i
 
 Export toint(moduleop)int
 
@@ -220,11 +219,11 @@ Function FUNCTIONDEC moduleop moduleop.8
 type constop is toint:int
 
 Function decode(code:constop)seq.word
- let i = toint.code
-  if between(i + 1, 1, 23)then
-  let r = ["? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"_(i + 1)]
-    if not(r = "?")then r else"constop" + toword.i
-  else"constop" + toword.i
+let i = toint.code
+ if between(i + 1, 1, 23)then
+ let r = ["? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"_(i + 1)]
+  if not(r = "?")then r else"constop" + toword.i
+ else"constop" + toword.i
 
 Export toint(constop)int
 
@@ -263,11 +262,11 @@ Function CDATA constop constop.22
 type castop is toint:int
 
 Function decode(code:castop)seq.word
- let i = toint.code
-  if between(i + 1, 1, 12)then
-  let r = ["trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"_(i + 1)]
-    if not(r = "?")then r else"castop" + toword.i
-  else"castop" + toword.i
+let i = toint.code
+ if between(i + 1, 1, 12)then
+ let r = ["trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"_(i + 1)]
+  if not(r = "?")then r else"castop" + toword.i
+ else"castop" + toword.i
 
 Export toint(castop)int
 
@@ -304,11 +303,11 @@ Function bitcast castop castop.11
 type binaryop is toint:int
 
 Function decode(code:binaryop)seq.word
- let i = toint.code
-  if between(i + 1, 1, 13)then
-  let r = ["add sub mul udiv sdiv urem srem shl lshr ashr and or xor"_(i + 1)]
-    if not(r = "?")then r else"binaryop" + toword.i
-  else"binaryop" + toword.i
+let i = toint.code
+ if between(i + 1, 1, 13)then
+ let r = ["add sub mul udiv sdiv urem srem shl lshr ashr and or xor"_(i + 1)]
+  if not(r = "?")then r else"binaryop" + toword.i
+ else"binaryop" + toword.i
 
 Export toint(binaryop)int
 
@@ -347,12 +346,12 @@ Function xor binaryop binaryop.12
 type cmp2op is toint:int
 
 Function decode(code:cmp2op)seq.word
- let i = toint.code
-  if between(i + 1, 1, 42)then
-  let r = ["? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle"
-   _(i + 1)]
-    if not(r = "?")then r else"cmp2op." + toword.i
-  else"cmp2op." + toword.i
+let i = toint.code
+ if between(i + 1, 1, 42)then
+ let r = ["? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle"
+ _(i + 1)]
+  if not(r = "?")then r else"cmp2op." + toword.i
+ else"cmp2op." + toword.i
 
 Export toint(cmp2op)int
 
