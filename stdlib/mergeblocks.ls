@@ -57,19 +57,6 @@ function ?(a:casenode, b:casenode)ordering keyvalue.a ? keyvalue.b
 
 type repos is case:casenode, kind:word, branch:int
 
-function reorg(sorted:seq.casenode, brf:int)seq.repos
- if length.sorted < 4 then
-  { rechain }
-  for acc = empty:seq.repos, n = sorted >> 1 do acc + repos(n,"rechain"_1, 1)/for(acc + repos(last.sorted,"last"_1, 0))
- else
-  { split in two }
-  let mid = length.sorted / 2
-  let m = sorted_mid
-  let firstpart = reorg(subseq(sorted, 1, mid - 1), brf)
-  let lastpart = reorg(subseq(sorted, mid + 1, length.sorted), brf)
-   [ repos(m,"GT"_1, length.firstpart + 2), repos(m,"EQ"_1, 1)] + firstpart
-   + lastpart
-
 type reorgresult is code:seq.symbol, offset:int
 
 function reorg(sorted:seq.casenode, brf:int, var:symbol, nodes:seq.int, nodeno:int)reorgresult
@@ -101,20 +88,25 @@ function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.i
    let sym = code_e
    let brt = brt.sym + nodeno
     if isempty.first then
-     next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, subseq(code, last + 1, e - 3), eqivs)
-    else if nextcase ≠ 1 then
-     next(empty:seq.casenode, e, nodeno + 1, 0, empty:seq.symbol, empty:seq.symbol)
-    else if subseq(code, last + 1, e - 3) = first then
+     let b=subseq(code, last + 1, e - 3)
+      if  length.b > 2 /and islocal.last.b /and b_-2=Define.first.fsig.last.b then
+      next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, 
+       subseq(code, last + 1, e - 5), [ last.b])
+    else 
+     next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, b, empty:seq.symbol)
+    else if nextcase = 1 /and (subseq(code, last + 1, e - 3) = first /or last = e - 4 ∧ code_(e - 3) ∈ eqivs) then
      next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, first, eqivs)
-    else if islocal.code_(e - 3)
+    else if nextcase = 1 /and islocal.code_(e - 3)
     ∧ Define.first.fsig.code_(e - 3) = code_(e - 4)
     ∧ subseq(code, last + 1, e - 5) = first then
      next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, first, eqivs + code_(e - 3))
-    else if last = e - 4 ∧ code_(e - 3) ∈ eqivs then
-     next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, first, eqivs)
-    else next(empty:seq.casenode, e, nodeno + 1, 0, empty:seq.symbol, empty:seq.symbol)
+    else 
+      if length.cases < reorgwhen then
+       next([casenode(code_(e - 2), nodeno, brt)], e, nodeno + 1, brf.sym, subseq(code, last + 1, e - 3), empty:seq.symbol)
+      else
+       next (cases,e,nodeno+1,nextcase-1,first,eqivs)
  /for(if length.cases < reorgwhen then removedead(code, nodes, dead)
- else
+ else 
   let testvar = if length.first = 1 then first_1 else if isempty.eqivs then Local.nextvar else eqivs_1
   let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.first.fsig.testvar
   let t = reorg(sort.cases, nodeno.last.cases + brf.code_(nodes_(nodeno.last.cases)), testvar, nodes, nodeno.first.cases - 1)
@@ -128,7 +120,8 @@ function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.i
   let newnodes = for l = nodesBeforeStartOfCase + arithseq(nonewnodes, 4, loc + length.settestvar + 4), n = nodes << locnode do
    l + [ length.newcasecode + n]
   /for(l)
-  let newunreached = for l = for x = empty:seq.int, y = dead do x + (nonewnodes + y)/for(x), n = cases do
+  let newunreached = for l = for x = empty:seq.int, y = dead do x + 
+   if y < locnode then y else (nonewnodes + y)/for(x), n = cases do
   let n2 = nodeno.n + nonewnodes
    if isempty.l then [ n2]
    else if last.l > n2 then l + n2
@@ -187,7 +180,10 @@ function unreached(code:seq.symbol, nodes:seq.int, nextvar:int, reorgwhen:int)se
    { just two active nodes which must be a branch follow by an exit.so remove block }
    let blkstart =-first.nodes
    let secondnode = code_(nodes_2)
-    subseq(code, 1, blkstart - 1) + subseq(code, blkstart + 1, nodes_2 - 2)
+   let firstpart=subseq(code, blkstart + 1, nodes_2 - 1)
+   let firstpart1=if length.firstpart=1 /and (isconst.firstpart_1 /or islocal.firstpart_1) then empty:seq.symbol
+   else    firstpart+Define.100000
+    subseq(code, 1, blkstart - 1) + firstpart1
     + subseq(code, nodes_(1 + brt.secondnode) + 1, nodes_(2 + brt.secondnode) - 1)
   else if length.cases < reorgwhen then removedead(code, nodes, unreached)else findcases(code, nodes, cases, unreached, nextvar, reorgwhen)/if /if)
 
@@ -199,7 +195,7 @@ function removedead(code:seq.symbol, nodes:seq.int, dead:seq.int)seq.symbol
  /for(newcode + EndBlock)
 
 Function optB(s:seq.symbol, self:symbol)seq.symbol
-let reorgwhen = 11000
+let reorgwhen = 6
  for acc = empty:seq.symbol, stk = empty:stack.int, nextvar = length.s, lastsymbol = Lit.0, sym = s do
   if(lastsymbol = Littrue ∨ lastsymbol = Litfalse) ∧ isbr.sym
   ∧ top.stk = length.acc - 1 then

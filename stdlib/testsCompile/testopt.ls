@@ -33,38 +33,25 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br 24 Exit 
 /br 0 Exit 
 /br EndBlock 
-/br", { optest25 }
-"%1 3_(int seq, int)seq.int DEFINE 2 %2 9 >(int, int)standard 5 2 BR 3 
-/br %2 9 =(int, int)standard 7 3 BR 3 
-/br %2 5 =(int, int)standard 7 4 BR 3 
-/br %2 8 =(int, int)standard 7 8 BR 3 
-/br %2 10 =(int, int)standard 7 6 BR 3 
-/br %2 3333 =(int, int)standard 7 8 BR 3 
-/br 25 Exit 
-/br 2 Exit 
-/br EndBlock 
-/br","%1 %2_(word seq, int)seq.word DEFINE 3 %3 WORD c >(int, int)standard 5 2 BR 3 
-/br %3 WORD c =(int, int)standard 7 3 BR 3 
-/br %3 WORD xxx =(int, int)standard 8 4 BR 3 
-/br %3 WORD b =(int, int)standard 9 10 BR 3 
-/br %3 WORD a =(int, int)standard 9 6 BR 3 
-/br %3 WORD d =(int, int)standard 7 10 BR 3 
-/br 4 Exit 
-/br 3 Exit 
-/br 4 Exit 
-/br 5 Exit 
+/br","25", { optest26 }
+"/start(int) 
+/br %1 WORD a =(int, int)standard Br2(3, 1) 
+/br %1 WORD b =(int, int)standard Br2(2, 1) 
+/br %1 WORD c =(int, int)standard Br2(1, 2) 
+/br 26 Exit 
+/br 0 Exit 
 /br EndBlock 
 /br","%1 %2 LOOPBLOCK:3(int, int)
 /br %3 1 =(int, int)standard Br2(1, 2)
 /br %4 Exit 
 /br %3 1-(int, int)standard %3 %4 *(int, int)standard CONTINUE 2 
 /br EndBlock 
-/br","/start(boolean)
+/br",{ optest28 }"/start(boolean)
 /br %1 0 >(int, int)standard Br2(1, 2)
 /br 10 %2 >(int, int)standard Exit 
 /br Litfalse Exit 
 /br EndBlock 
-/br","/start(boolean)
+/br",{ optest29 }"/start(boolean)
 /br %1 0 >(int, int)standard Br2(1, 2)
 /br Littrue Exit 
 /br 10 %2 >(int, int)standard Exit 
@@ -76,15 +63,55 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br %3 Exit 
 /br EndBlock 
 /br"
-, { test 31 }
-"%1 %2_(int seq, int)seq.int DEFINE 3 %3 3 >(int, int)standard 4 2 BR 3 
-/br %3 3 =(int, int)standard 5 3 BR 3 
-/br %3 1 =(int, int)standard 5 6 BR 3 
-/br %3 4 =(int, int)standard 5 6 BR 3 
+,  "31"  
+,"%1", { test 33 }"33","/start(int) 
+ /br %1 %2_(int seq, int)seq.int DEFINE 3 %3 3 >(int, int)standard Br2(4, 1) 
+ /br %3 3 =(int, int)standard Br2(8, 1) 
+ /br %3 1 =(int, int)standard Br2(7, 1) 
+ /br %3 2 =(int, int)standard Br2(6, 7) 
+ /br %3 5 >(int, int)standard Br2(3, 1) 
+ /br %3 5 =(int, int)standard Br2(4, 1) 
+ /br %3 4 =(int, int)standard Br2(3, 4) 
+ /br %3 9 =(int, int)standard Br2(2, 1) 
+ /br %3 12 =(int, int)standard Br2(1, 2) 
+ /br 10 Exit 
+ /br 11 Exit 
+ /br EndBlock 
+ /br",{test 35} "/start(int) 
+/br %1 %2_(word seq, int)seq.word DEFINE 3 
+%3 WORD c >(int, int)standard Br2(4, 1) 
+/br %3 WORD c =(int, int)standard Br2(6, 1) 
+/br %3 WORD e =(int, int)standard Br2(5, 1) 
+/br %3 WORD b =(int, int)standard Br2(4, 5) 
+/br %3 WORD a =(int, int)standard Br2(3, 1) 
+/br %3 WORD x =(int, int)standard Br2(2, 1) 
+/br %3 WORD d =(int, int)standard Br2(1, 2) 
 /br 10 Exit 
 /br 11 Exit 
-/br BLOCK 6 
-/br","%1", { test 33 }"33"]
+/br EndBlock 
+/br",{test 36} "/start(int) 
+/br %1 3_(int seq, int)seq.int DEFINE 2 %2 8 >(int, int)standard Br2(4, 1) 
+/br %2 8 =(int, int)standard Br2(6, 1) 
+/br %2 5 =(int, int)standard Br2(5, 1) 
+/br %2 7 =(int, int)standard Br2(4, 5) 
+/br %2 9 =(int, int)standard Br2(3, 1) 
+/br %2 10 =(int, int)standard Br2(2, 1) 
+/br %2 3333 =(int, int)standard Br2(1, 2) 
+/br 25 Exit 
+/br 2 Exit 
+/br EndBlock /br",{test 37} "/start(int) 
+/br %1 %2_(word seq, int)seq.word DEFINE 3 %3 WORD b >(int, int)standard Br2(4, 1) 
+/br %3 WORD b =(int, int)standard Br2(7, 1) 
+/br %3 WORD z =(int, int)standard Br2(7, 1) 
+/br %3 WORD xxx =(int, int)standard Br2(4, 7) 
+/br %3 WORD c =(int, int)standard Br2(5, 1) 
+/br %3 WORD a =(int, int)standard Br2(3, 1) 
+/br %3 WORD d =(int, int)standard Br2(3, 4) 
+/br 3 Exit 
+/br 4 Exit 
+/br 4 Exit 
+/br 5 Exit 
+/br EndBlock /br"]
 let r = for acc ="", @e = arithseq(length.cl, 1, 1)do acc + getcode(p2, cl, @e)/for(acc)
 + if [ 40, 20, 30, 20]
 = [ multitarget(4, true, false), multitarget(4, false, false), multitarget(3, false, true), multitarget(2, false, false)]then
@@ -186,17 +213,10 @@ Function optest23a(a:int, b:int)int(a + a) / b
 
 Function optest24(i:int)int if i ∈ [ 5]then 24 else 0
 
-Function optest25(b:seq.int)int
- if b_3 = 3333 ∨ b_3 ∈ [ 5, 8, 9] ∨ b_3 = 10 then
-  25
- else 2
+Function optest25(i:int)int if 5 ∈ [ 3,5]then 25 else 0
 
-/Function optest26 int let x = [ 1, 3^5, 3]assert length.x = 3 report"XXXXXX arg"if length.x = 2 ∧ false then 5 else 10
+Function optest26(i:word)int if i ∈  " a b c" then 26 else 0
 
-Function optest26(s:seq.word, i:int)int
- if s_i = "xxx"_1 then 3
- else if s_i ∈ "a b"then 4
- else if s_i ∈ "c d"then 4 else 5
 
 Function optest27(a:int, result:int)int
  { tail recursion } if a = 1 then result else optest27(a - 1, a * result)
@@ -207,8 +227,7 @@ Function optest29(a:int, b:int)boolean a > 0 ∨ b < 10
 
 Function optest30(w:word, a:int, b:int)int if w ∈ "test"then a else b
 
-Function optest31(s:seq.int, i:int)int
- if s_i ∈ [ 1, 3] ∨ s_i = 4 then 10 else 11
+Function optest31(i:int)int if first."a" ∈ " b c " then 0 else 31
 
 Function optest32(t:seq.word)seq.word dropparameter(t,"")
 
@@ -216,9 +235,27 @@ function dropparameter(a:seq.word, result:seq.word)seq.word a
 
 Function optest33 int { does IDX work } length.[ 3, 4, 5, 6] + 29
 
-Function optest34(a:int, b:int, c:int, d:int)ordering optest34a(a ? b, c ? d)
+Function optest34(s:seq.int, i:int)int
+ if s_i ∈ [ 1,9,5,2,12, 3] ∨ s_i = 4 then 10 else 11
 
-Function optest34a(a:ordering, b:ordering)ordering let x = a
+Function optest35(s:seq.word, i:int)int
+ if s_i ∈ "  e d c b a "  ∨ s_i = first."x" then 10 else 11
+
+
+Function optest36(b:seq.int)int
+ if b_3 = 3333 ∨ b_3 ∈ [ 5, 7, 8, 9] ∨ b_3 = 10 then
+  25
+ else 2
+
+Function optest37(s:seq.word, i:int)int
+ if s_i = "xxx"_1 then 3
+ else if s_i ∈ "a b"then 4
+ else if s_i ∈ "c d z"then 4 else 5
+
+
+Function optest38(a:int, b:int, c:int, d:int)ordering optest38a(a ? b, c ? d)
+
+Function optest38a(a:ordering, b:ordering)ordering let x = a
  if x = EQ then b else x
 
 Function optest16a(a:seq.char)seq.int

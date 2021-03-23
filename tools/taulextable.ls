@@ -48,7 +48,7 @@ function tolexaction(next:word)lexaction1
  else if next = merge("/" + "in")then
  lexaction1(next, findindex("-"_1, terminals),"∈"_1)
  else if next = "comment"_1 then
- lexaction1("\\"_1, findindex("comment"_1, terminals),"\\"_1)  
+ lexaction1("}"_1, findindex("comment"_1, terminals),"\\"_1)  
  else
   let token = if next ∈ "< > ? ≤ ≠ ≥"then">"_1
   else if next ∈ "+-∈ ∉"then"-"_1

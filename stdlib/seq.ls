@@ -14,7 +14,7 @@ Export getseqtype(a:seq.T)int
 
 Export length(a:seq.T)int
 
-Builtin empty:seq.T seq.T \\ empty seq \\
+Builtin empty:seq.T seq.T { empty seq }
 
 builtin indexseq44(seqtype:int, s:seq.T, i:int)T
 

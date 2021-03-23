@@ -319,7 +319,6 @@ Function isstartorloop(sym:symbol)boolean last.module.sym ∈ "$loopblock"
 Function isstart(sym:symbol)boolean
  last.module.sym = "$loopblock"_1 ∧ (fsig.sym)_1 ≠ "LOOPBLOCK"_1
 
-last.module.sym ="$start"_1
 
 Function isloopblock(s:symbol)boolean
  last.module.s = "$loopblock"_1 ∧ (fsig.s)_1 = "LOOPBLOCK"_1
@@ -388,9 +387,6 @@ Function GetSeqLength symbol symbol("getseqlength(ptr)","tausupport","int")
 
 Function GetSeqType symbol symbol("getseqtype(ptr)","tausupport","int")
 
-Function isinOp(s:symbol)boolean
- fsig.s
- ∈ ["∈(int, int seq)","∈(word, word seq)","=(int, int)","=(word, word)"]
 
 Function isblock(s:symbol)boolean last.module.s = "$block"_1
 
@@ -666,7 +662,7 @@ _______________________________________________
 
 Function print(s:seq.symbol)seq.word
  for acc ="", e = s do
-  acc + { if last.module.e ∈"$branch $exit2 $start"then fsig.e + EOL else } print.e
+  acc +  print.e
  /for(acc)
 
 ___________________________________________________________

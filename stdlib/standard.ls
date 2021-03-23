@@ -160,11 +160,11 @@ Export ?(a:word, b:word)ordering
 
 Export =(a:word, b:word)boolean
 
-Export toword(n:int)word \\ Covert integer to a single word. \\
+Export toword(n:int)word { Covert integer to a single word. }
 
-Export toint(w:word)int \\ Convert an integer represented as a word to an int \\
+Export toint(w:word)int { Convert an integer represented as a word to an int }
 
-Export merge(a:seq.word)word \\ make multiple words into a single word. \\
+Export merge(a:seq.word)word { make multiple words into a single word. }
 
 Export type:ordering
 

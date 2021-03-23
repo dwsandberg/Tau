@@ -158,7 +158,7 @@ Function t043 boolean"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57
  acc + [ toword.e, encodeword.[ char.e]]
 /for(acc)
 
-function t044 boolean '"()+,-.:= [ \]^_' = standalonechars
+function t044 boolean '"()+,-.:= []^_{} ' = standalonechars
 
 Function standalonechars seq.word for acc ="", e = arithseq(length.classifychar, 1, 1)do
 let class = classifychar_e

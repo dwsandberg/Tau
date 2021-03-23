@@ -298,7 +298,7 @@ function processconst(toprocess:seq.symbol)int
    else notprocessed + xx /if)
   /for(notprocessed)
 
-\ function buildrecordconst(s:symbol, alltypes:typedict)match5 for args = empty:seq.int, ele = constantcode.s do let tp = findtemplate.ele args + if isempty.tp then let discard = if isrecordconstant.ele then arg.buildrecordconst(ele, alltypes)else arg.buildconst(ele, alltypes)arg.(findtemplate.ele)_1 else arg.tp_1 end(addtemplate(ele, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args))
+/ function buildrecordconst(s:symbol, alltypes:typedict)match5 for args = empty:seq.int, ele = constantcode.s do let tp = findtemplate.ele args + if isempty.tp then let discard = if isrecordconstant.ele then arg.buildrecordconst(ele, alltypes)else arg.buildconst(ele, alltypes)arg.(findtemplate.ele)_1 else arg.tp_1 end(addtemplate(ele, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args))
 
 function =(a:llvmtype, b:llvmtype)boolean typ.a = typ.b
 

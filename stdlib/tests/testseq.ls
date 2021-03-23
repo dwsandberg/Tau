@@ -71,10 +71,10 @@ function get:seq.word seq.word constantseq(getint.10, get:word)
 function xx(i:int)typerec2 typerec2(i, i * 2)
 
 Function testseq seq.word let a = encode.ccc(1, 987)
-let w = check:seq.typereal
-let x = check:seq.seq.word
-let y = check:seq.word
-let z = check:seq.typerec2
+let w = check:seq.typereal(1)
+let x = check:seq.seq.word(1)
+let y = check:seq.word(1)
+let z = check:seq.typerec2(2)
  sparsecheck
  + if not("FAIL"_1 ∈ (w + x + y + z))then"PASS testseq"
  else"FAIL testseq" + w + x + y + z
@@ -116,12 +116,12 @@ unbound get:T T
 
 unbound =(T, T)boolean
 
-Function check:seq.T seq.word let unpack = random:seq.T(16)
+Function check:seq.T(size:int) seq.word let unpack = random:seq.T(16)
 let pack = packed.unpack
 let x = if getseqtype.pack = 1 then"packed"else""
- if(length.pack > 9999 ∨ seqkind.pack = x + toword.length.unpack) ∧ pack = unpack then
+ if(length.pack > 8160 / size ∨ seqkind.pack = x + toword.length.unpack) ∧ pack = unpack then
   "PASS" + toword.length.pack
- else"FAIL" + toword.length.pack
+ else"FAIL" + toword.length.pack+x
 
 Function random:seq.T(depth:int)seq.T
  if depth ≤ 0 then base:seq.T

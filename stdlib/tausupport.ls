@@ -37,18 +37,17 @@ builtin bitcast(T)seq.T
 function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:T)int
  if memsize = 0 then idx
  else memcpy(setfld(idx, s, IDX(bitcast.fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
+ 
 
 type blockseq is sequence, dummy:seq.T
 
-function blocksize:T int 10000
+function blocksize:T int 8160
 
 Function_(a:blockseq.T, i:int)T
  assert between(i, 1, length.toseq.a)report"out of bounds"
  let data = bitcast.a
  let typ = getseqtype.dummy.a
- let ds = max(typ, 1)
-  { assert false report"where"+ toword.ds }
-  let blksz = blocksize:T / ds
+  let blksz= length.dummy.a 
   let blk = IDX(data,(i - 1) / blksz + 2)
   let b =(i - 1) mod blksz + 1
    indexseq44(typ, blk, b)
@@ -63,11 +62,18 @@ Function blockit(s:seq.T, ds:int)seq.T
   else
    let noblks =(length.s + blksz - 1) / blksz
    let blkseq = allocatespace:seq.T(noblks + 2)
-   let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
-   let discard = for acc = 2, @e = arithseq(noblks, blksz, 1)do
-    setfld(acc, blkseq, blockit(subseq(s, @e, @e + blksz - 1), ds))
+   let discard = 
+   for acc = 2, @e = arithseq(noblks, blksz, 1)do
+        let s2=subseq(s, @e, @e + blksz - 1)
+       let newseq = allocatespace:T(length.s2 * ds + 2)
+       let d = for acc2 = 2, e = s2 do memcpy(acc2, 0, ds, newseq, e)/for(acc2)
+       let b=setfirst(newseq, 1, length.s2)
+       setfld(acc, blkseq, b) 
    /for(acc)
+    let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
     setfirst(bitcast.blkseq, blockseqtype, length.s)
+    
+
 
 Function blockit(s:seq.T)seq.T
 let blksz = blocksize:T

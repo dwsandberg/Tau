@@ -63,26 +63,25 @@ else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
            let t2= if Callself ∈  flags.a   ∧  (fsig.s)_1 ≠"subpass2"_1 then optB(ty,s) else ty 
            expandresult(nextvar.a, t2,flags.a)
         else  a
-let newoptions = if length.code.t < 22 ∧ Callself ∉ flags.t ∧ Hasfor ∉ flags.t
-∧ "NOINLINE"_1 ∉ options
-∧ "INLINE"_1 ∉ options then
- if isverysimple(nopara.s, code.t) ∧ (fsig.s)_1 ∉ "headdict ispseq get"then
-       "INLINE VERYSIMPLE"+options 
-       else
-  assert not(length.code.t = 2
-  ∧ { isconst.first.code ∧ } first.fsig.(code.t)_2 ∈ "Lit")report"HJK" + print.s + print.code.t
-     "INLINE"+options  
-else options
+let newoptions1=if length.code.t < 22 ∧ Callself ∉ flags.t ∧ Hasfor ∉ flags.t ∧ "NOINLINE"_1 ∉ options then
+ if isverysimple(nopara.s, code.t) then
+      "INLINE VERYSIMPLE" 
+    else "INLINE" 
+else ""
+let newoptions=  if isempty.options then newoptions1 
+  else if options=newoptions1 then options
+  else   toseq(asset.options-asset."VERYSIMPLE INLINE" /cup asset.newoptions1)
  if newoptions = ""then code.t else code.t + Words.newoptions + Optionsym 
  
- function isverysimple(nopara:int,code:seq.symbol) boolean 
-let t = for isverysimple = length.code ≥ nopara, idx = 1, sym = code while isverysimple do next(if idx ≤ nopara then sym = Local.1
-else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym, idx + 1)/for(isverysimple)
-      nopara > 1 ∧ t
-      
-if nopara > 1 then t else if isconst.first.code ∧ length.code = 1 ∨ length.code = 3 ∧ first.code = Local.1 ∧ isconst.code_2 ∧ first.fsig.code_3 ∈"IDX_+"then true else if not.t then false else if nopara = 1 then length.code = 1 else assert true ∨ length.code ≠ 2 ∨ not.isconst.first.code ∨ first.fsig.code_2 ∈"stack Lit"report"XXXX"+ first.fsig.code_2 +"???"+ print.code length.code ∉ [ 3, 4, 5, 6, 7, 8, 9, 10, 11]
-  
-function xxx(alltypes:typedict, p:program, code:seq.symbol, s:symbol, pdict:worddict.seq.symbol)expandresult
+ function isverysimple(nopara:int,code:seq.symbol) boolean  
+   if   code=[Local.1] /and nopara=1 then true
+   else 
+    for isverysimple = length.code ≥ nopara, idx = 1, sym = code while isverysimple do 
+              next(if idx ≤ nopara then sym = Local.idx
+               else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym, idx + 1)
+   /for(isverysimple)
+
+ function xxx(alltypes:typedict, p:program, code:seq.symbol, s:symbol, pdict:worddict.seq.symbol)expandresult
        let a=scancode(alltypes,p,  code, nopara.s + 1, pdict, s)
            let new=if Hasmerge ∈ flags.a then  optB(code.a ,Lit.1)  else code.a
     if  length.code=length.new ∧ length.code > 20 ∨ new=code then 
@@ -117,8 +116,9 @@ function scancode(alltypes:typedict, p:program, org:seq.symbol, nextvarX:int, ma
       let  result1 = if hasnot then result >> 1 else result
        let newsym=  if last.result1=Litfalse then Br2(brf.sym1,brf.sym1)
    else if last.result1 = Littrue then Br2(brt.sym1, brt.sym1)else sym1
-    next(if brt.newsym = brf.newsym then Hasmerge ∨ flags
-    else { assert brt.newsym ≠ brf.newsym report"JKL"+ print.org + EOL + EOL + print.result } flags, result1 + newsym, nextvar, map)
+    next(if brt.newsym = brf.newsym     /or isblock.last.result1  then  
+   Hasmerge ∨ flags
+    else flags, result1 + newsym, nextvar, map)
    else if sym = Exit ∧ isblock.last.result then next(flags ∨ Hasmerge, result + sym, nextvar, map)
     else if isloopblock.sym then
       let nopara = nopara.sym
@@ -165,15 +165,16 @@ function scancode(alltypes:typedict, p:program, org:seq.symbol, nextvarX:int, ma
      if(first."COMPILETIME" ∈ options ∨ fsig.sym = "_(word seq, int)")
       ∧ for acc = true, @e = subseq(result, len - nopara + 1, len)do acc ∧ isconst.@e /for(acc)then
        { assert fsig.sym ≠"_(word seq, int)"report"XXXXXXX"}
+       if fsig.sym = "decodeword(word)" then
+        let arg1 = result_len
+        let a1 = for acc = empty:seq.symbol, @e = tointseq.decodeword.(fsig.arg1)_1 do acc + Lit.@e /for(acc)
+        let d = Constant2(a1 + Sequence(typeint, length.a1))
+        next(flags, result >> 1 + d, nextvar, map)
+       else 
      let newcode = interpretCompileTime(alltypes,subseq(result, len - nopara + 1, len) + sym)
      let newconst = if length.newcode > 1 then Constant2.newcode else first.newcode
        next(flags, result >> nopara + newconst, nextvar, map)
-     else if fsig.sym = "decodeword(word)" ∧ module.result_len = "$word"then
-     let arg1 = result_len
-      let a1 = for acc = empty:seq.symbol, @e = tointseq.decodeword.(fsig.arg1)_1 do acc + Lit.@e /for(acc)
-     let d = Constant2(a1 + Sequence(typeint, length.a1))
-      next(flags, result >> 1 + d, nextvar, map)
-      else if first."VERYSIMPLE" ∈ options then next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
+     else  if first."VERYSIMPLE" ∈ options then next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
      else if not("INLINE"_1 ∈ options )then
       let newflags = if"STATE"_1 ∈ options ∨ (fsig.sym)_1 ∈ "setfld"
       ∨ module.sym = "$global"then
@@ -360,7 +361,7 @@ function  subpass2(  alltypes:typedict,  bigin:seq.programele,corein:program,top
     for acc = core , prgele=toseqprogramele.core+toseqprogramele.small+ big do
   let code3 = code.prgele
   let sym3 = target.prgele
-   if isempty.code3 then map(acc, sym3, code3)else map(acc, sym3, firstopt(acc, sym3, code3, alltypes, getoption.code3, false))
+    if isempty.code3 then map(acc, sym3, code3)else map(acc, sym3, firstopt(acc, sym3, code3, alltypes, getoption.code3, false))
   /for(acc)
  else subpass2(alltypes, big, core, small, count + 1)/if)
 

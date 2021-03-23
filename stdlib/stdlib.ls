@@ -68,7 +68,7 @@ option.symbol lookupcode(p:program, s:symbol)programele PROFILE
 pending:seq.symbol, processed:program, code:seq.symbol, s:symbol)program
 PROFILE
 
-
+option.standard -(int ) int COMPILETIME
 
 option.standard +(int,int) int COMPILETIME
 
@@ -129,7 +129,7 @@ option.words encodeword( seq.char) word COMPILETIME
 
 option.words  decodeword( word) seq.char NOINLINE
 
-\option.words  decodeword( word) seq.char COMPILETIME
+option.words  decodeword( word) seq.char COMPILETIME
 
 
 option.seq.word _(seq.word,int) word COMPILETIME
@@ -144,6 +144,13 @@ option.seq.char _(seq.char,int) char COMPILETIME
 option.timestamp   currenttime timestamp STATE
 
 option.symbol Lit(int)symbol INLINE
+
+option.symbol symbol(seq.word,seq.word,seq.word,bits) symbol NOINLINE
+
+option.symbol start(mytype) symbol NOINLINE
+
+option.mytype replaceT(mytype,mytype) mytype NOINLINE
+
  
 option.UTF8 toword(int)word NOINLINE  
 

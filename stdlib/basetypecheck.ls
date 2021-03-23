@@ -54,8 +54,9 @@ let codeonly = removeoptions.removeoptions.removeoptions.code
        ""
 
 function match(a:mytype, b:mytype)boolean
- a = b ∨ a = typeptr ∧ abstracttype.b = "seq"_1
- ∨ b = typeptr ∧ abstracttype.a = "seq"_1
+ a = b ∨ a = typeptr ∧ abstracttype.b /in "seq packed2 packed3 packed4 packed5" 
+ ∨ b = typeptr ∧ abstracttype.a /in  "seq packed2 packed3 packed4 packed5" 
+ 
 
 function match(a:seq.mytype, b:seq.mytype)boolean
  for match = length.a = length.b, idx = 1, e = a while match do next(match(e, b_idx), idx + 1)/for(match)
@@ -90,6 +91,8 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
       ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), getbasetype(alltypes, addabstract("seq"_1, parameter.modname.s))), localtypes)
     else if isexit.s then
      assert match(top.stk, top.pop.stk)report"exit type does not match block type" + print.top.stk + print.top.pop.stk
+     +"at"
+       + for acc ="", @e = subseq(code, i - 6, i - 1)do acc + print.@e /for(acc)
       ccc(alltypes, code, i + 1, pop.stk, localtypes)
     else if isblock.s then ccc(alltypes, code, i + 1, stk, localtypes)
     else if iscontinue.s then

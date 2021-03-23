@@ -1,6 +1,6 @@
-#!/usr/local/bin/tau ; use doc ; createdoc
+#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
 
-doclibrary."stdlib"
+
 
 ; use doc ; createdoc
 
@@ -226,24 +226,24 @@ function callarcs(s:seq.word, i:int, result:seq.word)seq.word
     callarcs(s, findindex2('"'_1, s, i + 1) + 1, result)
    else if this = "'"_1 then
     callarcs(s, findindex2("'"_1, s, i + 1) + 1, result)
-   else if this = "BLOCK"_1 ∧ s_(i + 1) ≠ "("_1 then
-   let j = findindex2(")"_1, s, i + 1)
-    callarcs(s, j + 1, result)
-   else
+   else 
     let next = s_(i + 1)
      if next ∈ "(:"then
      let j = findindex2(")"_1, s, i + 1)
       if this = "RECORD"_1 then callarcs(s, j + 1, result)
       else
-       assert j < length.s report"JKL" + subseq(s, i, length.s)
+       assert j < length.s report"JKL RECORD" + subseq(s, i, length.s)
        let module = gathermod(s, j + 2, [ s_(j + 1)])
        let theend = 2 * (length.module - 1) + 1 + j + 1
         callarcs(s, theend, result + mangle(subseq(s, i, j), module))
-     else if this ∈ "DEFINE EXITBLOCK BR BLOCK APPLY WORD"then callarcs(s, i + 2, result)
+     else if this ∈ "DEFINE  WORD"then callarcs(s, i + 2, result)
      else if this ∈ " /br FREF Litfalse Littrue SEQUENCE /start Exit EndBlock"then callarcs(s, i + 1, result)
      else
       let chs = decodeword.this
-       assert length.chs > 0 ∧ chs_1 ∈ decodeword.merge."%-0123456789"report"call arcs problem" + this + toword.i + "full text" + s
+       assert length.chs > 0 ∧ chs_1 ∈ decodeword.merge."%-0123456789"report"call arcs problem" + this + toword.i 
+       +subseq(s,1,i)
+       +EOL+EOL+EOL
+       + "full text" + s
         callarcs(s, i + 1, result)
 
 function gathermod(s:seq.word, i:int, result:seq.word)seq.word

@@ -333,7 +333,7 @@ function reduceline(grammerandact:seq.seq.word, i:int, last:int)seq.word
 let s = grammerandact
 let prefix = if i = 1 then" /br if"
 else if i = last then" /br else assert"else" /br else if"
-let part2 ="ruleno = \\" + s_1 + "\\" + toword.i
+let part2 ="ruleno = {" + s_1 + "}" + toword.i
 + if i = last then ' report"invalid rule number"+ toword.ruleno  /br ' else"then"
  prefix + part2
  + for acc ="", w = s_2 do
@@ -444,14 +444,14 @@ function tauprettyrules seq.seq.seq.word { after generator grammar change %%% to
 , [ ' L L, E ', ' R_1 + R_3 ']
 , [ ' E [ L]', ' pretty.[ R_1, list.R_2, R_3]']
 , [ ' A W = E ', ' pretty.[ R_1, R_2, R_3]']
-, [ ' E let A E ', ' \\ checkpara(pretty.[ R_1, R_2], block("%%%br let assert", R_3))\\ attribute("%%%keyword let"+ subseq(text.R_2, 1, 2)+ protect(text.R_2 << 2, text.block("%%%br let assert", R_3)))']
+, [ ' E let A E ', ' { checkpara(pretty.[ R_1, R_2], block("%%%br let assert", R_3)) } attribute("%%%keyword let"+ subseq(text.R_2, 1, 2)+ protect(text.R_2 << 2, text.block("%%%br let assert", R_3)))']
 , [ ' E assert E report D E ', ' pretty.[ key.R_1, R_2, attribute("%%%keyword report"+ protect(text.R_4, text.block("%%%br let assert", R_5)))]']
 , [ ' E I ', ' R_1 ']
 , [ ' E I.I ', ' pretty.[ R_1, R_2, R_3]']
 , [ ' T W ', ' R_1 ']
 , [ ' T W.T ', ' pretty.[ R_1, R_2, R_3]']
 , [ ' E $wordlist ', ' attribute2.[ prettyresult(0, length.text.R_1,"%%%{ literal"+ escapeformat.text.R_1 +"%%%}")]']
-, [ ' E comment E ', ' let t ="%%%{ comment \\"+ escapeformat.text.R_1 << 1 >> 1 +"\\ %%%}"let t2 = if width.R_1 + width.R_2 > 30 ∧(text.R_2)_1 ≠"%%%br"_1 then t +"%%%br"else t pretty.[ attribute2.[ prettyresult(0, length.text.R_1, t2)], R_2]']
+, [ ' E comment E ', ' let t ="%%%{ comment {"+ escapeformat.text.R_1 << 1 >> 1 +"} %%%}"let t2 = if width.R_1 + width.R_2 > 30 ∧(text.R_2)_1 ≠"%%%br"_1 then t +"%%%br"else t pretty.[ attribute2.[ prettyresult(0, length.text.R_1, t2)], R_2]']
 , [ ' NM W ', ' R_1 ']
 , [ ' NM W:T ', ' pretty.[ R_1, R_2, R_3]']
 , [ ' F1 W = E ', ' pretty.[ R_1, R_2, R_3]']
