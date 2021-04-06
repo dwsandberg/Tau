@@ -39,7 +39,7 @@ void assertexit(int b,char *message);
 //Start of space allocation
 
 #define blocksize 0xFFFFF
-#define noblocks 16000
+#define noblocks 4000
 #define noencodings 40
 
 

@@ -139,19 +139,16 @@ let coretypes = false
  else if(fsig.sym)_1 ∈ "build"then
  let c = for acc = empty:seq.seq.mytype, @e = paratypes.sym do acc + getsubflds(alltypes, replaceT(modpara, @e))/for(acc)
   buildconstructor(alltypes, if issequence then { for seq index func } [ typeint]else empty:seq.mytype, c, empty:seq.mytype, 1, 1, 0, empty:seq.symbol)
- else if first.fsig.sym = first."createthreadX"then
- let paracode = buildargcode(alltypes, newsymbol("dummy", typeint, paratypes.newsym << 5, parameter.resulttype.newsym))
- let kindlist = for acc = empty:seq.mytype, @e = paratypes.sym << 5 do
-  acc + getbasetype(alltypes, replaceT(modpara, @e))
- /for(acc)
-  [ Record([ typeint, typeint] + kindlist), symbol("toseqX:seq.int(ptr)","tausupport","int seq"), Lit.paracode, newsymbol("createthread", mytype."tausupport", [ typeint, typeint, typeint, mytype."int seq", typeint], typeptr)]
- else if fsig.sym = "packed(T seq)"then [ blocksym(alltypes,(paratypes.newsym)_1)]
+   else if fsig.sym = "packed(T seq)"then [ blocksym(alltypes,(paratypes.newsym)_1)]
  else if fsig.sym = "indexseq44(int, T seq, int)"then
  let seqtype = getbasetype(alltypes,(paratypes.newsym)_2)
   [ newsymbol("indexseq44", mytype."builtin", [ typeint, seqtype, typeint], seqeletype.seqtype)]
  else if(fsig.sym)_1 = "forexp"_1 then
  let paras = for acc = empty:seq.mytype, p = paratypes.newsym do acc + getbasetype(alltypes, p)/for(acc)
   [ newsymbol("forexp", mytype."builtin", paras, last.paras)]
+   else if(fsig.sym)_1 = "createthreadY"_1 then
+ let paras = for acc = empty:seq.mytype, p = paratypes.newsym do acc + getbasetype(alltypes, p)/for(acc)
+  [ newsymbol( "createthreadY", addabstract(" builtin"_1,parameter.resulttype.sym), paras, getbasetype(alltypes, resulttype.sym))]
  else if(fsig.sym)_1 ∈ "assert"then
  let t = getbasetype(alltypes, parameter.modname.newsym)
  let kind = if abstracttype.t ∈ "seq"then"ptr"else typerep.t
@@ -159,7 +156,7 @@ let coretypes = false
  else if subseq(fsig.sym, 1, 2) = "IDX:"then [ Idx.getbasetype(alltypes, parameter.modname.newsym)]
  else if subseq(fsig.sym, 1, 2) = "IDX("then
   [ Idx.seqeletype.getbasetype(alltypes, first.paratypes.newsym)]
- else if(fsig.sym)_1 ∈ "setfirst setfld"then [ newsym]
+ else if(fsig.sym)_1 ∈ "setfld"then [ newsym]
  else if fsig.sym = "bitcast(T seq seq)"then
   [ symbol("bitcast(ptr)","builtin","ptr")]
  else if fsig.sym = "toseqX:T(ptr)" ∨ fsig.sym = "bitcast(T)"
@@ -167,7 +164,7 @@ let coretypes = false
  let t = getbasetype(alltypes, resulttype.newsym)
   [ symbol("toseq:" + print.t + "(ptr)","builtin", typerep.t)]
  else
-  assert fsig.sym = "allocatespace:T(int)"report"not expecting" + print.sym
+  assert fsig.sym = "allocateseq:T(int, int, int)" report"not expecting" + print.sym
    [ symbol(fsig.newsym,"builtin", returntype.newsym)]
 
 function blocksym(alltypes:typedict, type:mytype)symbol

@@ -145,7 +145,6 @@ let t = getseqtype.a
  else if ispseq.a then"pseq"
  else if t = getseqtype.packed.constantseq(1, get:T)then"packed" + toword.length.a else"unknown"
 
-+ decodeaddress.getseqtype.a +"//"+ decodeaddress.getseqtype(constantseq(1, get:T)+ constantseq(1, get:T))
 
 Function seqstruct(a:seq.T)seq.word
 let kind = seqkind.a

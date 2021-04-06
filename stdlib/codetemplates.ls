@@ -204,10 +204,6 @@ addtemplate(symbol("GEP(int seq, int)","interpreter","int"), 2, GEP(r.1, i64, ib
 , addtemplate(symbol("∧(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, and))
 , addtemplate(symbol("∨(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, or))
 , addtemplate(symbol("xor(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, xor))
-, addtemplates("real ptr byte bit int packed2 packed3 packed4 packed5 packed6", symbol("setfirst(T seq, int, int)","T builtin","T seq"), 3, GEP(r.1, i64, ibcsub.1, C64.1) + STORE(r.2, r.1, ibcsub.3)
-+ GEP(r.2, i64, ibcsub.1, C64.0)
-+ STORE(r.3, r.2, ibcsub.2)
-+ GEP(r.3, i64, ibcsub.1, C64.0))
 , addtemplate(symbol("setfld(int, int seq, int)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
 + BINOP(r.2, ibcsub.1, C64.1, add))
 , addtemplate(symbol("setfld(int, boolean seq, boolean)","boolean builtin","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
@@ -262,11 +258,11 @@ addtemplate(symbol("GEP(int seq, int)","interpreter","int"), 2, GEP(r.1, i64, ib
 + CAST(r.4, r.3, ptr.i64, inttoptr))
 , addtemplate(GetSeqLength, 2, GEP(r.1, i64, ibcsub.1, C64.1) + LOAD(r.2, r.1, i64))
 , addtemplate(GetSeqType, 1, LOAD(r.1, ibcsub.1, i64))
-, addtemplate(symbol("IDX:int(ptr, int)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplate(symbol("IDX:int(ptr, int)","int builtin","int"), 2,             GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
 , addtemplate(symbol("IDX:boolean(ptr, int)","boolean builtin","boolean"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
-, addtemplate(symbol("IDX:ptr(ptr, int)","ptr builtin","ptr"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+, addtemplate(symbol("IDX:ptr(ptr, int)","ptr builtin","ptr"), 3,             GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, ptr.i64, inttoptr))
-, addtemplate(symbol("IDX:real(ptr, int)","real builtin","real"), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+, addtemplate(symbol("IDX:real(ptr, int)","real builtin","real"), 3,           GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, double, bitcast))
 ]
 let const = for acc = empty:seq.symbol, e = toseq(uses - asset.[ Optionsym])do
@@ -355,13 +351,23 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)match5
     addtemplate(xx, length.intable2_1, parts.intable2_1)
    else if(fsig.xx)_1 = "toseq"_1 ∧ last.module.xx = "builtin"_1 then
     addtemplate(xx, 0, emptyinternalbc)
-   else if(fsig.xx)_1 = "allocatespace"_1 ∧ last.module.xx = "builtin"_1 then
+   else if(fsig.xx)_1 = "allocateseq"_1 ∧ last.module.xx = "builtin"_1 then
     addtemplate(xx
-    , 1
-    , CALL(r.1, 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespace", function.[ ptr.i64, i64, i64]), slot.ibcfirstpara2, ibcsub.1)
+    , 4
+    , BINOP(r.1, ibcsub.1, C64.2, add)
+     + CALL(r.2, 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespace", function.[ ptr.i64, i64, i64])
+    , slot.ibcfirstpara2, r.1)
+    +  STORE(r.3, r.2, ibcsub.2)
+     + GEP(r.3, i64, r.2, C64.1) + STORE(r.4, r.3, ibcsub.3)
+     + }GEP(r.4, i64, r.2, C64.0)
     )
    else if(fsig.xx)_1 = "global"_1 ∧ module.xx = "$global"then
     addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
+   else if(fsig.xx)_1 = "createthreadY"_1 ∧ last.module.xx = " builtin"_1 then
+   let l=for acc = empty:seq.llvmtype, e = paratypes.xx << 3 do acc + tollvmtype(alltypes, e)
+          /for(acc+tollvmtype(alltypes, parameter.modname.xx) )
+         assert true report "TTT"+print.xx+for ll="",e=l do ll+print.e /for(ll)
+     addtemplate(xx, 0, emptyinternalbc,(fsig.xx)_1, nopara.xx, empty:seq.symbol,l)
    else
     { if fsig.xx ∈ Externalsyms then call(alltypes, xx,"CALLE"_1, empty:seq.symbol, mangledname.xx)else }
     call(alltypes, xx,"CALL"_1, code.lookupcode(theprg, xx), mangledname.xx)

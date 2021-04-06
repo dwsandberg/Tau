@@ -119,9 +119,10 @@ function unaryop(R:reduction.bindinfo, input:seq.word, place:int, op:seq.word, e
    assert cardinality.dcrt = 1 report errormessage("parameter type" + print.rt + "is undefined in", input, place)
    let dcws = deepcopysym(dict.R, mytype."word seq")
     assert cardinality.dcws = 1 report errormessage("type word seq is require for process in", input, place)
-    let newcode = [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp, Lit.0, Lit.nopara]
-    + subseq(code.exp, 1, length.code.exp - 1)
-    + newsymbol("createthreadX", mytype."int builtin", [ typeint, typeint, typeint, typeint, typeint] + paratypes.last.code.exp, addabstract("process"_1, resulttype.last.code.exp))
+    let newcode =  [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp]
+      +subseq(code.exp, 1, length.code.exp - 1)
+      +newsymbol("createthreadY", mytype."int builtin",  [typeint,typeint,typeint]+paratypes.last.code.exp,
+       addabstract("process"_1, resulttype.last.code.exp))
      bindinfo(dict.R, newcode, [ addabstract("process"_1, rt)],"")
  else
   let f = lookupbysig(dict.R, op, types.exp, input, place)

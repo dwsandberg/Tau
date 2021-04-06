@@ -223,7 +223,7 @@ function split(s:seq.firstpass, i:int, abstract:seq.firstpass, simple:seq.firstp
  if i > length.s then [ abstract, simple]
  else
   let f = s_i
-   if not.iscomplex.modname.f ∧ length.uses.f > 0 then
+   if not.iscomplex.modname.f ∧ {this condition needs attention } length.uses.f > 0 then
     split(s, i + 1, abstract, simple + f)
    else if parameter.modname.f = mytype."T"then split(s, i + 1, abstract + f, simple)
    else split(s, i + 1, abstract, simple)

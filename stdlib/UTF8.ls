@@ -155,8 +155,7 @@ Function cvttoint(s:seq.char)int
 -------------
 
 Function hash(a:seq.char)int
- if a = decodeword."//"_1 then hash.tointseq.a
- else finalmix32.for acc = hashstart32.0, @e = tointseq.a do hash32(acc, @e)/for(acc)
+ finalmix32.for acc = hashstart32.0, @e = tointseq.a do hash32(acc, @e)/for(acc)
 
 Function tointseq(a:seq.char)seq.int
  { This is just a type change and the compiler recognizes this and does not generate code }

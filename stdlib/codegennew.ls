@@ -186,10 +186,25 @@ let action = action.m
  else if action = "SEQUENCE"_1 then
  let fldbc = sequencecode(top(args.l, arg.m), first.llvmtypelist.m, regno.l, false)
   Lcode2(code.l + bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
+ else if action = "createthreadY"_1 then
+   let fldbc = recordcode(top(args.l, arg.m-3), llvmtypelist.m >> 1, regno.l, false)
+    let     newargs=push(pop(args.l, arg.m-3),-(regno.l + 1))
+    let call=CALLSTART((regno.fldbc+1), 0, 32768, typ.function.[ ptr.i64,i64,i64,i64,i64,ptr.i64,i64]
+    , toint.symboltableentry("createthread", function.[ ptr.i64,i64,i64,i64,i64,ptr.i64,i64])
+    , 6)+CALLFINISH(regno.fldbc+1, [-1] + top(newargs,4)+  toint.C64.buildargcode.llvmtypelist.m)
+     Lcode2(code.l + bc.fldbc+call, lmap.l, noblocks.l, regno.fldbc+1, push(pop(args.l, arg.m),-(regno.fldbc+1)), blocks.l)
  else
   assert action = "RECORD"_1 report"code gen unknown" + action
   let fldbc = recordcode(top(args.l, arg.m), llvmtypelist.m, regno.l, false)
    Lcode2(code.l + bc.fldbc, lmap.l, noblocks.l, regno.fldbc, push(pop(args.l, arg.m),-(regno.l + 1)), blocks.l)
+   
+ 
+ function buildargcode(l:seq.llvmtype)int
+ { needed because the call interface implementation for reals is different than other types is some implementations }
+ for acc = 1, typ = l do
+  acc * 2
+  + if typ.typ=typ.double then 1 else 0
+ /for(acc)  
 
 function countnodes(s:stack.Lcode2)int
  if top.args.top.s ∈ [ 55, 2]then 1 else 1 + countnodes.pop.s

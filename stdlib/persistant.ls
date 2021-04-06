@@ -44,7 +44,7 @@ use seq.encodingpair.seq.char
 
 use set.encodingpair.seq.char
 
-// use maindict //
+/ use maindict 
 
 Export initialdict seq.encodingpair.seq.char
 

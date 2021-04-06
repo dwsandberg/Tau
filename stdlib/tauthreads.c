@@ -39,7 +39,7 @@ BT (*finishprof)(BT idx,BT x) =NULL;
     p->deepcopyseqword =  deepcopyseqword;
     p->func= func;
     p->argtype=argtype;
-    p->args= args+2;
+     p->args= args;
 
   p->profileindex = profileidx; 
   p->finishprof=finishprof;
@@ -48,8 +48,10 @@ BT (*finishprof)(BT idx,BT x) =NULL;
 } 
 
 BT createthreadZtausupportZintZintZintZintzseqZint(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype ){
-return createthread(PD,   deepcopyresult  ,  deepcopyseqword  , func,  args, argtype);}
+return createthread(PD,   deepcopyresult  ,  deepcopyseqword  , func,  args+2, argtype);}
 
+BT createthreadZtausupportZintZintZintZptrZint(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype ){
+return createthread(PD,   deepcopyresult  ,  deepcopyseqword  , func,  args+2, argtype);}
 /*
 
 The following code  was used to generate case in the threadbody.
@@ -71,6 +73,7 @@ function thecase(i:int) seq.word
 
  */
 
+  
 
 void threadbody(struct pinfo *q){
 if (setjmp(q->env)!=0) {

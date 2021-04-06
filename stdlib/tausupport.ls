@@ -6,7 +6,7 @@ Builtin IDX(seq.T, int)T
 
 Builtin IDX:T(ptr, int)T
 
-Builtin allocatespace:T(i:int)seq.T
+Builtin allocateseq:T(size:int,fld0:int,fld1:int) seq.T
 
 Builtin setfld(i:int, s:seq.T, val:T)int
 
@@ -26,17 +26,15 @@ use seq.seq.T
 
 Export type:seq.T
 
-builtin setfirst(r:seq.T, fld0:int, fld1:int)seq.T
-
 builtin bitcast(blockseq.T)seq.seq.T
 
 builtin bitcast(seq.seq.T)seq.T
 
 builtin bitcast(T)seq.T
 
-function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:T)int
+function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:seq.T)int
  if memsize = 0 then idx
- else memcpy(setfld(idx, s, IDX(bitcast.fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
+ else memcpy(setfld(idx, s, IDX( fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
  
 
 type blockseq is sequence, dummy:seq.T
@@ -56,39 +54,38 @@ Function blockit(s:seq.T, ds:int)seq.T
  assert ds > 1 report"blockit problem"
  let blksz = blocksize:T / ds
   if length.s ≤ blksz then
-  let newseq = allocatespace:T(length.s * ds + 2)
-  let d = for acc = 2, @e = s do memcpy(acc, 0, ds, newseq, @e)/for(acc)
-   setfirst(newseq, 1, length.s)
+  let newseq =  allocateseq:T(length.s * ds  ,1,length.s)
+  let d = for acc = 2, @e = s do memcpy(acc, 0, ds, newseq, bitcast.@e)/for(acc)
+    newseq 
   else
    let noblks =(length.s + blksz - 1) / blksz
-   let blkseq = allocatespace:seq.T(noblks + 2)
+   let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
+   let blkseq =  allocateseq:seq.T(noblks , blockseqtype, length.s)
    let discard = 
    for acc = 2, @e = arithseq(noblks, blksz, 1)do
         let s2=subseq(s, @e, @e + blksz - 1)
-       let newseq = allocatespace:T(length.s2 * ds + 2)
-       let d = for acc2 = 2, e = s2 do memcpy(acc2, 0, ds, newseq, e)/for(acc2)
-       let b=setfirst(newseq, 1, length.s2)
-       setfld(acc, blkseq, b) 
+       let newseq =  allocateseq:T(length.s2 * ds   , 1, length.s2)
+       let d = for acc2 = 2, e = s2 do memcpy(acc2, 0, ds, newseq, bitcast.e)/for(acc2)
+        setfld(acc, blkseq, newseq) 
    /for(acc)
-    let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
-    setfirst(bitcast.blkseq, blockseqtype, length.s)
+     bitcast.blkseq 
     
 
 
 Function blockit(s:seq.T)seq.T
 let blksz = blocksize:T
  if length.s ≤ blksz then
- let newseq = allocatespace:T(length.s + 2)
+ let newseq = allocateseq:T(length.s  ,0,length.s)
  let d = for acc = 2, @e = s do setfld(acc, newseq, @e)/for(acc)
-  setfirst(newseq, 0, length.s)
+   newseq 
  else
   let noblks =(length.s + blksz - 1) / blksz
-  let blkseq = allocatespace:seq.T(noblks + 2)
-  let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
-  let discard = for acc = 2, @e = arithseq(noblks, blksz, 1)do
+ let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
+  let blkseq =  allocateseq:seq.T(noblks   , blockseqtype, length.s)
+   let discard = for acc = 2, @e = arithseq(noblks, blksz, 1)do
    setfld(acc, blkseq, blockit.subseq(s, @e, @e + blksz - 1))
   /for(acc)
-   setfirst(bitcast.blkseq, blockseqtype, length.s)
+    bitcast.blkseq 
 
 module tausupport
 
@@ -163,6 +160,9 @@ Builtin initialdict seq.encodingpair.seq.char
 builtin dlsymbol(cstr)int
 
 Builtin createthread(int, int, int, seq.int, int)process.int
+
+Builtin createthread(int, int, int, ptr, int)process.int
+
 
 builtin callstack(n:int)seq.int
 

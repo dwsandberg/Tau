@@ -124,7 +124,7 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), typeptr), localtypes)
     else if fsig.s ∈ ["length(packed2 seq)","length(packed3 seq)","length(packed3 seq)"]then
      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), typeint), localtypes)
-    else if(fsig.s)_1 ∈ "getseqlength getseqtype setfld blockit setfirst memcpy toseq"then
+    else if(fsig.s)_1 ∈ "getseqlength getseqtype setfld blockit   memcpy toseq"then
      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), getbasetype(alltypes, resulttype.s)), localtypes)
     else if(fsig.s)_1 ∈ "IDX GEP idxseq callidx" ∧ length.top(stk, 2) = 2
     ∧ top.stk = typeint
