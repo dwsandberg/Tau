@@ -42,7 +42,6 @@ Function =(a:encodingpair.T, b:encodingpair.T)boolean
  hash.a = hash.b ∧ valueofencoding.code.a = valueofencoding.code.b
  ∧ data.a = data.b
 
-Function ?(a:encodingpair.T, b:encodingpair.T)ordering valueofencoding.code.a ? valueofencoding.code.b
 
 unbound hash(T)int
 

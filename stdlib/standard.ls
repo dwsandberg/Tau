@@ -301,3 +301,31 @@ Export >>(s:seq.word, i:int)seq.word
 * usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict tausupport exclude standard seq
 
 * usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 persistant llvm postbind reconstruct persistantseq opt2 symbol parse libdesc internalbc intercode cvttoinst codegen pass2 codegennew funcsig interpreter exclude seq set otherseq standard bits tree graph UTF8 stack real ipair bitpackedseq fileio textio encoding words
+
+use index
+
+Export type:index
+
+Export +(i:index,b:int) index   index(rep.i+b)
+
+Export toindex(i:int) index  assert i > 0 report "not a index" index(i-1)
+
+Export toint(i:index) int   rep.i+1 
+
+module index
+
+use standard 
+  
+type index is rep:int
+
+Export type:index
+
+Export index(int) index
+
+use seq.index
+
+Function +(i:index,b:int) index   index(rep.i+b)
+
+Function toindex(i:int) index  assert i > 0 report "not an index" index(i-1)
+
+Function toint(i:index) int   rep.i+1 

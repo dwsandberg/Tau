@@ -217,20 +217,20 @@ addtemplate(symbol("GEP(int seq, int)","interpreter","int"), 2, GEP(r.1, i64, ib
 , addtemplates("int real ptr packed2 packed3 packed4 packed5 packed6", symbol("setfld(int, T seq seq, T seq)","T seq builtin","int"), 3, CAST(r.1, ibcsub.2, ptr.ptr.i64, bitcast) + GEP(r.2, ptr.i64, r.1, ibcsub.1)
 + STORE(r.3, r.2, ibcsub.3)
 + BINOP(r.3, ibcsub.1, C64.1, add))
-, addtemplate(symbol("assert:int(word seq)","builtin","int")
+, addtemplate(abortsymbol."int" 
 , 1
 , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 )
-, addtemplate(symbol("assert:boolean(word seq)","builtin","boolean")
+, addtemplate(abortsymbol."boolean"
 , 1
 , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 )
-, addtemplate(symbol("assert:real(word seq)","builtin","real")
+, addtemplate(abortsymbol."real"
 , 2
 , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 + CAST(r.2, r.1, double, sitofp)
 )
-, addtemplate(symbol("assert:ptr(word seq)","builtin","ptr")
+, addtemplate(abortsymbol."ptr" 
 , 2
 , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 + CAST(r.2, r.1, ptr.i64, inttoptr)

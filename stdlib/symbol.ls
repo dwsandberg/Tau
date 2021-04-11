@@ -223,6 +223,9 @@ Function seqeletype(type:mytype)mytype
 let para = typerep.parameter.type
  mytype.if length.para > 1 ∨ para_1 ∈ "int real boolean"then para
  else if para_1 ∈ "int byte bit"then"int"else"ptr"
+ 
+Function outofbounds  symbol
+   symbol("outofbounds" ,"tausupport","word seq")
 
 Function IdxS(type:mytype)symbol
 let para = typerep.parameter.type
@@ -386,6 +389,10 @@ Function MultOp symbol symbol("*(int, int)","standard","int")
 Function GetSeqLength symbol symbol("getseqlength(ptr)","tausupport","int")
 
 Function GetSeqType symbol symbol("getseqtype(ptr)","tausupport","int")
+
+Function abortsymbol(s:seq.word) symbol 
+assert s /in ["int","ptr","boolean","real"] /or true report "abort problem"+s+stacktrace
+symbol ("abort:"+s+"(word seq)","tausupport",s)
 
 
 Function isblock(s:symbol)boolean last.module.s = "$block"_1
@@ -664,6 +671,18 @@ Function print(s:seq.symbol)seq.word
  for acc ="", e = s do
   acc +  print.e
  /for(acc)
+
+type compileinfo is alltypes:typedict,prg:program,roots:seq.symbol 
+
+Export compileinfo(alltypes:typedict,prg:program,roots:seq.symbol) compileinfo
+
+Export alltypes(compileinfo)typedict
+
+Export prg(compileinfo)program
+
+Export roots(compileinfo) seq.symbol  
+
+Export type:compileinfo 
 
 ___________________________________________________________
 

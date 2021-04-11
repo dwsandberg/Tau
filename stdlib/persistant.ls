@@ -44,6 +44,10 @@ use seq.encodingpair.seq.char
 
 use set.encodingpair.seq.char
 
+Function ?(a:encodingpair.seq.char, b:encodingpair.seq.char)ordering 
+valueofencoding.code.a ? valueofencoding.code.b
+
+
 / use maindict 
 
 Export initialdict seq.encodingpair.seq.char

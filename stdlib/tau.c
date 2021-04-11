@@ -415,9 +415,10 @@ BT createfile2(BT bytelength, struct bitsseq *data, char * name)
                    // data is stored as seq.seq.int:  Each of the subseq may be of different length // 
                     int j=0; int length=bytelength;
                       while ( length > 0 )   { 
-                         BT len= ((BT *) data->data[j]) [1];
-                         write( file,(char *)(data->data[j])+16,  len * 8 );
-                             length=length-len * 8; j++;
+                         BT len= ((BT *) data->data[j]) [1] * 8;
+                         BT len2=  len >  length ? length : len;
+                         write( file,(char *)(data->data[j])+16,  len2 );
+                             length=length-len2; j++;
                        }          
                 }
                  if (file!=1) close(file);

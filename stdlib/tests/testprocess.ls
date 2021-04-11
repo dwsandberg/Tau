@@ -69,8 +69,15 @@ Function testreal seq.word check([ print(3, sqrt.2.0) = "1.414"
 )
 
 Function testprocess seq.word let z = subseq("f red green", 2, 3)
-let y = [ not.isprefix("out of bounds","out"), isprefix("out of bounds", message.process.testout.0), isprefix("out of bounds", message.process.testout.-10), isprefix("out of bounds", message.process.testout.4), message.process.testout.1 = "normal exit", aborted.process.testout.5, not.aborted.process.testout.2, result.process.square.3.0 = 9.0, result.process.pi = pi, result.process.intpart.3.1 = 3
-, result.process.square.4 = 16.0, result.process.print(3, 3.0) = "3.000", result.process(3 * 4.0) = 12.0, result.process(12.0 / 3) = 4.0, result.process.testout.3 = "three", result.process.isprefix("red", z), result.process.redgreen = redgreen, result.process.arg4(1, 2, 3, 4) = 10, message.process.result.process.testout.4 = "no result of aborted process", a.result.process.testprocess3 = 4 ∧ b.result.process.testprocess3 = 40
+let y = [ not.isprefix("out of bounds","out"), isprefix("not an index", message.process.testout.0)
+, isprefix("not an index", message.process.testout.-10)
+, isprefix("out of bounds", message.process.testout.4), message.process.testout.1 = "normal exit", aborted.process.testout.5, not.aborted.process.testout.2, result.process.square.3.0 = 9.0, result.process.pi = pi, result.process.intpart.3.1 = 3
+, result.process.square.4 = 16.0, result.process.print(3, 3.0) = "3.000"
+, result.process(3 * 4.0) = 12.0, result.process(12.0 / 3) = 4.0
+, result.process.testout.3 = "three", result.process.isprefix("red", z)
+, result.process.redgreen = redgreen, result.process.arg4(1, 2, 3, 4) = 10
+, message.process.result.process.testout.4 = "no result of aborted process"
+, a.result.process.testprocess3 = 4 ∧ b.result.process.testprocess3 = 40
 , t513, t514, isprefix("invalid digit", message.process.toint."0A"_1), t520]
  check(y,"testprocess")
 

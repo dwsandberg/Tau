@@ -10,7 +10,6 @@ Builtin allocateseq:T(size:int,fld0:int,fld1:int) seq.T
 
 Builtin setfld(i:int, s:seq.T, val:T)int
 
-Builtin indexseq44(seqtype:int, s:seq.T, i:int)T
 
 module taublockseq.T
 
@@ -48,8 +47,8 @@ Function_(a:blockseq.T, i:int)T
   let blksz= length.dummy.a 
   let blk = IDX(data,(i - 1) / blksz + 2)
   let b =(i - 1) mod blksz + 1
-   indexseq44(typ, blk, b)
-
+  blk_toindex.b
+  
 Function blockit(s:seq.T, ds:int)seq.T
  assert ds > 1 report"blockit problem"
  let blksz = blocksize:T / ds
@@ -223,6 +222,8 @@ Function encodingno(name:seq.word)int
 function assignencoding(a:int, typename)int a + 1
 
 -----------
+
+Function outofbounds seq.word "out of bounds"+stacktrace
 
 Function stacktrace seq.word for acc ="", @e = callstack.30 << 2 do acc + " /br" + printmangled.addresstosymbol.@e /for(acc)
 

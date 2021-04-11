@@ -159,6 +159,26 @@ Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(op
 
 Function print(a:seq.seq.word)seq.word
  for acc ="", @e = a do acc + " /br  /br" + @e /for(acc)
+ 
+Function compilerfront(option:seq.word, libname:seq.word) compileinfo
+let info = getlibraryinfo.libname
+let dependentlibs = info_1
+let filelist = info_2
+let exports = info_3
+ { let b = unloadlib.[ libname]}
+ let allsrc = getlibrarysrc.libname
+  { assert false report allsrc @ +("", @e)}
+  let link = pass1(groupparagraphs("module Module", allsrc), exports, libmodules.dependentlibs)
+  let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
+  let prg3 = for acc = prg2, @e = for acc = empty:seq.seq.word, @e = allsrc do acc + @e /for(acc)do
+   processOption(acc, @e)
+  /for(acc)
+   if option = "pass1"then
+    compileinfo(alltypes.link,prg3,roots.link)
+   else
+    let prg4 = pass2(prg3, alltypes.link)
+     compileinfo(  alltypes.link,prg4,roots.link)
+ 
 
 _______________
 

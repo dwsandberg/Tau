@@ -150,7 +150,7 @@ function scancode(alltypes:typedict, p:program, org:seq.symbol, nextvarX:int, ma
    else if   (fsig.sym)_1 ∈ "forexp" ∧ module.sym="builtin"  then 
      let noop=forexpisnoop(sym,result)
    if not.isempty.noop then next(flags, noop, nextvar, map)else next(flags ∨ Hasfor, result + sym, nextvar, map)
-   else if (fsig.sym)_1 ∈ "indexseq44" ∧ module.sym="builtin"  then
+   else if (fsig.sym)_1 ∈ "indexseq45" ∧ module.sym="builtin"  then
      next(  flags  ∨ Hasfor   ,    result + sym, nextvar, map)
    else if sym=self then  next(flags ∨ Callself,result+sym,nextvar,map)
    else
@@ -213,25 +213,26 @@ compound accumaltor possiblities
 ,"+(word seq graph, word seq arc)graph.seq.word"
 ,"+(place, char seq encodingpair)maindict"] 
 
+function  isconstorlocal(p:seq.symbol) boolean  length.p=1 ∧ (isconst.first.p  ∨ islocal.first.p )
+
 function expandforexp(code:seq.symbol,nextvarin:int ) seq.symbol
   for  result=empty:seq.symbol, nextvar=nextvarin,sym=code do
    if last.module.sym="builtin"_1   ∧  (fsig.sym)_1 = "forexp"_1 then 
     let   f=forexpcode(sym, result, nextvar )
    next(  code.f, nextvar.f) 
-   else if last.module.sym="builtin"_1   ∧ (fsig.sym)_1="indexseq44"_1 then
-     let theseqtype=(paratypes.sym)_2
+   else if last.module.sym="builtin"_1   ∧ (fsig.sym)_1 /in"indexseq45"  then
+     let theseqtype=(paratypes.sym)_1
      let elementtype=seqeletype.theseqtype
-     let t =  backparse2(result, length.result, 3, empty:seq.int) 
-     let index = subseq(result, t_3, length.code)
-     let theseq = subseq(result, t_2, t_3 - 1)
-     let seqtype = subseq(result, t_1, t_2 - 1)
-      let newcode=for   morecode=empty:seq.symbol, para=empty:seq.symbol , var=nextvar,     p =[seqtype,theseq,index] do 
-        if length.p=1 ∧ (isconst.p_1 ∨ islocal.p_1) then  
-           next (morecode,para+p_1,var) 
-        else  next(morecode+p+Define.var,para+Local.var,var+1)
-  /for(subseq(result, 1, t_1 - 1) + morecode + indexseqcode(para_1, para_2, para_3, elementtype, theseqtype))
-     next(newcode,nextvar)
-  else next(result + sym, nextvar)
+     let t =  backparse2(result, length.result, 2, empty:seq.int) 
+     let index = subseq(result, t_2, length.code)
+     let theseq = subseq(result, t_1, t_2 - 1)
+     let theseq2=  if isconstorlocal.theseq then first.theseq else Local(nextvar+1 )
+     let newcode = subseq(result, 1, t_1 - 1) 
+                     +if isconstorlocal.theseq then empty:seq.symbol else theseq+Define(nextvar+1) /if+
+                [theseq2,GetSeqType,Define(nextvar)]+index+[Lit.1,PlusOp,Define(nextvar+2)] 
+     +indexseqcode(Local.nextvar, theseq2, Local(nextvar+2), elementtype, theseqtype,true)
+     next(newcode,nextvar+3)
+   else next(result + sym, nextvar)
  /for(result)
 
 function forexpisnoop (forsym:symbol,code:seq.symbol) seq.symbol
@@ -251,13 +252,21 @@ let initacc = subseq(code, t2_1, t2_2 - 1)
  else empty:seq.symbol
 else empty:seq.symbol
 
-function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, elementtype:mytype, theseqtype:mytype)seq.symbol
+
+function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, elementtype:mytype, theseqtype:mytype,boundscheck:boolean)seq.symbol  
 let packedseq = maybepacked.theseqtype
- [ start.elementtype, seqtype, Lit.0, EqOp, Br2(1, 2)] + [ theseq, masteridx, IdxS.theseqtype, Exit]
+ [ start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)] + [ theseq, masteridx, Callidx.theseqtype, Exit]
+ + if boundscheck then  
+   let t=if abstracttype.elementtype ∈ "seq packed2 packed3 packed4 packed5 packed6" then"ptr" 
+   else typerep.elementtype
+ [  masteridx,theseq, GetSeqLength, GtOp, Br2(1, 2),outofbounds,abortsymbol.t,Exit]    
+ else empty:seq.symbol /if 
  + if packedseq then
   [ seqtype, Lit.1, EqOp, Br2(1, 2)] + [ theseq, masteridx] + packedindex2.theseqtype + [ Exit]
  else empty:seq.symbol /if
-  + [ theseq, masteridx, Callidx.theseqtype, Exit,    EndBlock]
+  + [ theseq, masteridx, IdxS.theseqtype, Exit,    EndBlock]
+  
+  
      
 function forexpcode( forsym:symbol, code:seq.symbol, nextvar:int )expandresult
 let t =  backparse2(code, length.code, 5, empty:seq.int) << 1 
@@ -285,7 +294,7 @@ let firstpart = subseq(code, 1, startofsymbols - 1) + [ Define.nextvar1, theseq,
   + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint,nextvar,resulttype.forsym)
 + { 2 if masteridx > totallength then exit } [ masteridx, totallength, GtOp]
 + Br2(2, 1)
-+ { 3 else let sequenceele = seq_(idx)} indexseqcode(seqtype, theseq, masteridx, elementtype, theseqtype)
++ { 3 else let sequenceele = seq_(idx)} indexseqcode(seqtype, theseq, masteridx, elementtype, theseqtype,false)
   + [ Defineseqelement]
 + { 3 while condition } replace$for(exitexp, newsyms, syms)
 + Br2(2, 1)
@@ -300,7 +309,7 @@ else
   else
    let z2 = kkk(bodyexp2, length.bodyexp2 - 1, length.bodyexp2 - 1, empty:seq.symbol, [ masteridx, Lit.1, PlusOp, continue.length.syms], let typ = resulttype.forsym
    let typ2 = if abstracttype.typ = "seq"_1 then"ptr"else typerep.typ
-    [ symbol("assert:" + typ2 + "(word seq)","builtin", typ2), Exit])
+    [ abortsymbol.typ2 , Exit])
             z2+   EndBlock 
  { assert not.newway ∨ Word."ACTARG"_1 ∉(firstpart + lastpart)report"endexp"+ print.endexp + EOL +"exitexp"+ print.exitexp + EOL +"bodyexp"+ print.bodyexp + EOL +"syms"+ print.syms + EOL + print.(firstpart + lastpart)}
    expandresult(nextvar1 + 3,firstpart+lastpart, bits.0 )

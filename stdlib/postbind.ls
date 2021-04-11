@@ -140,9 +140,9 @@ let coretypes = false
  let c = for acc = empty:seq.seq.mytype, @e = paratypes.sym do acc + getsubflds(alltypes, replaceT(modpara, @e))/for(acc)
   buildconstructor(alltypes, if issequence then { for seq index func } [ typeint]else empty:seq.mytype, c, empty:seq.mytype, 1, 1, 0, empty:seq.symbol)
    else if fsig.sym = "packed(T seq)"then [ blocksym(alltypes,(paratypes.newsym)_1)]
- else if fsig.sym = "indexseq44(int, T seq, int)"then
- let seqtype = getbasetype(alltypes,(paratypes.newsym)_2)
-  [ newsymbol("indexseq44", mytype."builtin", [ typeint, seqtype, typeint], seqeletype.seqtype)]
+ else if fsig.sym =" _(T seq, index)" then    
+  let seqtype = getbasetype(alltypes,first.paratypes.newsym )
+ [  newsymbol("indexseq45", mytype."builtin", [  seqtype, typeint], seqeletype.seqtype)]
  else if(fsig.sym)_1 = "forexp"_1 then
  let paras = for acc = empty:seq.mytype, p = paratypes.newsym do acc + getbasetype(alltypes, p)/for(acc)
   [ newsymbol("forexp", mytype."builtin", paras, last.paras)]
@@ -151,8 +151,7 @@ let coretypes = false
   [ newsymbol( "createthreadY", addabstract(" builtin"_1,parameter.resulttype.sym), paras, getbasetype(alltypes, resulttype.sym))]
  else if(fsig.sym)_1 ∈ "assert"then
  let t = getbasetype(alltypes, parameter.modname.newsym)
- let kind = if abstracttype.t ∈ "seq"then"ptr"else typerep.t
-  [ symbol("assert:" + kind + "(word seq)","builtin", kind)]
+  [abortsymbol.if abstracttype.t ∈ "seq" then"ptr"else typerep.t]
  else if subseq(fsig.sym, 1, 2) = "IDX:"then [ Idx.getbasetype(alltypes, parameter.modname.newsym)]
  else if subseq(fsig.sym, 1, 2) = "IDX("then
   [ Idx.seqeletype.getbasetype(alltypes, first.paratypes.newsym)]

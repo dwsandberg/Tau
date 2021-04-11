@@ -107,7 +107,7 @@ Function binarysearch(s:seq.T, b:int, a:int, val:T)int
  if a < b then-(a + 1)
  else
   let p =(a + b) / 2
-  let c = s_p ? val
+  let c = s_toindex.p ? val
    if c = EQ then p
    else if c = GT then binarysearch(s, b, p - 1, val)else binarysearch(s, p + 1, a, val)
 
@@ -199,3 +199,15 @@ Export isempty(a:seq.T)boolean
 Export <<(s:seq.T, i:int)seq.T
 
 Export >>(s:seq.T, i:int)seq.T
+
+ use index
+  
+    use seq.index
+  
+  
+
+Function ascending(s:seq.T)  seq.index
+for a=empty:seq.index,e=arithseq(length.s,1,0) do a+index(e) /for(a)
+
+Function descending(s:seq.T)  seq.index
+for a=empty:seq.index,e=arithseq(length.s,-1,length.s-1) do a+index(e) /for(a)

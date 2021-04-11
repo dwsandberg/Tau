@@ -32,7 +32,7 @@ graph groupparagraphs intdict   ioseq ipair libdesc
 main2 maindict mangle mytype pretty otherseq    process 
 real seq set stack   symbol textio timestamp tree worddict words xxhash 
   sparseseq   standard testall
-svg svggraph displaygraph displaytextgraph display
+svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport
   interpreter  llvm llvmconstants internalbc codegennew codetemplates persistant breakblocks
 
