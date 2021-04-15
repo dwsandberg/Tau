@@ -133,7 +133,7 @@ else
   else
    let p3 = process.interpret(alltypes.result.p2, code.result.p2)
     if aborted.p3 then message.p3 else result.p3
- createhtmlfile("stdout", output)
+ createfile("stdout", toUTF8bytes.output)
 
 Function testcomp(s:seq.seq.word)seq.seq.word
 let exports ="testit"

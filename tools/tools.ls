@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau  ; use doc ; callgraphwithin("mylib","mylib")
+#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
+
+ ; use doc ; callgraphwithin("stdlib","outstream")
 
 
  ; use tools; testprofile."stdlib"

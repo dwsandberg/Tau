@@ -32,6 +32,9 @@ Function +(a:UTF8, b:UTF8)UTF8 UTF8(toseqbyte.a + toseqbyte.b)
 
 Function +(a:UTF8, ch:char)UTF8 a + encodeUTF8.ch
 
+Function +(a:UTF8, s:seq.char)UTF8 for acc = a, @e = s do acc + @e /for(acc)
+
+
 Function =(a:UTF8, b:UTF8)boolean toseqbyte.a = toseqbyte.b
 
 Function commachar char char.44

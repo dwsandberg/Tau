@@ -4,96 +4,112 @@ use standard
 
 use stack.seq.word
 
-unbound setnospace(T)T
-
-unbound nospace(T)boolean
-
 unbound +(T, char)T
 
-Function addspace(a:T, this:word)T addspace(a, this, false)
+unbound +(T, seq.char)T
 
-Function addspace(a:T, this:word, escapehtml:boolean)T
- if this = " /br"_1 then setnospace(a + char.10)
- else if this = ","_1 then { no space before but space after } a + char1.","
- else
-  let wordseq = '-()].:"_^. "' + space
-  let i = findindex(this, wordseq)
-   if i < length.wordseq then   { no space before or after }   setnospace(a + (decodeword.merge.wordseq)_i)
+
+    function addspace(nospace:boolean,result:T,toadd: word) T
+           let i= findindex(toadd,specialwords:T)
+            addspace2(nospace, result,toadd,false,i)
+
+
+function specialwords:T seq.word [space]+'-()].:_^"' + "/br. ," 
+ 
+     function addspace(nospace:boolean,result:T,toadd:seq.word) T
+          for ns=nospace, a=result   ,  this=toadd do
+             let i= findindex(this,specialwords:T)
+           next(i < length.specialwords:T,  addspace2(ns, a,this,false,i))
+           /for(a)
+
+
+ function addspace2(nospace:boolean,a:T,this:word,escapehtml:boolean,i:int) T
+     let wordseq=specialwords:T
+    if i=length.wordseq then {, no space before but space after}   a + char1.","
+    else if  i=length.wordseq-2  then{ /br   }  (a + char.10)
+    else if  i=length.wordseq-1  then {. } a + char1."."+char.32
+    else if i < length.wordseq then   { no space before or after }    (a + (decodeword.merge.wordseq)_i)
    else
     let d = decodeword.this
-    let a1 = if nospace.a then a else a + char.32
+    let a1 = if nospace then a else a + char.32
      if escapehtml then
      for acc = a1, @e = d do acc
       + if @e = char1."<"then decodeword.first."&lt;"
       else if @e = char1."&"then decodeword.first."&amp;"else [ @e] /for(acc)
      else for acc = a1, @e = d do acc + @e /for(acc)
-
-function +(a:T, s:seq.char)T for acc = a, @e = s do acc + @e /for(acc)
-
-function +(a:T, s:seq.word)T for acc = a, @e = s do addspace(acc, @e)/for(acc)
-
-function +(a:T, w:word)T addspace(a, w)
-
-Function processpara(x:T, t:seq.word)T processpara(t, 1, 1, x, push(empty:stack.seq.word,""))
-
-function processpara(a:seq.word, j:int, i:int, result:T, stk:stack.seq.word)T
- if i > length.a then result
- else
-  let this = a_i
-   if this = "&noformat"_1 then
-   let len = toint.a_(i + 1)
-     processpara(a, j, i + 2 + len, result + subseq(a, i + 2, i + 1 + len), stk)
-   else if this = " /keyword"_1 then
-   processpara(a, j, i + 2, result + "<span class = keyword>" + subseq(a, i + 1, i + 1) + "</span>", stk)
-   else if this = " /p"_1 then processpara(a, j, i + 1, result + "<p>", stk)
-   else if this = " /em"_1 then
-   processpara(a, j, i + 2, result + "<em>" + subseq(a, i + 1, i + 1) + "</em>", stk)
-   else if this = " /strong"_1 then
-   processpara(a, j, i + 2, result + "<strong>" + subseq(a, i + 1, i + 1) + "</strong>", stk)
-   else if this = " /row"_1 then
+     
+Function processpara(x:T, a:seq.word)T
+ let specialwords=specialwords:T
+ let none=merge."+NONE" 
+ let match=merge."+MaTcH" 
+ let pendingbreak=merge."+pendingBreak" 
+  for nospace=false,result=x, stk=empty:stack.seq.word ,last=none, this=a+space do 
+ if last=match then
+    if this="/<"_1 then 
+      next(false,addspace(nospace,result,this),push(stk,[this]),match)
+    else if this="/>"_1 then
+      if not.isempty.stk ∧  top.stk="/<"  then 
+         next(false,addspace(nospace,result,this),pop.stk,match)
+        else 
+         next(false,result,stk,none)
+    else 
+       next(findindex(this,specialwords) < length.specialwords,addspace(nospace,result,this),stk,last)
+ else if last=none then 
+   next(nospace,result,stk,this)
+ else if last = " /keyword"_1 then
+    let toadd="<span class = keyword>" + this + "</span>"
+    next (false,addspace(nospace,result,toadd), stk,none)
+ else if last = " /em"_1 then
+    let toadd="<em>" + this + "</em>"
+    next (false,addspace(nospace,result,toadd), stk,none)
+ else if last = " /strong"_1 then
+     let toadd="<strong>" + this + "</strong>"
+    next (false,addspace(nospace,result,toadd), stk,none)
+ else if last = " /p"_1 then 
+    next( false,addspace(nospace,result,EOL+"<p>"), stk,this)
+   else if last = " /row"_1 then
    if not.isempty.stk ∧ top.stk = "</caption>"then
-    processpara(a, j + 1, i + 1, result + EOL + ' </caption> <tr id ="' + toword.j
-     + '"onclick ="cmd5(this)"><td> ', pop.stk)
+    let toadd= EOL + ' <tr><td> '+top.stk
+    next(false,addspace(nospace,result,toadd), pop.stk,this)
     else
-     processpara(a, j + 1, i + 1, result + EOL + ' <tr id ="' + toword.j
-     + '"onclick ="cmd5(this)"><td> ', stk)
-   else if this = " /cell"_1 then
-   processpara(a, j, i + 1, result + EOL + "<td>", stk)
-   else if this = " /br"_1 then
-   if subseq(a, i + 1, i + 2) = " /< block"
-    ∨ i > 1 ∧ subseq(a, i - 1, i - 1) = " />"then
-    processpara(a, j, i + 1, result, stk)
-    else processpara(a, j, i + 1, result + EOL + "<br>" + space, stk)
-   else if this = " /<"_1 ∧ i + 2 < length.a then
-   let next = a_(i + 1)
-     if next = "block"_1 then
-     processpara(a, j, i + 2, result + "<span class = block>" + space, push(stk,"</span>"))
-     else if next = "keyword"_1 then
-     processpara(a, j, i + 2, result + "<span class = keywords>" + space, push(stk,"</span>"))
-     else if next = "noformat"_1 then
-     let t = match:T(a, 0, i + 2)
-       processpara(a, j, t + 1, result + subseq(a, i + 2, t - 1), stk)
-     else if next = "select"_1 then
-     if i + 4 < length.a ∧ a_(i + 3) = "/section"_1 then
-      processpara(a, j, i + 4, result + EOL + "<h2 id =" + a_(i + 2)
-       + ' onclick ="javascript:cmd5(this)"> '
-       + space, push(stk,"</h2>"))
-      else
-       processpara(a, j, i + 3, result + EOL + "<p id =" + a_(i + 2)
-       + ' onclick ="javascript:cmd5(this)"> '
-       + space, push(stk,"</p>"))
-     else if next = "table"_1 then
-     processpara(a, j, i + 2, result + "<table>" + space + "<caption>", push(push(stk,"</table>"),"</caption>"))
-     else
-      processpara(a, j, i + 2, result + "<span class =" + next + ">", push(stk,"</span>"))
-   else if this = " />"_1 ∧ not.isempty.stk then
-   processpara(a, j, i + 1, result + top.stk + space, pop.stk)
-   else if this = space then processpara(a, j, i + 1, result + space, stk)
-   else processpara(a, j, i + 1, addspace(result, this, true), stk)
+     let toadd= EOL + " <tr><td> "
+    next(false,addspace(nospace,result,toadd), stk,this)
+ else if last = " /cell"_1 then
+    next(false,addspace(nospace,result,EOL + "<td>"), stk,this)
+ else if last = " /br"_1 then
+        if this /ne " /< "_1 then 
+          let toadd=EOL + "<br>"+ space
+          next(true,addspace(nospace,result,toadd),stk,this)
+        else 
+        next(nospace,result,stk,pendingbreak)
+  else if last = " /<"_1 /or last=pendingbreak  then
+  if this = "block"_1 then
+     { if break is just before block suppress break }
+     let toadd="<span class = block>" + space 
+     next(true, addspace(nospace,result,toadd), push(stk,"</span>"),none)
+ else  
+   let pb=if last=pendingbreak then  EOL + "<br>" + space else ""
+  if this = "noformat"_1 then
+     next(nospace, result , stk,match)
+ else if this=  "/section"_1 then
+   let toadd=pb+EOL + "<h2>"+ space
+      next(true, addspace(nospace,result,toadd), push(stk,"</h2>"),none)
+ else if this = "table"_1 then
+   let toadd=pb+"<table>" + space + "<caption>"
+     next(false,addspace(nospace,result,toadd), push(push(stk,"</table>"),"</caption>"),this)
+ else    
+   let toadd=pb+"<span class =" + this + ">"
+      next(false, addspace(nospace,result,toadd), push(stk,"</span>"),none)
+ else if last= " />"_1 ∧ not.isempty.stk then
+   let toadd=top.stk + space  
+   next(true, addspace(nospace,result,toadd), pop.stk, if this=first."/br" then none else this)
+ else if last = space then 
+     let toadd= space 
+    next( true,addspace(nospace,result,toadd), stk,this)
+ else 
+   let toadd= last let i= findindex(toadd,specialwords)
+   next( i < length.specialwords,addspace2(nospace, result,toadd,true,i),stk,this)
+ /for(if last=none then result else addspace(nospace,result,last))
 
-Function match:T(s:seq.word, depth:int, i:int)int
- if i > length.s then i
- else if s_i = " /<"_1 then match:T(s, depth + 1, i + 1)
- else if s_i = " />"_1 then
- if depth = 0 then i else match:T(s, depth - 1, i + 1)
- else match:T(s, depth, i + 1)
+
+

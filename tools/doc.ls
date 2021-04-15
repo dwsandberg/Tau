@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau ; use doc ; createdoc
+
+; use doc ; doclibrary."stdlib"
 
 
 
@@ -26,6 +28,8 @@ use standard
 
 use textio
 
+use fileio
+
 use seq.char
 
 use seq.mytype
@@ -44,11 +48,13 @@ use seq.arcinfo.seq.word
 
 Function createdoc seq.word { Creates html tau html documentation. Creates file taudocs.html }
 let d = for acc ="", @e = gettext."tools/doc.txt"do acc + addselect.@e /for(acc)
-let x1 = createhtmlfile("doc.html", d)
- { let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])}
+let x1 = createfile("doc.html", toUTF8bytes.d)
+{ let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])}
  { let y1 = createhtmlfile("testall.html", htmlcode."testall")} d
 
-function addselect(s:seq.word)seq.word" /< select X" + s + " />"
+
+function addselect(s:seq.word)seq.word 
+ if not.isempty.s /and first.s=first."/section" then  "/< /section " + s << 1 + " />" else "/p " + s   
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
  { Calls between modules in list of modules. }
@@ -113,7 +119,7 @@ Function doclibrary(libname:seq.word)seq.word
  let exports =(getlibraryinfo.libname)_3
   docmodule(g, exports, r, liba, 1,"","","")
   + if length.r > 0 then""
-  else" /< select x /section Possibly Unused Functions  />  /< select x" + uncalledfunctions.libname + " />"
+  else" /<  /section Possibly Unused Functions  />  /< select x" + uncalledfunctions.libname + " />"
 
 * Paragraphs beginning with * are included in documentation.
 
@@ -156,7 +162,7 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
     " /br defines types: " + types + funcs
    else""
    let name = [ modname] + if length.lib_i > 2 then".T"else""
-    leftover + " /< select x /section  /keyword module" + name + " />"
+    leftover + " /< /section  /keyword module" + name + " />"
     + if modname ∈ exports then"Module" + name + "is exported from library. "else""/if
     + " /br Module"
     + name
@@ -177,7 +183,7 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
  else if lib_i_1 ∈ "Function"then
  let z = getheader.lib_i
  let x = if last.z ∈ "export stub"then subseq(z, 1, length.z - 1)else z
- let toadd =" /< select x  /keyword" + x + " />"
+ let toadd =" /p  /keyword" + x  
   docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
  else if subseq(lib_i, 1, 1) = "type"then
   docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_2)

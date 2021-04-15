@@ -4,8 +4,6 @@ use UTF8
 
 use bits
 
-use fileio
-
 use standard
 
 use seq.byte
@@ -149,15 +147,9 @@ let newlastbreak = if c ∈ [ 3, 4]then 0 else lastbreak + 1
 
 _____________________________
 
-Function createhtmlfile(name:seq.word, output:seq.word)int
- createfile(name, a.processpara(for acc = emptyout23, @e = htmlheader do addspace(acc, @e)/for(acc), output))
+Function toUTF8bytes( output:seq.word) seq.byte 
+ toseqbyte.processpara(  emptyUTF8 ,  "/< noformat " +  htmlheader+"   />"+ output)
 
-type out23 is nospace:boolean, a:seq.byte
+use outstream.UTF8
 
-function +(z:out23, c:char)out23
- { clears nospace flag }
- out23(false, if toint.c > 127 then a.z + toseqbyte.encodeUTF8.c else a.z + tobyte.toint.c)
 
-function setnospace(a:out23)out23 out23(true, a.a)
-
-function emptyout23 out23 out23(false, empty:seq.byte)
