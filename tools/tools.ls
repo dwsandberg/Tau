@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau ; use doc ; callgraphwithin("webassembly","wasm2")
+
+; use doc ; doclibrary."webassembly"
 
  ; use doc ; callgraphwithin("stdlib","outstream")
 

@@ -72,8 +72,8 @@ if a then if b then true else false else if b then false else true
 
 Function toword(o:ordering)word"LT EQ GT"_(toint.o + 1)
 
-Function ∧(a:ordering, b:ordering)ordering let x = a
- if x = EQ then b else x
+Function ∧(a:ordering, b:ordering)ordering  
+ if a = EQ then b else a
 
 --------------------
 

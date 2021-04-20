@@ -44,7 +44,9 @@ use set.arc.word
 
 use seq.tree.word
 
-Function testmodules seq.word let y = [ t501, t502, t503, t504, t505, t506, t507, test20, t044]
+use otherseq.int
+
+Function testmodules seq.word let y = [ t501, t502, t503, t504, t505, t506, t507,t508, test20, t044]
  check(y,"testmodules") + checkbits
 
 function print(a:seq.int)seq.word
@@ -121,6 +123,14 @@ function print(g:graph.int)seq.word
 
 function print(a:arc.int)seq.word"(" + toword.tail.a + toword.head.a + ")"
 
+
+function t508 boolean let s = for acc = constantseq(100, 0), i = for acc = empty:seq.int,e = randomseq(3456, 100001)do 
+acc + (e mod 100 + 1) /for(acc)do
+replace(acc, i, acc_i + 1)
+/for(acc)
+let totalcounts = for acc = 0, @e = s do acc + @e /for(acc)
+ length.s = 100 ∧ totalcounts = 100001
+ 
 _____________
 
 Randomphrase

@@ -49,54 +49,17 @@ let theend = if t < 1 then length.s else t
   subseq(s, 1, theend) + "(" + tt + ")" + tt + "stub"
  else subseq(s, 1, theend) + "stub"
 
-function match(s:seq.word, depth:int, i:int)int
- if i > length.s then i
- else if s_i = " /<"_1 then match(s, depth + 1, i + 1)
- else if s_i = " />"_1 then
-  if depth = 0 then i else match(s, depth - 1, i + 1)
- else match(s, depth, i + 1)
 
-function escapeformat(length:int, c:word)word
- if c ∈ " /<  /br  /p  /row"then
-  if length > 20 then merge.[ encodeword.[ char.10], c]else merge.[ space, c]
- else if c ∈ " /keyword  />  /em  /strong  /cell"then merge.[ space, c]else c
+
 
 Function escapeformat(s:seq.word)seq.word
- for acc ="", @e = s do acc + escapeformat(length.s, @e)/for(acc)
+ for acc ="", c = s do acc + if c ∈ " /<  /br  /p  /row"then
+  if length.s > 20 then merge.[ encodeword.[ char.10], c]else merge.[ space, c]
+ else if c ∈ " /keyword  />  /em  /strong  /cell"then merge.[ space, c]else c
+/for(acc)
+ 
 
-Function processtotext(x:seq.word)seq.word processtotext(x, 1,"", empty:stack.word)
 
-function needsLF(x:seq.word, i:int)boolean
- { adds LF only if no LF is present }
- if i = 0 then false
- else if x_i = space then needsLF(x, i - 1)
- else if x_i = " /br"_1 then false else true
-
-function processtotext(a:seq.word, i:int, result:seq.word, stk:stack.word)seq.word
- if i > length.a then result
- else
-  { assert i < 249 report"KL"+ toword.i + subseq(a, i, i + 3)}
-  let this = a_i
-  let next = if i < length.a then a_(i + 1)else space
-   if this = " /br"_1 then
-    if next = " /br"_1 then processtotext(a, i + 1, result, stk)
-    else processtotext(a, i + 1, result + " /br" + toseq.stk, stk)
-   else if this = " /<"_1 then
-    if next = "block"_1 then
-     if needsLF(result, length.result)then
-      processtotext(a, i + 2, result + " /br" + toseq.stk + space, push(stk, space))
-     else processtotext(a, i + 2, result, push(stk, space))
-    else if next = "noformat"_1 then
-    let t = match(a, 0, i + 2)
-     processtotext(a, t + 1, result + subseq(a, i + 2, t - 1), stk)
-    else processtotext(a, i + 2, result, push(stk, space))
-   else if not.isempty.stk ∧ this = " />"_1 then
-    processtotext(a, i + 1, result
-    + if top.stk = "endtable"_1 then")]"else"", pop.stk)
-   else if this = " /keyword"_1 then processtotext(a, i + 2, result + [ next], stk)
-   else if this = " /em"_1 then processtotext(a, i + 2, result + [ next], stk)
-   else if this = " /p"_1 then processtotext(a, i + 1, result + " /br  /br", stk)
-   else processtotext(a, i + 1, result + [ a_i], stk)
 
 Function htmlheader seq.word { the format of the meta tag is carefully crafted to get math unicode characters to display correctly }"<meta"
 + merge.' http-equiv ="Content-Type"'
@@ -152,4 +115,6 @@ Function toUTF8bytes( output:seq.word) seq.byte
 
 use outstream.UTF8
 
+Function toUTF8textbytes( output:seq.word) seq.byte 
+ toseqbyte.processpara(  emptyUTF8 ,  "/< noformat " +  htmlheader+"   />"+ output)
 

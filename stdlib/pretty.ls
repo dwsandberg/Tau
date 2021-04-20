@@ -68,7 +68,7 @@ let p = process.prettyfile(lib, newlibdir, file)
 function prettyfile(lib:word, newlibdir:word, file:word)seq.word
 let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
 let b = for acc ="", @e = prettyfile("", gettext.file2)do list(acc," /p", @e)/for(acc)
-let discard = createfile([ merge([ newlibdir] + "/" + file + ".ls")], processtotext.b)
+let discard = createfile([ merge([ newlibdir] + "/" + file + ".ls")],  toUTF8textbytes.b)
  b
 
 Function prettyfile(modhead:seq.word, s:seq.seq.word)seq.seq.word

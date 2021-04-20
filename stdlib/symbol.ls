@@ -572,7 +572,9 @@ let fsig = fsig.f
   else if fsig_1 = "EXITBLOCK"_1 then"Exit  /br"
   else if isbr.f then
    "Br2(" + fsig_3 + "," + fsig_4 + ") /br"
-  else if fsig_1 ∈ "BR2 LOOPBLOCK CONTINUE"then fsig + " /br"else fsig
+  else if fsig_1 ∈ "  LOOPBLOCK  "then fsig + print.mytype.module+ " /br" 
+  else if fsig_1 ∈ "BR2   CONTINUE"then fsig + " /br"
+  else fsig
  else if isrecordconstant.f then fsig
  else if isFref.f then"FREF" + print.(constantcode.f)_1
  else if last.fsig = ")"_1 then fsig else fsig + "()"/if

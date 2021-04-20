@@ -18,14 +18,13 @@ Paragraphs that do NOT start with /keyword type, /keyword use, /keyword Library,
  /keyword module, /keyword Function /keyword function, /keyword unbound,  or /keyword Export are always treated as comments.
 
 Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. 
-The characters ()+,-.:=[\]^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
+The characters ()+,-.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
 A word sequence literal is double or single quoted like "This is a string Literal." or ' This is a string Literal.'
 
-An integer literal is represented by a sequence of words where each word only contains digits. 
-That is spaces are allow to make long integers more readable. For example 1000000 is equivalent to 1 000 000. 
-A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 0 0 and 10 01 are integers.
+An integer literal is represented by a sequence of words where each word only contains digits or the no break space. 
+A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 00 and 1001 are integers.
 
-For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨  ∈ ∉ ∩ ∪ are  &le  &ge  &ne  &and  &or &in &nin &cap &cup respectively.
+For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨  ∈ ∉ ∩ ∪ are  /le  /ge  /ne  /and  /or /in /nin /cap /cup respectively.
 
 Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.
 
@@ -43,7 +42,8 @@ When converting a sequence of words back to characters for output, an space is u
 then the space before and after the word is not added. 
 /br 2. If word is a comma then the space before the comma is suppressed.
 
-These rules  sometimes do not produce the desired result.  To improve the result, no-break spaces can be added.  On the Mac keyboard pressing the option key and then space bar will insert a no-break space. 
+These rules  sometimes do not produce the desired result.  To improve the result, no-break spaces can be added. 
+ On the Mac keyboard pressing the option key and then space bar will insert a no-break space. 
 
 /section Expressions
 
@@ -65,22 +65,26 @@ The computation unit in tau is  a library. A library contains modules. A module 
 
 A paragraph is a sequence of words. Paragraphs that do NOT start with type, use, module, Library, Function, unbound, Export, or function are always treated as comments.
 
-The syntax for non-comment paragraphs is /< block <paragraph>::= <module definition> | <definition> | /keyword use <type> /br <module definition>::= /keyword module <word>(T)| /keyword module <word> 
+The syntax for non-comment paragraphs is /< block <paragraph>→ <module definition> | <definition> | /keyword use <type> /br <module definition>→ /keyword module <word>(T)| /keyword module <word> 
 /br <name list>:= <word>:<type> | <name list>, <word>:<type> 
-/br <definition type > ::= /keyword Function  | /keyword function | /keyword Export | /keyword unbound  
-/br <definition>::= /keyword type <word> /keyword is /keyword record <name list> 
-/br | /keyword type <word> /keyword is /keyword sequence <name list> 
-/br | <definition type >  <function name>(<name list>)<type> <exp> 
-/br | <definition type >  <function name> <type> <exp> 
-/br <let name>::= <word> /br <parameter name>::= <word> /br <type>::= <word> 
-/br <type>::= <word>.<type> /br <function call>::= <function name> | <function name>(<exp list>)
-/br <exp>::= <function call> |<parameter name> |<let name> 
-/br <exp>::= /keyword if <exp> /keyword then <exp> /keyword else <exp> 
-/br <exp>::=(<exp>)/br <exp>::= {<exp>} /br <exp>::= <exp> <binary op> <exp> 
-/br <exp>::=-<exp> /br <exp>::= <word>.<exp> /br <exp>::= <sequence constructor> /br <sequence constructor>::= [ <exp list>]/br <exp list>::= <exp> | <exp list>, <exp> 
-/br <exp>::=  /keyword  for ( word ∈ E,word = E) E   
-/br <exp>::=  /keyword  for ( word ∈ E,word = E,word,E) E   
-/br <exp>::= /keyword let <let name> = <exp> exp /br <exp>::= /keyword assert <exp> /keyword report <exp> exp /br <exp>::= // < one or more words not containing / /> // exp /br <exp>::= process.<function call> | process(<function call>)/>
+/br <definition type > → /keyword Function  | /keyword function | /keyword Export | /keyword unbound  
+/br <definition>→ /keyword type <word> /keyword is  <name list> 
+/br | <definition type >  <function name>(<name list>)<type> /em E  
+/br | <definition type >  <function name> <type> /em E  
+/br <let name>→ <word> /br <parameter name>→ <word> /br <type>→ <word> 
+/br <type>→ <word>.<type> /br <function call>→ <function name> | <function name>(/em EList)
+/br /em E → <function call> |<parameter name> |<let name> 
+/br /em E → /keyword if /em E /keyword then /em E /keyword else /em E 
+/br /em E → /keyword if /em E /keyword then /em E /keyword else /em E /keyword /if
+/br /em E → (/em E )/br /em E → /em E  <binary op> /em E  
+/br /em E → -/em E /br /em E → <word>./em E  
+/br /em E→  /em sequenceConstructor  /br  /em sequenceConstructor → [ /em EList]/br /em EList→ /em E  | /em EList, /em E  
+/br /em forItems → /em forItems , <word> = /em E | <word> = /em E
+/br /em E →  /keyword  for  /em forItems /keyword do /em E   /keyword /for ( /em E ) 
+/br /em E → /keyword let <let name> = /em E /em E 
+/br /em E → /keyword assert /em E /keyword report /em E /em E  
+/br /em E → { < one or more words not containing } > } /em E  
+/br /em E → process.<function call> | process(<function call>)/>
 
 Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
 
@@ -125,7 +129,7 @@ The follow paragraph that begins with use allows reference to functions defined 
 
 /keyword use standard
 
-The follow three paragraphs allow access to the function automatically defined by the type definition in other types that “use” this module. If these paragraphs are omitted the functions would not be available outside of this module. If a function starts with “function” instead of “Function” the function is also not available outside the module.
+The following three paragraphs allow access to the function automatically defined by the type definition in other types that “use” this module. If these paragraphs are omitted the functions would not be available outside of this module. If a function starts with “function” instead of “Function” the function is also not available outside the module.
 
 /keyword Function point2d(a:int, b:int)point2d export
 
@@ -153,15 +157,15 @@ Library point2d uses stdlib exports point2d
 The remainder  of the file is the above text.    This file can then be place in a subdirectory named point2d.  Then the program can be compile and executed with  /< block ./taumain “point2d point2d testpoint” />
 
 
-/section stdlib
+/section standard
 
-The module stdlib defines several commonly used types.
+The module standard defines several commonly used types.
 
 The types /em int and /em real are implement by the underlying hardware and have the usual operations. A more complete definition of will be supplied in a future release.
 
-The type boolean has operators:&and &or /em not /em true and /em false. The second operator of &and and &or is evaluated if and only if the first operator does not determine the result.
+The type boolean has operators:∧ ∨ /em not /em true and /em false. The second operator of ∧  and ∨ is evaluated if and only if the first operator does not determine the result.
 
-For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT is defined. An ∧ operator on orderings is defined as
+For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT is defined. The binary operator ? on integers returns these values. An ∧ operator on orderings is defined as
 
 /keyword Function ∧(a:ordering, b:ordering)ordering 
  /keyword let x = a 
@@ -169,97 +173,28 @@ For working with total orderings a type /em ordering with the values /em LT /em 
 
 /section Let
 
-A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows. This can make code easier to read or improve efficiency by evaluating the expression only once. 
-
-One can always remove a let statement from a program by defining an additional function. For example the function above can be replaced with
-
-/keyword function f1(a:ordering,b:ordering,x:ordering) ordering
- if x = EQ then b else x
-
-/keyword Function ∧(a:ordering, b:ordering)ordering
-  f1(a,b,x)
+A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows. 
  
 
 /section Aggregation
 
-An operation can be performed on each element of a sequence.
+An operation can be performed on each element of a sequence.  The following sums the sequence [ 1,2,3,4]
 
-for ( e ∈ [ 1,2,3,4], accumalator=0 )  accumalator+e 
+/keyword for (  accumulator=0 ,e=[ 1,2,3,4]) /keyword do accumalator+e  /keyword /for(accumulator)
 
-The general form for the for statement is 
+More than one accumulator is allowed. The following takes the average of the sequence
 
-for ( <e> ∈ <theseq>, <accumalator>=<initacc>,<idx>,<exit>)  <body exp>
+/keyword for (  count=0,sum=0, e=[ 1,2,3,4]) /keyword do next(count+1,sum+e)  /keyword /for( sum / count)
 
-where <theseq> is a seq and <exit> is a boolean expression and the type of the <initacc> is same as the <body exp>.
-The type of the whole for statement is the type of the <body exp> 
+For each element of the sequence the  expression after the /keyword do is executed giving new values to the accumulators. 
 
-the ",<idx>,<exit>" may be omitted.  The <idx> is the location in the seqence of the <e>.  
-If the <exit> expression evaluates to true the remaining elements in the sequence are not processed. 
+It is possible to not examine all elements of the sequence.  The following stops examining elements when 3 is found
 
-The for statement is equivalent to declaring a function  
-
-
-function  f1( <theseq>:seq.int, <accumalator>:int, <idx>:int)  <type of body exp>   
-   if <idx> > length.theseq then <accumalator>
-   else 
-   let <e>=<theseq>_<idx>
-   let tmp= accumalator+<e>
-   if <exit> then tmp else   f1(<theseq>,<bode exp>,<idx>+1)
-   
-and calling it with 
-
-f1(<theseq>,<initacc>,1> 
-
-    
-
-The Aggregation operator(@)is a generalization of the sigma operator in mathematics. The motivation behind introducing this control operator is to replace the use of recursive calls in many cases.
-
-Consider
-
-  /< noformat   <img src="sigmaexample.png"> />
-
-We can use arithseq(n, 1, 1) to represent the sequence 1 to n.   The arguments of arithseq represent the number of elements, the incremant, and start value.  
-
-The sum above can equivalantly   be expressed as follows sigma(0, arithseq(n,1,1), 1)where
-
-
-/keyword function term1(a:int, b:int)int a + n+1
-
-/keyword function sigma(acc:int, s:seq.int, i:int)int 
- /br /keyword if i > length.s /keyword then acc /keyword else sigma(term1(acc, term1(s_i)), s, i + 1)
-
-Using aggregation this can be express as arithseq(n,1,1) @ term1(0,@e)or
- arithseq(n,1,1)@+(0,@e+1)
-
-More generally  exp1 @ term1(exp2, exp3) where exp2 is of type <resulttype> and exp1 is of type seq.<elementtype> is defined as
-
-apply(exp1, exp2)
-
-where
  
-/keyword function thunk(acc:<resulttype>,@e:<elementtype>) <resulttype>
-term1(acc, explist )
-
- /keyword function apply(acc:<resulttype>, s:seq(<elementtype>), i:int)<resulttype> 
- /br /keyword if i > length.s /keyword then acc /keyword else apply(thunk(acc,  s_i), s, i + 1)
+ /keyword   for found = false, i = [ 1,2,3,4] while not.found do 3 = i /for(found)
 
 
-Using this form the example sigma sum above where n=10 is 
-[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] @ +(0,@e + 1) 
 
-An expression for summing a sequence is [ 1, 2, 3, 4] @ +(0, @e) = 0 + 1*1 + 1*2 + 1*3 + 1*4 = 10
-
-A product for the elements in a sequence is [ 1, 2, 3, 4] @ *(0, @e) = 24
-
-The following gives back the same sequence [ 1, 2, 3, 4] @ +(empty:int,@e)   evaluates to [ 1, 2, 3, 4]. "+"is the concatenation operator.
-
-One can print a sequence of integers with
-
-/keyword function print(a:seq.int)seq.word 
-/br {"["+ a @ list(",", [toward.@e]) +"]"}
-
-/keyword function list (a:seq.word, sep:seq.word, b:seq.word)seq.word 
-/br  /keyword if length.a = 0 /keyword then b /keyword else a +sep+ b
 
 /section Parameterized Module
 
@@ -277,7 +212,7 @@ Generic unbound functions on the type T may be included by using the word unboun
 
 /keyword function =(T, T)ordering unbound
 
-/keyword Function reverse(s:seq.T)seq.T  /br @(+,_.s, empty:seq.T, arithseq(length.s, 0 - 1, length.s))
+/keyword Function reverse(s:seq.T)seq.T  /br /keyword for acc=empty:seq.T,e=s /keyword do [s]+acc /for(acc)
 
 Here is a use of this type
 
@@ -299,7 +234,7 @@ Here is a use of this type
 
 /keyword function test2 seq.point2d reverse.[ point2d(1, 2), point2d(3, 4)]
 
-In this example the unbound function ? and = are bound to the integer function for ? and = in the stdlib module.
+In this example the unbound function ? and = are bound to the integer function for ? and = in the standard module. This is bad example. 
 
 /section Order of evaluation
 
@@ -313,7 +248,7 @@ Not all arguments need to be evaluated. Consider /< block i > 0 ∧ 300 / i < 10
 
 The compiler does simple inline expansion and the above expression becomes /< block if i > 0 then 300 / i < 10 else false /> This expression never evaluates 300 / i < 10
 
-This behavior is required for the &and operator on booleans.
+This behavior is required for the ∧ operator on booleans.
 
 /section Bindings
 
@@ -464,9 +399,13 @@ All sequences must be in a parameterized Module.
 
 /keyword use seq(T)
 
-/keyword type myseq is sequence length:int, data:seq.T
+/keyword type myseq is sequence , data:seq.T
 
-All sequences must have the first element representing the length of the seqence. As with any parameterized scope any type must contain an element that uses T so that multiple instances of the module does not produce duplicate symbols.
+Mytype is recognized as a sequence as the first element of the sequence is sequence.
+
+A function /em length (myseq) is implicitly defined to access the length of myseq
+
+As with any parameterized scope any type must contain an element that uses T so that multiple instances of the module does not produce duplicate symbols.
 
 We need some operations on T. T will be an int in this example so all these operations are define on int in the stdlib.
 
@@ -543,33 +482,40 @@ Making the function tail recursive is not the only way to reduce the stack size.
 
 Perhaps the best way to reverse a sequence is to use
 
-/keyword function leftcat(a:seq.int,b:int) seq.int  b+a
+/keyword Function reverse5(s:seq.T)seq.T  /br /keyword for acc=empty:seq.T,e=s /keyword do [s]+acc /for(acc)
 
-/keyword function reverse5(l:seqint) seq.int
- @(leftcat,identity,empty:seq.int,l)
 
-In this case the tau compiler will remove the recursion and the bounds check when indexing the sequence.  If the sequence was built up out of smaller sequences, it will also  break the sequence into the smaller parts and process them separately. 
+In this case the tau compiler will remove the recursion and the bounds check when indexing the sequence.  
+If the sequence was built up out of smaller sequences, it may also  break the sequence into the smaller parts and process them separately. 
 
 
 /section markup
 
-/keyword /br Start a new line
+/< table 
+/row /cell  syntax /cell with format /cell without format
+/row /cell  /p   /cell    first /p second  /cell first second
+/row /cell  /br   /cell  first /br second /cell first second
+/row /cell /keyword /em example /cell /em example /cell example
+/row /cell /keyword /strong example /cell /strong example /cell example
+/row /cell /keyword /keyword example /cell /keyword example /cell example
+/row /cell /em /< /keyword literal... /em /> /cell /< literal  this is an example /> /cell this is an example
+/row /cell /em /< /keyword keyword... /em />  /cell /< keyword this is an example  /> /cell this is an example
+/row /cell /em /< /keyword comment... /em /> /cell /< comment this is an example  /> /cell this is an example
+/row /cell /em /< /keyword block... /em /> /cell parent block /< block Indented block. /br second line /> 
+/cell  parent block  Indented block. /br second line
+/row /cell /em /< /keyword noformat... /em /> /cell  /< noformat <hr/> /> /cell <hr>   
+/row /cell /em /< /keyword table <caption> <rows of table> /em /> /cell Defines a table 
+/row /cell  /keyword /row../keyword /cell../keyword /cell..   /cell Defines a row of with three columns. 
+Must be placed within table. 
+/row /cell /em /< table  /em Sample /em Table 
+/br /em /row /em /cell 1 /em /cell 2 /em /cell 3
+/br /em /row /em /cell 3 /em /cell 4 /em /cell 5
+/em />
+/cell
+/< table  /em Sample /em Table /row /cell 1 /cell 2 /cell 3 /row /cell 3 /cell 4 /cell 5 />
+/> 
 
-/keyword /em emphasis. /em example
 
-/keyword /strong strong emphasis. /strong example
-
-/keyword /keyword Keyword of program. /keyword example
-
-/em /< /keyword literal... /em /> /< literal this is an example of how a literal is displayed />
-
-/em /< /keyword block... /em /> Indented block
-
-/em /< /keyword noformat../em /> block of unformated output
-
-/em /< /keyword table <caption> <rows of table> /em /> Defines a table
-
-/keyword /row../keyword /cell../keyword /cell..Defines a row of with three columns. 
-Must be placed within table.  This /< noformat /< table /row /cell 1 /cell 2 /cell 3 /row /cell 3 /cell 4 /cell 5 /> />
+This /< noformat /< table  /em Sample /em Table /row /cell 1 /cell 2 /cell 3 /row /cell 3 /cell 4 /cell 5 /> />
 produces following table.
-/< table /row /cell 1 /cell 2 /cell 3 /row /cell 3 /cell 4 /cell 5 />
+/< table  /em Sample /em Table /row /cell 1 /cell 2 /cell 3 /row /cell 3 /cell 4 /cell 5 />

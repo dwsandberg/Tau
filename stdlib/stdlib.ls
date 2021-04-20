@@ -9,7 +9,7 @@ pass1 pass2  persistant postbind   process real seq set stack  symbol textio tim
  mergeblocks
    tests/test11 tests/checking tests/point tests/testencoding  
  tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
- tests/testprocess tests/test5 tests/testseq
+ tests/testprocess tests/testfileio tests/testseq
  tests/wordfreq
  testsCompile/testall
  testsCompile/testopt

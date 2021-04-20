@@ -96,7 +96,7 @@ Function processpara(x:T, a:seq.word)T
       next(true, addspace(nospace,result,toadd), push(stk,"</h2>"),none)
  else if this = "table"_1 then
    let toadd=pb+"<table>" + space + "<caption>"
-     next(false,addspace(nospace,result,toadd), push(push(stk,"</table>"),"</caption>"),this)
+     next(false,addspace(nospace,result,toadd), push(push(stk,"</table>"),"</caption>"),none)
  else    
    let toadd=pb+"<span class =" + this + ">"
       next(false, addspace(nospace,result,toadd), push(stk,"</span>"),none)
@@ -111,5 +111,50 @@ Function processpara(x:T, a:seq.word)T
    next( i < length.specialwords,addspace2(nospace, result,toadd,true,i),stk,this)
  /for(if last=none then result else addspace(nospace,result,last))
 
+use stack.word
+
+Function processtotext(x:T,a:seq.word) T
+let specialwords=specialwords:T
+ let none=merge."+NONE" 
+ let match=merge."+MaTcH" 
+ let pendingbreak=merge."+pendingBreak" 
+  for needsLF=false,nospace=false,result=x, stk=empty:stack.word ,last=none, this=a+space do 
+ {     assert this /ne first."," report "x"+last+if needsLF then "LF" else ""}
+    if last=match then
+    if this="/<"_1 then 
+      next(needsLF,false,addspace(nospace,result,this),push(stk, this ),match)
+    else if this="/>"_1 then
+      if not.isempty.stk ∧  top.stk="/<"_1  then 
+         next(needsLF,false,addspace(nospace,result,this),pop.stk,match)
+        else 
+         next(needsLF,false,result,stk,none)
+    else 
+       next(needsLF,findindex(this,specialwords) < length.specialwords,addspace(nospace,result,this),stk,last)
+ else if last=none then 
+   next(needsLF,nospace,result,stk,this)
+ else if last = " /br"_1 then
+    if this = " /br"_1 then 
+      next(needsLF,true,result,stk,this)
+    else  next(needsLF,true,addspace(nospace,result," /br" + toseq.stk ),stk,this)
+   else if last = " /<"_1 then
+    if this = "block"_1 then
+     if needsLF then
+      next(false,nospace,addspace(nospace,result," /br" + toseq.stk ), push(stk, space),none)
+     else next(needsLF,nospace,result, push(stk, space),none)
+     else if this = "noformat"_1 then
+     next(needsLF,nospace, result , stk,match)
+    else next(needsLF,nospace, result, push(stk, space),none)
+ else if last= " />"_1 ∧ not.isempty.stk then 
+     let gg=[this]+if needsLF then "LF" else ""
+    {assert gg /in [", LF",")LF"] report "XXX"+gg}
+   next(needsLF,true, result, pop.stk, if this=first."/br" /and false then none else this)
+   else if last /in " /keyword /em /strong"  then next(needsLF,nospace, result , stk,this)
+   else if last= " /p"_1 then next(true,true, addspace(nospace,result, " /br  /br"), stk,this)
+   else if last = space then 
+    next(needsLF, true,addspace(nospace,result,space), stk,this)
+ else 
+   let toadd= last let i= findindex(toadd,specialwords)
+   next(true, i < length.specialwords,addspace2(nospace, result,toadd,false,i),stk,this)
+ /for(if last=none then result else addspace(nospace,result,last))
 
 
