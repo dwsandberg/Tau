@@ -258,7 +258,9 @@ function hash(s:symboltext)int hash(fsig.ph.s + module.ph.s)
 
 function =(a:symboltext, b:symboltext)boolean ph.a = ph.b
 
-function assignencoding(l:int, s:symboltext)int assignrandom(l, s)
+
+function assignencoding( p:seq.encodingpair.symboltext,a:symboltext)int  assignrandom( p, a)
+
 
 function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:int, knownoffset:int, offset:seq.word, prg:program)program
  if i > length.syms then
@@ -271,14 +273,14 @@ function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:in
    else
     let fldtype = resulttype.this
     let offsetinc = if abstracttype.fldtype ∈ "real int seq word encoding boolean"then 1 else 0
-    let knowntype = if fldtype = mytype."real" ∨ fldtype = mytype."boolean" ∨ fldtype = typeint then
+    let knowntype = if fldtype = typereal ∨ fldtype = typeboolean ∨ fldtype = typeint then
      fldtype
     else if fldtype = mytype."word" ∨ abstracttype.fldtype = "encoding"_1 then typeint
     else if abstracttype.fldtype ∈ "seq" ∧ abstracttype.parameter.fldtype ∈ "real int word encoding boolean byte bit"then
      fldtype
     else typeptr
      if offset = "" ∧ knowntype ≠ typeptr then
-      fldcode(constructor, indexfunc, syms, i + 1, knownoffset + 1, offset, map(prg, this, [ Local.1, Lit.knownoffset, Idx.knowntype]))
+      fldcode(constructor, indexfunc, syms, i + 1, knownoffset + 1, offset, map(prg, this, [ Local.1]+ Fld(knownoffset, knowntype ) ))
      else
       let newoffset = if offsetinc = 0 then
        if isempty.offset then typerep.fldtype else offset + "," + typerep.fldtype

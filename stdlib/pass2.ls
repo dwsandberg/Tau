@@ -222,7 +222,6 @@ function expandforexp(code:seq.symbol,nextvarin:int ) seq.symbol
    next(  code.f, nextvar.f) 
    else if last.module.sym="builtin"_1   ∧ (fsig.sym)_1 /in"indexseq45"  then
      let theseqtype=(paratypes.sym)_1
-     let elementtype=seqeletype.theseqtype
      let t =  backparse2(result, length.result, 2, empty:seq.int) 
      let index = subseq(result, t_2, length.code)
      let theseq = subseq(result, t_1, t_2 - 1)
@@ -230,7 +229,7 @@ function expandforexp(code:seq.symbol,nextvarin:int ) seq.symbol
      let newcode = subseq(result, 1, t_1 - 1) 
                      +if isconstorlocal.theseq then empty:seq.symbol else theseq+Define(nextvar+1) /if+
                 [theseq2,GetSeqType,Define(nextvar)]+index+[Lit.1,PlusOp,Define(nextvar+2)] 
-     +indexseqcode(Local.nextvar, theseq2, Local(nextvar+2), elementtype, theseqtype,true)
+     +indexseqcode(Local.nextvar, theseq2, Local(nextvar+2),  theseqtype,true)
      next(newcode,nextvar+3)
    else next(result + sym, nextvar)
  /for(result)
@@ -253,7 +252,8 @@ let initacc = subseq(code, t2_1, t2_2 - 1)
 else empty:seq.symbol
 
 
-function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, elementtype:mytype, theseqtype:mytype,boundscheck:boolean)seq.symbol  
+function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, theseqtype:mytype,boundscheck:boolean)seq.symbol  
+ let elementtype=seqeletype.theseqtype 
 let packedseq = maybepacked.theseqtype
  [ start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)] + [ theseq, masteridx, Callidx.theseqtype, Exit]
  + if boundscheck then  
@@ -294,7 +294,7 @@ let firstpart = subseq(code, 1, startofsymbols - 1) + [ Define.nextvar1, theseq,
   + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint,nextvar,resulttype.forsym)
 + { 2 if masteridx > totallength then exit } [ masteridx, totallength, GtOp]
 + Br2(2, 1)
-+ { 3 else let sequenceele = seq_(idx)} indexseqcode(seqtype, theseq, masteridx, elementtype, theseqtype,false)
++ { 3 else let sequenceele = seq_(idx)} indexseqcode(seqtype, theseq, masteridx, theseqtype,false)
   + [ Defineseqelement]
 + { 3 while condition } replace$for(exitexp, newsyms, syms)
 + Br2(2, 1)

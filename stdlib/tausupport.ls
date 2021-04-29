@@ -4,8 +4,6 @@ use seq.T
 
 Builtin IDX(seq.T, int)T
 
-Builtin IDX:T(ptr, int)T
-
 Builtin allocateseq:T(size:int,fld0:int,fld1:int) seq.T
 
 Builtin setfld(i:int, s:seq.T, val:T)int
@@ -74,9 +72,9 @@ Function blockit(s:seq.T, ds:int)seq.T
 Function blockit(s:seq.T)seq.T
 let blksz = blocksize:T
  if length.s ≤ blksz then
- let newseq = allocateseq:T(length.s  ,0,length.s)
- let d = for acc = 2, @e = s do setfld(acc, newseq, @e)/for(acc)
-   newseq 
+  let newseq = allocateseq:T(length.s  ,0,length.s)
+  let d = for acc = 2, @e = s do setfld(acc, newseq, @e)/for(acc)
+    newseq 
  else
   let noblks =(length.s + blksz - 1) / blksz
  let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
@@ -87,10 +85,6 @@ let blksz = blocksize:T
     bitcast.blkseq 
 
 module tausupport
-
-use fileio
-
-use mangle
 
 use standard
 
@@ -144,38 +138,13 @@ type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
 
 type ptr is xx:int
 
-Export IDX:ptr(ptr, int)ptr
-
-Export IDX:real(ptr, int)real
-
-Export IDX:boolean(ptr, int)boolean
-
-Export IDX:int(ptr, int)int
-
 Export setfld(int, seq.int, int)int
-
-Builtin initialdict seq.encodingpair.seq.char
-
-builtin dlsymbol(cstr)int
-
-Builtin createthread(int, int, int, seq.int, int)process.int
-
-Builtin createthread(int, int, int, ptr, int)process.int
-
-
-builtin callstack(n:int)seq.int
-
-builtin addresstosymbol2(a:int)seq.char
-
-Builtin randomint(i:int)seq.int
 
 Builtin getseqtype(ptr)int
 
 Builtin getseqlength(ptr)int
 
 Builtin toseqX:seq.int(ptr)seq.int
-
-Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
 
 Export_(pseq.byte, int)byte
 
@@ -219,9 +188,33 @@ Function encodingno(name:seq.word)int
  if name = "char seq"then 1
  else if name = "typename"then 2 else valueofencoding.encode.typename.name + 2
 
-function assignencoding(a:int, typename)int a + 1
+ 
+function assignencoding( p:seq.encodingpair.typename,a:typename)int   length.p +1
+
 
 -----------
+
+use fileio
+
+use mangle
+
+Builtin initialdict seq.encodingpair.seq.char
+
+builtin dlsymbol(cstr)int
+
+Builtin createthread(int, int, int, seq.int, int)process.int
+
+Builtin createthread(int, int, int, ptr, int)process.int
+
+
+builtin callstack(n:int)seq.int
+
+builtin addresstosymbol2(a:int)seq.char
+
+Builtin randomint(i:int)seq.int
+
+
+Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
 
 Function outofbounds seq.word "out of bounds"+stacktrace
 

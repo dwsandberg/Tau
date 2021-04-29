@@ -294,7 +294,7 @@ Function removeismember(c:symbol, var:symbol)seq.symbol
    let t = length.words + 2
     if length.words = 1 then [ var, Word.words_1, EqOp]
     else
-     for acc = [ start.mytype."boolean"], idx = 2, w = words >> 1 do
+     for acc = [ start.typeboolean], idx = 2, w = words >> 1 do
       next(acc + [ var, Word.w, EqOp] + Br2(t - idx, 1), idx + 1)
      /for(acc + [ var, Word.last.words, EqOp, Exit, Littrue, Exit, EndBlock])
  else
@@ -303,6 +303,6 @@ Function removeismember(c:symbol, var:symbol)seq.symbol
    else if length.z = 1 then [ var, first.z, EqOp]
    else
     let t = length.z + 2
-     for acc = [ start.mytype."boolean"], idx = 2, w = z >> 1 do
+     for acc = [ start.typeboolean], idx = 2, w = z >> 1 do
       next(acc + [ var, w, EqOp] + Br2(t - idx, 1), idx + 1)
      /for(acc + [ var, last.z, EqOp, Exit, Littrue, Exit, EndBlock])

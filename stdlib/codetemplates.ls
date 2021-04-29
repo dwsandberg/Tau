@@ -128,7 +128,8 @@ function =(a:match5, b:match5)boolean sym.a = sym.b
 
 function hash(a:match5)int fsighash.sym.a
 
-function assignencoding(l:int, a:match5)int l + 1
+function assignencoding( p:seq.encodingpair.match5,a:match5)int  length.p+1
+
 
 Function options(match5map:seq.match5, m:match5)seq.word getoption.code.m
 

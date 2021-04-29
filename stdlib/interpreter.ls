@@ -47,7 +47,7 @@ function tocode(r:int, typ:mytype)seq.symbol
  else if abstracttype.typ ∈ "int bits char"then [ Lit.r]
  else if abstracttype.typ = "boolean"_1 then [ if r = 1 then Littrue else Litfalse]
  else if typ = mytype."word seq"then [ Words.aswords.bitcast.r]
- else if typ = mytype."real"then [ Reallit.r]
+ else if typ =  typereal then [ Reallit.r]
  else
   assert abstracttype.typ ∈ "seq"report"resulttype not handled" + print.typ
   let s = bitcast.r

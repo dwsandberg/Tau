@@ -38,4 +38,8 @@ Function typeint mytype mytype."int"
 
 Function typeptr mytype mytype."ptr"
 
+Function typeboolean mytype mytype."boolean"
+
+Function typereal   mytype mytype."real"
+
 Function addabstract(a:word, b:mytype)mytype mytype(towords.b + a)

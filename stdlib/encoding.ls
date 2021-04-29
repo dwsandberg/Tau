@@ -47,7 +47,11 @@ unbound hash(T)int
 
 unbound =(T, T)boolean
 
-unbound assignencoding(length:int, data:T)int
+unbound assignencoding(seq.encodingpair.T,data:T) int 
+
+Export type:seq.encodingpair.T
+
+Export length(seq.encodingpair.T) int
 
 /Function empty:encodingstate.T encodingstate.T let x = constantseq(4, empty:seq.encodingpair.T)encodingstate(0, 0, x, x, empty:seq.encodingpair.T, 0)
 
@@ -92,10 +96,11 @@ function subadd(mask:bits, h:encodingstate.T, v:encodingpair.T, count:int)encodi
  let found = valueofencoding.code.v ≤ 0
  ∨ for acc = false, @e =(decodetable.h)_codeindex do acc ∨ code.v = code.@e /for(acc)
   if found then
-   subadd(mask, h, encodingpair(to:encoding.T(assignencoding(length.h, data.v)), data.v, hash.v), count + 1)
+    subadd(mask, h, encodingpair(to:encoding.T(assignencoding(all.h,data.v) ), data.v, hash.v), count + 1)
   else encodingpair(code.v, data.v, hash.v)
 
-Function assignrandom(length:int, data:T)int(randomint.1)_1
+
+Function assignrandom(all:seq.encodingpair.T,data:T) int (randomint.1)_1
 
 Function addencodingpairs(l:seq.encodingpair.T)int
 let inst = getinstance:encodingstate.T

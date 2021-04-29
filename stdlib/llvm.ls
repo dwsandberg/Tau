@@ -48,7 +48,9 @@ type llvmtype is index:encoding.llvmtypeele
 
 function hash(a:llvmtypeele)int hash.toseq.a
 
-Function assignencoding(l:int, a:llvmtypeele)int l + 1
+
+function assignencoding( p:seq.encodingpair.llvmtypeele,a:llvmtypeele)int  length.p+1
+
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
@@ -105,7 +107,9 @@ type llvmconst is typ:int, toseq:seq.int
 
 function hash(a:llvmconst)int hash.symtabname.a
 
-Function assignencoding(l:int, a:llvmconst)int l + 1
+
+function assignencoding( p:seq.encodingpair.llvmconst,a:llvmconst)int  length.p +1
+
 
 Function =(a:llvmconst, b:llvmconst)boolean symtabname.a = symtabname.b ∧ typ.a = typ.b
 

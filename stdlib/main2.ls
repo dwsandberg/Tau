@@ -2,7 +2,6 @@ Module main2
 
 use UTF8
 
-use baseTypeCheck
 
 use bits
 
@@ -104,8 +103,7 @@ let exports = info_3
    let defines = defines(prg4, uses - compiled.link)
     if option = "pass2"then
      for acc = empty:seq.seq.word, @e = defines do acc + print(prg4, @e)/for(acc)
-    else if option = "baseTypeCheck"then [ baseTypeCheck(alltypes.link, prg4)]
-    else
+    else 
      let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link, isempty.dependentlibs)
      let z2 = createlib(bc, last.libname, dependentlibs)
       ["OK"]

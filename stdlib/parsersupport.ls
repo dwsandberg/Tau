@@ -45,13 +45,19 @@ let m =" /< literal" + message + " />"
  m + " /br  /br" + prettynoparse.subseq(input, 1, place) + " /br" + m
 
 Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
- for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial)), matchthis ="'"_1, last = 0, instring = false, idx = 1, this = input + "#"do
-  if instring ∧ this ≠ matchthis then { in comment or string } next(lrpart, matchthis, last, true, idx + 1)
+ for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial)), matchthis ="'"_1, last = 0, instring = false, idx = 1,
+  nesting=0, this = input + "#"do
+  if instring ∧ this ≠ matchthis /or nesting > 0 then { in comment or string } 
+    let nestingchange=if matchthis /ne "}"_1 then 0
+      else if nesting > 0 /and matchthis=this then -1
+      else if this="{"_1 then 1
+      else 0
+   next(lrpart, matchthis, last, true, idx + 1,nesting+nestingchange)
   else if not.instring
   ∧ (this = "'"_1 ∨ this = '"'_1  
   ∨ this = "{"_1)then
    { start string }
-   next(lrpart, if this = "{"_1 then"}"_1 else this, idx, true, idx + 1)
+   next(lrpart, if this = "{"_1 then"}"_1 else this, idx, true, idx + 1,nesting)
   else
    let lexindex = binarysearch(lextable, token(this, 0, attribute:T("")))
    let newlrpart = if lexindex < 0 then
@@ -62,7 +68,7 @@ Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
    else
     let tok = lextable_lexindex
      step(lrpart, input, if instring then attribute:T(subseq(input, last, idx))else attribute.tok, tokenno.tok, idx)
-    next(newlrpart, this, idx, false, idx + 1)
+    next(newlrpart, this, idx, false, idx + 1,nesting)
  /for( assert not.instring report errormessage:T("missing string terminator",input,last)
  attribute.top.lrpart)
 

@@ -81,7 +81,7 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
       ccc(alltypes, code, i + 1, pop.stk, replace(localtypes,(name.s)_2, top.stk))
     else if module.s = "$words"then
      ccc(alltypes, code, i + 1, push(stk, mytype."int seq"), localtypes)
-    else if module.s = "$real"then ccc(alltypes, code, i + 1, push(stk, mytype."real"), localtypes)
+    else if module.s = "$real"then ccc(alltypes, code, i + 1, push(stk, typereal), localtypes)
     else if(module.s)_1 ∈ "$word $int $fref"then ccc(alltypes, code, i + 1, push(stk, typeint), localtypes)
     else if isRecord.s then
      assert length.toseq.stk ≥ nopara.s report"stack underflow record"
@@ -100,7 +100,7 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
       ccc(alltypes, code, i + 1, pop(stk, nopara.s), localtypes)
     else if isstart.s then ccc(alltypes, code, i + 1, push(stk, resulttype.s), localtypes)
     else if isbr.s then
-     assert top.stk = mytype."boolean"report"if problem"
+     assert top.stk = typeboolean report"if problem"
      + for a ="", e = top(stk, 1)do a + print.e /for(a)
       ccc(alltypes, code, i + 1, pop.stk, localtypes)
     else if isloopblock.s then
@@ -124,9 +124,9 @@ function ccc(alltypes:typedict, code:seq.symbol, i:int, stk:stack.mytype, localt
      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), typeptr), localtypes)
     else if fsig.s ∈ ["length(packed2 seq)","length(packed3 seq)","length(packed3 seq)"]then
      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), typeint), localtypes)
-    else if(fsig.s)_1 ∈ "getseqlength getseqtype setfld blockit   memcpy toseq"then
+    else if(name.s)_1 ∈ "getseqlength getseqtype setfld blockit   memcpy toseq"then
      ccc(alltypes, code, i + 1, push(pop(stk, nopara.s), getbasetype(alltypes, resulttype.s)), localtypes)
-    else if(fsig.s)_1 ∈ "IDX GEP idxseq callidx" ∧ length.top(stk, 2) = 2
+    else if(name.s)_1 ∈ "IDX GEP idxseq callidx" ∧ length.top(stk, 2) = 2
     ∧ top.stk = typeint
     ∧ top(stk, 2)_1 ∈ [ first.paratypes.s, typeptr]then
      ccc(alltypes, code, i + 1, push(pop(stk, 2), resulttype.s), localtypes)

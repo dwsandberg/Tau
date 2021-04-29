@@ -40,6 +40,12 @@ Export typeint mytype
 
 Export typeptr mytype
 
+Export typeboolean mytype
+
+Export typereal mytype
+
+
+
 Export addabstract(a:word, b:mytype)mytype
 
 Export type:set.symbol
@@ -65,8 +71,6 @@ Export iscomplex(a:mytype)boolean
 Export type:firstpass
 
 Function typerep(m:mytype)seq.word towords.m
-
-/Function abstracttype(w:word, parameter:mytype)mytype mytype(typerep.parameter + w)
 
 Function =(a:symbol, b:symbol)boolean
  flags.a = flags.b ∧ fsig.a = fsig.b ∧ modname.a = modname.b
@@ -101,7 +105,7 @@ Function newsymbol(name:seq.word, modname:mytype, paratypes:seq.mytype, resultty
  )
 
 Function name(s:symbol)seq.word
- if last.fsig.s ∉ ")"then fsig.s
+ if isconst.s /or last.fsig.s ∉ ")" then fsig.s
  else break(fsig.s >> 1,"(", false)_1
 
 Function paratypes(s:symbol)seq.mytype
@@ -207,17 +211,19 @@ Function isparameter(s:symbol)boolean
 
 Function istypeexport(s:symbol)boolean subseq(fsig.s, 1, 2) = "type:"
 
-Function isIdx(s:symbol)boolean
- last.module.s = "builtin"_1 ∧ (fsig.s)_1 = "IDX"_1
+Function Fld(offset:int,type:mytype) seq.symbol
+  [Lit.offset,Idx.type]
 
 Function Idx(type:mytype)symbol
 let kind = abstracttype.type
- if kind = "int"_1 ∨ kind = "byte"_1 then IdxInt
- else if kind = "ptr"_1 then IdxPtr
+ if kind = "int"_1 ∨ kind = "byte"_1 then symbol("IDX:int(ptr, int)","int builtin","int")
+ else if kind = "ptr"_1 then symbol("IDX:ptr(ptr, int)","ptr builtin","ptr")
  else if kind = "boolean"_1 then symbol("IDX:boolean(ptr, int)","boolean builtin","boolean")
- else if kind = "real"_1 then IdxReal
+ else if kind = "real"_1 then symbol("IDX:real(ptr, int)","real builtin","real")
  else
   symbol("IDX:" + print.type + "(ptr, int)", typerep.type + "builtin", typerep.type)
+  
+  
 
 Function seqeletype(type:mytype)mytype
 let para = typerep.parameter.type
@@ -231,11 +237,6 @@ Function IdxS(type:mytype)symbol
 let para = typerep.parameter.type
  symbol("idxseq(" + para + "seq, int)", para + "builtin", typerep.seqeletype.type)
 
-Function IdxInt symbol symbol("IDX:int(ptr, int)","int builtin","int")
-
-Function IdxReal symbol symbol("IDX:real(ptr, int)","real builtin","real")
-
-Function IdxPtr symbol symbol("IDX:ptr(ptr, int)","ptr builtin","ptr")
 
 Function Callidx(type:mytype)symbol
 let t = typerep.parameter.type
@@ -279,7 +280,9 @@ Function isrecordconstant(s:symbol)boolean module.s = "$constant"
 function hash(s:seq.symbol)int
  hash.for acc ="", e = s do acc + sigandmodule.e /for(acc)
 
-function assignencoding(a:int, symbolconstant)int a + 1
+ 
+function assignencoding( p:seq.encodingpair.symbolconstant,a:symbolconstant)int   length.p +1
+
 
 type symbolconstant is toseq:seq.symbol
 
@@ -626,9 +629,9 @@ function getbasetype(d:typedict, type:mytype, top:boolean)mytype
       if abstracttype.basetype = "seq"_1 then getbasetype(d, basetype, true)else basetype
 
 Function getsubflds(d:typedict, type:mytype)seq.mytype
- if type = typeint ∨ type = mytype."real" ∨ type = typeptr then [ type]
+ if type = typeint ∨ type = typereal ∨ type = typeptr then [ type]
  else
-  { if type = mytype."boolean"then typeinfo.[ mytype."boolean"]else }
+  { if type = typeboolean then typeinfo.[ typeboolean]else }
   if abstracttype.type = "seq"_1 ∨ type = mytype."internaltype"then [ typeptr]
   else
    let t = findelement(d, type)
@@ -639,7 +642,7 @@ Function buildargcode(alltypes:typedict, sym:symbol)int
  { needed because the call interface implementation for reals is different than other types is some implementations }
  for acc = 1, typ = paratypes.sym + resulttype.sym do
   acc * 2
-  + if getbasetype(alltypes, typ) = mytype."real"then 1 else 0
+  + if getbasetype(alltypes, typ) = typereal then 1 else 0
  /for(acc)
 
 Function typesym(it:myinternaltype)symbol
@@ -650,7 +653,7 @@ Function deepcopysym(d:typedict, type:mytype)symbol typesym(d, type)
 
 Function typesym(d:typedict, type:mytype)symbol
  if type = typeint then symbol("deepcopy(int)","tausupport","int")
- else if type = mytype."real"then symbol("deepcopy(real)","tausupport","real")
+ else if type = typereal then symbol("deepcopy(real)","tausupport","real")
  else
   let e = findelement(d, type)
    assert length.e = 1 report"type not found" + print.type + stacktrace
@@ -659,7 +662,7 @@ Function typesym(d:typedict, type:mytype)symbol
     newsymbol("type:" + print.t, modname.it, [ t], t)
 
 Function deepcopysym(dict:set.symbol, type:mytype)set.symbol
- if type ∈ [ typeint, mytype."real"]then asset.[ typesym(typedict.empty:seq.myinternaltype, type)]
+ if type ∈ [ typeint, typereal]then asset.[ typesym(typedict.empty:seq.myinternaltype, type)]
  else lookup(dict,"type:" + print.type, [ type])
 
 Function removeconstant(s:seq.symbol)seq.symbol

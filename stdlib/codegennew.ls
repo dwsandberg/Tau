@@ -318,7 +318,9 @@ let data = for acc = [ C64.1, C64.length.d], @e = d do
 
 function profiledatalen int length.encoding:seq.encodingpair.stat5 * 6 + 2
 
-function assignencoding(l:int, a:stat5)int l + 1
+
+function assignencoding( p:seq.encodingpair.stat5,a:stat5)int  length.p+1
+
 
 function hash(s:stat5)int abs(hash.caller.s + hash.callee.s)
 

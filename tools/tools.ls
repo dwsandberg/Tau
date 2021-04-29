@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau ; use doc ; callgraphwithin("webassembly","wasm2")
+#!/usr/local/bin/tau ; use baseTypeCheck; baseTypeCheck("stdlib")
+
+; use doc ; callgraphwithin("webassembly","wasm2")
 
 ; use doc ; doclibrary."webassembly"
 
@@ -55,9 +57,9 @@ print.compile("baseTypeCheck","stdlib")
 
 Module tools
 
-Library tools doc genLR1 profile taulextable
+Library tools doc genLR1 profile taulextable basetypecheck
 uses stdlib 
-exports doc genLR1 profile taulextable tools
+exports doc genLR1 profile taulextable tools baseTypeCheck
 
 * STATE builtin:profile profileinfo profileresult
 

@@ -23,7 +23,9 @@ function =(a:slot2, b:slot2)boolean
 
 function hash(a:slot2)int hash.rec.a
 
-function assignencoding(a:int, slot2)int a + 1
+
+Function assignencoding( p:seq.encodingpair.slot2,a:slot2)int  length.p+1
+
 
 Function c32(i:int)encoding.slot2 encode.slot2(i32, [ 45, i],"")
 
@@ -38,7 +40,9 @@ type llvmtypeele2 is toseq:seq.int
 
 function hash(a:llvmtypeele2)int hash.toseq.a
 
-Function assignencoding(l:int, a:llvmtypeele2)int l + 1
+
+Function assignencoding( p:seq.encodingpair.llvmtypeele2,a:llvmtypeele2)int  length.p+1
+
 
 function =(a:llvmtypeele2, b:llvmtypeele2)boolean toseq.a = toseq.b
 

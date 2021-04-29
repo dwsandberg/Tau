@@ -63,7 +63,7 @@ let coretypes = false
        next(result + p2, calls + target.xx4, sourceX)
       else if last.module.sym = "builtin"_1 then
        if fsig.sym = "processresult(T process)"then
-       let codeforbuiltin = [ Local.1, Lit.2, Idx.getbasetype(alltypes, parameter.modname.newsym)]
+       let codeforbuiltin = [ Local.1]+   Fld(2,getbasetype(alltypes, parameter.modname.newsym)  ) 
         next(result + if isfref then Fref.newsym else newsym, calls + newsym, map(sourceX, newsym, codeforbuiltin))
        else if fsig.sym = "primitiveadd(int, T encodingpair)"then
        let addefunc = newsymbol("add", addabstract("encoding"_1, parameter.modname.newsym), [ addabstract("encodingstate"_1, parameter.modname.newsym), addabstract("encodingpair"_1, parameter.modname.newsym)], addabstract("encodingstate"_1, parameter.modname.newsym))
@@ -97,7 +97,7 @@ function buildconstructor(alltypes:typedict, addfld:seq.mytype, flds:seq.seq.myt
    + for acc = empty:seq.mytype, @e = fldsubfields do acc + getbasetype(alltypes, @e)/for(acc)
   else flatflds
   let newresult = result
-  + if length.fldsubfields = 1 then [ Local.fldno]else [ Local.fldno, Lit.subfld, Idx.newflatflds_j]
+  + if length.fldsubfields = 1 then [ Local.fldno]else [ Local.fldno]  +Fld(subfld,newflatflds_j)
    if subfld = length.fldsubfields - 1 then
     buildconstructor(alltypes, addfld, flds, newflatflds, fldno + 1, j + 1, 0, newresult)
    else buildconstructor(alltypes, addfld, flds, newflatflds, fldno, j + 1, subfld + 1, newresult)
@@ -134,7 +134,7 @@ let coretypes = false
    acc + length.getsubflds(alltypes, replaceT(modpara, @e))
   /for(acc)
   let singlefld = 1 = length.getsubflds(alltypes, replaceT(modpara, resulttype.sym))
-   if singlefld then [ Lit.offset, Idx.getbasetype(coretypes, alltypes, replaceT(modpara, resulttype.sym)), Words."VERYSIMPLE", Optionsym]
+   if singlefld then Fld(offset, getbasetype(coretypes, alltypes, replaceT(modpara, resulttype.sym)))+[Words."VERYSIMPLE", Optionsym]
    else [ Lit.offset, symbol("GEP(ptr seq, int)","internal","ptr"), Words."VERYSIMPLE", Optionsym]
  else if(fsig.sym)_1 ∈ "build"then
  let c = for acc = empty:seq.seq.mytype, @e = paratypes.sym do acc + getsubflds(alltypes, replaceT(modpara, @e))/for(acc)
@@ -152,7 +152,9 @@ let coretypes = false
  else if(fsig.sym)_1 ∈ "assert"then
  let t = getbasetype(alltypes, parameter.modname.newsym)
   [abortsymbol.if abstracttype.t ∈ "seq" then"ptr"else typerep.t]
- else if subseq(fsig.sym, 1, 2) = "IDX:"then [ Idx.getbasetype(alltypes, parameter.modname.newsym)]
+ else if subseq(fsig.sym, 1, 2) = "IDX:"then 
+ {assert false report "here"}
+ [ Idx.getbasetype(alltypes, parameter.modname.newsym)]
  else if subseq(fsig.sym, 1, 2) = "IDX("then
   [ Idx.seqeletype.getbasetype(alltypes, first.paratypes.newsym)]
  else if(fsig.sym)_1 ∈ "setfld"then [ newsym]
@@ -180,11 +182,11 @@ function encodenocode(typ:mytype)seq.symbol
 let gl = symbol("global:" + print.typ,"$global","int seq")
 let setfld = symbol("setfld(int, int seq, int)","int builtin","int")
 let encodenosym = newsymbol("encodingno", mytype."tausupport", [ mytype."word seq"], typeint)
- if typ = mytype."typename"then [ Lit.0, gl, Lit.2, setfld, Define."xx", gl, Lit.0, IdxInt]
+ if typ = mytype."typename"then [ Lit.0, gl, Lit.2, setfld, Define."xx",gl]+Fld(0,typeint) 
  else if typ = mytype."char seq"then
-  [ Lit.0, gl, Lit.1, setfld, Define."xx", gl, Lit.0, IdxInt]
+  [ Lit.0, gl, Lit.1, setfld, Define."xx", gl]+Fld(0,typeint) 
  else
-  ifthenelse([ gl, Lit.0, IdxInt, Lit.0, EqOp], [ Lit.0, gl, Words.typerep.typ, encodenosym, setfld, Define."xx", gl, Lit.0, IdxInt], [ gl, Lit.0, IdxInt], typeint)
+  ifthenelse([ gl]+Fld( 0,typeint)+[ Lit.0, EqOp], [ Lit.0, gl, Words.typerep.typ, encodenosym, setfld, Define."xx", gl ]+Fld(0,typeint), [ gl]+Fld(0,typeint) , typeint)
 
 function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
  if abstracttype.type ∈ "encoding int word"then [ Local.1]
@@ -199,7 +201,7 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
    let acc = newsymbol("acc", addabstract("$for"_1, mytype."ptr"), empty:seq.mytype, mytype."ptr")
    let idx = newsymbol("idx", mytype."$for", empty:seq.mytype, typeint)
     Emptyseq.elementtype
-    + [ Local.1, acc, element, acc, element, deepcopysym(alltypes, parameter.type), cat, Littrue, acc, newsymbol("forexp", mytype."int builtin", [ resulttype, resulttype, resulttype, elementtype, typeptr, mytype."boolean", resulttype], resulttype)
+    + [ Local.1, acc, element, acc, element, deepcopysym(alltypes, parameter.type), cat, Littrue, acc, newsymbol("forexp", mytype."int builtin", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
     ]
     + blocksym(alltypes, type)
  else
@@ -215,4 +217,4 @@ function subfld(alltypes:typedict, flds:seq.mytype, fldno:int, fldkinds:seq.myty
  else
   let fldtype = flds_fldno
   let kind = getbasetype(alltypes, fldtype)
-   subfld(alltypes, flds, fldno + 1, fldkinds + kind, result + [ Local.1, Lit(fldno - 1), Idx.kind, deepcopysym(alltypes, fldtype)])
+   subfld(alltypes, flds, fldno + 1, fldkinds + kind, result + [ Local.1]+Fld( fldno - 1,kind)+ deepcopysym(alltypes, fldtype))

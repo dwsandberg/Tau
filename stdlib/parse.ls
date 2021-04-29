@@ -79,7 +79,8 @@ function text(b:bindinfo)seq.word tokentext.b
 
 function hash(l:seq.token.bindinfo)int length.l
 
-function assignencoding(l:int, a:seq.token.bindinfo)int assignrandom(l, a)
+function assignencoding( p:seq.encodingpair.seq.token.bindinfo,a:seq.token.bindinfo)int  assignrandom(p, a)
+
 
 function bindlit(R:reduction.bindinfo)bindinfo
  let chars = decodeword.first.text.R_1
@@ -91,10 +92,10 @@ function opaction(R:reduction.bindinfo, input:seq.word, place:int)bindinfo
  let op = tokentext.R_2
  let dict = dict.R_1
  let types = types.R_1 + types.R_3
- if op= "∧" ∧ types=[mytype."boolean",mytype."boolean"] then
-     bindinfo(dict,  ifthenelse(code.R_1, code.R_3 ,[Litfalse],mytype."boolean"), [ mytype."boolean"],"")
-  else if op= "∨" ∧ types=[mytype."boolean",mytype."boolean"] then
-     bindinfo(dict,  ifthenelse(code.R_1, [Littrue] , code.R_3 ,mytype."boolean"), [ mytype."boolean"],"")
+ if op= "∧" ∧ types=[typeboolean,typeboolean] then
+     bindinfo(dict,  ifthenelse(code.R_1, code.R_3 ,[Litfalse],typeboolean), [ typeboolean],"")
+  else if op= "∨" ∧ types=[typeboolean,typeboolean] then
+     bindinfo(dict,  ifthenelse(code.R_1, [Littrue] , code.R_3 ,typeboolean), [ typeboolean],"")
  else if op = "≠"then
   let f = lookupbysig(dict,"=", types, input, place)
     bindinfo(dict, code.R_1 + code.R_3 + f + NotOp, [ resulttype.f],"")
@@ -149,7 +150,7 @@ function createfunc(R:reduction.bindinfo, input:seq.word, place:int, funcname:se
 
 function isdefined(R:reduction.bindinfo, input:seq.word, place:int, type:mytype)bindinfo
  let dict = dict.R
-  if cardinality.dict < 25 ∨ type ∈ [ mytype."T", typeint, mytype."real"] ∨ isabstract.type then
+  if cardinality.dict < 25 ∨ type ∈ [ mytype."T", typeint, typereal] ∨ isabstract.type then
   bindinfo(dict, empty:seq.symbol, [ type],"")
   else
    let a = lookup(dict,"type:" + print.type, [ type])
@@ -161,7 +162,7 @@ function gettype(b:bindinfo)mytype(types.b)_1
 function dict(r:reduction.bindinfo)set.symbol dict.last.r
 
 function ifexp(R:reduction.bindinfo,  ifpart:bindinfo, thenpart:bindinfo,elsepart:bindinfo,input:seq.word,place:int) bindinfo
-assert(types.ifpart)_1 = mytype."boolean"report errormessage("cond of if must be boolean", input, place) 
+assert(types.ifpart)_1 = typeboolean report errormessage("cond of if must be boolean", input, place) 
 assert types.thenpart = types.elsepart report errormessage("then and else types are different", input, place) 
 bindinfo(dict.R, ifthenelse(code.ifpart,code.thenpart,code.elsepart,(types.thenpart)_1 ), types.thenpart,"") 
 
@@ -234,7 +235,7 @@ assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplic
  else if ruleno = { E let A E } 37 then
   bindinfo(dict.R_1, code.R_2 + code.R_3, types.R_3,"")
  else if ruleno = { E assert E report D E } 38 then
-  assert(types.R_2)_1 = mytype."boolean"report errormessage("condition in assert must be boolean in:", input, place)
+  assert(types.R_2)_1 = typeboolean report errormessage("condition in assert must be boolean in:", input, place)
    assert(types.R_4)_1 = mytype."word seq"report errormessage("report in assert must be seq of word in:", input, place)
 let assertsym=symbol(" assert:T(word seq)", typerep.(types.R_5)_1 +"builtin", typerep.(types.R_5)_1)
 bindinfo(dict.R, ifthenelse(code.R_2, code.R_5, code.R_4 + assertsym,(types.R_5)_1), types.R_5,"") 
@@ -242,7 +243,7 @@ bindinfo(dict.R, ifthenelse(code.R_2, code.R_5, code.R_4 + assertsym,(types.R_5)
  else if ruleno = { E I.I } 40 then
   bindinfo(dict.R
   , [ Words(tokentext.R_1 + "." + tokentext.R_3), symbol("makereal(word seq)","UTF8","real")]
-  , [ mytype."real"]
+  , [ typereal]
   ,""
   )
  else if ruleno = { T W } 41 then isdefined(R, input, place, mytype.tokentext.R_1)
@@ -291,7 +292,7 @@ function forlocaldeclare(a:bindinfo, input:seq.word, place:int) bindinfo
    bindinfo(dict1 ∪ asset(accumulators + elesym), code.a + accumulators + elesym, types.a, elename)
 
 function forbody(dict:set.symbol ,vars:bindinfo,forbody:bindinfo,exitexp:bindinfo,endexp:bindinfo, input:seq.word, place:int) bindinfo 
-let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = mytype."boolean"then
+let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = typeboolean then
  { while type is OK. now check body type }
       if length.types.vars > 2 then
  if resulttype.lookup(dict.vars,"for", empty:seq.mytype)_1 = (types.forbody)_1 then""
@@ -304,7 +305,7 @@ let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = mytype."
    assert isempty.checktypes report errormessage(checktypes,input,place)
     let resulttype=first.types.endexp
      let sym = newsymbol("forexp", mytype."int builtin", types.vars + types.vars >> 1 + parameter.last.types.vars + typeptr
- + mytype."boolean"
+ + typeboolean
  + resulttype, resulttype)
  let newcode = code.vars + code.forbody
  + if tokentext.exitexp = "for"then [ Littrue]else code.exitexp /if
