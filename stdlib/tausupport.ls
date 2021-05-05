@@ -2,11 +2,13 @@ module abstractBuiltin.T
 
 use seq.T
 
-Builtin IDX(seq.T, int)T
 
 Builtin allocateseq:T(size:int,fld0:int,fld1:int) seq.T
 
 Builtin setfld(i:int, s:seq.T, val:T)int
+
+Builtin load(address:T,offset:int)  T  {load value of type T at address}
+
 
 
 module taublockseq.T
@@ -27,11 +29,13 @@ builtin bitcast(blockseq.T)seq.seq.T
 
 builtin bitcast(seq.seq.T)seq.T
 
-builtin bitcast(T)seq.T
 
-function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:seq.T)int
+
+
+function memcpy(idx:int, i:int, memsize:int, s:seq.T, fromaddress:T)int
  if memsize = 0 then idx
- else memcpy(setfld(idx, s, IDX( fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
+ else memcpy(setfld(idx, s, load( fromaddress, i)), i + 1, memsize - 1, s, fromaddress)
+
  
 
 type blockseq is sequence, dummy:seq.T
@@ -43,16 +47,15 @@ Function_(a:blockseq.T, i:int)T
  let data = bitcast.a
  let typ = getseqtype.dummy.a
   let blksz= length.dummy.a 
-  let blk = IDX(data,(i - 1) / blksz + 2)
-  let b =(i - 1) mod blksz + 1
-  blk_toindex.b
+    let blk=load(bitcast.data,(i - 1) / blksz + 2)
+    blk_toindex.( (i - 1) mod blksz + 1)
   
 Function blockit(s:seq.T, ds:int)seq.T
  assert ds > 1 report"blockit problem"
  let blksz = blocksize:T / ds
   if length.s ≤ blksz then
   let newseq =  allocateseq:T(length.s * ds  ,1,length.s)
-  let d = for acc = 2, @e = s do memcpy(acc, 0, ds, newseq, bitcast.@e)/for(acc)
+  let d = for acc = 2, @e = s do memcpy(acc, 0, ds, newseq,  @e)/for(acc)
     newseq 
   else
    let noblks =(length.s + blksz - 1) / blksz
@@ -62,7 +65,7 @@ Function blockit(s:seq.T, ds:int)seq.T
    for acc = 2, @e = arithseq(noblks, blksz, 1)do
         let s2=subseq(s, @e, @e + blksz - 1)
        let newseq =  allocateseq:T(length.s2 * ds   , 1, length.s2)
-       let d = for acc2 = 2, e = s2 do memcpy(acc2, 0, ds, newseq, bitcast.e)/for(acc2)
+       let d = for acc2 = 2, e = s2 do memcpy(acc2, 0, ds, newseq, e)/for(acc2)
         setfld(acc, blkseq, newseq) 
    /for(acc)
      bitcast.blkseq 

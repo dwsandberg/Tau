@@ -52,14 +52,23 @@ use seq.encodingpair.stat5
 
 use seq.seq.seq.int
 
-function f100(theprg:program, ele:symbol)seq.symbol
- if isbuiltinlist.ele then [ ele]
- else
-  let d = code.lookupcode(theprg, ele)
-   if isempty.d ∨ "BUILTIN"_1 ∈ getoption.d then empty:seq.symbol else [ ele]
 
 Function codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict, isbase:boolean)seq.bits
-let defines = for acc = empty:seq.symbol, @e = definesWithBuiltins do acc + f100(theprg, @e)/for(acc)
+let defines = for acc = empty:seq.symbol, ele = definesWithBuiltins do 
+ let d = code.lookupcode(theprg, ele)
+ if isempty.d then { sym not defined in this library } acc  
+  else if "BUILTIN"_1 /nin getoption.d then acc+ele
+  else 
+  {  if builtin not implement with external function. Must define an internal one }
+  if inmodule(ele,"real") /and (wordname.ele)  /in "+ - * / ? representation casttoreal toreal intpart" then acc+ele
+ else if inmodule(ele,"standard") /and (wordname.ele)  /in "+ - * / ? true false = > not " then acc+ele
+  else if inmodule(ele,"bits") /and (wordname.ele)  /in ">> << ∧   ∨ xor  toint" then acc+ele
+  else if inmodule(ele,"interpreter") /and (wordname.ele)  /in "GEP bitcast" then acc+ele
+  else if inmodule(ele,"fileio") /and (wordname.ele)  /in "tocstr" then acc+ele
+ else if inmodule(ele,"tausupport") /and (wordname.ele)  /in "bitcast getseqlength getseqtype" then acc+ele
+ else { implemented by external funciton }
+   acc
+/for(acc)
 let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
 let discard4 = for acc = 0, @e = defines do acc + funcdec(alltypes, @e)/for(acc)
 let match5map = match5map(theprg, uses, alltypes)

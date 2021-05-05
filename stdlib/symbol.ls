@@ -46,15 +46,11 @@ Export typereal mytype
 
 
 
-Export addabstract(a:word, b:mytype)mytype
+/Export addabstract(a:word, b:mytype)mytype
 
 Export type:set.symbol
 
 Export type:mytype
-
-Export mytype(seq.word)mytype
-
-Export abstracttype(m:mytype)word
 
 Export isabstract(a:mytype)boolean
 
@@ -107,6 +103,11 @@ Function newsymbol(name:seq.word, modname:mytype, paratypes:seq.mytype, resultty
 Function name(s:symbol)seq.word
  if isconst.s /or last.fsig.s ∉ ")" then fsig.s
  else break(fsig.s >> 1,"(", false)_1
+ 
+ Function wordname(s:symbol) word 
+   (fsig.s)_1
+ 
+ Function wordconstantdata(s:symbol) seq.word name.s
 
 Function paratypes(s:symbol)seq.mytype
  for acc = empty:seq.mytype, @e = paratypesastext.s do acc + mytype.@e /for(acc)
@@ -123,10 +124,9 @@ Function resulttype(s:symbol)mytype mytype.returntype.s
 Function nopara(s:symbol)int
  if isconst.s ∨ islocal.s ∨ isparameter.s then 0
  else if isspecial.s ∧ last.module.s ∉ "$record $loopblock"then
-  { assert last.module.s in"$continue $block $apply $exitblock $br $record $loopblock $define"report"X"+ module.s }
-  if last.module.s = "$define"_1 ∨ isbr.s then 1
+  if   isdefine.s ∨ isbr.s then 1
   else
-   assert length.fsig.s > 1 report"define problem" + fsig.s + module.s + stacktrace
+   assert length.fsig.s > 1 report"define problem" + print.s   + stacktrace
     toint.(fsig.s)_2
  else if last.fsig.s ≠ ")"_1 then 0
  else
@@ -216,39 +216,17 @@ Function Fld(offset:int,type:mytype) seq.symbol
 
 Function Idx(type:mytype)symbol
 let kind = abstracttype.type
- if kind = "int"_1 ∨ kind = "byte"_1 then symbol("IDX:int(ptr, int)","int builtin","int")
- else if kind = "ptr"_1 then symbol("IDX:ptr(ptr, int)","ptr builtin","ptr")
- else if kind = "boolean"_1 then symbol("IDX:boolean(ptr, int)","boolean builtin","boolean")
- else if kind = "real"_1 then symbol("IDX:real(ptr, int)","real builtin","real")
- else
-  symbol("IDX:" + print.type + "(ptr, int)", typerep.type + "builtin", typerep.type)
-  
-  
+let kind2=if kind= "seq"_1 then  typeptr  else  type
+newsymbol("load",moduleref("builtin",kind2),[typeptr,typeint],kind2)
+ 
 
 Function seqeletype(type:mytype)mytype
 let para = typerep.parameter.type
- mytype.if length.para > 1 ∨ para_1 ∈ "int real boolean"then para
+ mytype.if length.para > 1 then "ptr" else if para_1 ∈ "int real boolean"then para
  else if para_1 ∈ "int byte bit"then"int"else"ptr"
  
 Function outofbounds  symbol
    symbol("outofbounds" ,"tausupport","word seq")
-
-Function IdxS(type:mytype)symbol
-let para = typerep.parameter.type
- symbol("idxseq(" + para + "seq, int)", para + "builtin", typerep.seqeletype.type)
-
-
-Function Callidx(type:mytype)symbol
-let t = typerep.parameter.type
- symbol("callidx(" + t + "seq, int)", t + "builtin", typerep.seqeletype.type)
-
-Function packedindex2(type:mytype)seq.symbol
-let ds = if length.typerep.type > 2 then"ptr"_1 else(typerep.type)_1
- if ds ∈ "packed2 packed3 packed4 packed5 packed6"then
-  [ symbol("packedindex(" + ds + "seq, int)","internal","ptr")]
- else if ds ∈ "byte"then
-  [ Lit.-1, PlusOp, symbol("extractbyte(byte seq, int)","internal","int")]
- else [ Lit.-1, PlusOp, symbol("extractbit(bit seq, int)","internal","int")]
 
 function Record(kinds:seq.word)symbol
  symbol("RECORD("
@@ -262,9 +240,6 @@ Function Record(types:seq.mytype)symbol
 
 Function Sequence(eletype:mytype, length:int)symbol
  symbol("SEQUENCE" + toword.length, typerep.eletype + "$sequence", typerep.eletype + "seq", specialbit)
-
-Function maybepacked(t:mytype)boolean
- abstracttype.t = "seq"_1 ∧ abstracttype.parameter.t ∈ "byte bit packed2 packed3 packed4 packed5 packed6"
 
 Function continue(i:int)symbol symbol(["CONTINUE"_1, toword.i],"$continue","?", specialbit)
 
@@ -363,7 +338,9 @@ Function Word(s:word)symbol symbol([ s],"$word","word", constbit)
 
 Function Define(s:seq.word)symbol Define.s_1
 
-Function Define(w:word)symbol symbol(["DEFINE"_1, w],"$define","?", specialbit)
+Function Define(w:word)symbol symbol([w],"$define","?", specialbit)
+
+Function Definearg(s:symbol)   word   (fsig.s)_1
 
 Function Define(w:int)symbol Define.toword.w
 
@@ -393,9 +370,10 @@ Function GetSeqLength symbol symbol("getseqlength(ptr)","tausupport","int")
 
 Function GetSeqType symbol symbol("getseqtype(ptr)","tausupport","int")
 
-Function abortsymbol(s:seq.word) symbol 
-assert s /in ["int","ptr","boolean","real"] /or true report "abort problem"+s+stacktrace
-symbol ("abort:"+s+"(word seq)","tausupport",s)
+
+Function abortsymbol(typ:mytype) symbol 
+let a=if abstracttype.typ = "seq"_1 then typeptr else  typ
+replaceTsymbol(a,symbol ("abort:T(word seq)","tausupport","T"))
 
 
 Function isblock(s:symbol)boolean last.module.s = "$block"_1
@@ -409,6 +387,10 @@ Function iscontinue(s:symbol)boolean module.s = "$continue"
 Function isdefine(s:symbol)boolean module.s = "$define"
 
 Function isexit(s:symbol)boolean module.s = "$exitblock"
+
+Function isword(s:symbol)boolean module.s = "$word"
+
+Function iswordseq(s:symbol) boolean module.s="$words"
 
 Function isbr(s:symbol)boolean module.s = "$br"
 
@@ -430,6 +412,28 @@ Function getoption(code:seq.symbol)seq.word
 Function removeoptions(code:seq.symbol)seq.symbol
  if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)
  else code
+ 
+Function typeref(modname:mytype,typ:seq.word) mytype mytype.typ
+ 
+Function typebits mytype  typeref(moduleref."bits","bits")
+
+Function typebit mytype typeref(moduleref."bits","bit")
+
+Function typebyte mytype typeref(moduleref."bits","byte")
+
+Function typeword mytype typeref(moduleref."?","word")
+
+Function typeT mytype mytype("T")
+
+Function moduleref(modname:seq.word,para:mytype) mytype
+  addabstract(modname_1,para)
+  
+Function moduleref(modname:seq.word) mytype
+  mytype.[modname_1] 
+  
+Function seqof(base:mytype) mytype  addabstract("seq"_1,base)
+
+
 
 ------
 
@@ -569,7 +573,8 @@ let fsig = fsig.f
   else '"' + fsig + '"'
  else if module = "$word"then"WORD" + fsig
  else if isspecial.f then
-  if fsig_1 = "/start"_1 then
+  if isdefine.f then "DEFINE"+wordname.f
+  else if fsig_1 = "/start"_1 then
    fsig + "(" + print.resulttype.f + ") /br"
   else if fsig_1 = "BLOCK"_1 then"EndBlock  /br"
   else if fsig_1 = "EXITBLOCK"_1 then"Exit  /br"
@@ -603,30 +608,79 @@ Export typedict(seq.myinternaltype)typedict
 
 Export type:typedict
 
-Function getbasetype(d:typedict, type:mytype)mytype getbasetype(d, type, true)
 
-function getbasetype(d:typedict, type:mytype, top:boolean)mytype
- if abstracttype.type ∈ "packed2 packed3 packed4 packed5 packed6"then typeptr
- else if abstracttype.type ∈ "int boolean real ptr"then type
- else if abstracttype.type = "seq"_1 then
-  if abstracttype.parameter.type ∈ "int boolean real ptr bit byte packed2 packed3 packed4 packed5 packed6"then type
-  else addabstract("seq"_1, getbasetype(d, parameter.type, false))
- else if type = mytype."internaltype"then typeptr
- else if abstracttype.type = "$base"_1 then { used for type of next in for expression } type
+Function getbasetype(d:typedict,intype:mytype) mytype
+{ base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.bit 
+   seq.packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
+  if abstracttype.intype = "$base"_1 then { used for type of next in for expression } intype
  else
-  let t = findelement(d, type)
+  let isseq =  abstracttype.intype="seq"_1
+  let type= if isseq then parameter.intype else intype
+  if abstracttype.type ∈ " packed2 packed3 packed4 packed5 packed6" then 
+     if isseq then intype else typeptr
+  else  if abstracttype.type ∈ "int boolean real ptr"then 
+     if isseq then intype else type
+  else if abstracttype.type   ∈ " bit byte "then 
+    if isseq then  intype else typeint
+  else if abstracttype.type="seq"_1  /and isseq then seqof.typeptr
+  else 
+   let t = findelement(d, type)
    assert length.t = 1 report"type not found" + print.type + stacktrace
    let size = length.subflds.t_1
-    if size > 1 then
-     if top then typeptr
-     else if size = 2 then mytype."packed2"
-     else if size = 3 then mytype."packed3"
-     else if size = 4 then mytype."packed4"
-     else if size = 5 then mytype."packed5"
-     else if size = 6 then mytype."packed6"else typeptr
+     if size > 1 then
+     if not.isseq then typeptr
+     else if size = 2 then mytype."packed2 seq"
+     else if size = 3 then mytype."packed3 seq"
+     else if size = 4 then mytype."packed4 seq"
+     else if size = 5 then mytype."packed5 seq"
+     else if size = 6 then mytype."packed6 seq"  
+     else mytype."ptr seq"
     else
      let basetype =(subflds.t_1)_1
-      if abstracttype.basetype = "seq"_1 then getbasetype(d, basetype, true)else basetype
+      if abstracttype.basetype = "seq"_1 /and isseq  then mytype."ptr seq"
+      else let basetype2=getbasetype(d,basetype)
+         if not.isseq then basetype2
+         else    if abstracttype.basetype2 = "seq"_1   then mytype."ptr seq"
+         else addabstract("seq"_1,basetype2) 
+         
+Function packedtypes seq.mytype [typeref(moduleref."tausupport","packed2")
+,typeref(moduleref."tausupport","packed3"),typeref(moduleref."tausupport","packed4"),typeref(moduleref."tausupport","packed5"),typeref(moduleref."tausupport","packed6")]
+         
+Function getbasetype2(d:typedict,intype:mytype) mytype
+{ base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.bit 
+   seq.packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
+  if abstracttype.intype = "$base"_1 then { used for type of next in for expression } intype
+ else
+  let isseq =  abstracttype.intype="seq"_1
+  let type= if isseq then parameter.intype else intype
+    { assert false report "here"+if isseq then "T" else "F" /if+print.type+print.intype}
+  if  type ∈ packedtypes then 
+     if isseq then intype else typeptr
+  else  if abstracttype.type ∈ "int boolean real ptr"then 
+      if isseq then intype else type
+  else if abstracttype.type   ∈ " bit byte "then 
+    if isseq then  intype else typeint
+  else if abstracttype.type="seq"_1  /and isseq then seqof.typeptr
+  else 
+   let t = findelement(d, type)
+   assert length.t = 1 report"type not found" + print.type + stacktrace
+   let size = length.subflds.t_1
+     if size > 1 then
+     if not.isseq then typeptr
+     else if size = 2 then mytype."packed2 seq"
+     else if size = 3 then mytype."packed3 seq"
+     else if size = 4 then mytype."packed4 seq"
+     else if size = 5 then mytype."packed5 seq"
+     else if size = 6 then mytype."packed6 seq"  
+     else mytype."ptr seq"
+    else
+     let basetype =(subflds.t_1)_1
+      if abstracttype.basetype = "seq"_1 /and isseq  then mytype."ptr seq"
+      else let basetype2=getbasetype(d,basetype)
+         if not.isseq then basetype2
+         else    if abstracttype.basetype2 = "seq"_1   then mytype."ptr seq"
+         else addabstract("seq"_1,basetype2) 
+ 
 
 Function getsubflds(d:typedict, type:mytype)seq.mytype
  if type = typeint ∨ type = typereal ∨ type = typeptr then [ type]
@@ -689,6 +743,42 @@ Export roots(compileinfo) seq.symbol
 
 Export type:compileinfo 
 
+__________
+
+Function symbol3(module:seq.word,name:seq.word,p1:mytype,p2:mytype,p3:mytype,p4:mytype,rt:mytype) symbol
+ newsymbol(name,mytype.module,[p1,p2,p3,p4],rt)
+
+Function symbol3(module:seq.word,name:seq.word,p1:mytype,p2:mytype,p3:mytype,rt:mytype) symbol
+ newsymbol(name,mytype.module,[p1,p2,p3],rt)
+
+Function symbol3(module:seq.word,name:seq.word,p1:mytype,p2:mytype,rt:mytype) symbol
+ newsymbol(name,mytype.module,[p1,p2],rt)
+
+Function symbol3(module:seq.word,name:seq.word,p1:mytype,rt:mytype) symbol
+ newsymbol(name,mytype.module,[p1],rt)
+
+Function symbol3(module:seq.word,name:seq.word, rt:mytype) symbol
+ newsymbol(name,mytype.module,empty:seq.mytype,rt)
+ 
+Function inmodule(sym:symbol,module:seq.word) boolean last.module.sym=first.module
+
+
+Function symboladdword symbol symbol("add(char seq encodingstate, char seq encodingpair)","char seq encoding","char seq encodingstate")
+
+Function abortedsymbol symbol symbol("aborted(T process)","builtin","boolean")
+
+Function isseq(a:mytype) boolean   abstracttype.a="seq"_1 
+
+Function isencoding(a:mytype) boolean abstracttype.a ∈ "encoding"
+
+Function fldname(a:mytype) word   abstracttype.a
+
+Function fldtype(a:mytype) mytype parameter.a 
+
+Function abstracttypeof(a:mytype)  mytype addabstract(abstracttype.a,typeT)
+
+Function addabstract(a:mytype,t:mytype) mytype  addabstract(abstracttype.a,t)
+
 ___________________________________________________________
 
 module hashset.T
@@ -745,3 +835,4 @@ Function empty:hashset.T hashset.T hashset([ empty:seq.T, empty:seq.T, empty:seq
 Export type:hashset.T
 
 Export cardinality(hashset.T)int
+

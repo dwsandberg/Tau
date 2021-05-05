@@ -31,7 +31,7 @@ Function valid(s:seq.symbol)boolean
  else if isbr.sym then
  let blkno = countnodes2.stk + 1
   next(brt.sym > 0 ∧ brf.sym > 0, push(stk, max(blkno + max(brt.sym, brf.sym), top.stk)))
- else if first.module.sym ∈ "$exitblock $continue"then next(valid, push(stk, top.stk))
+ else if  isexit.sym /or  iscontinue.sym then next(valid, push(stk, top.stk))
  else if isstartorloop.sym then next(valid, push(stk, 2))else next(valid, stk)/for(valid)
 
 function ghj(code:seq.symbol, stk:stack.int, label:int, replace:int)seq.symbol
@@ -51,7 +51,7 @@ type casenode is key:symbol, nodeno:int, brt:int
 
 function keyvalue(n:casenode)int
 let s = key.n
- if module.s = "$word"then encoding.(fsig.s)_1 else value.s
+ if isword.s then encoding.wordname.s  else value.s
 
 function ?(a:casenode, b:casenode)ordering keyvalue.a ? keyvalue.b
 
@@ -89,7 +89,7 @@ function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.i
    let brt = brt.sym + nodeno
     if isempty.first then
      let b=subseq(code, last + 1, e - 3)
-      if  length.b > 2 /and islocal.last.b /and b_-2=Define.first.fsig.last.b then
+      if  length.b > 2 /and islocal.last.b /and b_-2=Define.wordname.last.b then
       next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, 
        subseq(code, last + 1, e - 5), [ last.b])
     else 
@@ -97,7 +97,7 @@ function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.i
     else if nextcase = 1 /and (subseq(code, last + 1, e - 3) = first /or last = e - 4 ∧ code_(e - 3) ∈ eqivs) then
      next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, first, eqivs)
     else if nextcase = 1 /and islocal.code_(e - 3)
-    ∧ Define.first.fsig.code_(e - 3) = code_(e - 4)
+    ∧ Define.wordname.code_(e - 3) = code_(e - 4)
     ∧ subseq(code, last + 1, e - 5) = first then
      next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, first, eqivs + code_(e - 3))
     else 
@@ -108,7 +108,7 @@ function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.i
  /for(if length.cases < reorgwhen then removedead(code, nodes, dead)
  else 
   let testvar = if length.first = 1 then first_1 else if isempty.eqivs then Local.nextvar else eqivs_1
-  let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.first.fsig.testvar
+  let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.wordname.testvar
   let t = reorg(sort.cases, nodeno.last.cases + brf.code_(nodes_(nodeno.last.cases)), testvar, nodes, nodeno.first.cases - 1)
   let nonewnodes = length.code.t / 4
   let locnode = nodeno.first.cases - 1
@@ -248,7 +248,8 @@ let reorgwhen = 6
 
 function newstk(sym:symbol, stk:stack.int, acc:seq.symbol)stack.int
  if isstartorloop.sym then push(stk,-length.acc - 1)
- else if first.module.sym ∈ "$br $exitblock $continue"then push(stk, length.acc + 1)else stk
+ else if  isexit.sym /or  iscontinue.sym /or isbr.sym
+ then push(stk, length.acc + 1)else stk
 
 function tailR(code:seq.symbol, self:symbol, stk:stack.int)seq.symbol
 let l = for l = empty:seq.int, ss = toseq.stk do
@@ -267,8 +268,8 @@ let l = for l = empty:seq.int, ss = toseq.stk do
 
 function adjustvar(s:seq.symbol, delta:int)seq.symbol
  for acc = empty:seq.symbol, a = s do
-  if islocal.a then acc + Local(toint.(fsig.a)_1 + delta)
-  else if isdefine.a then acc + Define.toword(toint.(fsig.a)_2 + delta)
+  if islocal.a then acc + Local(toint.wordname.a  + delta)
+  else if isdefine.a then acc + Define.toword(toint.Definearg.a + delta)
   else if isloopblock.a then acc + Loopblock(paratypes.a, firstvar.a + delta, resulttype.a)else acc + a
  /for(acc)
 
@@ -280,6 +281,7 @@ function adjustbr(code:seq.symbol, nodestoadjust:seq.int, adjust:int)seq.symbol
   if isbr.sym ∧ (brt.sym > blockcount ∨ brf.sym > blockcount)then
   let newt = if brt.sym > blockcount then brt.sym + adjust else brt.sym
   let newf = if brf.sym > blockcount then brf.sym + adjust else brf.sym
+    assert between(i,1,length.acc) report "problem adjust" +print.i+print.code
    next(replace(acc, i, Br2(newt, newf)), blockcount - 1)
   else next(acc, blockcount - 1)
  /for(acc)
@@ -287,8 +289,8 @@ function adjustbr(code:seq.symbol, nodestoadjust:seq.int, adjust:int)seq.symbol
 function countnodes(s:stack.int)int if top.s < 0 then 1 else 1 + countnodes.pop.s
 
 Function removeismember(c:symbol, var:symbol)seq.symbol
- if module.c = "$words"then
- let words = fsig.c
+ if iswordseq.c  then
+ let words = wordconstantdata.c
   if isempty.words then [ Litfalse]
   else
    let t = length.words + 2

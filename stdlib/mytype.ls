@@ -25,7 +25,7 @@ Function parameter(m:mytype)mytype mytype.subseq(towords.m, 1, length.towords.m 
 
 Function isabstract(a:mytype)boolean(towords.a)_1 = "T"_1
 
-Function isinstance(a:mytype)boolean length.towords.a > 1 ∧ not(parameter.a = mytype."T")
+/Function isinstance(a:mytype)boolean length.towords.a > 1 ∧ not(parameter.a = mytype."T")
 
 Function iscomplex(a:mytype)boolean length.towords.a > 1
 

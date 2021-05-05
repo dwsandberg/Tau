@@ -60,7 +60,7 @@ let a=xxx(alltypes,p,removeoptions.code,s,pdict )
 let t = if first then a
 else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
             let ty= if Hasfor ∈ flags.a  then expandforexp(code.a,nextvar.a) else code.a
-           let t2= if Callself ∈  flags.a   ∧  (fsig.s)_1 ≠"subpass2"_1 then optB(ty,s) else ty 
+           let t2= if Callself ∈  flags.a   ∧  (name.s)_1 ≠"subpass2"_1 then optB(ty,s) else ty 
            expandresult(nextvar.a, t2,flags.a)
         else  a
 let newoptions1=if length.code.t < 22 ∧ Callself ∉ flags.t ∧ Hasfor ∉ flags.t ∧ "NOINLINE"_1 ∉ options then
@@ -105,8 +105,8 @@ function scancode(alltypes:typedict, p:program, org:seq.symbol, nextvarX:int, ma
   let len = length.result
   if isconst.sym then next(flags, result + sym, nextvar, map)
    else if isspecial.sym then
-     if { isdefine }(fsig.sym)_1 = "DEFINE"_1 then
-    let thelocal =(fsig.sym)_2
+     if   isdefine.sym  then
+    let thelocal =Definearg.sym 
      if len > 0 ∧ (isconst.result_len ∨ islocal.result_len)then
      next(flags, subseq(result, 1, length.result - 1), nextvar, replace(map, thelocal, [ result_len]))
     else next(flags, result + Define.toword.nextvar, nextvar + 1, replace(map, thelocal, [ Local.nextvar]))
@@ -132,11 +132,11 @@ function scancode(alltypes:typedict, p:program, org:seq.symbol, nextvarX:int, ma
     if constargs then next(flags, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
      else next(flags, result + sym, nextvar, map)
     else if(module.sym)_1 = "local"_1 then
-    let t = lookup(map,(fsig.sym)_1)
+    let t = lookup(map,(name.sym)_1)
        next(flags, result + if isempty.t then [sym] else  t_1, nextvar, map)
     else if(module.sym)_1 = "para"_1 then
     let sym2 = Local.(module.sym)_2
-    let t = lookup(map,(fsig.sym2)_1)
+    let t = lookup(map,(name.sym2)_1)
      if isempty.t then next(flags, result +if isempty.t then [sym] else  t_1, nextvar, map)
      else next(flags, result + t_1, nextvar, map)
     else  next(flags, result + sym, nextvar, map) 
@@ -147,24 +147,23 @@ function scancode(alltypes:typedict, p:program, org:seq.symbol, nextvarX:int, ma
      if islocal.arg ∨ isconst.arg then 
        next(flags, result >> 2 +removeismember(last.result,arg),nextvar,map)
    else next(flags, result >> 1 + Define.nextvar + removeismember(last.result, Local.nextvar), nextvar, map)
-   else if   (fsig.sym)_1 ∈ "forexp" ∧ module.sym="builtin"  then 
+   else if   (name.sym)_1 ∈ "forexp" ∧ inmodule(sym,"builtin")  then 
      let noop=forexpisnoop(sym,result)
    if not.isempty.noop then next(flags, noop, nextvar, map)else next(flags ∨ Hasfor, result + sym, nextvar, map)
-   else if (fsig.sym)_1 ∈ "indexseq45" ∧ module.sym="builtin"  then
+   else if (name.sym)_1 ∈ "indexseq45 " ∧ inmodule(sym,"builtin")  then
      next(  flags  ∨ Hasfor   ,    result + sym, nextvar, map)
    else if sym=self then  next(flags ∨ Callself,result+sym,nextvar,map)
    else
     let nopara = nopara.sym
     let dd1=lookupcode(p, sym)
     if not.isdefined.dd1   then 
-    let newflags = if(fsig.sym)_1 ∈ "setfld" ∨ module.sym = "$global"then State else bits.0
+    let newflags = if(name.sym)_1 ∈ "setfld" ∨ inmodule(sym , "$global")then State else bits.0
          next(flags ∨ newflags ,result+sym,nextvar,map)
        else 
     let dd = code.dd1
     let options = getoption.dd
      if(first."COMPILETIME" ∈ options ∨ fsig.sym = "_(word seq, int)")
       ∧ for acc = true, @e = subseq(result, len - nopara + 1, len)do acc ∧ isconst.@e /for(acc)then
-       { assert fsig.sym ≠"_(word seq, int)"report"XXXXXXX"}
        if fsig.sym = "decodeword(word)" then
         let arg1 = result_len
         let a1 = for acc = empty:seq.symbol, @e = tointseq.decodeword.(fsig.arg1)_1 do acc + Lit.@e /for(acc)
@@ -176,8 +175,8 @@ function scancode(alltypes:typedict, p:program, org:seq.symbol, nextvarX:int, ma
        next(flags, result >> nopara + newconst, nextvar, map)
      else  if first."VERYSIMPLE" ∈ options then next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
      else if not("INLINE"_1 ∈ options )then
-      let newflags = if"STATE"_1 ∈ options ∨ (fsig.sym)_1 ∈ "setfld"
-      ∨ module.sym = "$global"then
+      let newflags = if"STATE"_1 ∈ options ∨ (name.sym)_1 ∈ "setfld"
+      ∨ inmodule(sym, "$global") then
        State ∨ flags
       else flags
      next( newflags,   result + sym, nextvar, map)
@@ -217,10 +216,10 @@ function  isconstorlocal(p:seq.symbol) boolean  length.p=1 ∧ (isconst.first.p 
 
 function expandforexp(code:seq.symbol,nextvarin:int ) seq.symbol
   for  result=empty:seq.symbol, nextvar=nextvarin,sym=code do
-   if last.module.sym="builtin"_1   ∧  (fsig.sym)_1 = "forexp"_1 then 
+   if inmodule(sym,"builtin")   ∧  (name.sym)_1 = "forexp"_1 then 
     let   f=forexpcode(sym, result, nextvar )
    next(  code.f, nextvar.f) 
-   else if last.module.sym="builtin"_1   ∧ (fsig.sym)_1 /in"indexseq45"  then
+   else if inmodule(sym,"builtin")   ∧ (name.sym)_1 /in"indexseq45 "  then
      let theseqtype=(paratypes.sym)_1
      let t =  backparse2(result, length.result, 2, empty:seq.int) 
      let index = subseq(result, t_2, length.code)
@@ -236,7 +235,7 @@ function expandforexp(code:seq.symbol,nextvarin:int ) seq.symbol
 
 function forexpisnoop (forsym:symbol,code:seq.symbol) seq.symbol
 if nopara.forsym=7  ∧ code_(-2) = Littrue 
-   ∧  abstracttype.resulttype.last.code = "seq"_1  
+   ∧  isseq.resulttype.last.code    
  ∧ name.code_(-3) = "+"
  ∧ last.module.code_(-3) = "seq"_1
  ∧ name.code_(-4) = "SEQUENCE 1"
@@ -252,20 +251,21 @@ let initacc = subseq(code, t2_1, t2_2 - 1)
 else empty:seq.symbol
 
 
-function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, theseqtype:mytype,boundscheck:boolean)seq.symbol  
+function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, theseqtype:mytype,boundscheck:boolean)seq.symbol 
+  {seqtype will be a basetype} 
  let elementtype=seqeletype.theseqtype 
-let packedseq = maybepacked.theseqtype
- [ start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)] + [ theseq, masteridx, Callidx.theseqtype, Exit]
+ let parameter=parameter.theseqtype
+ let maybepacked= parameter /in packedtypes /or parameter =typebyte /or parameter=typebit 
+ let callidx= newsymbol("callidx",moduleref("builtin",parameter.theseqtype ),[theseqtype ,typeint],elementtype)
+ [ start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)] + [ theseq, masteridx, callidx, Exit]
  + if boundscheck then  
-   let t=if abstracttype.elementtype ∈ "seq packed2 packed3 packed4 packed5 packed6" then"ptr" 
-   else typerep.elementtype
- [  masteridx,theseq, GetSeqLength, GtOp, Br2(1, 2),outofbounds,abortsymbol.t,Exit]    
+ [  masteridx,theseq, GetSeqLength, GtOp, Br2(1, 2),outofbounds,abortsymbol.elementtype,Exit]    
  else empty:seq.symbol /if 
- + if packedseq then
-  [ seqtype, Lit.1, EqOp, Br2(1, 2)] + [ theseq, masteridx] + packedindex2.theseqtype + [ Exit]
+ + if maybepacked  then
+  [ seqtype, Lit.1, EqOp, Br2(1, 2)] + [ theseq, masteridx, 
+    symbol3("internal","packedindex", theseqtype,typeint,elementtype),Exit]
  else empty:seq.symbol /if
-  + [ theseq, masteridx, IdxS.theseqtype, Exit,    EndBlock]
-  
+  + [ theseq, masteridx, symbol3("internal","idxseq", theseqtype,typeint,elementtype), Exit,    EndBlock]
   
      
 function forexpcode( forsym:symbol, code:seq.symbol, nextvar:int )expandresult
@@ -304,19 +304,18 @@ let bodyexp2=replace$for(bodyexp, newsyms, syms)
 let lastpart = if length.syms = 2 then bodyexp2 + [ masteridx, Lit.1, PlusOp, continue.2, EndBlock]
 else 
  let iscompound = isblock.last.bodyexp
- ∧ (isnext.bodyexp_(-3) ∨ subseq(fsig.bodyexp_(-3), 4, 4) = "$base")
+ ∧ (isnext.bodyexp_(-3) ∨ subseq(fsig.bodyexp_(-3), 3, 3) = "$base")
   if not.iscompound then bodyexp2 >> 1 + [ masteridx, Lit.1, PlusOp, continue.length.syms, EndBlock]
   else
-   let z2 = kkk(bodyexp2, length.bodyexp2 - 1, length.bodyexp2 - 1, empty:seq.symbol, [ masteridx, Lit.1, PlusOp, continue.length.syms], let typ = resulttype.forsym
-   let typ2 = if abstracttype.typ = "seq"_1 then"ptr"else typerep.typ
-    [ abortsymbol.typ2 , Exit])
-            z2+   EndBlock 
+   kkk(bodyexp2, length.bodyexp2 - 1, length.bodyexp2 - 1, empty:seq.symbol, [ masteridx, Lit.1, PlusOp, continue.length.syms], 
+     [ abortsymbol.resulttype.forsym , Exit]) 
+           +   EndBlock 
  { assert not.newway ∨ Word."ACTARG"_1 ∉(firstpart + lastpart)report"endexp"+ print.endexp + EOL +"exitexp"+ print.exitexp + EOL +"bodyexp"+ print.bodyexp + EOL +"syms"+ print.syms + EOL + print.(firstpart + lastpart)}
    expandresult(nextvar1 + 3,firstpart+lastpart, bits.0 )
    
 function isnext(sym:symbol) boolean
- length.fsig.sym > 3 ∧ (fsig.sym)_1 = "next"_1
- ∧ last.module.sym = "$for"_1
+ length.fsig.sym > 3 ∧ (name.sym)_1 = "next"_1
+ ∧ inmodule( sym , "$for")
    
 function  kkk(   s:seq.symbol,i:int,last:int,result:seq.symbol,c:seq.symbol,assert2: seq.symbol) seq.symbol
     let sym=s_i
@@ -331,7 +330,7 @@ function  kkk(   s:seq.symbol,i:int,last:int,result:seq.symbol,c:seq.symbol,asse
 function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol 
 for acc = empty:seq.symbol,  s = code do 
   acc
-  + if last.module.s = "$for"_1 then
+  + if inmodule(s,"$for") then
         let i = findindex(s, old)
          if i ≤ length.new then [ new_i]
    else { this is for one of two cases 1:a nested for and $for variable is from outer loop 2:the next expresion } [ s]

@@ -43,17 +43,13 @@ let t1 = asset.for acc = empty:seq.symbol, @e = toseq.set2 do acc + zcode.@e /fo
  addseq.for acc = empty:seq.symbol, @e = mods2 do acc + addlibmod(set2, @e)/for(acc)
 
 function tolibmod(alltypes:typedict, p:program, templates:program, exports:seq.word, m:firstpass)seq.firstpass
- if not(abstracttype.modname.m ∈ exports)then empty:seq.firstpass
+ if not(fldname.modname.m ∈ exports)then empty:seq.firstpass
  else
   let defines = if isabstract.modname.m then defines.m else exports.m
   let types = for acc = empty:seq.myinternaltype, @e = toseq.defines do acc + libtypes2(alltypes, p, templates, @e)/for(acc)
   let uses = if isabstract.modname.m then uses.m else empty:seq.mytype
    [ firstpass(modname.m, uses, defines, exports.m, empty:seq.symbol, empty:set.symbol, types)]
 
-function printtotype(a:seq.word, i:int, result:seq.word)mytype
- if isempty.result then printtotype(a, i + 1, result + a_i)
- else if i > length.a then mytype.result
- else printtotype(a, i + 2, [ a_(i + 1)] + result)
 
 function libtypes2(alltypes:typedict, p:program, templates:program, s:symbol)seq.myinternaltype
  if istypeexport.s then
@@ -92,12 +88,11 @@ function addlibsym(s:symbol)symbol
 
 function addmytype(t:mytype)symbol Words.typerep.t
 
-function addseq(s:seq.symbol)symbol Constant2(s + Sequence(mytype."ptr", length.s))
+function addseq(s:seq.symbol)symbol Constant2(s + Sequence(typeptr, length.s))
 
 function addlibmod(toexport:set.symbol, m:firstpass)symbol
  { symbols in m are replaced with the symbol from toexport which has zcode to form programele }
  let exports = toexport ∩ exports.m
-  { assert not(modname.m = mytype."standard")report"HHH"+ print.modname.m + toseq.exports @ +("", print.@e)}
   let defines = if isabstract.modname.m then toexport ∩ defines.m else exports
   let e = addseq.for acc = empty:seq.symbol, @e = toseq.exports do acc + addlibsym.@e /for(acc)
   let d = if isabstract.modname.m then

@@ -43,13 +43,13 @@ let r = interpret(alltypes, removeconstant.code, 1, empty:stack.int)
  tocode(r, resulttype.last.code)
 
 function tocode(r:int, typ:mytype)seq.symbol
- if typ = mytype."word"then [ Word.wordencodingtoword.r]
- else if abstracttype.typ ∈ "int bits char"then [ Lit.r]
- else if abstracttype.typ = "boolean"_1 then [ if r = 1 then Littrue else Litfalse]
- else if typ = mytype."word seq"then [ Words.aswords.bitcast.r]
+ if typ = typeword then [ Word.wordencodingtoword.r]
+ else if typ=typeint /or typ=typebits /or typ=typeref(moduleref."UTF8","char")  then [ Lit.r]
+ else if  typ =  typeboolean then [ if r = 1 then Littrue else Litfalse]
+ else if typ = seqof.typeword  then [ Words.aswords.bitcast.r]
  else if typ =  typereal then [ Reallit.r]
  else
-  assert abstracttype.typ ∈ "seq"report"resulttype not handled" + print.typ
+  assert isseq.typ  report"resulttype not handled" + print.typ
   let s = bitcast.r
    for acc = [ Lit.0, Lit.length.s], @e = s do acc + tocode(@e, parameter.typ)/for(acc)
 
@@ -64,9 +64,9 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)int
  else
   let sym = code_i
   let nopara = nopara.sym
-   if module.sym = "$word"then
+   if isword.sym  then
     interpret(alltypes, code, i + 1, push(stk, hash.first.fsig.sym))
-   else if module.sym = "$words"then
+   else if  iswordseq.sym  then
    let a = for acc = empty:seq.int, @e = fsig.sym do acc + hash.@e /for(acc)
     interpret(alltypes, code, i + 1, push(stk, GEP(a, 0)))
    else if module.sym = "$int" ∨ module.sym = "$real" ∨ module.sym = "$boolean"then
@@ -84,9 +84,9 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)int
     let dcret = deepcopysym(alltypes, resulttype.sym)
     let adcret = dlsymbol.mangle(fsig.dcret, module.dcret)
      assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret
-      assert t > 0 report"Not handle by interperter" + fsig.sym + module.sym + "mangle:"
+      assert t > 0 report"Not handle by interperter" + print.sym + "mangle:"
       + mangle(fsig.sym, module.sym)
-      let dc = deepcopysym(alltypes, mytype."word seq")
+      let dc = deepcopysym(alltypes, seqof.typeword  )
       let adc = dlsymbol.mangle(fsig.dc, module.dc)
        assert adc > 0 report"?"
        let p = createthread(adcret, adc, t, packed.top(stk, nopara), buildargcode(alltypes, sym))
