@@ -1,3 +1,4 @@
+
 Module codegennew
 
 use UTF8
@@ -14,7 +15,7 @@ use llvmconstants
 
 use standard
 
-use symbol
+use symbolE
 
 use textio
 
@@ -55,7 +56,7 @@ use seq.seq.seq.int
 
 Function codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict, isbase:boolean)seq.bits
 let defines = for acc = empty:seq.symbol, ele = definesWithBuiltins do 
- let d = code.lookupcode(theprg, ele)
+ let d = getCode(theprg, ele)
  if isempty.d then { sym not defined in this library } acc  
   else if "BUILTIN"_1 /nin getoption.d then acc+ele
   else 

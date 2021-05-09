@@ -1,3 +1,4 @@
+
 Module codetemplates
 
 use bits
@@ -16,7 +17,7 @@ use persistant
 
 use standard
 
-use symbol
+use symbolE
 
 use textio
 
@@ -51,7 +52,6 @@ Export wordref(w:word)int
 Export addliblib(libname:seq.word, mods:int, profiledata:int, isbase:boolean)int
 
 
-Function mangledname(s:symbol)word mangle(fsig.s, module.s)
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
  if  s = Optionsym then function.[i64,i64,i64,i64] 
@@ -131,7 +131,7 @@ Function funcdec(alltypes:typedict, i:symbol)int
  toint.modulerecord([ mangledname.i], [ toint.FUNCTIONDEC, typ.tollvmtype(alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
 Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
-let discard3 = [addtemplate(symbol("packedindex(bit seq, int)","internal","int"), 8, 
+let discard3 = [addtemplate(symbol3("internal","packedindex", seqof.typebit,typeint ,typeint), 8, 
  BINOP(r.1, ibcsub.2,C64.1,sub)
 +BINOP(r.2, r.1, C64.6, lshr) 
 + BINOP(r.3, r.2, C64.2, add)
@@ -140,7 +140,7 @@ let discard3 = [addtemplate(symbol("packedindex(bit seq, int)","internal","int")
 + BINOP(r.6, r.1, C64.63, and)
 + BINOP(r.7, r.5, r.6, lshr)
 + BINOP(r.8, r.7, C64.1, and))
-, addtemplate(symbol("packedindex(byte seq, int)","internal","int"), 9, 
+, addtemplate(symbol3("internal","packedindex",seqof.typebyte,typeint,typeint ), 9, 
  BINOP(r.1, ibcsub.2,C64.1,sub)
 + BINOP(r.2, r.1, C64.3, lshr) 
 + BINOP(r.3, r.2, C64.2, add)
@@ -150,71 +150,72 @@ let discard3 = [addtemplate(symbol("packedindex(bit seq, int)","internal","int")
 + BINOP(r.7, r.6, C64.3, shl)
 + BINOP(r.8, r.5, r.7, lshr)
 + BINOP(r.9, r.8, C64.255, and))
-, addtemplate(symbol("packedindex(packed2 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.2, mul)
+,addtemplate(symbol3("internal","packedindex",seqof.typeref(moduleref."tausupport","packed2"),typeint,typeptr ), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.2, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol("packedindex(packed3 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.3, mul)
+,addtemplate(symbol3("internal","packedindex",seqof.typeref(moduleref."tausupport","packed3"),typeint,typeptr ), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.3, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol("packedindex(packed4 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.4, mul)
+,addtemplate(symbol3("internal","packedindex",seqof.typeref(moduleref."tausupport","packed4"),typeint,typeptr ), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.4, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol("packedindex(packed5 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.5, mul)
+,addtemplate(symbol3("internal","packedindex",seqof.typeref(moduleref."tausupport","packed5"),typeint,typeptr ), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.5, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol("packedindex(packed6 seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.6, mul)
+,addtemplate(symbol3("internal","packedindex",seqof.typeref(moduleref."tausupport","packed6"),typeint,typeptr ), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.6, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol("tocstr(bits seq)","fileio","cstr"), 2, GEP(r.1, i64, ibcsub.1, C64.2) + CAST(r.2, r.1, i64, ptrtoint))
-, addtemplate(symbol("toint(byte)","bits","int"), 0, emptyinternalbc)
-, addtemplate(symbol("toint(bit)","bits","int"), 0, emptyinternalbc)
+, addtemplate(symbol3("fileio","tocstr",seqof.typebits,typeref(moduleref."fileio", "cstr")), 2, GEP(r.1, i64, ibcsub.1, C64.2) + CAST(r.2, r.1, i64, ptrtoint))
+, addtemplate(symbol3("bits","toint" ,typebyte,typeint ), 0, emptyinternalbc)
+, addtemplate(symbol3("bits","toint" ,typebit,typeint ), 0, emptyinternalbc)
 , { addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0)+ STORE(r.2, r.1, ibcsub.1)+ GEP(r.2, ptr.i64, r.1, C64.1)+ STORE(r.3, r.2, ibcsub.2)+ GEP(r.3, ptr.i64, r.1, C64.0)), addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint)), addtemplate(symbol("bitcast(int seq)","interpreter","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint)), }
-addtemplate(symbol("GEP(int seq, int)","interpreter","int"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + CAST(r.2, r.1, i64, ptrtoint))
-, addtemplate(symbol("bitcast(int)","interpreter","int seq"), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
-, addtemplate(symbol("bitcast(ptr)","builtin","ptr"), 1, GEP(r.1, i64, ibcsub.1, C64.0))
-, addtemplate(symbol("toseqX:seq.int(ptr)","tausupport","int seq"), 0, emptyinternalbc)
-, addtemplates("bit byte int ptr real packed2 packed3 packed4 packed5 packed6", symbol("toseq:seq.T(ptr)","builtin","ptr"), 0, emptyinternalbc)
-, addtemplate(symbol("intpart(real)","real","real"), 1, CAST(r.1, ibcsub.1, i64, fptosi))
-, addtemplate(symbol("toreal(int)","real","real"), 1, CAST(r.1, ibcsub.1, double, sitofp))
-, addtemplate(symbol("-(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
-, addtemplate(symbol("+(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, add))
-, addtemplate(symbol("*(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, mul))
-, addtemplate(symbol("/(real, real)","real","real"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv))
-, addtemplate(symbol("casttoreal(int)","real","real"), 1, CAST(r.1, ibcsub.1, double, bitcast))
-, addtemplate(symbol("representation(real)","real","int"), 1, CAST(r.1, ibcsub.1, i64, bitcast))
-, addtemplate(symbol("?(real, real)","real","ordering"), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext)
+addtemplate(symbol3("interpreter","GEP " ,seqof.typeint,typeint,typeint), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + CAST(r.2, r.1, i64, ptrtoint))
+, addtemplate(symbol3("interpreter","bitcast ",typeint,seqof.typeint), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
+, addtemplate(symbol3("internal","bitcast",typeptr,typeptr ), 1, GEP(r.1, i64, ibcsub.1, C64.0))
+, addtemplate(symbol4(moduleref."tausupport","toseqX"_1,seqof.typeint, [typeptr],seqof.typeint ), 0, emptyinternalbc)
+, addtemplates("bit byte int ptr real packed2 packed3 packed4 packed5 packed6", 
+symbol4(moduleref."internal","toseq"_1,seqof.typeT, [typeptr],typeptr ), 0, emptyinternalbc)
+, addtemplate(symbol3("real","intpart",typereal, typeint ), 1, CAST(r.1, ibcsub.1, i64, fptosi))
+, addtemplate(symbol3("real","toreal",typeint,typereal ), 1, CAST(r.1, ibcsub.1, double, sitofp))
+, addtemplate(symbol3("real","-",typereal,typereal,typereal), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
+, addtemplate(symbol3("real","+",typereal,typereal,typereal), 1, BINOP(r.1, ibcsub.1, ibcsub.2, add))
+, addtemplate(symbol3("real","*",typereal,typereal,typereal), 1, BINOP(r.1, ibcsub.1, ibcsub.2, mul))
+, addtemplate(symbol3("real","/",typereal,typereal,typereal), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv))
+, addtemplate(symbol3("real","casttoreal",typeint,typereal), 1, CAST(r.1, ibcsub.1, double, bitcast))
+, addtemplate(symbol3("real","representation",typereal, typeint), 1, CAST(r.1, ibcsub.1, i64, bitcast))
+, addtemplate(symbol3("real","?",typereal,typereal ,typeref(moduleref."standard","ordering")), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext)
 + CMP2(r.3, ibcsub.1, ibcsub.2, 2)
 + CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add))
-, addtemplate(symbol("?(int, int)","standard","ordering"), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext)
+, addtemplate(symbol3("standard","? ", typeint,typeint,typeref(moduleref."standard","ordering")), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext)
 + CMP2(r.3, ibcsub.1, ibcsub.2, 38)
 + CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add))
-, addtemplate(symbol("GEP(ptr seq, int)","internal","ptr"), 1, GEP(r.1, i64, ibcsub.1, ibcsub.2))
-, addtemplate(symbol("not(boolean)","standard","boolean"), 1, BINOP(r.1, ibcsub.1, C64.1, xor))
-, addtemplate(symbol(">(int, int)","standard","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 38) + CAST(r.2, r.1, i64, zext))
-, addtemplate(symbol("=(boolean, boolean)","standard","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext))
-, addtemplate(symbol("=(int, int)","standard","boolean"), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext))
-, addtemplate(symbol("-(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
-, addtemplate(symbol("+(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, add))
-, addtemplate(symbol("*(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, mul))
-, addtemplate(symbol("/(int, int)","standard","int"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv))
-, addtemplate(symbol("<<(bits, int)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, shl))
-, addtemplate(symbol(">>(bits, int)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, lshr))
-, addtemplate(symbol("∧(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, and))
-, addtemplate(symbol("∨(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, or))
-, addtemplate(symbol("xor(bits, bits)","bits","bits"), 1, BINOP(r.1, ibcsub.1, ibcsub.2, xor))
-, addtemplate(symbol("setfld(int, int seq, int)","int builtin","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
+, addtemplate(symbol3("internal","GEP ",seqof.typeptr,typeint,typeptr), 1, GEP(r.1, i64, ibcsub.1, ibcsub.2))
+, addtemplate(symbol3("standard","not", typeboolean,typeboolean), 1, BINOP(r.1, ibcsub.1, C64.1, xor))
+, addtemplate(symbol3("standard",">" ,typeint,typeint,typeboolean ), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 38) + CAST(r.2, r.1, i64, zext))
+, addtemplate(symbol3("standard","=",typeboolean,typeboolean,typeboolean), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext))
+, addtemplate(symbol3("standard","=" ,typeint,typeint,typeboolean ), 2, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext))
+, addtemplate(symbol3("standard","-" ,typeint,typeint,typeint ), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sub))
+, addtemplate(symbol3("standard","+" ,typeint,typeint,typeint ), 1, BINOP(r.1, ibcsub.1, ibcsub.2, add))
+, addtemplate(symbol3("standard","*" ,typeint,typeint,typeint ), 1, BINOP(r.1, ibcsub.1, ibcsub.2, mul))
+, addtemplate(symbol3("standard","/" ,typeint,typeint,typeint ), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv))
+, addtemplate(symbol3("bits","<<",typebits,typeint,typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, shl))
+, addtemplate(symbol3("bits",">>",typebits,typeint,typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, lshr))
+, addtemplate(symbol3("bits","∧",typebits,typebits,typebits ), 1, BINOP(r.1, ibcsub.1, ibcsub.2, and))
+, addtemplate(symbol3("bits","∨",typebits,typebits,typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, or))
+, addtemplate(symbol3("bits","xor",typebits,typebits,typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, xor))
+, addtemplate(symbol3(moduleref("builtin",typeint),"setfld",[typeint, seqof.typeint, typeint], typeint), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
 + BINOP(r.2, ibcsub.1, C64.1, add))
-, addtemplate(symbol("setfld(int, boolean seq, boolean)","boolean builtin","int"), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
+, addtemplate(symbol3(moduleref("builtin",typeboolean),"setfld",[typeint, seqof.typeboolean, typeboolean], typeint), 2, GEP(r.1, i64, ibcsub.2, ibcsub.1) + STORE(r.2, r.1, ibcsub.3)
 + BINOP(r.2, ibcsub.1, C64.1, add))
-, addtemplate(symbol("setfld(int, real seq, real)","real builtin","int"), 3, CAST(r.1, ibcsub.3, i64, bitcast) + GEP(r.2, i64, ibcsub.2, ibcsub.1)
+, addtemplate(symbol3(moduleref("builtin",typereal),"setfld",[typeint, seqof.typereal, typereal], typeint), 3, CAST(r.1, ibcsub.3, i64, bitcast) + GEP(r.2, i64, ibcsub.2, ibcsub.1)
 + STORE(r.3, r.2, r.1)
 + BINOP(r.3, ibcsub.1, C64.1, add))
-, addtemplates("ptr packed2 packed3 packed4 packed5 packed6", symbol("setfld(int, T seq, T)","T builtin","int"), 3, CAST(r.1, ibcsub.2, ptr.ptr.i64, bitcast) + GEP(r.2, ptr.i64, r.1, ibcsub.1)
+, addtemplates("ptr packed2 packed3 packed4 packed5 packed6", symbol3(moduleref("builtin",typeT),"setfld",[typeint, seqof.typeT, typeT], typeint), 3, CAST(r.1, ibcsub.2, ptr.ptr.i64, bitcast) + GEP(r.2, ptr.i64, r.1, ibcsub.1)
 + STORE(r.3, r.2, ibcsub.3)
 + BINOP(r.3, ibcsub.1, C64.1, add))
-, addtemplates("int real ptr packed2 packed3 packed4 packed5 packed6", symbol("setfld(int, T seq seq, T seq)","T seq builtin","int"), 3, CAST(r.1, ibcsub.2, ptr.ptr.i64, bitcast) + GEP(r.2, ptr.i64, r.1, ibcsub.1)
+, addtemplates("int real ptr packed2 packed3 packed4 packed5 packed6", symbol3(moduleref("builtin",seqof.typeT),"setfld",[typeint, seqof.seqof.typeT, seqof.typeT], typeint), 3, CAST(r.1, ibcsub.2, ptr.ptr.i64, bitcast) + GEP(r.2, ptr.i64, r.1, ibcsub.1)
 + STORE(r.3, r.2, ibcsub.3)
 + BINOP(r.3, ibcsub.1, C64.1, add))
 , addtemplate(abortsymbol.typeint 
@@ -235,35 +236,36 @@ addtemplate(symbol("GEP(int seq, int)","interpreter","int"), 2, GEP(r.1, i64, ib
 , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 + CAST(r.2, r.1, ptr.i64, inttoptr)
 )
-, addtemplates("int boolean bit byte", symbol("callidx(T seq, int)","T builtin","int"), 4, GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
+,  addtemplates("int boolean bit byte", symbol3("internal","callidx",seqof.typeT,typeint,typeint ), 4, GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, ptr.function.[ i64, i64, ptr.i64, i64], inttoptr)
 + CALL(r.4, 0, 32768, function.[ i64, i64, ptr.i64, i64], r.3, slot.ibcfirstpara2, ibcsub.1, ibcsub.2))
-, addtemplate(symbol("callidx(real seq, int)","real builtin","real"), 4, GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
+, addtemplate(symbol3("internal","callidx",seqof.typereal,typeint,typereal ), 4, GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, ptr.function.[ double, i64, ptr.i64, i64], inttoptr)
 + CALL(r.4, 0, 32768, function.[ double, i64, ptr.i64, i64], r.3, slot.ibcfirstpara2, [ ibcsub.1, ibcsub.2]))
 , addtemplates("ptr packed2 packed3 packed4 packed5 packed6"
-, symbol("callidx(T seq, int)","T builtin","ptr")
+, symbol3("internal","callidx",seqof.typeT,typeint,typeptr )
 , 4
 , GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, ptr.function.[ ptr.i64, i64, ptr.i64, i64], inttoptr)
 + CALL(r.4, 0, 32768, function.[ ptr.i64, i64, ptr.i64, i64], r.3, slot.ibcfirstpara2, [ ibcsub.1, ibcsub.2])
 )
-, addtemplates("int   boolean byte bit ", symbol("idxseq(T seq, int)","internal","int"), 3, BINOP(r.1, ibcsub.2, C64.1, add) + GEP(r.2, i64, ibcsub.1, r.1)
+, addtemplates("int   boolean byte bit ", symbol3("internal","idxseq",seqof.typeT,typeint,typeint ), 3, BINOP(r.1, ibcsub.2, C64.1, add) + GEP(r.2, i64, ibcsub.1, r.1)
 + LOAD(r.3, r.2, i64))
-, addtemplate(symbol("idxseq(real seq, int)","internal","real"), 4, BINOP(r.1, ibcsub.2, C64.1, add) + GEP(r.2, i64, ibcsub.1, r.1)
+, addtemplate(symbol3("internal","idxseq",seqof.typereal,typeint,typereal ), 4, BINOP(r.1, ibcsub.2, C64.1, add) + GEP(r.2, i64, ibcsub.1, r.1)
 + LOAD(r.3, r.2, i64)
 + CAST(r.4, r.3, double, bitcast))
-, addtemplates("ptr packed2 packed3 packed4 packed5 packed6",symbol( "idxseq(T seq, int)","internal","ptr"), 4, BINOP(r.1, ibcsub.2, C64.1, add) + GEP(r.2, i64, ibcsub.1, r.1)
+, addtemplates("ptr packed2 packed3 packed4 packed5 packed6",symbol3("internal","idxseq",seqof.typeT,typeint,typeptr ), 4, BINOP(r.1, ibcsub.2, C64.1, add) + GEP(r.2, i64, ibcsub.1, r.1)
 + LOAD(r.3, r.2, i64)
 + CAST(r.4, r.3, ptr.i64, inttoptr))
 , addtemplate(GetSeqLength, 2, GEP(r.1, i64, ibcsub.1, C64.1) + LOAD(r.2, r.1, i64))
 , addtemplate(GetSeqType, 1, LOAD(r.1, ibcsub.1, i64))
-, addtemplate(symbol("load(ptr,int)","int builtin","int"),         2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
-, addtemplate(symbol("load(ptr,int)","boolean builtin","boolean"), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
-, addtemplate(symbol("load(ptr,int)","ptr builtin","ptr"),         3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)+ CAST(r.3, r.2, ptr.i64, inttoptr))
-, addtemplate(symbol("load(ptr,int)","real builtin","real"), 3,           GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+, addtemplate(symbol3(moduleref("builtin", typeint),"load",[typeptr,typeint],typeint ),         2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplate(symbol3(moduleref("builtin", typeboolean),"load",[typeptr,typeint],typeboolean ), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplate(symbol3(moduleref("builtin", typeptr),"load",[typeptr,typeint],typeptr ),         3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)+ CAST(r.3, r.2, ptr.i64, inttoptr))
+, addtemplate(symbol3(moduleref("builtin", typereal),"load",[typeptr,typeint],typereal ), 3,           GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, double, bitcast))
-,addtemplates("int byte bit ptr real boolean packed2 packed3 packed4 packed5 packed6",symbol("allocateseq:seq.T(int,int,int)","builtin","seq.T")
+,addtemplates("int byte bit ptr real boolean packed2 packed3 packed4 packed5 packed6",
+symbol4(moduleref."internal","allocateseq"_1,seqof.typeT,[typeint,typeint,typeint],seqof.typeT  )
     , 4
     , BINOP(r.1, ibcsub.1, C64.2, add)
      + CALL(r.2, 0, 32768, function.[ ptr.i64, i64, i64], symboltableentry("allocatespace", function.[ ptr.i64, i64, i64])
@@ -314,7 +316,7 @@ function buildconst(xx:symbol, alltypes:typedict)match5
   addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
  else if islit.xx then
   addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, if inmodule(xx,"$real") then Creal.value.xx else C64.value.xx)
- else if iswordseq.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.name.xx)
+ else if iswordseq.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.worddata.xx)
  else
   assert isword.xx report"not a constant"
    addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.wordname.xx )
@@ -322,7 +324,7 @@ function buildconst(xx:symbol, alltypes:typedict)match5
 function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)match5
  { xx will not be constant }
  if islocal.xx then addtemplate(xx, 0, emptyinternalbc,"LOCAL"_1, slot.value.xx)
- else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,"DEFINE"_1, slot.toint.Definearg.xx  )
+ else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,"DEFINE"_1, slot.toint.wordname.xx  )
  else if isblock.xx then addtemplate(xx, 0, emptyinternalbc,wordname.xx, 0, empty:seq.symbol, [ i64])
  else if isstart.xx then
  let typ = tollvmtype(alltypes, resulttype.xx)
@@ -349,13 +351,13 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)match5
    if length.intable > 0 then intable_1
    else if wordname.xx = "global"_1 ∧ inmodule(xx ,"$global")then
     addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
-   else if name.xx = "createthreadY" ∧ inmodule(xx , "builtin") then
+   else if wordname.xx = "createthreadY"_1 ∧ inmodule(xx , "builtin") then
    let l=for acc = empty:seq.llvmtype, e = paratypes.xx << 3 do acc + tollvmtype(alltypes, e)
           /for(acc+tollvmtype(alltypes, parameter.modname.xx) )
          assert true report "TTT"+print.xx+for ll="",e=l do ll+print.e /for(ll)
      addtemplate(xx, 0, emptyinternalbc,wordname.xx, nopara.xx, empty:seq.symbol,l)
    else
-     call(alltypes, xx,"CALL"_1, code.lookupcode(theprg, xx), mangledname.xx)
+     call(alltypes, xx,"CALL"_1, getCode(theprg, xx), mangledname.xx)
 
 function call(alltypes:typedict, xx:symbol, type:word, code:seq.symbol, symname:word)match5
 let list = tollvmtypelist(alltypes, xx)

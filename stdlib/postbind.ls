@@ -2,7 +2,9 @@ module postbind
 
 use standard
 
-use symbol
+use symbol 
+
+use program
 
 use seq.myinternaltype
 
@@ -19,7 +21,7 @@ use otherseq.word
 use seq.seq.mytype
 
 Function postbind(alltypes:typedict, dict:set.symbol, roots:seq.symbol, theprg:program, templates:program)program
-let root = newsymbol("Wroot", typeref(moduleref."W","W"), empty:seq.mytype, typeint)
+let root = symbol3("W","Wroot", typeint)
  postbindc(alltypes, dict, [ root], map(theprg, root, roots), templates, emptyprogram)
 
 Function postbindc(alltypes:typedict, dict:set.symbol, toprocess:seq.symbol, sourceX:program, tempX:program, resultX:program)program
@@ -31,29 +33,29 @@ Function postbindc(alltypes:typedict, dict:set.symbol, toprocess:seq.symbol, sou
    else
     let lr1 = lookupcode(source, s)
      { assert isdefined.lr1 report"postbind:expected to be defined:"+ print.s }
-     let r = postbind3b(alltypes, dict, code.lr1, parameter.modname.s, print.s, source, tempX)
-      next(w - s, if s = newsymbol("Wroot", typeref(moduleref."W","W"), empty:seq.mytype, typeint)then result
+     let r = postbind3b(alltypes, dict, code.lr1,  s, source, tempX)
+      next(w - s, if s = symbol3("W","Wroot", typeint) then result
       else map(result, s, code.r), sourceX.r, calls ∪ calls.r)
   /for(postbindc(alltypes, dict, toseq.calls, source, tempX, result))
 
 type resultpb is calls:set.symbol, code:seq.symbol, sourceX:program
 
-function postbind3b(alltypes:typedict, dict:set.symbol, code:seq.symbol, modpara:mytype, org:seq.word, source:program, tempX:program)resultpb
-let coretypes = false
+function postbind3b(alltypes:typedict, dict:set.symbol, code:seq.symbol, s:symbol, source:program, tempX:program)resultpb
+let modpara=parameter.modname.s let org=print.s
  for result = empty:seq.symbol, calls = empty:set.symbol, sourceX = source, x = code do
   if isspecial.x then
   let a = if isSequence.x then Sequence(parameter.getbasetype(alltypes, replaceT(modpara, resulttype.x)), nopara.x)
-  else if isstart.x then start.getbasetype(coretypes, alltypes, replaceT(modpara, resulttype.x))else x
+  else if isstart.x then start.getbasetype(  alltypes, replaceT(modpara, resulttype.x))else x
    next(result + a, calls, sourceX)
   else
    let isfref = isFref.x
    let sym = basesym.x
     if isconst.sym ∨ inmodule(sym ,"$global") then next(result + x, calls, sourceX)
-    else if module.sym = "builtin"then next(result + x, calls + sym, sourceX)
+    else if inmodule(sym, "internal")  then next(result + x, calls + sym, sourceX)
     else if inmodule(sym, "$for")then next(result + replaceTsymbol(modpara, sym), calls, sourceX)
     else
      let lr1 = lookupcode(sourceX, sym)
-     let newsym = if isempty.typerep.modpara ∨ isdefined.lr1 then sym else replaceTsymbol(modpara, sym)
+     let newsym = if  not.iscomplex.modname.s ∨ isdefined.lr1 then sym else replaceTsymbol(modpara, sym)
      let xx4 = if newsym = sym then lr1 else { check to see if template already has been processed } lookupcode(sourceX, newsym)
       if isdefined.xx4 then
       let p2 = if isfref then [ Fref.target.xx4]
@@ -69,21 +71,21 @@ let coretypes = false
        let encodingtype=typeref(moduleref."encoding","encoding")
        let encodingstatetype=typeref(moduleref."encoding","encodingstate")
        let encodingpairtype=typeref(moduleref."encoding","encodingpair")
-       let addefunc = newsymbol("add", addabstract( encodingtype, parameter.modname.newsym)
+       let addefunc = symbol3( addabstract( encodingtype, parameter.modname.newsym),"add"
        , [ addabstract(encodingstatetype, parameter.modname.newsym), addabstract( encodingpairtype, parameter.modname.newsym)]
        , addabstract(encodingstatetype, parameter.modname.newsym))
-       let add2 = newsymbol("addencoding", moduleref."builtin", [ typeint, typeptr, typeint, typeint], typeint)
+       let add2 =  symbol3(moduleref."internal","addencoding",  [ typeint, typeptr, typeint, typeint], typeint)
        let dc = deepcopysym(alltypes, addabstract( encodingpairtype, parameter.modname.newsym))
        let codeforbuiltin = [ Local.1, Local.2, Fref.addefunc, Fref.dc, add2, Words."NOINLINE STATE", Optionsym]
         next(result + if isfref then Fref.newsym else newsym, calls + newsym, map(sourceX, newsym, codeforbuiltin))
        else if fsig.sym = "getinstance:encodingstate.T"then
-       let get = newsymbol("getinstance",moduleref."builtin" ,[typeint] ,typeptr)
+       let get = symbol3("internal","getinstance" , typeint  ,typeptr)
        let codeforbuiltin = encodenocode.parameter.modname.newsym + [ get, Words."NOINLINE STATE", Optionsym]
         next(result + if isfref then Fref.newsym else newsym, calls + newsym, map(sourceX, newsym, codeforbuiltin))
        else
         let p2 = codeforbuiltin(alltypes, length.result > 0, newsym, sym, modpara)
          next(result + p2, calls, sourceX)
-      else if subseq(name.sym, 1, 2) = "type:"then
+      else if istype.sym then
       let p2 = definedeepcopy(alltypes, resulttype.newsym, org)
        next(result + if isfref then Fref.newsym else newsym, calls + newsym, map(sourceX, newsym, p2))
       else
@@ -112,10 +114,8 @@ let fx = lookupcode(tempX, sym)
  if isdefined.fx then
   if isdefined.lookupcode(sourceX, sym)then [ sym]else [ sym] + code.fx
  else
-  let k = lookup(dict, name.sym, paratypes.sym)
-   assert cardinality.k = 1 report"Cannot find template for" + name.sym + "("
-   + for acc ="", @e = paratypes.sym do list(acc,",", print.@e)/for(acc)
-   + ")"
+  let k = lookupsymbol(dict,  sym)
+   assert cardinality.k = 1 report"Cannot find template for" + print.sym   
    + "while processing"
    + org
     assert not(sym = k_1)report"ERR12" + print.sym + print.k_1
@@ -126,69 +126,63 @@ let fx = lookupcode(tempX, sym)
 function buildcode(acc:int, w:word)int
  acc * 2 + if w = first."real"then 1 else 0
 
-function getbasetype(coretypes:boolean, alltypes:typedict, t:mytype)mytype
-let a = getbasetype(alltypes, t)
- if length.typerep.a > 2 ∧ coretypes then typeptr else a
 
 function codeforbuiltin(alltypes:typedict, issequence:boolean, newsym:symbol, sym:symbol, modpara:mytype)seq.symbol
-let coretypes = false
- if(name.sym)_1 ∈ "offsets"then
+  if wordname.sym ∈ "offsets"then
   { symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)}
   let paratypes = paratypes.sym
   let offset = for acc = toint.(module.sym)_1, @e = subseq(paratypes, 2, length.paratypes)do
    acc + length.getsubflds(alltypes, replaceT(modpara, @e))
   /for(acc)
   let singlefld = 1 = length.getsubflds(alltypes, replaceT(modpara, resulttype.sym))
-   if singlefld then Fld(offset, getbasetype(coretypes, alltypes, replaceT(modpara, resulttype.sym)))+[Words."VERYSIMPLE", Optionsym]
-   else [ Lit.offset, newsymbol("GEP",moduleref."internal",[seqof.typeptr, typeint],typeptr), Words."VERYSIMPLE", Optionsym]
- else if(name.sym)_1 ∈ "build"then
+   if singlefld then Fld(offset, getbasetype( alltypes, replaceT(modpara, resulttype.sym)))+[Words."VERYSIMPLE", Optionsym]
+   else [ Lit.offset,  symbol3("internal","GEP",  seqof.typeptr, typeint ,typeptr), Words."VERYSIMPLE", Optionsym]
+ else if wordname.sym ∈ "build"then
  let c = for acc = empty:seq.seq.mytype, @e = paratypes.sym do acc + getsubflds(alltypes, replaceT(modpara, @e))/for(acc)
   buildconstructor(alltypes, if issequence then { for seq index func } [ typeint]else empty:seq.mytype, c, empty:seq.mytype, 1, 1, 0, empty:seq.symbol)
-   else if fsig.sym = "packed(T seq)"then [ blocksym(alltypes,(paratypes.newsym)_1)]
+   else if fsig.sym = "packed(T seq)"then [ blocksym.getbasetype(alltypes,(paratypes.newsym)_1)]
  else if fsig.sym =" _(T seq, index)"then    
   let seqtype = getbasetype(alltypes,first.paratypes.newsym )
- [  newsymbol("indexseq45", moduleref."builtin", [  seqtype, typeint], seqeletype.seqtype)]
+ [  symbol3( "internal","indexseq45",     seqtype, typeint , seqeletype.seqtype)]
   else if fsig.sym =" indexseqnobounds(T seq, index)" then    
   let seqtype = getbasetype(alltypes,first.paratypes.newsym )
- [  newsymbol("indexseqnobounds", moduleref."builtin", [  seqtype, typeint], seqeletype.seqtype)]
- else if(name.sym)_1 = "forexp"_1 then
+ [   symbol3("internal","indexseqnobounds",     seqtype, typeint , seqeletype.seqtype)]
+ else if wordname.sym = "forexp"_1 then
  let paras = for acc = empty:seq.mytype, p = paratypes.newsym do acc + getbasetype(alltypes, p)/for(acc)
-  [ newsymbol("forexp", moduleref."builtin", paras, last.paras)]
-   else if(name.sym)_1 = "createthreadY"_1 then
+  [ symbol3(moduleref."builtin","forexp",  paras, last.paras)]
+   else if wordname.sym = "createthreadY"_1 then
  let paras = for acc = empty:seq.mytype, p = paratypes.newsym do acc + getbasetype(alltypes, p)/for(acc)
-  [ newsymbol( "createthreadY", moduleref(" builtin" ,parameter.resulttype.sym), paras, getbasetype(alltypes, resulttype.sym))]
- else if(name.sym)_1 ∈ "assert"then
+  [  symbol3( moduleref(" builtin" ,parameter.resulttype.sym),"createthreadY",  paras, getbasetype(alltypes, resulttype.sym))]
+ else if wordname.sym ∈ "assert"then
  let t = getbasetype(alltypes, parameter.modname.newsym)
   [abortsymbol.t]
-  else if (name.sym)_1 ∈ "load "  then
+  else if  wordname.sym ∈ "load "  then
      [Idx.getbasetype(alltypes, parameter.modname.newsym)]
- else if(name.sym)_1 ∈ "setfld"then [ newsym]
- else if sym=symbol3("T builtin","bitcast",seqof.seqof.typeT,seqof.typeT)  then
-  [ symbol("bitcast(ptr)","builtin","ptr")]
+ else if wordname.sym ∈ "setfld"then [ newsym]
+ else if sym=symbol3(moduleref("builtin", typeT),"bitcast",seqof.seqof.typeT,seqof.typeT)  then
+  [ symbol3("internal","bitcast",typeptr,typeptr)]
  else if fsig.sym = "toseqX:T(ptr)" ∨ fsig.sym = "bitcast(T)"
  ∨ fsig.sym = "bitcast(T blockseq)"then
  let t = getbasetype(alltypes, resulttype.newsym)
-  [symbol3("builtin","toseq:" + print.t,typeptr,t) ]
+  [symbol4(moduleref."internal","toseq"_1,  t,[typeptr],t) ]
  else
-  assert sym=symbol3("T builtin","allocateseq:T",typeint,typeint,typeint,seqof.typeT) report"not expecting" + print.sym
+  assert sym=symbol3(moduleref("builtin",typeT),"allocateseq:T",typeint,typeint,typeint,seqof.typeT) report"not expecting" + print.sym
       [replaceTsymbol(getbasetype(alltypes, resulttype.newsym),
-        symbol("allocateseq:T(int,int,int)","builtin","T"))]
-  
- 
-function blocksym(alltypes:typedict, type:mytype)symbol
-let z = getbasetype(alltypes, type)
-let kind =(typerep.z)_(-2)
- if kind ∈ "real"then symbol("blockit(real seq)","real taublockseq","real seq")
- else if kind ∈ "int byte bit boolean"then symbol("blockit(int seq)","int taublockseq","int seq")
- else if kind ∈ "ptr seq"then symbol("blockit(ptr seq)","ptr taublockseq","ptr seq")
- else
-  assert kind ∈ "packed2 packed3 packed4 packed5 packed6"report"blocksym problem"
-   symbol("blockit(" + kind + "seq)","tausupport", [ kind,"seq"_1])
+      symbol4(moduleref."internal","allocateseq"_1,typeT,[typeint,typeint,typeint],typeT  ))]
 
+   
+ 
+   
+   function blocksym(  basetype:mytype)symbol
+     let p= parameter.basetype 
+     let p2=seqof.if p=typebyte /or p=typebit /or p=typeboolean then typeint else p
+     symbol3("tausupport","blockIt", p2, p2)
+     
+ 
 function encodenocode(typ:mytype)seq.symbol
-let gl = symbol("global:" + print.typ,"$global","int seq")
-let setfld = symbol("setfld(int, int seq, int)","int builtin","int")
-let encodenosym = newsymbol("encodingno", moduleref."tausupport", [ seqof.typeword ], typeint)
+let gl = symbol4(moduleref."$global","global"_1 ,  typ,empty:seq.mytype,seqof.typeint )
+let setfld =  symbol3(moduleref("builtin",typeint),"setfld",[typeint, seqof.typeint, typeint], typeint)
+let encodenosym =  symbol3("tausupport","encodingno",   seqof.typeword , typeint)
  if typ = typeref(moduleref."tausupport","typename" ) then [ Lit.0, gl, Lit.2, setfld, Define."xx",gl]+Fld(0,typeint) 
  else if typ = seqof.typeref(moduleref."?","char")then
   [ Lit.0, gl, Lit.1, setfld, Define."xx", gl]+Fld(0,typeint) 
@@ -199,18 +193,17 @@ function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
  if type=typeint /or type=typeword  /or isencoding.type  then [ Local.1]
  else if isseq.type   then
  let basetype = getbasetype(alltypes, type)
-  if  basetype =typeint /or basetype=typereal /or basetype=typeboolean  then [ Local.1, blocksym(alltypes, type)]
+  if  basetype =typeint /or basetype=typereal /or basetype=typeboolean  then [ Local.1, blocksym( basetype)]
   else
-   let cat = newsymbol("+", type, [ type, parameter.type], type)
+   let cat =  symbol3(type, "+",  [ type, parameter.type], type)
    let resulttype = basetype
    let elementtype = parameter.basetype
-   let element = newsymbol("element", moduleref("$for", elementtype), empty:seq.mytype, elementtype)
-   let acc = newsymbol("acc", moduleref("$for", typeptr), empty:seq.mytype, typeptr)
-   let idx = newsymbol("idx", moduleref."$for", empty:seq.mytype, typeint)
-    Emptyseq.elementtype
-    + [ Local.1, acc, element, acc, element, deepcopysym(alltypes, parameter.type), cat, Littrue, acc, newsymbol("forexp", moduleref("builtin",typeint), [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
+   let element = symbol3(moduleref("$for", elementtype),"element",  empty:seq.mytype, elementtype)
+   let acc =  symbol3(moduleref("$for", typeptr),"acc",  empty:seq.mytype, typeptr)
+     Emptyseq.elementtype
+    + [ Local.1, acc, element, acc, element, deepcopysym(alltypes, parameter.type), cat, Littrue, acc,  symbol3( moduleref("builtin",typeint),"forexp", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
     ]
-    + blocksym(alltypes, type)
+    + blocksym(  basetype)
  else
   let subflds = getsubflds(alltypes, type)
   let y = subfld(alltypes, subflds, 1, empty:seq.mytype, empty:seq.symbol)

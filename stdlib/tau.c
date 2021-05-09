@@ -144,6 +144,10 @@ BT getinstance(processinfo PD,BT  encodingnumber){
    return startencoding(PD,encodingnumber)->encodingstate ;
 }
 
+ BT getinstanceZinternalZint(processinfo PD,BT  encodingnumber){ 
+   return startencoding(PD,encodingnumber)->encodingstate ;
+}
+
  
  
 BT addencoding(processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
@@ -157,7 +161,7 @@ BT addencoding(processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,
  return (( BT *) newtable)[5];
 } 
 
-BT addencodingZbuiltinZintZintzseqZintZint
+BT XaddencodingZbuiltinZintZintzseqZintZint
  (processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
  struct einfo *e=startencoding(PD, encodingnumber)  ;
   assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
@@ -170,6 +174,18 @@ BT addencodingZbuiltinZintZintzseqZintZint
 } 
 
 BT addencodingZbuiltinZintZptrZintZint
+ (processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
+ struct einfo *e=startencoding(PD, encodingnumber)  ;
+  assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+  BT encodingpair=   (e->allocatein == PD ) ? P2 : (deepcopy)(e->allocatein,P2)  ;
+  BT newtable=(add2)(e->allocatein,e->encodingstate,encodingpair);
+  e->encodingstate=newtable;
+ assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+ // return  encoding
+ return (( BT *) newtable)[5];
+}
+
+BT addencodingZinternalZintZptrZintZint
  (processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
  struct einfo *e=startencoding(PD, encodingnumber)  ;
   assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
@@ -382,7 +398,7 @@ BT aborted(processinfo PD,BT pin){
     return (BT)( q->aborted);
 }
 
-BT abortedZtausupportTzprocess(processinfo PD,BT pin){
+BT abortedZinternalZTzprocess(processinfo PD,BT pin){
      processinfo q = ( processinfo)  pin;
     if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
     return (BT)( q->aborted);

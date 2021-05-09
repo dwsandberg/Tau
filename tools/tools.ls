@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use baseTypeCheck; baseTypeCheck("stdlib")
+#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
 
 ; use doc ; callgraphwithin("webassembly","wasm2")
 
@@ -57,7 +57,7 @@ print.compile("baseTypeCheck","stdlib")
 
 Module tools
 
-Library tools doc genLR1 profile taulextable basetypecheck
+Library tools doc genLR1 profile taulextable baseTypeCheck
 uses stdlib 
 exports doc genLR1 profile taulextable tools baseTypeCheck
 

@@ -12,8 +12,8 @@ use real
 
 use standard
 
-use symbol
-
+use symbol 
+ 
 use tausupport
 
 use words

@@ -1,10 +1,16 @@
 #!/usr/local/bin/tau   ; use baseTypeCheck; baseTypeCheck("stdlib")
 
+
+
+ 
 module baseTypeCheck
 
 use standard
 
-use symbol
+use symbolE
+
+/use symbolsbtc
+
 
 use seq.myinternaltype
 
@@ -38,7 +44,7 @@ for acc = empty:seq.word,count=0, s = toseq.prg.r2 do
  let p = process.checkkind(alltypes.r2, prg.r2, s)
  let b=if aborted.p then
      " /p ERROR:" + print.s + " /br" + message.p + " /br fullcode"
-   + for acc2 ="", @e = code.lookupcode(prg.r2, s)do acc2 + print.@e /for(acc2) 
+   + for acc2 ="", @e = getCode(prg.r2, s)do acc2 + print.@e /for(acc2) 
   else   result.p 
 next(acc + b, if isempty.b then count else count+1)/for(
 if count=0 then"Passed Base Type Check" else
@@ -66,7 +72,7 @@ function addlocals(localtypes:worddict.mytype, para:seq.mytype, localno:int, i:i
 function print(s:seq.mytype)seq.word for a ="", e = s do a + print.e /for(a)
 
 function checkkind(alltypes:typedict, result2:program, s2:symbol)seq.word
-let code = code.lookupcode(result2, s2)
+let code = getCode(result2, s2)
 let codeonly = removeoptions.removeoptions.removeoptions.code
  if length.codeonly = 0 then""
  else
@@ -75,14 +81,14 @@ let codeonly = removeoptions.removeoptions.removeoptions.code
   addpara(acc, alltypes, paratypes.s2, @e)/for(acc)
    let returntype= getbasetype3(alltypes, resulttype.s2)
  for  stk=empty:stack.mytype,localtypes=localdict,s=codeonly do 
-    assert not.isempty.module.s report"Illformed module on symbol"
+    {assert not.isempty.module.s report"Illformed module on symbol"}
     if isdefine.s then
      assert not.isempty.stk   report"Ill formed Define"
       next( pop.stk, replace(localtypes, wordname.s , top.stk))
-    else if module.s = "$words"then
+    else if inmodule(s, "$words") then
      next( push(stk, seqof.typeint), localtypes)
-    else if module.s = "$real"then next( push(stk, typereal), localtypes)
-    else if(module.s)_1 ∈ "$word $int $fref"then next( push(stk, typeint), localtypes)
+    else if inmodule(s ,"$real") then next( push(stk, typereal), localtypes)
+    else if inmodule(s,"$word") /or inmodule(s,"$int") /or inmodule(s,"$fref")  then next( push(stk, typeint), localtypes)
     else if isRecord.s then
      assert length.toseq.stk ≥ nopara.s report"stack underflow record"
       next( push(pop(stk, nopara.s), typeptr), localtypes)
@@ -107,17 +113,16 @@ let codeonly = removeoptions.removeoptions.removeoptions.code
     let no = nopara.s
     let loc = addlocals(localtypes, top(stk, nopara.s), firstvar.s + no - 1, no)
      next( push(pop(stk, nopara.s), getbasetype3(alltypes, resulttype.s)), loc)
-    else if(module.s)_1 = "para"_1 then
-     assert length.module.s > 1 report"illform para"
-     let x = lookup(localtypes,(module.s)_2)
+    else if isparameter.s  then
+     let x = lookup(localtypes,parameternumber.s)
      assert not.isempty.x report "NOT FOUND PARA"
         next( push(stk, x_1), localtypes)
     else if islocal.s then
-     assert not.isempty.name.s report"ill formed local"
-     let localtype = lookup(localtypes,(name.s)_1)
-      assert not.isempty.localtype report"local not defined" + name.s
+     {assert not.isempty.name2.s report"ill formed local"}
+     let localtype = lookup(localtypes,(wordname.s) )
+      assert not.isempty.localtype report"local not defined" + wordname.s
        next( push(stk, localtype_1), localtypes)
-    else if(name.s)_1 ∈ "packed blockit" ∧ nopara.s = 1 then
+    else if(wordname.s)  ∈ "packed blockit" ∧ nopara.s = 1 then
      next( stk, localtypes)
     else
      let parakinds = for acc = empty:seq.mytype, @e = paratypes.s do acc + getbasetype3(alltypes, @e)/for(acc)

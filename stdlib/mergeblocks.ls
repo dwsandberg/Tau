@@ -2,7 +2,7 @@ module mergeblocks2
 
 use standard
 
-use symbol
+use symbolE
 
 use words
 
@@ -157,7 +157,7 @@ function unreached(code:seq.symbol, nodes:seq.int, nextvar:int, reorgwhen:int)se
    let t = count + brt.sym
    let f = count + brf.sym
    let c = if t ∈ targets then 1 else 0 /if + if f ∈ targets then 2 else 0
-   let newcases = if n ∉ multpred ∧ fsig.code_(n - 1) = "=(int, int)"
+   let newcases = if n ∉ multpred ∧ code_(n - 1) = EqOp
    ∧ isconst.code_(n - 2)then
     cases + count
    else cases
@@ -269,7 +269,7 @@ let l = for l = empty:seq.int, ss = toseq.stk do
 function adjustvar(s:seq.symbol, delta:int)seq.symbol
  for acc = empty:seq.symbol, a = s do
   if islocal.a then acc + Local(toint.wordname.a  + delta)
-  else if isdefine.a then acc + Define.toword(toint.Definearg.a + delta)
+  else if isdefine.a then acc + Define.toword(toint.wordname.a + delta)
   else if isloopblock.a then acc + Loopblock(paratypes.a, firstvar.a + delta, resulttype.a)else acc + a
  /for(acc)
 
@@ -290,7 +290,7 @@ function countnodes(s:stack.int)int if top.s < 0 then 1 else 1 + countnodes.pop.
 
 Function removeismember(c:symbol, var:symbol)seq.symbol
  if iswordseq.c  then
- let words = wordconstantdata.c
+ let words = worddata.c
   if isempty.words then [ Litfalse]
   else
    let t = length.words + 2

@@ -32,8 +32,9 @@ main2 maindict mangle mytype pretty otherseq    process
 real seq set stack   symbol textio timestamp tree worddict words xxhash 
   sparseseq   standard testall
 svg svggraph displaygraph displaytextgraph display index
-barycenter bandeskopf makeDAG layergraph labeledgraph tausupport
+barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
   interpreter  llvm llvmconstants internalbc codegennew codetemplates persistant breakblocks
+  program symbolE
 
 * Removed maindict 
 
@@ -59,7 +60,7 @@ option.codegennew codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:s
 
 /option.pass1 maptemp(s: seq.mapele, templates:program) program PROFILE
 
-option.symbol lookupcode(p:program, s:symbol)programele PROFILE
+option.program lookupcode(p:program, s:symbol)programele PROFILE
 
 /option.set.symbol findelement(val:symbol, s:set.symbol)set.symbol PROFILE
 
@@ -144,7 +145,6 @@ option.timestamp   currenttime timestamp STATE
 
 option.symbol Lit(int)symbol INLINE
 
-option.symbol symbol(seq.word,seq.word,seq.word,bits) symbol NOINLINE
 
 option.symbol start(mytype) symbol NOINLINE
 

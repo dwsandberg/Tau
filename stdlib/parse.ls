@@ -9,7 +9,7 @@ use format
 
 use standard
 
-use symbol
+use symbolE 
 
 use parsersupport.bindinfo
 
@@ -126,7 +126,7 @@ function unaryop(R:reduction.bindinfo, input:seq.word, place:int, op:seq.word, e
     let processtype=typeref(moduleref."process" ,"process")
     let newcode =  [ Fref.dcrt_1, Fref.dcws_1, Fref.last.code.exp]
       +subseq(code.exp, 1, length.code.exp - 1)
-      +newsymbol("createthreadY", moduleref("builtin",typeint)  ,  [typeint,typeint,typeint]+paratypes.last.code.exp,
+      +symbol3(moduleref("builtin",typeint),"createthreadY",     [typeint,typeint,typeint]+paratypes.last.code.exp,
        addabstract(processtype, resulttype.last.code.exp))
      bindinfo(dict.R, newcode, [ addabstract(processtype, rt)],"")
  else
@@ -137,7 +137,7 @@ function unaryop(R:reduction.bindinfo, input:seq.word, place:int, op:seq.word, e
 function addparameter(dict:set.symbol, orgsize:int, input:seq.word, place:int, m:mytype)set.symbol
  let parametername=fldname.m
  let parametertype=fldtype.m
- assert isempty.lookup(dict, [ parametername], empty:seq.mytype) ∨ parametername = ":"_1 report errormessage("duplciate symbol:" + parametername, input, place)
+ assert isempty.lookupLocal(dict, [ parametername]) ∨ parametername = ":"_1 report errormessage("duplciate symbol:" + parametername, input, place)
  let parano = cardinality.dict - orgsize + 1
   dict + Parameter(parametername, parametertype, parano)
 
@@ -236,7 +236,7 @@ let types = types.R_2
    bindinfo(dict.R, code.R_2 + Sequence(types_1, length.types), [ seqof.(types_1)],"")
  else if ruleno = { A W = E } 36 then
 let name = tokentext.R_1 
-assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:"+ name, input, place) 
+assert isempty.lookupLocal(dict.R, name)report errormessage("duplicate symbol:"+ name, input, place) 
   let newdict = dict.R + Local(name,(types.R_3)_1)
    bindinfo(newdict, code.R_3 + Define.name, types.R_3, name)
  else if ruleno = { E let A E } 37 then
@@ -244,13 +244,12 @@ assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplic
  else if ruleno = { E assert E report D E } 38 then
   assert(types.R_2)_1 = typeboolean report errormessage("condition in assert must be boolean in:", input, place)
    assert(types.R_4)_1 = seqof.typeword report errormessage("report in assert must be seq of word in:", input, place)
-let assertsym=newsymbol(" assert:T", moduleref("builtin",(types.R_5)_1),[seqof.typeword],(types.R_5)_1) 
+let assertsym=symbol4( moduleref("builtin",(types.R_5)_1),"assert"_1,typeT,[seqof.typeword],(types.R_5)_1)
 bindinfo(dict.R, ifthenelse(code.R_2, code.R_5, code.R_4 + assertsym,(types.R_5)_1), types.R_5,"") 
  else if ruleno = { E I } 39 then bindlit.R
  else if ruleno = { E I.I } 40 then
   bindinfo(dict.R
-  , [ Words(tokentext.R_1 + "." + tokentext.R_3), 
-   newsymbol("makereal",moduleref."UTF8",[seqof.typeword],typereal )]
+  , [ Words(tokentext.R_1 + "." + tokentext.R_3), symbol3("UTF8","makereal", seqof.typeword,typereal )]
   , [ typereal]
   ,""
   )
@@ -266,11 +265,11 @@ bindinfo(dict.R, ifthenelse(code.R_2, code.R_5, code.R_4 + assertsym,(types.R_5)
   bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 + ":" + print.(types.R_3)_1)
  else if ruleno = { F1 W = E } 47 then
 let name = tokentext.R_1 
-  assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:" + name, input, place)
+  assert isempty.lookupLocal(dict.R, name)report errormessage("duplicate symbol:" + name, input, place)
    bindinfo(dict.R_1, code.R_3, types.R_3, name)
  else if ruleno = { F1 F1, W = E } 48 then
 let name = tokentext.R_3 
-  assert isempty.lookup(dict.R, name, empty:seq.mytype)report errormessage("duplicate symbol:" + name, input, place)
+  assert isempty.lookupLocal(dict.R, name)report errormessage("duplicate symbol:" + name, input, place)
    bindinfo(dict.R, code.R_1 + code.R_5, types.R_1 + types.R_5, tokentext.R_1 + tokentext.R_3)
  else if ruleno = { F2 F1 } 49 then forlocaldeclare(R_1, input, place)
  else if ruleno = { E for F2 do E end(E)} 50 then
@@ -286,17 +285,17 @@ function forlocaldeclare(a:bindinfo, input:seq.word, place:int) bindinfo
   assert isseq.seqtype    report "final expression in for list must be a sequence but it is of type:"+print.seqtype
   assert length.types.a ≠ 1 report errormessage("For must have at least one accumulator" + print.length.types.a, input, place)
   let elename= [last.tokentext.a  ] 
-  let elesym= newsymbol(elename,addabstract(typeref(moduleref."internal","$for"),parameter.seqtype),empty:seq.mytype,parameter.seqtype )
+  let elesym=  symbol3(addabstract(typeref(moduleref."internal","$for"),parameter.seqtype),elename ,empty:seq.mytype,parameter.seqtype )
    let  dict1= if length.types.a  >  1 then 
    { keep track so right next is used in nested fors }
-   let resultsym = newsymbol("next", moduleref."$for", types.a >> 1, 
+   let resultsym = symbol3(moduleref."$for","next"  , types.a >> 1, 
           typeref(moduleref."$base", [ toword.place,"$base"_1] ) )
-         let nestingsym=  newsymbol("for",resulttype.resultsym,empty:seq.mytype,resulttype.resultsym)
-         let oldnesting= lookup(dict.a, "for", empty:seq.mytype)
+         let nestingsym=  symbol3(resulttype.resultsym,"for",empty:seq.mytype,resulttype.resultsym)
+         let oldnesting= lookupLocal(dict.a, "for")
     if isempty.oldnesting then dict.a else dict.a - oldnesting /if + resultsym + nestingsym
       else dict.a 
   let accumulators = for acc = empty:seq.symbol, i = 1, name = tokentext.a >> 1 do
-   next(acc + newsymbol([ name], addabstract(typeref(moduleref."internal","$for"),(types.a)_i) , empty:seq.mytype,(types.a)_i), i + 1)
+   next(acc + symbol3(addabstract(typeref(moduleref."internal","$for"),(types.a)_i) ,[ name],  empty:seq.mytype,(types.a)_i), i + 1)
   /for(acc)
    bindinfo(dict1 ∪ asset(accumulators + elesym), code.a + accumulators + elesym, types.a, elename)
 
@@ -304,7 +303,7 @@ function forbody(dict:set.symbol ,vars:bindinfo,forbody:bindinfo,exitexp:bindinf
 let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = typeboolean then
  { while type is OK. now check body type }
       if length.types.vars > 2 then
- if resulttype.lookup(dict.vars,"for", empty:seq.mytype)_1 = (types.forbody)_1 then""
+ if resulttype.lookupLocal(dict.vars,"for" )_1 = (types.forbody)_1 then""
   else"incorrect body type:" + print.(types.forbody)_1
  else if first.types.vars = first.types.forbody then""
  else
@@ -313,7 +312,7 @@ let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = typebool
       else "while expresssion type must be boolean" 
    assert isempty.checktypes report errormessage(checktypes,input,place)
     let resulttype=first.types.endexp
-     let sym = newsymbol("forexp", moduleref("builtin",typeint) , types.vars + types.vars >> 1 + parameter.last.types.vars + typeptr
+     let sym = symbol3( moduleref("builtin",typeint) ,"forexp", types.vars + types.vars >> 1 + parameter.last.types.vars + typeptr
  + typeboolean
  + resulttype, resulttype)
  let newcode = code.vars + code.forbody

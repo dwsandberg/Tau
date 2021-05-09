@@ -141,7 +141,7 @@ type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
 
 type ptr is xx:int
 
-Export setfld(int, seq.int, int)int
+/Export setfld(int, seq.int, int)int
 
 Builtin getseqtype(ptr)int
 
@@ -159,6 +159,14 @@ Export blockit(s:seq.ptr)seq.ptr
 
 /Export blockit(s:seq.byte)seq.byte
 
+Export_(pseq.byte, int)byte
+
+Function blockIt(s:seq.int)seq.int  blockit.s
+
+Function blockIt(s:seq.real)seq.real blockit.s
+
+Function blockIt(s:seq.ptr)seq.ptr blockit.s
+
 Function blockit(s:seq.packed2)seq.packed2 blockit(s, 2)
 
 Function blockit(s:seq.packed3)seq.packed3 blockit(s, 3)
@@ -168,6 +176,17 @@ Function blockit(s:seq.packed4)seq.packed4 blockit(s, 4)
 Function blockit(s:seq.packed5)seq.packed5 blockit(s, 5)
 
 Function blockit(s:seq.packed6)seq.packed6 blockit(s, 6)
+
+Function blockIt(s:seq.packed2)seq.packed2 blockit(s, 2)
+
+Function blockIt(s:seq.packed3)seq.packed3 blockit(s, 3)
+
+Function blockIt(s:seq.packed4)seq.packed4 blockit(s, 4)
+
+Function blockIt(s:seq.packed5)seq.packed5 blockit(s, 5)
+
+Function blockIt(s:seq.packed6)seq.packed6 blockit(s, 6)
+
 
 Export_(blockseq.int, int)int
 

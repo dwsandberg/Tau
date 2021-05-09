@@ -4,7 +4,9 @@ use parse
 
 use standard
 
-use symbol
+use symbol 
+
+use program
 
 use textio
 
@@ -62,7 +64,11 @@ type linkage is result:program, compiled:set.symbol, roots:seq.symbol, mods:seq.
 
 function =(a:firstpass, b:firstpass)boolean modname.a = modname.b
 
-Function ?(a:firstpass, b:firstpass)ordering toalphaseq.typerep.modname.a ? toalphaseq.typerep.modname.b
+type mapele is key:symbol, target:symbol
+
+  
+function replaceTsymbol2(with:mytype, s:symbol)mapele mapele(replaceTsymbol(with, s), s)
+
 
 Function print(b:firstpass)seq.word
  " /br  /br" + print.modname.b + " /br defines" + printdict.defines.b
@@ -208,7 +214,7 @@ let x = find(modset, use)
    let exps = for acc = empty:seq.mapele, @e = toseq.exports.f do acc + replaceTsymbol2(with, @e)/for(acc)
    let unb = for acc = empty:seq.mapele, @e = unboundexports.f do acc + replaceTsymbol2(with, @e)/for(acc)
     expanduseresult(modset
-    + firstpass(replaceT(with, modname.f), for acc = empty:seq.mytype, @e = uses.f do acc + replaceT(with, @e)/for(acc), asset.for acc = empty:seq.symbol, @e = defs do acc + s.@e /for(acc), asset.for acc = empty:seq.symbol, @e = exps do acc + s.@e /for(acc), for acc = empty:seq.symbol, @e = unb do acc + s.@e /for(acc), empty:set.symbol, for acc = empty:seq.myinternaltype, @e = types.f do acc + replaceTmyinternaltype(with, @e)/for(acc), prg.f)
+    + firstpass(replaceT(with, modname.f), for acc = empty:seq.mytype, @e = uses.f do acc + replaceT(with, @e)/for(acc), asset.for acc = empty:seq.symbol, @e = defs do acc + key.@e /for(acc), asset.for acc = empty:seq.symbol, @e = exps do acc + key.@e /for(acc), for acc = empty:seq.symbol, @e = unb do acc + key.@e /for(acc), empty:set.symbol, for acc = empty:seq.myinternaltype, @e = types.f do acc + replaceTmyinternaltype(with, @e)/for(acc), prg.f)
     , map.acc2 + defs + exps + unb
     )
   else acc2
@@ -256,22 +262,21 @@ let r = for acc = acc0, @e = input do gathersymbols(acc, headdict, @e)/for(acc)
 
 type symboltext is ph:symbol, modname:mytype, text:seq.word
 
-function hash(s:symboltext)int hash(fsig.ph.s + module.ph.s)
+function hash(s:symboltext)int 
+{should include module in hash }
+fsighash.ph.s
+
 
 function =(a:symboltext, b:symboltext)boolean ph.a = ph.b
 
 
 function assignencoding( p:seq.encodingpair.symboltext,a:symboltext)int  assignrandom( p, a)
-
-function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:int, knownoffset:int, offset:seq.word, prg:program)program
- if i > length.syms then
-  { if offset =""then could build access function for type here but does not seem to impact overall performance to delay }
-  map(prg, constructor, indexfunc + symbol3("x builtin","build." + fsig.constructor,typeptr))
- else
-  let this = syms_i
-   if i = 1 ∧ length.syms = 1 ∧ knownoffset = 0 then
-    map(map(prg, this, [ Local.1]), constructor, [ Local.1])
-   else
+ 
+ function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:int, inknownoffset:int, offsetx:seq.word, inprg:program)program   
+   if   length.syms = 1 ∧ inknownoffset = 0 then
+    map(map(inprg, first.syms, [ Local.1]), constructor, [ Local.1])
+    else
+   for knownoffset=inknownoffset,  offset=empty:seq.mytype,prg=inprg, this = syms do
     let fldtype = resulttype.this
     let offsetinc =  if fldtype = typereal ∨ fldtype = typeint ∨ fldtype = typeboolean  ∨ fldtype = typeword
      ∨ isseq.fldtype  ∨ isencoding.fldtype then 1 else 0
@@ -283,22 +288,14 @@ function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:in
     else if isseq.fldtype  ∧ isencoding.parameter.fldtype then
      fldtype
     else typeptr
-     if offset = "" ∧ knowntype ≠ typeptr then
-      fldcode(constructor, indexfunc, syms, i + 1, knownoffset + 1, offset, map(prg, this, [ Local.1]+ Fld(knownoffset, knowntype ) ))
-     else
-      let newoffset = if offsetinc = 0 then
-       if isempty.offset then typerep.fldtype else offset + "," + typerep.fldtype
-      else offset
-       { assert not.isempty.offset report"problem X"+ typerep.fldtype +"idxfunc"+"constr"+ print.constructor + stacktrace }
-       let code = [ Local.1
-       , symbol("offsets(" + typerep.fldtype
-       + if isempty.offset then")"else"," + offset + ")", [ toword.knownoffset] + "builtin", typerep.fldtype)
-       ]
-        fldcode(constructor, indexfunc, syms, i + 1, knownoffset + offsetinc, newoffset, map(prg, this, code))
-        
-        newsymbol  ( "offsets",moduleref("builtin", typeref( moduleref."builtin",[toword.knownoffset]))
-          [fldtype]  ,fldtype)
-
+     if isempty.offset   ∧ knowntype ≠ typeptr then
+      next( knownoffset + 1, offset, map(prg, this, [ Local.1]+ Fld(knownoffset, knowntype ) ))
+  else
+      let newoffset = if offsetinc = 0 then offset + fldtype else offset
+       let code = [ Local.1,  symbol3(moduleref("builtin",typeref(moduleref."internal",  [ toword.knownoffset])),"offsets", [fldtype]+offset,fldtype)]
+          next( knownoffset + offsetinc, newoffset, map(prg, this, code))
+ /for(map(prg, constructor, indexfunc + symbol3(moduleref("builtin", typeint),"build." + worddata2.constructor,typeptr))
+ )
 
 function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpass
  if length.input = 0 then
@@ -318,31 +315,31 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
   else myinternaltype("record"_1, name, modname.f, types.b)
   let typesym = typesym.it
    if kind.it = "sequence"_1 then
-   let constructor = newsymbol([ name], modname.f, for acc = [ typeint], @e = subflds.it << 1 do acc + parameter.@e /for(acc), t)
+   let constructor =  symbol3(modname.f,[ name],  for acc = [ typeint], @e = subflds.it << 1 do acc + parameter.@e /for(acc), t)
    let fldsyms = for acc = empty:seq.symbol, m = subflds.it << 1 do
-     acc + newsymbol([fldname.m], modname.f, [ t], parameter.m)
+     acc +  symbol3(modname.f,[fldname.m],  [ t], parameter.m)
    /for(acc)
    let seqtype = seqof.parameter.modname.f 
-   let symtoseq = newsymbol("toseq", modname.f, [ t], seqtype)
-   let symfromseq = newsymbol("to:" + print.t, modname.f, [ seqtype], t)
-    let indexfunc = Fref.newsymbol("_", modname.f, [ addabstract(typeref(moduleref."fldname",[name]),typeT), typeint], typeT)
+   let symtoseq =  symbol3(modname.f,"toseq", [ t], seqtype)
+   let symfromseq = symbol4(modname.f,"to"_1,t,   [ seqtype], t)
+    let indexfunc = Fref.symbol3(modname.f,"_",  [ addabstract(typeref(moduleref."fldname",[name]),typeT), typeint], typeT)
    let prg1 = fldcode(constructor, [ indexfunc], fldsyms, 1, 2,"", prg.f)
-   let prg2 = map(prg1, symtoseq, [ Local.1, newsymbol("toseqX:T", moduleref("builtin",typeT), [ typeptr], seqof.typeT)])
+   let prg2 = map(prg1, symtoseq, [ Local.1, symbol4(moduleref("builtin",typeT),"toseqX"_1,typeT, [ typeptr], seqof.typeT)])
    let prg3 = map(prg2, symfromseq, ifthenelse([ Local.1, GetSeqType, indexfunc, EqOp], [ Local.1], Emptyseq.typeint, typeptr)
-   + symbol3("builtin","bitcast",typeptr,typeptr ))
+   + symbol3("internal","bitcast",typeptr,typeptr ))
    let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]
     if name ≠ "seq"_1 then
      firstpass(modname.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, types.f + it, prg3)
     else
-     let symlen = newsymbol("length", modname.f, [ t], typeint)
-     let symgettype = newsymbol("getseqtype", modname.f, [ t], typeint)
+     let symlen =  symbol3(modname.f,"length",  [ t], typeint)
+     let symgettype =  symbol3(modname.f,"getseqtype",  [ t], typeint)
      let prg4 = map(prg3, symlen, [ Local.1, GetSeqLength, Words."VERYSIMPLE", Optionsym])
      let prg5 = map(prg4, symgettype, [ Local.1, GetSeqType, Words."VERYSIMPLE", Optionsym])
       firstpass(modname.f, uses.f, defines.f ∪ asset(syms + symlen + symgettype), exports.f, unboundexports.f, unbound.f, types.f + it, prg5)
    else
-    let constructor = newsymbol([ name], modname.f, for acc = empty:seq.mytype, @e = subflds.it do acc + parameter.@e /for(acc), t)
+    let constructor =  symbol3(modname.f,[ name],  for acc = empty:seq.mytype, @e = subflds.it do acc + parameter.@e /for(acc), t)
     let fldsyms = for acc = empty:seq.symbol, m = types.b do
-      acc + newsymbol([fldname.m], modname.f, [ t], parameter.m)
+      acc +  symbol3(modname.f,[fldname.m],  [ t], parameter.m)
     /for(acc)
     let prg2 = fldcode(constructor, empty:seq.symbol, fldsyms, 1, 0,"", prg.f)
     let syms = fldsyms + [ constructor, typesym]
@@ -351,25 +348,30 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
  let t = parse(stubdict, getheader.input)
  let name = funcname.t
  let paratypes = funcparametertypes.t
- let sym = newsymbol(name, modname.f, paratypes, funcreturntype.t)
-  assert iscomplex.modname.f = "T"_1 ∈ fsig.sym report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input
+ let  tin= typeinname(name)
+  let sym= if isempty.tin then symbol3(modname.f, name, paratypes, funcreturntype.t)
+     else symbol4(modname.f, name_1, tin_1,paratypes, funcreturntype.t)
+   assert iscomplex.modname.f = "T"_1 ∈ worddata2.sym report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input
    if input_1 = "Export"_1 then
     firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, types.f, prg.f)
    else if input_1 = "unbound"_1 then
     firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + sym, types.f, prg.f)
    else
-    assert not(sym ∈ defines.f)report"Function" + name.sym + "is defined twice in module" + print.modname.f
+    assert not(sym ∈ defines.f)report"Function" + wordname.sym + "is defined twice in module" + print.modname.f
     let prg1 = if input_1 ∈ "Builtin builtin"then
       let code2 = 
-      if name.sym = "empty:seq.T"then Emptyseq.typeT
-      else if name.sym = "aborted"then
-       [ Local.1, symbol3("builtin","aborted" ,addabstract(typeref(moduleref."process","process"),typeT),typeboolean)]
-    else if name.sym = "true"then [ Littrue, Words."VERYSIMPLE  ", Optionsym]
-    else if name.sym = "false"then [ Litfalse, Words."VERYSIMPLE  ", Optionsym]
+      if  sym=  symbol4(modname.f,"empty"_1,seqof.typeT,empty:seq.mytype,seqof.typeT) then Emptyseq.typeT
+      else if wordname.sym = "aborted"_1 then
+       [ Local.1, symbol3("internal","aborted" ,addabstract(typeref(moduleref."process","process"),typeT),typeboolean)]
+    else if wordname.sym = "true"_1 then [ Littrue, Words."VERYSIMPLE  ", Optionsym]
+    else if wordname.sym = "false"_1 then [ Litfalse, Words."VERYSIMPLE  ", Optionsym]
     else
      for acc = empty:seq.symbol, @e = arithseq(length.paratypes, 1, 1)do acc + Local.@e /for(acc)
-     + if length.module.sym = 1 then [ sym, Words."BUILTIN", Optionsym]
-     else [ symbol(fsig.sym,"T builtin", returntype.sym)]
+     + if  not.iscomplex.modname.sym   then [ sym, Words."BUILTIN", Optionsym]
+     else [ 
+     if isempty.tin then symbol3(moduleref("builtin",typeT), name, paratypes, resulttype.sym)
+     else symbol4(moduleref("builtin",typeT), name_1, tin_1,paratypes, resulttype.sym)
+]
      map(prg.f, sym, code2)
     else let discard = encode.symboltext(sym, modname.f, input)
      prg.f
@@ -392,9 +394,12 @@ Function processOption(p:program, txt:seq.word)program
   let t = parse(dict, txt << (2 * length.modname))
   let name = funcname.t
   let paratypes = funcparametertypes.t
-    let sym = newsymbol(name,  moduleref([last.modname] ,typeref(moduleref.[last.modname],modname >> 1)) ,  paratypes, funcreturntype.t)
+  let modref=moduleref([last.modname] ,typeref(moduleref.[last.modname],modname >> 1))
+  let  tin= typeinname(name)
+  let sym= if isempty.tin then symbol3(modref, name, paratypes, funcreturntype.t)
+     else symbol4(modref, name_1, tin_1,paratypes, funcreturntype.t)
   let r = lookupcode(p, sym)
-  let option = fsig.(parsedcode.t)_1
+  let option = worddata.(parsedcode.t )_1
    assert isdefined.r report"Option problem" + modname + print.sym + EOL
     addoption(p, sym, option)
 

@@ -4,7 +4,9 @@ use fileio
 
 use standard
 
-use symbol
+use symbol 
+
+use program
 
 use seq.firstpass
 
@@ -52,13 +54,12 @@ function tolibmod(alltypes:typedict, p:program, templates:program, exports:seq.w
 
 
 function libtypes2(alltypes:typedict, p:program, templates:program, s:symbol)seq.myinternaltype
- if istypeexport.s then
+ if istype.s then
  let it = findelement(alltypes, resulttype.s)_1
   [ if isabstract.modname.it then myinternaltype("undefined"_1, name.it, modname.it, subflds.it)else it]
  else empty:seq.myinternaltype
 
 function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)symbol
-let cleansym = [ if isempty.zcode.sym then sym else symbol(fsig.sym, module.sym, returntype.sym)]
 let code = if isabstract.modname.sym then code.lookupcode(templates, sym)
 else
  let code1 = code.lookupcode(p, sym)
@@ -79,12 +80,13 @@ else
   if"BUILTIN"_1 ∈ optionsx ∨ "COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then
    z + Words.optionsx + Optionsym
   else z
- symbol(fsig.sym, module.sym, returntype.sym, cleansym + code)
-
+  cleansymbol(sym,code)
+  
+ 
 ----------------------------------
 
 function addlibsym(s:symbol)symbol
- Constant2.[ Words.fsig.s, Words.module.s, Words.returntype.s, addseq.for acc = empty:seq.symbol, @e = zcode.s do acc + addlibsym.@e /for(acc), Lit.extrabits.s, Record.[ typeptr, typeptr, typeptr, typeptr, typeptr]]
+ Constant2.[ Words.fsig.s, Words.typerep.modname.s, Words.typerep.resulttype.s, addseq.for acc = empty:seq.symbol, @e = zcode.s do acc + addlibsym.@e /for(acc), Lit.extrabits.s, Record.[ typeptr, typeptr, typeptr, typeptr, typeptr]]
 
 function addmytype(t:mytype)symbol Words.typerep.t
 

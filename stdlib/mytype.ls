@@ -42,4 +42,21 @@ Function typeboolean mytype mytype."boolean"
 
 Function typereal   mytype mytype."real"
 
-Function addabstract(a:word, b:mytype)mytype mytype(towords.b + a)
+function typeT mytype typeref(moduleref."internal", "T")
+
+
+function addabstract2(a:word, b:mytype)mytype mytype(towords.b + a)
+
+Function abstracttypeof(a:mytype)  mytype addabstract2(abstracttype.a,typeT)
+
+
+Function typeref(modname:mytype,typ:seq.word) mytype mytype.typ
+
+Function moduleref(modname:seq.word,para:mytype) mytype
+  addabstract2(modname_1,para)
+  
+  Function moduleref(modname:seq.word) mytype
+ { assert length.modname=1 report "problem moduleref"+modname+stacktrace}
+  mytype.[modname_1] 
+  
+  Function addabstract(a:mytype,t:mytype) mytype  addabstract2(abstracttype.a,t)

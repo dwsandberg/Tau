@@ -1,3 +1,5 @@
+
+
 Module main2
 
 use UTF8
@@ -25,7 +27,9 @@ use postbind
 
 use standard
 
-use symbol
+use symbolE
+
+use program
 
 use textio
 
@@ -151,7 +155,7 @@ let src = ["module $X","use standard"] + subseq(b, 2, length.b - 1)
 + ["Function runitx seq.word" + b_(length.b)]
 let link = pass1([ src],"$X", libmodules("stdlib" + lib))
 let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
- runitresult(code.lookupcode(prg2, symbol("runitx","$X","word seq")), alltypes.link)
+ runitresult(code.lookupcode(prg2, symbol3("$X","runitx",seqof.typeword )), alltypes.link)
 
 Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname)
 
