@@ -47,7 +47,7 @@ function typeT mytype typeref(moduleref."internal", "T")
 
 function addabstract2(a:word, b:mytype)mytype mytype(towords.b + a)
 
-Function abstracttypeof(a:mytype)  mytype addabstract2(abstracttype.a,typeT)
+Function abstracttypeof(a:mytype)  mytype typeref(moduleref."?",[abstracttype.a] )
 
 
 Function typeref(modname:mytype,typ:seq.word) mytype mytype.typ

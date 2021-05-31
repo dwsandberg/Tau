@@ -20,8 +20,6 @@ use encoding.seq.char
 
 use seq.encodingpair.seq.char
 
-/use encoding.seq.int
-
 Export type:word
 
 type word is asencoding:encoding.seq.char
@@ -36,8 +34,8 @@ Function hash(a:word)int hash.asencoding.a
 
 Function encoding(w:word)int valueofencoding.asencoding.w
 
- 
- function assignencoding( p:seq.encodingpair.seq.char,a:seq.char)int toint(bits.assignrandom(p, a) ∧ bits(toint(bits.1 << 31) - 1))
+function assignencoding(p:seq.encodingpair.seq.char, a:seq.char)int
+ toint(bits.assignrandom(p, a) ∧ bits(toint(bits.1 << 31) - 1))
 
 Function =(a:word, b:word)boolean asencoding.a = asencoding.b
 
@@ -51,7 +49,7 @@ Function merge(a:seq.word)word
 
 * Functions to perform alphabetical sorting
 
-Export type:alphaword s
+Export type:alphaword 
 
 type alphaword is toword:word
 

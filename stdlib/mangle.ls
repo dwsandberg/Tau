@@ -15,7 +15,7 @@ let d = codedown.w
 let para = for acc ="", e = d << 2 do
  if acc = ""then printtype.e else acc + "," + printtype.e
 /for(acc)
- d_1
+d_1
  + if isempty.para then""else"(" + para + ")"/if
  + if length.d > 1 then" /keyword module:" + printtype.d_2 else""
 
@@ -28,7 +28,7 @@ Function mangle(fsig:seq.word, module:seq.word)word
 let i = findindex("("_1, fsig)
 let modname = module
 let parameters = break(","_1,"", subseq(fsig, i + 1, length.fsig - 1))
- encodeword.for acc = empty:seq.char, @e = [ [ merge.subseq(fsig, 1, i - 1)], module] + parameters do
+encodeword.for acc = empty:seq.char, @e = [ [ merge.subseq(fsig, 1, i - 1)], module] + parameters do
   if isempty.acc then codeup.@e else acc + char.charmajorseparator + codeup.@e
  /for(acc)
 
@@ -45,14 +45,14 @@ function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.
  else if l_i = char1."Q"then
   assert i + 2 ≤ length.l report"format problem with codedown for" + encodeword.l
   let first = hexvalue.l_(i + 1)
-  let inc = if first > 0 then { one hex digit } 3 else { two hex digit } 6
+  let inc = if first > 0 then { one hex digit }3 else { two hex digit }6
   let t = first * 16 + hexvalue.l_(i + 2)
   let ch = if inc = 3 then char.t
   else
    char(((t * 16 + hexvalue.l_(i + 3)) * 16 + hexvalue.l_(i + 4))
    * 16
    + hexvalue.l_(i + 5))
-   if ch ∈ decodeword.".:"_1 then
+  if ch ∈ decodeword.".:"_1 then
     codedown(l, i + 1, empty:seq.char, words + encodeword.w + encodeword.[ ch], result)
    else codedown(l, i + inc, w + ch, words, result)
  else codedown(l, i + 1, w + l_i, words, result)
@@ -72,9 +72,9 @@ function addword(s:seq.char, w:word)seq.char
   codeup(acc, @e)
  /for(acc)
 
-function charmajorseparator int { Z } 90
+function charmajorseparator int { Z }90
 
-function charminorseparator int { z } 122
+function charminorseparator int { z }122
 
 function codeup(l:seq.char, char:char)seq.char
  { represent legal characters as themselves, and others as Qxx where xx is hexadecimal of byte or Q0xxxx }
@@ -92,4 +92,4 @@ function hexdigit(val:bits, digit:int)char legal_(toint(val >> (4 * digit) ∧ b
 Function manglednopara(w:word)int
  for acc =-1, @e = decodeword.w do acc + count(char.90, @e)/for(acc)
 
-function count(val:char, i:char)int if val = i then 1 else 0
+function count(val:char, i:char)int if val = i then 1 else 0 

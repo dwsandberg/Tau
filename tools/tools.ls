@@ -1,4 +1,8 @@
-#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau ; use doc ; callgraphwithin("typepass","typepass")
+
+; use doc ; doclibrary("typepass" )
+
+use doc ; doclibrary."stdlib"
 
 ; use doc ; callgraphwithin("webassembly","wasm2")
 

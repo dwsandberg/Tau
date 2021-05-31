@@ -14,8 +14,6 @@ use encoding.slot2
 
 use seq.slot2
 
-use seq.seq.int
-
 type slot2 is type:int, rec:seq.int, name:seq.word
 
 function =(a:slot2, b:slot2)boolean

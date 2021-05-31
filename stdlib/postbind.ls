@@ -157,8 +157,10 @@ function codeforbuiltin(alltypes:typedict, issequence:boolean, newsym:symbol, sy
  let t = getbasetype(alltypes, parameter.modname.newsym)
   [abortsymbol.t]
   else if  wordname.sym ∈ "load "  then
-     [Idx.getbasetype(alltypes, parameter.modname.newsym)]
+       [Idx.getbasetype(alltypes, resulttype.newsym)]
  else if wordname.sym ∈ "setfld"then [ newsym]
+ else if sym=symbol4(moduleref("builtin", typeT),"bitcast"_1,typeT,[typeptr],   seqof.typeT) then
+  [ symbol3("internal","bitcast",typeptr,typeptr)]
  else if sym=symbol3(moduleref("builtin", typeT),"bitcast",seqof.seqof.typeT,seqof.typeT)  then
   [ symbol3("internal","bitcast",typeptr,typeptr)]
  else if fsig.sym = "toseqX:T(ptr)" ∨ fsig.sym = "bitcast(T)"

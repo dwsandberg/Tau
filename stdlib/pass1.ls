@@ -58,7 +58,7 @@ Export templates(linkage)program
 
 Export alltypes(linkage)typedict
 
-Export type:linkage internaltype
+Export type:linkage 
 
 type linkage is result:program, compiled:set.symbol, roots:seq.symbol, mods:seq.firstpass, templates:program, alltypes:typedict, dict:set.symbol
 
@@ -192,17 +192,10 @@ let x = findelement2(dict, s)
  else
   firstpass(modname.f, uses.f, defines.f, exports.f, unboundexports.f + s, unbound.f, types.f, prg.f)
 
-function expanduse(acc2:expanduseresult)expanduseresult
-let modset = firstpasses.acc2
-let newset = for acc = acc2, @e = toseq.asset.for acc = empty:seq.mytype, @e = toseq.modset do acc + uses.@e /for(acc)do
- expanduse2(acc, @e)
-/for(acc)
- if cardinality.firstpasses.newset > cardinality.modset then expanduse.newset else acc2
-
-type expanduseresult is firstpasses:set.firstpass, map:seq.mapele
-
-function expanduse2(acc2:expanduseresult, use:mytype)expanduseresult
-let modset = firstpasses.acc2
+function expanduse(acc3:expanduseresult)expanduseresult
+let modset1 = firstpasses.acc3
+let newset = for acc2 = acc3, use = toseq.asset.for acc = empty:seq.mytype, @e = toseq.modset1 do acc + uses.@e /for(acc)do
+ let modset = firstpasses.acc2
 let x = find(modset, use)
  if iscomplex.use ∧ not(parameter.use = typeT)then
   if isempty.x then
@@ -220,6 +213,11 @@ let x = find(modset, use)
   else acc2
  else assert not.isempty.x report"Cannot find module" + print.use
   acc2
+/for(acc2)
+ if cardinality.firstpasses.newset > cardinality.modset1 then expanduse.newset else acc3
+
+type expanduseresult is firstpasses:set.firstpass, map:seq.mapele
+
 
 function hasunbound(f:firstpass)seq.firstpass if length.unboundexports.f = 0 then empty:seq.firstpass else [ f]
 
@@ -349,7 +347,9 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
  let name = funcname.t
  let paratypes = funcparametertypes.t
  let  tin= typeinname(name)
-  let sym= if isempty.tin then symbol3(modname.f, name, paratypes, funcreturntype.t)
+  let sym= if isempty.tin then  if name = "true"  then Littrue else 
+    if name = "false"  then Litfalse else
+    symbol3(modname.f, name, paratypes, funcreturntype.t)
      else symbol4(modname.f, name_1, tin_1,paratypes, funcreturntype.t)
    assert iscomplex.modname.f = "T"_1 ∈ worddata2.sym report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input
    if input_1 = "Export"_1 then
@@ -363,9 +363,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
       if  sym=  symbol4(modname.f,"empty"_1,seqof.typeT,empty:seq.mytype,seqof.typeT) then Emptyseq.typeT
       else if wordname.sym = "aborted"_1 then
        [ Local.1, symbol3("internal","aborted" ,addabstract(typeref(moduleref."process","process"),typeT),typeboolean)]
-    else if wordname.sym = "true"_1 then [ Littrue, Words."VERYSIMPLE  ", Optionsym]
-    else if wordname.sym = "false"_1 then [ Litfalse, Words."VERYSIMPLE  ", Optionsym]
-    else
+     else  
      for acc = empty:seq.symbol, @e = arithseq(length.paratypes, 1, 1)do acc + Local.@e /for(acc)
      + if  not.iscomplex.modname.sym   then [ sym, Words."BUILTIN", Optionsym]
      else [ 

@@ -51,7 +51,11 @@ static int alloccount=0;
 // myalloc does not zero memory so care is needed to initialize every fld when calling.
 
 BT spacecount=0;
- 
+
+BT * setZtausupportZptrZint(processinfo PD, BT *ptr,BT val) { *(ptr++)=val; return ptr;}
+
+BT * setZtausupportZptrZptr(processinfo PD, BT *ptr,BT val) { *(ptr++)=val; return ptr;}
+  
 
 BT allocatespace(processinfo PD, BT i)   { struct  spaceinfo *sp =&PD->space;
    sp->nextone=sp->nextone+i*8;

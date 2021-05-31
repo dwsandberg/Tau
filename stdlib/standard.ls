@@ -2,6 +2,8 @@ Module standard
 
 use UTF8
 
+use index
+
 use tausupport
 
 use words
@@ -72,8 +74,7 @@ if a then if b then true else false else if b then false else true
 
 Function toword(o:ordering)word"LT EQ GT"_(toint.o + 1)
 
-Function ∧(a:ordering, b:ordering)ordering  
- if a = EQ then b else a
+Function ∧(a:ordering, b:ordering)ordering if a = EQ then b else a
 
 --------------------
 
@@ -302,8 +303,6 @@ Export >>(s:seq.word, i:int)seq.word
 
 * usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 persistant llvm postbind reconstruct persistantseq opt2 symbol symbolE program parse libdesc internalbc intercode cvttoinst codegen pass2 codegennew funcsig interpreter exclude seq set otherseq standard bits tree graph UTF8 stack real ipair bitpackedseq fileio textio encoding words
 
-use index
-
 Export type:index
 
 Export +(i:index,b:int) index   index(rep.i+b)
@@ -316,16 +315,18 @@ module index
 
 use standard 
   
+use seq.index
+
 type index is rep:int
 
 Export type:index
 
 Export index(int) index
 
-use seq.index
-
 Function +(i:index,b:int) index   index(rep.i+b)
 
-Function toindex(i:int) index  assert i > 0 report "not an index"+stacktrace index(i-1)
+Function toindex(i:int)index
+ assert i > 0 report"not an index" + stacktrace
+  index(i - 1)
 
 Function toint(i:index) int   rep.i+1 

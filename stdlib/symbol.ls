@@ -265,7 +265,6 @@ Export Word(word)  symbol
 
 Export mangledname(s:symbol)word 
 
-Export islit(symbol) boolean
 
 
 Module program
@@ -599,12 +598,12 @@ Function ?(a:mytype, b:mytype)ordering towords.a ? towords.b
 _______________________________
 
 Function Parameter(name:word, type:mytype, parano:int)symbol
- symbol([ name], ["para"_1, toword.parano,"$"_1], towords.type, specialbit)
+ symbol([ name], towords.type+[ toword.parano,"$parameter"_1], towords.type, specialbit)
  
-Function parameternumber(s:symbol) word   (module.s)_2
+Function parameternumber(s:symbol) word   (module.s)_-2
 
 Function isparameter(s:symbol)boolean
- (module.s)_1 = "para"_1 ∧ last.module.s = "$"_1
+    last.module.s = "$parameter"_1
 
 Function istype(s:symbol)boolean subseq(fsig.s, 1, 2) = "type:"
 
@@ -662,8 +661,6 @@ Function isspecial(s:symbol)boolean(flags.s ∧ specialbit) = specialbit
 
 Function isconst(s:symbol)boolean(flags.s ∧ constbit) = constbit
 
-Function islit(s:symbol)boolean
- module.s = "$int" ∨ module.s = "$real" ∨ module.s = "$boolean"
 
 Function isFref(s:symbol)boolean module.s = "$fref"
 
@@ -715,9 +712,9 @@ Function Reallit(i:int)symbol symbol([ toword.i],"$real","real", constbit)
 
 Function Lit(i:int)symbol symbol([ toword.i],"$int","int", constbit)
 
-Function Littrue symbol symbol("1","$boolean","boolean", constbit)
+Function Littrue symbol symbol("true","standard","boolean", constbit)
 
-Function Litfalse symbol symbol("0","$boolean","boolean", constbit)
+Function Litfalse symbol symbol("false","standard","boolean", constbit)
 
 Function Words(s:seq.word)symbol symbol(s,"$words","word seq", constbit)
 
@@ -754,7 +751,7 @@ Function GetSeqType symbol symbol("getseqtype(ptr)","tausupport","int",0x0)
 
 
 Function abortsymbol(typ:mytype) symbol 
-let a=if abstracttype.typ = "seq"_1 then typeptr else  typ
+let a=if isseq.typ     then typeptr else  typ
 replaceTsymbol(a,symbol ("abort:T(word seq)","tausupport","T",0x0))
 
 
@@ -883,7 +880,7 @@ Function print3(it:myinternaltype)seq.word
   [ kind.it, name.it] + print.modname.it
   + for acc ="", e = subflds.it do acc + print.e /for(acc)
 
-function printfld(f:mytype)seq.word [ abstracttype.f,":"_1] + print.parameter.f
+function printfld(f:mytype)seq.word [ fldname.f,":"_1] + print.parameter.f
 
 Export fsig(symbol)seq.word
 
@@ -899,10 +896,7 @@ Function print(f:symbol)seq.word
 let module = module.f
 let fsig = fsig.f
  if islocal.f ∨ isparameter.f then [ merge(["%"_1] + fsig)]
- else if islit.f then
-  if module = "$boolean"then
-   if fsig = "0"then"Litfalse"else"Littrue"
-  else fsig
+ else if module ="$int" /or module= "$real" then fsig
  else if module = "$words"then
   if '"'_1 ∈ fsig then"'" + fsig + "'"
   else '"' + fsig + '"'
@@ -934,15 +928,15 @@ Export type:typedict
 Function getbasetype(d:typedict,intype:mytype) mytype
 { base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.bit 
    seq.packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
-  if abstracttype.intype = "$base"_1 then { used for type of next in for expression } intype
+  if abstracttypeof.intype = typeref(moduleref."$base","$base") then { used for type of next in for expression } intype
  else
   let isseq =  isseq.intype 
   let type= if isseq then parameter.intype else intype
-  if abstracttype.type ∈ " packed2 packed3 packed4 packed5 packed6" then 
+  if  type ∈ packedtypes then 
      if isseq then intype else typeptr
-  else  if abstracttype.type ∈ "int boolean real ptr"then 
+  else  if  type ∈ [typeint, typeboolean ,typereal, typeptr]then 
      if isseq then intype else type
-  else if abstracttype.type   ∈ " bit byte "then 
+  else if  type   ∈ [ typebit, typebyte ] then 
     if isseq then  intype else typeint
   else if isseq.type  /and isseq then seqof.typeptr
   else 
@@ -1074,9 +1068,9 @@ Function symboladdword symbol symbol("add(char seq encodingstate, char seq encod
 
 Function abortedsymbol symbol symbol("aborted(T process)","builtin","boolean",0x0)
 
-Function isseq(a:mytype) boolean   abstracttype.a="seq"_1 
+Function isseq(a:mytype) boolean   abstracttypeof.a = typeref(moduleref."seq", "seq")
 
-Function isencoding(a:mytype) boolean abstracttype.a ∈ "encoding"
+Function isencoding(a:mytype) boolean abstracttypeof.a = typeref(moduleref."encoding", "encoding")
 
 Function fldname(a:mytype) word   abstracttype.a
 

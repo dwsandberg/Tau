@@ -1,8 +1,12 @@
 Module otherseq.T
 
+use index
+
 use standard
 
 use seq.T
+
+use seq.index
 
 use seq.seq.T
 
@@ -34,7 +38,7 @@ Function replace(s:seq.T, index:int, value:T)seq.T
   for oldacc = initacc, e30 = initseq do oldacc + s_e30 /for(oldacc)
  else
   let p = to:pseq.T(s)
-   if index > length.a.p then
+  if index > length.a.p then
     a.p + replace(b.p, index - length.a.p, value)
    else replace(a.p, index, value) + b.p
 
@@ -80,7 +84,7 @@ let lengthb = length.b
  else if i > lengthb then GT
  else
   let c = ?alpha(a_i, b_i)
-   if c = EQ then subcmpalpha(a, b, i + 1)else c
+  if c = EQ then subcmpalpha(a, b, i + 1)else c
 
 Function sort(a:seq.T)seq.T
  if length.a < 2 then a
@@ -101,30 +105,30 @@ function submerge(a:seq.T, b:seq.T, i:int, j:int)seq.T
  else [ a_i] + submerge(a, b, i + 1, j)
 
 Function binarysearch(s:seq.T, val:T)int
- { binarysearch returns position in seq if found and the negation of the posistion if not found } binarysearch(s, 1, length.s, val)
+ { binarysearch returns position in seq if found and the negation of the posistion if not found }binarysearch(s, 1, length.s, val)
 
 Function binarysearch(s:seq.T, b:int, a:int, val:T)int
  if a < b then-(a + 1)
  else
   let p =(a + b) / 2
-  let c = s_toindex.p ? val
+  let c = s_(toindex.p) ? val
    if c = EQ then p
    else if c = GT then binarysearch(s, b, p - 1, val)else binarysearch(s, p + 1, a, val)
 
 Function setinsert(s:seq.T, val:T)seq.T
 let i = binarysearch(s, val)
- if i > 0 then s
+if i > 0 then s
  else subseq(s, 1,-i - 1) + [ val] + subseq(s,-i, length.s)
 
 Function setdelete(s:seq.T, val:T)seq.T
 let i = binarysearch(s, val)
- if i > 0 then
+if i > 0 then
   subseq(s, 1, i - 1) + subseq(s, i + 1, length.s)
  else s
 
 Function setreplaceorinsert(s:seq.T, val:T)seq.T
 let i = binarysearch(s, val)
- if i > 0 then
+if i > 0 then
   subseq(s, 1, i - 1) + [ val] + subseq(s, i + 1, length.s)
  else subseq(s, 1,-i - 1) + [ val] + subseq(s,-i, length.s)
 
@@ -136,7 +140,7 @@ Function break(seperator:T, quotes:seq.T, a:seq.T)seq.seq.T
 let b = for acc = empty:seq.int, i = 1, e = a do
  next(acc + if e ∈ ([ seperator] + quotes)then [ i]else empty:seq.int, i + 1)
 /for(acc)
- if isempty.b then [ a]else break(empty:seq.T, seperator, seperator, a, b, 1, 1, empty:seq.seq.T)
+if isempty.b then [ a]else break(empty:seq.T, seperator, seperator, a, b, 1, 1, empty:seq.seq.T)
 
 function break(str:seq.T, currentquote:T, seperator:T, a:seq.T, b:seq.int, j:int, start:int, result:seq.seq.T)seq.seq.T
  if j > length.b then result + (str + subseq(a, start, length.a))
@@ -151,14 +155,14 @@ function break(str:seq.T, currentquote:T, seperator:T, a:seq.T, b:seq.int, j:int
      break(subseq(a, start, i), currentquote, seperator, a, b, j + 2, i + 2, result)
     else
      assert a_i ≠ seperator ∧ a_(i + 1) = seperator report"format problem"
-      break(empty:seq.T, seperator, seperator, a, b, j + 2, i + 2, result + (str + subseq(a, start, i - 1)))
+     break(empty:seq.T, seperator, seperator, a, b, j + 2, i + 2, result + (str + subseq(a, start, i - 1)))
    else
     { not in quoted string }
     if a_i = seperator then
      break(empty:seq.T, seperator, seperator, a, b, j + 1, i + 1, result + (str + subseq(a, start, i - 1)))
     else
      assert isempty(str + subseq(a, start, i - 1))report"format problem"
-      break(str, a_i, seperator, a, b, j + 1, i + 1, result)
+     break(str, a_i, seperator, a, b, j + 1, i + 1, result)
 
 Function suffix(s:seq.T, len:int)seq.T subseq(s, length.s - len - 1, length.s)
 
@@ -200,14 +204,10 @@ Export <<(s:seq.T, i:int)seq.T
 
 Export >>(s:seq.T, i:int)seq.T
 
- use index
-  
-    use seq.index
-  
-  
+Function ascending(s:seq.T)seq.index
+ for a = empty:seq.index, e = arithseq(length.s, 1, 0)do a + index.e /for(a)
 
-Function ascending(s:seq.T)  seq.index
-for a=empty:seq.index,e=arithseq(length.s,1,0) do a+index(e) /for(a)
-
-Function descending(s:seq.T)  seq.index
-for a=empty:seq.index,e=arithseq(length.s,-1,length.s-1) do a+index(e) /for(a)
+Function descending(s:seq.T)seq.index
+ for a = empty:seq.index, e = arithseq(length.s,-1, length.s - 1)do
+  a + index.e
+ /for(a) 

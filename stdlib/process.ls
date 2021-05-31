@@ -16,3 +16,5 @@ Function result(p:process.T)T
   processresult.p
 
 Builtin processresult(p:process.T)T
+
+Export type:process.T

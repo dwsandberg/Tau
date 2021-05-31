@@ -12,9 +12,9 @@ use otherseq.byte
 
 use otherseq.int
 
-use seq.seq.seq.int
+/use seq.seq.seq.int
 
-use seq.seq.seq.word
+/use seq.seq.seq.word
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
 
@@ -61,12 +61,7 @@ Function breakparagraph(u:UTF8, i:int, last:int, result:seq.seq.word)seq.seq.wor
   else breakparagraph(u, i + 1, last, result)
  else breakparagraph(u, i + 1, last, result)
 
-Function classifychar seq.word ' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ 0 ]^_
-0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0
-0 0 0 { 0 } 0 0
-'
+Function classifychar seq.word ' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [ 0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 { 0 } 0 0 '
 
 Function towords(a:UTF8)seq.word towords.decodeUTF8.a
 

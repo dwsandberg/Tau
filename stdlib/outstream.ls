@@ -2,17 +2,17 @@ Module outstream.T
 
 use standard
 
+use stack.word
+
 use stack.seq.word
 
 unbound +(T, char)T
 
 unbound +(T, seq.char)T
 
-
     function addspace(nospace:boolean,result:T,toadd: word) T
            let i= findindex(toadd,specialwords:T)
             addspace2(nospace, result,toadd,false,i)
-
 
 function specialwords:T seq.word [space]+'-()].:_^"' + "/br. ," 
  
@@ -22,11 +22,10 @@ function specialwords:T seq.word [space]+'-()].:_^"' + "/br. ,"
            next(i < length.specialwords:T,  addspace2(ns, a,this,false,i))
            /for(a)
 
-
  function addspace2(nospace:boolean,a:T,this:word,escapehtml:boolean,i:int) T
      let wordseq=specialwords:T
     if i=length.wordseq then {, no space before but space after}   a + char1.","
-    else if  i=length.wordseq-2  then{ /br   }  (a + char.10)
+ else if i = length.wordseq - 2 then {  /br }a + char.10
     else if  i=length.wordseq-1  then {. } a + char1."."+char.32
     else if i < length.wordseq then   { no space before or after }    (a + (decodeword.merge.wordseq)_i)
    else
@@ -111,7 +110,6 @@ Function processpara(x:T, a:seq.word)T
    next( i < length.specialwords,addspace2(nospace, result,toadd,true,i),stk,this)
  /for(if last=none then result else addspace(nospace,result,last))
 
-use stack.word
 
 Function processtotext(x:T,a:seq.word) T
 let specialwords=specialwords:T

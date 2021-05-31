@@ -59,7 +59,7 @@ let startshift = toint(bits(start - 1) ∧ bits.63)
 let finishshift = toint(bits(finish - 1) ∧ bits.63)
 let startpart = ithword(s, startword) >> startshift
 let finishpartmask = bits.-1 >> (63 - partbits)
- if len ≤ 64 then
+if len ≤ 64 then
   if len ≤ 0 then empty:bitstream
   else if startword = finishword then bitstream(len, startpart ∧ finishpartmask, empty:seq.bits)
   else
@@ -70,19 +70,19 @@ let finishpartmask = bits.-1 >> (63 - partbits)
   bitstream(len, endpart, subseq(fullwords.s, startword, finishword - 1))
  else
   let endpart = if finishshift ≥ startshift then
-   { all bits in endpart come from finishword } ithword(s, finishword) >> (64 - startshift) ∧ finishpartmask
+   { all bits in endpart come from finishword }ithword(s, finishword) >> (64 - startshift) ∧ finishpartmask
   else
    ithword(s, finishword) << (64 - startshift) ∧ finishpartmask
    ∨ ithword(s, finishword - 1) >> (64 - startshift)
   let firstpart = subseq(fullwords.s + endpart.s, startword, if finishshift = 63 then finishword else finishword - 1)
-   bitstream(len, endpart, shiftleft(2, startpart, firstpart, startshift, empty:seq.bits))
+  bitstream(len, endpart, shiftleft(2, startpart, firstpart, startshift, empty:seq.bits))
 
 /function cmp(a:bitstream, b:bitstream, i:int, offseta:int)boolean if i > length.b then true else if singlebit(a, i + offseta)= singlebit(b, i)then cmp(a, b, i + 1, offseta)else false
 
 Function +(a:bitstream, b:bitstream)bitstream
  { steal bits from b to make full words in a }
  let partbitsa = toint(bits.length.a ∧ bits(64 - 1))
-  if partbitsa = 0 ∧ length.a > 0 then
+ if partbitsa = 0 ∧ length.a > 0 then
    { no need to steal bits }
    bitstream(length.a + length.b, endpart.b, fullwords.a + endpart.a + fullwords.b)
   else if length.b ≤ 64 then add(a, endpart.b, length.b)
@@ -96,14 +96,14 @@ Function +(a:bitstream, b:bitstream)bitstream
      else bitstream(length.a + length.b, overlap, fullwords.a)
     else
      let allwords = shiftleft(2, firstword.b >> steal, fullwords.b + endpart.b, partbitsa, firstpart)
-      if partbitsb > steal ∨ partbitsb = 0 then
+     if partbitsb > steal ∨ partbitsb = 0 then
        bitstream(length.a + length.b, endpart.b >> steal, allwords)
       else bitstream(length.a + length.b, last.allwords, allwords >> 1)
 
 Function add(a:bitstream, b:bits, nobits:int)bitstream
 let partbitsa = toint(bits.length.a ∧ bits(64 - 1))
 let firstwordb = b ∧ bits.-1 >> (64 - nobits)
- if partbitsa = 0 ∧ length.a > 1 then
+if partbitsa = 0 ∧ length.a > 1 then
   bitstream(length.a + nobits, firstwordb, fullwords.a + endpart.a)
  else
   let overlap = firstwordb << partbitsa ∨ endpart.a
@@ -121,4 +121,4 @@ function shiftleft(i:int, leftover:bits, allwords:seq.bits, shiftleft:int, resul
  if i > length.allwords then result
  else
   let next = allwords_i
-   shiftleft(i + 1, next >> (64 - shiftleft), allwords, shiftleft, result + (leftover ∨ next << shiftleft))
+   shiftleft(i + 1, next >> (64 - shiftleft), allwords, shiftleft, result + (leftover ∨ next << shiftleft)) 

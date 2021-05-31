@@ -1,8 +1,8 @@
 Module seq.T
 
-use standard
-
 use index
+
+use standard
 
 unbound =(T, T)boolean
 
@@ -21,7 +21,7 @@ Builtin empty:seq.T seq.T { empty seq }
 Builtin  _(a:seq.T,i:index)  T   
  
 Function _(a:seq.T, c:int)T
- a_toindex.if c < 0 then length.a + c + 1 else c
+ a_(toindex.if c < 0 then length.a + c + 1 else c /if)
 
 Function =(a:seq.T, b:seq.T)boolean
  for isequal = length.a = length.b, i = 1, e = a while isequal do next(e = b_i, i + 1)/for(isequal)
@@ -51,10 +51,11 @@ let i = ii + start.s
 let len = length.a.s
  if i > len then
  let x = to:pseq.T(b.s)
-  if length.toseq.x = 0 then(b.s)_index(i - len-1)else x_(i - len)
+ if length.toseq.x = 0 then(b.s)_(index(i - len - 1))
+  else x_(i - len)
  else
   let x = to:pseq.T(a.s)
-   if length.toseq.x = 0 then(a.s)_index(i-1) else x_i
+  if length.toseq.x = 0 then(a.s)_(index(i - 1))else x_i
 
 Function ispseq(s:seq.T)boolean length.toseq.to:pseq.T(s) ≠ 0
 
@@ -76,7 +77,7 @@ function cat3(totallength:int, a:seq.T, b:seq.T, c:seq.T)seq.T
 
 function catnonzero(a:seq.T, b:seq.T)seq.T
 let totallength = length.a + length.b
- if totallength = 2 then [ a_index.0, b_index.0]
+ if totallength = 2 then [ a_(index.0), b_(index.0)]
  else
   let ta = to:pseq.T(a)
    if length.toseq.ta = 0 then
@@ -110,9 +111,9 @@ let adjfinish = start.p + finish - length.a.p
   subseq(a.p, start.p + start, length.a.p) + subseq(b.p, 1, adjfinish)
  else { all in part a } subseq(a.p, start.p + start, start.p + finish)
 
-Function last(a:seq.T)T a_toindex.(length.a)
+Function last(a:seq.T)T a_(toindex.length.a)
 
-Function first(a:seq.T)T a_toindex.1
+Function first(a:seq.T)T a_(toindex.1)
 
 Function isempty(a:seq.T)boolean length.a = 0
 

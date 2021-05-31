@@ -206,7 +206,6 @@ compound accumaltor possiblities
 +(int graph, int arc)graph.int
 ,"advancepnp(pnpstate, word)format"
 ,"state100(state100, program, symbol, symbol)breakblocks"
-,"+(out23, char)format"
 ,"deletearc(word seq graph, word seq arc)graph.seq.word"
 ,"+(word seq graph, word seq arc)graph.seq.word"
 ,"+(place, char seq encodingpair)maindict"] 
@@ -323,7 +322,7 @@ function iscompound (bodyexp:seq.symbol) boolean
 let sym= bodyexp_(-3)
  isblock.last.bodyexp
  ∧ (wordname.sym = "next"_1
- ∧  nopara.sym > 3 ∧  inmodule( sym , "$for") ∨ { assert case } abstracttypeof.resulttype.sym=addabstract(typeref(moduleref."?","$base"),typeT))
+ ∧  nopara.sym > 3 ∧  inmodule( sym , "$for") ∨ { assert case } abstracttypeof.resulttype.sym=typeref(moduleref."internal","$base"))
    
  function  exitlocations(s:seq.symbol,i:int,result:seq.int) seq.int
         let sym=s_i

@@ -82,8 +82,8 @@ Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
 
 Function createfile(name:seq.word, a:seq.int)int
  createfile3(length.a * 8, for acc = empty:seq.bits, @e = packed.a do acc + bits.@e /for(acc), tocstr.name)
- 
- Function toUTF8(a:seq.word)UTF8 addspace(a, 1, true, emptyUTF8)
+
+Function toUTF8(a:seq.word)UTF8 addspace(a, 1, true, emptyUTF8)
 
 function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
  { nospace means add no space before word s_i.comma adds space after but not before single means add no space before or after }
@@ -92,10 +92,10 @@ function addspace(s:seq.word, i:int, nospace:boolean, result:UTF8)UTF8
   let this = s_i
    if this = " /br"_1 then addspace(s, i + 1, true, result + char.10)
    else if this = ","_1 then
-    { no space before but space after } addspace(s, i + 1, false, result + char1.",")
+    { no space before but space after }addspace(s, i + 1, false, result + char1.",")
    else
     let d = for acc = emptyUTF8, @e = decodeword.this do acc + encodeUTF8.@e /for(acc)
-     if this ∈ ('-()].:"_^. ' + space)then
-      { no space before or after } addspace(s, i + 1, true, result + d)
+    if this ∈ ('-()].:"_^. ' + space)then
+      { no space before or after }addspace(s, i + 1, true, result + d)
      else
-      addspace(s, i + 1, false, if nospace then result + d else result + char.32 + d)
+      addspace(s, i + 1, false, if nospace then result + d else result + char.32 + d) 

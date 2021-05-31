@@ -6,11 +6,11 @@ use bits
 
 use standard
 
+use outstream.UTF8
+
 use seq.byte
 
 use set.int
-
-use outstream.out23
 
 use stack.word
 
@@ -36,7 +36,7 @@ let unknown =-7
  else if state = findend then if ele ∈ ")"then extendtype2 else findend
  else if state = extendtype then
   if ele ∈ "."then extendtype2
-  else if ele ∈ "//"then incomment else { done } idx - 1
+  else if ele ∈ "//"then incomment else { done }idx - 1
  else if state = extendtype2 then extendtype
  else if state = incomment then if ele ∈ "//"then extendtype else incomment else unknown
 
@@ -46,20 +46,16 @@ let t = for state = 0, idx = 1, ele = s while state ≤ 0 do next(changestate(st
 let theend = if t < 1 then length.s else t
  if istype then
  let tt = subseq(s, 4, theend)
-  subseq(s, 1, theend) + "(" + tt + ")" + tt + "stub"
+ subseq(s, 1, theend) + "(" + tt + ")" + tt + "stub"
  else subseq(s, 1, theend) + "stub"
 
-
-
-
 Function escapeformat(s:seq.word)seq.word
- for acc ="", c = s do acc + if c ∈ " /<  /br  /p  /row"then
-  if length.s > 20 then merge.[ encodeword.[ char.10], c]else merge.[ space, c]
- else if c ∈ " /keyword  />  /em  /strong  /cell"then merge.[ space, c]else c
-/for(acc)
- 
-
-
+ for acc ="", c = s do
+  acc
+  + if c ∈ " /<  /br  /p  /row"then
+   if length.s > 20 then merge.[ encodeword.[ char.10], c]else merge.[ space, c]
+  else if c ∈ " /keyword  />  /em  /strong  /cell"then merge.[ space, c]else c
+ /for(acc)
 
 Function htmlheader seq.word { the format of the meta tag is carefully crafted to get math unicode characters to display correctly }"<meta"
 + merge.' http-equiv ="Content-Type"'
@@ -69,7 +65,7 @@ Function htmlheader seq.word { the format of the meta tag is carefully crafted t
 + ' span.keyword { color:blue ; } span.keywords { color:blue ; } '
 + ' span.literal { color:red ; } span.comment { color:green ; } '
 + ' span.block { padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ; } '
-+ ' form{margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style> '
++ ' form { margin:0px ; } html, body { margin:0 ; padding:0 ; height:100% ; }.container { margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ; }.floating-menu { margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ; }.content { margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; }--> </style> '
 + EOL
 
 type pnpstate is lastbreak:int, result:seq.word, matchthis:word, instring:boolean
@@ -110,11 +106,6 @@ let newlastbreak = if c ∈ [ 3, 4]then 0 else lastbreak + 1
 
 _____________________________
 
-Function toUTF8bytes( output:seq.word) seq.byte 
- toseqbyte.processpara(  emptyUTF8 ,  "/< noformat " +  htmlheader+"   />"+ output)
+Function toUTF8bytes(output:seq.word)seq.byte toseqbyte.processpara(emptyUTF8," /< noformat" + htmlheader + " />" + output)
 
-use outstream.UTF8
-
-Function toUTF8textbytes( output:seq.word) seq.byte 
- toseqbyte.processpara(  emptyUTF8 ,  "/< noformat " +  htmlheader+"   />"+ output)
-
+Function toUTF8textbytes(output:seq.word)seq.byte toseqbyte.processtotext(emptyUTF8, output) 

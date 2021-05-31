@@ -314,11 +314,17 @@ function buildconst(xx:symbol, alltypes:typedict)match5
  let mn = mangledname.f1
  let functyp = ptr.tollvmtype(alltypes, f1)
   addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
- else if islit.xx then
-  addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, if inmodule(xx,"$real") then Creal.value.xx else C64.value.xx)
- else if iswordseq.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.worddata.xx)
- else
-  assert isword.xx report"not a constant"
+ else if inmodule(xx,"$real") then
+   addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1,   Creal.value.xx )
+ else  if inmodule(xx,"$int")  then
+  addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1,    C64.value.xx)
+else if iswordseq.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.worddata.xx)
+ else if xx=Littrue then 
+  addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1,   C64.1  )
+else if xx=Litfalse then 
+  addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1,   C64.0  )
+else
+  assert isword.xx report"not a constant"+print.xx
    addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.wordname.xx )
 
 function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)match5

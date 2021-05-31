@@ -65,14 +65,19 @@ function pprettyfile(lib:word, newlibdir:word, file:word)seq.word
 let p = process.prettyfile(lib, newlibdir, file)
  if aborted.p then message.p else result.p
 
+use seq.byte
+
 function prettyfile(lib:word, newlibdir:word, file:word)seq.word
 let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
-let b = for acc ="", @e = prettyfile("", gettext.file2)do list(acc," /p", @e)/for(acc)
-let discard = createfile([ merge([ newlibdir] + "/" + file + ".ls")],  toUTF8textbytes.b)
+let b = for acc ="", @e = prettyfile("", gettext.file2)do  acc+"/p"+ @e /for(acc << 1)
+let discard = createfile([ merge([ newlibdir] + "/" + file + ".ls")],  toUTF8textbytes.b << 1)
  b
 
 Function prettyfile(modhead:seq.word, s:seq.seq.word)seq.seq.word
  prettyfile(modhead, s, 1, empty:seq.seq.word, empty:seq.seq.word, empty:seq.seq.word)
+ 
+ Function pretty(s:seq.word) seq.word  let tmp0=text.(toseq.parse.s)_1
+     removeclose(tmp0, length.tmp0)
 
 function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, libbody:seq.seq.word, result:seq.seq.word)seq.seq.word
  if i > length.l then result + sortuse.uses + libbody

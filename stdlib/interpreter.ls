@@ -69,8 +69,12 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)int
    else if  iswordseq.sym  then
    let a = for acc = empty:seq.int, @e = fsig.sym do acc + hash.@e /for(acc)
     interpret(alltypes, code, i + 1, push(stk, GEP(a, 0)))
-   else if module.sym = "$int" ∨ module.sym = "$real" ∨ module.sym = "$boolean"then
+   else if module.sym = "$int" ∨ module.sym = "$real" then  
     interpret(alltypes, code, i + 1, push(stk, toint.(fsig.sym)_1))
+   else if sym=Littrue then 
+     interpret(alltypes, code, i + 1, push(stk, 1))
+   else if sym=Litfalse then 
+     interpret(alltypes, code, i + 1, push(stk, 0))  
    else if last.module.sym = "$sequence"_1 then
     interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 0)))
    else if module.sym = "$record"then
