@@ -33,7 +33,7 @@ Function_(s:set.T, i:int)T(toseq.s)_i
 
 Function findelement(val:T, s:set.T)set.T
 let i = binarysearch(toseq.s, val)
- if i > 0 then set.[(toseq.s)_i]else empty:set.T
+if i > 0 then set.[(toseq.s)_i]else empty:set.T
 
 Function ∩(a:set.T, b:set.T)set.T set.intersect(toseq.a, toseq.b, 1, 1)
 
@@ -64,13 +64,13 @@ function union(a:seq.T, b:seq.T, i:int, j:int, result:seq.T)seq.T
   union(a, b, i + 1, j + 1, result + b_j)
  else
   let p = binarysearch(a, i + 1, length.a, b_j)
-   if p > 0 then
+  if p > 0 then
     union(a, b, p + 1, j + 1, result + subseq(a, i, p))
    else
     union(a, b,-p, j + 1, result + subseq(a, i,-p - 1) + [ b_j])
 
 Function-(a:set.T, b:set.T)set.T
- { elements in a but not in b } set.diff(toseq.a, toseq.b, 1, 1)
+ { elements in a but not in b }set.diff(toseq.a, toseq.b, 1, 1)
 
 Function-(a:set.T, b:T)set.T set.setdelete(toseq.a, b)
 
@@ -121,7 +121,7 @@ unbound ?2(T, T)ordering
 
 Function findelement2(a:set.T, n:T)set.T
 let i = binarysearch2(toseq.a, 1, length.toseq.a, n)
- if i < 0 then asset.empty:seq.T
+if i < 0 then asset.empty:seq.T
  else
   asset.for acc = empty:seq.T, @e = subseq(toseq.a, expandrangedown(toseq.a, n, i), expandrangeup(toseq.a, n, i))do
    acc + @e
@@ -142,5 +142,5 @@ function binarysearch2(s:seq.T, b:int, a:int, val:T)int
  else
   let p =(a + b) / 2
   let c = ?2(s_p, val)
-   if c = EQ then p
-   else if c = GT then binarysearch2(s, b, p - 1, val)else binarysearch2(s, p + 1, a, val)
+  if c = EQ then p
+   else if c = GT then binarysearch2(s, b, p - 1, val)else binarysearch2(s, p + 1, a, val) 

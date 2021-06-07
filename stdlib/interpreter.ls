@@ -12,8 +12,8 @@ use real
 
 use standard
 
-use symbol 
- 
+use symbol
+
 use tausupport
 
 use words
@@ -40,16 +40,17 @@ Builtin GEP(seq.int, int)int
 
 Function interpretCompileTime(alltypes:typedict, code:seq.symbol)seq.symbol
 let r = interpret(alltypes, removeconstant.code, 1, empty:stack.int)
- tocode(r, resulttype.last.code)
+tocode(r, resulttype.last.code)
 
 function tocode(r:int, typ:mytype)seq.symbol
  if typ = typeword then [ Word.wordencodingtoword.r]
- else if typ=typeint /or typ=typebits /or typ=typeref(moduleref."UTF8","char")  then [ Lit.r]
- else if  typ =  typeboolean then [ if r = 1 then Littrue else Litfalse]
- else if typ = seqof.typeword  then [ Words.aswords.bitcast.r]
- else if typ =  typereal then [ Reallit.r]
+ else if typ = typeint ∨ typ = typebits ∨ typ = typeref."char UTF8."then
+  [ Lit.r]
+ else if typ = typeboolean then [ if r = 1 then Littrue else Litfalse]
+ else if typ = seqof.typeword then [ Words.aswords.bitcast.r]
+ else if typ = typereal then [ Reallit.r]
  else
-  assert isseq.typ  report"resulttype not handled" + print.typ
+  assert isseq.typ report"resulttype not handled" + print.typ
   let s = bitcast.r
    for acc = [ Lit.0, Lit.length.s], @e = s do acc + tocode(@e, parameter.typ)/for(acc)
 
@@ -64,35 +65,31 @@ function interpret(alltypes:typedict, code:seq.symbol, i:int, stk:stack.int)int
  else
   let sym = code_i
   let nopara = nopara.sym
-   if isword.sym  then
-    interpret(alltypes, code, i + 1, push(stk, hash.first.fsig.sym))
-   else if  iswordseq.sym  then
-   let a = for acc = empty:seq.int, @e = fsig.sym do acc + hash.@e /for(acc)
-    interpret(alltypes, code, i + 1, push(stk, GEP(a, 0)))
-   else if module.sym = "$int" ∨ module.sym = "$real" then  
-    interpret(alltypes, code, i + 1, push(stk, toint.(fsig.sym)_1))
-   else if sym=Littrue then 
-     interpret(alltypes, code, i + 1, push(stk, 1))
-   else if sym=Litfalse then 
-     interpret(alltypes, code, i + 1, push(stk, 0))  
-   else if last.module.sym = "$sequence"_1 then
+   if isword.sym then interpret(alltypes, code, i + 1, push(stk, hash.wordname.sym))
+   else if iswordseq.sym then
+   let a = for acc = empty:seq.int, @e = worddata.sym do acc + hash.@e /for(acc)
+   interpret(alltypes, code, i + 1, push(stk, GEP(a, 0)))
+   else if inmodule(sym,"$int") ∨ inmodule(sym,"$real")then
+    interpret(alltypes, code, i + 1, push(stk,   value.sym))
+   else if sym = Littrue then interpret(alltypes, code, i + 1, push(stk, 1))
+   else if sym = Litfalse then interpret(alltypes, code, i + 1, push(stk, 0))
+   else if inmodule(sym,"$sequence")then
     interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 0)))
-   else if module.sym = "$record"then
+   else if inmodule(sym,"$record")then
     if subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
      interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara - 2), 0)))
     else interpret(alltypes, code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 2)))
-   else if fsig.sym = "makereal(word seq)"then
+   else if wordname.sym = "makereal"_1 /and inmodule(sym,"UTF8" ) then
     interpret(alltypes, code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
    else
-    let t = dlsymbol.mangle(fsig.sym, module.sym)
+    let t = dlsymbol.mangledname.sym
     let dcret = deepcopysym(alltypes, resulttype.sym)
-    let adcret = dlsymbol.mangle(fsig.dcret, module.dcret)
+    let adcret = dlsymbol.mangledname.dcret
      assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret
-      assert t > 0 report"Not handle by interperter" + print.sym + "mangle:"
-      + mangle(fsig.sym, module.sym)
-      let dc = deepcopysym(alltypes, seqof.typeword  )
-      let adc = dlsymbol.mangle(fsig.dc, module.dc)
+      assert t > 0 report"Not handle by interperter" + print.sym + "mangle:" + mangledname.sym
+      let dc = deepcopysym(alltypes, seqof.typeword)
+      let adc = dlsymbol.mangledname.dc
        assert adc > 0 report"?"
        let p = createthread(adcret, adc, t, packed.top(stk, nopara), buildargcode(alltypes, sym))
-        assert not.aborted.p report message.p
-         interpret(alltypes, code, i + 1, push(pop(stk, nopara), result.p))
+       assert not.aborted.p report message.p
+         interpret(alltypes, code, i + 1, push(pop(stk, nopara), result.p)) 

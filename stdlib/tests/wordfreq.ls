@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau ; use test2 ; test2
 
 Module wordfreq
 

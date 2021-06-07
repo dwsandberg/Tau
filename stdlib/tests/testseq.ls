@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau ; use testseq ; testseq
 
 module testseq
 

@@ -1,5 +1,3 @@
-#!/usr/local/bin/tau
-
 Module pretty
 
 use fileio
@@ -35,7 +33,7 @@ Function gettexts(l:seq.word)seq.seq.word
 
 Function gettexts(lib:word, file:word)seq.seq.word
 let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
- for acc = empty:seq.seq.word, @e = gettext.file2 do acc + gettext2.@e /for(acc)
+for acc = empty:seq.seq.word, @e = gettext.file2 do acc + gettext2.@e /for(acc)
 
 function gettext2(s:seq.word)seq.seq.word
  if length.s = 0 then empty:seq.seq.word
@@ -44,7 +42,7 @@ function gettext2(s:seq.word)seq.seq.word
 Function htmlcode(libname:seq.word)seq.word
 let p = prettyfile('  /< noformat <hr id ="T">  />  /keyword ', getlibrarysrc.libname_1)
 let modules = for acc ="", @e = p do acc + findmodules.@e /for(acc)
- " /< noformat <h1> Source code for Library" + libname + "</h1>  />"
+" /< noformat <h1> Source code for Library" + libname + "</h1>  />"
  + for acc ="", @e = modules do acc + ref.@e /for(acc)
  + for acc ="", @e = p do list(acc," /p", @e)/for(acc)
 
@@ -63,21 +61,24 @@ Function pretty(l:seq.word, targetdir:seq.word)seq.word
 
 function pprettyfile(lib:word, newlibdir:word, file:word)seq.word
 let p = process.prettyfile(lib, newlibdir, file)
- if aborted.p then message.p else result.p
+if aborted.p then message.p else result.p
 
 use seq.byte
 
+use bits
+
 function prettyfile(lib:word, newlibdir:word, file:word)seq.word
 let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
-let b = for acc ="", @e = prettyfile("", gettext.file2)do  acc+"/p"+ @e /for(acc << 1)
-let discard = createfile([ merge([ newlibdir] + "/" + file + ".ls")],  toUTF8textbytes.b << 1)
- b
+let b = for acc ="", @e = prettyfile("", gettext.file2)do acc + " /p" + @e /for(acc << 1)
+let discard = createfile([ merge([ newlibdir] + "/" + file + ".ls")], toUTF8textbytes.b << 1)
+b
 
 Function prettyfile(modhead:seq.word, s:seq.seq.word)seq.seq.word
  prettyfile(modhead, s, 1, empty:seq.seq.word, empty:seq.seq.word, empty:seq.seq.word)
- 
- Function pretty(s:seq.word) seq.word  let tmp0=text.(toseq.parse.s)_1
-     removeclose(tmp0, length.tmp0)
+
+Function pretty(s:seq.word)seq.word
+let tmp0 = text.(toseq.parse.s)_1
+ removeclose(tmp0, length.tmp0)
 
 function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, libbody:seq.seq.word, result:seq.seq.word)seq.seq.word
  if i > length.l then result + sortuse.uses + libbody
@@ -89,7 +90,7 @@ function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, 
    let tmp0 = text.(toseq.parse.s)_1
    let tmp = removeclose(tmp0, length.tmp0)
    let tmp2 = if s_1 ∈ "Function function" ∧ last.tmp = "export"_1 then
-    " /keyword Export" + subseq(tmp, 3, length.tmp - 1)
+   " /keyword Export" + subseq(tmp, 3, length.tmp - 1)
    else tmp
     prettyfile(modhead, l, i + 1, uses, libbody + tmp2, result)
    else if s_1 ∈ "module Module"then
@@ -97,11 +98,11 @@ function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, 
     subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
    else empty:seq.word
    let newresult = result + sortuse.uses + libbody + (target + s)
-    prettyfile(modhead, l, i + 1, empty:seq.seq.word, empty:seq.seq.word, newresult)
+   prettyfile(modhead, l, i + 1, empty:seq.seq.word, empty:seq.seq.word, newresult)
    else
     let temp = if s_1 ∈ "Library library"then
     let parts = break(s,"uses exports", true)
-     " /keyword Library" + s_2 + alphasort(parts_1 << 2) + " /br  /keyword"
+    " /keyword Library" + s_2 + alphasort(parts_1 << 2) + " /br  /keyword"
      + parts_2
      + " /br  /keyword exports"
      + alphasort(parts_3 << 1)
@@ -117,9 +118,9 @@ function sortuse(a:seq.seq.word)seq.seq.word
 function pretty(b:seq.attribute2)attribute2
 let a = for acc = empty:seq.prettyresult, @e = b do acc + toseq.@e /for(acc)
 let text = for acc ="", @e = a do acc + text.@e /for(acc)
- attribute2.[ prettyresult(prec.first.a, for acc = 0, @e = a do acc + width.@e /for(acc), text)]
+attribute2.[ prettyresult(prec.first.a, for acc = 0, @e = a do acc + width.@e /for(acc), text)]
 
- for width = 0, text ="", attr = b do next(width + width.first.toseq.attr, text + text.first.toseq.attr)end(attribute2.[ prettyresult(prec.toseq.first.first.toseq.b, width, text)])
+for width = 0, text ="", attr = b do next(width + width.first.toseq.attr, text + text.first.toseq.attr)end(attribute2.[ prettyresult(prec.toseq.first.first.toseq.b, width, text)])
 
 function protect(a:seq.word, b:seq.word)seq.word
 let a1 = lastsymbol(a, length.a)
@@ -130,9 +131,9 @@ else if subseq(b, 1, 2) = "block  /keyword"then b_3 else b_1
  if a1 = "/if"_1 ∧ b1 ∉ "-+("then
   removeclose(a, length.a) + b
  else if b1 ∈ "-+" ∧ a1 ∉ "/if"then
-  "(" + a + ")(" + b + ")"
+ "(" + a + ")(" + b + ")"
  else if b1 ∈ "(" ∧ a1 ∉ ("/if)]'" + "'")then
-  "(" + a + ")" + b
+ "(" + a + ")" + b
  else a + b
 
 function removeclose(a:seq.word, i:int)seq.word
@@ -187,7 +188,7 @@ function wrap(prec:int, prein:attribute2, binary:seq.word, postin:attribute2)att
 let pre =(toseq.prein)_1
 let post =(toseq.postin)_1
 let x = if width.pre + width.post > 30 ∧ binary ≠ "."then
- " /br"
+" /br"
  + if binary ∈ [".","_","^"]then binary else binary + space
 else if binary ∈ [".","_","^"]then binary else [ space] + binary + space
 let pre1 = if prec.pre > prec then"(" + text.pre + ")"else text.pre
@@ -199,7 +200,7 @@ let a = if prec.post > prec ∨ prec ≠ 3 ∧ prec = prec.post then
 else
  { assert binary ≠"+"report"wrap"+ print.prec.pre + print.prec.post + print.prec }
  prettyresult(prec, width.pre + width.x + width.post, pre1 + x + text.post)
- { assert text.pre ="33"report text.pre +"("+ toword.left.prec.pre + toword.prec.pre + binary + toword.right.prec.post + toword.prec.post +")"+ text.post +"result"+ toword.prec.a_1 }
+{ assert text.pre ="33"report text.pre +"("+ toword.left.prec.pre + toword.prec.pre + binary + toword.right.prec.post + toword.prec.post +")"+ text.post +"result"+ toword.prec.a_1 }
  attribute2.[ a]
 
 function unaryminus(exp:attribute2)attribute2
@@ -221,7 +222,7 @@ let txt = text.a
  ]
 
 function blocktxt(txt:seq.word)seq.word
- " /< block"
+" /< block"
  + if txt_1 = " /br"_1 then txt << 1 else txt /if
  + " />"
 
@@ -242,105 +243,105 @@ function width(s:seq.word)int length.s
 Below is generated from parser generator.
 
 Function action(ruleno:int, input:seq.word, place:int, R:reduction.attribute2)attribute2
- if ruleno = { G F # } 1 then R_1
- else if ruleno = { F W NM(FP)T E } 2 then
+ if ruleno = { G F # }1 then R_1
+ else if ruleno = { F W NM(FP)T E }2 then
   pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
- else if ruleno = { F W_(FP)T E } 3 then
+ else if ruleno = { F W_(FP)T E }3 then
   pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
- else if ruleno = { F W-(FP)T E } 4 then
+ else if ruleno = { F W-(FP)T E }4 then
   pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
- else if ruleno = { F W =(FP)T E } 5 then
+ else if ruleno = { F W =(FP)T E }5 then
   pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
- else if ruleno = { F W >(FP)T E } 6 then
+ else if ruleno = { F W >(FP)T E }6 then
   pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
- else if ruleno = { F W *(FP)T E } 7 then
+ else if ruleno = { F W *(FP)T E }7 then
   pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
- else if ruleno = { F W ∧(FP)T E } 8 then
+ else if ruleno = { F W ∧(FP)T E }8 then
   pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
- else if ruleno = { F W ∨(FP)T E } 9 then
+ else if ruleno = { F W ∨(FP)T E }9 then
   pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]
- else if ruleno = { F W NM T E } 10 then
+ else if ruleno = { F W NM T E }10 then
   pretty.[ key.R_1, R_2, R_3, R_4]
- else if ruleno = { F W NM is P } 11 then
+ else if ruleno = { F W NM is P }11 then
   pretty.[ key.R_1, R_2, R_3, list.R_4]
- else if ruleno = { FP P } 12 then list.R_1
- else if ruleno = { P T } 13 then R_1
- else if ruleno = { P P, T } 14 then R_1 + R_3
- else if ruleno = { P W:T } 15 then pretty.[ R_1, R_2, R_3]
- else if ruleno = { P P, W:T } 16 then
+ else if ruleno = { FP P }12 then list.R_1
+ else if ruleno = { P T }13 then R_1
+ else if ruleno = { P P, T }14 then R_1 + R_3
+ else if ruleno = { P W:T }15 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = { P P, W:T }16 then
   R_1 + pretty.[ R_3, R_4, R_5]
- else if ruleno = { P comment W:T } 17 then pretty.[ R_1, R_2, R_3, R_4]
- else if ruleno = { P P, comment W:T } 18 then
+ else if ruleno = { P comment W:T }17 then pretty.[ R_1, R_2, R_3, R_4]
+ else if ruleno = { P P, comment W:T }18 then
   R_1 + pretty.[ R_3, R_4, R_5, R_6]
- else if ruleno = { E NM } 19 then R_1
- else if ruleno = { E NM(L)} 20 then
+ else if ruleno = { E NM }19 then R_1
+ else if ruleno = { E NM(L)}20 then
   if length.R_3 = 1 ∧ length.text.R_1 = 1 then
    wrap(3, R_1,".", R_3)
   else pretty.[ R_1, R_2, list.R_3, R_4]
- else if ruleno = { E(E)} 21 then R_2
- else if ruleno = { E if E then E else E } 22 then
+ else if ruleno = { E(E)}21 then R_2
+ else if ruleno = { E if E then E else E }22 then
  let x1 =" /keyword if" + removeclose.text.R_2 + " /keyword then"
  let x = attribute(x1 + removeclose.text.R_4)
  let t = if width.R_2 + width.R_4 + width.R_6 < 30 then
   [ x, key.R_5, R_6]
  else if width.R_2 + width.R_4 < 30 then [ x, elseblock.R_6]
  else [ attribute(x1 + removeclose.text.block.R_4), elseblock.R_6]
-  pretty(t + attribute."/if")
- else if ruleno = { E if E then E else E /if } 23 then
+ pretty(t + attribute."/if")
+ else if ruleno = { E if E then E else E /if }23 then
  let x1 =" /keyword if" + removeclose.text.R_2 + " /keyword then"
  let x = attribute(x1 + removeclose.text.R_4)
  let t = if width.R_2 + width.R_4 + width.R_6 < 30 then
   [ x, key.R_5, R_6]
  else if width.R_2 + width.R_4 < 30 then [ x, elseblock.R_6]
  else [ attribute(x1 + removeclose.text.block.R_4), elseblock.R_6]
-  pretty(t + attribute."/if")
- else if ruleno = { E E_E } 24 then wrap(1, R_1, text.R_2, R_3)
- else if ruleno = { E-E } 25 then unaryminus.R_2
- else if ruleno = { E W.E } 26 then wrap(3, R_1, text.R_2, R_3)
- else if ruleno = { E E * E } 27 then wrap(4, R_1, text.R_2, R_3)
- else if ruleno = { E E-E } 28 then wrap(5, R_1, text.R_2, R_3)
- else if ruleno = { E E = E } 29 then wrap(6, R_1, text.R_2, R_3)
- else if ruleno = { E E > E } 30 then wrap(7, R_1, text.R_2, R_3)
- else if ruleno = { E E ∧ E } 31 then wrap(8, R_1, text.R_2, R_3)
- else if ruleno = { E E ∨ E } 32 then wrap(9, R_1, text.R_2, R_3)
- else if ruleno = { L E } 33 then R_1
- else if ruleno = { L L, E } 34 then R_1 + R_3
- else if ruleno = { E [ L]} 35 then pretty.[ R_1, list.R_2, R_3]
- else if ruleno = { A W = E } 36 then pretty.[ R_1, R_2, R_3]
- else if ruleno = { E let A E } 37 then
+ pretty(t + attribute."/if")
+ else if ruleno = { E E_E }24 then wrap(1, R_1, text.R_2, R_3)
+ else if ruleno = { E-E }25 then unaryminus.R_2
+ else if ruleno = { E W.E }26 then wrap(3, R_1, text.R_2, R_3)
+ else if ruleno = { E E * E }27 then wrap(4, R_1, text.R_2, R_3)
+ else if ruleno = { E E-E }28 then wrap(5, R_1, text.R_2, R_3)
+ else if ruleno = { E E = E }29 then wrap(6, R_1, text.R_2, R_3)
+ else if ruleno = { E E > E }30 then wrap(7, R_1, text.R_2, R_3)
+ else if ruleno = { E E ∧ E }31 then wrap(8, R_1, text.R_2, R_3)
+ else if ruleno = { E E ∨ E }32 then wrap(9, R_1, text.R_2, R_3)
+ else if ruleno = { L E }33 then R_1
+ else if ruleno = { L L, E }34 then R_1 + R_3
+ else if ruleno = { E [ L]}35 then pretty.[ R_1, list.R_2, R_3]
+ else if ruleno = { A W = E }36 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = { E let A E }37 then
   { checkpara(pretty.[ R_1, R_2], block("
 /br let assert", R_3))}
   attribute(" /keyword let" + subseq(text.R_2, 1, 2)
   + protect(text.R_2 << 2, text.block(" /br let assert", R_3)))
- else if ruleno = { E assert E report D E } 38 then
+ else if ruleno = { E assert E report D E }38 then
   pretty.[ key.R_1, R_2, attribute(" /keyword report" + protect(text.R_4, text.block(" /br let assert", R_5)))]
- else if ruleno = { E I } 39 then R_1
- else if ruleno = { E I.I } 40 then pretty.[ R_1, R_2, R_3]
- else if ruleno = { T W } 41 then R_1
- else if ruleno = { T W.T } 42 then pretty.[ R_1, R_2, R_3]
- else if ruleno = { E $wordlist } 43 then
+ else if ruleno = { E I }39 then R_1
+ else if ruleno = { E I.I }40 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = { T W }41 then R_1
+ else if ruleno = { T W.T }42 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = { E $wordlist }43 then
   attribute2.[ prettyresult(0, length.text.R_1," /< literal" + escapeformat.text.R_1 + " />")]
- else if ruleno = { E comment E } 44 then
+ else if ruleno = { E comment E }44 then
  let t =" /< comment {" + escapeformat.text.R_1 << 1 >> 1 + "}  />"
  let t2 = if width.R_1 + width.R_2 > 30
  ∧ (text.R_2)_1 ≠ " /br"_1 then
   t + " /br"
  else t
   pretty.[ attribute2.[ prettyresult(0, length.text.R_1, t2)], R_2]
- else if ruleno = { NM W } 45 then R_1
- else if ruleno = { NM W:T } 46 then pretty.[ R_1, R_2, R_3]
- else if ruleno = { F1 W = E } 47 then pretty.[ R_1, R_2, R_3]
- else if ruleno = { F1 F1, W = E } 48 then
+ else if ruleno = { NM W }45 then R_1
+ else if ruleno = { NM W:T }46 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = { F1 W = E }47 then pretty.[ R_1, R_2, R_3]
+ else if ruleno = { F1 F1, W = E }48 then
   pretty.[ R_1, R_2, R_3, R_4, R_5]
- else if ruleno = { F2 F1 } 49 then R_1
- else if ruleno = { E for F2 do E /for(E)} 50 then
+ else if ruleno = { F2 F1 }49 then R_1
+ else if ruleno = { E for F2 do E /for(E)}50 then
   if width.R_2 + width.R_4 < 30 then
    pretty.[ key.R_1, list.R_2, attribute(" /keyword do" + removeclose.text.R_4 + " /keyword /for"), R_6, R_7, R_8]
   else
    pretty.[ key.R_1, list.R_2, attribute(" /keyword do" + removeclose.text.block.R_4 + " /br  /keyword /for"), R_6, R_7, R_8]
- else if ruleno = { E for F2 while E do E /for(E)} 51 then
+ else if ruleno = { E for F2 while E do E /for(E)}51 then
   pretty.[ key.R_1, list.R_2, attribute(" /keyword while" + text.R_4 + " /keyword do" + removeclose.text.R_6
   + " /keyword /for"), R_8, R_9, R_10]
  else
-  assert ruleno = { D E } 52 report"invalid rule number" + toword.ruleno
-   R_1
+  assert ruleno = { D E }52 report"invalid rule number" + toword.ruleno
+   R_1 

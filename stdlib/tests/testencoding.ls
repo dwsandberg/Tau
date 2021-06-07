@@ -1,5 +1,3 @@
-#!/usr/local/bin/tau ; use testencoding ; testencoding
-
 Module testencoding
 
 Testing encodings
@@ -64,13 +62,12 @@ function hash(a:testrecord)int key.a
 
 Export type:testrecord
 
-function assignencoding( p:seq.encodingpair.testrecord,a:testrecord)int  assignrandom(p, a)
-
+function assignencoding(p:seq.encodingpair.testrecord, a:testrecord)int assignrandom(p, a)
 
 function add(b:seq.word)int
 let d = encoding:seq.encodingpair.testrecord
 let x = encode.testrecord(length.d + 1, b)
- 1
+1
 
 type testrecord is key:int, body:seq.word
 
@@ -94,7 +91,7 @@ let p = process.process1
 Function process1 seq.encodingpair.testrecord let discard = for acc = 0, @e = ["A1","B2","C3","D4","E5"]do
  acc + add.@e
 /for(acc)
- encoding:seq.encodingpair.testrecord
+encoding:seq.encodingpair.testrecord
 
 Function nextpower(i:int, base:int, start:int)int
  if i > start then nextpower(i, base, start * base)else start
@@ -104,4 +101,4 @@ type testdeep is fld1:seq.word, fld2:tree.seq.word, fld3:seq.char
 function testdeep1 testdeep testdeep("A BC DEF", tree("LIT 1", [ tree."PARAM 1"]), decodeword."TEST"_1)
 
 function =(a:testdeep, b:testdeep)boolean
- fld1.a = fld1.b ∧ fld2.a = fld2.b ∧ fld3.a = fld3.b
+ fld1.a = fld1.b ∧ fld2.a = fld2.b ∧ fld3.a = fld3.b 

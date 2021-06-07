@@ -43,9 +43,9 @@ Function getlibraryinfo(libname:seq.word)seq.seq.word
 let a = gettext.[ merge([ first.libname] + "/" + last.libname + ".ls")]
 let s = findlibclause(a, 1)
 let l = break(s,"uses exports", true)
- assert length.l = 3 ∧ l_2_1 = "uses"_1
+assert length.l = 3 ∧ l_2_1 = "uses"_1
  ∧ l_3_1 = "exports"_1 report"lib clause problem"
-  [ { dependentlibs } l_2 << 1, { filelist } l_1 << 1, { exports } l_3 << 1]
+ [ { dependentlibs }l_2 << 1, { filelist }l_1 << 1, { exports }l_3 << 1]
 
 Function getlibrarysrc(libname:seq.word)seq.seq.word
 let filelist =(getlibraryinfo.libname)_2
@@ -55,4 +55,4 @@ let filelist =(getlibraryinfo.libname)_2
 
 Function getlibraryinfo(libname:word)seq.seq.word getlibraryinfo.[ libname]
 
-Function getlibrarysrc(libname:word)seq.seq.word getlibrarysrc.[ libname]
+Function getlibrarysrc(libname:word)seq.seq.word getlibrarysrc.[ libname] 

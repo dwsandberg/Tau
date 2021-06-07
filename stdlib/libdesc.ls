@@ -4,7 +4,7 @@ use fileio
 
 use standard
 
-use symbol 
+use symbol
 
 use program
 
@@ -36,31 +36,31 @@ use seq.seq.word
 
 use seq.encodingpair.seq.char
 
+
 Function libdesc(alltypes:typedict, p:program, templates:program, mods:seq.firstpass, exports:seq.word)symbol
 let mods2 = for acc = empty:seq.firstpass, @e = mods do acc + tolibmod(alltypes, p, templates, exports, @e)/for(acc)
 let symstoexport = for acc = empty:set.symbol, @e = mods2 do acc ∪ defines.@e /for(acc)
 ∪ for acc = empty:set.symbol, @e = mods2 do acc ∪ exports.@e /for(acc)
 let set2 = asset.for acc = empty:seq.symbol, @e = toseq.symstoexport do acc + tolibsym(p, templates, symstoexport, @e)/for(acc)
 let t1 = asset.for acc = empty:seq.symbol, @e = toseq.set2 do acc + zcode.@e /for(acc)
- addseq.for acc = empty:seq.symbol, @e = mods2 do acc + addlibmod(set2, @e)/for(acc)
+addseq.for acc = empty:seq.symbol, @e = mods2 do acc + addlibmod(set2, @e)/for(acc)
 
 function tolibmod(alltypes:typedict, p:program, templates:program, exports:seq.word, m:firstpass)seq.firstpass
- if not(fldname.modname.m ∈ exports)then empty:seq.firstpass
+ if  name.module.m ∉ exports then empty:seq.firstpass
  else
-  let defines = if isabstract.modname.m then defines.m else exports.m
+  let defines = if isabstract.module.m then defines.m else exports.m
   let types = for acc = empty:seq.myinternaltype, @e = toseq.defines do acc + libtypes2(alltypes, p, templates, @e)/for(acc)
-  let uses = if isabstract.modname.m then uses.m else empty:seq.mytype
-   [ firstpass(modname.m, uses, defines, exports.m, empty:seq.symbol, empty:set.symbol, types)]
-
+  let uses = if isabstract.module.m then uses.m else empty:seq.mytype
+   [ firstpass(module.m, uses, defines, exports.m, empty:seq.symbol, empty:set.symbol, types,emptyprogram)]
 
 function libtypes2(alltypes:typedict, p:program, templates:program, s:symbol)seq.myinternaltype
  if istype.s then
  let it = findelement(alltypes, resulttype.s)_1
-  [ if isabstract.modname.it then myinternaltype("undefined"_1, name.it, modname.it, subflds.it)else it]
+  [ if isabstract.module.it then myinternaltype("undefined"_1, name.it, module.it, subflds.it)else it]
  else empty:seq.myinternaltype
 
 function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)symbol
-let code = if isabstract.modname.sym then code.lookupcode(templates, sym)
+let code = if isabstract.module.sym then code.lookupcode(templates, sym)
 else
  let code1 = code.lookupcode(p, sym)
  let code = removeoptions.code1
@@ -68,7 +68,7 @@ else
  let x = removeconstant.code
   if for acc = true, @e = x do
    acc
-   ∧ (isconst.@e ∨ module.@e ∈ ["int builtin","real builtin"] ∨ isspecial.@e
+   ∧ (isconst.@e ∨ moduleS.@e ∈ ["int builtin","real builtin"] ∨ isspecial.@e
    ∨ islocal.@e
    ∨ @e ∈ toexport)
   /for(acc)then
@@ -80,30 +80,46 @@ else
   if"BUILTIN"_1 ∈ optionsx ∨ "COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then
    z + Words.optionsx + Optionsym
   else z
-  cleansymbol(sym,code)
-  
- 
+cleansymbol(sym, code)
+
 ----------------------------------
 
+use mytype
+
 function addlibsym(s:symbol)symbol
- Constant2.[ Words.fsig.s, Words.typerep.modname.s, Words.typerep.resulttype.s, addseq.for acc = empty:seq.symbol, @e = zcode.s do acc + addlibsym.@e /for(acc), Lit.extrabits.s, Record.[ typeptr, typeptr, typeptr, typeptr, typeptr]]
+ let t=module.s
+ Constant2.[ Words.worddata.s, Word.library.t,Word.name.t,addmytype.para.t,   
+ addseq.for acc = empty:seq.symbol, @e = zcode.s do acc + addlibsym.@e /for(acc), Lit.extrabits.s, 
+ addseq.for acc = empty:seq.symbol, @e = types.s do acc + addmytype.@e /for(acc)
+ ,Record.[ typeptr, typeword,typeword, typeptr 
+ , typeptr, typeint, typeptr]]
 
-function addmytype(t:mytype)symbol Words.typerep.t
+function addmytype(t:mytype)symbol 
+ addseq.for acc = empty:seq.symbol, e =  typerep.t do acc + 
+ Constant2.[Word.name.e,Word.module.e,Word.library.e,Record.[typeint,typeint,typeint]]
+  /for(acc)
+ 
 
+ 
 function addseq(s:seq.symbol)symbol Constant2(s + Sequence(typeptr, length.s))
 
 function addlibmod(toexport:set.symbol, m:firstpass)symbol
  { symbols in m are replaced with the symbol from toexport which has zcode to form programele }
  let exports = toexport ∩ exports.m
-  let defines = if isabstract.modname.m then toexport ∩ defines.m else exports
-  let e = addseq.for acc = empty:seq.symbol, @e = toseq.exports do acc + addlibsym.@e /for(acc)
-  let d = if isabstract.modname.m then
-   addseq.for acc = empty:seq.symbol, @e = toseq.defines do acc + addlibsym.@e /for(acc)
-  else e
-   Constant2.[ addmytype.modname.m, addseq.for acc = empty:seq.symbol, @e = uses.m do acc + addmytype.@e /for(acc), d, e, Words."", Words."", addseq.for acc = empty:seq.symbol, @e = types.m do acc + addinternaltype.@e /for(acc), Words."", Record.[ typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr]]
+ let defines = if isabstract.module.m then toexport ∩ defines.m else exports
+ let e = addseq.for acc = empty:seq.symbol, @e = toseq.exports do acc + addlibsym.@e /for(acc)
+ let d = if isabstract.module.m then
+  addseq.for acc = empty:seq.symbol, @e = toseq.defines do acc + addlibsym.@e /for(acc)
+ else e
+  let t=module.m
+  Constant2.[ Word.library.t,Word.name.t,addmytype.para.t, addseq.for acc = empty:seq.symbol, @e = uses.m do acc + addmytype.@e /for(acc), d, e, Words."", Words."", addseq.for acc = empty:seq.symbol, @e = types.m do acc + addinternaltype.@e /for(acc), Words."", 
+  Record.[ typeword,typeword,typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr]]
 
-function addinternaltype(t:myinternaltype)symbol
- Constant2.[ Word.kind.t, Word.name.t, addmytype.modname.t, addseq.for acc = empty:seq.symbol, @e = subflds.t do acc + addmytype.@e /for(acc), Record.[ typeint, typeint, typeptr, typeptr]]
+function addinternaltype(i:myinternaltype)symbol
+let t=module.i
+ Constant2.[ Word.kind.i, Word.name.i, Word.library.t,Word.name.t,addmytype.para.t, 
+ addseq.for acc = empty:seq.symbol, @e = subflds.i do acc + addmytype.@e /for(acc),
+  Record.[ typeint, typeint, typeword,typeword,typeptr, typeptr]]
 
 --------------------------
 
@@ -153,4 +169,4 @@ builtin unloadlib(cstr)int
 
 Function loadlibrary(a:word)int loadlib.tocstr.[ a]
 
-builtin loadlib(cstr)int
+builtin loadlib(cstr)int 

@@ -65,4 +65,4 @@ Function *(a:int, b:real)real toreal.a * b
 
 Export print(decimals:int, rin:real)seq.word
 
--------------
+------------- 

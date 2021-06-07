@@ -22,8 +22,7 @@ Function_(a:blockseq.T, i:int)T
  assert between(i, 1, length.toseq.a)report"out of bounds"
   let blksz= length.dummy.a 
     let blk=load( a,(i - 1) / blksz + 2)
-    blk_toindex.( (i - 1) mod blksz + 1)
-  
+ blk_(toindex((i - 1) mod blksz + 1))
 
 Function blockit3(s:seq.T)seq.T
 let blksz = blocksize:T
@@ -35,10 +34,11 @@ let blksz = blocksize:T
   let noblks =(length.s + blksz - 1) / blksz
  let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
     let blkseq=allocatespace(noblks+2)
-     let discard = 
-   for acc = set(set(blkseq,blockseqtype), length.s), @e = arithseq(noblks, blksz, 1)do
+  let discard = for acc = set(set(blkseq, blockseqtype), length.s), @e = arithseq(noblks, blksz, 1)do
         let newseq =  allocatespace ( blksz   +2) 
-     let d = for acc2 = set(set(newseq,  0 ) ,blksz) ,  e = subseq(s, @e, @e + blksz - 1) do set (acc2,   e) /for(acc2)
+  let d = for acc2 = set(set(newseq, 0), blksz), e = subseq(s, @e, @e + blksz - 1)do
+   set(acc2, e)
+  /for(acc2)
      let x =bitcast:T(newseq)
     set (acc,   newseq) 
    /for(acc)
@@ -55,8 +55,7 @@ Function blockit2(s:seq.T, ds:int)seq.T
    let noblks =(length.s + blksz - 1) / blksz
    let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
    let blkseq=allocatespace(noblks+2)
-     let discard = 
-   for acc = set(set(blkseq,blockseqtype), length.s), @e = arithseq(noblks, blksz, 1)do
+   let discard = for acc = set(set(blkseq, blockseqtype), length.s), @e = arithseq(noblks, blksz, 1)do
         let s2=subseq(s, @e, @e + blksz - 1)
        let newseq =  allocatespace(length.s2 * ds+2)
        let d = for acc2 = set(set(newseq,  1),length.s) , e=s2 do set (acc2,  @e) /for(acc2)
@@ -66,16 +65,16 @@ Function blockit2(s:seq.T, ds:int)seq.T
    
 module tausupport
 
-use standard
-
-
 use bits
+
+
+use real
+
+use standard
 
 use seq.byte
 
 use taublockseq.byte
-
-/use abstractBuiltin.int
 
 use seq.int
 
@@ -133,27 +132,26 @@ Export_(pseq.byte, int)byte
 
 Export_(pseq.byte, int)byte
 
-use real
-
 function set (i:ptr ,b:real)  ptr     set(i,representation.b)
-
 
 function set (i:ptr ,b:packed2)  ptr   set (set (i ,fld1.b), fld2.b)  
 
 function set (i:ptr ,b:packed3)  ptr  set(set (set (i ,fld1.b), fld2.b) ,fld3.b)
 
-function set (i:ptr ,b:packed4)  ptr  set(set(set (set (i ,fld1.b), fld2.b) ,fld3.b),fld4.b)
+function set(i:ptr, b:packed4)ptr
+ set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b)
 
-function set (i:ptr ,b:packed5)  ptr  set(set(set(set (set (i ,fld1.b), fld2.b) ,fld3.b),fld4.b),fld5.b)
+function set(i:ptr, b:packed5)ptr
+ set(set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b), fld5.b)
 
-function set (i:ptr ,b:packed6)  ptr  set(set(set(set(set (set (i ,fld1.b), fld2.b) ,fld3.b),fld4.b),fld5.b),fld6.b)
+function set(i:ptr, b:packed6)ptr
+ set(set(set(set(set(set(i, fld1.b), fld2.b), fld3.b), fld4.b), fld5.b), fld6.b)
 
 Function blockIt(s:seq.int)seq.int  blockit3.s
 
 Function blockIt(s:seq.ptr)seq.ptr blockit3.s
 
 Function blockIt(s:seq.real)seq.real blockit3.s
-
 
 Function blockIt(s:seq.packed2)seq.packed2 blockit2(s, 2)
 
@@ -164,7 +162,6 @@ Function blockIt(s:seq.packed4)seq.packed4 blockit2(s, 4)
 Function blockIt(s:seq.packed5)seq.packed5 blockit2(s, 5)
 
 Function blockIt(s:seq.packed6)seq.packed6 blockit2(s, 6)
-
 
 /Export_(blockseq.int, int)int
 
@@ -188,9 +185,7 @@ Function encodingno(name:seq.word)int
  if name = "char seq"then 1
  else if name = "typename"then 2 else valueofencoding.encode.typename.name + 2
 
- 
 function assignencoding( p:seq.encodingpair.typename,a:typename)int   length.p +1
-
 
 -----------
 
@@ -200,7 +195,6 @@ use mangle
 
 use process.int
 
-
 Builtin initialdict seq.encodingpair.seq.char
 
 builtin dlsymbol(cstr)int
@@ -209,13 +203,11 @@ Builtin createthread(int, int, int, seq.int, int)process.int
 
 Builtin createthread(int, int, int, ptr, int)process.int
 
-
 builtin callstack(n:int)seq.int
 
 builtin addresstosymbol2(a:int)seq.char
 
 Builtin randomint(i:int)seq.int
-
 
 Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
 

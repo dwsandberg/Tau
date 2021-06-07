@@ -1,5 +1,3 @@
-#!/usr/local/bin/tau ;use testprocess; testprocess
-
 Module testprocess
 
 use UTF8

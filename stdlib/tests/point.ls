@@ -25,4 +25,4 @@ Export y(a:point.T)T export
 
 Export x(a:point.T)T
 
-Export z(a:point.T)T
+Export z(a:point.T)T 

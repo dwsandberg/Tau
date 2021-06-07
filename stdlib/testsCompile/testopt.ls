@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau ; use testopt ; testopt
 
 Module testopt
 
@@ -26,8 +25,8 @@ use seq.seq.word
 
 Function testopt seq.word let p2 = secondPass."stdlib.testoptconfig"
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
-,"1","Litfalse","4607182418800017408","44","2","46","72","27","2","128"
-,"65","Littrue","4", { optest24 }
+,"1","false()standard","4607182418800017408","44","2","46","72","27","2","128"
+,"65","true()standard","4", { optest24 }
 "/start(int)
 /br %1 5 =(int, int)standard Br2(1, 2)
 /br 24 Exit 
@@ -49,11 +48,11 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br",{ optest28 }"/start(boolean)
 /br %1 0 >(int, int)standard Br2(1, 2)
 /br 10 %2 >(int, int)standard Exit 
-/br Litfalse Exit 
+/br false()standard Exit 
 /br EndBlock 
 /br",{ optest29 }"/start(boolean)
 /br %1 0 >(int, int)standard Br2(1, 2)
-/br Littrue Exit 
+/br true()standard Exit 
 /br 10 %2 >(int, int)standard Exit 
 /br EndBlock 
 /br", { optest30 }

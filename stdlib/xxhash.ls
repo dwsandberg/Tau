@@ -26,7 +26,7 @@ let PRIME2 = 14029467366897019727
 let PRIME3 = 1609587929392839161
 let acc1 = bits(toint.xor(acc, acc >> 33) * PRIME2)
 let acc2 = bits(toint.xor(acc1, acc1 >> 29) * PRIME3)
- abs.toint.xor(acc2, acc2 >> 32)
+abs.toint.xor(acc2, acc2 >> 32)
 
 Function rotl32(x:bits, n:int)bits 0xFFFF FFFF ∧ (x << n ∨ x >> (32 - n))
 
@@ -37,7 +37,7 @@ Function *(a:bits, b:int)bits
 let m = toint(bits.b ∨ bits.0)
 let nlo = toint(a ∧ 0xFFFF)
 let nhi = toint(a ∧ 0xFFFF << 16)
- bits(toint(bits(nhi * m) ∧ 0xFFFF FFFF) + nlo * m) ∧ 0xFFFF FFFF
+bits(toint(bits(nhi * m) ∧ 0xFFFF FFFF) + nlo * m) ∧ 0xFFFF FFFF
 
 0xFFFF FFFF
 
@@ -47,4 +47,4 @@ let h32d = xor(h32c, h32c >> 13) * 374761393
  abs.toint(xor(h32d, h32d >> 16) ∧ 0xFFFF FFFF)
 
 Function hashstart32(seed:int)bits let PRIME5 = 374761393
- bits(seed + PRIME5)
+ bits(seed + PRIME5) 

@@ -44,7 +44,7 @@ Function periodchar char char.46
 
 Function doublequotechar char char.34
 
-Function nbspchar char { no break space character } char.160
+Function nbspchar char { no break space character }char.160
 
 Function toUTF8(n:int)UTF8
  UTF8.if n < 0 then [ tobyte.toint.hyphenchar] + toUTF8(n, 10)else toUTF8(-n, 10)
@@ -66,7 +66,7 @@ function subUTF8(n:int, c:int)seq.byte
   [ tobyte(256 - 2^(8 - n) + c)]
  else subUTF8(n + 1, c / 64) + tobyte(128 + c mod 64)
 
-Function decodeUTF8(b:UTF8)seq.char { converts UTF8 encoded sequence into a sequence of integers(chars)} decodeUTF8(b, 1, length.b)
+Function decodeUTF8(b:UTF8)seq.char { converts UTF8 encoded sequence into a sequence of integers(chars)}decodeUTF8(b, 1, length.b)
 
 Function decodeUTF8(a:UTF8, start:int, finish:int)seq.char
  tocharseq.xx(toseqbyte.a, max(1, start), min(finish, length.toseqbyte.a), empty:seq.int)
@@ -107,9 +107,9 @@ function xx(b:seq.byte, i:int, finish:int, result:seq.int)seq.int
 
 ---------
 
-Function toword(n:int)word { Covert integer to sequence of characters represented as a single word. } encodeword.decodeUTF8.toUTF8.n
+Function toword(n:int)word { Covert integer to sequence of characters represented as a single word. }encodeword.decodeUTF8.toUTF8.n
 
-Function toint(w:word)int { Convert an integer represented as a word to an int } cvttoint.decodeword.w
+Function toint(w:word)int { Convert an integer represented as a word to an int }cvttoint.decodeword.w
 
 Function intlit(s:UTF8)int cvttoint.decodeUTF8.s
 
@@ -129,12 +129,12 @@ Function cvttoint(s:seq.char)int
   let validdigits = decodeword.first."0123456789"
   let val = for val = 0, c = s do
   let i = binarysearch(validdigits, c)
-   if i > 0 then val * 10 - (i - 1)
+  if i > 0 then val * 10 - (i - 1)
    else
     assert c ∈ [ char1."-", nbspchar]report"invalid digit" + encodeword.s + stacktrace
      val
   /for(val)
-   { Since there are more negative numbers in twos-complement we calculate using negative values. }
+  { Since there are more negative numbers in twos-complement we calculate using negative values. }
    if val = 0 ∨ s_1 = char1."-"then val else-val
 
 -------------
@@ -160,14 +160,14 @@ let r = rin + 1.0 / toreal(a * 2)
 let r2 = if decimals > 0 then
  [ toword.intpart.r,"."_1, encodeword.lpad(decimals, char.48, decodeUTF8.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))]
 else [ toword.intpart.r]
- if neg then"-" + r2 else r2
+if neg then"-" + r2 else r2
 
 Function toUTF8(rin:real, decimals:int)UTF8
  if(rin ? toreal.0) = LT then encodeUTF8.hyphenchar + toUTF8(toreal.0 - rin, decimals)
  else
   let a = 10^decimals
   let r = rin + 1.0 / toreal(a * 2)
-   if decimals > 0 then
+  if decimals > 0 then
     toUTF8.intpart.r + encodeUTF8.periodchar
     + UTF8.lpad(decimals, tobyte.48, toseqbyte.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
    else toUTF8.intpart.r
@@ -190,4 +190,4 @@ function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
   reallit(s, decimals, i + 1, val, 1)
  else
   assert s_i = periodchar report"unexpected character in real literal" + encodeword.s
-   reallit(s, 1, i + 1, val, neg)
+   reallit(s, 1, i + 1, val, neg) 

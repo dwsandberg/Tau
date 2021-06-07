@@ -1,5 +1,3 @@
-#!/usr/local/bin/tau ; use test11 ; test11
-
 Module test11
 
 use checking
@@ -49,7 +47,7 @@ function t007 boolean [ 2, 3] = [ 2] + [ 3]
 function ff(seed:int, x:int)int
  if x = 1 then pseudorandom.seed else ff(pseudorandom.seed, x - 1)
 
-function t008 boolean { testing random number generator } 1043618065 = ff(1, 10000)
+function t008 boolean { testing random number generator }1043618065 = ff(1, 10000)
 
 function gen(n:int)seq.int
  if n = 1 then [ n]else gen(n - 1) + [ n * n]
@@ -128,7 +126,7 @@ function t033 boolean 6 = toint.if true then"3"_1 else"5"_1 /if + 3
 function t034 boolean 3464 = 3456 + if true then 3 else 1 /if + 5
 
 function print(a:seq.int)seq.word
- "["
+"["
  + for acc ="", e = a do seperator(acc,",") + toword.e /for(acc)
  + "]"
 
@@ -158,14 +156,14 @@ Function t043 boolean"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57
  acc + [ toword.e, encodeword.[ char.e]]
 /for(acc)
 
-function t044 boolean '"()+,-.:= []^_{} ' = standalonechars
+function t044 boolean '"()+,-.:= []^_{ } ' = standalonechars
 
 Function standalonechars seq.word for acc ="", e = arithseq(length.classifychar, 1, 1)do
 let class = classifychar_e
  if class ∈ "0 SPACE"then acc else acc + [ class]
 /for(acc)
 
-Function t045 boolean { testing UNICODE to word conversion and no-break space in integer 8746 } decodeword."1 2∪"_1
+Function t045 boolean { testing UNICODE to word conversion and no-break space in integer 8746 }decodeword."1 2∪"_1
 = [ char.49, char.160, char.50, char.87 46]
 
 function testset set.int asset.[ 2, 5, 6, 9, 12, 15, 35, 36]
@@ -186,4 +184,4 @@ Function test11 seq.word let y = [ t001, t002, t003, t004, t005, t006, t007, t00
 , t041, t042, t043, t044, t045, t046,"this is a test"_(-1) = "test"_1, b.[ Tpair(3,"three"), Tpair(4,"four"), Tpair(5,"five")]_(-2)
 = "four", [ 1, 2, 4]_(-3) = 1, { 50 }"this is a test" << 2 = "a test"
 ,"this is a test" >> 3 = "this"]
- check(y,"test11")
+check(y,"test11") 

@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau ; use test11a ; test11a
 
 Module test11a
 

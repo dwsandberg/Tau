@@ -4,6 +4,8 @@ use UTF8
 
 use standard
 
+use bits
+
 use seq.byte
 
 Export type:timestamp
@@ -18,7 +20,7 @@ Function testjulian boolean [ tojulian(2000, 1, 1), tojulian(1999, 1, 1), tojuli
 Function tojulian(year:int, month:int, day:int)int
 let ayear = if month > 2 then year else year - 1
 let amonth = if month > 2 then month else month + 12 /if
- (amonth + 1) * 306001 / 10000 + day + 1720994 + 2 - ayear / 100
+(amonth + 1) * 306001 / 10000 + day + 1720994 + 2 - ayear / 100
  + ayear / 100 / 4
  + 1461 * ayear / 4
 
@@ -45,7 +47,7 @@ Function timestamplit(t:UTF8)timestamp
  let minutes = intlit.subseq(t, 15, 16)
  let second = intlit.subseq(t, 18, 19)
  let date = tojulian(year, month, day)
-  timestamp(((date * 24 + hour) * 60 + minutes) * 60 + second)
+ timestamp(((date * 24 + hour) * 60 + minutes) * 60 + second)
 
 Function totimestamp(year:int, month:int, day:int, hour:int, minute:int, second:int)timestamp
  timestamp(((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second)
@@ -69,4 +71,4 @@ Builtin currenttime timestamp
 
 Function asseconds(t:timestamp)int toint.t
 
-Function totimestamp(seconds:int)timestamp timestamp.seconds
+Function totimestamp(seconds:int)timestamp timestamp.seconds 

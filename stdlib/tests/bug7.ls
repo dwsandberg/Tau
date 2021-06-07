@@ -1,4 +1,3 @@
-#!/usr/local/bin/tau ; use bug7 ; testbug7
 
 module bug7
 

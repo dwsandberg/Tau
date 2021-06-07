@@ -49,7 +49,7 @@ Function merge(a:seq.word)word
 
 * Functions to perform alphabetical sorting
 
-Export type:alphaword 
+Export type:alphaword
 
 type alphaword is toword:word
 
@@ -75,7 +75,7 @@ Export ?(a:seq.alphaword, b:seq.alphaword)ordering
 
 Function alphasort(a:seq.seq.word)seq.seq.word
 let b = for acc = empty:seq.seq.alphaword, @e = a do acc + toalphaseq.@e /for(acc)
- for acc = empty:seq.seq.word, @e = sort.b do acc + towordseq.@e /for(acc)
+for acc = empty:seq.seq.word, @e = sort.b do acc + towordseq.@e /for(acc)
 
 Function checkinteger(w:word)word
 let l = decodeword.w
@@ -84,11 +84,11 @@ let validhex = decodeword.first."0123456789ABCDEFabcdef" + nbspchar
  if length.l > 2 ∧ l_1 = char1."0"
  ∧ l_2 ∈ decodeword.first."xX"then
   if for acc = true, @e = l << 2 do acc ∧ binarysearch(validhex, @e) > 0 /for(acc)then
-   "INTEGER"_1
+  "INTEGER"_1
   else"ILLEGAL"_1
  else
   let i = if length.l > 1 ∧ l_1 = char1."-"then 2 else 1
    if not.between(toint.l_i, 48, 57)then"WORD"_1
    else if for acc = true, @e = l << (i - 1)do acc ∧ binarysearch(validdigits, @e) > 0 /for(acc)then
-    "INTEGER"_1
-   else"ILLEGAL"_1
+   "INTEGER"_1
+   else"ILLEGAL"_1 

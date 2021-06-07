@@ -34,10 +34,10 @@ Function clength(s:seq.T, i:int)int
  if i > length.s then 0
  else
   assert s_i > 0 report"invalid"
-   if s_i < 128 then 1 + clength(s, i + 1)
+  if s_i < 128 then 1 + clength(s, i + 1)
    else
     assert s_i < 128 + 64 + 32 report"invalid"
-     1 + clength(s, i + 2)
+    1 + clength(s, i + 2)
 
 Function cindex(s:seq.T, i:int, idx:int)T
  if idx = 1 then
@@ -51,4 +51,4 @@ Function myseq(d:seq.T)seq.T toseq.myseq(clength(d, 1), d)
 
 Every sequence must have a_function defined on it which is below for mseq.T
 
-Function_(a:myseq.T, idx:int)T cindex(data.a, 1, idx)
+Function_(a:myseq.T, idx:int)T cindex(data.a, 1, idx) 

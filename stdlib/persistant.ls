@@ -44,19 +44,15 @@ use seq.encodingpair.seq.char
 
 use set.encodingpair.seq.char
 
-Function ?(a:encodingpair.seq.char, b:encodingpair.seq.char)ordering 
-valueofencoding.code.a ? valueofencoding.code.b
+Function ?(a:encodingpair.seq.char, b:encodingpair.seq.char)ordering valueofencoding.code.a ? valueofencoding.code.b
 
-
-/ use maindict 
+/ use maindict
 
 Export initialdict seq.encodingpair.seq.char
 
 type word3 is toword:word
 
-
-function assignencoding( p:seq.encodingpair.word3,a:word3)int  encoding.toword.a
-
+function assignencoding(p:seq.encodingpair.word3, a:word3)int encoding.toword.a
 
 function =(a:word3, b:word3)boolean toword.a = toword.b
 
@@ -80,11 +76,7 @@ function =(a:slot, b:slot)boolean toint.a = toint.b
 function hash(a:const3)int
  hash.for acc = empty:seq.int, @e = flds.a do acc + toint.@e /for(acc)
 
- 
-function assignencoding( p:seq.encodingpair.const3,a:const3)int  assignrandom( p, a)
-
-
-
+function assignencoding(p:seq.encodingpair.const3, a:const3)int assignrandom(p, a)
 
 llvmtypeele
 
@@ -102,7 +94,7 @@ else
  { @(+, code, empty:set.encoding.seq.char, words.loadedlibs_1)}
  for acc = empty:set.encoding.seq.char, @e = initialdict do acc + code.@e /for(acc)
 let used = for acc = empty:set.encoding.seq.char, @e = encoding:seq.encodingpair.word3 do acc + wordcode.@e /for(acc)
- { build packed seq of word encodings }
+{ build packed seq of word encodings }
  let wordstoadd = toseq(used - have)
  let data = for acc = [ toint.C64.0, toint.C64.length.wordstoadd], @e = wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
  let wordreps = addobject.data
@@ -111,7 +103,7 @@ let used = for acc = empty:set.encoding.seq.char, @e = encoding:seq.encodingpair
 function addobject(name:seq.word, data:seq.int)int
 let objtype = array(length.data, i64)
 let ll = global("liblib", objtype, AGGREGATE.for acc = empty:seq.slot, @e = data do acc + asi64.slot.@e /for(acc))
- toint.CGEP(slot.ll, 0)
+toint.CGEP(slot.ll, 0)
 
 Function global(name:seq.word, type:llvmtype, init:slot)int
  toint.modulerecord(name, [ toint.GLOBALVAR, typ.type, 2, 1 + toint.init, 0, toint.align8 + 1, 0])
@@ -129,7 +121,7 @@ let s = tointseq.decode.code
 let k = addobject.for acc = empty:seq.int, @e = for acc = [ C64.0, C64.length.s], @e = s do acc + C64.@e /for(acc)do
  acc + toint.@e
 /for(acc)
- [ toint.C64.valueofencoding.code, k, toint.C64.0]
+[ toint.C64.valueofencoding.code, k, toint.C64.0]
 
 Function addwordseq2(a:seq.word)int
- addobject.for acc = [ toint.C64.0, toint.C64.length.a], @e = a do acc + wordref.@e /for(acc)
+ addobject.for acc = [ toint.C64.0, toint.C64.length.a], @e = a do acc + wordref.@e /for(acc) 

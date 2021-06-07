@@ -54,7 +54,7 @@ Function breakparagraph(u:UTF8, i:int, last:int, result:seq.seq.word)seq.seq.wor
   if last < length.u then result + towords.decodeUTF8(u, last, length.u)else result
  else if toint.u_i = 10 then
  let j = blankline(u, i + 1)
-  if j > 0 then
+ if j > 0 then
    if i - 1 < last then breakparagraph(u, j + 1, j + 1, result)
    else
     breakparagraph(u, j + 1, j + 1, result + towords.decodeUTF8(u, last, i - 1))
@@ -76,7 +76,7 @@ let spacechar = char.32
    if not.between(toint.t, 1, length.classifychar)then towords2(a, i + 1, last, result)
    else
     let class = classifychar_(toint.t)
-     if class = "0"_1 then towords2(a, i + 1, last, result)
+    if class = "0"_1 then towords2(a, i + 1, last, result)
      else if class = "SPACE"_1 then
       towords2(a, i + 1, i + 1, if last = i then result else result + encodeword.subseq(a, last, i - 1))
      else
@@ -84,5 +84,5 @@ let spacechar = char.32
       if t = periodchar ∧ i + 1 ≤ length.a ∧ a_(i + 1) = spacechar then
        towords2(a, i + 2, i + 2, if last = i then result + encodeword.[ periodchar, spacechar]
        else result + encodeword.subseq(a, last, i - 1) + encodeword.[ periodchar, spacechar])
-      else 
-       towords2(a, i + 1, i + 1, if last = i then result else result + encodeword.subseq(a, last, i - 1)/if + class)
+      else
+       towords2(a, i + 1, i + 1, if last = i then result else result + encodeword.subseq(a, last, i - 1)/if + class) 
