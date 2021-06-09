@@ -335,13 +335,8 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
    firstpass(module.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, types.f + it, prg2)
  else if input_1 ∈ "Function function Builtin builtin Export unbound"then
  let t = parse(stubdict, getheader.input)
- let name = funcname.t
- let paratypes = funcparametertypes.t
- let tin = typeinname.name
- let sym = if isempty.tin then
-  if name = "true"then Littrue
-  else if name = "false"then Litfalse else symbol3(module.f, name, paratypes, funcreturntype.t)
- else symbol4(module.f, name_1, tin_1, paratypes, funcreturntype.t)
+ let sym=tosymfromparse(t,module.f)
+ let paratypes = paratypes.sym
  assert checkwellformed.sym report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input
    if input_1 = "Export"_1 then
     firstpass(module.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, types.f, prg.f)
@@ -358,8 +353,8 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
      for acc = empty:seq.symbol, @e = arithseq(length.paratypes, 1, 1)do acc + Local.@e /for(acc)
      + if  issimple.module.sym then [ sym, Words."BUILTIN", Optionsym]
      else
-      [ if isempty.tin then symbol3(moduleref("builtin", typeT), name, paratypes, resulttype.sym)
-      else symbol4(moduleref("builtin", typeT), name_1, tin_1, paratypes, resulttype.sym)]
+      [ if issimplename.sym then symbol3(moduleref("builtin", typeT), [wordname.sym], paratypes, resulttype.sym)
+      else symbol4(moduleref("builtin", typeT), wordname.sym, (nametype.sym)_1, paratypes, resulttype.sym)]
     map(prg.f, sym, code2)
     else let discard = encode.symboltext(sym,  module.f, input)
     prg.f
@@ -384,16 +379,34 @@ Function processOption(p:program, txt:seq.word)program
   let dict = for acc = empty:seq.symbol, w ="STATE PROFILE COMPILETIME INLINE NOINLINE"do
    acc + symbol3(moduleref."headdict", [ w], typeref."internal1 headdict.")
   /for(asset.acc)
+   let modref = moduleref([ last.modname], TypeFromOldTyperep(modname >> 1))
   let t = parse(dict, txt << (2 * length.modname))
-  let name = funcname.t
-  let paratypes = funcparametertypes.t
-  let modref = moduleref([ last.modname], TypeFromOldTyperep(modname >> 1))
-  let tin = typeinname.name
-  let sym = if isempty.tin then symbol3(modref, name, paratypes, funcreturntype.t)else symbol4(modref, name_1, tin_1, paratypes, funcreturntype.t)
-  let r = lookupcode(p, sym)
+  let sym=tosymfromparse(t,modref)
+    let r = lookupcode(p, sym)
   let option = worddata.(parsedcode.t)_1
    assert isdefined.r report"Option problem" + modname + print.sym + EOL
     addoption(p, sym, option)
+
+function tosymfromparse(t:bindinfo,module:modref) symbol
+ let name = funcname.t
+  let paratypes = funcparametertypes.t
+  if length.name=1 then
+  if name = "true"then Littrue
+  else if name = "false"then Litfalse else symbol3(module, name, paratypes, funcreturntype.t)
+  else 
+   assert name_2 /in ":" report "typeiname format problem"
+   let typeinname=for   r=""  , w =name << 2  while w /nin "("  do
+    if w /in "." then r else [w]+ r
+ /for (  TypeFromOldTyperep.r )
+ {   let typeinname=for   r=typeref([name_3,"?"_1,"?"_1])  , w =name << 4     do
+    if w /in "." then r else   addabstract(typeref([w,"?"_1,"?"_1])   ,r)
+ /for (  r )
+}
+  symbol4(module, name_1, typeinname, paratypes, funcreturntype.t)
+
+    
+ 
+use mytype 
 
 function getmod(s:seq.word, i:int)seq.word
  if s_i ∈ "."then getmod(s, i + 2) + s_(i + 1)

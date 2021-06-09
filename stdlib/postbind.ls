@@ -128,7 +128,7 @@ function codeforbuiltin(alltypes:typedict, issequence:boolean, newsym:symbol, sy
  if wordname.sym ∈ "offsets"then
   { symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)}
   let paratypes = paratypes.sym
-  let offset = for acc = toint.(moduleS.sym)_1, @e = subseq(paratypes, 2, length.paratypes)do
+   let offset = for acc = baseoffset.sym , @e = subseq(paratypes, 2, length.paratypes)do
    acc + length.getsubflds(alltypes, replaceT(modpara, @e))
   /for(acc)
   let singlefld = 1 = length.getsubflds(alltypes, replaceT(modpara, resulttype.sym))

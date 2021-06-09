@@ -6,7 +6,7 @@ use format
 
 use standard
 
-use symbolE
+use symbol
 
 use parsersupport.bindinfo
 

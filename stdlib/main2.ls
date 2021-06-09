@@ -27,7 +27,7 @@ use postbind
 
 use standard
 
-use symbolE
+use symbol
 
 use program
 

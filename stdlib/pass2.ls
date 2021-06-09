@@ -12,7 +12,7 @@ use real
 
 use standard
 
-use symbolE
+use symbol
 
 use program
 

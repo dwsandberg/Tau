@@ -16,7 +16,9 @@ use persistant
 
 use standard
 
-use symbolE
+use symbol
+
+use program
 
 use textio
 

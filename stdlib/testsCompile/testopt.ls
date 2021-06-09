@@ -40,7 +40,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br 26 Exit 
 /br 0 Exit 
 /br EndBlock 
-/br","%1 %2 LOOPBLOCK:3(int, int)
+/br","%1 %2 LOOPBLOCK:3(int, int)$loopblock.int 
 /br %3 1 =(int, int)standard Br2(1, 2)
 /br %4 Exit 
 /br %3 1-(int, int)standard %3 %4 *(int, int)standard CONTINUE 2 
@@ -64,7 +64,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br"
 ,  "31"  
 ,"%1", { test 33 }"33","/start(int) 
- /br %1 %2_(int seq, int)seq.int DEFINE 3 %3 3 >(int, int)standard Br2(4, 1) 
+ /br %1 %2_(seq.int, int)seq.int DEFINE 3 %3 3 >(int, int)standard Br2(4, 1) 
  /br %3 3 =(int, int)standard Br2(8, 1) 
  /br %3 1 =(int, int)standard Br2(7, 1) 
  /br %3 2 =(int, int)standard Br2(6, 7) 
@@ -77,7 +77,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
  /br 11 Exit 
  /br EndBlock 
  /br",{test 35} "/start(int) 
-/br %1 %2_(word seq, int)seq.word DEFINE 3 
+/br %1 %2_(seq.word, int)seq.word DEFINE 3 
 %3 WORD c >(int, int)standard Br2(4, 1) 
 /br %3 WORD c =(int, int)standard Br2(6, 1) 
 /br %3 WORD e =(int, int)standard Br2(5, 1) 
@@ -89,7 +89,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br 11 Exit 
 /br EndBlock 
 /br",{test 36} "/start(int) 
-/br %1 3_(int seq, int)seq.int DEFINE 2 %2 8 >(int, int)standard Br2(4, 1) 
+/br %1 3_(seq.int, int)seq.int DEFINE 2 %2 8 >(int, int)standard Br2(4, 1) 
 /br %2 8 =(int, int)standard Br2(6, 1) 
 /br %2 5 =(int, int)standard Br2(5, 1) 
 /br %2 7 =(int, int)standard Br2(4, 5) 
@@ -99,7 +99,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br 25 Exit 
 /br 2 Exit 
 /br EndBlock /br",{test 37} "/start(int) 
-/br %1 %2_(word seq, int)seq.word DEFINE 3 %3 WORD b >(int, int)standard Br2(4, 1) 
+/br %1 %2_(seq.word, int)seq.word DEFINE 3 %3 WORD b >(int, int)standard Br2(4, 1) 
 /br %3 WORD b =(int, int)standard Br2(7, 1) 
 /br %3 WORD z =(int, int)standard Br2(7, 1) 
 /br %3 WORD xxx =(int, int)standard Br2(4, 7) 
@@ -146,8 +146,8 @@ function sameto(a:seq.word, b:seq.word, i:int, diffs:seq.word)seq.word
 
 function removeoptions(s:seq.word, i:int)seq.word
  if i = length.s then
-  if subseq(s, i - 7, i) ≠ "option(int, word seq)internal"then s
-  else removeoptions(s, i - 9)
+  if subseq(s, i - 8, i) ≠ "option(int, seq.word )internal"then s
+  else removeoptions(s, i - 10)
  else if s_i ≠ '"'_1 then removeoptions(s, i - 1)
  else subseq(s, 1, i - 1)
 

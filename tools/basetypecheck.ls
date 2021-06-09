@@ -7,7 +7,9 @@ module baseTypeCheck
 
 use standard
 
-use symbolE
+use symbol
+
+use program
 
 /use symbolsbtc
 
@@ -27,6 +29,8 @@ use seq.symbol
 use process.seq.word
 
 use main2
+
+use program
 
 
 Function baseTypeCheck( library:seq.word) seq.word 

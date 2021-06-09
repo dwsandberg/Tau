@@ -68,7 +68,7 @@ else
  let x = removeconstant.code
   if for acc = true, @e = x do
    acc
-   ∧ (isconst.@e ∨ moduleS.@e ∈ ["int builtin","real builtin"] ∨ isspecial.@e
+   ∧ (isconst.@e ∨ (name.module.@e="builtin"_1 /and para.module.@e    ∈ [typereal,typeint] )∨ isspecial.@e
    ∨ islocal.@e
    ∨ @e ∈ toexport)
   /for(acc)then
@@ -86,13 +86,18 @@ cleansymbol(sym, code)
 
 use mytype
 
+use bits
+
+
 function addlibsym(s:symbol)symbol
  let t=module.s
  Constant2.[ Words.worddata.s, Word.library.t,Word.name.t,addmytype.para.t,   
- addseq.for acc = empty:seq.symbol, @e = zcode.s do acc + addlibsym.@e /for(acc), Lit.extrabits.s, 
- addseq.for acc = empty:seq.symbol, @e = types.s do acc + addmytype.@e /for(acc)
+  addseq.for acc = empty:seq.symbol, @e = types.s do acc + addmytype.@e /for(acc)
+ , Lit.toint.raw.s,Lit.extrabits.s  
+  ,addseq.for acc = empty:seq.symbol, @e = zcode.s do acc + addlibsym.@e /for(acc)
  ,Record.[ typeptr, typeword,typeword, typeptr 
- , typeptr, typeint, typeptr]]
+ ,typeptr
+ , typeint, typeint, typeptr]]
 
 function addmytype(t:mytype)symbol 
  addseq.for acc = empty:seq.symbol, e =  typerep.t do acc + 

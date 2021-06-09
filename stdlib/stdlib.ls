@@ -34,7 +34,7 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
   interpreter  llvm llvmconstants internalbc codegennew codetemplates persistant breakblocks
-  program symbolE
+  program hidesymbol
 
 * Removed maindict 
 

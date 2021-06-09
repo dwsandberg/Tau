@@ -22,6 +22,8 @@ use mangle
 
 use mytype
 
+use symbol
+
 use pretty
 
 use standard
@@ -75,13 +77,13 @@ let p = codedown.w
  if length.p < 2 then empty:set.word
  else if last.p_2 ∈ include then empty:set.word else asset.[ w]
 
-function mytype(w:word)mytype mytype.[ w]
+function mytype(w:word)mytype TypeFromOldTyperep.[ w]
 
 function modarc(s:seq.mytype, a:arc.word)seq.arc.word
 let t1 = codedown.tail.a
 let h1 = codedown.head.a
  if length.t1 < 2 ∨ length.h1 < 2 ∨ t1_2 = h1_2
- ∨ not(mytype.h1_2 ∈ s ∧ mytype.t1_2 ∈ s)then
+ ∨ not(TypeFromOldTyperep.h1_2 ∈ s ∧ TypeFromOldTyperep.t1_2 ∈ s)then
   empty:seq.arc.word
  else [ arc(merge.readable.tail.a, merge.readable.head.a)]
 
@@ -91,8 +93,8 @@ function readable(fsig:word)seq.word
 let p = codedown.fsig
  if length.p = 1 then p_1
  else
-  let plist = for acc = empty:seq.mytype, @e = subseq(p, 3, length.p)do acc + mytype.@e /for(acc)
-   p_1 + ":" + print.mytype.p_2 + "("
+  let plist = for acc = empty:seq.mytype, @e = subseq(p, 3, length.p)do acc + TypeFromOldTyperep.@e /for(acc)
+   p_1 + ":" + print.TypeFromOldTyperep.p_2 + "("
    + for acc ="", @e = plist do list(acc,",", print.@e)/for(acc)
    + ")"
 

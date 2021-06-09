@@ -2,7 +2,7 @@ Module mergeblocks
 
 use standard
 
-use symbolE
+use symbol
 
 use words
 
