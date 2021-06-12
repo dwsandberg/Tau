@@ -27,13 +27,13 @@ Function testopt seq.word let p2 = secondPass."stdlib.testoptconfig"
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 ,"1","false()standard","4607182418800017408","44","2","46","72","27","2","128"
 ,"65","true()standard","4", { optest24 }
-"/start(int)
+"Start(int)
 /br %1 5 =(int, int)standard Br2(1, 2)
 /br 24 Exit 
 /br 0 Exit 
 /br EndBlock 
 /br","25", { optest26 }
-"/start(int) 
+"Start(int) 
 /br %1 WORD a =(int, int)standard Br2(3, 1) 
 /br %1 WORD b =(int, int)standard Br2(2, 1) 
 /br %1 WORD c =(int, int)standard Br2(1, 2) 
@@ -45,25 +45,25 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br %4 Exit 
 /br %3 1-(int, int)standard %3 %4 *(int, int)standard CONTINUE 2 
 /br EndBlock 
-/br",{ optest28 }"/start(boolean)
+/br",{ optest28 }"Start(boolean)
 /br %1 0 >(int, int)standard Br2(1, 2)
 /br 10 %2 >(int, int)standard Exit 
 /br false()standard Exit 
 /br EndBlock 
-/br",{ optest29 }"/start(boolean)
+/br",{ optest29 }"Start(boolean)
 /br %1 0 >(int, int)standard Br2(1, 2)
 /br true()standard Exit 
 /br 10 %2 >(int, int)standard Exit 
 /br EndBlock 
 /br", { optest30 }
-"/start(int)
+"Start(int)
 /br %1 WORD test =(int, int)standard Br2(1, 2)
 /br %2 Exit 
 /br %3 Exit 
 /br EndBlock 
 /br"
 ,  "31"  
-,"%1", { test 33 }"33","/start(int) 
+,"%1", { test 33 }"33","Start(int) 
  /br %1 %2_(seq.int, int)seq.int DEFINE 3 %3 3 >(int, int)standard Br2(4, 1) 
  /br %3 3 =(int, int)standard Br2(8, 1) 
  /br %3 1 =(int, int)standard Br2(7, 1) 
@@ -76,7 +76,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
  /br 10 Exit 
  /br 11 Exit 
  /br EndBlock 
- /br",{test 35} "/start(int) 
+ /br",{test 35} "Start(int) 
 /br %1 %2_(seq.word, int)seq.word DEFINE 3 
 %3 WORD c >(int, int)standard Br2(4, 1) 
 /br %3 WORD c =(int, int)standard Br2(6, 1) 
@@ -88,7 +88,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br 10 Exit 
 /br 11 Exit 
 /br EndBlock 
-/br",{test 36} "/start(int) 
+/br",{test 36} "Start(int) 
 /br %1 3_(seq.int, int)seq.int DEFINE 2 %2 8 >(int, int)standard Br2(4, 1) 
 /br %2 8 =(int, int)standard Br2(6, 1) 
 /br %2 5 =(int, int)standard Br2(5, 1) 
@@ -98,7 +98,7 @@ let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 /br %2 3333 =(int, int)standard Br2(1, 2) 
 /br 25 Exit 
 /br 2 Exit 
-/br EndBlock /br",{test 37} "/start(int) 
+/br EndBlock /br",{test 37} "Start(int) 
 /br %1 %2_(seq.word, int)seq.word DEFINE 3 %3 WORD b >(int, int)standard Br2(4, 1) 
 /br %3 WORD b =(int, int)standard Br2(7, 1) 
 /br %3 WORD z =(int, int)standard Br2(7, 1) 

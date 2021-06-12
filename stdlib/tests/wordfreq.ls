@@ -1,4 +1,3 @@
-
 Module wordfreq
 
 Count word frequence in text file. An indexed encoding is used to assign indexes to each distinct word in the file. Uses a dseq to provide a 0 count for words that have not yet been encountered and assigned an index. 
@@ -20,7 +19,6 @@ use sparseseq.wordfreq
 use seq.seq.word
 
 type indexedword is w:word
-
 
 function assignencoding( p:seq.encodingpair.indexedword,a:indexedword)int length.p+1
 

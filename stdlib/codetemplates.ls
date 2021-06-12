@@ -199,9 +199,8 @@ addtemplate(symbol3(moduleref."interpreter","GEP", seqof.typeint, typeint, typei
 , addtemplate(symbol3(moduleref."bits","∧", typebits, typebits, typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, and))
 , addtemplate(symbol3(moduleref."bits","∨", typebits, typebits, typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, or))
 , addtemplate(symbol3(moduleref."bits","xor", typebits, typebits, typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, xor))
-,addtemplate(symbol3(moduleref."tausupport" ,"set ", [ typeptr, typeint], typeptr), 1, 
-  STORE(r.1, ibcsub.1, ibcsub.2)+ GEP(r.1, i64, ibcsub.1, C64.1) )
-,  addtemplate(abortsymbol.typeint
+, addtemplate(symbol3(moduleref."tausupport","set", [ typeptr, typeint], typeptr), 1, STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1))
+, addtemplate(abortsymbol.typeint
 , 1
 , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 )
@@ -315,13 +314,13 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)match5
    if nopara.xx < 10 then
    let fldbc = sequencecode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1), tollvmtype(alltypes, para.module.xx), 0, true)
    addtemplate(xx, regno.fldbc, bc.fldbc)
-   else addtemplate(xx, 0, emptyinternalbc, "SEQUENCE"_1, nopara.xx, empty:seq.symbol, [ tollvmtype(alltypes, para.module.xx)])
+   else
+    addtemplate(xx, 0, emptyinternalbc,"SEQUENCE"_1, nopara.xx, empty:seq.symbol, [ tollvmtype(alltypes, para.module.xx)])
   else if isbr.xx then addtemplate(xx, brt.xx, emptyinternalbc, wordname.xx, brf.xx, empty:seq.symbol, [ i64])
   else if isloopblock.xx then
    addtemplate(xx, firstvar.xx, emptyinternalbc, wordname.xx, nopara.xx, empty:seq.symbol, for oldacc = [ tollvmtype(alltypes, resulttype.xx)], e20 = paratypes.xx do oldacc + tollvmtype(alltypes, e20)/for(oldacc))
-  else if iscontinue.xx then
-   addtemplate(xx, 0, emptyinternalbc, "CONTINUE"_1, nopara.xx, empty:seq.symbol, [ i64])
-  else  addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, empty:seq.symbol, [ i64])
+  else if iscontinue.xx then addtemplate(xx, 0, emptyinternalbc,"CONTINUE"_1, nopara.xx, empty:seq.symbol, [ i64])
+  else addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, empty:seq.symbol, [ i64])
  else
   { handle builtin package }
   let intable = findtemplate.xx

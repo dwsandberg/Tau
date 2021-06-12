@@ -178,7 +178,8 @@ let action = action.m
    Lcode2(newcode, lmap.l, noblocks.l, regno.l + 1, newstack, pop(blocks.l, no))
  else if action = "DEFINE"_1 then
   Lcode2(code.l, [ localmap(arg.m, top.args.l)] + lmap.l, noblocks.l, regno.l, pop(args.l, 1), blocks.l)
- else if action = "SET"_1 then l
+ else if action = "SET"_1 then assert false report"in SET"
+ l
  else if action = "LOOPBLOCK"_1 then
  let varcount = arg.m
  let argstk = { this value added is never used }push(args.l, 0)
@@ -188,7 +189,7 @@ let action = action.m
  { stack from top is kind, noexps, firstvar, exptypes, exps }
   let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, newstk, blocks.l)
   Lcode2(emptyinternalbc, bodymap, noblocks.l + 1, regno.l + varcount, empty:stack.int, push(blocks.l, exitblock))
- else if action = "/start"_1 then
+ else if action = "Start"_1 then
  let exitblock = Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(push(args.l, typ.first.llvmtypelist.m), 55), blocks.l)
  Lcode2(emptyinternalbc, lmap.l, noblocks.l, regno.l, empty:stack.int, push(blocks.l, exitblock))
  else if action = "CONTINUE"_1 then
@@ -259,7 +260,7 @@ function processblk(blks:seq.Lcode2, i:int, exitbr:internalbc, code:internalbc, 
        let newtailphi = tailphi + [ noblocks.l - 1] + top(pop.args.l, noargs)
        let newcode = BR.noblocks.blks_1
         processblk(blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, newtailphi)
-    else if kind = 55 then { /start }processblk(blks, i + 1, exitbr, code + code.l, varcount, phi, tailphi)
+    else if kind = 55 then { Start }processblk(blks, i + 1, exitbr, code + code.l, varcount, phi, tailphi)
     else
      { br block }
      assert kind = 1 report"expecting br block" + toword.kind

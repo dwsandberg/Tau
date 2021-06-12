@@ -1,9 +1,6 @@
-
-
 Module main2
 
 use UTF8
-
 
 use bits
 
@@ -98,23 +95,23 @@ let exports = info_3
  let prg3 = for acc = prg2, @e = for acc = empty:seq.seq.word, @e = allsrc do acc + @e /for(acc)do
   processOption(acc, @e)
  /for(acc)
-  if option = "pass1"then
+ if option = "pass1"then
    for acc = empty:seq.seq.word, @e = toseq.prg3 do acc + print(prg3, @e)/for(acc)
   else
-   let prg4 = pass2(prg3, alltypes.link)
+   let prg4 = pass2.prg3
    let libdesc = libdesc(alltypes.link, prg4, templates.link, mods.link, exports)
    let uses = uses(prg4, asset.roots.link + libdesc)
    let defines = defines(prg4, uses - compiled.link)
-    if option = "pass2"then
+   if option = "pass2"then
      for acc = empty:seq.seq.word, @e = defines do acc + print(prg4, @e)/for(acc)
-    else 
+    else
      let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link, isempty.dependentlibs)
      let z2 = createlib(bc, last.libname, dependentlibs)
-      ["OK"]
+     ["OK"]
 
 Function compilelib2(libname:seq.word)seq.word
 let p1 = process.subcompilelib("all", libname)
- if aborted.p1 then"COMPILATION ERROR:" + space + message.p1
+if aborted.p1 then"COMPILATION ERROR:" + space + message.p1
  else
   let aa =(result.p1)_1
    if subseq(aa, 1, 1) = "OK"then aa else"COMPILATION ERROR:" + space + aa
@@ -134,14 +131,14 @@ else
   if aborted.p2 then message.p2
   else
    let p3 = process.interpret(alltypes.result.p2, code.result.p2)
-    if aborted.p3 then message.p3 else result.p3
- createfile("stdout", toUTF8bytes.output)
+   if aborted.p3 then message.p3 else result.p3
+createfile("stdout", toUTF8bytes.output)
 
 Function testcomp(s:seq.seq.word)seq.seq.word
 let exports ="testit"
 let allsrc = groupparagraphs("module Module", s)
 let r = pass1(allsrc, exports, libmodules."stdlib")
- for acc = empty:seq.seq.word, @e = toseq.result.r do acc + print(result.r, @e)/for(acc)
+for acc = empty:seq.seq.word, @e = toseq.result.r do acc + print(result.r, @e)/for(acc)
 
 Function firstPass(libname:seq.word)seq.seq.word subcompilelib("pass1", libname)
 
@@ -155,14 +152,14 @@ let src = ["module $X","use standard"] + subseq(b, 2, length.b - 1)
 + ["Function runitx seq.word" + b_(length.b)]
 let link = pass1([ src],"$X", libmodules("stdlib" + lib))
 let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
- runitresult(code.lookupcode(prg2, symbol3(moduleref."$X","runitx",seqof.typeword )), alltypes.link)
+runitresult(code.lookupcode(prg2, symbol3(moduleref."$X","runitx", seqof.typeword)), alltypes.link)
 
 Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname)
 
 Function print(a:seq.seq.word)seq.word
  for acc ="", @e = a do acc + " /br  /br" + @e /for(acc)
- 
-Function compilerfront(option:seq.word, libname:seq.word) compileinfo
+
+Function compilerfront(option:seq.word, libname:seq.word)compileinfo
 let info = getlibraryinfo.libname
 let dependentlibs = info_1
 let filelist = info_2
@@ -175,14 +172,11 @@ let exports = info_3
   let prg3 = for acc = prg2, @e = for acc = empty:seq.seq.word, @e = allsrc do acc + @e /for(acc)do
    processOption(acc, @e)
   /for(acc)
-   if option = "pass1"then
-    compileinfo(alltypes.link,prg3,roots.link)
-   else
-    let prg4 = pass2(prg3, alltypes.link)
-     compileinfo(  alltypes.link,prg4,roots.link)
- 
+  if option = "pass1"then compileinfo(alltypes.link, prg3, roots.link)
+   else let prg4 = pass2.prg3
+    compileinfo(alltypes.link, prg4, roots.link)
 
 _______________
 
 Function addlibrarywords(l:liblib)int let discard = addencodingpairs.words.l
- 1
+ 1 

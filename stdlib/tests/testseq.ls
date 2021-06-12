@@ -1,4 +1,3 @@
-
 module testseq
 
 use real
@@ -39,9 +38,7 @@ use testpackedseq.seq.word
 
 type ccc is key:int, val:int
 
-
 function assignencoding( p:seq.encodingpair.ccc,a:ccc)int  assignrandom(p, a)
-
 
 function =(a:ccc, b:ccc)boolean key.a = key.b
 
@@ -77,7 +74,7 @@ let x = check:seq.seq.word(1)
 let y = check:seq.word(1)
 let z = check:seq.typerec2(2)
  sparsecheck
- + if not("FAIL"_1 ∈ (w + x + y + z))then"PASS testseq"
+ + if"FAIL"_1 ∉ (w + x + y + z)then"PASS testseq"
  else"FAIL testseq" + w + x + y + z
 
 Function sparsecheck seq.word let b = for acc = sparseseq.101, @e = subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)do

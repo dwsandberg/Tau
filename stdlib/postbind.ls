@@ -45,7 +45,7 @@ let org = print.s
  for result = empty:seq.symbol, calls = empty:set.symbol, sourceX = source, x = code do
   if isspecial.x then
   let a = if isSequence.x then Sequence(parameter.getbasetype(alltypes, replaceT(modpara, resulttype.x)), nopara.x)
-  else if isstart.x then start.getbasetype(alltypes, replaceT(modpara, resulttype.x))else x
+  else if isstart.x then Start.getbasetype(alltypes, replaceT(modpara, resulttype.x))else x
    next(result + a, calls, sourceX)
   else
    let isfref = isFref.x
@@ -64,24 +64,23 @@ let org = print.s
       else [ target.xx4]
       next(result + p2, calls + target.xx4, sourceX)
       else if inmodule(sym,"builtin")then
-       if wordname.sym ∈  "processresult"then
+       if wordname.sym ∈ "processresult"then
        let codeforbuiltin = [ Local.1] + Fld(2, getbasetype(alltypes, para.module.newsym))
        next(result + if isfref then Fref.newsym else newsym, calls + newsym, map(sourceX, newsym, codeforbuiltin))
-       else if wordname.sym ∈  "primitiveadd"then
+       else if wordname.sym ∈ "primitiveadd"then
        let encodingtype = typeref."encoding encoding. "
        let encodingstatetype = typeref."encodingstate encoding. "
        let encodingpairtype = typeref."encodingpair encoding. "
        let addefunc = symbol3(moduleref("encoding", para.module.newsym),"add", [ addabstract(encodingstatetype, para.module.newsym), addabstract(encodingpairtype, para.module.newsym)], addabstract(encodingstatetype, para.module.newsym))
        let add2 = symbol3(internalmod,"addencoding", [ typeint, typeptr, typeint, typeint], typeint)
        let dc = deepcopysym(alltypes, addabstract(encodingpairtype, para.module.newsym))
-       if  true then 
-         let codeforbuiltin = [ Local.1, Local.2, Fref.addefunc, Fref.dc, add2, Words."NOINLINE STATE", Optionsym]
-       next(result + if isfref then Fref.newsym else newsym, calls + newsym, map(sourceX, newsym, codeforbuiltin)) 
-       else
-       next(result+[Fref.addefunc, Fref.dc, add2],calls+addefunc,sourceX)
-       else if wordname.sym ∈  "getinstance"then
+       if true then
+        let codeforbuiltin = [ Local.1, Local.2, Fref.addefunc, Fref.dc, add2, Words."NOINLINE STATE", Optionsym]
+        next(result + if isfref then Fref.newsym else newsym, calls + newsym, map(sourceX, newsym, codeforbuiltin))
+        else next(result + [ Fref.addefunc, Fref.dc, add2], calls + addefunc, sourceX)
+       else if wordname.sym ∈ "getinstance"then
        let get = symbol3(internalmod,"getinstance", typeint, typeptr)
-       next(result+encodenocode.para.module.newsym+[ get],calls,sourceX)
+       next(result + encodenocode.para.module.newsym + [ get], calls, sourceX)
        else
         let p2 = codeforbuiltin(alltypes, length.result > 0, newsym, sym, modpara)
         next(result + p2, calls, sourceX)
@@ -128,21 +127,23 @@ function codeforbuiltin(alltypes:typedict, issequence:boolean, newsym:symbol, sy
  if wordname.sym ∈ "offsets"then
   { symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)}
   let paratypes = paratypes.sym
-   let offset = for acc = baseoffset.sym , @e = subseq(paratypes, 2, length.paratypes)do
+  let offset = for acc = baseoffset.sym, @e = subseq(paratypes, 2, length.paratypes)do
    acc + length.getsubflds(alltypes, replaceT(modpara, @e))
   /for(acc)
   let singlefld = 1 = length.getsubflds(alltypes, replaceT(modpara, resulttype.sym))
   if singlefld then Fld(offset, getbasetype(alltypes, replaceT(modpara, resulttype.sym))) + [ Words."VERYSIMPLE", Optionsym]
    else [ Lit.offset, symbol3(internalmod,"GEP", seqof.typeptr, typeint, typeptr), Words."VERYSIMPLE", Optionsym]
- else if wordname.sym ∈ "build" then
+ else if wordname.sym ∈ "build"then
  let c = for acc = empty:seq.seq.mytype, @e = paratypes.sym do acc + getsubflds(alltypes, replaceT(modpara, @e))/for(acc)
  buildconstructor(alltypes, if issequence then { for seq index func }[ typeint]else empty:seq.mytype, c, empty:seq.mytype, 1, 1, 0, empty:seq.symbol)
- else if wordname.sym ∈  "packed "then [ blocksym.getbasetype(alltypes,(paratypes.newsym)_1)]
+ else if wordname.sym ∈ "packed"then [ blocksym.getbasetype(alltypes,(paratypes.newsym)_1)]
  else if wordname.sym ∈ "_"then
  let seqtype = getbasetype(alltypes, first.paratypes.newsym)
- [ symbol3(internalmod,"indexseq45", seqtype, typeint, seqeletype.seqtype)]
+ [ symbol3(internalmod,"indexseq45", seqtype, typeint, parameter.seqtype)]
  else if wordname.sym = "forexp"_1 then
- let paras = for acc = empty:seq.mytype, p = paratypes.newsym do acc + getbasetype(alltypes, p)/for(acc)
+ let paras = for acc = empty:seq.mytype, p = paratypes.newsym do
+  acc + if"$base"_1 ∈ print.p then p else getbasetype(alltypes, p)
+ /for(acc)
  [ symbol3(moduleref."builtin","forexp", paras, last.paras)]
  else if wordname.sym = "createthreadY"_1 then
  let paras = for acc = empty:seq.mytype, p = paratypes.newsym do acc + getbasetype(alltypes, p)/for(acc)
@@ -155,10 +156,10 @@ function codeforbuiltin(alltypes:typedict, issequence:boolean, newsym:symbol, sy
   [ symbol3(internalmod,"bitcast", typeptr, typeptr)]
  else if sym = symbol3(moduleref("builtin", typeT),"bitcast", seqof.seqof.typeT, seqof.typeT)then
   [ symbol3(internalmod,"bitcast", typeptr, typeptr)]
- else assert    wordname.sym ∈ "bitcast toseqX" report"not expecting" + print.sym
- let t = getbasetype(alltypes, resulttype.newsym)
- [ symbol4(internalmod,"toseq"_1, t, [ typeptr], t)]
-
+ else
+  assert wordname.sym ∈ "bitcast toseqX"report"not expecting" + print.sym
+  let t = getbasetype(alltypes, resulttype.newsym)
+  [ symbol4(internalmod,"toseq"_1, t, [ typeptr], t)]
 
 function blocksym(basetype:mytype)symbol
 let p = parameter.basetype
@@ -167,17 +168,14 @@ let p2 = seqof.if p = typebyte ∨ p = typebit ∨ p = typeboolean then typeint 
 
 function encodenocode(typ:mytype)seq.symbol
 let gl = symbol4(moduleref."$global","global"_1, typ, empty:seq.mytype, seqof.typeint)
-let set = symbol3(moduleref("tausupport"),"set", [ typeptr,  typeint], typeptr)
+let set = symbol3(moduleref."tausupport","set", [ typeptr, typeint], typeptr)
 let encodenosym = symbol3(moduleref."tausupport","encodingno", seqof.typeword, typeint)
-if typ = typeref."typename tausupport. "then
-  [  Lit.2 ]
- else if typ = seqof.typeref."char UTF8."then
-  [   Lit.1 ]  
+if typ = typeref."typename tausupport. "then [ Lit.2]
+ else if typ = seqof.typeref."char UTF8."then [ Lit.1]
  else
-  ifthenelse([ gl] + Fld(0, typeint)+Define."X1"+
-    [Local."X1"_1 , Lit.0, EqOp], [   gl, Words.print.typ, encodenosym, set, Define."xx", gl] + Fld(0, typeint),[ Local."X1"_1],typeint)
+  ifthenelse([ gl] + Fld(0, typeint) + Define."X1"
+  + [ Local."X1"_1, Lit.0, EqOp], [ gl, Words.print.typ, encodenosym, set, Define."xx", gl] + Fld(0, typeint), [ Local."X1"_1], typeint)
 
- 
 function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
  if type = typeint ∨ type = typeword ∨ isencoding.type then [ Local.1]
  else if isseq.type then

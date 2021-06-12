@@ -36,7 +36,6 @@ use seq.seq.word
 
 use seq.encodingpair.seq.char
 
-
 Function libdesc(alltypes:typedict, p:program, templates:program, mods:seq.firstpass, exports:seq.word)symbol
 let mods2 = for acc = empty:seq.firstpass, @e = mods do acc + tolibmod(alltypes, p, templates, exports, @e)/for(acc)
 let symstoexport = for acc = empty:set.symbol, @e = mods2 do acc ∪ defines.@e /for(acc)
@@ -88,23 +87,20 @@ use mytype
 
 use bits
 
-
 function addlibsym(s:symbol)symbol
  let t=module.s
  Constant2.[ Words.worddata.s, Word.library.t,Word.name.t,addmytype.para.t,   
   addseq.for acc = empty:seq.symbol, @e = types.s do acc + addmytype.@e /for(acc)
  , Lit.toint.raw.s,Lit.extrabits.s  
   ,addseq.for acc = empty:seq.symbol, @e = zcode.s do acc + addlibsym.@e /for(acc)
- ,Record.[ typeptr, typeword,typeword, typeptr 
- ,typeptr
+ , Record.[ typeptr, typeword,typeword, typeptr 
+ , typeptr
  , typeint, typeint, typeptr]]
 
 function addmytype(t:mytype)symbol 
- addseq.for acc = empty:seq.symbol, e =  typerep.t do acc + 
- Constant2.[Word.name.e,Word.module.e,Word.library.e,Record.[typeint,typeint,typeint]]
+ addseq.for acc = empty:seq.symbol, e = typerep.t do
+  acc + Constant2.[ Word.name.e, Word.module.e, Word.library.e, Record.[ typeint, typeint, typeint]]
   /for(acc)
- 
-
  
 function addseq(s:seq.symbol)symbol Constant2(s + Sequence(typeptr, length.s))
 
@@ -117,8 +113,8 @@ function addlibmod(toexport:set.symbol, m:firstpass)symbol
   addseq.for acc = empty:seq.symbol, @e = toseq.defines do acc + addlibsym.@e /for(acc)
  else e
   let t=module.m
-  Constant2.[ Word.library.t,Word.name.t,addmytype.para.t, addseq.for acc = empty:seq.symbol, @e = uses.m do acc + addmytype.@e /for(acc), d, e, Words."", Words."", addseq.for acc = empty:seq.symbol, @e = types.m do acc + addinternaltype.@e /for(acc), Words."", 
-  Record.[ typeword,typeword,typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr]]
+  Constant2.[ Word.library.t, Word.name.t, addmytype.para.t, addseq.for acc = empty:seq.symbol, @e = uses.m do acc + addmytype.@e /for(acc), d, e, Words."", Words."", addseq.for acc = empty:seq.symbol, @e = types.m do acc + addinternaltype.@e /for(acc), Words.""
+  , Record.[ typeword, typeword, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr, typeptr]]
 
 function addinternaltype(i:myinternaltype)symbol
 let t=module.i

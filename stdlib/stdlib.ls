@@ -34,7 +34,7 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
   interpreter  llvm llvmconstants internalbc codegennew codetemplates persistant breakblocks
-  program hidesymbol
+  program hidesymbol pass2
 
 * Removed maindict 
 
@@ -44,16 +44,16 @@ option.main2 compilelib2(seq.word)seq.word PROFILE
 
 option.pass1 pass1( seq.seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
 
-option.pass2 pass2(placehold:program, alltypes:typedict)program PROFILE
+option.pass2 pass2(placehold:program)program PROFILE
 
 
-\option.pass2 xxx(alltypes:typedict,p:program,code:seq.symbol,s:symbol,
+\option.pass2 xxx(p:program,code:seq.symbol,s:symbol,
  pdict:worddict.seq.symbol,first:boolean
 ) expandresult PROFILE
 
-\option.pass2 firstopt(p:program, rep:symbol, code:seq.symbol, alltypes:typedict)program PROFILE
+\option.pass2 firstopt(p:program, rep:symbol, code:seq.symbol)program PROFILE
 
-option.pass2 subpass2(  alltypes:typedict,  bigin:seq.programele,corein:program,toprocess:program,count:int) program
+option.pass2 subpass2(    bigin:seq.programele,corein:program,toprocess:program,count:int) program
  PROFILE
 
 option.codegennew codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict,isbase:boolean)seq.bits PROFILE
@@ -146,7 +146,7 @@ option.timestamp   currenttime timestamp STATE
 option.symbol Lit(int)symbol INLINE
 
 
-option.symbol start(mytype) symbol NOINLINE
+option.symbol Start(mytype) symbol NOINLINE
 
 option.mytype replaceT(mytype,mytype) mytype NOINLINE
 

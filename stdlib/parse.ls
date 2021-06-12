@@ -166,25 +166,26 @@ function ifexp(R:reduction.bindinfo, ifpart:bindinfo, thenpart:bindinfo, elsepar
   bindinfo(dict.R, ifthenelse(code.ifpart, code.thenpart, code.elsepart,(types.thenpart)_1), types.thenpart,"")
 
 function action(ruleno:int, input:seq.word, place:int, R:reduction.bindinfo)bindinfo
+ let common=input
  if ruleno = { G F # }1 then R_1
  else if ruleno = { F W NM(FP)T E }2 then
-  createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
+  createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
  else if ruleno = { F W_(FP)T E }3 then
-  createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
+  createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
  else if ruleno = { F W-(FP)T E }4 then
-  createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
+  createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
  else if ruleno = { F W =(FP)T E }5 then
-  createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
+  createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
  else if ruleno = { F W >(FP)T E }6 then
-  createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
+  createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
  else if ruleno = { F W *(FP)T E }7 then
-  createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
+  createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
  else if ruleno = { F W ∧(FP)T E }8 then
-  createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
+  createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
  else if ruleno = { F W ∨(FP)T E }9 then
-  createfunc(R, input, place, tokentext.R_2, types.R_4, R_6, R_7)
+  createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
  else if ruleno = { F W NM T E }10 then
-  createfunc(R, input, place, tokentext.R_2, empty:seq.mytype, R_3, R_4)
+  createfunc(R, common, place, tokentext.R_2, empty:seq.mytype, R_3, R_4)
  else if ruleno = { F W NM is P }11 then
   bindinfo(dict.R, empty:seq.symbol, types.R_4,"record" + tokentext.R_2)
  else if ruleno = { FP P }12 then
@@ -205,26 +206,26 @@ function action(ruleno:int, input:seq.word, place:int, R:reduction.bindinfo)bind
  let id = tokentext.R_1
  let f = lookupbysig(dict.R, id, empty:seq.mytype, input, place)
  bindinfo(dict.R, [ f], [ resulttype.f],"")
- else if ruleno = { E NM(L)}20 then unaryop(R, input, place, tokentext.R_1, R_3)
+ else if ruleno = { E NM(L)}20 then unaryop(R, common, place, tokentext.R_1, R_3)
  else if ruleno = { E(E)}21 then R_2
- else if ruleno = { E if E then E else E }22 then ifexp(R, R_2, R_4, R_6, input, place)
+ else if ruleno = { E if E then E else E }22 then ifexp(R, R_2, R_4, R_6, common, place)
  else if ruleno = { E if E then E else E fi }23 then
-  ifexp(R, R_2, R_4, R_6, input, place)
- else if ruleno = { E E_E }24 then opaction(R, input, place)
- else if ruleno = { E-E }25 then unaryop(R, input, place, tokentext.R_1, R_2)
- else if ruleno = { E W.E }26 then unaryop(R, input, place, tokentext.R_1, R_3)
- else if ruleno = { E E * E }27 then opaction(R, input, place)
- else if ruleno = { E E-E }28 then opaction(R, input, place)
- else if ruleno = { E E = E }29 then opaction(R, input, place)
- else if ruleno = { E E > E }30 then opaction(R, input, place)
- else if ruleno = { E E ∧ E }31 then opaction(R, input, place)
- else if ruleno = { E E ∨ E }32 then opaction(R, input, place)
+  ifexp(R, R_2, R_4, R_6, common, place)
+ else if ruleno = { E E_E }24 then opaction(R, common, place)
+ else if ruleno = { E-E }25 then unaryop(R, common, place, tokentext.R_1, R_2)
+ else if ruleno = { E W.E }26 then unaryop(R, common, place, tokentext.R_1, R_3)
+ else if ruleno = { E E * E }27 then opaction(R, common, place)
+ else if ruleno = { E E-E }28 then opaction(R, common, place)
+ else if ruleno = { E E = E }29 then opaction(R, common, place)
+ else if ruleno = { E E > E }30 then opaction(R, common, place)
+ else if ruleno = { E E ∧ E }31 then opaction(R, common, place)
+ else if ruleno = { E E ∨ E }32 then opaction(R, common, place)
  else if ruleno = { L E }33 then R_1
  else if ruleno = { L L, E }34 then
   bindinfo(dict.R, code.R_1 + code.R_3, types.R_1 + types.R_3,"")
  else if ruleno = { E [ L]}35 then
  let types = types.R_2
-  assert for acc = true, @e = types do acc ∧ types_1 = @e /for(acc)report errormessage("types do not match in build", input, place)
+  assert for acc = true, @e = types do acc ∧ types_1 = @e /for(acc)report errormessage("types do not match in build", common, place)
   bindinfo(dict.R, code.R_2 + Sequence(types_1, length.types), [ seqof.types_1],"")
  else if ruleno = { A W = E }36 then
  let name = tokentext.R_1
@@ -263,11 +264,11 @@ function action(ruleno:int, input:seq.word, place:int, R:reduction.bindinfo)bind
  let name = tokentext.R_3
   assert isempty.lookupLocal(dict.R, name)report errormessage("duplicate symbol:" + name, input, place)
   bindinfo(dict.R, code.R_1 + code.R_5, types.R_1 + types.R_5, tokentext.R_1 + tokentext.R_3)
- else if ruleno = { F2 F1 }49 then forlocaldeclare(R_1, input, place)
+ else if ruleno = { F2 F1 }49 then forlocaldeclare(R_1, common, place)
  else if ruleno = { E for F2 do E end(E)}50 then
-  forbody(dict.R_1, R_2, R_4, R_1, R_7, input, place)
+  forbody(dict.R_1, R_2, R_4, R_1, R_7, common, place)
  else if ruleno = { E for F2 while E do E end(E)}51 then
-  forbody(dict.R_1, R_2, R_6, R_4, R_9, input, place)
+  forbody(dict.R_1, R_2, R_6, R_4, R_9, common, place)
  else
   assert ruleno = { D E }52 report"invalid rule number" + toword.ruleno
    R_1
@@ -280,9 +281,7 @@ let seqtype = last.types.a
   let elesym = symbol3(moduleref("$for", parameter.seqtype), elename, empty:seq.mytype, parameter.seqtype)
   let dict1 = if length.types.a > 1 then
    { keep track so right next is used in nested fors }
-   let resultsym = symbol3(moduleref."$for","next", types.a >> 1, 
-      addabstract(typeref."$base . .",typeref([toword.place]+". ."))
-   )
+   let resultsym = symbol3(moduleref."$for","next", types.a >> 1, addabstract(typeref."$base. .", typeref([ toword.place] + ". .")))
    let nestingsym = symbol3(tomodref.resulttype.resultsym,"for", empty:seq.mytype, resulttype.resultsym)
    let oldnesting = lookupLocal(dict.a,"for")
    if isempty.oldnesting then dict.a else dict.a - oldnesting /if + resultsym + nestingsym
@@ -305,10 +304,11 @@ let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = typebool
 else"while expresssion type must be boolean"
 assert isempty.checktypes report errormessage(checktypes, input, place)
  let resulttype = first.types.endexp
- let sym = symbol3(moduleref("builtin", typeint),"forexp", types.vars + types.vars >> 1 + parameter.last.types.vars + typeptr + typeboolean
+ let sym = symbol3(moduleref("builtin", typeint),"forexp", types.vars + types.vars >> 1 + parameter.last.types.vars + (types.forbody)_1
+ + typeboolean
  + resulttype, resulttype)
- let newcode = code.vars + code.forbody
- + if tokentext.exitexp = "for"then [ Littrue]else code.exitexp /if
- + code.endexp
- + sym
-  bindinfo(dict, newcode, [ resulttype],"") 
+  let newcode = code.vars + code.forbody
+  + if tokentext.exitexp = "for"then [ Littrue]else code.exitexp /if
+  + code.endexp
+  + sym
+   bindinfo(dict, newcode, [ resulttype],"") 
