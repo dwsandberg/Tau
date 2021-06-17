@@ -1,3 +1,4 @@
+#!/usr/local/bin/tau ; use testopt; testopt
 
 Module testopt
 
@@ -23,7 +24,14 @@ use otherseq.seq.word
 
 use seq.seq.word
 
-Function testopt seq.word let p2 = secondPass."stdlib.testoptconfig"
+use symbol
+
+use pro2gram
+
+Function testopt seq.word  
+let p2=for acc = empty:seq.seq.word, 
+           p=tosymdefs.prg.compilerfront("pass2","stdlib.testoptconfig")
+      do acc + [ print.sym.p+print.code.p] /for(acc)
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
 ,"1","false()standard","4607182418800017408","44","2","46","72","27","2","128"
 ,"65","true()standard","4", { optest24 }

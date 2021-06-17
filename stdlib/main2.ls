@@ -26,7 +26,7 @@ use standard
 
 use symbol
 
-use program
+use pro2gram
 
 use textio
 
@@ -36,9 +36,9 @@ use seq.byte
 
 use otherseq.char
 
-use seq.firstpass
+/use seq.firstpass
 
-use set.firstpass
+/use set.firstpass
 
 use process.liblib
 
@@ -90,22 +90,12 @@ let filelist = info_2
 let exports = info_3
  { let b = unloadlib.[ libname]}
  let allsrc = getlibrarysrc.libname
- let link = pass1(groupparagraphs("module Module", allsrc), exports, libmodules.dependentlibs)
- let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
- let prg3 = for acc = prg2, @e = for acc = empty:seq.seq.word, @e = allsrc do acc + @e /for(acc)do
-  processOption(acc, @e)
- /for(acc)
- if option = "pass1"then
-   for acc = empty:seq.seq.word, @e = toseq.prg3 do acc + print(prg3, @e)/for(acc)
-  else
-   let prg4 = pass2.prg3
-   let libdesc = libdesc(alltypes.link, prg4, templates.link, mods.link, exports)
+ let link = pass1(allsrc, exports, libmodules.dependentlibs)
+   let prg4 =  pass2.result.link
+   let libdesc = libdesc( alltypes.link , prg4,  templates.link, mods.link, exports)
    let uses = uses(prg4, asset.roots.link + libdesc)
    let defines = defines(prg4, uses - compiled.link)
-   if option = "pass2"then
-     for acc = empty:seq.seq.word, @e = defines do acc + print(prg4, @e)/for(acc)
-    else
-     let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link, isempty.dependentlibs)
+     let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link , isempty.dependentlibs)
      let z2 = createlib(bc, last.libname, dependentlibs)
      ["OK"]
 
@@ -136,23 +126,20 @@ createfile("stdout", toUTF8bytes.output)
 
 Function testcomp(s:seq.seq.word)seq.seq.word
 let exports ="testit"
-let allsrc = groupparagraphs("module Module", s)
-let r = pass1(allsrc, exports, libmodules."stdlib")
-for acc = empty:seq.seq.word, @e = toseq.result.r do acc + print(result.r, @e)/for(acc)
+let r = pass1(s, exports, libmodules."stdlib")
+for acc = empty:seq.seq.word, p = tosymdefs.result.r do
+  acc + [ print.sym.p + print.code.p]
+ /for(acc)
 
-Function firstPass(libname:seq.word)seq.seq.word subcompilelib("pass1", libname)
-
-Function secondPass(libname:seq.word)seq.seq.word subcompilelib("pass2", libname)
-
-type runitresult is code:seq.symbol, alltypes:typedict
+type runitresult is code:seq.symbol, alltypes:type2dict
 
 Function runit(b:seq.seq.word)runitresult
 let lib = b_1
 let src = ["module $X","use standard"] + subseq(b, 2, length.b - 1)
 + ["Function runitx seq.word" + b_(length.b)]
-let link = pass1([ src],"$X", libmodules("stdlib" + lib))
-let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
-runitresult(code.lookupcode(prg2, symbol3(moduleref."$X","runitx", seqof.typeword)), alltypes.link)
+let link = pass1(  src ,"$X", libmodules("stdlib" + lib))
+let prg2 =  result.link 
+runitresult(getCode(prg2, symbol(moduleref."$X","runitx", seqof.typeword)), alltypes.link)
 
 Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname)
 
@@ -167,12 +154,9 @@ let exports = info_3
  { let b = unloadlib.[ libname]}
  let allsrc = getlibrarysrc.libname
   { assert false report allsrc @ +("", @e)}
-  let link = pass1(groupparagraphs("module Module", allsrc), exports, libmodules.dependentlibs)
-  let prg2 = postbind(alltypes.link, dict.link, roots.link, result.link, templates.link)
-  let prg3 = for acc = prg2, @e = for acc = empty:seq.seq.word, @e = allsrc do acc + @e /for(acc)do
-   processOption(acc, @e)
-  /for(acc)
-  if option = "pass1"then compileinfo(alltypes.link, prg3, roots.link)
+  let link = pass1(  allsrc , exports, libmodules.dependentlibs)
+  let prg3 =  result.link 
+   if option = "pass1"then compileinfo(alltypes.link, prg3, roots.link)
    else let prg4 = pass2.prg3
     compileinfo(alltypes.link, prg4, roots.link)
 

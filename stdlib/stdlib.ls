@@ -5,7 +5,7 @@ stdlib UTF8   bits codegennew codetemplates encoding fileio format   groupparagr
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
 pass1 pass2  persistant postbind   process real seq set stack  symbol textio timestamp tree worddict words xxhash
  sparseseq standard maindict  outstream bitstream tausupport
- mergeblocks
+ mergeblocks program hidesymbol 
    tests/test11 tests/checking tests/point tests/testencoding  
  tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
  tests/testprocess tests/testfileio tests/testseq
@@ -34,7 +34,7 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
   interpreter  llvm llvmconstants internalbc codegennew codetemplates persistant breakblocks
-  program hidesymbol pass2
+  pro2gram hidesymbol pass2 parsersupport program
 
 * Removed maindict 
 
@@ -42,31 +42,20 @@ option.main2 subcompilelib(seq.word, seq.word)seq.word PROFILE
 
 option.main2 compilelib2(seq.word)seq.word PROFILE
 
-option.pass1 pass1( seq.seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
+option.pass1 pass1( seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
 
-option.pass2 pass2(placehold:program)program PROFILE
+option.pass2 pass2(placehold:pro2gram)pro2gram PROFILE
 
 
-\option.pass2 xxx(p:program,code:seq.symbol,s:symbol,
- pdict:worddict.seq.symbol,first:boolean
-) expandresult PROFILE
 
-\option.pass2 firstopt(p:program, rep:symbol, code:seq.symbol)program PROFILE
 
-option.pass2 subpass2(    bigin:seq.programele,corein:program,toprocess:program,count:int) program
- PROFILE
+option.codegennew codegen(theprg:pro2gram, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:type2dict,isbase:boolean)seq.bits PROFILE
 
-option.codegennew codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict,isbase:boolean)seq.bits PROFILE
 
-/option.pass1 maptemp(s: seq.mapele, templates:program) program PROFILE
-
-option.program lookupcode(p:program, s:symbol)programele PROFILE
 
 /option.set.symbol findelement(val:symbol, s:set.symbol)set.symbol PROFILE
 
-\option.pass2 depthfirst(knownsymbols:program, alltypes:typedict, 
-pending:seq.symbol, processed:program, code:seq.symbol, s:symbol)program
-PROFILE
+
 
 option.standard -(int ) int COMPILETIME
 

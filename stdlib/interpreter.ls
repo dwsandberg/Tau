@@ -34,6 +34,8 @@ use process.seq.int
 
 use seq.seq.int
 
+use pro2gram
+
 Builtin bitcast(int)seq.int
 
 Builtin GEP(seq.int, int)int
@@ -56,7 +58,7 @@ function tocode(r:int, typ:mytype)seq.symbol
 
 function aswords(s:seq.int)seq.word for acc ="", @e = s do acc + wordencodingtoword.@e /for(acc)
 
-Function interpret(alltypes:typedict, code:seq.symbol)seq.word aswords.bitcast.interpret(code, 1, empty:stack.int)
+Function interpret(alltypes:type2dict, code:seq.symbol)seq.word aswords.bitcast.interpret(code, 1, empty:stack.int)
 
 let p = process.interpret(code, 1, empty:stack.int)if aborted.p then message.p else aswords.bitcast.result.p
 
@@ -83,6 +85,7 @@ function interpret(code:seq.symbol, i:int, stk:stack.int)int
     interpret(code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
    else
     let t = dlsymbol.mangledname.sym
+     assert print.resulttype.sym ≠ "?"report"INTER" + print.sym + print.code
     let dcret = deepcopysymI.resulttype.sym
     let adcret = dlsymbol.mangledname.dcret
      assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret

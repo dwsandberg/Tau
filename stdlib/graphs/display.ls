@@ -22,7 +22,7 @@ use seq.seq.seq.word
 
 /use words
 
-Export type:characterwidths s
+Export type:characterwidths 
 
 type characterwidths is widths:seq.int
 

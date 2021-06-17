@@ -14,8 +14,6 @@ use standard
 
 use symbol
 
-use program
-
 use words
 
 use seq.char
@@ -30,7 +28,7 @@ use otherseq.mytype
 
 use seq.mytype
 
-use seq.programele
+use seq.symdef
 
 use otherseq.symbol
 
@@ -56,7 +54,7 @@ use set.seq.word
 
 use seq.seq.seq.symbol
 
-function firstopt(p:program, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
+function firstopt(p:pro2gram, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
 let pdict = for pmap = emptyworddict:worddict.seq.symbol, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara.s do next(add(pmap, toword.parano, [ Local.parano]), parano + 1)/for(pmap)
 let a = xxx(p, removeoptions.code, s, pdict)
 let t = if first then a
@@ -79,7 +77,7 @@ function isverysimple(nopara:int, code:seq.symbol)boolean
   for isverysimple = length.code ≥ nopara, idx = 1, sym = code while isverysimple do next(if idx ≤ nopara then sym = Local.idx
   else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym, idx + 1)/for(isverysimple)
 
-function xxx(p:program, code:seq.symbol, s:symbol, pdict:worddict.seq.symbol)expandresult
+function xxx(p:pro2gram, code:seq.symbol, s:symbol, pdict:worddict.seq.symbol)expandresult
 let a = scancode(p, code, nopara.s + 1, pdict, s)
 let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1)else code.a
  if length.code = length.new ∧ length.code > 20 ∨ new = code then
@@ -98,10 +96,12 @@ Function Hasmerge bits bits.16
 
 function ∈(a:bits, b:bits)boolean(a ∧ b) = a
 
-function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:worddict.seq.symbol, self:symbol)expandresult
+function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:worddict.seq.symbol, self:symbol)expandresult
  for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym = org do
  let len = length.result
-  if isconst.sym then next(flags, result + sym, nextvar, map)
+  if not.isempty.result ∧ last.result = PreFref then
+       next(flags,  result >> 1+Fref.sym,nextvar, map)
+  else if isconst.sym then next(flags, result + sym, nextvar, map)
   else if isspecial.sym then
    if isdefine.sym then
    let thelocal = wordname.sym
@@ -129,16 +129,11 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:worddict.seq.sym
    else if islocal.sym then
    let t = lookup(map, wordname.sym)
    next(flags, result + if isempty.t then [ sym]else t_1, nextvar, map)
-   else if isparameter.sym then
-   let sym2 = Local.parameternumber.sym
-   let t = lookup(map, wordname.sym2)
-   if isempty.t then next(flags, result + if isempty.t then [ sym]else t_1, nextvar, map)
-    else next(flags, result + t_1, nextvar, map)
    else next(flags, result + sym, nextvar, map)
   else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
   else if length.result > 2 ∧ isconst.last.result
-  ∧ (sym = symbol3(moduleref("seq", typeint),"∈", [ typeint, seqof.typeint], typeboolean)
-  ∨ sym = symbol3(moduleref("seq", typeword),"∈", [ typeword, seqof.typeword], typeboolean))then
+  ∧ (sym = symbol(moduleref("seq", typeint),"∈", [ typeint, seqof.typeint], typeboolean)
+  ∨ sym = symbol(moduleref("seq", typeword),"∈", [ typeword, seqof.typeword], typeboolean))then
   let arg = result_(-2)
   if islocal.arg ∨ isconst.arg then
     next(flags, result >> 2 + removeismember(last.result, arg), nextvar, map)
@@ -154,9 +149,9 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:worddict.seq.sym
    let dd = getCode(p, sym)
    let options = getoption.dd
     if(first."COMPILETIME" ∈ options
-    ∨ sym = symbol3(moduleref("seq", typeword),"_", [ seqof.typeword, typeint], typeword))
+    ∨ sym = symbol(moduleref("seq", typeword),"_", [ seqof.typeword, typeint], typeword))
     ∧ for acc = true, @e = subseq(result, len - nopara + 1, len)do acc ∧ isconst.@e /for(acc)then
-     if sym = symbol3(moduleref."words","decodeword", typeword, typeint)then
+     if sym = symbol(moduleref."words","decodeword", typeword, typeint)then
      let arg1 = result_len
      let a1 = for acc = empty:seq.symbol, @e = tointseq.decodeword.wordname.arg1 do acc + Lit.@e /for(acc)
      let d = Constant2(a1 + Sequence(typeint, length.a1))
@@ -183,7 +178,7 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:worddict.seq.sym
         next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
  /for(expandresult(nextvar, result, flags))
 
-function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:program, self:symbol)expandresult
+function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:pro2gram, self:symbol)expandresult
  for pmap = emptyworddict:worddict.seq.symbol, paracode = empty:seq.symbol, nextvar = nextvarin, parano = 1, lastidx = t_1, idx = t << 1 do
   next(add(pmap, toword.parano, [ Local.nextvar]), paracode + subseq(result, lastidx, idx - 1) + Define.nextvar, nextvar + 1, parano + 1, idx)
  /for(let r = scancode(p, code, nextvar, pmap, self)
@@ -193,8 +188,6 @@ function replace(s:seq.symbol, start:int, length:int, value:seq.symbol)seq.symbo
  subseq(s, 1, start - 1) + value + subseq(s, start + length, length.s)
 
 type expandresult is nextvar:int, code:seq.symbol, flags:bits
-
-compound accumaltor possiblities +(int graph, int arc)graph.int,"advancepnp(pnpstate, word)format","state100(state100, program, symbol, symbol)breakblocks","deletearc(word seq graph, word seq arc)graph.seq.word","+(word seq graph, word seq arc)graph.seq.word","+(place, char seq encodingpair)maindict"]
 
 function isconstorlocal(p:seq.symbol)boolean length.p = 1 ∧ (isconst.first.p ∨ islocal.first.p)
 
@@ -243,15 +236,15 @@ function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqty
  let theseqtype = seqof.seqparameter
  let elementtype = if seqparameter ∈ [ typeint, typereal, typeboolean]then seqparameter else if seqparameter ∈ [ typebyte, typebit]then typeint else typeptr
  let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte ∨ seqparameter = typebit
- let callidx = symbol3(moduleref."internal","callidx", [ seqof.elementtype, typeint], elementtype)
+ let callidx = symbol(moduleref."internal","callidx", [ seqof.elementtype, typeint], elementtype)
  [ Start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)] + [ theseq, masteridx, callidx, Exit]
   + if boundscheck then
-   [ masteridx, theseq, GetSeqLength, GtOp, Br2(1, 2), symbol3(moduleref."tausupport","outofbounds", seqof.typeword), abortsymbol.elementtype, Exit]
+   [ masteridx, theseq, GetSeqLength, GtOp, Br2(1, 2), symbol(moduleref."tausupport","outofbounds", seqof.typeword), abortsymbol.elementtype, Exit]
   else empty:seq.symbol /if
   + if maybepacked then
-   [ seqtype, Lit.1, EqOp, Br2(1, 2)] + [ theseq, masteridx, symbol3(internalmod,"packedindex", theseqtype, typeint, elementtype), Exit]
+   [ seqtype, Lit.1, EqOp, Br2(1, 2)] + [ theseq, masteridx, symbol(internalmod,"packedindex", theseqtype, typeint, elementtype), Exit]
   else empty:seq.symbol /if
-  + [ theseq, masteridx, symbol3(internalmod,"idxseq", seqof.elementtype, typeint, elementtype), Exit, EndBlock]
+  + [ theseq, masteridx, symbol(internalmod,"idxseq", seqof.elementtype, typeint, elementtype), Exit, EndBlock]
 
 function forexpcode(forsym:symbol, code:seq.symbol, nextvar:int)expandresult
 let t = backparse2(code, length.code, 5, empty:seq.int) << 1
@@ -326,7 +319,7 @@ function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol
 
 ________________________________
 
-Function pass2(knownsymbols:program)program subpass2(empty:seq.programele, emptyprogram, knownsymbols, 0)
+Function pass2(knownsymbols:pro2gram)pro2gram subpass2(empty:seq.symdef, emptypro2gram, knownsymbols, 0)
 
 SIZE 2283 868 1385 1 SIZE 1646 1080 1810 2 SIZE 1589 1103 1844 3 SIZE 1584 1108 1844 4
 
@@ -334,9 +327,9 @@ SIZE 1751 918 1867 4
 
 SIZE 2333 315 1888 4
 
-function subpass2(bigin:seq.programele, corein:program, toprocess:program, count:int)program
+function subpass2(bigin:seq.symdef, corein:pro2gram, toprocess:pro2gram, count:int)pro2gram
  { assert count < 4 report"SIZE"+ print.length.toseq.toprocess + print.length.bigin + print.length.toseq.corein + print.count }
- for big = bigin, small = emptyprogram, core = corein, pele = toseqprogramele.toprocess do
+ for big = bigin, small = emptypro2gram, core = corein, pele = tosymdefs.toprocess do
  let s = target.pele
  let fullcode = code.pele
  let options = getoption.fullcode
@@ -351,8 +344,8 @@ function subpass2(bigin:seq.programele, corein:program, toprocess:program, count
   if"INLINE"_1 ∈ getoption.t then next(big, small, map(core, s, t))
    else next(big, map(small, s, t), core)
   else next(big + pele, small, core)
- /for(if length.toseq.corein = length.toseq.core then
-  for acc = core, prgele = toseqprogramele.core + toseqprogramele.small + big do
+ /for(if length.tosymdefs.corein = length.tosymdefs.core then
+  for acc = core, prgele = tosymdefs.core + tosymdefs.small + big do
   let code3 = code.prgele
   let sym3 = target.prgele
    if isempty.code3 then map(acc, sym3, code3)else map(acc, sym3, firstopt(acc, sym3, code3, getoption.code3, false))
@@ -397,23 +390,24 @@ function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
     c_1
     else first
      backparse2(s, b - 1, no - 1, [ b] + result)
+     
+use pro2gram
 
-Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
+Function uses(p:pro2gram, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
 
-Function defines(p:program, roots:set.symbol)seq.symbol
+Function defines(p:pro2gram, roots:set.symbol)seq.symbol
  for acc = empty:seq.symbol, @e = toseq.roots do
   acc + if isconstantorspecial.@e ∨ isabstract.module.@e then empty:seq.symbol else [ @e]
  /for(acc)
 
-function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
+function uses(p:pro2gram, processed:set.symbol, toprocess:set.symbol)set.symbol
  if isempty.toprocess then processed
  else
   let q = asset.for acc = empty:seq.symbol, @e = toseq.toprocess do
    acc
    + let d = getCode(p, @e)
-   { assert not.containspara.d report"has p"+ print.@e + print.d }
-    if isempty.d then constantcode.@e else d
+     if isempty.d then constantcode.@e else d
   /for(acc)
   uses(p, processed ∪ toprocess, q - processed)
 
-function containspara(code:seq.symbol)boolean for hasparameter = false, e = code do hasparameter ∨ isparameter.e /for(hasparameter) 
+ 

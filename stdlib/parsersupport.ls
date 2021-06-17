@@ -44,8 +44,7 @@ Function errormessage:T(message:seq.word, input:seq.word, place:int)seq.word
 let m =" /< literal" + message + " />"
 m + " /br  /br" + prettynoparse.subseq(input, 1, place) + " /br" + m
 
-Function parse:T(initial:T, lextable:seq.token.T, common:seq.word)T
- let input=common
+Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
  for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial)), matchthis ="'"_1, last = 0, instring = false, idx = 1, nesting = 0, this = input + "#"do
   if instring ∧ this ≠ matchthis ∨ nesting > 0 then
    { in comment or string }
@@ -63,16 +62,15 @@ Function parse:T(initial:T, lextable:seq.token.T, common:seq.word)T
     { next is not in lex table }
     let kind = checkinteger.this
      assert kind ≠ "ILLEGAL"_1 report"Illegal character in Integer" + this
-      step(lrpart, common, attribute:T([ this]), if kind = "WORD"_1 then Wtoken:T else Itoken:T, idx)
+      step(lrpart, input, attribute:T([ this]), if kind = "WORD"_1 then Wtoken:T else Itoken:T, idx)
    else
     let tok = lextable_lexindex
-     step(lrpart, common, if instring then attribute:T(subseq(input, last, idx))else attribute.tok, tokenno.tok, idx)
+     step(lrpart, input, if instring then attribute:T(subseq(input, last, idx))else attribute.tok, tokenno.tok, idx)
    next(newlrpart, this, idx, false, idx + 1, nesting)
  /for(assert not.instring report errormessage:T("missing string terminator", input, last)
  attribute.top.lrpart)
 
-function step(stk:stack.stkele.T, common:seq.word, attrib:T, tokenno:int, place:int)stack.stkele.T
-let input= common
+function step(stk:stack.stkele.T,input:seq.word, attrib:T, tokenno:int, place:int)stack.stkele.T
 let stateno = stateno.top.stk
 let actioncode = actiontable:T_(tokenno + length.tokenlist:T * stateno)
 if actioncode > 0 then
@@ -86,8 +84,8 @@ if actioncode > 0 then
   let newstk = pop(stk, rulelen)
   let newstateno = actiontable:T_(leftside:T_ruleno + length.tokenlist:T * stateno.top.newstk)
   assert newstateno > 0 report"????"
-   let newstkele = stkele(newstateno, action(ruleno, common, place, reduction.top(stk, rulelen)))
-    step(push(newstk, newstkele), common, attrib, tokenno, place)
+   let newstkele = stkele(newstateno, action(ruleno, input, place, reduction.top(stk, rulelen)))
+    step(push(newstk, newstkele), input, attrib, tokenno, place)
 
 function expect:T(stateno:int)seq.word
 let l = for acc ="", @e = arithseq(length.tokenlist:T, 1, 1)do acc + kk:T(stateno, @e)/for(acc)

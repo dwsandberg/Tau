@@ -223,7 +223,8 @@ Function resolvetypes(t:seq.seq.word, lib:word)set.passtypes
  /for(let p2 = resolve(s, knownmods, passtypes(mref, defines, unresolveduses, unresolvedexports, empty:set.mytype, empty:set.modref))
  R(s + p2, knownmods, 100000))
 
-function newtype(mref:modref, name:word)mytype mytype([ typedef(name, name.mref, library.mref)] + typerep.para.mref)
+Function newtype(mref:modref, name:word)mytype 
+mytype([ typedef(name, name.mref, library.mref)] + typerep.para.mref)
 
 function R(s1:set.passtypes, knownmods:set.modref, countin:int)set.passtypes
  if countin = 0 then s1

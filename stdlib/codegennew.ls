@@ -16,7 +16,7 @@ use standard
 
 use symbol
 
-use program
+use pro2gram
 
 use textio
 
@@ -54,7 +54,11 @@ use seq.encodingpair.stat5
 
 use seq.seq.seq.int
 
-Function codegen(theprg:program, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:typedict, isbase:boolean)seq.bits
+Export type2dict(typedict) type2dict
+
+Export type:type2dict
+
+Function codegen(theprg:pro2gram, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:type2dict, isbase:boolean)seq.bits
 let defines = for acc = empty:seq.symbol, ele = definesWithBuiltins do
 let d = getCode(theprg, ele)
 if isempty.d then { sym not defined in this library }acc
@@ -72,8 +76,8 @@ if isempty.d then { sym not defined in this library }acc
   else { implemented by external funciton }acc
 /for(acc)
 let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
-let discard4 = for acc = 0, @e = defines do acc + funcdec(alltypes, @e)/for(acc)
-let match5map = match5map(theprg, uses, alltypes)
+let discard4 = for acc = 0, @e = defines do acc + funcdec( alltypes, @e)/for(acc)
+let match5map = match5map(theprg, uses,  alltypes)
 let libmods2 = arg.match5map_libdesc
  { let zx2c = createfile("stat.txt", ["in codegen0.3"])}
  let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
@@ -97,7 +101,11 @@ let libmods2 = arg.match5map_libdesc
  llvm(patchlist, bodytxts, adjust)
 
 function addfuncdef(match5map:seq.match5, i:symbol)internalbc
- { let hh = process.subaddfuncdef(match5map, i)assert not.aborted.hh report"fail get"+ print.i + message.hh result.hh use process.internalbc function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc }
+  { let hh = process.subaddfuncdef(match5map, i)
+   assert not.aborted.hh report"fail get"+ print.i + message.hh 
+   result.hh 
+   use process.internalbc 
+ function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc  }
  let m = match5map_i
  let options = options(match5map, m)
  let codet = if length.options > 0 then

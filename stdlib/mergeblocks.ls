@@ -89,7 +89,7 @@ function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.i
    let brt = brt.sym + nodeno
     if isempty.first then
     let b = subseq(code, last + 1, e - 3)
-    if length.b > 2 ∧ islocal.last.b ∧ b_(-2) = Define.wordname.last.b then
+    if length.b > 2 ∧ islocal.last.b ∧ b_(-2) = Define.value.last.b then
       next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, subseq(code, last + 1, e - 5), [ last.b])
      else
       next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, b, empty:seq.symbol)
@@ -98,7 +98,7 @@ function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.i
     ∨ last = e - 4 ∧ code_(e - 3) ∈ eqivs)then
      next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, first, eqivs)
     else if nextcase = 1 ∧ islocal.code_(e - 3)
-    ∧ Define.wordname.code_(e - 3) = code_(e - 4)
+    ∧ Define.value.code_(e - 3) = code_(e - 4)
     ∧ subseq(code, last + 1, e - 5) = first then
      next(cases + casenode(code_(e - 2), nodeno, brt), e, nodeno + 1, brf.sym, first, eqivs + code_(e - 3))
     else if length.cases < reorgwhen then
@@ -107,7 +107,7 @@ function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.i
  /for(if length.cases < reorgwhen then removedead(code, nodes, dead)
  else
   let testvar = if length.first = 1 then first_1 else if isempty.eqivs then Local.nextvar else eqivs_1
-  let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.wordname.testvar
+  let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.value.testvar
   let t = reorg(sort.cases, nodeno.last.cases + brf.code_(nodes_(nodeno.last.cases)), testvar, nodes, nodeno.first.cases - 1)
   let nonewnodes = length.code.t / 4
   let locnode = nodeno.first.cases - 1
@@ -266,8 +266,8 @@ if isempty.l then code
 
 function adjustvar(s:seq.symbol, delta:int)seq.symbol
  for acc = empty:seq.symbol, a = s do
-  if islocal.a then acc + Local(toint.wordname.a + delta)
-  else if isdefine.a then acc + Define.toword(toint.wordname.a + delta)
+  if islocal.a then acc + Local(value.a + delta)
+  else if isdefine.a then acc + Define(value.a + delta)
   else if isloopblock.a then acc + Loopblock(paratypes.a, firstvar.a + delta, resulttype.a)else acc + a
  /for(acc)
 

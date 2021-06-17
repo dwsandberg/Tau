@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau ;  use doc ; doclibrary("typepass" )
+#!/usr/local/bin/tau ; use tools; ; use doc ; doclibrary."typepass"
+
+
 
 ; use doc ; callgraphwithin("typepass","typepass")
 
@@ -63,7 +65,7 @@ print.compile("baseTypeCheck","stdlib")
 
 Module tools
 
-Library tools  genLR1 profile taulextable baseTypeCheck doc
+Library tools  genLR1 profile taulextable   doc baseTypeCheck
 uses stdlib 
 exports doc genLR1 profile taulextable tools baseTypeCheck
 

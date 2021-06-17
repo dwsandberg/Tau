@@ -6,7 +6,7 @@ use standard
 
 use symbol
 
-use program
+use pro2gram
 
 use seq.firstpass
 
@@ -34,9 +34,11 @@ use seq.seq.int
 
 use seq.seq.word
 
+use program
+
 use seq.encodingpair.seq.char
 
-Function libdesc(alltypes:typedict, p:program, templates:program, mods:seq.firstpass, exports:seq.word)symbol
+Function libdesc(alltypes:type2dict, p:pro2gram, templates:pro2gram, mods:seq.firstpass, exports:seq.word)symbol
 let mods2 = for acc = empty:seq.firstpass, @e = mods do acc + tolibmod(alltypes, p, templates, exports, @e)/for(acc)
 let symstoexport = for acc = empty:set.symbol, @e = mods2 do acc ∪ defines.@e /for(acc)
 ∪ for acc = empty:set.symbol, @e = mods2 do acc ∪ exports.@e /for(acc)
@@ -44,30 +46,34 @@ let set2 = asset.for acc = empty:seq.symbol, @e = toseq.symstoexport do acc + to
 let t1 = asset.for acc = empty:seq.symbol, @e = toseq.set2 do acc + zcode.@e /for(acc)
 addseq.for acc = empty:seq.symbol, @e = mods2 do acc + addlibmod(set2, @e)/for(acc)
 
-function tolibmod(alltypes:typedict, p:program, templates:program, exports:seq.word, m:firstpass)seq.firstpass
+function tolibmod(alltypes:type2dict, p:pro2gram, templates:pro2gram, exports:seq.word, m:firstpass)seq.firstpass
  if  name.module.m ∉ exports then empty:seq.firstpass
  else
   let defines = if isabstract.module.m then defines.m else exports.m
-  let types = for acc = empty:seq.myinternaltype, @e = toseq.defines do acc + libtypes2(alltypes, p, templates, @e)/for(acc)
+  let types = for acc = empty:seq.myinternaltype, s = toseq.defines do 
+  if istype.s then
+     let it2=flatwithtype(alltypes, resulttype.s)
+      acc
+    +   
+    myinternaltype(if isabstract.module.m then "undefined"_1
+    else "defined"_1, abstracttype.first.it2, module2.first.it2, it2 << 1 ) 
+   else acc
+  /for(acc)
   let uses = if isabstract.module.m then uses.m else empty:seq.mytype
-   [ firstpass(module.m, uses, defines, exports.m, empty:seq.symbol, empty:set.symbol, types,emptyprogram)]
+   [ firstpass(module.m, uses, defines, exports.m, types)]
 
-function libtypes2(alltypes:typedict, p:program, templates:program, s:symbol)seq.myinternaltype
- if istype.s then
- let it = findelement(alltypes, resulttype.s)_1
-  [ if isabstract.module.it then myinternaltype("undefined"_1, name.it, module.it, subflds.it)else it]
- else empty:seq.myinternaltype
-
-function tolibsym(p:program, templates:program, toexport:set.symbol, sym:symbol)symbol
-let code = if isabstract.module.sym then code.lookupcode(templates, sym)
+function tolibsym(p:pro2gram, templates:pro2gram, toexport:set.symbol, sym:symbol)symbol
+let code = if isabstract.module.sym then getCode(templates, sym)
 else
- let code1 = code.lookupcode(p, sym)
+ let code1 = getCode(p, sym)
  let code = removeoptions.code1
  let z = if length.code < 15 then
  let x = removeconstant.code
   if for acc = true, @e = x do
    acc
-   ∧ (isconst.@e ∨ (name.module.@e="builtin"_1 /and para.module.@e    ∈ [typereal,typeint] )∨ isspecial.@e
+   ∧ (isconst.@e 
+   ∨ (name.module.@e = "builtin"_1 ∧ para.module.@e    ∈ [ typereal, typeint] )
+   ∨ isspecial.@e
    ∨ islocal.@e
    ∨ @e ∈ toexport)
   /for(acc)then
@@ -118,7 +124,7 @@ function addlibmod(toexport:set.symbol, m:firstpass)symbol
 
 function addinternaltype(i:myinternaltype)symbol
 let t=module.i
- Constant2.[ Word.kind.i, Word.name.i, Word.library.t,Word.name.t,addmytype.para.t, 
+ Constant2.[ Word."defined"_1, Word.name.i, Word.library.t,Word.name.t,addmytype.para.t, 
  addseq.for acc = empty:seq.symbol, @e = subflds.i do acc + addmytype.@e /for(acc),
   Record.[ typeint, typeint, typeword,typeword,typeptr, typeptr]]
 

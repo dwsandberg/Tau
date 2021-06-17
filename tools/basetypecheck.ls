@@ -1,18 +1,15 @@
-#!/usr/local/bin/tau   ; use baseTypeCheck; baseTypeCheck("stdlib")
+#!/usr/local/bin/tau   ; use baseTypeCheck; resultCheck("stdlib")
 
 
 
  
-module baseTypeCheck
+Module baseTypeCheck
 
 use standard
 
 use symbol
 
-use program
-
-/use symbolsbtc
-
+use pro2gram
 
 use seq.myinternaltype
 
@@ -22,124 +19,214 @@ use set.mytype
 
 use stack.mytype
 
-use worddict.mytype
-
 use seq.symbol
 
 use process.seq.word
 
 use main2
 
-use program
+use pro2gram
+
+use set.symdef
+
+use seq.symdef
+
+ use intdict.mytype
+ 
+ use set.symbol
+ 
+ 
+Function resultCheck( library:seq.word) seq.word 
+let p = process.glue2( library)
+ if aborted.p then message.p else  result.p
+ 
+ 
+function glue2(library:seq.word)  seq.word
+  let r2=  compilerfront("pass2",library)
+  checkresults(prg.r2 )
+
 
 
 Function baseTypeCheck( library:seq.word) seq.word 
 let p = process.glue( library)
  if aborted.p then message.p else  result.p
  
- Function getbasetype3(a:typedict,t:mytype) mytype getbasetype(a,t)
- 
- 
- 
  
 function glue(library:seq.word)  seq.word
   let r2=  compilerfront("pass2",library)
-for acc = empty:seq.word,count=0, s = toseq.prg.r2 do 
- let p = process.checkkind(alltypes.r2, prg.r2, s)
- let b=if aborted.p then
-     " /p ERROR:" + print.s + " /br" + message.p + " /br fullcode"
-   + for acc2 ="", @e = getCode(prg.r2, s)do acc2 + print.@e /for(acc2) 
-  else   result.p 
-next(acc + b, if isempty.b then count else count+1)/for(
-if count=0 then"Passed Base Type Check" else
- "Base Type Check Failed" + print.count + "Times"+
-acc)
+  basetypecheck(prg.r2,alltypes.r2 )
+  
 
-
-function match(a:mytype, b:mytype)boolean
- a = b ∨ a = typeptr ∧ isseq.b   
- ∨ b = typeptr ∧ isseq.a 
-   /or b =seqof.typeptr /and a /in packedtypes
- /or b =seqof.typeint /and a /in [seqof.typebyte,seqof.typebit]
- /or a =seqof.typeptr /and b /in  packedtypes
-
-
-function match(a:seq.mytype, b:seq.mytype)boolean
- for match = length.a = length.b, idx = 1, e = a while match do next(match(e, b_idx), idx + 1)/for(match)
-
-function addpara(dict:worddict.mytype, alltypes:typedict, paratypes:seq.mytype, i:int)worddict.mytype add(dict, toword.i, getbasetype3(alltypes, paratypes_i))
-
-function addlocals(localtypes:worddict.mytype, para:seq.mytype, localno:int, i:int)worddict.mytype
- if i > 0 then addlocals(replace(localtypes, toword.localno, para_i), para, localno - 1, i - 1)
- else localtypes
 
 function print(s:seq.mytype)seq.word for a ="", e = s do a + print.e /for(a)
 
-function checkkind(alltypes:typedict, result2:program, s2:symbol)seq.word
-let code = getCode(result2, s2)
-let codeonly = removeoptions.removeoptions.removeoptions.code
- if length.codeonly = 0 then""
+
+Function basetypecheck(r2:pro2gram, typedict:type2dict)seq.word
+ for acc = empty:seq.word, count = 0, s = tosymdefs.r2 do
+ let p = process.checkkind(s, typedict)
+ let b = if aborted.p then
+ " /p ERROR:" + print.sym.s + " /br" + message.p + " /br fullcode"
+  + print.code.s
+ else result.p
+  next(acc + b, if isempty.b then count else count + 1)
+ /for(if count = 0 then"Passed Base Type Check"
+ else"Base Type Check Failed" + print.count + "Times" + acc /if)
+ 
+ function addlocals(localtypes:intdict.mytype, para:seq.mytype, localno:int, i:int)intdict.mytype
+ if i > 0 then addlocals(replace(localtypes,  localno, para_i), para, localno - 1, i - 1)
+ else localtypes
+
+
+function checkkind(s2:symdef, typedict:type2dict)seq.word
+ if isconst.sym.s2 /or name.sym.s2 ∈ "type]"then""
  else
-  assert last.codeonly ≠ Optionsym report"more than one option symbol"
-  let localdict = for acc = emptyworddict:worddict.mytype, @e = arithseq(nopara.s2, 1, 1)do 
-  addpara(acc, alltypes, paratypes.s2, @e)/for(acc)
-   let returntype= getbasetype3(alltypes, resulttype.s2)
- for  stk=empty:stack.mytype,localtypes=localdict,s=codeonly do 
-    {assert not.isempty.module.s report"Illformed module on symbol"}
-    if isdefine.s then
-     assert not.isempty.stk   report"Ill formed Define"
-      next( pop.stk, replace(localtypes, wordname.s , top.stk))
-    else if inmodule(s, "$words") then
-     next( push(stk, seqof.typeint), localtypes)
-    else if inmodule(s ,"$real") then next( push(stk, typereal), localtypes)
-    else if inmodule(s,"$word") /or inmodule(s,"$int") /or inmodule(s,"$fref")  then next( push(stk, typeint), localtypes)
-    else if isRecord.s then
-     assert length.toseq.stk ≥ nopara.s report"stack underflow record"
-      next( push(pop(stk, nopara.s), typeptr), localtypes)
-    else if isSequence.s then
-     assert length.toseq.stk ≥ nopara.s report"stack underflow sequence"
-     assert  parameter.modname.s /in ([typeint,typereal , typeboolean ,typeptr,typebit,typebyte] + packedtypes)
-     report "SEQ"+print.parameter.modname.s
-      next( push(pop(stk, nopara.s), getbasetype3(alltypes, seqof.parameter.modname.s)), localtypes)
-    else if isexit.s then
-     assert match(top.stk, top.pop.stk)report"exit type does not match block type" + print.top.stk + print.top.pop.stk
-      next( pop.stk, localtypes)
-    else if isblock.s then next( stk, localtypes)
-    else if iscontinue.s then
-     assert length.toseq.stk ≥ nopara.s report"stack underflow continue"
-      next( pop(stk, nopara.s), localtypes)
-    else if isstart.s then next( push(stk, resulttype.s), localtypes)
-    else if isbr.s then
-     assert top.stk = typeboolean report"if problem"
-     + for a ="", e = top(stk, 1)do a + print.e /for(a)
-      next( pop.stk, localtypes)
-    else if isloopblock.s then
-    let no = nopara.s
-    let loc = addlocals(localtypes, top(stk, nopara.s), firstvar.s + no - 1, no)
-     next( push(pop(stk, nopara.s), getbasetype3(alltypes, resulttype.s)), loc)
-    else if isparameter.s  then
-     let x = lookup(localtypes,parameternumber.s)
-     assert not.isempty.x report "NOT FOUND PARA"
-        next( push(stk, x_1), localtypes)
-    else if islocal.s then
-     {assert not.isempty.name2.s report"ill formed local"}
-     let localtype = lookup(localtypes,(wordname.s) )
-      assert not.isempty.localtype report"local not defined" + wordname.s
-       next( push(stk, localtype_1), localtypes)
-    else if(wordname.s)  ∈ "packed blockit" ∧ nopara.s = 1 then
-     next( stk, localtypes)
-    else
-     let parakinds = for acc = empty:seq.mytype, @e = paratypes.s do acc + getbasetype3(alltypes, @e)/for(acc)
-      assert  match(top(stk, nopara.s), parakinds) report
-       " /br symbol type missmatch for" + print.s 
-       + " /br stktop"
-       + print.top(stk, nopara.s)
-       + " /br parabasetypes"
-       + print.parakinds
-         next( push(pop(stk, nopara.s), getbasetype3(alltypes, resulttype.s)), localtypes)
-       /for   (assert  length.toseq.stk = 1  report "Expect one element on stack:" + print.toseq.stk
-       assert  match(top.stk, returntype) report  "Expected return type of" + print.returntype + "but type on stack is"
-      + print.top.stk
-  "")
+  let codeonly = removeoptions.code.s2
+   if length.codeonly = 0 then""
+   else
+    { assert last.codeonly ≠ Optionsym report"more than one option symbol"}
+    let localdict = for acc = empty:intdict.mytype, @e = arithseq(nopara.sym.s2, 1, 1)do
+     add(acc, @e, coretype((paratypes.sym.s2)_@e, typedict))
+    /for(acc)
+    let returntype = coretype(resulttype.sym.s2, typedict)
+    for stk = empty:stack.mytype, localtypes = localdict, skip = false, s = codeonly do
+      if skip then next(stk, localtypes, false)
+       else {if s = PreFref then next(push(stk, typeint), localtypes, true)
+      else}
+       { assert not.isempty.module.s report"Illformed module on symbol"}
+       if isdefine.s then
+        assert not.isempty.stk report"Ill formed Define"
+        let z = replace(localtypes, value.s, top.stk)
+        { assert false report"BB"+ print.s + print.value.s + for acc ="", i = keys.z do acc + toword.i /for(acc)+ for acc ="", i = data.z do acc + print.i /for(acc)}
+         next(pop.stk, replace(localtypes, value.s, top.stk), false)
+       else if inmodule(s,"$words")then next(push(stk, typeptr), localtypes, false)
+       else if inmodule(s,"$real")then next(push(stk, typereal), localtypes, false)
+       else if inmodule(s,"$word") ∨ inmodule(s,"$int") ∨ inmodule(s,"$fref")then
+        next(push(stk, typeint), localtypes, false)
+       else if isRecord.s then
+        assert length.toseq.stk ≥ nopara.s report"stack underflow record"
+        next(push(pop(stk, nopara.s), typeptr), localtypes, false)
+       else if isSequence.s then
+        assert length.toseq.stk ≥ nopara.s report"stack underflow sequence"
+          next(push(pop(stk, nopara.s), typeptr), localtypes, false)
+       else if isloopblock.s then
+         let no = nopara.s
+         let loc = addlocals(localtypes, top(stk, nopara.s), firstvar.s + no - 1, no)
+         next( push(pop(stk, nopara.s),coretype( resulttype.s,typedict)), loc,false)
+       else if isexit.s then
+        assert top.stk = top.pop.stk report"exit type does not match block type" + print.top.stk + print.top.pop.stk
+         next(pop.stk, localtypes, false)
+       else if isblock.s then next(stk, localtypes, false)
+       else if iscontinue.s then
+        assert length.toseq.stk ≥ nopara.s report"stack underflow continue"
+        next(pop(stk, nopara.s), localtypes, false)
+       else if isstart.s then {next(push(stk, resulttype.s), localtypes, false)}
+           next( push(stk, if isseq.resulttype.s then typeptr else resulttype.s), localtypes, false)
+       else if isbr.s then
+        assert top.stk = typeboolean report"if problem"
+        + for a ="", e = top(stk, 1)do a + print.e /for(a)
+        next(pop.stk, localtypes, false)
+       else
+         if islocal.s then
+         { assert not.isempty.name2.s report"ill formed local"}
+         let localtype = lookup(localtypes, value.s)
+         assert not.isempty.localtype report"local not defined" + print.s
+           next(push(stk, localtype_1), localtypes, false)
+        else if name.s ∈ "packed blockit" ∧ nopara.s = 1 then next(stk, localtypes, false)
+        else
+         let parakinds = for acc = empty:seq.mytype, @e = paratypes.s do acc + coretype(@e, typedict)/for(acc)
+         assert top(stk, nopara.s) = parakinds report" /br symbol type missmatch for" + print.s + " /br stktop" + print.top(stk, nopara.s)
+          + " /br parabasetypes"
+          + print.parakinds
+           next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), localtypes, false)
+     /for(assert length.toseq.stk = 1 report"Expect one element on stack:" + print.toseq.stk
+      assert top.stk = returntype report"Expected return type of" + print.returntype + "but type on stack is" + print.top.stk
+      "")
 
+function checkresults(prg:pro2gram)seq.word
+let undefined = for defines = empty:set.symbol, uses = empty:set.symbol, h = tosymdefs.prg  do
+ next(defines + sym.h, uses ∪ asset.code.h)
+/for(uses - defines - asset.knownsym)
+for acc10 =" /p  /p checkresults  /p", h = toseq.undefined do
+  if isconst.h /or name.h = "createthreadY"_1 ∧ isempty(asset.types.h - asset.[ typeint, typereal, typeptr])then
+   acc10
+  else if name.module.h = "builtin"_1 ∧ name.h ∈ "forexpx primitiveadd xgetinstance"then acc10
+  else if isabstract.module.h ∨ name.module.h ∈ "$int $define $local $sequence $for    $words
+  $loopblock $continue $br $global"
+  ∨ name.h ∈ "]" /or isunbound.h /or isRecord.h then
+   acc10
+  else acc10 + print.h   + EOL
+ /for( "CheckResult:"+if isempty.acc10 then "OK" else acc10+"/p end checkresults /p")
 
+function knownsym seq.symbol 
+let typecstr= typeref."cstr fileio ." 
+let typeindex=typeref."index index ."
+[ Litfalse, Littrue, PlusOp, NotOp,  Br2(1, 2)
+, symbol(moduleref."fileio","tocstr", seqof.typebits, typecstr)
+, symbol(moduleref."fileio","createlib2", [ typecstr, typecstr, typeint, seqof.typebits], typeint)
+, symbol(moduleref."tausupport","callstack", typeint, seqof.typeint)
+, symbol(moduleref."tausupport","dlsymbol", typecstr, typeint)
+, symbol(moduleref."tausupport","addresstosymbol2", typeint,seqof.typeref."char standard ."  )
+, symbol(moduleref."fileio","getfile", typecstr, typeptr)
+, symbol(moduleref."fileio","getbitfile", typecstr, typeptr)
+, symbol(moduleref."fileio","getbytefile", typecstr, typeptr)
+, symbol(moduleref."fileio","createfile", typeint, seqof.typebits, typecstr, typeint)
+, symbol(moduleref."real","sqrt", typereal, typereal)
+, symbol(internalmod,"randomfunc", typereal)
+, symbol(moduleref."real","intpart", typereal, typeint)
+, symbol(moduleref."real","representation", typereal, typeint)
+, symbol(moduleref."real","sin", typereal, typereal)
+, symbol(moduleref."real","cos", typereal, typereal)
+, symbol(moduleref."real","tan", typereal, typereal)
+, symbol(moduleref."real","arcsin", typereal, typereal)
+, symbol(moduleref."real","arccos", typereal, typereal)
+, symbol(moduleref."real","toreal", typeint, typereal)
+, symbol(moduleref."real","+", typereal, typereal, typereal)
+, symbol(moduleref."real","-", typereal, typereal, typereal)
+, symbol(moduleref."real","*", typereal, typereal, typereal)
+, symbol(moduleref."real","/", typereal, typereal, typereal)
+, symbol(moduleref."real","?", typereal, typereal, typeref."ordering standard . ")
+, symbol(moduleref."standard","?", typeint, typeint, typeref."ordering standard . ")
+, symbol(moduleref."standard","*", typeint, typeint, typeint)
+, symbol(moduleref."standard","-", typeint, typeint, typeint)
+, symbol(moduleref."standard","/", typeint, typeint, typeint)
+, symbol(moduleref."standard","=", typeint, typeint, typeboolean)
+, symbol(moduleref."standard",">", typeint, typeint, typeboolean)
+, symbol(moduleref."standard","=", typeboolean, typeboolean, typeboolean)
+, symbol(moduleref."bits","xor", typebits, typebits, typebits)
+, symbol(moduleref."bits","∧", typebits, typebits, typebits)
+, symbol(moduleref."bits","∨", typebits, typebits, typebits)
+, symbol(moduleref."bits","<<", typebits, typeint, typebits)
+, symbol(moduleref."bits",">>", typebits, typeint, typebits)
+, symbol(internalmod,"allocate", typeint, typeptr)
+,   GetSeqType ,GetSeqLength
+, symbol(internalmod,"aborted", typeptr, typeboolean)
+, symbol(internalmod,"randomint", typeint, seqof.typeint)
+, symbol(internalmod,"emptyseq", typeptr)
+, symbol(moduleref."bits","toint", typebyte, typeint)
+, symbol(moduleref."bits","toint", typebit, typeint)
+, symbol(moduleref("builtin",typereal),"load", typeptr, typeint, typereal)
+, symbol(moduleref("builtin",typeint),"load", typeptr, typeint, typeint)
+, symbol(moduleref("builtin",typeptr),"load", typeptr, typeint, typeptr)
+, symbol(moduleref("builtin",typeboolean),"load", typeptr, typeint, typeboolean)
+, { symbol(builtinmod.typereal,"fld", typeptr, typeint, typereal)
+, symbol(builtinmod.typeint,"fld", typeptr, typeint, typeint)
+, symbol(builtinmod.typeptr,"fld", typeptr, typeint, typeptr)
+, symbol(builtinmod.typeboolean,"fld", typeptr, typeint, typeboolean)
+,} symbol(internalmod ,"idxseq", seqof.typereal, typeint, typereal)
+, symbol(internalmod,"idxseq", seqof.typeint, typeint, typeint)
+, symbol(internalmod,"idxseq", seqof.typeptr, typeint, typeptr)
+, symbol(internalmod,"idxseq", seqof.typeboolean, typeint, typeboolean)
+, symbol(internalmod ,"callidx", seqof.typereal, typeint, typereal)
+, symbol(internalmod,"callidx", seqof.typeint, typeint, typeint)
+, symbol(internalmod,"callidx", seqof.typeptr, typeint, typeptr)
+, symbol(internalmod,"callidx", seqof.typeboolean, typeint, typeboolean)
+, symbol(internalmod,"packedindex", seqof.typeref."packed2 tausupport .", typeint, typeptr)
+, symbol(internalmod,"packedindex", seqof.typeref."packed3 tausupport .", typeint, typeptr)
+, symbol(internalmod,"packedindex", seqof.typeref."packed4 tausupport .", typeint, typeptr)
+, symbol(internalmod,"packedindex", seqof.typeref."packed5 tausupport .", typeint, typeptr)
+, symbol(internalmod,"packedindex", seqof.typeref."packed6 tausupport .", typeint, typeptr)
+,{ setSym.typereal, setSym.typeint
+, setSym.typeboolean, setSym.typeptr
+,} abortsymbol.typereal,abortsymbol.typeint
+, abortsymbol.typeboolean,abortsymbol.typeptr
+,Exit, Start.typereal, Start.typeint, Start.typeboolean, Start.typeptr, EndBlock]

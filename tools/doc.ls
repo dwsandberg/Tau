@@ -1,4 +1,7 @@
-#!/usr/local/bin/tau ; use doc ; createdoc
+#!/usr/local/bin/tau  ; use doc ; callgraphwithin("tools","doc")
+
+
+; use doc ; createdoc
 
 ; use doc ; doclibrary."stdlib"
 
@@ -54,20 +57,35 @@ let x1 = createfile("doc.html", toUTF8bytes.d)
 { let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])}
  { let y1 = createhtmlfile("testall.html", htmlcode."testall")} d
 
+use pro2gram
 
 function addselect(s:seq.word)seq.word 
  if not.isempty.s /and first.s=first."/section" then  "/< /section " + s << 1 + " />" else "/p " + s   
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
  { Calls between modules in list of modules. }
- let z = formcallgraph(compile("pass1", libname), 2)
+ let z = formcallarcs.libname
  let a = for acc = empty:seq.mytype, @e = modulelist do acc + mytype.@e /for(acc)
  let arcs = for acc = empty:seq.arc.word, @e = z do acc + modarc(a, @e)/for(acc)
   display.for acc = empty:seq.arcinfo.seq.word, @e = toseq.arcs.newgraph.arcs do acc + toarcinfo.@e /for(acc)
 
+Function formcallarcs(libname:seq.word) seq.arc.word
+for  arcs2=empty:seq.arc.word,  p=  tosymdefs.prg.compilerfront("pass1",libname) do
+     let tail=mangledname.sym.p
+     for arcs=arcs2 ,  sym=code.p do
+        if isconst.sym /or isspecial.sym /or sym=sym.p then arcs else  arcs+arc(tail,mangledname.sym)
+     /for(arcs)
+     /for(arcs2)
+
 Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
  { Calls within modules in list of modules. }
- let g = newgraph.formcallgraph(compile("pass1", libname), 2)
+ let t= for  arcs2=empty:seq.arc.word,  p=  tosymdefs.prg.compilerfront("pass1",libname) do
+     let tail=mangledname.sym.p
+     for arcs=arcs2 ,  sym=code.p do
+        if isconst.sym /or isspecial.sym /or sym=sym.p then arcs else  arcs+arc(tail,mangledname.sym)
+     /for(arcs)
+     /for(arcs2)
+  let g = newgraph.formcallarcs.libname
  let nodestoinclude = for acc = empty:set.word, @e = toseq.nodes.g do acc ∪ filterx(modulelist, @e)/for(acc)
  let g2 = for acc = g, @e = toseq.nodestoinclude do deletenode(acc, @e)/for(acc)
   display.for acc = empty:seq.arcinfo.seq.word, @e = toseq.arcs.g2 do acc + toarcinfo.@e /for(acc)
@@ -193,7 +211,7 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
 
 Function uncalledfunctions(libname:seq.word)seq.word
  { List of functions may include indirectly called functions. }
- let g = newgraph.formcallgraph(compile("pass1", libname), 2)
+ let g = newgraph.formcallarcs.libname
  let sources = for acc ="", @e = toseq.nodes.g do acc + sources(g, empty:set.word, @e)/for(acc)
   for acc ="", @e = alphasort.sources do list(acc," /br", readable.@e)/for(acc)
 
@@ -213,47 +231,3 @@ function usegraph(lib:seq.seq.word, kind:word, i:int, currentmod:word, result:se
     else usegraph(lib, kind, i + 1, currentmod, result + arc(currentmod, m))
    else usegraph(lib, kind, i + 1, currentmod, result)
 
-function formcallgraph(lib:seq.seq.word, i:int)seq.arc.word
- if i > length.lib then empty:seq.arc.word
- else
-  let t = callarcs(lib_i, 1, empty:seq.word)
-   for acc = empty:seq.arc.word, @e = toseq(asset.subseq(t, 2, length.t) - asset.subseq(t, 1, 1))do
-    acc + arc(t_1, @e)
-   /for(acc)
-   + formcallgraph(lib, i + 1)
-
-function findindex2(w:word, s:seq.word, i:int)int
- if i > length.s then i
- else if s_i = w then i else findindex2(w, s, i + 1)
-
-function callarcs(s:seq.word, i:int, result:seq.word)seq.word
- if i + 1 > length.s then result
- else
-  let this = s_i
-   if this = '"'_1 then
-    callarcs(s, findindex2('"'_1, s, i + 1) + 1, result)
-   else if this = "'"_1 then
-    callarcs(s, findindex2("'"_1, s, i + 1) + 1, result)
-   else 
-    let next = s_(i + 1)
-     if next ∈ "(:"then
-     let j = findindex2(")"_1, s, i + 1)
-      if this = "RECORD"_1 then callarcs(s, j + 1, result)
-      else
-       assert j < length.s report"JKL RECORD" + subseq(s, i, length.s)
-       let module = gathermod(s, j + 2, [ s_(j + 1)])
-       let theend = 2 * (length.module - 1) + 1 + j + 1
-        callarcs(s, theend, result + mangle(subseq(s, i, j), module))
-     else if this ∈ "DEFINE  WORD"then callarcs(s, i + 2, result)
-     else if this ∈ " /br FREF Litfalse Littrue SEQUENCE /start Exit EndBlock"then callarcs(s, i + 1, result)
-     else
-      let chs = decodeword.this
-       assert length.chs > 0 ∧ chs_1 ∈ decodeword.merge."%-0123456789"report"call arcs problem" + this + toword.i 
-       +subseq(s,1,i)
-       +EOL+EOL+EOL
-       + "full text" + s
-        callarcs(s, i + 1, result)
-
-function gathermod(s:seq.word, i:int, result:seq.word)seq.word
- if i > length.s ∨ not(s_i = "."_1)then result
- else gathermod(s, i + 2, [ s_(i + 1)] + result)
