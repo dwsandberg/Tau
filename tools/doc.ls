@@ -70,7 +70,7 @@ Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
   display.for acc = empty:seq.arcinfo.seq.word, @e = toseq.arcs.newgraph.arcs do acc + toarcinfo.@e /for(acc)
 
 Function formcallarcs(libname:seq.word) seq.arc.word
-for  arcs2=empty:seq.arc.word,  p=  tosymdefs.prg.compilerfront("pass1",libname) do
+for  arcs2=empty:seq.arc.word,  p=   prg.compilerfront("pass1",libname) do
      let tail=mangledname.sym.p
      for arcs=arcs2 ,  sym=code.p do
         if isconst.sym /or isspecial.sym /or sym=sym.p then arcs else  arcs+arc(tail,mangledname.sym)
@@ -79,7 +79,7 @@ for  arcs2=empty:seq.arc.word,  p=  tosymdefs.prg.compilerfront("pass1",libname)
 
 Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
  { Calls within modules in list of modules. }
- let t= for  arcs2=empty:seq.arc.word,  p=  tosymdefs.prg.compilerfront("pass1",libname) do
+ let t= for  arcs2=empty:seq.arc.word,  p=  prg.compilerfront("pass1",libname) do
      let tail=mangledname.sym.p
      for arcs=arcs2 ,  sym=code.p do
         if isconst.sym /or isspecial.sym /or sym=sym.p then arcs else  arcs+arc(tail,mangledname.sym)

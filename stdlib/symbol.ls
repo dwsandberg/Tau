@@ -439,6 +439,8 @@ Export type:myinternaltype
 
 Export name(myinternaltype)word
 
+Export kind(myinternaltype) word
+
 Function isdefined(it:myinternaltype)boolean kind.it = "defined"_1
 
 Function typekind(t:myinternaltype)word kind.t
@@ -536,6 +538,8 @@ Export para(modref) mytype
 Export tomodref(mytype) modref
 
 Export name(modref) word
+
+Export library(modref)word
 
 Export isseq(mytype) boolean    
 

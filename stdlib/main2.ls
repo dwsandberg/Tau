@@ -90,14 +90,50 @@ let filelist = info_2
 let exports = info_3
  { let b = unloadlib.[ libname]}
  let allsrc = getlibrarysrc.libname
- let link = pass1(allsrc, exports, libmodules.dependentlibs)
+ let link = pass1(["Library"+libname]+allsrc, exports, libmodules.dependentlibs)
    let prg4 =  pass2.result.link
-   let libdesc = libdesc( alltypes.link , prg4,  templates.link, mods.link, exports)
-   let uses = uses(prg4, asset.roots.link + libdesc)
-   let defines = defines(prg4, uses - compiled.link)
-     let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.link , isempty.dependentlibs)
+    let cinfo= cinfo.link
+    let libdesc= libdesc(cinfo,prg4 /cup templates.link)
+   let roots=for acc= empty:set.symbol, m =mods.cinfo do 
+     for acc2=acc, r=exports.m do  
+      if issimple.modname.m then acc2+(symbolrefdecode.cinfo)_toint.r else acc2 /for(acc2)
+    /for(acc)
+   let uses = uses(prg4, roots /cup  asset.libdesc)
+   let defines=definesX(prg4, uses,isempty.dependentlibs )
+    {let discard =symbolref.libdesc_1
+    let discard2=symbolref.libdesc_2
+     let xx= for acc=empty:set.symbol,sym=toseq.(asset.symbolrefdecode.addprg(cinfo,prg4,false) -uses ) 
+      do
+          if  isabstract.module.sym then acc else acc +sym
+        /for(acc)}
+     {assert false report "DIFFXXX"+ 
+       print.toseq.(uses-xx  )  +"DIFFTTT"+ 
+       print.toseq.(xx -uses ) } 
+      let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.cinfo.link , isempty.dependentlibs)
      let z2 = createlib(bc, last.libname, dependentlibs)
      ["OK"]
+     
+   /  function uses(p:pro2gram, processed:set.symbol, toprocess:set.symbol)set.symbol
+   if isempty.toprocess then processed
+ else
+  let q = asset.for acc = empty:seq.symbol, @e = toseq.toprocess do
+   acc
+   + let d = getCode(p, @e)
+     if isempty.d then constantcode.@e else d
+  /for(acc)
+  uses(p, processed ∪ toprocess, q - processed)
+
+function definesX(p:pro2gram, uses:set.symbol,isbase:boolean)seq.symbol
+ for acc = empty:seq.symbol, sym = toseq.uses do
+  if isconstantorspecial.sym ∨ isabstract.module.sym 
+     /or library.module.sym="compiled"_1
+  then acc 
+  else if not.isbase  /and name.module.sym /in "standard tausupport fileio" then acc
+  else  acc+sym
+ /for(acc)
+
+
+use mytype
 
 Function compilelib2(libname:seq.word)seq.word
 let p1 = process.subcompilelib("all", libname)
@@ -139,7 +175,7 @@ let src = ["module $X","use standard"] + subseq(b, 2, length.b - 1)
 + ["Function runitx seq.word" + b_(length.b)]
 let link = pass1(  src ,"$X", libmodules("stdlib" + lib))
 let prg2 =  result.link 
-runitresult(getCode(prg2, symbol(moduleref."$X","runitx", seqof.typeword)), alltypes.link)
+runitresult(getCode(prg2, symbol(moduleref."$X","runitx", seqof.typeword)), alltypes.cinfo.link)
 
 Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname)
 
@@ -156,9 +192,13 @@ let exports = info_3
   { assert false report allsrc @ +("", @e)}
   let link = pass1(  allsrc , exports, libmodules.dependentlibs)
   let prg3 =  result.link 
-   if option = "pass1"then compileinfo(alltypes.link, prg3, roots.link)
+   {if option = "pass1"then compileinfo(alltypes.link, prg3, roots.link)
    else let prg4 = pass2.prg3
     compileinfo(alltypes.link, prg4, roots.link)
+    }
+    addprg(cinfo.link,if option = "pass1"then prg3 else pass2.prg3,true)
+    
+    cvtL2( alltypes.link,if option = "pass1"then prg3 else pass2.prg3 ,  mods.link,exports )
 
 _______________
 

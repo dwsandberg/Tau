@@ -49,9 +49,9 @@ option.pass2 pass2(placehold:pro2gram)pro2gram PROFILE
 
 
 
-option.codegennew codegen(theprg:pro2gram, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:type2dict,isbase:boolean)seq.bits PROFILE
+option.codegennew codegen(theprg:pro2gram, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict,isbase:boolean)seq.bits PROFILE
 
-
+/option.codetemplates   match5map(theprg:pro2gram, uses:set.symbol, alltypes:type2dict)seq.match5 PROFILE
 
 /option.set.symbol findelement(val:symbol, s:set.symbol)set.symbol PROFILE
 

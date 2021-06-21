@@ -31,6 +31,8 @@ Function =(a:symbol, b:symbol)boolean
  ∧ issimplename.a = issimplename.b
  ∧ module.a = module.b
 
+ /and (name.module.a /nin "$fref"  /or zcode.a=zcode.b)
+
 Function ?(a:symbol, b:symbol)ordering
  fsighash.a ? fsighash.b ∧ worddata.a ? worddata.b ∧ (types.a >> 1)  ? (types.b  >> 1) 
   ∧ issimplename.a ? issimplename.b

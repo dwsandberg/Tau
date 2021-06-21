@@ -395,10 +395,15 @@ use pro2gram
 
 Function uses(p:pro2gram, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
 
-Function defines(p:pro2gram, roots:set.symbol)seq.symbol
- for acc = empty:seq.symbol, @e = toseq.roots do
-  acc + if isconstantorspecial.@e ∨ isabstract.module.@e then empty:seq.symbol else [ @e]
+Function defines(p:pro2gram, uses:set.symbol)seq.symbol
+ for acc = empty:seq.symbol, sym = toseq.uses do
+  if isconstantorspecial.sym ∨ isabstract.module.sym 
+     /or library.module.sym="compiled"_1
+  then acc else  acc+sym
  /for(acc)
+ 
+ 
+ 
 
 function uses(p:pro2gram, processed:set.symbol, toprocess:set.symbol)set.symbol
  if isempty.toprocess then processed

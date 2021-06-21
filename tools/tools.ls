@@ -1,5 +1,4 @@
-#!/usr/local/bin/tau ; use tools; ; use doc ; doclibrary."typepass"
-
+#!/usr/local/bin/tau   ; use tools; testprofile."stdlib"
 
 
 ; use doc ; callgraphwithin("typepass","typepass")

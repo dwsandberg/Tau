@@ -19,7 +19,8 @@ Function data(a:pro2gram) set.symdef  first.datax.a
 
 Function pro2gram(s:set.symdef) pro2gram pro2gram.[s]
 
-
+Function /cup(a:pro2gram,b:pro2gram) pro2gram 
+  pro2gram (data.a /cup data.b )
     
 
 
@@ -55,17 +56,6 @@ use seq.myinternaltype
 
 use set.symbol
 
-type compileinfo is alltypes:type2dict,prg:pro2gram,roots:seq.symbol 
-
-Export compileinfo(alltypes:type2dict,prg:pro2gram,roots:seq.symbol) compileinfo
-
-Export alltypes(compileinfo)type2dict
-
-Export prg(compileinfo)pro2gram
-
-Export roots(compileinfo) seq.symbol  
-
-Export type:compileinfo 
 
 use mytype
 
@@ -131,6 +121,154 @@ Function buildargcodeI(  sym:symbol)int
   + if  {getbasetype(alltypes, typ)} typ  = typereal then 1 else 0
  /for(acc)  
 
+ ----
+ 
+use encoding.symbol
+
+use seq.symbolref
+
+use seq.encodingpair.symbol
+
+use seq.seq.mytype
+
+use set.symbolref
+
+use seq.seq.symbolref
+
+use seq.seq.word
+
+use seq.libraryModule
+
+use seq.firstpass
+
+ type symbolref is toint:int
+
+Export toint(symbolref)int
+
+Export symbolref(int)symbolref
+
+Export type:symbolref
+
+Function symbolref(sym:symbol)symbolref symbolref.valueofencoding.encode.sym
+
+Function assignencoding(l:seq.encodingpair.symbol  , symbol) int  length.l+1
+
+ function       symbolrefdecode seq.symbol
+         for acc=empty:seq.symbol , p=encoding:seq.encodingpair.symbol do
+              acc+data.p
+        /for(acc)
+
+
+
+type libraryModule is modname:modref, exports:seq.symbolref,
+uses:seq.mytype,defines:seq.symbolref,types:seq.seq.mytype
+
+Export type:libraryModule
+
+Function libraryModule (modname:modref, exports:seq.symbolref) libraryModule
+libraryModule(modname,exports,empty:seq.mytype,empty:seq.symbolref,empty:seq.seq.mytype)
+
+Export   exports(libraryModule)  seq.symbolref
+
+Export modname(libraryModule) modref
+
+Export uses(libraryModule) seq.mytype
+
+Export defines(libraryModule)  seq.symbolref
+
+Export types(libraryModule) seq.seq.mytype
+
+
+Export alltypes(compileinfo)type2dict
+
+Export type:compileinfo 
+
+type compileinfo is typedict:type2dict  
+,code:seq.seq.symbolref,src:seq.seq.word
+,symbolrefdecode:seq.symbol,mods:seq.libraryModule
+
+
+Function roots(s:compileinfo) set.symbol
+   for acc= empty:set.symbol, m =mods.s do 
+     for acc2=acc, r=exports.m do  acc2+(symbolrefdecode.s)_toint.r /for(acc2)
+    /for(acc)
+
+Export code(compileinfo) seq.seq.symbolref
+
+Export mods(compileinfo) seq.libraryModule
+
+
+Export src(compileinfo) seq.seq.word
+
+Function prg(s:compileinfo) seq.symdef 
+let symdecode=symbolrefdecode.s
+  for acc4=empty:seq.symdef, c=code.s do
+      acc4+symdef(symdecode_toint.first.c,
+          for   acc=empty:seq.symbol, r= c << 2 do   acc+ symdecode_toint.r /for(acc))
+/for(acc4)
+
+Export typedict(compileinfo) type2dict
+
+Export symbolrefdecode(compileinfo) seq.symbol
+
+Function alltypes(s:compileinfo) type2dict typedict.s
+
+ 
+Function  compileinfo (prg:seq.symdef, alltypes:type2dict ,mods:seq.libraryModule
+,src:seq.seq.word) compileinfo
+compileinfo(alltypes, cvtL3(pro2gram.asset.prg,1,empty:seq.seq.symbolref,true),src,symbolrefdecode,mods)
+
+
+use program
+
+Function cvtL2( alltypes: type2dict,prg:pro2gram,  t5:seq.firstpass,exports:seq.word) compileinfo
+ let mods= for acc = empty:seq.libraryModule, m2 =  t5 do
+    if name.module.m2 /nin exports then acc else
+     let exps=  for acc3 = empty:seq.symbolref, e = toseq.exports.m2 do acc3 + symbolref.e /for(acc3)
+    let defines=if isabstract.module.m2 then
+      for acc3 = empty:seq.symbolref, e = toseq.defines.m2 do acc3 + symbolref.e /for(acc3)
+     else exps
+      let d2=if isabstract.module.m2 then defines.m2 else exports.m2
+     let types = for acc5 = empty:seq.seq.mytype, s =  toseq.d2 do 
+        if istype.s then
+         acc5+ ([ resulttype.s]+flatflds(alltypes, resulttype.s))
+   else   acc5
+  /for(acc5)
+    acc
+    + libraryModule(module.m2, 
+ exps    ,if isabstract.module.m2 then uses.m2 else empty:seq.mytype
+    ,defines,types)
+   /for(acc)
+compileinfo(alltypes, cvtL3(prg,1,empty:seq.seq.symbolref,true),empty:seq.seq.word,symbolrefdecode,mods)
+
+Function addprg(cinfo:compileinfo,prg:pro2gram,all:boolean) compileinfo
+  compileinfo(typedict.cinfo,cvtL3(prg,1,empty:seq.seq.symbolref,all)
+  ,src.cinfo,symbolrefdecode,mods.cinfo) 
+
+ function cvtL3(prg:pro2gram,i:int, in: seq.seq.symbolref,all:boolean) seq.seq.symbolref
+ let x=encoding:seq.encodingpair.symbol
+ if i > length.x then in 
+ else 
+    cvtL3(prg,length.x+1, for acc=in , p=subseq(x,i,length.x)   do
+          if all /or not.isabstract.module.data.p then
+            let code= getCode(prg,data.p)
+            if isempty.code then 
+              let discard=if not.all then 
+                for acc3=0,  sym=constantcode.data.p do
+                  let discard2=symbolref.sym
+               acc3
+            /for(acc3)
+            else 0
+              acc
+            else 
+              acc+for acc2 = [ symbolref.data.p,symbolref.Lit.0], sym = code  do 
+       acc2 + symbolref.sym /for(acc2)
+            else acc
+        /for(acc),all)
+  
+
+
+
 Module codetemplates
 
 use bits
@@ -183,7 +321,7 @@ Export constdata seq.slot
 
 Export wordref(w:word)int
 
-Export addliblib(libname:seq.word, mods:int, profiledata:int, isbase:boolean)int
+Export addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean)int
 
 function tollvmtype(alltypes:type2dict, s:symbol)llvmtype
  if s = Optionsym then function.[ i64, i64, i64, i64]else function.tollvmtypelist(alltypes, s)

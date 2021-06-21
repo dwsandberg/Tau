@@ -87,7 +87,7 @@ Function wordref(w:word)int let d = encode.word3.w
 
 function wordcode(a:encodingpair.word3)encoding.seq.char to:encoding.seq.char(encoding.toword.data.a)
 
-Function addliblib(libname:seq.word, mods:int, profiledata:int, isbase:boolean)int
+Function addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean)int
 let name = addwordseq2.libname
 let have = if isbase then empty:set.encoding.seq.char
 else
@@ -98,7 +98,7 @@ let used = for acc = empty:set.encoding.seq.char, @e = encoding:seq.encodingpair
  let wordstoadd = toseq(used - have)
  let data = for acc = [ toint.C64.0, toint.C64.length.wordstoadd], @e = wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
  let wordreps = addobject.data
-  addobject("liblib", [ name, wordreps, mods, toint.C64.0, profiledata])
+  addobject("liblib", [ name, wordreps, toint.C64.0, toint.C64.0, profiledata]+ mods)
 
 function addobject(name:seq.word, data:seq.int)int
 let objtype = array(length.data, i64)

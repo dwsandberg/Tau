@@ -186,6 +186,15 @@ Function encodingno(name:seq.word)int
 
 function assignencoding( p:seq.encodingpair.typename,a:typename)int   length.p +1
 
+Builtin  abort:ptr(seq.word)ptr 
+
+Builtin  abort:int(seq.word)int
+
+Builtin  abort:real(seq.word)real
+
+Builtin  abort:boolean(seq.word)boolean
+
+
 -----------
 
 use fileio

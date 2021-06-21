@@ -54,11 +54,7 @@ use seq.encodingpair.stat5
 
 use seq.seq.seq.int
 
-Export type2dict(typedict) type2dict
-
-Export type:type2dict
-
-Function codegen(theprg:pro2gram, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:symbol, alltypes:type2dict, isbase:boolean)seq.bits
+Function codegen(theprg:pro2gram, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict, isbase:boolean)seq.bits
 let defines = for acc = empty:seq.symbol, ele = definesWithBuiltins do
 let d = getCode(theprg, ele)
 if isempty.d then { sym not defined in this library }acc
@@ -78,12 +74,12 @@ if isempty.d then { sym not defined in this library }acc
 let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
 let discard4 = for acc = 0, @e = defines do acc + funcdec( alltypes, @e)/for(acc)
 let match5map = match5map(theprg, uses,  alltypes)
-let libmods2 = arg.match5map_libdesc
+let libmods2 =   for acc=empty:seq.int ,sym =  libdesc  do acc+arg.match5map_sym /for(acc)
  { let zx2c = createfile("stat.txt", ["in codegen0.3"])}
  let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
  let bodies = for acc = empty:seq.internalbc, @e = defines do acc + addfuncdef(match5map, @e)/for(acc)
  let xxx = profiledata
- let liblib = slot.addliblib([ thename], libmods2, toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0)), isbase)
+ let liblib = slot.addliblib([ thename],  libmods2 , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0)), isbase)
  let libnametype = array(length.decodeword.thename + 1, i8)
  let libslot = modulerecord(""
  , [ toint.GLOBALVAR, typ.libnametype, 2, toint.DATA(libnametype, tointseq.decodeword.thename + 0) + 1, 3, toint.align8, 0]

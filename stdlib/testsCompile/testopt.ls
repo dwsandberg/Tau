@@ -29,91 +29,89 @@ use symbol
 use pro2gram
 
 Function testopt seq.word  
-let p2=for acc = empty:seq.seq.word, 
-           p=tosymdefs.prg.compilerfront("pass2","stdlib.testoptconfig")
-      do acc + [ print.sym.p+print.code.p] /for(acc)
+let p2=prg.compilerfront("pass2","stdlib.testoptconfig")
 let cl = ["7","12","1","2","WORD FIRST","WORD AB", '"A B"',"7","11","2"
-,"1","false()standard","4607182418800017408","44","2","46","72","27","2","128"
-,"65","true()standard","4", { optest24 }
+,"1","standard:false boolean","4607182418800017408","44","2","46","72","27","2","128"
+,"65","standard:true boolean","4", { optest24 }
 "Start(int)
-/br %1 5 =(int, int)standard Br2(1, 2)
+/br %1 5    standard:=(int, int)boolean Br2(1, 2)
 /br 24 Exit 
 /br 0 Exit 
 /br EndBlock 
 /br","25", { optest26 }
 "Start(int) 
-/br %1 WORD a =(int, int)standard Br2(3, 1) 
-/br %1 WORD b =(int, int)standard Br2(2, 1) 
-/br %1 WORD c =(int, int)standard Br2(1, 2) 
+/br %1 WORD a    standard:=(int, int)boolean Br2(3, 1) 
+/br %1 WORD b    standard:=(int, int)boolean Br2(2, 1) 
+/br %1 WORD c    standard:=(int, int)boolean Br2(1, 2) 
 /br 26 Exit 
 /br 0 Exit 
 /br EndBlock 
-/br","%1 %2 LOOPBLOCK:3(int, int)$loopblock.int 
-/br %3 1 =(int, int)standard Br2(1, 2)
+/br","%1 %2 $loopblock.int:LOOPBLOCK:3(int, int) 
+/br %3 1    standard:=(int, int)boolean Br2(1, 2)
 /br %4 Exit 
-/br %3 1-(int, int)standard %3 %4 *(int, int)standard CONTINUE 2 
+/br %3 1 standard:-(int, int)int %3 %4 standard:*(int, int)int CONTINUE 2 
 /br EndBlock 
 /br",{ optest28 }"Start(boolean)
-/br %1 0 >(int, int)standard Br2(1, 2)
-/br 10 %2 >(int, int)standard Exit 
-/br false()standard Exit 
+/br %1 0  standard:>(int, int)boolean Br2(1, 2)
+/br 10 %2  standard:>(int, int)boolean Exit 
+/br standard:false boolean Exit 
 /br EndBlock 
 /br",{ optest29 }"Start(boolean)
-/br %1 0 >(int, int)standard Br2(1, 2)
-/br true()standard Exit 
-/br 10 %2 >(int, int)standard Exit 
+/br %1 0  standard:>(int, int)boolean Br2(1, 2)
+/br standard:true boolean Exit 
+/br 10 %2  standard:>(int, int)boolean Exit 
 /br EndBlock 
 /br", { optest30 }
 "Start(int)
-/br %1 WORD test =(int, int)standard Br2(1, 2)
+/br %1 WORD test    standard:=(int, int)boolean Br2(1, 2)
 /br %2 Exit 
 /br %3 Exit 
 /br EndBlock 
 /br"
 ,  "31"  
 ,"%1", { test 33 }"33","Start(int) 
- /br %1 %2_(seq.int, int)seq.int DEFINE 3 %3 3 >(int, int)standard Br2(4, 1) 
- /br %3 3 =(int, int)standard Br2(8, 1) 
- /br %3 1 =(int, int)standard Br2(7, 1) 
- /br %3 2 =(int, int)standard Br2(6, 7) 
- /br %3 5 >(int, int)standard Br2(3, 1) 
- /br %3 5 =(int, int)standard Br2(4, 1) 
- /br %3 4 =(int, int)standard Br2(3, 4) 
- /br %3 9 =(int, int)standard Br2(2, 1) 
- /br %3 12 =(int, int)standard Br2(1, 2) 
+ /br %1 %2 seq.int:_(seq.int, int)int Define 3 %3 3  standard:>(int, int)boolean Br2(4, 1) 
+ /br %3 3    standard:=(int, int)boolean Br2(8, 1) 
+ /br %3 1    standard:=(int, int)boolean Br2(7, 1) 
+ /br %3 2    standard:=(int, int)boolean Br2(6, 7) 
+ /br %3 5  standard:>(int, int)boolean Br2(3, 1) 
+ /br %3 5    standard:=(int, int)boolean Br2(4, 1) 
+ /br %3 4    standard:=(int, int)boolean Br2(3, 4) 
+ /br %3 9    standard:=(int, int)boolean Br2(2, 1) 
+ /br %3 12    standard:=(int, int)boolean Br2(1, 2) 
  /br 10 Exit 
  /br 11 Exit 
  /br EndBlock 
  /br",{test 35} "Start(int) 
-/br %1 %2_(seq.word, int)seq.word DEFINE 3 
-%3 WORD c >(int, int)standard Br2(4, 1) 
-/br %3 WORD c =(int, int)standard Br2(6, 1) 
-/br %3 WORD e =(int, int)standard Br2(5, 1) 
-/br %3 WORD b =(int, int)standard Br2(4, 5) 
-/br %3 WORD a =(int, int)standard Br2(3, 1) 
-/br %3 WORD x =(int, int)standard Br2(2, 1) 
-/br %3 WORD d =(int, int)standard Br2(1, 2) 
+/br %1 %2 seq.word:_(seq.word, int)word Define 3 
+%3 WORD c  standard:>(int, int)boolean Br2(4, 1) 
+/br %3 WORD c    standard:=(int, int)boolean Br2(6, 1) 
+/br %3 WORD e    standard:=(int, int)boolean Br2(5, 1) 
+/br %3 WORD b    standard:=(int, int)boolean Br2(4, 5) 
+/br %3 WORD a    standard:=(int, int)boolean Br2(3, 1) 
+/br %3 WORD x    standard:=(int, int)boolean Br2(2, 1) 
+/br %3 WORD d    standard:=(int, int)boolean Br2(1, 2) 
 /br 10 Exit 
 /br 11 Exit 
 /br EndBlock 
 /br",{test 36} "Start(int) 
-/br %1 3_(seq.int, int)seq.int DEFINE 2 %2 8 >(int, int)standard Br2(4, 1) 
-/br %2 8 =(int, int)standard Br2(6, 1) 
-/br %2 5 =(int, int)standard Br2(5, 1) 
-/br %2 7 =(int, int)standard Br2(4, 5) 
-/br %2 9 =(int, int)standard Br2(3, 1) 
-/br %2 10 =(int, int)standard Br2(2, 1) 
-/br %2 3333 =(int, int)standard Br2(1, 2) 
+/br %1 3 seq.int:_(seq.int, int)int Define 2 %2 8  standard:>(int, int)boolean Br2(4, 1) 
+/br %2 8    standard:=(int, int)boolean Br2(6, 1) 
+/br %2 5    standard:=(int, int)boolean Br2(5, 1) 
+/br %2 7    standard:=(int, int)boolean Br2(4, 5) 
+/br %2 9    standard:=(int, int)boolean Br2(3, 1) 
+/br %2 10    standard:=(int, int)boolean Br2(2, 1) 
+/br %2 3333    standard:=(int, int)boolean Br2(1, 2) 
 /br 25 Exit 
 /br 2 Exit 
 /br EndBlock /br",{test 37} "Start(int) 
-/br %1 %2_(seq.word, int)seq.word DEFINE 3 %3 WORD b >(int, int)standard Br2(4, 1) 
-/br %3 WORD b =(int, int)standard Br2(7, 1) 
-/br %3 WORD z =(int, int)standard Br2(7, 1) 
-/br %3 WORD xxx =(int, int)standard Br2(4, 7) 
-/br %3 WORD c =(int, int)standard Br2(5, 1) 
-/br %3 WORD a =(int, int)standard Br2(3, 1) 
-/br %3 WORD d =(int, int)standard Br2(3, 4) 
+/br %1 %2 seq.word:_(seq.word, int)word Define 3 %3 WORD b  standard:>(int, int)boolean Br2(4, 1) 
+/br %3 WORD b    standard:=(int, int)boolean Br2(7, 1) 
+/br %3 WORD z    standard:=(int, int)boolean Br2(7, 1) 
+/br %3 WORD xxx    standard:=(int, int)boolean Br2(4, 7) 
+/br %3 WORD c    standard:=(int, int)boolean Br2(5, 1) 
+/br %3 WORD a    standard:=(int, int)boolean Br2(3, 1) 
+/br %3 WORD d    standard:=(int, int)boolean Br2(3, 4) 
 /br 3 Exit 
 /br 4 Exit 
 /br 4 Exit 
@@ -126,13 +124,11 @@ let r = for acc ="", @e = arithseq(length.cl, 1, 1)do acc + getcode(p2, cl, @e)/
 else"fail multitarget"
  if isempty.r then"PASS testopt"else"testopt" + r
 
-function filter(name:word, s:seq.word)seq.word if name = s_1 then s else""
+use seq.symdef
 
-Function getcode(p2:seq.seq.word, codelist:seq.seq.word, no:int)seq.word
-let t1 = for acc ="", @e = p2 do acc + filter(merge("optest" + toword.no), @e)/for(acc)
-let t = subseq(t1, findindex("testopt"_1, t1) + 1, length.t1)
-let code = removeoptions(t, length.t)
- { assert false report t1 +" /br"+ t +" /br"+ code }
+Function getcode(p2:seq.symdef, codelist:seq.seq.word, no:int)seq.word
+let name=merge("optest" + toword.no)
+ let code=  for acc="", p=p2 do if name=name.sym.p then  print.removeoptions.code.p  else acc /for(acc)
  if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1,"")then
   ""
  else
@@ -152,12 +148,6 @@ function sameto(a:seq.word, b:seq.word, i:int, diffs:seq.word)seq.word
  else if a_i = b_i then sameto(a, b, i + 1, diffs)
  else sameto(a, b, i + 1, diffs + [ toword.i, a_i, b_i])
 
-function removeoptions(s:seq.word, i:int)seq.word
- if i = length.s then
-  if subseq(s, i - 8, i) ≠ "option(int, seq.word )internal"then s
-  else removeoptions(s, i - 10)
- else if s_i ≠ '"'_1 then removeoptions(s, i - 1)
- else subseq(s, 1, i - 1)
 
 Function multitarget(value1:int, a:boolean, b:boolean)int
  { check to see optimization handles this case correctly }

@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau   ; use baseTypeCheck; resultCheck("stdlib")
+#!/usr/local/bin/tau   ; use baseTypeCheck;  baseTypeCheck("stdlib")
 
 
 
@@ -61,8 +61,8 @@ function glue(library:seq.word)  seq.word
 function print(s:seq.mytype)seq.word for a ="", e = s do a + print.e /for(a)
 
 
-Function basetypecheck(r2:pro2gram, typedict:type2dict)seq.word
- for acc = empty:seq.word, count = 0, s = tosymdefs.r2 do
+Function basetypecheck(r2:seq.symdef, typedict:type2dict)seq.word
+ for acc = empty:seq.word, count = 0, s =  r2 do
  let p = process.checkkind(s, typedict)
  let b = if aborted.p then
  " /p ERROR:" + print.sym.s + " /br" + message.p + " /br fullcode"
@@ -142,8 +142,8 @@ function checkkind(s2:symdef, typedict:type2dict)seq.word
       assert top.stk = returntype report"Expected return type of" + print.returntype + "but type on stack is" + print.top.stk
       "")
 
-function checkresults(prg:pro2gram)seq.word
-let undefined = for defines = empty:set.symbol, uses = empty:set.symbol, h = tosymdefs.prg  do
+function checkresults(prg:seq.symdef)seq.word
+let undefined = for defines = empty:set.symbol, uses = empty:set.symbol, h =  prg  do
  next(defines + sym.h, uses ∪ asset.code.h)
 /for(uses - defines - asset.knownsym)
 for acc10 =" /p  /p checkresults  /p", h = toseq.undefined do

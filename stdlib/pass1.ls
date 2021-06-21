@@ -46,21 +46,15 @@ use seq.seq.seq.word
 
 Export result(linkage)pro2gram
 
-Export dict(linkage)set.symbol
-
 Export compiled(linkage)set.symbol
-
-Export roots(linkage)seq.symbol
-
-Export mods(linkage)seq.firstpass
 
 Export templates(linkage)pro2gram
 
-Export alltypes(linkage)type2dict
+Export cinfo(linkage)compileinfo
 
 Export type:linkage
 
-type linkage is result:pro2gram, compiled:set.symbol, roots:seq.symbol, mods:seq.firstpass, templates:pro2gram, alltypes:type2dict, dict:set.symbol
+type linkage is result:pro2gram, compiled:set.symbol, templates:pro2gram,cinfo:compileinfo
 
 function =(a:firstpass, b:firstpass)boolean module.a = module.b
 
@@ -110,7 +104,8 @@ let alltypes0 = for acc = empty:seq.myinternaltype, @e = toseq.d1 do acc + types
  let prg2=postbind(alltypes, allsymbols1, roots , prg1, templates)
  let options=for acc = empty:seq.seq.word, @e = allsrc1 do acc + @e /for(acc)
  let prg3 =for acc = prg2, @e = options do processOption(acc, @e) /for(acc)
- linkage(prescan.pro2gram.prg3, asset.toseq.libprg, roots, simple + abstract, pro2gram.templates, type2dict(alltypes), allsymbols1)
+ let cinfo=cvtL2( type2dict(alltypes) ,emptypro2gram,  simple + abstract,exports)
+ linkage(prescan.pro2gram.prg3, asset.toseq.libprg,   pro2gram.templates,cinfo)
  
  use postbind
  
