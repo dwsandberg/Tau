@@ -11,7 +11,6 @@ use symbol
 
 use pro2gram
 
-use seq.myinternaltype
 
 use seq.mytype
 
@@ -35,31 +34,22 @@ use seq.symdef
  
  use set.symbol
  
- 
 Function resultCheck( library:seq.word) seq.word 
-let p = process.glue2( library)
+let p = process.glue2.library
  if aborted.p then message.p else  result.p
  
- 
-function glue2(library:seq.word)  seq.word
-  let r2=  compilerfront("pass2",library)
-  checkresults(prg.r2 )
-
-
+function glue2(library:seq.word)seq.word let r2 = compilerfront("pass2", library)
+checkresults.prg.r2
 
 Function baseTypeCheck( library:seq.word) seq.word 
-let p = process.glue( library)
+let p = process.glue.library
  if aborted.p then message.p else  result.p
- 
  
 function glue(library:seq.word)  seq.word
   let r2=  compilerfront("pass2",library)
   basetypecheck(prg.r2,alltypes.r2 )
   
-
-
 function print(s:seq.mytype)seq.word for a ="", e = s do a + print.e /for(a)
-
 
 Function basetypecheck(r2:seq.symdef, typedict:type2dict)seq.word
  for acc = empty:seq.word, count = 0, s =  r2 do
@@ -73,12 +63,10 @@ Function basetypecheck(r2:seq.symdef, typedict:type2dict)seq.word
  else"Base Type Check Failed" + print.count + "Times" + acc /if)
  
  function addlocals(localtypes:intdict.mytype, para:seq.mytype, localno:int, i:int)intdict.mytype
- if i > 0 then addlocals(replace(localtypes,  localno, para_i), para, localno - 1, i - 1)
- else localtypes
-
+ if i > 0 then addlocals(replace(localtypes, localno, para_i), para, localno - 1, i - 1)else localtypes
 
 function checkkind(s2:symdef, typedict:type2dict)seq.word
- if isconst.sym.s2 /or name.sym.s2 ∈ "type]"then""
+ if isconst.sym.s2 ∨ name.sym.s2 ∈ "type]" /or isabstract.module.sym.s2 then""
  else
   let codeonly = removeoptions.code.s2
    if length.codeonly = 0 then""
@@ -90,8 +78,8 @@ function checkkind(s2:symdef, typedict:type2dict)seq.word
     let returntype = coretype(resulttype.sym.s2, typedict)
     for stk = empty:stack.mytype, localtypes = localdict, skip = false, s = codeonly do
       if skip then next(stk, localtypes, false)
-       else {if s = PreFref then next(push(stk, typeint), localtypes, true)
-      else}
+      else
+       { if s = PreFref then next(push(stk, typeint), localtypes, true)else }
        { assert not.isempty.module.s report"Illformed module on symbol"}
        if isdefine.s then
         assert not.isempty.stk report"Ill formed Define"
@@ -119,14 +107,14 @@ function checkkind(s2:symdef, typedict:type2dict)seq.word
        else if iscontinue.s then
         assert length.toseq.stk ≥ nopara.s report"stack underflow continue"
         next(pop(stk, nopara.s), localtypes, false)
-       else if isstart.s then {next(push(stk, resulttype.s), localtypes, false)}
+       else if isstart.s then
+        { next(push(stk, resulttype.s), localtypes, false)}
            next( push(stk, if isseq.resulttype.s then typeptr else resulttype.s), localtypes, false)
        else if isbr.s then
         assert top.stk = typeboolean report"if problem"
         + for a ="", e = top(stk, 1)do a + print.e /for(a)
         next(pop.stk, localtypes, false)
-       else
-         if islocal.s then
+       else if islocal.s then
          { assert not.isempty.name2.s report"ill formed local"}
          let localtype = lookup(localtypes, value.s)
          assert not.isempty.localtype report"local not defined" + print.s
@@ -147,18 +135,19 @@ let undefined = for defines = empty:set.symbol, uses = empty:set.symbol, h =  pr
  next(defines + sym.h, uses ∪ asset.code.h)
 /for(uses - defines - asset.knownsym)
 for acc10 =" /p  /p checkresults  /p", h = toseq.undefined do
-  if isconst.h /or name.h = "createthreadY"_1 ∧ isempty(asset.types.h - asset.[ typeint, typereal, typeptr])then
+  if isconst.h
+  ∨ name.h = "createthreadY"_1 ∧ isempty(asset.types.h - asset.[ typeint, typereal, typeptr])then
    acc10
   else if name.module.h = "builtin"_1 ∧ name.h ∈ "forexpx primitiveadd xgetinstance"then acc10
-  else if isabstract.module.h ∨ name.module.h ∈ "$int $define $local $sequence $for    $words
-  $loopblock $continue $br $global"
-  ∨ name.h ∈ "]" /or isunbound.h /or isRecord.h then
+  else if isabstract.module.h ∨ name.module.h ∈ "$int $define $local $sequence $for $words $loopblock $continue $br $global"
+  ∨ name.h ∈ "]"
+  ∨ isunbound.h
+  ∨ isRecord.h then
    acc10
   else acc10 + print.h   + EOL
- /for( "CheckResult:"+if isempty.acc10 then "OK" else acc10+"/p end checkresults /p")
+ /for("CheckResult:" + if isempty.acc10 then"OK"else acc10 + " /p end checkresults  /p"/if)
 
-function knownsym seq.symbol 
-let typecstr= typeref."cstr fileio ." 
+function knownsym seq.symbol let typecstr = typeref."cstr fileio."
 let typeindex=typeref."index index ."
 [ Litfalse, Littrue, PlusOp, NotOp,  Br2(1, 2)
 , symbol(moduleref."fileio","tocstr", seqof.typebits, typecstr)

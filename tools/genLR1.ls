@@ -78,9 +78,7 @@ function ?(a:dottedrule, b:dottedrule)ordering rule.a ? rule.b ∧ place.a ? pla
 
 function hash(p:dottedrule)int hash.rule.p + place.p
 
- 
 function assignencoding( p:seq.encodingpair.state,a:state)int  length.p+1
-
 
 function =(a:action, b:action)boolean lookahead.a = lookahead.b ∧ stateno.a = stateno.b
 

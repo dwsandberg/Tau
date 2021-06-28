@@ -78,13 +78,13 @@ use  groupparagraphs
 
 /use pro2gram
 
-Function pass1(allsrc1:seq.seq.word, exports:seq.word, librarymods:seq.firstpass)linkage
+use seq.program
+
+
+
+Function pass1(allsrc1:seq.seq.word, exports:seq.word, librarymods:seq.firstpass
+, libsimple:program,libtemplates:program)linkage
 let allsrc=groupparagraphs("module Module", allsrc1)
-let alllibsym = for acc = empty:set.symbol, @e = librarymods do acc ∪ defines.@e /for(acc)
-∪ for acc = empty:set.symbol, @e = librarymods do acc ∪ exports.@e /for(acc)
-let simplesym = asset.for acc = empty:seq.symbol, @e = toseq.alllibsym do acc + issimple2.@e /for(acc)
-let libprg = program2.simplesym
-let libtemplates = program2(alllibsym - simplesym)
 let a = for acc = asset.librarymods, @e = allsrc do gathersymbols(acc, @e)/for(acc)
 let expand1 = expanduse.expanduseresult(a, empty:seq.mapele)
 let u0 = firstpasses.expand1
@@ -97,19 +97,48 @@ let alltypes0 = for acc = empty:seq.myinternaltype, @e = toseq.d1 do acc + types
  let abstractsimple1 = split(toseq.d1, 1, empty:seq.firstpass, empty:seq.firstpass)
  let simple = abstractsimple1_2
  let abstract = abstractsimple1_1
- let prg1 = for acc = libprg, @e = simple do bind3(acc, alltypes, d1, @e)/for(acc)
+ let prg1 = for acc = libsimple, @e = simple do bind3(acc, alltypes, d1, @e)/for(acc)
  let templates0 = for acc = libtemplates, @e = abstract do bind3(acc, alltypes, d1, @e)/for(acc)
  let templates = maptemp(map.expand1, templates0)
  let roots = for acc = empty:seq.symbol, @e = simple do acc + roots(exports, @e)/for(acc)
  let prg2=postbind(alltypes, allsymbols1, roots , prg1, templates)
  let options=for acc = empty:seq.seq.word, @e = allsrc1 do acc + @e /for(acc)
  let prg3 =for acc = prg2, @e = options do processOption(acc, @e) /for(acc)
- let cinfo=cvtL2( type2dict(alltypes) ,emptypro2gram,  simple + abstract,exports)
- linkage(prescan.pro2gram.prg3, asset.toseq.libprg,   pro2gram.templates,cinfo)
+ let dict2=type2dict(alltypes)
+ let mods=tolibraryModules(dict2,emptypro2gram,  simple + abstract,exports) 
+ let cinfo=cvtL2( dict2 ,emptypro2gram,  mods)
+ linkage(prescan.pro2gram.prg3, asset.toseq.libsimple,   prescan.pro2gram.templates,cinfo)
  
+ use seq.libraryModule
+ 
+ use seq.symbolref
+ 
+ use seq.seq.mytype
+ 
+ 
+ Function tolibraryModules(alltypes: type2dict,prg:pro2gram,  t5:seq.firstpass,exports:seq.word) seq.libraryModule
+ for acc = empty:seq.libraryModule, m2 =  t5 do
+    if name.module.m2 /nin exports then acc else
+     let exps=  for acc3 = empty:seq.symbolref, e = toseq.exports.m2 do acc3 + symbolref.e /for(acc3)
+    let defines=if isabstract.module.m2 then
+      for acc3 = empty:seq.symbolref, e = toseq(defines.m2 /cup unbound.m2) do acc3 + symbolref.e /for(acc3)
+     else exps
+      let d2=if isabstract.module.m2 then defines.m2 else exports.m2
+     let types = for acc5 = empty:seq.seq.mytype, s =  toseq.d2 do 
+        if istype.s then
+         acc5+ ([ resulttype.s]+flatflds(alltypes, resulttype.s))
+   else   acc5
+  /for(acc5)
+    acc
+    + libraryModule(module.m2, 
+ exps    ,if isabstract.module.m2 then uses.m2 else empty:seq.mytype
+    ,defines,types)
+   /for(acc)
+   
  use postbind
  
  use pro2gram
+ 
 
 function basetypes seq.myinternaltype [ myinternaltype("defined"_1,"int"_1, moduleref."standard", [ typeint]), myinternaltype("defined"_1,"boolean"_1, moduleref."standard", [ typeint])]
 
@@ -357,7 +386,7 @@ function gathersymbols(f:firstpass, stubdict:set.symbol, input:seq.word)firstpas
    if input_1 = "Export"_1 then
     firstpass(module.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, types.f, prg.f)
    else if input_1 = "unbound"_1 then
-    firstpass(module.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + sym, types.f, prg.f)
+    firstpass(module.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + setunbound.sym, types.f, prg.f)
    else
     assert sym ∉ defines.f report"Function" + wordname.sym + "is defined twice in module" + print.module.f
     let prg1 = if input_1 ∈ "Builtin builtin"then

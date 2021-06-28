@@ -60,7 +60,9 @@ let x1 = createfile("doc.html", toUTF8bytes.d)
 use pro2gram
 
 function addselect(s:seq.word)seq.word 
- if not.isempty.s /and first.s=first."/section" then  "/< /section " + s << 1 + " />" else "/p " + s   
+ if not.isempty.s ∧ first.s = first."/section"then
+ " /< /section" + s << 1 + " />"
+ else" /p" + s
 
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
  { Calls between modules in list of modules. }
@@ -73,7 +75,8 @@ Function formcallarcs(libname:seq.word) seq.arc.word
 for  arcs2=empty:seq.arc.word,  p=   prg.compilerfront("pass1",libname) do
      let tail=mangledname.sym.p
      for arcs=arcs2 ,  sym=code.p do
-        if isconst.sym /or isspecial.sym /or sym=sym.p then arcs else  arcs+arc(tail,mangledname.sym)
+   if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs
+   else arcs + arc(tail, mangledname.sym)
      /for(arcs)
      /for(arcs2)
 
@@ -82,7 +85,8 @@ Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
  let t= for  arcs2=empty:seq.arc.word,  p=  prg.compilerfront("pass1",libname) do
      let tail=mangledname.sym.p
      for arcs=arcs2 ,  sym=code.p do
-        if isconst.sym /or isspecial.sym /or sym=sym.p then arcs else  arcs+arc(tail,mangledname.sym)
+   if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs
+   else arcs + arc(tail, mangledname.sym)
      /for(arcs)
      /for(arcs2)
   let g = newgraph.formcallarcs.libname

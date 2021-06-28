@@ -6,7 +6,6 @@ use symbol
 
 use program
 
-use seq.myinternaltype
 
 use otherseq.mytype
 
@@ -132,14 +131,15 @@ function buildcode(acc:int, w:word)int
  acc * 2 + if w = first."real"then 1 else 0
  
  Function baseoffset(sym:symbol) int toint.abstracttype.para.module.sym 
-
+ 
+ use seq.myinternaltype
+ 
+ 
 Function getsubflds(d:typedict, type:mytype)seq.mytype
  if type = typeint ∨ type = typereal ∨ type = typeptr then [ type]
- else
-  { if type = typeboolean then typeinfo.[ typeboolean]else }
-  if isseq.type   then  [ typeptr]
+ else  if isseq.type   then  [ typeptr]
   else
-   let t = findtype(d, type)
+    let t = findtype(d, type)
     assert length.t = 1 report"type not found" + print.type + stacktrace
      subflds.t_1
      
@@ -148,7 +148,7 @@ function codeforbuiltin(alltypes:typedict, issequence:boolean, newsym:symbol, sy
   { symbol(offset(<rettype> <types with unknownsize >, <knowoffset> +"builtin", <rettype>)}
   let paratypes = paratypes.sym
   let offset = for acc = baseoffset.sym, @e = subseq(paratypes, 2, length.paratypes)do
-   acc + length.getsubflds(alltypes, replaceT(modpara, @e))
+   acc + length.getsubflds( alltypes, replaceT(modpara, @e))
   /for(acc)
   let singlefld = 1 = length.getsubflds(alltypes, replaceT(modpara, resulttype.sym))
   if singlefld then Fld(offset, getbasetype(alltypes, replaceT(modpara, resulttype.sym))) + [ Words."VERYSIMPLE", Optionsym]
@@ -198,6 +198,16 @@ if typ = typeref."typename tausupport. "then [ Lit.2]
   ifthenelse([ gl] + Fld(0, typeint) + DefineF."X1"_1
   + [ LocalF("X1",typeint), Lit.0, EqOp], [ gl, Words.print.typ, encodenosym, set, DefineF."xx"_1, gl] + Fld(0, typeint), [ LocalF("X1",typeint)], typeint)
 
+/Function typesym(d:type2dict, type:mytype)symbol
+ if type = typeint then symbol(moduleref."tausupport", "deepcopy ",typeint,typeint)
+ else if type = typereal then symbol(moduleref."tausupport", "deepcopy ",typereal,typereal)
+ else
+  let e = findtype(d, type)
+   assert length.e = 1 report"type not found" + print.type + stacktrace
+   let it = e_1
+   let t = addabstract(typeref3(module.it, name.it ), para.module.it)
+        symbol4(module.it,"type"_1 ,t  ,   [ t], t)
+        
 function definedeepcopy(alltypes:typedict, type:mytype, org:seq.word)seq.symbol
  if type = typeint ∨ type = typeword ∨ isencoding.type then [ Local.1]
  else if isseq.type then
@@ -227,14 +237,79 @@ function subfld(alltypes:typedict, flds:seq.mytype, fldno:int, fldkinds:seq.myty
   let fldtype = flds_fldno
   let kind = getbasetype(alltypes, fldtype)
   subfld(alltypes, flds, fldno + 1, fldkinds + kind, result + [ Local.1] + Fld(fldno - 1, kind) + deepcopysym(alltypes, fldtype)) 
+
+/function definedeepcopy(alltypes:type2dict, type:mytype, org:seq.word)seq.symbol
+ if type = typeint ∨ type = typeword ∨ isencoding.type then [ Local.1]
+ else if isseq.type then
+ let basetype = getbasetype(alltypes, type)
+ if basetype = typeint ∨ basetype = typereal ∨ basetype = typeboolean then [ Local.1, blocksym.basetype]
+  else
+   let cat = symbol(tomodref.type,"+", [ type, parameter.type], type)
+   let resulttype = basetype
+   let elementtype = parameter.basetype
+   let element = symbol(moduleref("$for", elementtype),"element", empty:seq.mytype, elementtype)
+   let acc = symbol(moduleref("$for", typeptr),"acc", empty:seq.mytype, typeptr)
+   Emptyseq.elementtype
+    + [ Local.1, acc, element, acc, element, deepcopysym(alltypes, parameter.type), cat, Littrue, acc, symbol(moduleref("builtin", typeint),"forexp", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
+    ]
+    + blocksym.basetype
+ else
+  let subflds = getsubflds(alltypes, type)
+  let y = subfld(alltypes, subflds, 1, empty:seq.mytype, empty:seq.symbol)
+  if length.subflds = 1 then
+    { only one element in record so type is not represent by actual record }[ Local.1]
+    + subseq(y, 4, length.y - 1)
+   else y
+
+/function subfld(alltypes:type2dict, flds:seq.mytype, fldno:int, fldkinds:seq.mytype, result:seq.symbol)seq.symbol
+ if fldno > length.flds then result + [ Record.fldkinds]
+ else
+  let fldtype = flds_fldno
+  let kind = getbasetype(alltypes, fldtype)
+  subfld(alltypes, flds, fldno + 1, fldkinds + kind, result + [ Local.1] + Fld(fldno - 1, kind) + deepcopysym(alltypes, fldtype)) 
   
   Function getbasetype(d:typedict,intype:mytype) mytype
 { base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.bit 
    seq.packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
+  if abstracttypeof.intype = typeref ( "$base $base .") then { used for type of next in for expression } intype
+  else if isencoding.intype  then  typeint
+     else
+  let isseq =  isseq.intype 
+  let type= if isseq then parameter.intype else intype
+  if  type ∈ packedtypes then 
+     if isseq then intype else typeptr
+  else  if  type ∈ [typeint, typeboolean ,typereal, typeptr]then 
+     if isseq then intype else type
+  else if  type   ∈ [ typebit, typebyte ] then 
+    if isseq then  intype else typeint
+  else if isseq.type  /and isseq then seqof.typeptr
+  else 
+   let t = findtype(d, type)
+   assert length.t = 1 report"type not found" + print.type + stacktrace
+   let size = length.subflds.t_1
+     if size > 1 then
+     if not.isseq then typeptr
+     else if size = 2 then seqof.typeref(  "packed2 tausupport .")
+     else if size = 3 then seqof.typeref(  "packed3  tausupport .")
+     else if size = 4 then seqof.typeref(  "packed4  tausupport .")
+     else if size = 5 then seqof.typeref(  "packed5  tausupport .")
+     else if size = 6 then seqof.typeref(  "packed6  tausupport .")  
+     else seqof.typeptr
+    else
+     let basetype =(subflds.t_1)_1
+      if isseq.basetype   /and isseq  then seqof.typeptr
+       else let basetype2=getbasetype(d,basetype)
+         if not.isseq then basetype2
+         else    if isseq.basetype2     then seqof.typeptr
+         else seqof.basetype2 
+         
+ / Function getbasetype(d:type2dict,intype:mytype) mytype
+{ base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.bit 
+   seq.packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
    { if abstracttypeof.intype = typeref ( "$base $base .") then { used for type of next in for expression } intype
  else if isseq.intype then
-     seqof.coretype(parameter.intype,type2dict(d),6)
-   else coretype(intype,type2dict(d)  )
+     seqof.coretype(parameter.intype, d ,6)
+   else coretype(intype, d   )
  }
   if abstracttypeof.intype = typeref ( "$base $base .") then { used for type of next in for expression } intype
  else if isencoding.intype  then  typeint
@@ -267,6 +342,7 @@ function subfld(alltypes:typedict, flds:seq.mytype, fldno:int, fldkinds:seq.myty
          if not.isseq then basetype2
          else    if isseq.basetype2     then seqof.typeptr
          else seqof.basetype2 
+
          
  Function  prescan(   prg:pro2gram) pro2gram 
       for  acc=empty:set.symdef ,  p=tosymdefs.prg do

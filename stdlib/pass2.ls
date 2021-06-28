@@ -148,9 +148,13 @@ function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:worddict.seq.sy
    let nopara = nopara.sym
    let dd = getCode(p, sym)
    let options = getoption.dd
-    if(first."COMPILETIME" ∈ options
-    ∨ sym = symbol(moduleref("seq", typeword),"_", [ seqof.typeword, typeint], typeword))
-    ∧ for acc = true, @e = subseq(result, len - nopara + 1, len)do acc ∧ isconst.@e /for(acc)then
+    if first."COMPILETIME" ∈ options
+    ∧ for acc = true, @e = subseq(result, len - nopara + 1, len)
+      while acc do isconst.@e  /and (not.isrecordconstant.@e
+       /or for acc2 = true, sub = removeconstant.[@e] 
+      while acc2 do   not.isFref.sub  /for(acc2))
+    /for(  acc
+    )then
      if sym = symbol(moduleref."words","decodeword", typeword, typeint)then
      let arg1 = result_len
      let a1 = for acc = empty:seq.symbol, @e = tointseq.decodeword.wordname.arg1 do acc + Lit.@e /for(acc)
@@ -393,26 +397,17 @@ function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
      
 use pro2gram
 
-Function uses(p:pro2gram, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
-
-Function defines(p:pro2gram, uses:set.symbol)seq.symbol
- for acc = empty:seq.symbol, sym = toseq.uses do
-  if isconstantorspecial.sym ∨ isabstract.module.sym 
-     /or library.module.sym="compiled"_1
-  then acc else  acc+sym
- /for(acc)
+ Function uses(p:pro2gram, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
  
- 
- 
-
 function uses(p:pro2gram, processed:set.symbol, toprocess:set.symbol)set.symbol
  if isempty.toprocess then processed
  else
   let q = asset.for acc = empty:seq.symbol, @e = toseq.toprocess do
-   acc
-   + let d = getCode(p, @e)
-     if isempty.d then constantcode.@e else d
+     if isabstract.module.@e then acc else
+   acc+if isrecordconstant.@e /or isFref.@e then constantcode.@e    else getCode(p, @e)   
   /for(acc)
   uses(p, processed ∪ toprocess, q - processed)
+
+
 
  

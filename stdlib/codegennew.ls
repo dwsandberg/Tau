@@ -54,9 +54,12 @@ use seq.encodingpair.stat5
 
 use seq.seq.seq.int
 
-Function codegen(theprg:pro2gram, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict, isbase:boolean)seq.bits
-let defines = for acc = empty:seq.symbol, ele = definesWithBuiltins do
+Function codegen(theprg:pro2gram,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict, isbase:boolean)seq.bits
+let defines = for acc = empty:seq.symbol, ele = toseq.uses do
 let d = getCode(theprg, ele)
+ if isconstantorspecial.ele ∨ isabstract.module.ele  /or library.module.ele="compiled"_1 then acc 
+  else if not.isbase  /and name.module.ele /in "standard tausupport fileio" then acc
+  else 
 if isempty.d then { sym not defined in this library }acc
  else if"BUILTIN"_1 ∉ getoption.d then acc + ele
  else

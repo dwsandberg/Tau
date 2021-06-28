@@ -5,7 +5,7 @@ stdlib UTF8   bits codegennew codetemplates encoding fileio format   groupparagr
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
 pass1 pass2  persistant postbind   process real seq set stack  symbol textio timestamp tree worddict words xxhash
  sparseseq standard maindict  outstream bitstream tausupport
- mergeblocks program hidesymbol 
+ mergeblocks program   
    tests/test11 tests/checking tests/point tests/testencoding  
  tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
  tests/testprocess tests/testfileio tests/testseq
@@ -33,8 +33,8 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
   sparseseq   standard testall
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
-  interpreter  llvm llvmconstants internalbc codegennew codetemplates persistant breakblocks
-  pro2gram hidesymbol pass2 parsersupport program
+  interpreter  llvm llvmconstants codegennew   persistant breakblocks
+  pro2gram hidesymbol pass2 parsersupport  
 
 * Removed maindict 
 
@@ -42,14 +42,12 @@ option.main2 subcompilelib(seq.word, seq.word)seq.word PROFILE
 
 option.main2 compilelib2(seq.word)seq.word PROFILE
 
-option.pass1 pass1( seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
+/option.pass1 pass1( seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
 
 option.pass2 pass2(placehold:pro2gram)pro2gram PROFILE
 
 
-
-
-option.codegennew codegen(theprg:pro2gram, definesWithBuiltins:seq.symbol, uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict,isbase:boolean)seq.bits PROFILE
+option.codegennew codegen(theprg:pro2gram,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict,isbase:boolean)seq.bits PROFILE
 
 /option.codetemplates   match5map(theprg:pro2gram, uses:set.symbol, alltypes:type2dict)seq.match5 PROFILE
 
@@ -95,7 +93,21 @@ option.tausupport getseqlength(ptr) int COMPILETIME
 
 \option.tausupport getseqtype(ptr) int COMPILETIME
 
+option.UTF8 toword(int) word COMPILETIME
 
+
+option.words encodeword( seq.char) word COMPILETIME
+
+
+
+option.words  decodeword( word) seq.char COMPILETIME
+
+
+option.seq.word _(seq.word,int) word COMPILETIME
+
+option.seq.int _(seq.int,int) int COMPILETIME
+
+option.seq.char _(seq.char,int) char COMPILETIME
 
 option.fileio getfile(name:cstr)fileresult STATE
 
@@ -107,33 +119,11 @@ option.fileio createfile(byteLength:int,data:seq.bits,cstr) int STATE
 
 option.fileio  createfile3(byteLength:int,data:seq.bits,name:cstr) int  STATE
 
-
-
- 
-option.UTF8 toword(int) word COMPILETIME
-
-
-option.words encodeword( seq.char) word COMPILETIME
-
-
-option.words  decodeword( word) seq.char NOINLINE
-
-option.words  decodeword( word) seq.char COMPILETIME
-
-
-option.seq.word _(seq.word,int) word COMPILETIME
-
-option.seq.int _(seq.int,int) int COMPILETIME
-
-option.seq.char _(seq.char,int) char COMPILETIME
-
-
-  
-
 option.timestamp   currenttime timestamp STATE
 
 option.symbol Lit(int)symbol INLINE
 
+option.words  decodeword( word) seq.char NOINLINE
 
 option.symbol Start(mytype) symbol NOINLINE
 

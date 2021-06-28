@@ -208,8 +208,12 @@ Function processof(base:mytype)mytype mytype([ typedef."process process."] + typ
 
 type passtypes is modname:modref, defines:set.mytype, unresolveduses:seq.seq.word, unresolvedexports:seq.seq.word, exports:set.mytype, uses:set.modref
 
-Function resolvetypes(t:seq.seq.word, lib:word)set.passtypes
- for knownmods = empty:set.modref, s = empty:set.passtypes, defines = empty:set.mytype, unresolveduses = empty:seq.seq.word, unresolvedexports = empty:seq.seq.word, mref = internalmod, m = t do
+Function passtypes(modname:modref, defines:set.mytype,exports:set.mytype) passtypes
+ passtypes(modname,defines,empty:seq.seq.word,empty:seq.seq.word,exports,empty:set.modref)
+
+Function resolvetypes(librarytypes:set.passtypes,t:seq.seq.word, lib:word)set.passtypes
+ let librarymods= for acc=empty:set.modref,p=toseq.librarytypes do acc+modname.p /for(acc)
+ for knownmods = librarymods, s = librarytypes, defines = empty:set.mytype, unresolveduses = empty:seq.seq.word, unresolvedexports = empty:seq.seq.word, mref = internalmod, m = t do
   if isempty.m then next(knownmods, s, defines, unresolveduses, unresolvedexports, mref)
   else if first.m ∈ "Module module"then
   let p2 = resolve(s, knownmods, passtypes(mref, defines, unresolveduses, unresolvedexports, empty:set.mytype, empty:set.modref))
@@ -232,10 +236,15 @@ function R(s1:set.passtypes, knownmods:set.modref, countin:int)set.passtypes
   { assert countin /in [ 100000, 134, 45, 22, 1]report"C"+ print.countin }
   for cnt = 0, acc = empty:set.passtypes, p = toseq.s1 do
    next(cnt + length.unresolvedexports.p + length.unresolveduses.p, acc + resolve(s1, knownmods, p))
-  /for(assert countin ≠ cnt report"unresolvedtypes"
-  + for acc2 ="", p2 = toseq.s1 do acc2 + print.p2 + EOL /for(acc2)
+  /for(assert countin ≠ cnt report
+   for acc2 ="", p2 = toseq.s1 do acc2 + printunresolved.p2   /for(acc2)
   R(acc, knownmods, cnt))
-
+  
+  function  printunresolved(p:passtypes) seq.word
+  let txt=for acc="",t=unresolveduses.p do acc+"use"+ t +EOL /for(  acc   )
+  +for acc="",t=unresolvedexports.p do  acc+"Export type:"+ t +EOL /for(  acc )
+  if isempty.txt then "" else "module"+ print.modname.p  + "contains lines that cannot be resolved:"+txt
+  
 function resolve(all:set.passtypes, knownmods:set.modref, p:passtypes)passtypes
 let dict = formtypedict(all, p)
 let p1 = for exports = exports.p, x = empty:seq.seq.word, t2 = unresolvedexports.p do
@@ -247,7 +256,7 @@ for uses = uses.p, x = empty:seq.seq.word, t2 = unresolveduses.p do
  if isempty.b then next(uses, x + t2)else next(uses + b_1, x)
  /for(passtypes(modname.p, defines.p, x, unresolvedexports.p1, exports.p1, uses))
 
-function ?(a:passtypes, b:passtypes)ordering name.modname.a ? name.modname.b
+Function ?(a:passtypes, b:passtypes)ordering name.modname.a ? name.modname.b
 
 Function print(p:passtypes)seq.word
 " /keyword module" + print.modname.p + EOL + " /keyword defines"

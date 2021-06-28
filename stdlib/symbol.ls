@@ -13,7 +13,6 @@ use standard
 
 use seq.char
 
-use seq.myinternaltype
 
 use otherseq.mytype
 
@@ -71,7 +70,136 @@ Export =(a:modref,b:modref) boolean
 
 ---internal
 
-use hidesymbol
+type symbol is worddata:seq.word, module:modref,types:seq.mytype, raw:bits,hashbits:bits, zcode:seq.symbol
+
+Export type:symbol
+
+Export worddata(symbol) seq.word
+
+Export module(symbol)modref
+
+Export types(symbol)seq.mytype
+
+Export raw(symbol)bits
+
+Export zcode(symbol) seq.symbol
+
+Function =(a:symbol, b:symbol)boolean
+ hashbits.a = hashbits.b ∧ worddata.a = worddata.b ∧ (types.a >> 1= types.b >> 1) 
+ ∧ issimplename.a = issimplename.b
+ ∧ module.a = module.b
+
+ /and (name.module.a /nin "$fref"  /or zcode.a=zcode.b)
+
+Function ?(a:symbol, b:symbol)ordering
+ fsighash.a ? fsighash.b ∧ worddata.a ? worddata.b ∧ (types.a >> 1)  ? (types.b  >> 1) 
+  ∧ issimplename.a ? issimplename.b
+ ∧ module.a ? module.b
+ 
+Function ?2(a:symbol, b:symbol)ordering 
+ fsighash.a ? fsighash.b ∧ worddata.a ? worddata.b ∧ (types.a >> 1) ? (types.b  >> 1)
+ ∧ issimplename.a ? issimplename.b
+
+function extrabits(types:seq.mytype,other:int,flags:bits) bits
+ bits.hash( types ,other) << 4 ∨ (flags /and 0x0F)
+ 
+Function extrabits(s:symbol)int toint.hashbits.s
+
+Function Words(s:seq.word)symbol 
+symbol(s, moduleref."$words",[ typeptr],0x0,extrabits(empty:seq.mytype,hash.s,constbit), empty:seq.symbol)
+
+function specialbit bits bits.4
+
+function simplenamebit bits bits.2
+
+function constbit bits bits.1
+
+Function issimplename(sym:symbol) boolean (hashbits.sym /and simplenamebit) /ne 0x0 
+
+Function isspecial(s:symbol)boolean(hashbits.s ∧ specialbit) = specialbit
+
+Function isconst(s:symbol)boolean(hashbits.s ∧ constbit) = constbit
+
+Function isunbound(sym:symbol)boolean (raw.sym /and unboundbit) /ne 0x0
+
+function unboundbit bits  0x1 << 41
+
+function requiresbit bits  0x1 << 42
+
+Function hasrequires(sym:symbol)boolean (raw.sym /and requiresbit) /ne 0x0
+
+Function hash(sym:symbol)int toint(hashbits.sym >> 4)
+
+Function fsighash(s:symbol)int toint(hashbits.s >> 4)
+
+Function setunbound(sym:symbol) symbol
+  symbol( worddata.sym,module.sym,types.sym,raw.sym /or unboundbit,hashbits.sym,empty:seq.symbol) 
+
+Function setrequires(sym:symbol)symbol 
+ symbol( worddata.sym,module.sym,types.sym,raw.sym /or requiresbit,hashbits.sym,empty:seq.symbol) 
+
+Function addzcode (s:symbol,zcode:seq.symbol) symbol
+ symbol(worddata.s, module.s,types.s, raw.s,hashbits.s,  zcode)
+
+Function replaceTsymbol(with:mytype, sym:symbol)symbol
+ if with = typeT /or isconst.sym then sym else
+let newtypes = for newtypes = empty:seq.mytype, t = types.sym do newtypes + replaceT(with, t)/for(newtypes)
+symbol( worddata.sym,replaceT(with, module.sym), newtypes, raw.sym,extrabits(newtypes,   hash.worddata.sym,hashbits.sym),empty:seq.symbol)
+
+function symbolZ(module:modref, name:word,namePara:seq.mytype,paras:seq.mytype,rt:mytype,flags:bits,raw:bits) symbol
+   let types=namePara+paras+rt
+  symbol([name] ,   module , types,raw
+  , extrabits( types ,hash.[name],
+  if isempty.namePara  then simplenamebit /or flags else flags),  empty:seq.symbol )
+  
+Function Br2(t:int, f:int)symbol
+ let raw=bits.t << 20 ∨ bits.f
+ symbolZ(moduleref("$br"),"BR2"_1, 
+  [ typeref([ toword.toint.raw,"."_1,"."_1])  ]
+  ,empty:seq.mytype,type?,specialbit,bits.t << 20 ∨ bits.f)
+
+Function brt(s:symbol)int toint(raw.s >> 20 ∧ 0xFFFFF)
+
+Function brf(s:symbol)int toint(raw.s ∧ 0xFFFFF)
+
+Function type? mytype  typeref( "? internal .") 
+
+Function printrep(s :symbol) seq.word
+    if name.module.s = "$int"_1 then [ name.s]
+    else   if iswords.s then   '"'+ worddata.s+'"' 
+    else 
+     "("+[library.module.s,name.module.s]+ printrep.para.module.s
+    +name.s+toword.toint.raw.s 
+    +for acc = "", t =  types.s   do
+     acc + printrep.t  
+    /for(acc   + ")")/if
+
+Function name(sym:symbol) word first.worddata.sym 
+
+
+Function iswords(s:symbol)boolean name.module.s ∈ "$words"
+
+Function islocal(s:symbol)boolean name.module.s ∈ "$local " 
+
+Function isdefine(s:symbol)boolean name.module.s ∈ "$define"
+
+Function isbr(s:symbol)boolean name.module.s ∈ "$br"
+
+Function isexit(s:symbol)boolean name.module.s ∈ "$exitblock"
+
+Function isparameter(s:symbol)boolean    name.module.s ∈ "$parameter" 
+
+Function value(sym:symbol)int toint.raw.sym
+
+Function nopara(s:symbol)int
+ if isconst.s ∨ islocal.s ∨ isparameter.s then 0
+ else if isspecial.s ∧ name.module.s ∉ "$record $loopblock"then
+  if   isdefine.s ∨ isbr.s /or isexit.s then 1
+  else
+  { assert name.module.s  /in "$continue $sequence " report "CHeKC"+print.s}
+    toint.name.s
+ else 
+  length.types.s-if issimplename.s then  1 else  2
 
 Export raw(symbol) bits
 
@@ -140,8 +268,6 @@ Export nopara(sym:symbol)int
 
 Export extrabits(s:symbol)int 
 
-Function cleansymbol(sym:symbol,code:seq.symbol)symbol
- addzcode(sym,[ if isempty.zcode.sym then sym else addzcode( sym,  empty:seq.symbol)] + code)
  
 function fsig(name:word,nametype:seq.mytype,paratypes:seq.mytype) seq.word
   let fullname=if isempty.nametype then [name] else  [name]+":"+print.first.nametype 
@@ -429,86 +555,18 @@ if issimple.module.s then [name.module.s] else oldTypeRep.para.module.s+name.mod
 
 ------
 
-type typedict is data:seq.myinternaltype
-
-Function +(a:typedict, b:seq.myinternaltype)typedict typedict(data.a + b)
-
-type myinternaltype is kind:word, name:word, module:modref, subflds:seq.mytype
-
-Export type:myinternaltype
-
-Export name(myinternaltype)word
-
-Export kind(myinternaltype) word
-
-Function isdefined(it:myinternaltype)boolean kind.it = "defined"_1
-
-Function typekind(t:myinternaltype)word kind.t
-
-Function modpara(t:myinternaltype)mytype para.module.t
-
-Export subflds(myinternaltype)seq.mytype
-
-function =(a:myinternaltype, b:myinternaltype)boolean
- name.a = name.b ∧ para.module.a = para.module.b
-
-Function changesubflds(t:myinternaltype, subflds:seq.mytype)myinternaltype 
-myinternaltype("defined"_1, name.t, module.t, subflds)
-
-
-Export module(m: myinternaltype) modref  
-
-Export myinternaltype(kind:word, name:word, module:modref, subflds:seq.mytype)myinternaltype
-  
-  
-Function replaceTmyinternaltype(with:mytype, it:myinternaltype)myinternaltype 
-myinternaltype(kind.it, name.it, replaceT(with, module.it), subflds.it)
-
-
-function parseit(s:seq.word, i:int, fld:seq.word, flds:seq.seq.word)seq.seq.word
- if i > length.s then flds + fld
- else if s_i = "."_1 then
-  parseit(s, i + 2, [ s_(i + 1)] + fld, flds)
- else { end of fld } parseit(s, i + 1, [ s_i], flds + fld)
 
 Export type:symbol
 
 Export zcode(symbol)seq.symbol
 
-
 Function nametype(sym:symbol) seq.mytype 
     if issimplename.sym then empty:seq.mytype else [first.types.sym] 
  
-  
 
-Function findtype(d:typedict, type:mytype)seq.myinternaltype
- findelement(myinternaltype("?"_1, abstracttype.type,    moduleref("?", parameter.type) , empty:seq.mytype), data.d)
-
-Export typedict(seq.myinternaltype)typedict
-
-Export type:typedict
-
-
-
-Function typesym(it:myinternaltype)symbol
-let t = addabstract(typeref3(module.it, name.it ), para.module.it)
-       symbol4(module.it,"type"_1 ,t  ,   [ t], t)
-
-Function deepcopysym(d:typedict, type:mytype)symbol typesym(d, type)
-
-Function typesym(d:typedict, type:mytype)symbol
- if type = typeint then symbol(moduleref."tausupport", "deepcopy ",typeint,typeint)
- else if type = typereal then symbol(moduleref."tausupport", "deepcopy ",typereal,typereal)
- else
-  let e = findtype(d, type)
-   assert length.e = 1 report"type not found" + print.type + stacktrace
-   let it = e_1
-   let t = addabstract(typeref3(module.it, name.it ), para.module.it)
-        symbol4(module.it,"type"_1 ,t  ,   [ t], t)
-
-   
 Function deepcopysym(dict:set.symbol, type:mytype)set.symbol
- if type ∈ [ typeint, typereal]then asset.[ typesym(typedict.empty:seq.myinternaltype, type)]
+ if type = typeint then asset.[symbol(moduleref."tausupport", "deepcopy ",typeint,typeint)]
+ else if type = typereal then asset.[symbol(moduleref."tausupport", "deepcopy ",typereal,typereal)]
  else lookup(dict,"type:" + print.type, [ type])
 
 Function removeconstant(s:seq.symbol)seq.symbol
@@ -555,7 +613,6 @@ Export internalmod modref
 
 use words
 
-/use encoding.symbol
 
 use mangle
 
@@ -568,7 +625,6 @@ Export ?(typedef,typedef)ordering
 
 Export ?(modref, modref)ordering
 
-/function assignencoding(a:seq.encodingpair.symbol, symbol) int length.a+1
 
 Function PreFref symbol symbol(builtinmod.type?,"PreFref",   typeint)
 
@@ -614,3 +670,5 @@ Export code(symdef)seq.symbol
 Export paragraphno(symdef) int  
    
 Function ?(a:symdef,b:symdef) ordering sym.a ? sym.b
+
+

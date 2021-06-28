@@ -36,9 +36,6 @@ use seq.byte
 
 use otherseq.char
 
-/use seq.firstpass
-
-/use set.firstpass
 
 use process.liblib
 
@@ -83,6 +80,10 @@ function loadlibs(dependentlibs:seq.word, i:int, time:int)int
    assert stamp ≥ time report"library" + dependentlibs_i + "is out of date" + toword.time + toword.stamp
     loadlibs(dependentlibs, i + 1, stamp)
 
+use set.symdef
+
+use seq.program
+
 function subcompilelib(option:seq.word, libname:seq.word)seq.seq.word
 let info = getlibraryinfo.libname
 let dependentlibs = info_1
@@ -90,16 +91,15 @@ let filelist = info_2
 let exports = info_3
  { let b = unloadlib.[ libname]}
  let allsrc = getlibrarysrc.libname
- let link = pass1(["Library"+libname]+allsrc, exports, libmodules.dependentlibs)
-   let prg4 =  pass2.result.link
-    let cinfo= cinfo.link
-    let libdesc= libdesc(cinfo,prg4 /cup templates.link)
-   let roots=for acc= empty:set.symbol, m =mods.cinfo do 
-     for acc2=acc, r=exports.m do  
-      if issimple.modname.m then acc2+(symbolrefdecode.cinfo)_toint.r else acc2 /for(acc2)
-    /for(acc)
-   let uses = uses(prg4, roots /cup  asset.libdesc)
-   let defines=definesX(prg4, uses,isempty.dependentlibs )
+ { let cinfo=compilerfront(option,libname,allsrc,dependentlibs,exports)
+    let prg4=pro2gram.asset.prg.cinfo
+}
+let libinfo=libinfo.dependentlibs
+let link = pass1(["Library"+libname]+allsrc, exports, mods.libinfo,simple.libinfo,abstract.libinfo)
+let prg4 =  pass2.result.link /cup templates.link
+let cinfo= cinfo.link
+let libdesc= libdesc(cinfo,prg4 )
+let uses = uses(prg4 , roots.cinfo /cup  asset.libdesc)
     {let discard =symbolref.libdesc_1
     let discard2=symbolref.libdesc_2
      let xx= for acc=empty:set.symbol,sym=toseq.(asset.symbolrefdecode.addprg(cinfo,prg4,false) -uses ) 
@@ -109,29 +109,15 @@ let exports = info_3
      {assert false report "DIFFXXX"+ 
        print.toseq.(uses-xx  )  +"DIFFTTT"+ 
        print.toseq.(xx -uses ) } 
-      let bc = codegen(prg4, defines, uses, last.libname, libdesc, alltypes.cinfo.link , isempty.dependentlibs)
+      let bc = codegen(prg4,  uses, last.libname, libdesc, alltypes.cinfo , isempty.dependentlibs)
      let z2 = createlib(bc, last.libname, dependentlibs)
      ["OK"]
      
-   /  function uses(p:pro2gram, processed:set.symbol, toprocess:set.symbol)set.symbol
-   if isempty.toprocess then processed
- else
-  let q = asset.for acc = empty:seq.symbol, @e = toseq.toprocess do
-   acc
-   + let d = getCode(p, @e)
-     if isempty.d then constantcode.@e else d
-  /for(acc)
-  uses(p, processed ∪ toprocess, q - processed)
 
-function definesX(p:pro2gram, uses:set.symbol,isbase:boolean)seq.symbol
- for acc = empty:seq.symbol, sym = toseq.uses do
-  if isconstantorspecial.sym ∨ isabstract.module.sym 
-     /or library.module.sym="compiled"_1
-  then acc 
-  else if not.isbase  /and name.module.sym /in "standard tausupport fileio" then acc
-  else  acc+sym
+function compare(a:program,b:program) seq.word
+ for acc="",sym = toseq.a do
+  if  getCode(a,sym)= getCode(b,sym)  then acc else acc+print.sym
  /for(acc)
-
 
 use mytype
 
@@ -162,18 +148,20 @@ createfile("stdout", toUTF8bytes.output)
 
 Function testcomp(s:seq.seq.word)seq.seq.word
 let exports ="testit"
-let r = pass1(s, exports, libmodules."stdlib")
+let libinfo=libinfo."stdlib"
+let r = pass1(s, exports, mods.libinfo,simple.libinfo,abstract.libinfo)
 for acc = empty:seq.seq.word, p = tosymdefs.result.r do
   acc + [ print.sym.p + print.code.p]
  /for(acc)
 
 type runitresult is code:seq.symbol, alltypes:type2dict
 
-Function runit(b:seq.seq.word)runitresult
+function runit(b:seq.seq.word)runitresult
 let lib = b_1
 let src = ["module $X","use standard"] + subseq(b, 2, length.b - 1)
 + ["Function runitx seq.word" + b_(length.b)]
-let link = pass1(  src ,"$X", libmodules("stdlib" + lib))
+let libinfo=libinfo("stdlib" + lib)
+let link = pass1(  src ,"$X",mods.libinfo,simple.libinfo,abstract.libinfo)  
 let prg2 =  result.link 
 runitresult(getCode(prg2, symbol(moduleref."$X","runitx", seqof.typeword)), alltypes.cinfo.link)
 
@@ -189,17 +177,60 @@ let filelist = info_2
 let exports = info_3
  { let b = unloadlib.[ libname]}
  let allsrc = getlibrarysrc.libname
-  { assert false report allsrc @ +("", @e)}
-  let link = pass1(  allsrc , exports, libmodules.dependentlibs)
-  let prg3 =  result.link 
-   {if option = "pass1"then compileinfo(alltypes.link, prg3, roots.link)
-   else let prg4 = pass2.prg3
-    compileinfo(alltypes.link, prg4, roots.link)
-    }
-    addprg(cinfo.link,if option = "pass1"then prg3 else pass2.prg3,true)
-    
-    cvtL2( alltypes.link,if option = "pass1"then prg3 else pass2.prg3 ,  mods.link,exports )
+   compilerfront(option,libname,allsrc,dependentlibs,exports)
 
+Function compilerfront(option:seq.word,libname:seq.word
+,allsrc:seq.seq.word,dependentlibs:seq.word,exports:seq.word) compileinfo
+  { assert false report allsrc @ +("", @e)}
+  let libinfo=libinfo.dependentlibs
+  let link = pass1(  allsrc , exports, mods.libinfo,simple.libinfo,abstract.libinfo)
+  let prg3 =  result.link 
+  addprg(cinfo.link,if option = "pass1"then prg3 else pass2.prg3 /cup templates.link)
+    
+use seq.libraryModule
+
+use program
+
+use seq.firstpass
+
+use seq.myinternaltype
+
+Function loadlibbug seq.word " bug10 "
+
+
+  
+  type libinfo is mods:seq.firstpass,simple:program,abstract:program 
+ 
+  function  libinfo(   dependentlibs:seq.word) libinfo
+  for acc = libinfo(empty:seq.firstpass,emptyprogram,emptyprogram), l = loadedLibs do 
+  if(libname.l)_1 ∈ dependentlibs then  
+    for ab = abstract.acc,simple=simple.acc,c=code.l do
+      let code=  for acc2=empty:seq.symbol,r=c do  acc2+ (decoderef.l)_toint.r /for(acc2)
+       if isabstract.module.first.code then 
+         if isunbound.first.code then next(ab,simple) 
+         else 
+           next(map(ab,first.code,code << 1 ), simple) 
+        else next(ab,map(simple,first.code,code << 1 ) )
+       /for( libinfo( mods.acc+cvtnewmods(newmods.l,decoderef.l), simple,  ab )   )
+  else acc
+  /for(acc)
+ 
+  
+
+function  cvtnewmods(ll:seq.libraryModule,decoderef:seq.symbol) seq.firstpass
+for acc=empty:seq.firstpass,m=ll  do
+   let e=  for acc2=empty:set.symbol,r=exports.m do  acc2+ (decoderef)_toint.r /for(acc2)
+   let d= for acc2=empty:set.symbol,r=defines.m do 
+      let sym=(decoderef)_toint.r
+      if isunbound.sym then acc2 else 
+      acc2+ sym /for(acc2)
+   let types=  for acc2=empty:seq.myinternaltype, t=types.m do
+      acc2+myinternaltype(if isabstract.modname.m then "undefined"_1
+    else "defined"_1, abstracttype.first.t, module2.first.t, t << 1 )
+      /for(acc2)
+         acc+firstpass(modname.m, uses.m, d, e, types)
+ /for(acc)
+ 
 _______________
 
 Function addlibrarywords(l:liblib)int let discard = addencodingpairs.words.l

@@ -52,37 +52,49 @@ use seq.mytype
 
 use seq.symdef
 
-use seq.myinternaltype
 
 use set.symbol
 
 
 use mytype
 
-type type2dict is totypedict:typedict
+type typerep is totypeseq:seq.mytype
 
-Export type2dict(typedict) type2dict
+function ?(a:typerep,b:typerep) ordering  first.totypeseq.a ? first.totypeseq.b
+
+use set.typerep
+
+function type(a:typerep) mytype  first.totypeseq.a
+
+function flatflds(a:typerep) seq.mytype  totypeseq.a << 1
+
+function typerep(t:mytype,flat:seq.mytype) typerep typerep([t]+flat) 
+
+type type2dict is totypedict:set.typerep
+
+
 
 Export type:type2dict
 
-Function emptytypedict type2dict type2dict.typedict.empty:seq.myinternaltype
+
+
+
+Function emptytypedict type2dict type2dict.empty:set.typerep
 
 Function add(alltypes:type2dict,t:mytype,flatflds:seq.mytype) type2dict
-   type2dict(totypedict.alltypes +[myinternaltype("defined"_1,abstracttype.t,
-     if isabstract.module2.t then  replaceT(parameter.t,module2.t) 
-     else module2.t    ,flatflds)])
-     
+   type2dict(totypedict.alltypes +typerep(t,flatflds))
+      
 
  
 Function    flatflds(alltypes:type2dict,type:mytype) seq.mytype
-  let t = findtype(totypedict.alltypes, type)
+  let t=  findelement(typerep(type,empty:seq.mytype),totypedict.alltypes)
   if isempty.t then empty:seq.mytype
-  else subflds.t_1  
+  else flatflds.t_1  
   
 Function    flatwithtype(alltypes:type2dict,type:mytype) seq.mytype
-  let t = findtype(totypedict.alltypes, type)
-  if isempty.t then empty:seq.mytype
-  else [newtype(module.t_1,name.t_1)] +subflds.t_1  
+   let t=  findelement(typerep(type,empty:seq.mytype),totypedict.alltypes)
+ if isempty.t then empty:seq.mytype
+  else [type.t_1] +flatflds.t_1  
         
   
 Function coretype(typ:mytype, alltypes:type2dict) mytype  coretype(typ,alltypes,0)
@@ -139,7 +151,6 @@ use seq.seq.word
 
 use seq.libraryModule
 
-use seq.firstpass
 
  type symbolref is toint:int
 
@@ -153,7 +164,7 @@ Function symbolref(sym:symbol)symbolref symbolref.valueofencoding.encode.sym
 
 Function assignencoding(l:seq.encodingpair.symbol  , symbol) int  length.l+1
 
- function       symbolrefdecode seq.symbol
+ Function       symbolrefdecode seq.symbol
          for acc=empty:seq.symbol , p=encoding:seq.encodingpair.symbol do
               acc+data.p
         /for(acc)
@@ -162,6 +173,9 @@ Function assignencoding(l:seq.encodingpair.symbol  , symbol) int  length.l+1
 
 type libraryModule is modname:modref, exports:seq.symbolref,
 uses:seq.mytype,defines:seq.symbolref,types:seq.seq.mytype
+
+Export libraryModule ( modname:modref, exports:seq.symbolref,
+uses:seq.mytype,defines:seq.symbolref,types:seq.seq.mytype)libraryModule
 
 Export type:libraryModule
 
@@ -188,9 +202,13 @@ type compileinfo is typedict:type2dict
 ,symbolrefdecode:seq.symbol,mods:seq.libraryModule
 
 
-Function roots(s:compileinfo) set.symbol
+   Function roots(s:compileinfo) set.symbol
    for acc= empty:set.symbol, m =mods.s do 
-     for acc2=acc, r=exports.m do  acc2+(symbolrefdecode.s)_toint.r /for(acc2)
+     if issimple.modname.m then  
+     for acc2=acc, r=exports.m do  
+     acc2+(symbolrefdecode.s)_toint.r 
+     /for(acc2)
+     else acc
     /for(acc)
 
 Export code(compileinfo) seq.seq.symbolref
@@ -214,57 +232,32 @@ Export symbolrefdecode(compileinfo) seq.symbol
 Function alltypes(s:compileinfo) type2dict typedict.s
 
  
-Function  compileinfo (prg:seq.symdef, alltypes:type2dict ,mods:seq.libraryModule
+Function  compileinfo(prg:seq.symdef, alltypes:type2dict ,mods:seq.libraryModule
 ,src:seq.seq.word) compileinfo
-compileinfo(alltypes, cvtL3(pro2gram.asset.prg,1,empty:seq.seq.symbolref,true),src,symbolrefdecode,mods)
+compileinfo(alltypes, cvtL3(pro2gram.asset.prg,1,empty:seq.seq.symbolref),src,symbolrefdecode,mods)
 
 
-use program
 
-Function cvtL2( alltypes: type2dict,prg:pro2gram,  t5:seq.firstpass,exports:seq.word) compileinfo
- let mods= for acc = empty:seq.libraryModule, m2 =  t5 do
-    if name.module.m2 /nin exports then acc else
-     let exps=  for acc3 = empty:seq.symbolref, e = toseq.exports.m2 do acc3 + symbolref.e /for(acc3)
-    let defines=if isabstract.module.m2 then
-      for acc3 = empty:seq.symbolref, e = toseq.defines.m2 do acc3 + symbolref.e /for(acc3)
-     else exps
-      let d2=if isabstract.module.m2 then defines.m2 else exports.m2
-     let types = for acc5 = empty:seq.seq.mytype, s =  toseq.d2 do 
-        if istype.s then
-         acc5+ ([ resulttype.s]+flatflds(alltypes, resulttype.s))
-   else   acc5
-  /for(acc5)
-    acc
-    + libraryModule(module.m2, 
- exps    ,if isabstract.module.m2 then uses.m2 else empty:seq.mytype
-    ,defines,types)
-   /for(acc)
-compileinfo(alltypes, cvtL3(prg,1,empty:seq.seq.symbolref,true),empty:seq.seq.word,symbolrefdecode,mods)
 
-Function addprg(cinfo:compileinfo,prg:pro2gram,all:boolean) compileinfo
-  compileinfo(typedict.cinfo,cvtL3(prg,1,empty:seq.seq.symbolref,all)
+Function cvtL2( alltypes: type2dict,prg:pro2gram,  mods:seq.libraryModule) compileinfo
+compileinfo(alltypes, cvtL3(prg,1,empty:seq.seq.symbolref),empty:seq.seq.word,symbolrefdecode,mods)
+
+Function addprg(cinfo:compileinfo,prg:pro2gram) compileinfo
+  compileinfo(typedict.cinfo,cvtL3(prg,1,empty:seq.seq.symbolref)
   ,src.cinfo,symbolrefdecode,mods.cinfo) 
 
- function cvtL3(prg:pro2gram,i:int, in: seq.seq.symbolref,all:boolean) seq.seq.symbolref
+ function cvtL3(prg:pro2gram,i:int, in: seq.seq.symbolref) seq.seq.symbolref
  let x=encoding:seq.encodingpair.symbol
  if i > length.x then in 
  else 
-    cvtL3(prg,length.x+1, for acc=in , p=subseq(x,i,length.x)   do
-          if all /or not.isabstract.module.data.p then
-            let code= getCode(prg,data.p)
-            if isempty.code then 
-              let discard=if not.all then 
-                for acc3=0,  sym=constantcode.data.p do
-                  let discard2=symbolref.sym
-               acc3
-            /for(acc3)
-            else 0
-              acc
-            else 
-              acc+for acc2 = [ symbolref.data.p,symbolref.Lit.0], sym = code  do 
-       acc2 + symbolref.sym /for(acc2)
-            else acc
-        /for(acc),all)
+    cvtL3(prg,length.x+1, 
+       for acc=in , p=subseq(x,i,length.x)   do
+       let f=findelement(symdef(data.p,empty:seq.symbol),data.prg)
+        if isempty.f /or isempty.code.f_1 then acc  
+        else 
+               acc+for acc2 = [ symbolref.data.p,symbolref.Lit.paragraphno.f_1], sym = code.f_1  do 
+           acc2 + symbolref.sym /for(acc2)
+        /for(acc))
   
 
 
@@ -624,6 +617,8 @@ type recordcoderesult is regno:int, bc:internalbc
 Export regno(recordcoderesult)int
 
 Export bc(recordcoderesult)internalbc
+
+Export type:recordcoderesult
 
 function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.llvmtype, regno:int, pint:int, preal:int, pptr:int)recordcoderesult
  if i > length.args then recordcoderesult(regno, bc)

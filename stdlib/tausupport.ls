@@ -115,6 +115,17 @@ type ptr is xx:int
 
 Export type:ptr
 
+Export type:packed2
+
+Export type:packed3
+
+Export type:packed4
+
+Export type:packed5
+
+Export type:packed6
+
+
 Builtin set(ptr,int) ptr 
 
 Builtin set(ptr,ptr) ptr 

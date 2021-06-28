@@ -1,11 +1,13 @@
-#!/usr/local/bin/tau   ; use tools; testprofile."stdlib"
+#!/usr/local/bin/tau  ; use doc ; doclibrary."stdlib"
+
+ ; use tools; testprofile."stdlib"
 
 
 ; use doc ; callgraphwithin("typepass","typepass")
 
 ; use doc ; doclibrary("typepass" )
 
-use doc ; doclibrary."stdlib"
+;use doc ; doclibrary."stdlib"
 
 ; use doc ; callgraphwithin("webassembly","wasm2")
 
@@ -22,7 +24,7 @@ use doc ; doclibrary."stdlib"
 
 testprofile."stdlib"
 
-use tools; testprofile."solardataall"
+;use tools; testprofile."solardataall"
 
 doclibrary."stdlib"
 

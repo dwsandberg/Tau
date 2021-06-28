@@ -8,11 +8,9 @@ use symbol
 
 use pro2gram
 
-use seq.firstpass
-
+ 
 use seq.liblib
 
-use seq.myinternaltype
 
 use otherseq.mytype
 
@@ -34,27 +32,47 @@ use seq.seq.int
 
 use seq.seq.word
 
-use program
+/use  program
 
 use seq.encodingpair.seq.char
 
 function print(l:seq.mytype) seq.word for acc="(",t=l do acc+print.t /for(acc+")")
 
+use seq.symbolref
+
+use set.symbolref
+
+function ?(a:symbolref,b:symbolref) ordering toint.a ? toint.b
   
 Function libdesc(info:compileinfo, prg:pro2gram) seq.symbol
-let symstoexport= asset.symbolrefdecode.info
-let set2 = for acc = empty:seq.symbol, sym = symbolrefdecode.info do 
-   let code = if isabstract.module.sym then getCode(prg, sym)
-            else libcode(getCode(prg, sym),symstoexport)
-       acc+addlibsym(cleansymbol(sym, code),symstoexport)
-    /for(acc)
-[ addseq.set2  
+let symstoexport2=   for  acc=empty:seq.symbolref ,  m=  mods.info do
+          acc+  defines.m+exports.m
+        /for( for acc2=empty:set.symbol, r=toseq.asset.acc do 
+        acc2 +(symbolrefdecode.info)_toint.r
+         /for(acc2))
+{let symstoexport= asset.symbolrefdecode.info
+assert symstoexport2=symstoexport report "NOT SMAE"}
+let discard=for    idx=1,sym=symbolrefdecode.info do
+  assert toint.symbolref.sym=idx report "lib problem"
+   idx+1
+  /for(idx)
+let code=for  acc=empty:seq.symbol,        sym=toseq.symstoexport2 do
+         acc+for refs=empty:seq.symbol, sym2=[sym]+
+         if isabstract.module.sym then getCode(prg, sym)
+            else libcode(getCode(prg, sym),symstoexport2) do
+          refs+Lit.toint.symbolref.sym2 /for(addseq.refs)
+        /for(addseq.acc)
+ for  decoderef = empty:seq.symbol, sym = symbolrefdecode do 
+       decoderef +addlibsym(sym, symstoexport2)
+    /for( 
+[ addseq.decoderef  
  ,addseq.for acc = empty:seq.symbol, @e = mods.info do acc + addlibraryMod(@e)/for(acc)
-]
+ ,code
+])
 
 
 
-function libcode(code1:seq.symbol,toexport:set.symbol) seq.symbol
+Function libcode(code1:seq.symbol,toexport:set.symbol) seq.symbol
 let code = removeoptions.code1
  let z = if length.code < 15 then
  let x = removeconstant.code
@@ -74,10 +92,7 @@ let code = removeoptions.code1
   if"BUILTIN"_1 ∈ optionsx ∨ "COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then
    z + Words.optionsx + Optionsym
   else z
-
-
-
-
+  
 ----------------------------------
 
 use mytype
@@ -90,7 +105,7 @@ function addlibsym(s:symbol,toexport:set.symbol)symbol
  Constant2.[ Words.worddata.s, Word.lib,Word.name.t,addmytype.para.t,   
   addseq.for acc = empty:seq.symbol, @e = types.s do acc + addmytype.@e /for(acc)
  , Lit.toint.raw.s,Lit.extrabits.s  
-  ,addseq.for acc = empty:seq.symbol, @e = zcode.s do acc + addlibsym(@e,toexport) /for(acc)
+ , if isFref.s then addseq.[addlibsym((zcode.s)_1,toexport)]else Words.""
  , Record.[ typeptr, typeword,typeword, typeptr 
  , typeptr
  , typeint, typeint, typeptr]]
@@ -127,6 +142,7 @@ Export type:parc
 
 type liblib is libname:seq.word, words:seq.encodingpair.seq.char,unused:int, timestamp:int
 , profiledata:seq.parc ,decoderef:seq.symbol,newmods:seq.libraryModule
+, code:seq.seq.symbolref
 
 type parc is head:word, tail:word, counts:int, clocks:int, space:int, unused:int
 
@@ -137,6 +153,8 @@ Export head(parc)word
 Export tail(parc)word
 
 Export counts(parc)int
+
+Export code(liblib) seq.seq.symbolref 
 
 Export clocks(parc)int
 
@@ -150,7 +168,6 @@ Export newmods(liblib) seq.libraryModule
 
 Export libname(liblib)seq.word
 
-/Export mods(liblib)seq.firstpass
 
 Export words(liblib)seq.encodingpair.seq.char
 
@@ -160,28 +177,13 @@ builtin loadedlibs2 seq.liblib
 
 Function loadedLibs seq.liblib loadedlibs2
 
-Function libmodules(dependentlibs:seq.word)seq.firstpass
- for acc = empty:seq.firstpass, l = loadedLibs do acc +
-  if(libname.l)_1 ∈ dependentlibs then  acc+cvtnewmods(newmods.l,decoderef.l) 
-  else acc
-  /for(acc)
 
 
 Function unloadlib(a:seq.word)int unloadlib.tocstr.a
 
 use seq.libraryModule
   
- 
-Function  cvtnewmods(ll:seq.libraryModule,decoderef:seq.symbol) seq.firstpass
-for acc=empty:seq.firstpass,m=ll  do
-   let e=  for acc2=empty:set.symbol,r=exports.m do  acc2+ (decoderef)_toint.r /for(acc2)
-   let d= for acc2=empty:set.symbol,r=defines.m do  acc2+ (decoderef)_toint.r /for(acc2)
-   let types=  for acc2=empty:seq.myinternaltype, t=types.m do
-      acc2+myinternaltype(if isabstract.modname.m then "undefined"_1
-    else "defined"_1, abstracttype.first.t, module2.first.t, t << 1 )
-      /for(acc2)
-         acc+firstpass(modname.m, uses.m, d, e, types)
- /for(acc)
+
 
 builtin unloadlib(cstr)int
 

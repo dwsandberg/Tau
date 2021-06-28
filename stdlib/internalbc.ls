@@ -361,7 +361,7 @@ let a7 = for acc = a6.p, @e = bodies do addbody(acc, @e)/for(acc)
 
 type llvmpartial is a6:bitstream, h:bitstream
 
-Function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int)llvmpartial
+function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int)llvmpartial
 let offset = length.constantrecords
 let h = addblockheader(add(add(add(add(empty:bitstream, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8), 2, toint.MODULE, MODABBREVLEN)
 let info = getmachineinfo

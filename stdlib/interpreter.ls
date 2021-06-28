@@ -24,7 +24,6 @@ use seq.int
 
 use stack.int
 
-use seq.myinternaltype
 
 use seq.mytype
 
@@ -41,8 +40,11 @@ Builtin bitcast(int)seq.int
 Builtin GEP(seq.int, int)int
 
 Function interpretCompileTime(code:seq.symbol)seq.symbol
-let r = interpret(removeconstant.code, 1, empty:stack.int)
-tocode(r, resulttype.last.code)
+let z=removeconstant.code
+assert for acc=true ,sym=z while acc do not.isFref.sym /for(acc) report
+   "has Fref"+print.z
+let r = interpret(z, 1, empty:stack.int)
+ tocode(r, resulttype.last.code)
 
 function tocode(r:int, typ:mytype)seq.symbol
  if typ = typeword then [ Word.wordencodingtoword.r]
@@ -83,7 +85,9 @@ function interpret(code:seq.symbol, i:int, stk:stack.int)int
     else interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 2)))
    else if wordname.sym = "makereal"_1 ∧ inmodule(sym,"UTF8")then
     interpret(code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
-   else
+   else {if isFref.sym then
+interpret(code, i + 1, push(stk,dlsymbol.mangledname.basesym.sym ))
+   else}
     let t = dlsymbol.mangledname.sym
      assert print.resulttype.sym ≠ "?"report"INTER" + print.sym + print.code
     let dcret = deepcopysymI.resulttype.sym
