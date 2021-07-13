@@ -84,7 +84,7 @@ use set.symdef
 
 use seq.program
 
-function subcompilelib(option:seq.word, libname:seq.word)seq.seq.word
+Function subcompilelib(option:seq.word, libname:seq.word)seq.seq.word
 let info = getlibraryinfo.libname
 let dependentlibs = info_1
 let filelist = info_2
@@ -197,7 +197,8 @@ use seq.myinternaltype
 
 Function loadlibbug seq.word " bug10 "
 
-
+use seq.symbolref
+  
   
   type libinfo is mods:seq.firstpass,simple:program,abstract:program 
  
@@ -205,12 +206,14 @@ Function loadlibbug seq.word " bug10 "
   for acc = libinfo(empty:seq.firstpass,emptyprogram,emptyprogram), l = loadedLibs do 
   if(libname.l)_1 ∈ dependentlibs then  
     for ab = abstract.acc,simple=simple.acc,c=code.l do
-      let code=  for acc2=empty:seq.symbol,r=c do  acc2+ (decoderef.l)_toint.r /for(acc2)
-       if isabstract.module.first.code then 
-         if isunbound.first.code then next(ab,simple) 
-         else 
-           next(map(ab,first.code,code << 1 ), simple) 
-        else next(ab,map(simple,first.code,code << 1 ) )
+       let sym=(decoderef.l)_toint.first.c
+       if isunbound.sym then next(ab,simple) 
+       else
+       let code=  for acc2=empty:seq.symbol,r=c << 1 do  
+          acc2+ (decoderef.l)_toint.r /for(acc2)
+        if isabstract.module.sym then 
+           next(map(ab,sym,code ), simple) 
+        else next(ab,map(simple,sym,code  ) )
        /for( libinfo( mods.acc+cvtnewmods(newmods.l,decoderef.l), simple,  ab )   )
   else acc
   /for(acc)

@@ -35,17 +35,17 @@ type cstr is dummy:int
 
 builtin createlib2(name:cstr, libs:cstr, length:int, data:seq.bits)int
 
-builtin getfile(name:cstr)fileresult
+Builtin getfile(name:cstr)fileresult
 
-builtin getbytefile(cstr)fileresultbyte
+Builtin getbytefile(cstr)fileresultbyte
 
-builtin getbitfile(cstr)fileresultbit
+Builtin getbitfile(cstr)fileresultbit
 
 builtin tocstr(seq.bits)cstr
 
-builtin createfile(byteLength:int, data:seq.bits, cstr)int
+Builtin createfile(byteLength:int, data:seq.bits, cstr)int
 
-function createfile3(byteLength:int, data:seq.bits, name:cstr)int createfile(byteLength, data, name)
+Function createfile3(byteLength:int, data:seq.bits, name:cstr)int createfile(byteLength, data, name)
 
 Function getfile:int(name:seq.word)seq.int let file = getfile.tocstr.name
  start.file + data.file

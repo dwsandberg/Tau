@@ -42,7 +42,9 @@ use seq.symbolref
 
 use set.symbolref
 
-function ?(a:symbolref,b:symbolref) ordering toint.a ? toint.b
+use seq.seq.symbolref
+
+Function ?(a:symbolref,b:symbolref) ordering toint.a ? toint.b
   
 Function libdesc(info:compileinfo, prg:pro2gram) seq.symbol
 let symstoexport2=   for  acc=empty:seq.symbolref ,  m=  mods.info do
@@ -50,26 +52,30 @@ let symstoexport2=   for  acc=empty:seq.symbolref ,  m=  mods.info do
         /for( for acc2=empty:set.symbol, r=toseq.asset.acc do 
         acc2 +(symbolrefdecode.info)_toint.r
          /for(acc2))
-{let symstoexport= asset.symbolrefdecode.info
-assert symstoexport2=symstoexport report "NOT SMAE"}
-let discard=for    idx=1,sym=symbolrefdecode.info do
-  assert toint.symbolref.sym=idx report "lib problem"
-   idx+1
-  /for(idx)
-let code=for  acc=empty:seq.symbol,        sym=toseq.symstoexport2 do
-         acc+for refs=empty:seq.symbol, sym2=[sym]+
-         if isabstract.module.sym then getCode(prg, sym)
-            else libcode(getCode(prg, sym),symstoexport2) do
-          refs+Lit.toint.symbolref.sym2 /for(addseq.refs)
-        /for(addseq.acc)
- for  decoderef = empty:seq.symbol, sym = symbolrefdecode do 
-       decoderef +addlibsym(sym, symstoexport2)
+let code2=for  acc=empty:seq.seq.symbolref,        sym=toseq.symstoexport2 do
+                  acc+  for acc2=[symbolref.sym],sym2 =
+                           if isabstract.module.sym then getCode(prg, sym)
+                           else libcode(getCode(prg, sym),symstoexport2)   
+                        do 
+                        if isFref.sym2 then
+                             acc2+ symbolref.PreFref+ symbolref.first.zcode.sym2
+                        else
+                          acc2+symbolref.sym2
+                       /for(acc2)
+                /for (acc)
+let all=for all=empty:seq.symbolref,a=code2 do all+a /for(asset.all)
+        let dd=symbolrefdecode
+ for  decoderef = empty:seq.symbol,  r =  toseq.all  do
+     let sym=dd_toint.r 
+     let lib=if not.isabstract.module.sym /and sym /in symstoexport2 then "compiled"_1 else library.module.sym 
+       decoderef +addlibsym(sym, lib)
     /for( 
 [ addseq.decoderef  
- ,addseq.for acc = empty:seq.symbol, @e = mods.info do acc + addlibraryMod(@e)/for(acc)
- ,code
+ ,addseq.for acc = empty:seq.symbol, @e = mods.info do acc + addlibraryMod(@e,all)/for(acc)
+ ,{code} for  acc=empty:seq.symbol,       a=code2 do  acc+addseqsymbolref(a,all) /for(addseq.acc)
 ])
 
+use otherseq.symbolref
 
 
 Function libcode(code1:seq.symbol,toexport:set.symbol) seq.symbol
@@ -81,8 +87,7 @@ let code = removeoptions.code1
    ∧ (isconst.@e 
    ∨ (name.module.@e = "builtin"_1 ∧ para.module.@e    ∈ [ typereal, typeint] )
    ∨ isspecial.@e
-   ∨ islocal.@e
-   ∨ @e ∈ toexport)
+    ∨ @e ∈ toexport)
   /for(acc)then
    x
   else empty:seq.symbol
@@ -99,13 +104,13 @@ use mytype
 
 use bits
 
-function addlibsym(s:symbol,toexport:set.symbol)symbol
+function addlibsym(s:symbol,lib:word)symbol
+ assert not.isFref.s report "Fref problem"
   let t=module.s
- let lib=if not.isabstract.module.s /and s /in toexport then "compiled"_1 else library.module.s
- Constant2.[ Words.worddata.s, Word.lib,Word.name.t,addmytype.para.t,   
+  Constant2.[ Words.worddata.s, Word.lib,Word.name.t,addmytype.para.t,   
   addseq.for acc = empty:seq.symbol, @e = types.s do acc + addmytype.@e /for(acc)
  , Lit.toint.raw.s,Lit.extrabits.s  
- , if isFref.s then addseq.[addlibsym((zcode.s)_1,toexport)]else Words.""
+ , Words.""
  , Record.[ typeptr, typeword,typeword, typeptr 
  , typeptr
  , typeint, typeint, typeptr]]
@@ -119,9 +124,12 @@ function addseq(s:seq.symbol)symbol Constant2(s + Sequence(typeptr, length.s))
 
 
   
-function addlibraryMod(m:libraryModule)symbol
- let e = addseq.for acc = empty:seq.symbol, @e = exports.m do acc + Lit.toint.@e /for(acc)
- let d = if isabstract.modname.m then  addseq.for acc = empty:seq.symbol, @e = defines.m do acc + Lit.toint.@e /for(acc)
+function addseqsymbolref(s:seq.symbolref,all:set.symbolref) symbol
+addseq.for acc = empty:seq.symbol, r = s do acc +  Lit.binarysearch(toseq.all,r)  /for(acc)
+
+function addlibraryMod(m:libraryModule,all:set.symbolref)symbol
+ let e = addseqsymbolref(exports.m  ,all)
+ let d = if isabstract.modname.m then  addseqsymbolref(defines.m  ,all)
  else e
  let t=modname.m
   Constant2.[ Word.library.t, Word.name.t, addmytype.para.t

@@ -11,8 +11,6 @@ use standard
 
 use seq.set.symdef
 
-
-
 type pro2gram is datax:seq.set.symdef 
 
 Function data(a:pro2gram) set.symdef  first.datax.a
@@ -30,6 +28,10 @@ Export type:pro2gram
 Function getCode(theprg:pro2gram,s:symbol) seq.symbol 
  let f=findelement(symdef(s,empty:seq.symbol),data.theprg)
  if isempty.f then empty:seq.symbol else code.f_1
+ 
+Function isdefined(theprg:pro2gram,s:symbol) boolean
+ not.isempty.findelement(symdef(s,empty:seq.symbol),data.theprg)
+  
 
 Function print(p:pro2gram, i:symbol)seq.word  
   print.i + for acc ="", @e = getCode(p,i) do acc + print.@e /for(acc)
@@ -259,6 +261,17 @@ Function addprg(cinfo:compileinfo,prg:pro2gram) compileinfo
            acc2 + symbolref.sym /for(acc2)
         /for(acc))
   
+
+
+use set.word
+  
+Function addoption(p:pro2gram, s:symbol, option:seq.word)pro2gram
+let code = getCode(p, s)
+let current = asset.getoption.code
+ if current = asset.option then p
+ else
+  let newcode = removeoptions.code + Words.toseq(current ∪ asset.option) + Optionsym
+   map(p, s, newcode)
 
 
 

@@ -1,6 +1,4 @@
 
-
-
 Module symbol
 
 use seq.typedef
@@ -187,12 +185,11 @@ Function isbr(s:symbol)boolean name.module.s ∈ "$br"
 
 Function isexit(s:symbol)boolean name.module.s ∈ "$exitblock"
 
-Function isparameter(s:symbol)boolean    name.module.s ∈ "$parameter" 
 
 Function value(sym:symbol)int toint.raw.sym
 
 Function nopara(s:symbol)int
- if isconst.s ∨ islocal.s ∨ isparameter.s then 0
+ if isconst.s ∨ islocal.s   then 0
  else if isspecial.s ∧ name.module.s ∉ "$record $loopblock"then
   if   isdefine.s ∨ isbr.s /or isexit.s then 1
   else
@@ -204,8 +201,6 @@ Function nopara(s:symbol)int
 Export raw(symbol) bits
 
 Export type:symbol
-
-Export isparameter(symbol) boolean
 
 Export worddata(symbol) seq.word
 
@@ -301,9 +296,6 @@ Function printdict(s:set.symbol)seq.word
  for acc ="", @e = toseq.s do acc + print.@e /for(acc)
 
 _______________________________
-
-Function Parameter(name:word, type:mytype, parano:int)symbol
-   symbolZ(moduleref("$parameter"),name,empty:seq.mytype,empty:seq.mytype,type, specialbit,tobits(parano))
  
 Function istype(s:symbol)boolean 
  not.issimplename.s /and wordname.s="type"_1
@@ -339,7 +331,7 @@ Function fullname(s:symbol) seq.word  if issimplename.s then
  [name.s] else [name.s]+":"+print.first.types.s
 
 Function print(s:symbol)seq.word
- if islocal.s ∨ isparameter.s then 
+ if islocal.s  then 
 { let x = toword.value.s
   [ merge("%"+ if x = name.s then [ x]else [ x, first.".", name.s]/if)]
  }[ merge(["%"_1] + wordname.s)]
@@ -348,7 +340,7 @@ Function print(s:symbol)seq.word
   if '"'_1 ∈ worddata.s then"'" + worddata.s + "'"
   else '"' + worddata.s + '"'
  else if isword.s then"WORD" + wordname.s
- else if isrecordconstant.s then [wordname.s]
+ else if isrecordconstant.s then  {[wordname.s]}  "{"+print.removeconstant.zcode.s+"}"
  else if isFref.s then"FREF" + print.(constantcode.s)_1
  else if not.isspecial.s /or isloopblock.s  then
     print.module.s + ":" +fsig2(wordname.s,nametype.s,paratypes.s)
@@ -487,16 +479,6 @@ Function isconstantorspecial(s:symbol)boolean isconst.s ∨ isspecial.s
 
 Function Local(i:int)symbol Local(toword.i, typeint, i)
 
-
-
-Function LocalF(name:seq.word, type:mytype)symbol 
-let value=if checkinteger.first.name="INTEGER"_1 then toint.first.name else 0
-symbolZ(moduleref."$local",name_1,empty:seq.mytype,empty:seq.mytype,type,specialbit,tobits.value)
-
-Function DefineF(name:word)symbol 
-let value=if checkinteger.name="INTEGER"_1 then toint.name else 0
-symbolZ(moduleref."$define",name ,empty:seq.mytype,empty:seq.mytype,type?,specialbit,tobits.value)
-
 Function Optionsym symbol 
  symbol(internalmod,"option",typeint,seqof.typeword,type?)
  
@@ -626,7 +608,7 @@ Export ?(typedef,typedef)ordering
 Export ?(modref, modref)ordering
 
 
-Function PreFref symbol symbol(builtinmod.type?,"PreFref",   typeint)
+Function PreFref symbol symbol(internalmod,"PreFref",   typeint)
 
 Function Local(name:word, type:mytype, parano:int)symbol 
 symbolZ( moduleref."$local", name ,empty:seq.mytype,empty:seq.mytype,type,specialbit ,tobits.parano)
@@ -645,7 +627,12 @@ Export =(mytype, mytype)boolean
 
 Export isseq(mytype)boolean
 
-Function deepcopySym(typ:mytype)symbol symbol4(module2.typ,"type"_1, typ, [ typ ],typ)
+Function deepcopySym(rt:mytype)symbol 
+if rt=typereal then symbol(moduleref("tausupport"),"deepcopy",typereal,typereal) 
+   else if rt=typeint then symbol(moduleref("tausupport"),"deepcopy",typeint,typeint) 
+   else  symbol4(replaceT(parameter.rt,module2.rt),"type"_1, rt, [ rt ],rt)
+
+symbol4(module2.typ,"type"_1, typ, [ typ ],typ)
 
 Function setSym(typ:mytype)symbol
 let fldtype = if isseq.typ then typeptr else if isencoding.typ then typeint else typ
@@ -670,5 +657,85 @@ Export code(symdef)seq.symbol
 Export paragraphno(symdef) int  
    
 Function ?(a:symdef,b:symdef) ordering sym.a ? sym.b
+
+
+Module symboldict 
+
+use standard
+
+use symbol
+
+use set.symbol
+
+use seq.symbol
+
+use set.symdef
+
+use seq.commoninfo
+  
+Export type:commoninfo
+
+Export types(commoninfo)set.mytype
+
+Export modname(commoninfo)modref
+
+Export lib(commoninfo)word
+
+Export mode(commoninfo) word
+
+Export input(commoninfo) seq.word
+
+
+Export commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word)commoninfo
+
+type commoninfo is input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word
+
+Function lookupbysig(dict:symboldict, sym:symbol)set.symbol findelement2(asset.dict, sym)
+
+Function lookupbysig(dict:symboldict, name:seq.word)set.symbol findelement2(asset.dict, symbol(internalmod, name, typeint))
+
+type symboldict is asset:set.symbol,requires:set.symdef ,commonX:seq.commoninfo
+
+Export type:symboldict
+
+Export asset(symboldict) set.symbol
+
+Function symboldict(d:set.symbol, common:seq.commoninfo)symboldict symboldict(d, empty:set.symdef, common)
+
+Function common(d:symboldict) commoninfo first.commonX.d 
+
+Function requires(d:symboldict,sym:symbol) seq.symbol
+ if hasrequires.sym then 
+   code.findelement(symdef(sym,empty:seq.symbol),requires.d)_1
+ else empty:seq.symbol
+
+Function add(d:symboldict,syms:set.symbol,requires:set.symdef) symboldict
+ symboldict(asset.d /cup syms,requires.d /cup requires,commonX.d) 
+
+Function empty:symboldict symboldict symboldict(empty:set.symbol,empty:set.symdef,empty:seq.commoninfo)
+
+Function +(d:symboldict,sym:symbol) symboldict   symboldict(asset.d+sym,requires.d,commonX.d)
+
+Function -(d:symboldict, s:set.symbol) symboldict symboldict(asset.d-s,requires.d,commonX.d)
+
+Function ∪(d:symboldict, s:set.symbol) symboldict symboldict(asset.d ∪ s,requires.d,commonX.d)
+
+Function cardinality(d:symboldict) int cardinality.asset.d
+
+Export type:bindinfo
+
+type bindinfo is dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word
+
+Export dict(bindinfo)symboldict
+
+Export code(bindinfo)seq.symbol
+
+Export types(bindinfo)seq.mytype
+
+Export tokentext(bindinfo) seq.word
+
+Export   bindinfo (dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word)
+bindinfo
+
 
 

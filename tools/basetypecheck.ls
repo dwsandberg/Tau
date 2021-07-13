@@ -11,7 +11,6 @@ use symbol
 
 use pro2gram
 
-
 use seq.mytype
 
 use set.mytype
@@ -66,7 +65,8 @@ Function basetypecheck(r2:seq.symdef, typedict:type2dict)seq.word
  if i > 0 then addlocals(replace(localtypes, localno, para_i), para, localno - 1, i - 1)else localtypes
 
 function checkkind(s2:symdef, typedict:type2dict)seq.word
- if isconst.sym.s2 ∨ name.sym.s2 ∈ "type]" /or isabstract.module.sym.s2 then""
+ if isconst.sym.s2 ∨ name.sym.s2 ∈ "type]" ∨ isabstract.module.sym.s2 then
+ ""
  else
   let codeonly = removeoptions.code.s2
    if length.codeonly = 0 then""

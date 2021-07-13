@@ -25,17 +25,17 @@ Function test11a seq.word let z = [ compare("a + b + c","(a + b)+ c")
 , testerror(" /< literal parse error:unexpected end of paragraph  />", ["function f1(a:int)boolean [ a +"])
 , testerror("Function f1 is defined twice in module testit", ["function f1(a:int)int 3","function f1(a:int)int 3"])
 , testerror(" /< literal then and else types are different  />", ["function f1(a:int)int if true then true else 0"])
-, testerror(" /< literal cond of if must be boolean  />", ["function f1(a:int)int if 1 then 2 else 3"])
+, testerror(" /< literal cond of if must be boolean but is int />", ["function f1(a:int)int if 1 then 2 else 3"])
 , testerror(" /< literal condition in assert must be boolean", ["function f1(a:int)int assert 1 report 2 3"])
 , testerror(" /< literal report in assert must be seq of word in:", ["function f1(a:int)int assert true report 2 3"])
-, testerror(" /< literal parameter type hhh is undefined", ["function f1(z:hhh)int 3"])
-, testerror(" /< literal parameter type xxx is undefined", ["function f1(z:int)xxx 3"])
+, testerror(" /< literal cannot resolve type hhh ", ["function f1(z:hhh)int 3"])
+, testerror(" /< literal cannot resolve type xxx ", ["function f1(z:int)xxx 3"])
 , testerror("unresolved types:module:testit type testtype is record fld1:testtype", ["type testtype is fld1:testtype"])
 , testerror("unresolved exports", ["Export f1(int, int)int"])
 , testerror("export return type missmatch", ["Export +(int, int)boolean"])
-, testerror("Cannot find module", ["use int.notdefined"])
+]{, testerror("Cannot find module", ["use int.notdefined"])
 , testerror("Cannot find module", ["use notdefined"])
-]
+]}
  check(z,"test11a") + checkprec
 
 Function testcomp2(s:seq.seq.word)seq.word

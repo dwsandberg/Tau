@@ -270,8 +270,11 @@ Function print(p:passtypes)seq.word
  else""/if
  + " /br  /keyword exports"
  + for acc ="", t = toseq.exports.p do acc + print.t /for(acc)
-
+ 
 Function resolvetype(knowntypes:set.mytype, ref:seq.word)seq.mytype
+ resolvetype(knowntypes , ref,false)
+
+Function resolvetype(knowntypes:set.mytype, ref:seq.word,nocheck:boolean)seq.mytype
  if ref = "int"then [ typeint]
  else if ref = "boolean"then [ typeboolean]
  else if ref = "T"then [ typeT]
@@ -280,6 +283,7 @@ Function resolvetype(knowntypes:set.mytype, ref:seq.word)seq.mytype
   let x = for acc = empty:seq.typedef, w = ref do
    if w = "."_1 then acc else acc + typedef(w,"internal"_1,"."_1)
   /for(mytype.acc)
+  if nocheck then [x] else
   let a1 = findelement2(knowntypes, x)
   if cardinality.a1 = 1 then toseq.a1
    else if length.ref = 1 then empty:seq.mytype

@@ -34,102 +34,149 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
   interpreter  llvm llvmconstants codegennew   persistant breakblocks
-  pro2gram hidesymbol pass2 parsersupport  
+  pro2gram hidesymbol pass2 parse  symboldict 
 
 * Removed maindict 
 
-option.main2 subcompilelib(seq.word, seq.word)seq.word PROFILE
 
-option.main2 compilelib2(seq.word)seq.word PROFILE
+Module PROFILE
 
-/option.pass1 pass1( seq.seq.word,  seq.word, seq.firstpass) linkage PROFILE
+use main2
 
-option.pass2 pass2(placehold:pro2gram)pro2gram PROFILE
+use pass2
 
+use codegennew
 
-option.codegennew codegen(theprg:pro2gram,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict,isbase:boolean)seq.bits PROFILE
+use standard
 
-/option.codetemplates   match5map(theprg:pro2gram, uses:set.symbol, alltypes:type2dict)seq.match5 PROFILE
+Export  subcompilelib(seq.word, seq.word)seq.seq.word  
 
-/option.set.symbol findelement(val:symbol, s:set.symbol)set.symbol PROFILE
+Export  compilelib2(seq.word)seq.word  
 
-
-
-option.standard -(int ) int COMPILETIME
-
-option.standard +(int,int) int COMPILETIME
-
-option.standard -(int,int) int COMPILETIME
-
-option.standard /(int,int) int COMPILETIME
-
-option.standard *(int,int) int COMPILETIME
-
-option.standard =(int,int) boolean COMPILETIME
-
-option.standard =(boolean,boolean) boolean COMPILETIME
-
-option.standard >(int,int) boolean COMPILETIME
-
-option.standard =(int,int) boolean COMPILETIME
-
-option.bits  ∧(a:bits, bits)bits COMPILETIME
-
-option.bits ∨(a:bits, bits)bits COMPILETIME
-
-option.bits  >>(a:bits, i:int)bits COMPILETIME
-
-option.bits  <<(a:bits, i:int)bits COMPILETIME
-
-option.real -(real,real) real COMPILETIME
-
-option.seq.word +(seq.word,seq.word) seq.word COMPILETIME
-
-option.words merge(seq.word )  word COMPILETIME
-
-option.UTF8 makereal(seq.word) real COMPILETIME
-
-option.tausupport getseqlength(ptr) int COMPILETIME
-
-\option.tausupport getseqtype(ptr) int COMPILETIME
-
-option.UTF8 toword(int) word COMPILETIME
+Export pass2(placehold:pro2gram)pro2gram  
 
 
-option.words encodeword( seq.char) word COMPILETIME
+Export codegen(theprg:pro2gram,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict,isbase:boolean)seq.bits  
 
 
 
-option.words  decodeword( word) seq.char COMPILETIME
+
+module STATE
+
+use standard
+
+use fileio
+
+use timestamp
+
+Export currenttime timestamp 
+
+Export getfile(name:cstr)fileresult  
+
+Export getbytefile(cstr) fileresultbyte  
+
+Export getbitfile(cstr)  fileresultbit  
+
+Export createfile(byteLength:int,data:seq.bits,cstr) int  
+
+Export  createfile3(byteLength:int,data:seq.bits,name:cstr) int   
 
 
-option.seq.word _(seq.word,int) word COMPILETIME
 
-option.seq.int _(seq.int,int) int COMPILETIME
 
-option.seq.char _(seq.char,int) char COMPILETIME
-
-option.fileio getfile(name:cstr)fileresult STATE
-
-option.fileio getbytefile(cstr) fileresultbyte STATE
-
-option.fileio getbitfile(cstr)  fileresultbit STATE
-
-option.fileio createfile(byteLength:int,data:seq.bits,cstr) int STATE
-
-option.fileio  createfile3(byteLength:int,data:seq.bits,name:cstr) int  STATE
-
-option.timestamp   currenttime timestamp STATE
-
-option.symbol Lit(int)symbol INLINE
-
-option.words  decodeword( word) seq.char NOINLINE
-
-option.symbol Start(mytype) symbol NOINLINE
-
-option.mytype replaceT(mytype,mytype) mytype NOINLINE
-
+module INLINE
  
-option.UTF8 toword(int)word NOINLINE  
+use symbol
+
+Export Lit(int)symbol
+
+
+
+module ININLINE
+
+use standard
+
+use UTF8
+
+use symbol
+
+Export toword(int)word  
+
+Export decodeword(word) seq.char
+
+Export Start(mytype) symbol
+
+Export replaceT(mytype,mytype) mytype
+  
+
+module COMPILETIME
+
+use standard
+
+use bits
+
+use UTF8
+
+use tausupport
+
+use real
+
+Export -(int ) int 
+
+Export +(int,int) int 
+
+Export -(int,int) int 
+
+Export /(int,int) int 
+
+Export *(int,int) int 
+
+Export =(int,int) boolean 
+
+Export =(boolean,boolean) boolean 
+
+Export >(int,int) boolean 
+
+Export =(int,int) boolean 
+
+Export  ∧(a:bits, bits)bits 
+
+Export ∨(a:bits, bits)bits 
+
+Export  >>(a:bits, i:int)bits 
+
+Export  <<(a:bits, i:int)bits 
+
+Export   -(real,real) real 
+
+Export +(seq.word,seq.word) seq.word 
+
+Export  merge(seq.word )  word 
+
+Export makereal(seq.word) real 
+
+Export  getseqlength(ptr) int 
+
+Export toword(int) word 
+
+
+Export encodeword( seq.char) word 
+
+
+Export  decodeword( word) seq.char  
+
+
+Export _(seq.word,int) word 
+
+Export _(seq.int,int) int  
+
+Export _(seq.char,int) char 
+
+
+
+
+
+
+
 
 

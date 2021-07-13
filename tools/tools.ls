@@ -1,66 +1,40 @@
-#!/usr/local/bin/tau  ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau  ; use doc ; doclibrary."typepass"
 
- ; use tools; testprofile."stdlib"
+; use doc ; callgraphbetween("typepass","passparse passsymbol   ")
 
+; use tools; testprofile."stdlib"
 
 ; use doc ; callgraphwithin("typepass","typepass")
 
 ; use doc ; doclibrary("typepass" )
 
-;use doc ; doclibrary."stdlib"
+; use doc ; doclibrary."stdlib"
 
 ; use doc ; callgraphwithin("webassembly","wasm2")
 
 ; use doc ; doclibrary."webassembly"
 
- ; use doc ; callgraphwithin("stdlib","outstream")
+; use doc ; callgraphwithin("stdlib","outstream")
 
-
- ; use tools; testprofile."stdlib"
-
-; use doc ; doclibrary."stdlib"
-
- ; use tools; testprofile."stdlib"
-
-testprofile."stdlib"
-
-;use tools; testprofile."solardataall"
-
-doclibrary."stdlib"
+; use tools; testprofile."solardataall"
 
 ; use pretty ; pretty("printbitcodes printbitcodes bitcodesupport runcode","junk")
 
 print.compile("baseTypeCheck","stdlib")
 
-; use doc ; doclibrary."stdlib"
-
-; use doc ; doclibrary."stdlib"
-
-; use doc ; doclibrary."tools"
-
 ; use main2  ; print.compile("pass2","bug9.core")
 
-; use main2 ;   print.compile("pass2","bug9.core")
-
 ; use doc ; doclibrary."stdlib:small"
-
-; use tools; testprofile."solardataall"
 
 ; use doc ; doclibrary."tools"
 
 ; use taulextable ; getlextable
-
-; use doc ; doclibrary."stdlib"
 
 ; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq  ")
 
 ; use doc ; callgraphwithin("stdlib","llvm")
 
 ; use pretty ; htmlcode."testall"
-
-; use main2 ; use tools ; asparagraphs.compile("pass1","testall")
-
-; use main2 ; use tools ; asparagraphs.compile("pass2","testall")
 
 ; use genLR1 ; gentau2
 
