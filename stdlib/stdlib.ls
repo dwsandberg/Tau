@@ -34,7 +34,7 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
   interpreter  llvm llvmconstants codegennew   persistant breakblocks
-  pro2gram hidesymbol pass2 parse  symboldict 
+  pro2gram hidesymbol pass2 parse  symboldict taublockseq
 
 * Removed maindict 
 
@@ -49,9 +49,22 @@ use codegennew
 
 use standard
 
-Export  subcompilelib(seq.word, seq.word)seq.seq.word  
+use  pro2gram
 
-Export  compilelib2(seq.word)seq.word  
+use symbol
+
+use set.symbol
+
+use seq.symbol
+
+use bits
+
+use seq.bits
+
+
+
+Export  subcompilelib( seq.word)seq.word  
+
 
 Export pass2(placehold:pro2gram)pro2gram  
 
@@ -68,6 +81,11 @@ use standard
 use fileio
 
 use timestamp
+
+use bits
+
+use seq.bits
+
 
 Export currenttime timestamp 
 
@@ -166,11 +184,11 @@ Export encodeword( seq.char) word
 Export  decodeword( word) seq.char  
 
 
-Export _(seq.word,int) word 
+Export_(seq.word,int) word 
 
-Export _(seq.int,int) int  
+Export_(seq.int,int) int  
 
-Export _(seq.char,int) char 
+Export_(seq.char,int) char 
 
 
 

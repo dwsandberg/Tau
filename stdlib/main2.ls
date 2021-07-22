@@ -45,8 +45,6 @@ use seq.mytype
 
 use set.mytype
 
-use process.runitresult
-
 use seq.symbol
 
 use set.symbol
@@ -69,6 +67,7 @@ use process.seq.seq.word
 
 use seq.seq.seq.word
 
+
 /use maindict
 
 /Function loaddictionary(file:fileresult)int // loaddict(file)// 0
@@ -84,90 +83,57 @@ use set.symdef
 
 use seq.program
 
-Function subcompilelib(option:seq.word, libname:seq.word)seq.seq.word
+use mytype
+
+
+Function subcompilelib( libname:seq.word)seq.word
 let info = getlibraryinfo.libname
 let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
  { let b = unloadlib.[ libname]}
- let allsrc = getlibrarysrc.libname
- { let cinfo=compilerfront(option,libname,allsrc,dependentlibs,exports)
-    let prg4=pro2gram.asset.prg.cinfo
-}
-let libinfo=libinfo.dependentlibs
-let link = pass1(["Library"+libname]+allsrc, exports, mods.libinfo,simple.libinfo,abstract.libinfo)
-let prg4 =  pass2.result.link /cup templates.link
-let cinfo= cinfo.link
+let cinfo=compilerfront("all",libname,["Library"+libname]+getlibrarysrc.libname,dependentlibs,exports)
+let prg4=pro2gram.asset.prg.cinfo
 let libdesc= libdesc(cinfo,prg4 )
 let uses = uses(prg4 , roots.cinfo /cup  asset.libdesc)
-    {let discard =symbolref.libdesc_1
-    let discard2=symbolref.libdesc_2
-     let xx= for acc=empty:set.symbol,sym=toseq.(asset.symbolrefdecode.addprg(cinfo,prg4,false) -uses ) 
-      do
-          if  isabstract.module.sym then acc else acc +sym
-        /for(acc)}
-     {assert false report "DIFFXXX"+ 
-       print.toseq.(uses-xx  )  +"DIFFTTT"+ 
-       print.toseq.(xx -uses ) } 
-      let bc = codegen(prg4,  uses, last.libname, libdesc, alltypes.cinfo , isempty.dependentlibs)
-     let z2 = createlib(bc, last.libname, dependentlibs)
-     ["OK"]
+let bc = codegen(prg4,  uses, last.libname, libdesc, alltypes.cinfo , isempty.dependentlibs)
+let z2 = createlib(bc, last.libname, dependentlibs)
+     "OK"
      
-
-function compare(a:program,b:program) seq.word
- for acc="",sym = toseq.a do
-  if  getCode(a,sym)= getCode(b,sym)  then acc else acc+print.sym
- /for(acc)
-
-use mytype
-
-Function compilelib2(libname:seq.word)seq.word
-let p1 = process.subcompilelib("all", libname)
-if aborted.p1 then"COMPILATION ERROR:" + space + message.p1
- else
-  let aa =(result.p1)_1
-   if subseq(aa, 1, 1) = "OK"then aa else"COMPILATION ERROR:" + space + aa
-
+     
+  
 Function main(argin:seq.byte)int
 let args2 = for acc = empty:seq.seq.word, @e = break(char1.";", empty:seq.char, decodeUTF8.UTF8.argin)do
  acc + towords.@e
 /for(acc)
 let libname = args2_1
 let compileresult = if first.libname = first."L"then"OK"
-else let p = process.compilelib2.libname
- if aborted.p then message.p else result.p
+else let p = process.subcompilelib( libname)
+ if aborted.p then "COMPILATION ERROR:" + space + message.p else result.p
 let output = if length.args2 = 1 ∨ subseq(compileresult, 1, 1) ≠ "OK"then compileresult
 else
  { execute function specified in arg }
- let p2 = process.runit.args2
+ let lib = args2_1
+let src = ["module $X","use standard"] + subseq(args2, 2, length.args2 - 1)
++ ["Function runitx seq.word" + args2_(length.args2)]
+let p2=process.compilerfront("pass1", "runit",src,"stdlib" + lib,"$X")
   if aborted.p2 then message.p2
   else
-   let p3 = process.interpret(alltypes.result.p2, code.result.p2)
+   let p3 = process.interpret(typedict.result.p2, getCode(pro2gram.asset.prg.result.p2
+   , symbol(moduleref."$X","runitx", seqof.typeword)))
    if aborted.p3 then message.p3 else result.p3
 createfile("stdout", toUTF8bytes.output)
 
-Function testcomp(s:seq.seq.word)seq.seq.word
-let exports ="testit"
-let libinfo=libinfo."stdlib"
-let r = pass1(s, exports, mods.libinfo,simple.libinfo,abstract.libinfo)
-for acc = empty:seq.seq.word, p = tosymdefs.result.r do
+use process.compileinfo
+
+ Function astext(info:compileinfo) seq.seq.word
+  for acc = empty:seq.seq.word, p = prg.info do
   acc + [ print.sym.p + print.code.p]
  /for(acc)
+ 
+ use pro2gram
 
-type runitresult is code:seq.symbol, alltypes:type2dict
-
-function runit(b:seq.seq.word)runitresult
-let lib = b_1
-let src = ["module $X","use standard"] + subseq(b, 2, length.b - 1)
-+ ["Function runitx seq.word" + b_(length.b)]
-let libinfo=libinfo("stdlib" + lib)
-let link = pass1(  src ,"$X",mods.libinfo,simple.libinfo,abstract.libinfo)  
-let prg2 =  result.link 
-runitresult(getCode(prg2, symbol(moduleref."$X","runitx", seqof.typeword)), alltypes.cinfo.link)
-
-Function compile(option:seq.word, libname:seq.word)seq.seq.word subcompilelib(option, libname)
-
-Function print(a:seq.seq.word)seq.word
+/Function print(a:seq.seq.word)seq.word
  for acc ="", @e = a do acc + " /br  /br" + @e /for(acc)
 
 Function compilerfront(option:seq.word, libname:seq.word)compileinfo
@@ -184,8 +150,7 @@ Function compilerfront(option:seq.word,libname:seq.word
   { assert false report allsrc @ +("", @e)}
   let libinfo=libinfo.dependentlibs
   let link = pass1(  allsrc , exports, mods.libinfo,simple.libinfo,abstract.libinfo)
-  let prg3 =  result.link 
-  addprg(cinfo.link,if option = "pass1"then prg3 else pass2.prg3 /cup templates.link)
+  addprg(cinfo.link,if option = "pass1"then result.link else pass2.result.link /cup templates.link)
     
 use seq.libraryModule
 
@@ -235,6 +200,8 @@ for acc=empty:seq.firstpass,m=ll  do
  /for(acc)
  
 _______________
+
+use words
 
 Function addlibrarywords(l:liblib)int let discard = addencodingpairs.words.l
  1 

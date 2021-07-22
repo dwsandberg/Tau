@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau   ; use baseTypeCheck;  baseTypeCheck("stdlib")
+#!/usr/local/bin/tau   ; use baseTypeCheck;  resultCheck("stdlib:core")
 
 
 
@@ -8,8 +8,6 @@ Module baseTypeCheck
 use standard
 
 use symbol
-
-use pro2gram
 
 use seq.mytype
 
@@ -138,7 +136,7 @@ for acc10 =" /p  /p checkresults  /p", h = toseq.undefined do
   if isconst.h
   ∨ name.h = "createthreadY"_1 ∧ isempty(asset.types.h - asset.[ typeint, typereal, typeptr])then
    acc10
-  else if name.module.h = "builtin"_1 ∧ name.h ∈ "forexpx primitiveadd xgetinstance"then acc10
+  else if name.module.h = "builtin"_1 ∧ name.h ∈ "forexp" then acc10
   else if isabstract.module.h ∨ name.module.h ∈ "$int $define $local $sequence $for $words $loopblock $continue $br $global"
   ∨ name.h ∈ "]"
   ∨ isunbound.h
@@ -154,6 +152,7 @@ let typeindex=typeref."index index ."
 , symbol(moduleref."fileio","createlib2", [ typecstr, typecstr, typeint, seqof.typebits], typeint)
 , symbol(moduleref."tausupport","callstack", typeint, seqof.typeint)
 , symbol(moduleref."tausupport","dlsymbol", typecstr, typeint)
+, symbol(moduleref."tausupport","outofbounds", seqof.typeword)
 , symbol(moduleref."tausupport","addresstosymbol2", typeint,seqof.typeref."char standard ."  )
 , symbol(moduleref."fileio","getfile", typecstr, typeptr)
 , symbol(moduleref."fileio","getbitfile", typecstr, typeptr)
@@ -188,20 +187,19 @@ let typeindex=typeref."index index ."
 , symbol(moduleref."bits",">>", typebits, typeint, typebits)
 , symbol(internalmod,"allocate", typeint, typeptr)
 ,   GetSeqType ,GetSeqLength
+, symbol(internalmod,"getinstance",typeint,typeptr)
+, symbol(internalmod,"addencoding",[typeint, typeptr, typeint, typeint],typeint)
 , symbol(internalmod,"aborted", typeptr, typeboolean)
 , symbol(internalmod,"randomint", typeint, seqof.typeint)
-, symbol(internalmod,"emptyseq", typeptr)
+,  {? seqof ptr } symbol(internalmod,"GEP",seqof.typeptr,typeint,typeptr)
+, symbol(internalmod,"option",typeint,seqof.typeword,type?) 
 , symbol(moduleref."bits","toint", typebyte, typeint)
 , symbol(moduleref."bits","toint", typebit, typeint)
-, symbol(moduleref("builtin",typereal),"load", typeptr, typeint, typereal)
-, symbol(moduleref("builtin",typeint),"load", typeptr, typeint, typeint)
-, symbol(moduleref("builtin",typeptr),"load", typeptr, typeint, typeptr)
-, symbol(moduleref("builtin",typeboolean),"load", typeptr, typeint, typeboolean)
-, { symbol(builtinmod.typereal,"fld", typeptr, typeint, typereal)
-, symbol(builtinmod.typeint,"fld", typeptr, typeint, typeint)
-, symbol(builtinmod.typeptr,"fld", typeptr, typeint, typeptr)
-, symbol(builtinmod.typeboolean,"fld", typeptr, typeint, typeboolean)
-,} symbol(internalmod ,"idxseq", seqof.typereal, typeint, typereal)
+, symbol(moduleref("builtin",typereal),"fld", typeptr, typeint, typereal)
+, symbol(moduleref("builtin",typeint),"fld", typeptr, typeint, typeint)
+, symbol(moduleref("builtin",typeptr),"fld", typeptr, typeint, typeptr)
+, symbol(moduleref("builtin",typeboolean),"fld", typeptr, typeint, typeboolean)
+, symbol(internalmod ,"idxseq", seqof.typereal, typeint, typereal)
 , symbol(internalmod,"idxseq", seqof.typeint, typeint, typeint)
 , symbol(internalmod,"idxseq", seqof.typeptr, typeint, typeptr)
 , symbol(internalmod,"idxseq", seqof.typeboolean, typeint, typeboolean)
@@ -209,6 +207,8 @@ let typeindex=typeref."index index ."
 , symbol(internalmod,"callidx", seqof.typeint, typeint, typeint)
 , symbol(internalmod,"callidx", seqof.typeptr, typeint, typeptr)
 , symbol(internalmod,"callidx", seqof.typeboolean, typeint, typeboolean)
+, symbol(internalmod,"packedindex", seqof.typebyte, typeint, typeptr)
+, symbol(internalmod,"packedindex", seqof.typebit, typeint, typeptr)
 , symbol(internalmod,"packedindex", seqof.typeref."packed2 tausupport .", typeint, typeptr)
 , symbol(internalmod,"packedindex", seqof.typeref."packed3 tausupport .", typeint, typeptr)
 , symbol(internalmod,"packedindex", seqof.typeref."packed4 tausupport .", typeint, typeptr)

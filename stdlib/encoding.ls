@@ -102,7 +102,7 @@ Function assignrandom(all:seq.encodingpair.T, data:T)int(randomint.1)_1
 
 Function addencodingpairs(l:seq.encodingpair.T)int
 let inst = getinstance:encodingstate.T
- for acc = 0, @e = l do acc + primitiveadd(encodingno.inst, rehash.@e)/for(acc)
+ for acc = 0, @e = l do acc + primitiveadd2(encodingno.inst, rehash.@e)/for(acc)
 
 function rehash(a:encodingpair.T)encodingpair.T encodingpair(code.a, data.a)
 
@@ -116,7 +116,11 @@ let a = lookupencodingpair.t
 
 builtin getinstance:encodingstate.T encodingstate.T
 
-Builtin primitiveadd(encodingnumber:int, s:encodingpair.T)int
+function primitiveadd2(encodingnumber:int, s:encodingpair.T)int
+ if false then let discard =add(getinstance:encodingstate.T, s) 0
+ else primitiveadd(encodingnumber , s) 
+
+builtin primitiveadd(encodingnumber:int, s:encodingpair.T)int
 
 Function encoding:seq.encodingpair.T seq.encodingpair.T all.getinstance:encodingstate.T
 
@@ -124,7 +128,7 @@ Function encode(t:T)encoding.T
 let instance = getinstance:encodingstate.T
 let r = lookuprep(t, instance)
 if isempty.r then
-  to:encoding.T(primitiveadd(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t)))
+  to:encoding.T(primitiveadd2(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t)))
  else code.r_1
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingpair.T

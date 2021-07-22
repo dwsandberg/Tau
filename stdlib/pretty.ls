@@ -242,7 +242,7 @@ function width(s:seq.word)int length.s
 
 Below is generated from parser generator.
 
-Function action(ruleno:int, input:seq.word, place:int, R:reduction.attribute2)attribute2
+function action(ruleno:int, input:seq.word, place:int, R:reduction.attribute2)attribute2
  if ruleno = { G F # }1 then R_1
  else if ruleno = { F W NM(FP)T E }2 then
   pretty.[ key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4 + width.R_7 > 30 then block.R_7 else R_7]

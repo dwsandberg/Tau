@@ -46,7 +46,7 @@ use seq.seq.int
 
 use seq.seq.symbol
 
-use worddict.seq.symbol
+use intdict.seq.symbol
 
 use seq.seq.word
 
@@ -55,7 +55,9 @@ use set.seq.word
 use seq.seq.seq.symbol
 
 function firstopt(p:pro2gram, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
-let pdict = for pmap = emptyworddict:worddict.seq.symbol, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara.s do next(add(pmap, toword.parano, [ Local.parano]), parano + 1)/for(pmap)
+let pdict = for pmap = empty:intdict.seq.symbol, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara.s 
+  do next(add(pmap, parano, [ Local.parano]), parano + 1)
+  /for(pmap)
 let a = xxx(p, removeoptions.code, s, pdict)
 let t = if first then a
 else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
@@ -77,7 +79,7 @@ function isverysimple(nopara:int, code:seq.symbol)boolean
   for isverysimple = length.code ≥ nopara, idx = 1, sym = code while isverysimple do next(if idx ≤ nopara then sym = Local.idx
   else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym, idx + 1)/for(isverysimple)
 
-function xxx(p:pro2gram, code:seq.symbol, s:symbol, pdict:worddict.seq.symbol)expandresult
+function xxx(p:pro2gram, code:seq.symbol, s:symbol, pdict:intdict.seq.symbol)expandresult
 let a = scancode(p, code, nopara.s + 1, pdict, s)
 let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1)else code.a
  if length.code = length.new ∧ length.code > 20 ∨ new = code then
@@ -96,7 +98,7 @@ Function Hasmerge bits bits.16
 
 function ∈(a:bits, b:bits)boolean(a ∧ b) = a
 
-function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:worddict.seq.symbol, self:symbol)expandresult
+function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symbol, self:symbol)expandresult
  for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym = org do
  let len = length.result
   if not.isempty.result ∧ last.result = PreFref then
@@ -104,7 +106,7 @@ function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:worddict.seq.sy
   else if isconst.sym then next(flags, result + sym, nextvar, map)
   else if isspecial.sym then
    if isdefine.sym then
-   let thelocal = wordname.sym
+   let thelocal = value.sym
     if len > 0 ∧ (isconst.result_len ∨ islocal.result_len)then
      next(flags, subseq(result, 1, length.result - 1), nextvar, replace(map, thelocal, [ result_len]))
     else next(flags, result + Define.nextvar, nextvar + 1, replace(map, thelocal, [ Local.nextvar]))
@@ -118,7 +120,7 @@ function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:worddict.seq.sy
    else if sym = Exit ∧ isblock.last.result then next(flags ∨ Hasmerge, result + sym, nextvar, map)
    else if isloopblock.sym then
    let nopara = nopara.sym
-   let addlooplocals = for pmap = map, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara do next(replace(pmap, toword(firstvar.sym + parano - 1), [ Local(nextvar + parano - 1)]), parano + 1)/for(pmap)
+   let addlooplocals = for pmap = map, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara do next(replace(pmap,firstvar.sym + parano - 1, [ Local(nextvar + parano - 1)]), parano + 1)/for(pmap)
    next(flags, result + Loopblock(paratypes.sym, nextvar, resulttype.sym), nextvar + nopara, addlooplocals)
    else if isRecord.sym ∨ isSequence.sym then
    let nopara = nopara.sym
@@ -127,7 +129,7 @@ function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:worddict.seq.sy
    if constargs then next(flags, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
     else next(flags, result + sym, nextvar, map)
    else if islocal.sym then
-   let t = lookup(map, wordname.sym)
+   let t = lookup(map, value.sym)
    next(flags, result + if isempty.t then [ sym]else t_1, nextvar, map)
    else next(flags, result + sym, nextvar, map)
   else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
@@ -183,8 +185,8 @@ function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:worddict.seq.sy
  /for(expandresult(nextvar, result, flags))
 
 function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:pro2gram, self:symbol)expandresult
- for pmap = emptyworddict:worddict.seq.symbol, paracode = empty:seq.symbol, nextvar = nextvarin, parano = 1, lastidx = t_1, idx = t << 1 do
-  next(add(pmap, toword.parano, [ Local.nextvar]), paracode + subseq(result, lastidx, idx - 1) + Define.nextvar, nextvar + 1, parano + 1, idx)
+ for pmap = empty:intdict.seq.symbol, paracode = empty:seq.symbol, nextvar = nextvarin, parano = 1, lastidx = t_1, idx = t << 1 do
+  next(add(pmap, parano, [ Local.nextvar]), paracode + subseq(result, lastidx, idx - 1) + Define.nextvar, nextvar + 1, parano + 1, idx)
  /for(let r = scancode(p, code, nextvar, pmap, self)
  expandresult(nextvar.r, paracode + code.r, flags.r))
 
@@ -323,7 +325,10 @@ function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol
 
 ________________________________
 
-Function pass2(knownsymbols:pro2gram)pro2gram subpass2(empty:seq.symdef, emptypro2gram, knownsymbols, 0)
+use set.symdef
+
+Function pass2(knownsymbols :pro2gram)pro2gram 
+subpass2(empty:seq.symdef, emptypro2gram, knownsymbols, 0)
 
 SIZE 2283 868 1385 1 SIZE 1646 1080 1810 2 SIZE 1589 1103 1844 3 SIZE 1584 1108 1844 4
 

@@ -37,12 +37,16 @@ Function test11a seq.word let z = [ compare("a + b + c","(a + b)+ c")
 , testerror("Cannot find module", ["use notdefined"])
 ]}
  check(z,"test11a") + checkprec
+ 
+ use pro2gram
+ 
+ use process.compileinfo
 
 Function testcomp2(s:seq.seq.word)seq.word
-let p = process.testcomp.s
+let p = process.compilerfront("pass1", "testcomp",s,"stdlib","testit")
  if aborted.p then message.p
  else
-  for acc ="", @e = result.p do acc + " /br  /br" + @e /for(acc)
+  for acc ="", @e = astext.result.p do acc + " /br  /br" + @e /for(acc)
 
 Function compare(exp1:seq.word, exp2:seq.word)boolean
 let e1 = testcomp2.["module testit","use standard","Function f1(a:int, b:int, c:int)int" + exp1]

@@ -407,6 +407,12 @@ BT abortedZinternalZTzprocess(processinfo PD,BT pin){
     if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
     return (BT)( q->aborted);
 }
+
+BT abortedZinternalZptr(processinfo PD,BT pin){
+     processinfo q = ( processinfo)  pin;
+    if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
+    return (BT)( q->aborted);
+}
    
 BT abortedZbuiltinZTzprocess(processinfo PD,BT pin){
      processinfo q = ( processinfo)  pin;

@@ -8,9 +8,11 @@ use seq.T
 
 Export type:seq.T
 
+Export type:blockseq.T
+
 builtin bitcast:T(ptr)seq.T
 
-builtin load(address:blockseq.T,offset:int)  seq.T  {load value of type T at address}
+builtin getfld(address:blockseq.T,offset:int)  seq.T  {load value of type T at address}
 
 unbound set (ptr, T) ptr
 
@@ -21,7 +23,7 @@ function blocksize:T int 8160
 Function_(a:blockseq.T, i:int)T
  assert between(i, 1, length.toseq.a)report"out of bounds"
   let blksz= length.dummy.a 
-    let blk=load( a,(i - 1) / blksz + 2)
+    let blk=getfld( a,(i - 1) / blksz + 2)
  blk_(toindex((i - 1) mod blksz + 1))
 
 Function blockit3(s:seq.T)seq.T
@@ -126,6 +128,25 @@ Export type:packed5
 Export type:packed6
 
 
+
+Export_(blockseq.packed2, int)packed2
+
+Export_(blockseq.packed3, int)packed3
+
+Export_(blockseq.packed4, int)packed4
+
+Export_(blockseq.packed5, int)packed5
+
+Export_(blockseq.packed6, int)packed6
+
+Export_(blockseq.int, int)int
+
+Export_(blockseq.ptr, int)ptr
+
+Export_(blockseq.real, int)real
+
+
+
 Builtin set(ptr,int) ptr 
 
 Builtin set(ptr,ptr) ptr 
@@ -175,7 +196,7 @@ Function blockIt(s:seq.packed6)seq.packed6 blockit2(s, 6)
 
 /Export_(blockseq.int, int)int
 
-Export_(seq.int, int)int
+/Export_(seq.int, int)int
 
 Export decode(encoding.seq.char)seq.char
 

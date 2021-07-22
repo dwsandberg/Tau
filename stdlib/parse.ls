@@ -103,10 +103,37 @@ assert not.isempty.f report errormessage("cannot find 1" + fixNM.name + "("
   + for acc ="", @e = toseq.f do acc + print.@e /for(acc), common, place)
   let discard = for acc ="", sym2 = requires(dict,f_1) do
     let xxx = lookupbysig( dict,  sym2)
-  assert not.isempty.xxx ∨ isabstract.module.f_1 report"require unbound" + print.f_1 + print.sym2
-    acc
+  assert not.isempty.xxx ∨ isabstract.module.f_1 report
+     errormessage("require unbound" + print.f_1 + print.sym2, common, place)
+   {let kk=print.sym2+print.xxx_1}
+   let discard2=if not.isempty.xxx then 
+   let discard =encode.requireencoding(sym2,xxx_1) 1 else 1
+   { assert  kk /in[ "encoding.indexedword:=(indexedword, indexedword)boolean wordfreq:=(indexedword, indexedword)boolean"
+    ,"seq.bits:=(bits, bits)boolean bits:=(bits, bits)boolean"
+    ,"encoding.ccc:=(ccc, ccc)boolean testseq:=(ccc, ccc)boolean"
+    ,"encoding.ccc:hash(ccc)int testseq:hash(ccc)int"
+    ,"seq.typereal:=(typereal, typereal)boolean testseq:=(typereal, typereal)boolean"] report "requires"+kk
+   } acc
   /for(acc)
   f_1
+  
+  use encoding.requireencoding
+  
+type requireencoding is  a:symbol,b:symbol
+
+function hash(a:requireencoding) int  hash.a.a
+
+function =(x:requireencoding,y:requireencoding) boolean a.x=a.y
+
+function assignencoding(p:seq.encodingpair.requireencoding, a:requireencoding)int 
+ assignrandom(p, a)
+ 
+use seq.symdef
+
+Function requirematch seq.symdef
+for acc=empty:seq.symdef,  p=encoding:seq.encodingpair.requireencoding do 
+  acc+  symdef(a.data.p, for   paras= empty:seq.symbol,   i=arithseq(nopara.a.data.p,1,1) do paras+Local.i /for(paras+b.data.p)) 
+  /for(acc)
 
 function bindlit(R:reduction.bindinfo)bindinfo
 let chars = decodeword.first.text.R_1

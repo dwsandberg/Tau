@@ -159,7 +159,6 @@ Export typedict(seq.myinternaltype)typedict
 Export type:typedict
 
 
-Function deepcopysym(d:typedict, type:mytype)symbol typesym(d, type)
 
 Function typesym(d:typedict, type:mytype)symbol
  if type = typeint then symbol(moduleref."tausupport", "deepcopy ",typeint,typeint)

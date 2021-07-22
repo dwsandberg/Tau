@@ -1,4 +1,8 @@
-#!/usr/local/bin/tau  ; use doc ; doclibrary."typepass"
+#!/usr/local/bin/tau  ; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq  ")
+
+
+
+; use doc ; doclibrary."typepass"
 
 ; use doc ; callgraphbetween("typepass","passparse passsymbol   ")
 
@@ -63,5 +67,4 @@ use seq.word
 use seq.seq.word
  
 Function testprofile(libname:seq.word)seq.word
-let a = print.compile("all", libname)
- a + profileresults."time" + dumpprofileinfo
+ subcompilelib(libname)+ profileresults."time" + dumpprofileinfo

@@ -300,9 +300,6 @@ _______________________________
 Function istype(s:symbol)boolean 
  not.issimplename.s /and wordname.s="type"_1
 
-Function Load(type:mytype)symbol
-let kind2=if isseq.type then  typeptr  else  type
- symbol(moduleref("builtin",kind2),"load",[typeptr,typeint],kind2)
  
 Function Record(types:seq.mytype)symbol
  symbol(moduleref."$record","RECORD",types,typeptr,specialbit)
@@ -459,7 +456,6 @@ _________________
 Function Constant2(args:seq.symbol)symbol
   addzcode(symbol( moduleref."$constant", [toword.valueofencoding.encode.symbolconstant.args],empty:seq.mytype,typeptr,constbit)  ,args)
  
-Function Emptyseq(type:mytype)seq.symbol [ Sequence(type, 0)]
 
 
 function hash(s:seq.symbol)int
@@ -503,8 +499,9 @@ Function GetSeqType symbol symbol(moduleref."tausupport","getseqtype",typeptr,ty
 
 Function abortsymbol(typ:mytype) symbol 
 let a=if isseq.typ     then typeptr else  typ
-replaceTsymbol(a,symbol4(moduleref."tausupport","abort"_1,typeT,[seqof.typeword],typeT))
+ symbol4(moduleref."tausupport","abort"_1,a,[seqof.typeword],a) 
   
+ 
 
 Function basesym(s:symbol)symbol 
 {only used in postbind } if name.module.s = first."$fref"then(zcode.s)_1 else s
@@ -545,11 +542,6 @@ Export zcode(symbol)seq.symbol
 Function nametype(sym:symbol) seq.mytype 
     if issimplename.sym then empty:seq.mytype else [first.types.sym] 
  
-
-Function deepcopysym(dict:set.symbol, type:mytype)set.symbol
- if type = typeint then asset.[symbol(moduleref."tausupport", "deepcopy ",typeint,typeint)]
- else if type = typereal then asset.[symbol(moduleref."tausupport", "deepcopy ",typereal,typereal)]
- else lookup(dict,"type:" + print.type, [ type])
 
 Function removeconstant(s:seq.symbol)seq.symbol
  for acc = empty:seq.symbol, @e = s do
@@ -640,7 +632,9 @@ let fldtype = if isseq.typ then typeptr else if isencoding.typ then typeint else
   moduleref."tausupport"
  else builtinmod.fldtype,"set", typeptr, fldtype, typeptr)
 
-Function fldSym(fldtype:mytype)symbol symbol(builtinmod.fldtype,"fld", typeptr, typeint, fldtype)
+Function Getfld(fldtype:mytype)symbol 
+let kind2=if isseq.fldtype then  typeptr  else if isencoding.fldtype then typeint else  fldtype
+symbol(builtinmod.kind2,"fld", typeptr, typeint,kind2)
 
 Export type:symdef
 

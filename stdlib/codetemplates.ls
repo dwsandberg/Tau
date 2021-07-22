@@ -74,7 +74,8 @@ function typerep(t:mytype,flat:seq.mytype) typerep typerep([t]+flat)
 
 type type2dict is totypedict:set.typerep
 
-
+Function print(dict:type2dict) seq.word
+   for txt="", tr=toseq.totypedict.dict do   for acc2=txt,  t=totypeseq.tr do acc2+print.t /for(acc2+EOL) /for(txt)
 
 Export type:type2dict
 
@@ -166,8 +167,8 @@ Function symbolref(sym:symbol)symbolref symbolref.valueofencoding.encode.sym
 
 Function assignencoding(l:seq.encodingpair.symbol  , symbol) int  length.l+1
 
- Function       symbolrefdecode seq.symbol
-         for acc=empty:seq.symbol , p=encoding:seq.encodingpair.symbol do
+Function symbolrefdecode seq.symbol
+  for acc=empty:seq.symbol , p=encoding:seq.encodingpair.symbol do
               acc+data.p
         /for(acc)
 
@@ -254,24 +255,33 @@ Function addprg(cinfo:compileinfo,prg:pro2gram) compileinfo
  else 
     cvtL3(prg,length.x+1, 
        for acc=in , p=subseq(x,i,length.x)   do
-       let f=findelement(symdef(data.p,empty:seq.symbol),data.prg)
-        if isempty.f /or isempty.code.f_1 then acc  
-        else 
+         let f=findelement(symdef(data.p,empty:seq.symbol),data.prg)
+         if isempty.f /or isempty.code.f_1 then  acc   
+         else 
                acc+for acc2 = [ symbolref.data.p,symbolref.Lit.paragraphno.f_1], sym = code.f_1  do 
-           acc2 + symbolref.sym /for(acc2)
-        /for(acc))
+                       acc2+if isFref.sym then
+                        let  discard=symbolref.basesym.sym
+                        symbolref.sym 
+                       else if  isrecordconstant.sym then
+                        let discard= for acc3=symbolref.Lit.0 ,  sym2=removeconstant.[sym] do symbolref.sym2 /for(acc3)
+                        symbolref.sym
+                       else 
+                        symbolref.sym /for(acc2)
+                    /for(acc))
   
 
 
 use set.word
   
 Function addoption(p:pro2gram, s:symbol, option:seq.word)pro2gram
-let code = getCode(p, s)
+{ must maintain library of symbol in p}
+ let f=findelement(symdef(s,empty:seq.symbol),data.p)
+  let code= if isempty.f then empty:seq.symbol else code.f_1
 let current = asset.getoption.code
  if current = asset.option then p
  else
   let newcode = removeoptions.code + Words.toseq(current ∪ asset.option) + Optionsym
-   map(p, s, newcode)
+   map(p, if isempty.f then s else sym.f_1, newcode)
 
 
 
@@ -527,6 +537,12 @@ addtemplate(symbol(moduleref."interpreter","GEP", seqof.typeint, typeint, typein
 + CAST(r.3, r.2, ptr.i64, inttoptr))
 , addtemplate(symbol(moduleref("builtin", typereal),"load", [ typeptr, typeint], typereal), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, double, bitcast))
+, addtemplate(symbol(moduleref("builtin", typeint),"fld", [ typeptr, typeint], typeint), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplate(symbol(moduleref("builtin", typeboolean),"fld", [ typeptr, typeint], typeboolean), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplate(symbol(moduleref("builtin", typeptr),"fld", [ typeptr, typeint], typeptr), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
++ CAST(r.3, r.2, ptr.i64, inttoptr))
+, addtemplate(symbol(moduleref("builtin", typereal),"fld", [ typeptr, typeint], typereal), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
++ CAST(r.3, r.2, double, bitcast))
 ]
 let const = for acc = empty:seq.symbol, e = toseq(uses - asset.[ Optionsym])do
  if isconst.e then
@@ -579,7 +595,7 @@ function buildconst(xx:symbol, alltypes:type2dict)match5
 function buildtemplate(theprg:pro2gram, alltypes:type2dict, xx:symbol)match5
  { xx will not be constant }
  if islocal.xx then addtemplate(xx, 0, emptyinternalbc,"LOCAL"_1, slot.value.xx)
- else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,"DEFINE"_1, slot.toint.wordname.xx)
+ else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,"DEFINE"_1, slot.value.xx)
  else if isblock.xx then addtemplate(xx, 0, emptyinternalbc, wordname.xx, 0, empty:seq.symbol, [ i64])
  else if isstart.xx then
  let typ = tollvmtype(alltypes, resulttype.xx)

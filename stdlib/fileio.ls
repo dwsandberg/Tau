@@ -41,6 +41,13 @@ Builtin getbytefile(cstr)fileresultbyte
 
 Builtin getbitfile(cstr)fileresultbit
 
+Export type:fileresult
+
+Export type:fileresultbyte
+
+Export type:fileresultbit
+
+
 builtin tocstr(seq.bits)cstr
 
 Builtin createfile(byteLength:int, data:seq.bits, cstr)int
