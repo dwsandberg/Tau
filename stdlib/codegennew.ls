@@ -56,10 +56,14 @@ use seq.seq.seq.int
 
 Function codegen(theprg:pro2gram,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict, isbase:boolean)seq.bits
 let defines = for acc = empty:seq.symbol, ele = toseq.uses do
-let d = getCode(theprg, ele)
  if isconstantorspecial.ele ∨ isabstract.module.ele  /or library.module.ele="compiled"_1 then acc 
   else if not.isbase  /and name.module.ele /in "standard tausupport fileio" then acc
   else 
+  let d = getCode(theprg, ele)
+     { assert isconstantorspecial.ele /or cardinality.uses > 10000 /or nopara.ele /ne 2 /or name.ele /ne "="_1 /or 
+    "tree"_1 /nin print.first.paratypes.ele
+    /or print.ele="seq.tree.seq.word:=(seq.tree.seq.word, seq.tree.seq.word)boolean" report "DEFING1"+print.ele
+ +print.cardinality.uses  +toword.length.d+mangledname.ele+getoption.d}
 if isempty.d then { sym not defined in this library }acc
  else if"BUILTIN"_1 ∉ getoption.d then acc + ele
  else
@@ -142,7 +146,7 @@ let action = action.m
  if profile = "noprofile"_1 ∨ profile = callee then
   let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [-1] + args)
   Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
-  else profilecall(l, args, symboltableentry(callee, functype.m), profile(profile, callee), functype.m)
+  else profilecall(l, args, symboltableentry([callee], functype.m), profile(profile, callee), functype.m)
  else if action = "CALLE"_1 then
  let noargs = arg.m
  let args = top(args.l, noargs)

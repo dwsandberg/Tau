@@ -112,12 +112,13 @@ let alltypes0 = for acc = empty:seq.myinternaltype, @e = toseq.d1 do acc + types
  let templates = maptemp(map.expand1, templates0)
  let roots = for acc = empty:seq.symbol, @e = simple do acc + roots(exports, @e)/for(acc)
   let dict2=type2dict(alltypes)
-let prg2=postbind(dict2, allsymbols1, roots , prg1, templates)
+  let compiled=asset.toseq.libsimple
+let prg2=postbind(dict2, allsymbols1, roots , prg1, templates,compiled)
  let options=for acc = empty:seq.seq.word, @e = allsrc1 do acc + @e /for(acc)
  let mods=tolibraryModules(dict2,emptypro2gram,  simple + abstract,exports) 
 { assert false report  "X"+for acc="", m=mods do acc+name.modname.m /for (acc)
  }let cinfo=cvtL2( dict2 ,emptypro2gram,  mods)
- linkage(processOptions(prg2,simple,"COMPILETIME NOINLINE INLINE PROFILE STATE"), asset.toseq.libsimple,   prescan2.pro2gram.templates,cinfo)
+ linkage(processOptions(prg2,simple,"COMPILETIME NOINLINE INLINE PROFILE STATE"), compiled,   prescan2.pro2gram.templates,cinfo)
  
  Function processOptions(prg:pro2gram,mods:seq.firstpass,option:seq.word) pro2gram
   for acc=prg ,  m=mods     do   

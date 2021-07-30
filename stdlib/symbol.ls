@@ -142,7 +142,11 @@ Function addzcode (s:symbol,zcode:seq.symbol) symbol
 Function replaceTsymbol(with:mytype, sym:symbol)symbol
  if with = typeT /or isconst.sym then sym else
 let newtypes = for newtypes = empty:seq.mytype, t = types.sym do newtypes + replaceT(with, t)/for(newtypes)
-symbol( worddata.sym,replaceT(with, module.sym), newtypes, raw.sym,extrabits(newtypes,   hash.worddata.sym,hashbits.sym),empty:seq.symbol)
+ let adjustedraw={if isunbound.sym then
+      for hasT=false ,t=newtypes while not.hasT do  isabstract.t /for(
+       if hasT then raw.sym else   raw.sym   /and xor(unboundbit,tobits.-1)  )
+    else} raw.sym
+symbol( worddata.sym,replaceT(with, module.sym), newtypes, adjustedraw,extrabits(newtypes,   hash.worddata.sym,hashbits.sym),empty:seq.symbol)
 
 function symbolZ(module:modref, name:word,namePara:seq.mytype,paras:seq.mytype,rt:mytype,flags:bits,raw:bits) symbol
    let types=namePara+paras+rt
@@ -298,7 +302,7 @@ Function printdict(s:set.symbol)seq.word
 _______________________________
  
 Function istype(s:symbol)boolean 
- not.issimplename.s /and wordname.s="type"_1
+ not.issimplename.s /and wordname.s="type"_1 /and nopara.s=1
 
  
 Function Record(types:seq.mytype)symbol

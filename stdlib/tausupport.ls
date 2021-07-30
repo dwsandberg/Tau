@@ -226,6 +226,10 @@ Builtin  abort:real(seq.word)real
 
 Builtin  abort:boolean(seq.word)boolean
 
+Export type:encodingpair.seq.char
+
+Export type:encodingpair.typename
+
 
 -----------
 

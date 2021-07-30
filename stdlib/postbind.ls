@@ -64,13 +64,13 @@ Function  prescan2(   prg:pro2gram) pro2gram
       /for(acc+symdef( sym.p,result))
       /for(pro2gram.acc)      
  
-Function postbind(alltypes:type2dict, dict:set.symbol, roots:seq.symbol, theprg:program, templates:program)pro2gram
+Function postbind(alltypes:type2dict, dict:set.symbol, roots:seq.symbol, theprg:program, templates:program,compiled:set.symbol)pro2gram
 let root = symbol(moduleref."W","Wroot", typeint)
    let discard=for acc=0 ,r=roots do let discard2=encode.r 0 /for(0)
- pro2gram.asset.usedsyms(theprg,alltypes,0,empty:seq.symdef,templates,dict)
+ pro2gram.asset.usedsyms(theprg,alltypes,0,empty:seq.symdef,templates,dict,compiled)
   
   function usedsyms(source:program ,typedict:type2dict,last:int,result:seq.symdef, tempX:program
-  , dict:set.symbol) seq.symdef
+  , dict:set.symbol,compiled:set.symbol) seq.symdef
      let a=  encoding:seq.encodingpair.symbol 
      if length.a=last   then result
     else 
@@ -83,27 +83,27 @@ let root = symbol(moduleref."W","Wroot", typeint)
           let lr1 = lookupcode(source, data.p)
           let org=print.data.p
             let r=if isdefined.lr1 then 
-            postbind3b(typedict,dict,symdef(data.p,code.lr1),source) 
+            postbind3b(typedict,dict,symdef(data.p,code.lr1), compiled) 
             else  if istype.data.p then
              let p2 =  deepcopybody(resulttype.data.p,typedict )
-             postbind3b(typedict,dict,symdef(data.p,p2),source)
+             postbind3b(typedict,dict,symdef(data.p,p2), compiled)
             else 
                let fx = handletemplate(dict, data.p, org, source, tempX)
                let k = first.fx
                if length.fx=1 then
                 let code= for paras=empty:seq.symbol,i=arithseq(nopara.k,1,1) do paras+Local.i /for(paras+k)
-                postbind3b(typedict,dict,symdef(data.p,code),source)
+                postbind3b(typedict,dict,symdef(data.p,code), compiled)
                else 
                 assert length.fx > 1 report "KLJ??"+print.k+print.data.p
-                   postbind3b(typedict,dict,symdef(k,fx << 1),source) 
+                   postbind3b(typedict,dict,symdef(k,fx << 1), compiled) 
               let discard=for acc2=symbolref.EqOp, sym=code.r   do  symbolref.sym /for(acc2)
             acc+symdef(data.p,code.r) 
          /for(
-           usedsyms(source, typedict,length.a,acc,tempX,dict)
+           usedsyms(source, typedict,length.a,acc,tempX,dict,compiled)
            )
 
 
-function postbind3b(typedict:type2dict, dict:set.symbol, sd:symdef, source:program)symdef
+function postbind3b(typedict:type2dict, dict:set.symbol, sd:symdef, compiled:set.symbol)symdef
 let modpara = para.module.sym.sd
  let pdict = for pmap = empty:intdict.seq.symbol, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara.sym.sd do 
                next(add(pmap, parano, [ Local.parano]), parano + 1)
@@ -123,16 +123,11 @@ for nextvar = nopara.sym.sd + 1, map = pdict,result = empty:seq.symbol ,  sym = 
        next(nextvar,map,result + sym)
     else if inmodule(sym,"$for")then next(nextvar,map,result + replaceTsymbol(modpara, sym) )
     else
-     let lr1 = lookupcode(source, sym)
-     let newsym = if issimple.module.sym.sd ∨ isdefined.lr1 then sym else replaceTsymbol(modpara, sym)
-     if isdefined.lr1 then
-      let p2 =if"VERYSIMPLE"_1 ∈ getoption.code.lr1 /and (isempty.result /or last.result /ne PreFref )then
-               subseq(code.lr1, nopara.newsym + 1, length.code.lr1 - 2)
-              else 
-                assert target.lr1=sym report "PPP"+print.target.lr1+print.sym
-                 [ target.lr1]
-      next(nextvar,map,result + p2 )
-    else if inmodule(sym,"builtin")then
+       let newsym = replaceTsymbol(modpara, sym)
+       if not.inmodule(sym,"builtin")then
+            let t4= findelement(sym,compiled) 
+            next(nextvar,map,result+if isempty.t4 then newsym else t4_1 )  
+       else 
          if  name.sym ∈ "primitiveadd" then
         let encodingtype = typeref."encoding encoding. "
        let encodingstatetype = typeref."encodingstate encoding. "
@@ -206,8 +201,7 @@ else if name.sym ∈ "packed"then
   else
         assert name.sym /in "offsets build" report "post bind"+print.sym
      sym
-     ])
-      else    next(nextvar,map,result+newsym )  
+     ] )
        /for(symdef(sym.sd, result))
        
  function iscoretype(typ:mytype) boolean
@@ -238,7 +232,7 @@ let p2 = seqof.if p = typebyte ∨ p = typebit ∨ p = typeboolean then typeint 
 function deepcopysym(typedict:type2dict, type:mytype) symbol
  if type =typereal /or type=typeint then deepcopySym(type) else
  let z=flatwithtype(typedict,type)
- assert not.isempty.z report  "deepcopy cannot find type"+print.type
+ assert not.isempty.z report  "deepcopy cannot find type"+print.type+stacktrace
    deepcopySym(first.z)
         
 function deepcopybody(type:mytype, typedict:type2dict)seq.symbol

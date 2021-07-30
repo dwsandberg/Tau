@@ -14,8 +14,6 @@ use otherseq.int
 
 use point.int
 
-use seq.int
-
 use set.int
 
 use seq.ordering
@@ -177,11 +175,12 @@ function t046 boolean toseq.findelement2(testset, 36) = [ 35, 36] ∧ toseq.find
 
 type Tpair is a:int, b:seq.word
 
-Function test11 seq.word let y = [ t001, t002, t003, t004, t005, t006, t007, t008, t009, t010
+Function test11 seq.word 
+let list = [ t001, t002, t003, t004, t005, t006, t007, t008, t009, t010
 , t011, t012, t013, t014, t015, t016, t017, t018, t019, t020
 , t021, t022, t023, t024, t025, t026, t027, t028, t029, t030
 , t031, t032, t033, t034, t035, t036, t037, t038, t039, t040
 , t041, t042, t043, t044, t045, t046,"this is a test"_(-1) = "test"_1, b.[ Tpair(3,"three"), Tpair(4,"four"), Tpair(5,"five")]_(-2)
 = "four", [ 1, 2, 4]_(-3) = 1, { 50 }"this is a test" << 2 = "a test"
 ,"this is a test" >> 3 = "this"]
-check(y,"test11") 
+check(list,"test11") 

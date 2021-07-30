@@ -492,20 +492,20 @@ addtemplate(symbol(moduleref."interpreter","GEP", seqof.typeint, typeint, typein
 , addtemplate(symbol(moduleref."tausupport","set", [ typeptr, typeint], typeptr), 1, STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1))
 , addtemplate(abortsymbol.typeint
 , 1
-, CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
+, CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert", function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 )
 , addtemplate(abortsymbol.typeboolean
 , 1
-, CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
+, CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert", function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 )
 , addtemplate(abortsymbol.typereal
 , 2
-, CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
+, CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert", function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 + CAST(r.2, r.1, double, sitofp)
 )
 , addtemplate(abortsymbol.typeptr
 , 2
-, CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert"_1, function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
+, CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert", function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 + CAST(r.2, r.1, ptr.i64, inttoptr)
 )
 , addtemplates("int boolean bit byte", symbol(internalmod,"callidx", seqof.typeT, typeint, typeint), 4, GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
@@ -555,9 +555,6 @@ let const = for acc = empty:seq.symbol, e = toseq(uses - asset.[ Optionsym])do
 let discard4 = processconst.const
  empty:seq.match5
 
-function symboltableentry(name:word)slot symboltableentry(name, i64)
-
-Function symboltableentry(name:word, type:llvmtype)slot symboltableentry([ name], type)
 
 Function symboltableentry(name:seq.word, type:llvmtype)slot
  modulerecord(name, [ toint.FUNCTIONDEC, typ.type, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
@@ -582,7 +579,7 @@ function buildconst(xx:symbol, alltypes:type2dict)match5
  let f1 =(constantcode.xx)_1
  let mn = mangledname.f1
  let functyp = ptr.tollvmtype(alltypes, f1)
- addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry(mn, functyp)))
+ addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry([mn], functyp)))
  else if inmodule(xx,"$real")then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, Creal.value.xx)
  else if inmodule(xx,"$int")then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, C64.value.xx)
  else if iswordseq.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.worddata.xx)
@@ -633,7 +630,7 @@ function buildtemplate(theprg:pro2gram, alltypes:type2dict, xx:symbol)match5
 function call(alltypes:type2dict, xx:symbol, type:word, code:seq.symbol, symname:word)match5
 let list = tollvmtypelist(alltypes, xx)
 let functype = function.list
-let newcode = CALLSTART(1, 0, 32768, typ.functype, toint.symboltableentry(symname, functype), if type = "CALL"_1 then nopara.xx + 1 else nopara.xx)
+let newcode = CALLSTART(1, 0, 32768, typ.functype, toint.symboltableentry([symname], functype), if type = "CALL"_1 then nopara.xx + 1 else nopara.xx)
 addtemplate(xx, 1, newcode, type, nopara.xx, code, list)
 
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
