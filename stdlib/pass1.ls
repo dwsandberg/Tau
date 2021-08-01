@@ -18,8 +18,6 @@ use seq.firstpass
 
 use set.firstpass
 
-use seq.mapele
-
 use seq.myinternaltype
 
 use seq.mytype
@@ -58,9 +56,6 @@ type linkage is result:pro2gram, compiled:set.symbol, templates:pro2gram,cinfo:c
 
 function =(a:firstpass, b:firstpass)boolean module.a = module.b
 
-type mapele is key:symbol, target:symbol
-
-function replaceTsymbol2(with:mytype, s:symbol)mapele mapele(replaceTsymbol(with, s), s)
 
 Function print(b:firstpass)seq.word
 " /br  /br" + print.module.b + " /br defines" + printdict.defines.b
@@ -96,8 +91,7 @@ let modsx = resolvetypes(libpasstypes,allsrc1, lib)
 let typedict=for typedict=empty:set.mytype, m=toseq.modsx do typedict /cup defines.m /for(typedict)
 let allsrc=groupparagraphs("module Module", allsrc1)
 let a = for acc = asset.librarymods, @e = allsrc do gathersymbols(acc,typedict, @e)/for(acc)
-let expand1 = expanduse.expanduseresult(a, empty:seq.mapele)
-let u0 = firstpasses.expand1
+let u0 = expanduse.a
 let d1 = resolveunboundexports.u0
 let allsymbols1 = for acc = empty:set.symbol, @e = toseq.d1 do acc ∪ defines.@e /for(acc)
 let alltypes0 = for acc = empty:seq.myinternaltype, @e = toseq.d1 do acc + types.@e /for(acc)
@@ -109,16 +103,22 @@ let alltypes0 = for acc = empty:seq.myinternaltype, @e = toseq.d1 do acc + types
  let abstract = abstractsimple1_1
  let prg1 = for acc = libsimple, @e = simple do bind3(acc, alltypes, d1, @e)/for(acc)
  let templates0 = for acc = libtemplates, @e = abstract do bind3(acc, alltypes, d1, @e)/for(acc)
- let templates = maptemp(map.expand1, templates0)
+ let templates =   templates0
  let roots = for acc = empty:seq.symbol, @e = simple do acc + roots(exports, @e)/for(acc)
   let dict2=type2dict(alltypes)
   let compiled=asset.toseq.libsimple
-let prg2=postbind(dict2, allsymbols1, roots , prg1, templates,compiled)
+let prg2=postbind(dict2, allsymbols1, roots , pro2gramB.prg1, pro2gramB.templates,compiled)
  let options=for acc = empty:seq.seq.word, @e = allsrc1 do acc + @e /for(acc)
  let mods=tolibraryModules(dict2,emptypro2gram,  simple + abstract,exports) 
 { assert false report  "X"+for acc="", m=mods do acc+name.modname.m /for (acc)
  }let cinfo=cvtL2( dict2 ,emptypro2gram,  mods)
  linkage(processOptions(prg2,simple,"COMPILETIME NOINLINE INLINE PROFILE STATE"), compiled,   prescan2.pro2gram.templates,cinfo)
+ 
+ /Function postbind3b(typedict:type2dict, dict:set.symbol, sd:symdef, compiled:set.symbol)symdef
+
+  
+   postbind3b(dict2,allsymbols1,?,compiled)
+ 
  
  Function processOptions(prg:pro2gram,mods:seq.firstpass,option:seq.word) pro2gram
   for acc=prg ,  m=mods     do   
@@ -162,12 +162,6 @@ let prg2=postbind(dict2, allsymbols1, roots , prg1, templates,compiled)
 
 function basetypes seq.myinternaltype [ myinternaltype("defined"_1,"int"_1, moduleref."standard", [ typeint]), myinternaltype("defined"_1,"boolean"_1, moduleref."standard", [ typeint])]
 
-function maptemp(map:seq.mapele, templates:program)program
- for st = templates, e = map do
- let s2 = lookupcode(templates, target.e)
- if isdefined.s2 then map(st, key.e, target.e, code.s2)
-  else map(st, key.e, target.e, empty:seq.symbol)
- /for(st)
  
  Function print3(it:myinternaltype)seq.word
  if not.isdefined.it then
@@ -268,10 +262,10 @@ if cardinality.x = 1 then
  else
   firstpass(module.f, uses.f, defines.f, exports.f, unboundexports.f + s, unbound.f, types.f, prg.f)
 
-function expanduse(acc3:expanduseresult)expanduseresult
-let modset1 = firstpasses.acc3
+function expanduse(acc3:set.firstpass)set.firstpass
+let modset1 = acc3
 let newset = for acc2 = acc3, use = toseq.asset.for acc = empty:seq.mytype, @e = toseq.modset1 do acc + uses.@e /for(acc)do
-let modset = firstpasses.acc2
+let modset = acc2
 let x = find(modset, use)
 if iscomplex.use ∧ parameter.use ≠ typeT then
   if isempty.x then
@@ -279,20 +273,21 @@ if iscomplex.use ∧ parameter.use ≠ typeT then
   assert not.isempty.template report"Cannot find module" + print.use
    let f = template_1
    let with = parameter.use
-   let defs = for acc = empty:seq.mapele, @e = toseq.defines.f do acc + replaceTsymbol2(with, @e)/for(acc)
-   let exps = for acc = empty:seq.mapele, @e = toseq.exports.f do acc + replaceTsymbol2(with, @e)/for(acc)
-   let unb = for acc = empty:seq.mapele, @e = unboundexports.f do acc + replaceTsymbol2(with, @e)/for(acc)
-   expanduseresult(modset
-    + firstpass(replaceT(with, module.f), for acc = empty:seq.mytype, @e = uses.f do acc + replaceT(with, @e)/for(acc), asset.for acc = empty:seq.symbol, @e = defs do acc + key.@e /for(acc), asset.for acc = empty:seq.symbol, @e = exps do acc + key.@e /for(acc), for acc = empty:seq.symbol, @e = unb do acc + key.@e /for(acc), empty:set.symbol, for acc = empty:seq.myinternaltype, @e = types.f do acc + replaceTmyinternaltype(with, @e)/for(acc), prg.f)
-    , map.acc2 + defs + exps + unb
-    )
+     modset
+    + firstpass(replaceT(with, module.f)
+    , for acc = empty:seq.mytype
+    , @e = uses.f do acc + replaceT(with, @e)/for(acc)
+    , asset.for acc = empty:seq.symbol, @e = toseq.defines.f do acc + replaceTsymbol(with, @e) /for(acc)
+    , asset.for acc = empty:seq.symbol, @e = toseq.exports.f do acc + replaceTsymbol(with, @e) /for(acc)
+    , for acc = empty:seq.symbol, @e = unboundexports.f do acc + replaceTsymbol(with, @e) /for(acc)
+    , empty:set.symbol, for acc = empty:seq.myinternaltype
+    , @e = types.f do acc + replaceTmyinternaltype(with, @e)/for(acc), prg.f)
   else acc2
  else assert not.isempty.x report"Cannot find module" + print.use
   acc2
 /for(acc2)
-if cardinality.firstpasses.newset > cardinality.modset1 then expanduse.newset else acc3
+if cardinality.newset > cardinality.modset1 then expanduse.newset else acc3
 
-type expanduseresult is firstpasses:set.firstpass, map:seq.mapele
 
 function hasunbound(f:firstpass)seq.firstpass if length.unboundexports.f = 0 then empty:seq.firstpass else [ f]
 
@@ -307,8 +302,6 @@ function split(s:seq.firstpass, i:int, abstract:seq.firstpass, simple:seq.firstp
    else if para.module.f = typeT then split(s, i + 1, abstract + f, simple)
    else split(s, i + 1, abstract, simple)
 
-function print(p2:program)seq.word
- for acc ="", @e = toseq.p2 do list(acc," /br  /br", print(p2, @e))/for(acc)
 
 function bind3(p:program, alltypes:typedict, modset:set.firstpass, f:firstpass)program
 let dict= formsymboldict(modset,f,"body")

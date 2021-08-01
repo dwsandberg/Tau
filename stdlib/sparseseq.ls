@@ -14,7 +14,7 @@ type sparseele is start:int, edata:seq.T
 
 type sparse is sequence, sdata:seq.sparseele.T, default:T
 
-function ?(a:sparseele.T, b:sparseele.T)ordering start.a ? start.b
+Function ?(a:sparseele.T, b:sparseele.T)ordering start.a ? start.b
 
 function_(s:sparse.T, i:int)T
 let place = binarysearch(sdata.s, sparseele(i, empty:seq.T))

@@ -26,24 +26,70 @@ use seq.seq.mytype
 
 use intdict.seq.symbol
 
-use program
-
 use otherseq.mytype
 
 use otherseq.word
 
+type findabstractresult  is sd:symdef,modpara:mytype
 
-function handletemplate(dict:set.symbol, sym:symbol, org:seq.word, sourceX:program, tempX:program)seq.symbol
-let fx = lookupcode(tempX, sym)
-if isdefined.fx then
-  if isdefined.lookupcode(sourceX, sym)then [ sym]else [ sym] + code.fx
+use seq.findabstractresult 
+
+function xxx(templates:pro2gram,sym:symbol)   seq.findabstractresult
+     for  acc=empty:seq.findabstractresult , sd=toseq.data.templates do
+     if name.sym=name.sym.sd  /and  para.module.sym.sd=typeT /and nopara.sym=nopara.sym.sd  
+     /and name.module.sym.sd=name.module.sym     
+      then 
+      let z= for Tis=type? ,  idx=1,   t= types.sym.sd do
+             let S=solveT(t,(types.sym)_idx) 
+             if S=type? then 
+              {assert t=(types.s)_idx report "XXXXX"+print.t+print.(types.s)_idx}
+             next(Tis,idx+1) else next(S,idx+1)
+            /for(Tis)
+       if ?2(sym,replaceTsymbol(z,sym.sd)) =EQ  then 
+        if sym ? sym.sd =EQ  /or isunbound.sym.sd then acc else
+           acc+findabstractresult (sd,z)  
+          else acc
+    else  acc
+    /for(
+     acc)
+
+/Function findabstract(all:set.passsymbols, s:symbol)seq.findabstractresult
+let a = findelement(passsymbols(module.s, empty:set.symbol, empty:set.symbol, empty:set.symbol, empty:set.modref, empty:set.mytype, empty:seq.symtextpair)
+, all
+)
+if isempty.a then empty:seq.findabstractresult
  else
-  let k = lookupsymbol(dict, sym)
-  assert cardinality.k = 1 report"Cannot find template for" + print.sym + "while processing" + org
+  for acc = empty:seq.findabstractresult, e = toseq.defines.a_1 do
+   if name.e = name.s ∧ nopara.e = nopara.s  then
+      let z= for Tis=type? ,  idx=1,   t= types.e do
+             let S=solveT(t,(types.s)_idx) 
+             if S=type? then 
+              {assert t=(types.s)_idx report "XXXXX"+print.t+print.(types.s)_idx}
+             next(Tis,idx+1) else next(S,idx+1)
+            /for(Tis)
+    if  ?2(s,replaceTsymbol(z, e)) =EQ  then
+       if s ? e =EQ /or isunbound.e then acc else
+       acc + findabstractresult(e,z)
+    else acc
+   else acc
+  /for(acc) 
+
+function handletemplate(dict:set.symbol, sym:symbol, org:seq.word,   templates:pro2gram,compiled:set.symbol)seq.symbol
+if isunbound.sym then
+    let k = lookupsymbol(dict, sym)
+    assert cardinality.k = 1 report"Cannot find template for" + print.sym + "while processing" + org+stacktrace
     assert sym ≠ k_1 report"ERR12" + print.sym + print.k_1
-    let dd = lookupcode(sourceX, k_1)
-    if isdefined.dd then [ k_1]
-     else { handles parameterized unbound cases like ?(int arc, int arc)graph.int }handletemplate(dict, k_1, org, sourceX, tempX)
+     if   issimple.module.k_1 /or k_1 /in compiled then [ k_1]
+     else  
+      assert not.isunbound.k_1 report "shound not be unbound"+print.k_1
+      handletemplate(dict, k_1, org,   templates,compiled)
+else
+   let gx=xxx(templates,sym)
+    assert length.gx = 1 report"Cannot find template for" + print.sym + "while processing" + org+stacktrace
+      let fx2= for newcode=empty:seq.symbol,sym2 = code.sd.gx_1 do   newcode+ replaceTsymbol(modpara.gx_1, sym2)
+                 /for(newcode) 
+    {if not.isempty.getCode(sourceX, sym) then [ sym] else} [ sym] +  fx2
+
 
 /function buildcode(acc:int, w:word)int
  acc * 2 + if w = first."real"then 1 else 0
@@ -64,46 +110,104 @@ Function  prescan2(   prg:pro2gram) pro2gram
       /for(acc+symdef( sym.p,result))
       /for(pro2gram.acc)      
  
-Function postbind(alltypes:type2dict, dict:set.symbol, roots:seq.symbol, theprg:program, templates:program,compiled:set.symbol)pro2gram
+Function postbind(alltypes:type2dict, dict:set.symbol, roots:seq.symbol, theprg:pro2gram, templates:pro2gram,compiled:set.symbol)pro2gram
 let root = symbol(moduleref."W","Wroot", typeint)
    let discard=for acc=0 ,r=roots do let discard2=encode.r 0 /for(0)
- pro2gram.asset.usedsyms(theprg,alltypes,0,empty:seq.symdef,templates,dict,compiled)
+{let prg2=handletemplatesX( tosymdefs.theprg,asset.tosymdefs.theprg,templates,alltypes,compiled,dict)    
+} pro2gram.asset.usedsyms(theprg,alltypes,0,empty:seq.symdef,templates,dict,compiled)
   
-  function usedsyms(source:program ,typedict:type2dict,last:int,result:seq.symdef, tempX:program
+  function usedsyms(source:pro2gram ,typedict:type2dict,last:int,result:seq.symdef, templates:pro2gram
   , dict:set.symbol,compiled:set.symbol) seq.symdef
      let a=  encoding:seq.encodingpair.symbol 
      if length.a=last   then result
     else 
     for  acc=result,   p=subseq(a,last+1,length.a) do
-     let sym1=data.p
-    if isspecial.sym1 /or isconst.sym1 
+       let sym1=data.p
+       if isspecial.sym1 /or isconst.sym1 
+             /or name.module.sym1 /in "builtin internal $for $global" 
+             /or name.sym1 /in "abort" then acc
+       else
+          let lr1 = getCode(source, data.p)
+          let r=if (not.isempty.lr1 /or data.p /in compiled) then 
+                 symdef(data.p,lr1) 
+            else  if istype.data.p then
+              symdef(data.p,deepcopybody(resulttype.data.p,typedict )) 
+            else 
+               let fx = handletemplate(dict, data.p, {org} print.data.p,  templates,compiled)
+               let k = first.fx
+               if length.fx=1 then
+                 for paras=empty:seq.symbol,i=arithseq(nopara.k,1,1) do paras+Local.i /for( symdef(data.p,paras+k)) 
+               else 
+                assert length.fx > 1 report "KLJ??"+print.k+print.data.p
+                    symdef(k,fx << 1) 
+              acc+addsymbolref(data.p,r,typedict,dict,compiled) 
+         /for(usedsyms(source, typedict,length.a,acc,templates,dict,compiled))
+           
+           
+      function    addsymbolref(sym2:symbol,sd:symdef,typedict:type2dict , dict:set.symbol,compiled:set.symbol) symdef 
+         let code=postbind3b(typedict,dict,sd, compiled)
+         let discard=for acc2=symbolref.EqOp, sym=code    do  symbolref.sym /for(acc2)
+            symdef(sym2,code )
+            
+            
+/Function findabstract(all:set.passsymbols, s:symbol)seq.findabstractresult
+let a = findelement(passsymbols(module.s, empty:set.symbol, empty:set.symbol, empty:set.symbol, empty:set.modref, empty:set.mytype, empty:seq.symtextpair)
+, all
+)
+if isempty.a then empty:seq.findabstractresult
+ else
+  for acc = empty:seq.findabstractresult, e = toseq.defines.a_1 do
+   if name.e = name.s ∧ nopara.e = nopara.s  then
+      let z= for Tis=type? ,  idx=1,   t= types.e do
+             let S=solveT(t,(types.s)_idx) 
+             if S=type? then 
+              {assert t=(types.s)_idx report "XXXXX"+print.t+print.(types.s)_idx}
+             next(Tis,idx+1) else next(S,idx+1)
+            /for(Tis)
+    if  ?2(s,replaceTsymbol(z, e)) =EQ  then
+       if s ? e =EQ /or isunbound.e then acc else
+       acc + findabstractresult(e,z)
+    else acc
+   else acc
+  /for(acc) 
+  
+
+  
+  
+  function solveT ( a:mytype,b:mytype) mytype
+    if a=typeT then b
+    else if isabstract.a  /and abstracttype.a=abstracttype.b then solveT(parameter.a,parameter.b)
+    else type?
+           
+       
+    {    function handletemplatesX(toprocess:seq.symdef,insource:set.symdef,templates:pro2gram,typedict:type2dict,compiled:set.symbol
+        ,dict:set.symbol) set.symdef
+          for source=insource,new=empty:seq.symdef,  p=toprocess do  
+           let newones= for acc=empty:seq.symdef,  sym1=toseq.asset.code.p do 
+           if isspecial.sym1 /or isconst.sym1 
              /or name.module.sym1 /in "builtin internal $for $global" 
              /or name.sym1 /in "abort" then acc
              else
-          let lr1 = lookupcode(source, data.p)
-          let org=print.data.p
-            let r=if isdefined.lr1 then 
-            postbind3b(typedict,dict,symdef(data.p,code.lr1), compiled) 
-            else  if istype.data.p then
-             let p2 =  deepcopybody(resulttype.data.p,typedict )
-             postbind3b(typedict,dict,symdef(data.p,p2), compiled)
-            else 
-               let fx = handletemplate(dict, data.p, org, source, tempX)
-               let k = first.fx
-               if length.fx=1 then
-                let code= for paras=empty:seq.symbol,i=arithseq(nopara.k,1,1) do paras+Local.i /for(paras+k)
-                postbind3b(typedict,dict,symdef(data.p,code), compiled)
-               else 
-                assert length.fx > 1 report "KLJ??"+print.k+print.data.p
-                   postbind3b(typedict,dict,symdef(k,fx << 1), compiled) 
-              let discard=for acc2=symbolref.EqOp, sym=code.r   do  symbolref.sym /for(acc2)
-            acc+symdef(data.p,code.r) 
-         /for(
-           usedsyms(source, typedict,length.a,acc,tempX,dict,compiled)
-           )
+              let isdefined=not.isempty.findelement(symdef(sym1,empty:seq.symbol),source) /or sym1 /in compiled
+              if isdefined then acc
+              else  if istype.sym1 then
+                acc+symdef(sym1,deepcopybody(resulttype.sym1,typedict ))
+              else 
+               let fx =  getCode(templates, sym1)
+               acc+if isempty.fx then 
+                assert false report "J"+print.sym1
+             symdef(sym1,for paras=empty:seq.symbol,i=arithseq(nopara.sym1,1,1) do paras+Local.i /for(paras+sym1))
+               else symdef(sym1,fx )
+         /for(acc)
+           next(source /cup asset.newones,new+newones)
+        /for( 
+                 if isempty.new /or true then source else handletemplatesX(new,source,templates,typedict,compiled,dict))
+         }
+         
+  use set.symdef    
 
 
-function postbind3b(typedict:type2dict, dict:set.symbol, sd:symdef, compiled:set.symbol)symdef
+Function postbind3b(typedict:type2dict, dict:set.symbol, sd:symdef, compiled:set.symbol) seq.symbol
 let modpara = para.module.sym.sd
  let pdict = for pmap = empty:intdict.seq.symbol, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara.sym.sd do 
                next(add(pmap, parano, [ Local.parano]), parano + 1)
@@ -202,7 +306,7 @@ else if name.sym ∈ "packed"then
         assert name.sym /in "offsets build" report "post bind"+print.sym
      sym
      ] )
-       /for(symdef(sym.sd, result))
+       /for( result)
        
  function iscoretype(typ:mytype) boolean
  typ =  typeint /or typ=typereal   /or typ=typeptr /or typ=typeboolean /or isseq.typ /or isencoding.typ
@@ -217,25 +321,26 @@ else if name.sym ∈ "packed"then
      Local.varno , Lit.0, EqOp], [   gl, Words.print.typ, encodenosym, setSym.typeint, Define(varno+1), gl  
       ,Lit.0,Getfld.typeint],[ Local.varno],typeint)
 
-function basetype(type:mytype, addsize: type2dict)mytype
+function deepcopysym(typedict:type2dict, type:mytype) symbol
+ if type =typereal /or type=typeint then deepcopySym(type) else
+ let z=flatwithtype(typedict,type)
+ assert not.isempty.z report  "deepcopy cannot find type"+print.type+stacktrace
+   deepcopySym(first.z)
+
+Function basetype(type:mytype, addsize: type2dict)mytype
    if isseq.type then
      let para=parameter.type
      if para =typebyte /or para =typebit then type else 
      seqof.coretype(parameter.type,addsize,6)
    else coretype(type,addsize)    
 
-function blocksym(basetype:mytype)symbol
+Function blocksym(basetype:mytype)symbol
 let p = parameter.basetype
 let p2 = seqof.if p = typebyte ∨ p = typebit ∨ p = typeboolean then typeint else p
  symbol(moduleref."tausupport","blockIt", p2, p2)
        
-function deepcopysym(typedict:type2dict, type:mytype) symbol
- if type =typereal /or type=typeint then deepcopySym(type) else
- let z=flatwithtype(typedict,type)
- assert not.isempty.z report  "deepcopy cannot find type"+print.type+stacktrace
-   deepcopySym(first.z)
         
-function deepcopybody(type:mytype, typedict:type2dict)seq.symbol
+Function deepcopybody(type:mytype, typedict:type2dict)seq.symbol
  if type = typeint ∨ type = typeword ∨ isencoding.type then [ Local.1]
  else if isseq.type then
  let basetype =  basetype(  type,typedict)

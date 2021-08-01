@@ -44,6 +44,8 @@ Function replace(s:seq.T, index:int, value:T)seq.T
 
 _____________
 
+Export type:arithmeticseq.T
+
 type arithmeticseq is sequence, step:T, start:T
 
 unbound +(T, T)T

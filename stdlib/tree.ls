@@ -12,6 +12,9 @@ unbound =(T, T)boolean
 
 Function =(a:tree.T, b:tree.T)boolean
  if label.a = label.b then sons.a = sons.b else false
+ 
+Export =(a:seq.tree.T, b:seq.tree.T)boolean
+ 
 
 Function tree(l:T)tree.T tree(l, empty:seq.tree.T)
 

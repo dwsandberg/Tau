@@ -191,6 +191,8 @@ Export empty:seq.int seq.int
 
 Export arithseq(int, int, int)seq.int
 
+Export _(arithmeticseq.int,int) int
+
 Export constantseq(len:int, element:int)seq.int
 
 Export_(seq.word, int)word

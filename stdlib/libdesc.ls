@@ -32,7 +32,6 @@ use seq.seq.int
 
 use seq.seq.word
 
-/use  program
 
 use seq.encodingpair.seq.char
 

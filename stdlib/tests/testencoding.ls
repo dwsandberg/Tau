@@ -88,7 +88,8 @@ let p = process.process1
    ,"encoding"
    )
 
-Function process1 seq.encodingpair.testrecord let discard = for acc = 0, @e = ["A1","B2","C3","D4","E5"]do
+Function process1 seq.encodingpair.testrecord 
+let discard = for acc = 0, @e = ["A1","B2","C3","D4","E5"]do
  acc + add.@e
 /for(acc)
 encoding:seq.encodingpair.testrecord
