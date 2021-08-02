@@ -1,4 +1,4 @@
-Module pro2gram
+Module program
 
 
 use symbol
@@ -11,29 +11,29 @@ use standard
 
 use seq.set.symdef
 
-type pro2gram is datax:seq.set.symdef 
+type program is datax:seq.set.symdef 
 
-Function data(a:pro2gram) set.symdef  first.datax.a
+Function data(a:program) set.symdef  first.datax.a
 
-Function pro2gram(s:set.symdef) pro2gram pro2gram.[s]
+Function program(s:set.symdef) program program.[s]
 
-Function /cup(a:pro2gram,b:pro2gram) pro2gram 
-  pro2gram (data.a /cup data.b )
+Function /cup(a:program,b:program) program 
+  program (data.a /cup data.b )
     
 
 
-Export type:pro2gram
+Export type:program
 
 
-Function getCode(theprg:pro2gram,s:symbol) seq.symbol 
+Function getCode(theprg:program,s:symbol) seq.symbol 
  let f=findelement(symdef(s,empty:seq.symbol),data.theprg)
  if isempty.f then empty:seq.symbol else code.f_1
  
-Function isdefined(theprg:pro2gram,s:symbol) boolean
+Function isdefined(theprg:program,s:symbol) boolean
  not.isempty.findelement(symdef(s,empty:seq.symbol),data.theprg)
   
 
-Function print(p:pro2gram, i:symbol)seq.word  
+Function print(p:program, i:symbol)seq.word  
   print.i + for acc ="", @e = getCode(p,i) do acc + print.@e /for(acc)
 
 
@@ -41,12 +41,12 @@ Function  target(a:symdef)symbol sym.a
 
 use seq.symdef
  
-Function  tosymdefs(p:pro2gram)seq.symdef   toseq.data.p
+Function  tosymdefs(p:program)seq.symdef   toseq.data.p
 
-Function emptypro2gram pro2gram pro2gram.empty:set.symdef
+Function emptyprogram program program.empty:set.symdef
 
-Function map(p:pro2gram, s:symbol, code:seq.symbol)pro2gram 
-pro2gram.replace(data.p,symdef(s,code)  )    
+Function map(p:program, s:symbol, code:seq.symbol)program 
+program.replace(data.p,symdef(s,code)  )    
 
 use set.symdef
 
@@ -237,19 +237,19 @@ Function alltypes(s:compileinfo) type2dict typedict.s
  
 Function  compileinfo(prg:seq.symdef, alltypes:type2dict ,mods:seq.libraryModule
 ,src:seq.seq.word) compileinfo
-compileinfo(alltypes, cvtL3(pro2gram.asset.prg,1,empty:seq.seq.symbolref),src,symbolrefdecode,mods)
+compileinfo(alltypes, cvtL3(program.asset.prg,1,empty:seq.seq.symbolref),src,symbolrefdecode,mods)
 
 
 
 
-Function cvtL2( alltypes: type2dict,prg:pro2gram,  mods:seq.libraryModule) compileinfo
+Function cvtL2( alltypes: type2dict,prg:program,  mods:seq.libraryModule) compileinfo
 compileinfo(alltypes, cvtL3(prg,1,empty:seq.seq.symbolref),empty:seq.seq.word,symbolrefdecode,mods)
 
-Function addprg(cinfo:compileinfo,prg:pro2gram) compileinfo
+Function addprg(cinfo:compileinfo,prg:program) compileinfo
   compileinfo(typedict.cinfo,cvtL3(prg,1,empty:seq.seq.symbolref)
   ,src.cinfo,symbolrefdecode,mods.cinfo) 
 
- function cvtL3(prg:pro2gram,i:int, in: seq.seq.symbolref) seq.seq.symbolref
+ function cvtL3(prg:program,i:int, in: seq.seq.symbolref) seq.seq.symbolref
  let x=encoding:seq.encodingpair.symbol
  if i > length.x then in 
  else 
@@ -273,7 +273,7 @@ Function addprg(cinfo:compileinfo,prg:pro2gram) compileinfo
 
 use set.word
   
-Function addoption(p:pro2gram, s:symbol, option:seq.word)pro2gram
+Function addoption(p:program, s:symbol, option:seq.word)program
 { must maintain library of symbol in p}
  let f=findelement(symdef(s,empty:seq.symbol),data.p)
   let code= if isempty.f then empty:seq.symbol else code.f_1
@@ -305,7 +305,7 @@ use standard
 
 use symbol
 
-use pro2gram
+use program
 
 use textio
 
@@ -419,7 +419,7 @@ Function options(match5map:seq.match5, m:match5)seq.word getoption.code.m
 Function funcdec(alltypes:type2dict, i:symbol)int
  toint.modulerecord([ mangledname.i], [ toint.FUNCTIONDEC, typ.tollvmtype( alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
-Function match5map(theprg:pro2gram, uses:set.symbol, alltypes:type2dict)seq.match5
+Function match5map(theprg:program, uses:set.symbol, alltypes:type2dict)seq.match5
 let discard3 = [ addtemplate(symbol(internalmod,"packedindex", seqof.typebit, typeint, typeint), 8, BINOP(r.1, ibcsub.2, C64.1, sub) + BINOP(r.2, r.1, C64.6, lshr)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3)
@@ -589,7 +589,7 @@ function buildconst(xx:symbol, alltypes:type2dict)match5
   assert isword.xx report"not a constant" + print.xx
    addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.wordname.xx)
 
-function buildtemplate(theprg:pro2gram, alltypes:type2dict, xx:symbol)match5
+function buildtemplate(theprg:program, alltypes:type2dict, xx:symbol)match5
  { xx will not be constant }
  if islocal.xx then addtemplate(xx, 0, emptyinternalbc,"LOCAL"_1, slot.value.xx)
  else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,"DEFINE"_1, slot.value.xx)

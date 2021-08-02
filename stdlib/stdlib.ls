@@ -34,7 +34,7 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
   interpreter  llvm llvmconstants codegennew   persistant breakblocks
-  pro2gram hidesymbol pass2 parse  symboldict taublockseq
+  program hidesymbol pass2 parse  symboldict taublockseq
 
 * Removed maindict 
 
@@ -49,7 +49,7 @@ use codegennew
 
 use standard
 
-use  pro2gram
+use  program
 
 use symbol
 
@@ -66,10 +66,10 @@ use seq.bits
 Export  subcompilelib( seq.word)seq.word  
 
 
-Export pass2(placehold:pro2gram)pro2gram  
+Export pass2(placehold:program)program  
 
 
-Export codegen(theprg:pro2gram,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict,isbase:boolean)seq.bits  
+Export codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict,isbase:boolean)seq.bits  
 
 
 

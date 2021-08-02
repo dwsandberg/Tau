@@ -26,7 +26,7 @@ use standard
 
 use symbol
 
-use pro2gram
+use program
 
 use textio
 
@@ -93,7 +93,7 @@ let filelist = info_2
 let exports = info_3
  { let b = unloadlib.[ libname]}
 let cinfo=compilerfront("all",libname,["Library"+libname]+getlibrarysrc.libname,dependentlibs,exports)
-let prg4=pro2gram.asset.prg.cinfo
+let prg4=program.asset.prg.cinfo
 let libdesc= libdesc(cinfo,prg4 )
 let uses = uses(prg4 , roots.cinfo /cup  asset.libdesc)
 let bc = codegen(prg4,  uses, last.libname, libdesc, alltypes.cinfo , isempty.dependentlibs)
@@ -119,7 +119,7 @@ let src = ["module $X","use standard"] + subseq(args2, 2, length.args2 - 1)
 let p2=process.compilerfront("pass1", "runit",src,"stdlib" + lib,"$X")
   if aborted.p2 then message.p2
   else
-   let p3 = process.interpret(typedict.result.p2, getCode(pro2gram.asset.prg.result.p2
+   let p3 = process.interpret(typedict.result.p2, getCode(program.asset.prg.result.p2
    , symbol(moduleref."$X","runitx", seqof.typeword)))
    if aborted.p3 then message.p3 else result.p3
 createfile("stdout", toUTF8bytes.output)
@@ -131,7 +131,7 @@ use process.compileinfo
   acc + [ print.sym.p + print.code.p]
  /for(acc)
  
- use pro2gram
+ use program
 
 /Function print(a:seq.seq.word)seq.word
  for acc ="", @e = a do acc + " /br  /br" + @e /for(acc)
@@ -154,7 +154,7 @@ Function compilerfront(option:seq.word,libname:seq.word
     
 use seq.libraryModule
 
-use program
+use firstpass
 
 use seq.firstpass
 

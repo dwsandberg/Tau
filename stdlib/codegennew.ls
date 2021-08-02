@@ -16,7 +16,7 @@ use standard
 
 use symbol
 
-use pro2gram
+use program
 
 use textio
 
@@ -54,7 +54,7 @@ use seq.encodingpair.stat5
 
 use seq.seq.seq.int
 
-Function codegen(theprg:pro2gram,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict, isbase:boolean)seq.bits
+Function codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict, isbase:boolean)seq.bits
 let defines = for acc = empty:seq.symbol, ele = toseq.uses do
  if isconstantorspecial.ele ∨ isabstract.module.ele  /or library.module.ele="compiled"_1 then acc 
   else if not.isbase  /and name.module.ele /in "standard tausupport fileio" then acc

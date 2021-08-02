@@ -15,7 +15,7 @@ use otherseq.seq.word
 
 use symbol
 
-use pro2gram
+use program
 
 Function multitarget(value1:int, a:boolean, b:boolean)int
  { check to see optimization handles this case correctly }

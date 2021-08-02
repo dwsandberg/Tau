@@ -6,7 +6,7 @@ use standard
 
 use symbol
 
-use program
+use firstpass
 
 use textio
 
@@ -42,17 +42,17 @@ use seq.seq.word
 
 use seq.seq.seq.word
 
-Export result(linkage)pro2gram
+Export result(linkage)program
 
 Export compiled(linkage)set.symbol
 
-Export templates(linkage)pro2gram
+Export templates(linkage)program
 
 Export cinfo(linkage)compileinfo
 
 Export type:linkage
 
-type linkage is result:pro2gram, compiled:set.symbol, templates:pro2gram,cinfo:compileinfo
+type linkage is result:program, compiled:set.symbol, templates:program,cinfo:compileinfo
 
 function =(a:firstpass, b:firstpass)boolean module.a = module.b
 
@@ -71,9 +71,11 @@ function issimple2(s:symbol)seq.symbol if isabstract.module.s then empty:seq.sym
 
 use  groupparagraphs
 
-/use pro2gram
+/use program
 
 use seq.program
+
+use set.symdef
 
 
 use set.passtypes
@@ -103,16 +105,22 @@ let alltypes0 = for acc = empty:seq.myinternaltype, @e = toseq.d1 do acc + types
  let abstract = abstractsimple1_1
  let prg1 = for acc = libsimple, @e = simple do bind3(acc, alltypes, d1, @e)/for(acc)
  let templates0 = for acc = libtemplates, @e = abstract do bind3(acc, alltypes, d1, @e)/for(acc)
- let templates =   templates0
+  let templates =    templates0
  let roots = for acc = empty:seq.symbol, @e = simple do acc + roots(exports, @e)/for(acc)
   let dict2=type2dict(alltypes)
-  let compiled=asset.toseq.libsimple
-let prg2=postbind(dict2, allsymbols1, roots , pro2gramB.prg1, pro2gramB.templates,compiled)
+  let compiled=for acc=empty:set.symbol,sd=toseq.data.libsimple do  acc+sym.sd /for(acc)
+ { let z=for  acc=empty:set.symdef ,  sd=  toseq.data.templates do
+     acc+symdef(sym.sd,postbind3b(dict2,allsymbols1,sd,compiled))
+  /for (program.acc)}
+  let prg2=postbind(dict2, allsymbols1, roots ,  prg1,  templates,compiled)
  let options=for acc = empty:seq.seq.word, @e = allsrc1 do acc + @e /for(acc)
- let mods=tolibraryModules(dict2,emptypro2gram,  simple + abstract,exports) 
+ let mods=tolibraryModules(dict2,emptyprogram,  simple + abstract,exports) 
 { assert false report  "X"+for acc="", m=mods do acc+name.modname.m /for (acc)
- }let cinfo=cvtL2( dict2 ,emptypro2gram,  mods)
- linkage(processOptions(prg2,simple,"COMPILETIME NOINLINE INLINE PROFILE STATE"), compiled,   prescan2.pro2gram.templates,cinfo)
+ }let cinfo=cvtL2( dict2 ,emptyprogram,  mods)
+ linkage(processOptions(prg2,simple,"COMPILETIME NOINLINE INLINE PROFILE STATE"), compiled,   templates,cinfo)
+ 
+ 
+ 
  
  /Function postbind3b(typedict:type2dict, dict:set.symbol, sd:symdef, compiled:set.symbol)symdef
 
@@ -120,7 +128,7 @@ let prg2=postbind(dict2, allsymbols1, roots , pro2gramB.prg1, pro2gramB.template
    postbind3b(dict2,allsymbols1,?,compiled)
  
  
- Function processOptions(prg:pro2gram,mods:seq.firstpass,option:seq.word) pro2gram
+ Function processOptions(prg:program,mods:seq.firstpass,option:seq.word) program
   for acc=prg ,  m=mods     do   
    if name.module.m /in option then
     for  acc2=acc  , sym=toseq.exports.m do 
@@ -136,7 +144,7 @@ let prg2=postbind(dict2, allsymbols1, roots , pro2gramB.prg1, pro2gramB.template
  use seq.seq.mytype
  
  
- Function tolibraryModules(alltypes: type2dict,prg:pro2gram,  t5:seq.firstpass,exports:seq.word) seq.libraryModule
+ Function tolibraryModules(alltypes: type2dict,prg:program,  t5:seq.firstpass,exports:seq.word) seq.libraryModule
  for acc = empty:seq.libraryModule, m2 =  t5 do
     if name.module.m2 /nin exports then acc else
      let exps=  for acc3 = empty:seq.symbolref, e = toseq.exports.m2 do acc3 + symbolref.e /for(acc3)
@@ -157,7 +165,7 @@ let prg2=postbind(dict2, allsymbols1, roots , pro2gramB.prg1, pro2gramB.template
    
  use postbind
  
- use pro2gram
+ use program
  
 
 function basetypes seq.myinternaltype [ myinternaltype("defined"_1,"int"_1, moduleref."standard", [ typeint]), myinternaltype("defined"_1,"boolean"_1, moduleref."standard", [ typeint])]
@@ -314,8 +322,9 @@ if not.isempty.txt then
  .common.dict,mode.common.dict)])
  let code = parsedcode.parse.dict2
  map(p, s, if length.code = 1 ∧ isconst.code_1 then code + [ Words."VERYSIMPLE", Optionsym]else code)
- else if para.module.s = typeT ∧ s ∉ p then map(p, s, empty:seq.symbol)else p
-
+ else if para.module.s = typeT ∧ symdef(s,empty:seq.symbol) ∉ data.p then map(p, s, empty:seq.symbol)else p
+ 
+ 
 
 type symboltext is ph:symbol, module:modref, text:seq.word
 

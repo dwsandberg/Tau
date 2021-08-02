@@ -54,7 +54,7 @@ use set.seq.word
 
 use seq.seq.seq.symbol
 
-function firstopt(p:pro2gram, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
+function firstopt(p:program, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
 let pdict = for pmap = empty:intdict.seq.symbol, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara.s 
   do next(add(pmap, parano, [ Local.parano]), parano + 1)
   /for(pmap)
@@ -79,7 +79,7 @@ function isverysimple(nopara:int, code:seq.symbol)boolean
   for isverysimple = length.code ≥ nopara, idx = 1, sym = code while isverysimple do next(if idx ≤ nopara then sym = Local.idx
   else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym, idx + 1)/for(isverysimple)
 
-function xxx(p:pro2gram, code:seq.symbol, s:symbol, pdict:intdict.seq.symbol)expandresult
+function xxx(p:program, code:seq.symbol, s:symbol, pdict:intdict.seq.symbol)expandresult
 let a = scancode(p, code, nopara.s + 1, pdict, s)
 let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1)else code.a
  if length.code = length.new ∧ length.code > 20 ∨ new = code then
@@ -98,7 +98,7 @@ Function Hasmerge bits bits.16
 
 function ∈(a:bits, b:bits)boolean(a ∧ b) = a
 
-function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symbol, self:symbol)expandresult
+function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symbol, self:symbol)expandresult
  for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym = org do
  let len = length.result
   if not.isempty.result ∧ last.result = PreFref then
@@ -184,7 +184,7 @@ function scancode(p:pro2gram, org:seq.symbol, nextvarX:int, mapX:intdict.seq.sym
         next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
  /for(expandresult(nextvar, result, flags))
 
-function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:pro2gram, self:symbol)expandresult
+function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:program, self:symbol)expandresult
  for pmap = empty:intdict.seq.symbol, paracode = empty:seq.symbol, nextvar = nextvarin, parano = 1, lastidx = t_1, idx = t << 1 do
   next(add(pmap, parano, [ Local.nextvar]), paracode + subseq(result, lastidx, idx - 1) + Define.nextvar, nextvar + 1, parano + 1, idx)
  /for(let r = scancode(p, code, nextvar, pmap, self)
@@ -327,8 +327,8 @@ ________________________________
 
 use set.symdef
 
-Function pass2(knownsymbols :pro2gram)pro2gram 
-subpass2(empty:seq.symdef, emptypro2gram, knownsymbols, 0)
+Function pass2(knownsymbols :program)program 
+subpass2(empty:seq.symdef, emptyprogram, knownsymbols, 0)
 
 SIZE 2283 868 1385 1 SIZE 1646 1080 1810 2 SIZE 1589 1103 1844 3 SIZE 1584 1108 1844 4
 
@@ -336,9 +336,9 @@ SIZE 1751 918 1867 4
 
 SIZE 2333 315 1888 4
 
-function subpass2(bigin:seq.symdef, corein:pro2gram, toprocess:pro2gram, count:int)pro2gram
+function subpass2(bigin:seq.symdef, corein:program, toprocess:program, count:int)program
  { assert count < 4 report"SIZE"+ print.length.toseq.toprocess + print.length.bigin + print.length.toseq.corein + print.count }
- for big = bigin, small = emptypro2gram, core = corein, pele = tosymdefs.toprocess do
+ for big = bigin, small = emptyprogram, core = corein, pele = tosymdefs.toprocess do
  let s = target.pele
  let fullcode = code.pele
  let options = getoption.fullcode
@@ -400,11 +400,11 @@ function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
     else first
      backparse2(s, b - 1, no - 1, [ b] + result)
      
-use pro2gram
+use program
 
- Function uses(p:pro2gram, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
+ Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
  
-function uses(p:pro2gram, processed:set.symbol, toprocess:set.symbol)set.symbol
+function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
  if isempty.toprocess then processed
  else
   let q = asset.for acc = empty:seq.symbol, @e = toseq.toprocess do

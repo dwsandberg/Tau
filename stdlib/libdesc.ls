@@ -6,7 +6,7 @@ use standard
 
 use symbol
 
-use pro2gram
+use program
 
  
 use seq.liblib
@@ -45,7 +45,7 @@ use seq.seq.symbolref
 
 Function ?(a:symbolref,b:symbolref) ordering toint.a ? toint.b
   
-Function libdesc(info:compileinfo, prg:pro2gram) seq.symbol
+Function libdesc(info:compileinfo, prg:program) seq.symbol
 let symstoexport2=   for  acc=empty:seq.symbolref ,  m=  mods.info do
           acc+  defines.m+exports.m
         /for( for acc2=empty:set.symbol, r=toseq.asset.acc do 

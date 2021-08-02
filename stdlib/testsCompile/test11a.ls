@@ -38,7 +38,7 @@ Function test11a seq.word let z = [ compare("a + b + c","(a + b)+ c")
 ]}
  check(z,"test11a") + checkprec
  
- use pro2gram
+ use program
  
  use process.compileinfo
 

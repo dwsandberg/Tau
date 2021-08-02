@@ -21,7 +21,7 @@ use process.seq.word
 
 use main2
 
-use pro2gram
+use program
 
 use set.symdef
 

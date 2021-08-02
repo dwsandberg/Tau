@@ -1,7 +1,7 @@
-Module program
+Module firstpass
 
     
-use pro2gram
+use program
 
 use symbol 
 
@@ -22,38 +22,7 @@ use set.word
 
 use set.symdef
 
-Export type:program
 
-Function getCode(p:program, s:symbol) seq.symbol 
-let t = findelement(s, toset.p)
- if isempty.t then  empty:seq.symbol else  zcode.t_1 << 1
-
-
-
-Function  pro2gram(p:program) pro2gram  pro2gramB.p
- 
-Function pro2gramB(p:program) pro2gram  
- for acc = empty:set.symdef , sym=toseq.toset.p do acc+symdef(sym, zcode.sym << 1) /for(pro2gram.acc)
-
-
-
-Function emptyprogram program program2.empty:set.symbol
-
-type program is toset:set.symbol
-
-Function ∪(p:program, a:program)program program(toset.p ∪ toset.a)
-
-Function toseq(p:program)seq.symbol toseq.toset.p
-
-Function ∈(s:symbol, p:program)boolean s ∈ toset.p
-
-Function program2(a:set.symbol)program program.a
-
-Function map(p:program, s:symbol, code:seq.symbol)program  
- program.replace(toset.p, addzcode (s, [ s] + code))
-
-
-   
   
 Export type:firstpass
 
@@ -97,7 +66,7 @@ use mytype
 
 use seq.mytype
 
-use pro2gram
+use program
 
 type typedict is data:seq.myinternaltype
 

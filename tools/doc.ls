@@ -57,7 +57,7 @@ let x1 = createfile("doc.html", toUTF8bytes.d)
 { let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])}
  { let y1 = createhtmlfile("testall.html", htmlcode."testall")} d
 
-use pro2gram
+use program
 
 function addselect(s:seq.word)seq.word 
  if not.isempty.s ∧ first.s = first."/section"then

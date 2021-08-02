@@ -33,7 +33,7 @@ use process.seq.int
 
 use seq.seq.int
 
-use pro2gram
+use program
 
 Builtin bitcast(int)seq.int
 
