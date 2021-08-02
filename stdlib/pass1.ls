@@ -105,7 +105,7 @@ let alltypes0 = for acc = empty:seq.myinternaltype, @e = toseq.d1 do acc + types
  let abstract = abstractsimple1_1
  let prg1 = for acc = libsimple, @e = simple do bind3(acc, alltypes, d1, @e)/for(acc)
  let templates0 = for acc = libtemplates, @e = abstract do bind3(acc, alltypes, d1, @e)/for(acc)
-  let templates =    templates0
+  let templates =   prescan2.templates0
  let roots = for acc = empty:seq.symbol, @e = simple do acc + roots(exports, @e)/for(acc)
   let dict2=type2dict(alltypes)
   let compiled=for acc=empty:set.symbol,sd=toseq.data.libsimple do  acc+sym.sd /for(acc)
