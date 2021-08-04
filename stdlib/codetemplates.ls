@@ -60,17 +60,20 @@ use set.symbol
 
 use mytype
 
-type typerep is totypeseq:seq.mytype
+use typerep
 
-function ?(a:typerep,b:typerep) ordering  first.totypeseq.a ? first.totypeseq.b
+
+/type typerep is totypeseq:seq.mytype
+
+/function ?(a:typerep,b:typerep) ordering  first.totypeseq.a ? first.totypeseq.b
 
 use set.typerep
 
-function type(a:typerep) mytype  first.totypeseq.a
+/function type(a:typerep) mytype  first.totypeseq.a
 
-function flatflds(a:typerep) seq.mytype  totypeseq.a << 1
+/function flatflds(a:typerep) seq.mytype  totypeseq.a << 1
 
-function typerep(t:mytype,flat:seq.mytype) typerep typerep([t]+flat) 
+/function typerep(t:mytype,flat:seq.mytype) typerep typerep([t]+flat) 
 
 type type2dict is totypedict:set.typerep
 

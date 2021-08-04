@@ -158,8 +158,7 @@ use firstpass
 
 use seq.firstpass
 
-use seq.myinternaltype
-
+ 
 Function loadlibbug seq.word " bug10 "
 
 use seq.symbolref
@@ -192,13 +191,11 @@ for acc=empty:seq.firstpass,m=ll  do
       let sym=(decoderef)_toint.r
       if isunbound.sym then acc2 else 
       acc2+ sym /for(acc2)
-   let types=  for acc2=empty:seq.myinternaltype, t=types.m do
-      acc2+myinternaltype(if isabstract.modname.m then "undefined"_1
-    else "defined"_1, abstracttype.first.t, module2.first.t, t << 1 )
-      /for(acc2)
-         acc+firstpass(modname.m, uses.m, d, e, types)
+          acc+firstpass(modname.m, uses.m, d, e, types.m)
  /for(acc)
  
+ 
+      
 _______________
 
 use words

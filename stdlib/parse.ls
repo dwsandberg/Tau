@@ -40,10 +40,7 @@ let paratypes = for acc = empty:seq.mytype, @e =  subseq(types.t,if length.name=
    symbol4(module, name_1, typeinname, paratypes, funcreturntype)
 
 
-Function typeflds(b:bindinfo) seq.mytype 
-for acc=empty:seq.mytype,idx=1,t=types.b << 1 do
- next(acc+addabstract(typeref([(text.b)_idx] +"internal."), t),idx+1)
-/for(acc)
+
 
 function fixNM(t:seq.word) seq.word
 if length.t=1  then t else [t_1,":"_1]+(t << 1)

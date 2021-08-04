@@ -15,26 +15,26 @@ use seq.mytype
  
 use standard
 
-use seq.myinternaltype
-
 use set.word
-
 
 use set.symdef
 
-
-  
-Export type:firstpass
-
 use mytype
 
-type firstpass is module:modref, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unbound:set.symbol, types:seq.myinternaltype, prg:program
- 
-Export  firstpass(module:modref, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, types:seq.myinternaltype, p:program)firstpass
+use parse
+
+use symboldict
+     
+use seq.seq.mytype
+
+use seq.firstpass
+
+
+Export type:firstpass
+
+Export  firstpass(module:modref, uses:seq.mytype, defines:set.symbol, exports:set.symbol, unboundexports:seq.symbol, unboundx:set.symbol, types:seq.seq.mytype, p:program)firstpass
 
 Export module(f:firstpass) modref
-
- 
 
 Export defines(firstpass)set.symbol
 
@@ -46,94 +46,70 @@ Export unboundexports(firstpass)seq.symbol
 
 Export unbound(firstpass)set.symbol
 
-Export types(firstpass)seq.myinternaltype
+Export types(firstpass)seq.seq.mytype
 
 Export prg(firstpass)program
 
+type firstpass is module:modref, uses:seq.mytype, defines:set.symbol, exports:set.symbol
+, unboundexports:seq.symbol, unbound:set.symbol, types:seq.seq.mytype, prg:program
+
 Function ?(a:firstpass, b:firstpass)ordering toalphaseq.print.module.a ? toalphaseq.print.module.b
 
-Function  firstpass(module:modref, uses:seq.mytype, defines:set.symbol, exports:set.symbol  , types:seq.myinternaltype )firstpass
+Function  firstpass(module:modref, uses:seq.mytype, defines:set.symbol, exports:set.symbol  , types:seq.seq.mytype )firstpass
 firstpass(module , uses , defines , exports , empty:seq.symbol, empty:set.symbol, types, emptyprogram) 
 
+Function firstpass(module:modref) firstpass
+firstpass( module, empty:seq.mytype, empty:set.symbol, empty:set.symbol, empty:seq.symbol, empty:set.symbol, empty:seq.seq.mytype, emptyprogram)
+ 
+Function fixtype(t:seq.mytype) mytype first.t  
 
-use standard
+function subflds(t:seq.mytype) seq.mytype t << 1
 
-use symbol
-
-use seq.myinternaltype
-
-use mytype
-
-use seq.mytype
-
-use program
-
-type typedict is data:seq.myinternaltype
-
-Export data(typedict) seq.myinternaltype
-
-Function type2dict(dict:typedict) type2dict   
-for acc=emptytypedict, t=data.dict do
-add(acc,newtype(module.t,name.t) ,  subflds.t)  
-/for(acc)
-
-Function +(a:typedict, b:seq.myinternaltype)typedict typedict(data.a + b)
+function name(m:seq.mytype) word abstracttype.first.m
+   
+Function addtype(dict:seq.seq.mytype,name:word, module:modref,subflds:seq.mytype) seq.seq.mytype
+  dict+([if not.issimple.module then 
+addabstract(typeref3(module , name ),para.module)
+ else typeref3(module , name )]+subflds) 
+      
+Function replaceTmyinternaltype(with:mytype, s:seq.seq.mytype) seq.seq.mytype
+for acc = empty:seq.seq.mytype , it = s do 
+  acc + (   [replaceT(with, first.it)]+it << 1 )
+    /for(acc)
 
 
-Function findtype(d:typedict, type:mytype)seq.myinternaltype
- findelement(myinternaltype("?"_1, abstracttype.type,    moduleref("?", parameter.type) , empty:seq.mytype), data.d)
+Function processtypedef( s:seq.firstpass) type2dict
+ let a=for acc = empty:seq.seq.mytype, @e = s do acc + types.@e /for(acc)
+ processtypedef(emptytypedict, a, 1, empty:seq.seq.mytype)
+ 
+ Function processtypedef( fldtypes:seq.seq.mytype) type2dict
+ processtypedef(emptytypedict, fldtypes, 1, empty:seq.seq.mytype)
 
-Export typedict(seq.myinternaltype)typedict
-
-Export type:typedict
-
-
-
-Function typesym(d:typedict, type:mytype)symbol
- if type = typeint then symbol(moduleref."tausupport", "deepcopy ",typeint,typeint)
- else if type = typereal then symbol(moduleref."tausupport", "deepcopy ",typereal,typereal)
+ 
+function print3(it:seq.mytype)seq.word
+    "type" +print.first.it +"subfield types" 
+  + for acc ="", e = it << 1 do acc + print.e /for(acc)
+      
+   function processtypedef(defined:type2dict, undefined:seq.seq.mytype, i:int, newundefined:seq.seq.mytype)type2dict
+ if i > length.undefined then
+  if length.newundefined = 0 then defined
+  else
+   assert length.undefined > length.newundefined report"unresolved types:"
+   + for acc ="", @e = newundefined do list(acc," /br", print3.@e)/for(acc)
+   processtypedef(defined, newundefined, 1, empty:seq.seq.mytype)
  else
-  let e = findtype(d, type)
-   assert length.e = 1 report"type not found" + print.type + stacktrace
-   let it = e_1
-   let t = addabstract(typeref3(module.it, name.it ), para.module.it)
-        symbol4(module.it,"type"_1 ,t  ,   [ t], t)
-        
-        
-
-type myinternaltype is kind:word, name:word, module:modref, subflds:seq.mytype
-
-Export type:myinternaltype
-
-Export name(myinternaltype)word
-
-Export kind(myinternaltype) word
-
-Function isdefined(it:myinternaltype)boolean kind.it = "defined"_1
-
-Function typekind(t:myinternaltype)word kind.t
-
-Function modpara(t:myinternaltype)mytype para.module.t
-
-Export subflds(myinternaltype)seq.mytype
-
-function =(a:myinternaltype, b:myinternaltype)boolean
- name.a = name.b ∧ para.module.a = para.module.b
-
-Function changesubflds(t:myinternaltype, subflds:seq.mytype)myinternaltype 
-myinternaltype("defined"_1, name.t, module.t, subflds)
-
-
-Export module(m: myinternaltype) modref  
-
-Export myinternaltype(kind:word, name:word, module:modref, subflds:seq.mytype)myinternaltype
-  
-  
-Function replaceTmyinternaltype(with:mytype, it:myinternaltype)myinternaltype 
-myinternaltype(kind.it, name.it, replaceT(with, module.it), subflds.it)
-
-Function typesym(it:myinternaltype)symbol
-let t = addabstract(typeref3(module.it, name.it ), para.module.it)
-       symbol4(module.it,"type"_1 ,t  ,   [ t], t)
-
+   let td = undefined_i
+   let flds = for acc = empty:seq.mytype, idx = 1, fld = subflds.td do
+   let typ=replaceT(parameter.first.td, fld)
+   let tmp = if isseq.typ ∨ typ ∈ [ typeint, typereal, typeboolean, typeT]then [ typ]
+ else if isencoding.typ then [ typeint] else flatflds(defined, typ)
+   next(
+   if idx = 1 ∨ isempty.tmp then tmp else if isempty.acc then acc else acc + tmp, idx + 1)
+  /for(acc)
+  if length.flds = 0 then
+    { some fld is not defined }
+     processtypedef(defined, undefined, i + 1, newundefined + undefined_i)
+   else 
+   processtypedef(add(defined,first.td ,  flds) 
+   , undefined, i + 1, newundefined)
 

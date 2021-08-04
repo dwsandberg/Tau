@@ -503,6 +503,8 @@ Function GetSeqType symbol symbol(moduleref."tausupport","getseqtype",typeptr,ty
 
 Function abortsymbol(typ:mytype) symbol 
 let a=if isseq.typ     then typeptr else  typ
+  symbol(builtinmod.a,"assert", seqof.typeword, a)
+ 
  symbol4(moduleref."tausupport","abort"_1,a,[seqof.typeword],a) 
   
  

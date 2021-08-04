@@ -204,6 +204,9 @@ Function isseq(t:mytype)boolean first.typerep.t = typedef."seq seq."
 
 Function isencoding(t:mytype)boolean first.typerep.t = typedef."encoding encoding."
 
+Function encodingof(base:mytype)mytype mytype([ typedef."encoding encoding."] + typerep.base)
+
+
 Function processof(base:mytype)mytype mytype([ typedef."process process."] + typerep.base)
 
 type passtypes is modname:modref, defines:set.mytype, unresolveduses:seq.seq.word, unresolvedexports:seq.seq.word, exports:set.mytype, uses:set.modref
