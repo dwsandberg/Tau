@@ -53,6 +53,8 @@ for acc3 = toseq.typesyms, q = toseq.asset.typesused do
              /for(resolvetypesize(acc3) )
              
 
+             
+
 function typesused(sym:symbol)seq.mytype
  { only includes parameter of seq and encoding and excludes types int, real, boolea, ptr, and T}
  for acc = empty:seq.mytype, t = types.sym do 
@@ -93,7 +95,8 @@ function print(h:typerep) seq.word for acc=print.type.h , z= flatflds.h do acc+p
 type checkflatresult2 is known:set.typerep, unknown:seq.typerep 
 
 function isflat(p:typerep)boolean
- if isempty.flatflds.p then false
+ if isseq.type.p then true
+ else if isempty.flatflds.p then false
  else
   for state = true, t = flatflds.p while state do
    t ∈ [ typeint, typeT, typeboolean, typereal,typeptr] ∨ isseq.t ∨ isencoding.t
@@ -101,7 +104,7 @@ function isflat(p:typerep)boolean
 
 function expandflat(p:typerep,types:set.typerep)typerep
  let flatflds=flatflds.p
- if isempty.flatflds then
+ if isempty.flatflds then 
      let f3=findelement(typerep(abstracttypeof2.type.p,empty:seq.mytype),types)
       if isempty.f3 then p 
       else typerep(type.p,replaceT(parameter.type.p,flatflds.f3_1) )

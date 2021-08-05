@@ -13,11 +13,11 @@ use textio
 
 use words
 
-use otherseq.firstpass
+use otherseq.passsymbols
 
-use seq.firstpass
+use seq.passsymbols
 
-use set.firstpass
+use set.passsymbols
 
 
 use seq.mytype
@@ -28,15 +28,12 @@ use seq.symbol
 
 use set.symbol
 
-use encoding.symboltext
-
-use seq.symboltext
 
 
 
 use set.word
 
-use seq.seq.firstpass
+use seq.seq.passsymbols
 
 use seq.seq.word
 
@@ -54,17 +51,14 @@ Export type:linkage
 
 type linkage is result:program, compiled:set.symbol, templates:program,cinfo:compileinfo
 
-function =(a:firstpass, b:firstpass)boolean module.a = module.b
+function =(a:passsymbols, b:passsymbols)boolean module.a = module.b
 
 
-Function print(b:firstpass)seq.word
+Function print(b:passsymbols)seq.word
 " /br  /br" + print.module.b + " /br defines" + printdict.defines.b
- + " /br unboundexports"
- + printdict.asset.unboundexports.b
+ + " /br unresolvedexports"
+ + printdict.unresolvedexports.b
 
-Function find(modset:set.firstpass, name:mytype)set.firstpass
- findelement(firstpass(tomodref.name), modset
- )
 
 function issimple2(s:symbol)seq.symbol if isabstract.module.s then empty:seq.symbol else [ s]
 
@@ -79,7 +73,7 @@ use set.symdef
 
 use set.passtypes
 
-Function pass1(allsrc1:seq.seq.word, exports:seq.word, librarymods:seq.firstpass
+Function pass1(allsrc1:seq.seq.word, exports:seq.word, librarymods:seq.passsymbols
 , libsimple:program,libtemplates:program)linkage
 let libpasstypes=for acc=empty:set.passtypes,m=librarymods do 
  let types= for acc2=empty:set.mytype,t=types.m  do  acc2+ fixtype.t /for(acc2)
@@ -90,32 +84,32 @@ let lib ="?"_1
 let modsx = resolvetypes(libpasstypes,allsrc1, lib)
 let typedict=for typedict=empty:set.mytype, m=toseq.modsx do typedict /cup defines.m /for(typedict)
 let allsrc=groupparagraphs("module Module", allsrc1)
-let a = for acc = asset.librarymods, @e = allsrc do gathersymbols(acc,typedict, @e)/for(acc)
-let d1 = resolveunboundexports.expanduse.a
- let split = split(toseq.d1)
+let a = for acc = asset.librarymods, @e = allsrc do gathersymbols(acc,typedict,modsx, @e)/for(acc)
+let d0 =resolveunresolvedexports.a
+ let split = split(toseq.d0)
  let simple = simple.split 
  let abstract = abstract.split
- let allsymbols1=defines.split
-  let prg1 = for acc = libsimple, @e = simple do bind3(acc,   d1, @e)/for(acc)
+  let prg1 = for acc = libsimple, @e = simple do bind3(acc,   d0, @e)/for(acc)
  let templates = for acc = libtemplates, @e = abstract do 
- prescan2.bind3(acc,  d1, @e)/for(acc)
+ prescan2.bind3(acc,  d0, @e)/for(acc)
  let roots = for acc = empty:seq.symbol, @e = simple do acc + roots(exports, @e)/for(acc)
   { let z=for  acc=empty:set.symdef ,  sd=  toseq.data.templates do
      acc+symdef(sym.sd,code.postbind (sd,dict2,  compiled))
   /for (program.acc) }
-     let dict2=if newdict then buildtypedict(allsymbols1,typeflds.split)
-          else processtypedef.typeflds.split  
-  {let dict4= buildtypedict(data.prg1, typeflds.split)  }   
-  let prg2=postbind(dict2, allsymbols1, roots ,  prg1,  templates,compiled)
- let mods=tolibraryModules(dict2,emptyprogram,  simple + abstract,exports) 
-{ assert false report  "X"+for acc="", m=mods do acc+name.modname.m /for (acc)
- }let cinfo=cvtL2( dict2 ,emptyprogram,  mods)
+    let d1 = expanduse.d0
+let allsymbols1 = for acc = empty:set.symbol, @e = toseq.d1 do acc ∪ defines.@e /for(acc)
+let typeflds  = for typeflds = empty:seq.seq.mytype, @e = toseq.d1 do typeflds + types.@e /for( typeflds)
+let dict2=buildtypedict(empty:set.symbol,typeflds)
+   let prg2=postbind(dict2, allsymbols1, roots ,  prg1,  templates,compiled)
+   let dict3=buildtypedict(data.prg2+symdef( (defines.split)_1,toseq.defines.split),typeflds  ) 
+ let mods=tolibraryModules(dict3,emptyprogram,  simple + abstract,exports) 
+let cinfo=cvtL2( dict3 ,emptyprogram,  mods)
  linkage(processOptions(prg2,simple,"COMPILETIME NOINLINE INLINE PROFILE STATE"), compiled,   
  templates,cinfo)
   
  use typerep
  
- Function processOptions(prg:program,mods:seq.firstpass,option:seq.word) program
+ Function processOptions(prg:program,mods:seq.passsymbols,option:seq.word) program
   for acc=prg ,  m=mods     do   
    if name.module.m /in option then
     for  acc2=acc  , sym=toseq.exports.m do 
@@ -131,25 +125,30 @@ let d1 = resolveunboundexports.expanduse.a
  use seq.seq.mytype
  
  
- Function tolibraryModules(alltypes: type2dict,prg:program,  t5:seq.firstpass,exports:seq.word) seq.libraryModule
+ Function tolibraryModules(alltypes: type2dict ,prg:program, t5:seq.passsymbols,exports:seq.word) seq.libraryModule
  for acc = empty:seq.libraryModule, m2 =  t5 do
     if name.module.m2 /nin exports then acc else
      let exps=  for acc3 = empty:seq.symbolref, e = toseq.exports.m2 do acc3 + symbolref.e /for(acc3)
     let defines=if isabstract.module.m2 then
-      for acc3 = empty:seq.symbolref, e = toseq(defines.m2 /cup unbound.m2) do acc3 + symbolref.e /for(acc3)
+      for acc3 = empty:seq.symbolref, e = toseq(defines.m2 ) do acc3 + symbolref.e /for(acc3)
      else exps
       let d2=if isabstract.module.m2 then defines.m2 else exports.m2
      let types = for acc5 = empty:seq.seq.mytype, s =  toseq.d2 do 
         if istype.s then
-         acc5+ ([ resulttype.s]+flatflds(alltypes, resulttype.s))
+             let c= for c=empty:seq.mytype,t=flatflds(alltypes, resulttype.s) do
+                 c+if isencoding.t /or t=typeword /or print.t="char" then typeint else t /for(c)
+           acc5+ ([ resulttype.s]+c)
    else   acc5
   /for(acc5)
     acc
     + libraryModule(module.m2, 
- exps    ,if isabstract.module.m2 then uses.m2 else empty:seq.mytype
+ exps    ,if isabstract.module.m2 /and para.module.m2=typeT then cvttomytypes.uses.m2 else empty:seq.mytype
     ,defines,types)
    /for(acc)
    
+   
+ function print(s:seq.mytype) seq.word  for txt="",t=s do txt+print.t /for(txt)
+ 
  use postbind
  
  use program
@@ -157,33 +156,34 @@ let d1 = resolveunboundexports.expanduse.a
 
 
 
-function resolveunboundexports(modset:set.firstpass)set.firstpass
+function resolveunresolvedexports(modset:set.passsymbols)set.passsymbols
   for modset1 = modset,count=0 , orgcount=0,f = toseq.modset do 
-      if length.unboundexports.f = 0 then next(modset1,count,orgcount)
+      if cardinality.unresolvedexports.f = 0 then next(modset1,count,orgcount)
  else
   let dict = builddict(modset1, f)
-  let new = for exports=exports.f,unboundexports=empty:seq.symbol, s = unboundexports.f do 
+  let new = for exports=exports.f,unresolvedexports=empty:set.symbol, s = toseq.unresolvedexports.f do 
         let x = findelement2(dict, s)
         if cardinality.x = 1 then
           assert resulttype.x_1 = resulttype.s report"export return type missmatch" + print.s + print.x_1
-          next( exports  ∪ x,   unboundexports)
+          next( exports  ∪ x,   unresolvedexports)
         else
-            next( exports,    unboundexports + s)
-    /for(firstpass(module.f, uses.f, defines.f, exports, unboundexports, unbound.f, types.f, prg.f))
-  next(replace(modset1, new),count+length.unboundexports.new,orgcount+length.unboundexports.f)
+            next( exports,    unresolvedexports + s)
+    /for(firstpass(module.f, uses.f, defines.f, exports, unresolvedexports,  types.f, prg.f,text.f))
+  next(replace(modset1, new),count+cardinality.unresolvedexports.new,orgcount+cardinality.unresolvedexports.f)
   /for( if count=0 then modset1 
       else  assert count < orgcount /or  count = 0 report "unresolved exports"
     + for acc ="", x = for acc = empty:seq.symbol, @e = toseq.modset do 
-      acc + unboundexports.@e /for(acc)do
+      acc +toseq.unresolvedexports.@e /for(acc)do
      acc + print.x
     /for(acc)
-     resolveunboundexports.modset1)
+     resolveunresolvedexports.modset1)
 
  
- 
+ Function ?(a:passsymbols, b:passsymbols)ordering toalphaseq.print.module.a ? toalphaseq.print.module.b
+
   
 
-function formsymboldict(modset:set.firstpass, f:firstpass,mode:seq.word ) symboldict
+function formsymboldict(modset:set.passsymbols, f:passsymbols,mode:seq.word ) symboldict
  let dict=builddict(modset,f)
  let typedict= for typedict=empty:set.mytype, sym = toseq.dict do
   if istype.sym then  typedict+resulttype.sym else typedict
@@ -194,49 +194,53 @@ use seq.commoninfo
 
 use symboldict
 
-commoninfo("",moduleref."?","?"_1,typedict,mode_1)
 
+function builddict(modset:set.passsymbols, f:passsymbols)set.symbol
+ for acc = defines.f , @e = toseq.uses.f do 
+ if issimple.@e /or para.@e=typeT then 
+    let e =  findelement(firstpass(@e), modset)
+    if isempty.e then acc else acc ∪ exports.e_1 
+ else 
+   let template=findelement(firstpass( moduleref([name.@e], typeT)), modset)
+   assert not.isempty.template report"Cannot find module" +  name.@e
+   if isempty.template then acc else 
+     for acc2 = acc, export = toseq.exports.template_1 do acc2 + replaceTsymbol(para.@e, export) /for(acc2)
+/for(acc)
 
-function builddict(modset:set.firstpass, f:firstpass)set.symbol
- for acc = defines.f ∪ unbound.f, @e = uses.f do 
- let e = find(modset, @e)
- if isempty.e then acc else acc ∪ exports.e_1 /for(acc)
-
-
-function expanduse(acc3:set.firstpass)set.firstpass
-let modset1 = acc3
-let newset = for acc2 = acc3, use = toseq.asset.for acc = empty:seq.mytype, @e = toseq.modset1 do acc + uses.@e /for(acc)do
-let modset = acc2
-let x = find(modset, use)
-if iscomplex.use ∧ parameter.use ≠ typeT then
+function expanduse(modset1:set.passsymbols)set.passsymbols
+ for modset = modset1, use1 = toseq.for acc = empty:set.modref, @e = toseq.modset1 do acc /cup uses.@e /for(acc)do
+let x = findelement(firstpass(use1), modset)
+if not.issimple.use1 ∧ para.use1 ≠ typeT then
   if isempty.x then
-  let template = find(modset, addabstract(abstracttypeof.use, typeT))
-  assert not.isempty.template report"Cannot find module" + print.use
+  let template =  findelement(firstpass( moduleref([name.use1], typeT)), modset)
+  assert not.isempty.template report"Cannot find module" + print.use1
    let f = template_1
-   let with = parameter.use
+   let with = para.use1
      modset
     + firstpass(replaceT(with, module.f)
-    , for acc = empty:seq.mytype
-    , @e = uses.f do acc + replaceT(with, @e)/for(acc)
-    , asset.for acc = empty:seq.symbol, @e = toseq.defines.f do acc + replaceTsymbol(with, @e) /for(acc)
-    , asset.for acc = empty:seq.symbol, @e = toseq.exports.f do acc + replaceTsymbol(with, @e) /for(acc)
-    , for acc = empty:seq.symbol, @e = unboundexports.f do acc + replaceTsymbol(with, @e) /for(acc)
-    , empty:set.symbol, replaceTmyinternaltype(with, types.f), prg.f)
-  else acc2
- else assert not.isempty.x report"Cannot find module" + print.use
-  acc2
-/for(acc2)
-if cardinality.newset > cardinality.modset1 then expanduse.newset else acc3
+    , for acc = empty:set.modref, @e = toseq.uses.f do acc + replaceT(with, @e)/for(acc)
+    , asset.for acc = empty:seq.symbol, @e = toseq.defines.f do 
+      if isunbound.@e then acc else acc + replaceTsymbol(with, @e) /for(acc)
+    ,  empty:set.symbol
+    ,  empty:set.symbol
+    , replaceTmyinternaltype(with, types.f), prg.f,text.f)
+  else modset
+ else assert not.isempty.x report"Cannot find module" + print.use1
+  modset
+/for(
+if cardinality.modset > cardinality.modset1 then expanduse.modset else modset1)
+
+use seq.modref
 
 
 
- type typesplit is abstract :seq.firstpass,simple :seq.firstpass,defines:set.symbol
+ type typesplit is abstract :seq.passsymbols,simple :seq.passsymbols,defines:set.symbol
  ,typeflds : seq.seq.mytype
    
 function  newdict boolean false
 
-function split(s:seq.firstpass) typesplit
-  for  abstract=empty:seq.firstpass,simple=empty:seq.firstpass,defines=empty:set.symbol 
+function split(s:seq.passsymbols) typesplit
+  for  abstract=empty:seq.passsymbols,simple=empty:seq.passsymbols,defines=empty:set.symbol 
    ,fldtypes=empty:seq.seq.mytype
   ,f=s do
      if issimple.module.f  then
@@ -246,37 +250,27 @@ function split(s:seq.firstpass) typesplit
     else next(abstract ,simple,defines /cup defines.f,if newdict then fldtypes else fldtypes+types.f )
   /for(typesplit( abstract, simple,defines,fldtypes))
  
- 
-function bind3(p:program,  modset:set.firstpass, f:firstpass)program
+function bind3(p:program,  modset:set.passsymbols, f:passsymbols)program
 let dict= formsymboldict(modset,f,"body")
- for acc = p ∪ prg.f, s = toseq.defines.f do bind2(acc,  dict, s)/for(acc)
-
-function bind2(p:program,   dict:symboldict, s:symbol)program
-let txt = findencode.symboltext(s, moduleref."?","?")
-if not.isempty.txt then
- let dict2= symboldict(asset.dict,[commoninfo(text.txt_1,modname.common.dict,"?"_1,types
+ for acc = p ∪ prg.f, text = text.f do 
+  {if (text.text)_1 ∈ "Builtin builtin"then
+    let sym=sym.text
+    let code2 = 
+     for acc2 = empty:seq.symbol, @e = arithseq(nopara.sym, 1, 1)do acc2 + Local.@e /for(acc2)
+     + if issimple.module.sym then [ sym, Words."BUILTIN", Optionsym]
+     else
+      [ if issimplename.sym then symbol(moduleref("builtin", typeT), [ wordname.sym], paratypes.sym, resulttype.sym)
+      else symbol4(moduleref("builtin", typeT), wordname.sym,(nametype.sym)_1, paratypes.sym, resulttype.sym)]
+    map(p , sym, code2)
+  else }
+ let dict2= symboldict(asset.dict,[commoninfo(text.text,modname.common.dict,"?"_1,types
  .common.dict,mode.common.dict)])
  let code = parsedcode.parse.dict2
- map(p, s, if length.code = 1 ∧ isconst.code_1 then code + [ Words."VERYSIMPLE", Optionsym]else code)
- else if para.module.s = typeT ∧ symdef(s,empty:seq.symbol) ∉ data.p then map(p, s, empty:seq.symbol)else p
- 
- 
-
-type symboltext is ph:symbol, module:modref, text:seq.word
-
-function hash(s:symboltext)int { should include module in hash }fsighash.ph.s
-
-function =(a:symboltext, b:symboltext)boolean ph.a = ph.b
-
-function assignencoding(p:seq.encodingpair.symboltext, a:symboltext)int assignrandom(p, a)
-
-function fldname(a:mytype) word   abstracttype.a
-
-function fldtype(a:mytype) mytype parameter.a 
+ map(acc, sym.text, if length.code = 1 ∧ isconst.code_1 then code + [ Words."VERYSIMPLE", Optionsym]else code)
+ /for(acc)
 
 Function bindinfoX(types:set.mytype, input:seq.word,mode:seq.word) symboldict
 symboldict(empty:set.symbol,[commoninfo(input,moduleref."?","?"_1,types,mode_1)])
-
 
 function fldcode(constructor:symbol, indexfunc:seq.symbol, syms:seq.symbol, i:int, inknownoffset:int, offsetx:seq.word, inprg:program
 ,isseq:boolean,b:bindinfo,modname:modref)program
@@ -319,64 +313,63 @@ symdef(fldsym, [ Local.1, Lit.knownsize] + unknownsize + Getfld.if isseq.fldtype
 function knownsize(fldtype:mytype)int
  if fldtype ∈ [ typeint, typeword, typereal, typeboolean, typeseqdec] ∨ isseq.fldtype ∨ isencoding.fldtype then 1 else 0
 
-function gathersymbols(mods:set.firstpass,typedict:set.mytype, inputseq:seq.seq.word)set.firstpass
-for f = firstpass(moduleref."?"), input = inputseq do 
+function gathersymbols(mods:set.passsymbols,typedict:set.mytype, passtypes:set.passtypes, inputseq:seq.seq.word)set.passsymbols
+for text = empty:seq.symtextpair,module=moduleref."?", uses=empty:set.modref, defines=empty:set.symbol, exports=empty:set.symbol
+, unresolvedexports=empty:set.symbol, unbound=empty:set.symbol, types=empty:seq.seq.mytype, prg=emptyprogram
+,input = inputseq do
  if length.input = 0 then
- let k = defines.f ∩ asset.unboundexports.f
-  if isempty.k then f
-  else
-   firstpass(module.f, uses.f, defines.f, exports.f ∪ k, toseq(asset.unboundexports.f - k), unbound.f, types.f, prg.f)
- else if input_1 ∈ "use"then
+    next(text, module, uses , defines , exports , unresolvedexports , unbound , types , prg )
+ else {if input_1 ∈ "use"then
  let t= (types.parse.bindinfoX(typedict,"type type is" + input << 1,"use"))_2
-  firstpass(module.f, uses.f + t, defines.f, exports.f, unboundexports.f, unbound.f, types.f, prg.f)
- else if input_1 ∈ "type"then
+    next(text, module, uses+t , defines , exports , unresolvedexports , unbound , types , prg )
+ else }if input_1 ∈ "type"then
  let bb=parse.bindinfoX(typedict, input,"use")
   let name = input_2
- let t = addabstract(typeref([ name] + "fldname."), para.module.f)
- let thetype = addabstract(typeref3(module.f, name ), para.module.f)
- let typesym   =  symbol4(module.f,"type"_1 ,thetype   ,   [ thetype ], thetype )
+  let t = addabstract(typeref([ name] + "fldname."), para.module) 
+ let thetype = addabstract(typeref3(module, name ), para.module)
+ let typesym   =  symbol4(module,"type"_1 ,thetype   ,   [ thetype ], thetype )
 if input_4 = "sequence"_1 then
-  let constructor = symbol(module.f, [ name],  [ typeint] + types.bb << 2  , t)
+  let constructor = symbol(module, [ name],  [ typeint] + types.bb << 2  , t)
   let fldsyms = for acc=empty:seq.symbol,idx=2,t2=types.bb << 2 do
-                    next(acc+ symbol(module.f, [(text.bb)_idx],[t], t2),idx+1)
+                    next( acc+ symbol(module, [(text.bb)_idx],[t], t2),idx+1)
                 /for(acc)
-  let seqtype = seqof.para.module.f
-  let symtoseq = symbol(module.f,"toseq",  t, seqtype)
-  let symfromseq = symbol4(module.f,"to"_1, t, [ seqtype], t)
-  let indexfunc =  symbol(module.f,"_", [ addabstract(typeref([ name] + "fldname."), typeT), typeint], typeT)
-  let prg1 = fldcode(constructor, [PreFref, indexfunc], fldsyms, 1, 2,"", prg.f,true,bb,module.f)
+  let seqtype = seqof.para.module
+  let symtoseq = symbol(module,"toseq",  t, seqtype)
+  let symfromseq = symbol4(module,"to"_1, t, [ seqtype], t)
+  let indexfunc =  symbol(module,"_", [ addabstract(typeref([ name] + "fldname."), typeT), typeint], typeT)
+  let prg1 = fldcode(constructor, [PreFref, indexfunc], fldsyms, 1, 2,"", prg ,true,bb,module)
   let prg2 = map(prg1, symtoseq, [ Local.1])
   let prg3 = map(prg2, symfromseq, ifthenelse([ Local.1, GetSeqType, PreFref,indexfunc, EqOp], [ Local.1]
   , [Sequence(typeint,0)], typeptr) )
   let syms = fldsyms + [ constructor, typesym, symtoseq, symfromseq]
-    let newtypes =  addtype(types.f,   name, module.f, [typeint,typeint ] + types.bb << 2 )
+    let newtypes =  addtype(types,   name, module, [typeint,typeint ] + types.bb << 2 )
   if name ≠ "seq"_1 then
-    firstpass(module.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, newtypes, prg3)
+       next(text, module, uses  , defines ∪ asset.syms, exports , unresolvedexports , unbound , newtypes , prg3 )
    else
-    let symlen = symbol(module.f,"length",  t, typeint)
+    let symlen = symbol(module,"length",  t, typeint)
     let symgettype = symbol(builtinmod.typeint,"getseqtype",  t, typeint)
     let prg4 = map(prg3, symlen, [ Local.1, GetSeqLength])
-     firstpass(module.f, uses.f, defines.f ∪ asset(syms + symlen + symgettype), exports.f, unboundexports.f, unbound.f, newtypes, prg4) 
+      next(text, module, uses  , defines ∪ asset(syms + symlen + symgettype), exports , unresolvedexports , unbound , newtypes , prg4 )
 else
-   let constructor = symbol(module.f, [ name],types.bb << 1  , t)
+   let constructor = symbol(module, [ name],types.bb << 1  , t)
    let fldsyms = for acc=empty:seq.symbol,idx=1,t2=types.bb << 1 do
-                    next(acc+ symbol(module.f, [(text.bb)_idx],[t], t2),idx+1)
+                    next( acc+ symbol(module, [(text.bb)_idx],[t], t2),idx+1)
                 /for(acc)
-   let prg2 = fldcode(constructor, empty:seq.symbol, fldsyms, 1, 0,"", prg.f,false,bb,module.f)
+   let prg2 = fldcode(constructor, empty:seq.symbol, fldsyms, 1, 0,"", prg,false,bb,module)
    let syms = fldsyms + [ constructor, typesym]
-   let newtypes=addtype(types.f, name, module.f,  types.bb << 1)
-   firstpass(module.f, uses.f, defines.f ∪ asset.syms, exports.f, unboundexports.f, unbound.f, newtypes, prg2)
+   let newtypes=addtype(types, name, module,  types.bb << 1)
+         next(text, module, uses  , defines ∪ asset.syms, exports , unresolvedexports , unbound , newtypes , prg2 )
  else if input_1 ∈ "Function function Builtin builtin Export unbound"then
  let t = parse.bindinfoX(typedict, getheader.input,"gather")
- let sym = tosymfromparse(t, module.f)
+ let sym = tosymfromparse(t, module)
  let paratypes = paratypes.sym
   assert checkwellformed.sym report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input
    if input_1 = "Export"_1 then
-    firstpass(module.f, uses.f, defines.f, exports.f, unboundexports.f + sym, unbound.f, types.f, prg.f)
+       next(text, module, uses  , defines , exports , unresolvedexports+ sym , unbound , types , prg )
    else if input_1 = "unbound"_1 then
-    firstpass(module.f, uses.f, defines.f, exports.f, unboundexports.f, unbound.f + setunbound.sym, types.f, prg.f)
-   else
-    assert sym ∉ defines.f report"Function" + wordname.sym + "is defined twice in module" + print.module.f
+          next(text, module, uses  , defines + setunbound.sym, exports , unresolvedexports  , unbound  , types , prg )
+    else
+    assert sym ∉ defines  report"Function" + wordname.sym + "is defined twice in module" + print.module
     let prg1 = if input_1 ∈ "Builtin builtin"then
     let code2 = 
      for acc = empty:seq.symbol, @e = arithseq(length.paratypes, 1, 1)do acc + Local.@e /for(acc)
@@ -384,20 +377,38 @@ else
      else
       [ if issimplename.sym then symbol(moduleref("builtin", typeT), [ wordname.sym], paratypes, resulttype.sym)
       else symbol4(moduleref("builtin", typeT), wordname.sym,(nametype.sym)_1, paratypes, resulttype.sym)]
-    map(prg.f, sym, code2)
-    else let discard = encode.symboltext(sym, module.f, input)
-    prg.f
-    let a = if input_1 ∈ "Function Builtin"then exports.f + sym else exports.f
-     firstpass(module.f, uses.f, defines.f + sym, a, unboundexports.f, unbound.f, types.f, prg1)
+    map(prg , sym, code2)
+    else 
+    prg 
+    let a = if input_1 ∈ "Function Builtin"then exports  + sym else exports 
+    let newtext=if input_1 ∈ "Builtin builtin"then text else 
+              text+symtextpair(sym,input,0)
+             next(newtext, module, uses  , defines+ sym , a , unresolvedexports  , unbound  , types , prg1 )
  else if input_1 ∈ "module Module"then
-  firstpass(if length.input > 2 then moduleref([ input_2], typeT)else moduleref.[ input_2], uses.f, defines.f, exports.f, unboundexports.f, unbound.f, types.f, prg.f)
- else f
+  let lib="."_1
+ let x = findpasstypes( passtypes, lib,  input )
+    assert not.isempty.x report"did not find" +input
+     {let tmp= for acc=empty:seq.mytype,   m=toseq.uses.x_1 do  acc+addabstract(typeref3(m, name.m ), para.m) /for(acc)
+       }  next(text, if length.input > 2 then moduleref([ input_2], typeT)else moduleref.[ input_2]
+         ,  uses.x_1   , defines , exports , unresolvedexports  , unbound  , types , prg )
+ else         next(text, module, uses  , defines , exports , unresolvedexports    , unbound ,types , prg )
 /for( 
+let f=firstpass(module, uses  , defines , exports , unresolvedexports     , types , prg,text )
+if name.module.f /in "?" then mods else
 assert f ∉ mods report"duplicate module name:" + print.module.f
   mods + f)
+  
+  use set.modref
+  
+  use seq.symtextpair
+  
+function cvttomytypes(in:set.modref) seq.mytype
+for acc=empty:seq.mytype,   m=toseq.in do  acc+addabstract(typeref3(m, name.m ), para.m) /for(acc)
 
+Function  cvttomodrefs(in:seq.mytype)    set.modref
+  for acc=empty:set.modref,   m=in do acc+moduleref([abstracttype.m],parameter.m) /for(acc)
 
-function roots(exported:seq.word, f:firstpass)seq.symbol
+function roots(exported:seq.word, f:passsymbols)seq.symbol
  if name.module.f ∉ exported ∨ not.issimple.module.f then empty:seq.symbol else toseq.exports.f
 
 use mytype

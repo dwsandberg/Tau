@@ -95,7 +95,7 @@ else symbol4(internalmod, name_1, resolvetype(name << 1, common, place), paratyp
 let f = lookupbysig( dict, sym3)
 assert not.isempty.f report errormessage("cannot find 1" + fixNM.name + "("
  + for acc ="", @e = paratypes do list(acc,",", print.@e)/for(acc)
- + ")", common, place)
+ + ")", common, place)+print.toseq.asset.dict
  assert cardinality.f = 1 report errormessage("found more than one"
   + for acc ="", @e = toseq.f do acc + print.@e /for(acc), common, place)
   let discard = for acc ="", sym2 = requires(dict,f_1) do

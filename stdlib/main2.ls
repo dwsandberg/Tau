@@ -156,7 +156,7 @@ use seq.libraryModule
 
 use firstpass
 
-use seq.firstpass
+use seq.passsymbols
 
  
 Function loadlibbug seq.word " bug10 "
@@ -164,10 +164,10 @@ Function loadlibbug seq.word " bug10 "
 use seq.symbolref
   
   
-  type libinfo is mods:seq.firstpass,simple:program,abstract:program 
+  type libinfo is mods:seq.passsymbols,simple:program,abstract:program 
  
   function  libinfo(   dependentlibs:seq.word) libinfo
-  for acc = libinfo(empty:seq.firstpass,emptyprogram,emptyprogram), l = loadedLibs do 
+  for acc = libinfo(empty:seq.passsymbols,emptyprogram,emptyprogram), l = loadedLibs do 
   if(libname.l)_1 ∈ dependentlibs then  
     for ab = abstract.acc,simple=simple.acc,c=code.l do
        let sym=(decoderef.l)_toint.first.c
@@ -184,14 +184,14 @@ use seq.symbolref
  
   
 
-function  cvtnewmods(ll:seq.libraryModule,decoderef:seq.symbol) seq.firstpass
-for acc=empty:seq.firstpass,m=ll  do
+function  cvtnewmods(ll:seq.libraryModule,decoderef:seq.symbol) seq.passsymbols
+for acc=empty:seq.passsymbols,m=ll  do
    let e=  for acc2=empty:set.symbol,r=exports.m do  acc2+ (decoderef)_toint.r /for(acc2)
    let d= for acc2=empty:set.symbol,r=defines.m do 
       let sym=(decoderef)_toint.r
       if isunbound.sym then acc2 else 
       acc2+ sym /for(acc2)
-          acc+firstpass(modname.m, uses.m, d, e, types.m)
+           acc+firstpass(modname.m, cvttomodrefs.uses.m, d, e, types.m) 
  /for(acc)
  
  
