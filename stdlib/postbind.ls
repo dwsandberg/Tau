@@ -32,11 +32,14 @@ use otherseq.word
 
 use seq.findabstractresult 
 
- function usedsyms(source:program ,typedict:type2dict,last:int,result:seq.symdef, templates:program
-  , dict:set.symbol,compiled:set.symbol) seq.symdef
+use passsymbol
+
+ function usedsyms(source:program ,typedictin:type2dict,last:int,result:seq.symdef, templates:program
+  , dict:set.symbol,compiled:set.symbol,typeflds:seq.seq.mytype) seq.symdef
      let a=  encoding:seq.encodingpair.symbol 
      if length.a=last   then result
     else 
+    let typedict={buildtypedict(asset.result,typeflds)}typedictin
     for  acc=result,   p=subseq(a,last+1,length.a) do
        let sym=data.p
        if isspecial.sym /or isconst.sym 
@@ -47,10 +50,15 @@ use seq.findabstractresult
           let sd=if (not.isempty.lr1 /or sym /in compiled) then 
                  symdef(sym,lr1) 
             else  if istype.sym then
-              symdef(sym,deepcopybody2(resulttype.sym,typedict )) 
+              symdef(sym,deepcopybody(resulttype.sym,typedict )) 
             else  
               let sym2=if isunbound.sym then
-               let k = lookupsymbol(dict, sym)
+                 let k2=      lookupbysig(data.source,sym)
+                { assert not.isempty.k2 /or print.sym /in [ "seq.seq.word:=(seq.word, seq.word)boolean"
+                 ,"otherseq.seq.alphaword:?(seq.alphaword, seq.alphaword)ordering"
+                 ,"set.encoding.seq.char:?(encoding.seq.char, encoding.seq.char)ordering" 
+                 report "HK"+print.sym}
+                let k = lookupsymbol(dict, sym) 
                assert cardinality.k = 1 report"Cannot bind unbound"   + print.sym  
                assert sym ≠ k_1 report"ERR12" + print.sym + print.k_1
                  k_1 else sym
@@ -64,7 +72,15 @@ use seq.findabstractresult
          let newsd=postbind(sd,typedict,  compiled)
          let discard=for acc2=symbolref.EqOp, sym5=code.newsd  do  symbolref.sym5 /for(acc2)
             acc+symdef(sym ,code.newsd )    
-         /for(usedsyms(source, typedict,length.a,acc,templates,dict,compiled))    
+         /for(usedsyms(source, typedict,length.a,acc,templates,dict,compiled,typeflds))    
+         
+         Function lookupsymbol(dict:set.symbol, sym:symbol)set.symbol  findelement2(dict, sym)
+         
+           if issimple.module.sym /or para.module.sym=typeT then 
+            findelement2(dict, sym)
+           else 
+              assert false report "JKLS"+print.sym
+            findelement2(dict, sym)
 
 
 Function postbind(sd:symdef,typedict:type2dict,   compiled:set.symbol) symdef
@@ -98,7 +114,7 @@ for nextvar = nopara.sym.sd + 1, map = pdict,result = empty:seq.symbol ,  symx =
        let encodingpairtype = typeref."encodingpair encoding. "
        let addefunc = symbol(moduleref("encoding", para.module.sym),"add", [ addabstract(encodingstatetype, para.module.sym), addabstract(encodingpairtype, para.module.sym)], addabstract(encodingstatetype, para.module.sym))
        let add2 = symbol(internalmod,"addencoding", [ typeint, typeptr, typeint, typeint], typeint)
-       let dc = deepcopysym(typedict, addabstract(encodingpairtype, para.module.sym))
+       let dc = deepcopySym(  addabstract(encodingpairtype, para.module.sym))
          next(nextvar+1,map,result+[ PreFref,addefunc, PreFref,dc, add2] )
       else if name.sym ∈ "getinstance"then
           let get = symbol(internalmod,"getinstance", typeint, typeptr)
@@ -181,51 +197,16 @@ else if name.sym ∈ "packed"then
      Local.varno , Lit.0, EqOp], [   gl, Words.print.typ, encodenosym, setSym.typeint, Define(varno+1), gl  
       ,Lit.0,Getfld.typeint],[ Local.varno],typeint)
 
-function deepcopysym(typedict:type2dict, type:mytype) symbol
- if type =typereal /or type=typeint  then deepcopySym(type)  
- else {if isseq.type then
-    if parameter.type =typereal /or parameter.type=typeint  then 
-      deepcopySym(seqof.parameter.type)  
-    else
-  let z=flatwithtype(typedict,parameter.type)
-  assert not.isempty.z report  "deepcopy cannot find type"+print.type+stacktrace
-     deepcopySym(seqof.first.z)
- else if isencoding.type then
-    if parameter.type =typereal /or parameter.type=typeint  then 
-      deepcopySym(encodingof.parameter.type)  
-    else
-  let z=flatwithtype(typedict,parameter.type)
-  assert not.isempty.z report  "deepcopy cannot find type"+print.type+stacktrace
-     deepcopySym(encodingof.first.z)
- else }
- let z=flatwithtype(typedict,type)
- assert not.isempty.z report  "deepcopy cannot find type"+print.type+stacktrace
-   deepcopySym(first.z)
+use typerep
+
 
 use mytype
 
-type findabstractresult  is sd:symdef,modpara:mytype
+      use seq.seq.mytype
+      
+        use set.symdef    
 
 
-Function findabstract(templates:program,sym:symbol)seq.findabstractresult
- for  acc=empty:seq.findabstractresult , sd=toseq.data.templates do
-    let e=sym.sd
-   if name.e = name.sym  ∧ nopara.e = nopara.sym 
-     ∧ para.module.e = typeT  
-     ∧ name.module.e=name.module.sym     
-      then 
-      let z= for Tis=type? ,  idx=1,   t= types.e do
-             let S=solveT(t,(types.sym)_idx) 
-             if S=type? then 
-              {assert t=(types.s)_idx report "XXXXX"+print.t+print.(types.s)_idx}
-             next(Tis,idx+1) else next(S,idx+1)
-            /for(Tis)
-       if ?2(sym,replaceTsymbol(z, e)) =EQ  then 
-        if sym ? e =EQ  /or isunbound.e then acc else
-           acc+findabstractresult (sd,z)  
-          else acc
-    else  acc
-    /for(acc)
 
 /function buildcode(acc:int, w:word)int
  acc * 2 + if w = first."real"then 1 else 0
@@ -245,55 +226,11 @@ Function  prescan2(   prg:program) program
            else result + sym
       /for(acc+symdef( sym.p,result))
       /for(program.acc)      
- 
-Function postbind(alltypes:type2dict, dict:set.symbol, roots:seq.symbol, theprg:program, templates:program,compiled:set.symbol)program
+      
+Function postbind(alltypes:type2dict, dict:set.symbol, roots:seq.symbol, theprg:program, 
+templates:program,compiled:set.symbol,typeflds:seq.seq.mytype)program
 let root = symbol(moduleref."W","Wroot", typeint)
    let discard=for acc=0 ,r=roots do let discard2=encode.r 0 /for(0)
- program.asset.usedsyms(theprg,alltypes,0,empty:seq.symdef,templates,dict,compiled)
+ program.asset.usedsyms(theprg,alltypes,0,empty:seq.symdef,templates,dict,compiled,typeflds)
   
-   
-    
-            
-            
-
-  
-  
-  function solveT ( a:mytype,b:mytype) mytype
-    if a=typeT then b
-    else if isabstract.a  /and abstracttype.a=abstracttype.b then solveT(parameter.a,parameter.b)
-    else type?
-           
-       
-   
-         
-  use set.symdef    
-
-       
-        
-Function deepcopybody2(type:mytype, typedict:type2dict)seq.symbol
- if type = typeint ∨ type = typeword ∨ isencoding.type then [ Local.1]
- else if isseq.type then
- let basetype =  basetype(  type,typedict)
- if basetype = typeint ∨ basetype = typereal ∨ basetype = typeboolean then [ Local.1, blocksym.basetype]
-  else
-   let cat = symbol(tomodref.type,"+", [ type, parameter.type], type)
-   let resulttype = basetype
-   let elementtype = parameter.basetype
-   let element = symbol(moduleref("$for", elementtype),"element", empty:seq.mytype, elementtype)
-   let acc = symbol(moduleref("$for", typeptr),"acc", empty:seq.mytype, typeptr)
-   [Sequence(elementtype,0)]
-    + [ Local.1, acc, element, acc, element, deepcopysym(typedict, parameter.type), cat, Littrue, acc, symbol(moduleref("builtin", typeint),"forexp", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
-    ]
-    + blocksym.basetype
- else
-  let subflds =  flatflds(typedict,type)
-  if length.subflds = 1 then
-    { only one element in record so type is not represent by actual record }[ Local.1]
-    + deepcopysym(typedict, first.subflds)
-   else 
-    for     fldno=1, fldkinds=empty:seq.mytype, result= empty:seq.symbol,fldtype=subflds do
-  let kind = basetype(  fldtype,typedict)
-   next(fldno+1,fldkinds + kind, result + [ Local.1,Lit(fldno - 1), Getfld.kind,   deepcopysym(typedict, fldtype)])
-/for(result + [ Record.fldkinds])
-
-use typerep
+          

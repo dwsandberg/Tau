@@ -1,4 +1,7 @@
-#!/usr/local/bin/tau  ; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq  ")
+#!/usr/local/bin/tau ; use doc ; doclibrary("typepass" )
+
+
+ ; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq  ")
 
 
 

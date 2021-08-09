@@ -27,7 +27,7 @@ Function totypeseq(t:typerep) seq.mytype tosymdef.t
 
 Export type:typerep 
 
-function ?(a:typerep,b:typerep) ordering  first.tosymdef.a ? first.tosymdef.b
+Function ?(a:typerep,b:typerep) ordering  first.tosymdef.a ? first.tosymdef.b
 
 Function type(a:typerep) mytype  first.tosymdef.a
 
@@ -40,6 +40,35 @@ Function buildtypedict(zz1:set.symdef, types:seq.seq.mytype)    type2dict
      acc + sym.p
 /for(buildtypedict( acc ,types))
 
+Function    addtypes(alltypes:type2dict,syms:set.symbol)   type2dict
+ let typesused=for  acc = empty:seq.mytype, sym = toseq.syms do
+     acc + typesused.sym 
+/for(acc)
+ for acc=alltypes ,d= toseq.asset.typesused do addtype(acc,d)  /for(acc)
+
+Function    addtype(alltypes:type2dict,type:mytype)   type2dict
+  if type   ∈ [ typeint, typeT, typeboolean, typereal,typeptr] then alltypes
+  else if isseq.type then addtype(alltypes,parameter.type)
+  else
+   let t=  findelement(typerep(type,empty:seq.mytype),totypedict.alltypes)
+  if not.isempty.t then alltypes
+  else let flatflds=expandflat(type,empty:seq.mytype,totypedict.alltypes) 
+   let newtr=typerep(type,flatflds)
+    if isflat.newtr then 
+     { add to typedict and then check to make sure parameters are in typedict }
+     for acc= type2dict(totypedict.alltypes+newtr) ,subfld = flatflds    do
+        if   isseq.subfld  /or isencoding.subfld   
+        then addtype(acc,subfld) 
+        else acc
+     /for(acc)
+     else  
+     { add types not in  typedict  and try again }
+      for acc=alltypes, subfld = flatflds    do
+        if subfld ∈ [ typeint, typeT, typeboolean, typereal,typeptr]  /or isseq.subfld /or isencoding.subfld  
+        then acc
+      else addtype(acc,subfld)
+     /for(addtype(acc,type))
+  
 use set.symbol
  
 Function buildtypedict(syms:set.symbol, types:seq.seq.mytype)    type2dict
@@ -82,7 +111,7 @@ function print(h:typerep) seq.word for acc=print.type.h , z= flatflds.h do acc+p
 
  function checkflat(types:set.typerep, unknown:seq.typerep)checkflatresult2
  for known = types, notflat = empty:seq.typerep,   p = unknown do
-   if isflat.p /or   abstracttype.type.p="$base"_1  /or type.p =type? then next(known + p, notflat )
+   if isflat.p /or   abstracttypename.type.p="$base"_1  /or type.p =type? then next(known + p, notflat )
    else let new=expandflat(p, types)
      if isflat.new then next(known+new,notflat) else  next(known, notflat + new )
  /for( if isempty.notflat /or length.unknown=length.notflat then 
@@ -103,23 +132,30 @@ function isflat(p:typerep)boolean
   /for(state)
 
 function expandflat(p:typerep,types:set.typerep)typerep
- let flatflds=flatflds.p
+  let newflat=expandflat(type.p ,flatflds.p,types )  
+  if newflat=flatflds.p then p else typerep(type.p,    newflat )
+ 
+ function expandflat(type:mytype,flatflds:seq.mytype,types:set.typerep) seq.mytype
  if isempty.flatflds then 
-     let f3=findelement(typerep(abstracttypeof2.type.p,empty:seq.mytype),types)
-      if isempty.f3 then p 
-      else typerep(type.p,replaceT(parameter.type.p,flatflds.f3_1) )
+     let f3=findelement(typerep(abstracttype.type ,empty:seq.mytype),types)
+      if isempty.f3 then flatflds
+      else  replaceT(parameter.type ,flatflds.f3_1)  
  else 
-  for acc = empty:seq.mytype, unchanged = true, t = flatflds.p do
+ for acc = empty:seq.mytype, unchanged = true, t = flatflds  do
   if t ∈ [ typeint, typeT, typeboolean, typereal] ∨ isseq.t ∨ isencoding.t then
     next(acc + t, unchanged)
    else
       let   f=findelement(typerep(t,empty:seq.mytype),types)
-      if isempty.f then
-         let f3=findelement(typerep(abstracttypeof.t,empty:seq.mytype),types)
+      if isempty.f   then
+         let t2=  (abstracttype.t) 
+         if t2=t then next(acc + t, unchanged)
+         else 
+         let f3=findelement(typerep(t2,empty:seq.mytype),types)
+         {assert {print.t /ne "set.arc.T"} isempty.f3   report "K"+print.t+"K"+print.t2 }
          if isempty.f3 then next(acc + t, unchanged)
          else next(acc + replaceT(parameter.t,flatflds.f3_1 ), false)
      else next(acc + flatflds.f_1, false)
-      /for(if unchanged then p else typerep(type.p,    acc )/if)
+      /for(if unchanged then flatflds else    acc /if)
 
 function replaceT(with:mytype,typs:seq.mytype) seq.mytype
  for acc=empty:seq.mytype,t=typs do acc+replaceT(with,t) /for(acc)

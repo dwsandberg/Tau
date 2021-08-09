@@ -28,16 +28,6 @@ Function parsedcode(b:bindinfo)seq.symbol code.b
 
 Export getheader(s:seq.word)seq.word
 
-Function tosymfromparse(t:bindinfo, module:modref)symbol
-let name = text.t
-let funcreturntype=last.types.t 
-let paratypes = for acc = empty:seq.mytype, @e =  subseq(types.t,if length.name=1 then 1 else 2,length.types.t -1) do acc + @e /for(acc)
- if length.name = 1 then
-  if name = "true"then Littrue
-  else if name = "false"then Litfalse else symbol(module, name, paratypes, funcreturntype)
- else
-  let typeinname=first.types.t
-   symbol4(module, name_1, typeinname, paratypes, funcreturntype)
 
 
 
@@ -62,7 +52,7 @@ Function bindinfo(dict:symboldict, types:seq.mytype, tokentext:seq.word)bindinfo
 
 
 function resolvetype(text:seq.word, common:commoninfo, place:int)mytype
-let a = resolvetype(types.common, text,mode.common /in "gather use")
+let a = resolvetype(types.common, text)
 let w = for acc = EOL, t = toseq.types.common do acc + print.t /for(acc + EOL)
 assert not.isempty.a report errormessage("cannot resolve type" + text + w, common, place)
  a_1
@@ -101,16 +91,13 @@ assert not.isempty.f report errormessage("cannot find 1" + fixNM.name + "("
   let discard = for acc ="", sym2 = requires(dict,f_1) do
     let xxx = lookupbysig( dict,  sym2)
   assert not.isempty.xxx ∨ isabstract.module.f_1 report
-     errormessage("require unbound" + print.f_1 + print.sym2, common, place)
-   {let kk=print.sym2+print.xxx_1}
-   let discard2=if not.isempty.xxx then 
+     errormessage( "using symbol "+ print.f_1+" requires unbound" +   print.sym2, common, place)
+    { +for  txt="/p dictionary",s=      toseq.asset.dict do
+        if name.s =name.sym2 then txt+print.s+EOL 
+       else txt /for(txt)}
+     let discard2=if not.isempty.xxx then 
    let discard =encode.requireencoding(sym2,xxx_1) 1 else 1
-   { assert  kk /in[ "encoding.indexedword:=(indexedword, indexedword)boolean wordfreq:=(indexedword, indexedword)boolean"
-    ,"seq.bits:=(bits, bits)boolean bits:=(bits, bits)boolean"
-    ,"encoding.ccc:=(ccc, ccc)boolean testseq:=(ccc, ccc)boolean"
-    ,"encoding.ccc:hash(ccc)int testseq:hash(ccc)int"
-    ,"seq.typereal:=(typereal, typereal)boolean testseq:=(typereal, typereal)boolean"] report "requires"+kk
-   } acc
+    acc
   /for(acc)
   f_1
   

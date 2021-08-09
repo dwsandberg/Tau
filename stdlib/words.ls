@@ -41,6 +41,9 @@ Function =(a:word, b:word)boolean asencoding.a = asencoding.b
 
 Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
 
+Function ?(a:encodingpair.seq.char, b:encodingpair.seq.char)ordering valueofencoding.code.a ? valueofencoding.code.b
+
+
 ----
 
 Function merge(a:seq.word)word

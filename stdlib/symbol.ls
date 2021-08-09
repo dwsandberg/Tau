@@ -292,7 +292,6 @@ Function lookup(dict:set.symbol, name:seq.word, types:seq.mytype)set.symbol
     else symbol4(internalmod,name_1,parsetype(name << 2),types,type?)
 findelement2(dict, sym )
 
-Function lookupsymbol(dict:set.symbol, sym:symbol)set.symbol findelement2(dict, sym)
 
 Function lookupbysig(dict:set.symbol, name:seq.word)set.symbol lookup(dict, name, empty:seq.mytype)
 
@@ -413,7 +412,7 @@ Function Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype)symbol
  symbol4(moduleref( "$loopblock",resulttype),"LOOPBLOCK"_1,
  typeref( [toword.firstvar,"."_1,"."_1]),types,resulttype )
 
-Function firstvar(a:symbol)int toint.abstracttype.first.types.a
+Function firstvar(a:symbol)int toint.abstracttypename.first.types.a
 
 Function inmodule(sym:symbol,module:seq.word) boolean name.module.sym ∈ module
 
@@ -559,10 +558,10 @@ _______________________________________________
 Function deepcopysymI(rt:mytype) symbol
  if rt= typeint then symbol(moduleref."tausupport", "deepcopy ",typeint,typeint)
       else if rt = typereal   then symbol(moduleref."tausupport", "deepcopy ",typereal,typereal)
-      else if rt = typeboolean then symbol4(module2.typeboolean,"type"_1, rt, [ rt ],rt)
-      else if rt = typebits then symbol4(module2.typebits,"type"_1, rt, [ rt ],rt)
-      else if rt= typeword then symbol4(module2.typeword,"type"_1, rt, [ rt ],rt)
-      else if   abstracttype.rt="char"_1 then symbol4(moduleref."standard","type"_1, rt, [ rt ],rt)
+      else if rt = typeboolean then symbol4(abstractModref.typeboolean,"type"_1, rt, [ rt ],rt)
+      else if rt = typebits then symbol4(abstractModref.typebits,"type"_1, rt, [ rt ],rt)
+      else if rt= typeword then symbol4(abstractModref.typeword,"type"_1, rt, [ rt ],rt)
+      else if   abstracttypename.rt="char"_1 then symbol4(moduleref."standard","type"_1, rt, [ rt ],rt)
       else 
     assert  rt =seqof.typeword report "deepcopysymI"+ print.rt+stacktrace
    symbol4(moduleref("seq",typeword),"type"_1, rt, [ rt ],rt)
@@ -585,9 +584,12 @@ Export isencoding(mytype) boolean
 
 Export processof(mytype)mytype
 
-Export  abstracttypeof(mytype)  mytype 
 
-Export  abstracttype(mytype) word 
+Export  abstracttype(mytype)  mytype
+
+
+Export  abstracttypename(mytype) word 
+
 
 Export internalmod modref
 
@@ -628,9 +630,8 @@ Export isseq(mytype)boolean
 Function deepcopySym(rt:mytype)symbol 
 if rt=typereal then symbol(moduleref("tausupport"),"deepcopy",typereal,typereal) 
    else if rt=typeint then symbol(moduleref("tausupport"),"deepcopy",typeint,typeint) 
-   else  symbol4(replaceT(parameter.rt,module2.rt),"type"_1, rt, [ rt ],rt)
+   else  symbol4(replaceT(parameter.rt,abstractModref.rt),"type"_1, rt, [ rt ],rt)
 
-symbol4(module2.typ,"type"_1, typ, [ typ ],typ)
 
 Function setSym(typ:mytype)symbol
 let fldtype = if isseq.typ then typeptr else if isencoding.typ then typeint else typ
@@ -658,6 +659,12 @@ Export paragraphno(symdef) int
    
 Function ?(a:symdef,b:symdef) ordering sym.a ? sym.b
 
+Function ?2(a:symdef,b:symdef) ordering ?2(sym.a  , sym.b)
+
+Function lookupbysig(dict:set.symdef, sym:symbol)set.symbol 
+ for acc=empty:set.symbol , sd=toseq.findelement2(dict,symdef(sym,empty:seq.symbol))  do acc+sym.sd /for(acc)
+
+use set.symdef
 
 Module symboldict 
 

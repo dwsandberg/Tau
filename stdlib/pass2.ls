@@ -305,7 +305,7 @@ function iscompound(bodyexp:seq.symbol)boolean
  let sym = bodyexp_(-3)
  isblock.last.bodyexp
   ∧ (wordname.sym = "next"_1 ∧ nopara.sym > 3 ∧ inmodule(sym,"$for")
-  ∨ { assert case }abstracttypeof.resulttype.sym = typeref."$base internal.")
+  ∨ { assert case }abstracttype.resulttype.sym = addabstract(typeref."$base internal.",typeT))
 
 function exitlocations(s:seq.symbol, i:int, result:seq.int)seq.int
 let sym = s_i

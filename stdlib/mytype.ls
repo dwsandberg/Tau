@@ -41,9 +41,23 @@ Function print(s:mytype)seq.word
 
 Function =(a:mytype, b:mytype)boolean typerep.a = typerep.b
 
-Function abstracttypeof(t:mytype)mytype mytype.[ first.typerep.t]
 
-Function abstracttypeof2(t:mytype)mytype mytype.[ first.typerep.t, first.typerep.typeT]
+
+Function abstracttypename(m:mytype)word name.first.typerep.m
+
+
+Function abstracttype(t:mytype)mytype 
+if length.typerep.t = 1 then t else
+mytype.[ first.typerep.t, first.typerep.typeT]
+
+
+Function abstractModref(typ:mytype)modref
+let t = first.typerep.typ
+ modref(library.t, modname.t, if length.typerep.typ > 1 then typeT else mytype.empty:seq.typedef)
+
+Function tomodref(m:mytype)modref modref("."_1, abstracttypename.m, parameter.m)
+
+
 
 Function isabstract(m:modref)boolean not.isempty.typerep.para.m ∧ isabstract.para.m
 
@@ -98,7 +112,6 @@ Function hash(b:seq.mytype, other:int)int
 
 Function iscomplex(a:mytype)boolean length.typerep.a > 1
 
-Function abstracttype(m:mytype)word name.first.typerep.m
 
 Function addabstract(a:mytype, t:mytype)mytype mytype([ first.typerep.a] + typerep.t)
 
@@ -117,7 +130,6 @@ Function parsetype(s:seq.word)mytype
   if w = "."_1 then acc else [ w] + acc
  /for(TypeFromOldTyperep.acc)
 
-Function tomodref(m:mytype)modref modref("."_1, abstracttype.m, parameter.m)
 
 Function moduleref(modname:seq.word, para:mytype)modref modref("."_1, modname_1, para)
 
@@ -159,9 +171,6 @@ Function typeseqdec mytype typeref."sequence internal. "
 
 function typedef(a:seq.word)typedef typedef(a_1, a_2, a_3)
 
-Function module2(typ:mytype)modref
-let t = first.typerep.typ
- modref(library.t, modname.t, if length.typerep.typ > 1 then typeT else mytype.empty:seq.typedef)
 
 Function =(a:modref, b:modref)boolean name.a = name.b ∧ para.a = para.b
 
@@ -275,9 +284,6 @@ Function print(p:passtypes)seq.word
  + for acc ="", t = toseq.exports.p do acc + print.t /for(acc)
  
 Function resolvetype(knowntypes:set.mytype, ref:seq.word)seq.mytype
- resolvetype(knowntypes , ref,false)
-
-Function resolvetype(knowntypes:set.mytype, ref:seq.word,nocheck:boolean)seq.mytype
  if ref = "int"then [ typeint]
  else if ref = "boolean"then [ typeboolean]
  else if ref = "T"then [ typeT]
@@ -286,7 +292,6 @@ Function resolvetype(knowntypes:set.mytype, ref:seq.word,nocheck:boolean)seq.myt
   let x = for acc = empty:seq.typedef, w = ref do
    if w = "."_1 then acc else acc + typedef(w,"internal"_1,"."_1)
   /for(mytype.acc)
-  if nocheck then [x] else
   let a1 = findelement2(knowntypes, x)
   if cardinality.a1 = 1 then toseq.a1
    else if length.ref = 1 then empty:seq.mytype

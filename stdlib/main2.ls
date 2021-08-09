@@ -148,10 +148,15 @@ let exports = info_3
 Function compilerfront(option:seq.word,libname:seq.word
 ,allsrc:seq.seq.word,dependentlibs:seq.word,exports:seq.word) compileinfo
   { assert false report allsrc @ +("", @e)}
-  let libinfo=libinfo.dependentlibs
-  let link = pass1(  allsrc , exports, mods.libinfo,simple.libinfo,abstract.libinfo)
+   { let libinfo=libinfo.dependentlibs}
+    let libinfo=libmodules2.dependentlibs
+     let  link= pass1(  allsrc , exports, mods.libinfo,program.asset.prg.libinfo)
   addprg(cinfo.link,if option = "pass1"then result.link else pass2.result.link /cup templates.link)
+  
+
     
+use seq.symdef
+
 use seq.libraryModule
 
 use firstpass
@@ -164,37 +169,8 @@ Function loadlibbug seq.word " bug10 "
 use seq.symbolref
   
   
-  type libinfo is mods:seq.passsymbols,simple:program,abstract:program 
- 
-  function  libinfo(   dependentlibs:seq.word) libinfo
-  for acc = libinfo(empty:seq.passsymbols,emptyprogram,emptyprogram), l = loadedLibs do 
-  if(libname.l)_1 ∈ dependentlibs then  
-    for ab = abstract.acc,simple=simple.acc,c=code.l do
-       let sym=(decoderef.l)_toint.first.c
-       if isunbound.sym then next(ab,simple) 
-       else
-       let code=  for acc2=empty:seq.symbol,r=c << 1 do  
-          acc2+ (decoderef.l)_toint.r /for(acc2)
-        if isabstract.module.sym then 
-           next(map(ab,sym,code ), simple) 
-        else next(ab,map(simple,sym,code  ) )
-       /for( libinfo( mods.acc+cvtnewmods(newmods.l,decoderef.l), simple,  ab )   )
-  else acc
-  /for(acc)
  
   
-
-function  cvtnewmods(ll:seq.libraryModule,decoderef:seq.symbol) seq.passsymbols
-for acc=empty:seq.passsymbols,m=ll  do
-   let e=  for acc2=empty:set.symbol,r=exports.m do  acc2+ (decoderef)_toint.r /for(acc2)
-   let d= for acc2=empty:set.symbol,r=defines.m do 
-      let sym=(decoderef)_toint.r
-      if isunbound.sym then acc2 else 
-      acc2+ sym /for(acc2)
-           acc+firstpass(modname.m, cvttomodrefs.uses.m, d, e, types.m) 
- /for(acc)
- 
- 
       
 _______________
 

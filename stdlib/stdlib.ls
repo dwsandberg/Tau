@@ -25,7 +25,7 @@ pass1 pass2  persistant postbind   process real seq set stack  symbol textio tim
  graphs/bandeskopf
  graphs/ipair
  graphs/graph
- typerep
+ typerep passsymbol
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format abstractBuiltin
 graph groupparagraphs intdict   ioseq ipair libdesc  
@@ -35,7 +35,7 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
   interpreter  llvm llvmconstants codegennew   persistant breakblocks
-  program hidesymbol pass2 parse  symboldict taublockseq typerep firstpass
+  program hidesymbol pass2 parse  symboldict taublockseq typerep firstpass passsymbol
 
 * Removed maindict 
 

@@ -73,7 +73,7 @@ use set.typerep
 
 /function flatflds(a:typerep) seq.mytype  totypeseq.a << 1
 
-/function typerep(t:mytype,flat:seq.mytype) typerep typerep([t]+flat) 
+/Export typerep(t:mytype,flat:seq.mytype) typerep  
 
 type type2dict is totypedict:set.typerep
 
@@ -82,7 +82,9 @@ Function print(dict:type2dict) seq.word
 
 Export type:type2dict
 
+Export totypedict(type2dict) set.typerep
 
+Export type2dict(set.typerep) type2dict
 
 
 Function emptytypedict type2dict type2dict.empty:set.typerep
@@ -185,8 +187,6 @@ uses:seq.mytype,defines:seq.symbolref,types:seq.seq.mytype)libraryModule
 
 Export type:libraryModule
 
-Function libraryModule (modname:modref, exports:seq.symbolref) libraryModule
-libraryModule(modname,exports,empty:seq.mytype,empty:seq.symbolref,empty:seq.seq.mytype)
 
 Export   exports(libraryModule)  seq.symbolref
 
@@ -355,7 +355,7 @@ for acc = starttypes, @e = paratypes.s do
 
 function tollvmtype(alltypes:type2dict, s:mytype)llvmtype
  if isseq.s then ptr.i64
- else if abstracttype.s="process"_1 then ptr.i64
+ else if abstracttypename.s="process"_1 then ptr.i64
  else
   let kind = coretype(s,alltypes )
   if kind = typeint ∨ kind = typeboolean then i64
