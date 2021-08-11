@@ -339,7 +339,7 @@ SIZE 2333 315 1888 4
 function subpass2(bigin:seq.symdef, corein:program, toprocess:program, count:int)program
  { assert count < 4 report"SIZE"+ print.length.toseq.toprocess + print.length.bigin + print.length.toseq.corein + print.count }
  for big = bigin, small = emptyprogram, core = corein, pele = tosymdefs.toprocess do
- let s = target.pele
+ let s = sym.pele
  let fullcode = code.pele
  let options = getoption.fullcode
  let code = removeoptions.fullcode
@@ -356,7 +356,7 @@ function subpass2(bigin:seq.symdef, corein:program, toprocess:program, count:int
  /for(if length.tosymdefs.corein = length.tosymdefs.core then
   for acc = core, prgele = tosymdefs.core + tosymdefs.small + big do
   let code3 = code.prgele
-  let sym3 = target.prgele
+  let sym3 = sym.prgele
    if isempty.code3 then map(acc, sym3, code3)else map(acc, sym3, firstopt(acc, sym3, code3, getoption.code3, false))
   /for(acc)
  else subpass2(big, core, small, count + 1)/if)

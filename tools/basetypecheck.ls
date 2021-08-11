@@ -31,6 +31,8 @@ use seq.symdef
  
  use set.symbol
  
+ use mytype
+ 
 Function resultCheck( library:seq.word) seq.word 
 let p = process.glue2.library
  if aborted.p then message.p else  result.p

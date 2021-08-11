@@ -34,19 +34,80 @@ use seq.findabstractresult
 
 use passsymbol
 
- function usedsyms(source:program ,typedictin:type2dict,last:int,result:seq.symdef, templates:program
-  , dict:set.symbol,compiled:set.symbol,typeflds:seq.seq.mytype) seq.symdef
+use seq.set.symdef
+    
+function verysimpleinline(sd:symdef) boolean
+ let nopara=nopara.sym.sd
+ for acc=true,idx=1,sym=code.sd  while acc do
+   if idx /le nopara then
+     next(sym=Local.idx,idx+1)
+   else 
+   if islocal.sym then
+     next(false,idx+1) 
+   else next(inmodule(sym,"$int") /or inmodule(sym ,"builtin")  /and name.sym="fld"_1
+   /or  inmodule(sym,"standard") /and name.sym /nin "randomint" 
+   /or inmodule(sym,"bits") /or inmodule(sym,"internal") /and name.sym /in "getseqlength"
+   /or inmodule(sym,"real")
+   ,idx+1) 
+  /for(acc)
+  
+  function vinline(toprocess:set.symdef,orginline:set.symdef) seq.set.symdef
+  let tmp=for   other=empty:set.symdef,    inline=orginline ,sd=toseq.toprocess do 
+   let z= for acc=empty:seq.symbol,     sym=code.sd do
+      if not.isempty.acc /and last.acc=PreFref then acc+sym else
+      let f= findelement(  symdef(sym,empty:seq.symbol),inline)
+      if  isempty.f then acc+sym else acc+(  code.(f_1) << nopara.sym)
+    /for(symdef(sym.sd,acc))
+   if verysimpleinline.z then next(other,inline+z) else next(other+z,inline )
+ /for([other,inline])
+ if cardinality.orginline=cardinality.tmp_2 then tmp
+ else vinline(tmp_1,tmp_2)
+
+Function postbind(zz1:set.symdef, typedict:type2dict) seq.symdef
+    let result0=for accx = empty:seq.symdef, sd = toseq.zz1 do
+       accx +  postbind(sd,typedict,empty:set.symbol)  
+       /for(accx)
+    let vinline= vinline(asset.result0 ,empty:set.symdef)
+    let compiled=for compiled=empty:set.symbol,z= toseq.zz1 do 
+      if library.module.sym.z /in "compiled" then   compiled+sym.z else compiled
+    /for(compiled)
+let theprg=program(vinline_1  /cup vinline_2 /cup zz1) 
+usedsyms( theprg ,typedict,0, empty:seq.symdef
+,emptyprogram,empty:set.symbol
+,compiled ) 
+
+Function postbind(typedict:type2dict, dict:set.symbol, roots:seq.symbol, theprg:program, 
+templates:program,compiled:set.symbol )program
+let root = symbol(moduleref."W","Wroot", typeint)
+   let discard=for acc=0 ,r=roots do let discard2=encode.r 0 /for(0)
+ program.asset.
+ usedsyms(theprg,typedict,0,empty:seq.symdef
+ ,templates,dict
+ ,compiled )
+
+
+ function usedsyms(source:program ,typedict:type2dict,last:int,result:seq.symdef
+ , templates:program
+  , dict:set.symbol
+  ,compiled:set.symbol) seq.symdef
      let a=  encoding:seq.encodingpair.symbol 
      if length.a=last   then result
     else 
-    let typedict={buildtypedict(asset.result,typeflds)}typedictin
-    for  acc=result,   p=subseq(a,last+1,length.a) do
+     for  acc=result,   p=subseq(a,last+1,length.a) do
        let sym=data.p
        if isspecial.sym /or isconst.sym 
              /or name.module.sym /in "builtin internal $for $global" 
               then acc
        else
-          let lr1 = getCode(source, sym)
+          let lr1 = getCode(source, sym)          
+          if isempty.dict then {new}
+                  if isempty.lr1 then          acc 
+        else {old}
+         let sd=symdef(sym,lr1)
+         let newsd=postbind(sd,typedict, compiled )
+         let discard=for acc2=symbolref.EqOp, sym5=code.newsd  do   symbolref.sym5 /for(acc2)
+          acc +  symdef(sym, code.newsd )
+          else         
           let sd=if (not.isempty.lr1 /or sym /in compiled) then 
                  symdef(sym,lr1) 
             else  if istype.sym then
@@ -72,7 +133,9 @@ use passsymbol
          let newsd=postbind(sd,typedict,  compiled)
          let discard=for acc2=symbolref.EqOp, sym5=code.newsd  do  symbolref.sym5 /for(acc2)
             acc+symdef(sym ,code.newsd )    
-         /for(usedsyms(source, typedict,length.a,acc,templates,dict,compiled,typeflds))    
+         /for(usedsyms(source, typedict,length.a,acc
+         ,templates,dict
+         ,compiled ))    
          
          Function lookupsymbol(dict:set.symbol, sym:symbol)set.symbol  findelement2(dict, sym)
          
@@ -122,7 +185,7 @@ for nextvar = nopara.sym.sd + 1, map = pdict,result = empty:seq.symbol ,  symx =
         else  next(nextvar,map   
       ,    if name.sym ∈ "pushflds" then
             if iscoretype.para.module.sym then result
-            else 
+            else
              let t = flatflds(typedict,para.module.sym)
              if isempty.t /or typeT ∈ t  then 
                     result+sym
@@ -143,7 +206,8 @@ for nextvar = nopara.sym.sd + 1, map = pdict,result = empty:seq.symbol ,  symx =
    else [ if name.sym ∈ "typesize"then
        let typ=para.module.sym
           if typ = typeint ∨ typ = typereal ∨ typ = typeptr /or isseq.typ then Lit.1
-              else       let t = flatflds(typedict,typ)  
+              else      
+               let t = flatflds(typedict,typ)  
         if isempty.t /or typeT ∈ t then sym else Lit.length.t
   else     if name.sym ∈ "length"then  GetSeqLength
 else if name.sym ∈ "packed"then 
@@ -197,7 +261,7 @@ else if name.sym ∈ "packed"then
      Local.varno , Lit.0, EqOp], [   gl, Words.print.typ, encodenosym, setSym.typeint, Define(varno+1), gl  
       ,Lit.0,Getfld.typeint],[ Local.varno],typeint)
 
-use typerep
+use typedict
 
 
 use mytype
@@ -225,12 +289,15 @@ Function  prescan2(   prg:program) program
            else if isdefine.sym then  result+Define.value.sym
            else result + sym
       /for(acc+symdef( sym.p,result))
-      /for(program.acc)      
+      /for(program.acc)  
       
-Function postbind(alltypes:type2dict, dict:set.symbol, roots:seq.symbol, theprg:program, 
-templates:program,compiled:set.symbol,typeflds:seq.seq.mytype)program
-let root = symbol(moduleref."W","Wroot", typeint)
-   let discard=for acc=0 ,r=roots do let discard2=encode.r 0 /for(0)
- program.asset.usedsyms(theprg,alltypes,0,empty:seq.symdef,templates,dict,compiled,typeflds)
+      Function  prescan2(   p:symdef) symdef
+          for  result = empty:seq.symbol, sym = code.p do
+            if  islocal.sym then
+                 result +  Local.value.sym
+           else if isdefine.sym then  result+Define.value.sym
+           else result + sym
+      /for( symdef( sym.p,result) )
+      
   
           

@@ -127,6 +127,8 @@ Export type:packed5
 
 Export type:packed6
 
+Export type:typename
+
 
 
 Export_(blockseq.packed2, int)packed2

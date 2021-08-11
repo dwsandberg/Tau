@@ -304,7 +304,7 @@ use symboldict
 
 Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound:set.symdef,c:seq.commoninfo) symboldict
  for symdict = symboldict(defines.this,c), u = toseq.uses.this do
- let a = checkfindelement(firstpass(u), modset )
+ let a = checkfindelement(passsymbols.u, modset )
  if isempty.a then 
       assert isempty.c /or  mode.c_1 /nin "body" report"Cannot find module" +  name.u
        {needed for when modset passsymbols are not yet created} symdict 
@@ -327,10 +327,10 @@ Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound
  function builddict(modset:set.passsymbols, this:passsymbols)set.symbol
  for symdict = defines.this , u = toseq.uses.this do 
  if issimple.u /or para.u=typeT then 
-    let e =  findelement(firstpass(u), modset)
+    let e =  findelement(passsymbols.u, modset)
     if isempty.e then symdict else symdict ∪ exports.e_1 
  else 
-   let template=findelement(firstpass( moduleref([name.u], typeT)), modset)
+   let template=findelement(passsymbols( moduleref([name.u], typeT)), modset)
    assert not.isempty.template report"Cannot find module" +  name.u
    if isempty.template then symdict else 
      for acc2 =symdict, export = toseq.exports.template_1 do acc2 + replaceTsymbol(para.u, export) /for(acc2)
@@ -346,7 +346,7 @@ Function gettemplates(all:set.passsymbols,prg:program) program
    /for(program.acc)
    
 Function findabstract(templates:program, sym:symbol)seq.findabstractresult
-  for acc = empty:seq.findabstractresult, sd = toseq.data.templates do
+  for acc = empty:seq.findabstractresult, sd = tosymdefs.templates do
    let e=sym.sd
    assert not.isempty.worddata.e /and not.isempty.worddata.sym report "FIND"+ print.e
     +print.sym
@@ -393,19 +393,23 @@ use seq.findabstractresult
 
 use set.word
 
-Function processOptions(prg:program,s:set.passsymbols,option:seq.word) program
- let a = checkfindelement(
-firstpass(moduleref(option))  , s
- ) 
- if isempty.a then prg else 
-   for  acc=prg  , sym=toseq.exports.a_1 do 
-          addoption(acc,sym,option) 
-       /for(acc)
+
+       
+Function processOptions(prg:program,mods:seq.passsymbols,option:seq.word) program
+  for acc=prg ,  m=mods     do   
+   if name.module.m /in option then
+    for  acc2=acc  , sym=toseq.exports.m do 
+          addoption(acc2,sym,[name.module.m]) 
+       /for(acc2)
+   else acc 
+  /for(acc)
+  
+  use seq.passsymbols
 
 Function  checkfindelement(e:passsymbols,a:set.passsymbols ) set.passsymbols
   let e2= if issimple.modname.e /or para.modname.e=typeT then e 
    else 
-   firstpass(modref(library.modname.e,name.modname.e,typeT) )
+   passsymbols(modref(library.modname.e,name.modname.e,typeT) )
  { assert issimple.modname.e /or para.modname.e=typeT report "DIFF"+print.modname.e
   +   print.modref(library.modname.e,name.modname.e,typeT)}
   let t=findelement(e2,a)

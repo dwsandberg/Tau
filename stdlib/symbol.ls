@@ -285,19 +285,6 @@ function fsig2(name:word,nametype:seq.mytype,paratypes:seq.mytype) seq.word
  not.issimple.module.sym
  = for acc = false, t = types.sym while not.acc do isabstract.t /for(acc)
    
---- internal
-
-Function lookup(dict:set.symbol, name:seq.word, types:seq.mytype)set.symbol
-  let sym=if length.name=1 then symbol(internalmod,name,types,type?)
-    else symbol4(internalmod,name_1,parsetype(name << 2),types,type?)
-findelement2(dict, sym )
-
-
-Function lookupbysig(dict:set.symbol, name:seq.word)set.symbol lookup(dict, name, empty:seq.mytype)
-
-Function printdict(s:set.symbol)seq.word
- for acc ="", @e = toseq.s do acc + print.@e /for(acc)
-
 _______________________________
  
 Function istype(s:symbol)boolean 
@@ -640,7 +627,7 @@ let fldtype = if isseq.typ then typeptr else if isencoding.typ then typeint else
  else builtinmod.fldtype,"set", typeptr, fldtype, typeptr)
 
 Function Getfld(fldtype:mytype)symbol 
-let kind2=if isseq.fldtype then  typeptr  else if isencoding.fldtype then typeint else  fldtype
+let kind2=if isseq.fldtype then  typeptr  else if isencoding.fldtype /or fldtype=typeword then typeint else  fldtype
 symbol(builtinmod.kind2,"fld", typeptr, typeint,kind2)
 
 Export type:symdef

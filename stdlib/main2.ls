@@ -149,11 +149,33 @@ Function compilerfront(option:seq.word,libname:seq.word
 ,allsrc:seq.seq.word,dependentlibs:seq.word,exports:seq.word) compileinfo
   { assert false report allsrc @ +("", @e)}
    { let libinfo=libinfo.dependentlibs}
-    let libinfo=libmodules2.dependentlibs
-     let  link= pass1(  allsrc , exports, mods.libinfo,program.asset.prg.libinfo)
-  addprg(cinfo.link,if option = "pass1"then result.link else pass2.result.link /cup templates.link)
+let lib ="?"_1
+let libinfo=libmodules2.dependentlibs
+let libpasstypes=for acc=empty:set.passtypes,m=mods.libinfo do 
+         acc+passtypes(modname.m,empty:set.mytype,typedict.m)
+         /for(acc)
+ let mode= if option="text" then "text"_1 else "body"_1
+ { figure out how to interpret text form of type }
+let modsx = resolvetypes(libpasstypes,allsrc, lib)
+{ figure out how to interpret text form of symbol }
+let t5 = resolvesymbols(allsrc, lib, modsx,asset.mods.libinfo )
+{ parse the function bodies }
+let prg10 = program.passparse(modules.t5, lib, modsx, toseq.code.t5+prg.libinfo,allsrc,mode)
+let typedict0= buildtypedict(empty:set.symbol,types.t5+types.libinfo) 
+ {assert isempty.mods.libinfo report print(typedict0)+
+  "NNN"+for txt="",t=types.t5 do txt+print.t+EOL /for(txt)  }
+let compiled=for acc=empty:set.symbol,sd=prg.libinfo do 
+        if not.isabstract.module.sym.sd  then   acc+sym.sd  else acc 
+    /for(acc)
+     pass1(exports , t5 , prg10 ,compiled ,typedict0,option)
+     
   
-
+  
+  use seq.seq.mytype
+  
+  use typedict
+  
+use set.passtypes
     
 use seq.symdef
 
@@ -162,6 +184,12 @@ use seq.libraryModule
 use firstpass
 
 use seq.passsymbols
+
+use set.passsymbols
+
+use passsymbol
+
+use passparse
 
  
 Function loadlibbug seq.word " bug10 "

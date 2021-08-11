@@ -125,7 +125,7 @@ Function TypeFromOldTyperep(m:seq.word)mytype
 Function oldTypeRep(m:mytype)seq.word
  for acc ="", e = typerep.m do [ name.e] + acc /for(acc)
 
-Function parsetype(s:seq.word)mytype
+/Function parsetype(s:seq.word)mytype
  for acc ="", w = s do
   if w = "."_1 then acc else [ w] + acc
  /for(TypeFromOldTyperep.acc)
