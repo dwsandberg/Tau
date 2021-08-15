@@ -85,17 +85,18 @@ else symbol4(internalmod, name_1, resolvetype(name << 1, common, place), paratyp
 let f = lookupbysig( dict, sym3)
 assert not.isempty.f report errormessage("cannot find 1" + fixNM.name + "("
  + for acc ="", @e = paratypes do list(acc,",", print.@e)/for(acc)
- + ")", common, place)+print.toseq.asset.dict
+ + ")", common, place){+print.toseq.asset.dict}
  assert cardinality.f = 1 report errormessage("found more than one"
   + for acc ="", @e = toseq.f do acc + print.@e /for(acc), common, place)
   let discard = for acc ="", sym2 = requires(dict,f_1) do
     let xxx = lookupbysig( dict,  sym2)
-  assert not.isempty.xxx ∨ isabstract.module.f_1 report
+  assert not.isempty.xxx ∨ isabstract.module.f_1  report
      errormessage( "using symbol "+ print.f_1+" requires unbound" +   print.sym2, common, place)
     { +for  txt="/p dictionary",s=      toseq.asset.dict do
         if name.s =name.sym2 then txt+print.s+EOL 
        else txt /for(txt)}
      let discard2=if not.isempty.xxx then 
+     { assert false report "FF"+print.sym2+print.xxx_1+"XXX"+print.modname.common}
    let discard =encode.requireencoding(sym2,xxx_1) 1 else 1
     acc
   /for(acc)

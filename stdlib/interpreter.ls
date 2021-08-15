@@ -6,8 +6,6 @@ use fileio
 
 use mangle
 
-use pass1
-
 use real
 
 use standard
@@ -23,7 +21,6 @@ use process.int
 use seq.int
 
 use stack.int
-
 
 use seq.mytype
 

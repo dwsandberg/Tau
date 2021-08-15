@@ -5,9 +5,8 @@ Module passsymbol
 
 Function resolvesymbols(t:seq.seq.word, lib:word, mods:set.passtypes,libmods:set.passsymbols)prg6
  let passtypes=mods
- for  prg=emptyprogram
- ,modtypeflds=empty:seq.seq.mytype
- ,typeflds=empty:seq.seq.mytype
+ for  
+   typeflds=empty:seq.seq.mytype
     , paragraphno=1
     , text = empty:seq.symtextpair
     , modlist = libmods
@@ -20,15 +19,15 @@ Function resolvesymbols(t:seq.seq.word, lib:word, mods:set.passtypes,libmods:set
     , m = t do
     let input=m
   if isempty.input then 
-   next(prg,modtypeflds,typeflds,paragraphno+1, text, modlist, defines, exports, unresolvedexports, uses, common, typearcs)
+   next(typeflds,paragraphno+1, text, modlist, defines, exports, unresolvedexports, uses, common, typearcs)
   else if first.input ∈ "Module module"then
   let x = findpasstypes(passtypes, lib, input)
   let z = commoninfo(input, modname.x_1, lib, formtypedict(passtypes, x_1), "symbol"_1)
   assert not.isempty.x report"did not find" + input
    let lastpass = resolve(empty:set.passsymbols, 
-    passsymbols(modname.common, uses,asset.defines, exports, unresolvedexports,types.common,text, modtypeflds,   prg )
+    passsymbols(modname.common, uses,asset.defines, exports, unresolvedexports,types.common,text)
    )
-   next(emptyprogram,empty:seq.seq.mytype,typeflds, paragraphno + 1, empty:seq.symtextpair, modlist + lastpass, empty:seq.symbol, empty:set.symbol, empty:set.symbol, uses.x_1, z, typearcs
+   next( typeflds, paragraphno + 1, empty:seq.symtextpair, modlist + lastpass, empty:seq.symbol, empty:set.symbol, empty:set.symbol, uses.x_1, z, typearcs
     )
   else if first.input ∈ "Function function  Builtin builtin Export unbound"then
      let b = parse.symboldict(empty:set.symbol, [commoninfo(getheader.input, modname.common, lib.common, types.common, "symbol"_1)])
@@ -43,12 +42,12 @@ Function resolvesymbols(t:seq.seq.word, lib:word, mods:set.passtypes,libmods:set
       symbol4(modname, first.text.b, first.types.b,subseq(types.b,2,length.types.b-1), last.types.b)
    assert checkwellformed.sym report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module" + getheader.input
    if first.input = "unbound"_1 then
-     next(prg,modtypeflds,typeflds,paragraphno+1,   text, modlist, defines+ setunbound.sym, exports, unresolvedexports, uses, common, typearcs)
+     next(typeflds,paragraphno+1,   text, modlist, defines+ setunbound.sym, exports, unresolvedexports, uses, common, typearcs)
   else if first.input = "Export"_1  then 
-     next(prg,modtypeflds,typeflds,paragraphno+1,   text, modlist, defines, exports, unresolvedexports + sym, uses, common, typearcs)
+     next(typeflds,paragraphno+1,   text, modlist, defines, exports, unresolvedexports + sym, uses, common, typearcs)
    else
         assert sym ∉ defines  report"Function" + wordname.sym + "is defined twice in module" + print.modname
-    next(prg,modtypeflds,typeflds,paragraphno+1,    text + symtextpair(sym, m,paragraphno)
+    next(typeflds,paragraphno+1,    text + symtextpair(sym, m,paragraphno)
     , modlist, defines + sym, if first.input ∈ "Function Builtin"then exports + sym else exports, unresolvedexports, uses, common, typearcs)
   else if first.input ∈ "type"then
    let b =  parse.symboldict(empty:set.symbol, [commoninfo(input, modname.common, lib.common, types.common + typeseqdec, "symbol"_1)])
@@ -57,13 +56,12 @@ Function resolvesymbols(t:seq.seq.word, lib:word, mods:set.passtypes,libmods:set
    let isseq = typs_2 = typeseqdec
    let flds = flds(isseq,text.b,modname.common,input_2,typs)
    let newdefines=for acc=defines + typesym,sd=flds do acc+sym.sd /for(acc)
-   let newprg=for acc=prg,sd=flds do map(acc,sym.sd,code.sd) /for(acc)
    let tt=if isseq then [first.typs, typeint, typeint] + typs << 2
      else typs
-    next(newprg,modtypeflds+tt,typeflds+tt,paragraphno+1,   text, modlist, newdefines, exports, unresolvedexports, uses, common, typearcs + flds)
-  else next(prg,modtypeflds,typeflds,paragraphno+1,   text, modlist, defines, exports, unresolvedexports, uses, common, typearcs)
+    next(typeflds+tt,paragraphno+1,   text, modlist, newdefines, exports, unresolvedexports, uses, common, typearcs + flds)
+  else next(typeflds,paragraphno+1,   text, modlist, defines, exports, unresolvedexports, uses, common, typearcs)
  /for(   let lastpass = resolve(empty:set.passsymbols, 
-    passsymbols(modname.common, uses,asset.defines, exports, unresolvedexports,types.common,text, modtypeflds,   prg )
+    passsymbols(modname.common, uses,asset.defines, exports, unresolvedexports,types.common,text )
    )
  prg6(asset.typearcs, resolveexports(modlist + lastpass, 100000),typeflds))
 
@@ -240,7 +238,7 @@ function resolve(all:set.passsymbols, p:passsymbols)passsymbols
   for exports = exports.p, unresolved = empty:set.symbol, t2 = toseq.unresolvedexports.p do
    let b = lookupbysig(dict, t2)
    if cardinality.b = 1 then next(exports + b_1, unresolved)else next(exports, unresolved + t2)
-   /for(passsymbols(modname.p,uses.p, defines.p, exports, unresolved,   typedict.p, text.p,types.p,prg.p ))
+   /for(passsymbols(modname.p,uses.p, defines.p, exports, unresolved,   typedict.p, text.p ))
    
       {modname , uses , defines , exports, unresolvedexports, typedict , text  , types , prg }
 
@@ -271,7 +269,6 @@ Export paragraphno(symtextpair) int
 
 Export sym(symtextpair)symbol 
 
-use firstpass
 
 Export print(passsymbols)seq.word
 
@@ -324,18 +321,7 @@ Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound
    /for(add(symdict ,  acc,req))
  /for(symdict  )
  
- function builddict(modset:set.passsymbols, this:passsymbols)set.symbol
- for symdict = defines.this , u = toseq.uses.this do 
- if issimple.u /or para.u=typeT then 
-    let e =  findelement(passsymbols.u, modset)
-    if isempty.e then symdict else symdict ∪ exports.e_1 
- else 
-   let template=findelement(passsymbols( moduleref([name.u], typeT)), modset)
-   assert not.isempty.template report"Cannot find module" +  name.u
-   if isempty.template then symdict else 
-     for acc2 =symdict, export = toseq.exports.template_1 do acc2 + replaceTsymbol(para.u, export) /for(acc2)
-/for(symdict)
-
+ 
 Function gettemplates(all:set.passsymbols,prg:program) program
  for acc=empty:set.symdef, m=toseq.all do
    for acc2=acc,  sym=     toseq.defines.m do
@@ -353,6 +339,25 @@ Function findabstract(templates:program, sym:symbol)seq.findabstractresult
    if name.e = name.sym ∧ length.types.e = length.types.sym 
        ∧ para.module.e = typeT  
        ∧ name.module.e=name.module.sym      
+   then
+      let z= for Tis=type? ,  idx=1,   t= types.e do
+             let S=solveT(t,(types.sym)_idx) 
+             if S=type? then 
+              {assert t=(types.s)_idx report "XXXXX"+print.t+print.(types.s)_idx}
+             next(Tis,idx+1) else next(S,idx+1)
+            /for(Tis)
+    if  ?2(sym,replaceTsymbol(z, e)) =EQ  then
+       if sym ? e =EQ /or isunbound.e then acc else
+       acc + findabstractresult(sd,z)
+    else acc
+   else acc
+  /for(acc) 
+  
+  Function findabstract2(templates:program, sym:symbol)seq.findabstractresult
+  for acc = empty:seq.findabstractresult, sd = tosymdefs.templates do
+   let e=sym.sd
+   if name.e = name.sym ∧ length.types.e = length.types.sym 
+       ∧ para.module.e = typeT      
    then
       let z= for Tis=type? ,  idx=1,   t= types.e do
              let S=solveT(t,(types.sym)_idx) 
@@ -414,5 +419,75 @@ Function  checkfindelement(e:passsymbols,a:set.passsymbols ) set.passsymbols
   +   print.modref(library.modname.e,name.modname.e,typeT)}
   let t=findelement(e2,a)
    t
+  
+------------
+
+
+type symtextpair is sym:symbol, text:seq.word,paragraphno:int
+
+Export symtextpair(sym:symbol, text:seq.word,paragraphno:int)symtextpair
+
+Export text(symtextpair)seq.word
+
+Export type:symtextpair
+
+Export paragraphno(symtextpair) int 
+
+Export sym(symtextpair)symbol
+
+
+
+Export type:passsymbols
+
+
+Function module(f:passsymbols) modref modname.f
+
+Export modname(f:passsymbols) modref  
+
+Export typedict(passsymbols) set.mytype
+
+Export defines(passsymbols)set.symbol
+
+Export exports(passsymbols)set.symbol
+
+
+Export unresolvedexports(passsymbols)set.symbol
+
+
+
+
+Export uses(passsymbols)set.modref
+
+
+Export text(passsymbols) seq.symtextpair
+
+
+
+
+use set.modref
+
+use set.mytype
+
+type passsymbols is modname:modref, uses:set.modref, defines:set.symbol, exports:set.symbol, unresolvedexports:set.symbol
+, typedict:set.mytype, text:seq.symtextpair 
+
+Export passsymbols(modname:modref, uses:set.modref, defines:set.symbol, exports:set.symbol, unresolvedexports:set.symbol
+, typedict:set.mytype, text:seq.symtextpair 
+) passsymbols
+
+
+Function passsymbols(modname:modref, uses:set.modref) passsymbols
+passsymbols(modname,uses,empty:set.symbol, empty:set.symbol, empty:set.symbol
+, empty:set.mytype, empty:seq.symtextpair ) 
+
+
+
+
+Function passsymbols(modname:modref) passsymbols
+passsymbols( modname, empty:set.modref, empty:set.symbol, empty:set.symbol, empty:set.symbol
+, empty:set.mytype, empty:seq.symtextpair )
+ 
+
+   Function ?(a:passsymbols, b:passsymbols)ordering   module.a ? module.b
   
 

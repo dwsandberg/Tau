@@ -63,90 +63,142 @@ function verysimpleinline(sd:symdef) boolean
  if cardinality.orginline=cardinality.tmp_2 then tmp
  else vinline(tmp_1,tmp_2)
 
-Function postbind(zz1:set.symdef, typedict:type2dict) seq.symdef
-    let result0=for accx = empty:seq.symdef, sd = toseq.zz1 do
-       accx +  postbind(sd,typedict,empty:set.symbol)  
-       /for(accx)
-    let vinline= vinline(asset.result0 ,empty:set.symdef)
-    let compiled=for compiled=empty:set.symbol,z= toseq.zz1 do 
-      if library.module.sym.z /in "compiled" then   compiled+sym.z else compiled
-    /for(compiled)
-let theprg=program(vinline_1  /cup vinline_2 /cup zz1) 
-usedsyms( theprg ,typedict,0, empty:seq.symdef
-,emptyprogram,empty:set.symbol
-,compiled ) 
 
-Function postbind(typedict:type2dict, dict:set.symbol, roots:seq.symbol, theprg:program, 
-templates:program,compiled:set.symbol )program
-let root = symbol(moduleref."W","Wroot", typeint)
+
+
+type postbindresult  is typedict:type2dict ,prg:program 
+
+Export typedict(postbindresult) type2dict
+
+Export prg(postbindresult) program
+
+
+type  mapsymbolused is  modname:modref,syms:set.symbol
+
+function ?(a:mapsymbolused,b:mapsymbolused) ordering  modname.a ? modname.b 
+
+use set.mapsymbolused
+
+function add(b:set.mapsymbolused,sd:symdef) set.mapsymbolused
+  let new= for  acc=empty:set.symbol , sym=code.sd do
+    if not.isunbound.sym /and isabstract.module.sym /and  name.module.sym /nin "$for $loopblock $sequence builtin" then  
+     acc+sym  else acc
+    /for( acc)
+   if isempty.new then b
+ else
+ let m1=mapsymbolused(module.sym.sd,new)
+ let f=   findelement(m1,b)
+ if isempty.f then 
+   b+m1
+ else 
+   replace(b,mapsymbolused(module.sym.sd,syms.f_1 /cup new))
+   
+ 
+   
+   
+      function print (a:set.mapsymbolused) seq.word
+      for acc="sym used", e=toseq.a do acc+print.modname.e+  print.toseq.syms.e +   EOL /for(acc) 
+      
+  
+Function postbind( t5:prg6, roots:seq.symbol, theprg:program, 
+templates:program,compiled:set.symbol , typedict1:type2dict
+)postbindresult
+ let root = symbol(moduleref."W","Wroot", typeint)
    let discard=for acc=0 ,r=roots do let discard2=encode.r 0 /for(0)
- program.asset.
- usedsyms(theprg,typedict,0,empty:seq.symdef
- ,templates,dict
- ,compiled )
+  usedsyms(theprg ,0,empty:seq.symdef
+ ,templates 
+ ,compiled,typedict1 )
+ 
+ assert false report 
+  for txt="DEBUG",   d=encoding:seq.encodingpair.debug do
+   txt+data.data.d +EOL /for(txt)
+ j
 
 
- function usedsyms(source:program ,typedict:type2dict,last:int,result:seq.symdef
+ function usedsyms(source:program ,last:int,result:seq.symdef
  , templates:program
-  , dict:set.symbol
-  ,compiled:set.symbol) seq.symdef
+  ,compiled:set.symbol,typedict1:type2dict ) postbindresult
      let a=  encoding:seq.encodingpair.symbol 
-     if length.a=last   then result
+     if length.a=last   then postbindresult(typedict1,program.asset.result )
     else 
-     for  acc=result,   p=subseq(a,last+1,length.a) do
+     for  acc=result, newtypedict=typedict1 , p=subseq(a,last+1,length.a) do
        let sym=data.p
        if isspecial.sym /or isconst.sym 
              /or name.module.sym /in "builtin internal $for $global" 
-              then acc
+              then next(acc,newtypedict)
        else
-          let lr1 = getCode(source, sym)          
-          if isempty.dict then {new}
-                  if isempty.lr1 then          acc 
-        else {old}
-         let sd=symdef(sym,lr1)
-         let newsd=postbind(sd,typedict, compiled )
-         let discard=for acc2=symbolref.EqOp, sym5=code.newsd  do   symbolref.sym5 /for(acc2)
-          acc +  symdef(sym, code.newsd )
-          else         
+          let newdict2=addtype(newtypedict,resulttype.sym)
+          let lr1 = getCode(source, sym)                  
           let sd=if (not.isempty.lr1 /or sym /in compiled) then 
                  symdef(sym,lr1) 
             else  if istype.sym then
-              symdef(sym,deepcopybody(resulttype.sym,typedict )) 
-            else  
-              let sym2=if isunbound.sym then
-                 let k2=      lookupbysig(data.source,sym)
-                { assert not.isempty.k2 /or print.sym /in [ "seq.seq.word:=(seq.word, seq.word)boolean"
-                 ,"otherseq.seq.alphaword:?(seq.alphaword, seq.alphaword)ordering"
-                 ,"set.encoding.seq.char:?(encoding.seq.char, encoding.seq.char)ordering" 
-                 report "HK"+print.sym}
-                let k = lookupsymbol(dict, sym) 
-               assert cardinality.k = 1 report"Cannot bind unbound"   + print.sym  
-               assert sym ≠ k_1 report"ERR12" + print.sym + print.k_1
-                 k_1 else sym
-               if   issimple.module.sym2 /or sym2 /in compiled then 
-                    for paras=empty:seq.symbol,i=arithseq(nopara.sym2,1,1) do paras+Local.i /for (symdef(sym2,  paras+sym2))
+              symdef(sym,deepcopybody(resulttype.sym,newdict2 )) 
+            else  if not.isunbound.sym then sub5(sym,compiled ,templates )
+            else
+              let k2=      lookupbysig(data.source,sym)
+                if isempty.k2 then sub5(sym,compiled ,templates )
+                  else    
+                     let txt0=print.sym
+                   let pick=  if cardinality.k2 = 1 then  k2
+                    else 
+                       let n=k2_1
+                       if name.n="?"_1 /and name.module.n="graph"_1 /and
+                         cardinality.k2=2 then  asset.[k2_2]
+                     else 
+                      for pick=empty:set.symbol  ,sy=toseq.k2 do 
+                      if print.sy /in ["otherseq.seq.word:?(seq.word, seq.word)ordering",
+                   "standard:*(int, int)int","standard:+(int, int)int"
+                   ,"standard:=(int, int)boolean"
+                   ,"standard:?(int, int)ordering"
+                   ,"symbol:?(symbol, symbol) ordering "
+                   ,"words:?(word, word)ordering"
+                   ,"standard:=(char, char)boolean"
+                   ,"checkdata2:?(rec, rec)ordering"
+                   ,"point:?(point, point)ordering"
+                   ,"words:?(alphaword, alphaword)ordering"
+                   ,"words:=(word, word)boolean"
+                   ,"seq.word:=(seq.word, seq.word)boolean"
+                   ,"genLR1:?(dottedrule, dottedrule)ordering"
+                   ,"genLR1:?(action, action)ordering"
+                   ,"genLR1:?(action2, action2)ordering"
+                   ,"genLR1:=(dottedrule, dottedrule)boolean"
+                   ,"checkdata2:?(rollup, rollup)ordering"
+                   ,"mytype:=(mytype, mytype)boolean"
+                    ,"mytype:?(mytype, mytype)ordering"
+                   ,"llvmconstants:=(instop, instop)boolean"
+                   ,"llvmconstants:=(constop, constop)boolean"
+                   ,"profile:?2(parc, parc)ordering"] then
+                          pick+sy else pick
+                  /for(pick)   
+                    assert cardinality.pick=1 report  "postbind problem"+print.toseq.k2+
+                         "pick:"+print.toseq.pick     
+                   sub5(pick_1,compiled ,templates )
+               let  newdict3=addtypes(newdict2, asset(code.sd+sym.sd)) 
+            next(acc+symdef(sym ,postbind(sd,newdict3,  compiled)   ),newdict3)   
+         /for(usedsyms(source, length.a,acc
+         ,templates 
+         ,compiled,typedict1  ))  
+         
+
+         
+         function sub5(sym2:symbol,compiled:set.symbol,templates:program) symdef   
+              if   issimple.module.sym2 /or sym2 /in compiled then 
+                    for paras=empty:seq.symbol,i=arithseq(nopara.sym2,1,1) do paras+Local.i 
+                    /for (symdef(sym2,  paras+sym2))
                else  
-                 let gx=findabstract(templates,sym2)
-                   assert length.gx = 1 report"Cannot find template for" + print.sym2  
-                  for newcode=empty:seq.symbol,sym4 = code.sd.gx_1 do   newcode+ replaceTsymbol(modpara.gx_1, sym4)
-                 /for(symdef(  sym2 ,    newcode))     
-         let newsd=postbind(sd,typedict,  compiled)
-         let discard=for acc2=symbolref.EqOp, sym5=code.newsd  do  symbolref.sym5 /for(acc2)
-            acc+symdef(sym ,code.newsd )    
-         /for(usedsyms(source, typedict,length.a,acc
-         ,templates,dict
-         ,compiled ))    
-         
-         Function lookupsymbol(dict:set.symbol, sym:symbol)set.symbol  findelement2(dict, sym)
-         
-           if issimple.module.sym /or para.module.sym=typeT then 
-            findelement2(dict, sym)
-           else 
-              assert false report "JKLS"+print.sym
-            findelement2(dict, sym)
+                 let gx=findabstract2(templates,sym2)
+                   assert length.gx = 1 report"Cannot find template for X"  +
+                    print.length.gx+ print.sym2  
+                  for newcode=empty:seq.symbol,sym4 = code.sd.gx_1 do  
+                         assert { print.sym.sd.gx_1 /ne "set.T:+(set.T,  T)set.T"
+                         /or length.print.modpara.gx_1=1 } not.isunbound.sym.sd.gx_1 report 
+                        "HHH"+print.modpara.gx_1+print.sym.sd.gx_1          +print.sym4  
+                      newcode+replaceTsymbol(modpara.gx_1, sym4) 
+                 /for(symdef(  sym2 ,    newcode))  
+            
 
 
-Function postbind(sd:symdef,typedict:type2dict,   compiled:set.symbol) symdef
+Function postbind(sd:symdef,typedict:type2dict,   compiled:set.symbol) seq.symbol
 let modpara = para.module.sym.sd
  let pdict = for pmap = empty:intdict.seq.symbol, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara.sym.sd do 
                next(add(pmap, parano, [ Local.parano]), parano + 1)
@@ -246,7 +298,7 @@ else if name.sym ∈ "packed"then
         assert name.sym /in "offsets build" report "post bind"+print.sym
      sym
      ] )
-   /for(symdef( sym.sd , result))
+   /for( let discard=for acc2=symbolref.EqOp, sym5=result  do  symbolref.sym5 /for(acc2) result)
        
  function iscoretype(typ:mytype) boolean
  typ =  typeint /or typ=typereal   /or typ=typeptr /or typ=typeboolean /or isseq.typ /or isencoding.typ
@@ -255,7 +307,7 @@ else if name.sym ∈ "packed"then
   let gl = symbol4(moduleref."$global","global"_1, typ, empty:seq.mytype, seqof.typeint)
   let encodenosym = symbol(moduleref."tausupport","encodingno", seqof.typeword, typeint)
   if typ = typeref."typename tausupport. "then [  Lit.2 ]
-  else if typ = seqof.typeref."char standard ."then  [   Lit.1 ]  
+  else if typ = seqof.typechar then  [   Lit.1 ]  
  else
   ifthenelse([ gl,Lit.0,Getfld.typeint,Define.varno,
      Local.varno , Lit.0, EqOp], [   gl, Words.print.typ, encodenosym, setSym.typeint, Define(varno+1), gl  
@@ -299,5 +351,28 @@ Function  prescan2(   prg:program) program
            else result + sym
       /for( symdef( sym.p,result) )
       
-  
+ 
+ 
+use set.passsymbols
+
+use seq.modref
+
+use set.modref
+
           
+   
+       type debug is data:seq.word,k:int
+    
+ function    hash (d:debug) int hash.data.d
+ 
+ function   assignencoding(l:seq.encodingpair.debug,debug) int length.l
+ 
+ use seq.encodingpair.debug 
+ 
+ 
+ 
+ use encoding.debug
+ 
+ function =(a:debug,b:debug) boolean data.a=data.b
+        
+       

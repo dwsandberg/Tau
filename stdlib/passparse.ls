@@ -1,9 +1,3 @@
-#!/usr/local/bin/tau ; use driver ; mainX(["bug10","use bug10","test4"])
-
-#!/usr/local/bin/tau ;use driver ; test4
-
-
-
  module passparse 
  
  use passsymbol
@@ -48,23 +42,61 @@ use set.arc.symbol
 
 use encoding.symbol
 
+
+
  function abstractarcs(arcsin: seq.arc.symbol,sym:symbol,code:seq.symbol) seq.arc.symbol
         for arcs=arcsin,codesym =  code    do 
            if isspecial.codesym /or not.isabstract.module.codesym /or sym  = codesym 
-            /or  name.module.codesym /in "builtin" /or para.module.codesym /ne  typeT  then arcs
-          else  if name.module.codesym /in "$for" then 
+            /or  name.module.codesym /in "builtin" then arcs
+             else { if   para.module.codesym /ne  typeT  then arcs
+          else }  if name.module.codesym /in "$for" then 
             if name.codesym /in "name for" then arcs
             else
-            { assert false report print.codesym+print.symbol(moduleref("seq",resulttype.codesym),"_",seqof.resulttype.codesym
-             ,typeint,resulttype.codesym)}
-             arcs+arc(sym,symbol(moduleref("seq",resulttype.codesym),"_",seqof.resulttype.codesym
+                arcs+arc(sym,symbol(moduleref("seq",resulttype.codesym),"_",seqof.resulttype.codesym
              ,typeint,resulttype.codesym))
-          else arcs+arc(sym ,codesym) 
+          else 
+           { assert  name.module.sym /nin "graph" /or  para.module.sym /ne typeT  
+           report "X" +print.arc(sym ,codesym)}
+           arcs+arc(sym ,codesym) 
         /for (arcs)
         
+        function print(a:arc.symbol)  seq.word  print.tail.a+print.head.a  
+        
+        graph.T:newgraph(seq.arc.T)graph.T set.arc.T:empty:set.arc.T set.arc.T
+         
         use program
+        
+type passparse is prg:set.symdef,requires:set.symdef 
+
+Export prg(passparse) set.symdef
+
+Export requires(passparse) set.symdef
+
+Export type:passparse
+
+function removesinks(      sinkstokeep:set.symbol,g:graph.symbol,toprocess:seq.symbol)
+     seq.arc.symbol
+    { removes sinks that are not unbound and parameter of module is typeT}
+    { do a transitiveClosure and only keep arcs whose head is a sink }
+    { looking for relation of function to the unbound functions it can call.
+     This are not quite yet that relation. } 
+      for keep=sinkstokeep,  pred=empty:set.symbol,g2=g,  n=toprocess do 
+        if isunbound.n /or para.module.n /ne typeT  then next(keep+n, pred,g2)
+        else  next(keep,pred /cup predecessors(g2,n),deletenode(g2,n))
+       /for(  
+          let newsinks=for  acc=empty:seq.symbol,   p=toseq.pred do
+            if  outdegree(g,p)=0 then acc+p else acc 
+         /for(acc)
+           if isempty.newsinks  then
+              for acc=empty:seq.arc.symbol,  a=toseq.arcs.transitiveClosure.g2 do
+     if head.a /in  keep then acc+a else acc /for( acc)
+          else removesinks(keep,g2,newsinks)
+       ) 
+       
+
     
-Function  passparse(   modlist :set.passsymbols,lib:word,mods:set.passtypes,prg1:seq.symdef,src:seq.seq.word,mode:word) set.symdef
+Function  passparse(   modlist :set.passsymbols,lib:word,mods:set.passtypes,prg1:seq.symdef,src:seq.seq.word,mode:word) 
+set.symdef
  let prg0arcs=  for  acc=empty:seq.arc.symbol,     p =prg1 do 
     abstractarcs(acc,sym.p, code.p )
    /for (acc)
@@ -73,39 +105,40 @@ Function  passparse(   modlist :set.passsymbols,lib:word,mods:set.passtypes,prg1
        if not.isabstract.modname.m /or first.text.p /in "Builtin builtin" then acc
        else 
                assert first.text.p /in "Function function" report text.p
-         let b = parse( formsymboldict(modlist,m,lib,mode ,empty:set.symdef,src_paragraphno.p) )  
-        abstractarcs(acc,sym.p,parsedcode.b)
+          let b = parse( formsymboldict(modlist,m,lib,mode ,empty:set.symdef,src_paragraphno.p) ) 
+           abstractarcs(acc,sym.p,parsedcode.b)
      /for(acc)
 /for(acc2)
-{assert false report display.arcinfo.toseq.arcs.g3}
-let sinks =asset.sinks.g3
-let g4=for acc=empty:seq.arc.symbol,  a=toseq.arcs.transitiveClosure.g3 do
-     if head.a /in sinks then acc+a else acc /for(newgraph.acc)
-let tails=nodes.g4-sinks
-{assert false report "XK"+print.toseq.tails}
-let templates=gettemplates(modlist,emptyprogram)
-let g5=for  acc=g4,  n=toseq.sinks do 
-  if isunbound.n then acc
-  else 
-   { find template }
+{ graph g3 has three kinds of sinks.
+     1:is unbound and module parameter is T
+     2: is not unbound and module parameter is T
+     3:   module parameter is not T
+    examples: otherseq.T:=(T, T) boolean ; otherseq.T:step(arithmeticseq.T)T ;
+      otherseq.sparseele.T:binarysearch(seq.sparseele.T) }
+  let sinks =asset.sinks.g3
+ let g4=     newgraph.removesinks(empty:set.symbol,g3,toseq.sinks)
+ let templates=gettemplates(modlist,emptyprogram)
+let g5=for  acc=g4,  n=toseq(sinks /cap nodes.g4)   do 
+let newgraph=if isunbound.n then acc else  deletenode(acc,n)
   let f=findabstract(templates,n)
-  {assert false  report "here"+print.f+if first.f /in tails then "T" else "F"}
-  if not.isempty.f /and sym.first.f /in tails then 
+  {assert not.isempty.f report "analzye templates error"+print.n}
+  if isempty.f then newgraph
+   else
     { look in g4 to find what unbound symbols are used }
-  let z=for acc2=empty:seq.arc.symbol,sym=toseq.successors(g4,sym.f_1) do 
-     let x=replaceTsymbol(para.module.n,sym)
-     let f2 =  findelement( x,nodes.g4)
-     acc2+ toarcs( toseq.predecessors(g3,sym.f_1)+ [n],if isempty.f2 then x else f2_1) /for(acc2)
-  acc+z else deletenode(acc,n)
+  for acc2=empty:seq.arc.symbol,sym=toseq.successors(g4,sym.f_1) do 
+     let x=replaceTsymbol(modpara.f_1,sym)
+      acc2+ toarcs( toseq.predecessors(g4,sym.f_1)  ,x ) /for(newgraph+acc2) 
 /for(acc)
-{assert false report display.arcinfo.toseq.arcs.g5}
+ { change many-to-one relation defined by arcs in g5 into format of set.symdef }
   let requireUnbound=if isempty.arcs.g5 then empty:set.symdef else 
-  for acc=empty:set.symdef, last=tail.first.toseq.arcs.g5,list=empty:seq.symbol,a=toseq.arcs.g5 do
+  for acc=empty:set.symdef
+     , last=Lit.0
+     ,list=empty:seq.symbol,a=toseq.arcs.g5 do
    if last /ne tail.a then
-          next(if isempty.list then acc else  
-          acc+symdef(last,list), tail.a,if isunbound.head.a then [head.a] else empty:seq.symbol)
+          next(if isempty.list then acc else   acc+symdef(last,list)
+          , tail.a,if isunbound.head.a then [head.a] else empty:seq.symbol)
      else next(acc, tail.a,if isunbound.head.a then list+head.a else list)
-  /for(acc)
+  /for(if isempty.list then acc else   acc+symdef(last,list))
  { assert isempty.requireUnbound  report "req"+for acc="",x=toseq.requireUnbound do acc+print.sym.x +print.code.x+EOL
   /for(acc) }
   let discard10= requirematch
@@ -122,109 +155,26 @@ let g5=for  acc=g4,  n=toseq.sinks do
          ) else 
                assert first.text.p /in "Function function" report text.p
       let b = parse(formsymboldict(modlist,m,lib,mode ,requireUnbound,src_paragraphno.p))  
-       {assert name.sym.p /nin "emptyxx" report "parsepass X"+print.parsedcode.b+text.p}
-       acc+ symdef(sym.p, parsedcode.b,paragraphno.p ) 
+        acc+ symdef(sym.p, parsedcode.b,paragraphno.p ) 
        /for( acc )
       /for(
-      { assert false report for txt="match",sd=requirematch do txt+print.sym.sd+print.code.sd +EOL /for(txt)}
-      asset(  prg1+  prg+requirematch))
+       {  assert false report for txt="requirematch",sd=requirematch do txt+print.sym.sd+print.code.sd +EOL /for(txt)   
+     }   asset(  prg1+  prg +requirematch) )
      
  
  use seq.seq.mytype
  
                use set.word
                
-    type jjjresult is prg:set.symdef,typedict:type2dict,unprocessed:set.symdef
-    
-    Function  addabstract(  prg:set.symdef,typedict:type2dict) set.symdef
-      let templates=for acc=empty:seq.symdef,p=toseq.prg do  if para.module.sym.p = typeT then
-      acc+p else acc /for(program.asset.acc)
-      prg.jjj(jjjresult(data.templates,typedict,prg),templates)
-
- function jjj( prg:jjjresult,templates:program) jjjresult
- { code of unprocessed has not been scanned for abstract symbols }
-  for  acc=jjjresult(prg.prg,typedict.prg,empty:set.symdef)  ,z=toseq.unprocessed.prg do 
-    let A=abstractSymbolUses.code.z
-     for newprg2=prg.acc  ,typedict2=typedict.acc,added =empty:set.symdef, sym= toseq.A do 
-      {  seq.tree.seq.word 
-      }  if not.isempty.findelement(  symdef(sym,empty:seq.symbol),newprg2) then 
-         next(newprg2,typedict2,added)
-        else if istype.sym then
-          let p1=print.resulttype.sym
-          if length.p1 < 5 /or subseq(p1,1,3)="seq.seq"
-            /or    p1 /in ["encoding.seq.char " ,"seq.tree.seq.word ","tree.seq.word"
-           ] then
-            let newdict=addtype(typedict2,resulttype.sym) 
-             let newsd=symdef(sym, deepcopybody(resulttype.sym,newdict) )
-             next(newprg2+newsd, newdict ,added+newsd)
-          else 
-           assert print.resulttype.sym /in [ "seq.encodingpair.testrecord" ] report "here addtype"+print.resulttype.sym   
-          next(newprg2,typedict2,added )
-        else       
-         let t=findabstract(templates,sym)
-           if isempty.t /and isunbound.sym  then 
-             next(newprg2,typedict2,added)
-            else
-              assert length.t=1 report "cannot find abstract 10"+print.sym +EOL
-              + for txt="", p=toseq.data.templates do txt+print.sym.p+if isempty.code.p then "E" else "" /if+EOL /for(txt)
-             let newsymdef=
-            for newcode=empty:seq.symbol,sym2 = code.sd.t_1 do   newcode+replaceTsymbol(modpara.t_1, sym2)
-                 /for(symdef(sym,newcode)) 
-            next(newprg2+newsymdef,typedict2,added+newsymdef)
-        /for(if isempty.added then acc else jjjresult(newprg2,typedict2,unprocessed.acc /cup added)  )
-        /for( 
-        { assert cardinality.prg.acc /in [1160]report "HERE"+print.cardinality.prg.acc+print.cardinality.unprocessed.acc
-       } if isempty.unprocessed.acc  then acc else jjj(acc,templates))
- 
-    { code of unprocessed has not been scanned for abstract symbols }
-       
- 
- 
-Function yyyy(prg:set.symdef,defines:set.symbol, all: set.passsymbols,typeflds:seq.seq.mytype) set.symdef
- yyyy(prg,defines,all,empty:set.symbol,typeflds)  
-    
-              
-Function yyyy(prg:set.symdef,defines:set.symbol, all: set.passsymbols,intypesyms:set.symbol,typeflds:seq.seq.mytype) set.symdef
-     {check for abstract }
-    let notdefined=for    notdefined=empty:set.symbol ,z=toseq.prg do 
-      notdefined /cup abstractSymbolUses.code.z /for(notdefined-defines)
-      let templates=gettemplates(all,program.prg)
-     for newprg=prg,newdefines=defines,typesyms=intypesyms,sym = toseq.notdefined   do 
-         if istype.sym then next(newprg,newdefines,typesyms+sym ) 
-       else 
-       let t=findabstract(templates,sym)
-      if isempty.t /and isunbound.sym  then 
-       next(newprg,newdefines+sym,typesyms)
-      else
-          assert length.t=1 report "cannot find abstract 1"+print.sym +EOL+for text="",p=toseq.all do text+print.p+EOL /for(text)
-            let newcode=
-            for newcode=empty:seq.symbol,sym2 = code.sd.t_1 do   newcode+replaceTsymbol(modpara.t_1, sym2)
-                 /for(newcode) 
-            next(newprg+symdef(sym,newcode),defines+sym,typesyms)
-   /for( 
-   if  cardinality.newprg = cardinality.prg then 
-    let typedict=buildtypedict(newprg, typeflds )
-   for newprg2=newprg,defines2=newdefines, ts=toseq.typesyms do 
-       next(newprg2+symdef(ts,deepcopybody(resulttype.ts,typedict)),defines+ts) /for(
-       if  cardinality.newprg2 = cardinality.prg then newprg2
-       else 
-      yyyy(   newprg2 ,defines2,all,typesyms,typeflds)
-      )
-   else
-   yyyy(   newprg ,newdefines,all,typesyms,typeflds))
+  
    
   use typedict
        
   function  abstractSymbolUses(z:seq.symbol) set.symbol  
        for acc =empty:set.symbol,sym=z do
-     {    assert print.sym /ne "encoding.testrecord:type:encodingpair.testrecord(encodingpair.testrecord)encodingpair.testrecord"
-         report "found"}
          if issimple.module.sym then 
            if not.isconst.sym /and istype.sym then 
-            { assert print.sym /in ["testencoding:type:testdeep(testdeep)testdeep",
-             "standard:type:boolean(boolean)boolean"
-             ,"testprocess:type:returntype(returntype)returntype"] report "in passparse"+print.sym}
-             acc+sym
+              acc+sym
            else acc 
          else if name.module.sym  /in "$for" then
               if name.sym /in "next for" then acc
@@ -234,19 +184,17 @@ Function yyyy(prg:set.symdef,defines:set.symbol, all: set.passsymbols,intypesyms
         else if  name.module.sym  /in "builtin $local  $word $words $int $boolean   $br2   $define internal
   $sequence  $typefld $loopblock"    
   then acc 
-  else {if isunbound.sym  /and isabstract.para.module.sym    then 
-   acc
-  else} acc+sym 
+  else  acc+sym 
 /for(acc)
 
   
-   use displaytextgraph
+ /  use displaytextgraph
 
-  use svggraph.seq.word
+ / use svggraph.seq.word
 
- use seq.arcinfo.seq.word
+/ use seq.arcinfo.seq.word
 
- function arcinfo(l:seq.arc.symbol) seq.arcinfo.seq.word
+/ function arcinfo(l:seq.arc.symbol) seq.arcinfo.seq.word
      for acc=empty:seq.arcinfo.seq.word,a=l do 
     acc+arcinfo(print.tail.a ,print.head.a,"")
     /for(acc)
@@ -257,9 +205,6 @@ Function yyyy(prg:set.symdef,defines:set.symbol, all: set.passsymbols,intypesyms
 
 use otherseq.mytype
 
-
-
-/Function assignencoding(l:seq.encodingpair.symbol  , symbol) int  length.l+1
 
 
 

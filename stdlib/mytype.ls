@@ -57,7 +57,9 @@ let t = first.typerep.typ
 
 Function tomodref(m:mytype)modref modref("."_1, abstracttypename.m, parameter.m)
 
-
+Function abstractmod(m:modref) modref   
+modref(library.m,name.m, typeT)
+       
 
 Function isabstract(m:modref)boolean not.isempty.typerep.para.m ∧ isabstract.para.m
 
@@ -96,6 +98,9 @@ Function typeboolean mytype typeref."boolean standard."
 Function typereal mytype typeref."real internal."
 
 Function typeT mytype typeref."T internal."
+
+Function typeseqdec mytype typeref."sequence internal. "
+
 
 Function typeref(s:seq.word)mytype
  assert length.s = 3 report"typereferror" + s
@@ -167,7 +172,6 @@ function modname(a:typedef)word module.a
 
 Function modref(lib:word, name:word)modref modref(lib, name, mytype.empty:seq.typedef)
 
-Function typeseqdec mytype typeref."sequence internal. "
 
 function typedef(a:seq.word)typedef typedef(a_1, a_2, a_3)
 

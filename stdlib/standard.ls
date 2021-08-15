@@ -303,7 +303,8 @@ Export >>(s:seq.word, i:int)seq.word
 
 * usegraph include prims tree graph ipair libscope internalbc process stack set format groupparagraphs bitpackedseq maindict worddict tausupport exclude standard seq
 
-* usegraph include main2 libscope display constant codegen convert parse pass1 symbol libdesc codetemplates pass2 persistant llvm postbind reconstruct persistantseq opt2 symbol prg2gram  program parse libdesc internalbc intercode cvttoinst codegen pass2 codegennew funcsig interpreter exclude seq set otherseq standard bits tree graph UTF8 stack real ipair bitpackedseq fileio textio encoding words
+* usegraph include main2 libscope display constant codegen convert parse passparse passsymbol symbol libdesc codetemplates pass2 persistant llvm postbind reconstruct persistantseq opt2 symbol prg2gram  program parse libdesc internalbc intercode cvttoinst codegen pass2 codegennew funcsig interpreter 
+exclude seq set otherseq standard bits tree graph UTF8 stack real ipair bitpackedseq fileio textio encoding words
 
 Export type:index
 

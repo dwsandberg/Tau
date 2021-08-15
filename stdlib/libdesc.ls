@@ -133,7 +133,7 @@ function addlibraryMod(m:libraryModule,all:set.symbolref)symbol
  let t=modname.m
   Constant2.[ Word.library.t, Word.name.t, addmytype.para.t
     , e
-    ,addseq.for acc = empty:seq.symbol, @e = uses.m do acc + addmytype.@e /for(acc)
+    ,{addseq.for acc = empty:seq.symbol, @e = uses.m do acc + addmytype.@e /for(acc)} Words.""
     , d
     , addseq.for acc2=empty:seq.symbol ,tl=types.m do
          acc2+addseq.for acc = empty:seq.symbol, @e = tl do acc + addmytype.@e /for(acc)

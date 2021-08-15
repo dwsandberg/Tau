@@ -3,7 +3,7 @@
 Library 
 stdlib UTF8   bits codegennew codetemplates encoding fileio format   groupparagraphs intdict 
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
-pass1 pass2  persistant postbind   process real seq set stack  symbol textio timestamp tree worddict words xxhash
+pass2  persistant postbind   process real seq set stack  symbol textio timestamp tree worddict words xxhash
  sparseseq standard maindict  outstream bitstream tausupport
  mergeblocks program   
    tests/test11 tests/checking tests/point tests/testencoding  
@@ -34,9 +34,8 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
   sparseseq   standard testall
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
-  interpreter  llvm llvmconstants codegennew   persistant breakblocks
-  program hidesymbol pass2 parse  symboldict taublockseq typerep firstpass passsymbol passparse
-  postbind
+  interpreter  llvm llvmconstants       
+  program    symboldict taublockseq typerep  
 
 * Removed maindict 
 

@@ -441,6 +441,8 @@ Function typebyte mytype typeref."byte bits."
 
 Function typeword mytype typeref."word words."
 
+Function typechar mytype typeref."char standard ."
+
 _________________
 
 Function Constant2(args:seq.symbol)symbol

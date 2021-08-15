@@ -37,9 +37,19 @@ Function buildtypedict(zz1:set.symdef, types:seq.seq.mytype)    type2dict
 
 Function    addtypes(alltypes:type2dict,syms:set.symbol)   type2dict
  let typesused=for  acc = empty:seq.mytype, sym = toseq.syms do
-     acc + typesused.sym 
+  if isstart.sym /or isSequence.sym then acc+typesused.sym 
+  else if isconst.sym ∨ inmodule(sym,"$global") ∨ inmodule(sym,"internal") /or sym=PreFref /or sym= Optionsym   
+     /or  inmodule(sym,"$for") 
+     /or    isspecial.sym   then  acc
+   else
+     if issimple.module.sym then acc else  acc+para.module.sym  /if +
+      typesused.sym 
 /for(acc)
- for acc=alltypes ,d= toseq.asset.typesused do addtype(acc,d)  /for(acc)
+ for acc=alltypes ,d= toseq.asset.typesused do 
+ if d= type? /or abstracttypename.d /in"$base"  then acc else
+ addtype(acc,d)  /for(acc)
+ 
+ function print(t:seq.mytype) seq.word for txt="",a=t do  txt+print.a /for (txt)
 
 Function    addtype(alltypes:type2dict,type:mytype)   type2dict
    if type   ∈ [ typeint, typeT, typeboolean, typereal,typeptr] then alltypes
