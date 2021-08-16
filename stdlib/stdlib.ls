@@ -72,6 +72,8 @@ Export pass2(placehold:program)program
 
 Export codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict,isbase:boolean)seq.bits  
 
+Export compilerfront(option:seq.word,libname:seq.word
+,allsrc:seq.seq.word,dependentlibs:seq.word,exports:seq.word) compileinfo
 
 
 

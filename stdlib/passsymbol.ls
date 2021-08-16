@@ -233,14 +233,15 @@ use seq.commoninfo
 
 function resolve(all:set.passsymbols, p:passsymbols)passsymbols
  if isempty.unresolvedexports.p then p
- else
-  let dict = formsymboldict(all, p,empty:set.symdef,empty:seq.commoninfo)
+ else 
+  let z=commoninfo("", internalmod, "?"_1 , empty:set.mytype, "symbol"_1)
+  let r=formsymboldict(all,p,empty:set.symdef,"symbol"_1)
+  let dict = symboldict(syms.r,req.r,[z])
   for exports = exports.p, unresolved = empty:set.symbol, t2 = toseq.unresolvedexports.p do
    let b = lookupbysig(dict, t2)
    if cardinality.b = 1 then next(exports + b_1, unresolved)else next(exports, unresolved + t2)
    /for(passsymbols(modname.p,uses.p, defines.p, exports, unresolved,   typedict.p, text.p ))
    
-      {modname , uses , defines , exports, unresolvedexports, typedict , text  , types , prg }
 
 
 function resolveexports(s1:set.passsymbols, countin:int)set.passsymbols
@@ -292,22 +293,26 @@ function print(s:passsymbols)seq.word
   EOL + "Unresolved Export" + EOL
   + for acc ="", t = toseq.unresolvedexports.s do acc + print.t + EOL /for(acc)
 
-Function     formsymboldict(modlist:set.passsymbols,this:passsymbols,lib:word,mode:word
-    ,requireUnbound:set.symdef,input:seq.word)  symboldict
-        let z=commoninfo(input ,modname.this,lib,typedict.this ,mode )
-       formsymboldict(modlist,this,requireUnbound ,[z])
 
 use symboldict
 
-Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound:set.symdef,c:seq.commoninfo) symboldict
- for symdict = symboldict(defines.this,c), u = toseq.uses.this do
- let a = checkfindelement(passsymbols.u, modset )
- if isempty.a then 
-      assert isempty.c /or  mode.c_1 /nin "body" report"Cannot find module" +  name.u
-       {needed for when modset passsymbols are not yet created} symdict 
- else if not.isabstract.modname.a_1 then symdict ∪ exports.a_1
+Function parse(input:seq.word,p:partdict,c :commoninfo) bindinfo
+     parse.symboldict(syms.p,req.p,[commoninfo(input ,modname.c,lib.c,types.c ,mode.c)])
+ 
+
+Function formsymboldict(modset:set.passsymbols,this:passsymbols, requireUnbound:set.symdef, mode:word)
+partdict
+ { bug here should not need i=0 in forloop }
+  for   syms=defines.this,requires=empty:set.symdef,i=0, u = toseq.uses.this do
+    let a = checkfindelement(passsymbols.u, modset )
+      if isempty.a then 
+        assert   mode   /nin "body" report"Cannot find module" +  name.u
+         {needed for when modset passsymbols are not yet created} 
+          next(syms,requires,0) 
+      else if not.isabstract.modname.a_1 then 
+       next(syms  ∪ exports.a_1,requires,0)
   else
-   for acc = empty:set.symbol,req=empty:set.symdef, e = toseq.exports.a_1 do
+   let r=for acc = syms,req=requires, e = toseq.exports.a_1 do
    let sym2 = replaceTsymbol(para.u, e)
    if isempty.requireUnbound then next(acc+sym2,req)
    else 
@@ -318,19 +323,15 @@ Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound
       acc2 +  replaceTsymbol(para.u, sym4)
      /for(acc2)
       next(acc+setrequires.sym2, req+symdef(sym2,list))
-   /for(add(symdict ,  acc,req))
- /for(symdict  )
+   /for(partdict(  acc,req))
+     next(syms.r,req.r,0)
+ /for( partdict(syms,requires) )
  
+ symboldict(syms,requires,[c])
  
-Function gettemplates(all:set.passsymbols,prg:program) program
- for acc=empty:set.symdef, m=toseq.all do
-   for acc2=acc,  sym=     toseq.defines.m do
-      if isabstract.modname.m then 
-      acc2+symdef(sym,getCode(prg,sym))
-      else acc2
-   /for(acc2)
-   /for(program.acc)
-   
+ type partdict is syms :set.symbol,req:set.symdef
+
+
 Function findabstract(templates:program, sym:symbol)seq.findabstractresult
   for acc = empty:seq.findabstractresult, sd = tosymdefs.templates do
    let e=sym.sd

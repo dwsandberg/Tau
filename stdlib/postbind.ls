@@ -114,6 +114,13 @@ templates:program,compiled:set.symbol , typedict1:type2dict
    txt+data.data.d +EOL /for(txt)
  j
 
+  assert false report for txt=">>>",  sd=tosymdefs.theprg do
+   for txt2=txt, sym=code.sd do
+    if print.sym=
+   "svggraph.seq.word:?(seq.word, seq.word)ordering" then txt2+print.sym.sd 
+   else txt2 /for(txt2)
+   /for(txt)   
+
 
  function usedsyms(source:program ,last:int,result:seq.symdef
  , templates:program
@@ -138,39 +145,24 @@ templates:program,compiled:set.symbol , typedict1:type2dict
               let k2=      lookupbysig(data.source,sym)
                 if isempty.k2 then sub5(sym,compiled ,templates )
                   else    
-                     let txt0=print.sym
                    let pick=  if cardinality.k2 = 1 then  k2
                     else 
-                       let n=k2_1
-                       if name.n="?"_1 /and name.module.n="graph"_1 /and
-                         cardinality.k2=2 then  asset.[k2_2]
-                     else 
                       for pick=empty:set.symbol  ,sy=toseq.k2 do 
-                      if print.sy /in ["otherseq.seq.word:?(seq.word, seq.word)ordering",
-                   "standard:*(int, int)int","standard:+(int, int)int"
+                      if print.sy /in [
+                      "otherseq.seq.word:?(seq.word, seq.word)ordering",
+                   "standard:*(int, int)int"
+                   ,"standard:+(int, int)int"
                    ,"standard:=(int, int)boolean"
                    ,"standard:?(int, int)ordering"
                    ,"symbol:?(symbol, symbol) ordering "
                    ,"words:?(word, word)ordering"
-                   ,"standard:=(char, char)boolean"
-                   ,"checkdata2:?(rec, rec)ordering"
-                   ,"point:?(point, point)ordering"
-                   ,"words:?(alphaword, alphaword)ordering"
                    ,"words:=(word, word)boolean"
-                   ,"seq.word:=(seq.word, seq.word)boolean"
-                   ,"genLR1:?(dottedrule, dottedrule)ordering"
-                   ,"genLR1:?(action, action)ordering"
-                   ,"genLR1:?(action2, action2)ordering"
-                   ,"genLR1:=(dottedrule, dottedrule)boolean"
-                   ,"checkdata2:?(rollup, rollup)ordering"
-                   ,"mytype:=(mytype, mytype)boolean"
-                    ,"mytype:?(mytype, mytype)ordering"
-                   ,"llvmconstants:=(instop, instop)boolean"
-                   ,"llvmconstants:=(constop, constop)boolean"
-                   ,"profile:?2(parc, parc)ordering"] then
+                    ] then
                           pick+sy else pick
                   /for(pick)   
-                    assert cardinality.pick=1 report  "postbind problem"+print.toseq.k2+
+                    assert cardinality.pick=1 report  "postbind problem"+
+                    print.sym+":"+
+                    print.toseq.k2+
                          "pick:"+print.toseq.pick     
                    sub5(pick_1,compiled ,templates )
                let  newdict3=addtypes(newdict2, asset(code.sd+sym.sd)) 
@@ -189,14 +181,27 @@ templates:program,compiled:set.symbol , typedict1:type2dict
                  let gx=findabstract2(templates,sym2)
                    assert length.gx = 1 report"Cannot find template for X"  +
                     print.length.gx+ print.sym2  
-                  for newcode=empty:seq.symbol,sym4 = code.sd.gx_1 do  
+               let newcode=   for newcode=empty:seq.symbol,sym4 = code.sd.gx_1 do  
                          assert { print.sym.sd.gx_1 /ne "set.T:+(set.T,  T)set.T"
                          /or length.print.modpara.gx_1=1 } not.isunbound.sym.sd.gx_1 report 
                         "HHH"+print.modpara.gx_1+print.sym.sd.gx_1          +print.sym4  
                       newcode+replaceTsymbol(modpara.gx_1, sym4) 
                  /for(symdef(  sym2 ,    newcode))  
+              { let z=  for txt2="", sym=code.newcode do
+    if print.sym /in [
+      "otherseq.arcinfo.seq.word:?(arcinfo.seq.word, arcinfo.seq.word)ordering" 
+     ,"otherseq.arcinfo.seq.word:binarysearch(seq.arcinfo.seq.word, int, int, arcinfo.seq.word)int "
+     ,"otherseq.arcinfo.seq.word:binarysearch(seq.arcinfo.seq.word, arcinfo.seq.word)int" 
+     ,"otherseq.arcinfo.seq.word:setinsert(seq.arcinfo.seq.word, arcinfo.seq.word)seq.arcinfo.seq.word " 
+     ,"set.arcinfo.seq.word:asset(seq.arcinfo.seq.word)set.arcinfo.seq.word" 
+     ,"svggraph.seq.word:?(seq.word, seq.word)ordering"
+     ,"displaygraph.seq.word:displaygraph(characterwidths, seq.arcinfo.seq.word)seq.word"]
+     then txt2+print.sym2 
+   else txt2 /for(txt2)
+        assert isempty.z report "LLLL"+print.sym2}
+        newcode
             
-
+ displaygraph.seq.word:displaygraph(characterwidths, seq.arcinfo.seq.word)seq.word
 
 Function postbind(sd:symdef,typedict:type2dict,   compiled:set.symbol) seq.symbol
 let modpara = para.module.sym.sd

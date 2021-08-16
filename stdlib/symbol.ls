@@ -682,15 +682,28 @@ Export mode(commoninfo) word
 Export input(commoninfo) seq.word
 
 
-Export commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word)commoninfo
+/Function commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word)commoninfo
+  commoninfo(input,modname,lib,types,mode,empty:set.symdef)
 
-type commoninfo is input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word
+Export commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word )commoninfo
+
+
+type commoninfo is input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word 
 
 Function lookupbysig(dict:symboldict, sym:symbol)set.symbol findelement2(asset.dict, sym)
 
+Function lookupbysig(dict:set.symbol, sym:symbol)set.symbol lookupbysig( dict, sym)
+
+
 Function lookupbysig(dict:symboldict, name:seq.word)set.symbol findelement2(asset.dict, symbol(internalmod, name, typeint))
 
-type symboldict is asset:set.symbol,requires:set.symdef ,commonX:seq.commoninfo
+type symboldict is asset:set.symbol,requiresX:set.symdef ,commonX:seq.commoninfo
+
+Export symboldict (asset:set.symbol,requiresX:set.symdef ,commonX:seq.commoninfo) symboldict
+
+function requires(a:symboldict) set.symdef requiresX.a
+
+ if isempty.commonX.a then requiresX.a else requires.first.commonX.a
 
 Export type:symboldict
 
@@ -705,7 +718,7 @@ Function requires(d:symboldict,sym:symbol) seq.symbol
    code.findelement(symdef(sym,empty:seq.symbol),requires.d)_1
  else empty:seq.symbol
 
-Function add(d:symboldict,syms:set.symbol,requires:set.symdef) symboldict
+/Function addSymbols(d:symboldict,syms:set.symbol,requires:set.symdef) symboldict
  symboldict(asset.d /cup syms,requires.d /cup requires,commonX.d) 
 
 Function empty:symboldict symboldict symboldict(empty:set.symbol,empty:set.symdef,empty:seq.commoninfo)

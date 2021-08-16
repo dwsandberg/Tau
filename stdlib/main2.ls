@@ -160,8 +160,18 @@ let modsx = resolvetypes(libpasstypes,allsrc, lib)
 { figure out how to interpret text form of symbol }
 let t5 = resolvesymbols(allsrc, lib, modsx,asset.mods.libinfo )
 { parse the function bodies }
-let prg10=program.passparse(modules.t5, lib, modsx, toseq.code.t5+prg.libinfo,allsrc,mode)
+let prg10=
+for  abstract=empty:seq.passsymbols, simple=empty:seq.passsymbols, m=toseq.modules.t5 do
+   if isabstract.modname.m then next(abstract+m,simple) else next(abstract,simple+m)
+   /for(
+program.passparse( asset.abstract,asset.simple, lib,  toseq.code.t5+prg.libinfo,allsrc,mode))
 let typedict= buildtypedict(empty:set.symbol,types.t5+types.libinfo) 
+if mode="text"_1 then
+      let zz1=tosymdefs.prg10  
+     let discard=for acc = symbolref.sym.zz1_1,d= zz1 do  if paragraphno.d > 0
+       then symbolref.sym.d else acc /for(acc)
+        compileinfo( zz1,emptytypedict,empty:seq.libraryModule, allsrc)  
+  else  
  {assert isempty.mods.libinfo report print(typedict0)+
   "NNN"+for txt="",t=types.t5 do txt+print.t+EOL /for(txt)  }
 let compiled=for acc=empty:set.symbol,sd=prg.libinfo do 

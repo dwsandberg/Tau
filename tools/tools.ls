@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use doc ; doclibrary("stdlib" )
+#!/usr/local/bin/tau ; use tools; testprofile."stdlib"
 
  ; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq  ")
 
