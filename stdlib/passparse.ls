@@ -49,7 +49,7 @@ use encoding.symbol
              else  if name.module.codesym /in "$for" then 
             if name.codesym /in "name for" then arcs
             else
-                arcs+arc(sym,symbol(moduleref("seq",resulttype.codesym),"_",seqof.resulttype.codesym
+                arcs+arc(sym,symbol(moduleref("stdlib seq",resulttype.codesym),"_",seqof.resulttype.codesym
              ,typeint,resulttype.codesym))
           else 
            arcs+arc(sym ,codesym) 
@@ -182,7 +182,7 @@ assert isempty.check report "CHECK"+check
          else if name.module.sym  /in "$for" then
               if name.sym /in "next for" then acc
               else 
-                let  idxsym=symbol(moduleref("seq",resulttype.sym),"_",seqof.resulttype.sym,typeint,resulttype.sym)
+                let  idxsym=symbol(moduleref("stdlib seq",resulttype.sym),"_",seqof.resulttype.sym,typeint,resulttype.sym)
                 acc+idxsym
         else if  name.module.sym  /in "builtin $local  $word $words $int $boolean   $br2   $define internal
   $sequence  $typefld $loopblock"    

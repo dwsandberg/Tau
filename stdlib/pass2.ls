@@ -134,8 +134,8 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symb
    else next(flags, result + sym, nextvar, map)
   else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
   else if length.result > 2 ∧ isconst.last.result
-  ∧ (sym = symbol(moduleref("seq", typeint),"∈", [ typeint, seqof.typeint], typeboolean)
-  ∨ sym = symbol(moduleref("seq", typeword),"∈", [ typeword, seqof.typeword], typeboolean))then
+  ∧ (sym = symbol(moduleref("stdlib seq", typeint),"∈", [ typeint, seqof.typeint], typeboolean)
+  ∨ sym = symbol(moduleref("stdlib seq", typeword),"∈", [ typeword, seqof.typeword], typeboolean))then
   let arg = result_(-2)
   if islocal.arg ∨ isconst.arg then
     next(flags, result >> 2 + removeismember(last.result, arg), nextvar, map)
@@ -157,7 +157,7 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symb
       while acc2 do   not.isFref.sub  /for(acc2))
     /for(  acc
     )then
-     if sym = symbol(moduleref."words","decodeword", typeword, typeint)then
+     if sym = symbol(moduleref."stdlib words","decodeword", typeword, typeint)then
      let arg1 = result_len
      let a1 = for acc = empty:seq.symbol, @e = tointseq.decodeword.wordname.arg1 do acc + Lit.@e /for(acc)
      let d = Constant2(a1 + Sequence(typeint, length.a1))
@@ -245,7 +245,7 @@ function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqty
  let callidx = symbol(moduleref."internal","callidx", [ seqof.elementtype, typeint], elementtype)
  [ Start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)] + [ theseq, masteridx, callidx, Exit]
   + if boundscheck then
-   [ masteridx, theseq, GetSeqLength, GtOp, Br2(1, 2), symbol(moduleref."tausupport","outofbounds", seqof.typeword), abortsymbol.elementtype, Exit]
+   [ masteridx, theseq, GetSeqLength, GtOp, Br2(1, 2), symbol(modTausupport,"outofbounds", seqof.typeword), abortsymbol.elementtype, Exit]
   else empty:seq.symbol /if
   + if maybepacked then
    [ seqtype, Lit.1, EqOp, Br2(1, 2)] + [ theseq, masteridx, symbol(internalmod,"packedindex", theseqtype, typeint, elementtype), Exit]

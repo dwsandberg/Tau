@@ -63,13 +63,7 @@ Export type:type2dict
 
 Export coretype(mytype, type2dict) mytype
   
- Function packedtypes seq.mytype [
-typeref(  "packed2 tausupport .")
-,typeref(  "packed3 tausupport .")
-,typeref(  "packed4 tausupport .")
-,typeref(  "packed5 tausupport .")
-,typeref(  "packed6 tausupport .")
- ]
+ 
 
  
 Function buildargcodeI(  sym:symbol)int

@@ -45,7 +45,7 @@ let r = interpret(z, 1, empty:stack.int)
 
 function tocode(r:int, typ:mytype)seq.symbol
  if typ = typeword then [ Word.wordencodingtoword.r]
- else if typ = typeint ∨ typ = typebits ∨ typ = typeref."char UTF8."then
+ else if typ = typeint ∨ typ = typebits ∨ typ = typechar then
   [ Lit.r]
  else if typ = typeboolean then [ if r = 1 then Littrue else Litfalse]
  else if typ = seqof.typeword then [ Words.aswords.bitcast.r]

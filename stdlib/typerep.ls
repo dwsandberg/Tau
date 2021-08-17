@@ -239,7 +239,7 @@ Function coretype(typ:mytype, alltypes:type2dict,maxsize:int)mytype
 Function blocksym(basetype:mytype)symbol
 let p = parameter.basetype
 let p2 = seqof.if p = typebyte ∨ p = typebit ∨ p = typeboolean then typeint else p
- symbol(moduleref."tausupport","blockIt", p2, p2)
+ symbol(modTausupport,"blockIt", p2, p2)
 
    
 Function deepcopybody(type:mytype, typedict:type2dict)seq.symbol

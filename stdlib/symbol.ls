@@ -305,9 +305,9 @@ Function Start(t:mytype)symbol symbol(moduleref("$loopblock",t),"Start",t, speci
 
 Function EndBlock symbol symbol(moduleref."$block","BLOCK",typeint, specialbit)
 
-Function NotOp symbol  symbol(moduleref."standard","not", typeboolean, typeboolean)
+Function NotOp symbol  symbol(modStandard,"not", typeboolean, typeboolean)
 
-Function PlusOp symbol  symbol(moduleref."standard","+", typeint, typeint, typeint)
+Function PlusOp symbol  symbol(modStandard,"+", typeint, typeint, typeint)
 
 Function paratypes(s:symbol)seq.mytype
 if issimplename.s then  types.s >> 1 else  subseq(types.s,2,length.types.s-1)
@@ -379,9 +379,9 @@ Function ifthenelse(cond:seq.symbol, thenclause:seq.symbol, elseclause:seq.symbo
  [ Start.m] + cond + Br2(1, 2) + thenclause + Exit + elseclause + Exit
  + EndBlock
 
-Function Littrue symbol  symbol(moduleref."standard","true" ,typeboolean, constbit)
+Function Littrue symbol  symbol(modStandard,"true" ,typeboolean, constbit)
 
-Function Litfalse symbol symbol(moduleref."standard","false" , typeboolean, constbit)
+Function Litfalse symbol symbol(modStandard,"false" , typeboolean, constbit)
   
 Function continue(i:int)symbol symbol(moduleref."$continue",[toword.i],type?,specialbit)
 
@@ -403,9 +403,9 @@ Function firstvar(a:symbol)int toint.abstracttypename.first.types.a
 
 Function inmodule(sym:symbol,module:seq.word) boolean name.module.sym ∈ module
 
-Function EqOp symbol  symbol(moduleref."standard","=", typeint, typeint, typeboolean)
+Function EqOp symbol  symbol(modStandard,"=", typeint, typeint, typeboolean)
 
-Function GtOp symbol  symbol(moduleref."standard",">", typeint, typeint, typeboolean)
+Function GtOp symbol  symbol(modStandard,">", typeint, typeint, typeboolean)
 
 Function isblock(s:symbol)boolean name.module.s = "$block"_1
 
@@ -442,6 +442,23 @@ Function typebyte mytype typeref."byte bits."
 Function typeword mytype typeref."word words."
 
 Function typechar mytype typeref."char standard ."
+
+Function packedtypes seq.mytype [
+typeref(  "packed2 tausupport .")
+,typeref(  "packed3 tausupport .")
+,typeref(  "packed4 tausupport .")
+,typeref(  "packed5 tausupport .")
+,typeref(  "packed6 tausupport .")
+ ]
+
+Function modStandard modref moduleref."stdlib standard"
+
+Function modTausupport modref moduleref."stdlib tausupport"
+
+Function modReal modref moduleref."stdlib real"
+
+Function modBits modref moduleref."stdlib bits"
+
 
 _________________
 
@@ -485,15 +502,15 @@ addzcode(symbol(moduleref."$fref",[merge("FREF" + fsig(wordname.s,nametype.s,par
 
 
 
-Function GetSeqLength symbol symbol(moduleref."tausupport","getseqlength",typeptr,typeint)
+Function GetSeqLength symbol symbol(modTausupport,"getseqlength",typeptr,typeint)
 
-Function GetSeqType symbol symbol(moduleref."tausupport","getseqtype",typeptr,typeint)
+Function GetSeqType symbol symbol(modTausupport,"getseqtype",typeptr,typeint)
 
 Function abortsymbol(typ:mytype) symbol 
 let a=if isseq.typ     then typeptr else  typ
   symbol(builtinmod.a,"assert", seqof.typeword, a)
  
- symbol4(moduleref."tausupport","abort"_1,a,[seqof.typeword],a) 
+ symbol4(modTausupport,"abort"_1,a,[seqof.typeword],a) 
   
  
 
@@ -545,15 +562,15 @@ Function removeconstant(s:seq.symbol)seq.symbol
 _______________________________________________
 
 Function deepcopysymI(rt:mytype) symbol
- if rt= typeint then symbol(moduleref."tausupport", "deepcopy ",typeint,typeint)
-      else if rt = typereal   then symbol(moduleref."tausupport", "deepcopy ",typereal,typereal)
+ if rt= typeint then symbol(modTausupport, "deepcopy ",typeint,typeint)
+      else if rt = typereal   then symbol(modTausupport, "deepcopy ",typereal,typereal)
       else if rt = typeboolean then symbol4(abstractModref.typeboolean,"type"_1, rt, [ rt ],rt)
       else if rt = typebits then symbol4(abstractModref.typebits,"type"_1, rt, [ rt ],rt)
       else if rt= typeword then symbol4(abstractModref.typeword,"type"_1, rt, [ rt ],rt)
-      else if   abstracttypename.rt="char"_1 then symbol4(moduleref."standard","type"_1, rt, [ rt ],rt)
+      else if   abstracttypename.rt="char"_1 then symbol4(modStandard,"type"_1, rt, [ rt ],rt)
       else 
     assert  rt =seqof.typeword report "deepcopysymI"+ print.rt+stacktrace
-   symbol4(moduleref("seq",typeword),"type"_1, rt, [ rt ],rt)
+   symbol4(moduleref("stdlib seq",typeword),"type"_1, rt, [ rt ],rt)
      
 Export type:modref
 
@@ -617,15 +634,15 @@ Export =(mytype, mytype)boolean
 Export isseq(mytype)boolean
 
 Function deepcopySym(rt:mytype)symbol 
-if rt=typereal then symbol(moduleref("tausupport"),"deepcopy",typereal,typereal) 
-   else if rt=typeint then symbol(moduleref("tausupport"),"deepcopy",typeint,typeint) 
+if rt=typereal then symbol(modTausupport,"deepcopy",typereal,typereal) 
+   else if rt=typeint then symbol(modTausupport ,"deepcopy",typeint,typeint) 
    else  symbol4(replaceT(parameter.rt,abstractModref.rt),"type"_1, rt, [ rt ],rt)
 
 
 Function setSym(typ:mytype)symbol
 let fldtype = if isseq.typ then typeptr else if isencoding.typ then typeint else typ
  symbol(if fldtype = typeint ∨ fldtype = typeboolean ∨ fldtype = typeptr ∨ fldtype = typereal then
-  moduleref."tausupport"
+  modTausupport
  else builtinmod.fldtype,"set", typeptr, fldtype, typeptr)
 
 Function Getfld(fldtype:mytype)symbol 
