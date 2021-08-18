@@ -80,15 +80,13 @@ Export types(symbol)seq.mytype
 
 Export raw(symbol)bits
 
-Export zcode(symbol) seq.symbol
 
 Function =(a:symbol, b:symbol)boolean
  hashbits.a = hashbits.b ∧ worddata.a = worddata.b ∧ (types.a >> 1= types.b >> 1) 
  ∧ issimplename.a = issimplename.b
  ∧ module.a = module.b
 
- /and (name.module.a /nin "$fref"  /or zcode.a=zcode.b)
-
+ 
 Function ?(a:symbol, b:symbol)ordering
  fsighash.a ? fsighash.b ∧ worddata.a ? worddata.b ∧ (types.a >> 1)  ? (types.b  >> 1) 
   ∧ issimplename.a ? issimplename.b
@@ -136,7 +134,7 @@ Function setunbound(sym:symbol) symbol
 Function setrequires(sym:symbol)symbol 
  symbol( worddata.sym,module.sym,types.sym,raw.sym /or requiresbit,hashbits.sym,empty:seq.symbol) 
 
-Function addzcode (s:symbol,zcode:seq.symbol) symbol
+function addzcode (s:symbol,zcode:seq.symbol) symbol
  symbol(worddata.s, module.s,types.s, raw.s,hashbits.s,  zcode)
 
 Function replaceTsymbol(with:mytype, sym:symbol)symbol
@@ -236,7 +234,6 @@ Export setunbound(sym:symbol) symbol
  
 Export setrequires(sym:symbol)symbol 
  
-Export addzcode (s:symbol,zcode:seq.symbol) symbol
   
 Export replaceTsymbol(with:mytype, sym:symbol)symbol
 
@@ -281,9 +278,6 @@ function fsig2(name:word,nametype:seq.mytype,paratypes:seq.mytype) seq.word
          for  acc= fullname+"(" ,t =paratypes do  acc+print.t +"," /for( acc >> 1 +")")
 
  
- Function checkwellformed(sym:symbol) boolean
- not.issimple.module.sym
- = for acc = false, t = types.sym while not.acc do isabstract.t /for(acc)
    
 _______________________________
  
@@ -465,8 +459,6 @@ _________________
 Function Constant2(args:seq.symbol)symbol
   addzcode(symbol( moduleref."$constant", [toword.valueofencoding.encode.symbolconstant.args],empty:seq.mytype,typeptr,constbit)  ,args)
  
-
-
 function hash(s:seq.symbol)int
  hash.for acc ="", e = s do acc + worddata.e + name.module.e /for(acc)
 
@@ -515,7 +507,7 @@ let a=if isseq.typ     then typeptr else  typ
  
 
 Function basesym(s:symbol)symbol 
-{only used in postbind } if name.module.s = first."$fref"then(zcode.s)_1 else s
+ if name.module.s = first."$fref" then(zcode.s)_1 else s
 
 Function getoption(code:seq.symbol)seq.word
  if isempty.code ∨ last.code ≠ Optionsym then empty:seq.word else worddata.code_(length.code - 1)
@@ -548,7 +540,6 @@ if issimple.module.s then [name.module.s] else oldTypeRep.para.module.s+name.mod
 
 Export type:symbol
 
-Export zcode(symbol)seq.symbol
 
 Function nametype(sym:symbol) seq.mytype 
     if issimplename.sym then empty:seq.mytype else [first.types.sym] 
@@ -699,8 +690,6 @@ Export mode(commoninfo) word
 Export input(commoninfo) seq.word
 
 
-/Function commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word)commoninfo
-  commoninfo(input,modname,lib,types,mode,empty:set.symdef)
 
 Export commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word )commoninfo
 
@@ -718,11 +707,12 @@ type symboldict is asset:set.symbol,requiresX:set.symdef ,commonX:seq.commoninfo
 
 Export symboldict (asset:set.symbol,requiresX:set.symdef ,commonX:seq.commoninfo) symboldict
 
-function requires(a:symboldict) set.symdef requiresX.a
+Function requires(a:symboldict) set.symdef requiresX.a
 
  if isempty.commonX.a then requiresX.a else requires.first.commonX.a
 
 Export type:symboldict
+
 
 Export asset(symboldict) set.symbol
 
@@ -735,8 +725,6 @@ Function requires(d:symboldict,sym:symbol) seq.symbol
    code.findelement(symdef(sym,empty:seq.symbol),requires.d)_1
  else empty:seq.symbol
 
-/Function addSymbols(d:symboldict,syms:set.symbol,requires:set.symdef) symboldict
- symboldict(asset.d /cup syms,requires.d /cup requires,commonX.d) 
 
 Function empty:symboldict symboldict symboldict(empty:set.symbol,empty:set.symdef,empty:seq.commoninfo)
 

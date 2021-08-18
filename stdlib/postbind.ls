@@ -142,29 +142,14 @@ templates:program,compiled:set.symbol , typedict1:type2dict
               symdef(symz,deepcopybody(resulttype.symz,newdict2 )) 
             else  if not.isunbound.symz then sub5(symz,compiled ,templates )
             else
-              let k2=      lookupbysig(data.source,symz)
-                if isempty.k2 then sub5(symz,compiled ,templates )
+                let k2=      lookupbysig(data.source,symz)
+                if isempty.k2 then 
+                  { assert length.print.module.symz > 3 report "XX"+print.symz}
+                   sub5(symz,compiled ,templates )
                   else    
-                   let pick=  if cardinality.k2 = 1 then  k2
-                    else 
-                      for pick=empty:set.symbol  ,sy=toseq.k2 do 
-                      if print.sy /in [
-                      "otherseq.seq.word:?(seq.word, seq.word)ordering",
-                   "standard:*(int, int)int"
-                   ,"standard:+(int, int)int"
-                   ,"standard:=(int, int)boolean"
-                   ,"standard:?(int, int)ordering"
-                   ,"symbol:?(symbol, symbol) ordering "
-                   ,"words:?(word, word)ordering"
-                   ,"words:=(word, word)boolean"
-                    ] then
-                          pick+sy else pick
-                  /for(pick)   
-                    assert cardinality.pick=1 report  "postbind problem"+
-                    print.symz+":"+
-                    print.toseq.k2+
-                         "pick:"+print.toseq.pick     
-                   sub5(pick_1,compiled ,templates )
+                   assert cardinality.k2 = 1 report
+                      "unbound problem"+print.symz    
+                   sub5(k2_1,compiled ,templates )
                let  newdict3=addtypes(newdict2, asset(code.sd+sym.sd)) 
                {------------}
               let modpara = para.module.sym.sd
@@ -343,27 +328,38 @@ use mytype
 { base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.bit 
    seq.packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
             
-Function  prescan2(   prg:program) program 
-      for  acc=empty:set.symdef ,  p=tosymdefs.prg do
-         for  result = empty:seq.symbol, sym = code.p do
-          {if not.isempty.result ∧ last.result = PreFref then
-               result >> 1+Fref.sym
-           else} if  islocal.sym then
-                 result +  Local.value.sym
-           else if isdefine.sym then  result+Define.value.sym
-           else result + sym
-      /for(acc+symdef( sym.p,result))
-      /for(program.acc)  
+   
+   Function deepcopybody(type:mytype, typedict:type2dict)seq.symbol
+  if type = typeint ∨ type = typeword ∨ isencoding.type then [ Local.1]
+ else if isseq.type then
+ let basetype =  basetype(  type,typedict)
+ if basetype = typeint ∨ basetype = typereal ∨ basetype = typeboolean then [ Local.1, blocksym.basetype]
+  else
+   let cat = symbol(tomodref.type,"+", [ type, parameter.type], type)
+   let resulttype = basetype
+   let elementtype = parameter.basetype
+   let element = symbol(moduleref("$for", elementtype),"element", empty:seq.mytype, elementtype)
+   let acc = symbol(moduleref("$for", typeptr),"acc", empty:seq.mytype, typeptr)
+   [Sequence(elementtype,0)]
+    + [ Local.1, acc, element, acc, element, deepcopySym( parameter.type), cat, Littrue, acc, symbol(moduleref("builtin", typeint),"forexp", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
+    ]
+    + blocksym.basetype
+ else
+  let subflds =  flatflds(typedict,type)
+  if length.subflds = 1 then
+    { only one element in record so type is not represent by actual record }[ Local.1]
+    + deepcopySym(first.subflds)
+   else 
+    for     fldno=1, fldkinds=empty:seq.mytype, result= empty:seq.symbol,fldtype=subflds do
+  let kind = basetype(  fldtype,typedict)
+   next(fldno+1,fldkinds + kind, result + [ Local.1,Lit(fldno - 1), Getfld.kind,   deepcopySym( fldtype)])
+/for(result + [ Record.fldkinds])
       
-      Function  prescan2(   p:symdef) symdef
-          for  result = empty:seq.symbol, sym = code.p do
-            if  islocal.sym then
-                 result +  Local.value.sym
-           else if isdefine.sym then  result+Define.value.sym
-           else result + sym
-      /for( symdef( sym.p,result) )
-      
- 
+ Function blocksym(basetype:mytype)symbol
+let p = parameter.basetype
+let p2 = seqof.if p = typebyte ∨ p = typebit ∨ p = typeboolean then typeint else p
+ symbol(modTausupport,"blockIt", p2, p2)
+
  
 use set.passsymbols
 
@@ -387,4 +383,3 @@ use set.modref
  
  function =(a:debug,b:debug) boolean data.a=data.b
         
-       

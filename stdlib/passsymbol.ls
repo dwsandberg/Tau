@@ -300,10 +300,43 @@ Function parse(input:seq.word,p:partdict,c :commoninfo) bindinfo
      parse.symboldict(syms.p,req.p,[commoninfo(input ,modname.c,lib.c,types.c ,mode.c)])
  
 
+/Function formsymboldict(modset:set.passsymbols,this:passsymbols, requireUnbound:set.symdef, mode:word)
+partdict
+   let dict=  for   syms=defines.this , u = toseq.uses.this do
+    let a = checkfindelement(passsymbols.u, modset )
+      if isempty.a then 
+        assert   mode   /nin "body" report"Cannot find module" +  name.u
+         {needed for when modset passsymbols are not yet created} 
+         syms  
+        if not.isabstract.modname.a_1 then 
+          syms  ∪ exports.a_1 
+         else
+         for acc = syms  e = toseq.exports.a_1 do syms+replaceTsymbol(para.u, e) /for(acc)
+    /for(syms)
+   for acc = empty:set.symbol,req=empty:set.symdef, sym2 = toseq.dict do
+   if not.isabstract.module.sym2 then next(acc+sym2,req) 
+     else 
+    if isempty.requireUnbound then next(acc+sym2,req)
+   else 
+   let x=findabstract( program.requireUnbound,sym2)
+   let require = sd.x_1
+   if isempty.x then next(acc+sym2,req)
+    else
+     let list=for acc2 = empty:seq.symbol, sym4= code.sd.x_1 do
+      acc2 +  replaceTsymbol(modpara.x_1, sym4)
+     /for(acc2)
+    {       assert name.e /nin "arithseq"  report "GHJ"+print.list}
+      next(acc+setrequires.sym2, req+symdef(sym2,list))
+   /for(partdict(  acc,req))
+      
+    
+ 
+
+
 Function formsymboldict(modset:set.passsymbols,this:passsymbols, requireUnbound:set.symdef, mode:word)
 partdict
  { bug here should not need i=0 in forloop }
-  for   syms=defines.this,requires=empty:set.symdef,i=0, u = toseq.uses.this do
+let dict=  for   syms=defines.this,requires=empty:set.symdef,i=0, u = toseq.uses.this do
     let a = checkfindelement(passsymbols.u, modset )
       if isempty.a then 
         assert   mode   /nin "body" report"Cannot find module" +  name.u
@@ -322,10 +355,13 @@ partdict
      let list=for acc2 = empty:seq.symbol, sym4= code.require_1 do
       acc2 +  replaceTsymbol(para.u, sym4)
      /for(acc2)
+    {       assert name.e /nin "arithseq"  report "GHJ"+print.list}
       next(acc+setrequires.sym2, req+symdef(sym2,list))
    /for(partdict(  acc,req))
      next(syms.r,req.r,0)
  /for( partdict(syms,requires) )
+ partdict( for acc=empty:set.symbol,    sd=toseq.req.dict  do  acc+setrequires.sym.sd /for(
+   for acc2=acc, sym=toseq.syms.dict do acc2+sym /for(acc2)  ),req.dict )
  
  symboldict(syms,requires,[c])
  
@@ -490,4 +526,9 @@ passsymbols( modname, empty:set.modref, empty:set.symbol, empty:set.symbol, empt
  
 
    Function ?(a:passsymbols, b:passsymbols)ordering   module.a ? module.b
+   
+   Function checkwellformed(sym:symbol) boolean
+ not.issimple.module.sym
+ = for acc = false, t = types.sym while not.acc do isabstract.t /for(acc)
+ 
   

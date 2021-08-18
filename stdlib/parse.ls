@@ -24,7 +24,6 @@ use set.symbol
 
 use symboldict
 
-Function parsedcode(b:bindinfo)seq.symbol code.b
 
 Export getheader(s:seq.word)seq.word
 
@@ -53,8 +52,9 @@ Function bindinfo(dict:symboldict, types:seq.mytype, tokentext:seq.word)bindinfo
 
 function resolvetype(text:seq.word, common:commoninfo, place:int)mytype
 let a = resolvetype(types.common, text)
+assert not.isempty.a report 
 let w = for acc = EOL, t = toseq.types.common do acc + print.t /for(acc + EOL)
-assert not.isempty.a report errormessage("cannot resolve type" + text + w, common, place)
+errormessage("cannot resolve type" + text + w, common, place)
  a_1
 
 Function parse(dict:symboldict)bindinfo
@@ -88,34 +88,33 @@ assert not.isempty.f report errormessage("cannot find 1" + fixNM.name + "("
  + ")", common, place){+print.toseq.asset.dict}
  assert cardinality.f = 1 report errormessage("found more than one"
   + for acc ="", @e = toseq.f do acc + print.@e /for(acc), common, place)
-  let discard = for acc ="", sym2 = requires(dict,f_1) do
-    let xxx = lookupbysig( dict,  sym2)
-  assert not.isempty.xxx ∨ isabstract.module.f_1  report
+  let discard = for acc=0, sym2 = requires(dict,f_1) do
+      let xxx = lookupbysig( dict,  sym2)
+      assert not.isempty.xxx ∨ isabstract.module.f_1  report
      errormessage( "using symbol "+ print.f_1+" requires unbound" +   print.sym2, common, place)
-    { +for  txt="/p dictionary",s=      toseq.asset.dict do
-        if name.s =name.sym2 then txt+print.s+EOL 
-       else txt /for(txt)}
-     let discard2=if not.isempty.xxx then 
-     { assert false report "FF"+print.sym2+print.xxx_1+"XXX"+print.modname.common}
-   let discard =encode.requireencoding(sym2,xxx_1) 1 else 1
-    acc
-  /for(acc)
-  f_1
+     0
+   /for(0)
+   f_1
   
-  use encoding.requireencoding
+  function print(s:seq.symdef) seq.word
+   for txt="", sd=s do txt+print.sym.sd+print.code.sd +EOL /for(txt)
   
-type requireencoding is  a:symbol,b:symbol
+  use set.symdef
+  
+ / use encoding.requireencoding
+  
+/type requireencoding is  a:symbol,b:symbol
 
-function hash(a:requireencoding) int  hash.a.a
+/function hash(a:requireencoding) int  hash.a.a
 
-function =(x:requireencoding,y:requireencoding) boolean a.x=a.y
+/function =(x:requireencoding,y:requireencoding) boolean a.x=a.y
 
-function assignencoding(p:seq.encodingpair.requireencoding, a:requireencoding)int 
+/function assignencoding(p:seq.encodingpair.requireencoding, a:requireencoding)int 
  assignrandom(p, a)
  
 use seq.symdef
 
-Function requirematch seq.symdef
+/Function requirematch seq.symdef
 for acc=empty:seq.symdef,  p=encoding:seq.encodingpair.requireencoding do 
   acc+  symdef(a.data.p, for   paras= empty:seq.symbol,   i=arithseq(nopara.a.data.p,1,1) do paras+Local.i /for(paras+b.data.p)) 
   /for(acc)

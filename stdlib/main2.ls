@@ -178,7 +178,7 @@ let compiled=for acc=empty:set.symbol,sd=prg.libinfo do
         if not.isabstract.module.sym.sd  then   acc+sym.sd  else acc 
     /for(acc)
  let templates=for acc=empty:seq.symdef,p=tosymdefs.prg10 do  if para.module.sym.p = typeT then
-  acc+prescan2.p else acc /for(program.asset.acc)
+  acc+p else acc /for(program.asset.acc)
   let simple=for   simple=empty:seq.passsymbols  ,f=toseq.modules.t5  do
         if issimple.module.f  then simple + f else simple  
     /for(simple)

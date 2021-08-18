@@ -115,10 +115,8 @@ type libraryModule is modname:modref, exports:seq.symbolref,
 uses:seq.mytype,defines:seq.symbolref,types:seq.seq.mytype
 
 Export libraryModule( modname:modref, exports:seq.symbolref,
-uses:seq.mytype,defines:seq.symbolref,types:seq.seq.mytype)libraryModule
+unused:seq.mytype,defines:seq.symbolref,types:seq.seq.mytype)libraryModule
 
-/Function libraryModule(modname:modref, exports:seq.symbolref,defines:seq.symbolref,types:seq.seq.mytype)libraryModule
- libraryModule(modname,exports,defines,types)
 
 Export type:libraryModule
 
@@ -127,7 +125,6 @@ Export   exports(libraryModule)  seq.symbolref
 
 Export modname(libraryModule) modref
 
-Export uses(libraryModule) seq.mytype
 
 Export defines(libraryModule)  seq.symbolref
 

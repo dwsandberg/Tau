@@ -236,34 +236,5 @@ Function coretype(typ:mytype, alltypes:type2dict,maxsize:int)mytype
       else typeref."packed6 tausupport . " 
  
 
-Function blocksym(basetype:mytype)symbol
-let p = parameter.basetype
-let p2 = seqof.if p = typebyte ∨ p = typebit ∨ p = typeboolean then typeint else p
- symbol(modTausupport,"blockIt", p2, p2)
 
    
-Function deepcopybody(type:mytype, typedict:type2dict)seq.symbol
-  if type = typeint ∨ type = typeword ∨ isencoding.type then [ Local.1]
- else if isseq.type then
- let basetype =  basetype(  type,typedict)
- if basetype = typeint ∨ basetype = typereal ∨ basetype = typeboolean then [ Local.1, blocksym.basetype]
-  else
-   let cat = symbol(tomodref.type,"+", [ type, parameter.type], type)
-   let resulttype = basetype
-   let elementtype = parameter.basetype
-   let element = symbol(moduleref("$for", elementtype),"element", empty:seq.mytype, elementtype)
-   let acc = symbol(moduleref("$for", typeptr),"acc", empty:seq.mytype, typeptr)
-   [Sequence(elementtype,0)]
-    + [ Local.1, acc, element, acc, element, deepcopySym( parameter.type), cat, Littrue, acc, symbol(moduleref("builtin", typeint),"forexp", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
-    ]
-    + blocksym.basetype
- else
-  let subflds =  flatflds(typedict,type)
-  if length.subflds = 1 then
-    { only one element in record so type is not represent by actual record }[ Local.1]
-    + deepcopySym(first.subflds)
-   else 
-    for     fldno=1, fldkinds=empty:seq.mytype, result= empty:seq.symbol,fldtype=subflds do
-  let kind = basetype(  fldtype,typedict)
-   next(fldno+1,fldkinds + kind, result + [ Local.1,Lit(fldno - 1), Getfld.kind,   deepcopySym( fldtype)])
-/for(result + [ Record.fldkinds])

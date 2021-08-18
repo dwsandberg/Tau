@@ -57,7 +57,7 @@ let code2=for  acc=empty:seq.seq.symbolref,        sym=toseq.symstoexport2 do
                            else libcode(getCode(prg, sym),symstoexport2)   
                         do 
                         if isFref.sym2 then
-                             acc2+ symbolref.PreFref+ symbolref.first.zcode.sym2
+                             acc2+ symbolref.PreFref+ symbolref.basesym.sym2
                         else
                           acc2+symbolref.sym2
                        /for(acc2)

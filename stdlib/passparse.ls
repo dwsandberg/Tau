@@ -40,10 +40,11 @@ use set.arc.symbol
 
 use encoding.symbol
 
+
  function abstractarcs(s: seq.symdef ) seq.arc.symbol
    for outer=empty:seq.arc.symbol,p=s do 
         let sym=sym.p
-        for arcs=outer,codesym =  code.p    do 
+         for arcs=outer,codesym =  code.p    do 
            if isspecial.codesym /or not.isabstract.module.codesym /or sym  = codesym 
             /or  name.module.codesym /in "builtin" then arcs
              else  if name.module.codesym /in "$for" then 
@@ -61,9 +62,7 @@ use encoding.symbol
           
         use program
         
-                 for acc=empty:seq.arc.symbol,  a=toseq.arcs.transitiveClosure.g do
-     if head.a /in  toprocess then acc+a else acc /for( acc)
-
+ 
        
 
 function removesinks(      sinkstokeep:set.symbol,g:graph.symbol,toprocess:seq.symbol)
@@ -107,7 +106,7 @@ seq.symdef
            else 
                assert first.text.p /in "Function function" report text.p
       let b=  parse( src_paragraphno.p,partdict,z)
-         symdef(sym.p, parsedcode.b,paragraphno.p ) 
+         symdef(sym.p, code.b,paragraphno.p ) 
        /for( prg+acc )
       /for(  prg   )
       
@@ -119,7 +118,7 @@ Function  passparse(   abstractmods :set.passsymbols,simplemods:set.passsymbols
 ,src:seq.seq.word,mode:word) 
 set.symdef
  let allmods=abstractmods /cup simplemods
- let prga=compile(allmods, abstractmods ,lib  ,src ,mode,empty:set.symdef) 
+ let prga=prescan2.compile(allmods, abstractmods ,lib  ,src ,mode,empty:set.symdef) 
   let g3=  newgraph.abstractarcs( prga+prg1 ) 
 { graph g3 has three kinds of sinks.
      1:is unbound and module parameter is T
@@ -132,64 +131,46 @@ set.symdef
   let templates=for acc=empty:set.symdef, sd=prga do
        if isabstract.module.sym.sd then acc+sd else acc 
    /for(program(asset.prg1 /cup acc))
-let g5=for  acc=g4,  n=toseq(sinks /cap nodes.g4)   do 
-let newgraph=if isunbound.n then acc else  deletenode(acc,n)
-  let f=findabstract(templates,n)
-  {assert not.isempty.f report "analzye templates error"+print.n}
-  if isempty.f then newgraph
-   else
-    { look in g4 to find what unbound symbols are used }
-  for acc2=empty:seq.arc.symbol,sym=toseq.successors(g4,sym.f_1) do 
-     let x=replaceTsymbol(modpara.f_1,sym)
-      acc2+ toarcs( toseq.predecessors(g4,sym.f_1)  ,x ) /for(newgraph+acc2) 
-/for(acc)
- let check=  for txt="",  n=toseq(sinks /cap nodes.g5) do
-     if isunbound.n /or para.module.n=typeT then txt 
-      else txt+print.n /for(txt)
-assert isempty.check report "CHECK"+check
  { change many-to-one relation defined by arcs in g5 into format of set.symdef }
-  let requireUnbound=if isempty.arcs.g5 then empty:set.symdef else 
+  let requireUnbound=if isempty.arcs.g4 then empty:set.symdef else 
   for acc=empty:set.symdef
      , last=Lit.0
-     ,list=empty:seq.symbol,a=toseq.arcs.g5 do
-   if last /ne tail.a then
-          next(if isempty.list then acc else   acc+symdef(last,list)
-          , tail.a,if isunbound.head.a then [head.a] else empty:seq.symbol)
-     else next(acc, tail.a,if isunbound.head.a then list+head.a else list)
+     ,list=empty:seq.symbol,a=toseq.arcs.g4 do 
+     let list0=if last /ne tail.a then empty:seq.symbol else list
+       let newlist=if isunbound.head.a then list0+head.a else  list0
+      let newacc=if last /ne tail.a then
+      if isempty.list then acc else  
+            acc+symdef(last,list) else acc
+          next(newacc , tail.a,   newlist)
   /for(if isempty.list then acc else   acc+symdef(last,list))
-  { assert isempty.requireUnbound  report "req"+for acc="",x=toseq.requireUnbound do acc+print.sym.x +print.code.x+EOL
-  /for(acc)  }
-  let discard10= requirematch
-  let prg=compile(allmods, simplemods ,lib  ,src ,mode,requireUnbound)
- asset(  prga+prg1+  prg +requirematch)
+   let prg=compile(allmods, simplemods ,lib  ,src ,mode,requireUnbound)
+ asset(  prga+prg1+  prg )
  
-     
+     function  prescan2(  s: seq.symdef) seq.symdef
+      for  acc=empty:seq.symdef ,  p=s  do
+         for  result = empty:seq.symbol, sym = code.p do
+           if  islocal.sym then
+                 result +  Local.value.sym
+           else if isdefine.sym then  result+Define.value.sym
+           else {if isconst.sym /or isspecial.sym then result+sym
+           else
+              assert subseq(print.sym.p,1,5) /ne  "tree.T:="  /or module.sym.p=module.sym report 
+          "KL"+print.sym.p+ print.sym}
+           result + sym
+      /for(acc+symdef( sym.p,result))
+      /for( acc)  
+   
  
  use seq.seq.mytype
  
-               use set.word
-               
-  
-   
-  use typedict
-       
-  function  abstractSymbolUses(z:seq.symbol) set.symbol  
-       for acc =empty:set.symbol,sym=z do
-         if issimple.module.sym then 
-           if not.isconst.sym /and istype.sym then 
-              acc+sym
-           else acc 
-         else if name.module.sym  /in "$for" then
-              if name.sym /in "next for" then acc
-              else 
-                let  idxsym=symbol(moduleref("stdlib seq",resulttype.sym),"_",seqof.resulttype.sym,typeint,resulttype.sym)
-                acc+idxsym
-        else if  name.module.sym  /in "builtin $local  $word $words $int $boolean   $br2   $define internal
-  $sequence  $typefld $loopblock"    
-  then acc 
-  else  acc+sym 
-/for(acc)
+use set.word
 
+ use words
+
+use otherseq.mytype
+            
+  use typedict
+  
   
  /  use displaytextgraph
 
@@ -203,13 +184,7 @@ assert isempty.check report "CHECK"+check
     /for(acc)
    
 
- 
- use words
-
-use otherseq.mytype
-
-
-
+  
 
                
           
