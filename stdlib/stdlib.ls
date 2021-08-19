@@ -25,7 +25,7 @@ pass2  persistant postbind   process real seq set stack  symbol textio timestamp
  graphs/bandeskopf
  graphs/ipair
  graphs/graph
- typerep passsymbol passparse   
+ typedict passsymbol passparse   
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format abstractBuiltin
 graph groupparagraphs intdict   ioseq ipair libdesc  
@@ -35,7 +35,7 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
   interpreter  llvm llvmconstants       
-  program    symboldict taublockseq typerep  
+  program    symboldict taublockseq typedict 
 
 * Removed maindict 
 
@@ -70,7 +70,7 @@ Export  subcompilelib( seq.word)seq.word
 Export pass2(placehold:program)program  
 
 
-Export codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:type2dict,isbase:boolean)seq.bits  
+Export codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:typedict,isbase:boolean)seq.bits  
 
 Export compilerfront(option:seq.word,libname:seq.word
 ,allsrc:seq.seq.word,dependentlibs:seq.word,exports:seq.word) compileinfo
@@ -131,6 +131,8 @@ Export replaceT(mytype,mytype) mytype
   
 
 module COMPILETIME
+
+use typedict
 
 use standard
 

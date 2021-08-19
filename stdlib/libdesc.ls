@@ -47,7 +47,7 @@ Function ?(a:symbolref,b:symbolref) ordering toint.a ? toint.b
   
 Function libdesc(info:compileinfo, prg:program) seq.symbol
 let symstoexport2=   for  acc=empty:seq.symbolref ,  m=  mods.info do
-          acc+  defines.m+exports.m
+          acc+  exports.m
         /for( for acc2=empty:set.symbol, r=toseq.asset.acc do 
         acc2 +(symbolrefdecode.info)_toint.r
          /for(acc2))
@@ -104,15 +104,14 @@ use mytype
 use bits
 
 function addlibsym(s:symbol,lib:word)symbol
- assert not.isFref.s report "Fref problem"
+ assert not.isFref.s report "Fref problem" 
   let t=module.s
   Constant2.[ Words.worddata.s, Word.lib,Word.name.t,addmytype.para.t,   
   addseq.for acc = empty:seq.symbol, @e = types.s do acc + addmytype.@e /for(acc)
  , Lit.toint.raw.s,Lit.extrabits.s  
- , Words.""
  , Record.[ typeptr, typeword,typeword, typeptr 
  , typeptr
- , typeint, typeint, typeptr]]
+ , typeint, typeint]]
 
 function addmytype(t:mytype)symbol 
  addseq.for acc = empty:seq.symbol, e = typerep.t do
@@ -128,17 +127,14 @@ addseq.for acc = empty:seq.symbol, r = s do acc +  Lit.binarysearch(toseq.all,r)
 
 function addlibraryMod(m:libraryModule,all:set.symbolref)symbol
  let e = addseqsymbolref(exports.m  ,all)
- let d = if isabstract.modname.m then  addseqsymbolref(defines.m  ,all)
- else e
+ let types=addseq.for acc2=empty:seq.symbol ,tl=types.m do
+         acc2+addseq.for acc = empty:seq.symbol, @e = tl do acc + addmytype.@e /for(acc)
+       /for(acc2)
  let t=modname.m
   Constant2.[ Word.library.t, Word.name.t, addmytype.para.t
     , e
-    ,{addseq.for acc = empty:seq.symbol, @e = uses.m do acc + addmytype.@e /for(acc)} Words.""
-    , d
-    , addseq.for acc2=empty:seq.symbol ,tl=types.m do
-         acc2+addseq.for acc = empty:seq.symbol, @e = tl do acc + addmytype.@e /for(acc)
-       /for(acc2)
-  , Record.[ typeword, typeword, typeptr, typeptr, typeptr, typeptr,typeptr]]
+    , types
+  , Record.[ typeword, typeword, typeptr, typeptr, typeptr]]
 
 
 --------------------------
@@ -175,7 +171,6 @@ Export newmods(liblib) seq.libraryModule
 
 Export libname(liblib)seq.word
 
-
 Export words(liblib)seq.encodingpair.seq.char
 
 Export profiledata(liblib)seq.parc
@@ -184,14 +179,10 @@ builtin loadedlibs2 seq.liblib
 
 Function loadedLibs seq.liblib loadedlibs2
 
-
-
 Function unloadlib(a:seq.word)int unloadlib.tocstr.a
 
 use seq.libraryModule
   
-
-
 builtin unloadlib(cstr)int
 
 Function loadlibrary(a:word)int loadlib.tocstr.[ a]

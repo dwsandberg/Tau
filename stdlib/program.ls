@@ -59,9 +59,9 @@ program.replace(data.p,symdef(s,code)  )
 
 
 
-Export type:type2dict
+Export type:typedict
 
-Export coretype(mytype, type2dict) mytype
+Export coretype(mytype, typedict) mytype
   
  
 
@@ -111,31 +111,24 @@ Function symbolrefdecode seq.symbol
 
 
 
-type libraryModule is modname:modref, exports:seq.symbolref,
-uses:seq.mytype,defines:seq.symbolref,types:seq.seq.mytype
+type libraryModule is modname:modref, exports:seq.symbolref,types:seq.seq.mytype
 
-Export libraryModule( modname:modref, exports:seq.symbolref,
-unused:seq.mytype,defines:seq.symbolref,types:seq.seq.mytype)libraryModule
+Export libraryModule( modname:modref, exports:seq.symbolref,types:seq.seq.mytype)libraryModule
 
 
 Export type:libraryModule
-
 
 Export   exports(libraryModule)  seq.symbolref
 
 Export modname(libraryModule) modref
 
-
-Export defines(libraryModule)  seq.symbolref
-
 Export types(libraryModule) seq.seq.mytype
 
-
-Export alltypes(compileinfo)type2dict
+Export alltypes(compileinfo)typedict
 
 Export type:compileinfo 
 
-type compileinfo is typedict:type2dict  
+type compileinfo is typedict:typedict  
 ,code:seq.seq.symbolref,src:seq.seq.word
 ,symbolrefdecode:seq.symbol,mods:seq.libraryModule
 
@@ -163,14 +156,14 @@ let symdecode=symbolrefdecode.s
           for   acc=empty:seq.symbol, r= c << 2 do   acc+ symdecode_toint.r /for(acc))
 /for(acc4)
 
-Export typedict(compileinfo) type2dict
+Export typedict(compileinfo) typedict
 
 Export symbolrefdecode(compileinfo) seq.symbol
 
-Function alltypes(s:compileinfo) type2dict typedict.s
+Function alltypes(s:compileinfo) typedict typedict.s
 
  
-Function  compileinfo(prg:seq.symdef, alltypes:type2dict ,mods:seq.libraryModule
+Function  compileinfo(prg:seq.symdef, alltypes:typedict ,mods:seq.libraryModule
 ,src:seq.seq.word) compileinfo
 compileinfo(alltypes, cvtL3(program.asset.prg,1,empty:seq.seq.symbolref),src,symbolrefdecode,mods)
 

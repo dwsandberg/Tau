@@ -263,14 +263,14 @@ use seq.symbolref
  
  
   
- Function tolibraryModules(alltypes: type2dict ,prg:program, t5:seq.passsymbols,exports:seq.word) seq.libraryModule
+ Function tolibraryModules(alltypes: typedict ,prg:program, t5:seq.passsymbols,exports:seq.word) seq.libraryModule
  for acc = empty:seq.libraryModule,typedec=empty:seq.seq.mytype, m2 =  t5 do
     if name.module.m2 /nin exports then next(acc,typedec) else
-     let exps=  for acc3 = empty:seq.symbolref, e = toseq.exports.m2 do acc3 + symbolref.e /for(acc3)
-    let defines=if isabstract.module.m2 then
-      for acc3 = empty:seq.symbolref, e = toseq(defines.m2 ) do acc3 + symbolref.e /for(acc3)
-     else exps
       let d2=if isabstract.module.m2 then defines.m2 else exports.m2
+     let exps=  for acc3 = empty:seq.symbolref, e = toseq.d2 do 
+      if isunbound.e then acc3 else
+     acc3 + 
+      symbolref.e /for(acc3)
      let types = for acc5 = empty:seq.seq.mytype, s =  toseq.d2 do 
         if istype.s    then
            if isseq.resulttype.s then acc5+[resulttype.s,typeint]
@@ -280,8 +280,7 @@ use seq.symbolref
            acc5+ ([ resulttype.s]+c)
         else   acc5
        /for(acc5)
-    next(acc
-    + libraryModule(module.m2,  exps    ,empty:seq.mytype    ,defines,types),typedec+types)
+    next(acc+ libraryModule(module.m2,  exps ,types),typedec+types)
    /for(       acc   )
   
  ---------
@@ -315,8 +314,8 @@ use seq.symbolref
                 acc+symdef(sym,code)
                 /for(acc)
  for   mods=empty:seq.passsymbols, types1=empty:seq.seq.mytype, m=newmods.ll do
-    let defines=for defines=empty:set.symbol,r=defines.m do defines+( decoderef.ll)_toint.r
-            /for(defines)
+    let defines={for defines=empty:set.symbol,r=defines.m do defines+( decoderef.ll)_toint.r
+            /for(defines)}empty:set.symbol
       let modx=for exports=empty:seq.symbol,types=empty:seq.mytype,r=exports.m do  
           let sym=( decoderef.ll)_toint.r  
           next(exports+sym,if name.sym="type"_1 then types+resulttype.sym else types)

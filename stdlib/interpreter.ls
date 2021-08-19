@@ -57,7 +57,7 @@ function tocode(r:int, typ:mytype)seq.symbol
 
 function aswords(s:seq.int)seq.word for acc ="", @e = s do acc + wordencodingtoword.@e /for(acc)
 
-Function interpret(alltypes:type2dict, code:seq.symbol)seq.word aswords.bitcast.interpret(code, 1, empty:stack.int)
+Function interpret(alltypes:typedict, code:seq.symbol)seq.word aswords.bitcast.interpret(code, 1, empty:stack.int)
 
 let p = process.interpret(code, 1, empty:stack.int)if aborted.p then message.p else aswords.bitcast.result.p
 

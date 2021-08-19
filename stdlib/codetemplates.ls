@@ -54,10 +54,10 @@ Export wordref(w:word)int
 
 Export addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean)int
 
-function tollvmtype(alltypes:type2dict, s:symbol)llvmtype
+function tollvmtype(alltypes:typedict, s:symbol)llvmtype
  if s = Optionsym then function.[ i64, i64, i64, i64]else function.tollvmtypelist(alltypes, s)
  
-function tollvmtypelist(alltypes:type2dict, s:symbol)seq.llvmtype
+function tollvmtypelist(alltypes:typedict, s:symbol)seq.llvmtype
  assert resulttype.s ≠ typeT report"TTT" + print.s
 let starttypes = [ tollvmtype(alltypes, resulttype.s), i64]
 for acc = starttypes, @e = paratypes.s do 
@@ -65,7 +65,7 @@ for acc = starttypes, @e = paratypes.s do
     acc + tollvmtype(alltypes, @e)
   /for(acc)
 
-function tollvmtype(alltypes:type2dict, s:mytype)llvmtype
+function tollvmtype(alltypes:typedict, s:mytype)llvmtype
  if isseq.s then ptr.i64
  else if abstracttypename.s="process"_1 then ptr.i64
  else
@@ -132,10 +132,10 @@ function assignencoding(p:seq.encodingpair.match5, a:match5)int length.p + 1
 
 Function options(match5map:seq.match5, m:match5)seq.word getoption.code.m
 
-Function funcdec(alltypes:type2dict, i:symbol)int
+Function funcdec(alltypes:typedict, i:symbol)int
  toint.modulerecord([ mangledname.i], [ toint.FUNCTIONDEC, typ.tollvmtype( alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
-Function match5map(theprg:program, uses:set.symbol, alltypes:type2dict)seq.match5
+Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
 let discard3 = [ addtemplate(symbol(internalmod,"packedindex", seqof.typebit, typeint, typeint), 8, BINOP(r.1, ibcsub.2, C64.1, sub) + BINOP(r.2, r.1, C64.6, lshr)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3)
@@ -261,15 +261,23 @@ addtemplate(symbol(moduleref."stdlib interpreter","GEP", seqof.typeint, typeint,
 + CAST(r.3, r.2, double, bitcast))
 ]
 let const = for acc = empty:seq.symbol, e = toseq(uses - asset.[ Optionsym])do
+   {assert print.e /ne "FREF taublockseq.real:_(blockseq.real, int)real" 
+   report "JKLSDF"+if isconst.e then "T" else "F"  }
  if isconst.e then
   if isrecordconstant.e then acc + e
-  else { let discard = buildrecordconst(e, alltypes)acc else }let discard = buildconst(e, alltypes)
+  else { let discard = buildrecordconst(e, alltypes)acc else }
+  let discard = buildconst(e, alltypes)
   acc
  else let discard5 = buildtemplate(theprg, alltypes, e)
  acc
 /for(acc)
 let discard4 = processconst.const
  empty:seq.match5
+ 
+  for acc=false , k=toseq.uses while not.acc do 
+    print.k="taublockseq.real:_(blockseq.real, int)real"
+    /for(acc) 
+report "PPPP"+print.toseq.roots.cinfo
 
 
 Function symboltableentry(name:seq.word, type:llvmtype)slot
@@ -278,20 +286,36 @@ Function symboltableentry(name:seq.word, type:llvmtype)slot
 function processconst(toprocess:seq.symbol)int
  if isempty.toprocess then 0
  else
-  processconst.for notprocessed = empty:seq.symbol, xx = toprocess do
-   for args = empty:seq.int, defined = true, ele = constantcode.xx while defined do let tp = findtemplate.ele
-    if isempty.tp then next(empty:seq.int, false)else next(args + arg.tp_1, true)/for(if defined then
+  for notprocessed = empty:seq.symbol,changed=false, xx = toprocess do
+   let processed=for args = empty:seq.int, defined = true, ele = constantcode.xx while defined do 
+   let tp = findtemplate.ele
+    if isempty.tp then next(empty:seq.int, false)
+    else 
+    next(args + arg.tp_1, true)
+    /for(if defined then
    let discard = addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args)
-   notprocessed
-   else notprocessed + xx /if)
-  /for(notprocessed)
+    true
+   else false /if)
+   next(if processed then notprocessed else notprocessed + xx , changed /or processed)
+  /for(
+     assert changed report "problem processconst"
+    +for txt ="",     xx2 = notprocessed    do
+    let txt2=for txt2="", ele = constantcode.xx2  do
+  let tp = findtemplate.ele
+    if isempty.tp then txt2+print.ele
+    else txt2
+    /for (txt2)
+    txt+txt2
+    /for(txt) 
+     if not.changed then 0 else
+     processconst.notprocessed)
 
 
 function =(a:llvmtype, b:llvmtype)boolean typ.a = typ.b
 
-function buildconst(xx:symbol, alltypes:type2dict)match5
+function buildconst(xx:symbol, alltypes:typedict)match5
  if isFref.xx then
- let f1 =(constantcode.xx)_1
+ let f1 =basesym.xx
  let mn = mangledname.f1
  let functyp = ptr.tollvmtype(alltypes, f1)
  addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry([mn], functyp)))
@@ -304,7 +328,7 @@ function buildconst(xx:symbol, alltypes:type2dict)match5
   assert isword.xx report"not a constant" + print.xx
    addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.wordref.wordname.xx)
 
-function buildtemplate(theprg:program, alltypes:type2dict, xx:symbol)match5
+function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)match5
  { xx will not be constant }
  if islocal.xx then addtemplate(xx, 0, emptyinternalbc,"LOCAL"_1, slot.value.xx)
  else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc,"DEFINE"_1, slot.value.xx)
@@ -342,7 +366,7 @@ function buildtemplate(theprg:program, alltypes:type2dict, xx:symbol)match5
     addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, empty:seq.symbol, l)
    else call(alltypes, xx,"CALL"_1, getCode(theprg, xx), mangledname.xx)
 
-function call(alltypes:type2dict, xx:symbol, type:word, code:seq.symbol, symname:word)match5
+function call(alltypes:typedict, xx:symbol, type:word, code:seq.symbol, symname:word)match5
 let list = tollvmtypelist(alltypes, xx)
 let functype = function.list
 let newcode = CALLSTART(1, 0, 32768, typ.functype, toint.symboltableentry([symname], functype), if type = "CALL"_1 then nopara.xx + 1 else nopara.xx)

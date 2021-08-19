@@ -47,7 +47,7 @@ function glue(library:seq.word)  seq.word
   
 function print(s:seq.mytype)seq.word for a ="", e = s do a + print.e /for(a)
 
-Function basetypecheck(r2:seq.symdef, typedict:type2dict)seq.word
+Function basetypecheck(r2:seq.symdef, typedict:typedict)seq.word
  for acc = empty:seq.word, count = 0, s =  r2 do
  let p = process.checkkind(s, typedict)
  let b = if aborted.p then
@@ -61,7 +61,7 @@ Function basetypecheck(r2:seq.symdef, typedict:type2dict)seq.word
  function addlocals(localtypes:intdict.mytype, para:seq.mytype, localno:int, i:int)intdict.mytype
  if i > 0 then addlocals(replace(localtypes, localno, para_i), para, localno - 1, i - 1)else localtypes
 
-function checkkind(s2:symdef, typedict:type2dict)seq.word
+function checkkind(s2:symdef, typedict:typedict)seq.word
  if isconst.sym.s2 ∨ name.sym.s2 ∈ "type]" ∨ isabstract.module.sym.s2 then
  ""
  else

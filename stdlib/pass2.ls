@@ -407,10 +407,10 @@ use program
 function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
  if isempty.toprocess then processed
  else
-  let q = asset.for acc = empty:seq.symbol, @e = toseq.toprocess do
+  let q = for acc = empty:seq.symbol, @e = toseq.toprocess do
      if isabstract.module.@e then acc else
-   acc+if isrecordconstant.@e /or isFref.@e then constantcode.@e    else getCode(p, @e)   
-  /for(acc)
+   acc+if isFref.@e then [basesym.@e] else if isrecordconstant.@e  then constantcode.@e    else getCode(p, @e)   
+  /for(asset.acc)
   uses(p, processed ∪ toprocess, q - processed)
 
 

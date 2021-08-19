@@ -68,7 +68,7 @@ Export =(a:modref,b:modref) boolean
 
 ---internal
 
-type symbol is worddata:seq.word, module:modref,types:seq.mytype, raw:bits,hashbits:bits, zcode:seq.symbol
+type symbol is worddata:seq.word, module:modref,types:seq.mytype, raw:bits,hashbits:bits
 
 Export type:symbol
 
@@ -102,7 +102,9 @@ function extrabits(types:seq.mytype,other:int,flags:bits) bits
 Function extrabits(s:symbol)int toint.hashbits.s
 
 Function Words(s:seq.word)symbol 
-symbol(s, moduleref."$words",[ typeptr],0x0,extrabits(empty:seq.mytype,hash.s,constbit), empty:seq.symbol)
+symbol(s, moduleref."$words",[ typeptr],0x0,extrabits(empty:seq.mytype,hash.s,constbit))
+
+function frefbit  bits  bits.8
 
 function specialbit bits bits.4
 
@@ -113,6 +115,9 @@ function constbit bits bits.1
 Function issimplename(sym:symbol) boolean (hashbits.sym /and simplenamebit) /ne 0x0 
 
 Function isspecial(s:symbol)boolean(hashbits.s ∧ specialbit) = specialbit
+
+Function isFref(s:symbol)boolean  
+(hashbits.s ∧ frefbit) = frefbit
 
 Function isconst(s:symbol)boolean(hashbits.s ∧ constbit) = constbit
 
@@ -129,13 +134,11 @@ Function hash(sym:symbol)int toint(hashbits.sym >> 4)
 Function fsighash(s:symbol)int toint(hashbits.s >> 4)
 
 Function setunbound(sym:symbol) symbol
-  symbol( worddata.sym,module.sym,types.sym,raw.sym /or unboundbit,hashbits.sym,empty:seq.symbol) 
+  symbol( worddata.sym,module.sym,types.sym,raw.sym /or unboundbit,hashbits.sym ) 
 
 Function setrequires(sym:symbol)symbol 
- symbol( worddata.sym,module.sym,types.sym,raw.sym /or requiresbit,hashbits.sym,empty:seq.symbol) 
+ symbol( worddata.sym,module.sym,types.sym,raw.sym /or requiresbit,hashbits.sym ) 
 
-function addzcode (s:symbol,zcode:seq.symbol) symbol
- symbol(worddata.s, module.s,types.s, raw.s,hashbits.s,  zcode)
 
 Function replaceTsymbol(with:mytype, sym:symbol)symbol
  if with = typeT /or isconst.sym then sym else
@@ -144,13 +147,13 @@ let newtypes = for newtypes = empty:seq.mytype, t = types.sym do newtypes + repl
       for hasT=false ,t=newtypes while not.hasT do  isabstract.t /for(
        if hasT then raw.sym else   raw.sym   /and xor(unboundbit,tobits.-1)  )
     else} raw.sym
-symbol( worddata.sym,replaceT(with, module.sym), newtypes, adjustedraw,extrabits(newtypes,   hash.worddata.sym,hashbits.sym),empty:seq.symbol)
+symbol( worddata.sym,replaceT(with, module.sym), newtypes, adjustedraw,extrabits(newtypes,   hash.worddata.sym,hashbits.sym) )
 
 function symbolZ(module:modref, name:word,namePara:seq.mytype,paras:seq.mytype,rt:mytype,flags:bits,raw:bits) symbol
    let types=namePara+paras+rt
   symbol([name] ,   module , types,raw
   , extrabits( types ,hash.[name],
-  if isempty.namePara  then simplenamebit /or flags else flags),  empty:seq.symbol )
+  if isempty.namePara  then simplenamebit /or flags else flags) )
   
 Function Br2(t:int, f:int)symbol
  let raw=bits.t << 20 ∨ bits.f
@@ -191,7 +194,7 @@ Function isexit(s:symbol)boolean name.module.s ∈ "$exitblock"
 Function value(sym:symbol)int toint.raw.sym
 
 Function nopara(s:symbol)int
- if isconst.s ∨ islocal.s   then 0
+ if isconst.s ∨ islocal.s   ∨ isFref.s  then 0
  else if isspecial.s ∧ name.module.s ∉ "$record $loopblock"then
   if   isdefine.s ∨ isbr.s /or isexit.s then 1
   else
@@ -304,9 +307,10 @@ Function NotOp symbol  symbol(modStandard,"not", typeboolean, typeboolean)
 Function PlusOp symbol  symbol(modStandard,"+", typeint, typeint, typeint)
 
 Function paratypes(s:symbol)seq.mytype
-if issimplename.s then  types.s >> 1 else  subseq(types.s,2,length.types.s-1)
+if isFref.s then empty:seq.mytype
+else if issimplename.s then  types.s >> 1 else  subseq(types.s,2,length.types.s-1)
 
-Function resulttype(s:symbol)mytype  last.types.s 
+Function resulttype(s:symbol)mytype  if isFref.s then typeint else  last.types.s 
 
 Function fullname(s:symbol) seq.word  if issimplename.s then
  [name.s] else [name.s]+":"+print.first.types.s
@@ -321,8 +325,8 @@ Function print(s:symbol)seq.word
   if '"'_1 ∈ worddata.s then"'" + worddata.s + "'"
   else '"' + worddata.s + '"'
  else if isword.s then"WORD" + wordname.s
- else if isrecordconstant.s then  {[wordname.s]}  "{"+print.removeconstant.zcode.s+"}"
- else if isFref.s then"FREF" + print.(constantcode.s)_1
+ else if isrecordconstant.s then  {[wordname.s]}  "{"+print.removeconstant.constantcode.s+"}"
+ else if isFref.s then"FREF" + print.basesym.s
  else if not.isspecial.s /or isloopblock.s  then
     print.module.s + ":" +fsig2(wordname.s,nametype.s,paratypes.s)
      +if isloopblock.s  then "/br" else print.resulttype.s 
@@ -415,17 +419,20 @@ Function isword(s:symbol)boolean name.module.s ∈ "$word"
 
 Function isrecordconstant(s:symbol)boolean name.module.s = first."$constant"
 
-Function isFref(s:symbol)boolean name.module.s = first."$fref"
 
 Function wordname(s:symbol) word first.worddata.s
 
 Function constantcode(s:symbol)seq.symbol
- if isFref.s then zcode.s
- else if isrecordconstant.s then
-  if isSequence.last.zcode.s then
-   [ Lit.0, Lit.nopara.last.zcode.s] + zcode.s >> 1
-  else zcode.s >> 1
- else empty:seq.symbol
+  assert isrecordconstant.s report "constant code error"+print.s +stacktrace
+   let code1= toseq.decode.to:encoding.symbolconstant(toint.name.s)
+  if isSequence.last.code1 then
+   [ Lit.0, Lit.nopara.last.code1] + code1 >> 1
+  else code1 >> 1
+ 
+Function fullconstantcode(s:symbol)seq.symbol
+  assert isrecordconstant.s report "constant code error"+print.s +stacktrace
+    toseq.decode.to:encoding.symbolconstant(toint.name.s)
+   
  
 Function typebit mytype typeref."bit bits."
 
@@ -457,7 +464,9 @@ Function modBits modref moduleref."stdlib bits"
 _________________
 
 Function Constant2(args:seq.symbol)symbol
-  addzcode(symbol( moduleref."$constant", [toword.valueofencoding.encode.symbolconstant.args],empty:seq.mytype,typeptr,constbit)  ,args)
+  symbol( moduleref."$constant", 
+  [toword.valueofencoding.encode.symbolconstant.args],empty:seq.mytype,typeptr,constbit)  
+  
  
 function hash(s:seq.symbol)int
  hash.for acc ="", e = s do acc + worddata.e + name.module.e /for(acc)
@@ -474,6 +483,8 @@ function hash(a:symbolconstant)int hash.toseq.a
 
 Function isconstantorspecial(s:symbol)boolean isconst.s ∨ isspecial.s
 
+
+
 Function Local(i:int)symbol Local(toword.i, typeint, i)
 
 Function Optionsym symbol 
@@ -488,9 +499,18 @@ symbolZ(moduleref."$define",  name ,empty:seq.mytype,empty:seq.mytype, typeint ,
 
 
 Function Fref(s:symbol)symbol
-addzcode(symbol(moduleref."$fref",[merge("FREF" + fsig(wordname.s,nametype.s,paratypes.s) 
-+ print.s)],empty:seq.mytype,type?,constbit)
-,[s])
+ let z=extrabits(paratypes.s+resulttype.s,hash.[merge("FREF" + print.s)]
+ , constbit /or frefbit /or (hashbits.s /and 0x0F ))
+  symbol(worddata.s, module.s,types.s, raw.s,z )
+  
+ 
+Function basesym(s:symbol)symbol 
+ if isFref.s then
+ let flags=hashbits.s /and  xor( constbit /or frefbit   ,  tobits.-1)
+   let newbits=extrabits( types.s ,hash.worddata.s,
+   flags) 
+   symbol(worddata.s, module.s,types.s, raw.s, newbits )
+ else s
 
 
 
@@ -506,8 +526,6 @@ let a=if isseq.typ     then typeptr else  typ
   
  
 
-Function basesym(s:symbol)symbol 
- if name.module.s = first."$fref" then(zcode.s)_1 else s
 
 Function getoption(code:seq.symbol)seq.word
  if isempty.code ∨ last.code ≠ Optionsym then empty:seq.word else worddata.code_(length.code - 1)
@@ -547,7 +565,7 @@ Function nametype(sym:symbol) seq.mytype
 
 Function removeconstant(s:seq.symbol)seq.symbol
  for acc = empty:seq.symbol, @e = s do
-  acc + if isrecordconstant.@e then removeconstant.zcode.@e else [ @e]
+  acc + if isrecordconstant.@e then removeconstant.fullconstantcode.@e else [ @e]
  /for(acc)
 
 _______________________________________________

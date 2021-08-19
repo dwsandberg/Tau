@@ -66,9 +66,9 @@ function verysimpleinline(sd:symdef) boolean
 
 
 
-type postbindresult  is typedict:type2dict ,prg:program 
+type postbindresult  is typedict:typedict ,prg:program 
 
-Export typedict(postbindresult) type2dict
+Export typedict(postbindresult) typedict
 
 Export prg(postbindresult) program
 
@@ -101,7 +101,7 @@ function add(b:set.mapsymbolused,sd:symdef) set.mapsymbolused
       
   
 Function postbind( t5:prg6, roots:seq.symbol, theprg:program, 
-templates:program,compiled:set.symbol , typedict1:type2dict
+templates:program,compiled:set.symbol , typedict1:typedict
 )postbindresult
  let root = symbol(moduleref."W","Wroot", typeint)
    let discard=for acc=0 ,r=roots do let discard2=encode.r 0 /for(0)
@@ -124,7 +124,7 @@ templates:program,compiled:set.symbol , typedict1:type2dict
 
  function usedsyms(source:program ,last:int,result:program
  , templates:program
-  ,compiled:set.symbol,typedict1:type2dict ) postbindresult
+  ,compiled:set.symbol,typedict1:typedict ) postbindresult
      let aa=  encoding:seq.encodingpair.symbol 
      if length.aa=last   then postbindresult(typedict1,result )
     else 
@@ -200,7 +200,7 @@ templates:program,compiled:set.symbol , typedict1:type2dict
          ,templates 
          ,compiled, typedict.accZ  ))  
  
- function test(symx:symbol,newdict3:type2dict,modpara:mytype,compiled:set.symbol) seq.symbol 
+ function test(symx:symbol,newdict3:typedict,modpara:mytype,compiled:set.symbol) seq.symbol 
   let sym = replaceTsymbol(modpara, symx) 
         if isspecial.sym then
        if isSequence.sym then [Sequence(parameter.basetype(   resulttype.sym,newdict3), nopara.sym)]
@@ -262,7 +262,7 @@ else if name.sym ∈ "packed"then
             else   Getfld.first.a  
         else if name.sym ∈ "empty" then Sequence(coretype(para.module.sym, newdict3),0)
   else
-        assert name.sym /in "offsets build" report "post bind"+print.sym
+        assert name.sym /in "offsets build" report "post bind error:"+print.sym
      sym
      ] 
          
@@ -329,7 +329,7 @@ use mytype
    seq.packed2 seq.packed3 seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
             
    
-   Function deepcopybody(type:mytype, typedict:type2dict)seq.symbol
+   Function deepcopybody(type:mytype, typedict:typedict)seq.symbol
   if type = typeint ∨ type = typeword ∨ isencoding.type then [ Local.1]
  else if isseq.type then
  let basetype =  basetype(  type,typedict)
