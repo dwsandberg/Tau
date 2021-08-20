@@ -434,22 +434,22 @@ Function fullconstantcode(s:symbol)seq.symbol
     toseq.decode.to:encoding.symbolconstant(toint.name.s)
    
  
-Function typebit mytype typeref."bit bits."
+Function typebit mytype typeref."bit bits stdlib"
 
-Function typebits mytype  typeref."bits bits."
+Function typebits mytype  typeref."bits bits stdlib"
 
-Function typebyte mytype typeref."byte bits."
+Function typebyte mytype typeref."byte bits stdlib"
 
-Function typeword mytype typeref."word words."
+Function typeword mytype typeref."word words stdlib"
 
-Function typechar mytype typeref."char standard ."
+Function typechar mytype typeref."char standard stdlib"
 
 Function packedtypes seq.mytype [
-typeref(  "packed2 tausupport .")
-,typeref(  "packed3 tausupport .")
-,typeref(  "packed4 tausupport .")
-,typeref(  "packed5 tausupport .")
-,typeref(  "packed6 tausupport .")
+typeref(  "packed2 tausupport stdlib")
+,typeref(  "packed3 tausupport stdlib")
+,typeref(  "packed4 tausupport stdlib")
+,typeref(  "packed5 tausupport stdlib")
+,typeref(  "packed6 tausupport stdlib")
  ]
 
 Function modStandard modref moduleref."stdlib standard"
@@ -548,10 +548,27 @@ Export typeT mytype
   
 Export seqof(mytype) mytype   
 
-Function mangledname(s:symbol)word mangle(fsig(wordname.s,nametype.s,paratypes.s), 
+Function mangledname(s:symbol)word 
+let a=if issimplename.s  then
+ if   wordname.s /in " loadlib  
+addresstosymbol2 callstack randomint currenttime
+getmachineinfo createlib2 getfile getbytefile getbitfile
+addencoding getinstance allocatespace dlsymbol loadedlibs2  unloadlib2
+arcsin arccos createfile2 initialdict processisaborted
+" then
+ {assert name.module.s /in "builtit libdesc" report "XXGX"+print.s}
+  wordname.s
+ else   if   wordname.s /in " tan cos sin sqrt" then 
+   merge([wordname.s]+"2")
+else "$XX"_1
+else "$XX"_1
+if a /ne "$XX"_1 then a
+else
+mangle(fsig(wordname.s,nametype.s,paratypes.s), 
 if issimple.module.s then [name.module.s] else oldTypeRep.para.module.s+name.module.s
 )
 
+ main2 addlibrarywords loaddictionary 
 
 ------
 

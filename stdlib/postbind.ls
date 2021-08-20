@@ -166,9 +166,9 @@ templates:program,compiled:set.symbol , typedict1:typedict
       else if isconst.sym  then 
        next(cache,nextvar,map,result2 + sym)
      else  if  name.sym ∈ "primitiveadd" /and inmodule(sym,"builtin") then
-        let encodingtype = typeref."encoding encoding. "
-       let encodingstatetype = typeref."encodingstate encoding. "
-       let encodingpairtype = typeref."encodingpair encoding. "
+        let encodingtype = typeref."encoding encoding stdlib "
+       let encodingstatetype = typeref."encodingstate encoding stdlib "
+       let encodingpairtype = typeref."encodingpair encoding stdlib "
        let addefunc = symbol(moduleref("stdlib encoding", para.module.sym),"add", [ addabstract(encodingstatetype, para.module.sym), addabstract(encodingpairtype, para.module.sym)], addabstract(encodingstatetype, para.module.sym))
        let add2 = symbol(internalmod,"addencoding", [ typeint, typeptr, typeint, typeint], typeint)
        let dc = deepcopySym(  addabstract(encodingpairtype, para.module.sym))
@@ -232,7 +232,7 @@ templates:program,compiled:set.symbol , typedict1:typedict
 else if name.sym ∈ "packed"then 
  let typ=seqof.coretype(para.module.sym, newdict3)
           symbol(modTausupport ,"blockIt", typ,typ)
-     else if name.sym ∈ "aborted"then   symbol(internalmod,"aborted", typeptr, typeboolean)
+     else if name.sym ∈ "aborted"then   symbol(internalmod,"processisaborted", typeptr, typeboolean)
  else if name.sym ∈ "assert "  then
       abortsymbol.coretype(para.module.sym, newdict3)
         else if name.sym ∈ "_"then
@@ -303,7 +303,7 @@ else if name.sym ∈ "packed"then
   function encodenocode(typ:mytype,varno:int)seq.symbol
   let gl = symbol4(moduleref."$global","global"_1, typ, empty:seq.mytype, seqof.typeint)
   let encodenosym = symbol(modTausupport,"encodingno", seqof.typeword, typeint)
-  if typ = typeref."typename tausupport. "then [  Lit.2 ]
+  if typ = typeref."typename tausupport stdlib "then [  Lit.2 ]
   else if typ = seqof.typechar then  [   Lit.1 ]  
  else
   ifthenelse([ gl,Lit.0,Getfld.typeint,Define.varno,

@@ -12,8 +12,6 @@ use llvm
 
 use llvmconstants
 
-use mangle
-
 use persistant
 
 use standard
@@ -151,22 +149,22 @@ let discard3 = [ addtemplate(symbol(internalmod,"packedindex", seqof.typebit, ty
 + BINOP(r.7, r.6, C64.3, shl)
 + BINOP(r.8, r.5, r.7, lshr)
 + BINOP(r.9, r.8, C64.255, and))
-, addtemplate(symbol(internalmod,"packedindex", seqof.typeref."packed2 tausupport.", typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.2, mul)
+, addtemplate(symbol(internalmod,"packedindex", seqof.packedtypes_1, typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.2, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol(internalmod,"packedindex", seqof.typeref."packed3 tausupport.", typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.3, mul)
+, addtemplate(symbol(internalmod,"packedindex", seqof.packedtypes_2, typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.3, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol(internalmod,"packedindex", seqof.typeref."packed4 tausupport.", typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.4, mul)
+, addtemplate(symbol(internalmod,"packedindex", seqof.packedtypes_3, typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.4, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol(internalmod,"packedindex", seqof.typeref."packed5 tausupport.", typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.5, mul)
+, addtemplate(symbol(internalmod,"packedindex", seqof.packedtypes_4, typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.5, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol(internalmod,"packedindex", seqof.typeref."packed6 tausupport.", typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.6, mul)
+, addtemplate(symbol(internalmod,"packedindex", seqof.packedtypes_5, typeint, typeptr), 4, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.6, mul)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3))
-, addtemplate(symbol(moduleref."stdlib fileio","tocstr", seqof.typebits, typeref."fileio cstr."), 2, GEP(r.1, i64, ibcsub.1, C64.2) + CAST(r.2, r.1, i64, ptrtoint))
+, addtemplate(symbol(moduleref."stdlib fileio","tocstr", seqof.typebits, typeref."fileio cstr stdlib"), 2, GEP(r.1, i64, ibcsub.1, C64.2) + CAST(r.2, r.1, i64, ptrtoint))
 , addtemplate(symbol(modBits,"toint", typebyte, typeint), 0, emptyinternalbc)
 , addtemplate(symbol(modBits,"toint", typebit, typeint), 0, emptyinternalbc)
 , { addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(r.1, ptr.ptr.i64, i64, C64.2, 0)+ STORE(r.2, r.1, ibcsub.1)+ GEP(r.2, ptr.i64, r.1, C64.1)+ STORE(r.3, r.2, ibcsub.2)+ GEP(r.3, ptr.i64, r.1, C64.0)), addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint)), addtemplate(symbol("bitcast(int seq)","interpreter","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint)), }
@@ -183,11 +181,11 @@ addtemplate(symbol(moduleref."stdlib interpreter","GEP", seqof.typeint, typeint,
 , addtemplate(symbol(modReal,"/", typereal, typereal, typereal), 1, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv))
 , addtemplate(symbol(modReal,"casttoreal", typeint, typereal), 1, CAST(r.1, ibcsub.1, double, bitcast))
 , addtemplate(symbol(modReal,"representation", typereal, typeint), 1, CAST(r.1, ibcsub.1, i64, bitcast))
-, addtemplate(symbol(modReal,"?", typereal, typereal, typeref."ordering standard."), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext)
+, addtemplate(symbol(modReal,"?", typereal, typereal, typeref."ordering standard stdlib"), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext)
 + CMP2(r.3, ibcsub.1, ibcsub.2, 2)
 + CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add))
-, addtemplate(symbol(modStandard,"?", typeint, typeint, typeref."ordering standard."), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext)
+, addtemplate(symbol(modStandard,"?", typeint, typeint, typeref."ordering standard stdlib"), 5, CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext)
 + CMP2(r.3, ibcsub.1, ibcsub.2, 38)
 + CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add))

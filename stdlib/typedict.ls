@@ -227,13 +227,11 @@ Function coretype(typ:mytype, alltypes:typedict,maxsize:int)mytype
  else
    let flatflds=flatflds(alltypes,typ)
   if isempty.flatflds then typ else 
-  if length.flatflds = 1 then coretype(first.flatflds, alltypes)else
-      if length.flatflds > maxsize then typeptr
-      else  if length.flatflds = 2 then  typeref."packed2 tausupport . "
-      else if length.flatflds = 3 then  typeref."packed3 tausupport . "
-      else if length.flatflds = 4 then  typeref."packed4 tausupport . "
-      else if length.flatflds = 5 then  typeref."packed5 tausupport . " 
-      else typeref."packed6 tausupport . " 
+   let fldsize=length.flatflds 
+  if fldsize = 1 then coretype(first.flatflds, alltypes)else
+      if fldsize > min(maxsize ,length.packedtypes+1)     then typeptr
+      else packedtypes_(fldsize-1)
+     
  
 
 

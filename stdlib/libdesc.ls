@@ -44,6 +44,7 @@ use set.symbolref
 use seq.seq.symbolref
 
 Function ?(a:symbolref,b:symbolref) ordering toint.a ? toint.b
+
   
 Function libdesc(info:compileinfo, prg:program) seq.symbol
 let symstoexport2=   for  acc=empty:seq.symbolref ,  m=  mods.info do
@@ -66,7 +67,9 @@ let all=for all=empty:seq.symbolref,a=code2 do all+a /for(asset.all)
         let dd=symbolrefdecode
  for  decoderef = empty:seq.symbol,  r =  toseq.all  do
      let sym=dd_toint.r 
-     let lib=if not.isabstract.module.sym /and sym /in symstoexport2 then "compiled"_1 else library.module.sym 
+     let lib=if isabstract.module.sym /or name.module.sym = "builtin"_1 then  library.module.sym
+       else 
+     "compiled"_1  
        decoderef +addlibsym(sym, lib)
     /for( 
 [ addseq.decoderef  
@@ -179,11 +182,11 @@ builtin loadedlibs2 seq.liblib
 
 Function loadedLibs seq.liblib loadedlibs2
 
-Function unloadlib(a:seq.word)int unloadlib.tocstr.a
+Function unloadlib(a:seq.word)int unloadlib2.tocstr.a
 
 use seq.libraryModule
   
-builtin unloadlib(cstr)int
+builtin unloadlib2(cstr)int
 
 Function loadlibrary(a:word)int loadlib.tocstr.[ a]
 

@@ -95,8 +95,7 @@ let exports = info_3
 let cinfo=compilerfront("all",libname,["Library"+libname]+getlibrarysrc.libname,dependentlibs,exports)
 let prg4=program.asset.prg.cinfo
 let libdesc= libdesc(cinfo,prg4 )
-let uses = uses(prg4 , roots.cinfo /cup  asset.libdesc)
-let bc = codegen(prg4,  uses, last.libname, libdesc, alltypes.cinfo , isempty.dependentlibs)
+let bc = codegen(prg4,  roots.cinfo /cup  asset.libdesc, last.libname, libdesc, alltypes.cinfo , isempty.dependentlibs)
 let z2 = createlib(bc, last.libname, dependentlibs)
      "OK"
      
@@ -133,8 +132,6 @@ use process.compileinfo
  
  use program
 
-/Function print(a:seq.seq.word)seq.word
- for acc ="", @e = a do acc + " /br  /br" + @e /for(acc)
 
 Function compilerfront(option:seq.word, libname:seq.word)compileinfo
 let info = getlibraryinfo.libname
@@ -188,49 +185,10 @@ let compiled=for acc=empty:set.symbol,sd=prg.libinfo do
    let pb=postbind(  t5 , roots ,  prg10  ,  templates  ,compiled,typedict)
   let mods=tolibraryModules(typedict,emptyprogram,  toseq.modules.t5,exports) 
 let result=processOptions(prg.pb,simple,"COMPILETIME NOINLINE INLINE PROFILE STATE")
-{assert false report "heck types"+check.pass2.result}
-  compileinfo(tosymdefs.if option = "pass1"then result  else pass2.result  /cup templates, typedict.pb
+   compileinfo(tosymdefs.if option = "pass1"then result  else pass2.result  /cup templates, typedict.pb
   ,mods
 ,empty:seq.seq.word) 
-
-
-function check (    prg:program) seq.word
-   for  txt4=empty:seq.seq.word,txt5=empty:seq.seq.word, sd=tosymdefs.prg do
-      let alltypes=for alltypes=empty:seq.mytype , s=code.sd+sym.sd do
-           alltypes+types.s /for(alltypes)
-    let txt2=  for  txt2=empty:seq.seq.word, t=alltypes do
-          txt2+print%.t
-      /for(txt2)
-    let txt3=  for  txt3=empty:seq.seq.word, t=alltypes do
-          txt3+print.t
-      /for(txt3)
-      next(txt4+txt2,txt5+txt3)
-    /for(assert fix.txt4=txt5 report "difi"
-       "CHECK OK")
-      
-      assert     txt2= txt3 report":::"+ print.sym.sd+
-      "/p"+printx.fix.txt2+"/p"+printx.txt2
-      txt /cup asset.txt2
-    /for (txt )
-    printx.toseq.a
-     
-
-function fix(txt:seq.seq.word) seq.seq.word
-   for  acc=empty:seq.seq.word,    t=txt do 
-   acc+fix.t /for(acc)
-   
-   
-   function printx(s:seq.seq.word) seq.word
-   for txt="", l= s do 
-        txt+l+EOL
-    /for(txt)
-   
-     function fix(txt:seq.word) seq.word
-      for acc="",t=txt do
-        if t="%"_1 then acc >> 1
-        else acc+t
-        /for (acc)
-  
+    
   
   use seq.seq.mytype
   

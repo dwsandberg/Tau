@@ -402,17 +402,6 @@ function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
      
 use program
 
- Function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
  
-function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
- if isempty.toprocess then processed
- else
-  let q = for acc = empty:seq.symbol, @e = toseq.toprocess do
-     if isabstract.module.@e then acc else
-   acc+if isFref.@e then [basesym.@e] else if isrecordconstant.@e  then constantcode.@e    else getCode(p, @e)   
-  /for(asset.acc)
-  uses(p, processed ∪ toprocess, q - processed)
-
-
 
  

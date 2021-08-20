@@ -100,6 +100,13 @@ seq.symdef
                    + if issimple.module.sym.p then [ sym.p, Words."BUILTIN", Optionsym]
                     else
       [ if issimplename.sym then 
+          assert isabstract.module.sym /or  name.sym /in " loadlib  
+addresstosymbol2 callstack randomint currenttime
+getmachineinfo createlib2 getfile getbytefile getbitfile
+addencoding getinstance allocatespace dlsymbol loadedlibs  unloadlib
+tan cos sin sqrt arcsin arccos
+ unloadlib   createfile 
+"   report "xxx"+print.sym
             symbol(moduleref("builtin", typeT), [ wordname.sym], paratypes.sym, resulttype.sym)
       else symbol4(moduleref("builtin", typeT), wordname.sym,(nametype.sym)_1, paratypes.sym, resulttype.sym)]
        )

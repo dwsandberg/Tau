@@ -98,7 +98,7 @@ Export getbytefile(cstr) fileresultbyte
 
 Export getbitfile(cstr)  fileresultbit  
 
-Export createfile(byteLength:int,data:seq.bits,cstr) int  
+Export createfile2(byteLength:int,data:seq.bits,cstr) int  
 
 Export  createfile3(byteLength:int,data:seq.bits,name:cstr) int   
 

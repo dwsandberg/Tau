@@ -4,7 +4,6 @@ use UTF8
 
 use fileio
 
-use mangle
 
 use real
 
@@ -83,16 +82,16 @@ function interpret(code:seq.symbol, i:int, stk:stack.int)int
    else if wordname.sym = "makereal"_1 ∧ inmodule(sym,"UTF8")then
     interpret(code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
    else {if isFref.sym then
-interpret(code, i + 1, push(stk,dlsymbol.mangledname.basesym.sym ))
+interpret(code, i + 1, push(stk,dlsymbol2.mangledname.basesym.sym ))
    else}
-    let t = dlsymbol.mangledname.sym
+    let t = dlsymbol2.mangledname.sym
      assert print.resulttype.sym ≠ "?"report"INTER" + print.sym + print.code
     let dcret = deepcopysymI.resulttype.sym
-    let adcret = dlsymbol.mangledname.dcret
+    let adcret = dlsymbol2.mangledname.dcret
      assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret
       assert t > 0 report"Not handle by interperter" + print.sym + "mangle:" + mangledname.sym
       let dc = deepcopysymI.seqof.typeword
-      let adc = dlsymbol.mangledname.dc
+      let adc = dlsymbol2.mangledname.dc
        assert adc > 0 report"?"
        let p = createthread(adcret, adc, t, packed.top(stk, nopara), buildargcodeI.sym)
        assert not.aborted.p report message.p

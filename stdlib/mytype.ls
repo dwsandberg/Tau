@@ -94,9 +94,9 @@ Function replaceT(with:mytype, m:modref)modref
 
 Function typeint mytype typeref."int internal."
 
-Function typeptr mytype typeref."ptr tausupport."
+Function typeptr mytype typeref."ptr tausupport stdlib"
 
-Function typeboolean mytype typeref."boolean standard."
+Function typeboolean mytype typeref."boolean standard stdlib"
 
 Function typereal mytype typeref."real internal."
 

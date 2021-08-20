@@ -54,33 +54,54 @@ use seq.encodingpair.stat5
 
 use seq.seq.seq.int
 
-Function codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:typedict, isbase:boolean)seq.bits
+function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
+ 
+function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
+ if isempty.toprocess then processed
+ else
+  let q = for acc = empty:seq.symbol, @e = toseq.toprocess do
+     if isabstract.module.@e then acc 
+     else  acc+if isFref.@e then [basesym.@e] 
+     else if isrecordconstant.@e  then constantcode.@e    
+     else getCode(p, @e)   
+  /for(asset.acc)
+  uses(p, processed ∪ toprocess, q - processed)
+  
+type steponeresult is match5map:seq.match5,defines:seq.symbol
+
+function stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean ) steponeresult 
+  let uses=uses(theprg,roots)
 let defines = for acc = empty:seq.symbol, ele = toseq.uses do
- if isconstantorspecial.ele ∨ isabstract.module.ele  /or library.module.ele="compiled"_1 then acc 
-  else if not.isbase  /and name.module.ele /in "standard tausupport fileio" then acc
+ if isconstantorspecial.ele ∨ isabstract.module.ele then acc
+ else if  library.module.ele="compiled"_1 then acc 
+  else if not.isbase  /and name.module.ele /in "standard tausupport fileio" then    acc
   else 
   let d = getCode(theprg, ele)
-     { assert isconstantorspecial.ele /or cardinality.uses > 10000 /or nopara.ele /ne 2 /or name.ele /ne "="_1 /or 
-    "tree"_1 /nin print.first.paratypes.ele
-    /or print.ele="seq.tree.seq.word:=(seq.tree.seq.word, seq.tree.seq.word)boolean" report "DEFING1"+print.ele
- +print.cardinality.uses  +toword.length.d+mangledname.ele+getoption.d}
-if isempty.d then { sym not defined in this library }acc
- else if"BUILTIN"_1 ∉ getoption.d then acc + ele
+   if isempty.d then { sym not defined in this library }acc
+ else 
+   let addele=if"BUILTIN"_1 ∉ getoption.d then true
  else
   { if builtin not implement with external function. Must define an internal one }
   if inmodule(ele,"real") ∧ wordname.ele ∈ "+-* / ? representation casttoreal toreal intpart"then
-   acc + ele
+   true
   else if inmodule(ele,"standard") ∧ wordname.ele ∈ "+-* / ? true false = > not"then
-   acc + ele
-  else if inmodule(ele,"bits") ∧ wordname.ele ∈ ">> << ∧ ∨ xor toint"then acc + ele
-  else if inmodule(ele,"interpreter") ∧ wordname.ele ∈ "GEP bitcast"then acc + ele
-  else if inmodule(ele,"fileio") ∧ wordname.ele ∈ "tocstr"then acc + ele
-  else if inmodule(ele,"tausupport") ∧ wordname.ele ∈ "bitcast getseqlength getseqtype"then acc + ele
-  else { implemented by external funciton }acc
+   true
+  else if inmodule(ele,"bits") ∧ wordname.ele ∈ ">> << ∧ ∨ xor toint"then true
+  else if inmodule(ele,"interpreter") ∧ wordname.ele ∈ "GEP bitcast"then true
+  else if inmodule(ele,"fileio") ∧ wordname.ele ∈ "tocstr"then true
+  else if inmodule(ele,"tausupport") ∧ wordname.ele ∈ "bitcast getseqlength getseqtype"then true
+  else { implemented by external funciton }false
+  if addele then 
+    let discard= funcdec( alltypes, ele) 
+   acc+ele else acc
 /for(acc)
+steponeresult( match5map(theprg, uses,  alltypes),defines)
+
+Function codegen(theprg:program,  roots:set.symbol, thename:word, libdesc:seq.symbol, alltypes:typedict, isbase:boolean)seq.bits
 let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
-let discard4 = for acc = 0, @e = defines do acc + funcdec( alltypes, @e)/for(acc)
-let match5map = match5map(theprg, uses,  alltypes)
+let stepone=stepone(theprg,roots,alltypes,isbase)
+let match5map = match5map.stepone
+let defines= defines.stepone
 let libmods2 =   for acc=empty:seq.int ,sym =  libdesc  do acc+arg.match5map_sym /for(acc)
  { let zx2c = createfile("stat.txt", ["in codegen0.3"])}
  let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])

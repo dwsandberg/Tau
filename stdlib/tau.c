@@ -76,7 +76,6 @@ BT allocatespace(processinfo PD, BT i)   { struct  spaceinfo *sp =&PD->space;
         }
     return  (BT)(sp->nextone-i*8);}
     
-BT allocatespaceZtausupportZint(processinfo PD, BT i)   {  return allocatespace(PD,i); }
 
 
 void myfree(struct spaceinfo *sp) {int i; i =0; 
@@ -140,57 +139,9 @@ BT getinstance(processinfo PD,BT  encodingnumber){
    return startencoding(PD,encodingnumber)->encodingstate ;
 }
  
- BT getinstanceZtausupportZint(processinfo PD,BT  encodingnumber){ 
-   return startencoding(PD,encodingnumber)->encodingstate ;
-}
-
- BT getinstanceZbuiltinZint(processinfo PD,BT  encodingnumber){ 
-   return startencoding(PD,encodingnumber)->encodingstate ;
-}
-
- BT getinstanceZinternalZint(processinfo PD,BT  encodingnumber){ 
-   return startencoding(PD,encodingnumber)->encodingstate ;
-}
-
  
  
 BT addencoding(processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
- struct einfo *e=startencoding(PD, encodingnumber)  ;
-  assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-  BT encodingpair=   (e->allocatein == PD ) ? P2 : (deepcopy)(e->allocatein,P2)  ;
-  BT newtable=(add2)(e->allocatein,e->encodingstate,encodingpair);
-  e->encodingstate=newtable;
- assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
- // return  encoding
- return (( BT *) newtable)[5];
-} 
-
-BT XaddencodingZbuiltinZintZintzseqZintZint
- (processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
- struct einfo *e=startencoding(PD, encodingnumber)  ;
-  assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-  BT encodingpair=   (e->allocatein == PD ) ? P2 : (deepcopy)(e->allocatein,P2)  ;
-  BT newtable=(add2)(e->allocatein,e->encodingstate,encodingpair);
-  e->encodingstate=newtable;
- assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
- // return  encoding
- return (( BT *) newtable)[5];
-} 
-
-BT addencodingZbuiltinZintZptrZintZint
- (processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
- struct einfo *e=startencoding(PD, encodingnumber)  ;
-  assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-  BT encodingpair=   (e->allocatein == PD ) ? P2 : (deepcopy)(e->allocatein,P2)  ;
-  BT newtable=(add2)(e->allocatein,e->encodingstate,encodingpair);
-  e->encodingstate=newtable;
- assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
- // return  encoding
- return (( BT *) newtable)[5];
-}
-
-BT addencodingZinternalZintZptrZintZint
- (processinfo PD,BT encodingnumber,BT P2,BT (*add2)(processinfo,BT,BT),BT(*deepcopy)(processinfo,BT)){  
  struct einfo *e=startencoding(PD, encodingnumber)  ;
   assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
   BT encodingpair=   (e->allocatein == PD ) ? P2 : (deepcopy)(e->allocatein,P2)  ;
@@ -214,17 +165,9 @@ BT* initialdictionary=empty;
 
 BT* initialdict() { return initialdictionary; }
 
-BT* initialdictZtausupport() { return initialdictionary; }
 
-BT* initialdictZtausupportZ() { return initialdictionary; }
-
-BT loadedlibs()  // returns list of loaded libraries
- {return (BT)loaded;}   
 
 BT loadedlibs2(processinfo PD)  // returns list of loaded libraries
- {return (BT)loaded;}   
-
-BT loadedlibs2ZlibdescZ(processinfo PD)  // returns list of loaded libraries
  {return (BT)loaded;}   
 
 
@@ -251,7 +194,7 @@ if (libidx > 0 ) {
 return 0; 
 }
 
-BT unloadlibZlibdescZcstr(processinfo PD,char *libname){ 
+BT unloadlib2(processinfo PD,char *libname){ 
 int libidx = looklibraryname(libname);
 // fprintf(stderr,"unload library %s %d\n",libname,libidx);
 if (libidx > 0 ) {
@@ -265,6 +208,9 @@ if (libidx > 0 ) {
    } 
 return 0; 
 }
+
+
+
 
 
 
@@ -345,14 +291,7 @@ if (i >= 0)
 return  loadlibrary(PD,libname) ;  
 }
 
-BT loadlibZlibdescZcstr(processinfo PD,char *libname)
-{ 
-int i = looklibraryname(libname) ;
-if (i >= 0)
-{   fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
-  return ((BT*)loaded[i+2])[3];}
-return  loadlibrary(PD,libname) ;  
-}
+
 
 BT loadlib22(processinfo PD,char *libname)
 { 
@@ -394,32 +333,11 @@ BT assert(processinfo PD,BT message)
     longjmp(PD->env,1);
      return 1; }
 
-
-
-BT aborted(processinfo PD,BT pin){
+BT processisaborted(processinfo PD,BT pin){
      processinfo q = ( processinfo)  pin;
     if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
     return (BT)( q->aborted);
 }
-
-BT abortedZinternalZTzprocess(processinfo PD,BT pin){
-     processinfo q = ( processinfo)  pin;
-    if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
-    return (BT)( q->aborted);
-}
-
-BT abortedZinternalZptr(processinfo PD,BT pin){
-     processinfo q = ( processinfo)  pin;
-    if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
-    return (BT)( q->aborted);
-}
-   
-BT abortedZbuiltinZTzprocess(processinfo PD,BT pin){
-     processinfo q = ( processinfo)  pin;
-    if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
-    return (BT)( q->aborted);
-}
-
 
 
 // start of file io
@@ -427,7 +345,7 @@ BT abortedZbuiltinZTzprocess(processinfo PD,BT pin){
 struct bitsseq  { BT type; BT length; BT  data[50]; };
 
 
-BT createfile2(BT bytelength, struct bitsseq *data, char * name) 
+BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * name) 
               {    int file=1;
                       if (!( strcmp("stdout",name)==0 ))  { 
                       file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
@@ -451,11 +369,6 @@ BT createfile2(BT bytelength, struct bitsseq *data, char * name)
                  return 1;
                  }
 
-BT createfile(processinfo PD, BT bytelength, struct bitsseq *data, char * name) 
-{ return createfile2(bytelength,data,name);}
-
-BT createfileZfileioZintZbitszseqZcstr(processinfo PD, BT bytelength, struct bitsseq *data, char * name) 
-{ return createfile2(bytelength,data,name);}
 
 
 
@@ -464,7 +377,7 @@ BT createlib2(processinfo PD,char * libname,char * otherlib, BT bytelength, stru
      /* create the .bc file */
        sprintf(buff,"%s.bc",libname);
   
-        createfile2( bytelength , data,buff);
+        createfile2(PD, bytelength , data,buff);
      /* compile to .bc file */ 
   sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",libname,otherlib,libname);
    fprintf(stderr,"Createlib3 %s\n",buff);
@@ -473,10 +386,7 @@ BT createlib2(processinfo PD,char * libname,char * otherlib, BT bytelength, stru
   else {loadlib(PD,libname); return 1;}
 }
 
-BT createlib2ZfileioZcstrZcstrZintZbitszseq(processinfo PD,char * libname,char * otherlib, BT bytelength, struct bitsseq *data ){
-return createlib2( PD, libname, otherlib,  bytelength,  data);
-}
-
+ 
 
     
     
@@ -528,12 +438,6 @@ BT getbytefile(processinfo PD,char * filename){  return  subgetfile (PD,filename
 
 BT getbitfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,-1); }
 
-BT getfileZfileioZcstr(processinfo PD,char * filename){ return  subgetfile (PD,filename,0); }
-
-
-BT getbytefileZfileioZcstr(processinfo PD,char * filename){  return  subgetfile (PD,filename,-8); }
-
-BT getbitfileZfileioZcstr(processinfo PD,char * filename){ return  subgetfile (PD,filename,-1); }
 
 
 // end of file io
@@ -630,12 +534,6 @@ int main(int argc, char **argv)    {   int i=0,count;
    return a;
  }
  
-  BT getmachineinfoZinternalbcZ(processinfo PD) 
-{  BT a = myalloc(PD,2);
-   IDXUC(a,0)=tobyteseq(PD,/* "x86_64-apple-macosx10.15.0" */ "arm64-apple-macosx11.0.0");
-   IDXUC(a,1)=tobyteseq(PD,"e-m:o-i64:64-f80:128-n8:16:32:64-S128");
-   return a;
- }
 
 
 BT currenttime() { 
@@ -645,12 +543,7 @@ BT currenttime() {
      return T1970+seconds;
 }
 
-BT currenttimeZtimestamp() { 
-     BT T1970=210866716800;
-     time_t seconds;
-     seconds = time(NULL);
-     return T1970+seconds;
-}
+
     
 BT randomint (processinfo PD,BT len){
      int randomData = open("/dev/urandom", O_RDONLY);
@@ -662,15 +555,7 @@ BT randomint (processinfo PD,BT len){
      return org;
   }
 
-BT randomintZtausupportZint (processinfo PD,BT len){
-     int randomData = open("/dev/urandom", O_RDONLY);
-     BT org = myalloc(PD,2+len );
-     IDXUC(org,0)=0;
-     IDXUC(org,1)=len;
-     if (len!=read(randomData, &IDXUC(org,2), len*8 )) {      /* error, unable to read /dev/random  */ }    
-     close(randomData);
-     return org;
-  }
+
 
 
 
@@ -684,26 +569,6 @@ Dl_info d; int i;
    for( i=0; i < len; i++)  r[i+2]=name[i]; 
  // printf("addresstosymbole2 %s\n",name);
   return (BT)r;}
-  
-BT addresstosymbol2ZtausupportZint(processinfo PD,BT address){
-Dl_info d; int i;
-  const char * name = "unknown";
-   if   (dladdr( (void *)address,&d)) name=  d.dli_sname;
-  int len=strlen(name);
-   BT *r = (BT *) myalloc(PD,len+2);
-   r[0]=0; r[1]=len;
-   for( i=0; i < len; i++)  r[i+2]=name[i]; 
- // printf("addresstosymbole2 %s\n",name);
-  return (BT)r;}
-
- 
-BT callstackZtausupportZint(processinfo PD,BT maxsize){
-      BT r = myalloc(PD,maxsize+2);
-      BT frames=backtrace(  (void*)(r+16) ,(int)maxsize);
-       IDXUC(r,0)=0;
-       IDXUC(r,1)=frames;
-      //  fprintf(stderr,"CALLStACK %d\n",frames);
-     return r;}
 
 BT callstack(processinfo PD,BT maxsize){
       BT r = myalloc(PD,maxsize+2);
@@ -717,33 +582,21 @@ BT callstack(processinfo PD,BT maxsize){
 BT dlsymbol(processinfo PD,char * funcname) 
 {return (BT) dlsym(RTLD_DEFAULT,  funcname );}
 
-BT dlsymbolZtausupportZcstr (processinfo PD,char * funcname) 
-{return (BT) dlsym(RTLD_DEFAULT,  funcname );}
-
 
 
 BT toscreen(BT outputnibble ) {
 return write( /* stdout */ 1,(char *) &outputnibble+1,  outputnibble & 7  );
 }
-double sinZrealZreal(processinfo PD, double arg )   { return sin(arg); }
-
-double cosZrealZreal(processinfo PD, double arg)  { return cos(arg); }
-
-double tanZrealZreal(processinfo PD, double arg)  { return tan(arg); }
-
-double sqrtZrealZreal(processinfo PD, double arg)  { return sqrt(arg); }
 
 
- double arcsinZrealZreal(processinfo PD, double arg)  { return asin(arg); }
+double arcsin (processinfo PD, double arg)  { return asin(arg); }
   
-double arccosZrealZreal(processinfo PD, double arg)   { return acos(arg); }
+double arccos (processinfo PD, double arg)   { return acos(arg); }
 
-double sinTauZrealZreal(processinfo PD, double arg )   { return sin(arg); }
+double sin2(processinfo PD, double arg )   { return sin(arg); }
 
-double cosTauZrealZreal(processinfo PD, double arg)  { return cos(arg); }
+double cos2(processinfo PD, double arg)  { return cos(arg); }
 
-double tanTauZrealZreal(processinfo PD, double arg)  { return tan(arg); }
+double tan2(processinfo PD, double arg)  { return tan(arg); }
 
-double sqrtTauZrealZreal(processinfo PD, double arg)  { return sqrt(arg); }
-
-   
+double sqrt2(processinfo PD, double arg)  { return sqrt(arg); }

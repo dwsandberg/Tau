@@ -50,9 +50,9 @@ Export type:fileresultbit
 
 builtin tocstr(seq.bits)cstr
 
-Builtin createfile(byteLength:int, data:seq.bits, cstr)int
+Builtin createfile2(byteLength:int, data:seq.bits, cstr)int
 
-Function createfile3(byteLength:int, data:seq.bits, name:cstr)int createfile(byteLength, data, name)
+Function createfile3(byteLength:int, data:seq.bits, name:cstr)int createfile2(byteLength, data, name)
 
 Function getfile:int(name:seq.word)seq.int let file = getfile.tocstr.name
  start.file + data.file

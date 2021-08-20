@@ -255,7 +255,7 @@ builtin addresstosymbol2(a:int)seq.char
 
 Builtin randomint(i:int)seq.int
 
-Function dlsymbol(name:word)int dlsymbol.tocstr.[ name]
+Function dlsymbol2(name:word)int dlsymbol.tocstr.[ name]
 
 Function outofbounds seq.word "out of bounds"+stacktrace
 
