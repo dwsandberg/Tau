@@ -28,7 +28,6 @@ use seq.int
 
 use seq.liblib
 
-use labeledgraph.parc
 
 use seq.parc
 
@@ -46,70 +45,82 @@ use seq.arcinfo.seq.word
 
 use seq.seq.seq.word
 
+use seq.lparc
+
 * To profile a function add a use clause"use options.<return type of /function >"and change /function so body is wrap by a call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the part of code of interest add a call to profileresults("time")to optain the result.
 
 * Profiling is accomplished by adding code to perform measurements before and after each procedure call and recording the difference.
 
-function toarcinfo(measure:seq.word, max:int, map:nodemap, a:parc)arcinfo.seq.word
-let label = toword(if measure = "time"then clocks.a
-else if measure = "count"then counts.a else space.a /if /if
-* 100
-/ max)
- arcinfo(shorten(map, head.a), shorten(map, tail.a), [ label])
+ 
+ type lparc is head:symbol,tail:symbol,measure:int
+
+    
+  type tmptype is graph:labeledgraph.lparc,max:int 
+  
+  
+  use labeledgraph.lparc
+  
+  use program
+  
+  use symbol
+  
+  use seq.symbol
+  
+function   decode(w:symbolref,l:liblib) symbol   
+  if between(toint.w,1,length.decoderef.l) then
+   (decoderef.l)_toint.w 
+  else Lit.toint.w
 
 Function profileresults(measure:seq.word)seq.word
  { Returns label graph of profile results. Measure is time, count, or space. }
  { let g = profileresults }
- let g = for acc = empty:labeledgraph.parc, @e = for acc = empty:seq.parc, @e = loadedLibs do acc + profiledata.@e /for(acc)do
-  acc + @e
+ let tmp =  for acc = tmptype(empty:labeledgraph.lparc,0), @e = loadedLibs do 
+      for  g0=graph.acc,max=max.acc,arc=profiledata.@e do
+        let m=if measure = "time" then clocks.arc
+              else if measure = "count"then counts.arc 
+              else
+               assert measure = "space"report"unknown profile measure"
+               space.arc
+         if m=0 then next(g0,max)
+  else next(g0+lparc(decode(caller.arc,@e),decode(callee.arc,@e),m),max(m,max))
+   /for(tmptype(g0,max))
  /for(acc)
- let m = if measure = "time"then
-  for acc = 0, @e = toseq.arcs.g do max(acc, clocks.@e)/for(acc)
- else if measure = "count"then
-  for acc = 0, @e = toseq.arcs.g do max(acc, counts.@e)/for(acc)
- else
-  assert measure = "space"report"unknown profile measure"
-   for acc = 0, @e = toseq.arcs.g do max(acc, space.@e)/for(acc)
- let g3 = removesmall(g, measure, m)
-  { shorten the names of the functions and then build and display labeled graph }
-  let nodemap = shorten.for acc ="", @e = toseq.nodes.g3 do acc + head.@e /for(acc)
-  let z2 = for acc = empty:seq.arcinfo.seq.word, @e = toseq.arcs.g3 do
-   acc + toarcinfo(measure, m, nodemap, @e)
+ let g3=removesmall(graph.tmp,max.tmp)
+ { for acc ="", @e = toseq.nodes.g3 do 
+   acc + for x="",t=codedown.head.@e do  x+t+";" /for(x) +EOL /for(acc)
+  }
+   { shorten the names of the functions and then build and display labeled graph }
+   assert      for acc =empty:set.word, @e = toseq.nodes.g3 do acc + name.head.@e /for(cardinality.acc)
+       = cardinality.nodes.g3 report "Problem:profile nodes names not distinct"
+{ let nodemap = shorten.for acc ="", @e = toseq.nodes.g3 do acc + head.@e /for(acc)}
+   let z2 = for acc = empty:seq.arcinfo.seq.word, a = toseq.arcs.g3 do
+   acc + {arcinfo(shorten(nodemap, head.a), shorten(nodemap, tail.a),}
+      arcinfo([name(head.a)],[name.tail.a], [ toword(measure.a * 100 / max.tmp)])
   /for(acc)
-   " /br" + measure + toword.m + " /br" + display.z2 + " /br"
+     " /br" + measure + toword.max.tmp + " /br" + display.z2 + " /br"
    + measure
-   + toword.m
+   + toword.max.tmp
+    
+       function symname(w:word) seq.word    (codedown.w)_1
+       
+ use set.word
+  
+ use set.lparc
+ 
 
-function removesmall(g:labeledgraph.parc, measure:seq.word, m:int)labeledgraph.parc
-let g2 = if measure = "time"then
- for acc = g, @e = toseq.nodes.g do removesmallclocks(acc, m / 100, @e)/for(acc)
-else if measure = "space"then
- for acc = g, @e = toseq.nodes.g do removesmallspace(acc, m / 100, @e)/for(acc)
-else
- for acc = g, @e = toseq.nodes.g do removesmallcount(acc, m / 100, @e)/for(acc)
- if cardinality.arcs.g = cardinality.arcs.g2 then g2 else removesmall(g2, measure, m)
+function removesmall(g:labeledgraph.lparc,  m:int)labeledgraph.lparc
+ let limit=m / 100
+ for acc = g, node = toseq.nodes.g do 
+ if cardinality.arcstosuccessors(acc, node) = 0 then
+  if for total = 0, @e = toseq.backarcstopredecessors(acc, node)do total + measure.@e /for(total) < limit then
+   deletenode(acc, node)
+  else acc
+ else acc
+/for( 
+  if cardinality.arcs.g = cardinality.arcs.acc then acc else removesmall(acc, m))
 
-function removesmallclocks(g:labeledgraph.parc, limit:int, node:parc)labeledgraph.parc
- if cardinality.arcstosuccessors(g, node) = 0 then
-  if for acc = 0, @e = toseq.backarcstopredecessors(g, node)do acc + clocks.@e /for(acc) < limit then
-   deletenode(g, node)
-  else g
- else g
 
-function removesmallspace(g:labeledgraph.parc, limit:int, node:parc)labeledgraph.parc
- if cardinality.arcstosuccessors(g, node) = 0 then
-  if for acc = 0, @e = toseq.backarcstopredecessors(g, node)do acc + space.@e /for(acc) < limit then
-   deletenode(g, node)
-  else g
- else g
 
-function removesmallcount(g:labeledgraph.parc, limit:int, node:parc)labeledgraph.parc
- if cardinality.arcstosuccessors(g, node) = 0 then
-  if for acc = 0, @e = toseq.backarcstopredecessors(g, node)do acc + counts.@e /for(acc) < limit then
-   assert false report [ head.node]
-    deletenode(g, node)
-  else g
- else g
 
 Function shorten(pnodes:seq.word)nodemap
  { This procedure produces a map that takes fsigs and shortens them keeping them distinct. The following procedure uses this result to map the figs to the new ones. }
@@ -141,9 +152,9 @@ function differ(a:seq.seq.word, b:seq.seq.word, i:int)int
  if i > length.a ∨ i > length.b then i
  else if a_i = b_i then differ(a, b, i + 1)else i
 
-Export head(parc)word
+/Export head(parc)word
 
-Export tail(parc)word
+/Export tail(parc)word
 
 Export counts(parc)int
 
@@ -151,15 +162,19 @@ Export clocks(parc)int
 
 Export space(parc)int
 
-function ?(a:parc, b:parc)ordering head.a ? head.b ∧ tail.a ? tail.b
 
-function ?2(a:parc, b:parc)ordering head.a ? head.b
+function ?(a:lparc, b:lparc)ordering head.a ? head.b ∧ tail.a ? tail.b
 
-function reverse(a:parc)parc parc(tail.a, head.a, counts.a, clocks.a, space.a)
+function ?2(a:lparc, b:lparc)ordering head.a ? head.b
 
-function tonode(a:parc)parc parc(head.a, head.a, counts.a, clocks.a, space.a)
+function reverse(a:lparc)lparc lparc(tail.a, head.a, measure.a)
 
-Function dumpprofileinfo seq.word let e = profiledata.loadedLibs_1
+function tonode(a:lparc)lparc lparc(head.a, head.a, measure.a)
+
+
+Function dumpprofileinfo seq.word 
+let lib=loadedLibs_1
+let e = profiledata.lib
  for acc ="", @e = profiledata.loadedLibs_1 do
-  list(acc," /br", [ tail.@e, head.@e, toword.clocks.@e])
+  list(acc," /br",   print.decode(caller.@e,lib)+print.decode(callee.@e,lib)+toword.clocks.@e )
  /for(acc)

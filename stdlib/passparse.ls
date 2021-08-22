@@ -46,7 +46,7 @@ use encoding.symbol
         let sym=sym.p
          for arcs=outer,codesym =  code.p    do 
            if isspecial.codesym /or not.isabstract.module.codesym /or sym  = codesym 
-            /or  name.module.codesym /in "builtin" then arcs
+            /or   isBuiltin.codesym  then arcs
              else  if name.module.codesym /in "$for" then 
             if name.codesym /in "name for" then arcs
             else
@@ -107,8 +107,8 @@ addencoding getinstance allocatespace dlsymbol loadedlibs  unloadlib
 tan cos sin sqrt arcsin arccos
  unloadlib   createfile 
 "   report "xxx"+print.sym
-            symbol(moduleref("builtin", typeT), [ wordname.sym], paratypes.sym, resulttype.sym)
-      else symbol4(moduleref("builtin", typeT), wordname.sym,(nametype.sym)_1, paratypes.sym, resulttype.sym)]
+            symbol(builtinmod( typeT), [ wordname.sym], paratypes.sym, resulttype.sym)
+      else symbol4(builtinmod( typeT), wordname.sym,(nametype.sym)_1, paratypes.sym, resulttype.sym)]
        )
            else 
                assert first.text.p /in "Function function" report text.p

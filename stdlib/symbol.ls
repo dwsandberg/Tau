@@ -302,9 +302,9 @@ Function Start(t:mytype)symbol symbol(moduleref("$loopblock",t),"Start",t, speci
 
 Function EndBlock symbol symbol(moduleref."$block","BLOCK",typeint, specialbit)
 
-Function NotOp symbol  symbol(modStandard,"not", typeboolean, typeboolean)
+Function NotOp symbol  symbol(internalmod,"not", typeboolean, typeboolean)
 
-Function PlusOp symbol  symbol(modStandard,"+", typeint, typeint, typeint)
+Function PlusOp symbol  symbol(internalmod,"+", typeint, typeint, typeint)
 
 Function paratypes(s:symbol)seq.mytype
 if isFref.s then empty:seq.mytype
@@ -377,9 +377,9 @@ Function ifthenelse(cond:seq.symbol, thenclause:seq.symbol, elseclause:seq.symbo
  [ Start.m] + cond + Br2(1, 2) + thenclause + Exit + elseclause + Exit
  + EndBlock
 
-Function Littrue symbol  symbol(modStandard,"true" ,typeboolean, constbit)
+Function Littrue symbol  symbol(internalmod,"true" ,typeboolean, constbit)
 
-Function Litfalse symbol symbol(modStandard,"false" , typeboolean, constbit)
+Function Litfalse symbol symbol(internalmod,"false" , typeboolean, constbit)
   
 Function continue(i:int)symbol symbol(moduleref."$continue",[toword.i],type?,specialbit)
 
@@ -401,9 +401,9 @@ Function firstvar(a:symbol)int toint.abstracttypename.first.types.a
 
 Function inmodule(sym:symbol,module:seq.word) boolean name.module.sym ∈ module
 
-Function EqOp symbol  symbol(modStandard,"=", typeint, typeint, typeboolean)
+Function EqOp symbol  symbol(internalmod,"=", typeint, typeint, typeboolean)
 
-Function GtOp symbol  symbol(modStandard,">", typeint, typeint, typeboolean)
+Function GtOp symbol  symbol(internalmod,">", typeint, typeint, typeboolean)
 
 Function isblock(s:symbol)boolean name.module.s = "$block"_1
 
@@ -417,6 +417,10 @@ Function iswordseq(s:symbol) boolean name.module.s = first."$words"
 
 Function isword(s:symbol)boolean name.module.s ∈ "$word"
 
+Function isIntLit(s:symbol) boolean name.module.s ∈ "$int"
+
+Function isRealLit(s:symbol) boolean name.module.s ∈ "$real"
+
 Function isrecordconstant(s:symbol)boolean name.module.s = first."$constant"
 
 
@@ -429,7 +433,7 @@ Function constantcode(s:symbol)seq.symbol
    [ Lit.0, Lit.nopara.last.code1] + code1 >> 1
   else code1 >> 1
  
-Function fullconstantcode(s:symbol)seq.symbol
+function fullconstantcode(s:symbol)seq.symbol
   assert isrecordconstant.s report "constant code error"+print.s +stacktrace
     toseq.decode.to:encoding.symbolconstant(toint.name.s)
    
@@ -456,9 +460,7 @@ Function modStandard modref moduleref."stdlib standard"
 
 Function modTausupport modref moduleref."stdlib tausupport"
 
-Function modReal modref moduleref."stdlib real"
 
-Function modBits modref moduleref."stdlib bits"
 
 
 _________________
@@ -514,9 +516,9 @@ Function basesym(s:symbol)symbol
 
 
 
-Function GetSeqLength symbol symbol(modTausupport,"getseqlength",typeptr,typeint)
+Function GetSeqLength symbol symbol(internalmod,"getseqlength",typeptr,typeint)
 
-Function GetSeqType symbol symbol(modTausupport,"getseqtype",typeptr,typeint)
+Function GetSeqType symbol symbol(internalmod,"getseqtype",typeptr,typeint)
 
 Function abortsymbol(typ:mytype) symbol 
 let a=if isseq.typ     then typeptr else  typ
@@ -554,16 +556,19 @@ let a=if issimplename.s  then
 addresstosymbol2 callstack randomint currenttime
 getmachineinfo createlib2 getfile getbytefile getbitfile
 addencoding getinstance allocatespace dlsymbol loadedlibs2  unloadlib2
-arcsin arccos createfile2 initialdict processisaborted
+arcsin arccos createfile2 initialdict processisaborted createthreadI   
 " then
  {assert name.module.s /in "builtit libdesc" report "XXGX"+print.s}
   wordname.s
  else   if   wordname.s /in " tan cos sin sqrt" then 
    merge([wordname.s]+"2")
-else "$XX"_1
+ else  if wordname.s /in "main" /and name.module.s /in "main2" then "main2"_1
+  else   if wordname.s /in "addlibrarywords" /and name.module.s /in "main2" then 
+  "addlibrarywordsZmain2Zliblib"_1
+else   "$XX"_1
 else "$XX"_1
 if a /ne "$XX"_1 then a
-else
+else 
 mangle(fsig(wordname.s,nametype.s,paratypes.s), 
 if issimple.module.s then [name.module.s] else oldTypeRep.para.module.s+name.module.s
 )
@@ -582,7 +587,8 @@ Function nametype(sym:symbol) seq.mytype
 
 Function removeconstant(s:seq.symbol)seq.symbol
  for acc = empty:seq.symbol, @e = s do
-  acc + if isrecordconstant.@e then removeconstant.fullconstantcode.@e else [ @e]
+  acc + if isrecordconstant.@e then 
+  removeconstant.fullconstantcode.@e else [ @e]
  /for(acc)
 
 _______________________________________________
@@ -645,7 +651,18 @@ Function PreFref symbol symbol(internalmod,"PreFref",   typeint)
 Function Local(name:word, type:mytype, parano:int)symbol 
 symbolZ( moduleref."$local", name ,empty:seq.mytype,empty:seq.mytype,type,specialbit ,tobits.parano)
 
+Function modFor(para:mytype)modref modref("."_1,"$for"_1, para)
+
+Function inModFor(sym:symbol) boolean  name.module.sym = "$for"_1
+
 Function builtinmod(para:mytype)modref modref("."_1,"builtin"_1, para)
+
+Function isBuiltin(sym:symbol) boolean  name.module.sym = "builtin"_1
+
+
+Function isInternal(sym:symbol) boolean name.module.sym = "internal"_1
+
+Function isGlobal(sym:symbol) boolean name.module.sym = "$global"_1
 
 Export typebase(i:int)mytype
 

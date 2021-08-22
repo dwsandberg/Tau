@@ -31,8 +31,8 @@ Function resolvesymbols(t:seq.seq.word, lib:word, mods:set.passtypes,libmods:set
     )
   else if first.input ∈ "Function function  Builtin builtin Export unbound"then
      let b = parse.symboldict(empty:set.symbol, [commoninfo(getheader.input, modname.common, lib.common, types.common, "symbol"_1)])
-     let modname =   {if issimple.modname.common  /and first.input /in  "Builtin builtin "then  
-        moduleref("builtin")  else} modname.common
+      let modname =    if issimple.modname.common  /and first.input /in  "Builtin builtin "then  
+        internalmod  else     modname.common 
      let sym = if length.text.b = 1  then
      let name = text.b
   if name = "true"then Littrue
@@ -101,8 +101,6 @@ use seq.symbol
 
 use set.symbol
 
-use seq.symbolref
-
 use seq.symdef
 
 use set.symdef
@@ -135,7 +133,6 @@ use set.arc.seq.word
 
 / use seq.libraryModule
 
-/ use seq.seq.symbolref
 
 Export type:symdef
 

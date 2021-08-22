@@ -85,6 +85,7 @@ use seq.program
 
 use mytype
 
+/use process.compileinfo
 
 Function subcompilelib( libname:seq.word)seq.word
 let info = getlibraryinfo.libname
@@ -92,10 +93,11 @@ let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
  { let b = unloadlib.[ libname]}
-let cinfo=compilerfront("all",libname,["Library"+libname]+getlibrarysrc.libname,dependentlibs,exports)
+let cinfo={result.process.}compilerfront("all",libname,["Library"+libname]+getlibrarysrc.libname,dependentlibs,exports)
+ {assert false report "XX"+print.length.symbolrefdecode}
 let prg4=program.asset.prg.cinfo
 let libdesc= libdesc(cinfo,prg4 )
-let bc = codegen(prg4,  roots.cinfo /cup  asset.libdesc, last.libname, libdesc, alltypes.cinfo , isempty.dependentlibs)
+let bc = codegen(prg4,  roots.cinfo /cup  asset.liblibflds.libdesc, last.libname, libdesc, alltypes.cinfo , isempty.dependentlibs)
 let z2 = createlib(bc, last.libname, dependentlibs)
      "OK"
      
@@ -183,6 +185,9 @@ let compiled=for acc=empty:set.symbol,sd=prg.libinfo do
   if name.module.f ∉ exports ∨ not.issimple.module.f then empty:seq.symbol else toseq.exports.f
  /for(acc)
    let pb=postbind(  t5 , roots ,  prg10  ,  templates  ,compiled,typedict)
+  { let x=tosymdefs.prg.pb 
+ assert length.x > 4000 report for txt=print.length.x,sd={tosymdefs.prg10} x do
+  if "COMPILETIME"_1 /in getoption.code.sd then txt+print.sym.sd +EOL else txt /for(txt) }
   let mods=tolibraryModules(typedict,emptyprogram,  toseq.modules.t5,exports) 
 let result=processOptions(prg.pb,simple,"COMPILETIME NOINLINE INLINE PROFILE STATE")
    compileinfo(tosymdefs.if option = "pass1"then result  else pass2.result  /cup templates, typedict.pb

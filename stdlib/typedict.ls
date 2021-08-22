@@ -38,8 +38,8 @@ Function buildtypedict(zz1:set.symdef, types:seq.seq.mytype)    typedict
 Function    addtypes(alltypes:typedict,syms:set.symbol)   typedict
  let typesused=for  acc = empty:seq.mytype, sym = toseq.syms do
   if isstart.sym /or isSequence.sym then acc+typesused.sym 
-  else if isconst.sym ∨ inmodule(sym,"$global") ∨ inmodule(sym,"internal") /or sym=PreFref /or sym= Optionsym   
-     /or  inmodule(sym,"$for") 
+  else if isconst.sym ∨ isGlobal.sym ∨ isInternal.sym   /or sym= Optionsym   
+     /or  inModFor.sym 
      /or    isspecial.sym   then  acc
    else
      if issimple.module.sym then acc else  acc+para.module.sym  /if +
@@ -216,7 +216,7 @@ Function    flatwithtype(alltypes:typedict,type:mytype) seq.mytype
   else [type.t_1] +flatflds.t_1  
         
   
-Function coretype(typ:mytype, alltypes:typedict) mytype  coretype(typ,alltypes,0)
+Function coretype(typ:mytype, alltypes:typedict) mytype  coretype(typ,alltypes,{6} 0)
     
 Function coretype(typ:mytype, alltypes:typedict,maxsize:int)mytype
  if typ = typeint ∨ typ = typeboolean ∨ typ = typeptr ∨ typ = typereal

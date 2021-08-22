@@ -38,10 +38,6 @@ use seq.match5
 
 use seq.slot
 
-use encoding.stat5
-
-use seq.stat5
-
 use seq.symbol
 
 use set.symbol
@@ -49,8 +45,6 @@ use set.symbol
 use seq.seq.bits
 
 use seq.seq.int
-
-use seq.encodingpair.stat5
 
 use seq.seq.seq.int
 
@@ -67,46 +61,79 @@ function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
   /for(asset.acc)
   uses(p, processed ∪ toprocess, q - processed)
   
-type steponeresult is match5map:seq.match5,defines:seq.symbol
+type steponeresult is match5map:seq.match5,defines:seq.symbol 
 
 function stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean ) steponeresult 
   let uses=uses(theprg,roots)
-let defines = for acc = empty:seq.symbol, ele = toseq.uses do
+ for acc = empty:seq.symbol,  ele = toseq.uses do
  if isconstantorspecial.ele ∨ isabstract.module.ele then acc
  else if  library.module.ele="compiled"_1 then acc 
   else if not.isbase  /and name.module.ele /in "standard tausupport fileio" then    acc
   else 
   let d = getCode(theprg, ele)
-   if isempty.d then { sym not defined in this library }acc
+ let addele=   if isempty.d then 
+       { assert xx /or name.ele /in "packedindex callidx processisaborted GEP
+        addencoding idxseq getinstance option getfile getbytefile getbitfile createlib2 createfile2
+        randomint createthreadI toseqX  abort addresstosymbol2
+        allocatespace callstack initialdict dlsymbol
+        sin cos tan arcsin arccos sqrt " report "PPP"+print.ele}
+        false
  else 
-   let addele=if"BUILTIN"_1 ∉ getoption.d then true
- else
-  { if builtin not implement with external function. Must define an internal one }
-  if inmodule(ele,"real") ∧ wordname.ele ∈ "+-* / ? representation casttoreal toreal intpart"then
-   true
-  else if inmodule(ele,"standard") ∧ wordname.ele ∈ "+-* / ? true false = > not"then
-   true
-  else if inmodule(ele,"bits") ∧ wordname.ele ∈ ">> << ∧ ∨ xor toint"then true
-  else if inmodule(ele,"interpreter") ∧ wordname.ele ∈ "GEP bitcast"then true
-  else if inmodule(ele,"fileio") ∧ wordname.ele ∈ "tocstr"then true
-  else if inmodule(ele,"tausupport") ∧ wordname.ele ∈ "bitcast getseqlength getseqtype"then true
-  else { implemented by external funciton }false
+   if"BUILTIN"_1 ∉ getoption.d then true
+ else if isInternal.ele /and   print.ele /in [
+          "internal:>>(bits, int)bits"
+          ,"internal:<<(bits, int)bits"
+          ,"internal:xor(bits,bits)bits"
+          ,"internal:∨(bits,bits)bits"
+          ,"internal:∧(bits,bits)bits"
+          ,"internal:toint(byte)int"
+          ,"internal:toint(bit)int"
+          ,"internal:bitcast(int)seq.int"
+          ,"internal:GEP(seq.int, int)int"
+          ,"internal:tocstr(seq.bits)cstr"
+          ,"internal:getseqtype(ptr)int"
+          ,"internal:+(real,real)real"
+          ,"internal:-(real,real)real"
+          ,"internal:*(real,real)real"
+          ,"internal:/(real,real)real"
+          ,"internal:?(real,real)ordering"
+          ,"internal:toreal(int)real"
+          ,"internal:set(ptr, ptr)ptr"
+          ,"internal:representation(real)int"
+          ,"internal:casttoreal(int)real"
+          ,"internal:intpart(real)int"
+          , "internal:?(int,int)ordering"  
+, "internal:not(boolean)boolean"
+, "internal:>(int,int)boolean" 
+, "internal:=(boolean,boolean)boolean"  
+, "internal:=(int,int)boolean"  
+, "internal:-(int,int)int" 
+, "internal:+(int,int)int" 
+, "internal:*(int,int)int" 
+, "internal:/(int,int)int"
+] then  { if builtin not implement with external function. Must define an internal one }
+ true
+  else  { implemented by external funciton }false
   if addele then 
-    let discard= funcdec( alltypes, ele) 
-   acc+ele else acc
-/for(acc)
-steponeresult( match5map(theprg, uses,  alltypes),defines)
+     let discard= funcdec( alltypes, ele) 
+    acc+ele   
+   else acc
+/for( steponeresult( match5map(theprg, uses,  alltypes),acc))
 
-Function codegen(theprg:program,  roots:set.symbol, thename:word, libdesc:seq.symbol, alltypes:typedict, isbase:boolean)seq.bits
+use libdesc
+
+Function codegen(theprg:program,  roots:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict, isbase:boolean)seq.bits
+let profilearcs=profilearcs.libdesc
 let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
 let stepone=stepone(theprg,roots,alltypes,isbase)
 let match5map = match5map.stepone
 let defines= defines.stepone
-let libmods2 =   for acc=empty:seq.int ,sym =  libdesc  do acc+arg.match5map_sym /for(acc)
+let libmods2 =   for acc=empty:seq.int ,sym =  liblibflds.libdesc  do acc+arg.match5map_sym /for(acc)
  { let zx2c = createfile("stat.txt", ["in codegen0.3"])}
  let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
- let bodies = for acc = empty:seq.internalbc, @e = defines do acc + addfuncdef(match5map, @e)/for(acc)
- let xxx = profiledata
+ let bodies = for acc = empty:seq.internalbc, @e = defines do 
+    acc + addfuncdef(match5map, @e,profilearcs )/for(acc)
+ let xxx = profiledata (profilearcs ) 
  let liblib = slot.addliblib([ thename],  libmods2 , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0)), isbase)
  let libnametype = array(length.decodeword.thename + 1, i8)
  let libslot = modulerecord(""
@@ -121,10 +148,11 @@ let libmods2 =   for acc=empty:seq.int ,sym =  libdesc  do acc+arg.match5map_sym
  let data = constdata
  let patchlist = [ [ toint.GLOBALVAR, typ.conststype, 2, toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0], [ toint.GLOBALVAR, typ.profiletype, 2, toint.xxx + 1, 3, toint.align8 + 1, 0]]
  let trec = typerecords
- let adjust = [ trec_1, [ toint.ARRAY, length.data, 0], [ toint.ARRAY, profiledatalen, 0]] + subseq(trec, 4, length.trec)
+ let adjust = [ trec_1, [ toint.ARRAY, length.data, 0], [ toint.ARRAY, length.profilearcs , 0]] 
+ + subseq(trec, 4, length.trec)
  llvm(patchlist, bodytxts, adjust)
 
-function addfuncdef(match5map:seq.match5, i:symbol)internalbc
+function addfuncdef(match5map:seq.match5, i:symbol,profilearcs:seq.parc)internalbc
   { let hh = process.subaddfuncdef(match5map, i)
    assert not.aborted.hh report"fail get"+ print.i + message.hh 
    result.hh 
@@ -132,19 +160,18 @@ function addfuncdef(match5map:seq.match5, i:symbol)internalbc
  function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc  }
  let m = match5map_i
  let options = options(match5map, m)
- let codet = if length.options > 0 then
-  { assert"PROFILE"_1 in options report"PROFILE PROBLEM"+ options }
-  subseq(code.m, 1, length.code.m - 2)
- else code.m
+ let codet = if length.options > 0 then  subseq(code.m, 1, length.code.m - 2) else code.m
  let code = if isempty.codet then
   for acc = empty:seq.symbol, e9 = arithseq(nopara.i, 1, 1)do acc + Local.e9 /for(acc)
   + i
  else codet
   { assert not.isempty.code.m report"xxxx"+ print.i }
   let nopara = arg.m
-  let l = Lcode2(emptyinternalbc, paramap(nopara, empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
-  let g5 = if"PROFILE"_1 ∈ options then mangledname.i else"noprofile"_1
-  let r = for acc = l, @e = code do processnext(acc, g5, match5map, @e)/for(acc)
+  let linit = Lcode2(emptyinternalbc, paramap(nopara, empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
+   let xx=if"PROFILE"_1 ∈ options then profilearcs else empty:seq.parc
+  let r = for l = linit, s = code do 
+  processnext(l, i, match5map, s,xx)
+  /for(l)
   BLOCKCOUNT(1, noblocks.r) + code.r
    + RET(r(regno.r + 1), slot.top.args.r)
 
@@ -157,23 +184,28 @@ function paramap(i:int, result:seq.localmap)seq.localmap
 
 function length(s:stack.int)int length.toseq.s
 
-function processnext(l:Lcode2, profile:word, match5map:seq.match5, s:symbol)Lcode2
+use otherseq.parc
+
+function processnext(l:Lcode2, caller:symbol, match5map:seq.match5, s:symbol
+,profilearcs:seq.parc)Lcode2
 let m = match5map_s
 let action = action.m
  if action = "CALL"_1 then
  let callee = mangledname.s
  let noargs = arg.m
  let args = top(args.l, noargs)
- if profile = "noprofile"_1 ∨ profile = callee then
-  let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [-1] + args)
-  Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
-  else profilecall(l, args, symboltableentry([callee], functype.m), profile(profile, callee), functype.m)
- else if action = "CALLE"_1 then
+    let idx=if isempty.profilearcs then 1 else findindex(parc(  caller, s),profilearcs) 
+     if idx > length.profilearcs then  
+      let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [-1] + args)
+      Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
+    else   
+    profilecall(l, args, m, idx)
+ else {if action = "CALLE"_1 then
  let noargs = arg.m
  let args = top(args.l, noargs)
  let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, args)
  Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
- else if action = "ACTARG"_1 then
+ else} if action = "ACTARG"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
  else if action = "LOCAL"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, getloc(lmap.l, arg.m, 1)), blocks.l)
@@ -195,14 +227,14 @@ let action = action.m
  else if action = "BLOCK"_1 then
  let no = { arg.m }countnodes.blocks.l
  let blks = top(blocks.l, no)
- assert length.blks = no report"XXXXXX arg" + profile
+ assert length.blks = no report"XXXXXX arg"  
   let rblk = processblk(blks, 1, empty:seq.localmap, BR(noblocks.l - 1))
   { assert length.phi.rblk > 3 report"phi"+ @(+, toword,"", phi.rblk)}
    let firstblkargs = args.blks_1
    let kind = top.firstblkargs
    let popno = if kind = 55 then { stack from top is kind resulttype }2
    else
-    assert top.firstblkargs = 2 report"Code Gen--not expecting first blk kind" + toword.kind + profile
+    assert top.firstblkargs = 2 report"Code Gen--not expecting first blk kind" + toword.kind  
      { stack from top is kind, noexps, firstvar, exptypes, exps }2 * top.pop.firstblkargs + 3
    let rt = if kind = 55 then top.pop.args.blks_1 else undertop(firstblkargs, top.pop.firstblkargs + 2)
    let newstack = push(pop(firstblkargs, popno),-(regno.l + 1))
@@ -308,15 +340,18 @@ function getloc(l:seq.localmap, localno:int, i:int)int
 
 function addloopmapentry(l:seq.localmap, baselocal:int, regbase:int, i:int)seq.localmap
  [ localmap(baselocal + i - 1,-regbase - i)] + l
-
-function profilecall(l:Lcode2, args:seq.int, callee:slot, idx:int, functype:llvmtype)Lcode2
+ 
+ 
+function profilecall(l:Lcode2, args:seq.int, m:match5, idx:int )Lcode2
+let functype=functype.m
+let  callee={slot}symboltableentry([mangledname.sym.m], functype.m)
 let base = regno.l
 let block = noblocks.l
-let pcount = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 2) + 2)
+let pcount = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 2)
 let p1 = { pclocks }
-toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 2) + 3)
-let pspace = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 2) + 4)
-let prefs = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 2) + 5)
+toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 3)
+let pspace = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 4)
+let prefs = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 5)
 let c = GEP(r(base + 1), profiletype, symboltableentry("profiledata", ptr.profiletype))
 + LOAD(r(base + 2), slot.prefs, i64)
 + BINOP(r(base + 3), r(base + 2), C64.1, add)
@@ -348,23 +383,12 @@ let c = GEP(r(base + 1), profiletype, symboltableentry("profiledata", ptr.profil
 + STORE(r(base + 22), slot.prefs, r(base + 21))
 Lcode2(code.l + c, lmap.l, noblocks.l + 3, regno.l + 21, push(pop(args.l, length.args),-base - 19), blocks.l)
 
-type stat5 is caller:word, callee:word
-
-function profiledata slot let d = encoding:seq.encodingpair.stat5
-let data = for acc = [ C64.1, C64.length.d], @e = d do
+ 
+function profiledata(profilearcs:seq.parc) slot
+let data = for acc = [ C64.1, C64.length.profilearcs], arc = profilearcs do
  acc
- + [ slot.wordref.caller.data.@e, slot.wordref.callee.data.@e, C64.0, C64.0, C64.0, C64.0]
+ + [ C64.toint.caller.arc , C64.toint.callee.arc, C64.0, C64.0, C64.0, C64.0]
 /for(acc)
 AGGREGATE.data
 
-function profiledatalen int length.encoding:seq.encodingpair.stat5 * 6 + 2
-
-function assignencoding(p:seq.encodingpair.stat5, a:stat5)int length.p + 1
-
-function hash(s:stat5)int abs(hash.caller.s + hash.callee.s)
-
-function =(a:stat5, b:stat5)boolean caller.a = caller.b ∧ callee.a = callee.b
-
-Function profile(caller:word, callee:word)int
- if caller = callee ∨ caller = "noprofile"_1 then 0
- else valueofencoding.encode.stat5(caller, callee) + 1 
+ 

@@ -44,10 +44,10 @@ function verysimpleinline(sd:symdef) boolean
    else 
    if islocal.sym then
      next(false,idx+1) 
-   else next(inmodule(sym,"$int") /or inmodule(sym ,"builtin")  /and name.sym="fld"_1
-   /or  inmodule(sym,"standard") /and name.sym /nin "randomint" 
-   /or inmodule(sym,"bits") /or inmodule(sym,"internal") /and name.sym /in "getseqlength"
-   /or inmodule(sym,"real")
+   else next(isIntLit.sym   /or  isBuiltin.sym   /and name.sym="fld"_1
+   /or   module.sym=modStandard /and name.sym /nin "randomint" 
+   /or    isInternal.sym /and name.sym /in "getseqlength"
+   /or isRealLit.sym 
    ,idx+1) 
   /for(acc)
   
@@ -131,8 +131,13 @@ templates:program,compiled:set.symbol , typedict1:typedict
      for  accZ=postbindresult(typedict1,result),   pp=subseq(aa,last+1,length.aa) do
        let symz=data.pp
        if isspecial.symz /or isconst.symz 
-             /or name.module.symz /in "builtin internal $for $global" 
+             /or name.module.symz /in "builtin  $for $global" 
               then accZ 
+        else if isInternal.symz then
+          let lr1 = getCode(source, symz) 
+           if isempty.lr1 then accZ
+           else 
+            postbindresult(typedict.accZ,map(prg.accZ,symz,lr1)) 
        else
           let newdict2=addtype(typedict.accZ,resulttype.symz)
           let lr1 = getCode(source, symz)                  
@@ -165,7 +170,7 @@ templates:program,compiled:set.symbol , typedict1:typedict
         next(cache,nextvar, map,   result2 + t_1)  
       else if isconst.sym  then 
        next(cache,nextvar,map,result2 + sym)
-     else  if  name.sym ∈ "primitiveadd" /and inmodule(sym,"builtin") then
+     else  if  name.sym ∈ "primitiveadd" /and isBuiltin.sym   then
         let encodingtype = typeref."encoding encoding stdlib "
        let encodingstatetype = typeref."encodingstate encoding stdlib "
        let encodingpairtype = typeref."encodingpair encoding stdlib "
@@ -173,10 +178,10 @@ templates:program,compiled:set.symbol , typedict1:typedict
        let add2 = symbol(internalmod,"addencoding", [ typeint, typeptr, typeint, typeint], typeint)
        let dc = deepcopySym(  addabstract(encodingpairtype, para.module.sym))
          next(cache,nextvar+1,map,result2+[ PreFref,addefunc, PreFref,dc, add2] )
-      else if name.sym ∈ "getinstance" /and inmodule(sym,"builtin")then
+      else if name.sym ∈ "getinstance" /and  isBuiltin.sym  then
           let get = symbol(internalmod,"getinstance", typeint, typeptr)
             next(cache,nextvar+2,map,result2 + encodenocode(para.module.sym,nextvar) +   get  )
-     else  if name.sym ∈ "pushflds" /and inmodule(sym,"builtin") then
+     else  if name.sym ∈ "pushflds" /and  isBuiltin.sym  then
            next(cache,nextvar,map , if iscoretype.para.module.sym then result2
             else
              let t = flatflds(newdict3,para.module.sym)
@@ -206,11 +211,11 @@ templates:program,compiled:set.symbol , typedict1:typedict
        if isSequence.sym then [Sequence(parameter.basetype(   resulttype.sym,newdict3), nopara.sym)]
             else if isstart.sym then [Start.basetype(  resulttype.sym,newdict3)]
           else [sym] 
-    else if isconst.sym ∨ inmodule(sym,"$global") ∨ inmodule(sym,"internal") /or sym=PreFref /or sym= Optionsym then 
+    else if isconst.sym ∨ isGlobal.sym ∨ isInternal.sym /or sym=PreFref /or sym= Optionsym then 
        [ sym]
-    else if inmodule(sym,"$for")then  [ sym ]
+    else if inModFor.sym then  [ sym ]
     else 
-       if not.inmodule(sym,"builtin")then
+       if not.isBuiltin.sym then
             let t4= findelement(sym,compiled) 
             [if isempty.t4 then sym else t4_1 ]  
        else  if name.sym ∈ "buildrecord" then
@@ -341,7 +346,7 @@ use mytype
    let element = symbol(moduleref("$for", elementtype),"element", empty:seq.mytype, elementtype)
    let acc = symbol(moduleref("$for", typeptr),"acc", empty:seq.mytype, typeptr)
    [Sequence(elementtype,0)]
-    + [ Local.1, acc, element, acc, element, deepcopySym( parameter.type), cat, Littrue, acc, symbol(moduleref("builtin", typeint),"forexp", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
+    + [ Local.1, acc, element, acc, element, deepcopySym( parameter.type), cat, Littrue, acc, symbol(builtinmod( typeint),"forexp", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
     ]
     + blocksym.basetype
  else

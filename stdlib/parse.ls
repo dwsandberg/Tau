@@ -325,7 +325,7 @@ let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = typebool
 else"while expresssion type must be boolean"
 assert isempty.checktypes report errormessage(checktypes, input, place)
  let resulttype = first.types.endexp
- let sym = symbol(moduleref("builtin", typeint),"forexp", types.vars + types.vars >> 1 + parameter.last.types.vars + (types.forbody)_1
+ let sym = symbol(builtinmod( typeint),"forexp", types.vars + types.vars >> 1 + parameter.last.types.vars + (types.forbody)_1
  + typeboolean
  + resulttype, resulttype)
   let newcode = code.vars + code.forbody

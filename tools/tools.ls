@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau ;  use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau ; use tools; testprofile."stdlib"
+
+;  use doc ; doclibrary."stdlib"
 
  ; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq  ")
 
@@ -67,4 +69,7 @@ use seq.word
 use seq.seq.word
  
 Function testprofile(libname:seq.word)seq.word
- subcompilelib(libname)+ profileresults."time" + dumpprofileinfo
+ subcompilelib(libname)
+ + profileresults."time" 
+ 
+ + dumpprofileinfo

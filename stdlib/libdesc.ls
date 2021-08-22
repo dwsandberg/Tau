@@ -45,15 +45,27 @@ use seq.seq.symbolref
 
 Function ?(a:symbolref,b:symbolref) ordering toint.a ? toint.b
 
+type libdescresult is liblibflds:seq.symbol
+      ,profilearcs:seq.parc
+      
+Export profilearcs(libdescresult) seq.parc
+
+Export liblibflds(libdescresult) seq.symbol
+
+Export type:libdescresult
+
+use seq.parc
+                   
   
-Function libdesc(info:compileinfo, prg:program) seq.symbol
+Function libdesc(info:compileinfo, prg:program) libdescresult
 let symstoexport2=   for  acc=empty:seq.symbolref ,  m=  mods.info do
           acc+  exports.m
         /for( for acc2=empty:set.symbol, r=toseq.asset.acc do 
         acc2 +(symbolrefdecode.info)_toint.r
          /for(acc2))
 let code2=for  acc=empty:seq.seq.symbolref,        sym=toseq.symstoexport2 do
-                  acc+  for acc2=[symbolref.sym],sym2 =
+            { assert not(isInternal.sym /and name.sym /in ">>" )report "KKK"+print.sym +"C"+print.getCode(prg, sym)
+             }                  acc+  for acc2=[symbolref.sym],sym2 =
                            if isabstract.module.sym then getCode(prg, sym)
                            else libcode(getCode(prg, sym),symstoexport2)   
                         do 
@@ -63,19 +75,29 @@ let code2=for  acc=empty:seq.seq.symbolref,        sym=toseq.symstoexport2 do
                           acc2+symbolref.sym2
                        /for(acc2)
                 /for (acc)
-let all=for all=empty:seq.symbolref,a=code2 do all+a /for(asset.all)
+let profilearcs=    for acc=empty:seq.parc , sd=tosymdefs.prg do 
+           if  "PROFILE"_1 /nin getoption.code.sd then acc
+           else 
+        for txt=acc ,sym =toseq.asset.code.sd  do 
+          if isconstantorspecial.sym /or name.module.sym /in "standard real bits internal "then txt 
+          else txt+parc( sym.sd, sym) 
+        /for(txt)
+             /for(acc)    
+let all0=for acc=empty:seq.symbolref ,arc=profilearcs do acc+callee.arc+caller.arc /for(acc)     
+let all=for all=all0,a=code2 do all+a /for(asset.all)
         let dd=symbolrefdecode
  for  decoderef = empty:seq.symbol,  r =  toseq.all  do
      let sym=dd_toint.r 
-     let lib=if isabstract.module.sym /or name.module.sym = "builtin"_1 then  library.module.sym
+     let lib=if isabstract.module.sym /or isBuiltin.sym  /or isInternal.sym then  library.module.sym
        else 
      "compiled"_1  
        decoderef +addlibsym(sym, lib)
-    /for( 
-[ addseq.decoderef  
+    /for( libdescresult( [
+  addseq.decoderef  
  ,addseq.for acc = empty:seq.symbol, @e = mods.info do acc + addlibraryMod(@e,all)/for(acc)
- ,{code} for  acc=empty:seq.symbol,       a=code2 do  acc+addseqsymbolref(a,all) /for(addseq.acc)
-])
+ ,{code} for  acc=empty:seq.symbol,       a=code2 do  acc+addseqsymbolref(a,all) /for( addseq.acc)
+ ],profilearcs
+ ))
 
 use otherseq.symbolref
 
@@ -87,7 +109,7 @@ let code = removeoptions.code1
   if for acc = true, @e = x do
    acc
    ∧ (isconst.@e 
-   ∨ (name.module.@e = "builtin"_1 ∧ para.module.@e    ∈ [ typereal, typeint] )
+   ∨ ( isBuiltin.@e   ∧ para.module.@e    ∈ [ typereal, typeint] )
    ∨ isspecial.@e
     ∨ @e ∈ toexport)
   /for(acc)then
@@ -150,13 +172,18 @@ type liblib is libname:seq.word, words:seq.encodingpair.seq.char,unused:int, tim
 , profiledata:seq.parc ,decoderef:seq.symbol,newmods:seq.libraryModule
 , code:seq.seq.symbolref
 
-type parc is head:word, tail:word, counts:int, clocks:int, space:int, unused:int
+type parc is caller:symbolref, callee:symbolref, counts:int, clocks:int, 
+space:int, unused:int
 
-Function parc(head:word, tail:word, counts:int, clocks:int, spacex:int)parc parc(head, tail, counts, clocks, spacex, 0)
+ 
+Function parc(caller:symbol, callee:symbol)parc 
+parc(symbolref.caller, symbolref.callee, 0,0, 0, 0)
 
-Export head(parc)word
+Function =(a:parc,b:parc)boolean toint.callee.a=toint.callee.b /and toint.caller.a=toint.caller.b
 
-Export tail(parc)word
+Export caller(parc) symbolref
+
+Export callee(parc) symbolref
 
 Export counts(parc)int
 

@@ -111,6 +111,8 @@ Function typeref(s:seq.word)mytype
 
 Function internalmod modref moduleref."internal"
 
+
+
 Function hash(b:seq.mytype, other:int)int
  for acc = hashstart, a = b >> 1 do
   for acc2 = acc, e = typerep.a do hash(acc2, other)/for(acc2)

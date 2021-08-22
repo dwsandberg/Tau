@@ -47,11 +47,9 @@ BT (*finishprof)(BT idx,BT x) =NULL;
   return (BT)p;
 } 
 
-BT createthreadZtausupportZintZintZintZintzseqZint(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype ){
+BT createthreadI(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype ){
 return createthread(PD,   deepcopyresult  ,  deepcopyseqword  , func,  args+2, argtype);}
 
-BT createthreadZtausupportZintZintZintZptrZint(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype ){
-return createthread(PD,   deepcopyresult  ,  deepcopyseqword  , func,  args+2, argtype);}
 /*
 
 The following code  was used to generate case in the threadbody.

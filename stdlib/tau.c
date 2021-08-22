@@ -51,10 +51,6 @@ static int alloccount=0;
 // myalloc does not zero memory so care is needed to initialize every fld when calling.
 
 BT spacecount=0;
-
-BT * setZtausupportZptrZint(processinfo PD, BT *ptr,BT val) { *(ptr++)=val; return ptr;}
-
-BT * setZtausupportZptrZptr(processinfo PD, BT *ptr,BT val) { *(ptr++)=val; return ptr;}
   
 
 BT allocatespace(processinfo PD, BT i)   { struct  spaceinfo *sp =&PD->space;
@@ -238,14 +234,25 @@ if ( baselib==1 ){
 
 BT wdrepseq= ((BT *) libdesc)[1];
 
+fprintf(stderr,"initlib5 1\n" ); 
+
 BT (* addlibrarywords)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT,  "addlibrarywordsZmain2Zliblib");
+if (!addlibrarywords){ fprintf(stderr,"initlib5 1a\n" ); 
+     BT (* addlibrarywords)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT,  "XaddlibrarywordsX");
+fprintf(stderr,"initlib5 1b\n" ); 
 if (!addlibrarywords){
+    fprintf(stderr,"initlib5 1c\n" ); 
     fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
     exit(EXIT_FAILURE);
 }
+     
+}
+fprintf(stderr,"initlib5 2\n" ); 
 
 addlibrarywords(&sharedspace,libdesc);
  
+ fprintf(stderr,"initlib5 3\n" ); 
+
  // register library 
      { int i =loaded[1]++;
       char name[100];
@@ -507,7 +514,7 @@ int main(int argc, char **argv)    {   int i=0,count;
       initprocessinfo(p,PD);
       p->deepcopyresult = (BT)noop; 
       p->deepcopyseqword = (BT)noop;
-      p->func=(BT)dlsym(RTLD_DEFAULT, "mainZmain2Zbytezseq");
+       p->func=(BT)dlsym(RTLD_DEFAULT, "main2");
       if (!p->func) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);

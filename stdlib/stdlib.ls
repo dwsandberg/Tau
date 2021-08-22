@@ -62,7 +62,7 @@ use bits
 
 use seq.bits
 
-
+use libdesc
 
 Export  subcompilelib( seq.word)seq.word  
 
@@ -70,7 +70,7 @@ Export  subcompilelib( seq.word)seq.word
 Export pass2(placehold:program)program  
 
 
-Export codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:seq.symbol, alltypes:typedict,isbase:boolean)seq.bits  
+Export codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict,isbase:boolean)seq.bits  
 
 Export compilerfront(option:seq.word,libname:seq.word
 ,allsrc:seq.seq.word,dependentlibs:seq.word,exports:seq.word) compileinfo
@@ -160,8 +160,6 @@ Export =(boolean,boolean) boolean
 
 Export >(int,int) boolean 
 
-Export =(int,int) boolean 
-
 Export  ∧(a:bits, bits)bits 
 
 Export ∨(a:bits, bits)bits 
@@ -178,7 +176,7 @@ Export  merge(seq.word )  word
 
 Export makereal(seq.word) real 
 
-Export  getseqlength(ptr) int 
+/Export  getseqlength(ptr) int 
 
 Export toword(int) word 
 

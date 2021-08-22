@@ -69,13 +69,13 @@ function interpret(code:seq.symbol, i:int, stk:stack.int)int
    else if iswordseq.sym then
    let a = for acc = empty:seq.int, @e = worddata.sym do acc + hash.@e /for(acc)
    interpret(code, i + 1, push(stk, GEP(a, 0)))
-   else if inmodule(sym,"$int") ∨ inmodule(sym,"$real")then
+   else if isIntLit.sym  ∨ isRealLit.sym then
     interpret(code, i + 1, push(stk, value.sym))
    else if sym = Littrue then interpret(code, i + 1, push(stk, 1))
    else if sym = Litfalse then interpret(code, i + 1, push(stk, 0))
-   else if inmodule(sym,"$sequence")then
+   else if isSequence.sym then
     interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 0)))
-   else if inmodule(sym,"$record")then
+   else if  isRecord.sym then
     if subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
      interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara - 2), 0)))
     else interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 2)))
@@ -89,10 +89,10 @@ interpret(code, i + 1, push(stk,dlsymbol2.mangledname.basesym.sym ))
     let dcret = deepcopysymI.resulttype.sym
     let adcret = dlsymbol2.mangledname.dcret
      assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret
-      assert t > 0 report"Not handle by interperter" + print.sym + "mangle:" + mangledname.sym
+          assert t > 0 report"Not handle by interperter" + print.sym + "mangle:" + mangledname.sym
       let dc = deepcopysymI.seqof.typeword
       let adc = dlsymbol2.mangledname.dc
        assert adc > 0 report"?"
-       let p = createthread(adcret, adc, t, packed.top(stk, nopara), buildargcodeI.sym)
+       let p = createthreadI(adcret, adc, t, packed.top(stk, nopara), buildargcodeI.sym)
        assert not.aborted.p report message.p
          interpret(code, i + 1, push(pop(stk, nopara), result.p)) 

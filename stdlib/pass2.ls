@@ -140,10 +140,10 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symb
   if islocal.arg ∨ isconst.arg then
     next(flags, result >> 2 + removeismember(last.result, arg), nextvar, map)
    else next(flags, result >> 1 + Define.nextvar + removeismember(last.result, Local.nextvar), nextvar, map)
-  else if wordname.sym ∈ "forexp" ∧ inmodule(sym,"builtin")then
+  else if wordname.sym ∈ "forexp" ∧  isBuiltin.sym then
   let noop = forexpisnoop(sym, result)
   if not.isempty.noop then next(flags, noop, nextvar, map)else next(flags ∨ Hasfor, result + sym, nextvar, map)
-  else if wordname.sym ∈ "indexseq45" ∧ inmodule(sym,"internal")then
+  else if wordname.sym ∈ "indexseq45" ∧ isInternal.sym  then
    next(flags ∨ Hasfor, result + sym, nextvar, map)
   else if sym = self then next(flags ∨ Callself, result + sym, nextvar, map)
   else
@@ -168,7 +168,7 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symb
        next(flags, result >> nopara + newconst, nextvar, map)
     else if first."VERYSIMPLE" ∈ options then next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
     else if"INLINE"_1 ∉ options then
-    let newflags = if"STATE"_1 ∈ options ∨ { wordname.sym ∈"setfld"∨ }inmodule(sym,"$global")then
+    let newflags = if"STATE"_1 ∈ options ∨ { wordname.sym ∈"setfld"∨ }isGlobal.sym then
      State ∨ flags
     else flags
      next(newflags, result + sym, nextvar, map)
@@ -199,10 +199,10 @@ function isconstorlocal(p:seq.symbol)boolean length.p = 1 ∧ (isconst.first.p �
 
 function expandforexp(code:seq.symbol, nextvarin:int)seq.symbol
  for result = empty:seq.symbol, nextvar = nextvarin, sym = code do
-  if inmodule(sym,"builtin") ∧ wordname.sym = "forexp"_1 then
+  if  isBuiltin.sym  ∧ wordname.sym = "forexp"_1 then
   let f = forexpcode(sym, result, nextvar)
   next(code.f, nextvar.f)
-  else if inmodule(sym,"internal") ∧ wordname.sym ∈ "indexseq45"then
+  else if  isInternal.sym ∧ wordname.sym ∈ "indexseq45"then
   let theseqtype =(paratypes.sym)_1
   let t = backparse2(result, length.result, 2, empty:seq.int)
   let index = subseq(result, t_2, length.code)
@@ -242,7 +242,7 @@ function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqty
  let theseqtype = seqof.seqparameter
  let elementtype = if seqparameter ∈ [ typeint, typereal, typeboolean]then seqparameter else if seqparameter ∈ [ typebyte, typebit]then typeint else typeptr
  let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte ∨ seqparameter = typebit
- let callidx = symbol(moduleref."internal","callidx", [ seqof.elementtype, typeint], elementtype)
+ let callidx = symbol(internalmod,"callidx", [ seqof.elementtype, typeint], elementtype)
  [ Start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)] + [ theseq, masteridx, callidx, Exit]
   + if boundscheck then
    [ masteridx, theseq, GetSeqLength, GtOp, Br2(1, 2), symbol(modTausupport,"outofbounds", seqof.typeword), abortsymbol.elementtype, Exit]
@@ -296,7 +296,7 @@ let elementtype = if isseq.(paratypes.forsym)_(-4)then typeptr else(paratypes.fo
   { first item in locs is start of block and the rest are exits }
    for acc = subseq(bodyexp2, 1, first.locs - 1), last = first.locs + 1, i = locs << 1 do
     next(acc + subseq(bodyexp2, last, i - 2)
-    + if inmodule(bodyexp2_(i - 1),"$for")then continue2 else assert2, i + 1)
+    + if inModFor(bodyexp2_(i - 1)) then continue2 else assert2, i + 1)
    /for(acc + subseq(bodyexp2, last, length.bodyexp2 - 1) + EndBlock)
  expandresult(nextvar1 + 3, firstpart + lastpart, bits.0)
 
@@ -304,7 +304,7 @@ function iscompound(bodyexp:seq.symbol)boolean
  { detects compound accumulator }
  let sym = bodyexp_(-3)
  isblock.last.bodyexp
-  ∧ (wordname.sym = "next"_1 ∧ nopara.sym > 3 ∧ inmodule(sym,"$for")
+  ∧ (wordname.sym = "next"_1 ∧ nopara.sym > 3 ∧ inModFor.sym 
   ∨ { assert case }abstracttype.resulttype.sym = addabstract(typeref."$base internal.",typeT))
 
 function exitlocations(s:seq.symbol, i:int, result:seq.int)seq.int
@@ -316,7 +316,7 @@ let sym = s_i
 function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol
  for acc = empty:seq.symbol, s = code do
   acc
-  + if inmodule(s,"$for")then
+  + if inModFor.s  then
   let i = findindex(s, old)
   if i ≤ length.new then [ new_i]
    else { this is for one of two cases 1:a nested for and $for variable is from outer loop 2:the next expresion }[ s]
@@ -330,11 +330,6 @@ use set.symdef
 Function pass2(knownsymbols :program)program 
 subpass2(empty:seq.symdef, emptyprogram, knownsymbols, 0)
 
-SIZE 2283 868 1385 1 SIZE 1646 1080 1810 2 SIZE 1589 1103 1844 3 SIZE 1584 1108 1844 4
-
-SIZE 1751 918 1867 4
-
-SIZE 2333 315 1888 4
 
 function subpass2(bigin:seq.symdef, corein:program, toprocess:program, count:int)program
  { assert count < 4 report"SIZE"+ print.length.toseq.toprocess + print.length.bigin + print.length.toseq.corein + print.count }

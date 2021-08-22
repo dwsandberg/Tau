@@ -245,9 +245,9 @@ Builtin initialdict seq.encodingpair.seq.char
 
 builtin dlsymbol(cstr)int
 
-Builtin createthread(int, int, int, seq.int, int)process.int
+Builtin createthreadI(int, int, int, seq.int, int)process.int
 
-Builtin createthread(int, int, int, ptr, int)process.int
+
 
 builtin callstack(n:int)seq.int
 
