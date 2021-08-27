@@ -298,17 +298,17 @@ let seqtype = last.types.a
  assert isseq.seqtype report errormessage("final expression in for list must be a sequence but it is of type:" + print.seqtype, input, place)
   assert length.types.a ≠ 1 report errormessage("For must have at least one accumulator" + print.length.types.a, input, place)
   let elename = [ last.tokentext.a]
-  let elesym = symbol(moduleref("$for", parameter.seqtype), elename, empty:seq.mytype, parameter.seqtype)
+  let elesym = symbol(moduleref(". $for", parameter.seqtype), elename, empty:seq.mytype, parameter.seqtype)
   let dict1 = if length.types.a > 1 then
    { keep track so right next is used in nested fors }
    let basetype = typebase.place
-   let resultsym = symbol(moduleref("$for",basetype),"next", types.a >> 1, basetype)
-   let nestingsym = symbol(moduleref("$for",basetype),"for", empty:seq.mytype, basetype)
+   let resultsym = symbol(moduleref(". $for",basetype),"next", types.a >> 1, basetype)
+   let nestingsym = symbol(moduleref(". $for",basetype),"for", empty:seq.mytype, basetype)
    let oldnesting = lookupbysig(dict.a,"for")
    if isempty.oldnesting then dict.a else dict.a - oldnesting /if + resultsym + nestingsym
   else dict.a
   let accumulators = for acc = empty:seq.symbol, i = 1, name = tokentext.a >> 1 do
-   next(acc + symbol(moduleref("$for",(types.a)_i), [ name], empty:seq.mytype,(types.a)_i), i + 1)
+   next(acc + symbol(moduleref(". $for",(types.a)_i), [ name], empty:seq.mytype,(types.a)_i), i + 1)
   /for(acc)
   bindinfo(dict1 ∪ asset(accumulators + elesym), code.a + accumulators + elesym, types.a, elename)
 

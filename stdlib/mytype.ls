@@ -24,7 +24,6 @@ Export name(modref)word
 
 Export library(modref)word
 
-Export modref(word, word, mytype)modref
 
 type typedef is name:word, module:word, library:word
 
@@ -60,7 +59,8 @@ let t = first.typerep.typ
 
 Function tomodref(m:mytype)modref modref("."_1, abstracttypename.m, parameter.m)
 
-Function abstractmod(m:modref) modref   
+Function abstractmod(m:modref) modref
+if issimple.m /or para.m=typeT then   m else 
 modref(library.m,name.m, typeT)
        
 
@@ -77,7 +77,6 @@ Function replaceT(with:mytype, m:mytype)mytype
 
 Function =(a:typedef, b:typedef)boolean name.a = name.b
 ∧ modname.a = modname.b 
-
 ∧ library.a=library.b
 
 Function ?(a:mytype, b:mytype)ordering typerep.a ? typerep.b
@@ -109,7 +108,7 @@ Function typeref(s:seq.word)mytype
  assert length.s = 3 report"typereferror" + s
   mytype.[ typedef(first.s, s_2, s_3)]
 
-Function internalmod modref moduleref."internal"
+Function internalmod modref moduleref.". internal"
 
 
 
@@ -126,10 +125,6 @@ Function iscomplex(a:mytype)boolean length.typerep.a > 1
 Function addabstract(a:mytype, t:mytype)mytype mytype([ first.typerep.a] + typerep.t)
 
 
-Function TypeFromOldTyperep(m:seq.word)mytype
- mytype.for acc = empty:seq.typedef, e = m do
-  [ typedef(e,"?"_1,"?"_1)] + acc
- /for(acc)
 
 Function oldTypeRep(m:mytype)seq.word
  for acc ="", e = typerep.m do [ name.e] + acc /for(acc)
@@ -137,14 +132,11 @@ Function oldTypeRep(m:mytype)seq.word
 
 
 Function moduleref(modname:seq.word, para:mytype)modref 
- if length.modname=2 then modref(modname_1, modname_2, para)
- else
- {assert modname_1 /in "builtin $int $real internal $local $br $words $word $record 
- $exitblock $loopblock $block $sequence $define $for $global W $fref $constant $continue" 
- report "checkmodref"+modname  }
- modref("."_1, modname_1, para)
-
+  assert length.modname=2 report "modname must be of length 2"+modname
+  modref(modname_1, modname_2, para)
+ 
 Function moduleref(modname:seq.word)modref moduleref(modname, noparameter)
+
 
 ------------
 
@@ -178,9 +170,6 @@ function modname(a:typedef)word module.a
 
 function noparameter mytype mytype.empty:seq.typedef
 
-function typedef(a:seq.word)typedef typedef(a_1, a_2, a_3)
-
-
 Function =(a:modref, b:modref)boolean name.a = name.b ∧ para.a = para.b
 
 Function ?(a:modref, b:modref)ordering name.a ? name.b ∧ para.a ? para.b
@@ -202,7 +191,7 @@ function subcmp(a:seq.typedef, b:seq.typedef, i:int)ordering
   let c = name.a_i ? name.b_i
    if c = EQ then subcmp(a, b, i + 1)else c
 
-Function typebase(i:int)mytype mytype.[ typedef."$base internal.", typedef(toword.i,"internal"_1,"."_1)]
+Function typebase(i:int)mytype mytype.[ typedef("$base"_1, "internal"_1,"."_1), typedef(toword.i,"internal"_1,"."_1)]
 
 Function internalmod(s:seq.word)modref 
 modref("."_1,"."_1 , noparameter)
@@ -212,21 +201,16 @@ Function printrep(s:mytype)seq.word
   acc + [ name.t, modname.t, library.t]
  /for(acc)
 
-Function parsemytype(s:seq.word)mytype
- for acc = empty:seq.typedef, i = arithseq(toint.s_1, 3, 2)do
-  acc + typedef(s_i, s_(i + 1), s_(i + 2))
- /for(mytype.acc)
+Function seqof(base:mytype)mytype mytype([ typedef("seq"_1,"seq"_1,"stdlib"_1)] + typerep.base)
 
-Function seqof(base:mytype)mytype mytype([ typedef."seq seq."] + typerep.base)
+Function isseq(t:mytype)boolean first.typerep.t = typedef("seq"_1,"seq"_1,"stdlib"_1)
 
-Function isseq(t:mytype)boolean first.typerep.t = typedef."seq seq."
+Function isencoding(t:mytype)boolean first.typerep.t = typedef("encoding"_1, "encoding"_1,"stdlib"_1)
 
-Function isencoding(t:mytype)boolean first.typerep.t = typedef."encoding encoding."
-
-Function encodingof(base:mytype)mytype mytype([ typedef."encoding encoding."] + typerep.base)
+Function encodingof(base:mytype)mytype mytype([ typedef("encoding"_1, "encoding"_1,"stdlib"_1)] + typerep.base)
 
 
-Function processof(base:mytype)mytype mytype([ typedef."process process."] + typerep.base)
+Function processof(base:mytype)mytype mytype([ typedef("process"_1, "process"_1,"stdlib"_1)] + typerep.base)
 
 type passtypes is modname:modref, defines:set.mytype, unresolveduses:seq.seq.word, unresolvedexports:seq.seq.word, exports:set.mytype, uses:set.modref
 

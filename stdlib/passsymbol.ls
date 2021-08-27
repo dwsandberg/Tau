@@ -31,8 +31,9 @@ Function resolvesymbols(t:seq.seq.word, lib:word, mods:set.passtypes,libmods:set
     )
   else if first.input ∈ "Function function  Builtin builtin Export unbound"then
      let b = parse.symboldict(empty:set.symbol, [commoninfo(getheader.input, modname.common, lib.common, types.common, "symbol"_1)])
-      let modname =    if issimple.modname.common  /and first.input /in  "Builtin builtin "then  
-        internalmod  else     modname.common 
+      let modname =   if first.input /in  "Builtin builtin " then
+           if issimple.modname.common  then  internalmod  else modname.common
+         else      modname.common   
      let sym = if length.text.b = 1  then
      let name = text.b
   if name = "true"then Littrue
@@ -297,45 +298,11 @@ use symboldict
 Function parse(input:seq.word,p:partdict,c :commoninfo) bindinfo
      parse.symboldict(syms.p,req.p,[commoninfo(input ,modname.c,lib.c,types.c ,mode.c)])
  
-
-/Function formsymboldict(modset:set.passsymbols,this:passsymbols, requireUnbound:set.symdef, mode:word)
-partdict
-   let dict=  for   syms=defines.this , u = toseq.uses.this do
-    let a = checkfindelement(passsymbols.u, modset )
-      if isempty.a then 
-        assert   mode   /nin "body" report"Cannot find module" +  name.u
-         {needed for when modset passsymbols are not yet created} 
-         syms  
-        if not.isabstract.modname.a_1 then 
-          syms  ∪ exports.a_1 
-         else
-         for acc = syms  e = toseq.exports.a_1 do syms+replaceTsymbol(para.u, e) /for(acc)
-    /for(syms)
-   for acc = empty:set.symbol,req=empty:set.symdef, sym2 = toseq.dict do
-   if not.isabstract.module.sym2 then next(acc+sym2,req) 
-     else 
-    if isempty.requireUnbound then next(acc+sym2,req)
-   else 
-   let x=findabstract( program.requireUnbound,sym2)
-   let require = sd.x_1
-   if isempty.x then next(acc+sym2,req)
-    else
-     let list=for acc2 = empty:seq.symbol, sym4= code.sd.x_1 do
-      acc2 +  replaceTsymbol(modpara.x_1, sym4)
-     /for(acc2)
-    {       assert name.e /nin "arithseq"  report "GHJ"+print.list}
-      next(acc+setrequires.sym2, req+symdef(sym2,list))
-   /for(partdict(  acc,req))
-      
-    
- 
-
-
 Function formsymboldict(modset:set.passsymbols,this:passsymbols, requireUnbound:set.symdef, mode:word)
 partdict
  { bug here should not need i=0 in forloop }
 let dict=  for   syms=defines.this,requires=empty:set.symdef,i=0, u = toseq.uses.this do
-    let a = checkfindelement(passsymbols.u, modset )
+    let a =  findelement(passsymbols.abstractmod.u,modset)
       if isempty.a then 
         assert   mode   /nin "body" report"Cannot find module" +  name.u
          {needed for when modset passsymbols are not yet created} 
@@ -369,11 +336,8 @@ let dict=  for   syms=defines.this,requires=empty:set.symdef,i=0, u = toseq.uses
 Function findabstract(templates:program, sym:symbol)seq.findabstractresult
   for acc = empty:seq.findabstractresult, sd = tosymdefs.templates do
    let e=sym.sd
-   assert not.isempty.worddata.e /and not.isempty.worddata.sym report "FIND"+ print.e
-    +print.sym
    if name.e = name.sym ∧ length.types.e = length.types.sym 
-       ∧ para.module.e = typeT  
-       ∧ name.module.e=name.module.sym      
+    ∧ para.module.e = typeT       
    then
       let z= for Tis=type? ,  idx=1,   t= types.e do
              let S=solveT(t,(types.sym)_idx) 
@@ -388,27 +352,6 @@ Function findabstract(templates:program, sym:symbol)seq.findabstractresult
    else acc
   /for(acc) 
   
-  Function findabstract2(templates:program, sym:symbol)seq.findabstractresult
-  for acc = empty:seq.findabstractresult, sd = tosymdefs.templates do
-   let e=sym.sd
-   if name.e = name.sym ∧ length.types.e = length.types.sym 
-       ∧ para.module.e = typeT      
-   then
-      let z= for Tis=type? ,  idx=1,   t= types.e do
-             let S=solveT(t,(types.sym)_idx) 
-             if S=type? then 
-              {assert t=(types.s)_idx report "XXXXX"+print.t+print.(types.s)_idx}
-             next(Tis,idx+1) else next(S,idx+1)
-            /for(Tis)
-    if  ?2(sym,replaceTsymbol(z, e)) =EQ  then
-       if sym ? e =EQ /or isunbound.e then acc else
-       acc + findabstractresult(sd,z)
-    else acc
-   else acc
-  /for(acc) 
-   
-
-
   
   type findabstractresult  is sd:symdef,modpara:mytype
   
@@ -445,16 +388,7 @@ Function processOptions(prg:program,mods:seq.passsymbols,option:seq.word) progra
   /for(acc)
   
   use seq.passsymbols
-
-Function  checkfindelement(e:passsymbols,a:set.passsymbols ) set.passsymbols
-  let e2= if issimple.modname.e /or para.modname.e=typeT then e 
-   else 
-   passsymbols(modref(library.modname.e,name.modname.e,typeT) )
- { assert issimple.modname.e /or para.modname.e=typeT report "DIFF"+print.modname.e
-  +   print.modref(library.modname.e,name.modname.e,typeT)}
-  let t=findelement(e2,a)
-   t
-  
+ 
 ------------
 
 
@@ -485,8 +419,6 @@ Export defines(passsymbols)set.symbol
 
 Export exports(passsymbols)set.symbol
 
-
-Export unresolvedexports(passsymbols)set.symbol
 
 
 
@@ -525,7 +457,7 @@ passsymbols( modname, empty:set.modref, empty:set.symbol, empty:set.symbol, empt
 
    Function ?(a:passsymbols, b:passsymbols)ordering   module.a ? module.b
    
-   Function checkwellformed(sym:symbol) boolean
+   function checkwellformed(sym:symbol) boolean
  not.issimple.module.sym
  = for acc = false, t = types.sym while not.acc do isabstract.t /for(acc)
  

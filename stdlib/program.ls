@@ -104,6 +104,8 @@ Function symbolref(sym:symbol)symbolref symbolref.valueofencoding.encode.sym
 
 Function assignencoding(l:seq.encodingpair.symbol  , symbol) int  length.l+1
 
+Function decode(s:symbolref) symbol decode(to:encoding.symbol(toint.s))
+
 Function symbolrefdecode seq.symbol
   for acc=empty:seq.symbol , p=encoding:seq.encodingpair.symbol do
               acc+data.p
@@ -131,16 +133,15 @@ Export type:compileinfo
 type compileinfo is typedict:typedict  
 ,code:seq.seq.symbolref,src:seq.seq.word
 ,symbolrefdecode:seq.symbol,mods:seq.libraryModule
+,Xroots:seq.symbolref
 
 
    Function roots(s:compileinfo) set.symbol
-   for acc= empty:set.symbol, m =mods.s do 
-     if issimple.modname.m then  
-     for acc2=acc, r=exports.m do  
-     acc2+(symbolrefdecode.s)_toint.r 
-     /for(acc2)
-     else acc
+   for acc= empty:set.symbol, r=Xroots.s do 
+      acc+(symbolrefdecode.s)_toint.r 
     /for(acc)
+    
+    
 
 Export code(compileinfo) seq.seq.symbolref
 
@@ -152,9 +153,13 @@ Export src(compileinfo) seq.seq.word
 Function prg(s:compileinfo) seq.symdef 
 let symdecode=symbolrefdecode.s
   for acc4=empty:seq.symdef, c=code.s do
-      acc4+symdef(symdecode_toint.first.c,
-          for   acc=empty:seq.symbol, r= c << 2 do   acc+ symdecode_toint.r /for(acc))
+       let sym=symdecode_toint.first.c
+      acc4+symdef(sym,
+          for   acc=empty:seq.symbol, r= c << 2 do   acc+ symdecode_toint.r 
+          /for(  acc ))
 /for(acc4)
+
+
 
 Export typedict(compileinfo) typedict
 
@@ -164,9 +169,11 @@ Function alltypes(s:compileinfo) typedict typedict.s
 
  
 Function  compileinfo(prg:seq.symdef, alltypes:typedict ,mods:seq.libraryModule
-,src:seq.seq.word) compileinfo
-compileinfo(alltypes, cvtL3(program.asset.prg,1,empty:seq.seq.symbolref),src,symbolrefdecode,mods)
+,src:seq.seq.word,roots:set.symbol) compileinfo
+let roots2=for acc=empty:seq.symbolref , sym=toseq.roots do acc+symbolref.sym /for(acc)
+compileinfo(alltypes, cvtL3(program.asset.prg,1,empty:seq.seq.symbolref),src,symbolrefdecode,mods,roots2)
 
+compileinfo(seq.symdef, typedict, seq.libraryModule, seq.seq.word, set.symbol)
 
  function cvtL3(prg:program,i:int, in: seq.seq.symbolref) seq.seq.symbolref
  let x=encoding:seq.encodingpair.symbol
@@ -182,7 +189,7 @@ compileinfo(alltypes, cvtL3(program.asset.prg,1,empty:seq.seq.symbolref),src,sym
                         let  discard=symbolref.basesym.sym
                         symbolref.sym 
                        else if  isrecordconstant.sym then
-                        let discard= for acc3=symbolref.Lit.0 ,  sym2=removeconstant.[sym] do symbolref.sym2 /for(acc3)
+                        let discard= for acc3=symbolref.Lit.0 ,  sym2=removeconstantcode.[sym] do symbolref.sym2 /for(acc3)
                         symbolref.sym
                        else 
                         symbolref.sym /for(acc2)
@@ -201,4 +208,13 @@ let current = asset.getoption.code
  else
   let newcode = removeoptions.code + Words.toseq(current ∪ asset.option) + Optionsym
    map(p, if isempty.f then s else sym.f_1, newcode)
+   
+Function addoption(code:seq.symbol,option:seq.word) seq.symbol
+  let current = asset.getoption.code
+  let new= current ∪ asset.option
+  if cardinality.new=cardinality.current then code
+  else  removeoptions.code + Words.toseq(new) + Optionsym
+   
+
+
 

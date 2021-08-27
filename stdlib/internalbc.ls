@@ -150,6 +150,8 @@ function addsignedaddress(slot:int, a:int, b:internalbc)internalbc
 
 Export type:internalbc
 
+Export type:templatepart
+
 _____________________________
 
 Function BLOCKCOUNT(slot:int, a1:int)internalbc addstartbits(1, 1, add(a1, emptyinternalbc))

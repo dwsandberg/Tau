@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau  ; use doc ; callgraphwithin("tools","doc")
+#!/usr/local/bin/tau  ; use doc ;  callgraphbetween("stdlib","interperter tausupport mangle")
 
 
 ; use doc ; createdoc
@@ -21,13 +21,11 @@ use groupparagraphs
 
 use main2
 
-use mangle
 
 use mytype
 
 use symbol
 
-use pretty
 
 use standard
 
@@ -39,13 +37,20 @@ use seq.char
 
 use seq.mytype
 
+use graph.symbolref
+
 use graph.word
 
 use set.word
 
+use seq.arc.symbolref
+
+use set.arc.symbolref
+
 use seq.arc.word
 
 use set.arc.word
+
 
 use svggraph.seq.word
 
@@ -67,58 +72,55 @@ function addselect(s:seq.word)seq.word
 Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
  { Calls between modules in list of modules. }
  let z = formcallarcs.libname
- let a = for acc = empty:seq.mytype, @e = modulelist do acc + mytype.@e /for(acc)
- let arcs = for acc = empty:seq.arc.word, @e = z do acc + modarc(a, @e)/for(acc)
+  let arcs = for acc = empty:seq.arc.symbolref, a = z do 
+  let t1 = decode.tail.a
+let h1 = decode.head.a
+if module.t1=module.h1 then acc
+else if name.module.t1 ∈ modulelist ∧ name.module.h1 ∈ modulelist then 
+     acc+a
+else acc
+  /for(acc)
   display.for acc = empty:seq.arcinfo.seq.word, @e = toseq.arcs.newgraph.arcs do acc + toarcinfo.@e /for(acc)
 
-Function formcallarcs(libname:seq.word) seq.arc.word
-for  arcs2=empty:seq.arc.word,  p=   prg.compilerfront("pass1",libname) do
-     let tail=mangledname.sym.p
+   
+
+
+Function formcallarcs(libname:seq.word) seq.arc.symbolref
+for  arcs2=empty:seq.arc.symbolref,  p=   prg.compilerfront("pass1",libname) do
+     let tail=symbolref.sym.p
      for arcs=arcs2 ,  sym=code.p do
    if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs
-   else arcs + arc(tail, mangledname.sym)
+   else arcs + arc(tail, symbolref.sym)
      /for(arcs)
      /for(arcs2)
 
 Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
  { Calls within modules in list of modules. }
- let t= for  arcs2=empty:seq.arc.word,  p=  prg.compilerfront("pass1",libname) do
-     let tail=mangledname.sym.p
+ let t= for  arcs2=empty:seq.arc.symbolref,  p=  prg.compilerfront("pass1",libname) do
+     let tail=symbolref.sym.p
      for arcs=arcs2 ,  sym=code.p do
    if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs
-   else arcs + arc(tail, mangledname.sym)
+   else arcs + arc(tail, symbolref.sym)
      /for(arcs)
      /for(arcs2)
   let g = newgraph.formcallarcs.libname
- let nodestoinclude = for acc = empty:set.word, @e = toseq.nodes.g do acc ∪ filterx(modulelist, @e)/for(acc)
- let g2 = for acc = g, @e = toseq.nodestoinclude do deletenode(acc, @e)/for(acc)
+ let nodesnottoinclude = for acc = empty:set.symbolref, @e = toseq.nodes.g do 
+   let p=decode.@e
+    if name.module.p  ∈ modulelist then acc  else acc+@e
+    /for(acc)
+ let g2 = for acc = g, @e = toseq.nodesnottoinclude do deletenode(acc, @e)/for(acc)
   display.for acc = empty:seq.arcinfo.seq.word, @e = toseq.arcs.g2 do acc + toarcinfo.@e /for(acc)
 
-function filterx(include:seq.word, w:word)set.word
-let p = codedown.w
- if length.p < 2 then empty:set.word
- else if last.p_2 ∈ include then empty:set.word else asset.[ w]
 
-function mytype(w:word)mytype TypeFromOldTyperep.[ w]
+use set.symbolref
 
-function modarc(s:seq.mytype, a:arc.word)seq.arc.word
-let t1 = codedown.tail.a
-let h1 = codedown.head.a
- if length.t1 < 2 ∨ length.h1 < 2 ∨ t1_2 = h1_2
- ∨ not(TypeFromOldTyperep.h1_2 ∈ s ∧ TypeFromOldTyperep.t1_2 ∈ s)then
-  empty:seq.arc.word
- else [ arc(merge.readable.tail.a, merge.readable.head.a)]
+use libdesc
 
-function toarcinfo(a:arc.word)arcinfo.seq.word arcinfo(readable.tail.a, readable.head.a,"")
 
-function readable(fsig:word)seq.word
-let p = codedown.fsig
- if length.p = 1 then p_1
- else
-  let plist = for acc = empty:seq.mytype, @e = subseq(p, 3, length.p)do acc + TypeFromOldTyperep.@e /for(acc)
-   p_1 + ":" + print.TypeFromOldTyperep.p_2 + "("
-   + for acc ="", @e = plist do list(acc,",", print.@e)/for(acc)
-   + ")"
+     
+
+function toarcinfo(a:arc.symbolref)arcinfo.seq.word arcinfo(print.decode.tail.a, print.decode.head.a,"")
+
 
 Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word
 let g1 = exclude + for acc ="", @e = exclude do acc + addabstractpara.@e /for(acc)
@@ -128,7 +130,7 @@ else
  let a = include + for acc ="", @e = include do acc + addabstractpara.@e /for(acc)
  let b = for acc = empty:set.arc.word, @e = a do acc ∪ arcstosuccessors(g2, @e)/for(acc)
   newgraph.toseq.b
-let d = for acc = empty:seq.arcinfo.seq.word, @e = toseq.arcs.g3 do acc + toarcinfo.@e /for(acc)
+let d = for acc = empty:seq.arcinfo.seq.word, @e = toseq.arcs.g3 do acc + arcinfo([tail.@e],[head.@e],"") /for(acc)
  display.d
 
 function addabstractpara(w:word)word merge([ w] + ".T")
@@ -216,8 +218,10 @@ function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:se
 Function uncalledfunctions(libname:seq.word)seq.word
  { List of functions may include indirectly called functions. }
  let g = newgraph.formcallarcs.libname
- let sources = for acc ="", @e = toseq.nodes.g do acc + sources(g, empty:set.word, @e)/for(acc)
-  for acc ="", @e = alphasort.sources do list(acc," /br", readable.@e)/for(acc)
+ let sources = for acc =empty:seq.symbolref, @e = toseq.nodes.g do acc + sources(g, empty:set.symbolref, @e)/for(acc)
+  for acc ="", @e = sources do list(acc," /br", print.decode.@e)/for(acc)
+
+use seq.symbolref
 
 * usegraph exclude stdlib seq set
 

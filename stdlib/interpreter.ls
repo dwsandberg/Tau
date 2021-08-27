@@ -4,14 +4,11 @@ use UTF8
 
 use fileio
 
-
 use real
 
 use standard
 
 use symbol
-
-use tausupport
 
 use words
 
@@ -31,12 +28,14 @@ use seq.seq.int
 
 use program
 
+use mangle
+
 Builtin bitcast(int)seq.int
 
 Builtin GEP(seq.int, int)int
 
 Function interpretCompileTime(code:seq.symbol)seq.symbol
-let z=removeconstant.code
+let z=removeconstantcode.code
 assert for acc=true ,sym=z while acc do not.isFref.sym /for(acc) report
    "has Fref"+print.z
 let r = interpret(z, 1, empty:stack.int)
@@ -56,7 +55,8 @@ function tocode(r:int, typ:mytype)seq.symbol
 
 function aswords(s:seq.int)seq.word for acc ="", @e = s do acc + wordencodingtoword.@e /for(acc)
 
-Function interpret(alltypes:typedict, code:seq.symbol)seq.word aswords.bitcast.interpret(code, 1, empty:stack.int)
+Function interpret(alltypes:typedict, code:seq.symbol)seq.word 
+     aswords.bitcast.interpret(code, 1, empty:stack.int)
 
 let p = process.interpret(code, 1, empty:stack.int)if aborted.p then message.p else aswords.bitcast.result.p
 
@@ -79,20 +79,27 @@ function interpret(code:seq.symbol, i:int, stk:stack.int)int
     if subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
      interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara - 2), 0)))
     else interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 2)))
-   else if wordname.sym = "makereal"_1 ∧ inmodule(sym,"UTF8")then
+   else if wordname.sym = "makereal"_1 ∧ name.module.sym /in "UTF8" then
     interpret(code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
    else {if isFref.sym then
-interpret(code, i + 1, push(stk,dlsymbol2.mangledname.basesym.sym ))
+interpret(code, i + 1, push(stk,funcaddress.basesym.sym ))
    else}
-    let t = dlsymbol2.mangledname.sym
+      {if mangledname.sym="ADDint"_1 then
+      let args=top(stk,2)
+       interpret(code, i + 1, push(pop(stk, nopara),args_1+args_2 ))
+   else if mangledname.sym="EQint"_1 then
+      let args=top(stk,2)
+       interpret(code, i + 1, push(pop(stk, nopara),if args_1=args_2 then 1 else 0 ))
+   else }
+    let t = funcaddress.sym
      assert print.resulttype.sym ≠ "?"report"INTER" + print.sym + print.code
-    let dcret = deepcopysymI.resulttype.sym
-    let adcret = dlsymbol2.mangledname.dcret
+    let dcret = deepcopySym.resulttype.sym
+    let adcret = funcaddress.dcret
      assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret
           assert t > 0 report"Not handle by interperter" + print.sym + "mangle:" + mangledname.sym
-      let dc = deepcopysymI.seqof.typeword
-      let adc = dlsymbol2.mangledname.dc
-       assert adc > 0 report"?"
+      let dc = deepcopySym.seqof.typeword
+      let adc = funcaddress.dc
+       assert adc > 0 report"interpreter ?"
        let p = createthreadI(adcret, adc, t, packed.top(stk, nopara), buildargcodeI.sym)
        assert not.aborted.p report message.p
          interpret(code, i + 1, push(pop(stk, nopara), result.p)) 

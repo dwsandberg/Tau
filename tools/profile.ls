@@ -14,7 +14,7 @@ use displaytextgraph
 
 use libdesc
 
-use mangle
+/use mangle
 
 use standard
 
@@ -92,6 +92,7 @@ Function profileresults(measure:seq.word)seq.word
    { shorten the names of the functions and then build and display labeled graph }
    assert      for acc =empty:set.word, @e = toseq.nodes.g3 do acc + name.head.@e /for(cardinality.acc)
        = cardinality.nodes.g3 report "Problem:profile nodes names not distinct"
+       +for txt="",  @e = toseq.nodes.g3 do txt+print.head.@e+EOL /for(txt)
 { let nodemap = shorten.for acc ="", @e = toseq.nodes.g3 do acc + head.@e /for(acc)}
    let z2 = for acc = empty:seq.arcinfo.seq.word, a = toseq.arcs.g3 do
    acc + {arcinfo(shorten(nodemap, head.a), shorten(nodemap, tail.a),}
@@ -101,7 +102,7 @@ Function profileresults(measure:seq.word)seq.word
    + measure
    + toword.max.tmp
     
-       function symname(w:word) seq.word    (codedown.w)_1
+  /     function symname(w:word) seq.word    (codedown.w)_1
        
  use set.word
   
@@ -122,7 +123,7 @@ function removesmall(g:labeledgraph.lparc,  m:int)labeledgraph.lparc
 
 
 
-Function shorten(pnodes:seq.word)nodemap
+/Function shorten(pnodes:seq.word)nodemap
  { This procedure produces a map that takes fsigs and shortens them keeping them distinct. The following procedure uses this result to map the figs to the new ones. }
  let nodes = sort.toalphaseq.pnodes
  let c = for acc = [ empty:seq.seq.word], @e = towordseq.nodes do acc + codedown.@e /for(acc)

@@ -46,28 +46,40 @@ use seq.seq.symbolref
 Function ?(a:symbolref,b:symbolref) ordering toint.a ? toint.b
 
 type libdescresult is liblibflds:seq.symbol
-      ,profilearcs:seq.parc
+      ,profilearcs:set.seq.symbol,newmap:set.symbolref,profiledata:seq.int
       
-Export profilearcs(libdescresult) seq.parc
+Export profilearcs(libdescresult) set.seq.symbol
 
 Export liblibflds(libdescresult) seq.symbol
+
+
+Export profiledata(libdescresult )seq.int
 
 Export type:libdescresult
 
 use seq.parc
-                   
+
+use set.seq.symbol
+
+use seq.seq.symbol
+
+use otherseq.symbol
+              
+   
   
-Function libdesc(info:compileinfo, prg:program) libdescresult
-let symstoexport2=   for  acc=empty:seq.symbolref ,  m=  mods.info do
+Function libdesc(info:compileinfo, prg:program ) libdescresult
+{ mods.info are only the exported modules }
+let symstoexport2={roots.info}   for  acc=empty:seq.symbolref ,  m=  mods.info do
           acc+  exports.m
         /for( for acc2=empty:set.symbol, r=toseq.asset.acc do 
         acc2 +(symbolrefdecode.info)_toint.r
          /for(acc2))
 let code2=for  acc=empty:seq.seq.symbolref,        sym=toseq.symstoexport2 do
             { assert not(isInternal.sym /and name.sym /in ">>" )report "KKK"+print.sym +"C"+print.getCode(prg, sym)
-             }                  acc+  for acc2=[symbolref.sym],sym2 =
+             }               let ref=symbolref.sym
+                        acc+  for acc2=[ref],sym2 =
                            if isabstract.module.sym then getCode(prg, sym)
-                           else libcode(getCode(prg, sym),symstoexport2)   
+                           else libcode( getCode(prg, sym) ,symstoexport2)   
                         do 
                         if isFref.sym2 then
                              acc2+ symbolref.PreFref+ symbolref.basesym.sym2
@@ -75,37 +87,38 @@ let code2=for  acc=empty:seq.seq.symbolref,        sym=toseq.symstoexport2 do
                           acc2+symbolref.sym2
                        /for(acc2)
                 /for (acc)
-let profilearcs=    for acc=empty:seq.parc , sd=tosymdefs.prg do 
+let profilearcs=for acc=empty:set.seq.symbol , sd=tosymdefs.prg do 
            if  "PROFILE"_1 /nin getoption.code.sd then acc
            else 
         for txt=acc ,sym =toseq.asset.code.sd  do 
           if isconstantorspecial.sym /or name.module.sym /in "standard real bits internal "then txt 
-          else txt+parc( sym.sd, sym) 
+          else txt+ [sym.sd, sym ] 
         /for(txt)
-             /for(acc)    
-let all0=for acc=empty:seq.symbolref ,arc=profilearcs do acc+callee.arc+caller.arc /for(acc)     
+        /for(acc)
+let all0=for acc=empty:seq.symbolref ,arc=toseq.profilearcs do acc+symbolref.arc_1+symbolref.arc_2 /for(acc)     
 let all=for all=all0,a=code2 do all+a /for(asset.all)
-        let dd=symbolrefdecode
- for  decoderef = empty:seq.symbol,  r =  toseq.all  do
-     let sym=dd_toint.r 
-     let lib=if isabstract.module.sym /or isBuiltin.sym  /or isInternal.sym then  library.module.sym
-       else 
-     "compiled"_1  
-       decoderef +addlibsym(sym, lib)
+{ all is used to establish new mapping of symbols to symbolrefs}
+let profiledata = for acc = [  1,  cardinality.profilearcs], arc = toseq.profilearcs do
+ acc + [   binarysearch(toseq.all,symbolref.arc_1) , binarysearch(toseq.all,symbolref.arc_2), 0, 0, 0, 0]
+/for(acc)
+let dd=symbolrefdecode
+   for  decoderef = empty:seq.symbol, idx= toseq.all     do
+        decoderef +addlibsym(dd_toint.idx)
     /for( libdescresult( [
   addseq.decoderef  
  ,addseq.for acc = empty:seq.symbol, @e = mods.info do acc + addlibraryMod(@e,all)/for(acc)
- ,{code} for  acc=empty:seq.symbol,       a=code2 do  acc+addseqsymbolref(a,all) /for( addseq.acc)
- ],profilearcs
- ))
+ ,{code} for  acc=empty:seq.symbol, a=code2 do  acc+addseqsymbolref(a,all) /for( addseq.acc)
+ ],profilearcs,all,profiledata)
+ )
 
 use otherseq.symbolref
 
+use set.int
 
 Function libcode(code1:seq.symbol,toexport:set.symbol) seq.symbol
 let code = removeoptions.code1
  let z = if length.code < 15 then
- let x = removeconstant.code
+ let x = removeconstantcode.code
   if for acc = true, @e = x do
    acc
    ∧ (isconst.@e 
@@ -128,10 +141,10 @@ use mytype
 
 use bits
 
-function addlibsym(s:symbol,lib:word)symbol
- assert not.isFref.s report "Fref problem" 
+function addlibsym(s:symbol )symbol
+ assert not.isFref.s report "Fref problem" +stacktrace
   let t=module.s
-  Constant2.[ Words.worddata.s, Word.lib,Word.name.t,addmytype.para.t,   
+  Constant2.[ Words.worddata.s, Word.library.t,Word.name.t,addmytype.para.t,   
   addseq.for acc = empty:seq.symbol, @e = types.s do acc + addmytype.@e /for(acc)
  , Lit.toint.raw.s,Lit.extrabits.s  
  , Record.[ typeptr, typeword,typeword, typeptr 
@@ -178,6 +191,8 @@ space:int, unused:int
  
 Function parc(caller:symbol, callee:symbol)parc 
 parc(symbolref.caller, symbolref.callee, 0,0, 0, 0)
+
+
 
 Function =(a:parc,b:parc)boolean toint.callee.a=toint.callee.b /and toint.caller.a=toint.caller.b
 

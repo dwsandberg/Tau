@@ -34,7 +34,7 @@ real seq set stack   symbol textio timestamp tree worddict words xxhash
   sparseseq   standard testall
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
-  interpreter  llvm llvmconstants       
+  interpreter  llvm llvmconstants  internalbc    
   program    symboldict taublockseq typedict 
 
 * Removed maindict 
@@ -64,16 +64,31 @@ use seq.bits
 
 use libdesc
 
+use passparse
+
+use passsymbol
+
+use set.passsymbols
+
 Export  subcompilelib( seq.word)seq.word  
 
 
 Export pass2(placehold:program)program  
 
 
-Export codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict,isbase:boolean)seq.bits  
+Export codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:libdescresult,
+ alltypes:typedict,isbase:boolean)seq.bits  
 
 Export compilerfront(option:seq.word,libname:seq.word
 ,allsrc:seq.seq.word,dependentlibs:seq.word,exports:seq.word) compileinfo
+
+Export  passparse(   abstractmods :set.passsymbols,simplemods:set.passsymbols
+,lib:word, prg1:seq.symdef
+,src:seq.seq.word,mode:word) 
+set.symdef
+
+Export stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean
+  ) steponeresult 
 
 
 
@@ -156,6 +171,8 @@ Export *(int,int) int
 
 Export =(int,int) boolean 
 
+Export =(word,word) boolean
+
 Export =(boolean,boolean) boolean 
 
 Export >(int,int) boolean 
@@ -176,7 +193,7 @@ Export  merge(seq.word )  word
 
 Export makereal(seq.word) real 
 
-/Export  getseqlength(ptr) int 
+Export  getseqlength(ptr) int 
 
 Export toword(int) word 
 

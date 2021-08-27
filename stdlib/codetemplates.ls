@@ -46,6 +46,10 @@ use seq.seq.int
 
 use seq.seq.symbol
 
+use mangle
+
+Export mangledname(s:symbol) word
+
 Export constdata seq.slot
 
 Export wordref(w:word)int

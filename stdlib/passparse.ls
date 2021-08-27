@@ -91,29 +91,23 @@ seq.symdef
      let z= commoninfo("", modname.m, lib , typedict.m, mode)
           let partdict=formsymboldict(allmods,m,requireUnbound,mode)   
        for  acc=empty:seq.symdef ,      p=text.m do
-         acc+if first.text.p /in "Builtin builtin"  then  
+         if first.text.p /in "Builtin builtin"  then  
+          if issimple.module.sym.p then  acc+ symdef(sym.p, [  Words."XBUILTIN", Optionsym]) 
+          else
                let sym=sym.p
-                symdef(sym.p
+            acc+    symdef(sym.p
                  ,for code = empty:seq.symbol, @e = arithseq(nopara.sym.p, 1, 1)do 
                     code + Local.@e 
                  /for( code)
-                   + if issimple.module.sym.p then [ sym.p, Words."BUILTIN", Optionsym]
-                    else
+                   +
       [ if issimplename.sym then 
-          assert isabstract.module.sym /or  name.sym /in " loadlib  
-addresstosymbol2 callstack randomint currenttime
-getmachineinfo createlib2 getfile getbytefile getbitfile
-addencoding getinstance allocatespace dlsymbol loadedlibs  unloadlib
-tan cos sin sqrt arcsin arccos
- unloadlib   createfile 
-"   report "xxx"+print.sym
             symbol(builtinmod( typeT), [ wordname.sym], paratypes.sym, resulttype.sym)
       else symbol4(builtinmod( typeT), wordname.sym,(nametype.sym)_1, paratypes.sym, resulttype.sym)]
        )
            else 
                assert first.text.p /in "Function function" report text.p
       let b=  parse( src_paragraphno.p,partdict,z)
-         symdef(sym.p, code.b,paragraphno.p ) 
+       acc+  symdef(sym.p, code.b,paragraphno.p ) 
        /for( prg+acc )
       /for(  prg   )
       

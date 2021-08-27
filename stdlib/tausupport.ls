@@ -243,22 +243,12 @@ use process.int
 
 Builtin initialdict seq.encodingpair.seq.char
 
-builtin dlsymbol(cstr)int
-
-Builtin createthreadI(int, int, int, seq.int, int)process.int
-
-
-
-builtin callstack(n:int)seq.int
-
-builtin addresstosymbol2(a:int)seq.char
 
 Builtin randomint(i:int)seq.int
 
-Function dlsymbol2(name:word)int dlsymbol.tocstr.[ name]
 
 Function outofbounds seq.word "out of bounds"+stacktrace
 
-Function stacktrace seq.word for acc ="", @e = callstack.30 << 2 do acc + " /br" + printmangled.addresstosymbol.@e /for(acc)
+Function stacktrace seq.word internalstacktrace
 
-Function addresstosymbol(a:int)word encodeword.addresstosymbol2.a
+

@@ -98,6 +98,18 @@ Function Hasmerge bits bits.16
 
 function ∈(a:bits, b:bits)boolean(a ∧ b) = a
 
+function prepareargs(args:seq.symbol,func:symbol) seq.symbol
+{returns empty sequence if args are not all constants. Removes record constants in args.
+ returns empty if Fref appears in args }
+for acc = true, newargs=empty:seq.symbol, @e = args while acc do 
+       if not.isconst.@e /or isFref.@e then next(false,newargs)
+       else if not.isrecordconstant.@e then next(true,newargs+@e)
+       else 
+         let t=removeconstantcode.[@e]
+         let noFref= for noFref = true, sub = t  while noFref do   not.isFref.sub  /for(noFref) 
+           next(noFref,newargs+t)
+/for( if acc then args+func else empty:seq.symbol)
+
 function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symbol, self:symbol)expandresult
  for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym = org do
  let len = length.result
@@ -150,20 +162,16 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symb
    let nopara = nopara.sym
    let dd = getCode(p, sym)
    let options = getoption.dd
-    if first."COMPILETIME" ∈ options
-    ∧ for acc = true, @e = subseq(result, len - nopara + 1, len)
-      while acc do isconst.@e  /and (not.isrecordconstant.@e
-       /or for acc2 = true, sub = removeconstant.[@e] 
-      while acc2 do   not.isFref.sub  /for(acc2))
-    /for(  acc
-    )then
+    let ct=if first."COMPILETIME" ∈ options then prepareargs(subseq(result, len - nopara + 1, len),sym)
+       else empty:seq.symbol
+    if {COMPILE TIME} not.isempty.ct then
      if sym = symbol(moduleref."stdlib words","decodeword", typeword, typeint)then
      let arg1 = result_len
      let a1 = for acc = empty:seq.symbol, @e = tointseq.decodeword.wordname.arg1 do acc + Lit.@e /for(acc)
      let d = Constant2(a1 + Sequence(typeint, length.a1))
      next(flags, result >> 1 + d, nextvar, map)
-     else
-      let newcode = interpretCompileTime(subseq(result, len - nopara + 1, len) + sym)
+     else 
+      let newcode = interpretCompileTime.ct
       let newconst = if length.newcode > 1 then Constant2.newcode else first.newcode
        next(flags, result >> nopara + newconst, nextvar, map)
     else if first."VERYSIMPLE" ∈ options then next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
@@ -222,7 +230,7 @@ function forexpisnoop(forsym:symbol, code:seq.symbol)seq.symbol
  if nopara.forsym = 7 ∧ first.paratypes.forsym = resulttype.forsym ∧ code_(-2) = Littrue
  ∧ isseq.resulttype.last.code
  ∧ wordname.code_(-3) = "+"_1
- ∧ inmodule(code_(-3),"seq")
+ ∧  name.module.code_(-3) /in "seq" 
  ∧ isSequence.code_(-4)
  ∧ nopara.code_(-4) = 1
  ∧ last.code = code_(-8)
@@ -329,6 +337,7 @@ use set.symdef
 
 Function pass2(knownsymbols :program)program 
 subpass2(empty:seq.symdef, emptyprogram, knownsymbols, 0)
+
 
 
 function subpass2(bigin:seq.symdef, corein:program, toprocess:program, count:int)program

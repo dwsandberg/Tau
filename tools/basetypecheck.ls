@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau   ; use baseTypeCheck;  resultCheck("stdlib:core")
+#!/usr/local/bin/tau   ; use baseTypeCheck;  resultCheck("stdlib ")
  
 Module baseTypeCheck
 

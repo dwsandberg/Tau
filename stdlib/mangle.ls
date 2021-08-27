@@ -10,8 +10,8 @@ use otherseq.word
 
 use seq.seq.word
 
-Function printmangled(w:word)seq.word
-let d = codedown.w
+function printmangled(w:seq.char)seq.word
+let d = codedown(w, 1, empty:seq.char,"", empty:seq.seq.word)
 let para = for acc ="", e = d << 2 do
  if acc = ""then printtype.e else acc + "," + printtype.e
 /for(acc)
@@ -23,16 +23,12 @@ function printtype(a:seq.word)seq.word
  for acc ="", e = a do
   if acc = ""then acc + e else [ e] + "." + acc
  /for(acc)
-
-Function mangle(fsig:seq.word, module:seq.word)word
-let i = findindex("("_1, fsig)
-let modname = module
-let parameters = break(","_1,"", subseq(fsig, i + 1, length.fsig - 1))
-encodeword.for acc = empty:seq.char, @e = [ [ merge.subseq(fsig, 1, i - 1)], module] + parameters do
+ 
+ function mangle( name:seq.word,parameters:seq.seq.word, modname:seq.word)word
+encodeword.for acc = empty:seq.char, @e = [ [ merge.name], modname] + parameters do
   if isempty.acc then codeup.@e else acc + char.charmajorseparator + codeup.@e
  /for(acc)
 
-Function codedown(w:word)seq.seq.word codedown(decodeword.w, 1, empty:seq.char,"", empty:seq.seq.word)
 
 function codedown(l:seq.char, i:int, w:seq.char, words:seq.word, result:seq.seq.word)seq.seq.word
  if i > length.l then
@@ -89,7 +85,49 @@ function codeup(l:seq.char, char:char)seq.char
 
 function hexdigit(val:bits, digit:int)char legal_(toint(val >> (4 * digit) ∧ bits.15) + 1)
 
-Function manglednopara(w:word)int
- for acc =-1, @e = decodeword.w do acc + count(char.90, @e)/for(acc)
+ Function mangledname(s:symbol)word 
+    if wordname.s /in "main" /and name.module.s /in "main2" then "main2"_1
+  else   if wordname.s /in "addlibrarywords" /and name.module.s /in "main2" then 
+  "addlibrarywordsZmain2Zliblib"_1
+else if name.module.s /in "internal" then extname.s
+else 
+ let fullname=if isempty.nametype.s then [name.s] else  [name.s]+":"+print.first.nametype.s 
+  let parameters=for  acc= empty:seq.seq.word ,t =paratypes.s do  acc+oldTypeRep.t   /for( acc  )
+mangle(fullname,parameters, 
+if issimple.module.s then [name.module.s] else oldTypeRep.para.module.s+name.module.s
+)
 
-function count(val:char, i:char)int if val = i then 1 else 0 
+Function extname(sym:symbol) word
+let name1="set + - / * ? toint = > >> << ∨ ∧ tan cos sin sqrt"
+let i=findindex(name.sym,name1)
+if i /le length.name1  then  merge.["set ADD SUB DIV MUL ORD toint EQ GT SHR SHL OR AND tan cos sin sqrt"_i ,abstracttypename.last.paratypes.sym] else  name.sym  
+
+
+ use symbol
+ 
+ use mytype
+ 
+ use seq.mytype
+ 
+ ______
+ 
+ use fileio
+ 
+ use process.int
+ 
+ use seq.int
+ 
+ builtin dlsymbol(cstr)int
+
+
+Function funcaddress (sym:symbol) int dlsymbol.tocstr.[ mangledname.sym]
+
+Builtin createthreadI(int, int, int, seq.int, int)process.int
+
+Function internalstacktrace seq.word
+for acc ="", @e = callstack.30 << 2 do acc + " /br" + printmangled.addresstosymbol2.@e /for(acc)
+
+
+builtin callstack(n:int)seq.int
+
+builtin addresstosymbol2(a:int)seq.char

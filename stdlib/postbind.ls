@@ -45,8 +45,7 @@ function verysimpleinline(sd:symdef) boolean
    if islocal.sym then
      next(false,idx+1) 
    else next(isIntLit.sym   /or  isBuiltin.sym   /and name.sym="fld"_1
-   /or   module.sym=modStandard /and name.sym /nin "randomint" 
-   /or    isInternal.sym /and name.sym /in "getseqlength"
+   /or    isInternal.sym /and name.sym /in "getseqlength "
    /or isRealLit.sym 
    ,idx+1) 
   /for(acc)
@@ -101,13 +100,13 @@ function add(b:set.mapsymbolused,sd:symdef) set.mapsymbolused
       
   
 Function postbind( t5:prg6, roots:seq.symbol, theprg:program, 
-templates:program,compiled:set.symbol , typedict1:typedict
+templates:program , typedict1:typedict
 )postbindresult
- let root = symbol(moduleref."W","Wroot", typeint)
+ let root = symbol(moduleref.". W","Wroot", typeint)
    let discard=for acc=0 ,r=roots do let discard2=encode.r 0 /for(0)
   usedsyms(theprg ,0,emptyprogram
  ,templates 
- ,compiled,typedict1 )
+ ,typedict1 )
  
  assert false report 
   for txt="DEBUG",   d=encoding:seq.encodingpair.debug do
@@ -121,10 +120,14 @@ templates:program,compiled:set.symbol , typedict1:typedict
    else txt2 /for(txt2)
    /for(txt)   
 
+use set.word
+
+
+
 
  function usedsyms(source:program ,last:int,result:program
  , templates:program
-  ,compiled:set.symbol,typedict1:typedict ) postbindresult
+ ,typedict1:typedict ) postbindresult
      let aa=  encoding:seq.encodingpair.symbol 
      if length.aa=last   then postbindresult(typedict1,result )
     else 
@@ -140,21 +143,36 @@ templates:program,compiled:set.symbol , typedict1:typedict
             postbindresult(typedict.accZ,map(prg.accZ,symz,lr1)) 
        else
           let newdict2=addtype(typedict.accZ,resulttype.symz)
-          let lr1 = getCode(source, symz)                  
-          let sd=if (not.isempty.lr1 /or symz /in compiled) then 
+          let lr1 = getCode(source, symz)  
+           let sd=if (not.isempty.lr1 /or  iscompiled(lr1,symz)) then 
                  symdef(symz,lr1) 
             else  if istype.symz then
               symdef(symz,deepcopybody(resulttype.symz,newdict2 )) 
-            else  if not.isunbound.symz then sub5(symz,compiled ,templates )
+            else  if not.isunbound.symz then 
+             if   issimple.module.symz  then 
+                    for paras=empty:seq.symbol,i=arithseq(nopara.symz,1,1) do paras+Local.i 
+                    /for (symdef(symz,  paras+symz))
+               else 
+                sub5(symz  ,templates )
             else
                 let k2=      lookupbysig(data.source,symz)
                 if isempty.k2 then 
                   { assert length.print.module.symz > 3 report "XX"+print.symz}
-                   sub5(symz,compiled ,templates )
+                    if   issimple.module.symz  then 
+                    for paras=empty:seq.symbol,i=arithseq(nopara.symz,1,1) do paras+Local.i 
+                    /for (symdef(symz,  paras+symz))
+               else 
+                   sub5(symz,templates )
                   else    
                    assert cardinality.k2 = 1 report
-                      "unbound problem"+print.symz    
-                   sub5(k2_1,compiled ,templates )
+                      "unbound problem"+print.symz 
+                      let sym2=k2_1
+                        if   issimple.module.sym2 /or
+           iscompiled(getCode(source, sym2),sym2)  then
+                    for paras=empty:seq.symbol,i=arithseq(nopara.sym2,1,1) do paras+Local.i 
+                    /for (symdef(sym2,  paras+sym2))
+               else     
+                   sub5(k2_1,templates )
                let  newdict3=addtypes(newdict2, asset(code.sd+sym.sd)) 
                {------------}
               let modpara = para.module.sym.sd
@@ -197,15 +215,15 @@ templates:program,compiled:set.symbol , typedict1:typedict
           if not.isempty.cacheValue then
             next(cache,nextvar,map  , result2+ code.cacheValue_1)
           else 
-            let newValue= test(symx,newdict3,modpara,compiled)
+            let newValue= test(symx,newdict3,modpara)
           next(cache+symdef(symx,newValue),nextvar,map  , result2+ newValue)
    /for( let discard=for acc2=symbolref.EqOp, sym5=result2  do  symbolref.sym5 /for(acc2) 
       postbindresult(newdict3,map(prg.accZ,symz,result2)) )
          /for(usedsyms(source, length.aa,prg.accZ
          ,templates 
-         ,compiled, typedict.accZ  ))  
+         , typedict.accZ  ))  
  
- function test(symx:symbol,newdict3:typedict,modpara:mytype,compiled:set.symbol) seq.symbol 
+ function test(symx:symbol,newdict3:typedict,modpara:mytype) seq.symbol 
   let sym = replaceTsymbol(modpara, symx) 
         if isspecial.sym then
        if isSequence.sym then [Sequence(parameter.basetype(   resulttype.sym,newdict3), nopara.sym)]
@@ -213,12 +231,8 @@ templates:program,compiled:set.symbol , typedict1:typedict
           else [sym] 
     else if isconst.sym ∨ isGlobal.sym ∨ isInternal.sym /or sym=PreFref /or sym= Optionsym then 
        [ sym]
-    else if inModFor.sym then  [ sym ]
-    else 
-       if not.isBuiltin.sym then
-            let t4= findelement(sym,compiled) 
-            [if isempty.t4 then sym else t4_1 ]  
-       else  if name.sym ∈ "buildrecord" then
+    else if inModFor.sym /or not.isBuiltin.sym  then  [ sym ]
+    else  if name.sym ∈ "buildrecord" then
         let t = flatflds(newdict3,para.module.sym)
         [if isempty.t /or typeT ∈ t then sym  else  Record.t]
     else  if name.sym ∈  "bitcast"  then
@@ -250,7 +264,7 @@ else if name.sym ∈ "packed"then
   let paras = for acc = empty:seq.mytype, p = paratypes.sym do
   acc + if"$base"_1 ∈ print.p then p else  basetype( p,newdict3)
  /for(acc)
-  symbol(moduleref."builtin","forexp", paras, last.paras)
+  symbol(moduleref.". builtin","forexp", paras, last.paras)
       else  if name.sym = "createthreadY"_1 then
         let paras = for paras = empty:seq.mytype, p = paratypes.sym do paras + coretype(p, newdict3)/for(paras)
        let rt = processof.coretype( parameter.resulttype.sym , newdict3)
@@ -271,12 +285,8 @@ else if name.sym ∈ "packed"then
      sym
      ] 
          
-         function sub5(sym2:symbol,compiled:set.symbol,templates:program) symdef   
-              if   issimple.module.sym2 /or sym2 /in compiled then 
-                    for paras=empty:seq.symbol,i=arithseq(nopara.sym2,1,1) do paras+Local.i 
-                    /for (symdef(sym2,  paras+sym2))
-               else  
-                 let gx=findabstract2(templates,sym2)
+         function sub5(sym2:symbol, templates:program) symdef   
+                 let gx=findabstract(templates,sym2)
                    assert length.gx = 1 report"Cannot find template for X"  +
                     print.length.gx+ print.sym2  
                let newcode=   for newcode=empty:seq.symbol,sym4 = code.sd.gx_1 do  
@@ -306,7 +316,7 @@ else if name.sym ∈ "packed"then
  typ =  typeint /or typ=typereal   /or typ=typeptr /or typ=typeboolean /or isseq.typ /or isencoding.typ
 
   function encodenocode(typ:mytype,varno:int)seq.symbol
-  let gl = symbol4(moduleref."$global","global"_1, typ, empty:seq.mytype, seqof.typeint)
+  let gl = symbol4(moduleref.". $global","global"_1, typ, empty:seq.mytype, seqof.typeint)
   let encodenosym = symbol(modTausupport,"encodingno", seqof.typeword, typeint)
   if typ = typeref."typename tausupport stdlib "then [  Lit.2 ]
   else if typ = seqof.typechar then  [   Lit.1 ]  
@@ -343,8 +353,8 @@ use mytype
    let cat = symbol(tomodref.type,"+", [ type, parameter.type], type)
    let resulttype = basetype
    let elementtype = parameter.basetype
-   let element = symbol(moduleref("$for", elementtype),"element", empty:seq.mytype, elementtype)
-   let acc = symbol(moduleref("$for", typeptr),"acc", empty:seq.mytype, typeptr)
+   let element = symbol(moduleref(". $for", elementtype),"element", empty:seq.mytype, elementtype)
+   let acc = symbol(moduleref(". $for", typeptr),"acc", empty:seq.mytype, typeptr)
    [Sequence(elementtype,0)]
     + [ Local.1, acc, element, acc, element, deepcopySym( parameter.type), cat, Littrue, acc, symbol(builtinmod( typeint),"forexp", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
     ]

@@ -238,7 +238,7 @@ fprintf(stderr,"initlib5 1\n" );
 
 BT (* addlibrarywords)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT,  "addlibrarywordsZmain2Zliblib");
 if (!addlibrarywords){ fprintf(stderr,"initlib5 1a\n" ); 
-     BT (* addlibrarywords)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT,  "XaddlibrarywordsX");
+     BT (* addlibrarywords)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT,  "addlibrarywords");
 fprintf(stderr,"initlib5 1b\n" ); 
 if (!addlibrarywords){
     fprintf(stderr,"initlib5 1c\n" ); 
@@ -607,3 +607,12 @@ double cos2(processinfo PD, double arg)  { return cos(arg); }
 double tan2(processinfo PD, double arg)  { return tan(arg); }
 
 double sqrt2(processinfo PD, double arg)  { return sqrt(arg); }
+
+double sinreal(processinfo PD, double arg )   { return sin(arg); }
+
+double cosreal(processinfo PD, double arg)  { return cos(arg); }
+
+double tanreal(processinfo PD, double arg)  { return tan(arg); }
+
+double sqrtreal(processinfo PD, double arg)  { return sqrt(arg); }
+
