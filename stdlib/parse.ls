@@ -74,7 +74,7 @@ function errormessage(message:seq.word, common:commoninfo, place:int)seq.word
 
 function addparameters(b:bindinfo, common:commoninfo,place:int)bindinfo
  let flds = for flds = dict.b, idx=1, paratype = types.b do 
- assert isempty.lookupbysig(flds, [ (text.b)_idx]) ∨ (text.b)_idx = ":"_1 report errormessage("duplciate symbol:" + (text.b)_idx, common, place)
+ assert isempty.lookupbysig(flds,  [ (text.b)_idx] ) ∨ (text.b)_idx = ":"_1 report errormessage("duplciate symbol:" + (text.b)_idx, common, place)
  next(flds + Local((text.b)_idx, paratype, idx), idx + 1)
   /for(flds)
   bindinfo(flds , empty:seq.symbol, if mode.common =first."gather" then types.b else empty:seq.mytype ,"")
@@ -312,11 +312,14 @@ let seqtype = last.types.a
   /for(acc)
   bindinfo(dict1 ∪ asset(accumulators + elesym), code.a + accumulators + elesym, types.a, elename)
 
+function lookupbysig(dict:symboldict, name:seq.word)set.symbol lookupbysig(dict, symbol(internalmod, name, typeint))
+
+
 function forbody(dict:symboldict, vars:bindinfo, forbody:bindinfo, exitexp:bindinfo, endexp:bindinfo, input:commoninfo, place:int)bindinfo
 let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = typeboolean then
  { while type is OK. now check body type }
  if length.types.vars > 2 then
-  if resulttype.lookupbysig(dict.vars,"for")_1 = (types.forbody)_1 then""
+  if resulttype.lookupbysig(dict.vars, "for"  )_1 = (types.forbody)_1 then""
   else"incorrect body type:" + print.(types.forbody)_1
  else if first.types.vars = first.types.forbody then""
  else

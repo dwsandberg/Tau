@@ -47,7 +47,7 @@ use encoding.symbol
          for arcs=outer,codesym =  code.p    do 
            if isspecial.codesym /or not.isabstract.module.codesym /or sym  = codesym 
             /or   isBuiltin.codesym  then arcs
-             else  if name.module.codesym /in "$for" then 
+             else  if inModFor.codesym   then 
             if name.codesym /in "name for" then arcs
             else
                 arcs+arc(sym,symbol(moduleref("stdlib seq",resulttype.codesym),"_",seqof.resulttype.codesym
@@ -92,7 +92,7 @@ seq.symdef
           let partdict=formsymboldict(allmods,m,requireUnbound,mode)   
        for  acc=empty:seq.symdef ,      p=text.m do
          if first.text.p /in "Builtin builtin"  then  
-          if issimple.module.sym.p then  acc+ symdef(sym.p, [  Words."XBUILTIN", Optionsym]) 
+          if issimple.module.sym.p then   acc+ symdef(sym.p,  empty:seq.symbol)  
           else
                let sym=sym.p
             acc+    symdef(sym.p

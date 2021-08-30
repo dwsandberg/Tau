@@ -1,9 +1,9 @@
 
 
 Library 
-stdlib UTF8   bits codegennew codetemplates encoding fileio format   groupparagraphs intdict 
+stdlib UTF8   bits codegennew codetemplates encoding fileio format   groupparagraphs  
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
-pass2  persistant postbind   process real seq set stack  symbol textio timestamp tree worddict words xxhash
+pass2  persistant postbind   process real seq set stack  symbol textio timestamp tree   words xxhash
  sparseseq standard maindict  outstream bitstream tausupport
  mergeblocks program   
    tests/test11 tests/checking tests/point tests/testencoding  
@@ -28,9 +28,9 @@ pass2  persistant postbind   process real seq set stack  symbol textio timestamp
  typedict passsymbol passparse   
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format abstractBuiltin
-graph groupparagraphs intdict   ioseq ipair libdesc  
+graph groupparagraphs   hashset   ioseq ipair libdesc  
 main2 maindict mangle mytype pretty otherseq    process 
-real seq set stack   symbol textio timestamp tree worddict words xxhash 
+real seq set stack   symbol textio timestamp tree  words xxhash 
   sparseseq   standard testall
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 

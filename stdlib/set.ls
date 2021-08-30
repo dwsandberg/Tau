@@ -29,7 +29,14 @@ Function +(s:set.T, val:T)set.T set.setinsert(toseq.s, val)
 
 Function replace(s:set.T, val:T)set.T set.setreplaceorinsert(toseq.s, val)
 
+Function  /cup (val:T,s:set.T) set.T set.setreplaceorinsert(toseq.s, val)
+
 Function_(s:set.T, i:int)T(toseq.s)_i
+
+Function lookup(val:T, s:set.T)set.T
+let i = binarysearch(toseq.s, val)
+if i > 0 then set.[(toseq.s)_i]else empty:set.T
+
 
 Function findelement(val:T, s:set.T)set.T
 let i = binarysearch(toseq.s, val)

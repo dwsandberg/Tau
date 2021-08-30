@@ -59,7 +59,26 @@ function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
      else if isrecordconstant.@e  then constantcode.@e    
      else getCode(p, @e)   
   /for(asset.acc)
+   {for  done=processed,new=empty:set.symbol ,sym=toseq.q do
+     if sym /in processed then next(done,new)  
+     else next(done+sym,new+sym)
+    /for( uses(p,done,new))
+    }
   uses(p, processed ∪ toprocess, q - processed)
+  
+/function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
+   for   done=processed, new=empty:set.symbol, sym=toseq.toprocess do
+      let k=asset.if isabstract.module.sym then empty:seq.symbol
+      else if isFref.sym then  [basesym.sym]
+      else if isrecordconstant.sym  then constantcode.sym    
+     else getCode(p, sym) 
+     next( done /cup k,for  acc=new,      sym1=toseq.k do
+        if isconstantorspecial.sym1 then acc
+        else if sym1 /in done then acc
+        else acc+sym1
+        /for(acc))
+    /for( if isempty.new then done else uses(p,done,new))
+
   
 type steponeresult is match5map:seq.match5,defines:seq.symbol 
 
@@ -71,26 +90,20 @@ Function stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boo
   ) steponeresult 
   let uses=uses(theprg,roots)
  for acc = empty:seq.symbol,  ele = toseq.uses do
- if isconstantorspecial.ele ∨ isabstract.module.ele then acc
+ if isconstantorspecial.ele ∨ isabstract.module.ele /or isBuiltin.ele /or isGlobal.ele 
+ /or inModFor.ele then acc
  else   let d = getCode(theprg, ele)
    if iscompiled(d,ele) then acc 
   else 
- let addele=   if isempty.d then 
-       { assert xx /or name.ele /in "packedindex callidx processisaborted GEP
-        addencoding idxseq getinstance option getfile getbytefile getbitfile createlib2 createfile2
-        randomint createthreadI toseqX  abort addresstosymbol2
-        allocatespace callstack initialdict dlsymbol
-        sin cos tan arcsin arccos sqrt " report "PPP"+print.ele}
-        false
- else 
-   if"BUILTIN"_1 ∉ getoption.d then true
- else   isInternal.ele /and  
- { if builtin not implement with external function. Must define an internal one }
-extname.ele /in " GEP, DIVint, GTint, MULreal, SUBreal, not, getseqtype, getseqlength
-, ORDreal, casttoreal, setint, intpart, ADDreal, SUBint, EQboolean, SHLint, setptr
-, bitcast, DIVreal, ORDint, tocstr, toreal, tointbit, ADDint, EQint, tointbyte
-, SHRint, ANDbits, representation, MULint, xor, ORbits"
-   if addele then 
+ let addele=  
+    if   isInternal.ele then true /and 
+extname.ele /in "   DIVint GTint MULreal SUBreal not getseqtype getseqlength
+ ORDreal casttoreal setint intpart ADDreal SUBint EQboolean SHLint setptr
+ bitcast DIVreal ORDint tocstr toreal tointbit ADDint EQint tointbyte
+ SHRint ANDbits representation MULint xor ORbits"
+ else
+        not.isempty.d  
+if addele then 
      let discard= funcdec( alltypes, ele) 
     acc+ele   
    else acc

@@ -46,7 +46,6 @@ use seq.seq.int
 
 use seq.seq.symbol
 
-use intdict.seq.symbol
 
 use seq.seq.word
 
@@ -54,10 +53,13 @@ use set.seq.word
 
 use seq.seq.seq.symbol
 
+use localmap2
+
+
 function firstopt(p:program, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
-let pdict = for pmap = empty:intdict.seq.symbol, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara.s 
-  do next(add(pmap, parano, [ Local.parano]), parano + 1)
-  /for(pmap)
+let pdict = for pmap =  empty:set.localmap2  , parano =   arithseq(nopara.s,1, 1)  do 
+       pmap+localmap2(parano,[ Local.parano])
+     /for(pmap)
 let a = xxx(p, removeoptions.code, s, pdict)
 let t = if first then a
 else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
@@ -79,7 +81,7 @@ function isverysimple(nopara:int, code:seq.symbol)boolean
   for isverysimple = length.code ≥ nopara, idx = 1, sym = code while isverysimple do next(if idx ≤ nopara then sym = Local.idx
   else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym, idx + 1)/for(isverysimple)
 
-function xxx(p:program, code:seq.symbol, s:symbol, pdict:intdict.seq.symbol)expandresult
+function xxx(p:program, code:seq.symbol, s:symbol, pdict:set.localmap2)expandresult
 let a = scancode(p, code, nopara.s + 1, pdict, s)
 let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1)else code.a
  if length.code = length.new ∧ length.code > 20 ∨ new = code then
@@ -110,7 +112,7 @@ for acc = true, newargs=empty:seq.symbol, @e = args while acc do
            next(noFref,newargs+t)
 /for( if acc then args+func else empty:seq.symbol)
 
-function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symbol, self:symbol)expandresult
+function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:set.localmap2, self:symbol)expandresult
  for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym = org do
  let len = length.result
   if not.isempty.result ∧ last.result = PreFref then
@@ -120,8 +122,10 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symb
    if isdefine.sym then
    let thelocal = value.sym
     if len > 0 ∧ (isconst.result_len ∨ islocal.result_len)then
-     next(flags, subseq(result, 1, length.result - 1), nextvar, replace(map, thelocal, [ result_len]))
-    else next(flags, result + Define.nextvar, nextvar + 1, replace(map, thelocal, [ Local.nextvar]))
+     next(flags, subseq(result, 1, length.result - 1), nextvar, 
+      localmap2(thelocal, [ result_len]) /cup map)
+    else next(flags, result + Define.nextvar, nextvar + 1, 
+    localmap2(thelocal, [ Local.nextvar]) /cup map )
    else if isbr.sym then
    let hasnot = last.result = NotOp
    let sym1 = if hasnot then Br2(brf.sym, brt.sym)else sym
@@ -132,7 +136,9 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symb
    else if sym = Exit ∧ isblock.last.result then next(flags ∨ Hasmerge, result + sym, nextvar, map)
    else if isloopblock.sym then
    let nopara = nopara.sym
-   let addlooplocals = for pmap = map, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara do next(replace(pmap,firstvar.sym + parano - 1, [ Local(nextvar + parano - 1)]), parano + 1)/for(pmap)
+   let addlooplocals = for pmap = map, parano = 1, e = constantseq(10000, 1)while parano ≤ nopara do 
+   next(localmap2(firstvar.sym + parano - 1, [ Local(nextvar + parano - 1)]) /cup pmap, parano + 1)
+   /for(pmap)
    next(flags, result + Loopblock(paratypes.sym, nextvar, resulttype.sym), nextvar + nopara, addlooplocals)
    else if isRecord.sym ∨ isSequence.sym then
    let nopara = nopara.sym
@@ -141,8 +147,8 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symb
    if constargs then next(flags, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
     else next(flags, result + sym, nextvar, map)
    else if islocal.sym then
-   let t = lookup(map, value.sym)
-   next(flags, result + if isempty.t then [ sym]else t_1, nextvar, map)
+   let t = lookup( value.sym,map)
+   next(flags, result + if isempty.t then [ sym]else value.t_1, nextvar, map)
    else next(flags, result + sym, nextvar, map)
   else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
   else if length.result > 2 ∧ isconst.last.result
@@ -193,8 +199,8 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:intdict.seq.symb
  /for(expandresult(nextvar, result, flags))
 
 function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:program, self:symbol)expandresult
- for pmap = empty:intdict.seq.symbol, paracode = empty:seq.symbol, nextvar = nextvarin, parano = 1, lastidx = t_1, idx = t << 1 do
-  next(add(pmap, parano, [ Local.nextvar]), paracode + subseq(result, lastidx, idx - 1) + Define.nextvar, nextvar + 1, parano + 1, idx)
+ for pmap = empty:set.localmap2, paracode = empty:seq.symbol, nextvar = nextvarin, parano = 1, lastidx = t_1, idx = t << 1 do
+  next(pmap+localmap2( parano, [ Local.nextvar]) , paracode + subseq(result, lastidx, idx - 1) + Define.nextvar, nextvar + 1, parano + 1, idx)
  /for(let r = scancode(p, code, nextvar, pmap, self)
  expandresult(nextvar.r, paracode + code.r, flags.r))
 
@@ -347,21 +353,21 @@ function subpass2(bigin:seq.symdef, corein:program, toprocess:program, count:int
  let fullcode = code.pele
  let options = getoption.fullcode
  let code = removeoptions.fullcode
-  if isempty.code ∨ "BUILTIN"_1 ∈ options ∨ "VERYSIMPLE"_1 ∈ options then
-   next(big, small, map(core, s, fullcode))
+  if isempty.code  ∨ "VERYSIMPLE"_1 ∈ options then
+   next(big, small,   pele /cup core)
   else if"COMPILETIME"_1 ∈ options then
   let code4 = firstopt(core, s, fullcode, options, true)
-  next(big, small, map(core, s, code4))
+  next(big, small,   symdef(s, code4) /cup core)
   else if length.code < 30 then
   let t = firstopt(core, s, fullcode, options, true)
-  if"INLINE"_1 ∈ getoption.t then next(big, small, map(core, s, t))
-   else next(big, map(small, s, t), core)
+  if"INLINE"_1 ∈ getoption.t then next(big, small, symdef(s,t) /cup  core )
+   else next(big, symdef( s, t) /cup small, core)
   else next(big + pele, small, core)
  /for(if length.tosymdefs.corein = length.tosymdefs.core then
   for acc = core, prgele = tosymdefs.core + tosymdefs.small + big do
   let code3 = code.prgele
   let sym3 = sym.prgele
-   if isempty.code3 then map(acc, sym3, code3)else map(acc, sym3, firstopt(acc, sym3, code3, getoption.code3, false))
+   if isempty.code3 then   prgele /cup acc else symdef( sym3, firstopt(acc, sym3, code3, getoption.code3, false) ) /cup acc
   /for(acc)
  else subpass2(big, core, small, count + 1)/if)
 

@@ -274,9 +274,7 @@ let discard3 = [ addtemplate(symbol(internalmod,"packedindex", seqof.typebit, ty
 + CAST(r.3, r.2, double, bitcast))
 ]
 let const = for acc = empty:seq.symbol, e = toseq(uses - asset.[ Optionsym])do
-   {assert print.e /ne "FREF taublockseq.real:_(blockseq.real, int)real" 
-   report "JKLSDF"+if isconst.e then "T" else "F"  }
- if isconst.e then
+  if isconst.e then
   if isrecordconstant.e then acc + e
   else { let discard = buildrecordconst(e, alltypes)acc else }
   let discard = buildconst(e, alltypes)
@@ -287,10 +285,7 @@ let const = for acc = empty:seq.symbol, e = toseq(uses - asset.[ Optionsym])do
 let discard4 = processconst.const
  empty:seq.match5
  
-  for acc=false , k=toseq.uses while not.acc do 
-    print.k="taublockseq.real:_(blockseq.real, int)real"
-    /for(acc) 
-report "PPPP"+print.toseq.roots.cinfo
+
 
 
 Function symboltableentry(name:seq.word, type:llvmtype)slot

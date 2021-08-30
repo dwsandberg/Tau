@@ -24,11 +24,27 @@ use set.symdef
 
 use seq.symdef
 
- use intdict.mytype
  
  use set.symbol
  
  use mytype
+ 
+  type typemap is key:int,value:mytype
+ 
+   
+ 
+
+    
+function lookup(key:int,a:set.typemap) set.typemap
+lookup( typemap(key,typeint),a) 
+
+Function ?(a:typemap,b:typemap) ordering key.a ? key.b 
+
+use set.typemap
+ 
+use seq.typemap
+
+ 
  
 Function resultCheck( library:seq.word) seq.word 
 let p = process.glue2.library
@@ -58,8 +74,8 @@ Function basetypecheck(r2:seq.symdef, typedict:typedict)seq.word
  /for(if count = 0 then"Passed Base Type Check"
  else"Base Type Check Failed" + print.count + "Times" + acc /if)
  
- function addlocals(localtypes:intdict.mytype, para:seq.mytype, localno:int, i:int)intdict.mytype
- if i > 0 then addlocals(replace(localtypes, localno, para_i), para, localno - 1, i - 1)else localtypes
+ function addlocals(localtypes:set.typemap, para:seq.mytype, localno:int, i:int)set.typemap
+ if i > 0 then addlocals(  typemap( localno, para_i) /cup localtypes, para, localno - 1, i - 1)else localtypes
 
 function checkkind(s2:symdef, typedict:typedict)seq.word
  if isconst.sym.s2 ∨ name.sym.s2 ∈ "type]" ∨ isabstract.module.sym.s2 then
@@ -69,8 +85,8 @@ function checkkind(s2:symdef, typedict:typedict)seq.word
    if length.codeonly = 0 then""
    else
     { assert last.codeonly ≠ Optionsym report"more than one option symbol"}
-    let localdict = for acc = empty:intdict.mytype, @e = arithseq(nopara.sym.s2, 1, 1)do
-     add(acc, @e, coretype((paratypes.sym.s2)_@e, typedict))
+    let localdict = for acc = empty:set.typemap, @e = arithseq(nopara.sym.s2, 1, 1)do
+       typemap(@e, coretype((paratypes.sym.s2)_@e, typedict)) /cup acc 
     /for(acc)
     let returntype = coretype(resulttype.sym.s2, typedict)
     for stk = empty:stack.mytype, localtypes = localdict, skip = false, s = codeonly do
@@ -80,9 +96,9 @@ function checkkind(s2:symdef, typedict:typedict)seq.word
        { assert not.isempty.module.s report"Illformed module on symbol"}
        if isdefine.s then
         assert not.isempty.stk report"Ill formed Define"
-        let z = replace(localtypes, value.s, top.stk)
+        let z = typemap(  value.s, top.stk) /cup localtypes
         { assert false report"BB"+ print.s + print.value.s + for acc ="", i = keys.z do acc + toword.i /for(acc)+ for acc ="", i = data.z do acc + print.i /for(acc)}
-         next(pop.stk, replace(localtypes, value.s, top.stk), false)
+         next(pop.stk, typemap( value.s, top.stk) /cup localtypes, false)
        else if iswords.s then next(push(stk, typeptr), localtypes, false)
        else if isRealLit.s then next(push(stk, typereal), localtypes, false)
        else if isword.s ∨  isIntLit.s ∨ isFref.s then
@@ -113,9 +129,9 @@ function checkkind(s2:symdef, typedict:typedict)seq.word
         next(pop.stk, localtypes, false)
        else if islocal.s then
          { assert not.isempty.name2.s report"ill formed local"}
-         let localtype = lookup(localtypes, value.s)
+         let localtype = lookup(value.s,localtypes )
          assert not.isempty.localtype report"local not defined" + print.s
-           next(push(stk, localtype_1), localtypes, false)
+           next(push(stk, value.localtype_1), localtypes, false)
         else if name.s ∈ "packed blockit" ∧ nopara.s = 1 then next(stk, localtypes, false)
         else
          let parakinds = for acc = empty:seq.mytype, @e = paratypes.s do acc + coretype(@e, typedict)/for(acc)

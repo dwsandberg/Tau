@@ -60,6 +60,13 @@ Function interpret(alltypes:typedict, code:seq.symbol)seq.word
 
 let p = process.interpret(code, 1, empty:stack.int)if aborted.p then message.p else aswords.bitcast.result.p
 
+Function buildargcodeI(  sym:symbol)int
+ { needed because the call interface implementation for reals is different than other types is some implementations }
+ for acc = 1, typ = paratypes.sym + resulttype.sym do
+  acc * 2
+  + if  {getbasetype(alltypes, typ)} typ  = typereal then 1 else 0
+ /for(acc)
+
 function interpret(code:seq.symbol, i:int, stk:stack.int)int
  if i > length.code then top.stk
  else

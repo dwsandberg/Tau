@@ -17,44 +17,40 @@ use seq.mytype
 
 use seq.symdef
 
-
 use set.symbol
-
 
 use mytype
 
 use typedict
 
-type program is data:set.symdef
+type program is dataX:set.symdef
 
-Export data(a:program) set.symdef 
+Export   dataX(a:program) set.symdef 
 
 Export program(set.symdef) program
 
 Export type:program
 
 Function /cup(a:program,b:program) program 
-  program (data.a /cup data.b )
+  program (dataX.a /cup dataX.b )
     
 Function getCode(theprg:program,s:symbol) seq.symbol 
- let f=findelement(symdef(s,empty:seq.symbol),data.theprg)
+ let f=findelement(symdef(s,empty:seq.symbol),dataX.theprg)
  if isempty.f then empty:seq.symbol else code.f_1
  
 Function isdefined(theprg:program,s:symbol) boolean
- not.isempty.findelement(symdef(s,empty:seq.symbol),data.theprg)
+ not.isempty.findelement(symdef(s,empty:seq.symbol),dataX.theprg)
   
 
-Function print(p:program, i:symbol)seq.word  
+/Function print(p:program, i:symbol)seq.word  
   print.i + for acc ="", @e = getCode(p,i) do acc + print.@e /for(acc)
 
-Function  tosymdefs(p:program)seq.symdef   toseq.data.p
+Function  tosymdefs(p:program)seq.symdef   toseq.dataX.p
 
 Function emptyprogram program program.empty:set.symdef
 
-Function map(p:program, s:symbol, code:seq.symbol)program 
-program.replace(data.p,symdef(s,code)  )    
-
-
+Function /cup ( a:symdef,p:program )  program
+  program( a /cup dataX.p)
 
 
 
@@ -66,12 +62,7 @@ Export coretype(mytype, typedict) mytype
  
 
  
-Function buildargcodeI(  sym:symbol)int
- { needed because the call interface implementation for reals is different than other types is some implementations }
- for acc = 1, typ = paratypes.sym + resulttype.sym do
-  acc * 2
-  + if  {getbasetype(alltypes, typ)} typ  = typereal then 1 else 0
- /for(acc)  
+  
 
  ----
  
@@ -173,15 +164,13 @@ Function  compileinfo(prg:seq.symdef, alltypes:typedict ,mods:seq.libraryModule
 let roots2=for acc=empty:seq.symbolref , sym=toseq.roots do acc+symbolref.sym /for(acc)
 compileinfo(alltypes, cvtL3(program.asset.prg,1,empty:seq.seq.symbolref),src,symbolrefdecode,mods,roots2)
 
-compileinfo(seq.symdef, typedict, seq.libraryModule, seq.seq.word, set.symbol)
-
  function cvtL3(prg:program,i:int, in: seq.seq.symbolref) seq.seq.symbolref
  let x=encoding:seq.encodingpair.symbol
  if i > length.x then in 
  else 
     cvtL3(prg,length.x+1, 
        for acc=in , p=subseq(x,i,length.x)   do
-         let f=findelement(symdef(data.p,empty:seq.symbol),data.prg)
+         let f=findelement(symdef(data.p,empty:seq.symbol),dataX.prg)
          if isempty.f /or isempty.code.f_1 then  acc   
          else 
                acc+for acc2 = [ symbolref.data.p,symbolref.Lit.paragraphno.f_1], sym = code.f_1  do 
@@ -201,13 +190,13 @@ use set.word
   
 Function addoption(p:program, s:symbol, option:seq.word)program
 { must maintain library of symbol in p}
- let f=findelement(symdef(s,empty:seq.symbol),data.p)
-  let code= if isempty.f then empty:seq.symbol else code.f_1
-let current = asset.getoption.code
+ let f=findelement(symdef(s,empty:seq.symbol),dataX.p)
+ let code= if isempty.f then empty:seq.symbol else code.f_1
+ let current = asset.getoption.code
  if current = asset.option then p
  else
   let newcode = removeoptions.code + Words.toseq(current ∪ asset.option) + Optionsym
-   map(p, if isempty.f then s else sym.f_1, newcode)
+   symdef( if isempty.f then s else sym.f_1, newcode) /cup p 
    
 Function addoption(code:seq.symbol,option:seq.word) seq.symbol
   let current = asset.getoption.code

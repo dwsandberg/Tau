@@ -497,7 +497,7 @@ Function isconstantorspecial(s:symbol)boolean isconst.s ∨ isspecial.s
 Function Local(i:int)symbol Local(toword.i, typeint, i)
 
 Function Optionsym symbol 
- symbol(internalmod,"option",typeint,seqof.typeword,type?)
+ symbol(internalmod,"option",typeint,seqof.typeword,typeint)
  
  ----------------
 
@@ -626,7 +626,7 @@ Function isGlobal(sym:symbol) boolean name.module.sym = "$global"_1
 Function iscompiled(code:seq.symbol,sym:symbol) boolean not.isempty.externalname(code)
 
 Function externalname(code:seq.symbol) seq.word
-toseq.(asset.getoption.code- asset." COMPILETIME NOINLINE INLINE PROFILE STATE  BUILTIN VERYSIMPLE")
+toseq.(asset.getoption.code- asset." COMPILETIME NOINLINE INLINE PROFILE STATE   VERYSIMPLE")
 
 Export typebase(i:int)mytype
 
@@ -649,7 +649,7 @@ if rt=typereal then symbol(modTausupport,"deepcopy",typereal,typereal)
 Function setSym(typ:mytype)symbol
 let fldtype = if isseq.typ then typeptr else if isencoding.typ then typeint else typ
  symbol(if fldtype = typeint ∨ fldtype = typeboolean ∨ fldtype = typeptr ∨ fldtype = typereal then
-  modTausupport
+  {modTausupport} internalmod
  else builtinmod.fldtype,"set", typeptr, fldtype, typeptr)
 
 Function Getfld(fldtype:mytype)symbol 
@@ -714,10 +714,8 @@ type commoninfo is input:seq.word, modname:modref, lib:word, types:set.mytype, m
 
 Function lookupbysig(dict:symboldict, sym:symbol)set.symbol findelement2(asset.dict, sym)
 
-Function lookupbysig(dict:set.symbol, sym:symbol)set.symbol lookupbysig( dict, sym)
 
 
-Function lookupbysig(dict:symboldict, name:seq.word)set.symbol findelement2(asset.dict, symbol(internalmod, name, typeint))
 
 type symboldict is asset:set.symbol,requiresX:set.symdef ,commonX:seq.commoninfo
 

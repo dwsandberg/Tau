@@ -381,7 +381,7 @@ use set.word
 Function processOptions(prg:program,mods:seq.passsymbols,option:seq.word) program
   for acc=prg ,  m=mods     do   
    if name.module.m /in option then
-    for  acc2=acc  , sym=toseq.exports.m do 
+        for  acc2=acc  , sym=toseq.exports.m do 
           addoption(acc2,sym,[name.module.m]) 
        /for(acc2)
    else acc 

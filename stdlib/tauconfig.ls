@@ -1,14 +1,14 @@
 
 Library tauconfig 
-stdlib UTF8   bits codegennew codetemplates encoding fileio format  groupparagraphs intdict 
+stdlib UTF8   bits codegennew codetemplates encoding fileio format  groupparagraphs  
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
-pass1 pass2 breakblocks persistant postbind   process real seq set stack   symbol textio timestamp tree worddict words xxhash
+pass1 pass2 breakblocks persistant postbind   process real seq set stack   symbol textio timestamp tree   words xxhash
  sparseseq standard maindict outstream bitstream tausupportNostacktrace 
 uses
 exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format 
- groupparagraphs intdict   ioseq libdesc  
+ groupparagraphs    ioseq libdesc  localmap2
 main2   mangle mytype pretty otherseq  prims process 
-real seq set stack   symbol textio timestamp tree worddict words xxhash 
+real seq set stack   symbol textio timestamp tree   words xxhash 
      standard 
 
 * Removed maindict 

@@ -98,9 +98,9 @@ if issimple.module.s then [name.module.s] else oldTypeRep.para.module.s+name.mod
 )
 
 Function extname(sym:symbol) word
-let name1="set + - / * ? toint = > >> << ∨ ∧ tan cos sin sqrt"
+let name1="set + - / * ? toint = > >> << ∨ ∧ tan cos sin sqrt GEP"
 let i=findindex(name.sym,name1)
-if i /le length.name1  then  merge.["set ADD SUB DIV MUL ORD toint EQ GT SHR SHL OR AND tan cos sin sqrt"_i ,abstracttypename.last.paratypes.sym] else  name.sym  
+if i /le length.name1  then  merge.["set ADD SUB DIV MUL ORD toint EQ GT SHR SHL OR AND tan cos sin sqrt GEP"_i ,abstracttypename.last.paratypes.sym] else  name.sym  
 
 
  use symbol

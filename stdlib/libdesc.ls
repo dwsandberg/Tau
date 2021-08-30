@@ -91,7 +91,7 @@ let profilearcs=for acc=empty:set.seq.symbol , sd=tosymdefs.prg do
            if  "PROFILE"_1 /nin getoption.code.sd then acc
            else 
         for txt=acc ,sym =toseq.asset.code.sd  do 
-          if isconstantorspecial.sym /or name.module.sym /in "standard real bits internal "then txt 
+          if isconstantorspecial.sym /or isInternal.sym then txt 
           else txt+ [sym.sd, sym ] 
         /for(txt)
         /for(acc)
@@ -131,7 +131,7 @@ let code = removeoptions.code1
  else empty:seq.symbol
  let optionsx = getoption.code1
   { assert isempty.optionsx ∨ optionsx ∈ ["STATE","INLINE","VERYSIMPLE INLINE","STATE INLINE","BUILTIN","BUILTIN COMPILETIME","PROFILE","STATE BUILTIN","COMPILETIME STATE","COMPILETIME","PROFILE STATE","INLINE STATE","NOINLINE STATE"]report"X"+ optionsx z }
-  if"BUILTIN"_1 ∈ optionsx ∨ "COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then
+  if "COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then
    z + Words.optionsx + Optionsym
   else z
   
