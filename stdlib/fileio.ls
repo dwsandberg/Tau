@@ -47,7 +47,6 @@ Export type:fileresultbyte
 
 Export type:fileresultbit
 
-
 builtin tocstr(seq.bits)cstr
 
 Builtin createfile2(byteLength:int, data:seq.bits, cstr)int

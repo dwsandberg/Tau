@@ -4,7 +4,7 @@ use standard
 
 use graph.T
 
-use ipair.T
+/use ipair.T
 
 use otherseq.T
 
@@ -14,7 +14,7 @@ use otherseq.arc.T
 
 use set.arc.T
 
-use otherseq.ipair.T
+/use otherseq.ipair.T
 
 type arc is tail:T, head:T
 
@@ -150,7 +150,7 @@ Function breathfirst(g:graph.T)seq.T { will not return nodes involved in a cycle
 
 ____________________
 
-Function nodesbyoutdegree(g:graph.T)seq.T
+/Function nodesbyoutdegree(g:graph.T)seq.T
  for acc = empty:seq.T, @e = sort.for acc = empty:seq.ipair.T, n = toseq.nodes.g do
   acc + ipair(outdegree(g, n), n)
  /for(acc)do

@@ -41,10 +41,6 @@ Function getCode(theprg:program,s:symbol) seq.symbol
 Function isdefined(theprg:program,s:symbol) boolean
  not.isempty.findelement(symdef(s,empty:seq.symbol),dataX.theprg)
   
-
-/Function print(p:program, i:symbol)seq.word  
-  print.i + for acc ="", @e = getCode(p,i) do acc + print.@e /for(acc)
-
 Function  tosymdefs(p:program)seq.symdef   toseq.dataX.p
 
 Function emptyprogram program program.empty:set.symdef
@@ -83,7 +79,6 @@ use seq.seq.word
 use seq.libraryModule
 
 
- type symbolref is toint:int
 
 Export toint(symbolref)int
 
@@ -103,8 +98,7 @@ Function symbolrefdecode seq.symbol
         /for(acc)
 
 
-
-type libraryModule is modname:modref, exports:seq.symbolref,types:seq.seq.mytype
+use libraryModule
 
 Export libraryModule( modname:modref, exports:seq.symbolref,types:seq.seq.mytype)libraryModule
 
@@ -204,6 +198,3 @@ Function addoption(code:seq.symbol,option:seq.word) seq.symbol
   if cardinality.new=cardinality.current then code
   else  removeoptions.code + Words.toseq(new) + Optionsym
    
-
-
-

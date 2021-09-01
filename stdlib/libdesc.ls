@@ -35,6 +35,8 @@ use seq.seq.word
 
 use seq.encodingpair.seq.char
 
+use libraryModule
+
 function print(l:seq.mytype) seq.word for acc="(",t=l do acc+print.t /for(acc+")")
 
 use seq.symbolref
@@ -43,7 +45,7 @@ use set.symbolref
 
 use seq.seq.symbolref
 
-Function ?(a:symbolref,b:symbolref) ordering toint.a ? toint.b
+Export  ?(a:symbolref,b:symbolref) ordering  
 
 type libdescresult is liblibflds:seq.symbol
       ,profilearcs:set.seq.symbol,newmap:set.symbolref,profiledata:seq.int
@@ -52,6 +54,7 @@ Export profilearcs(libdescresult) set.seq.symbol
 
 Export liblibflds(libdescresult) seq.symbol
 
+Export newmap(libdescresult)  set.symbolref
 
 Export profiledata(libdescresult )seq.int
 
@@ -153,7 +156,7 @@ function addlibsym(s:symbol )symbol
 
 function addmytype(t:mytype)symbol 
  addseq.for acc = empty:seq.symbol, e = typerep.t do
-  acc + Constant2.[ Word.name.e, Word.module.e, Word.library.e, Record.[ typeint, typeint, typeint]]
+  acc + Constant2.[ Word.name.e, Word.modname.e, Word.library.e, Record.[ typeint, typeint, typeint]]
   /for(acc)
  
 function addseq(s:seq.symbol)symbol Constant2(s + Sequence(typeptr, length.s))
@@ -177,59 +180,4 @@ function addlibraryMod(m:libraryModule,all:set.symbolref)symbol
 
 --------------------------
 
-Export type:liblib
 
-Export type:parc
-
-type liblib is libname:seq.word, words:seq.encodingpair.seq.char,unused:int, timestamp:int
-, profiledata:seq.parc ,decoderef:seq.symbol,newmods:seq.libraryModule
-, code:seq.seq.symbolref
-
-type parc is caller:symbolref, callee:symbolref, counts:int, clocks:int, 
-space:int, unused:int
-
- 
-Function parc(caller:symbol, callee:symbol)parc 
-parc(symbolref.caller, symbolref.callee, 0,0, 0, 0)
-
-
-
-Function =(a:parc,b:parc)boolean toint.callee.a=toint.callee.b /and toint.caller.a=toint.caller.b
-
-Export caller(parc) symbolref
-
-Export callee(parc) symbolref
-
-Export counts(parc)int
-
-Export code(liblib) seq.seq.symbolref 
-
-Export clocks(parc)int
-
-Export space(parc)int
-
-Export timestamp(liblib)int
-
-Export decoderef(liblib) seq.symbol
-
-Export newmods(liblib) seq.libraryModule
-
-Export libname(liblib)seq.word
-
-Export words(liblib)seq.encodingpair.seq.char
-
-Export profiledata(liblib)seq.parc
-
-builtin loadedlibs2 seq.liblib
-
-Function loadedLibs seq.liblib loadedlibs2
-
-Function unloadlib(a:seq.word)int unloadlib2.tocstr.a
-
-use seq.libraryModule
-  
-builtin unloadlib2(cstr)int
-
-Function loadlibrary(a:word)int loadlib.tocstr.[ a]
-
-builtin loadlib(cstr)int 

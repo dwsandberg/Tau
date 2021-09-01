@@ -235,7 +235,6 @@ Export type:encodingpair.typename
 
 -----------
 
-use fileio
 
 use mangle
 

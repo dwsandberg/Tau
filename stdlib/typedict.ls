@@ -20,6 +20,8 @@ use set.mytype
 
 use seq.typeentry
 
+Export type:typeentry
+
 type typeentry is totypeseq:seq.mytype
 
 function ?(a:typeentry,b:typeentry) ordering  first.totypeseq.a ? first.totypeseq.b
@@ -114,21 +116,22 @@ function typesused(sym:symbol)seq.mytype
  
  function resolvetypesize(prg1:seq.typeentry) typedict
   let bx5 = checkflat(empty:set.typeentry, prg1)
-assert  isempty.unknown.bx5  report"flattype problem"
+assert  isempty.unknown.bx5  report"recursive type problem: /br"
  + for acc10 ="", h = unknown.bx5 do
-  acc10 + print.h 
-  + if isflat.h then"T"else""/if
-  + EOL
+  acc10 + print2.h   + EOL
  /for(acc10)
- + " /p  /p known types /p"
+ {+ " /p  /p known types /p"
  + for acc10 ="", h = toseq.known.bx5 do
   acc10 + print.h + EOL
- /for(acc10)
+ /for(acc10)}
 for acc=emptytypedict, d=toseq.known.bx5 do add( acc, type.d  ,flatflds.d) /for( acc)
  
 function print(s:symdef) seq.word print.sym.s+print.code.s 
 
 function print(h:typeentry) seq.word for acc=print.type.h , z= flatflds.h do acc+print.z /for(acc)
+
+function print2(h:typeentry) seq.word for acc="type"+print.type.h+"is" , z= flatflds.h do acc+print.z+"," /for(acc >> 1)
+
 
  function checkflat(types:set.typeentry, unknown:seq.typeentry)checkflatresult2
  for known = types, notflat = empty:seq.typeentry,   p = unknown do

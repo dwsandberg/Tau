@@ -10,6 +10,10 @@ use otherseq.word
 
 use seq.seq.word
 
+use program
+
+use libraryModule
+
 function printmangled(w:seq.char)seq.word
 let d = codedown(w, 1, empty:seq.char,"", empty:seq.seq.word)
 let para = for acc ="", e = d << 2 do
@@ -85,17 +89,45 @@ function codeup(l:seq.char, char:char)seq.char
 
 function hexdigit(val:bits, digit:int)char legal_(toint(val >> (4 * digit) ∧ bits.15) + 1)
 
- Function mangledname(s:symbol)word 
+Function mangledname(prg:program,s:symbol) word
+ mangledname(getoption.getCode(prg,s),s )
+ 
+ 
+
+ Function mangledname(options:seq.word,s:symbol)word 
     if wordname.s /in "main" /and name.module.s /in "main2" then "main2"_1
   else   if wordname.s /in "addlibrarywords" /and name.module.s /in "main2" then 
   "addlibrarywordsZmain2Zliblib"_1
 else if name.module.s /in "internal" then extname.s
 else 
- let fullname=if isempty.nametype.s then [name.s] else  [name.s]+":"+print.first.nametype.s 
+  let externalname=externalname.options
+  assert length.externalname=1 /or inModFor.s /or isBuiltin.s /or isGlobal.s report "?????EXT"+print.s+options  +stacktrace
+    if  length.externalname=1 /and last.decodeword.first.externalname =  first.decodeword."$"_1 
+       then
+    {assert false report print.s+externalname}
+    first.externalname
+    else 
+  let fullname=if isempty.nametype.s then [name.s] else  [name.s]+":"+print.first.nametype.s 
   let parameters=for  acc= empty:seq.seq.word ,t =paratypes.s do  acc+oldTypeRep.t   /for( acc  )
-mangle(fullname,parameters, 
+ mangle(fullname,parameters, 
 if issimple.module.s then [name.module.s] else oldTypeRep.para.module.s+name.module.s
 )
+
+function manglednameA(s:symbol)word 
+    if wordname.s /in "main" /and name.module.s /in "main2" then "main2"_1
+  else   if wordname.s /in "addlibrarywords" /and name.module.s /in "main2" then 
+  "addlibrarywordsZmain2Zliblib"_1
+else if name.module.s /in "internal" then extname.s
+else 
+  let fullname=if isempty.nametype.s then [name.s] else  [name.s]+":"+print.first.nametype.s 
+  let parameters=for  acc= empty:seq.seq.word ,t =paratypes.s do  acc+oldTypeRep.t   /for( acc  )
+ mangle(fullname,parameters, 
+if issimple.module.s then [name.module.s] else oldTypeRep.para.module.s+name.module.s
+)
+ 
+function externalname(options:seq.word) seq.word
+toseq.(asset.options- asset." COMPILETIME NOINLINE INLINE PROFILE STATE   VERYSIMPLE")
+
 
 Function extname(sym:symbol) word
 let name1="set + - / * ? toint = > >> << ∨ ∧ tan cos sin sqrt GEP"
@@ -109,6 +141,8 @@ if i /le length.name1  then  merge.["set ADD SUB DIV MUL ORD toint EQ GT SHR SHL
  
  use seq.mytype
  
+ use set.word
+ 
  ______
  
  use fileio
@@ -119,8 +153,22 @@ if i /le length.name1  then  merge.["set ADD SUB DIV MUL ORD toint EQ GT SHR SHL
  
  builtin dlsymbol(cstr)int
 
+use libraryModule
 
-Function funcaddress (sym:symbol) int dlsymbol.tocstr.[ mangledname.sym]
+use seq.liblib
+
+use otherseq.symbol
+
+Function funcaddress (sym:symbol) int 
+let t=dlsymbol.tocstr.[ manglednameA( sym)]
+if t > 0 then t
+else 
+let l=decoderef.loadedLibs_1
+ let  idx= findindex(sym,l)
+ assert idx /le length.l report "???"+print.sym
+  dlsymbol.tocstr.[merge( libname.loadedLibs_1+"$$"+toword.idx)]
+
+
 
 Builtin createthreadI(int, int, int, seq.int, int)process.int
 

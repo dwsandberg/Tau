@@ -24,15 +24,10 @@ use set.symbol
 
 use symboldict
 
-
 Export getheader(s:seq.word)seq.word
 
-
-
-
-
 function fixNM(t:seq.word) seq.word
-if length.t=1  then t else [t_1,":"_1]+(t << 1)
+ if length.t = 1 then t else [ t_1,":"_1] + t << 1
 
 Export type:bindinfo
 
@@ -46,15 +41,10 @@ function dict(r:reduction.bindinfo) symboldict dict.last.r
 
 Function bindinfo(dict:symboldict, types:seq.mytype, tokentext:seq.word)bindinfo  bindinfo(dict, empty:seq.symbol, types, tokentext)
 
-
-
-
-
 function resolvetype(text:seq.word, common:commoninfo, place:int)mytype
 let a = resolvetype(types.common, text)
-assert not.isempty.a report 
-let w = for acc = EOL, t = toseq.types.common do acc + print.t /for(acc + EOL)
-errormessage("cannot resolve type" + text + w, common, place)
+assert not.isempty.a report {let w = for acc = EOL, t = toseq.types.common do acc + print.t /for(acc + EOL)
+}errormessage("cannot resolve type" + text , common, place)
  a_1
 
 Function parse(dict:symboldict)bindinfo
@@ -204,7 +194,7 @@ function action(ruleno:int, dupinput:seq.word, place:int, R:reduction.bindinfo)b
  else if ruleno = { P comment W:T }17 then addpara(dict.R,tokentext.R_2,R_4,place)
  else if ruleno = { P P, comment W:T }18 then addpara(dict.R,tokentext.R_4,R_6,place,R_1)
   else if ruleno = { E NM }19 then
-   if mode.common /in "body text" then
+  if mode.common ∈ "body text"then
  let f = lookupbysig(dict.R, text.R_1, empty:seq.mytype, common, place)
  bindinfo(dict.R, [ f], [ resulttype.f],"")
  else R_1
@@ -298,22 +288,21 @@ let seqtype = last.types.a
  assert isseq.seqtype report errormessage("final expression in for list must be a sequence but it is of type:" + print.seqtype, input, place)
   assert length.types.a ≠ 1 report errormessage("For must have at least one accumulator" + print.length.types.a, input, place)
   let elename = [ last.tokentext.a]
-  let elesym = symbol(moduleref(". $for", parameter.seqtype), elename, empty:seq.mytype, parameter.seqtype)
+  let elesym = symbol(moduleref("internallib  $for", parameter.seqtype), elename, empty:seq.mytype, parameter.seqtype)
   let dict1 = if length.types.a > 1 then
    { keep track so right next is used in nested fors }
    let basetype = typebase.place
-   let resultsym = symbol(moduleref(". $for",basetype),"next", types.a >> 1, basetype)
-   let nestingsym = symbol(moduleref(". $for",basetype),"for", empty:seq.mytype, basetype)
+   let resultsym = symbol(moduleref("internallib  $for",basetype),"next", types.a >> 1, basetype)
+   let nestingsym = symbol(moduleref("internallib  $for",basetype),"for", empty:seq.mytype, basetype)
    let oldnesting = lookupbysig(dict.a,"for")
    if isempty.oldnesting then dict.a else dict.a - oldnesting /if + resultsym + nestingsym
   else dict.a
   let accumulators = for acc = empty:seq.symbol, i = 1, name = tokentext.a >> 1 do
-   next(acc + symbol(moduleref(". $for",(types.a)_i), [ name], empty:seq.mytype,(types.a)_i), i + 1)
+   next(acc + symbol(moduleref("internallib  $for",(types.a)_i), [ name], empty:seq.mytype,(types.a)_i), i + 1)
   /for(acc)
   bindinfo(dict1 ∪ asset(accumulators + elesym), code.a + accumulators + elesym, types.a, elename)
 
 function lookupbysig(dict:symboldict, name:seq.word)set.symbol lookupbysig(dict, symbol(internalmod, name, typeint))
-
 
 function forbody(dict:symboldict, vars:bindinfo, forbody:bindinfo, exitexp:bindinfo, endexp:bindinfo, input:commoninfo, place:int)bindinfo
 let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = typeboolean then
@@ -328,7 +317,7 @@ let checktypes = if tokentext.exitexp = "for" ∨ first.types.exitexp = typebool
 else"while expresssion type must be boolean"
 assert isempty.checktypes report errormessage(checktypes, input, place)
  let resulttype = first.types.endexp
- let sym = symbol(builtinmod( typeint),"forexp", types.vars + types.vars >> 1 + parameter.last.types.vars + (types.forbody)_1
+ let sym = symbol(builtinmod.typeint,"forexp", types.vars + types.vars >> 1 + parameter.last.types.vars + (types.forbody)_1
  + typeboolean
  + resulttype, resulttype)
   let newcode = code.vars + code.forbody

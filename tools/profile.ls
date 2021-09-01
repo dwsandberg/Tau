@@ -12,9 +12,9 @@ Max space seems to be on node with head and tail blank!
 
 use displaytextgraph
 
-use libdesc
+ 
+use libraryModule
 
-/use mangle
 
 use standard
 
@@ -60,9 +60,8 @@ use seq.lparc
   
   use labeledgraph.lparc
   
-  use program
-  
-  use symbol
+   
+  use symbol2
   
   use seq.symbol
   

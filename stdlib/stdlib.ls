@@ -1,11 +1,11 @@
 
 
 Library 
-stdlib UTF8   bits codegennew codetemplates encoding fileio format   groupparagraphs  
+stdlib UTF8   bits codegennew codetemplates encoding fileio format     
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
 pass2  persistant postbind   process real seq set stack  symbol textio timestamp tree   words xxhash
- sparseseq standard maindict  outstream bitstream tausupport
- mergeblocks program   
+ sparseseq standard maindict  outstream bitstream tausupport symbol2
+ mergeblocks program   libraryModule
    tests/test11 tests/checking tests/point tests/testencoding  
  tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
  tests/testprocess tests/testfileio tests/testseq
@@ -27,15 +27,15 @@ pass2  persistant postbind   process real seq set stack  symbol textio timestamp
  graphs/graph
  typedict passsymbol passparse   
 uses
-exports UTF8 assignencodingnumber bitpackedseq bits dataio dict encoding fileio format abstractBuiltin
-graph groupparagraphs   hashset   ioseq ipair libdesc  
-main2 maindict mangle mytype pretty otherseq    process 
-real seq set stack   symbol textio timestamp tree  words xxhash 
+exports UTF8   bits dataio dict encoding fileio format 
+graph    hashset   ioseq ipair   
+main2 maindict mangle  pretty otherseq    process 
+real seq set stack    textio timestamp tree  words xxhash 
   sparseseq   standard testall
 svg svggraph displaygraph displaytextgraph display index
 barycenter bandeskopf makeDAG layergraph labeledgraph tausupport 
-  interpreter  llvm llvmconstants  internalbc    
-  program    symboldict taublockseq typedict 
+    llvm llvmconstants  internalbc    
+      taublockseq  libraryModule symbol2
 
 * Removed maindict 
 
@@ -87,7 +87,7 @@ Export  passparse(   abstractmods :set.passsymbols,simplemods:set.passsymbols
 ,src:seq.seq.word,mode:word) 
 set.symdef
 
-Export stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean
+/Export stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean
   ) steponeresult 
 
 

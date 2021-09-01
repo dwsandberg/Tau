@@ -83,7 +83,7 @@ Export prg(postbindresult)program
 
 Function postbind( roots:seq.symbol, theprg:program, templates:program, typedict1:typedict)postbindresult
 let discard = for acc = symbolref.Lit.0, r = roots do   symbolref.r /for(0)
- {  let inline=for inline=postbindresult(typedict1,theprg,empty:set.symdef),   sd=tosymdefs.theprg do
+    let inline=for inline=postbindresult(typedict1,theprg,empty:set.symdef),   sd=tosymdefs.theprg do
    if not.isabstract.module.sym.sd /and verysimpleinline(sym.sd,code.sd) 
       then 
        for acc=empty:seq.symbol,typedict3=typedict.inline,    symx=code.sd do
@@ -94,7 +94,7 @@ let discard = for acc = symbolref.Lit.0, r = roots do   symbolref.r /for(0)
        else inline 
    /for(inline)  
 usedsyms(prg.inline, 0, emptyprogram, templates, typedict.inline, inline.inline)
-}
+ 
 usedsyms(theprg, 0, emptyprogram, templates, typedict1, empty:set.symdef)
 
 function usedsyms(source:program, last:int, result:program, templates:program, typedict1:typedict, inline:set.symdef)postbindresult
@@ -149,7 +149,7 @@ let aa = encoding:seq.encodingpair.symbol
        else if name.sym ∈ "getinstance" ∧ isBuiltin.sym then
        let get = symbol(internalmod,"getinstance", typeint, typeptr)
        let typ = para.module.sym
-       let gl = symbol4(moduleref.". $global","global"_1, typ, empty:seq.mytype, seqof.typeint)
+       let gl = symbol4(moduleref."internallib $global","global"_1, typ, empty:seq.mytype, seqof.typeint)
        let encodenocode = if typ = typeref."typename tausupport stdlib"then [ Lit.2]
        else if typ = seqof.typechar then [ Lit.1]
        else
@@ -226,7 +226,7 @@ if isspecial.sym then
   let paras = for acc = empty:seq.mytype, p = paratypes.sym do
    acc + if"$base"_1 ∈ print.p then p else basetype(p, newdict3)
   /for(acc)
-  symbol(moduleref.". builtin","forexp", paras, last.paras)
+  symbol(moduleref."internallib builtin","forexp", paras, last.paras)
   else if name.sym = "createthreadY"_1 then
   let paras = for paras = empty:seq.mytype, p = paratypes.sym do paras + coretype(p, newdict3)/for(paras)
   let rt = processof.coretype(parameter.resulttype.sym, newdict3)
@@ -272,8 +272,8 @@ function deepcopybody(type:mytype, typedict:typedict)seq.symbol
   else
    let cat = symbol(tomodref.type,"+", [ type, parameter.type], type)
    let resulttype = basetype
-    let element = symbol(moduleref(". $for", elementtype),"element", empty:seq.mytype, elementtype)
-   let acc = symbol(moduleref(". $for", typeptr),"acc", empty:seq.mytype, typeptr)
+    let element = symbol(moduleref("internallib  $for", elementtype),"element", empty:seq.mytype, elementtype)
+   let acc = symbol(moduleref("internallib  $for", typeptr),"acc", empty:seq.mytype, typeptr)
    [ Sequence(elementtype, 0)]
     + [ Local.1, acc, element, acc, element, deepcopySym.parameter.type, cat, Littrue, acc, symbol(builtinmod.typeint,"forexp", [ resulttype, resulttype, resulttype, elementtype, typeptr, typeboolean, resulttype], resulttype)
     ]
@@ -370,6 +370,10 @@ type hashelement is data:T,hash:int
 type hashset  is cardinality:int,table:seq.seq.hashelement.T
 
 Export type:hashset.T
+
+Export type:hashelement.T
+
+Export type:seq.seq.hashelement.T
 
 Export cardinality(hashset.T) int
 

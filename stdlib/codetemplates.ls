@@ -48,7 +48,7 @@ use seq.seq.symbol
 
 use mangle
 
-Export mangledname(s:symbol) word
+Export mangledname(program,s:symbol) word
 
 Export constdata seq.slot
 
@@ -136,8 +136,8 @@ function assignencoding(p:seq.encodingpair.match5, a:match5)int length.p + 1
 
 Function options(match5map:seq.match5, m:match5)seq.word getoption.code.m
 
-Function funcdec(alltypes:typedict, i:symbol)int
- toint.modulerecord([ mangledname.i], [ toint.FUNCTIONDEC, typ.tollvmtype( alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
+Function funcdec(alltypes:typedict, i:symbol,theprg:program)int
+ toint.modulerecord([ mangledname(theprg,i)], [ toint.FUNCTIONDEC, typ.tollvmtype( alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
 Function match5map(theprg:program, uses:set.symbol, alltypes:typedict)seq.match5
 let discard3 = [ addtemplate(symbol(internalmod,"packedindex", seqof.typebit, typeint, typeint), 8, BINOP(r.1, ibcsub.2, C64.1, sub) + BINOP(r.2, r.1, C64.6, lshr)
@@ -277,7 +277,7 @@ let const = for acc = empty:seq.symbol, e = toseq(uses - asset.[ Optionsym])do
   if isconst.e then
   if isrecordconstant.e then acc + e
   else { let discard = buildrecordconst(e, alltypes)acc else }
-  let discard = buildconst(e, alltypes)
+  let discard = buildconst(e, alltypes,theprg)
   acc
  else let discard5 = buildtemplate(theprg, alltypes, e)
  acc
@@ -321,11 +321,11 @@ function processconst(toprocess:seq.symbol)int
 
 function =(a:llvmtype, b:llvmtype)boolean typ.a = typ.b
 
-function buildconst(xx:symbol, alltypes:typedict)match5
+function buildconst(xx:symbol, alltypes:typedict,theprg:program)match5
  if isFref.xx then
  let f1 =basesym.xx
   let functyp = ptr.tollvmtype(alltypes, f1)
- addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry([mangledname.f1], functyp)))
+ addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry([mangledname(theprg,f1)], functyp)))
  else if isRealLit.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, Creal.value.xx)
  else if isIntLit.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, C64.value.xx)
  else if iswordseq.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addwordseq2.worddata.xx)
@@ -365,7 +365,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)match5
   let intable = findtemplate.xx
    if length.intable > 0 then intable_1
    else if wordname.xx = "global"_1 ∧ isGlobal.xx then
-    addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname.xx], i64, C64.0)))
+    addtemplate(xx, 1, GEP(r.1, i64, slot.global([ mangledname(theprg,xx)], i64, C64.0)))
    else if wordname.xx = "createthreadY"_1 ∧ isBuiltin.xx  then
    let rt=parameter.para.module.xx
    { assert print.rt /in ["seq.word","compileinfo","testdeep","set.int","seq.encodingpair.testrecord"] report "PROCESS2"+print.rt 
@@ -373,7 +373,7 @@ function buildtemplate(theprg:program, alltypes:typedict, xx:symbol)match5
    assert para.module.xx /ne typereal report"TTT" + print.xx
     + for ll ="", e = l do ll + print.e /for(ll)
     addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, empty:seq.symbol, l)
-   else call(alltypes, xx,"CALL"_1, getCode(theprg, xx), mangledname.xx)
+   else call(alltypes, xx,"CALL"_1, getCode(theprg, xx), mangledname(theprg,xx))
 
 function call(alltypes:typedict, xx:symbol, type:word, code:seq.symbol, symname:word)match5
 let list = tollvmtypelist(alltypes, xx)

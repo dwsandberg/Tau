@@ -299,16 +299,22 @@ Export <<(s:seq.word, i:int)seq.word
 
 Export >>(s:seq.word, i:int)seq.word
 
-* usegraph include xxhash encoding bits words real textio reconstruct UTF8 seq otherseq fileio standard bitstream exclude standard seq
+* usegraph include 
+xxhash encoding bits words real textio  UTF8 set seq otherseq fileio standard bitstream exclude standard seq
 
-* usegraph include prims tree graph ipair libscope internalbc process stack set format 
-groupparagraphs bitpackedseq maindict  tausupport 
-mangle mytype symbol exclude standard seq 
+* usegraph include tree graph ipair    process stack set format 
+ maindict  tausupport  program typedict
+  mytype symbol exclude standard seq bits  otherseq
 
-* usegraph include main2 libscope display constant codegen convert parse passparse passsymbol symbol libdesc codetemplates pass2 persistant llvm postbind reconstruct persistantseq opt2 symbol prg2gram  program parse libdesc internalbc intercode cvttoinst codegen pass2 codegennew funcsig interpreter 
+* usegraph include codetemplates  codegennew internalbc llvmconstant llvm
+interpreter mangle persistant  libdesc 
+exclude seq bits set otherseq standard UTF8 real stack
+
+* usegraph include main2   display  parse passparse passsymbol    pass2 
+  postbind          pass2 
 typedict
-exclude seq set otherseq standard bits tree graph UTF8 stack real 
-ipair bitpackedseq fileio textio encoding words symbol
+exclude seq set otherseq standard bits  graph UTF8 stack real 
+  fileio textio encoding words symbol types
 
 Export type:index
 

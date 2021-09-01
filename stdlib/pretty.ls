@@ -4,7 +4,7 @@ use fileio
 
 use format
 
-use groupparagraphs
+use libraryModule
 
 use standard
 

@@ -177,7 +177,7 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:set.localmap2, s
      let d = Constant2(a1 + Sequence(typeint, length.a1))
      next(flags, result >> 1 + d, nextvar, map)
      else 
-      let newcode = interpretCompileTime.ct
+      let newcode = interpretCompileTime(ct)
       let newconst = if length.newcode > 1 then Constant2.newcode else first.newcode
        next(flags, result >> nopara + newconst, nextvar, map)
     else if first."VERYSIMPLE" ∈ options then next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
@@ -319,7 +319,7 @@ function iscompound(bodyexp:seq.symbol)boolean
  let sym = bodyexp_(-3)
  isblock.last.bodyexp
   ∧ (wordname.sym = "next"_1 ∧ nopara.sym > 3 ∧ inModFor.sym 
-  ∨ { assert case }abstracttype.resulttype.sym = addabstract(typeref."$base internal.",typeT))
+  ∨ { assert case }abstracttype.resulttype.sym = addabstract(typeref."$base internal internallib",typeT))
 
 function exitlocations(s:seq.symbol, i:int, result:seq.int)seq.int
 let sym = s_i

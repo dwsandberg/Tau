@@ -103,7 +103,7 @@ interpret(code, i + 1, push(stk,funcaddress.basesym.sym ))
     let dcret = deepcopySym.resulttype.sym
     let adcret = funcaddress.dcret
      assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret
-          assert t > 0 report"Not handle by interperter" + print.sym + "mangle:" + mangledname.sym
+          assert t > 0 report"Not handle by interperter" + print.sym 
       let dc = deepcopySym.seqof.typeword
       let adc = funcaddress.dc
        assert adc > 0 report"interpreter ?"

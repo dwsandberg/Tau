@@ -4,7 +4,7 @@ Module baseTypeCheck
 
 use standard
 
-use symbol
+use symbol2
 
 use seq.mytype
 
@@ -18,7 +18,6 @@ use process.seq.word
 
 use main2
 
-use program
 
 use set.symdef
 
@@ -27,7 +26,6 @@ use seq.symdef
  
  use set.symbol
  
- use mytype
  
   type typemap is key:int,value:mytype
  
@@ -163,54 +161,58 @@ for acc10 =" /p  /p checkresults  /p", h = toseq.undefined do
 function knownsym seq.symbol let typecstr = typeref."cstr fileio."
 let typeindex=typeref."index index ."
 [ Litfalse, Littrue, PlusOp, NotOp,  Br2(1, 2)
-, symbol(moduleref."fileio","tocstr", seqof.typebits, typecstr)
-, symbol(moduleref."fileio","createlib2", [ typecstr, typecstr, typeint, seqof.typebits], typeint)
-, symbol(moduleref."tausupport","callstack", typeint, seqof.typeint)
-, symbol(moduleref."tausupport","dlsymbol", typecstr, typeint)
-, symbol(moduleref."tausupport","outofbounds", seqof.typeword)
-, symbol(moduleref."tausupport","addresstosymbol2", typeint,seqof.typeref."char standard ."  )
-, symbol(moduleref."fileio","getfile", typecstr, typeptr)
-, symbol(moduleref."fileio","getbitfile", typecstr, typeptr)
-, symbol(moduleref."fileio","getbytefile", typecstr, typeptr)
-, symbol(moduleref."fileio","createfile", typeint, seqof.typebits, typecstr, typeint)
-, symbol(moduleref."real","sqrt", typereal, typereal)
+, symbol(internalmod,"tocstr", seqof.typebits, typecstr)
+, symbol(internalmod,"createlib2", [ typecstr, typecstr, typeint, seqof.typebits], typeint)
+, symbol(internalmod,"callstack", typeint, seqof.typeint)
+, symbol(internalmod,"dlsymbol", typecstr, typeint)
+, symbol(internalmod,"outofbounds", seqof.typeword)
+, symbol(internalmod,"addresstosymbol2", typeint,seqof.typeref."char standard ."  )
+, symbol(internalmod,"getfile", typecstr, typeptr)
+, symbol(internalmod,"getbitfile", typecstr, typeptr)
+, symbol(internalmod,"getbytefile", typecstr, typeptr)
+, symbol(internalmod,"createfile", typeint, seqof.typebits, typecstr, typeint)
+, symbol(internalmod,"loadlib", typecstr, typeint)
+, symbol(internalmod,"unloadlib2", typecstr, typeint)
+, symbol(internalmod,"sqrt", typereal, typereal)
 , symbol(internalmod,"randomfunc", typereal)
-, symbol(moduleref."real","intpart", typereal, typeint)
-, symbol(moduleref."real","representation", typereal, typeint)
-, symbol(moduleref."real","sin", typereal, typereal)
-, symbol(moduleref."real","cos", typereal, typereal)
-, symbol(moduleref."real","tan", typereal, typereal)
-, symbol(moduleref."real","arcsin", typereal, typereal)
-, symbol(moduleref."real","arccos", typereal, typereal)
-, symbol(moduleref."real","toreal", typeint, typereal)
-, symbol(moduleref."real","+", typereal, typereal, typereal)
-, symbol(moduleref."real","-", typereal, typereal, typereal)
-, symbol(moduleref."real","*", typereal, typereal, typereal)
-, symbol(moduleref."real","/", typereal, typereal, typereal)
-, symbol(moduleref."real","?", typereal, typereal, typeref."ordering standard . ")
-, symbol(moduleref."standard","?", typeint, typeint, typeref."ordering standard . ")
-, symbol(moduleref."standard","*", typeint, typeint, typeint)
-, symbol(moduleref."standard","-", typeint, typeint, typeint)
-, symbol(moduleref."standard","/", typeint, typeint, typeint)
-, symbol(moduleref."standard","=", typeint, typeint, typeboolean)
-, symbol(moduleref."standard",">", typeint, typeint, typeboolean)
-, symbol(moduleref."standard","=", typeboolean, typeboolean, typeboolean)
-, symbol(moduleref."bits","xor", typebits, typebits, typebits)
-, symbol(moduleref."bits","∧", typebits, typebits, typebits)
-, symbol(moduleref."bits","∨", typebits, typebits, typebits)
-, symbol(moduleref."bits","<<", typebits, typeint, typebits)
-, symbol(moduleref."bits",">>", typebits, typeint, typebits)
+,  symbol(internalmod,"intpart", typereal, typeint)
+, symbol(internalmod,"representation", typereal, typeint)
+, symbol(internalmod,"sin", typereal, typereal)
+, symbol(internalmod,"cos", typereal, typereal)
+, symbol(internalmod,"tan", typereal, typereal)
+, symbol(internalmod,"arcsin", typereal, typereal)
+, symbol(internalmod,"arccos", typereal, typereal)
+, symbol(internalmod,"toreal", typeint, typereal)
+, symbol(internalmod,"+", typereal, typereal, typereal)
+, symbol(internalmod,"-", typereal, typereal, typereal)
+, symbol(internalmod,"*", typereal, typereal, typereal)
+, symbol(internalmod,"/", typereal, typereal, typereal)
+, symbol(internalmod,"?", typereal, typereal, typeref."ordering standard . ")
+,  symbol(internalmod,"?", typeint, typeint, typeref."ordering standard . ")
+, symbol(internalmod,"*", typeint, typeint, typeint)
+, symbol(internalmod,"-", typeint, typeint, typeint)
+, symbol(internalmod,"/", typeint, typeint, typeint)
+, symbol(internalmod,"=", typeint, typeint, typeboolean)
+, symbol(internalmod,">", typeint, typeint, typeboolean)
+, symbol(internalmod,"=", typeboolean, typeboolean, typeboolean)
+, symbol(internalmod,"xor", typebits, typebits, typebits)
+, symbol(internalmod,"∧", typebits, typebits, typebits)
+, symbol(internalmod,"∨", typebits, typebits, typebits)
+, symbol(internalmod,"<<", typebits, typeint, typebits)
+, symbol(internalmod,">>", typebits, typeint, typebits)
 , symbol(internalmod,"allocate", typeint, typeptr)
 ,   GetSeqType ,GetSeqLength
+, symbol(internalmod,"getmachineinfo",typeptr)
 , symbol(internalmod,"getinstance",typeint,typeptr)
 , symbol(internalmod,"addencoding",[typeint, typeptr, typeint, typeint],typeint)
-, symbol(internalmod,"aborted", typeptr, typeboolean)
+, symbol(internalmod,"processisaborted", typeptr, typeboolean)
 , symbol(internalmod,"randomint", typeint, seqof.typeint)
 ,  {? seqof ptr } symbol(internalmod,"GEP",seqof.typeptr,typeint,typeptr)
+,symbol(internalmod,"GEP",seqof.typeint,typeint,typeint)
 , symbol(internalmod,"option",typeint,seqof.typeword,type?) 
-, symbol(moduleref."bits","toint", typebyte, typeint)
-, symbol(moduleref."bits","toint", typebit, typeint)
-, symbol(builtinmod(typereal),"fld", typeptr, typeint, typereal)
+, symbol(internalmod,"toint", typebyte, typeint)
+, symbol(internalmod,"toint", typebit, typeint) 
+,  symbol(builtinmod(typereal),"fld", typeptr, typeint, typereal)
 , symbol(builtinmod(typeint),"fld", typeptr, typeint, typeint)
 , symbol(builtinmod(typeptr),"fld", typeptr, typeint, typeptr)
 , symbol(builtinmod(typeboolean),"fld", typeptr, typeint, typeboolean)

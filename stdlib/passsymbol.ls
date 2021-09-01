@@ -238,10 +238,20 @@ function resolve(all:set.passsymbols, p:passsymbols)passsymbols
   let dict = symboldict(syms.r,req.r,[z])
   for exports = exports.p, unresolved = empty:set.symbol, t2 = toseq.unresolvedexports.p do
    let b = lookupbysig(dict, t2)
-   if cardinality.b = 1 then next(exports + b_1, unresolved)else next(exports, unresolved + t2)
+   if checkreturntype(b,t2)  then 
+   {   assert resulttype.b_1=resulttype.t2 report "Return type of export does not match"+print.b_1}
+   next(exports + b_1, unresolved)else next(exports, unresolved + t2)
    /for(passsymbols(modname.p,uses.p, defines.p, exports, unresolved,   typedict.p, text.p ))
    
-
+function checkreturntype(b:set.symbol,t2:symbol) boolean
+  if cardinality.b = 1 then 
+    let t=resulttype.b_1=resulttype.t2 
+    assert t report "Export result type does not match"+print.t2
+    t
+  else false
+  
+  assert resulttype.b_1=resulttype.t2 report "Return type of export does not match"+print.b_1
+   true
 
 function resolveexports(s1:set.passsymbols, countin:int)set.passsymbols
  if countin = 0 then s1

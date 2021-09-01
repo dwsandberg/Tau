@@ -9,6 +9,7 @@
 
 ; use doc ; createdoc
 
+
 Module doc
 
 use displaytextgraph
@@ -17,14 +18,12 @@ use fileio
 
 use format
 
-use groupparagraphs
+use libraryModule
 
 use main2
 
 
-use mytype
-
-use symbol
+use symbol2
 
 
 use standard
@@ -62,7 +61,6 @@ let x1 = createfile("doc.html", toUTF8bytes.d)
 { let x2 = createfile("appdoc.html", [ htmlheader + processpara.@(+, addselect,"", gettext."tools/appdoc.txt")])}
  { let y1 = createhtmlfile("testall.html", htmlcode."testall")} d
 
-use program
 
 function addselect(s:seq.word)seq.word 
  if not.isempty.s ∧ first.s = first."/section"then
@@ -114,7 +112,6 @@ Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
 
 use set.symbolref
 
-use libdesc
 
 
      

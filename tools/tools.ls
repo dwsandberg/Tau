@@ -1,6 +1,7 @@
-#!/usr/local/bin/tau ; use tools; testprofile."stdlib"
+#!/usr/local/bin/tau ;  use doc ; doclibrary."stdlib"
 
-;  use doc ; doclibrary."stdlib"
+; use tools; testprofile."stdlib"
+
 
 ;  use doc ; doclibrary."stdlib"
 

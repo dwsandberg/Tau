@@ -80,34 +80,46 @@ function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
     /for( if isempty.new then done else uses(p,done,new))
 
   
-type steponeresult is match5map:seq.match5,defines:seq.symbol 
+type steponeresult is match5map:seq.match5,defines:seq.symbol,prg:program
 
 use set.word
 
 Export type:steponeresult
 
-Function stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean
-  ) steponeresult 
-  let uses=uses(theprg,roots)
- for acc = empty:seq.symbol,  ele = toseq.uses do
- if isconstantorspecial.ele ∨ isabstract.module.ele /or isBuiltin.ele /or isGlobal.ele 
- /or inModFor.ele then acc
- else   let d = getCode(theprg, ele)
-   if iscompiled(d,ele) then acc 
-  else 
- let addele=  
-    if   isInternal.ele then true /and 
+Function addele(ele:symbol,d:seq.symbol) boolean
+ if   isInternal.ele then true /and 
 extname.ele /in "   DIVint GTint MULreal SUBreal not getseqtype getseqlength
  ORDreal casttoreal setint intpart ADDreal SUBint EQboolean SHLint setptr
  bitcast DIVreal ORDint tocstr toreal tointbit ADDint EQint tointbyte
  SHRint ANDbits representation MULint xor ORbits"
  else
-        not.isempty.d  
-if addele then 
-     let discard= funcdec( alltypes, ele) 
-    acc+ele   
-   else acc
-/for( steponeresult( match5map(theprg, uses,  alltypes),acc))
+        not.isempty.d
+
+Function stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean,
+  thename:word,newmap:set.symbolref) steponeresult 
+  let uses=uses(theprg,roots)
+ for acc = empty:seq.symbol,newprg=theprg,  ele = toseq.uses do
+ if isconstantorspecial.ele ∨ isabstract.module.ele /or isBuiltin.ele /or isGlobal.ele 
+ /or inModFor.ele then next(acc,newprg)
+ else   let d = getCode(theprg, ele)
+   if iscompiled(d,ele) then next(acc,newprg) 
+  else  
+if addele(ele,d) then 
+let r= symbolref.ele
+let i = binarysearch(toseq.newmap, symbolref.ele)
+ let extname=[merge( [thename]+if i > 0 then "$$"+ toword.i else "$"+ toword.toint.r+"$") ] 
+ let tmpprg=addoption(newprg,ele,extname)
+     let discard= funcdec( alltypes, ele,tmpprg) 
+       next(acc+ele,tmpprg)
+   else next(acc,newprg)
+/for( steponeresult( match5map(newprg, uses,  alltypes),acc,newprg))
+
+
+use set.symbolref
+
+use otherseq.symbolref
+
+ 
 
 use mangle
 
@@ -115,12 +127,13 @@ use seq.mytype
 
 use libdesc
 
-Function codegen(theprg:program,  roots:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict, isbase:boolean
+Function codegen(theprg0:program,  roots:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict, isbase:boolean
 )seq.bits
 {let theprg=for theprg=theprg0 , sd=constantsymbols do  map(theprg,sym.sd,code.sd)/for(theprg)
 }let profilearcs=profilearcs.libdesc
 let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
-let stepone=stepone(theprg,roots,alltypes,isbase)
+let stepone=stepone(theprg0,roots,alltypes,isbase,thename,newmap.libdesc)
+let theprg=prg.stepone
 let match5map = match5map.stepone
 let defines= defines.stepone
 let libmods2 =   for acc=empty:seq.int ,sym =  liblibflds.libdesc  do acc+arg.match5map_sym /for(acc)
@@ -143,7 +156,7 @@ let libmods2 =   for acc=empty:seq.int ,sym =  liblibflds.libdesc  do acc+arg.ma
  let data = constdata
  let patchlist = [ [ toint.GLOBALVAR, typ.conststype, 2, toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0], [ toint.GLOBALVAR, typ.profiletype, 2, toint.xxx + 1, 3, toint.align8 + 1, 0]]
  let trec = typerecords
- let adjust = [ trec_1, [ toint.ARRAY, length.data, 0], [ toint.ARRAY, cardinality.profilearcs , 0]] 
+ let adjust = [ trec_1, [ toint.ARRAY, length.data, 0], [ toint.ARRAY, 2+6 * cardinality.profilearcs , 0]] 
  + subseq(trec, 4, length.trec)
  llvm(patchlist, bodytxts, adjust)
  
@@ -189,7 +202,6 @@ function processnext(l:Lcode2, caller:symbol, match5map:seq.match5, s:symbol
 let m = match5map_s
 let action = action.m
  if action = "CALL"_1 then
- let callee = mangledname.s
  let noargs = arg.m
  let args = top(args.l, noargs)
     let idx=if isempty.profilearcs then 1 else findindex(   [caller, s] ,toseq.profilearcs) 
@@ -342,7 +354,7 @@ function addloopmapentry(l:seq.localmap, baselocal:int, regbase:int, i:int)seq.l
  
 function profilecall(l:Lcode2, args:seq.int, m:match5, idx:int )Lcode2
 let functype=functype.m
-let  callee={slot}symboltableentry([mangledname.sym.m], functype.m)
+let  callee={slot}symboltableentry([mangledname(getoption.code.m,sym.m)], functype.m)
 let base = regno.l
 let block = noblocks.l
 let pcount = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 2)

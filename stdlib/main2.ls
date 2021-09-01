@@ -10,7 +10,6 @@ use fileio
 
 use format
 
-use groupparagraphs
 
 use interpreter
 
@@ -119,7 +118,8 @@ let src = ["module $X","use standard"] + subseq(args2, 2, length.args2 - 1)
 let p2=process.compilerfront("pass1", "runit",src,"stdlib" + lib,"$X")
   if aborted.p2 then message.p2
   else
-   let p3 = process.interpret(typedict.result.p2, getCode(program.asset.prg.result.p2, symbol(moduleref.". $X","runitx", seqof.typeword)))
+   let theprg=program.asset.prg.result.p2
+   let p3 = process.interpret( typedict.result.p2, getCode(theprg, symbol(moduleref."internallib $X","runitx", seqof.typeword)))
    if aborted.p3 then message.p3 else result.p3
 createfile("stdout", toUTF8bytes.output)
 
@@ -130,7 +130,8 @@ use process.compileinfo
   acc + [ print.sym.p + print.code.p]
  /for(acc)
  
- use program
+ 
+ use libraryModule
 
 Function compilerfront(option:seq.word, libname:seq.word)compileinfo
 let info = getlibraryinfo.libname
@@ -159,11 +160,19 @@ let libpasstypes=for acc=empty:set.passtypes,m=mods.libinfo do
  { figure out how to interpret text form of type }
 let modsx = resolvetypes(libpasstypes,allsrc, lib)
 { figure out how to interpret text form of symbol }
-let t5 = resolvesymbols(allsrc, lib, modsx,asset.mods.libinfo )
+    let t5 = resolvesymbols(allsrc, lib, modsx,asset.mods.libinfo )
+  {assert false report  for libs=empty:seq.word, p=toseq.modules.t5 do 
+  libs+library.modname.p +name.modname.p +EOL /for( libs) }
 { parse the function bodies }
      let prg10 = for abstract = empty:seq.passsymbols, simple = empty:seq.passsymbols, m = toseq.modules.t5 do
    if isabstract.modname.m then next(abstract+m,simple) else next(abstract,simple+m)
      /for(program.passparse(asset.abstract, asset.simple, lib, toseq.code.t5 + prg.libinfo, allsrc, mode))
+{let discard10= for  acc=empty:set.word ,   sd=tosymdefs.prg10 do
+ for acc2= acc+library.module.sym.sd ,sym=code.sd do 
+  assert library.module.sym /nin ". " report "KK"+print.sym.sd+print.sym
+ acc2+library.module.sym /for(acc2)
+/for(toseq.acc+toword.cardinality.acc)
+assert false report discard10}
 let typedict= buildtypedict(empty:set.symbol,types.t5+types.libinfo) 
 if mode="text"_1 then
       let zz1=tosymdefs.prg10  
@@ -305,8 +314,7 @@ use seq.symbolref
       next( mods+modx, types1+types.m)
    /for(loadedresult(mods,types1,tosymdefs.prg))  
    
-   use libdesc
-   
+    
    use seq.symdef
    
    use seq.symbolref

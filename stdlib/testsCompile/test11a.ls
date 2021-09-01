@@ -30,15 +30,15 @@ Function test11a seq.word let z = [ compare("a + b + c","(a + b)+ c")
 , testerror(" /< literal report in assert must be seq of word in:", ["function f1(a:int)int assert true report 2 3"])
 , testerror(" /< literal cannot resolve type hhh ", ["function f1(z:hhh)int 3"])
 , testerror(" /< literal cannot resolve type xxx ", ["function f1(z:int)xxx 3"])
-]{ testerror("unresolved types:module:testit type testtype is record fld1:testtype", ["type testtype is fld1:testtype"])
-, testerror("unresolved exports", ["Export f1(int, int)int"])
-, testerror("export return type missmatch", ["Export +(int, int)boolean"])
-, testerror("Cannot find module", ["use int.notdefined"])
-, testerror("Cannot find module", ["use notdefined"])
-}
+, testerror("recursive type problem: ", ["type testtype is fld1:testtype"])
+, testerror("module testit contains unresolved exports: testit:f1(int, int)int", ["Export f1(int, int)int"])
+, testerror("Export result type does not match", ["Export +(int, int)boolean"])
+,  testerror("module testit contains lines that cannot be resolved:use int.notdefined", ["use int.notdefined"])
+, testerror("module testit contains lines that cannot be resolved:use notdefined", ["use notdefined"])
+]
  check(z,"test11a") + checkprec
  
- use program
+ use symbol2
  
  use process.compileinfo
 

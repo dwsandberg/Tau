@@ -102,7 +102,7 @@ function extrabits(types:seq.mytype,other:int,flags:bits) bits
 Function extrabits(s:symbol)int toint.hashbits.s
 
 Function Words(s:seq.word)symbol 
-symbol(s, moduleref.". $words",[ typeptr],0x0,extrabits(empty:seq.mytype,hash.s,constbit))
+symbol(s, moduleref."internallib  $words",[ typeptr],0x0,extrabits(empty:seq.mytype,hash.s,constbit))
 
 function frefbit  bits  bits.8
 
@@ -157,15 +157,15 @@ function symbolZ(module:modref, name:word,namePara:seq.mytype,paras:seq.mytype,r
   
 Function Br2(t:int, f:int)symbol
  let raw=bits.t << 20 ∨ bits.f
- symbolZ(moduleref(". $br"),"BR2"_1, 
-  [ typeref([ toword.toint.raw,"."_1,"."_1])  ]
+ symbolZ(moduleref("internallib $br"),"BR2"_1, 
+  [ typeref([ toword.toint.raw,"."_1,"internallib"_1])  ]
   ,empty:seq.mytype,type?,specialbit,bits.t << 20 ∨ bits.f)
 
 Function brt(s:symbol)int toint(raw.s >> 20 ∧ 0xFFFFF)
 
 Function brf(s:symbol)int toint(raw.s ∧ 0xFFFFF)
 
-Function type? mytype  typeref( "? internal .") 
+Function type? mytype  typeref( "? internal internallib") 
 
 Function printrep(s :symbol) seq.word
     if name.module.s = "$int"_1 then [ name.s]
@@ -284,18 +284,18 @@ Function istype(s:symbol)boolean
 
  
 Function Record(types:seq.mytype)symbol
- symbol(moduleref.". $record","RECORD",types,typeptr,specialbit)
+ symbol(moduleref."internallib  $record","RECORD",types,typeptr,specialbit)
  
  Function Reallit(i:int)symbol 
-symbolZ(moduleref.". $real",toword.i ,empty:seq.mytype,empty:seq.mytype,typereal,constbit,tobits.i)
+symbolZ(moduleref."internallib  $real",toword.i ,empty:seq.mytype,empty:seq.mytype,typereal,constbit,tobits.i)
 
 ----------------------
  
-Function Exit symbol symbol(moduleref.". $exitblock","EXITBLOCK", type?,specialbit )
+Function Exit symbol symbol(moduleref."internallib  $exitblock","EXITBLOCK", type?,specialbit )
 
-Function Start(t:mytype)symbol symbol(moduleref(". $loopblock",t),"Start",t, specialbit)
+Function Start(t:mytype)symbol symbol(moduleref("internallib  $loopblock",t),"Start",t, specialbit)
 
-Function EndBlock symbol symbol(moduleref.". $block","BLOCK",typeint, specialbit)
+Function EndBlock symbol symbol(moduleref."internallib  $block","BLOCK",typeint, specialbit)
 
 Function NotOp symbol  symbol(internalmod,"not", typeboolean, typeboolean)
 
@@ -338,10 +338,10 @@ Function print(s:symbol)seq.word
 Function print(s:seq.symbol)seq.word for acc ="", sym = s do acc +  print.sym /for(acc)
  
 Function Lit(i:int)symbol 
-symbolZ(moduleref.". $int",toword.i ,empty:seq.mytype,empty:seq.mytype,typeint,constbit,tobits.i)
+symbolZ(moduleref."internallib  $int",toword.i ,empty:seq.mytype,empty:seq.mytype,typeint,constbit,tobits.i)
 
 Function Sequence(eletype:mytype, length:int)symbol
-symbolZ(moduleref(". $sequence", eletype),toword.length,empty:seq.mytype,empty:seq.mytype,seqof.eletype
+symbolZ(moduleref("internallib  $sequence", eletype),toword.length,empty:seq.mytype,empty:seq.mytype,seqof.eletype
 ,specialbit /or simplenamebit, tobits.length)
 
 Function symbol(m:modref, name:seq.word, returntype:mytype, b:bits)symbol 
@@ -376,9 +376,9 @@ Function Littrue symbol  symbol(internalmod,"true" ,typeboolean, constbit)
 
 Function Litfalse symbol symbol(internalmod,"false" , typeboolean, constbit)
   
-Function continue(i:int)symbol symbol(moduleref.". $continue",[toword.i],type?,specialbit)
+Function continue(i:int)symbol symbol(moduleref."internallib  $continue",[toword.i],type?,specialbit)
 
-Function Word(s:word)symbol symbol( moduleref.". $word",[ s],  typeword, constbit)
+Function Word(s:word)symbol symbol( moduleref."internallib  $word",[ s],  typeword, constbit)
 
 Function isstartorloop(sym:symbol)boolean name.module.sym ∈ "$loopblock"
 
@@ -389,8 +389,8 @@ Function isloopblock(s:symbol)boolean
  name.module.s = "$loopblock"_1 ∧ wordname.s = "LOOPBLOCK"_1
 
 Function Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype)symbol
- symbol4(moduleref( ". $loopblock",resulttype),"LOOPBLOCK"_1,
- typeref( [toword.firstvar,"."_1,"."_1]),types,resulttype )
+ symbol4(moduleref( "internallib $loopblock",resulttype),"LOOPBLOCK"_1,
+ typeref( [toword.firstvar,"."_1,"internallib"_1]),types,resulttype )
 
 Function firstvar(a:symbol)int toint.abstracttypename.first.types.a
 
@@ -461,7 +461,7 @@ Function Constant2(args:seq.symbol)symbol
   symconst.encode.symbolconstant.args 
   
 function   symconst( e:encoding.symbolconstant) symbol
-symbol( moduleref.". $constant", 
+symbol( moduleref."internallib  $constant", 
   [toword.valueofencoding.e],empty:seq.mytype,typeptr,constbit)  
   
 
@@ -504,7 +504,7 @@ Function Optionsym symbol
 Function Define(i:int)symbol Define(toword.i, i)
 
 Function Define(name:word, i:int)symbol 
-symbolZ(moduleref.". $define",  name ,empty:seq.mytype,empty:seq.mytype, typeint ,specialbit,tobits.i )
+symbolZ(moduleref."internallib  $define",  name ,empty:seq.mytype,empty:seq.mytype, typeint ,specialbit,tobits.i )
 
 
 Function Fref(s:symbol)symbol
@@ -608,13 +608,13 @@ Export ?(modref, modref)ordering
 Function PreFref symbol symbol(internalmod,"PreFref",   typeint)
 
 Function Local(name:word, type:mytype, parano:int)symbol 
-symbolZ( moduleref.". $local", name ,empty:seq.mytype,empty:seq.mytype,type,specialbit ,tobits.parano)
+symbolZ( moduleref."internallib $local", name ,empty:seq.mytype,empty:seq.mytype,type,specialbit ,tobits.parano)
 
-Function modFor(para:mytype)modref moduleref(". $for" , para)
+Function modFor(para:mytype)modref moduleref("internallib  $for" , para)
 
 Function inModFor(sym:symbol) boolean  name.module.sym = "$for"_1
 
-Function builtinmod(para:mytype)modref moduleref(".  builtin" , para)
+Function builtinmod(para:mytype)modref moduleref("internallib   builtin" , para)
 
 Function isBuiltin(sym:symbol) boolean  name.module.sym = "builtin"_1
 
