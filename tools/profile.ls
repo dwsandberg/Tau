@@ -89,21 +89,25 @@ Function profileresults(measure:seq.word)seq.word
    acc + for x="",t=codedown.head.@e do  x+t+";" /for(x) +EOL /for(acc)
   }
    { shorten the names of the functions and then build and display labeled graph }
-   assert      for acc =empty:set.word, @e = toseq.nodes.g3 do acc + name.head.@e /for(cardinality.acc)
+   assert      for acc =empty:set.seq.word, @e = toseq.nodes.g3 do acc + print3.head.@e  /for(cardinality.acc)
        = cardinality.nodes.g3 report "Problem:profile nodes names not distinct"
-       +for txt="",  @e = toseq.nodes.g3 do txt+print.head.@e+EOL /for(txt)
+       +for txt="",  @e = toseq.nodes.g3 do txt+print3.head.@e+EOL /for(txt)
 { let nodemap = shorten.for acc ="", @e = toseq.nodes.g3 do acc + head.@e /for(acc)}
    let z2 = for acc = empty:seq.arcinfo.seq.word, a = toseq.arcs.g3 do
    acc + {arcinfo(shorten(nodemap, head.a), shorten(nodemap, tail.a),}
-      arcinfo([name(head.a)],[name.tail.a], [ toword(measure.a * 100 / max.tmp)])
+      arcinfo( print3(head.a) , print3.tail.a , [ toword(measure.a * 100 / max.tmp)])
   /for(acc)
      " /br" + measure + toword.max.tmp + " /br" + display.z2 + " /br"
    + measure
    + toword.max.tmp
+   
+   function print3(s:symbol) seq.word  {print.para.module.s+":"+}  fullname.s 
     
   /     function symname(w:word) seq.word    (codedown.w)_1
        
  use set.word
+ 
+ use set.seq.word
   
  use set.lparc
  

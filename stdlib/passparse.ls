@@ -157,7 +157,11 @@ set.symdef
            else
               assert subseq(print.sym.p,1,5) /ne  "tree.T:="  /or module.sym.p=module.sym report 
           "KL"+print.sym.p+ print.sym}
-           result + sym
+           result+if isBuiltin.sym then
+             if name.sym ∈ "length"then  GetSeqLength
+                 else if name.sym ∈ "getseqtype"then GetSeqType
+              else sym
+            else sym
       /for(acc+symdef( sym.p,result))
       /for( acc)  
    

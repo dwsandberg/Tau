@@ -48,76 +48,6 @@ use seq.seq.int
 
 use seq.seq.seq.int
 
-function uses(p:program, roots:set.symbol)set.symbol uses(p, empty:set.symbol, roots)
- 
-function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
- if isempty.toprocess then processed
- else
-  let q = for acc = empty:seq.symbol, @e = toseq.toprocess do
-     if isabstract.module.@e then acc 
-     else  acc+if isFref.@e then [basesym.@e] 
-     else if isrecordconstant.@e  then constantcode.@e    
-     else getCode(p, @e)   
-  /for(asset.acc)
-   {for  done=processed,new=empty:set.symbol ,sym=toseq.q do
-     if sym /in processed then next(done,new)  
-     else next(done+sym,new+sym)
-    /for( uses(p,done,new))
-    }
-  uses(p, processed ∪ toprocess, q - processed)
-  
-/function uses(p:program, processed:set.symbol, toprocess:set.symbol)set.symbol
-   for   done=processed, new=empty:set.symbol, sym=toseq.toprocess do
-      let k=asset.if isabstract.module.sym then empty:seq.symbol
-      else if isFref.sym then  [basesym.sym]
-      else if isrecordconstant.sym  then constantcode.sym    
-     else getCode(p, sym) 
-     next( done /cup k,for  acc=new,      sym1=toseq.k do
-        if isconstantorspecial.sym1 then acc
-        else if sym1 /in done then acc
-        else acc+sym1
-        /for(acc))
-    /for( if isempty.new then done else uses(p,done,new))
-
-  
-type steponeresult is match5map:seq.match5,defines:seq.symbol,prg:program
-
-use set.word
-
-Export type:steponeresult
-
-Function addele(ele:symbol,d:seq.symbol) boolean
- if   isInternal.ele then true /and 
-extname.ele /in "   DIVint GTint MULreal SUBreal not getseqtype getseqlength
- ORDreal casttoreal setint intpart ADDreal SUBint EQboolean SHLint setptr
- bitcast DIVreal ORDint tocstr toreal tointbit ADDint EQint tointbyte
- SHRint ANDbits representation MULint xor ORbits"
- else
-        not.isempty.d
-
-Function stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean,
-  thename:word,newmap:set.symbolref) steponeresult 
-  let uses=uses(theprg,roots)
- for acc = empty:seq.symbol,newprg=theprg,  ele = toseq.uses do
- if isconstantorspecial.ele ∨ isabstract.module.ele /or isBuiltin.ele /or isGlobal.ele 
- /or inModFor.ele then next(acc,newprg)
- else   let d = getCode(theprg, ele)
-   if iscompiled(d,ele) then next(acc,newprg) 
-  else  
-if addele(ele,d) then 
-let r= symbolref.ele
-let i = binarysearch(toseq.newmap, symbolref.ele)
- let extname=[merge( [thename]+if i > 0 then "$$"+ toword.i else "$"+ toword.toint.r+"$") ] 
- let tmpprg=addoption(newprg,ele,extname)
-     let discard= funcdec( alltypes, ele,tmpprg) 
-       next(acc+ele,tmpprg)
-   else next(acc,newprg)
-/for( steponeresult( match5map(newprg, uses,  alltypes),acc,newprg))
-
-
-use set.symbolref
-
-use otherseq.symbolref
 
  
 
@@ -133,7 +63,6 @@ Function codegen(theprg0:program,  roots:set.symbol, thename:word, libdesc:libde
 }let profilearcs=profilearcs.libdesc
 let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
 let stepone=stepone(theprg0,roots,alltypes,isbase,thename,newmap.libdesc)
-let theprg=prg.stepone
 let match5map = match5map.stepone
 let defines= defines.stepone
 let libmods2 =   for acc=empty:seq.int ,sym =  liblibflds.libdesc  do acc+arg.match5map_sym /for(acc)

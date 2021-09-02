@@ -10,8 +10,6 @@ use otherseq.word
 
 use seq.seq.word
 
-use program
-
 use libraryModule
 
 function printmangled(w:seq.char)seq.word
@@ -89,8 +87,6 @@ function codeup(l:seq.char, char:char)seq.char
 
 function hexdigit(val:bits, digit:int)char legal_(toint(val >> (4 * digit) ∧ bits.15) + 1)
 
-Function mangledname(prg:program,s:symbol) word
- mangledname(getoption.getCode(prg,s),s )
  
  
 

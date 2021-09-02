@@ -70,6 +70,8 @@ use passsymbol
 
 use set.passsymbols
 
+use codetemplates
+
 Export  subcompilelib( seq.word)seq.word  
 
 
@@ -87,9 +89,12 @@ Export  passparse(   abstractmods :set.passsymbols,simplemods:set.passsymbols
 ,src:seq.seq.word,mode:word) 
 set.symdef
 
-/Export stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean
-  ) steponeresult 
+Export stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean,
+  thename:word,newmap:set.symbolref) steponeresult 
 
+/Export uses(p:program, alltypes:typedict,processed:set.symbol, toprocess:set.symbol
+,infref:set.symbol,inrecordconstant:set.symbol,inother:set.symbol 
+)usesresult
 
 
 module STATE

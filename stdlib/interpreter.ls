@@ -91,13 +91,6 @@ function interpret(code:seq.symbol, i:int, stk:stack.int)int
    else {if isFref.sym then
 interpret(code, i + 1, push(stk,funcaddress.basesym.sym ))
    else}
-      {if mangledname.sym="ADDint"_1 then
-      let args=top(stk,2)
-       interpret(code, i + 1, push(pop(stk, nopara),args_1+args_2 ))
-   else if mangledname.sym="EQint"_1 then
-      let args=top(stk,2)
-       interpret(code, i + 1, push(pop(stk, nopara),if args_1=args_2 then 1 else 0 ))
-   else }
     let t = funcaddress.sym
      assert print.resulttype.sym ≠ "?"report"INTER" + print.sym + print.code
     let dcret = deepcopySym.resulttype.sym
