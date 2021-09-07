@@ -26,7 +26,8 @@ use process.seq.int
 
 use seq.seq.int
 
-use program
+
+use typedict
 
 use mangle
 

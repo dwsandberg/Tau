@@ -4,7 +4,6 @@ use UTF8
 
 use bits
 
-
 use libraryModule
 
 use llvm
@@ -44,7 +43,6 @@ use set.encoding.seq.char
 use seq.encodingpair.seq.char
 
 use set.encodingpair.seq.char
-
 
 / use maindict
 
@@ -95,7 +93,7 @@ else
  for acc = empty:set.encoding.seq.char, @e = initialdict do acc + code.@e /for(acc)
 let used = for acc = empty:set.encoding.seq.char, @e = encoding:seq.encodingpair.word3 do acc + wordcode.@e /for(acc)
 { build packed seq of word encodings }
- let wordstoadd = toseq(used - have)
+ let wordstoadd = toseq(used \ have)
  let data = for acc = [ toint.C64.0, toint.C64.length.wordstoadd], @e = wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
  let wordreps = addobject.data
   addobject("liblib", [ name, wordreps, toint.C64.0, toint.C64.0, profiledata]+ mods)

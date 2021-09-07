@@ -68,11 +68,9 @@ Function resolvesymbols(t:seq.seq.word, lib:word, mods:set.passtypes,libmods:set
  prg6(asset.typearcs, resolveexports(modlist + lastpass, 100000),typeflds))
 
 
-use format
 
 use mytype
 
-use program
 
 use standard
 
@@ -312,24 +310,20 @@ Function formsymboldict(modset:set.passsymbols,this:passsymbols, requireUnbound:
 partdict
  { bug here should not need i=0 in forloop }
 let dict=  for   syms=defines.this,requires=empty:set.symdef,i=0, u = toseq.uses.this do
-    let a =  findelement(passsymbols.abstractmod.u,modset)
+ let a = lookup(modset, passsymbols.abstractmod.u)
       if isempty.a then 
-        assert   mode   /nin "body" report"Cannot find module" +  name.u
-         {needed for when modset passsymbols are not yet created} 
-          next(syms,requires,0) 
-      else if not.isabstract.modname.a_1 then 
-       next(syms  ∪ exports.a_1,requires,0)
+   assert mode ∉ "body"report"Cannot find module" + name.u
+    { needed for when modset passsymbols are not yet created }next(syms, requires, 0)
+  else if not.isabstract.modname.a_1 then next(syms ∪ exports.a_1, requires, 0)
   else
    let r=for acc = syms,req=requires, e = toseq.exports.a_1 do
    let sym2 = replaceTsymbol(para.u, e)
    if isempty.requireUnbound then next(acc+sym2,req)
    else 
-   let require = findelement(symdef(e,empty:seq.symbol), requireUnbound)
+     let require = lookup(requireUnbound, symdef(e, empty:seq.symbol))
    if isempty.require then next(acc+sym2,req)
     else
-     let list=for acc2 = empty:seq.symbol, sym4= code.require_1 do
-      acc2 +  replaceTsymbol(para.u, sym4)
-     /for(acc2)
+       let list = for acc2 = empty:seq.symbol, sym4 = code.require_1 do acc2 + replaceTsymbol(para.u, sym4)/for(acc2)
     {       assert name.e /nin "arithseq"  report "GHJ"+print.list}
       next(acc+setrequires.sym2, req+symdef(sym2,list))
    /for(partdict(  acc,req))
@@ -343,8 +337,8 @@ let dict=  for   syms=defines.this,requires=empty:set.symdef,i=0, u = toseq.uses
  type partdict is syms :set.symbol,req:set.symdef
 
 
-Function findabstract(templates:program, sym:symbol)seq.findabstractresult
-  for acc = empty:seq.findabstractresult, sd = tosymdefs.templates do
+Function findabstract(templates:set.symdef, sym:symbol)seq.findabstractresult
+  for acc = empty:seq.findabstractresult, sd = toseq.templates do
    let e=sym.sd
    if name.e = name.sym ∧ length.types.e = length.types.sym 
     ∧ para.module.e = typeT       
@@ -377,30 +371,15 @@ use seq.findabstractresult
   
    Export modpara(findabstractresult ) mytype
  
-  
   function solveT ( a:mytype,b:mytype) mytype
     if a=typeT then b
-    else if isabstract.a  /and abstracttypename.a=abstracttypename.b then solveT(parameter.a,parameter.b)
-    else type?
-    
+ else if isabstract.a ∧ abstracttypename.a = abstracttypename.b then solveT(parameter.a, parameter.b)else type?
 
 use set.word
 
-
-       
-Function processOptions(prg:program,mods:seq.passsymbols,option:seq.word) program
-  for acc=prg ,  m=mods     do   
-   if name.module.m /in option then
-        for  acc2=acc  , sym=toseq.exports.m do 
-          addoption(acc2,sym,[name.module.m]) 
-       /for(acc2)
-   else acc 
-  /for(acc)
-  
   use seq.passsymbols
  
 ------------
-
 
 type symtextpair is sym:symbol, text:seq.word,paragraphno:int
 
@@ -414,10 +393,7 @@ Export paragraphno(symtextpair) int
 
 Export sym(symtextpair)symbol
 
-
-
 Export type:passsymbols
-
 
 Function module(f:passsymbols) modref modname.f
 
@@ -429,17 +405,9 @@ Export defines(passsymbols)set.symbol
 
 Export exports(passsymbols)set.symbol
 
-
-
-
-
 Export uses(passsymbols)set.modref
 
-
 Export text(passsymbols) seq.symtextpair
-
-
-
 
 use set.modref
 

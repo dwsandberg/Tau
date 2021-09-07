@@ -74,7 +74,7 @@ let sym3 = if length.name = 1 then symbol(internalmod, name, paratypes, typeint)
 else symbol4(internalmod, name_1, resolvetype(name << 1, common, place), paratypes, typeint)
 let f = lookupbysig( dict, sym3)
 assert not.isempty.f report errormessage("cannot find 1" + fixNM.name + "("
- + for acc ="", @e = paratypes do list(acc,",", print.@e)/for(acc)
+ + for acc ="", @e = paratypes do acc+print.@e+ "," /for(acc >> 1)
  + ")", common, place){+print.toseq.asset.dict}
  assert cardinality.f = 1 report errormessage("found more than one"
   + for acc ="", @e = toseq.f do acc + print.@e /for(acc), common, place)

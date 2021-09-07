@@ -140,7 +140,7 @@ Function shorten(map:nodemap, w:word)seq.word(short.map)_binarysearch(org.map, a
 
 type nodemap is org:seq.alphaword, short:seq.seq.word
 
-function shorten(a:seq.seq.seq.word, i:int)seq.word
+/function shorten(a:seq.seq.seq.word, i:int)seq.word
 let j = max(differ(a_(i - 1), a_i, 1), differ(a_i, a_(i + 1), 1))
  if j = 1 then a_i_1
  else
@@ -149,7 +149,7 @@ let j = max(differ(a_(i - 1), a_i, 1), differ(a_i, a_(i + 1), 1))
    + for acc ="", @e = subseq(z, 2, length.z)do list(acc,",", @e)/for(acc)
    + ")"
 
-function formattype(a:seq.word)seq.word
+/function formattype(a:seq.word)seq.word
  reverse.for acc ="", @e = a do list(acc,".", [ @e])/for(acc)
 
 function differ(a:seq.seq.word, b:seq.seq.word, i:int)int
@@ -180,5 +180,5 @@ Function dumpprofileinfo seq.word
 let lib=loadedLibs_1
 let e = profiledata.lib
  for acc ="", @e = profiledata.loadedLibs_1 do
-  list(acc," /br",   print.decode(caller.@e,lib)+print.decode(callee.@e,lib)+toword.clocks.@e )
- /for(acc)
+   acc + print.decode(caller.@e,lib)+print.decode(callee.@e,lib)+toword.clocks.@e+" /br"  
+ /for(acc >> 1)

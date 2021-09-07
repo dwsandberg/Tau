@@ -16,7 +16,7 @@ use standard
 
 use symbol
 
-use program
+use typedict
 
 use textio
 
@@ -48,19 +48,20 @@ use seq.seq.int
 
 use seq.seq.seq.int
 
-
- 
-
 use mangle
 
 use seq.mytype
 
 use libdesc
 
-Function codegen(theprg0:program,  roots:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict, isbase:boolean
-)seq.bits
-{let theprg=for theprg=theprg0 , sd=constantsymbols do  map(theprg,sym.sd,code.sd)/for(theprg)
-}let profilearcs=profilearcs.libdesc
+Export libdesc(info:compileinfo, prg:set.symdef ) libdescresult
+
+Export  liblibflds(libdescresult) seq.symbol
+
+Function codegen(theprg0:set.symdef, roots:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict, isbase:boolean)seq.bits
+ { let theprg = for theprg = theprg0, sd = constantsymbols do map(theprg, sym.sd, code.sd)/for(theprg)}
+ { assert false report for txt = empty:set.word, s = toseq.newmap.libdesc do txt + name.module.decode.s /for(toseq.txt)}
+ let profilearcs = profilearcs.libdesc
 let tobepatched = typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype) + toint.symboltableentry("profiledata", profiletype)
 let stepone=stepone(theprg0,roots,alltypes,isbase,thename,newmap.libdesc)
 let match5map = match5map.stepone
@@ -68,9 +69,8 @@ let defines= defines.stepone
 let libmods2 =   for acc=empty:seq.int ,sym =  liblibflds.libdesc  do acc+arg.match5map_sym /for(acc)
  { let zx2c = createfile("stat.txt", ["in codegen0.3"])}
  let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
- let bodies = for acc = empty:seq.internalbc, @e = defines do 
-    acc + addfuncdef(match5map, @e,profilearcs )/for(acc)
- let xxx = profiledata (profiledata.libdesc ) 
+  let bodies = for acc = empty:seq.internalbc, @e = defines do acc + addfuncdef(match5map, @e, profilearcs)/for(acc)
+  let xxx = profiledata.profiledata.libdesc
  let liblib = slot.addliblib([ thename],  libmods2 , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0)), isbase)
  let libnametype = array(length.decodeword.thename + 1, i8)
  let libslot = modulerecord(""
@@ -110,9 +110,7 @@ function addfuncdef(match5map:seq.match5, i:symbol,profilearcs:set.seq.symbol)in
   let nopara = arg.m
   let linit = Lcode2(emptyinternalbc, paramap(nopara, empty:seq.localmap), 1, nopara + 1, empty:stack.int, empty:stack.Lcode2)
    let xx=if"PROFILE"_1 ∈ options then profilearcs else empty:set.seq.symbol
-  let r = for l = linit, s = code do 
-  processnext(l, i, match5map, s,xx)
-  /for(l)
+  let r = for l = linit, s = code do processnext(l, i, match5map, s, xx)/for(l)
   BLOCKCOUNT(1, noblocks.r) + code.r
    + RET(r(regno.r + 1), slot.top.args.r)
 
@@ -125,9 +123,7 @@ function paramap(i:int, result:seq.localmap)seq.localmap
 
 function length(s:stack.int)int length.toseq.s
 
-
-function processnext(l:Lcode2, caller:symbol, match5map:seq.match5, s:symbol
-,profilearcs:set.seq.symbol)Lcode2
+function processnext(l:Lcode2, caller:symbol, match5map:seq.match5, s:symbol, profilearcs:set.seq.symbol)Lcode2
 let m = match5map_s
 let action = action.m
  if action = "CALL"_1 then
@@ -137,14 +133,10 @@ let action = action.m
      if idx > cardinality.profilearcs then  
       let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [-1] + args)
       Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
+  else profilecall(l, args, m, idx)
     else   
-    profilecall(l, args, m, idx)
- else {if action = "CALLE"_1 then
- let noargs = arg.m
- let args = top(args.l, noargs)
- let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, args)
- Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)
- else} if action = "ACTARG"_1 then
+  { if action ="CALLE"_1 then let noargs = arg.m let args = top(args.l, noargs)let c = usetemplate(m, regno.l, empty:seq.int)+ CALLFINISH(regno.l + 1, args)Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(regno.l + 1)), blocks.l)else }
+  if action = "ACTARG"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
  else if action = "LOCAL"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, getloc(lmap.l, arg.m, 1)), blocks.l)
@@ -280,7 +272,6 @@ function getloc(l:seq.localmap, localno:int, i:int)int
 function addloopmapentry(l:seq.localmap, baselocal:int, regbase:int, i:int)seq.localmap
  [ localmap(baselocal + i - 1,-regbase - i)] + l
  
- 
 function profilecall(l:Lcode2, args:seq.int, m:match5, idx:int )Lcode2
 let functype=functype.m
 let  callee={slot}symboltableentry([mangledname(getoption.code.m,sym.m)], functype.m)
@@ -324,10 +315,5 @@ Lcode2(code.l + c, lmap.l, noblocks.l + 3, regno.l + 21, push(pop(args.l, length
 
  
 
-
 function profiledata(profiledata:seq.int) slot
-  for acc = empty:seq.slot, x = profiledata do acc+C64.x 
- /for(AGGREGATE.acc)
- 
-
- 
+ for acc = empty:seq.slot, x = profiledata do acc + C64.x /for(AGGREGATE.acc) 

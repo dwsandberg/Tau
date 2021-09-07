@@ -26,9 +26,8 @@ Export stacktrace seq.word
 
 type ordering is toint:int
 
-type boolean is tointx:int
+Export type:ordering
 
-* Useful constants
 
 Function space word encodeword.[ char.32]
 
@@ -40,19 +39,51 @@ Function GT ordering ordering.2
 
 Function LT ordering ordering.0
 
+Function ?(a:ordering, b:ordering)ordering toint.a ? toint.b
+
+Function =(a:ordering, b:ordering)boolean toint.a = toint.b
+
+Function toword(o:ordering)word"LT EQ GT"_(toint.o + 1)
+
+Function ∧(a:ordering, b:ordering)ordering if a = EQ then b else a
+
+
 -----------------
 
-Builtin true boolean
+type boolean is tointx:int
 
-Builtin false boolean
+Export type:boolean
 
-Builtin not(a:boolean)boolean
+
+Export true boolean
+
+builtin true boolean
+
+Export false boolean
+
+builtin false boolean
+
+builtin not(a:boolean)boolean
+
+Export not(a:boolean)boolean
+
+builtin =(a:boolean, b:boolean)boolean
+
+Export   =(a:boolean, b:boolean)boolean
+
+Function ?(a:boolean, b:boolean)ordering
+ if a then if b then { T T } EQ else { T F } GT
+ else if b then { F T } LT else { F F } EQ
+
+Function ∧(a:boolean, b:boolean)boolean if a then b else false
+
+Function ∨(a:boolean, b:boolean)boolean if a then true else b
+
+______________
 
 Function-(i:int)int 0 - i
 
 Builtin ?(a:int, b:int)ordering
-
-Function ?(a:ordering, b:ordering)ordering toint.a ? toint.b
 
 Builtin +(a:int, b:int)int
 
@@ -66,25 +97,8 @@ Function hash(i:int)int finalmix.hash(hashstart, i)
 
 Builtin =(a:int, b:int)boolean
 
-Function =(a:ordering, b:ordering)boolean toint.a = toint.b
-
-Builtin =(a:boolean, b:boolean)boolean
-
-if a then if b then true else false else if b then false else true
-
-Function toword(o:ordering)word"LT EQ GT"_(toint.o + 1)
-
-Function ∧(a:ordering, b:ordering)ordering if a = EQ then b else a
-
 --------------------
 
-Function ?(a:boolean, b:boolean)ordering
- if a then if b then { T T } EQ else { T F } GT
- else if b then { F T } LT else { F F } EQ
-
-Function ∧(a:boolean, b:boolean)boolean if a then b else false
-
-Function ∨(a:boolean, b:boolean)boolean if a then true else b
 
 Function abs(x:int)int if x < 0 then 0 - x else x
 
@@ -102,6 +116,10 @@ Function min(a:int, b:int)int if a < b then a else b
 
 Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
+Function^(i:int, n:int)int {  * nth power of i }
+ for acc = 1, @e = constantseq(n, i)do acc * @e /for(acc)
+
+
 ---------------------------
 
 Function hash(a:seq.int)int finalmix.for acc = hashstart, @e = a do hash(acc, @e)/for(acc)
@@ -109,8 +127,6 @@ Function hash(a:seq.int)int finalmix.for acc = hashstart, @e = a do hash(acc, @e
 Function hash(a:seq.word)int
  finalmix.for acc = hashstart, @e = a do hash(acc, hash.@e)/for(acc)
 
-Function^(i:int, n:int)int
- for acc = 1, @e = constantseq(n, i)do acc * @e /for(acc)
 
 Function pseudorandom(seed:int)int
 let ah = 16807
@@ -118,15 +134,14 @@ let mh = 2147483647
 let test = ah * (seed mod (mh / ah)) - mh mod ah * (seed / (mh / ah))
  if test > 0 then test else test + mh
 
-function addrandom(s:seq.int, i:int)seq.int s + pseudorandom.s_(length.s)
 
 Function randomseq(seed:int, length:int)seq.int
- for acc = [ seed], @e = constantseq(length - 1, 1)do addrandom(acc, @e)/for(acc)
+ for acc = [ seed], @e = constantseq(length - 1, 1)do 
+  acc+pseudorandom.last.acc
+  /for(acc)
 
 Export randomint(i:int)seq.int
 
-Function list(a:seq.word, b:seq.word, c:seq.word)seq.word
- if isempty.a then c else if isempty.c then a else a + (b + c)
 
 Function print(n:int)seq.word
 let s = decodeUTF8.toUTF8.n
@@ -167,9 +182,7 @@ Export toint(w:word)int { Convert an integer represented as a word to an int }
 
 Export merge(a:seq.word)word { make multiple words into a single word. }
 
-Export type:ordering
 
-Export type:boolean
 
 Export type:word
 
@@ -311,7 +324,7 @@ interpreter mangle persistant  libdesc
 exclude seq bits set otherseq standard UTF8 real stack
 
 * usegraph include main2   display  parse passparse passsymbol    pass2 
-  postbind          pass2 
+  postbind          pass2 program
 typedict
 exclude seq set otherseq standard bits  graph UTF8 stack real 
   fileio textio encoding words symbol types

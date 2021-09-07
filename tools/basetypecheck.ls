@@ -18,23 +18,16 @@ use process.seq.word
 
 use main2
 
-
 use set.symdef
 
 use seq.symdef
 
+use set.symbol
  
- use set.symbol
- 
- 
-  type typemap is key:int,value:mytype
- 
+type typemap is key:int,value:mytype
    
- 
-
-    
-function lookup(key:int,a:set.typemap) set.typemap
-lookup( typemap(key,typeint),a) 
+function lookup( a:set.typemap,key:int) set.typemap
+lookup(a, typemap(key,typeint) ) 
 
 Function ?(a:typemap,b:typemap) ordering key.a ? key.b 
 
@@ -57,7 +50,7 @@ let p = process.glue.library
  
 function glue(library:seq.word)  seq.word
   let r2=  compilerfront("pass2",library)
-  basetypecheck(prg.r2,alltypes.r2 )
+  basetypecheck(prg.r2,typedict.r2 )
   
 function print(s:seq.mytype)seq.word for a ="", e = s do a + print.e /for(a)
 
@@ -127,7 +120,7 @@ function checkkind(s2:symdef, typedict:typedict)seq.word
         next(pop.stk, localtypes, false)
        else if islocal.s then
          { assert not.isempty.name2.s report"ill formed local"}
-         let localtype = lookup(value.s,localtypes )
+         let localtype = lookup( localtypes,value.s )
          assert not.isempty.localtype report"local not defined" + print.s
            next(push(stk, value.localtype_1), localtypes, false)
         else if name.s ∈ "packed blockit" ∧ nopara.s = 1 then next(stk, localtypes, false)
@@ -144,10 +137,10 @@ function checkkind(s2:symdef, typedict:typedict)seq.word
 function checkresults(prg:seq.symdef)seq.word
 let undefined = for defines = empty:set.symbol, uses = empty:set.symbol, h =  prg  do
  next(defines + sym.h, uses ∪ asset.code.h)
-/for(uses - defines - asset.knownsym)
+/for(uses \ defines \ asset.knownsym)
 for acc10 =" /p  /p checkresults  /p", h = toseq.undefined do
   if isconst.h
-  ∨ name.h = "createthreadY"_1 ∧ isempty(asset.types.h - asset.[ typeint, typereal, typeptr])then
+  ∨ name.h = "createthreadY"_1 ∧ isempty(asset.types.h \ asset.[ typeint, typereal, typeptr])then
    acc10
   else if  isBuiltin.h ∧ name.h ∈ "forexp" then acc10
   else if isabstract.module.h ∨ name.module.h ∈ "$int $define $local $sequence $for $words $loopblock $continue $br $global"

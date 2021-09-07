@@ -38,8 +38,8 @@ function restoredirection(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T, a
 let other = if head.a ∈ nodes.org ∧ not(tail.a ∈ nodes.org)then
 expandback(org, modified, tail.a)
 else tail.a
-let for2 = findelement(arcinfo.arc(other, head.a), orgarc)
-let back = findelement(arcinfo.arc(head.a, other), orgarc)
+let for2 = lookup(orgarc,arcinfo.arc(other, head.a) )
+let back = lookup(orgarc,arcinfo.arc(head.a, other) )
 let both = if not.isempty.for2 then [ setarc(for2_1, a, false)]else empty:seq.arcinfo.T /if
 + if not.isempty.back then [ setarc(back_1, a, true)]else empty:seq.arcinfo.T
  if isempty.both then [ arcinfo.a]else both
@@ -50,7 +50,7 @@ Function restorearcs(orgarc:set.arcinfo.T, org:graph.T, modified:graph.T)seq.arc
 Function displaygraph(control:characterwidths, arci:seq.arcinfo.T)seq.word
 let g = newgraph.for acc = empty:seq.arc.T, @e = arci do acc + a.@e /for(acc)
 let lg = layer.makeDAG.g
-let posistion = assignx(g.lg, nodes.g.lg - nodes.g, layers.lg)
+let posistion = assignx(g.lg, nodes.g.lg \ nodes.g, layers.lg)
 let p1 = for acc = empty:seq.nodeinfo.T, @e = toseq.posistion do acc + assignwidths(control, @e)/for(acc)
 let p3 = restorearcs(asset.arci, g, g.lg)
  tosvg(p3, toseq.nodes.g, asset.p1)
@@ -58,7 +58,7 @@ let p3 = restorearcs(asset.arci, g, g.lg)
 Function displaygraph(control:characterwidths, g:graph.T)seq.word
 let arci = for acc = empty:seq.arcinfo.T, @e = toseq.arcs.g do acc + arcinfo.@e /for(acc)
 let lg = layer.makeDAG.g
-let posistion = assignx(g.lg, nodes.g.lg - nodes.g, layers.lg)
+let posistion = assignx(g.lg, nodes.g.lg \ nodes.g, layers.lg)
 let p1 = for acc = empty:seq.nodeinfo.T, @e = toseq.posistion do acc + assignwidths(control, @e)/for(acc)
 let p3 = restorearcs(asset.arci, g, g.lg)
  tosvg(p3, toseq.nodes.g, asset.p1)

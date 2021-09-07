@@ -6,11 +6,9 @@ use standard
 
 use symbol
 
-use program
+use compilerfront
 
- 
 use seq.liblib
-
 
 use otherseq.mytype
 
@@ -32,12 +30,12 @@ use seq.seq.int
 
 use seq.seq.word
 
-
 use seq.encodingpair.seq.char
 
 use libraryModule
 
-function print(l:seq.mytype) seq.word for acc="(",t=l do acc+print.t /for(acc+")")
+function print(l:seq.mytype)seq.word
+ for acc ="(", t = l do acc + print.t /for(acc + ")")
 
 use seq.symbolref
 
@@ -68,9 +66,13 @@ use seq.seq.symbol
 
 use otherseq.symbol
               
+   use set.symdef
    
+   use symref
   
-Function libdesc(info:compileinfo, prg:program ) libdescresult
+  Export type:compileinfo
+  
+Function libdesc(info:compileinfo, prg:set.symdef ) libdescresult
 { mods.info are only the exported modules }
 let symstoexport2={roots.info}   for  acc=empty:seq.symbolref ,  m=  mods.info do
           acc+  exports.m
@@ -90,7 +92,7 @@ let code2=for  acc=empty:seq.seq.symbolref,        sym=toseq.symstoexport2 do
                           acc2+symbolref.sym2
                        /for(acc2)
                 /for (acc)
-let profilearcs=for acc=empty:set.seq.symbol , sd=tosymdefs.prg do 
+let profilearcs=for acc=empty:set.seq.symbol , sd=toseq.prg do 
            if  "PROFILE"_1 /nin getoption.code.sd then acc
            else 
         for txt=acc ,sym =toseq.asset.code.sd  do 
@@ -120,8 +122,11 @@ use set.int
 
 Function libcode(code1:seq.symbol,toexport:set.symbol) seq.symbol
 let code = removeoptions.code1
+ let optionsx = getoption.code1
  let z = if length.code < 15 then
  let x = removeconstantcode.code
+    if "VERYSIMPLE"_1 /in optionsx then  x
+    else 
   if for acc = true, @e = x do
    acc
    ∧ (isconst.@e 
@@ -132,7 +137,6 @@ let code = removeoptions.code1
    x
   else empty:seq.symbol
  else empty:seq.symbol
- let optionsx = getoption.code1
   { assert isempty.optionsx ∨ optionsx ∈ ["STATE","INLINE","VERYSIMPLE INLINE","STATE INLINE","BUILTIN","BUILTIN COMPILETIME","PROFILE","STATE BUILTIN","COMPILETIME STATE","COMPILETIME","PROFILE STATE","INLINE STATE","NOINLINE STATE"]report"X"+ optionsx z }
   if "COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then
    z + Words.optionsx + Optionsym
@@ -161,8 +165,6 @@ function addmytype(t:mytype)symbol
  
 function addseq(s:seq.symbol)symbol Constant2(s + Sequence(typeptr, length.s))
 
-
-  
 function addseqsymbolref(s:seq.symbolref,all:set.symbolref) symbol
 addseq.for acc = empty:seq.symbol, r = s do acc +  Lit.binarysearch(toseq.all,r)  /for(acc)
 
@@ -179,5 +181,3 @@ function addlibraryMod(m:libraryModule,all:set.symbolref)symbol
 
 
 --------------------------
-
-

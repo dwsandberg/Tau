@@ -51,8 +51,6 @@ let p = process.compilerfront("pass1", "testcomp",s,"stdlib","testit")
 Function compare(exp1:seq.word, exp2:seq.word)boolean
 let e1 = testcomp2.["module testit","use standard","Function f1(a:int, b:int, c:int)int" + exp1]
 let e2 = testcomp2.["module testit","use standard","Function f1(a:int, b:int, c:int)int" + exp2]
-let i1 = findindex("f1ZtestitZintZintZint"_1, e1)
-let i2 = findindex("f1ZtestitZintZintZint"_1, e2)
  e1 = e2
 
 Function isprefix(p:seq.word, s:seq.word)boolean subseq(s, 1, length.p) = p
@@ -72,11 +70,11 @@ let b = ["((1 + 2)+ 3)","((1 + 2)+ 3)","((1 * 2)* 3)","((1^2)^3)","((1_2)_3)","(
 ,"((1 + 2)= 3)","(1 =(2 + 3))","((1 > 2)= 3)","((1 = 2)> 3)","((1 = 2)∧ 3)","(1 ∧(2 = 3))","((1 ∧ 2)∨ 3)","(1 ∨(2 ∧ 3))","((uni 1)+ 2)"]
  check(for acc = empty:seq.seq.word, @e = a do acc + toseq.@e /for(acc), b,"precedence test")
 
-function check2(l:seq.seq.word, b:seq.seq.word, i:int)seq.word
- if l_i = b_i then""else [ toword.i]
-
+ 
 Function check(y:seq.seq.word, b:seq.seq.word, testname:seq.word)seq.word
-let x = for acc ="", @e = arithseq(length.y, 1, 1)do acc + check2(y, b, @e)/for(acc)
+let x = for acc ="", i = arithseq(length.y, 1, 1)do 
+    if y_i = b_i then acc else acc+toword.i 
+  /for(acc)
  if x = ""then"PASS" + testname
  else" /< literal FAILED  /> test" + x + "in" + testname
 

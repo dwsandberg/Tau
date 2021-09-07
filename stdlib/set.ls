@@ -33,14 +33,10 @@ Function  /cup (val:T,s:set.T) set.T set.setreplaceorinsert(toseq.s, val)
 
 Function_(s:set.T, i:int)T(toseq.s)_i
 
-Function lookup(val:T, s:set.T)set.T
+Function lookup( s:set.T,val:T)set.T
 let i = binarysearch(toseq.s, val)
 if i > 0 then set.[(toseq.s)_i]else empty:set.T
 
-
-Function findelement(val:T, s:set.T)set.T
-let i = binarysearch(toseq.s, val)
-if i > 0 then set.[(toseq.s)_i]else empty:set.T
 
 Function ∩(a:set.T, b:set.T)set.T set.intersect(toseq.a, toseq.b, 1, 1)
 
@@ -76,8 +72,10 @@ function union(a:seq.T, b:seq.T, i:int, j:int, result:seq.T)seq.T
    else
     union(a, b,-p, j + 1, result + subseq(a, i,-p - 1) + [ b_j])
 
-Function-(a:set.T, b:set.T)set.T
+ 
+ Function \(a:set.T, b:set.T)set.T
  { elements in a but not in b }set.diff(toseq.a, toseq.b, 1, 1)
+
 
 Function-(a:set.T, b:T)set.T set.setdelete(toseq.a, b)
 

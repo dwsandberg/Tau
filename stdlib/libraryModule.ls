@@ -115,7 +115,7 @@ assert length.l = 3 ∧ l_2_1 = "uses"_1
 Function getlibrarysrc(libname:seq.word)seq.seq.word
 let filelist =(getlibraryinfo.libname)_2
  for acc = empty:seq.seq.word, @e = filelist do
-  acc + gettext.[ merge([ first.libname] + "/" + @e + ".ls")]
+  acc + gettext.[ merge([ first.libname] + "/" + @e + ".ls")]+{File seperator} [encodeword.[char.28]]
  /for(acc)
 
 Function getlibraryinfo(libname:word)seq.seq.word getlibraryinfo.[ libname]

@@ -103,6 +103,11 @@ use seq.seq.int
 
 use seq.encodingpair.seq.char
 
+use seq.word
+
+Export_(seq.word,index) word 
+
+
 type packed2 is fld1:int, fld2:int
 
 type packed3 is fld1:int, fld2:int, fld3:int

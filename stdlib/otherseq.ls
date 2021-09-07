@@ -184,7 +184,7 @@ Export =(a:seq.T, b:seq.T)boolean
 
 Export ∈(a:T, s:seq.T)boolean
 
-Export findelement(w:T, s:seq.T)seq.T
+Export lookup(s:seq.T,T) seq.T
 
 Export_(s:pseq.T, ii:int)T
 

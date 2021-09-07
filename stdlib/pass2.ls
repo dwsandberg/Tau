@@ -56,7 +56,7 @@ use seq.seq.seq.symbol
 use localmap2
 
 
-function firstopt(p:program, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
+function firstopt(p:set.symdef, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
 let pdict = for pmap =  empty:set.localmap2  , parano =   arithseq(nopara.s,1, 1)  do 
        pmap+localmap2(parano,[ Local.parano])
      /for(pmap)
@@ -67,21 +67,22 @@ let ty = if Hasfor ∈ flags.a then expandforexp(code.a, nextvar.a)else code.a
 let t2 = if Callself ∈ flags.a ∧ wordname.s ≠ "subpass2"_1 then optB(ty, s)else ty
  expandresult(nextvar.a, t2, flags.a)
 else a
-let newoptions1 = if length.code.t < 22 ∧ Callself ∉ flags.t ∧ Hasfor ∉ flags.t
+ let newoptions1 = if between( length.code.t,1, 21) ∧ Callself ∉ flags.t ∧ Hasfor ∉ flags.t
 ∧ "NOINLINE"_1 ∉ options then
  if isverysimple(nopara.s, code.t)then"INLINE VERYSIMPLE"else"INLINE"
 else""
 let newoptions = if isempty.options then newoptions1
-else if options = newoptions1 then options else toseq(asset.options - asset."VERYSIMPLE INLINE" ∪ asset.newoptions1)
-if newoptions = ""then code.t else code.t + Words.newoptions + Optionsym
-
+else if options = newoptions1 then options else 
+ toseq(asset.options \ asset."VERYSIMPLE INLINE"  ∪ asset.newoptions1)
+  if newoptions = ""then code.t else code.t + Words.newoptions + Optionsym
+ 
 function isverysimple(nopara:int, code:seq.symbol)boolean
  if code = [ Local.1] ∧ nopara = 1 then true
  else
   for isverysimple = length.code ≥ nopara, idx = 1, sym = code while isverysimple do next(if idx ≤ nopara then sym = Local.idx
   else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym, idx + 1)/for(isverysimple)
 
-function xxx(p:program, code:seq.symbol, s:symbol, pdict:set.localmap2)expandresult
+function xxx(p:set.symdef, code:seq.symbol, s:symbol, pdict:set.localmap2)expandresult
 let a = scancode(p, code, nopara.s + 1, pdict, s)
 let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1)else code.a
  if length.code = length.new ∧ length.code > 20 ∨ new = code then
@@ -112,7 +113,7 @@ for acc = true, newargs=empty:seq.symbol, @e = args while acc do
            next(noFref,newargs+t)
 /for( if acc then args+func else empty:seq.symbol)
 
-function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:set.localmap2, self:symbol)expandresult
+function scancode(p:set.symdef, org:seq.symbol, nextvarX:int, mapX:set.localmap2, self:symbol)expandresult
  for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym = org do
  let len = length.result
   if not.isempty.result ∧ last.result = PreFref then
@@ -147,7 +148,7 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:set.localmap2, s
    if constargs then next(flags, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
     else next(flags, result + sym, nextvar, map)
    else if islocal.sym then
-   let t = lookup( value.sym,map)
+   let t = lookup( map,value.sym )
    next(flags, result + if isempty.t then [ sym]else value.t_1, nextvar, map)
    else next(flags, result + sym, nextvar, map)
   else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
@@ -195,10 +196,12 @@ function scancode(p:program, org:seq.symbol, nextvarX:int, mapX:set.localmap2, s
        let t = backparse2(result, len, nopara, empty:seq.int) + [ len + 1]
        { assert length.t = nopara + 1 report"INLINE PARA PROBLEM"}
         let new = expandinline(result, t, nextvar, code, p, self)
+     {   assert name.sym /nin "<" report "here"+print.sym+"org"+print.org
+        +EOL+"new"+EOL+print(subseq(result, 1, t_1 - 1) + code.new) }
         next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
  /for(expandresult(nextvar, result, flags))
 
-function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:program, self:symbol)expandresult
+function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:set.symdef, self:symbol)expandresult
  for pmap = empty:set.localmap2, paracode = empty:seq.symbol, nextvar = nextvarin, parano = 1, lastidx = t_1, idx = t << 1 do
   next(pmap+localmap2( parano, [ Local.nextvar]) , paracode + subseq(result, lastidx, idx - 1) + Define.nextvar, nextvar + 1, parano + 1, idx)
  /for(let r = scancode(p, code, nextvar, pmap, self)
@@ -341,14 +344,14 @@ ________________________________
 
 use set.symdef
 
-Function pass2(knownsymbols :program)program 
-subpass2(empty:seq.symdef, emptyprogram, knownsymbols, 0)
+Function pass2(knownsymbols :set.symdef)set.symdef 
+ subpass2(empty:seq.symdef, empty:set.symdef,  knownsymbols, 0)
 
 
 
-function subpass2(bigin:seq.symdef, corein:program, toprocess:program, count:int)program
+function subpass2(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int)set.symdef
  { assert count < 4 report"SIZE"+ print.length.toseq.toprocess + print.length.bigin + print.length.toseq.corein + print.count }
- for big = bigin, small = emptyprogram, core = corein, pele = tosymdefs.toprocess do
+ for big = bigin, small = empty:set.symdef, core = corein, pele = toseq.toprocess do
  let s = sym.pele
  let fullcode = code.pele
  let options = getoption.fullcode
@@ -363,8 +366,8 @@ function subpass2(bigin:seq.symdef, corein:program, toprocess:program, count:int
   if"INLINE"_1 ∈ getoption.t then next(big, small, symdef(s,t) /cup  core )
    else next(big, symdef( s, t) /cup small, core)
   else next(big + pele, small, core)
- /for(if length.tosymdefs.corein = length.tosymdefs.core then
-  for acc = core, prgele = tosymdefs.core + tosymdefs.small + big do
+ /for(if length.toseq.corein = length.toseq.core then
+  for acc = core, prgele = toseq.core + toseq.small + big do
   let code3 = code.prgele
   let sym3 = sym.prgele
    if isempty.code3 then   prgele /cup acc else symdef( sym3, firstopt(acc, sym3, code3, getoption.code3, false) ) /cup acc
@@ -410,8 +413,6 @@ function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
     else first
      backparse2(s, b - 1, no - 1, [ b] + result)
      
-use program
-
  
 
  

@@ -4,8 +4,6 @@ use mytype
 
 use passsymbol
 
-use program
- 
 use standard
 
 use symbol
@@ -45,59 +43,46 @@ use seq.encodingpair.symbol
 use seq.seq.symbol
 
 use seq.set.symdef
+
+use seq.commoninfo
+
+use symboldict
     
 function verysimpleinline(sym1:symbol, code:seq.symbol)boolean
-  if isempty.code /or last.code=Optionsym /or length.code > 10 then false else
+ if isempty.code ∨ last.code = Optionsym ∨ length.code > 10 then false
+ else
   let nopara = nopara.sym1
-    for acc = length.code ≥ nopara, idx = 1, sym = code while acc do if idx ≤ nopara then next(sym = Local.idx, idx + 1)
+    for isverysimple = length.code ≥ nopara, idx = 1, sym = code while isverysimple do if idx ≤ nopara then next(sym = Local.idx, idx + 1)
    else
      next(if isconst.sym then true
-     else if isBuiltin.sym then name.sym /in "fld getfld length"    
-     else if  isInternal.sym  then 
-      {let A=true /and  name.sym ∈ "set getseqlength + - * / ? toint =  >  >> <<  ∨ ∧ tan cos sin sqrt 
-      getbitfile getbytefile getfile createfile2 dlsymbol 
-      loadedlibs2 unloadlib2 randomint casttoreal loadlib getseqtype representation toreal callstack 
-      processisaborted getinstance not PreFref" 
-       }
-       name.sym /nin "xGEP     indexseq45  "
-     else   not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym ,idx+1)
-     /for(acc)
-      
-    next(isconst.sym /or  isBuiltin.sym ∧ name.sym = "fld getfld length"_1
-    ∨ isInternal.sym ∧ name.sym ∈ "getseqlength + - * / ="
-    , idx + 1)/for(acc)
-    
-    for isverysimple = length.code ≥ nopara, idx = 1, sym = code while isverysimple do 
-  next(if idx ≤ nopara then sym = Local.idx
-  else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym /and (not.isBuiltin.sym /or name.sym /in "fld getseqlength"), idx + 1)/for(isverysimple)
+    else if isBuiltin.sym then name.sym ∈ "fld getfld length getseqlength"
+    else if isInternal.sym then name.sym ∉ "indexseq45"
+    else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
+    , idx + 1
+    )/for(isverysimple ∧ name.sym1 ∉ "decodeword encodeword")
 
-    set + - / * ? toint = > >> << ∨ ∧ tan cos sin sqrt GEP
-    
-    pushflds
-
-type postbindresult is typedict:typedict, prg:program, inline:set.symdef
+type postbindresult is typedict:typedict, prg:set.symdef, inline:set.symdef
 
 Export typedict(postbindresult)typedict
 
-Export prg(postbindresult)program
+Export prg(postbindresult) set.symdef
 
-Function postbind( roots:seq.symbol, theprg:program, templates:program, typedict1:typedict)postbindresult
+Function postbind( roots:seq.symbol, theprg:set.symdef, templates:set.symdef, typedict1:typedict)postbindresult
 let discard = for acc = symbolref.Lit.0, r = roots do   symbolref.r /for(0)
-    let inline=for inline=postbindresult(typedict1,theprg,empty:set.symdef),   sd=tosymdefs.theprg do
-   if not.isabstract.module.sym.sd /and verysimpleinline(sym.sd,code.sd) 
-      then 
+ for inline=postbindresult(typedict1,theprg,empty:set.symdef), allsyms=empty:set.symbol,  sd=toseq.theprg do
+  next(if not.isabstract.module.sym.sd ∧ verysimpleinline(sym.sd, code.sd)then
        for acc=empty:seq.symbol,typedict3=typedict.inline,    symx=code.sd do
-        if islocal.symx /or  isconst.symx then next(acc+symx,typedict3) else 
+    if islocal.symx ∨ isconst.symx then next(acc + symx, typedict3)
+    else
         let newdict3 = addtypes(typedict3, asset(code.sd + sym.sd))
          next( acc+ test(symx, newdict3, para.module.sym.sd, empty:set.symdef),newdict3)
-     /for (postbindresult( typedict3,symdef(sym.sd,acc ) /cup prg.inline,inline.inline+symdef(sym.sd,acc)) )
-       else inline 
-   /for(inline)  
-usedsyms(prg.inline, 0, emptyprogram, templates, typedict.inline, inline.inline)
- 
-usedsyms(theprg, 0, emptyprogram, templates, typedict1, empty:set.symdef)
+   /for(postbindresult(typedict3, symdef(sym.sd, acc) ∪ prg.inline, inline.inline + symdef(sym.sd, acc)))
+    else inline ,allsyms+sym.sd)
+ /for(usedsyms(symboldict(allsyms, empty:seq.commoninfo), prg.inline, 0, empty:set.symdef, templates, typedict.inline, inline.inline))
 
-function usedsyms(source:program, last:int, result:program, templates:program, typedict1:typedict, inline:set.symdef)postbindresult
+use symref
+
+function usedsyms(allsyms:symboldict,source:set.symdef, last:int, result:set.symdef, templates:set.symdef, typedict1:typedict, inline:set.symdef)postbindresult
 let aa = encoding:seq.encodingpair.symbol
  if length.aa = last then
   { assert false report"INLINE"+ for txt ="", sd = toseq.inline do txt + print.sym.sd + print.code.sd + EOL /for(txt)}
@@ -113,7 +98,7 @@ let aa = encoding:seq.encodingpair.symbol
     else if istype.symz then symdef(symz, deepcopybody(resulttype.symz, newdict2))
     else if not.isunbound.symz then instantiateTemplate(symz, templates)
     else
-     let k2 = lookupbysig(dataX.source, symz)
+     let k2=lookupbysig(allsyms,symz)
      if isempty.k2 then instantiateTemplate(symz, templates)
       else
        assert cardinality.k2 = 1 report"unbound problem" + print.symz
@@ -130,9 +115,9 @@ let aa = encoding:seq.encodingpair.symbol
      for cache = empty:set.symdef, nextvar = nopara.sym.sd + 1, map = pdict, result2 = empty:seq.symbol, symx = code.sd do
       let sym = replaceTsymbol(modpara, symx)
       if name.module.sym ∈ "$define"then
-        next(cache, nextvar + 1, localmap2( value.sym, [ Local.nextvar]) /cup map, result2 + Define.nextvar)
+        next(cache, nextvar + 1, localmap2(value.sym, [ Local.nextvar]) ∪ map, result2 + Define.nextvar)
        else if name.module.sym ∈ "$local"then
-       let t = value.lookup(value.sym ,map)_1
+       let t = value.lookup(map,value.sym  )_1
        next(cache, nextvar, map, result2 + t)
        else if isconst.sym then next(cache, nextvar, map, result2 + sym)
        else if name.sym ∈ "primitiveadd" ∧ isBuiltin.sym then
@@ -174,13 +159,13 @@ let aa = encoding:seq.encodingpair.symbol
        else if not.isempty.result2 ∧ last.result2 = PreFref then
         next(cache, nextvar, map, result2 + test(symx, newdict3, modpara, empty:set.symdef))
        else
-        let cacheValue = findelement(symdef(symx, empty:seq.symbol), cache)
+        let cacheValue = lookup(cache, symdef(symx, empty:seq.symbol))
         if not.isempty.cacheValue then next(cache, nextvar, map, result2 + code.cacheValue_1)
          else
           let newValue = test(symx, newdict3, modpara, inline.accZ)
           next(cache + symdef(symx, newValue), nextvar, map, result2 + newValue)
-      /for(postbindresult(newdict3,   symdef(symz, result2) /cup prg.accZ, if verysimpleinline(symz, result2)then inline.accZ + symdef(symz, result2)else inline.accZ))
-  /for(usedsyms(source, length.aa, prg.accZ, templates, typedict.accZ, inline.accZ))
+      /for(postbindresult(newdict3, symdef(symz, result2) ∪ prg.accZ, if verysimpleinline(symz, result2)then inline.accZ + symdef(symz, result2)else inline.accZ))
+  /for(usedsyms(allsyms,source, length.aa, prg.accZ, templates, typedict.accZ, inline.accZ))
 
 function test(symx:symbol, newdict3:typedict, modpara:mytype, inline:set.symdef)seq.symbol
 let sym = replaceTsymbol(modpara, symx)
@@ -190,7 +175,7 @@ if isspecial.sym then
  else if isInternal.sym then let discard = symbolref.sym
   [ sym]
  else if not.isBuiltin.sym then
- let xx = getCode(program.inline, sym)
+ let xx = getCode(inline, sym)
  if isempty.xx then let discard = symbolref.sym
    [ sym]else xx << nopara.sym
  else if name.sym ∈ "bitcast"then
@@ -245,7 +230,7 @@ if isspecial.sym then
     sym
   ]
 
-function instantiateTemplate(sym2:symbol, templates:program)symdef
+function instantiateTemplate(sym2:symbol, templates:set.symdef)symdef
  if issimple.module.sym2 then symdef(sym2, empty:seq.symbol)
  else
   let gx = findabstract(templates, sym2)
@@ -259,7 +244,6 @@ function iscoretype(typ:mytype)boolean
  ∨ isseq.typ
  ∨ isencoding.typ
 
-
 function deepcopybody(type:mytype, typedict:typedict)seq.symbol
  if type = typeint ∨ type = typeword ∨ isencoding.type then [ Local.1]
  else if isseq.type then
@@ -267,7 +251,6 @@ function deepcopybody(type:mytype, typedict:typedict)seq.symbol
  let basetype = basetype(type, typedict)
  let elementtype = parameter.basetype
  if elementtype = typebyte ∨ elementtype = typebit ∨ elementtype = typeboolean then 
-  {assert false report "here"}
  [ Local.1, symbol(modTausupport,"blockIt", seqof.typeint, seqof.typeint)]
   else
    let cat = symbol(tomodref.type,"+", [ type, parameter.type], type)
@@ -327,9 +310,11 @@ use set.localmap2
  
  Export ∪(localmap2, set.localmap2) set.localmap2
  
- Function lookup(key:int,a:set.localmap2) set.localmap2
-lookup( localmap2(key,empty:seq.symbol),a) 
+  Function lookup(a:set.localmap2,key:int) set.localmap2
+lookup(a,localmap2(key,empty:seq.symbol) ) 
 
+ 
+ 
 Function  =(a:localmap2,b:localmap2) boolean key.a=key.b
 
 Function hash(a:localmap2) int hash.key.a
@@ -347,9 +332,10 @@ Function ?(a:localmap2,b:localmap2) ordering key.a ? key.b
  
  Export ∪(localmap2, hashset.localmap2) hashset.localmap2
  
- Function lookup(key:int,a:hashset.localmap2) seq.localmap2
-lookup( localmap2(key,empty:seq.symbol),a) 
- 
+  
+  Function lookup( a:hashset.localmap2,key:int) seq.localmap2
+lookup(a, localmap2(key,empty:seq.symbol) ) 
+
  
  Module hashset.T
 
@@ -385,7 +371,8 @@ unbound  =(a:T,b:T) boolean
 
 unbound hash(T) int
 
-Function lookup( ele:T,s:hashset.T) seq.T
+ 
+ Function lookup( s:hashset.T,ele:T) seq.T
  let h=hash.ele
  for acc = empty:seq.T, e =(table.s)_(h   mod length.table.s + 1)do
   if data.e=ele then acc + data.e else acc

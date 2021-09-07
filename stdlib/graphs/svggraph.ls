@@ -121,7 +121,7 @@ let xstop = if width.a = 0 then x.stop else x.stop - width.a / 8 - 5
  + text("text", xstop, y.stop + (i - 1) * vertnodesize, label.a)
 
 function toarcinfo(s:set.nodeinfo.T, a:arcinfo.T)arcinfo.T
-let y = findelement(nodeinfo(tail.a.a, 0, 0), s)
+let y = lookup(s,nodeinfo(tail.a.a, 0, 0) )
  assert not.isempty.y report"node not found" + nodetotext.tail.a.a
  let start = y_1
   arcinfo(a.a, x.start + if width.start = 0 then 0 else width.start + 10, y.start, label.a, width.a, backarc.a)

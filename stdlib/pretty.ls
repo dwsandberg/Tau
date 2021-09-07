@@ -40,18 +40,17 @@ function gettext2(s:seq.word)seq.seq.word
  else if s_1 ∈ "Function function type use"then [ s]else empty:seq.seq.word
 
 Function htmlcode(libname:seq.word)seq.word
-let p = prettyfile('  /< noformat <hr id ="T">  />  /keyword ', getlibrarysrc.libname_1)
-let modules = for acc ="", @e = p do acc + findmodules.@e /for(acc)
+let p = prettyfile(true,'  /< noformat <hr id ="T">  />  /keyword ', getlibrarysrc.libname_1)
+let modules = for acc ="", @e = p do
+ if subseq(@e, 1, 2) ∈ [" /< noformat"]then acc + @e_7 else acc
+/for(acc)
 " /< noformat <h1> Source code for Library" + libname + "</h1>  />"
  + for acc ="", @e = modules do acc + ref.@e /for(acc)
- + for acc ="", @e = p do list(acc," /p", @e)/for(acc)
+ + for acc ="", @e = p do  acc+@e+" /p" /for(acc >> 1)
 
 function ref(modname:word)seq.word
  '  /< noformat <a href ="' + merge.["#"_1, modname] + '"> ' + modname
  + "</a>  />"
-
-function findmodules(p:seq.word)seq.word
- if subseq(p, 1, 2) ∈ [" /< noformat"]then [ p_7]else""
 
 ____________________________
 
@@ -69,36 +68,29 @@ use bits
 
 function prettyfile(lib:word, newlibdir:word, file:word)seq.word
 let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
-let b = for acc ="", @e = prettyfile("", gettext.file2)do acc + " /p" + @e /for(acc << 1)
+let b = for acc ="", @e = prettyfile(true,"", gettext.file2)do acc + " /p" + @e /for(acc << 1)
 let discard = createfile([ merge([ newlibdir] + "/" + file + ".ls")], toUTF8textbytes.b << 1)
 b
-
-Function prettyfile(modhead:seq.word, s:seq.seq.word)seq.seq.word
- prettyfile(modhead, s, 1, empty:seq.seq.word, empty:seq.seq.word, empty:seq.seq.word)
 
 Function pretty(s:seq.word)seq.word
 let tmp0 = text.(toseq.parse.s)_1
  removeclose(tmp0, length.tmp0)
 
-function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, libbody:seq.seq.word, result:seq.seq.word)seq.seq.word
- if i > length.l then result + sortuse.uses + libbody
- else
-  let s = l_i
-   if length.s = 0 then prettyfile(modhead, l, i + 1, uses, libbody, result)
-   else if s_1 ∈ "use"then prettyfile(modhead, l, i + 1, uses + reverse.s, libbody, result)
+Function prettyfile(escape:boolean,modhead:seq.word, text:seq.seq.word)seq.seq.word
+for   uses=empty:seq.seq.word, libbody=empty:seq.seq.word, result=empty:seq.seq.word ,    s=text do
+   if length.s = 0 then next(uses, libbody, result)
+   else if s_1 ∈ "use"then next(uses + reverse.s, libbody, result)
+  else if s_1 ∈ "Export unbound"then next(uses, libbody + (" /keyword" + s), result)
    else if s_1 ∈ "Function function type"then
    let tmp0 = text.(toseq.parse.s)_1
    let tmp = removeclose(tmp0, length.tmp0)
-   let tmp2 = if s_1 ∈ "Function function" ∧ last.tmp = "export"_1 then
-   " /keyword Export" + subseq(tmp, 3, length.tmp - 1)
-   else tmp
-    prettyfile(modhead, l, i + 1, uses, libbody + tmp2, result)
+    next(uses, libbody + tmp, result)
    else if s_1 ∈ "module Module"then
    let target = if length.modhead > 1 then
     subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
    else empty:seq.word
    let newresult = result + sortuse.uses + libbody + (target + s)
-   prettyfile(modhead, l, i + 1, empty:seq.seq.word, empty:seq.seq.word, newresult)
+   next(empty:seq.seq.word, empty:seq.seq.word, newresult)
    else
     let temp = if s_1 ∈ "Library library"then
     let parts = break(s,"uses exports", true)
@@ -106,9 +98,9 @@ function prettyfile(modhead:seq.word, l:seq.seq.word, i:int, uses:seq.seq.word, 
      + parts_2
      + " /br  /keyword exports"
      + alphasort(parts_3 << 1)
-    else escapeformat.s
-     if length.uses = 0 then prettyfile(modhead, l, i + 1, uses, libbody, result + temp)
-     else prettyfile(modhead, l, i + 1, uses, libbody + temp, result)
+    else if escape then escapeformat.s else s
+    if length.uses = 0 then next(uses, libbody, result + temp)else next(uses, libbody + temp, result)
+/for( result + sortuse.uses + libbody)
 
 function formatuse(a:seq.word)seq.word" /keyword" + reverse.a
 

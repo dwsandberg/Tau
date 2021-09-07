@@ -49,7 +49,7 @@ check(y,"testmodules") + checkbits
 
 function print(a:seq.int)seq.word
 "["
- + for acc ="", @e = a do list(acc,",", [ toword.@e])/for(acc)
+ + for acc ="", @e = a do acc + toword.@e +"," /for(acc >> 1)
  + "]"
 
 ---
@@ -76,9 +76,7 @@ function print(t:tree.word)seq.word
   [ label.t]
   + if nosons.t = 1 then"." + print.t_1
   else
-  "("
-   + for acc ="", @e = sons.t do list(acc,",", print.@e)/for(acc)
-   + ")"
+  "("+ for acc ="", @e = sons.t do  acc+","+ print.@e /for(acc >> 1)+ ")"
 
 function t502 boolean [ GT, EQ, EQ]
 = [ tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree.1]

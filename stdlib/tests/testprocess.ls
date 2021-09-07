@@ -59,8 +59,8 @@ Function testreal seq.word check([ print(3, sqrt.2.0) = "1.414"
 , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
 = "1 C addcomma function i int merge s segment seq seq toword toword word"
 , for acc ="", @e = alphasort.["z b","a b","a a","test 23","test 20"]do
- list(acc,"/", @e)
-/for(acc)
+  acc+@e+"/" 
+/for(acc >> 1)
 = "a a / a b / test 20 / test 23 / z b"
 ]
 ,"real"

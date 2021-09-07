@@ -10,8 +10,6 @@ use set.symdef
 
 use symbol
 
-use program
-
 use seq.seq.mytype
 
 use seq.mytype
@@ -33,9 +31,7 @@ function flatflds(a:typeentry) seq.mytype  totypeseq.a << 1
 function typeentry(t:mytype,flat:seq.mytype) typeentry typeentry([t]+flat)  
 
 Function buildtypedict(zz1:set.symdef, types:seq.seq.mytype)    typedict
- for  acc = empty:set.symbol, p = toseq.zz1 do
-     acc + sym.p
-/for(buildtypedict( acc ,types))
+ for acc = empty:set.symbol, p = toseq.zz1 do acc + sym.p /for(buildtypedict(acc, types))
 
 Function    addtypes(alltypes:typedict,syms:set.symbol)   typedict
  let typesused=for  acc = empty:seq.mytype, sym = toseq.syms do
@@ -48,17 +44,16 @@ Function    addtypes(alltypes:typedict,syms:set.symbol)   typedict
       typesused.sym 
 /for(acc)
  for acc=alltypes ,d= toseq.asset.typesused do 
- if d= type? /or abstracttypename.d /in"$base"  then acc else
- addtype(acc,d)  /for(acc)
+  if d = type? ∨ abstracttypename.d ∈ "$base"then acc else addtype(acc, d)
+ /for(acc)
  
  function print(t:seq.mytype) seq.word for txt="",a=t do  txt+print.a /for (txt)
 
 Function    addtype(alltypes:typedict,type:mytype)   typedict
    if type   ∈ [ typeint, typeT, typeboolean, typereal,typeptr] then alltypes
+ else if isseq.type then addtype(alltypes, parameter.type)
   else 
-   if isseq.type then addtype(alltypes,parameter.type)
-  else 
-   let t=  findelement(typeentry(type,empty:seq.mytype),totypedict.alltypes)
+  let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
   if not.isempty.t then alltypes 
   else 
     {assert  abstracttypename.type /nin "lexaction1 nodemap" report "lexxx"+if isempty.t then "T" else "F" /if+print.alltypes}
@@ -67,19 +62,15 @@ Function    addtype(alltypes:typedict,type:mytype)   typedict
     if isflat.newtr then 
      { add to typedict and then check to make sure parameters are in typedict }
      for acc= typedict(totypedict.alltypes+newtr) ,subfld = flatflds    do
-        if   isseq.subfld  /or isencoding.subfld   
-        then addtype(acc,subfld) 
-        else acc
+       if isseq.subfld ∨ isencoding.subfld then addtype(acc, subfld)else acc
      /for(acc)
      else  
      { add types not in  typedict  and try again }
       for acc=alltypes, subfld = flatflds    do
-        if subfld ∈ [ typeint, typeT, typeboolean, typereal,typeptr]  /or isseq.subfld /or isencoding.subfld  
-        then acc
-      else 
-          addtype(acc,subfld)
-     /for( assert cardinality.totypedict.alltypes < cardinality.totypedict.acc report "PROBLEM"+print.type
-     +"flat:"+for txt="",g=flatflds do txt+print.g /for(txt+EOL)+print.acc
+       if subfld ∈ [ typeint, typeT, typeboolean, typereal, typeptr] ∨ isseq.subfld ∨ isencoding.subfld then acc else addtype(acc, subfld)
+      /for(assert cardinality.totypedict.alltypes < cardinality.totypedict.acc report"PROBLEM" + print.type + "flat:"
+      + for txt ="", g = flatflds do txt + print.g /for(txt + EOL)
+      + print.acc
        addtype(acc,type))
   
 use set.symbol
@@ -88,9 +79,10 @@ Function check(smalldict:typedict,bigdict:typedict) typedict
    for small=smalldict,      atyprep=  toseq.totypedict.bigdict do 
       let t=type.atyprep
         let new=addtype(smalldict,t)
-     assert  isseq.t /or flatwithtype(new,t)=flatwithtype(bigdict,t) report "check"+print.t
-      +"flat:"+for txt="",g=flatwithtype(bigdict,t) do txt+print.g /for(txt+EOL)
-      +"flat:"+for txt="",g=flatwithtype(new,t) do txt+print.g /for(txt+EOL)
+ assert isseq.t ∨ flatwithtype(new, t) = flatwithtype(bigdict, t)report"check" + print.t + "flat:"
+  + for txt ="", g = flatwithtype(bigdict, t)do txt + print.g /for(txt + EOL)
+  + "flat:"
+  + for txt ="", g = flatwithtype(new, t)do txt + print.g /for(txt + EOL)
      new
     /for(small)
  
@@ -161,21 +153,19 @@ function expandflat(p:typeentry,types:set.typeentry)typeentry
  
  function expandflat(type:mytype,flatflds:seq.mytype,types:set.typeentry) seq.mytype
  if isempty.flatflds then 
-     let f3=findelement(typeentry(abstracttype.type ,empty:seq.mytype),types)
-      if isempty.f3 then flatflds
-      else  
-        expandflat(type,replaceT(parameter.type ,flatflds.f3_1),types)  
+ let f3 = lookup(types, typeentry(abstracttype.type, empty:seq.mytype))
+ if isempty.f3 then flatflds else expandflat(type, replaceT(parameter.type, flatflds.f3_1), types)
  else 
  for acc = empty:seq.mytype, unchanged = true, t = flatflds  do
   if t ∈ [ typeint, typeT, typeboolean, typereal,typeword] ∨ isseq.t ∨ isencoding.t then
     next(acc + t, unchanged)
    else
-      let   f=findelement(typeentry(t,empty:seq.mytype),types)
+    let f = lookup(types, typeentry(t, empty:seq.mytype))
       if isempty.f   then
-         let t2=  (abstracttype.t) 
+     let t2 = abstracttype.t
          if t2=t then next(acc + t, unchanged)
          else 
-         let f3=findelement(typeentry(t2,empty:seq.mytype),types)
+       let f3 = lookup(types, typeentry(t2, empty:seq.mytype))
          {assert {print.t /ne "set.arc.T"} isempty.f3   report "K"+print.t+"K"+print.t2 }
          if isempty.f3 then next(acc + t, unchanged)
          else next(acc + replaceT(parameter.t,flatflds.f3_1 ), false)
@@ -190,34 +180,30 @@ use seq.symbol
 Function basetype(type:mytype, addsize: typedict)mytype
    if isseq.type then
      let para=parameter.type
-     if para =typebyte /or para =typebit then type else 
-     seqof.coretype(parameter.type,addsize,6)
+  if para = typebyte ∨ para = typebit then type else seqof.coretype(parameter.type, addsize, 6)
    else coretype(type,addsize)    
    
 type typedict is totypedict:set.typeentry
 
 Function print(dict:typedict) seq.word
-   for txt="", tr=toseq.totypedict.dict do   for acc2=txt,  t=totypeseq.tr do acc2+print.t /for(acc2+EOL) /for(txt)
+ for txt ="", tr = toseq.totypedict.dict do
+  for acc2 = txt, t = totypeseq.tr do acc2 + print.t /for(acc2 + EOL)
+ /for(txt)
 
 Export type:typedict
 
-
 Function emptytypedict typedict typedict.empty:set.typeentry
 
-Function add(alltypes:typedict,t:mytype,flatflds:seq.mytype) typedict
-   typedict(totypedict.alltypes +typeentry(t,flatflds))
+Function add(alltypes:typedict, t:mytype, flatflds:seq.mytype)typedict typedict(totypedict.alltypes + typeentry(t, flatflds))
       
 Function    flatflds(alltypes:typedict,type:mytype) seq.mytype
  {assert not.isseq.type /or parameter.type=typeT report "flattype"+print.type+stacktrace}
-  let t=  findelement(typeentry(type,empty:seq.mytype),totypedict.alltypes)
-  if isempty.t then empty:seq.mytype
-  else flatflds.t_1  
+ let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
+ if isempty.t then empty:seq.mytype else flatflds.t_1
   
 Function    flatwithtype(alltypes:typedict,type:mytype) seq.mytype
-   let t=  findelement(typeentry(type,empty:seq.mytype),totypedict.alltypes)
- if isempty.t then empty:seq.mytype
-  else [type.t_1] +flatflds.t_1  
-        
+let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
+if isempty.t then empty:seq.mytype else [ type.t_1] + flatflds.t_1
   
 Function coretype(typ:mytype, alltypes:typedict) mytype  coretype(typ,alltypes,{6} 0)
     
@@ -229,13 +215,10 @@ Function coretype(typ:mytype, alltypes:typedict,maxsize:int)mytype
  else if isencoding.typ then typeint
  else
    let flatflds=flatflds(alltypes,typ)
-  if isempty.flatflds then typ else 
+  if isempty.flatflds then typ
+   else
    let fldsize=length.flatflds 
-  if fldsize = 1 then coretype(first.flatflds, alltypes)else
-      if fldsize > min(maxsize ,length.packedtypes+1)     then typeptr
-      else packedtypes_(fldsize-1)
-     
- 
-
+     if fldsize = 1 then coretype(first.flatflds, alltypes)
+     else if fldsize > min(maxsize, length.packedtypes + 1)then typeptr else packedtypes_(fldsize - 1)
 
    

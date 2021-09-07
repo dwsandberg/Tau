@@ -5,7 +5,7 @@ stdlib UTF8   bits codegennew codetemplates encoding fileio format
 internalbc interpreter  libdesc llvm llvmconstants main2  mangle mytype pretty otherseq parse parsersupport 
 pass2  persistant postbind   process real seq set stack  symbol textio timestamp tree   words xxhash
  sparseseq standard maindict  outstream bitstream tausupport symbol2
- mergeblocks program   libraryModule
+ mergeblocks compilerfront symref symboldict  libraryModule
    tests/test11 tests/checking tests/point tests/testencoding  
  tests/randomphrase tests/myseq tests/test20 tests/bug7 tests/testmodules
  tests/testprocess tests/testfileio tests/testseq
@@ -27,7 +27,7 @@ pass2  persistant postbind   process real seq set stack  symbol textio timestamp
  graphs/graph
  typedict passsymbol passparse   
 uses
-exports UTF8   bits dataio dict encoding fileio format 
+exports UTF8   bits dataio  encoding fileio format 
 graph    hashset   ioseq ipair   
 main2 maindict mangle  pretty otherseq    process 
 real seq set stack    textio timestamp tree  words xxhash 
@@ -39,6 +39,7 @@ barycenter bandeskopf makeDAG layergraph labeledgraph tausupport
 
 * Removed maindict 
 
+* only document standard seq real
 
 Module PROFILE
 
@@ -50,7 +51,7 @@ use codegennew
 
 use standard
 
-use  program
+use  compilerfront
 
 use symbol
 
@@ -75,10 +76,10 @@ use codetemplates
 Export  subcompilelib( seq.word)seq.word  
 
 
-Export pass2(placehold:program)program  
+Export pass2(placehold:set.symdef)set.symdef  
 
 
-Export codegen(theprg:program,  uses:set.symbol, thename:word, libdesc:libdescresult,
+Export codegen(theprg:set.symdef,  uses:set.symbol, thename:word, libdesc:libdescresult,
  alltypes:typedict,isbase:boolean)seq.bits  
 
 Export compilerfront(option:seq.word,libname:seq.word
@@ -89,7 +90,7 @@ Export  passparse(   abstractmods :set.passsymbols,simplemods:set.passsymbols
 ,src:seq.seq.word,mode:word) 
 set.symdef
 
-Export stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean,
+Export stepone(theprg:set.symdef,  roots:set.symbol,alltypes:typedict, isbase:boolean,
   thename:word,newmap:set.symbolref) steponeresult 
 
 /Export uses(p:program, alltypes:typedict,processed:set.symbol, toprocess:set.symbol
@@ -133,7 +134,7 @@ Export Lit(int)symbol
 
 
 
-module ININLINE
+module NOINLINE
 
 use standard
 
@@ -141,13 +142,12 @@ use UTF8
 
 use symbol
 
+
 Export toword(int)word  
 
 Export decodeword(word) seq.char
 
-Export Start(mytype) symbol
-
-Export replaceT(mytype,mytype) mytype
+Export encodeword(seq.char) word
   
 
 module COMPILETIME
@@ -163,6 +163,8 @@ use UTF8
 use tausupport
 
 use real
+
+use seq.word
 
 Export -(int ) int 
 
@@ -208,6 +210,9 @@ Export encodeword( seq.char) word
 
 Export  decodeword( word) seq.char  
 
+Export char1(seq.word) char
+
+Export_(seq.word,index) word 
 
 Export_(seq.word,int) word 
 

@@ -20,17 +20,13 @@ Builtin empty:seq.T seq.T { empty seq }
 
 Builtin_(a:seq.T, i:index)T
 
-Function_(a:seq.T, c:int)T
- a_(toindex.if c < 0 then length.a + c + 1 else c /if)
+Function_(a:seq.T, c:int)T a_(toindex.if c < 0 then length.a + c + 1 else c /if)
 
-Function =(a:seq.T, b:seq.T)boolean
- for isequal = length.a = length.b, i = 1, e = a while isequal do next(e = b_i, i + 1)/for(isequal)
+Function =(a:seq.T, b:seq.T)boolean for isequal = length.a = length.b, i = 1, e = a while isequal do next(e = b_i, i + 1)/for(isequal)
 
-Function ∈(a:T, s:seq.T)boolean
- for found = false, e = s while not.found do a = e /for(found)
+Function ∈(a:T, s:seq.T)boolean for found = false, e = s while not.found do a = e /for(found)
 
-Function findelement(a:T, s:seq.T)seq.T
- for found = empty:seq.T, e = s while isempty.found do if a = e then found + e else found /for(found)
+Function lookup(s:seq.T, a:T)seq.T for found = empty:seq.T, e = s while isempty.found do if a = e then found + e else found /for(found)
 
 -------------------------
 
@@ -121,8 +117,8 @@ Function isempty(a:seq.T)boolean length.a = 0
 
 Function <<(s:seq.T, i:int)seq.T
  assert i ≥ 0 report"FAIL <<" + stacktrace
-  subseq(s, if i < 0 then length.s + i + 1 else i + 1, length.s)
+  subseq(s,  i + 1, length.s)
 
 Function >>(s:seq.T, i:int)seq.T
  assert i ≥ 0 report"FAIL >>" + stacktrace
-  subseq(s, 1, if i < 0 then-i else length.s - i) 
+  subseq(s, 1,  length.s - i) 

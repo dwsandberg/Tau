@@ -155,20 +155,19 @@ type ruleprec is lookahead:word, rules:seq.int
 
 function print(grammar:seq.seq.word, p:ruleprec)seq.word
  "lookahead:" + lookahead.p
- + for acc ="", @e = rules.p do list(acc," /br |", grammar_@e)/for(acc)
+ + for acc ="", @e = rules.p do acc+ grammar_@e+" /br |"/for(acc >> 2)
 
 function =(a:ruleprec, b:ruleprec)boolean lookahead.a = lookahead.b
 
 function print(a:seq.seq.word)seq.word
- for acc ="", @e = a do list(acc," /br", @e)/for(acc)
+ for acc ="", @e = a do  acc+ @e+" /br" /for(acc >> 1)
 
 function print(p:dottedrule)seq.word
  subseq(rule.p, 1, place.p - 1) + "'"
  + subseq(rule.p, place.p, length.rule.p)
 
 function print(s:state)seq.word
- '  /br '
- + for acc ="", dotrule = toseq.toset.s do list(acc," /br |", print.dotrule)/for(acc)
+ for acc ='  /br ', dotrule = toseq.toset.s do  acc+ print.dotrule+" /br |" /for(acc >> 2)
 
 Function initialstate(grammar:seq.seq.word)set.dottedrule close2(grammar, asset.[ dottedrule(2,"G F #")])
 
@@ -231,9 +230,9 @@ let nontermials = for acc = empty:set.word, rule = grammar2 do acc + first.rule 
  let initialstateno = valueofencoding.encode.state.initialstate.grammar2
  let finalstateno = valueofencoding.encode.state.finalstate.grammar2
  let symbolsused = for acc = empty:set.word, rule = grammar2 do acc ∪ asset.rule /for(acc)
- let missingsymbols = symbolsused - asset.alphabet
-  assert isempty(symbolsused - asset.alphabet)report"Symbols not included in alphabet" + toseq(symbolsused - asset.alphabet)
-   assert isempty(asset.alphabet - symbolsused)report"Symbols in alphabet but not used" + toseq(asset.alphabet - symbolsused)
+ let missingsymbols = symbolsused \ asset.alphabet
+  assert isempty(symbolsused \ asset.alphabet)report"Symbols not included in alphabet" + toseq(symbolsused \ asset.alphabet)
+   assert isempty(asset.alphabet \ symbolsused)report"Symbols in alphabet but not used" + toseq(asset.alphabet \ symbolsused)
    let k = for problems ="", item = ruleprec do
     problems
     + if length.item = 1 ∧ item_1 ∉ alphabet then
@@ -277,7 +276,7 @@ let nontermials = for acc = empty:set.word, rule = grammar2 do acc + first.rule 
        replaceS(table, findindex(lookahead.@e, alphabet) + length.alphabet * stateno.@e, [ codedaction.@e])
       /for(table)
        " /p function actiontable:T seq.int ["
-       + for acc ="", @e = x do list(acc,",", [ toword.@e])/for(acc)
+       + for acc ="", @e = x do  acc+ toword.@e +"," /for(acc >> 1)
        + "]"
       else""/if
       + " /p follow"
@@ -324,9 +323,9 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attri
   next(acc + reduceline(e, i, length.grammarandact), i + 1)
  /for(acc)
  + " /p function rulelength:T seq.int ["
- + for acc ="", @e = grammarandact do list(acc,",", [ toword(length.@e_1 - 1)])/for(acc)
+ + for acc ="", @e = grammarandact do  acc+  toword(length.@e_1 - 1)  +"," /for(acc >> 1)
  + "] /p function leftside:T seq.int ["
- + for acc ="", @e = grammarandact do list(acc,",", [ toword.findindex(@e_1_1, alphabet)])/for(acc)
+ + for acc ="", @e = grammarandact do acc+ toword.findindex(@e_1_1, alphabet)+"," /for(acc >> 1)
  + ']'
 
 function reduceline(grammerandact:seq.seq.word, i:int, last:int)seq.word

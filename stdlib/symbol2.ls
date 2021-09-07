@@ -1,4 +1,3 @@
-
 Module symbol2 
 
 use symbol
@@ -111,7 +110,6 @@ Export Exit symbol
 
 Export EndBlock symbol
 
-
 Export type:mytype
 
 Export NotOp symbol
@@ -162,17 +160,15 @@ Export seqof(mytype) mytype
 
 use mytype
 
-use program 
+use compilerfront 
 
-Export symbolrefdecode seq.symbol
+use pass2
+
+Export symbolrefdecode(compileinfo) seq.symbol
 
 Export toint(symbolref) int
 
 Export type:symbolref
-
-Export symbolref(symbol) symbolref
-
-Export decode(symbolref) symbol
 
 Export type: typedict
 
@@ -189,8 +185,6 @@ Export roots(compileinfo) set.symbol
 Export code(compileinfo) seq.seq.symbolref
 
 Export src(compileinfo) seq.seq.word
-
-Export alltypes(compileinfo) typedict
 
 Export  coretype(mytype, typedict) mytype
 
@@ -236,14 +230,7 @@ Export  hash(symbol) int
 
 Export  Record(seq.mytype) symbol
 
-Export type:program
-
-Export getCode(program, symbol) seq.symbol
-
-
-
-Export program(set.symdef) program
-
+Export getCode(set.symdef, symbol) seq.symbol
 
 Export basetype(mytype, typedict) mytype
 
@@ -252,4 +239,3 @@ Export type:typedef
 use typedict
 
 use set.symdef
-

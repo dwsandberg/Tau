@@ -35,7 +35,7 @@ function +(p:place, r:encodingpair.seq.char)place
 
 Function writedict(tin:seq.encodingpair.seq.char)int
 let have = asset.initialdict
-let t = toseq(asset.tin - have)
+let t = toseq(asset.tin \ have)
  if isempty.t then 0
  else
   let p = if isempty.have then place(empty:seq.int, 0, empty:seq.int)

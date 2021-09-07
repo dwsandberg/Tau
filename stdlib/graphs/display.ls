@@ -52,7 +52,7 @@ Function charwidths characterwidths characterwidths.replaceS(sparseseq.60
 , 64, 57, 62, 26, 62, 70]
 )
 
-Function checkwidths seq.word for acc ="", @e = arithseq(128 - 32, 1, 32)do list(acc," /br", check.@e)/for(acc)
+Function checkwidths seq.word for acc ="", @e = arithseq(128 - 32, 1, 32)do  acc+ check.@e +" /br" /for(acc)
 
 function check(i:int)seq.word
 let a = encodeword.tocharseq.constantseq(100, i)

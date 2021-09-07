@@ -1,14 +1,18 @@
 /section The Tau Programming Language
 
-
 Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.
 
 This new language is different because there is:
-/< block —No assignment operator. /br —No loop/while/do statement /br —No function type./br —Only uses program state in a very controlled way. /br —Words are the basic text element instead of characters. /br —Heavy use of sequences. /br —Introduces a new control structure modeled after the sigma operator in mathematics./>
+/< block —No assignment operator. /br —No loop/while statement 
+/br —No function type./br —Only uses program state in a very controlled way. /br —Words are the basic text element instead of characters. 
+/br —Heavy use of sequences. 
+/br —Introduces a new control structure for iterating through loops./>
 
 Functional program languages have no assignment operator or loop statements, but tend to be based on the lamada calculus which makes use of higher order functions. We only include the basic operations on function of declaring and calling of them and the binding of unbound function to an actual function in an instantiation of a function from a parameterized module.
 
-Functional languages tend to use recursion to replace the control structures of loops. The full power of recursion is seldom needed. We introduce a generalized version of the sigma operator use in mathematics to cover many of the simple uses of recursion.
+Functional languages tend to use recursion to replace the control structures of loops. 
+The full power of recursion is seldom needed. 
+We introduce a  new control structure  to cover many of the simple uses of recursion.
 
 /section Lexical level
 
@@ -28,17 +32,21 @@ For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨  ∈ ∉ ∩ ∪ are �
 
 Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.
 
-Occasionally some unexpected lexical issues arise.  The follow function looks good but will cause a syntax error:
+Occasionally some unexpected lexical issues arise.   The syntax for a let statement is 
+ /keyword let <name> = <expresion> <expresion>.
+ The follow function looks good but will cause a syntax error:
 
-/keyword function f1 int /br let x=  56  /br  -4+x  
+/keyword function f1 int /br /keyword let x=  56  /br  -4+x  
  
-Written on a single line, the problem becomes clear:  /keyword function f1 int  let x=  56    -4+x 
+Written on a single line, the problem becomes clear as there is no second expression:  /keyword function f1 int /keyword let x=  56    -4+x 
 
-The fix is /keyword function f1 int  let x=  56    (-4+x)
+The fix is to add parenthesizes 
+
+/keyword function f1 int  /keyword let x=  56    (-4+x)
 
 
 When converting a sequence of words back to characters for output, an space is usually added after each word with the exceptions:
-/br 1. If the word is  "()-].:^  or is a space or a period followed by a space 
+/br 1. If the word is  "()-].. :^  
 then the space before and after the word is not added. 
 /br 2. If word is a comma then the space before the comma is suppressed.
 
@@ -50,27 +58,32 @@ These rules  sometimes do not produce the desired result.  To improve the result
 Here is a list of infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.
 /br _^
 /br unary minus
-/br * / mod ∪ ∩ 
+/br * / mod ∪ ∩ \
 /br  +-∈ ∉
 /br = < > ? ≤ ≥ ≠ >> <<
 /br ∧
 /br ∨
 
-()or {} are used to override the default precedence. Procedure calls are of the form f1(p1, p2, …, pn). f1()is illegal and should be written f1. To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1. The precedence of. is between the_and the *.
+()or {} are used to override the default precedence.  Not that the operators ∪ ∩ \ which are commonly used for set union, intersection and differences all have that same precedence.
+
+Procedure calls are of the form f1(p1, p2, …, pn). f1()is illegal and should be written f1. To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1. The precedence of. is between the_and the *.
 
  The operators ≤ ≥ ≠ are abbreviations for   not(a > b) , not ( a < b ), not(a = b) respectively. 
 
 
-The computation unit in tau is  a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word /keyword module.
+The compilation unit in tau is  a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word /keyword module.
 
 A paragraph is a sequence of words. Paragraphs that do NOT start with type, use, module, Library, Function, unbound, Export, or function are always treated as comments.
 
-The syntax for non-comment paragraphs is /< block <paragraph>→ <module definition> | <definition> | /keyword use <type> /br <module definition>→ /keyword module <word>(T)| /keyword module <word> 
-/br <name list>:= <word>:<type> | <name list>, <word>:<type> 
-/br <definition type > → /keyword Function  | /keyword function | /keyword Export | /keyword unbound  
-/br <definition>→ /keyword type <word> /keyword is  <name list> 
-/br | <definition type >  <function name>(<name list>)<type> /em E  
-/br | <definition type >  <function name> <type> /em E  
+The syntax for non-comment paragraphs is /< block <paragraph>→ /keyword module <word>.T | /keyword module <word>  | <definition> /br <paragraph>→ /keyword use <type> 
+/br <paragraph>→ /keyword type <word> /keyword is  <name list> 
+/br <paragraph>→ /keyword Export <function> 
+/br <paragraph>→ /keyword unbound <function> 
+/br <paragraph>→ /keyword Function <function> /em E
+/br <paragraph>→ /keyword function <function> /em E
+/br <name list>→ <word>:<type> | <name list>, <word>:<type> 
+/br   <function > → <function name>(<name list>)<type>     
+/br   <function > → <function name> <type>      
 /br <let name>→ <word> /br <parameter name>→ <word> /br <type>→ <word> 
 /br <type>→ <word>.<type> /br <function call>→ <function name> | <function name>(/em EList)
 /br /em E → <function call> |<parameter name> |<let name> 
@@ -81,6 +94,7 @@ The syntax for non-comment paragraphs is /< block <paragraph>→ <module definit
 /br /em E→  /em sequenceConstructor  /br  /em sequenceConstructor → [ /em EList]/br /em EList→ /em E  | /em EList, /em E  
 /br /em forItems → /em forItems , <word> = /em E | <word> = /em E
 /br /em E →  /keyword  for  /em forItems /keyword do /em E   /keyword /for ( /em E ) 
+/br /em E →  /keyword  for  /em forItems /keyword while /em E /keyword do /em E   /keyword /for ( /em E ) 
 /br /em E → /keyword let <let name> = /em E /em E 
 /br /em E → /keyword assert /em E /keyword report /em E /em E  
 /br /em E → { < one or more words not containing } > } /em E  
@@ -119,38 +133,49 @@ User defined types can be either a record, a sequence, a parameterized record or
 
 The following paragraph starts a new module. A module is a collection of functions and types.
 
-/keyword module point2d
+module point2d
 
 Here is a simple type definition that introduces a new type with two components.
 
-/keyword type point2d is x:int, y:int
+The follow paragraph that begins with /keyword use allows reference to functions defined in another module. In this case, the standard library functions.
+Documentation of the standard module is   /< noformat <a href ='stdlib.html#standard'>  here </a>  />
 
-The follow paragraph that begins with use allows reference to functions defined in another module. In this case, the standard library functions.
+use standard
 
-/keyword use standard
+type point2d is x:int, y:int
 
-The following three paragraphs allow access to the function automatically defined by the type definition in other types that “use” this module. If these paragraphs are omitted the functions would not be available outside of this module. If a function starts with “function” instead of “Function” the function is also not available outside the module.
+To allow the type name to be used outside this module we export the type, we use special syntax:
 
-/keyword Function point2d(a:int, b:int)point2d export
+ Export type:point2d
 
-/keyword Function y(a:point2d)int export
+To allow the constructor for points to be used outside the module we export it:
 
-/keyword Function x(a:point2d)int export
+Export point2d(a:int, b:int)point2d 
 
-The following two paragraphs defines an addition and subtraction function on point2ds.
+Access to the fields is granted with: 
 
-/keyword Function +(a:point2d, b:point2d)point2d point2d(x.a + x.b, y.a + y.b)
+ Export point2d(a:int, b:int)point2d  
 
-/keyword Function-(a:point2d, b:point2d)point2d point2d(x.a - x.b, y.a - y.b)
+ Export y(a:point2d)int  
 
-/keyword Function print(p:point2d)seq.word 
+
+The following two paragraphs defines an addition and subtraction function on the type point2d.
+If a function starts with  /keyword  function  instead of /keyword   Function  the function is also not available outside the module.
+
+
+Function +(a:point2d, b:point2d)point2d point2d(x.a + x.b, y.a + y.b)
+
+Function-(a:point2d, b:point2d)point2d point2d(x.a - x.b, y.a - y.b)
+
+Function print(p:point2d)seq.word 
  "("+ toword.x.p +","+ toword.y.p +")"
 
 
-/keyword Function testpoint seq.word print(point2d(2, 3)+ point2d(4, 5))
+ Function testpoint seq.word print(point2d(2, 3)+ point2d(4, 5))
 
 Since a program is sequence of paragraphs.The above text can be placed in a file and 
-turned into a running program.  A module lives with in the context of a library.  So a file name point2d.ls  is required with the first   paragraphs  being:
+turned into a running program.  A module lives with in the context of a library.  
+So a file name point2d.ls  is required with the first   paragraphs  being:
 
 Library point2d uses stdlib exports point2d 
 
@@ -167,31 +192,27 @@ The type boolean has operators:∧ ∨ /em not /em true and /em false. The secon
 
 For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT is defined. The binary operator ? on integers returns these values. An ∧ operator on orderings is defined as
 
-/keyword Function ∧(a:ordering, b:ordering)ordering 
- /keyword let x = a 
-  /keyword if x = EQ /keyword then b /keyword else x
+  Function ∧(a:ordering, b:ordering)ordering 
+ let x = a 
+  if x = EQ   then b   else x
 
-/section Let
+/section Iteration
 
-A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows. 
- 
+An operation can be performed on each element of a sequence.  The following sums a sequence:
 
-/section Aggregation
-
-An operation can be performed on each element of a sequence.  The following sums the sequence [ 1,2,3,4]
-
-/keyword for (  accumulator=0 ,e=[ 1,2,3,4]) /keyword do accumalator+e  /keyword /for(accumulator)
+ function sum(s:seq.int) int  for   accumulator=0 ,e=s    do accumalator+e    /for(accumulator)
 
 More than one accumulator is allowed. The following takes the average of the sequence
 
-/keyword for (  count=0,sum=0, e=[ 1,2,3,4]) /keyword do next(count+1,sum+e)  /keyword /for( sum / count)
+  function sum(s:seq.int) int for   count=0,sum=0, e=s   do next(count+1,sum+e)    /for( sum / count)
 
 For each element of the sequence the  expression after the /keyword do is executed giving new values to the accumulators. 
 
-It is possible to not examine all elements of the sequence.  The following stops examining elements when 3 is found
+It is possible to not examine all elements of the sequence.  The following stops examining elements when /em ele is found
 
  
- /keyword   for found = false, i = [ 1,2,3,4] while not.found do 3 = i /for(found)
+function /in(s:seq.int,ele:int) boolean   
+  for found = false, i = s   while not.found   do ele = i  /for(found)
 
 
 
@@ -202,69 +223,137 @@ A type can have a single type parameter of named T. The T can be used anywhere a
 
 Generic unbound functions on the type T may be included by using the word unbound as the defining expression. When the parameterized type is used, there must exist a function with the same signature as the unbound one where T is replaced with the actual type for T.
 
-/keyword module extendseq(T)
+As an example the follow defines a parameterized set implemented as a sequence
 
-/keyword use standard
+  module listset.T
 
-/keyword use seq.T
+  use standard
 
-/keyword function ?(T, T)ordering unbound
+  use seq.T
 
-/keyword function =(T, T)ordering unbound
+  unbound =(T, T)boolean
 
-/keyword Function reverse(s:seq.T)seq.T  /br /keyword for acc=empty:seq.T,e=s /keyword do [s]+acc /for(acc)
+  type listset is toseq:seq.T
 
-Here is a use of this type
+ Export type:listset.T
 
-/keyword module testextendseq
+  Export toseq(s:listset.T)seq.T
 
-/keyword use seq.int
+  Function empty:listset.T listset.T listset.empty:seq.T
 
-/keyword use point2d
+  Function ∈(ele:T, s:listset.T)boolean ele ∈ toseq.s
 
-/keyword use seq.point2d
+ Function +(s:listset.T, ele:T)listset.T if ele ∈ s then s else listset([ ele]+ toseq.s)
 
-/keyword use extendseq.int
+  Function tolistset(s:seq.T)listset.T {construct a listset from a sequence}
+for acc = empty:listset.T, ele = s do acc + ele /for(acc)
 
-/keyword use extendseq.point2d
+  Function ∪(a:listset.T, b:listset.T)listset.T { This union is constructed so if a element is in both a and b the representation in a is use in the result } for acc = a, ele = toseq.b do acc + ele /for(acc)
 
-/keyword use standard
+  Export isempty(seq.T)boolean
 
-/keyword function test seq.int reverse.[ 1, 3, 4, 5]
+  Export_(seq.T, int)T
 
-/keyword function test2 seq.point2d reverse.[ point2d(1, 2), point2d(3, 4)]
+  Function lookup(s:listset.T, ele:T)seq.T lookup(toseq.s, ele) 
 
-In this example the unbound function ? and = are bound to the integer function for ? and = in the standard module. This is bad example. 
+The purpose of the last three function of the above module will become clear below.
+
+Module testlistset
+
+use standard
+
+use listset.word
+
+Function test7 seq.word 
+let set1 = tolistset."A A B C A C B"
+let set2 = tolistset."D B E"
+if toseq.set1 = "C B A" ∧ first."C" ∈ set1
+ ∧ first."D" ∉ set1
+ ∧ toseq(set1 ∪ set2) = "D E C B A"then
+ "PASS"
+ else"FAIL"
+
+Set can be used to implement dictionaries.   A dictionary contains entries.  
+Each entry contains a key and a data component.  A type is declared to represent an entry.  In this example the key will be an integer and the key a string.
+Entries will be equal if and only if the keys are equal.
+
+ type myentry is key:int, data:seq.word
+
+ function =(a:myentry, b:myentry)boolean key.a = key.b
+
+Now a set of entries will be a dictionary.   From the mathematical view of the set each entry is an representation of an entry.  The integer 3 could be represented by
+ myentry(3,"X") , myentry (3,"A B C") or and infinite number of other possibilities.  But only one representation will be used in any listset.myentry.
+
+Looking up an entry in the dictionary is just looking up the representation used in the set.  The last
+function in the /em listset module does just that.  The A ∪ B function in the listset mmodule is carefully crafted
+so that if and element is in both A and B  the representation of used in A is used in the result.  Thus 
+ listset.[myentry(3,"X")] ∪ B will redefine the entry in B if it exists.    The expression  B + myentry(3,"X") or  B /cup [myentry(3,"X")] will not redefine the entry in B.  
+ The general rule is that for a binary operation on sets  the representation of on the left is used in the result -- not the one on the right.
+   
+Module testdict
+
+use standard 
+
+use seq.myentry
+
+use listset.myentry
+
+  type myentry is key:int, data:seq.word
+
+  function =(a:myentry, b:myentry)boolean key.a = key.b
+
+  function lookup(a:listset.myentry , i:int)seq.myentry lookup(a, myentry(i,""))
+
+function print(a:listset.myentry)seq.word
+ for txt ="", ele = toseq.a do
+  txt + "(" + toword.key.ele + "," + data.ele
+  + "),"
+ /for(txt >> 1)
+ 
+The following function uses a let statement.  A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows.
+A let statement DOES NOT define a variable that can change values.
+
+ 
+Function test8 seq.word let dict = tolistset.[ myentry(1,"add"), myentry(2,"sub"), myentry(3,"mult")]
+let dict2 = tolistset.[ myentry(2,"subtract"), myentry(4,"divide")]
+let l1 = lookup(dict, 4)
+if print.dict = "(3, mult),(2, sub),(1, add)"
+ ∧ print.dict2 = "(4, divide),(2, subtract)"
+ ∧ isempty.lookup(dict, 4)
+ ∧ data.lookup(dict, 2)_1 = "sub"
+ ∧ print(dict2 ∪ dict)
+ = "(1, add),(3, mult),(4, divide),(2, subtract)"then
+ "PASS testdict"
+ else"FAIL testdict" 
+
+
+Note that in the module testlist set the unbound function ? in the listset module is bound to the function = in the standard module
+and that in the module testdict it is bound to =(a:myentry, b:myentry)boolean
+
 
 /section Order of evaluation
 
 The arguments of a function are evaluate from left to right before the function is called.
 
-Not all arguments need to be evaluated. Consider /< block i > 0 ∧ 300 / i < 10
+Not all arguments need to be evaluated. Consider  i > 0 ∧ 300 / i < 10 where ∧ is defined as:
 
 /keyword function ∧(a:boolean, b:boolean)boolean /keyword if a /keyword then b /keyword else false
 
-/>
+ 
 
-The compiler does simple inline expansion and the above expression becomes /< block if i > 0 then 300 / i < 10 else false /> This expression never evaluates 300 / i < 10
+The compiler will do inline expansion and the above expression becomes /< block if i > 0 then 300 / i < 10 else false />  If i=0 then the expression   300 / i < 10 is never evaluated.
 
 This behavior is required for the ∧ operator on booleans.
 
 /section Bindings
 
 Consider the following code:
-
-/keyword Module B
-
-/keyword Function TWO int 2
-
-/keyword Module A
-
-/keyword use B
-
-/keyword use standard
-
-/keyword Function f1(p1:int)int 
+Module B
+Function TWO int 2
+Module A
+use B
+use standard
+Function f1(p1:int)int 
  /br /keyword let l1 = p1 * TWO 
  /br  p1 * l1 - 3
 
@@ -294,19 +383,19 @@ A type can be mapped to positive integers in an encoding. As an example consider
 
 We need a type to encode:
 
-/keyword type factors is key:int, factors:seq.int
+type factors is key:int, factors:seq.int
 
 We must define a hash function and = function of the type.
 
-/keyword function hash(a:factors)int key.a
+  function hash(a:factors)int key.a
 
-/keyword function =(a:factors, b:factors)boolean key.a = key.b
+ function =(a:factors, b:factors)boolean key.a = key.b
 
 Note that for a and b of the type factor ; a = b implies hash(a)= hash(b). This must be true for the hash to work correctly.
 
 We also need to specify how integers are to be assigned to the values of the type.  
 
-/keyword function assignencoding(numberPrevouslyEncoded:int, b:seq.symbol ) int assignrandom(numberPrevouslyEncoded,b)
+  function assignencoding(numberPrevouslyEncoded:int, b:seq.symbol ) int assignrandom(numberPrevouslyEncoded,b)
 
 
 The declaration below with introduce a type encoding.factors with the name of myencoding.
@@ -361,28 +450,30 @@ Process allow temporary space used to calculate the result to be reclaimed. This
 
 Process allow abnormal events to be captured and reported. The following code snippet show how to capture an abnormal event.
 
-/keyword use process.int
+Module testprocess
 
-/keyword function myprocess(a:int)int 
-/br /keyword  assert a > 0 /keyword report "invalid"
-/br  3^a
+use process.int
 
-/keyword function useprocess(i:int)int 
-/br /keyword let a = process.myprocess.i 
-/br  /keyword if aborted.a 
-  /keyword then /keyword assert message.a ="invalid" /keyword report "new message"
- /br  0 
- /br /keyword else result.a
+  function myprocess(a:int)int 
+   assert a > 0   report "invalid"
+   3^a
+
+  function useprocess(i:int)int 
+  let a = process.myprocess.i 
+  if aborted.a 
+    then  assert message.a ="invalid"   report "new message"
+   0 
+  else result.a
 
 In the use clause, the type int matches the return type of myprocess. The process function takes a expressing of the form <funcname>(<arg list>)evaluates the arguments and then spawns a process to execute the function returning a result of type process that refers to the spawned process.
 
 The follow function interact with the spawned process and blocks to wait for the spawned process to finish.
 
-/keyword function aborted(process(T)) boolean // true if the process was aborted as with an assert statement // ;
+  function aborted(process.T ) boolean { true if the process was aborted as with an assert statement } stub
 
-/keyword function message(process(T)) seq.word  // message return when process was aborted // ;
+  function message(process.T ) seq.word  { message return when process was aborted } stub
 
-/keyword function result(process(T)) T // result return upon successful completion. // ;
+  function result(process.T) T { result return upon successful completion. }  stub
 
 The spawning process cannot terminate until all of it child process complete, because it may have allocated space and passed it to a child process as a parameter. 
 
@@ -391,15 +482,15 @@ The spawning process cannot terminate until all of it child process complete, be
 
 We use the example of myseq which is a start on a user defined sequence to decode UTF8 sequnece of bytes. The length of the sequence is the number of characters. The i'th element of the sequence with be the i'th character in the encoding.
 
-/keyword Module myseq(T)
+  Module myseq.T 
 
 All sequences must be in a parameterized Module.
 
-/keyword use standard
+  use standard
 
-/keyword use seq(T)
+  use seq(T)
 
-/keyword type myseq is sequence , data:seq.T
+ type myseq is sequence , data:seq.T
 
 Mytype is recognized as a sequence as the first element of the sequence is sequence.
 
@@ -409,15 +500,15 @@ As with any parameterized scope any type must contain an element that uses T so 
 
 We need some operations on T. T will be an int in this example so all these operations are define on int in the stdlib.
 
-/keyword function >(T, int)boolean unbound
+  unbound >(T, int)boolean  
 
-/keyword function <(T, int)boolean unbound
+  unbound <(T, int)boolean  
 
-/keyword function-(T, int)T unbound
+  unbound-(T, int)T  
 
-/keyword function *(T, int)T unbound
+ unbound *(T, int)T  
 
-/keyword function +(T, T)T unbound
+  unbound +(T, T)T 
 
 We need to helper functions to calculate the length and find the ith element of the seq for this example.
 

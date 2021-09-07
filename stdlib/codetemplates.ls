@@ -1,5 +1,3 @@
-
-
 Module codetemplates
 
 use bits
@@ -18,7 +16,7 @@ use standard
 
 use symbol
 
-use program
+use typedict
 
 use textio
 
@@ -54,8 +52,12 @@ use otherseq.symbolref
 
 use libraryModule
 
+use symref
+
+use set.symdef
+
  
-Function uses(p:program, alltypes:typedict,processed:set.symbol, toprocess:set.symbol
+Function uses(p:set.symdef, alltypes:typedict,processed:set.symbol, toprocess:set.symbol
 ,infref:set.symbol,inrecordconstant:set.symbol,inother:set.symbol,newmap:set.symbolref 
 ,thename:word)steponeresult
     for acc = empty:seq.symbol
@@ -65,53 +67,47 @@ Function uses(p:program, alltypes:typedict,processed:set.symbol, toprocess:set.s
     , newprg=p
   , @e = toseq.toprocess do
      if isabstract.module.@e then next(acc,fref,crecord,other,newprg)
-     else  let ele=@e
+  else
+   let ele = @e
       if isFref.@e then next(acc+[basesym.@e] ,fref+@e,crecord,other,newprg)
      else if isrecordconstant.@e  then next(acc+constantcode.@e,fref,crecord+@e,other,newprg)    
-     else  if isconst.ele then 
-      let discard5=buildconst(ele,alltypes )
+    else if isconst.ele then let discard5 = buildconst(ele, alltypes)
     next(acc,fref,crecord,other,newprg)
-  else if isspecial.ele then 
-   let discard5=buildspecial(ele,alltypes )
+    else if isspecial.ele then let discard5 = buildspecial(ele, alltypes)
    next(acc,fref,crecord,other,newprg)
     else if isGlobal.ele  then
-   let discard5=  addtemplate(ele, 1, GEP(r.1, i64, slot.global([ 
-   merge("$"+ toword.toint.symbolref.ele+"$")], i64, C64.0)))
-          next(acc,fref,crecord,other,newprg)
-  else if inModFor.ele /or @e=Optionsym  then
+    let discard5 = addtemplate(ele
+    , 1
+    , GEP(r.1, i64, slot.global([ merge("$" + toword.toint.symbolref.ele + "$")], i64, C64.0))
+    )
     next(acc,fref,crecord,other,newprg)
+    else if inModFor.ele ∨ @e = Optionsym then next(acc, fref, crecord, other, newprg)
   else if  isBuiltin.ele  then
       if wordname.ele = "createthreadY"_1    then
           let rt=parameter.para.module.ele
           let l = for l = empty:seq.llvmtype, e = paratypes.ele << 3 do l + tollvmtype(alltypes, e)/for(l + tollvmtype(alltypes, rt))
       let discard5=  addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele, empty:seq.symbol, l)
      next(acc,fref,crecord,other,newprg)
-    else 
-     next(acc,fref,crecord,other,newprg)
+     else next(acc, fref, crecord, other, newprg)
   else 
     let d=getCode(p, @e)
        let options=getoption.d
-     if iscompiled(d,ele) /or not.addele(ele,d) then 
+      if iscompiled(d, ele) ∨ not.addele(ele, d)then
     let discard5= call(alltypes, ele,"CALL"_1, d, mangledname(options,ele))
         next(acc,fref,crecord,other,newprg)
     else
         let r= symbolref.ele
-     let i = binarysearch(toseq.newmap, symbolref.ele)
-     let extname=[merge( [thename]+if i > 0 then "$$"+ toword.i else "$"+ toword.toint.r+"$") ] 
-     let tmpprg=addoption(newprg,ele,extname)
-     let  newcode=addoption(d,extname) 
-        next(acc+d ,fref,crecord,other+@e,tmpprg)  
+     let i = binarysearch(toseq.newmap, r)
+       let extname = [ merge([ thename]
+       + if i > 0 then"$$" + toword.i
+       else"$" + toword.toint.r + "$"/if)]
+       next(acc + d, fref, crecord, other + @e, symdef(ele, addoption(d, extname)) ∪ newprg)
   /for(let q=asset.acc 
     let done=processed ∪ toprocess
     let new=for  new=empty:set.symbol , sym=toseq.q do
-     if sym /in done then  new   
-     else new+sym
+  if sym ∈ done then new else new + sym
     /for(new)
-      if isempty.new then 
-           finishuse(alltypes,newprg,toseq.other,fref,crecord )
-      else 
-      uses(newprg,alltypes,done,new,fref,crecord,other,newmap,thename) )
-      
+ if isempty.new then finishuse(alltypes, newprg, toseq.other, fref, crecord)else uses(newprg, alltypes, done, new, fref, crecord, other, newmap, thename)/if)
       
     
   
@@ -121,32 +117,26 @@ Export match5map(steponeresult)seq.match5
 
 Export defines(steponeresult)seq.symbol,
 
- 
 use set.word
 
 Export type:steponeresult
 
 Function addele(ele:symbol,d:seq.symbol) boolean
- if   isInternal.ele then true /and 
-extname.ele /in "   DIVint GTint MULreal SUBreal not getseqtype getseqlength
- ORDreal casttoreal setint intpart ADDreal SUBint EQboolean SHLint setptr
- bitcast DIVreal ORDint tocstr toreal tointbit ADDint EQint tointbyte
- SHRint ANDbits representation MULint xor ORbits"
- else
-        not.isempty.d
+ if isInternal.ele then
+  true
+  ∧ extname.ele
+  ∈ "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean SHLint setptr bitcast DIVreal ORDint tocstr toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint xor ORbits"
+ else not.isempty.d
         
         
 
-Function stepone(theprg:program,  roots:set.symbol,alltypes:typedict, isbase:boolean,
-  thename:word,newmap:set.symbolref) steponeresult 
+Function stepone(theprg:set.symdef, roots:set.symbol, alltypes:typedict, isbase:boolean, thename:word, newmap:set.symbolref)steponeresult
 let discard1=initmap5
  uses(theprg,alltypes,empty:set.symbol,roots,empty:set.symbol,empty:set.symbol,empty:set.symbol,newmap,thename)
   
  
        
-      
-function finishuse( alltypes:typedict,prg:program,defines:seq.symbol,
- fref:set.symbol,isrecordconstant:set.symbol) steponeresult
+function finishuse(alltypes:typedict, prg:set.symdef, defines:seq.symbol, fref:set.symbol, isrecordconstant:set.symbol)steponeresult
  let discard= for acc = 0,  ele = defines do
    let d = getCode(prg, ele)
    let options=getoption.d
@@ -158,16 +148,13 @@ function finishuse( alltypes:typedict,prg:program,defines:seq.symbol,
       let discard4 = processconst.toseq.isrecordconstant 
       steponeresult( empty:seq.match5 ,defines)
 
-
-function buildFref(theprg:program, other:seq.symbol, alltypes:typedict)seq.match5
+function buildFref(theprg:set.symdef, other:seq.symbol, alltypes:typedict)seq.match5
 for acc = empty:seq.match5, e = other do
   let f1 =basesym.e
  let functyp = ptr.tollvmtype(alltypes, f1)
   let discard =addtemplate(e, 0, emptyinternalbc,"ACTARG"_1, ptrtoint(functyp, symboltableentry([mangledname(getoption.getCode(theprg,f1),f1)], functyp)))
    acc
 /for(acc)
-
-
 
 Export constdata seq.slot
 
@@ -230,11 +217,8 @@ function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:
 
 function addtemplate(sym:symbol, length:int, b:internalbc)match5 addtemplate(sym, length, b,"TEMPLATE"_1, slot.nopara.sym)
 
- 
  function addtemplates(t:seq.mytype, sym:symbol, length:int, b:internalbc)match5
- first.for acc = empty:seq.match5, e = t do
-  [ addtemplate(replaceTsymbol(e, sym), length, b)]
- /for(acc)
+ first.for acc = empty:seq.match5, e = t do [ addtemplate(replaceTsymbol(e, sym), length, b)]/for(acc)
 
 function findtemplate(d:symbol)seq.match5 findencode.match5(d, 0, emptyinternalbc,"NOTFOUND"_1, 0, empty:seq.symbol, [ i64])
 
@@ -255,13 +239,10 @@ function assignencoding(p:seq.encodingpair.match5, a:match5)int length.p + 1
 
 Function options(match5map:seq.match5, m:match5)seq.word getoption.code.m
 
-
 function funcdec(alltypes:typedict, i:symbol,symname: word)int
  toint.modulerecord([symname], [ toint.FUNCTIONDEC, typ.tollvmtype( alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
-
-function initmap5   seq.match5
- [ addtemplate(symbol(internalmod,"packedindex", seqof.typebit, typeint, typeint), 8, BINOP(r.1, ibcsub.2, C64.1, sub) + BINOP(r.2, r.1, C64.6, lshr)
+function initmap5 seq.match5 [ addtemplate(symbol(internalmod,"packedindex", seqof.typebit, typeint, typeint), 8, BINOP(r.1, ibcsub.2, C64.1, sub) + BINOP(r.2, r.1, C64.6, lshr)
 + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3)
 + LOAD(r.5, r.4, i64)
@@ -330,16 +311,12 @@ function initmap5   seq.match5
 , addtemplate(symbol(internalmod,"∧", typebits, typebits, typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, and))
 , addtemplate(symbol(internalmod,"∨", typebits, typebits, typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, or))
 , addtemplate(symbol(internalmod,"xor", typebits, typebits, typebits), 1, BINOP(r.1, ibcsub.1, ibcsub.2, xor))
-, addtemplate(symbol(internalmod,"set", [ typeptr, typeint], typeptr), 1
-, STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1))
-, addtemplate(symbol(internalmod,"set", [ typeptr, typeptr], typeptr), 2
-,CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast)
-+ STORE(r.2, r.1, ibcsub.2) + GEP(r.2, i64, ibcsub.1, C64.1))
-, addtemplate(symbol(modTausupport,"set", [ typeptr, typeint], typeptr), 1
-, STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1))
-, addtemplate(symbol(modTausupport,"set", [ typeptr, typeptr], typeptr), 2
-,CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast)
-+ STORE(r.2, r.1, ibcsub.2) + GEP(r.2, i64, ibcsub.1, C64.1))
+, addtemplate(symbol(internalmod,"set", [ typeptr, typeint], typeptr), 1, STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1))
+, addtemplate(symbol(internalmod,"set", [ typeptr, typeptr], typeptr), 2, CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast) + STORE(r.2, r.1, ibcsub.2)
++ GEP(r.2, i64, ibcsub.1, C64.1))
+, addtemplate(symbol(modTausupport,"set", [ typeptr, typeint], typeptr), 1, STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1))
+, addtemplate(symbol(modTausupport,"set", [ typeptr, typeptr], typeptr), 2, CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast) + STORE(r.2, r.1, ibcsub.2)
++ GEP(r.2, i64, ibcsub.1, C64.1))
 , addtemplate(abortsymbol.typeint
 , 1
 , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert", function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
@@ -353,7 +330,8 @@ function initmap5   seq.match5
 , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert", function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 + CAST(r.2, r.1, double, sitofp)
 )
-, addtemplates(packedtypes+typeptr,abortsymbol.typeT
+, addtemplates(packedtypes + typeptr
+, abortsymbol.typeT
 , 2
 , CALL(r.1, 0, 32768, function.[ i64, i64, ptr.i64], symboltableentry("assert", function.[ i64, i64, ptr.i64]), slot.ibcfirstpara2, ibcsub.1)
 + CAST(r.2, r.1, ptr.i64, inttoptr)
@@ -381,24 +359,19 @@ function initmap5   seq.match5
 + CAST(r.4, r.3, ptr.i64, inttoptr))
 , addtemplate(GetSeqLength, 2, GEP(r.1, i64, ibcsub.1, C64.1) + LOAD(r.2, r.1, i64))
 , addtemplate(GetSeqType, 1, LOAD(r.1, ibcsub.1, i64))
-, addtemplate(symbol(builtinmod( typeint),"load", [ typeptr, typeint], typeint), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
-, addtemplate(symbol(builtinmod( typeboolean),"load", [ typeptr, typeint], typeboolean), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
-, addtemplate(symbol(builtinmod( typeptr),"load", [ typeptr, typeint], typeptr), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+, addtemplate(symbol(builtinmod.typeint,"load", [ typeptr, typeint], typeint), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplate(symbol(builtinmod.typeboolean,"load", [ typeptr, typeint], typeboolean), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplate(symbol(builtinmod.typeptr,"load", [ typeptr, typeint], typeptr), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, ptr.i64, inttoptr))
-, addtemplate(symbol(builtinmod( typereal),"load", [ typeptr, typeint], typereal), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+, addtemplate(symbol(builtinmod.typereal,"load", [ typeptr, typeint], typereal), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, double, bitcast))
-, addtemplate(symbol(builtinmod( typeint),"fld", [ typeptr, typeint], typeint), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
-, addtemplate(symbol(builtinmod( typeboolean),"fld", [ typeptr, typeint], typeboolean), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
-, addtemplates(packedtypes+typeptr,symbol(builtinmod( typeT),"fld", [ typeptr, typeint], typeptr), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+, addtemplate(symbol(builtinmod.typeint,"fld", [ typeptr, typeint], typeint), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplate(symbol(builtinmod.typeboolean,"fld", [ typeptr, typeint], typeboolean), 2, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64))
+, addtemplates(packedtypes + typeptr, symbol(builtinmod.typeT,"fld", [ typeptr, typeint], typeptr), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, ptr.i64, inttoptr))
-, addtemplate(symbol(builtinmod( typereal),"fld", [ typeptr, typeint], typereal), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+, addtemplate(symbol(builtinmod.typereal,"fld", [ typeptr, typeint], typereal), 3, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
 + CAST(r.3, r.2, double, bitcast))
 ]  
-
-
- 
-
-
 
 Function symboltableentry(name:seq.word, type:llvmtype)slot
  modulerecord(name, [ toint.FUNCTIONDEC, typ.type, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
@@ -416,20 +389,16 @@ function processconst(toprocess:seq.symbol)int
    let discard = addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args)
     true
    else false /if)
-   next(if processed then notprocessed else notprocessed + xx , changed /or processed)
-  /for(
-     assert changed report "problem processconst"
+  next(if processed then notprocessed else notprocessed + xx, changed ∨ processed)
+  /for(assert changed report"problem processconst"
     +for txt ="",     xx2 = notprocessed    do
     let txt2=for txt2="", ele = constantcode.xx2  do
   let tp = findtemplate.ele
-    if isempty.tp then txt2+print.ele
-    else txt2
+   if isempty.tp then txt2 + print.ele else txt2
     /for (txt2)
     txt+txt2
     /for(txt) 
-     if not.changed then 0 else
-     processconst.notprocessed)
-
+  if not.changed then 0 else processconst.notprocessed /if)
 
 function =(a:llvmtype, b:llvmtype)boolean typ.a = typ.b
 
@@ -466,10 +435,6 @@ Function buildspecial(xx:symbol,alltypes:typedict) match5
    addtemplate(xx, firstvar.xx, emptyinternalbc, wordname.xx, nopara.xx, empty:seq.symbol, for oldacc = [ tollvmtype(alltypes, resulttype.xx)], e20 = paratypes.xx do oldacc + tollvmtype(alltypes, e20)/for(oldacc))
   else if iscontinue.xx then addtemplate(xx, 0, emptyinternalbc,"CONTINUE"_1, nopara.xx, empty:seq.symbol, [ i64])
   else addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, empty:seq.symbol, [ i64])
-
-
-
-
 
 function call(alltypes:typedict, xx:symbol, type:word, code:seq.symbol, symname:word)match5
 let list = tollvmtypelist(alltypes, xx)

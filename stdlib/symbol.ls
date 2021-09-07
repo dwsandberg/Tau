@@ -1,4 +1,3 @@
-
 Module symbol
 
 use seq.typedef
@@ -10,7 +9,6 @@ use mytype
 use standard
 
 use seq.char
-
 
 use otherseq.mytype
 
@@ -80,13 +78,11 @@ Export types(symbol)seq.mytype
 
 Export raw(symbol)bits
 
-
 Function =(a:symbol, b:symbol)boolean
  hashbits.a = hashbits.b ∧ worddata.a = worddata.b ∧ (types.a >> 1= types.b >> 1) 
  ∧ issimplename.a = issimplename.b
  ∧ module.a = module.b
 
- 
 Function ?(a:symbol, b:symbol)ordering
  fsighash.a ? fsighash.b ∧ worddata.a ? worddata.b ∧ (types.a >> 1)  ? (types.b  >> 1) 
   ∧ issimplename.a ? issimplename.b
@@ -112,73 +108,62 @@ function simplenamebit bits bits.2
 
 function constbit bits bits.1
 
-Function issimplename(sym:symbol) boolean (hashbits.sym /and simplenamebit) /ne 0x0 
+Function issimplename(sym:symbol)boolean(hashbits.sym ∧ simplenamebit) ≠ 0x0
 
 Function isspecial(s:symbol)boolean(hashbits.s ∧ specialbit) = specialbit
 
-Function isFref(s:symbol)boolean  
-(hashbits.s ∧ frefbit) = frefbit
+Function isFref(s:symbol)boolean(hashbits.s ∧ frefbit) = frefbit
 
 Function isconst(s:symbol)boolean(hashbits.s ∧ constbit) = constbit
 
-Function isunbound(sym:symbol)boolean (raw.sym /and unboundbit) /ne 0x0
+Function isunbound(sym:symbol)boolean(raw.sym ∧ unboundbit) ≠ 0x0
 
 function unboundbit bits  0x1 << 41
 
 function requiresbit bits  0x1 << 42
 
-Function hasrequires(sym:symbol)boolean (raw.sym /and requiresbit) /ne 0x0
+Function hasrequires(sym:symbol)boolean(raw.sym ∧ requiresbit) ≠ 0x0
 
 Function hash(sym:symbol)int toint(hashbits.sym >> 4)
 
 Function fsighash(s:symbol)int toint(hashbits.s >> 4)
 
-Function setunbound(sym:symbol) symbol
-  symbol( worddata.sym,module.sym,types.sym,raw.sym /or unboundbit,hashbits.sym ) 
+Function setunbound(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym ∨ unboundbit, hashbits.sym)
 
-Function setrequires(sym:symbol)symbol 
- symbol( worddata.sym,module.sym,types.sym,raw.sym /or requiresbit,hashbits.sym ) 
-
+Function setrequires(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym ∨ requiresbit, hashbits.sym)
 
 Function replaceTsymbol(with:mytype, sym:symbol)symbol
- if with = typeT /or isconst.sym then sym else
+ if with = typeT ∨ isconst.sym then sym
+ else
 let newtypes = for newtypes = empty:seq.mytype, t = types.sym do newtypes + replaceT(with, t)/for(newtypes)
- let adjustedraw={if isunbound.sym then
-      for hasT=false ,t=newtypes while not.hasT do  isabstract.t /for(
-       if hasT then raw.sym else   raw.sym   /and xor(unboundbit,tobits.-1)  )
-    else} raw.sym
+  let adjustedraw = { if isunbound.sym then for hasT = false, t = newtypes while not.hasT do isabstract.t /for(if hasT then raw.sym else raw.sym /and xor(unboundbit, tobits.-1))else }
+  raw.sym
 symbol( worddata.sym,replaceT(with, module.sym), newtypes, adjustedraw,extrabits(newtypes,   hash.worddata.sym,hashbits.sym) )
 
 function symbolZ(module:modref, name:word,namePara:seq.mytype,paras:seq.mytype,rt:mytype,flags:bits,raw:bits) symbol
    let types=namePara+paras+rt
-  symbol([name] ,   module , types,raw
-  , extrabits( types ,hash.[name],
-  if isempty.namePara  then simplenamebit /or flags else flags) )
+ symbol([ name], module, types, raw, extrabits(types, hash.[ name], if isempty.namePara then simplenamebit ∨ flags else flags))
   
 Function Br2(t:int, f:int)symbol
  let raw=bits.t << 20 ∨ bits.f
- symbolZ(moduleref("internallib $br"),"BR2"_1, 
-  [ typeref([ toword.toint.raw,"."_1,"internallib"_1])  ]
-  ,empty:seq.mytype,type?,specialbit,bits.t << 20 ∨ bits.f)
+ symbolZ(moduleref."internallib $br","BR2"_1, [ typeref.[ toword.toint.raw,"."_1,"internallib"_1]], empty:seq.mytype, type?, specialbit, bits.t << 20 ∨ bits.f)
 
 Function brt(s:symbol)int toint(raw.s >> 20 ∧ 0xFFFFF)
 
 Function brf(s:symbol)int toint(raw.s ∧ 0xFFFFF)
 
-Function type? mytype  typeref( "? internal internallib") 
+Function type? mytype typeref."? internal internallib"
 
 Function printrep(s :symbol) seq.word
     if name.module.s = "$int"_1 then [ name.s]
     else   if iswords.s then   '"'+ worddata.s+'"' 
     else 
      "("+[library.module.s,name.module.s]+ printrep.para.module.s
-    +name.s+toword.toint.raw.s 
-    +for acc = "", t =  types.s   do
-     acc + printrep.t  
-    /for(acc   + ")")/if
+  + name.s
+  + toword.toint.raw.s
+  + for acc ="", t = types.s do acc + printrep.t /for(acc + ")")
 
 Function name(sym:symbol) word first.worddata.sym 
-
 
 Function iswords(s:symbol)boolean name.module.s ∈ "$words"
 
@@ -190,18 +175,14 @@ Function isbr(s:symbol)boolean name.module.s ∈ "$br"
 
 Function isexit(s:symbol)boolean name.module.s ∈ "$exitblock"
 
-
 Function value(sym:symbol)int toint.raw.sym
 
 Function nopara(s:symbol)int
  if isconst.s ∨ islocal.s   ∨ isFref.s  then 0
  else if isspecial.s ∧ name.module.s ∉ "$record $loopblock"then
-  if   isdefine.s ∨ isbr.s /or isexit.s then 1
-  else
-  { assert name.module.s  /in "$continue $sequence " report "CHeKC"+print.s}
-    toint.name.s
- else 
-  length.types.s-if issimplename.s then  1 else  2
+  if isdefine.s ∨ isbr.s ∨ isexit.s then 1
+  else { assert name.module.s /in"$continue $sequence"report"CHeKC"+ print.s }toint.name.s
+ else length.types.s - if issimplename.s then 1 else 2
 
 Export raw(symbol) bits
 
@@ -237,7 +218,6 @@ Export setunbound(sym:symbol) symbol
  
 Export setrequires(sym:symbol)symbol 
  
-  
 Export replaceTsymbol(with:mytype, sym:symbol)symbol
 
 Export Br2(l1:int, l2:int)symbol
@@ -264,7 +244,6 @@ Export nopara(sym:symbol)int
   
 --- end internal
 
-
 Export extrabits(s:symbol)int 
 
  
@@ -280,14 +259,11 @@ function fsig2(name:word,nametype:seq.mytype,paratypes:seq.mytype) seq.word
 _______________________________
  
 Function istype(s:symbol)boolean 
- not.issimplename.s /and wordname.s="type"_1 /and nopara.s=1
+ not.issimplename.s ∧ wordname.s = "type"_1 ∧ nopara.s = 1
 
+Function Record(types:seq.mytype)symbol symbol(moduleref."internallib $record","RECORD", types, typeptr, specialbit)
  
-Function Record(types:seq.mytype)symbol
- symbol(moduleref."internallib  $record","RECORD",types,typeptr,specialbit)
- 
- Function Reallit(i:int)symbol 
-symbolZ(moduleref."internallib  $real",toword.i ,empty:seq.mytype,empty:seq.mytype,typereal,constbit,tobits.i)
+Function Reallit(i:int)symbol symbolZ(moduleref."internallib $real", toword.i, empty:seq.mytype, empty:seq.mytype, typereal, constbit, tobits.i)
 
 ----------------------
  
@@ -536,6 +512,13 @@ Function removeoptions(code:seq.symbol)seq.symbol
  if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)
  else code
  
+ Function addoption(code:seq.symbol,option:seq.word) seq.symbol
+  let current = asset.getoption.code
+  let new= current ∪ asset.option
+  if cardinality.new=cardinality.current then code
+  else  removeoptions.code + Words.toseq(new) + Optionsym
+
+ 
 Export typeref(seq.word) mytype  
  
 Export moduleref( seq.word,para:mytype) modref
@@ -626,7 +609,7 @@ Function isGlobal(sym:symbol) boolean name.module.sym = "$global"_1
 Function iscompiled(code:seq.symbol,sym:symbol) boolean not.isempty.externalname(code)
 
 Function externalname(code:seq.symbol) seq.word
-toseq.(asset.getoption.code- asset." COMPILETIME NOINLINE INLINE PROFILE STATE   VERYSIMPLE")
+toseq.(asset.getoption.code \ asset." COMPILETIME NOINLINE INLINE PROFILE STATE   VERYSIMPLE")
 
 Export typebase(i:int)mytype
 
@@ -672,98 +655,11 @@ Export paragraphno(symdef) int
    
 Function ?(a:symdef,b:symdef) ordering sym.a ? sym.b
 
-Function ?2(a:symdef,b:symdef) ordering ?2(sym.a  , sym.b)
-
-Function lookupbysig(dict:set.symdef, sym:symbol)set.symbol 
- for acc=empty:set.symbol , sd=toseq.findelement2(dict,symdef(sym,empty:seq.symbol))  do acc+sym.sd /for(acc)
-
-use set.symdef
-
-Module symboldict 
-
-use standard
-
-use symbol
-
-use set.symbol
-
-use seq.symbol
+Function getCode(a:set.symdef,sym:symbol) seq.symbol
+let b=lookup(a,symdef(sym,empty:seq.symbol)  )
+  if isempty.b then empty:seq.symbol else code.b_1
 
 use set.symdef
-
-use seq.commoninfo
-  
-Export type:commoninfo
-
-Export types(commoninfo)set.mytype
-
-Export modname(commoninfo)modref
-
-Export lib(commoninfo)word
-
-Export mode(commoninfo) word
-
-Export input(commoninfo) seq.word
-
-
-
-Export commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word )commoninfo
-
-
-type commoninfo is input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word 
-
-Function lookupbysig(dict:symboldict, sym:symbol)set.symbol findelement2(asset.dict, sym)
-
-
-
-
-type symboldict is asset:set.symbol,requiresX:set.symdef ,commonX:seq.commoninfo
-
-Export symboldict (asset:set.symbol,requiresX:set.symdef ,commonX:seq.commoninfo) symboldict
-
-Function requires(a:symboldict) set.symdef requiresX.a
-
- if isempty.commonX.a then requiresX.a else requires.first.commonX.a
-
-Export type:symboldict
-
-
-Export asset(symboldict) set.symbol
-
-Function symboldict(d:set.symbol, common:seq.commoninfo)symboldict symboldict(d, empty:set.symdef, common)
-
-Function common(d:symboldict) commoninfo first.commonX.d 
-
-Function requires(d:symboldict,sym:symbol) seq.symbol
- if hasrequires.sym then 
-   code.findelement(symdef(sym,empty:seq.symbol),requires.d)_1
- else empty:seq.symbol
-
-
-Function empty:symboldict symboldict symboldict(empty:set.symbol,empty:set.symdef,empty:seq.commoninfo)
-
-Function +(d:symboldict,sym:symbol) symboldict   symboldict(asset.d+sym,requires.d,commonX.d)
-
-Function -(d:symboldict, s:set.symbol) symboldict symboldict(asset.d-s,requires.d,commonX.d)
-
-Function ∪(d:symboldict, s:set.symbol) symboldict symboldict(asset.d ∪ s,requires.d,commonX.d)
-
-Function cardinality(d:symboldict) int cardinality.asset.d
-
-Export type:bindinfo
-
-type bindinfo is dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word
-
-Export dict(bindinfo)symboldict
-
-Export code(bindinfo)seq.symbol
-
-Export types(bindinfo)seq.mytype
-
-Export tokentext(bindinfo) seq.word
-
-Export   bindinfo (dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word)
-bindinfo
 
 
 

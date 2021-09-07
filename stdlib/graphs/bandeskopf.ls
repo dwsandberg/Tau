@@ -30,7 +30,7 @@ Based on:Fast and Simple Horizontal Coordinate Assignment Ulrik Brandes and Bori
 
 step one is to find type1 conflicts
 
-function contains(a:set.T, w:T)set.T findelement(w, a)
+function contains(a:set.T, w:T)set.T lookup(a, w)
 
 function iis(g:graph.T, dummy:set.T, node:T)seq.T
  { returns upper nieghbor of inner segment ending at node }
@@ -136,7 +136,7 @@ Function assignvert(RtoL:boolean, layers:set.nodeinfo.T, vertarcs:seq.arc.T, ass
  let newq = for acc = empty:seq.nodeinfo.T, @e = vertarcs do acc + findy(q, @e)/for(acc)
   if isempty.newq then
    for acc = assigned, @e = result + q do acc + setx(lastassignedx, @e)/for(acc)
-  else assignvert(RtoL, layers, vertarcs, assigned, findelement(newq_1, layers)_1, lastassignedx, result + q)
+  else assignvert(RtoL, layers, vertarcs, assigned, lookup(layers, newq_1)_1, lastassignedx, result + q)
 
 function setx(x:int, q:nodeinfo.T)nodeinfo.T nodeinfo(n.q, x, y.q)
 
@@ -213,7 +213,7 @@ function assignx(RtoL:boolean, layers:set.nodeinfo.T, list:seq.T, assigned:set.n
   let node = list_i
    if nodeinfo(node, 0, 0) ∈ assigned then assignx(RtoL, layers, list, assigned, vertarcs, i + 1)
    else
-    let q = findelement(nodeinfo(node, 0, 0), layers)_1
+    let q = lookup(layers,nodeinfo(node, 0, 0))_1
      assignx(RtoL, layers, list, assignvert(RtoL, layers, vertarcs, assigned, q, if RtoL then-1 else 1, empty:seq.nodeinfo.T), vertarcs, i + 1)
 
 ----------------------
