@@ -4,13 +4,13 @@ use standard
 
 use symbol
 
-use set.symbol
+use seq.commoninfo
 
 use seq.symbol
 
-use set.symdef
+use set.symbol
 
-use seq.commoninfo
+use set.symdef
 
 Export type:commoninfo
 
@@ -47,7 +47,8 @@ Function symboldict(d:set.symbol, common:seq.commoninfo)symboldict symboldict(d,
 Function common(d:symboldict)commoninfo first.commonX.d
 
 Function requires(d:symboldict, sym:symbol)seq.symbol
- if hasrequires.sym then code.lookup(requires.d, symdef(sym, empty:seq.symbol))_1 else empty:seq.symbol
+if hasrequires.sym then code.lookup(requires.d, symdef(sym, empty:seq.symbol))_1
+else empty:seq.symbol
 
 Function empty:symboldict symboldict symboldict(empty:set.symbol, empty:set.symdef, empty:seq.commoninfo)
 

@@ -1,26 +1,24 @@
-#!/usr/local/bin/tau ;  use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
 
-
-;  use doc ; callgraphbetween("stdlib","mytype passsymbol   ")
+; use doc ; callgraphbetween("stdlib","mytype passsymbol")
 
 doclibrary."stdlib"
 
 ; use tools; testprofile."stdlib"
 
+; use doc ; doclibrary."stdlib"
 
-;  use doc ; doclibrary."stdlib"
-
-; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq  ")
+; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq")
 
 ; use doc ; doclibrary."typepass"
 
-; use doc ; callgraphbetween("typepass","passparse passsymbol   ")
+; use doc ; callgraphbetween("typepass","passparse passsymbol")
 
 ; use tools; testprofile."stdlib"
 
 ; use doc ; callgraphwithin("typepass","typepass")
 
-; use doc ; doclibrary("typepass" )
+; use doc ; doclibrary("typepass")
 
 ; use doc ; doclibrary."stdlib"
 
@@ -36,7 +34,7 @@ doclibrary."stdlib"
 
 print.compile("baseTypeCheck","stdlib")
 
-; use main2  ; print.compile("pass2","bug9.core")
+; use main2 ; print.compile("pass2","bug9.core")
 
 ; use doc ; doclibrary."stdlib:small"
 
@@ -44,7 +42,7 @@ print.compile("baseTypeCheck","stdlib")
 
 ; use taulextable ; getlextable
 
-; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq  ")
+; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq")
 
 ; use doc ; callgraphwithin("stdlib","llvm")
 
@@ -54,11 +52,9 @@ print.compile("baseTypeCheck","stdlib")
 
 Module tools
 
-Library tools  genLR1 profile taulextable   doc baseTypeCheck
-uses stdlib 
-exports doc genLR1 profile taulextable tools baseTypeCheck
-
- 
+Library tools baseTypeCheck doc genLR1 profile taulextable
+uses stdlib
+exports baseTypeCheck doc genLR1 profile taulextable tools
 
 * STATE builtin:profile profileinfo profileresult
 
@@ -75,9 +71,7 @@ use standard
 use seq.word
 
 use seq.seq.word
- 
-Function testprofile(libname:seq.word)seq.word
- subcompilelib(libname)
- + profileresults."time" 
- 
- + dumpprofileinfo
+
+Function testprofile(libname:seq.word)seq.word subcompilelib.libname + profileresults."time"
+
++ dumpprofileinfo 

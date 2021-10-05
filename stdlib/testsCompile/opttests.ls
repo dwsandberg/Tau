@@ -110,4 +110,4 @@ Function optest38a(a:ordering, b:ordering)ordering let x = a
 
 Function optest16a(a:seq.char)seq.int
  { This is just a type change and the compiler recognizes this and does not generate code }
- for acc = empty:seq.int, @e = a do acc + toint.@e /for(acc)
+ for acc = empty:seq.int, @e /in a do acc + toint.@e /for(acc)

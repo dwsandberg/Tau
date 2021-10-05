@@ -55,11 +55,12 @@ Builtin representation(a:real)int
 Builtin casttoreal(i:int)real
 
 Function^(a:real, n:int)real
- if n = 0 then 1.0
- else if n = 1 then a
- else if n < 0 then 1.0 / a^(-n)
- else let d = n / 2
-  a^d * a^(n - d)
+if n = 0 then 1.0
+else if n = 1 then a
+else if n < 0 then 1.0 / a^(-n)
+else
+ let d = n / 2
+ a^d * a^(n - d)
 
 Function *(a:int, b:real)real toreal.a * b
 

@@ -45,7 +45,7 @@ The fix is to add parenthesizes
 /keyword function f1 int  /keyword let x=  56    (-4+x)
 
 
-When converting a sequence of words back to characters for output, an space is usually added after each word with the exceptions:
+When converting a sequence of words  to characters for output, an space is usually added after each word with the exceptions:
 /br 1. If the word is  "()-].. :^  
 then the space before and after the word is not added. 
 /br 2. If word is a comma then the space before the comma is suppressed.
@@ -73,7 +73,10 @@ Procedure calls are of the form f1(p1, p2, …, pn). f1()is illegal and should b
 
 The compilation unit in tau is  a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word /keyword module.
 
-A paragraph is a sequence of words. Paragraphs that do NOT start with type, use, module, Library, Function, unbound, Export, or function are always treated as comments.
+A paragraph is a sequence of words. Paragraphs that do NOT start with /keyword type, /keyword use, /keyword Library,
+ /keyword module, /keyword Function /keyword function, /keyword unbound,  or /keyword Export are always treated as comments.
+
+
 
 The syntax for non-comment paragraphs is /< block <paragraph>→ /keyword module <word>.T | /keyword module <word>  | <definition> /br <paragraph>→ /keyword use <type> 
 /br <paragraph>→ /keyword type <word> /keyword is  <name list> 
@@ -104,7 +107,7 @@ Comments are traditionally defined at the lexical level. In tau they are defined
 
 /section Sequences
 
-Sequence, S, is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as [ 2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define
+A sequence is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as [ 2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define
 
 /keyword function test1 seq.int [ 2, 4, 8, 16, 32]
 
@@ -129,7 +132,7 @@ Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T 
 
 The type of an expression can always be inferred from the sub-expression. For example, 1.0 + 5.0 is of type real, 1 * 8 is of type int, and 1.0 = 8.0 is of type boolean.
 
-User defined types can be either a record, a sequence, a parameterized record or an encoding. Below a user defined record type is defined as an example.
+User defined types can be either a record, a sequence, or a parameterized record. Below a user defined record type is defined as an example.
 
 The following paragraph starts a new module. A module is a collection of functions and types.
 
@@ -137,14 +140,14 @@ module point2d
 
 Here is a simple type definition that introduces a new type with two components.
 
-The follow paragraph that begins with /keyword use allows reference to functions defined in another module. In this case, the standard library functions.
+The follow paragraph that begins with /keyword use allows reference to functions defined in another module. In this case, the standard library functions. 
 Documentation of the standard module is   /< noformat <a href ='stdlib.html#standard'>  here </a>  />
 
 use standard
 
 type point2d is x:int, y:int
 
-To allow the type name to be used outside this module we export the type, we use special syntax:
+To allow the type name to be used outside this module we export the type  using a special syntax that omits the return type of the Export:
 
  Export type:point2d
 
@@ -152,9 +155,9 @@ To allow the constructor for points to be used outside the module we export it:
 
 Export point2d(a:int, b:int)point2d 
 
-Access to the fields is granted with: 
+Access to the fields outside the module is granted with: 
 
- Export point2d(a:int, b:int)point2d  
+ Export x(a:int )point2d  
 
  Export y(a:point2d)int  
 
@@ -193,8 +196,7 @@ The type boolean has operators:∧ ∨ /em not /em true and /em false. The secon
 For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT is defined. The binary operator ? on integers returns these values. An ∧ operator on orderings is defined as
 
   Function ∧(a:ordering, b:ordering)ordering 
- let x = a 
-  if x = EQ   then b   else x
+  if a = EQ   then b   else a
 
 /section Iteration
 
@@ -264,6 +266,10 @@ use standard
 
 use listset.word
 
+The following function uses a let statement.  A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows.
+A let statement DOES NOT define a variable that can change values.
+
+
 Function test7 seq.word 
 let set1 = tolistset."A A B C A C B"
 let set2 = tolistset."D B E"
@@ -273,8 +279,8 @@ if toseq.set1 = "C B A" ∧ first."C" ∈ set1
  "PASS"
  else"FAIL"
 
-Set can be used to implement dictionaries.   A dictionary contains entries.  
-Each entry contains a key and a data component.  A type is declared to represent an entry.  In this example the key will be an integer and the key a string.
+Sets can be used to implement dictionaries.   A dictionary contains entries.  
+Each entry contains a key and a data component.  A type is declared to represent an entry.  In this example the key will be an integer and the key a string. 
 Entries will be equal if and only if the keys are equal.
 
  type myentry is key:int, data:seq.word
@@ -310,8 +316,6 @@ function print(a:listset.myentry)seq.word
   + "),"
  /for(txt >> 1)
  
-The following function uses a let statement.  A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows.
-A let statement DOES NOT define a variable that can change values.
 
  
 Function test8 seq.word let dict = tolistset.[ myentry(1,"add"), myentry(2,"sub"), myentry(3,"mult")]
@@ -327,7 +331,7 @@ if print.dict = "(3, mult),(2, sub),(1, add)"
  else"FAIL testdict" 
 
 
-Note that in the module testlist set the unbound function ? in the listset module is bound to the function = in the standard module
+Note that in the module testlist, the unbound function = in the listset module is bound to the function = in the standard module
 and that in the module testdict it is bound to =(a:myentry, b:myentry)boolean
 
 
@@ -348,28 +352,35 @@ This behavior is required for the ∧ operator on booleans.
 /section Bindings
 
 Consider the following code:
-Module B
-Function TWO int 2
-Module A
-use B
-use standard
-Function f1(p1:int)int 
- /br /keyword let l1 = p1 * TWO 
- /br  p1 * l1 - 3
 
-Parameters implicitly declare an access function"function p1 int"
+Module B
+
+Function TWO int 2
+
+Module A
+
+use B
+
+use standard
+
+Function f1(p1:int)int 
+  let l1 = p1 * TWO 
+   p1 * l1 - 3
+
+Parameters implicitly declare an access function: /keyword function p1 int 
+
 Parameters are only visible in the expression that defines the body. In the above p1 is only visible in the body of f1.
 
 
-Names of Functions are visible within the module.
+Names of functions are visible within the module.
 
 Functions from another module B are visible in module A, if they are declared using /keyword Function 
-rather than /keyword function or they are exported and the module A includes a use statement"/keyword use B”.  In the above the function TWO is visible in  module A and B.
+rather than /keyword function or they are exported and the module A includes a use statement: /keyword use B.  In the above the function TWO is visible in  module A and B.
 
-An word of all digits implicitly declares an access function"function 3 int"
+An word of all digits implicitly declares an access function: /keyword function 3 int 
 
 Let definitions are only visible within the second expression in the let statement. 
-Let definitions declare an access function"function l1 < the type of the first expression of the let>". The definition itself returns the type of the second expression.
+Let definitions declare an access function: /keyword function l1 <the type of the first expression of the let>. The definition itself returns the type of the second expression.
 
 A function call f1(<exp1>, <exp2>,...)must match exactly one visible function defintion in name, number of parameters and types of the expressions of the arguments.
 
@@ -496,7 +507,7 @@ Mytype is recognized as a sequence as the first element of the sequence is seque
 
 A function /em length (myseq) is implicitly defined to access the length of myseq
 
-As with any parameterized scope any type must contain an element that uses T so that multiple instances of the module does not produce duplicate symbols.
+As with any parameterized module  a type definition   must contain an element that uses T so that multiple instances of the module does not produce duplicate symbols.
 
 We need some operations on T. T will be an int in this example so all these operations are define on int in the stdlib.
 
@@ -552,61 +563,63 @@ A function is tail recursive if the last function called is itself. A compiler c
 
 Sometimes a recursive function can be rewritten to make it tail recursive. Consider the following function:
 
-/keyword use seq.int
+ use seq.int
 
-/keyword function reverse2(l:seq.int)seq.int 
-/keyword  if isempty.l /keyword  then l /keyword else reverse2.subseq(l, 2, length.l)+ l_1
+  function reverse2(l:seq.int)seq.int 
+  if isempty.l    then l   else reverse2.subseq(l, 2, length.l)+ l_1
 
 The last call in this function is to +. Here is a rewritten version that is tail recursive:
 
-/keyword function reverse3(l:seq.int, accumalator:seq.int)seq.int 
- /keyword if isempty.l /keyword then accumalator /keyword else reverse3(subseq(l, 2, length.l), accumalator + l_1)
+  function reverse3(l:seq.int, accumalator:seq.int)seq.int 
+ if isempty.l then accumalator   else reverse3(subseq(l, 2, length.l), accumalator + l_1)
 
-/keyword function reverse3(l:seq.int)seq.int reverse3(l, empty:seq.int)
+  function reverse3(l:seq.int)seq.int reverse3(l, empty:seq.int)
 
-Now reverse is the last function called.
+Now reverse3 is the last function called.
 
 Making the function tail recursive is not the only way to reduce the stack size. The follow version uses O(ln n) instead of O(n) where n is the length of the sequence.
 
-/keyword function reverse4(l:seq.int)seq.int 
- /br /keyword if length.l < 2 /keyword then l /keyword else reverse4.subseq(l, length.l / 2 + 1, length.l)+ reverse4.subseq(l, 1, length.l / 2)
+  function reverse4(l:seq.int)seq.int 
+ if length.l < 2  then l   else reverse4.subseq(l, length.l / 2 + 1, length.l)+ reverse4.subseq(l, 1, length.l / 2)
 
 Perhaps the best way to reverse a sequence is to use
 
-/keyword Function reverse5(s:seq.T)seq.T  /br /keyword for acc=empty:seq.T,e=s /keyword do [s]+acc /for(acc)
+  Function reverse5(s:seq.T)seq.T    for acc=empty:seq.T,e=s   do [s]+acc /for(acc)
 
 
-In this case the tau compiler will remove the recursion and the bounds check when indexing the sequence.  
+In this case the tau compiler will remove the recursion and the bounds checking when indexing the sequence.  
 If the sequence was built up out of smaller sequences, it may also  break the sequence into the smaller parts and process them separately. 
 
 
 /section markup
 
 /< table 
-/row /cell  syntax /cell with format /cell without format
-/row /cell  /p   /cell    first /p second  /cell first second
-/row /cell  /br   /cell  first /br second /cell first second
-/row /cell /keyword /em example /cell /em example /cell example
-/row /cell /keyword /strong example /cell /strong example /cell example
-/row /cell /keyword /keyword example /cell /keyword example /cell example
-/row /cell /em /< /keyword literal... /em /> /cell /< literal  this is an example /> /cell this is an example
-/row /cell /em /< /keyword keyword... /em />  /cell /< keyword this is an example  /> /cell this is an example
-/row /cell /em /< /keyword comment... /em /> /cell /< comment this is an example  /> /cell this is an example
-/row /cell /em /< /keyword block... /em /> /cell parent block /< block Indented block. /br second line /> 
-/cell  parent block  Indented block. /br second line
-/row /cell /em /< /keyword noformat... /em /> /cell  /< noformat <hr/> /> /cell <hr>   
-/row /cell /em /< /keyword table <caption> <rows of table> /em /> /cell Defines a table 
-/row /cell  /keyword /row../keyword /cell../keyword /cell..   /cell Defines a row of with three columns. 
-Must be placed within table. 
-/row /cell /em /< table  /em Sample /em Table 
-/br /em /row /em /cell 1 /em /cell 2 /em /cell 3
-/br /em /row /em /cell 3 /em /cell 4 /em /cell 5
-/em />
+/row Example /cell with format /cell note
+/row first /keyword /p second  /cell    first /p second  /cell paragraph break
+/row first /keyword  /br second  /cell  first /br second /cell line break
+/row /keyword /em example /cell /em example  
+/row /keyword /strong example /cell /strong example  
+/row /keyword /keyword example /cell /keyword example  
+/row /keyword /< /keyword literal this is an example  /keyword /> /cell /< literal  this is an example />  
+/row /keyword /< /keyword keyword this is an example  /keyword />  /cell /< keyword this is an example  />  
+/row /keyword /< /keyword comment this is an example  /keyword /> /cell /< comment this is an example  />  
+/row parent block /keyword /< /keyword block Indented block. /keyword  /br second line /keyword /> 
+/cell parent block /< block Indented block. /br second line /> 
+/cell   Indented block 
+/row /keyword /< /keyword noformat <hr/> /keyword /> /cell  /< noformat <hr/> />   
+/row /keyword /< /keyword table <caption> <rows of table> /keyword /> /cell /cell Defines a table 
+/row  /keyword /row../keyword /cell../keyword /cell..  /cell /cell Defines a row of with three columns. 
+/br Must be placed within table. 
+/row /keyword /< /keyword table    Sample   Table 
+/br /keyword /row   1 /keyword /cell 2 /keyword /cell 3
+/br /keyword /row   3 /keyword /cell 4 /keyword /cell 5
+/keyword />
 /cell
-/< table  /em Sample /em Table /row /cell 1 /cell 2 /cell 3 /row /cell 3 /cell 4 /cell 5 />
+/< table    Sample  Table 
+ /row   1 /cell 2 /cell  3 
+ /row   3 /cell 4 /cell 5  
+  />
 /> 
 
+END
 
-This /< noformat /< table  /em Sample /em Table /row /cell 1 /cell 2 /cell 3 /row /cell 3 /cell 4 /cell 5 /> />
-produces following table.
-/< table  /em Sample /em Table /row /cell 1 /cell 2 /cell 3 /row /cell 3 /cell 4 /cell 5 />

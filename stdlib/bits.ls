@@ -30,8 +30,7 @@ Function =(a:bits, b:bits)boolean toint.a = toint.b
 
 function hexdigit(b:bits)char(decodeword."0123456789ABCDEF"_1)_(1 + toint(b ∧ 0x0F))
 
-function hexword(b:bits)word
- encodeword.[ hexdigit(b >> 12), hexdigit(b >> 8), hexdigit(b >> 4), hexdigit.b]
+function hexword(b:bits)word encodeword.[ hexdigit(b >> 12), hexdigit(b >> 8), hexdigit(b >> 4), hexdigit.b]
 
 Function print(b:bits)seq.word [ hexword(b >> 48), hexword(b >> 32), hexword(b >> 16), hexword.b]
 
@@ -51,8 +50,7 @@ let d8 = if b8 = 0x0 then 0xFF ∧ d16 else b8
 let b4 = d8 >> 4
 let t4 = if b4 = 0x0 then 0 else 4
 let d4 = if b4 = 0x0 then 0xF ∧ d8 else b4
- t32 + t16 + t8 + t4
- + [ 0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4]_(toint.d4 + 1)
+t32 + t16 + t8 + t4 + [ 0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4]_(toint.d4 + 1)
 
 __________________
 
@@ -74,6 +72,7 @@ Function =(a:byte, b:byte)boolean toint.a = toint.b
 
 Function tobits(a:byte)bits tobits.toint.a
 
-Builtin toint(b:byte)int { use builtin rather than rep.b so abyteseq @ +(empty:seq.int, toint.@e)does not become an noop since a bytseq may contain packed sequences of bytes }
+Builtin toint(b:byte)int { use builtin rather than rep.b so abyteseq @ +(empty:seq.int, toint.@e)does not become an noop 
+ since a bytseq may contain packed sequences of bytes }
 
 Function tobyte(a:int)byte byte.a 
