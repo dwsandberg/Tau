@@ -1,6 +1,4 @@
-#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
-
-; use doc ; callgraphbetween("stdlib","mytype passsymbol")
+#!/usr/local/bin/tau ; use doc ; callgraphbetween("stdlib","mytype passsymbol")
 
 doclibrary."stdlib"
 

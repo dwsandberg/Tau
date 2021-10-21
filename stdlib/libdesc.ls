@@ -56,7 +56,6 @@ use seq.seq.symbolref
 
 use seq.seq.word
 
-use seq.encodingpair.seq.char
 
 function print(l:seq.mytype)seq.word
 for acc ="(", t ∈ l do acc + print.t /for(acc + ")")

@@ -23,7 +23,7 @@ use seq.int
 Export type:cstr
 
 Function tocstr(s:seq.word)cstr
-tocstr.packed.bits.for acc = empty:bitstream, @e ∈ toseqbyte.toUTF8.s + tobyte.0 do add(acc, bits.toint.@e, 8)/for(acc)
+cstr.packed.bits.for acc = empty:bitstream, @e ∈ toseqbyte.toUTF8.s + tobyte.0 do add(acc, bits.toint.@e, 8)/for(acc)
 
 type fileresult is size:int, start:seq.int, data:seq.int
 
@@ -31,7 +31,7 @@ type fileresultbit is size:int, start:seq.bit, data:seq.bit
 
 type fileresultbyte is size:int, start:seq.byte, data:seq.byte
 
-type cstr is dummy:int
+type cstr is dummy:seq.bits
 
 builtin createlib2(name:cstr, libs:cstr, length:int, data:seq.bits)int
 
@@ -46,8 +46,6 @@ Export type:fileresult
 Export type:fileresultbyte
 
 Export type:fileresultbit
-
-builtin tocstr(seq.bits)cstr
 
 Builtin createfile2(byteLength:int, data:seq.bits, cstr)int
 

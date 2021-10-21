@@ -53,7 +53,7 @@ unbound hash(T)int
 
 unbound =(T, T)boolean
 
-unbound assignencoding(seq.encodingpair.T, data:T)int
+unbound assignencoding(data:T)int
 
 Export type:seq.encodingpair.T
 
@@ -109,16 +109,20 @@ let found =
 if found then
  subadd(mask
  , h
- , encodingpair(to:encoding.T(assignencoding(all.h, data.v)), data.v, hash.v)
+ , encodingpair(to:encoding.T(assignencoding(  data.v)), data.v, hash.v)
  , count + 1
  )
 else encodingpair(code.v, data.v, hash.v)
 
-Function assignrandom(all:seq.encodingpair.T, data:T)int(randomint.1)_1
+
+Function assignrandom(data:T) int(randomint.1)_1
+
+Function nextencoding(a:T) int length.all.getinstance:encodingstate.T+1
+
 
 Function addencodingpairs(l:seq.encodingpair.T)int
 let inst = getinstance:encodingstate.T
-for acc = 0, @e ∈ l do acc + primitiveadd2(encodingno.inst, rehash.@e)/for(acc)
+for acc = 0, @e ∈ l do acc + primitiveadd(encodingno.inst, rehash.@e)/for(acc)
 
 function rehash(a:encodingpair.T)encodingpair.T encodingpair(code.a, data.a)
 
@@ -133,13 +137,8 @@ data.a_1
 
 builtin getinstance:encodingstate.T encodingstate.T
 
-function primitiveadd2(encodingnumber:int, s:encodingpair.T)int
-if false then
- let discard = add(getinstance:encodingstate.T, s)
- 0
-else primitiveadd(encodingnumber, s)
-
 builtin primitiveadd(encodingnumber:int, s:encodingpair.T)int
+
 
 Function encoding:seq.encodingpair.T seq.encodingpair.T all.getinstance:encodingstate.T
 
@@ -147,7 +146,7 @@ Function encode(t:T)encoding.T
 let instance = getinstance:encodingstate.T
 let r = lookuprep(t, instance)
 if isempty.r then
- to:encoding.T(primitiveadd2(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t)))
+ to:encoding.T(primitiveadd(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t)))
 else code.r_1
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingpair.T

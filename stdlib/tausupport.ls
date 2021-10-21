@@ -218,10 +218,10 @@ function =(a:typename, b:typename)boolean name.a = name.b
 function hash(a:typename)int hash.name.a
 
 Function encodingno(name:seq.word)int
-if name = "char seq"then 1
-else if name = "typename"then 2 else valueofencoding.encode.typename.name + 2
+{if name = "char seq"then 1
+else if name = "typename"then 2 else} valueofencoding.encode.typename.name + 2
 
-function assignencoding(p:seq.encodingpair.typename, a:typename)int length.p + 1
+function assignencoding(  a:typename)int nextencoding.a
 
 Builtin abort:ptr(seq.word)ptr
 

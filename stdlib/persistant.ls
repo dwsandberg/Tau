@@ -50,7 +50,7 @@ Export initialdict seq.encodingpair.seq.char
 
 type word3 is toword:word
 
-function assignencoding(p:seq.encodingpair.word3, a:word3)int encoding.toword.a
+function assignencoding(  a:word3)int encoding.toword.a
 
 function =(a:word3, b:word3)boolean toword.a = toword.b
 
@@ -74,9 +74,8 @@ function =(a:slot, b:slot)boolean toint.a = toint.b
 
 function hash(a:const3)int hash.for acc = empty:seq.int, @e ∈ flds.a do acc + toint.@e /for(acc)
 
-function assignencoding(p:seq.encodingpair.const3, a:const3)int assignrandom(p, a)
+function assignencoding(  a:const3)int assignrandom.a 
 
-llvmtypeele
 
 /Function dumpword3 seq.word let x = encoding:seq.encodingpair.word3"len:"+ toword.length.x + @(+, toword,"", @(
  +, data, empty:seq.word3, x))

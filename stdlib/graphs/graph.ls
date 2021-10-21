@@ -12,10 +12,6 @@ use otherseq.arc.T
 
 use set.arc.T
 
-/use ipair.T
-
-/use otherseq.ipair.T
-
 type arc is tail:T, head:T
 
 Export type:arc.T

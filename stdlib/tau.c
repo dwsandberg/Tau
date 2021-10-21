@@ -23,6 +23,7 @@
 #define STRLEN(a)  IDXUC(a,1)
 #define myalloc allocatespace
 
+#define tocstr(filename) ( filename+16  )
 
 
 
@@ -289,8 +290,8 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
 }
 
  
-BT loadlib(processinfo PD,char *libname)
-{ 
+BT loadlib(processinfo PD,char *libname0)
+{ char * libname=tocstr(libname0);
 int i = looklibraryname(libname) ;
 if (i >= 0)
 {   fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
@@ -352,8 +353,11 @@ BT processisaborted(processinfo PD,BT pin){
 struct bitsseq  { BT type; BT length; BT  data[50]; };
 
 
-BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * name) 
-              {    int file=1;
+
+BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * filename ) 
+               {    int file=1;
+                    char * name=tocstr(filename);
+                    fprintf(stderr,"start createfile %s %d\n",name,file);
                       if (!( strcmp("stdout",name)==0 ))  { 
                       file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
                        fprintf(stderr,"createfile %s %d\n",name,file);
@@ -379,18 +383,22 @@ BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * name)
 
 
 
-BT createlib2(processinfo PD,char * libname,char * otherlib, BT bytelength, struct bitsseq *data ){
+BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data ){
+      char * libname=   tocstr(filename);
+     char * otherlib= tocstr(otherlibs) ; 
      char buff[200];
      /* create the .bc file */
-       sprintf(buff,"%s.bc",libname);
+       sprintf(buff+16,"%s.bc",libname);
   
         createfile2(PD, bytelength , data,buff);
      /* compile to .bc file */ 
-  sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",libname,otherlib,libname);
+     sprintf(buff,"%s.bc",libname);
+  sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",libname,
+  otherlib,libname);
    fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else {loadlib(PD,libname); return 1;}
+  else {loadlib(PD,filename); return 1;}
 }
 
  
@@ -438,12 +446,14 @@ BT subgetfile(processinfo PD,  char *name,BT seqtype){
 }
 
   
-BT getfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,0); }
+BT getfile(processinfo PD,char * filename){ 
+return  subgetfile (PD,tocstr(filename),0); }
 
 
-BT getbytefile(processinfo PD,char * filename){  return  subgetfile (PD,filename,-8); }
+BT getbytefile(processinfo PD,char * filename){  
+return  subgetfile (PD,tocstr(filename),-8); }
 
-BT getbitfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,-1); }
+BT getbitfile(processinfo PD,char * filename){ return  subgetfile (PD,tocstr(filename),-1); }
 
 
 
@@ -585,9 +595,10 @@ BT callstack(processinfo PD,BT maxsize){
       //  fprintf(stderr,"CALLStACK %d\n",frames);
      return r;}
 
-     
+
+
 BT dlsymbol(processinfo PD,char * funcname) 
-{return (BT) dlsym(RTLD_DEFAULT,  funcname );}
+{return (BT) dlsym(RTLD_DEFAULT,  tocstr(funcname) );}
 
 
 

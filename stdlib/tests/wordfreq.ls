@@ -21,7 +21,7 @@ use seq.seq.word
 
 type indexedword is w:word
 
-function assignencoding(p:seq.encodingpair.indexedword, a:indexedword)int length.p + 1
+function assignencoding(  a:indexedword)int nextencoding.a
 
 function hash(a:indexedword)int hash.w.a
 

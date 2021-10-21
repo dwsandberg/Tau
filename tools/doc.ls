@@ -68,7 +68,7 @@ use seq.arcinfo.seq.word
 
 function symbolref(sym:symbol)symbolref symbolref.valueofencoding.encode.sym
 
-function assignencoding(l:seq.encodingpair.symbol, symbol)int length.l + 1
+function assignencoding(  a:symbol)int nextencoding.a
 
 function decode(s:symbolref)symbol decode.to:encoding.symbol(toint.s)
 

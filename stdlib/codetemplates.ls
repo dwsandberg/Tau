@@ -139,7 +139,7 @@ if isInternal.ele then
  true
  ∧ extname.ele
  ∈ "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean 
- SHLint setptr bitcast DIVreal ORDint tocstr toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint 
+ SHLint setptr bitcast DIVreal ORDint   toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint 
  xor ORbits"
 else not.isempty.d
 
@@ -281,7 +281,7 @@ function =(a:match5, b:match5)boolean sym.a = sym.b
 
 function hash(a:match5)int fsighash.sym.a
 
-function assignencoding(p:seq.encodingpair.match5, a:match5)int length.p + 1
+function assignencoding( a:match5)int nextencoding.a
 
 Function options(match5map:seq.match5, m:match5)seq.word getoption.code.m
 
@@ -334,10 +334,6 @@ function initmap5 seq.match5
 , 4
 , BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.6, mul) + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3)
-)
-, addtemplate(symbol(internalmod,"tocstr", seqof.typebits, typeref."fileio cstr stdlib")
-, 2
-, GEP(r.1, i64, ibcsub.1, C64.2) + CAST(r.2, r.1, i64, ptrtoint)
 )
 , addtemplate(symbol(internalmod,"toint", typebyte, typeint), 0, emptyinternalbc)
 , addtemplate(symbol(internalmod,"toint", typebit, typeint), 0, emptyinternalbc)

@@ -38,7 +38,7 @@ use testpackedseq.seq.word
 
 type ccc is key:int, val:int
 
-function assignencoding(p:seq.encodingpair.ccc, a:ccc)int assignrandom(p, a)
+function assignencoding(  a:ccc)int assignrandom( a)
 
 function =(a:ccc, b:ccc)boolean key.a = key.b
 
