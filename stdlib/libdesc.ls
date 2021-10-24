@@ -4,8 +4,6 @@ use bits
 
 use compilerfront
 
-use fileio
-
 use libraryModule
 
 use mytype
@@ -55,7 +53,6 @@ use set.seq.symbol
 use seq.seq.symbolref
 
 use seq.seq.word
-
 
 function print(l:seq.mytype)seq.word
 for acc ="(", t ∈ l do acc + print.t /for(acc + ")")

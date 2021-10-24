@@ -20,7 +20,7 @@ Export type:symbolref
 
 Function symbolref(sym:symbol)symbolref symbolref.valueofencoding.encode.sym
 
-Function assignencoding(  a:symbol)int nextencoding.a
+Function assignencoding(a:symbol)int nextencoding.a
 
 Function decode(s:symbolref)symbol decode.to:encoding.symbol(toint.s)
 

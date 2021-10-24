@@ -6,8 +6,6 @@ use bits
 
 use checking
 
-use fileio
-
 use standard
 
 use textio
@@ -36,7 +34,7 @@ length.r = length.data ∧ data = r
 
 function t5501 boolean
 let text = ["this is a test","line 2"]
-let f = createfile("testw.txt", text)
+let f = createfile("testw.txt", text_1+encodeword.[char.10,char.10]+text_2)
 gettext."testw.txt" = text
 
 function *(i:int, b:byte)byte tobyte(i * toint.b)
@@ -46,6 +44,6 @@ function +(i:byte, b:byte)byte tobyte(toint.i + toint.b)
 function filetest(i:int)boolean
 let name ="test" + toword.i + ".txt"
 let a = createfile(name, arithseq(i, tobyte.1, tobyte.48))
-fileexists.name ∧ i = length.getfile:byte(name)
+ i = length.getfile:byte(name)
 
 Function t522 boolean for acc = true, @e ∈ arithseq(9, 1, 4)do acc ∧ filetest.@e /for(acc) 

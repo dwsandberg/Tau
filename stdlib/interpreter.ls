@@ -2,8 +2,6 @@ module interpreter
 
 use UTF8
 
-use fileio
-
 use mangle
 
 use real

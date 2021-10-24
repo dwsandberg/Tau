@@ -492,7 +492,7 @@ symbol(moduleref."internallib $constant"
 function hash(s:seq.symbol)int
 hash.for acc ="", e ∈ s do acc + worddata.e + name.module.e /for(acc)
 
-function assignencoding(  a:symbolconstant)int  nextencoding.a
+function assignencoding(a:symbolconstant)int nextencoding.a
 
 Export type:symbolconstant
 

@@ -130,7 +130,7 @@ Export EndBlock symbol
 
 Export type:mytype
 
-Export parameter(mytype) mytype
+Export parameter(mytype)mytype
 
 Export NotOp symbol
 

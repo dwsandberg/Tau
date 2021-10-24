@@ -107,18 +107,12 @@ let found =
  valueofencoding.code.v ≤ 0
  ∨ for acc = false, @e ∈(decodetable.h)_codeindex do acc ∨ code.v = code.@e /for(acc)
 if found then
- subadd(mask
- , h
- , encodingpair(to:encoding.T(assignencoding(  data.v)), data.v, hash.v)
- , count + 1
- )
+ subadd(mask, h, encodingpair(to:encoding.T(assignencoding.data.v), data.v, hash.v), count + 1)
 else encodingpair(code.v, data.v, hash.v)
 
+Function assignrandom(data:T)int(randomint.1)_1
 
-Function assignrandom(data:T) int(randomint.1)_1
-
-Function nextencoding(a:T) int length.all.getinstance:encodingstate.T+1
-
+Function nextencoding(a:T)int length.all.getinstance:encodingstate.T + 1
 
 Function addencodingpairs(l:seq.encodingpair.T)int
 let inst = getinstance:encodingstate.T
@@ -130,6 +124,8 @@ Function lookupencodingpair(t:encoding.T)seq.encodingpair.T
 let inst = getinstance:encodingstate.T
 decode(inst, t)
 
+/Function encodingnumber:T int encodingno.getinstance:encodingstate.T
+
 Function decode(t:encoding.T)T
 let a = lookupencodingpair.t
 assert length.a = 1 report"no such encoding" + toword.valueofencoding.t + stacktrace
@@ -138,7 +134,6 @@ data.a_1
 builtin getinstance:encodingstate.T encodingstate.T
 
 builtin primitiveadd(encodingnumber:int, s:encodingpair.T)int
-
 
 Function encoding:seq.encodingpair.T seq.encodingpair.T all.getinstance:encodingstate.T
 

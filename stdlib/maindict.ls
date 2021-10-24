@@ -4,7 +4,7 @@ use UTF8
 
 use dataio
 
-use fileio
+use inputoutput
 
 use standard
 

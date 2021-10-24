@@ -88,7 +88,7 @@ let y =
  , result.process.isprefix("red", z)
  , result.process.redgreen = redgreen
  , result.process.arg4(1, 2, 3, 4) = 10
- , {20} message.process.result.process.testout.4 = "no result of aborted process"
+ , { 20 } message.process.result.process.testout.4 = "no result of aborted process"
  , isprefix("unexpected character in real literal", message.process.makereal."45t6.3")
  , a.result.process.testprocess3 = 4 ∧ b.result.process.testprocess3 = 40
  , t513
@@ -109,13 +109,10 @@ let b = process.countprimes(c + 1, 2 * c)
 [ 1228, 1033] = [ result.a, result.b]
 
 function findprimes(start:int, finish:int)seq.word
-for acc ="", @e ∈ arithseq((finish - start + 2) / 2, 2, start)do
-  if isprime.@e then  acc+ toword.@e else acc /for(acc)
+for acc ="", @e ∈ arithseq((finish - start + 2) / 2, 2, start)do if isprime.@e then acc + toword.@e else acc /for(acc)
 
 function countprimes(start:int, finish:int)int
-for acc = 0, @e ∈ arithseq((finish - start + 2) / 2, 2, start)
-do  if isprime.@e then acc+1  else acc /for(acc)
-
+for acc = 0, @e ∈ arithseq((finish - start + 2) / 2, 2, start)do if isprime.@e then acc + 1 else acc /for(acc)
 
 function isprime(i:int)boolean
 if i mod 2 = 0 then i = 2
@@ -123,8 +120,4 @@ else
  let a = i / 2
  { intpart.sqrt.toreal.i }
  let b =(a + i / a) / 2
- for acc=true, f /in arithseq(a,2,3) 
-  while acc /and f /le b
-  do i mod f /ne 0 /for(acc)
- 
- 
+ for acc = true, f ∈ arithseq(a, 2, 3)while acc ∧ f ≤ b do i mod f ≠ 0 /for(acc) 

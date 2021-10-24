@@ -12,9 +12,9 @@ use otherseq.byte
 
 use otherseq.int
 
-/use seq.seq.seq.int
+Function getfileaslines(filename:seq.word)seq.UTF8 breaklines.UTF8.getfile:byte(filename)
 
-/use seq.seq.seq.word
+Function gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
 

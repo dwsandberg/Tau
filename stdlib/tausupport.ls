@@ -70,8 +70,6 @@ module tausupport
 
 use bits
 
-use mangle
-
 use real
 
 use standard
@@ -79,8 +77,6 @@ use standard
 use seq.byte
 
 use taublockseq.byte
-
-use process.int
 
 use seq.int
 
@@ -217,11 +213,9 @@ function =(a:typename, b:typename)boolean name.a = name.b
 
 function hash(a:typename)int hash.name.a
 
-Function encodingno(name:seq.word)int
-{if name = "char seq"then 1
-else if name = "typename"then 2 else} valueofencoding.encode.typename.name + 2
+Function encodingno(name:seq.word)int valueofencoding.encode.typename.name + 2
 
-function assignencoding(  a:typename)int nextencoding.a
+function assignencoding(a:typename)int nextencoding.a
 
 Builtin abort:ptr(seq.word)ptr
 
@@ -237,10 +231,4 @@ Export type:encodingpair.typename
 
 -----------
 
-Builtin initialdict seq.encodingpair.seq.char
-
-Builtin randomint(i:int)seq.int
-
-Function outofbounds seq.word"out of bounds" + stacktrace
-
-Function stacktrace seq.word internalstacktrace 
+Function outofbounds seq.word"out of bounds" + stacktrace 

@@ -455,7 +455,11 @@ return  subgetfile (PD,tocstr(filename),-8); }
 
 BT getbitfile(processinfo PD,char * filename){ return  subgetfile (PD,tocstr(filename),-1); }
 
+BT getbytefile2(processinfo PD,char * filename){  return  subgetfile (PD,tocstr(filename),-8); }
 
+BT getbitfile2(processinfo PD,char * filename){ return  subgetfile (PD,tocstr(filename),-1); }
+
+BT getfile2(processinfo PD,char * filename){ return  subgetfile (PD,tocstr(filename),0); }
 
 // end of file io
 

@@ -2,8 +2,6 @@ Module pretty
 
 use bits
 
-use fileio
-
 use format
 
 use libraryModule

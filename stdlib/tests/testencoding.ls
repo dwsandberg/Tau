@@ -62,7 +62,7 @@ function hash(a:testrecord)int key.a
 
 Export type:testrecord
 
-function assignencoding( a:testrecord)int assignrandom( a)
+function assignencoding(a:testrecord)int assignrandom.a
 
 function add(b:seq.word)int
 let d = encoding:seq.encodingpair.testrecord

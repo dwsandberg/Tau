@@ -151,7 +151,7 @@ else
       if isabstract.module.sym2 ∨ isconstantorspecial.sym2 ∨ isBuiltin.sym2 then acc3 else acc3 + sym2
      /for(acc3))
    /for(acc)
-   let prg10a= processOptions(prg10, toseq.modules.t5,"NOINLINE")
+  let prg10a = processOptions(prg10, toseq.modules.t5,"NOINLINE")
   let pb = postbind(roots, prg10a, templates, typedict)
   let result = processOptions(prg.pb, toseq.modules.t5,"COMPILETIME NOINLINE INLINE PROFILE STATE")
   { let z = symbol(moduleref("stdlib standard"),"<", typeint, typeint, typeboolean)let c1 = getCode(prg.pb, z)let c2 

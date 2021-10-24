@@ -184,7 +184,15 @@ else
        let encodenosym = symbol(modTausupport,"encodingno", seqof.typeword, typeint)
        let discard = symbolref.encodenosym
        ifthenelse([ gl, Lit.0, Getfld.typeint, Define.nextvar, Local.nextvar, Lit.0, EqOp]
-       , [ gl, Words.fullprint.typ, encodenosym, setSym.typeint, Define(nextvar + 1), gl, Lit.0, Getfld.typeint]
+       , [ gl
+       , Words.fullprint.typ
+       , encodenosym
+       , setSym.typeint
+       , Define(nextvar + 1)
+       , gl
+       , Lit.0
+       , Getfld.typeint
+       ]
        , [ Local.nextvar]
        , typeint
        )

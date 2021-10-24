@@ -34,8 +34,7 @@ Function hash(a:word)int hash.asencoding.a
 
 Function encoding(w:word)int valueofencoding.asencoding.w
 
-Function assignencoding(  a:seq.char)int
-toint(bits.assignrandom( a) ∧ bits(toint(bits.1 << 31) - 1))
+Function assignencoding(a:seq.char)int toint(bits.assignrandom.a ∧ bits(toint(bits.1 << 31) - 1))
 
 Function =(a:word, b:word)boolean asencoding.a = asencoding.b
 

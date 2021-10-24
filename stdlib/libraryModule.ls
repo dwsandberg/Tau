@@ -1,10 +1,14 @@
 Module libraryModule
 
-use fileio
+use bits
+
+use inputoutput
 
 use standard
 
 use symbol
+
+use seq.bits
 
 use seq.libraryModule
 
@@ -97,6 +101,15 @@ builtin unloadlib2(cstr)int
 Function loadlibrary(a:word)int loadlib.tocstr.[ a]
 
 builtin loadlib(cstr)int
+
+Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
+createlib2(tocstr.[ libname]
+, tocstr.for acc ="", @e ∈ dependlibs do acc + [ @e] + ".dylib"/for(acc)
+, length.b * 8
+, packed.b
+)
+
+builtin createlib2(name:cstr, libs:cstr, length:int, data:seq.bits)int
 
 _______________________
 

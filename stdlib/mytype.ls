@@ -55,8 +55,8 @@ Export library(typedef)word
 Function print(s:mytype)seq.word
 for acc ="", t ∈ typerep.s do acc + "." + name.t /for(acc << 1)
 
-Function fullprint(s:mytype) seq.word
-for acc ="", t ∈ typerep.s do acc  + name.t + modname.t +library.t /for(acc )
+Function fullprint(s:mytype)seq.word
+for acc ="", t ∈ typerep.s do acc + name.t + modname.t + library.t /for(acc)
 
 Function =(a:mytype, b:mytype)boolean typerep.a = typerep.b
 

@@ -2,13 +2,23 @@ Module standard
 
 use UTF8
 
+use bits
+
 use index
 
+use inputoutput
+
 use tausupport
+
+use textio
 
 use words
 
 use xxhash
+
+use seq.bit
+
+use seq.byte
 
 use seq.char
 
@@ -114,6 +124,24 @@ Function^(i:int, n:int)int
 { * nth power of i } for acc = 1, @e ∈ constantseq(n, i)do acc * @e /for(acc)
 
 ---------------------
+
+
+
+Function getfile:byte(name:seq.word)seq.byte getfilebyte.name
+
+Function getfile:bit(name:seq.word)seq.bit getfilebit.name
+
+Function getfile:int(name:seq.word)seq.int getfileint.name
+
+Export gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
+
+Function createfile(filename:seq.word, s:seq.word)int createfile(filename, toseqbyte.toUTF8.s)
+
+Export createfile(name:seq.word, a:seq.byte)int
+
+Export createfile(name:seq.word, a:seq.int)int
+
+_______________
 
 Function hash(a:seq.int)int finalmix.for acc = hashstart, @e ∈ a do hash(acc, @e)/for(acc)
 
@@ -293,8 +321,8 @@ Export <<(s:seq.word, i:int)seq.word { removes i words from beginning of s }
 
 Export >>(s:seq.word, i:int)seq.word { removes i words from end of s }
 
-* usegraph include xxhash encoding bits words real textio UTF8 set seq otherseq fileio standard bitstream exclude standard 
- seq
+* usegraph include inputoutput xxhash encoding bits words real textio UTF8 set seq otherseq fileio standard bitstream 
+ exclude standard seq
 
 * usegraph include tree graph ipair process stack set format maindict tausupport program typedict mytype symbol exclude 
  standard seq bits otherseq

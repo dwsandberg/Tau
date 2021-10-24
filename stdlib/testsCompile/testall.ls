@@ -31,5 +31,5 @@ Function testall seq.word
 + testbug7
 + testreal
 + testseq
-+ testopt
-+ testwordfreq 
++ testwordfreq
++ testopt 

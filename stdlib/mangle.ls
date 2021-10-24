@@ -1,6 +1,6 @@
 module mangle
 
-use fileio
+use inputoutput
 
 use libraryModule
 

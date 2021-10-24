@@ -18,7 +18,6 @@ Module doc
 
 use displaytextgraph
 
-use fileio
 
 use format
 

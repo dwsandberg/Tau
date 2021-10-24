@@ -2,8 +2,6 @@ Module codetemplates
 
 use bits
 
-use fileio
-
 use internalbc
 
 use libraryModule
@@ -139,8 +137,8 @@ if isInternal.ele then
  true
  ∧ extname.ele
  ∈ "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean 
- SHLint setptr bitcast DIVreal ORDint   toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint 
- xor ORbits"
+ SHLint setptr bitcast DIVreal ORDint toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint xor 
+ ORbits"
 else not.isempty.d
 
 Function stepone(theprg:set.symdef
@@ -281,7 +279,7 @@ function =(a:match5, b:match5)boolean sym.a = sym.b
 
 function hash(a:match5)int fsighash.sym.a
 
-function assignencoding( a:match5)int nextencoding.a
+function assignencoding(a:match5)int nextencoding.a
 
 Function options(match5map:seq.match5, m:match5)seq.word getoption.code.m
 
