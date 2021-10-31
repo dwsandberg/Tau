@@ -90,6 +90,15 @@ use standard
 
 use symbol
 
+/use inputoutput
+
+/use seq.byte
+
+/use bits
+
+/Export  getfileX:byte(seq.word,int) seq.byte
+
+
 Export toword(int)word
 
 Export decodeword(word)seq.char

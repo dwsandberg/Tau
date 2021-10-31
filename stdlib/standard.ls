@@ -8,8 +8,6 @@ use index
 
 use inputoutput
 
-use tausupport
-
 use textio
 
 use words
@@ -125,13 +123,11 @@ Function^(i:int, n:int)int
 
 ---------------------
 
+Export  getfile:byte(name:seq.word)seq.byte  
 
-
-Function getfile:byte(name:seq.word)seq.byte getfilebyte.name
-
-Function getfile:bit(name:seq.word)seq.bit getfilebit.name
-
-Function getfile:int(name:seq.word)seq.int getfileint.name
+Export getfile:bit(name:seq.word)seq.bit  
+ 
+Export getfile:int(name:seq.word)seq.int 
 
 Export gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
 

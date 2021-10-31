@@ -8,8 +8,6 @@ use inputoutput
 
 use standard
 
-use tausupport
-
 use words
 
 use seq.int

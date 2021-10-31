@@ -76,7 +76,7 @@ let newoptions1 =
 let newoptions =
  if isempty.options then newoptions1
  else if options = newoptions1 then options
- else toseq(asset.options \ asset."VERYSIMPLE INLINE" ∪ asset.newoptions1)
+ else toseq(asset.options \ asset."VERYSIMPLE " ∪ asset.newoptions1)
 if newoptions = ""then code.t else code.t + Words.newoptions + Optionsym
 
 function isverysimple(nopara:int, code:seq.symbol)boolean

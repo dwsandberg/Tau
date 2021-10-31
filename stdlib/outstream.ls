@@ -14,7 +14,7 @@ function addspace(nospace:boolean, result:T, toadd:word)T
 let i = findindex(toadd, specialwords:T)
 addspace2(nospace, result, toadd, false, i)
 
-function specialwords:T seq.word [ space] + '-()].:_^"' + " /br. ,"
+function specialwords:T seq.word [ space] + '=+-()].:_^"' + " /br. ,"
 
 function addspace(nospace:boolean, result:T, toadd:seq.word)T
 for ns = nospace, a = result, this ∈ toadd do

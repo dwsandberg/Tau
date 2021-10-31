@@ -1,4 +1,6 @@
-#!/usr/local/bin/tau ; use doc ; doclibrary."stdlib"
+#!/usr/local/bin/tau ; use doc ; htmlcode."bug10"
+
+; use doc ; doclibrary."stdlib"
 
 ; use doc ; callgraphbetween("stdlib","mytype passsymbol")
 
@@ -46,7 +48,7 @@ print.compile("baseTypeCheck","stdlib")
 
 ; use doc ; callgraphwithin("stdlib","llvm")
 
-; use pretty ; htmlcode."testall"
+; use doc ; htmlcode."testall"
 
 ; use genLR1 ; gentau2
 

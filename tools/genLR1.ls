@@ -80,7 +80,7 @@ function ?(a:dottedrule, b:dottedrule)ordering rule.a ? rule.b ∧ place.a ? pla
 
 function hash(p:dottedrule)int hash.rule.p + place.p
 
-function assignencoding(  a:state)int nextencoding.a
+function assignencoding(a:state)int nextencoding.a
 
 function =(a:action, b:action)boolean lookahead.a = lookahead.b ∧ stateno.a = stateno.b
 
@@ -601,7 +601,7 @@ _6]else [ attribute(x1 + removeclose.text.block.R_4), elseblock.R_6]pretty(t + a
 , [ ' D E ',"R_1"]
 ]
 
-Function test11 seq.word
+Function test112 seq.word
 extractgrammer.' function action(ruleno:int, dupinput:seq.word, place:int, R:reduction.bindinfo)bindinfo let common = common.
  dict.R if ruleno = { G F # } 1 then R_1 else if ruleno = { F W NM(FP)T E } 2 then createfunc(R, common, place, tokentext.R_2, types 
 .R_4, R_6, R_7)else if ruleno = { F W_(FP)T E } 3 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)else 

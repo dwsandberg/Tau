@@ -101,8 +101,6 @@ module testpackedseq.T
 
 use standard
 
-use tausupport
-
 use testseq
 
 use otherseq.T

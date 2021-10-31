@@ -400,12 +400,9 @@ BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, st
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
   else {loadlib(PD,filename); return 1;}
 }
-
- 
-
     
-    
-BT subgetfile(processinfo PD,  char *name,BT seqtype){
+BT subgetfile(processinfo PD,  char *filename,BT seqtype){
+  char *name= tocstr(filename);
        int fd;
     char *filedata;
     struct stat sbuf;
@@ -446,20 +443,17 @@ BT subgetfile(processinfo PD,  char *name,BT seqtype){
 }
 
   
-BT getfile(processinfo PD,char * filename){ 
-return  subgetfile (PD,tocstr(filename),0); }
+BT getfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,0); }
 
+BT getbytefile(processinfo PD,char * filename){  return  subgetfile (PD,filename,-8); }
 
-BT getbytefile(processinfo PD,char * filename){  
-return  subgetfile (PD,tocstr(filename),-8); }
+BT getbitfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,-1); }
 
-BT getbitfile(processinfo PD,char * filename){ return  subgetfile (PD,tocstr(filename),-1); }
+BT getbytefile2(processinfo PD,char * filename){  return  subgetfile (PD,filename,-8); }
 
-BT getbytefile2(processinfo PD,char * filename){  return  subgetfile (PD,tocstr(filename),-8); }
+BT getbitfile2(processinfo PD,char * filename){ return  subgetfile (PD,filename,-1); }
 
-BT getbitfile2(processinfo PD,char * filename){ return  subgetfile (PD,tocstr(filename),-1); }
-
-BT getfile2(processinfo PD,char * filename){ return  subgetfile (PD,tocstr(filename),0); }
+BT getfile2(processinfo PD,char * filename){ return  subgetfile (PD,filename,0); }
 
 // end of file io
 

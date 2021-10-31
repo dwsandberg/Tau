@@ -34,6 +34,8 @@ Export paratypes(symbol)seq.mytype
 
 Export name(symbol)word
 
+Export nametype(sym:symbol)seq.mytype
+
 Export internalmod modref
 
 Export typeboolean mytype

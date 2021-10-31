@@ -108,6 +108,11 @@ pnpstate(newlastbreak, newresult, newmatchthis, newinstring)
 
 _____________________________
 
+Function HTMLformat(output:seq.word) UTF8 processpara(emptyUTF8,output)
+
+Function textformat(output:seq.word) UTF8 processtotext(emptyUTF8, output) 
+
+
 Function toUTF8bytes(output:seq.word)seq.byte
 toseqbyte.processpara(emptyUTF8," /< noformat" + htmlheader + " />" + output)
 

@@ -4,8 +4,6 @@ use bits
 
 use format
 
-use libraryModule
-
 use standard
 
 use parsersupport.attribute2
@@ -22,54 +20,26 @@ use seq.token.attribute2
 
 use seq.seq.prettyresult
 
-use process.seq.word
-
 use seq.seq.word
 
 use set.seq.word
 
-Function gettexts(l:seq.word)seq.seq.word
-for acc = empty:seq.seq.word, @e ∈ subseq(l, 2, length.l)do acc + gettexts(l_1, @e)/for(acc)
+use process.seq.seq.word
 
-Function gettexts(lib:word, file:word)seq.seq.word
-let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
-for acc = empty:seq.seq.word, @e ∈ gettext.file2 do acc + gettext2.@e /for(acc)
 
-function gettext2(s:seq.word)seq.seq.word
-if length.s = 0 then empty:seq.seq.word
-else if s_1 ∈ "Function function type use"then [ s]else empty:seq.seq.word
-
-Function htmlcode(libname:seq.word)seq.word
-let p = prettyfile(true, '  /< noformat <hr id ="T">  />  /keyword ', getlibrarysrc.libname_1)
-let modules =
- for acc ="", @e ∈ p do
-  if subseq(@e, 1, 2) ∈ [" /< noformat"]then acc + @e_7 else acc
- /for(acc)
-" /< noformat <h1> Source code for Library" + libname + "</h1>  />"
-+ for acc ="", @e ∈ modules do acc + ref.@e /for(acc)
-+ for acc ="", @e ∈ p do acc + @e + " /p"/for(acc >> 1)
-
-function ref(modname:word)seq.word
-'  /< noformat <a href ="' + merge.["#"_1, modname] + '"> ' + modname
-+ "</a>  />"
-
-_____________________
 
 Function pretty(l:seq.word, targetdir:seq.word)seq.word
 { first item in list is library and others are files with library to pretty }
-for acc ="", @e ∈ subseq(l, 2, length.l)do acc + pprettyfile(l_1, targetdir_1, @e)/for(acc)
-
-function pprettyfile(lib:word, newlibdir:word, file:word)seq.word
-let p = process.prettyfile(lib, newlibdir, file)
-if aborted.p then message.p else result.p
-
-function prettyfile(lib:word, newlibdir:word, file:word)seq.word
-let file2 = [ merge([ lib] + "/" + [ file] + ".ls")]
-let b =
- for acc ="", @e ∈ prettyfile(true,"", gettext.file2)do acc + " /p" + @e /for(acc << 1)
-let discard =
- createfile([ merge([ newlibdir] + "/" + file + ".ls")], toUTF8textbytes.b << 1)
-b
+for acc ="", file ∈ subseq(l, 2, length.l)do
+ let p =
+  process.prettyfile(true,"", gettext([ l_1] + "/" + file + ".ls"))
+ if aborted.p then acc + message.p
+ else
+  let result =
+   for txt ="", @e ∈ result.p do txt + " /p" + @e /for(txt << 1)
+  let discard = createfile(targetdir + "/" + file + ".ls", toUTF8textbytes.result << 1)
+  acc + result
+/for(acc)
 
 Function pretty(s:seq.word)seq.word
 let tmp0 = text.(toseq.parse.s)_1
@@ -303,11 +273,12 @@ else if ruleno = { L E } 33 then R_1
 else if ruleno = { L L, E } 34 then R_1 + R_3
 else if ruleno = { E [ L]} 35 then pretty.[ R_1, list.R_2, R_3]
 else if ruleno = { A W = E } 36 then
- pretty.[ R_1, R_2, if width.R_3 > maxwidth then block.R_3 else R_3]
+ pretty.[ R_1,  if width.R_3 > maxwidth then block.R_3 else R_3]
 else if ruleno = { E let A E } 37 then
  attribute2.[ prettyresult(0
  , 10000
- ," /keyword let" + subseq(text.R_2, 1, 2) + protect(text.R_2 << 2, text.R_3)
+ ,
+ " /keyword let" + first.text.R_2+[space, "="_1,space]    + protect(text.R_2 << 1, text.R_3)
  )
  ]
 else if ruleno = { E assert E report D E } 38 then

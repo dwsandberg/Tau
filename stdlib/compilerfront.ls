@@ -66,7 +66,6 @@ use seq.seq.word
 
 Export type:liblib
 
-Export getlibraryinfo(seq.word)seq.seq.word
 
 Export getlibrarysrc(seq.word)seq.seq.word
 
@@ -153,17 +152,34 @@ else
    /for(acc)
   let prg10a = processOptions(prg10, toseq.modules.t5,"NOINLINE")
   let pb = postbind(roots, prg10a, templates, typedict)
-  let result = processOptions(prg.pb, toseq.modules.t5,"COMPILETIME NOINLINE INLINE PROFILE STATE")
-  { let z = symbol(moduleref("stdlib standard"),"<", typeint, typeint, typeboolean)let c1 = getCode(prg.pb, z)let c2 
- = getCode(result, z)}
-  { assert libname /ne"stdlib.testoptconfig"report"XXX"+ for txt ="", Z = toseq.result do txt + print.sym.Z + print.subseq 
-(code.Z, 1, 10)+"ENDX"+ EOL /for(txt)}
+  let afteroption=processOptions(prg.pb, toseq.modules.t5,"COMPILETIME NOINLINE INLINE PROFILE STATE")
+  let result = if option="wasm" then
+    for  acc0=afteroption, root /in toseq.asset.roots do 
+       for acc=acc0, sym /in toseq.expand(4,afteroption,root ) do 
+         addoption(acc,sym, "INLINE")
+    /for(acc)
+    /for(acc0)
+  else afteroption
   compileinfo(toseq.if option = "pass1"then result else pass2.result ∪ templates
   , typedict.pb
   , tolibraryModules(typedict, toseq.modules.t5, exports)
   , empty:seq.seq.word
   , asset.roots
   )
+  
+  function expand(level:int,prg:set.symdef,symin:symbol) set.symbol
+     for acc=empty:set.symbol,  sym /in getCode( prg ,symin)   do
+      if isspecial.sym /or isconst.sym
+        /or name.module.sym /in "internal builtin UTF8 seq" then acc
+       else if name.sym /in "putfile jsgetfile" then acc+symin
+       else if level=0 then acc
+       else 
+       let s=expand(level-1,prg,sym)
+        if isempty.s then acc else
+         acc /cup expand(level-1,prg,sym)+symin
+   /for(acc)
+   
+ 
 
 Export type:compileinfo
 

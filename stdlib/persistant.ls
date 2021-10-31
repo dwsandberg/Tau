@@ -14,8 +14,6 @@ use llvmconstants
 
 use standard
 
-use tausupport
-
 use words
 
 use encoding.const3

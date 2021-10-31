@@ -65,6 +65,20 @@ use svggraph.seq.word
 
 use seq.arcinfo.seq.word
 
+use seq.seq.word
+
+Function htmlcode(libname:seq.word)seq.word
+let p = prettyfile(true, '  /< noformat <hr id ="T">  />  /keyword ', getlibrarysrc.libname << 3)
+let modules =
+ for acc ="", @e ∈ p do
+  if subseq(@e, 1, 2) ∈ [" /< noformat"]then acc + @e_7 else acc
+ /for(acc)
+" /< noformat <h1> Source code for Library" + libname + "</h1>  />"
++ for acc ="", modname ∈ modules do acc + '  /< noformat <a href ="' + merge.["#"_1, modname] + '"> ' + modname
++ "</a>  />" /for(acc)
++ for acc ="", @e ∈ p do acc + @e + " /p"/for(acc >> 1)
+
+
 function symbolref(sym:symbol)symbolref symbolref.valueofencoding.encode.sym
 
 function assignencoding(  a:symbol)int nextencoding.a
@@ -149,7 +163,7 @@ Function testdoc seq.word { callgraphwithin("stdlib","llvm")+ } doclibrary."stdl
 Function doclibrary(libname:seq.word)seq.word
 { create summary documentation for libraray. }
 let liba = getlibrarysrc.libname
-let exports =(getlibraryinfo.libname)_3
+let exports =liba_3
 let todoc =
  for acc ="", s ∈ liba do
   if subseq(s, 1, 3) = "* only document"then acc + subseq(s, 4, length.s)else acc

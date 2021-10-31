@@ -75,7 +75,7 @@ use seq.seq.seq.word
 /use process.compileinfo
 
 Function subcompilelib(libname:seq.word)seq.word
-let info = getlibraryinfo.libname
+let info = getlibraryinfo2.libname
 let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
@@ -84,7 +84,7 @@ let cinfo =
  { result.process.}
  compilerfront("all"
  , libname
- , ["Library" + libname] + getlibrarysrc.libname
+ , ["Library" + libname] + info << 3
  , dependentlibs
  , exports
  )
@@ -134,13 +134,12 @@ Function astext(info:compileinfo)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ prg.info do acc + [ print.sym.p + print.code.p]/for(acc)
 
 Function compilerfront(option:seq.word, libname:seq.word)compileinfo
-let info = getlibraryinfo.libname
+let info = getlibraryinfo2.libname
 let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
 { let b = unloadlib.[ libname]}
-let allsrc = getlibrarysrc.libname
-compilerfront(option, libname, allsrc, dependentlibs, exports)
+compilerfront(option, libname, info << 3, dependentlibs, exports)
 
 Export compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
 
