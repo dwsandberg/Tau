@@ -223,6 +223,8 @@ else
    ))
  /for(usedsyms(allsyms, source, length.aa, prg.accZ, templates, typedict.accZ, inline.accZ))
 
+use otherseq.mytype
+
 function test(symx:symbol, newdict3:typedict, modpara:mytype, inline:set.symdef)seq.symbol
 let sym = replaceTsymbol(modpara, symx)
 if isspecial.sym then
@@ -237,11 +239,26 @@ else if not.isBuiltin.sym then
   let discard = symbolref.sym
   [ sym]
  else xx << nopara.sym
-else if name.sym ∈ "bitcast"then
+else if name.sym ∈ "bitcast toptr"then
  let a = coretype(first.paratypes.sym, newdict3)
  let b = coretype(resulttype.sym, newdict3)
  if a = b then empty:seq.symbol else [ symbol(internalmod,"bitcast", a, b)]
 else if name.sym ∈ "processresult"then [ Lit.2, Getfld.coretype(para.module.sym, newdict3)]
+else if name.sym ∈ "typestructure" then
+     let roottype=para.module.sym
+      let tmp=for acc=empty:seq.seq.mytype ,row /in asseqseqmytype.subdict(newdict3,roottype) do 
+     if first.row=roottype then   [row]+acc   else  acc+row 
+   /for(acc)
+   { root type is now first row in tmp}
+     for acc=empty:seq.symbol, row /in tmp do
+      acc+for accrow=empty:seq.symbol , t /in row do
+             let fp=fullprint.t
+            accrow+for acctype=empty:seq.symbol,idx=1, w /in fp do 
+              next(acctype+if idx < 3 then [Word.w] else [Word.w,Record([typeword,typeword,typeword])],
+                if idx=3 then 1 else idx+1)
+            /for( acctype+Sequence(typeword, length.fp / 3 )) 
+      /for (accrow+Sequence(seqof.typeptr,length.row))
+    /for (acc+Sequence(typeptr,length.tmp))  
 else
  [ if name.sym ∈ "buildrecord"then
   let t = flatflds(newdict3, para.module.sym)
@@ -297,6 +314,8 @@ if issimple.module.sym2 then symdef(sym2, empty:seq.symbol)
 else
  let gx = findabstract(templates, sym2)
  assert length.gx = 1 report"Cannot find template for X" + print.length.gx + print.sym2
+ + if isempty.gx then "" else for txt="",k /in gx do  txt+EOL+print.sym.sd.k+print.modpara.k
+ /for(txt)
  for newcode = empty:seq.symbol, sym4 ∈ code.sd.gx_1 do newcode + replaceTsymbol(modpara.gx_1, sym4)/for(symdef(sym2, newcode))
 
 function iscoretype(typ:mytype)boolean

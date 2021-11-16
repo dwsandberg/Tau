@@ -24,7 +24,15 @@ use seq.seq.mytype
 
 Export type:typeentry
 
+Export type:typedict
+
+
 type typeentry is totypeseq:seq.mytype
+
+type typedict is totypedict:set.typeentry
+
+
+Function emptytypedict typedict typedict.empty:set.typeentry
 
 function ?(a:typeentry, b:typeentry)ordering first.totypeseq.a ? first.totypeseq.b
 
@@ -173,16 +181,17 @@ if isseq.type then
  if para = typebyte ∨ para = typebit then type else seqof.coretype(parameter.type, addsize, 6)
 else coretype(type, addsize)
 
-type typedict is totypedict:set.typeentry
+
+Function asseqseqmytype(dict:typedict) seq.seq.mytype
+ for acc=empty:seq.seq.mytype, tr ∈ toseq.totypedict.dict do
+   acc+  totypeseq.tr  
+/for(acc)
 
 Function print(dict:typedict)seq.word
 for txt ="", tr ∈ toseq.totypedict.dict do
  for acc2 = txt, t ∈ totypeseq.tr do acc2 + print.t /for(acc2 + EOL)
 /for(txt)
 
-Export type:typedict
-
-Function emptytypedict typedict typedict.empty:set.typeentry
 
 Function add(alltypes:typedict, t:mytype, flatflds:seq.mytype)typedict
 typedict(totypedict.alltypes + typeentry(t, flatflds))
@@ -192,6 +201,26 @@ Function flatflds(alltypes:typedict, type:mytype)seq.mytype
 let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
 if isempty.t then empty:seq.mytype else flatflds.t_1
 
+Function subdict(all:typedict,t:mytype ) typedict
+ let sub = typedict.lookup(totypedict.all , typeentry(t, empty:seq.mytype))
+ closedict(all,sub)
+
+function closedict(all:typedict,subdict:typedict) typedict
+ let need= for  acc=empty:set.mytype ,have=empty:set.mytype,  te /in toseq.totypedict.subdict do
+      next(for  acc2=acc,     t /in flatflds.te do
+        if isseq.t then acc2+parameter.t else  acc2+t 
+     /for(acc2),have+type.te)
+    /for(acc \ ( asset.[typeint,typeboolean,typeptr,typereal,typeword] /cup have))
+   for   new=empty:set.typeentry,      t /in toseq.need do
+         let x= lookup(totypedict.all, typeentry(t, empty:seq.mytype))
+         if isempty.x /and isseq.t then 
+            new+typeentry(t,[t])
+            else 
+         new /cup x 
+   /for( if isempty.new then subdict else 
+      closedict(all,typedict(totypedict.subdict /cup new)))
+         
+          
 Function flatwithtype(alltypes:typedict, type:mytype)seq.mytype
 let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
 if isempty.t then empty:seq.mytype else [ type.t_1] + flatflds.t_1

@@ -82,6 +82,9 @@ Export types(symbol)seq.mytype
 
 Export raw(symbol)bits
 
+Function  rehash(s:symbol) symbol
+symbol(worddata.s,module.s,types.s,raw.s,extrabits(types.s,hash.worddata.s,hashbits.s))
+
 Function =(a:symbol, b:symbol)boolean
 hashbits.a = hashbits.b ∧ worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1
 ∧ issimplename.a = issimplename.b

@@ -1,4 +1,9 @@
-#!/usr/local/bin/tau ; use doc ; htmlcode."bug10"
+#!/usr/local/bin/tau ;   use doc ; callgraphwithin("webassembly","wasm2")
+
+
+
+use doc ; doclibrary."tools"
+
 
 ; use doc ; doclibrary."stdlib"
 
@@ -54,9 +59,11 @@ print.compile("baseTypeCheck","stdlib")
 
 Module tools
 
-Library tools baseTypeCheck doc genLR1 profile taulextable
+Library tools baseTypeCheck bandeskopf svg2graph doc genLR1 profile  taulextable
 uses stdlib
-exports baseTypeCheck doc genLR1 profile taulextable tools
+exports baseTypeCheck doc genLR1 profile taulextable tools  
+
+
 
 * STATE builtin:profile profileinfo profileresult
 

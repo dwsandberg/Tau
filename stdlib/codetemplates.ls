@@ -335,25 +335,16 @@ function initmap5 seq.match5
 )
 , addtemplate(symbol(internalmod,"toint", typebyte, typeint), 0, emptyinternalbc)
 , addtemplate(symbol(internalmod,"toint", typebit, typeint), 0, emptyinternalbc)
+, addtemplate(symbol(internalmod,"toptr", seqof.typeword,typeptr),0,emptyinternalbc)
 , { addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(r.1, ptr.ptr 
 .i64, i64, C64.2, 0)+ STORE(r.2, r.1, ibcsub.1)+ GEP(r.2, ptr.i64, r.1, C64.1)+ STORE(r.3, r.2, ibcsub.2)+ GEP(r.3, 
- ptr.i64, r.1, C64.0)), addtemplate(symbol("bitcast(ptr)","builtin","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint 
-)), addtemplate(symbol("bitcast(int seq)","interpreter","int"), 1, CAST(r.1, ibcsub.1, i64, ptrtoint)), }
-addtemplate(symbol(internalmod,"bitcast", typeint, seqof.typeint)
-, 1
-, CAST(r.1, ibcsub.1, ptr.i64, inttoptr)
-)
+ ptr.i64, r.1, C64.0)),  }
+addtemplate( symbol(internalmod,"bitcast", typeptr, typeint), 1, CAST(r.1, ibcsub.1, i64, ptrtoint ))
+,addtemplate(symbol(internalmod,"bitcast", typeint, typeptr), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
+, addtemplate(symbol(internalmod,"bitcastXX", typeptr, typeptr), 1, GEP(r.1, i64, ibcsub.1, C64.0))
 , addtemplate(symbol(internalmod,"GEP", seqof.typeint, typeint, typeint)
 , 2
 , GEP(r.1, i64, ibcsub.1, ibcsub.2) + CAST(r.2, r.1, i64, ptrtoint)
-)
-, addtemplate(symbol(internalmod,"bitcast", typeptr, typeptr)
-, 1
-, GEP(r.1, i64, ibcsub.1, C64.0)
-)
-, addtemplate(symbol4(internalmod,"toseqX"_1, seqof.typeint, [ typeptr], seqof.typeint)
-, 0
-, emptyinternalbc
 )
 , addtemplates([ typebit, typebyte, typeint, typeptr, typereal] + packedtypes
 , symbol4(internalmod,"toseq"_1, seqof.typeT, [ typeptr], typeptr)

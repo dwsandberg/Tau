@@ -2,6 +2,11 @@ Module bandeskopf.T
 
 use standard
 
+use makeDAG.T
+
+use layergraph.T
+
+
 use graph.T
 
 use otherseq.T
@@ -9,8 +14,6 @@ use otherseq.T
 use seq.T
 
 use set.T
-
-use svggraph.T
 
 use seq.int
 
@@ -252,3 +255,93 @@ asset.for acc = empty:seq.nodeinfo.T, @e ∈ arithseq(cardinality.UL, 1, 1)do ac
 function merge(UL:set.nodeinfo.T, UR:set.nodeinfo.T, m:int, i:int)nodeinfo.T
 let ul = UL_i
 nodeinfo(n.ul,(x.ul + x.UR_i - m + 1) * 2 / 2, y.ul) 
+
+
+
+________________
+
+use graph.nodeinfo.T
+
+use seq.arc.nodeinfo.T
+
+type graphlayout is  g:graph.T, nodeinfo:set.nodeinfo.T, paths:seq.seq.T
+
+Export  nodeinfo(graphlayout.T) set.nodeinfo.T
+
+Export  paths(graphlayout.T) seq.seq.T
+
+use otherseq.seq.seq.T
+
+Function layout(  g:graph.T,allpaths:boolean) graphlayout.T
+let lg = layer.makeDAG.g
+ let paths= for  acc=empty:seq.seq.T,      a /in   toseq.arcs.g.lg do
+     if tail.a /nin nodes.g /or   not.allpaths /and head.a /in nodes.g     then acc
+     else  
+      let path=[tail.a]+followpath(head.a,g.lg,nodes.g)
+   let acc1=   if arc(first.path,last.path) /in arcs.g  then
+        acc+path
+      else acc
+     if arc(last.path,first.path) /in arcs.g  then
+        acc1+reverse.path
+      else acc1 
+/for(acc)
+graphlayout(g,assignx(g.lg, nodes.g.lg \ nodes.g, layers.lg),paths)
+
+ for  acc=empty:seq.arc.nodeinfo.T,      a /in   toseq.arcs.g.lg do
+    acc+  arc(lookup(t, nodeinfo(tail.a,0,0))_1,lookup(t, nodeinfo(head.a,0,0))_1)
+/for(newgraph.acc)
+
+function followpath( a:T,lg:graph.T,nodes:set.T ) seq.T
+     if a /in nodes   then  [a]
+      else  [a]+followpath(successors(lg,a)_1,lg,nodes)  
+
+  
+________________
+
+Export type:nodeinfo.T
+
+type nodeinfo is n:T, x:int, y:int,  seperation:int
+
+seperation is"width"of node in layer.y is the layer value, x is the posistion within the layer.
+
+Export n(nodeinfo.T)T
+
+Export x(nodeinfo.T)int
+
+Export y(nodeinfo.T)int
+
+
+Export seperation(nodeinfo.T)int
+
+Function nodeinfo(n:T, x:int, y:int)nodeinfo.T nodeinfo(n, x, y,  1)
+
+
+unbound =(T, T)boolean
+
+function =(a:nodeinfo.T, b:nodeinfo.T)boolean n.a = n.b
+
+/Function maxx(a:seq.nodeinfo.T)int for acc = 0, @e ∈ a do max(acc, rightedge.@e)/for(acc)
+
+
+/Function maxy(a:seq.nodeinfo.T)int for acc = 0, @e ∈ a do max(acc, y.@e)/for(acc)
+
+function posindegree(g:graph.T, layers:seq.seq.T, layer:int, node:T)nodeinfo.T
+let x = findindex(node, layers_layer)
+if x > length.layers_layer then posindegree(g, layers, layer + 1, node)
+else
+ let d = length.toseq.predecessors(g, node)
+ nodeinfo(node, x, layer,  if d > 2 then d else 1)
+
+function pos(layers:seq.seq.T, layer:int, node:T)nodeinfo.T
+let x = findindex(node, layers_layer)
+if x > length.layers_layer then pos(layers, layer + 1, node)else nodeinfo(node, x, layer)
+
+function defaultpos(g:graph.T, layers:seq.seq.T)set.nodeinfo.T
+let a = for acc = empty:seq.T, @e ∈ layers do acc + @e /for(acc)
+for acc = empty:set.nodeinfo.T, @e ∈ a do acc + pos(layers, 1, @e)/for(acc)
+
+function posindegree(g:graph.T, layers:seq.seq.T)set.nodeinfo.T
+let a = for acc = empty:seq.T, @e ∈ layers do acc + @e /for(acc)
+for acc = empty:set.nodeinfo.T, @e ∈ a do acc + posindegree(g, layers, 1, @e)/for(acc)
+
+

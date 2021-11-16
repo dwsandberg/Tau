@@ -1,3 +1,15 @@
+
+module bitcast.T
+
+use tausupport
+
+Builtin bitcast:T(ptr) T
+
+Builtin fld:T(ptr,int) T 
+
+Builtin toptr(T) ptr
+
+
 module taublockseq.T
 
 use standard
@@ -10,15 +22,18 @@ Export type:seq.T
 
 Export type:blockseq.T
 
-builtin bitcast:T(ptr)seq.T
+use bitcast.seq.T
 
 builtin getfld(address:blockseq.T, offset:int)seq.T { load value of type T at address }
+
 
 unbound set(ptr, T)ptr
 
 type blockseq is sequence, dummy:seq.T
 
 function blocksize:T int 8160
+
+Function blockseqtype:T int getseqtype.toseq.blockseq(1, empty:seq.T)
 
 Function_(a:blockseq.T, i:int)T
 assert between(i, 1, length.toseq.a)report"out of bounds"
@@ -31,7 +46,7 @@ let blksz = blocksize:T
 if length.s ≤ blksz then
  let newseq = allocatespace(length.s + 2)
  let d = for acc = set(set(newseq, 0), length.s), @e ∈ s do set(acc, @e)/for(acc)
- bitcast:T(newseq)
+ bitcast:seq.T(newseq)
 else
  let noblks =(length.s + blksz - 1) / blksz
  let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
@@ -41,10 +56,10 @@ else
    let newseq = allocatespace(blksz + 2)
    let d =
     for acc2 = set(set(newseq, 0), blksz), e ∈ subseq(s, @e, @e + blksz - 1)do set(acc2, e)/for(acc2)
-   let x = bitcast:T(newseq)
+   let x = bitcast:seq.T(newseq)
    set(acc, newseq)
   /for(acc)
- bitcast:T(blkseq)
+ bitcast:seq.T(blkseq)
 
 Function blockit2(s:seq.T, ds:int)seq.T
 assert ds > 1 report"blockit problem"
@@ -52,7 +67,7 @@ let blksz = blocksize:T / ds
 if length.s ≤ blksz then
  let newseq = allocatespace(length.s * ds + 2)
  let d = for acc = set(set(newseq, 1), length.s), @e ∈ s do set(acc, @e)/for(acc)
- bitcast:T(newseq)
+ bitcast:seq.T(newseq)
 else
  let noblks =(length.s + blksz - 1) / blksz
  let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
@@ -64,7 +79,7 @@ else
    let d = for acc2 = set(set(newseq, 1), length.s), e ∈ s2 do set(acc2, @e)/for(acc2)
    set(acc, newseq)
   /for(acc)
- bitcast:T(blkseq)
+ bitcast:seq.T(blkseq)
 
 module tausupport
 
@@ -105,6 +120,8 @@ use encoding.seq.char
 use seq.seq.int
 
 use seq.encodingpair.seq.char
+
+Export blockseqtype:int int
 
 Export_(seq.word, index)word
 
@@ -160,11 +177,9 @@ Builtin getseqtype(ptr)int
 
 Builtin getseqlength(ptr)int
 
-Builtin toseqX:seq.int(ptr)seq.int
+/Export_(pseq.byte, int)byte
 
-Export_(pseq.byte, int)byte
-
-Export_(pseq.byte, int)byte
+/Export_(pseq.byte, int)byte
 
 function set(i:ptr, b:real)ptr set(i, representation.b)
 
@@ -194,10 +209,6 @@ Function blockIt(s:seq.packed4)seq.packed4 blockit2(s, 4)
 Function blockIt(s:seq.packed5)seq.packed5 blockit2(s, 5)
 
 Function blockIt(s:seq.packed6)seq.packed6 blockit2(s, 6)
-
-/Export_(blockseq.int, int)int
-
-/Export_(seq.int, int)int
 
 Export decode(encoding.seq.char)seq.char
 

@@ -339,7 +339,7 @@ for acc = empty:seq.libraryModule, typedec = empty:seq.seq.mytype, m2 ∈ t5 do
      else
       let c =
        for c = empty:seq.mytype, t ∈ flatflds(alltypes, resulttype.s)do
-        c + if isencoding.t ∨ t = typeword ∨ t = typechar then typeint else t
+        c + if isencoding.t ∨ { t = typeword ∨} t = typechar then typeint else t
        /for(c)
       acc5 + ([ resulttype.s] + c)
     else acc5

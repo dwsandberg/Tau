@@ -1,4 +1,4 @@
-Module point.T
+Module testPoint.T
 
 use standard
 

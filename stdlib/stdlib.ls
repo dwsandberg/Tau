@@ -1,7 +1,14 @@
 Library stdlib UTF8 bits bitstream codegennew codetemplates compilerfront encoding 
-inputoutput format graphs/bandeskopf graphs/barycenter graphs/display graphs/displaygraph graphs/displaytextgraph graphs/graph graphs/ipair graphs/labeledgraph graphs/layergraph graphs/makeDAG graphs/svg graphs/svggraph internalbc interpreter libdesc libraryModule llvm llvmconstants main2 maindict mangle mergeblocks mytype otherseq outstream parse parsersupport pass2 passparse passsymbol persistant postbind pretty process real seq set sparseseq stack standard symbol symbol2 symboldict symref tausupport tests/bug7 tests/checking tests/myseq tests/point tests/randomphrase tests/test11 tests/test20 tests/testencoding tests/testfileio tests/testmodules tests/testprocess tests/testseq tests/wordfreq testsCompile/test11a testsCompile/testall testsCompile/testopt textio timestamp tree typedict words xxhash
+inputoutput format  graphs/barycenter    graphs/graph   
+  graphs/layergraph graphs/makeDAG     internalbc interpreter libdesc libraryModule llvm llvmconstants main2  
+mangle mergeblocks mytype otherseq outstream parse parsersupport pass2 passparse passsymbol persistant postbind pretty process real seq set sparseseq stack standard symbol symbol2 symboldict symref tausupport tests/bug7 tests/checking tests/myseq tests/point tests/randomphrase tests/test11 tests/test20 tests/testencoding tests/testfileio tests/testmodules tests/testprocess tests/testseq tests/wordfreq testsCompile/test11a testsCompile/testall testsCompile/testopt textio timestamp tree typedict words xxhash
 uses
-exports UTF8 bandeskopf barycenter bits dataio display displaygraph displaytextgraph encoding fileio format graph hashset index internalbc ioseq ipair labeledgraph layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp tree words xxhash
+exports UTF8 bandeskopf barycenter bits dataio display displaygraph displaytextgraph encoding fileio format graph hashset index internalbc ioseq ipair labeledgraph layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph 
+symbol2 taublockseq tausupport testall textio timestamp tree words xxhash
+bitcast
+
+
+
 
 * Removed maindict
 

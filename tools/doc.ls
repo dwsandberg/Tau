@@ -16,8 +16,7 @@
 
 Module doc
 
-use displaytextgraph
-
+ 
 
 use format
 
@@ -61,9 +60,8 @@ use seq.arc.word
 
 use set.arc.word
 
-use svggraph.seq.word
+use svg2graph.seq.word
 
-use seq.arcinfo.seq.word
 
 use seq.seq.word
 
@@ -105,43 +103,57 @@ Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
 { Calls between modules in list of modules. }
 let z = formcallarcs.libname
 let arcs =
- for acc = empty:seq.arc.symbolref, a ∈ z do
-  let t1 = decode.tail.a
-  let h1 = decode.head.a
+ for acc = empty:seq.arc.symbol, a ∈ z do
+  let t1 =  tail.a
+  let h1 =  head.a
   if module.t1 = module.h1 then acc
-  else if name.module.t1 ∈ modulelist ∧ name.module.h1 ∈ modulelist then acc + a else acc
+  else if name.module.t1 ∈ modulelist ∧ name.module.h1 ∈ modulelist then acc + arc(t1,h1) else acc
  /for(acc)
+drawgraph.newgraph.arcs
+
+use profile
+
+use seq.arc.symbol
+
+use graph.symbol
+
+use svg2graph.symbol
+ 
 display.for acc = empty:seq.arcinfo.seq.word, @e ∈ toseq.arcs.newgraph.arcs do acc + toarcinfo.@e /for(acc)
 
-Function formcallarcs(libname:seq.word)seq.arc.symbolref
-for arcs2 = empty:seq.arc.symbolref, p ∈ prg.compilerfront("text", libname)do
- let tail = symbolref.sym.p
+/function toarcinfo(a:arc.symbolref)arcinfo.seq.word 
+arcinfo(print.decode.tail.a, print.decode.head.a,"")
+
+
+
+Function formcallarcs(libname:seq.word)seq.arc.symbol 
+for arcs2 = empty:seq.arc.symbol, p ∈ prg.compilerfront("text", libname)do
+ let tail = decode.symbolref.sym.p
  for arcs = arcs2, sym ∈ code.p do
-  if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs else arcs + arc(tail, symbolref.sym)
+  if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs else arcs + arc(tail, decode.symbolref.sym)
  /for(arcs)
 /for(arcs2)
 
 Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
 { Calls within modules in list of modules. }
 let t =
- for arcs2 = empty:seq.arc.symbolref, p ∈ prg.compilerfront("pass1", libname)do
-  let tail = symbolref.sym.p
+ for arcs2 = empty:seq.arc.symbol , p ∈ prg.compilerfront("pass1", libname)do
+  let tail =  sym.p
   for arcs = arcs2, sym ∈ code.p do
-   if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs else arcs + arc(tail, symbolref.sym)
+   if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs else arcs + arc(tail, sym)
   /for(arcs)
  /for(arcs2)
 let g = newgraph.formcallarcs.libname
 let nodesnottoinclude =
- for acc = empty:set.symbolref, @e ∈ toseq.nodes.g do
-  let p = decode.@e
-  if name.module.p ∈ modulelist then acc else acc + @e
+ for acc = empty:set.symbol, @e ∈ toseq.nodes.g do
+  if name.module.@e ∈ modulelist then acc else acc + @e
  /for(acc)
 let g2 = for acc = g, @e ∈ toseq.nodesnottoinclude do deletenode(acc, @e)/for(acc)
-display.for acc = empty:seq.arcinfo.seq.word, @e ∈ toseq.arcs.g2 do acc + toarcinfo.@e /for(acc)
+drawgraph.g2
 
-function toarcinfo(a:arc.symbolref)arcinfo.seq.word arcinfo(print.decode.tail.a, print.decode.head.a,"")
+use set.symbol
 
-Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word
+ Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word  
 let g1 =
  exclude + for acc ="", @e ∈ exclude do acc + addabstractpara.@e /for(acc)
 let g2 = for acc = g, @e ∈ g1 do deletenode(acc, @e)/for(acc)
@@ -151,10 +163,21 @@ let g3 =
   let a =
    include + for acc ="", @e ∈ include do acc + addabstractpara.@e /for(acc)
   let b = for acc = empty:set.arc.word, @e ∈ a do acc ∪ arcstosuccessors(g2, @e)/for(acc)
-  newgraph.toseq.b
-let d =
- for acc = empty:seq.arcinfo.seq.word, @e ∈ toseq.arcs.g3 do acc + arcinfo([ tail.@e], [ head.@e],"")/for(acc)
-display.d
+   newgraph.toseq.b
+   ""
+   
+   drawgraph(g3 )  
+    
+   
+
+ 
+ use svg2graph.word
+ 
+ function nodeTitle(word)seq.word ""
+ 
+ function node2text(a:word) seq.word [a]
+ 
+ function generatenode(a:set.word)word toword.cardinality.a
 
 function addabstractpara(w:word)word merge([ w] + ".T")
 
@@ -169,7 +192,8 @@ let todoc =
   if subseq(s, 1, 3) = "* only document"then acc + subseq(s, 4, length.s)else acc
  /for(if isempty.acc then exports else acc /if)
 let g = newgraph.usegraph(liba,"mod"_1, 1,"?"_1, empty:seq.arc.word)
-modindex.todoc + docmodule(g, exports, todoc, liba, 1,"","","")
+ modindex.todoc + docmodule(g, exports, todoc, liba, 1,"","","")
+  
 
 function modindex(mods:seq.word)seq.word
 for txt ="", modname ∈ mods do
@@ -275,8 +299,8 @@ Function uncalledfunctions(libname:seq.word)seq.word
 { List of functions may include indirectly called functions. }
 let g = newgraph.formcallarcs.libname
 let sources =
- for acc = empty:seq.symbolref, @e ∈ toseq.nodes.g do acc + sources(g, empty:set.symbolref, @e)/for(acc)
-for acc ="", @e ∈ sources do acc + print.decode.@e + " /br"/for(acc)
+ for acc = empty:seq.symbol , @e ∈ toseq.nodes.g do acc + sources(g, empty:set.symbol, @e)/for(acc)
+for acc ="", @e ∈ sources do acc + print.@e + " /br"/for(acc)
 
 * usegraph exclude stdlib seq set
 

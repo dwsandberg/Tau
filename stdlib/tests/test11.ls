@@ -12,7 +12,7 @@ use seq.boolean
 
 use otherseq.int
 
-use point.int
+use testPoint.int
 
 use set.int
 

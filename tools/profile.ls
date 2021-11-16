@@ -1,166 +1,80 @@
 #!/usr/local/bin/tau ; use tools; testprofile."solardataall"
 
-/run profile dumpprofileinfo
-
-run tools testprofile
-
+ 
 Module profile
 
-Problems:Junk at top of graph
+  
+ 
+use standard
 
-Max space seems to be on node with head and tail blank!
 
-use displaytextgraph
+
 
 use libraryModule
 
-use standard
+use seq.liblib
 
 use symbol2
 
-use words
-
-use otherseq.alphaword
-
-use seq.alphaword
-
-use seq.int
-
-use seq.liblib
-
-use labeledgraph.lparc
-
-use seq.lparc
-
-use set.lparc
-
-use seq.parc
-
-use set.parc
-
 use seq.symbol
-
-use otherseq.word
-
-use seq.word
-
-use set.word
-
-use seq.seq.word
-
-use set.seq.word
-
-use svggraph.seq.word
-
-use seq.arcinfo.seq.word
-
-use seq.seq.seq.word
-
-* To profile a function add a use clause"use options.<return type of /function >"and change /function so body is wrap by a 
- call to PROFILE(<body>). Multiple procedures can be profiled at the same time. After the part of code of interest add a 
- call to profileresults("time")to optain the result.
-
-* Profiling is accomplished by adding code to perform measurements before and after each procedure call and recording the 
- difference.
-
-type lparc is head:symbol, tail:symbol, measure:int
-
-type tmptype is graph:labeledgraph.lparc, max:int
 
 function decode(w:symbolref, l:liblib)symbol
 if between(toint.w, 1, length.decoderef.l)then(decoderef.l)_(toint.w)else Lit.toint.w
 
-Function profileresults(measure:seq.word)seq.word
-{ Returns label graph of profile results. Measure is time, count, or space. }
-{ let g = profileresults }
-let tmp =
- for acc = tmptype(empty:labeledgraph.lparc, 0), @e ∈ loadedLibs do
-  for g0 = graph.acc, max = max.acc, arc ∈ profiledata.@e do
-   let m =
-    if measure = "time"then clocks.arc
+function measure(arc:parc,measure:seq.word) int
+if measure = "time"then clocks.arc
     else if measure = "count"then counts.arc
     else
      assert measure = "space"report"unknown profile measure"
      space.arc
-   if m = 0 then next(g0, max)
-   else next(g0 + lparc(decode(caller.arc, @e), decode(callee.arc, @e), m), max(m, max))
-  /for(tmptype(g0, max))
- /for(acc)
-let g3 = removesmall(graph.tmp, max.tmp)
-{ for acc ="", @e = toseq.nodes.g3 do acc + for x ="", t = codedown.head.@e do x + t +";"/for(x)+ EOL /for(acc)}
-{ shorten the names of the functions and then build and display labeled graph }
-assert for acc = empty:set.seq.word, @e ∈ toseq.nodes.g3 do acc + print3.head.@e /for(cardinality.acc)
-= cardinality.nodes.g3
-report"Problem:profile nodes names not distinct"
-+ for txt ="", @e ∈ toseq.nodes.g3 do txt + print3.head.@e + EOL /for(txt)
-{ let nodemap = shorten.for acc ="", @e = toseq.nodes.g3 do acc + head.@e /for(acc)}
-let z2 =
- for acc = empty:seq.arcinfo.seq.word, a ∈ toseq.arcs.g3 do
-  acc
-  + { arcinfo(shorten(nodemap, head.a), shorten(nodemap, tail.a), }
-  arcinfo(print3.head.a, print3.tail.a, [ toword(measure.a * 100 / max.tmp)])
- /for(acc)
-" /br" + measure + toword.max.tmp + " /br" + display.z2 + " /br"
-+ measure
-+ toword.max.tmp
 
-function print3(s:symbol)seq.word { print.para.module.s +":"+ } fullname.s
+use seq.labeledarc.symbol
 
-/ function symname(w:word)seq.word(codedown.w)_1
 
-function removesmall(g:labeledgraph.lparc, m:int)labeledgraph.lparc
-let limit = m / 100
-for acc = g, node ∈ toseq.nodes.g do
- if cardinality.arcstosuccessors(acc, node) = 0 then
-  if for total = 0, @e ∈ toseq.backarcstopredecessors(acc, node)do total + measure.@e /for(total)
-  < limit then
-   deletenode(acc, node)
-  else acc
- else acc
-/for(if cardinality.arcs.g = cardinality.arcs.acc then acc else removesmall(acc, m)/if)
 
-/Function shorten(pnodes:seq.word)nodemap { This procedure produces a map that takes fsigs and shortens them keeping 
- them distinct. The following procedure uses this result to map the figs to the new ones. } let nodes = sort.toalphaseq.
- pnodes let c = for acc = [ empty:seq.seq.word], @e = towordseq.nodes do acc + codedown.@e /for(acc)+ [ empty:seq.seq.word 
-]let short = for acc = empty:seq.seq.word, @e = arithseq(length.c-2, 1, 2)do acc + shorten(c, @e)/for(acc)nodemap(nodes 
-, short)
+type  arcs/max is arcs:seq.labeledarc.symbol,max:int
 
-Function shorten(map:nodemap, w:word)seq.word(short.map)_binarysearch(org.map, alphaword.w)
+Function profileresults(measure:seq.word) seq.word
+let a=  for acc=arcs/max(empty:seq.labeledarc.symbol,0),  lib /in loadedLibs do
+            for acc0 = arcs.acc, max=max.acc,arc ∈ profiledata.lib do
+                 let m =measure(arc,measure)
+                 if m=0 /or m  <  max / 100 then next(acc0,max) 
+                 else  
+                     next(acc0+ arc(decode(caller.arc,lib),decode(callee.arc, lib),[toword.m]),max(max,m)) 
+             /for(arcs/max(acc0,max) )
+  /for(acc)
+let b=  for acc=empty:seq.labeledarc.symbol, arc /in arcs.a do
+    let m=toint.first.label.arc 
+    if m < max.a / 100 then acc else
+   acc+arc(tail.arc.arc,head.arc.arc, [toword(m * 100 / max.a) ]  ) 
+  /for(acc) 
+{ for txt="", arc /in b do
+    txt+ label.arc + print.tail.arc.arc+print.head.arc.arc  +EOL
+  /for(txt)
+}  
+  drawgraph(for acc=empty:seq.arc.symbol , arc /in b do   acc+arc.arc /for(newgraph.acc),asset.b)
+   
+Function generatenode(a:set.symbol)symbol   Lit.cardinality.a
 
-type nodemap is org:seq.alphaword, short:seq.seq.word
+ did not get error when result type of generatednode was seq.word!!!!!
 
-/function shorten(a:seq.seq.seq.word, i:int)seq.word let j = max(differ(a_(i-1), a_i, 1), differ(a_i, a_(i + 1), 1 
-))if j = 1 then a_i_1 else let z = for acc = empty:seq.seq.word, @e = subseq(a_i, 1, j)do acc + formattype.@e /for(acc)z_1 + 
-":"+ z_2 +"("+ for acc ="", @e = subseq(z, 2, length.z)do list(acc,",", @e)/for(acc)+")"
+Function node2text(a:symbol)seq.word [name.a]
 
-/function formattype(a:seq.word)seq.word reverse.for acc ="", @e = a do list(acc,".", [ @e])/for(acc)
+Function nodeTitle(a:symbol) seq.word print.a
 
-function differ(a:seq.seq.word, b:seq.seq.word, i:int)int
-if i > length.a ∨ i > length.b then i
-else if a_i = b_i then differ(a, b, i + 1)else i
+use seq.arc.symbol
 
-/Export head(parc)word
+use set.symbol
 
-/Export tail(parc)word
+use svg2graph.symbol
 
-Export counts(parc)int
+use graph.symbol
 
-Export clocks(parc)int
+use set.labeledarc.symbol
 
-Export space(parc)int
 
-function ?(a:lparc, b:lparc)ordering head.a ? head.b ∧ tail.a ? tail.b
 
-function ?2(a:lparc, b:lparc)ordering head.a ? head.b
+ 
 
-function reverse(a:lparc)lparc lparc(tail.a, head.a, measure.a)
 
-function tonode(a:lparc)lparc lparc(head.a, head.a, measure.a)
 
-Function dumpprofileinfo seq.word
-let lib = loadedLibs_1
-let e = profiledata.lib
-for acc ="", @e ∈ profiledata.loadedLibs_1 do
- acc + print.decode(caller.@e, lib) + print.decode(callee.@e, lib) + toword.clocks.@e
- + " /br"
-/for(acc >> 1) 
