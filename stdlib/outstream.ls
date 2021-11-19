@@ -6,9 +6,9 @@ use stack.word
 
 use stack.seq.word
 
-unbound +(T, char)T
+unbound+(T, char)T
 
-unbound +(T, seq.char)T
+unbound+(T, seq.char)T
 
 function addspace(nospace:boolean, result:T, toadd:word)T
 let i = findindex(toadd, specialwords:T)
@@ -41,9 +41,9 @@ else
 
 Function processpara(x:T, a:seq.word)T
 let specialwords = specialwords:T
-let none = merge."+ NONE"
-let match = merge."+ MaTcH"
-let pendingbreak = merge."+ pendingBreak"
+let none = merge."+NONE"
+let match = merge."+MaTcH"
+let pendingbreak = merge."+pendingBreak"
 for nospace = false, result = x, stk = empty:stack.seq.word, last = none, this âˆˆ a + space do
  if last = match then
   if this = " /<"_1 then
@@ -60,13 +60,13 @@ for nospace = false, result = x, stk = empty:stack.seq.word, last = none, this â
    )
  else if last = none then next(nospace, result, stk, this)
  else if last = " /keyword"_1 then
-  let toadd ="<span class = keyword>" + this + "</span>"
+  let toadd = "<span class=keyword>" + this + "</span>"
   next(false, addspace(nospace, result, toadd), stk, none)
  else if last = " /em"_1 then
-  let toadd ="<em>" + this + "</em>"
+  let toadd = "<em>" + this + "</em>"
   next(false, addspace(nospace, result, toadd), stk, none)
  else if last = " /strong"_1 then
-  let toadd ="<strong>" + this + "</strong>"
+  let toadd = "<strong>" + this + "</strong>"
   next(false, addspace(nospace, result, toadd), stk, none)
  else if last = " /p"_1 then
   next(false, addspace(nospace, result, EOL + "<p>"), stk, this)
@@ -87,7 +87,7 @@ for nospace = false, result = x, stk = empty:stack.seq.word, last = none, this â
  else if last = " /<"_1 âˆ¨ last = pendingbreak then
   if this = "block"_1 then
    { if break is just before block suppress break }
-   let toadd ="<span class = block>" + space
+   let toadd = "<span class=block>" + space
    next(true, addspace(nospace, result, toadd), push(stk,"</span>"), none)
   else
    let pb = if last = pendingbreak then EOL + "<br>" + space else""
@@ -103,7 +103,7 @@ for nospace = false, result = x, stk = empty:stack.seq.word, last = none, this â
     , none
     )
    else
-    let toadd = pb + "<span class =" + this + ">"
+    let toadd = pb + "<span class=" + this + ">"
     next(false, addspace(nospace, result, toadd), push(stk,"</span>"), none)
  else if last = " />"_1 âˆ§ not.isempty.stk then
   let toadd = top.stk + space
@@ -123,11 +123,11 @@ for nospace = false, result = x, stk = empty:stack.seq.word, last = none, this â
 
 Function processtotext(x:T, a:seq.word)T
 let specialwords = specialwords:T
-let none = merge."+ NONE"
-let match = merge."+ MaTcH"
-let pendingbreak = merge."+ pendingBreak"
+let none = merge."+NONE"
+let match = merge."+MaTcH"
+let pendingbreak = merge."+pendingBreak"
 for needsLF = false, nospace = false, result = x, stk = empty:stack.word, last = none, this âˆˆ a + space do
- { assert this /ne first.","report"x"+ last + if needsLF then"LF"else""}
+ { assert this /ne first.","report"x"+last+if needsLF then"LF"else""}
  if last = match then
   if this = " /<"_1 then
    next(needsLF, false, addspace(nospace, result, this), push(stk, this), match)
@@ -149,8 +149,8 @@ for needsLF = false, nospace = false, result = x, stk = empty:stack.word, last =
  else if last = " /<"_1 then
   if this = "block"_1 then
    if needsLF then
-    next(false
-    , nospace
+    next(needsLF
+    , false
     , addspace(nospace, result," /br" + toseq.stk)
     , push(stk, space)
     , none

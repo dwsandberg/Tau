@@ -36,17 +36,17 @@ Function ?(a:token.T, b:token.T)ordering w.a ? w.b
 
 Function =(a:token.T, b:token.T)boolean w.a = w.b
 
-Function_(r:reduction.T, n:int)T attribute.(toseq.r)_n
+Function _(r:reduction.T, n:int)T attribute.(toseq.r)_n
 
 Function last(r:reduction.T)T attribute.(toseq.r)_(length.toseq.r)
 
 Function errormessage:T(message:seq.word, input:seq.word, place:int)seq.word
-let m =" /< literal" + message + " />"
+let m = " /< literal" + message + " />"
 m + " /br  /br" + prettynoparse.subseq(input, 1, place) + " /br" + m
 
 Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
 for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial))
-, matchthis ="'"_1
+, matchthis = "'"_1
 , last = 0
 , instring = false
 , idx = 1
@@ -55,7 +55,7 @@ for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial))
 do
  if instring ∧ this ≠ matchthis ∨ nesting > 0 then
   { in comment or string }
-  let nestingchange =
+  let nestingchange = 
    if matchthis ≠ "}"_1 then 0
    else if nesting > 0 ∧ matchthis = this then-1
    else if this = "{"_1 then 1 else 0
@@ -71,7 +71,7 @@ do
   )
  else
   let lexindex = binarysearch(lextable, token(this, 0, attribute:T("")))
-  let newlrpart =
+  let newlrpart = 
    if lexindex < 0 then
     { next is not in lex table }
     let kind = checkinteger.this
@@ -108,7 +108,7 @@ else
  )
  + " /br"
  + expect:T(stateno)
- let ruleno =-actioncode
+ let ruleno = -actioncode
  let rulelen = rulelength:T_ruleno
  let newstk = pop(stk, rulelen)
  let newstateno = actiontable:T_(leftside:T_ruleno + length.tokenlist:T * stateno.top.newstk)
@@ -117,8 +117,8 @@ else
  step(push(newstk, newstkele), input, attrib, tokenno, place)
 
 function expect:T(stateno:int)seq.word
-let l =
- for acc ="", @e ∈ arithseq(length.tokenlist:T, 1, 1)do acc + kk:T(stateno, @e)/for(acc)
+let l = 
+ for acc = "", @e ∈ arithseq(length.tokenlist:T, 1, 1)do acc + kk:T(stateno, @e)/for(acc)
 "Expecting:" + toseq(asset.l ∩ asset."]})else then report")
 
 function kk:T(stateno:int, token:int)seq.word

@@ -69,31 +69,31 @@ Function codegen(theprg0:set.symdef
 , alltypes:typedict
 , isbase:boolean
 )seq.bits
-{ let theprg = for theprg = theprg0, sd = constantsymbols do map(theprg, sym.sd, code.sd)/for(theprg)}
-{ assert false report for txt = empty:set.word, s = toseq.newmap.libdesc do txt + name.module.decode.s /for(toseq.txt 
+{ let theprg=for theprg=theprg0, sd=constantsymbols do map(theprg, sym.sd, code.sd)/for(theprg)}
+{ assert false report for txt=empty:set.word, s=toseq.newmap.libdesc do txt+name.module.decode.s /for(toseq.txt 
 )}
 let profilearcs = profilearcs.libdesc
-let tobepatched =
+let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
 let stepone = stepone(theprg0, roots, alltypes, isbase, thename, newmap.libdesc)
 let match5map = match5map.stepone
 let defines = defines.stepone
-let libmods2 =
+let libmods2 = 
  for acc = empty:seq.int, sym ∈ liblibflds.libdesc do acc + arg.match5map_sym /for(acc)
-{ let zx2c = createfile("stat.txt", ["in codegen0.3"])}
+{ let zx2c=createfile("stat.txt", ["in codegen0.3"])}
 let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
-let bodies =
+let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(match5map, @e, profilearcs)/for(acc)
 let xxx = profiledata.profiledata.libdesc
-let liblib =
+let liblib = 
  slot.addliblib([ thename]
  , libmods2
  , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
  , isbase
  )
 let libnametype = array(length.decodeword.thename + 1, i8)
-let libslot =
+let libslot = 
  modulerecord(""
  , [ toint.GLOBALVAR
  , typ.libnametype
@@ -104,11 +104,11 @@ let libslot =
  , 0
  ]
  )
-let f2 =
+let f2 = 
  modulerecord("init22"
  , [ toint.FUNCTIONDEC, typ.function.[ VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
  )
-let bodytxts =
+let bodytxts = 
  bodies
  + [ BLOCKCOUNT(1, 1)
  + CALL(r.1
@@ -122,30 +122,30 @@ let bodytxts =
  + RETURN
  ]
 let data = constdata
-let patchlist =
+let patchlist = 
  [ [ toint.GLOBALVAR, typ.conststype, 2, toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0]
  , [ toint.GLOBALVAR, typ.profiletype, 2, toint.xxx + 1, 3, toint.align8 + 1, 0]
  ]
 let trec = typerecords
-let adjust =
+let adjust = 
  [ trec_1, [ toint.ARRAY, length.data, 0], [ toint.ARRAY, 2 + 6 * cardinality.profilearcs, 0]]
  + subseq(trec, 4, length.trec)
 llvm(patchlist, bodytxts, adjust)
 
 function addfuncdef(match5map:seq.match5, i:symbol, profilearcs:set.seq.symbol)internalbc
-{ let hh = process.subaddfuncdef(match5map, i)assert not.aborted.hh report"fail get"+ print.i + message.hh result 
+{ let hh=process.subaddfuncdef(match5map, i)assert not.aborted.hh report"fail get"+print.i+message.hh result 
 .hh use process.internalbc function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc }
 let m = match5map_i
 let options = options(match5map, m)
 let codet = if length.options > 0 then subseq(code.m, 1, length.code.m - 2)else code.m
-let code =
+let code = 
  if isempty.codet then
   for acc = empty:seq.symbol, e9 ∈ arithseq(nopara.i, 1, 1)do acc + Local.e9 /for(acc)
   + i
  else codet
-{ assert not.isempty.code.m report"xxxx"+ print.i }
+{ assert not.isempty.code.m report"xxxx"+print.i }
 let nopara = arg.m
-let linit =
+let linit = 
  Lcode2(emptyinternalbc
  , paramap(nopara, empty:seq.localmap)
  , 1
@@ -184,9 +184,9 @@ if action = "CALL"_1 then
   )
  else profilecall(l, args, m, idx)
 else
- { if action ="CALLE"_1 then let noargs = arg.m let args = top(args.l, noargs)let c = usetemplate(m, regno.l, empty:seq.
- int)+ CALLFINISH(regno.l + 1, args)Lcode2(code.l + c, lmap.l, noblocks.l, regno.l + 1, push(pop(args.l, noargs),-(
- regno.l + 1)), blocks.l)else }
+ { if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq.
+ int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs),-(
+ regno.l+1)), blocks.l)else }
  if action = "ACTARG"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
  else if action = "LOCAL"_1 then
@@ -217,15 +217,15 @@ else
   let blks = top(blocks.l, no)
   assert length.blks = no report"XXXXXX arg"
   let rblk = processblk(blks, 1, empty:seq.localmap, BR(noblocks.l - 1))
-  { assert length.phi.rblk > 3 report"phi"+ @(+, toword,"", phi.rblk)}
+  { assert length.phi.rblk > 3 report"phi"+@(+, toword,"", phi.rblk)}
   let firstblkargs = args.blks_1
   let kind = top.firstblkargs
-  let popno =
+  let popno = 
    if kind = 55 then { stack from top is kind resulttype } 2
    else
     assert top.firstblkargs = 2 report"Code Gen--not expecting first blk kind" + toword.kind
     { stack from top is kind, noexps, firstvar, exptypes, exps } 2 * top.pop.firstblkargs + 3
-  let rt =
+  let rt = 
    if kind = 55 then top.pop.args.blks_1 else undertop(firstblkargs, top.pop.firstblkargs + 2)
   let newstack = push(pop(firstblkargs, popno),-(regno.l + 1))
   let newcode = code.rblk + phiinst(regno.last.blks, [ rt], phi.rblk, 1)
@@ -244,7 +244,7 @@ else
  else if action = "LOOPBLOCK"_1 then
   let varcount = arg.m
   let argstk = { this value added is never used } push(args.l, 0)
-  let bodymap =
+  let bodymap = 
    for acc = lmap.l, @e ∈ arithseq(varcount, 1, 1)do addloopmapentry(acc, firstvar.m, regno.l, @e)/for(acc)
   let pushexptypes = for acc = args.l, e ∈ llvmtypelist.m do push(acc, typ.e)/for(acc)
   let newstk = push(push(pushexptypes, varcount), 2)
@@ -258,7 +258,7 @@ else
   , push(blocks.l, exitblock)
   )
  else if action = "Start"_1 then
-  let exitblock =
+  let exitblock = 
    Lcode2(code.l
    , lmap.l
    , noblocks.l
@@ -282,7 +282,7 @@ else
  else if action = "createthreadY"_1 then
   let fldbc = recordcode(top(args.l, arg.m - 3), llvmtypelist.m >> 1, regno.l, false)
   let newargs = push(pop(args.l, arg.m - 3),-(regno.l + 1))
-  let call =
+  let call = 
    CALLSTART(regno.fldbc + 1
    , 0
    , 32768
@@ -326,7 +326,7 @@ function processblk(blks:seq.Lcode2, i:int, exitbr:internalbc, code:internalbc, 
 , phi:seq.int, tailphi:seq.int)processblkresult
 if i > length.blks then
  let firstblk = blks_1
- let code1 =
+ let code1 = 
   if top.args.firstblk = { loopblock } 2 then
    let noargs = top.pop.args.firstblk
    code.firstblk + BR.noblocks.firstblk
@@ -346,17 +346,17 @@ else
   processblk(blks, i + 1, exitbr, code + code.l + exitbr, varcount, phi + [ noblocks.l - 1] + t2, tailphi)
  else if kind = 2 then
   { LOOPBLOCK }
-  { assert false report"L"+ @(+, toword,"", args.l)}
+  { assert false report"L"+@(+, toword,"", args.l)}
   let noargs = top.pop.args.l
-  { let firstvar = top.pop.args.l }
+  { let firstvar=top.pop.args.l }
   let newtailphi = [ noblocks.l - 1] + top(pop(args.l, 3 + noargs), noargs)
   processblk(blks, i + 1, exitbr, code, varcount, phi, newtailphi)
  else if kind = 3 then
   { CONTINUE }
   assert kind.blks_1 = "2"_1 report"incorrect format on block"
-  { + for e10 ∈ blks, oldacc ="",,, oldacc + kind.e10 }
+  {+for e10 ∈ blks, oldacc="",,, oldacc+kind.e10 }
   let noargs = top.pop.args.blks_1
-  { assert false report"C"+ @(+, toword,"", args.blks_1)+"noargs:"+ toword.noargs }
+  { assert false report"C"+@(+, toword,"", args.blks_1)+"noargs:"+toword.noargs }
   let newtailphi = tailphi + [ noblocks.l - 1] + top(pop.args.l, noargs)
   let newcode = BR.noblocks.blks_1
   processblk(blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, newtailphi)
@@ -366,7 +366,7 @@ else
   assert kind = 1 report"expecting br block" + toword.kind
   assert length.args.l > 3
   report"check m"
-  + for acc ="", @e ∈ [ kind] + toseq.args.l do acc + toword.@e /for(acc)
+  + for acc = "", @e ∈ [ kind] + toseq.args.l do acc + toword.@e /for(acc)
   let args = top(args.l, 4)
   assert between(i + args_2, 1, length.blks) ∧ between(i + args_3, 1, length.blks)
   report"codegen error:jmp to unknown block"
@@ -385,12 +385,12 @@ let callee = { slot } symboltableentry([ mangledname(getoption.code.m, sym.m)], 
 let base = regno.l
 let block = noblocks.l
 let pcount = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 2)
-let p1 =
+let p1 = 
  { pclocks }
  toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 3)
 let pspace = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 4)
 let prefs = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 5)
-let c =
+let c = 
  GEP(r(base + 1), profiletype, symboltableentry("profiledata", ptr.profiletype))
  + LOAD(r(base + 2), slot.prefs, i64)
  + BINOP(r(base + 3), r(base + 2), C64.1, add)

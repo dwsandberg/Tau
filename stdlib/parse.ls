@@ -49,7 +49,7 @@ bindinfo(dict, empty:seq.symbol, types, tokentext)
 function resolvetype(text:seq.word, common:commoninfo, place:int)mytype
 let a = resolvetype(types.common, text)
 assert not.isempty.a
-report { let w = for acc = EOL, t = toseq.types.common do acc + print.t /for(acc + EOL)}
+report { let w=for acc=EOL, t=toseq.types.common do acc+print.t /for(acc+EOL)}
 errormessage("cannot resolve type" + text, common, place)
 a_1
 
@@ -85,7 +85,7 @@ function errormessage(message:seq.word, common:commoninfo, place:int)seq.word
 + prettynoparse.subseq(input.common, 1, place)
 
 function addparameters(b:bindinfo, common:commoninfo, place:int)bindinfo
-let flds =
+let flds = 
  for flds = dict.b, idx = 1, paratype ∈ types.b do
   assert isempty.lookupbysig(flds, [(text.b)_idx]) ∨ (text.b)_idx = ":"_1
   report errormessage("duplciate symbol:" + (text.b)_idx, common, place)
@@ -98,25 +98,25 @@ bindinfo(flds
 )
 
 function lookupbysig(dict:symboldict, name:seq.word, paratypes:seq.mytype, common:commoninfo, place:int)symbol
-let sym3 =
+let sym3 = 
  if length.name = 1 then symbol(internalmod, name, paratypes, typeint)
  else symbol4(internalmod, name_1, resolvetype(name << 1, common, place), paratypes, typeint)
 let f = lookupbysig(dict, sym3)
 assert not.isempty.f
 report errormessage("cannot find 1" + fixNM.name + "("
-+ for acc ="", @e ∈ paratypes do acc + print.@e + ","/for(acc >> 1)
++ for acc = "", @e ∈ paratypes do acc + print.@e + ","/for(acc >> 1)
 + ")"
 , common
 , place
 )
-{ + print.toseq.asset.dict }
+{+print.toseq.asset.dict }
 assert cardinality.f = 1
 report errormessage("found more than one"
-+ for acc ="", @e ∈ toseq.f do acc + print.@e /for(acc)
++ for acc = "", @e ∈ toseq.f do acc + print.@e /for(acc)
 , common
 , place
 )
-let discard =
+let discard = 
  for acc = 0, sym2 ∈ requires(dict, f_1)do
   let xxx = lookupbysig(dict, sym2)
   assert not.isempty.xxx ∨ isabstract.module.f_1
@@ -126,11 +126,11 @@ let discard =
 f_1
 
 function print(s:seq.symdef)seq.word
-for txt ="", sd ∈ s do txt + print.sym.sd + print.code.sd + EOL /for(txt)
+for txt = "", sd ∈ s do txt + print.sym.sd + print.code.sd + EOL /for(txt)
 
 function bindlit(R:reduction.bindinfo)bindinfo
 let chars = decodeword.first.text.R_1
-let rt =
+let rt = 
  if length.chars > 1 ∧ chars_2 ∈ decodeword.first."Xx"then typebits else typeint
 bindinfo(dict.R
 , [ if mode.common.dict.R = "text"_1 then symbol(internalmod, text.R_1, rt)
@@ -149,7 +149,7 @@ if op = "∧" ∧ types = [ typeboolean, typeboolean] ∧ mode.input ∈ "body"t
 else if op = "∨" ∧ types = [ typeboolean, typeboolean] ∧ mode.input ∈ "body"then
  bindinfo(dict, ifthenelse(code.R_1, [ Littrue], code.R_3, typeboolean), [ typeboolean],"")
 else
- let f =
+ let f = 
   if op = "≠"then [ lookupbysig(dict,"=", types, input, place), NotOp]
   else if op = "∉"then [ lookupbysig(dict,"∈", types, input, place), NotOp]
   else if op = "≥"then [ lookupbysig(dict,"<", types, input, place), NotOp]
@@ -161,14 +161,14 @@ function unaryop(R:reduction.bindinfo, common:commoninfo, place:int, op:seq.word
 if op_1 = "process"_1 then
  let rt = resolvetype(types.common, print.(types.exp)_1)_1
  let processtype = processof.rt
- let dcws =
+ let dcws = 
   symbol4(moduleref("stdlib seq", typeword)
   ,"type"_1
   , seqof.typeword
   , [ seqof.typeword]
   , seqof.typeword
   )
- let newcode =
+ let newcode = 
   [ PreFref, deepcopySym.rt, PreFref, dcws, PreFref, last.code.exp]
   + subseq(code.exp, 1, length.code.exp - 1)
   + symbol(builtinmod.rt
@@ -224,7 +224,7 @@ function forlocaldeclare(dict:symboldict
 )bindinfo
 assert isseq.seqtype
 report errormessage("final expression in for list must be a sequence but it is of type:" + print.seqtype, input, place)
-let elesym =
+let elesym = 
  symbol(moduleref("internallib $for", parameter.seqtype)
  , elename
  , empty:seq.mytype
@@ -233,12 +233,12 @@ let elesym =
 { keep track so right next is used in nested fors }
 let basetype = typebase.place
 let resultsym = symbol(moduleref("internallib $for", basetype),"next", acctypes, basetype)
-let nestingsym =
+let nestingsym = 
  symbol(moduleref("internallib $for", basetype),"for", empty:seq.mytype, basetype)
 let oldnesting = lookupbysig(dict,"for")
-let dict1 =
+let dict1 = 
  if isempty.oldnesting then dict else dict - oldnesting /if + resultsym + nestingsym
-let accumulators =
+let accumulators = 
  for acc = empty:seq.symbol, i = 1, name ∈ accnames do
   next(acc
   + symbol(moduleref("internallib $for", acctypes_i), [ name], empty:seq.mytype, acctypes_i)
@@ -251,7 +251,7 @@ function lookupbysig(dict:symboldict, name:seq.word)set.symbol lookupbysig(dict,
 
 function forbody(dict:symboldict, vars:bindinfo, forbody:bindinfo, exitexp:bindinfo, endexp:bindinfo
 , input:commoninfo, place:int)bindinfo
-let checktypes =
+let checktypes = 
  if tokentext.exitexp = "for" ∨ first.types.exitexp = typeboolean then
   { while type is OK. now check body type }
   if length.types.vars > 2 then
@@ -264,13 +264,13 @@ let checktypes =
  else"while expresssion type must be boolean"
 assert isempty.checktypes report errormessage(checktypes, input, place)
 let resulttype = first.types.endexp
-let sym =
+let sym = 
  symbol(builtinmod.typeint
  ,"forexp"
  , types.vars + types.vars >> 1 + parameter.last.types.vars + (types.forbody)_1 + typeboolean + resulttype
  , resulttype
  )
-let newcode =
+let newcode = 
  code.vars + code.forbody
  + if tokentext.exitexp = "for"then [ Littrue]else code.exitexp /if
  + code.endexp
@@ -283,7 +283,7 @@ if ruleno = { G F # } 1 then R_1
 else if ruleno = { F W NM(FP)T E } 2 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
 else if ruleno = { F W_(FP)T E } 3 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
 else if ruleno = { F W-(FP)T E } 4 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
-else if ruleno = { F W =(FP)T E } 5 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
+else if ruleno = { F W=(FP)T E } 5 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
 else if ruleno = { F W >(FP)T E } 6 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
 else if ruleno = { F W *(FP)T E } 7 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
 else if ruleno = { F W ∧(FP)T E } 8 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)
@@ -291,7 +291,7 @@ else if ruleno = { F W ∨(FP)T E } 9 then createfunc(R, common, place, tokentex
 else if ruleno = { F W NM T E } 10 then
  createfunc(R, common, place, tokentext.R_2, empty:seq.mytype, R_3, R_4)
 else if ruleno = { F W NM is P } 11 then
- let tp =
+ let tp = 
   resolvetype(if isabstract.modname.common then tokentext.R_2 + ".T"else tokentext.R_2
   , common
   , place
@@ -319,7 +319,7 @@ else if ruleno = { E-E } 25 then unaryop(R, common, place, tokentext.R_1, R_2)
 else if ruleno = { E W.E } 26 then unaryop(R, common, place, tokentext.R_1, R_3)
 else if ruleno = { E E * E } 27 then opaction(R, common, place)
 else if ruleno = { E E-E } 28 then opaction(R, common, place)
-else if ruleno = { E E = E } 29 then opaction(R, common, place)
+else if ruleno = { E E=E } 29 then opaction(R, common, place)
 else if ruleno = { E E > E } 30 then opaction(R, common, place)
 else if ruleno = { E E ∧ E } 31 then opaction(R, common, place)
 else if ruleno = { E E ∨ E } 32 then opaction(R, common, place)
@@ -331,14 +331,14 @@ else if ruleno = { E [ L]} 35 then
  assert for acc = true, @e ∈ types do acc ∧ types_1 = @e /for(acc)
  report errormessage("types do not match in build", common, place)
  bindinfo(dict.R, code.R_2 + Sequence(types_1, length.types), [ seqof.types_1],"")
-else if ruleno = { A W = E } 36 then
+else if ruleno = { A W=E } 36 then
  let name = tokentext.R_1
  assert isempty.lookupbysig(dict.R, name)
  report errormessage("duplicate symbol:" + name, common, place)
  let newdict = dict.R + Local(name_1,(types.R_3)_1, cardinality.dict.R)
  bindinfo(newdict, code.R_3 + Define(name_1, cardinality.dict.R), types.R_3, name)
 else if ruleno = { E let A E } 37 then
- let letsym =
+ let letsym = 
   if mode.common ∈ "text"then
    [ symbol(internalmod,"let", typeint, first.types.R_3, first.types.R_3)]
   else empty:seq.symbol
@@ -348,7 +348,7 @@ else if ruleno = { E assert E report D E } 38 then
  report errormessage("condition in assert must be boolean in:", common, place)
  assert(types.R_4)_1 = seqof.typeword
  report errormessage("report in assert must be seq of word in:", common, place)
- let typ =(types.R_5)_1
+ let typ = (types.R_5)_1
  let assertsym = symbol(builtinmod.typ,"assert", seqof.typeword, typ)
  bindinfo(dict.R
  , [ Start.(types.R_5)_1] + code.R_2 + Br2(1, 2) + code.R_5 + Exit + code.R_4 + assertsym + Exit
@@ -389,12 +389,12 @@ else if ruleno = { E comment E } 44 then
 else if ruleno = { NM W } 45 then R_1
 else if ruleno = { NM W:T } 46 then
  bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1 + tokentext.R_3)
-else if ruleno = { F1 W = E } 47 then
+else if ruleno = { F1 W=E } 47 then
  let name = tokentext.R_1
  assert isempty.lookupbysig(dict.R, name)
  report errormessage("duplicate symbol:" + name, common, place)
  bindinfo(dict.R_1, code.R_3, types.R_3, name)
-else if ruleno = { F1 F1, W = E } 48 then
+else if ruleno = { F1 F1, W=E } 48 then
  let name = tokentext.R_3
  assert isempty.lookupbysig(dict.R, name)
  report errormessage("duplicate symbol:" + name, common, place)

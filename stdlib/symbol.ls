@@ -58,7 +58,7 @@ Export parameter(mytype)mytype
 
 Export print(p:mytype)seq.word
 
-Export =(t:mytype, b:mytype)boolean
+Export=(t:mytype, b:mytype)boolean
 
 Export replaceT(with:mytype, m:mytype)mytype
 
@@ -66,7 +66,7 @@ Export iscomplex(a:mytype)boolean
 
 Export worddata(s:symbol)seq.word
 
-Export =(a:modref, b:modref)boolean
+Export=(a:modref, b:modref)boolean
 
 ---internal
 
@@ -82,8 +82,8 @@ Export types(symbol)seq.mytype
 
 Export raw(symbol)bits
 
-Function  rehash(s:symbol) symbol
-symbol(worddata.s,module.s,types.s,raw.s,extrabits(types.s,hash.worddata.s,hashbits.s))
+Function rehash(s:symbol)symbol
+symbol(worddata.s, module.s, types.s, raw.s, extrabits(types.s, hash.worddata.s, hashbits.s))
 
 Function =(a:symbol, b:symbol)boolean
 hashbits.a = hashbits.b ∧ worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1
@@ -146,10 +146,10 @@ Function setrequires(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sy
 Function replaceTsymbol(with:mytype, sym:symbol)symbol
 if with = typeT ∨ isconst.sym then sym
 else
- let newtypes =
+ let newtypes = 
   for newtypes = empty:seq.mytype, t ∈ types.sym do newtypes + replaceT(with, t)/for(newtypes)
- let adjustedraw =
-  { if isunbound.sym then for hasT = false, t = newtypes while not.hasT do isabstract.t /for(if hasT then raw.sym else raw.
+ let adjustedraw = 
+  { if isunbound.sym then for hasT=false, t=newtypes while not.hasT do isabstract.t /for(if hasT then raw.sym else raw.
  sym /and xor(unboundbit, tobits.-1))else }
   raw.sym
  symbol(worddata.sym
@@ -194,7 +194,7 @@ else if iswords.s then '"' + worddata.s + '"'
 else
 "(" + [ library.module.s, name.module.s] + printrep.para.module.s + name.s
  + toword.toint.raw.s
- + for acc ="", t ∈ types.s do acc + printrep.t /for(acc + ")")
+ + for acc = "", t ∈ types.s do acc + printrep.t /for(acc + ")")
 
 Function name(sym:symbol)word first.worddata.sym
 
@@ -214,7 +214,7 @@ Function nopara(s:symbol)int
 if isconst.s ∨ islocal.s ∨ isFref.s then 0
 else if isspecial.s ∧ name.module.s ∉ "$record $loopblock"then
  if isdefine.s ∨ isbr.s ∨ isexit.s then 1
- else { assert name.module.s /in"$continue $sequence"report"CHeKC"+ print.s } toint.name.s
+ else { assert name.module.s /in"$continue $sequence"report"CHeKC"+print.s } toint.name.s
 else length.types.s - if issimplename.s then 1 else 2
 
 Export raw(symbol)bits
@@ -227,7 +227,7 @@ Export module(symbol)modref
 
 Export types(symbol)seq.mytype
 
-Export =(a:symbol, b:symbol)boolean
+Export=(a:symbol, b:symbol)boolean
 
 Export ?(a:symbol, b:symbol)ordering
 
@@ -280,7 +280,7 @@ Export nopara(sym:symbol)int
 Export extrabits(s:symbol)int
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype)seq.word
-let fullname =
+let fullname = 
  if isempty.nametype then [ name]else [ name] + ":" + print.first.nametype
 if length.paratypes = 0 then fullname
 else
@@ -327,7 +327,7 @@ if issimplename.s then [ name.s]else [ name.s] + ":" + print.first.types.s
 
 Function print(s:symbol)seq.word
 if islocal.s then
- { let x = toword.value.s [ merge("%"+ if x = name.s then [ x]else [ x, first.".", name.s]/if)]}
+ { let x=toword.value.s [ merge("%"+if x=name.s then [ x]else [ x, first.".", name.s]/if)]}
  [ merge(["%"_1] + wordname.s)]
 else if name.module.s ∈ "$int $real"then [ name.s]
 else if iswords.s then
@@ -348,7 +348,7 @@ else if isbr.s then"Br2(" + toword.brt.s + "," + toword.brf.s + ") /br"
 else if iscontinue.s then"CONTINUE" + wordname.s + " /br"
 else print.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s) + print.resulttype.s
 
-Function print(s:seq.symbol)seq.word for acc ="", sym ∈ s do acc + print.sym /for(acc)
+Function print(s:seq.symbol)seq.word for acc = "", sym ∈ s do acc + print.sym /for(acc)
 
 Function Lit(i:int)symbol
 symbolZ(moduleref."internallib $int"
@@ -493,7 +493,7 @@ symbol(moduleref."internallib $constant"
 )
 
 function hash(s:seq.symbol)int
-hash.for acc ="", e ∈ s do acc + worddata.e + name.module.e /for(acc)
+hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /for(acc)
 
 function assignencoding(a:symbolconstant)int nextencoding.a
 
@@ -535,7 +535,7 @@ symbolZ(moduleref."internallib $define"
 )
 
 Function Fref(s:symbol)symbol
-let z =
+let z = 
  extrabits(paratypes.s + resulttype.s
  , hash.[ merge("FREF" + print.s)]
  , constbit ∨ frefbit ∨ hashbits.s ∧ 0x0F
@@ -658,7 +658,7 @@ Export replaceT(mytype, mytype)mytype
 
 Export replaceT(mytype, modref)modref
 
-Export =(mytype, mytype)boolean
+Export=(mytype, mytype)boolean
 
 Export isseq(mytype)boolean
 
@@ -668,7 +668,7 @@ else if rt = typeint then symbol(modTausupport,"deepcopy", typeint, typeint)
 else symbol4(replaceT(parameter.rt, abstractModref.rt),"type"_1, rt, [ rt], rt)
 
 Function setSym(typ:mytype)symbol
-let fldtype =
+let fldtype = 
  if isseq.typ then typeptr else if isencoding.typ then typeint else typ
 symbol(if fldtype = typeint ∨ fldtype = typeboolean ∨ fldtype = typeptr ∨ fldtype = typereal then
  { modTausupport } internalmod
@@ -680,7 +680,7 @@ else builtinmod.fldtype
 )
 
 Function Getfld(fldtype:mytype)symbol
-let kind2 =
+let kind2 = 
  if isseq.fldtype then typeptr
  else if isencoding.fldtype ∨ fldtype = typeword then typeint else fldtype
 symbol(builtinmod.kind2,"fld", typeptr, typeint, kind2)

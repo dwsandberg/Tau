@@ -76,8 +76,8 @@ function hash(a:const3)int hash.for acc = empty:seq.int, @e ∈ flds.a do acc + 
 
 function assignencoding(a:const3)int assignrandom.a
 
-/Function dumpword3 seq.word let x = encoding:seq.encodingpair.word3"len:"+ toword.length.x + @(+, toword,"", @(
- +, data, empty:seq.word3, x))
+/Function dumpword3 seq.word let x=encoding:seq.encodingpair.word3"len:"+toword.length.x+@(+, toword,"", @(
++, data, empty:seq.word3, x))
 
 Function wordref(w:word)int
 let d = encode.word3.w
@@ -87,23 +87,23 @@ function wordcode(a:encodingpair.word3)encoding.seq.char to:encoding.seq.char(en
 
 Function addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean)int
 let name = addwordseq2.libname
-let have =
+let have = 
  if isbase then empty:set.encoding.seq.char
  else
   { @(+, code, empty:set.encoding.seq.char, words.loadedlibs_1)}
   for acc = empty:set.encoding.seq.char, @e ∈ initialdict do acc + code.@e /for(acc)
-let used =
+let used = 
  for acc = empty:set.encoding.seq.char, @e ∈ encoding:seq.encodingpair.word3 do acc + wordcode.@e /for(acc)
 { build packed seq of word encodings }
 let wordstoadd = toseq(used \ have)
-let data =
+let data = 
  for acc = [ toint.C64.0, toint.C64.length.wordstoadd], @e ∈ wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
 let wordreps = addobject.data
 addobject("liblib", [ name, wordreps, toint.C64.0, toint.C64.0, profiledata] + mods)
 
 function addobject(name:seq.word, data:seq.int)int
 let objtype = array(length.data, i64)
-let ll =
+let ll = 
  global("liblib"
  , objtype
  , AGGREGATE.for acc = empty:seq.slot, @e ∈ data do acc + asi64.slot.@e /for(acc)
@@ -123,7 +123,7 @@ toint.CGEP(modulerecord("list", [ 0]), idx)
 
 function fldsofwordencoding(code:encoding.seq.char)seq.int
 let s = tointseq.decode.code
-let k =
+let k = 
  addobject.for acc = empty:seq.int
  , @e ∈ for acc = [ C64.0, C64.length.s], @e ∈ s do acc + C64.@e /for(acc)
  do acc + toint.@e /for(acc)

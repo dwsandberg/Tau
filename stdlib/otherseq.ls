@@ -21,7 +21,7 @@ Function removedups(a:seq.T)seq.T removedups(a, empty:seq.T, length.a)
 
 type cseq is sequence, element:T
 
-Function_(s:cseq.T, i:int)T element.s
+Function _(s:cseq.T, i:int)T element.s
 
 Function constantseq(len:int, element:T)seq.T toseq.cseq(len, element)
 
@@ -44,13 +44,13 @@ Export type:arithmeticseq.T
 
 type arithmeticseq is sequence, step:T, start:T
 
-unbound +(T, T)T
+unbound+(T, T)T
 
 unbound *(int, T)T
 
-unbound =(T, T)boolean
+unbound=(T, T)boolean
 
-Function_(s:arithmeticseq.T, i:int)T start.s + (i - 1) * step.s
+Function _(s:arithmeticseq.T, i:int)T start.s + (i - 1) * step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 
@@ -103,7 +103,7 @@ binarysearch(s, 1, length.s, val)
 Function binarysearch(s:seq.T, b:int, a:int, val:T)int
 if a < b then-(a + 1)
 else
- let p =(a + b) / 2
+ let p = (a + b) / 2
  let c = s_(toindex.p) ? val
  if c = EQ then p
  else if c = GT then binarysearch(s, b, p - 1, val)else binarysearch(s, p + 1, a, val)
@@ -126,7 +126,7 @@ Function lpad(n:int, val:T, l:seq.T)seq.T constantseq(n - length.l, val) + l
 Function break(w:T, a:seq.T)seq.seq.T break(w, empty:seq.T, a)
 
 Function break(seperator:T, quotes:seq.T, a:seq.T)seq.seq.T
-let b =
+let b = 
  for acc = empty:seq.int, i = 1, e ∈ a do
   next(acc + if e ∈ ([ seperator] + quotes)then [ i]else empty:seq.int, i + 1)
  /for(acc)
@@ -167,7 +167,7 @@ Export empty:seq.T seq.T
 
 Export_(a:seq.T, c:int)T
 
-Export =(a:seq.T, b:seq.T)boolean
+Export=(a:seq.T, b:seq.T)boolean
 
 Export ∈(a:T, s:seq.T)boolean
 
@@ -177,9 +177,9 @@ Export_(s:pseq.T, ii:int)T
 
 Export ispseq(s:seq.T)boolean
 
-Export +(a:seq.T, b:seq.T)seq.T
+Export+(a:seq.T, b:seq.T)seq.T
 
-Export +(l:seq.T, a:T)seq.T
+Export+(l:seq.T, a:T)seq.T
 
 Export subseq(s:seq.T, start:int, finish:int)seq.T
 

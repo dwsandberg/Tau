@@ -85,7 +85,7 @@ do
    let discard5 = buildspecial(ele, alltypes)
    next(acc, fref, crecord, other, newprg)
   else if isGlobal.ele then
-   let discard5 =
+   let discard5 = 
     addtemplate(ele
     , 1
     , GEP(r.1
@@ -98,7 +98,7 @@ do
   else if isBuiltin.ele then
    if wordname.ele = "createthreadY"_1 then
     let rt = parameter.para.module.ele
-    let l =
+    let l = 
      for l = empty:seq.llvmtype, e ∈ paratypes.ele << 3 do l + tollvmtype(alltypes, e)/for(l + tollvmtype(alltypes, rt))
     let discard5 = addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele, empty:seq.symbol, l)
     next(acc, fref, crecord, other, newprg)
@@ -112,14 +112,14 @@ do
    else
     let r = symbolref.ele
     let i = binarysearch(toseq.newmap, r)
-    let extname =
+    let extname = 
      [ merge([ thename]
      + if i > 0 then"$$" + toword.i else"$" + toword.toint.r + "$"/if)
      ]
     next(acc + d, fref, crecord, other + @e, symdef(ele, addoption(d, extname)) ∪ newprg)
 /for(let q = asset.acc
 let done = processed ∪ toprocess
-let new =
+let new = 
  for new = empty:set.symbol, sym ∈ toseq.q do if sym ∈ done then new else new + sym /for(new)
 if isempty.new then finishuse(alltypes, newprg, toseq.other, fref, crecord)
 else uses(newprg, alltypes, done, new, fref, crecord, other, newmap, thename)/if)
@@ -158,7 +158,7 @@ function finishuse(alltypes:typedict
 , fref:set.symbol
 , isrecordconstant:set.symbol
 )steponeresult
-let discard =
+let discard = 
  for acc = 0, ele ∈ defines do
   let d = getCode(prg, ele)
   let options = getoption.d
@@ -174,7 +174,7 @@ function buildFref(theprg:set.symdef, other:seq.symbol, alltypes:typedict)seq.ma
 for acc = empty:seq.match5, e ∈ other do
  let f1 = basesym.e
  let functyp = ptr.tollvmtype(alltypes, f1)
- let discard =
+ let discard = 
   addtemplate(e
   , 0
   , emptyinternalbc
@@ -270,7 +270,7 @@ Export code(match5)seq.symbol
 
 Export type:symbol
 
-Function_(m:seq.match5, d:symbol)match5
+Function _(m:seq.match5, d:symbol)match5
 let e = findtemplate.d
 assert not.isempty.e report"LL codetemplates" + print.d + stacktrace
 e_1
@@ -335,13 +335,22 @@ function initmap5 seq.match5
 )
 , addtemplate(symbol(internalmod,"toint", typebyte, typeint), 0, emptyinternalbc)
 , addtemplate(symbol(internalmod,"toint", typebit, typeint), 0, emptyinternalbc)
-, addtemplate(symbol(internalmod,"toptr", seqof.typeword,typeptr),0,emptyinternalbc)
+, addtemplate(symbol(internalmod,"toptr", seqof.typeword, typeptr), 0, emptyinternalbc)
 , { addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(r.1, ptr.ptr 
-.i64, i64, C64.2, 0)+ STORE(r.2, r.1, ibcsub.1)+ GEP(r.2, ptr.i64, r.1, C64.1)+ STORE(r.3, r.2, ibcsub.2)+ GEP(r.3, 
- ptr.i64, r.1, C64.0)),  }
-addtemplate( symbol(internalmod,"bitcast", typeptr, typeint), 1, CAST(r.1, ibcsub.1, i64, ptrtoint ))
-,addtemplate(symbol(internalmod,"bitcast", typeint, typeptr), 1, CAST(r.1, ibcsub.1, ptr.i64, inttoptr))
-, addtemplate(symbol(internalmod,"bitcastXX", typeptr, typeptr), 1, GEP(r.1, i64, ibcsub.1, C64.0))
+.i64, i64, C64.2, 0)+STORE(r.2, r.1, ibcsub.1)+GEP(r.2, ptr.i64, r.1, C64.1)+STORE(r.3, r.2, ibcsub.2)+GEP(r.3, 
+ ptr.i64, r.1, C64.0)), }
+addtemplate(symbol(internalmod,"bitcast", typeptr, typeint)
+, 1
+, CAST(r.1, ibcsub.1, i64, ptrtoint)
+)
+, addtemplate(symbol(internalmod,"bitcast", typeint, typeptr)
+, 1
+, CAST(r.1, ibcsub.1, ptr.i64, inttoptr)
+)
+, addtemplate(symbol(internalmod,"bitcastXX", typeptr, typeptr)
+, 1
+, GEP(r.1, i64, ibcsub.1, C64.0)
+)
 , addtemplate(symbol(internalmod,"GEP", seqof.typeint, typeint, typeint)
 , 2
 , GEP(r.1, i64, ibcsub.1, ibcsub.2) + CAST(r.2, r.1, i64, ptrtoint)
@@ -610,7 +619,7 @@ function processconst(toprocess:seq.symbol)int
 if isempty.toprocess then 0
 else
  for notprocessed = empty:seq.symbol, changed = false, xx ∈ toprocess do
-  let processed =
+  let processed = 
    for args = empty:seq.int, defined = true, ele ∈ constantcode.xx
    while defined
    do let tp = findtemplate.ele
@@ -622,9 +631,9 @@ else
   next(if processed then notprocessed else notprocessed + xx, changed ∨ processed)
  /for(assert changed
  report"problem processconst"
- + for txt ="", xx2 ∈ notprocessed do
-  let txt2 =
-   for txt2 ="", ele ∈ constantcode.xx2 do
+ + for txt = "", xx2 ∈ notprocessed do
+  let txt2 = 
+   for txt2 = "", ele ∈ constantcode.xx2 do
     let tp = findtemplate.ele
     if isempty.tp then txt2 + print.ele else txt2
    /for(txt2)
@@ -654,7 +663,7 @@ else if isstart.xx then
  addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, empty:seq.symbol, [ typ])
 else if isRecord.xx then
  if nopara.xx < 10 then
-  let fldbc =
+  let fldbc = 
    recordcode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1), tollvmtypelist(alltypes, xx) << 2, 0, true)
   addtemplate(xx, regno.fldbc, bc.fldbc)
  else
@@ -668,7 +677,7 @@ else if isRecord.xx then
   )
 else if isSequence.xx then
  if nopara.xx < 10 then
-  let fldbc =
+  let fldbc = 
    sequencecode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1), tollvmtype(alltypes, para.module.xx), 0, true)
   addtemplate(xx, regno.fldbc, bc.fldbc)
  else
@@ -697,7 +706,7 @@ else addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, empty:seq.symbo
 function call(alltypes:typedict, xx:symbol, type:word, code:seq.symbol, symname:word)match5
 let list = tollvmtypelist(alltypes, xx)
 let functype = function.list
-let newcode =
+let newcode = 
  CALLSTART(1
  , 0
  , 32768
@@ -708,7 +717,7 @@ let newcode =
 addtemplate(xx, 1, newcode, type, nopara.xx, code, list)
 
 Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
-let args =
+let args = 
  if action.t = "CALL"_1 then empty:seq.int
  else subseq(argstack, length.argstack - arg.t + 1, length.argstack)
 processtemplate(parts.t, deltaoffset, args)
@@ -766,7 +775,7 @@ recordcode([ toint.C64.0, toint.C64.length.args] + args
 
 Function recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolean)recordcoderesult
 let firstpara = if template then slot.ibcfirstpara2 else r.1
-let newcode =
+let newcode = 
  CALL(r(lastreg + 1)
  , 0
  , 32768

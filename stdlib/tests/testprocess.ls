@@ -58,7 +58,7 @@ check([ print(3, sqrt.2.0) = "1.414"
 ,-2^4 = -16
 , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
 = "1 C addcomma function i int merge s segment seq seq toword toword word"
-, for acc =""
+, for acc = ""
 , @e ∈ alphasort.["z b","a b","a a","test 23","test 20"]
 do acc + @e + "/"/for(acc >> 1)
 = "a a / a b / test 20 / test 23 / z b"
@@ -68,7 +68,7 @@ do acc + @e + "/"/for(acc >> 1)
 
 Function testprocess seq.word
 let z = subseq("f red green", 2, 3)
-let y =
+let y = 
  [ not.isprefix("out of bounds","out")
  , isprefix("not an index", message.process.testout.0)
  , isprefix("not an index", message.process.testout.-10)
@@ -109,7 +109,7 @@ let b = process.countprimes(c + 1, 2 * c)
 [ 1228, 1033] = [ result.a, result.b]
 
 function findprimes(start:int, finish:int)seq.word
-for acc ="", @e ∈ arithseq((finish - start + 2) / 2, 2, start)do if isprime.@e then acc + toword.@e else acc /for(acc)
+for acc = "", @e ∈ arithseq((finish - start + 2) / 2, 2, start)do if isprime.@e then acc + toword.@e else acc /for(acc)
 
 function countprimes(start:int, finish:int)int
 for acc = 0, @e ∈ arithseq((finish - start + 2) / 2, 2, start)do if isprime.@e then acc + 1 else acc /for(acc)
@@ -119,5 +119,5 @@ if i mod 2 = 0 then i = 2
 else
  let a = i / 2
  { intpart.sqrt.toreal.i }
- let b =(a + i / a) / 2
+ let b = (a + i / a) / 2
  for acc = true, f ∈ arithseq(a, 2, 3)while acc ∧ f ≤ b do i mod f ≠ 0 /for(acc) 

@@ -60,7 +60,7 @@ else if toint.u_i = 10 then
 else breakparagraph(u, i + 1, last, result)
 
 Function classifychar seq.word
-' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0 +,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0+,-.0 0 0 0 0 0 0 0 0 0 0:0 0=0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
  0 0 [ 0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 { 0 } 0 0 '
 
 Function towords(a:UTF8)seq.word towords.decodeUTF8.a
@@ -84,8 +84,8 @@ else
    , if last = i then result else result + encodeword.subseq(a, last, i - 1)
    )
   else
-   { if class ="-"_1 ∧ i + 1 ≤ length.a ∧ between(toint.a_(i + 1), 48, 57)then towords2(a, i + 2, i, if last = i then result else result 
- + encodeword.subseq(a, last, i-1))else }
+   { if class="-"_1 ∧ i+1 ≤ length.a ∧ between(toint.a_(i+1), 48, 57)then towords2(a, i+2, i, if last=i then result else result 
++encodeword.subseq(a, last, i-1))else }
    if t = periodchar ∧ i + 1 ≤ length.a ∧ a_(i + 1) = spacechar then
     towords2(a
     , i + 2

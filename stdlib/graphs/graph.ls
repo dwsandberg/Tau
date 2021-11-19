@@ -29,7 +29,7 @@ Function ?(a:arc.T, b:arc.T)ordering tail.a ? tail.b ∧ head.a ? head.b
 
 Function ?2(a:arc.T, b:arc.T)ordering tail.a ? tail.b
 
-unbound =(a:T, b:T)boolean
+unbound=(a:T, b:T)boolean
 
 unbound ?(a:T, b:T)ordering
 
@@ -115,14 +115,15 @@ function addnodup(l:seq.T, n:seq.T)seq.T
 if length.n = 0 then l else if n_1 ∈ l then l else l + n
 
 function sinksfirst(g:graph.T, b:set.T, result:seq.T)seq.T
-let a = for acc = result, @e ∈ toseq(nodes.g \ b)do addnodup(acc, sinks(g, b, @e))/for(acc)
+let a = 
+ for acc = result, @e ∈ toseq(nodes.g \ b)do addnodup(acc, sinks(g, b, @e))/for(acc)
 if length.a = length.result then result else sinksfirst(g, asset.a, a)
 
 Function sources(g:graph.T, b:set.T, n:T)seq.T
 if cardinality(predecessors(g, n) \ b) = 0 then [ n]else empty:seq.T
 
 function breathfirst(g:graph.T, b:set.T, result:seq.T)seq.T
-let a =
+let a = 
  for acc = result, @e ∈ toseq(nodes.g \ b)do addnodup(acc, sources(g, b, @e))/for(acc)
 if length.a = length.result then
  let u = nodes.g \ b
@@ -133,8 +134,8 @@ Function breathfirst(g:graph.T)seq.T { will not return nodes involved in a cycle
 
 ____________________
 
-/Function nodesbyoutdegree(g:graph.T)seq.T for acc = empty:seq.T, @e = sort.for acc = empty:seq.ipair.T, n = toseq.
- nodes.g do acc + ipair(outdegree(g, n), n)/for(acc)do acc + value.@e /for(acc)
+/Function nodesbyoutdegree(g:graph.T)seq.T for acc=empty:seq.T, @e=sort.for acc=empty:seq.ipair.T, n=toseq.
+ nodes.g do acc+ipair(outdegree(g, n), n)/for(acc)do acc+value.@e /for(acc)
 
 Function outdegree(g:graph.T, n:T)int cardinality.successors(g, n)
 

@@ -53,10 +53,10 @@ Export name(typedef)word
 Export library(typedef)word
 
 Function print(s:mytype)seq.word
-for acc ="", t ∈ typerep.s do acc + "." + name.t /for(acc << 1)
+for acc = "", t ∈ typerep.s do acc + "." + name.t /for(acc << 1)
 
 Function fullprint(s:mytype)seq.word
-for acc ="", t ∈ typerep.s do acc + name.t + modname.t + library.t /for(acc)
+for acc = "", t ∈ typerep.s do acc + name.t + modname.t + library.t /for(acc)
 
 Function =(a:mytype, b:mytype)boolean typerep.a = typerep.b
 
@@ -89,7 +89,7 @@ if isabstract.m then mytype(typerep.m >> 1 + typerep.with)else m
 
 Function =(a:typedef, b:typedef)boolean name.a = name.b ∧ modname.a = modname.b
 
-∧ library.a = library.b
+∧ library.a=library.b
 
 Function ?(a:mytype, b:mytype)ordering typerep.a ? typerep.b
 
@@ -131,7 +131,7 @@ Function iscomplex(a:mytype)boolean length.typerep.a > 1
 
 Function addabstract(a:mytype, t:mytype)mytype mytype([ first.typerep.a] + typerep.t)
 
-Function oldTypeRep(m:mytype)seq.word for acc ="", e ∈ typerep.m do [ name.e] + acc /for(acc)
+Function oldTypeRep(m:mytype)seq.word for acc = "", e ∈ typerep.m do [ name.e] + acc /for(acc)
 
 Function moduleref(modname:seq.word, para:mytype)modref
 assert length.modname = 2 report"modname must be of length 2" + modname
@@ -153,7 +153,7 @@ function noparameter mytype mytype.empty:seq.typedef
 
 Function =(a:modref, b:modref)boolean name.a = name.b ∧ para.a = para.b
 
-∧ library.a = library.b
+∧ library.a=library.b
 
 Function ?(a:modref, b:modref)ordering name.a ? name.b ∧ para.a ? para.b
 
@@ -228,7 +228,7 @@ do
   if mref = internalmod then
    next(knownmods + newmod, s, empty:set.mytype, empty:seq.seq.word, empty:seq.seq.word, newmod)
   else
-   let p2 =
+   let p2 = 
     resolve(s
     , knownmods
     , passtypes(mref, defines, unresolveduses, unresolvedexports, empty:set.mytype, empty:set.modref)
@@ -241,7 +241,7 @@ do
  else if subseq(m, 1, 3) = "Export type:"then
   next(knownmods, s, defines, unresolveduses, unresolvedexports + m << 3, mref)
  else next(knownmods, s, defines, unresolveduses, unresolvedexports, mref)
-/for(let p2 =
+/for(let p2 = 
  resolve(s
  , knownmods
  , passtypes(mref, defines, unresolveduses, unresolvedexports, empty:set.mytype, empty:set.modref)
@@ -253,23 +253,23 @@ Function newtype(mref:modref, name:word)mytype mytype([ typedef(name, name.mref,
 function R(s1:set.passtypes, knownmods:set.modref, countin:int)set.passtypes
 if countin = 0 then s1
 else
- { assert countin /in [ 100000, 134, 45, 22, 1]report"C"+ print.countin }
+ { assert countin /in [ 100000, 134, 45, 22, 1]report"C"+print.countin }
  for cnt = 0, acc = empty:set.passtypes, p ∈ toseq.s1 do
   next(cnt + length.unresolvedexports.p + length.unresolveduses.p, acc + resolve(s1, knownmods, p))
  /for(assert countin ≠ cnt
- report for acc2 ="", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for(acc2)
+ report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for(acc2)
  R(acc, knownmods, cnt))
 
 function printunresolved(p:passtypes)seq.word
-let txt =
- for acc ="", t ∈ unresolveduses.p do acc + "use" + t + EOL /for(acc)
- + for acc ="", t ∈ unresolvedexports.p do acc + "Export type:" + t + EOL /for(acc)
+let txt = 
+ for acc = "", t ∈ unresolveduses.p do acc + "use" + t + EOL /for(acc)
+ + for acc = "", t ∈ unresolvedexports.p do acc + "Export type:" + t + EOL /for(acc)
 if isempty.txt then""
 else"module" + print.modname.p + "contains lines that cannot be resolved:" + txt
 
 function resolve(all:set.passtypes, knownmods:set.modref, p:passtypes)passtypes
 let dict = formtypedict(all, p)
-let p1 =
+let p1 = 
  for exports = exports.p, x = empty:seq.seq.word, t2 ∈ unresolvedexports.p do
   let b = resolvetype(dict, t2)
   if isempty.b then next(exports, x + t2)else next(exports + b_1, x)
@@ -283,17 +283,17 @@ Function ?(a:passtypes, b:passtypes)ordering name.modname.a ? name.modname.b
 
 Function print(p:passtypes)seq.word
 " /keyword module" + print.modname.p + EOL + " /keyword defines"
-+ for acc ="", t ∈ toseq.defines.p do acc + print.t /for(acc)
++ for acc = "", t ∈ toseq.defines.p do acc + print.t /for(acc)
 + if not.isempty.unresolveduses.p then
- for acc =" /br  /keyword unresolveduses", s ∈ unresolveduses.p do acc + s /for(acc)
+ for acc = " /br  /keyword unresolveduses", s ∈ unresolveduses.p do acc + s /for(acc)
 else""/if
-+ for acc =" /br  /keyword uses", s ∈ toseq.uses.p do acc + print.s /for(acc)
++ for acc = " /br  /keyword uses", s ∈ toseq.uses.p do acc + print.s /for(acc)
 + if not.isempty.unresolvedexports.p then
 " /br  /keyword unresolvedexports"
- + for acc ="", s ∈ unresolvedexports.p do acc + s /for(acc)
+ + for acc = "", s ∈ unresolvedexports.p do acc + s /for(acc)
 else""/if
 + " /br  /keyword exports"
-+ for acc ="", t ∈ toseq.exports.p do acc + print.t /for(acc)
++ for acc = "", t ∈ toseq.exports.p do acc + print.t /for(acc)
 
 Function resolvetype(knowntypes:set.mytype, ref:seq.word)seq.mytype
 if ref = "int"then [ typeint]
@@ -301,7 +301,7 @@ else if ref = "boolean"then [ typeboolean]
 else if ref = "T"then [ typeT]
 else if ref = "real"then [ typereal]
 else
- let x =
+ let x = 
   for acc = empty:seq.typedef, w ∈ ref do
    if w = "."_1 then acc else acc + typedef(w,"internal"_1,"."_1)
   /for(mytype.acc)
@@ -309,7 +309,7 @@ else
  if cardinality.a1 = 1 then toseq.a1
  else if length.ref = 1 then empty:seq.mytype
  else
-  let a =
+  let a = 
    findelement2(knowntypes
    , mytype([ typedef(ref_1,"internal"_1,"."_1)] + typerep.typeT)
    )
@@ -325,8 +325,8 @@ if cardinality.a ≠ 1 then empty:seq.modref
 else if length.ref = 1 then toseq.a
 else
  let b = resolvetype(knowntypes, ref << 2)
- { assert cardinality.knownmodules < 30 /or ref /ne"seq.word"report"ref"+ ref + toword.length.b + ref << 2 + for acc =""
-, t = toseq.knowntypes do acc + EOL + print.t /for(acc)}
+ { assert cardinality.knownmodules < 30 /or ref /ne"seq.word"report"ref"+ref+toword.length.b+ref << 2+for acc=""
+, t=toseq.knowntypes do acc+EOL+print.t /for(acc)}
  if isempty.b then empty:seq.modref else [ modref(library.a_1, name.a_1, b_1)]
 
 Function findpasstypes(all:set.passtypes, lib:word, m:seq.word)set.passtypes
@@ -338,7 +338,7 @@ lookup(all
 
 Function formtypedict(all:set.passtypes, this:passtypes)set.mytype
 for r = exports.this, u ∈ toseq.uses.this do
- let a =
+ let a = 
   lookup(all
   , passtypes(u, empty:set.mytype, empty:seq.seq.word, empty:seq.seq.word, empty:set.mytype, empty:set.modref)
   )

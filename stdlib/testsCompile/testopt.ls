@@ -21,7 +21,7 @@ else if if value1 = 3 then b else false then 30 else 20
 
 Function testopt seq.word
 let p2 = prg.compilerfront("pass2","stdlib.testoptconfig")
-let cl =
+let cl = 
  ["7"
  ,"12"
  ,"1"
@@ -120,8 +120,8 @@ let cl =
 /br EndBlock 
 /br"
  ]
-let r =
- for acc ="", @e ∈ arithseq(length.cl, 1, 1)do acc + getcode(p2, cl, @e)/for(acc)
+let r = 
+ for acc = "", @e ∈ arithseq(length.cl, 1, 1)do acc + getcode(p2, cl, @e)/for(acc)
  + if [ 40, 20, 30, 20]
  = [ multitarget(4, true, false)
  , multitarget(4, false, false)
@@ -134,8 +134,8 @@ if isempty.r then"PASS testopt"else"testopt" + r
 
 Function getcode(p2:seq.symdef, codelist:seq.seq.word, no:int)seq.word
 let name = merge("optest" + toword.no)
-let code =
- for acc ="", p ∈ p2 do
+let code = 
+ for acc = "", p ∈ p2 do
   if name = name.sym.p then print.removeoptions.code.p else acc
  /for(acc)
 if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1,"")then

@@ -54,7 +54,7 @@ Function empty:symboldict symboldict symboldict(empty:set.symbol, empty:set.symd
 
 Function +(d:symboldict, sym:symbol)symboldict symboldict(asset.d + sym, requires.d, commonX.d)
 
-Function-(d:symboldict, s:set.symbol)symboldict symboldict(asset.d \ s, requires.d, commonX.d)
+Function -(d:symboldict, s:set.symbol)symboldict symboldict(asset.d \ s, requires.d, commonX.d)
 
 Function ∪(d:symboldict, s:set.symbol)symboldict symboldict(asset.d ∪ s, requires.d, commonX.d)
 

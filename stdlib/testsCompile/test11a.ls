@@ -17,13 +17,13 @@ use process.compileinfo
 use process.seq.seq.word
 
 Function test11a seq.word
-let z =
- [ compare("a + b + c","(a + b)+ c")
+let z = 
+ [ compare("a+b+c","(a+b)+c")
  , compare("a * b * c","(a * b)* c")
- , compare("a + b * c","a +(b * c)")
- , compare("-a + b","(-a)+ b")
- , compare("a +-b","a +(-b)")
- , compare("a^2 + b","(a^2)+ b")
+ , compare("a+b * c","a+(b * c)")
+ , compare("-a+b","(-a)+b")
+ , compare("a+-b","a+(-b)")
+ , compare("a^2+b","(a^2)+b")
  , compare("length.[ 1, 2]","length([ 1, 2])")
  , testerror(" /< literal parse error:unexpected end of paragraph  />"
  , ["function f1(a:int)boolean(a"]
@@ -32,7 +32,7 @@ let z =
  , ["function f1(a:int)boolean [ a"]
  )
  , testerror(" /< literal parse error:unexpected end of paragraph  />"
- , ["function f1(a:int)boolean [ a +"]
+ , ["function f1(a:int)boolean [ a+"]
  )
  , testerror("Function f1 is defined twice in module testit"
  , ["function f1(a:int)int 3","function f1(a:int)int 3"]
@@ -55,7 +55,7 @@ let z =
  , testerror("module testit contains unresolved exports:testit:f1(int, int)int"
  , ["Export f1(int, int)int"]
  )
- , testerror("Export result type does not match", ["Export +(int, int)boolean"])
+ , testerror("Export result type does not match", ["Export+(int, int)boolean"])
  , testerror("module testit contains lines that cannot be resolved:use int.notdefined"
  , ["use int.notdefined"]
  )
@@ -66,19 +66,19 @@ let z =
 check(z,"test11a") + checkprec
 
 Function testcomp2(s:seq.seq.word)seq.word
-let p =
+let p = 
  process.compilerfront("pass1","testcomp", s,"stdlib","testit")
 if aborted.p then message.p
 else
- for acc ="", @e ∈ astext.result.p do acc + " /br  /br" + @e /for(acc)
+ for acc = "", @e ∈ astext.result.p do acc + " /br  /br" + @e /for(acc)
 
 Function compare(exp1:seq.word, exp2:seq.word)boolean
-let e1 =
+let e1 = 
  testcomp2.["module testit"
  ,"use standard"
  ,"Function f1(a:int, b:int, c:int)int" + exp1
  ]
-let e2 =
+let e2 = 
  testcomp2.["module testit"
  ,"use standard"
  ,"Function f1(a:int, b:int, c:int)int" + exp2
@@ -98,7 +98,7 @@ type checkprec is toseq:seq.word
 
 Function checkprec seq.word
 assert-(1 * 1) - 5 = -6 report"Fail prec"
-let a =
+let a = 
  [ x.1 + { should not change assocativity } x.2 + x.3
  , x.1 + x.2 + x.3
  , x.1 * x.2 * x.3
@@ -119,26 +119,26 @@ let a =
  , x.1 ∨ x.2 ∧ x.3
  , uni.x.1 + x.2
  ]
-let b =
- ["((1 + 2)+ 3)"
- ,"((1 + 2)+ 3)"
+let b = 
+ ["((1+2)+3)"
+ ,"((1+2)+3)"
  ,"((1 * 2)* 3)"
  ,"((1^2)^3)"
  ,"((1_2)_3)"
  ,"((-1)*(2^3))"
- ,"((1 * 2)+ 3)"
- ,"(1 +(2 * 3))"
+ ,"((1 * 2)+3)"
+ ,"(1+(2 * 3))"
  ,"((uni 1)* 2)"
  ,"(uni(1^2))"
- ,"((1 + 2)= 3)"
- ,"(1 =(2 + 3))"
- ,"((1 > 2)= 3)"
- ,"((1 = 2)> 3)"
- ,"((1 = 2)∧ 3)"
- ,"(1 ∧(2 = 3))"
+ ,"((1+2)=3)"
+ ,"(1=(2+3))"
+ ,"((1 > 2)=3)"
+ ,"((1=2)> 3)"
+ ,"((1=2)∧ 3)"
+ ,"(1 ∧(2=3))"
  ,"((1 ∧ 2)∨ 3)"
  ,"(1 ∨(2 ∧ 3))"
- ,"((uni 1)+ 2)"
+ ,"((uni 1)+2)"
  ]
 check(for acc = empty:seq.seq.word, @e ∈ a do acc + toseq.@e /for(acc)
 , b
@@ -146,21 +146,21 @@ check(for acc = empty:seq.seq.word, @e ∈ a do acc + toseq.@e /for(acc)
 )
 
 Function check(y:seq.seq.word, b:seq.seq.word, testname:seq.word)seq.word
-let x =
- for acc ="", i ∈ arithseq(length.y, 1, 1)do if y_i = b_i then acc else acc + toword.i /for(acc)
+let x = 
+ for acc = "", i ∈ arithseq(length.y, 1, 1)do if y_i = b_i then acc else acc + toword.i /for(acc)
 if x = ""then"PASS" + testname
 else" /< literal FAILED  /> test" + x + "in" + testname
 
 function x(a:int)checkprec checkprec.[ toword.a]
 
-function-(a:checkprec)checkprec checkprec("(-" + toseq.a + ")")
+function -(a:checkprec)checkprec checkprec("(-" + toseq.a + ")")
 
 function uni(a:checkprec)checkprec checkprec("(uni" + toseq.a + ")")
 
-function^(a:checkprec, b:checkprec)checkprec
+function ^(a:checkprec, b:checkprec)checkprec
 checkprec("(" + toseq.a + "^" + toseq.b + ")")
 
-function_(a:checkprec, b:checkprec)checkprec
+function _(a:checkprec, b:checkprec)checkprec
 checkprec("(" + toseq.a + "_" + toseq.b + ")")
 
 function *(a:checkprec, b:checkprec)checkprec

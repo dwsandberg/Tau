@@ -270,6 +270,8 @@ Export  nodeinfo(graphlayout.T) set.nodeinfo.T
 
 Export  paths(graphlayout.T) seq.seq.T
 
+Export g(graphlayout.T) graph.T
+
 use otherseq.seq.seq.T
 
 Function layout(  g:graph.T,allpaths:boolean) graphlayout.T
@@ -285,7 +287,7 @@ let lg = layer.makeDAG.g
         acc1+reverse.path
       else acc1 
 /for(acc)
-graphlayout(g,assignx(g.lg, nodes.g.lg \ nodes.g, layers.lg),paths)
+graphlayout(g.lg,assignx(g.lg, nodes.g.lg \ nodes.g, layers.lg),paths)
 
  for  acc=empty:seq.arc.nodeinfo.T,      a /in   toseq.arcs.g.lg do
     acc+  arc(lookup(t, nodeinfo(tail.a,0,0))_1,lookup(t, nodeinfo(head.a,0,0))_1)

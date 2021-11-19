@@ -1,4 +1,9 @@
-#!/usr/local/bin/tau ;   use doc ; callgraphwithin("webassembly","wasm2")
+#!/usr/local/bin/tau  ; use tools ; test3
+
+
+;  use doc ; doclibrary."webassembly"
+
+ use doc ; callgraphwithin("webassembly","wasm2")
 
 
 
@@ -60,14 +65,15 @@ print.compile("baseTypeCheck","stdlib")
 Module tools
 
 Library tools baseTypeCheck bandeskopf svg2graph doc genLR1 profile  taulextable
+prettycompilerfront
 uses stdlib
-exports baseTypeCheck doc genLR1 profile taulextable tools  
+exports baseTypeCheck doc genLR1 profile taulextable tools  uniqueids wordgraph
 
 
 
 * STATE builtin:profile profileinfo profileresult
 
-* only document printbitcodes profile prettylib doc
+* only document printbitcodes profile prettylib doc 
 
 * usegraph exclude standard seq set
 
@@ -81,6 +87,21 @@ use seq.word
 
 use seq.seq.word
 
+use prettycompilerfront
+
 Function testprofile(libname:seq.word)seq.word subcompilelib.libname + profileresults."time"
 
-+ dumpprofileinfo 
+Function test3 seq.word 
+totext(compilerfront("text","stdlib"),"junk"
+,[rename("seq.T:findelement(T,seq.T) seq.T","lookup",[2,1])
+,rename("set.symdef:findelement(symdef,set.symdef) set.symdef","lookup",[2,1])
+,rename("set.passtypes:findelement(passtypes,set.passtypes) set.passtypes","lookup",[2,1])
+,rename("set.passsymbols:findelement(passsymbols,set.passsymbols) set.passsymbols","lookup",[2,1])
+,rename("set.typeentry:findelement(typeentry,set.typeentry) set.typeentry","lookup",[2,1])
+]
+)
+
+
+
+
+

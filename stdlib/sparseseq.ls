@@ -16,12 +16,12 @@ type sparse is sequence, sdata:seq.sparseele.T, default:T
 
 Function ?(a:sparseele.T, b:sparseele.T)ordering start.a ? start.b
 
-function_(s:sparse.T, i:int)T
+function _(s:sparse.T, i:int)T
 let place = binarysearch(sdata.s, sparseele(i, empty:seq.T))
 if place = -1 then default.s
 else
  let k = if place < 0 then-place - 1 else place
- let before =(sdata.s)_k
+ let before = (sdata.s)_k
  let beforeindex = i - start.before + 1
  if beforeindex > length.edata.before then default.s else(edata.before)_beforeindex
 
@@ -33,7 +33,7 @@ if length.toseq.d = 0 then subseq(a, 1, i - 1) + b + subseq(a, i + length.b, len
 else
  let ele = sparseele(i, b)
  let place = binarysearch(sdata.d, ele)
- let t =
+ let t = 
   if place > 0 then
    subseq(sdata.d, 1, place - 1) * ele
    + removeoverlap(i + length.b - 1, subseq(sdata.d, place + 1, length.sdata.d), 1)

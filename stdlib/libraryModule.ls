@@ -10,6 +10,8 @@ use symbol
 
 use seq.bits
 
+use seq.char
+
 use seq.libraryModule
 
 use seq.symbolref
@@ -17,6 +19,8 @@ use seq.symbolref
 use encoding.seq.char
 
 use seq.seq.mytype
+
+use seq.seq.word
 
 use seq.encodingpair.seq.char
 
@@ -104,7 +108,7 @@ builtin loadlib(cstr)int
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
 createlib2(tocstr.[ libname]
-, tocstr.for acc ="", @e ∈ dependlibs do acc + [ @e] + ".dylib"/for(acc)
+, tocstr.for acc = "", @e ∈ dependlibs do acc + [ @e] + ".dylib"/for(acc)
 , length.b * 8
 , packed.b
 )
@@ -118,14 +122,7 @@ assert i < length.a report"No Library clause found"
 let s = a_i
 if s_1 = "Library"_1 then s else findlibclause(a, i + 1)
 
-Function getlibrarysrc(libname:seq.word)seq.seq.word
-getlibraryinfo2.libname 
-
-
-
-use seq.seq.word
-
-use seq.char
+Function getlibrarysrc(libname:seq.word)seq.seq.word getlibraryinfo2.libname
 
 Function getlibraryinfo2(libname:seq.word)seq.seq.word
 { first three lines are dependentlibs filelist and exports }
@@ -134,14 +131,15 @@ let s = findlibclause(a, 1)
 let l = break(s,"uses exports", true)
 assert length.l = 3 ∧ l_2_1 = "uses"_1 ∧ l_3_1 = "exports"_1
 report"lib clause problem"
-let filelist=l_1 << 1
-for acc =[ { dependentlibs } l_2 << 1, filelist  , { exports } l_3 << 1]+a
- , @e ∈ filelist do
- if @e=last.libname then acc else 
- let chars=decodeword.@e
-  acc + gettext.if chars_1=char1."/" then  [encodeword( chars << 1)] +  ".ls" 
+let filelist = l_1 << 1
+for acc = [ { dependentlibs } l_2 << 1, filelist, { exports } l_3 << 1] + a
+, @e ∈ filelist
+do
+ if @e = last.libname then acc
  else
- [first.libname] + "/" + @e + ".ls" /if
- + { File seperator } [ encodeword.[ char.28]]
-/for(acc)
-
+  let chars = decodeword.@e
+  acc
+  + gettext.if chars_1 = char1."/"then [ encodeword(chars << 1)] + ".ls"
+  else [ first.libname] + "/" + @e + ".ls"/if
+  + { File seperator } [ encodeword.[ char.28]]
+/for(acc) 

@@ -51,7 +51,7 @@ hash.a = hash.b ∧ valueofencoding.code.a = valueofencoding.code.b ∧ data.a =
 
 unbound hash(T)int
 
-unbound =(T, T)boolean
+unbound=(T, T)boolean
 
 unbound assignencoding(data:T)int
 
@@ -59,7 +59,7 @@ Export type:seq.encodingpair.T
 
 Export length(seq.encodingpair.T)int
 
-/Function empty:encodingstate.T encodingstate.T let x = constantseq(4, empty:seq.encodingpair.T)encodingstate 
+/Function empty:encodingstate.T encodingstate.T let x=constantseq(4, empty:seq.encodingpair.T)encodingstate 
 (0, 0, x, x, empty:seq.encodingpair.T, 0)
 
 Function lastadded(h:encodingstate.T)encoding.T code.last.all.h
@@ -81,12 +81,12 @@ else
  let p = subadd(mask, h, v, 1)
  let code = code.p
  let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
- let listdecode =
+ let listdecode = 
   for acc = [ p], e ∈(decodetable.h)_codeindex do
    if code.e = code ∨ notsamehash:T(valueofencoding.code, valueofencoding.code.e, mask)then acc
    else acc + e
   /for(acc)
- let listencode =
+ let listencode = 
   for acc = [ p], e ∈(encodetable.h)_dataindex do
    if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask)then acc else acc + e
   /for(acc)
@@ -103,7 +103,7 @@ function subadd(mask:bits, h:encodingstate.T, v:encodingpair.T, count:int)encodi
 { assert count < 10 report"unable to assign encoding"}
 let code = code.v
 let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
-let found =
+let found = 
  valueofencoding.code.v ≤ 0
  ∨ for acc = false, @e ∈(decodetable.h)_codeindex do acc ∨ code.v = code.@e /for(acc)
 if found then
@@ -163,14 +163,14 @@ let r = lookuprep(t, getinstance:encodingstate.T)
 if isempty.r then empty:seq.T else [ data.r_1]
 
 function analyze(t:encodingstate.T)seq.word
-"numele =" + toword.length.all.t + "encodecounts"
+"numele=" + toword.length.all.t + "encodecounts"
 + counts(encodetable.t, 1, 0, 0, 0)
 + "decodeconuts"
 + counts(decodetable.t, 1, 0, 0, 0)
 
 function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int)seq.word
 if i > length.s then
- for acc ="", @e ∈ [ length.s, one, two, big]do acc + toword.@e /for(acc)
+ for acc = "", @e ∈ [ length.s, one, two, big]do acc + toword.@e /for(acc)
 else
  let t = length.s_i
  if t = 0 then counts(s, i + 1, one, two, big)

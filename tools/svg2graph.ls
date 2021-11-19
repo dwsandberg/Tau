@@ -1,4 +1,5 @@
-#!/usr/local/bin/tau ; use doc ; createdoc
+#!/usr/local/bin/tau ; use doc ; use doc ; use uniqueids; callgraphwithin("tools:tools2","taulextable")+callgraphbetween("stdlib","mytype passsymbol")
+
 
 module svg2graph.T
       
@@ -39,7 +40,7 @@ Function ?(a:labeledarc.T,b:labeledarc.T) ordering
    tail.a ? tail.b /and head.a ? head.b  
 
 Function ?(a:arcpath.T,b:arcpath.T)ordering  
-head.arc.a ? head.arc.b /and from.a ? from.b /and tail.arc.a ? tail.arc.b 
+head.arc.a ? head.arc.b /and {from.a ? from.b /and} tail.arc.a ? tail.arc.b 
 
 Function ?(a:nodeinfo.T, b:nodeinfo.T)ordering n.a ? n.b     
 
@@ -71,9 +72,9 @@ Function drawscript:T  seq.word '    <script>
     <style>
       .arcs {     fill: none ; stroke:black ; stroke-width: .07  ; }
       .nodes {     font-size:0.6; stroke-width:.1 ; }
-      .target { pointer-events: stoke;                }
 svg g:hover text {    opacity:  1;    }
-    </style> '
+svg g:hover rect {    opacity:  1;    }
+    </style> '+encodeword.[char.10]
     
     use set.labeledarc.T
     
@@ -89,6 +90,9 @@ svg g:hover text {    opacity:  1;    }
     
     unbound node2text(T) seq.word
     
+    use set.arc.T
+    
+    
 Function drawgraph(xxx:graph.T) seq.word drawgraph(xxx,empty:set.labeledarc.T)
 
  Function drawgraph(xxx:graph.T,labels:set.labeledarc.T) seq.word    
@@ -103,17 +107,20 @@ Function drawgraph(xxx:graph.T) seq.word drawgraph(xxx,empty:set.labeledarc.T)
       next( d+"L"+ print(3,toreal.y.xy * scalex)+ print(3,toreal.x.xy * scaley)  ,from1,x.xy) 
      /for(asset.[arcpath(arc(first.a,last.a),d,from0)] /cup ap)
    /for(ap)
-   let arcpaths= if  not.haslabels  then arcpaths0 else  
+   let arcpaths= if  not.haslabels   then arcpaths0 else  
    for acc=empty:seq.arcpath.T,grp=empty:seq.arcpath.T,    p /in toseq.arcpaths0 do 
        if isempty.grp /or  head.arc.last.grp=head.arc.p  then next(acc,grp+p ) 
        else 
            next(acc+addgroup.grp ,[p])
    /for( asset(acc+addgroup.grp))
-let z= for txt=""  , i =1 ,id=1,draw="",maxx=0.0,maxy=0.0,hover=empty:seq.hovertext.T, n /in toseq.nodeinfo.layout do
+for txt=""  , i =1 ,id=requestids(cardinality.nodes.xxx+cardinality.arcs.xxx )+requestids(1 ),draw="",maxx=0.0,maxy=0.0,hover=empty:seq.hovertext.T, n /in toseq.nodeinfo.layout do
    {assumes nodes in g uses same sortorder as nodinfo}
     let nodex=toreal.y.n * scalex 
      let nodey= toreal.x.n * scaley 
-  if  (nodes.xxx)_i=n.n then 
+    { assert  i /le cardinality.nodes.xxx report "XXX"
+     +for out="",nn /in toseq.nodeinfo.layout do out+node2text.n.nn /for(out)
+     +for out="/p",nn /in toseq.nodes.xxx do out+node2text.nn  /for(out)}
+  if i /le cardinality.nodes.xxx /and (nodes.xxx)_i=n.n then 
      let succ=toseq.successors(xxx,n.n)
       let txtend=print(3,nodex) +'" y="'+print(3,nodey)  +'"> '+node2text.n.n+'   </text>  '+encodeword.[char.10]
       let hovertext=nodeTitle.n.n
@@ -122,7 +129,8 @@ let z= for txt=""  , i =1 ,id=1,draw="",maxx=0.0,maxy=0.0,hover=empty:seq.hovert
         let xy=lookup(nodeinfo.layout,nodeinfo(s,0,0))_1 
         let paths=lookup(arcpaths,arcpath(arc(n.n,s),"",0) )
         let path=if isempty.paths then" L "+ print(3,toreal.y.xy * scalex)+ print(3,toreal.x.xy * scaley)
-        else d.paths_1
+        else 
+        d.paths_1
       next(arctxt+' <path id="'+toword( j) +'"  class="arcs" d="M 0 0 '+path+'"'+merge("/>"+space)
          +encodeword.[char.10] 
          +if  haslabels   then 
@@ -149,8 +157,7 @@ let z= for txt=""  , i =1 ,id=1,draw="",maxx=0.0,maxy=0.0,hover=empty:seq.hovert
      viewBox="5.0 -1 '+print(2,maxx+5.0)+print(2,maxy+1.0)+' "
     onload="[ '  + draw >> 1+'].forEach(shiftstart)"> '+ drawscript:T+txt+hovertxt+"</svg> />"
   )
-  {assert false report "here"+z}
-  z
+
   
   type hovertext  is n:T,nodex:real,nodey:real, text:seq.word 
   
@@ -163,8 +170,35 @@ let z= for txt=""  , i =1 ,id=1,draw="",maxx=0.0,maxy=0.0,hover=empty:seq.hovert
    else if nodex.b  = nodex.a /or nodey.b  = nodey.b  then EQ else GT
   
   function  assvg(h:hovertext.T) seq.word
-         '  <g > <rect fill="black" opacity="0.0" x= "'+print(2,nodex.h)+'" y="' +print(2,nodey.h-0.5)+'" height="0.5" width="1" '
-       +' /><text class="nodes"  x="5" y="-0.5" opacity="0.0"> ' +text.h  +' </text> </g> '
+         '  <g > <rect  opacity="0.0" x= "'+print(2,nodex.h)+'" y="' +print(2,nodey.h-0.5)+'" height="0.5" width="1" '
+       +' /><rect pointer-events="none" fill="white" opacity="0.0" x= "'+print(2,nodex.h)+'" y="' +print(2,nodey.h-0.5)+'" height="1" width="100" '
+       +' /><text pointer-events="none" class="nodes"  x="'+print(2,nodex.h)+'" y="' +print(2,nodey.h)+'" opacity="0.0"> ' +text.h  +' </text> </g> '
 +encodeword.[char.10]
    
    use seq.arcpath.T
+   
+   use  uniqueids
+   
+module uniqueids
+
+use standard
+
+ type idrange is  next:int
+ 
+ use encoding.idrange
+ 
+ function =(a:idrange, b:idrange)boolean next.a=next.b
+ 
+ function hash(a:idrange) int next.a
+ 
+  function  assignencoding(a:idrange)int nextencoding(a)
+ 
+Function requestids(no:int) int
+     let j=  nextencoding(idrange.0)
+       let firstno=if j=1 then 1 else  next.decode.to:encoding.idrange(j-1)
+     let discard=encode.idrange(firstno+no)
+      firstno
+ 
+ 
+   
+   

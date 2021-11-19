@@ -1,6 +1,3 @@
-* usegraph include passsymbol typepass passparse symparse driver commoninfo passpostbind exclude standard set seq otherseq 
- bits
-
 Module passsymbol
 
 use mytype
@@ -84,7 +81,7 @@ do
   let x = findpasstypes(passtypes, lib, input)
   let z = commoninfo(input, modname.x_1, lib, formtypedict(passtypes, x_1),"symbol"_1)
   assert not.isempty.x report"did not find" + input
-  let lastpass =
+  let lastpass = 
    resolve(empty:set.passsymbols
    , passsymbols(modname.common, uses, asset.defines, exports, unresolvedexports, types.common, text)
    )
@@ -100,15 +97,15 @@ do
   , typearcs
   )
  else if first.input ∈ "Function function Builtin builtin Export unbound"then
-  let b =
+  let b = 
    parse.symboldict(empty:set.symbol
    , [ commoninfo(getheader.input, modname.common, lib.common, types.common,"symbol"_1)]
    )
-  let modname =
+  let modname = 
    if first.input ∈ "Builtin builtin"then
     if issimple.modname.common then internalmod else modname.common
    else modname.common
-  let sym =
+  let sym = 
    if length.text.b = 1 then
     let name = text.b
     if name = "true"then Littrue
@@ -158,7 +155,7 @@ do
    , typearcs
    )
  else if first.input ∈ "type"then
-  let b =
+  let b = 
    parse.symboldict(empty:set.symbol
    , [ commoninfo(input, modname.common, lib.common, types.common + typeseqdec,"symbol"_1)]
    )
@@ -175,7 +172,7 @@ do
   next(typeflds, paragraphno + 1, text, modlist, defines
   , exports, unresolvedexports, uses, common, typearcs
   )
-/for(let lastpass =
+/for(let lastpass = 
  resolve(empty:set.passsymbols
  , passsymbols(modname.common, uses, asset.defines, exports, unresolvedexports, types.common, text)
  )
@@ -230,7 +227,7 @@ else
  , fldtype ∈ if isseq then [ typeint] + typs << 2 else typs << 1
  do
   let size = knownsize.fldtype
-  let usize =
+  let usize = 
    if size = 1 then unknownsize
    else unknownsize + symbol(builtinmod.fldtype,"typesize", typeint) + PlusOp
   if binfotext_idx ∈ ":"then next(flds, idx + 1, knownsize + size, usize, constructflds)
@@ -243,7 +240,7 @@ else
    + if fldtype = typeint ∨ isseq.fldtype then [ Local.idx]
    else [ Local.idx, symbol(builtinmod.fldtype,"pushflds", fldtype, fldtype)]
    )
- /for(let constructor =
+ /for(let constructor = 
   symbol(modname
   , [ name]
   , if isseq then [ typeint] + typs << 2 else typs << 1
@@ -311,7 +308,7 @@ else
  for exports = exports.p, unresolved = empty:set.symbol, t2 ∈ toseq.unresolvedexports.p do
   let b = lookupbysig(dict, t2)
   if checkreturntype(b, t2)then
-   { assert resulttype.b_1 = resulttype.t2 report"Return type of export does not match"+ print.b_1 }
+   { assert resulttype.b_1=resulttype.t2 report"Return type of export does not match"+print.b_1 }
    next(exports + b_1, unresolved)
   else next(exports, unresolved + t2)
  /for(passsymbols(modname.p, uses.p, defines.p, exports, unresolved, typedict.p, text.p))
@@ -323,22 +320,23 @@ if cardinality.b = 1 then
  t
 else false
 
-assert resulttype.b_1 = resulttype.t2 report"Return type of export does not match"+ print.b_1 true
+assert resulttype.b_1=resulttype.t2 report"Return type of export does not match"+print.b_1 true
 
 function resolveexports(s1:set.passsymbols, countin:int)set.passsymbols
 if countin = 0 then s1
 else
- { assert countin /in [ 100000, 101, 25]report"C"+ print.countin }
+ { assert countin /in [ 100000, 101, 25]report"C"+print.countin }
  for cnt = 0, acc = empty:set.passsymbols, p ∈ toseq.s1 do next(cnt + cardinality.unresolvedexports.p, acc + resolve(s1, p))/for(assert countin ≠ cnt
- report for acc2 ="", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for(acc2)
+ report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for(acc2)
  resolveexports(acc, cnt))
 
 function printunresolved(p:passsymbols)seq.word
-let txt = for acc ="", t ∈ toseq.unresolvedexports.p do acc + print.t /for(acc)
+let txt = 
+ for acc = "", t ∈ toseq.unresolvedexports.p do acc + print.t /for(acc)
 if isempty.txt then""
 else"module" + print.modname.p + "contains unresolved exports:" + txt + EOL
 
-Function print(s:seq.mytype)seq.word for acc ="", t ∈ s do acc + print.t /for(acc)
+Function print(s:seq.mytype)seq.word for acc = "", t ∈ s do acc + print.t /for(acc)
 
 Export text(symtextpair)seq.word
 
@@ -362,18 +360,18 @@ Export exports(passsymbols)set.symbol
 
 function print(s:passsymbols)seq.word
 EOL + "Module" + print.modname.s + EOL + "Defines" + EOL
-+ for acc ="", t ∈ toseq.defines.s do acc + print.t + EOL /for(acc)
++ for acc = "", t ∈ toseq.defines.s do acc + print.t + EOL /for(acc)
 + if isempty.unresolvedexports.s then""
 else
  EOL + "Unresolved Export" + EOL
- + for acc ="", t ∈ toseq.unresolvedexports.s do acc + print.t + EOL /for(acc)
+ + for acc = "", t ∈ toseq.unresolvedexports.s do acc + print.t + EOL /for(acc)
 
 Function parse(input:seq.word, p:partdict, c:commoninfo)bindinfo
 parse.symboldict(syms.p, req.p, [ commoninfo(input, modname.c, lib.c, types.c, mode.c)])
 
 Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound:set.symdef, mode:word)partdict
-{ bug here should not need i = 0 in forloop }
-let dict =
+{ bug here should not need i=0 in forloop }
+let dict = 
  for syms = defines.this, requires = empty:set.symdef, i = 0, u ∈ toseq.uses.this do
   let a = lookup(modset, passsymbols.abstractmod.u)
   if isempty.a then
@@ -381,7 +379,7 @@ let dict =
    { needed for when modset passsymbols are not yet created } next(syms, requires, 0)
   else if not.isabstract.modname.a_1 then next(syms ∪ exports.a_1, requires, 0)
   else
-   let r =
+   let r = 
     for acc = syms, req = requires, e ∈ toseq.exports.a_1 do
      let sym2 = replaceTsymbol(para.u, e)
      if isempty.requireUnbound then next(acc + sym2, req)
@@ -389,9 +387,9 @@ let dict =
       let require = lookup(requireUnbound, symdef(e, empty:seq.symbol))
       if isempty.require then next(acc + sym2, req)
       else
-       let list =
+       let list = 
         for acc2 = empty:seq.symbol, sym4 ∈ code.require_1 do acc2 + replaceTsymbol(para.u, sym4)/for(acc2)
-       { assert name.e /nin"arithseq"report"GHJ"+ print.list }
+       { assert name.e /nin"arithseq"report"GHJ"+print.list }
        next(acc + setrequires.sym2, req + symdef(sym2, list))
     /for(partdict(acc, req))
    next(syms.r, req.r, 0)
@@ -408,11 +406,11 @@ Function findabstract(templates:set.symdef, sym:symbol)seq.findabstractresult
 for acc = empty:seq.findabstractresult, sd ∈ toseq.templates do
  let e = sym.sd
  if name.e = name.sym ∧ length.types.e = length.types.sym ∧ para.module.e = typeT then
-  let z =
+  let z = 
    for Tis = type?, idx = 1, t ∈ types.e do
     let S = solveT(t,(types.sym)_idx)
     if S = type? then
-     { assert t =(types.s)_idx report"XXXXX"+ print.t + print.(types.s)_idx } next(Tis, idx + 1)
+     { assert t=(types.s)_idx report"XXXXX"+print.t+print.(types.s)_idx } next(Tis, idx + 1)
     else next(S, idx + 1)
    /for(Tis)
   if ?2(sym, replaceTsymbol(z, e)) = EQ then

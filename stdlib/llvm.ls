@@ -63,7 +63,7 @@ else if tp = ARRAY then"array(" + toword.a_2 + "," + print.b_3 + ")"
 else if tp = POINTER then"ptr." + print.b_2
 else if tp = FUNCTION then
 "function("
- + for acc ="", @e ∈ subseq(b, 3, length.a)do acc + print.@e + ","/for(acc >> 1)
+ + for acc = "", @e ∈ subseq(b, 3, length.a)do acc + print.@e + ","/for(acc >> 1)
  + ")"
 else if tp = TVOID then"VOID"
 else if tp = DOUBLE then"double"else"?"
@@ -75,7 +75,7 @@ for acc = empty:seq.seq.int, @e ∈ encoding:seq.encodingpair.llvmtypeele do acc
 
 Function returntype(func:llvmtype)llvmtype llvmtype.to:encoding.llvmtypeele((toseq.decode.index.func)_3 + 1)
 
-typerecords_(typ.llvmtype + 1)_3
+typerecords_(typ.llvmtype+1)_3
 
 Function typ(a:llvmtype)int valueofencoding.index.a - 1
 
@@ -106,7 +106,7 @@ type llvmconst is typ:int, toseq:seq.int
 
 function hash(a:llvmconst)int hash.symtabname.a
 
-function assignencoding(a:llvmconst)int { length.p + 1 } nextencoding.a
+function assignencoding(a:llvmconst)int { length.p+1 } nextencoding.a
 
 Function =(a:llvmconst, b:llvmconst)boolean symtabname.a = symtabname.b ∧ typ.a = typ.b
 
@@ -114,7 +114,7 @@ function symtabname(a:llvmconst)seq.int
 if typ.a ∈ [-1,-2]then subseq(toseq.a, 2, 1 + (toseq.a)_1)else toseq.a
 
 Function modulerecord(name:seq.word, rec:seq.int)slot
-let c =
+let c = 
  if name = ""then llvmconst(-3, rec)
  else
   let chars = tointseq.for acc = empty:seq.char, @e ∈ name do acc + decodeword.@e /for(acc)
@@ -134,7 +134,8 @@ Function DATA(t:llvmtype, data:seq.int)slot slot(valueofencoding.encode.llvmcons
 Function AGGREGATE(data:seq.slot)slot
 let t = array(length.data, i64)
 slot(valueofencoding.encode.llvmconst(typ.t
-, [ toint.CAGGREGATE] + for acc = empty:seq.int, @e ∈ data do acc + toint.@e /for(acc)
+, [ toint.CAGGREGATE]
++ for acc = empty:seq.int, @e ∈ data do acc + toint.@e /for(acc)
 )
 - 1)
 

@@ -36,9 +36,9 @@ Function dayofyear(t:timestamp)int
 toint.t / (24 * 60 * 60) - tojulian((fromJuliantointseq(toint.t / (24 * 60 * 60)))_1, 1, 1) + 1
 
 Function fromJuliantointseq(dt:int)seq.int
-let a =((dt + 1) * 4 - 7468865) / 146097
+let a = ((dt + 1) * 4 - 7468865) / 146097
 let b = dt + 1 + 1 + a - a / 4 + 1524
-let c =(b * 20 - 2442) / 7305
+let c = (b * 20 - 2442) / 7305
 let d = b - 1461 * c / 4
 let e = d * 10000 / 306001
 let m = e - if e > 13 then 13 else 1

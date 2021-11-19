@@ -82,7 +82,7 @@ function removesinks(sinkstokeep:set.symbol, g:graph.symbol, toprocess:seq.symbo
 for keep = sinkstokeep, pred = empty:set.symbol, g2 = g, n ∈ toprocess do
  if isunbound.n ∨ para.module.n ≠ typeT then next(keep + n, pred, g2)
  else next(keep, pred ∪ predecessors(g2, n), deletenode(g2, n))
-/for(let newsinks =
+/for(let newsinks = 
  for acc = empty:seq.symbol, p ∈ toseq.pred do if outdegree(g, p) = 0 then acc + p else acc /for(acc)
 if isempty.newsinks then
  for acc = empty:seq.arc.symbol, a ∈ toseq.arcs.transitiveClosure.g2 do if head.a ∈ keep then acc + a else acc /for(acc)
@@ -133,13 +133,13 @@ let g3 = newgraph.abstractarcs(prga + prg1)
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)
 { change many-to-one relation defined by arcs in g5 into format of set.symdef }
-let requireUnbound =
+let requireUnbound = 
  if isempty.arcs.g4 then empty:set.symdef
  else
   for acc = empty:set.symdef, last = Lit.0, list = empty:seq.symbol, a ∈ toseq.arcs.g4 do
    let list0 = if last ≠ tail.a then empty:seq.symbol else list
    let newlist = if isunbound.head.a then list0 + head.a else list0
-   let newacc =
+   let newacc = 
     if last ≠ tail.a then if isempty.list then acc else acc + symdef(last, list)
     else acc
    next(newacc, tail.a, newlist)
@@ -153,21 +153,12 @@ for acc = empty:seq.symdef, p ∈ s do
   if islocal.sym then result + Local.value.sym
   else if isdefine.sym then result + Define.value.sym
   else
-   { if isconst.sym /or isspecial.sym then result + sym else assert subseq(print.sym.p, 1, 5)/ne"tree.T:="/or module.sym 
-.p = module.sym report"KL"+ print.sym.p + print.sym }
+   { if isconst.sym /or isspecial.sym then result+sym else assert subseq(print.sym.p, 1, 5)/ne"tree.T:="/or module.sym 
+.p=module.sym report"KL"+print.sym.p+print.sym }
    result
    + if isBuiltin.sym then
     if name.sym ∈ "length"then GetSeqLength
     else if name.sym ∈ "getseqtype"then GetSeqType else sym
    else sym
  /for(acc + symdef(sym.p, result))
-/for(acc)
-
-/ use displaytextgraph
-
-/ use svggraph.seq.word
-
-/ use seq.arcinfo.seq.word
-
-/ function arcinfo(l:seq.arc.symbol)seq.arcinfo.seq.word for acc = empty:seq.arcinfo.seq.word, a = l do acc + arcinfo 
-(print.tail.a, print.head.a,"")/for(acc) 
+/for(acc) 

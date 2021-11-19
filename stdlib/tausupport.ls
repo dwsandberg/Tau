@@ -1,14 +1,32 @@
+module index
+
+use standard
+
+use seq.index
+
+type index is rep:int
+
+Export type:index
+
+Export index(int)index
+
+Function +(i:index, b:int)index index(rep.i + b)
+
+Function toindex(i:int)index
+assert i > 0 report"not an index" + stacktrace
+index(i - 1)
+
+Function toint(i:index)int rep.i + 1 
 
 module bitcast.T
 
 use tausupport
 
-Builtin bitcast:T(ptr) T
+Builtin bitcast:T(ptr)T
 
-Builtin fld:T(ptr,int) T 
+Builtin fld:T(ptr, int)T
 
-Builtin toptr(T) ptr
-
+Builtin toptr(T)ptr
 
 module taublockseq.T
 
@@ -18,14 +36,13 @@ use tausupport
 
 use seq.T
 
+use bitcast.seq.T
+
 Export type:seq.T
 
 Export type:blockseq.T
 
-use bitcast.seq.T
-
 builtin getfld(address:blockseq.T, offset:int)seq.T { load value of type T at address }
-
 
 unbound set(ptr, T)ptr
 
@@ -35,7 +52,7 @@ function blocksize:T int 8160
 
 Function blockseqtype:T int getseqtype.toseq.blockseq(1, empty:seq.T)
 
-Function_(a:blockseq.T, i:int)T
+Function _(a:blockseq.T, i:int)T
 assert between(i, 1, length.toseq.a)report"out of bounds"
 let blksz = length.dummy.a
 let blk = getfld(a,(i - 1) / blksz + 2)
@@ -48,13 +65,13 @@ if length.s ≤ blksz then
  let d = for acc = set(set(newseq, 0), length.s), @e ∈ s do set(acc, @e)/for(acc)
  bitcast:seq.T(newseq)
 else
- let noblks =(length.s + blksz - 1) / blksz
+ let noblks = (length.s + blksz - 1) / blksz
  let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
  let blkseq = allocatespace(noblks + 2)
- let discard =
+ let discard = 
   for acc = set(set(blkseq, blockseqtype), length.s), @e ∈ arithseq(noblks, blksz, 1)do
    let newseq = allocatespace(blksz + 2)
-   let d =
+   let d = 
     for acc2 = set(set(newseq, 0), blksz), e ∈ subseq(s, @e, @e + blksz - 1)do set(acc2, e)/for(acc2)
    let x = bitcast:seq.T(newseq)
    set(acc, newseq)
@@ -69,10 +86,10 @@ if length.s ≤ blksz then
  let d = for acc = set(set(newseq, 1), length.s), @e ∈ s do set(acc, @e)/for(acc)
  bitcast:seq.T(newseq)
 else
- let noblks =(length.s + blksz - 1) / blksz
+ let noblks = (length.s + blksz - 1) / blksz
  let blockseqtype = getseqtype.toseq.blockseq(1, empty:seq.T)
  let blkseq = allocatespace(noblks + 2)
- let discard =
+ let discard = 
   for acc = set(set(blkseq, blockseqtype), length.s), @e ∈ arithseq(noblks, blksz, 1)do
    let s2 = subseq(s, @e, @e + blksz - 1)
    let newseq = allocatespace(length.s2 * ds + 2)

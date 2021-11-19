@@ -79,7 +79,7 @@ sparsecheck
 else"FAIL testseq" + w + x + y + z
 
 Function sparsecheck seq.word
-let b =
+let b = 
  for acc = sparseseq.101, @e ∈ subseq(random(randomseq(567, 54), 1, empty:seq.seq.int), 1, 1200)do check(acc, @e)/for(acc)
 "Pass Sparse Sequence"
 
@@ -111,7 +111,7 @@ use seq.T
 
 unbound get:T T
 
-unbound =(T, T)boolean
+unbound=(T, T)boolean
 
 Function check:seq.T(size:int)seq.word
 let unpack = random:seq.T(16)

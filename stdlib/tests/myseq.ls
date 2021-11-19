@@ -23,7 +23,7 @@ unbound-(T, int)T
 
 unbound *(T, int)T
 
-unbound +(T, T)T
+unbound+(T, T)T
 
 We need to helper functions to calculate the length and find the ith element of the seq for this example.
 
@@ -51,4 +51,4 @@ Function myseq(d:seq.T)seq.T toseq.myseq(clength(d, 1), d)
 
 Every sequence must have a_function defined on it which is below for mseq.T
 
-Function_(a:myseq.T, idx:int)T cindex(data.a, 1, idx) 
+Function _(a:myseq.T, idx:int)T cindex(data.a, 1, idx) 

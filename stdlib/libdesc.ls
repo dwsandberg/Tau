@@ -55,7 +55,7 @@ use seq.seq.symbolref
 use seq.seq.word
 
 function print(l:seq.mytype)seq.word
-for acc ="(", t ∈ l do acc + print.t /for(acc + ")")
+for acc = "(", t ∈ l do acc + print.t /for(acc + ")")
 
 Export ?(a:symbolref, b:symbolref)ordering
 
@@ -75,12 +75,12 @@ Export type:compileinfo
 
 Function libdesc(info:compileinfo, prg:set.symdef)libdescresult
 { mods.info are only the exported modules }
-let symstoexport2 =
+let symstoexport2 = 
  { roots.info }
  for acc = empty:seq.symbolref, m ∈ mods.info do acc + exports.m /for(for acc2 = empty:set.symbol, r ∈ toseq.asset.acc do acc2 + (symbolrefdecode.info)_(toint.r)/for(acc2))
-let code2 =
+let code2 = 
  for acc = empty:seq.seq.symbolref, sym ∈ toseq.symstoexport2 do
-  { assert not(isInternal.sym /and name.sym /in">>")report"KKK"+ print.sym +"C"+ print.getCode(prg, sym)}
+  { assert not(isInternal.sym /and name.sym /in">>")report"KKK"+print.sym+"C"+print.getCode(prg, sym)}
   let ref = symbolref.sym
   acc
   + for acc2 = [ ref]
@@ -89,7 +89,7 @@ let code2 =
    if isFref.sym2 then acc2 + symbolref.PreFref + symbolref.basesym.sym2 else acc2 + symbolref.sym2
   /for(acc2)
  /for(acc)
-let profilearcs =
+let profilearcs = 
  for acc = empty:set.seq.symbol, sd ∈ toseq.prg do
   if"PROFILE"_1 ∉ getoption.code.sd then acc
   else
@@ -97,11 +97,11 @@ let profilearcs =
     if isconstantorspecial.sym ∨ isInternal.sym then txt else txt + [ sym.sd, sym]
    /for(txt)
  /for(acc)
-let all0 =
+let all0 = 
  for acc = empty:seq.symbolref, arc ∈ toseq.profilearcs do acc + symbolref.arc_1 + symbolref.arc_2 /for(acc)
 let all = for all = all0, a ∈ code2 do all + a /for(asset.all)
 { all is used to establish new mapping of symbols to symbolrefs }
-let profiledata =
+let profiledata = 
  for acc = [ 1, cardinality.profilearcs], arc ∈ toseq.profilearcs do
   acc
   + [ binarysearch(toseq.all, symbolref.arc_1)
@@ -126,7 +126,7 @@ for acc = empty:seq.symbol, a ∈ code2 do acc + addseqsymbolref(a, all)/for(add
 Function libcode(code1:seq.symbol, toexport:set.symbol)seq.symbol
 let code = removeoptions.code1
 let optionsx = getoption.code1
-let z =
+let z = 
  if length.code < 15 then
   let x = removeconstantcode.code
   if"VERYSIMPLE"_1 ∈ optionsx then x
@@ -138,7 +138,7 @@ let z =
  else empty:seq.symbol
 { assert isempty.optionsx ∨ optionsx ∈ ["STATE","INLINE","VERYSIMPLE INLINE","STATE INLINE","BUILTIN","BUILTIN 
  COMPILETIME","PROFILE","STATE BUILTIN","COMPILETIME STATE","COMPILETIME","PROFILE STATE","INLINE STATE","
- NOINLINE STATE"]report"X"+ optionsx z }
+ NOINLINE STATE"]report"X"+optionsx z }
 if"COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then z + Words.optionsx + Optionsym else z
 
 ----------------------------------
@@ -168,7 +168,7 @@ addseq.for acc = empty:seq.symbol, r ∈ s do acc + Lit.binarysearch(toseq.all, 
 
 function addlibraryMod(m:libraryModule, all:set.symbolref)symbol
 let e = addseqsymbolref(exports.m, all)
-let types =
+let types = 
  addseq.for acc2 = empty:seq.symbol, tl ∈ types.m do
   acc2 + addseq.for acc = empty:seq.symbol, @e ∈ tl do acc + addmytype.@e /for(acc)
  /for(acc2)

@@ -51,7 +51,7 @@ function adddummynodes(y2:layeredgraph.T)layeredgraph.T d2(y2, g.y2, 2, asset.(l
 
 function d2(org:layeredgraph.T, g:graph.T, i:int, ok:set.T, layerout:seq.seq.T)layeredgraph.T
 let ok1 = ok ∪ asset.(layers.org)_i
-let gnew =
+let gnew = 
  for acc = g
  , @e ∈ for acc = empty:seq.arc.T, @e ∈ layerout_(i - 1)do acc + splitarcs(g, ok1, @e)/for(acc)
  do splitarc(acc, @e)/for(acc)

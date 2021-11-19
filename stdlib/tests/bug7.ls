@@ -53,6 +53,6 @@ use seq.T
 
 type seq8 is sequence, flda:seq.T, fldb:int
 
-function_(a:seq8.T, i:int)T(flda.a)_i
+function _(a:seq8.T, i:int)T(flda.a)_i
 
 Function newseq8(a:seq.T)seq.T toseq.seq8(length.a, a, 15) 

@@ -79,18 +79,13 @@ let info = getlibraryinfo2.libname
 let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
-{ let b = unloadlib.[ libname]}
-let cinfo =
+{ let b=unloadlib.[ libname]}
+let cinfo = 
  { result.process.}
- compilerfront("all"
- , libname
- , ["Library" + libname] + info << 3
- , dependentlibs
- , exports
- )
+ compilerfront("all", libname, ["Library" + libname] + info << 3, dependentlibs, exports)
 let prg4 = asset.prg.cinfo
 let libdesc = libdesc(cinfo, prg4)
-let bc =
+let bc = 
  codegen(prg4
  , roots.cinfo ∪ asset.liblibflds.libdesc
  , last.libname
@@ -102,28 +97,28 @@ let z2 = createlib(bc, last.libname, dependentlibs)
 "OK"
 
 Function main(argin:seq.byte)int
-let args2 =
+let args2 = 
  for acc = empty:seq.seq.word, @e ∈ break(char1.";", empty:seq.char, decodeUTF8.UTF8.argin)do acc + towords.@e /for(acc)
 let libname = args2_1
-let compileresult =
+let compileresult = 
  if first.libname = first."L"then"OK"
  else
   let p = process.subcompilelib.libname
   if aborted.p then"COMPILATION ERROR:" + space + message.p else result.p
-let output =
+let output = 
  if length.args2 = 1 ∨ subseq(compileresult, 1, 1) ≠ "OK"then compileresult
  else
   { execute function specified in arg }
   let lib = args2_1
-  let src =
+  let src = 
    ["module $X","use standard"] + subseq(args2, 2, length.args2 - 1)
    + ["Function runitx seq.word" + args2_(length.args2)]
-  let p2 =
+  let p2 = 
    process.compilerfront("pass1","runit", src,"stdlib" + lib,"$X")
   if aborted.p2 then message.p2
   else
    let theprg = asset.prg.result.p2
-   let p3 =
+   let p3 = 
     process.interpret(typedict.result.p2
     , getCode(theprg, symbol(moduleref."runit $X","runitx", seqof.typeword))
     )
@@ -138,8 +133,7 @@ let info = getlibraryinfo2.libname
 let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
-{ let b = unloadlib.[ libname]}
-compilerfront(option, libname, info << 3, dependentlibs, exports)
+{ let b=unloadlib.[ libname]} compilerfront(option, libname, info << 3, dependentlibs, exports)
 
 Export compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
 

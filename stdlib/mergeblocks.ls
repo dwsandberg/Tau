@@ -41,8 +41,8 @@ function ghj(code:seq.symbol, stk:stack.int, label:int, replace:int)seq.symbol
 if top.stk < 0 then code
 else
  let sym = code_(top.stk)
- { assert not.isbr.sym report"TFL"+ print.brt.sym + print.brf.sym + print.label + print.replace }
- let newcode =
+ { assert not.isbr.sym report"TFL"+print.brt.sym+print.brf.sym+print.label+print.replace }
+ let newcode = 
   if isbr.sym ∧ (label = brt.sym ∨ label = brf.sym)then
    replace(code
    , top.stk
@@ -69,7 +69,7 @@ function reorg(sorted:seq.casenode, brf:int, var:symbol, nodes:seq.int, nodeno:i
 { brf is absolute }
 if length.sorted < 4 then
  { rechain }
- let new =
+ let new = 
   for acc = empty:seq.symbol, off = nodeno - (length.sorted - 1), c ∈ sorted >> 1 do next(acc + [ var, key.c, EqOp, Br2(brt.c - off, 1)], off + 1)/for(let last = last.sorted
   let brt = brt.last - nodeno
   acc + [ var, key.last, EqOp, Br2(brt, brf - nodeno)])
@@ -80,7 +80,7 @@ else
  let m = sorted_mid
  let lastpart = reorg(subseq(sorted, mid + 1, length.sorted), brf, var, nodes, nodeno)
  let firstpart = reorg(subseq(sorted, 1, mid - 1), brf, var, nodes, offset.lastpart)
- let new =
+ let new = 
   [ var, key.m, GtOp, Br2(offset.lastpart - offset.firstpart + 2, 1)]
   + [ var, key.m, EqOp, Br2(brt.m - offset.firstpart, 1)]
   + code.firstpart
@@ -89,7 +89,7 @@ else
 
 function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.int, nextvar:int, reorgwhen:int)seq.symbol
 for cases = empty:seq.casenode
-, last =-nodes_1
+, last = -nodes_1
 , nodeno = 2
 , nextcase = 0
 , first = empty:seq.symbol
@@ -127,11 +127,11 @@ do
   else next(cases, e, nodeno + 1, nextcase - 1, first, eqivs)
 /for(if length.cases < reorgwhen then removedead(code, nodes, dead)
 else
- let testvar =
+ let testvar = 
   if length.first = 1 then first_1
   else if isempty.eqivs then Local.nextvar else eqivs_1
  let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.value.testvar
- let t =
+ let t = 
   reorg(sort.cases
   , nodeno.last.cases + brf.code_(nodes_(nodeno.last.cases))
   , testvar
@@ -143,16 +143,16 @@ else
  let nodesBeforeStartOfCase = subseq(nodes, 1, locnode)
  let newcasecode = settestvar + code.t
  let loc = abs.nodes_locnode
- let newcode =
+ let newcode = 
   subseq(adjustbr(code, subseq(nodes, 1, locnode + 1), nonewnodes), 1, loc) + newcasecode
   + subseq(code, loc + 1, length.code)
- let newnodes =
+ let newnodes = 
   for l = nodesBeforeStartOfCase + arithseq(nonewnodes, 4, loc + length.settestvar + 4)
   , n ∈ nodes << locnode
   do
    l + [ length.newcasecode + n]
   /for(l)
- let newunreached =
+ let newunreached = 
   for l = for x = empty:seq.int, y ∈ dead do x + if y < locnode then y else nonewnodes + y /for(x)
   , n ∈ cases
   do
@@ -170,12 +170,12 @@ else
  report"cases" + for l = EOL, c ∈ cases do l + print.nodeno.c /for(l)
  + print.newcode
  + EOL
- + { for l = EOL, c = newnodes do l + print.newcode_abs.c end(l)+ } EOL
- + for l ="dead" + EOL, c ∈ newunreached do l + print.c /for(l)
+ + { for l=EOL, c=newnodes do l+print.newcode_abs.c end(l)+} EOL
+ + for l = "dead" + EOL, c ∈ newunreached do l + print.c /for(l)
  + EOL
- + for l ="deadin" + EOL, c ∈ dead do l + print.c /for(l)
+ + for l = "deadin" + EOL, c ∈ dead do l + print.c /for(l)
  + EOL
- + for l ="olddead" + EOL, c ∈ cases do l + print.nodeno.c /for(l)
+ + for l = "olddead" + EOL, c ∈ cases do l + print.nodeno.c /for(l)
  + EOL
  + print.nonewnodes
  + EOL
@@ -197,34 +197,34 @@ do
   { isbr }
   let t = count + brt.sym
   let f = count + brf.sym
-  let c =
+  let c = 
    if t ∈ targets then 1 else 0 /if + if f ∈ targets then 2 else 0
-  let newcases =
+  let newcases = 
    if n ∉ multpred ∧ code_(n - 1) = EqOp ∧ isconst.code_(n - 2)then cases + count else cases
-  let newtargets =
+  let newtargets = 
    if c = 0 then targets + t + f
    else if c = 1 then targets + f else if c = 2 then targets + t else targets
-  let newmultpred =
+  let newmultpred = 
    if c = 0 then multpred
    else if c = 1 then multpred + t
    else if c = 2 then multpred + f else multpred + t + f
   next(unreached, newmultpred, newcases, newtargets, count + 1)
 /for(assert true
-report"casenodes" + for l ="", c ∈ cases do l + print.c /for(l)
+report"casenodes" + for l = "", c ∈ cases do l + print.c /for(l)
 + "unreached"
-+ for l ="", c ∈ unreached do l + print.c /for(l)
++ for l = "", c ∈ unreached do l + print.c /for(l)
 + "targets"
-+ for l ="", c ∈ toseq.targets do l + print.c /for(l)
++ for l = "", c ∈ toseq.targets do l + print.c /for(l)
 + "multpred"
-+ for l ="", c ∈ multpred do l + print.c /for(l)
++ for l = "", c ∈ multpred do l + print.c /for(l)
 + EOL
 + print.code
 if length.nodes - 3 = length.unreached ∧ isstart.code_(-first.nodes)then
  { just two active nodes which must be a branch follow by an exit.so remove block }
- let blkstart =-first.nodes
+ let blkstart = -first.nodes
  let secondnode = code_(nodes_2)
  let firstpart = subseq(code, blkstart + 1, nodes_2 - 1)
- let firstpart1 =
+ let firstpart1 = 
   if length.firstpart = 1 ∧ (isconst.firstpart_1 ∨ islocal.firstpart_1)then empty:seq.symbol
   else firstpart + Define.100000
  subseq(code, 1, blkstart - 1) + firstpart1
@@ -256,18 +256,18 @@ for acc = empty:seq.symbol, stk = empty:stack.int, nextvar = length.s, lastsymbo
   let noblocks = countnodes.stk
   let nodes = top(stk, noblocks)
   let stk1 = pop(stk, noblocks)
-  let blkstart =-first.nodes
+  let blkstart = -first.nodes
   if isloopblock.acc_blkstart ∨ sym ≠ Exit ∧ not.isbr.sym then
    let code0 = unreached(acc, nodes, nextvar, reorgwhen)
    next(code0 + sym, newstk(sym, stk1, code0), nextvar + 1, sym)
   else if isbr.sym then
-   { assert noblocks ≠ 4 report"X"+ print.noblocks + print.length.s }
+   { assert noblocks ≠ 4 report"X"+print.noblocks+print.length.s }
    { adjust br in enclosing block }
    let code0 = adjustbr(acc, top(stk1, countnodes.stk1 - 1), noblocks - 2)
    { remove start of block }
    let code1 = subseq(code0, 1,-first.nodes - 1) + subseq(code0,-first.nodes + 1, length.code0)
    { replace exit by br sym }
-   let t =
+   let t = 
     for code2 = code1, stk2 = stk1, adjust = noblocks - 2, n1 ∈ nodes << 1 do
      let n = n1 - 1
      next(if code2_n = Exit then
@@ -303,16 +303,16 @@ if isstartorloop.sym then push(stk,-length.acc - 1)
 else if isexit.sym ∨ iscontinue.sym ∨ isbr.sym then push(stk, length.acc + 1)else stk
 
 function tailR(code:seq.symbol, self:symbol, stk:stack.int)seq.symbol
-let l =
+let l = 
  for l = empty:seq.int, ss ∈ toseq.stk do
   if ss > 0 ∧ code_ss = Exit ∧ code_(ss - 1) = self then [ ss] + l else l
  /for(l)
 if isempty.l then code
 else
  let nopara = nopara.self
- let plist =
+ let plist = 
   for acc = empty:seq.symbol, e2 ∈ arithseq(nopara, 1, 1)do acc + Local.e2 /for(acc)
- let code2 =
+ let code2 = 
   for code2 = code, i ∈ l do subseq(code2, 1, i - 2) + continue.nopara + subseq(code2, i + 1, length.code2)/for(code2)
  plist + Loopblock(paratypes.self, nopara + 1, resulttype.self) + adjustvar(code2 << 1, nopara)
 

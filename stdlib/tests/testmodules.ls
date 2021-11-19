@@ -50,7 +50,7 @@ check(y,"testmodules") + checkbits
 
 function print(a:seq.int)seq.word
 "["
-+ for acc ="", @e ∈ a do acc + toword.@e + ","/for(acc >> 1)
++ for acc = "", @e ∈ a do acc + toword.@e + ","/for(acc >> 1)
 + "]"
 
 ---
@@ -75,7 +75,7 @@ else
  + if nosons.t = 1 then"." + print.t_1
  else
  "("
-  + for acc ="", @e ∈ sons.t do acc + "," + print.@e /for(acc >> 1)
+  + for acc = "", @e ∈ sons.t do acc + "," + print.@e /for(acc >> 1)
   + ")"
 
 function t502 boolean [ GT, EQ, EQ] = [ tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree.1]
@@ -101,10 +101,10 @@ function n7 int 7
 function n8 int 8
 
 function t505 boolean
-let g =
+let g = 
  newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6)
  , arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
-let r =
+let r = 
  print.g + "transversal" + print.sinksfirst.g + "Suc"
  + print.toseq.successors(g, n2)
  + "sinks"
@@ -118,12 +118,12 @@ closure = toseq.arcs.transitiveClosure.g
 
 function print(g:graph.int)seq.word
 "GRAPH:"
-+ for acc ="", @e ∈ toseq.arcs.g do acc + print.@e /for(acc)
++ for acc = "", @e ∈ toseq.arcs.g do acc + print.@e /for(acc)
 
 function print(a:arc.int)seq.word"(" + toword.tail.a + toword.head.a + ")"
 
 function t508 boolean
-let s =
+let s = 
  for acc = constantseq(100, 0)
  , i ∈ for acc = empty:seq.int, e ∈ randomseq(3456, 100001)do acc + (e mod 100 + 1)/for(acc)
  do replace(acc, i, acc_i + 1)/for(acc)
@@ -139,7 +139,7 @@ Function t507 boolean"The umber ant ambles the opal nurse" = getphrase.20
 function t044 boolean
 let s = UTF8.[ tobyte.40, tobyte.50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
 let z = myseq.for acc = empty:seq.int, @e ∈ toseqbyte.s do acc + toint.@e /for(acc)
-for acc ="", @e ∈ z do acc + toword.@e /for(acc)
+for acc = "", @e ∈ z do acc + toword.@e /for(acc)
 = "40 50 335 50 336"
 ∧ length.toseq.to:myseq.int(z) ≠ 0
 ∧ length.toseq.to:myseq.int([ 1, 2, 3]) = 0

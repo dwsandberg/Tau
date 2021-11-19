@@ -18,7 +18,7 @@ type UTF8 is toseqbyte:seq.byte
 
 Function length(a:UTF8)int length.toseqbyte.a
 
-Function_(a:UTF8, i:int)byte(toseqbyte.a)_i
+Function _(a:UTF8, i:int)byte(toseqbyte.a)_i
 
 Export type:UTF8
 
@@ -127,7 +127,7 @@ if length.s > 2 ∧ s_2 ∈ decodeword.first."Xx"then
  /for(b)
 else
  let validdigits = decodeword.first."0123456789"
- let val =
+ let val = 
   for val = 0, c ∈ s do
    let i = binarysearch(validdigits, c)
    if i > 0 then val * 10 - (i - 1)
@@ -154,11 +154,11 @@ for acc = empty:seq.char, @e ∈ a do acc + char.@e /for(acc)
 _________________
 
 Function print(decimals:int, rin1:real)seq.word
-let neg =(rin1 ? toreal.0) = LT
+let neg = (rin1 ? toreal.0) = LT
 let rin = if neg then toreal.0 - rin1 else rin1
 let a = 10^decimals
 let r = rin + 1.0 / toreal(a * 2)
-let r2 =
+let r2 = 
  if decimals > 0 then
   [ toword.intpart.r
   ,"."_1
@@ -180,7 +180,12 @@ else
 Function reallit(s:UTF8)real reallit(decodeUTF8.s,-1, 1, 0, 1)
 
 Function makereal(w:seq.word)real
-reallit(for acc = empty:seq.char, @e ∈ w do acc + decodeword.@e /for(acc),-1, 1, 0, 1)
+reallit(for acc = empty:seq.char, @e ∈ w do acc + decodeword.@e /for(acc)
+,-1
+, 1
+, 0
+, 1
+)
 
 function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
 if i > length.s then

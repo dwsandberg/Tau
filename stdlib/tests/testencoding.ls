@@ -52,7 +52,7 @@ function identity(a:testdeep)testdeep a
 
 function deepcopytest(a:int)int a
 
-Export +(i:int, b:int)int
+Export+(i:int, b:int)int
 
 function =(a:testrecord, b:testrecord)boolean key.a = key.b
 
@@ -82,7 +82,7 @@ let p = process.process1
 if aborted.p then"Failed encoding" + message.p
 else
  let s1 = list.result.p
- let z =
+ let z = 
   for acc = 0, @e ∈ ["firstadd","secondadd"]do acc + add.@e /for(acc)
  let s2 = list.result.process.process1
  let s3 = list.encoding:seq.encodingpair.testrecord
@@ -97,8 +97,10 @@ else
  )
 
 Function process1 seq.encodingpair.testrecord
-let discard =
- for acc = 0, @e ∈ ["A1","B2","C3","D4","E5"]do acc + add.@e /for(acc)
+let discard = 
+ for acc = 0
+ , @e ∈ ["A1","B2","C3","D4","E5"]
+ do acc + add.@e /for(acc)
 encoding:seq.encodingpair.testrecord
 
 Function nextpower(i:int, base:int, start:int)int

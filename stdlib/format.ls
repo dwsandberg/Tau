@@ -20,13 +20,13 @@ use stack.seq.word
 
 function changestate(state:int, ele:word, idx:int, early:boolean)int
 let start = 0
-let startname =-1
-let extendname =-2
-let findend =-3
-let extendtype =-4
-let extendtype2 =-5
-let incomment =-6
-let unknown =-7
+let startname = -1
+let extendname = -2
+let findend = -3
+let extendtype = -4
+let extendtype2 = -5
+let incomment = -6
+let unknown = -7
 if state > 0 then state
 else if state = start then startname
 else if state = startname then extendname
@@ -43,7 +43,7 @@ else unknown
 
 Function getheader(s:seq.word)seq.word
 let istype = subseq(s, 1, 3) = "Export type:"
-let t =
+let t = 
  for state = 0, idx = 1, ele ∈ s while state ≤ 0 do next(changestate(state, ele, idx, istype), idx + 1)/for(state)
 let theend = if t < 1 then length.s else t
 if istype then
@@ -53,11 +53,8 @@ else subseq(s, 1, theend) + "stub"
 
 Function htmlheader seq.word
 { the format of the meta tag is carefully crafted to get math unicode characters to display correctly }
-"<meta"
-+ merge.' http-equiv ="Content-Type"'
-+ ' content ="text/html; '
-+ merge."charset = utf-8"
-+ '"> <style type ="text/css"> <!--span.avoidwrap { display:inline-block ; } '
+' <meta http-equiv="Content-Type"content="text/html"; charset="utf-8"> '
++ ' <style type="text/css"> <!--span.avoidwrap { display:inline-block ; } '
 + ' span.keyword { color:blue ; } span.keywords { color:blue ; } '
 + ' span.literal { color:red ; } span.comment { color:green ; } '
 + ' span.block { padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ; } '
@@ -78,17 +75,17 @@ let lastbreak = lastbreak.state
 let result = result.state
 let matchthis = matchthis.state
 let instring = instring.state
-let newinstring =
+let newinstring = 
  if instring then this ≠ matchthis
  else this = "//"_1 ∨ this = "'"_1 ∨ this = '"'_1
 let newmatchthis = if instring then matchthis else this
-let c =
+let c = 
  if newinstring then 0
  else if this ∈ "if then else let assert function Function type"then 1
  else if this ∈ "report"then 2
  else if lastbreak > 20 ∧ this ∈ ")]" ∨ lastbreak > 40 ∧ this ∈ ","then 3
  else if lastbreak > 20 ∧ this ∈ "["then 4 else 5
-let newresult =
+let newresult = 
  if instring then
   if this = matchthis then result + this + " />"else result + this
  else if c = 0 then
@@ -108,12 +105,9 @@ pnpstate(newlastbreak, newresult, newmatchthis, newinstring)
 
 _____________________________
 
-Function HTMLformat(output:seq.word) UTF8 processpara(emptyUTF8,output)
+Function HTMLformat(output:seq.word)UTF8 processpara(emptyUTF8, output)
 
-Function textformat(output:seq.word) UTF8 processtotext(emptyUTF8, output) 
-
+Function textformat(output:seq.word)UTF8 processtotext(emptyUTF8, output)
 
 Function toUTF8bytes(output:seq.word)seq.byte
-toseqbyte.processpara(emptyUTF8," /< noformat" + htmlheader + " />" + output)
-
-Function toUTF8textbytes(output:seq.word)seq.byte toseqbyte.processtotext(emptyUTF8, output) 
+toseqbyte.processpara(emptyUTF8," /< noformat" + htmlheader + " />" + output) 

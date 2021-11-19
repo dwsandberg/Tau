@@ -18,7 +18,7 @@ use seq.baryinfo.T
 
 use seq.seq.T
 
-unbound =(T, T)boolean
+unbound=(T, T)boolean
 
 type baryinfo is avg:real, node:T
 
@@ -32,7 +32,7 @@ let a = for acc = 0, @e ∈ pred do acc + findindex(@e, layer1)/for(acc)
 baryinfo(toreal.a / toreal.length.pred, node)
 
 function baryinfo(g:graph.T, layer1:seq.T, layer2:seq.T)seq.T
-let a =
+let a = 
  for acc = empty:seq.baryinfo.T, @e ∈ layer2 do acc + averagepred(g, layer1, @e)/for(acc)
 for acc = empty:seq.T, @e ∈ sort.a do acc + node.@e /for(acc)
 

@@ -51,11 +51,11 @@ else
  for acc = [ Lit.0, Lit.length.s], @e ∈ s do acc + tocode(@e, parameter.typ)/for(acc)
 
 function aswords(s:seq.int)seq.word
-for acc ="", @e ∈ s do acc + wordencodingtoword.@e /for(acc)
+for acc = "", @e ∈ s do acc + wordencodingtoword.@e /for(acc)
 
 Function interpret(alltypes:typedict, code:seq.symbol)seq.word aswords.bitcast.interpret(code, 1, empty:stack.int)
 
-let p = process.interpret(code, 1, empty:stack.int)if aborted.p then message.p else aswords.bitcast.result.p
+let p=process.interpret(code, 1, empty:stack.int)if aborted.p then message.p else aswords.bitcast.result.p
 
 Function buildargcodeI(sym:symbol)int
 { needed because the call interface implementation for reals is different than other types is some implementations }
@@ -83,7 +83,7 @@ else
  else if wordname.sym = "makereal"_1 ∧ name.module.sym ∈ "UTF8"then
   interpret(code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
  else
-  { if isFref.sym then interpret(code, i + 1, push(stk, funcaddress.basesym.sym))else }
+  { if isFref.sym then interpret(code, i+1, push(stk, funcaddress.basesym.sym))else }
   let t = funcaddress.sym
   assert print.resulttype.sym ≠ "?"report"INTER" + print.sym + print.code
   let dcret = deepcopySym.resulttype.sym

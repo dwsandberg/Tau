@@ -8,11 +8,11 @@ type tree is label:T, sons:seq.tree.T
 
 Export type:tree.T
 
-unbound =(T, T)boolean
+unbound=(T, T)boolean
 
 Function =(a:tree.T, b:tree.T)boolean if label.a = label.b then sons.a = sons.b else false
 
-Export =(a:seq.tree.T, b:seq.tree.T)boolean
+Export=(a:seq.tree.T, b:seq.tree.T)boolean
 
 Function tree(l:T)tree.T tree(l, empty:seq.tree.T)
 
@@ -22,7 +22,7 @@ Export sons(t:tree.T)seq.tree.T
 
 Export tree(l:T, s:seq.tree.T)tree.T
 
-Function_(t:tree.T, i:int)tree.T(sons.t)_i
+Function _(t:tree.T, i:int)tree.T(sons.t)_i
 
 Function nosons(t:tree.T)int length.sons.t
 

@@ -42,7 +42,8 @@ Function sources2(g:graph.T, b:set.T, n:T)set.T
 if cardinality(predecessors(g, n) \ b) = 0 then asset.[ n]else empty:set.T
 
 function ordernodes(g:graph.T, b:set.T, first:seq.T, last:seq.T)seq.T
-let a = for acc = empty:set.T, @e ∈ toseq(nodes.g \ b)do acc ∪ sources2(g, b, @e)/for(acc)
+let a = 
+ for acc = empty:set.T, @e ∈ toseq(nodes.g \ b)do acc ∪ sources2(g, b, @e)/for(acc)
 let d = for acc = empty:set.T, @e ∈ toseq(nodes.g \ b)do acc ∪ sinks2(g, b, @e)/for(acc)
 if cardinality.a + cardinality.d = 0 then
  let u = nodes.g \ b

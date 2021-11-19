@@ -1,4 +1,11 @@
-#!/usr/local/bin/tau ; use doc ; createdoc
+#!/usr/local/bin/tau ; use wordgraph; testgraph
+
+; use doc ; doclibrary."stdlib"
+
+
+; use doc; usegraph("stdlib usegraph include main2 compilerfront passsymbol postbind  exclude    graph     bits  process set seq otherseq standard textio words")
+
+; use doc ; doclibrary."stdlib"
 
 ; use doc ; createdoc
 
@@ -15,8 +22,6 @@
 ; use doc ; createdoc
 
 Module doc
-
- 
 
 use format
 
@@ -118,13 +123,6 @@ use seq.arc.symbol
 use graph.symbol
 
 use svg2graph.symbol
- 
-display.for acc = empty:seq.arcinfo.seq.word, @e ∈ toseq.arcs.newgraph.arcs do acc + toarcinfo.@e /for(acc)
-
-/function toarcinfo(a:arc.symbolref)arcinfo.seq.word 
-arcinfo(print.decode.tail.a, print.decode.head.a,"")
-
-
 
 Function formcallarcs(libname:seq.word)seq.arc.symbol 
 for arcs2 = empty:seq.arc.symbol, p ∈ prg.compilerfront("text", libname)do
@@ -153,33 +151,10 @@ drawgraph.g2
 
 use set.symbol
 
- Function usegraph(g:graph.word, include:seq.word, exclude:seq.word)seq.word  
-let g1 =
- exclude + for acc ="", @e ∈ exclude do acc + addabstractpara.@e /for(acc)
-let g2 = for acc = g, @e ∈ g1 do deletenode(acc, @e)/for(acc)
-let g3 =
- if include = ""then g2
- else
-  let a =
-   include + for acc ="", @e ∈ include do acc + addabstractpara.@e /for(acc)
-  let b = for acc = empty:set.arc.word, @e ∈ a do acc ∪ arcstosuccessors(g2, @e)/for(acc)
-   newgraph.toseq.b
-   ""
-   
-   drawgraph(g3 )  
-    
-   
+  
 
- 
- use svg2graph.word
- 
- function nodeTitle(word)seq.word ""
- 
- function node2text(a:word) seq.word [a]
- 
- function generatenode(a:set.word)word toword.cardinality.a
 
-function addabstractpara(w:word)word merge([ w] + ".T")
+use wordgraph
 
 Function testdoc seq.word { callgraphwithin("stdlib","llvm")+ } doclibrary."stdlib"
 
@@ -191,8 +166,8 @@ let todoc =
  for acc ="", s ∈ liba do
   if subseq(s, 1, 3) = "* only document"then acc + subseq(s, 4, length.s)else acc
  /for(if isempty.acc then exports else acc /if)
-let g = newgraph.usegraph(liba,"mod"_1, 1,"?"_1, empty:seq.arc.word)
- modindex.todoc + docmodule(g, exports, todoc, liba, 1,"","","")
+let g = newgraph.usegraph(liba,"mod"_1)
+ modindex.todoc + docmodule(g, exports, todoc, liba)
   
 
 function modindex(mods:seq.word)seq.word
@@ -213,87 +188,8 @@ for txt ="", modname ∈ mods do
  will be construction including and excluding the modules listed. Both the exclude and include are optional, but for a large 
  library should be used to restrict the size of the graph. An example of a use graph is included at the end of this module.
 
-function plist(t:seq.word, i:int, parano:int, names:seq.word)seq.word
-if i = 1 then
- if length.names > 0 then
- "("
-  + if names_parano = ":"_1 then""else [ names_parano] + ":"/if
-  + t_i
-  + plist(t, i + 1, parano + 1, names)
- else t
-else if t_i = ".a"_1 ∨ t_i = ". a"_1 then
- subseq(t, i, i + 1) + plist(t, i + 2, parano, names)
-else if parano ≤ length.names then
-","
- + if names_parano = ":"_1 then""else [ names_parano] + ":"/if
- + t_i
- + plist(t, i + 1, parano + 1, names)
-else")" + subseq(t, i, length.t)
 
-function docmodule(usegraph:graph.word
-, exports:seq.word
-, todoc:seq.word
-, lib:seq.seq.word
-, i:int
-, currentmod:seq.word
-, funcs:seq.word
-, types:seq.word
-)seq.word
-if i > length.lib then
- if length.types > 0 ∨ length.funcs > 0 then" /br defines types: " + types + funcs
- else""
-else if length.lib_i = 0 then docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
-else if lib_i_1 ∈ "module Module"then
- let modname = lib_i_2
- if not(modname ∈ todoc ∨ length.todoc = 0)then
-  docmodule(usegraph, exports, todoc, lib, i + 1,"", funcs, types)
- else
-  let leftover =
-   if length.types > 0 ∨ length.funcs > 0 then" /br defines types: " + types + funcs
-   else""
-  let name = [ modname] + if length.lib_i > 2 then".T"else""
-  leftover + '  /< noformat <hr id ="' + modname + '">  /> '
-  + " /< /section  /keyword module"
-  + name
-  + " />"
-  + if modname ∈ exports then"Module" + name + "is exported from library. "
-  else""/if
-  + " /br Module"
-  + name
-  + "is used in modules: "
-  + alphasort.for acc ="", @e ∈ toseq.arcstopredecessors(usegraph, merge.name)do acc + tail.@e /for(acc)
-  + docmodule(usegraph
-  , exports
-  , todoc
-  , lib
-  , i + 1
-  , subseq(lib_i, 2, length.lib_i)
-  ,""
-  ,""
-  )
-else if currentmod = ""then
- docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
-else if subseq(lib_i, 1, 1) = "*"then
- let a = lib_i
- let toadd =
- " /p"
-  + if a_2 = "usegraph"_1 then
-   let l = findindex("include"_1, a)
-   let k = findindex("exclude"_1, a)
-   usegraph(usegraph, subseq(a, l + 1, k), subseq(a, k + 1, length.a))
-  else subseq(a, 2, length.a)
- docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
-else if lib_i_1 ∈ "Function Export"then
- let z = getheader.lib_i
- let toadd =
- " /p  /keyword"
-  + if subseq(lib_i, length.z, length.z + 1) = "{ *"then
-   z >> 1 + "{" + subseq(lib_i, length.z + 2, findindex("}"_1, lib_i))
-  else if last.z ∈ "stub"then z >> 1 else z
- docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs + toadd, types)
-else if subseq(lib_i, 1, 1) = "type"then
- docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types + lib_i_2)
-else docmodule(usegraph, exports, todoc, lib, i + 1, currentmod, funcs, types)
+
 
 Function uncalledfunctions(libname:seq.word)seq.word
 { List of functions may include indirectly called functions. }
@@ -302,19 +198,127 @@ let sources =
  for acc = empty:seq.symbol , @e ∈ toseq.nodes.g do acc + sources(g, empty:set.symbol, @e)/for(acc)
 for acc ="", @e ∈ sources do acc + print.@e + " /br"/for(acc)
 
-* usegraph exclude stdlib seq set
+* usegraph exclude standard seq set UTF8 stack graph otherseq
 
-function usegraph(lib:seq.seq.word, kind:word, i:int, currentmod:word, result:seq.arc.word)seq.arc.word
-if i > length.lib then result
-else
- let key = if length.lib_i > 1 then lib_i_1 else"empty"_1
- if key ∈ "module Module"then
-  usegraph(lib, kind, i + 1, merge.subseq(lib_i, 2, length.lib_i), result)
- else if key = "use"_1 then
+function usegraph(lib:seq.seq.word, kind:word)seq.arc.word
+for      currentmod="?"_1,result=empty:seq.arc.word, p /in lib do
+   if isempty.p then next(currentmod,result)
+   else  if first.p ∈ "module Module"then
+        next( p_2,result)
+  else if first.p /in  "use" then
   let m =
-   if length.lib_i = 2 then lib_i_2
-   else if kind = "mod"_1 then merge([ lib_i_2] + ".T")
-   else merge.subseq(lib_i, 2, length.lib_i)
-  if currentmod = m then usegraph(lib, kind, i + 1, currentmod, result)
-  else usegraph(lib, kind, i + 1, currentmod, result + arc(currentmod, m))
- else usegraph(lib, kind, i + 1, currentmod, result) 
+   if length.p = 2 then p_2
+   else if kind = "mod"_1  then  p_2
+   else  merge.( p << 1)
+  next(currentmod,if currentmod = m /or currentmod /in "?" then result else  result + arc(currentmod, m))
+ else next( currentmod, result) 
+ /for(result)
+ 
+Function  usegraph(p:seq.word) seq.word
+  let i= findindex("usegraph"_1, p)
+  let lib=getlibrarysrc.subseq(p,1,i-1) 
+ let l = findindex("include"_1, p)
+   let k = findindex("exclude"_1, p)
+   let include=subseq(p, l + 1, k)
+   let exclude= subseq(p, k + 1, length.p)
+  for arclist=empty:seq.arc.word,    a /in usegraph(lib,"mod"_1)  do
+    if head.a /in exclude  /or not.isempty.include /and  tail.a /nin  include  then arclist
+     else arclist+a
+  /for(drawgraph(newgraph.arclist) ) 
+
+ 
+ 
+ function docmodule(usegraph:graph.word
+, exports:seq.word
+, todoc:seq.word
+, lib:seq.seq.word
+)seq.word
+for acc="",currentmod="?",funcs="",types="", p /in lib do 
+ if isempty.p then next(acc,currentmod,funcs,types)
+else if first.p ∈ "module Module"then
+ let modname = p_2
+ if  modname /nin todoc   then
+  next(acc,currentmod,funcs,types)
+ else
+  let leftover =
+   if length.types > 0 ∨ length.funcs > 0 then" /br defines types: " + types + funcs
+   else""
+  let name = [ modname] + if length.p > 2 then".T"else""
+ next(acc+ leftover + '  /< noformat <hr id ="' + modname + '">  /> '
+  + " /< /section  /keyword module"
+  + name
+  + " />"
+  + if modname ∈ exports then"Module" + name + "is exported from library. "
+  else""/if
+  + " /br Module"
+  + name
+  + "is used in modules: "
+  + alphasort.for acc2 ="", @e ∈ toseq.arcstopredecessors(usegraph, merge.name)do acc2 + tail.@e /for(acc2)
+  , subseq(p, 2, length.p)
+  ,""
+  ,""
+  )
+else if currentmod = ""then
+ next( acc,currentmod, funcs, types)
+else if length.p > 2 /and first.p /in "*" then
+   let toadd =
+ " /p"
+  + if p_2 = "usegraph"_1 then
+   let l = findindex("include"_1, p)
+   let k = findindex("exclude"_1, p)
+   let include=subseq(p, l + 1, k)
+   let exclude= subseq(p, k + 1, length.p)
+  for arclist=empty:seq.arc.word,    a /in toseq.arcs.usegraph  do
+    if head.a /in exclude  /or not.isempty.include /and  tail.a /nin  include  then arclist
+     else arclist+a
+  /for(drawgraph(newgraph.arclist) ) 
+  else subseq(p, 2, length.p)
+ next( acc,currentmod, funcs + toadd, types)
+else if first.p ∈ "Function Export"then
+ let z = getheader.p
+ let toadd =
+ " /p  /keyword"
+  + if subseq(p, length.z, length.z + 1) = "{ *"then
+   z >> 1 + "{" + subseq(p, length.z + 2, findindex("}"_1, p))
+  else if last.z ∈ "stub"then z >> 1 else z
+ next( acc,currentmod, funcs + toadd, types)
+else if first.p /in  "type" then
+ next( acc, currentmod, funcs, types + p_2)
+else next( acc, currentmod, funcs, types)
+/for(acc+if not.isempty.types ∨ not.isempty.funcs   then" /br defines types: " + types + funcs
+ else"")
+ 
+
+ 
+ module wordgraph 
+ 
+ use standard
+ 
+ use set.word
+ 
+ use graph.word
+ 
+  use svg2graph.word
+  
+  use seq.arc.word
+ 
+ function nodeTitle(word)seq.word ""
+ 
+ function node2text(a:word) seq.word [a]
+ 
+ function generatenode(a:set.word)word toword.cardinality.a
+ 
+ 
+ Export drawgraph(g:graph.word) seq.word 
+ 
+ 
+  Function  testgraph seq.word
+  let data= "parse mytype parse parsersupport parse format parse symboldict main2 libraryModule main2 process main2 timestamp main2 compilerfront main2 codegennew main2 format main2 interpreter passsymbol mytype passsymbol parse passsymbol symboldict typedict mytype pass2 localmap2 pass2 mergeblocks pass2 interpreter postbind mytype postbind localmap2 postbind passsymbol postbind typedict postbind symref postbind symboldict passparse mytype passparse parse passparse passsymbol passparse typedict passparse symboldict
+ "
+    let none=first."."
+      for arcs=empty:seq.arc.word,  last=none,  w /in data+"." do 
+      if last=none then 
+         next(arcs,w)
+      else 
+         next(arcs+arc(last,w),none)
+         /for( drawgraph.newgraph.arcs)

@@ -31,17 +31,17 @@ enumerate("align","unspecified ? ? ? align8 align16 align32 align64")
 function enumerate(type:seq.word, codes:seq.word)seq.word
 "type" + type + "is toint:int" + " /br  /br Function decode(code:" + type
 + ")seq.word"
-+ " /br let i = toint.code  /br if between(i + 1, 1,"
++ " /br let i=toint.code  /br if between(i+1, 1,"
 + toword.length.codes
 + ")then"
-+ '  /br let r = ["'
++ '  /br let r=["'
 + codes
-+ '"_(i + 1)]if not(r ="?")then r else"'
++ '"_(i+1)]if not(r="?")then r else"'
 + type
-+ '."+ toword.i '
++ '."+toword.i '
 + '  /br else"'
 + type
-+ '."+ toword.i '
++ '."+toword.i '
 + " /br  /br Export toint("
 + type
 + ")int"
@@ -51,12 +51,12 @@ function enumerate(type:seq.word, codes:seq.word)seq.word
 + type
 + " /br  /br Export type:"
 + type
-+ " /br  /br Function =(a:"
++ " /br  /br Function=(a:"
 + type
 + ", b:"
 + type
-+ ")boolean toint.a = toint.b"
-+ for acc ="", @e ∈ arithseq(length.codes, 1, 1)do acc + dd(type, codes, @e)/for(acc)
++ ")boolean toint.a=toint.b"
++ for acc = "", @e ∈ arithseq(length.codes, 1, 1)do acc + dd(type, codes, @e)/for(acc)
 + " /br  /br"
 
 function dd(type:seq.word, w:seq.word, i:int)seq.word
@@ -97,7 +97,7 @@ type instop is toint:int
 Function decode(code:instop)seq.word
 let i = toint.code
 if between(i + 1, 1, 45)then
- let r =
+ let r = 
   ["? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
   _(i + 1)
   ]
@@ -236,7 +236,7 @@ type constop is toint:int
 Function decode(code:constop)seq.word
 let i = toint.code
 if between(i + 1, 1, 23)then
- let r =
+ let r = 
   ["? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA 
 "
   _(i + 1)

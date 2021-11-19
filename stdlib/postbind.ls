@@ -109,7 +109,7 @@ function usedsyms(allsyms:symboldict
 )postbindresult
 let aa = encoding:seq.encodingpair.symbol
 if length.aa = last then
- { assert false report"INLINE"+ for txt ="", sd = toseq.inline do txt + print.sym.sd + print.code.sd + EOL /for(txt)}
+ { assert false report"INLINE"+for txt="", sd=toseq.inline do txt+print.sym.sd+print.code.sd+EOL /for(txt)}
  postbindresult(typedict1, result, inline)
 else
  for accZ = postbindresult(typedict1, result, inline), pp ∈ subseq(aa, last + 1, length.aa)do
@@ -118,7 +118,7 @@ else
   else
    let newdict2 = addtype(typedict.accZ, resulttype.symz)
    let lr1 = getCode(source, symz)
-   let sd =
+   let sd = 
     if not.isempty.lr1 ∨ iscompiled(lr1, symz)then symdef(symz, lr1)
     else if istype.symz then symdef(symz, deepcopybody(resulttype.symz, newdict2))
     else if not.isunbound.symz then instantiateTemplate(symz, templates)
@@ -134,7 +134,7 @@ else
    let newdict3 = addtypes(newdict2, asset(code.sd + sym.sd))
    {------------}
    let modpara = para.module.sym.sd
-   let pdict =
+   let pdict = 
     for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.sym.sd, 1, 1)do pmap + localmap2(parano, [ Local.parano])/for(pmap)
    for cache = empty:set.symdef
    , nextvar = nopara.sym.sd + 1
@@ -150,10 +150,10 @@ else
      next(cache, nextvar, map, result2 + t)
     else if isconst.sym then next(cache, nextvar, map, result2 + sym)
     else if name.sym ∈ "primitiveadd" ∧ isBuiltin.sym then
-     { let encodingtype = typeref."encoding encoding stdlib"}
+     { let encodingtype=typeref."encoding encoding stdlib"}
      let encodingstatetype = typeref."encodingstate encoding stdlib"
      let encodingpairtype = typeref."encodingpair encoding stdlib"
-     let addefunc =
+     let addefunc = 
       symbol(moduleref("stdlib encoding", para.module.sym)
       ,"add"
       , [ addabstract(encodingstatetype, para.module.sym)
@@ -170,14 +170,14 @@ else
     else if name.sym ∈ "getinstance" ∧ isBuiltin.sym then
      let get = symbol(internalmod,"getinstance", typeint, typeptr)
      let typ = para.module.sym
-     let gl =
+     let gl = 
       symbol4(moduleref."internallib $global"
       ,"global"_1
       , typ
       , empty:seq.mytype
       , seqof.typeint
       )
-     let encodenocode =
+     let encodenocode = 
       if typ = typeref."typename tausupport stdlib"then [ Lit.2]
       else if typ = seqof.typechar then [ Lit.1]
       else
@@ -223,8 +223,6 @@ else
    ))
  /for(usedsyms(allsyms, source, length.aa, prg.accZ, templates, typedict.accZ, inline.accZ))
 
-use otherseq.mytype
-
 function test(symx:symbol, newdict3:typedict, modpara:mytype, inline:set.symdef)seq.symbol
 let sym = replaceTsymbol(modpara, symx)
 if isspecial.sym then
@@ -244,21 +242,26 @@ else if name.sym ∈ "bitcast toptr"then
  let b = coretype(resulttype.sym, newdict3)
  if a = b then empty:seq.symbol else [ symbol(internalmod,"bitcast", a, b)]
 else if name.sym ∈ "processresult"then [ Lit.2, Getfld.coretype(para.module.sym, newdict3)]
-else if name.sym ∈ "typestructure" then
-     let roottype=para.module.sym
-      let tmp=for acc=empty:seq.seq.mytype ,row /in asseqseqmytype.subdict(newdict3,roottype) do 
-     if first.row=roottype then   [row]+acc   else  acc+row 
-   /for(acc)
-   { root type is now first row in tmp}
-     for acc=empty:seq.symbol, row /in tmp do
-      acc+for accrow=empty:seq.symbol , t /in row do
-             let fp=fullprint.t
-            accrow+for acctype=empty:seq.symbol,idx=1, w /in fp do 
-              next(acctype+if idx < 3 then [Word.w] else [Word.w,Record([typeword,typeword,typeword])],
-                if idx=3 then 1 else idx+1)
-            /for( acctype+Sequence(typeword, length.fp / 3 )) 
-      /for (accrow+Sequence(seqof.typeptr,length.row))
-    /for (acc+Sequence(typeptr,length.tmp))  
+else if name.sym ∈ "typestructure"then
+ let roottype = para.module.sym
+ let tmp = 
+  for acc = empty:seq.seq.mytype, row ∈ asseqseqmytype.subdict(newdict3, roottype)do
+   if first.row = roottype then [ row] + acc else acc + row
+  /for(acc)
+ { root type is now first row in tmp }
+ for acc = empty:seq.symbol, row ∈ tmp do
+  acc
+  + for accrow = empty:seq.symbol, t ∈ row do
+   let fp = fullprint.t
+   accrow
+   + for acctype = empty:seq.symbol, idx = 1, w ∈ fp do
+    next(acctype
+    + if idx < 3 then [ Word.w]else [ Word.w, Record.[ typeword, typeword, typeword]]
+    , if idx = 3 then 1 else idx + 1
+    )
+   /for(acctype + Sequence(typeword, length.fp / 3))
+  /for(accrow + Sequence(seqof.typeptr, length.row))
+ /for(acc + Sequence(typeptr, length.tmp))
 else
  [ if name.sym ∈ "buildrecord"then
   let t = flatflds(newdict3, para.module.sym)
@@ -284,13 +287,13 @@ else
  else if name.sym ∈ "getseqtype"then GetSeqType
  else if name.sym ∈ "set"then setSym.coretype(para.module.sym, newdict3)
  else if name.sym = "forexp"_1 then
-  let paras =
+  let paras = 
    for acc = empty:seq.mytype, p ∈ paratypes.sym do
     acc + if"$base"_1 ∈ print.p then p else basetype(p, newdict3)
    /for(acc)
   symbol(moduleref."internallib builtin","forexp", paras, last.paras)
  else if name.sym = "createthreadY"_1 then
-  let paras =
+  let paras = 
    for paras = empty:seq.mytype, p ∈ paratypes.sym do paras + coretype(p, newdict3)/for(paras)
   let rt = processof.coretype(parameter.resulttype.sym, newdict3)
   symbol(builtinmod.rt,"createthreadY", paras, typeptr)
@@ -313,9 +316,11 @@ function instantiateTemplate(sym2:symbol, templates:set.symdef)symdef
 if issimple.module.sym2 then symdef(sym2, empty:seq.symbol)
 else
  let gx = findabstract(templates, sym2)
- assert length.gx = 1 report"Cannot find template for X" + print.length.gx + print.sym2
- + if isempty.gx then "" else for txt="",k /in gx do  txt+EOL+print.sym.sd.k+print.modpara.k
- /for(txt)
+ assert length.gx = 1
+ report"Cannot find template for X" + print.length.gx + print.sym2
+ + if isempty.gx then""
+ else
+  for txt = "", k ∈ gx do txt + EOL + print.sym.sd.k + print.modpara.k /for(txt)
  for newcode = empty:seq.symbol, sym4 ∈ code.sd.gx_1 do newcode + replaceTsymbol(modpara.gx_1, sym4)/for(symdef(sym2, newcode))
 
 function iscoretype(typ:mytype)boolean
@@ -333,13 +338,13 @@ else if isseq.type then
  else
   let cat = symbol(tomodref.type,"+", [ type, parameter.type], type)
   let resulttype = basetype
-  let element =
+  let element = 
    symbol(moduleref("internallib $for", elementtype)
    ,"element"
    , empty:seq.mytype
    , elementtype
    )
-  let acc =
+  let acc = 
    symbol(moduleref("internallib $for", typeptr),"acc", empty:seq.mytype, typeptr)
   [ Sequence(elementtype, 0)]
   + [ Local.1
@@ -367,136 +372,4 @@ else
   for fldno = 1, fldkinds = empty:seq.mytype, result = empty:seq.symbol, fldtype ∈ subflds do
    let kind = basetype(fldtype, typedict)
    next(fldno + 1, fldkinds + kind, result + [ Local.1, Lit(fldno - 1), Getfld.kind, deepcopySym.fldtype])
-  /for(result + [ Record.fldkinds])
-
-Module localmap2
-
-use standard
-
-use symbol
-
-use hashset.localmap2
-
-use seq.localmap2
-
-use set.localmap2
-
-use seq.symbol
-
-type localmap2 is key:int, value:seq.symbol
-
-Export type:localmap2
-
-Export type:hashset.localmap2
-
-Export localmap2(key:int, value:seq.symbol)localmap2
-
-Export key(localmap2)int
-
-Export value(localmap2)seq.symbol
-
-Export empty:set.localmap2 set.localmap2
-
-Export isempty(set.localmap2)boolean
-
-Export_(set.localmap2, int)localmap2
-
-Export +(set.localmap2, localmap2)set.localmap2
-
-Export ∪(localmap2, set.localmap2)set.localmap2
-
-Function lookup(a:set.localmap2, key:int)set.localmap2 lookup(a, localmap2(key, empty:seq.symbol))
-
-Function =(a:localmap2, b:localmap2)boolean key.a = key.b
-
-Function hash(a:localmap2)int hash.key.a
-
-Function ?(a:localmap2, b:localmap2)ordering key.a ? key.b
-
-Export empty:hashset.localmap2 hashset.localmap2
-
-Export isempty(seq.localmap2)boolean
-
-Export_(seq.localmap2, int)localmap2
-
-Export +(hashset.localmap2, localmap2)hashset.localmap2
-
-Export ∪(localmap2, hashset.localmap2)hashset.localmap2
-
-Function lookup(a:hashset.localmap2, key:int)seq.localmap2 lookup(a, localmap2(key, empty:seq.symbol))
-
-Module hashset.T
-
-use bits
-
-use standard
-
-use seq.T
-
-use seq.hashelement.T
-
-use otherseq.seq.hashelement.T
-
-use seq.seq.hashelement.T
-
-type hashelement is data:T, hash:int
-
-type hashset is cardinality:int, table:seq.seq.hashelement.T
-
-Export type:hashset.T
-
-Export type:hashelement.T
-
-Export type:seq.seq.hashelement.T
-
-Export cardinality(hashset.T)int
-
-Function empty:hashset.T hashset.T
-let x = empty:seq.hashelement.T
-hashset(0, [ x, x, x, x])
-
-unbound =(a:T, b:T)boolean
-
-unbound hash(T)int
-
-Function lookup(s:hashset.T, ele:T)seq.T
-let h = hash.ele
-for acc = empty:seq.T, e ∈(table.s)_(h mod length.table.s + 1)do if data.e = ele then acc + data.e else acc /for(acc)
-
-Function toseq(h:hashset.T)seq.T
-let tablesize = length.table.h
-let mask = bits.-1 >> (65 - floorlog2.tablesize)
-for acc = empty:seq.T, idx ∈ arithseq(tablesize, 1, 1)do
- for acc2 = acc, e ∈(table.h)_idx do if(bits.hash.e ∧ mask) = bits(idx - 1)then acc2 + data.e else acc2 /for(acc2)
-/for(acc)
-
-function notsamehash(ele:T, a:int, b:int, mask:bits)boolean(bits.a ∧ mask) ≠ (bits.b ∧ mask)
-
-Function +(h:hashset.T, ele:T)hashset.T
-let tablesize = length.table.h
-let mask = bits.-1 >> (65 - floorlog2.tablesize)
-let hash = hash.ele
-let dataindex = toint(tobits.hash ∧ mask) + 1
-for acc = empty:seq.hashelement.T, found = false, e ∈(table.h)_dataindex do
- if data.e = ele then next(acc + e, true)
- else if notsamehash(ele, hash, hash.e, mask)then next(acc, found)else next(acc + e, found)
-/for(let t =
- replace(table.h, dataindex, if found then acc else [ hashelement(ele, hash)] + acc)
-hashset(if found then cardinality.h else cardinality.h + 1
-, if 3 * cardinality.h > 2 * tablesize then t + t + t + t else t
-))
-
-Function ∪(ele:T, h:hashset.T)hashset.T replace(h, hashelement(ele, hash.ele))
-
-function replace(h:hashset.T, ele:hashelement.T)hashset.T
-let tablesize = length.table.h
-let mask = bits.-1 >> (65 - floorlog2.tablesize)
-let hash = hash.ele
-let dataindex = toint(tobits.hash ∧ mask) + 1
-for acc = [ ele], found = false, e ∈(table.h)_dataindex do
- if data.e = data.ele then next(acc, true)
- else if notsamehash(data.ele, hash, hash.e, mask)then next(acc, found)else next(acc + e, found)
-/for(let t = replace(table.h, dataindex, acc)
-hashset(if found then cardinality.h else cardinality.h + 1
-, if 3 * cardinality.h > 2 * tablesize then t + t + t + t else t
-)) 
+  /for(result + [ Record.fldkinds]) 

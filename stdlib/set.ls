@@ -12,9 +12,9 @@ Export type:set.T
 
 Export empty:seq.T seq.T
 
-Export +(seq.T, T)seq.T
+Export+(seq.T, T)seq.T
 
-Export +(seq.T, seq.T)seq.T
+Export+(seq.T, seq.T)seq.T
 
 Export_(seq.T, int)T
 
@@ -30,7 +30,7 @@ Function replace(s:set.T, val:T)set.T set.setreplaceorinsert(toseq.s, val)
 
 Function ∪(val:T, s:set.T)set.T set.setreplaceorinsert(toseq.s, val)
 
-Function_(s:set.T, i:int)T(toseq.s)_i
+Function _(s:set.T, i:int)T(toseq.s)_i
 
 Function lookup(s:set.T, val:T)set.T
 let i = binarysearch(toseq.s, val)
@@ -66,7 +66,7 @@ else
 
 Function \(a:set.T, b:set.T)set.T { elements in a but not in b } set.diff(toseq.a, toseq.b, 1, 1)
 
-Function-(a:set.T, b:T)set.T set.setdelete(toseq.a, b)
+Function -(a:set.T, b:T)set.T set.setdelete(toseq.a, b)
 
 function diff(a:seq.T, b:seq.T, i:int, j:int)seq.T
 if i > length.a then empty:seq.T
@@ -105,7 +105,7 @@ _________________
 
 Secondary ordering that allows a secondary search on a partial key.
 
-The following must be true ?2(a, b)≠ EQ implies ?(a, b)= ?2(a, b)
+The following must be true ?2(a, b)≠ EQ implies ?(a, b)=?2(a, b)
 
 unbound ?2(T, T)ordering
 
@@ -128,7 +128,7 @@ else u
 function binarysearch2(s:seq.T, b:int, a:int, val:T)int
 if a < b then-(a + 1)
 else
- let p =(a + b) / 2
+ let p = (a + b) / 2
  let c = ?2(s_p, val)
  if c = EQ then p
  else if c = GT then binarysearch2(s, b, p - 1, val)else binarysearch2(s, p + 1, a, val) 

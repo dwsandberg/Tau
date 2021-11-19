@@ -57,26 +57,26 @@ use set.seq.word
 use seq.seq.seq.symbol
 
 function firstopt(p:set.symdef, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
-let pdict =
+let pdict = 
  for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.s, 1, 1)do pmap + localmap2(parano, [ Local.parano])/for(pmap)
 let a = xxx(p, removeoptions.code, s, pdict)
-let t =
+let t = 
  if first then a
  else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
   let ty = if Hasfor ∈ flags.a then expandforexp(code.a, nextvar.a)else code.a
-  let t2 =
+  let t2 = 
    if Callself ∈ flags.a ∧ wordname.s ≠ "subpass2"_1 then optB(ty, s)else ty
   expandresult(nextvar.a, t2, flags.a)
  else a
-let newoptions1 =
+let newoptions1 = 
  if between(length.code.t, 1, 21) ∧ Callself ∉ flags.t ∧ Hasfor ∉ flags.t
  ∧ "NOINLINE"_1 ∉ options then
   if isverysimple(nopara.s, code.t)then"INLINE VERYSIMPLE"else"INLINE"
  else""
-let newoptions =
+let newoptions = 
  if isempty.options then newoptions1
  else if options = newoptions1 then options
- else toseq(asset.options \ asset."VERYSIMPLE " ∪ asset.newoptions1)
+ else toseq(asset.options \ asset."VERYSIMPLE" ∪ asset.newoptions1)
 if newoptions = ""then code.t else code.t + Words.newoptions + Optionsym
 
 function isverysimple(nopara:int, code:seq.symbol)boolean
@@ -95,7 +95,7 @@ let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1)else code.a
 if length.code = length.new ∧ length.code > 20 ∨ new = code then expandresult(nextvar.a, new, flags.a)
 else xxx(p, new, s, pdict)
 
-function print(s:seq.int)seq.word for acc ="", @e ∈ s do acc + toword.@e /for(acc)
+function print(s:seq.int)seq.word for acc = "", @e ∈ s do acc + toword.@e /for(acc)
 
 Function Callself bits bits.1
 
@@ -139,7 +139,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    let hasnot = last.result = NotOp
    let sym1 = if hasnot then Br2(brf.sym, brt.sym)else sym
    let result1 = if hasnot then result >> 1 else result
-   let newsym =
+   let newsym = 
     if last.result1 = Litfalse then Br2(brf.sym1, brf.sym1)
     else if last.result1 = Littrue then Br2(brt.sym1, brt.sym1)else sym1
    next(if brt.newsym = brf.newsym ∨ isblock.last.result1 then Hasmerge ∨ flags else flags
@@ -150,7 +150,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
   else if sym = Exit ∧ isblock.last.result then next(flags ∨ Hasmerge, result + sym, nextvar, map)
   else if isloopblock.sym then
    let nopara = nopara.sym
-   let addlooplocals =
+   let addlooplocals = 
     for pmap = map, parano = 1, e ∈ constantseq(10000, 1)
     while parano ≤ nopara
     do next(localmap2(firstvar.sym + parano - 1, [ Local(nextvar + parano - 1)]) ∪ pmap, parano + 1)
@@ -200,13 +200,13 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
   let nopara = nopara.sym
   let dd = getCode(p, sym)
   let options = getoption.dd
-  let ct =
+  let ct = 
    if first."COMPILETIME" ∈ options then prepareargs(subseq(result, len - nopara + 1, len), sym)
    else empty:seq.symbol
   if { COMPILE TIME } not.isempty.ct then
    if sym = symbol(moduleref."stdlib words","decodeword", typeword, typeint)then
     let arg1 = result_len
-    let a1 =
+    let a1 = 
      for acc = empty:seq.symbol, @e ∈ tointseq.decodeword.wordname.arg1 do acc + Lit.@e /for(acc)
     let d = Constant2(a1 + Sequence(typeint, length.a1))
     next(flags, result >> 1 + d, nextvar, map)
@@ -217,7 +217,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
   else if first."VERYSIMPLE" ∈ options then
    next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
   else if"INLINE"_1 ∉ options then
-   let newflags =
+   let newflags = 
     if"STATE"_1 ∈ options ∨ { wordname.sym ∈"setfld"∨ } isGlobal.sym then State ∨ flags
     else flags
    next(newflags, result + sym, nextvar, map)
@@ -228,10 +228,10 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
     { function just returns result } next(flags, result, nextvar, map)
    else
     let t = backparse2(result, len, nopara, empty:seq.int) + [ len + 1]
-    { assert length.t = nopara + 1 report"INLINE PARA PROBLEM"}
+    { assert length.t=nopara+1 report"INLINE PARA PROBLEM"}
     let new = expandinline(result, t, nextvar, code, p, self)
-    { assert name.sym /nin"<"report"here"+ print.sym +"org"+ print.org + EOL +"new"+ EOL + print(subseq(result, 1, t_1-
- 1)+ code.new)}
+    { assert name.sym /nin"<"report"here"+print.sym+"org"+print.org+EOL+"new"+EOL+print(subseq(result, 1, t_1-
+ 1)+code.new)}
     next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
 /for(expandresult(nextvar, result, flags))
 
@@ -265,12 +265,12 @@ for result = empty:seq.symbol, nextvar = nextvarin, sym ∈ code do
   let f = forexpcode(sym, result, nextvar)
   next(code.f, nextvar.f)
  else if isInternal.sym ∧ wordname.sym ∈ "indexseq45"then
-  let theseqtype =(paratypes.sym)_1
+  let theseqtype = (paratypes.sym)_1
   let t = backparse2(result, length.result, 2, empty:seq.int)
   let index = subseq(result, t_2, length.code)
   let theseq = subseq(result, t_1, t_2 - 1)
   let theseq2 = if isconstorlocal.theseq then first.theseq else Local(nextvar + 1)
-  let newcode =
+  let newcode = 
    subseq(result, 1, t_1 - 1)
    + if isconstorlocal.theseq then empty:seq.symbol else theseq + Define(nextvar + 1)/if
    + [ theseq2, GetSeqType, Define.nextvar]
@@ -302,7 +302,7 @@ function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqty
 { seqtype will be a basetype }
 let seqparameter = parameter.xtheseqtype
 let theseqtype = seqof.seqparameter
-let elementtype =
+let elementtype = 
  if seqparameter ∈ [ typeint, typereal, typeboolean]then seqparameter
  else if seqparameter ∈ [ typebyte, typebit]then typeint else typeptr
 let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte ∨ seqparameter = typebit
@@ -342,21 +342,21 @@ let bodyexp = subseq(code, t_(-3), t_(-2) - 1)
 let endofsymbols = t_(-3) - 1
 let startofsymbols = endofsymbols - (nopara.forsym - 3) / 2 + 1
 let syms = subseq(code, startofsymbols, endofsymbols)
-let tmp =
+let tmp = 
  for acc = empty:seq.symbol, i = 1, s ∈ syms >> 1 do next(acc + Local(nextvar + i - 1), i + 1)/for(acc)
 let masteridx = Local(value.last.tmp + 1)
 let seqelement = Local(value.masteridx + 1)
 let nextvar1 = value.seqelement + 1
 let Defineseqelement = Define.value.seqelement
 let newsyms = tmp + seqelement
-let theseqtype =(paratypes.forsym)_(length.newsyms)
+let theseqtype = (paratypes.forsym)_(length.newsyms)
 let elementtype = if isseq.(paratypes.forsym)_(-4)then typeptr else(paratypes.forsym)_(-4)
-{ let theseqtype = seqof.elementtype }
+{ let theseqtype=seqof.elementtype }
 let theseq = Local.nextvar1
 let totallength = Local(nextvar1 + 1)
 let seqtype = Local(nextvar1 + 2)
 let Defineseqtype = Define(nextvar1 + 2)
-let firstpart =
+let firstpart = 
  subseq(code, 1, startofsymbols - 1)
  + [ Define.nextvar1
  , theseq
@@ -370,14 +370,14 @@ let firstpart =
  + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint, nextvar, resulttype.forsym)
  + { 2 if masteridx > totallength then exit } [ masteridx, totallength, GtOp]
  + Br2(2, 1)
- + { 3 else let sequenceele = seq_(idx)} indexseqcode(seqtype, theseq, masteridx, theseqtype, false)
+ + { 3 else let sequenceele=seq_(idx)} indexseqcode(seqtype, theseq, masteridx, theseqtype, false)
  + [ Defineseqelement]
  + { 3 while condition } replace$for(exitexp, newsyms, syms)
  + Br2(2, 1)
  + { 4 exit loop } replace$for(endexp, newsyms, syms)
  + Exit
 let bodyexp2 = replace$for(bodyexp, newsyms, syms)
-let lastpart =
+let lastpart = 
  if length.syms = 2 then bodyexp2 + [ masteridx, Lit.1, PlusOp, continue.2, EndBlock]
  else if not.iscompound.bodyexp then bodyexp2 >> 1 + [ masteridx, Lit.1, PlusOp, continue.length.syms, EndBlock]
  else
@@ -423,7 +423,7 @@ ________________________________
 Function pass2(knownsymbols:set.symdef)set.symdef subpass2(empty:seq.symdef, empty:set.symdef, knownsymbols, 0)
 
 function subpass2(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int)set.symdef
-{ assert count < 4 report"SIZE"+ print.length.toseq.toprocess + print.length.bigin + print.length.toseq.corein + 
+{ assert count < 4 report"SIZE"+print.length.toseq.toprocess+print.length.bigin+print.length.toseq.corein+
  print.count }
 for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toprocess do
  let s = sym.pele
@@ -472,15 +472,15 @@ else
   if b = 1 then [ b] + result else backparse2(s, b - 1, no - 1, [ b] + result)
  else
   let nopara = nopara.s_i
-  let first =
+  let first = 
    if nopara = 0 then i
    else
     let args = backparse2(s, i - 1, nopara, empty:seq.int)
     assert length.args = nopara
     report"back parse 3" + print.[ s_i] + toword.nopara + "//"
-    + for acc ="", @e ∈ args do acc + toword.@e /for(acc)
+    + for acc = "", @e ∈ args do acc + toword.@e /for(acc)
     args_1
-  let b =
+  let b = 
    if first > 1 ∧ isdefine.s_(first - 1)then
     let c = backparse2(s, first - 2, 1, empty:seq.int)
     c_1

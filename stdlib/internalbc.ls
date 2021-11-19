@@ -70,7 +70,7 @@ Function ibcsub(i:int)slot slot(ibcfirstpara2 + i)
 type internalbc is parts:seq.templatepart
 
 Function print(bc:internalbc)seq.word
-for acc ="", e ∈ parts.bc do acc + print.val.e /for(acc)
+for acc = "", e ∈ parts.bc do acc + print.val.e /for(acc)
 
 function tail(b:internalbc)seq.templatepart parts.b << 1
 
@@ -290,9 +290,9 @@ Function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int)internalbc
 for acc = emptyinternalbc, @e ∈ arithseq(nopara, 1, 1)do acc + phiinst(slot, typ, tailphi, nopara, @e)/for(acc)
 
 function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int, p:int)internalbc
-{ let t = @(addpair(tailphi, slot + p, p), identity, emptyinternalbc, arithseq(length.tailphi /(nopara + 1),-nopara 
+{ let t=@(addpair(tailphi, slot+p, p), identity, emptyinternalbc, arithseq(length.tailphi /(nopara+1),-nopara 
 -1, length.tailphi-nopara))}
-let t =
+let t = 
  for acc = emptyinternalbc
  , @e ∈ arithseq(length.tailphi / (nopara + 1),-nopara - 1, length.tailphi - nopara)
  do addpair(acc, tailphi, slot + p, p, @e)/for(acc)
@@ -301,7 +301,7 @@ addstartbits(toint.PHI, length.tailphi / (nopara + 1) * 2 + 1, add(typ_p, t))
 function addsignedaddress(loc:slot, a:slot, bc:internalbc)internalbc addsignedaddress(-toint.loc, toint.a, bc)
 
 function addaddress(locin:slot, a:slot, bc:internalbc)internalbc
-let slot =-toint.locin
+let slot = -toint.locin
 addaddress(slot, toint.a, bc)
 
 Function addvbr(b:bitstream, newbits:int, bitcount:int)bitstream
@@ -355,8 +355,8 @@ Function finishblock(current:bitstream, headerplace:int, blockabbrevlength:int)b
 if headerplace = 0 then current
 else
  let bb = align32.addvbr(current, ENDBLOCK, blockabbrevlength)
- let len =(length.bb - headerplace) / 32
- { assert false report"X"+ toword(length.header-32)+ toword.len } patch(bb, headerplace - 31, len)
+ let len = (length.bb - headerplace) / 32
+ { assert false report"X"+toword(length.header-32)+toword.len } patch(bb, headerplace - 31, len)
 
 Function addbody(m:bitstream, offset:int, bodytxt:internalbc)bitstream
 let header = addblockheader(m, MODABBREVLEN, toint.FUNCTIONBLK, FUNCABBRVLEN)
@@ -408,14 +408,14 @@ type llvmpartial is a6:bitstream, h:bitstream
 
 function llvmpartial(deflist:seq.seq.int, trecords:seq.seq.int)llvmpartial
 let offset = length.constantrecords
-let h =
+let h = 
  addblockheader(add(add(add(add(empty:bitstream, bits.66, 8), bits.67, 8), bits.192, 8), bits.222, 8)
  , 2
  , toint.MODULE
  , MODABBREVLEN
  )
 let info = getmachineinfo
-let a =
+let a = 
  addrecords(h
  , MODABBREVLEN
  , [ [ 1, 1]
@@ -431,7 +431,7 @@ let a2 = addrecords(typeheader, TYPEABBREVLEN, [ [ toint.NumEle, length.trecords
 let a3 = finishblock(a2, length.typeheader, TYPEABBREVLEN)
 { PARAGRPBLOCK }
 let pgh = addblockheader(a3, MODABBREVLEN, toint.PARAGRP, TYPEABBREVLEN)
-let pge =
+let pge = 
  finishblock(addrecords(pgh
  , TYPEABBREVLEN
  , [ [ 3, 0, 2^32 - 1, 0, 14, 0, 26, 0, 18] + [ 3]
@@ -444,12 +444,12 @@ let pge =
  )
 { para block }
 let paraheader = addblockheader(pge, MODABBREVLEN, toint.PARA, TYPEABBREVLEN)
-let a4 =
+let a4 = 
  finishblock(addrecords(paraheader, TYPEABBREVLEN, [ [ 2, 0]]), length.paraheader, TYPEABBREVLEN)
 { def list }
 let a5 = addrecords(a4, MODABBREVLEN, deflist)
 { const block }
-let g =
+let g = 
  for acc = trackconst(a5,-1, 0), @e ∈ subseq(constantrecords, length.deflist + 1, offset)do constrecords(acc, @e)/for(acc)
 let a6 = finishblock(bits.g, blockstart.g, TYPEABBREVLEN)
 llvmpartial(a6, h)
@@ -457,21 +457,21 @@ llvmpartial(a6, h)
 function constrecords(z:trackconst, l:slotrecord)trackconst
 { keep track of type of last const processed and add record when type changes }
 if ismoduleblock.l then
- let bits =
+ let bits = 
   if not.islastmodule.z then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)else bits.z
  trackconst(addrecord(bits, MODABBREVLEN, record.l), typ.l, 0)
 else
  let newblock = islastmodule.z ∧ not.ismoduleblock.l
- let bits =
+ let bits = 
   if newblock then addblockheader(bits.z, MODABBREVLEN, toint.CONSTANTS, TYPEABBREVLEN)else bits.z
- let bits2 =
+ let bits2 = 
   if lasttype.z = typ.l then bits else addvbr6(add(bits, bits((1 * 64 + 1) * 16 + 3), 16), typ.l)
  let rec = record.l
  let tp = rec_1
- let bs =
+ let bs = 
   if tp = toint.CINTEGER then addvbrsigned6(add(bits2, bits((1 * 64 + toint.CINTEGER) * 16 + 3), 16), rec_2)
   else
-   let a1 =
+   let a1 = 
     if length.rec < 32 then add(bits2, bits(((length.rec - 1) * 64 + tp) * 16 + 3), 16)
     else addvbr6(addvbr6(addvbr(bits2, 3, TYPEABBREVLEN), tp), length.rec - 1)
    addvbr6(a1, subseq(rec, 2, length.rec))
@@ -481,13 +481,13 @@ Function symentries(bits:bitstream, s:seq.slotrecord, i:int)bitstream
 if i > length.s then bits
 else
  let l = s_i
- let bs =
+ let bs = 
   if ismoduleblock.l then
    let abbrevlength = 4
    let name = tointseq.symtablename.l
    if isempty.name then bits
    else
-    let a1 =
+    let a1 = 
      addvbr6(addvbr6(addvbr6(addvbr(bits, 3, abbrevlength), { rec type entry } 1), length.name + 1)
      , i - 1
      )

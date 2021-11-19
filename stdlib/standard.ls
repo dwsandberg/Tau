@@ -72,9 +72,9 @@ builtin not(a:boolean)boolean
 
 Export not(a:boolean)boolean
 
-builtin =(a:boolean, b:boolean)boolean
+builtin=(a:boolean, b:boolean)boolean
 
-Export =(a:boolean, b:boolean)boolean
+Export=(a:boolean, b:boolean)boolean
 
 Function ?(a:boolean, b:boolean)ordering
 if a then if b then { T T } EQ else { T F } GT
@@ -86,11 +86,11 @@ Function ∨(a:boolean, b:boolean)boolean if a then true else b
 
 ______________
 
-Function-(i:int)int 0 - i
+Function -(i:int)int 0 - i
 
 Builtin ?(a:int, b:int)ordering
 
-Builtin +(a:int, b:int)int
+Builtin+(a:int, b:int)int
 
 Builtin-(a:int, b:int)int
 
@@ -100,7 +100,7 @@ Builtin /(a:int, b:int)int
 
 Function hash(i:int)int finalmix.hash(hashstart, i)
 
-Builtin =(a:int, b:int)boolean
+Builtin=(a:int, b:int)boolean
 
 --------------------
 
@@ -118,16 +118,16 @@ Function min(a:int, b:int)int if a < b then a else b
 
 Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
-Function^(i:int, n:int)int
+Function ^(i:int, n:int)int
 { * nth power of i } for acc = 1, @e ∈ constantseq(n, i)do acc * @e /for(acc)
 
 ---------------------
 
-Export  getfile:byte(name:seq.word)seq.byte  
+Export getfile:byte(name:seq.word)seq.byte
 
-Export getfile:bit(name:seq.word)seq.bit  
- 
-Export getfile:int(name:seq.word)seq.int 
+Export getfile:bit(name:seq.word)seq.bit
+
+Export getfile:int(name:seq.word)seq.int
 
 Export gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
 
@@ -169,7 +169,7 @@ Function EOL seq.word" /br"
 
 Function break(s:seq.word, seperators:seq.word, includeseperator:boolean)seq.seq.word
 let nosep = if includeseperator then 0 else 1
-let l =
+let l = 
  for acc = empty:seq.int, i = 1, e ∈ s do
   next(acc + if e ∈ seperators then [ i]else empty:seq.int, i + 1)
  /for(acc)
@@ -181,7 +181,7 @@ Export hash(a:word)int
 
 Export ?(a:word, b:word)ordering
 
-Export =(a:word, b:word)boolean
+Export=(a:word, b:word)boolean
 
 Export toword(n:int)word { Covert integer to a single word. }
 
@@ -243,23 +243,23 @@ Export ∈(seq.word, seq.seq.word)boolean
 
 Export ∈(int, seq.int)boolean
 
-Export =(seq.word, seq.word)boolean
+Export=(seq.word, seq.word)boolean
 
-Export =(seq.int, seq.int)boolean
+Export=(seq.int, seq.int)boolean
 
-Export +(seq.word, word)seq.word
+Export+(seq.word, word)seq.word
 
-Export +(seq.int, seq.int)seq.int
+Export+(seq.int, seq.int)seq.int
 
-Export +(seq.int, int)seq.int
+Export+(seq.int, int)seq.int
 
 Export last(seq.int)int
 
-Export +(seq.seq.word, seq.word)seq.seq.word
+Export+(seq.seq.word, seq.word)seq.seq.word
 
-Export +(seq.seq.word, seq.seq.word)seq.seq.word
+Export+(seq.seq.word, seq.seq.word)seq.seq.word
 
-Export +(a:seq.word, b:seq.word)seq.word
+Export+(a:seq.word, b:seq.word)seq.word
 
 Export nbspchar char
 
@@ -283,7 +283,7 @@ Export length(seq.char)int
 
 Export empty:seq.char seq.char
 
-Export +(seq.char, seq.char)seq.char
+Export+(seq.char, seq.char)seq.char
 
 Export isempty(seq.char)boolean
 
@@ -295,9 +295,9 @@ Export_(seq.char, int)char
 
 Export subseq(seq.char, int, int)seq.char
 
-Export =(seq.char, seq.char)boolean
+Export=(seq.char, seq.char)boolean
 
-Export +(seq.char, char)seq.char
+Export+(seq.char, char)seq.char
 
 Export toint(char)int
 
@@ -326,33 +326,13 @@ Export >>(s:seq.word, i:int)seq.word { removes i words from end of s }
 * usegraph include codetemplates codegennew internalbc llvmconstant llvm interpreter mangle persistant libdesc exclude 
  seq bits set otherseq standard UTF8 real stack
 
-* usegraph include main2 display parse passparse passsymbol pass2 postbind pass2 program typedict exclude seq set otherseq 
- standard bits graph UTF8 stack real fileio textio encoding words symbol types
+* usegraph include compilerfront main2 display parse passparse passsymbol pass2 postbind pass2 program typedict exclude 
+ seq set otherseq standard bits graph UTF8 stack real fileio textio encoding words symbol types
 
 Export type:index
 
-Export +(i:index, b:int)index index(rep.i + b)
+Export+(i:index, b:int)index index(rep.i+b)
 
 Export toindex(i:int)index assert i > 0 report"not a index"index(i-1)
 
-Export toint(i:index)int rep.i + 1
-
-module index
-
-use standard
-
-use seq.index
-
-type index is rep:int
-
-Export type:index
-
-Export index(int)index
-
-Function +(i:index, b:int)index index(rep.i + b)
-
-Function toindex(i:int)index
-assert i > 0 report"not an index" + stacktrace
-index(i - 1)
-
-Function toint(i:index)int rep.i + 1 
+Export toint(i:index)int rep.i+1 

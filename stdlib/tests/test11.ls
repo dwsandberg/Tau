@@ -12,9 +12,9 @@ use seq.boolean
 
 use otherseq.int
 
-use testPoint.int
-
 use set.int
+
+use testPoint.int
 
 use seq.ordering
 
@@ -73,7 +73,7 @@ test on in
 
 function t017 boolean [ true, true, false] = [ 2 ∈ [ 1, 2, 3], 3 ∈ [ 1, 2, 3], 5 ∈ [ 1, 2, 3]]
 
-test of + using functional notation pretty printer messes up this example this should be 3 = +(1, 2).
+test of+using functional notation pretty printer messes up this example this should be 3=+(1, 2).
 
 function t018 boolean 3 = 1 + 2
 
@@ -83,7 +83,7 @@ function t020 boolean 5 = findindex(1, [ 2, 4, 3, 8, 1, 3] + constantseq(4, 1))
 
 function t021 boolean 28 = constantseq(13, 5)_7 + length.constantseq(23, 3)
 
-/ function t022 boolean [ 3, 6]= all(3, [ 2, 4, 3, 8, 1, 3])
+/ function t022 boolean [ 3, 6]=all(3, [ 2, 4, 3, 8, 1, 3])
 
 function t022 boolean [ toword.384] + toword.52 = "384 52"
 
@@ -115,7 +115,7 @@ function t034 boolean 3464 = 3456 + if true then 3 else 1 /if + 5
 
 function print(a:seq.int)seq.word
 "["
-+ for acc ="", e ∈ a do seperator(acc,",") + toword.e /for(acc)
++ for acc = "", e ∈ a do seperator(acc,",") + toword.e /for(acc)
 + "]"
 
 function seperator(acc:seq.word, sep:seq.word)seq.word if isempty.acc then acc else acc + sep
@@ -126,7 +126,8 @@ function t036 boolean 10 = for acc = 0, e ∈ [ 1, 2, 3, 4]do acc + e /for(acc)
 
 function t037 boolean 24 = for acc = 1, e ∈ [ 1, 2, 3, 4]do acc * e /for(acc)
 
-function t038 boolean [ 1, 2, 3, 4] = for acc = empty:seq.int, e ∈ [ 1, 2, 3, 4]do acc + e /for(acc)
+function t038 boolean
+[ 1, 2, 3, 4] = for acc = empty:seq.int, e ∈ [ 1, 2, 3, 4]do acc + e /for(acc)
 
 function t039 boolean
 let a = 6 * 6
@@ -139,14 +140,14 @@ function t041 boolean"1 2 k 4 5" = replace("1 2 3 4 5", 3,"k"_1)
 function t042 boolean 97 = for acc = 100, e ∈ [ 1, 2]do acc - e /for(acc)
 
 Function t043 boolean
-"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61 = 62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 
+"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61=62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 
  N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
-= for acc ="code glyph", e ∈ arithseq(43, 1, 48)do acc + [ toword.e, encodeword.[ char.e]]/for(acc)
+= for acc = "code glyph", e ∈ arithseq(43, 1, 48)do acc + [ toword.e, encodeword.[ char.e]]/for(acc)
 
-function t044 boolean '"()+,-.:= []^_{ } ' = standalonechars
+function t044 boolean '"()+,-.:=[]^_{ } ' = standalonechars
 
 Function standalonechars seq.word
-for acc ="", e ∈ arithseq(length.classifychar, 1, 1)do
+for acc = "", e ∈ arithseq(length.classifychar, 1, 1)do
  let class = classifychar_e
  if class ∈ "0 SPACE"then acc else acc + [ class]
 /for(acc)
@@ -159,14 +160,14 @@ function testset set.int asset.[ 2, 5, 6, 9, 12, 15, 35, 36]
 
 function ?2(a:int, b:int)ordering a / 10 ? b / 10
 
-function print(a:set.int)seq.word for acc ="", e ∈ toseq.a do acc + toword.e /for(acc)
+function print(a:set.int)seq.word for acc = "", e ∈ toseq.a do acc + toword.e /for(acc)
 
 function t046 boolean toseq.findelement2(testset, 36) = [ 35, 36] ∧ toseq.findelement2(testset, 15) = [ 12, 15]
 
 type Tpair is a:int, b:seq.word
 
 Function test11 seq.word
-let list =
+let list = 
  [ t001
  , t002
  , t003

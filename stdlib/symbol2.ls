@@ -140,7 +140,7 @@ Export GetSeqType symbol
 
 Export GetSeqLength symbol
 
-Export =(symbol, symbol)boolean
+Export=(symbol, symbol)boolean
 
 Export ?(symbol, symbol)ordering
 
@@ -158,7 +158,7 @@ Export removeoptions(seq.symbol)seq.symbol
 
 Export resulttype(symbol)mytype
 
-Export =(modref, modref)boolean
+Export=(modref, modref)boolean
 
 Export typeint mytype
 
@@ -166,7 +166,7 @@ Export typeptr mytype
 
 Export typereal mytype
 
-Export =(mytype, mytype)boolean
+Export=(mytype, mytype)boolean
 
 Export isseq(mytype)boolean
 
