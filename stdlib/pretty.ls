@@ -37,7 +37,7 @@ for acc = "", file ∈ subseq(l, 2, length.l)do
  else
   let result = 
    for txt = "", @e ∈ result.p do txt + " /p" + @e /for(txt << 1)
-  let discard = createfile(targetdir + "/" + file + ".ls", toseqbyte.textformat.result << 1)
+  let discard = createfile(targetdir + "/" + file + ".ls", toseqbyte.textformat.result )
   acc + result
 /for(acc)
 

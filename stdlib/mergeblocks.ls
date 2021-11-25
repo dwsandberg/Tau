@@ -239,8 +239,7 @@ for newcode = code, n ∈ dead do
  + subseq(newcode, nodes_n + 1, length.code)
 /for(newcode + EndBlock)
 
-Function optB(s:seq.symbol, self:symbol)seq.symbol
-let reorgwhen = 6
+Function optB(s:seq.symbol, self:symbol, reorgwhen:int)seq.symbol
 for acc = empty:seq.symbol, stk = empty:stack.int, nextvar = length.s, lastsymbol = Lit.0, sym ∈ s do
  if(lastsymbol = Littrue ∨ lastsymbol = Litfalse) ∧ isbr.sym ∧ top.stk = length.acc - 1 then
   { patch previous br's so they skip over this block }

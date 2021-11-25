@@ -1,18 +1,19 @@
-Library stdlib UTF8 bits bitstream codegennew codetemplates compilerfront encoding 
-inputoutput format  graphs/barycenter    graphs/graph   
-  graphs/layergraph graphs/makeDAG     internalbc interpreter libdesc libraryModule llvm llvmconstants main2  
-mangle mergeblocks mytype otherseq outstream parse parsersupport pass2 passparse passsymbol persistant postbind 
- pretty process real seq set sparseseq stack standard symbol symbol2 symboldict symref tausupport tests/bug7 tests/checking tests/myseq tests/point tests/randomphrase tests/test11 tests/test20 tests/testencoding tests/testfileio tests/testmodules tests/testprocess tests/testseq tests/wordfreq testsCompile/test11a testsCompile/testall testsCompile/testopt textio timestamp tree typedict words xxhash
-localmap2 hashset
+Library 
+stdlib 
+bits bitstream codegennew codetemplates compilerfront encoding inputoutput format 
+graphs/barycenter graphs/graph graphs/layergraph graphs/makeDAG 
+hashset internalbc interpreter libdesc libraryModule llvm llvmconstants localmap2
+main2 mangle mergeblocks mytype otherseq 
+parse parsersupport pass2 passparse passsymbol persistant postbind pretty process 
+real seq set sparseseq stack standard symbol symbol2 symboldict symref 
+tausupport textio timestamp tree typedict UTF8 words xxhash
+tests/bug7 tests/checking tests/myseq tests/point tests/randomphrase tests/test11 tests/test20 tests/testencoding tests/testfileio tests/testmodules tests/testprocess tests/testseq tests/wordfreq 
+testsCompile/test11a testsCompile/testall testsCompile/testopt 
 uses
-exports UTF8  barycenter bits dataio display displaygraph displaytextgraph encoding fileio format graph hashset index internalbc ioseq ipair labeledgraph layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph 
+exports UTF8  barycenter bits dataio display  encoding fileio format graph hashset index internalbc ioseq   layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph 
 symbol2 taublockseq tausupport testall textio timestamp tree words xxhash compilerfront
 bitcast
 
-
-
-
-* Removed maindict
 
 /* only document standard seq real
 

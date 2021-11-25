@@ -1,4 +1,10 @@
-#!/usr/local/bin/tau ; use wordgraph; testgraph
+#!/usr/local/bin/tau ; use doc ; createdoc
+
+ callgraphwithin("bug11","seqiohelp")
+
+;use doc; doclibrary."bug11"
+
+;use wordgraph; testgraph
 
 ; use doc ; doclibrary."stdlib"
 

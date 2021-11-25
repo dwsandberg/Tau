@@ -134,9 +134,6 @@ Function breathfirst(g:graph.T)seq.T { will not return nodes involved in a cycle
 
 ____________________
 
-/Function nodesbyoutdegree(g:graph.T)seq.T for acc=empty:seq.T, @e=sort.for acc=empty:seq.ipair.T, n=toseq.
- nodes.g do acc+ipair(outdegree(g, n), n)/for(acc)do acc+value.@e /for(acc)
-
 Function outdegree(g:graph.T, n:T)int cardinality.successors(g, n)
 
 Function indegree(g:graph.T, n:T)int cardinality.predecessors(g, n)

@@ -320,7 +320,7 @@ Export >>(s:seq.word, i:int)seq.word { removes i words from end of s }
 * usegraph include inputoutput xxhash encoding bits words real textio UTF8 set seq otherseq fileio standard bitstream 
  exclude standard seq
 
-* usegraph include tree graph ipair process stack set format maindict tausupport program typedict mytype symbol exclude 
+* usegraph include tree graph  process stack set format maindict tausupport program typedict mytype symbol exclude 
  standard seq bits otherseq
 
 * usegraph include codetemplates codegennew internalbc llvmconstant llvm interpreter mangle persistant libdesc exclude 

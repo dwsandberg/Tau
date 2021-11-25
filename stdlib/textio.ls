@@ -30,7 +30,7 @@ else breaklines(a, i + 1, last, result)
 
 Function breakcommas(a:UTF8)seq.UTF8
 for acc = empty:seq.UTF8
-, @e ∈ break(tobyte.toint.char1.",", [ tobyte.toint.char1.'"'], toseqbyte.a)
+, @e ∈ break(tobyte.toint.char1.", ", [tobyte.toint.char1.'"'], toseqbyte.a)
 do acc + UTF8.@e /for(acc)
 
 --------
@@ -40,7 +40,7 @@ handle files of paragraphs
 Function breakparagraph(a:UTF8)seq.seq.word breakparagraph(a, 1, 1, empty:seq.seq.word)
 
 function blankline(a:UTF8, i:int)int
-{ returns 0 if no new line is found before next non white char otherwise returns index of newline }
+{returns 0 if no new line is found before next non white char otherwise returns index of newline}
 if i > length.a then i
 else
  let t = toint.a_i
@@ -60,42 +60,38 @@ else if toint.u_i = 10 then
 else breakparagraph(u, i + 1, last, result)
 
 Function classifychar seq.word
-' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0+,-.0 0 0 0 0 0 0 0 0 0 0:0 0=0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
- 0 0 [ 0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 { 0 } 0 0 '
+' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0+, -.0 0 0 0 0 0 0 0 0 0 0:0 0=0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0[0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0{0}0 0 '
 
 Function towords(a:UTF8)seq.word towords.decodeUTF8.a
 
-Function towords(a:seq.char)seq.word towords2(a, 1, 1, empty:seq.word)
+function checkescape(s:seq.char)int
+if isempty.s then 0
+else if s_1 = char1."n"then 2 * 128 + 10
+else if length.s ≥ 3 ∧ between(toint.s_1, 48, 51) ∧ between(toint.s_2, 48, 55)
+∧ between(toint.s_3, 48, 55)then
+ ((toint.s_1 - 48) * 64 + (toint.s_2 - 48)) * 8 + toint.s_3 - 48 + 4 * 128
+else 0
 
-function towords2(a:seq.char, i:int, last:int, result:seq.word)seq.word
+Function towords(chars:seq.char)seq.word
 let spacechar = char.32
-if i > length.a then
- if last > length.a then result else result + [ encodeword.subseq(a, last, length.a)]
-else
- let t = a_i
- if not.between(toint.t, 1, length.classifychar)then towords2(a, i + 1, last, result)
- else
-  let class = classifychar_(toint.t)
-  if class = "0"_1 then towords2(a, i + 1, last, result)
-  else if class = "SPACE"_1 then
-   towords2(a
-   , i + 1
-   , i + 1
-   , if last = i then result else result + encodeword.subseq(a, last, i - 1)
-   )
+for acc = "", last = 1, i = 1, pending = empty:seq.char, ch ∈ chars + spacechar do
+ if last > i then next(acc, last, i + 1, pending)
+ else if ch = char1."\"then
+  let k = checkescape.subseq(chars, i + 1, i + 3)
+  if k = 0 then next(acc, last, i + 1, pending)
   else
-   { if class="-"_1 ∧ i+1 ≤ length.a ∧ between(toint.a_(i+1), 48, 57)then towords2(a, i+2, i, if last=i then result else result 
-+encodeword.subseq(a, last, i-1))else }
-   if t = periodchar ∧ i + 1 ≤ length.a ∧ a_(i + 1) = spacechar then
-    towords2(a
-    , i + 2
-    , i + 2
-    , if last = i then result + encodeword.[ periodchar, spacechar]
-    else result + encodeword.subseq(a, last, i - 1) + encodeword.[ periodchar, spacechar]
-    )
-   else
-    towords2(a
-    , i + 1
-    , i + 1
-    , if last = i then result else result + encodeword.subseq(a, last, i - 1)/if + class
-    ) 
+   let nexti = i + k / 128
+   next(acc, nexti, i + 1, pending + subseq(chars, last, i - 1) + char(k mod 128))
+ else if not.between(toint.ch, 1, length.classifychar)then next(acc, last, i + 1, pending)
+ else
+  let class = classifychar_(toint.ch)
+  if class = "0"_1 then next(acc, last, i + 1, pending)
+  else
+   let newacc = 
+    if last = i ∧ isempty.pending then acc else acc + encodeword(pending + subseq(chars, last, i - 1))
+   if class ∈ "SPACE"then next(newacc, i + 1, i + 1, empty:seq.char)
+   else if ch = char1."." ∧ i + 1 ≤ length.chars ∧ chars_(i + 1) = spacechar then
+    next(newacc + encodeword.[char1.".", spacechar], i + 1, i + 1, empty:seq.char)
+   else next(newacc + class, i + 1, i + 1, empty:seq.char)
+/for(acc) 

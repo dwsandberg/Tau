@@ -178,16 +178,6 @@ do
  )
 prg6(asset.typearcs, resolveexports(modlist + lastpass, 100000), typeflds))
 
-/use graph.seq.word
-
-/use displaytextgraph
-
-/use svggraph.seq.word
-
-/use seq.arcinfo.seq.word
-
-/ use seq.libraryModule
-
 Export type:symdef
 
 Export type:prg6

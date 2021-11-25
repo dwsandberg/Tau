@@ -56,6 +56,8 @@ use set.seq.word
 
 use seq.seq.seq.symbol
 
+function reorgwhen int 6000
+
 function firstopt(p:set.symdef, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
 let pdict = 
  for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.s, 1, 1)do pmap + localmap2(parano, [ Local.parano])/for(pmap)
@@ -65,7 +67,8 @@ let t =
  else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
   let ty = if Hasfor ∈ flags.a then expandforexp(code.a, nextvar.a)else code.a
   let t2 = 
-   if Callself ∈ flags.a ∧ wordname.s ≠ "subpass2"_1 then optB(ty, s)else ty
+   if Callself ∈ flags.a ∧ { ???? } wordname.s ≠ "subpass2"_1 then optB(ty, s, reorgwhen)
+   else ty
   expandresult(nextvar.a, t2, flags.a)
  else a
 let newoptions1 = 
@@ -91,7 +94,7 @@ else
 
 function xxx(p:set.symdef, code:seq.symbol, s:symbol, pdict:set.localmap2)expandresult
 let a = scancode(p, code, nopara.s + 1, pdict, s)
-let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1)else code.a
+let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1, reorgwhen)else code.a
 if length.code = length.new ∧ length.code > 20 ∨ new = code then expandresult(nextvar.a, new, flags.a)
 else xxx(p, new, s, pdict)
 
@@ -109,7 +112,7 @@ function ∈(a:bits, b:bits)boolean(a ∧ b) = a
 
 function prepareargs(args:seq.symbol, func:symbol)seq.symbol
 { returns empty sequence if args are not all constants. Removes record constants in args.returns empty if Fref appears 
- in args }
+in args }
 for acc = true, newargs = empty:seq.symbol, @e ∈ args
 while acc
 do if not.isconst.@e ∨ isFref.@e then next(false, newargs)
@@ -231,7 +234,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
     { assert length.t=nopara+1 report"INLINE PARA PROBLEM"}
     let new = expandinline(result, t, nextvar, code, p, self)
     { assert name.sym /nin"<"report"here"+print.sym+"org"+print.org+EOL+"new"+EOL+print(subseq(result, 1, t_1-
- 1)+code.new)}
+1)+code.new)}
     next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
 /for(expandresult(nextvar, result, flags))
 
@@ -424,7 +427,7 @@ Function pass2(knownsymbols:set.symdef)set.symdef subpass2(empty:seq.symdef, emp
 
 function subpass2(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int)set.symdef
 { assert count < 4 report"SIZE"+print.length.toseq.toprocess+print.length.bigin+print.length.toseq.corein+
- print.count }
+print.count }
 for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toprocess do
  let s = sym.pele
  let fullcode = code.pele

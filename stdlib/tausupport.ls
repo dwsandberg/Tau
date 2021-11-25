@@ -16,7 +16,7 @@ Function toindex(i:int)index
 assert i > 0 report"not an index" + stacktrace
 index(i - 1)
 
-Function toint(i:index)int rep.i + 1 
+Function toint(i:index)int rep.i + 1
 
 module bitcast.T
 
@@ -42,7 +42,7 @@ Export type:seq.T
 
 Export type:blockseq.T
 
-builtin getfld(address:blockseq.T, offset:int)seq.T { load value of type T at address }
+builtin getfld(address:blockseq.T, offset:int)seq.T{load value of type T at address}
 
 unbound set(ptr, T)ptr
 
@@ -55,7 +55,7 @@ Function blockseqtype:T int getseqtype.toseq.blockseq(1, empty:seq.T)
 Function _(a:blockseq.T, i:int)T
 assert between(i, 1, length.toseq.a)report"out of bounds"
 let blksz = length.dummy.a
-let blk = getfld(a,(i - 1) / blksz + 2)
+let blk = getfld(a, (i - 1) / blksz + 2)
 blk_(toindex((i - 1) mod blksz + 1))
 
 Function blockit3(s:seq.T)seq.T

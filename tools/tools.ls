@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau  ; use tools ; test3
+#!/usr/local/bin/tau  ; use doc ; callgraphwithin("stdlib","format")
 
 
 ;  use doc ; doclibrary."webassembly"
