@@ -81,12 +81,21 @@ let filelist = info_2
 let exports = info_3
 { let b=unloadlib.[ libname]}
 let cinfo = 
- { result.process.}
+  {result.process.}
  compilerfront("all", libname, ["Library" + libname] + info << 3, dependentlibs, exports)
-let prg4 = asset.prg.cinfo
-let libdesc = libdesc(cinfo, prg4)
+ compilerback(cinfo,libname,dependentlibs)
+ 
+use process.compileinfo
+
+use symbolconstant
+
+use seq.symdef
+
+Function compilerback(cinfo:compileinfo,libname:seq.word,dependentlibs:seq.word ) seq.word
+let prg4 = asset.prg.cinfo 
+let libdesc = libdesc(cinfo, prg4) 
 let bc = 
- codegen(prg4
+ codegen(prg4 /cup constantsymbols 
  , roots.cinfo ∪ asset.liblibflds.libdesc
  , last.libname
  , libdesc
@@ -96,7 +105,7 @@ let bc =
 let z2 = createlib(bc, last.libname, dependentlibs)
 "OK"
 
-Function main(argin:seq.byte)int
+Function entrypoint( argin:seq.byte) int 
 let args2 = 
  for acc = empty:seq.seq.word, @e ∈ break(char1.";", empty:seq.char, decodeUTF8.UTF8.argin)do acc + towords.@e /for(acc)
 let libname = args2_1

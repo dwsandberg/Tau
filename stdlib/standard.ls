@@ -30,6 +30,16 @@ use seq.seq.int
 
 use seq.seq.word
 
+use format
+
+Export type:UTF8
+
+Export towords(UTF8) seq.word
+
+Export HTML(seq.word) UTF8
+
+Export TEXT(seq.word) UTF8
+
 Export stacktrace seq.word
 
 type ordering is toint:int

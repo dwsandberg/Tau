@@ -1,5 +1,7 @@
 Module libdesc
 
+use  symbolconstant
+
 use bits
 
 use compilerfront
@@ -59,15 +61,32 @@ for acc = "(", t ∈ l do acc + print.t /for(acc + ")")
 
 Export ?(a:symbolref, b:symbolref)ordering
 
-type libdescresult is liblibflds:seq.symbol, profilearcs:set.seq.symbol, newmap:set.symbolref, profiledata:seq.int
+type libdescresult is liblibflds:seq.symbol, profilearcs:set.seq.symbol
+                     , newmap:set.symbolref 
+                     
+Function newsymbolref(ld:libdescresult,sym:symbol) int  
+let one=binarysearch(toseq.newmap.ld ,symbolref.sym)
+{if one < 0 /and isrecordconstant.sym then
+ let two=binarysearch(toseq.newmap2.ld ,symbolref.sym)
+ if two < 0 then two else two+cardinality.newmap.ld
+else} one
+                     
+ Function profiledata(ld:libdescresult)seq.int
+ for acc = [ 1, cardinality.profilearcs.ld], arc ∈ toseq.profilearcs.ld do
+  acc
+  + [ newsymbolref(ld , arc_1)
+  , newsymbolref(ld ,  arc_2)
+  , 0
+  , 0
+  , 0
+  , 0
+  ] /for(acc)
 
 Export profilearcs(libdescresult)set.seq.symbol
 
 Export liblibflds(libdescresult)seq.symbol
 
-Export newmap(libdescresult)set.symbolref
 
-Export profiledata(libdescresult)seq.int
 
 Export type:libdescresult
 
@@ -80,11 +99,8 @@ let symstoexport2 =
  for acc = empty:seq.symbolref, m ∈ mods.info do acc + exports.m /for(for acc2 = empty:set.symbol, r ∈ toseq.asset.acc do acc2 + (symbolrefdecode.info)_(toint.r)/for(acc2))
 let code2 = 
  for acc = empty:seq.seq.symbolref, sym ∈ toseq.symstoexport2 do
-  { assert not(isInternal.sym /and name.sym /in">>")report"KKK"+print.sym+"C"+print.getCode(prg, sym)}
-  let ref = symbolref.sym
-  acc
-  + for acc2 = [ ref]
-  , sym2 ∈ if isabstract.module.sym then getCode(prg, sym)else libcode(getCode(prg, sym), symstoexport2)
+   let libsymcode=if isabstract.module.sym then getCode(prg, sym)else libcode(getCode(prg, sym), symstoexport2)
+   acc + for acc2 = [ symbolref.sym] , sym2 ∈ libsymcode
   do
    if isFref.sym2 then acc2 + symbolref.PreFref + symbolref.basesym.sym2 else acc2 + symbolref.sym2
   /for(acc2)
@@ -97,21 +113,13 @@ let profilearcs =
     if isconstantorspecial.sym ∨ isInternal.sym then txt else txt + [ sym.sd, sym]
    /for(txt)
  /for(acc)
-let all0 = 
- for acc = empty:seq.symbolref, arc ∈ toseq.profilearcs do acc + symbolref.arc_1 + symbolref.arc_2 /for(acc)
-let all = for all = all0, a ∈ code2 do all + a /for(asset.all)
-{ all is used to establish new mapping of symbols to symbolrefs }
-let profiledata = 
- for acc = [ 1, cardinality.profilearcs], arc ∈ toseq.profilearcs do
-  acc
-  + [ binarysearch(toseq.all, symbolref.arc_1)
-  , binarysearch(toseq.all, symbolref.arc_2)
-  , 0
-  , 0
-  , 0
-  , 0
-  ]
- /for(acc)
+let newmap = 
+ for acc = empty:seq.symbolref, arc ∈ toseq.profilearcs 
+  do acc + symbolref.arc_1 + symbolref.arc_2 /for(
+  for newmap = acc, a ∈ code2 do newmap + a /for(asset.newmap)
+   )
+{ newmap is used to establish new mapping of symbols to symbolrefs }
+let all=newmap
 let dd = symbolrefdecode
 for decoderef = empty:seq.symbol, idx ∈ toseq.all do decoderef + addlibsym.dd_(toint.idx)/for(libdescresult([ addseq.decoderef
 , addseq.for acc = empty:seq.symbol, @e ∈ mods.info do acc + addlibraryMod(@e, all)/for(acc)
@@ -120,7 +128,6 @@ for acc = empty:seq.symbol, a ∈ code2 do acc + addseqsymbolref(a, all)/for(add
 ]
 , profilearcs
 , all
-, profiledata
 ))
 
 Function libcode(code1:seq.symbol, toexport:set.symbol)seq.symbol
@@ -136,9 +143,6 @@ let z =
    x
   else empty:seq.symbol
  else empty:seq.symbol
-{ assert isempty.optionsx ∨ optionsx ∈ ["STATE","INLINE","VERYSIMPLE INLINE","STATE INLINE","BUILTIN","BUILTIN 
- COMPILETIME","PROFILE","STATE BUILTIN","COMPILETIME STATE","COMPILETIME","PROFILE STATE","INLINE STATE","
- NOINLINE STATE"]report"X"+optionsx z }
 if"COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then z + Words.optionsx + Optionsym else z
 
 ----------------------------------

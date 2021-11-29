@@ -12,7 +12,7 @@ testsCompile/test11a testsCompile/testall testsCompile/testopt
 uses
 exports UTF8  barycenter bits dataio display  encoding fileio format graph hashset index internalbc ioseq   layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph 
 symbol2 taublockseq tausupport testall textio timestamp tree words xxhash compilerfront
-bitcast
+bitcast interpreter
 
 
 /* only document standard seq real
@@ -59,10 +59,15 @@ Export compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dep
 
 Export passparse(abstractmods:set.passsymbols, simplemods:set.passsymbols, lib:word, prg1:seq.symdef, src:seq.seq.word, mode:word)set.symdef
 
-Export stepone(theprg:set.symdef, roots:set.symbol, alltypes:typedict, isbase:boolean, thename:word, newmap:set.symbolref)steponeresult
+/Export stepone(theprg:set.symdef, roots:set.symbol, alltypes:typedict, isbase:boolean, thename:word, newmap:set.symbolref)steponeresult
 
 /Export uses(p:program, alltypes:typedict, processed:set.symbol, toprocess:set.symbol, infref:set.symbol, inrecordconstant 
 :set.symbol, inother:set.symbol)usesresult
+
+use libdesc
+
+Export libdesc(info:compileinfo, prg:set.symdef)libdescresult
+
 
 module STATE
 

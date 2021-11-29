@@ -271,6 +271,8 @@ return 0;
 }
 
 
+BT lastentrypoint=0;
+
 BT loadlibrary(struct pinfo *PD,char *lib_name_root){
    char lib_name[200],name[100];
    struct stat sbuf;
@@ -283,6 +285,7 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
       fprintf(stderr,"[%s] Unable to open library: %s\n",__FILE__, dlerror());
      return -1;
     }  
+  lastentrypoint=(BT)dlsym(lib_handle,"entrypoint");
   stat(lib_name, &sbuf) ;  
    fprintf(stderr,"using lib %s  time: %ld\n",lib_name,sbuf.st_mtimespec.tv_sec );          
   return sbuf.st_mtimespec.tv_sec;
@@ -489,7 +492,6 @@ BT  tobyteseq ( processinfo PD,char *str) {
      return (BT) b;
 }
 
-
 int main(int argc, char **argv)    {   int i=0,count; 
           char argstr [500]; {int i;
            // initialize main process
@@ -522,7 +524,7 @@ int main(int argc, char **argv)    {   int i=0,count;
       initprocessinfo(p,PD);
       p->deepcopyresult = (BT)noop; 
       p->deepcopyseqword = (BT)noop;
-       p->func=(BT)dlsym(RTLD_DEFAULT, "main2");
+       p->func=(BT)dlsym(RTLD_DEFAULT, "entrypoint");
       if (!p->func) {
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
@@ -596,7 +598,11 @@ BT callstack(processinfo PD,BT maxsize){
 
 
 BT dlsymbol(processinfo PD,char * funcname) 
-{return (BT) dlsym(RTLD_DEFAULT,  tocstr(funcname) );}
+{if (strcmp(tocstr(funcname),"entrypoint")==0 ){
+ fprintf(stderr,"dlentrypoint %lld \n",lastentrypoint);
+ return lastentrypoint;
+}
+return (BT) dlsym(RTLD_DEFAULT,  tocstr(funcname) );}
 
 
 

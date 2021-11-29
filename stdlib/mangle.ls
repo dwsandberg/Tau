@@ -27,7 +27,7 @@ use otherseq.word
 use set.word
 
 Function mangledname(options:seq.word, s:symbol)word
-if wordname.s ∈ "main" ∧ name.module.s ∈ "main2"then"main2"_1
+if wordname.s ∈ "entrypoint" then "entrypoint"_1
 else if wordname.s ∈ "addlibrarywords" ∧ name.module.s ∈ "main2"then
 "addlibrarywordsZmain2Zliblib"_1
 else if name.module.s ∈ "internal"then extname.s else first.externalname.options
@@ -50,7 +50,7 @@ builtin dlsymbol(cstr)int
 
 Function funcaddress(sym:symbol)int
 let name0 = 
- if wordname.sym ∈ "main" ∧ name.module.sym ∈ "main2"then"main2"
+if wordname.sym ∈ "entrypoint" then "entrypoint" 
  else if wordname.sym ∈ "addlibrarywords" ∧ name.module.sym ∈ "main2"then
  "addlibrarywordsZmain2Zliblib"
  else if name.module.sym ∈ "internal"then [ extname.sym]else""

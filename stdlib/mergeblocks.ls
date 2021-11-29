@@ -20,6 +20,8 @@ use otherseq.symbol
 
 use seq.symbol
 
+use symbolconstant
+
 type ggg is code:seq.symbol, stk:stack.int
 
 function countnodes2(s:stack.int)int if top.s = 2 then 1 else 1 + countnodes2.pop.s

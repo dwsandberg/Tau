@@ -328,3 +328,4 @@ else next( acc, currentmod, funcs, types)
       else 
          next(arcs+arc(last,w),none)
          /for( drawgraph.newgraph.arcs)
+         

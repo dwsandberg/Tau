@@ -123,6 +123,8 @@ else
  next(noFref, newargs + t)
 /for(if acc then args + func else empty:seq.symbol /if)
 
+use symbolconstant
+
 function scancode(p:set.symdef, org:seq.symbol, nextvarX:int, mapX:set.localmap2, self:symbol)expandresult
 for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym ∈ org do
  let len = length.result
@@ -167,7 +169,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    let nopara = nopara.sym
    let args = subseq(result, len + 1 - nopara, len)
    let constargs = for acc = true, @e ∈ args while acc do isconst.@e /for(acc)
-   if constargs then next(flags, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
+   if constargs then next(flags, subseq(result, 1, len - nopara) + Constant2(p,args + sym), nextvar, map)
    else next(flags, result + sym, nextvar, map)
   else if islocal.sym then
    let t = lookup(map, value.sym)
@@ -211,11 +213,11 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
     let arg1 = result_len
     let a1 = 
      for acc = empty:seq.symbol, @e ∈ tointseq.decodeword.wordname.arg1 do acc + Lit.@e /for(acc)
-    let d = Constant2(a1 + Sequence(typeint, length.a1))
+    let d = Constant2(p,a1 + Sequence(typeint, length.a1))
     next(flags, result >> 1 + d, nextvar, map)
    else
-    let newcode = interpretCompileTime.ct
-    let newconst = if length.newcode > 1 then Constant2.newcode else first.newcode
+    let newcode = interpretCompileTime.removeconstantcode.ct
+    let newconst = if length.newcode > 1 then Constant2(p,newcode) else first.newcode
     next(flags, result >> nopara + newconst, nextvar, map)
   else if first."VERYSIMPLE" ∈ options then
    next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
@@ -423,7 +425,8 @@ for acc = empty:seq.symbol, s ∈ code do
 
 ________________________________
 
-Function pass2(knownsymbols:set.symdef)set.symdef subpass2(empty:seq.symdef, empty:set.symdef, knownsymbols, 0)
+Function pass2(knownsymbols:set.symdef)set.symdef 
+subpass2(empty:seq.symdef, empty:set.symdef, knownsymbols, 0) /cup constantsymbols
 
 function subpass2(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int)set.symdef
 { assert count < 4 report"SIZE"+print.length.toseq.toprocess+print.length.bigin+print.length.toseq.corein+

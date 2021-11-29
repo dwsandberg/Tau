@@ -32,8 +32,10 @@ Builtin bitcast(int)seq.int
 
 Builtin GEP(seq.int, int)int
 
+Export  deepcopySym(mytype) symbol
+
 Function interpretCompileTime(code:seq.symbol)seq.symbol
-let z = removeconstantcode.code
+let z = code
 assert for acc = true, sym ∈ z while acc do not.isFref.sym /for(acc)
 report"has Fref" + print.z
 let r = interpret(z, 1, empty:stack.int)

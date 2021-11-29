@@ -1,5 +1,7 @@
 Module codetemplates
 
+use libdesc
+
 use bits
 
 use internalbc
@@ -56,14 +58,16 @@ use seq.seq.int
 
 use seq.seq.symbol
 
+use symbolconstant
+
 Function uses(p:set.symdef
 , alltypes:typedict
 , processed:set.symbol
 , toprocess:set.symbol
 , infref:set.symbol
-, inrecordconstant:set.symbol
+, inrecordconstant:seq.symdef
 , inother:set.symbol
-, newmap:set.symbolref
+, newmap:libdescresult
 , thename:word
 )steponeresult
 for acc = empty:seq.symbol
@@ -77,7 +81,9 @@ do
  else
   let ele = @e
   if isFref.@e then next(acc + [ basesym.@e], fref + @e, crecord, other, newprg)
-  else if isrecordconstant.@e then next(acc + constantcode.@e, fref, crecord + @e, other, newprg)
+  else if isrecordconstant.@e then 
+  let code=constantcode.@e
+  next(acc + code, fref, crecord + symdef(@e,code), other, newprg)
   else if isconst.ele then
    let discard5 = buildconst(ele, alltypes)
    next(acc, fref, crecord, other, newprg)
@@ -106,15 +112,22 @@ do
   else
    let d = getCode(p, @e)
    let options = getoption.d
-   if iscompiled(d, ele) ∨ not.addele(ele, d)then
+let callit= iscompiled(d, ele)  ∨ if isInternal.ele then
+ extname.ele
+ /nin "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean 
+ SHLint setptr bitcast DIVreal ORDint toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint xor 
+ ORbits"
+else isempty.d
+    if callit then
     let discard5 = call(alltypes, ele,"CALL"_1, d, mangledname(options, ele))
     next(acc, fref, crecord, other, newprg)
    else
     let r = symbolref.ele
-    let i = binarysearch(toseq.newmap, r)
+    let i =  newsymbolref(newmap,ele)   
     let extname = 
      [ merge([ thename]
-     + if i > 0 then"$$" + toword.i else"$" + toword.toint.r + "$"/if)
+     + if i > 0 then"$$" + toword.i else
+     "$" + toword.toint.r + "$"/if)
      ]
     next(acc + d, fref, crecord, other + @e, symdef(ele, addoption(d, extname)) ∪ newprg)
 /for(let q = asset.acc
@@ -132,31 +145,23 @@ Export defines(steponeresult)seq.symbol,
 
 Export type:steponeresult
 
-Function addele(ele:symbol, d:seq.symbol)boolean
-if isInternal.ele then
- true
- ∧ extname.ele
- ∈ "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean 
- SHLint setptr bitcast DIVreal ORDint toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint xor 
- ORbits"
-else not.isempty.d
 
 Function stepone(theprg:set.symdef
 , roots:set.symbol
 , alltypes:typedict
 , isbase:boolean
 , thename:word
-, newmap:set.symbolref
+, newmap:libdescresult
 )steponeresult
 let discard1 = initmap5
 uses(theprg, alltypes, empty:set.symbol, roots, empty:set.symbol
-, empty:set.symbol, empty:set.symbol, newmap, thename)
+, empty:seq.symdef, empty:set.symbol, newmap, thename)
 
 function finishuse(alltypes:typedict
 , prg:set.symdef
 , defines:seq.symbol
 , fref:set.symbol
-, isrecordconstant:set.symbol
+, isrecordconstant:seq.symdef 
 )steponeresult
 let discard = 
  for acc = 0, ele ∈ defines do
@@ -167,7 +172,7 @@ let discard =
   acc
  /for(acc)
 let discard2 = buildFref(prg, toseq.fref, alltypes)
-let discard4 = processconst.toseq.isrecordconstant
+let discard4 = processconst.isrecordconstant
 steponeresult(empty:seq.match5, defines)
 
 function buildFref(theprg:set.symdef, other:seq.symbol, alltypes:typedict)seq.match5
@@ -615,17 +620,20 @@ addtemplate(symbol(internalmod,"bitcast", typeptr, typeint)
 Function symboltableentry(name:seq.word, type:llvmtype)slot
 modulerecord(name, [ toint.FUNCTIONDEC, typ.type, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
-function processconst(toprocess:seq.symbol)int
+ 
+ use seq.symdef
+ 
+ function processconst(toprocess:seq.symdef)int
 if isempty.toprocess then 0
 else
- for notprocessed = empty:seq.symbol, changed = false, xx ∈ toprocess do
+ for notprocessed = empty:seq.symdef, changed = false, xx ∈ toprocess do
   let processed = 
-   for args = empty:seq.int, defined = true, ele ∈ constantcode.xx
+   for args = empty:seq.int, defined = true, ele ∈ code.xx
    while defined
    do let tp = findtemplate.ele
    if isempty.tp then next(empty:seq.int, false)else next(args + arg.tp_1, true)
    /for(if defined then
-    let discard = addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args)
+    let discard = addtemplate(sym.xx, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args)
     true
    else false /if)
   next(if processed then notprocessed else notprocessed + xx, changed ∨ processed)
@@ -633,7 +641,7 @@ else
  report"problem processconst"
  + for txt = "", xx2 ∈ notprocessed do
   let txt2 = 
-   for txt2 = "", ele ∈ constantcode.xx2 do
+   for txt2 = "", ele ∈ code.xx2 do
     let tp = findtemplate.ele
     if isempty.tp then txt2 + print.ele else txt2
    /for(txt2)

@@ -158,12 +158,52 @@ else
      for acc = acc0, sym ∈ toseq.expand(4, afteroption, root)do addoption(acc, sym,"INLINE")/for(acc)
     /for(acc0)
    else afteroption
-  compileinfo(toseq.if option = "pass1"then result else pass2.result ∪ templates
+  if option = "pass1"then compileinfo(toseq.result
+  , typedict.pb
+  , tolibraryModules(typedict, toseq.modules.t5, exports)
+  , empty:seq.seq.word
+  , asset.roots
+  ) else 
+  let  prg5=pass2.result ∪ templates
+  compileinfo(toseq.prg5
   , typedict.pb
   , tolibraryModules(typedict, toseq.modules.t5, exports)
   , empty:seq.seq.word
   , asset.roots
   )
+
+  /use set.seq.symbolref
+  
+  /use otherseq.symbolref
+ 
+function libcode(code1:seq.symbol, toexport:set.symbol)seq.symbol
+let code = removeoptions.code1
+let optionsx = getoption.code1
+let z = 
+ if length.code < 15 then
+  let x =  code
+  if"VERYSIMPLE"_1 ∈ optionsx then x
+  else if for acc = true, @e ∈ x do
+   acc ∧ (isconst.@e ∨ isBuiltin.@e ∧ para.module.@e ∈ [ typereal, typeint] ∨ isspecial.@e ∨ @e ∈ toexport)
+  /for(acc)then
+   x
+  else empty:seq.symbol
+ else empty:seq.symbol
+{ assert isempty.optionsx ∨ optionsx ∈ ["STATE","INLINE","VERYSIMPLE INLINE","STATE INLINE","BUILTIN","BUILTIN 
+ COMPILETIME","PROFILE","STATE BUILTIN","COMPILETIME STATE","COMPILETIME","PROFILE STATE","INLINE STATE","
+ NOINLINE STATE"]report"X"+optionsx z }
+if"COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then z + Words.optionsx + Optionsym else z
+  
+/Function libprg( mods:seq.seq.libraryModule) seq.symbolref
+ for acc = empty:seq.symbolref, m ∈ mods.info do acc + exports.m /for(for acc2 = empty:set.symbol, r ∈ toseq.asset.acc do acc2 + (symbolrefdecode.info)_(toint.r)/for(acc2))
+ for acc = empty:seq.seq.symbolref, sym ∈ toseq.symstoexport2 do
+   let libsymcode=if isabstract.module.sym then getCode(prg, sym)else libcode(getCode(prg, sym), symstoexport2)
+   acc + for acc2 = [ symbolref.sym] , sym2 ∈ libsymcode
+  do
+   if isFref.sym2 then acc2 + symbolref.PreFref + symbolref.basesym.sym2 else acc2 + symbolref.sym2
+  /for(acc2)
+ /for(acc)
+
 
 function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
 for acc = empty:set.symbol, sym ∈ getCode(prg, symin)do
@@ -237,6 +277,8 @@ else
    /for(acc2)
  /for(acc)
  )
+ 
+ use symbolconstant
 
 Function addoption(p:set.symdef, s:symbol, option:seq.word)set.symdef
 { must maintain library of symbol in p }
@@ -323,6 +365,7 @@ assert c1 = c2 report"SFD" + print.c1 + EOL + print.c2
 pp
 
 Function tolibraryModules(alltypes:typedict, t5:seq.passsymbols, exports:seq.word)seq.libraryModule
+{does this need typedec????}
 for acc = empty:seq.libraryModule, typedec = empty:seq.seq.mytype, m2 ∈ t5 do
  if name.module.m2 ∉ exports then next(acc, typedec)
  else

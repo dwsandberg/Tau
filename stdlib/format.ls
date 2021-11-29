@@ -62,7 +62,7 @@ Function htmlheader seq.word
 + '.container{margin:0 ; padding:0 ; height:100% ; display:-webkit-flex ; display:flex ; flex-direction:column ;}'
 + '.floating-menu{margin:0 ; padding:0 ; background:yellowgreen ; padding:0.5em ;}'
 + '.content{margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow:auto ; height:0 ; min-height:0 ; 
-}'
+'}
 } ' --> </style> '
 + EOL
 
@@ -206,6 +206,22 @@ for needsLF = false, result = emptyUTF8, stk = empty:stack.word, last = none, th
  else if last = space then next(needsLF, result + [space], stk, this)
  else next(true, result + [last], stk, this)
 /for(if last = none then result else result + [last]/if)
+
+Function HTML(output:seq.word) UTF8
+let r=toUTF8bytes.output
+let z=createfile("stdout", toUTF8bytes.output)
+ UTF8.r
+ 
+ Function TEXT(output:seq.word) UTF8
+let r= toseqbyte.textformat.output
+let z=createfile("stdout", toUTF8bytes.output)
+ UTF8.r
+ 
+ use textio
+ 
+ Export type:UTF8
+ 
+ Export towords(UTF8) seq.word
 
 function chrs(s:seq.word)seq.char decodeword.s_1
 

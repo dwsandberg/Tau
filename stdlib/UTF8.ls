@@ -220,8 +220,13 @@ for result = emptyUTF8, nospace = nospacein, this ∈ s do
   {no space before but space after}next(result + char1.", " + char.32, true)
  else
   let chars = decodeword.this
-  if chars = [char1.".", char.32]
-  ∨ length.chars = 1 ∧ first.chars ∈ (decodeword.merge.'={}+-()[].:"_^' + char.32)then
+   if length.chars = 1 ∧ first.chars ∈ decodeword.merge.'={}+-()[].:"_^'  then
+       {no space before or after}next(result + chars, true)
+   else if length.chars = 1 ∧ first.chars = char.32 then
+      if 32 /le length.format /and length(format_32) > 1 then 
+       next(if nospace then result + format_32 else result + char.32 + format_32, false)
+       else  next(result + chars, true) 
+  else if chars = [char1.".", char.32] then 
    {no space before or after}next(result + chars, true)
   else
    let d = 

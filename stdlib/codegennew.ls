@@ -69,14 +69,11 @@ Function codegen(theprg0:set.symdef
 , alltypes:typedict
 , isbase:boolean
 )seq.bits
-{ let theprg=for theprg=theprg0, sd=constantsymbols do map(theprg, sym.sd, code.sd)/for(theprg)}
-{ assert false report for txt=empty:set.word, s=toseq.newmap.libdesc do txt+name.module.decode.s /for(toseq.txt 
-)}
 let profilearcs = profilearcs.libdesc
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(theprg0, roots, alltypes, isbase, thename, newmap.libdesc)
+let stepone = stepone(theprg0, roots, alltypes, isbase, thename, libdesc)
 let match5map = match5map.stepone
 let defines = defines.stepone
 let libmods2 = 

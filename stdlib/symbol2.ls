@@ -1,5 +1,7 @@
 Module symbol2
 
+use symbolconstant
+
 use compilerfront
 
 use mytype
@@ -23,6 +25,10 @@ Export library(modref)word
 Export symdef(symbol, seq.symbol, int)symdef
 
 Export type:symbolconstant
+
+Export Constant2(seq.symbol) symbol
+
+Export constantcode(s:symbol)seq.symbol
 
 Export type:symbol
 
@@ -226,8 +232,6 @@ Export moduleref(seq.word, mytype)modref
 
 Export isrecordconstant(symbol)boolean
 
-Export constantcode(symbol)seq.symbol
-
 Export iswordseq(symbol)boolean
 
 Export brt(symbol)int
@@ -235,8 +239,6 @@ Export brt(symbol)int
 Export brf(symbol)int
 
 Export isstartorloop(symbol)boolean
-
-Export Constant2(seq.symbol)symbol
 
 Export fsighash(symbol)int
 
