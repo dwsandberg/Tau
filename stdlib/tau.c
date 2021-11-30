@@ -493,31 +493,17 @@ BT  tobyteseq ( processinfo PD,char *str) {
 }
 
 int main(int argc, char **argv)    {   int i=0,count; 
-          char argstr [500]; {int i;
            // initialize main process
     sharedspace.encodings = staticencodings;
     for(i=0; i<noencodings;i++) sharedspace.encodings[i]=0;
     signal(SIGSEGV,fatal_error_signal);
      signal(SIGBUS,fatal_error_signal);
     signal(SIGILL,fatal_error_signal);
-  } 
-       for(count=1;argc > count; count++){ // combine arguements
-        int j=0;
-            while( argv[count][j] != 0 ) { argstr[i++]=argv[count][j++];}
-            argstr[i++]=' '; 
-     }   
-     argstr[i++]=0;
+    
      {  // load the library  
-       char libstr[100]="stdlib";
-       int k=0;
-       i=0; while( argstr[i]==' ') i++;
-       if (argstr[i]=='L' ) { i++;
-         while( argstr[i]==' ') i++;
-         while( argstr[i]!=' ' & argstr[i]!=0) libstr[k++]=argstr[i++]; 
-         libstr[k]=0;
-       }
-        loadlibrary(&sharedspace,libstr);  
+         loadlibrary(&sharedspace,argc > 1?argv[1]:"stdlib");  
      }
+     
         processinfo PD=&sharedspace;
       int j;  
       processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
@@ -529,7 +515,7 @@ int main(int argc, char **argv)    {   int i=0,count;
         fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
        exit(EXIT_FAILURE);
       }
-      BT argsx=tobyteseq ( p, argstr);  
+      BT argsx=tobyteseq ( p,argc  > 2?argv[2]:"");  
        p->argtype=4;
        p->args=&argsx;
        p->freespace=0;

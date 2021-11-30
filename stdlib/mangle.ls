@@ -67,6 +67,9 @@ else
 
 Builtin createthreadI(int, int, int, seq.int, int)process.int
 
+Builtin createthreadI(int, int, int, seq.UTF8, int)process.int
+
+
 Function internalstacktrace seq.word
 for acc = "", @e ∈ callstack.30 << 2 do acc + " /br" + printfunc.addresstosymbol2.@e /for(acc)
 
@@ -84,3 +87,39 @@ else
 builtin callstack(n:int)seq.int
 
 builtin addresstosymbol2(a:int)seq.char 
+
+
+____________
+
+Function callentrypoint(arg:UTF8) seq.word
+let entry= for acc=empty:seq.symbol,  sym /in decoderef.last.loadedLibs  do
+     if not.isconst.sym /and name.sym /in "entrypoint" then acc+sym else acc
+     /for(acc)
+    if length.entry /ne 1 then "Entry problem"
+    else 
+    let sym=entry_1
+  let t = funcaddress.sym
+  let dcret = deepcopySym.resulttype.sym
+  let adcret = funcaddress.dcret
+    let dc = deepcopySym.seqof.typeword
+  let adc = funcaddress.dc
+   if not( t > 0  /and adcret > 0 /and adc > 0) then
+    "ERROR"+[toword.t,toword.adcret,toword.adc]
+  else
+    let p = createthreadI(adcret, adc, t, [arg], {buildargcodeI.sym} 4)
+    if aborted.p then message.p
+   else "OK"
+   
+   use UTF8
+   
+   use seq.liblib
+   
+   use mangle 
+   
+   use bitcast.UTF8
+   
+   use bitcast.int
+   
+   use seq.int
+   
+   use process.int

@@ -105,7 +105,17 @@ let bc =
 let z2 = createlib(bc, last.libname, dependentlibs)
 "OK"
 
-Function entrypoint( argin:seq.byte) int 
+use mangle
+
+Function entrypoint(arg:UTF8) UTF8
+ let wordargs=towords.arg
+ let p = process.subcompilelib.[first.wordargs]
+ HTML.if aborted.p then
+   "COMPILATION ERROR:" + space + message.p 
+ else if first.wordargs="stdlib"_1 then "OK" else
+     callentrypoint( toUTF8(wordargs << 1))
+     
+/Function entrypoint( argin:seq.byte) int 
 let args2 = 
  for acc = empty:seq.seq.word, @e ∈ break(char1.";", empty:seq.char, decodeUTF8.UTF8.argin)do acc + towords.@e /for(acc)
 let libname = args2_1

@@ -1,4 +1,7 @@
-#!/usr/local/bin/tau ; use doc ; callgraphbetween("stdlib"," codetemplates pass2 symbolconstant")
+#!/usr/bin/env bash tau complib tools pretty  printbitcodes printbitcodes bitcodesupport runcode  
+
+
+
 
 
 ;  use doc ; doclibrary."webassembly"
@@ -90,6 +93,51 @@ use seq.seq.word
 use prettycompilerfront
 
 Function testprofile(libname:seq.word)seq.word subcompilelib.libname + profileresults."time"
+
+use taulextable
+
+use doc
+
+use seq.char
+
+use genLR1
+
+use baseTypeCheck
+
+use pretty
+
+use testall
+
+Function entrypoint(s:UTF8) UTF8
+ let args=towords.s
+ let arg=[first.args]
+ let arg2= if length.args > 1 then [args_2] else ""
+ HTML.if arg="lextable" then getlextable
+ else if arg="testprofile" then 
+ testprofile.arg2
+ else if arg="doclibrary" then 
+ doclibrary.arg2
+  else if arg="htmlcode" then 
+ doclibrary.arg2
+  else if arg="callgraphbetween" then
+   let otherargs= if  char1."/" /in decodeword.last.args then  args >> 1 else  args
+   callgraphbetween([args_2],otherargs << 2)
+  else if arg="callgraphwithin" then
+   let otherargs= if  char1."/" /in decodeword.last.args then  args >> 1 else  args
+   callgraphwithin([args_2],otherargs << 2)
+ else if arg="pretty" then
+   let otherargs=    
+     if length.args > 3 /and args_-2=first."." then args >> 3 else  args
+    pretty(otherargs << 1,"junk") 
+  else if arg="taugrammar" then
+  gentau2
+    else if arg="testall" then
+   testall
+   else if arg="baseTypeCheck" then 
+ baseTypeCheck.arg2
+  else  "unknown arg"+args
+ 
+
 
 Function test3 seq.word 
 totext(compilerfront("text","stdlib"),"junk"
