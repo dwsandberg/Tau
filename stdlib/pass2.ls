@@ -110,7 +110,7 @@ Function Hasmerge bits bits.16
 
 function ∈(a:bits, b:bits)boolean(a ∧ b) = a
 
-function prepareargs(args:seq.symbol, func:symbol)seq.symbol
+function prepareargs(prg:set.symdef,args:seq.symbol, func:symbol)seq.symbol
 { returns empty sequence if args are not all constants. Removes record constants in args.returns empty if Fref appears 
 in args }
 for acc = true, newargs = empty:seq.symbol, @e ∈ args
@@ -118,7 +118,7 @@ while acc
 do if not.isconst.@e ∨ isFref.@e then next(false, newargs)
 else if not.isrecordconstant.@e then next(true, newargs + @e)
 else
- let t = removeconstantcode.[ @e]
+ let t = {removerecordconstant(prg,} removeconstantcode([ @e])
  let noFref = for noFref = true, sub ∈ t while noFref do not.isFref.sub /for(noFref)
  next(noFref, newargs + t)
 /for(if acc then args + func else empty:seq.symbol /if)
@@ -206,7 +206,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
   let dd = getCode(p, sym)
   let options = getoption.dd
   let ct = 
-   if first."COMPILETIME" ∈ options then prepareargs(subseq(result, len - nopara + 1, len), sym)
+   if first."COMPILETIME" ∈ options then prepareargs(p,subseq(result, len - nopara + 1, len), sym)
    else empty:seq.symbol
   if { COMPILE TIME } not.isempty.ct then
    if sym = symbol(moduleref."stdlib words","decodeword", typeword, typeint)then

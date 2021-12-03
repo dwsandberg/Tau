@@ -1,6 +1,7 @@
+#!/bin/sh tau   stdlib stdlib
+
 Module libdesc
 
-use  symbolconstant
 
 use bits
 
@@ -46,6 +47,8 @@ use set.word
 
 use encoding.seq.char
 
+
+
 use seq.seq.int
 
 use seq.seq.symbol
@@ -56,133 +59,106 @@ use seq.seq.symbolref
 
 use seq.seq.word
 
+use codegennew
+
 function print(l:seq.mytype)seq.word
 for acc = "(", t ∈ l do acc + print.t /for(acc + ")")
 
 Export ?(a:symbolref, b:symbolref)ordering
-
-type libdescresult is liblibflds:seq.symbol, profilearcs:set.seq.symbol
-                     , newmap:set.symbolref 
                      
-Function newsymbolref(ld:libdescresult,sym:symbol) int  
-let one=binarysearch(toseq.newmap.ld ,symbolref.sym)
-{if one < 0 /and isrecordconstant.sym then
- let two=binarysearch(toseq.newmap2.ld ,symbolref.sym)
- if two < 0 then two else two+cardinality.newmap.ld
-else} one
-                     
- Function profiledata(ld:libdescresult)seq.int
- for acc = [ 1, cardinality.profilearcs.ld], arc ∈ toseq.profilearcs.ld do
-  acc
-  + [ newsymbolref(ld , arc_1)
-  , newsymbolref(ld ,  arc_2)
-  , 0
-  , 0
-  , 0
-  , 0
-  ] /for(acc)
-
-Export profilearcs(libdescresult)set.seq.symbol
-
-Export liblibflds(libdescresult)seq.symbol
 
 
-
-Export type:libdescresult
+use mytype
 
 Export type:compileinfo
 
-Function libdesc(info:compileinfo, prg:set.symdef)libdescresult
-{ mods.info are only the exported modules }
-let symstoexport2 = 
- { roots.info }
- for acc = empty:seq.symbolref, m ∈ mods.info do acc + exports.m /for(for acc2 = empty:set.symbol, r ∈ toseq.asset.acc do acc2 + (symbolrefdecode.info)_(toint.r)/for(acc2))
-let code2 = 
- for acc = empty:seq.seq.symbolref, sym ∈ toseq.symstoexport2 do
-   let libsymcode=if isabstract.module.sym then getCode(prg, sym)else libcode(getCode(prg, sym), symstoexport2)
-   acc + for acc2 = [ symbolref.sym] , sym2 ∈ libsymcode
-  do
-   if isFref.sym2 then acc2 + symbolref.PreFref + symbolref.basesym.sym2 else acc2 + symbolref.sym2
-  /for(acc2)
- /for(acc)
-let profilearcs = 
- for acc = empty:set.seq.symbol, sd ∈ toseq.prg do
-  if"PROFILE"_1 ∉ getoption.code.sd then acc
+Function compilerback(info:compileinfo,libname:seq.word,dependentlibs:seq.word ) seq.word
+let prg10 = asset.prg.info  
+  let newmods= for acc = empty:seq.libraryModule, @e ∈ mods.info do 
+    for newexports = empty:seq.symbolref, r ∈ exports.@e do 
+    newexports +  symbolrefnew.(symbolrefdecode.info)_toint.r
+  /for (   acc + libraryModule(modname.@e,newexports  ,types.@e))
+/for(acc) 
+let code2 = libcode(prg10,mods.info,symbolrefdecode.info)
+ let gensym=gencode(mods.info,code.info,symbolrefdecode.info)
+let prg= for  acc=empty:seq.symdef,  sd /in toseq.prg10 do
+   if  isabstract.module.sym.sd /or  symbolref.sym.sd /nin gensym then acc
+   else acc+sd 
+ /for(asset.acc)
+ let profilearcs = 
+ for acc = [ symbolref.0 ], sd ∈ toseq.prg10 do
+  if  isabstract.module.sym.sd /or "PROFILE"_1 ∉ getoption.code.sd /or symbolref.sym.sd /nin gensym  then acc
   else
    for txt = acc, sym ∈ toseq.asset.code.sd do
-    if isconstantorspecial.sym ∨ isInternal.sym then txt else txt + [ sym.sd, sym]
+    if isconstantorspecial.sym ∨ isInternal.sym then txt else txt + [  
+     symbolrefnew.sym.sd, symbolrefnew.sym]
    /for(txt)
  /for(acc)
-let newmap = 
- for acc = empty:seq.symbolref, arc ∈ toseq.profilearcs 
-  do acc + symbolref.arc_1 + symbolref.arc_2 /for(
-  for newmap = acc, a ∈ code2 do newmap + a /for(asset.newmap)
-   )
-{ newmap is used to establish new mapping of symbols to symbolrefs }
-let all=newmap
-let dd = symbolrefdecode
-for decoderef = empty:seq.symbol, idx ∈ toseq.all do decoderef + addlibsym.dd_(toint.idx)/for(libdescresult([ addseq.decoderef
-, addseq.for acc = empty:seq.symbol, @e ∈ mods.info do acc + addlibraryMod(@e, all)/for(acc)
-, { code }
-for acc = empty:seq.symbol, a ∈ code2 do acc + addseqsymbolref(a, all)/for(addseq.acc)
-]
-, profilearcs
-, all
-))
+ let newmap2=symbolrefdecodenew
+let bc = 
+ codegen(prg  
+ , last.libname
+ , compileinfo(typedict.info
+ ,   [profilearcs]+code2
+ ,empty:seq.seq.word
+ , { decode ref } newmap2
+, newmods)
+ , isempty.dependentlibs
+ , length.newmap2  
+ )
+let z2 = createlib(bc, last.libname, dependentlibs)
+"OK"
 
-Function libcode(code1:seq.symbol, toexport:set.symbol)seq.symbol
-let code = removeoptions.code1
-let optionsx = getoption.code1
-let z = 
- if length.code < 15 then
-  let x = removeconstantcode.code
-  if"VERYSIMPLE"_1 ∈ optionsx then x
-  else if for acc = true, @e ∈ x do
-   acc ∧ (isconst.@e ∨ isBuiltin.@e ∧ para.module.@e ∈ [ typereal, typeint] ∨ isspecial.@e ∨ @e ∈ toexport)
-  /for(acc)then
-   x
-  else empty:seq.symbol
- else empty:seq.symbol
-if"COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then z + Words.optionsx + Optionsym else z
 
-----------------------------------
+use seq.seq.symbolref
 
-function addlibsym(s:symbol)symbol
-assert not.isFref.s report"Fref problem" + stacktrace
-let t = module.s
-Constant2.[ Words.worddata.s
-, Word.library.t
-, Word.name.t
-, addmytype.para.t
-, addseq.for acc = empty:seq.symbol, @e ∈ types.s do acc + addmytype.@e /for(acc)
-, Lit.toint.raw.s
-, Lit.extrabits.s
-, Record.[ typeptr, typeword, typeword, typeptr, typeptr, typeint, typeint]
-]
+use sparseseq.seq.symbolref
 
-function addmytype(t:mytype)symbol
-addseq.for acc = empty:seq.symbol, e ∈ typerep.t do
- acc + Constant2.[ Word.name.e, Word.modname.e, Word.library.e, Record.[ typeint, typeint, typeint]]
-/for(acc)
+function gencode(mods:seq.libraryModule,code:seq.seq.symbolref,refdecode:seq.symbol)set.symbolref
+let code2=for acc=sparseseq(empty:seq.symbolref), row /in code do 
+   replaceS(acc,toint.first.row,[row << 1]) 
+/for(
+ for  acc2=acc,idx=1,sym /in refdecode do
+                next(if isFref.sym then 
+                replaceS(acc2, idx,[[symbolref.basesym.sym]]) else acc2,
+                 idx+1)
+           /for (acc2))
+ for acc = empty:seq.symbolref, m ∈ mods do acc + exports.m 
+ /for
+ (for acc2 = empty:set.symbolref, r ∈ toseq.asset.acc do 
+  if isabstract.module.refdecode _(toint.r) then acc2 else  acc2 +  r
+ /for(
+ close(code2,acc2,empty:set.symbolref,refdecode))
+ )
+ 
+ function close(symdefs:seq.seq.symbolref,toprocess:set.symbolref,symlist:set.symbolref,refdecode:seq.symbol)
+  set.symbolref
+ for acc = empty:seq.symbolref, sym /in toseq.toprocess do
+           acc+  symdefs_toint.sym
+ /for( let newsymlist=toprocess /cup symlist
+        let newtoprocess=   asset.acc \ newsymlist  
+   { assert false report "XXX"+toword.cardinality.newtoprocess +for acc4="", r2 /in toseq( newtoprocess) do
+       acc4+ print.( refdecode)_toint.r2+EOL
+  /for(acc4)}
+       if isempty.newtoprocess then newsymlist else close(symdefs,newtoprocess,newsymlist,refdecode) 
+  )
 
-function addseq(s:seq.symbol)symbol Constant2(s + Sequence(typeptr, length.s))
 
-function addseqsymbolref(s:seq.symbolref, all:set.symbolref)symbol
-addseq.for acc = empty:seq.symbol, r ∈ s do acc + Lit.binarysearch(toseq.all, r)/for(acc)
 
-function addlibraryMod(m:libraryModule, all:set.symbolref)symbol
-let e = addseqsymbolref(exports.m, all)
-let types = 
- addseq.for acc2 = empty:seq.symbol, tl ∈ types.m do
-  acc2 + addseq.for acc = empty:seq.symbol, @e ∈ tl do acc + addmytype.@e /for(acc)
- /for(acc2)
-let t = modname.m
-Constant2.[ Word.library.t
-, Word.name.t
-, addmytype.para.t
-, e
-, types
-, Record.[ typeword, typeword, typeptr, typeptr, typeptr]
-]
+
+use seq.libraryModule
+
+function libcode(prg:set.symdef,mods:seq.libraryModule,refdecode:seq.symbol)seq.seq.symbolref
+let symstoexport2 = 
+ for acc = empty:seq.symbolref, m ∈ mods  do acc + exports.m /for(
+ for acc2 = empty:set.symbol, r ∈ toseq.asset.acc do acc2 + (refdecode)_(toint.r)/for(acc2))
+ for acc = empty:seq.seq.symbolref, sym ∈ toseq.symstoexport2 do
+   let libsymcode=if isabstract.module.sym then getCode(prg, sym)else libcode(prg,getCode(prg, sym), symstoexport2)
+   acc + for acc2 = [ symbolrefnew.sym] , sym2 ∈ libsymcode
+  do
+   if isFref.sym2 then acc2 + symbolrefnew.PreFref + symbolrefnew.basesym.sym2 else acc2 + symbolrefnew.sym2
+  /for(acc2)
+ /for(acc)
+
 
 -------------------------- 

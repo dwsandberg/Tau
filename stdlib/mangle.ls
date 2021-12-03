@@ -27,10 +27,14 @@ use otherseq.word
 use set.word
 
 Function mangledname(options:seq.word, s:symbol)word
+ assert not.isempty.worddata.s report "mangledname"+print.s+options
 if wordname.s ∈ "entrypoint" then "entrypoint"_1
 else if wordname.s ∈ "addlibrarywords" ∧ name.module.s ∈ "main2"then
 "addlibrarywordsZmain2Zliblib"_1
-else if name.module.s ∈ "internal"then extname.s else first.externalname.options
+else if name.module.s ∈ "internal"then extname.s else 
+let t=externalname.options
+assert not.isempty.t report "mangledname"+print.s+options
+first.t
 
 function externalname(options:seq.word)seq.word
 toseq(asset.options \ asset."COMPILETIME NOINLINE INLINE PROFILE STATE VERYSIMPLE")
@@ -62,7 +66,7 @@ else
  do let l = decoderef.ll
  let idx = findindex(sym, l)
  if idx ≤ length.l then libname.ll + "$$" + toword.idx else name
- /for(assert not.isempty.name report"funcaddress error" + print.sym
+ /for(assert not.isempty.name report"funcaddress error" + print.sym+stacktrace
  dlsymbol.tocstr.[ merge.name])
 
 Builtin createthreadI(int, int, int, seq.int, int)process.int

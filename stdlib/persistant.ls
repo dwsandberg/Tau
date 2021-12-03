@@ -1,3 +1,5 @@
+#!/bin/sh tau   stdlib stdlib
+
 Module persistant
 
 use UTF8
@@ -101,6 +103,8 @@ let data =
 let wordreps = addobject.data
 addobject("liblib", [ name, wordreps, toint.C64.0, toint.C64.0, profiledata] + mods)
 
+
+
 function addobject(name:seq.word, data:seq.int)int
 let objtype = array(length.data, i64)
 let ll = 
@@ -131,3 +135,82 @@ let k =
 
 Function addwordseq2(a:seq.word)int
 addobject.for acc = [ toint.C64.0, toint.C64.length.a], @e ∈ a do acc + wordref.@e /for(acc) 
+
+Function addtype(a:mytype) int
+  addobject.for acc = [ toint.C64.1, toint.C64.length.typerep.a], e ∈ typerep.a do
+ acc +   wordref.name.e+ wordref.modname.e+ wordref.library.e 
+/for(acc)
+
+Function addtypeseq(a:seq.mytype)int
+addobject.for acc = [ toint.C64.0, toint.C64.length.a], @e ∈ a do acc + addtype.@e /for(acc) 
+
+
+Function addtypeseqseq(a:seq.seq.mytype)int
+addobject.for acc = [ toint.C64.0, toint.C64.length.a], @e ∈ a do acc + addtypeseq.@e /for(acc) 
+
+
+Function addsymbolrefseq(a:seq.symbolref) int
+  addobject.for acc = [ toint.C64.0, toint.C64.length.a], @e ∈ a do 
+  acc + toint.C64.toint.@e /for(acc) 
+
+
+Function addsymbolrefseqseq(a:seq.seq.symbolref) int
+  addobject.for acc = [ toint.C64.0, toint.C64.length.a], @e ∈ a do 
+  acc + addsymbolrefseq.@e /for(acc) 
+
+Function addlibmod(a:libraryModule) int
+  addobject.[wordref.library.modname.a,wordref.name.modname.a
+  ,addtype.para.modname.a,addsymbolrefseq.exports.a
+  ,addtypeseqseq( types.a)]
+  
+Function addlibmodseq(a:seq.libraryModule) int
+ addobject.for acc = [ toint.C64.0, toint.C64.length.a], @e ∈ a do 
+  acc + addlibmod.@e /for(acc) 
+  
+Function addsymbol(a:symbol) int
+addobject.[ addwordseq2.worddata.a,wordref.library.module.a,wordref.name.module.a
+  ,addtype.para.module.a,addtypeseq.types.a,toint.C64.toint.raw.a,
+  toint.C64.extrabits.a
+]
+
+Function addsymbolseq(a:seq.symbol) int
+ addobject.for acc = [ toint.C64.0, toint.C64.length.a], @e ∈ a do 
+  acc + addsymbol.@e /for(acc) 
+
+use symbol2
+
+use symbol
+
+use mytype
+
+use seq.typedef
+
+use seq.mytype
+
+use seq.seq.mytype
+
+use seq.symbolref
+
+use seq.seq.symbolref
+
+use seq.libraryModule
+
+use seq.symbol
+
+/type modref is library:word, name:word, para:mytype
+
+
+/type libraryModule is modname:modref, exports:seq.symbolref, types:seq.seq.mytype
+
+/type symbol is worddata:seq.word, module:modref, 
+types:seq.mytype, raw:bits, hashbits:bits
+
+
+/type liblib is libname:seq.word
+, words:seq.encodingpair.seq.char
+, unused:int
+, timestamp:int
+, profiledata:seq.parc
+, decoderef:seq.symbol
+, newmods:seq.libraryModule
+, code:seq.seq.symbolref

@@ -1,7 +1,5 @@
 Module symbol2
 
-use symbolconstant
-
 use compilerfront
 
 use mytype
@@ -24,13 +22,9 @@ Export library(modref)word
 
 Export symdef(symbol, seq.symbol, int)symdef
 
-Export type:symbolconstant
-
-Export Constant2(seq.symbol) symbol
-
-Export constantcode(s:symbol)seq.symbol
-
 Export type:symbol
+
+Export symconst(i:int)symbol
 
 Export value(symbol)int
 

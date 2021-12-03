@@ -1,3 +1,5 @@
+#!/bin/sh tau   stdlib stdlib
+
 Module symbol
 
 use bits
@@ -116,7 +118,7 @@ function specialbit bits bits.4
 
 function simplenamebit bits bits.2
 
-Function constbit bits bits.1
+function constbit bits bits.1
 
 Function issimplename(sym:symbol)boolean(hashbits.sym ∧ simplenamebit) ≠ 0x0
 
@@ -664,7 +666,19 @@ Function getCode(a:set.symdef, sym:symbol)seq.symbol
 let b = lookup(a, symdef(sym, empty:seq.symbol))
 if isempty.b then empty:seq.symbol else code.b_1 
 
-
+Function removerecordconstant(p:set.symdef,s:seq.symbol) seq.symbol
+    for code=empty:seq.symbol,  sym /in s do 
+     if not.isrecordconstant.sym then code+sym
+     else  code+ removerecordconstant(p,getCode(p,sym))
+    /for(code)
+    
+Function symconst(i:int)symbol
+symbol(moduleref."internallib $constant"
+, [ toword.i]
+, empty:seq.mytype
+, typeptr
+, constbit
+)
 
 Module symbolconstant
 
@@ -680,29 +694,27 @@ use set.symdef
 
 use seq.mytype
 
-Function Constant2(p:set.symdef,args:seq.symbol)symbol 
-Constant2.args
 
 Function constantcode(s:symbol)seq.symbol
-assert isrecordconstant.s report"constant code error" + print.s + stacktrace
-let code1 = toseq.decode.to:encoding.symbolconstant(toint.name.s)
+let code1 = fullconstantcode.s
 if isSequence.last.code1 then [ Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
 
-function fullconstantcode(s:symbol)seq.symbol
+Function fullconstantcode(s:symbol)seq.symbol
 assert isrecordconstant.s report"constant code error" + print.s + stacktrace
 toseq.decode.to:encoding.symbolconstant(toint.name.s)
 
-Function Constant2(args:seq.symbol)symbol symconst.encode.symbolconstant.args
+Function Constant2(p:set.symdef,args:seq.symbol)symbol
+  let testsym=symconst.nextencoding.symbolconstant.empty:seq.symbol
+let a=lookup(p,symdef(testsym,args))
+if not.isempty.a then 
+  let discard=encode.symbolconstant.code.a_1
+  Constant2(p,args)
+else symconst.valueofencoding.encode.symbolconstant.args
 
-function symconst(e:encoding.symbolconstant)symbol
-symbol(moduleref."internallib $constant"
-, [ toword.valueofencoding.e]
-, empty:seq.mytype
-, typeptr
-, constbit
-)
+Function Constant2(args:seq.symbol)symbol 
+symconst.valueofencoding.encode.symbolconstant.args 
 
-function hash(s:seq.symbol)int
+Function hash(s:seq.symbol)int
 hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /for(acc)
 
 function assignencoding(a:symbolconstant)int nextencoding.a
@@ -721,5 +733,9 @@ for acc = empty:seq.symbol, @e ∈ s do
  + if isrecordconstant.@e then removeconstantcode.fullconstantcode.@e else [ @e]
 /for(acc)
 
+
+
+
 Function constantsymbols set.symdef
-for acc = empty:set.symdef, p ∈ encoding:seq.encodingpair.symbolconstant do acc + symdef(symconst.code.p, toseq.data.p)/for(acc)
+for acc = empty:set.symdef, p ∈ encoding:seq.encodingpair.symbolconstant do 
+acc + symdef(symconst.valueofencoding.code.p, toseq.data.p)/for(acc)

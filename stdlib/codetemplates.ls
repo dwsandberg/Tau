@@ -1,6 +1,7 @@
+#!/bin/sh tau   stdlib stdlib
+
 Module codetemplates
 
-use libdesc
 
 use bits
 
@@ -9,6 +10,8 @@ use internalbc
 use libraryModule
 
 use llvm
+
+
 
 use llvmconstants
 
@@ -58,7 +61,8 @@ use seq.seq.int
 
 use seq.seq.symbol
 
-use symbolconstant
+use set.symbolref
+
 
 Function uses(p:set.symdef
 , alltypes:typedict
@@ -67,7 +71,7 @@ Function uses(p:set.symdef
 , infref:set.symbol
 , inrecordconstant:seq.symdef
 , inother:set.symbol
-, newmap:libdescresult
+, newmaplength:int
 , thename:word
 )steponeresult
 for acc = empty:seq.symbol
@@ -77,13 +81,17 @@ for acc = empty:seq.symbol
 , newprg = p
 , @e ∈ toseq.toprocess
 do
- if isabstract.module.@e then next(acc, fref, crecord, other, newprg)
+ if isabstract.module.@e then 
+ {assert false report "here in codetemplates"}
+ next(acc, fref, crecord, other, newprg)
  else
   let ele = @e
-  if isFref.@e then next(acc + [ basesym.@e], fref + @e, crecord, other, newprg)
+  if isFref.@e then 
+   next(acc + [ basesym.@e], fref + @e, crecord, other, newprg)
   else if isrecordconstant.@e then 
-  let code=constantcode.@e
-  next(acc + code, fref, crecord + symdef(@e,code), other, newprg)
+  let code1 = getCode(p,@e)
+  let code =if isSequence.last.code1 then [ Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
+   next(acc + code, fref, crecord + symdef(@e,code), other, newprg)
   else if isconst.ele then
    let discard5 = buildconst(ele, alltypes)
    next(acc, fref, crecord, other, newprg)
@@ -109,6 +117,9 @@ do
     let discard5 = addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele, empty:seq.symbol, l)
     next(acc, fref, crecord, other, newprg)
    else next(acc, fref, crecord, other, newprg)
+  else if print.@e /in ["seq.index:empty:seq.index seq.index "
+  ,"seq.index:+(seq.index, index)seq.index"] then
+     next(acc, fref, crecord, other, newprg)
   else
    let d = getCode(p, @e)
    let options = getoption.d
@@ -122,12 +133,11 @@ else isempty.d
     let discard5 = call(alltypes, ele,"CALL"_1, d, mangledname(options, ele))
     next(acc, fref, crecord, other, newprg)
    else
-    let r = symbolref.ele
-    let i =  newsymbolref(newmap,ele)   
-    let extname = 
+    let r = toint.symbolrefnew.ele
+     let extname = 
      [ merge([ thename]
-     + if i > 0 then"$$" + toword.i else
-     "$" + toword.toint.r + "$"/if)
+     + if r /le newmaplength then"$$" + toword.r else
+     "$" + toword.r + "$"/if)
      ]
     next(acc + d, fref, crecord, other + @e, symdef(ele, addoption(d, extname)) ∪ newprg)
 /for(let q = asset.acc
@@ -135,7 +145,8 @@ let done = processed ∪ toprocess
 let new = 
  for new = empty:set.symbol, sym ∈ toseq.q do if sym ∈ done then new else new + sym /for(new)
 if isempty.new then finishuse(alltypes, newprg, toseq.other, fref, crecord)
-else uses(newprg, alltypes, done, new, fref, crecord, other, newmap, thename)/if)
+else 
+uses(newprg, alltypes, done, new, fref, crecord, other, newmaplength, thename)/if)
 
 type steponeresult is match5map:seq.match5, defines:seq.symbol
 
@@ -151,11 +162,11 @@ Function stepone(theprg:set.symdef
 , alltypes:typedict
 , isbase:boolean
 , thename:word
-, newmap:libdescresult
+,  newmaplength:int
 )steponeresult
 let discard1 = initmap5
 uses(theprg, alltypes, empty:set.symbol, roots, empty:set.symbol
-, empty:seq.symdef, empty:set.symbol, newmap, thename)
+, empty:seq.symdef, empty:set.symbol, newmaplength, thename)
 
 function finishuse(alltypes:typedict
 , prg:set.symdef

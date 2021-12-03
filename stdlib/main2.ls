@@ -1,16 +1,17 @@
+#!/bin/sh tau tools callgraphwithin stdlib main2
+
 Module main2
 
 use UTF8
 
 use bits
 
-use codegennew
 
 use compilerfront
 
 use format
 
-use interpreter
+/use interpreter
 
 use libraryModule
 
@@ -81,31 +82,19 @@ let filelist = info_2
 let exports = info_3
 { let b=unloadlib.[ libname]}
 let cinfo = 
-  {result.process.}
+   {result.process.}
  compilerfront("all", libname, ["Library" + libname] + info << 3, dependentlibs, exports)
  compilerback(cinfo,libname,dependentlibs)
  
 use process.compileinfo
 
-use symbolconstant
 
 use seq.symdef
 
-Function compilerback(cinfo:compileinfo,libname:seq.word,dependentlibs:seq.word ) seq.word
-let prg4 = asset.prg.cinfo 
-let libdesc = libdesc(cinfo, prg4) 
-let bc = 
- codegen(prg4 /cup constantsymbols 
- , roots.cinfo ∪ asset.liblibflds.libdesc
- , last.libname
- , libdesc
- , typedict.cinfo
- , isempty.dependentlibs
- )
-let z2 = createlib(bc, last.libname, dependentlibs)
-"OK"
+use libdesc
 
 use mangle
+
 
 Function entrypoint(arg:UTF8) UTF8
  let wordargs=towords.arg
@@ -115,34 +104,6 @@ Function entrypoint(arg:UTF8) UTF8
  else if first.wordargs="stdlib"_1 then "OK" else
      callentrypoint( toUTF8(wordargs << 1))
      
-/Function entrypoint( argin:seq.byte) int 
-let args2 = 
- for acc = empty:seq.seq.word, @e ∈ break(char1.";", empty:seq.char, decodeUTF8.UTF8.argin)do acc + towords.@e /for(acc)
-let libname = args2_1
-let compileresult = 
- if first.libname = first."L"then"OK"
- else
-  let p = process.subcompilelib.libname
-  if aborted.p then"COMPILATION ERROR:" + space + message.p else result.p
-let output = 
- if length.args2 = 1 ∨ subseq(compileresult, 1, 1) ≠ "OK"then compileresult
- else
-  { execute function specified in arg }
-  let lib = args2_1
-  let src = 
-   ["module $X","use standard"] + subseq(args2, 2, length.args2 - 1)
-   + ["Function runitx seq.word" + args2_(length.args2)]
-  let p2 = 
-   process.compilerfront("pass1","runit", src,"stdlib" + lib,"$X")
-  if aborted.p2 then message.p2
-  else
-   let theprg = asset.prg.result.p2
-   let p3 = 
-    process.interpret(typedict.result.p2
-    , getCode(theprg, symbol(moduleref."runit $X","runitx", seqof.typeword))
-    )
-   if aborted.p3 then message.p3 else result.p3
-createfile("stdout", toUTF8bytes.output)
 
 Function astext(info:compileinfo)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ prg.info do acc + [ print.sym.p + print.code.p]/for(acc)

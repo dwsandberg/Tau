@@ -53,7 +53,7 @@ Export subcompilelib(seq.word)seq.word
 
 Export pass2(placehold:set.symdef)set.symdef
 
-Export codegen(theprg:set.symdef, uses:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict, isbase:boolean)seq.bits
+/Export codegen(theprg:set.symdef, uses:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict, isbase:boolean)seq.bits
 
 Export compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
 
@@ -66,7 +66,7 @@ Export passparse(abstractmods:set.passsymbols, simplemods:set.passsymbols, lib:w
 
 use libdesc
 
-Export libdesc(info:compileinfo, prg:set.symdef)libdescresult
+/Export libdesc(info:compileinfo, prg:set.symdef)libdescresult
 
 
 module STATE

@@ -336,7 +336,7 @@ Export >>(s:seq.word, i:int)seq.word { removes i words from end of s }
 * usegraph include codetemplates codegennew internalbc llvmconstant llvm interpreter mangle persistant libdesc exclude 
  seq bits set otherseq standard UTF8 real stack
 
-* usegraph include compilerfront main2 display parse passparse passsymbol pass2 postbind pass2 program typedict exclude 
+* usegraph include compilerfront main2 mergeblocks display parse passparse passsymbol pass2 postbind pass2 program typedict exclude 
  seq set otherseq standard bits graph UTF8 stack real fileio textio encoding words symbol types
 
 Export type:index

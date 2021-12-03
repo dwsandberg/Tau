@@ -1,3 +1,5 @@
+#!/bin/sh tau   stdlib stdlib
+
 Module codegennew
 
 use UTF8
@@ -7,8 +9,6 @@ use bits
 use codetemplates
 
 use internalbc
-
-use libdesc
 
 use llvm
 
@@ -58,31 +58,62 @@ use set.seq.symbol
 
 use seq.seq.seq.int
 
-Export libdesc(info:compileinfo, prg:set.symdef)libdescresult
+use set.symbolref
 
-Export liblibflds(libdescresult)seq.symbol
+/use compilerfront
+
+use persistant
+
+use symref
+
+use libraryModule
+
+use set.symbolref
+
+use seq.symbolref
+
+use otherseq.seq.symbol 
+
+use otherseq.symbol
+
+ use seq.seq.symbolref
+ 
+function profiledata(info:compileinfo)seq.int
+  let l=first.code.info << 1
+   for   acc=[1,length.l / 2],first=true,  r /in l do
+     if first then next(acc+toint.r,false) 
+     else 
+       next(acc+ toint.r+[0,0,0,0] ,true)
+  /for( acc  )
+  
+function profilearcs(info:compileinfo) set.seq.symbol
+    let l=first.code.info << 1
+  for   acc=empty:set.seq.symbol,first=true,last=Lit.0,  r /in l do 
+    let sym= (symbolrefdecode.info)_toint.r
+    if first then next(acc,false,sym)
+    else next(acc+[last,sym],true,sym)
+  /for( acc)
 
 Function codegen(theprg0:set.symdef
-, roots:set.symbol
 , thename:word
-, libdesc:libdescresult
-, alltypes:typedict
+, info:compileinfo
 , isbase:boolean
+, newmaplength:int
 )seq.bits
-let profilearcs = profilearcs.libdesc
+let profilearcs=profilearcs.info  
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(theprg0, roots, alltypes, isbase, thename, libdesc)
+let stepone = stepone(theprg0, roots.info, typedict.info, isbase, thename, newmaplength)
 let match5map = match5map.stepone
 let defines = defines.stepone
-let libmods2 = 
- for acc = empty:seq.int, sym ∈ liblibflds.libdesc do acc + arg.match5map_sym /for(acc)
+let libmods2 = [addsymbolseq.symbolrefdecode.info ,addlibmodseq.mods.info  
+,addsymbolrefseqseq(code.info << 1) ]
 { let zx2c=createfile("stat.txt", ["in codegen0.3"])}
 let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(match5map, @e, profilearcs)/for(acc)
-let xxx = profiledata.profiledata.libdesc
+let xxx = profiledata.profiledata.info
 let liblib = 
  slot.addliblib([ thename]
  , libmods2
