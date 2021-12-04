@@ -26,18 +26,20 @@ use otherseq.word
 
 use set.word
 
-Function mangledname(options:seq.word, s:symbol)word
- assert not.isempty.worddata.s report "mangledname"+print.s+options
-if wordname.s ∈ "entrypoint" then "entrypoint"_1
+function mangledname(s:symbol) seq.word
+ assert not.isempty.worddata.s report "mangledname"+print.s
+if wordname.s ∈ "entrypoint" then "entrypoint" 
 else if wordname.s ∈ "addlibrarywords" ∧ name.module.s ∈ "main2"then
-"addlibrarywordsZmain2Zliblib"_1
-else if name.module.s ∈ "internal"then extname.s else 
-let t=externalname.options
-assert not.isempty.t report "mangledname"+print.s+options
-first.t
+"addlibrarywordsZmain2Zliblib" 
+else if name.module.s ∈ "internal"then [extname.s] else ""
 
-function externalname(options:seq.word)seq.word
-toseq(asset.options \ asset."COMPILETIME NOINLINE INLINE PROFILE STATE VERYSIMPLE")
+
+
+Function mangledname(extname:set.symdef, s:symbol)word
+ let t1=mangledname.s
+if not.isempty.t1 then t1_1 else
+   name.first.getCode(extname,s)
+
 
 Function extname(sym:symbol)word
 let name1 = "set+-/ * ? toint=> >> << ∨ ∧ tan cos sin sqrt GEP"
@@ -53,11 +55,7 @@ ______
 builtin dlsymbol(cstr)int
 
 Function funcaddress(sym:symbol)int
-let name0 = 
-if wordname.sym ∈ "entrypoint" then "entrypoint" 
- else if wordname.sym ∈ "addlibrarywords" ∧ name.module.sym ∈ "main2"then
- "addlibrarywordsZmain2Zliblib"
- else if name.module.sym ∈ "internal"then [ extname.sym]else""
+let name0 = mangledname.sym
 let t = if isempty.name0 then 0 else dlsymbol.tocstr.name0
 if t > 0 then t
 else
@@ -78,8 +76,8 @@ Function internalstacktrace seq.word
 for acc = "", @e ∈ callstack.30 << 2 do acc + " /br" + printfunc.addresstosymbol2.@e /for(acc)
 
 function printfunc(name:seq.char)seq.word
-if last.name = char1."$"then [ encodeword.name]
-else
+ if last.name = char1."$"then [ encodeword.name]
+else 
  let i = findindex(char1."$", name)
  let library = encodeword.subseq(name, 1, i - 1)
  let idx = toint.encodeword.subseq(name, i + 2, length.name)

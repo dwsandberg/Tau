@@ -67,7 +67,6 @@ for acc = "(", t ∈ l do acc + print.t /for(acc + ")")
 Export ?(a:symbolref, b:symbolref)ordering
                      
 
-
 use mytype
 
 Export type:compileinfo
@@ -87,12 +86,19 @@ let prg= for  acc=empty:seq.symdef,  sd /in toseq.prg10 do
  /for(asset.acc)
  let profilearcs = 
  for acc = [ symbolref.0 ], sd ∈ toseq.prg10 do
-  if  isabstract.module.sym.sd /or "PROFILE"_1 ∉ getoption.code.sd /or symbolref.sym.sd /nin gensym  then acc
-  else
+  if  isabstract.module.sym.sd  /or symbolref.sym.sd /nin gensym  
+  then acc
+  else 
+    let options=getoption.code.sd
+   if "PROFILE"_1 /in options then  
    for txt = acc, sym ∈ toseq.asset.code.sd do
     if isconstantorspecial.sym ∨ isInternal.sym then txt else txt + [  
      symbolrefnew.sym.sd, symbolrefnew.sym]
    /for(txt)
+   else if "COMPILETIME"_1 /in options then 
+    let discard=symbolrefnew.sym.sd
+    acc
+  else acc
  /for(acc)
  let newmap2=symbolrefdecodenew
 let bc = 
@@ -103,7 +109,7 @@ let bc =
  ,empty:seq.seq.word
  , { decode ref } newmap2
 , newmods)
- , isempty.dependentlibs
+ , dependentlibs
  , length.newmap2  
  )
 let z2 = createlib(bc, last.libname, dependentlibs)

@@ -606,11 +606,6 @@ Function isInternal(sym:symbol)boolean name.module.sym = "internal"_1
 
 Function isGlobal(sym:symbol)boolean name.module.sym = "$global"_1
 
-Function iscompiled(code:seq.symbol, sym:symbol)boolean not.isempty.externalname.code
-
-Function externalname(code:seq.symbol)seq.word
-toseq(asset.getoption.code \ asset."COMPILETIME NOINLINE INLINE PROFILE STATE VERYSIMPLE")
-
 Export typebase(i:int)mytype
 
 Export print(mytype)seq.word

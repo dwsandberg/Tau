@@ -119,7 +119,7 @@ else
    let newdict2 = addtype(typedict.accZ, resulttype.symz)
    let lr1 = getCode(source, symz)
    let sd = 
-    if not.isempty.lr1 ∨ iscompiled(lr1, symz)then symdef(symz, lr1)
+    if not.isempty.lr1 ∨   "COMPILED"_1 /in getoption.lr1 then symdef(symz, lr1)
     else if istype.symz then symdef(symz, deepcopybody(resulttype.symz, newdict2))
     else if not.isunbound.symz then instantiateTemplate(symz, templates)
     else
@@ -128,7 +128,7 @@ else
      else
       assert cardinality.k2 = 1 report"unbound problem" + print.symz
       let sym2 = k2_1
-      if issimple.module.sym2 ∨ iscompiled(getCode(source, sym2), sym2)then
+      if issimple.module.sym2 ∨   "COMPILED"_1 /in getoption.getCode(source, sym2) then
        for paras = empty:seq.symbol, i ∈ arithseq(nopara.sym2, 1, 1)do paras + Local.i /for(symdef(sym2, paras + sym2))
       else instantiateTemplate(sym2, templates)
    let newdict3 = addtypes(newdict2, asset(code.sd + sym.sd))

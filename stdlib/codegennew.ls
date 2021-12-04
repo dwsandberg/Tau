@@ -97,22 +97,24 @@ function profilearcs(info:compileinfo) set.seq.symbol
 Function codegen(theprg0:set.symdef
 , thename:word
 , info:compileinfo
-, isbase:boolean
+, dependentlibs:seq.word
 , newmaplength:int
 )seq.bits
+let isbase=isempty.dependentlibs 
 let profilearcs=profilearcs.info  
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(theprg0, roots.info, typedict.info, isbase, thename, newmaplength)
+let stepone = stepone(theprg0, roots.info, typedict.info, dependentlibs, thename, newmaplength)
 let match5map = match5map.stepone
 let defines = defines.stepone
 let libmods2 = [addsymbolseq.symbolrefdecode.info ,addlibmodseq.mods.info  
 ,addsymbolrefseqseq(code.info << 1) ]
 { let zx2c=createfile("stat.txt", ["in codegen0.3"])}
 let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
+let geninfo=geninfo(match5map,profilearcs,extnames.stepone,false)
 let bodies = 
- for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(match5map, @e, profilearcs)/for(acc)
+ for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(geninfo, @e )/for(acc)
 let xxx = profiledata.profiledata.info
 let liblib = 
  slot.addliblib([ thename]
@@ -160,16 +162,21 @@ let adjust =
  + subseq(trec, 4, length.trec)
 llvm(patchlist, bodytxts, adjust)
 
-function addfuncdef(match5map:seq.match5, i:symbol, profilearcs:set.seq.symbol)internalbc
+type   geninfo is match5map:seq.match5,profilearcs:set.seq.symbol,extnames:set.symdef,profile:boolean
+
+function enableprofile(g:geninfo) geninfo 
+geninfo(match5map.g,profilearcs.g,extnames.g,true)
+
+function addfuncdef(geninfo:geninfo, sd:symdef)internalbc
 { let hh=process.subaddfuncdef(match5map, i)assert not.aborted.hh report"fail get"+print.i+message.hh result 
 .hh use process.internalbc function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc }
-let m = match5map_i
-let options = options(match5map, m)
-let codet = if length.options > 0 then subseq(code.m, 1, length.code.m - 2)else code.m
-let code = 
+let m = (match5map.geninfo)_sym.sd
+let options = getoption.code.sd
+let codet = removeoptions.code.sd
+ let code = 
  if isempty.codet then
-  for acc = empty:seq.symbol, e9 ∈ arithseq(nopara.i, 1, 1)do acc + Local.e9 /for(acc)
-  + i
+  for acc = empty:seq.symbol, e9 ∈ arithseq(nopara.sym.sd, 1, 1)do acc + Local.e9 /for(acc)
+  + sym.sd
  else codet
 { assert not.isempty.code.m report"xxxx"+print.i }
 let nopara = arg.m
@@ -181,8 +188,8 @@ let linit =
  , empty:stack.int
  , empty:stack.Lcode2
  )
-let xx = if"PROFILE"_1 ∈ options then profilearcs else empty:set.seq.symbol
-let r = for l = linit, s ∈ code do processnext(l, i, match5map, s, xx)/for(l)
+let xx = if"PROFILE"_1 ∈ options then enableprofile.geninfo else geninfo
+let r = for l = linit, s ∈ code do processnext(l, sym.sd, xx, s)/for(l)
 BLOCKCOUNT(1, noblocks.r) + code.r + RET(r(regno.r + 1), slot.top.args.r)
 
 type Lcode2 is code:internalbc, lmap:seq.localmap, noblocks:int, regno:int, args:stack.int, blocks:stack.Lcode2
@@ -194,14 +201,14 @@ if i = 0 then result else paramap(i - 1, result + localmap(i,-i - 1))
 
 function length(s:stack.int)int length.toseq.s
 
-function processnext(l:Lcode2, caller:symbol, match5map:seq.match5, s:symbol, profilearcs:set.seq.symbol)Lcode2
-let m = match5map_s
+function processnext(l:Lcode2, caller:symbol, geninfo:geninfo, s:symbol)Lcode2
+let m = (match5map.geninfo)_s
 let action = action.m
 if action = "CALL"_1 then
  let noargs = arg.m
  let args = top(args.l, noargs)
- let idx = if isempty.profilearcs then 1 else findindex([ caller, s], toseq.profilearcs)
- if idx > cardinality.profilearcs then
+ let idx = if not.profile.geninfo  then 1 +cardinality.profilearcs.geninfo else findindex([ caller, s], toseq.profilearcs.geninfo)
+ if idx > cardinality.profilearcs.geninfo then
   let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [-1] + args)
   Lcode2(code.l + c
   , lmap.l
@@ -210,7 +217,8 @@ if action = "CALL"_1 then
   , push(pop(args.l, noargs),-(regno.l + 1))
   , blocks.l
   )
- else profilecall(l, args, m, idx)
+ else 
+  profilecall(l, args, m, idx,mangledname(extnames.geninfo, sym.m))
 else
  { if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq.
  int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs),-(
@@ -407,9 +415,9 @@ if localno.l_i = localno then regno.l_i else getloc(l, localno, i + 1)
 function addloopmapentry(l:seq.localmap, baselocal:int, regbase:int, i:int)seq.localmap
 [ localmap(baselocal + i - 1,-regbase - i)] + l
 
-function profilecall(l:Lcode2, args:seq.int, m:match5, idx:int)Lcode2
+function profilecall(l:Lcode2, args:seq.int, m:match5, idx:int,mangledname:word)Lcode2
 let functype = functype.m
-let callee = { slot } symboltableentry([ mangledname(getoption.code.m, sym.m)], functype.m)
+let callee = { slot } symboltableentry([ mangledname], functype.m)
 let base = regno.l
 let block = noblocks.l
 let pcount = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 2)

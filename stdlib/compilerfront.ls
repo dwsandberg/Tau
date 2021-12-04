@@ -217,9 +217,6 @@ function libprg(alltypes:typedict,prg:set.symdef, mods:seq.libraryModule,roots:s
  compileinfo(alltypes, gencode, empty:seq.seq.word, symdecode
  , mods)
 
-  { decode=primary+secondary, maxprimary=length.primary
-      gencode }
-      "hi"
  
  function tosyms(prg:set.symdef) set.symbolref
    for acc=empty:seq.symbolref ,sd /in toseq.prg do acc+symbolref.sym.sd /for(asset.acc)
@@ -348,31 +345,20 @@ do
  if(libname.ll)_1 ∈ dependentlibs then toloadedresult(org, ll)else org
 /for(org)
 
-function externalname(sym:symbol, ll:liblib, prg:set.symdef, idx:int)seq.word
-if library.module.sym = (libname.ll)_1 then [ merge(libname.ll + "$$" + toword.idx)]
-else externalname.getCode(prg, sym)
 
 function toloadedresult(org:loadedresult, ll:liblib)loadedresult
 let orgprg = asset.prg.org
 let prg0 = 
  for acc = orgprg, c ∈ code.ll do
-  let sym = (decoderef.ll)_(toint.c_1)
-  let code = 
-   for acc2 = empty:seq.symbol, r ∈ c << 1 do acc2 + (decoderef.ll)_(toint.r)/for(if isabstract.module.sym then acc2
-   else
-    let externalname = externalname(sym, ll, orgprg, toint.c_1)
-    addoption(acc2, externalname)/if)
-  symdef(sym, code) ∪ acc
- /for(acc)
+  for code = empty:seq.symbol, r ∈ c << 1 do code + (decoderef.ll)_(toint.r)/for(
+    symdef( (decoderef.ll)_(toint.c_1),code) ∪ acc)
+   /for(acc)
 let prg = 
  for acc = prg0, idx = 1, sym ∈ decoderef.ll do
-  if isconstantorspecial.sym ∨ isabstract.module.sym then next(acc, idx + 1)
+  if isconstantorspecial.sym ∨ isabstract.module.sym 
+   /or library.module.sym /ne (libname.ll)_1  then next(acc, idx + 1)
   else
-   let code = getCode(prg0, sym)
-   let externalname = externalname.code
-   if not.isempty.externalname then next(acc, idx + 1)
-   else
-    next(symdef(sym, addoption(code, externalname(sym, ll, empty:set.symdef, idx))) ∪ acc, idx + 1)
+    next(symdef(sym,   addoption(getCode(acc,sym),"COMPILED") ) ∪ acc, idx + 1)
  /for(acc)
 for mods = mods.org, types1 = types.org, m ∈ newmods.ll do
  let modx = 
