@@ -2,7 +2,6 @@
 
 Module codetemplates
 
-
 use bits
 
 use internalbc
@@ -11,19 +10,13 @@ use libraryModule
 
 use llvm
 
-
-
 use llvmconstants
-
-use mangle
 
 use persistant
 
 use standard
 
 use symbol
-
-use symref
 
 use textio
 
@@ -49,157 +42,11 @@ use seq.symbol
 
 use set.symbol
 
-use otherseq.symbolref
-
-use set.symbolref
-
-use set.symdef
-
 use set.word
 
 use seq.seq.int
 
 use seq.seq.symbol
-
-use set.symbolref
-
-
-Export extnames(steponeresult) set.symdef
-
-Function stepone(theprg:set.symdef
-, roots:set.symbol
-, alltypes:typedict
-, dependentlibs:seq.word
-, thename:word
-,  newmaplength:int
-)steponeresult
-let extnames=externnames(dependentlibs)
-let discard1 = initmap5
-uses(theprg, alltypes, empty:set.symbol, roots, empty:set.symbol
-, empty:seq.symdef, empty:set.symbol, newmaplength, thename,extnames)
-
-Function uses(p:set.symdef
-, alltypes:typedict
-, processed:set.symbol
-, toprocess:set.symbol
-, infref:set.symbol
-, inrecordconstant:seq.symdef
-, inother:set.symbol
-, newmaplength:int
-, thename:word
-, extnamesin:set.symdef
-)steponeresult
-for acc = empty:seq.symbol
-, fref = infref
-, crecord = inrecordconstant
-, defines = inother
-, extnames=extnamesin
-, @e ∈ toseq.toprocess
-do
- if isabstract.module.@e then 
- {assert false report "here in codetemplates"}
- next(acc, fref, crecord, defines,  extnames)
- else
-  let ele = @e
-  if isFref.@e then 
-   next(acc + [ basesym.@e], fref + @e, crecord, defines,  extnames)
-  else if isrecordconstant.@e then 
-  let code1 = getCode(p,@e)
-  let code =if isSequence.last.code1 then [ Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
-   next(acc + code, fref, crecord + symdef(@e,code), defines,  extnames)
-  else if isconst.ele then
-   let discard5 = buildconst(ele, alltypes)
-   next(acc, fref, crecord, defines,  extnames)
-  else if isspecial.ele then
-   let discard5 = buildspecial(ele, alltypes)
-   next(acc, fref, crecord, defines,  extnames)
-  else if isGlobal.ele then
-   let discard5 = 
-    addtemplate(ele
-    , 1
-    , GEP(r.1
-    , i64
-    , slot.global([ merge("$" + toword.toint.symbolref.ele + "$")], i64, C64.0)
-    )
-    )
-   next(acc, fref, crecord, defines,  extnames)
-  else if inModFor.ele ∨ @e = Optionsym then next(acc, fref, crecord, defines,  extnames)
-  else if isBuiltin.ele then
-   if wordname.ele = "createthreadY"_1 then
-    let rt = parameter.para.module.ele
-    let l = 
-     for l = empty:seq.llvmtype, e ∈ paratypes.ele << 3 do l + tollvmtype(alltypes, e)/for(l + tollvmtype(alltypes, rt))
-    let discard5 = addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele , l)
-    next(acc, fref, crecord, defines,  extnames)
-   else next(acc, fref, crecord, defines,  extnames)
-  else
-   let d = getCode(p, @e)
-   let options = getoption.d
-let callit= "COMPILED"_1 /in  options  ∨ if isInternal.ele then
- extname.ele
- /nin "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean 
- SHLint setptr bitcast DIVreal ORDint toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint xor 
- ORbits"
-else isempty.d
-    if callit then
-    let discard5 = call(alltypes, ele,"CALL"_1,   mangledname(extnames,ele))
-    next(acc, fref, crecord, defines,  extnames)
-   else
-    let r = toint.symbolrefnew.ele
-    let extname = 
-       merge([ thename]+ if r /le newmaplength then"$$" + toword.r else "$$" + toword.r + "$"/if)
-    next(acc + d, fref, crecord, defines + @e,   add( extnames,ele,extname))
-/for(let q = asset.acc
-let done = processed ∪ toprocess
-let new = 
- for new = empty:set.symbol, sym ∈ toseq.q do if sym ∈ done then new else new + sym /for(new)
-if isempty.new then finishuse(alltypes, p, toseq.defines, fref, crecord,extnames)
-else 
-uses(p, alltypes, done, new, fref, crecord, defines, newmaplength, thename,extnames)/if)
-
-type steponeresult is match5map:seq.match5, defines:seq.symdef,extnames:set.symdef
-
-Export match5map(steponeresult)seq.match5
-
-Export defines(steponeresult)seq.symdef,
-
-Export type:steponeresult
-
-
-
-function finishuse(alltypes:typedict
-, prg:set.symdef
-, defines:seq.symbol
-, fref:set.symbol
-, isrecordconstant:seq.symdef ,
-extnames:set.symdef
-)steponeresult
-let defines2 = 
- for acc = empty:seq.symdef, ele ∈ defines do
-  let d = getCode(prg, ele)
-  let name=mangledname(extnames, ele)
-  let discard = funcdec(alltypes, ele,name)
-  let discard5 = call(alltypes, ele,"CALL"_1,  name)
-  acc+symdef(ele,d)
- /for(acc)
-let discard2 = buildFref( toseq.fref, alltypes,extnames)
-let discard4 = processconst.isrecordconstant
-steponeresult(empty:seq.match5, defines2,extnames)
-
-function buildFref( other:seq.symbol, alltypes:typedict
-,extnames:set.symdef)seq.match5
-for acc = empty:seq.match5, e ∈ other do
- let f1 = basesym.e
- let functyp = ptr.tollvmtype(alltypes, f1)
- let discard = 
-  addtemplate(e
-  , 0
-  , emptyinternalbc
-  ,"ACTARG"_1
-  , ptrtoint(functyp, symboltableentry([ mangledname(extnames, f1)], functyp))
-  )
- acc
-/for(acc)
 
 Export constdata seq.slot
 
@@ -207,7 +54,7 @@ Export wordref(w:word)int
 
 Export addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean)int
 
-function tollvmtype(alltypes:typedict, s:symbol)llvmtype
+Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
 if s = Optionsym then function.[ i64, i64, i64, i64]else function.tollvmtypelist(alltypes, s)
 
 function tollvmtypelist(alltypes:typedict, s:symbol)seq.llvmtype
@@ -218,7 +65,7 @@ for acc = starttypes, @e ∈ paratypes.s do
  acc + tollvmtype(alltypes, @e)
 /for(acc)
 
-function tollvmtype(alltypes:typedict, s:mytype)llvmtype
+Function tollvmtype(alltypes:typedict, s:mytype)llvmtype
 if isseq.s then ptr.i64
 else if abstracttypename.s = "process"_1 then ptr.i64
 else
@@ -248,39 +95,25 @@ Function brf(a:match5)int arg.a
 
 Export llvmtypelist(match5)seq.llvmtype
 
-type match5 is sym:symbol
-, length:int
-, parts:internalbc
-, action:word
-, arg:int
-, llvmtypelist:seq.llvmtype
-
+type match5 is sym:symbol, length:int, parts:internalbc, action:word, arg:int, llvmtypelist:seq.llvmtype
 
 Function functype(m:match5)llvmtype function.llvmtypelist.m
 
-function addtemplate(sym:symbol
-, length:int
-, parts:internalbc
-, action:word
-, arg:int
-, llvmtypelist:seq.llvmtype
-)match5
+Function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:int, llvmtypelist:seq.llvmtype)match5
 let m = match5(sym, length, parts, action, arg,   llvmtypelist)
 let discard = encode.m
 m
 
-function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:slot)match5
+Function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:slot)match5
 addtemplate(sym, length, parts, action, toint.arg,   [ i64])
 
-function addtemplate(sym:symbol, length:int, b:internalbc)match5
+Function addtemplate(sym:symbol, length:int, b:internalbc)match5
 addtemplate(sym, length, b,"TEMPLATE"_1, slot.nopara.sym)
 
 function addtemplates(t:seq.mytype, sym:symbol, length:int, b:internalbc)match5
 first.for acc = empty:seq.match5, e ∈ t do [ addtemplate(replaceTsymbol(e, sym), length, b)]/for(acc)
 
-function findtemplate(d:symbol)seq.match5
-findencode.match5(d, 0, emptyinternalbc,"NOTFOUND"_1, 0, [ i64])
-
+Function findtemplate(d:symbol)seq.match5 findencode.match5(d, 0, emptyinternalbc, "NOTFOUND"_1, 0, [i64])
 
 Export type:symbol
 
@@ -295,13 +128,12 @@ function hash(a:match5)int fsighash.sym.a
 
 function assignencoding(a:match5)int nextencoding.a
 
-
-function funcdec(alltypes:typedict, i:symbol, symname:word)int
+Function funcdec(alltypes:typedict, i:symbol, symname:word)int
 toint.modulerecord([ symname]
 , [ toint.FUNCTIONDEC, typ.tollvmtype(alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
 )
 
-function initmap5 seq.match5
+Function initmap5 seq.match5
 [ addtemplate(symbol(internalmod,"packedindex", seqof.typebit, typeint, typeint)
 , 8
 , BINOP(r.1, ibcsub.2, C64.1, sub) + BINOP(r.2, r.1, C64.6, lshr) + BINOP(r.3, r.2, C64.2, add)
@@ -628,38 +460,9 @@ addtemplate(symbol(internalmod,"bitcast", typeptr, typeint)
 Function symboltableentry(name:seq.word, type:llvmtype)slot
 modulerecord(name, [ toint.FUNCTIONDEC, typ.type, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
- 
- use seq.symdef
- 
- function processconst(toprocess:seq.symdef)int
-if isempty.toprocess then 0
-else
- for notprocessed = empty:seq.symdef, changed = false, xx ∈ toprocess do
-  let processed = 
-   for args = empty:seq.int, defined = true, ele ∈ code.xx
-   while defined
-   do let tp = findtemplate.ele
-   if isempty.tp then next(empty:seq.int, false)else next(args + arg.tp_1, true)
-   /for(if defined then
-    let discard = addtemplate(sym.xx, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args)
-    true
-   else false /if)
-  next(if processed then notprocessed else notprocessed + xx, changed ∨ processed)
- /for(assert changed
- report"problem processconst"
- + for txt = "", xx2 ∈ notprocessed do
-  let txt2 = 
-   for txt2 = "", ele ∈ code.xx2 do
-    let tp = findtemplate.ele
-    if isempty.tp then txt2 + print.ele else txt2
-   /for(txt2)
-  txt + txt2
- /for(txt)
- if not.changed then 0 else processconst.notprocessed /if)
-
 function =(a:llvmtype, b:llvmtype)boolean typ.a = typ.b
 
-function buildconst(xx:symbol, alltypes:typedict)match5
+Function buildconst(xx:symbol, alltypes:typedict)match5
 if isRealLit.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, Creal.value.xx)
 else if isIntLit.xx then addtemplate(xx, 0, emptyinternalbc,"ACTARG"_1, C64.value.xx)
 else if iswordseq.xx then
@@ -682,14 +485,7 @@ else if isRecord.xx then
   let fldbc = 
    recordcode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1), tollvmtypelist(alltypes, xx) << 2, 0, true)
   addtemplate(xx, regno.fldbc, bc.fldbc)
- else
-  addtemplate(xx
-  , 0
-  , emptyinternalbc
-  , wordname.xx
-  , nopara.xx
-  , tollvmtypelist(alltypes, xx) << 2
-  )
+ else addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, tollvmtypelist(alltypes, xx) << 2)
 else if isSequence.xx then
  if nopara.xx < 10 then
   let fldbc = 
@@ -712,11 +508,10 @@ else if isloopblock.xx then
  , nopara.xx
  , for oldacc = [ tollvmtype(alltypes, resulttype.xx)], e20 ∈ paratypes.xx do oldacc + tollvmtype(alltypes, e20)/for(oldacc)
  )
-else if iscontinue.xx then
- addtemplate(xx, 0, emptyinternalbc,"CONTINUE"_1, nopara.xx,  [ i64])
+else if iscontinue.xx then addtemplate(xx, 0, emptyinternalbc, "CONTINUE"_1, nopara.xx, [i64])
 else addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx,  [ i64])
 
-function call(alltypes:typedict, xx:symbol, type:word,   symname:word)match5
+Function call(alltypes:typedict, xx:symbol, type:word,   symname:word)match5
 let list = tollvmtypelist(alltypes, xx)
 let functype = function.list
 let newcode = 
@@ -800,24 +595,3 @@ let newcode =
 let c = setnextfld(newcode, args, 1, types, lastreg + 1, lastreg + 1, 0, 0)
 if template then recordcoderesult(regno.c + 1, bc.c + GEP(r(regno.c + 1), i64, r(lastreg + 1), C64.0))
 else c 
-
-Function add(extnames:set.symdef,sym:symbol,name:word) set.symdef
-  if isconstantorspecial.sym ∨ isabstract.module.sym 
-  /or  not.isempty.getCode(extnames, sym)  then extnames
-  else 
-      symdef(sym,  [ Word.name] ) ∪ extnames 
-      
- Function externnames(dependentlibs:seq.word)set.symdef
-for org =   empty:set.symdef 
-, ll ∈ loadedLibs
-do
- if(libname.ll)_1 /nin dependentlibs then org else
- for acc = org, idx = 1, sym ∈ decoderef.ll do
-  if isconstantorspecial.sym ∨ isabstract.module.sym 
-  /or  not.isempty.getCode(org, sym)  then next(acc, idx + 1)
-  else 
-      next(symdef(sym,  [ Word.merge(libname.ll + "$$" + toword.idx)] ) ∪ acc, idx + 1)
- /for(acc)
-/for(org)
-
-

@@ -8,20 +8,29 @@ use standard
 
 use symbol
 
+use typedict
+
 use encoding.symbol
+
+use otherseq.symbol
 
 use seq.symbol
 
-use typedict
+use set.symbol
 
 use seq.symbolref
 
-use set.symbol
-
-Export compileinfo(typedict, seq.seq.symbolref, seq.seq.word, seq.symbol, seq.libraryModule)
-compileinfo
-
 use seq.encodingpair.symbol
+
+use otherseq.seq.symbol
+
+use set.seq.symbol
+
+use otherseq.seq.symbolref
+
+use seq.seq.symbolref
+
+Export compileinfo(typedict, seq.seq.symbolref, seq.seq.word, seq.symbol, seq.libraryModule)compileinfo
 
 Export toint(symbolref)int
 
@@ -38,7 +47,6 @@ Function decode(s:symbolref)symbol decode.to:encoding.symbol(toint.s)
 Function symbolrefdecode seq.symbol
 for acc = empty:seq.symbol, p ∈ encoding:seq.encodingpair.symbol do acc + data.p /for(acc) 
 
-
 Export type:compileinfo
 
 type compileinfo is typedict:typedict
@@ -47,8 +55,10 @@ type compileinfo is typedict:typedict
 , symbolrefdecode:seq.symbol
 , mods:seq.libraryModule
  
+
 Function roots(s:compileinfo)set.symbol
-let exports=for  exports=empty:seq.symbolref , m /in mods.s do exports+exports.m /for(exports)
+let exports = 
+ for exports = empty:seq.symbolref, m ∈ mods.s do exports + exports.m /for(exports)
 for acc = empty:set.symbol, r ∈ exports do acc + (symbolrefdecode.s)_(toint.r)/for(acc)
 
 Export code(compileinfo)seq.seq.symbolref
@@ -61,19 +71,23 @@ Export symbolrefdecode(compileinfo)seq.symbol
 
 Export src(compileinfo)seq.seq.word
 
-type symbolnew is tosymbol:symbol
+Function profiledata(info:compileinfo)seq.int
+  let l=first.code.info << 3
+for acc = [1, length.l / 2], first = true, r ∈ l do
+ if first then next(acc + toint.r, false)else next(acc + toint.r + [0, 0, 0, 0], true)
+  /for( acc  )
+  
+Function profilearcs(info:compileinfo) set.seq.symbol
+    let l=first.code.info << 3
+for acc = empty:set.seq.symbol, first = true, last = Lit.0, r ∈ l do
+ let sym = (symbolrefdecode.info)_(toint.r)
+ if first then next(acc, false, sym)else next(acc + [last, sym], true, sym)
+  /for( acc)
 
-Function symbolrefnew(sym:symbol)symbolref symbolref.valueofencoding.encode.symbolnew.sym
+Function newmaplength(info:compileinfo)int toint.(first.code.info)_2
 
-Function symbolrefdecodenew seq.symbol
-for acc = empty:seq.symbol, p ∈ encoding:seq.encodingpair.symbolnew do acc + tosymbol.data.p /for(acc) 
+Function libcodelength(info:compileinfo)int toint.(first.code.info)_3
 
-function hash(a:symbolnew) int hash(tosymbol.a)
+Function libcode(info:compileinfo)seq.seq.symbolref subseq(code.info, 2, libcodelength.info + 1)
 
-function =(a:symbolnew,b:symbolnew) boolean tosymbol.a=tosymbol.b
-
-function assignencoding(a:symbolnew) int nextencoding.a
-
-use encoding.symbolnew
-
-use seq.encodingpair.symbolnew
+Function prgcode(info:compileinfo)seq.seq.symbolref subseq(code.info, libcodelength.info + 2, length.code.info) 

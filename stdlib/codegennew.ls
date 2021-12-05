@@ -6,7 +6,7 @@ use UTF8
 
 use bits
 
-use codetemplates
+use codetemplates2
 
 use internalbc
 
@@ -16,9 +16,13 @@ use llvmconstants
 
 use mangle
 
+use persistant
+
 use standard
 
 use symbol
+
+use symref
 
 use textio
 
@@ -56,60 +60,23 @@ use otherseq.seq.symbol
 
 use set.seq.symbol
 
-use seq.seq.seq.int
-
-use set.symbolref
-
-/use compilerfront
-
-use persistant
-
-use symref
-
-use libraryModule
-
-use set.symbolref
-
-use seq.symbolref
-
-use otherseq.seq.symbol 
-
-use otherseq.symbol
-
  use seq.seq.symbolref
  
-function profiledata(info:compileinfo)seq.int
-  let l=first.code.info << 1
-   for   acc=[1,length.l / 2],first=true,  r /in l do
-     if first then next(acc+toint.r,false) 
-     else 
-       next(acc+ toint.r+[0,0,0,0] ,true)
-  /for( acc  )
-  
-function profilearcs(info:compileinfo) set.seq.symbol
-    let l=first.code.info << 1
-  for   acc=empty:set.seq.symbol,first=true,last=Lit.0,  r /in l do 
-    let sym= (symbolrefdecode.info)_toint.r
-    if first then next(acc,false,sym)
-    else next(acc+[last,sym],true,sym)
-  /for( acc)
-
-Function codegen(theprg0:set.symdef
-, thename:word
-, info:compileinfo
-, dependentlibs:seq.word
-, newmaplength:int
-)seq.bits
+Function codegen(thename:word, dependentlibs:seq.word, info:compileinfo)seq.bits
+let newmaplength=newmaplength.info
 let isbase=isempty.dependentlibs 
 let profilearcs=profilearcs.info  
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(theprg0, roots.info, typedict.info, dependentlibs, thename, newmaplength)
+ let stepone = stepone( info , dependentlibs, thename )
 let match5map = match5map.stepone
 let defines = defines.stepone
-let libmods2 = [addsymbolseq.symbolrefdecode.info ,addlibmodseq.mods.info  
-,addsymbolrefseqseq(code.info << 1) ]
+let libmods2 = 
+ [addsymbolseq.subseq(symbolrefdecode.info, 1, newmaplength)
+ , addlibmodseq.mods.info
+ , addsymbolrefseqseq.libcode.info
+ ]
 { let zx2c=createfile("stat.txt", ["in codegen0.3"])}
 let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
 let geninfo=geninfo(match5map,profilearcs,extnames.stepone,false)
@@ -164,13 +131,12 @@ llvm(patchlist, bodytxts, adjust)
 
 type   geninfo is match5map:seq.match5,profilearcs:set.seq.symbol,extnames:set.symdef,profile:boolean
 
-function enableprofile(g:geninfo) geninfo 
-geninfo(match5map.g,profilearcs.g,extnames.g,true)
+function enableprofile(g:geninfo)geninfo geninfo(match5map.g, profilearcs.g, extnames.g, true)
 
 function addfuncdef(geninfo:geninfo, sd:symdef)internalbc
 { let hh=process.subaddfuncdef(match5map, i)assert not.aborted.hh report"fail get"+print.i+message.hh result 
 .hh use process.internalbc function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc }
-let m = (match5map.geninfo)_sym.sd
+let m = (match5map.geninfo)_(sym.sd)
 let options = getoption.code.sd
 let codet = removeoptions.code.sd
  let code = 
@@ -207,7 +173,9 @@ let action = action.m
 if action = "CALL"_1 then
  let noargs = arg.m
  let args = top(args.l, noargs)
- let idx = if not.profile.geninfo  then 1 +cardinality.profilearcs.geninfo else findindex([ caller, s], toseq.profilearcs.geninfo)
+ let idx = 
+  if not.profile.geninfo then 1 + cardinality.profilearcs.geninfo
+  else findindex([caller, s], toseq.profilearcs.geninfo)
  if idx > cardinality.profilearcs.geninfo then
   let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [-1] + args)
   Lcode2(code.l + c
@@ -217,8 +185,7 @@ if action = "CALL"_1 then
   , push(pop(args.l, noargs),-(regno.l + 1))
   , blocks.l
   )
- else 
-  profilecall(l, args, m, idx,mangledname(extnames.geninfo, sym.m))
+ else profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m))
 else
  { if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq.
  int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs),-(

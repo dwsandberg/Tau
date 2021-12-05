@@ -2,6 +2,8 @@
 
 Module compilerfront
 
+use libdesc
+
 use libraryModule
 
 use mytype
@@ -149,8 +151,9 @@ else
     else
      for acc2 = empty:seq.symbol, sym ∈ toseq.defines.f do acc2 + getCode(prg10, sym)/for(for acc3 = acc, sym2 ∈ toseq.asset.acc2 do
       if isabstract.module.sym2 ∨ isconstantorspecial.sym2 ∨ isBuiltin.sym2 
-       /or name.module.sym2 /in "$for"
-      then acc3 else acc3 + sym2
+      ∨ name.module.sym2 ∈ "$for"then
+       acc3
+      else acc3 + sym2
      /for(acc3))
    /for(acc)
   let prg10a = processOptions(prg10, toseq.modules.t5,"NOINLINE")
@@ -162,97 +165,17 @@ else
      for acc = acc0, sym ∈ toseq.expand(4, afteroption, root)do addoption(acc, sym,"INLINE")/for(acc)
     /for(acc0)
    else afteroption
-  if option = "pass1"then compileinfo(toseq.result
+  if option = "pass1"then
+   compileinfo(toseq.result
   , typedict.pb
   , tolibraryModules(typedict, toseq.modules.t5, exports)
   , empty:seq.seq.word
-  ) else 
+   )
+  else
   let  prg5=pass2.result ∪ templates
   let libmods=tolibraryModules(typedict, toseq.modules.t5, exports)
-  {let tmps= libprg(typedict,prg5,libmods,asset.roots)}
-  compileinfo(toseq.prg5
-  , typedict.pb
-  , libmods
-  , empty:seq.seq.word
-  )
-
- 
-Function libcode(prg:set.symdef,code1:seq.symbol, toexport:set.symbol)seq.symbol
-let code = removeoptions.code1
-let optionsx = getoption.code1
-let z = 
- if length.code < 15 then
-  let x =  removerecordconstant(prg,code)
-  if"VERYSIMPLE"_1 ∈ optionsx then x
-  else if for acc = true, @e ∈ x do
-   acc ∧ (isconst.@e ∨ isBuiltin.@e ∧ para.module.@e ∈ [ typereal, typeint] ∨ isspecial.@e ∨ @e ∈ toexport)
-  /for(acc)then
-   x
-  else empty:seq.symbol
- else empty:seq.symbol
-if"COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then z + Words.optionsx + Optionsym else z
-
-function libprg(alltypes:typedict,prg:set.symdef, mods:seq.libraryModule,roots:set.symbol) compileinfo
- let libprg=for acc = empty:seq.symbolref, m ∈ mods do acc + exports.m 
- /for(let decode=symbolrefdecode
-  for acc2 = empty:set.symbol, r ∈ toseq.asset.acc do 
-   acc2 +  decode_(toint.r)
-   /for(close(prg,acc2,true)))
- let genprg=close(prg,roots,false)
- let profilearcs = 
- for acc = empty:seq.symbolref, sd ∈ toseq.genprg do
-  if"PROFILE"_1 ∉ getoption.code.sd then acc
-  else
-   for txt = acc, sym ∈ toseq.asset.code.sd do
-    if isconstantorspecial.sym ∨ isInternal.sym then txt
-     else txt +  symbolref.sym.sd+ symbolref.sym
-   /for(txt)
- /for(acc)
-  let primary=tosyms.libprg /cup asset.profilearcs
- let secondary=tosyms.genprg \ primary
- let libcode=symbolref(libprg,primary,secondary)
- let gencode=symbolref(genprg,primary,secondary)
-  let symdecode = 
- for acc = empty:seq.symbol,  sd ∈ toseq.libprg +toseq.genprg do acc + sym.sd /for(acc)
- compileinfo(alltypes, gencode, empty:seq.seq.word, symdecode
- , mods)
-
- 
- function tosyms(prg:set.symdef) set.symbolref
-   for acc=empty:seq.symbolref ,sd /in toseq.prg do acc+symbolref.sym.sd /for(asset.acc)
-  
-function   close(prg:set.symdef,symlist: set.symbol,libdesc:boolean) set.symdef
-  if isempty.symlist then prg else 
-  for defs = empty:set.symdef, toprocess=empty:seq.symbol, sym ∈ toseq.symlist do
-   let sd=if not.libdesc /or isabstract.module.sym then 
-      symdef(sym,getCode(prg, sym))
-      else symdef(sym,libcode(prg,getCode(prg, sym),symlist))
-        next(defs+sd,toprocess+if isFref.sym then
-              [basesym.sym]
-      else if isrecordconstant.sym then
-          removerecordconstant(prg,[sym])
-      else code.sd)
-   /for( 
-       close(prg,asset.toprocess \ symlist,libdesc))
-   
-   use otherseq.symbolref
-   
- function symbolref(prg:set.symdef, primary:set.symbolref,secondary:set.symbolref)
- seq.seq.symbolref
- for acc0=empty:seq.seq.symbolref, sd /in toseq.prg do 
-  if isempty.code.sd then acc0 else 
- for acc = empty:seq.symbolref, r ∈ [sym.sd]+code.sd do 
-    let ref=symbolref.r
-    let one=binarysearch(toseq.primary, ref)
-    let two=if one > 0 then one else 
-       binarysearch(toseq.secondary, ref)+cardinality.primary
-    acc + symbolref.two 
-  /for(acc0+acc)
-  /for(acc0)
-  
-   
-  
-  
+  if option ="all" then   compilerback2( prg5 ,libmods ,typedict )
+   else compileinfo(toseq.prg5, typedict.pb, libmods, empty:seq.seq.word)
 
 function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
 for acc = empty:set.symbol, sym ∈ getCode(prg, symin)do
@@ -316,8 +239,6 @@ else
  /for(acc)
  )
  
-
-
 Function addoption(p:set.symdef, s:symbol, option:seq.word)set.symdef
 { must maintain library of symbol in p }
 let f = lookup(p, symdef(s, empty:seq.symbol))
@@ -345,20 +266,17 @@ do
  if(libname.ll)_1 ∈ dependentlibs then toloadedresult(org, ll)else org
 /for(org)
 
-
 function toloadedresult(org:loadedresult, ll:liblib)loadedresult
 let orgprg = asset.prg.org
 let prg0 = 
  for acc = orgprg, c ∈ code.ll do
-  for code = empty:seq.symbol, r ∈ c << 1 do code + (decoderef.ll)_(toint.r)/for(
-    symdef( (decoderef.ll)_(toint.c_1),code) ∪ acc)
+  for code = empty:seq.symbol, r ∈ c << 1 do code + (decoderef.ll)_(toint.r)/for(symdef((decoderef.ll)_(toint.c_1), code) ∪ acc)
    /for(acc)
 let prg = 
  for acc = prg0, idx = 1, sym ∈ decoderef.ll do
-  if isconstantorspecial.sym ∨ isabstract.module.sym 
-   /or library.module.sym /ne (libname.ll)_1  then next(acc, idx + 1)
-  else
-    next(symdef(sym,   addoption(getCode(acc,sym),"COMPILED") ) ∪ acc, idx + 1)
+  if isconstantorspecial.sym ∨ isabstract.module.sym ∨ library.module.sym ≠ (libname.ll)_1 then
+   next(acc, idx + 1)
+  else next(symdef(sym, addoption(getCode(acc, sym), "COMPILED")) ∪ acc, idx + 1)
  /for(acc)
 for mods = mods.org, types1 = types.org, m ∈ newmods.ll do
  let modx = 

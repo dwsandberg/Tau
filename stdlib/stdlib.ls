@@ -9,6 +9,7 @@ real seq set sparseseq stack standard symbol symbol2 symboldict symref
 tausupport textio timestamp tree typedict UTF8 words xxhash
 tests/bug7 tests/checking tests/myseq tests/point tests/randomphrase tests/test11 tests/test20 tests/testencoding tests/testfileio tests/testmodules tests/testprocess tests/testseq tests/wordfreq 
 testsCompile/test11a testsCompile/testall testsCompile/testopt 
+codetemplates2
 uses
 exports UTF8  barycenter bits dataio display  encoding fileio format graph hashset index internalbc ioseq   layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph 
 symbol2 taublockseq tausupport testall textio timestamp tree words xxhash compilerfront
@@ -23,7 +24,7 @@ use bits
 
 use codegennew
 
-use codetemplates
+use codetemplates2
 
 use compilerfront
 
@@ -53,16 +54,25 @@ Export subcompilelib(seq.word)seq.word
 
 Export pass2(placehold:set.symdef)set.symdef
 
-/Export codegen(theprg:set.symdef, uses:set.symbol, thename:word, libdesc:libdescresult, alltypes:typedict, isbase:boolean)seq.bits
+Export codegen(thename:word, dependentlibs:seq.word, info:compileinfo)seq.bits
 
 Export compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
 
 Export passparse(abstractmods:set.passsymbols, simplemods:set.passsymbols, lib:word, prg1:seq.symdef, src:seq.seq.word, mode:word)set.symdef
 
-/Export stepone(theprg:set.symdef, roots:set.symbol, alltypes:typedict, isbase:boolean, thename:word, newmap:set.symbolref)steponeresult
+/Export stepone(info:compileinfo, dependentlibs:seq.word, thename:word)steponeresult
 
-/Export uses(p:program, alltypes:typedict, processed:set.symbol, toprocess:set.symbol, infref:set.symbol, inrecordconstant 
-:set.symbol, inother:set.symbol)usesresult
+/Export uses(alltypes:typedict
+, processed:set.symbol
+, toprocess:set.symbol
+, infref:set.symbol
+, isrecordconstant:seq.symdef
+, indefines:set.symdef
+, newmaplength:int
+, thename:word
+, extnamesin:set.symdef
+,symboldecode:seq.symbol
+)steponeresult
 
 use libdesc
 
