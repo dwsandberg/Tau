@@ -60,7 +60,7 @@ use set.word
 
 use seq.seq.mytype
 
-use seq.encodingpair.symbol
+/use seq.encodingpair.symbol
 
 use seq.seq.symbolref
 
@@ -202,42 +202,15 @@ Export symbolrefdecode(compileinfo)seq.symbol
 Export src(compileinfo)seq.seq.word
 
 Function prg(s:compileinfo)seq.symdef
-let symdecode = symbolrefdecode.s
 for acc4 = empty:seq.symdef, c ∈ code.s do
- let sym = symdecode_(toint.first.c)
+ let sym = s_(c_1)
  acc4
  + symdef(sym
- , for acc = empty:seq.symbol, r ∈ c << 2 do acc + symdecode_(toint.r)/for(acc)
+ , for acc = empty:seq.symbol, r ∈ c << 2 do acc + s_r /for(acc)
  )
 /for(acc4)
 
-Function compileinfo(prg:seq.symdef, alltypes:typedict, mods:seq.libraryModule, src:seq.seq.word )compileinfo
-compileinfo(alltypes, cvtL3(asset.prg, 1, empty:seq.seq.symbolref), src, symbolrefdecode, mods)
 
-function cvtL3(prg:set.symdef, i:int, in:seq.seq.symbolref)seq.seq.symbolref
-let x = encoding:seq.encodingpair.symbol
-if i > length.x then in
-else
- cvtL3(prg
- , length.x + 1
- , for acc = in, p ∈ subseq(x, i, length.x)do
-  let f = lookup(prg, symdef(data.p, empty:seq.symbol))
-  if isempty.f ∨ isempty.code.f_1 then acc
-  else
-   acc
-   + for acc2 = [ symbolref.data.p, symbolref.Lit.paragraphno.f_1], sym ∈ code.f_1 do
-    acc2
-    + if isFref.sym then
-     let discard = symbolref.basesym.sym
-     symbolref.sym
-    else if isrecordconstant.sym then
-     let discard = 
-      for acc3 = symbolref.Lit.0, sym2 ∈ removerecordconstant(prg,[ sym])do symbolref.sym2 /for(acc3)
-     symbolref.sym
-    else symbolref.sym
-   /for(acc2)
- /for(acc)
- )
  
 Function addoption(p:set.symdef, s:symbol, option:seq.word)set.symdef
 { must maintain library of symbol in p }
@@ -310,9 +283,8 @@ assert c1 = c2 report"SFD" + print.c1 + EOL + print.c2
 pp
 
 Function tolibraryModules(alltypes:typedict, t5:seq.passsymbols, exports:seq.word)seq.libraryModule
-{does this need typedec????}
-for acc = empty:seq.libraryModule, typedec = empty:seq.seq.mytype, m2 ∈ t5 do
- if name.module.m2 ∉ exports then next(acc, typedec)
+for acc = empty:seq.libraryModule,  m2 ∈ t5 do
+ if name.module.m2 ∉ exports then acc
  else
   let d2 = if isabstract.module.m2 then defines.m2 else exports.m2
   let exps = 
@@ -329,5 +301,5 @@ for acc = empty:seq.libraryModule, typedec = empty:seq.seq.mytype, m2 ∈ t5 do
       acc5 + ([ resulttype.s] + c)
     else acc5
    /for(acc5)
-  next(acc + libraryModule(module.m2, exps, types), typedec + types)
+  acc + libraryModule(module.m2, exps, types) 
 /for(acc) 

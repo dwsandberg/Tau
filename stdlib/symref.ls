@@ -59,7 +59,7 @@ type compileinfo is typedict:typedict
 Function roots(s:compileinfo)set.symbol
 let exports = 
  for exports = empty:seq.symbolref, m ∈ mods.s do exports + exports.m /for(exports)
-for acc = empty:set.symbol, r ∈ exports do acc + (symbolrefdecode.s)_(toint.r)/for(acc)
+for acc = empty:set.symbol, r ∈ exports do acc + s_r /for(acc)
 
 Export code(compileinfo)seq.seq.symbolref
 
@@ -80,7 +80,7 @@ for acc = [1, length.l / 2], first = true, r ∈ l do
 Function profilearcs(info:compileinfo) set.seq.symbol
     let l=first.code.info << 3
 for acc = empty:set.seq.symbol, first = true, last = Lit.0, r ∈ l do
- let sym = (symbolrefdecode.info)_(toint.r)
+ let sym =  info_r 
  if first then next(acc, false, sym)else next(acc + [last, sym], true, sym)
   /for( acc)
 
@@ -91,3 +91,8 @@ Function libcodelength(info:compileinfo)int toint.(first.code.info)_3
 Function libcode(info:compileinfo)seq.seq.symbolref subseq(code.info, 2, libcodelength.info + 1)
 
 Function prgcode(info:compileinfo)seq.seq.symbolref subseq(code.info, libcodelength.info + 2, length.code.info) 
+
+Function   _(info:compileinfo,r:symbolref) symbol
+ let i=toint.r
+ if i > 0 then  (symbolrefdecode.info)_i  else Fref.(symbolrefdecode.info)_-i
+ 

@@ -235,7 +235,7 @@ if ( baselib==1 ){
 
 BT wdrepseq= ((BT *) libdesc)[1];
 
-fprintf(stderr,"initlib5 1\n" ); 
+//fprintf(stderr,"initlib5 1\n" ); 
 
 BT (* addlibrarywords)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT,  "addlibrarywordsZmain2Zliblib");
 if (!addlibrarywords){ fprintf(stderr,"initlib5 1a\n" ); 
@@ -248,11 +248,11 @@ if (!addlibrarywords){
 }
      
 }
-fprintf(stderr,"initlib5 2\n" ); 
+//fprintf(stderr,"initlib5 2\n" ); 
 
 addlibrarywords(&sharedspace,libdesc);
  
- fprintf(stderr,"initlib5 3\n" ); 
+ //fprintf(stderr,"initlib5 3\n" ); 
 
  // register library 
      { int i =loaded[1]++;

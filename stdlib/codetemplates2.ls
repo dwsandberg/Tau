@@ -121,142 +121,110 @@ Function stepone(info:compileinfo, dependentlibs:seq.word, thename:word)steponer
 let discard1 = initmap5
 let alltypes=typedict.info
 let newmaplength=newmaplength.info
-let symdecode = symbolrefdecode.info
-for acc = empty:set.symbol
-, fref = empty:set.symbol
-, crecord = empty:seq.symdef
-, defines = empty:set.symdef
-, extnames = externnames.dependentlibs
-, processed=empty:set.symbol
-,c ∈ prgcode.info
-do
- let ele=symdecode_(toint.first.c)
- let sd = 
-  symdef(ele
-  , for code1 = empty:seq.symbol, r ∈ c << 1 do code1 + symdecode_(toint.r)/for(code1)
-  )
- if isrecordconstant.ele then 
-  let code1 = code.sd
-  let code = 
-   if isSequence.last.code1 then[Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
-   next(acc /cup asset.code, fref, crecord + symdef(ele,code), defines,  extnames,processed+ele)
-   else if isGlobal.ele then
-   let discard5 = 
-    addtemplate(ele
-    , 1
-    , GEP(r.1
-    , i64
-    , slot.global([ merge("$" + toword.toint.symbolref.ele + "$")], i64, C64.0)
-    )
-    )
-   next(acc, fref, crecord, defines,  extnames,processed+ele)
-  else if inModFor.ele ∨ ele = Optionsym then next(acc, fref, crecord, defines,  extnames,processed+ele)
-  else if isBuiltin.ele then
-   if wordname.ele = "createthreadY"_1 then
-    let rt = parameter.para.module.ele
-    let l = 
-     for l = empty:seq.llvmtype, e ∈ paratypes.ele << 3 do l + tollvmtype(alltypes, e)/for(l + tollvmtype(alltypes, rt))
-    let discard5 = addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele , l)
-    next(acc, fref, crecord, defines,  extnames,processed+ele)
-   else next(acc, fref, crecord, defines,  extnames,processed+ele)
-  else
-   let d = code.sd
-   let options = getoption.d
-  let callit = 
-   "COMPILED"_1 ∈ options
-   ∨ if isInternal.ele then
- extname.ele
+let libextnames = externnames.dependentlibs
+for  used0=empty:seq.symbolref
+    ,crecord=empty:seq.symdef
+    ,defines=empty:seq.symdef,symrefs=empty:set.symbolref 
+    , extnames = libextnames, c ∈ prgcode.info do
+  let firstsym=  info_first.c 
+    if isrecordconstant.firstsym then 
+     let code=for code = empty:seq.symbol,r ∈ c << 1 do  code+info_ r  /for(code)
+     let lastsym=last.code
+    let sd=  symdef(firstsym,
+     if isSequence.lastsym then[Lit.0, Lit.nopara.lastsym] + code >> 1   else code >> 1 )
+   next(   used0+ toseq.asset.(c << 1)   ,crecord+sd, defines,symrefs,extnames)
+    else 
+     let code=for code = empty:seq.symbol,r ∈ c << 1 do  code+info_ r  /for(code)
+       if "COMPILED"_1 ∈ getoption.code /or isInternal.firstsym /and
+ extname.firstsym
     ∉ "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean 
  SHLint setptr bitcast DIVreal ORDint toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint xor 
- ORbits"
-else isempty.d
-    if callit then
-    let discard5 = call(alltypes, ele,"CALL"_1,   mangledname(extnames,ele))
-    next(acc, fref, crecord, defines,  extnames,processed+ele)
-   else
+ ORbits" 
+       then 
+         let discard5 = call(alltypes, firstsym,"CALL"_1,   mangledname(libextnames,firstsym))
+       next( used0,crecord,defines,symrefs+first.c,extnames)       
+      else  
+      let sd=symdef(firstsym,code,toint.first.c)
     let r = toint.first.c
     let extname = 
     merge([thename]
     + if r ≤ newmaplength then"$$" + toword.r else"$$" + toword.r + "$"/if)
-    next(acc /cup asset.d, fref, crecord, defines + sd,   add( extnames,ele,extname),processed+ele)
-/for(let q=processed
- let new = 
- for new = empty:set.symbol, sym ∈ toseq.acc do if sym ∈ q then new else new + sym /for(new)
-uses(alltypes, q, new, fref, crecord
-, defines, newmaplength, thename, extnames, symdecode
+    next(    used0+ toseq.asset.c ,crecord,defines+sd,symrefs+first.c
+    ,add( extnames,firstsym,extname))
+/for(   
+uses(alltypes,  asset.used0 , crecord , defines , 
+newmaplength, thename, extnames, info,symrefs
 ))
 
+use otherseq.symbolref
+
 Function uses(alltypes:typedict
-, processed:set.symbol
-, toprocess:set.symbol
-, infref:set.symbol
+, used:set.symbolref
 , isrecordconstant:seq.symdef
-, indefines:set.symdef
+, indefines:seq.symdef
 , newmaplength:int
 , thename:word
 , extnamesin:set.symdef
-,symboldecode:seq.symbol
+,info:compileinfo
+,symrefs:set.symbolref
 )steponeresult
-for fref = infref, defines = indefines, extnames = extnamesin, @e ∈ toseq.toprocess do
- if isabstract.module.@e then next(fref, defines, extnames)
- else
-  let ele = @e
-  if isFref.ele ∧ (basesym.ele ∈ processed ∨ basesym.ele ∈ toprocess)then next(fref + @e, defines, extnames)
-  else if isconst.ele ∧ not.isFref.ele then
-    assert not.isrecordconstant.@e report "PROBLEM2"
+ let i=binarysearch(toseq.used,symbolref.0)
+ let notprocessed=subseq(toseq.used,abs.i,length.toseq.used)
+ let infref=for acc=empty:seq.symbol,ref /in subseq(toseq.used,1,abs.i -1 ) do acc+info_ref /for(acc)
+for  defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
+   let ele=info_ref 
+ if isabstract.module.ele then next(defines, extnames)
+ else if isconst.ele  then
+    if isFref.ele /or isrecordconstant.ele then next( defines, extnames) else 
    let discard5 = buildconst(ele, alltypes)
-   next( fref,  defines,  extnames)
+   next(  defines,  extnames)
   else if isspecial.ele then
    let discard5 = buildspecial(ele, alltypes)
-   next( fref,  defines,  extnames)
+   next(  defines,  extnames)
   else if isGlobal.ele then
-   let discard5 = 
+    let discard5 = 
     addtemplate(ele
     , 1
     , GEP(r.1
     , i64
-    , slot.global([ merge("$" + toword.toint.symbolref.ele + "$")], i64, C64.0)
+    , slot.global([ merge("$" + toword.toint.ref + "$")], i64, C64.0)
     )
     )
-   next( fref,  defines,  extnames)
-  else if inModFor.ele ∨ @e = Optionsym then next( fref,  defines,  extnames)
+   next(    defines,  extnames)
+  else if inModFor.ele ∨ ele = Optionsym then next(   defines,  extnames)
   else if isBuiltin.ele then
    if wordname.ele = "createthreadY"_1 then
     let rt = parameter.para.module.ele
     let l = 
      for l = empty:seq.llvmtype, e ∈ paratypes.ele << 3 do l + tollvmtype(alltypes, e)/for(l + tollvmtype(alltypes, rt))
     let discard5 = addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele , l)
-    next( fref,  defines,  extnames)
-   else next( fref,  defines,  extnames)
-  else
-   let  yy= if isFref.ele then basesym.ele else ele
-   if isInternal.yy
-   ∧ extname.yy
+    next(   defines,  extnames)
+   else next(  defines,  extnames)
+  else  if ref /in symrefs then next(  defines,  extnames)
+  else  if isInternal.ele
+   ∧ extname.ele
    ∈ "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean 
  SHLint setptr bitcast DIVreal ORDint toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint xor 
  ORbits" then
-     let r = findindex(yy,symboldecode )
-     assert  r < length.symboldecode report "problem onestep"+print.yy
+     let r = toint.ref
     let extname = 
      merge([thename]
      + if r ≤ newmaplength then"$$" + toword.r else"$$" + toword.r + "$"/if)
-    next(if isFref.ele then fref + ele else fref
-    , defines + symdef(@e, empty:seq.symbol)
-    , add(extnames, yy, extname)
+    next( defines + symdef(ele, empty:seq.symbol)   , add(extnames, ele, extname)
     )
    else
-      let discard5 = call(alltypes, yy,"CALL"_1,   mangledname(extnames,yy))
-    next( if isFref.ele then fref+ele else fref,  defines,  extnames)
+      let discard5 = call(alltypes, ele,"CALL"_1,   mangledname(extnames,ele))
+    next(  defines,  extnames)
 /for( let defines2 = 
  for acc = 0, sd ∈ toseq.defines do
-  let ele=sym.sd
-  let name=mangledname(extnames, ele)
-  let discard = funcdec(alltypes, ele,name)
-  let discard5 = call(alltypes, ele,"CALL"_1,  name)
+  let ele2=sym.sd
+  let name=mangledname(extnames, ele2)
+  let discard = funcdec(alltypes, ele2,name)
+  let discard5 = call(alltypes, ele2,"CALL"_1,  name)
   acc
  /for(toseq.defines)
-let discard2 = buildFref( toseq.fref, alltypes,extnames)
-let discard4 = processconst.isrecordconstant
+let discard2 = buildFref( infref, alltypes,extnames)
+let discard4 = processconst(isrecordconstant,alltypes)
 steponeresult(empty:seq.match5, defines2, extnames))
 
 Export extnames(steponeresult) set.symdef
@@ -298,7 +266,7 @@ for org = empty:set.symdef, ll ∈ loadedLibs do
  /for(acc)
 /for(org)
 
- Function processconst(toprocess:seq.symdef)int
+ Function processconst(toprocess:seq.symdef,alltypes:typedict)int
 if isempty.toprocess then 0
 else
  for notprocessed = empty:seq.symdef, changed = false, xx ∈ toprocess do
@@ -306,7 +274,9 @@ else
    for args = empty:seq.int, defined = true, ele ∈ code.xx
    while defined
    do let tp = findtemplate.ele
-   if isempty.tp then next(empty:seq.int, false)else next(args + arg.tp_1, true)
+   if isempty.tp then 
+     let discard6=if name.module.ele /in "$int" then let discard5 = buildconst(ele, alltypes) 0 else 0 
+     next(empty:seq.int, false)else next(args + arg.tp_1, true)
    /for(if defined then
     let discard = addtemplate(sym.xx, 0, emptyinternalbc,"ACTARG"_1, slot.addobject.args)
     true
@@ -322,4 +292,4 @@ else
    /for(txt2)
   txt + txt2
  /for(txt)
- if not.changed then 0 else processconst.notprocessed /if)
+ if not.changed then 0 else processconst(notprocessed,alltypes) /if)

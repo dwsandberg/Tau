@@ -60,7 +60,7 @@ Export compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dep
 
 Export passparse(abstractmods:set.passsymbols, simplemods:set.passsymbols, lib:word, prg1:seq.symdef, src:seq.seq.word, mode:word)set.symdef
 
-/Export stepone(info:compileinfo, dependentlibs:seq.word, thename:word)steponeresult
+Export stepone(info:compileinfo, dependentlibs:seq.word, thename:word)steponeresult
 
 /Export uses(alltypes:typedict
 , processed:set.symbol
