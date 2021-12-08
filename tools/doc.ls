@@ -1,31 +1,6 @@
 #!/usr/local/bin/tau ; use doc ; createdoc
 
- callgraphwithin("bug11","seqiohelp")
-
-;use doc; doclibrary."bug11"
-
-;use wordgraph; testgraph
-
-; use doc ; doclibrary."stdlib"
-
-
-; use doc; usegraph("stdlib usegraph include main2 compilerfront passsymbol postbind  exclude    graph     bits  process set seq otherseq standard textio words")
-
-; use doc ; doclibrary."stdlib"
-
-; use doc ; createdoc
-
-; use doc ; createdoc
-
-; use pretty ; htmlcode("bug10")
-
-; use doc ; callgraphbetween("stdlib","interperter tausupport mangle")
-
-; use doc ; createdoc
-
-; use doc ; doclibrary."stdlib"
-
-; use doc ; createdoc
+ 
 
 Module doc
 

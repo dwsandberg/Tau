@@ -74,7 +74,7 @@ let d = decompose.ts
 , toword.d_6]
 ]
 
-Builtin currenttime timestamp
+Builtin currenttime timestamp {OPTION STATE}
 
 Function asseconds(t:timestamp)int toint.t
 

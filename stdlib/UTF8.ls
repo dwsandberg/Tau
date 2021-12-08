@@ -108,6 +108,7 @@ else
 ---------
 
 Function toword(n:int)word
+{OPTION NOINLINE COMPILETIME}
 {Covert integer to sequence of characters represented as a single word. }encodeword.decodeUTF8.toUTF8.n
 
 Function toint(w:word)int{Convert an integer represented as a word to an int}cvttoint.decodeword.w
@@ -181,7 +182,7 @@ else
 
 Function reallit(s:UTF8)real reallit(decodeUTF8.s, -1, 1, 0, 1)
 
-Function makereal(w:seq.word)real
+Function makereal(w:seq.word)real {OPTION COMPILETIME}
 reallit(for acc = empty:seq.char, @e ∈ w do acc + decodeword.@e /for(acc)
 , -1
 , 1

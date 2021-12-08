@@ -76,7 +76,7 @@ function =(a:symbolref, b:symbolref)boolean toint.a=toint.b
 Export type:compileinfo
 
 Function compilerback2(prg10:set.symdef,oldmods:seq.libraryModule,typedict:typedict ) compileinfo
-let symdecode=symbolrefdecode
+{/OPTION PROFILE}let symdecode=symbolrefdecode
 let newmods = 
  for acc = empty:seq.libraryModule, @e ∈ oldmods do
   for newexports = empty:seq.symbolref, r ∈ exports.@e do newexports + symbolrefnew.symdecode_(toint.r)/for(acc + libraryModule(modname.@e, newexports, types.@e))
@@ -90,7 +90,7 @@ let code2 = libcode(prg10,oldmods,symbolrefdecode)
     let options=getoption.code.sd
    if"PROFILE"_1 ∈ options then
    for txt = acc, sym ∈ toseq.asset.code.sd do
-     if isconstantorspecial.sym ∨ isInternal.sym then txt
+     if isconstantorspecial.sym ∨ isInternal.sym /or sym=sym.sd then txt
      else txt + [symbolrefnew.sym.sd, symbolrefnew.sym]
    /for(txt)
    else if"COMPILETIME"_1 ∈ options then
@@ -115,11 +115,13 @@ for code3 = empty:seq.seq.symbolref, sd ∈ toseq.prg10 do
 ))
 
 function gencode(mods:seq.libraryModule,prg:set.symdef,refdecode:seq.symbol)set.symbolref
+{/OPTION PROFILE}
 for acc = empty:seq.symbolref, m ∈ mods do acc + exports.m /for(for acc2 = empty:set.symbolref, r ∈ toseq.asset.acc do
   if isabstract.module.refdecode _(toint.r) then acc2 else  acc2 +  r
  /for( close(prg,acc2,empty:set.symbolref,refdecode)))
  
 function close(prg:set.symdef, toprocess:set.symbolref, symlist:set.symbolref, refdecode:seq.symbol)set.symbolref
+{/OPTION PROFILE}
 for acc = empty:seq.symbolref, symref ∈ toseq.toprocess do
  for acc2 = acc, sym ∈ toseq.asset.getCode(prg, refdecode_(toint.symref))do
   if isFref.sym then acc2 + symbolref.sym + symbolref.basesym.sym else acc2 + symbolref.sym

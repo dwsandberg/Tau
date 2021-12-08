@@ -233,7 +233,6 @@ if ( baselib==1 ){
 }
 
 
-BT wdrepseq= ((BT *) libdesc)[1];
 
 //fprintf(stderr,"initlib5 1\n" ); 
 

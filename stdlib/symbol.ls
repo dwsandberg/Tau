@@ -351,6 +351,7 @@ else print.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s) + print.r
 Function print(s:seq.symbol)seq.word for acc = "", sym ∈ s do acc + print.sym /for(acc)
 
 Function Lit(i:int)symbol
+{OPTION INLINE }
 symbolZ(moduleref."internallib $int"
 , toword.i
 , empty:seq.mytype

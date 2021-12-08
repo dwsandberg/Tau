@@ -22,8 +22,10 @@ use seq.word
 
 use seq.seq.word
 
+use process.seq.seq.word
+
 Function testfileio seq.word
-let y = [ t5501, t5502, t522]
+let y = [ t5501, t5502, t522,message.process.gettext("..")=" Error opening file:.."]
 check(y,"testfileio")
 
 function t5502 boolean

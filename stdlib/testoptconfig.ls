@@ -1,5 +1,5 @@
 
-Library testoptconfig  testsCompile/opttests
+Library testoptconfig  /tools/testsCompile/opttests
 uses stdlib
 exports opttests
 

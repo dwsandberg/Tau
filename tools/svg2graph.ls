@@ -1,5 +1,3 @@
-#!/usr/local/bin/tau ; use doc ; use doc ; use uniqueids; callgraphwithin("tools:tools2","taulextable")+callgraphbetween("stdlib","mytype passsymbol")
-
 
 module svg2graph.T
       

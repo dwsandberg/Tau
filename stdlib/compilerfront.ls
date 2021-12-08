@@ -97,9 +97,8 @@ Export modname(libraryModule)modref
 Export types(libraryModule)seq.seq.mytype
 
 Function compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
-{ assert false report allsrc @+("", @e)}
-{ let libinfo=libinfo.dependentlibs }
-let lib = last.libname
+{ OPTION PROFILE }
+ let lib = last.libname
 let libinfo = libmodules2.dependentlibs
 { assert isempty.mods.libinfo report for txt="testingx", sd=prg.libinfo do if name.module.sym.sd /in"llvm"then txt 
 +print.sym.sd+print.code.sd+EOL else txt /for(txt)}
@@ -243,7 +242,8 @@ function toloadedresult(org:loadedresult, ll:liblib)loadedresult
 let orgprg = asset.prg.org
 let prg0 = 
  for acc = orgprg, c ∈ code.ll do
-  for code = empty:seq.symbol, r ∈ c << 1 do code + (decoderef.ll)_(toint.r)/for(symdef((decoderef.ll)_(toint.c_1), code) ∪ acc)
+  for code = empty:seq.symbol, r ∈ c << 1 do code + (libinfo.ll)_r 
+  /for(symdef((libinfo.ll)_(c_1), code) ∪ acc)
    /for(acc)
 let prg = 
  for acc = prg0, idx = 1, sym ∈ decoderef.ll do
@@ -251,10 +251,10 @@ let prg =
    next(acc, idx + 1)
   else next(symdef(sym, addoption(getCode(acc, sym), "COMPILED")) ∪ acc, idx + 1)
  /for(acc)
-for mods = mods.org, types1 = types.org, m ∈ newmods.ll do
+for mods = mods.org, types1 = types.org, m ∈ mods.libinfo.ll do
  let modx = 
   for exports = empty:seq.symbol, types = empty:seq.mytype, r ∈ exports.m do
-   let sym = (decoderef.ll)_(toint.r)
+   let sym = (libinfo.ll)_r
    next(exports + sym
    , if name.sym = "type"_1 then types + resulttype.sym else types
    )

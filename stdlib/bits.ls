@@ -16,15 +16,15 @@ Function tobits(a:int)bits bits.a
 
 Export bits(int)bits
 
-Builtin ∨(a:bits, bits)bits
+Builtin ∨(a:bits, bits)bits {OPTION COMPILETIME}
 
-Builtin ∧(a:bits, bits)bits
+Builtin ∧(a:bits, bits)bits {OPTION COMPILETIME}
 
-Builtin >>(a:bits, i:int)bits
+Builtin >>(a:bits, i:int)bits {OPTION COMPILETIME}
 
-Builtin <<(a:bits, i:int)bits
+Builtin <<(a:bits, i:int)bits {OPTION COMPILETIME}
 
-Builtin xor(a:bits, b:bits)bits
+Builtin xor(a:bits, b:bits)bits {OPTION COMPILETIME}
 
 Function =(a:bits, b:bits)boolean toint.a = toint.b
 

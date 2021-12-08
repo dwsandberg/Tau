@@ -117,6 +117,11 @@ Export recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolea
 
 Export functype(m:match5)llvmtype
 
+Function externalcall(sym:symbol) boolean
+  isInternal.sym /and 
+   name.sym /nin "not getseqtype getseqlength casttoreal setint intpart setptr bitcast toreal toint  representation xor
+set+-/ * ? toint=> >> << ∨ ∧   "
+
 Function stepone(info:compileinfo, dependentlibs:seq.word, thename:word)steponeresult
 let discard1 = initmap5
 let alltypes=typedict.info
@@ -135,11 +140,7 @@ for  used0=empty:seq.symbolref
    next(   used0+ toseq.asset.(c << 1)   ,crecord+sd, defines,symrefs,extnames)
     else 
      let code=for code = empty:seq.symbol,r ∈ c << 1 do  code+info_ r  /for(code)
-       if "COMPILED"_1 ∈ getoption.code /or isInternal.firstsym /and
- extname.firstsym
-    ∉ "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean 
- SHLint setptr bitcast DIVreal ORDint toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint xor 
- ORbits" 
+       if "COMPILED"_1 ∈ getoption.code /or  externalcall.firstsym
        then 
          let discard5 = call(alltypes, firstsym,"CALL"_1,   mangledname(libextnames,firstsym))
        next( used0,crecord,defines,symrefs+first.c,extnames)       
@@ -201,28 +202,32 @@ for  defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
     next(   defines,  extnames)
    else next(  defines,  extnames)
   else  if ref /in symrefs then next(  defines,  extnames)
-  else  if isInternal.ele
-   ∧ extname.ele
-   ∈ "DIVint GTint MULreal SUBreal not getseqtype getseqlength ORDreal casttoreal setint intpart ADDreal SUBint EQboolean 
- SHLint setptr bitcast DIVreal ORDint toreal tointbit ADDint EQint tointbyte SHRint ANDbits representation MULint xor 
- ORbits" then
+  else  if not.isInternal.ele
+   /or externalcall.ele then
+     let discard5 = call(alltypes, ele,"CALL"_1,   mangledname(extnames,ele))
+    next(  defines,  extnames)
+    else
      let r = toint.ref
     let extname = 
      merge([thename]
      + if r ≤ newmaplength then"$$" + toword.r else"$$" + toword.r + "$"/if)
     next( defines + symdef(ele, empty:seq.symbol)   , add(extnames, ele, extname)
     )
-   else
-      let discard5 = call(alltypes, ele,"CALL"_1,   mangledname(extnames,ele))
-    next(  defines,  extnames)
 /for( let defines2 = 
- for acc = 0, sd ∈ toseq.defines do
+ for acc = empty:set.symbol, sd ∈ toseq.defines do
   let ele2=sym.sd
   let name=mangledname(extnames, ele2)
   let discard = funcdec(alltypes, ele2,name)
   let discard5 = call(alltypes, ele2,"CALL"_1,  name)
-  acc
- /for(toseq.defines)
+  acc+ele2
+ /for(  
+  {let check= 
+   for acc2="", sym /in    subseq(symbolrefdecode.info,1,newmaplength) do
+    if  library.module.sym ≠ "stdlib"_1 /or isabstract.module.sym /or sym /in acc then acc2
+    else acc2+print.sym+library.module.sym+EOL
+    /for(acc2)
+  assert isempty.check report "failing in codetemplates2 "+ check}
+ toseq.defines)
 let discard2 = buildFref( infref, alltypes,extnames)
 let discard4 = processconst(isrecordconstant,alltypes)
 steponeresult(empty:seq.match5, defines2, extnames))

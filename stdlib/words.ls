@@ -26,9 +26,9 @@ type word is asencoding:encoding.seq.char
 
 Function wordencodingtoword(i:int)word word.to:encoding.seq.char(i)
 
-Function encodeword(a:seq.char)word word.encode.a
+Function encodeword(a:seq.char)word {OPTION NOINLINE COMPILETIME }word.encode.a
 
-Function decodeword(w:word)seq.char decode.asencoding.w
+Function decodeword(w:word)seq.char {OPTION NOINLINE COMPILETIME} decode.asencoding.w
 
 Function hash(a:word)int hash.asencoding.a
 
@@ -36,7 +36,7 @@ Function encoding(w:word)int valueofencoding.asencoding.w
 
 Function assignencoding(a:seq.char)int toint(bits.assignrandom.a ∧ bits(toint(bits.1 << 31) - 1))
 
-Function =(a:word, b:word)boolean asencoding.a = asencoding.b
+Function =(a:word, b:word)boolean {OPTION COMPILETIME} asencoding.a = asencoding.b
 
 Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
 
@@ -45,6 +45,7 @@ Function ?(a:encodingpair.seq.char, b:encodingpair.seq.char)ordering valueofenco
 ----
 
 Function merge(a:seq.word)word
+{OPTION COMPILETIME }
 { make multiple words into a single word. }
 encodeword.for acc = empty:seq.char, @e ∈ a do acc + decodeword.@e /for(acc)
 

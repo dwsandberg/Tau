@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use baseTypeCheck; resultCheck("stdlib")
+  resultCheck("xstdlib")
 
 Module baseTypeCheck
 

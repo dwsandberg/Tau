@@ -82,7 +82,7 @@ builtin not(a:boolean)boolean
 
 Export not(a:boolean)boolean
 
-builtin=(a:boolean, b:boolean)boolean
+builtin=(a:boolean, b:boolean)boolean {OPTION COMPILETIME }
 
 Export=(a:boolean, b:boolean)boolean
 
@@ -96,21 +96,21 @@ Function ∨(a:boolean, b:boolean)boolean if a then true else b
 
 ______________
 
-Function -(i:int)int 0 - i
+Function -(i:int)int {OPTION COMPILETIME } 0 - i
 
 Builtin ?(a:int, b:int)ordering
 
-Builtin+(a:int, b:int)int
+Builtin+(a:int, b:int)int {OPTION COMPILETIME}
 
-Builtin-(a:int, b:int)int
+Builtin-(a:int, b:int)int {OPTION COMPILETIME}
 
-Builtin *(a:int, b:int)int
+Builtin *(a:int, b:int)int {OPTION COMPILETIME}
 
-Builtin /(a:int, b:int)int
+Builtin /(a:int, b:int)int {OPTION COMPILETIME}
 
 Function hash(i:int)int finalmix.hash(hashstart, i)
 
-Builtin=(a:int, b:int)boolean
+Builtin=(a:int, b:int)boolean {OPTION COMPILETIME}
 
 --------------------
 
@@ -118,7 +118,7 @@ Function abs(x:int)int if x < 0 then 0 - x else x
 
 Function mod(x:int, y:int)int if x < 0 then x - x / y * y + y else x - x / y * y
 
-Builtin >(a:int, b:int)boolean
+Builtin >(a:int, b:int)boolean {OPTION COMPILETIME }
 
 Function <(a:int, b:int)boolean b > a
 
@@ -313,7 +313,9 @@ Export toint(char)int
 
 Export char(int)char
 
-Function char1(s:seq.word)char({ * First character of first word of s } decodeword.s_1)_1
+Function char1(s:seq.word)char
+{ OPTION COMPILETIME }
+ { * First character of first word of s } first.decodeword.s_1 
 
 Export encodeword(a:seq.char)word
 

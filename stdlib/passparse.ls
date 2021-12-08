@@ -100,7 +100,7 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
  let partdict = formsymboldict(allmods, m, requireUnbound, mode)
  for acc = empty:seq.symdef, p ∈ text.m do
   if first.text.p ∈ "Builtin builtin"then
-   if issimple.module.sym.p then acc + symdef(sym.p, empty:seq.symbol)
+   if issimple.module.sym.p then acc + symdef(sym.p, addcommentoptions(text.p,empty:seq.symbol))
    else
     let sym = sym.p
     acc
@@ -113,10 +113,18 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
   else
    assert first.text.p ∈ "Function function"report text.p
    let b = parse(src_(paragraphno.p), partdict, z)
-   acc + symdef(sym.p, code.b, paragraphno.p)
+   acc + symdef(sym.p, addcommentoptions(text.p,code.b), paragraphno.p)
  /for(prg + acc)
 /for(prg)
 
+function  addcommentoptions(s:seq.word,code:seq.symbol) seq.symbol
+let a=getheader.s
+    if  subseq(s,length.a,length.a+1 ) = "{ OPTION "  then  
+      for   acc="",     w /in subseq(s,length.a+2,length.s) while w /nin "{}"  do
+        if w /in "PROFILE STATE COMPILETIME NOINLINE INLINE" then acc+w else acc /for(
+        if isempty.s then code else addoption(code,acc) )
+     else code
+     
 Function passparse(abstractmods:set.passsymbols
 , simplemods:set.passsymbols
 , lib:word

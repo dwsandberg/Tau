@@ -69,23 +69,26 @@ use process.seq.seq.word
 use seq.seq.seq.word
 
 Function subcompilelib(libname:seq.word)seq.word
+{ OPTION PROFILE }
 let info = getlibraryinfo2.libname
 let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
-{ let b=unloadlib.[ libname]}
-let cinfo = 
-   {result.process.}
- compilerfront("all", libname, ["Library" + libname] + info << 3, dependentlibs, exports)
-let bc= codegen( last.libname, dependentlibs, cinfo)
-let z2 = createlib(bc, last.libname, dependentlibs)
+ let cinfo= compilerfront("all", libname, ["Library" + libname] + info << 3, dependentlibs, exports)
+ let bc= codegen( last.libname, dependentlibs, cinfo)
+let z2 = createlib(bc, last.libname, subseq(dependentlibs,1,1))
 "OK"
 
 Function entrypoint(arg:UTF8) UTF8
+compile.arg
+
+
+Function compile(arg:UTF8) UTF8
  let wordargs=towords.arg
  let p = process.subcompilelib.[first.wordargs]
-HTML.if aborted.p then"COMPILATION ERROR:" + space + message.p
-else if first.wordargs = "stdlib"_1 then"OK"
+HTML.if aborted.p then"COMPILATION ERROR in libray:"   +wordargs +EOL+ message.p
+else    if length.wordargs=1 /or wordargs_2 /in ". ." then   
+ "finished compiling"+first.wordargs 
 else callentrypoint.toUTF8(wordargs << 1)
 
 Function astext(info:compileinfo)seq.seq.word

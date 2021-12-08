@@ -24,6 +24,9 @@ use seq.seq.word
 
 use seq.encodingpair.seq.char
 
+use symref
+
+
 type symbolref is toint:int
 
 Export toint(symbolref)int
@@ -75,18 +78,17 @@ type liblib is libname:seq.word
 , unused:int
 , timestamp:int
 , profiledata:seq.parc
-, decoderef:seq.symbol
-, newmods:seq.libraryModule
-, code:seq.seq.symbolref
+, libinfo:compileinfo
 
 
-Export code(liblib)seq.seq.symbolref
+
+Export libinfo(liblib) compileinfo
+
+Function code(l:liblib) seq.seq.symbolref code.libinfo.l
 
 Export timestamp(liblib)int
 
-Export decoderef(liblib)seq.symbol
-
-Export newmods(liblib)seq.libraryModule
+Function decoderef(l:liblib)seq.symbol  symbolrefdecode.libinfo.l
 
 Export libname(liblib)seq.word
 

@@ -1,76 +1,15 @@
-#!/usr/bin/env bash tau complib tools pretty  printbitcodes printbitcodes bitcodesupport runcode  
+#!/bin/sh  tau tools pretty  printbitcodes printbitcodes bitcodesupport runcode  
 
 
-
-
-
-;  use doc ; doclibrary."webassembly"
-
- use doc ; callgraphwithin("webassembly","wasm2")
-
-
-
-use doc ; doclibrary."tools"
-
-
-; use doc ; doclibrary."stdlib"
-
-; use doc ; callgraphbetween("stdlib","mytype passsymbol")
-
-doclibrary."stdlib"
-
-; use tools; testprofile."stdlib"
-
-; use doc ; doclibrary."stdlib"
-
-; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq")
-
-; use doc ; doclibrary."typepass"
-
-; use doc ; callgraphbetween("typepass","passparse passsymbol")
-
-; use tools; testprofile."stdlib"
-
-; use doc ; callgraphwithin("typepass","typepass")
-
-; use doc ; doclibrary("typepass")
-
-; use doc ; doclibrary."stdlib"
-
-; use doc ; callgraphwithin("webassembly","wasm2")
-
-; use doc ; doclibrary."webassembly"
-
-; use doc ; callgraphwithin("stdlib","outstream")
-
-; use tools; testprofile."solardataall"
-
-; use pretty ; pretty("printbitcodes printbitcodes bitcodesupport runcode","junk")
-
-print.compile("baseTypeCheck","stdlib")
-
-; use main2 ; print.compile("pass2","bug9.core")
-
-; use doc ; doclibrary."stdlib:small"
-
-; use doc ; doclibrary."tools"
-
-; use taulextable ; getlextable
-
-; use doc ; callgraphbetween("stdlib","UTF8 codegennew otherseq")
-
-; use doc ; callgraphwithin("stdlib","llvm")
-
-; use doc ; htmlcode."testall"
-
-; use genLR1 ; gentau2
 
 Module tools
 
 Library tools baseTypeCheck bandeskopf svg2graph doc genLR1 profile  taulextable
 prettycompilerfront
+testsCompile/test11a testsCompile/testall testsCompile/testopt 
+tests/bug7 tests/checking tests/myseq tests/point tests/randomphrase tests/test11 tests/test20 tests/testencoding tests/testfileio tests/testmodules tests/testprocess tests/testseq tests/wordfreq 
 uses stdlib
-exports baseTypeCheck doc genLR1 profile taulextable tools  uniqueids wordgraph
+exports baseTypeCheck doc genLR1 profile taulextable tools  uniqueids wordgraph testall
 
 
 

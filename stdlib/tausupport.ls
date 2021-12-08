@@ -38,6 +38,8 @@ use seq.T
 
 use bitcast.seq.T
 
+
+
 Export type:seq.T
 
 Export type:blockseq.T
@@ -138,6 +140,12 @@ use seq.seq.int
 
 use seq.encodingpair.seq.char
 
+use seq.index
+
+Export empty:seq.index seq.index
+
+Export +(seq.index,index) seq.index 
+
 Export blockseqtype:int int
 
 Export_(seq.word, index)word
@@ -192,7 +200,7 @@ Builtin allocatespace(int)ptr
 
 Builtin getseqtype(ptr)int
 
-Builtin getseqlength(ptr)int
+Builtin getseqlength(ptr)int {OPTION COMPILETIME}
 
 /Export_(pseq.byte, int)byte
 

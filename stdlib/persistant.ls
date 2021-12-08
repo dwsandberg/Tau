@@ -46,7 +46,7 @@ use seq.encodingpair.seq.char
 
 use set.encodingpair.seq.char
 
-/ use maindict
+ 
 
 Export initialdict seq.encodingpair.seq.char
 
@@ -101,7 +101,8 @@ let wordstoadd = toseq(used \ have)
 let data = 
  for acc = [ toint.C64.0, toint.C64.length.wordstoadd], @e ∈ wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
 let wordreps = addobject.data
-addobject("liblib", [ name, wordreps, toint.C64.0, toint.C64.0, profiledata] + mods)
+let emptyseq=addobject.[ toint.C64.0, toint.C64.0]
+addobject("liblib", [ name, wordreps,toint.C64.0 , toint.C64.0, profiledata,mods_1,mods_2,mods_3,emptyseq,emptyseq])
 
 
 
@@ -206,11 +207,4 @@ use seq.symbol
 types:seq.mytype, raw:bits, hashbits:bits
 
 
-/type liblib is libname:seq.word
-, words:seq.encodingpair.seq.char
-, unused:int
-, timestamp:int
-, profiledata:seq.parc
-, decoderef:seq.symbol
-, newmods:seq.libraryModule
-, code:seq.seq.symbolref
+

@@ -30,7 +30,8 @@ use otherseq.seq.symbolref
 
 use seq.seq.symbolref
 
-Export compileinfo(typedict, seq.seq.symbolref, seq.seq.word, seq.symbol, seq.libraryModule)compileinfo
+Function compileinfo(t:typedict, code:seq.seq.symbolref, src:seq.seq.word, d:seq.symbol,m: seq.libraryModule)compileinfo
+         compileinfo( d, m,code,src,t)
 
 Export toint(symbolref)int
 
@@ -49,11 +50,14 @@ for acc = empty:seq.symbol, p ∈ encoding:seq.encodingpair.symbol do acc + data
 
 Export type:compileinfo
 
-type compileinfo is typedict:typedict
+type compileinfo is  symbolrefdecode:seq.symbol
+, mods:seq.libraryModule
 , code:seq.seq.symbolref
 , src:seq.seq.word
-, symbolrefdecode:seq.symbol
-, mods:seq.libraryModule
+ ,typedict:typedict
+
+
+
  
 
 Function roots(s:compileinfo)set.symbol
