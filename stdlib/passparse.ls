@@ -61,14 +61,7 @@ for outer = empty:seq.arc.symbol, p ∈ s do
    if name.codesym ∈ "name for"then arcs
    else
     arcs
-    + arc(sym
-    , symbol(moduleref("stdlib seq", resulttype.codesym)
-    ,"_"
-    , seqof.resulttype.codesym
-    , typeint
-    , resulttype.codesym
-    )
-    )
+    + arc(sym, indexsymbol.resulttype.codesym )
   else arcs + arc(sym, codesym)
  /for(arcs)
 /for(outer)

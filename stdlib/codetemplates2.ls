@@ -1,4 +1,3 @@
-#!/bin/sh tau   stdlib stdlib
 
 Module codetemplates2
 
@@ -70,6 +69,7 @@ Export type:match5
 Export constdata seq.slot
 
 Export wordref(w:word)int
+
 
 Function conststype llvmtype array(-2, i64)
 
@@ -223,7 +223,7 @@ for  defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
  /for(  
   {let check= 
    for acc2="", sym /in    subseq(symbolrefdecode.info,1,newmaplength) do
-    if  library.module.sym ≠ "stdlib"_1 /or isabstract.module.sym /or sym /in acc then acc2
+    if  library.module.sym ≠ "stdxlib"_1 /or isabstract.module.sym /or sym /in acc then acc2
     else acc2+print.sym+library.module.sym+EOL
     /for(acc2)
   assert isempty.check report "failing in codetemplates2 "+ check}
@@ -241,6 +241,20 @@ Export match5map(steponeresult)seq.match5
 Export defines(steponeresult)seq.symdef,
 
 Export type:steponeresult
+
+Function entrypointsymbol(extnames:set.symdef,a:compileinfo) slot  
+  for acc=C64.0 ,sym /in symbolrefdecode.a do
+    if isconstantorspecial.sym /or name.sym /nin "entrypoint" then acc
+    else 
+  let functyp = ptr.tollvmtype(typedict.a, sym)
+      ptrtoint(functyp, symboltableentry([ mangledname(extnames, sym)], functyp)) 
+ /for(acc)
+
+ 
+Function addlibwords(extnames:set.symdef,typedict:typedict) slot
+ let f1=symbol(moduleref."main2","addlibrarywords",typeref."liblib libraryModule",typeint)
+ let functyp = ptr.tollvmtype(typedict, f1)
+  ptrtoint(functyp, symboltableentry([ mangledname(extnames, f1)], functyp))
 
 function buildFref(other:seq.symbol, alltypes:typedict, extnames:set.symdef)seq.match5
 for acc = empty:seq.match5, e ∈ other do

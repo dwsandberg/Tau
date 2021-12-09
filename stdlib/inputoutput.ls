@@ -1,4 +1,3 @@
-#!/bin/sh tau   stdlib stdlib
 
 Module inputoutput
 

@@ -1,4 +1,3 @@
-#!/bin/sh tau   stdlib stdlib
 
 Module codegennew
 
@@ -62,6 +61,7 @@ use set.seq.symbol
 
  use seq.seq.symbolref
  
+  
 Function codegen(thename:word, dependentlibs:seq.word, info:compileinfo)seq.bits
 let newmaplength=newmaplength.info
 let isbase=isempty.dependentlibs 
@@ -72,22 +72,23 @@ let tobepatched =
  let stepone = stepone( info , dependentlibs, thename )
 let match5map = match5map.stepone
 let defines = defines.stepone
-let libmods2 = 
- [addsymbolseq.subseq(symbolrefdecode.info, 1, newmaplength)
- , addlibmodseq.mods.info
- , addsymbolrefseqseq.libcode.info
- ]
 { let zx2c=createfile("stat.txt", ["in codegen0.3"])}
 let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
 let geninfo=geninfo(match5map,profilearcs,extnames.stepone,false)
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(geninfo, @e )/for(acc)
 let xxx = profiledata.profiledata.info
+let libmods2 = 
+ [addsymbolseq.subseq(symbolrefdecode.info, 1, newmaplength)
+ , addlibmodseq.mods.info
+ , addsymbolrefseqseq.libcode.info
+ ]
 let liblib = 
  slot.addliblib([ thename]
  , libmods2
  , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
  , isbase
+ , entrypointsymbol(extnames.stepone,info)
  )
 let libnametype = array(length.decodeword.thename + 1, i8)
 let libslot = 
@@ -114,7 +115,7 @@ let bodytxts =
  , function.[ i64, ptr.i8, ptr.i64, i64]
  , symboltableentry("initlib5", function.[ i64, ptr.i8, ptr.i64, i64])
  , CGEPi8(libslot, 0)
- , [ liblib, if isbase then C64.1 else C64.0]
+ , [ liblib, if isbase then   addlibwords(extnames.stepone,typedict.info)   else C64.0]
  )
  + RETURN
  ]

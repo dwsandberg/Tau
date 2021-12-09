@@ -1,4 +1,3 @@
-#!/bin/sh tau tools callgraphwithin stdlib main2
 
 Module main2
 

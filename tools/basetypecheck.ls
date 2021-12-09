@@ -1,4 +1,4 @@
-  resultCheck("xstdlib")
+  resultCheck("stdxlib")
 
 Module baseTypeCheck
 

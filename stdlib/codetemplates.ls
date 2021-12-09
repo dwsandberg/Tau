@@ -1,4 +1,3 @@
-#!/bin/sh tau   stdlib stdlib
 
 Module codetemplates
 
@@ -52,7 +51,7 @@ Export constdata seq.slot
 
 Export wordref(w:word)int
 
-Export addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean)int
+Export addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean,entrypoint:slot)int
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
 if s = Optionsym then function.[ i64, i64, i64, i64]else function.tollvmtypelist(alltypes, s)
@@ -237,13 +236,13 @@ addtemplate(symbol(internalmod,"bitcast", typeptr, typeint)
 , 1
 , CAST(r.1, ibcsub.1, i64, bitcast)
 )
-, addtemplate(symbol(internalmod,"?", typereal, typereal, typeref."ordering standard stdlib")
+, addtemplate(symbol(internalmod,"?", typereal, typereal, typeref."ordering standard")
 , 5
 , CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext) + CMP2(r.3, ibcsub.1, ibcsub.2, 2)
 + CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add)
 )
-, addtemplate(symbol(internalmod,"?", typeint, typeint, typeref."ordering standard stdlib")
+, addtemplate(symbol(internalmod,"?", typeint, typeint, typeref."ordering standard")
 , 5
 , CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext) + CMP2(r.3, ibcsub.1, ibcsub.2, 38)
 + CAST(r.4, r.3, i64, zext)
@@ -314,11 +313,11 @@ addtemplate(symbol(internalmod,"bitcast", typeptr, typeint)
 , CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast) + STORE(r.2, r.1, ibcsub.2)
 + GEP(r.2, i64, ibcsub.1, C64.1)
 )
-, addtemplate(symbol(modTausupport,"set", [ typeptr, typeint], typeptr)
+, addtemplate(setintsymbol
 , 1
 , STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1)
 )
-, addtemplate(symbol(modTausupport,"set", [ typeptr, typeptr], typeptr)
+, addtemplate(setptrsymbol
 , 2
 , CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast) + STORE(r.2, r.1, ibcsub.2)
 + GEP(r.2, i64, ibcsub.1, C64.1)
@@ -510,6 +509,9 @@ else if isloopblock.xx then
  )
 else if iscontinue.xx then addtemplate(xx, 0, emptyinternalbc, "CONTINUE"_1, nopara.xx, [i64])
 else addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx,  [ i64])
+
+
+
 
 Function call(alltypes:typedict, xx:symbol, type:word,   symname:word)match5
 let list = tollvmtypelist(alltypes, xx)

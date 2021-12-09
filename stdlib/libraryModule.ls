@@ -75,12 +75,12 @@ ___________________________
 
 type liblib is libname:seq.word
 , words:seq.encodingpair.seq.char
-, unused:int
+, entrypointaddress:int
 , timestamp:int
 , profiledata:seq.parc
 , libinfo:compileinfo
 
-
+Export entrypointaddress(liblib) int 
 
 Export libinfo(liblib) compileinfo
 

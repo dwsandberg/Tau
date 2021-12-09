@@ -1,4 +1,3 @@
-#!/bin/sh tau   stdlib stdlib
 
 Module persistant
 
@@ -87,7 +86,7 @@ toint.C64.valueofencoding.d
 
 function wordcode(a:encodingpair.word3)encoding.seq.char to:encoding.seq.char(encoding.toword.data.a)
 
-Function addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean)int
+Function addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean,entrypoint:slot)int
 let name = addwordseq2.libname
 let have = 
  if isbase then empty:set.encoding.seq.char
@@ -102,7 +101,7 @@ let data =
  for acc = [ toint.C64.0, toint.C64.length.wordstoadd], @e ∈ wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
 let wordreps = addobject.data
 let emptyseq=addobject.[ toint.C64.0, toint.C64.0]
-addobject("liblib", [ name, wordreps,toint.C64.0 , toint.C64.0, profiledata,mods_1,mods_2,mods_3,emptyseq,emptyseq])
+addobject("liblib", [ name, wordreps,toint.entrypoint , toint.C64.0, profiledata,mods_1,mods_2,mods_3,emptyseq,emptyseq])
 
 
 

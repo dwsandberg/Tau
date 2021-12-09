@@ -150,17 +150,8 @@ else
      next(cache, nextvar, map, result2 + t)
     else if isconst.sym then next(cache, nextvar, map, result2 + sym)
     else if name.sym ∈ "primitiveadd" ∧ isBuiltin.sym then
-     { let encodingtype=typeref."encoding encoding stdlib"}
-     let encodingstatetype = typeref."encodingstate encoding stdlib"
-     let encodingpairtype = typeref."encodingpair encoding stdlib"
-     let addefunc = 
-      symbol(moduleref("stdlib encoding", para.module.sym)
-      ,"add"
-      , [ addabstract(encodingstatetype, para.module.sym)
-      , addabstract(encodingpairtype, para.module.sym)
-      ]
-      , addabstract(encodingstatetype, para.module.sym)
-      )
+      let encodingpairtype = typeref."encodingpair encoding "
+     let addefunc = addencodingsymbol(para.module.sym)
      let add2 = symbol(internalmod,"addencoding", [ typeint, typeptr, typeint, typeint], typeint)
      let dc = deepcopySym.addabstract(encodingpairtype, para.module.sym)
      let discard = symbolref.addefunc
@@ -178,11 +169,10 @@ else
       , seqof.typeint
       )
      let encodenocode = 
-      if typ = typeref."typename tausupport stdlib"then [ Lit.2]
+      if typ = typeref."typename tausupport"then [ Lit.2]
       else if typ = seqof.typechar then [ Lit.1]
       else
-       let encodenosym = symbol(modTausupport,"encodingno", seqof.typeword, typeint)
-       let discard = symbolref.encodenosym
+        let discard = symbolref.encodenosym
        ifthenelse([ gl, Lit.0, Getfld.typeint, Define.nextvar, Local.nextvar, Lit.0, EqOp]
        , [ gl
        , Words.fullprint.typ
@@ -275,7 +265,7 @@ else
  else if name.sym ∈ "length"then GetSeqLength
  else if name.sym ∈ "packed"then
   let typ = seqof.coretype(para.module.sym, newdict3)
-  let tmp = symbol(modTausupport,"blockIt", typ, typ)
+  let tmp = blockitsymbol.typ  
   let discard = symbolref.tmp
   tmp
  else if name.sym ∈ "aborted"then
@@ -334,7 +324,7 @@ else if isseq.type then
  let basetype = basetype(type, typedict)
  let elementtype = parameter.basetype
  if elementtype = typebyte ∨ elementtype = typebit ∨ elementtype = typeboolean then
-  [ Local.1, symbol(modTausupport,"blockIt", seqof.typeint, seqof.typeint)]
+  [ Local.1, blockitsymbol.seqof.typeint ]
  else
   let cat = symbol(tomodref.type,"+", [ type, parameter.type], type)
   let resulttype = basetype
@@ -362,7 +352,7 @@ else if isseq.type then
   , resulttype
   )
   ]
-  + symbol(modTausupport,"blockIt", basetype, basetype)
+  + blockitsymbol.basetype 
 else
  let subflds = flatflds(typedict, type)
  if length.subflds = 1 then

@@ -125,6 +125,10 @@ else
 
 use symbolconstant
 
+function ismember(s:symbol) boolean
+  name.module.s="seq"_1 /and     name.s="∈"_1 /and (paratypes.s)_1 /in [typeint, typeword]  
+ 
+
 function scancode(p:set.symdef, org:seq.symbol, nextvarX:int, mapX:set.localmap2, self:symbol)expandresult
 for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym ∈ org do
  let len = length.result
@@ -177,18 +181,8 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
   else next(flags, result + sym, nextvar, map)
  else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
  else if length.result > 2 ∧ isconst.last.result
- ∧ (sym
- = symbol(moduleref("stdlib seq", typeint)
- ,"∈"
- , [ typeint, seqof.typeint]
- , typeboolean
- )
- ∨ sym
- = symbol(moduleref("stdlib seq", typeword)
- ,"∈"
- , [ typeword, seqof.typeword]
- , typeboolean
- ))then
+ ∧ ismember.sym
+ then
   let arg = result_(-2)
   if islocal.arg ∨ isconst.arg then
    next(flags, result >> 2 + removeismember(last.result, arg), nextvar, map)
@@ -209,7 +203,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    if first."COMPILETIME" ∈ options then prepareargs(p,subseq(result, len - nopara + 1, len), sym)
    else empty:seq.symbol
   if { COMPILE TIME } not.isempty.ct then
-   if sym = symbol(moduleref."stdlib words","decodeword", typeword, typeint)then
+   if isdecodeword.sym  then
     let arg1 = result_len
     let a1 = 
      for acc = empty:seq.symbol, @e ∈ tointseq.decodeword.wordname.arg1 do acc + Lit.@e /for(acc)
@@ -319,7 +313,7 @@ let callidx = symbol(internalmod,"callidx", [ seqof.elementtype, typeint], eleme
  , GetSeqLength
  , GtOp
  , Br2(1, 2)
- , symbol(modTausupport,"outofbounds", seqof.typeword)
+ , outofboundssymbol
  , abortsymbol.elementtype
  , Exit
  ]

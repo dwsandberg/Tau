@@ -207,51 +207,21 @@ return 0;
 }
 
 
-
-
-
-
-
 BT initlib5(char * libname,BT  libdesc,BT baselib) {
   // fprintf(stderr,"starting initlib4\n");
   fprintf(stderr,"initlib5 %s %lld \n",libname,baselib); 
-if ( baselib==1 ){
+  static BT (* addlibrarywords)(processinfo PD,BT   );
+if ( baselib ){
   /* only needed when initializing base lib */
       
     staticencodings[1]=neweinfo(&sharedspace,1);  // word encodings //
     staticencodings[2]=neweinfo(&sharedspace,2); // encoding map for assigning encoding to an integer number
 
-/*   BT (* loaddict)(processinfo PD,BT)= dlsym(RTLD_DEFAULT,"loaddictionaryZmain2Zfileresult");
-    if (!loaddict){
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-    }
-    loaddict(&sharedspace,getfile(&sharedspace,(BT)"1234567812345678maindictionary.data")); 
-*/
-
+    addlibrarywords  = ( BT (* )(processinfo PD,BT   )) baselib; 
     initialdictionary=(BT *)(  ((BT * )  (staticencodings[1]->encodingstate)) [4]); 
 }
 
-
-
-//fprintf(stderr,"initlib5 1\n" ); 
-
-BT (* addlibrarywords)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT,  "addlibrarywordsZmain2Zliblib");
-if (!addlibrarywords){ fprintf(stderr,"initlib5 1a\n" ); 
-     BT (* addlibrarywords)(processinfo PD,BT   ) = dlsym(RTLD_DEFAULT,  "addlibrarywords");
-fprintf(stderr,"initlib5 1b\n" ); 
-if (!addlibrarywords){
-    fprintf(stderr,"initlib5 1c\n" ); 
-    fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-    exit(EXIT_FAILURE);
-}
-     
-}
-//fprintf(stderr,"initlib5 2\n" ); 
-
 addlibrarywords(&sharedspace,libdesc);
- 
- //fprintf(stderr,"initlib5 3\n" ); 
 
  // register library 
      { int i =loaded[1]++;
@@ -270,7 +240,6 @@ return 0;
 }
 
 
-BT lastentrypoint=0;
 
 BT loadlibrary(struct pinfo *PD,char *lib_name_root){
    char lib_name[200],name[100];
@@ -284,7 +253,6 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
       fprintf(stderr,"[%s] Unable to open library: %s\n",__FILE__, dlerror());
      return -1;
     }  
-  lastentrypoint=(BT)dlsym(lib_handle,"entrypoint");
   stat(lib_name, &sbuf) ;  
    fprintf(stderr,"using lib %s  time: %ld\n",lib_name,sbuf.st_mtimespec.tv_sec );          
   return sbuf.st_mtimespec.tv_sec;
@@ -492,6 +460,7 @@ BT  tobyteseq ( processinfo PD,char *str) {
 }
 
 int main(int argc, char **argv)    {   int i=0,count; 
+   if (argc==0)  fprintf(stderr,"must have compiled library as first argument"); 
            // initialize main process
     sharedspace.encodings = staticencodings;
     for(i=0; i<noencodings;i++) sharedspace.encodings[i]=0;
@@ -500,8 +469,14 @@ int main(int argc, char **argv)    {   int i=0,count;
     signal(SIGILL,fatal_error_signal);
     
      {  // load the library  
-         loadlibrary(&sharedspace,argc > 1?argv[1]:"stdlib");  
+         loadlibrary(&sharedspace, argv[1]);  
      }
+
+        BT  lastloadedentrypoint=((BT*) loaded[loaded[1]+1])[2];
+        if (lastloadedentrypoint==0) {
+          fprintf(stderr,"library has no entry point" );
+           exit(EXIT_FAILURE);
+        }
      
         processinfo PD=&sharedspace;
       int j;  
@@ -509,11 +484,9 @@ int main(int argc, char **argv)    {   int i=0,count;
       initprocessinfo(p,PD);
       p->deepcopyresult = (BT)noop; 
       p->deepcopyseqword = (BT)noop;
-       p->func=(BT)dlsym(RTLD_DEFAULT, "entrypoint");
-      if (!p->func) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-      }
+       p->func=lastloadedentrypoint;
+   
+      
       BT argsx=tobyteseq ( p,argc  > 2?argv[2]:"");  
        p->argtype=4;
        p->args=&argsx;
@@ -583,10 +556,7 @@ BT callstack(processinfo PD,BT maxsize){
 
 
 BT dlsymbol(processinfo PD,char * funcname) 
-{if (strcmp(tocstr(funcname),"entrypoint")==0 ){
- fprintf(stderr,"dlentrypoint %lld \n",lastentrypoint);
- return lastentrypoint;
-}
+{
 return (BT) dlsym(RTLD_DEFAULT,  tocstr(funcname) );}
 
 

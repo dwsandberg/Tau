@@ -106,9 +106,9 @@ else modref(library.m, name.m, mytype(typerep.para.m >> 1 + typerep.with))
 
 Function typeint mytype typeref."int internal internallib"
 
-Function typeptr mytype typeref."ptr tausupport stdlib"
+Function typeptr mytype typeref."ptr tausupport"
 
-Function typeboolean mytype typeref."boolean standard stdlib"
+Function typeboolean mytype typeref."boolean standard"
 
 Function typereal mytype typeref."real internal internallib"
 
@@ -117,6 +117,9 @@ Function typeT mytype typeref."T internal internallib"
 Function typeseqdec mytype typeref."sequence internal internallib"
 
 Function typeref(s:seq.word)mytype
+ if length.s=2 then
+ mytype.[ typedef(first.s, s_2, "stdlib"_1)]
+ else 
 assert length.s = 3 report"typereferror" + s + stacktrace
 mytype.[ typedef(first.s, s_2, s_3)]
 
@@ -134,6 +137,9 @@ Function addabstract(a:mytype, t:mytype)mytype mytype([ first.typerep.a] + typer
 Function oldTypeRep(m:mytype)seq.word for acc = "", e ∈ typerep.m do [ name.e] + acc /for(acc)
 
 Function moduleref(modname:seq.word, para:mytype)modref
+if length.modname=1 then
+modref("stdlib"_1, modname_1, para)
+else 
 assert length.modname = 2 report"modname must be of length 2" + modname
 modref(modname_1, modname_2, para)
 
@@ -188,18 +194,18 @@ Function printrep(s:mytype)seq.word
 for acc = [ toword.length.typerep.s], t ∈ typerep.s do acc + [ name.t, modname.t, library.t]/for(acc)
 
 Function seqof(base:mytype)mytype
-mytype([ typedef("seq"_1,"seq"_1,"stdlib"_1)] + typerep.base)
+mytype(typerep.typeref("seq seq" ) + typerep.base)
 
-Function isseq(t:mytype)boolean first.typerep.t = typedef("seq"_1,"seq"_1,"stdlib"_1)
+Function isseq(t:mytype)boolean first.typerep.t = first.typerep.typeref("seq seq")
 
 Function isencoding(t:mytype)boolean
-first.typerep.t = typedef("encoding"_1,"encoding"_1,"stdlib"_1)
+first.typerep.t = first.typerep.typeref("encoding encoding")
 
 Function encodingof(base:mytype)mytype
-mytype([ typedef("encoding"_1,"encoding"_1,"stdlib"_1)] + typerep.base)
+mytype(typerep.typeref("encoding encoding" ) + typerep.base)
 
 Function processof(base:mytype)mytype
-mytype([ typedef("process"_1,"process"_1,"stdlib"_1)] + typerep.base)
+mytype(  typerep.typeref("process process" ) + typerep.base)
 
 type passtypes is modname:modref
 , defines:set.mytype

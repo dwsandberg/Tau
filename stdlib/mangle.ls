@@ -28,10 +28,15 @@ use set.word
 
 function mangledname(s:symbol) seq.word
  assert not.isempty.worddata.s report "mangledname"+print.s
-if wordname.s ∈ "entrypoint" then "entrypoint" 
-else if wordname.s ∈ "addlibrarywords" ∧ name.module.s ∈ "main2"then
-"addlibrarywordsZmain2Zliblib" 
-else if name.module.s ∈ "internal"then [extname.s] else ""
+if name.module.s ∈ "internal"then 
+let name1 = "set+-/ * ? toint=> >> << ∨ ∧ "
+let i = findindex(name.s, name1)
+if i ≤ length.name1 then
+ [merge(["set ADD SUB DIV MUL ORD toint EQ GT SHR SHL OR AND "_i 
+ , abstracttypename.last.paratypes.s ])
+ ]
+else [ name.s]
+ else ""
 
 
 
@@ -40,15 +45,6 @@ Function mangledname(extname:set.symdef, s:symbol)word
 if not.isempty.t1 then t1_1 else
    name.first.getCode(extname,s)
 
-
-Function extname(sym:symbol)word
-let name1 = "set+-/ * ? toint=> >> << ∨ ∧ tan cos sin sqrt GEP"
-let i = findindex(name.sym, name1)
-if i ≤ length.name1 then
- merge.["set ADD SUB DIV MUL ORD toint EQ GT SHR SHL OR AND tan cos sin sqrt GEP"_i
- , abstracttypename.last.paratypes.sym
- ]
-else name.sym
 
 ______
 
@@ -94,14 +90,9 @@ builtin addresstosymbol2(a:int)seq.char
 ____________
 
 Function callentrypoint(arg:UTF8) seq.word
-let entry= for acc=empty:seq.symbol,  sym /in decoderef.last.loadedLibs  do
-     if not.isconst.sym /and name.sym /in "entrypoint" then acc+sym else acc
-     /for(acc)
-    if length.entry /ne 1 then "Entry problem"
-    else 
-    let sym=entry_1
-  let t = funcaddress.sym
-  let dcret = deepcopySym.resulttype.sym
+let t=entrypointaddress.last.loadedLibs
+let typeUTF8=typeref("UTF8 UTF8")
+let dcret = deepcopySym.typeUTF8
   let adcret = funcaddress.dcret
     let dc = deepcopySym.seqof.typeword
   let adc = funcaddress.dc
@@ -112,6 +103,8 @@ let entry= for acc=empty:seq.symbol,  sym /in decoderef.last.loadedLibs  do
     if aborted.p then message.p
    else "OK"
    
+
+
    use UTF8
    
    use seq.liblib

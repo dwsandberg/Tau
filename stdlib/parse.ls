@@ -161,13 +161,7 @@ function unaryop(R:reduction.bindinfo, common:commoninfo, place:int, op:seq.word
 if op_1 = "process"_1 then
  let rt = resolvetype(types.common, print.(types.exp)_1)_1
  let processtype = processof.rt
- let dcws = 
-  symbol4(moduleref("stdlib seq", typeword)
-  ,"type"_1
-  , seqof.typeword
-  , [ seqof.typeword]
-  , seqof.typeword
-  )
+ let dcws = deepcopyseqword
  let newcode = 
   [ PreFref, deepcopySym.rt, PreFref, dcws, PreFref, last.code.exp]
   + subseq(code.exp, 1, length.code.exp - 1)
@@ -361,7 +355,7 @@ else if ruleno = { E I } 39 then bindlit.R
 else if ruleno = { E I.I } 40 then
  bindinfo(dict.R
  , [ Words(tokentext.R_1 + "." + tokentext.R_3)
- , symbol(moduleref."stdlib UTF8","makereal", seqof.typeword, typereal)
+ , makerealSymbol
  ]
  , [ typereal]
  ,""

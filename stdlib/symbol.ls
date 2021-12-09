@@ -1,4 +1,4 @@
-#!/bin/sh tau   stdlib stdlib
+
 
 Module symbol
 
@@ -453,25 +453,62 @@ Function isrecordconstant(s:symbol)boolean name.module.s = first."$constant"
 Function wordname(s:symbol)word first.worddata.s
 
 
-Function typebit mytype typeref."bit bits stdlib"
+Function typebit mytype typeref."bit bits  "
 
-Function typebits mytype typeref."bits bits stdlib"
+Function typebits mytype typeref."bits bits "
 
-Function typebyte mytype typeref."byte bits stdlib"
+Function typebyte mytype typeref."byte bits  "
 
-Function typeword mytype typeref."word words stdlib"
+Function typeword mytype typeref."word words  "
 
-Function typechar mytype typeref."char standard stdlib"
+Function typechar mytype typeref."char standard  "
 
 Function packedtypes seq.mytype
-[ typeref."packed2 tausupport stdlib"
-, typeref."packed3 tausupport stdlib"
-, typeref."packed4 tausupport stdlib"
-, typeref."packed5 tausupport stdlib"
-, typeref."packed6 tausupport stdlib"
+[ typeref."packed2 tausupport  "
+, typeref."packed3 tausupport  "
+, typeref."packed4 tausupport  "
+, typeref."packed5 tausupport  "
+, typeref."packed6 tausupport  "
 ]
 
-Function modTausupport modref moduleref."stdlib tausupport"
+
+Function isdecodeword(sym:symbol) boolean
+sym= symbol(moduleref." words","decodeword", typeword, typeint)
+
+Function deepcopyseqword symbol
+symbol4(moduleref(" seq", typeword)
+  ,"type"_1
+  , seqof.typeword
+  , [ seqof.typeword]
+  , seqof.typeword
+  )
+
+Function makerealSymbol symbol
+symbol(moduleref." UTF8","makereal", seqof.typeword, typereal)
+
+Function indexsymbol(T:mytype) symbol symbol(moduleref(" seq", T)
+    ,"_"
+    , seqof.T
+    , typeint
+    , T
+    )
+    
+Function addencodingsymbol(T:mytype) symbol 
+    let encodingstatetype = typeref."encodingstate encoding"
+     let encodingpairtype = typeref."encodingpair encoding"
+      symbol(moduleref(" encoding", T)
+      ,"add"
+      , [ addabstract(encodingstatetype, T)
+      , addabstract(encodingpairtype, T)
+      ]
+      , addabstract(encodingstatetype, T)
+      )
+
+Function outofboundssymbol symbol symbol(moduleref." tausupport","outofbounds", seqof.typeword)
+
+Function encodenosym symbol symbol(moduleref." tausupport","encodingno", seqof.typeword, typeint)
+ 
+Function blockitsymbol(T:mytype) symbol symbol(moduleref." tausupport","blockIt", T, T)
 
 _________________
 
@@ -481,6 +518,11 @@ Function isconstantorspecial(s:symbol)boolean isconst.s ∨ isspecial.s
 Function Local(i:int)symbol Local(toword.i, typeint, i)
 
 Function Optionsym symbol symbol(internalmod,"option", typeint, seqof.typeword, typeint)
+
+Function  setintsymbol symbol   symbol(moduleref." tausupport","set", [ typeptr, typeint], typeptr)
+
+Function  setptrsymbol symbol   symbol(moduleref." tausupport","set", [ typeptr, typeptr], typeptr)
+
 
 ----------------
 
@@ -620,15 +662,15 @@ Export=(mytype, mytype)boolean
 Export isseq(mytype)boolean
 
 Function deepcopySym(rt:mytype)symbol
-if rt = typereal then symbol(modTausupport,"deepcopy", typereal, typereal)
-else if rt = typeint then symbol(modTausupport,"deepcopy", typeint, typeint)
+if rt = typereal then symbol(moduleref." tausupport","deepcopy", typereal, typereal)
+else if rt = typeint then symbol(moduleref." tausupport","deepcopy", typeint, typeint)
 else symbol4(replaceT(parameter.rt, abstractModref.rt),"type"_1, rt, [ rt], rt)
 
 Function setSym(typ:mytype)symbol
 let fldtype = 
  if isseq.typ then typeptr else if isencoding.typ then typeint else typ
 symbol(if fldtype = typeint ∨ fldtype = typeboolean ∨ fldtype = typeptr ∨ fldtype = typereal then
- { modTausupport } internalmod
+  internalmod
 else builtinmod.fldtype
 ,"set"
 , typeptr

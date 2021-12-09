@@ -1,4 +1,3 @@
-#!/bin/sh tau   stdlib stdlib
 
 Module compilerfront
 
@@ -144,7 +143,7 @@ else
   let templates = 
    for acc = empty:seq.symdef, p ∈ toseq.prg10 do if para.module.sym.p = typeT then acc + p else acc /for(asset.acc)
   let roots = 
-   for acc = [ symbol(modTausupport,"outofbounds", seqof.typeword)], f ∈ toseq.modules.t5 do
+   for acc = [ outofboundssymbol], f ∈ toseq.modules.t5 do
     if name.module.f ∉ exports then acc
     else if issimple.module.f then acc + toseq.exports.f
     else
@@ -270,17 +269,11 @@ for mods = mods.org, types1 = types.org, m ∈ mods.libinfo.ll do
 /for(loadedresult(mods, types1, toseq.prg))
 
 Function processOptions(prg:set.symdef, mods:seq.passsymbols, option:seq.word)set.symdef
-let z = symbol(moduleref."stdlib standard","<", typeint, typeint, typeboolean)
-let c1 = getCode(prg, z)
-let pp = 
  for acc = prg, m ∈ mods do
   if name.module.m ∈ option then
    for acc2 = acc, sym ∈ toseq.exports.m do addoption(acc2, sym, [ name.module.m])/for(acc2)
   else acc
  /for(acc)
-let c2 = getCode(prg, z)
-assert c1 = c2 report"SFD" + print.c1 + EOL + print.c2
-pp
 
 Function tolibraryModules(alltypes:typedict, t5:seq.passsymbols, exports:seq.word)seq.libraryModule
 for acc = empty:seq.libraryModule,  m2 ∈ t5 do
