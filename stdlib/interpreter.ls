@@ -2,8 +2,6 @@ module interpreter
 
 use UTF8
 
-use mangle
-
 use real
 
 use standard
@@ -28,9 +26,19 @@ use process.seq.int
 
 use seq.seq.int
 
+use libraryModule
+
+use seq.liblib
+
+use symref
+
+use otherseq.symbol
+
 Builtin bitcast(int)seq.int
 
 Builtin GEP(seq.int, int)int
+
+Builtin createthreadI(int, int, int, seq.int, int)process.int
 
 Export  deepcopySym(mytype) symbol
 
@@ -38,8 +46,9 @@ Function interpretCompileTime(code:seq.symbol)seq.symbol
 let z = code
 assert for acc = true, sym ∈ z while acc do not.isFref.sym /for(acc)
 report"has Fref" + print.z
-let r = interpret(z, 1, empty:stack.int)
-tocode(r, resulttype.last.code)
+let r = interpret( z >> 1, 1, empty:stack.int)
+ callsymbol(last.code,r)
+  
 
 function tocode(r:int, typ:mytype)seq.symbol
 if typ = typeword then [ Word.wordencodingtoword.r]
@@ -55,18 +64,15 @@ else
 function aswords(s:seq.int)seq.word
 for acc = "", @e ∈ s do acc + wordencodingtoword.@e /for(acc)
 
-Function interpret(alltypes:typedict, code:seq.symbol)seq.word aswords.bitcast.interpret(code, 1, empty:stack.int)
-
-let p=process.interpret(code, 1, empty:stack.int)if aborted.p then message.p else aswords.bitcast.result.p
-
+ 
 Function buildargcodeI(sym:symbol)int
 { needed because the call interface implementation for reals is different than other types is some implementations }
 for acc = 1, typ ∈ paratypes.sym + resulttype.sym do
  acc * 2 + if { getbasetype(alltypes, typ)} typ = typereal then 1 else 0
 /for(acc)
 
-function interpret(code:seq.symbol, i:int, stk:stack.int)int
-if i > length.code then top.stk
+function interpret(code:seq.symbol, i:int, stk:stack.int)stack.int
+if i > length.code then  stk
 else
  let sym = code_i
  let nopara = nopara.sym
@@ -82,19 +88,44 @@ else
   if subseq(top(stk, nopara), 1, 2) = [ 0, nopara - 2]then
    interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara - 2), 0)))
   else interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 2)))
- else if wordname.sym = "makereal"_1 ∧ name.module.sym ∈ "UTF8"then
+ else assert wordname.sym = "makereal"_1 ∧ name.module.sym ∈ "UTF8"
+  report "interpret not expecting"+print.sym
   interpret(code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
- else
-  { if isFref.sym then interpret(code, i+1, push(stk, funcaddress.basesym.sym))else }
+
+function callsymbol(sym:symbol,stk:stack.int) seq.symbol
   let t = funcaddress.sym
-  assert print.resulttype.sym ≠ "?"report"INTER" + print.sym + print.code
+  if t=0 then empty:seq.symbol
+  else 
+  let nopara=nopara.sym
+  assert print.resulttype.sym ≠ "?"report"INTER" + print.sym  
   let dcret = deepcopySym.resulttype.sym
   let adcret = funcaddress.dcret
   assert adcret > 0 report"Not handle by interperter" + print.sym + "can not find" + print.dcret
   assert t > 0 report"Not handle by interperter" + print.sym
   let dc = deepcopySym.seqof.typeword
   let adc = funcaddress.dc
-  assert adc > 0 report"interpreter ?"
+  assert adc > 0 report"interpreter ?"+print.dc+"sym:"+print.sym
   let p = createthreadI(adcret, adc, t, packed.top(stk, nopara), buildargcodeI.sym)
   assert not.aborted.p report message.p
-  interpret(code, i + 1, push(pop(stk, nopara), result.p)) 
+  tocode(result.p,resulttype.sym)
+  
+  Function funcaddress(sym:symbol)int
+     let addrs=symboladdress.first.loadedLibs
+   let i= findindex(sym,subseq(symbolrefdecode.libinfo.first.loadedLibs,1,length.addrs))
+   if i /le length.addrs then addrs_i  else 0  
+
+Builtin createthreadI(int, int, int, seq.UTF8, int)process.int
+
+Function callentrypoint(arg:UTF8) seq.word
+let t=entrypointaddress.last.loadedLibs
+let typeUTF8=typeref("UTF8 UTF8")
+let dcret = deepcopySym.typeUTF8
+  let adcret = funcaddress.dcret
+    let dc = deepcopySym.seqof.typeword
+  let adc = funcaddress.dc
+   if not( t > 0  /and adcret > 0 /and adc > 0) then
+    "ERROR"+[toword.t,toword.adcret,toword.adc]
+  else
+    let p = createthreadI(adcret, adc, t, [arg], {buildargcodeI.sym} 4)
+    if aborted.p then message.p
+   else "OK"

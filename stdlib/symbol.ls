@@ -35,6 +35,10 @@ use otherseq.seq.word
 
 use seq.seq.word
 
+Export type:passtypes
+
+Export abstractModref(mytype) modref
+
 Export print(modref)seq.word
 
 Export replaceT(mytype, modref)modref
@@ -519,9 +523,6 @@ Function Local(i:int)symbol Local(toword.i, typeint, i)
 
 Function Optionsym symbol symbol(internalmod,"option", typeint, seqof.typeword, typeint)
 
-Function  setintsymbol symbol   symbol(moduleref." tausupport","set", [ typeptr, typeint], typeptr)
-
-Function  setptrsymbol symbol   symbol(moduleref." tausupport","set", [ typeptr, typeptr], typeptr)
 
 
 ----------------

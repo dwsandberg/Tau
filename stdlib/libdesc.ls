@@ -74,12 +74,25 @@ function =(a:symbolref, b:symbolref)boolean toint.a=toint.b
 
 Export type:compileinfo
 
-Function compilerback2(prg10:set.symdef,oldmods:seq.libraryModule,typedict:typedict ) compileinfo
-{/OPTION PROFILE}let symdecode=symbolrefdecode
+Function compilerback2(prg10:set.symdef,oldmods:seq.libraryModule,typedict:typedict,libname:word ) compileinfo
+{/OPTION PROFILE}
+let discardresult=for acc=0 ,sd /in toseq.prg10 do 
+  if  "COMPILETIME"_1 ∈ getoption.code.sd then
+    let discard=symbolrefnew.sym.sd acc
+    else acc 
+/for(0)
+let addresses=length.symbolrefdecodenew
+let symdecode=symbolrefdecode
 let newmods = 
  for acc = empty:seq.libraryModule, @e ∈ oldmods do
   for newexports = empty:seq.symbolref, r ∈ exports.@e do newexports + symbolrefnew.symdecode_(toint.r)/for(acc + libraryModule(modname.@e, newexports, types.@e))
 /for(acc) 
+{assert false report "LLL"+ 
+ for acc="" ,a /in symbolrefdecodenew  do  if isabstract.module.a then acc 
+ else 
+  let options=getoption.getCode(prg10,a)
+  if options /in ["INLINE","INLINE VERYSIMPLE"] /or  module.a=internalmod /and isempty.options  then acc
+  else  acc+options+print.a+EOL /for ( acc)}
 let code2 = libcode(prg10,oldmods,symbolrefdecode)
   let gensym=gencode(oldmods,prg10,symbolrefdecode)
   let profilearcs = 
@@ -107,7 +120,8 @@ for code3 = empty:seq.seq.symbolref, sd ∈ toseq.prg10 do
     if isFref.sym then  acc +   symbolref.-toint.symbolrefnew.basesym.sym  
     else acc + symbolrefnew.sym /for(code3 + acc)
  /for( compileinfo(typedict
- ,   [[ symbolref.0,symbolref.length.newmap2,symbolref.length.code2 ]+profilearcs]+code2+code3
+ ,   [[ symbolref.0,symbolref.length.newmap2,symbolref.length.code2
+ ,symbolref.addresses ]+profilearcs]+code2+code3
  ,empty:seq.seq.word
  , symbolrefdecodenew
 , newmods

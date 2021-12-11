@@ -211,6 +211,9 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
     next(flags, result >> 1 + d, nextvar, map)
    else
     let newcode = interpretCompileTime.removeconstantcode.ct
+    if isempty.newcode then 
+    next(flags, result + sym, nextvar, map)
+    else
     let newconst = if length.newcode > 1 then Constant2(p,newcode) else first.newcode
     next(flags, result >> nopara + newconst, nextvar, map)
   else if first."VERYSIMPLE" ∈ options then

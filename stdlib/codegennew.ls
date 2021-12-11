@@ -13,7 +13,6 @@ use llvm
 
 use llvmconstants
 
-use mangle
 
 use persistant
 
@@ -61,9 +60,11 @@ use set.seq.symbol
 
  use seq.seq.symbolref
  
+  use set.symdef
+  
+  use seq.symbolref
   
 Function codegen(thename:word, dependentlibs:seq.word, info:compileinfo)seq.bits
-let newmaplength=newmaplength.info
 let isbase=isempty.dependentlibs 
 let profilearcs=profilearcs.info  
 let tobepatched = 
@@ -72,14 +73,22 @@ let tobepatched =
  let stepone = stepone( info , dependentlibs, thename )
 let match5map = match5map.stepone
 let defines = defines.stepone
-{ let zx2c=createfile("stat.txt", ["in codegen0.3"])}
+let addresslength= addresslength.info 
+ let symboladdress=
+    for slots=[ toint.C64.0, toint.C64.addresslength],done=false,c /in   libcode.info while not.done do
+    if toint.c_1 /le   addresslength then 
+     next(slots+toint.Frefslot(info_(c_1),extnames.stepone,typedict.info,c_1)
+     , length.slots-1=addresslength )
+    else next(slots,done)
+  /for({assert length.slots=addresslength+2 report "PROBLEM H"+print.addresslength+print.length.slots}
+  addobject.slots ) 
 let discard3 = modulerecord("spacecount", [ toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
 let geninfo=geninfo(match5map,profilearcs,extnames.stepone,false)
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(geninfo, @e )/for(acc)
-let xxx = profiledata.profiledata.info
+let xxx=for acc = empty:seq.slot, x ∈ profiledata.info do acc + C64.x /for(AGGREGATE.acc)
 let libmods2 = 
- [addsymbolseq.subseq(symbolrefdecode.info, 1, newmaplength)
+ [addsymbolseq.subseq(symbolrefdecode.info, 1, newmaplength.info)
  , addlibmodseq.mods.info
  , addsymbolrefseqseq.libcode.info
  ]
@@ -87,8 +96,9 @@ let liblib =
  slot.addliblib([ thename]
  , libmods2
  , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
- , isbase
+ , dependentlibs
  , entrypointsymbol(extnames.stepone,info)
+ , symboladdress 
  )
 let libnametype = array(length.decodeword.thename + 1, i8)
 let libslot = 
@@ -186,7 +196,7 @@ if action = "CALL"_1 then
   , push(pop(args.l, noargs),-(regno.l + 1))
   , blocks.l
   )
- else profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m))
+ else profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m,"codegen"))
 else
  { if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq.
  int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs),-(
@@ -446,5 +456,3 @@ Lcode2(code.l + c
 , blocks.l
 )
 
-function profiledata(profiledata:seq.int)slot
-for acc = empty:seq.slot, x ∈ profiledata do acc + C64.x /for(AGGREGATE.acc) 

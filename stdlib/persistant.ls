@@ -45,9 +45,8 @@ use seq.encodingpair.seq.char
 
 use set.encodingpair.seq.char
 
- 
+ use seq.liblib
 
-Export initialdict seq.encodingpair.seq.char
 
 type word3 is toword:word
 
@@ -77,8 +76,6 @@ function hash(a:const3)int hash.for acc = empty:seq.int, @e ∈ flds.a do acc + 
 
 function assignencoding(a:const3)int assignrandom.a
 
-/Function dumpword3 seq.word let x=encoding:seq.encodingpair.word3"len:"+toword.length.x+@(+, toword,"", @(
-+, data, empty:seq.word3, x))
 
 Function wordref(w:word)int
 let d = encode.word3.w
@@ -86,13 +83,14 @@ toint.C64.valueofencoding.d
 
 function wordcode(a:encodingpair.word3)encoding.seq.char to:encoding.seq.char(encoding.toword.data.a)
 
-Function addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean,entrypoint:slot)int
+Function addliblib(libname:seq.word, mods:seq.int, profiledata:int, dependlibs:seq.word,entrypoint:slot,
+symboladdresses:int)int
 let name = addwordseq2.libname
-let have = 
- if isbase then empty:set.encoding.seq.char
- else
-  { @(+, code, empty:set.encoding.seq.char, words.loadedlibs_1)}
-  for acc = empty:set.encoding.seq.char, @e ∈ initialdict do acc + code.@e /for(acc)
+let have = for  acc0=empty:set.encoding.seq.char, ll /in loadedLibs do 
+    if first.libname /in dependlibs then
+    for acc = acc0, @e ∈  words.ll  do acc + code.@e /for(acc)
+    else acc0
+       /for(acc0)
 let used = 
  for acc = empty:set.encoding.seq.char, @e ∈ encoding:seq.encodingpair.word3 do acc + wordcode.@e /for(acc)
 { build packed seq of word encodings }
@@ -101,7 +99,8 @@ let data =
  for acc = [ toint.C64.0, toint.C64.length.wordstoadd], @e ∈ wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
 let wordreps = addobject.data
 let emptyseq=addobject.[ toint.C64.0, toint.C64.0]
-addobject("liblib", [ name, wordreps,toint.entrypoint , toint.C64.0, profiledata,mods_1,mods_2,mods_3,emptyseq,emptyseq])
+addobject("liblib", [ name, wordreps,toint.entrypoint , toint.C64.0, profiledata
+,mods_1,mods_2,mods_3,emptyseq,emptyseq,symboladdresses])
 
 
 

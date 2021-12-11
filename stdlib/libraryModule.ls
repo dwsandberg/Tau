@@ -79,6 +79,9 @@ type liblib is libname:seq.word
 , timestamp:int
 , profiledata:seq.parc
 , libinfo:compileinfo
+,symboladdress:seq.int
+
+Export symboladdress(liblib) seq.int 
 
 Export entrypointaddress(liblib) int 
 

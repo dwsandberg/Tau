@@ -51,7 +51,7 @@ Export constdata seq.slot
 
 Export wordref(w:word)int
 
-Export addliblib(libname:seq.word, mods:seq.int, profiledata:int, isbase:boolean,entrypoint:slot)int
+Export addliblib(libname:seq.word, mods:seq.int, profiledata:int, dependlibs:seq.word,entrypoint:slot,symboladdresses:int)int
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
 if s = Optionsym then function.[ i64, i64, i64, i64]else function.tollvmtypelist(alltypes, s)
@@ -309,15 +309,6 @@ addtemplate(symbol(internalmod,"bitcast", typeptr, typeint)
 , STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1)
 )
 , addtemplate(symbol(internalmod,"set", [ typeptr, typeptr], typeptr)
-, 2
-, CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast) + STORE(r.2, r.1, ibcsub.2)
-+ GEP(r.2, i64, ibcsub.1, C64.1)
-)
-, addtemplate(setintsymbol
-, 1
-, STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1)
-)
-, addtemplate(setptrsymbol
 , 2
 , CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast) + STORE(r.2, r.1, ibcsub.2)
 + GEP(r.2, i64, ibcsub.1, C64.1)

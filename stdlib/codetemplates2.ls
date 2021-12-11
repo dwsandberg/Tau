@@ -14,7 +14,6 @@ use llvm
 
 use llvmconstants
 
-use mangle
 
 use persistant
 
@@ -119,13 +118,13 @@ Export functype(m:match5)llvmtype
 
 Function externalcall(sym:symbol) boolean
   isInternal.sym /and 
-   name.sym /nin "not getseqtype getseqlength casttoreal setint intpart setptr bitcast toreal toint  representation xor
-set+-/ * ? toint=> >> << ∨ ∧   "
+   name.sym /nin "not getseqtype getseqlength casttoreal 
+    intpart  bitcast toreal toint  representation xor
+set+-/ * ? => >> << ∨ ∧   "
 
 Function stepone(info:compileinfo, dependentlibs:seq.word, thename:word)steponeresult
 let discard1 = initmap5
 let alltypes=typedict.info
-let newmaplength=newmaplength.info
 let libextnames = externnames.dependentlibs
 for  used0=empty:seq.symbolref
     ,crecord=empty:seq.symdef
@@ -142,19 +141,15 @@ for  used0=empty:seq.symbolref
      let code=for code = empty:seq.symbol,r ∈ c << 1 do  code+info_ r  /for(code)
        if "COMPILED"_1 ∈ getoption.code /or  externalcall.firstsym
        then 
-         let discard5 = call(alltypes, firstsym,"CALL"_1,   mangledname(libextnames,firstsym))
+         let discard5 = call(alltypes, firstsym,"CALL"_1,   mangledname(libextnames,firstsym,"loc1",first.c))
        next( used0,crecord,defines,symrefs+first.c,extnames)       
       else  
-      let sd=symdef(firstsym,code,toint.first.c)
-    let r = toint.first.c
-    let extname = 
-    merge([thename]
-    + if r ≤ newmaplength then"$$" + toword.r else"$$" + toword.r + "$"/if)
-    next(    used0+ toseq.asset.c ,crecord,defines+sd,symrefs+first.c
+       let extname =  merge([thename] +  "$$" + toword.toint.first.c )
+    next(    used0+ toseq.asset.c ,crecord,defines+symdef(firstsym,code,toint.first.c),symrefs+first.c
     ,add( extnames,firstsym,extname))
 /for(   
 uses(alltypes,  asset.used0 , crecord , defines , 
-newmaplength, thename, extnames, info,symrefs
+ thename, extnames, info,symrefs
 ))
 
 use otherseq.symbolref
@@ -163,7 +158,6 @@ Function uses(alltypes:typedict
 , used:set.symbolref
 , isrecordconstant:seq.symdef
 , indefines:seq.symdef
-, newmaplength:int
 , thename:word
 , extnamesin:set.symdef
 ,info:compileinfo
@@ -171,7 +165,7 @@ Function uses(alltypes:typedict
 )steponeresult
  let i=binarysearch(toseq.used,symbolref.0)
  let notprocessed=subseq(toseq.used,abs.i,length.toseq.used)
- let infref=for acc=empty:seq.symbol,ref /in subseq(toseq.used,1,abs.i -1 ) do acc+info_ref /for(acc)
+ let frefs=subseq(toseq.used,1,abs.i -1 ) 
 for  defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
    let ele=info_ref 
  if isabstract.module.ele then next(defines, extnames)
@@ -188,7 +182,7 @@ for  defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
     , 1
     , GEP(r.1
     , i64
-    , slot.global([ merge("$" + toword.toint.ref + "$")], i64, C64.0)
+    , slot.global([ merge("$$" + toword.toint.ref  )], i64, C64.0)
     )
     )
    next(    defines,  extnames)
@@ -204,19 +198,17 @@ for  defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
   else  if ref /in symrefs then next(  defines,  extnames)
   else  if not.isInternal.ele
    /or externalcall.ele then
-     let discard5 = call(alltypes, ele,"CALL"_1,   mangledname(extnames,ele))
+     let discard5 = call(alltypes, ele,"CALL"_1,   mangledname(extnames,ele,"loc2",ref))
     next(  defines,  extnames)
     else
      let r = toint.ref
-    let extname = 
-     merge([thename]
-     + if r ≤ newmaplength then"$$" + toword.r else"$$" + toword.r + "$"/if)
-    next( defines + symdef(ele, empty:seq.symbol)   , add(extnames, ele, extname)
+    let extname =  merge([thename]   +"$$" + toword.r    )
+    next( defines + symdef(ele, empty:seq.symbol,toint.ref)   , add(extnames, ele, extname)
     )
 /for( let defines2 = 
  for acc = empty:set.symbol, sd ∈ toseq.defines do
   let ele2=sym.sd
-  let name=mangledname(extnames, ele2)
+  let name=mangledname(extnames, ele2,"defines",symbolref(paragraphno.sd))
   let discard = funcdec(alltypes, ele2,name)
   let discard5 = call(alltypes, ele2,"CALL"_1,  name)
   acc+ele2
@@ -228,7 +220,7 @@ for  defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
     /for(acc2)
   assert isempty.check report "failing in codetemplates2 "+ check}
  toseq.defines)
-let discard2 = buildFref( infref, alltypes,extnames)
+let discard2 = buildFref( frefs, info,extnames)
 let discard4 = processconst(isrecordconstant,alltypes)
 steponeresult(empty:seq.match5, defines2, extnames))
 
@@ -245,27 +237,32 @@ Export type:steponeresult
 Function entrypointsymbol(extnames:set.symdef,a:compileinfo) slot  
   for acc=C64.0 ,sym /in symbolrefdecode.a do
     if isconstantorspecial.sym /or name.sym /nin "entrypoint" then acc
-    else 
-  let functyp = ptr.tollvmtype(typedict.a, sym)
-      ptrtoint(functyp, symboltableentry([ mangledname(extnames, sym)], functyp)) 
+    else Frefslot(sym,extnames,typedict.a,symbolref.0)
  /for(acc)
 
  
 Function addlibwords(extnames:set.symdef,typedict:typedict) slot
  let f1=symbol(moduleref."main2","addlibrarywords",typeref."liblib libraryModule",typeint)
- let functyp = ptr.tollvmtype(typedict, f1)
-  ptrtoint(functyp, symboltableentry([ mangledname(extnames, f1)], functyp))
+ Frefslot(f1,extnames,typedict,symbolref.0)
+ 
 
-function buildFref(other:seq.symbol, alltypes:typedict, extnames:set.symdef)seq.match5
-for acc = empty:seq.match5, e ∈ other do
- let f1 = basesym.e
- let functyp = ptr.tollvmtype(alltypes, f1)
+ Function  Frefslot (sym:symbol,extnames:set.symdef,typedict:typedict,ref:symbolref) slot 
+  let functyp = ptr.tollvmtype(typedict, sym)
+      ptrtoint(functyp, symboltableentry([ mangledname(extnames, sym,"locFref",ref)], functyp)) 
+
+
+function buildFref(frefs:seq.symbolref, info:compileinfo, extnames:set.symdef)seq.match5
+let alltypes=typedict.info
+for acc = empty:seq.match5, ref /in frefs do
+let refbase=symbolref(-toint.ref)
+let basesym=info_refbase
+ let functyp = ptr.tollvmtype(alltypes, basesym)
  let discard = 
-  addtemplate(e
+  addtemplate(Fref.basesym
   , 0
   , emptyinternalbc
   ,"ACTARG"_1
-  , ptrtoint(functyp, symboltableentry([ mangledname(extnames, f1)], functyp))
+  ,  Frefslot(basesym,extnames,alltypes,refbase)
   )
  acc
 /for(acc)
@@ -312,3 +309,18 @@ else
   txt + txt2
  /for(txt)
  if not.changed then 0 else processconst(notprocessed,alltypes) /if)
+ 
+ Function mangledname(extname:set.symdef, s:symbol,loc:seq.word)word
+ mangledname(extname,s,loc,symbolref.0)
+ 
+ Function mangledname(extname:set.symdef,s:symbol,loc:seq.word,ref:symbolref)word
+   if name.module.s ∈ "internal"then 
+    if externalcall.s then  name.s 
+    else 
+      merge.[toword.toint.ref,"$"_1,"$"_1,toword.toint.ref]
+   else
+ let t=  name.first.getCode(extname,s)
+    assert  toint.ref > 0 /or loc_1 /in "codegen" /or name.s /in "entrypoint addlibrarywords" report "HERE f"+loc+print.s
+  {  assert toint.ref /le 0 /or merge.[library.module.s,"$"_1,"$"_1,toword.toint.ref]=t  report "XXX"+print.s
+     +t+merge.[library.module.s,"$"_1,"$"_1,toword.toint.ref]}
+    t

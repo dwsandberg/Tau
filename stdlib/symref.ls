@@ -29,7 +29,8 @@ use otherseq.seq.symbolref
 
 use seq.seq.symbolref
 
-Function compileinfo(t:typedict, code:seq.seq.symbolref, src:seq.seq.word, d:seq.symbol,m: seq.libraryModule)compileinfo
+Function compileinfo(t:typedict, code:seq.seq.symbolref, src:seq.seq.word, d:seq.symbol
+,m: seq.libraryModule)compileinfo
          compileinfo( d, m,code,src,t)
 
 Export toint(symbolref)int
@@ -75,13 +76,13 @@ Export symbolrefdecode(compileinfo)seq.symbol
 Export src(compileinfo)seq.seq.word
 
 Function profiledata(info:compileinfo)seq.int
-  let l=first.code.info << 3
+  let l=first.code.info << 4
 for acc = [1, length.l / 2], first = true, r ∈ l do
  if first then next(acc + toint.r, false)else next(acc + toint.r + [0, 0, 0, 0], true)
   /for( acc  )
   
 Function profilearcs(info:compileinfo) set.seq.symbol
-    let l=first.code.info << 3
+    let l=first.code.info << 4
 for acc = empty:set.seq.symbol, first = true, last = Lit.0, r ∈ l do
  let sym =  info_r 
  if first then next(acc, false, sym)else next(acc + [last, sym], true, sym)
@@ -90,6 +91,8 @@ for acc = empty:set.seq.symbol, first = true, last = Lit.0, r ∈ l do
 Function newmaplength(info:compileinfo)int toint.(first.code.info)_2
 
 Function libcodelength(info:compileinfo)int toint.(first.code.info)_3
+
+Function addresslength(info:compileinfo)int toint.(first.code.info)_4
 
 Function libcode(info:compileinfo)seq.seq.symbolref subseq(code.info, 2, libcodelength.info + 1)
 

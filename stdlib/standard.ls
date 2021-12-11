@@ -329,16 +329,16 @@ Export <<(s:seq.word, i:int)seq.word { removes i words from beginning of s }
 
 Export >>(s:seq.word, i:int)seq.word { removes i words from end of s }
 
-* usegraph include inputoutput xxhash encoding bits words real textio UTF8 set seq otherseq fileio standard bitstream 
+* usegraph include graph xxhash format encoding bits words real textio UTF8 set seq otherseq fileio standard bitstream 
  exclude standard seq
 
-* usegraph include tree graph  process stack set format maindict tausupport program typedict mytype symbol exclude 
+* usegraph include tree inputoutput  process stack set  taublockseq libraryModule  tausupport  typedict mytype symbol exclude 
  standard seq bits otherseq
 
-* usegraph include codetemplates codegennew internalbc llvmconstant llvm interpreter mangle persistant libdesc exclude 
+* usegraph include codetemplates codetemplates2 codegennew internalbc llvmconstant llvm   persistant  exclude 
  seq bits set otherseq standard UTF8 real stack
 
-* usegraph include compilerfront main2 mergeblocks display parse passparse passsymbol pass2 postbind pass2 program typedict exclude 
+* usegraph include compilerfront interpreter libdesc main2 mergeblocks  parse passparse passsymbol pass2 postbind pass2 program typedict exclude 
  seq set otherseq standard bits graph UTF8 stack real fileio textio encoding words symbol types
 
 Export type:index

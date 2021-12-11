@@ -7,8 +7,6 @@ use bits
 
 use bitstream
 
-use mangle
-
 use standard
 
 use fileT.bit
@@ -61,11 +59,35 @@ createfile2(length.a * 8
 , tocstr.name
 )
 
-Builtin initialdict seq.encodingpair.seq.char
 
 Builtin randomint(i:int)seq.int
 
 Function stacktrace seq.word internalstacktrace
+
+Function internalstacktrace seq.word
+for acc = "", @e ∈ callstack.30 << 2 do acc + " /br" + printfunc.addresstosymbol2.@e /for(acc)
+
+function printfunc(name:seq.char)seq.word
+ let i = findindex(char1."$", name)
+ let library = encodeword.subseq(name, 1, i - 1)
+ let idx = toint.encodeword.subseq(name, i + 2, length.name)
+ for name2 = "", ll ∈ loadedLibs
+ while isempty.name2
+ do if first.libname.ll = library  /and  idx /le length.decoderef.ll  then print.(decoderef.ll)_idx else name2
+ /for(if isempty.name2 then [ encodeword.name]else name2 /if)
+
+builtin callstack(n:int)seq.int
+
+builtin addresstosymbol2(a:int)seq.char 
+
+use otherseq.char
+
+use seq.symbol
+
+use symbol
+
+use libraryModule
+
 
 Module fileT.T
 

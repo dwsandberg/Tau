@@ -157,11 +157,6 @@ BT loaded[20]={0,0};
 char libnames[20][100];
 
 BT empty[2]={0,0};
-BT* initialdictionary=empty;
-
-
-BT* initialdict() { return initialdictionary; }
-
 
 
 BT loadedlibs2(processinfo PD)  // returns list of loaded libraries
@@ -218,7 +213,6 @@ if ( baselib ){
     staticencodings[2]=neweinfo(&sharedspace,2); // encoding map for assigning encoding to an integer number
 
     addlibrarywords  = ( BT (* )(processinfo PD,BT   )) baselib; 
-    initialdictionary=(BT *)(  ((BT * )  (staticencodings[1]->encodingstate)) [4]); 
 }
 
 addlibrarywords(&sharedspace,libdesc);
@@ -555,16 +549,13 @@ BT callstack(processinfo PD,BT maxsize){
 
 
 
-BT dlsymbol(processinfo PD,char * funcname) 
+/* BT dlsymbol(processinfo PD,char * funcname) 
 {
 return (BT) dlsym(RTLD_DEFAULT,  tocstr(funcname) );}
 
 
-
-BT toscreen(BT outputnibble ) {
-return write( /* stdout */ 1,(char *) &outputnibble+1,  outputnibble & 7  );
-}
-
+ 
+*/
 
 double arcsin (processinfo PD, double arg)  { return asin(arg); }
   

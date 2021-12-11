@@ -13,8 +13,6 @@ use format
 
 use libraryModule
 
-use mangle
-
 use standard
 
 use symbol
@@ -67,6 +65,8 @@ use process.seq.seq.word
 
 use seq.seq.seq.word
 
+use interpreter
+
 Function subcompilelib(libname:seq.word)seq.word
 { OPTION PROFILE }
 let info = getlibraryinfo2.libname
@@ -102,7 +102,7 @@ let exports = info_3
 
 Export compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
 
-/use seq.libraryModule
+
 
 _______________
 

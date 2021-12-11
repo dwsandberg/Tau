@@ -1,14 +1,9 @@
-#!/usr/local/bin/tau ; use tools; testprofile."solardataall"
+#!/bin/sh tau stdlib tools testprofile   checkdata 
 
  
 Module profile
 
-  
- 
 use standard
-
-
-
 
 use libraryModule
 

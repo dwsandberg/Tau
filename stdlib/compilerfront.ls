@@ -59,8 +59,6 @@ use set.word
 
 use seq.seq.mytype
 
-/use seq.encodingpair.symbol
-
 use seq.seq.symbolref
 
 use seq.set.symdef
@@ -96,7 +94,7 @@ Export modname(libraryModule)modref
 Export types(libraryModule)seq.seq.mytype
 
 Function compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
-{ OPTION PROFILE }
+{ /OPTION PROFILE }
  let lib = last.libname
 let libinfo = libmodules2.dependentlibs
 { assert isempty.mods.libinfo report for txt="testingx", sd=prg.libinfo do if name.module.sym.sd /in"llvm"then txt 
@@ -172,7 +170,8 @@ else
   else
   let  prg5=pass2.result ∪ templates
   let libmods=tolibraryModules(typedict, toseq.modules.t5, exports)
-  if option ="all" then   compilerback2( prg5 ,libmods ,typedict )
+  if option ="all" then  
+     compilerback2( prg5 ,libmods ,typedict ,lib)
    else compileinfo(toseq.prg5, typedict.pb, libmods, empty:seq.seq.word)
 
 function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
