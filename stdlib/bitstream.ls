@@ -21,7 +21,7 @@ Function bits(a:bitstream)seq.bits fullwords.a + endpart.a
 / function singlebit(a:bitstream, i:int)int // does format checking and gets bit i // assert between(i, 1, length.a)report 
 "out bound singlebit"assert(length.a+63)/ 64=length.fullwords.a+1 report"rep problem"+stacktrace let j=((i-1 
 )/ 64+1)let b=if j > length.fullwords.a then let partbits=(length.a mod 64)assert partbits=0 ∨ bits.0=endpart.a >>(
- partbits)report"stray bits"+stacktrace endpart.a else(fullwords.a)_j toint(b >>((i-1)mod 64)∧ 0x1)
+partbits)report"stray bits"+stacktrace endpart.a else(fullwords.a)_j toint(b >>((i-1)mod 64)∧ 0x1)
 
 Function empty:bitstream bitstream bitstream(0, 0x0, empty:seq.bits)
 
@@ -37,7 +37,7 @@ else
  let j = i / 16
  let start = print.endpart.x << (3 - j)
  let k = i mod 16 + 1
- let part = if k = 16 then start else [ toword.k] + "bits of" + start
+ let part = if k = 16 then start else[toword.k] + "bits of" + start
  part
  + for acc = "", @e ∈ reverse.fullwords.x do acc + print.@e /for(acc)
 
@@ -48,7 +48,7 @@ if i > length.fullwords.x then endpart.x else(fullwords.x)_i
 
 Function bitstream(length:int, val:bits)bitstream bitstream(length, bits(2^length - 1) ∧ val, empty:seq.bits)
 
-Function index(s:bitstream, i:int, sizebits:int)bits endpart.subseq(s,(i - 1) * sizebits + 1, i * sizebits)
+Function index(s:bitstream, i:int, sizebits:int)bits endpart.subseq(s, (i - 1) * sizebits + 1, i * sizebits)
 
 Function _(s:bitstream, i:int)byte tobyte.toint.index(s, i, 8)
 
@@ -73,7 +73,7 @@ else if startshift = 0 then
 else
  let endpart = 
   if finishshift ≥ startshift then
-   { all bits in endpart come from finishword } ithword(s, finishword) >> (64 - startshift)
+   {all bits in endpart come from finishword}ithword(s, finishword) >> (64 - startshift)
    ∧ finishpartmask
   else
    ithword(s, finishword) << (64 - startshift) ∧ finishpartmask
@@ -89,10 +89,10 @@ else
 +offseta)=singlebit(b, i)then cmp(a, b, i+1, offseta)else false
 
 Function +(a:bitstream, b:bitstream)bitstream
-{ steal bits from b to make full words in a }
+{steal bits from b to make full words in a}
 let partbitsa = toint(bits.length.a ∧ bits(64 - 1))
 if partbitsa = 0 ∧ length.a > 0 then
- { no need to steal bits }
+ {no need to steal bits}
  bitstream(length.a + length.b, endpart.b, fullwords.a + endpart.a + fullwords.b)
 else if length.b ≤ 64 then add(a, endpart.b, length.b)
 else

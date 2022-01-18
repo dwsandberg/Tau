@@ -1,4 +1,12 @@
-#!/bin/sh  tau tools pretty  printbitcodes printbitcodes bitcodesupport runcode  
+#!/bin/sh  tau stdlib tools pretty wtest1 tausupport bits bitstream format set textio stack encoding otherseq process real seq standard UTF8 words xxhash
+
+tau stdlib tools test3  wtest1
+
+pretty wtest1 .
+
+test3
+
+pretty  webassembly inputoutput
 
 
 
@@ -74,12 +82,13 @@ Function entrypoint(s:UTF8) UTF8
    testall
    else if arg="baseTypeCheck" then 
  baseTypeCheck.arg2
+   else if arg="test3" then test3.arg2
   else  "unknown arg"+args
  
 
 
-Function test3 seq.word 
-totext(compilerfront("text","stdlib"),"junk"
+Function test3(lib:seq.word) seq.word 
+totext(compilerfront("text",lib),"junk"
 ,[rename("seq.T:findelement(T,seq.T) seq.T","lookup",[2,1])
 ,rename("set.symdef:findelement(symdef,set.symdef) set.symdef","lookup",[2,1])
 ,rename("set.passtypes:findelement(passtypes,set.passtypes) set.passtypes","lookup",[2,1])

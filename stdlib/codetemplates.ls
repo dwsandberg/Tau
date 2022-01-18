@@ -1,4 +1,3 @@
-
 Module codetemplates
 
 use bits
@@ -500,9 +499,6 @@ else if isloopblock.xx then
  )
 else if iscontinue.xx then addtemplate(xx, 0, emptyinternalbc, "CONTINUE"_1, nopara.xx, [i64])
 else addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx,  [ i64])
-
-
-
 
 Function call(alltypes:typedict, xx:symbol, type:word,   symname:word)match5
 let list = tollvmtypelist(alltypes, xx)

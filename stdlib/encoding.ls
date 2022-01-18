@@ -67,13 +67,13 @@ Function lastadded(h:encodingstate.T)encoding.T code.last.all.h
 function notsamehash:T(a:int, b:int, mask:bits)boolean(bits.a ∧ mask) ≠ (bits.b ∧ mask)
 
 Function add(h:encodingstate.T, v:encodingpair.T)encodingstate.T
-{ this is the add that is called by primitiveadd }
+{this is the add that is called by primitiveadd}
 let tablesize = length.encodetable.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
 let dataindex = toint(tobits.hash.v ∧ mask) + 1
-let existingcode = lookuprep(data.v,(encodetable.h)_dataindex)
+let existingcode = lookuprep(data.v, (encodetable.h)_dataindex)
 if not.isempty.existingcode then
- { already present }
+ {already present}
  let c = valueofencoding.code.existingcode_1
  if lastadd.h = c then h
  else encodingstate(encodingno.h, length.h, encodetable.h, decodetable.h, all.h, c)
@@ -82,12 +82,12 @@ else
  let code = code.p
  let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
  let listdecode = 
-  for acc = [ p], e ∈(decodetable.h)_codeindex do
+  for acc = [p], e ∈(decodetable.h)_codeindex do
    if code.e = code ∨ notsamehash:T(valueofencoding.code, valueofencoding.code.e, mask)then acc
    else acc + e
   /for(acc)
  let listencode = 
-  for acc = [ p], e ∈(encodetable.h)_dataindex do
+  for acc = [p], e ∈(encodetable.h)_dataindex do
    if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask)then acc else acc + e
   /for(acc)
  let newdecode = replace(decodetable.h, codeindex, listdecode)
@@ -100,7 +100,7 @@ else
   encodingstate(encodingno.h, length.h + 1, newencode, newdecode, all.h + p, valueofencoding.code.p)
 
 function subadd(mask:bits, h:encodingstate.T, v:encodingpair.T, count:int)encodingpair.T
-{ assert count < 10 report"unable to assign encoding"}
+{assert count < 10 report"unable to assign encoding"}
 let code = code.v
 let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
 let found = 
@@ -153,14 +153,14 @@ Function ?(a:encoding.T, b:encoding.T)ordering valueofencoding.a ? valueofencodi
 
 Function hash(a:encoding.T)int valueofencoding.a
 
-function lookuprep(t:T, inst:encodingstate.T)seq.encodingpair.T lookuprep(t,(encodetable.inst)_(hash.t mod length.encodetable.inst + 1))
+function lookuprep(t:T, inst:encodingstate.T)seq.encodingpair.T lookuprep(t, (encodetable.inst)_(hash.t mod length.encodetable.inst + 1))
 
 function lookuprep(t:T, s:seq.encodingpair.T)seq.encodingpair.T
 for acc = empty:seq.encodingpair.T, e ∈ s do if t = data.e then acc + e else acc /for(acc)
 
 Function findencode(t:T)seq.T
 let r = lookuprep(t, getinstance:encodingstate.T)
-if isempty.r then empty:seq.T else [ data.r_1]
+if isempty.r then empty:seq.T else[data.r_1]
 
 function analyze(t:encodingstate.T)seq.word
 "numele=" + toword.length.all.t + "encodecounts"
@@ -170,7 +170,7 @@ function analyze(t:encodingstate.T)seq.word
 
 function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int)seq.word
 if i > length.s then
- for acc = "", @e ∈ [ length.s, one, two, big]do acc + toword.@e /for(acc)
+ for acc = "", @e ∈[length.s, one, two, big]do acc + toword.@e /for(acc)
 else
  let t = length.s_i
  if t = 0 then counts(s, i + 1, one, two, big)

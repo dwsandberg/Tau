@@ -1,4 +1,3 @@
-
 Module symref
 
 use libraryModule
@@ -29,9 +28,8 @@ use otherseq.seq.symbolref
 
 use seq.seq.symbolref
 
-Function compileinfo(t:typedict, code:seq.seq.symbolref, src:seq.seq.word, d:seq.symbol
-,m: seq.libraryModule)compileinfo
-         compileinfo( d, m,code,src,t)
+Function compileinfo(t:typedict, code:seq.seq.symbolref, src:seq.seq.word, d:seq.symbol, m:seq.libraryModule)compileinfo
+compileinfo(d, m, code, src, t)
 
 Export toint(symbolref)int
 
@@ -46,19 +44,16 @@ Function assignencoding(a:symbol)int nextencoding.a
 Function decode(s:symbolref)symbol decode.to:encoding.symbol(toint.s)
 
 Function symbolrefdecode seq.symbol
-for acc = empty:seq.symbol, p ∈ encoding:seq.encodingpair.symbol do acc + data.p /for(acc) 
+for acc = empty:seq.symbol, p ∈ encoding:seq.encodingpair.symbol do acc + data.p /for(acc)
 
 Export type:compileinfo
 
-type compileinfo is  symbolrefdecode:seq.symbol
+type compileinfo is symbolrefdecode:seq.symbol
 , mods:seq.libraryModule
 , code:seq.seq.symbolref
 , src:seq.seq.word
- ,typedict:typedict
+, typedict:typedict
 
-
-
- 
 
 Function roots(s:compileinfo)set.symbol
 let exports = 
@@ -76,17 +71,17 @@ Export symbolrefdecode(compileinfo)seq.symbol
 Export src(compileinfo)seq.seq.word
 
 Function profiledata(info:compileinfo)seq.int
-  let l=first.code.info << 4
+let l = first.code.info << 4
 for acc = [1, length.l / 2], first = true, r ∈ l do
  if first then next(acc + toint.r, false)else next(acc + toint.r + [0, 0, 0, 0], true)
-  /for( acc  )
-  
-Function profilearcs(info:compileinfo) set.seq.symbol
-    let l=first.code.info << 4
+/for(acc)
+
+Function profilearcs(info:compileinfo)set.seq.symbol
+let l = first.code.info << 4
 for acc = empty:set.seq.symbol, first = true, last = Lit.0, r ∈ l do
- let sym =  info_r 
+ let sym = info_r
  if first then next(acc, false, sym)else next(acc + [last, sym], true, sym)
-  /for( acc)
+/for(acc)
 
 Function newmaplength(info:compileinfo)int toint.(first.code.info)_2
 
@@ -96,9 +91,8 @@ Function addresslength(info:compileinfo)int toint.(first.code.info)_4
 
 Function libcode(info:compileinfo)seq.seq.symbolref subseq(code.info, 2, libcodelength.info + 1)
 
-Function prgcode(info:compileinfo)seq.seq.symbolref subseq(code.info, libcodelength.info + 2, length.code.info) 
+Function prgcode(info:compileinfo)seq.seq.symbolref subseq(code.info, libcodelength.info + 2, length.code.info)
 
-Function   _(info:compileinfo,r:symbolref) symbol
- let i=toint.r
- if i > 0 then  (symbolrefdecode.info)_i  else Fref.(symbolrefdecode.info)_-i
- 
+Function _(info:compileinfo, r:symbolref)symbol
+let i = toint.r
+if i > 0 then(symbolrefdecode.info)_i else Fref.(symbolrefdecode.info)_(-i) 

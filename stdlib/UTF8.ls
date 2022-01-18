@@ -182,7 +182,8 @@ else
 
 Function reallit(s:UTF8)real reallit(decodeUTF8.s, -1, 1, 0, 1)
 
-Function makereal(w:seq.word)real {OPTION COMPILETIME}
+Function makereal(w:seq.word)real
+{OPTION COMPILETIME}
 reallit(for acc = empty:seq.char, @e ∈ w do acc + decodeword.@e /for(acc)
 , -1
 , 1
@@ -221,14 +222,13 @@ for result = emptyUTF8, nospace = nospacein, this ∈ s do
   {no space before but space after}next(result + char1.", " + char.32, true)
  else
   let chars = decodeword.this
-   if length.chars = 1 ∧ first.chars ∈ decodeword.merge.'={}+-()[].:"_^'  then
-       {no space before or after}next(result + chars, true)
-   else if length.chars = 1 ∧ first.chars = char.32 then
-      if 32 /le length.format /and length(format_32) > 1 then 
-       next(if nospace then result + format_32 else result + char.32 + format_32, false)
-       else  next(result + chars, true) 
-  else if chars = [char1.".", char.32] then 
+  if length.chars = 1 ∧ first.chars ∈ decodeword.merge.'={}+-()[].:"_^' then
    {no space before or after}next(result + chars, true)
+  else if length.chars = 1 ∧ first.chars = char.32 then
+   if 32 ≤ length.format ∧ length.format_32 > 1 then
+    next(if nospace then result + format_32 else result + char.32 + format_32, false)
+   else next(result + chars, true)
+  else if chars = [char1.".", char.32]then{no space before or after}next(result + chars, true)
   else
    let d = 
     for acc = emptyUTF8, ch ∈ chars do

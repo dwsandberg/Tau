@@ -43,7 +43,7 @@ if i > length.a then empty:seq.T
 else if j > length.b then empty:seq.T
 else
  let c = a_i ? b_j
- if c = EQ then [ a_i] + intersect(a, b, i + 1, j + 1)
+ if c = EQ then[a_i] + intersect(a, b, i + 1, j + 1)
  else if c = GT then intersect(a, b, i, j + 1)else intersect(a, b, i + 1, j)
 
 function union(a:set.T, b:set.T)set.T
@@ -62,9 +62,9 @@ else if(a_i ? b_j) = EQ then union(a, b, i + 1, j + 1, result + b_j)
 else
  let p = binarysearch(a, i + 1, length.a, b_j)
  if p > 0 then union(a, b, p + 1, j + 1, result + subseq(a, i, p))
- else union(a, b,-p, j + 1, result + subseq(a, i,-p - 1) + [ b_j])
+ else union(a, b, -p, j + 1, result + subseq(a, i, -p - 1) + [b_j])
 
-Function \(a:set.T, b:set.T)set.T { elements in a but not in b } set.diff(toseq.a, toseq.b, 1, 1)
+Function \(a:set.T, b:set.T)set.T{elements in a but not in b}set.diff(toseq.a, toseq.b, 1, 1)
 
 Function -(a:set.T, b:T)set.T set.setdelete(toseq.a, b)
 
@@ -72,18 +72,18 @@ function diff(a:seq.T, b:seq.T, i:int, j:int)seq.T
 if i > length.a then empty:seq.T
 else if j > length.b then subseq(a, i, length.a)
 else if(a_i ? b_j) = EQ then diff(a, b, i + 1, j + 1)
-else if(a_i ? b_j) = LT then [ a_i] + diff(a, b, i + 1, j)else diff(a, b, i, j + 1)
+else if(a_i ? b_j) = LT then[a_i] + diff(a, b, i + 1, j)else diff(a, b, i, j + 1)
 
 Function replace(a:set.T, b:set.T)set.T set.replace(toseq.a, toseq.b, 1, 1, empty:seq.T)
 
 function replace(a:seq.T, b:seq.T, i:int, j:int, result:seq.T)seq.T
-{ if in a and b then b else a }
+{if in a and b then b else a}
 if i > length.a then result
 else if j > length.b then result + subseq(a, i, length.a)
 else
  let ai = a_i
  let c = ai ? b_j
- if c = EQ then replace(a, b, i + 1, j + 1, result + [ b_j])
+ if c = EQ then replace(a, b, i + 1, j + 1, result + [b_j])
  else if c = LT then replace(a, b, i + 1, j, result + ai)
  else replace(a, b, i, skipahead(b, j, 1, ai), result)
 

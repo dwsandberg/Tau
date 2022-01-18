@@ -44,7 +44,7 @@ Function min(a:real, b:real)real if(a ? b) = LT then a else b
 
 Builtin+(a:real, b:real)real
 
-Builtin-(a:real, b:real)real {OPTION COMPILETIME }
+Builtin-(a:real, b:real)real{OPTION COMPILETIME}
 
 Builtin *(a:real, b:real)real
 

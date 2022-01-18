@@ -38,8 +38,6 @@ use seq.T
 
 use bitcast.seq.T
 
-
-
 Export type:seq.T
 
 Export type:blockseq.T
@@ -104,13 +102,21 @@ module tausupport
 
 use bits
 
+use bitstream
+
 use real
 
 use standard
 
+use seq.bits
+
 use seq.byte
 
 use taublockseq.byte
+
+use seq.index
+
+use bitcast.int
 
 use seq.int
 
@@ -134,19 +140,23 @@ use encoding.typename
 
 use seq.word
 
+use bitcast.seq.bits
+
+use bitcast.seq.byte
+
 use encoding.seq.char
 
 use seq.seq.int
 
 use seq.encodingpair.seq.char
 
-use seq.index
-
 Export empty:seq.index seq.index
 
-Export +(seq.index,index) seq.index 
+Export+(seq.index, index)seq.index
 
 Export blockseqtype:int int
+
+Export blockseqtype:byte int
 
 Export_(seq.word, index)word
 
@@ -200,7 +210,7 @@ Builtin allocatespace(int)ptr
 
 Builtin getseqtype(ptr)int
 
-Builtin getseqlength(ptr)int {OPTION COMPILETIME}
+Builtin getseqlength(ptr)int{OPTION COMPILETIME}
 
 /Export_(pseq.byte, int)byte
 
@@ -239,9 +249,9 @@ Export decode(encoding.seq.char)seq.char
 
 Export encode(seq.char)encoding.seq.char
 
-Function deepcopy(a:int)int {OPTION COMPILETIME} a
+Function deepcopy(a:int)int{OPTION COMPILETIME}a
 
-Function deepcopy(a:real)real {OPTION COMPILETIME} a
+Function deepcopy(a:real)real{OPTION COMPILETIME}a
 
 type typename is name:seq.word
 
@@ -267,4 +277,29 @@ Export type:encodingpair.typename
 
 -----------
 
-Function outofbounds seq.word"out of bounds" + stacktrace 
+Function outofbounds seq.word"out of bounds" + stacktrace
+
+Export packedbyteseqasbits(a:seq.byte)seq.bits
+
+function packedbytes(a:seq.byte)seq.byte
+let b = packedbyteseqasbits.a
+bitcast:seq.byte(set(set(toptr.b, getseqtype.b), length.b))
+
+Function packedbyteseqasbits(a:seq.byte)seq.bits
+let b = 
+ packed([bits.1, bits.length.a]
+ + bits.for acc = empty:bitstream, @e ∈ a do add(acc, bits.toint.@e, 8)/for(acc))
+assert getseqtype.b = 0 report"to big byte sequence to pack"
+b
+
+Function blockIt(s:seq.byte)seq.byte
+let blksz = 64000
+if length.s ≤ blksz then packedbytes.s
+else
+ let noblks = (length.s + blksz - 1) / blksz
+ let blkseq = allocatespace(noblks + 2)
+ let discard = 
+  for acc = set(set(blkseq, blockseqtype:byte), length.s), @e ∈ arithseq(noblks, blksz, 1)do
+   set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1)))
+  /for(acc)
+ bitcast:seq.byte(blkseq) 

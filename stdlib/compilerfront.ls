@@ -93,9 +93,8 @@ Export modname(libraryModule)modref
 
 Export types(libraryModule)seq.seq.mytype
 
-Function compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
+Function compilerfront(option:seq.word, lib:word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
 { /OPTION PROFILE }
- let lib = last.libname
 let libinfo = libmodules2.dependentlibs
 { assert isempty.mods.libinfo report for txt="testingx", sd=prg.libinfo do if name.module.sym.sd /in"llvm"then txt 
 +print.sym.sd+print.code.sd+EOL else txt /for(txt)}
@@ -177,7 +176,7 @@ else
 function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
 for acc = empty:set.symbol, sym ∈ getCode(prg, symin)do
  if isspecial.sym ∨ isconst.sym ∨ name.module.sym ∈ "internal builtin UTF8 seq"then acc
- else if name.sym ∈ "putfile jsgetfile"then acc + symin
+ else if name.sym ∈ "jsputfile jsgetfile"then acc + symin
  else if level = 0 then acc
  else
   let s = expand(level - 1, prg, sym)

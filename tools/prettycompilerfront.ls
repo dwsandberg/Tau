@@ -1,4 +1,4 @@
-#!/usr/local/bin/tau ; use tools ; test3
+#!/bin/sh  tau stdlib tools test3
 
 Module prettycompilerfront
 
@@ -49,10 +49,16 @@ function preprocess(a:seq.rename,c:compileinfo) seq.rename
   /for(result)  
 
 Function totext(result1:compileinfo,directory:seq.word)seq.word
-totext(result1,directory,empty:seq.rename)
+writeModule(totext(result1,empty:seq.rename),directory)
+
+
+Function Optionsym symbol symbol(internalmod,"option", typeint, seqof.typeword, typeint)
 
 
 Function totext(result1:compileinfo,directory:seq.word,renames0:seq.rename)seq.word
+writeModule(totext(result1,renames0),directory)
+
+Function totext(result1:compileinfo,renames0:seq.rename)seq.seq.word
 let renames= preprocess(renames0,result1)
 let symdecode = symbolrefdecode.result1
 let src = src.result1
@@ -60,8 +66,9 @@ let acc4 = for acc4 = src, c /in code.result1 do
  let paragraphno = value.symdecode_(toint.c_2)
  if paragraphno = 0 then acc4
  else
+   let tmp= if Optionsym=symdecode_(toint.last.c) then  c >> 2 else c 
    let newtext = getheader.src_paragraphno >> 1
-  + for acc ="", stk = empty:stack.seq.word, last = symdecode_(toint.c_3), r /in c << 3 do
+  + for acc ="", stk = empty:stack.seq.word, last = symdecode_(toint.c_3), r /in  tmp << 3 do
   let sym = symdecode_(toint.r)
   if sym = NotOp ∧ nopara.last = 2 then
    let paratypes = paratypes.last
@@ -75,19 +82,19 @@ let acc4 = for acc4 = src, c /in code.result1 do
   /for(top.newstk(last, stk,renames))
   replace(acc4, paragraphno, pretty.newtext)
 /for(acc4)
-for acc ="", modtext ="", p /in acc4 do
+for acc =empty:seq.seq.word, modtext ="", p /in acc4 do
    if subseq(p, 1, 1) ∈ ["Module","module",[encodeword.[char.28]]]then
-     let discard = writeModule(modtext,directory)
-     next(acc + " /p" + p, p)
+      next(acc + modtext, p)
   else 
   let t= if subseq(p, 1, 1) ∈ ["/keyword"," use"," builtin","Export" ] then 
     p 
     else if subseq(p, 1, 1) /in [ "type" ,"Function" ,"function"] then pretty.p
     else 
    escapeformat.p  
-  next(acc + " /p" + t, modtext + " /p" + t)
- /for(let discard = writeModule(modtext,directory)
-  acc)
+  next(acc , modtext + " /p" + t)
+ /for(acc)
+ 
+
 
 function newstk(sym:symbol, stk:stack.seq.word,renames:seq.rename)stack.seq.word
  if isstart.sym ∨ isexit.sym ∨ isbr.sym then stk
@@ -152,7 +159,13 @@ function newstk(sym:symbol, stk:stack.seq.word,renames:seq.rename)stack.seq.word
  function addcommas (s:seq.seq.word) seq.word
      for acc2 ="", t /in s do acc2 + t + ","/for(acc2 >> 1)
 
-function writeModule(modtext:seq.word,directory:seq.word)int
- if not.isempty.modtext ∧ first.modtext ∈ "Module module"then
-  createfile([ merge(directory + "/" + modtext_2 + ".ls")], toseqbyte.textformat.modtext << 1)
- else 1 
+function writeModule(modtexts:seq.seq.word,directory:seq.word) seq.word
+{OPTION INLINE}
+ for txt="",modtext /in  modtexts do
+    if not.isempty.modtext ∧ first.modtext ∈ "Module module"then
+  let discard2=  createfile([ merge(directory + "/" + modtext_2 + ".ls")], toseqbyte.textformat.modtext )
+    txt+"/p"+modtext
+ else txt 
+   /for( txt)
+ 
+ 

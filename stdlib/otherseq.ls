@@ -60,7 +60,7 @@ Function ?(a:seq.T, b:seq.T)ordering
 let lengtha = length.a
 let lengthb = length.b
 if lengtha > lengthb then GT
-else if lengtha < lengthb then LT else { a @ ?(EQ, @e ? b_@i)((@e ? b_@i)≠ EQ)} subcmp(a, b, 1)
+else if lengtha < lengthb then LT else{a @ ?(EQ, @e ? b_@i)((@e ? b_@i)≠ EQ)}subcmp(a, b, 1)
 
 function subcmp(a:seq.T, b:seq.T, i:int)ordering
 if i > length.a then EQ
@@ -94,10 +94,10 @@ else if(a_1 ? b_(length.b)) = GT then b + a else submerge(a, b, 1, 1)
 function submerge(a:seq.T, b:seq.T, i:int, j:int)seq.T
 if i > length.a then subseq(b, j, length.b)
 else if j > length.b then subseq(a, i, length.a)
-else if(b_j ? a_i) = LT then [ b_j] + submerge(a, b, i, j + 1)else [ a_i] + submerge(a, b, i + 1, j)
+else if(b_j ? a_i) = LT then[b_j] + submerge(a, b, i, j + 1)else[a_i] + submerge(a, b, i + 1, j)
 
 Function binarysearch(s:seq.T, val:T)int
-{ binarysearch returns position in seq if found and the negation of the posistion if not found }
+{binarysearch returns position in seq if found and the negation of the posistion if not found}
 binarysearch(s, 1, length.s, val)
 
 Function binarysearch(s:seq.T, b:int, a:int, val:T)int
@@ -110,7 +110,7 @@ else
 
 Function setinsert(s:seq.T, val:T)seq.T
 let i = binarysearch(s, val)
-if i > 0 then s else subseq(s, 1,-i - 1) + [ val] + subseq(s,-i, length.s)
+if i > 0 then s else subseq(s, 1, -i - 1) + [val] + subseq(s, -i, length.s)
 
 Function setdelete(s:seq.T, val:T)seq.T
 let i = binarysearch(s, val)
@@ -118,8 +118,8 @@ if i > 0 then subseq(s, 1, i - 1) + subseq(s, i + 1, length.s)else s
 
 Function setreplaceorinsert(s:seq.T, val:T)seq.T
 let i = binarysearch(s, val)
-if i > 0 then subseq(s, 1, i - 1) + [ val] + subseq(s, i + 1, length.s)
-else subseq(s, 1,-i - 1) + [ val] + subseq(s,-i, length.s)
+if i > 0 then subseq(s, 1, i - 1) + [val] + subseq(s, i + 1, length.s)
+else subseq(s, 1, -i - 1) + [val] + subseq(s, -i, length.s)
 
 Function lpad(n:int, val:T, l:seq.T)seq.T constantseq(n - length.l, val) + l
 
@@ -128,16 +128,16 @@ Function break(w:T, a:seq.T)seq.seq.T break(w, empty:seq.T, a)
 Function break(seperator:T, quotes:seq.T, a:seq.T)seq.seq.T
 let b = 
  for acc = empty:seq.int, i = 1, e ∈ a do
-  next(acc + if e ∈ ([ seperator] + quotes)then [ i]else empty:seq.int, i + 1)
+  next(acc + if e ∈ ([seperator] + quotes)then[i]else empty:seq.int, i + 1)
  /for(acc)
-if isempty.b then [ a]else break(empty:seq.T, seperator, seperator, a, b, 1, 1, empty:seq.seq.T)
+if isempty.b then[a]else break(empty:seq.T, seperator, seperator, a, b, 1, 1, empty:seq.seq.T)
 
 function break(str:seq.T, currentquote:T, seperator:T, a:seq.T, b:seq.int, j:int, start:int, result:seq.seq.T)seq.seq.T
 if j > length.b then result + (str + subseq(a, start, length.a))
 else
  let i = b_j
  if currentquote ≠ seperator then
-  { in quoted string }
+  {in quoted string}
   if a_i = seperator then break(str, currentquote, seperator, a, b, j + 1, start, result)
   else if a_i = currentquote ∧ i = length.a then result + (str + subseq(a, start, i - 1))
   else if a_i = currentquote ∧ a_(i + 1) = currentquote then
@@ -146,7 +146,7 @@ else
    assert a_i ≠ seperator ∧ a_(i + 1) = seperator report"format problem"
    break(empty:seq.T, seperator, seperator, a, b, j + 2, i + 2, result + (str + subseq(a, start, i - 1)))
  else
-  { not in quoted string }
+  {not in quoted string}
   if a_i = seperator then
    break(empty:seq.T, seperator, seperator, a, b, j + 1, i + 1, result + (str + subseq(a, start, i - 1)))
   else
@@ -156,7 +156,7 @@ else
 Function suffix(s:seq.T, len:int)seq.T subseq(s, length.s - len - 1, length.s)
 
 Function findindex(w:T, s:seq.T)int
-{ result > length.s when element is not found.Otherwise results is location in sequence }
+{result > length.s when element is not found.Otherwise results is location in sequence}
 for i = 1, e ∈ s while e ≠ w do i + 1 /for(i)
 
 Export type:seq.T
@@ -197,4 +197,4 @@ Function ascending(s:seq.T)seq.index
 for a = empty:seq.index, e ∈ arithseq(length.s, 1, 0)do a + index.e /for(a)
 
 Function descending(s:seq.T)seq.index
-for a = empty:seq.index, e ∈ arithseq(length.s,-1, length.s - 1)do a + index.e /for(a) 
+for a = empty:seq.index, e ∈ arithseq(length.s, -1, length.s - 1)do a + index.e /for(a) 

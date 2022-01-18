@@ -38,8 +38,8 @@ else
    subseq(sdata.d, 1, place - 1) * ele
    + removeoverlap(i + length.b - 1, subseq(sdata.d, place + 1, length.sdata.d), 1)
   else
-   subseq(sdata.d, 1,-place - 1) * ele
-   + removeoverlap(i + length.b - 1, subseq(sdata.d,-place, length.sdata.d), 1)
+   subseq(sdata.d, 1, -place - 1) * ele
+   + removeoverlap(i + length.b - 1, subseq(sdata.d, -place, length.sdata.d), 1)
  let last = t_(-1)
  toseq.sparse(start.last + length.edata.last - 1, t, default.d)
 
@@ -50,10 +50,10 @@ else
  let this = s_i
  let thisfinish = start.this + length.edata.this - 1
  if finish ≥ thisfinish then removeoverlap(finish, s, i + 1)
- else [ sparseele(finish + 1, edata.this << (finish - start.this))] + s << i
+ else[sparseele(finish + 1, edata.this << (finish - start.this))] + s << i
 
 function *(a:seq.sparseele.T, e:sparseele.T)seq.sparseele.T
-if isempty.a then [ e]
+if isempty.a then[e]
 else
  let last = a_(-1)
  let lastend = start.last + length.edata.last - 1

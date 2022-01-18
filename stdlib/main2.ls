@@ -1,4 +1,3 @@
-
 Module main2
 
 use UTF8
@@ -10,6 +9,8 @@ use codegennew
 use compilerfront
 
 use format
+
+use interpreter
 
 use libraryModule
 
@@ -65,44 +66,38 @@ use process.seq.seq.word
 
 use seq.seq.seq.word
 
-use interpreter
-
 Function subcompilelib(libname:seq.word)seq.word
-{ OPTION PROFILE }
-let info = getlibraryinfo2.libname
+{OPTION PROFILE}
+let info = getlibrarysrc.libname
 let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
- let cinfo= compilerfront("all", libname, ["Library" + libname] + info << 3, dependentlibs, exports)
- let bc= codegen( last.libname, dependentlibs, cinfo)
-let z2 = createlib(bc, last.libname, subseq(dependentlibs,1,1))
+let cinfo = 
+ compilerfront("all", last.libname, ["Library" + libname] + info << 3, dependentlibs, exports)
+let bc = codegen(last.libname, dependentlibs, cinfo)
+let z2 = createlib(bc, last.libname, subseq(dependentlibs, 1, 1))
 "OK"
 
-Function entrypoint(arg:UTF8) UTF8
-compile.arg
+Function entrypoint(arg:UTF8)UTF8 compile.arg
 
-
-Function compile(arg:UTF8) UTF8
- let wordargs=towords.arg
- let p = process.subcompilelib.[first.wordargs]
-HTML.if aborted.p then"COMPILATION ERROR in libray:"   +wordargs +EOL+ message.p
-else    if length.wordargs=1 /or wordargs_2 /in ". ." then   
- "finished compiling"+first.wordargs 
+Function compile(arg:UTF8)UTF8
+let wordargs = towords.arg
+let p = process.subcompilelib.[first.wordargs]
+HTML.if aborted.p then"COMPILATION ERROR in libray:" + wordargs + EOL + message.p
+else if length.wordargs = 1 ∨ wordargs_2 ∈ ". ."then"finished compiling" + first.wordargs
 else callentrypoint.toUTF8(wordargs << 1)
 
 Function astext(info:compileinfo)seq.seq.word
-for acc = empty:seq.seq.word, p ∈ prg.info do acc + [ print.sym.p + print.code.p]/for(acc)
+for acc = empty:seq.seq.word, p ∈ prg.info do acc + [print.sym.p + print.code.p]/for(acc)
 
 Function compilerfront(option:seq.word, libname:seq.word)compileinfo
-let info = getlibraryinfo2.libname
+let info = getlibrarysrc.libname
 let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
-{ let b=unloadlib.[ libname]} compilerfront(option, libname, info << 3, dependentlibs, exports)
+{let b=unloadlib.[libname]}compilerfront(option, last.libname, info << 3, dependentlibs, exports)
 
-Export compilerfront(option:seq.word, libname:seq.word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
-
-
+Export compilerfront(option:seq.word, lib:word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
 
 _______________
 

@@ -67,7 +67,7 @@ check(z,"test11a") + checkprec
 
 Function testcomp2(s:seq.seq.word)seq.word
 let p = 
- process.compilerfront("pass1","testcomp", s,"stdlib","testit")
+ process.compilerfront("pass1","testcomp"_1, s,"stdlib","testit")
 if aborted.p then message.p
 else
  for acc = "", @e ∈ astext.result.p do acc + " /br  /br" + @e /for(acc)

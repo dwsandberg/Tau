@@ -127,15 +127,10 @@ assert i < length.a report"No Library clause found"
 let s = a_i
 if s_1 = "Library"_1 then s else findlibclause(a, i + 1)
 
-Function getlibrarysrc(libname:seq.word)seq.seq.word getlibraryinfo2.libname
-
-Function getlibraryinfo2(libname:seq.word)seq.seq.word
+Function getlibrarysrc(libname:seq.word)seq.seq.word {OPTION INLINE}
 { first three lines are dependentlibs filelist and exports }
-let a = gettext.[ merge([ first.libname] + "/" + last.libname + ".ls")]
-let s = findlibclause(a, 1)
-let l = break(s,"uses exports", true)
-assert length.l = 3 ∧ l_2_1 = "uses"_1 ∧ l_3_1 = "exports"_1
-report"lib clause problem"
+let a = gettext.( [ first.libname] + "/" + last.libname + ".ls")
+let l = extractinfo.a
 let filelist = l_1 << 1
 for acc = [ { dependentlibs } l_2 << 1, filelist, { exports } l_3 << 1] + a
 , @e ∈ filelist
@@ -148,3 +143,13 @@ do
   else [ first.libname] + "/" + @e + ".ls"/if
   + { File seperator } [ encodeword.[ char.28]]
 /for(acc) 
+
+Function extractinfo(a:seq.seq.word)seq.seq.word
+{ first three lines are dependentlibs filelist and exports }
+for  l=empty:seq.seq.word,   s /in a while isempty.l do
+ if subseq(s,1,1)="Library" then
+  break(s,"uses exports", true) else l
+/for(
+assert length.l = 3 ∧ l_2_1 = "uses"_1 ∧ l_3_1 = "exports"_1
+report"lib clause problem"
+l)
