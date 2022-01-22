@@ -42,4 +42,4 @@ if i < length.layers then
  baryinfo(g, layers, i + 1, result + new)
 else result
 
-Function decreasecrosses(g:graph.T, layers:seq.seq.T)seq.seq.T baryinfo(g, layers, 1, [ layers_1]) 
+Function decreasecrosses(g:graph.T, layers:seq.seq.T)seq.seq.T baryinfo(g, layers, 1, [layers_1]) 

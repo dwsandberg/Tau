@@ -1,5 +1,3 @@
-
-
 Module symbol
 
 use bits
@@ -20,7 +18,6 @@ use seq.symbol
 
 use set.symbol
 
-
 use set.symdef
 
 use seq.typedef
@@ -37,7 +34,7 @@ use seq.seq.word
 
 Export type:passtypes
 
-Export abstractModref(mytype) modref
+Export abstractModref(mytype)modref
 
 Export print(modref)seq.word
 
@@ -111,7 +108,7 @@ Function extrabits(s:symbol)int toint.hashbits.s
 Function Words(s:seq.word)symbol
 symbol(s
 , moduleref."internallib $words"
-, [ typeptr]
+, [typeptr]
 , 0x0
 , extrabits(empty:seq.mytype, hash.s, constbit)
 )
@@ -154,8 +151,8 @@ else
  let newtypes = 
   for newtypes = empty:seq.mytype, t ∈ types.sym do newtypes + replaceT(with, t)/for(newtypes)
  let adjustedraw = 
-  { if isunbound.sym then for hasT=false, t=newtypes while not.hasT do isabstract.t /for(if hasT then raw.sym else raw.
- sym /and xor(unboundbit, tobits.-1))else }
+  {if isunbound.sym then for hasT=false, t=newtypes while not.hasT do isabstract.t /for(if hasT then raw.sym else raw.
+sym /and xor(unboundbit, tobits.-1))else}
   raw.sym
  symbol(worddata.sym
  , replaceT(with, module.sym)
@@ -166,12 +163,12 @@ else
 
 function symbolZ(module:modref, name:word, namePara:seq.mytype, paras:seq.mytype, rt:mytype, flags:bits, raw:bits)symbol
 let types = namePara + paras + rt
-symbol([ name]
+symbol([name]
 , module
 , types
 , raw
 , extrabits(types
-, hash.[ name]
+, hash.[name]
 , if isempty.namePara then simplenamebit ∨ flags else flags
 )
 )
@@ -179,8 +176,8 @@ symbol([ name]
 Function Br2(t:int, f:int)symbol
 let raw = bits.t << 20 ∨ bits.f
 symbolZ(moduleref."internallib $br"
-,"BR2"_1
-, [ typeref.[ toword.toint.raw,"."_1,"internallib"_1]]
+, "BR2"_1
+, [typeref.[toword.toint.raw, "."_1, "internallib"_1]]
 , empty:seq.mytype
 , type?
 , specialbit
@@ -194,10 +191,10 @@ Function brf(s:symbol)int toint(raw.s ∧ 0xFFFFF)
 Function type? mytype typeref."? internal internallib"
 
 Function printrep(s:symbol)seq.word
-if name.module.s = "$int"_1 then [ name.s]
+if name.module.s = "$int"_1 then[name.s]
 else if iswords.s then '"' + worddata.s + '"'
 else
-"(" + [ library.module.s, name.module.s] + printrep.para.module.s + name.s
+ "(" + [library.module.s, name.module.s] + printrep.para.module.s + name.s
  + toword.toint.raw.s
  + for acc = "", t ∈ types.s do acc + printrep.t /for(acc + ")")
 
@@ -219,7 +216,7 @@ Function nopara(s:symbol)int
 if isconst.s ∨ islocal.s ∨ isFref.s then 0
 else if isspecial.s ∧ name.module.s ∉ "$record $loopblock"then
  if isdefine.s ∨ isbr.s ∨ isexit.s then 1
- else { assert name.module.s /in"$continue $sequence"report"CHeKC"+print.s } toint.name.s
+ else{assert name.module.s /in"$continue $sequence"report"CHeKC"+print.s}toint.name.s
 else length.types.s - if issimplename.s then 1 else 2
 
 Export raw(symbol)bits
@@ -286,17 +283,17 @@ Export extrabits(s:symbol)int
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype)seq.word
 let fullname = 
- if isempty.nametype then [ name]else [ name] + ":" + print.first.nametype
+ if isempty.nametype then[name]else[name] + ":" + print.first.nametype
 if length.paratypes = 0 then fullname
 else
- for acc = fullname + "(", t ∈ paratypes do acc + print.t + ","/for(acc >> 1 + ")")
+ for acc = fullname + "(", t ∈ paratypes do acc + print.t + ", "/for(acc >> 1 + ")")
 
 _______________________________
 
 Function istype(s:symbol)boolean not.issimplename.s ∧ wordname.s = "type"_1 ∧ nopara.s = 1
 
 Function Record(types:seq.mytype)symbol
-symbol(moduleref."internallib $record","RECORD", types, typeptr, specialbit)
+symbol(moduleref."internallib $record", "RECORD", types, typeptr, specialbit)
 
 Function Reallit(i:int)symbol
 symbolZ(moduleref."internallib $real"
@@ -310,16 +307,16 @@ symbolZ(moduleref."internallib $real"
 
 ----------------------
 
-Function Exit symbol symbol(moduleref."internallib $exitblock","EXITBLOCK", type?, specialbit)
+Function Exit symbol symbol(moduleref."internallib $exitblock", "EXITBLOCK", type?, specialbit)
 
 Function Start(t:mytype)symbol
-symbol(moduleref("internallib $loopblock", t),"Start", t, specialbit)
+symbol(moduleref("internallib $loopblock", t), "Start", t, specialbit)
 
-Function EndBlock symbol symbol(moduleref."internallib $block","BLOCK", typeint, specialbit)
+Function EndBlock symbol symbol(moduleref."internallib $block", "BLOCK", typeint, specialbit)
 
-Function NotOp symbol symbol(internalmod,"not", typeboolean, typeboolean)
+Function NotOp symbol symbol(internalmod, "not", typeboolean, typeboolean)
 
-Function PlusOp symbol symbol(internalmod,"+", typeint, typeint, typeint)
+Function PlusOp symbol symbol(internalmod, "+", typeint, typeint, typeint)
 
 Function paratypes(s:symbol)seq.mytype
 if isFref.s then empty:seq.mytype
@@ -328,18 +325,18 @@ else if issimplename.s then types.s >> 1 else subseq(types.s, 2, length.types.s 
 Function resulttype(s:symbol)mytype if isFref.s then typeint else last.types.s
 
 Function fullname(s:symbol)seq.word
-if issimplename.s then [ name.s]else [ name.s] + ":" + print.first.types.s
+if issimplename.s then[name.s]else[name.s] + ":" + print.first.types.s
 
 Function print(s:symbol)seq.word
 if islocal.s then
- { let x=toword.value.s [ merge("%"+if x=name.s then [ x]else [ x, first.".", name.s]/if)]}
- [ merge(["%"_1] + wordname.s)]
-else if name.module.s ∈ "$int $real"then [ name.s]
+ {let x=toword.value.s[merge("%"+if x=name.s then[x]else[x, first.".", name.s]/if)]}
+ [merge(["%"_1] + wordname.s)]
+else if name.module.s ∈ "$int $real"then[name.s]
 else if iswords.s then
  if '"'_1 ∈ worddata.s then"'" + worddata.s + "'"
  else '"' + worddata.s + '"'
 else if isword.s then"WORD" + wordname.s
-else if isrecordconstant.s then "const"+name.s
+else if isrecordconstant.s then"const" + name.s
 else if isFref.s then"FREF" + print.basesym.s
 else if not.isspecial.s ∨ isloopblock.s then
  print.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s)
@@ -348,14 +345,14 @@ else if isdefine.s then"Define" + name.s
 else if isstart.s then"Start" + "(" + print.resulttype.s + ") /br"
 else if isblock.s then"EndBlock  /br"
 else if isexit.s then"Exit  /br"
-else if isbr.s then"Br2(" + toword.brt.s + "," + toword.brf.s + ") /br"
+else if isbr.s then"Br2(" + toword.brt.s + ", " + toword.brf.s + ") /br"
 else if iscontinue.s then"CONTINUE" + wordname.s + " /br"
 else print.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s) + print.resulttype.s
 
 Function print(s:seq.symbol)seq.word for acc = "", sym ∈ s do acc + print.sym /for(acc)
 
 Function Lit(i:int)symbol
-{OPTION INLINE }
+{OPTION INLINE}
 symbolZ(moduleref."internallib $int"
 , toword.i
 , empty:seq.mytype
@@ -381,13 +378,13 @@ symbol(m, name, empty:seq.mytype, returntype, b)
 Function symbol(module:modref, name:seq.word, paras:seq.mytype, rt:mytype)symbol symbol(module, name, paras, rt, 0x0)
 
 Function symbol(module:modref, name:seq.word, para:mytype, para2:mytype, para3:mytype, returntype:mytype)symbol
-symbol(module, name, [ para, para2, para3], returntype)
+symbol(module, name, [para, para2, para3], returntype)
 
 Function symbol(module:modref, name:seq.word, para:mytype, para2:mytype, returntype:mytype)symbol
-symbol(module, name, [ para, para2], returntype)
+symbol(module, name, [para, para2], returntype)
 
 Function symbol(module:modref, name:seq.word, para:mytype, returntype:mytype)symbol
-symbol(module, name, [ para], returntype)
+symbol(module, name, [para], returntype)
 
 Function symbol(module:modref, name:seq.word, returntype:mytype)symbol
 symbol(module, name, empty:seq.mytype, returntype)
@@ -398,7 +395,7 @@ symbolZ(module, name_1, empty:seq.mytype, paras, rt, hashbits, 0x0)
 Function symbol4(module:modref, name:word, namePara:mytype, paras:seq.mytype, rt:mytype)symbol
 symbolZ(module
 , name
-, [ namePara]
+, [namePara]
 , paras
 , rt
 , if name ∈ "LOOPBLOCK"then specialbit else 0x0
@@ -406,15 +403,15 @@ symbolZ(module
 )
 
 Function ifthenelse(cond:seq.symbol, thenclause:seq.symbol, elseclause:seq.symbol, m:mytype)seq.symbol
-[ Start.m] + cond + Br2(1, 2) + thenclause + Exit + elseclause + Exit + EndBlock
+[Start.m] + cond + Br2(1, 2) + thenclause + Exit + elseclause + Exit + EndBlock
 
-Function Littrue symbol symbol(internalmod,"true", typeboolean, constbit)
+Function Littrue symbol symbol(internalmod, "true", typeboolean, constbit)
 
-Function Litfalse symbol symbol(internalmod,"false", typeboolean, constbit)
+Function Litfalse symbol symbol(internalmod, "false", typeboolean, constbit)
 
-Function continue(i:int)symbol symbol(moduleref."internallib $continue", [ toword.i], type?, specialbit)
+Function continue(i:int)symbol symbol(moduleref."internallib $continue", [toword.i], type?, specialbit)
 
-Function Word(s:word)symbol symbol(moduleref."internallib $word", [ s], typeword, constbit)
+Function Word(s:word)symbol symbol(moduleref."internallib $word", [s], typeword, constbit)
 
 Function isstartorloop(sym:symbol)boolean name.module.sym ∈ "$loopblock"
 
@@ -424,17 +421,17 @@ Function isloopblock(s:symbol)boolean name.module.s = "$loopblock"_1 ∧ wordnam
 
 Function Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype)symbol
 symbol4(moduleref("internallib $loopblock", resulttype)
-,"LOOPBLOCK"_1
-, typeref.[ toword.firstvar,"."_1,"internallib"_1]
+, "LOOPBLOCK"_1
+, typeref.[toword.firstvar, "."_1, "internallib"_1]
 , types
 , resulttype
 )
 
 Function firstvar(a:symbol)int toint.abstracttypename.first.types.a
 
-Function EqOp symbol symbol(internalmod,"=", typeint, typeint, typeboolean)
+Function EqOp symbol symbol(internalmod, "=", typeint, typeint, typeboolean)
 
-Function GtOp symbol symbol(internalmod,">", typeint, typeint, typeboolean)
+Function GtOp symbol symbol(internalmod, ">", typeint, typeint, typeboolean)
 
 Function isblock(s:symbol)boolean name.module.s = "$block"_1
 
@@ -456,74 +453,60 @@ Function isrecordconstant(s:symbol)boolean name.module.s = first."$constant"
 
 Function wordname(s:symbol)word first.worddata.s
 
+Function typebit mytype typeref."bit bits"
 
-Function typebit mytype typeref."bit bits  "
+Function typebits mytype typeref."bits bits"
 
-Function typebits mytype typeref."bits bits "
+Function typebyte mytype typeref."byte bits"
 
-Function typebyte mytype typeref."byte bits  "
+Function typeword mytype typeref."word words"
 
-Function typeword mytype typeref."word words  "
-
-Function typechar mytype typeref."char standard  "
+Function typechar mytype typeref."char standard"
 
 Function packedtypes seq.mytype
-[ typeref."packed2 tausupport  "
-, typeref."packed3 tausupport  "
-, typeref."packed4 tausupport  "
-, typeref."packed5 tausupport  "
-, typeref."packed6 tausupport  "
+[typeref."packed2 tausupport"
+, typeref."packed3 tausupport"
+, typeref."packed4 tausupport"
+, typeref."packed5 tausupport"
+, typeref."packed6 tausupport"
 ]
 
-
-Function isdecodeword(sym:symbol) boolean
-sym= symbol(moduleref." words","decodeword", typeword, typeint)
+Function isdecodeword(sym:symbol)boolean sym = symbol(moduleref."words", "decodeword", typeword, typeint)
 
 Function deepcopyseqword symbol
-symbol4(moduleref(" seq", typeword)
-  ,"type"_1
-  , seqof.typeword
-  , [ seqof.typeword]
-  , seqof.typeword
-  )
+symbol4(moduleref("seq", typeword)
+, "type"_1
+, seqof.typeword
+, [seqof.typeword]
+, seqof.typeword
+)
 
-Function makerealSymbol symbol
-symbol(moduleref." UTF8","makereal", seqof.typeword, typereal)
+Function makerealSymbol symbol symbol(moduleref."UTF8", "makereal", seqof.typeword, typereal)
 
-Function indexsymbol(T:mytype) symbol symbol(moduleref(" seq", T)
-    ,"_"
-    , seqof.T
-    , typeint
-    , T
-    )
-    
-Function addencodingsymbol(T:mytype) symbol 
-    let encodingstatetype = typeref."encodingstate encoding"
-     let encodingpairtype = typeref."encodingpair encoding"
-      symbol(moduleref(" encoding", T)
-      ,"add"
-      , [ addabstract(encodingstatetype, T)
-      , addabstract(encodingpairtype, T)
-      ]
-      , addabstract(encodingstatetype, T)
-      )
+Function indexsymbol(T:mytype)symbol symbol(moduleref("seq", T), "_", seqof.T, typeint, T)
 
-Function outofboundssymbol symbol symbol(moduleref." tausupport","outofbounds", seqof.typeword)
+Function addencodingsymbol(T:mytype)symbol
+let encodingstatetype = typeref."encodingstate encoding"
+let encodingpairtype = typeref."encodingpair encoding"
+symbol(moduleref("encoding", T)
+, "add"
+, [addabstract(encodingstatetype, T), addabstract(encodingpairtype, T)]
+, addabstract(encodingstatetype, T)
+)
 
-Function encodenosym symbol symbol(moduleref." tausupport","encodingno", seqof.typeword, typeint)
- 
-Function blockitsymbol(T:mytype) symbol symbol(moduleref." tausupport","blockIt", T, T)
+Function outofboundssymbol symbol symbol(moduleref."tausupport", "outofbounds", seqof.typeword)
+
+Function encodenosym symbol symbol(moduleref."tausupport", "encodingno", seqof.typeword, typeint)
+
+Function blockitsymbol(T:mytype)symbol symbol(moduleref."tausupport", "blockIt", T, T)
 
 _________________
-
 
 Function isconstantorspecial(s:symbol)boolean isconst.s ∨ isspecial.s
 
 Function Local(i:int)symbol Local(toword.i, typeint, i)
 
-Function Optionsym symbol symbol(internalmod,"option", typeint, seqof.typeword, typeint)
-
-
+Function Optionsym symbol symbol(internalmod, "option", typeint, seqof.typeword, typeint)
 
 ----------------
 
@@ -542,7 +525,7 @@ symbolZ(moduleref."internallib $define"
 Function Fref(s:symbol)symbol
 let z = 
  extrabits(paratypes.s + resulttype.s
- , hash.[ merge("FREF" + print.s)]
+ , hash.[merge("FREF" + print.s)]
  , constbit ∨ frefbit ∨ hashbits.s ∧ 0x0F
  )
 symbol(worddata.s, module.s, types.s, raw.s, z)
@@ -554,13 +537,13 @@ if isFref.s then
  symbol(worddata.s, module.s, types.s, raw.s, newbits)
 else s
 
-Function GetSeqLength symbol symbol(internalmod,"getseqlength", typeptr, typeint)
+Function GetSeqLength symbol symbol(internalmod, "getseqlength", typeptr, typeint)
 
-Function GetSeqType symbol symbol(internalmod,"getseqtype", typeptr, typeint)
+Function GetSeqType symbol symbol(internalmod, "getseqtype", typeptr, typeint)
 
 Function abortsymbol(typ:mytype)symbol
 let a = if isseq.typ then typeptr else typ
-symbol(builtinmod.a,"assert", seqof.typeword, a)
+symbol(builtinmod.a, "assert", seqof.typeword, a)
 
 Function getoption(code:seq.symbol)seq.word
 if isempty.code ∨ last.code ≠ Optionsym then empty:seq.word else worddata.code_(length.code - 1)
@@ -590,7 +573,7 @@ Export seqof(mytype)mytype
 
 Export type:symbol
 
-Function nametype(sym:symbol)seq.mytype if issimplename.sym then empty:seq.mytype else [ first.types.sym]
+Function nametype(sym:symbol)seq.mytype if issimplename.sym then empty:seq.mytype else[first.types.sym]
 
 _______________________________________________
 
@@ -626,7 +609,7 @@ Export ?(typedef, typedef)ordering
 
 Export ?(modref, modref)ordering
 
-Function PreFref symbol symbol(internalmod,"PreFref", typeint)
+Function PreFref symbol symbol(internalmod, "PreFref", typeint)
 
 Function Local(name:word, type:mytype, parano:int)symbol
 symbolZ(moduleref."internallib $local"
@@ -663,17 +646,16 @@ Export=(mytype, mytype)boolean
 Export isseq(mytype)boolean
 
 Function deepcopySym(rt:mytype)symbol
-if rt = typereal then symbol(moduleref." tausupport","deepcopy", typereal, typereal)
-else if rt = typeint then symbol(moduleref." tausupport","deepcopy", typeint, typeint)
-else symbol4(replaceT(parameter.rt, abstractModref.rt),"type"_1, rt, [ rt], rt)
+if rt = typereal then symbol(moduleref."tausupport", "deepcopy", typereal, typereal)
+else if rt = typeint then symbol(moduleref."tausupport", "deepcopy", typeint, typeint)
+else symbol4(replaceT(parameter.rt, abstractModref.rt), "type"_1, rt, [rt], rt)
 
 Function setSym(typ:mytype)symbol
 let fldtype = 
  if isseq.typ then typeptr else if isencoding.typ then typeint else typ
-symbol(if fldtype = typeint ∨ fldtype = typeboolean ∨ fldtype = typeptr ∨ fldtype = typereal then
-  internalmod
+symbol(if fldtype = typeint ∨ fldtype = typeboolean ∨ fldtype = typeptr ∨ fldtype = typereal then internalmod
 else builtinmod.fldtype
-,"set"
+, "set"
 , typeptr
 , fldtype
 , typeptr
@@ -683,7 +665,7 @@ Function Getfld(fldtype:mytype)symbol
 let kind2 = 
  if isseq.fldtype then typeptr
  else if isencoding.fldtype ∨ fldtype = typeword then typeint else fldtype
-symbol(builtinmod.kind2,"fld", typeptr, typeint, kind2)
+symbol(builtinmod.kind2, "fld", typeptr, typeint, kind2)
 
 Export type:symdef
 
@@ -703,78 +685,12 @@ Function ?(a:symdef, b:symdef)ordering sym.a ? sym.b
 
 Function getCode(a:set.symdef, sym:symbol)seq.symbol
 let b = lookup(a, symdef(sym, empty:seq.symbol))
-if isempty.b then empty:seq.symbol else code.b_1 
+if isempty.b then empty:seq.symbol else code.b_1
 
-Function removerecordconstant(p:set.symdef,s:seq.symbol) seq.symbol
-    for code=empty:seq.symbol,  sym /in s do 
-     if not.isrecordconstant.sym then code+sym
-     else  code+ removerecordconstant(p,getCode(p,sym))
-    /for(code)
-    
+Function removerecordconstant(p:set.symdef, s:seq.symbol)seq.symbol
+for code = empty:seq.symbol, sym ∈ s do
+ if not.isrecordconstant.sym then code + sym else code + removerecordconstant(p, getCode(p, sym))
+/for(code)
+
 Function symconst(i:int)symbol
-symbol(moduleref."internallib $constant"
-, [ toword.i]
-, empty:seq.mytype
-, typeptr
-, constbit
-)
-
-Module symbolconstant
-
-use standard
-
-use encoding.symbolconstant
-
-use symbol
-
-use seq.symbol
-
-use set.symdef
-
-use seq.mytype
-
-
-Function constantcode(s:symbol)seq.symbol
-let code1 = fullconstantcode.s
-if isSequence.last.code1 then [ Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
-
-Function fullconstantcode(s:symbol)seq.symbol
-assert isrecordconstant.s report"constant code error" + print.s + stacktrace
-toseq.decode.to:encoding.symbolconstant(toint.name.s)
-
-Function Constant2(p:set.symdef,args:seq.symbol)symbol
-  let testsym=symconst.nextencoding.symbolconstant.empty:seq.symbol
-let a=lookup(p,symdef(testsym,args))
-if not.isempty.a then 
-  let discard=encode.symbolconstant.code.a_1
-  Constant2(p,args)
-else symconst.valueofencoding.encode.symbolconstant.args
-
-Function Constant2(args:seq.symbol)symbol 
-symconst.valueofencoding.encode.symbolconstant.args 
-
-Function hash(s:seq.symbol)int
-hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /for(acc)
-
-function assignencoding(a:symbolconstant)int nextencoding.a
-
-Export type:symbolconstant
-
-type symbolconstant is toseq:seq.symbol
-
-function =(a:symbolconstant, b:symbolconstant)boolean toseq.a = toseq.b
-
-function hash(a:symbolconstant)int hash.toseq.a
-
-Function removeconstantcode(s:seq.symbol)seq.symbol
-for acc = empty:seq.symbol, @e ∈ s do
- acc
- + if isrecordconstant.@e then removeconstantcode.fullconstantcode.@e else [ @e]
-/for(acc)
-
-
-
-
-Function constantsymbols set.symdef
-for acc = empty:set.symdef, p ∈ encoding:seq.encodingpair.symbolconstant do 
-acc + symdef(symconst.valueofencoding.code.p, toseq.data.p)/for(acc)
+symbol(moduleref."internallib $constant", [toword.i], empty:seq.mytype, typeptr, constbit) 

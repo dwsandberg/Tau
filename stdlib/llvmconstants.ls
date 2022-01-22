@@ -3,35 +3,35 @@ module llvmconstants
 use standard
 
 function generatecode seq.word
-{ generates code in this module beyond---------}
-{ cmp2op found llvm/IR/InstrTypes.h }
-enumerate("align","unspecified ? ? ? align8 align16 align32 align64")
+{generates code in this module beyond---------}
+{cmp2op found llvm/IR/InstrTypes.h}
+enumerate("align", "unspecified ? ? ? align8 align16 align32 align64")
 + enumerate("instop"
-,"? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
+, "? BLOCKBINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
 )
 + enumerate("typeop"
-,"? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"
+, "? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION"
 )
 + enumerate("blockop"
-,"INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"
+, "INFOBLOCK? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK? VALUESYMTABLE ? ? TYPES"
 )
-+ enumerate("moduleop","? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC")
++ enumerate("moduleop", "? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC")
 + enumerate("constop"
-,"? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA 
+, "? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA 
 "
 )
 + enumerate("castop"
-,"trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"
+, "trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"
 )
-+ enumerate("binaryop","add sub mul udiv sdiv urem srem shl lshr ashr and or xor")
++ enumerate("binaryop", "add sub mul udiv sdiv urem srem shl lshr ashr and or xor")
 + enumerate("cmp2op"
-,"? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle"
+, "? Feq Fgt Fge Flt Fle Fne ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? eq ne ugt uge ult ule sgt sge slt sle"
 )
 
 function enumerate(type:seq.word, codes:seq.word)seq.word
 "type" + type + "is toint:int" + " /br  /br Function decode(code:" + type
 + ")seq.word"
-+ " /br let i=toint.code  /br if between(i+1, 1,"
++ " /br let i=toint.code  /br if between(i+1, 1, "
 + toword.length.codes
 + ")then"
 + '  /br let r=["'
@@ -98,7 +98,7 @@ Function decode(code:instop)seq.word
 let i = toint.code
 if between(i + 1, 1, 45)then
  let r = 
-  ["? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
+  ["? BLOCKBINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ? ? ? ? ? GEP STORE"
   _(i + 1)
   ]
  if r ≠ "?"then r else"instop" + toword.i
@@ -176,7 +176,7 @@ type blockop is toint:int
 Function decode(code:blockop)seq.word
 let i = toint.code
 if between(i + 1, 1, 18)then
- let r = ["INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK ? VALUESYMTABLE ? ? TYPES"_(i + 1)]
+ let r = ["INFOBLOCK? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTANTS FUNCTIONBLK? VALUESYMTABLE ? ? TYPES"_(i + 1)]
  if r ≠ "?"then r else"blockop" + toword.i
 else"blockop" + toword.i
 

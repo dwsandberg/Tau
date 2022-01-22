@@ -38,7 +38,7 @@ function type(a:typeentry)mytype first.totypeseq.a
 
 function flatflds(a:typeentry)seq.mytype totypeseq.a << 1
 
-function typeentry(t:mytype, flat:seq.mytype)typeentry typeentry([ t] + flat)
+function typeentry(t:mytype, flat:seq.mytype)typeentry typeentry([t] + flat)
 
 Function buildtypedict(zz1:set.symdef, types:seq.seq.mytype)typedict
 for acc = empty:set.symbol, p ∈ toseq.zz1 do acc + sym.p /for(buildtypedict(acc, types))
@@ -57,7 +57,7 @@ for acc = alltypes, d ∈ toseq.asset.typesused do
 function print(t:seq.mytype)seq.word for txt = "", a ∈ t do txt + print.a /for(txt)
 
 Function addtype(alltypes:typedict, type:mytype)typedict
-if type ∈ [ typeint, typeT, typeboolean, typereal, typeptr]then alltypes
+if type ∈ [typeint, typeT, typeboolean, typereal, typeptr]then alltypes
 else if isseq.type then addtype(alltypes, parameter.type)
 else
  let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
@@ -66,14 +66,14 @@ else
   let flatflds = expandflat(type, empty:seq.mytype, totypedict.alltypes)
   let newtr = typeentry(type, flatflds)
   if isflat.newtr then
-   { add to typedict and then check to make sure parameters are in typedict }
+   {add to typedict and then check to make sure parameters are in typedict}
    for acc = typedict(totypedict.alltypes + newtr), subfld ∈ flatflds do
     if isseq.subfld ∨ isencoding.subfld then addtype(acc, subfld)else acc
    /for(acc)
   else
-   { add types not in typedict and try again }
+   {add types not in typedict and try again}
    for acc = alltypes, subfld ∈ flatflds do
-    if subfld ∈ [ typeint, typeT, typeboolean, typereal, typeptr] ∨ isseq.subfld ∨ isencoding.subfld then acc
+    if subfld ∈ [typeint, typeT, typeboolean, typereal, typeptr] ∨ isseq.subfld ∨ isencoding.subfld then acc
     else addtype(acc, subfld)
    /for(assert cardinality.totypedict.alltypes < cardinality.totypedict.acc
    report"PROBLEM" + print.type + "flat:"
@@ -103,10 +103,10 @@ for acc3 = toseq.typesyms, q ∈ toseq.asset.typesused do
 /for(resolvetypesize.acc3)
 
 function typesused(sym:symbol)seq.mytype
-{ only includes parameter of seq and encoding and excludes types int, real, boolea, ptr, and T }
+{only includes parameter of seq and encoding and excludes types int, real, boolea, ptr, and T}
 for acc = empty:seq.mytype, t ∈ types.sym do
  let typ = if isseq.t ∨ isencoding.t then parameter.t else t
- if typ ∈ [ typeint, typereal, typeboolean, typeptr, typeT]then acc else acc + typ
+ if typ ∈ [typeint, typereal, typeboolean, typeptr, typeT]then acc else acc + typ
 /for(acc)
 
 function resolvetypesize(prg1:seq.typeentry)typedict
@@ -122,7 +122,7 @@ function print(s:symdef)seq.word print.sym.s + print.code.s
 function print(h:typeentry)seq.word for acc = print.type.h, z ∈ flatflds.h do acc + print.z /for(acc)
 
 function print2(h:typeentry)seq.word
-for acc = "type" + print.type.h + "is", z ∈ flatflds.h do acc + print.z + ","/for(acc >> 1)
+for acc = "type" + print.type.h + "is", z ∈ flatflds.h do acc + print.z + ", "/for(acc >> 1)
 
 function checkflat(types:set.typeentry, unknown:seq.typeentry)checkflatresult2
 for known = types, notflat = empty:seq.typeentry, p ∈ unknown do
@@ -142,7 +142,7 @@ else if isempty.flatflds.p then false
 else
  for state = true, t ∈ flatflds.p
  while state
- do t ∈ [ typeint, typeT, typeboolean, typereal, typeptr, typeword] ∨ isseq.t ∨ isencoding.t
+ do t ∈ [typeint, typeT, typeboolean, typereal, typeptr, typeword] ∨ isseq.t ∨ isencoding.t
  /for(state)
 
 function expandflat(p:typeentry, types:set.typeentry)typeentry
@@ -155,7 +155,7 @@ if isempty.flatflds then
  if isempty.f3 then flatflds else expandflat(type, replaceT(parameter.type, flatflds.f3_1), types)
 else
  for acc = empty:seq.mytype, unchanged = true, t ∈ flatflds do
-  if t ∈ [ typeint, typeT, typeboolean, typereal, typeword] ∨ isseq.t ∨ isencoding.t then
+  if t ∈ [typeint, typeT, typeboolean, typereal, typeword] ∨ isseq.t ∨ isencoding.t then
    next(acc + t, unchanged)
   else
    let f = lookup(types, typeentry(t, empty:seq.mytype))
@@ -164,7 +164,7 @@ else
     if t2 = t then next(acc + t, unchanged)
     else
      let f3 = lookup(types, typeentry(t2, empty:seq.mytype))
-     { assert { print.t /ne"set.arc.T"} isempty.f3 report"K"+print.t+"K"+print.t2 }
+     {assert{print.t /ne"set.arc.T"}isempty.f3 report"K"+print.t+"K"+print.t2}
      if isempty.f3 then next(acc + t, unchanged)
      else next(acc + replaceT(parameter.t, flatflds.f3_1), false)
    else next(acc + flatflds.f_1, false)
@@ -191,7 +191,7 @@ Function add(alltypes:typedict, t:mytype, flatflds:seq.mytype)typedict
 typedict(totypedict.alltypes + typeentry(t, flatflds))
 
 Function flatflds(alltypes:typedict, type:mytype)seq.mytype
-{ assert not.isseq.type /or parameter.type=typeT report"flattype"+print.type+stacktrace }
+{assert not.isseq.type /or parameter.type=typeT report"flattype"+print.type+stacktrace}
 let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
 if isempty.t then empty:seq.mytype else flatflds.t_1
 
@@ -205,17 +205,17 @@ let need =
   next(for acc2 = acc, t ∈ flatflds.te do if isseq.t then acc2 + parameter.t else acc2 + t /for(acc2)
   , have + type.te
   )
- /for(acc \ (asset.[ typeint, typeboolean, typeptr, typereal, typeword] ∪ have))
+ /for(acc \ (asset.[typeint, typeboolean, typeptr, typereal, typeword] ∪ have))
 for new = empty:set.typeentry, t ∈ toseq.need do
  let x = lookup(totypedict.all, typeentry(t, empty:seq.mytype))
- if isempty.x ∧ isseq.t then new + typeentry(t, [ t])else new ∪ x
+ if isempty.x ∧ isseq.t then new + typeentry(t, [t])else new ∪ x
 /for(if isempty.new then subdict else closedict(all, typedict(totypedict.subdict ∪ new))/if)
 
 Function flatwithtype(alltypes:typedict, type:mytype)seq.mytype
 let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
-if isempty.t then empty:seq.mytype else [ type.t_1] + flatflds.t_1
+if isempty.t then empty:seq.mytype else[type.t_1] + flatflds.t_1
 
-Function coretype(typ:mytype, alltypes:typedict)mytype coretype(typ, alltypes, { 6 } 0)
+Function coretype(typ:mytype, alltypes:typedict)mytype coretype(typ, alltypes, {6}0)
 
 Function coretype(typ:mytype, alltypes:typedict, maxsize:int)mytype
 if typ = typeint ∨ typ = typeboolean ∨ typ = typeptr ∨ typ = typereal ∨ typ = typeT then typ

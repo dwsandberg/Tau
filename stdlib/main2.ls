@@ -73,7 +73,12 @@ let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
 let cinfo = 
- compilerfront("all", last.libname, ["Library" + libname] + info << 3, dependentlibs, exports)
+ compilerfront("all"
+ , last.libname
+ , ["Library" + libname] + info << 3
+ , dependentlibs
+ , exports
+ )
 let bc = codegen(last.libname, dependentlibs, cinfo)
 let z2 = createlib(bc, last.libname, subseq(dependentlibs, 1, 1))
 "OK"

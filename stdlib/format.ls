@@ -20,7 +20,8 @@ use seq.seq.word
 
 use stack.seq.word
 
-function changestate(state:int, ele:word, idx:int, early:boolean)int
+Function getheader(s:seq.word)seq.word
+let istype = subseq(s, 1, 3) = "Export type:"
 let start = 0
 let startname = -1
 let extendname = -2
@@ -29,25 +30,26 @@ let extendtype = -4
 let extendtype2 = -5
 let incomment = -6
 let unknown = -7
-if state > 0 then state
-else if state = start then startname
-else if state = startname then extendname
-else if state = extendname then
- if ele ∈ ":."then startname
- else if early then idx - 1 else if ele ∈ "("then findend else extendtype
-else if state = findend then if ele ∈ ")"then extendtype2 else findend
-else if state = extendtype then
- if ele ∈ "."then extendtype2
- else if ele ∈ "//"then incomment else{done}idx - 1
-else if state = extendtype2 then extendtype
-else if state = incomment then if ele ∈ "//"then extendtype else incomment
-else unknown
-
-Function getheader(s:seq.word)seq.word
-let istype = subseq(s, 1, 3) = "Export type:"
-let t = 
- for state = 0, idx = 1, ele ∈ s while state ≤ 0 do next(changestate(state, ele, idx, istype), idx + 1)/for(state)
-let theend = if t < 1 then length.s else t
+let theend = 
+ for state = 0, idx = 1, ele ∈ s
+ while state ≤ 0
+ do next(if state > 0 then state
+ else if state = start then startname
+ else if state = startname then extendname
+ else if state = extendname then
+  if ele ∈ ":."then startname
+  else if istype then idx - 1
+  else if ele ∈ "("then findend else extendtype
+ else if state = findend then if ele ∈ ")"then extendtype2 else findend
+ else if state = extendtype then
+  if ele ∈ "."then extendtype2
+  else if ele ∈ "//"then incomment else{done}idx - 1
+ else if state = extendtype2 then extendtype
+ else if state = incomment then if ele ∈ "//"then extendtype else incomment
+ else unknown
+ , idx + 1
+ )
+ /for(if state < 1 then length.s else state /if)
 if istype then
  let tt = subseq(s, 4, theend)
  subseq(s, 1, theend) + "(" + tt + ")" + tt + "stub"
@@ -120,7 +122,7 @@ if isempty.toadd then result
 else
  let nospace = 
   isempty.toseqbyte.result
-  ∨ toint.last.toseqbyte.result ∈ [10, 32, 34, 40, 41, 43, 45, 46, 58, 61, 75, 91, 93, 94, 95, 123, 125]
+  ∨ toint.last.toseqbyte.result ∈ [10, 32, 34, 40, 41, 43, 45, 46, 58, 61, 91, 93, 94, 95, 123, 125]
  result + toUTF8(toadd, empty:seq.seq.char, nospace)
 
 Function processpara(x:UTF8, a:seq.word)UTF8
@@ -175,7 +177,7 @@ for result = x, stk = empty:stack.seq.word, last = none, this ∈ a + space do
  else
   let nospace = 
    isempty.toseqbyte.result
-   ∨ toint.last.toseqbyte.result ∈ [10, 32, 34, 40, 41, 43, 45, 46, 58, 61, 75, 91, 93, 94, 95, 123, 125]
+   ∨ toint.last.toseqbyte.result ∈ [10, 32, 34, 40, 41, 43, 45, 46, 58, 61, 91, 93, 94, 95, 123, 125]
   next(result + toUTF8([last], HTMLformat, nospace), stk, this)
 /for(if last = none then result else result + [last]/if)
 

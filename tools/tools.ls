@@ -1,4 +1,9 @@
-#!/bin/sh  tau stdlib tools pretty wtest1 tausupport bits bitstream format set textio stack encoding otherseq process real seq standard UTF8 words xxhash
+#!/bin/sh  tau stdlib tools pretty stdlib tausupport bits bitstream format set textio stack encoding otherseq process real seq standard UTF8 words xxhash
+
+
+#!/bin/sh  tau stdlib tools test3 stdlib
+
+
 
 tau stdlib tools test3  wtest1
 

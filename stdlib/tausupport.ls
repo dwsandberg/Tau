@@ -303,3 +303,7 @@ else
    set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1)))
   /for(acc)
  bitcast:seq.byte(blkseq) 
+ 
+
+ 
+    

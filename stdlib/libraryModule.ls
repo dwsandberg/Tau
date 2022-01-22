@@ -8,6 +8,8 @@ use standard
 
 use symbol
 
+use symref
+
 use seq.bits
 
 use seq.char
@@ -23,9 +25,6 @@ use seq.seq.mytype
 use seq.seq.word
 
 use seq.encodingpair.seq.char
-
-use symref
-
 
 type symbolref is toint:int
 
@@ -79,19 +78,20 @@ type liblib is libname:seq.word
 , timestamp:int
 , profiledata:seq.parc
 , libinfo:compileinfo
-,symboladdress:seq.int
+, symboladdress:seq.int
 
-Export symboladdress(liblib) seq.int 
 
-Export entrypointaddress(liblib) int 
+Export symboladdress(liblib)seq.int
 
-Export libinfo(liblib) compileinfo
+Export entrypointaddress(liblib)int
 
-Function code(l:liblib) seq.seq.symbolref code.libinfo.l
+Export libinfo(liblib)compileinfo
+
+Function code(l:liblib)seq.seq.symbolref code.libinfo.l
 
 Export timestamp(liblib)int
 
-Function decoderef(l:liblib)seq.symbol  symbolrefdecode.libinfo.l
+Function decoderef(l:liblib)seq.symbol symbolrefdecode.libinfo.l
 
 Export libname(liblib)seq.word
 
@@ -107,13 +107,13 @@ Function unloadlib(a:seq.word)int unloadlib2.tocstr.a
 
 builtin unloadlib2(cstr)int
 
-Function loadlibrary(a:word)int loadlib.tocstr.[ a]
+Function loadlibrary(a:word)int loadlib.tocstr.[a]
 
 builtin loadlib(cstr)int
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
-createlib2(tocstr.[ libname]
-, tocstr.for acc = "", @e ∈ dependlibs do acc + [ @e] + ".dylib"/for(acc)
+createlib2(tocstr.[libname]
+, tocstr.for acc = "", @e ∈ dependlibs do acc + [@e] + ".dylib"/for(acc)
 , length.b * 8
 , packed.b
 )
@@ -127,29 +127,29 @@ assert i < length.a report"No Library clause found"
 let s = a_i
 if s_1 = "Library"_1 then s else findlibclause(a, i + 1)
 
-Function getlibrarysrc(libname:seq.word)seq.seq.word {OPTION INLINE}
-{ first three lines are dependentlibs filelist and exports }
-let a = gettext.( [ first.libname] + "/" + last.libname + ".ls")
+Function getlibrarysrc(libname:seq.word)seq.seq.word
+{OPTION INLINE}
+{first three lines are dependentlibs filelist and exports}
+let a = gettext([first.libname] + "/" + last.libname + ".ls")
 let l = extractinfo.a
 let filelist = l_1 << 1
-for acc = [ { dependentlibs } l_2 << 1, filelist, { exports } l_3 << 1] + a
+for acc = [{dependentlibs}l_2 << 1, filelist, {exports}l_3 << 1] + a
 , @e ∈ filelist
 do
  if @e = last.libname then acc
  else
   let chars = decodeword.@e
   acc
-  + gettext.if chars_1 = char1."/"then [ encodeword(chars << 1)] + ".ls"
-  else [ first.libname] + "/" + @e + ".ls"/if
-  + { File seperator } [ encodeword.[ char.28]]
-/for(acc) 
+  + gettext.if chars_1 = char1."/"then[encodeword(chars << 1)] + ".ls"
+  else[first.libname] + "/" + @e + ".ls"/if
+  + {File seperator}[encodeword.[char.28]]
+/for(acc)
 
 Function extractinfo(a:seq.seq.word)seq.seq.word
-{ first three lines are dependentlibs filelist and exports }
-for  l=empty:seq.seq.word,   s /in a while isempty.l do
- if subseq(s,1,1)="Library" then
-  break(s,"uses exports", true) else l
-/for(
-assert length.l = 3 ∧ l_2_1 = "uses"_1 ∧ l_3_1 = "exports"_1
+{first three lines are dependentlibs filelist and exports}
+for l = empty:seq.seq.word, s ∈ a
+while isempty.l
+do if subseq(s, 1, 1) = "Library"then break(s, "uses exports", true)else l
+/for(assert length.l = 3 ∧ l_2_1 = "uses"_1 ∧ l_3_1 = "exports"_1
 report"lib clause problem"
-l)
+l) 

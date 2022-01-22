@@ -101,15 +101,15 @@ _________________
 ordering of nodes in graph
 
 Function sinks(g:graph.T, b:set.T, n:T)seq.T
-{ returns list of sinks in graph with arcs to nodes in set b removed }
-if cardinality(successors(g, n) \ b) = 0 then [ n]else empty:seq.T
+{returns list of sinks in graph with arcs to nodes in set b removed}
+if cardinality(successors(g, n) \ b) = 0 then[n]else empty:seq.T
 
 Function sinks(g:graph.T, b:set.T)seq.T
 for acc = empty:seq.T, @e ∈ toseq.nodes.g do acc + sinks(g, b, @e)/for(acc)
 
 Function sinks(g:graph.T)seq.T sinks(g, empty:set.T)
 
-Function sinksfirst(g:graph.T)seq.T { will not return nodes involved in a cycle } sinksfirst(g, empty:set.T, empty:seq.T)
+Function sinksfirst(g:graph.T)seq.T{will not return nodes involved in a cycle}sinksfirst(g, empty:set.T, empty:seq.T)
 
 function addnodup(l:seq.T, n:seq.T)seq.T
 if length.n = 0 then l else if n_1 ∈ l then l else l + n
@@ -120,7 +120,7 @@ let a =
 if length.a = length.result then result else sinksfirst(g, asset.a, a)
 
 Function sources(g:graph.T, b:set.T, n:T)seq.T
-if cardinality(predecessors(g, n) \ b) = 0 then [ n]else empty:seq.T
+if cardinality(predecessors(g, n) \ b) = 0 then[n]else empty:seq.T
 
 function breathfirst(g:graph.T, b:set.T, result:seq.T)seq.T
 let a = 
@@ -130,7 +130,7 @@ if length.a = length.result then
  if isempty.u then result else breathfirst(g, b + u_1, a + u_1)
 else breathfirst(g, asset.a, a)
 
-Function breathfirst(g:graph.T)seq.T { will not return nodes involved in a cycle } breathfirst(g, empty:set.T, empty:seq.T)
+Function breathfirst(g:graph.T)seq.T{will not return nodes involved in a cycle}breathfirst(g, empty:set.T, empty:seq.T)
 
 ____________________
 
@@ -141,9 +141,9 @@ Function indegree(g:graph.T, n:T)int cardinality.predecessors(g, n)
 Function =(a:graph.T, b:graph.T)boolean cardinality.arcs.a = cardinality.arcs.b ∧ nodes.a = nodes.b ∧ arcs.a = arcs.b
 
 Function transitiveClosure(gin:graph.T)graph.T
-{ add arcs to graph so if node is reachable, it can be reached with single arc }
+{add arcs to graph so if node is reachable, it can be reached with single arc}
 for g = gin, n ∈ toseq.nodes.gin do
- { add arcs to graph so path does not need to go through n }
+ {add arcs to graph so path does not need to go through n}
  for arcs = empty:seq.arc.T, p ∈ toseq.predecessors(g, n)do
   for acc2 = empty:seq.arc.T, s ∈ toseq.successors(g, n)do acc2 + arc(p, s)/for(arcs + acc2)
  /for(g + arcs)

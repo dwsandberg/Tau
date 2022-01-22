@@ -26,7 +26,7 @@ Export cardinality(hashset.T)int
 
 Function empty:hashset.T hashset.T
 let x = empty:seq.hashelement.T
-hashset(0, [ x, x, x, x])
+hashset(0, [x, x, x, x])
 
 unbound=(a:T, b:T)boolean
 
@@ -56,7 +56,7 @@ for acc = empty:seq.hashelement.T, found = false, e ∈(table.h)_dataindex do
  if data.e = ele then next(acc + e, true)
  else if notsamehash(ele, hash, hash.e, mask)then next(acc, found)else next(acc + e, found)
 /for(let t = 
- replace(table.h, dataindex, if found then acc else [ hashelement(ele, hash)] + acc)
+ replace(table.h, dataindex, if found then acc else[hashelement(ele, hash)] + acc)
 hashset(if found then cardinality.h else cardinality.h + 1
 , if 3 * cardinality.h > 2 * tablesize then t + t + t + t else t
 ))
@@ -68,7 +68,7 @@ let tablesize = length.table.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
 let hash = hash.ele
 let dataindex = toint(tobits.hash ∧ mask) + 1
-for acc = [ ele], found = false, e ∈(table.h)_dataindex do
+for acc = [ele], found = false, e ∈(table.h)_dataindex do
  if data.e = data.ele then next(acc, true)
  else if notsamehash(data.ele, hash, hash.e, mask)then next(acc, found)else next(acc + e, found)
 /for(let t = replace(table.h, dataindex, acc)

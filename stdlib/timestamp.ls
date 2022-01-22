@@ -15,7 +15,7 @@ type timestamp is toint:int
 function subseq(a:UTF8, i:int, j:int)UTF8 UTF8.subseq(toseqbyte.a, i, j)
 
 Function testjulian boolean
-[ tojulian(2000, 1, 1)
+[tojulian(2000, 1, 1)
 , tojulian(1999, 1, 1)
 , tojulian(1987, 1, 27)
 , tojulian(1987, 6, 19)
@@ -25,7 +25,7 @@ Function testjulian boolean
 , tojulian(1600, 1, 1)
 , tojulian(1600, 12, 31)
 ]
-= [ 2451544, 2451179, 2446822, 2446965, 2447187, 2447331, 2415020, 2305447, 2305812]
+= [2451544, 2451179, 2446822, 2446965, 2447187, 2447331, 2415020, 2305447, 2305812]
 
 Function tojulian(year:int, month:int, day:int)int
 let ayear = if month > 2 then year else year - 1
@@ -42,10 +42,10 @@ let c = (b * 20 - 2442) / 7305
 let d = b - 1461 * c / 4
 let e = d * 10000 / 306001
 let m = e - if e > 13 then 13 else 1
-[ c - if m > 2 then 4716 else 4715, m, d - e * 306001 / 10000]
+[c - if m > 2 then 4716 else 4715, m, d - e * 306001 / 10000]
 
 Function timestamplit(t:UTF8)timestamp
-{ assumes t is in format 2019-12-12T12:48:11 }
+{assumes t is in format 2019-12-12T12:48:11}
 let year = intlit.subseq(t, 1, 4)
 let month = intlit.subseq(t, 6, 7)
 let day = intlit.subseq(t, 9, 10)
@@ -59,22 +59,22 @@ Function totimestamp(year:int, month:int, day:int, hour:int, minute:int, second:
 timestamp(((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second)
 
 Function decompose(ts:timestamp)seq.int
-{ returns sequence of year, month, day, hour, minute, second }
+{returns sequence of year, month, day, hour, minute, second}
 let t = toint.ts
 let a = t mod (24 * 60 * 60)
 let seconds = a mod 60
 let minutes = a / 60 mod 60
 let hours = a / 3600
-fromJuliantointseq(t / (24 * 60 * 60)) + [ hours, minutes, seconds]
+fromJuliantointseq(t / (24 * 60 * 60)) + [hours, minutes, seconds]
 
 Function print(ts:timestamp)seq.word
 let d = decompose.ts
-[ merge.[ toword.d_1,"-"_1, toword.d_2,"-"_1, toword.d_3
-,"."_1, toword.d_4,":"_1, toword.d_5,":"_1
+[merge.[toword.d_1, "-"_1, toword.d_2, "-"_1, toword.d_3
+, "."_1, toword.d_4, ":"_1, toword.d_5, ":"_1
 , toword.d_6]
 ]
 
-Builtin currenttime timestamp {OPTION STATE}
+Builtin currenttime timestamp{OPTION STATE}
 
 Function asseconds(t:timestamp)int toint.t
 

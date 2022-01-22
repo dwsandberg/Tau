@@ -9,6 +9,7 @@ real seq set sparseseq stack standard symbol symbol2 symboldict symref
 tausupport textio timestamp  typedict UTF8 words xxhash
 codetemplates2
 graphs/barycenter graphs/layergraph graphs/makeDAG tree
+symbolconstant
 uses
 exports UTF8  barycenter bits dataio display  encoding fileio format graph hashset index internalbc ioseq   layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph 
 symbol2 taublockseq tausupport testall textio timestamp tree words xxhash compilerfront

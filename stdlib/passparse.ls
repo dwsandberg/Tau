@@ -59,9 +59,7 @@ for outer = empty:seq.arc.symbol, p ∈ s do
   if isspecial.codesym ∨ not.isabstract.module.codesym ∨ sym = codesym ∨ isBuiltin.codesym then arcs
   else if inModFor.codesym then
    if name.codesym ∈ "name for"then arcs
-   else
-    arcs
-    + arc(sym, indexsymbol.resulttype.codesym )
+   else arcs + arc(sym, indexsymbol.resulttype.codesym)
   else arcs + arc(sym, codesym)
  /for(arcs)
 /for(outer)
@@ -69,9 +67,9 @@ for outer = empty:seq.arc.symbol, p ∈ s do
 function print(a:arc.symbol)seq.word print.tail.a + print.head.a
 
 function removesinks(sinkstokeep:set.symbol, g:graph.symbol, toprocess:seq.symbol)seq.arc.symbol
-{ removes sinks that are not unbound and parameter of module is typeT }
-{ do a transitiveClosure and only keep arcs whose head is a sink }
-{ looking for relation of function to the unbound functions it can call.This are not quite yet that relation. }
+{removes sinks that are not unbound and parameter of module is typeT}
+{do a transitiveClosure and only keep arcs whose head is a sink}
+{looking for relation of function to the unbound functions it can call.This are not quite yet that relation. }
 for keep = sinkstokeep, pred = empty:set.symbol, g2 = g, n ∈ toprocess do
  if isunbound.n ∨ para.module.n ≠ typeT then next(keep + n, pred, g2)
  else next(keep, pred ∪ predecessors(g2, n), deletenode(g2, n))
@@ -93,31 +91,32 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
  let partdict = formsymboldict(allmods, m, requireUnbound, mode)
  for acc = empty:seq.symdef, p ∈ text.m do
   if first.text.p ∈ "Builtin builtin"then
-   if issimple.module.sym.p then acc + symdef(sym.p, addcommentoptions(text.p,empty:seq.symbol))
+   if issimple.module.sym.p then acc + symdef(sym.p, addcommentoptions(text.p, empty:seq.symbol))
    else
     let sym = sym.p
     acc
     + symdef(sym.p
     , for code = empty:seq.symbol, @e ∈ arithseq(nopara.sym.p, 1, 1)do code + Local.@e /for(code)
-    + [ if issimplename.sym then symbol(builtinmod.typeT, [ wordname.sym], paratypes.sym, resulttype.sym)
-    else symbol4(builtinmod.typeT, wordname.sym,(nametype.sym)_1, paratypes.sym, resulttype.sym)
+    + [if issimplename.sym then symbol(builtinmod.typeT, [wordname.sym], paratypes.sym, resulttype.sym)
+    else symbol4(builtinmod.typeT, wordname.sym, (nametype.sym)_1, paratypes.sym, resulttype.sym)
     ]
     )
   else
    assert first.text.p ∈ "Function function"report text.p
    let b = parse(src_(paragraphno.p), partdict, z)
-   acc + symdef(sym.p, addcommentoptions(text.p,code.b), paragraphno.p)
+   acc + symdef(sym.p, addcommentoptions(text.p, code.b), paragraphno.p)
  /for(prg + acc)
 /for(prg)
 
-function  addcommentoptions(s:seq.word,code:seq.symbol) seq.symbol
-let a=getheader.s
-    if  subseq(s,length.a,length.a+1 ) = "{ OPTION "  then  
-      for   acc="",     w /in subseq(s,length.a+2,length.s) while w /nin "{}"  do
-        if w /in "PROFILE STATE COMPILETIME NOINLINE INLINE" then acc+w else acc /for(
-        if isempty.s then code else addoption(code,acc) )
-     else code
-     
+function addcommentoptions(s:seq.word, code:seq.symbol)seq.symbol
+let a = getheader.s
+if subseq(s, length.a, length.a + 1) = "{OPTION"then
+ for acc = "", w ∈ subseq(s, length.a + 2, length.s)
+ while w ∉ "{}"
+ do if w ∈ "PROFILE STATE COMPILETIME NOINLINE INLINE"then acc + w else acc
+ /for(if isempty.s then code else addoption(code, acc)/if)
+else code
+
 Function passparse(abstractmods:set.passsymbols
 , simplemods:set.passsymbols
 , lib:word
@@ -128,12 +127,12 @@ Function passparse(abstractmods:set.passsymbols
 let allmods = abstractmods ∪ simplemods
 let prga = prescan2.compile(allmods, abstractmods, lib, src, mode, empty:set.symdef)
 let g3 = newgraph.abstractarcs(prga + prg1)
-{ graph g3 has three kinds of sinks.1:is unbound and module parameter is T 2:is not unbound and module parameter is T 3:module 
- parameter is not T examples:otherseq.T:=(T, T)boolean ; otherseq.T:step(arithmeticseq.T)T ; otherseq.sparseele 
+{graph g3 has three kinds of sinks.1:is unbound and module parameter is T 2:is not unbound and module parameter is T 3:module 
+parameter is not T examples:otherseq.T:=(T, T)boolean ; otherseq.T:step(arithmeticseq.T)T ; otherseq.sparseele 
 .T:binarysearch(seq.sparseele.T)}
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)
-{ change many-to-one relation defined by arcs in g5 into format of set.symdef }
+{change many-to-one relation defined by arcs in g5 into format of set.symdef}
 let requireUnbound = 
  if isempty.arcs.g4 then empty:set.symdef
  else
@@ -154,8 +153,8 @@ for acc = empty:seq.symdef, p ∈ s do
   if islocal.sym then result + Local.value.sym
   else if isdefine.sym then result + Define.value.sym
   else
-   { if isconst.sym /or isspecial.sym then result+sym else assert subseq(print.sym.p, 1, 5)/ne"tree.T:="/or module.sym 
-.p=module.sym report"KL"+print.sym.p+print.sym }
+   {if isconst.sym /or isspecial.sym then result+sym else assert subseq(print.sym.p, 1, 5)/ne"tree.T:="/or module.sym 
+.p=module.sym report"KL"+print.sym.p+print.sym}
    result
    + if isBuiltin.sym then
     if name.sym ∈ "length"then GetSeqLength
