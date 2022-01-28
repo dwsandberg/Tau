@@ -6,8 +6,6 @@ use bits
 
 use format
 
-use index
-
 use inputoutput
 
 use textio
@@ -25,8 +23,6 @@ use seq.char
 use otherseq.int
 
 use otherseq.word
-
-use encoding.seq.char
 
 use seq.seq.int
 
@@ -209,8 +205,6 @@ Export type:seq.int
 
 Export type:seq.char
 
-Export type:encoding.seq.char
-
 Export empty:seq.seq.word seq.seq.word
 
 Export empty:seq.word seq.word
@@ -320,30 +314,22 @@ Export encodeword(a:seq.char)word
 
 Export decodeword(w:word)seq.char
 
-Export print(decimals:int, rin:real)seq.word
-
 Export checkinteger(w:word)word{* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out like an integer but has illegal characters in it. otherwise returns WORD. }
 
 Export <<(s:seq.word, i:int)seq.word{removes i words from beginning of s}
 
 Export >>(s:seq.word, i:int)seq.word{removes i words from end of s}
 
-* usegraph include graph xxhash format encoding bits words real textio UTF8 set seq otherseq fileio standard bitstream 
-exclude standard seq
-
-* usegraph include tree inputoutput process stack set taublockseq libraryModule tausupport typedict mytype symbol exclude 
-standard seq bits otherseq
-
-* usegraph include codetemplates codetemplates2 codegennew internalbc llvmconstant llvm persistant exclude seq bits 
-set otherseq standard UTF8 real stack
-
-* usegraph include compilerfront interpreter libdesc main2 mergeblocks parse passparse passsymbol pass2 postbind pass2 
-program typedict exclude seq set otherseq standard bits graph UTF8 stack real fileio textio encoding words symbol types
+type index is rep:int
 
 Export type:index
 
-Export+(i:index, b:int)index index(rep.i+b)
+Export index(int)index
 
-Export toindex(i:int)index assert i > 0 report"not a index"index(i-1)
+Function +(i:index, b:int)index index(rep.i + b)
 
-Export toint(i:index)int rep.i+1 
+Function toindex(i:int)index
+assert i > 0 report"not an index" + stacktrace
+index(i - 1)
+
+Function toint(i:index)int rep.i + 1 

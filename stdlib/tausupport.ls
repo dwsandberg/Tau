@@ -1,26 +1,18 @@
-module index
+module tau55
 
-use standard
+use tausupport
 
-use seq.index
+Export type:ptr
 
-type index is rep:int
+Export allocatespace(int)ptr
 
-Export type:index
+Export set(ptr, int)ptr
 
-Export index(int)index
-
-Function +(i:index, b:int)index index(rep.i + b)
-
-Function toindex(i:int)index
-assert i > 0 report"not an index" + stacktrace
-index(i - 1)
-
-Function toint(i:index)int rep.i + 1
+Export set(ptr, ptr)ptr
 
 module bitcast.T
 
-use tausupport
+use tau55
 
 Builtin bitcast:T(ptr)T
 
@@ -32,7 +24,7 @@ module taublockseq.T
 
 use standard
 
-use tausupport
+use tau55
 
 use seq.T
 
@@ -303,7 +295,3 @@ else
    set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1)))
   /for(acc)
  bitcast:seq.byte(blkseq) 
- 
-
- 
-    

@@ -50,7 +50,7 @@ Export constdata seq.slot
 
 Export wordref(w:word)int
 
-Export addliblib(libname:seq.word, mods:seq.int, profiledata:int, dependlibs:seq.word, entrypoint:slot, symboladdresses:int)int
+Export addliblib(libname:seq.word, syms:seq.symbol, libmods:seq.libraryModule, code:seq.seq.symbolref, profiledata:int, dependlibs:seq.word, entrypoint:slot, symboladdresses:int)int
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
 if s = Optionsym then function.[i64, i64, i64, i64]else function.tollvmtypelist(alltypes, s)

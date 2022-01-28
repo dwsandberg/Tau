@@ -1,7 +1,5 @@
 Module seq.T
 
-use index
-
 use standard
 
 unbound=(T, T)boolean

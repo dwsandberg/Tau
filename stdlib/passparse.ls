@@ -22,6 +22,8 @@ use set.modref
 
 use otherseq.mytype
 
+use seq.mytype
+
 use set.mytype
 
 use set.passsymbols

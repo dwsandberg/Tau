@@ -6,6 +6,8 @@ use bits
 
 use standard
 
+use xxhash
+
 use otherseq.alphaword
 
 use otherseq.char
@@ -23,6 +25,9 @@ use seq.encodingpair.seq.char
 Export type:word
 
 type word is asencoding:encoding.seq.char
+
+Function hash(a:seq.char)int
+finalmix32.for acc = hashstart32.0, @e ∈ tointseq.a do hash32(acc, @e)/for(acc)
 
 Function wordencodingtoword(i:int)word word.to:encoding.seq.char(i)
 

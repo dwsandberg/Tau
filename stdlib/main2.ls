@@ -10,6 +10,8 @@ use compilerfront
 
 use format
 
+use inputoutput
+
 use interpreter
 
 use libraryModule
@@ -76,7 +78,7 @@ let cinfo =
  compilerfront("all"
  , last.libname
  , ["Library" + libname] + info << 3
- , dependentlibs
+ , libmodules2.dependentlibs
  , exports
  )
 let bc = codegen(last.libname, dependentlibs, cinfo)
@@ -102,10 +104,17 @@ let filelist = info_2
 let exports = info_3
 {let b=unloadlib.[libname]}compilerfront(option, last.libname, info << 3, dependentlibs, exports)
 
-Export compilerfront(option:seq.word, lib:word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
+Function compilerfront(option:seq.word, lib:word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
+compilerfront(option, lib, allsrc, libmodules2.dependentlibs, exports)
 
 _______________
 
 Function addlibrarywords(l:liblib)int
 let discard = addencodingpairs.words.l
-1 
+1
+
+Function libmodules2(dependentlibs:seq.word)loadedresult
+for org = empty:loadedresult, ll ∈ loadedLibs do
+ let libname = (libname.ll)_1
+ if libname ∈ dependentlibs then toloadedresult(org, libinfo.ll, libname)else org
+/for(org) 

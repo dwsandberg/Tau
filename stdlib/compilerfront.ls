@@ -18,8 +18,6 @@ use standard
 
 use symbol
 
-use symref
-
 use typedict
 
 use seq.libraryModule
@@ -92,11 +90,8 @@ Export modname(libraryModule)modref
 
 Export types(libraryModule)seq.seq.mytype
 
-Function compilerfront(option:seq.word, lib:word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
+Function compilerfront(option:seq.word, lib:word, allsrc:seq.seq.word, libinfo:loadedresult, exports:seq.word)compileinfo
 {/OPTION PROFILE}
-let libinfo = libmodules2.dependentlibs
-{assert isempty.mods.libinfo report for txt="testingx", sd=prg.libinfo do if name.module.sym.sd /in"llvm"then txt 
-+print.sym.sd+print.code.sd+EOL else txt /for(txt)}
 if option = "library"then
  let zz1 = prg.libinfo
  let discard = for acc = symbolref.sym.zz1_1, d ∈ zz1 do symbolref.sym.d /for(acc)
@@ -112,8 +107,6 @@ else
     /for(tmp)
    acc + passtypes(modname.m, tmp, typedict.m)
   /for(acc)
- {assert isempty.libpasstypes report for txt="types", t=types.libinfo do txt+print.first.t /for(txt)+"passtypes 
-"+for txt="", p=toseq.libpasstypes do txt+print.p /for(txt)}
  let mode = 
   if option = "text"then"text"_1 else"body"_1
  {figure out how to interpret text form of type}
@@ -134,10 +127,6 @@ else
    for acc = symbolref.sym.zz1_1, d ∈ zz1 do if paragraphno.d > 0 then symbolref.sym.d else acc /for(acc)
   compileinfo(zz1, emptytypedict, empty:seq.libraryModule, allsrc)
  else
-  {assert isempty.mods.libinfo report print(typedict0)+"NNN"+for txt="", t=types.t5 do txt+print.t+EOL /for(txt 
-)}
-  let templates = 
-   for acc = empty:seq.symdef, p ∈ toseq.prg10 do if para.module.sym.p = typeT then acc + p else acc /for(asset.acc)
   let roots = 
    for acc = [outofboundssymbol], f ∈ toseq.modules.t5 do
     if name.module.f ∉ exports then acc
@@ -150,26 +139,47 @@ else
       else acc3 + sym2
      /for(acc3))
    /for(acc)
-  let prg10a = processOptions(prg10, toseq.modules.t5, "NOINLINE")
-  let pb = postbind(roots, prg10a, templates, typedict)
-  let afteroption = processOptions(prg.pb, toseq.modules.t5, "COMPILETIME NOINLINE INLINE PROFILE STATE")
-  let result = 
-   if option = "wasm"then
-    for acc0 = afteroption, root ∈ toseq.asset.roots do
-     for acc = acc0, sym ∈ toseq.expand(4, afteroption, root)do addoption(acc, sym, "INLINE")/for(acc)
-    /for(acc0)
-   else afteroption
-  if option = "pass1"then
-   compileinfo(toseq.result
-   , typedict.pb
+  if option = "hhh"then
+   let hmods = 
+    for acc = empty:seq.passsymbols, m ∈ toseq.modules.t5 do
+     acc
+     + passsymbols(modname.m
+     , empty:set.modref
+     , if isabstract.module.m then defines.m else empty:set.symbol
+     , exports.m
+     , empty:set.symbol
+     , typedict.m
+     , empty:seq.symtextpair
+     )
+    /for(acc)
+   compileinfo(for acc = empty:seq.symdef, d ∈ toseq.prg10 do if issimple.module.sym.d then acc else acc + d /for(acc)
+   , typedict
    , tolibraryModules(typedict, toseq.modules.t5, exports)
    , empty:seq.seq.word
    )
   else
-   let prg5 = pass2.result ∪ templates
-   let libmods = tolibraryModules(typedict, toseq.modules.t5, exports)
-   if option = "all"then compilerback2(prg5, libmods, typedict, lib)
-   else compileinfo(toseq.prg5, typedict.pb, libmods, empty:seq.seq.word)
+   let templates = 
+    for acc = empty:seq.symdef, p ∈ toseq.prg10 do if para.module.sym.p = typeT then acc + p else acc /for(asset.acc)
+   let prg10a = processOptions(prg10, toseq.modules.t5, "NOINLINE")
+   let pb = postbind(roots, prg10a, templates, typedict)
+   let afteroption = processOptions(prg.pb, toseq.modules.t5, "COMPILETIME NOINLINE INLINE PROFILE STATE")
+   let result = 
+    if option = "wasm"then
+     for acc0 = afteroption, root ∈ toseq.asset.roots do
+      for acc = acc0, sym ∈ toseq.expand(4, afteroption, root)do addoption(acc, sym, "INLINE")/for(acc)
+     /for(acc0)
+    else afteroption
+   if option = "pass1"then
+    compileinfo(toseq.result
+    , typedict.pb
+    , tolibraryModules(typedict, toseq.modules.t5, exports)
+    , empty:seq.seq.word
+    )
+   else
+    let prg5 = pass2.result ∪ templates
+    let libmods = tolibraryModules(typedict, toseq.modules.t5, exports)
+    if option = "all"then compilerback2(prg5, libmods, typedict, lib)
+    else compileinfo(toseq.prg5, typedict.pb, libmods, empty:seq.seq.word)
 
 function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
 for acc = empty:set.symbol, sym ∈ getCode(prg, symin)do
@@ -221,42 +231,42 @@ Export prg(loadedresult)seq.symdef
 
 Export type:loadedresult
 
-Function libmodules2(dependentlibs:seq.word)loadedresult
-for org = loadedresult(empty:seq.passsymbols, empty:seq.seq.mytype, empty:seq.symdef)
-, ll ∈ loadedLibs
-do
- if(libname.ll)_1 ∈ dependentlibs then toloadedresult(org, ll)else org
-/for(org)
+Export loadedresult(mods:seq.passsymbols, types:seq.seq.mytype, prg:seq.symdef)loadedresult
 
-function toloadedresult(org:loadedresult, ll:liblib)loadedresult
+Function empty:loadedresult loadedresult loadedresult(empty:seq.passsymbols, empty:seq.seq.mytype, empty:seq.symdef)
+
+Function toloadedresult(org:loadedresult, libinfo:compileinfo, libname:word)loadedresult
 let orgprg = asset.prg.org
 let prg0 = 
- for acc = orgprg, c ∈ code.ll do
-  for code = empty:seq.symbol, r ∈ c << 1 do code + (libinfo.ll)_r /for(symdef((libinfo.ll)_(c_1), code) ∪ acc)
+ for acc = orgprg, c ∈ code.libinfo do
+  if toint.first.c = 0 then acc
+  else
+   for code = empty:seq.symbol, r ∈ c << 1 do code + libinfo_r /for(symdef(libinfo_(c_1), code) ∪ acc)
  /for(acc)
 let prg = 
- for acc = prg0, idx = 1, sym ∈ decoderef.ll do
-  if isconstantorspecial.sym ∨ isabstract.module.sym ∨ library.module.sym ≠ (libname.ll)_1 then
-   next(acc, idx + 1)
+ for acc = prg0, idx = 1, sym ∈ symbolrefdecode.libinfo do
+  if isconstantorspecial.sym ∨ isabstract.module.sym ∨ library.module.sym ≠ libname then next(acc, idx + 1)
   else next(symdef(sym, addoption(getCode(acc, sym), "COMPILED")) ∪ acc, idx + 1)
- /for(acc)
-for mods = mods.org, types1 = types.org, m ∈ mods.libinfo.ll do
- let modx = 
-  for exports = empty:seq.symbol, types = empty:seq.mytype, r ∈ exports.m do
-   let sym = (libinfo.ll)_r
-   next(exports + sym
-   , if name.sym = "type"_1 then types + resulttype.sym else types
-   )
-  /for(passsymbols(modname.m
-  , empty:set.modref
-  , empty:set.symbol
-  , asset.exports
-  , empty:set.symbol
-  , asset.types
-  , empty:seq.symtextpair
-  ))
- next(mods + modx, types1 + types.m)
-/for(loadedresult(mods, types1, toseq.prg))
+ /for(toseq.acc)
+loadedresult(for mods = mods.org, m ∈ mods.libinfo do
+ for exports = empty:seq.symbol, types = empty:seq.mytype, r ∈ exports.m do
+  let sym = libinfo_r
+  next(exports + sym
+  , if name.sym = "type"_1 then types + resulttype.sym else types
+  )
+ /for(mods
+ + passsymbols(modname.m
+ , empty:set.modref
+ , empty:set.symbol
+ , asset.exports
+ , empty:set.symbol
+ , asset.types
+ , empty:seq.symtextpair
+ ))
+/for(mods)
+, for acc = types.org, m2 ∈ mods.libinfo do acc + types.m2 /for(acc)
+, prg
+)
 
 Function processOptions(prg:set.symdef, mods:seq.passsymbols, option:seq.word)set.symdef
 for acc = prg, m ∈ mods do

@@ -2,13 +2,11 @@ Module libraryModule
 
 use bits
 
-use inputoutput
-
 use standard
 
 use symbol
 
-use symref
+use typedict
 
 use seq.bits
 
@@ -16,11 +14,29 @@ use seq.char
 
 use seq.libraryModule
 
+use encoding.symbol
+
+use otherseq.symbol
+
+use seq.symbol
+
+use set.symbol
+
 use seq.symbolref
 
 use encoding.seq.char
 
 use seq.seq.mytype
+
+use seq.encodingpair.symbol
+
+use otherseq.seq.symbol
+
+use set.seq.symbol
+
+use otherseq.seq.symbolref
+
+use seq.seq.symbolref
 
 use seq.seq.word
 
@@ -99,27 +115,6 @@ Export words(liblib)seq.encodingpair.seq.char
 
 Export profiledata(liblib)seq.parc
 
-builtin loadedlibs2 seq.liblib
-
-Function loadedLibs seq.liblib loadedlibs2
-
-Function unloadlib(a:seq.word)int unloadlib2.tocstr.a
-
-builtin unloadlib2(cstr)int
-
-Function loadlibrary(a:word)int loadlib.tocstr.[a]
-
-builtin loadlib(cstr)int
-
-Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
-createlib2(tocstr.[libname]
-, tocstr.for acc = "", @e ∈ dependlibs do acc + [@e] + ".dylib"/for(acc)
-, length.b * 8
-, packed.b
-)
-
-builtin createlib2(name:cstr, libs:cstr, length:int, data:seq.bits)int
-
 _______________________
 
 function findlibclause(a:seq.seq.word, i:int)seq.word
@@ -152,4 +147,69 @@ while isempty.l
 do if subseq(s, 1, 1) = "Library"then break(s, "uses exports", true)else l
 /for(assert length.l = 3 ∧ l_2_1 = "uses"_1 ∧ l_3_1 = "exports"_1
 report"lib clause problem"
-l) 
+l)
+
+_________________
+
+type compileinfo is symbolrefdecode:seq.symbol
+, mods:seq.libraryModule
+, code:seq.seq.symbolref
+, src:seq.seq.word
+, typedict:typedict
+
+
+Export type:compileinfo
+
+Export code(compileinfo)seq.seq.symbolref
+
+Export mods(compileinfo)seq.libraryModule
+
+Export typedict(compileinfo)typedict
+
+Export symbolrefdecode(compileinfo)seq.symbol
+
+Export src(compileinfo)seq.seq.word
+
+Function compileinfo(t:typedict, code:seq.seq.symbolref, src:seq.seq.word, d:seq.symbol, m:seq.libraryModule)compileinfo
+compileinfo(d, m, code, src, t)
+
+Function profiledata(info:compileinfo)seq.int
+let l = first.code.info << 4
+for acc = [1, length.l / 2], first = true, r ∈ l do
+ if first then next(acc + toint.r, false)else next(acc + toint.r + [0, 0, 0, 0], true)
+/for(acc)
+
+Function profilearcs(info:compileinfo)set.seq.symbol
+let l = first.code.info << 4
+for acc = empty:set.seq.symbol, first = true, last = Lit.0, r ∈ l do
+ let sym = info_r
+ if first then next(acc, false, sym)else next(acc + [last, sym], true, sym)
+/for(acc)
+
+Function newmaplength(info:compileinfo)int toint.(first.code.info)_2
+
+Function libcodelength(info:compileinfo)int toint.(first.code.info)_3
+
+Function addresslength(info:compileinfo)int toint.(first.code.info)_4
+
+Function libcode(info:compileinfo)seq.seq.symbolref subseq(code.info, 2, libcodelength.info + 1)
+
+Function prgcode(info:compileinfo)seq.seq.symbolref subseq(code.info, libcodelength.info + 2, length.code.info)
+
+Function _(info:compileinfo, r:symbolref)symbol
+let i = toint.r
+if i > 0 then(symbolrefdecode.info)_i else Fref.(symbolrefdecode.info)_(-i)
+
+Function roots(s:compileinfo)set.symbol
+let exports = 
+ for exports = empty:seq.symbolref, m ∈ mods.s do exports + exports.m /for(exports)
+for acc = empty:set.symbol, r ∈ exports do acc + s_r /for(acc)
+
+Function symbolref(sym:symbol)symbolref symbolref.valueofencoding.encode.sym
+
+Function assignencoding(a:symbol)int nextencoding.a
+
+Function decode(s:symbolref)symbol decode.to:encoding.symbol(toint.s)
+
+Function symbolrefdecode seq.symbol
+for acc = empty:seq.symbol, p ∈ encoding:seq.encodingpair.symbol do acc + data.p /for(acc) 

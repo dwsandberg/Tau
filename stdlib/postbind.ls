@@ -1,5 +1,7 @@
 module postbind
 
+use libraryModule
+
 use localmap2
 
 use mytype
@@ -11,8 +13,6 @@ use standard
 use symbol
 
 use symboldict
-
-use symref
 
 use typedict
 

@@ -118,7 +118,7 @@ let unpack = random:seq.T(16)
 let pack = packed.unpack
 let x = if getseqtype.pack = 1 then"packed"else""
 if(length.pack > 8160 / size ∨ seqkind.pack = x + toword.length.unpack) ∧ pack = unpack then
-"PASS" + toword.length.pack
+ "PASS" + toword.length.pack
 else"FAIL" + toword.length.pack + x
 
 Function random:seq.T(depth:int)seq.T
@@ -128,14 +128,14 @@ else random:seq.T(depth - 1 - getint.2) + random:seq.T(depth - 1 - getint.2)
 Function base:seq.T seq.T
 let i = getint.6
 if i = 0 then empty:seq.T
-else if i = 1 then [ get:T]
-else if i = 2 then [ get:T, get:T]
-else if i = 4 then [ get:T, get:T, get:T, get:T, get:T]
-else if i = 5 then [ get:T, get:T, get:T, get:T, get:T, get:T]else constantseq(getint.7, get:T)
+else if i = 1 then[get:T]
+else if i = 2 then[get:T, get:T]
+else if i = 4 then[get:T, get:T, get:T, get:T, get:T]
+else if i = 5 then[get:T, get:T, get:T, get:T, get:T, get:T]else constantseq(getint.7, get:T)
 
 function seqkind(a:seq.T)seq.word
 let t = getseqtype.a
-if t = 0 then [ toword.length.a]
+if t = 0 then[toword.length.a]
 else if t = 1 then"packed" + toword.length.a
 else if t = getseqtype.constantseq(1, get:T)then"const"
 else if ispseq.a then"pseq"

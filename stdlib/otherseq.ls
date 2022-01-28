@@ -1,7 +1,5 @@
 Module otherseq.T
 
-use index
-
 use standard
 
 use seq.T
@@ -191,10 +189,4 @@ Export isempty(a:seq.T)boolean
 
 Export <<(s:seq.T, i:int)seq.T
 
-Export >>(s:seq.T, i:int)seq.T
-
-Function ascending(s:seq.T)seq.index
-for a = empty:seq.index, e ∈ arithseq(length.s, 1, 0)do a + index.e /for(a)
-
-Function descending(s:seq.T)seq.index
-for a = empty:seq.index, e ∈ arithseq(length.s, -1, length.s - 1)do a + index.e /for(a) 
+Export >>(s:seq.T, i:int)seq.T 

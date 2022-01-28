@@ -86,6 +86,27 @@ builtin callstack(n:int)seq.int
 
 builtin addresstosymbol2(a:int)seq.char
 
+Builtin loadedlibs2 seq.liblib
+
+Function loadedLibs seq.liblib loadedlibs2
+
+Function unloadlib(a:seq.word)int unloadlib2.tocstr.a
+
+builtin unloadlib2(cstr)int
+
+Function loadlibrary(a:word)int loadlib.tocstr.[a]
+
+builtin loadlib(cstr)int
+
+Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
+createlib2(tocstr.[libname]
+, tocstr.for acc = "", @e ∈ dependlibs do acc + [@e] + ".dylib"/for(acc)
+, length.b * 8
+, packed.b
+)
+
+builtin createlib2(name:cstr, libs:cstr, length:int, data:seq.bits)int
+
 Module fileT.T
 
 use inputoutput

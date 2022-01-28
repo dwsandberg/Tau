@@ -2,6 +2,8 @@ Module symbol2
 
 use compilerfront
 
+use libraryModule
+
 use mytype
 
 use pass2
@@ -14,7 +16,17 @@ use typedict
 
 use seq.mytype
 
+use seq.symbol
+
 use set.symdef
+
+Function rehash(c:compileinfo)compileinfo
+compileinfo(typedict.c
+, code.c
+, src.c
+, for acc = empty:seq.symbol, sym ∈ symbolrefdecode.c do acc + rehash.sym /for(acc)
+, mods.c
+)
 
 Export basesym(s:symbol)symbol
 

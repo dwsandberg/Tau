@@ -56,7 +56,7 @@ Export+(i:int, b:int)int
 
 function =(a:testrecord, b:testrecord)boolean key.a = key.b
 
-Function print(a:testrecord)seq.word [ toword.key.a] + body.a
+Function print(a:testrecord)seq.word[toword.key.a] + body.a
 
 function hash(a:testrecord)int key.a
 
@@ -77,29 +77,29 @@ function list(a:seq.encodingpair.testrecord)seq.seq.word
 for acc = empty:seq.seq.word, @e ∈ a do acc + body.@e /for(acc)
 
 Function testencoding seq.word
-{ must export this module so encoding type can be figured out }
+{must export this module so encoding type can be figured out}
 let p = process.process1
 if aborted.p then"Failed encoding" + message.p
 else
  let s1 = list.result.p
  let z = 
-  for acc = 0, @e ∈ ["firstadd","secondadd"]do acc + add.@e /for(acc)
+  for acc = 0, @e ∈["firstadd", "secondadd"]do acc + add.@e /for(acc)
  let s2 = list.result.process.process1
  let s3 = list.encoding:seq.encodingpair.testrecord
- check([ 3 = deepcopytest.3
- , asset.[ 3, 7, 9] = deepcopytest.asset.[ 3, 7, 9]
+ check([3 = deepcopytest.3
+ , asset.[3, 7, 9] = deepcopytest.asset.[3, 7, 9]
  , deepcopytest.testdeep1 = testdeep1
- , s1 = ["A1","B2","C3","D4","E5"]
- , s2 = ["firstadd","secondadd"] + s1
+ , s1 = ["A1", "B2", "C3", "D4", "E5"]
+ , s2 = ["firstadd", "secondadd"] + s1
  , s3 = s2
  ]
- ,"encoding"
+ , "encoding"
  )
 
 Function process1 seq.encodingpair.testrecord
 let discard = 
  for acc = 0
- , @e ∈ ["A1","B2","C3","D4","E5"]
+ , @e ∈["A1", "B2", "C3", "D4", "E5"]
  do acc + add.@e /for(acc)
 encoding:seq.encodingpair.testrecord
 
@@ -110,7 +110,7 @@ type testdeep is fld1:seq.word, fld2:tree.seq.word, fld3:seq.char
 
 function testdeep1 testdeep
 testdeep("A BC DEF"
-, tree("LIT 1", [ tree."PARAM 1"])
+, tree("LIT 1", [tree."PARAM 1"])
 , decodeword."TEST"_1
 )
 

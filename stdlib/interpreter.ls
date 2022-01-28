@@ -2,6 +2,8 @@ module interpreter
 
 use UTF8
 
+use inputoutput
+
 use libraryModule
 
 use real
@@ -9,8 +11,6 @@ use real
 use standard
 
 use symbol
-
-use symref
 
 use typedict
 
@@ -87,8 +87,7 @@ else
    interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara - 2), 0)))
   else interpret(code, i + 1, push(pop(stk, nopara), GEP(top(stk, nopara), 2)))
  else
-  assert wordname.sym = "makereal"_1 ∧ name.module.sym ∈ "UTF8"
-  report"interpret not expecting" + print.sym
+  assert sym = makerealSymbol report"interpret not expecting" + print.sym
   interpret(code, i + 1, push(pop(stk, nopara), representation.makereal.aswords.bitcast.top.stk))
 
 function callsymbol(sym:symbol, stk:stack.int)seq.symbol

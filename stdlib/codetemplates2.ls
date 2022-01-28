@@ -18,8 +18,6 @@ use standard
 
 use symbol
 
-use symref
-
 use textio
 
 use typedict

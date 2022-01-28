@@ -64,6 +64,8 @@ use seq.encodingpair.seq.char
 
 use set.encodingpair.seq.char
 
+Export loadedLibs seq.liblib
+
 type word3 is toword:word
 
 function assignencoding(a:word3)int encoding.toword.a
@@ -99,12 +101,17 @@ toint.C64.valueofencoding.d
 function wordcode(a:encodingpair.word3)encoding.seq.char to:encoding.seq.char(encoding.toword.data.a)
 
 Function addliblib(libname:seq.word
-, mods:seq.int
+, decodesymref:seq.symbol
+, libmods2:seq.libraryModule
+, code2:seq.seq.symbolref
 , profiledata:int
 , dependlibs:seq.word
 , entrypoint:slot
 , symboladdresses:int
 )int
+let symbolrefdecode2 = addsymbolseq.decodesymref
+let code = addsymbolrefseqseq.code2
+let libmods = addlibmodseq.libmods2
 let name = addwordseq2.libname
 let have = 
  for acc0 = empty:set.encoding.seq.char, ll ∈ loadedLibs do
@@ -121,9 +128,18 @@ let data =
 let wordreps = addobject.data
 let emptyseq = addobject.[toint.C64.0, toint.C64.0]
 addobject("liblib"
-, [name, wordreps, toint.entrypoint, toint.C64.0, profiledata
-, mods_1, mods_2, mods_3, emptyseq, emptyseq
-, symboladdresses]
+, [name
+, wordreps
+, toint.entrypoint
+, toint.C64.0
+, profiledata
+, symbolrefdecode2
+, libmods
+, code
+, {src}emptyseq
+, {typedict}emptyseq
+, symboladdresses
+]
 )
 
 function addobject(name:seq.word, data:seq.int)int
@@ -171,7 +187,7 @@ addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + addtype
 Function addsymbolrefseq(a:seq.symbolref)int
 addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + toint.C64.toint.@e /for(acc)
 
-Function addsymbolrefseqseq(a:seq.seq.symbolref)int
+function addsymbolrefseqseq(a:seq.seq.symbolref)int
 addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + addsymbolrefseq.@e /for(acc)
 
 Function addlibmod(a:libraryModule)int
@@ -182,7 +198,7 @@ addobject.[wordref.library.modname.a
 , addtypeseqseq.types.a
 ]
 
-Function addlibmodseq(a:seq.libraryModule)int
+function addlibmodseq(a:seq.libraryModule)int
 addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + addlibmod.@e /for(acc)
 
 Function addsymbol(a:symbol)int
@@ -195,7 +211,7 @@ addobject.[addwordseq2.worddata.a
 , toint.C64.extrabits.a
 ]
 
-Function addsymbolseq(a:seq.symbol)int
+function addsymbolseq(a:seq.symbol)int
 addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + addsymbol.@e /for(acc)
 
 /type modref is library:word, name:word, para:mytype

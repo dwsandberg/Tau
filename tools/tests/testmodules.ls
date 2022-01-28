@@ -45,23 +45,23 @@ use set.arc.word
 use seq.tree.word
 
 Function testmodules seq.word
-let y = [ t501, t502, t503, t504, t505, t506, t507, t508, test20, t044]
-check(y,"testmodules") + checkbits
+let y = [t501, t502, t503, t504, t505, t506, t507, t508, test20, t044]
+check(y, "testmodules") + checkbits
 
 function print(a:seq.int)seq.word
 "["
-+ for acc = "", @e ∈ a do acc + toword.@e + ","/for(acc >> 1)
++ for acc = "", @e ∈ a do acc + toword.@e + ", "/for(acc >> 1)
 + "]"
 
 ---
 
 Test trees
 
-function tr1 tree.int tree(56, [ tree.200, tree.1, tree(5, [ tree.4])])
+function tr1 tree.int tree(56, [tree.200, tree.1, tree(5, [tree.4])])
 
-function tr2 tree.int tree(37, [ tr1, tr1])
+function tr2 tree.int tree(37, [tr1, tr1])
 
-function t501 boolean [ 56, 200, 3] = [ label.tr1, label.tr1_1, nosons.tr1]
+function t501 boolean[56, 200, 3] = [label.tr1, label.tr1_1, nosons.tr1]
 
 function ?(a:tree.int, b:tree.int)ordering subx(a, b, 1, label.a ? label.b ∧ nosons.a ? nosons.b)
 
@@ -69,20 +69,20 @@ function subx(a:tree.int, b:tree.int, i:int, o:ordering)ordering
 if o = EQ ∧ i ≤ nosons.a then subx(a, b, i + 1, a_i ? b_i)else o
 
 function print(t:tree.word)seq.word
-if nosons.t = 0 then [ label.t]
+if nosons.t = 0 then[label.t]
 else
- [ label.t]
+ [label.t]
  + if nosons.t = 1 then"." + print.t_1
  else
- "("
-  + for acc = "", @e ∈ sons.t do acc + "," + print.@e /for(acc >> 1)
+  "("
+  + for acc = "", @e ∈ sons.t do acc + ", " + print.@e /for(acc >> 1)
   + ")"
 
-function t502 boolean [ GT, EQ, EQ] = [ tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree.1]
+function t502 boolean[GT, EQ, EQ] = [tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree.1]
 
 function t503 boolean"a" = print.tree."a"_1
 
-function t504 boolean"a.b" = print.tree("a"_1, [ tree."b"_1])
+function t504 boolean"a.b" = print.tree("a"_1, [tree."b"_1])
 
 function n1 int 1
 
@@ -102,18 +102,18 @@ function n8 int 8
 
 function t505 boolean
 let g = 
- newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6)
+ newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6)
  , arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
 let r = 
  print.g + "transversal" + print.sinksfirst.g + "Suc"
  + print.toseq.successors(g, n2)
  + "sinks"
- + print.sinks(g, asset.[ n4], n2)
-r = "GRAPH:(1 2)(1 4)(2 4)(3 2)(5 1)(5 6)(6 7)(6 8)(7 5)transversal [ 4, 8, 2, 1, 3]Suc [ 4]sinks [ 2]"
+ + print.sinks(g, asset.[n4], n2)
+r = "GRAPH:(1 2)(1 4)(2 4)(3 2)(5 1)(5 6)(6 7)(6 8)(7 5)transversal[4, 8, 2, 1, 3]Suc[4]sinks[2]"
 
 function t506 boolean
-let g = newgraph.[ arc(n1, n2), arc(n3, n2), arc(n2, n4)]
-let closure = [ arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
+let g = newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4)]
+let closure = [arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
 closure = toseq.arcs.transitiveClosure.g
 
 function print(g:graph.int)seq.word
@@ -137,12 +137,12 @@ Randomphrase
 Function t507 boolean"The umber ant ambles the opal nurse" = getphrase.20
 
 function t044 boolean
-let s = UTF8.[ tobyte.40, tobyte.50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
+let s = UTF8.[tobyte.40, tobyte.50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336
 let z = myseq.for acc = empty:seq.int, @e ∈ toseqbyte.s do acc + toint.@e /for(acc)
 for acc = "", @e ∈ z do acc + toword.@e /for(acc)
 = "40 50 335 50 336"
 ∧ length.toseq.to:myseq.int(z) ≠ 0
-∧ length.toseq.to:myseq.int([ 1, 2, 3]) = 0
+∧ length.toseq.to:myseq.int([1, 2, 3]) = 0
 
 _____________
 
@@ -151,7 +151,7 @@ bits
 Function checkbits seq.word
 let min64integer = toint(0x1 << 63)
 let max64integer = toint(bits.-1 >> 1)
-check([ toint.toword.min64integer = min64integer
+check([toint.toword.min64integer = min64integer
 , toint.toword.max64integer = max64integer
 , min64integer + 1 = -max64integer
 , 0xD = bits.13
@@ -162,7 +162,7 @@ check([ toint.toword.min64integer = min64integer
 , print(0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000"
 , print.xor(0xD687F000, 0x0FE00000) = "0000 0000 D967 F000"
 ]
-,"bits"
+, "bits"
 )
 
 function rotl32(x:bits, n:int)bits bits.4294967295 ∧ (x << n ∨ x >> (32 - n)) 

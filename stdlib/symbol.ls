@@ -481,7 +481,7 @@ symbol4(moduleref("seq", typeword)
 , seqof.typeword
 )
 
-Function makerealSymbol symbol symbol(moduleref."UTF8", "makereal", seqof.typeword, typereal)
+Function makerealSymbol symbol symbol(moduleref."real", "makereal", seqof.typeword, typereal)
 
 Function indexsymbol(T:mytype)symbol symbol(moduleref("seq", T), "_", seqof.T, typeint, T)
 

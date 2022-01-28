@@ -8,6 +8,8 @@ use codetemplates2
 
 use internalbc
 
+use libraryModule
+
 use llvm
 
 use llvmconstants
@@ -17,8 +19,6 @@ use persistant
 use standard
 
 use symbol
-
-use symref
 
 use textio
 
@@ -88,14 +88,11 @@ let bodies =
  for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(geninfo, @e)/for(acc)
 let xxx = 
  for acc = empty:seq.slot, x ∈ profiledata.info do acc + C64.x /for(AGGREGATE.acc)
-let libmods2 = 
- [addsymbolseq.subseq(symbolrefdecode.info, 1, newmaplength.info)
- , addlibmodseq.mods.info
- , addsymbolrefseqseq.libcode.info
- ]
 let liblib = 
  slot.addliblib([thename]
- , libmods2
+ , subseq(symbolrefdecode.info, 1, newmaplength.info)
+ , mods.info
+ , libcode.info
  , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
  , dependentlibs
  , entrypointsymbol(extnames.stepone, info)

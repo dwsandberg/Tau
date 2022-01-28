@@ -10,8 +10,6 @@ use standard
 
 use symbol
 
-use symref
-
 use typedict
 
 use set.int
