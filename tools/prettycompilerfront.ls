@@ -14,6 +14,8 @@ use standard
 
 use symbol2
 
+use textio
+
 use seq.byte
 
 use seq.mytype

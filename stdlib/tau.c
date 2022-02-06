@@ -321,7 +321,7 @@ struct bitsseq  { BT type; BT length; BT  data[50]; };
 BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * filename ) 
                {    int file=1;
                     char * name=tocstr(filename);
-                    fprintf(stderr,"start createfile %s %d\n",name,file);
+                    fprintf(stderr,"start createfile %s %d %d\n",name,file,strcmp("stdout",name));
                       if (!( strcmp("stdout",name)==0 ))  { 
                       file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
                        fprintf(stderr,"createfile %s %d\n",name,file);
@@ -352,12 +352,12 @@ BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, st
      char * otherlib= tocstr(otherlibs) ; 
      char buff[200];
      /* create the .bc file */
-       sprintf(buff+16,"%s.bc",libname);
+       sprintf(buff+16,"tmp/%s.bc",libname);
   
         createfile2(PD, bytelength , data,buff);
      /* compile to .bc file */ 
      sprintf(buff,"%s.bc",libname);
-  sprintf(buff,"/usr/bin/cc -dynamiclib %s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",libname,
+  sprintf(buff,"/usr/bin/cc -dynamiclib tmp/%s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",libname,
   otherlib,libname);
    fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
@@ -465,12 +465,13 @@ int main(int argc, char **argv)    {   int i=0,count;
      {  // load the library  
          loadlibrary(&sharedspace, argv[1]);  
      }
-
-        BT  lastloadedentrypoint=((BT*) loaded[loaded[1]+1])[2];
-        if (lastloadedentrypoint==0) {
-          fprintf(stderr,"library has no entry point" );
-           exit(EXIT_FAILURE);
-        }
+     
+        BT   entrypoint=(BT)dlsym(RTLD_DEFAULT, "entrypoint");
+      if (!entrypoint) {
+        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
+       exit(EXIT_FAILURE);
+      }
+  
      
         processinfo PD=&sharedspace;
       int j;  
@@ -478,7 +479,7 @@ int main(int argc, char **argv)    {   int i=0,count;
       initprocessinfo(p,PD);
       p->deepcopyresult = (BT)noop; 
       p->deepcopyseqword = (BT)noop;
-       p->func=lastloadedentrypoint;
+       p->func=entrypoint;
    
       
       BT argsx=tobyteseq ( p,argc  > 2?argv[2]:"");  
@@ -547,15 +548,7 @@ BT callstack(processinfo PD,BT maxsize){
       //  fprintf(stderr,"CALLStACK %d\n",frames);
      return r;}
 
-
-
-/* BT dlsymbol(processinfo PD,char * funcname) 
-{
-return (BT) dlsym(RTLD_DEFAULT,  tocstr(funcname) );}
-
-
- 
-*/
+// BT dlsymbol(processinfo PD,char * funcname) {return (BT) dlsym(RTLD_DEFAULT,  tocstr(funcname) );}
 
 double arcsin (processinfo PD, double arg)  { return asin(arg); }
   

@@ -498,7 +498,10 @@ Function outofboundssymbol symbol symbol(moduleref."tausupport", "outofbounds", 
 
 Function encodenosym symbol symbol(moduleref."tausupport", "encodingno", seqof.typeword, typeint)
 
-Function blockitsymbol(T:mytype)symbol symbol(moduleref."tausupport", "blockIt", T, T)
+Function blockitsymbol(T:mytype)symbol
+{assert isseq.T /and print.parameter.T /in["int", "real", "ptr", "packed2", "packed3", "packed4", "packed5", "packed6 
+", "byte"]report"HJK"+print.T}
+symbol(moduleref."tausupport", "blockIt", T, T)
 
 _________________
 
@@ -650,11 +653,14 @@ if rt = typereal then symbol(moduleref."tausupport", "deepcopy", typereal, typer
 else if rt = typeint then symbol(moduleref."tausupport", "deepcopy", typeint, typeint)
 else symbol4(replaceT(parameter.rt, abstractModref.rt), "type"_1, rt, [rt], rt)
 
+Function iscore4(typ:mytype)boolean typ = typeint ∨ typ = typereal ∨ typ = typeptr ∨ typ = typeboolean
+
+∨ typ=typebyte
+
 Function setSym(typ:mytype)symbol
 let fldtype = 
  if isseq.typ then typeptr else if isencoding.typ then typeint else typ
-symbol(if fldtype = typeint ∨ fldtype = typeboolean ∨ fldtype = typeptr ∨ fldtype = typereal then internalmod
-else builtinmod.fldtype
+symbol(if iscore4.fldtype then internalmod else builtinmod.fldtype
 , "set"
 , typeptr
 , fldtype

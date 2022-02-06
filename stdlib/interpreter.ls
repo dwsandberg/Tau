@@ -2,6 +2,8 @@ module interpreter
 
 use UTF8
 
+use format
+
 use inputoutput
 
 use libraryModule
@@ -15,6 +17,8 @@ use symbol
 use typedict
 
 use words
+
+use process.UTF8
 
 use process.int
 
@@ -112,16 +116,17 @@ let addrs = symboladdress.first.loadedLibs
 let i = findindex(sym, subseq(symbolrefdecode.libinfo.first.loadedLibs, 1, length.addrs))
 if i ≤ length.addrs then addrs_i else 0
 
-Builtin createthreadI(int, int, int, seq.UTF8, int)process.int
+Builtin createthreadI(int, int, int, seq.UTF8, int)process.UTF8
 
-Function callentrypoint(arg:UTF8)seq.word
+Function callentrypoint(arg:UTF8)UTF8
 let t = entrypointaddress.last.loadedLibs
 let typeUTF8 = typeref."UTF8 UTF8"
 let dcret = deepcopySym.typeUTF8
 let adcret = funcaddress.dcret
 let dc = deepcopySym.seqof.typeword
 let adc = funcaddress.dc
-if not(t > 0 ∧ adcret > 0 ∧ adc > 0)then"ERROR" + [toword.t, toword.adcret, toword.adc]
+if not(t > 0 ∧ adcret > 0 ∧ adc > 0)then
+ HTMLformat("ERROR" + [toword.t, toword.adcret, toword.adc])
 else
  let p = createthreadI(adcret, adc, t, [arg], {buildargcodeI.sym}4)
- if aborted.p then message.p else"OK" 
+ if aborted.p then HTMLformat.message.p else result.p 

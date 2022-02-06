@@ -1,3 +1,5 @@
+#!/bin/sh  tau stdlib tools createdoc
+
 /section The Tau Programming Language
 
 Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.
@@ -46,7 +48,7 @@ The fix is to add parenthesizes
 
 
 When converting a sequence of words  to characters for output, an space is usually added after each word with the exceptions:
-/br 1. If the word is  "()-].. :^  
+/br 1. If the word is  "()+-[]{}_.. :^   
 then the space before and after the word is not added. 
 /br 2. If word is a comma then the space before the comma is suppressed.
 
@@ -138,12 +140,13 @@ The following paragraph starts a new module. A module is a collection of functio
 
 module point2d
 
-Here is a simple type definition that introduces a new type with two components.
 
 The follow paragraph that begins with /keyword use allows reference to functions defined in another module. In this case, the standard library functions. 
 Documentation of the standard module is   /< noformat <a href ='stdlib.html#standard'>  here </a>  />
 
 use standard
+
+Here is a simple type definition that introduces a new type with two components.
 
 type point2d is x:int, y:int
 
@@ -617,28 +620,29 @@ If the sequence was built up out of smaller sequences, it may also  break the se
 /row Example /cell with format /cell note
 /row first /keyword /p second  /cell    first /p second  /cell paragraph break
 /row first /keyword  /br second  /cell  first /br second /cell line break
-/row /keyword /em example /cell /em example  
-/row /keyword /strong example /cell /strong example  
-/row /keyword /keyword example /cell /keyword example  
-/row /keyword /< /keyword literal this is an example  /keyword /> /cell /< literal  this is an example />  
-/row /keyword /< /keyword keyword this is an example  /keyword />  /cell /< keyword this is an example  />  
-/row /keyword /< /keyword comment this is an example  /keyword /> /cell /< comment this is an example  />  
-/row parent block /keyword /< /keyword block Indented block. /keyword  /br second line /keyword /> 
+/row /keyword /em example /cell /em example  /cell
+/row /keyword /strong example /cell /strong example  /cell
+/row /keyword /keyword example /cell /keyword example  /cell
+/row /keyword /&lt; /keyword literal this is an example  /keyword /> /cell /< literal  this is an example />  /cell
+/row /keyword /&lt; /keyword keyword this is an example  /keyword />  /cell /< keyword this is an example  />  /cell
+/row /keyword /&lt; /keyword comment this is an example  /keyword />; /cell /< comment this is an example  />  /cell
+/row parent block /keyword /&lt; /keyword block Indented block. /keyword  /br second line /keyword /> 
 /cell parent block /< block Indented block. /br second line /> 
 /cell   Indented block 
-/row /keyword /< /keyword noformat <hr/> /keyword /> /cell  /< noformat <hr/> />   
-/row /keyword /< /keyword table <caption> <rows of table> /keyword /> /cell /cell Defines a table 
+/row /keyword /&lt; /keyword noformat <hr/> /keyword /&lt; /cell  /< noformat <hr/> />  /cell 
+/row /keyword /&lt; /keyword table <caption> <rows of table> /keyword /&lt; /cell /cell Defines a table 
 /row  /keyword /row../keyword /cell../keyword /cell..  /cell /cell Defines a row of with three columns. 
 /br Must be placed within table. 
-/row /keyword /< /keyword table    Sample   Table 
+/row /keyword /&lt; /keyword table    Sample   Table 
 /br /keyword /row   1 /keyword /cell 2 /keyword /cell 3
 /br /keyword /row   3 /keyword /cell 4 /keyword /cell 5
-/keyword />
+/keyword /&lt;
 /cell
 /< table    Sample  Table 
  /row   1 /cell 2 /cell  3 
  /row   3 /cell 4 /cell 5  
   />
+/cell
 /> 
 
 END

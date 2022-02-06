@@ -70,8 +70,6 @@ Export words(liblib)seq.encodingpair.seq.char
 
 Export type:typedict
 
-Export coretype(mytype, typedict)mytype
-
 ----
 
 Export toint(symbolref)int

@@ -90,8 +90,9 @@ Function entrypoint(arg:UTF8)UTF8 compile.arg
 Function compile(arg:UTF8)UTF8
 let wordargs = towords.arg
 let p = process.subcompilelib.[first.wordargs]
-HTML.if aborted.p then"COMPILATION ERROR in libray:" + wordargs + EOL + message.p
-else if length.wordargs = 1 ∨ wordargs_2 ∈ ". ."then"finished compiling" + first.wordargs
+if aborted.p then HTMLformat("COMPILATION ERROR in libray:" + wordargs + EOL + message.p)
+else if length.wordargs = 1 ∨ wordargs_2 ∈ ". ."then
+ HTMLformat("finished compiling" + first.wordargs)
 else callentrypoint.toUTF8(wordargs << 1)
 
 Function astext(info:compileinfo)seq.seq.word
@@ -117,4 +118,6 @@ Function libmodules2(dependentlibs:seq.word)loadedresult
 for org = empty:loadedresult, ll ∈ loadedLibs do
  let libname = (libname.ll)_1
  if libname ∈ dependentlibs then toloadedresult(org, libinfo.ll, libname)else org
-/for(org) 
+/for(org)
+
+Function OUTPUT(r:UTF8)int createfile("stdout", toseqbyte(toUTF8.htmlheader + r)) 

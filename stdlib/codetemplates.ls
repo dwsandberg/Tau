@@ -67,7 +67,7 @@ Function tollvmtype(alltypes:typedict, s:mytype)llvmtype
 if isseq.s then ptr.i64
 else if abstracttypename.s = "process"_1 then ptr.i64
 else
- let kind = coretype(s, alltypes)
+ let kind = basetype(s, alltypes)
  if kind = typeint ∨ kind = typeboolean then i64
  else if kind = typereal then double else ptr.i64
 
@@ -190,10 +190,7 @@ addtemplate(symbol(internalmod, "bitcast", typeptr, typeint)
 , 1
 , CAST(r.1, ibcsub.1, ptr.i64, inttoptr)
 )
-, addtemplate(symbol(internalmod, "bitcastXX", typeptr, typeptr)
-, 1
-, GEP(r.1, i64, ibcsub.1, C64.0)
-)
+, addtemplate(symbol(internalmod, "bitcast", typeint, typebyte), 0, emptyinternalbc)
 , addtemplate(symbol(internalmod, "GEP", seqof.typeint, typeint, typeint)
 , 2
 , GEP(r.1, i64, ibcsub.1, ibcsub.2) + CAST(r.2, r.1, i64, ptrtoint)
@@ -323,6 +320,17 @@ addtemplate(symbol(internalmod, "bitcast", typeptr, typeint)
 , ibcsub.1
 )
 )
+, addtemplate(abortsymbol.typebyte
+, 1
+, CALL(r.1
+, 0
+, 32768
+, function.[i64, i64, ptr.i64]
+, symboltableentry("assert", function.[i64, i64, ptr.i64])
+, slot.ibcfirstpara2
+, ibcsub.1
+)
+)
 , addtemplate(abortsymbol.typeboolean
 , 1
 , CALL(r.1
@@ -428,6 +436,10 @@ addtemplate(symbol(internalmod, "bitcast", typeptr, typeint)
 , GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64) + CAST(r.3, r.2, double, bitcast)
 )
 , addtemplate(symbol(builtinmod.typeint, "fld", [typeptr, typeint], typeint)
+, 2
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+)
+, addtemplate(symbol(builtinmod.typebyte, "fld", [typeptr, typeint], typebyte)
 , 2
 , GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
 )

@@ -1,0 +1,46 @@
+#!/bin/bash  
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# set up working directory
+
+cd $SCRIPT_DIR
+cd ..
+pwd
+
+#parse options
+
+while getopts ":f:" opt; do
+  case ${opt} in
+    f )
+      target=$OPTARG
+      ;;
+    \? )
+      echo "Invalid option: $OPTARG" 1>&2
+      ;;
+    : )
+      echo "Invalid option: $OPTARG requires an argument" 1>&2
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+p1=$1
+libname=$1
+shift 1
+otherpara=$@
+
+if [ -n "$target" ]; then 
+$SCRIPT_DIR/tauexe $p1 "$otherpara" > $target
+else
+  $SCRIPT_DIR/tauexe $p1 "$otherpara" > "tmp/$libname.html"
+  if [ "<" == "$(head -c 1 tmp/$libname.html)" ] ;
+  then 
+    open http://localhost/tmp/$libname.html 
+  else
+  cat tmp/$libname.html
+ fi
+
+ fi
+
+#echo $SCRIPT_DIR/tau2 $p1 $@
+exit

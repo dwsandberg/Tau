@@ -224,11 +224,10 @@ Export defines(steponeresult)seq.symdef,
 
 Export type:steponeresult
 
-Function entrypointsymbol(extnames:set.symdef, a:compileinfo)slot
-for acc = C64.0, sym ∈ symbolrefdecode.a do
- if isconstantorspecial.sym ∨ name.sym ∉ "entrypoint"then acc
- else Frefslot(sym, extnames, typedict.a, symbolref.0)
-/for(acc)
+Function entrypointsymbol(a:compileinfo)symbol
+for acc = empty:seq.symbol, sym ∈ symbolrefdecode.a do
+ if isconstantorspecial.sym ∨ name.sym ∉ "entrypoint"then acc else acc + sym
+/for(first.acc)
 
 Function addlibwords(extnames:set.symdef, typedict:typedict)slot
 let f1 = 
@@ -275,6 +274,7 @@ for org = empty:set.symdef, ll ∈ loadedLibs do
 /for(org)
 
 Function processconst(toprocess:seq.symdef, alltypes:typedict)int
+let discard6a = buildconst(Lit.0, alltypes)
 if isempty.toprocess then 0
 else
  for notprocessed = empty:seq.symdef, changed = false, xx ∈ toprocess do
@@ -295,8 +295,9 @@ else
     true
    else false /if)
   next(if processed then notprocessed else notprocessed + xx, changed ∨ processed)
- /for(assert changed
- report"problem processconst"
+ /for(assert changed ∨ isempty.notprocessed ∨ print.code.notprocessed_1 = "0 0"
+ report"problem processconst" + toword.length.notprocessed + print.sym.notprocessed_1
+ + print.code.notprocessed_1
  + for txt = "", xx2 ∈ notprocessed do
   let txt2 = 
    for txt2 = "", ele ∈ code.xx2 do

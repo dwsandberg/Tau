@@ -16,6 +16,8 @@ use tau55
 
 Builtin bitcast:T(ptr)T
 
+Builtin bitcast:T(int)T
+
 Builtin fld:T(ptr, int)T
 
 Builtin toptr(T)ptr
@@ -270,8 +272,6 @@ Export type:encodingpair.typename
 -----------
 
 Function outofbounds seq.word"out of bounds" + stacktrace
-
-Export packedbyteseqasbits(a:seq.byte)seq.bits
 
 function packedbytes(a:seq.byte)seq.byte
 let b = packedbyteseqasbits.a

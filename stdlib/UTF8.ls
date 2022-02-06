@@ -149,8 +149,6 @@ for acc = empty:seq.char, @e ∈ a do acc + char.@e /for(acc)
 
 _________________
 
-___________
-
 Function toUTF8(a:seq.word)UTF8 toUTF8(a, empty:seq.seq.char, true)
 
 Function toUTF8(s:seq.word, format:seq.seq.char, nospacein:boolean)UTF8

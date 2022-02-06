@@ -17,14 +17,14 @@ use process.compileinfo
 use process.seq.seq.word
 
 Function test11a seq.word
-let z = 
- [compare("a+b+c", "(a+b)+c")
- , compare("a * b * c", "(a * b)* c")
- , compare("a+b * c", "a+(b * c)")
- , compare("-a+b", "(-a)+b")
- , compare("a+-b", "a+(-b)")
- , compare("a^2+b", "(a^2)+b")
- , compare("length.[1, 2]", "length([1, 2])")
+let z =
+ [ compare("a + b + c","(a + b)+ c")
+ , compare("a * b * c","(a * b)* c")
+ , compare("a + b * c","a +(b * c)")
+ , compare("-a + b","(-a)+ b")
+ , compare("a +-b","a +(-b)")
+ , compare("a^2 + b","(a^2)+ b")
+ , compare("length.[ 1, 2]","length([ 1, 2])")
  , testerror(" /< literal parse error:unexpected end of paragraph  />"
  , ["function f1(a:int)boolean(a"]
  )

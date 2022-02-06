@@ -44,6 +44,8 @@ use seq.mytype
 
 use seq.slot
 
+use otherseq.symbol
+
 use seq.symbol
 
 use set.symbol
@@ -95,7 +97,7 @@ let liblib =
  , libcode.info
  , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
  , dependentlibs
- , entrypointsymbol(extnames.stepone, info)
+ , Frefslot(entrypointsymbol.info, extnames.stepone, typedict.info, symbolref.0)
  , symboladdress
  )
 let libnametype = array(length.decodeword.thename + 1, i8)
@@ -114,6 +116,13 @@ let f2 =
  modulerecord("init22"
  , [toint.FUNCTIONDEC, typ.function.[VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
  )
+let f3 = 
+ modulerecord("entrypoint"
+ , [toint.FUNCTIONDEC, typ.function.[VOID, i64, ptr.i64], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+ )
+let symoutput = symbol(moduleref."main2", "OUTPUT", typeref."UTF8 UTF8", typeint)
+let symoutputref = symbolref.findindex(symoutput, symbolrefdecode.info)
+let symoutputmangledname = mangledname(extnames.stepone, symoutput, "HJK", symoutputref)
 let bodytxts = 
  bodies
  + [BLOCKCOUNT(1, 1)
@@ -126,6 +135,27 @@ let bodytxts =
  , [liblib
  , if isbase then addlibwords(extnames.stepone, typedict.info)else C64.0
  ]
+ )
+ + RETURN
+ ]
+ + [BLOCKCOUNT(2, 1)
+ + CALL(r.3
+ , 0
+ , 32768
+ , function.[ptr.i64, i64, ptr.i64]
+ , symboltableentry([mangledname(extnames.stepone, entrypointsymbol.info, "HJK", symbolref.0)]
+ , function.[ptr.i64, i64, ptr.i64]
+ )
+ , r.1
+ , r.2
+ )
+ + CALL(r.4
+ , 0
+ , 32768
+ , function.[i64, i64, ptr.i64]
+ , symboltableentry([symoutputmangledname], function.[i64, i64, ptr.i64])
+ , r.1
+ , r.3
  )
  + RETURN
  ]

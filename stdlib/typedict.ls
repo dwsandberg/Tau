@@ -57,7 +57,7 @@ for acc = alltypes, d ∈ toseq.asset.typesused do
 function print(t:seq.mytype)seq.word for txt = "", a ∈ t do txt + print.a /for(txt)
 
 Function addtype(alltypes:typedict, type:mytype)typedict
-if type ∈ [typeint, typeT, typeboolean, typereal, typeptr]then alltypes
+if iscore4.type ∨ type = typeT then alltypes
 else if isseq.type then addtype(alltypes, parameter.type)
 else
  let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
@@ -73,7 +73,7 @@ else
   else
    {add types not in typedict and try again}
    for acc = alltypes, subfld ∈ flatflds do
-    if subfld ∈ [typeint, typeT, typeboolean, typereal, typeptr] ∨ isseq.subfld ∨ isencoding.subfld then acc
+    if iscore4.subfld ∨ subfld = typeT ∨ isseq.subfld ∨ isencoding.subfld then acc
     else addtype(acc, subfld)
    /for(assert cardinality.totypedict.alltypes < cardinality.totypedict.acc
    report"PROBLEM" + print.type + "flat:"
@@ -106,7 +106,7 @@ function typesused(sym:symbol)seq.mytype
 {only includes parameter of seq and encoding and excludes types int, real, boolea, ptr, and T}
 for acc = empty:seq.mytype, t ∈ types.sym do
  let typ = if isseq.t ∨ isencoding.t then parameter.t else t
- if typ ∈ [typeint, typereal, typeboolean, typeptr, typeT]then acc else acc + typ
+ if iscore4.typ ∨ typ = typeT then acc else acc + typ
 /for(acc)
 
 function resolvetypesize(prg1:seq.typeentry)typedict
@@ -140,10 +140,7 @@ function isflat(p:typeentry)boolean
 if isseq.type.p then true
 else if isempty.flatflds.p then false
 else
- for state = true, t ∈ flatflds.p
- while state
- do t ∈ [typeint, typeT, typeboolean, typereal, typeptr, typeword] ∨ isseq.t ∨ isencoding.t
- /for(state)
+ for state = true, t ∈ flatflds.p while state do iscore4.t ∨ t ∈ [typeT, typeword] ∨ isseq.t ∨ isencoding.t /for(state)
 
 function expandflat(p:typeentry, types:set.typeentry)typeentry
 let newflat = expandflat(type.p, flatflds.p, types)
@@ -155,8 +152,7 @@ if isempty.flatflds then
  if isempty.f3 then flatflds else expandflat(type, replaceT(parameter.type, flatflds.f3_1), types)
 else
  for acc = empty:seq.mytype, unchanged = true, t ∈ flatflds do
-  if t ∈ [typeint, typeT, typeboolean, typereal, typeword] ∨ isseq.t ∨ isencoding.t then
-   next(acc + t, unchanged)
+  if iscore4.t ∨ t ∈ [typeT, typeword] ∨ isseq.t ∨ isencoding.t then next(acc + t, unchanged)
   else
    let f = lookup(types, typeentry(t, empty:seq.mytype))
    if isempty.f then
@@ -172,12 +168,6 @@ else
 
 function replaceT(with:mytype, typs:seq.mytype)seq.mytype
 for acc = empty:seq.mytype, t ∈ typs do acc + replaceT(with, t)/for(acc)
-
-Function basetype(type:mytype, addsize:typedict)mytype
-if isseq.type then
- let para = parameter.type
- if para = typebyte ∨ para = typebit then type else seqof.coretype(parameter.type, addsize, 6)
-else coretype(type, addsize)
 
 Function asseqseqmytype(dict:typedict)seq.seq.mytype
 for acc = empty:seq.seq.mytype, tr ∈ toseq.totypedict.dict do acc + totypeseq.tr /for(acc)
@@ -215,16 +205,20 @@ Function flatwithtype(alltypes:typedict, type:mytype)seq.mytype
 let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
 if isempty.t then empty:seq.mytype else[type.t_1] + flatflds.t_1
 
-Function coretype(typ:mytype, alltypes:typedict)mytype coretype(typ, alltypes, {6}0)
+Function basetype(typ:mytype, alltypes:typedict)mytype
+if isseq.typ then
+ let para = parameter.typ
+ if para = typebyte ∨ para = typebit ∨ iscore4.typ ∨ typ = typeT then typ
+ else seqof.coretype(parameter.typ, alltypes, packedtypes)
+else coretype(typ, alltypes, empty:seq.mytype)
 
-Function coretype(typ:mytype, alltypes:typedict, maxsize:int)mytype
-if typ = typeint ∨ typ = typeboolean ∨ typ = typeptr ∨ typ = typereal ∨ typ = typeT then typ
-else if isseq.typ then typeptr
+function coretype(typ:mytype, alltypes:typedict, maxsize:seq.mytype)mytype
+if iscore4.typ ∨ typ = typeT then typ
 else if isencoding.typ then typeint
+else if isseq.typ then typeptr
 else
  let flatflds = flatflds(alltypes, typ)
- if isempty.flatflds then typ
- else
-  let fldsize = length.flatflds
-  if fldsize = 1 then coretype(first.flatflds, alltypes)
-  else if fldsize > min(maxsize, length.packedtypes + 1)then typeptr else packedtypes_(fldsize - 1) 
+ let fldsize = length.flatflds
+ if fldsize = 1 then coretype(first.flatflds, alltypes, empty:seq.mytype)
+ else if fldsize = 0 then typ
+ else if fldsize - 1 > length.maxsize then typeptr else maxsize_(fldsize - 1) 

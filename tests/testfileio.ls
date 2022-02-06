@@ -2,6 +2,8 @@
 
 Module testfileio
 
+use IO2
+
 use UTF8
 
 use bits

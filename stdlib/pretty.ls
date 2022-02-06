@@ -8,6 +8,8 @@ use format
 
 use standard
 
+use textio
+
 use parsersupport.attribute2
 
 use seq.attribute2

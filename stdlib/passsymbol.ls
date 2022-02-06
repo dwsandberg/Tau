@@ -200,7 +200,7 @@ Function flds(isseq:boolean, binfotext:seq.word, modname:modref, name:word, typs
 let recordtype = if issimple.modname then first.typs else addabstract(first.typs, typeT)
 if not.isseq ∧ length.typs = 2 then
  let typ = recordtype
- if typ = typeboolean ∨ typ = typeint ∨ typ = typereal ∨ typ = typeptr then empty:seq.symdef
+ if iscore4.typ then empty:seq.symdef
  else
   let fldtype = last.typs
   [symdef(symbol(modname, [name], fldtype, typ), [Local.1])

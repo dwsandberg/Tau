@@ -214,8 +214,6 @@ Export code(compileinfo)seq.seq.symbolref
 
 Export src(compileinfo)seq.seq.word
 
-Export coretype(mytype, typedict)mytype
-
 Export ?(symdef, symdef)ordering
 
 Export type:modref

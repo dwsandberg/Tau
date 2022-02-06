@@ -1,5 +1,7 @@
 Module textio
 
+use IO2
+
 use UTF8
 
 use bits
@@ -94,4 +96,10 @@ for acc = "", last = 1, i = 1, pending = empty:seq.char, ch ∈ chars + spacecha
    else if ch = char1."." ∧ i + 1 ≤ length.chars ∧ chars_(i + 1) = spacechar then
     next(newacc + encodeword.[char1.".", spacechar], i + 1, i + 1, empty:seq.char)
    else next(newacc + class, i + 1, i + 1, empty:seq.char)
-/for(acc) 
+/for(acc)
+
+Function createfile(filename:seq.word, s:seq.word)int createfile(filename, toseqbyte.toUTF8.s)
+
+Export createfile(name:seq.word, a:seq.byte)int
+
+Export getfile:byte(name:seq.word)seq.byte 

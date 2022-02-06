@@ -1,22 +1,14 @@
 Module standard
 
+use IO2
+
 use UTF8
 
-use bits
-
 use format
-
-use inputoutput
-
-use textio
 
 use words
 
 use xxhash
-
-use seq.bit
-
-use seq.byte
 
 use seq.char
 
@@ -32,9 +24,7 @@ Export type:UTF8
 
 Export towords(UTF8)seq.word
 
-Export HTML(seq.word)UTF8
-
-Export TEXT(seq.word)UTF8
+Export HTMLformat(output:seq.word)UTF8
 
 Export stacktrace seq.word
 
@@ -126,22 +116,6 @@ Function between(i:int, lower:int, upper:int)boolean i ≥ lower ∧ i ≤ upper
 
 Function ^(i:int, n:int)int
 {* nth power of i}for acc = 1, @e ∈ constantseq(n, i)do acc * @e /for(acc)
-
----------------------
-
-Export getfile:byte(name:seq.word)seq.byte
-
-Export getfile:bit(name:seq.word)seq.bit
-
-Export getfile:int(name:seq.word)seq.int
-
-Export gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
-
-Function createfile(filename:seq.word, s:seq.word)int createfile(filename, toseqbyte.toUTF8.s)
-
-Export createfile(name:seq.word, a:seq.byte)int
-
-Export createfile(name:seq.word, a:seq.int)int
 
 _______________
 
@@ -332,4 +306,30 @@ Function toindex(i:int)index
 assert i > 0 report"not an index" + stacktrace
 index(i - 1)
 
-Function toint(i:index)int rep.i + 1 
+Function toint(i:index)int rep.i + 1
+
+Module IO2
+
+use bits
+
+use inputoutput
+
+use standard
+
+use seq.bit
+
+use seq.byte
+
+Export stacktrace seq.word
+
+Export randomint(int)seq.int
+
+Export createfile(name:seq.word, a:seq.byte)int
+
+Export getfile:byte(name:seq.word)seq.byte
+
+Export createfile(name:seq.word, a:seq.int)int
+
+Export getfile:bit(name:seq.word)seq.bit
+
+Export getfile:int(name:seq.word)seq.int 

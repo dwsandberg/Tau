@@ -1,8 +1,6 @@
-resultCheck("stdxlib")
+#!/bin/sh tau stdlib tools baseTypeCheck webassembly
 
 Module baseTypeCheck
-
-use main2
 
 use standard
 
@@ -28,32 +26,21 @@ use set.typemap
 
 use process.seq.word
 
+function coretype(typ:mytype, alltypes:typedict)mytype
+let b = basetype(typ, alltypes)
+if isseq.b then typeptr else b
+
 type typemap is key:int, value:mytype
 
 function lookup(a:set.typemap, key:int)set.typemap lookup(a, typemap(key, typeint))
 
 Function ?(a:typemap, b:typemap)ordering key.a ? key.b
 
-Function resultCheck(library:seq.word)seq.word
-let p = process.glue2.library
-if aborted.p then message.p else result.p
-
-function glue2(library:seq.word)seq.word
-let r2 = compilerfront("pass2", library)
-checkresults.prg.r2
-
-Function baseTypeCheck(library:seq.word)seq.word
-let p = process.glue.library
-if aborted.p then message.p else result.p
-
-function glue(library:seq.word)seq.word
-let r2 = compilerfront("pass2", library)
-basetypecheck(prg.r2, typedict.r2)
-
 function print(s:seq.mytype)seq.word for a = "", e ∈ s do a + print.e /for(a)
 
-Function basetypecheck(r2:seq.symdef, typedict:typedict)seq.word
-for acc = empty:seq.word, count = 0, s ∈ r2 do
+Function baseTypeCheck(r2:compileinfo)seq.word
+let typedict = typedict.r2
+for acc = empty:seq.word, count = 0, s ∈ prg.r2 do
  let p = process.checkkind(s, typedict)
  let b = 
   if aborted.p then
@@ -89,7 +76,7 @@ else
      {assert false report"BB"+print.s+print.value.s+for acc="", i=keys.z do acc+toword.i /for(acc)+for acc="", i=data 
 .z do acc+print.i /for(acc)}
      next(pop.stk, typemap(value.s, top.stk) ∪ localtypes, false)
-    else if iswords.s then next(push(stk, typeptr), localtypes, false)
+    else if iswords.s then next(push(stk, {seqof.typeint}typeptr), localtypes, false)
     else if isRealLit.s then next(push(stk, typereal), localtypes, false)
     else if isword.s ∨ isIntLit.s ∨ isFref.s then next(push(stk, typeint), localtypes, false)
     else if isRecord.s then
@@ -103,7 +90,8 @@ else
      let loc = addlocals(localtypes, top(stk, nopara.s), firstvar.s + no - 1, no)
      next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), loc, false)
     else if isexit.s then
-     assert top.stk = top.pop.stk report"exit type does not match block type" + print.top.stk + print.top.pop.stk
+     assert top.stk = top.pop.stk ∨ top.stk = typeint ∧ top.pop.stk = typebyte
+     report"exit type does not match block type" + print.top.stk + print.top.pop.stk
      next(pop.stk, localtypes, false)
     else if isblock.s then next(stk, localtypes, false)
     else if iscontinue.s then
@@ -129,18 +117,27 @@ else
     else
      let parakinds = 
       for acc = empty:seq.mytype, @e ∈ paratypes.s do acc + coretype(@e, typedict)/for(acc)
-     assert top(stk, nopara.s) = parakinds
+     assert check5(top(stk, nopara.s), parakinds)
      report" /br symbol type missmatch for" + print.s + " /br stktop"
      + print.top(stk, nopara.s)
      + " /br parabasetypes"
      + print.parakinds
      next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), localtypes, false)
   /for(assert length.toseq.stk = 1 report"Expect one element on stack:" + print.toseq.stk
-  assert top.stk = returntype
+  assert check5([top.stk], [returntype])
   report"Expected return type of" + print.returntype + "but type on stack is" + print.top.stk
   "")
 
-function checkresults(prg:seq.symdef)seq.word
+function check5(a:seq.mytype, b:seq.mytype)boolean
+if a = b then true
+else
+ let z = print.a + ":" + print.b
+ if z ∈ ["byte:int", "byte ptr:int ptr"]then true
+ else
+  assert print.a = print.b report"X" + print.a + print.b
+  false
+
+Function checkresults(prg:seq.symdef)seq.word
 let undefined = 
  for defines = empty:set.symbol, uses = empty:set.symbol, h ∈ prg do next(defines + sym.h, uses ∪ asset.code.h)/for(uses \ defines \ asset.knownsym)
 for acc10 = " /p  /p checkresults  /p", h ∈ toseq.undefined do
@@ -169,8 +166,8 @@ let typeindex = typeref."index index."
 , symbol(internalmod, "tocstr", seqof.typebits, typecstr)
 , symbol(internalmod, "createlib2", [typecstr, typecstr, typeint, seqof.typebits], typeint)
 , symbol(internalmod, "callstack", typeint, seqof.typeint)
-, symbol(internalmod, "dlsymbol", typecstr, typeint)
-, symbol(internalmod, "outofbounds", seqof.typeword)
+, {symbol(internalmod, "dlsymbol", typecstr, typeint), }
+symbol(internalmod, "outofbounds", seqof.typeword)
 , symbol(internalmod, "addresstosymbol2", typeint, seqof.typeref."char standard.")
 , symbol(internalmod, "getfile", typecstr, typeptr)
 , symbol(internalmod, "getbitfile", typecstr, typeptr)
@@ -226,10 +223,12 @@ let typeindex = typeref."index index."
 , symbol(internalmod, "idxseq", seqof.typeint, typeint, typeint)
 , symbol(internalmod, "idxseq", seqof.typeptr, typeint, typeptr)
 , symbol(internalmod, "idxseq", seqof.typeboolean, typeint, typeboolean)
+, symbol(internalmod, "idxseq", seqof.typebyte, typeint, typebyte)
 , symbol(internalmod, "callidx", seqof.typereal, typeint, typereal)
 , symbol(internalmod, "callidx", seqof.typeint, typeint, typeint)
 , symbol(internalmod, "callidx", seqof.typeptr, typeint, typeptr)
 , symbol(internalmod, "callidx", seqof.typeboolean, typeint, typeboolean)
+, symbol(internalmod, "callidx", seqof.typebyte, typeint, typebyte)
 , symbol(internalmod, "packedindex", seqof.typebyte, typeint, typeptr)
 , symbol(internalmod, "packedindex", seqof.typebit, typeint, typeptr)
 , symbol(internalmod
@@ -262,10 +261,13 @@ let typeindex = typeref."index index."
 , typeint
 , typeptr
 )
-, {setSym.typereal, setSym.typeint, setSym.typeboolean, setSym.typeptr, }abortsymbol.typereal
+, symbol(internalmod, "set", typeptr, typeint, typeptr)
+, symbol(internalmod, "set", typeptr, typeptr, typeptr)
+, abortsymbol.typereal
 , abortsymbol.typeint
 , abortsymbol.typeboolean
 , abortsymbol.typeptr
+, abortsymbol.typebyte
 , Exit
 , Start.typereal
 , Start.typeint

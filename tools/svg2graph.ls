@@ -1,6 +1,32 @@
+#!/bin/sh tau stdlib tools htmlcode checkdata
+
+callgraphbetween stdlib standard inputoutput
+
+module help
+
+use standard
+
+function comb(i:int, str:seq.word)int
+if i = length.str then i
+else if str_(i + 1) ∈ "-"then comb(i + 2, str)else i
+
+Function element(str:seq.word, vals:seq.seq.word, body:seq.word)seq.word
+for acc = [merge("<" + first.str)], idx = 2, val ∈ vals do
+ let j = comb(idx, str)
+ next(acc + subseq(str, idx, j) + '="' + val + '"' + space, j + 1)
+/for(acc
++ if isempty.body then[merge(" />" + space)]
+else">" + body + merge("</" + first.str + ">")/if)
+
+Function element(str:seq.word, body:seq.word)seq.word
+[merge("<" + str + ">")] + body + body
++ merge("</" + first.str + ">")
+
 module svg2graph.T
 
 use UTF8
+
+use help
 
 use real
 
@@ -80,8 +106,8 @@ Function drawscript:T seq.word
 (idval, index){if(index > 0){let element=document.getElementById(idval); let d="M"'
 + space
 + '+(bb.x+bb.width)+", "+(bb.y+bb.height)+element.getAttribute("d").substring(5); element.setAttribute("d 
-", d);}});}</script> <style>.arcs{fill:none ; stroke:black ; stroke-width:.07 ;}.nodes{font-size:0.6; stroke-
-width:.1 ;}svg g:hover text{opacity:1;}svg g:hover rect{opacity:1;}</style> '
+", d);}});}</script> <style>.arcs{fill:none ; stroke:black ; stroke-width:.07 ;}.nodes{font-size:.03em; stroke 
+-width:.1 ;}svg g:hover text{opacity:1;}svg g:hover rect{opacity:1;}</style> '
 + encodeword.[char.10]
 
 unbound node2text(T)seq.word
@@ -132,30 +158,36 @@ do
 (out)+for out=" /p", nn /in toseq.nodes.xxx do out+node2text.nn /for(out)}
  if i ≤ cardinality.nodes.xxx ∧ (nodes.xxx)_i = n.n then
   let succ = toseq.successors(xxx, n.n)
-  let txtend = 
-   print(3, nodex) + '"y="' + print(3, nodey) + '"> ' + node2text.n.n
-   + ' </text> '
-   + encodeword.[char.10]
   let hovertext = nodeTitle.n.n
   let svg = 
-   ' <text id="' + toword.id + '"class="nodes"x="' + txtend
+   element("text id class x y"
+   , [[toword.id], "nodes", print(3, nodex), print(3, nodey)]
+   , node2text.n.n
+   )
+   + encodeword.[char.10]
    + for arctxt = "", j = id + 1, s ∈ succ do
     let xy = lookup(nodeinfo.layout, nodeinfo(s, 0, 0))_1
     let paths = lookup(arcpaths, arcpath(arc(n.n, s), "", 0))
     let path = 
      if isempty.paths then"L" + print(3, toreal.y.xy * scalex) + print(3, toreal.x.xy * scaley)
      else d.paths_1
-    next(arctxt + ' <path id="' + toword.j + '"class="arcs"d="M 0 0 ' + path + '"'
-    + merge(" />" + space)
+    next(arctxt
+    + element("path id class d"
+    , [[toword.j], "arcs", "M 0 0" + path]
+    , ""
+    )
     + encodeword.[char.10]
     + if haslabels then
      let lab = lookup(labels, arc(n.n, s, ""))
      if isempty.lab then""
      else
-      ' <text class="nodes"> <textPath href="' + merge(' # ' + toword.j)
-      + '"startOffset="100%"text-anchor="end"> <tspan dy="-0.1"> '
-      + label.lab_1
-      + ' </tspan> </textPath> </text> '
+      element("text class"
+      , ["nodes"]
+      , element("textPath href startOffset text-anchor"
+      , [[merge(' # ' + toword.j)], "100%", "end"]
+      , element("tspan dy", ["-0.1"], label.lab_1)
+      )
+      )
       + encodeword.[char.10]
     else""
     , j + 1
@@ -175,16 +207,16 @@ do
   )
  else next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
 /for(let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e /for(svg2)
-'  /br  /< noformat <svg id=svg10 xmlns="http://www.w3.org/2000/svg"viewBox="5.0-1 '
-+ print(2, maxx + 5.0)
-+ print(2, maxy + 1.0)
-+ '"onload="['
-+ draw >> 1
-+ '].forEach(shiftstart)"> '
-+ drawscript:T
-+ txt
-+ hovertxt
-+ "</svg>  />")
+" /br  /< noformat"
++ element("svg id xmlns viewBox onload"
+, ["svg10"
+, "http://www.w3.org/2000/svg"
+, "5.0-1" + print(2, maxx + 5.0) + print(2, maxy + 1.0)
+, "[" + draw >> 1 + "].forEach(shiftstart)"
+]
+, drawscript:T + txt + hovertxt
+)
++ " />")
 
 type hovertext is n:T, nodex:real, nodey:real, text:seq.word
 
@@ -193,21 +225,32 @@ if nodex.b < nodex.a ∨ nodey.b < nodey.b then LT
 else if nodex.b = nodex.a ∨ nodey.b = nodey.b then EQ else GT
 
 function assvg(h:hovertext.T)seq.word
-' <g > <rect opacity="0.0"x="' + print(2, nodex.h) + '"y="'
-+ print(2, nodey.h - 0.5)
-+ '"height="0.5"width="1"'
-+ ' /><rect pointer-events="none"fill="white"opacity="0.0"x="'
-+ print(2, nodex.h)
-+ '"y="'
-+ print(2, nodey.h - 0.5)
-+ '"height="1"width="100"'
-+ ' /><text pointer-events="none"class="nodes"x="'
-+ print(2, nodex.h)
-+ '"y="'
-+ print(2, nodey.h)
-+ '"opacity="0.0"> '
-+ text.h
-+ ' </text> </g> '
+element("g"
+, element("rect opacity x y height width"
+, ["0.0"
+, print(2, nodex.h)
+, print(2, nodey.h - 0.5)
+, "0.5"
+, "1"
+]
+, ""
+)
++ element("rect pointer-events fill opacity x y height width"
+, ["none"
+, "white"
+, "0.0"
+, print(2, nodex.h)
+, print(2, nodey.h - 0.5)
+, "1"
+, "100"
+]
+, ""
+)
++ element("text pointer-events class x y opacity"
+, ["none", "nodes", print(2, nodex.h), print(2, nodey.h), "0.0"]
+, text.h
+)
+)
 + encodeword.[char.10]
 
 module uniqueids

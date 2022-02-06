@@ -1,12 +1,18 @@
-#!/bin/sh tau stdlib tools doclibrary stdlib.
+#!/bin/sh tau stdlib tools callgraphbetween stdlib standard inputoutput
+
+#!/bin/sh tau stdlib tools callgraphwithin tools doc
+
+#!/bin/sh tau stdlib tools createdoc
+
+doclibrary stdlib.
 
 Module doc
+
+use UTF8
 
 use format
 
 use libraryModule
-
-use main2
 
 use pretty
 
@@ -74,21 +80,27 @@ Function createdoc seq.word
 {Creates html tau html documentation. Creates file taudocs.html}
 let d = 
  for acc = "", @e ∈ prettyfile(false, "", gettext."tools/doc.txt")do acc + addselect.@e /for(acc)
-let x1 = createfile("doc.html", toUTF8bytes.d)
+let x1 = createfile("taudoc.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d))
+let d2 = 
+ for acc = ""
+ , @e ∈ prettyfile(false, "", gettext."tools/install.txt")
+ do acc + addselect.@e /for(acc)
+let x2 = createfile("install.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d2))
 {let x2=createfile("appdoc.html", [htmlheader+processpara.@(+, addselect, "", gettext."tools/appdoc.txt")]
 )}
 {let y1=createhtmlfile("testall.html", htmlcode."testall")}
-let y1 = createfile("stdlib.html", toUTF8bytes.doclibrary."stdlib")
-d
+let y1 = 
+ createfile("stdlib.html", toseqbyte(toUTF8.htmlheader + HTMLformat.doclibrary."stdlib"))
+d2
 
 function addselect(s:seq.word)seq.word
 if isempty.s then" /p" + s
 else if first.s = first."/section"then" /< /section" + s << 1 + " />"
 else if first.s ∈ "Module module"then" /p  /keyword" + s else" /p" + s
 
-Function callgraphbetween(libname:seq.word, modulelist:seq.word)seq.word
+Function callgraphbetween(prg:seq.symdef, modulelist:seq.word)seq.word
 {Calls between modules in list of modules. }
-let z = formcallarcs.libname
+let z = formcallarcs.prg
 let arcs = 
  for acc = empty:seq.arc.symbol, a ∈ z do
   let t1 = tail.a
@@ -98,30 +110,21 @@ let arcs =
  /for(acc)
 drawgraph.newgraph.arcs
 
-Function formcallarcs(libname:seq.word)seq.arc.symbol
-for arcs2 = empty:seq.arc.symbol, p ∈ prg.compilerfront("text", libname)do
+function formcallarcs(prg:seq.symdef)seq.arc.symbol
+for arcs2 = empty:seq.arc.symbol, p ∈ prg do
  let tail = decode.symbolref.sym.p
  for arcs = arcs2, sym ∈ code.p do
   if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs else arcs + arc(tail, decode.symbolref.sym)
  /for(arcs)
 /for(arcs2)
 
-Function callgraphwithin(libname:seq.word, modulelist:seq.word)seq.word
+Function callgraphwithin(prg:seq.symdef, modulelist:seq.word)seq.word
 {Calls within modules in list of modules. }
-let t = 
- for arcs2 = empty:seq.arc.symbol, p ∈ prg.compilerfront("pass1", libname)do
-  let tail = sym.p
-  for arcs = arcs2, sym ∈ code.p do
-   if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs else arcs + arc(tail, sym)
-  /for(arcs)
- /for(arcs2)
-let g = newgraph.formcallarcs.libname
+let g = newgraph.formcallarcs.prg
 let nodesnottoinclude = 
  for acc = empty:set.symbol, @e ∈ toseq.nodes.g do if name.module.@e ∈ modulelist then acc else acc + @e /for(acc)
 let g2 = for acc = g, @e ∈ toseq.nodesnottoinclude do deletenode(acc, @e)/for(acc)
 drawgraph.g2
-
-Function testdoc seq.word{callgraphwithin("stdlib", "llvm")+}doclibrary."stdlib"
 
 Function doclibrary(libname:seq.word)seq.word
 {create summary documentation for libraray. }
@@ -141,8 +144,6 @@ for txt = "", modname ∈ mods do
  + "</a>  />"
 /for(txt)
 
-+if length.todoc > 0 then""else" /< /section Possibly Unused Functions  />  /< select x"+uncalledfunctions.libname+" />"
-
 * Paragraphs beginning with * are included in documentation.
 
 * If a paragraph in the library module is of the form:* only document <module1 name> <module2 name>... then only those modules 
@@ -152,9 +153,9 @@ named will be documented.
 will be construction including and excluding the modules listed. Both the exclude and include are optional, but for a large 
 library should be used to restrict the size of the graph. An example of a use graph is included at the end of this module.
 
-Function uncalledfunctions(libname:seq.word)seq.word
+Function uncalledfunctions(prg:seq.symdef)seq.word
 {List of functions may include indirectly called functions. }
-let g = newgraph.formcallarcs.libname
+let g = newgraph.formcallarcs.prg
 let sources = 
  for acc = empty:seq.symbol, @e ∈ toseq.nodes.g do acc + sources(g, empty:set.symbol, @e)/for(acc)
 for acc = "", @e ∈ sources do acc + print.@e + " /br"/for(acc)

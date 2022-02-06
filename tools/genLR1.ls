@@ -1,6 +1,10 @@
+#!/bin/sh tau stdlib tools taugrammar
+
 Module genLR1
 
 use format
+
+use pretty
 
 use standard
 
@@ -232,7 +236,12 @@ else if length.dup = 2 ∧ codedaction.dup_1 < 0 ∧ codedaction.dup_2 > 0 then
  else if between(shiftpos, 1, reducepos)then{choose shift}[dup_2]else dup
 else dup
 
-Function lr1parser(grammarandact:seq.seq.seq.word, ruleprec:seq.seq.word, terminals:seq.word, attributename:seq.word)seq.word
+Function lr1parser(grammarandact:seq.seq.seq.word
+, ruleprec:seq.seq.word
+, terminals:seq.word
+, attributename:seq.word
+, mode:seq.word
+)seq.word
 let grammar2 = for acc = empty:seq.seq.word, @e ∈ grammarandact do acc + first.@e /for(acc)
 let nontermials = for acc = empty:set.word, rule ∈ grammar2 do acc + first.rule /for(acc)
 assert isempty(asset.terminals ∩ nontermials)report"terminals and nontermials sets must be distinct"
@@ -264,38 +273,40 @@ let amb =
   acc
   + if length.@e > 1 then" /br >>>>" + print(grammar2, @e)else empty:seq.word
  /for(acc)
-if length.amb > 0 then
- "ambiguous actions:" + amb + " /br prec rules"
- + for acc = "", @e ∈ ruleprec do acc + "|" + @e /for(acc)
-else""/if
-+ print(grammar2, actions3)
-+ generatereduce(grammarandact, alphabet, attributename)
-+ '  /p function tokenlist:T seq.word"'
-+ alphabet
-+ '"'
-+ " /p function startstate:T int"
-+ toword.initialstateno
-+ " /p function finalstate:T int"
-+ toword.finalstateno
-+ " /p noactions"
-+ toword.length.actions
-+ " /br nosymbols:"
-+ toword.length.alphabet
-+ " /br norules"
-+ toword.length.grammarandact
-+ " /br nostate"
-+ toword.length.encoding:seq.encodingpair.state
-+ if length.amb = 0 then
- let x = 
-  for table = sparseseq.0, @e ∈ actions3 do
-   replaceS(table, findindex(lookahead.@e, alphabet) + length.alphabet * stateno.@e, [codedaction.@e])
-  /for(table)
- " /p function actiontable:T seq.int["
- + for acc = "", @e ∈ x do acc + toword.@e + ", "/for(acc >> 1)
- + "]"
-else""/if
-+ " /p follow"
-+ print.follow.graminfo
+let result = 
+ [generatereduce(grammarandact, alphabet, attributename)
+ , "function rulelength:T seq.int"
+ + for acc = "[", @e ∈ grammarandact do acc + toword(length.@e_1 - 1) + ", "/for(acc >> 1 + ']')
+ , "function leftside:T seq.int"
+ + for acc = "[", @e ∈ grammarandact do acc + toword.findindex(@e_1_1, alphabet) + ", "/for(acc >> 1 + ']')
+ , ' function tokenlist:T seq.word"' + alphabet + '"'
+ , "function startstate:T int" + toword.initialstateno
+ , "function finalstate:T int" + toword.finalstateno
+ , "function actiontable:T seq.int"
+ + if length.amb = 0 then
+  let x = 
+   for table = sparseseq.0, @e ∈ actions3 do
+    replaceS(table, findindex(lookahead.@e, alphabet) + length.alphabet * stateno.@e, [codedaction.@e])
+   /for(table)
+  for acc = "[", @e ∈ x do acc + toword.@e + ", "/for(acc >> 1 + "]")
+ else"{action table omitted}[0]"
+ ]
+let header = 
+ " /p noactions" + toword.length.actions + "nosymbols:" + toword.length.alphabet
+ + "norules:"
+ + toword.length.grammarandact
+ + "nostate:"
+ + toword.length.encoding:seq.encodingpair.state
+ + " /p"
+ + if length.amb > 0 then
+  "ambiguous actions:" + amb + " /br prec rules"
+  + for acc = "", @e ∈ ruleprec do acc + "|" + @e /for(acc)
+ else""/if
+ + if mode = ""then print(grammar2, actions3)else""
+for txt = header, p ∈ result do
+ txt + " /p"
+ + if mode = "code only pretty"then pretty.towords.textformat.p else p
+/for(if mode = ""then txt + " /p follow" + print.follow.graminfo else txt /if)
 
 function print(a:graph.word)seq.word
 for acc = "nodes", node ∈ toseq.nodes.a do
@@ -329,18 +340,12 @@ else
   /for(acc)
  closestate(graminfo, stateno + 1, newresult, alphabet)
 
-Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attribute:seq.word)seq.word
-" /br  /br Function action(ruleno:int, input:seq.token." + attribute
-+ ", R:reduction."
-+ attribute
+Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attributename:seq.word)seq.word
+"Function action(ruleno:int, input:seq.token." + attributename + ", R:reduction."
++ attributename
 + ")"
-+ attribute
++ attributename
 + for acc = "", i = 1, e ∈ grammarandact do next(acc + reduceline(e, i, length.grammarandact), i + 1)/for(acc)
-+ " /p function rulelength:T seq.int["
-+ for acc = "", @e ∈ grammarandact do acc + toword(length.@e_1 - 1) + ", "/for(acc >> 1)
-+ "] /p function leftside:T seq.int["
-+ for acc = "", @e ∈ grammarandact do acc + toword.findindex(@e_1_1, alphabet) + ", "/for(acc >> 1)
-+ ']'
 
 function reduceline(grammerandact:seq.seq.word, i:int, last:int)seq.word
 let s = grammerandact
@@ -355,16 +360,15 @@ prefix + part2
  acc + if w ∈ "let assert"then" /br" + w else[w]
 /for(acc)
 
-Function gentau2 seq.word
+Function gentau seq.word
 {used to generater tau parser for Pass1 of the tau compiler. }
-lr1parser(taurules2, tauruleprec, taualphabet, "bindinfo")
+lr1parser(taurules2, tauruleprec, taualphabet, "bindinfo", "code only pretty")
 
 function taualphabet seq.word".=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do"
 
 function tauruleprec seq.seq.word
-{list of rules and lookaheads. The position of the lookahead is noted. Rule reductions after are discard and rule the first 
-rule listed before the position is used to reduce. }
-{[""]}
+{list of rules and lookaheads. The position of the lookahead is noted. Rule reductions after position are discarded and 
+rule the first rule listed before the position is used to reduce. }
 ["("
 , "E NM"
 , ' E comment E '
@@ -384,8 +388,7 @@ rule listed before the position is used to reduce. }
 , "∧"
 , "E E ∨ E"
 , "∨"
-]
-+ ["/for"
+, "/for"
 , "/if"
 , "E if E then E else E"
 , "E assert E report D E"
@@ -438,7 +441,7 @@ dict.R, [f], [resulttype.f], "")else R_1 '
 , [' L E ', ' R_1 ']
 , [' L L, E ', ' bindinfo(dict.R, code.R_1+code.R_3, types.R_1+types.R_3, "")']
 , [' E[L]'
-, ' let types=types.R_2 assert for acc=true, @e=types do acc ∧ types_1=@e /for(acc)report errormessage("types do not match 
+, ' let types=types.R_2 assert for acc=true, @e ∈ types do acc ∧ types_1=@e /for(acc)report errormessage("types do not match 
 in build", common, place)bindinfo(dict.R, code.R_2+Sequence(types_1, length.types), [seqof.types_1], "")'
 ]
 , [' A W=E '
@@ -459,8 +462,7 @@ internalmod, "report", typeint)else EndBlock, types.R_5, "")'
 ]
 , [' E I ', ' bindlit.R ']
 , [' E I.I '
-, ' bindinfo(dict.R, [Words(tokentext.R_1+"."+tokentext.R_3), symbol(moduleref."stdlib UTF8", "makereal", seqof 
-.typeword, typereal)], [typereal], "")'
+, ' bindinfo(dict.R, [Words(tokentext.R_1+"."+tokentext.R_3), makerealSymbol], [typereal], "")'
 ]
 , [' T W ', ' R_1 ']
 , [' T W.T '
@@ -498,37 +500,24 @@ typeword, first.types.R_2, first.types.R_2), types.R_2, "")else R_2 '
 
 Function gentaupretty seq.word
 {used to generater tau parser for Pass1 of the tau compiler. }
-lr1parser(tauprettyrules, tauruleprec, taualphabet, "attribute2")
+lr1parser(tauprettyrules, tauruleprec, taualphabet, "attribute2", "code only pretty")
 
 function tauprettyrules seq.seq.seq.word
 {after generator grammar change %%% to \}
 [[' G F # ', ' R_1 ']
-, [' F W NM(FP)T E '
-, ' pretty.[key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4+width.R_7 > 30 then block.R_7 else R_7]'
+, [' F W NM(FP)T E ', ' prettyfunc.R ']
+, [' F W_(FP)T E ', ' prettyfunc.R ']
+, [' F W-(FP)T E ', ' prettyfunc.R ']
+, [' F W=(FP)T E ', ' prettyfunc.R ']
+, [' F W >(FP)T E ', ' prettyfunc.R ']
+, [' F W *(FP)T E ', ' prettyfunc.R ']
+, [' F W ∧(FP)T E ', ' prettyfunc.R ']
+, [' F W ∨(FP)T E ', ' prettyfunc.R ']
+, [' F W NM T E '
+, ' if width.R_4 > maxwidth then pretty.[attribute."%%%keyword", R_1, R_2, R_3, attribute."%%%br", R_4]else pretty.
+[attribute."%%%keyword", R_1, R_2, R_3, R_4]'
 ]
-, [' F W_(FP)T E '
-, ' pretty.[key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4+width.R_7 > 30 then block.R_7 else R_7]'
-]
-, [' F W-(FP)T E '
-, ' pretty.[key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4+width.R_7 > 30 then block.R_7 else R_7]'
-]
-, [' F W=(FP)T E '
-, ' pretty.[key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4+width.R_7 > 30 then block.R_7 else R_7]'
-]
-, [' F W >(FP)T E '
-, ' pretty.[key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4+width.R_7 > 30 then block.R_7 else R_7]'
-]
-, [' F W *(FP)T E '
-, ' pretty.[key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4+width.R_7 > 30 then block.R_7 else R_7]'
-]
-, [' F W ∧(FP)T E '
-, ' pretty.[key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4+width.R_7 > 30 then block.R_7 else R_7]'
-]
-, [' F W ∨(FP)T E '
-, ' pretty.[key.R_1, R_2, R_3, R_4, R_5, R_6, if width.R_4+width.R_7 > 30 then block.R_7 else R_7]'
-]
-, [' F W NM T E ', ' pretty.[key.R_1, R_2, R_3, R_4]']
-, [' F W NM is P ', ' pretty.[key.R_1, R_2, R_3, list.R_4]']
+, [' F W NM is P ', ' pretty.[attribute."%%%keyword", R_1, R_2, R_3, list.R_4]']
 , [' FP P ', ' list.R_1 ']
 , [' P T ', ' R_1 ']
 , [' P P, T ', ' R_1+R_3 ']
@@ -538,19 +527,12 @@ function tauprettyrules seq.seq.seq.word
 , [' P P, comment W:T ', ' R_1+pretty.[R_3, R_4, R_5, R_6]']
 , [' E NM ', ' R_1 ']
 , [' E NM(L)'
-, ' if length.R_3=1 ∧ length.text.R_1=1 then wrap(3, R_1, ".", R_3)else pretty.[R_1, R_2, list.R_3, R_4]'
+, ' if length.R_3=1 ∧ length.text.R_1=1 then wrap(3, R_1, ".", R_3)else pretty.[R_1, attribute."(", list.R_3, attribute 
+.")"]'
 ]
 , [' E(E)', ' R_2 ']
-, [' E if E then E else E '
-, ' let x1="%%%keyword if"+removeclose.text.R_2+"%%%keyword then"let x=attribute(x1+removeclose.text.R_4)let 
-t=if width.R_2+width.R_4+width.R_6 < 30 then[x, key.R_5, R_6]else if width.R_2+width.R_4 < 30 then[x, elseblock.R 
-_6]else[attribute(x1+removeclose.text.block.R_4), elseblock.R_6]pretty(t+attribute."\ if")'
-]
-, [' E if E then E else E /if '
-, ' let x1="%%%keyword if"+removeclose.text.R_2+"%%%keyword then"let x=attribute(x1+removeclose.text.R_4)let 
-t=if width.R_2+width.R_4+width.R_6 < 30 then[x, key.R_5, R_6]else if width.R_2+width.R_4 < 30 then[x, elseblock.R 
-_6]else[attribute(x1+removeclose.text.block.R_4), elseblock.R_6]pretty(t+attribute."\ if")'
-]
+, [' E if E then E else E ', ' ifthenelse.R ']
+, [' E if E then E else E /if ', ' ifthenelse.R ']
 , [' E E_E ', ' wrap(1, R_1, text.R_2, R_3)']
 , [' E-E ', ' unaryminus.R_2 ']
 , [' E W.E ', ' wrap(3, R_1, text.R_2, R_3)']
@@ -563,96 +545,82 @@ _6]else[attribute(x1+removeclose.text.block.R_4), elseblock.R_6]pretty(t+attribu
 , [' L E ', ' R_1 ']
 , [' L L, E ', ' R_1+R_3 ']
 , [' E[L]', ' pretty.[R_1, list.R_2, R_3]']
-, [' A W=E ', ' pretty.[R_1, R_2, R_3]']
+, [' A W=E ', ' pretty.[R_1, if width.R_3 > maxwidth then block.R_3 else R_3]']
 , [' E let A E '
-, '{checkpara(pretty.[R_1, R_2], block("%%%br let assert", R_3))}attribute("%%%keyword let"+subseq(text.R_2, 1 
-, 2)+protect(text.R_2 << 2, text.block("%%%br let assert", R_3)))'
+, ' attribute2.[prettyresult(0, 10000, "%%%keyword let"+first.text.R_2+[space, "="_1, space]+protect(text.R_2 
+<< 1, text.R_3))]'
 ]
 , [' E assert E report D E '
-, ' pretty.[key.R_1, R_2, attribute("%%%keyword report"+protect(text.R_4, text.block("%%%br let assert", R_5)))
-]'
+, ' attribute2.[prettyresult(0, 10000, "%%%keyword assert"+text.R_2+if width.R_2+width.R_4 > maxwidth then"%%%br 
+"else""/if+"%%%keyword report"+protect(text.R_4, text.R_5))]'
 ]
 , [' E I ', ' R_1 ']
 , [' E I.I ', ' pretty.[R_1, R_2, R_3]']
 , [' T W ', ' R_1 ']
 , [' T W.T ', ' pretty.[R_1, R_2, R_3]']
-, [' E $wordlist '
-, ' attribute2.[prettyresult(0, length.text.R_1, "%%%{literal"+escapeformat.text.R_1+"%%%}")]'
-]
+, [' E $wordlist ', ' attribute("%%%< literal"+escapeformat.text.R_1+"%%%>")']
 , [' E comment E '
-, ' let t="%%%{comment{"+escapeformat.text.R_1 << 1 >> 1+"}%%%}"let t2=if width.R_1+width.R_2 > 30 ∧(text.R_2)_1 ≠"
-%%%br"_1 then t+"%%%br"else t pretty.[attribute2.[prettyresult(0, length.text.R_1, t2)], R_2]'
+, ' precAttribute(prec.(toseq.R_2)_1, "%%%< comment"+escapeformat.text.R_1+"%%%>"+if width.R_1+width.R_2 > maxwidth 
+then"%%%br"+text.R_2 else text.R_2)'
 ]
 , [' NM W ', ' R_1 ']
 , [' NM W:T ', ' pretty.[R_1, R_2, R_3]']
-, [' F1 W=E ', ' pretty.[R_1, R_2, R_3]']
-, [' F1 F1, W=E ', ' pretty.[R_1, R_2, R_3, R_4, R_5]']
-, [' F2 F1 ', ' R_1 ']
+, [' F1 W=E ', ' pretty.[R_1, attribute.[space, "="_1, space], R_3]']
+, [' F1 F1, W=E ', ' R_1+pretty.[R_3, attribute.[space, "="_1, space], R_5]']
+, [' F2 F1, W-E ', ' R_1+pretty.[R_3, attribute."∈", R_5]']
 , [' E for F2 do E /for(E)'
-, ' if width.R_2+width.R_4 < 30 then pretty.[key.R_1, list.R_2, attribute("%%%keyword do"+removeclose.text.R_4+"
-%%%keyword /for"), R_6, R_7, R_8]else pretty.[key.R_1, list.R_2, attribute("%%%keyword do"+removeclose.text.block 
-.R_4+"%%%br %%%keyword /for"), R_6, R_7, R_8]'
+, ' if width.R_2+width.R_4 < maxwidth then pretty.[attribute."%%%keyword for", list.R_2, attribute("%%%keyword do 
+"+removeclose.text.R_4+"%%%keyword /for"), R_6, R_7, R_8]else pretty.[attribute."%%%keyword for", list.R_2, attribute 
+("%%%keyword do"+removeclose.text.block.R_4+"%%%br %%%keyword /for"), R_6, R_7, R_8]'
 ]
-, [' E for F2 while(E)E /for(E)'
-, ' pretty.[key.R_1, list.R_2, attribute("%%%keyword while("+text.R_5+")"+removeclose.text.R_7+"%%%keyword /for 
-"), R_9, R_10, R_11]'
+, [' E for F2 while E do E /for(E)'
+, ' if width.R_2+width.R_4+width.R_6 < maxwidth then pretty.[attribute."%%%keyword for", list.R_2, attribute("%%%keyword 
+while"+text.R_4+"%%%keyword do"+removeclose.text.R_6+"%%%keyword /for"), R_8, R_9, R_10]else pretty.[attribute 
+."%%%keyword for", list.R_2, attribute("%%%br %%%keyword while"+text.R_4+"%%%br %%%keyword do"+removeclose.text 
+.R_6+"%%%br %%%keyword /for"), R_8, R_9, R_10]'
 ]
 , [' D E ', "R_1"]
 ]
 
 Function test112 seq.word
-extractgrammer.' function action(ruleno:int, dupinput:seq.word, place:int, R:reduction.bindinfo)bindinfo let common=common.
-dict.R if ruleno={G F #}1 then R_1 else if ruleno={F W NM(FP)T E}2 then createfunc(R, common, place, tokentext.R_2, types 
-.R_4, R_6, R_7)else if ruleno={F W_(FP)T E}3 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)else 
-if ruleno={F W-(FP)T E}4 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)else if ruleno={F W=(
-FP)T E}5 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)else if ruleno={F W >(FP)T E}6 then createfunc 
-(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)else if ruleno={F W *(FP)T E}7 then createfunc(R, common, place 
-, tokentext.R_2, types.R_4, R_6, R_7)else if ruleno={F W ∧(FP)T E}8 then createfunc(R, common, place, tokentext.R_2 
-, types.R_4, R_6, R_7)else if ruleno={F W ∨(FP)T E}9 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6 
-, R_7)else if ruleno={F W NM T E}10 then createfunc(R, common, place, tokentext.R_2, empty:seq.mytype, R_3, R_4)else 
-if ruleno={F W NM is P}11 then let tp=resolvetype(if isabstract.modname.common then tokentext.R_2+".T"else tokentext 
-.R_2, common, place)bindinfo(dict.R, empty:seq.symbol, [tp]+types.R_4, text.R_4)else if ruleno={FP P}12 then if 
-mode.common ∉"symbol"then addparameters(R_1, common, place)else R_1 else if ruleno={P T}13 then addpara(dict.R, "
-:", R_1, place)else if ruleno={P P, T}14 then addpara(dict.R, ":", R_3, place, R_1)else if ruleno={P W:T}15 then addpara 
-(dict.R, tokentext.R_1, R_3, place)else if ruleno={P P, W:T}16 then addpara(dict.R, tokentext.R_3, R_5, place, R_1 
-)else if ruleno={P comment W:T}17 then addpara(dict.R, tokentext.R_2, R_4, place)else if ruleno={P P, comment W:T}18 
-then addpara(dict.R, tokentext.R_4, R_6, place, R_1)else if ruleno={E NM}19 then if mode.common ∈"body text"then let 
-f=lookupbysig(dict.R, text.R_1, empty:seq.mytype, common, place)bindinfo(dict.R, [f], [resulttype.f], "")else 
-R_1 else if ruleno={E NM(L)}20 then unaryop(R, common, place, tokentext.R_1, R_3)else if ruleno={E(E)}21 then R_2 else 
-if ruleno={E if E then E else E}22 then ifexp(R, R_2, R_4, R_6, common, place)else if ruleno={E if E then E else E fi}23 then 
-ifexp(R, R_2, R_4, R_6, common, place)else if ruleno={E E_E}24 then opaction(R, common, place)else if ruleno={E-E}25 
-then unaryop(R, common, place, tokentext.R_1, R_2)else if ruleno={E W.E}26 then unaryop(R, common, place, tokentext 
-.R_1, R_3)else if ruleno={E E * E}27 then opaction(R, common, place)else if ruleno={E E-E}28 then opaction(R, common, 
-place)else if ruleno={E E=E}29 then opaction(R, common, place)else if ruleno={E E > E}30 then opaction(R, common, place 
-)else if ruleno={E E ∧ E}31 then opaction(R, common, place)else if ruleno={E E ∨ E}32 then opaction(R, common, place)else 
-if ruleno={L E}33 then R_1 else if ruleno={L L, E}34 then bindinfo(dict.R, code.R_1+code.R_3, types.R_1+types.R_3, 
-"")else if ruleno={E[L]}35 then let types=types.R_2 assert for acc=true, @e=types do acc ∧ types_1=@e /for(acc)report 
-errormessage("types do not match in build", common, place)bindinfo(dict.R, code.R_2+Sequence(types_1, length.types 
-), [seqof.types_1], "")else if ruleno={A W=E}36 then let name=tokentext.R_1 assert isempty.lookupbysig(dict.R, name 
-)report errormessage("duplicate symbol:"+name, common, place)let newdict=dict.R+Local(name_1, (types.R_3)_1 
-, cardinality.dict.R)bindinfo(newdict, code.R_3+Define(name_1, cardinality.dict.R), types.R_3, name)else if 
-ruleno={E let A E}37 then let letsym=if mode.common ∈"text"then[symbol(internalmod, "let", typeint, first.types.
-R_3, first.types.R_3)]else empty:seq.symbol bindinfo(dict.R_1, code.R_2+code.R_3+letsym, types.R_3, "")else 
-if ruleno={E assert E report D E}38 then assert(types.R_2)_1=typeboolean report errormessage("condition in assert 
-must be boolean in:", common, place)assert(types.R_4)_1=seqof.typeword report errormessage("report in assert must 
-be seq of word in:", common, place)let typ=(types.R_5)_1 let assertsym=symbol(builtinmod.typ, "assert", seqof.typeword 
-, typ)bindinfo(dict.R, [Start.(types.R_5)_1]+code.R_2+Br2(1, 2)+code.R_5+Exit+code.R_4+assertsym+Exit+if 
-mode.common ∈"text"then symbol(internalmod, "report", typeint)else EndBlock, types.R_5, "")else if ruleno={E I}
-39 then bindlit.R else if ruleno={E I.I}40 then bindinfo(dict.R, [Words(tokentext.R_1+"."+tokentext.R_3), symbol 
-(moduleref."stdlib UTF8", "makereal", seqof.typeword, typereal)], [typereal], "")else if ruleno={T W}41 then R_1 
-else if ruleno={T W.T}42 then bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1+"."+tokentext 
-.R_3)else if ruleno={E $wordlist}43 then let s=tokentext.R_1 bindinfo(dict.R, [Words.if mode.common ∈"text"then 
-s else subseq(s, 2, length.s-1)], [seqof.typeword], "")else if ruleno={E comment E}44 then if mode.common ∈"text"then 
-bindinfo(dict.R, [Words.tokentext.R_1]+code.R_2+symbol(internalmod, "{", seqof.typeword, first.types.R_2, 
-first.types.R_2), types.R_2, "")else R_2 else if ruleno={NM W}45 then R_1 else if ruleno={NM W:T}46 then bindinfo(dict 
-.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1+tokentext.R_3)else if ruleno={F1 W=E}47 then let name=tokentext 
-.R_1 assert isempty.lookupbysig(dict.R, name)report errormessage("duplicate symbol:"+name, common, place)bindinfo 
-(dict.R_1, code.R_3, types.R_3, name)else if ruleno={F1 F1, W=E}48 then let name=tokentext.R_3 assert isempty.lookupbysig 
-(dict.R, name)report errormessage("duplicate symbol:"+name, common, place)bindinfo(dict.R, code.R_1+code.R_
-5, types.R_1+types.R_5, tokentext.R_1+tokentext.R_3)else if ruleno={F2 F1}49 then forlocaldeclare(R_1, common 
-, place)else if ruleno={E for F2 do E end(E)}50 then forbody(dict.R_1, R_2, R_4, R_1, R_7, common, place)else if ruleno 
-={E for F2 while E do E end(E)}51 then forbody(dict.R_1, R_2, R_6, R_4, R_9, common, place)else assert ruleno={D E}52 report 
-"invalid rule number"+toword.ruleno R_1 '
+extractgrammer.' function action(ruleno:int, input:seq.word, place:int, R:reduction.attribute2)attribute2 if ruleno={G F #}1 then 
+R_1 else if ruleno={F W NM(FP)T E}2 then prettyfunc.R else if ruleno={F W_(FP)T E}3 then prettyfunc.R else if ruleno={F 
+W-(FP)T E}4 then prettyfunc.R else if ruleno={F W=(FP)T E}5 then prettyfunc.R else if ruleno={F W >(FP)T E}6 then prettyfunc 
+.R else if ruleno={F W *(FP)T E}7 then prettyfunc.R else if ruleno={F W ∧(FP)T E}8 then prettyfunc.R else if ruleno={F W ∨ 
+(FP)T E}9 then prettyfunc.R else if ruleno={F W NM T E}10 then if width.R_4 > maxwidth then pretty.[attribute."%%%keyword 
+", R_1, R_2, R_3, attribute."%%%br", R_4]else pretty.[attribute."%%%keyword", R_1, R_2, R_3, R_4]else if ruleno={
+F W NM is P}11 then pretty.[attribute."%%%keyword", R_1, R_2, R_3, list.R_4]else if ruleno={FP P}12 then list.R_1 else 
+if ruleno={P T}13 then R_1 else if ruleno={P P, T}14 then R_1+R_3 else if ruleno={P W:T}15 then pretty.[R_1, R_2, R_3]else 
+if ruleno={P P, W:T}16 then R_1+pretty.[R_3, R_4, R_5]else if ruleno={P comment W:T}17 then pretty.[R_1, R_2, R_3, R_
+4]else if ruleno={P P, comment W:T}18 then R_1+pretty.[R_3, R_4, R_5, R_6]else if ruleno={E NM}19 then R_1 else if ruleno 
+={E NM(L)}20 then if length.R_3=1 ∧ length.text.R_1=1 then wrap(3, R_1, ".", R_3)else pretty.[R_1, attribute."(", list 
+.R_3, attribute.")"]else if ruleno={E(E)}21 then R_2 else if ruleno={E if E then E else E}22 then ifthenelse.R else if ruleno 
+={E if E then E else E /if}23 then ifthenelse.R else if ruleno={E E_E}24 then wrap(1, R_1, text.R_2, R_3)else if ruleno={
+E-E}25 then unaryminus.R_2 else if ruleno={E W.E}26 then wrap(3, R_1, text.R_2, R_3)else if ruleno={E E * E}27 then wrap 
+(4, R_1, text.R_2, R_3)else if ruleno={E E-E}28 then wrap(5, R_1, text.R_2, R_3)else if ruleno={E E=E}29 then wrap(6, 
+R_1, text.R_2, R_3)else if ruleno={E E > E}30 then wrap(7, R_1, text.R_2, R_3)else if ruleno={E E ∧ E}31 then wrap(8, R_1 
+, text.R_2, R_3)else if ruleno={E E ∨ E}32 then wrap(9, R_1, text.R_2, R_3)else if ruleno={L E}33 then R_1 else if ruleno 
+={L L, E}34 then R_1+R_3 else if ruleno={E[L]}35 then pretty.[R_1, list.R_2, R_3]else if ruleno={A W=E}36 then pretty 
+.[R_1, if width.R_3 > maxwidth then block.R_3 else R_3]else if ruleno={E let A E}37 then attribute2.[prettyresult(0, 
+10000, " /keyword let"+first.text.R_2+[space, "="_1, space]+protect(text.R_2 << 1, text.R_3))]else if ruleno={E assert E report 
+D E}38 then attribute2.[prettyresult(0, 10000, " /keyword assert"+text.R_2+if width.R_2+width.R_4 > maxwidth then"
+/br"else""/if+" /keyword report"+protect(text.R_4, text.R_5))]else if ruleno={E I}39 then R_1 else if ruleno={E I.I}40 then pretty 
+.[R_1, R_2, R_3]else if ruleno={T W}41 then R_1 else if ruleno={T W.T}42 then pretty.[R_1, R_2, R_3]else if ruleno={E $wordlist 
+}43 then attribute("
+/< literal"+escapeformat.text.R_1+" />")else if ruleno={E comment E}44 then precAttribute(prec.(toseq.R_2)_1, "
+/< comment"+escapeformat.text.R_1+" />"+if width.R_1+width.R_2 > maxwidth then"
+/br"+text.R_2 else text.R_2)else if ruleno={NM W}45 then R_1 else if ruleno={NM W:T}46 then pretty.[R_1, R_2, R_3]else if 
+ruleno={F1 W=E}47 then pretty.[R_1, attribute.[space, "="_1, space], R_3]else if ruleno={F1 F1, W=E}48 then R_1+pretty 
+.[R_3, attribute.[space, "="_1, space], R_5]else if ruleno={F2 F1, W+E}49 then R_1+pretty.[R_3, attribute."∈", R_
+5]else if ruleno={E for F2 do E /for(E)}50 then if width.R_2+width.R_4 < maxwidth then pretty.[attribute." /keyword for", list 
+.R_2, attribute(" /keyword do"+removeclose.text.R_4+" /keyword /for"), R_6, R_7, R_8]else pretty.[attribute." /keyword for", list.R_2, attribute 
+(" /keyword do"+removeclose.text.block.R_4+"
+/br  /keyword /for"), R_6, R_7, R_8]else if ruleno={E for F2 while E do E /for(E)}51 then if width.R_2+width.R_4+width.R_6 < maxwidth 
+then pretty.[attribute." /keyword for", list.R_2, attribute(" /keyword while"+text.R_4+" /keyword do"+removeclose.text.R_6+" /keyword /for"), R_8 
+, R_9, R_10]else pretty.[attribute." /keyword for", list.R_2, attribute("
+/br  /keyword while"+text.R_4+"
+/br  /keyword do"+removeclose.text.R_6+"
+/br  /keyword /for"), R_8, R_9, R_10]else assert ruleno={D E}52 report"invalid rule number"+toword.ruleno R_1 '
 
 Function extractgrammer(z:seq.word)seq.word
 {use to extract grammar and rules from action procedure generated by genLR1}

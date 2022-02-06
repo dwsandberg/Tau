@@ -155,8 +155,6 @@ for acc = empty:seq.symdef, p ∈ s do
   if islocal.sym then result + Local.value.sym
   else if isdefine.sym then result + Define.value.sym
   else
-   {if isconst.sym /or isspecial.sym then result+sym else assert subseq(print.sym.p, 1, 5)/ne"tree.T:="/or module.sym 
-.p=module.sym report"KL"+print.sym.p+print.sym}
    result
    + if isBuiltin.sym then
     if name.sym ∈ "length"then GetSeqLength

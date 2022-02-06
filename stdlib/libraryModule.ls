@@ -6,6 +6,8 @@ use standard
 
 use symbol
 
+use textio
+
 use typedict
 
 use seq.bits

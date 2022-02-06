@@ -55,20 +55,6 @@ if istype then
  subseq(s, 1, theend) + "(" + tt + ")" + tt + "stub"
 else subseq(s, 1, theend) + "stub"
 
-Function htmlheader seq.word
-{the format of the meta tag is carefully crafted to get math unicode characters to display correctly}
-' <meta http-equiv="Content-Type"content="text/html"; charset="utf-8"> '
-+ ' <style type="text/css"> <!--span.avoidwrap{display:inline-block ;}'
-+ ' span.keyword{color:blue ;}span.keywords{color:blue ;}'
-+ ' span.literal{color:red ;}span.comment{color:green ;}'
-+ ' span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}'
-+ {' form{margin:0px ;}html, body{margin:0 ; padding:0 ; height:100% ;}'+'.container{margin:0 ; padding:0 ; height:
-100% ; display:-webkit-flex ; display:flex ; flex-direction:column ;}'+'.floating-menu{margin:0 ; padding:0 ; background 
-:yellowgreen ; padding:0.5em ;}'+'.content{margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow 
-:auto ; height:0 ; min-height:0 ; '}}
-'--> </style> '
-+ EOL
-
 type pnpstate is lastbreak:int, result:seq.word, matchthis:word, instring:boolean
 
 Function prettynoparse(s:seq.word)seq.word
@@ -112,8 +98,20 @@ _____________________________
 
 Function HTMLformat(output:seq.word)UTF8 processpara(emptyUTF8, output)
 
-Function toUTF8bytes(output:seq.word)seq.byte
-toseqbyte.processpara(emptyUTF8, " /< noformat" + htmlheader + " />" + output)
+Function htmlheader seq.word
+{the format of the meta tag is carefully crafted to get math unicode characters to display correctly}
+{' <meta http-equiv="Content-Type"content="text/html"; charset="utf-8"> '}
+' <!doctype html> <meta charset="UTF-8"> '
++ ' <style > <!--span.avoidwrap{display:inline-block ;}'
++ ' span.keyword{color:blue ;}span.keywords{color:blue ;}'
++ ' span.literal{color:red ;}span.comment{color:green ;}'
++ ' span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}'
++ {' form{margin:0px ;}html, body{margin:0 ; padding:0 ; height:100% ;}'+'.container{margin:0 ; padding:0 ; height:
+100% ; display:-webkit-flex ; display:flex ; flex-direction:column ;}'+'.floating-menu{margin:0 ; padding:0 ; background 
+:yellowgreen ; padding:0.5em ;}'+'.content{margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow 
+:auto ; height:0 ; min-height:0 ; '}}
+'--> </style> '
++ EOL
 
 ___________________
 
@@ -145,7 +143,7 @@ for result = x, stk = empty:stack.seq.word, last = none, this ∈ a + space do
  else if last = " /p"_1 then next(result + char.10 + "<p>", stk, this)
  else if last = " /row"_1 then
   if not.isempty.stk ∧ top.stk = "</caption>"then
-   next(result + char.10 + (' <tr><td> ' + top.stk), pop.stk, this)
+   next(result + char.10 + (top.stk + ' <tr><td> '), pop.stk, this)
   else next(result + char.10 + "<tr><td>", stk, this)
  else if last = " /cell"_1 then next(result + char.10 + "<td>", stk, this)
  else if last = " /br"_1 then
@@ -209,16 +207,6 @@ for needsLF = false, result = emptyUTF8, stk = empty:stack.word, last = none, th
  else if last = space then next(needsLF, result + [space], stk, this)
  else next(true, result + [last], stk, this)
 /for(if last = none then result else result + [last]/if)
-
-Function HTML(output:seq.word)UTF8
-let r = toUTF8bytes.output
-let z = createfile("stdout", toUTF8bytes.output)
-UTF8.r
-
-Function TEXT(output:seq.word)UTF8
-let r = toseqbyte.textformat.output
-let z = createfile("stdout", toUTF8bytes.output)
-UTF8.r
 
 Export type:UTF8
 

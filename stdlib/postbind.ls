@@ -188,12 +188,13 @@ else
        )
      next(cache, nextvar + 2, map, result2 + encodenocode + get)
     else if name.sym ∈ "pushflds" ∧ isBuiltin.sym then
+     let typ = para.module.sym
      next(cache
      , nextvar
      , map
-     , if iscoretype.para.module.sym then result2
+     , if iscore4.typ ∨ isseq.typ ∨ isencoding.typ then result2
      else
-      let t = flatflds(newdict3, para.module.sym)
+      let t = flatflds(newdict3, typ)
       if isempty.t ∨ typeT ∈ t then result2 + sym
       else if length.t = 1 then result2
       else
@@ -228,10 +229,13 @@ else if not.isBuiltin.sym then
   [sym]
  else xx << nopara.sym
 else if name.sym ∈ "bitcast toptr"then
- let a = coretype(first.paratypes.sym, newdict3)
- let b = coretype(resulttype.sym, newdict3)
- if a = b then empty:seq.symbol else[symbol(internalmod, "bitcast", a, b)]
-else if name.sym ∈ "processresult"then[Lit.2, Getfld.coretype(para.module.sym, newdict3)]
+ let a = basetype(first.paratypes.sym, newdict3)
+ let b = basetype(resulttype.sym, newdict3)
+ if if isseq.a then typeptr else a /if
+ = if isseq.b then typeptr else b then
+  empty:seq.symbol
+ else[symbol(internalmod, "bitcast", a, b)]
+else if name.sym ∈ "processresult"then[Lit.2, Getfld.basetype(para.module.sym, newdict3)]
 else if name.sym ∈ "typestructure"then
  let roottype = para.module.sym
  let tmp = 
@@ -258,24 +262,24 @@ else
   if isempty.t ∨ typeT ∈ t then sym else Record.t
  else if name.sym ∈ "typesize"then
   let typ = para.module.sym
-  if typ = typeint ∨ typ = typereal ∨ typ = typeptr ∨ isseq.typ then Lit.1
+  if iscore4.typ ∨ isseq.typ then Lit.1
   else
    let t = flatflds(newdict3, typ)
    if isempty.t ∨ typeT ∈ t then sym else Lit.length.t
  else if name.sym ∈ "length"then GetSeqLength
  else if name.sym ∈ "packed"then
-  let typ = seqof.coretype(para.module.sym, newdict3)
+  let typ = basetype(seqof.para.module.sym, newdict3)
   let tmp = blockitsymbol.typ
   let discard = symbolref.tmp
   tmp
  else if name.sym ∈ "aborted"then
   symbol(internalmod, "processisaborted", typeptr, typeboolean)
- else if name.sym ∈ "assert"then abortsymbol.coretype(para.module.sym, newdict3)
+ else if name.sym ∈ "assert"then abortsymbol.basetype(para.module.sym, newdict3)
  else if name.sym ∈ "_"then
   let seqtype = basetype(first.paratypes.sym, newdict3)
   symbol(internalmod, "indexseq45", seqtype, typeint, parameter.seqtype)
  else if name.sym ∈ "getseqtype"then GetSeqType
- else if name.sym ∈ "set"then setSym.coretype(para.module.sym, newdict3)
+ else if name.sym ∈ "set"then setSym.basetype(para.module.sym, newdict3)
  else if name.sym = "forexp"_1 then
   let paras = 
    for acc = empty:seq.mytype, p ∈ paratypes.sym do
@@ -284,19 +288,26 @@ else
   symbol(moduleref."internallib builtin", "forexp", paras, last.paras)
  else if name.sym = "createthreadY"_1 then
   let paras = 
-   for paras = empty:seq.mytype, p ∈ paratypes.sym do paras + coretype(p, newdict3)/for(paras)
-  let rt = processof.coretype(parameter.resulttype.sym, newdict3)
-  symbol(builtinmod.rt, "createthreadY", paras, typeptr)
+   for paras = empty:seq.mytype, p ∈ paratypes.sym do
+    let tmp = basetype(p, newdict3)
+    paras + if isseq.tmp then typeptr else tmp
+   /for(paras)
+  let rt = basetype(parameter.resulttype.sym, newdict3)
+  symbol(builtinmod.processof.if isseq.rt then typeptr else rt
+  , "createthreadY"
+  , paras
+  , typeptr
+  )
  else if name.sym ∈ "fld getfld"then
   let typ = resulttype.sym
-  if iscoretype.typ then Getfld.typ
+  if iscore4.typ ∨ isseq.typ ∨ isencoding.typ then Getfld.typ
   else if isabstract.typ then sym
   else
    let a = flatflds(newdict3, typ)
    assert not.isempty.a report"cannot find type getfld" + print.typ
    if length.a > 1 then symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
    else Getfld.first.a
- else if name.sym ∈ "empty"then Sequence(coretype(para.module.sym, newdict3), 0)
+ else if name.sym ∈ "empty"then Sequence(basetype(para.module.sym, newdict3), 0)
  else
   assert name.sym ∈ "xoffsets xbuild"report"post bind error:" + print.sym
   sym
@@ -313,9 +324,6 @@ else
   for txt = "", k ∈ gx do txt + EOL + print.sym.sd.k + print.modpara.k /for(txt)
  for newcode = empty:seq.symbol, sym4 ∈ code.sd.gx_1 do newcode + replaceTsymbol(modpara.gx_1, sym4)/for(symdef(sym2, newcode))
 
-function iscoretype(typ:mytype)boolean
-typ = typeint ∨ typ = typereal ∨ typ = typeptr ∨ typ = typeboolean ∨ isseq.typ ∨ isencoding.typ
-
 function deepcopybody(type:mytype, typedict:typedict)seq.symbol
 if type = typeint ∨ type = typeword ∨ isencoding.type then[Local.1]
 else if isseq.type then
@@ -323,8 +331,7 @@ else if isseq.type then
 .packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
  let basetype = basetype(type, typedict)
  let elementtype = parameter.basetype
- if elementtype = typebyte ∨ elementtype = typebit ∨ elementtype = typeboolean then
-  [Local.1, blockitsymbol.seqof.typeint]
+ if elementtype = typebit ∨ elementtype = typeboolean then[Local.1, blockitsymbol.seqof.typeint]
  else
   let cat = symbol(tomodref.type, "+", [type, parameter.type], type)
   let resulttype = basetype
