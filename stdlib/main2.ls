@@ -103,7 +103,7 @@ let info = getlibrarysrc.libname
 let dependentlibs = info_1
 let filelist = info_2
 let exports = info_3
-{let b=unloadlib.[libname]}compilerfront(option, last.libname, info << 3, dependentlibs, exports)
+compilerfront(option, last.libname, info << 3, libmodules2.dependentlibs, exports)
 
 Function compilerfront(option:seq.word, lib:word, allsrc:seq.seq.word, dependentlibs:seq.word, exports:seq.word)compileinfo
 compilerfront(option, lib, allsrc, libmodules2.dependentlibs, exports)
