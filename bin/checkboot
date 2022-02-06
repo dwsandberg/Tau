@@ -1,0 +1,16 @@
+cc stdlib/*.c -o bin/tauexe
+/usr/bin/cc -dynamiclib bin/stdlib.bc  -o stdlib.dylib  -init _init22 -undefined dynamic_lookup
+time tau -f tmp/checkboot1.html stdlib  stdlib
+time tau -f tmp/checkboot2.html stdlib  stdlib
+time tau -f tmp/checkboot3.html stdlib  stdlib
+open tmp/checkboot1.html
+diff tmp/checkboot1.html tmp/checkboot2.html
+if [ $? -ne 0 ] 
+then 
+  open tmp/checkboot2.html 
+fi
+diff tmp/checkboot1.html tmp/checkboot3.html
+if [ $? -ne 0 ] 
+then 
+  open tmp/checkboot3.html 
+fi

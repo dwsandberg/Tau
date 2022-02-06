@@ -1,25 +1,21 @@
 Module process.T
 
-use stdlib
+use standard
 
-/use seq.word
+use seq.T
 
-type process is record abortedx:boolean, a:seq.word, resultb:T
+type process is abortedx:boolean, a:seq.word, resultb:T
 
-Function aborted(p:process.T)boolean builtin.usemangle
+Builtin aborted(p:process.T)boolean
 
-Function message(p:process.T)seq.word 
- if aborted.p then a.p else"normal exit"
+Function message(p:process.T)seq.word if aborted.p then a.p else"normal exit"
 
-Function result(p:process.T)T 
- assert not.aborted.p report"no result of aborted process"
-  subresult(p, 2)
+Function result(p:process.T)T
+assert not.aborted.p report"no result of aborted process"
+{The compiler has a special case to handle accessing process resultb because if the type T is a structure of more than one element 
+, then compiler would normally assume the elements are store at resultb and not a pointer to the type T. }
+processresult.p
 
-function subresult(a:process.T, b:int)T builtin.IDXUC
+Builtin processresult(p:process.T)T
 
-Note:Must access result of process with function result rather than using field resultb because if the type T is a structure of more than one element, the compile would assume the elements are store at resultb and not a pointer to the type T.
-
-Function process(T)process.T builtin.usemangle
-
-______________
-
+Export type:process.T 

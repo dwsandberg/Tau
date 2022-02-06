@@ -1,228 +1,598 @@
 Module codetemplates
 
-use bitpackedseq.bit
-
 use bits
-
-use blockseq.templatepart
-
-use blockseq.word
-
-use deepcopy.int
-
-use deepcopy.linklists2
-
-use deepcopy.match5
-
-use deepcopy.seq.templatepart
-
-use deepcopy.seq.word
-
-use deepcopy.word
-
-use encoding.match5
-
-use fileio
-
-use intercode
 
 use internalbc
 
-use ipair.linklists2
+use libraryModule
 
 use llvm
 
-use process.seq.match5
+use llvmconstants
 
-use seq.bit
+use persistant
 
-use seq.int
+use standard
 
-use seq.llvmtype
-
-use seq.match5
-
-use seq.seq.int
-
-use seq.templatepart
-
-use seq.word
-
-use stdlib
+use symbol
 
 use textio
 
-function wordstype llvmtype array(-1, i64)
+use typedict
+
+use seq.bit
+
+use set.int
+
+use otherseq.llvmtype
+
+use seq.llvmtype
+
+use encoding.match5
+
+use seq.match5
+
+use seq.mytype
+
+use set.mytype
+
+use seq.symbol
+
+use set.symbol
+
+use set.word
+
+use seq.seq.int
+
+use seq.seq.symbol
+
+Export constdata seq.slot
+
+Export wordref(w:word)int
+
+Export addliblib(libname:seq.word, syms:seq.symbol, libmods:seq.libraryModule, code:seq.seq.symbolref, profiledata:int, dependlibs:seq.word, entrypoint:slot, symboladdresses:int)int
+
+Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
+if s = Optionsym then function.[i64, i64, i64, i64]else function.tollvmtypelist(alltypes, s)
+
+function tollvmtypelist(alltypes:typedict, s:symbol)seq.llvmtype
+assert resulttype.s ≠ typeT report"TTT" + print.s
+let starttypes = [tollvmtype(alltypes, resulttype.s), i64]
+for acc = starttypes, @e ∈ paratypes.s do
+ assert @e ≠ typeT report"TTTP" + print.s
+ acc + tollvmtype(alltypes, @e)
+/for(acc)
+
+Function tollvmtype(alltypes:typedict, s:mytype)llvmtype
+if isseq.s then ptr.i64
+else if abstracttypename.s = "process"_1 then ptr.i64
+else
+ let kind = basetype(s, alltypes)
+ if kind = typeint ∨ kind = typeboolean then i64
+ else if kind = typereal then double else ptr.i64
 
 Function conststype llvmtype array(-2, i64)
 
-type match5 is record fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int, index:int
+Function profiletype llvmtype array(-3, i64)
 
-Function addindex(m:match5, i:int)match5 match5(fullinst.m, length.m, parts.m, action.m, arg.m, i)
+Export type:match5
 
-function match5(fullinst:seq.word, length:int, parts:seq.templatepart, action:word, arg:int)match5 
- match5(fullinst, length, parts, action, arg, 0)
+Export length(match5)int{no of instruction that return results}
 
-Function length(match5)int export
+Export action(match5)word
 
-Function action(match5)word export
+Export arg(match5)int
 
-Function arg(match5)int export
+Export sym(match5)symbol
 
-Function fullinst(m:match5)seq.word export
+Function firstvar(a:match5)int length.a
 
-Function inst(m:match5)word fullinst(m)_1
+Function brt(a:match5)int length.a
 
-Function instarg(m:match5)word fullinst(m)_2
+Function brf(a:match5)int arg.a
 
-function =(a:match5, b:match5)boolean fullinst.a = fullinst.b
+Export llvmtypelist(match5)seq.llvmtype
 
-function hash(a:match5)int hash.fullinst.a
+type match5 is sym:symbol, length:int, parts:internalbc, action:word, arg:int, llvmtypelist:seq.llvmtype
 
-type ematch5 is encoding match5
+Function functype(m:match5)llvmtype function.llvmtypelist.m
 
-Function table seq.match5 
- let t = [ match5("IDXUC"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ GEP(2, 1, typ.i64,-1, ibcsub2)+ LOAD(3,-2, typ.i64, align8, 0)), 
-  match5(// ? //"Q3FZbuiltinZintZint"_1, 5, CMP2(1, ibcsub1, ibcsub2, 39)+ CAST(2,-1, typ.i64, CASTZEXT)+ CMP2(3, ibcsub1, ibcsub2, 38)+ CAST(4,-3, typ.i64, CASTZEXT)+ BINOP(5,-2,-4, 0, typ.i64)), 
-  match5("getaddressZbuiltinZTzseqZint"_1, 2, BINOP(1, ibcsub2, C64.3, // shift left // 7)+ BINOP(2, ibcsub1,-1, 0, typ.i64)), 
-  match5("Q3EZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 38)+ CAST(2,-1, typ.i64, CASTZEXT)), 
-  match5("notZbuiltinZboolean"_1, 1, BINOP(1, ibcsub1, C64.1, 12, typ.i64)), 
-  match5("hashZbuiltinZint"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64], C."HASH", ibcsub1)), 
-  // include aborted here so does not show up in profile results match5("abortedZbuiltinZTzprocess"_1, 1, CALL(1, 0, 32768, typ.function.[ i64, i64, i64], C."abortedZbuiltinZTzprocess",-1, ibcsub1)), Including this as a template causes subtle compile errors // 
-   match5("Q3DZbuiltinZintZint"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32)+ CAST(2,-1, typ.i64, CASTZEXT)), 
-  match5("EQL"_1, 2, CMP2(1, ibcsub1, ibcsub2, 32)+ CAST(2,-1, typ.i64, CASTZEXT)), 
-  match5("Q2DZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 1, typ.i64)), 
-  match5("Q2BZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 0, typ.i64)), 
-  match5("Q2AZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 2, typ.i64)), 
-  match5("Q2FZbuiltinZintZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, 4, typ.i64)), 
-  match5("Q2DZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 1)+ CAST(4,-3, typ.i64, 11)), 
-  match5(// + //"Q2BZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 0)+ CAST(4,-3, typ.i64, 11)), 
-  match5(// * //"Q2AZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 2)+ CAST(4,-3, typ.i64, 11)), 
-  match5(// / //"Q2FZbuiltinZrealZreal"_1, 4, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ BINOP(3,-1,-2, 4)+ CAST(4,-3, typ.i64, 11)), 
-  match5(// ? //"Q3FZbuiltinZrealZreal"_1, 7, CAST(1, ibcsub1, typ.double, 11)+ CAST(2, ibcsub2, typ.double, 11)+ CMP2(3,-1,-2, 3)+ CAST(4,-3, typ.i64, CASTZEXT)+ CMP2(5,-1,-2, 2)+ CAST(6,-5, typ.i64, CASTZEXT)+ BINOP(7,-4,-6, 0, typ.i64)), 
-  match5("intpartZbuiltinZreal"_1, 2, CAST(1, ibcsub1, typ.double, 11)+ CAST(2,-1, typ.i64, // fptosi double // 4)), 
-  match5("int2realZbuiltinZint"_1, 2, // sitofp // CAST(1, ibcsub1, typ.double, 6)+ CAST(2,-1, typ.i64, 11)), 
-  match5("sqrtZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.sqrt.f64",-1)+ CAST(3,-2, typ.i64, 11)), 
-  match5("sinZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.sin.f64",-1)+ CAST(3,-2, typ.i64, 11)), 
-  match5("cosZbuiltinZreal"_1, 3, CAST(1, ibcsub1, typ.double, 11)+ CALL(2, 0, 32768, typ.function.[ double, double], C.merge."llvm.cos.f64",-1)+ CAST(3,-2, typ.i64, 11)), 
-  match5("Q3CQ3CZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // SHL // 7, typ.i64)), 
-  match5("Q3EQ3EZbuiltinZbitsZint"_1, 1, BINOP(1, ibcsub1, ibcsub2, // LSHR // 8, typ.i64)), 
-  match5("Q02227ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // AND // 10, typ.i64)), 
-  match5("Q02228ZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // OR // 11, typ.i64)), 
-  match5("xorZbuiltinZbitsZbits"_1, 1, BINOP(1, ibcsub1, ibcsub2, // XOR // 12, typ.i64)), 
-  match5("setfldZbuiltinZTzaddressZT"_1, 3, CAST(1, ibcsub1, typ.ptr.i64, 10)+ STORE(2,-1, ibcsub2, align8, 0)+ GEP(2, 1, typ.i64,-1, C64.1)+ CAST(3,-2, typ.i64, 9)), 
-  match5("STKRECORD"_1, 3, ALLOCA(1, typ.ptr.i64, typ.i64, C64.2, 0)+ STORE(2,-1, ibcsub1, align8, 0)+ GEP(2, 1, typ.i64,-1, C64.1)+ STORE(3,-2, ibcsub2, align8, 0)+ CAST(3,-1, typ.i64, CASTPTRTOINT)), 
-  match5("CALLIDX"_1, 2, CAST(1, ibcsub1, typ.ptr.function.[ i64, i64, i64, i64], CASTINTTOPTR)+ CALL(2, 0, 32768, typ.function.[ i64, i64, i64, i64],-1, ibcfirstpara2, ibcsub2, ibcsub3)), 
-  match5("if 3", 0, empty:seq.templatepart,"SPECIAL"_1, 0), 
-  match5("if 4", 0, empty:seq.templatepart,"SPECIAL"_1, 0), 
-  match5("MRECORD 2", 0, empty:seq.templatepart,"SPECIAL"_1, 0), 
-  match5("THENBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0), 
-  match5("ELSEBLOCK 1", 0, empty:seq.templatepart,"SPECIAL"_1, 0)]
-  let discard = @(+, addit, 0, t)
-  t
+Function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:int, llvmtypelist:seq.llvmtype)match5
+let m = match5(sym, length, parts, action, arg, llvmtypelist)
+let discard = encode.m
+m
 
-function addit(m:match5)int findindex(m, ematch5)
+Function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:slot)match5
+addtemplate(sym, length, parts, action, toint.arg, [i64])
 
-function match5(inst:word, length:int, b:internalbc)match5 
- let parts = getparts.b 
-  let nopara = @(max, parano, 0, parts)
-  match5([ inst, toword.nopara], length, parts,"TEMPLATE"_1, nopara)
+Function addtemplate(sym:symbol, length:int, b:internalbc)match5
+addtemplate(sym, length, b, "TEMPLATE"_1, slot.nopara.sym)
 
-type temppair is record templates:seq.match5, consts:linklists2
+function addtemplates(t:seq.mytype, sym:symbol, length:int, b:internalbc)match5
+first.for acc = empty:seq.match5, e ∈ t do[addtemplate(replaceTsymbol(e, sym), length, b)]/for(acc)
 
-Function templates(temppair)seq.match5 export
+Function findtemplate(d:symbol)seq.match5 findencode.match5(d, 0, emptyinternalbc, "NOTFOUND"_1, 0, [i64])
 
-Function consts(temppair)linklists2 export
+Export type:symbol
 
-Function inittemppair temppair temppair(empty:seq.match5, createlinkedlists)
+Function _(m:seq.match5, d:symbol)match5
+let e = findtemplate.d
+assert not.isempty.e report"LL codetemplates" + print.d + stacktrace
+e_1
 
-Function buildtemplates(p:temppair, fullinst:seq.word)temppair 
- let s = templates.p 
-  let lastconsts = consts.p 
-  // let z10 = createfile("stat.txt", [ fullinst]+"start")// 
-  let a = match5(fullinst, 0, empty:seq.templatepart,"NOTFOUND"_1, 0)
-  let b = findencode(a, ematch5)
-  if length.b = 0 
-  then let inst = fullinst_1 
-   let instarg = fullinst_2 
-   let m = if inst ="FREF"_1 
-    then temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C(i64, [ CONSTCECAST, 9, typ.ptr.getftype.instarg, C.instarg])), lastconsts)
-    else if inst ="LIT"_1 
-    then temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.toint.instarg), lastconsts)
-    else if inst ="LOCAL"_1 
-    then temppair(s + match5(fullinst, 0, empty:seq.templatepart,"LOCAL"_1, toint.instarg), lastconsts)
-    else if inst in"PARAM FIRSTVAR"
-    then temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, toint.instarg), lastconsts)
-    else if inst in"CONTINUE FINISHLOOP LOOPBLOCK RECORD SET DEFINE MSET"
-    then temppair(s + match5(fullinst, 0, empty:seq.templatepart,"SPECIAL"_1, 0), lastconsts)
-    else if inst in"CONSTANT WORDS"
-    then let tt = if inst ="CONSTANT"_1 
-      then addconst(lastconsts, fullinst)
-      else addwordseq(lastconsts, subseq(fullinst, 3, length.fullinst))
-     let newcode = GEP(1, 1, typ.conststype, C."list", C64.0, C64(index.tt + 1))+ CAST(2,-1, typ.i64, 9)
-     let r = match5(fullinst, 2, getparts.newcode,"TEMPLATE"_1, 0)
-     temppair(s + r, value.tt)
-    else if inst ="WORD"_1 
-    then let discard = registerword.instarg 
-     temppair(s + match5(fullinst, 0, empty:seq.templatepart,"ACTARG"_1, C64.hash.instarg), lastconsts)
-    else let noargs = toint.instarg 
-    let newcode = CALLSTART(1, 0, 32768, typ.function.constantseq(noargs + 2, i64), C.[ inst], noargs + 1)
-    temppair(s + match5(fullinst, 1, getparts.newcode,"CALL"_1, noargs), lastconsts)
-   let discard = encode(last.templates.m, ematch5)
-   m 
-  else // already have a match5 // temppair(s + b_1, lastconsts)
+function =(a:match5, b:match5)boolean sym.a = sym.b
 
-/Function deepcopy2(m:match5)match5 let y0 = deepcopy.fullinst.m let y1 = deepcopy.length.m let y2 = deepcopy.parts.m let y3 = deepcopy.action.m let y4 = deepcopy.arg.m let y5 = deepcopy.consts.m match5(y0, y1, y2, y3, y4, y5)
+function hash(a:match5)int fsighash.sym.a
 
-/Function checkmap(s:seq.match5)seq.word @(+, hjk,"", s)
+function assignencoding(a:match5)int nextencoding.a
 
-/function hjk(m:match5)seq.word [ inst.m, toword.length.a.consts.m]
+Function funcdec(alltypes:typedict, i:symbol, symname:word)int
+toint.modulerecord([symname]
+, [toint.FUNCTIONDEC, typ.tollvmtype(alltypes, i), 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+)
 
-function ematch5 erecord.match5 export
+Function initmap5 seq.match5
+[addtemplate(symbol(internalmod, "packedindex", seqof.typebit, typeint, typeint)
+, 8
+, BINOP(r.1, ibcsub.2, C64.1, sub) + BINOP(r.2, r.1, C64.6, lshr) + BINOP(r.3, r.2, C64.2, add)
++ GEP(r.4, i64, ibcsub.1, r.3)
++ LOAD(r.5, r.4, i64)
++ BINOP(r.6, r.1, C64.63, and)
++ BINOP(r.7, r.5, r.6, lshr)
++ BINOP(r.8, r.7, C64.1, and)
+)
+, addtemplate(symbol(internalmod, "packedindex", seqof.typebyte, typeint, typeint)
+, 9
+, BINOP(r.1, ibcsub.2, C64.1, sub) + BINOP(r.2, r.1, C64.3, lshr) + BINOP(r.3, r.2, C64.2, add)
++ GEP(r.4, i64, ibcsub.1, r.3)
++ LOAD(r.5, r.4, i64)
++ BINOP(r.6, r.1, C64.7, and)
++ BINOP(r.7, r.6, C64.3, shl)
++ BINOP(r.8, r.5, r.7, lshr)
++ BINOP(r.9, r.8, C64.255, and)
+)
+, addtemplate(symbol(internalmod, "packedindex", seqof.packedtypes_1, typeint, typeptr)
+, 4
+, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.2, mul) + BINOP(r.3, r.2, C64.2, add)
++ GEP(r.4, i64, ibcsub.1, r.3)
+)
+, addtemplate(symbol(internalmod, "packedindex", seqof.packedtypes_2, typeint, typeptr)
+, 4
+, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.3, mul) + BINOP(r.3, r.2, C64.2, add)
++ GEP(r.4, i64, ibcsub.1, r.3)
+)
+, addtemplate(symbol(internalmod, "packedindex", seqof.packedtypes_3, typeint, typeptr)
+, 4
+, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.4, mul) + BINOP(r.3, r.2, C64.2, add)
++ GEP(r.4, i64, ibcsub.1, r.3)
+)
+, addtemplate(symbol(internalmod, "packedindex", seqof.packedtypes_4, typeint, typeptr)
+, 4
+, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.5, mul) + BINOP(r.3, r.2, C64.2, add)
++ GEP(r.4, i64, ibcsub.1, r.3)
+)
+, addtemplate(symbol(internalmod, "packedindex", seqof.packedtypes_5, typeint, typeptr)
+, 4
+, BINOP(r.1, ibcsub.2, C64.-1, add) + BINOP(r.2, r.1, C64.6, mul) + BINOP(r.3, r.2, C64.2, add)
++ GEP(r.4, i64, ibcsub.1, r.3)
+)
+, addtemplate(symbol(internalmod, "toint", typebyte, typeint), 0, emptyinternalbc)
+, addtemplate(symbol(internalmod, "toint", typebit, typeint), 0, emptyinternalbc)
+, addtemplate(symbol(internalmod, "toptr", seqof.typeword, typeptr), 0, emptyinternalbc)
+, {addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(r.1, ptr.ptr 
+.i64, i64, C64.2, 0)+STORE(r.2, r.1, ibcsub.1)+GEP(r.2, ptr.i64, r.1, C64.1)+STORE(r.3, r.2, ibcsub.2)+GEP(r.3, 
+ptr.i64, r.1, C64.0)), }
+addtemplate(symbol(internalmod, "bitcast", typeptr, typeint)
+, 1
+, CAST(r.1, ibcsub.1, i64, ptrtoint)
+)
+, addtemplate(symbol(internalmod, "bitcast", typeint, typeptr)
+, 1
+, CAST(r.1, ibcsub.1, ptr.i64, inttoptr)
+)
+, addtemplate(symbol(internalmod, "bitcast", typeint, typebyte), 0, emptyinternalbc)
+, addtemplate(symbol(internalmod, "GEP", seqof.typeint, typeint, typeint)
+, 2
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + CAST(r.2, r.1, i64, ptrtoint)
+)
+, addtemplates([typebit, typebyte, typeint, typeptr, typereal] + packedtypes
+, symbol4(internalmod, "toseq"_1, seqof.typeT, [typeptr], typeptr)
+, 0
+, emptyinternalbc
+)
+, addtemplate(symbol(internalmod, "intpart", typereal, typeint)
+, 1
+, CAST(r.1, ibcsub.1, i64, fptosi)
+)
+, addtemplate(symbol(internalmod, "toreal", typeint, typereal)
+, 1
+, CAST(r.1, ibcsub.1, double, sitofp)
+)
+, addtemplate(symbol(internalmod, "-", typereal, typereal, typereal)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, sub)
+)
+, addtemplate(symbol(internalmod, "+", typereal, typereal, typereal)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, add)
+)
+, addtemplate(symbol(internalmod, "*", typereal, typereal, typereal)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, mul)
+)
+, addtemplate(symbol(internalmod, "/", typereal, typereal, typereal)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv)
+)
+, addtemplate(symbol(internalmod, "casttoreal", typeint, typereal)
+, 1
+, CAST(r.1, ibcsub.1, double, bitcast)
+)
+, addtemplate(symbol(internalmod, "representation", typereal, typeint)
+, 1
+, CAST(r.1, ibcsub.1, i64, bitcast)
+)
+, addtemplate(symbol(internalmod, "?", typereal, typereal, typeref."ordering standard")
+, 5
+, CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext) + CMP2(r.3, ibcsub.1, ibcsub.2, 2)
++ CAST(r.4, r.3, i64, zext)
++ BINOP(r.5, r.2, r.4, add)
+)
+, addtemplate(symbol(internalmod, "?", typeint, typeint, typeref."ordering standard")
+, 5
+, CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext) + CMP2(r.3, ibcsub.1, ibcsub.2, 38)
++ CAST(r.4, r.3, i64, zext)
++ BINOP(r.5, r.2, r.4, add)
+)
+, addtemplate(symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
+, 1
+, GEP(r.1, i64, ibcsub.1, ibcsub.2)
+)
+, addtemplate(symbol(internalmod, "not", typeboolean, typeboolean)
+, 1
+, BINOP(r.1, ibcsub.1, C64.1, xor)
+)
+, addtemplate(symbol(internalmod, ">", typeint, typeint, typeboolean)
+, 2
+, CMP2(r.1, ibcsub.1, ibcsub.2, 38) + CAST(r.2, r.1, i64, zext)
+)
+, addtemplate(symbol(internalmod, "=", typeboolean, typeboolean, typeboolean)
+, 2
+, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext)
+)
+, addtemplate(symbol(internalmod, "=", typeint, typeint, typeboolean)
+, 2
+, CMP2(r.1, ibcsub.1, ibcsub.2, 32) + CAST(r.2, r.1, i64, zext)
+)
+, addtemplate(symbol(internalmod, "-", typeint, typeint, typeint)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, sub)
+)
+, addtemplate(symbol(internalmod, "+", typeint, typeint, typeint)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, add)
+)
+, addtemplate(symbol(internalmod, "*", typeint, typeint, typeint)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, mul)
+)
+, addtemplate(symbol(internalmod, "/", typeint, typeint, typeint)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, sdiv)
+)
+, addtemplate(symbol(internalmod, "<<", typebits, typeint, typebits)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, shl)
+)
+, addtemplate(symbol(internalmod, ">>", typebits, typeint, typebits)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, lshr)
+)
+, addtemplate(symbol(internalmod, "∧", typebits, typebits, typebits)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, and)
+)
+, addtemplate(symbol(internalmod, "∨", typebits, typebits, typebits)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, or)
+)
+, addtemplate(symbol(internalmod, "xor", typebits, typebits, typebits)
+, 1
+, BINOP(r.1, ibcsub.1, ibcsub.2, xor)
+)
+, addtemplate(symbol(internalmod, "set", [typeptr, typeint], typeptr)
+, 1
+, STORE(r.1, ibcsub.1, ibcsub.2) + GEP(r.1, i64, ibcsub.1, C64.1)
+)
+, addtemplate(symbol(internalmod, "set", [typeptr, typeptr], typeptr)
+, 2
+, CAST(r.1, ibcsub.1, ptr.ptr.i64, bitcast) + STORE(r.2, r.1, ibcsub.2)
++ GEP(r.2, i64, ibcsub.1, C64.1)
+)
+, addtemplate(abortsymbol.typeint
+, 1
+, CALL(r.1
+, 0
+, 32768
+, function.[i64, i64, ptr.i64]
+, symboltableentry("assert", function.[i64, i64, ptr.i64])
+, slot.ibcfirstpara2
+, ibcsub.1
+)
+)
+, addtemplate(abortsymbol.typebyte
+, 1
+, CALL(r.1
+, 0
+, 32768
+, function.[i64, i64, ptr.i64]
+, symboltableentry("assert", function.[i64, i64, ptr.i64])
+, slot.ibcfirstpara2
+, ibcsub.1
+)
+)
+, addtemplate(abortsymbol.typeboolean
+, 1
+, CALL(r.1
+, 0
+, 32768
+, function.[i64, i64, ptr.i64]
+, symboltableentry("assert", function.[i64, i64, ptr.i64])
+, slot.ibcfirstpara2
+, ibcsub.1
+)
+)
+, addtemplate(abortsymbol.typereal
+, 2
+, CALL(r.1
+, 0
+, 32768
+, function.[i64, i64, ptr.i64]
+, symboltableentry("assert", function.[i64, i64, ptr.i64])
+, slot.ibcfirstpara2
+, ibcsub.1
+)
++ CAST(r.2, r.1, double, sitofp)
+)
+, addtemplates(packedtypes + typeptr
+, abortsymbol.typeT
+, 2
+, CALL(r.1
+, 0
+, 32768
+, function.[i64, i64, ptr.i64]
+, symboltableentry("assert", function.[i64, i64, ptr.i64])
+, slot.ibcfirstpara2
+, ibcsub.1
+)
++ CAST(r.2, r.1, ptr.i64, inttoptr)
+)
+, addtemplates([typeint, typeboolean, typebyte, typebit]
+, symbol(internalmod, "callidx", seqof.typeT, typeint, typeint)
+, 4
+, GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
++ CAST(r.3, r.2, ptr.function.[i64, i64, ptr.i64, i64], inttoptr)
++ CALL(r.4, 0, 32768, function.[i64, i64, ptr.i64, i64], r.3, slot.ibcfirstpara2, ibcsub.1, ibcsub.2)
+)
+, addtemplate(symbol(internalmod, "callidx", seqof.typereal, typeint, typereal)
+, 4
+, GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
++ CAST(r.3, r.2, ptr.function.[double, i64, ptr.i64, i64], inttoptr)
++ CALL(r.4
+, 0
+, 32768
+, function.[double, i64, ptr.i64, i64]
+, r.3
+, slot.ibcfirstpara2
+, [ibcsub.1, ibcsub.2]
+)
+)
+, addtemplates(packedtypes + typeptr
+, symbol(internalmod, "callidx", seqof.typeT, typeint, typeptr)
+, 4
+, GEP(r.1, i64, ibcsub.1, C64.0) + LOAD(r.2, r.1, i64)
++ CAST(r.3, r.2, ptr.function.[ptr.i64, i64, ptr.i64, i64], inttoptr)
++ CALL(r.4
+, 0
+, 32768
+, function.[ptr.i64, i64, ptr.i64, i64]
+, r.3
+, slot.ibcfirstpara2
+, [ibcsub.1, ibcsub.2]
+)
+)
+, addtemplates([typeint, typeboolean, typebyte, typebit]
+, symbol(internalmod, "idxseq", seqof.typeT, typeint, typeint)
+, 3
+, BINOP(r.1, ibcsub.2, C64.1, add) + GEP(r.2, i64, ibcsub.1, r.1) + LOAD(r.3, r.2, i64)
+)
+, addtemplate(symbol(internalmod, "idxseq", seqof.typereal, typeint, typereal)
+, 4
+, BINOP(r.1, ibcsub.2, C64.1, add) + GEP(r.2, i64, ibcsub.1, r.1) + LOAD(r.3, r.2, i64)
++ CAST(r.4, r.3, double, bitcast)
+)
+, addtemplates(packedtypes + typeptr
+, symbol(internalmod, "idxseq", seqof.typeT, typeint, typeptr)
+, 4
+, BINOP(r.1, ibcsub.2, C64.1, add) + GEP(r.2, i64, ibcsub.1, r.1) + LOAD(r.3, r.2, i64)
++ CAST(r.4, r.3, ptr.i64, inttoptr)
+)
+, addtemplate(GetSeqLength, 2, GEP(r.1, i64, ibcsub.1, C64.1) + LOAD(r.2, r.1, i64))
+, addtemplate(GetSeqType, 1, LOAD(r.1, ibcsub.1, i64))
+, addtemplate(symbol(builtinmod.typeint, "load", [typeptr, typeint], typeint)
+, 2
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+)
+, addtemplate(symbol(builtinmod.typeboolean, "load", [typeptr, typeint], typeboolean)
+, 2
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+)
+, addtemplate(symbol(builtinmod.typeptr, "load", [typeptr, typeint], typeptr)
+, 3
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64) + CAST(r.3, r.2, ptr.i64, inttoptr)
+)
+, addtemplate(symbol(builtinmod.typereal, "load", [typeptr, typeint], typereal)
+, 3
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64) + CAST(r.3, r.2, double, bitcast)
+)
+, addtemplate(symbol(builtinmod.typeint, "fld", [typeptr, typeint], typeint)
+, 2
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+)
+, addtemplate(symbol(builtinmod.typebyte, "fld", [typeptr, typeint], typebyte)
+, 2
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+)
+, addtemplate(symbol(builtinmod.typeboolean, "fld", [typeptr, typeint], typeboolean)
+, 2
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64)
+)
+, addtemplates(packedtypes + typeptr
+, symbol(builtinmod.typeT, "fld", [typeptr, typeint], typeptr)
+, 3
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64) + CAST(r.3, r.2, ptr.i64, inttoptr)
+)
+, addtemplate(symbol(builtinmod.typereal, "fld", [typeptr, typeint], typereal)
+, 3
+, GEP(r.1, i64, ibcsub.1, ibcsub.2) + LOAD(r.2, r.1, i64) + CAST(r.3, r.2, double, bitcast)
+)
+]
 
-Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc 
- let args = if inst.t in"WORD CONSTANT"∨ action.t ="CALL"_1 
-   then empty:seq.int 
-   else subseq(argstack, length.argstack - toint.instarg.t + 1, length.argstack)
-  processtemplate(parts.t, deltaoffset, args)
+Function symboltableentry(name:seq.word, type:llvmtype)slot
+modulerecord(name, [toint.FUNCTIONDEC, typ.type, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0])
 
-Function CASTZEXT int 1
+function =(a:llvmtype, b:llvmtype)boolean typ.a = typ.b
 
-Function CASTTRUNC int 0
+Function buildconst(xx:symbol, alltypes:typedict)match5
+if isRealLit.xx then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, Creal.value.xx)
+else if isIntLit.xx then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.value.xx)
+else if iswordseq.xx then
+ addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, slot.addwordseq2.worddata.xx)
+else if xx = Littrue then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.1)
+else if xx = Litfalse then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.0)
+else
+ assert isword.xx report"not a constant" + print.xx
+ addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, slot.wordref.wordname.xx)
 
-Function CASTPTRTOINT int 9
+Function buildspecial(xx:symbol, alltypes:typedict)match5
+if islocal.xx then addtemplate(xx, 0, emptyinternalbc, "LOCAL"_1, slot.value.xx)
+else if isdefine.xx then addtemplate(xx, 0, emptyinternalbc, "DEFINE"_1, slot.value.xx)
+else if isblock.xx then addtemplate(xx, 0, emptyinternalbc, wordname.xx, 0, [i64])
+else if isstart.xx then
+ let typ = tollvmtype(alltypes, resulttype.xx)
+ addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, [typ])
+else if isRecord.xx then
+ if nopara.xx < 10 then
+  let fldbc = 
+   recordcode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1), tollvmtypelist(alltypes, xx) << 2, 0, true)
+  addtemplate(xx, regno.fldbc, bc.fldbc)
+ else addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, tollvmtypelist(alltypes, xx) << 2)
+else if isSequence.xx then
+ if nopara.xx < 10 then
+  let fldbc = 
+   sequencecode(arithseq(nopara.xx, 1, ibcfirstpara2 + 1), tollvmtype(alltypes, para.module.xx), 0, true)
+  addtemplate(xx, regno.fldbc, bc.fldbc)
+ else
+  addtemplate(xx
+  , 0
+  , emptyinternalbc
+  , "SEQUENCE"_1
+  , nopara.xx
+  , [tollvmtype(alltypes, para.module.xx)]
+  )
+else if isbr.xx then addtemplate(xx, brt.xx, emptyinternalbc, wordname.xx, brf.xx, [i64])
+else if isloopblock.xx then
+ addtemplate(xx
+ , firstvar.xx
+ , emptyinternalbc
+ , wordname.xx
+ , nopara.xx
+ , for oldacc = [tollvmtype(alltypes, resulttype.xx)], e20 ∈ paratypes.xx do oldacc + tollvmtype(alltypes, e20)/for(oldacc)
+ )
+else if iscontinue.xx then addtemplate(xx, 0, emptyinternalbc, "CONTINUE"_1, nopara.xx, [i64])
+else addtemplate(xx, 0, emptyinternalbc, wordname.xx, nopara.xx, [i64])
 
-Function CASTINTTOPTR int 10
+Function call(alltypes:typedict, xx:symbol, type:word, symname:word)match5
+let list = tollvmtypelist(alltypes, xx)
+let functype = function.list
+let newcode = 
+ CALLSTART(1
+ , 0
+ , 32768
+ , typ.functype
+ , toint.symboltableentry([symname], functype)
+ , if type = "CALL"_1 then nopara.xx + 1 else nopara.xx
+ )
+addtemplate(xx, 1, newcode, type, nopara.xx, list)
 
-type pp is record idx:int, val:int
+Function usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
+let args = 
+ if action.t = "CALL"_1 then empty:seq.int
+ else subseq(argstack, length.argstack - arg.t + 1, length.argstack)
+processtemplate(parts.t, deltaoffset, args)
 
-function getvbr(a:seq.bit, idx:int, size:int)pp getvbr(a, size, bits.0, 0, idx, 0)
+type recordcoderesult is regno:int, bc:internalbc
 
-function getvbr(a:seq.bit, size:int, val:bits, nobits:int, idx:int, i:int)pp 
- let b = toint(a_(idx + i))
-  if i = size - 1 
-  then if b = 0 then pp(idx + size, toint.val)else getvbr(a, size, val, nobits, idx + size, 0)
-  else getvbr(a, size, bits.b << nobits ∨ val, nobits + 1, idx, i + 1)
+Export regno(recordcoderesult)int
 
-function getinfo(b:seq.bit, noargs:int, r:seq.int, idx:int, recs:seq.seq.int, abbrvlen:int)seq.seq.int 
- if length.r > 0 
-  then // working on record // 
-   if noargs = 0 
-   then getinfo(b, 0, empty:seq.int, idx, recs + r, abbrvlen)
-   else let next = getvbr(b, idx, 6)
-   getinfo(b, noargs - 1, r + val.next, idx.next, recs, abbrvlen)
-  else let t = getvbr(b, abbrvlen, bits.0, 0, idx, 0)
-  if val.t = 3 
-  then // record // 
-   let inst = getvbr(b, idx.t, 6)
-   let args = getvbr(b, idx.inst, 6)
-   getinfo(b, val.args, [ val.inst], idx.args, recs, abbrvlen)
-  else recs
+Export bc(recordcoderesult)internalbc
 
-function astext2(a:seq.int)seq.word {"["+ @(+, toword,"", a)+"]"}
+Export type:recordcoderesult
 
-Function astext(a:bitpackedseq.bit)seq.word 
- // @(+, toword,"", @(+, toint, empty:seq.int, toseq.a))+"&br"+ // 
-  let recs = getinfo(toseq.a, 0, empty:seq.int, 1, empty:seq.seq.int, 4)
-  @(seperator."&br", astext2,"", recs)
+function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.llvmtype, regno:int, pint:int, preal:int, pptr:int)recordcoderesult
+if i > length.args then recordcoderesult(regno, bc)
+else
+ let typ = types_i
+ if typ = double then
+  if preal = 0 then
+   setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.double, bitcast)
+   , args
+   , i
+   , types
+   , regno + 1
+   , pint
+   , regno + 1
+   , pptr
+   )
+  else
+   let newbc = GEP(r(regno + 1), double, r.preal, C64(i - 1)) + STORE(r(regno + 2), r(regno + 1), slot.args_i)
+   setnextfld(bc + newbc, args, i + 1, types, regno + 1, pint, preal, pptr)
+ else if typ = ptr.i64 then
+  if pptr = 0 then
+   setnextfld(bc + CAST(r(regno + 1), r.pint, ptr.ptr.i64, bitcast)
+   , args
+   , i
+   , types
+   , regno + 1
+   , pint
+   , preal
+   , regno + 1
+   )
+  else
+   let newbc = GEP(r(regno + 1), ptr.i64, r.pptr, C64(i - 1)) + STORE(r(regno + 2), r(regno + 1), slot.args_i)
+   setnextfld(bc + newbc, args, i + 1, types, regno + 1, pint, preal, pptr)
+ else
+  let newbc = GEP(r(regno + 1), i64, r.pint, C64(i - 1)) + STORE(r(regno + 2), r(regno + 1), slot.args_i)
+  setnextfld(bc + newbc, args, i + 1, types, regno + 1, pint, preal, pptr)
 
+Function sequencecode(args:seq.int, type:llvmtype, lastreg:int, template:boolean)recordcoderesult
+recordcode([toint.C64.0, toint.C64.length.args] + args
+, [i64, i64] + constantseq(length.args, type)
+, lastreg
+, template
+)
+
+Function recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolean)recordcoderesult
+let firstpara = if template then slot.ibcfirstpara2 else r.1
+let newcode = 
+ CALL(r(lastreg + 1)
+ , 0
+ , 32768
+ , function.[ptr.i64, i64, i64]
+ , symboltableentry("allocatespace", function.[ptr.i64, i64, i64])
+ , firstpara
+ , C64.length.args
+ )
+let c = setnextfld(newcode, args, 1, types, lastreg + 1, lastreg + 1, 0, 0)
+if template then recordcoderesult(regno.c + 1, bc.c + GEP(r(regno.c + 1), i64, r(lastreg + 1), C64.0))
+else c 

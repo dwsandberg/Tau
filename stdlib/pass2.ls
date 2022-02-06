@@ -1,439 +1,490 @@
 Module pass2
 
+use UTF8
+
 use bits
 
-use cvttoinst
+use interpreter
 
-use graph.word
+use localmap2
 
-use ipair.tree.seq.word
-
-use libscope
+use mergeblocks
 
 use real
 
-use seq.arc.word
-
-use seq.int
-
-use seq.ipair.tree.seq.word
-
-use seq.mytype
-
-use seq.seq.word
-
-use seq.symbol
-
-use seq.tree.seq.word
-
-use set.arc.word
-
-use set.symbol
-
-use set.word
-
-use stack.tree.seq.word
-
-use stdlib
+use standard
 
 use symbol
 
-use tree.seq.word
+use symbolconstant
 
-use worddict.tree.seq.word
+use words
 
-Function pass2(knownsymbols:symbolset, roots:seq.word, compiled:symbolset)intercode 
- // does inline expansion, finds consts, removes unreaachable functions // 
-  let p = program(knownsymbols, newgraph.empty:seq.arc.word, empty:set.word,"")
-  let x = @(addsymbol, identity, p, roots)
-  let s2 = expandinline.x 
-  let statechangingfuncs = reachable(complement.callgraph.s2, hasstate.x)∩ nodes.callgraph.s2 
-  // only pass on functions that can be reached from roots and are in this library // 
-  let g = reachable(callgraph.s2, roots) - asset.@(+, mangledname, empty:seq.word, toseq.compiled)
-  let z = predecessors(callgraph.s2,"APPLY"_1)
-  assert isempty.z report"APPLY?"+ toseq.z 
-  // find tail calls and constants // 
-  let rr = @(+, findconstandtail(s2, statechangingfuncs), empty:seq.symbol, toseq.g)
-  // assert false report @(seperator."&br &br", print2,"", rr)// convert2(knownsymbols.x, rr)
+use seq.char
 
-function findconstandtail(p:program, stateChangingFuncs:set.word, mangledname:word)seq.symbol 
- // finds constants, discards builtins, and make sure"STATE"is root on state changing functions // 
-  if mangledname ="STATE"_1 
-  then empty:seq.symbol 
-  else let a = codedown.mangledname 
-  if length.a > 1 ∧ last(a_2)="builtin"_1 
-  then empty:seq.symbol 
-  else let f = lookupfunc(knownsymbols.p, mangledname)
-  // let code1 = if"TESTOPT"_1 in flags.f then hoistRecord.codetree.f else hoistRecord.codetree.f let code2 = // 
-  // remove result record in loop // 
-  // opt2.code1 let code3 = removerecords.code2 // 
-  let q = inline(p, empty:set.word, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, codetree.f)
-  let q2 = if"STATE"_1 in flags.f ∨ not(mangledname.f in stateChangingFuncs)
-   then q 
-   else tree("STATE", [ q])
-  [ changecodetree(f, q2)]
+use otherseq.int
 
-function paratree(i:int)tree.seq.word tree("PARAM"+ toword.i)
+use seq.int
 
-function addsymbol(p:program, mangledname:word)program 
- let caller = lookupsymbol(knownsymbols.p, mangledname)
-  // assert not(mangledname ="test4Ztest4"_1)report src.caller +"FLAGS"+ flags.caller // 
-  // assert not(mangledname ="PROFILE"_1)report"XXX"+ mangledname // 
-  // assert length.src.caller > 0 report"Error"+ mangledname + print2.caller // 
-  if isdefined.caller ∧ label.codetree.caller ="default"
-  then let startindex = if src(caller)_1 ="parsedfunc"_1 then toint(src(caller)_2)+ 3 else 1 
-   let treecode = subseq(src.caller, startindex, length.src.caller - length.flags.caller)
-   if length.src.caller > 0 ∧ last.src.caller ="EXTERNAL"_1 
-   then program(replace(knownsymbols.p, changecodetree(caller, tree."EXTERNAL")), callgraph.p, inline.p, if"STATE"_1 in flags.caller then hasstate.p + mangledname.caller else hasstate.p)
-   else let tr0 = buildcodetreeX(knownsymbols.p, false, caller, empty:stack.tree.seq.word, 1, treecode)
-   let tr = inline(p, inline.p, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, if label.tr0 ="STATE"then tr0_1 else tr0)
-   let calls2 = calls(knownsymbols.p, tr)
-   let isrecusive = mangledname.caller in calls2 
-   let tr2 = if isrecusive then tailcall(tr, mangledname.caller, nopara.caller)else tr 
-   let calls3 = asset.calls(knownsymbols.p, tr2)
-   let newsym = changecodetree(caller, tr2)
-   let flags = flags.newsym 
-   let newp = program(replace(knownsymbols.p, newsym), callgraph.p + @(+, arc.mangledname.caller, empty:seq.arc.word, toseq.calls3), if isrecusive ∨ not("SIMPLE"_1 in flags ∨"INLINE"_1 in flags)
-    then inline.p 
-    else inline.p + mangledname.newsym, if"STATE"_1 in flags ∨ inst.tr0 ="STATE"_1 
-    then hasstate.p + mangledname.newsym 
-    else hasstate.p)
-   @(addsymbol, identity, newp, toseq(calls3 - "APPLY"_1))
-  else p
+use set.int
 
-function buildcodetree(knownsymbols:symbolset, src:seq.word)tree.seq.word 
- buildcodetreeX(knownsymbols, false, symbol("looptemplate"_1, mytype."?", empty:seq.mytype, mytype."?",""), empty:stack.tree.seq.word, 1, src)
+use otherseq.mytype
 
-function buildcodetreeX(knownsymbols:symbolset, hasstate:boolean, caller:symbol, stk:stack.tree.seq.word, i:int, src:seq.word)tree.seq.word 
- if i > length.src 
-  then assert length.toseq.stk > 0 report"STACK ISSUE"+ mangledname.caller + src 
-   let top2 = top.stk 
-   // let top2 = if label.top ="builtinZtestZinternal1"&and label.top_1 ="NOOP"then tree("PARAM 1")else top assert not(label.top2 ="builtinZtestZinternal1")report print.top2 // 
-   if hasstate then tree("STATE", [ top2])else top2 
-  else let name = src_i 
-  if name in"builtinZtestZwordzseq builtinZtestZinternal1"
-  then buildcodetreeX(knownsymbols, hasstate, caller, stk, i + 1, src)
-  else let specialnopara = if name in"if CALLIDX"
-   then 3 
-   else if name in"IDXUC setfldZbuiltinZTzaddressZT decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint createfileZbuiltinZbitszseqZoutputformat"
-   then 2 
-   else if name in"assertZbuiltinZwordzseq mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord allocatespaceZbuiltinZint builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT getfileZbuiltinZbitszseq"
-   then 1 
-   else if name in"FORCEINLINEZtest PROFILEZtest NOINLINEZtest"then 0 else-1 
-  assert length.toseq.stk ≥ specialnopara report"STACK ISSUE"+ name + mangledname.caller + src 
-  if specialnopara >-1 
-  then buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, specialnopara), tree([ name], top(stk, specialnopara))), i + 1, src)
-  else if name ="SET"_1 
-  then buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, 2), tree(subseq(src, i, i + 1), top(stk, 2))), i + 2, src)
-  else if name in"LIT PARAM LOCAL WORD"
-  then buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
-  else if name ="FREF"_1 
-  then // let sym = lookupfunc(knownsymbols, src_(i + 1))// 
-   buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + 1)), i + 2, src)
-  else if name ="define"_1 
-  then buildcodetreeX(knownsymbols, hasstate, caller, stk, i + 2, src)
-  else if name in"RECORD APPLY LOOPBLOCK STKRECORD CONTINUE FINISHLOOP CRECORD"
-  then let size = toint(src_(i + 1))
-   assert length.toseq.stk ≥ size report"stack problem APPLY/RECORD"+ src 
-   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, size), tree(subseq(src, i, i + 1), top(stk, size))), i + 2, src)
-  else if name ="PRECORD"_1 
-  then let size = toint(src_(i + 1))
-   let s = top(stk, size)
-   let b = tree("PROCESS2", [ tree("RECORD", subseq(s, size - 3, size)+ subseq(s, 1, size - 4))])
-   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, size), b), i + 2, src)
-  else if name ="WORDS"_1 
-  then let size = toint(src_(i + 1))
-   buildcodetreeX(knownsymbols, hasstate, caller, push(stk, tree.subseq(src, i, i + size + 1)), i + size + 2, src)
-  else if name ="COMMENT"_1 
-  then let size = toint(src_(i + 1))
-   buildcodetreeX(knownsymbols, hasstate, caller, stk, i + size + 2, src)
-  else let sym = lookupsymbol(knownsymbols, name)
-  if isundefined.sym 
-  then let down = codedown.name 
-   let nopara = length.codedown.name - 2 
-   let modname = mytype(down_2)
-   let templatename = abstracttype.modname 
-   let label = if templatename ="para"_1 
-    then"PARAM"+ down_2_1 
-    else if templatename ="local"_1 then"LOCAL"+ down_1 else down_1 
-   buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara), tree(label, top(stk, nopara))), i + 1, src)
-  else // assert not(src(sym)_1 in"sequence record encoding")report"MM4"+ name + mangledname.caller // 
-  assert length.toseq.stk ≥ nopara.sym report"stack problem"+ print2.sym 
-  let flags = flags.sym 
-  if"EXTERNAL"_1 in flags ∨"VERYSIMPLE"_1 in flags 
-  then buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
-  else if"VERYSIMPLE"_1 in flags 
-  then assert not("EXTERNAL"_1 in flags)report"ERR20"+ src.sym 
-   buildcodetreeX(knownsymbols, hasstate ∨"STATE"_1 in flags.sym, caller, stk, 1, subseq(src.sym, nopara.sym * 2 + 1, length.src.sym - length.flags.sym)+ subseq(src, i + 1, length.src))
-  else buildcodetreeX(knownsymbols, hasstate, caller, push(pop(stk, nopara.sym), tree([ name], top(stk, nopara.sym))), i + 1, src)
+use seq.mytype
 
-Function calls(knownsymbols:symbolset, t:tree.seq.word)seq.word 
- @(+, calls.knownsymbols, empty:seq.word, sons.t)+ if inst.t ="FREF"_1 
-  then [ arg.t]
-  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD assertZbuiltinZwordzseq setfldZbuiltinZTzaddressZT allocatespaceZbuiltinZint decodeZbuiltinZTzencodingZTzerecord encodeZbuiltinZTZTzerecord mappingZbuiltinZTzerecord getinstanceZbuiltinZTzerecord findencodeZbuiltinZTZTzerecord getaddressZbuiltinZTzseqZint FORCEINLINEZtest builtinZtestZinternal1 abortedZbuiltinZTzprocess processZbuiltinZT PROFILEZtest NOINLINEZtest createfileZbuiltinZbitszseqZoutputformat getfileZbuiltinZbitszseq"
-  then empty:seq.word 
-  else // let sym = knownsymbols_inst.t assert mangledname.sym ≠"undefinedsym"_1 ∨ inst.t in"APPLY"report"IN calls"+ inst.t + print.t // 
-  [ inst.t]
+use otherseq.symbol
 
-Function calls(self:word, t:tree.seq.word)seq.arc.word 
- @(+, calls.self, empty:seq.arc.word, sons.t)+ if inst.t ="FREF"_1 
-  then [ arc(self, arg.t)]
-  else if inst.t in"WORD WORDS RECORD IDXUC LIT LOCAL PARAM SET FINISHLOOP LOOPBLOCK CONTINUE NOINLINE EQL if CALLIDX PROCESS2 CRECORD STKRECORD"
-  then empty:seq.arc.word 
-  else // let a = codedown.inst.t if length.a > 1 ∧(a_2 ="builtin")then empty:seq.arc.word else // 
-  [ arc(self, inst.t)]
+use seq.symbol
 
-function opSUB word {"Q2DZbuiltinZintZint"_1 }
+use set.symbol
 
-function opRSUB word {"Q2DZbuiltinZrealZreal"_1 }
+use seq.symdef
 
-function isconst(t:tree.seq.word)boolean 
- inst.t in"LIT CRECORD WORD WORDS FREF"
+use set.symdef
 
-function simplecalcs(label:seq.word, a:int, b:int, l:seq.tree.seq.word)tree.seq.word 
- let inst = label_1 
-  if inst = opRSUB 
-  then tree.["LIT"_1, toword.representation(casttoreal.a - casttoreal.b)]
-  else if not(between(a,-2147483648, 2147483648)∧ between(b,-2147483648, 2147483648))
-  then tree(label, l)
-  else if inst = opSUB 
-  then tree.["LIT"_1, toword(a - b)]
-  else if inst ="Q2BZbuiltinZintZint"_1 
-  then tree.["LIT"_1, toword(a + b)]
-  else if inst ="Q2FZbuiltinZintZint"_1 ∧ b ≠ 0 
-  then tree.["LIT"_1, toword(a / b)]
-  else if inst ="Q2AZbuiltinZintZint"_1 
-  then tree.["LIT"_1, toword(a * b)]
-  else if inst ="EQL"_1 
-  then tree.["LIT"_1, if a = b then"1"_1 else"0"_1]
-  else if inst ="Q3CQ3CZbuiltinZbitsZint"_1 
-  then tree.["LIT"_1, toword.toint(bits.a << b)]
-  else if inst ="Q3EQ3EZbuiltinZbitsZint"_1 
-  then tree.["LIT"_1, toword.toint(bits.a >> b)]
-  else // assert inst in"Q5EZstdlibZintZint BLOCKCOUNTZinternalbcZintZint"report"XY"+ inst // 
-  tree(label, l)
+use otherseq.word
 
-type program is record knownsymbols:symbolset, callgraph:graph.word, inline:set.word, hasstate:seq.word
+use set.word
 
-__________________________
+use otherseq.seq.int
 
-inline expansion
+use seq.seq.int
 
-Function expandinline(p:program)program 
- let canidates = @(∪, predecessors.callgraph.p, asset."", toseq.inline.p)
-  // canidates will contain functions with just FREF's // 
-  let s0 = program(knownsymbols.p, callgraph.p, asset."", hasstate.p)
-  let s1 = @(simple3.inline.p, identity, s0, toseq.canidates)
-  let usesapply = predecessors(callgraph.s1,"APPLY"_1)
-  let s2 = @(simple3(inline.p ∪ asset."APPLY"), identity, s1, toseq.usesapply)
-  if isempty.inline.s2 then s2 else expandinline.s2
+use seq.seq.symbol
 
-Function simple3(inline:set.word, p:program, f:word)program 
- let infunc = lookupfunc(knownsymbols.p, f)
-  let oldarcs = arcstosuccessors(callgraph.p, f)
-  let z = @(+, head, empty:set.word, toseq.oldarcs)∩ inline - f 
-  if isempty.z 
-  then p 
-  else // inline may introduce new calls that are not in z so pass full set of possible inline expansions // 
-  let t = inline(p, inline, emptyworddict:worddict.tree.seq.word, empty:seq.tree.seq.word, 1, codetree.infunc)
-  let newsymbol = changecodetree(infunc, t)
-  let newknown = replace(knownsymbols.p, newsymbol)
-  let flags = flags.newsymbol 
-  program(newknown, replacearcs(callgraph.p, oldarcs, asset.calls(f, t)), if"SIMPLE"_1 in flags ∨"INLINE"_1 in flags then inline.p + f else inline.p,"")
+use seq.seq.word
 
-function explodeinline(prg:program, inlinename:set.word, inlinetree:tree.seq.word, simple:boolean, nextset:int, paras:seq.tree.seq.word)tree.seq.word 
- // add sets for complex parameters and then does inline expansion. // 
-  if simple 
-  then inline(prg, inlinename, emptyworddict:worddict.tree.seq.word, paras, nextset, inlinetree)
-  else let pmap = @(addtoparamatermap, identity, parametermap(empty:seq.tree.seq.word, nextset, empty:seq.ipair.tree.seq.word), paras)
-  let a = inline(prg, inlinename, emptyworddict:worddict.tree.seq.word, paramap.pmap, nextset.pmap, inlinetree)
-  @(addsets, identity, a, addnodes.pmap)
+use set.seq.word
 
-type parametermap is record paramap:seq.tree.seq.word, nextset:int, addnodes:seq.ipair.tree.seq.word
+use seq.seq.seq.symbol
 
-function addtoparamatermap(p:parametermap, t:tree.seq.word)parametermap 
- if inst.t in"LIT LOCAL PARAM FREF FREFB WORD WORDS"
-  then parametermap(paramap.p + t, nextset.p, addnodes.p)
-  else parametermap(paramap.p + tree.["LOCAL"_1, toword.nextset.p], nextset.p + 1, addnodes.p + ipair(nextset.p, t))
+function reorgwhen int 6000
 
-function addsets(t:tree.seq.word, a:ipair.tree.seq.word)tree.seq.word 
- tree(["SET"_1, toword.index.a], [ value.a, t])
+function firstopt(p:set.symdef, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol
+let pdict = 
+ for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.s, 1, 1)do pmap + localmap2(parano, [Local.parano])/for(pmap)
+let a = xxx(p, removeoptions.code, s, pdict)
+let t = 
+ if first then a
+ else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
+  let ty = if Hasfor ∈ flags.a then expandforexp(code.a, nextvar.a)else code.a
+  let t2 = 
+   if Callself ∈ flags.a ∧ {????}wordname.s ≠ "subpass2"_1 then optB(ty, s, reorgwhen)
+   else ty
+  expandresult(nextvar.a, t2, flags.a)
+ else a
+let newoptions1 = 
+ if between(length.code.t, 1, 21) ∧ Callself ∉ flags.t ∧ Hasfor ∉ flags.t
+ ∧ "NOINLINE"_1 ∉ options then
+  if isverysimple(nopara.s, code.t)then"INLINE VERYSIMPLE"else"INLINE"
+ else""
+let newoptions = 
+ if isempty.options then newoptions1
+ else if options = newoptions1 then options
+ else toseq(asset.options \ asset."VERYSIMPLE" ∪ asset.newoptions1)
+if newoptions = ""then code.t else code.t + Words.newoptions + Optionsym
 
-function addlooptosetmap(sets:worddict.tree.seq.word, old:int, new:int, numbertoadd:int)worddict.tree.seq.word 
- if numbertoadd = 0 
-  then sets 
-  else let i = numbertoadd - 1 
-  addlooptosetmap(addtosetmap(sets, toword(old + i), new + i), old, new, i)
+function isverysimple(nopara:int, code:seq.symbol)boolean
+if code = [Local.1] ∧ nopara = 1 then true
+else
+ for isverysimple = length.code ≥ nopara, idx = 1, sym ∈ code
+ while isverysimple
+ do next(if idx ≤ nopara then sym = Local.idx else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
+ , idx + 1
+ )
+ /for(isverysimple)
 
-function addtosetmap(sets:worddict.tree.seq.word, old:word, new:int)worddict.tree.seq.word 
- replace(sets, old, tree.["LOCAL"_1, toword.new])
+function xxx(p:set.symdef, code:seq.symbol, s:symbol, pdict:set.localmap2)expandresult
+let a = scancode(p, code, nopara.s + 1, pdict, s)
+let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1, reorgwhen)else code.a
+if length.code = length.new ∧ length.code > 20 ∨ new = code then expandresult(nextvar.a, new, flags.a)
+else xxx(p, new, s, pdict)
 
-function inline(pp:program, inlinename:set.word, sets:worddict.tree.seq.word, paramap:seq.tree.seq.word, nextset:int, code:tree.seq.word)tree.seq.word 
- let inst = inst.code 
-  if nosons.code = 0 ∧ inst in"LIT FREF FREFB WORD WORDS"
-  then code 
-  else if inst ="LOCAL"_1 
-  then lookup(sets, arg.code)_1 
-  else if inst ="PARAM"_1 
-  then let i = toint.arg.code 
-   assert i > 0 report"PARAM Problem"+ print.code 
-   if i ≤ length.paramap then paramap_i else code 
-  else if inst ="CRECORD"_1 
-  then code 
-  else if inst ="SET"_1 
-  then let s1 = inline(pp, inlinename, sets, paramap, nextset + 1, code_1)
-   if inst.s1 in"LIT LOCAL PARAM FREF FREFB WORD"∨ inst.s1 ="getaddressZbuiltinZTzseqZint"_1 ∧ inst(s1_1)="LOCAL"_1 ∧ inst(s1_2)="LIT"_1 
-   then inline(pp, inlinename, replace(sets, arg.code, s1), paramap, nextset, code_2)
-   else let s2 = inline(pp, inlinename, addtosetmap(sets, arg.code, nextset), paramap, nextset + 1, code_2)
-   tree(["SET"_1, toword.nextset], [ s1, s2])
-  else if inst.code ="FINISHLOOP"_1 
-  then let lb = code_1 
-   let firstvar = toint.arg(lb_nosons.lb)
-   let noloopvars = nosons.lb - 1 
-   let newmap = addlooptosetmap(sets, firstvar, nextset, noloopvars)
-   let newlb = tree(label.lb, @(+, inline(pp, inlinename, newmap, paramap, nextset + noloopvars), empty:seq.tree.seq.word, subseq(sons.lb, 1, noloopvars))+ tree.["LIT"_1, toword.nextset])
-   tree(label.code, [ newlb, inline(pp, inlinename, newmap, paramap, nextset + noloopvars, code_2)])
-  else let l = @(+, inline(pp, inlinename, sets, paramap, nextset), empty:seq.tree.seq.word, sons.code)
-  // look for simplifications // 
-  if inst ="RECORD"_1 
-  then let insts = @(+, inst, empty:set.word, l)
-   if isempty(insts - asset."LIT CRECORD WORD WORDS FREF")
-   then if length.l > 2 ∧ label(l_1)="LIT 0"∧ inst(l_2)="LIT"_1 ∧ arg(l_2)= toword(length.l - 2)∧ insts = asset."WORD LIT"∧ toseq.@(+, inst, empty:set.word, subseq(l, 3, length.l))="WORD"
-    then // assert length.l > 3 &or decode(arg.l_3)_1 > 75 &or arg.l_3 in"&br, IDXUC HASH INLINE HERe HELLO"report"HERe"+ print.code + @(+, toword,"", decode.arg.l_3)// 
-     tree.@(+, arg,"WORDS"+ arg(l_2), subseq(l, 3, length.l))
-    else tree("CRECORD", l)
-   else tree(label.code, l)
-  else if inst ="IDXUC"_1 ∧ inst(l_2)="LIT"_1 
-  then let idx = toint.arg(l_2)
-   if inst(l_1)="CRECORD"_1 
-   then if between(idx, 0, nosons(l_1) - 1)then l_1_(idx + 1)else tree(label.code, l)
-   else if inst(l_1)="getaddressZbuiltinZTzseqZint"_1 ∧ inst(l_1_2)="LIT"_1 
-   then tree(label.code, [ l_1_1, tree.["LIT"_1, toword(idx + toint.arg(l_1_2))]])
-   else tree(label.code, l)
-  else if inst ="if"_1 
-  then let i2 = inst(l_1)
-   if i2 ="LIT"_1 
-   then if arg(l_1)="1"_1 then l_2 else l_3 
-   else if i2 ="notZbuiltinZboolean"_1 
-   then tree(label.code, [ l_1_1, l_3, l_2])
-   else tree(label.code, l)
-  else if inst in"mergeZstdlibZwordzseq"∧ inst(l_1)="WORDS"_1 
-  then // assert false report"merge"+ label(l_1)// 
-   tree("WORD"+ merge.subseq(label(l_1), 3, length.label(l_1)))
-  else if inst ="Q2BZwordzseqZTzseqZTzseq"_1 ∧ inst(l_1)="WORDS"_1 ∧ inst(l_2)="WORDS"_1 
-  then let cat = subseq(label(l_1), 3, length.label(l_1))+ subseq(label(l_2), 3, length.label(l_2))
-   tree("WORDS"+ toword.length.cat + cat)
-  else if inst in"Q5FZwordzseqZTzseqZint"∧ inst(l_2)="LIT"_1 ∧ inst(l_1)="WORDS"_1 
-  then let cst = l_1 
-   let idx = toint.arg(l_2)
-   if idx > 0 ∧ idx ≤ toint.arg(l_1)
-   then tree("WORD"+ label(l_1)_(idx + 2))
-   else tree(label.code, l)
-  else if inst in"Q5FZwordzseqZTzseqZint"∧ inst(l_2)="LIT"_1 ∧ inst(l_1)="CRECORD"_1 
-  then // only expand when is standard sequence:that is 0 is in first field of record // 
-   let cst = l_1 
-   let idx = toint.arg(l_2)
-   if idx > 0 ∧ idx ≤ nosons.cst - 2 ∧ inst(cst_1)="LIT"_1 ∧ arg(cst_1)="0"_1 
-   then cst_(idx + 2)
-   else tree(label.code, l)
-  else if length.l = 2 ∧ inst(l_2)="LIT"_1 ∧ inst.code ="getaddressZbuiltinZTzseqZint"_1 ∧ arg(l_2)="0"_1 
-  then l_1 
-  else if inst ="APPLY"_1 ∧(nosons.code ≠ 5 ∨ nosons(l_1)> 2)
-  then expandapply(pp, inlinename, nextset, code, l)
-  else if inst in inlinename 
-  then // inline expansion // 
-   if inst ="APPLY"_1 
-   then if nosons.code = 5 ∧ checkistypechangeonly(pp, inlinename, arg(l_4), arg(l_3), l_1)
-    then inline(pp, inlinename, sets, paramap, nextset, l_2)
-    else expandapply(pp, inlinename, nextset, code, l)
-   else let f = lookupfunc(knownsymbols.pp, inst)
-   explodeinline(pp, inlinename, codetree.f,"SIMPLE"_1 in flags.f, nextset, l)
-  else if length.l = 2 ∧ inst(l_1)="LIT"_1 ∧ inst(l_2)="LIT"_1 
-  then // location after inline expansion so inlining will happen if both sons happen to be LIT's // 
-   simplecalcs(label.code, toint.arg(l_1), toint.arg(l_2), l)
-  else tree(label.code, l)
+function print(s:seq.int)seq.word for acc = "", @e ∈ s do acc + toword.@e /for(acc)
 
-function expandapply(pp:program, inlinename:set.word, nextset:int, code:tree.seq.word, l:seq.tree.seq.word)tree.seq.word 
- let term1 = arg(code_(nosons.code - 1))
-  let term2 = arg(code_(nosons.code - 2))
-  let ptyp = arg(code_nosons.code)
-  let p1 = noparamangled.term1 - 2 
-  let p2 = noparamangled.term2 - 1 
-  let nopara = 2 + p2 + p1 
-  assert p2 ≥ 0 report"illformed"+ term1 + term2 + print.lookupfunc(knownsymbols.pp, term2)
-  // let thetree = buildcodetree(nopara, template2(term1, term2, p1, p2, ptyp))let z = @(+, identity, knownsymbols.pp, testx)// 
-  let thetree = buildcodetree(knownsymbols.pp, template2(term1, term2, p1, p2, ptyp))
-  explodeinline(pp, inlinename, thetree, false, nextset, subseq(l, 1, length.l - 3))
+Function Callself bits bits.1
 
-______________
+Function State bits bits.4
 
-Tailcall
+Function Hasfor bits bits.8
 
-Function tailcall(t:tree.seq.word, self:word)boolean 
- if inst.t ="if"_1 
-  then if tailcall(t_2, self)then true else tailcall(t_3, self)
-  else if inst.t ="SET"_1 
-  then tailcall(t_2, self)
-  else if inst.t in"FINISHLOOP"then false else inst.t = self
+Function Hasmerge bits bits.16
 
-Function tailcall(t:tree.seq.word, self:word, nopara:int)tree.seq.word 
- if tailcall(t, self)
-  then let m = getmaxvar.t + 1 
-   let s = @(+, newNode("LOCAL"_1), empty:seq.tree.seq.word, arithseq(nopara, 1, m))
-   let plist = @(+, newNode("PARAM"_1), empty:seq.tree.seq.word, arithseq(nopara, 1, 1))
-   tree("FINISHLOOP 2", [ tree(["LOOPBLOCK"_1, toword(nopara + 1)], plist + newNode("LIT"_1, m)), 
-   tailcall(s, self, t)])
-  else t
+function ∈(a:bits, b:bits)boolean(a ∧ b) = a
 
-function leftcat(a:seq.tree.seq.word, b:tree.seq.word)seq.tree.seq.word [ b]+ a
+function prepareargs(prg:set.symdef, args:seq.symbol, func:symbol)seq.symbol
+{returns empty sequence if args are not all constants. Removes record constants in args.returns empty if Fref appears 
+in args}
+for acc = true, newargs = empty:seq.symbol, @e ∈ args
+while acc
+do if not.isconst.@e ∨ isFref.@e then next(false, newargs)
+else if not.isrecordconstant.@e then next(true, newargs + @e)
+else
+ let t = {removerecordconstant(prg, }removeconstantcode.[@e]
+ let noFref = for noFref = true, sub ∈ t while noFref do not.isFref.sub /for(noFref)
+ next(noFref, newargs + t)
+/for(if acc then args + func else empty:seq.symbol /if)
 
-function newNode(w:word, i:int)tree.seq.word tree.[ w, toword.i]
+function ismember(s:symbol)boolean
+name.module.s = "seq"_1 ∧ name.s = "∈"_1 ∧ (paratypes.s)_1 ∈ [typeint, typeword]
 
-function tailcall(paramap:seq.tree.seq.word, self:word, t:tree.seq.word)tree.seq.word 
- if inst.t ="if"_1 
-  then tree(label.t, [ tailcall(paramap,"nomatch"_1, t_1), tailcall(paramap, self, t_2), tailcall(paramap, self, t_3)])
-  else if inst.t ="SET"_1 
-  then tree(label.t, [ tailcall(paramap,"nomatch"_1, t_1), tailcall(paramap, self, t_2)])
-  else if inst.t = self 
-  then tree(["CONTINUE"_1, self], @(+, tailcall(paramap,"nomatch"_1), empty:seq.tree.seq.word, sons.t))
-  else if inst.t ="PARAM"_1 
-  then paramap_toint.arg.t 
-  else tree(label.t, @(+, tailcall(paramap,"nomatch"_1), empty:seq.tree.seq.word, sons.t))
+function scancode(p:set.symdef, org:seq.symbol, nextvarX:int, mapX:set.localmap2, self:symbol)expandresult
+for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym ∈ org do
+ let len = length.result
+ if not.isempty.result ∧ last.result = PreFref then next(flags, result >> 1 + Fref.sym, nextvar, map)
+ else if isconst.sym then next(flags, result + sym, nextvar, map)
+ else if isspecial.sym then
+  if isdefine.sym then
+   let thelocal = value.sym
+   if len > 0 ∧ (isconst.result_len ∨ islocal.result_len)then
+    next(flags
+    , subseq(result, 1, length.result - 1)
+    , nextvar
+    , localmap2(thelocal, [result_len]) ∪ map
+    )
+   else next(flags, result + Define.nextvar, nextvar + 1, localmap2(thelocal, [Local.nextvar]) ∪ map)
+  else if isbr.sym then
+   let hasnot = last.result = NotOp
+   let sym1 = if hasnot then Br2(brf.sym, brt.sym)else sym
+   let result1 = if hasnot then result >> 1 else result
+   let newsym = 
+    if last.result1 = Litfalse then Br2(brf.sym1, brf.sym1)
+    else if last.result1 = Littrue then Br2(brt.sym1, brt.sym1)else sym1
+   next(if brt.newsym = brf.newsym ∨ isblock.last.result1 then Hasmerge ∨ flags else flags
+   , result1 + newsym
+   , nextvar
+   , map
+   )
+  else if sym = Exit ∧ isblock.last.result then next(flags ∨ Hasmerge, result + sym, nextvar, map)
+  else if isloopblock.sym then
+   let nopara = nopara.sym
+   let addlooplocals = 
+    for pmap = map, parano = 1, e ∈ constantseq(10000, 1)
+    while parano ≤ nopara
+    do next(localmap2(firstvar.sym + parano - 1, [Local(nextvar + parano - 1)]) ∪ pmap, parano + 1)
+    /for(pmap)
+   next(flags
+   , result + Loopblock(paratypes.sym, nextvar, resulttype.sym)
+   , nextvar + nopara
+   , addlooplocals
+   )
+  else if isRecord.sym ∨ isSequence.sym then
+   let nopara = nopara.sym
+   let args = subseq(result, len + 1 - nopara, len)
+   let constargs = for acc = true, @e ∈ args while acc do isconst.@e /for(acc)
+   if constargs then
+    next(flags, subseq(result, 1, len - nopara) + Constant2(p, args + sym), nextvar, map)
+   else next(flags, result + sym, nextvar, map)
+  else if islocal.sym then
+   let t = lookup(map, value.sym)
+   next(flags, result + if isempty.t then[sym]else value.t_1, nextvar, map)
+  else next(flags, result + sym, nextvar, map)
+ else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
+ else if length.result > 2 ∧ isconst.last.result ∧ ismember.sym then
+  let arg = result_(-2)
+  if islocal.arg ∨ isconst.arg then
+   next(flags, result >> 2 + removeismember(last.result, arg), nextvar, map)
+  else
+   next(flags, result >> 1 + Define.nextvar + removeismember(last.result, Local.nextvar), nextvar, map)
+ else if wordname.sym ∈ "forexp" ∧ isBuiltin.sym then
+  let noop = forexpisnoop(sym, result)
+  if not.isempty.noop then next(flags, noop, nextvar, map)
+  else next(flags ∨ Hasfor, result + sym, nextvar, map)
+ else if wordname.sym ∈ "indexseq45" ∧ isInternal.sym then
+  next(flags ∨ Hasfor, result + sym, nextvar, map)
+ else if sym = self then next(flags ∨ Callself, result + sym, nextvar, map)
+ else
+  let nopara = nopara.sym
+  let dd = getCode(p, sym)
+  let options = getoption.dd
+  let ct = 
+   if first."COMPILETIME" ∈ options then
+    prepareargs(p, subseq(result, len - nopara + 1, len), sym)
+   else empty:seq.symbol
+  if{COMPILE TIME}not.isempty.ct then
+   if isdecodeword.sym then
+    let arg1 = result_len
+    let a1 = 
+     for acc = empty:seq.symbol, @e ∈ tointseq.decodeword.wordname.arg1 do acc + Lit.@e /for(acc)
+    let d = Constant2(p, a1 + Sequence(typeint, length.a1))
+    next(flags, result >> 1 + d, nextvar, map)
+   else
+    let newcode = interpretCompileTime.removeconstantcode.ct
+    if isempty.newcode then next(flags, result + sym, nextvar, map)
+    else
+     let newconst = if length.newcode > 1 then Constant2(p, newcode)else first.newcode
+     next(flags, result >> nopara + newconst, nextvar, map)
+  else if first."VERYSIMPLE" ∈ options then
+   next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
+  else if"INLINE"_1 ∉ options then
+   let newflags = 
+    if"STATE"_1 ∈ options ∨ {wordname.sym ∈"setfld"∨}isGlobal.sym then State ∨ flags
+    else flags
+   next(newflags, result + sym, nextvar, map)
+  else
+   let code = removeoptions.dd
+   if isempty.code then next(flags, result + sym, nextvar, map)
+   else if length.code = 1 ∧ code = [Local.1] ∧ nopara = 1 then
+    {function just returns result}next(flags, result, nextvar, map)
+   else
+    let t = backparse2(result, len, nopara, empty:seq.int) + [len + 1]
+    {assert length.t=nopara+1 report"INLINE PARA PROBLEM"}
+    let new = expandinline(result, t, nextvar, code, p, self)
+    {assert name.sym /nin"<"report"here"+print.sym+"org"+print.org+EOL+"new"+EOL+print(subseq(result, 1, t_1-
+1)+code.new)}
+    next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
+/for(expandresult(nextvar, result, flags))
 
-------paramap_(length.paramap-toint.arg.code + 1)
+function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:set.symdef, self:symbol)expandresult
+for pmap = empty:set.localmap2
+, paracode = empty:seq.symbol
+, nextvar = nextvarin
+, parano = 1
+, lastidx = t_1
+, idx ∈ t << 1
+do
+ next(pmap + localmap2(parano, [Local.nextvar])
+ , paracode + subseq(result, lastidx, idx - 1) + Define.nextvar
+ , nextvar + 1
+ , parano + 1
+ , idx
+ )
+/for(let r = scancode(p, code, nextvar, pmap, self)
+expandresult(nextvar.r, paracode + code.r, flags.r))
 
-function getmaxvar(t:tree.seq.word)int 
- @(max, getmaxvar, if inst.t ="SET"_1 
-  then toint.arg.t 
-  else if inst.t ="LOOPBLOCK"_1 then toint.arg(t_nosons.t)+ nosons.t - 2 else 0, sons.t)
+function replace(s:seq.symbol, start:int, length:int, value:seq.symbol)seq.symbol
+subseq(s, 1, start - 1) + value + subseq(s, start + length, length.s)
 
-_____________
+type expandresult is nextvar:int, code:seq.symbol, flags:bits
 
-function noparamangled(a:word)int length.codedown.a - 2
+function isconstorlocal(p:seq.symbol)boolean length.p = 1 ∧ (isconst.first.p ∨ islocal.first.p)
 
-function parainst(i:int)seq.word {"PARAM"+ toword.i }
+function expandforexp(code:seq.symbol, nextvarin:int)seq.symbol
+for result = empty:seq.symbol, nextvar = nextvarin, sym ∈ code do
+ if isBuiltin.sym ∧ wordname.sym = "forexp"_1 then
+  let f = forexpcode(sym, result, nextvar)
+  next(code.f, nextvar.f)
+ else if isInternal.sym ∧ wordname.sym ∈ "indexseq45"then
+  let theseqtype = (paratypes.sym)_1
+  let t = backparse2(result, length.result, 2, empty:seq.int)
+  let index = subseq(result, t_2, length.code)
+  let theseq = subseq(result, t_1, t_2 - 1)
+  let theseq2 = if isconstorlocal.theseq then first.theseq else Local(nextvar + 1)
+  let newcode = 
+   subseq(result, 1, t_1 - 1)
+   + if isconstorlocal.theseq then empty:seq.symbol else theseq + Define(nextvar + 1)/if
+   + [theseq2, GetSeqType, Define.nextvar]
+   + index
+   + [Lit.1, PlusOp, Define(nextvar + 2)]
+   + indexseqcode(Local.nextvar, theseq2, Local(nextvar + 2), theseqtype, true)
+  next(newcode, nextvar + 3)
+ else next(result + sym, nextvar)
+/for(result)
 
-function template2(term1:word, term2:word, nopara1:int, nopara2:int, ptyp:word)seq.word 
- // PARA 1 is seq PARA 2 is result LOCAL 10 is result of inner loop LOCAL 3 is seq LOCAL 2 is stk LOCAL 1 is accumulator // 
-  // Inner loop LOCAL 6 result LOCAL 7 index LOCAL 5 length of seq // 
-  // EQL-Q3DZbuiltinZintZint opGT = Q3EZbuiltinZintZint ADD = Q2BZbuiltinZintZint // 
-  let CALLTERM1 = [ term1]
-  let CALLTERM2 = [ term2]
-  let TERM1PARA = @(+, parainst,"", arithseq(nopara1, 1, 1))
-  let TERM2PARA = @(+, parainst,"", arithseq(nopara2, 1, nopara1 + 1))
-  parainst(nopara1 + nopara2 + 1)+"LIT 0"+ parainst(nopara1 + nopara2 + 2)+"LIT 1 LOOPBLOCK 4 LOCAL 3 LIT 0 IDXUC FREF"+ ptyp +"Q3DZbuiltinZintZint LOCAL 1 LOCAL 2 LOCAL 3 LIT 3 IDXUC STKRECORD 2 LOCAL 3 LIT 2 IDXUC CONTINUE 3 LOCAL 3 LIT 1 IDXUC LOCAL 1 LIT 1 LIT 6 LOOPBLOCK 3 LOCAL 7 LOCAL 5 Q3EZbuiltinZintZint LOCAL 6"+ TERM2PARA +"LOCAL 3 LIT 0 IDXUC LIT 0 Q3DZbuiltinZintZint LOCAL 3 LOCAL 7 LIT 1 Q2BZbuiltinZintZint IDXUC LOCAL 3 LIT 0 IDXUC LOCAL 3 LOCAL 7 CALLIDX if"+ CALLTERM2 + TERM1PARA +"LOCAL 6 LOCAL 8"+ CALLTERM1 +"LOCAL 7 LIT 1 Q2BZbuiltinZintZint CONTINUE 2 SET 8 if FINISHLOOP 2 SET 5 LOCAL 2 LIT 0 Q3DZbuiltinZintZint LOCAL 10 LOCAL 10 LOCAL 2 LIT 0 IDXUC LOCAL 2 LIT 1 IDXUC CONTINUE 3 if SET 10 if FINISHLOOP 2"
+function forexpisnoop(forsym:symbol, code:seq.symbol)seq.symbol
+if nopara.forsym = 7 ∧ first.paratypes.forsym = resulttype.forsym ∧ code_(-2) = Littrue
+∧ isseq.resulttype.last.code
+∧ wordname.code_(-3) = "+"_1
+∧ name.module.code_(-3) ∈ "seq"
+∧ isSequence.code_(-4)
+∧ nopara.code_(-4) = 1
+∧ last.code = code_(-8)
+∧ last.code = code_(-6)
+∧ code_(-7) = code_(-5)then
+ let t2 = backparse2(code, length.code - 8, 2, empty:seq.int)
+ let initacc = subseq(code, t2_1, t2_2 - 1)
+ if length.initacc = 1 ∧ isrecordconstant.initacc_1 ∧ constantcode.initacc_1 = [Lit.0, Lit.0]then
+  subseq(code, 1, t2_1 - 1) + subseq(code, t2_2, length.code - 8)
+ else empty:seq.symbol
+else empty:seq.symbol
 
-function checkistypechangeonly(prg:program, inlinename:set.word, term1:word, term2:word, term3:tree.seq.word)boolean 
- // check to see if APPLY just does a type change // 
-  let q = codedown.term1 
-  if length.q = 4 ∧ last(q_2)="seq"_1 ∧ q_1_1 ="+"_1 ∧ subseq(q, 3, length.q)= ["T seq","T"]
-  then let f = lookupfunc(knownsymbols.prg, term2)
-   if nopara.f = 1 ∧ inst.codetree.f in"PARAM"∧ not("NOINLINE"_1 in flags.f)
-   then if inst.term3 ="CRECORD"_1 ∧ nosons.term3 = 2 ∧"LIT 0"= label(term3_1)∧"LIT 0"= label(term3_1)
-    then true 
-    else // assert false report"Z"+ term1 + term2 + print(term3)// false 
-   else false 
-  else false
+function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqtype:mytype, boundscheck:boolean)seq.symbol
+{seqtype will be a basetype}
+let seqparameter = parameter.xtheseqtype
+let theseqtype = seqof.seqparameter
+let elementtype = 
+ if seqparameter ∈ [typeint, typereal, typeboolean, typebyte]then seqparameter
+ else if seqparameter ∈ [typebit]then typeint else typeptr
+let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte ∨ seqparameter = typebit
+let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], elementtype)
+[Start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)] + [theseq, masteridx, callidx, Exit]
++ if boundscheck then
+ [masteridx
+ , theseq
+ , GetSeqLength
+ , GtOp
+ , Br2(1, 2)
+ , outofboundssymbol
+ , abortsymbol.elementtype
+ , Exit
+ ]
+else empty:seq.symbol /if
++ if maybepacked then
+ [seqtype, Lit.1, EqOp, Br2(1, 2)]
+ + [theseq
+ , masteridx
+ , symbol(internalmod, "packedindex", theseqtype, typeint, elementtype)
+ , Exit
+ ]
+else empty:seq.symbol /if
++ [theseq
+, masteridx
+, symbol(internalmod, "idxseq", seqof.elementtype, typeint, elementtype)
+, Exit
+, EndBlock
+]
 
-function print(a:arc.word)seq.word [ tail.a,":"_1, head.a]
+function forexpcode(forsym:symbol, code:seq.symbol, nextvar:int)expandresult
+let t = backparse2(code, length.code, 5, empty:seq.int) << 1
+let endexp = subseq(code, t_(-1), length.code)
+let exitexp = subseq(code, t_(-2), t_(-1) - 1)
+let bodyexp = subseq(code, t_(-3), t_(-2) - 1)
+let endofsymbols = t_(-3) - 1
+let startofsymbols = endofsymbols - (nopara.forsym - 3) / 2 + 1
+let syms = subseq(code, startofsymbols, endofsymbols)
+let tmp = 
+ for acc = empty:seq.symbol, i = 1, s ∈ syms >> 1 do next(acc + Local(nextvar + i - 1), i + 1)/for(acc)
+let masteridx = Local(value.last.tmp + 1)
+let seqelement = Local(value.masteridx + 1)
+let nextvar1 = value.seqelement + 1
+let Defineseqelement = Define.value.seqelement
+let newsyms = tmp + seqelement
+let theseqtype = (paratypes.forsym)_(length.newsyms)
+let elementtype = if isseq.(paratypes.forsym)_(-4)then typeptr else(paratypes.forsym)_(-4)
+{let theseqtype=seqof.elementtype}
+let theseq = Local.nextvar1
+let totallength = Local(nextvar1 + 1)
+let seqtype = Local(nextvar1 + 2)
+let Defineseqtype = Define(nextvar1 + 2)
+let firstpart = 
+ subseq(code, 1, startofsymbols - 1)
+ + [Define.nextvar1
+ , theseq
+ , GetSeqLength
+ , Define(nextvar1 + 1)
+ , theseq
+ , GetSeqType
+ , Defineseqtype
+ , Lit.1
+ ]
+ + Loopblock(subseq(paratypes.forsym, 1, length.syms - 1) + typeint, nextvar, resulttype.forsym)
+ + {2 if masteridx > totallength then exit}[masteridx, totallength, GtOp]
+ + Br2(2, 1)
+ + {3 else let sequenceele=seq_(idx)}indexseqcode(seqtype, theseq, masteridx, theseqtype, false)
+ + [Defineseqelement]
+ + {3 while condition}replace$for(exitexp, newsyms, syms)
+ + Br2(2, 1)
+ + {4 exit loop}replace$for(endexp, newsyms, syms)
+ + Exit
+let bodyexp2 = replace$for(bodyexp, newsyms, syms)
+let lastpart = 
+ if length.syms = 2 then bodyexp2 + [masteridx, Lit.1, PlusOp, continue.2, EndBlock]
+ else if not.iscompound.bodyexp then bodyexp2 >> 1 + [masteridx, Lit.1, PlusOp, continue.length.syms, EndBlock]
+ else
+  {replace exits in body with a continue or abortsymbol}
+  let continue2 = [masteridx, Lit.1, PlusOp, continue.length.syms]
+  let assert2 = [abortsymbol.resulttype.forsym, Exit]
+  let locs = exitlocations(bodyexp2, length.bodyexp2 - 1, empty:seq.int)
+  {first item in locs is start of block and the rest are exits}
+  for acc = subseq(bodyexp2, 1, first.locs - 1), last = first.locs + 1, i ∈ locs << 1 do
+   next(acc + subseq(bodyexp2, last, i - 2)
+   + if inModFor.bodyexp2_(i - 1)then continue2 else assert2
+   , i + 1
+   )
+  /for(acc + subseq(bodyexp2, last, length.bodyexp2 - 1) + EndBlock)
+expandresult(nextvar1 + 3, firstpart + lastpart, bits.0)
 
+function iscompound(bodyexp:seq.symbol)boolean
+{detects compound accumulator}
+let sym = bodyexp_(-3)
+isblock.last.bodyexp
+∧ (wordname.sym = "next"_1 ∧ nopara.sym > 3 ∧ inModFor.sym
+∨ {assert case}abstracttype.resulttype.sym
+= addabstract(typeref."$base internal internallib", typeT))
+
+function exitlocations(s:seq.symbol, i:int, result:seq.int)seq.int
+let sym = s_i
+if isstart.sym then[i] + result
+else if isblock.sym then exitlocations(s, matchblock(s, i - 1, 0) - 1, result)
+else exitlocations(s, i - 1, if isexit.sym then[i] + result else result)
+
+function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol
+for acc = empty:seq.symbol, s ∈ code do
+ acc
+ + if inModFor.s then
+  let i = findindex(s, old)
+  if i ≤ length.new then[new_i]
+  else{this is for one of two cases 1:a nested for and $for variable is from outer loop 2:the next expresion}[s]
+ else[s]
+/for(acc)
+
+________________________________
+
+Function pass2(knownsymbols:set.symdef)set.symdef
+subpass2(empty:seq.symdef, empty:set.symdef, knownsymbols, 0) ∪ constantsymbols
+
+function subpass2(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int)set.symdef
+{assert count < 4 report"SIZE"+print.length.toseq.toprocess+print.length.bigin+print.length.toseq.corein+
+print.count}
+for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toprocess do
+ let s = sym.pele
+ let fullcode = code.pele
+ let options = getoption.fullcode
+ let code = removeoptions.fullcode
+ if isempty.code ∨ "VERYSIMPLE"_1 ∈ options ∨ "INLINE"_1 ∈ options then
+  next(big, small, pele ∪ core)
+ else if"COMPILETIME"_1 ∈ options then
+  let code4 = firstopt(core, s, fullcode, options, true)
+  next(big, small, symdef(s, code4) ∪ core)
+ else if length.code < 30 then
+  let t = firstopt(core, s, fullcode, options, true)
+  if"INLINE"_1 ∈ getoption.t then next(big, small, symdef(s, t) ∪ core)
+  else next(big, symdef(s, t) ∪ small, core)
+ else next(big + pele, small, core)
+/for(if length.toseq.corein = length.toseq.core then
+ for acc = core, prgele ∈ toseq.core + toseq.small + big do
+  let code3 = code.prgele
+  let sym3 = sym.prgele
+  if isempty.code3 then prgele ∪ acc
+  else symdef(sym3, firstopt(acc, sym3, code3, getoption.code3, false)) ∪ acc
+ /for(acc)
+else subpass2(big, core, small, count + 1)/if)
+
+function matchblock(s:seq.symbol, i:int, nest:int)int
+let sym = s_i
+if isblock.sym then matchblock(s, i - 1, nest + 1)
+else if isstartorloop.sym then
+ if nest = 0 then
+  if isloopblock.sym then backparse2(s, i - 1, nopara.sym, empty:seq.int)_1 else addDefine(s, i)
+ else matchblock(s, i - 1, nest - 1)
+else matchblock(s, i - 1, nest)
+
+function addDefine(s:seq.symbol, i:int)int
+if i > 1 ∧ isdefine.s_(i - 1)then addDefine(s, backparse2(s, i - 2, 1, empty:seq.int)_1)else i
+
+function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
+if no = 0 then result
+else
+ assert i > 0 report"back parse 1a:" + toword.no + print.s + stacktrace
+ if isdefine.s_i then
+  let args = backparse2(s, i - 1, 1, empty:seq.int)
+  backparse2(s, args_1, no, result)
+ else if isblock.s_i then
+  let b = matchblock(s, i - 1, 0)
+  if b = 1 then[b] + result else backparse2(s, b - 1, no - 1, [b] + result)
+ else
+  let nopara = nopara.s_i
+  let first = 
+   if nopara = 0 then i
+   else
+    let args = backparse2(s, i - 1, nopara, empty:seq.int)
+    assert length.args = nopara
+    report"back parse 3" + print.[s_i] + toword.nopara + "//"
+    + for acc = "", @e ∈ args do acc + toword.@e /for(acc)
+    args_1
+  let b = 
+   if first > 1 ∧ isdefine.s_(first - 1)then
+    let c = backparse2(s, first - 2, 1, empty:seq.int)
+    c_1
+   else first
+  backparse2(s, b - 1, no - 1, [b] + result) 

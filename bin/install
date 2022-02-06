@@ -1,0 +1,4 @@
+xattr -rd com.apple.quarantine bin/checkboot 
+xattr -rd com.apple.quarantine bin/tau
+mkdir tmp
+checkboot

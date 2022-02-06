@@ -1,76 +1,53 @@
-//
-//  toc.h
-//  funclanguage
-//
-//  Created by david on 1/21/15.
-//  Copyright (c) 2015 david. All rights reserved.
-//
-
-
-#define  BT long long int
-
-#define BRT double
 
 #include <setjmp.h>
 #include <pthread.h>
-#include "math.h"
+#include <stdio.h>
 
 
+#define  BT long long int
 typedef  struct pinfo *processinfo;
 
-BT PROCESS2(processinfo PD,BT pin);
-BT aborted(BT p);
+struct spaceinfo { char * nextone,*lastone; BT *blocklist; };
 
 
-#define IDXUC(a,b)  (*(BT *)((a)+8*(b)))
-#define  IDX(PD,P2,P1)   (*(BT*)(P2)== 0) ? IDXUC(P2,P1 + 1): ((*(BT *) (P2) )==1) ? *((unsigned char *) ((P2)+15+ (P1)  ) ) :    ((BT(*)(processinfo,BT, BT))IDXUC(P2,0))(PD,P2,P1)
+pthread_mutex_t sharedspace_mutex;
 
-
-BT DECODE(processinfo PD,BT P1,BT P2);
-BT ENCODE(processinfo PD,BT P1,BT P2);
-BT MAPENCODE(processinfo PD,BT P2);
-BT LOCALENCODE(processinfo PD,BT P2);
-
-
-BT assert2(processinfo PD,BT message);
-
-
-BT HASH(BT a);
-
-
-BT allocatespaceZbuiltinZint(processinfo PD,BT i) ;
-
-BT encodewordZstdlibZintzseq(processinfo PD,BT P1);
-
-
-// Real Support
-union cvt {BRT r;BT i;};
-#define asreal(i) (((union cvt) (i)).r)
-#define asint(r) (((union cvt) (r)).i)
-
-
-//BT tanZbuiltinZreal(processinfo PD,BT P1);
-//BT  arcsinZbuiltinZreal(processinfo PD,BT P2);
-//BT  arccosZbuiltinZreal(processinfo PD,BT P3);
-
-
-struct str2 { BT  type;
-               BT  length;
-               char data[500];
+struct pinfo { BT aborted; // 1 if aborted
+    BT message; // message if aborted (seq.word)
+    BT result;  // result returned by process
+    BT joined;  // has process been joined to parent?
+    struct spaceinfo space; //for space allocation
+    jmp_buf env;
+    BT error;
+    pthread_t pid;
+    struct einfo **encodings;
+    processinfo spawningprocess;
+    BT profileindex;
+    BT (*finishprof)(BT idx,BT x);
+    BT freespace;
+    BT newencodings;
+     // info needed to create thread
+    BT  deepcopyresult;
+    BT  deepcopyseqword;
+    BT func;
+    BT argtype;
+    // argtype is the follow sequence of bits from high to low:
+    //    1
+    //  for each argument of func 1 if is  double else 0 
+    //   1 if return type is double else 0
+    // This is needed because function calling convention may differ when a double is used as
+    // a parameter or result type
+    BT *args;
                };
-               
 
-struct pinfo *   step ( char * func,struct str2 *rname,struct str2 *func2,struct str2 *buff ) ; /* defined in tau.c */
-struct str2  *   stepresult( BT x);  /* defined in tau.c */
-void    stepfree ( BT x); /* defined in tau.c */
-void inittau(int additional); /* defined in tau.c */
+void threadbody(struct pinfo *q);
 
-struct outputformat { BT bytelength; struct bitsseq *data;};
+void myfree(struct spaceinfo *sp);
 
-struct bitsseq  { BT type; BT length; BT  data[50]; };
+BT allocatespace(processinfo PD, BT i);
 
-struct  blockseq  {BT type; BT length; BT blksize; struct bitsseq * seqseq;};
+void assertexit(int b,char *message);
 
-void createfilefromoutput(struct outputformat *t,int file);
+void initprocessinfo(processinfo p,processinfo PD);
 
-struct outputformat *output(processinfo p);
+BT createthread(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype );

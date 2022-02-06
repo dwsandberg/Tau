@@ -2,99 +2,133 @@ Module real
 
 use UTF8
 
+use bits
+
+use standard
+
+use otherseq.byte
+
+use otherseq.char
+
 use seq.real
 
-use stdlib
-
-type real is record representation:int
-
-Function-(r:real)real 0.0 - r
+Function -(r:real)real 0.0 - r
 
 Function abs(x:real)real if x < 0.0 then 0.0 - x else x
 
-Function int2real(i:int)real builtin.usemangle
+Builtin toreal(i:int)real
 
-Function intpart(a:real)int builtin.usemangle
+Builtin intpart(a:real)int
 
-Function decpart(a:real)real a - int2real.intpart.a
+Function decpart(a:real)real a - toreal.intpart.a
 
-Function sqrt(a:real)real builtin.usemangle
+Builtin sin(a:real)real sinTau.a
 
-Function sin(a:real)real builtin.usemangle
+Builtin cos(a:real)real cosTau.a
 
-Function arccos(a:real)real builtin.usemangle
+Builtin sqrt(a:real)real sqrtTau.a
 
-Function arcsin(a:real)real builtin.usemangle
+Builtin tan(a:real)real tanTau.a
 
-Function cos(a:real)real builtin.usemangle
+Builtin arccos(a:real)real
 
-Function tan(a:real)real builtin.usemangle
+Builtin arcsin(a:real)real
 
 Function pi real 3.1415926535898
 
-Function ?(a:real, b:real)ordering builtin.usemangle
+Builtin ?(a:real, b:real)ordering
 
-Function =(a:real, b:real)boolean a ? b = EQ
+Function =(a:real, b:real)boolean(a ? b) = EQ
 
-Function >(a:real, b:real)boolean a ? b = GT
+Function >(a:real, b:real)boolean(a ? b) = GT
 
-Function <(a:real, b:real)boolean export
+Function <(a:real, b:real)boolean b > a
 
-Function max(a:real, b:real)real if a ? b = GT then a else b
+Function max(a:real, b:real)real if(a ? b) = GT then a else b
 
-Function min(a:real, b:real)real if a ? b = LT then a else b
+Function min(a:real, b:real)real if(a ? b) = LT then a else b
 
-Function +(a:real, b:real)real builtin.usemangle
+Builtin+(a:real, b:real)real
 
-Function-(a:real, b:real)real builtin.usemangle
+Builtin-(a:real, b:real)real{OPTION COMPILETIME}
 
-Function *(a:real, b:real)real builtin.usemangle
+Builtin *(a:real, b:real)real
 
-Function /(a:real, b:real)real builtin.usemangle
+Builtin /(a:real, b:real)real
 
-Function representation(a:real)int export
+Builtin representation(a:real)int
 
-Function casttoreal(i:int)real builtin.NOOP
+Builtin casttoreal(i:int)real
 
-Function^(i:real, n:int)real @(*, identity, 1.0, constantseq(n, i))
+Function ^(a:real, n:int)real
+if n = 0 then 1.0
+else if n = 1 then a
+else if n < 0 then 1.0 / a^(-n)
+else
+ let d = n / 2
+ a^d * a^(n - d)
 
-Function makereal(whole:int, digits:int)real 
- if digits < 7 
-  then int2real.whole / int2real([ 10, 100, 1000, 10000, 100000, 1000000]_digits)
-  else int2real.whole / int2real(10^digits)
+Function *(a:int, b:real)real toreal.a * b
 
-Function print(rin:real, decimals:int)seq.word 
- {(if rin < 0.0 then [ space]else empty:seq.word)+ towords.toUTF8(rin, decimals)}
-
-Function toUTF8(rin:real, decimals:int)seq.int 
- if rin ? int2real.0 = LT 
-  then [ hyphenchar]+ toUTF8(int2real.0 - rin, decimals)
-  else let a = 10^decimals 
-  let r = rin + 1.0 / int2real(a * 2)
-  toseqint.toUTF8.intpart.r + if decimals > 0 
-   then [ decode("."_1)_1]+ lpad(toseqint.toUTF8.intpart((r - int2real.intpart.r)* int2real.a), decimals)
-   else empty:seq.int
-
-Function lpad(l:seq.int, n:int)seq.int constantseq(n - length.l, 48)+ l
-
-Function reallit(s:seq.int)real reallit(s,-1, 1, 0, 1)
-
-Function reallit(s:seq.int, decimals:int, i:int, val:int, neg:int)real 
- if i > length.s 
-  then let r = if decimals < 1 
-    then int2real.val 
-    else if decimals < 7 
-    then int2real.val / int2real([ 10, 100, 1000, 10000, 100000, 1000000]_decimals)
-    else int2real.val / int2real(10^decimals)
-   if neg < 1 then-(1.0 * r)else r 
-  else if between(s_i, 48, 57)
-  then reallit(s, if decimals =-1 then-1 else decimals + 1, i + 1, 10 * val + s_i - 48, neg)
-  else if s_i = 32 ∨ s_i = commachar 
-  then reallit(s, decimals, i + 1, val, neg)
-  else if i < 3 ∧ s_i = hyphenchar 
-  then reallit(s, decimals, i + 1, val,-1)
-  else assert s_i = decode("."_1)_1 report"unexpected character in real literal"+ encodeword.s 
-  reallit(s, decimals + 1, i + 1, val, neg)
+Export print(decimals:int, rin:real)seq.word
 
 -------------
 
+Export print(decimals:int, rin1:real)seq.word
+
+Export toUTF8(rin:real, decimals:int)UTF8
+
+Export reallit(s:UTF8)real
+
+Function makereal(w:seq.word)real
+{OPTION COMPILETIME}
+reallit(for acc = empty:seq.char, @e ∈ w do acc + decodeword.@e /for(acc)
+, -1
+, 1
+, 0
+, 1
+)
+
+Function print(decimals:int, rin1:real)seq.word
+let neg = (rin1 ? toreal.0) = LT
+let rin = if neg then toreal.0 - rin1 else rin1
+let a = 10^decimals
+let r = rin + 1.0 / toreal(a * 2)
+let r2 = 
+ if decimals > 0 then
+  [toword.intpart.r
+  , "."_1
+  , encodeword.lpad(decimals, char.48, decodeUTF8.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
+  ]
+ else[toword.intpart.r]
+if neg then"-" + r2 else r2
+
+Function toUTF8(rin:real, decimals:int)UTF8
+if(rin ? toreal.0) = LT then encodeUTF8.hyphenchar + toUTF8(toreal.0 - rin, decimals)
+else
+ let a = 10^decimals
+ let r = rin + 1.0 / toreal(a * 2)
+ if decimals > 0 then
+  toUTF8.intpart.r + encodeUTF8.periodchar
+  + UTF8.lpad(decimals, tobyte.48, toseqbyte.toUTF8.intpart((r - toreal.intpart.r) * toreal.a))
+ else toUTF8.intpart.r
+
+Function reallit(s:UTF8)real reallit(decodeUTF8.s, -1, 1, 0, 1)
+
+function reallit(s:seq.char, decimals:int, i:int, val:int, neg:int)real
+if i > length.s then
+ let r = if decimals < 1 then toreal.val else toreal.val / toreal.decimals
+ if neg < 1 then-1.0 * r else r
+else if between(toint.s_i, 48, 57)then
+ reallit(s
+ , if decimals = -1 then-1 else decimals * 10
+ , i + 1
+ , 10 * val + toint.s_i - 48
+ , neg
+ )
+else if s_i = char.32 ∨ s_i = commachar then reallit(s, decimals, i + 1, val, neg)
+else if i < 3 ∧ s_i = hyphenchar then reallit(s, decimals, i + 1, val, -1)
+else if i < 3 ∧ s_i = char1."+"then reallit(s, decimals, i + 1, val, 1)
+else
+ assert s_i = periodchar report"unexpected character in real literal" + encodeword.s
+ reallit(s, 1, i + 1, val, neg) 

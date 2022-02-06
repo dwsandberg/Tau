@@ -1,6 +1,6 @@
 Module doc2
 
-use stdlib
+use standard
 
 use sid
 
@@ -89,7 +89,7 @@ Function example3(s:session, arg:seq.word, lastpos:seq.word, b:seq.seq.word)cmdr
 
 Some data must exist beyond the life of a session to be useful. We can do that by using a persitant encoding. The following allows a user to save a seq of words. Once saved the data canot be changed.
 
-type helloworld is record key:int, body:seq.word
+type helloworld is key:int, body:seq.word
 
 use seq.helloworld
 

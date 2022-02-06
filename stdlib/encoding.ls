@@ -1,133 +1,151 @@
 Module encoding.T
 
-use deepcopy.seq.encodingrep.T
+use bits
+
+use standard
 
 use seq.T
 
-use seq.encodingrep.T
+use seq.encodingpair.T
 
-use seq.seq.encodingrep.T
+use seq.encodingstate.T
 
-use stdlib
+use otherseq.seq.encodingpair.T
 
-type encodingstate is sequence length:int, encodetable:seq.seq.encodingrep.T, decodetable:seq.seq.encodingrep.T, all:seq.encodingrep.T
+Export type:encodingpair.T
 
-Function decodetable(encodingstate.T)seq.seq.encodingrep.T export
+Export type:encoding.T
 
-Function encodetable(encodingstate.T)seq.seq.encodingrep.T export
+Export code(a:encodingpair.T)encoding.T
 
-Function all(encodingstate.T)seq.encodingrep.T export
+Export data(a:encodingpair.T)T
 
-function elecount(e:encodingstate.T)int length.e
+Export hash(a:encodingpair.T)int
 
-Function length(e:encodingstate.T)int export
+Export valueofencoding(a:encoding.T)int
 
-Function_(e:encodingstate.T, i:int)T data(all(e)_i)
+type encoding is valueofencoding:int
 
-type encodingrep is record code:int, data:T, hash:int
+Function to:encoding.T(i:int)encoding.T encoding.i
 
-Function code(encodingrep.T)int export
+type encodingstate is encodingno:int
+, length:int
+, encodetable:seq.seq.encodingpair.T
+, decodetable:seq.seq.encodingpair.T
+, all:seq.encodingpair.T
+, lastadd:int
 
-Function hash(encodingrep.T)int export
 
-Function data(encodingrep.T)T export
+/function encodingstate(length:int, encodetable:seq.seq.encodingpair.T, decodetable:seq.seq.encodingpair 
+.T, all:seq.encodingpair.T, lastadd:int)encodingstate.T encodingstate(0, length, encodetable, decodetable, all 
+, lastadd)
 
-Function encodingrep(code:int, data:T, hash:int)encodingrep.T export
+/function_(e:encodingstate.T, i:int)T data.(all.e)_i
 
-Function =(a:encodingrep.T, b:encodingrep.T)boolean hash.a = hash.b ∧ code.a = code.b ∧ data.a = data.b
+type encodingpair is code:encoding.T, data:T, hash:int
 
-Function check(h:encodingstate.T)seq.word [ toword.length.encodetable.h, toword.length.decodetable.h]
+Function encodingpair(code:encoding.T, data:T)encodingpair.T encodingpair(code, data, hash.data)
 
-Function hash(T)int unbound
+Function =(a:encodingpair.T, b:encodingpair.T)boolean
+hash.a = hash.b ∧ valueofencoding.code.a = valueofencoding.code.b ∧ data.a = data.b
 
-Function =(T, T)boolean unbound
+unbound hash(T)int
 
-Function index(T)int unbound
+unbound=(T, T)boolean
 
-Function addindex(T, int)T unbound
+unbound assignencoding(data:T)int
 
-Function encodingstate(v:T)encodingstate.T 
- let x = constantseq(4, empty:seq.encodingrep.T)
-  encodingstate(0, x, x, empty:seq.encodingrep.T)
+Export type:seq.encodingpair.T
 
-function ele(v:T, a:encodingrep.T)int if v = data.a then code.a else 0
+Export length(seq.encodingpair.T)int
 
-function ele2(eletoadd:encodingrep.T, tablesize:int, a:encodingrep.T)seq.encodingrep.T 
- if data.a = data.eletoadd ∨ not(hash.eletoadd mod tablesize = hash.a mod tablesize)
-  then empty:seq.encodingrep.T 
-  else [ a]
+/Function empty:encodingstate.T encodingstate.T let x=constantseq(4, empty:seq.encodingpair.T)encodingstate 
+(0, 0, x, x, empty:seq.encodingpair.T, 0)
 
-function addcode(code:int, hashsize:int, x:seq.encodingrep.T, e:encodingrep.T)seq.encodingrep.T 
- if code.e = code ∨ not(code mod hashsize = code.e mod hashsize)then x else x + e
+Function lastadded(h:encodingstate.T)encoding.T code.last.all.h
 
-Function lookup(data:T, h:encodingstate.T)int 
- @(max, ele.data, 0, encodetable(h)_(hash.data mod length.encodetable.h + 1))
+function notsamehash:T(a:int, b:int, mask:bits)boolean(bits.a ∧ mask) ≠ (bits.b ∧ mask)
 
-Function add(h:encodingstate.T, i:int, v:T)encodingstate.T add(h, v)
+Function add(h:encodingstate.T, v:encodingpair.T)encodingstate.T
+{this is the add that is called by primitiveadd}
+let tablesize = length.encodetable.h
+let mask = bits.-1 >> (65 - floorlog2.tablesize)
+let dataindex = toint(tobits.hash.v ∧ mask) + 1
+let existingcode = lookuprep(data.v, (encodetable.h)_dataindex)
+if not.isempty.existingcode then
+ {already present}
+ let c = valueofencoding.code.existingcode_1
+ if lastadd.h = c then h
+ else encodingstate(encodingno.h, length.h, encodetable.h, decodetable.h, all.h, c)
+else
+ let p = subadd(mask, h, v, 1)
+ let code = code.p
+ let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
+ let listdecode = 
+  for acc = [p], e ∈(decodetable.h)_codeindex do
+   if code.e = code ∨ notsamehash:T(valueofencoding.code, valueofencoding.code.e, mask)then acc
+   else acc + e
+  /for(acc)
+ let listencode = 
+  for acc = [p], e ∈(encodetable.h)_dataindex do
+   if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask)then acc else acc + e
+  /for(acc)
+ let newdecode = replace(decodetable.h, codeindex, listdecode)
+ let newencode = replace(encodetable.h, dataindex, listencode)
+ if 3 * length.h > 2 * tablesize then
+  let t = newencode
+  let d = newdecode
+  encodingstate(encodingno.h, length.h + 1, t + t + t + t, d + d + d + d, all.h + p, valueofencoding.code.p)
+ else
+  encodingstate(encodingno.h, length.h + 1, newencode, newdecode, all.h + p, valueofencoding.code.p)
 
-Function add(h:encodingstate.T, l:seq.encodingrep.T)encodingstate.T 
- if 3 *(elecount.h + length.l)> 2 * length.encodetable.h 
-  then let t = encodetable.h 
-   let d = decodetable.h 
-   add(encodingstate(elecount.h, t + t + t + t, d + d + d + d, all.h), l)
-  else @(add, identity, h, l)
+function subadd(mask:bits, h:encodingstate.T, v:encodingpair.T, count:int)encodingpair.T
+{assert count < 10 report"unable to assign encoding"}
+let code = code.v
+let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
+let found = 
+ valueofencoding.code.v ≤ 0
+ ∨ for acc = false, @e ∈(decodetable.h)_codeindex do acc ∨ code.v = code.@e /for(acc)
+if found then
+ subadd(mask, h, encodingpair(to:encoding.T(assignencoding.data.v), data.v, hash.v), count + 1)
+else encodingpair(code.v, data.v, hash.v)
 
-function ele6(v:encodingrep.T, e:encodingrep.T)int 
- if data.v = data.e then code.e else 0
+Function assignrandom(data:T)int(randomint.1)_1
 
-Function add(h:encodingstate.T, v:encodingrep.T)encodingstate.T 
- let tablesize = length.encodetable.h 
-  let datahash = hash.v 
-  let dataindex = datahash mod tablesize + 1 
-  if @(max, ele6.v, 0, encodetable(h)_dataindex)> 0 
-  then // already present // h 
-  else let code = code.v 
-  let p = v 
-  let codeindex = code mod tablesize + 1 
-  let l2 = @(addcode(code, tablesize), identity, [ p], decodetable(h)_codeindex)
-  let tnew = replace(encodetable.h, dataindex, @(+, ele2(p, tablesize), [ p], encodetable(h)_dataindex))
-  encodingstate(elecount.h + 1, tnew, replace(decodetable.h, codeindex, l2), all.h + p)
+Function nextencoding(a:T)int length.all.getinstance:encodingstate.T + 1
 
-Function add(h:encodingstate.T, v:T)encodingstate.T 
- if 3 * elecount.h > 2 * length.encodetable.h 
-  then let t = encodetable.h 
-   let d = decodetable.h 
-   add(encodingstate(elecount.h, t + t + t + t, d + d + d + d, all.h), v)
-  else let tablesize = length.encodetable.h 
-  let datahash = hash.v 
-  let dataindex = datahash mod tablesize + 1 
-  if @(max, ele.v, 0, encodetable(h)_dataindex)> 0 
-  then // already present // h 
-  else let code = randomint(1)_1 
-  if code < 0 
-  then add(h, v)
-  else let p = encodingrep(code, v, datahash)
-  let codeindex = code mod tablesize + 1 
-  let l2 = @(addcode(code, tablesize), identity, [ p], decodetable(h)_codeindex)
-  let tnew = replace(encodetable.h, dataindex, @(+, ele2(p, tablesize), [ p], encodetable(h)_dataindex))
-  encodingstate(elecount.h + 1, tnew, replace(decodetable.h, codeindex, l2), all.h + p)
+Function addencodingpairs(l:seq.encodingpair.T)int
+let inst = getinstance:encodingstate.T
+for acc = 0, @e ∈ l do acc + primitiveadd(encodingno.inst, rehash.@e)/for(acc)
 
-Function decode(h:encodingstate.T, code:int)seq.T 
- @(+, ele4.code, empty:seq.T, decodetable(h)_(code mod length.decodetable.h + 1))
+function rehash(a:encodingpair.T)encodingpair.T encodingpair(code.a, data.a)
 
-function ele4(v:int, a:encodingrep.T)seq.T 
- if v = code.a then [ data.a]else empty:seq.T
+Function lookupencodingpair(t:encoding.T)seq.encodingpair.T
+let inst = getinstance:encodingstate.T
+decode(inst, t)
 
-Function getinstance(erec:erecord.T)encodingstate.T builtin.STATE.usemangle
+/Function encodingnumber:T int encodingno.getinstance:encodingstate.T
 
-Function mapping(erec:erecord.T)seq.T toseq.getinstance.erec
+Function decode(t:encoding.T)T
+let a = lookupencodingpair.t
+assert length.a = 1 report"no such encoding" + toword.valueofencoding.t + stacktrace
+data.a_1
 
-Function orderadded(erec:erecord.T)seq.T toseq.getinstance.erec
+builtin getinstance:encodingstate.T encodingstate.T
 
-Function decode(t:encoding.T, erec:erecord.T)T 
- let inst = getinstance.erec 
-  let a = decode(inst, valueofencoding.t)
-  assert length.a = 1 report"no such encoding"+ toword.valueofencoding.t + if valueofencoding.t in @(+, code, empty:seq.int, all.inst)
-   then"F"
-   else"NONE"
-  a_1
+builtin primitiveadd(encodingnumber:int, s:encodingpair.T)int
 
-Function valueofencoding(encoding.T)int builtin.NOOP
+Function encoding:seq.encodingpair.T seq.encodingpair.T all.getinstance:encodingstate.T
+
+Function encode(t:T)encoding.T
+let instance = getinstance:encodingstate.T
+let r = lookuprep(t, instance)
+if isempty.r then
+ to:encoding.T(primitiveadd(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t)))
+else code.r_1
+
+function decode(h:encodingstate.T, t:encoding.T)seq.encodingpair.T
+for acc = empty:seq.encodingpair.T, e ∈(decodetable.h)_(valueofencoding.t mod length.decodetable.h + 1)do if t = code.e then acc + e else acc /for(acc)
 
 Function =(a:encoding.T, b:encoding.T)boolean valueofencoding.a = valueofencoding.b
 
@@ -135,53 +153,26 @@ Function ?(a:encoding.T, b:encoding.T)ordering valueofencoding.a ? valueofencodi
 
 Function hash(a:encoding.T)int valueofencoding.a
 
-Function encode(t:T, erec:erecord.T)encoding.T builtin.STATE.usemangle
+function lookuprep(t:T, inst:encodingstate.T)seq.encodingpair.T lookuprep(t, (encodetable.inst)_(hash.t mod length.encodetable.inst + 1))
 
-type erecord is record deepcopy:int, lookupfunc:int, addfunc:int, number:int, name:word, ispersistant:boolean, encodingtype:seq.word
+function lookuprep(t:T, s:seq.encodingpair.T)seq.encodingpair.T
+for acc = empty:seq.encodingpair.T, e ∈ s do if t = data.e then acc + e else acc /for(acc)
 
-Function ispersistant(erecord.T)boolean export
+Function findencode(t:T)seq.T
+let r = lookuprep(t, getinstance:encodingstate.T)
+if isempty.r then empty:seq.T else[data.r_1]
 
-Function encodingtype(erecord.T)seq.word export
+function analyze(t:encodingstate.T)seq.word
+"numele=" + toword.length.all.t + "encodecounts"
++ counts(encodetable.t, 1, 0, 0, 0)
++ "decodeconuts"
++ counts(decodetable.t, 1, 0, 0, 0)
 
-Function name(erecord.T)word export
-
-function ele5(v:T, a:encodingrep.T)seq.T 
- if v = data.a then [ data.a]else empty:seq.T
-
-Function findencode(t:T, erec:erecord.T)seq.T 
- let inst = getinstance.erec 
-  @(+, ele5.t, empty:seq.T, encodetable(inst)_(hash.t mod length.encodetable.inst + 1))
-
-Function findindex(t:T, erec:erecord.T)int 
- let inst = getinstance.erec 
-  let a = @(+, ele5.t, empty:seq.T, encodetable(inst)_(hash.t mod length.encodetable.inst + 1))
-  if length.a = 0 
-  then let x = encode(addindex(t, length.inst + 1), erec)
-   length.inst + 1 
-  else index(a_1)
-
-Function analyze(t:encodingstate.T)seq.word 
- {"numele ="+ toword.length.all.t +"encodecounts"+ counts(encodetable.t, 1, 0, 0, 0)+"decodeconuts"+ counts(decodetable.t, 1, 0, 0, 0)}
-
-function counts(s:seq.seq.encodingrep.T, i:int, one:int, two:int, big:int)seq.word 
- if i > length.s 
-  then @(+, toword,"", [ length.s, one, two, big])
-  else let t = length(s_i)
-  if t = 0 
-  then counts(s, i + 1, one, two, big)
-  else if t = 1 
-  then counts(s, i + 1, one + 1, two, big)
-  else if t = 2 then counts(s, i + 1, one, two + 1, big)else counts(s, i + 1, one, two, big + 1)
-
-Function reconstruct(allx:seq.encodingrep.T)encodingstate.T 
- let all = deepcopy.allx 
-  let size = 4 * length.all 
-  let x = constantseq(size, empty:seq.encodingrep.T)
-  let t = encodingstate(length.all, x, x, all)
-  @(XX.size, identity, t, all)
-
-function XX(hashsize:int, h:encodingstate.T, a:encodingrep.T)encodingstate.T 
- let codehash = code.a mod hashsize + 1 
-  let datahash = hash.a mod hashsize + 1 
-  encodingstate(elecount.h, replace(encodetable.h, datahash, encodetable(h)_datahash + a), replace(decodetable.h, codehash, decodetable(h)_codehash + a), all.h)
-
+function counts(s:seq.seq.encodingpair.T, i:int, one:int, two:int, big:int)seq.word
+if i > length.s then
+ for acc = "", @e ∈[length.s, one, two, big]do acc + toword.@e /for(acc)
+else
+ let t = length.s_i
+ if t = 0 then counts(s, i + 1, one, two, big)
+ else if t = 1 then counts(s, i + 1, one + 1, two, big)
+ else if t = 2 then counts(s, i + 1, one, two + 1, big)else counts(s, i + 1, one, two, big + 1) 
