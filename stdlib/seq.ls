@@ -113,10 +113,10 @@ Function isempty(a:seq.T)boolean length.a = 0
 
 ---------------------
 
-Function <<(s:seq.T, i:int)seq.T
+Function <<(s:seq.T, i:int)seq.T{* removes i elements from beginning of s}
 assert i ≥ 0 report"FAIL <<" + stacktrace
 subseq(s, i + 1, length.s)
 
-Function >>(s:seq.T, i:int)seq.T
+Function >>(s:seq.T, i:int)seq.T {* removes i elements from end of s}
 assert i ≥ 0 report"FAIL >>" + stacktrace
 subseq(s, 1, length.s - i) 

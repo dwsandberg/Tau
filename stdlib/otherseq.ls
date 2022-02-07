@@ -11,11 +11,11 @@ use seq.seq.T
 Function reverse(s:seq.T)seq.T
 for acc = empty:seq.T, @e ∈ arithseq(length.s, 0 - 1, length.s)do acc + s_@e /for(acc)
 
-Function removedups(a:seq.T, b:seq.T, c:int)seq.T
+/Function removedups(a:seq.T, b:seq.T, c:int)seq.T
 if c = 0 then b
 else if a_c ∈ b then removedups(a, b, c - 1)else removedups(a, b + a_c, c - 1)
 
-Function removedups(a:seq.T)seq.T removedups(a, empty:seq.T, length.a)
+/Function removedups(a:seq.T)seq.T removedups(a, empty:seq.T, length.a)
 
 type cseq is sequence, element:T
 
@@ -83,7 +83,7 @@ Function sort(a:seq.T)seq.T
 if length.a < 2 then a
 else merge(sort.subseq(a, 1, length.a / 2), sort.subseq(a, length.a / 2 + 1, length.a))
 
-Function merge(a:seq.T, b:seq.T)seq.T
+Function merge(a:seq.T, b:seq.T)seq.T { * combines sorted seq}
 if length.a = 0 then b
 else if length.b = 0 then a
 else if(b_1 ? a_(length.a)) = GT then a + b
@@ -95,7 +95,7 @@ else if j > length.b then subseq(a, i, length.a)
 else if(b_j ? a_i) = LT then[b_j] + submerge(a, b, i, j + 1)else[a_i] + submerge(a, b, i + 1, j)
 
 Function binarysearch(s:seq.T, val:T)int
-{binarysearch returns position in seq if found and the negation of the posistion if not found}
+{* binarysearch returns position in seq if found and the negation of the posistion if not found}
 binarysearch(s, 1, length.s, val)
 
 Function binarysearch(s:seq.T, b:int, a:int, val:T)int
@@ -106,15 +106,15 @@ else
  if c = EQ then p
  else if c = GT then binarysearch(s, b, p - 1, val)else binarysearch(s, p + 1, a, val)
 
-Function setinsert(s:seq.T, val:T)seq.T
+Function setinsert(s:seq.T, val:T)seq.T { * assumes s is sorted}
 let i = binarysearch(s, val)
 if i > 0 then s else subseq(s, 1, -i - 1) + [val] + subseq(s, -i, length.s)
 
-Function setdelete(s:seq.T, val:T)seq.T
+Function setdelete(s:seq.T, val:T)seq.T { * assumes s is sorted}
 let i = binarysearch(s, val)
 if i > 0 then subseq(s, 1, i - 1) + subseq(s, i + 1, length.s)else s
 
-Function setreplaceorinsert(s:seq.T, val:T)seq.T
+Function setreplaceorinsert(s:seq.T, val:T)seq.T {assumes s is sorted}
 let i = binarysearch(s, val)
 if i > 0 then subseq(s, 1, i - 1) + [val] + subseq(s, i + 1, length.s)
 else subseq(s, 1, -i - 1) + [val] + subseq(s, -i, length.s)
@@ -187,6 +187,6 @@ Export first(a:seq.T)T
 
 Export isempty(a:seq.T)boolean
 
-Export <<(s:seq.T, i:int)seq.T
+Export <<(s:seq.T, i:int)seq.T {* removes i elements from beginning of s}
 
-Export >>(s:seq.T, i:int)seq.T 
+Export >>(s:seq.T, i:int)seq.T {* removes i elements from end of s}

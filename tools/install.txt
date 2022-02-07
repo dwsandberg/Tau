@@ -27,7 +27,6 @@ Module HelloWorld
 
 use standard 
 
-
 Function entrypoint(args:UTF8) UTF8 HTMLformat."Hello World"
 
 3. From terminal run: /< block tau  stdlib HelloWorld arg />
@@ -56,7 +55,32 @@ Your text editor may run HelloWorld as a script without setting the execute bit.
 To set the execute bit, use /< block chmod +x HelloWorld/HelloWorld.ls />
 
 
+/section Installing Web Assembly Cross Compiler
 
+Since wasm files cannot be served from filesystem a web server is require.  OSX has an apache web server pre-installed so we will use that server
+with the DocumentRoot being <Tau>.  Below is the list of configuration changes that need to be made.  Google to find details on how to make these changes.
+
+Change the user to your user name to avoid permission problems.
+ /<  block User David />
+Change the document root to <Tau>  
+ /< block DocumentRoot "<Tau>" /br
+<Directory   "<Tau>" > /> 
+
+Since files are cached by browse change cache control to retrieve new copy when file is changed on server.  To do this add the
+directive  /< block set Cache-Control no-cache /> to the <IfModule headers_module> section of the configuration file.
+
+A CGI is used to write files on the server.  To enable this CGI change the
+ScriptAliasMatch to /< block 
+   ScriptAliasMatch ^/cgi-bin/((?!(?i:webobjects)).*$) "/Users/david/work/bin/$1"
+/> and add /< block <FilesMatch "/Users/david/work/bin/putfile.cgi">
+ \br   SetHandler cgi-script
+\br </FilesMatch> />
+
+Restart the Apache web server. 
+
+To see if all is working properly run the command /< block 
+tau -w http://localhost/  stdlib   webassembly  wtests wtests  />
+This should open a web browser  with a link wtest. Follow the link which should open a page with two buttons that will run two tests.
 
 
 

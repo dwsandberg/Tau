@@ -1,4 +1,5 @@
 cc stdlib/*.c -o bin/tauexe
+cc bin/putfile.c -o bin/putfile.cgi
 /usr/bin/cc -dynamiclib bin/stdlib.bc  -o stdlib.dylib  -init _init22 -undefined dynamic_lookup
 time tau -f tmp/checkboot1.html stdlib  stdlib
 time tau -f tmp/checkboot2.html stdlib  stdlib

@@ -1,0 +1,27 @@
+<!doctype html>
+<title> Beizer Cubic Curves </title>
+<meta charset="UTF-8">
+<h1> Beizer Cubic Curves  </h1>
+<p > 
+Dragging node will move node. 
+<p>
+ <svg   id=svg10 xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 30 20"
+    onmouseenter="makeDraggable(evt,drawcubic)"
+     >
+    <style>
+      .static {     cursor: not-allowed; }
+      .draggable {     cursor: move; fill:blue;   }
+    </style>
+    <g id=grp1>
+      <path id=lines fill="none" stroke="gray" stroke-width=".05" />    
+      <path id="curve" fill="none" stroke="blue" stroke-width=".1" />  
+    <g id ="a4">
+     <circle class="draggable" id="c4" cx="5" cy="5" r=".5" />   
+ <circle id="c1" class="draggable" cx="10" cy="5"  r=".5" />  
+  <circle id="c2" class="draggable" cx="10" cy="10" r="0.5"/>  
+  <circle id="c3" class="draggable" cx="15" cy="10" r="0.5"/>  
+    </g>
+  </svg>   
+ 
+ 
