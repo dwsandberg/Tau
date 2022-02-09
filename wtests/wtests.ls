@@ -1,4 +1,4 @@
-#!/bin/bash  tau -w http://localhost/  stdlib   webassembly  wtests wtests  .
+#!/bin/bash  tau -w https://myhost.local/  stdlib   webassembly  wtests wtests  .
 
 
 

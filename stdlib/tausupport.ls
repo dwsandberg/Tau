@@ -66,7 +66,8 @@ else
   for acc = set(set(blkseq, blockseqtype), length.s), @e ∈ arithseq(noblks, blksz, 1)do
    let newseq = allocatespace(blksz + 2)
    let d = 
-    for acc2 = set(set(newseq, 0), blksz), e ∈ subseq(s, @e, @e + blksz - 1)do set(acc2, e)/for(acc2)
+    for acc2 = set(set(newseq, 0), blksz), e ∈ subseq(s, @e, @e + blksz - 1)do 
+    set(acc2, e)/for(acc2)
    let x = bitcast:seq.T(newseq)
    set(acc, newseq)
   /for(acc)
@@ -87,7 +88,7 @@ else
   for acc = set(set(blkseq, blockseqtype), length.s), @e ∈ arithseq(noblks, blksz, 1)do
    let s2 = subseq(s, @e, @e + blksz - 1)
    let newseq = allocatespace(length.s2 * ds + 2)
-   let d = for acc2 = set(set(newseq, 1), length.s), e ∈ s2 do set(acc2, @e)/for(acc2)
+   let d = for acc2 = set(set(newseq, 1), length.s2), e ∈ s2 do set(acc2, e)/for(acc2)
    set(acc, newseq)
   /for(acc)
  bitcast:seq.T(blkseq)

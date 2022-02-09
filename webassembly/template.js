@@ -263,6 +263,11 @@ async function putfile(filename,bodydata) {
  return 0; 
 }
 
+,  callevent2:function (id,  event   ){
+ document.getElementById(asjsstring(id).trim()).dispatchEvent(new Event(asjsstring(event).trim()));
+  return(0);
+  }
+
 , replacesvg: function(id, xml ){
   var doc=new DOMParser().parseFromString(
   '<svg xmlns="http://www.w3.org/2000/svg"> <g id="newnode">'+ 
@@ -280,7 +285,7 @@ async function putfile(filename,bodydata) {
 ,jsgetfile:function (typ,name,code,pc,stk,locals) {
 inprogress++;
   console.log("getfile "+  asjsstring(name));
-  fetch("http://localhost/"+ asjsstring(name))
+  fetch("/"+ asjsstring(name))
  .then( function (response)   {
     if (response.ok) {
     return response.arrayBuffer();}  else { throw response.statusText;    }})
@@ -299,7 +304,7 @@ inprogress++;
    }
 
  } } ; 
-  fetch("http://localhost/"+library+".wasm")
+  fetch("/"+library+".wasm")
  .then(function(response){ return response.arrayBuffer()})
  .then(function(bytes){ return WebAssembly.instantiate(bytes, importObject)})
  .then(function(results){ 

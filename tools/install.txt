@@ -8,11 +8,12 @@ Down load zip file from GitHub
 
 Unzip to directory a which we will call <Tau>.  This directory will become the working directory for tau.    You are free to choose another name.  
 
+Modify PATH environment variable to include absolute path to <Tau>/bin. 
+
 Open Terminal and cd to Tau
 
 Run "bash bin/install".  This is likely to generate a warning message about the llvm spec. 
 
-Modify PATH environment variable to include absolute path to <Tau>/bin. 
 
 
 /section HelloWorld
@@ -82,6 +83,53 @@ To see if all is working properly run the command /< block
 tau -w http://localhost/  stdlib   webassembly  wtests wtests  />
 This should open a web browser  with a link wtest. Follow the link which should open a page with two buttons that will run two tests.
 
+
+/section vhost
+
+edit vhost and  dulicate the localhost line and change localhost to myhost.test
+
+uncomment vhost line in httpd.conf
+
+edit httpd-vhosts.conf
+
+---
+
+sudo ssh-keygen -f server.key -m PEM
+
+/section security
+
+ Is the user who he claims to be?
+ 
+ Is the user authorized for action provided ?
+ 
+Token
+  createdate  user action signature 
+  
+  hour*60+10*second of time of creation --gives 4 digit decimal number
+  
+  Authenticator
+    table of  user(key) password(hashed)  email phone  
+    
+    table of user tempkey
+    
+    table of  user action 
+    
+ Login
+    
+    user presents user password tempkey Authenticator
+    
+    Authenticator: if password matches  sends  email with random code (saving randome code user tempkey
+    and time send)
+    
+    Users: presents  user password tempkey  code
+  
+    Authenticator sends token to user with action "create token"
+   
+ User request for token
+      sends temp key and code
+  
+Request for signature verification 
+     just send token
 
 
 

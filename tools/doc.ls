@@ -1,5 +1,3 @@
-#!/bin/sh tau stdlib tools callgraphbetween stdlib standard inputoutput
-
 #!/bin/sh tau stdlib tools callgraphwithin tools doc
 
 #!/bin/sh tau stdlib tools createdoc

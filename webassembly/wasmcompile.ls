@@ -703,6 +703,7 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
    )
   next(blkstk, curblk + Icode(tobyte.254, tableindex.funcidx.typ), localtypes)
  else if sym = symbol(moduleref("builtin",typeint),"assert",seqof.typeword,typeint)
+ /or sym = symbol(moduleref("builtin",typeptr),"assert",seqof.typeword,typeptr)
   /or ( {module.sym=internalmod /and} name.sym /in "idxseq fld packedindex processisaborted
   getseqlength getseqtype") then
   next(blkstk, curblk + Icall(alltypes, sym), localtypes)

@@ -31,3 +31,6 @@ Export setElementValue(id:seq.word, text:jsbytes)int
 Export getElementValue:jsbytes(id:seq.word)jsbytes
 
 Export jsUTF8(t:seq.byte)jsbytes
+
+Export callevent(id:seq.word, event:seq.word) int
+

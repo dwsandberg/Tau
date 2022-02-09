@@ -1,18 +1,22 @@
 module testseq
 
+use bits
+
 use real
 
 use standard
 
-use encoding.ccc
-
-use seq.ccc
+use testpackedseq.byte
 
 use seq.int
 
 use set.int
 
 use sparseseq.int
+
+use encoding.seedtrack
+
+use seq.seedtrack
 
 use seq.typereal
 
@@ -26,9 +30,9 @@ use otherseq.word
 
 use testpackedseq.word
 
-use seq.encodingpair.ccc
-
 use seq.seq.int
+
+use seq.encodingpair.seedtrack
 
 use otherseq.seq.word
 
@@ -36,18 +40,18 @@ use seq.seq.word
 
 use testpackedseq.seq.word
 
-type ccc is key:int, val:int
+type seedtrack is key:int, val:int
 
-function assignencoding(a:ccc)int assignrandom.a
+function assignencoding(a:seedtrack)int assignrandom.a
 
-function =(a:ccc, b:ccc)boolean key.a = key.b
+function =(a:seedtrack, b:seedtrack)boolean key.a = key.b
 
-function hash(a:ccc)int key.a
+function hash(a:seedtrack)int key.a
 
 Function getint(size:int)int
-let p = data.last.encoding:seq.encodingpair.ccc
+let p = data.last.encoding:seq.encodingpair.seedtrack
 let d = pseudorandom.val.p
-let c = encode.ccc(key.p + 1, d)
+let c = encode.seedtrack(key.p + 1, d)
 d mod size
 
 type typerec2 is a:int, b:int
@@ -66,17 +70,25 @@ function get:word word toword.getint.1000
 
 function get:seq.word seq.word constantseq(getint.10, get:word)
 
-function xx(i:int)typerec2 typerec2(i, i * 2)
+function get:byte byte tobyte.getint.256
 
 Function testseq seq.word
-let a = encode.ccc(1, 987)
-let w = check:seq.typereal(1)
-let x = check:seq.seq.word(1)
-let y = check:seq.word(1)
-let z = check:seq.typerec2(2)
-sparsecheck
-+ if"FAIL"_1 ∉ (w + x + y + z)then"PASS testseq"
-else"FAIL testseq" + w + x + y + z
+let a = encode.seedtrack(1, 987)
+let all = 
+ check:seq.byte(1, 22) + check:seq.byte(1, 8) + EOL + check:seq.typereal(8, 17)
+ + check:seq.typereal(8, 8)
+ + EOL
+ + check:seq.seq.word(8, 17)
+ + check:seq.seq.word(8, 8)
+ + EOL
+ + check:seq.word(8, 17)
+ + check:seq.word(8, 8)
+ + EOL
+ + check:seq.typerec2(16, 17)
+ + check:seq.typerec2(16, 8)
+ + EOL
+ + sparsecheck
+if"FAIL"_1 ∉ all then"PASS testseq"else"FAIL testseq" + all
 
 Function sparsecheck seq.word
 let b = 
@@ -113,13 +125,16 @@ unbound get:T T
 
 unbound=(T, T)boolean
 
-Function check:seq.T(size:int)seq.word
-let unpack = random:seq.T(16)
+Function check:seq.T(size:int, depth:int)seq.word
+let unpack = random:seq.T(depth)
 let pack = packed.unpack
-let x = if getseqtype.pack = 1 then"packed"else""
-if(length.pack > 8160 / size ∨ seqkind.pack = x + toword.length.unpack) ∧ pack = unpack then
- "PASS" + toword.length.pack
-else"FAIL" + toword.length.pack + x
+let typ = getseqtype.pack
+let blksize = 8160 * 8
+if pack ≠ unpack then"FAIL seq not equal"
+else if length.pack ≤ blksize ∧ typ = 0 ∧ size = 8 then"PASS std" + toword.length.pack
+else if length.pack ≤ blksize / size ∧ typ = 1 then"PASS packed" + toword.length.pack
+else if length.pack > blksize / size ∧ typ ∉ [0, 1]then"PASS block" + toword.length.pack
+else"FAIL" + toword.length.pack + toword.typ
 
 Function random:seq.T(depth:int)seq.T
 if depth ≤ 0 then base:seq.T
@@ -139,8 +154,7 @@ if t = 0 then[toword.length.a]
 else if t = 1 then"packed" + toword.length.a
 else if t = getseqtype.constantseq(1, get:T)then"const"
 else if ispseq.a then"pseq"
-else if t = getseqtype.packed.constantseq(1, get:T)then"packed" + toword.length.a
-else"unknown"
+else "unknown"
 
 Function seqstruct(a:seq.T)seq.word
 let kind = seqkind.a

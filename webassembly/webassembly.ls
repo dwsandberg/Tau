@@ -104,7 +104,7 @@ let discard =
  , pagehtml+script
  + toseqbyte.toUTF8(scriptstart + '  /br pageinit("' + lib + '", ' + page + "); </script>")
  )
-txt + ' <a href="' + merge("//localhost/" + htmlname + '"> ') + page
+txt + ' <a href="' + merge("/" + htmlname + '"> ') + page
 + "</a>"
 /for(" /< noformat" + txt + " />" + discard2)
 

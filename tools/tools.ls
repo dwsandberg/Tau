@@ -1,13 +1,15 @@
+#!/bin/sh tau stdlib tools callgraphwithin tests testseq
+
 #!/bin/sh tau stdlib tools doclibrary tools
 
-#!/bin/sh  tau stdlib tools callgraphbetween stdlib standard inputoutput
+#!/bin/sh tau stdlib tools callgraphbetween stdlib standard inputoutput
 
-#!/bin/sh  tau stdlib tools pretty stdlib tausupport bits bitstream format set textio stack encoding otherseq process real seq standard UTF8 words xxhash
+#!/bin/sh tau stdlib tools pretty stdlib tausupport bits bitstream format set textio stack encoding otherseq process 
+real seq standard UTF8 words xxhash
 
-#!/bin/sh  tau stdlib tools test3 stdlib
+#!/bin/sh tau stdlib tools test3 stdlib
 
-tau stdlib tools test3  wtest1
-
+tau stdlib tools test3 wtest1
 
 Module tools
 
@@ -19,7 +21,7 @@ exports baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
 
 * only document printbitcodes profile prettylib doc
 
-* usegraph exclude standard seq set otherseq UTF8
+* usegraph exclude standard seq set otherseq UTF8 real graph
 
 use UTF8
 
@@ -86,11 +88,20 @@ else
 Function test3(lib:seq.word)seq.word
 totext(compilerfront("text", lib)
 , "tmp"
-,[rename("seq.T:findelement(T,seq.T) seq.T","lookup",[2,1])
-,rename("set.symdef:findelement(symdef,set.symdef) set.symdef","lookup",[2,1])
-,rename("set.passtypes:findelement(passtypes,set.passtypes) set.passtypes","lookup",[2,1])
-,rename("set.passsymbols:findelement(passsymbols,set.passsymbols) set.passsymbols","lookup",[2,1])
-,rename("set.typeentry:findelement(typeentry,set.typeentry) set.typeentry","lookup",[2,1])
+, [rename("seq.T:findelement(T, seq.T)seq.T", "lookup", [2, 1])
+, rename("set.symdef:findelement(symdef, set.symdef)set.symdef", "lookup", [2, 1])
+, rename("set.passtypes:findelement(passtypes, set.passtypes)set.passtypes"
+, "lookup"
+, [2, 1]
+)
+, rename("set.passsymbols:findelement(passsymbols, set.passsymbols)set.passsymbols"
+, "lookup"
+, [2, 1]
+)
+, rename("set.typeentry:findelement(typeentry, set.typeentry)set.typeentry"
+, "lookup"
+, [2, 1]
+)
 ]
 )
 

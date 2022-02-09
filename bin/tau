@@ -9,11 +9,13 @@ pwd
 
 #parse options
 
-while getopts ":f:" opt; do
+while getopts ":f:w:" opt; do
   case ${opt} in
     f )
       target=$OPTARG
       ;;
+   w )
+     webprefix=$OPTARG ;;
     \? )
       echo "Invalid option: $OPTARG" 1>&2
       ;;
@@ -35,7 +37,7 @@ else
   $SCRIPT_DIR/tauexe $p1 "$otherpara" > "tmp/$libname.html"
   if [ "<" == "$(head -c 1 tmp/$libname.html)" ] ;
   then 
-    open http://localhost/tmp/$libname.html 
+    open ${webprefix}tmp/$libname.html 
   else
   cat tmp/$libname.html
  fi

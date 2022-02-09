@@ -122,6 +122,12 @@ Builtin setelementvalue(name:jsbytes, text:jsbytes)real
 
 Builtin getattributes2(name:jsbytes, text:jsbytes)jsbytes
 
+Function callevent(id:seq.word, event:seq.word)int {OPTION NOINLINE}
+intpart.callevent2(jsUTF8.token.id, jsUTF8.token.event)
+
+Builtin callevent2(name:jsbytes, text:jsbytes) real
+
+
 Builtin setattribute2(name:jsbytes, att:jsbytes, value:jsbytes)real
 
 Builtin getelementvalue(name:jsbytes)jsbytes
@@ -135,6 +141,7 @@ setattribute2(jsUTF8.token.id, jsUTF8.token.att, jsUTF8.toseqbyte.HTMLformat.val
 
 Function getattributes(id:seq.word, attributes:seq.word)seq.word
 towords.getattributes2(jsUTF8.token.id, jsUTF8.toseqbyte.HTMLformat.attributes)
+
 
 Function getElementValue(id:seq.word)seq.word towords.getelementvalue.jsUTF8.token.id
 
