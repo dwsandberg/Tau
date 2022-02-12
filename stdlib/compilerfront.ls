@@ -182,7 +182,7 @@ else
 function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
 for acc = empty:set.symbol, sym ∈ getCode(prg, symin)do
  if isspecial.sym ∨ isconst.sym ∨ name.module.sym ∈ "internal builtin UTF8 seq"then acc
- else if name.sym ∈ "jsputfile jsgetfile"then acc + symin
+ else if name.sym ∈ "jsHTTP"then acc + symin
  else if level = 0 then acc
  else
   let s = expand(level - 1, prg, sym)

@@ -14,7 +14,7 @@ uses
 exports inputoutput tausupport graph  bandeskopf barycenter layergraph 
 makeDAG bits bitstream encoding format otherseq process 
 real seq set sparseseq standard stack UTF8 textio bitcast taublockseq
-words xxhash webIO
+words xxhash webIO IO2
 
 * usegraph include   bits bitstream encoding format otherseq process 
 real seq set sparseseq standard stack UTF8 textio webIO 

@@ -102,32 +102,31 @@ function drag(evt) {
  function endDrag(evt) {selectedElement = false;}
 }
   
-function tobytearray(data,typ)  { 
+function tobytearray(data,nobits)  { 
    let i32a = new Uint32Array(memory.buffer, data, 16);
     if (i32a[0] > 3) {  
       let i32= new Uint32Array(memory.buffer, i32a[4], 4); 
-      console.log(" "+i32a+"\n"+i32)
       let total=i32a[2];
       let blksize=i32[2];
       let j=4;
       let arr=new Array(0);
       let offset=0;
       while( total > 0) { 
-       console.log("L"+(total > blksize ?blksize:total));
-       arr.push(...new Uint8Array(memory.buffer,i32a[j]+16, (total > blksize ?blksize:total) * typ )) ;
+//       console.log("L"+(total > blksize ?blksize:total));
+       arr.push(...new Uint8Array(memory.buffer,i32a[j]+16, (total > blksize ?blksize:total) * nobits / 8 )) ;
        j=j+2; total=total-blksize
       }
        let t=new Uint8Array(arr);
-       console.log("JK"+t.length+" "+i32a[2]);
+  //     console.log("JK"+t.length+" "+i32a[2]);
        return t;
        }
      else {
-       return  new Uint8Array(memory.buffer, data+16,i32a[2] * typ); 
+       return  new Uint8Array(memory.buffer, data+16,i32a[2] * nobits / 8); 
     }}
   
 function asjsstring ( offset){  
  let  utf8decoder = new TextDecoder();
- return  utf8decoder.decode(tobytearray(offset,1)) ;
+ return  utf8decoder.decode(tobytearray(offset,8)) ;
  }
 
 function jsstring2UTF8bytes(r){
@@ -141,8 +140,8 @@ function jsstring2UTF8bytes(r){
    return sp;
 }
 
-function finaljsgetfile(typ,data){
- const blksize=8000;
+function finaljsHTTP(data,nobits ){
+  const blksize=8000;
  let size=data.byteLength;
  let offset=0;
  let noblks= Math.trunc((size+ 8* blksize -1 )/ (8*blksize));
@@ -152,18 +151,18 @@ function finaljsgetfile(typ,data){
  if (size >   (8 * blksize)){
      blks = exports.allocatespace3( (noblks + 2)); 
      i32blk = new Uint32Array(memory.buffer, blks, noblks*2+4); 
-    //   console.log("Asize:"+size+ ">"+ 8*blksize +":"+i32blk);
+//   console.log("Asize:"+size+ ">"+ 8*blksize +":"+i32blk);
      i32blk[0]=exports.blockseqtype(); i32blk[1]=0; 
-     i32blk [ 2]=size*typ;  i32blk [ 3]=0;
+     i32blk [ 2]=8 / nobits * size ;  i32blk [ 3]=0;
   };
   while (size >0)   {
     let thisblocksize=size >   8*blksize ? 8*blksize :size;
     let  tausize = Math.trunc((thisblocksize+ 7)/ 8); 
-    // console.log("filesize:"+tausize+"b:"+noblks);
+ //     console.log("filesize:"+tausize+"b:"+noblks);
     let  sp = exports.allocatespace3((tausize + 2)); 
     let  i32a = new Uint32Array(memory.buffer, sp, 4); 
-    i32a [ 0]= typ ==0.125?0:1; i32a [ 1]= 0;
-    i32a [ 2]= typ*thisblocksize ;  i32a [ 3]= 0 ; 
+    i32a [ 0]= 64   == nobits ?0:1; i32a [ 1]= 0;
+    i32a [ 2]= 8 / nobits *thisblocksize ;  i32a [ 3]= 0 ; 
     let  i8src = new Uint8Array(data, offset,   thisblocksize); 
     let  i8dst = new Uint8Array(memory.buffer, sp + 16, thisblocksize); 
     i8dst.set(i8src); 
@@ -176,17 +175,6 @@ function finaljsgetfile(typ,data){
    }
   return blks;  } 
  
-async function putfile(filename,bodydata) {   
-   console.log("putfile"+filename);
-   let  response = await fetch("../cgi-bin/putfile.cgi?"+ filename, { 
-    	method:'PUT'
-    	,headers:{ 	'Content-Type':'application/text' 	 }
-    	,body:bodydata 
-      }); 
-  let  dataf = await response.text(); 
-// console.log("dataf"+dataf);
-   return bodydata.length ; 
-  } 
  
  function pageinit(library,page) {
 
@@ -204,7 +192,7 @@ async function putfile(filename,bodydata) {
   try { return exports.processbody(wrapper, args); } 
   catch(err){ 
     var b; 
-    // console.log("catch err"+ err.message +"err"+"name:"+(err.name)); 
+// console.log("catch err"+ err.message +"err"+"name:"+(err.name)); 
     if(err.message ===undefined){ b = err; } 
     else if(err.message.startsWith("Division")){ b = 0; } 
     else { b = 0; } 
@@ -213,7 +201,7 @@ async function putfile(filename,bodydata) {
 
 , setelementvalue:function  (id ,textin ){
   let text=asjsstring(textin); 
-   // console.log("SETELEMENT"+text);   
+// console.log("SETELEMENT"+text);   
   let  z = document.getElementById(asjsstring( id )); 
   let  kind = z.tagName; 
   if(kind=="TEXTAREA" || kind=="SELECT" )z.value =  text.trim();
@@ -255,7 +243,7 @@ async function putfile(filename,bodydata) {
 }
 
 ,setattribute2:function (id, att   ,value   ){
-  // console.log("set "+asjsstring(id)+asjsstring(att )+asjsstring(value)); 
+// console.log("set "+asjsstring(id)+asjsstring(att )+asjsstring(value)); 
   let element=document.getElementById(asjsstring(id).trim());
   if(element instanceof SVGElement)  
     element.setAttributeNS(null,asjsstring(att ).trim(),asjsstring(value).trim());
@@ -281,27 +269,41 @@ async function putfile(filename,bodydata) {
   return 0;
 }
 
+ //    method:UTF8 header:UTF8 body:UTF8
+ //      header: UTF8, body:T
+   
 
-,jsgetfile:function (typ,name,code,pc,stk,locals) {
-inprogress++;
-  console.log("getfile "+  asjsstring(name));
-  fetch("/"+ asjsstring(name))
- .then( function (response)   {
-    if (response.ok) {
-    return response.arrayBuffer();}  else { throw response.statusText;    }})
- .then(function (a) {inprogress--; exports.resume(finaljsgetfile(typ,a),code,pc,stk,locals,6); }) 
- .catch(function(error) { console.log("HERE jsgetfile"+error);
-     inprogress--;
-     exports.resume(jsstring2UTF8bytes(""),code,pc,stk,locals,6);
- })
-}
- 
-,jsputfile:function (typ,name,data,code,pc,stk,locals) {
-    inprogress++;
-   let filename=asjsstring(name);
-   putfile( filename,tobytearray(data,typ) )
-    .then (function (a) { inprogress--; exports.resume(1,code,pc,stk,locals,7); })
-   }
+ ,jsHTTP:function (nobits,url,methodx,data,code,pc,stk,locals) {
+  // only handles one header //
+   var responeheader="";
+  inprogress++;
+  let header=asjsstring(methodx);
+  method=header.split(" ")[0];
+  let tmp=  header.slice(method.length);
+  let parts=tmp.split(":");
+  console.log("jsHTTP "+  asjsstring(url));
+    var headers = new Headers();
+   if (parts.length==2) {  headers.append(parts[0].trim(), parts[1].trim());}
+  fetch( asjsstring(url),
+       { method, headers, body: (method=="GET" )? null : tobytearray(data,nobits  )  }   
+       )
+  .then( function (response)   {
+    responeheader=response.status+" "+response.statusText+"\n";
+    for (var pair of response.headers.entries()) {
+      responeheader+=(pair[0]+ ': '+ pair[1]+"\n");
+    }
+    return response.arrayBuffer();
+     })
+ .then(function (result) {
+ //   console.log(responeheader)
+      let a=jsstring2UTF8bytes( responeheader);
+      let b=finaljsHTTP(result,nobits);
+      let rec = exports.allocatespace3(  2); 
+      let i32blk = new Float64Array(memory.buffer, rec,2); 
+         i32blk [ 1]=a  ;
+      i32blk[0]=b ;
+     inprogress--; exports.resume(rec,code,pc,stk,locals,8); }) 
+  }
 
  } } ; 
   fetch("/"+library+".wasm")

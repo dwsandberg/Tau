@@ -125,7 +125,7 @@ for txt = "", @e ∈ p do txt + " /p" + @e /for(textformat(txt << 1))
 
 Function alltests int
 let z = 
- test11 + testmodules + sparsecheck + testreal + testencoding + testbug7 + testseq + testprocess
+ test11 + testmodules + sparsecheck + testreal + testencoding + testbug7 + {testseq +} testprocess
  + testwordfreq
  + checkhash
  + testfileio

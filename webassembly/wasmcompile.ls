@@ -151,22 +151,16 @@ let exp =
 {define some support functions}
 let descard100 = [allocatefunc.alltypes, getinstancefunc.alltypes, addencodingfunc.alltypes]
 {look for exports that must be interpreted}
-let jsgetfile = 
+ let jsHTTP = 
  symbol(internalmod
- , "jsgetfile"
- , [typereal, typereal, typereal, typereal, typereal, typereal]
- , typereal
- )
-let jsputfile = 
- symbol(internalmod
- , "jsputfile"
- , [typereal, typereal, typereal, typereal, typereal, typereal, typereal]
+ , "jsHTTP"
+ , [typereal, typereal, typereal, typereal, typereal, typereal, typereal, typereal]
  , typereal
  )
 let zzzzz = 
  for txt = "", sym ∈ roots do
   let code = getCode(prg4, sym)
-  if jsgetfile ∈ getCode(prg4, sym) ∨ jsputfile ∈ getCode(prg4, sym)then
+  if  jsHTTP  /in getCode(prg4, sym) then
    {assert name.sym /nin"testpretty22"report print.code}
    interpret(alltypes, knownfuncs, sym, getCode(prg4, sym))
   else txt
@@ -216,7 +210,7 @@ for notused = to:encoding.wfunc(1), sym ∈ k do
     let typeidx = toint.encodeword(c << length.d)
     encode.wfunc(alltypes, sym, processXbody.typeidx, funcidx.sym)
    else
-    assert not.isempty.ele ∨ name.sym ∈ "jsgetfile"
+    assert not.isempty.ele 
     report"dependedfunc:no definition for:" + print.sym + ":::" + name.sym
     let bodycode = 
      if isempty.ele then const64.0
@@ -723,7 +717,7 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
 function Icall(alltypes:typedict, sym:symbol)seq.Icode
 let typ = 
  tableindex.funcidx.symbol(moduleref."$$Icall", [toword.typeindex(alltypes, sym)], typeint, typeint, typeint)
-[Icode(if name.sym ∈ "jsgetfile jsputfile"then tobyte.255 else call
+[Icode(if name.sym ∈ "jsHTTP"then tobyte.255 else call
 , tableindex.funcidx.sym
 )
 , Icode(tobyte.0, typ)

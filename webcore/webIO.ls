@@ -1,12 +1,10 @@
-
-
 module webIO
+
+use bits
 
 use inputoutput
 
 use standard
-
-use  bits
 
 use seq.byte
 
@@ -32,5 +30,4 @@ Export getElementValue:jsbytes(id:seq.word)jsbytes
 
 Export jsUTF8(t:seq.byte)jsbytes
 
-Export callevent(id:seq.word, event:seq.word) int
-
+Export callevent(id:seq.word, event:seq.word)int 

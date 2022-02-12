@@ -1,5 +1,3 @@
-#!/bin/bash tau stdlib webassembly testX test87
-
 module COMPILETIME
 
 use UTF8
@@ -46,7 +44,11 @@ use seq.bit
 
 use seq.bits
 
+use HTTPresponse.byte
+
 use seq.byte
+
+use HTTPresponse.int
 
 use bitcast.int
 
@@ -112,9 +114,7 @@ Function jsUTF8(t:seq.byte)jsbytes{OPTION NOINLINE}jsbytes.toreal.bitcast:int(to
 Function setElementValue(id:seq.word, text:seq.word)int
 {OPTION NOINLINE}intpart.setelementvalue(jsUTF8.token.id, jsUTF8.toseqbyte.HTMLformat.text)
 
-Function setElementValue(id:seq.word, text:jsbytes)int
-{OPTION NOINLINE}intpart.setelementvalue(jsUTF8.token.id, text)
-
+Function setElementValue(id:seq.word, text:jsbytes)int{OPTION NOINLINE}intpart.setelementvalue(jsUTF8.token.id, text)
 
 Builtin bits2real(seq.bits)real
 
@@ -122,11 +122,10 @@ Builtin setelementvalue(name:jsbytes, text:jsbytes)real
 
 Builtin getattributes2(name:jsbytes, text:jsbytes)jsbytes
 
-Function callevent(id:seq.word, event:seq.word)int {OPTION NOINLINE}
-intpart.callevent2(jsUTF8.token.id, jsUTF8.token.event)
+Function callevent(id:seq.word, event:seq.word)int
+{OPTION NOINLINE}intpart.callevent2(jsUTF8.token.id, jsUTF8.token.event)
 
-Builtin callevent2(name:jsbytes, text:jsbytes) real
-
+Builtin callevent2(name:jsbytes, text:jsbytes)real
 
 Builtin setattribute2(name:jsbytes, att:jsbytes, value:jsbytes)real
 
@@ -142,11 +141,9 @@ setattribute2(jsUTF8.token.id, jsUTF8.token.att, jsUTF8.toseqbyte.HTMLformat.val
 Function getattributes(id:seq.word, attributes:seq.word)seq.word
 towords.getattributes2(jsUTF8.token.id, jsUTF8.toseqbyte.HTMLformat.attributes)
 
-
 Function getElementValue(id:seq.word)seq.word towords.getelementvalue.jsUTF8.token.id
 
-Function getElementValue:jsbytes(id:seq.word) jsbytes getelementvalue.jsUTF8.token.id
-
+Function getElementValue:jsbytes(id:seq.word)jsbytes getelementvalue.jsUTF8.token.id
 
 Function replaceSVG(name:seq.word, xml0:seq.word)real
 let none = "N"_1
@@ -169,47 +166,44 @@ Function set2zero(p:ptr, size:int)ptr if size = 0 then p else set2zero(set(p, 0)
 
 Function rootreal(x:real)real sin.x + cos.x + tan.x + sqrt.x + arcsin.x + arccos.x
 
-Builtin jsgetfile(typ:real, filename:real, code:real, pc:real, stk:real, locals:real)real
+Builtin jsHTTP(outputbits:real, url:real, method:real, bodydata:real, code:real, pc:real, stk:real, locals:real 
+)real
 
-Builtin jsputfile(typ:real, filename:real, data:real, code:real, pc:real, stk:real, locals:real)real
+Function method:byte(s:seq.word)method.byte
+assert first.s ∈ "GET PUT"report"illegal HTTP method"
+method(toUTF8.s, 8, tobyte.0)
 
-function readbytefile real 1.0
-
-function readintfile real 0.125
+Function method:int(s:seq.word)method.int
+assert first.s ∈ "GET PUT"report"illegal HTTP method"
+method(toUTF8.s, 64, 0)
 
 Function getfile:byte(name:seq.word)seq.byte
 {OPTION INLINE}
-let f = jsgetfile(readbytefile, toreal.bitcast:int(toptr.blockIt.token.name), 0.0, 0.0, 0.0, 0.0)
-bitcast:seq.byte(toptr.intpart.f)
+let t = HTTP("/" + name, method:byte("GET"))
+if isaborted.t then empty:seq.byte else body.t
 
 Function getfile:int(name:seq.word)seq.int
 {OPTION INLINE}
-let f = jsgetfile(readintfile, toreal.bitcast:int(toptr.blockIt.token.name), 0.0, 0.0, 0.0, 0.0)
-bitcast:seq.int(toptr.intpart.f)
+let t = HTTP("/" + name, method:int("GET"))
+if isaborted.t then empty:seq.int else body.t
 
 Function createfile(name:seq.word, data:seq.byte)int
+{OPTION INLINE}
 let t = 
- jsputfile(1.0
- , toreal.bitcast:int(toptr.blockIt.token.name)
- , toreal.bitcast:int(toptr.blockIt.data)
- , 0.0
- , 0.0
- , 0.0
- , 0.0
+ HTTP("../cgi-bin/putfile.cgi?" + name
+ , method:byte("PUT Content-Type:application/text")
+ , packed.data
  )
-1
+if isaborted.t then 0 else 1
 
 Function createfile(name:seq.word, data:seq.int)int
+{OPTION INLINE}
 let t = 
- jsputfile(8.0
- , toreal.bitcast:int(toptr.blockIt.token.name)
- , toreal.bitcast:int(toptr.blockIt.data)
- , 0.0
- , 0.0
- , 0.0
- , 0.0
+ HTTP("../cgi-bin/putfile.cgi?" + name
+ , method:int("PUT Content-Type:application/text")
+ , packed.data
  )
-1
+if isaborted.t then 0 else 1
 
 Export undertop(s:stack.int, i:int)int
 
@@ -280,8 +274,7 @@ else if op = tobyte.254 then
  let zz = stackcall2(stk, loadvalue.undertop(stk, 1), arg)
  interpert(code, pc + 1, zz, locals)
 else if op = tobyte.255 then
- {this is a call to jsputfile or jsgetfile. Control is passed back to javascript and interpreter is resumed after call is 
-compelete.}
+ {this is a call to jsHTML. Control is passed back to javascript and interpreter is resumed after call is compelete.}
  let adjustedstack = 
   push(push(push(push(pop(stk, 4), representation.toreal.bitcast:int(toptr.code))
   , representation.toreal(pc + 2)
@@ -342,4 +335,71 @@ function i32const byte tobyte.0x41
 
 function i64load byte tobyte.0x29
 
-function tobyte(b:bits)byte tobyte.toint.b 
+function tobyte(b:bits)byte tobyte.toint.b
+
+Module HTTPresponse.T
+
+use UTF8
+
+use bits
+
+use inputoutput
+
+use real
+
+use standard
+
+use seq.T
+
+use bitcast.UTF8
+
+use otherseq.byte
+
+use seq.byte
+
+use bitcast.int
+
+use bitcast.HTTPresponse.T
+
+use bitcast.seq.T
+
+use bitcast.seq.byte
+
+Export type:HTTPresponse.T
+
+Export type:method.T
+
+Export method(header:UTF8, outputbits:int, dummy:T)method.T
+
+type HTTPresponse is Rbody:real, Rheader:real, dummy:T
+
+type method is header:UTF8, outputbits:int, dummy:T
+
+Function asreals(a:HTTPresponse.T)seq.word print(3, Rbody.a) + print(3, Rheader.a)
+
+Function header(a:HTTPresponse.T)UTF8 bitcast:UTF8(toptr.intpart.Rheader.a)
+
+Function body(a:HTTPresponse.T)seq.T bitcast:seq.T(toptr.intpart.Rbody.a)
+
+Function isaborted(a:HTTPresponse.T)boolean subseq(toseqbyte.header.a, 1, 3) ≠ toseqbyte.toUTF8."200"
+
+Function message(a:HTTPresponse.T)seq.word
+let h = toseqbyte.header.a
+towords.UTF8.subseq(h, 1, findindex(tobyte.10, h))
+
+
+Function HTTP(name:seq.word, method:method.T)HTTPresponse.T{OPTION INLINE}HTTP(name, method, empty:seq.T)
+
+Function HTTP(name:seq.word, method:method.T, body:seq.T)HTTPresponse.T
+{OPTION INLINE}
+let f = 
+ jsHTTP(toreal.outputbits.method
+ , toreal.bitcast:int(toptr.packed.token.name)
+ , toreal.bitcast:int(toptr.packed.toseqbyte.header.method)
+ , toreal.bitcast:int(toptr.packed.body)
+ , 0.0
+ , 0.0
+ , 0.0
+ , 0.0
+ )
+bitcast:HTTPresponse.T(toptr.intpart.f) 
