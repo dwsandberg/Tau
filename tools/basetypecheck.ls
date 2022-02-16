@@ -1,4 +1,4 @@
-#!/bin/sh tau stdlib tools baseTypeCheck webassembly
+#!/bin/sh tau stdlib tools baseTypeCheck stdlib
 
 Module baseTypeCheck
 
@@ -124,18 +124,16 @@ else
      + print.parakinds
      next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), localtypes, false)
   /for(assert length.toseq.stk = 1 report"Expect one element on stack:" + print.toseq.stk
-  assert check5([top.stk], [returntype])
+  assert check5([ top.stk  ], [coretype(returntype,typedict)])
   report"Expected return type of" + print.returntype + "but type on stack is" + print.top.stk
   "")
 
 function check5(a:seq.mytype, b:seq.mytype)boolean
-if a = b then true
-else
- let z = print.a + ":" + print.b
- if z ∈ ["byte:int", "byte ptr:int ptr"]then true
- else
-  assert print.a = print.b report"X" + print.a + print.b
-  false
+  for acc=length.a = length.b, idx=1,t /in a while acc do 
+  let t2=b_idx 
+    next(t2=t /or t=typebyte /and t2=typeint /or t2=typebyte /and t=typeint,idx+1 )
+  /for(acc)
+  
 
 Function checkresults(prg:seq.symdef)seq.word
 let undefined = 

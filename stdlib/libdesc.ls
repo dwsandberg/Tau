@@ -75,7 +75,7 @@ function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
 
 Export type:compileinfo
 
-Function compilerback2(prg10:set.symdef, oldmods:seq.libraryModule, typedict:typedict, libname:word)compileinfo
+Function compilerback2(prg10:set.symdef, oldmods:seq.libraryModule, typedict:typedict, src:seq.seq.word)compileinfo
 {/OPTION PROFILE}
 let discardresult = 
  for acc = 0, sd ∈ toseq.prg10 do
@@ -124,7 +124,7 @@ for code3 = empty:seq.seq.symbolref, sd ∈ toseq.prg10 do
 ]
 + code2
 + code3
-, empty:seq.seq.word
+, src
 , symbolrefdecodenew
 , newmods
 ))

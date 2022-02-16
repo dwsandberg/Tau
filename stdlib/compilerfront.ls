@@ -6,8 +6,6 @@ use libraryModule
 
 use mytype
 
-use pass2
-
 use passparse
 
 use passsymbol
@@ -88,12 +86,22 @@ Export modname(libraryModule)modref
 
 Export types(libraryModule)seq.seq.mytype
 
-Function compilerfront(option:seq.word, lib:word, allsrc:seq.seq.word, libinfo:loadedresult, exports:seq.word)compileinfo
-{/OPTION PROFILE}
+Function extract(which:seq.word, s:seq.word)seq.word
+let libclause = break(s, "uses exports", true)
+if which = "exports"then libclause_3 << 1
+else if which = "library"then[libclause_1_2]
+else
+ assert which = "uses"report"PROBLEM in libraryclause"
+ libclause_2 << 1
+
+Function compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:loadedresult)midpoint
+let libclause = break(allsrc_1, "uses exports", true)
+let lib = libclause_1_2
+let exports = {libclause_3 << 1}extract("exports", allsrc_1)
 if option = "library"then
  let zz1 = prg.libinfo
  let discard = for acc = symbolref.sym.zz1_1, d ∈ zz1 do symbolref.sym.d /for(acc)
- compileinfo(prg.libinfo, emptytypedict, empty:seq.libraryModule, empty:seq.seq.word)
+ midpoint(option, asset.prg.libinfo, emptytypedict, empty:seq.libraryModule, empty:seq.seq.word)
 else
  let libpasstypes = 
   for acc = empty:set.passtypes, m ∈ mods.libinfo do
@@ -123,7 +131,7 @@ else
   let zz1 = toseq.prg10
   let discard = 
    for acc = symbolref.sym.zz1_1, d ∈ zz1 do if paragraphno.d > 0 then symbolref.sym.d else acc /for(acc)
-  compileinfo(zz1, emptytypedict, empty:seq.libraryModule, allsrc)
+  midpoint(option, asset.zz1, emptytypedict, empty:seq.libraryModule, allsrc)
  else
   let roots = 
    for acc = [outofboundssymbol], f ∈ toseq.modules.t5 do
@@ -150,7 +158,8 @@ else
      , empty:seq.symtextpair
      )
     /for(acc)
-   compileinfo(for acc = empty:seq.symdef, d ∈ toseq.prg10 do if issimple.module.sym.d then acc else acc + d /for(acc)
+   midpoint(option
+   , for acc = empty:set.symdef, d ∈ toseq.prg10 do if issimple.module.sym.d then acc else acc + d /for(acc)
    , typedict
    , tolibraryModules(typedict, toseq.modules.t5, exports)
    , empty:seq.seq.word
@@ -167,17 +176,37 @@ else
       for acc = acc0, sym ∈ toseq.expand(4, afteroption, root)do addoption(acc, sym, "INLINE")/for(acc)
      /for(acc0)
     else afteroption
-   if option = "pass1"then
-    compileinfo(toseq.result
-    , typedict.pb
-    , tolibraryModules(typedict, toseq.modules.t5, exports)
-    , empty:seq.seq.word
-    )
-   else
-    let prg5 = pass2.result ∪ templates
-    let libmods = tolibraryModules(typedict, toseq.modules.t5, exports)
-    if option = "all"then compilerback2(prg5, libmods, typedict, lib)
-    else compileinfo(toseq.prg5, typedict.pb, libmods, empty:seq.seq.word)
+   let libmods = tolibraryModules(typedict, toseq.modules.t5, exports)
+   if option = "pass1"then midpoint(option, result, typedict.pb, libmods, empty:seq.seq.word)
+   else midpoint(option, result, templates, typedict, libmods, [first.allsrc])
+
+function midpoint(option:seq.word
+, prg:set.symdef
+, typedict:typedict
+, libmods:seq.libraryModule
+, libclause:seq.seq.word
+)midpoint
+midpoint(option, prg, empty:set.symdef, typedict, libmods, libclause)
+
+Function finish(m:midpoint, prg5:set.symdef)compileinfo
+if option.m = "all"then compilerback2(prg5, libmods.m, typedict.m, [first.src.m])
+else compileinfo(toseq.prg5, typedict.m, libmods.m, src.m)
+
+Export prg(midpoint)set.symdef
+
+Export option(midpoint)seq.word
+
+Export templates(midpoint)set.symdef
+
+Export typedict(midpoint)typedict
+
+type midpoint is option:seq.word
+, prg:set.symdef
+, templates:set.symdef
+, typedict:typedict
+, libmods:seq.libraryModule
+, src:seq.seq.word
+
 
 function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
 for acc = empty:set.symbol, sym ∈ getCode(prg, symin)do

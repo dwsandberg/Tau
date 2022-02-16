@@ -1,4 +1,4 @@
-#!/bin/sh tau stdlib tools callgraphwithin tools doc
+#!/bin/sh  tau stdlib tools doclibrary stdlib.
 
 #!/bin/sh tau stdlib tools createdoc
 
@@ -61,7 +61,7 @@ use seq.seq.word
 use svg2graph.seq.word
 
 Function htmlcode(libname:seq.word)seq.word
-let p = prettyfile(true, '  /< noformat <hr id="T">  />  /keyword ', getlibrarysrc.libname << 3)
+let p = prettyfile(true, '  /< noformat <hr id="T">  />  /keyword ', getlibrarysrc.libname << 1)
 let modules = 
  for acc = "", @e ∈ p do
   if subseq(@e, 1, 2) ∈ [" /< noformat"]then acc + @e_7 else acc
@@ -127,7 +127,7 @@ drawgraph.g2
 Function doclibrary(libname:seq.word)seq.word
 {create summary documentation for libraray. }
 let liba = getlibrarysrc.libname
-let exports = liba_3
+let exports = break(liba_1,"exports",true)_2 << 1
 let todoc = 
  for acc = "", s ∈ liba do
   if subseq(s, 1, 3) = "* only document"then acc + subseq(s, 4, length.s)else acc

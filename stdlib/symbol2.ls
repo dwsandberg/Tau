@@ -6,8 +6,6 @@ use libraryModule
 
 use mytype
 
-use pass2
-
 use standard
 
 use symbol

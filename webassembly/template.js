@@ -298,10 +298,11 @@ function finaljsHTTP(data,nobits ){
  //   console.log(responeheader)
       let a=jsstring2UTF8bytes( responeheader);
       let b=finaljsHTTP(result,nobits);
-      let rec = exports.allocatespace3(  2); 
-      let i32blk = new Float64Array(memory.buffer, rec,2); 
-         i32blk [ 1]=a  ;
-      i32blk[0]=b ;
+      let rec  = exports.jsmakepair(b,a);
+//      let rec = exports.allocatespace3(  2); 
+//      let i32blk = new Float64Array(memory.buffer, rec,2); 
+//         i32blk [ 1]=a  ;
+//      i32blk[0]=b ;
      inprogress--; exports.resume(rec,code,pc,stk,locals,8); }) 
   }
 

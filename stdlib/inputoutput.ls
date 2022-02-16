@@ -26,7 +26,13 @@ use otherseq.char
 
 use fileT.int
 
+use process.int
+
 use seq.int
+
+use seq.liblib
+
+use otherseq.symbol
 
 use seq.symbol
 
@@ -106,6 +112,18 @@ createlib2(tocstr.[libname]
 )
 
 builtin createlib2(name:cstr, libs:cstr, length:int, data:seq.bits)int
+
+Function createthreadB(funcaddress:int, returntype:mytype, args:seq.int, argcode:int)process.int
+let adcret = funcaddress.deepcopySym.returntype
+let adc = funcaddress.deepcopySym.seqof.typeword
+createthreadI(adcret, adc, funcaddress, packed.args, argcode)
+
+Function funcaddress(sym:symbol)int
+let addrs = symboladdress.first.loadedLibs
+let i = findindex(sym, subseq(symbolrefdecode.libinfo.first.loadedLibs, 1, length.addrs))
+if i ≤ length.addrs then addrs_i else 0
+
+builtin createthreadI(int, int, int, seq.int, int)process.int
 
 Module fileT.T
 

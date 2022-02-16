@@ -58,6 +58,8 @@ use seq.int
 
 use stack.int
 
+use bitcast.intpair
+
 use bitcast.ptr
 
 use seq.real
@@ -68,9 +70,13 @@ use bitcast.seq.bits
 
 use seq.seq.bits
 
+use bitcast.HTTPresponse.byte
+
 use bitcast.seq.byte
 
 use seq.seq.byte
+
+use bitcast.HTTPresponse.int
 
 use bitcast.seq.int
 
@@ -133,6 +139,10 @@ Builtin getelementvalue(name:jsbytes)jsbytes
 
 Builtin replacesvg(id:jsbytes, xml:jsbytes)real
 
+Function jsmakepair(a:real, b:real)real toreal.bitcast:int(toptr.intpair(intpart.a, intpart.b))
+
+type intpair is a:int, b:int
+
 Function towords(a:jsbytes)seq.word towords.UTF8.bitcast:seq.byte(toptr.intpart.toreal.a)
 
 Function setAttribute(id:seq.word, att:seq.word, value:seq.word)real
@@ -169,29 +179,47 @@ Function rootreal(x:real)real sin.x + cos.x + tan.x + sqrt.x + arcsin.x + arccos
 Builtin jsHTTP(outputbits:real, url:real, method:real, bodydata:real, code:real, pc:real, stk:real, locals:real 
 )real
 
-Function method:byte(s:seq.word)method.byte
-assert first.s ∈ "GET PUT"report"illegal HTTP method"
-method(toUTF8.s, 8, tobyte.0)
+Function HTTP(name:seq.word, method:UTF8, body:seq.byte)HTTPresponse.byte
+{OPTION INLINE}
+bitcast:HTTPresponse.byte(toptr.intpart.jsHTTP({bits}8.0
+, toreal.bitcast:int(toptr.packed.token.name)
+, toreal.bitcast:int(toptr.packed.toseqbyte.method)
+, toreal.bitcast:int(toptr.packed.body)
+, 0.0
+, 0.0
+, 0.0
+, 0.0
+)
+)
 
-Function method:int(s:seq.word)method.int
-assert first.s ∈ "GET PUT"report"illegal HTTP method"
-method(toUTF8.s, 64, 0)
+Function HTTP(name:seq.word, method:UTF8, body:seq.int)HTTPresponse.int
+{OPTION INLINE}
+bitcast:HTTPresponse.int(toptr.intpart.jsHTTP({bits}64.0
+, toreal.bitcast:int(toptr.packed.token.name)
+, toreal.bitcast:int(toptr.packed.toseqbyte.method)
+, toreal.bitcast:int(toptr.packed.body)
+, 0.0
+, 0.0
+, 0.0
+, 0.0
+)
+)
 
 Function getfile:byte(name:seq.word)seq.byte
 {OPTION INLINE}
-let t = HTTP("/" + name, method:byte("GET"))
+let t = HTTP("/" + name, toUTF8."GET", empty:seq.byte)
 if isaborted.t then empty:seq.byte else body.t
 
 Function getfile:int(name:seq.word)seq.int
 {OPTION INLINE}
-let t = HTTP("/" + name, method:int("GET"))
+let t = HTTP("/" + name, toUTF8."GET", empty:seq.int)
 if isaborted.t then empty:seq.int else body.t
 
 Function createfile(name:seq.word, data:seq.byte)int
 {OPTION INLINE}
 let t = 
  HTTP("../cgi-bin/putfile.cgi?" + name
- , method:byte("PUT Content-Type:application/text")
+ , toUTF8."PUT Content-Type:application/text"
  , packed.data
  )
 if isaborted.t then 0 else 1
@@ -200,7 +228,7 @@ Function createfile(name:seq.word, data:seq.int)int
 {OPTION INLINE}
 let t = 
  HTTP("../cgi-bin/putfile.cgi?" + name
- , method:int("PUT Content-Type:application/text")
+ , toUTF8."PUT Content-Type:application/text"
  , packed.data
  )
 if isaborted.t then 0 else 1
@@ -337,69 +365,44 @@ function i64load byte tobyte.0x29
 
 function tobyte(b:bits)byte tobyte.toint.b
 
+/Function createthreadB(funcaddress:int,returntype:mytype,args:seq.int,argcode:int) process.int
+  process.2^3
+  
+ / use process.int
+  
+ / use mytype
+  
+ / use symbol
+
+/ function funcaddress(sym:symbol)int 0
+
+
 Module HTTPresponse.T
 
 use UTF8
 
 use bits
 
-use inputoutput
-
-use real
-
 use standard
 
 use seq.T
-
-use bitcast.UTF8
 
 use otherseq.byte
 
 use seq.byte
 
-use bitcast.int
-
 use bitcast.HTTPresponse.T
-
-use bitcast.seq.T
-
-use bitcast.seq.byte
 
 Export type:HTTPresponse.T
 
-Export type:method.T
+type HTTPresponse is body:seq.T, header:UTF8
 
-Export method(header:UTF8, outputbits:int, dummy:T)method.T
+Export header(a:HTTPresponse.T)UTF8
 
-type HTTPresponse is Rbody:real, Rheader:real, dummy:T
-
-type method is header:UTF8, outputbits:int, dummy:T
-
-Function asreals(a:HTTPresponse.T)seq.word print(3, Rbody.a) + print(3, Rheader.a)
-
-Function header(a:HTTPresponse.T)UTF8 bitcast:UTF8(toptr.intpart.Rheader.a)
-
-Function body(a:HTTPresponse.T)seq.T bitcast:seq.T(toptr.intpart.Rbody.a)
+Export body(a:HTTPresponse.T)seq.T
 
 Function isaborted(a:HTTPresponse.T)boolean subseq(toseqbyte.header.a, 1, 3) ≠ toseqbyte.toUTF8."200"
 
 Function message(a:HTTPresponse.T)seq.word
 let h = toseqbyte.header.a
-towords.UTF8.subseq(h, 1, findindex(tobyte.10, h))
-
-
-Function HTTP(name:seq.word, method:method.T)HTTPresponse.T{OPTION INLINE}HTTP(name, method, empty:seq.T)
-
-Function HTTP(name:seq.word, method:method.T, body:seq.T)HTTPresponse.T
-{OPTION INLINE}
-let f = 
- jsHTTP(toreal.outputbits.method
- , toreal.bitcast:int(toptr.packed.token.name)
- , toreal.bitcast:int(toptr.packed.toseqbyte.header.method)
- , toreal.bitcast:int(toptr.packed.body)
- , 0.0
- , 0.0
- , 0.0
- , 0.0
- )
-bitcast:HTTPresponse.T(toptr.intpart.f) 
+towords.UTF8.subseq(h, 1, findindex(tobyte.10, h)) 

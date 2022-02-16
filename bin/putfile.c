@@ -4,19 +4,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-/* Print a basic HTTP header. */
-
-static void
-print_http_header (const char * content_type)
-{
-    printf ("Content-Type: %s\n\n", content_type);
-}
-
 /* Handle errors by printing a plain text message. */
 
 static void cgi_fail (const char * message)
 {
-    print_http_header ("text/plain");
+    printf ("Content-Type: text/plain\n\n" );
     printf ("%s\n", message);
     exit (0);
 }
@@ -25,7 +17,8 @@ static void cgi_fail (const char * message)
 
 int 
 main ()
-{    print_http_header ("text/html");
+{   
+    printf ("Content-Type: text/html\n\n" );
      int content_length=atoi(getenv("CONTENT_LENGTH"));
      char *Root=getenv("DOCUMENT_ROOT");
      char *query=getenv("QUERY_STRING");

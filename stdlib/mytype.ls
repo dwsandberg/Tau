@@ -20,6 +20,8 @@ use set.passtypes
 
 use otherseq.typedef
 
+use seq.typedef
+
 use set.typedef
 
 use set.seq.typedef

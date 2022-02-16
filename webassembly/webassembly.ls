@@ -1,4 +1,4 @@
-#!/bin/bash tau stdlib webassembly testgraphw testgraph.
+#!/bin/bash  tau -w https://myhost.local/  stdlib   webassembly  wtests wtests  .
 
 Module webassembly
 
@@ -11,8 +11,6 @@ exports wasm wasm1 wasm2 wasmcompile webassembly
 use UTF8
 
 use bits
-
-use compilerfront
 
 use format
 
@@ -48,6 +46,8 @@ use seq.seq.word
 
 use IO2
 
+use main2
+
 Function entrypoint(s:UTF8)UTF8
 let args = towords.s
 let p = process.glue(args_1, args << 1)
@@ -59,17 +59,12 @@ function glue(lib:word, pages:seq.word)seq.word
 let includetemplate = false
 let libname = [lib]
 let info2 = getlibrarysrc.libname
-let exports = "tausupport inputoutput" + info2_3
-let r = 
- compilerfront("wasm"
- , lib
- , getlibrarysrc.info2_1 + info2 << 3
- , {dependentlibs}empty:loadedresult
- , exports
- )
+let info2f=break(info2_1,"uses exports",true) 
+let exports = "tausupport inputoutput" +  info2f_3 << 1
+let r = compilerfront:libllvm("wasm",["Library"+libname+"uses exports"+exports]+getlibrarysrc(info2f_2 << 1)+ info2 << 1)
 let syms2 = 
  for syms2 = empty:seq.symbol, m ∈ mods.r do
-  if name.modname.m ∈ info2_3 then
+  if name.modname.m ∈ info2f_3 << 1 then
    for txt3 = syms2, e ∈ exports.m do txt3 + (symbolrefdecode.r)_(toint.e)/for(txt3)
   else syms2
  /for({should check for dup names on syms}syms2)

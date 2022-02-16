@@ -1,4 +1,4 @@
-#!/bin/sh tau stdlib tools callgraphwithin tests testseq
+#!/bin/sh tau stdlib tools callgraphwithin stdlib interpreter  
 
 #!/bin/sh tau stdlib tools doclibrary tools
 

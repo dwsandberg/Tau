@@ -133,7 +133,9 @@ let roots =
  , [typereal, typereal, typereal, typereal, typereal, typereal]
  , typereal
  )
- + symbol(moduleref."webassembly inputoutput", "blockseqtype", typereal))
+ + symbol(moduleref."webassembly inputoutput", "blockseqtype", typereal)
+ + symbol(moduleref."webassembly inputoutput", "jsmakepair", typereal,typereal,typereal)
+ )
 let imp = 
  for acc = empty:seq.seq.byte, @e ∈ imports do
   let discard0 = funcidx.@e
@@ -634,7 +636,7 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
   if inmodule(sym, "$real")then
    if value.sym = 0 then next(blkstk, curblk + Icode(i64const, 0), localtypes)
    else
-    assert casttoreal.value.sym ∈ [1.0, 8.0, 0.125]
+    assert casttoreal.value.sym ∈ [1.0, 8.0, 0.125,64.0]
     report"REAL" + print(3, casttoreal.value.sym) + print.value.sym
     next(blkstk, curblk + Icode(f64const, intpart(casttoreal.value.sym * 1000.0)), localtypes)
   else if isFref.sym then next(blkstk, curblk + Icode(i64const, tableindex.basesym.sym), localtypes)

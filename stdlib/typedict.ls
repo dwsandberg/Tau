@@ -217,7 +217,11 @@ if iscore4.typ ∨ typ = typeT then typ
 else if isencoding.typ then typeint
 else if isseq.typ then typeptr
 else
- let flatflds = flatflds(alltypes, typ)
+ let flatflds1 = flatflds(alltypes, typ)
+ let flatflds = 
+  if isempty.flatflds1 then
+   for j = empty:seq.mytype, t ∈ flatflds(alltypes, abstracttype.typ)do j + replaceT(parameter.typ, t)/for(j)
+  else flatflds1
  let fldsize = length.flatflds
  if fldsize = 1 then coretype(first.flatflds, alltypes, empty:seq.mytype)
  else if fldsize = 0 then typ
