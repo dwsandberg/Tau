@@ -1,4 +1,4 @@
-#!/bin/sh tau stdlib tools callgraphwithin stdlib interpreter  
+#!/bin/sh tau stdlib tools callgraphbetween stdlib xxhash format xxhash UTF8
 
 #!/bin/sh tau stdlib tools doclibrary tools
 
@@ -24,6 +24,8 @@ exports baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
 * usegraph exclude standard seq set otherseq UTF8 real graph
 
 use UTF8
+
+use format
 
 use baseTypeCheck
 

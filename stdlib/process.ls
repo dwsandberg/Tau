@@ -1,21 +1,35 @@
 Module process.T
 
+use UTF8
+
+use bits
+
 use standard
 
 use seq.T
 
-type process is abortedx:boolean, a:seq.word, resultb:T
+use otherseq.byte
 
-Builtin aborted(p:process.T)boolean
+type process is abortedx:boolean, msg:seq.word, header:UTF8, body1:seq.T, body2:T
 
-Function message(p:process.T)seq.word if aborted.p then a.p else"normal exit"
+Builtin aborted(process.T)boolean
+
+Function message(p:process.T)seq.word
+if aborted.p then
+ if isempty.msg.p then
+  let h = toseqbyte.header.p
+  towords.UTF8.subseq(h, 1, findindex(tobyte.10, h))
+ else msg.p
+else"normal exit"
 
 Function result(p:process.T)T
 assert not.aborted.p report"no result of aborted process"
-{The compiler has a special case to handle accessing process resultb because if the type T is a structure of more than one element 
-, then compiler would normally assume the elements are store at resultb and not a pointer to the type T. }
-processresult.p
+first.body1.p
 
-Builtin processresult(p:process.T)T
+Function merge(a:process.T, b:T, c:T)process.T process(abortedx.a, msg.a, header.a, [b], c)
 
-Export type:process.T 
+Export body2(process.T)T
+
+Export type:process.T
+
+Export header(a:process.T)UTF8 

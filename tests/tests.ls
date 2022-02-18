@@ -8,6 +8,8 @@ exports tests
 
 use UTF8
 
+use format
+
 use standard
 
 use testall

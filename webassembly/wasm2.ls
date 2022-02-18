@@ -160,16 +160,20 @@ let discard =
  +setGlobal(freeblocks
  ,  load(Wlocal.5,lastfree) + const32.toint.{will produce 32bit constant 0xFFFF0000}0xFFFFFFFFFFFF0000 + i32and
  )
- + {create result record}const64.0
+ + {create process record}const64.0
  + const64.0
  + Wlocal.4
+ + (const64.0
+ + const64.1
+ + Wlocal.4
  + Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr))
+)
+ + Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint,typeptr], typeptr))
  + f64converti64s
  )
  )
 exportfunc(funcidx.sym, wordname.sym)
 
-Wcall.seqsym(alltypes, newsymbol(internalmod, "record", [typeint, typeint, typeint], typeptr))
 
 Function exporthandleerror(alltypes:typedict)seq.byte
 let sym = symbol(internalmod, "handleerror", typereal, typereal)
@@ -188,7 +192,7 @@ let discard =
  , seqof.typeword
  )
  + Wdefine.2
- + const64.1
+ + {create process record} const64.1
  + Wlocal.2
  + const64.0
  + Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr))

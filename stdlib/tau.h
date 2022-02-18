@@ -12,10 +12,16 @@ struct spaceinfo { char * nextone,*lastone; BT *blocklist; };
 
 pthread_mutex_t sharedspace_mutex;
 
-struct pinfo { BT aborted; // 1 if aborted
-    BT message; // message if aborted (seq.word)
-    BT result;  // result returned by process
-    BT joined;  // has process been joined to parent?
+struct pinfo { BT aborted; //  if aborted then 1 else if success then 0 
+    BT * message; // message if aborted (seq.word)
+    BT * messageUTF8;  
+    BT * body;  
+    BT * body2;  
+        // space for a seq containing the result
+    BT  zero;
+    BT  seqtype;
+    BT  seqlength;
+    BT  seqelement;   
     struct spaceinfo space; //for space allocation
     jmp_buf env;
     BT error;
@@ -51,3 +57,5 @@ void assertexit(int b,char *message);
 void initprocessinfo(processinfo p,processinfo PD);
 
 BT createthread(processinfo PD ,BT  deepcopyresult  ,BT  deepcopyseqword  ,BT func,BT * args,BT argtype );
+
+BT processisaborted(processinfo PD,BT pin);

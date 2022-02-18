@@ -158,7 +158,7 @@ else
  bindinfo(dict, code.R_1 + code.R_3 + f, [resulttype.first.f], "")
 
 function unaryop(R:reduction.bindinfo, common:commoninfo, place:int, op:seq.word, exp:bindinfo)bindinfo
-if op_1 = "process"_1 then
+if op_1 = "process"_1 ∧ length.types.exp = 1 then
  let rt = resolvetype(types.common, print.(types.exp)_1)_1
  let processtype = processof.rt
  let dcws = deepcopyseqword

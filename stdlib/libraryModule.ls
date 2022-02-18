@@ -126,17 +126,13 @@ if s_1 = "Library"_1 then s else findlibclause(a, i + 1)
 
 Function getlibrarysrc(libname:seq.word)seq.seq.word
 {OPTION INLINE}
-let a = getlibrarysrcA.libname
-["Library" + first.libname + "uses" + a_1 + "exports" + a_3]
-+ a << 3
-
-function getlibrarysrcA(libname:seq.word)seq.seq.word
-{OPTION INLINE}
-{first three lines are dependentlibs filelist and exports}
+{library info is contain in first paragraph of result}
 let a = gettext([first.libname] + "/" + last.libname + ".ls")
 let l = extractinfo.a
 let filelist = l_1 << 1
-for acc = [{dependentlibs}l_2 << 1, filelist, {exports}l_3 << 1] + a
+for acc = ["Library" + first.libname + "uses" + l_2 << 1 + "exports" + l_3 << 1
+]
++ a
 , @e ∈ filelist
 do
  if @e = last.libname then acc

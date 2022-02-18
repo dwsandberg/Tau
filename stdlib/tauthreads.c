@@ -7,17 +7,21 @@ union cvt {double r;BT i;};
 #define asint(r) (((union cvt) (r)).i)
 
 void initprocessinfo(processinfo p,processinfo PD){
+    p->aborted = -1;
+    p->message =&(p->zero);
+    p->messageUTF8 =&(p->zero);
+    p->body2 =&(p->zero) ;
+    p->body = &(p->seqtype) ;
     p->spawningprocess =PD;
     p->encodings = PD->encodings;
-    p->aborted = 0;
     p->pid = pthread_self ();
-    p->joined =0 ;
+     p->zero = 0;
+    p->seqtype=0;
+    p->seqlength=1;
     p->space.nextone =0;
     p->space.lastone =0;
     p->space.blocklist = 0;
     p->error =0;
-    p->message =0;
-    p->result =0;
     p->profileindex = 0;
     p->freespace=1;
     p->newencodings=0;
@@ -76,11 +80,11 @@ function thecase(i:int) seq.word
 
 void threadbody(struct pinfo *q){
 if (setjmp(q->env)!=0) {
-       q->message= ((BT (*) (processinfo,BT))(q->deepcopyseqword) ) (q->spawningprocess,q->error);
+       q->message= ((BT *(*) (processinfo,BT))(q->deepcopyseqword) ) (q->spawningprocess,q->error);
         q->aborted = 1;}
     else {BT result;
      // fprintf(stderr,"start threadbody\n");
-     q->aborted = 0;
+    
        //  fprintf(stderr,"case %lld \n",q->argtype);
       switch( q->argtype  ){
 case 2:result =((BT(*)(processinfo))(q->func))(q); break; 
@@ -213,13 +217,17 @@ case 128:result =((BT(*)(processinfo, BT, BT, BT, BT, BT, BT))(q->func))(q, q->a
 case 129:result = asint(((double(*)(processinfo, BT, BT, BT, BT, BT, BT))(q->func))(q, q->args [ 0], q->args [ 1], q->args [ 2], q->args [ 3], q->args [ 4], q->args [ 5])); break;
      default: assertexit(0,"number of parameters not implement for threads");   
      }
-     // fprintf(stderr,"start result copy \n"); //
      assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
-     q->result= (q->argtype % 2) ? result : ((BT (*) (processinfo,BT))(q->deepcopyresult) ) ( q->spawningprocess,result);
-     assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
-     // fprintf(stderr,"finish result copy\n"); //
+     q->seqelement= (q->argtype % 2) ? result : ((BT (*) (processinfo,BT))(q->deepcopyresult) ) ( q->spawningprocess,result);
+      assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+      q->aborted = 0; // must be done after seqelement is set 
     }
-    if (q->freespace )  myfree(&q->space); 
+      if (q->freespace )  myfree(&q->space); 
     if (q->profileindex > 0 )  (q->finishprof)(q->profileindex ,0);
 }
 
+BT processisaborted(processinfo PD,BT pin){
+     processinfo q = ( processinfo)  pin;
+     if (q->aborted == -1)   pthread_join(q->pid,NULL);  
+    return (BT)( q->aborted);
+}

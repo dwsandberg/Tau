@@ -4,7 +4,7 @@ use IO2
 
 use UTF8
 
-use format
+use textio
 
 use words
 
@@ -24,7 +24,7 @@ Export type:UTF8
 
 Export towords(UTF8)seq.word
 
-Export HTMLformat(output:seq.word)UTF8
+/Export HTMLformat(output:seq.word)UTF8
 
 Export stacktrace seq.word
 

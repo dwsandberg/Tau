@@ -305,11 +305,7 @@ BT assert(processinfo PD,BT message)
     longjmp(PD->env,1);
      return 1; }
 
-BT processisaborted(processinfo PD,BT pin){
-     processinfo q = ( processinfo)  pin;
-    if (!(q->joined)){ pthread_join(q->pid,NULL); q->joined=1;};
-    return (BT)( q->aborted);
-}
+
 
 
 // start of file io
@@ -374,7 +370,7 @@ BT subgetfile(processinfo PD,  char *filename,BT seqtype){
     BT *data2,org;
  // fprintf(stderr,"openning %s\n",name); //
         org=myalloc(PD,4);
-     IDXUC(org,0)=-1;
+     IDXUC(org,0)=1;
      IDXUC(org,1)=0;
      IDXUC(org,2)=0;
      IDXUC(org,3)=0;
@@ -384,30 +380,37 @@ BT subgetfile(processinfo PD,  char *filename,BT seqtype){
     
     if ((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) == (caddr_t)(-1)) return org;
     data2=(long long *) filedata;
-    org=myalloc(PD,7);
+    org=myalloc(PD,12);
      BT  filesize=sbuf.st_size,noelements; 
      int elementsin128bits;
-      if (seqtype==0)  { noelements= (filesize+7)/8 ;   elementsin128bits= 2;  }
-      else if (seqtype==-8)   {  noelements=filesize   ; elementsin128bits= 16; }
-      else if (seqtype==-1) { noelements=(filesize  ) * 8  ; elementsin128bits= 128; }
+     if (seqtype==0)  { noelements= (filesize+7)/8 ;   elementsin128bits= 2;  }
+     else if (seqtype==-8)   {  noelements=filesize   ; elementsin128bits= 16; }
+     else if (seqtype==-1) { noelements=(filesize  ) * 8  ; elementsin128bits= 128; }
    
-     IDXUC(org,0)=filesize;
-     IDXUC(org,1)=(BT)((BT * )org+3);
+     IDXUC(org,0)=0;
+     IDXUC(org,1)=(BT)((BT * )org+5);
      IDXUC(org,2)= (BT )(filesize <= 16 ?empty:  data2);
-      IDXUC(org,3)=seqtype==0?0:1;
-       IDXUC(org,4)= filesize < 16 ?noelements:elementsin128bits ;
-     IDXUC(org,5)=data2[0];
-     IDXUC(org,6)=data2[1];
+     IDXUC(org,3)=(BT)((BT * )org+9);
+     IDXUC(org,4)= (BT )(filesize <= 16 ?empty:  data2);
      
-    data2[0]=seqtype==0?0:1;
-      data2[1]= noelements-elementsin128bits ;
-    close(fd);
+     IDXUC(org,5)=seqtype==0?0:1;
+     IDXUC(org,6)= filesize < 16 ?noelements:elementsin128bits ;
+     IDXUC(org,7)=data2[0];
+     IDXUC(org,8)=data2[1];
+     
+     IDXUC(org,9)=0;
+     IDXUC(org,10)=1;
+     IDXUC(org,11)=(BT)((BT * )org+5);
+     
+     data2[0]=seqtype==0?0:1;
+     data2[1]= noelements-elementsin128bits ;
+     close(fd);
   //  fprintf(stderr,"filename %s address %lld\n",name,(long long ) filedata);
     return org;
 }
 
   
-BT getfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,0); }
+//BT getfile(processinfo PD,char * filename){ return  subgetfile (PD,filename,0); }
 
 BT getbytefile(processinfo PD,char * filename){  return  subgetfile (PD,filename,-8); }
 

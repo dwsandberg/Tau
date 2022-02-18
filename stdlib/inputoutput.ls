@@ -12,19 +12,13 @@ use standard
 
 use symbol
 
-use fileT.bit
-
 use seq.bit
 
 use seq.bits
 
-use fileT.byte
-
 use seq.byte
 
 use otherseq.char
-
-use fileT.int
 
 use process.int
 
@@ -36,7 +30,13 @@ use otherseq.symbol
 
 use seq.symbol
 
+use process.seq.bit
+
+use process.seq.byte
+
 use encoding.seq.char
+
+use process.seq.int
 
 Export type:cstr
 
@@ -46,17 +46,26 @@ cstr.packed.bits.for acc = empty:bitstream, @e ∈ t + tobyte.0 do add(acc, bits
 
 type cstr is dummy:seq.bits
 
-Builtin getfile2(cstr)fileresult.int{OPTION STATE}
+Builtin getfile2(cstr)process.seq.int{OPTION STATE}
 
-Builtin getbytefile2(cstr)fileresult.byte{OPTION STATE}
+Builtin getbytefile2(cstr)process.seq.byte{OPTION STATE}
 
-Builtin getbitfile2(cstr)fileresult.bit{OPTION STATE}
+Builtin getbitfile2(cstr)process.seq.bit{OPTION STATE}
 
-Function getfile:byte(name:seq.word)seq.byte result(getbytefile2.tocstr.name, name)
+Function getfile:byte(name:seq.word)seq.byte
+let a = getbytefile2.tocstr.name
+assert not.aborted.a report"Error opening file:" + name
+result.merge(a, result.a + body2.a, empty:seq.byte)
 
-Function getfile:bit(name:seq.word)seq.bit result(getbitfile2.tocstr.name, name)
+Function getfile:bit(name:seq.word)seq.bit
+let a = getbitfile2.tocstr.name
+assert not.aborted.a report"Error opening file:" + name
+result.merge(a, result.a + body2.a, empty:seq.bit)
 
-Function getfile:int(name:seq.word)seq.int result(getfile2.tocstr.name, name)
+Function getfile:int(name:seq.word)seq.int
+let a = getfile2.tocstr.name
+assert not.aborted.a report"Error opening file:" + name
+result.merge(a, result.a + body2.a, empty:seq.int)
 
 Builtin createfile2(byteLength:int, data:seq.bits, cstr)int{OPTION STATE}
 
@@ -123,20 +132,4 @@ let addrs = symboladdress.first.loadedLibs
 let i = findindex(sym, subseq(symbolrefdecode.libinfo.first.loadedLibs, 1, length.addrs))
 if i ≤ length.addrs then addrs_i else 0
 
-builtin createthreadI(int, int, int, seq.int, int)process.int
-
-Module fileT.T
-
-use inputoutput
-
-use standard
-
-use seq.T
-
-Export type:fileresult.T
-
-type fileresult is size:int, start:seq.T, data:seq.T
-
-Function result(a:fileresult.T, name:seq.word)seq.T
-assert size.a ≥ 0 report"Error opening file:" + name
-start.a + data.a 
+builtin createthreadI(int, int, int, seq.int, int)process.int 

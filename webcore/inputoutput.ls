@@ -1,3 +1,5 @@
+#!/bin/bash  tau -w https://myhost.local/  stdlib   webassembly  wtests wtests  .
+
 module COMPILETIME
 
 use UTF8
@@ -44,11 +46,11 @@ use seq.bit
 
 use seq.bits
 
-use HTTPresponse.byte
+use process.seq.byte
 
 use seq.byte
 
-use HTTPresponse.int
+use process.seq.int
 
 use bitcast.int
 
@@ -70,13 +72,13 @@ use bitcast.seq.bits
 
 use seq.seq.bits
 
-use bitcast.HTTPresponse.byte
+use bitcast.process.seq.byte
 
 use bitcast.seq.byte
 
 use seq.seq.byte
 
-use bitcast.HTTPresponse.int
+use bitcast.process.seq.int
 
 use bitcast.seq.int
 
@@ -139,9 +141,12 @@ Builtin getelementvalue(name:jsbytes)jsbytes
 
 Builtin replacesvg(id:jsbytes, xml:jsbytes)real
 
-Function jsmakepair(a:real, b:real)real toreal.bitcast:int(toptr.intpair(intpart.a, intpart.b))
+Function jsmakepair(a:real, h:real)real
+let b = bitcast:seq.byte(toptr.intpart.h)
+toreal.bitcast:int(toptr.intpair(subseq(b, 1, 1) ≠ toseqbyte.toUTF8."2", "", intpart.h, [intpart.a])
+)
 
-type intpair is a:int, b:int
+type intpair is aborted:boolean, msg:seq.word, msgUTF8:int, body1:seq.int
 
 Function towords(a:jsbytes)seq.word towords.UTF8.bitcast:seq.byte(toptr.intpart.toreal.a)
 
@@ -179,9 +184,9 @@ Function rootreal(x:real)real sin.x + cos.x + tan.x + sqrt.x + arcsin.x + arccos
 Builtin jsHTTP(outputbits:real, url:real, method:real, bodydata:real, code:real, pc:real, stk:real, locals:real 
 )real
 
-Function HTTP(name:seq.word, method:UTF8, body:seq.byte)HTTPresponse.byte
+Function HTTP(name:seq.word, method:UTF8, body:seq.byte)process.seq.byte
 {OPTION INLINE}
-bitcast:HTTPresponse.byte(toptr.intpart.jsHTTP({bits}8.0
+bitcast:process.seq.byte(toptr.intpart.jsHTTP({bits}8.0
 , toreal.bitcast:int(toptr.packed.token.name)
 , toreal.bitcast:int(toptr.packed.toseqbyte.method)
 , toreal.bitcast:int(toptr.packed.body)
@@ -192,9 +197,9 @@ bitcast:HTTPresponse.byte(toptr.intpart.jsHTTP({bits}8.0
 )
 )
 
-Function HTTP(name:seq.word, method:UTF8, body:seq.int)HTTPresponse.int
+Function HTTP(name:seq.word, method:UTF8, body:seq.int)process.seq.int
 {OPTION INLINE}
-bitcast:HTTPresponse.int(toptr.intpart.jsHTTP({bits}64.0
+bitcast:process.seq.int(toptr.intpart.jsHTTP({bits}64.0
 , toreal.bitcast:int(toptr.packed.token.name)
 , toreal.bitcast:int(toptr.packed.toseqbyte.method)
 , toreal.bitcast:int(toptr.packed.body)
@@ -208,12 +213,12 @@ bitcast:HTTPresponse.int(toptr.intpart.jsHTTP({bits}64.0
 Function getfile:byte(name:seq.word)seq.byte
 {OPTION INLINE}
 let t = HTTP("/" + name, toUTF8."GET", empty:seq.byte)
-if isaborted.t then empty:seq.byte else body.t
+if aborted.t then empty:seq.byte else result.t
 
 Function getfile:int(name:seq.word)seq.int
 {OPTION INLINE}
 let t = HTTP("/" + name, toUTF8."GET", empty:seq.int)
-if isaborted.t then empty:seq.int else body.t
+if aborted.t then empty:seq.int else result.t
 
 Function createfile(name:seq.word, data:seq.byte)int
 {OPTION INLINE}
@@ -222,7 +227,7 @@ let t =
  , toUTF8."PUT Content-Type:application/text"
  , packed.data
  )
-if isaborted.t then 0 else 1
+if aborted.t then 0 else 1
 
 Function createfile(name:seq.word, data:seq.int)int
 {OPTION INLINE}
@@ -231,7 +236,7 @@ let t =
  , toUTF8."PUT Content-Type:application/text"
  , packed.data
  )
-if isaborted.t then 0 else 1
+if aborted.t then 0 else 1
 
 Export undertop(s:stack.int, i:int)int
 
@@ -363,46 +368,4 @@ function i32const byte tobyte.0x41
 
 function i64load byte tobyte.0x29
 
-function tobyte(b:bits)byte tobyte.toint.b
-
-/Function createthreadB(funcaddress:int,returntype:mytype,args:seq.int,argcode:int) process.int
-  process.2^3
-  
- / use process.int
-  
- / use mytype
-  
- / use symbol
-
-/ function funcaddress(sym:symbol)int 0
-
-
-Module HTTPresponse.T
-
-use UTF8
-
-use bits
-
-use standard
-
-use seq.T
-
-use otherseq.byte
-
-use seq.byte
-
-use bitcast.HTTPresponse.T
-
-Export type:HTTPresponse.T
-
-type HTTPresponse is body:seq.T, header:UTF8
-
-Export header(a:HTTPresponse.T)UTF8
-
-Export body(a:HTTPresponse.T)seq.T
-
-Function isaborted(a:HTTPresponse.T)boolean subseq(toseqbyte.header.a, 1, 3) ≠ toseqbyte.toUTF8."200"
-
-Function message(a:HTTPresponse.T)seq.word
-let h = toseqbyte.header.a
-towords.UTF8.subseq(h, 1, findindex(tobyte.10, h)) 
+function tobyte(b:bits)byte tobyte.toint.b 
