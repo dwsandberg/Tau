@@ -1,6 +1,7 @@
+#!/bin/sh tau stdlib tools createdoc
+
 #!/bin/sh  tau stdlib tools doclibrary stdlib.
 
-#!/bin/sh tau stdlib tools createdoc
 
 doclibrary stdlib.
 
@@ -89,7 +90,7 @@ let x2 = createfile("install.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d2)
 {let y1=createhtmlfile("testall.html", htmlcode."testall")}
 let y1 = 
  createfile("stdlib.html", toseqbyte(toUTF8.htmlheader + HTMLformat.doclibrary."stdlib"))
-d2
+d
 
 function addselect(s:seq.word)seq.word
 if isempty.s then" /p" + s

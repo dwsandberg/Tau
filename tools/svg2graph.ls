@@ -207,14 +207,14 @@ do
   )
  else next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
 /for(let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e /for(svg2)
-" /br  /< noformat"
-+ drawscript:T+element("svg id xmlns viewBox onload"
+" /br  /< noformat" + drawscript:T
++ element("svg id xmlns viewBox onload"
 , ["svg10"
 , "http://www.w3.org/2000/svg"
 , "5.0-1" + print(2, maxx + 5.0) + print(2, maxy + 1.0)
 , "[" + draw >> 1 + "].forEach(shiftstart)"
 ]
-,   txt + hovertxt
+, txt + hovertxt
 )
 + " />")
 

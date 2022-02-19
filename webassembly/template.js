@@ -214,7 +214,7 @@ function finaljsHTTP(data,nobits ){
 }
   
 , getelementvalue:function  (id){ 
-  let  z = document.getElementById(asjsstring( id)); 
+  let  z = document.getElementById(asjsstring( id).trim()); 
   let  kind=z.tagName ;
   let  r=(kind=="TEXTAREA"  )? z.value:
          (kind=="INPUT")?   ( ( z.type=="checkbox")?   z.checked :  z.value):
