@@ -6,18 +6,29 @@ use seq.seq.word
 
 use process.seq.seq.word
 
-function testX seq.word
-testY("-a 3 4 5-c", "a c", "word words", "Syntax:..-a word-..")
-+ testY("-a-c", "a c", "word words", "Syntax:..-a word-..")
-+ testY("a b c", "", "", "-main a b c")
-+ testY("-c", "", "", "Unknown arg-c")
-+ testY("-c", "c", "words", "-c")
-+ testY("-c", "c", "word", "Syntax:..-c word..")
-+ testY("-d 3 4 5", "d", "word", "-d 3 |-main 4 5")
-+ testY("-c 3 4 5", "c", "words", "-c 3 4 5")
-+ testY("-c a b", "c", "word", "-c a |-main b")
-+ testY("-c-a a b", "c a", "boolean word", "-c |-a a |-main b")
-+ testY("-a a-c b", "c a", "boolean word", "-a a |-c |-main b")
+Function testX seq.word
+let t = 
+ testY("-a 3 4 5-c", "a c", "word words", "Syntax:..-a word-..")
+ + testY("-a-c", "a c", "word words", "Syntax:..-a word-..")
+ + testY("a b c", "main", "words", "-main a b c")
+ + testY("-c", "", "", "Unknown option-c")
+ + testY("-c", "c", "words", "-c")
+ + testY("-c", "c", "word", "Syntax:..-c word-..")
+ + testY("-d 3 4 5", "d main", "word words", "-d 3 |-main 4 5")
+ + testY("-c 3 4 5", "c", "words", "-c 3 4 5")
+ + testY("-c a b", "c main", "word word", "-c a |-main b")
+ + testY("-c-a a b"
+ , "c a main"
+ , "boolean word words"
+ , "-c |-a a |-main b"
+ )
+ + testY("-a a-c b"
+ , "c a main"
+ , "boolean word words"
+ , "-a a |-c |-main b"
+ )
+ + testY("a-p b", "main p", "word word", "-main a |-p b")
+if isempty.t then"PASS"else"FAIL" + t
 
 function testY(a:seq.word, b:seq.word, c:seq.word, r:seq.word)seq.word
 let p = process.parseargs(a, b, c)
@@ -28,25 +39,29 @@ let z =
 if z = r then""else" /br" + z + "expected" + r
 
 Function parseargs(otherargs:seq.word, validargs:seq.word, argtypes:seq.word)seq.seq.word
-let b = break(otherargs, "-", true)
+let b0 = 
+ break(subseq(otherargs, 1, findindex(first."#", otherargs) - 1), "-", true)
 let b2 = 
- if isempty.last.b ∨ first.last.b ∉ "-"then["-main" + first.b]
+ if isempty.last.b0 ∨ first.last.b0 ∉ "-"then["-main" + last.b0]
  else
-  assert length.last.b > 1 ∧ first.last.b ∈ "-" ∧ (last.b)_2 ∈ validargs
-  report"Unknown arg" + last.b
-  let t = argtypes_findindex((last.b)_2, validargs)
-  if t = first."words"then b << 1
-  else if t = first."word"then
-   assert length.last.b > 2 report"Syntax:.." + subseq(last.b, 1, 2) + "word.."
-   let i = 3
-   subseq(b, 2, length.b - 1) + subseq(last.b, 1, i) + ("-main" + last.b << i)
+  {there is at least one option. if first.b0 is not an option make it a-main option}
+  let b = 
+   if isempty.first.b0 then b0 << 1
+   else if first.first.b0 ∉ "-"then["-main" + first.b0] + b0 << 1 else b0
+  if length.last.b < 2 ∨ first.last.b ∉ "-" ∨ (last.b)_2 ∉ validargs then
+   {last option is not a vaild option}b
   else
-   let i = 2
-   subseq(b, 2, length.b - 1) + subseq(last.b, 1, i) + ("-main" + last.b << i)
+   let t = argtypes_findindex((last.b)_2, validargs)
+   if t = first."words"then b
+   else
+    let i = if t = first."word"then 3 else 2
+    let main = last.b << i
+    b >> 1 + subseq(last.b, 1, i)
+    + if isempty.main then empty:seq.seq.word else["-main" + main]
 let discard = 
- for acc = "", p ∈ b2 >> 1 do
+ for acc = "", p ∈ b2 do
   let i = findindex(p_2, validargs)
-  assert i ≤ length.validargs report"Unknown flag" + p
+  assert i ≤ length.validargs report"Unknown option" + p
   assert argtypes_i ≠ first."boolean" ∨ length.p = 2
   report"Syntax:..-" + p_2 + "-.."
   assert argtypes_i ≠ first."word" ∨ length.p = 3

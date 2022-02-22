@@ -1,5 +1,3 @@
-#!/bin/sh tau stdlib tools test3
-
 Module prettycompilerfront
 
 use UTF8
@@ -174,4 +172,37 @@ for txt = "", modtext ∈ modtexts do
    createfile([merge(directory + "/" + modtext_2 + ".ls")], toseqbyte.textformat.modtext)
   txt + " /p" + modtext
  else txt
-/for(txt) 
+/for(txt)
+
+use libraryModule
+
+use seq.seq.word
+
+use otherseq.char
+
+use seq.char
+
+Function prettybyfile(libname:seq.word, targetdir:seq.word)seq.word
+{OPTION INLINE}
+let filelist = 
+ first.extractinfo.breakparagraph.getfile:UTF8(libname + "/" + libname + ".ls")
+ << 1
+for acc = "", file ∈ filelist do
+ let chars = decodeword.file
+ let getname = 
+  if chars_1 = char1."/"then[encodeword(chars << 1)] + ".ls"
+  else libname + "/" + file + ".ls"
+ let z = prettyfile(true, "", breakparagraph.getfile:UTF8(getname))
+ let discard = createfile(outname(file, targetdir), toseqbyte.textformat.z)
+ acc + for txt = "", @e ∈ z do txt + " /p" + @e /for(txt)
+/for(acc)
+
+function outname(file:word, targetdir:seq.word)seq.word
+let chars = decodeword.file
+if chars_1 = char1."/"then
+ targetdir + "/" + encodeword(chars << (findindex(char1."/", chars << 1) + 1))
+ + ".ls"
+else targetdir + "/" + file + ".ls"
+
+function textformat(p:seq.seq.word)UTF8
+for txt = "", @e ∈ p do txt + " /p" + @e /for(textformat(txt << 1)) 

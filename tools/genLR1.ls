@@ -1,5 +1,3 @@
-#!/bin/sh tau stdlib tools taugrammar
-
 Module genLR1
 
 use format

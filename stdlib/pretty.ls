@@ -8,7 +8,7 @@ use format
 
 use standard
 
-use textio
+
 
 use parsersupport.attribute2
 
@@ -30,18 +30,7 @@ use set.seq.word
 
 use process.seq.seq.word
 
-Function pretty(l:seq.word, targetdir:seq.word)seq.word
-{first item in list is library and others are files with library to pretty}
-for acc = "", file ∈ subseq(l, 2, length.l)do
- let p = 
-  process.prettyfile(true, "", gettext([l_1] + "/" + file + ".ls"))
- if aborted.p then acc + message.p
- else
-  let result = 
-   for txt = "", @e ∈ result.p do txt + " /p" + @e /for(txt << 1)
-  let discard = createfile(targetdir + "/" + file + ".ls", toseqbyte.textformat.result)
-  acc + result
-/for(acc)
+
 
 Function pretty(s:seq.word)seq.word
 let tmp0 = text.(toseq.parse.s)_1

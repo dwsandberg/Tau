@@ -1,5 +1,3 @@
-#!/usr/local/bin/tau ; use taulextable ; getlextable
-
 Module taulextable
 
 use UTF8

@@ -15,7 +15,7 @@ use libraryModule
 
 use pretty
 
-use profile
+use frontcmd
 
 use standard
 
@@ -78,11 +78,13 @@ let modules =
 Function createdoc seq.word
 {Creates html tau html documentation. Creates file taudocs.html}
 let d = 
- for acc = "", @e ∈ prettyfile(false, "", gettext."tools/doc.txt")do acc + addselect.@e /for(acc)
+ for acc = ""
+ , @e ∈ prettyfile(false, "", breakparagraph.getfile:UTF8("tools/doc.txt"))
+ do acc + addselect.@e /for(acc)
 let x1 = createfile("taudoc.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d))
 let d2 = 
  for acc = ""
- , @e ∈ prettyfile(false, "", gettext."tools/install.txt")
+ , @e ∈ prettyfile(false, "", breakparagraph.getfile:UTF8("tools/install.txt"))
  do acc + addselect.@e /for(acc)
 let x2 = createfile("install.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d2))
 {let x2=createfile("appdoc.html", [htmlheader+processpara.@(+, addselect, "", gettext."tools/appdoc.txt")]
@@ -128,7 +130,7 @@ drawgraph.g2
 Function doclibrary(libname:seq.word)seq.word
 {create summary documentation for libraray. }
 let liba = getlibrarysrc.libname
-let exports = break(liba_1,"exports",true)_2 << 1
+let exports = break(liba_1, "exports", true)_2 << 1
 let todoc = 
  for acc = "", s ∈ liba do
   if subseq(s, 1, 3) = "* only document"then acc + subseq(s, 4, length.s)else acc
@@ -249,8 +251,4 @@ function node2text(a:word)seq.word[a]
 
 function generatenode(a:set.word)word toword.cardinality.a
 
-/ Function drawgraph(arcs:seq.arc.word)seq.word drawgraph(newgraph.arcs)
-
 Export drawgraph(arcs:seq.arc.word, set.word, set.word)seq.word
-
-/ Export drawgraph(g:graph.word)seq.word 

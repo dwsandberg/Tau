@@ -1,5 +1,3 @@
-#!/bin/bash tau stdlib webassembly testX test87
-
 Module testfileio
 
 use IO2
@@ -28,8 +26,11 @@ use seq.seq.word
 
 use process.seq.seq.word
 
+use textio
+
 Function testfileio seq.word
-let y = [t5501, t5502, t522, message.process.gettext.".." = "Error opening file:.."]
+let y = [t5501, t5502, t522, 
+message.process.getfile:seq.seq.word("..") = "Error opening file:.."]
 check(y, "testfileio")
 
 function t5502 boolean
@@ -43,7 +44,7 @@ function t5501 boolean
 {OPTION INLINE}
 let text = ["this is a test", "line 2"]
 let f = createfile("testw.txt", text_1 + encodeword.[char.10, char.10] + text_2)
-gettext."testw.txt" = text
+getfile:seq.seq.word("testw.txt") = text
 
 function *(i:int, b:byte)byte tobyte(i * toint.b)
 

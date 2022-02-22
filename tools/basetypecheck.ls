@@ -1,5 +1,3 @@
-#!/bin/sh tau stdlib tools baseTypeCheck stdlib
-
 Module baseTypeCheck
 
 use standard

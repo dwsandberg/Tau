@@ -1,5 +1,3 @@
-#!/bin/sh tau stdlib tools testprofile checkdata
-
 Module profile
 
 use libraryModule
@@ -60,10 +58,4 @@ drawgraph(for acc = empty:seq.arc.symbol, arc ∈ b do acc + arc.arc /for(newgra
 , asset.b
 )
 
-Function generatenode(a:set.symbol)symbol Lit.cardinality.a
-
-did not get error when result type of generatednode was seq.word!!!!!
-
-Function node2text(a:symbol)seq.word[name.a]
-
-Function nodeTitle(a:symbol)seq.word print.a 
+use frontcmd

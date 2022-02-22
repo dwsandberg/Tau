@@ -16,7 +16,9 @@ use otherseq.int
 
 Function getfileaslines(filename:seq.word)seq.UTF8 breaklines.UTF8.getfile:byte(filename)
 
-Function gettext(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
+Function getfile:seq.seq.word(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
+
+Function getfile:UTF8(filename:seq.word) UTF8  UTF8.getfile:byte(filename)
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
 

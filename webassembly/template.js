@@ -130,6 +130,7 @@ function asjsstring ( offset){
  }
 
 function jsstring2UTF8bytes(r){
+   console.log("js"+r);
    const encoder = new TextEncoder();
    const i8src = encoder.encode(r);
    let sp = exports.allocatespace3( (( i8src.length+7) / 8 + 2));
@@ -201,7 +202,7 @@ function finaljsHTTP(data,nobits ){
 
 , setelementvalue:function  (id ,textin ){
   let text=asjsstring(textin); 
-// console.log("SETELEMENT"+text);   
+  console.log("SETELEMENT"+text);   
   let  z = document.getElementById(asjsstring( id )); 
   let  kind = z.tagName; 
   if(kind=="TEXTAREA" || kind=="SELECT" )z.value =  text.trim();

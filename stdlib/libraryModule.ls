@@ -127,7 +127,7 @@ if s_1 = "Library"_1 then s else findlibclause(a, i + 1)
 Function getlibrarysrc(libname:seq.word)seq.seq.word
 {OPTION INLINE}
 {library info is contain in first paragraph of result}
-let a = gettext([first.libname] + "/" + last.libname + ".ls")
+let a = breakparagraph.getfile:UTF8([first.libname] + "/" + last.libname + ".ls")
 let l = extractinfo.a
 let filelist = l_1 << 1
 for acc = ["Library" + first.libname + "uses" + l_2 << 1 + "exports" + l_3 << 1
@@ -139,8 +139,8 @@ do
  else
   let chars = decodeword.@e
   acc
-  + gettext.if chars_1 = char1."/"then[encodeword(chars << 1)] + ".ls"
-  else[first.libname] + "/" + @e + ".ls"/if
+  + breakparagraph.getfile:UTF8(if chars_1 = char1."/"then[encodeword(chars << 1)] + ".ls"
+  else[first.libname] + "/" + @e + ".ls"/if)
   + {File seperator}[encodeword.[char.28]]
 /for(acc)
 
