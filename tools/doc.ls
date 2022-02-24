@@ -1,7 +1,6 @@
-#!/bin/sh tau stdlib tools createdoc
+#!/bin/sh tau stdlib tools htmlcode tools #
 
-#!/bin/sh  tau stdlib tools doclibrary stdlib.
-
+#!/bin/sh tau stdlib tools doclibrary stdlib.
 
 doclibrary stdlib.
 
@@ -11,11 +10,11 @@ use UTF8
 
 use format
 
+use frontcmd
+
 use libraryModule
 
 use pretty
-
-use frontcmd
 
 use standard
 
@@ -64,28 +63,24 @@ use svg2graph.seq.word
 Function htmlcode(libname:seq.word)seq.word
 let p = prettyfile(true, '  /< noformat <hr id="T">  />  /keyword ', getlibrarysrc.libname << 1)
 let modules = 
- for acc = "", @e ∈ p do
-  if subseq(@e, 1, 2) ∈ [" /< noformat"]then acc + @e_7 else acc
- /for(acc)
+ for txt = "", state = 0, name = "1"_1, idx = 1, d ∈ p do
+  if d ∈ " /keyword"then next(txt, 1, name, idx + 1)
+  else if state = 1 ∧ d ∈ "Module"then next(txt, 2, name, idx + 1)
+  else if state = 2 then next(txt, 3, d, idx + 1)
+  else if state = 3 then next(txt + name, 0, name, idx + 1)else next(txt, 0, name, idx + 1)
+ /for(txt)
 " /< noformat <h1> Source code for Library" + libname + "</h1>  />"
 + for acc = "", modname ∈ modules do
  acc + '  /< noformat <a href="' + merge.["#"_1, modname] + '"> '
  + modname
  + "</a>  />"
-/for(acc)
-+ for acc = "", @e ∈ p do acc + @e + " /p"/for(acc >> 1)
+/for(acc + p)
 
 Function createdoc seq.word
 {Creates html tau html documentation. Creates file taudocs.html}
-let d = 
- for acc = ""
- , @e ∈ prettyfile(false, "", breakparagraph.getfile:UTF8("tools/doc.txt"))
- do acc + addselect.@e /for(acc)
+let d = prettyfile(false, "", breakparagraph.getfile:UTF8("tools/doc.txt"))
 let x1 = createfile("taudoc.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d))
-let d2 = 
- for acc = ""
- , @e ∈ prettyfile(false, "", breakparagraph.getfile:UTF8("tools/install.txt"))
- do acc + addselect.@e /for(acc)
+let d2 = prettyfile(false, "", breakparagraph.getfile:UTF8("tools/install.txt"))
 let x2 = createfile("install.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d2))
 {let x2=createfile("appdoc.html", [htmlheader+processpara.@(+, addselect, "", gettext."tools/appdoc.txt")]
 )}
@@ -93,11 +88,6 @@ let x2 = createfile("install.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d2)
 let y1 = 
  createfile("stdlib.html", toseqbyte(toUTF8.htmlheader + HTMLformat.doclibrary."stdlib"))
 d
-
-function addselect(s:seq.word)seq.word
-if isempty.s then" /p" + s
-else if first.s = first."/section"then" /< /section" + s << 1 + " />"
-else if first.s ∈ "Module module"then" /p  /keyword" + s else" /p" + s
 
 Function callgraphbetween(prg:seq.symdef, modulelist:seq.word)seq.word
 {Calls between modules in list of modules. }
@@ -251,4 +241,4 @@ function node2text(a:word)seq.word[a]
 
 function generatenode(a:set.word)word toword.cardinality.a
 
-Export drawgraph(arcs:seq.arc.word, set.word, set.word)seq.word
+Export drawgraph(arcs:seq.arc.word, set.word, set.word)seq.word 

@@ -131,17 +131,17 @@ let a = breakparagraph.getfile:UTF8([first.libname] + "/" + last.libname + ".ls"
 let l = extractinfo.a
 let filelist = l_1 << 1
 for acc = ["Library" + first.libname + "uses" + l_2 << 1 + "exports" + l_3 << 1
-]
-+ a
+,"file("+first.libname+"/"+last.libname+".ls)"]
++ a 
 , @e ∈ filelist
 do
  if @e = last.libname then acc
  else
   let chars = decodeword.@e
-  acc
-  + breakparagraph.getfile:UTF8(if chars_1 = char1."/"then[encodeword(chars << 1)] + ".ls"
-  else[first.libname] + "/" + @e + ".ls"/if)
-  + {File seperator}[encodeword.[char.28]]
+  let t=breakparagraph.getfile:UTF8(if chars_1 = char1."/"then[encodeword(chars << 1)] + ".ls"
+  else[first.libname] + "/" + @e + ".ls"/if) 
+  acc+if  subseq(t,1,1)=["file("+first.libname+"/"+@e+".ls)"] then t
+   else  ["file("+first.libname+"/"+@e+".ls)"]+t
 /for(acc)
 
 Function extractinfo(a:seq.seq.word)seq.seq.word

@@ -12,6 +12,8 @@
 
 Module frontcmd
 
+use baseTypeCheck
+
 use libraryModule
 
 use standard
@@ -34,7 +36,7 @@ use seq.arc.symbol
 
 use seq.arc.symbolref
 
-use baseTypeCheck
+use set.arc.symbolref
 
 Function front(cf:compileinfo, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
 , ~mods:seq.word, out:seq.word)seq.word
@@ -80,8 +82,6 @@ else
    if tail.c = head.c then acc else acc + arc(cf_(tail.c), cf_(head.c))
   /for(drawgraph.newgraph.acc)/if /if /if /if /if)
 
-use set.arc.symbolref
-
 function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
 
 Export drawgraph(graph.symbol)seq.word
@@ -94,21 +94,21 @@ Function node2text(a:symbol)seq.word[name.a]
 
 Function nodeTitle(a:symbol)seq.word print.a
 
- /< command-f frontcmd front  />
+ /< command  frontcmd front  />
 
- /< option-t word library  /> Library to compile.
+ /< option 1 -library  /> Library to compile.
 
- /< option-t word pass  /> pass of compile to run
+ /< option 1 -pass  /> pass of compile to run
 
- /< option n  /> list of modules to include
+ /< option * -n  /> list of modules to include
 
- /< option ~n  /> list of modules to exclude
+ /< option * -~n  /> list of modules to exclude
 
- /< option mods  /> list of modules to include
+ /< option * -mods  /> list of modules to include
 
- /< option ~mods  /> list of modules to exluded
+ /< option * -~mods  /> list of modules to exluded
 
- /< option-t word out  /> format of output  /< block The comand"front-out pretty-library <Library>"will check the sematics 
+ /< option 1 word -out  /> format of output  /< block The comand"front-out pretty-library <Library>"will check the sematics 
 and place one file for each module in directory tmp  />
 
 -out sym will print list of symbols

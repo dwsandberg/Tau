@@ -1,3 +1,6 @@
+#!/bin/sh tau stdlib tools htmlcode tools  # df
+
+
 #!/bin/sh tau stdlib tools front -out pretty -library tools #
 
 #!/bin/sh tau stdlib tools front -pass text -n getbytefile2 getfile2  -library  stdlib #
@@ -78,62 +81,61 @@ use entrycmd
 
 Function testprofile(libname:seq.word)seq.word subcompilelib.libname + profileresults."time"
 
-Function entrypoint(argin:UTF8)UTF8
-{This function was generated from the documentation in the files:' tools/entrycmd tools/frontcmd tools/tools '. Manually 
-editing this function is a bad idea.}
-let allargs = towords.argin
-let cmd = [first.allargs]
-let otherargs = allargs << 1
-HTMLformat.if cmd = "entry"then
- let args = 
-  parseargs(otherargs
-  , "main web proc doc option types"
-  , "words boolean boolean boolean words words"
-  )
- entry(getarg(args, "main"_1)
- , getarg:boolean(args, "web"_1)
- , getarg:boolean(args, "proc"_1)
- , getarg:boolean(args, "doc"_1)
- , getarg(args, "option"_1)
- , getarg(args, "types"_1)
- )
-else if cmd = "front"then
- let args = 
-  parseargs(otherargs, "library pass n ~n mods ~mods out", "word word words words words words word")
- frontcmd(getarg(args, "library"_1)
- , getarg(args, "pass"_1)
- , getarg(args, "n"_1)
- , getarg(args, "~n"_1)
- , getarg(args, "mods"_1)
- , getarg(args, "~mods"_1)
- , getarg(args, "out"_1)
- )
-else if cmd = "pretty"then
- let args = parseargs(otherargs, "library target", "word word")
- prettybyfile(getarg(args, "library"_1), getarg(args, "target"_1))
-else if cmd = "lextable"then getlextable
-else if cmd = "taugrammar"then gentau
-else if cmd = "taugrammarpretty"then gentaupretty
-else if cmd = "createdoc"then createdoc
-else if cmd = "doclibrary"then
- let args = parseargs(otherargs, "main", "word")
- doclibrary.getarg(args, "main"_1)
-else if cmd = "callgraphwithin"then
- let args = parseargs(otherargs, "l main", "word words")
- callgraphwithin(getarg(args, "l"_1), getarg(args, "main"_1))
-else if cmd = "callgraphbetween"then
- let args = parseargs(otherargs, "l main", "word words")
- callgraphbetween(getarg(args, "l"_1), getarg(args, "main"_1))
-else if cmd = "test3"then
- let args = parseargs(otherargs, "main", "word")
- test3.getarg(args, "main"_1)
-else if cmd = "htmlcode"then
- let args = parseargs(otherargs, "main", "word")
- htmlcode.getarg(args, "main"_1)
-else if cmd = "testprofile"then
- let args = parseargs(otherargs, "main", "word")
- testprofile.getarg(args, "main"_1)
-else if cmd = "createdoc"then createdoc else"unknown command" + cmd
+
+Function entrypoint(argin:UTF8)UTF8 
+{This function was generated from the documentation in the files:' tools/entrycmd tools/frontcmd tools/tools '. Manually editing this function is a bad idea.} let allargs = towords.argin 
+let cmd = [first.allargs] 
+let otherargs = allargs << 1 
+HTMLformat.if cmd = "entry" then
+let args =
+parseargs(otherargs 
+, "args web proc doc option" , ["*" , "f" , "f" , "f" , "*" ] 
+)
+entry(getarg(args, "args" _1) 
+, getarg:boolean(args, "web" _1) 
+, getarg:boolean(args, "proc" _1) 
+, getarg:boolean(args, "doc" _1) 
+, getarg(args, "option" _1) 
+)
+else if cmd = "front" then
+let args =
+parseargs(otherargs 
+, "library pass n ~n mods ~mods out" , ["1" , "1" , "*" , "*" , "*" , "*" , "1 word" ] 
+)
+frontcmd(getarg(args, "library" _1) 
+, getarg(args, "pass" _1) 
+, getarg(args, "n" _1) 
+, getarg(args, "~n" _1) 
+, getarg(args, "mods" _1) 
+, getarg(args, "~mods" _1) 
+, getarg(args, "out" _1) 
+)
+else if cmd = "pretty" then
+let args = parseargs(otherargs, "library target args" , ["1" , "1", "*"]) 
+prettybyfile(getarg(args, "library" _1), getarg(args, "target" _1))
+else if cmd = "lextable" then getlextable 
+else if cmd = "taugrammar" then gentau 
+else if cmd = "taugrammarpretty" then gentaupretty 
+else if cmd = "createdoc" then createdoc 
+else if cmd = "doclibrary" then
+let args = parseargs(otherargs, "args" , ["1" ]) 
+doclibrary.getarg(args, "args" _1)
+else if cmd = "callgraphwithin" then
+let args = parseargs(otherargs, "l args" , ["1" , "*" ]) 
+callgraphwithin(getarg(args, "l" _1), getarg(args, "args" _1))
+else if cmd = "callgraphbetween" then
+let args = parseargs(otherargs, "l args" , ["1" , "*" ]) 
+callgraphbetween(getarg(args, "l" _1), getarg(args, "args" _1))
+else if cmd = "test3" then
+let args = parseargs(otherargs, "args" , ["1" ]) 
+test3.getarg(args, "args" _1)
+else if cmd = "htmlcode" then
+let args = parseargs(otherargs, "args" , ["1" ]) 
+htmlcode.getarg(args, "args" _1)
+else if cmd = "testprofile" then
+let args = parseargs(otherargs, "args" , ["1" ]) 
+testprofile.getarg(args, "args" _1)
+else if cmd = "createdoc" then createdoc else "unknown command" + cmd
 
 function callgraphwithin(libname:seq.word, args:seq.word)seq.word
 callgraphwithin(prg.compilerfront("text", libname), args)
@@ -142,7 +144,7 @@ function callgraphbetween(libname:seq.word, args:seq.word)seq.word
 callgraphbetween(prg.compilerfront("text", libname), args)
 
 Function test3(lib:seq.word)seq.word
-totext(compilerfront("text", lib)
+totext(compilerfront("text", lib) 
 , "tmp"
 , [rename("seq.T:findelement(T, seq.T)seq.T", "lookup", [2, 1])
 , rename("set.symdef:findelement(symdef, set.symdef)set.symdef", "lookup", [2, 1])
@@ -179,48 +181,48 @@ else
  , out
  )
 
- /< command -f prettybyfile pretty  /> pretty
+ /< command  prettybyfile pretty  /> pretty
 
- /< option -t word library  /> <library name>
+ /< option 1 -library  /> <library name>
 
- /< option -t word target  /> <directory to result files in>
+ /< option 1 -target  /> <directory to result files in>
 
-/< command -f getlextable lextable /> 
+/< command  getlextable lextable /> 
 
-/< command -f gentau taugrammar  /> Grammar used in  tau compiler
+/< command  gentau taugrammar  /> Grammar used in  tau compiler
  
-/< command -f gentaupretty taugrammarpretty  />
+/< command  gentaupretty taugrammarpretty  />
 
-/< command -f createdoc createdoc  />
+/< command  createdoc createdoc  />
 
-/< command -f doclibrary   doclibrary  /> 
+/< command  doclibrary   doclibrary  /> 
  
-/< option -t  word main  /> <library name>
+/< option 1  -args  /> <library name>
 
 
 /< command   callgraphwithin  /> 
  
-/< option -t word l  /> <library name>
+/< option 1 -l  /> <library name>
 
-/< option -t words main />  <spec>
+/< option * -args />  <spec>
 
 /< command    callgraphbetween /> 
  
-/< option -t word l  /> <library name>
+/< option 1 -l  /> <library name>
 
-/< option -t words main />  <spec>
+/< option * -args />  <spec>
 
 /< command test3    /> 
  
-/< option -t word main  /> <library name>
+/< option 1 -args  /> <library name>
   
 /< command htmlcode     /> 
   
-   /< option -t word main  /> <library name>
+   /< option 1 -args  /> <library name>
  
   /< command   testprofile />
  
-  /< option -t word main  /> <library name>
+  /< option 1 -args  /> <library name>
   
 /< command createdoc    /> 
 

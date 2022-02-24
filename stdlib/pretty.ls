@@ -36,7 +36,7 @@ Function pretty(s:seq.word)seq.word
 let tmp0 = text.(toseq.parse.s)_1
 removeclose(tmp0, length.tmp0)
 
-Function prettyfile(escape:boolean, modhead:seq.word, text:seq.seq.word)seq.seq.word
+Function prettyfile(escape:boolean, modhead:seq.word, text:seq.seq.word) seq.word
 for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.seq.word, s ∈ text do
  if length.s = 0 then next(uses, libbody, result)
  else if s_1 ∈ "use"then next(uses + reverse.s, libbody, result)
@@ -45,7 +45,7 @@ for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.
  else if s_1 ∈ "module Module"then
   let target = 
    if length.modhead > 1 then subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
-   else empty:seq.word
+   else "/keyword"
   let newresult = result + sortuse.uses + libbody + (target + s)
   next(empty:seq.seq.word, empty:seq.seq.word, newresult)
  else
@@ -58,7 +58,10 @@ for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.
    else if escape then escapeformat.s else s
   if length.uses = 0 then next(uses, libbody, result + temp)
   else next(uses, libbody + temp, result)
-/for(result + sortuse.uses + libbody)
+/for(
+for txt = "", p ∈ result + sortuse.uses + libbody do
+        txt+"/p"+ p /for(txt)
+)
 
 function formatuse(a:seq.word)seq.word" /keyword" + reverse.a
 

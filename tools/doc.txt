@@ -1,6 +1,6 @@
 #!/bin/sh  tau stdlib tools createdoc
 
-/section The Tau Programming Language
+/< /section The Tau Programming Language />
 
 Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.
 
@@ -16,7 +16,7 @@ Functional languages tend to use recursion to replace the control structures of 
 The full power of recursion is seldom needed. 
 We introduce a  new control structure  to cover many of the simple uses of recursion.
 
-/section Lexical level
+/section Lexical level />
 
 A program is represented as a sequence of characters. The character encoding is assume to be unicode represented in UTF8 format. The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.
 
@@ -55,7 +55,7 @@ then the space before and after the word is not added.
 These rules  sometimes do not produce the desired result.  To improve the result, no-break spaces can be added. 
  On the Mac keyboard pressing the option key and then space bar will insert a no-break space. 
 
-/section Expressions
+/< /section Expressions />
 
 Here is a list of infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.
 /br _^
@@ -107,7 +107,7 @@ The syntax for non-comment paragraphs is /< block <paragraph>→ /keyword module
 
 Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
 
-/section Sequences
+/< /section Sequences />
 
 A sequence is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as [ 2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define
 
@@ -130,7 +130,7 @@ The concatenation operator for sequences is +, for example the expression test1 
 
 Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T is any type. For example, the expression subseq(test1, 3, 4)evaluates to [ 8, 16]
 
-/section Types
+/< /section Types />
 
 The type of an expression can always be inferred from the sub-expression. For example, 1.0 + 5.0 is of type real, 1 * 8 is of type int, and 1.0 = 8.0 is of type boolean.
 
@@ -201,7 +201,7 @@ For working with total orderings a type /em ordering with the values /em LT /em 
   Function ∧(a:ordering, b:ordering)ordering 
   if a = EQ   then b   else a
 
-/section Iteration
+/< /section Iteration />
 
 An operation can be performed on each element of a sequence.  The following sums a sequence:
 
@@ -222,7 +222,7 @@ function /in(s:seq.int,ele:int) boolean
 
 
 
-/section Parameterized Module
+/< /section Parameterized Module />
 
 A type can have a single type parameter of named T. The T can be used anywhere a type can be used.
 
@@ -339,7 +339,7 @@ For the type listset.word, the unbound function = in the listset module is bound
 For the type listset.mytype, then unbound = is bound to =(a:myentry, b:myentry)boolean
 
 
-/section Order of evaluation
+/< /section Order of evaluation />
 
 The arguments of a function are evaluate from left to right before the function is called.
 
@@ -353,7 +353,7 @@ The compiler will do inline expansion and the above expression becomes /< block 
 
 This behavior is required for the ∧ operator on booleans.
 
-/section Bindings
+/< /section Bindings />
 
 Consider the following example code:
 
@@ -394,7 +394,7 @@ The type of the expression that defines a function much match the return type of
 
 
 
-/section Encodings
+/< /section Encodings />
 
 A type can be mapped to positive integers in an encoding. As an example consider implementing a cache that stores the factors of an integer.
 
@@ -474,7 +474,7 @@ Then /< block S_i = S_j if and only if encoding(E_i)= encoding(E_j)/> and /< blo
 
 Since the mapping  can be shared by multiple process, modification of  the mapping is a critical section. Also the mapping may contain values not assigned by the current process.
 
-/section Process statement
+/< /section Process statement />
 
 Process are included in Tau for three reasons.
 
@@ -512,7 +512,7 @@ The follow function interact with the spawned process and blocks to wait for the
 The spawning process cannot terminate until all of it child process complete, because it may have allocated space and passed it to a child process as a parameter. 
 
 
-/section Sequences
+/< /section Sequences />
 
 We use the example of myseq which is a start on a user defined sequence to decode UTF8 sequnece of bytes. The length of the sequence is the number of characters. The i'th element of the sequence with be the i'th character in the encoding.
 
@@ -580,7 +580,7 @@ Every sequence must have a_function defined on it which is below for mseq.T
  /br keyword  let s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
  /br @(+, toword,"", myseq(toseqbyte.s @ +(empty:seq.int,toint.@e) ))
 
-/section Tail Recursion
+/< /section Tail Recursion />
 
 A function is tail recursive if the last function called is itself. A compiler can take advantage of this and reuse the activation record on the call stack resulting in less space taken up by the stack during execution.
 
@@ -614,7 +614,7 @@ In this case the tau compiler will remove the recursion and the bounds checking 
 If the sequence was built up out of smaller sequences, it may also  break the sequence into the smaller parts and process them separately. 
 
 
-/section markup
+/< /section markup />
 
 /< table 
 /row Example /cell with format /cell note

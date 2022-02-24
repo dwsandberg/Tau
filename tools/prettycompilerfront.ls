@@ -6,6 +6,8 @@ use bits
 
 use format
 
+use libraryModule
+
 use pretty
 
 use standard
@@ -15,6 +17,10 @@ use symbol2
 use textio
 
 use seq.byte
+
+use otherseq.char
+
+use seq.char
 
 use seq.mytype
 
@@ -174,35 +180,37 @@ for txt = "", modtext ∈ modtexts do
  else txt
 /for(txt)
 
-use libraryModule
+/use libraryModule
 
-use seq.seq.word
+/use seq.seq.word
 
-use otherseq.char
+/use otherseq.char
 
-use seq.char
+/use seq.char
 
 Function prettybyfile(libname:seq.word, targetdir:seq.word)seq.word
-{OPTION INLINE}
-let filelist = 
- first.extractinfo.breakparagraph.getfile:UTF8(libname + "/" + libname + ".ls")
- << 1
-for acc = "", file ∈ filelist do
- let chars = decodeword.file
- let getname = 
-  if chars_1 = char1."/"then[encodeword(chars << 1)] + ".ls"
-  else libname + "/" + file + ".ls"
- let z = prettyfile(true, "", breakparagraph.getfile:UTF8(getname))
- let discard = createfile(outname(file, targetdir), toseqbyte.textformat.z)
- acc + for txt = "", @e ∈ z do txt + " /p" + @e /for(txt)
-/for(acc)
+let z = getlibrarysrc.libname + "file(dummy)"
+for txt = "", last = 0, idx = 1, k ∈ z do
+ if subseq(k, 1, 2) = "file("then
+  if last = 0 then next(txt, idx, idx + 1)
+  else
+   let zz = prettyfile(true, "", subseq(z, last + 1, idx - 1)) << 1
+   let filename = extractfilename.z_last
+   if isempty.filename then next(txt, idx, idx + 1)
+   else
+    let discard = createfile(targetdir + "/" + filename, toseqbyte.textformat.zz)
+    next(txt + zz, idx, idx + 1)
+ else next(txt, last, idx + 1)
+/for(txt)
+
+function extractfilename(s:seq.word)seq.word
+let k = findindex(first.")", s)
+if subseq(s, 1, 2) = "file(" ∧ k ≤ length.s then subseq(s, 3, k - 1)
+else""
 
 function outname(file:word, targetdir:seq.word)seq.word
 let chars = decodeword.file
 if chars_1 = char1."/"then
  targetdir + "/" + encodeword(chars << (findindex(char1."/", chars << 1) + 1))
  + ".ls"
-else targetdir + "/" + file + ".ls"
-
-function textformat(p:seq.seq.word)UTF8
-for txt = "", @e ∈ p do txt + " /p" + @e /for(textformat(txt << 1)) 
+else targetdir + "/" + file + ".ls" 

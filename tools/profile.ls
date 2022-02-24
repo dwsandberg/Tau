@@ -1,5 +1,7 @@
 Module profile
 
+use frontcmd
+
 use libraryModule
 
 use standard
@@ -56,6 +58,4 @@ let b =
 {for txt="", arc /in b do txt+label.arc+print.tail.arc.arc+print.head.arc.arc+EOL /for(txt)}
 drawgraph(for acc = empty:seq.arc.symbol, arc ∈ b do acc + arc.arc /for(newgraph.acc)
 , asset.b
-)
-
-use frontcmd
+) 
