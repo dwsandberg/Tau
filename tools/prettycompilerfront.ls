@@ -94,7 +94,8 @@ let acc4 =
 for acc = empty:seq.seq.word, modtext = "", p ∈ acc4 do
  if subseq(p, 1, 1) ∈ ["Module", "module", [encodeword.[char.28]]]then
   next(acc + modtext, p)
- else
+ else {if subseq(p, 1, 2) = "file("then next(acc, modtext)
+  else}
   let t = 
    if subseq(p, 1, 1)
    ∈ [" /keyword", "use", "builtin", "Export"]then
@@ -112,7 +113,10 @@ else if name.sym = first."let" ∧ length.toseq.stk ≥ 2 then
  push(pop(stk, 2), args_1 + "(" + args_2 + ")")
 else if isdefine.sym ∧ not.isempty.stk then
  push(pop.stk, "let" + [name.sym] + "=(" + top.stk + ")")
-else if iswords.sym then push(stk, worddata.sym)
+else if iswords.sym then 
+  let wd=worddata.sym
+ if first.wd = first."'" ∧ dq_1 ∉ wd then push(stk, dq + subseq(wd, 2, length.wd - 1) + dq)
+ else if first.wd ∈ "'" ∧ length.wd = 3 then push(stk, "dq")else push(stk, wd)
 else if name.sym ∈ "{" ∧ length.toseq.stk ≥ 2 then
  {comment}
  let args = top(stk, 2)

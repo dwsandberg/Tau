@@ -8,8 +8,6 @@ use format
 
 use standard
 
-
-
 use parsersupport.attribute2
 
 use seq.attribute2
@@ -29,8 +27,6 @@ use seq.seq.word
 use set.seq.word
 
 use process.seq.seq.word
-
-
 
 Function pretty(s:seq.word)seq.word
 let tmp0 = text.(toseq.parse.s)_1
@@ -58,10 +54,7 @@ for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.
    else if escape then escapeformat.s else s
   if length.uses = 0 then next(uses, libbody, result + temp)
   else next(uses, libbody + temp, result)
-/for(
-for txt = "", p ∈ result + sortuse.uses + libbody do
-        txt+"/p"+ p /for(txt)
-)
+/for(for txt = "", p ∈ result + sortuse.uses + libbody do txt + " /p" + p /for(txt))
 
 function formatuse(a:seq.word)seq.word" /keyword" + reverse.a
 
@@ -93,7 +86,7 @@ let b1 =
 if a1 = "/if"_1 ∧ b1 ∉ "-+("then removeclose(a, length.a) + " /br" + b
 else if b1 ∈ "-+" ∧ a1 ∉ "/if"then
  "(" + a + ") /br(" + b + ")"
-else if b1 ∈ "(" ∧ a1 ∉ ("/if)]'" + "'")then
+else if b1 ∈ "(" ∧ a1 ∉ ("/if)]'" + dq)then
  "(" + a + ")" + " /br" + b
 else a + " /br" + b
 
@@ -220,9 +213,17 @@ pretty.[attribute." /keyword"
 , if width.R_4 + width.R_7 > maxwidth then attribute(" /br" + text.R_7)else R_7
 ]
 
+function keyword  seq.word "/keyword"
+
+function bracket( s:seq.word)seq.word "/<"+s+"/>"
+
 Below is generated from parser generator.
 
 function action(ruleno:int, input:seq.word, place:int, R:reduction.attribute2)attribute2
+{Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do F2 P T L D E FP A F F1 G NM 
+}
+{RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | /if | E if 
+E then E else E | E assert E report D E | A W=E | E let A E | D E |}
 if ruleno = {G F #}1 then R_1
 else if ruleno = {F W NM(FP)T E}2 then prettyfunc.R
 else if ruleno = {F W_(FP)T E}3 then prettyfunc.R
@@ -233,10 +234,9 @@ else if ruleno = {F W *(FP)T E}7 then prettyfunc.R
 else if ruleno = {F W ∧(FP)T E}8 then prettyfunc.R
 else if ruleno = {F W ∨(FP)T E}9 then prettyfunc.R
 else if ruleno = {F W NM T E}10 then
- if width.R_4 > maxwidth then
-  pretty.[attribute." /keyword", R_1, R_2, R_3, attribute." /br", R_4]
- else pretty.[attribute." /keyword", R_1, R_2, R_3, R_4]
-else if ruleno = {F W NM is P}11 then pretty.[attribute." /keyword", R_1, R_2, R_3, list.R_4]
+ if width.R_4 > maxwidth then pretty.[attribute.keyword, R_1, R_2, R_3, attribute.EOL, R_4]
+ else pretty.[attribute.keyword, R_1, R_2, R_3, R_4]
+else if ruleno = {F W NM is P}11 then pretty.[attribute.keyword, R_1, R_2, R_3, list.R_4]
 else if ruleno = {FP P}12 then list.R_1
 else if ruleno = {P T}13 then R_1
 else if ruleno = {P P, T}14 then R_1 + R_3
@@ -268,16 +268,17 @@ else if ruleno = {A W=E}36 then
 else if ruleno = {E let A E}37 then
  attribute2.[prettyresult(0
  , 10000
- , " /keyword let" + first.text.R_2 + [space, "="_1, space]
+ ,  keyword+"let" + first.text.R_2 + [space, "="_1, space]
  + protect(text.R_2 << 1, text.R_3)
  )
  ]
 else if ruleno = {E assert E report D E}38 then
  attribute2.[prettyresult(0
  , 10000
- , " /keyword assert" + text.R_2
- + if width.R_2 + width.R_4 > maxwidth then" /br"else""/if
- + " /keyword report"
+ ,  keyword+"assert" + text.R_2
+ + if width.R_2 + width.R_4 > maxwidth then EOL else""/if
+ + keyword
+ + "report"
  + protect(text.R_4, text.R_5)
  )
  ]
@@ -285,55 +286,58 @@ else if ruleno = {E I}39 then R_1
 else if ruleno = {E I.I}40 then pretty.[R_1, R_2, R_3]
 else if ruleno = {T W}41 then R_1
 else if ruleno = {T W.T}42 then pretty.[R_1, R_2, R_3]
-else if ruleno = {E $wordlist}43 then
- attribute(" /< literal" + escapeformat.text.R_1 + " />")
+else if ruleno = {E $wordlist}43 then attribute.bracket("literal" + escapeformat.text.R_1)
 else if ruleno = {E comment E}44 then
  precAttribute(prec.(toseq.R_2)_1
- , " /< comment" + escapeformat.text.R_1 + " />"
- + if width.R_1 + width.R_2 > maxwidth then" /br" + text.R_2 else text.R_2
+ , bracket( "comment" + escapeformat.text.R_1  )
+ + if width.R_1 + width.R_2 > maxwidth then EOL + text.R_2 else text.R_2
  )
 else if ruleno = {NM W}45 then R_1
 else if ruleno = {NM W:T}46 then pretty.[R_1, R_2, R_3]
 else if ruleno = {F1 W=E}47 then pretty.[R_1, attribute.[space, "="_1, space], R_3]
 else if ruleno = {F1 F1, W=E}48 then
  R_1 + pretty.[R_3, attribute.[space, "="_1, space], R_5]
-else if ruleno = {F2 F1, W+E}49 then R_1 + pretty.[R_3, attribute."∈", R_5]
+else if ruleno = {F2 F1, W-E}49 then R_1 + pretty.[R_3, attribute."∈", R_5]
 else if ruleno = {E for F2 do E /for(E)}50 then
  if width.R_2 + width.R_4 < maxwidth then
-  pretty.[attribute." /keyword for"
+  pretty.[attribute(keyword+"for")
   , list.R_2
-  , attribute(" /keyword do" + removeclose.text.R_4 + " /keyword /for")
+  , attribute( keyword+"do" + removeclose.text.R_4 +  keyword+"/for")
   , R_6
   , R_7
   , R_8
   ]
  else
-  pretty.[attribute." /keyword for"
+  pretty.[attribute(keyword+"for")
   , list.R_2
-  , attribute(" /keyword do" + removeclose.text.block.R_4 + " /br  /keyword /for")
+  , attribute(keyword + "do" + removeclose.text.block.R_4 + EOL + keyword + "/for")
   , R_6
   , R_7
   , R_8
   ]
 else if ruleno = {E for F2 while E do E /for(E)}51 then
  if width.R_2 + width.R_4 + width.R_6 < maxwidth then
-  pretty.[attribute." /keyword for"
+  pretty.[attribute(keyword+"for")
   , list.R_2
-  , attribute(" /keyword while" + text.R_4 + " /keyword do" + removeclose.text.R_6
-  + " /keyword /for")
+  , attribute(keyword + "while" + text.R_4 + keyword + "do" + removeclose.text.R_6 + keyword
+  + "/for")
   , R_8
   , R_9
   , R_10
   ]
  else
-  pretty.[attribute." /keyword for"
+  pretty.[attribute(keyword+"for")
   , list.R_2
-  , attribute(" /br  /keyword while" + text.R_4 + " /br  /keyword do" + removeclose.text.R_6
-  + " /br  /keyword /for")
+  , attribute(EOL + keyword + "while" + text.R_4 + EOL + keyword + "do" + removeclose.text.R_6
+  + EOL
+  + keyword
+  + "/for")
   , R_8
   , R_9
   , R_10
   ]
+else if ruleno = {D E}52 then R_1
 else
- assert ruleno = {D E}52 report"invalid rule number" + toword.ruleno
+ {ruleno}
+ assert false report"invalid rule number" + toword.ruleno
  R_1 

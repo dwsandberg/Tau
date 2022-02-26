@@ -18,7 +18,7 @@ Function getfileaslines(filename:seq.word)seq.UTF8 breaklines.UTF8.getfile:byte(
 
 Function getfile:seq.seq.word(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
 
-Function getfile:UTF8(filename:seq.word) UTF8  UTF8.getfile:byte(filename)
+Function getfile:UTF8(filename:seq.word)UTF8 UTF8.getfile:byte(filename)
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
 
@@ -34,7 +34,7 @@ else breaklines(a, i + 1, last, result)
 
 Function breakcommas(a:UTF8)seq.UTF8
 for acc = empty:seq.UTF8
-, @e ∈ break(tobyte.toint.char1.", ", [tobyte.toint.char1.'"'], toseqbyte.a)
+, @e ∈ break(tobyte.toint.char1.", ", [tobyte.toint.char1.dq], toseqbyte.a)
 do acc + UTF8.@e /for(acc)
 
 --------
@@ -64,8 +64,8 @@ else if toint.u_i = 10 then
 else breakparagraph(u, i + 1, last, result)
 
 Function classifychar seq.word
-' 0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0"0 0 0 0 0()0+, -.0 0 0 0 0 0 0 0 0 0 0:0 0=0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0[0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0{0}0 0 '
+"0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0" + dq
++ "0 0 0 0 0()0+, -.0 0 0 0 0 0 0 0 0 0 0:0 0=0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0[0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0{0}0 0"
 
 Function towords(a:UTF8)seq.word towords.decodeUTF8.a
 

@@ -81,35 +81,35 @@ if for acc = empty:seq.word, @e ∈ wordfreq(50, testdata)do acc + print.@e /for
 else" /< literal FAIL wordfreq  />"
 
 function testdata seq.seq.word
-[' Module pass2 '
-, ' use UTF8 '
-, ' use bits '
-, ' use interpreter '
-, ' use localmap2 '
-, ' use mergeblocks '
-, ' use real '
-, ' use standard '
-, ' use symbol '
-, ' use words '
-, ' use seq.char '
-, ' use otherseq.int '
-, ' use seq.int '
-, ' use set.int '
-, ' use otherseq.mytype '
-, ' use seq.mytype '
-, ' use otherseq.symbol '
-, ' use seq.symbol '
-, ' use set.symbol '
-, ' use seq.symdef '
-, ' use set.symdef '
-, ' use otherseq.word '
-, ' use set.word '
-, ' use otherseq.seq.int '
-, ' use seq.seq.int '
-, ' use seq.seq.symbol '
-, ' use seq.seq.word '
-, ' use set.seq.word '
-, ' use seq.seq.seq.symbol '
+["Module pass2"
+, "use UTF8"
+, "use bits"
+, "use interpreter"
+, "use localmap2"
+, "use mergeblocks"
+, "use real"
+, "use standard"
+, "use symbol"
+, "use words"
+, "use seq.char"
+, "use otherseq.int"
+, "use seq.int"
+, "use set.int"
+, "use otherseq.mytype"
+, "use seq.mytype"
+, "use otherseq.symbol"
+, "use seq.symbol"
+, "use set.symbol"
+, "use seq.symdef"
+, "use set.symdef"
+, "use otherseq.word"
+, "use set.word"
+, "use otherseq.seq.int"
+, "use seq.seq.int"
+, "use seq.seq.symbol"
+, "use seq.seq.word"
+, "use set.seq.word"
+, "use seq.seq.seq.symbol"
 , ' function firstopt(p:set.symdef, s:symbol, code:seq.symbol, options:seq.word, first:boolean)seq.symbol let pdict 
 =for pmap=empty:set.localmap2, parano ∈ arithseq(nopara.s, 1, 1)do pmap+localmap2(parano, [Local.parano])/for 
 (pmap)let a=xxx(p, removeoptions.code, s, pdict)let t=if first then a else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then 
@@ -119,23 +119,23 @@ let ty=if Hasfor ∈ flags.a then expandforexp(code.a, nextvar.a)else code.a let
 then"INLINE VERYSIMPLE"else"INLINE"else""let newoptions=if isempty.options then newoptions1 else if options=newoptions1 
 then options else toseq(asset.options \ asset."VERYSIMPLE INLINE"∪ asset.newoptions1)if newoptions=""then code 
 .t else code.t+Words.newoptions+Optionsym '
-, ' function isverysimple(nopara:int, code:seq.symbol)boolean if code=[Local.1]∧ nopara=1 then true else for isverysimple 
+, "function isverysimple(nopara:int, code:seq.symbol)boolean if code=[Local.1]∧ nopara=1 then true else for isverysimple 
 =length.code ≥ nopara, idx=1, sym ∈ code while isverysimple do next(if idx ≤ nopara then sym=Local.idx else not.isbr.sym 
-∧ not.isdefine.sym ∧ not.islocal.sym, idx+1)/for(isverysimple)'
-, ' function xxx(p:set.symdef, code:seq.symbol, s:symbol, pdict:set.localmap2)expandresult let a=scancode(p, code 
+∧ not.isdefine.sym ∧ not.islocal.sym, idx+1)/for(isverysimple)"
+, "function xxx(p:set.symdef, code:seq.symbol, s:symbol, pdict:set.localmap2)expandresult let a=scancode(p, code 
 , nopara.s+1, pdict, s)let new=if Hasmerge ∈ flags.a then optB(code.a, Lit.1)else code.a if length.code=length.new 
-∧ length.code > 20 ∨ new=code then expandresult(nextvar.a, new, flags.a)else xxx(p, new, s, pdict)'
+∧ length.code > 20 ∨ new=code then expandresult(nextvar.a, new, flags.a)else xxx(p, new, s, pdict)"
 , ' function print(s:seq.int)seq.word for acc="", @e ∈ s do acc+toword.@e /for(acc)'
-, ' Function Callself bits bits.1 '
-, ' Function State bits bits.4 '
-, ' Function Hasfor bits bits.8 '
-, ' Function Hasmerge bits bits.16 '
-, ' function ∈(a:bits, b:bits)boolean(a ∧ b)=a '
-, ' function prepareargs(args:seq.symbol, func:symbol)seq.symbol{returns empty sequence if args are not all constants 
+, "Function Callself bits bits.1"
+, "Function State bits bits.4"
+, "Function Hasfor bits bits.8"
+, "Function Hasmerge bits bits.16"
+, "function ∈(a:bits, b:bits)boolean(a ∧ b)=a"
+, "function prepareargs(args:seq.symbol, func:symbol)seq.symbol{returns empty sequence if args are not all constants 
 . Removes record constants in args.returns empty if Fref appears in args}for acc=true, newargs=empty:seq.symbol, @e 
 ∈ args while acc do if not.isconst.@e ∨ isFref.@e then next(false, newargs)else if not.isrecordconstant.@e then next 
 (true, newargs+@e)else let t=removeconstantcode.[@e]let noFref=for noFref=true, sub ∈ t while noFref do not.isFref 
-.sub /for(noFref)next(noFref, newargs+t)/for(if acc then args+func else empty:seq.symbol /if)'
+.sub /for(noFref)next(noFref, newargs+t)/for(if acc then args+func else empty:seq.symbol /if)"
 , ' function scancode(p:set.symdef, org:seq.symbol, nextvarX:int, mapX:set.localmap2, self:symbol)expandresult 
 for flags=bits.0, result=empty:seq.symbol, nextvar=nextvarX, map=mapX, sym ∈ org do let len=length.result if not.
 isempty.result ∧ last.result=PreFref then next(flags, result >> 1+Fref.sym, nextvar, map)else if isconst.sym then 
@@ -176,15 +176,15 @@ map)else let code=removeoptions.dd if isempty.code then next(flags, result+sym, 
 (result, t, nextvar, code, p, self){assert name.sym /nin"<"report"here"+print.sym+"org"+print.org+EOL+"new"+
 EOL+print(subseq(result, 1, t_1-1)+code.new)}next(flags ∨ flags.new, subseq(result, 1, t_1-1)+code.new, nextvar 
 .new, map)/for(expandresult(nextvar, result, flags))'
-, ' function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:set.symdef, self:symbol 
+, "function expandinline(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:set.symdef, self:symbol 
 )expandresult for pmap=empty:set.localmap2, paracode=empty:seq.symbol, nextvar=nextvarin, parano=1, lastidx 
 =t_1, idx ∈ t << 1 do next(pmap+localmap2(parano, [Local.nextvar]), paracode+subseq(result, lastidx, idx-1)+Define 
 .nextvar, nextvar+1, parano+1, idx)/for(let r=scancode(p, code, nextvar, pmap, self)expandresult(nextvar.r, paracode 
-+code.r, flags.r))'
-, ' function replace(s:seq.symbol, start:int, length:int, value:seq.symbol)seq.symbol subseq(s, 1, start-1)+value 
-+subseq(s, start+length, length.s)'
-, ' type expandresult is nextvar:int, code:seq.symbol, flags:bits '
-, ' function isconstorlocal(p:seq.symbol)boolean length.p=1 ∧(isconst.first.p ∨ islocal.first.p)'
++code.r, flags.r))"
+, "function replace(s:seq.symbol, start:int, length:int, value:seq.symbol)seq.symbol subseq(s, 1, start-1)+value 
++subseq(s, start+length, length.s)"
+, "type expandresult is nextvar:int, code:seq.symbol, flags:bits"
+, "function isconstorlocal(p:seq.symbol)boolean length.p=1 ∧(isconst.first.p ∨ islocal.first.p)"
 , ' function expandforexp(code:seq.symbol, nextvarin:int)seq.symbol for result=empty:seq.symbol, nextvar=nextvarin 
 , sym ∈ code do if isBuiltin.sym ∧ wordname.sym="forexp"_1 then let f=forexpcode(sym, result, nextvar)next(code.f, 
 nextvar.f)else if isInternal.sym ∧ wordname.sym ∈"indexseq45"then let theseqtype=(paratypes.sym)_1 let t=backparse2 
@@ -209,7 +209,7 @@ let elementtype=if seqparameter ∈[typeint, typereal, typeboolean]then seqparam
 :seq.symbol /if+if maybepacked then[seqtype, Lit.1, EqOp, Br2(1, 2)]+[theseq, masteridx, symbol(internalmod, "packedindex 
 ", theseqtype, typeint, elementtype), Exit]else empty:seq.symbol /if+[theseq, masteridx, symbol(internalmod, "
 idxseq", seqof.elementtype, typeint, elementtype), Exit, EndBlock]'
-, ' function forexpcode(forsym:symbol, code:seq.symbol, nextvar:int)expandresult let t=backparse2(code, length 
+, "function forexpcode(forsym:symbol, code:seq.symbol, nextvar:int)expandresult let t=backparse2(code, length 
 .code, 5, empty:seq.int)<< 1 let endexp=subseq(code, t_(-1), length.code)let exitexp=subseq(code, t_(-2), t_(-1 
 )-1)let bodyexp=subseq(code, t_(-3), t_(-2)-1)let endofsymbols=t_(-3)-1 let startofsymbols=endofsymbols-(nopara 
 .forsym-3)/ 2+1 let syms=subseq(code, startofsymbols, endofsymbols)let tmp=for acc=empty:seq.symbol, i=1, s ∈ syms 
@@ -230,19 +230,19 @@ let totallength=Local(nextvar1+1)let seqtype=Local(nextvar1+2)let Defineseqtype=
 :seq.int){first item in locs is start of block and the rest are exits}for acc=subseq(bodyexp2, 1, first.locs-1), last 
 =first.locs+1, i ∈ locs << 1 do next(acc+subseq(bodyexp2, last, i-2)+if inModFor.bodyexp2_(i-1)then continue2 else 
 assert2, i+1)/for(acc+subseq(bodyexp2, last, length.bodyexp2-1)+EndBlock)expandresult(nextvar1+3, firstpart 
-+lastpart, bits.0)'
++lastpart, bits.0)"
 , ' function iscompound(bodyexp:seq.symbol)boolean{detects compound accumulator}let sym=bodyexp_(-3)isblock.
 last.bodyexp ∧(wordname.sym="next"_1 ∧ nopara.sym > 3 ∧ inModFor.sym ∨{assert case}abstracttype.resulttype.sym 
 =addabstract(typeref."$base internal internallib", typeT))'
-, ' function exitlocations(s:seq.symbol, i:int, result:seq.int)seq.int let sym=s_i if isstart.sym then[i]+result 
+, "function exitlocations(s:seq.symbol, i:int, result:seq.int)seq.int let sym=s_i if isstart.sym then[i]+result 
 else if isblock.sym then exitlocations(s, matchblock(s, i-1, 0)-1, result)else exitlocations(s, i-1, if isexit.sym 
-then[i]+result else result)'
-, ' function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol for acc=empty:seq.symbol, 
+then[i]+result else result)"
+, "function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol for acc=empty:seq.symbol, 
 s ∈ code do acc+if inModFor.s then let i=findindex(s, old)if i ≤ length.new then[new_i]else{this is for one of two cases 
-1:a nested for and $for variable is from outer loop 2:the next expresion}[s]else[s]/for(acc)'
-, '________________________________'
-, ' Function pass2(knownsymbols:set.symdef)set.symdef subpass2(empty:seq.symdef, empty:set.symdef, knownsymbols 
-, 0)'
+1:a nested for and $for variable is from outer loop 2:the next expresion}[s]else[s]/for(acc)"
+, "________________________________"
+, "Function pass2(knownsymbols:set.symdef)set.symdef subpass2(empty:seq.symdef, empty:set.symdef, knownsymbols 
+, 0)"
 , ' function subpass2(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int)set.symdef{assert 
 count < 4 report"SIZE"+print.length.toseq.toprocess+print.length.bigin+print.length.toseq.corein+print.count 
 }for big=bigin, small=empty:set.symdef, core=corein, pele ∈ toseq.toprocess do let s=sym.pele let fullcode=code.
@@ -253,11 +253,11 @@ next(big, small, pele ∪ core)else if"COMPILETIME"_1 ∈ options then let code4
 next(big+pele, small, core)/for(if length.toseq.corein=length.toseq.core then for acc=core, prgele ∈ toseq.core 
 +toseq.small+big do let code3=code.prgele let sym3=sym.prgele if isempty.code3 then prgele ∪ acc else symdef(sym3, 
 firstopt(acc, sym3, code3, getoption.code3, false))∪ acc /for(acc)else subpass2(big, core, small, count+1)/if)'
-, ' function matchblock(s:seq.symbol, i:int, nest:int)int let sym=s_i if isblock.sym then matchblock(s, i-1, nest+1 
+, "function matchblock(s:seq.symbol, i:int, nest:int)int let sym=s_i if isblock.sym then matchblock(s, i-1, nest+1 
 )else if isstartorloop.sym then if nest=0 then if isloopblock.sym then backparse2(s, i-1, nopara.sym, empty:seq.int 
-)_1 else addDefine(s, i)else matchblock(s, i-1, nest-1)else matchblock(s, i-1, nest)'
-, ' function addDefine(s:seq.symbol, i:int)int if i > 1 ∧ isdefine.s_(i-1)then addDefine(s, backparse2(s, i-2, 1, empty 
-:seq.int)_1)else i '
+)_1 else addDefine(s, i)else matchblock(s, i-1, nest-1)else matchblock(s, i-1, nest)"
+, "function addDefine(s:seq.symbol, i:int)int if i > 1 ∧ isdefine.s_(i-1)then addDefine(s, backparse2(s, i-2, 1, empty 
+:seq.int)_1)else i"
 , ' function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int if no=0 then result else assert i > 0 report 
 "back parse 1a:"+toword.no+print.s+stacktrace if isdefine.s_i then let args=backparse2(s, i-1, 1, empty:seq.int 
 )backparse2(s, args_1, no, result)else if isblock.s_i then let b=matchblock(s, i-1, 0)if b=1 then[b]+result else backparse2 

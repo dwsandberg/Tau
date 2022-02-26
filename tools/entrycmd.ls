@@ -27,18 +27,17 @@ else
   else subseq(p, length.b_1, length.p)
  " /< block" + subseq(p, 1, 2) + a + " />"
 
-function quote(s:seq.word)seq.word '"' + s + '"'
-
-function quote(s:seq.seq.word)seq.word
-for txt = "", p ∈ s do txt + quote.p + ", "/for("[" + txt >> 1 + "]")
+ 
+function dq(s:seq.seq.word)seq.word
+for txt = "", p ∈ s do txt + dq.p + ", "/for("[" + txt >> 1 + "]")
 
 type cmdinfo is parano:int, cmdname:word, proc:seq.word, types:seq.seq.word, options:seq.word
 
 function empty(d:seq.word, s:seq.word)seq.word if isempty.d then s else d
 
 Function editwarning(filelist:seq.word)seq.word
-"{This function was generated from the documentation in the files:'" + filelist
-+ "'. Manually editing this function is a bad idea.}"
+"{This function was generated from the documentation in the files:" + dq.filelist
++ ". Manually editing this function is a bad idea.}"
 
 function findcmd(p:seq.word)seq.word
 let part = subseq(p, 3, findindex(first." />", p) - 1)
@@ -47,18 +46,18 @@ if length.part = 1 then part + part else part
 function findoption(p:seq.word)seq.word
 let part = subseq(p, 3, findindex(first." />", p) - 1)
 let k = break(part, "-=", true)
-assert length.k = 2 report"KL" + p
+assert length.k = 2 report "Error:syntax"+p
 if first.k_2 = first."-"then subseq(k_2, 2, 2) + empty(first.k, "f")
 else[last.first.k] + k_1 << 1
 
 Function entry(libname:seq.word, html:boolean, includeproc:boolean, includedocin:boolean, optionsin:seq.word)seq.word
 if not.isempty.optionsin then
  for options = "", types = empty:seq.seq.word, s ∈ break(optionsin, ", ", false)do next(options + first.s, types + s << 1)/for(let pp = parseargs(libname, options, types)
- "parseargs(" + quote.libname + ", " + quote.options + quote.types + ")"
+ "parseargs(" + dq.libname + ", " + dq.options + dq.types + ")"
  + for txt = "", o ∈ options do txt + " /br" + o + "=" + getarg(pp, o)/for(txt))
 else
  let includedoc = if includeproc = false then true else includedocin
- {shik first part of file}
+ {ship first part of file}
  let desc = 
   for desc = empty:seq.seq.word, name ∈ libname do
    let fullfile = breakparagraph.getfile:UTF8([name] + ".ls")
@@ -85,7 +84,7 @@ else
     next(acc, idx + 1, lastcmd, options + first.pp, types + pp << 1)
    else next(acc, idx + 1, lastcmd, options, types)
   /for(acc)
- {for txt="", c /in cmds do txt+" /p"+cmdname.c+proc.c+options.c+for txt2="", s /in types.c do txt2+quote.s+", "/for 
+ {for txt="", c /in cmds do txt+" /p"+cmdname.c+proc.c+options.c+for txt2="", s /in types.c do txt2+dq.s+", "/for 
 ("types:["+txt2 >> 1+"]")/for(txt)}
  let doc = 
   if not.includedoc then""
@@ -108,12 +107,14 @@ else
        " /< noformat <button onclick=" + merge("cmd" + proc.cmds_cmdno)
        + "()>run cmd </button>  />"
       else""
-     next(txt + new, cmdno + 1, false)
+     next(txt + " /p" + new, cmdno + 1, false)
     else if key = " /< option"then
      next(txt + " /p" + clean(p, "-"), cmdno, true)
-    else
+    else 
+     let pp = 
+      if subseq(p, 1, 1) ∈ ["Function", "function"]then pretty.p else p
      next(txt + " /p"
-     + if inoption then" /< block" + p + " />"else p
+     + if inoption then" /< block" + pp + " />"else pp
      , cmdno
      , inoption
      )
@@ -125,19 +126,19 @@ else
    + for txt = "", c ∈ cmds do
     let call = 
      if isempty.options.c then proc.c
-     else if html then"let otherargs=getElementValue." + quote.[merge([cmdname.c] + "$")]
+     else if html then"let otherargs=getElementValue." + dq.[merge([cmdname.c] + "$")]
      else""/if
      + "let args=parseargs(otherargs, "
-     + quote.options.c
+     + dq.options.c
      + ", "
-     + quote.types.c
+     + dq.types.c
      + ")"
      + proc.c
      + for txt2 = "(", idx = 1, a ∈ options.c do
       let cc = 
        if first.(types.c)_idx ∈ "f"then"getarg:boolean(args, "
        else"getarg(args, "
-      next(txt2 + cc + quote.[a] + "_1), ", idx + 1)
+      next(txt2 + cc + dq.[a] + "_1), ", idx + 1)
      /for(txt2 >> 1 + ")")
     txt
     + if html then
@@ -146,13 +147,13 @@ else
      + call
      + ")")
      + " /p"
-    else"if cmd=" + quote.[cmdname.c] + "then" + call + "else"
+    else"if cmd=" + dq.[cmdname.c] + "then" + call + "else"
    /for(if html then txt
    else
-    pretty("Function entrypoint(argin:UTF8)UTF8" + editwarning.libname
-    + "let allargs=towords.argin let cmd=[first.allargs]let otherargs=allargs << 1 HTMLformat("
-    + txt
-    + '"unknown command"+cmd)')/if)
+      pretty("Function entrypoint(argin:UTF8)UTF8" + editwarning.libname
+    + "let allargs=towords.argin let cmd=[first.allargs]let otherargs=allargs << 1 
+    HTMLformat("
+    + txt +dq."unknown command"+ "+cmd )"))
  doc + proc
 
  /< command entry  /> Generate a command line interface for a library and provide documentation.

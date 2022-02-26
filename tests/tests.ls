@@ -1,10 +1,8 @@
-#!/bin/sh tau stdlib tests testall
-
 Module tests
 
-Library tests bug7 checking myseq point randomphrase test11 test20 testencoding testfileio testmodules testprocess testsCompile/test11a testsCompile/testall testsCompile/testopt testseq tree wordfreq
-uses stdlib
-exports tests
+Library tests bug7 checking myseq point randomphrase test11 test20 testencoding testfileio testmodules testprocess 
+testsCompile/test11a testsCompile/testall 
+testsCompile/testopt testseq   wordfreq tree uses stdlib exports tests
 
 use UTF8
 

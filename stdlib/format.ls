@@ -67,8 +67,7 @@ let result = result.state
 let matchthis = matchthis.state
 let instring = instring.state
 let newinstring = 
- if instring then this ≠ matchthis
- else this = "//"_1 ∨ this = "'"_1 ∨ this = '"'_1
+ if instring then this ≠ matchthis else this = "//"_1 ∨ this = singlequote_1 ∨ this = dq_1
 let newmatchthis = if instring then matchthis else this
 let c = 
  if newinstring then 0
@@ -81,8 +80,7 @@ let newresult =
   if this = matchthis then result + this + " />"else result + this
  else if c = 0 then
   result
-  + if this ∈ ('"' + "'")then" /< literal"
-  else" /br  /< comment"/if
+  + if this ∈ (dq + singlequote)then" /< literal"else" /br  /< comment"/if
   + this
  else if c = 1 then
   if lastbreak > 20 then result + " /br"else result /if
@@ -100,17 +98,18 @@ Function HTMLformat(output:seq.word)UTF8 processpara(emptyUTF8, output)
 
 Function htmlheader seq.word
 {the format of the meta tag is carefully crafted to get math unicode characters to display correctly}
-{' <meta http-equiv="Content-Type"content="text/html"; charset="utf-8"> '}
-' <!doctype html> <meta charset="UTF-8"> '
-+ ' <style > <!--span.avoidwrap{display:inline-block ;}'
-+ ' span.keyword{color:blue ;}span.keywords{color:blue ;}'
-+ ' span.literal{color:red ;}span.comment{color:green ;}'
-+ ' span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}'
-+ {' form{margin:0px ;}html, body{margin:0 ; padding:0 ; height:100% ;}'+'.container{margin:0 ; padding:0 ; height:
-100% ; display:-webkit-flex ; display:flex ; flex-direction:column ;}'+'.floating-menu{margin:0 ; padding:0 ; background 
-:yellowgreen ; padding:0.5em ;}'+'.content{margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow 
-:auto ; height:0 ; min-height:0 ; '}}
-'--> </style> '
+"<!doctype html> <meta charset="
++ dq."UTF-8"
++ ">"
++ "<style > <!--span.avoidwrap{display:inline-block ;}"
++ "span.keyword{color:blue ;}span.keywords{color:blue ;}"
++ "span.literal{color:red ;}span.comment{color:green ;}"
++ "span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}"
++ {" form{margin:0px ;}html, body{margin:0 ; padding:0 ; height:100% ;}"+".container{margin:0 ; padding:0 ; height:
+100% ; display:-webkit-flex ; display:flex ; flex-direction:column ;}"+".floating-menu{margin:0 ; padding:0 ; background 
+:yellowgreen ; padding:0.5em ;}"+".content{margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow 
+:auto ; height:0 ; min-height:0 ; "}}
+"--> </style>"
 + EOL
 
 ___________________
@@ -143,7 +142,7 @@ for result = x, stk = empty:stack.seq.word, last = none, this ∈ a + space do
  else if last = " /p"_1 then next(result + char.10 + "<p>", stk, this)
  else if last = " /row"_1 then
   if not.isempty.stk ∧ top.stk = "</caption>"then
-   next(result + char.10 + (top.stk + ' <tr><td> '), pop.stk, this)
+   next(result + char.10 + (top.stk + "<tr><td>"), pop.stk, this)
   else next(result + char.10 + "<tr><td>", stk, this)
  else if last = " /cell"_1 then next(result + char.10 + "<td>", stk, this)
  else if last = " /br"_1 then
@@ -250,12 +249,12 @@ Function HTMLformat seq.seq.char
 , chrs.31
 , chrs.32
 , chrs."!"
-, chrs.'"'
+, chrs.dq
 , chrs."#"
 , chrs."$"
 , chrs."%"
 , chrs."&amp;"
-, chrs."'"
+, chrs.singlequote
 , chrs."("
 , chrs.")"
 , chrs."*"
@@ -313,12 +312,12 @@ Function perserveFormat seq.seq.char
 , chrs.31
 , [char.92, char.48, char.52, char.48]
 , chrs."!"
-, chrs.'"'
+, chrs.dq
 , chrs."#"
 , chrs."$"
 , chrs."%"
 , chrs."&"
-, chrs."'"
+, chrs.singlequote
 , [char.92, char.48, char.53, char.48]
 , [char.92, char.48, char.53, char.49]
 , chrs."*"

@@ -160,7 +160,7 @@ for result = emptyUTF8, nospace = nospacein, this ∈ s do
   {no space before but space after}next(result + char1.", " + char.32, true)
  else
   let chars = decodeword.this
-  if length.chars = 1 ∧ first.chars ∈ decodeword.merge.'={}+-()[].:"_^' then
+  if length.chars = 1 ∧ first.chars ∈ decodeword.merge("={}+-()[].:_^" + dq)then
    {no space before or after}next(result + chars, true)
   else if length.chars = 1 ∧ first.chars = char.32 then
    if 32 ≤ length.format ∧ length.format_32 > 1 then

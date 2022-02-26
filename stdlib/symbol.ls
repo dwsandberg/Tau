@@ -192,7 +192,7 @@ Function type? mytype typeref."? internal internallib"
 
 Function printrep(s:symbol)seq.word
 if name.module.s = "$int"_1 then[name.s]
-else if iswords.s then '"' + worddata.s + '"'
+else if iswords.s then dq.worddata.s
 else
  "(" + [library.module.s, name.module.s] + printrep.para.module.s + name.s
  + toword.toint.raw.s
@@ -333,8 +333,7 @@ if islocal.s then
  [merge(["%"_1] + wordname.s)]
 else if name.module.s ∈ "$int $real"then[name.s]
 else if iswords.s then
- if '"'_1 ∈ worddata.s then"'" + worddata.s + "'"
- else '"' + worddata.s + '"'
+ if dq_1 ∈ worddata.s then singlequote + worddata.s + singlequote else dq.worddata.s
 else if isword.s then"WORD" + wordname.s
 else if isrecordconstant.s then"const" + name.s
 else if isFref.s then"FREF" + print.basesym.s

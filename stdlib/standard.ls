@@ -24,7 +24,11 @@ Export type:UTF8
 
 Export towords(UTF8)seq.word
 
-/Export HTMLformat(output:seq.word)UTF8
+Function dq seq.word  '"'
+
+Function singlequote seq.word "'"
+
+Function dq(s:seq.word) seq.word dq+s+dq
 
 Export stacktrace seq.word
 

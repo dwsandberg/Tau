@@ -1,15 +1,3 @@
-#!/bin/sh tau stdlib tools front -out resultCheck -library stdlib #
-
-#!/bin/sh tau stdlib tools   entry  tools/frontcmd #
-
-#!/bin/sh tau stdlib tools   front  -out symdef  -n glue -library  tools -mods tools    #
-
-#!/bin/sh tau stdlib tools   front  -out sym   -library  tools -mods tools    #
-
-#!/bin/sh tau stdlib tools   front  -out pretty   -library  tools    #
-
-
-
 Module frontcmd
 
 use baseTypeCheck
@@ -108,7 +96,7 @@ Function nodeTitle(a:symbol)seq.word print.a
 
  /< option * -~mods  /> list of modules to exluded
 
- /< option 1 word -out  /> format of output  /< block The comand"front-out pretty-library <Library>"will check the sematics 
+ /< option 1 pretty baseTypeCheck sym symdef resultCheck-out  /> format of output  /< block The comand"front out=pretty library= <Library>"will check the sematics 
 and place one file for each module in directory tmp  />
 
 -out sym will print list of symbols

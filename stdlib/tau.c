@@ -204,7 +204,7 @@ return 0;
 
 BT initlib5(char * libname,BT  libdesc,BT baselib) {
   // fprintf(stderr,"starting initlib4\n");
-  fprintf(stderr,"initlib5 %s %lld \n",libname,baselib); 
+  //fprintf(stderr,"initlib5 %s %lld \n",libname,baselib); 
   static BT (* addlibrarywords)(processinfo PD,BT   );
 if ( baselib ){
   /* only needed when initializing base lib */
@@ -228,7 +228,7 @@ addlibrarywords(&sharedspace,libdesc);
     strcpy(libnames[i+2],libname);
     }
 
-fprintf(stderr,"finish initlib5  \n");
+// fprintf(stderr,"finish initlib5  \n");
 return 0;
   
 }
@@ -241,7 +241,7 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
    BT liblib;
   //  fprintf(stderr,"check %s,%d\n",lib_name_root,strlen(lib_name_root));
    sprintf(lib_name,"%s.dylib",lib_name_root);
-    fprintf(stderr,"Loading %s\n",lib_name);
+   // fprintf(stderr,"Loading %s\n",lib_name);
    void *lib_handle = dlopen(lib_name, RTLD_NOW);
     if (lib_handle==0) {
       fprintf(stderr,"[%s] Unable to open library: %s\n",__FILE__, dlerror());
@@ -258,7 +258,7 @@ BT loadlib(processinfo PD,char *libname0)
 { char * libname=tocstr(libname0);
 int i = looklibraryname(libname) ;
 if (i >= 0)
-{   fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
+{   // fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
   return ((BT*)loaded[i+2])[3];}
 return  loadlibrary(PD,libname) ;  
 }
@@ -317,7 +317,7 @@ struct bitsseq  { BT type; BT length; BT  data[50]; };
 BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * filename ) 
                {    int file=1;
                     char * name=tocstr(filename);
-                    fprintf(stderr,"start createfile %s %d %d\n",name,file,strcmp("stdout",name));
+                  //  fprintf(stderr,"start createfile %s %d %d\n",name,file,strcmp("stdout",name));
                       if (!( strcmp("stdout",name)==0 ))  { 
                       file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
                        fprintf(stderr,"createfile %s %d\n",name,file);
@@ -355,7 +355,7 @@ BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, st
      sprintf(buff,"%s.bc",libname);
   sprintf(buff,"/usr/bin/cc -dynamiclib tmp/%s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",libname,
   otherlib,libname);
-   fprintf(stderr,"Createlib3 %s\n",buff);
+   // fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
   else {loadlib(PD,filename); return 1;}

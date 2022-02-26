@@ -1,5 +1,6 @@
-#!/bin/sh tau stdlib tools htmlcode tools  # df
+#!/bin/sh tau stdlib tools tooldoc #
 
+#!/bin/sh tau stdlib tools htmlcode tools  # df
 
 #!/bin/sh tau stdlib tools front -out pretty -library tools #
 
@@ -11,9 +12,7 @@
 
 #!/bin/sh tau stdlib tools callgraphbetween -l stdlib standard inputoutput
 
-
 #!/bin/sh tau stdlib tools callgraphwithin -l webcore  format textio inputoutput   #
-
 
 #!/bin/sh tau stdlib tools taugrammarpretty
 
@@ -28,7 +27,6 @@
 #!/bin/sh tau stdlib tools doclibrary  simpletest
 
 #!/bin/sh tau stdlib tools checkTypes -result stdlib #
-
 
 Module tools
 
@@ -81,15 +79,17 @@ use entrycmd
 
 Function testprofile(libname:seq.word)seq.word subcompilelib.libname + profileresults."time"
 
-
 Function entrypoint(argin:UTF8)UTF8 
-{This function was generated from the documentation in the files:' tools/entrycmd tools/frontcmd tools/tools '. Manually editing this function is a bad idea.} let allargs = towords.argin 
+{This function was generated from the documentation in the files:" tools/entrycmd tools/frontcmd tools/tools ". Manually 
+editing this function is a bad idea.}
+let allargs = towords.argin
 let cmd = [first.allargs] 
 let otherargs = allargs << 1 
 HTMLformat.if cmd = "entry" then
 let args =
 parseargs(otherargs 
-, "args web proc doc option" , ["*" , "f" , "f" , "f" , "*" ] 
+  , "args web proc doc option"
+  , ["*", "f", "f", "f", "*"]
 )
 entry(getarg(args, "args" _1) 
 , getarg:boolean(args, "web" _1) 
@@ -100,7 +100,8 @@ entry(getarg(args, "args" _1)
 else if cmd = "front" then
 let args =
 parseargs(otherargs 
-, "library pass n ~n mods ~mods out" , ["1" , "1" , "*" , "*" , "*" , "*" , "1 word" ] 
+, "library pass n ~n mods ~mods out" , 
+["1" , "1" , "*" , "*" , "*" , "*" , "1 pretty baseTypeCheck" ] 
 )
 frontcmd(getarg(args, "library" _1) 
 , getarg(args, "pass" _1) 
@@ -117,6 +118,7 @@ else if cmd = "lextable" then getlextable
 else if cmd = "taugrammar" then gentau 
 else if cmd = "taugrammarpretty" then gentaupretty 
 else if cmd = "createdoc" then createdoc 
+else if cmd = "tooldoc" then tooldoc 
 else if cmd = "doclibrary" then
 let args = parseargs(otherargs, "args" , ["1" ]) 
 doclibrary.getarg(args, "args" _1)
@@ -135,7 +137,14 @@ htmlcode.getarg(args, "args" _1)
 else if cmd = "testprofile" then
 let args = parseargs(otherargs, "args" , ["1" ]) 
 testprofile.getarg(args, "args" _1)
-else if cmd = "createdoc" then createdoc else "unknown command" + cmd
+else if cmd = "createdoc" then createdoc 
+else if cmd = "LR1" then
+let args = parseargs(otherargs, "args c p" , ["*" , "f" , "f" ]) 
+LR1gen(getarg(args, "args" _1) 
+, getarg:boolean(args, "c" _1) 
+, getarg:boolean(args, "p" _1) 
+)
+else "unknown command" + cmd
 
 function callgraphwithin(libname:seq.word, args:seq.word)seq.word
 callgraphwithin(prg.compilerfront("text", libname), args)
@@ -163,6 +172,9 @@ totext(compilerfront("text", lib)
 ]
 )
 
+function tooldoc seq.word
+   entry("tools/frontcmd  tools/entrycmd tools/tools tools/genLR1",false,false,false,"") 
+
 use otherseq.word
 
 use parseargs
@@ -180,6 +192,8 @@ else
  , ~mods
  , out
  )
+ 
+ 
 
  /< command  prettybyfile pretty  /> pretty
 
@@ -188,10 +202,6 @@ else
  /< option 1 -target  /> <directory to result files in>
 
 /< command  getlextable lextable /> 
-
-/< command  gentau taugrammar  /> Grammar used in  tau compiler
- 
-/< command  gentaupretty taugrammarpretty  />
 
 /< command  createdoc createdoc  />
 
@@ -225,6 +235,8 @@ else
   /< option 1 -args  /> <library name>
   
 /< command createdoc    /> 
+
+/< command tooldoc  />
 
  /< noformat <style> span.command{color:black ; font-size:120%; font-weight:bold;}span.block{padding:0px 0px 0px 
 0px ; margin:0px 0px 0px 20px ; display:block ;}span.option{color:blue ;}</style>  /> 

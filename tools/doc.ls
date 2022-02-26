@@ -1,9 +1,3 @@
-#!/bin/sh tau stdlib tools htmlcode tools #
-
-#!/bin/sh tau stdlib tools doclibrary stdlib.
-
-doclibrary stdlib.
-
 Module doc
 
 use UTF8

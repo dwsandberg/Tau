@@ -102,7 +102,7 @@ else callentrypoint.toUTF8(wordargs << 1)
 
 function callentrypoint(arg:UTF8)UTF8
 let t = entrypointaddress.last.loadedLibs
-if not(t > 0)then HTMLformat."callentrypoint address ERROR"
+if t ≤ 0 then HTMLformat."callentrypoint address ERROR"
 else
  let p = createthreadB(t, typeref."UTF8 UTF8", [bitcast:int(toptr.arg)], 4)
  if aborted.p then HTMLformat.message.p else bitcast:UTF8(toptr.result.p)
