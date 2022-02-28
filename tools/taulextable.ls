@@ -60,20 +60,17 @@ else
 
 Function totext(l:lexaction1)seq.word
 let w = 
- if w.l ∈ "/for /if /"then dq.[w.l] + '"_1 '
+ if w.l ∈ "/for /if /"then dq.[w.l] + dq+"_1 "
  else if(decodeword.w.l)_1 = (decodeword."/"_1)_1 then
-  ' merge("/"+' + dq.[encodeword.subseq(decodeword.w.l, 2, 100)] + ')'
- else if w.l = '"'_1 then singlequote + w.l + "'_1"
- else  dq.[w.l] + '_1 '
-let label = 
- if label.l = '"'_1 then singlequote + label.l + singlequote
- else   dq.[label.l ] 
+  " merge("+"/"+"+" + dq.[encodeword.subseq(decodeword.w.l, 2, 100)] + ")"
+ else if w.l = dq_1 then singlequote + w.l + "'_1"else dq.[w.l] + "_1"
+let label = if label.l = dq_1 then singlequote + label.l + singlequote else dq.[label.l]
 "token(" + w + ", " + toword.tokenno.l + ", attribute:T(" + label
 + "))"
 
 Function getlextable seq.word
 {generate the lextable for the Tau compiler. }
-let mostfrequentwords = dq+' \ , ().:+_seq=a int if-then else Function let word 0 i T][2 use function mytype empty inst '
+let mostfrequentwords = dq + "\, ().:+_seq=a int if-then else Function let word 0 i T][2 use function mytype empty inst"
 let wordstoinclude = 
  mostfrequentwords + terminals + "=< > ? ≤ ≠ ≥ >> << in+-∈ * / mod \ ∪ ∩_^'"
  + prepreplacements("", "", "le ≤ ge ≥ ne ≠ and ∧ or ∨ cup ∪ cap ∩ in ∈ nin ∉", 1)

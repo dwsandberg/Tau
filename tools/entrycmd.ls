@@ -27,7 +27,6 @@ else
   else subseq(p, length.b_1, length.p)
  " /< block" + subseq(p, 1, 2) + a + " />"
 
- 
 function dq(s:seq.seq.word)seq.word
 for txt = "", p ∈ s do txt + dq.p + ", "/for("[" + txt >> 1 + "]")
 
@@ -85,7 +84,8 @@ else
    else next(acc, idx + 1, lastcmd, options, types)
   /for(acc)
  {for txt="", c /in cmds do txt+" /p"+cmdname.c+proc.c+options.c+for txt2="", s /in types.c do txt2+dq.s+", "/for 
-("types:["+txt2 >> 1+"]")/for(txt)}
+ ("types 
+:["+txt2 >> 1+"]")/for(txt)}
  let doc = 
   if not.includedoc then""
   else
@@ -143,7 +143,7 @@ else
     txt
     + if html then
      pretty("Function" + merge("cmd" + proc.c) + "int" + editwarning.libname
-     + ' setElementValue("pageready", '
+     + " setElementValue("+dq."pageready"+", "
      + call
      + ")")
      + " /p"

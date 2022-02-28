@@ -166,12 +166,14 @@ function print(a:seq.seq.word)seq.word
 for acc = "", @e ∈ a do acc + @e + " /br"/for(acc >> 1)
 
 function print(p:dottedrule)seq.word
-subseq(rule.p, 1, place.p - 1) + singlequote + subseq(rule.p, place.p, length.rule.p)
+subseq(rule.p, 1, place.p - 1) + "'" + subseq(rule.p, place.p, length.rule.p)
 
 function print(s:state)seq.word
 for acc = " /br", dotrule ∈ toseq.toset.s do acc + print.dotrule + " /br |"/for(acc >> 2)
 
-Function initialstate(grammar:seq.seq.word)set.dottedrule close2(grammar, asset.[dottedrule(2, "G F #")])
+function initialstate(grammar:seq.seq.word)set.dottedrule close2(grammar, asset.[dottedrule(2, "G F #")])
+
+function finalstate(grammar:seq.seq.word)set.dottedrule close2(grammar, asset.[dottedrule(3, "G F #")])
 
 function close2(g:seq.seq.word, s:set.dottedrule)set.dottedrule
 let newset = for acc = s, dotrule ∈ toseq.s do acc ∪ close(g, dotrule)/for(acc)
@@ -242,11 +244,14 @@ Function lr1parser(grammarandact:seq.seq.seq.word
 , codeonly:boolean
 , parameterized:boolean
 )seq.word
+{ruleprec is a list of rules and lookaheads. The position of the lookahead is noted. Rule reductions after position are 
+discarded and rule the first rule listed before the position is used to reduce. }
 let grammar2 = for acc = empty:seq.seq.word, @e ∈ grammarandact do acc + first.@e /for(acc)
 let nontermials = for acc = empty:set.word, rule ∈ grammar2 do acc + first.rule /for(acc)
 assert isempty(asset.terminals ∩ nontermials)report"terminals and nontermials sets must be distinct"
 let alphabet = terminals + toseq.nontermials
 let initialstateno = valueofencoding.encode.state.initialstate.grammar2
+let finalstatenox = valueofencoding.encode.state.finalstate.grammar2
 let symbolsused = for acc = empty:set.word, rule ∈ grammar2 do acc ∪ asset.rule /for(acc)
 let missingsymbols = symbolsused \ asset.alphabet
 assert isempty(symbolsused \ asset.alphabet)
@@ -357,9 +362,8 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attri
  acc2 + if w ∈ "let assert"then" /br" + w else[w]
  /for(acc2)
 next(acc + reduceline, i + 1)
-/for(
-acc << 2 + " else{ruleno}assert false report"
-+dq."invalid rule number"+"+toword.ruleno  R_1 ")
+/for(acc << 2 + "else{ruleno}assert false report" + dq."invalid rule number"
++ "+toword.ruleno R_1")
  
  Function LR1gen (location:seq.word,codeonly:boolean,parameterized:boolean) seq.word
 {Assumption:Word ruleno is not used in any action.First use of ruleprec in comment that defines the precedence}
@@ -392,228 +396,6 @@ let terminals2 =
    lr1parser(rules,ruleprec,terminals2,"attribute",codeonly,parameterized)  )
 
 use textio
-
-Function gentau seq.word
-{used to generater tau parser for Pass1 of the tau compiler. }
-lr1parser(taurules2, tauruleprec, taualphabet, "bindinfo", false,true)
-
-function taualphabet seq.word".=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do"
-
-function tauruleprec seq.seq.word
-{list of rules and lookaheads. The position of the lookahead is noted. Rule reductions after position are discarded and 
-rule the first rule listed before the position is used to reduce. }
-["("
-, "E NM"
-, "E comment E"
-, "E E_E"
-, "_"
-, "E W.E"
-, "E E * E"
-, "E-E"
-, "*"
-, "E E-E"
-, "-"
-, "E E > E"
-, "E E=E"
-, "="
-, ">"
-, "E E ∧ E"
-, "∧"
-, "E E ∨ E"
-, "∨"
-, "/for"
-, "/if"
-, "E if E then E else E"
-, "E assert E report D E"
-, "A W=E"
-, "E let A E"
-, "D E"
-]
-
-function taurules2 seq.seq.seq.word
-[["G F #", "R_1"]
-, ["F W NM(FP)T E", "createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)"]
-, ["F W_(FP)T E", "createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)"]
-, ["F W-(FP)T E", "createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)"]
-, ["F W=(FP)T E", "createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)"]
-, ["F W >(FP)T E", "createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)"]
-, ["F W *(FP)T E", "createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)"]
-, ["F W ∧(FP)T E", "createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)"]
-, ["F W ∨(FP)T E", "createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)"]
-, ["F W NM T E"
-, "createfunc(R, common, place, tokentext.R_2, empty:seq.mytype, R_3, R_4)"
-]
-, ["F W NM is P"
-, ' let tp=resolvetype(if isabstract.modname.common then tokentext.R_2+".T"else tokentext.R_2, common, place)bindinfo 
-(dict.R, empty:seq.symbol, [tp]+types.R_4, text.R_4)'
-]
-, ["FP P", ' if mode.common ∉"symbol"then addparameters(R_1, common, place)else R_1 ']
-, ["P T", ' addpara(dict.R, ":", R_1, place)']
-, ["P P, T", ' addpara(dict.R, ":", R_3, place, R_1)']
-, ["P W:T", "addpara(dict.R, tokentext.R_1, R_3, place)"]
-, ["P P, W:T", "addpara(dict.R, tokentext.R_3, R_5, place, R_1)"]
-, ["P comment W:T", "addpara(dict.R, tokentext.R_2, R_4, place)"]
-, ["P P, comment W:T", "addpara(dict.R, tokentext.R_4, R_6, place, R_1)"]
-, ["E NM"
-, ' if mode.common ∈"body text"then let f=lookupbysig(dict.R, text.R_1, empty:seq.mytype, common, place)bindinfo(
-dict.R, [f], [resulttype.f], "")else R_1 '
-]
-, ["E NM(L)", "unaryop(R, common, place, tokentext.R_1, R_3)"]
-, ["E(E)", "R_2"]
-, ["E if E then E else E", "ifexp(R, R_2, R_4, R_6, common, place)"]
-, ["E if E then E else E /if", "ifexp(R, R_2, R_4, R_6, common, place)"]
-, ["E E_E", "opaction(R, common, place)"]
-, ["E-E", "unaryop(R, common, place, tokentext.R_1, R_2)"]
-, ["E W.E", "unaryop(R, common, place, tokentext.R_1, R_3)"]
-, ["E E * E", "opaction(R, common, place)"]
-, ["E E-E", "opaction(R, common, place)"]
-, ["E E=E", "opaction(R, common, place)"]
-, ["E E > E", "opaction(R, common, place)"]
-, ["E E ∧ E", "opaction(R, common, place)"]
-, ["E E ∨ E", "opaction(R, common, place)"]
-, ["L E", "R_1"]
-, ["L L, E", ' bindinfo(dict.R, code.R_1+code.R_3, types.R_1+types.R_3, "")']
-, ["E[L]"
-, ' let types=types.R_2 assert for acc=true, @e ∈ types do acc ∧ types_1=@e /for(acc)report errormessage("types do not match 
-in build", common, place)bindinfo(dict.R, code.R_2+Sequence(types_1, length.types), [seqof.types_1], "")'
-]
-, ["A W=E"
-, ' let name=tokentext.R_1 assert isempty.lookupbysig(dict.R, name)report errormessage("duplicate symbol:"+name 
-, common, place)let newdict=dict.R+Local(name_1, (types.R_3)_1, cardinality.dict.R)bindinfo(newdict, code.R 
-_3+Define(name_1, cardinality.dict.R), types.R_3, name)'
-]
-, ["E let A E"
-, ' let letsym=if mode.common ∈"text"then[symbol(internalmod, "let", typeint, first.types.R_3, first.types.R_3)
-]else empty:seq.symbol bindinfo(dict.R_1, code.R_2+code.R_3+letsym, types.R_3, "")'
-]
-, ["E assert E report D E"
-, ' assert(types.R_2)_1=typeboolean report errormessage("condition in assert must be boolean in:", common, place)assert 
-(types.R_4)_1=seqof.typeword report errormessage("report in assert must be seq of word in:", common, place)let typ 
-=(types.R_5)_1 let assertsym=symbol(builtinmod.typ, "assert", seqof.typeword, typ)bindinfo(dict.R, [Start.(
-types.R_5)_1]+code.R_2+Br2(1, 2)+code.R_5+Exit+code.R_4+assertsym+Exit+if mode.common ∈"text"then symbol(
-internalmod, "report", typeint)else EndBlock, types.R_5, "")'
-]
-, ["E I", "bindlit.R"]
-, ["E I.I"
-, ' bindinfo(dict.R, [Words(tokentext.R_1+"."+tokentext.R_3), makerealSymbol], [typereal], "")'
-]
-, ["T W", "R_1"]
-, ["T W.T"
-, ' bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1+"."+tokentext.R_3)'
-]
-, ["E $wordlist"
-, ' let s=tokentext.R_1 bindinfo(dict.R, [Words.if mode.common ∈"text"then s else subseq(s, 2, length.s-1)], [seqof 
-.typeword], "")'
-]
-, ["E comment E"
-, ' if mode.common ∈"text"then bindinfo(dict.R, [Words.tokentext.R_1]+code.R_2+symbol(internalmod, "{", seqof.
-typeword, first.types.R_2, first.types.R_2), types.R_2, "")else R_2 '
-]
-, ["NM W", "R_1"]
-, ["NM W:T"
-, "bindinfo(dict.R, empty:seq.symbol, empty:seq.mytype, tokentext.R_1+tokentext.R_3)"
-]
-, ["F1 W=E"
-, ' let name=tokentext.R_1 assert isempty.lookupbysig(dict.R, name)report errormessage("duplicate symbol:"+name 
-, common, place)bindinfo(dict.R_1, code.R_3, types.R_3, name)'
-]
-, ["F1 F1, W=E"
-, ' let name=tokentext.R_3 assert isempty.lookupbysig(dict.R, name)report errormessage("duplicate symbol:"+name 
-, common, place)bindinfo(dict.R, code.R_1+code.R_5, types.R_1+types.R_5, tokentext.R_1+tokentext.R_3)'
-]
-, ["F2 F1, W-E"
-, ' let name=tokentext.R_3 assert isempty.lookupbysig(dict.R, name)report errormessage("duplicate symbol:"+name 
-, common, place)forlocaldeclare(dict.R, code.R_1+code.R_5, last.types.R_5, [last(tokentext.R_3)], types.R_1 
-, tokentext.R_1, common, place)'
-]
-, ["E for F2 do E /for(E)", "forbody(dict.R_1, R_2, R_4, R_1, R_7, common, place)"]
-, ["E for F2 while E do E /for(E)", "forbody(dict.R_1, R_2, R_6, R_4, R_9, common, place)"]
-, ["D E", "R_1"]
-]
-
-Function gentaupretty seq.word
-{used to generater tau parser for Pass1 of the tau compiler. }
-lr1parser(tauprettyrules, tauruleprec, taualphabet, "attribute2", true,true)
-
-function tauprettyrules seq.seq.seq.word
-{after generator grammar change %%% to \}
-[["G F #", "R_1"]
-, ["F W NM(FP)T E", "prettyfunc.R"]
-, ["F W_(FP)T E", "prettyfunc.R"]
-, ["F W-(FP)T E", "prettyfunc.R"]
-, ["F W=(FP)T E", "prettyfunc.R"]
-, ["F W >(FP)T E", "prettyfunc.R"]
-, ["F W *(FP)T E", "prettyfunc.R"]
-, ["F W ∧(FP)T E", "prettyfunc.R"]
-, ["F W ∨(FP)T E", "prettyfunc.R"]
-, ["F W NM T E"
-, ' if width.R_4 > maxwidth then pretty.[attribute."%%%keyword", R_1, R_2, R_3, attribute."%%%br", R_4]else pretty.
-[attribute."%%%keyword", R_1, R_2, R_3, R_4]'
-]
-, ["F W NM is P", ' pretty.[attribute."%%%keyword", R_1, R_2, R_3, list.R_4]']
-, ["FP P", "list.R_1"]
-, ["P T", "R_1"]
-, ["P P, T", "R_1+R_3"]
-, ["P W:T", "pretty.[R_1, R_2, R_3]"]
-, ["P P, W:T", "R_1+pretty.[R_3, R_4, R_5]"]
-, ["P comment W:T", "pretty.[R_1, R_2, R_3, R_4]"]
-, ["P P, comment W:T", "R_1+pretty.[R_3, R_4, R_5, R_6]"]
-, ["E NM", "R_1"]
-, ["E NM(L)"
-, ' if length.R_3=1 ∧ length.text.R_1=1 then wrap(3, R_1, ".", R_3)else pretty.[R_1, attribute."(", list.R_3, attribute 
-.")"]'
-]
-, ["E(E)", "R_2"]
-, ["E if E then E else E", "ifthenelse.R"]
-, ["E if E then E else E /if", "ifthenelse.R"]
-, ["E E_E", "wrap(1, R_1, text.R_2, R_3)"]
-, ["E-E", "unaryminus.R_2"]
-, ["E W.E", "wrap(3, R_1, text.R_2, R_3)"]
-, ["E E * E", "wrap(4, R_1, text.R_2, R_3)"]
-, ["E E-E", "wrap(5, R_1, text.R_2, R_3)"]
-, ["E E=E", "wrap(6, R_1, text.R_2, R_3)"]
-, ["E E > E", "wrap(7, R_1, text.R_2, R_3)"]
-, ["E E ∧ E", "wrap(8, R_1, text.R_2, R_3)"]
-, ["E E ∨ E", "wrap(9, R_1, text.R_2, R_3)"]
-, ["L E", "R_1"]
-, ["L L, E", "R_1+R_3"]
-, ["E[L]", "pretty.[R_1, list.R_2, R_3]"]
-, ["A W=E", "pretty.[R_1, if width.R_3 > maxwidth then block.R_3 else R_3]"]
-, ["E let A E"
-, ' attribute2.[prettyresult(0, 10000, "%%%keyword let"+first.text.R_2+[space, "="_1, space]+protect(text.R_2 
-<< 1, text.R_3))]'
-]
-, ["E assert E report D E"
-, ' attribute2.[prettyresult(0, 10000, "%%%keyword assert"+text.R_2+if width.R_2+width.R_4 > maxwidth then"%%%br 
-"else""/if+"%%%keyword report"+protect(text.R_4, text.R_5))]'
-]
-, ["E I", "R_1"]
-, ["E I.I", "pretty.[R_1, R_2, R_3]"]
-, ["T W", "R_1"]
-, ["T W.T", "pretty.[R_1, R_2, R_3]"]
-, ["E $wordlist", ' attribute("%%%< literal"+escapeformat.text.R_1+"%%%>")']
-, ["E comment E"
-, ' precAttribute(prec.(toseq.R_2)_1, "%%%< comment"+escapeformat.text.R_1+"%%%>"+if width.R_1+width.R_2 > maxwidth 
-then"%%%br"+text.R_2 else text.R_2)'
-]
-, ["NM W", "R_1"]
-, ["NM W:T", "pretty.[R_1, R_2, R_3]"]
-, ["F1 W=E", ' pretty.[R_1, attribute.[space, "="_1, space], R_3]']
-, ["F1 F1, W=E", ' R_1+pretty.[R_3, attribute.[space, "="_1, space], R_5]']
-, ["F2 F1, W-E", ' R_1+pretty.[R_3, attribute."∈", R_5]']
-, ["E for F2 do E /for(E)"
-, ' if width.R_2+width.R_4 < maxwidth then pretty.[attribute."%%%keyword for", list.R_2, attribute("%%%keyword do 
-"+removeclose.text.R_4+"%%%keyword /for"), R_6, R_7, R_8]else pretty.[attribute."%%%keyword for", list.R_2, attribute 
-("%%%keyword do"+removeclose.text.block.R_4+"%%%br %%%keyword /for"), R_6, R_7, R_8]'
-]
-, ["E for F2 while E do E /for(E)"
-, ' if width.R_2+width.R_4+width.R_6 < maxwidth then pretty.[attribute."%%%keyword for", list.R_2, attribute("%%%keyword 
-while"+text.R_4+"%%%keyword do"+removeclose.text.R_6+"%%%keyword /for"), R_8, R_9, R_10]else pretty.[attribute 
-."%%%keyword for", list.R_2, attribute("%%%br %%%keyword while"+text.R_4+"%%%br %%%keyword do"+removeclose.text 
-.R_6+"%%%br %%%keyword /for"), R_8, R_9, R_10]'
-]
-, ["D E", "R_1"]
-]
 
  /<  command LR1gen LR1 />  A parser generator for a subset of LR1 grammars. 
 

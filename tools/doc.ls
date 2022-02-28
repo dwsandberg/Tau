@@ -55,7 +55,7 @@ use seq.seq.word
 use svg2graph.seq.word
 
 Function htmlcode(libname:seq.word)seq.word
-let p = prettyfile(true, '  /< noformat <hr id="T">  />  /keyword ', getlibrarysrc.libname << 1)
+let p = prettyfile(true, "  /< noformat <hr id="+dq."T"+" >  />  /keyword ", getlibrarysrc.libname << 1)
 let modules = 
  for txt = "", state = 0, name = "1"_1, idx = 1, d ∈ p do
   if d ∈ " /keyword"then next(txt, 1, name, idx + 1)
@@ -65,7 +65,7 @@ let modules =
  /for(txt)
 " /< noformat <h1> Source code for Library" + libname + "</h1>  />"
 + for acc = "", modname ∈ modules do
- acc + '  /< noformat <a href="' + merge.["#"_1, modname] + '"> '
+ acc + "  /< noformat <a href="+dq.[merge.["#"_1, modname]] + "> "
  + modname
  + "</a>  />"
 /for(acc + p)
@@ -124,7 +124,7 @@ modindex.todoc + docmodule(g, exports, todoc, liba)
 
 function modindex(mods:seq.word)seq.word
 for txt = "", modname ∈ mods do
- txt + '  /< noformat <a href="' + merge.["#"_1, modname] + '"> '
+ txt + "  /< noformat <a href=" + dq.[merge.["#"_1, modname]] + "> "
  + modname
  + "</a>  />"
 /for(txt)
@@ -161,6 +161,10 @@ for currentmod = "?"_1, result = empty:seq.arc.word, p ∈ lib do
  else next(currentmod, result)
 /for(result)
 
+Function usegraphcmd( library:seq.word,include:seq.word,exclude:seq.word) seq.word
+let usegraph=usegraph(getlibrarysrc.library,"mod"_1)
+ drawgraph(usegraph, asset.include, asset.exclude)
+
 function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:seq.seq.word)seq.word
 for acc = ""
 , currentmod = "?"
@@ -177,7 +181,7 @@ do
     if length.types > 0 ∨ length.funcs > 0 then" /br defines types: " + types + funcs
     else""
    let name = [modname] + if length.p > 2 then".T"else""
-   next(acc + leftover + '  /< noformat <hr id="' + modname + '">  /> '
+   next(acc + leftover + "  /< noformat <hr id=" + dq.[modname] + ">  /> "
    + " /< /section  /keyword module"
    + name
    + " />"

@@ -1,3 +1,7 @@
+#!/bin/sh tau  stdlib  tools  front  library=  david -mods( david delta) #
+
+
+
 Module frontcmd
 
 use baseTypeCheck
@@ -26,13 +30,14 @@ use seq.arc.symbolref
 
 use set.arc.symbolref
 
-Function front(cf:compileinfo, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
-, ~mods:seq.word, out:seq.word)seq.word
+Function front(cf:compileinfo, pass:seq.word, names:seq.word, ~n:seq.word, mods:seq.word
+, ~mods:seq.word,samemodule:boolean,rootnames:seq.word, out:seq.word)seq.word
 for selected = empty:seq.symbolref, root = empty:seq.symbolref, idx = 1, ss ∈ symbolrefdecode.cf do
  if isconst.ss ∨ isspecial.ss then next(selected, root, idx + 1)
- else if(isempty.mods ∨ name.module.ss ∈ mods) ∧ name.ss ∉ ~n ∧ name.module.ss ∉ ~mods then
+ else if(isempty.mods ∨ name.module.ss ∈ mods) ∧ (isempty.names ∨ name.ss ∈ names) ∧ name.ss ∉ ~n
+ ∧ name.module.ss ∉ ~mods then
   next(selected + symbolref.idx
-  , if name.ss ∈ n then root + symbolref.idx else root
+  , if name.ss ∈ rootnames then root + symbolref.idx else root
   , idx + 1
   )
  else next(selected, root, idx + 1)
@@ -53,16 +58,18 @@ else
  let g = 
   for acc = empty:seq.arc.symbolref, c ∈ code.cf do
    if c_1 ∉ selected then acc
-   else for acc2 = acc, h ∈ toseq(asset(c << 2) ∩ s)do acc2 + arc(first.c, h)/for(acc2)
+   else 
+    for acc2 = acc, h ∈ toseq(asset(c << 2) ∩ s)do 
+     if samemodule ∧ module.cf_(first.c) = module.cf_h then acc2 else acc2 + arc(first.c, h)
+   /for(acc2)
   /for(newgraph.acc)
  let g2 = 
-  for g2 = newgraph.empty:seq.arc.symbolref
-  , new = asset.subseq(root, 1, 1)
-  , i ∈[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  do
+  if not.isempty.root then
+   for g2 = newgraph.empty:seq.arc.symbolref, new = asset.root, i ∈[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]do
    let g3 = for g3 = g2, r ∈ toseq.new do g3 + toseq.arcstopredecessors(g, r)/for(g3)
    next(g3, nodes.g3 \ nodes.g2)
   /for(g2)
+  else g
  if out = "text"then
   for txt = "txt", a ∈ toseq.arcs.g2 do txt + " /br" + print.cf_(tail.a) + print.cf_(head.a)/for(txt)
  else
@@ -88,16 +95,20 @@ Function nodeTitle(a:symbol)seq.word print.a
 
  /< option 1 -pass  /> pass of compile to run
 
- /< option * -n  /> list of modules to include
+ /< option * -n  /> list of symbol names to include
 
- /< option * -~n  /> list of modules to exclude
+ /< option * -!n  /> list of symbol names to exclude
 
  /< option * -mods  /> list of modules to include
 
- /< option * -~mods  /> list of modules to exluded
-
- /< option 1 pretty baseTypeCheck sym symdef resultCheck-out  /> format of output  /< block The comand"front out=pretty library= <Library>"will check the sematics 
-and place one file for each module in directory tmp  />
+ /< option * -!mods  /> list of modules to exluded
+ 
+ /< option f -within /> exclude arcs within module
+ 
+ /< option * -rn  />  root names
+ 
+ /< option 1 pretty baseTypeCheck sym symdef resultCheck-out  /> format of output  /< block The comand"front out=pretty library 
+=<Library>"will check the sematics and place one file for each module in directory tmp  />
 
 -out sym will print list of symbols
 
@@ -106,3 +117,5 @@ and place one file for each module in directory tmp  />
 -out baseTypeCheck
 
 -out resultCheck 
+
+-out txt will print the arcs in the resulting graph rather than display the graph.

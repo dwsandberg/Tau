@@ -52,15 +52,15 @@ for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial))
 , idx = 1
 , nesting = 0
 , this ∈ input + "#"
-do
- if instring ∧ this ≠ matchthis ∨ nesting > 0 then
+while stateno.top.lrpart ≠ finalstate:T
+do if instring ∧ this ≠ matchthis ∨ nesting > 0 then
   {in comment or string}
   let nestingchange = 
    if matchthis ≠ "}"_1 then 0
    else if nesting > 0 ∧ matchthis = this then-1
    else if this = "{"_1 then 1 else 0
   next(lrpart, matchthis, last, true, idx + 1, nesting + nestingchange)
- else if not.instring ∧ (this = singlequote_1 ∨ this = dq_1 ∨ this = "{"_1)then
+ else if not.instring ∧ ( this = singlequote_1 ∨  this = dq_1 ∨ this = "{"_1)then
   {start string}
   next(lrpart
   , if this = "{"_1 then"}"_1 else this
@@ -92,13 +92,14 @@ do
     )
   next(newlrpart, this, idx, false, idx + 1, nesting)
 /for(assert not.instring report errormessage:T("missing string terminator", input, last)
-attribute.top.lrpart)
+attribute.undertop(lrpart,1))
 
 function step(stk:stack.stkele.T, input:seq.word, attrib:T, tokenno:int, place:int)stack.stkele.T
 let stateno = stateno.top.stk
 let actioncode = actiontable:T_(tokenno + length.tokenlist:T * stateno)
 if actioncode > 0 then
- if stateno = 2 then stk else push(stk, stkele(actioncode, forward(attribute.top.stk, attrib)))
+ if stateno = finalstate:T then stk
+  else push(stk, stkele(actioncode, forward(attribute.top.stk, attrib)))
 else
  assert actioncode < 0
  report errormessage:T(if text.attrib = "#"then"parse error:unexpected end of paragraph"
@@ -230,7 +231,7 @@ function tokenlist:T seq.word
 
 function startstate:T int 1
 
-function finalstate:T int 2
+function finalstate:T int 4
 
 noactions 1836 nosymbols:43 norules 52 nostate 163
 

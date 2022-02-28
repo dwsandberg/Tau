@@ -1,7 +1,3 @@
-#!/bin/sh tau stdlib tools htmlcode checkdata
-
-callgraphbetween stdlib standard inputoutput
-
 module help
 
 use standard
@@ -13,7 +9,7 @@ else if str_(i + 1) ∈ "-"then comb(i + 2, str)else i
 Function element(str:seq.word, vals:seq.seq.word, body:seq.word)seq.word
 for acc = [merge("<" + first.str)], idx = 2, val ∈ vals do
  let j = comb(idx, str)
- next(acc + subseq(str, idx, j) + '=' + dq.val   + space, j + 1)
+ next(acc + subseq(str, idx, j) + "=" + dq.val + space, j + 1)
 /for(acc
 + if isempty.body then[merge(" />" + space)]
 else">" + body + merge("</" + first.str + ">")/if)
@@ -102,12 +98,18 @@ else
  for acc = empty:seq.arcpath.T, new = base, q ∈ grp do next(acc + arcpath(arc.q, d.q >> 3 + print(3, new), 0), new + inc)/for(acc)
 
 Function drawscript:T seq.word
-' <script> function shiftstart(arcs){let bb=document.getElementById(arcs[0]).getBBox(); arcs.forEach(function 
-(idval, index){if(index > 0){let element=document.getElementById(idval); let d="M"'
+" <script> function shiftstart(arcs){let bb=document.getElementById(arcs[0]).getBBox(); arcs.forEach(function 
+(idval, index){if(index > 0){let element=document.getElementById(idval); let d="
++ dq."M"
 + space
-+ '+(bb.x+bb.width)+", "+(bb.y+bb.height)+element.getAttribute("d").substring(5); element.setAttribute("d 
-", d);}});}</script> <style>.arcs{fill:none ; stroke:black ; stroke-width:.07 ;}.nodes{font-size:.03em; stroke 
--width:.1 ;}svg g:hover text{opacity:1;}svg g:hover rect{opacity:1;}</style> '
++ "+(bb.x+bb.width)+"
++ dq.", "
++ "+(bb.y+bb.height)+element.getAttribute("
++ dq."d"
++ ").substring(5); element.setAttribute("
++ dq."d"
++ ", d);}});}</script> <style>.arcs{fill:none ; stroke:black ; stroke-width:.07 ;}.nodes{font-size:.03em; stroke 
+-width:.1 ;}svg g:hover text{opacity:1;}svg g:hover rect{opacity:1;}</style> "
 + encodeword.[char.10]
 
 unbound node2text(T)seq.word
@@ -184,7 +186,7 @@ do
       element("text class"
       , ["nodes"]
       , element("textPath href startOffset text-anchor"
-      , [[merge(' # ' + toword.j)], "100%", "end"]
+      , [[merge(" # " + toword.j)], "100%", "end"]
       , element("tspan dy", ["-0.1"], label.lab_1)
       )
       )

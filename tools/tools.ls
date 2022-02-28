@@ -1,32 +1,4 @@
-#!/bin/sh tau stdlib tools tooldoc #
-
-#!/bin/sh tau stdlib tools htmlcode tools  # df
-
-#!/bin/sh tau stdlib tools front -out pretty -library tools #
-
-#!/bin/sh tau stdlib tools front -pass text -n getbytefile2 getfile2  -library  stdlib #
-
-#!/bin/sh tau stdlib tools entry  -proc  tools/entrycmd tools/frontcmd tools/tools #
-
-#!/bin/sh tau stdlib tools front -pass text -~n tobyte  -library  stdlib  -mods format textio inputoutput   #
-
-#!/bin/sh tau stdlib tools callgraphbetween -l stdlib standard inputoutput
-
-#!/bin/sh tau stdlib tools callgraphwithin -l webcore  format textio inputoutput   #
-
-#!/bin/sh tau stdlib tools taugrammarpretty
-
-#!/bin/sh tau stdlib tools taugrammar
-
-#!/bin/sh tau stdlib tools lextable
-
-#!/bin/sh tau stdlib tools testprofile  simpletest
-
-#!/bin/sh tau stdlib tools htmlcode  simpletest
-
-#!/bin/sh tau stdlib tools doclibrary  simpletest
-
-#!/bin/sh tau stdlib tools checkTypes -result stdlib #
+#!/bin/sh tau stdlib tools help #
 
 Module tools
 
@@ -77,15 +49,15 @@ use seq.seq.word
 
 use entrycmd
 
-Function testprofile(libname:seq.word)seq.word subcompilelib.libname + profileresults."time"
+Entry point procedure
 
 Function entrypoint(argin:UTF8)UTF8 
-{This function was generated from the documentation in the files:" tools/entrycmd tools/frontcmd tools/tools ". Manually 
-editing this function is a bad idea.}
+{This function was generated from the documentation in the files:"tools/entrycmd tools/frontcmd tools/tools tools/genLR1 
+". Manually editing this function is a bad idea.}
 let allargs = towords.argin
 let cmd = [first.allargs] 
 let otherargs = allargs << 1 
-HTMLformat.if cmd = "entry" then
+HTMLformat. if cmd = "entry" then
 let args =
 parseargs(otherargs 
   , "args web proc doc option"
@@ -100,34 +72,42 @@ entry(getarg(args, "args" _1)
 else if cmd = "front" then
 let args =
 parseargs(otherargs 
-, "library pass n ~n mods ~mods out" , 
-["1" , "1" , "*" , "*" , "*" , "*" , "1 pretty baseTypeCheck" ] 
+  , "library pass n !n mods !mods within rn out"
+  , ["1"
+  , "1"
+  , "*"
+  , "*"
+  , "*"
+  , "*"
+  , "f"
+  , "*"
+  , "1 pretty baseTypeCheck sym symdef resultCheck"
+  ]
 )
 frontcmd(getarg(args, "library" _1) 
 , getarg(args, "pass" _1) 
 , getarg(args, "n" _1) 
-, getarg(args, "~n" _1) 
+, getarg(args, "!n" _1) 
 , getarg(args, "mods" _1) 
-, getarg(args, "~mods" _1) 
+, getarg(args, "!mods" _1) 
+, getarg:boolean(args, "within" _1) 
+, getarg(args, "rn" _1) 
 , getarg(args, "out" _1) 
 )
 else if cmd = "pretty" then
-let args = parseargs(otherargs, "library target args" , ["1" , "1", "*"]) 
-prettybyfile(getarg(args, "library" _1), getarg(args, "target" _1))
+let args = parseargs(otherargs, "args target" , ["1" , "1" ]) 
+prettybyfile(getarg(args, "args" _1), getarg(args, "target" _1))
+else if cmd = "usegraph" then
+let args =
+parseargs(otherargs, "args include exclude" , ["1" , "*" , "*" ])
+usegraphcmd(getarg(args, "args" _1) 
+, getarg(args, "include" _1) 
+, getarg(args, "exclude" _1) 
+)
 else if cmd = "lextable" then getlextable 
-else if cmd = "taugrammar" then gentau 
-else if cmd = "taugrammarpretty" then gentaupretty 
-else if cmd = "createdoc" then createdoc 
-else if cmd = "tooldoc" then tooldoc 
 else if cmd = "doclibrary" then
 let args = parseargs(otherargs, "args" , ["1" ]) 
 doclibrary.getarg(args, "args" _1)
-else if cmd = "callgraphwithin" then
-let args = parseargs(otherargs, "l args" , ["1" , "*" ]) 
-callgraphwithin(getarg(args, "l" _1), getarg(args, "args" _1))
-else if cmd = "callgraphbetween" then
-let args = parseargs(otherargs, "l args" , ["1" , "*" ]) 
-callgraphbetween(getarg(args, "l" _1), getarg(args, "args" _1))
 else if cmd = "test3" then
 let args = parseargs(otherargs, "args" , ["1" ]) 
 test3.getarg(args, "args" _1)
@@ -138,6 +118,7 @@ else if cmd = "testprofile" then
 let args = parseargs(otherargs, "args" , ["1" ]) 
 testprofile.getarg(args, "args" _1)
 else if cmd = "createdoc" then createdoc 
+else if cmd = "help" then help 
 else if cmd = "LR1" then
 let args = parseargs(otherargs, "args c p" , ["*" , "f" , "f" ]) 
 LR1gen(getarg(args, "args" _1) 
@@ -145,6 +126,8 @@ LR1gen(getarg(args, "args" _1)
 , getarg:boolean(args, "p" _1) 
 )
 else "unknown command" + cmd
+
+Function testprofile(libname:seq.word)seq.word subcompilelib.libname + profileresults."time"
 
 function callgraphwithin(libname:seq.word, args:seq.word)seq.word
 callgraphwithin(prg.compilerfront("text", libname), args)
@@ -172,15 +155,20 @@ totext(compilerfront("text", lib)
 ]
 )
 
-function tooldoc seq.word
-   entry("tools/frontcmd  tools/entrycmd tools/tools tools/genLR1",false,false,false,"") 
+function help seq.word
+entry("tools/frontcmd tools/entrycmd tools/tools tools/genLR1"
+, false
+, false
+, false
+, ""
+)
 
 use otherseq.word
 
 use parseargs
 
 Function frontcmd(library:seq.word, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
-, ~mods:seq.word, out:seq.word)seq.word
+, ~mods:seq.word,within:boolean,rootnames:seq.word, out:seq.word)seq.word
 if out = "pretty"then
  {should be able to specify target}totext(compilerfront("text", library), "tmp")
 else
@@ -190,37 +178,34 @@ else
  , ~n
  , mods
  , ~mods
+ ,within
+ ,rootnames 
  , out
  )
  
  
 
- /< command  prettybyfile pretty  /> pretty
+ /< command  prettybyfile pretty  /> pretty  Pretty print the source code of a Library.  
+ 
+ This command checks the syntax of each source file but not the semantics.  
 
- /< option 1 -library  /> <library name>
+ /< option 1 -args  /> Library to pretty print.
 
- /< option 1 -target  /> <directory to result files in>
+ /< option 1-target  /> <directory to place result files in.> Will default to"tmp".
+ 
+/< command usegraphcmd usegraph />
+
+/< option 1 -args  /> Library 
+
+/< option * -include  /> modules to include  
+ 
+/< option * -exclude />  modules to include
 
 /< command  getlextable lextable /> 
-
-/< command  createdoc createdoc  />
 
 /< command  doclibrary   doclibrary  /> 
  
 /< option 1  -args  /> <library name>
-
-
-/< command   callgraphwithin  /> 
- 
-/< option 1 -l  /> <library name>
-
-/< option * -args />  <spec>
-
-/< command    callgraphbetween /> 
- 
-/< option 1 -l  /> <library name>
-
-/< option * -args />  <spec>
 
 /< command test3    /> 
  
@@ -236,7 +221,7 @@ else
   
 /< command createdoc    /> 
 
-/< command tooldoc  />
+/< command help  />
 
  /< noformat <style> span.command{color:black ; font-size:120%; font-weight:bold;}span.block{padding:0px 0px 0px 
 0px ; margin:0px 0px 0px 20px ; display:block ;}span.option{color:blue ;}</style>  /> 

@@ -25,6 +25,8 @@ let z =
  , compare("a +-b","a +(-b)")
  , compare("a^2 + b","(a^2)+ b")
  , compare("length.[ 1, 2]","length([ 1, 2])")
+ ,compare ( "if true  then 1 else if true  then 3 else 4 /if + 5"
+ ,   "if true  then 1 else (if true  then 3 else 4 /if +5 )")
  , testerror(" /< literal parse error:unexpected end of paragraph  />"
  , ["function f1(a:int)boolean(a"]
  )

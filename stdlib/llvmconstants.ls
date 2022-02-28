@@ -34,9 +34,9 @@ function enumerate(type:seq.word, codes:seq.word)seq.word
 + toword.length.codes
 + ")then  /br let r=["
 + dq.codes
-+ '_(i+1)]if not(r='
++ "_(i+1)]if not(r="
 + dq."?"
-+ ')then r else '
++ ")then r else"
 + dq(type + ".")
 + "+toword.i  /br else"
 +dq(type+".")

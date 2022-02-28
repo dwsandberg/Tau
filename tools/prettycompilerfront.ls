@@ -91,18 +91,22 @@ let acc4 =
     /for(top.newstk(last, stk, renames))
    replace(acc4, paragraphno, pretty.newtext)
  /for(acc4)
-for acc = empty:seq.seq.word, modtext = "", p ∈ acc4 do
+for acc = empty:seq.seq.word
+, modtext = ""
+, beforeModule = true
+, p ∈ acc4 + "Module"
+do
  if subseq(p, 1, 1) ∈ ["Module", "module", [encodeword.[char.28]]]then
-  next(acc + modtext, p)
- else {if subseq(p, 1, 2) = "file("then next(acc, modtext)
-  else}
+  next(acc + modtext, p,false)
+ else if subseq(p, 1, 2) = "file("then next(acc + modtext, "", true)
+  else 
   let t = 
    if subseq(p, 1, 1)
    ∈ [" /keyword", "use", "builtin", "Export"]then
     p
    else if subseq(p, 1, 1) ∈ ["type", "Function", "function"]then pretty.p
    else escapeformat.p
-  next(acc, modtext + " /p" + t)
+  next(acc, modtext + " /p" + t,beforeModule)
 /for(acc)
 
 function newstk(sym:symbol, stk:stack.seq.word, renames:seq.rename)stack.seq.word
@@ -202,7 +206,11 @@ for txt = "", last = 0, idx = 1, k ∈ z do
    let filename = extractfilename.z_last
    if isempty.filename then next(txt, idx, idx + 1)
    else
-    let discard = createfile(targetdir + "/" + filename, toseqbyte.textformat.zz)
+    let discard = 
+     createfile(if isempty.targetdir then"tmp"else targetdir /if + "/"
+     + filename
+     , toseqbyte.textformat.zz
+     )
     next(txt + zz, idx, idx + 1)
  else next(txt, last, idx + 1)
 /for(txt)

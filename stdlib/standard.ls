@@ -24,7 +24,7 @@ Export type:UTF8
 
 Export towords(UTF8)seq.word
 
-Function dq seq.word  '"'
+Function dq seq.word {doublequote} [encodeword.[char.34]]
 
 Function singlequote seq.word "'"
 

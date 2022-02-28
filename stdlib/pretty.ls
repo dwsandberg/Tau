@@ -222,8 +222,8 @@ Below is generated from parser generator.
 function action(ruleno:int, input:seq.word, place:int, R:reduction.attribute2)attribute2
 {Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do F2 P T L D E FP A F F1 G NM 
 }
-{RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | /if | E if 
-E then E else E | E assert E report D E | A W=E | E let A E | D E |}
+{RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for 
+| E if E then E else E /if | /if | E if E then E else E | E assert E report D E | A W=E | E let A E | D E |}
 if ruleno = {G F #}1 then R_1
 else if ruleno = {F W NM(FP)T E}2 then prettyfunc.R
 else if ruleno = {F W_(FP)T E}3 then prettyfunc.R
