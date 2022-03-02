@@ -1,12 +1,13 @@
-#!/bin/sh tau stdlib tools help #
+#!/bin/sh tau common  tools help #
 
 Module tools
 
-Library tools bandeskopf barycenter baseTypeCheck doc genLR1 layergraph makeDag prettycompilerfront profile svg2graph taulextable
+Library tools 
+baseTypeCheck doc genLR1 prettycompilerfront profile  taulextable
 parseargs
 frontcmd
 entrycmd
-uses stdlib
+uses stdlib common
 exports baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
 
 * STATE builtin:profile profileinfo profileresult

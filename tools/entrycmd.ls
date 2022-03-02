@@ -83,8 +83,7 @@ else
     next(acc, idx + 1, lastcmd, options + first.pp, types + pp << 1)
    else next(acc, idx + 1, lastcmd, options, types)
   /for(acc)
- {for txt="", c /in cmds do txt+" /p"+cmdname.c+proc.c+options.c+for txt2="", s /in types.c do txt2+dq.s+", "/for 
- ("types 
+ {for txt="", c /in cmds do txt+" /p"+cmdname.c+proc.c+options.c+for txt2="", s /in types.c do txt2+dq.s+", "/for("types 
 :["+txt2 >> 1+"]")/for(txt)}
  let doc = 
   if not.includedoc then""

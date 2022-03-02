@@ -56,7 +56,7 @@ for result = empty:seq.rename, r ∈ a do
 /for(result)
 
 Function totext(result1:compileinfo, directory:seq.word)seq.word
-writeModule(totext(result1, empty:seq.rename), directory)
+{OPTION INLINE}writeModule(totext(result1, empty:seq.rename), directory)
 
 Function Optionsym symbol symbol(internalmod, "option", typeint, seqof.typeword, typeint)
 
@@ -197,6 +197,7 @@ for txt = "", modtext ∈ modtexts do
 /use seq.char
 
 Function prettybyfile(libname:seq.word, targetdir:seq.word)seq.word
+{OPTION INLINE}
 let z = getlibrarysrc.libname + "file(dummy)"
 for txt = "", last = 0, idx = 1, k ∈ z do
  if subseq(k, 1, 2) = "file("then

@@ -60,7 +60,10 @@ use set.seq.word
 
 use seq.seq.seq.symbol
 
-Function pass2:T(knownsymbols:set.symdef, t:typedict)set.symdef
+Function pass2:T(knownsymbols:set.symdef, t:typedict,option:seq.word)set.symdef
+if option="addpass" then 
+additionalpass:T(toseq.knownsymbols,knownsymbols,t)
+else 
 subpass2:T(empty:seq.symdef, empty:set.symdef, knownsymbols, 0, t) ∪ constantsymbols
 
 function subpass2:T(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int, typedict:typedict)set.symdef
@@ -82,14 +85,23 @@ for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toproce
   else next(big, symdef(s, t) ∪ small, core)
  else next(big + pele, small, core)
 /for(if length.toseq.corein = length.toseq.core then
- for acc = core, prgele ∈ toseq.core + toseq.small + big do
+ if false then for acc = core, prgele ∈ toseq.core + toseq.small + big do
+  let code3 = code.prgele
+  let sym3 = sym.prgele
+  if isempty.code3 then prgele ∪ acc
+  else symdef(sym3, firstopt:T(acc, sym3, code3, getoption.code3, false, typedict)) ∪ acc
+ /for(acc) else 
+ additionalpass:T(toseq.core + toseq.small + big,core,typedict)
+else subpass2:T(big, core, small, count + 1, typedict)/if)
+
+ Function additionalpass:T(p:seq.symdef,start:set.symdef,typedict:typedict) set.symdef
+  for acc = start, prgele ∈ p do
   let code3 = code.prgele
   let sym3 = sym.prgele
   if isempty.code3 then prgele ∪ acc
   else symdef(sym3, firstopt:T(acc, sym3, code3, getoption.code3, false, typedict)) ∪ acc
  /for(acc)
-else subpass2:T(big, core, small, count + 1, typedict)/if)
-
+ 
 Function firstopt:T(p:set.symdef, s:symbol, code:seq.symbol, options:seq.word, first:boolean, typedict:typedict)seq.symbol
 let pdict = 
  for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.s, 1, 1)do pmap + localmap2(parano, [Local.parano])/for(pmap)

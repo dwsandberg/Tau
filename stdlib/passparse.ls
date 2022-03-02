@@ -85,9 +85,10 @@ Function compile(allmods:set.passsymbols
 , modlist:set.passsymbols
 , lib:word
 , src:seq.seq.word
-, mode:word
+, textmode:boolean
 , requireUnbound:set.symdef
 )seq.symdef
+let mode=if textmode then "text"_1 else "body"_1
 for prg = empty:seq.symdef, m ∈ toseq.modlist do
  let z = commoninfo("", modname.m, lib, typedict.m, mode)
  let partdict = formsymboldict(allmods, m, requireUnbound, mode)
@@ -119,7 +120,7 @@ if subseq(s, length.a, length.a + 1) = "{OPTION"then
  /for(if isempty.s then code else addoption(code, acc)/if)
 else code
 
-Function passparse(abstractmods:set.passsymbols
+/Function passparse(abstractmods:set.passsymbols
 , simplemods:set.passsymbols
 , lib:word
 , prg1:seq.symdef
@@ -127,15 +128,19 @@ Function passparse(abstractmods:set.passsymbols
 , mode:word
 )set.symdef
 let allmods = abstractmods ∪ simplemods
-let prga = prescan2.compile(allmods, abstractmods, lib, src, mode, empty:set.symdef)
-let g3 = newgraph.abstractarcs(prga + prg1)
+let prga = compile(allmods, abstractmods, lib, src, mode, empty:set.symdef)
+let requireUnbound=buildrequires(prga + prg1)
+let prg = compile(allmods, simplemods, lib, src, mode, requireUnbound)
+asset.{prescan2.}(prga + prg1 + prg)
+
+Function buildrequires(prg:seq.symdef ) set.symdef
+let g3 = newgraph.abstractarcs( prg)
 {graph g3 has three kinds of sinks.1:is unbound and module parameter is T 2:is not unbound and module parameter is T 3:module 
 parameter is not T examples:otherseq.T:=(T, T)boolean ; otherseq.T:step(arithmeticseq.T)T ; otherseq.sparseele 
 .T:binarysearch(seq.sparseele.T)}
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)
-{change many-to-one relation defined by arcs in g5 into format of set.symdef}
-let requireUnbound = 
+{change many-to-one relation defined by arcs in g4 into format of set.symdef}
  if isempty.arcs.g4 then empty:set.symdef
  else
   for acc = empty:set.symdef, last = Lit.0, list = empty:seq.symbol, a ∈ toseq.arcs.g4 do
@@ -146,10 +151,9 @@ let requireUnbound =
     else acc
    next(newacc, tail.a, newlist)
   /for(if isempty.list then acc else acc + symdef(last, list)/if)
-let prg = compile(allmods, simplemods, lib, src, mode, requireUnbound)
-asset(prga + prg1 + prg)
 
-function prescan2(s:seq.symdef)seq.symdef
+Function prescan2(s:seq.symdef)seq.symdef  
+{ removes name from locals and change length and getseqtype to GetSeqLength and GetSeqType }
 for acc = empty:seq.symdef, p ∈ s do
  for result = empty:seq.symbol, sym ∈ code.p do
   if islocal.sym then result + Local.value.sym

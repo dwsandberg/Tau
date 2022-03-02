@@ -1,6 +1,6 @@
 Module compilerfront
 
-use libdesc
+/use libdesc
 
 use libraryModule
 
@@ -113,21 +113,22 @@ else
     /for(tmp)
    acc + passtypes(modname.m, tmp, typedict.m)
   /for(acc)
- let mode = 
-  if option = "text"then"text"_1 else"body"_1
  {figure out how to interpret text form of type}
  let modsx = resolvetypes(libpasstypes, allsrc, lib)
  {figure out how to interpret text form of symbol}
  let t5 = resolvesymbols(allsrc, lib, modsx, asset.mods.libinfo)
- {assert false report for libs=empty:seq.word, p=toseq.modules.t5 do libs+library.modname.p+name.modname.p+EOL 
-/for(libs)}
  {parse the function bodies}
  let prg10 = 
   for abstract = empty:seq.passsymbols, simple = empty:seq.passsymbols, m ∈ toseq.modules.t5 do
    if isabstract.modname.m then next(abstract + m, simple)else next(abstract, simple + m)
-  /for(passparse(asset.abstract, asset.simple, lib, toseq.code.t5 + prg.libinfo, allsrc, mode))
- let typedict = buildtypedict(empty:set.symbol, types.t5 + types.libinfo)
- if mode = "text"_1 then
+  /for(
+ let allmods = asset(abstract+simple) 
+let prga = prescan2.compile(allmods, asset.abstract, lib, allsrc, option = "text", empty:set.symdef)
+let requireUnbound=buildrequires(prga + toseq.code.t5 + prg.libinfo)
+let prg = compile(allmods, asset.simple, lib, allsrc, option = "text", requireUnbound)
+asset.( prga + toseq.code.t5 + prg.libinfo +  prg)
+)
+ if option = "text"  then
   let zz1 = toseq.prg10
   let discard = 
    for acc = symbolref.sym.zz1_1, d ∈ zz1 do if paragraphno.d > 0 then symbolref.sym.d else acc /for(acc)
@@ -145,6 +146,7 @@ else
       else acc3 + sym2
      /for(acc3))
    /for(acc)
+  let typedict = buildtypedict(empty:set.symbol, types.t5 + types.libinfo)
   if option = "hhh"then
    let hmods = 
     for acc = empty:seq.passsymbols, m ∈ toseq.modules.t5 do
@@ -170,15 +172,9 @@ else
    let prg10a = processOptions(prg10, toseq.modules.t5, "NOINLINE")
    let pb = postbind(roots, prg10a, templates, typedict)
    let afteroption = processOptions(prg.pb, toseq.modules.t5, "COMPILETIME NOINLINE INLINE PROFILE STATE")
-   let result = 
-    if option = "wasm"then
-     for acc0 = afteroption, root ∈ toseq.asset.roots do
-      for acc = acc0, sym ∈ toseq.expand(4, afteroption, root)do addoption(acc, sym, "INLINE")/for(acc)
-     /for(acc0)
-    else afteroption
    let libmods = tolibraryModules(typedict, toseq.modules.t5, exports)
-   if option = "pass1"then midpoint(option, result, typedict.pb, libmods, empty:seq.seq.word)
-   else midpoint(option, result, templates, typedict, libmods, [first.allsrc])
+   if option = "pass1"then midpoint(option, afteroption, typedict.pb, libmods, empty:seq.seq.word)
+   else midpoint(option,afteroption, templates, typedict, libmods, [first.allsrc])
 
 function midpoint(option:seq.word
 , prg:set.symdef
@@ -188,9 +184,19 @@ function midpoint(option:seq.word
 )midpoint
 midpoint(option, prg, empty:set.symdef, typedict, libmods, libclause)
 
-Function finish(m:midpoint, prg5:set.symdef)compileinfo
+/use otherseq.mytype
+
+
+/Function finish(m:midpoint, prg5:set.symdef)compileinfo
 if option.m = "all"then compilerback2(prg5, libmods.m, typedict.m, [first.src.m])
-else compileinfo(toseq.prg5, typedict.m, libmods.m, src.m)
+else 
+let js=symbol(internalmod,"jsHTTP",constantseq(8,typereal),typereal)
+let k=  for  txt="",    s /in toseq.prg5 do 
+   if js /in code.s  /and "INLINE"_1 /in getoption.code.s  then
+      txt+"/br"+print.sym.s else txt
+  /for(txt)
+assert isempty.k report k
+compileinfo(toseq.prg5, typedict.m, libmods.m, src.m)
 
 Export prg(midpoint)set.symdef
 
@@ -200,6 +206,16 @@ Export templates(midpoint)set.symdef
 
 Export typedict(midpoint)typedict
 
+Export type:midpoint
+
+Export prg(midpoint) set.symdef 
+
+Export templates(midpoint) set.symdef 
+
+Export src(midpoint) seq.seq.word
+
+Export libmods(midpoint) seq.libraryModule
+
 type midpoint is option:seq.word
 , prg:set.symdef
 , templates:set.symdef
@@ -208,7 +224,7 @@ type midpoint is option:seq.word
 , src:seq.seq.word
 
 
-function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
+/function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
 for acc = empty:set.symbol, sym ∈ getCode(prg, symin)do
  if isspecial.sym ∨ isconst.sym ∨ name.module.sym ∈ "internal builtin UTF8 seq"then acc
  else if name.sym ∈ "jsHTTP"then acc + symin

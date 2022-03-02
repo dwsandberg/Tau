@@ -1,23 +1,3 @@
-module help
-
-use standard
-
-function comb(i:int, str:seq.word)int
-if i = length.str then i
-else if str_(i + 1) ∈ "-"then comb(i + 2, str)else i
-
-Function element(str:seq.word, vals:seq.seq.word, body:seq.word)seq.word
-for acc = [merge("<" + first.str)], idx = 2, val ∈ vals do
- let j = comb(idx, str)
- next(acc + subseq(str, idx, j) + "=" + dq.val + space, j + 1)
-/for(acc
-+ if isempty.body then[merge(" />" + space)]
-else">" + body + merge("</" + first.str + ">")/if)
-
-Function element(str:seq.word, body:seq.word)seq.word
-[merge("<" + str + ">")] + body + body
-+ merge("</" + first.str + ">")
-
 module svg2graph.T
 
 use UTF8
@@ -98,7 +78,7 @@ else
  for acc = empty:seq.arcpath.T, new = base, q ∈ grp do next(acc + arcpath(arc.q, d.q >> 3 + print(3, new), 0), new + inc)/for(acc)
 
 Function drawscript:T seq.word
-" <script> function shiftstart(arcs){let bb=document.getElementById(arcs[0]).getBBox(); arcs.forEach(function 
+"<script> function shiftstart(arcs){let bb=document.getElementById(arcs[0]).getBBox(); arcs.forEach(function 
 (idval, index){if(index > 0){let element=document.getElementById(idval); let d="
 + dq."M"
 + space
@@ -109,7 +89,7 @@ Function drawscript:T seq.word
 + ").substring(5); element.setAttribute("
 + dq."d"
 + ", d);}});}</script> <style>.arcs{fill:none ; stroke:black ; stroke-width:.07 ;}.nodes{font-size:.03em; stroke 
--width:.1 ;}svg g:hover text{opacity:1;}svg g:hover rect{opacity:1;}</style> "
+-width:.1 ;}svg g:hover text{opacity:1;}svg g:hover rect{opacity:1;}</style>"
 + encodeword.[char.10]
 
 unbound node2text(T)seq.word
@@ -186,7 +166,7 @@ do
       element("text class"
       , ["nodes"]
       , element("textPath href startOffset text-anchor"
-      , [[merge(" # " + toword.j)], "100%", "end"]
+      , [[merge("#" + toword.j)], "100%", "end"]
       , element("tspan dy", ["-0.1"], label.lab_1)
       )
       )
@@ -253,24 +233,4 @@ element("g"
 , text.h
 )
 )
-+ encodeword.[char.10]
-
-module uniqueids
-
-use standard
-
-use encoding.idrange
-
-type idrange is next:int
-
-function =(a:idrange, b:idrange)boolean next.a = next.b
-
-function hash(a:idrange)int next.a
-
-function assignencoding(a:idrange)int nextencoding.a
-
-Function requestids(no:int)int
-let j = nextencoding.idrange.0
-let firstno = if j = 1 then 1 else next.decode.to:encoding.idrange(j - 1)
-let discard = encode.idrange(firstno + no)
-firstno 
++ encodeword.[char.10] 

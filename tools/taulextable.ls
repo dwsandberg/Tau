@@ -62,7 +62,9 @@ Function totext(l:lexaction1)seq.word
 let w = 
  if w.l ∈ "/for /if /"then dq.[w.l] + dq+"_1 "
  else if(decodeword.w.l)_1 = (decodeword."/"_1)_1 then
-  " merge("+"/"+"+" + dq.[encodeword.subseq(decodeword.w.l, 2, 100)] + ")"
+  "merge(" + "/" + "+"
+  + dq.[encodeword.subseq(decodeword.w.l, 2, 100)]
+  + ")"
  else if w.l = dq_1 then singlequote + w.l + "'_1"else dq.[w.l] + "_1"
 let label = if label.l = dq_1 then singlequote + label.l + singlequote else dq.[label.l]
 "token(" + w + ", " + toword.tokenno.l + ", attribute:T(" + label

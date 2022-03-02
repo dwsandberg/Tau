@@ -295,3 +295,22 @@ else
    set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1)))
   /for(acc)
  bitcast:seq.byte(blkseq) 
+ 
+___________
+
+use process.int
+
+Function createthread(adcret:int, adc:int, funcaddress:int, 
+args:seq.int, argcode:int)process.int 
+createthread(adcret, adc, funcaddress, c.bitcast:dummyrec2(toptr.packed.args), argcode)
+
+
+type dummyparameterrecord is a:int,b:int
+
+type dummyrec2 is a:int,b:int,c:dummyparameterrecord
+
+use bitcast.dummyrec2
+
+use bitcast.seq.int
+
+builtin createthread(int, int, int, dummyparameterrecord, int)process.int 

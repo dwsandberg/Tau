@@ -87,7 +87,7 @@ let cinfo = result.p
 let a = break(first.src.cinfo, "uses exports", true)
 let dependentlibs = a_2 << 1
 let bc = codegen(last.libname, dependentlibs, cinfo)
-let z2 = createlib(bc, last.libname, subseq(dependentlibs, 1, 1))
+let z2 = createlib(bc, last.libname, dependentlibs)
 "OK"
 
 Function entrypoint(arg:UTF8)UTF8 compile.arg
@@ -104,8 +104,11 @@ function callentrypoint(arg:UTF8)UTF8
 let t = entrypointaddress.last.loadedLibs
 if t ≤ 0 then HTMLformat."callentrypoint address ERROR"
 else
- let p = createthreadB(t, typeref."UTF8 UTF8", [bitcast:int(toptr.arg)], 4)
+let p=createthread(funcaddress.deepcopySym.typeref."UTF8 UTF8"
+,funcaddress.deepcopySym.seqof.typeword
+,t,[bitcast:int(toptr.arg)],4)
  if aborted.p then HTMLformat.message.p else bitcast:UTF8(toptr.result.p)
+ 
 
 Function astext(info:compileinfo)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ prg.info do acc + [print.sym.p + print.code.p]/for(acc)
@@ -117,11 +120,16 @@ result.p
 
 Function compilerfront:libllvm(option:seq.word, allsrc:seq.seq.word)compileinfo
 let t = break(allsrc_1, "uses exports", true)
-compilerfront4:libllvm(option, allsrc, depententinfo:libllvm(t_2 << 1))
+compilerfront4:libllvm(option, allsrc, dependentinfo:libllvm(t_2 << 1))
 
-Function createthreadB:libllvm(a:int, b:mytype, c:seq.int, d:int)process.int createthreadB(a, b, c, d)
 
 function funcaddress:libllvm(sym:symbol)int funcaddress.sym
+
+use typedict
+
+function buildargcode:libllvm(sym:symbol, typedict:typedict)int
+{needed because the call interface implementation for reals is different than other types is some implementations}
+for acc = 1, typ ∈ paratypes.sym + resulttype.sym do acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0 /for(acc) 
 
 _______________
 
@@ -133,7 +141,7 @@ Export type:libllvm
 
 type libllvm is a:int
 
-Function depententinfo:libllvm(dependentlibs:seq.word)loadedresult
+Function dependentinfo:libllvm(dependentlibs:seq.word)loadedresult
 for org = empty:loadedresult, ll ∈ loadedLibs do
  let libname = (libname.ll)_1
  if libname ∈ dependentlibs then toloadedresult(org, libinfo.ll, libname)else org

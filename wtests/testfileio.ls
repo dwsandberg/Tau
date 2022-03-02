@@ -44,7 +44,7 @@ function t5501 boolean
 {OPTION INLINE}
 let text = ["this is a test","line 2"]
 let f = createfile("testw.txt", text_1 + encodeword.[ char.10, char.10] + text_2)
- gettext."testw.txt"=text 
+ getfile:seq.seq.word("testw.txt")=text 
 
 function *(i:int, b:byte)byte tobyte(i * toint.b)
 

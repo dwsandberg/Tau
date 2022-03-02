@@ -1,4 +1,4 @@
-#!/bin/bash  tau -w https://myhost.local/  stdlib   webassembly  wtests wtests  .
+#!/bin/sh  tau -w https://myhost.local/  stdlib   webassembly  wtests wtests  .
 
 Module webassembly
 
@@ -53,6 +53,48 @@ let args = towords.s
 let p = process.glue(args_1, args << 1)
 HTMLformat.if aborted.p then message.p else result.p
 
+function checkweb(cf:compileinfo,libexports:seq.word) seq.word
+ let idx2=findindex(symbol(internalmod,"jsHTTP",constantseq(8,typereal),typereal)
+ ,symbolrefdecode.cf)
+ let g = 
+  for acc = empty:seq.arc.symbolref, c ∈ code.cf do
+    for acc2 = acc, h ∈ toseq(asset(c << 2))do 
+      let sym= cf_h
+     if   isconst.sym /or isspecial.sym  
+      then acc2 else acc2 + arc(h,first.c)
+   /for(acc2)
+  /for(newgraph.acc)
+   let r= reachable(g,toseq.[symbolref.idx2] )
+   for  txt="",    t /in toseq.r do 
+     if name.module.cf_t /in libexports then 
+        for txt2=txt,  k /in toseq(predecessors(g,t) \ asset.[symbolref.idx2] /cap r) do
+          txt+ "/p"+print.cf_t+"calls" +print.cf_k  
+           +{print.getCode(asset.prg.cf,cf_k)}""
+        /for(txt2 )
+          else txt
+    /for(txt)
+     
+  
+  use graph.symbolref
+  
+  use set.symbolref
+  
+  use seq.arc.symbolref
+ 
+ use otherseq.mytype
+ 
+ use otherseq.symbol
+ 
+ use seq.symbolref
+ 
+ function = (a:symbolref,b:symbolref) boolean toint.a=toint.b
+ 
+ 
+ 
+ for idx=0, sym /in symbolrefdecode.cf while idx=0 do
+  if name.sym="jsHTTP" then  
+  txt+"/br"+   print.sym 
+ /for(txt)
 
 function glue(lib:word, pages:seq.word)seq.word
 {problem is same symbol is used in different onclicks}
@@ -60,18 +102,21 @@ let includetemplate = false
 let libname = [lib]
 let info2 = getlibrarysrc.libname
 let info2f=break(info2_1,"uses exports",true) 
-let exports = "tausupport inputoutput" +  info2f_3 << 1
-let r = compilerfront:libllvm("wasm",["Library"+libname+"uses exports"+exports]+getlibrarysrc(info2f_2 << 1)+ info2 << 1)
+let libexports=info2f_3 << 1
+let r = compilerfront:libllvm("wasm",["Library"+libname+"uses exports tausupport inputoutput"+libexports]+getlibrarysrc(info2f_2 << 1)+ info2 << 1)
+let check=checkweb(r,libexports)
+assert isempty.check report check 
 let syms2 = 
  for syms2 = empty:seq.symbol, m ∈ mods.r do
-  if name.modname.m ∈ info2f_3 << 1 then
+  if name.modname.m ∈ libexports then
    for txt3 = syms2, e ∈ exports.m do txt3 + (symbolrefdecode.r)_(toint.e)/for(txt3)
   else syms2
  /for({should check for dup names on syms}syms2)
 let scriptstart = 
  for txt = "<script>  /br", sym ∈ syms2 do
   let f = 
-   for args = "", i ∈ arithseq(nopara.sym, 1, 1)do args + "a b c d e f g h i j k l m n o p q r s t u v w x y z"_i + ", "/for([name.sym] + "(" + args >> 1 + ")")
+   for args = "", i ∈ arithseq(nopara.sym, 1, 1)do args + "a b c d e f g h i j k l m n o p q r s t u v w x y z"_i + ", "
+   /for([name.sym] + "(" + args >> 1 + ")")
   {Cannot just call reclaimspace after call to function f because f may be interpreted and return control will waiting for 
 a callback. javascript global inprogress counts the number of callbacks we are waiting for. if inprogress is zero then 
 it is safe to reclaim space.}

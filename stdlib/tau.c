@@ -355,7 +355,7 @@ BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, st
      sprintf(buff,"%s.bc",libname);
   sprintf(buff,"/usr/bin/cc -dynamiclib tmp/%s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",libname,
   otherlib,libname);
-   // fprintf(stderr,"Createlib3 %s\n",buff);
+   fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
   else {loadlib(PD,filename); return 1;}

@@ -388,7 +388,6 @@ partdict(for acc = empty:set.symbol, sd ∈ toseq.req.dict do acc + setrequires.
 , req.dict
 )
 
-symboldict(syms, requires, [c])
 
 type partdict is syms:set.symbol, req:set.symdef
 

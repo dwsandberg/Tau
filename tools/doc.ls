@@ -55,7 +55,11 @@ use seq.seq.word
 use svg2graph.seq.word
 
 Function htmlcode(libname:seq.word)seq.word
-let p = prettyfile(true, "  /< noformat <hr id="+dq."T"+" >  />  /keyword ", getlibrarysrc.libname << 1)
+let p = 
+ prettyfile(true
+ , " /< noformat <hr id=" + dq."T" + ">  />  /keyword"
+ , getlibrarysrc.libname << 1
+ )
 let modules = 
  for txt = "", state = 0, name = "1"_1, idx = 1, d ∈ p do
   if d ∈ " /keyword"then next(txt, 1, name, idx + 1)
