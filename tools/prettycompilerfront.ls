@@ -109,6 +109,8 @@ do
   next(acc, modtext + " /p" + t,beforeModule)
 /for(acc)
 
+use seq.seq.word
+
 function newstk(sym:symbol, stk:stack.seq.word, renames:seq.rename)stack.seq.word
 if isstart.sym ∨ isexit.sym ∨ isbr.sym then stk
 else if name.module.sym ∈ "$int"then push(stk, [name.sym])
@@ -120,7 +122,13 @@ else if isdefine.sym ∧ not.isempty.stk then
 else if iswords.sym then 
   let wd=worddata.sym
  if first.wd = first."'" ∧ dq_1 ∉ wd then push(stk, dq + subseq(wd, 2, length.wd - 1) + dq)
- else if first.wd ∈ "'" ∧ length.wd = 3 then push(stk, "dq")else push(stk, wd)
+ else if first.wd ∈ "'" ∧ length.wd = 3 then push(stk, "dq")
+ else if first.wd = first."'" ∧ dq_1 /in wd then
+  let a=break(subseq(wd,2,length.wd-1),dq,false)
+     push(stk,for txt=dq+first.a,   b /in  a << 1 do
+       txt+dq+"+dq+"+dq+b
+     /for( "("+txt+dq+")") ) 
+     else push(stk, wd)
 else if name.sym ∈ "{" ∧ length.toseq.stk ≥ 2 then
  {comment}
  let args = top(stk, 2)

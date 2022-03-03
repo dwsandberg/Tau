@@ -95,8 +95,8 @@ function print(b:boolean)seq.word if b then"T"else"F"
 
 function checkhash seq.word
 if for l = empty:seq.int
-, w ∈ ' Xx 0123456789ABCDEFabcdef x X invalid hex digit 0123456789-MMMM out of bounds FAIL >>, ()].:"_^.384 52 3[2 4 5 a b c d e 1 k 
-+={}1 2∪ this is test three four five test11 0 SPACE 2∪ code glyph 48 49 50 51 53 54 6 '
+, w ∈"Xx 0123456789ABCDEFabcdef x X invalid hex digit 0123456789-MMMM out of bounds FAIL >>, ()].:" + dq
++ "_^.384 52 3[2 4 5 a b c d e 1 k+={}1 2∪ this is test three four five test11 0 SPACE 2∪ code glyph 48 49 50 51 53 54 6"
 do l + hash.decodeword.w /for(l)
 = [1606469939, 3611716215, 3408990482, 2398569529, 1805514831
 , 2794507078, 3153899467, 1592536390, 2267580998, 4148795192
@@ -121,17 +121,14 @@ use format
 function textformat(p:seq.seq.word)UTF8
 for txt = "", @e ∈ p do txt + " /p" + @e /for(textformat(txt << 1))
 
-
-
 Function alltests int
 let z = 
- test11 + testmodules + sparsecheck + testreal + testencoding + testbug7 + {testseq +} testprocess
+ test11 + testmodules + sparsecheck + testreal + testencoding + testbug7
+ + {testseq+}testprocess
  + testwordfreq
  + checkhash
  + testfileio
 setElementValue("pageready", z)
-
-
 
 function print(a:seq.seq.word)seq.word
 for txt = "", b ∈ a do txt + b + " /p"/for(txt >> 1)
@@ -145,8 +142,6 @@ setElementValue("mhhh", x) + setElementValue("mpeas", x2)
 + setElementValue("mcars", x3)
 + setElementValue("mtext", x4)
 
-Function wtests int
-setElementValue("pageready", "loaded")
+Function wtests int setElementValue("pageready", "loaded")
 
 use  webIO
-

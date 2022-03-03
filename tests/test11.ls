@@ -144,7 +144,7 @@ Function t043 boolean
 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
 = for acc = "code glyph", e ∈ arithseq(43, 1, 48)do acc + [toword.e, encodeword.[char.e]]/for(acc)
 
-function t044 boolean '"()+, -.:=[]^_{}' = standalonechars
+function t044 boolean"" + dq + "()+, -.:=[]^_{}" = standalonechars
 
 Function standalonechars seq.word
 for acc = "", e ∈ arithseq(length.classifychar, 1, 1)do

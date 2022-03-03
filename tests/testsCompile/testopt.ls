@@ -26,7 +26,7 @@ let cl =
  , "2"
  , "WORD FIRST"
  , "WORD AB"
- , '"A B"'
+ , dq."A B"
  , "7"
  , "11"
  , "2"

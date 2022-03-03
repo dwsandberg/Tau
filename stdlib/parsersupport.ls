@@ -44,7 +44,81 @@ Function errormessage:T(message:seq.word, input:seq.word, place:int)seq.word
 let m = " /< literal" + message + " />"
 m + " /br  /br" + prettynoparse.subseq(input, 1, place) + " /br" + m
 
+use stack.int
+
 Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
+let stringtoken=findindex("$wordlist"_1,tokenlist:T)
+let commenttoken=findindex("comment"_1,tokenlist:T)
+let codeinstringtoken=12
+for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial))
+,state=1, last=0,nestlevel=0,idx=1,stk=empty:stack.int 
+, this ∈ input + "#"
+while stateno.top.lrpart ≠ finalstate:T
+do
+if state=1 /and this /nin (dq+"{" )
+ /or state=4 /and this /nin dq /and (this /nin ")" /or nestlevel > 1) then 
+ let lexindex = binarysearch(lextable, token(this, 0, attribute:T("")))
+  let newlrpart = 
+   if lexindex < 0 then
+    {next is not in lex table}
+    let kind = checkinteger.this
+    assert kind ≠ "ILLEGAL"_1 report"Illegal character in Integer" + this
+    step(lrpart
+    , input
+    , attribute:T([this])
+    , if kind = "WORD"_1 then Wtoken:T else Itoken:T
+    , idx
+    )
+   else
+    let tok = lextable_lexindex
+    step(lrpart
+    , input
+    ,  attribute.tok
+    , tokenno.tok
+    , idx
+    )
+      let newnest= if this /in "(" then nestlevel+1 else if this /in ")" then nestlevel-1 else nestlevel
+ next(newlrpart ,state,idx,newnest,idx+1,stk)
+ else    if state=1 then 
+     if this /in "{" then 
+      next(lrpart,3,idx,1,idx+1,stk)
+     else { dq}
+      next(lrpart,2,idx,nestlevel,idx+1,stk)
+    else if {code inside of string}  state=4 then 
+       if this /in ")" then 
+        next(lrpart,2,idx,nestlevel,idx+1,pop.stk)
+       else 
+      { dq}
+       next(lrpart,2,idx,nestlevel,idx+1,stk)
+ else 
+  let kind=if state=2 /and this /in "(" /and input_(idx-1)="$"_1 then codeinstringtoken
+       else if  state=2 /and this /in dq then  stringtoken 
+       else if  state=3 /and this /in "}" /and nestlevel=1 then commenttoken
+       else 0   
+       let newlrpart=if kind=0 then lrpart  else
+       step(lrpart
+    , input
+    ,  attribute:T(subseq(input, last, idx)) 
+    , {tokenno} kind
+    , idx
+    )
+        if kind = commenttoken  then 
+         next(    newlrpart ,1,idx,nestlevel,idx+1,stk)
+         else  if kind = codeinstringtoken then
+               next(newlrpart ,4,idx,1,idx+1,push(stk,nestlevel))
+          else if kind = stringtoken then
+           next(    newlrpart ,
+            if isempty.stk then 1 else 4,idx,nestlevel,idx+1,stk)
+ else { in string or comment. Counts {} in strings for no good reason.}
+       let nest=if this /in "{" then nestlevel+1
+        else if this /in "}" then nestlevel-1
+        else nestlevel
+       next(lrpart,state,last,nest ,idx+1,stk)
+/for(assert state=1 report errormessage:T("missing string terminator", input, last)
+attribute.undertop(lrpart,1))
+
+
+/Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
 for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial))
 , matchthis = singlequote_1
 , last = 0
@@ -60,7 +134,7 @@ do if instring ∧ this ≠ matchthis ∨ nesting > 0 then
    else if nesting > 0 ∧ matchthis = this then-1
    else if this = "{"_1 then 1 else 0
   next(lrpart, matchthis, last, true, idx + 1, nesting + nestingchange)
- else if not.instring ∧ ( this = singlequote_1 ∨  this = dq_1 ∨ this = "{"_1)then
+ else if not.instring ∧ ({this = singlequote_1 ∨} this = dq_1 ∨ this = "{"_1)then
   {start string}
   next(lrpart
   , if this = "{"_1 then"}"_1 else this

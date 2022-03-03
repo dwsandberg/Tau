@@ -143,8 +143,7 @@ let discard =
  addf(alltypes
  , sym
  , funcbody([i32, i32, i64,i32]
- , switchcontext.newcontext2.2 + funccall 
- + Gcurrentprocess +Wdefine.5
+ , switchcontext.newcontext2.2 + funccall + Gcurrentprocess + Wdefine.5
  + switchcontext.load(Gcurrentprocess, parentprocess)
  + Wlocal.0
  + i32truncf64u
@@ -158,22 +157,22 @@ let discard =
  + Wif(void, Wlocal.4 + Wlocal.2 + Wcallindirect.typeindex([i64], i64) + Wdefine.4)
  + {reclaim space }store(Wlocal.5, Gfreeblocks, 0)
  +setGlobal(freeblocks
- ,  load(Wlocal.5,lastfree) + const32.toint.{will produce 32bit constant 0xFFFF0000}0xFFFFFFFFFFFF0000 + i32and
+ , load(Wlocal.5, lastfree)
+ + const32.toint.{will produce 32bit constant 0xFFFF0000}0xFFFFFFFFFFFF0000
+ + i32and
  )
  + {create process record}const64.0
  + const64.0
  + Wlocal.4
- + (const64.0
- + const64.1
- + Wlocal.4
- + Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr))
+ + (const64.0 + const64.1 + Wlocal.4
+ + Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr)))
+ + Wcall.recordsym(alltypes
+ , symbol(internalmod, "record", [typeint, typeint, typeint, typeptr], typeptr)
 )
- + Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint,typeptr], typeptr))
  + f64converti64s
  )
  )
 exportfunc(funcidx.sym, wordname.sym)
-
 
 Function exporthandleerror(alltypes:typedict)seq.byte
 let sym = symbol(internalmod, "handleerror", typereal, typereal)

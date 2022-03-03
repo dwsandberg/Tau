@@ -62,6 +62,8 @@ for lines = "M" + c1, curve = "M" + c1, i ∈ arithseq(no, 2, 2)do
 function split(c:seq.word)seq.seq.word
 if c_2 = first."."then[subseq(c, 1, 3), c << 3]else[[c_1], c << 1]
 
+function dq(a:word) seq.word dq+a+dq
+
 function addsegment(thisid:word)real
 let no = toint.first.getattributes("grp1", "data-segments")
 let new = 
@@ -77,12 +79,12 @@ let new =
 let svg = 
  for svg = "", i = 1, c ∈ new do
   let d = split.c
-  next(svg + ' <circle id="' + merge("c" + toword.i)
-  + '"class="draggable"fill="blue"cx="'
-  + d_1
-  + '"cy="'
-  + d_2
-  + '"r=".3" /> '
+  next(svg + " <circle id=" + dq.merge("c" + toword.i)
+  + "class="+dq."draggable"+"fill="+dq."blue"+"cx="
+  + dq.d_1
+  +  "cy=" 
+  + dq.d_2
+  + "r="+dq.".3" +"  />  "
   , i + 1
   )
  /for(svg)

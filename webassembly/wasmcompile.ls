@@ -1,7 +1,3 @@
-#!/bin/bash tau stdlib webassembly testX test87
-
-testgraph test89
-
 module wasmcompile
 
 use UTF8
@@ -134,8 +130,12 @@ let roots =
  , typereal
  )
  + symbol(moduleref."webassembly inputoutput", "blockseqtype", typereal)
- + symbol(moduleref."webassembly inputoutput", "jsmakepair", typereal,typereal,typereal)
- )
+ + symbol(moduleref."webassembly inputoutput"
+ , "jsmakepair"
+ , typereal
+ , typereal
+ , typereal
+ ))
 let imp = 
  for acc = empty:seq.seq.byte, @e ∈ imports do
   let discard0 = funcidx.@e
@@ -162,7 +162,7 @@ let descard100 = [allocatefunc.alltypes, getinstancefunc.alltypes, addencodingfu
 let zzzzz = 
  for txt = "", sym ∈ roots do
   let code = getCode(prg4, sym)
-  if  jsHTTP  /in getCode(prg4, sym) then
+  if jsHTTP ∈ getCode(prg4, sym)then
    {assert name.sym /nin"testpretty22"report print.code}
    interpret(alltypes, knownfuncs, sym, getCode(prg4, sym))
   else txt
@@ -212,8 +212,7 @@ for notused = to:encoding.wfunc(1), sym ∈ k do
     let typeidx = toint.encodeword(c << length.d)
     encode.wfunc(alltypes, sym, processXbody.typeidx, funcidx.sym)
    else
-    assert not.isempty.ele 
-    report"dependedfunc:no definition for:" + print.sym + ":::" + name.sym
+    assert not.isempty.ele report"dependedfunc:no definition for:" + print.sym + ":::" + name.sym
     let bodycode = 
      if isempty.ele then const64.0
      else
@@ -689,7 +688,7 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
  else if print.sym ∈ ["internal:bitcast(ptr)int", "internal:bitcast(int)ptr"]then
   next(blkstk, curblk, localtypes)
  else  if sym = symbol(internalmod, "callidx", seqof.typeint, typeint, typeint)
- /or sym = symbol(internalmod, "callidx", seqof.typeptr, typeint, typeint)then
+ ∨ sym = symbol(internalmod, "callidx", seqof.typeptr, typeint, typeint)then
   let typ = 
    symbol(moduleref."$$Icall"
    , [toword.typeindex([i64, i64], i64)]
@@ -698,10 +697,12 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
    , typeint
    )
   next(blkstk, curblk + Icode(tobyte.254, tableindex.funcidx.typ), localtypes)
- else if sym = symbol(moduleref("builtin",typeint),"assert",seqof.typeword,typeint)
- /or sym = symbol(moduleref("builtin",typeptr),"assert",seqof.typeword,typeptr)
-  /or ( {module.sym=internalmod /and} name.sym /in "idxseq fld packedindex processisaborted
-  getseqlength getseqtype") then
+ else if sym
+ = symbol(moduleref("builtin", typeint), "assert", seqof.typeword, typeint)
+ ∨ sym
+ = symbol(moduleref("builtin", typeptr), "assert", seqof.typeword, typeptr)
+ ∨ {module.sym=internalmod /and}name.sym
+ ∈ "idxseq fld packedindex processisaborted getseqlength getseqtype"then
   next(blkstk, curblk + Icall(alltypes, sym), localtypes)
  else 
   let ele = lookup2(knownfuncs, wfunc(alltypes, sym, empty:seq.byte))
@@ -709,8 +710,8 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
    if not.isempty.ele  then
     if length.code.first.ele=0 then empty:seq.Icode
     else 
-    assert length.code.first.ele = 1 report"/br ------not length one------- /br"+print.sym+
-      printcode.code.first.ele
+     assert length.code.first.ele = 1
+     report" /br------not length one------- /br" + print.sym + printcode.code.first.ele
     [Icode.first.code.first.ele]
    else Icall(alltypes, sym)
   next(blkstk, curblk + this, localtypes)
