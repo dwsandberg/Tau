@@ -66,8 +66,7 @@ let lastbreak = lastbreak.state
 let result = result.state
 let matchthis = matchthis.state
 let instring = instring.state
-let newinstring = 
- if instring then this ≠ matchthis else this = "//"_1 ∨ this = singlequote_1 ∨ this = dq_1
+let newinstring = if instring then this ≠ matchthis else this = "//"_1 ∨ this = dq_1
 let newmatchthis = if instring then matchthis else this
 let c = 
  if newinstring then 0
@@ -80,7 +79,7 @@ let newresult =
   if this = matchthis then result + this + " />"else result + this
  else if c = 0 then
   result
-  + if this ∈ (dq + singlequote)then" /< literal"else" /br  /< comment"/if
+  + if this ∈ dq then" /< literal"else" /br  /< comment"/if
   + this
  else if c = 1 then
   if lastbreak > 20 then result + " /br"else result /if
@@ -105,10 +104,10 @@ Function htmlheader seq.word
 + "span.keyword{color:blue ;}span.keywords{color:blue ;}"
 + "span.literal{color:red ;}span.comment{color:green ;}"
 + "span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}"
-+ {" form{margin:0px ;}html, body{margin:0 ; padding:0 ; height:100% ;}"+".container{margin:0 ; padding:0 ; height:
++ {"form{margin:0px ;}html, body{margin:0 ; padding:0 ; height:100% ;}"+".container{margin:0 ; padding:0 ; height:
 100% ; display:-webkit-flex ; display:flex ; flex-direction:column ;}"+".floating-menu{margin:0 ; padding:0 ; background 
 :yellowgreen ; padding:0.5em ;}"+".content{margin:0 ; padding:0.5em ;-webkit-flex:1 1 auto ; flex:1 1 auto ; overflow 
-:auto ; height:0 ; min-height:0 ; "}}
+:auto ; height:0 ; min-height:0 ;"}}
 "--> </style>"
 + EOL
 
@@ -254,7 +253,7 @@ Function HTMLformat seq.seq.char
 , chrs."$"
 , chrs."%"
 , chrs."&amp;"
-, chrs.singlequote
+, chrs."'"
 , chrs."("
 , chrs.")"
 , chrs."*"
@@ -317,7 +316,7 @@ Function perserveFormat seq.seq.char
 , chrs."$"
 , chrs."%"
 , chrs."&"
-, chrs.singlequote
+, chrs."'"
 , [char.92, char.48, char.53, char.48]
 , [char.92, char.48, char.53, char.49]
 , chrs."*"

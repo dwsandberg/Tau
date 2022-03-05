@@ -10,6 +10,10 @@ inputoutput webIO /stdlib/tausupport /stdlib/graph
 /stdlib/words /stdlib/xxhash
 /stdlib/bitstream
 /common/bandeskopf 
+/stdlib/IO2
+/stdlib/bitcast
+/stdlib/taublockseq
+/stdlib/ptr
 uses 
 exports inputoutput tausupport graph  bandeskopf barycenter layergraph 
 makeDAG bits bitstream encoding format otherseq process 

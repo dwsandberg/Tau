@@ -4,6 +4,10 @@ use standard
 
 use encoding.idrange
 
+Function $(a:seq.word,b:seq.word) seq.word a+b
+
+Function xml(val:seq.word)seq.word dq.val + space
+
 type idrange is next:int
 
 function =(a:idrange, b:idrange)boolean next.a = next.b

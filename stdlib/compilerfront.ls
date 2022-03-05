@@ -121,14 +121,13 @@ else
  let prg10 = 
   for abstract = empty:seq.passsymbols, simple = empty:seq.passsymbols, m ∈ toseq.modules.t5 do
    if isabstract.modname.m then next(abstract + m, simple)else next(abstract, simple + m)
-  /for(
- let allmods = asset(abstract+simple) 
-let prga = prescan2.compile(allmods, asset.abstract, lib, allsrc, option = "text", empty:set.symdef)
-let requireUnbound=buildrequires(prga + toseq.code.t5 + prg.libinfo)
-let prg = compile(allmods, asset.simple, lib, allsrc, option = "text", requireUnbound)
-asset.( prga + toseq.code.t5 + prg.libinfo +  prg)
-)
- if option = "text"  then
+  /for(let allmods = asset(abstract + simple)
+  let prga = 
+   prescan2.compile(allmods, asset.abstract, lib, allsrc, option = "text", empty:set.symdef)
+  let requireUnbound = buildrequires(prga + toseq.code.t5 + prg.libinfo)
+  let prg = compile(allmods, asset.simple, lib, allsrc, option = "text", requireUnbound)
+  asset(prga + toseq.code.t5 + prg.libinfo + prg))
+ if option = "text"then
   let zz1 = toseq.prg10
   let discard = 
    for acc = symbolref.sym.zz1_1, d ∈ zz1 do if paragraphno.d > 0 then symbolref.sym.d else acc /for(acc)
@@ -173,8 +172,9 @@ asset.( prga + toseq.code.t5 + prg.libinfo +  prg)
    let pb = postbind(roots, prg10a, templates, typedict)
    let afteroption = processOptions(prg.pb, toseq.modules.t5, "COMPILETIME NOINLINE INLINE PROFILE STATE")
    let libmods = tolibraryModules(typedict, toseq.modules.t5, exports)
-   if option = "pass1"then midpoint(option, afteroption, typedict.pb, libmods, empty:seq.seq.word)
-   else midpoint(option,afteroption, templates, typedict, libmods, [first.allsrc])
+   if option = "pass1"then
+    midpoint(option, afteroption, typedict.pb, libmods, empty:seq.seq.word)
+   else midpoint(option, afteroption, templates, typedict, libmods, [first.allsrc])
 
 function midpoint(option:seq.word
 , prg:set.symdef
@@ -183,20 +183,6 @@ function midpoint(option:seq.word
 , libclause:seq.seq.word
 )midpoint
 midpoint(option, prg, empty:set.symdef, typedict, libmods, libclause)
-
-/use otherseq.mytype
-
-
-/Function finish(m:midpoint, prg5:set.symdef)compileinfo
-if option.m = "all"then compilerback2(prg5, libmods.m, typedict.m, [first.src.m])
-else 
-let js=symbol(internalmod,"jsHTTP",constantseq(8,typereal),typereal)
-let k=  for  txt="",    s /in toseq.prg5 do 
-   if js /in code.s  /and "INLINE"_1 /in getoption.code.s  then
-      txt+"/br"+print.sym.s else txt
-  /for(txt)
-assert isempty.k report k
-compileinfo(toseq.prg5, typedict.m, libmods.m, src.m)
 
 Export prg(midpoint)set.symdef
 
@@ -208,13 +194,13 @@ Export typedict(midpoint)typedict
 
 Export type:midpoint
 
-Export prg(midpoint) set.symdef 
+Export prg(midpoint)set.symdef
 
-Export templates(midpoint) set.symdef 
+Export templates(midpoint)set.symdef
 
-Export src(midpoint) seq.seq.word
+Export src(midpoint)seq.seq.word
 
-Export libmods(midpoint) seq.libraryModule
+Export libmods(midpoint)seq.libraryModule
 
 type midpoint is option:seq.word
 , prg:set.symdef
@@ -223,16 +209,6 @@ type midpoint is option:seq.word
 , libmods:seq.libraryModule
 , src:seq.seq.word
 
-
-/function expand(level:int, prg:set.symdef, symin:symbol)set.symbol
-for acc = empty:set.symbol, sym ∈ getCode(prg, symin)do
- if isspecial.sym ∨ isconst.sym ∨ name.module.sym ∈ "internal builtin UTF8 seq"then acc
- else if name.sym ∈ "jsHTTP"then acc + symin
- else if level = 0 then acc
- else
-  let s = expand(level - 1, prg, sym)
-  if isempty.s then acc else acc ∪ expand(level - 1, prg, sym) + symin
-/for(acc)
 
 Export type:compileinfo
 

@@ -234,8 +234,8 @@ else if length.dup = 2 ∧ codedaction.dup_1 < 0 ∧ codedaction.dup_2 > 0 then
  else if between(shiftpos, 1, reducepos)then{choose shift}[dup_2]else dup
 else dup
 
-function printRulePrecedence(ruleprec:seq.seq.word) seq.word
- for acc = "{RulePrecedence", @e ∈ ruleprec do acc + "|" + @e /for(acc+"|}")
+function printRulePrecedence(ruleprec:seq.seq.word)seq.word
+for acc = "{RulePrecedence", @e ∈ ruleprec do acc + "|" + @e /for(acc + "|}")
 
 Function lr1parser(grammarandact:seq.seq.seq.word
 , ruleprec:seq.seq.word
@@ -251,7 +251,7 @@ let nontermials = for acc = empty:set.word, rule ∈ grammar2 do acc + first.rul
 assert isempty(asset.terminals ∩ nontermials)report"terminals and nontermials sets must be distinct"
 let alphabet = terminals + toseq.nontermials
 let initialstateno = valueofencoding.encode.state.initialstate.grammar2
-let finalstatenox = valueofencoding.encode.state.finalstate.grammar2
+{let finalstatenox = valueofencoding.encode.state.finalstate.grammar2}
 let symbolsused = for acc = empty:set.word, rule ∈ grammar2 do acc ∪ asset.rule /for(acc)
 let missingsymbols = symbolsused \ asset.alphabet
 assert isempty(symbolsused \ asset.alphabet)

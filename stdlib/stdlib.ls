@@ -9,6 +9,10 @@ real seq set sparseseq stack standard symbol symbol2 symboldict
 tausupport textio timestamp  typedict UTF8 words xxhash
 codetemplates2
 symbolconstant 
+ptr
+taublockseq
+bitcast
+IO2
 uses
 exports UTF8  barycenter bits   encoding fileio format graph hashset  internalbc ioseq   layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph 
 symbol2 taublockseq tausupport testall textio timestamp  words xxhash compilerfront

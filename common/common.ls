@@ -5,7 +5,6 @@ packedindex
 bandeskopf
 uniqueids
 svg2graph
-help
 makeDAG
 layergraph
 barycenter
@@ -15,7 +14,6 @@ packedindex
 bandeskopf
 uniqueids
 svg2graph
-help
 makeDAG
 layergraph
 barycenter

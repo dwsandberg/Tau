@@ -80,7 +80,7 @@ for inline = postbindresult(typedict1, theprg, empty:set.symdef)
 , allsyms = empty:set.symbol
 , sd ∈ toseq.theprg
 do
- next( if not.isabstract.module.sym.sd ∧ verysimpleinline(sym.sd, code.sd)then
+ next(if not.isabstract.module.sym.sd ∧ verysimpleinline(sym.sd, code.sd)then
   for acc = empty:seq.symbol, typedict3 = typedict.inline, symx ∈ code.sd do
    if islocal.symx ∨ isconst.symx then next(acc + symx, typedict3)
    else

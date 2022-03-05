@@ -115,13 +115,12 @@ builtin loadlib(cstr)int
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
 createlib2(tocstr.[libname]
-, tocstr.for acc = "", @e ∈ dependlibs do acc + [@e] + ".dylib"+encodeword.[char(32)] /for(acc)
+, tocstr.for acc = "", @e ∈ dependlibs do acc + [@e] + ".dylib" + encodeword.[char.32]/for(acc)
 , length.b * 8
 , packed.b
 )
 
 builtin createlib2(name:cstr, libs:cstr, length:int, data:seq.bits)int
-
 
 use tausupport
 
@@ -130,5 +129,4 @@ let addrs = symboladdress.first.loadedLibs
 let i = findindex(sym, subseq(symbolrefdecode.libinfo.first.loadedLibs, 1, length.addrs))
 if i ≤ length.addrs then addrs_i else 0
 
-Export createthread(adcret:int, adc:int, funcaddress:int, 
-args:seq.int, argcode:int)process.int 
+Export createthread(adcret:int, adc:int, funcaddress:int, args:seq.int, argcode:int)process.int 

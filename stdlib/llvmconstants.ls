@@ -30,7 +30,7 @@ enumerate("align", "unspecified ? ? ? align8 align16 align32 align64")
 
 function enumerate(type:seq.word, codes:seq.word)seq.word
 "type" + type + "is toint:int" + " /br  /br Function decode(code:" + type
-+ ")seq.word /br let i=toint.code  /br if between(i+1, 1, "
++ ")seq.word  /br let i=toint.code  /br if between(i+1, 1, "
 + toword.length.codes
 + ")then  /br let r=["
 + dq.codes
@@ -39,10 +39,10 @@ function enumerate(type:seq.word, codes:seq.word)seq.word
 + ")then r else"
 + dq(type + ".")
 + "+toword.i  /br else"
-+dq(type+".")
-+ " +toword.i  /br  /br Export toint("
++ dq(type + ".")
++ "+toword.i  /br  /br Export toint("
 + type
-+ ")int /br  /br Export"
++ ")int  /br  /br Export"
 + type
 + "(i:int)"
 + type

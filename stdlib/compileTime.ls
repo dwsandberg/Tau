@@ -30,11 +30,9 @@ use seq.seq.int
 
 use bitcast:seq.int
 
-
 unbound funcaddress:T(sym:symbol)int
 
 unbound buildargcode:T(sym:symbol, typedict:typedict)int
-
 
 Function interpretCompileTime:T(code:seq.symbol, typedict:typedict)seq.symbol
 let ctsym = last.code
@@ -55,11 +53,10 @@ else
    assert isRecord.sym report"interpret not expecting" + print.sym
    push(pop(stk, nopara), bitcast:int(set(set(toptr.packed.top(stk, nopara), 0), nopara)))
  /for(let adcret = funcaddress:T(deepcopySym.resulttype.ctsym)
-let adc = funcaddress:T(deepcopySym.seqof.typeword)
-let p=createthread(adcret, adc, t, top(stk, nopara.ctsym), buildargcode:T(ctsym, typedict))
+ let adc = funcaddress:T(deepcopySym.seqof.typeword)
+ let p = createthread(adcret, adc, t, top(stk, nopara.ctsym), buildargcode:T(ctsym, typedict))
  assert not.aborted.p report message.p
  tocode:T(result.p, resulttype.ctsym, typedict))
- 
 
 function tocode:T(r:int, typ:mytype, typedict:typedict)seq.symbol
 if typ = typeword then[Word.wordencodingtoword.r]
@@ -71,5 +68,4 @@ else if typ = typereal then[Reallit.r]
 else
  assert isseq.typ report"resulttype not handled" + print.typ
  let s = bitcast:seq.int(toptr.r)
- for acc = [Lit.0, Lit.length.s], @e ∈ s do acc + tocode:T(@e, parameter.typ, typedict)/for(acc)
-
+ for acc = [Lit.0, Lit.length.s], @e ∈ s do acc + tocode:T(@e, parameter.typ, typedict)/for(acc) 

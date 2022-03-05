@@ -194,7 +194,7 @@ else
   else if current = -1 then
    let s = fld:seq.word(p, idx)
    let words = 
-    if dq_1 ∉ s then dq + s + dq
+    if dq_1 ∉ s then  dq.s  
     else
      assert"'"_1 ∉ s report"did not find delimiter for sring"
      "'" + s + "'"

@@ -24,11 +24,9 @@ Export type:UTF8
 
 Export towords(UTF8)seq.word
 
-Function dq seq.word {doublequote} [encodeword.[char.34]]
+Function dq seq.word{doublequote}[encodeword.[char.34]]
 
-Function singlequote seq.word "'"
-
-Function dq(s:seq.word) seq.word dq+s+dq
+Function dq(s:seq.word)seq.word dq + s + dq
 
 Export stacktrace seq.word
 
@@ -310,30 +308,4 @@ Function toindex(i:int)index
 assert i > 0 report"not an index" + stacktrace
 index(i - 1)
 
-Function toint(i:index)int rep.i + 1
-
-Module IO2
-
-use bits
-
-use inputoutput
-
-use standard
-
-use seq.bit
-
-use seq.byte
-
-Export stacktrace seq.word
-
-Export randomint(int)seq.int
-
-Export createfile(name:seq.word, a:seq.byte)int
-
-Export getfile:byte(name:seq.word)seq.byte
-
-Export createfile(name:seq.word, a:seq.int)int
-
-Export getfile:bit(name:seq.word)seq.bit
-
-Export getfile:int(name:seq.word)seq.int 
+Function toint(i:index)int rep.i + 1 

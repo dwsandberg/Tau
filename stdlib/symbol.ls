@@ -333,7 +333,7 @@ if islocal.s then
  [merge(["%"_1] + wordname.s)]
 else if name.module.s ∈ "$int $real"then[name.s]
 else if iswords.s then
- if dq_1 ∈ worddata.s then singlequote + worddata.s + singlequote else dq.worddata.s
+ if dq_1 ∈ worddata.s then"'" + worddata.s + "'"else dq.worddata.s
 else if isword.s then"WORD" + wordname.s
 else if isrecordconstant.s then"const" + name.s
 else if isFref.s then"FREF" + print.basesym.s

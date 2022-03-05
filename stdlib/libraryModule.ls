@@ -133,7 +133,7 @@ let filelist = l_1 << 1
 for acc = ["Library" + first.libname + "uses" + l_2 << 1 + "exports" + l_3 << 1
 , "file(" + first.libname + "/" + last.libname + ".ls)"
 ]
-+ a 
++ a
 , @e ∈ filelist
 do
  if @e = last.libname then acc
@@ -146,7 +146,7 @@ do
   acc
   + if subseq(t, 1, 1) = ["file(" + first.libname + "/" + @e + ".ls)"]then
    t
-   else  ["file("+first.libname+"/"+@e+".ls)"]+t
+  else["file(" + first.libname + "/" + @e + ".ls)"] + t
 /for(acc)
 
 Function extractinfo(a:seq.seq.word)seq.seq.word

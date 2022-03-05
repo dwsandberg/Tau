@@ -1,8 +1,8 @@
+#!/bin/sh tau stdlib common tools testprofile common #
+
 module svg2graph.T
 
 use UTF8
-
-use help
 
 use real
 
@@ -82,13 +82,8 @@ Function drawscript:T seq.word
 (idval, index){if(index > 0){let element=document.getElementById(idval); let d="
 + dq."M"
 + space
-+ "+(bb.x+bb.width)+"
-+ dq.", "
-+ "+(bb.y+bb.height)+element.getAttribute("
-+ dq."d"
-+ ").substring(5); element.setAttribute("
-+ dq."d"
-+ ", d);}});}</script> <style>.arcs{fill:none ; stroke:black ; stroke-width:.07 ;}.nodes{font-size:.03em; stroke 
++ "+(bb.x+bb.width)+$(dq.", ")+(bb.y+bb.height)+element.getAttribute($(dq."d")).substring(5);
+ element.setAttribute($(dq."d"), d);}});}</script> <style>.arcs{fill:none ; stroke:black ; stroke-width:.07 ;}.nodes{font-size:.03em; stroke 
 -width:.1 ;}svg g:hover text{opacity:1;}svg g:hover rect{opacity:1;}</style>"
 + encodeword.[char.10]
 
@@ -141,12 +136,9 @@ do
  if i ≤ cardinality.nodes.xxx ∧ (nodes.xxx)_i = n.n then
   let succ = toseq.successors(xxx, n.n)
   let hovertext = nodeTitle.n.n
-  let svg = 
-   element("text id class x y"
-   , [[toword.id], "nodes", print(3, nodex), print(3, nodey)]
-   , node2text.n.n
-   )
-   + encodeword.[char.10]
+    let svg = "<text id=$(xml.[toword.id]) class=$(xml."nodes") x=$(xml.print(3, nodex)) y=$(xml.print(3, nodey))>
+   $(node2text.n.n)</text>"  
+   +  encodeword.[char.10]
    + for arctxt = "", j = id + 1, s ∈ succ do
     let xy = lookup(nodeinfo.layout, nodeinfo(s, 0, 0))_1
     let paths = lookup(arcpaths, arcpath(arc(n.n, s), "", 0))
@@ -154,27 +146,23 @@ do
      if isempty.paths then"L" + print(3, toreal.y.xy * scalex) + print(3, toreal.x.xy * scaley)
      else d.paths_1
     next(arctxt
-    + element("path id class d"
-    , [[toword.j], "arcs", "M 0 0" + path]
-    , ""
-    )
+    + "<path id=$(xml.[toword.j])class=$(xml."arcs") d=$(xml("M 0 0" + path)) ></path>"
     + encodeword.[char.10]
     + if haslabels then
      let lab = lookup(labels, arc(n.n, s, ""))
      if isempty.lab then""
      else
-      element("text class"
-      , ["nodes"]
-      , element("textPath href startOffset text-anchor"
-      , [[merge("#" + toword.j)], "100%", "end"]
-      , element("tspan dy", ["-0.1"], label.lab_1)
-      )
-      )
+        "<text class=$(xml."nodes") > 
+        <textPath href=$(xml.[merge("#" + toword.j)])
+              startOffset=$(xml."100%")  text-anchor=$(xml."end")>
+             <tspan dy=$(xml."-0.1")> $(label.lab_1) </tspan> </textPath>
+              </text>"  
       + encodeword.[char.10]
     else""
     , j + 1
     )
    /for(arctxt)
+   {"<tspan dy=$(xml."-0.1")> $(label.lab_1) </tspan>"}
   let newdraw = 
    if length.succ > 0 then
     for drawtxt = "", k ∈ arithseq(1 + length.succ, 1, id)do drawtxt + toword.k + ", "/for("[" + drawtxt >> 1 + "], ")
@@ -190,14 +178,10 @@ do
  else next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
 /for(let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e /for(svg2)
 " /br  /< noformat" + drawscript:T
-+ element("svg id xmlns viewBox onload"
-, ["svg10"
-, "http://www.w3.org/2000/svg"
-, "5.0-1" + print(2, maxx + 5.0) + print(2, maxy + 1.0)
-, "[" + draw >> 1 + "].forEach(shiftstart)"
-]
-, txt + hovertxt
-)
++ "<svg id=$(xml."svg10") xmlns=$(xml."http://www.w3.org/2000/svg") 
+viewBox=$(xml("5.0-1" + print(2, maxx + 5.0) + print(2, maxy + 1.0)))
+onload=$(xml("[" + draw >> 1 + "].forEach(shiftstart)")) >
+$(txt+hovertxt)+</svg>"
 + " />")
 
 type hovertext is n:T, nodex:real, nodey:real, text:seq.word
@@ -207,30 +191,13 @@ if nodex.b < nodex.a ∨ nodey.b < nodey.b then LT
 else if nodex.b = nodex.a ∨ nodey.b = nodey.b then EQ else GT
 
 function assvg(h:hovertext.T)seq.word
-element("g"
-, element("rect opacity x y height width"
-, ["0.0"
-, print(2, nodex.h)
-, print(2, nodey.h - 0.5)
-, "0.5"
-, "1"
-]
-, ""
-)
-+ element("rect pointer-events fill opacity x y height width"
-, ["none"
-, "white"
-, "0.0"
-, print(2, nodex.h)
-, print(2, nodey.h - 0.5)
-, "1"
-, "100"
-]
-, ""
-)
-+ element("text pointer-events class x y opacity"
-, ["none", "nodes", print(2, nodex.h), print(2, nodey.h), "0.0"]
-, text.h
-)
-)
+"<g> <rect  opacity=$(xml."0.0") x=$(xml.print(2, nodex.h)) y=$(xml.print(2, nodey.h - 0.5))
+   height=$(xml."0.5") width=$(xml."1") ></rect>"
+ +"<rect pointer-events=$(xml."none") fill=$(xml."white") opacity=$(xml."0.0")
+ x=$(xml.print(2, nodex.h)) y=$(xml.print(2, nodey.h - 0.5)) height=$(xml."1") width=$(xml."100")
+ ></rect>"
++ "<text pointer-events=$(xml."none") class=$(xml."nodes") 
+ x=$(xml.print(2, nodex.h)) y=$(xml.print(2, nodey.h)) opacity=$(xml."0.0") > $(text.h) </text>"
++"</g>"
 + encodeword.[char.10] 
+

@@ -104,11 +104,14 @@ function callentrypoint(arg:UTF8)UTF8
 let t = entrypointaddress.last.loadedLibs
 if t ≤ 0 then HTMLformat."callentrypoint address ERROR"
 else
-let p=createthread(funcaddress.deepcopySym.typeref."UTF8 UTF8"
-,funcaddress.deepcopySym.seqof.typeword
-,t,[bitcast:int(toptr.arg)],4)
+ let p = 
+  createthread(funcaddress.deepcopySym.typeref."UTF8 UTF8"
+  , funcaddress.deepcopySym.seqof.typeword
+  , t
+  , [bitcast:int(toptr.arg)]
+  , 4
+  )
  if aborted.p then HTMLformat.message.p else bitcast:UTF8(toptr.result.p)
- 
 
 Function astext(info:compileinfo)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ prg.info do acc + [print.sym.p + print.code.p]/for(acc)
@@ -122,14 +125,13 @@ Function compilerfront:libllvm(option:seq.word, allsrc:seq.seq.word)compileinfo
 let t = break(allsrc_1, "uses exports", true)
 compilerfront4:libllvm(option, allsrc, dependentinfo:libllvm(t_2 << 1))
 
-
 function funcaddress:libllvm(sym:symbol)int funcaddress.sym
 
 use typedict
 
 function buildargcode:libllvm(sym:symbol, typedict:typedict)int
 {needed because the call interface implementation for reals is different than other types is some implementations}
-for acc = 1, typ ∈ paratypes.sym + resulttype.sym do acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0 /for(acc) 
+for acc = 1, typ ∈ paratypes.sym + resulttype.sym do acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0 /for(acc)
 
 _______________
 

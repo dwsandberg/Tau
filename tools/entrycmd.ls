@@ -45,7 +45,7 @@ if length.part = 1 then part + part else part
 function findoption(p:seq.word)seq.word
 let part = subseq(p, 3, findindex(first." />", p) - 1)
 let k = break(part, "-=", true)
-assert length.k = 2 report "Error:syntax"+p
+assert length.k = 2 report"Error:syntax" + p
 if first.k_2 = first."-"then subseq(k_2, 2, 2) + empty(first.k, "f")
 else[last.first.k] + k_1 << 1
 
@@ -109,7 +109,7 @@ else
      next(txt + " /p" + new, cmdno + 1, false)
     else if key = " /< option"then
      next(txt + " /p" + clean(p, "-"), cmdno, true)
-    else 
+    else
      let pp = 
       if subseq(p, 1, 1) ∈ ["Function", "function"]then pretty.p else p
      next(txt + " /p"
@@ -142,17 +142,20 @@ else
     txt
     + if html then
      pretty("Function" + merge("cmd" + proc.c) + "int" + editwarning.libname
-     + " setElementValue("+dq."pageready"+", "
+     + "setElementValue("
+     + dq."pageready"
+     + ", "
      + call
      + ")")
      + " /p"
     else"if cmd=" + dq.[cmdname.c] + "then" + call + "else"
    /for(if html then txt
    else
-      pretty("Function entrypoint(argin:UTF8)UTF8" + editwarning.libname
-    + "let allargs=towords.argin let cmd=[first.allargs]let otherargs=allargs << 1 
-    HTMLformat("
-    + txt +dq."unknown command"+ "+cmd )"))
+    pretty("Function entrypoint(argin:UTF8)UTF8" + editwarning.libname
+    + "let allargs=towords.argin let cmd=[first.allargs]let otherargs=allargs << 1 HTMLformat("
+    + txt
+    + dq."unknown command"
+    + "+cmd)")/if)
  doc + proc
 
  /< command entry  /> Generate a command line interface for a library and provide documentation.
@@ -183,9 +186,9 @@ command is used.
 
  /< option *-option(<spec>, ..) /> Shows how the argments of a command are broken up. This option provides a list of the options 
 . Each spec is the option name followed by the type  /br * zero or more words.  /br 1 exactly one word.  /br f no words; that is 
-a flag set to true if option is present. /br >0 one or more words.
+a flag set to true if option is present.  /br >0 one or more words.
 
-A unix shell will treat some characters as special and may need to be escaped. /< block tau stdlib simpletest entry-option\ 
+A unix shell will treat some characters as special and may need to be escaped.  /< block tau stdlib simpletest entry-option\ 
 (args *, c 1, b f \)-args\(arg1-b c=hello world\) />
 
  /< noformat <style> span.command{color:black ; font-size:120%; font-weight:bold;}span.block{padding:0px 0px 0px 

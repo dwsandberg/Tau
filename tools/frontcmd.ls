@@ -1,7 +1,3 @@
-#!/bin/sh tau  stdlib  tools  front  library=  david -mods( david delta) #
-
-
-
 Module frontcmd
 
 use baseTypeCheck
@@ -107,8 +103,7 @@ Function nodeTitle(a:symbol)seq.word print.a
  
  /< option * -rn  />  root names
  
- /< option 1 pretty baseTypeCheck sym symdef resultCheck-out  /> format of output  /< block The comand"front out=pretty library 
-=<Library>"will check the sematics and place one file for each module in directory tmp  />
+ /< option 1 pretty baseTypeCheck sym symdef resultCheck-out  /> format of output  
 
 -out sym will print list of symbols
 

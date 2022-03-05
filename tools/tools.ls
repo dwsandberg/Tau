@@ -53,16 +53,13 @@ use entrycmd
 Entry point procedure
 
 Function entrypoint(argin:UTF8)UTF8 
-{This function was generated from the documentation in the files:"tools/entrycmd tools/frontcmd tools/tools tools/genLR1 
-". Manually editing this function is a bad idea.}
-let allargs = towords.argin
+{This function was generated from the documentation in the files:"tools/entrycmd tools/frontcmd tools/tools tools/genLR1 ". Manually editing this function is a bad idea.} let allargs = towords.argin 
 let cmd = [first.allargs] 
 let otherargs = allargs << 1 
 HTMLformat. if cmd = "entry" then
 let args =
 parseargs(otherargs 
-  , "args web proc doc option"
-  , ["*", "f", "f", "f", "*"]
+, "args web proc doc option" , ["*" , "f" , "f" , "f" , "*" ] 
 )
 entry(getarg(args, "args" _1) 
 , getarg:boolean(args, "web" _1) 
@@ -73,17 +70,7 @@ entry(getarg(args, "args" _1)
 else if cmd = "front" then
 let args =
 parseargs(otherargs 
-  , "library pass n !n mods !mods within rn out"
-  , ["1"
-  , "1"
-  , "*"
-  , "*"
-  , "*"
-  , "*"
-  , "f"
-  , "*"
-  , "1 pretty baseTypeCheck sym symdef resultCheck"
-  ]
+, "library pass n !n mods !mods within rn out" , ["1" , "1" , "*" , "*" , "*" , "*" , "f" , "*" , "1 pretty baseTypeCheck sym symdef resultCheck" ] 
 )
 frontcmd(getarg(args, "library" _1) 
 , getarg(args, "pass" _1) 
@@ -109,9 +96,13 @@ else if cmd = "lextable" then getlextable
 else if cmd = "doclibrary" then
 let args = parseargs(otherargs, "args" , ["1" ]) 
 doclibrary.getarg(args, "args" _1)
-else if cmd = "test3" then
-let args = parseargs(otherargs, "args" , ["1" ]) 
-test3.getarg(args, "args" _1)
+else if cmd = "transform" then
+let args =
+parseargs(otherargs, "args target rename" , ["1" , "1" , "*" ])
+transform(getarg(args, "args" _1) 
+, getarg(args, "target" _1) 
+, getarg(args, "rename" _1) 
+)
 else if cmd = "htmlcode" then
 let args = parseargs(otherargs, "args" , ["1" ]) 
 htmlcode.getarg(args, "args" _1)
@@ -136,25 +127,7 @@ callgraphwithin(prg.compilerfront("text", libname), args)
 function callgraphbetween(libname:seq.word, args:seq.word)seq.word
 callgraphbetween(prg.compilerfront("text", libname), args)
 
-Function test3(lib:seq.word)seq.word
-totext(compilerfront("text", lib) 
-, "tmp"
-, [rename("seq.T:findelement(T, seq.T)seq.T", "lookup", [2, 1])
-, rename("set.symdef:findelement(symdef, set.symdef)set.symdef", "lookup", [2, 1])
-, rename("set.passtypes:findelement(passtypes, set.passtypes)set.passtypes"
-, "lookup"
-, [2, 1]
-)
-, rename("set.passsymbols:findelement(passsymbols, set.passsymbols)set.passsymbols"
-, "lookup"
-, [2, 1]
-)
-, rename("set.typeentry:findelement(typeentry, set.typeentry)set.typeentry"
-, "lookup"
-, [2, 1]
-)
-]
-)
+
 
 function help seq.word
 entry("tools/frontcmd tools/entrycmd tools/tools tools/genLR1"
@@ -168,11 +141,16 @@ use otherseq.word
 
 use parseargs
 
+use prettycompilerfront
+
+
+function transform(library:seq.word,target:seq.word,rename:seq.word) seq.word
+   transform( compilerfront("text", library),library,if isempty.target then "tmp" else target,
+      rename)
+      
+
 Function frontcmd(library:seq.word, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
 , ~mods:seq.word,within:boolean,rootnames:seq.word, out:seq.word)seq.word
-if out = "pretty"then
- {should be able to specify target}totext(compilerfront("text", library), "tmp")
-else
  front(compilerfront(if isempty.pass then"pass2"else pass, library)
  , pass
  , n
@@ -208,9 +186,15 @@ else
  
 /< option 1  -args  /> <library name>
 
-/< command test3    /> 
+/< command transform />   Will parse and check the sematics of a library 
+    and place one file for each module in the target directory. Expressions such as 
+    not(a=b) will be rewritten as a /ne b.  Modules can be renamed. 
  
 /< option 1 -args  /> <library name>
+
+/< option 1 -target /> <target directory>
+
+/< option * -rename />  Modules to rename.  Example -rename(oldname > newname)
   
 /< command htmlcode     /> 
   
