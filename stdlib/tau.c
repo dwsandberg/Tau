@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include <strings.h>
+#include <string.h>
 #include <signal.h>
 #include <time.h>
 #include <errno.h>
@@ -188,7 +188,7 @@ addlibrarywords(&sharedspace,libdesc);
     sprintf(name,"%s.dylib",libname);
      stat(name, &sbuf);
     loaded[i+2]= libdesc; 
-    ((BT*)loaded[i+2])[3]=sbuf.st_mtimespec.tv_sec;
+    ((BT*)loaded[i+2])[3]=0;
     strcpy(libnames[i+2],libname);
     }
 
@@ -197,48 +197,7 @@ return 0;
   
 }
 
-#ifdef LIBRARY 
 
-#include <dlfcn.h>
-
-BT loadlibrary(struct pinfo *PD,char *lib_name_root){
-   char lib_name[200],name[100];
-   struct stat sbuf;
-   BT liblib;
-    int i = looklibraryname(lib_name_root) ;
-  if (i >= 0)
-   {   // fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
-     return ((BT*)loaded[i+2])[3];}
-  //  fprintf(stderr,"check %s,%d\n",lib_name_root,strlen(lib_name_root));
-   sprintf(lib_name,"%s.dylib",lib_name_root);
-   // fprintf(stderr,"Loading %s\n",lib_name);
-   void *lib_handle = dlopen(lib_name, RTLD_NOW);
-    if (lib_handle==0) {
-      fprintf(stderr,"[%s] Unable to open library: %s\n",__FILE__, dlerror());
-     return -1;
-    }  
-  stat(lib_name, &sbuf) ;  
-   fprintf(stderr,"using lib %s  time: %ld\n",lib_name,sbuf.st_mtimespec.tv_sec );          
-  return sbuf.st_mtimespec.tv_sec;
-      
-}
-
-
-#else
-
-BT loadlibrary(struct pinfo *PD,char *lib_name_root){ 
-fprintf(stderr,"Loadlibrary ???");
-return -1;}
-
-void init_stdlib();
-void init_common();
-void init_tools();
-void initlibs(){init_stdlib(); init_common(); init_tools();}
-
-//  cc stdlib/*.c  tmp/stdlib.bc tmp/common.bc tmp/tools.bc
-
-
-#endif
 
 
 // end of library support 
@@ -316,31 +275,84 @@ BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * filena
            p++;o++;
       }
     }
+    
+#ifdef LIBRARY 
+
+#include <dlfcn.h>
+
+BT loadlibrary(struct pinfo *PD,char *lib_name_root){
+   char lib_name[200],name[100];
+   struct stat sbuf;
+   BT liblib;
+    int i = looklibraryname(lib_name_root) ;
+  if (i >= 0)
+   {   // fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
+     return ((BT*)loaded[i+2])[3];}
+  //  fprintf(stderr,"check %s,%d\n",lib_name_root,strlen(lib_name_root));
+   sprintf(lib_name,"%s.dylib",lib_name_root);
+   // fprintf(stderr,"Loading %s\n",lib_name);
+   void *lib_handle = dlopen(lib_name, RTLD_NOW);
+    if (lib_handle==0) {
+      fprintf(stderr,"[%s] Unable to open library: %s\n",__FILE__, dlerror());
+     return -1;
+    }  
+  stat(lib_name, &sbuf) ;  
+   fprintf(stderr,"using lib %s  time: %ld\n",lib_name,sbuf.st_mtimespec.tv_sec );          
+  return sbuf.st_mtimespec.tv_sec;
+      
+}
 
 BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data ){
      char * libname=   tocstr(filename);
-   //  char * otherlib= tocstr(otherlibs) ; 
-     char buff[200];
-     prepare(buff,otherlibs,"(); ");
-     prepare(buff+100,otherlibs,"();\n void");
-     char buff2[200];
-     sprintf(buff2+16,"void %s();\n void %s initlibs(){%s%s();}",libname,buff+100,buff,libname); 
-     sprintf(buff+16,"tmp/ddd.c" );   
-      ((BT *)buff2)[0]=0; createfile2(PD, strlen(buff2+8)  , (struct bitsseq * )buff2, buff);
-     char  otherlib[200]; 
-     prepare(otherlib,otherlibs,".dylib ");
+    char buff[200];
+         char  otherlib[200]; 
   /* create the .bc file */
        sprintf(buff+16,"tmp/%s.bc",libname);
         createfile2(PD, bytelength , data,buff);
-  /* compile to .bc file */ 
- // sprintf(buff,"%s.bc",libname);
-  sprintf(buff,"/usr/bin/cc -dynamiclib tmp/%s.bc %s -o %s.dylib  -init _init_%s -undefined dynamic_lookup"
+   /* compile to .dylib file */ 
+     prepare(otherlib,otherlibs,".dylib ");
+  sprintf(buff,"clang -lm -pthread -dynamiclib tmp/%s.bc %s -o %s.dylib  -init _init_%s -undefined dynamic_lookup"
   ,libname,  otherlib,libname,libname);
    fprintf(stderr,"Createlib3 %s\n",buff);
-  int err=system(buff);
+   int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
   else {loadlibrary(PD,tocstr(filename)); return 1;}
 }
+
+#else
+
+BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data ){
+     char * libname=   tocstr(filename);
+    char buff[200];
+         char  otherlib[200]; 
+  /* create the .bc file */
+       sprintf(buff+16,"tmp/%s.bc",libname);
+        createfile2(PD, bytelength , data,buff);
+       prepare(buff,otherlibs,"(); init_");
+     prepare(buff+100,otherlibs,"();\n void init_");
+        char buff2[200];
+     ((BT *)buff2)[0]=0; 
+       sprintf(buff2+16,"void init_%s();\n void init_%slibs(){init_%s%s();}",libname,buff+100,buff,libname); 
+     sprintf(buff+16,"tmp/%s.c" ,libname);   
+       createfile2(PD, strlen(buff2+16)  , (struct bitsseq * )buff2, buff);
+     prepare(otherlib,otherlibs,".bc tmp/");
+     sprintf(buff,"clang -lm -pthread stdlib/*.c tmp/%s.c tmp/%s%s.bc  -o bin/%s",
+     libname,otherlib,libname,libname);
+   int err=     system(buff);
+    if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
+  else { return 1;}
+}
+
+
+void init_libs();
+
+
+//  cc stdlib/*.c  tmp/stdlib.bc tmp/common.bc tmp/tools.bc
+
+
+#endif
+
+
     
 BT subgetfile(processinfo PD,  char *filename,BT seqtype){
   char *name= tocstr(filename);
@@ -455,7 +467,7 @@ int main(int argc, char **argv)    {   int i=0,count;
      loadlibrary(&sharedspace, argv[1]); 
 #else
   int startarg=1;
-  initlibs();
+  init_libs();
 #endif
   
       BT   entrypoint=((BT*)loaded[loaded[1]+1])[2];

@@ -1,22 +1,21 @@
-#!/bin/sh  tau stdlib tools createdoc
+#!/bin/sh  tau stdlib common tools formatdoc tools/install #
 
-/section Tau Install Instruction
+/< /section Tau Install Instruction />
 
-Install command line tools for Mac OS ,if not already installed.
+Make sure clang is installed.   For Mac OS Clang is available if the command line tools are installed.
 
-Down load zip file from GitHub
+Down load zip file from GitHub  (Repository is dwsandberg/Tau
 
 Unzip to directory a which we will call <Tau>.  This directory will become the working directory for tau.    You are free to choose another name.  
 
 Modify PATH environment variable to include absolute path to <Tau>/bin. 
 
-Open Terminal and cd to Tau
+Open terminal and change direcotry to <Tau>.
 
 Run "bash bin/install".  This is likely to generate a warning message about the llvm spec. 
 
 
-
-/section HelloWorld
+/< /section HelloWorld />
 
 1. Create a new directory <Tau>/HelloWorld
 
@@ -28,11 +27,16 @@ Module HelloWorld
 
 use standard 
 
-Function entrypoint(args:UTF8) UTF8 HTMLformat."Hello World"
+Function entrypoint(args:UTF8) UTF8 HTMLformat."Hello World!"
 
-3. From terminal run: /< block tau  stdlib HelloWorld arg />
+3. From terminal run: /< block  stdlib HelloWorld | html /> 
 
-This will create a file <tau>/tmp/stdlib.html and open the file in a browser. 
+This will create a program with the name of HelloWord.  The pipe to html will open
+the default browser and display the a message saying that this was done.
+
+4. From terminal run: /< block HelloWord   | html /> This will display "Hello World!" in the web browser. 
+
+---------------------
 
 In this command /em tau refers to a script in <tau>/bin/tau.  The next word, /em stdlib 
 , refers to a dynamic library <tau>/stdlib.dylib which tau will load 
@@ -56,7 +60,7 @@ Your text editor may run HelloWorld as a script without setting the execute bit.
 To set the execute bit, use /< block chmod +x HelloWorld/HelloWorld.ls />
 
 
-/section Installing Web Assembly Cross Compiler
+/< /section Installing Web Assembly Cross Compiler />
 
 Since wasm files cannot be served from filesystem a web server is require.  OSX has an apache web server pre-installed so we will use that server
 with the DocumentRoot being <Tau>.  Below is the list of configuration changes that need to be made.  Google to find details on how to make these changes.

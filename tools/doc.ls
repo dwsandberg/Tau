@@ -74,6 +74,9 @@ let modules =
  + "</a>  />"
 /for(acc + p)
 
+Function  formatdoc(args:seq.word) seq.word
+ prettyfile(false,"",breakparagraph.getfile:UTF8(args+".txt"))
+
 Function createdoc seq.word
 {Creates html tau html documentation. Creates file taudocs.html}
 let d = prettyfile(false, "", breakparagraph.getfile:UTF8("tools/doc.txt"))

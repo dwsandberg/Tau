@@ -109,8 +109,9 @@ htmlcode.getarg(args, "args" _1)
 else if cmd = "testprofile" then
 let args = parseargs(otherargs, "args" , ["1" ]) 
 testprofile.getarg(args, "args" _1)
-else if cmd = "createdoc" then createdoc 
-else if cmd = "help" then help 
+else if cmd = "formatdoc" then
+let args = parseargs(otherargs, "args" , ["1" ]) 
+formatdoc.getarg(args, "args" _1)else if cmd = "help" then help 
 else if cmd = "LR1" then
 let args = parseargs(otherargs, "args c p" , ["*" , "f" , "f" ]) 
 LR1gen(getarg(args, "args" _1) 
@@ -162,8 +163,6 @@ Function frontcmd(library:seq.word, pass:seq.word, n:seq.word, ~n:seq.word, mods
  , out
  )
  
- 
-
  /< command  prettybyfile pretty  /> pretty  Pretty print the source code of a Library.  
  
  This command checks the syntax of each source file but not the semantics.  
@@ -204,7 +203,9 @@ Function frontcmd(library:seq.word, pass:seq.word, n:seq.word, ~n:seq.word, mods
  
   /< option 1 -args  /> <library name>
   
-/< command createdoc    /> 
+/< command formatdoc    /> 
+
+ /< option 1 -args  />  filename
 
 /< command help  />
 

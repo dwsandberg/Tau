@@ -1,4 +1,6 @@
 xattr -rd com.apple.quarantine bin/checkboot 
 xattr -rd com.apple.quarantine bin/tau
 mkdir tmp
-checkboot
+echo "void init_stdlib(); void init_libs(){init_stdlib(); }">tmp/stdlib.c
+clang -lm -pthread  stdlib/*.c tmp/stdlib.c bin/stdlib.bc  -o bin/stdlib
+cp bin/stdlib.bc tmp
