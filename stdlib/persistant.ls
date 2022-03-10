@@ -127,7 +127,7 @@ let data =
  for acc = [toint.C64.0, toint.C64.length.wordstoadd], @e ∈ wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
 let wordreps = addobject.data
 let emptyseq = addobject.[toint.C64.0, toint.C64.0]
-addobject("liblib"
+addobject2("liblib"+libname
 , [name
 , wordreps
 , toint.entrypoint
@@ -142,10 +142,10 @@ addobject("liblib"
 ]
 )
 
-function addobject(name:seq.word, data:seq.int)int
+function addobject2(name:seq.word, data:seq.int)int
 let objtype = array(length.data, i64)
 let ll = 
- global("liblib"
+ global(name
  , objtype
  , AGGREGATE.for acc = empty:seq.slot, @e ∈ data do acc + asi64.slot.@e /for(acc)
  )

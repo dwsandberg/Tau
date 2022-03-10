@@ -83,39 +83,36 @@ createfile2(length.a * 8
 
 Builtin randomint(i:int)seq.int
 
-Function stacktrace seq.word internalstacktrace
 
-Function internalstacktrace seq.word
-for acc = "", @e ∈ callstack.30 << 2 do acc + " /br" + printfunc.addresstosymbol2.@e /for(acc)
+type addrsym is addr:int,sym:symbol
 
-function printfunc(name:seq.char)seq.word
-let i = findindex(char1."$", name)
-let library = encodeword.subseq(name, 1, i - 1)
-let idx = toint.encodeword.subseq(name, i + 2, length.name)
-for name2 = "", ll ∈ loadedLibs
-while isempty.name2
-do if first.libname.ll = library ∧ idx ≤ length.decoderef.ll then print.(decoderef.ll)_idx else name2
-/for(if isempty.name2 then[encodeword.name]else name2 /if)
+use otherseq.addrsym
+
+use seq.addrsym
+
+use seq.int
+
+
+function ?(a:addrsym,b:addrsym) ordering addr.a ? addr.b 
+
+Function stacktrace seq.word  
+let t= for acc=empty:seq.addrsym, ll /in loadedLibs do
+for t=acc,idx=1, i /in symboladdress.ll do 
+next(t+addrsym(i , (libinfo.ll)_symbolref.idx),idx+1) /for(t)
+/for(sort.acc)
+for txt="/p", r /in callstack(30) << 2 do 
+let i=binarysearch(t,addrsym(r,Lit.1))
+txt+print.r + if between(-i-1,1,length.t) then print.sym.t_(-i-1) else "" /if +"/br" 
+/for(txt)
 
 builtin callstack(n:int)seq.int
 
-builtin addresstosymbol2(a:int)seq.char
+Builtin loadedLibs seq.liblib
 
-Builtin loadedlibs2 seq.liblib
-
-Function loadedLibs seq.liblib loadedlibs2
-
-Function unloadlib(a:seq.word)int unloadlib2.tocstr.a
-
-builtin unloadlib2(cstr)int
-
-Function loadlibrary(a:word)int loadlib.tocstr.[a]
-
-builtin loadlib(cstr)int
 
 Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
 createlib2(tocstr.[libname]
-, tocstr.for acc = "", @e ∈ dependlibs do acc + [@e] + ".dylib" + encodeword.[char.32]/for(acc)
+, tocstr.for acc = "", @e ∈ dependlibs do acc + @e   + encodeword.[char.32]/for(acc)
 , length.b * 8
 , packed.b
 )

@@ -96,22 +96,23 @@ Function compile(arg:UTF8)UTF8
 let wordargs = towords.arg
 let p = process.subcompilelib.[first.wordargs]
 if aborted.p then HTMLformat("COMPILATION ERROR in libray:" + wordargs + EOL + message.p)
-else if length.wordargs = 1 ∨ wordargs_2 ∈ ". ."then
+else if length.wordargs = 1 ∨ wordargs_2 ∈ "#"then
  HTMLformat("finished compiling" + first.wordargs)
-else callentrypoint.toUTF8(wordargs << 1)
-
-function callentrypoint(arg:UTF8)UTF8
-let t = entrypointaddress.last.loadedLibs
-if t ≤ 0 then HTMLformat."callentrypoint address ERROR"
-else
- let p = 
-  createthread(funcaddress.deepcopySym.typeref."UTF8 UTF8"
-  , funcaddress.deepcopySym.seqof.typeword
-  , t
-  , [bitcast:int(toptr.arg)]
-  , 4
-  )
- if aborted.p then HTMLformat.message.p else bitcast:UTF8(toptr.result.p)
+else 
+ let newarg=toUTF8(wordargs << 1)
+ let t = entrypointaddress.last.loadedLibs
+ if t ≤ 0 then HTMLformat."callentrypoint address ERROR"
+ else
+  let p2 = 
+    createthread(funcaddress.deepcopySym.{typeref."UTF8 UTF8"}typeint
+   , funcaddress.deepcopySym.seqof.typeword
+   , t
+   , [bitcast:int(toptr.newarg)]
+   , 4
+   )
+ if aborted.p2 then HTMLformat.message.p2 else toUTF8.""
+ 
+ bitcast:UTF8(toptr.result.p)
 
 Function astext(info:compileinfo)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ prg.info do acc + [print.sym.p + print.code.p]/for(acc)

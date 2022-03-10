@@ -142,7 +142,7 @@ do
     call(alltypes
     , firstsym
     , "CALL"_1
-    , mangledname(libextnames, firstsym, "loc1", first.c)
+    , mangledname(libextnames, firstsym,   first.c,thename)
     )
    next(used0, crecord, defines, symrefs + first.c, extnames)
   else
@@ -193,7 +193,7 @@ for defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
   else next(defines, extnames)
  else if ref ∈ symrefs then next(defines, extnames)
  else if not.isInternal.ele ∨ externalcall.ele then
-  let discard5 = call(alltypes, ele, "CALL"_1, mangledname(extnames, ele, "loc2", ref))
+  let discard5 = call(alltypes, ele, "CALL"_1, mangledname(extnames, ele,   ref,thename))
   next(defines, extnames)
  else
   let r = toint.ref
@@ -202,7 +202,7 @@ for defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
 /for(let defines2 = 
  for acc = empty:set.symbol, sd ∈ toseq.defines do
   let ele2 = sym.sd
-  let name = mangledname(extnames, ele2, "defines", symbolref.paragraphno.sd)
+  let name = mangledname(extnames, ele2,  symbolref.paragraphno.sd,thename)
   let discard = funcdec(alltypes, ele2, name)
   let discard5 = call(alltypes, ele2, "CALL"_1, name)
   acc + ele2
@@ -236,11 +236,16 @@ let f1 =
  , typeref."liblib libraryModule"
  , typeint
  )
+let functyp = ptr.tollvmtype(typedict, f1)
+ptrtoint(functyp, symboltableentry([mangledname(extnames, f1,   symbolref.0,"stdlib"_1)], functyp))
+
+ Export tollvmtype(typedict, symbol) llvmtype
+ 
 Frefslot(f1, extnames, typedict, symbolref.0)
 
-Function Frefslot(sym:symbol, extnames:set.symdef, typedict:typedict, ref:symbolref)slot
-let functyp = ptr.tollvmtype(typedict, sym)
-ptrtoint(functyp, symboltableentry([mangledname(extnames, sym, "locFref", ref)], functyp))
+function libname(info:compileinfo) word   (first.src.info)_2
+
+use seq.seq.word
 
 function buildFref(frefs:seq.symbolref, info:compileinfo, extnames:set.symdef)seq.match5
 let alltypes = typedict.info
@@ -248,12 +253,12 @@ for acc = empty:seq.match5, ref ∈ frefs do
  let refbase = symbolref.-toint.ref
  let basesym = info_refbase
  let functyp = ptr.tollvmtype(alltypes, basesym)
- let discard = 
+  let discard = 
   addtemplate(Fref.basesym
   , 0
   , emptyinternalbc
   , "ACTARG"_1
-  , Frefslot(basesym, extnames, alltypes, refbase)
+  ,ptrtoint(functyp, symboltableentry([mangledname(extnames, basesym,   refbase,libname.info)], functyp))
   )
  acc
 /for(acc)
@@ -274,10 +279,8 @@ for org = empty:set.symdef, ll ∈ loadedLibs do
 /for(org)
 
 Function processconst(toprocess:seq.symdef, alltypes:typedict)int
-let discard6a = buildconst(Lit.0, alltypes)
-if isempty.toprocess then 0
-else
- for notprocessed = empty:seq.symdef, changed = false, xx ∈ toprocess do
+let initvalue = assignencoding(buildconst(Lit.0, alltypes))
+ for notprocessed = empty:seq.symdef,  xx ∈ toprocess do
   let processed = 
    for args = empty:seq.int, defined = true, ele ∈ code.xx
    while defined
@@ -294,30 +297,15 @@ else
     let discard = addtemplate(sym.xx, 0, emptyinternalbc, "ACTARG"_1, slot.addobject.args)
     true
    else false /if)
-  next(if processed then notprocessed else notprocessed + xx, changed ∨ processed)
- /for(assert changed ∨ isempty.notprocessed ∨ print.code.notprocessed_1 = "0 0"
- report"problem processconst" + toword.length.notprocessed + print.sym.notprocessed_1
- + print.code.notprocessed_1
- + for txt = "", xx2 ∈ notprocessed do
-  let txt2 = 
-   for txt2 = "", ele ∈ code.xx2 do
-    let tp = findtemplate.ele
-    if isempty.tp then txt2 + print.ele else txt2
-   /for(txt2)
-  txt + txt2
- /for(txt)
- if not.changed then 0 else processconst(notprocessed, alltypes)/if)
-
-Function mangledname(extname:set.symdef, s:symbol, loc:seq.word)word mangledname(extname, s, loc, symbolref.0)
-
-Function mangledname(extname:set.symdef, s:symbol, loc:seq.word, ref:symbolref)word
-if name.module.s ∈ "internal"then
+ if processed then notprocessed else notprocessed + xx
+ /for(if  assignencoding(buildconst(Lit.0, alltypes)) =initvalue
+   then assert isempty.notprocessed  report "processconst problem"
+   0 else processconst(notprocessed, alltypes)/if)
+ 
+ Function mangledname(extname:set.symdef, s:symbol, ref:symbolref,library:word)word
+ if name.module.s ∈ "internal"then
  if externalcall.s then name.s
- else merge.[toword.toint.ref, "$"_1, "$"_1, toword.toint.ref]
+ else merge.[library, "$"_1, "$"_1, toword.toint.ref]
 else
- let t = name.first.getCode(extname, s)
- assert toint.ref > 0 ∨ loc_1 ∈ "codegen" ∨ name.s ∈ "entrypoint addlibrarywords"
- report"HERE f" + loc + print.s
- {assert toint.ref /le 0 /or merge.[library.module.s, "$"_1, "$"_1, toword.toint.ref]=t report"XXX"+print.s+t+merge 
-.[library.module.s, "$"_1, "$"_1, toword.toint.ref]}
- t 
+   name.first.getCode(extname, s)
+ 

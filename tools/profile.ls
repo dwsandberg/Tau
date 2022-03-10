@@ -24,9 +24,8 @@ use seq.labeledarc.symbol
 
 use set.labeledarc.symbol
 
-Builtin loadedlibs2 seq.liblib
-
-Function loadedLibs seq.liblib loadedlibs2
+ 
+Builtin loadedLibs seq.liblib  
 
 function decode(w:symbolref, l:liblib)symbol
 if between(toint.w, 1, length.decoderef.l)then(decoderef.l)_(toint.w)else Lit.toint.w

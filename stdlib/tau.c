@@ -1,11 +1,7 @@
-/* Runtime.c
- * Tests libRatings.A.dylib 1.0 as a runtime-loaded library.
- ***********************************************************/
  
 #include "tau.h"
 #include <stdlib.h>
 #include "math.h"
-#include <dlfcn.h>
 #include <execinfo.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -16,6 +12,8 @@
 #include <signal.h>
 #include <time.h>
 #include <errno.h>
+
+
 
 
 #define  BT long long int
@@ -32,9 +30,6 @@ typedef  struct pinfo *processinfo;
 
                
 void assertexit(int b,char *message);
-
-//BT loadlibrary(struct pinfo *PD,char *lib_name_root);
-
 
 
 //Start of space allocation
@@ -158,9 +153,10 @@ char libnames[20][100];
 
 BT empty[2]={0,0};
 
-
-BT loadedlibs2(processinfo PD)  // returns list of loaded libraries
+ 
+ BT loadedLibs(processinfo PD)  // returns list of loaded libraries
  {return (BT)loaded;}   
+  
 
 
 int looklibraryname(char* name) { int i;
@@ -169,38 +165,6 @@ int looklibraryname(char* name) { int i;
     if (strcmp(libnames[i+2],name)==0) return i  ;
     }
    return -1;}
-
-
-BT unloadlib(processinfo PD,char *libname){ 
-int libidx = looklibraryname(libname);
-// fprintf(stderr,"unload library %s %d\n",libname,libidx);
-if (libidx > 0 ) {
-   int i;
-   for(  i=loaded[1]-1; i>=libidx;i--){ char lib_name[100];
-   sprintf(lib_name,"%s.dylib",libnames[i+2]);
-    void *lib_handle =dlopen(lib_name,RTLD_NOW);dlclose(lib_handle);
-     fprintf(stderr,"close %s %d\n",libnames[i+2], dlclose(lib_handle) );
-  }
-  loaded[1]=libidx;
-   } 
-return 0; 
-}
-
-BT unloadlib2(processinfo PD,char *libname){ 
-int libidx = looklibraryname(libname);
-// fprintf(stderr,"unload library %s %d\n",libname,libidx);
-if (libidx > 0 ) {
-   int i;
-   for(  i=loaded[1]-1; i>=libidx;i--){ char lib_name[100];
-   sprintf(lib_name,"%s.dylib",libnames[i+2]);
-    void *lib_handle =dlopen(lib_name,RTLD_NOW);dlclose(lib_handle);
-     fprintf(stderr,"close %s %d\n",libnames[i+2], dlclose(lib_handle) );
-  }
-  loaded[1]=libidx;
-   } 
-return 0; 
-}
-
 
 BT initlib5(char * libname,BT  libdesc,BT baselib) {
   // fprintf(stderr,"starting initlib4\n");
@@ -233,12 +197,18 @@ return 0;
   
 }
 
+#ifdef LIBRARY 
 
+#include <dlfcn.h>
 
 BT loadlibrary(struct pinfo *PD,char *lib_name_root){
    char lib_name[200],name[100];
    struct stat sbuf;
    BT liblib;
+    int i = looklibraryname(lib_name_root) ;
+  if (i >= 0)
+   {   // fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
+     return ((BT*)loaded[i+2])[3];}
   //  fprintf(stderr,"check %s,%d\n",lib_name_root,strlen(lib_name_root));
    sprintf(lib_name,"%s.dylib",lib_name_root);
    // fprintf(stderr,"Loading %s\n",lib_name);
@@ -253,27 +223,23 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
       
 }
 
- 
-BT loadlib(processinfo PD,char *libname0)
-{ char * libname=tocstr(libname0);
-int i = looklibraryname(libname) ;
-if (i >= 0)
-{   // fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
-  return ((BT*)loaded[i+2])[3];}
-return  loadlibrary(PD,libname) ;  
-}
+
+#else
+
+BT loadlibrary(struct pinfo *PD,char *lib_name_root){ 
+fprintf(stderr,"Loadlibrary ???");
+return -1;}
+
+void init_stdlib();
+void init_common();
+void init_tools();
+void initlibs(){init_stdlib(); init_common(); init_tools();}
+
+//  cc stdlib/*.c  tmp/stdlib.bc tmp/common.bc tmp/tools.bc
 
 
+#endif
 
-BT loadlib22(processinfo PD,char *libname)
-{ 
-int i = looklibraryname(libname) ;
-if (i >= 0)
-{   fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
-  return ((BT*)loaded[i+2])[3];}
-return  loadlibrary(PD,libname) ;  
-}
- 
 
 // end of library support 
 
@@ -337,28 +303,43 @@ BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * filena
                        }          
                 }
                  if (file!=1) close(file);
-                 return 1;
+//                  fprintf(stderr,"finish createfile %s %d\n",name,file);
+                 return 0;
                  }
 
 
-
+ void prepare(char *otherlib,char *str,char *replace){
+  char  *o=otherlib ,*p=str+16; 
+     otherlib[0]=0;
+      while (*p!=0) { *o=*p;
+           if (*p==' ') { strcpy(o,replace); o=o+strlen(replace)-1;} 
+           p++;o++;
+      }
+    }
 
 BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data ){
-      char * libname=   tocstr(filename);
-     char * otherlib= tocstr(otherlibs) ; 
+     char * libname=   tocstr(filename);
+   //  char * otherlib= tocstr(otherlibs) ; 
      char buff[200];
-     /* create the .bc file */
+     prepare(buff,otherlibs,"(); ");
+     prepare(buff+100,otherlibs,"();\n void");
+     char buff2[200];
+     sprintf(buff2+16,"void %s();\n void %s initlibs(){%s%s();}",libname,buff+100,buff,libname); 
+     sprintf(buff+16,"tmp/ddd.c" );   
+      ((BT *)buff2)[0]=0; createfile2(PD, strlen(buff2+8)  , (struct bitsseq * )buff2, buff);
+     char  otherlib[200]; 
+     prepare(otherlib,otherlibs,".dylib ");
+  /* create the .bc file */
        sprintf(buff+16,"tmp/%s.bc",libname);
-  
         createfile2(PD, bytelength , data,buff);
-     /* compile to .bc file */ 
-     sprintf(buff,"%s.bc",libname);
-  sprintf(buff,"/usr/bin/cc -dynamiclib tmp/%s.bc %s -o %s.dylib  -init _init22 -undefined dynamic_lookup",libname,
-  otherlib,libname);
+  /* compile to .bc file */ 
+ // sprintf(buff,"%s.bc",libname);
+  sprintf(buff,"/usr/bin/cc -dynamiclib tmp/%s.bc %s -o %s.dylib  -init _init_%s -undefined dynamic_lookup"
+  ,libname,  otherlib,libname,libname);
    fprintf(stderr,"Createlib3 %s\n",buff);
   int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else {loadlib(PD,filename); return 1;}
+  else {loadlibrary(PD,tocstr(filename)); return 1;}
 }
     
 BT subgetfile(processinfo PD,  char *filename,BT seqtype){
@@ -368,7 +349,7 @@ BT subgetfile(processinfo PD,  char *filename,BT seqtype){
     struct stat sbuf;
     static const BT empty[]={0,0};
     BT *data2,org;
- // fprintf(stderr,"openning %s\n",name); //
+//  fprintf(stderr,"openning %s\n",name);  
         org=myalloc(PD,4);
      IDXUC(org,0)=1;
      IDXUC(org,1)=0;
@@ -456,27 +437,30 @@ BT  tobyteseq ( processinfo PD,char *str) {
      return (BT) b;
 }
 
+
 int main(int argc, char **argv)    {   int i=0,count; 
-   if (argc==0)  fprintf(stderr,"must have compiled library as first argument"); 
+#ifdef LIBRARY 
+     fprintf(stderr,"DYLIB VERSION\n");
+    if (argc==0)  fprintf(stderr,"must have compiled library as first argument"); 
+#endif  
            // initialize main process
     sharedspace.encodings = staticencodings;
     for(i=0; i<noencodings;i++) sharedspace.encodings[i]=0;
     signal(SIGSEGV,fatal_error_signal);
      signal(SIGBUS,fatal_error_signal);
     signal(SIGILL,fatal_error_signal);
-    
-     {  // load the library  
-         loadlibrary(&sharedspace, argv[1]);  
-     }
-     
-        BT   entrypoint=(BT)dlsym(RTLD_DEFAULT, "entrypoint");
-      if (!entrypoint) {
-        fprintf(stderr,"[%s] Unable to get symbol: %s\n",__FILE__, dlerror());
-       exit(EXIT_FAILURE);
-      }
+ 
+ #ifdef LIBRARY 
+   int startarg=2;
+     loadlibrary(&sharedspace, argv[1]); 
+#else
+  int startarg=1;
+  initlibs();
+#endif
   
-     
-        processinfo PD=&sharedspace;
+      BT   entrypoint=((BT*)loaded[loaded[1]+1])[2];
+
+      processinfo PD=&sharedspace;
       int j;  
       processinfo p =(struct pinfo * ) malloc(sizeof (struct pinfo));
       initprocessinfo(p,PD);
@@ -484,8 +468,10 @@ int main(int argc, char **argv)    {   int i=0,count;
       p->deepcopyseqword = (BT)noop;
        p->func=entrypoint;
    
-      
-      BT argsx=tobyteseq ( p,argc  > 2?argv[2]:"");  
+      char allargs[200]="";
+       for(j=startarg; j < argc; j++) 
+        { strcat(allargs,argv[j]); strcat(allargs," ");}
+       BT argsx=tobyteseq ( p,allargs);  
        p->argtype=4;
        p->args=&argsx;
        p->freespace=0;
@@ -532,16 +518,6 @@ BT randomint (processinfo PD,BT len){
 
 
 
-BT addresstosymbol2(processinfo PD,BT address){
-Dl_info d; int i;
-  const char * name = "unknown";
-   if   (dladdr( (void *)address,&d)) name=  d.dli_sname;
-  int len=strlen(name);
-   BT *r = (BT *) myalloc(PD,len+2);
-   r[0]=0; r[1]=len;
-   for( i=0; i < len; i++)  r[i+2]=name[i]; 
- // printf("addresstosymbole2 %s\n",name);
-  return (BT)r;}
 
 BT callstack(processinfo PD,BT maxsize){
       BT r = myalloc(PD,maxsize+2);

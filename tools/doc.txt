@@ -1,4 +1,4 @@
-#!/bin/sh  tau stdlib tools createdoc
+#!/bin/sh  tau stdlib common tools createdoc
 
 /< /section The Tau Programming Language />
 
@@ -16,7 +16,7 @@ Functional languages tend to use recursion to replace the control structures of 
 The full power of recursion is seldom needed. 
 We introduce a  new control structure  to cover many of the simple uses of recursion.
 
-/section Lexical level />
+/< /section Lexical level />
 
 A program is represented as a sequence of characters. The character encoding is assume to be unicode represented in UTF8 format. The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.
 
@@ -25,7 +25,20 @@ Paragraphs that do NOT start with /keyword type, /keyword use, /keyword Library,
 
 Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. 
 The characters ()+,-.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
-A word sequence literal is double or single quoted like "This is a string Literal." or ' This is a string Literal.'
+
+A word sequence literal is double quoted like "This is a string Literal."  
+
+To include a double quote within a use "$(dq)".  Inculding "$(...)" in a syntactical short  hand.
+  /< block " hello world without quotes $(dq) hello world $(dq) with quotes" /> is the sames as 
+  writing 
+  /< block $($($($(" hello world without quotes",dq),"hello world"),dq), "with quotes") /> 
+  which is equivalent to writing
+  /< block  " hello world without quotes"+dq+"hello world " +dq+ "with quotes" />
+  Since $(...) can receive any expression we could also write
+  /< block "hello world without quotes $(dq."hello world") with quotes" />
+  Since $( functions as an escape in strings, it can be include within a string
+  as  $("$")( 
+  
 
 An integer literal is represented by a sequence of words where each word only contains digits or the no break space. 
 A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 00 and 1001 are integers.
@@ -50,7 +63,7 @@ The fix is to add parenthesizes
 When converting a sequence of words  to characters for output, an space is usually added after each word with the exceptions:
 /br 1. If the word is  "()+-[]{}_.. :^   
 then the space before and after the word is not added. 
-/br 2. If word is a comma then the space before the comma is suppressed.
+/br 2. If the word is a comma then the space before the comma is suppressed.
 
 These rules  sometimes do not produce the desired result.  To improve the result, no-break spaces can be added. 
  On the Mac keyboard pressing the option key and then space bar will insert a no-break space. 

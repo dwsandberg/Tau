@@ -124,7 +124,7 @@ function =(a:match5, b:match5)boolean sym.a = sym.b
 
 function hash(a:match5)int fsighash.sym.a
 
-function assignencoding(a:match5)int nextencoding.a
+Function assignencoding(a:match5)int nextencoding.a
 
 Function funcdec(alltypes:typedict, i:symbol, symname:word)int
 toint.modulerecord([symname]

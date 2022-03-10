@@ -18,6 +18,18 @@ use seq.word
 
 use seq.seq.word
 
+use bits
+
+use real
+
+Export -(real) real
+
+Export <<(bits, int)bits
+
+Export xor(bits, bits)bits
+
+Export ∨(bits, bits)bits 
+
 Function entrypoint(s:UTF8)UTF8
 let args = towords.s
 let arg = [first.args]

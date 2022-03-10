@@ -73,31 +73,31 @@ let tobepatched =
 let stepone = stepone(info, dependentlibs, thename)
 let match5map = match5map.stepone
 let defines = defines.stepone
-let addresslength = addresslength.info
-let symboladdress = 
- for slots = [toint.C64.0, toint.C64.addresslength], done = false, c ∈ libcode.info
- while not.done
- do if toint.c_1 ≤ addresslength then
-  next(slots + toint.Frefslot(info_(c_1), extnames.stepone, typedict.info, c_1)
-  , length.slots - 1 = addresslength
-  )
- else next(slots, done)
- /for({assert length.slots=addresslength+2 report"PROBLEM H"+print.addresslength+print.length.slots}
- addobject.slots)
+let symboladdress = symboladdress(info ,extnames.stepone,
+thename,defines ) 
 let discard3 = modulerecord("spacecount", [toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
-let geninfo = geninfo(match5map, profilearcs, extnames.stepone, false)
+let geninfo = geninfo(match5map, profilearcs, extnames.stepone, false,thename)
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(geninfo, @e)/for(acc)
 let xxx = 
  for acc = empty:seq.slot, x ∈ profiledata.info do acc + C64.x /for(AGGREGATE.acc)
-let liblib = 
+let f2 = 
+ modulerecord([merge("init_"+thename)]
+ , [toint.FUNCTIONDEC, typ.function.[VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+ )
+  let entryfunctyp = function.[VOID, i64, ptr.i64]
+let f3 = 
+ modulerecord("entrypoint"+thename
+ , [toint.FUNCTIONDEC, typ.entryfunctyp, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+ )
+ let liblib = 
  slot.addliblib([thename]
  , subseq(symbolrefdecode.info, 1, newmaplength.info)
  , mods.info
  , libcode.info
  , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
  , dependentlibs
- , Frefslot(entrypointsymbol.info, extnames.stepone, typedict.info, symbolref.0)
+ ,  ptrtoint(ptr.entryfunctyp, symboltableentry("entrypoint"+thename, ptr.entryfunctyp))
  , symboladdress
  )
 let libnametype = array(length.decodeword.thename + 1, i8)
@@ -112,17 +112,9 @@ let libslot =
  , 0
  ]
  )
-let f2 = 
- modulerecord("init22"
- , [toint.FUNCTIONDEC, typ.function.[VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
- )
-let f3 = 
- modulerecord("entrypoint"
- , [toint.FUNCTIONDEC, typ.function.[VOID, i64, ptr.i64], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
- )
 let symoutput = symbol(moduleref."main2", "OUTPUT", typeref."UTF8 UTF8", typeint)
 let symoutputref = symbolref.findindex(symoutput, symbolrefdecode.info)
-let symoutputmangledname = mangledname(extnames.stepone, symoutput, "HJK", symoutputref)
+let symoutputmangledname = mangledname(extnames.stepone, symoutput,  symoutputref,thename)
 let bodytxts = 
  bodies
  + [BLOCKCOUNT(1, 1)
@@ -143,7 +135,7 @@ let bodytxts =
  , 0
  , 32768
  , function.[ptr.i64, i64, ptr.i64]
- , symboltableentry([mangledname(extnames.stepone, entrypointsymbol.info, "HJK", symbolref.0)]
+ , symboltableentry([mangledname(extnames.stepone, entrypointsymbol.info, symbolref.0,thename)]
  , function.[ptr.i64, i64, ptr.i64]
  )
  , r.1
@@ -157,7 +149,7 @@ let bodytxts =
  , r.1
  , r.3
  )
- + RETURN
+ + RET(r.5,r.4)
  ]
 let data = constdata
 let patchlist = 
@@ -170,9 +162,50 @@ let adjust =
  + subseq(trec, 4, length.trec)
 llvm(patchlist, bodytxts, adjust)
 
-type geninfo is match5map:seq.match5, profilearcs:set.seq.symbol, extnames:set.symdef, profile:boolean
+function symboladdress(info:compileinfo,extnames:set.symdef,
+libname:word,defines:seq.symdef) int 
+let addresslength = addresslength.info 
+{assert libname /nin "tests" report
+  for txt="",       i /in  arithseq(addresslength,1,1) do
+     txt+"/br"+toword.i+print.info_symbolref.i
+ /for(txt)}
+let known=for acc=empty:set.symbol ,d /in  toseq.extnames+defines do acc+sym.d /for(acc)
+ let t= asset.subseq(symbolrefdecode.info,1,addresslength) \ known 
+ assert isempty.t report "JKL"+print.toseq.t
+ for   slots = [toint.C64.0, toint.C64.addresslength],       i /in  arithseq(addresslength,1,1) do
+ let   f1=info_symbolref.i
+   let functyp = ptr.tollvmtype(typedict.info, f1)
+ let frefslot=ptrtoint(functyp, symboltableentry([mangledname(extnames, f1,    symbolref.i,libname)], functyp))
+  slots + toint.frefslot 
+   /for(addobject.slots)
 
-function enableprofile(g:geninfo)geninfo geninfo(match5map.g, profilearcs.g, extnames.g, true)
+
+ 
+ /function symboladdress(info:compileinfo,extnames:set.symdef,
+libname:word) int 
+let addresslength = addresslength.info
+ for slots = [toint.C64.0, toint.C64.addresslength], done = false, c ∈ libcode.info
+ while not.done
+ do 
+ {assert name.info_(c_1) /nin "p3" report "NM"+print.info_(c_1) }
+ if toint.c_1 ≤ addresslength then
+ let f1=info_(c_1)
+  let functyp = ptr.tollvmtype(typedict.info, f1)
+ let frefslot=ptrtoint(functyp, symboltableentry([mangledname(extnames, f1,    c_1,libname)], functyp))
+  next(slots + toint.frefslot
+  , length.slots - 1 = addresslength
+  )
+ else next(slots, done)
+ /for({assert length.slots=addresslength+2 
+ report"PROBLEM H"+print.addresslength+print.length.slots}
+ addobject.slots)
+ 
+
+type geninfo is match5map:seq.match5, profilearcs:set.seq.symbol, extnames:set.symdef
+, profile:boolean,libname:word
+
+function enableprofile(g:geninfo)geninfo 
+geninfo(match5map.g, profilearcs.g, extnames.g, true,libname.g)
 
 function addfuncdef(geninfo:geninfo, sd:symdef)internalbc
 {let hh=process.subaddfuncdef(match5map, i)assert not.aborted.hh report"fail get"+print.i+message.hh result 
@@ -226,7 +259,7 @@ if action = "CALL"_1 then
   , push(pop(args.l, noargs), -(regno.l + 1))
   , blocks.l
   )
- else profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m, "codegen"))
+ else profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m, symbolref.0,libname.geninfo))
 else
  {if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq.
 int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs), -(
