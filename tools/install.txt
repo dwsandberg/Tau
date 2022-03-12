@@ -21,11 +21,13 @@ Run "bash bin/installtau".  This is likely to generate a warning message about t
 
 2. Create a file txt file <Tau>/HelloWorld/HelloWorld.ls that contains:
 
-/keyword Library HelloWorld   use stdlib  exports HelloWorld
+/keyword Library HelloWorld   uses stdlib  exports HelloWorld
 
 Module HelloWorld
 
 use standard 
+
+use format
 
 Function entrypoint(args:UTF8) UTF8 HTMLformat."Hello World!"
 
