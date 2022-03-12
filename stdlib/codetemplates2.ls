@@ -206,28 +206,36 @@ for defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
   let discard = funcdec(alltypes, ele2, name)
   let discard5 = call(alltypes, ele2, "CALL"_1, name)
   acc + ele2
- /for({let check=for acc2="", sym /in subseq(symbolrefdecode.info, 1, newmaplength)do if library.module.sym ≠"stdxlib 
+ /for( {let check=for acc2="", sym /in subseq(symbolrefdecode.info, 1, newmaplength)do if library.module.sym ≠"stdxlib 
 "_1 /or isabstract.module.sym /or sym /in acc then acc2 else acc2+print.sym+library.module.sym+EOL /for(acc2)assert 
 isempty.check report"failing in codetemplates2"+check}
  toseq.defines)
 let discard2 = buildFref(frefs, info, extnames)
 let discard4 = processconst(isrecordconstant, alltypes)
-steponeresult(empty:seq.match5, defines2, extnames))
+for  entrypoint=slot.0 , sd /in toseq.defines 
+while toint.entrypoint  =0
+ do
+  if name.sym.sd /in "entrypoint" then
+    symboltableentry([mangledname(extnames, sym.sd, symbolref.0,thename)], function.[ptr.i64, i64, ptr.i64]
+ ) else entrypoint
+ /for( 
+steponeresult(empty:seq.match5, defines2, extnames,entrypoint,slot.0)))
 
 Export extnames(steponeresult)set.symdef
 
-type steponeresult is match5map:seq.match5, defines:seq.symdef, extnames:set.symdef
+type steponeresult is match5map:seq.match5, defines:seq.symdef, 
+extnames:set.symdef,entrypoint:slot,errorhandler:slot
 
 Export match5map(steponeresult)seq.match5
 
-Export defines(steponeresult)seq.symdef, 
+Export defines(steponeresult)seq.symdef
+
+Export entrypoint(steponeresult) slot 
+
+Export errorhandler(steponeresult) slot
 
 Export type:steponeresult
 
-Function entrypointsymbol(a:compileinfo)symbol
-for acc = empty:seq.symbol, sym ∈ symbolrefdecode.a do
- if isconstantorspecial.sym ∨ name.sym ∉ "entrypoint"then acc else acc + sym
-/for(first.acc)
 
 Function addlibwords(extnames:set.symdef, typedict:typedict)slot
 let f1 = 
@@ -241,8 +249,6 @@ ptrtoint(functyp, symboltableentry([mangledname(extnames, f1,   symbolref.0,"std
 
  Export tollvmtype(typedict, symbol) llvmtype
  
-Frefslot(f1, extnames, typedict, symbolref.0)
-
 function libname(info:compileinfo) word   (first.src.info)_2
 
 use seq.seq.word

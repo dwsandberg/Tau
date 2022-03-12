@@ -78,8 +78,9 @@ use process.seq.seq.word
 
 use seq.seq.seq.word
 
-Function subcompilelib(libname:seq.word)seq.word
+Function subcompilelib(args:seq.word)seq.word
 {OPTION PROFILE}
+let libname = [first.args]
 let info = getlibrarysrc.libname
 let p = compileinfo:libllvm("all", getlibrarysrc.libname)
 assert not.aborted.p report message.p
@@ -87,32 +88,31 @@ let cinfo = result.p
 let a = break(first.src.cinfo, "uses exports", true)
 let dependentlibs = a_2 << 1
 let bc = codegen(last.libname, dependentlibs, cinfo)
-let z2 = createlib(bc, last.libname, dependentlibs)
+let z2 = createlib(bc, last.libname, dependentlibs,args << 1)
 "OK"
 
 Function entrypoint(arg:UTF8)UTF8 compile.arg
 
 Function compile(arg:UTF8)UTF8
 let wordargs = towords.arg
-let p = process.subcompilelib.[first.wordargs]
-if aborted.p then HTMLformat("COMPILATION ERROR in libray:" + wordargs + EOL + message.p)
-else if length.wordargs = 1 ∨ wordargs_2 ∈ "#"then
- HTMLformat("finished compiling" + first.wordargs)
-else 
- let newarg=toUTF8(wordargs << 1)
- let t = entrypointaddress.last.loadedLibs
- if t ≤ 0 then HTMLformat."callentrypoint address ERROR"
- else
-  let p2 = 
-    createthread(funcaddress.deepcopySym.{typeref."UTF8 UTF8"}typeint
+let p = process.subcompilelib.wordargs 
+assert not.aborted.p report ("COMPILATION ERROR in libray:" + wordargs + EOL + message.p)
+toUTF8.("Finished creating program"+space)+arg
+
+ 
+Function entrywrapper(t:int,newarg:UTF8) UTF8
+ let p2 = 
+    createthread(funcaddress.deepcopySym.typeref."UTF8 UTF8" 
    , funcaddress.deepcopySym.seqof.typeword
    , t
    , [bitcast:int(toptr.newarg)]
    , 4
    )
- if aborted.p2 then HTMLformat.message.p2 else toUTF8.""
+ let r=if aborted.p2 then HTMLformat.message.p2 else bitcast:UTF8(toptr.result.p2)
+  let discard=createfile("stdout", toseqbyte(toUTF8.htmlheader + r))
+  r
  
- bitcast:UTF8(toptr.result.p)
+
 
 Function astext(info:compileinfo)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ prg.info do acc + [print.sym.p + print.code.p]/for(acc)
@@ -149,5 +149,3 @@ for org = empty:loadedresult, ll ∈ loadedLibs do
  let libname = (libname.ll)_1
  if libname ∈ dependentlibs then toloadedresult(org, libinfo.ll, libname)else org
 /for(org)
-
-Function OUTPUT(r:UTF8)int createfile("stdout", toseqbyte(toUTF8.htmlheader + r)) 

@@ -262,7 +262,7 @@ BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * filena
                        }          
                 }
                  if (file!=1) close(file);
-//                  fprintf(stderr,"finish createfile %s %d\n",name,file);
+         //         fprintf(stderr,"finish createfile %s %d\n",name,file);
                  return 0;
                  }
 
@@ -302,7 +302,8 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
       
 }
 
-BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data ){
+BT createlib3(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data
+,char * args ){
      char * libname=   tocstr(filename);
     char buff[200];
          char  otherlib[200]; 
@@ -316,13 +317,21 @@ BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, st
    fprintf(stderr,"Createlib3 %s\n",buff);
    int err=system(buff);
   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else {loadlibrary(PD,tocstr(filename)); return 1;}
-}
+  else { //loadlibrary(PD,tocstr(filename)); 
+    if ( *tocstr(args)==0) return 1;
+           fprintf(stderr,"pwd %s\n",getcwd(otherlib, 200));
+      sprintf(buff,"%s/bin/tauexe",otherlib);
+ 
+    int x= execl(buff,"tau", tocstr(filename), tocstr(args) , (char *)0  );
+    fprintf(stderr,"after exec %d %s \n", x,buff);
+  return 1;}
+ }
 
 #else
 
-BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data ){
-     char * libname=   tocstr(filename);
+BT createlib3(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data
+,char * args ){
+      char * libname=   tocstr(filename);
     char buff[200];
          char  otherlib[200]; 
   /* create the .bc file */
@@ -339,9 +348,14 @@ BT createlib2(processinfo PD,char * filename,char * otherlibs, BT bytelength, st
      sprintf(buff,"clang -lm -pthread stdlib/*.c tmp/%s.c tmp/%s%s.bc  -o bin/%s",
      libname,otherlib,libname,libname);
    int err=     system(buff);
-    if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else { return 1;}
-}
+   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
+  else {   
+    if ( *tocstr(args)==0) return 1;
+      fprintf(stderr,"pwd %s\n",getcwd(buff2, 200));
+      sprintf(buff,"%s/bin/%s",buff2,libname);
+    int x= execl(buff,libname, tocstr(args) , (char *)0  );
+  return 1;}
+ }
 
 
 void init_libs();

@@ -3,7 +3,7 @@ Experiment Programm language without assignment
 
 This makes the state of a program easier to figure out
 
-Only runs on Mac OS X
+Runs on Mac OS X and Linux
 
 A [link](./install.html)
 

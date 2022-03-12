@@ -1,6 +1,6 @@
 #!/bin/sh  tau stdlib common tools formatdoc tools/install #
 
-/< /section Tau Install Instruction />
+/< /section Installing Tau   />
 
 Make sure clang is installed.   For Mac OS Clang is available if the command line tools are installed.
 
@@ -12,7 +12,7 @@ Modify PATH environment variable to include absolute path to <Tau>/bin.
 
 Open terminal and change direcotry to <Tau>.
 
-Run "bash bin/install".  This is likely to generate a warning message about the llvm spec. 
+Run "bash bin/installtau".  This is likely to generate a warning message about the llvm spec. 
 
 
 /< /section HelloWorld />
@@ -29,22 +29,29 @@ use standard
 
 Function entrypoint(args:UTF8) UTF8 HTMLformat."Hello World!"
 
-3. From terminal run: /< block  stdlib HelloWorld | html /> 
+3. From terminal run: /< block  stdlib HelloWorld x | html /> 
 
-This will create a program with the name of HelloWord.  The pipe to html will open
-the default browser and display the a message saying that this was done.
+This will create a program with the name of HelloWord from the source code in
+directory <tau>/HelloWorld.  Since another argument is present in this case "x", the program
+Helloworld will be ran with the remaining arguments.  The pipe to html will open
+the default browser with the result of running "HelloWorld x".
 
-4. From terminal run: /< block HelloWord   | html /> This will display "Hello World!" in the web browser. 
+If "x" was not present then Helloworld would not be ran and a 
+message displayed indicating the program was successfully created.  
 
----------------------
+HelloWorld can be run from the prompt: /< block HelloWord   | html /> This will display "Hello World!" in the web browser. 
+
+/< /section HelloWorld with dynamic libraries />
+The Mac OS X implementation also allows  dynamic libraries to be created instead of programs.
+The command is    /< block tau stdlib HelloWorld x | html /> 
 
 In this command /em tau refers to a script in <tau>/bin/tau.  The next word, /em stdlib 
 , refers to a dynamic library <tau>/stdlib.dylib which tau will load 
 and pass the rest of the command line as an argument to stdlib. 
 
 The library stdlib takes /em "HelloWorld" and creates another dynamic library <tau>/Helloworld.dylib
-from the src in <tau>/HelloWorld/HelloWorld.ls.  Helloworld.dylib is then loaded and
-the entrypoint function is call with any remaining arguments, which in this case is "arg"
+from the src in <tau>/HelloWorld.  Helloworld.dylib is then loaded and
+the entrypoint function is call with any remaining arguments, which in this case is "x"
 If no args are present, then execute stops with the creation of HelloWorld.dylib.
 
 Once HelloWorld.dylib is created, the program can be run with
@@ -87,6 +94,8 @@ To see if all is working properly run the command /< block
 tau -w http://localhost/  stdlib   webassembly  wtests wtests  />
 This should open a web browser  with a link wtest. Follow the link which should open a page with two buttons that will run two tests.
 
+/< noformat <hr> />
+/< /section Documentation below is not complete. />
 
 /section vhost
 

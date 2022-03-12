@@ -112,9 +112,10 @@ let libslot =
  , 0
  ]
  )
-let symoutput = symbol(moduleref."main2", "OUTPUT", typeref."UTF8 UTF8", typeint)
-let symoutputref = symbolref.findindex(symoutput, symbolrefdecode.info)
-let symoutputmangledname = mangledname(extnames.stepone, symoutput,  symoutputref,thename)
+let symwrap = symbol(moduleref."main2", "entrywrapper",typeint, typeref."UTF8 UTF8", typeref."UTF8 UTF8")
+let wrapfunctype=tollvmtype(typedict.info,symwrap)
+let symwrapref = symbolref.findindex(symwrap, symbolrefdecode.info)
+let symwrapmangledname = mangledname(extnames.stepone, symwrap,  symwrapref,thename)
 let bodytxts = 
  bodies
  + [BLOCKCOUNT(1, 1)
@@ -131,25 +132,17 @@ let bodytxts =
  + RETURN
  ]
  + [BLOCKCOUNT(2, 1)
- + CALL(r.3
+ + CAST(r.3, entrypoint.stepone, i64, ptrtoint)
+ +CALL(r.4
  , 0
  , 32768
- , function.[ptr.i64, i64, ptr.i64]
- , symboltableentry([mangledname(extnames.stepone, entrypointsymbol.info, symbolref.0,thename)]
- , function.[ptr.i64, i64, ptr.i64]
- )
- , r.1
- , r.2
- )
- + CALL(r.4
- , 0
- , 32768
- , function.[i64, i64, ptr.i64]
- , symboltableentry([symoutputmangledname], function.[i64, i64, ptr.i64])
- , r.1
- , r.3
- )
- + RET(r.5,r.4)
+ , wrapfunctype
+, symboltableentry([symwrapmangledname], wrapfunctype)
+,r.1
+,r.3
+,r.2
+  )
+  + RET(r.5,r.4)
  ]
 let data = constdata
 let patchlist = 
@@ -178,27 +171,6 @@ let known=for acc=empty:set.symbol ,d /in  toseq.extnames+defines do acc+sym.d /
  let frefslot=ptrtoint(functyp, symboltableentry([mangledname(extnames, f1,    symbolref.i,libname)], functyp))
   slots + toint.frefslot 
    /for(addobject.slots)
-
-
- 
- /function symboladdress(info:compileinfo,extnames:set.symdef,
-libname:word) int 
-let addresslength = addresslength.info
- for slots = [toint.C64.0, toint.C64.addresslength], done = false, c ∈ libcode.info
- while not.done
- do 
- {assert name.info_(c_1) /nin "p3" report "NM"+print.info_(c_1) }
- if toint.c_1 ≤ addresslength then
- let f1=info_(c_1)
-  let functyp = ptr.tollvmtype(typedict.info, f1)
- let frefslot=ptrtoint(functyp, symboltableentry([mangledname(extnames, f1,    c_1,libname)], functyp))
-  next(slots + toint.frefslot
-  , length.slots - 1 = addresslength
-  )
- else next(slots, done)
- /for({assert length.slots=addresslength+2 
- report"PROBLEM H"+print.addresslength+print.length.slots}
- addobject.slots)
  
 
 type geninfo is match5map:seq.match5, profilearcs:set.seq.symbol, extnames:set.symdef

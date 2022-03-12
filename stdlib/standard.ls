@@ -24,6 +24,8 @@ Export type:UTF8
 
 Export towords(UTF8)seq.word
 
+Function $(a:seq.word,b:seq.word) seq.word a+b
+
 Function dq seq.word{doublequote}[encodeword.[char.34]]
 
 Function dq(s:seq.word)seq.word dq + s + dq

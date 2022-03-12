@@ -1,4 +1,4 @@
-#!/bin/sh  tau stdlib common tools createdoc
+#!/bin/sh  tau stdlib common tools formatdoc tools/doc #
 
 /< /section The Tau Programming Language />
 
@@ -15,6 +15,9 @@ Functional program languages have no assignment operator or loop statements, but
 Functional languages tend to use recursion to replace the control structures of loops. 
 The full power of recursion is seldom needed. 
 We introduce a  new control structure  to cover many of the simple uses of recursion.
+
+Instruction for downloading and install Tau in /< noformat <a href="install.html"> here </a> /> if you would
+like to try out the examples below for yourself.
 
 /< /section Lexical level />
 
@@ -37,7 +40,7 @@ To include a double quote within a use "$(dq)".  Inculding "$(...)" in a syntact
   Since $(...) can receive any expression we could also write
   /< block "hello world without quotes $(dq."hello world") with quotes" />
   Since $( functions as an escape in strings, it can be include within a string
-  as  $("$")( 
+  as " $("$")( " Note that just the "$" is escaped as "$("$(")" will raise an error because the escape in the inner qoute not properly formed.
   
 
 An integer literal is represented by a sequence of words where each word only contains digits or the no break space. 

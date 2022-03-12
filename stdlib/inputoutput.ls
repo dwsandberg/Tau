@@ -110,14 +110,14 @@ builtin callstack(n:int)seq.int
 Builtin loadedLibs seq.liblib
 
 
-Function createlib(b:seq.bits, libname:word, dependlibs:seq.word)int
-createlib2(tocstr.[libname]
+Function createlib(b:seq.bits, libname:word, dependlibs:seq.word,args:seq.word)int
+createlib3(tocstr.[libname]
 , tocstr.for acc = "", @e ∈ dependlibs do acc + @e   + encodeword.[char.32]/for(acc)
 , length.b * 8
-, packed.b
+, packed.b,tocstr.for acc = "", @e ∈ args do acc + @e   + encodeword.[char.32]/for(acc)
 )
 
-builtin createlib2(name:cstr, libs:cstr, length:int, data:seq.bits)int
+builtin createlib3(name:cstr, libs:cstr, length:int, data:seq.bits,args:cstr)int
 
 use tausupport
 
