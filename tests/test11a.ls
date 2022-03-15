@@ -36,6 +36,9 @@ let z =
  , testerror(" /< literal parse error:unexpected end of paragraph  />"
  , ["function f1(a:int)boolean[a+"]
  )
+ , testerror(" /< literal stray } />"
+ , ["function f1(a:int)boolean a+}a"]
+ )
  , testerror("Function f1 is defined twice in module testit"
  , ["function f1(a:int)int 3", "function f1(a:int)int 3"]
  )

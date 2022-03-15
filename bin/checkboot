@@ -2,9 +2,9 @@ echo "void init_stdlib(); void init_libs(){init_stdlib(); }">tmp/stdlib.c
 cc stdlib/*.c -DLIBRARY -o bin/tauexe
 cc bin/putfile.c -o bin/putfile.cgi
 /usr/bin/cc -dynamiclib bin/stdlib.bc  -o stdlib.dylib  -init _init_stdlib -undefined dynamic_lookup
-time tau -f tmp/checkboot1.html stdlib  stdlib
-time tau -f tmp/checkboot2.html stdlib  stdlib
-time tau -f tmp/checkboot3.html stdlib  stdlib
+time tauexe stdlib  stdlib > tmp/checkboot1.html
+time tauexe stdlib  stdlib > tmp/checkboot2.html
+time tauexe stdlib  stdlib > tmp/checkboot3.html
 cc stdlib/*.c tmp/stdlib.c tmp/stdlib.bc  -o bin/stdlib
 open tmp/checkboot1.html
 diff tmp/checkboot1.html tmp/checkboot2.html

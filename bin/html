@@ -3,5 +3,6 @@
 else
  name="$1"
 fi 
- cat - > /tmp/$name.html;open /tmp/$name.html
+ cat - > /tmp/$name.html
+tauopen /tmp/$name.html
 

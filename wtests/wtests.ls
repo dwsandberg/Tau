@@ -1,6 +1,4 @@
-#!/bin/sh  tau -w https://myhost.local/  stdlib   webassembly  wtests wtests  .
-
-
+#!/bin/sh wtau wtests wtests  .
 
 Module wtests
 

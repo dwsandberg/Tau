@@ -1,0 +1,32 @@
+#!/bin/bash  
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# set up working directory
+
+cd $SCRIPT_DIR
+cd ..
+
+ if [ -z "$tauwebserver" ]; then
+    tauwebserver="https://myhost.local" 
+fi
+
+libname=$1
+shift 1
+otherpara=$@
+
+  $SCRIPT_DIR/webassembly $libname "$otherpara" > "tmp/webassembly.html"
+    tauopen tmp/webassembly.html 
+
+grep 'Successful compile' tmp/webassembly.html > /tmp/null
+if [ $? == 0 ] ; then
+for f in $otherpara 
+do
+if [ $f == "." ] ; then 
+break
+fi
+tauopen "$tauwebserver/tmp/$f.html"
+done
+fi
+
+#echo $SCRIPT_DIR/tau2 $p1 $@
+exit

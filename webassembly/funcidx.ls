@@ -209,7 +209,7 @@ Function wfunc(alltypes:typedict, sym:symbol, code:seq.byte)wfunc wfunc(alltypes
 
 Function =(a:wfunc, b:wfunc)boolean sym.a = sym.b
 
-Function hash(a:wfunc)int fsighash.sym.a
+Function hash(a:wfunc)int hash.sym.a
 
 Function assignencoding(a:wfunc)int nextencoding.a
 

@@ -31,23 +31,22 @@ use format
 
 Function entrypoint(args:UTF8) UTF8 HTMLformat."Hello World!"
 
-3. From terminal run: /< block  stdlib HelloWorld x | html /> 
+3. From terminal run: /< block  tau stdlib HelloWorld x  /> 
 
 This will create a program with the name of HelloWord from the source code in
 directory <tau>/HelloWorld.  Since another argument is present in this case "x", the program
-Helloworld will be ran with the remaining arguments.  The pipe to html will open
-the default browser with the result of running "HelloWorld x".
+Helloworld will be ran with the remaining arguments and open a web browser with the results.
 
 If "x" was not present then Helloworld would not be ran and a 
 message displayed indicating the program was successfully created.  
 
-HelloWorld can be run from the prompt: /< block HelloWord   | html /> This will display "Hello World!" in the web browser. 
+HelloWorld can now be run from the prompt: /< block tau HelloWord  /> This will display "Hello World!" in the web browser. 
 
 /< /section HelloWorld with dynamic libraries />
 The Mac OS X implementation also allows  dynamic libraries to be created instead of programs.
-The command is    /< block tau stdlib HelloWorld x | html /> 
+The command is    /< block ltau stdlib HelloWorld x   /> 
 
-In this command /em tau refers to a script in <tau>/bin/tau.  The next word, /em stdlib 
+In this command /em ltau refers to a script in <tau>/bin.  The next word, /em stdlib 
 , refers to a dynamic library <tau>/stdlib.dylib which tau will load 
 and pass the rest of the command line as an argument to stdlib. 
 
@@ -57,10 +56,8 @@ the entrypoint function is call with any remaining arguments, which in this case
 If no args are present, then execute stops with the creation of HelloWorld.dylib.
 
 Once HelloWorld.dylib is created, the program can be run with
-/< block tau  HelloWorld arg /> without any compiling taking place.
+/< block ltau  HelloWorld arg /> without any compiling taking place.
 
-One can direct the output to a file with
-/< block tau -f file.html HelloWorld arg />
 
 4. Many text editors allow scripts to be run.  To change HelloWorld into a script
 add as the first line  of the  HelloWorld.ls,  the line
@@ -93,7 +90,7 @@ ScriptAliasMatch to /< block
 Restart the Apache web server. 
 
 To see if all is working properly run the command /< block 
-tau -w http://localhost/  stdlib   webassembly  wtests wtests  />
+wtau     wtests wtests  />
 This should open a web browser  with a link wtest. Follow the link which should open a page with two buttons that will run two tests.
 
 /< noformat <hr> />

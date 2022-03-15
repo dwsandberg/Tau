@@ -58,9 +58,11 @@ for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial))
 , stk = empty:stack.int
 , this ∈ input + "#"
 while stateno.top.lrpart ≠ finalstate:T
-do if state = 1 ∧ this ∉ (dq + "{") ∨ state = 4 ∧ this ∉ dq ∧ (this ∉ ")" ∨ nestlevel > 1)then
+do 
+ assert not(this /in "}" /and state =1)   report  errormessage:T("stray }", input, idx)
+ if state = 1 ∧ this ∉ (dq + "{") ∨ state = 4 ∧ this ∉ dq ∧ (this ∉ ")" ∨ nestlevel > 1)then
  let lexindex = binarysearch(lextable, token(this, 0, attribute:T("")))
- let newlrpart = 
+  let newlrpart = 
   if lexindex < 0 then
    {next is not in lex table}
    let kind = checkinteger.this
@@ -88,7 +90,8 @@ else
  let kind = 
   if state = 2 ∧ this ∈ "(" ∧ input_(idx - 1) = "$"_1 then codeinstringtoken
   else if state = 2 ∧ this ∈ dq then stringtoken
-  else if state = 3 ∧ this ∈ "}" ∧ nestlevel = 1 then commenttoken else 0
+  else if state = 3 ∧ this ∈ "}" ∧ nestlevel = 1 then commenttoken else 
+  0
  let newlrpart = 
   if kind = 0 then lrpart
   else
@@ -98,7 +101,7 @@ else
    , {tokenno}kind
    , idx
    )
- if kind = commenttoken then next(newlrpart, 1, idx, nestlevel, idx + 1, stk)
+ if kind = commenttoken then next(newlrpart, 1, idx, nestlevel-1, idx + 1, stk)
  else if kind = codeinstringtoken then next(newlrpart, 4, idx, 1, idx + 1, push(stk, nestlevel))
  else if kind = stringtoken then
   next(newlrpart, if isempty.stk then 1 else 4, idx, nestlevel, idx + 1, stk)

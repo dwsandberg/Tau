@@ -184,10 +184,9 @@ let discard =
  do next(bodies + code.data.p, funcs2 + LEB.typeidx.data.p)/for(createfile(libname + ".wasm"
  , createwasm(imp, funcs2, exp + exportmemory."memory"_1, bodies, dataseg, elementdata, startfuncidx)
  ))
-if true then""
-else
- {reportcoverage.knownfuncs+}zzzzz + EOL
- + for txt = "", p ∈ encoding:seq.encodingpair.wfunc do txt + toword.funcidx.data.p + print.sym.data.p + EOL /for(txt)
+ "Successful compile /p" 
+ +{reportcoverage.knownfuncs+zzzzz+    
+ +} for txt = "", p ∈ encoding:seq.encodingpair.wfunc do txt + toword.funcidx.data.p + print.sym.data.p + EOL /for(txt)
  + for txt = " /br+table+ /br", i = 2, idx ∈ elementdata do next(txt + toword.i + toword.idx + EOL, i + 1)/for(txt)
 
 /use seq.encodingpair.efuncidx

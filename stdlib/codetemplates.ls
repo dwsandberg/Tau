@@ -122,7 +122,7 @@ e_1
 
 function =(a:match5, b:match5)boolean sym.a = sym.b
 
-function hash(a:match5)int fsighash.sym.a
+function hash(a:match5)int hash.sym.a
 
 Function assignencoding(a:match5)int nextencoding.a
 

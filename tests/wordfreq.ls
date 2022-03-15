@@ -53,17 +53,33 @@ for acc = empty:seq.word, @e ∈ wordfreq(count, text)do acc + print.@e /for(acc
 function count(s:seq.wordfreq, w:seq.word)seq.wordfreq for acc = s, @e ∈ w do count(acc, @e)/for(acc)
 
 Function testwordfreq seq.word
-if for acc = empty:seq.word, @e ∈ wordfreq(50, testdata)do acc + print.@e /for(acc)
-= " /br the word s occurs 58 times. /br the word nextvar occurs 58 times. /br the word symbol occurs 66 times. /br the word-occurs 
-67 times. /br the word code occurs 69 times. /br the word result occurs 72 times. /br the word sym occurs 79 times. /br the word 
-seq occurs 83 times. /br the word then occurs 86 times. /br the word else occurs 86 times. /br the word if occurs 88 times. /br 
-the word"
-+ dq
-+ "occurs 88 times. /br the word_occurs 97 times. /br the word let occurs 99 times. /br the word:occurs 100 times. /br the word 
-+occurs 136 times. /br the word 1 occurs 147 times. /br the word=occurs 178 times. /br the word(occurs 241 times. /br the word 
-)occurs 241 times. /br the word.occurs 408 times. /br the word, occurs 460 times."then
- "PASS wordfref"
-else" /< literal FAIL wordfreq  />"
+let result=for acc = empty:seq.word, @e ∈ wordfreq(50, testdata)do acc + print.@e /for(acc)
+let result1="
+/br the word s occurs 58 times.
+/br the word nextvar occurs 58 times.
+/br the word symbol occurs 66 times.
+/br the word-occurs 67 times.
+/br the word code occurs 69 times.
+/br the word result occurs 72 times.
+/br the word sym occurs 79 times.
+/br the word seq occurs 83 times.
+/br the word then occurs 86 times.
+/br the word else occurs 86 times.
+/br the word if occurs 88 times.
+/br the word $(dq)  occurs 88 times.
+/br the word_occurs 97 times.
+/br the word let occurs 99 times.
+/br the word:occurs 100 times.
+/br the word+occurs 136 times.
+/br the word 1 occurs 147 times.
+/br the word=occurs 178 times.
+/br the word(occurs 241 times.
+/br the word)occurs 241 times.
+/br the word.occurs 408 times.
+/br the word, occurs 460 times.
+"
+if subseq(result,1,8) =subseq(result1,1,8)  then "PASS wordfreq"
+else" /< literal FAIL wordfreq />" 
 
 function testdata seq.seq.word
 ["Module pass2"

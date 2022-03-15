@@ -1,4 +1,4 @@
-#!/bin/sh  tau -w https://myhost.local/  stdlib   webassembly  wtests wtests  .
+#!/bin/sh  wtau  wtests wtests  .
 
 Module webassembly
 
@@ -148,11 +148,8 @@ let discard =
  + page
  + "); </script>")
  )
-txt + ("<a href=" + dq + "")
-+ merge("/" + htmlname + ("" + dq + ">"))
-+ page
-+ "</a>"
-/for(" /< noformat" + txt + " />" + discard2)
+txt 
+/for( discard2)
 
 Function findsymbol(prg:set.symdef, symname:seq.word)seq.symbol
 for actionsym = empty:seq.symbol, sym ∈ toseq.prg do

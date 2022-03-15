@@ -85,23 +85,26 @@ Export types(symbol)seq.mytype
 Export raw(symbol)bits
 
 Function rehash(s:symbol)symbol
-symbol(worddata.s, module.s, types.s, raw.s, extrabits(types.s, hash.worddata.s, hashbits.s))
+symbol(worddata.s, module.s, types.s, raw.s, extrabits(types.s, worddata.s, hashbits.s))
 
 Function =(a:symbol, b:symbol)boolean
-hashbits.a = hashbits.b ∧ worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1
+hashbits.a = hashbits.b ∧  worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1
 ∧ issimplename.a = issimplename.b
 ∧ module.a = module.b
 
 Function ?(a:symbol, b:symbol)ordering
-fsighash.a ? fsighash.b ∧ worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1
+{ checking hash first does not improve performance}
+   worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1
 ∧ issimplename.a ? issimplename.b
 ∧ module.a ? module.b
 
 Function ?2(a:symbol, b:symbol)ordering
-fsighash.a ? fsighash.b ∧ worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1
+   worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1
 ∧ issimplename.a ? issimplename.b
 
-function extrabits(types:seq.mytype, other:int, flags:bits)bits bits.hash(types, other) << 4 ∨ flags ∧ 0x0F
+function extrabits(types:seq.mytype, other:seq.word, flags:bits)bits 
+bits.hash(types, other) << 4 ∨ flags ∧ 0x0F
+
 
 Function extrabits(s:symbol)int toint.hashbits.s
 
@@ -110,7 +113,7 @@ symbol(s
 , moduleref."internallib $words"
 , [typeptr]
 , 0x0
-, extrabits(empty:seq.mytype, hash.s, constbit)
+, extrabits(empty:seq.mytype, s, constbit)
 )
 
 function frefbit bits bits.8
@@ -139,7 +142,6 @@ Function hasrequires(sym:symbol)boolean(raw.sym ∧ requiresbit) ≠ 0x0
 
 Function hash(sym:symbol)int toint(hashbits.sym >> 4)
 
-Function fsighash(s:symbol)int toint(hashbits.s >> 4)
 
 Function setunbound(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym ∨ unboundbit, hashbits.sym)
 
@@ -158,7 +160,7 @@ sym /and xor(unboundbit, tobits.-1))else}
  , replaceT(with, module.sym)
  , newtypes
  , adjustedraw
- , extrabits(newtypes, hash.worddata.sym, hashbits.sym)
+ , extrabits(newtypes,worddata.sym, hashbits.sym)
  )
 
 function symbolZ(module:modref, name:word, namePara:seq.mytype, paras:seq.mytype, rt:mytype, flags:bits, raw:bits)symbol
@@ -168,7 +170,7 @@ symbol([name]
 , types
 , raw
 , extrabits(types
-, hash.[name]
+, [name]
 , if isempty.namePara then simplenamebit ∨ flags else flags
 )
 )
@@ -247,7 +249,6 @@ Export isunbound(sym:symbol)boolean
 
 Export hash(sym:symbol)int
 
-Export fsighash(s:symbol)int
 
 Export setunbound(sym:symbol)symbol
 
@@ -527,7 +528,7 @@ symbolZ(moduleref."internallib $define"
 Function Fref(s:symbol)symbol
 let z = 
  extrabits(paratypes.s + resulttype.s
- , hash.[merge("FREF" + print.s)]
+ , [merge("FREF" + print.s)]
  , constbit ∨ frefbit ∨ hashbits.s ∧ 0x0F
  )
 symbol(worddata.s, module.s, types.s, raw.s, z)
@@ -535,7 +536,7 @@ symbol(worddata.s, module.s, types.s, raw.s, z)
 Function basesym(s:symbol)symbol
 if isFref.s then
  let flags = hashbits.s ∧ xor(constbit ∨ frefbit, tobits.-1)
- let newbits = extrabits(types.s, hash.worddata.s, flags)
+ let newbits = extrabits(types.s, worddata.s, flags)
  symbol(worddata.s, module.s, types.s, raw.s, newbits)
 else s
 

@@ -1,5 +1,11 @@
+if [ $(uname) == "Linux" ]; then
+echo "xgd-open \$@" > bin/tauopen 
+else 
+echo "open \$@" > bin/tauopen
 xattr -rd com.apple.quarantine bin/checkboot 
 xattr -rd com.apple.quarantine bin/tau
+fi
+chmod +x bin/tauopen
 mkdir tmp
 echo "void init_stdlib(); void init_libs(){init_stdlib(); }">tmp/stdlib.c
 clang -lm -pthread  stdlib/*.c tmp/stdlib.c bin/stdlib.bc  -o bin/stdlib

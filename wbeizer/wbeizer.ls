@@ -1,4 +1,4 @@
-#!/bin/bash  tau -w http://localhost/  stdlib   webassembly  wbeizer  Bquadratic Bcubic .
+#!/bin/bash  wtau  wbeizer  Bquadratic Bcubic .
 
 Module wbeizer
 

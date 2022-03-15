@@ -6,18 +6,18 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 cd ..
 
+
 libname=$1
 shift 1
 otherpara=$@
 
-  $SCRIPT_DIR/$libname "$otherpara" > "tmp/$libname.html"
+  $SCRIPT_DIR/tauexe $libname "$otherpara" > "tmp/$libname.html"
   if [ "<" == "$(head -c 1 tmp/$libname.html)" ] ;
   then 
-    open tmp/$libname.html 
+    tauopen tmp/$libname.html 
   else
   cat tmp/$libname.html
  fi
 
 
-#echo $SCRIPT_DIR/tau2 $p1 $@
 exit

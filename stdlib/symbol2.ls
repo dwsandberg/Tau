@@ -242,7 +242,6 @@ Export brf(symbol)int
 
 Export isstartorloop(symbol)boolean
 
-Export fsighash(symbol)int
 
 Export Sequence(mytype, int)symbol
 

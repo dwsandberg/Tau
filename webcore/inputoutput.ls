@@ -1,4 +1,4 @@
-#!/bin/bash  tau -w https://myhost.local/  stdlib   webassembly  wtests wtests  .
+#!/bin/sh  wtau  wtests wtests  .
 
 module COMPILETIME
 

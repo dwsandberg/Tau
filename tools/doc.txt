@@ -118,7 +118,7 @@ The syntax for non-comment paragraphs is /< block <paragraph>→ /keyword module
 /br /em E →  /keyword  for  /em forItems /keyword while /em E /keyword do /em E   /keyword /for ( /em E ) 
 /br /em E → /keyword let <let name> = /em E /em E 
 /br /em E → /keyword assert /em E /keyword report /em E /em E  
-/br /em E → { < one or more words not containing } > } /em E  
+/br /em E → { < words forming a comment with the brackets outside of double quotes balanced  > } /em E  
 /br /em E → process.<function call> | process(<function call>)/>
 
 Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
