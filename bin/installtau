@@ -1,5 +1,5 @@
 if [ $(uname) == "Linux" ]; then
-echo "xgd-open \$@" > bin/tauopen 
+echo "xdg-open \$@" > bin/tauopen 
 else 
 echo "open \$@" > bin/tauopen
 xattr -rd com.apple.quarantine bin/checkboot 

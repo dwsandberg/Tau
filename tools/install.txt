@@ -68,30 +68,45 @@ To set the execute bit, use /< block chmod +x HelloWorld/HelloWorld.ls />
 
 /< /section Installing Web Assembly Cross Compiler />
 
-Since wasm files cannot be served from filesystem a web server is require.  OSX has an apache web server pre-installed so we will use that server
-with the DocumentRoot being <Tau>.  Below is the list of configuration changes that need to be made.  Google to find details on how to make these changes.
+Since wasm files cannot be served from filesystem a web server is required. 
+OSX has an Apache web server pre-installed.  The details of how to configure the
+Apache web server is not hard but the details vary with OS so only the gist of what needs to 
+be done is given here.
 
+Set up a virtual host Below is an example configuretion.  The quotes strings
+will need to be updated with absolute path of you <Tau> directory.
+/< block 
+<VirtualHost *:80>
+    ServerName  myhost.local
+/br    DocumentRoot "/Users/david/Tau"
+/br    <Directory   "/Users/david/Tau" >
+/< block       Options FollowSymLinks Multiviews
+/br       MultiviewsMatch Any
+/br       AllowOverride None
+/br       Require all granted
+/>   </Directory>
+/br   ScriptAliasMatch ^/cgi-bin/((?!(?i:webobjects)).*$) "/Users/david/Tau/bin/$1"
+/br    ErrorLog "/private/var/log/apache2/myhost-error_log"
+/br    CustomLog "/private/var/log/apache2/myhost-access_log" common  
+/br </VirtualHost>
+/>
+
+To avoid file permission problems add the group of the web server
+as one of your groups.  Make that you default group.
 Change the user to your user name to avoid permission problems.
- /<  block User David />
-Change the document root to <Tau>  
- /< block DocumentRoot "<Tau>" /br
-<Directory   "<Tau>" > /> 
+An alternative is to run the web server under you user.
 
 Since files are cached by browse change cache control to retrieve new copy when file is changed on server.  To do this add the
 directive  /< block set Cache-Control no-cache /> to the <IfModule headers_module> section of the configuration file.
 
-A CGI is used to write files on the server.  To enable this CGI change the
-ScriptAliasMatch to /< block 
-   ScriptAliasMatch ^/cgi-bin/((?!(?i:webobjects)).*$) "/Users/david/work/bin/$1"
-/> and add /< block <FilesMatch "/Users/david/work/bin/putfile.cgi">
- \br   SetHandler cgi-script
-\br </FilesMatch> />
+The  <Tau>/bin/putfile.cgi is needed to write files back to the server.
 
 Restart the Apache web server. 
 
 To see if all is working properly run the command /< block 
 wtau     wtests wtests  />
-This should open a web browser  with a link wtest. Follow the link which should open a page with two buttons that will run two tests.
+This should open a web browser  with page with a button. 
+Push the button to run the test.  All the test should pass.
 
 /< noformat <hr> />
 /< /section Documentation below is not complete. />

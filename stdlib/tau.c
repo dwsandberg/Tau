@@ -245,6 +245,7 @@ BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * filena
                   //  fprintf(stderr,"start createfile %s %d %d\n",name,file,strcmp("stdout",name));
                       if (!( strcmp("stdout",name)==0 ))  { 
                       file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
+                      fchmod(file, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
                        fprintf(stderr,"createfile %s %d\n",name,file);
                      }
                  if ( data->type == 0) {

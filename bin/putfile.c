@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 
 /* Handle errors by printing a plain text message. */
 
@@ -22,21 +25,21 @@ main ()
      int content_length=atoi(getenv("CONTENT_LENGTH"));
      char *Root=getenv("DOCUMENT_ROOT");
      char *query=getenv("QUERY_STRING");
-     char buffer[BUFFER_SIZE];
-     strcpy(buffer,Root);
-     strcat(buffer,"/");
-     strcat(buffer,query);
+     char filename[300];
+     strcpy(filename,Root);
+     strcat(filename,"/");
+     strcat(filename,query);
      // check for illegal file name -- relative paths cannot be used  
      char *p;
-     for(p=buffer;*p!=0;p++) 
+     for(p=filename;*p!=0;p++) 
        if (  (*p=='.') && ( *(p+1)=='/' ||   *(p+1)=='\\' ))
          cgi_fail("illegal file name"); 
        else if (*p=='~' || (*p==':' )  ) cgi_fail("illegal file name"); 
      // open the file
-     FILE   *fp = fopen(buffer, "w"); 
+     FILE   *fp = fopen(filename, "w"); 
      if ( fp < 0) cgi_fail("fail open");
-     printf("filename:%s <br>",buffer);
-         
+     printf("filename:%s <br>",filename);
+  char buffer[BUFFER_SIZE];         
      int size=content_length;
      while (size > 0)   {
        int sz= size > BUFFER_SIZE ? BUFFER_SIZE:size;
@@ -45,5 +48,9 @@ main ()
        size-=BUFFER_SIZE;
        }
      printf("%d",    fclose(fp));
+       int f =open(  filename,O_RDWR);
+        
+        fchmod(f, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
+                  
      return 0;
 }

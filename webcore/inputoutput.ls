@@ -231,7 +231,7 @@ if aborted.t then 0 else 1
 Function createfile(name:seq.word, data:seq.int)int
 {OPTION INLINE}
 let t = 
- HTTP("../cgi-bin/putfile.cgi?" + name
+ HTTP({ "../cgi-bin/putfile.cgi?"} "bin/putfile.cgi?" + name
  , toUTF8."PUT Content-Type:application/text"
  , packed.data
  )
