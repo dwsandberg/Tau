@@ -701,7 +701,10 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
  ∨ sym
  = symbol(moduleref("builtin", typeptr), "assert", seqof.typeword, typeptr)
  ∨ {module.sym=internalmod /and}name.sym
- ∈ "idxseq fld packedindex processisaborted getseqlength getseqtype"then
+ ∈ "idxseq fld packedindex processisaborted getseqlength getseqtype"
+ /or  module.sym=internalmod /and name.sym
+ ∈ " not"
+ then
   next(blkstk, curblk + Icall(alltypes, sym), localtypes)
  else 
   let ele = lookup2(knownfuncs, wfunc(alltypes, sym, empty:seq.byte))

@@ -1,4 +1,4 @@
-#!/bin/sh tau common  tools help #
+#!/bin/sh tau stdlib common  tools help #
 
 Module tools
 
@@ -9,6 +9,7 @@ frontcmd
 entrycmd
 uses stdlib common
 exports baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
+
 
 * STATE builtin:profile profileinfo profileresult
 
@@ -146,8 +147,9 @@ use prettycompilerfront
 
 
 function transform(library:seq.word,target:seq.word,rename:seq.word) seq.word
-   transform( compilerfront("text", library),library,if isempty.target then "tmp" else target,
-      rename)
+   let newlib=if isempty.target then "tmp" else target
+   transform( compilerfront("text", library),library,newlib,
+      if isempty.rename then library + ">" + newlib else rename)
       
 
 Function frontcmd(library:seq.word, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
@@ -169,7 +171,7 @@ Function frontcmd(library:seq.word, pass:seq.word, n:seq.word, ~n:seq.word, mods
 
  /< option 1 -args  /> Library to pretty print.
 
- /< option 1-target  /> <directory to place result files in.> Will default to"tmp".
+ /< option 1-targstet  /> <directory to place result files in.> Will default to"tmp".
  
 /< command usegraphcmd usegraph />
 

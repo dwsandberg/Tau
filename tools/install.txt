@@ -91,8 +91,12 @@ will need to be updated with absolute path of you <Tau> directory.
 /br </VirtualHost>
 />
 
+The /em wtau command defaults the /em tauwebserver environment variable to https://myhost.local. 
+The environ variable tauwebserver must be set if the virtual host name is different or it
+does not use SSL. 
+
 To avoid file permission problems add the group of the web server
-as one of your groups.  Make that you default group.
+as one of your groups.  Make that your default group.
 Change the user to your user name to avoid permission problems.
 An alternative is to run the web server under you user.
 

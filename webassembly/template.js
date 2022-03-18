@@ -215,6 +215,7 @@ function finaljsHTTP(data,nobits ){
 }
   
 , getelementvalue:function  (id){ 
+  console.log("GETELEMENT"+asjsstring( id));   
   let  z = document.getElementById(asjsstring( id).trim()); 
   let  kind=z.tagName ;
   let  r=(kind=="TEXTAREA"  )? z.value:

@@ -237,15 +237,35 @@ BT assert(processinfo PD,BT message)
 
 struct bitsseq  { BT type; BT length; BT  data[50]; };
 
-
+int myopen(char * name) {
+char *p;
+ char tmp[200];
+ for(p=name;*p!=0;p++){
+   strncpy(tmp,name,sizeof(tmp));
+   tmp[ p-name]=0;
+  if (*p=='/') {
+   int status=  mkdir(tmp,0777) ;
+   int error=errno;
+  // fprintf(stderr,"%s %d\n",tmp,status);
+    status =( status==0|| errno==EEXIST) ? 0 : errno ;
+    if (status !=0 ) return status;
+   
+ //   printf("%s\n",tmp);
+ }}
+   int fp= open(name,O_CREAT |O_RDWR |O_TRUNC,0666);
+   if (fp < 0 ) return errno;
+    fchmod(fp, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
+ return fp;
+ }
 
 BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * filename ) 
                {    int file=1;
                     char * name=tocstr(filename);
                   //  fprintf(stderr,"start createfile %s %d %d\n",name,file,strcmp("stdout",name));
                       if (!( strcmp("stdout",name)==0 ))  { 
-                      file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
-                      fchmod(file, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
+     //                 file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
+     //                 fchmod(file, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP ); 
+                      file=myopen(name);
                        fprintf(stderr,"createfile %s %d\n",name,file);
                      }
                  if ( data->type == 0) {

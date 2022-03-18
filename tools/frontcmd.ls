@@ -27,7 +27,7 @@ use seq.arc.symbolref
 use set.arc.symbolref
 
 Function front(cf:compileinfo, pass:seq.word, names:seq.word, ~n:seq.word, mods:seq.word
-, ~mods:seq.word,samemodule:boolean,rootnames:seq.word, out:seq.word)seq.word
+, ~mods:seq.word, samemodule:boolean, rootnames:seq.word, out:seq.word)seq.word
 for selected = empty:seq.symbolref, root = empty:seq.symbolref, idx = 1, ss ∈ symbolrefdecode.cf do
  if isconst.ss ∨ isspecial.ss then next(selected, root, idx + 1)
  else if(isempty.mods ∨ name.module.ss ∈ mods) ∧ (isempty.names ∨ name.ss ∈ names) ∧ name.ss ∉ ~n
@@ -54,17 +54,17 @@ else
  let g = 
   for acc = empty:seq.arc.symbolref, c ∈ code.cf do
    if c_1 ∉ selected then acc
-   else 
-    for acc2 = acc, h ∈ toseq(asset(c << 2) ∩ s)do 
+   else
+    for acc2 = acc, h ∈ toseq(asset(c << 2) ∩ s)do
      if samemodule ∧ module.cf_(first.c) = module.cf_h then acc2 else acc2 + arc(first.c, h)
-   /for(acc2)
+    /for(acc2)
   /for(newgraph.acc)
  let g2 = 
   if not.isempty.root then
    for g2 = newgraph.empty:seq.arc.symbolref, new = asset.root, i ∈[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]do
-   let g3 = for g3 = g2, r ∈ toseq.new do g3 + toseq.arcstopredecessors(g, r)/for(g3)
-   next(g3, nodes.g3 \ nodes.g2)
-  /for(g2)
+    let g3 = for g3 = g2, r ∈ toseq.new do g3 + toseq.arcstopredecessors(g, r)/for(g3)
+    next(g3, nodes.g3 \ nodes.g2)
+   /for(g2)
   else g
  if out = "text"then
   for txt = "txt", a ∈ toseq.arcs.g2 do txt + " /br" + print.cf_(tail.a) + print.cf_(head.a)/for(txt)
@@ -85,7 +85,7 @@ Function node2text(a:symbol)seq.word[name.a]
 
 Function nodeTitle(a:symbol)seq.word print.a
 
- /< command  frontcmd front  />
+ /< command frontcmd front  />
 
  /< option 1 -library  /> Library to compile.
 

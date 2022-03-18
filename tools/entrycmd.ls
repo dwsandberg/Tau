@@ -1,3 +1,5 @@
+#!/bin/sh tau common tools help #
+
 Module entrycmd
 
 use parseargs
@@ -50,18 +52,27 @@ if first.k_2 = first."-"then subseq(k_2, 2, 2) + empty(first.k, "f")
 else[last.first.k] + k_1 << 1
 
 Function entry(libname:seq.word, html:boolean, includeproc:boolean, includedocin:boolean, optionsin:seq.word)seq.word
-if not.isempty.optionsin then
- for options = "", types = empty:seq.seq.word, s ∈ break(optionsin, ", ", false)do next(options + first.s, types + s << 1)/for(let pp = parseargs(libname, options, types)
- "parseargs(" + dq.libname + ", " + dq.options + dq.types + ")"
- + for txt = "", o ∈ options do txt + " /br" + o + "=" + getarg(pp, o)/for(txt))
-else
- let includedoc = if includeproc = false then true else includedocin
+{OPTION INLINE}
+if isempty.optionsin then
  {ship first part of file}
  let desc = 
   for desc = empty:seq.seq.word, name ∈ libname do
    let fullfile = breakparagraph.getfile:UTF8([name] + ".ls")
    for idx = 1, p ∈ fullfile while" /< command" ≠ subseq(p, 1, 2)do idx + 1 /for(desc + subseq(fullfile, idx, length.fullfile))
   /for(desc)
+ entry(libname, desc, html, includeproc, includedocin)
+else showargs(libname, optionsin)
+
+function showargs(args:seq.word,optionsin:seq.word) seq.word
+ for options = "", types = empty:seq.seq.word, s ∈ break(optionsin, ", ", false)do 
+ next(options + first.s, types + s << 1)/for(let pp = parseargs(args, options, types)
+ "parseargs($( dq.args),$( dq.options), $(dq.types))"  
+ + for txt = "", o ∈ options do txt + " /br" + o + "=" + getarg(pp, o)/for(txt))
+
+
+function entry(libname:seq.word,desc:seq.seq.word, html:boolean, includeproc:boolean, includedocin:boolean
+)seq.word
+ let includedoc = if includeproc = false then true else includedocin
  let cmds = 
   for acc = empty:seq.cmdinfo
   , idx = 1
@@ -98,9 +109,9 @@ else
      let new = 
       clean(p, "")
       + if html ∧ not.isempty.options.cmds_cmdno then
-       " /< noformat <input id="
-       + merge([cmdname.cmds_cmdno] + "$" + space + "/" + ">")
-       + " />"
+       " /< noformat <input id=$(dq.[merge([cmdname.cmds_cmdno] + "$")] + 
+       merge([space , "/"_1,  ">"_1])
+       ) />"
       else""/if
       + if html then
        " /< noformat <button onclick=" + merge("cmd" + proc.cmds_cmdno)

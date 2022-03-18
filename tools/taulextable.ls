@@ -25,7 +25,7 @@ function terminals seq.word".=():>]-for * comment, [_/if is I if # then else let
 function tolexaction(next:word)lexaction1
 {user supplied procedure to convert a word into a lex action}
 {assumes W for word I for Integer and comments map to 'comment'}
-if next ∈ (dq )then lexaction1(next, findindex("$wordlist"_1, terminals), next)
+if next ∈ dq then lexaction1(next, findindex("$wordlist"_1, terminals), next)
 else if next = merge("/" + "le")then
  lexaction1(next, findindex(">"_1, terminals), "≤"_1)
 else if next = merge("/" + "ge")then
@@ -60,13 +60,13 @@ else
 
 Function totext(l:lexaction1)seq.word
 let w = 
- if w.l ∈ "/for /if /"then dq.[w.l]+"_1 "
+ if w.l ∈ "/for /if /"then dq.[w.l] + "_1"
  else if(decodeword.w.l)_1 = (decodeword."/"_1)_1 then
   "merge(" + dq."/" + "+"
   + dq.[encodeword.subseq(decodeword.w.l, 2, 100)]
   + ")"
- else if w.l = dq_1 then  "dq_1"else dq.[w.l] + "_1"
-let label = if label.l = dq_1 then "dq" else dq.[label.l]
+ else if w.l = dq_1 then"dq_1"else dq.[w.l] + "_1"
+let label = if label.l = dq_1 then"dq"else dq.[label.l]
 "token(" + w + ", " + toword.tokenno.l + ", attribute:T(" + label
 + "))"
 

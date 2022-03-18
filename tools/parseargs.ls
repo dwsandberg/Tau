@@ -70,8 +70,8 @@ for lrpart = push(empty:stack.stkele, stkele(startstate, ATTR.[""]))
 , this ∈ input + "#"
 while stateno.top.lrpart ≠ finalstate
 do let tokenno = min(findindex(this, tokenlist), 6)
- let newlrpart = step(lrpart, input, ATTR.[[this]], tokenno, idx)
- next(newlrpart, idx + 1)
+let newlrpart = step(lrpart, input, ATTR.[[this]], tokenno, idx)
+next(newlrpart, idx + 1)
 /for(val.attribute.undertop(lrpart, 1))
 
 function step(stk:stack.stkele, input:seq.word, attrib:ATTR, tokenno:int, place:int)stack.stkele
@@ -92,51 +92,51 @@ else
  let newstateno = actiontable_(leftside_ruleno + length.tokenlist * stateno.top.newstk)
  assert newstateno > 0 report"????"
  let newstkele = stkele(newstateno, action(ruleno, input, place, reduction.top(stk, rulelen)))
- step(push(newstk, newstkele), input, attrib, tokenno, place) 
- 
+ step(push(newstk, newstkele), input, attrib, tokenno, place)
+
 Function action(ruleno:int, input:seq.word, place:int, R:reduction)ATTR
 {Alphabet #()-=W L O F V G}
-if ruleno = {G F #} 1 then R_1 
-else if ruleno = {F O} 2 then R_1 
-else if ruleno = {F F O} 3 then
+if ruleno = {G F #}1 then R_1
+else if ruleno = {F O}2 then R_1
+else if ruleno = {F F O}3 then
  if first.first.val.R_2 ≠ first."args"then ATTR(val.R_1 + val.R_2)
  else if first.first.val.R_1 ≠ first."args"then ATTR(val.R_2 + val.R_1)
-else ATTR([first.val.R_1 + first.val.R_2 << 1] + val.R_1 << 1)
-else if ruleno = {O W} 4 then ATTR.["args" + first.val.R_1] 
-else if ruleno = {O-W} 5 then R_2 
-else if ruleno = {O W=W} 6 then ATTR.[first.val.R_1 + first.val.R_3] 
-else if ruleno = {O-W(L)} 7 then ATTR.[first.val.R_2 + first.val.R_4] 
-else if ruleno = {V W} 8 then R_1 
-else if ruleno = {V-} 9 then R_1 
-else if ruleno = {V=} 10 then R_1 
-else if ruleno = {V(V)} 11 then ATTR.[first.val.R_1 + first.val.R_2 + first.val.R_3] 
-else if ruleno = {L V} 12 then R_1 
-else if ruleno = {L L V} 13 then ATTR.[first.val.R_1 + first.val.R_2] 
+ else ATTR([first.val.R_1 + first.val.R_2 << 1] + val.R_1 << 1)
+else if ruleno = {O W}4 then ATTR.["args" + first.val.R_1]
+else if ruleno = {O-W}5 then R_2
+else if ruleno = {O W=W}6 then ATTR.[first.val.R_1 + first.val.R_3]
+else if ruleno = {O-W(L)}7 then ATTR.[first.val.R_2 + first.val.R_4]
+else if ruleno = {V W}8 then R_1
+else if ruleno = {V-}9 then R_1
+else if ruleno = {V=}10 then R_1
+else if ruleno = {V(V)}11 then ATTR.[first.val.R_1 + first.val.R_2 + first.val.R_3]
+else if ruleno = {L V}12 then R_1
+else if ruleno = {L L V}13 then ATTR.[first.val.R_1 + first.val.R_2]
 else
  {ruleno}
  assert false report"invalid rule number" + toword.ruleno
-R_1
+ R_1
 
 function rulelength seq.int[2, 1, 2, 1, 2, 3, 5, 1, 1, 1, 3, 1, 2]
 
 function leftside seq.int[11, 10, 10, 8, 8, 8, 8, 9, 9, 9, 9, 7, 7]
 
-function tokenlist seq.word "#()-=W L O V F G"
+function tokenlist seq.word"#()-=W L O V F G"
 
 function startstate int 1
 
 function finalstate int 8
 
-function actiontable seq.int 
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 2, 0, 3, 0 
-, 5, 0, -4, 0, 0, -4, 6, -4, 0, 0, 0, 0, 0, -2, 0, 0, -2, 0, -2, 0 
-, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 8, 0, 0, 4, 0 
-, 2, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, -5, 11, 0 
-, -5, 0, -5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3 
-, 0, 0, -3, 0, -3, 0, 0, 0, 0, 0, -6, 0, 0, -6, 0, -6, 0, 0, 0, 0 
-, 0, 0, 17, 0, 15, 12, 14, 13, 0, 16, 0, 0, 0, -10, -10, -10, -10, -10, 0, 0 
-, 0, 0, 0, 0, 17, 18, 15, 12, 14, 0, 0, 19, 0, 0, 0, -8, -8, -8, -8, -8 
-, 0, 0, 0, 0, 0, 0, -9, -9, -9, -9, -9, 0, 0, 0, 0, 0, 0, -12, -12, -12 
-, -12, -12, 0, 0, 0, 0, 0, 0, 17, 0, 15, 12, 14, 0, 0, 20, 0, 0, -7, 0 
-, 0, -7, 0, -7, 0, 0, 0, 0, 0, 0, -13, -13, -13, -13, -13, 0, 0, 0, 0, 0 
-, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, -11, -11, -11, -11, -11]
+function actiontable seq.int
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 2, 0, 3, 0
+, 5, 0, -4, 0, 0, -4, 6, -4, 0, 0, 0, 0, 0, -2, 0, 0, -2, 0, -2, 0
+, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 8, 0, 0, 4, 0
+, 2, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, -5, 11, 0
+, -5, 0, -5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3
+, 0, 0, -3, 0, -3, 0, 0, 0, 0, 0, -6, 0, 0, -6, 0, -6, 0, 0, 0, 0
+, 0, 0, 17, 0, 15, 12, 14, 13, 0, 16, 0, 0, 0, -10, -10, -10, -10, -10, 0, 0
+, 0, 0, 0, 0, 17, 18, 15, 12, 14, 0, 0, 19, 0, 0, 0, -8, -8, -8, -8, -8
+, 0, 0, 0, 0, 0, 0, -9, -9, -9, -9, -9, 0, 0, 0, 0, 0, 0, -12, -12, -12
+, -12, -12, 0, 0, 0, 0, 0, 0, 17, 0, 15, 12, 14, 0, 0, 20, 0, 0, -7, 0
+, 0, -7, 0, -7, 0, 0, 0, 0, 0, 0, -13, -13, -13, -13, -13, 0, 0, 0, 0, 0
+, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, -11, -11, -11, -11, -11] 

@@ -13,7 +13,7 @@ otherpara=$@
   $SCRIPT_DIR/$libname "$otherpara" > "tmp/$libname.html"
   if [ "<" == "$(head -c 1 tmp/$libname.html)" ] ;
   then 
-    open tmp/$libname.html 
+    tauopen tmp/$libname.html 
   else
   cat tmp/$libname.html
  fi

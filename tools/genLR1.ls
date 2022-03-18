@@ -6,6 +6,8 @@ use pretty
 
 use standard
 
+use textio
+
 use otherseq.action
 
 use seq.action
@@ -33,6 +35,10 @@ use seq.ruleprec
 use encoding.state
 
 use seq.state
+
+use seq.stkele
+
+use stack.stkele
 
 use graph.word
 
@@ -251,7 +257,6 @@ let nontermials = for acc = empty:set.word, rule ∈ grammar2 do acc + first.rul
 assert isempty(asset.terminals ∩ nontermials)report"terminals and nontermials sets must be distinct"
 let alphabet = terminals + toseq.nontermials
 let initialstateno = valueofencoding.encode.state.initialstate.grammar2
-{let finalstatenox = valueofencoding.encode.state.finalstate.grammar2}
 let symbolsused = for acc = empty:set.word, rule ∈ grammar2 do acc ∪ asset.rule /for(acc)
 let missingsymbols = symbolsused \ asset.alphabet
 assert isempty(symbolsused \ asset.alphabet)
@@ -280,18 +285,18 @@ let amb =
 let finalstatebody = 
  for txt = "", a ∈ actions3 do
   if lookahead.a = first."#" ∧ codedaction.a > 0 then txt + toword.codedaction.a else txt
-  /for(txt)
- let para=if parameterized then ":T" else ""
-  let result = 
- [generatereduce(grammarandact, alphabet, attributename,ruleprec)
- , "function rulelength"+para+" seq.int"
+ /for(txt)
+let para = if parameterized then":T"else""
+let result = 
+ [generatereduce(grammarandact, alphabet, attributename, ruleprec)
+ , "function rulelength" + para + "seq.int"
  + for acc = "[", @e ∈ grammarandact do acc + toword(length.@e_1 - 1) + ", "/for(acc >> 1 + "]")
- , "function leftside"+para+" seq.int"
+ , "function leftside" + para + "seq.int"
  + for acc = "[", @e ∈ grammarandact do acc + toword.findindex(@e_1_1, alphabet) + ", "/for(acc >> 1 + "]")
- , "function tokenlist" + para +  "seq.word"  + dq.alphabet 
- , "function startstate"+para+" int" + toword.initialstateno
- , "function finalstate"+para+" int" + finalstatebody
- , "function actiontable"+para+" seq.int"
+ , "function tokenlist" + para + "seq.word" + dq.alphabet
+ , "function startstate" + para + "int" + toword.initialstateno
+ , "function finalstate" + para + "int" + finalstatebody
+ , "function actiontable" + para + "seq.int"
  + if length.amb = 0 then
   let x = 
    for table = sparseseq.0, @e ∈ actions3 do
@@ -308,11 +313,11 @@ let header =
  + toword.length.encoding:seq.encodingpair.state
  + " /p"
  + printRulePrecedence.ruleprec
- + if length.amb > 0 then "ambiguous actions:" + amb else""/if
- + if codeonly then "" else print(grammar2, actions3) 
+ + if length.amb > 0 then"ambiguous actions:" + amb else""/if
+ + if codeonly then""else print(grammar2, actions3)
 for txt = header, p ∈ result do
  txt + " /p" + if codeonly then pretty.towords.textformat.p else p
-/for(if codeonly then txt else txt + " /p follow" + print.follow.graminfo   /if)
+/for(if codeonly then txt else txt + " /p follow" + print.follow.graminfo /if)
 
 function print(a:graph.word)seq.word
 for acc = "nodes", node ∈ toseq.nodes.a do
@@ -345,7 +350,7 @@ else
    acc + shift(stateno, lookahead, newstateno)
   /for(acc)
  closestate(graminfo, stateno + 1, newresult, alphabet)
- 
+
 Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attributename:seq.word, ruleprec:seq.seq.word)seq.word
 "Function action(ruleno:int, input:seq.token." + attributename + ", R:reduction."
 + attributename
@@ -355,17 +360,17 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attri
 + alphabet
 + "}"
 + if isempty.ruleprec then""else printRulePrecedence.ruleprec /if
-+ for acc = "", i = 1, e ∈ grammarandact do 
++ for acc = "", i = 1, e ∈ grammarandact do
  let reduceline = 
   " /br else if ruleno={" + e_1 + "}" + toword.i + "then"
-+ for acc2 = "", w ∈ e_2 do
- acc2 + if w ∈ "let assert"then" /br" + w else[w]
- /for(acc2)
-next(acc + reduceline, i + 1)
+  + for acc2 = "", w ∈ e_2 do
+   acc2 + if w ∈ "let assert"then" /br" + w else[w]
+  /for(acc2)
+ next(acc + reduceline, i + 1)
 /for(acc << 2 + "else{ruleno}assert false report" + dq."invalid rule number"
 + "+toword.ruleno R_1")
- 
- Function LR1gen (location:seq.word,codeonly:boolean,parameterized:boolean) seq.word
+
+Function LR1gen(location:seq.word, codeonly:boolean, parameterized:boolean)seq.word
 {Assumption:Word ruleno is not used in any action.First use of ruleprec in comment that defines the precedence}
 for rules = empty:seq.seq.seq.word
 , terminals = ""
@@ -374,26 +379,26 @@ for rules = empty:seq.seq.seq.word
 , p ∈ breakparagraph.getfile:UTF8(location + ".ls")
 do
  if subseq(p, 1, 2) ∈ ["Function action", "function action"]then
-     let x = findindex("Alphabet"_1,p)
-       let newterminals= subseq(p,x+1,x+findindex("}"_1,p << x)-1) 
-     let a = findindex("RulePrecedence"_1,p)
-      let c=break(subseq(p,a,a+findindex("}"_1,p << a)),"|",false) << 1
-     let newruleprec =      c >> 1
+  let x = findindex("Alphabet"_1, p)
+  let newterminals = subseq(p, x + 1, x + findindex("}"_1, p << x) - 1)
+  let a = findindex("RulePrecedence"_1, p)
+  let c = break(subseq(p, a, a + findindex("}"_1, p << a)), "|", false) << 1
+  let newruleprec = c >> 1
   next(for acc = empty:seq.seq.seq.word, b ∈ break(p, "ruleno", false)do
-      if subseq(b,1,2)="={" then
-       let k= findindex(first."}",b)
-        acc+[subseq( b,3,k-1) , subseq(b,k+3 ,length.b-2)]
-      else acc
+   if subseq(b, 1, 2) = "={"then
+    let k = findindex(first."}", b)
+    acc + [subseq(b, 3, k - 1), subseq(b, k + 3, length.b - 2)]
+   else acc
   /for(acc)
   , newterminals
   , p_(findindex(first.")", p) + 1)
   , newruleprec
   )
-    else next(rules,terminals,attribute,ruleprec)
+ else next(rules, terminals, attribute, ruleprec)
 /for(let nonTerminals = for acc = empty:set.word, r ∈ rules do acc + first.first.r /for(acc)
 let terminals2 = 
  for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /for(acc)
-   lr1parser(rules,ruleprec,terminals2,"attribute",codeonly,parameterized)  )
+lr1parser(rules, ruleprec, terminals2, "attribute", codeonly, parameterized))
 
 use textio
 

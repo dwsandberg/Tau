@@ -54,7 +54,25 @@ if i > length.renames then name else renames_(i + 2)
 
 use otherseq.word
 
+function transform(cinfo:compileinfo, library:seq.word, modrename:seq.word) seq.seq.word
+let result1 = totext.cinfo
+for txt = empty:seq.seq.word, modlist = "", libloc = 1, idx = 1, c ∈ result1 do
+ if subseq(c, 1, 1) = "use"then
+  let newname = rename(modrename, c_2)
+  next(txt + replace(c, 2, newname), modlist, libloc, idx + 1)
+ else if subseq(c, 1, 1) = "Module" ∨ subseq(c, 1, 1) = "module"then
+  let newname = rename(modrename, c_2)
+  next(txt + replace(c, 2, newname), modlist + newname, libloc, idx + 1)
+ else if libloc = 1 ∧ subseq(c, 1, 1) = "Library"then next(txt + c, modlist, idx, idx + 1)
+ else next(txt + c, modlist, libloc, idx + 1)
+/for(replace(txt, libloc, fixlibclause(txt_libloc, modlist, modrename))
+)
+
 Function transform(cinfo:compileinfo, library:seq.word, newlib:seq.word, modrename0:seq.word)seq.word
+{OPTION INLINE}
+ let txt2=transform(cinfo,library,modrename0)
+ writeModule(txt2, newlib)
+ 
 let result1 = totext.cinfo
 let modrename = if isempty.modrename0 then library + ">" + newlib else modrename0
 for txt = empty:seq.seq.word, modlist = "", libloc = 1, idx = 1, c ∈ result1 do
