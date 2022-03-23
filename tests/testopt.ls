@@ -18,7 +18,8 @@ if if value1 = 4 then a else false then 40
 else if if value1 = 3 then b else false then 30 else 20
 
 Function testopt seq.word
-let p2 = prg.compilerfront("pass2", "stdlib.testoptconfig")
+let p2 = prg.compilerfront:libllvm("pass2", ["Library testoptconfig use stdlib exports 
+optests"])
 let cl = 
  ["7"
  , "12"

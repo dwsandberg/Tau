@@ -98,12 +98,10 @@ let includetemplate = false
 let libname = [lib]
 let info2 = getlibrarysrc.libname
 let info2f=break(info2_1,"uses exports",true) 
-let libexports=info2f_3 << 1
+let libexports=info2f_3 << 3
 let r = 
  compilerfront:libllvm("wasm"
- , ["Library" + libname + "uses exports tausupport inputoutput" + libexports]
- + getlibrarysrc(info2f_2 << 1)
- + info2 << 1
+ , info2
  )
 let check=checkweb(r,libexports)
 assert isempty.check report check 
@@ -132,14 +130,14 @@ let discard99 = oldconstants.prg
 let discard2 = wasmcompile(typedict.r, prg, syms2, [lib])
 let script = 
  if includetemplate then
-  toseqbyte.toUTF8."<script>" + getfile:byte("webassembly/template.js")
+  toseqbyte.toUTF8."<script>" + getfile:byte("/webassembly/template.js")
   + toseqbyte.toUTF8."</script>"
  else
   toseqbyte.toUTF8("<script src=" + dq + "/webassembly/template.js" + dq + "> </script>")
 for txt = "", page ∈ pages
 while page ∉ ". ."
 do let pagehtml = getfile:byte([lib] + "/" + page + ".html")
-let htmlname = "tmp/" + page + ".html"
+let htmlname = " built/" + page + ".html"
 let discard = 
  createfile(htmlname
  , pagehtml+script

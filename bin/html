@@ -1,8 +1,0 @@
- if [ -z "$1" ]; then 
- name="tmp"
-else
- name="$1"
-fi 
- cat - > /tmp/$name.html
-tauopen /tmp/$name.html
-

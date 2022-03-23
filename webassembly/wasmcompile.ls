@@ -181,7 +181,7 @@ let discard =
  for bodies = empty:seq.seq.byte
  , funcs2 = empty:seq.seq.byte
  , p ∈ sort.encoding:seq.encodingpair.wfunc << length.imports
- do next(bodies + code.data.p, funcs2 + LEB.typeidx.data.p)/for(createfile(libname + ".wasm"
+ do next(bodies + code.data.p, funcs2 + LEB.typeidx.data.p)/for(createfile("built/"+libname + ".wasm"
  , createwasm(imp, funcs2, exp + exportmemory."memory"_1, bodies, dataseg, elementdata, startfuncidx)
  ))
  "Successful compile /p" 

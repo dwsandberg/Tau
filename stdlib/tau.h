@@ -10,7 +10,7 @@ typedef  struct pinfo *processinfo;
 struct spaceinfo { char * nextone,*lastone; BT *blocklist; };
 
 
-pthread_mutex_t sharedspace_mutex;
+extern pthread_mutex_t sharedspace_mutex;
 
 struct pinfo { BT aborted; //  if aborted then 1 else if success then 0 
     BT * message; // message if aborted (seq.word)

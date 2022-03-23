@@ -1,0 +1,72 @@
+#!/bin/bash 
+  
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# set up working directory
+
+cd $SCRIPT_DIR
+cd ..
+
+pwd 
+
+set -e
+arg1=$1
+lib=${arg1%.*}
+f2="decs/$1.dec"
+parts1="$(awk '/parts/  {$1="";print}' $f2)"
+uses="$(awk '/uses/  {$1=""; $2="";print}' $f2)"
+exports="$(awk '/exports/  {print}' $f2)"
+baselib="$(awk '/uses/  {print $2}' $f2)"
+
+for p in $parts1 
+do
+ if [[ ${p::1} == "." ]]
+then
+ prefix="$p"
+ else
+ parts="$parts  $prefix$p"
+  if [[ ${p:(-3)} == ".ls" ]] 
+  then
+   lsparts="$lsparts  $prefix$p"
+  fi
+ fi
+done
+
+
+target="built/$lib.exe"
+echo "target=$target"
+pwd
+if [ -f "$target" ] ; then
+depends="$( ls -1t $parts $f2  $target| head -1)"
+echo "most recent: $depends"
+if [ "$depends" == "$target" ] ; then
+ exit 0;
+fi
+fi
+
+for  n in $uses $baselib
+ do
+  dependlibs="$dependslib built/$n.dylib"
+done
+
+
+echo "Library $lib uses $baselib $uses $exports " >  built/$lib.libsrc 
+ for  p in $lsparts 
+ do 
+ cat B $p  >> built/$lib.libsrc 
+done 
+if [ -z $baselib ]; then
+ baselib="stdlib"
+fi
+$SCRIPT_DIR/tauexe $baselib $lib   > "tmp/$lib.html"
+line1=$(awk '/^Finished/  {print "OK"}' tmp/$lib.html)
+ if [ "$line1" == "OK" ]; then 
+#ln -f tmp/$lib.bc   built/$lib.bc
+cmd="clang -lm -pthread -dynamiclib built/$lib.bc $dependlibs  -o built/$lib.dylib  -init _init_$lib -undefined dynamic_lookup"
+echo $cmd
+$cmd
+#ln -f $lib.dylib   built/$lib.exe
+echo "done" > built/$lib.exe
+else 
+tauopen tmp/$lib.html 
+fi

@@ -1,7 +1,7 @@
 echo "void init_stdlib(); void init_libs(){init_stdlib(); }">tmp/stdlib.c
-cc stdlib/*.c -DLIBRARY -o bin/tauexe
+cc  stdlib/*.c -DLIBRARY -o bin/tauexe
 cc bin/putfile.c -o bin/putfile.cgi
-/usr/bin/cc -dynamiclib bin/stdlib.bc  -o stdlib.dylib  -init _init_stdlib -undefined dynamic_lookup
+/usr/bin/cc -dynamiclib bin/stdlib.bc  -o built/stdlib.dylib  -init _init_stdlib -undefined dynamic_lookup
 time tauexe stdlib  stdlib > tmp/checkboot1.html
 time tauexe stdlib  stdlib > tmp/checkboot2.html
 time tauexe stdlib  stdlib > tmp/checkboot3.html

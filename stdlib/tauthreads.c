@@ -217,13 +217,13 @@ case 128:result =((BT(*)(processinfo, BT, BT, BT, BT, BT, BT))(q->func))(q, q->a
 case 129:result = asint(((double(*)(processinfo, BT, BT, BT, BT, BT, BT))(q->func))(q, q->args [ 0], q->args [ 1], q->args [ 2], q->args [ 3], q->args [ 4], q->args [ 5])); break;
      default: assertexit(0,"number of parameters not implement for threads");   
      }
-     assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail");
+    assertexit(pthread_mutex_lock (&sharedspace_mutex)==0,"lock fail2");
      q->seqelement= (q->argtype % 2) ? result : ((BT (*) (processinfo,BT))(q->deepcopyresult) ) ( q->spawningprocess,result);
-      assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail");
+      assertexit(pthread_mutex_unlock (&sharedspace_mutex)==0,"unlock fail2");
       q->aborted = 0; // must be done after seqelement is set 
     }
       if (q->freespace )  myfree(&q->space); 
-    if (q->profileindex > 0 )  (q->finishprof)(q->profileindex ,0);
+   // if (q->profileindex > 0 )  (q->finishprof)(q->profileindex ,0);
 }
 
 BT processisaborted(processinfo PD,BT pin){

@@ -1,15 +1,4 @@
-#!/bin/sh tau stdlib common  tools help #
-
 Module tools
-
-Library tools 
-baseTypeCheck doc genLR1 prettycompilerfront profile  taulextable
-parseargs
-frontcmd
-entrycmd
-uses stdlib common
-exports baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
-
 
 * STATE builtin:profile profileinfo profileresult
 
@@ -128,8 +117,6 @@ callgraphwithin(prg.compilerfront("text", libname), args)
 
 function callgraphbetween(libname:seq.word, args:seq.word)seq.word
 callgraphbetween(prg.compilerfront("text", libname), args)
-
-
 
 function help seq.word
 entry("tools/frontcmd tools/entrycmd tools/tools tools/genLR1"

@@ -26,10 +26,14 @@ use testseq
 
 use wordfreq
 
-Function testall seq.word
-{this is a comment}testfileio + test11 + test11a + testencoding + testprocess + testmodules
+Function testall seq.word 
+{this is a comment}testfileio + test11 
++ test11a 
++ testencoding + testprocess 
++testmodules
 + testbug7
 + testreal
 + testseq
 + testwordfreq
+
 + testopt 

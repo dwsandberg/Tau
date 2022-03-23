@@ -309,7 +309,7 @@ function finaljsHTTP(data,nobits ){
   }
 
  } } ; 
-  fetch("/"+library+".wasm")
+  fetch("/built/"+library+".wasm")
  .then(function(response){ return response.arrayBuffer()})
  .then(function(bytes){ return WebAssembly.instantiate(bytes, importObject)})
  .then(function(results){ 

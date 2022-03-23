@@ -7,6 +7,7 @@ xattr -rd com.apple.quarantine bin/tau
 fi
 chmod +x bin/tauopen
 mkdir tmp
-echo "void init_stdlib(); void init_libs(){init_stdlib(); }">tmp/stdlib.c
+mkdir built
+echo "void init_stdlib(); void init_libs(){init_stdlib(); }">built/stdlib.c
 clang -lm -pthread  stdlib/*.c tmp/stdlib.c bin/stdlib.bc  -o bin/stdlib
-cp bin/stdlib.bc tmp
+cp bin/stdlib.bc built/stdlib.bc

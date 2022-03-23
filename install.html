@@ -41,7 +41,8 @@
 <br> ErrorLog"/private/var/log/apache2/myhost-error_log"
 <br> CustomLog"/private/var/log/apache2/myhost-access_log"common
 <br> &lt;/VirtualHost> </span> 
-<p> To avoid file permission problems add the group of the web server as one of your groups. Make that you default group.Change the user to your user name to avoid permission problems.An alternative is to run the web server under you user.
+<p> The <em> wtau </em> command defaults the <em> tauwebserver </em> environment variable to https://myhost.local. The environ variable tauwebserver must be set if the virtual host name is different or it does not use SSL. 
+<p> To avoid file permission problems add the group of the web server as one of your groups. Make that your default group.Change the user to your user name to avoid permission problems.An alternative is to run the web server under you user.
 <p> Since files are cached by browse change cache control to retrieve new copy when file is changed on server. To do this add the directive <span class=block> set Cache-Control no-cache </span> to the &lt;IfModule headers_module> section of the configuration file.
 <p> The &lt;Tau>/bin/putfile.cgi is needed to write files back to the server.
 <p> Restart the Apache web server. 

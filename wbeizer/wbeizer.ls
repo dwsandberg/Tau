@@ -1,5 +1,3 @@
-#!/bin/bash  wtau  wbeizer  Bquadratic Bcubic .
-
 Module wbeizer
 
 Library wbeizer

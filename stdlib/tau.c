@@ -310,7 +310,8 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
    {   // fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
      return ((BT*)loaded[i+2])[3];}
   //  fprintf(stderr,"check %s,%d\n",lib_name_root,strlen(lib_name_root));
-   sprintf(lib_name,"%s.dylib",lib_name_root);
+   sprintf(lib_name,"built/%s.dylib",lib_name_root);
+ // sprintf(lib_name,"%s.dylib",lib_name_root);
    // fprintf(stderr,"Loading %s\n",lib_name);
    void *lib_handle = dlopen(lib_name, RTLD_NOW);
     if (lib_handle==0) {
@@ -331,6 +332,7 @@ BT createlib3(processinfo PD,char * filename,char * otherlibs, BT bytelength, st
   /* create the .bc file */
        sprintf(buff+16,"tmp/%s.bc",libname);
         createfile2(PD, bytelength , data,buff);
+        return 1;
    /* compile to .dylib file */ 
      prepare(otherlib,otherlibs,".dylib ");
   sprintf(buff,"clang -lm -pthread -dynamiclib tmp/%s.bc %s -o %s.dylib  -init _init_%s -undefined dynamic_lookup"

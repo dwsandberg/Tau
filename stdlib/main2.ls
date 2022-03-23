@@ -88,7 +88,7 @@ let cinfo = result.p
 let a = break(first.src.cinfo, "uses exports", true)
 let dependentlibs = a_2 << 1
 let bc = codegen(last.libname, dependentlibs, cinfo)
-let z2 = createlib(bc, last.libname, dependentlibs,args << 1)
+let z2 = createfile("built/"+ last.libname+".bc", bc )
 "OK"
 
 Function entrypoint(arg:UTF8)UTF8 compile.arg

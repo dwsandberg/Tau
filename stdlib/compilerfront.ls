@@ -1,7 +1,5 @@
 Module compilerfront
 
-/use libdesc
-
 use libraryModule
 
 use mytype
@@ -88,10 +86,14 @@ Export types(libraryModule)seq.seq.mytype
 
 Function extract(which:seq.word, s:seq.word)seq.word
 let libclause = break(s, "uses exports", true)
-if which = "exports"then libclause_3 << 1
-else if which = "library"then[libclause_1_2]
+ assert length.libclause > 2 report"PROBLEM in libraryclause"+s
+if which = "exports"then 
+libclause_3 << 1
+else if which = "library"then
+assert length.libclause_1 > 0 report"PROBLEM in libraryclause"+s
+[libclause_1_2]
 else
- assert which = "uses"report"PROBLEM in libraryclause"
+ assert which = "uses"report"PROBLEM in libraryclause"+s
  libclause_2 << 1
 
 Function compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:loadedresult)midpoint

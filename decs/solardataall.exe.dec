@@ -1,0 +1,3 @@
+parts ./solardataall/ solardataall.ls constants.ls data4.ls  redo.ls solarposistion.ls    
+uses common stdlib
+exports redo solardataall test3d data4  

@@ -81,6 +81,9 @@ createfile2(length.a * 8
 , tocstr.name
 )
 
+
+
+
 Builtin randomint(i:int)seq.int
 
 
@@ -109,8 +112,14 @@ builtin callstack(n:int)seq.int
 
 Builtin loadedLibs seq.liblib
 
+Function createfile(name:seq.word, a:seq.bits)int
+createfile2(length.a * 8
+, packed.a
+, tocstr.name
+)
 
-Function createlib(b:seq.bits, libname:word, dependlibs:seq.word,args:seq.word)int
+
+/Function createlib(b:seq.bits, libname:word, dependlibs:seq.word,args:seq.word)int
 createlib3(tocstr.[libname]
 , tocstr.for acc = "", @e ∈ dependlibs do acc + @e   + encodeword.[char.32]/for(acc)
 , length.b * 8

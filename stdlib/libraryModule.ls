@@ -126,6 +126,8 @@ if s_1 = "Library"_1 then s else findlibclause(a, i + 1)
 
 Function getlibrarysrc(libname:seq.word)seq.seq.word
 {OPTION INLINE}
+breakparagraph.getfile:UTF8( "built/" +  libname + ".libsrc")
+
 {library info is contain in first paragraph of result}
 let a = breakparagraph.getfile:UTF8([first.libname] + "/" + last.libname + ".ls")
 let l = extractinfo.a
