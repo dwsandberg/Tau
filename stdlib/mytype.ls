@@ -126,21 +126,14 @@ else
 
 Function internalmod modref moduleref."internallib internal"
 
-Function hash(b:seq.mytype, other:seq.word)int 
-for acc = hashstart, a ∈ b >> 1 do 
-for acc2 = acc, e ∈ typerep.a do 
-hash2(hash2(acc, name.e), modname.e)
-/for(acc2)
-/for(
- for acc3=acc, w /in other do
-   hash2(acc3, w)
- /for(finalmix.acc3))
- 
-function hash2(b:bits,w:word) bits  hash(b,hash.w)
+Function hash(b:seq.mytype, other:seq.word)int
+for acc = hashstart, a ∈ b >> 1 do
+ for acc2 = acc, e ∈ typerep.a do hash2(hash2(acc, name.e), modname.e)/for(acc2)
+/for(for acc3 = acc, w ∈ other do hash2(acc3, w)/for(finalmix.acc3))
 
+function hash2(b:bits, w:word)bits hash(b, hash.w)
 
 use bits
-
 
 ------------------
 

@@ -16,6 +16,8 @@ use symbol
 
 use typedict
 
+use textio
+
 use seq.libraryModule
 
 use seq.modref
@@ -60,13 +62,11 @@ use seq.seq.word
 
 Export type:liblib
 
-Export getlibrarysrc(seq.word)seq.seq.word
-
 Export words(liblib)seq.encodingpair.seq.char
 
 Export type:typedict
 
-----
+-----
 
 Export toint(symbolref)int
 
@@ -84,22 +84,11 @@ Export modname(libraryModule)modref
 
 Export types(libraryModule)seq.seq.mytype
 
-Function extract(which:seq.word, s:seq.word)seq.word
-let libclause = break(s, "uses exports", true)
- assert length.libclause > 2 report"PROBLEM in libraryclause"+s
-if which = "exports"then 
-libclause_3 << 1
-else if which = "library"then
-assert length.libclause_1 > 0 report"PROBLEM in libraryclause"+s
-[libclause_1_2]
-else
- assert which = "uses"report"PROBLEM in libraryclause"+s
- libclause_2 << 1
+Export  extractValue(s:seq.seq.word,name:seq.word) seq.word  
 
 Function compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:loadedresult)midpoint
-let libclause = break(allsrc_1, "uses exports", true)
-let lib = libclause_1_2
-let exports = {libclause_3 << 1}extract("exports", allsrc_1)
+let lib = first.extractValue(allsrc,"Library library")
+let exports = extractValue(allsrc,"exports")
 if option = "library"then
  let zz1 = prg.libinfo
  let discard = for acc = symbolref.sym.zz1_1, d ∈ zz1 do symbolref.sym.d /for(acc)

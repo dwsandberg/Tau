@@ -46,12 +46,7 @@ for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.
   next(empty:seq.seq.word, empty:seq.seq.word, newresult)
  else
   let temp = 
-   if s_1 ∈ "Library library"then
-    let parts = break(s, "uses exports", true)
-    " /keyword Library" + s_2 + alphasort(parts_1 << 2) + " /br  /keyword" + parts_2
-    + " /br  /keyword exports"
-    + alphasort(parts_3 << 1)
-   else if escape then escapeformat.s else s
+   if escape then escapeformat.s else s
   if length.uses = 0 then next(uses, libbody, result + temp)
   else next(uses, libbody + temp, result)
 /for(for txt = "", p ∈ result + sortuse.uses + libbody do txt + " /p" + p /for(txt))

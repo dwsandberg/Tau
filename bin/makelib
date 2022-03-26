@@ -6,18 +6,18 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 cd $SCRIPT_DIR
 source tauconfig.sh
-cd ..
 
-pwd 
+cd ..
 
 set -e
 arg1=$1
 lib=${arg1%.*}
-f2="decs/$1.dec"
-parts1="$(awk '/parts/  {$1="";print}' $f2)"
-uses="$(awk '/uses/  {$1=""; $2="";print}' $f2)"
-exports="$(awk '/exports/  {print}' $f2)"
-baselib="$(awk '/uses/  {print $2}' $f2)"
+f2="decs/$1"
+parts1="$(awk '/parts=/  {$1="";print}' $f2)"
+exports="$(awk '/exports=/  {$1="";print}' $f2)"
+baselib="$(awk '/uses=/  {print $2}' $f2)"
+uses="$(awk '/uses=/  {$1=""; $2="";print}' $f2)"
+
 
 for p in $parts1 
 do
@@ -25,16 +25,19 @@ do
 then
  prefix="$p"
  else
- parts="$parts  $prefix$p"
+  fullname=$prefix$p
+  parts="$parts  $fullname"
   if [[ ${p:(-3)} == ".ls" ]] 
   then
-   lsparts="$lsparts  $prefix$p"
+   lsparts="$lsparts  $fullname"
+  fi 
+  if [[ "${fullname::6}" == "built/" ]] ;then
+  make${fullname##*.} ${fullname:6} 
+  fi 
   fi
- fi
 done
 
-
-target="built/$lib.exe"
+target="built/$lib.lib"
 echo "target=$target"
 pwd
 if [ -f "$target" ] ; then
@@ -53,8 +56,11 @@ for  n in $uses $baselib
   ccode=" void init_$n(); $ccode init_$n();"
 done
 
+cp $f2   built/$lib.libsrc 
+echo "Library= $lib" >> built/$lib.libsrc
 
-echo "Library $lib uses $baselib $uses $exports " >  built/$lib.libsrc 
+echo "Library $lib uses $baselib $uses exports $exports " >  built/$lib.libsrc 
+ cat B $f2 >> built/$lib.libsrc  
  for  p in $lsparts 
  do 
  cat B $p  >> built/$lib.libsrc 
@@ -67,13 +73,17 @@ line1=$(awk '/^Finished/  {print "OK"}' tmp/$lib.html)
 if [ "$line1" == "OK" ]; then 
  if [ -z "$tauDylib"   ];then 
   echo "void init_$lib(); $ccode init_$lib();}" > tmp/$lib.c
-  cmd="clang -lm -pthread stdlib/*.c tmp/$lib.c   $dependlibs2  built/$lib.bc  -o bin/$lib"
- else
-   cmd="clang -lm -pthread -dynamiclib built/$lib.bc $dependlibs  -o built/$lib.dylib  -init _init_$lib -undefined dynamic_lookup" else
- fi
+  cmd="clang -lm -pthread stdlib/*.c tmp/$lib.c   $dependlibs2  built/$lib.bc  -o built/$lib"
  echo $cmd
  $cmd
- echo "done" > built/$lib.exe
+ 
+   ln -sf $(cd built ;pwd)/$lib $(cd bin ;pwd)/$lib
+ else
+   cmd="clang -lm -pthread -dynamiclib built/$lib.bc $dependlibs  -o built/$lib.dylib  -init _init_$lib -undefined dynamic_lookup" else
+ echo $cmd
+ $cmd
+ fi
+ echo "done" > built/$lib.lib
 else 
  $tauopen tmp/$lib.html 
 fi

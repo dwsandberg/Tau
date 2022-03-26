@@ -14,6 +14,8 @@ use bits
 
 use format
 
+use textio
+
 use libraryModule
 
 use standard

@@ -81,13 +81,9 @@ createfile2(length.a * 8
 , tocstr.name
 )
 
-
-
-
 Builtin randomint(i:int)seq.int
 
-
-type addrsym is addr:int,sym:symbol
+type addrsym is addr:int, sym:symbol
 
 use otherseq.addrsym
 
@@ -95,38 +91,25 @@ use seq.addrsym
 
 use seq.int
 
+function ?(a:addrsym, b:addrsym)ordering addr.a ? addr.b
 
-function ?(a:addrsym,b:addrsym) ordering addr.a ? addr.b 
-
-Function stacktrace seq.word  
-let t= for acc=empty:seq.addrsym, ll /in loadedLibs do
-for t=acc,idx=1, i /in symboladdress.ll do 
-next(t+addrsym(i , (libinfo.ll)_symbolref.idx),idx+1) /for(t)
-/for(sort.acc)
-for txt="/p", r /in callstack(30) << 2 do 
-let i=binarysearch(t,addrsym(r,Lit.1))
-txt+print.r + if between(-i-1,1,length.t) then print.sym.t_(-i-1) else "" /if +"/br" 
+Function stacktrace seq.word
+let t = 
+ for acc = empty:seq.addrsym, ll ∈ loadedLibs do
+  for t = acc, idx = 1, i ∈ symboladdress.ll do next(t + addrsym(i, (libinfo.ll)_(symbolref.idx)), idx + 1)/for(t)
+ /for(sort.acc)
+for txt = " /p", r ∈ callstack.30 << 2 do
+ let i = binarysearch(t, addrsym(r, Lit.1))
+ txt + print.r
+ + if between(-i - 1, 1, length.t)then print.sym.t_(-i - 1)else""/if
+ + " /br"
 /for(txt)
 
 builtin callstack(n:int)seq.int
 
 Builtin loadedLibs seq.liblib
 
-Function createfile(name:seq.word, a:seq.bits)int
-createfile2(length.a * 8
-, packed.a
-, tocstr.name
-)
-
-
-/Function createlib(b:seq.bits, libname:word, dependlibs:seq.word,args:seq.word)int
-createlib3(tocstr.[libname]
-, tocstr.for acc = "", @e ∈ dependlibs do acc + @e   + encodeword.[char.32]/for(acc)
-, length.b * 8
-, packed.b,tocstr.for acc = "", @e ∈ args do acc + @e   + encodeword.[char.32]/for(acc)
-)
-
-builtin createlib3(name:cstr, libs:cstr, length:int, data:seq.bits,args:cstr)int
+Function createfile(name:seq.word, a:seq.bits)int createfile2(length.a * 8, packed.a, tocstr.name)
 
 use tausupport
 

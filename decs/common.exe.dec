@@ -1,5 +1,0 @@
-#!/bin/sh  makehhh  common
- 
- parts built/stdlib.exe ./common/ common.ls  matrix.ls  point.ls seqio.ls seqiohelp.ls packedindex.ls bandeskopf.ls uniqueids.ls svg2graph.ls makeDAG.ls layergraph.ls barycenter.ls 
- uses stdlib 
- exports   common matrix point seqio seqiohelp  packedindex bandeskopf uniqueids svg2graph makeDAG layergraph barycenter

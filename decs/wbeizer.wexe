@@ -1,0 +1,2 @@
+parts=  built/webcore.libsrc ./wbeizer/ wbeizer.ls Bquadratic.html Bcubic.html 
+exports= wbeizer

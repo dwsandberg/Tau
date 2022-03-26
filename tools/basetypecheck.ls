@@ -160,7 +160,6 @@ let typeindex = typeref."index index."
 , NotOp
 , Br2(1, 2)
 , symbol(internalmod, "tocstr", seqof.typebits, typecstr)
-, symbol(internalmod, "createlib2", [typecstr, typecstr, typeint, seqof.typebits], typeint)
 , symbol(internalmod, "callstack", typeint, seqof.typeint)
 , {symbol(internalmod, "dlsymbol", typecstr, typeint), }
 symbol(internalmod, "outofbounds", seqof.typeword)

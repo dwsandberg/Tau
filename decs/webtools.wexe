@@ -1,0 +1,7 @@
+parts= built/webcore.libsrc webtools/webtools.ls webtools/mytests.html 
+parts= ./common/ seqio.ls seqiohelp.ls packedindex.ls svg2graph.ls uniqueids.ls   
+parts= ./tools/ entrycmd.ls parseargs.ls frontcmd.ls basetypecheck.ls doc.ls prettycompilerfront.ls genLR1.ls taulextable.ls
+parts= ./stdlib/ pretty.ls parsersupport.ls mytype.ls symbol.ls symbolconstant.ls symboldict.ls parse.ls compilerfront.ls compilerfrontT.ls 
+parts= libdesc.ls libraryModule.ls passparse.ls passsymbol.ls postbind.ls typedict.ls localmap2.ls hashset.ls symbol2.ls
+exports= mytests
+

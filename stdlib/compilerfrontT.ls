@@ -20,9 +20,9 @@ unbound pass2:T(set.symdef, typedict, option:seq.word)set.symdef
 
 Function compileinfo:T(option:seq.word, info:seq.seq.word)process.compileinfo
 {OPTION INLINE}
-let a = break(first.info, "uses exports", true)
-let dependentlibs = dependentinfo:T(a_2 << 1)
+let dependentlibs = dependentinfo:T(extractValue(info,"uses"))
 YYYY:T(option, info, dependentlibs)
+
 
 Function compilerfront4:T(option:seq.word, allsrc:seq.seq.word, libinfo:loadedresult)compileinfo
 let m = compilerfront3(option, allsrc, libinfo)

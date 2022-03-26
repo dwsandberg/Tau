@@ -78,18 +78,16 @@ use process.seq.seq.word
 
 use seq.seq.seq.word
 
-Function subcompilelib(args:seq.word)seq.word
+Function subcompilelib(args:seq.word)seq.bits
 {OPTION PROFILE}
 let libname = [first.args]
 let info = getlibrarysrc.libname
 let p = compileinfo:libllvm("all", getlibrarysrc.libname)
 assert not.aborted.p report message.p
 let cinfo = result.p
-let a = break(first.src.cinfo, "uses exports", true)
-let dependentlibs = a_2 << 1
-let bc = codegen(last.libname, dependentlibs, cinfo)
-let z2 = createfile("built/"+ last.libname+".bc", bc )
-"OK"
+codegen(last.libname, extractValue(src.cinfo,"uses"), cinfo)
+
+use process.seq.bits
 
 Function entrypoint(arg:UTF8)UTF8 compile.arg
 
@@ -97,6 +95,7 @@ Function compile(arg:UTF8)UTF8
 let wordargs = towords.arg
 let p = process.subcompilelib.wordargs 
 assert not.aborted.p report ("COMPILATION ERROR in libray:" + wordargs + EOL + message.p)
+let discard=createfile("built/"+ first.wordargs+".bc", result.p )
 toUTF8.("Finished creating program"+space)+arg
 
  
@@ -123,8 +122,7 @@ assert not.aborted.p report message.p
 result.p
 
 Function compilerfront:libllvm(option:seq.word, allsrc:seq.seq.word)compileinfo
-let t = break(allsrc_1, "uses exports", true)
-compilerfront4:libllvm(option, allsrc, dependentinfo:libllvm(t_2 << 1))
+compilerfront4:libllvm(option, allsrc, dependentinfo:libllvm(extractValue(allsrc,"uses")))
 
 function funcaddress:libllvm(sym:symbol)int funcaddress.sym
 

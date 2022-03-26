@@ -77,23 +77,22 @@ Export type:compileinfo
 
 Function compilerback2(prg10:set.symdef, oldmods:seq.libraryModule, typedict:typedict, src:seq.seq.word)compileinfo
 {/OPTION PROFILE}
-let libname=(src_1)_2
+let libname = src_1_2
 let discardresult = 
  for acc = 0, sd ∈ toseq.prg10 do
-  if"COMPILETIME"_1 ∈ getoption.code.sd  
-  then
+  if"COMPILETIME"_1 ∈ getoption.code.sd then
    let discard = symbolrefnew.sym.sd
    acc
   else acc
  /for(0)
 let symdecode = symbolrefdecode
-let discard2=for acc = symbolref(0), @e ∈ oldmods do
-  for acc2 = symbolref(0), r ∈ exports.@e do 
-    let sym=symdecode_(toint.r)
-     if isabstract.module.sym /or library.module.sym /ne libname then acc2 else 
-     symbolrefnew.sym 
-    /for(acc2)
-  /for(0)
+let discard2 = 
+ for acc = symbolref.0, @e ∈ oldmods do
+  for acc2 = symbolref.0, r ∈ exports.@e do
+   let sym = symdecode_(toint.r)
+   if isabstract.module.sym ∨ library.module.sym ≠ libname then acc2 else symbolrefnew.sym
+  /for(acc2)
+ /for(0)
 let addresses = length.symbolrefdecodenew
 let newmods = 
  for acc = empty:seq.libraryModule, @e ∈ oldmods do

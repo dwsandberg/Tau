@@ -6,8 +6,6 @@ use standard
 
 use symbol
 
-use textio
-
 use typedict
 
 use seq.bits
@@ -117,49 +115,6 @@ Export words(liblib)seq.encodingpair.seq.char
 
 Export profiledata(liblib)seq.parc
 
-_______________________
-
-function findlibclause(a:seq.seq.word, i:int)seq.word
-assert i < length.a report"No Library clause found"
-let s = a_i
-if s_1 = "Library"_1 then s else findlibclause(a, i + 1)
-
-Function getlibrarysrc(libname:seq.word)seq.seq.word
-{OPTION INLINE}
-breakparagraph.getfile:UTF8( "built/" +  libname + ".libsrc")
-
-{library info is contain in first paragraph of result}
-let a = breakparagraph.getfile:UTF8([first.libname] + "/" + last.libname + ".ls")
-let l = extractinfo.a
-let filelist = l_1 << 1
-for acc = ["Library" + first.libname + "uses" + l_2 << 1 + "exports" + l_3 << 1
-, "file(" + first.libname + "/" + last.libname + ".ls)"
-]
-+ a
-, @e ∈ filelist
-do
- if @e = last.libname then acc
- else
-  let chars = decodeword.@e
-  let t = 
-   breakparagraph.getfile:UTF8(if chars_1 = char1."/"then[encodeword(chars << 1)] + ".ls"
-   else[first.libname] + "/" + @e + ".ls"
-   )
-  acc
-  + if subseq(t, 1, 1) = ["file(" + first.libname + "/" + @e + ".ls)"]then
-   t
-  else["file(" + first.libname + "/" + @e + ".ls)"] + t
-/for(acc)
-
-Function extractinfo(a:seq.seq.word)seq.seq.word
-{first three lines are dependentlibs filelist and exports}
-for l = empty:seq.seq.word, s ∈ a
-while isempty.l
-do if subseq(s, 1, 1) = "Library"then break(s, "uses exports", true)else l
-/for(assert length.l = 3 ∧ l_2_1 = "uses"_1 ∧ l_3_1 = "exports"_1
-report"lib clause problem"
-l)
-
 _________________
 
 type compileinfo is symbolrefdecode:seq.symbol
@@ -168,7 +123,19 @@ type compileinfo is symbolrefdecode:seq.symbol
 , src:seq.seq.word
 , typedict:typedict
 
+Function libname(info:compileinfo) word   
+extractValue(src.info,"Library")_1
 
+Function extractValue(s:seq.seq.word,name:seq.word) seq.word  
+ if first.first.s /in "Library" then
+   for value="",p /in  break(s_1, "uses exports", true) do
+    if p_1 /in name then  p << 1 else value
+ /for(value)
+else 
+  for value="",last="="_1,p /in  break(first.s, "=", false) do
+  next(  if last /in name then p else value ,last)
+  /for( if value = p then value else value >> 1 )
+  
 Export type:compileinfo
 
 Export code(compileinfo)seq.seq.symbolref

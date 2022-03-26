@@ -1,0 +1,5 @@
+parts= built/stdlib.lib ./tests/ tests.ls bug7.ls checking.ls myseq.ls point.ls randomphrase.ls test11.ls test20.ls 
+parts=  testencoding.ls testfileio.ls testmodules.ls testprocess.ls test11a.ls testall.ls 
+parts=  testopt.ls testseq.ls wordfreq.ls tree.ls 
+uses= stdlib 
+exports= tests

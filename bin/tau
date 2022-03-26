@@ -4,20 +4,21 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # set up working directory
 
 cd $SCRIPT_DIR
+source tauconfig.sh
 cd ..
+set -e
+makelib $1.lib
 
-libname=$1
-shift 1
-otherpara=$@
+output="output.html"
 
-  $SCRIPT_DIR/$libname "$otherpara" > "tmp/$libname.html"
-  if [ "<" == "$(head -c 1 tmp/$libname.html)" ] ;
-  then 
-    tauopen tmp/$libname.html 
-  else
-  cat tmp/$libname.html
- fi
+$SCRIPT_DIR/$tauDylib$@ > "$output"
+#if [ "<" == "$(head -c 1  $output)" ] ;
+#then 
+#    $tauopen $output 
+#else
+#  cat $ouput
+#fi
 
+$tauopen "$output"
 
-#echo $SCRIPT_DIR/tau2 $p1 $@
 exit

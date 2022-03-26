@@ -127,7 +127,7 @@ let data =
  for acc = [toint.C64.0, toint.C64.length.wordstoadd], @e ∈ wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
 let wordreps = addobject.data
 let emptyseq = addobject.[toint.C64.0, toint.C64.0]
-addobject2("liblib"+libname
+addobject2("liblib" + libname
 , [name
 , wordreps
 , toint.entrypoint

@@ -110,7 +110,9 @@ LR1gen(getarg(args, "args" _1)
 )
 else "unknown command" + cmd
 
-Function testprofile(libname:seq.word)seq.word subcompilelib.libname + profileresults."time"
+Function testprofile(libname:seq.word)seq.word 
+let discard=subcompilelib.libname   
+profileresults."time"
 
 function callgraphwithin(libname:seq.word, args:seq.word)seq.word
 callgraphwithin(prg.compilerfront("text", libname), args)

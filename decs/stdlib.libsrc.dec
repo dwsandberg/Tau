@@ -1,7 +1,0 @@
-#!/bin/sh  makeexe stdlib.exe 
-
-parts    ./stdlib/  COMPILETIME.ls bitstream.ls codegennew.ls codetemplates.ls compilerfront.ls compilerfrontT.ls inputoutput.ls  hashset.ls internalbc.ls compileTime.ls libdesc.ls libraryModule.ls llvm.ls llvmconstants.ls localmap2.ls main2.ls mergeblocks.ls mytype.ls parse.ls parsersupport.ls pass2.ls pass2T.ls passparse.ls passsymbol.ls persistant.ls postbind.ls pretty.ls  symbol.ls symbol2.ls symboldict.ls tausupport.ls textio.ls timestamp.ls typedict.ls  codetemplates2.ls symbolconstant.ls ptr.ls taublockseq.ls bitcast.ls IO2.ls 
-parts ./core/ bits.ls  encoding.ls format.ls graph.ls process.ls real.ls seq.ls set.ls sparseseq.ls stack.ls standard.ls UTF8.ls words.ls xxhash.ls otherseq.ls 
-uses
-exports UTF8  barycenter bits   encoding fileio format graph hashset  internalbc ioseq   layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp  words xxhash compilerfront bitcast IO2 
-

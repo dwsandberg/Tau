@@ -1,13 +1,13 @@
 if [ $(uname) == "Linux" ]; then
-echo "xdg-open \$@" > bin/tauopen 
+echo  export tauopen=xdg-open  > bin/tauconfig.sh 
 else 
-echo "open \$@" > bin/tauopen
+echo '#export tauDylib="tauexe "' > bin/tauconfig.sh
+echo export tauopen=open >> bin/tauconfig.sh
 xattr -rd com.apple.quarantine bin/checkboot 
 xattr -rd com.apple.quarantine bin/tau
 fi
-chmod +x bin/tauopen
 mkdir tmp
 mkdir built
 echo "void init_stdlib(); void init_libs(){init_stdlib(); }">built/stdlib.c
-clang -lm -pthread  stdlib/*.c tmp/stdlib.c bin/stdlib.bc  -o bin/stdlib
+clang -lm -pthread  stdlib/*.c built/stdlib.c bin/stdlib.bc  -o bin/stdlib
 cp bin/stdlib.bc built/stdlib.bc

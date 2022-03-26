@@ -249,7 +249,6 @@ ptrtoint(functyp, symboltableentry([mangledname(extnames, f1,   symbolref.0,"std
 
  Export tollvmtype(typedict, symbol) llvmtype
  
-function libname(info:compileinfo) word   (first.src.info)_2
 
 use seq.seq.word
 

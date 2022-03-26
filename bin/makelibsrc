@@ -1,0 +1,51 @@
+#!/bin/bash 
+  
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# set up working directory
+
+cd $SCRIPT_DIR
+
+cd ..
+
+set -e
+arg1=$1
+lib=${arg1%.*}
+f2="decs/$1"
+parts1="$(awk '/parts=/  {$1="";print}' $f2)"
+uses="$(awk '/uses=/  {$1="";print}' $f2)"
+exports="$(awk '/$1="";exports=/  {print}' $f2)"
+
+for p in $parts1 
+do
+ if [[ ${p::1} == "." ]]
+then
+ prefix="$p"
+ else
+ parts="$parts  $prefix$p"
+  if [[ ${p:(-3)} == ".ls" ]] 
+  then
+   lsparts="$lsparts  $prefix$p"
+  fi
+ fi
+done
+
+
+
+
+target="built/$lib.libsrc"
+if [ -f "$target" ] ; then
+depends="$( ls -1t $parts $f2  $target| head -1)"
+echo "most recent: $depends"
+if [ "$depends" == "$target" ] ; then
+ exit 0;
+fi
+fi
+
+echo "Library $lib  uses $uses exports $exports " > "$target" 
+cat B $f2 >> "$target"
+ for  p in $lsparts 
+ do 
+ cat B $p  >> "$target"
+done 
+

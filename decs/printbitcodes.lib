@@ -1,0 +1,3 @@
+parts= built/stdlib.lib ./printbitcodes/ printbitcodes.ls bitcodesupport.ls runcode.ls slotdesc.ls
+uses= stdlib 
+exports= bitcodesupport data printbitcodes runcode

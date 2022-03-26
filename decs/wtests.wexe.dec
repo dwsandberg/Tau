@@ -1,3 +1,0 @@
-parts ./wtests/ wtests.ls testfileio.ls wtests.html ./built/ webcore.libsrc 
-parts ./tests/ tree.ls wordfreq.ls checking.ls test11.ls point.ls testencoding.ls testmodules.ls testprocess.ls randomphrase.ls test20.ls myseq.ls testseq.ls bug7.ls 
-exports wtests 

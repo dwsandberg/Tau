@@ -1,3 +1,0 @@
-parts  ./checkdata/ checkdata.ls checkdata2.ls   oldrecords.ls
-uses stdlib
-exports checkdata checkdata2   
