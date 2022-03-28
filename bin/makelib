@@ -14,7 +14,6 @@ arg1=$1
 lib=${arg1%.*}
 f2="decs/$1"
 parts1="$(awk '/parts=/  {$1="";print}' $f2)"
-exports="$(awk '/exports=/  {$1="";print}' $f2)"
 baselib="$(awk '/uses=/  {print $2}' $f2)"
 uses="$(awk '/uses=/  {$1=""; $2="";print}' $f2)"
 
@@ -34,7 +33,7 @@ then
   if [[ "${fullname::6}" == "built/" ]] ;then
   make${fullname##*.} ${fullname:6} 
   fi 
-  fi
+ fi
 done
 
 target="built/$lib.lib"
@@ -57,10 +56,7 @@ for  n in $uses $baselib
 done
 
 cp $f2   built/$lib.libsrc 
-echo "Library= $lib" >> built/$lib.libsrc
-
-echo "Library $lib uses $baselib $uses exports $exports " >  built/$lib.libsrc 
- cat B $f2 >> built/$lib.libsrc  
+echo " Library= $lib" >> built/$lib.libsrc
  for  p in $lsparts 
  do 
  cat B $p  >> built/$lib.libsrc 
@@ -72,8 +68,8 @@ $SCRIPT_DIR/$tauDylib$baselib $lib   > "tmp/$lib.html"
 line1=$(awk '/^Finished/  {print "OK"}' tmp/$lib.html)
 if [ "$line1" == "OK" ]; then 
  if [ -z "$tauDylib"   ];then 
-  echo "void init_$lib(); $ccode init_$lib();}" > tmp/$lib.c
-  cmd="clang -lm -pthread stdlib/*.c tmp/$lib.c   $dependlibs2  built/$lib.bc  -o built/$lib"
+  echo "void init_$lib(); $ccode init_$lib();}" > built/$lib.c
+  cmd="clang -lm -pthread stdlib/*.c built/$lib.c   $dependlibs2  built/$lib.bc  -o built/$lib"
  echo $cmd
  $cmd
  

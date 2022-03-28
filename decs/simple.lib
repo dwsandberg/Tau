@@ -1,0 +1,3 @@
+parts= built/stdlib.lib simple/simple.ls
+uses= stdlib
+exports= simple

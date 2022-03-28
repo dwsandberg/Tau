@@ -92,18 +92,31 @@ for txt = "", t ∈ toseq.r do
  
  function = (a:symbolref,b:symbolref) boolean toint.a=toint.b
  
- 
+  Function extractPages(s:seq.seq.word) seq.word
+   for txt="",last="",p /in break(extractValue2(s,"parts"),"html",false) do
+   next(if length.last < 2 /or last.last /nin "." then
+    txt 
+    else
+    txt+first.last,subseq(p,length.p-1,length.p))
+  /for(txt)
+  
+   Function extractValue2(s:seq.seq.word,name:seq.word) seq.word  
+ for value="",last="="_1,p /in  break(first.s+"?=", "=", false) do
+  next(  if last /in name then value+p >> 1 else value ,if isempty.p then "="_1 else last.p)
+  /for( value )
 
 function glue(lib:word, pages:seq.word)seq.word
 {problem is same symbol is used in different onclicks}
 let includetemplate = false
 let libname = [lib]
 let info2 = getlibrarysrc.libname
-let info2f=break(info2_1,"uses exports",true) 
-let libexports=info2f_3 << 3
+{let pages=extractPages(info2)
+assert false report "KLL4"+pages+"<>"+extractValue(info2,"parts")}
+let libexports= extractValue(info2,"exports") 
 let r = 
  compilerfront:libllvm("wasm"
- , info2
+ , [ "uses=$(extractValue(info2,"uses"))exports=tausupport inputoutput $(libexports)
+ Library=$(libname)"]+ info2 << 1
  )
 let check=checkweb(r,libexports)
 assert isempty.check report check 

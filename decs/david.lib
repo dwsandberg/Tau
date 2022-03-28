@@ -1,3 +1,4 @@
 parts= built/stdlib.lib david/david.ls david/delta.ls 
- uses= stdlib  
- exports= david
+uses= stdlib  
+exports= david
+ 

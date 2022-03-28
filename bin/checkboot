@@ -3,19 +3,19 @@ source bin/tauconfig.sh
 echo "tauDylib=$tauDylib" 
 if  [ -z "$tauDylib"   ] ;then 
 echo "zero"
-echo "void init_stdlib(); void init_libs(){init_stdlib(); }">tmp/stdlib.c
- clang -lm -pthread stdlib/*.c tmp/stdlib.c     bin/stdlib.bc  -o bin/stdlib 
+echo "void init_stdlib(); void init_libs(){ init_stdlib(); }">built/stdlib.c
+ clang -lm -pthread stdlib/*.c built/stdlib.c     bin/stdlib.bc  -o bin/stdlib 
 else 
 echo "non-zero"
 clang -dynamiclib bin/stdlib.bc  -o built/stdlib.dylib  -init _init_stdlib -undefined dynamic_lookup
 cc  stdlib/*.c -DLIBRARY -o bin/tauexe
 fi
 cc bin/putfile.c -o bin/putfile.cgi
-makelibsrc stdlib.libsrc
+makelibsrc stdlib.lib
 time $tauDylib stdlib  stdlib > tmp/checkboot1.html
 time $tauDylib stdlib  stdlib > tmp/checkboot2.html
 time $tauDylib stdlib  stdlib > tmp/checkboot3.html
-cc stdlib/*.c tmp/stdlib.c built/stdlib.bc  -o bin/stdlib
+cc stdlib/*.c built/stdlib.c built/stdlib.bc  -o bin/stdlib
 open tmp/checkboot1.html
 diff tmp/checkboot1.html tmp/checkboot2.html
 if [ $? -ne 0 ] 

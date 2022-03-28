@@ -127,15 +127,15 @@ Function libname(info:compileinfo) word
 extractValue(src.info,"Library")_1
 
 Function extractValue(s:seq.seq.word,name:seq.word) seq.word  
- if first.first.s /in "Library" then
+if first.first.s /in "Library" then
    for value="",p /in  break(s_1, "uses exports", true) do
     if p_1 /in name then  p << 1 else value
  /for(value)
-else 
-  for value="",last="="_1,p /in  break(first.s, "=", false) do
-  next(  if last /in name then p else value ,last)
-  /for( if value = p then value else value >> 1 )
-  
+else  for value="",last="="_1,p /in  break(first.s+"?=", "=", false) do
+  next(  if last /in name then value+p >> 1 else value ,if isempty.p then "="_1 else last.p)
+  /for( value )
+
+     
 Export type:compileinfo
 
 Export code(compileinfo)seq.seq.symbolref

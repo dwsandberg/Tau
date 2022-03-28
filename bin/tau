@@ -6,9 +6,12 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 source tauconfig.sh
 cd ..
-set -e
 makelib $1.lib
-
+err="$?"
+if [ "$err" != "0" ]; then
+$tauopen tmp/$1.lib.html
+exit 1
+else
 output="output.html"
 
 $SCRIPT_DIR/$tauDylib$@ > "$output"
@@ -20,5 +23,4 @@ $SCRIPT_DIR/$tauDylib$@ > "$output"
 #fi
 
 $tauopen "$output"
-
-exit
+fi

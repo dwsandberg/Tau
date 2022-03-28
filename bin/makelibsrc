@@ -13,8 +13,6 @@ arg1=$1
 lib=${arg1%.*}
 f2="decs/$1"
 parts1="$(awk '/parts=/  {$1="";print}' $f2)"
-uses="$(awk '/uses=/  {$1="";print}' $f2)"
-exports="$(awk '/$1="";exports=/  {print}' $f2)"
 
 for p in $parts1 
 do
@@ -22,10 +20,11 @@ do
 then
  prefix="$p"
  else
- parts="$parts  $prefix$p"
+  fullname=$prefix$p
+  parts="$parts  $fullname"
   if [[ ${p:(-3)} == ".ls" ]] 
   then
-   lsparts="$lsparts  $prefix$p"
+   lsparts="$lsparts  $fullname"
   fi
  fi
 done
@@ -42,8 +41,8 @@ if [ "$depends" == "$target" ] ; then
 fi
 fi
 
-echo "Library $lib  uses $uses exports $exports " > "$target" 
-cat B $f2 >> "$target"
+cp $f2   built/$lib.libsrc 
+echo " Library= $lib" >> built/$lib.libsrc
  for  p in $lsparts 
  do 
  cat B $p  >> "$target"

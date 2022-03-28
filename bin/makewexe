@@ -14,7 +14,6 @@ arg1=$1
 lib=${arg1%.*}
 f2="decs/$1"
 parts1="$(awk '/parts=/  {$1="";print}' $f2)"
-exports="$(awk '/exports=/  {$1="";print}' $f2)"
 
 for p in $parts1 
 do
@@ -55,11 +54,12 @@ if [ "$depends" == "$target" ] ; then
 fi
 fi
 
-echo "Library $lib  uses exports tausupport inputoutput $exports" >  built/$lib.libsrc  
  for h in $htmlparts 
  do
   htmlnames="$htmlnames $(basename -s .html  $h)"
  done
+ cp $f2   built/$lib.libsrc 
+echo " Library= $lib" >> built/$lib.libsrc
  for  p in $lsparts 
  do 
  cat  B  $p  >> built/$lib.libsrc 
