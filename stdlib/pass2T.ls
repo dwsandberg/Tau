@@ -20,7 +20,7 @@ use symbolconstant
 
 use typedict
 
-use compileTime.T
+use compileTimeT.T
 
 use seq.char
 
