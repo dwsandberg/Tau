@@ -1,5 +1,5 @@
 if [ $(uname) == "Linux" ]; then
-echo  export tauopen=xdg-open  > bin/tauconfig.sh 
+echo  "export tauopen=\"nohup xdg-open\""  > bin/tauconfig.sh 
 else 
 echo '#export tauDylib="tauexe "' > bin/tauconfig.sh
 echo export tauopen=open >> bin/tauconfig.sh

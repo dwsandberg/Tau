@@ -13,10 +13,12 @@ fi
 cc bin/putfile.c -o bin/putfile.cgi
 makelibsrc stdlib.lib
 time $tauDylib stdlib  stdlib > tmp/checkboot1.html
+clang -lm -pthread  stdlib/*.c built/stdlib.c built/stdlib.bc  -o bin/stdlib
 time $tauDylib stdlib  stdlib > tmp/checkboot2.html
+clang -lm -pthread  stdlib/*.c built/stdlib.c built/stdlib.bc  -o bin/stdlib
 time $tauDylib stdlib  stdlib > tmp/checkboot3.html
-cc stdlib/*.c built/stdlib.c built/stdlib.bc  -o bin/stdlib
-open tmp/checkboot1.html
+ clang -lm -pthread  stdlib/*.c built/stdlib.c built/stdlib.bc  -o bin/stdlib
+$tauopen tmp/checkboot1.html
 diff tmp/checkboot1.html tmp/checkboot2.html
 if [ $? -ne 0 ] 
 then 
