@@ -45,8 +45,7 @@ for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.
   let newresult = result + sortuse.uses + libbody + (target + s)
   next(empty:seq.seq.word, empty:seq.seq.word, newresult)
  else
-  let temp = 
-   if escape then escapeformat.s else s
+  let temp = if escape then escapeformat.s else s
   if length.uses = 0 then next(uses, libbody, result + temp)
   else next(uses, libbody + temp, result)
 /for(for txt = "", p ∈ result + sortuse.uses + libbody do txt + " /p" + p /for(txt))

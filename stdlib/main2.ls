@@ -78,40 +78,38 @@ use process.seq.seq.word
 
 use seq.seq.seq.word
 
-Function subcompilelib(args:seq.word)seq.bits
+Function subcompilelib(info:seq.seq.word)seq.bits
 {OPTION PROFILE}
-let libname = [first.args]
-let info = getlibrarysrc.libname
-let p = compileinfo:libllvm("all", getlibrarysrc.libname)
+let p = compileinfo:libllvm("all", info)
 assert not.aborted.p report message.p
 let cinfo = result.p
-codegen(last.libname, extractValue(src.cinfo,"uses"), cinfo)
+codegen(last.extractValue(info, "Library")
+, extractValue(src.cinfo, "uses")
+, cinfo
+)
 
 use process.seq.bits
 
-Function entrypoint(arg:UTF8)UTF8 compile.arg
+Function entrypoint(arg:UTF8)UTF8 compile.getlibrarysrc.[first.towords.arg]
 
-Function compile(arg:UTF8)UTF8
-let wordargs = towords.arg
-let p = process.subcompilelib.wordargs 
-assert not.aborted.p report ("COMPILATION ERROR in libray:" + wordargs + EOL + message.p)
-let discard=createfile("built/"+ first.wordargs+".bc", result.p )
-toUTF8.("Finished creating program"+space)+arg
+Function compile(info:seq.seq.word)UTF8
+let libname = extractValue(info, "Library")
+let p = process.subcompilelib.info
+assert not.aborted.p report"COMPILATION ERROR in libray:" + libname + EOL + message.p
+let discard = createfile("built/" + first.libname + ".bc", result.p)
+toUTF8("Finished creating program" + libname)
 
- 
-Function entrywrapper(t:int,newarg:UTF8) UTF8
- let p2 = 
-    createthread(funcaddress.deepcopySym.typeref."UTF8 UTF8" 
-   , funcaddress.deepcopySym.seqof.typeword
-   , t
-   , [bitcast:int(toptr.newarg)]
-   , 4
-   )
- let r=if aborted.p2 then HTMLformat.message.p2 else bitcast:UTF8(toptr.result.p2)
-  let discard=createfile("stdout", toseqbyte(toUTF8.htmlheader + r))
-  r
- 
-
+Function entrywrapper(t:int, newarg:UTF8)UTF8
+let p2 = 
+ createthread(funcaddress.deepcopySym.typeref."UTF8 UTF8"
+ , funcaddress.deepcopySym.seqof.typeword
+ , t
+ , [bitcast:int(toptr.newarg)]
+ , 4
+ )
+let r = if aborted.p2 then HTMLformat.message.p2 else bitcast:UTF8(toptr.result.p2)
+let discard = createfile("stdout", toseqbyte(toUTF8.htmlheader + r))
+r
 
 Function astext(info:compileinfo)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ prg.info do acc + [print.sym.p + print.code.p]/for(acc)
@@ -121,8 +119,13 @@ let p = compileinfo:libllvm(option, getlibrarysrc.libname)
 assert not.aborted.p report message.p
 result.p
 
+Function compilerfront(option:seq.word, info:seq.seq.word)compileinfo
+let p = compileinfo:libllvm(option, info)
+assert not.aborted.p report message.p
+result.p
+
 Function compilerfront:libllvm(option:seq.word, allsrc:seq.seq.word)compileinfo
-compilerfront4:libllvm(option, allsrc, dependentinfo:libllvm(extractValue(allsrc,"uses")))
+compilerfront4:libllvm(option, allsrc, dependentinfo:libllvm(extractValue(allsrc, "uses")))
 
 function funcaddress:libllvm(sym:symbol)int funcaddress.sym
 
@@ -146,4 +149,4 @@ Function dependentinfo:libllvm(dependentlibs:seq.word)loadedresult
 for org = empty:loadedresult, ll ∈ loadedLibs do
  let libname = (libname.ll)_1
  if libname ∈ dependentlibs then toloadedresult(org, libinfo.ll, libname)else org
-/for(org)
+/for(org) 

@@ -11,40 +11,16 @@ cd ..
 set -e
 arg1=$1
 lib=${arg1%.*}
-f2="decs/$1"
-parts1="$(awk '/parts=/  {$1="";print}' $f2)"
 
-for p in $parts1 
-do
- if [[ ${p::1} == "." ]]
-then
- prefix="$p"
- else
-  fullname=$prefix$p
-  parts="$parts  $fullname"
-  if [[ ${p:(-3)} == ".ls" ]] 
-  then
-   lsparts="$lsparts  $fullname"
-  fi
- fi
-done
+parts=$(grep  "^$1 parts= " built/decs.txt | cut -d" " -f3-)
 
-
-
-
-target="built/$lib.libsrc"
-if [ -f "$target" ] ; then
-depends="$( ls -1t $parts $f2  $target| head -1)"
-echo "most recent: $depends"
-if [ "$depends" == "$target" ] ; then
- exit 0;
-fi
-fi
-
-cp $f2   built/$lib.libsrc 
+grep  "^$1 " built/decs.txt | cut -d" " -f2- > built/$lib.libsrc 
 echo " Library= $lib" >> built/$lib.libsrc
- for  p in $lsparts 
+ for  fullname in $parts 
  do 
- cat B $p  >> "$target"
+  if [[ ${fullname:(-3)} == ".ls" || ${fullname:(-7)} == ".libsrc"  ]] 
+  then
+ cat B $fullname  >> built/$lib.libsrc
+  fi
 done 
 

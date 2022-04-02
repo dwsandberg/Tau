@@ -1,51 +1,23 @@
-#!/bin/sh 
+#!/bin/sh
   
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # set up working directory
 
 cd $SCRIPT_DIR
-source tauconfig.sh
 
 cd ..
 
 set -e
 arg1=$1
 lib=${arg1%.*}
-f2="decs/$1"
-parts1="$(awk '/parts=/  {$1="";print}' $f2)"
-baselib="$(awk '/uses=/  {print $2}' $f2)"
-uses="$(awk '/uses=/  {$1=""; $2="";print}' $f2)"
 
+source bin/tauconfig.sh
 
-for p in $parts1 
-do
- if [[ ${p::1} == "." ]]
-then
- prefix="$p"
- else
-  fullname=$prefix$p
-  parts="$parts  $fullname"
-  if [[ ${p:(-3)} == ".ls" ]] 
-  then
-   lsparts="$lsparts  $fullname"
-  fi 
-  if [[ "${fullname::6}" == "built/" ]] ;then
-  make${fullname##*.} ${fullname:6} 
-  fi 
- fi
-done
+usesX=$(grep  "^$lib.libsrc uses= " built/decs.txt | cut -d" " -f3-)
 
-target="built/$lib.lib"
-echo "target=$target"
-pwd
-if [ -f "$target" ] ; then
-depends="$( ls -1t $parts $f2  $target| head -1)"
-echo "most recent: $depends"
-if [ "$depends" == "$target" ] ; then
- exit 0;
-fi
-fi
+baselib="${usesX%%\ *}"
+uses="${usesX#*\ }"
 
 ccode="void init_libs(){"
 for  n in $uses $baselib
@@ -55,16 +27,10 @@ for  n in $uses $baselib
   ccode=" void init_$n(); $ccode init_$n();"
 done
 
-cp $f2   built/$lib.libsrc 
-echo " Library= $lib" >> built/$lib.libsrc
- for  p in $lsparts 
- do 
- cat B $p  >> built/$lib.libsrc 
-done 
 if [ -z $baselib ]; then
  baselib="stdlib"
 fi
-$SCRIPT_DIR/$tauDylib$baselib $lib   > "tmp/$lib.html"
+built/$tauDylib$baselib $lib   > "tmp/$lib.html"
 line1=$(awk '/^Finished/  {print "OK"}' tmp/$lib.html)
 if [ "$line1" == "OK" ]; then 
  if [ -z "$tauDylib"   ];then 
@@ -72,14 +38,12 @@ if [ "$line1" == "OK" ]; then
   cmd="clang -lm -pthread stdlib/*.c built/$lib.c   $dependlibs2  built/$lib.bc  -o built/$lib"
  echo $cmd
  $cmd
- 
-   ln -sf $(cd built ;pwd)/$lib $(cd bin ;pwd)/$lib
  else
    cmd="clang -lm -pthread -dynamiclib built/$lib.bc $dependlibs  -o built/$lib.dylib  -init _init_$lib -undefined dynamic_lookup" else
  echo $cmd
  $cmd
  fi
  echo "done" > built/$lib.lib
-else 
- $tauopen tmp/$lib.html 
+else
+ $tauopen tmp/$lib.html
 fi

@@ -1,3 +1,0 @@
-parts= built/common.lib ./mytest/ Gcode.ls heating.ls mytest.ls point2d.ls stl.ls svg.ls test4.ls 
-uses= common stdlib
-exports= heating matrix mytest stl

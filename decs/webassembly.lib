@@ -1,3 +1,0 @@
-parts= built/stdlib.lib ./webassembly/ webassembly.ls funcidx.ls knownWfunc.ls printfunc.ls wasm.ls wasm2.ls wasmcompile.ls
-uses= stdlib
-exports= wasm wasm1 wasm2 wasmcompile webassembly

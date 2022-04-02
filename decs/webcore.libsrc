@@ -1,7 +1,0 @@
-parts= ./webcore/ inputoutput.ls webIO.ls
-parts= ./common/ barycenter.ls layergraph.ls makeDAG.ls bandeskopf.ls
-parts= ./stdlib/  tausupport.ls       
-parts= textio.ls   bitstream.ls IO2.ls bitcast.ls taublockseq.ls ptr.ls
-parts= ./core/ UTF8.ls otherseq.ls bits.ls  encoding.ls  format.ls words.ls  xxhash.ls process.ls  real.ls  seq.ls  set.ls  sparseseq.ls  standard.ls  graph.ls  stack.ls
-uses=
-exports= standard

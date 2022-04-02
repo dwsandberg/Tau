@@ -1,75 +1,23 @@
-#!/bin/bash 
+#!/bin/sh
   
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # set up working directory
 
 cd $SCRIPT_DIR
-source tauconfig.sh
 
 cd ..
 
 set -e
 arg1=$1
 lib=${arg1%.*}
-f2="decs/$1"
-parts1="$(awk '/parts=/  {$1="";print}' $f2)"
 
-for p in $parts1 
-do
- if [[ ${p::1} == "." ]]
-then
- prefix="$p"
- else
-  fullname=$prefix$p
-  parts="$parts  $fullname"
-  if [[ ${p:(-3)} == ".ls" ]] 
-  then
-   lsparts="$lsparts  $fullname"
-  fi 
-  if [[ "${fullname::6}" == "built/" ]] ;then
-  make${fullname##*.} ${fullname:6} 
-  fi 
-  if [[ ${p:(-7)} == ".libsrc" ]] 
-  then
-   lsparts="$lsparts  $prefix$p"
-  fi
-  if [[ ${p:(-5)} == ".html" ]] 
-  then
-   htmlparts="$htmlparts  $prefix$p"
-  fi
- fi
-done
+source bin/tauconfig.sh
 
-makelib webassembly.lib
-
-target="built/$lib.wexe"
-echo "target=$target"
-pwd
-if [ -f "$target" ] ; then
-depends="$( ls -1t $parts $f2  $target| head -1)"
-echo "most recent: $depends"
-if [ "$depends" == "$target" ] ; then
- exit 0;
-fi
-fi
-
- for h in $htmlparts 
- do
-  htmlnames="$htmlnames $(basename -s .html  $h)"
- done
- cp $f2   built/$lib.libsrc 
-echo " Library= $lib" >> built/$lib.libsrc
- for  p in $lsparts 
- do 
- cat  B  $p  >> built/$lib.libsrc 
-done 
-#ln -f $lib/$lib.ls built/$lib.libsrc 
-echo "htmlparts:$htmlparts" 
-$SCRIPT_DIR/${tauDylib}webassembly $lib $(basename -as .html  $htmlparts)  > "tmp/$lib.html"
+built/${tauDylib}webassembly $lib    > "tmp/$lib.html"
 line1=$(awk '/^Successful compile/  {print "OK"}' tmp/$lib.html)
  if [ "$line1" == "OK" ]; then 
   echo "done" > built/$lib.wexe
- else
-  open tmp/$lib.html
-  fi
+else
+ $tauopen tmp/$lib.html
+fi

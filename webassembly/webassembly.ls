@@ -51,8 +51,7 @@ use IO2
 use main2
 
 Function entrypoint(s:UTF8)UTF8
-let args = towords.s
-let p = process.glue(args_1, args << 1)
+let p = process.glue(first.towords.s)
 HTMLformat.if aborted.p then message.p else result.p
 
 function checkweb(cf:compileinfo,libexports:seq.word) seq.word
@@ -90,6 +89,10 @@ for txt = "", t ∈ toseq.r do
  
  use seq.symbolref
  
+ use otherseq.char
+ 
+ use seq.seq.char
+ 
  function = (a:symbolref,b:symbolref) boolean toint.a=toint.b
  
   Function extractPages(s:seq.seq.word) seq.word
@@ -97,7 +100,8 @@ for txt = "", t ∈ toseq.r do
    next(if length.last < 2 /or last.last /nin "." then
     txt 
     else
-    txt+first.last,subseq(p,length.p-1,length.p))
+    txt+    encodeword(last.break(char1."/",decodeword.first.last))
+    ,subseq(p,length.p-1,length.p))
   /for(txt)
   
    Function extractValue2(s:seq.seq.word,name:seq.word) seq.word  
@@ -105,13 +109,12 @@ for txt = "", t ∈ toseq.r do
   next(  if last /in name then value+p >> 1 else value ,if isempty.p then "="_1 else last.p)
   /for( value )
 
-function glue(lib:word, pages:seq.word)seq.word
+function glue(lib:word)seq.word
 {problem is same symbol is used in different onclicks}
 let includetemplate = false
 let libname = [lib]
 let info2 = getlibrarysrc.libname
-{let pages=extractPages(info2)
-assert false report "KLL4"+pages+"<>"+extractValue(info2,"parts")}
+let pages=extractPages(info2)
 let libexports= extractValue(info2,"exports") 
 let r = 
  compilerfront:libllvm("wasm"

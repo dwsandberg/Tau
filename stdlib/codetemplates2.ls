@@ -139,11 +139,7 @@ do
   let code = for code = empty:seq.symbol, r ∈ c << 1 do code + info_r /for(code)
   if"COMPILED"_1 ∈ getoption.code ∨ externalcall.firstsym then
    let discard5 = 
-    call(alltypes
-    , firstsym
-    , "CALL"_1
-    , mangledname(libextnames, firstsym,   first.c,thename)
-    )
+    call(alltypes, firstsym, "CALL"_1, mangledname(libextnames, firstsym, first.c, thename))
    next(used0, crecord, defines, symrefs + first.c, extnames)
   else
    let extname = merge([thename] + "$$" + toword.toint.first.c)
@@ -193,7 +189,7 @@ for defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
   else next(defines, extnames)
  else if ref ∈ symrefs then next(defines, extnames)
  else if not.isInternal.ele ∨ externalcall.ele then
-  let discard5 = call(alltypes, ele, "CALL"_1, mangledname(extnames, ele,   ref,thename))
+  let discard5 = call(alltypes, ele, "CALL"_1, mangledname(extnames, ele, ref, thename))
   next(defines, extnames)
  else
   let r = toint.ref
@@ -202,40 +198,36 @@ for defines = asset.indefines, extnames = extnamesin, ref ∈ toseq.used do
 /for(let defines2 = 
  for acc = empty:set.symbol, sd ∈ toseq.defines do
   let ele2 = sym.sd
-  let name = mangledname(extnames, ele2,  symbolref.paragraphno.sd,thename)
+  let name = mangledname(extnames, ele2, symbolref.paragraphno.sd, thename)
   let discard = funcdec(alltypes, ele2, name)
   let discard5 = call(alltypes, ele2, "CALL"_1, name)
   acc + ele2
- /for( {let check=for acc2="", sym /in subseq(symbolrefdecode.info, 1, newmaplength)do if library.module.sym ≠"stdxlib 
+ /for({let check=for acc2="", sym /in subseq(symbolrefdecode.info, 1, newmaplength)do if library.module.sym ≠"stdxlib 
 "_1 /or isabstract.module.sym /or sym /in acc then acc2 else acc2+print.sym+library.module.sym+EOL /for(acc2)assert 
 isempty.check report"failing in codetemplates2"+check}
  toseq.defines)
 let discard2 = buildFref(frefs, info, extnames)
 let discard4 = processconst(isrecordconstant, alltypes)
-for  entrypoint=slot.0 , sd /in toseq.defines 
-while toint.entrypoint  =0
- do
-  if name.sym.sd /in "entrypoint" then
-    symboltableentry([mangledname(extnames, sym.sd, symbolref.0,thename)], function.[ptr.i64, i64, ptr.i64]
- ) else entrypoint
- /for( 
-steponeresult(empty:seq.match5, defines2, extnames,entrypoint,slot.0)))
+for entrypoint = slot.0, sd ∈ toseq.defines
+while toint.entrypoint = 0
+do if name.sym.sd ∈ "entrypoint"then
+ symboltableentry([mangledname(extnames, sym.sd, symbolref.0, thename)], function.[ptr.i64, i64, ptr.i64])
+else entrypoint
+/for(steponeresult(empty:seq.match5, defines2, extnames, entrypoint, slot.0)))
 
 Export extnames(steponeresult)set.symdef
 
-type steponeresult is match5map:seq.match5, defines:seq.symdef, 
-extnames:set.symdef,entrypoint:slot,errorhandler:slot
+type steponeresult is match5map:seq.match5, defines:seq.symdef, extnames:set.symdef, entrypoint:slot, errorhandler:slot
 
 Export match5map(steponeresult)seq.match5
 
 Export defines(steponeresult)seq.symdef
 
-Export entrypoint(steponeresult) slot 
+Export entrypoint(steponeresult)slot
 
-Export errorhandler(steponeresult) slot
+Export errorhandler(steponeresult)slot
 
 Export type:steponeresult
-
 
 Function addlibwords(extnames:set.symdef, typedict:typedict)slot
 let f1 = 
@@ -245,10 +237,11 @@ let f1 =
  , typeint
  )
 let functyp = ptr.tollvmtype(typedict, f1)
-ptrtoint(functyp, symboltableentry([mangledname(extnames, f1,   symbolref.0,"stdlib"_1)], functyp))
+ptrtoint(functyp
+, symboltableentry([mangledname(extnames, f1, symbolref.0, "stdlib"_1)], functyp)
+)
 
- Export tollvmtype(typedict, symbol) llvmtype
- 
+Export tollvmtype(typedict, symbol)llvmtype
 
 use seq.seq.word
 
@@ -258,12 +251,12 @@ for acc = empty:seq.match5, ref ∈ frefs do
  let refbase = symbolref.-toint.ref
  let basesym = info_refbase
  let functyp = ptr.tollvmtype(alltypes, basesym)
-  let discard = 
+ let discard = 
   addtemplate(Fref.basesym
   , 0
   , emptyinternalbc
   , "ACTARG"_1
-  ,ptrtoint(functyp, symboltableentry([mangledname(extnames, basesym,   refbase,libname.info)], functyp))
+  , ptrtoint(functyp, symboltableentry([mangledname(extnames, basesym, refbase, libname.info)], functyp))
   )
  acc
 /for(acc)
@@ -284,33 +277,32 @@ for org = empty:set.symdef, ll ∈ loadedLibs do
 /for(org)
 
 Function processconst(toprocess:seq.symdef, alltypes:typedict)int
-let initvalue = assignencoding(buildconst(Lit.0, alltypes))
- for notprocessed = empty:seq.symdef,  xx ∈ toprocess do
-  let processed = 
-   for args = empty:seq.int, defined = true, ele ∈ code.xx
-   while defined
-   do let tp = findtemplate.ele
-   if isempty.tp then
-    let discard6 = 
-     if name.module.ele ∈ "$int"then
-      let discard5 = buildconst(ele, alltypes)
-      0
-     else 0
-    next(empty:seq.int, false)
-   else next(args + arg.tp_1, true)
-   /for(if defined then
-    let discard = addtemplate(sym.xx, 0, emptyinternalbc, "ACTARG"_1, slot.addobject.args)
-    true
-   else false /if)
+let initvalue = assignencoding.buildconst(Lit.0, alltypes)
+for notprocessed = empty:seq.symdef, xx ∈ toprocess do
+ let processed = 
+  for args = empty:seq.int, defined = true, ele ∈ code.xx
+  while defined
+  do let tp = findtemplate.ele
+  if isempty.tp then
+   let discard6 = 
+    if name.module.ele ∈ "$int"then
+     let discard5 = buildconst(ele, alltypes)
+     0
+    else 0
+   next(empty:seq.int, false)
+  else next(args + arg.tp_1, true)
+  /for(if defined then
+   let discard = addtemplate(sym.xx, 0, emptyinternalbc, "ACTARG"_1, slot.addobject.args)
+   true
+  else false /if)
  if processed then notprocessed else notprocessed + xx
- /for(if  assignencoding(buildconst(Lit.0, alltypes)) =initvalue
-   then assert isempty.notprocessed  report "processconst problem"
-   0 else processconst(notprocessed, alltypes)/if)
- 
- Function mangledname(extname:set.symdef, s:symbol, ref:symbolref,library:word)word
- if name.module.s ∈ "internal"then
+/for(if assignencoding.buildconst(Lit.0, alltypes) = initvalue then
+ assert isempty.notprocessed report"processconst problem"
+ 0
+else processconst(notprocessed, alltypes)/if)
+
+Function mangledname(extname:set.symdef, s:symbol, ref:symbolref, library:word)word
+if name.module.s ∈ "internal"then
  if externalcall.s then name.s
  else merge.[library, "$"_1, "$"_1, toword.toint.ref]
-else
-   name.first.getCode(extname, s)
- 
+else name.first.getCode(extname, s) 

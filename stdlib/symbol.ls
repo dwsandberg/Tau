@@ -88,23 +88,20 @@ Function rehash(s:symbol)symbol
 symbol(worddata.s, module.s, types.s, raw.s, extrabits(types.s, worddata.s, hashbits.s))
 
 Function =(a:symbol, b:symbol)boolean
-hashbits.a = hashbits.b ∧  worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1
+hashbits.a = hashbits.b ∧ worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1
 ∧ issimplename.a = issimplename.b
 ∧ module.a = module.b
 
 Function ?(a:symbol, b:symbol)ordering
-{ checking hash first does not improve performance}
-   worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1
+{checking hash first does not improve performance}worddata.a ? worddata.b
+∧ types.a >> 1 ? types.b >> 1
 ∧ issimplename.a ? issimplename.b
 ∧ module.a ? module.b
 
 Function ?2(a:symbol, b:symbol)ordering
-   worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1
-∧ issimplename.a ? issimplename.b
+worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1 ∧ issimplename.a ? issimplename.b
 
-function extrabits(types:seq.mytype, other:seq.word, flags:bits)bits 
-bits.hash(types, other) << 4 ∨ flags ∧ 0x0F
-
+function extrabits(types:seq.mytype, other:seq.word, flags:bits)bits bits.hash(types, other) << 4 ∨ flags ∧ 0x0F
 
 Function extrabits(s:symbol)int toint.hashbits.s
 
@@ -142,7 +139,6 @@ Function hasrequires(sym:symbol)boolean(raw.sym ∧ requiresbit) ≠ 0x0
 
 Function hash(sym:symbol)int toint(hashbits.sym >> 4)
 
-
 Function setunbound(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym ∨ unboundbit, hashbits.sym)
 
 Function setrequires(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym ∨ requiresbit, hashbits.sym)
@@ -160,7 +156,7 @@ sym /and xor(unboundbit, tobits.-1))else}
  , replaceT(with, module.sym)
  , newtypes
  , adjustedraw
- , extrabits(newtypes,worddata.sym, hashbits.sym)
+ , extrabits(newtypes, worddata.sym, hashbits.sym)
  )
 
 function symbolZ(module:modref, name:word, namePara:seq.mytype, paras:seq.mytype, rt:mytype, flags:bits, raw:bits)symbol
@@ -169,10 +165,7 @@ symbol([name]
 , module
 , types
 , raw
-, extrabits(types
-, [name]
-, if isempty.namePara then simplenamebit ∨ flags else flags
-)
+, extrabits(types, [name], if isempty.namePara then simplenamebit ∨ flags else flags)
 )
 
 Function Br2(t:int, f:int)symbol
@@ -248,7 +241,6 @@ Export isconst(s:symbol)boolean
 Export isunbound(sym:symbol)boolean
 
 Export hash(sym:symbol)int
-
 
 Export setunbound(sym:symbol)symbol
 

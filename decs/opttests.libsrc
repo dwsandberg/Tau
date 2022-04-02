@@ -1,3 +1,0 @@
-parts=  tests/opttests.ls 
-uses= stdlib
-exports= opttests

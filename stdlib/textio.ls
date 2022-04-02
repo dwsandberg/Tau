@@ -17,7 +17,6 @@ use otherseq.int
 Function getlibrarysrc(libname:seq.word)seq.seq.word
 {OPTION INLINE}breakparagraph.getfile:UTF8("built/" + libname + ".libsrc")
 
-
 Function getfileaslines(filename:seq.word)seq.UTF8 breaklines.UTF8.getfile:byte(filename)
 
 Function getfile:seq.seq.word(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)

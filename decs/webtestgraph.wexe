@@ -1,5 +1,0 @@
-parts= built/webcore.libsrc ./webtestgraph/  webtestgraph.ls testgraph.html  
-parts= ./common/ point.ls matrix.ls
-parts= ./mytest/point2d.ls
-parts= ./stdlib/ libraryModule.ls symbol.ls mytype.ls typedict.ls  
-exports= webtestgraph

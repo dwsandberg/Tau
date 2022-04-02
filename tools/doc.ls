@@ -74,22 +74,7 @@ let modules =
  + "</a>  />"
 /for(acc + p)
 
-Function formatdoc(args:seq.word)seq.word
-{OPTION INLINE}
-prettyfile(false, "", breakparagraph.getfile:UTF8(args + ".txt"))
 
-Function createdoc seq.word
-{Creates html tau html documentation. Creates file taudocs.html}
-let d = prettyfile(false, "", breakparagraph.getfile:UTF8("tools/doc.txt"))
-let x1 = createfile("taudoc.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d))
-let d2 = prettyfile(false, "", breakparagraph.getfile:UTF8("tools/install.txt"))
-let x2 = createfile("install.html", toseqbyte(toUTF8.htmlheader + HTMLformat.d2))
-{let x2=createfile("appdoc.html", [htmlheader+processpara.@(+, addselect, "", gettext."tools/appdoc.txt")]
-)}
-{let y1=createhtmlfile("testall.html", htmlcode."testall")}
-let y1 = 
- createfile("stdlib.html", toseqbyte(toUTF8.htmlheader + HTMLformat.doclibrary."stdlib"))
-d
 
 Function callgraphbetween(prg:seq.symdef, modulelist:seq.word)seq.word
 {Calls between modules in list of modules. }

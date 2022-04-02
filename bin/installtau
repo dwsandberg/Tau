@@ -11,5 +11,5 @@ mkdir built
 echo "" > B
 echo "" >> B
 echo "void init_stdlib(); void init_libs(){init_stdlib(); }">built/stdlib.c
-clang -lm -pthread  stdlib/*.c built/stdlib.c bin/stdlib.bc  -o bin/stdlib
-cp bin/stdlib.bc built/stdlib.bc
+clang -lm -pthread  stdlib/*.c built/stdlib.c bin/stdlib.bc  -o built/stdlib
+ln -sf $(cd built ;pwd)/$stdlib $(cd bin ;pwd)/$stdlib

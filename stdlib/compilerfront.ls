@@ -16,8 +16,6 @@ use symbol
 
 use typedict
 
-use textio
-
 use seq.libraryModule
 
 use seq.modref
@@ -84,11 +82,11 @@ Export modname(libraryModule)modref
 
 Export types(libraryModule)seq.seq.mytype
 
-Export  extractValue(s:seq.seq.word,name:seq.word) seq.word  
+Export extractValue(s:seq.seq.word, name:seq.word)seq.word
 
 Function compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:loadedresult)midpoint
-let lib = first.extractValue(allsrc,"Library library")
-let exports = extractValue(allsrc,"exports")
+let lib = first.extractValue(allsrc, "Library library")
+let exports = extractValue(allsrc, "exports")
 if option = "library"then
  let zz1 = prg.libinfo
  let discard = for acc = symbolref.sym.zz1_1, d ∈ zz1 do symbolref.sym.d /for(acc)

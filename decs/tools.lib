@@ -1,4 +1,0 @@
-parts= built/common.lib ./tools/  tools.ls baseTypeCheck.ls  doc.ls  genLR1.ls  prettycompilerfront.ls  profile.ls   taulextable.ls 
-parts= parseargs.ls frontcmd.ls entrycmd.ls 
-uses= common stdlib  
-exports= baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph

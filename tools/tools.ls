@@ -110,15 +110,19 @@ LR1gen(getarg(args, "args" _1)
 )
 else "unknown command" + cmd
 
+use textio
+
+use pretty
+
+Function formatdoc(args:seq.word)seq.word
+{OPTION INLINE}
+prettyfile(false, "", breakparagraph.getfile:UTF8(args + ".txt"))
+
+
 Function testprofile(libname:seq.word)seq.word 
-let discard=subcompilelib.libname   
+let discard=compile.getlibrarysrc.libname
 profileresults."time"
 
-function callgraphwithin(libname:seq.word, args:seq.word)seq.word
-callgraphwithin(prg.compilerfront("text", libname), args)
-
-function callgraphbetween(libname:seq.word, args:seq.word)seq.word
-callgraphbetween(prg.compilerfront("text", libname), args)
 
 function help seq.word
 entry("tools/frontcmd tools/entrycmd tools/tools tools/genLR1"
@@ -137,13 +141,13 @@ use prettycompilerfront
 
 function transform(library:seq.word,target:seq.word,rename:seq.word) seq.word
    let newlib=if isempty.target then "tmp" else target
-   transform( compilerfront("text", library),library,newlib,
+   transform( compilerfront("text", getlibrarysrc.library),library,newlib,
       if isempty.rename then library + ">" + newlib else rename)
       
 
 Function frontcmd(library:seq.word, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
 , ~mods:seq.word,within:boolean,rootnames:seq.word, out:seq.word)seq.word
- front(compilerfront(if isempty.pass then"pass2"else pass, library)
+ front(compilerfront(if isempty.pass then"pass2"else pass, getlibrarysrc.library)
  , pass
  , n
  , ~n
