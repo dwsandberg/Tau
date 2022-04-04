@@ -71,7 +71,6 @@ for acc = "(", t ∈ l do acc + print.t /for(acc + ")")
 
 Export ?(a:symbolref, b:symbolref)ordering
 
-function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
 
 Export type:compileinfo
 

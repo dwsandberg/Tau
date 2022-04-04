@@ -14,9 +14,13 @@ use seq.byte
 
 use taublockseq.byte
 
+use bitcast.dummyrec2
+
 use seq.index
 
 use bitcast.int
+
+use process.int
 
 use seq.int
 
@@ -45,6 +49,8 @@ use bitcast.seq.bits
 use bitcast.seq.byte
 
 use encoding.seq.char
+
+use bitcast.seq.int
 
 use seq.seq.int
 
@@ -204,17 +210,11 @@ else
 
 ___________
 
-use process.int
-
 Function createthread(adcret:int, adc:int, funcaddress:int, args:seq.int, argcode:int)process.int
 createthread(adcret, adc, funcaddress, c.bitcast:dummyrec2(toptr.packed.args), argcode)
 
 type dummyparameterrecord is a:int, b:int
 
 type dummyrec2 is a:int, b:int, c:dummyparameterrecord
-
-use bitcast.dummyrec2
-
-use bitcast.seq.int
 
 builtin createthread(int, int, int, dummyparameterrecord, int)process.int 

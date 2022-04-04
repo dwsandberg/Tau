@@ -6,8 +6,6 @@ use pretty
 
 use standard
 
-use textio
-
 use otherseq.action
 
 use seq.action
@@ -370,13 +368,13 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attri
 /for(acc << 2 + "else{ruleno}assert false report" + dq."invalid rule number"
 + "+toword.ruleno R_1")
 
-Function LR1gen(location:seq.word, codeonly:boolean, parameterized:boolean)seq.word
+Function LR1gen(location:seq.seq.word, codeonly:boolean, parameterized:boolean)seq.word
 {Assumption:Word ruleno is not used in any action.First use of ruleprec in comment that defines the precedence}
 for rules = empty:seq.seq.seq.word
 , terminals = ""
 , attribute = first."ATTR"
 , ruleprec = empty:seq.seq.word
-, p ∈ breakparagraph.getfile:UTF8(location + ".ls")
+, p ∈ location
 do
  if subseq(p, 1, 2) ∈ ["Function action", "function action"]then
   let x = findindex("Alphabet"_1, p)
@@ -400,7 +398,6 @@ let terminals2 =
  for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /for(acc)
 lr1parser(rules, ruleprec, terminals2, "attribute", codeonly, parameterized))
 
-use textio
 
  /<  command LR1gen LR1 />  A parser generator for a subset of LR1 grammars. 
 

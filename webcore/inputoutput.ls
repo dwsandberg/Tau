@@ -214,10 +214,6 @@ Function getfile:byte(name:seq.word)seq.byte
 let t = HTTP("/" + name, toUTF8."GET", empty:seq.byte)
 if aborted.t then empty:seq.byte else result.t
 
-Function getfile:int(name:seq.word)seq.int
-{OPTION INLINE}
-let t = HTTP("/" + name, toUTF8."GET", empty:seq.int)
-if aborted.t then empty:seq.int else result.t
 
 Function createfile(name:seq.word, data:seq.byte)int
 {OPTION INLINE}
@@ -228,14 +224,6 @@ let t =
  )
 if aborted.t then 0 else 1
 
-Function createfile(name:seq.word, data:seq.int)int
-{OPTION INLINE}
-let t = 
- HTTP({ "../cgi-bin/putfile.cgi?"} "bin/putfile.cgi?" + name
- , toUTF8."PUT Content-Type:application/text"
- , packed.data
- )
-if aborted.t then 0 else 1
 
 Export undertop(s:stack.int, i:int)int
 
@@ -271,6 +259,9 @@ else if op = i32wrapi64 then interpert(code, pc + 1, stk, locals)
 else if op = i64mul then
  let args = top(stk, 2)
  interpert(code, pc + 1, push(pop(stk, 2), args_1 * args_2), locals)
+else if op = i64divs then
+ let args = top(stk, 2)
+ interpert(code, pc + 1, push(pop(stk, 2), args_1 / args_2), locals)
 else if op = i64add then
  let args = top(stk, 2)
  interpert(code, pc + 1, push(pop(stk, 2), args_1 + args_2), locals)

@@ -1,5 +1,7 @@
 Module mytype
 
+use bits
+
 use standard
 
 use xxhash
@@ -132,8 +134,6 @@ for acc = hashstart, a ∈ b >> 1 do
 /for(for acc3 = acc, w ∈ other do hash2(acc3, w)/for(finalmix.acc3))
 
 function hash2(b:bits, w:word)bits hash(b, hash.w)
-
-use bits
 
 ------------------
 

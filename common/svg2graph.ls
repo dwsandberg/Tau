@@ -171,7 +171,7 @@ do
  else next(txt, i, id, draw, max(maxx, nodex), max(maxy, nodey), hover)
 /for(let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e /for(svg2)
 " /br  /< noformat" + drawscript:T
-+ "<svg id=$(xml."svg10")xmlns=$(xml."http://www.w3.org/2000/svg")width=$(xml."100%")viewBox=$(xml("5.0" + space + "-1" + print(2, maxx + 5.0) + print(2, maxy + 1.0)))onload=$(xml("[" + draw >> 1 + "].forEach(shiftstart)"))> $(txt + hovertxt)+</svg>"
++ "<svg id=$(xml."svg10")xmlns=$(xml."http://www.w3.org/2000/svg")width=$(xml."100%")viewBox=$(xml("5.0" + space + "-1" + print(2, maxx + 5.0) + print(2, maxy + 1.3)))onload=$(xml("[" + draw >> 1 + "].forEach(shiftstart)"))> $(txt + hovertxt)+</svg>"
 + " />")
 
 type hovertext is n:T, nodex:real, nodey:real, text:seq.word

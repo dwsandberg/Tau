@@ -8,15 +8,19 @@ Module tools
 
 use UTF8
 
-use format
-
-use frontcmd
+use IO2
 
 use compilerfront
 
 use doc
 
+use format
+
+use frontcmd
+
 use genLR1
+
+use libraryModule
 
 use main2
 
@@ -30,179 +34,92 @@ use standard
 
 use taulextable
 
+use textio
+
 use seq.char
 
+use otherseq.word
+
 use seq.word
+
+use set.word
 
 use process.seq.word
 
 use seq.seq.word
 
-use entrycmd
+use bits
 
-Entry point procedure
-
-Function entrypoint(argin:UTF8)UTF8 
-{This function was generated from the documentation in the files:"tools/entrycmd tools/frontcmd tools/tools tools/genLR1 ". Manually editing this function is a bad idea.} let allargs = towords.argin 
-let cmd = [first.allargs] 
-let otherargs = allargs << 1 
-HTMLformat. if cmd = "entry" then
-let args =
-parseargs(otherargs 
-, "args web proc doc option" , ["*" , "f" , "f" , "f" , "*" ] 
-)
-entry(getarg(args, "args" _1) 
-, getarg:boolean(args, "web" _1) 
-, getarg:boolean(args, "proc" _1) 
-, getarg:boolean(args, "doc" _1) 
-, getarg(args, "option" _1) 
-)
-else if cmd = "front" then
-let args =
-parseargs(otherargs 
-, "library pass n !n mods !mods within rn out" , ["1" , "1" , "*" , "*" , "*" , "*" , "f" , "*" , "1 pretty baseTypeCheck sym symdef resultCheck" ] 
-)
-frontcmd(getarg(args, "library" _1) 
-, getarg(args, "pass" _1) 
-, getarg(args, "n" _1) 
-, getarg(args, "!n" _1) 
-, getarg(args, "mods" _1) 
-, getarg(args, "!mods" _1) 
-, getarg:boolean(args, "within" _1) 
-, getarg(args, "rn" _1) 
-, getarg(args, "out" _1) 
-)
-else if cmd = "pretty" then
-let args = parseargs(otherargs, "args target" , ["1" , "1" ]) 
-prettybyfile(getarg(args, "args" _1), getarg(args, "target" _1))
-else if cmd = "usegraph" then
-let args =
-parseargs(otherargs, "args include exclude" , ["1" , "*" , "*" ])
-usegraphcmd(getarg(args, "args" _1) 
-, getarg(args, "include" _1) 
-, getarg(args, "exclude" _1) 
-)
-else if cmd = "lextable" then getlextable 
-else if cmd = "doclibrary" then
-let args = parseargs(otherargs, "args" , ["1" ]) 
-doclibrary.getarg(args, "args" _1)
-else if cmd = "transform" then
-let args =
-parseargs(otherargs, "args target rename" , ["1" , "1" , "*" ])
-transform(getarg(args, "args" _1) 
-, getarg(args, "target" _1) 
-, getarg(args, "rename" _1) 
-)
-else if cmd = "htmlcode" then
-let args = parseargs(otherargs, "args" , ["1" ]) 
-htmlcode.getarg(args, "args" _1)
-else if cmd = "testprofile" then
-let args = parseargs(otherargs, "args" , ["1" ]) 
-testprofile.getarg(args, "args" _1)
-else if cmd = "formatdoc" then
-let args = parseargs(otherargs, "args" , ["1" ]) 
-formatdoc.getarg(args, "args" _1)else if cmd = "help" then help 
-else if cmd = "LR1" then
-let args = parseargs(otherargs, "args c p" , ["*" , "f" , "f" ]) 
-LR1gen(getarg(args, "args" _1) 
-, getarg:boolean(args, "c" _1) 
-, getarg:boolean(args, "p" _1) 
-)
-else "unknown command" + cmd
-
-use textio
-
-use pretty
-
-Function formatdoc(args:seq.word)seq.word
+Function writeModule(modtexts:seq.seq.word, directory:seq.word)seq.word
 {OPTION INLINE}
-prettyfile(false, "", breakparagraph.getfile:UTF8(args + ".txt"))
+for txt = "", modtext = "", p ∈ modtexts << 1 + "Module"do
+ if not.isempty.p ∧ first.p ∈ "Module module"then
+  let discard2 = 
+   if isempty.modtext then 0
+   else
+    createfile([merge(directory + "/" + modtext_2 + ".ls")], toseqbyte.textformat.modtext)
+  next(txt + modtext, p)
+ else next(txt, modtext + " /p" + p)
+/for(txt)
 
-
-Function testprofile(libname:seq.word)seq.word 
-let discard=compile.getlibrarysrc.libname
-profileresults."time"
-
-
-function help seq.word
-entry("tools/frontcmd tools/entrycmd tools/tools tools/genLR1"
-, false
-, false
-, false
-, ""
-)
-
-use otherseq.word
-
-use parseargs
-
-use prettycompilerfront
-
-
-function transform(library:seq.word,target:seq.word,rename:seq.word) seq.word
-   let newlib=if isempty.target then "tmp" else target
-   transform( compilerfront("text", getlibrarysrc.library),library,newlib,
-      if isempty.rename then library + ">" + newlib else rename)
-      
-
-Function frontcmd(library:seq.word, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
-, ~mods:seq.word,within:boolean,rootnames:seq.word, out:seq.word)seq.word
- front(compilerfront(if isempty.pass then"pass2"else pass, getlibrarysrc.library)
- , pass
- , n
- , ~n
- , mods
- , ~mods
- ,within
- ,rootnames 
- , out
+Function entrypoint(argin2:UTF8)UTF8
+let argsin = towords.argin2
+let cmd = [first.argsin]
+let args = [argsin]
+let parts = extractValue(args, "in")
+let file = getfile:byte(subseq(parts, 1, 3))
+HTMLformat.if cmd = "doclibrary"then doclibrary.breakparagraph.file
+else if cmd = "pretty"then
+ {Pretty print the source code of a Library. The syntax is checked but not the semantics. }
+ let target = extractValue(args, "target")
+ let a = prettyfile2(true, "", breakparagraph.file)
+ writeModule(prettyfile2(true, "", breakparagraph.file)
+ , if isempty.target then"tmp"else target
  )
- 
- /< command  prettybyfile pretty  /> pretty  Pretty print the source code of a Library.  
- 
- This command checks the syntax of each source file but not the semantics.  
+else if cmd = "transform"then
+ {Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
+as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname}
+ let target = extractValue(args, "target")
+ let rename = extractValue(args, "rename")
+ let cinfo = compilerfront("text", breakparagraph.file)
+ let library = [libname.cinfo]
+ let newlib = if isempty.target then"tmp"else target
+ writeModule(transform(cinfo
+ , newlib
+ , if isempty.rename then library + ">" + newlib else rename
+ )
+ , newlib
+ )
+else if cmd = "testprofile"then
+ let discard = compile.breakparagraph.file
+ profileresults."time"
+else if cmd = "htmlcode"then htmlcode.breakparagraph.file
+else if cmd = "usegraph"then
+ let usegraph = usegraph(breakparagraph.file, "mod"_1)
+ drawgraph(usegraph
+ , asset.extractValue(args, "include")
+ , asset.extractValue(args, "exclude")
+ )
+else if cmd = "formatdoc"then prettyfile(false, "", breakparagraph.file)
+else if cmd = "front"then
+ let pass = extractValue(args, "pass")
+ front(compilerfront(if isempty.pass then"pass2"else pass, breakparagraph.file)
+ , pass
+ , extractValue(args, "n")
+ , extractValue(args, "n!")
+ , extractValue(args, "mods")
+ , extractValue(args, "mods!")
+ , first."within" ∈ extractValue(args, "flags")
+ , extractValue(args, "rn")
+ , extractValue(args, "out")
+ )
+else if cmd = "lextable"then getlextable
+else if cmd = "LR1"then
+ LR1gen(breakparagraph.file
+ , first."codeonly" ∈ extractValue(args, "flags")
+ , first."parameterized" ∈ extractValue(args, "flags")
+ )
+else"unknown new cmd" + cmd
 
- /< option 1 -args  /> Library to pretty print.
-
- /< option 1-targstet  /> <directory to place result files in.> Will default to"tmp".
- 
-/< command usegraphcmd usegraph />
-
-/< option 1 -args  /> Library 
-
-/< option * -include  /> modules to include  
- 
-/< option * -exclude />  modules to include
-
-/< command  getlextable lextable /> 
-
-/< command  doclibrary   doclibrary  /> 
- 
-/< option 1  -args  /> <library name>
-
-/< command transform />   Will parse and check the sematics of a library 
-    and place one file for each module in the target directory. Expressions such as 
-    not(a=b) will be rewritten as a /ne b.  Modules can be renamed. 
- 
-/< option 1 -args  /> <library name>
-
-/< option 1 -target /> <target directory>
-
-/< option * -rename />  Modules to rename.  Example -rename(oldname > newname)
-  
-/< command htmlcode     /> 
-  
-   /< option 1 -args  /> <library name>
- 
-  /< command   testprofile />
- 
-  /< option 1 -args  /> <library name>
-  
-/< command formatdoc    /> 
-
- /< option 1 -args  />  filename
-
-/< command help  />
-
- /< noformat <style> span.command{color:black ; font-size:120%; font-weight:bold;}span.block{padding:0px 0px 0px 
-0px ; margin:0px 0px 0px 20px ; display:block ;}span.option{color:blue ;}</style>  /> 
+{Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
+as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname} 

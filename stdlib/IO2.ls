@@ -18,8 +18,4 @@ Export createfile(name:seq.word, a:seq.byte)int
 
 Export getfile:byte(name:seq.word)seq.byte
 
-Export createfile(name:seq.word, a:seq.int)int
-
 Export getfile:bit(name:seq.word)seq.bit
-
-Export getfile:int(name:seq.word)seq.int 

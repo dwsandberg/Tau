@@ -14,16 +14,9 @@ use otherseq.byte
 
 use otherseq.int
 
-Function getlibrarysrc(libname:seq.word)seq.seq.word
-{OPTION INLINE}breakparagraph.getfile:UTF8("built/" + libname + ".libsrc")
-
-Function getfileaslines(filename:seq.word)seq.UTF8 breaklines.UTF8.getfile:byte(filename)
-
-Function getfile:seq.seq.word(filename:seq.word)seq.seq.word breakparagraph.UTF8.getfile:byte(filename)
-
-Function getfile:UTF8(filename:seq.word)UTF8{OPTION INLINE}UTF8.getfile:byte(filename)
-
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
+
+Function breaklines(a:seq.byte) seq.UTF8 breaklines(a, 2, 1, empty:seq.UTF8)
 
 function breaklines(a:seq.byte, i:int, last:int, result:seq.UTF8)seq.UTF8
 if i > length.a then result
@@ -44,7 +37,9 @@ do acc + UTF8.@e /for(acc)
 
 handle files of paragraphs
 
-Function breakparagraph(a:UTF8)seq.seq.word breakparagraph(a, 1, 1, empty:seq.seq.word)
+Function breakparagraph(a:seq.byte) seq.seq.word  breakparagraph(UTF8.a, 1, 1, empty:seq.seq.word)
+
+/Function breakparagraph(a:UTF8)seq.seq.word breakparagraph(a, 1, 1, empty:seq.seq.word)
 
 function blankline(a:UTF8, i:int)int
 {returns 0 if no new line is found before next non white char otherwise returns index of newline}
@@ -103,8 +98,6 @@ for acc = "", last = 1, i = 1, pending = empty:seq.char, ch ∈ chars + spacecha
    else next(newacc + class, i + 1, i + 1, empty:seq.char)
 /for(acc)
 
-Function createfile(filename:seq.word, s:seq.word)int createfile(filename, toseqbyte.toUTF8.s)
+/Function createfile(filename:seq.word, s:seq.word)int  
+createfile(filename, toseqbyte.toUTF8.s)
 
-Export createfile(name:seq.word, a:seq.byte)int
-
-Export getfile:byte(name:seq.word)seq.byte 

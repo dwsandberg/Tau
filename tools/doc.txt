@@ -1,5 +1,3 @@
-#!/bin/sh  tau stdlib common tools formatdoc tools/doc #
-
 /< /section The Tau Programming Language />
 
 Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.

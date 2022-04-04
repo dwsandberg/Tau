@@ -52,6 +52,9 @@ Export type:symbolref
 
 Function ?(a:symbolref, b:symbolref)ordering toint.a ? toint.b
 
+Function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
+
+
 type libraryModule is modname:modref, exports:seq.symbolref, types:seq.seq.mytype
 
 Export libraryModule(modname:modref, exports:seq.symbolref, types:seq.seq.mytype)libraryModule

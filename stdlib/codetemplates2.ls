@@ -58,6 +58,8 @@ use seq.seq.int
 
 use seq.seq.symbol
 
+use seq.seq.word
+
 Export type:match5
 
 Export constdata seq.slot
@@ -242,8 +244,6 @@ ptrtoint(functyp
 )
 
 Export tollvmtype(typedict, symbol)llvmtype
-
-use seq.seq.word
 
 function buildFref(frefs:seq.symbolref, info:compileinfo, extnames:set.symdef)seq.match5
 let alltypes = typedict.info

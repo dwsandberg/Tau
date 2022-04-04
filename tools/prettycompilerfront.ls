@@ -14,8 +14,6 @@ use standard
 
 use symbol2
 
-use textio
-
 use seq.byte
 
 use otherseq.char
@@ -30,9 +28,13 @@ use seq.symbol
 
 use seq.symbolref
 
+use otherseq.word
+
 use seq.seq.symbolref
 
 use otherseq.seq.word
+
+use seq.seq.word
 
 use stack.seq.word
 
@@ -52,9 +54,7 @@ function rename(renames:seq.word, name:word)word
 let i = findindex(name, renames)
 if i > length.renames then name else renames_(i + 2)
 
-use otherseq.word
-
-function transform(cinfo:compileinfo, library:seq.word, modrename:seq.word) seq.seq.word
+Function transform(cinfo:compileinfo, library:seq.word, modrename:seq.word)seq.seq.word
 let result1 = totext.cinfo
 for txt = empty:seq.seq.word, modlist = "", libloc = 1, idx = 1, c ∈ result1 do
  if subseq(c, 1, 1) = "use"then
@@ -65,29 +65,12 @@ for txt = empty:seq.seq.word, modlist = "", libloc = 1, idx = 1, c ∈ result1 d
   next(txt + replace(c, 2, newname), modlist + newname, libloc, idx + 1)
  else if libloc = 1 ∧ subseq(c, 1, 1) = "Library"then next(txt + c, modlist, idx, idx + 1)
  else next(txt + c, modlist, libloc, idx + 1)
-/for(replace(txt, libloc, fixlibclause(txt_libloc, modlist, modrename))
-)
+/for(replace(txt, libloc, fixlibclause(txt_libloc, modlist, modrename)))
 
-Function transform(cinfo:compileinfo, library:seq.word, newlib:seq.word, modrename0:seq.word)seq.word
-{OPTION INLINE}
- let txt2=transform(cinfo,library,modrename0)
- writeModule(txt2, newlib)
- 
-let result1 = totext.cinfo
-let modrename = if isempty.modrename0 then library + ">" + newlib else modrename0
-for txt = empty:seq.seq.word, modlist = "", libloc = 1, idx = 1, c ∈ result1 do
- if subseq(c, 1, 1) = "use"then
-  let newname = rename(modrename, c_2)
-  next(txt + replace(c, 2, newname), modlist, libloc, idx + 1)
- else if subseq(c, 1, 1) = "Module" ∨ subseq(c, 1, 1) = "module"then
-  let newname = rename(modrename, c_2)
-  next(txt + replace(c, 2, newname), modlist + newname, libloc, idx + 1)
- else if libloc = 1 ∧ subseq(c, 1, 1) = "Library"then next(txt + c, modlist, idx, idx + 1)
- else next(txt + c, modlist, libloc, idx + 1)
-/for(let txt2 = replace(txt, libloc, fixlibclause(txt_libloc, modlist, modrename))
-writeModule(txt2, newlib))
 
 function fixlibclause(p:seq.word, modlist:seq.word, modrename:seq.word)seq.word
+p
+
 let b = break(p, "uses exports", true)
 assert first.last.b ∈ "exports"report"Library clause format"
 for txt = "Library" + modlist + " /br" + b_2 + " /br exports"
@@ -96,21 +79,7 @@ do
  txt + rename(modrename, e)
 /for(txt)
 
-use seq.seq.word
-
-use textio
-
-function writeModule(modtexts:seq.seq.word, directory:seq.word)seq.word
-{OPTION INLINE}
-for txt = "", modtext = "", p ∈ modtexts << 1 + "Module"do
- if not.isempty.p ∧ first.p ∈ "Module module"then
-  let discard2 = if isempty.modtext then 0 else 
-   createfile([merge(directory + "/" + modtext_2 + ".ls")], toseqbyte.textformat.modtext)
-   next(txt+modtext, p)
- else  next( txt,modtext+"/p"+p)
-/for(txt)
- 
-Function totext(result1:compileinfo) seq.seq.word
+Function totext(result1:compileinfo)seq.seq.word
 let renames = empty:seq.rename
 let symdecode = symbolrefdecode.result1
 let src = src.result1
@@ -144,24 +113,19 @@ for acc = empty:seq.seq.word
 , p ∈ acc4 + "Module"
 do
  if subseq(p, 1, 1) ∈ ["Module", "module", [encodeword.[char.28]]]then
-  next(acc + modtext, [p],false)
+  next(acc + modtext, [p], false)
  else if subseq(p, 1, 2) = "file("then next(acc + modtext, empty:seq.seq.word, true)
-  else 
+ else
   let t = 
    if subseq(p, 1, 1)
    ∈ [" /keyword", "use", "builtin", "Export"]then
     p
    else if subseq(p, 1, 1) ∈ ["type", "Function", "function"]then pretty.p
    else escapeformat.p
-  next(acc, modtext + t,beforeModule)
+  next(acc, modtext + t, beforeModule)
 /for(acc)
- 
 
 Function Optionsym symbol symbol(internalmod, "option", typeint, seqof.typeword, typeint)
-
-
-
-use seq.seq.word
 
 function newstk(sym:symbol, stk:stack.seq.word, renames:seq.rename)stack.seq.word
 if isstart.sym ∨ isexit.sym ∨ isbr.sym then stk
@@ -171,16 +135,16 @@ else if name.sym = first."let" ∧ length.toseq.stk ≥ 2 then
  push(pop(stk, 2), args_1 + "(" + args_2 + ")")
 else if isdefine.sym ∧ not.isempty.stk then
  push(pop.stk, "let" + [name.sym] + "=(" + top.stk + ")")
-else if iswords.sym then 
-  let wd=worddata.sym
+else if iswords.sym then
+ let wd = worddata.sym
  if first.wd = first."'" ∧ dq_1 ∉ wd then push(stk, dq + subseq(wd, 2, length.wd - 1) + dq)
  else if first.wd ∈ "'" ∧ length.wd = 3 then push(stk, "dq")
- else if first.wd = first."'" ∧ dq_1 /in wd then
-  let a=break(subseq(wd,2,length.wd-1),dq,false)
-     push(stk,for txt=dq+first.a,   b /in  a << 1 do
-       txt+dq+"+dq+"+dq+b
-     /for( "("+txt+dq+")") ) 
-     else push(stk, wd)
+ else if first.wd = first."'" ∧ dq_1 ∈ wd then
+  let a = break(subseq(wd, 2, length.wd - 1), dq, false)
+  push(stk
+  , for txt = dq + first.a, b ∈ a << 1 do txt + dq + "+dq+" + dq + b /for("(" + txt + dq + ")")
+  )
+ else push(stk, wd)
 else if name.sym ∈ "{" ∧ length.toseq.stk ≥ 2 then
  {comment}
  let args = top(stk, 2)
@@ -237,28 +201,6 @@ else stk
 
 function addcommas(s:seq.seq.word)seq.word
 for acc2 = "", t ∈ s do acc2 + t + ", "/for(acc2 >> 1)
-
-
-
-Function prettybyfile(libname:seq.word, targetdir:seq.word)seq.word
-{OPTION INLINE}
-let z = getlibrarysrc.libname + "file(dummy)"
-for txt = "", last = 0, idx = 1, k ∈ z do
- if subseq(k, 1, 2) = "file("then
-  if last = 0 then next(txt, idx, idx + 1)
-  else
-   let zz = prettyfile(true, "", subseq(z, last + 1, idx - 1)) << 1
-   let filename = extractfilename.z_last
-   if isempty.filename then next(txt, idx, idx + 1)
-   else
-    let discard = 
-     createfile(if isempty.targetdir then"tmp"else targetdir /if + "/"
-     + filename
-     , toseqbyte.textformat.zz
-     )
-    next(txt + zz, idx, idx + 1)
- else next(txt, last, idx + 1)
-/for(txt)
 
 function extractfilename(s:seq.word)seq.word
 let k = findindex(first.")", s)

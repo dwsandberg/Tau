@@ -12,6 +12,12 @@ use standard
 
 use symbol
 
+use tausupport
+
+use otherseq.addrsym
+
+use seq.addrsym
+
 use seq.bit
 
 use seq.bits
@@ -62,10 +68,6 @@ let a = getbitfile2.tocstr.name
 assert not.aborted.a report"Error opening file:" + name
 result.merge(a, result.a + body2.a, empty:seq.bit)
 
-Function getfile:int(name:seq.word)seq.int
-let a = getfile2.tocstr.name
-assert not.aborted.a report"Error opening file:" + name
-result.merge(a, result.a + body2.a, empty:seq.int)
 
 Builtin createfile2(byteLength:int, data:seq.bits, cstr)int{OPTION STATE}
 
@@ -75,21 +77,11 @@ createfile2(length.a
 , tocstr.name
 )
 
-Function createfile(name:seq.word, a:seq.int)int
-createfile2(length.a * 8
-, for acc = empty:seq.bits, @e ∈ packed.a do acc + bits.@e /for(acc)
-, tocstr.name
-)
+
 
 Builtin randomint(i:int)seq.int
 
 type addrsym is addr:int, sym:symbol
-
-use otherseq.addrsym
-
-use seq.addrsym
-
-use seq.int
 
 function ?(a:addrsym, b:addrsym)ordering addr.a ? addr.b
 
@@ -110,8 +102,6 @@ builtin callstack(n:int)seq.int
 Builtin loadedLibs seq.liblib
 
 Function createfile(name:seq.word, a:seq.bits)int createfile2(length.a * 8, packed.a, tocstr.name)
-
-use tausupport
 
 Function funcaddress(sym:symbol)int
 let addrs = symboladdress.first.loadedLibs

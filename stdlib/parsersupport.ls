@@ -4,6 +4,8 @@ use format
 
 use standard
 
+use stack.int
+
 use set.word
 
 use seq.stkele.T
@@ -43,8 +45,6 @@ Function last(r:reduction.T)T attribute.(toseq.r)_(length.toseq.r)
 Function errormessage:T(message:seq.word, input:seq.word, place:int)seq.word
 let m = " /< literal" + message + " />"
 m + " /br  /br" + prettynoparse.subseq(input, 1, place) + " /br" + m
-
-use stack.int
 
 Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
 let stringtoken = findindex("$wordlist"_1, tokenlist:T)

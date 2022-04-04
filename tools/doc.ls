@@ -14,8 +14,6 @@ use standard
 
 use symbol2
 
-use textio
-
 use wordgraph
 
 use seq.char
@@ -54,12 +52,14 @@ use seq.seq.word
 
 use svg2graph.seq.word
 
-Function htmlcode(libname:seq.word)seq.word {OPTION INLINE}
+Export drawgraph(seq.arc.word, set.word, set.word)seq.word
+
+Export extractValue(seq.seq.word, seq.word)seq.word
+
+Function htmlcode(libsrc:seq.seq.word)seq.word
+let libname = extractValue(libsrc, "Library")
 let p = 
- prettyfile(true
- , " /< noformat <hr id=" + dq."T" + ">  />  /keyword"
- , getlibrarysrc.libname << 1
- )
+ prettyfile(true, " /< noformat <hr id=" + dq."T" + ">  />  /keyword", libsrc)
 let modules = 
  for txt = "", state = 0, name = "1"_1, idx = 1, d ∈ p do
   if d ∈ " /keyword"then next(txt, 1, name, idx + 1)
@@ -73,8 +73,6 @@ let modules =
  + modname
  + "</a>  />"
 /for(acc + p)
-
-
 
 Function callgraphbetween(prg:seq.symdef, modulelist:seq.word)seq.word
 {Calls between modules in list of modules. }
@@ -104,16 +102,15 @@ let nodesnottoinclude =
 let g2 = for acc = g, @e ∈ toseq.nodesnottoinclude do deletenode(acc, @e)/for(acc)
 drawgraph.g2
 
-Function doclibrary(libname:seq.word)seq.word
+Function doclibrary(libsrc:seq.seq.word)seq.word
 {create summary documentation for libraray. }
-let liba = getlibrarysrc.libname
-let exports = break(liba_1, "exports", true)_2 << 1
+let exports = extractValue(libsrc, "exports")
 let todoc = 
- for acc = "", s ∈ liba do
+ for acc = "", s ∈ libsrc do
   if subseq(s, 1, 3) = "* only document"then acc + subseq(s, 4, length.s)else acc
  /for(if isempty.acc then exports else acc /if)
-let g = newgraph.usegraph(liba, "mod"_1)
-modindex.todoc + docmodule(g, exports, todoc, liba)
+let g = newgraph.usegraph(libsrc, "mod"_1)
+modindex.todoc + docmodule(g, exports, todoc, libsrc)
 
 function modindex(mods:seq.word)seq.word
 for txt = "", modname ∈ mods do
@@ -140,7 +137,7 @@ for acc = "", @e ∈ sources do acc + print.@e + " /br"/for(acc)
 
 * usegraph exclude standard seq set UTF8 stack graph otherseq
 
-function usegraph(lib:seq.seq.word, kind:word)seq.arc.word
+Function usegraph(lib:seq.seq.word, kind:word)seq.arc.word
 for currentmod = "?"_1, result = empty:seq.arc.word, p ∈ lib do
  if isempty.p then next(currentmod, result)
  else if first.p ∈ "module Module"then next(p_2, result)
@@ -153,10 +150,6 @@ for currentmod = "?"_1, result = empty:seq.arc.word, p ∈ lib do
   )
  else next(currentmod, result)
 /for(result)
-
-Function usegraphcmd(library:seq.word, include:seq.word, exclude:seq.word)seq.word
-let usegraph = usegraph(getlibrarysrc.library, "mod"_1)
-drawgraph(usegraph, asset.include, asset.exclude)
 
 function docmodule(usegraph:graph.word, exports:seq.word, todoc:seq.word, lib:seq.seq.word)seq.word
 for acc = ""
@@ -212,24 +205,4 @@ do
  else next(acc, currentmod, funcs, types)
 /for(acc
 + if not.isempty.types ∨ not.isempty.funcs then" /br defines types: " + types + funcs
-else""/if)
-
-module wordgraph
-
-use standard
-
-use graph.word
-
-use set.word
-
-use svg2graph.word
-
-use seq.arc.word
-
-function nodeTitle(word)seq.word""
-
-function node2text(a:word)seq.word[a]
-
-function generatenode(a:set.word)word toword.cardinality.a
-
-Export drawgraph(arcs:seq.arc.word, set.word, set.word)seq.word 
+else""/if) 

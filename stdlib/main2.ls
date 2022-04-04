@@ -1,5 +1,7 @@
 Module main2
 
+use IO2
+
 use UTF8
 
 use bits
@@ -21,6 +23,8 @@ use symbol
 use textio
 
 use timestamp
+
+use typedict
 
 use words
 
@@ -62,6 +66,8 @@ use otherseq.word
 
 use set.word
 
+use process.seq.bits
+
 use encoding.seq.char
 
 use seq.seq.char
@@ -88,7 +94,11 @@ codegen(last.extractValue(info, "Library")
 , cinfo
 )
 
-use process.seq.bits
+Function compileinfo:libllvm(option:seq.word, info:seq.seq.word)process.compileinfo
+{OPTION INLINE}
+let dependentlibs = dependentinfo:libllvm(extractValue(info, "uses"))
+process.compilerfront4:libllvm(option, info, dependentlibs) 
+
 
 Function entrypoint(arg:UTF8)UTF8 compile.getlibrarysrc.[first.towords.arg]
 
@@ -114,10 +124,9 @@ r
 Function astext(info:compileinfo)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ prg.info do acc + [print.sym.p + print.code.p]/for(acc)
 
-Function compilerfront(option:seq.word, libname:seq.word)compileinfo
-let p = compileinfo:libllvm(option, getlibrarysrc.libname)
-assert not.aborted.p report message.p
-result.p
+Function getlibrarysrc(libname:seq.word)seq.seq.word
+{OPTION INLINE}breakparagraph.getfile:byte("built/" + libname + ".libsrc")
+
 
 Function compilerfront(option:seq.word, info:seq.seq.word)compileinfo
 let p = compileinfo:libllvm(option, info)
@@ -128,8 +137,6 @@ Function compilerfront:libllvm(option:seq.word, allsrc:seq.seq.word)compileinfo
 compilerfront4:libllvm(option, allsrc, dependentinfo:libllvm(extractValue(allsrc, "uses")))
 
 function funcaddress:libllvm(sym:symbol)int funcaddress.sym
-
-use typedict
 
 function buildargcode:libllvm(sym:symbol, typedict:typedict)int
 {needed because the call interface implementation for reals is different than other types is some implementations}
@@ -145,7 +152,7 @@ Export type:libllvm
 
 type libllvm is a:int
 
-Function dependentinfo:libllvm(dependentlibs:seq.word)loadedresult
+function dependentinfo:libllvm(dependentlibs:seq.word)loadedresult
 for org = empty:loadedresult, ll ∈ loadedLibs do
  let libname = (libname.ll)_1
  if libname ∈ dependentlibs then toloadedresult(org, libinfo.ll, libname)else org

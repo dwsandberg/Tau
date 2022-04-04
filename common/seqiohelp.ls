@@ -1,5 +1,7 @@
 Module seqiohelp
 
+use IO2
+
 use UTF8
 
 use bits

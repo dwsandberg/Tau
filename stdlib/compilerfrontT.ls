@@ -2,6 +2,8 @@ Module compilerfrontT.T
 
 use compilerfront
 
+use libdesc
+
 use standard
 
 use symbol
@@ -10,18 +12,17 @@ use typedict
 
 use process.compileinfo
 
+use otherseq.mytype
+
+use seq.symbol
+
 use set.symdef
 
 use seq.seq.word
 
-unbound dependentinfo:T(s:seq.word)loadedresult
 
 unbound pass2:T(set.symdef, typedict, option:seq.word)set.symdef
 
-Function compileinfo:T(option:seq.word, info:seq.seq.word)process.compileinfo
-{OPTION INLINE}
-let dependentlibs = dependentinfo:T(extractValue(info, "uses"))
-YYYY:T(option, info, dependentlibs)
 
 Function compilerfront4:T(option:seq.word, allsrc:seq.seq.word, libinfo:loadedresult)compileinfo
 let m = compilerfront3(option, allsrc, libinfo)
@@ -39,13 +40,3 @@ else
 , sym.s, "INLINE")else acc /for(pass2:T(acc, typedict.m, "addpass"))}
  compileinfo(toseq.prg5, typedict.m, libmods.m, src.m)
 
-use libdesc
-
-use otherseq.mytype
-
-use seq.symbol
-
-function YYYY:T(option:seq.word, info:seq.seq.word, dependentlibs:loadedresult)process.compileinfo
-{OPTION NOINLINE}
-{need because wasm interpreted code does not handle createthreadY}
-process.compilerfront4:T(option, info, dependentlibs) 

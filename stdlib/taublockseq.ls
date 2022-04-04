@@ -1,8 +1,8 @@
 module taublockseq.T
 
-use standard
-
 use ptr
+
+use standard
 
 use seq.T
 

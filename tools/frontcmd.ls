@@ -73,7 +73,6 @@ else
    if tail.c = head.c then acc else acc + arc(cf_(tail.c), cf_(head.c))
   /for(drawgraph.newgraph.acc)/if /if /if /if /if)
 
-function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
 
 Export drawgraph(graph.symbol)seq.word
 
