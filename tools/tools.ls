@@ -66,7 +66,12 @@ Function entrypoint(argin2:UTF8)UTF8
 let argsin = towords.argin2
 let cmd = [first.argsin]
 let args = [argsin]
-let parts = extractValue(args, "in")
+let aa=argsin << 1
+let idx = findindex("="_1, aa ) 
+let rest =if idx > length.aa  then "" else aa << (idx-2)
+ let parts=subseq(aa,1,length.aa-length.rest)
+{
+let parts = extractValue(args, "in")}
 let file = getfile:byte(subseq(parts, 1, 3))
 HTMLformat.if cmd = "doclibrary"then doclibrary.breakparagraph.file
 else if cmd = "pretty"then

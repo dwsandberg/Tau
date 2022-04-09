@@ -181,7 +181,6 @@ Function add(alltypes:typedict, t:mytype, flatflds:seq.mytype)typedict
 typedict(totypedict.alltypes + typeentry(t, flatflds))
 
 Function flatflds(alltypes:typedict, type:mytype)seq.mytype
-{assert not.isseq.type /or parameter.type=typeT report"flattype"+print.type+stacktrace}
 let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
 if isempty.t then empty:seq.mytype else flatflds.t_1
 

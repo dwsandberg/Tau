@@ -100,37 +100,39 @@ _________________
 
 ordering of nodes in graph
 
-Function sinks(g:graph.T, b:set.T, n:T)seq.T
-{returns list of sinks in graph with arcs to nodes in set b removed}
-if cardinality(successors(g, n) \ b) = 0 then[n]else empty:seq.T
-
 Function sinks(g:graph.T, b:set.T)seq.T
-for acc = empty:seq.T, @e ∈ toseq.nodes.g do acc + sinks(g, b, @e)/for(acc)
+{returns list of sinks in graph with arcs to nodes in set b removed}
+for acc = empty:seq.T, n  ∈ toseq(nodes.g \ b) do 
+   if cardinality(successors(g, n) \ b ) = 0 then acc+n else acc
+/for(acc)
+
+Function sources(g:graph.T, b:set.T)seq.T
+{returns list of sinks in graph with arcs to nodes in set b removed}
+for acc = empty:seq.T, n  ∈ toseq(nodes.g \ b) do 
+   if cardinality(predecessors(g, n) \ b) = 0 then acc+n else acc
+/for(acc)
+
+Function sources(g:graph.T) seq.T sources(g, empty:set.T)
 
 Function sinks(g:graph.T)seq.T sinks(g, empty:set.T)
 
-Function sinksfirst(g:graph.T)seq.T{will not return nodes involved in a cycle}sinksfirst(g, empty:set.T, empty:seq.T)
+Function sinksfirst(g:graph.T)seq.T{will not return nodes involved in a cycle}
+sinksfirst(g, empty:set.T, empty:seq.T)
 
-function addnodup(l:seq.T, n:seq.T)seq.T
-if length.n = 0 then l else if n_1 ∈ l then l else l + n
 
 function sinksfirst(g:graph.T, b:set.T, result:seq.T)seq.T
-let a = 
- for acc = result, @e ∈ toseq(nodes.g \ b)do addnodup(acc, sinks(g, b, @e))/for(acc)
-if length.a = length.result then result else sinksfirst(g, asset.a, a)
-
+     let new= sinks(g,b) 
+     if isempty.new then result else  sinksfirst(g,b /cup asset.new,result+new)
+ 
 Function sources(g:graph.T, b:set.T, n:T)seq.T
 if cardinality(predecessors(g, n) \ b) = 0 then[n]else empty:seq.T
 
 function breathfirst(g:graph.T, b:set.T, result:seq.T)seq.T
-let a = 
- for acc = result, @e ∈ toseq(nodes.g \ b)do addnodup(acc, sources(g, b, @e))/for(acc)
-if length.a = length.result then
- let u = nodes.g \ b
- if isempty.u then result else breathfirst(g, b + u_1, a + u_1)
-else breathfirst(g, asset.a, a)
+     let new= sources(g,b) 
+     if isempty.new then result else  breathfirst(g,b /cup asset.new,result+new)
 
-Function breathfirst(g:graph.T)seq.T{will not return nodes involved in a cycle}breathfirst(g, empty:set.T, empty:seq.T)
+Function breathfirst(g:graph.T)seq.T{will not return nodes involved in a cycle}
+breathfirst(g, empty:set.T, empty:seq.T)
 
 ____________________
 

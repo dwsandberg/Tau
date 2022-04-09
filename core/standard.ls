@@ -307,7 +307,7 @@ Export index(int)index
 Function +(i:index, b:int)index index(rep.i + b)
 
 Function toindex(i:int)index
-assert i > 0 report"not an index" + stacktrace
+assert i > 0 report"not an index" {+ stacktrace}
 index(i - 1)
 
 Function toint(i:index)int rep.i + 1 

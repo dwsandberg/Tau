@@ -412,7 +412,7 @@ let code1 = fullconstantcode.s
 if isSequence.last.code1 then[Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
 
 Function fullconstantcode(s:symbol)seq.symbol
-assert isrecordconstant.s report"constant code error" + print.s + stacktrace
+assert isrecordconstant.s report"constant code error" + print.s  
 toseq.decode.to:encoding.wasmconstant(toint.name.s)
 
 Function Constant2(args:seq.symbol, value:int)symbol symconst.valueofencoding.encode.wasmconstant(args, value)

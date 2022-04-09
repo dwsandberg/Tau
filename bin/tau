@@ -1,0 +1,11 @@
+#!/bin/sh 
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# set up working directory
+
+cd $SCRIPT_DIR
+source tauconfig.sh
+cd ..
+
+built/$tauDylib$@ > "output.html"
+$tauopen "output.html"
