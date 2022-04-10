@@ -14,6 +14,8 @@ Export type:bitstream
 
 type bitstream is length:int, endpart:bits, fullwords:seq.bits
 
+Function tobitstream(s:seq.bits)  bitstream bitstream(length.s * 64,0x0,s)
+
 Export length(bitstream)int
 
 Function bits(a:bitstream)seq.bits fullwords.a + endpart.a

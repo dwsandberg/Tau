@@ -235,8 +235,6 @@ BT assert(processinfo PD,BT message)
 
 // start of file io
 
-struct bitsseq  { BT type; BT length; BT  data[50]; };
-
 int myopen(char * name) {
 char *p;
  char tmp[200];
@@ -257,31 +255,25 @@ char *p;
     fchmod(fp, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
  return fp;
  }
+ 
+ struct bitsseq  { BT type; BT length; BT  data[50]; };
 
-BT createfile2(processinfo PD,BT bytelength, struct bitsseq *data, char * filename ) 
-               {    int file=1;
+ struct level2  { BT type; BT length; char  data[50]; };
+ 
+ struct level1 { BT type; BT length;  struct level2 *data;  };
+ 
+BT createfile3(processinfo PD, struct bitsseq *data, char * filename )  {
+int file=1;
                     char * name=tocstr(filename);
-                  //  fprintf(stderr,"start createfile %s %d %d\n",name,file,strcmp("stdout",name));
-                      if (!( strcmp("stdout",name)==0 ))  { 
-     //                 file= open(name,O_WRONLY+O_CREAT+O_TRUNC,S_IRWXU);
-     //                 fchmod(file, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP ); 
+                       if (!( strcmp("stdout",name)==0 ))  { 
                       file=myopen(name);
-                       fprintf(stderr,"createfile %s %d\n",name,file);
+                       fprintf(stderr,"createfile %s %lld  \n",name,data->length);
                      }
-                 if ( data->type == 0) {
-                  //  data is stored in one sequence  
-                    write(file, (char *)  data->data, bytelength);
-                   }
-                else {  
-                   // data is stored as seq.seq.int:  Each of the subseq may be of different length // 
-                    int j=0; int length=bytelength;
-                      while ( length > 0 )   { 
-                         BT len= ((BT *) data->data[j]) [1] * 8;
-                         BT len2=  len >  length ? length : len;
-                         write( file,(char *)(data->data[j])+16,  len2 );
-                             length=length-len2; j++;
-                       }          
-                }
+                     int i;
+                 for (i=0; i < data->length;i++){ 
+                  BT len= ((BT *) data->data[i]) [1] ;
+          //        fprintf(stderr,"seqlen %lld  \n",len);
+                     write(file, (char *)(data->data[i])+16, len);}
                  if (file!=1) close(file);
          //         fprintf(stderr,"finish createfile %s %d\n",name,file);
                  return 0;
@@ -324,61 +316,11 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
       
 }
 
-BT createlib3(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data
-,char * args ){
-     char * libname=   tocstr(filename);
-    char buff[200];
-         char  otherlib[200]; 
-  /* create the .bc file */
-       sprintf(buff+16,"tmp/%s.bc",libname);
-        createfile2(PD, bytelength , data,buff);
-        return 1;
-   /* compile to .dylib file */ 
-     prepare(otherlib,otherlibs,".dylib ");
-  sprintf(buff,"clang -lm -pthread -dynamiclib tmp/%s.bc %s -o %s.dylib  -init _init_%s -undefined dynamic_lookup"
-  ,libname,  otherlib,libname,libname);
-   fprintf(stderr,"Createlib3 %s\n",buff);
-   int err=system(buff);
-  if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else { //loadlibrary(PD,tocstr(filename)); 
-    if ( *tocstr(args)==0) return 1;
-           fprintf(stderr,"pwd %s\n",getcwd(otherlib, 200));
-      sprintf(buff,"%s/bin/tauexe",otherlib);
- 
-    int x= execl(buff,"tau", tocstr(filename), tocstr(args) , (char *)0  );
-    fprintf(stderr,"after exec %d %s \n", x,buff);
-  return 1;}
- }
+
 
 #else
 
-BT createlib3(processinfo PD,char * filename,char * otherlibs, BT bytelength, struct bitsseq *data
-,char * args ){
-      char * libname=   tocstr(filename);
-    char buff[200];
-         char  otherlib[200]; 
-  /* create the .bc file */
-       sprintf(buff+16,"tmp/%s.bc",libname);
-        createfile2(PD, bytelength , data,buff);
-       prepare(buff,otherlibs,"(); init_");
-     prepare(buff+100,otherlibs,"();\n void init_");
-        char buff2[200];
-     ((BT *)buff2)[0]=0; 
-       sprintf(buff2+16,"void init_%s();\n void init_%slibs(){init_%s%s();}",libname,buff+100,buff,libname); 
-     sprintf(buff+16,"tmp/%s.c" ,libname);   
-       createfile2(PD, strlen(buff2+16)  , (struct bitsseq * )buff2, buff);
-     prepare(otherlib,otherlibs,".bc tmp/");
-     sprintf(buff,"clang -lm -pthread stdlib/*.c tmp/%s.c tmp/%s%s.bc  -o bin/%s",
-     libname,otherlib,libname,libname);
-   int err=     system(buff);
-   if (err ) { fprintf(stderr,"ERROR STATUS: %d \n",err); return 0;}
-  else {   
-    if ( *tocstr(args)==0) return 1;
-      fprintf(stderr,"pwd %s\n",getcwd(buff2, 200));
-      sprintf(buff,"%s/bin/%s",buff2,libname);
-    int x= execl(buff,libname, tocstr(args) , (char *)0  );
-  return 1;}
- }
+
 
 
 void init_libs();

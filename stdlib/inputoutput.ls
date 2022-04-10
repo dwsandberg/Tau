@@ -68,16 +68,21 @@ let a = getbitfile2.tocstr.name
 assert not.aborted.a report"Error opening file:" + name
 result.merge(a, result.a + body2.a, empty:seq.bit)
 
+Builtin createfile3(a:seq.seq.byte,name:cstr) int 
 
-Builtin createfile2(byteLength:int, data:seq.bits, cstr)int{OPTION STATE}
+use seq.seq.byte
 
 Function createfile(name:seq.word, a:seq.byte)int
-createfile2(length.a
-, packed.bits.for acc = empty:bitstream, @e ∈ a do add(acc, bits.toint.@e, 8)/for(acc)
-, tocstr.name
-)
+createfile3(
+  packed.toseqseqbyte.for acc = empty:bitstream, @e ∈ a do add(acc, bits.toint.@e, 8)/for(acc)
+, tocstr.name )
 
+Function createfile(name:seq.word, a:seq.bits)int 
+createfile3( packed.toseqseqbyte.tobitstream.a, tocstr.name)
 
+use bitcast.seq.byte
+
+use bitcast.seq.bits
 
 Builtin randomint(i:int)seq.int
 
@@ -100,8 +105,6 @@ for txt = " /p", r ∈ callstack.30 << 2 do
 builtin callstack(n:int)seq.int
 
 Builtin loadedLibs seq.liblib
-
-Function createfile(name:seq.word, a:seq.bits)int createfile2(length.a * 8, packed.a, tocstr.name)
 
 Function funcaddress(sym:symbol)int
 let addrs = symboladdress.first.loadedLibs

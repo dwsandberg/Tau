@@ -1,6 +1,7 @@
 #export tauDylib="tauexe "
 export tauopen=open 
 
+
 if ! [ -e built ] ; then 
 mkdir tmp
 mkdir built
@@ -21,8 +22,16 @@ first=${parts%%\ *}
 return 2 
 } 
 
+function libexe {
+ allargs="$@"
+ restargs="${allargs#*\ }"
+built/${tauDylib}$1 $restargs
+
+}
+
+
 function runwexe { 
-built/${tauDylib}webassembly $1 >"tmp/$1.html" 
+ libexe webassembly $1 >"tmp/$1.html" 
 line1=$(awk '/^Successful compile/{print "OK" }' tmp/$1.html) 
 if [ "$line1" == "OK" ] ; then 
 echo "done"> built/$1.wexe 
@@ -52,3 +61,4 @@ fi
 export -f runwexe
 export -f runlib
 export -f outofdate
+export -f libexe 
