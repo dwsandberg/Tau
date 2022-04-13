@@ -76,7 +76,7 @@ Export type:compileinfo
 
 Function compilerback2(prg10:set.symdef, oldmods:seq.libraryModule, typedict:typedict, src:seq.seq.word)compileinfo
 {/OPTION PROFILE}
-let libname = extractValue(src, "Library")_1
+let libname = extractValue(first.src, "Library")_1
 let discardresult = 
  for acc = 0, sd ∈ toseq.prg10 do
   if"COMPILETIME"_1 ∈ getoption.code.sd then

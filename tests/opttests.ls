@@ -1,3 +1,6 @@
+uses=stdlib exports=opttests 
+Library=opttests
+
 Module opttests 
 
 use standard

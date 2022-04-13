@@ -50,9 +50,19 @@ use IO2
 
 use main2
 
+use fileIO
+
+use file 
+
+use seq.file
+
+use process.seq.file
+
 Function entrypoint(s:UTF8)UTF8
-let p = process.glue(first.towords.s)
-HTMLformat.if aborted.p then message.p else result.p
+let args=towords.s
+let p = process.glue(getfiles.towords.s,extractValue( args,"Library")
+,extractValue( args,"exports"))
+if aborted.p then HTMLformat.message.p else finishentry.result.p
 
 function checkweb(cf:compileinfo,libexports:seq.word) seq.word
 let idx2 = 
@@ -95,30 +105,28 @@ for txt = "", t ∈ toseq.r do
  
  function = (a:symbolref,b:symbolref) boolean toint.a=toint.b
  
-  Function extractPages(s:seq.seq.word) seq.word
-   for txt="",last="",p /in break(extractValue2(s,"parts"),"html",false) do
-   next(if length.last < 2 /or last.last /nin "." then
-    txt 
-    else
-    txt+    encodeword(last.break(char1."/",decodeword.first.last))
-    ,subseq(p,length.p-1,length.p))
-  /for(txt)
+ 
   
-   Function extractValue2(s:seq.seq.word,name:seq.word) seq.word  
- for value="",last="="_1,p /in  break(first.s+"?=", "=", false) do
-  next(  if last /in name then value+p >> 1 else value ,if isempty.p then "="_1 else last.p)
-  /for( value )
+Function cat(files:seq.file,uses:seq.word,exports:seq.word,Library:seq.word) seq.file
+   for acc=empty:seq.byte,names="parts=",f /in files do 
+     if ext.fn.f /in "ls libsrc" then 
+      next(acc+tobyte(10)+tobyte(10)+data.f  ,names+fullname.fn.f) 
+     else next(acc,names)
+   /for([file(filename(Library+".libsrc")
+   ,toseqbyte.toUTF8(names+"uses=$(uses)exports=$(exports)Library=$(Library)")+acc)])
 
-function glue(lib:word)seq.word
+
+
+function glue(input:seq.file,Library:seq.word,exports:seq.word)seq.file
 {problem is same symbol is used in different onclicks}
 let includetemplate = false
-let libname = [lib]
-let info2 = getlibrarysrc.libname
-let pages=extractPages(info2)
-let libexports= extractValue(info2,"exports") 
+let input2=cat(input,"",exports,Library)
+let info2=breakparagraph.data.first.input2
+let libname=Library 
+let libexports= exports 
 let r = 
  compilerfront:libllvm("wasm"
- , [ "uses=$(extractValue(info2,"uses"))exports=tausupport inputoutput $(libexports)
+ , [ "uses=$(extractValue(first.info2,"uses"))exports=tausupport inputoutput $(libexports)
  Library=$(libname)"]+ info2 << 1
  )
 let check=checkweb(r,libexports)
@@ -145,27 +153,23 @@ it is safe to reclaim space.}
  /for(txt)
 let prg = asset.prg.r
 let discard99 = oldconstants.prg
-let discard2 = wasmcompile(typedict.r, prg, syms2, [lib])
+let wasmfile = wasmcompile(typedict.r, prg, syms2, libname)
 let script = 
- if includetemplate then
+ {if includetemplate then
   toseqbyte.toUTF8."<script>" + getfile:byte("/webassembly/template.js")
   + toseqbyte.toUTF8."</script>"
- else
+ else}
   toseqbyte.toUTF8("<script src=" + dq + "/webassembly/template.js" + dq + "> </script>")
-for txt = "", page ∈ pages
-while page ∉ ". ."
-do let pagehtml = getfile:byte([lib] + "/" + page + ".html")
-let htmlname = " built/" + page + ".html"
-let discard = 
- createfile(htmlname
- , pagehtml+script
- + toseqbyte.toUTF8(scriptstart + (" /br pageinit(" + dq + "") + lib
- + ("" + dq + ", ")
- + page
- + "); </script>")
- )
-txt 
-/for( discard2)
+for acc = wasmfile, page ∈ input
+do 
+ if  ext.fn.page /nin "html" then acc
+ else 
+ let pagehtml = data.page
+ acc+file(filename(first."built/",name.fn.page, "html"_1),
+ pagehtml+script
+ + toseqbyte.toUTF8(scriptstart +  " /br pageinit($(dq.libname), $([name.fn.page]) ); </script>")
+ ) 
+/for( acc)
 
 Function findsymbol(prg:set.symdef, symname:seq.word)seq.symbol
 for actionsym = empty:seq.symbol, sym ∈ toseq.prg do

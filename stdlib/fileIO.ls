@@ -12,15 +12,28 @@ use seq.file
 
 use format
 
+use inputoutput
+
+use seq.byte
+
+use seq.seq.byte
+
+Function check(s:seq.seq.byte) boolean
+  for acc=getseqtype.s=0, p /in s while acc do
+       getseqtype.p=1 
+  /for(acc) 
+
 Function finishentry( result:seq.file) UTF8 
 for  acc="files created:",    f /in result do 
-let discard2= createfile.f
+let discard2=if check.xdata.f then createfile3( packed.xdata.f, tocstr.[fullname.fn.f])
+else createfile([fullname.fn.f],data.f)
  acc+ fullname.fn.f 
   /for( HTMLformat.acc)
 
-Function  getfiles(rest:seq.word) seq.file 
-[file(filename(rest_2, rest_3, rest_4), getfile:byte(subseq(rest, 2, 4)))]
+Function  getfiles(args:seq.word) seq.file 
+ for acc=empty:seq.file,  fn /in  getfilenames(".",args << 1)  do 
+ acc+file(fn, [getfile:byte([fullname.fn])])
+ /for(acc)
 
-function createfile(f:file)int createfile([fullname.fn.f], data.f)
   
-function getfile(fn:filename) file file(fn,getfile:byte([fullname.fn]))
+function getfile(fn:filename) file file(fn,[getfile:byte([fullname.fn])])

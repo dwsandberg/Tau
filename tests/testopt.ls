@@ -19,8 +19,15 @@ Function multitarget(value1:int, a:boolean, b:boolean)int
 if if value1 = 4 then a else false then 40
 else if if value1 = 3 then b else false then 30 else 20
 
-Function testopt seq.word
-let p2 = prg.compilerfront:libllvm("pass2",getlibrarysrc."opttests" )
+use bits
+
+use file
+
+use seq.file
+
+Function testopt(f:file) seq.word
+let p2 = prg.compilerfront:libllvm("pass2",
+breakparagraph.{getfile:byte("tests/opttests.ls")} data.f)
 let cl = 
  ["7"
  , "12"

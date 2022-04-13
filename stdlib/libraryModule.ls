@@ -127,20 +127,9 @@ type compileinfo is symbolrefdecode:seq.symbol
 , typedict:typedict
 
 
-Function libname(info:compileinfo)word extractValue(src.info, "Library")_1
+Function libname(info:compileinfo)word extractValue(first.src.info, "Library")_1
 
-Function extractValue(s:seq.seq.word, name:seq.word)seq.word
-if first.first.s ∈ "Library"then
- for value = "", p ∈ break(s_1, "uses exports", true)do if p_1 ∈ name then p << 1 else value /for(value)
-else
- for value = ""
- , last = "="_1
- , p ∈ break(first.s + "?=", "=", false)
- do
-  next(if last ∈ name then value + p >> 1 else value
-  , if isempty.p then"="_1 else last.p
-  )
- /for(value)
+
 
 Export type:compileinfo
 

@@ -5,7 +5,20 @@ use standard
 
 use main2
 
-use textio
 
-Function entrypoint(arg:UTF8)UTF8 compile.getlibrarysrc.[first.towords.arg] 
+
+use file
+
+use seq.file
+
+
+
+
+
+  
+Function common(input:seq.file) seq.file
+  stdlib.input
+
+
+
 

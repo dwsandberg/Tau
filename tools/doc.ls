@@ -54,10 +54,11 @@ use svg2graph.seq.word
 
 Export drawgraph(seq.arc.word, set.word, set.word)seq.word
 
-Export extractValue(seq.seq.word, seq.word)seq.word
+Export extractValue(seq.word, seq.word)seq.word
 
-Function htmlcode(libsrc:seq.seq.word)seq.word
-let libname = extractValue(libsrc, "Library")
+Function htmlcode(input:seq.file)seq.word
+let libsrc=breakparagraph.data.first.input
+let libname = extractValue(first.libsrc, "Library")
 let p = 
  prettyfile(true, " /< noformat <hr id=" + dq."T" + ">  />  /keyword", libsrc)
 let modules = 
@@ -102,9 +103,16 @@ let nodesnottoinclude =
 let g2 = for acc = g, @e ∈ toseq.nodesnottoinclude do deletenode(acc, @e)/for(acc)
 drawgraph.g2
 
-Function doclibrary(libsrc:seq.seq.word)seq.word
+use file
+
+use seq.file
+
+use textio
+
+Function doclibrary(input:seq.file)seq.word
+let libsrc=breakparagraph.data.first.input
 {create summary documentation for libraray. }
-let exports = extractValue(libsrc, "exports")
+let exports = extractValue(first.libsrc, "exports")
 let todoc = 
  for acc = "", s ∈ libsrc do
   if subseq(s, 1, 3) = "* only document"then acc + subseq(s, 4, length.s)else acc
@@ -136,6 +144,12 @@ let sources =
 for acc = "", @e ∈ sources do acc + print.@e + " /br"/for(acc)
 
 * usegraph exclude standard seq set UTF8 stack graph otherseq
+
+Function usegraph(input:seq.file,include:seq.word,exclude:seq.word) seq.word
+drawgraph(usegraph(breakparagraph.data.first.input,"mod"_1)
+ , asset.include
+ , asset.exclude 
+ )
 
 Function usegraph(lib:seq.seq.word, kind:word)seq.arc.word
 for currentmod = "?"_1, result = empty:seq.arc.word, p ∈ lib do

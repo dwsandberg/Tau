@@ -12,8 +12,6 @@ use standard
 
 use textio
 
-use IO2
-
 use otherseq.byte
 
 use seq.byte

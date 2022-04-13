@@ -80,6 +80,10 @@ createfile3(
 Function createfile(name:seq.word, a:seq.bits)int 
 createfile3( packed.toseqseqbyte.tobitstream.a, tocstr.name)
 
+/Function createfile(name:seq.word,a:seq.seq.byte) int
+ createfile3( packed.a, tocstr.name)
+
+
 use bitcast.seq.byte
 
 use bitcast.seq.bits

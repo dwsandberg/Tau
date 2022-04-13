@@ -161,6 +161,16 @@ for acc = empty:seq.seq.word, i = 1, ele ∈ l + (length.s + 1)do
  next(acc + subseq(s, if i = 1 then 1 else l_(i - 1) + nosep, ele - 1), i + 1)
 /for(acc)
 
+Function extractValue(s:seq.word, name:seq.word)seq.word
+ for value = ""
+ , last = "="_1
+ , p ∈ break(s + "?=", "=", false)
+ do
+  next(if last ∈ name then value + p >> 1 else value
+  , if isempty.p then"="_1 else last.p
+  )
+ /for(value)
+
 Export hash(a:word)int
 
 Export ?(a:word, b:word)ordering

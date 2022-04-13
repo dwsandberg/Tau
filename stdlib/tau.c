@@ -256,24 +256,22 @@ char *p;
  return fp;
  }
  
- struct bitsseq  { BT type; BT length; BT  data[50]; };
+ struct bitsseq  { BT type; BT length; BT * data[50]; };
 
- struct level2  { BT type; BT length; char  data[50]; };
- 
- struct level1 { BT type; BT length;  struct level2 *data;  };
  
 BT createfile3(processinfo PD, struct bitsseq *data, char * filename )  {
 int file=1;
                     char * name=tocstr(filename);
                        if (!( strcmp("stdout",name)==0 ))  { 
                       file=myopen(name);
-                       fprintf(stderr,"createfile %s %lld  \n",name,data->length);
+                       fprintf(stderr,"createfile %s %lld  \n",name,data->length );
                      }
                      int i;
                  for (i=0; i < data->length;i++){ 
-                  BT len= ((BT *) data->data[i]) [1] ;
+                  BT len= ( data->data[i])[1] ;
           //        fprintf(stderr,"seqlen %lld  \n",len);
-                     write(file, (char *)(data->data[i])+16, len);}
+                     write(file, (char *)(data->data[i])+16, len);
+                     }
                  if (file!=1) close(file);
          //         fprintf(stderr,"finish createfile %s %d\n",name,file);
                  return 0;
@@ -340,7 +338,7 @@ BT subgetfile(processinfo PD,  char *filename,BT seqtype){
     struct stat sbuf;
     static const BT empty[]={0,0};
     BT *data2,org;
-//  fprintf(stderr,"openning %s\n",name);  
+   fprintf(stderr,"openning %s\n",name);  
         org=myalloc(PD,4);
      IDXUC(org,0)=1;
      IDXUC(org,1)=0;
@@ -459,7 +457,7 @@ int main(int argc, char **argv)    {   int i=0,count;
       p->deepcopyseqword = (BT)noop;
        p->func=entrypoint;
    
-      char allargs[200]="";
+      char allargs[2000]="";
        for(j=startarg; j < argc; j++) 
         { strcat(allargs,argv[j]); strcat(allargs," ");}
        BT argsx=tobyteseq ( p,allargs);  

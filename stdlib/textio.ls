@@ -1,7 +1,5 @@
 Module textio
 
-use IO2
-
 use UTF8
 
 use bits
@@ -98,6 +96,4 @@ for acc = "", last = 1, i = 1, pending = empty:seq.char, ch ∈ chars + spacecha
    else next(newacc + class, i + 1, i + 1, empty:seq.char)
 /for(acc)
 
-/Function createfile(filename:seq.word, s:seq.word)int  
-createfile(filename, toseqbyte.toUTF8.s)
 

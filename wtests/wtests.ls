@@ -2,25 +2,6 @@
 
 Module wtests
 
-Library wtests 
-testfileio
-/tests/tree
-/tests/wordfreq
-/tests/checking
-/tests/test11
-/tests/point
-/tests/testencoding
-/tests/testmodules
-/tests/testprocess
-/tests/randomphrase 
-/tests/test20  
-/tests/myseq  
-/tests/testseq 
-/tests/bug7 
-uses webcore
-exports wtests 
-
-
 use UTF8
 
 use bits

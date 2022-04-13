@@ -14,7 +14,7 @@ use test11a
 
 use testencoding
 
-use testfileio
+/use testfileio
 
 use testmodules
 
@@ -26,13 +26,25 @@ use testseq
 
 use wordfreq
 
-Function testall seq.word 
-{this is a comment}testfileio + test11 
-+ test11a 
-+ testencoding + testprocess 
-+testmodules
+use file
+
+use fileIO
+
+use seq.file
+
+
+Function testall(input:seq.file,o:seq.word) seq.file 
+let out=test11
++ testencoding 
++ testmodules
 + testbug7
-+ testreal
+{+ testreal
 + testseq
++ test11a 
 + testwordfreq
-+ testopt  
++ testopt(first.input)  
++ {testfileio
++} testprocess}
+[file(filename.o,out)]
+
+  

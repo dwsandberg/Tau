@@ -1,9 +1,5 @@
 Module wbeizer
 
-Library wbeizer
-uses webcore
-exports wbeizer
-
 use UTF8
 
 use bits

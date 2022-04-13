@@ -62,18 +62,18 @@ for txt = "", modtext = "", p ∈ modtexts << 1 + "Module"do
  else next(txt, modtext + " /p" + p)
 /for(txt)
 
+use file
+
+use seq.file
+
+use fileIO
+
 Function entrypoint(argin2:UTF8)UTF8
-let argsin = towords.argin2
-let cmd = [first.argsin]
-let args = [argsin]
-let aa=argsin << 1
-let idx = findindex("="_1, aa ) 
-let rest =if idx > length.aa  then "" else aa << (idx-2)
- let parts=subseq(aa,1,length.aa-length.rest)
-{
-let parts = extractValue(args, "in")}
-let file = getfile:byte(subseq(parts, 1, 3))
-HTMLformat.if cmd = "doclibrary"then doclibrary.breakparagraph.file
+let args = towords.argin2
+let cmd = [first.args]
+let input=getfiles.args
+let file = data.first.input
+let out=HTMLformat.if cmd = "doclibrary"then doclibrary.input
 else if cmd = "pretty"then
  {Pretty print the source code of a Library. The syntax is checked but not the semantics. }
  let target = extractValue(args, "target")
@@ -96,14 +96,14 @@ as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=
  , newlib
  )
 else if cmd = "testprofile"then
- let discard = compile.breakparagraph.file
- profileresults."time"
-else if cmd = "htmlcode"then htmlcode.breakparagraph.file
+ {let discard = compile.breakparagraph.file
+ profileresults."time"}
+ "needs work"
+else if cmd = "htmlcode"then htmlcode.input
 else if cmd = "usegraph"then
- let usegraph = usegraph(breakparagraph.file, "mod"_1)
- drawgraph(usegraph
- , asset.extractValue(args, "include")
- , asset.extractValue(args, "exclude")
+usegraph(input
+ ,extractValue(args, "include")
+ , extractValue(args, "exclude")
  )
 else if cmd = "formatdoc"then prettyfile(false, "", breakparagraph.file)
 else if cmd = "front"then
@@ -125,6 +125,8 @@ else if cmd = "LR1"then
  , first."parameterized" ∈ extractValue(args, "flags")
  )
 else"unknown new cmd" + cmd
+let discard=createfile("built/"+extractValue(args,"o"),toseqbyte.out)
+out
 
 {Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
 as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname} 

@@ -20,6 +20,10 @@ use IO2
 
 Builtin typestructure:T seq.seq.mytype
 
+Function readfile:T(data:UTF8) seq.T
+let datain = towords.data
+bitcast:seq.T(subread.datain)
+
 Function readfile:T(name:seq.word)seq.T
 {OPTION INLINE}
 let datain = towords.UTF8.getfile:byte(name)

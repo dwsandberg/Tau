@@ -33,9 +33,4 @@ Export xor(bits, bits)bits
 
 Export ∨(bits, bits)bits 
 
-Function entrypoint(s:UTF8)UTF8
-let args = towords.s
-let arg = [first.args]
-let arg2 = if length.args > 1 then[args_2]else""
-HTMLformat.if arg = "testall"then testall 
-else if arg="wordfreq" then testwordfreq else"unknown arg" + args 
+ 

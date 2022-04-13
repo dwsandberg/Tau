@@ -86,7 +86,10 @@ use set.seq.word
 
 use seq.seq.seq.byte
 
-use IO2
+
+use file
+
+use seq.file
 
 type coverage is towfunc:seq.word
 
@@ -116,7 +119,7 @@ for used = empty:seq.symbol, d ∈ toseq.prg do
 
 Function jsname(sym:symbol)seq.word"exports." + name.sym
 
-Function wasmcompile(alltypes:typedict, prg4:set.symdef, rootsin:seq.symbol, libname:seq.word)seq.word
+Function wasmcompile(alltypes:typedict, prg4:set.symdef, rootsin:seq.symbol, libname:seq.word)seq.file
 let discard68 = encode.coverage."???"
 let discard67 = startencodings
 let knownfuncs = knownWfunc.alltypes
@@ -176,22 +179,18 @@ let mustbedonelast =
  , symbol(moduleref."webassembly core", "initwords3", typeint)
  , initwordsbody
  )
-{create the wasm file}
-let discard = 
- for bodies = empty:seq.seq.byte
- , funcs2 = empty:seq.seq.byte
- , p ∈ sort.encoding:seq.encodingpair.wfunc << length.imports
- do next(bodies + code.data.p, funcs2 + LEB.typeidx.data.p)/for(createfile("built/"+libname + ".wasm"
- , createwasm(imp, funcs2, exp + exportmemory."memory"_1, bodies, dataseg, elementdata, startfuncidx)
- ))
- "Successful compile /p" 
+ let forlater="Successful compile /p" 
  +{reportcoverage.knownfuncs+zzzzz+    
  +} for txt = "", p ∈ encoding:seq.encodingpair.wfunc do txt + toword.funcidx.data.p + print.sym.data.p + EOL /for(txt)
  + for txt = " /br+table+ /br", i = 2, idx ∈ elementdata do next(txt + toword.i + toword.idx + EOL, i + 1)/for(txt)
-
-/use seq.encodingpair.efuncidx
-
-/use encoding.efuncidx
+{create the wasm file}
+for bodies = empty:seq.seq.byte
+ , funcs2 = empty:seq.seq.byte
+ , p ∈ sort.encoding:seq.encodingpair.wfunc << length.imports
+ do next(bodies + code.data.p, funcs2 + LEB.typeidx.data.p)/for(
+ [file(filename(libname + ".wasm"),
+ createwasm(imp, funcs2, exp + exportmemory."memory"_1, bodies, dataseg, elementdata, startfuncidx)
+ )])
 
 Function dependedfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, i:int)int
 let k = nobodies.i
