@@ -27,7 +27,7 @@ use seq.file
 
 Function testopt(f:file) seq.word
 let p2 = prg.compilerfront:libllvm("pass2",
-breakparagraph.{getfile:byte("tests/opttests.ls")} data.f)
+breakparagraph.data.f)
 let cl = 
  ["7"
  , "12"

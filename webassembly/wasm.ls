@@ -20,27 +20,18 @@ use seq.seq.byte
 
 Export type:byte
 
-/Function test7 seq.word let b=[call]+LEB.2567+[call]+LEB.245+i32const+LEBsigned.-400+i64const+LEBsigned.
--4 for text="", op=tobyte.0, result=0x0, shift=0, state="startop", byte ∈ b do if state="startop"then next(text, byte 
-, result, shift, "startLEBarg")else let c=tobits.byte ∧ 0x7F if c=tobits.byte then let arg=if state="startLEBarg"then 
-toint.if(tobits.byte ∧ 0x40)=0x0 then tobits.byte else c ∨ tobits.-1 << 7 else if op ∈[i32const, i64const]then if(tobits 
-.byte ∧ 0x40)=0x0 then toint(result ∨ c << shift)else toint(result ∨ c << shift ∨ tobits.-1 <<(shift+7))else toint(result 
-∨ c << shift)next(text+decodeop.op+toword.arg, op, 0x0, 0, "startop")else if state="startLEBarg"then next(text, 
-op, c, 7, "inLEB")else let newresult=result ∨ c << shift next(text, op, newresult, shift+7, state)/for("P"+text)
 
-/function decodeLEB(a:seq.byte, i:int, result:bits, shift:int)decoderesult let byte=tobits.a_i let c=byte ∧ 0x7F 
-let newresult=result ∨ c << shift if c=byte then decoderesult(toint.newresult, i+1)else decodeLEB(a, i+1, newresult 
-, shift+7)
+
 
 Function testLEB seq.word
 let r = 
  [tobyte.127, tobyte.128, tobyte.1, tobyte.128, tobyte.128
  , tobyte.4, tobyte.229, tobyte.142, tobyte.38, tobyte.255
  , tobyte.0, tobyte.192, tobyte.187, tobyte.120]
-let d1 = decodeLEB(r, 1)
-let d2 = decodeLEB(r, next.d1)
-let d3 = decodeLEB(r, next.d2)
-let d4 = decodeLEB(r, next.d3)
+let d1 = decodeLEBunsigned(r, 1)
+let d2 = decodeLEBunsigned(r, next.d1)
+let d3 = decodeLEBunsigned(r, next.d2)
+let d4 = decodeLEBunsigned(r, next.d3)
 let d5 = decodeLEBsigned(r, next.d4)
 let d6 = decodeLEBsigned(r, next.d5)
 if LEB.127 + LEB.128 + LEB.2^16 + LEB.624485 + LEBsigned.127 + LEBsigned.-123456 = r
@@ -49,7 +40,7 @@ if LEB.127 + LEB.128 + LEB.2^16 + LEB.624485 + LEBsigned.127 + LEBsigned.-123456
  "PASS"
 else"FAIL"
 
-Function decodeLEB(a:seq.byte, i:int)decoderesult decodeLEB(a, i, 0x0, 0)
+Function decodeLEBunsigned(a:seq.byte, i:int)decoderesult decodeLEB(a, i, 0x0, 0)
 
 Function decodeLEBsigned(a:seq.byte, i:int)decoderesult
 let r = decodeLEB(a, i, 0x0, 0)

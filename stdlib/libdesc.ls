@@ -48,8 +48,6 @@ use otherseq.word
 
 use set.word
 
-use encoding.seq.char
-
 use seq.seq.int
 
 use seq.encodingpair.symbol

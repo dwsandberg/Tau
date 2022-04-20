@@ -1,0 +1,162 @@
+: doclibrary tools
+: formatdoc tools
+: front tools
+: checkdata checkdata
+: LR1 tools
+: lextable tools
+: testall tests
+: heating mytest
+: gcodetest10 mytest
+: solardataall solardataall
+: printbitcodes printbitcodes
+: updatestate simple
+: updateX simple2 updatestate
+: wasm webassembly
+: libsrc stdlib
+: orglibsrc orgstdlib libsrc
+: stdlib stdlib
+: makelib stdlib
+: orgmakelib orgstdlib makelib
+: fff simple
+
+orglibsrc core.libsrc +core bits.ls encoding  format  graph process real seq set sparseseq stack standard UTF8 words xxhash otherseq
++stdlib file
+ 
+orglibsrc compilerfront.libsrc +stdlib compilerfrontT.ls compilerfront libdesc libraryModule localmap2 mytype parse parsersupport passparse passsymbol postbind symbol symboldict typedict
+ 
+orgmakelib stdlib.lib  core.libsrc compilerfront
+  +stdlib COMPILETIME.ls bitstream codegennew codetemplates fileIO inputoutput hashset internalbc compileTimeT llvm llvmconstants main2 mergeblocks pass2 pass2T persistant pretty symbol2 tausupport textio timestamp codetemplates2 symbolconstant ptr taublockseq IO2 bitcast
+exports=UTF8 barycenter bits bitstream ptr encoding file fileIO format graph hashset internalbc ioseq layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast IO2
+ 
+makelib tools.lib  common.lib +tools tools.ls baseTypeCheck doc genLR1 prettycompilerfront profile taulextable frontcmd wordgraph
+uses=common stdlib
+exports=baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
+
+ makelib common.lib +common common.ls matrix point  packedindex bandeskopf uniqueids svg2graph makeDAG layergraph barycenter
+object01
+LEBencoding
+uses=stdlib
+exports= matrix point  packedindex bandeskopf uniqueids svg2graph makeDAG layergraph barycenter  
+objectio object01 common
+
+makelib  checkdata.lib common.lib +checkdata checkdata.ls checkdata2 oldrecords
+uses=stdlib
+exports=checkdata checkdata2
+
+
+libsrc commontests.libsrc +tests  bug7.ls checking myseq   point randomphrase test11  test20 
+testencoding  testmodules  testprocess testseq tree  wordfreq  
+
+makelib tests.lib commontests.libsrc 
+ +tests  testopt.ls test11a  testall tests testfileio
+uses=stdlib
+exports=tests
+ 
+libsrc david.libsrc  +david david.ls  delta 
+uses=stdlib
+exports=david
+ 
+makelib mytest.lib  common.lib +mytest Gcode.ls heating  mytest  point2d  stl  svg  test4 
+uses=common stdlib
+exports=heating matrix mytest stl 
+ 
+
+makelib printbitcodes.lib +printbitcodes printbitcodes.ls bitcodesupport runcode slotdesc
+uses=stdlib
+exports=bitcodesupport data printbitcodes runcode
+ 
+makelib solardataall.lib common.lib  +solardataall solardataall.ls constants data4 redo solarposistion
+uses=common stdlib
+exports=redo solardataall test3d data4
+ 
+
+makelib webassembly.lib +webassembly webassembly.ls funcidx knownWfunc printfunc wasm wasm2 wasmcompile
+uses=stdlib
+exports=wasm wasm1 wasm2 wasmcompile webassembly
+ 
+libsrc webcore.libsrc core.libsrc  webassembly.lib
+  +webcore inputoutput.ls webIO 
+  +common barycenter  layergraph  makeDAG  bandeskopf 
+  +stdlib tausupport textio  bitstream  IO2  bitcast  taublockseq  ptr 
+ 
+wasm webtools.wasm webcore.libsrc  compilerfront  
+  +webtools webtools.ls  webtools.html
+  +common seqio.ls seqiohelp packedindex svg2graph uniqueids
+  +stdlib hashset symbol2 pretty symbolconstant
+  +tools doc baseTypeCheck frontcmd prettycompilerfront genLR1 taulextable wordgraph
+exports=webtools
+Library=webtools
+
+
+wasm webtestgraph.wasm webcore.libsrc +webtestgraph webtestgraph.ls testgraph.html
+ +common point.ls matrix 
+ +mytest point2d 
+ +stdlib libraryModule  symbol  mytype  typedict 
+exports=webtestgraph
+Library=webtestgraph
+
+doclibrary stdlibdoc.html  stdlib.libsrc
+ 
+doclibrary commondoc.html  common.libsrc
+
+formatdoc taudoc.html  +tools doc.txt
+
+formatdoc installdoc.html  +tools install.txt
+
+checkdata checkdata.html  
+
+LR1 taugrammer.html  +stdlib parse.ls
+ 
+lextable taulex.html  +tools install.txt
+
+testall testall.html 
+ 
+heating heating.html +mytest heating3.csv
+ 
+
+gcodetest10 gcode.html 
+ 
+
+printbitcodes printbitcodes.html   +printbitcodes bug9.bc
+
+solardataall solardataall.html +bug11 data1.txt data2 data3
+ 
+ makelib simple.lib  +simple simple.ls 
+uses=stdlib
+exports=simple  
+
+makelib simple2.lib  +simple simple.ls 
+uses=stdlib
+exports=simple 
+
+updateX update2.sh +simple all.decs
+
+updatestate update.sh +simple all.decs 
+
+updatestate installtau.sh +simple all.decs
+roots=installtau allweb
+
+front baseTypeCheck.html  stdlib.libsrc
+out=baseTypeCheck
+
+front callgraphwithin.html  tools.libsrc
+mods=taulextable
+
+wasm wbeizer.wasm webcore.libsrc  +wbeizer Bcubic.html Bquadratic 
+wbeizer.ls
+exports=wbeizer Library=wbeizer
+
+wasm wtests.wasm  webcore.libsrc commontests.libsrc +wtests wtests.html wtests.ls testfileio 
+ exports=wtests Library=wtests
+ 
+ fff fff.ls
+
+libsrc allweb.libsrc    wbeizer.wasm wtests.wasm
+ testall.html  baseTypeCheck  callgraphwithin 
+commondoc 
+installdoc 
+stdlibdoc 
+taudoc 
+taugrammer 
+taulex 
+testall 

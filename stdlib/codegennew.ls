@@ -84,7 +84,7 @@ let f2 =
  modulerecord([merge("init_" + thename)]
  , [toint.FUNCTIONDEC, typ.function.[VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
  )
-let entryfunctyp = function.[VOID, i64, ptr.i64]
+let entryfunctyp = function.[ptr.i64, i64, ptr.i64]
 let f3 = 
  modulerecord("entrypoint" + thename
  , [toint.FUNCTIONDEC, typ.entryfunctyp, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -111,16 +111,6 @@ let libslot =
  , 0
  ]
  )
-let symwrap = 
- symbol(moduleref."main2"
- , "entrywrapper"
- , typeint
- , typeref."UTF8 UTF8"
- , typeref."UTF8 UTF8"
- )
-let wrapfunctype = tollvmtype(typedict.info, symwrap)
-let symwrapref = symbolref.findindex(symwrap, symbolrefdecode.info)
-let symwrapmangledname = mangledname(extnames.stepone, symwrap, symwrapref, thename)
 let bodytxts = 
  bodies
  + [BLOCKCOUNT(1, 1)
@@ -136,18 +126,16 @@ let bodytxts =
  )
  + RETURN
  ]
- + [BLOCKCOUNT(2, 1) + CAST(r.3, entrypoint.stepone, i64, ptrtoint)
- + CALL(r.4
+ +   [BLOCKCOUNT(2, 1)+
+   CALL(r.3
  , 0
  , 32768
- , wrapfunctype
- , symboltableentry([symwrapmangledname], wrapfunctype)
- , r.1
- , r.3
- , r.2
+ ,entryfunctyp 
+ ,entrypoint.stepone
+ ,r.1
+ ,r.2
  )
- + RET(r.5, r.4)
- ]
+ +RET(r.4,r.3)]
 let data = constdata
 let patchlist = 
  [[toint.GLOBALVAR, typ.conststype, 2, toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0]

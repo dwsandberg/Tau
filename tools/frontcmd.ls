@@ -73,7 +73,6 @@ else
    if tail.c = head.c then acc else acc + arc(cf_(tail.c), cf_(head.c))
   /for(drawgraph.newgraph.acc)/if /if /if /if /if)
 
-
 Export drawgraph(graph.symbol)seq.word
 
 Function generatenode(a:set.symbol)symbol Lit.cardinality.a

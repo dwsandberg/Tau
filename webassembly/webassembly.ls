@@ -46,8 +46,6 @@ use process.seq.word
 
 use seq.seq.word
 
-use IO2
-
 use main2
 
 use fileIO
@@ -57,12 +55,6 @@ use file
 use seq.file
 
 use process.seq.file
-
-Function entrypoint(s:UTF8)UTF8
-let args=towords.s
-let p = process.glue(getfiles.towords.s,extractValue( args,"Library")
-,extractValue( args,"exports"))
-if aborted.p then HTMLformat.message.p else finishentry.result.p
 
 function checkweb(cf:compileinfo,libexports:seq.word) seq.word
 let idx2 = 
@@ -117,7 +109,7 @@ Function cat(files:seq.file,uses:seq.word,exports:seq.word,Library:seq.word) seq
 
 
 
-function glue(input:seq.file,Library:seq.word,exports:seq.word)seq.file
+Function wasm(input:seq.file,Library:seq.word,exports:seq.word)seq.file
 {problem is same symbol is used in different onclicks}
 let includetemplate = false
 let input2=cat(input,"",exports,Library)
@@ -165,7 +157,7 @@ do
  if  ext.fn.page /nin "html" then acc
  else 
  let pagehtml = data.page
- acc+file(filename(first."built/",name.fn.page, "html"_1),
+ acc+file(filename([name.fn.page]+ ".html"),
  pagehtml+script
  + toseqbyte.toUTF8(scriptstart +  " /br pageinit($(dq.libname), $([name.fn.page]) ); </script>")
  ) 

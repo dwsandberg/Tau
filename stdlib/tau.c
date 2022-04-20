@@ -338,7 +338,7 @@ BT subgetfile(processinfo PD,  char *filename,BT seqtype){
     struct stat sbuf;
     static const BT empty[]={0,0};
     BT *data2,org;
-   fprintf(stderr,"openning %s\n",name);  
+//  fprintf(stderr,"openning %s\n",name);  
         org=myalloc(PD,4);
      IDXUC(org,0)=1;
      IDXUC(org,1)=0;

@@ -17,6 +17,14 @@ Function _(s:cseq.T, i:int)T element.s
 
 Function constantseq(len:int, element:T)seq.T toseq.cseq(len, element)
 
+type cseq2 is sequence, patternlen:int,elements:seq.T
+
+Function _(s:cseq2.T,i:int)T   (elements.s)_((i mod patternlen.s)+1)
+
+Function constantseq(len:int, element:seq.T)seq.T toseq.cseq2(len,length.element, element)
+
+
+
 --------------------
 
 Function replace(s:seq.T, index:int, value:T)seq.T

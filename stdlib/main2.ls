@@ -85,7 +85,14 @@ use seq.seq.seq.word
 
 function makeentry(input:seq.byte) seq.byte
 let entryheader="use standard /p use file /p use fileIO /p use seq.file
-/p Function entrypoint(args0:UTF8)UTF8
+/p use process.UTF8
+/p
+Function entrypoint(args:UTF8)UTF8
+/br let p=process.entrypoint2(args)
+/br if aborted.p then
+/br   finishentry.[file($(dq."error.html"),message.p)] 
+/br else  result.p 
+/p Function entrypoint2(args0:UTF8)UTF8
 /br let args = towords.args0 
 /br let input=getfiles.args
 /br let cmd= first.args  /br finishentry."
@@ -96,6 +103,8 @@ let entryheader="use standard /p use file /p use fileIO /p use seq.file
          if w /in ",)" then
             next(para+if type="seq.word" then 
                 ",extractValue(args,$(dq.[name]))"
+            else if type="boolean" then 
+             ",first.$(dq.[name]) ∈ extractValue(args, $(dq("b=")))"
             else ",?",name,w,"")
          else if last /in ":" then 
             next(para,name,last,type+w)
@@ -115,7 +124,8 @@ let entryheader="use standard /p use file /p use fileIO /p use seq.file
 
 
 
-function cat(input:seq.file,uses:seq.word,exports:seq.word,Library:seq.word) seq.file
+Function libsrc(input:seq.file,uses:seq.word,exports:seq.word ,o:seq.word) seq.file
+   let Library=subseq(o,1,1)
    for acc=empty:seq.byte,names="parts=",f /in input do 
      if ext.fn.f /in "ls libsrc" then 
       next(acc+tobyte(10)+tobyte(10)+data.f  ,names+fullname.fn.f) 
@@ -145,17 +155,6 @@ let dependentlibs = dependentinfo:libllvm(extractValue(first.info, "uses"))
 process.compilerfront4:libllvm(option, info, dependentlibs) 
 
 
-Function entrypoint(arg:UTF8)UTF8 
-let args0=towords.arg
-let args=if  first.args0 /in "libsrc" then args0
-    else if args0="stdlib" then "stdlib +built stdlib.libsrc"
-else args0
-let input=getfiles.args
-let cmd=first.args
-finishentry.if cmd /in "libsrc" then
-     cat(input, extractValue(args, "uses"), extractValue(args, "exports"), extractValue(args, "Library"))
-  else 
-  stdlib.input
    
   
 use file
@@ -174,17 +173,6 @@ use seq.file
  file(  filename(libname + ".bc"),result.p )] 
 
 
-Function entrywrapper(t:int, newarg:UTF8)UTF8
-let p2 = 
- createthread(funcaddress.deepcopySym.typeref."UTF8 UTF8"
- , funcaddress.deepcopySym.seqof.typeword
- , t
- , [bitcast:int(toptr.newarg)]
- , 4
- )
-let r = if aborted.p2 then HTMLformat.message.p2 else bitcast:UTF8(toptr.result.p2)
-let discard = createfile("stdout", toseqbyte(toUTF8.htmlheader + r))
-r
 
 Function astext(info:compileinfo)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ prg.info do acc + [print.sym.p + print.code.p]/for(acc)

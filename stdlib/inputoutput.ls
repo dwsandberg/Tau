@@ -40,8 +40,6 @@ use process.seq.bit
 
 use process.seq.byte
 
-use encoding.seq.char
-
 use process.seq.int
 
 Export type:cstr

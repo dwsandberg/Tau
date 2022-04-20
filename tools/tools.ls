@@ -8,8 +8,6 @@ Module tools
 
 use UTF8
 
-use IO2
-
 use compilerfront
 
 use doc
@@ -50,17 +48,17 @@ use seq.seq.word
 
 use bits
 
-Function writeModule(modtexts:seq.seq.word, directory:seq.word)seq.word
+Function writeModule2(modtexts:seq.seq.word, directory:seq.word)seq.file
 {OPTION INLINE}
-for txt = "", modtext = "", p ∈ modtexts << 1 + "Module"do
- if not.isempty.p ∧ first.p ∈ "Module module"then
-  let discard2 = 
-   if isempty.modtext then 0
+for acc = empty:seq.file, modtext = "", p ∈ modtexts << 1 + "Module" do
+ if length.p > 1 ∧ first.p ∈ "Module module"then
+   next(if isempty.modtext then acc
    else
-    createfile([merge(directory + "/" + modtext_2 + ".ls")], toseqbyte.textformat.modtext)
-  next(txt + modtext, p)
- else next(txt, modtext + " /p" + p)
-/for(txt)
+    acc+file(filename("+"+directory+modtext_2+".ls"),modtext)
+    , p)
+ else next(acc, modtext + " /p" + p)
+/for(acc)
+
 
 use file
 
@@ -68,44 +66,48 @@ use seq.file
 
 use fileIO
 
-Function entrypoint(argin2:UTF8)UTF8
-let args = towords.argin2
-let cmd = [first.args]
-let input=getfiles.args
-let file = data.first.input
-let out=HTMLformat.if cmd = "doclibrary"then doclibrary.input
-else if cmd = "pretty"then
- {Pretty print the source code of a Library. The syntax is checked but not the semantics. }
- let target = extractValue(args, "target")
- let a = prettyfile2(true, "", breakparagraph.file)
- writeModule(prettyfile2(true, "", breakparagraph.file)
+Function pretty(input:seq.file,o:seq.word,target:seq.word) seq.file
+writeModule2(prettyfile2(true, "", breakparagraph.data.first.input)
  , if isempty.target then"tmp"else target
  )
-else if cmd = "transform"then
- {Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
-as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname}
- let target = extractValue(args, "target")
- let rename = extractValue(args, "rename")
- let cinfo = compilerfront("text", breakparagraph.file)
+
+Function formatdoc(input:seq.file,o:seq.word ) seq.file
+[file( filename.o,prettyfile(false, "", breakparagraph.data.first.input))]
+
+Function lextable(input:seq.file,o:seq.word ) seq.file
+[file( o,getlextable)]
+
+Function LR1(input:seq.file,o:seq.word,codeonly:boolean,parameterized:boolean ) seq.file
+[file( o,LR1gen(breakparagraph.data.first.input,codeonly,parameterized) )]
+
+Function front(input:seq.file,o:seq.word
+, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
+, ~mods:seq.word, within:boolean, rn:seq.word, out:seq.word) seq.file
+let output=front(compilerfront(if isempty.pass then"pass2"else pass, breakparagraph.data.first.input)
+,pass,n,~n,mods,~mods,within ,rn,out)
+[file(o,output)]
+
+Function transform(input:seq.file,o:seq.word,target:seq.word,rename:seq.word) seq.file
+{Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
+as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname} let cinfo = compilerfront("text", breakparagraph.data.first.input)
  let library = [libname.cinfo]
  let newlib = if isempty.target then"tmp"else target
- writeModule(transform(cinfo
+ writeModule2(transform(cinfo
  , newlib
  , if isempty.rename then library + ">" + newlib else rename
  )
  , newlib
  )
-else if cmd = "testprofile"then
+
+/Function Xentrypoint(argin2:UTF8)UTF8
+let args = towords.argin2
+let cmd = [first.args]
+let input=getfiles.args
+let file = data.first.input
+ let out=HTMLformat.if cmd = "testprofile"then
  {let discard = compile.breakparagraph.file
  profileresults."time"}
  "needs work"
-else if cmd = "htmlcode"then htmlcode.input
-else if cmd = "usegraph"then
-usegraph(input
- ,extractValue(args, "include")
- , extractValue(args, "exclude")
- )
-else if cmd = "formatdoc"then prettyfile(false, "", breakparagraph.file)
 else if cmd = "front"then
  let pass = extractValue(args, "pass")
  front(compilerfront(if isempty.pass then"pass2"else pass, breakparagraph.file)
@@ -118,15 +120,6 @@ else if cmd = "front"then
  , extractValue(args, "rn")
  , extractValue(args, "out")
  )
-else if cmd = "lextable"then getlextable
-else if cmd = "LR1"then
- LR1gen(breakparagraph.file
- , first."codeonly" ∈ extractValue(args, "flags")
- , first."parameterized" ∈ extractValue(args, "flags")
- )
+else 
 else"unknown new cmd" + cmd
-let discard=createfile("built/"+extractValue(args,"o"),toseqbyte.out)
-out
 
-{Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
-as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname} 

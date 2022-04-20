@@ -2,6 +2,8 @@ Module doc
 
 use UTF8
 
+use file
+
 use format
 
 use frontcmd
@@ -14,9 +16,13 @@ use standard
 
 use symbol2
 
+use textio
+
 use wordgraph
 
 use seq.char
+
+use seq.file
 
 use seq.mytype
 
@@ -56,7 +62,7 @@ Export drawgraph(seq.arc.word, set.word, set.word)seq.word
 
 Export extractValue(seq.word, seq.word)seq.word
 
-Function htmlcode(input:seq.file)seq.word
+Function htmlcode(input:seq.file,o:seq.word)seq.file
 let libsrc=breakparagraph.data.first.input
 let libname = extractValue(first.libsrc, "Library")
 let p = 
@@ -68,12 +74,15 @@ let modules =
   else if state = 2 then next(txt, 3, d, idx + 1)
   else if state = 3 then next(txt + name, 0, name, idx + 1)else next(txt, 0, name, idx + 1)
  /for(txt)
-" /< noformat <h1> Source code for Library" + libname + "</h1>  />"
+[file(filename.o
+, " /< noformat <h1> Source code for Library" + libname + "</h1>  />"
 + for acc = "", modname ∈ modules do
  acc + " /< noformat <a href=" + dq.[merge.["#"_1, modname]] + ">"
  + modname
  + "</a>  />"
 /for(acc + p)
+)
+]
 
 Function callgraphbetween(prg:seq.symdef, modulelist:seq.word)seq.word
 {Calls between modules in list of modules. }
@@ -103,13 +112,7 @@ let nodesnottoinclude =
 let g2 = for acc = g, @e ∈ toseq.nodesnottoinclude do deletenode(acc, @e)/for(acc)
 drawgraph.g2
 
-use file
-
-use seq.file
-
-use textio
-
-Function doclibrary(input:seq.file)seq.word
+Function doclibrary(input:seq.file,o:seq.word)seq.file
 let libsrc=breakparagraph.data.first.input
 {create summary documentation for libraray. }
 let exports = extractValue(first.libsrc, "exports")
@@ -118,7 +121,7 @@ let todoc =
   if subseq(s, 1, 3) = "* only document"then acc + subseq(s, 4, length.s)else acc
  /for(if isempty.acc then exports else acc /if)
 let g = newgraph.usegraph(libsrc, "mod"_1)
-modindex.todoc + docmodule(g, exports, todoc, libsrc)
+[file(filename.o, modindex.todoc + docmodule(g, exports, todoc, libsrc))]
 
 function modindex(mods:seq.word)seq.word
 for txt = "", modname ∈ mods do
@@ -145,11 +148,10 @@ for acc = "", @e ∈ sources do acc + print.@e + " /br"/for(acc)
 
 * usegraph exclude standard seq set UTF8 stack graph otherseq
 
-Function usegraph(input:seq.file,include:seq.word,exclude:seq.word) seq.word
-drawgraph(usegraph(breakparagraph.data.first.input,"mod"_1)
- , asset.include
- , asset.exclude 
- )
+Function usegraph(input:seq.file,o:seq.word,include:seq.word,exclude:seq.word) seq.file
+let out = 
+ drawgraph(usegraph(breakparagraph.data.first.input, "mod"_1), asset.include, asset.exclude)
+[file(filename.o,out)]
 
 Function usegraph(lib:seq.seq.word, kind:word)seq.arc.word
 for currentmod = "?"_1, result = empty:seq.arc.word, p ∈ lib do

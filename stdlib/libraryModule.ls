@@ -24,8 +24,6 @@ use set.symbol
 
 use seq.symbolref
 
-use encoding.seq.char
-
 use seq.seq.mytype
 
 use seq.encodingpair.symbol
