@@ -17,7 +17,7 @@ Export ∨(bits, bits)bits
 Export /and(bits, bits)bits
 
 Export <<(bits, int)bits
-  
+
 Function common(input:seq.file) seq.file
   stdlib.input
 

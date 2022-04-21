@@ -48,7 +48,7 @@ libsrc commontests.libsrc +tests  bug7.ls checking myseq   point randomphrase te
 testencoding  testmodules  testprocess testseq tree  wordfreq  
 
 makelib tests.lib commontests.libsrc 
- +tests  testopt.ls test11a  testall tests testfileio
+ +tests  testopt.ls test11a  testall tests  
 uses=stdlib
 exports=tests
  
@@ -71,6 +71,7 @@ exports=redo solardataall test3d data4
  
 
 makelib webassembly.lib +webassembly webassembly.ls funcidx knownWfunc printfunc wasm wasm2 wasmcompile
++common LEBencoding 
 uses=stdlib
 exports=wasm wasm1 wasm2 wasmcompile webassembly
  
@@ -81,7 +82,7 @@ libsrc webcore.libsrc core.libsrc  webassembly.lib
  
 wasm webtools.wasm webcore.libsrc  compilerfront  
   +webtools webtools.ls  webtools.html
-  +common seqio.ls seqiohelp packedindex svg2graph uniqueids
+  +common  packedindex.ls svg2graph uniqueids
   +stdlib hashset symbol2 pretty symbolconstant
   +tools doc baseTypeCheck frontcmd prettycompilerfront genLR1 taulextable wordgraph
 exports=webtools
@@ -116,16 +117,15 @@ heating heating.html +mytest heating3.csv
 
 gcodetest10 gcode.html 
  
-
 printbitcodes printbitcodes.html   +printbitcodes bug9.bc
 
-solardataall solardataall.html +bug11 data1.txt data2 data3
+solardataall solardataall.html +built  +solardataall solardata1.LEB solardata2.LEB solardata3.LEB solardata4.LEB
  
- makelib simple.lib  +simple simple.ls 
+ makelib simple.lib  +simple simple.ls  + common LEBencoding
 uses=stdlib
-exports=simple  
+exports=simple object4  
 
-makelib simple2.lib  +simple simple.ls 
+makelib simple2.lib  +simple simple.ls  
 uses=stdlib
 exports=simple 
 
@@ -146,7 +146,7 @@ wasm wbeizer.wasm webcore.libsrc  +wbeizer Bcubic.html Bquadratic
 wbeizer.ls
 exports=wbeizer Library=wbeizer
 
-wasm wtests.wasm  webcore.libsrc commontests.libsrc +wtests wtests.html wtests.ls testfileio 
+wasm wtests.wasm  webcore.libsrc commontests.libsrc +wtests wtests.html wtests.ls   
  exports=wtests Library=wtests
  
  fff fff.ls

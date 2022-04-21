@@ -56,7 +56,7 @@ use seq.word
 
 use seq.seq.word
 
-use testfileio
+/use testfileio
 
 
 /Function simpletest seq.bits 
@@ -106,8 +106,8 @@ let z =
  + {testseq+}testprocess
  + testwordfreq
  + checkhash
- + testfileio
-setElementValue("pageready", z)
+ + randomtest(500)
+ setElementValue("pageready", z)
 
 function print(a:seq.seq.word)seq.word
 for txt = "", b ∈ a do txt + b + " /p"/for(txt >> 1)

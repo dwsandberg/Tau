@@ -1,4 +1,4 @@
-#!/bin/bash tau stdlib webassembly wmytests mytests Bquadratic.
+LEBs#!/bin/bash tau stdlib webassembly wmytests mytests Bquadratic.
 
 Module wasm2
 
@@ -151,7 +151,7 @@ let discard =
  + tobyte.2
  + tobyte.0
  + localtee
- + LEB.2
+ + LEBu.2
  + const32.0
  + i32gtu
  + Wif(void, Wlocal.4 + Wlocal.2 + Wcallindirect.typeindex([i64], i64) + Wdefine.4)
@@ -340,9 +340,9 @@ function Glastfree seq.byte load(const32.0, lastfree)
 
 function Gcurrentprocess seq.byte load(const32.0, currentprocess)
 
-function load(base:seq.byte, offset:int)seq.byte base + i32load + tobyte.2 + LEB.offset
+function load(base:seq.byte, offset:int)seq.byte base + i32load + tobyte.2 + LEBu.offset
 
-function store(base:seq.byte, arg:seq.byte, i:int)seq.byte base + arg + i32store + tobyte.2 + LEB.i
+function store(base:seq.byte, arg:seq.byte, i:int)seq.byte base + arg + i32store + tobyte.2 + LEBu.i
 
 Function Wif(type:wtype, thenclause:seq.byte)seq.byte Wif(type, thenclause, empty:seq.byte)
 
@@ -351,12 +351,12 @@ Function Wif(type:wtype, thenclause:seq.byte, elseclause:seq.byte)seq.byte
 + if isempty.elseclause then empty:seq.byte else[tobyte.0x05] + elseclause /if
 + END
 
-Function const64(i:int)seq.byte[i64const] + LEBsigned.i
+Function const64(i:int)seq.byte[i64const] + LEBs.i
 
-Function const32(i:int)seq.byte[i32const] + LEBsigned.i
+Function const32(i:int)seq.byte[i32const] + LEBs.i
 
-Function Wlocal(i:int)seq.byte[localget] + LEB.i
+Function Wlocal(i:int)seq.byte[localget] + LEBu.i
 
-Function Wdefine(local:int)seq.byte[localset] + LEB.local
+Function Wdefine(local:int)seq.byte[localset] + LEBu.local
 
-Function Wcallindirect(typeindex:int)seq.byte[callindirect] + LEB.typeindex + tobyte.0 
+Function Wcallindirect(typeindex:int)seq.byte[callindirect] + LEBu.typeindex + tobyte.0 

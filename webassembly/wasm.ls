@@ -20,35 +20,19 @@ use seq.seq.byte
 
 Export type:byte
 
+use LEBencoding
 
 
 
-Function testLEB seq.word
-let r = 
- [tobyte.127, tobyte.128, tobyte.1, tobyte.128, tobyte.128
- , tobyte.4, tobyte.229, tobyte.142, tobyte.38, tobyte.255
- , tobyte.0, tobyte.192, tobyte.187, tobyte.120]
-let d1 = decodeLEBunsigned(r, 1)
-let d2 = decodeLEBunsigned(r, next.d1)
-let d3 = decodeLEBunsigned(r, next.d2)
-let d4 = decodeLEBunsigned(r, next.d3)
-let d5 = decodeLEBsigned(r, next.d4)
-let d6 = decodeLEBsigned(r, next.d5)
-if LEB.127 + LEB.128 + LEB.2^16 + LEB.624485 + LEBsigned.127 + LEBsigned.-123456 = r
-∧ for acc = empty:seq.int, @e ∈[d1, d2, d3, d4, d5, d6]do acc + value.@e /for(acc)
-= [127, 128, 65536, 624485, 127, -123456]then
- "PASS"
-else"FAIL"
+Export LEBu(i:int)seq.byte LEB(bits.0, bits.i, empty:seq.byte)
 
-Function decodeLEBunsigned(a:seq.byte, i:int)decoderesult decodeLEB(a, i, 0x0, 0)
+Export LEBs(i:int)seq.byte LEB(bits.64, bits.i, empty:seq.byte)
 
-Function decodeLEBsigned(a:seq.byte, i:int)decoderesult
-let r = decodeLEB(a, i, 0x0, 0)
-let byte = tobits.a_(next.r - 1)
-if(byte ∧ 0x40) = 0x0 then r
-else decoderesult(toint(bits.value.r ∨ tobits.-1 << ((next.r - i) * 7)), next.r)
+ 
+Export decodeLEBu(a:seq.byte, i:int)decoderesult  decodeLEB2(a, i, 0x0)
 
-type decoderesult is value:int, next:int
+ExportdecodeLEBs(a:seq.byte, i:int)decoderesult decodeLEB2(a, i, tobits.64)
+
 
 Export type:decoderesult
 
@@ -56,46 +40,28 @@ Export value(decoderesult)int
 
 Export next(decoderesult)int
 
-function decodeLEB(a:seq.byte, i:int, result:bits, shift:int)decoderesult
-let byte = tobits.a_i
-let c = byte ∧ 0x7F
-let newresult = result ∨ c << shift
-if c = byte then decoderesult(toint.newresult, i + 1)
-else decodeLEB(a, i + 1, newresult, shift + 7)
-
-Function LEB(i:int)seq.byte LEB(bits.0, bits.i, empty:seq.byte)
-
-Function LEBsigned(i:int)seq.byte LEB(bits.64, bits.i, empty:seq.byte)
-
-function LEB(signbit:bits, value:bits, result:seq.byte)seq.byte
-let byte = value ∧ bits.127
-let value1 = if toint.value < 0 then bits.-1 << (64 - 7) ∨ value >> 7 else value >> 7
-if toint.value1 = 0 ∧ toint(byte ∧ signbit) = 0 then result + tobyte.byte
-else if toint.value1 = -1 ∧ toint.byte ≥ toint.signbit then result + tobyte.byte
-else LEB(signbit, value1, result + tobyte(byte ∨ bits.128))
-
-Function exportfunc(idx:int, name:word)seq.byte vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x0] + LEB.idx
+Function exportfunc(idx:int, name:word)seq.byte vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x0] + LEBu.idx
 
 Function exportmemory(name:word)seq.byte vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x2, tobyte.0]
 
 Function importfunc(idx:int, modname:word, name:word)seq.byte
 vector.toseqbyte(emptyUTF8 + decodeword.modname) + vector.toseqbyte(emptyUTF8 + decodeword.name)
 + [tobyte.0]
-+ LEB.idx
++ LEBu.idx
 
 Function vector(a:seq.byte)seq.byte
 assert length.a < 2^32 report"vector problem" + stacktrace
-LEB.length.a + a
+LEBu.length.a + a
 
 Function vector(a:seq.seq.byte)seq.byte
 assert length.a < 2^32 report"vector problem"
-for acc = LEB.length.a, @e ∈ a do acc + @e /for(acc)
+for acc = LEBu.length.a, @e ∈ a do acc + @e /for(acc)
 
 function tobytea(a:seq.char)seq.byte
 {handles ascii only}
 for acc = empty:seq.byte, @e ∈ a do acc + tobyte.toint.@e /for(acc)
 
-Function tobyte(b:bits)byte tobyte.toint.b
+Export tobyte(b:bits)byte tobyte.toint.b
 
 Function wasmbytes seq.word
 {used to generate code that follows this function in this package}

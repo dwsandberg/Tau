@@ -136,7 +136,7 @@ if test > 0 then test else test + mh
 Function randomseq(seed:int, length:int)seq.int
 for acc = [seed], @e ∈ constantseq(length - 1, 1)do acc + pseudorandom.last.acc /for(acc)
 
-Export randomint(i:int)seq.int
+Builtin randomint(i:int)seq.int
 
 Function print(n:int)seq.word
 let s = decodeUTF8.toUTF8.n

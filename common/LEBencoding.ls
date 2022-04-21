@@ -39,12 +39,6 @@ if LEBu.127 + LEBu.128 + LEBu.2^16 + LEBu.624485 + LEBs.127 + LEBs.-123456 = r
 else"FAIL testLEB" +ok  
 
 
-     
-/Function LEB(a:seq.int) seq.byte 
-  for acc=empty:seq.byte , b /in a do 
-     acc+LEBs(b)
-  /for(acc)
-
  Function LEBu(i:int)seq.byte  LEB(bits.0, bits.i, empty:seq.byte)
  
 Function LEBs(i:int)seq.byte LEB(bits.64, bits.i, empty:seq.byte)
@@ -58,18 +52,7 @@ else LEB(signbit, value1, result + tobyte(byte ∨ bits.128))
    
 Function decodeLEBu(a:seq.byte, i:int)decoderesult  decodeLEB2(a, i, 0x0)
 
-let new=decodeLEB2(a, i, 0x0)
-let old=decodeLEB(a, i, 0x0, 0)
-assert value.old=value.new /and next.old=next.new report "FAIL decode"+toword.i
-+toword.value.new+toword.value.old+toword.next.old+toword.next.new
-old
-
 Function decodeLEBs(a:seq.byte, i:int)decoderesult decodeLEB2(a, i, tobits.64)
-
-let r = decodeLEB(a, i, 0x0, 0)
-let byte = tobits.a_(next.r - 1)
-if(byte ∧ 0x40) = 0x0 then r
-else decoderesult(toint(bits.value.r ∨ tobits.-1 << ((next.r - i) * 7)), next.r)
 
 function decodeLEB2(a:seq.byte,i:int,signbit:bits) decoderesult
   for  acc=0x0, lastbyte =0x80, j /in [0,1,2,3,4,5,6,7,8,9,10] while (lastbyte ∧ 0x80) /ne 0x0 do

@@ -15,6 +15,10 @@ use seq.byte
 
 use seq.filename
 
+use seq.seq.bit
+
+use seq.bit
+
 Export type:file
 
 Export fn(file) filename
@@ -42,12 +46,21 @@ function filename ( dir:word,name:word,ext:word) filename
 Function fullname(fn:filename) word 
 merge.if dir.fn /in "." then [name.fn,"."_1,ext.fn] else [dir.fn,"/"_1,name.fn,"."_1,ext.fn]
 
-type file is fn:filename,xdata:seq.seq.byte
+type file is fn:filename,xdata:seq.seq.byte,ydata:seq.seq.bit
 
 Function data(f:file) seq.byte
-  for acc=empty:seq.byte,p /in xdata.f do acc+p /for(acc)
+ { assert ext.fn.f /nin "bc" report "bc files contain bits"+fullname.fn.f
+ } for acc=empty:seq.byte,p /in xdata.f do acc+p /for(acc)
   
+Function bitdata(f:file)seq.bit
+  { assert ext.fn.f /nin "bc" report "only bc files contain bits"
+  } for acc=empty:seq.bit,p /in ydata.f do acc+p /for(acc)
+
 Export xdata(f:file) seq.seq.byte 
+
+Export ydata(f:file) seq.seq.bit
+
+Export file(fn:filename,a:seq.seq.byte,seq.seq.bit) file 
 
 
 
@@ -69,12 +82,11 @@ Function file( fn:filename,out:seq.word) file {OPTION NOINLINE}
    
 Function file(fn:filename,a:seq.byte) file
 file(  fn,toseqseqbyte.for acc = empty:bitstream, @e ∈ a do add(acc, bits.toint.@e, 8)/for(acc)
-   )
+   ,empty:seq.seq.bit)
 
 Function file(fn:filename,a:seq.bits) file
-file(  fn,toseqseqbyte.tobitstream.a )
+file(  fn,toseqseqbyte.tobitstream.a ,empty:seq.seq.bit)
 
-Export file(fn:filename,a:seq.seq.byte) file 
 
 Function filename(s:seq.word) filename  
 let t=getfilenames("built",s) 

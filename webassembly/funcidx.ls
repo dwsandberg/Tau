@@ -1,4 +1,3 @@
-#!/bin/bash tau stdlib webassembly testX test87
 
 Module funcidx
 
@@ -102,9 +101,9 @@ else
 Function printtypeidx(i:int)seq.word print.decode.to:encoding.wtype(i + 1) + "(idx:" + print.i + ")"
 
 Function typeindex(paras:seq.wtype, rt:wtype)int
-valueofencoding.encode.wtype([tobyte.0x60] + LEB.length.paras
+valueofencoding.encode.wtype([tobyte.0x60] + LEBu.length.paras
 + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e /for(acc)
-+ LEB.1
++ LEBu.1
 + val.rt)
 - 1
 
@@ -119,9 +118,9 @@ assert val_1 = tobyte.0x60 report"type problem"
 for acc = empty:seq.wtype, b ∈ subseq(val, 3, length.val - 2) + last.val do acc + wtype.b /for(acc)
 
 Function typeindex(paras:seq.wtype)int
-valueofencoding.encode.wtype([tobyte.0x60] + LEB.length.paras
+valueofencoding.encode.wtype([tobyte.0x60] + LEBu.length.paras
 + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e /for(acc)
-+ LEB.0)
++ LEBu.0)
 - 1
 
 Function createwasm(imports:seq.seq.byte
@@ -136,25 +135,25 @@ let initmemorysize = (length.data + 2^13 - 1) / 2^13
 {assert false report"XX"+toword.((length.data+2^16-1)/ 2^16)}
 let magic = [tobyte.0x00, tobyte.0x61, tobyte.0x73, tobyte.0x6D, tobyte.1, tobyte.0, tobyte.0, tobyte.0]
 let te = encoding:seq.encodingpair.wtype
-let types = for acc = LEB.length.te, @e ∈ te do acc + val.data.@e /for(acc)
-magic + [tobyte.1] + LEB.length.types + types + tobyte.2 + vector.vector.imports + tobyte.3
+let types = for acc = LEBu.length.te, @e ∈ te do acc + val.data.@e /for(acc)
+magic + [tobyte.1] + LEBu.length.types + types + tobyte.2 + vector.vector.imports + tobyte.3
 + vector.vector.funcs
 + {tables}tobyte.4
-+ vector.vector.[[tobyte.0x70, tobyte.0x00] + LEB(length.funcrefs + 2)]
++ vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(length.funcrefs + 2)]
 + {memory}tobyte.5
 + vector.vector.[[tobyte.0, tobyte.initmemorysize]]
 + tobyte.7
 + vector.vector.exports
 + {start}tobyte.8
-+ vector.LEB.startidx
++ vector.LEBu.startidx
 + {elements}tobyte.9
-+ vector.vector.[[tobyte.0, i32const] + LEBsigned.2 + END
-+ vector.for frefs = empty:seq.seq.byte, f ∈ funcrefs do frefs + LEB.f /for(frefs)
++ vector.vector.[[tobyte.0, i32const] + LEBs.2 + END
++ vector.for frefs = empty:seq.seq.byte, f ∈ funcrefs do frefs + LEBu.f /for(frefs)
 ]
 + {code}tobyte.10
 + vector.vector.code
 + {data}tobyte.11
-+ vector.vector.[[tobyte.0, i32const] + LEBsigned.0 + END
++ vector.vector.[[tobyte.0, i32const] + LEBs.0 + END
 + vector.for acc = empty:seq.byte, val ∈ data do
  for acc2 = acc, @i = 1, @e ∈ constantseq(8, 0)do next(acc2 + tobyte(bits.val >> (8 * @i - 8) ∧ bits.255), @i + 1)/for(acc2)
 /for(acc)
@@ -163,13 +162,13 @@ magic + [tobyte.1] + LEB.length.types + types + tobyte.2 + vector.vector.imports
 Function funcbody(localtypes:seq.wtype, code:seq.byte)seq.byte
 let locals = 
  if isempty.localtypes then empty:seq.seq.byte else localtypes(localtypes, 2, 1, empty:seq.seq.byte)
-let b = for acc = LEB.length.locals, @e ∈ locals do acc + @e /for(acc)
+let b = for acc = LEBu.length.locals, @e ∈ locals do acc + @e /for(acc)
 vector(b + code + END)
 
 function localtypes(s:seq.wtype, i:int, count:int, result:seq.seq.byte)seq.seq.byte
-if i > length.s then result + [LEB.count + val.s_(i - 1)]
+if i > length.s then result + [LEBu.count + val.s_(i - 1)]
 else if s_(i - 1) = s_i then localtypes(s, i + 1, count + 1, result)
-else localtypes(s, i + 1, 1, result + [LEB.count + val.s_(i - 1)])
+else localtypes(s, i + 1, 1, result + [LEBu.count + val.s_(i - 1)])
 
 type efuncidx is sym:symbol
 
@@ -273,7 +272,7 @@ acc)
 
 Function startencodings0 int length.encoding:seq.encodingpair.efuncidx + length.encoding:seq.encodingpair.wfunc
 
-Function Wcall(sym:symbol)seq.byte[call] + LEB.funcidx.sym
+Function Wcall(sym:symbol)seq.byte[call] + LEBu.funcidx.sym
 
 Function globalspace int
 let t = 208

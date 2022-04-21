@@ -4,8 +4,6 @@ build=built
 
 if ! [ -e $build ] ; then 
 mkdir $build
-echo "" > B
-echo "" >> B
 echo "void init_stdlib(); void init_libs(){init_stdlib(); }">$build/stdlib.c
 clang -lm -pthread  stdlib/*.c $build/stdlib.c bin/stdlib.bc  -o $build/stdlib.lib
 ln $build/stdlib.lib $build/orgstdlib.lib
@@ -30,6 +28,7 @@ fi
 function libexe {
  rm -f $build/error.html
  allargs="$@"
+ [[ "${allargs#*o=}" != $allargs ]] && rm  -f built/${allargs#*o=}
  echo "running ${allargs::40}"
  restargs="${allargs#*\ }"
 $build/${tauDylib}$1.lib $restargs > /dev/null
@@ -60,7 +59,7 @@ function checksrc {
 function  mkbuild {
 if  [ -z "$norun" ];then
 cd $build
-tar -zcf ~/work/save$(date +%Y%m%d%H%M.bak).tar.gz src
+tar -zcf ~/backup2/save$(date +%Y%m%d%H%M.bak).tar.gz src
 echo "finish tar"
 fi 
 }

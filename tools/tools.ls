@@ -64,7 +64,6 @@ use file
 
 use seq.file
 
-use fileIO
 
 Function pretty(input:seq.file,o:seq.word,target:seq.word) seq.file
 writeModule2(prettyfile2(true, "", breakparagraph.data.first.input)

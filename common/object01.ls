@@ -14,6 +14,8 @@ use seq.seq.int
 
 use seq.int
 
+use otherseq.int
+
 use bitcast.seq.int
 
 use bitcast.word
@@ -122,7 +124,7 @@ function outrec(finished0:seq.seq.int,inobj:ptr,allpatterns:seq.seq.int,patterni
                {assert stkcount /in [0,1] report "XX"+toword.stkcount}
               let t=outrec(finished,fld:ptr(obj,idx),allpatterns,typ,table)
              next(acc+(stkcount+1),idx+1,stkcount+1,finished.t,table.t)
-           /for( finished/this (finished+vector.(acc+stkcount),0,table))
+           /for( finished/this (finished+(acc+stkcount),0,table))
            
 use stack.ptr
 
@@ -206,13 +208,8 @@ Function  inrec(inrecs:seq.seq.int) ptr
 
  function vector(a:seq.char) seq.int for acc=empty:seq.int,c /in a do acc+  toint.c /for(acc)
  
- /function vector(seq.byte) seq.byte empty:seq.byte
-
- function  vector(a:seq.int) seq.int  a 
-    
-     let t= LEB.a
-     LEB.length.t+t
-     
+ 
+       
 
  ____________________________________
  

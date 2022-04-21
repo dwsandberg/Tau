@@ -28,8 +28,6 @@ use wordfreq
 
 use file
 
-use fileIO
-
 use seq.file
 
 
@@ -38,7 +36,8 @@ let out=test11
 + testencoding 
 + testmodules
 + testbug7
-{+ testreal
++ randomtest(500)
++ testreal
 + testseq
 + test11a 
 + testwordfreq

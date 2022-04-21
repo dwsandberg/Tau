@@ -24,11 +24,11 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 [wfunc(alltypes, symbol(internalmod, "not", typeboolean, typeboolean), const32.1 + i32xor)
 , wfunc(alltypes
 , symbol(internalmod, "getseqlength", typeptr, typeint)
-, [i32wrapi64, i64load, tobyte.3] + LEB.8
+, [i32wrapi64, i64load, tobyte.3] + LEBu.8
 )
 , wfunc(alltypes
 , symbol(internalmod, "getseqtype", typeptr, typeint)
-, [i32wrapi64, i64load, tobyte.3] + LEB.0
+, [i32wrapi64, i64load, tobyte.3] + LEBu.0
 )
 , wfunc(alltypes
 , symbol(internalmod
@@ -55,7 +55,7 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 )
 , wfunc(alltypes
 , symbol(internalmod, "packedindex", seqof.typebyte, typeint, typeptr)
-, [i64add, i32wrapi64, i64load8u, tobyte.0] + LEB.15
+, [i64add, i32wrapi64, i64load8u, tobyte.0] + LEBu.15
 )
 , wfunc(alltypes
 , symbol(internalmod, "packedindex", typepackedseq2, typeint, typeptr)
@@ -126,7 +126,7 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 )
 , wfunc(alltypes
 , symbol(internalmod, "processisaborted", typeptr, typeboolean)
-, [i32wrapi64, i32load, tobyte.2] + LEB.0
+, [i32wrapi64, i32load, tobyte.2] + LEBu.0
 )
 , wfunc(alltypes, abortsymbol.typeint, [f64converti64s] + Wcall.abortfunc + drop + const64.0)
 , wfunc(alltypes, abortsymbol.typebyte, [f64converti64s] + Wcall.abortfunc + drop + const64.0)
@@ -150,69 +150,72 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 )
 , wfunc(alltypes
 , symbol(builtinmod.typeptr, "fld", [typeptr, typeint], typeptr)
-, const64.8 + i64mul + i64add + i32wrapi64 + [i64load] + tobyte.3 + LEB.0
+, const64.8 + i64mul + i64add + i32wrapi64 + [i64load] + tobyte.3 + LEBu.0
 )
 , wfunc(alltypes
 , symbol(builtinmod.typeint, "fld", [typeptr, typeint], typeint)
-, const64.8 + i64mul + i64add + i32wrapi64 + [i64load] + tobyte.3 + LEB.0
+, const64.8 + i64mul + i64add + i32wrapi64 + [i64load] + tobyte.3 + LEBu.0
 )
 , wfunc(alltypes
 , symbol(builtinmod.typereal, "fld", [typeptr, typeint], typereal)
-, const64.8 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEB.0
+, const64.8 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEBu.0
 )
 , wfunc(alltypes
 , symbol(builtinmod.typeboolean, "fld", [typeptr, typeint], typeboolean)
-, const64.8 + i64mul + i64add + i32wrapi64 + [i32load] + tobyte.2 + LEB.0
+, const64.8 + i64mul + i64add + i32wrapi64 + [i32load] + tobyte.2 + LEBu.0
 )
 ,wfunc(alltypes
 , symbol(builtinmod.typeref."packed3 tausupport", "fld", [typeptr, typeint], typeref."packed3 tausupport")
-, const64.24 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEB.0
+, const64.24 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEBu.0
 )
 ,wfunc(alltypes
 , symbol(builtinmod.typeref."packed4 tausupport", "fld", [typeptr, typeint], typeref."packed4 tausupport")
-, const64.32 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEB.0
+, const64.32 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEBu.0
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", seqof.typeptr, typeint, typeptr)
-, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEB.8
+, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEBu.8
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", seqof.typeint, typeint, typeint)
-, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEB.8
+, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEBu.8
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", seqof.typebyte, typeint, typeint)
-, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEB.8
+, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEBu.8
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", typepackedseq2, typeint, typeptr)
-, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEB.8
+, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEBu.8
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", typepackedseq3, typeint, typeptr)
-, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEB.8
+, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEBu.8
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", typepackedseq4, typeint, typeptr)
-, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEB.8
+, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEBu.8
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", typepackedseq5, typeint, typeptr)
-, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEB.8
+, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEBu.8
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", typepackedseq6, typeint, typeptr)
-, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEB.8
+, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEBu.8
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", seqof.typeboolean, typeint, typeboolean)
-, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEB.8 + i32wrapi64
+, const64.8 + [i64mul, i64add, i32wrapi64, i64load, tobyte.3] + LEBu.8 + i32wrapi64
 )
 , wfunc(alltypes
 , symbol(internalmod, "idxseq", seqof.typereal, typeint, typereal)
-, const64.8 + [i64mul, i64add, i32wrapi64, f64load, tobyte.3] + LEB.8
+, const64.8 + [i64mul, i64add, i32wrapi64, f64load, tobyte.3] + LEBu.8
 )
+,wfunc(alltypes,symbol(internalmod,"stacktrace",seqof.typeword),
+const64.getoffset.wordsconst."")
 ]
+
 
 function typestack mytype addabstract(typeref."stack stack stdlib", typeint)
 

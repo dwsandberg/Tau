@@ -22,11 +22,11 @@ let a = code.f
 assert not.isempty.a report"emptycode" + print.sym.f
 let typdesc = printtypeidx.typeidx.f
 let argtypes = subseq(typdesc, 3, length.typdesc - 5)
-let d1 = decodeLEBunsigned(a, 1)
-let d2 = decodeLEBunsigned(a, next.d1)
+let d1 = decodeLEBu(a, 1)
+let d2 = decodeLEBu(a, next.d1)
 "funcidx:" + print.funcidx.f + print.sym.f
 + for text = "", place = next.d2, e ∈ constantseq(value.d2, 1)do
- let d3 = decodeLEBunsigned(a, place)
+ let d3 = decodeLEBu(a, place)
  next(text + constantseq(value.d3, (print.wtype.a_(next.d3))_1), next.d3 + 1)
 /for("(" + text + ")"
 + zzz(nocheck, argtypes >> 2 + text, subseq(a, place, length.a - 1), print.sym.f))

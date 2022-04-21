@@ -48,7 +48,6 @@ use seq.seq.word
 
 use main2
 
-use fileIO
 
 use file 
 

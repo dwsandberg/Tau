@@ -53,6 +53,7 @@ checksrc common/matrix.ls
 checksrc stdlib/mergeblocks.ls
 checksrc tests/myseq.ls
 checksrc stdlib/mytype.ls
+checksrc simple/newstuff.ls
 checksrc common/object01.ls
 checksrc core/otherseq.ls
 checksrc common/packedindex.ls
@@ -93,8 +94,6 @@ checksrc tests/test11a.ls
 checksrc tests/test20.ls
 checksrc tests/testall.ls
 checksrc tests/testencoding.ls
-checksrc tests/testfileio.ls
-checksrc wtests/testfileio.ls
 checksrc tests/testmodules.ls
 checksrc tests/testopt.ls
 checksrc tests/testprocess.ls
@@ -143,26 +142,26 @@ libexe stdlib stdlib built/common.libsrc ;runlib common)
 parts="built/commontests.libsrc built/stdlib.lib tests/bug7.ls tests/checking.ls tests/myseq.ls tests/point.ls tests/randomphrase.ls tests/test11.ls tests/test20.ls tests/testencoding.ls tests/testmodules.ls tests/testprocess.ls tests/testseq.ls tests/tree.ls tests/wordfreq.ls"
 outofdate ||(libexe stdlib libsrc tests/bug7.ls tests/checking.ls tests/myseq.ls tests/point.ls tests/randomphrase.ls tests/test11.ls tests/test20.ls tests/testencoding.ls tests/testmodules.ls tests/testprocess.ls tests/testseq.ls tests/tree.ls tests/wordfreq.ls cmd=libsrc o=commontests.libsrc)
 
-parts="built/simple.lib built/stdlib.lib simple/simple.ls"
+parts="built/simple.lib built/stdlib.lib simple/simple.ls simple/newstuff.ls common/LEBencoding.ls"
 dependlibs="built/stdlib.$libtype"
 ccode="void init_stdlib(); void init_libs(){init_stdlib();"
-outofdate ||(libexe stdlib libsrc simple/simple.ls uses=stdlib exports=simple o=simple.libsrc
+outofdate ||(libexe stdlib libsrc simple/simple.ls simple/newstuff.ls common/LEBencoding.ls uses=stdlib exports=simple object4 newstuff o=simple.libsrc
 libexe stdlib stdlib built/simple.libsrc ;runlib simple)
 
-parts="built/webassembly.lib built/stdlib.lib webassembly/webassembly.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls"
+parts="built/webassembly.lib built/stdlib.lib webassembly/webassembly.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls common/LEBencoding.ls"
 dependlibs="built/stdlib.$libtype"
 ccode="void init_stdlib(); void init_libs(){init_stdlib();"
-outofdate ||(libexe stdlib libsrc webassembly/webassembly.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls uses=stdlib exports=wasm wasm1 wasm2 wasmcompile webassembly o=webassembly.libsrc
+outofdate ||(libexe stdlib libsrc webassembly/webassembly.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls common/LEBencoding.ls uses=stdlib exports=wasm wasm1 wasm2 wasmcompile webassembly o=webassembly.libsrc
 libexe stdlib stdlib built/webassembly.libsrc ;runlib webassembly)
 #________________
 
 parts="built/installtau.sh built/simple.lib simple/all.decs"
 outofdate ||(libexe simple updatestate simple/all.decs cmd=updatestate roots=installtau allweb o=installtau.sh)
 
-parts="built/tests.lib built/stdlib.lib built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls tests/tests.ls tests/testfileio.ls"
+parts="built/tests.lib built/stdlib.lib built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls tests/tests.ls"
 dependlibs="built/stdlib.$libtype"
 ccode="void init_stdlib(); void init_libs(){init_stdlib();"
-outofdate ||(libexe stdlib libsrc built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls tests/tests.ls tests/testfileio.ls uses=stdlib exports=tests o=tests.libsrc
+outofdate ||(libexe stdlib libsrc built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls tests/tests.ls uses=stdlib exports=tests o=tests.libsrc
 libexe stdlib stdlib built/tests.libsrc ;runlib tests)
 
 parts="built/tools.lib built/stdlib.lib built/common.lib tools/tools.ls tools/baseTypeCheck.ls tools/doc.ls tools/genLR1.ls tools/prettycompilerfront.ls tools/profile.ls tools/taulextable.ls tools/frontcmd.ls tools/wordgraph.ls"
@@ -205,8 +204,8 @@ outofdate ||(libexe tests testall cmd=testall o=testall.html)
 parts="built/wbeizer.wasm built/webassembly.lib built/webcore.libsrc wbeizer/Bcubic.html wbeizer/Bquadratic.html wbeizer/wbeizer.ls"
 outofdate ||(libexe webassembly wasm built/webcore.libsrc wbeizer/Bcubic.html wbeizer/Bquadratic.html wbeizer/wbeizer.ls cmd=wasm exports=wbeizer Library=wbeizer o=wbeizer.wasm)
 
-parts="built/wtests.wasm built/webassembly.lib built/webcore.libsrc built/commontests.libsrc wtests/wtests.html wtests/wtests.ls wtests/testfileio.ls"
-outofdate ||(libexe webassembly wasm built/webcore.libsrc built/commontests.libsrc wtests/wtests.html wtests/wtests.ls wtests/testfileio.ls cmd=wasm exports=wtests Library=wtests o=wtests.wasm)
+parts="built/wtests.wasm built/webassembly.lib built/webcore.libsrc built/commontests.libsrc wtests/wtests.html wtests/wtests.ls"
+outofdate ||(libexe webassembly wasm built/webcore.libsrc built/commontests.libsrc wtests/wtests.html wtests/wtests.ls cmd=wasm exports=wtests Library=wtests o=wtests.wasm)
 #________________
 
 parts="built/allweb.libsrc built/stdlib.lib built/wbeizer.wasm built/wtests.wasm built/testall.html built/baseTypeCheck.html built/callgraphwithin.html built/commondoc.html built/installdoc.html built/stdlibdoc.html built/taudoc.html built/taugrammer.html built/taulex.html built/testall.html"

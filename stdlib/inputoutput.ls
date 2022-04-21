@@ -78,21 +78,17 @@ createfile3(
 Function createfile(name:seq.word, a:seq.bits)int 
 createfile3( packed.toseqseqbyte.tobitstream.a, tocstr.name)
 
-/Function createfile(name:seq.word,a:seq.seq.byte) int
- createfile3( packed.a, tocstr.name)
-
-
 use bitcast.seq.byte
 
 use bitcast.seq.bits
-
-Builtin randomint(i:int)seq.int
 
 type addrsym is addr:int, sym:symbol
 
 function ?(a:addrsym, b:addrsym)ordering addr.a ? addr.b
 
-Function stacktrace seq.word
+Function stacktrace seq.word stacktraceimp
+
+Function stacktraceimp seq.word
 let t = 
  for acc = empty:seq.addrsym, ll ∈ loadedLibs do
   for t = acc, idx = 1, i ∈ symboladdress.ll do next(t + addrsym(i, (libinfo.ll)_(symbolref.idx)), idx + 1)/for(t)

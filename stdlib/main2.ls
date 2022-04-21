@@ -159,7 +159,6 @@ process.compilerfront4:libllvm(option, info, dependentlibs)
   
 use file
 
-use fileIO
 
 use seq.file
 

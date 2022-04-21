@@ -2,8 +2,6 @@ Module fileIO
 
 use standard 
 
-use IO2
-
 use bits
 
 use file
@@ -17,6 +15,10 @@ use inputoutput
 use seq.byte
 
 use seq.seq.byte
+
+use seq.bit
+
+use seq.seq.bit
 
 Function check(s:seq.seq.byte) boolean
   for acc=getseqtype.s=0, p /in s while acc do
@@ -32,8 +34,11 @@ else createfile([fullname.fn.f],data.f)
 
 Function  getfiles(args:seq.word) seq.file 
  for acc=empty:seq.file,  fn /in  getfilenames(".",args << 1)  do 
- acc+file(fn, [getfile:byte([fullname.fn])])
+ acc+if ext.fn /in "bc" then
+         file(fn, empty:seq.seq.byte, [getfile:bit([fullname.fn])])
+ else 
+   file(fn, [getfile:byte([fullname.fn])],empty:seq.seq.bit)
  /for(acc)
 
   
-function getfile(fn:filename) file file(fn,[getfile:byte([fullname.fn])])
+function getfile(fn:filename) file file(fn,[getfile:byte([fullname.fn])],empty:seq.seq.bit)

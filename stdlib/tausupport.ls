@@ -183,7 +183,7 @@ Export type:encodingpair.typename
 
 -----------
 
-Function outofbounds seq.word"out of bounds"  
+Function outofbounds seq.word"out of bounds"  +stacktrace
 
 function packedbytes(a:seq.byte)seq.byte
 let b = packedbyteseqasbits.a

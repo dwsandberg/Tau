@@ -104,10 +104,15 @@ assert false report"not implemented"
 
 builtin randomfunc real
 
-Function randomint(i:int)seq.int
-for acc = empty:seq.int, e ∈ constantseq(i, 0)do acc + intpart.randomfunc /for(acc)
-
-Function stacktrace seq.word"MMMM"
+Function randomintimp(i:int) seq.int  
+  for acc = empty:seq.int, e ∈ constantseq(i, 0)do 
+    acc + toint.xor(tobits.representation.randomfunc << 16 ,
+      xor(tobits.representation.randomfunc ,
+      xor(tobits.representation.randomfunc >> 16,
+      tobits.representation.randomfunc >> 32)) )
+  /for(acc)
+ 
+Builtin stacktrace seq.word 
 
 type jsbytes is toreal:real
 
