@@ -1,4 +1,3 @@
-
 Module funcidx
 
 use UTF8
@@ -31,6 +30,9 @@ use seq.symbol
 
 use encoding.wfunc
 
+ use seq.encodingpair.datax
+
+
 use seq.wfunc
 
 use otherseq.word
@@ -47,17 +49,16 @@ use seq.wtype
 
 use seq.seq.byte
 
-use seq.encodingpair.datax
+use encoding.seq.char
 
-use seq.encodingpair.efuncidx
+use seq.efuncidx
 
-use seq.encodingpair.frefindex
+use seq.word5
 
-use seq.encodingpair.wfunc
+use seq.datax
 
-use seq.encodingpair.word5
+use seq.frefindex
 
-use seq.encodingpair.wtype
 
 Function funcidx2sym(i:int)symbol sym.decode.to:encoding.efuncidx(i + 1)
 
@@ -101,7 +102,7 @@ else
 Function printtypeidx(i:int)seq.word print.decode.to:encoding.wtype(i + 1) + "(idx:" + print.i + ")"
 
 Function typeindex(paras:seq.wtype, rt:wtype)int
-valueofencoding.encode.wtype([tobyte.0x60] + LEBu.length.paras
+addorder.wtype([tobyte.0x60] + LEBu.length.paras
 + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e /for(acc)
 + LEBu.1
 + val.rt)
@@ -118,7 +119,7 @@ assert val_1 = tobyte.0x60 report"type problem"
 for acc = empty:seq.wtype, b ∈ subseq(val, 3, length.val - 2) + last.val do acc + wtype.b /for(acc)
 
 Function typeindex(paras:seq.wtype)int
-valueofencoding.encode.wtype([tobyte.0x60] + LEBu.length.paras
+addorder.wtype([tobyte.0x60] + LEBu.length.paras
 + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e /for(acc)
 + LEBu.0)
 - 1
@@ -134,8 +135,8 @@ Function createwasm(imports:seq.seq.byte
 let initmemorysize = (length.data + 2^13 - 1) / 2^13
 {assert false report"XX"+toword.((length.data+2^16-1)/ 2^16)}
 let magic = [tobyte.0x00, tobyte.0x61, tobyte.0x73, tobyte.0x6D, tobyte.1, tobyte.0, tobyte.0, tobyte.0]
-let te = encoding:seq.encodingpair.wtype
-let types = for acc = LEBu.length.te, @e ∈ te do acc + val.data.@e /for(acc)
+let te = encodingdata:wtype
+let types = for acc = LEBu.length.te, @e ∈ te do acc + val.@e /for(acc)
 magic + [tobyte.1] + LEBu.length.types + types + tobyte.2 + vector.vector.imports + tobyte.3
 + vector.vector.funcs
 + {tables}tobyte.4
@@ -178,17 +179,14 @@ Function hash(a:efuncidx)int hash.sym.a
 
 Function assignencoding(a:efuncidx)int nextencoding.a
 
-Function printefuncidx seq.word
-for txt = "", x ∈ encoding:seq.encodingpair.efuncidx do txt + toword(valueofencoding.code.x - 1) + print.sym.data.x + EOL /for(txt)
-
 Function nobodies(i:int)seq.symbol
-let x = encoding:seq.encodingpair.efuncidx
+let x = encodingdata:efuncidx
 for acc = empty:seq.symbol, j ∈ arithseq(length.x - i + 1, 1, i)do
  let sym = sym.decode.to:encoding.efuncidx(j)
  if isempty.findencode.wfunc(sym, empty:seq.byte, 0, 0)then acc + sym else acc
 /for(acc)
 
-Function funcidx(sym:symbol)int value.funcidx(valueofencoding.encode.efuncidx.sym - 1)
+Function funcidx(sym:symbol)int value.funcidx(addorder.efuncidx.sym - 1)
 
 type funcidx is value:int
 
@@ -212,7 +210,8 @@ Function hash(a:wfunc)int hash.sym.a
 
 Function assignencoding(a:wfunc)int nextencoding.a
 
-Function ?(a:encodingpair.wfunc, b:encodingpair.wfunc)ordering funcidx.data.a ? funcidx.data.b
+Function ?(a:wfunc, b:wfunc)ordering funcidx.a ? funcidx.b
+
 
 Function lookup2(s:seq.wfunc, a:wfunc)seq.wfunc
 let t = 
@@ -255,22 +254,20 @@ let kind = basetype(typ, alltypes)
 if kind = typeboolean ∨ kind = typeptr then i32
 else if kind = typereal then f64 else i64
 
-Function addf(alltypes:typedict, sym:symbol, b:seq.byte)int
-valueofencoding.encode.wfunc(alltypes, sym, b, funcidx.sym)
+Function addf(alltypes:typedict, sym:symbol, b:seq.byte)int addorder.wfunc(alltypes, sym, b, funcidx.sym)
 
 Function funcidx2typedesc(arg:int)seq.word
-for acc = "", p ∈ encoding:seq.encodingpair.wfunc
+for acc = "", p ∈ encodingdata:wfunc
 while acc = ""
-do if funcidx.data.p = arg then
- let xx = printtypeidx.typeidx.data.p >> 5
- assert not.isempty.xx report"KLJ" + printtypeidx.typeidx.data.p
+do if funcidx.p = arg then
+ let xx = printtypeidx.typeidx.p >> 5
+ assert not.isempty.xx report"KLJ" + printtypeidx.typeidx.p
  xx
 else acc
-/for({assert not.isempty.acc report"JKLSDF"+for txt="", q=encoding:seq.encodingpair.wfunc do txt+toword.funcidx.
-data.q /for(txt)}
+/for(
 acc)
 
-Function startencodings0 int length.encoding:seq.encodingpair.efuncidx + length.encoding:seq.encodingpair.wfunc
+Function startencodings0 int length.encodingdata:efuncidx + length.encodingdata:wfunc
 
 Function Wcall(sym:symbol)seq.byte[call] + LEBu.funcidx.sym
 
@@ -283,17 +280,17 @@ ____________________
 
 type word5 is toword:word
 
-function assignencoding(a:word5)int encoding.toword.a
+function assignencoding(a:word5)int nextencoding.a
 
 Function =(a:word5, b:word5)boolean toword.a = toword.b
 
 Function hash(a:word5)int hash.toword.a
 
-Export toword(word5)word
+/Export toword(word5)word
 
-Export word5(word)word5
+/Export word5(word)word5
 
-Export type:word5
+/Export type:word5
 
 Function wordconst(w:word)symbol
 let discard = encode.word5.w
@@ -303,13 +300,13 @@ Function wordsconst(s:seq.word)symbol
 for acc = empty:seq.symbol, w ∈ s do acc + wordconst.w /for(Constant2(acc + Sequence(seqof.typeint, length.acc)))
 
 Function initialwordpairlocations seq.int
-for acc2 = empty:seq.int, p ∈ encoding:seq.encodingpair.word5 do
+for acc2 = empty:seq.int, p ∈ encodingdata:word5 do
  let k = 
-  for acc = empty:seq.symbol, c ∈ decodeword.toword.data.p do acc + Lit.toint.c /for(Constant2(acc + Sequence(seqof.typeint, length.acc)))
+  for acc = empty:seq.symbol, c ∈ decodeword.toword.p do acc + Lit.toint.c /for(Constant2(acc + Sequence(seqof.typeint, length.acc)))
  acc2
- + getoffset.Constant2.[Lit.hash.toword.data.p
+ + getoffset.Constant2.[Lit.hash.toword.p
  , k
- , Lit.hash.decodeword.toword.data.p
+ , Lit.hash.decodeword.toword.p
  , Record.[typeint, typeint, typeint]
  ]
 /for(acc2)
@@ -325,7 +322,7 @@ Function =(a:frefindex, b:frefindex)boolean toint.a = toint.b
 Function assignencoding(a:frefindex)int nextencoding.a
 
 Function elementdata seq.int
-for acc = empty:seq.int, p ∈ encoding:seq.encodingpair.frefindex do acc + toint.data.p /for(acc)
+for acc = empty:seq.int, p ∈ encodingdata:frefindex do acc + toint.p /for(acc)
 
 Export type:frefindex
 
@@ -335,40 +332,43 @@ Export frefindex(int)frefindex
 
 Function tableindex(sym:symbol)int tableindex.funcidx.sym
 
-Function tableindex(funcidx:int)int valueofencoding.encode.frefindex.funcidx + 1
+Function tableindex(funcidx:int)int addorder.frefindex.funcidx + 1
 
 ________________
 
 Function startencodings int
-{length.encoding:seq.encodingpair.efuncidx+length.encoding:seq.encodingpair.wfunc+}startencodings0
-+ length.encoding:seq.encodingpair.word5
-+ length.encoding:seq.encodingpair.datax
-+ length.encoding:seq.encodingpair.frefindex
+{length.encodingdata:efuncidx+length.encodingdata:wfunc+}startencodings0
++ length.encodingdata:word5
++ length.encodingdata:datax
++ length.encodingdata:frefindex
 
-type datax is no:word, elements:seq.int
+type datax is globalname:word, elements:seq.int 
 
 Export type:datax
 
-Function hash(a:datax)int hash.no.a
+Function hash(a:datax)int if globalname.a /nin "." then hash.globalname.a else hash.elements.a
 
-Function =(a:datax, b:datax)boolean no.a = no.b
+Function =(a:datax, b:datax)boolean  if globalname.a /nin "." /or globalname.b  /nin "." then globalname.a = globalname.b 
+ else elements.a=elements.b
 
-Function assignencoding(a:datax)int
-let p = encoding:seq.encodingpair.datax
-if isempty.p then globalspace else valueofencoding.code.last.p + 8 * length.elements.data.last.p
+Function assignencoding(a:datax)int nextencoding.a
 
 Function dataseg seq.int
-for acc = constantseq(globalspace / 8, 0), p ∈ encoding:seq.encodingpair.datax do acc + elements.data.p /for(acc)
+for acc = constantseq(globalspace / 8, 0), p ∈ encodingdata:datax do acc + elements.p /for(acc)
 
-Function allocateconstspace(no:word, elements:seq.int)int valueofencoding.encode.datax(no, elements)
+Function allocateconstspace(globalname:word, elements:seq.int)int 
+let d=encode.datax(globalname, elements)
+for offset=globalspace, p /in encoding:seq.encodingpair.datax while code.p /ne d do
+         offset+  8 * length.elements.data.p
+           /for(offset)
 
 Function constintseq(elements:seq.int)int
-valueofencoding.encode.datax(toword.-nextencoding.datax("X"_1, [0]), [0, length.elements] + elements)
+allocateconstspace("."_1, [0, length.elements] + elements)
 
 Function constbyteseq(a:seq.byte)int
 let elements = 
  for elements = empty:seq.int, b ∈ packedbyteseqasbits.a do elements + toint.b /for(elements)
-valueofencoding.encode.datax(toword.-nextencoding.datax("X"_1, [0]), elements)
+allocateconstspace("."_1, elements)
 
 Function getoffset(const:symbol)int
 let elements = 
@@ -386,69 +386,4 @@ let elements =
    assert isrecordconstant.sym report"problem getoffset" + print.sym
    getoffset.sym
  /for(elements)
-allocateconstspace((worddata.const)_1, elements)
-
-Module wasmconstant
-
-use standard
-
-use symbol2
-
-use seq.mytype
-
-use seq.symbol
-
-use seq.symdef
-
-use set.symdef
-
-use encoding.wasmconstant
-
-use seq.encodingpair.wasmconstant
-
-Function constantcode(s:symbol)seq.symbol
-let code1 = fullconstantcode.s
-if isSequence.last.code1 then[Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
-
-Function fullconstantcode(s:symbol)seq.symbol
-assert isrecordconstant.s report"constant code error" + print.s  
-toseq.decode.to:encoding.wasmconstant(toint.name.s)
-
-Function Constant2(args:seq.symbol, value:int)symbol symconst.valueofencoding.encode.wasmconstant(args, value)
-
-Function Constant2(args:seq.symbol)symbol Constant2(args, 0)
-
-Function hash(s:seq.symbol)int
-hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /for(acc)
-
-function assignencoding(a:wasmconstant)int
-if value.a > 0 then value.a else valueofencoding.code.last.encoding:seq.encodingpair.wasmconstant + 1
-
-Export type:wasmconstant
-
-type wasmconstant is toseq:seq.symbol, value:int
-
-function =(a:wasmconstant, b:wasmconstant)boolean toseq.a = toseq.b
-
-function hash(a:wasmconstant)int hash.toseq.a
-
-Function oldconstants(prg:set.symdef)int
-{must have biggest val the last to be encoded}
-for val = 0, max = first.toseq.prg, sd ∈ toseq.prg do
- if isrecordconstant.sym.sd then
-  let thisval = toint.name.sym.sd
-  if thisval < val then
-   let discard = Constant2(code.sd, thisval)
-   next(val, max)
-  else if val = 0 then next(thisval, sd)
-  else
-   let discard = Constant2(code.max, val)
-   next(thisval, sd)
- else next(val, max)
-/for(let discard = Constant2(code.max, val)
-0)
-
-Function dumpvalues seq.word
-for acc = "", p ∈ encoding:seq.encodingpair.wasmconstant do
- acc + toword.valueofencoding.code.p + toword.value.data.p + print.toseq.data.p + EOL
-/for(acc) 
+allocateconstspace("."_1, elements) 

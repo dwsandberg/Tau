@@ -50,13 +50,9 @@ use set.word
 
 use seq.seq.int
 
-use seq.encodingpair.symbol
-
 use seq.seq.symbol
 
 use set.seq.symbol
-
-use seq.encodingpair.symbolnew
 
 use otherseq.seq.symbolref
 
@@ -183,17 +179,17 @@ Function compileinfo(prg:seq.symdef, alltypes:typedict, mods:seq.libraryModule, 
 compileinfo(alltypes, cvtL3(asset.prg, 1, empty:seq.seq.symbolref), src, symbolrefdecode, mods)
 
 function cvtL3(prg:set.symdef, i:int, in:seq.seq.symbolref)seq.seq.symbolref
-let x = encoding:seq.encodingpair.symbol
+let x = encodingdata:symbol
 if i > length.x then in
 else
  cvtL3(prg
  , length.x + 1
  , for acc = in, p ∈ subseq(x, i, length.x)do
-  let f = lookup(prg, symdef(data.p, empty:seq.symbol))
+  let f = lookup(prg, symdef(p, empty:seq.symbol))
   if isempty.f ∨ isempty.code.f_1 then acc
   else
    acc
-   + for acc2 = [symbolref.data.p, symbolref.Lit.paragraphno.f_1], sym ∈ code.f_1 do
+   + for acc2 = [symbolref.p, symbolref.Lit.paragraphno.f_1], sym ∈ code.f_1 do
     acc2
     + if isFref.sym then
      let discard = symbolref.basesym.sym
@@ -211,10 +207,10 @@ ________________________
 
 type symbolnew is tosymbol:symbol
 
-function symbolrefnew(sym:symbol)symbolref symbolref.valueofencoding.encode.symbolnew.sym
+function symbolrefnew(sym:symbol)symbolref symbolref.addorder.symbolnew.sym
 
 function symbolrefdecodenew seq.symbol
-for acc = empty:seq.symbol, p ∈ encoding:seq.encodingpair.symbolnew do acc + tosymbol.data.p /for(acc)
+for acc = empty:seq.symbol, p ∈ encodingdata:symbolnew do acc + tosymbol.p /for(acc)
 
 function hash(a:symbolnew)int hash.tosymbol.a
 

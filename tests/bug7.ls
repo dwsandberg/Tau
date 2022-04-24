@@ -38,9 +38,9 @@ Function assignencoding(a:llvmtypeele2)int nextencoding.a
 
 function =(a:llvmtypeele2, b:llvmtypeele2)boolean toseq.a = toseq.b
 
-Function i64 int valueofencoding.encode.llvmtypeele2.[7, 64]
+Function i64 int addorder.llvmtypeele2.[7, 64]
 
-Function i32 int valueofencoding.encode.llvmtypeele2.[7, 32]
+Function i32 int addorder.llvmtypeele2.[7, 32]
 
 Module seq8.T
 

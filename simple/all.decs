@@ -70,7 +70,7 @@ uses=common stdlib
 exports=redo solardataall test3d data4
  
 
-makelib webassembly.lib +webassembly webassembly.ls funcidx knownWfunc printfunc wasm wasm2 wasmcompile
+makelib webassembly.lib +webassembly webassembly.ls funcidx wasmconstant knownWfunc printfunc wasm wasm2 wasmcompile
 +common LEBencoding 
 uses=stdlib
 exports=wasm wasm1 wasm2 wasmcompile webassembly

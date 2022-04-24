@@ -64,7 +64,8 @@ use set.seq.symbol
 
 use seq.seq.symbolref
 
-Function codegen(thename:word, dependentlibs:seq.word, info:compileinfo)seq.bits
+Function codegen(thename:word, dependentlibs:seq.word, info0:compileinfo)seq.bits
+ let info= changestacktrace.info0
 let isbase = isempty.dependentlibs
 let profilearcs = profilearcs.info
 let tobepatched = 

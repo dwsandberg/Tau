@@ -20,6 +20,8 @@ use seq.seq.int
 
 use seq.seq.word
 
+Builtin stacktrace2 seq.word
+
 Export type:UTF8
 
 Export towords(UTF8)seq.word
@@ -30,7 +32,8 @@ Function dq seq.word{doublequote}[encodeword.[char.34]]
 
 Function dq(s:seq.word)seq.word dq + s + dq
 
-Export stacktrace seq.word
+Function stacktrace5 seq.word stacktrace
+
 
 type ordering is toint:int
 
@@ -317,7 +320,7 @@ Export index(int)index
 Function +(i:index, b:int)index index(rep.i + b)
 
 Function toindex(i:int)index
-assert i > 0 report"not an index" {+ stacktrace}
+assert i > 0 report"not an index" + stacktrace2
 index(i - 1)
 
 Function toint(i:index)int rep.i + 1 

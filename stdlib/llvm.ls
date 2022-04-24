@@ -26,15 +26,9 @@ use seq.seq.int
 
 use seq.encoding.llvmconst
 
-use seq.encodingpair.llvmconst
-
-use seq.encodingpair.llvmtypeele
-
 use seq.seq.llvmtypeele
 
 use seq.seq.seq.int
-
-Export type:encodingpair.llvmconst
 
 Export type:llvmtypeele
 
@@ -44,7 +38,19 @@ Export type:llvmconst
 
 type llvmtypeele is toseq:seq.int
 
-type llvmtype is index:encoding.llvmtypeele
+type llvmtype is typ:int
+  
+Export typ(llvmtype) int 
+
+function asseq(t:llvmtype)  seq.int    toseq.decode.to:encoding.llvmtypeele(typ.t+1)
+
+Function returntype(func:llvmtype)llvmtype llvmtype.(asseq.func)_3 
+
+Function llvmtype(s:seq.int)llvmtype llvmtype(addorder.llvmtypeele.s - 1 )
+
+function inttollvmtype(i:int)llvmtype llvmtype.i
+
+
 
 function hash(a:llvmtypeele)int hash.toseq.a
 
@@ -52,10 +58,9 @@ function assignencoding(a:llvmtypeele)int nextencoding.a
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
-function inttollvmtype(i:int)llvmtype llvmtype.to:encoding.llvmtypeele(i + 1)
 
 Function print(t:llvmtype)seq.word
-let a = toseq.decode.index.t
+let a = asseq.t  
 let tp = typeop.a_1
 let b = for acc = empty:seq.llvmtype, @e ∈ a do acc + inttollvmtype.@e /for(acc)
 if tp = INTEGER then[merge("i" + toword.a_2)]
@@ -68,18 +73,8 @@ else if tp = FUNCTION then
 else if tp = TVOID then"VOID"
 else if tp = DOUBLE then"double"else"?"
 
-function cvttorec(a:encodingpair.llvmtypeele)seq.int toseq.data.a
-
 Function typerecords seq.seq.int
-for acc = empty:seq.seq.int, @e ∈ encoding:seq.encodingpair.llvmtypeele do acc + cvttorec.@e /for(acc)
-
-Function returntype(func:llvmtype)llvmtype llvmtype.to:encoding.llvmtypeele((toseq.decode.index.func)_3 + 1)
-
-typerecords_(typ.llvmtype+1)_3
-
-Function typ(a:llvmtype)int valueofencoding.index.a - 1
-
-Function llvmtype(s:seq.int)llvmtype llvmtype.encode.llvmtypeele.s
+for acc = empty:seq.seq.int, @e ∈ encodingdata:llvmtypeele do acc + toseq.@e /for(acc)
 
 Function double llvmtype llvmtype.[toint.DOUBLE]
 
@@ -106,7 +101,7 @@ type llvmconst is typ:int, toseq:seq.int
 
 function hash(a:llvmconst)int hash.symtabname.a
 
-function assignencoding(a:llvmconst)int{length.p+1}nextencoding.a
+function assignencoding(a:llvmconst)int nextencoding.a
 
 Function =(a:llvmconst, b:llvmconst)boolean symtabname.a = symtabname.b ∧ typ.a = typ.b
 
@@ -119,21 +114,21 @@ let c =
  else
   let chars = tointseq.for acc = empty:seq.char, @e ∈ name do acc + decodeword.@e /for(acc)
   llvmconst(-1, [length.chars] + chars + rec)
-slot(valueofencoding.encode.c - 1)
+slot(addorder.c - 1)
 
-Function C64(i:int)slot slot(valueofencoding.encode.llvmconst(typ.i64, [toint.CINTEGER, i]) - 1)
+Function C64(i:int)slot slot(addorder.llvmconst(typ.i64, [toint.CINTEGER, i]) - 1)
 
-Function C32(i:int)slot slot(valueofencoding.encode.llvmconst(typ.i32, [toint.CINTEGER, i]) - 1)
+Function C32(i:int)slot slot(addorder.llvmconst(typ.i32, [toint.CINTEGER, i]) - 1)
 
-function C(t:llvmtype, s:seq.int)int valueofencoding.encode.llvmconst(typ.t, s) - 1
+function C(t:llvmtype, s:seq.int)int addorder.llvmconst(typ.t, s) - 1
 
-Function constantrecord(t:llvmtype, s:seq.int)slot slot(valueofencoding.encode.llvmconst(typ.t, s) - 1)
+Function constantrecord(t:llvmtype, s:seq.int)slot slot(addorder.llvmconst(typ.t, s) - 1)
 
-Function DATA(t:llvmtype, data:seq.int)slot slot(valueofencoding.encode.llvmconst(typ.t, [toint.CDATA] + data) - 1)
+Function DATA(t:llvmtype, data:seq.int)slot slot(addorder.llvmconst(typ.t, [toint.CDATA] + data) - 1)
 
 Function AGGREGATE(data:seq.slot)slot
 let t = array(length.data, i64)
-slot(valueofencoding.encode.llvmconst(typ.t
+slot(addorder.llvmconst(typ.t
 , [toint.CAGGREGATE]
 + for acc = empty:seq.int, @e ∈ data do acc + toint.@e /for(acc)
 )
@@ -165,33 +160,32 @@ else
 Function constvalue(i:slot)int(toseq.decode.to:encoding.llvmconst(toint.i + 1))_2
 
 Function constantrecords seq.slotrecord
-for acc = empty:seq.slotrecord, @e ∈ encoding:seq.encodingpair.llvmconst do acc + slotrecord.@e /for(acc)
+for acc = empty:seq.slotrecord, @e ∈ encodingdata:llvmconst do acc + slotrecord.@e /for(acc)
 
-type slotrecord is cvt:encodingpair.llvmconst
+type slotrecord is tollvmconst:llvmconst
 
 Export type:slotrecord
 
 Function record(b:slotrecord)seq.int
-let a = data.cvt.b
+let a = tollvmconst.b
 if typ.a = -1 then{name comes before record}subseq(toseq.a, 2 + (toseq.a)_1, length.toseq.a)
 else toseq.a
 
 Function symtablename(c:slotrecord)seq.char
-let b = cvt.c
-let a = data.b
+let a = tollvmconst.c
 if typ.a ∈ [-1, -2]then tocharseq.subseq(toseq.a, 2, 1 + (toseq.a)_1)else empty:seq.char
 
-Function ismoduleblock(a:slotrecord)boolean typ.data.cvt.a < 0
+Function ismoduleblock(a:slotrecord)boolean typ.tollvmconst.a < 0
 
-Function typ(s:slotrecord)int typ.data.cvt.s
+Function typ(s:slotrecord)int typ.tollvmconst.s
 
 Function consttype(s:slot)llvmtype
 {pretty print get prec wrong comment?}
 let l = decode.to:encoding.llvmconst(toint.s + 1)
-llvmtype.to:encoding.llvmtypeele(1
-+ if typ.l = -1 then({must skip name to find record}toseq.l)_(3 + (toseq.l)_1)
-else if typ.l = -3 then(toseq.l)_2 else typ.l
-)
+inttollvmtype
+  (if typ.l = -1 then({must skip name to find record}toseq.l)_(3 + (toseq.l)_1)
+else if typ.l = -3 then(toseq.l)_2 else typ.l) 
+ 
 
 type slot is toint:int
 

@@ -16,7 +16,7 @@ Function constantcode(s:symbol)seq.symbol
 let code1 = fullconstantcode.s
 if isSequence.last.code1 then[Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
 
-Function fullconstantcode(s:symbol)seq.symbol
+function fullconstantcode(s:symbol)seq.symbol
 assert isrecordconstant.s report"constant code error" + print.s  
 toseq.decode.to:encoding.symbolconstant(toint.name.s)
 
@@ -26,9 +26,7 @@ let a = lookup(p, symdef(testsym, args))
 if not.isempty.a then
  let discard = encode.symbolconstant.code.a_1
  Constant2(p, args)
-else symconst.valueofencoding.encode.symbolconstant.args
-
-Function Constant2(args:seq.symbol)symbol symconst.valueofencoding.encode.symbolconstant.args
+else symconst.addorder.symbolconstant.args
 
 Function hash(s:seq.symbol)int
 hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /for(acc)
@@ -50,4 +48,5 @@ for acc = empty:seq.symbol, @e ∈ s do
 /for(acc)
 
 Function constantsymbols set.symdef
-for acc = empty:set.symdef, p ∈ encoding:seq.encodingpair.symbolconstant do acc + symdef(symconst.valueofencoding.code.p, toseq.data.p)/for(acc) 
+for acc = empty:set.symdef, i=1,p ∈ encodingdata:symbolconstant do 
+next(acc + symdef(symconst.i, toseq.p),i+1)/for(acc) 

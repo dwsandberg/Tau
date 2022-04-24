@@ -52,8 +52,6 @@ use seq.seq.action
 
 use seq.set.dottedrule
 
-use seq.encodingpair.state
-
 use seq.arc.word
 
 use set.arc.word
@@ -152,7 +150,7 @@ assert ruleno ≤ length.grammar report"rule not found" + rule
 ruleno
 
 function state(stateno:int)state
-if stateno = 0 then state.empty:set.dottedrule else data.encoding:seq.encodingpair.state_stateno
+if stateno = 0 then state.empty:set.dottedrule else encodingdata:state_stateno
 
 function shift(stateno:int, lookahead:word, newstateno:int)action action(stateno, lookahead, newstateno)
 
@@ -254,7 +252,7 @@ let grammar2 = for acc = empty:seq.seq.word, @e ∈ grammarandact do acc + first
 let nontermials = for acc = empty:set.word, rule ∈ grammar2 do acc + first.rule /for(acc)
 assert isempty(asset.terminals ∩ nontermials)report"terminals and nontermials sets must be distinct"
 let alphabet = terminals + toseq.nontermials
-let initialstateno = valueofencoding.encode.state.initialstate.grammar2
+let initialstateno = addorder.state.initialstate.grammar2
 let symbolsused = for acc = empty:set.word, rule ∈ grammar2 do acc ∪ asset.rule /for(acc)
 let missingsymbols = symbolsused \ asset.alphabet
 assert isempty(symbolsused \ asset.alphabet)
@@ -308,7 +306,7 @@ let header =
  + "norules:"
  + toword.length.grammarandact
  + "nostate:"
- + toword.length.encoding:seq.encodingpair.state
+ + toword.length.encodingdata:state
  + " /p"
  + printRulePrecedence.ruleprec
  + if length.amb > 0 then"ambiguous actions:" + amb else""/if
@@ -331,10 +329,10 @@ else if s_startofrun = s_i then dups(startofrun, s, i + 1, result)
 else dups(i, s, i + 1, result + subseq(s, startofrun, i - 1))
 
 function closestate(graminfo:grammarinfo, stateno:int, result:seq.action, alphabet:set.word)seq.action
-let m = encoding:seq.encodingpair.state
+let m = encodingdata:state
 if stateno > length.m then result
 else
- let state = data.m_stateno
+ let state = m_stateno
  let reductions = finished.state
  let reduceActions = 
   for acc = empty:seq.action, rule ∈ reductions do
@@ -344,7 +342,7 @@ else
  let newresult = 
   for acc = result + reduceActions, lookahead ∈ toseq.asset.shifts.state do
    let newstate = advance(grammar.graminfo, toset.state, lookahead)
-   let newstateno = if isempty.newstate then 0 else valueofencoding.encode.state.newstate
+   let newstateno = if isempty.newstate then 0 else addorder.state.newstate
    acc + shift(stateno, lookahead, newstateno)
   /for(acc)
  closestate(graminfo, stateno + 1, newresult, alphabet)

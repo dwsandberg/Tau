@@ -131,9 +131,18 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , wfunc(alltypes, abortsymbol.typeint, [f64converti64s] + Wcall.abortfunc + drop + const64.0)
 , wfunc(alltypes, abortsymbol.typebyte, [f64converti64s] + Wcall.abortfunc + drop + const64.0)
 , wfunc(alltypes, abortsymbol.typeptr, [f64converti64s] + Wcall.abortfunc + drop + const64.0)
-, wfunc(alltypes, abortsymbol.typeref."packed2 tausupport", [f64converti64s] + Wcall.abortfunc + drop + const64.0)
-, wfunc(alltypes, abortsymbol.typeref."packed3 tausupport", [f64converti64s] + Wcall.abortfunc + drop + const64.0)
-, wfunc(alltypes, abortsymbol.typeref."packed4 tausupport", [f64converti64s] + Wcall.abortfunc + drop + const64.0)
+, wfunc(alltypes
+, abortsymbol.typeref."packed2 tausupport"
+, [f64converti64s] + Wcall.abortfunc + drop + const64.0
+)
+, wfunc(alltypes
+, abortsymbol.typeref."packed3 tausupport"
+, [f64converti64s] + Wcall.abortfunc + drop + const64.0
+)
+, wfunc(alltypes
+, abortsymbol.typeref."packed4 tausupport"
+, [f64converti64s] + Wcall.abortfunc + drop + const64.0
+)
 , wfunc(alltypes, abortsymbol.typeboolean, [f64converti64s] + Wcall.abortfunc + drop + const32.0)
 , wfunc(alltypes, abortsymbol.typereal, [f64converti64s] + Wcall.abortfunc)
 , wfunc(alltypes
@@ -164,12 +173,20 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , symbol(builtinmod.typeboolean, "fld", [typeptr, typeint], typeboolean)
 , const64.8 + i64mul + i64add + i32wrapi64 + [i32load] + tobyte.2 + LEBu.0
 )
-,wfunc(alltypes
-, symbol(builtinmod.typeref."packed3 tausupport", "fld", [typeptr, typeint], typeref."packed3 tausupport")
+, wfunc(alltypes
+, symbol(builtinmod.typeref."packed3 tausupport"
+, "fld"
+, [typeptr, typeint]
+, typeref."packed3 tausupport"
+)
 , const64.24 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEBu.0
 )
-,wfunc(alltypes
-, symbol(builtinmod.typeref."packed4 tausupport", "fld", [typeptr, typeint], typeref."packed4 tausupport")
+, wfunc(alltypes
+, symbol(builtinmod.typeref."packed4 tausupport"
+, "fld"
+, [typeptr, typeint]
+, typeref."packed4 tausupport"
+)
 , const64.32 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEBu.0
 )
 , wfunc(alltypes
@@ -212,10 +229,14 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , symbol(internalmod, "idxseq", seqof.typereal, typeint, typereal)
 , const64.8 + [i64mul, i64add, i32wrapi64, f64load, tobyte.3] + LEBu.8
 )
-,wfunc(alltypes,symbol(internalmod,"stacktrace",seqof.typeword),
-const64.getoffset.wordsconst."")
-]
-
+, wfunc(alltypes
+, symbol(internalmod, "stacktrace", seqof.typeword)
+, const64.getoffset.wordsconst.""
+)
+, wfunc(alltypes
+, symbol(internalmod, "stacktrace2", seqof.typeword)
+, const64.getoffset.wordsconst.""
+)]
 
 function typestack mytype addabstract(typeref."stack stack stdlib", typeint)
 

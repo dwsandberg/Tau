@@ -32,7 +32,7 @@ function =(a:wordfreq, b:wordfreq)boolean false
 function ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b
 
 function count(s:seq.wordfreq, w:word)seq.wordfreq
-let index = valueofencoding.encode.indexedword.w
+let index = addorder.indexedword.w
 replaceS(s, index, [wordfreq(count.s_index + 1, w)])
 
 function print(p:wordfreq)seq.word

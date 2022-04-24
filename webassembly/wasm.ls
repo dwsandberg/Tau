@@ -1,6 +1,6 @@
-#!/usr/local/bin/tau ; use wasm; wasmbytes
-
 Module wasm
+
+use LEBencoding
 
 use UTF8
 
@@ -20,19 +20,13 @@ use seq.seq.byte
 
 Export type:byte
 
-use LEBencoding
-
-
-
 Export LEBu(i:int)seq.byte LEB(bits.0, bits.i, empty:seq.byte)
 
 Export LEBs(i:int)seq.byte LEB(bits.64, bits.i, empty:seq.byte)
 
- 
-Export decodeLEBu(a:seq.byte, i:int)decoderesult  decodeLEB2(a, i, 0x0)
+Export decodeLEBu(a:seq.byte, i:int)decoderesult decodeLEB2(a, i, 0x0)
 
 ExportdecodeLEBs(a:seq.byte, i:int)decoderesult decodeLEB2(a, i, tobits.64)
-
 
 Export type:decoderesult
 
@@ -50,7 +44,7 @@ vector.toseqbyte(emptyUTF8 + decodeword.modname) + vector.toseqbyte(emptyUTF8 + 
 + LEBu.idx
 
 Function vector(a:seq.byte)seq.byte
-assert length.a < 2^32 report"vector problem" + stacktrace
+assert length.a < 2^32 report"vector problem" + stacktrace2
 LEBu.length.a + a
 
 Function vector(a:seq.seq.byte)seq.byte
@@ -625,4 +619,4 @@ Function i64extend8s byte tobyte.0xC2
 
 Function i64extend16s byte tobyte.0xC3
 
-Function i64extend32s byte tobyte.0xC4 
+Function i64extend32s byte tobyte.0xC4

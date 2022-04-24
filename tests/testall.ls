@@ -14,8 +14,6 @@ use test11a
 
 use testencoding
 
-/use testfileio
-
 use testmodules
 
 use testopt
@@ -39,11 +37,10 @@ let out=test11
 + randomtest(500)
 + testreal
 + testseq
-+ test11a 
+{+ test11a 
 + testwordfreq
 + testopt(first.input)  
-+ {testfileio
-+} testprocess}
++  testprocess}
 [file(filename.o,out)]
 
   

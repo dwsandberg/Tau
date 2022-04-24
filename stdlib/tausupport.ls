@@ -54,8 +54,6 @@ use bitcast.seq.int
 
 use seq.seq.int
 
-use seq.encodingpair.seq.char
-
 Export empty:seq.index seq.index
 
 Export+(seq.index, index)seq.index
@@ -165,7 +163,7 @@ function =(a:typename, b:typename)boolean name.a = name.b
 
 function hash(a:typename)int hash.name.a
 
-Function encodingno(name:seq.word)int valueofencoding.encode.typename.name + 2
+Function encodingno(name:seq.word)int addorder.typename.name + 2
 
 function assignencoding(a:typename)int nextencoding.a
 
@@ -183,7 +181,7 @@ Export type:encodingpair.typename
 
 -----------
 
-Function outofbounds seq.word"out of bounds"  +stacktrace
+Function outofbounds seq.word"out of bounds" +stacktrace2
 
 function packedbytes(a:seq.byte)seq.byte
 let b = packedbyteseqasbits.a

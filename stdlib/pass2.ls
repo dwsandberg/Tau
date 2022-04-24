@@ -88,7 +88,7 @@ while acc
 do if not.isconst.@e ∨ isFref.@e then next(false, newargs)
 else if not.isrecordconstant.@e then next(true, newargs + @e)
 else
- let t = {removerecordconstant(prg, }removeconstantcode.[@e]
+ let t = removeconstantcode.[@e]
  let noFref = for noFref = true, sub ∈ t while noFref do not.isFref.sub /for(noFref)
  next(noFref, newargs + t)
 /for(if acc then args + func else empty:seq.symbol /if)

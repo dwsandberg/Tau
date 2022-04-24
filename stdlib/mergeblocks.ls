@@ -57,9 +57,11 @@ else
 
 type casenode is key:symbol, nodeno:int, brt:int
 
+use encoding.seq.char
+
 function keyvalue(n:casenode)int
 let s = key.n
-if isword.s then encoding.wordname.s else value.s
+if isword.s then valueofencoding.asencoding.wordname.s else value.s
 
 function ?(a:casenode, b:casenode)ordering keyvalue.a ? keyvalue.b
 

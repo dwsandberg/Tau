@@ -46,7 +46,6 @@ use set.word
 
 use seq.seq.mytype
 
-use seq.encodingpair.symbol
 
 use seq.seq.symbol
 
@@ -107,14 +106,13 @@ function usedsyms(allsyms:symboldict
 , typedict1:typedict
 , inline:set.symdef
 )postbindresult
-let aa = encoding:seq.encodingpair.symbol
+let aa = encodingdata:symbol
 if length.aa = last then
  {assert false report"INLINE"+for txt="", sd=toseq.inline do txt+print.sym.sd+print.code.sd+EOL /for(txt)}
  postbindresult(typedict1, result, inline)
 else
- for accZ = postbindresult(typedict1, result, inline), pp ∈ subseq(aa, last + 1, length.aa)do
-  let symz = data.pp
-  if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then accZ
+ for accZ = postbindresult(typedict1, result, inline), symz ∈ subseq(aa, last + 1, length.aa)do
+   if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then accZ
   else
    let newdict2 = addtype(typedict.accZ, resulttype.symz)
    let lr1 = getCode(source, symz)

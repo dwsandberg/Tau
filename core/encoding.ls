@@ -128,16 +128,26 @@ decode(inst, t)
 
 Function decode(t:encoding.T)T
 let a = lookupencodingpair.t
-assert length.a = 1 report"no such encoding" + toword.valueofencoding.t + stacktrace
+assert length.a = 1 report"no such encoding" + toword.valueofencoding.t + stacktrace2
 data.a_1
 
 builtin getinstance:encodingstate.T encodingstate.T
 
 builtin primitiveadd(encodingnumber:int, s:encodingpair.T)int
 
-Function encoding:seq.encodingpair.T seq.encodingpair.T all.getinstance:encodingstate.T
+Function encoding:seq.encodingpair.T seq.encodingpair.T 
+all.getinstance:encodingstate.T
 
-Function encode(t:T)encoding.T
+type e3 is sequence,data:seq.encodingpair.T 
+
+function _(a:e3.T,i:int) T  data.(data.a)_i
+
+Function  encodingdata:T  seq.T
+      let t=   all.getinstance:encodingstate.T
+    toseq.e3(length.t,t)
+  
+ 
+ Function encode(t:T)encoding.T
 let instance = getinstance:encodingstate.T
 let r = lookuprep(t, instance)
 if isempty.r then
@@ -161,6 +171,8 @@ for acc = empty:seq.encodingpair.T, e ∈ s do if t = data.e then acc + e else a
 Function findencode(t:T)seq.T
 let r = lookuprep(t, getinstance:encodingstate.T)
 if isempty.r then empty:seq.T else[data.r_1]
+
+Function addorder(t:T) int   valueofencoding.encode.t 
 
 function analyze(t:encodingstate.T)seq.word
 "numele=" + toword.length.all.t + "encodecounts"

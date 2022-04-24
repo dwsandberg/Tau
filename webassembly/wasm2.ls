@@ -1,5 +1,3 @@
-LEBs#!/bin/bash tau stdlib webassembly wmytests mytests Bquadratic.
-
 Module wasm2
 
 use UTF8
@@ -142,7 +140,7 @@ let funccall =
 let discard = 
  addf(alltypes
  , sym
- , funcbody([i32, i32, i64,i32]
+ , funcbody([i32, i32, i64, i32]
  , switchcontext.newcontext2.2 + funccall + Gcurrentprocess + Wdefine.5
  + switchcontext.load(Gcurrentprocess, parentprocess)
  + Wlocal.0
@@ -155,8 +153,8 @@ let discard =
  + const32.0
  + i32gtu
  + Wif(void, Wlocal.4 + Wlocal.2 + Wcallindirect.typeindex([i64], i64) + Wdefine.4)
- + {reclaim space }store(Wlocal.5, Gfreeblocks, 0)
- +setGlobal(freeblocks
+ + {reclaim space}store(Wlocal.5, Gfreeblocks, 0)
+ + setGlobal(freeblocks
  , load(Wlocal.5, lastfree)
  + const32.toint.{will produce 32bit constant 0xFFFF0000}0xFFFFFFFFFFFF0000
  + i32and
@@ -168,7 +166,7 @@ let discard =
  + Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr)))
  + Wcall.recordsym(alltypes
  , symbol(internalmod, "record", [typeint, typeint, typeint, typeptr], typeptr)
-)
+ )
  + f64converti64s
  )
  )
@@ -191,7 +189,7 @@ let discard =
  , seqof.typeword
  )
  + Wdefine.2
- + {create process record} const64.1
+ + {create process record}const64.1
  + Wlocal.2
  + const64.0
  + Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr))

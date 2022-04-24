@@ -1,10 +1,4 @@
-#!/bin/sh  wtau  wtests wtests  .
-
 Module webassembly
-
-Library webassembly funcidx knownWfunc printfunc wasm wasm2 wasmcompile
-uses stdlib
-exports wasm wasm1 wasm2 wasmcompile webassembly
 
 * usegraph exclude standard seq set otherseq bits encoding UTF8 stack
 
@@ -12,15 +6,19 @@ use UTF8
 
 use bits
 
+use file
+
 use format
 
-use textio
-
 use libraryModule
+
+use main2
 
 use standard
 
 use symbol2
+
+use textio
 
 use wasmcompile
 
@@ -28,46 +26,57 @@ use wasmconstant
 
 use seq.byte
 
+use otherseq.char
+
 use seq.char
+
+use seq.file
 
 use seq.int
 
 use set.int
 
+use otherseq.mytype
+
 use seq.mytype
+
+use otherseq.symbol
 
 use seq.symbol
 
 use set.symbol
 
+use graph.symbolref
+
+use seq.symbolref
+
+use set.symbolref
+
 use set.symdef
+
+use seq.seq.char
+
+use process.seq.file
+
+use seq.arc.symbolref
 
 use process.seq.word
 
 use seq.seq.word
 
-use main2
-
-
-use file 
-
-use seq.file
-
-use process.seq.file
-
-function checkweb(cf:compileinfo,libexports:seq.word) seq.word
+function checkweb(cf:compileinfo, libexports:seq.word)seq.word
 let idx2 = 
  findindex(symbol(internalmod, "jsHTTP", constantseq(8, typereal), typereal)
  , symbolrefdecode.cf
  )
- let g = 
-  for acc = empty:seq.arc.symbolref, c ∈ code.cf do
+let g = 
+ for acc = empty:seq.arc.symbolref, c ∈ code.cf do
   for acc2 = acc, h ∈ toseq.asset(c << 2)do
-      let sym= cf_h
+   let sym = cf_h
    if isconst.sym ∨ isspecial.sym then acc2 else acc2 + arc(h, first.c)
-   /for(acc2)
-  /for(newgraph.acc)
-   let r= reachable(g,toseq.[symbolref.idx2] )
+  /for(acc2)
+ /for(newgraph.acc)
+let r = reachable(g, toseq.[symbolref.idx2])
 for txt = "", t ∈ toseq.r do
  if name.module.cf_t ∈ libexports then
   for txt2 = txt, k ∈ toseq(predecessors(g, t) \ asset.[symbolref.idx2] ∩ r)do
@@ -108,20 +117,21 @@ Function cat(files:seq.file,uses:seq.word,exports:seq.word,Library:seq.word) seq
 
 
 
-Function wasm(input:seq.file,Library:seq.word,exports:seq.word)seq.file
+Function wasm(input:seq.file, Library:seq.word, exports:seq.word)seq.file
 {problem is same symbol is used in different onclicks}
 let includetemplate = false
-let input2=cat(input,"",exports,Library)
-let info2=breakparagraph.data.first.input2
-let libname=Library 
-let libexports= exports 
+let input2 = cat(input, "", exports, Library)
+let info2 = breakparagraph.data.first.input2
+let libname = Library
+let libexports = exports
 let r = 
  compilerfront:libllvm("wasm"
- , [ "uses=$(extractValue(first.info2,"uses"))exports=tausupport inputoutput $(libexports)
- Library=$(libname)"]+ info2 << 1
+ , ["uses=$(extractValue(first.info2, "uses"))exports=tausupport inputoutput $(libexports)Library=$(libname)"
+ ]
+ + info2 << 1
  )
-let check=checkweb(r,libexports)
-assert isempty.check report check 
+let check = checkweb(r, libexports)
+assert isempty.check report check
 let syms2 = 
  for syms2 = empty:seq.symbol, m ∈ mods.r do
   if name.modname.m ∈ libexports then
@@ -146,21 +156,19 @@ let prg = asset.prg.r
 let discard99 = oldconstants.prg
 let wasmfile = wasmcompile(typedict.r, prg, syms2, libname)
 let script = 
- {if includetemplate then
-  toseqbyte.toUTF8."<script>" + getfile:byte("/webassembly/template.js")
-  + toseqbyte.toUTF8."</script>"
- else}
-  toseqbyte.toUTF8("<script src=" + dq + "/webassembly/template.js" + dq + "> </script>")
-for acc = wasmfile, page ∈ input
-do 
- if  ext.fn.page /nin "html" then acc
- else 
- let pagehtml = data.page
- acc+file(filename([name.fn.page]+ ".html"),
- pagehtml+script
- + toseqbyte.toUTF8(scriptstart +  " /br pageinit($(dq.libname), $([name.fn.page]) ); </script>")
- ) 
-/for( acc)
+ {if includetemplate then toseqbyte.toUTF8."<script>"+getfile:byte("/webassembly/template.js")+toseqbyte.
+toUTF8."</script>"else}
+ toseqbyte.toUTF8("<script src=" + dq + "/webassembly/template.js" + dq + "> </script>")
+for acc = wasmfile, page ∈ input do
+ if ext.fn.page ∉ "html"then acc
+ else
+  let pagehtml = data.page
+  acc
+  + file(filename([name.fn.page] + ".html")
+  , pagehtml + script
+  + toseqbyte.toUTF8(scriptstart + " /br pageinit($(dq.libname), $([name.fn.page])); </script>")
+  )
+/for(acc)
 
 Function findsymbol(prg:set.symdef, symname:seq.word)seq.symbol
 for actionsym = empty:seq.symbol, sym ∈ toseq.prg do

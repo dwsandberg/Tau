@@ -30,15 +30,13 @@ use process.set.int
 
 use seq.set.int
 
-use seq.encodingpair.testrecord
-
 use seq.seq.testrecord
 
 use seq.seq.word
 
 use tree.seq.word
 
-use process.seq.encodingpair.testrecord
+use process.seq.testrecord
 
 use seq.tree.seq.word
 
@@ -62,18 +60,16 @@ function hash(a:testrecord)int key.a
 
 Export type:testrecord
 
-function assignencoding(a:testrecord)int assignrandom.a
+function assignencoding(a:testrecord)int nextencoding.a
 
 function add(b:seq.word)int
-let d = encoding:seq.encodingpair.testrecord
-let x = encode.testrecord(length.d + 1, b)
+let x = encode.testrecord(length.encodingdata:testrecord + 1, b)
 1
 
 type testrecord is key:int, body:seq.word
 
-function body(x:encodingpair.testrecord)seq.word body.data.x
 
-function list(a:seq.encodingpair.testrecord)seq.seq.word
+function list(a:seq.testrecord)seq.seq.word
 for acc = empty:seq.seq.word, @e ∈ a do acc + body.@e /for(acc)
 
 Function testencoding seq.word
@@ -85,7 +81,7 @@ else
  let z = 
   for acc = 0, @e ∈["firstadd", "secondadd"]do acc + add.@e /for(acc)
  let s2 = list.result.process.process1
- let s3 = list.encoding:seq.encodingpair.testrecord
+ let s3 = list.encodingdata:testrecord
  check([3 = deepcopytest.3
  , asset.[3, 7, 9] = deepcopytest.asset.[3, 7, 9]
  , deepcopytest.testdeep1 = testdeep1
@@ -96,12 +92,12 @@ else
  , "encoding"
  )
 
-Function process1 seq.encodingpair.testrecord
+Function process1 seq.testrecord
 let discard = 
  for acc = 0
  , @e ∈["A1", "B2", "C3", "D4", "E5"]
  do acc + add.@e /for(acc)
-encoding:seq.encodingpair.testrecord
+encodingdata:testrecord
 
 Function nextpower(i:int, base:int, start:int)int
 if i > start then nextpower(i, base, start * base)else start

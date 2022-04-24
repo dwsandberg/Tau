@@ -20,8 +20,6 @@ use otherseq.seq.alphaword
 
 use encoding.seq.char
 
-use seq.encodingpair.seq.char
-
 Export type:word
 
 type word is asencoding:encoding.seq.char
@@ -37,15 +35,13 @@ Function decodeword(w:word)seq.char{OPTION NOINLINE COMPILETIME}decode.asencodin
 
 Function hash(a:word)int hash.asencoding.a
 
-Function encoding(w:word)int valueofencoding.asencoding.w
+Export asencoding(w:word) encoding.seq.char
 
 Function assignencoding(a:seq.char)int toint(bits.assignrandom.a ∧ bits(toint(bits.1 << 31) - 1))
 
 Function =(a:word, b:word)boolean{OPTION COMPILETIME}asencoding.a = asencoding.b
 
 Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
-
-Function ?(a:encodingpair.seq.char, b:encodingpair.seq.char)ordering valueofencoding.code.a ? valueofencoding.code.b
 
 ----
 

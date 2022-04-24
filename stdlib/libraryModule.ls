@@ -26,8 +26,6 @@ use seq.symbolref
 
 use seq.seq.mytype
 
-use seq.encodingpair.symbol
-
 use otherseq.seq.symbol
 
 use set.seq.symbol
@@ -124,6 +122,31 @@ type compileinfo is symbolrefdecode:seq.symbol
 , src:seq.seq.word
 , typedict:typedict
 
+use otherseq.symbolref
+
+Function  changestacktrace(info:compileinfo) compileinfo
+  let traceimpsym=symbol(moduleref."inputoutput","stacktraceimp",seqof.typeword)
+  let tracesym=symbol(internalmod,"stacktrace2",seqof.typeword)
+   let impidx=symbolref.findindex(traceimpsym,symbolrefdecode.info )
+   let traceidx=symbolref.findindex(tracesym,symbolrefdecode.info) 
+   for  acc=empty:seq.seq.symbolref , def /in code.info do
+     let b=break(traceidx,def << 2) 
+     acc+if length.b=1 then def
+     else for acc1=subseq(def,1,2),p /in b do acc1+p+impidx /for(acc1 >> 1) 
+  /for(compileinfo( symbolrefdecode.info
+, mods.info
+, acc
+, src.info
+, typedict.info))
+   
+  for acc=empty:seq.symbol,   sym /in symbolrefdecode.info do
+   acc+ if sym = tracesym then traceimpsym  else  sym 
+  /for( compileinfo( acc
+, mods.info
+, code.info
+, src.info
+, typedict.info))
+
 
 Function libname(info:compileinfo)word extractValue(first.src.info, "Library")_1
 
@@ -176,11 +199,11 @@ let exports =
  for exports = empty:seq.symbolref, m ∈ mods.s do exports + exports.m /for(exports)
 for acc = empty:set.symbol, r ∈ exports do acc + s_r /for(acc)
 
-Function symbolref(sym:symbol)symbolref symbolref.valueofencoding.encode.sym
+Function symbolref(sym:symbol)symbolref symbolref.addorder.sym
 
 Function assignencoding(a:symbol)int nextencoding.a
 
 Function decode(s:symbolref)symbol decode.to:encoding.symbol(toint.s)
 
 Function symbolrefdecode seq.symbol
-for acc = empty:seq.symbol, p ∈ encoding:seq.encodingpair.symbol do acc + data.p /for(acc) 
+for acc = empty:seq.symbol, p ∈ encodingdata:symbol do acc + p /for(acc) 

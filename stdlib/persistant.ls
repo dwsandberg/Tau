@@ -46,7 +46,6 @@ use seq.word3
 
 use encoding.seq.char
 
-use seq.encodingpair.const3
 
 use seq.seq.mytype
 
@@ -54,37 +53,41 @@ use seq.seq.slot
 
 use seq.seq.symbolref
 
-use seq.encodingpair.word3
 
 use seq.encoding.seq.char
 
 use set.encoding.seq.char
 
-use seq.encodingpair.seq.char
+use otherseq.char
 
-use set.encodingpair.seq.char
+use set.word3
 
 Export loadedLibs seq.liblib
 
-type word3 is toword:word
+type word3 is chars:seq.char,code:encoding.seq.char ,slot:int
 
-function assignencoding(a:word3)int encoding.toword.a
+function word3(a:word) word3    
+word3.decodeword.a 
 
-function =(a:word3, b:word3)boolean toword.a = toword.b
+function word3(a:seq.char) word3
+   let b=asencoding.encodeword.a
+   word3(a,b,toint.C64.valueofencoding.b)
 
-function hash(a:word3)int hash.toword.a
+function ?(a:word3,b:word3) ordering chars.a ? chars.b 
 
-function eword2(ww:encodingpair.word3)encodingpair.seq.char
-let w = data.ww
-let a = decodeword.toword.w
-encodingpair(to:encoding.seq.char(valueofencoding.encode.w), a)
+
+function assignencoding(a:word3)int  valueofencoding.encode.chars.a  
+
+nextencoding.a
+
+function =(a:word3, b:word3)boolean chars.a = chars.b
+
+function hash(a:word3)int hash.chars.a
 
 Function constdata seq.slot
-for acc = empty:seq.slot, @e ∈ encoding:seq.encodingpair.const3 do acc + flds.@e /for(acc)
+for acc = empty:seq.slot, @e ∈ encodingdata:const3 do acc + flds.@e /for(acc)
 
 type const3 is place:int, flds:seq.slot
-
-function flds(p:encodingpair.const3)seq.slot flds.data.p
 
 function =(a:const3, b:const3)boolean flds.a = flds.b
 
@@ -92,13 +95,13 @@ function =(a:slot, b:slot)boolean toint.a = toint.b
 
 function hash(a:const3)int hash.for acc = empty:seq.int, @e ∈ flds.a do acc + toint.@e /for(acc)
 
-function assignencoding(a:const3)int assignrandom.a
+function assignencoding(a:const3)int nextencoding.a
 
-Function wordref(w:word)int
-let d = encode.word3.w
-toint.C64.valueofencoding.d
+Function wordref(w:word)int 
+assert  valueofencoding.encode.word3.w=valueofencoding.code.word3.w report "ADDFDSDF"+w
+slot.word3.w
 
-function wordcode(a:encodingpair.word3)encoding.seq.char to:encoding.seq.char(encoding.toword.data.a)
+
 
 Function addliblib(libname:seq.word
 , decodesymref:seq.symbol
@@ -114,13 +117,13 @@ let code = addsymbolrefseqseq.code2
 let libmods = addlibmodseq.libmods2
 let name = addwordseq2.libname
 let have = 
- for acc0 = empty:set.encoding.seq.char, ll ∈ loadedLibs do
+ for acc0 = empty:set.word3, ll ∈ loadedLibs do
   if first.libname ∈ dependlibs then
-   for acc = acc0, @e ∈ words.ll do acc + code.@e /for(acc)
+   for acc = acc0, @e ∈ words.ll do acc + word3(data.@e) /for(acc)
   else acc0
  /for(acc0)
 let used = 
- for acc = empty:set.encoding.seq.char, @e ∈ encoding:seq.encodingpair.word3 do acc + wordcode.@e /for(acc)
+ for acc = empty:set.word3, @e ∈ encodingdata:word3 do  acc + @e /for(acc)
 {build packed seq of word encodings}
 let wordstoadd = toseq(used \ have)
 let data = 
@@ -156,19 +159,19 @@ toint.modulerecord(name, [toint.GLOBALVAR, typ.type, 2, 1 + toint.init, 0, toint
 
 Function addobject(fldsin:seq.int)int
 let flds = for acc = empty:seq.slot, @e ∈ fldsin do acc + asi64.slot.@e /for(acc)
-let t = encoding:seq.encodingpair.const3
-let place = if length.t = 0 then 0 else place.data.last.t + length.flds.data.last.t
+let t =encodingdata:const3
+let place = if length.t = 0 then 0 else place.last.t + length.flds.last.t
 let x = decode.encode.const3(place, flds)
 let idx = if place.x ≠ place then place.x else place
 toint.CGEP(modulerecord("list", [0]), idx)
 
-function fldsofwordencoding(code:encoding.seq.char)seq.int
-let s = tointseq.decode.code
+function fldsofwordencoding(w3:word3)seq.int
+let s = tointseq.chars.w3
 let k = 
  addobject.for acc = empty:seq.int
  , @e ∈ for acc = [C64.0, C64.length.s], @e ∈ s do acc + C64.@e /for(acc)
  do acc + toint.@e /for(acc)
-[toint.C64.valueofencoding.code, k, toint.C64.0]
+[slot.w3, k, toint.C64.0]
 
 Function addwordseq2(a:seq.word)int
 addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + wordref.@e /for(acc)

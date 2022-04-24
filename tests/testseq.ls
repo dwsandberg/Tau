@@ -32,7 +32,6 @@ use testpackedseq.word
 
 use seq.seq.int
 
-use seq.encodingpair.seedtrack
 
 use otherseq.seq.word
 
@@ -42,14 +41,14 @@ use testpackedseq.seq.word
 
 type seedtrack is key:int, val:int
 
-function assignencoding(a:seedtrack)int assignrandom.a
+function assignencoding(a:seedtrack)int nextencoding.a
 
 function =(a:seedtrack, b:seedtrack)boolean key.a = key.b
 
 function hash(a:seedtrack)int key.a
 
 Function getint(size:int)int
-let p = data.last.encoding:seq.encodingpair.seedtrack
+let p = last.encodingdata:seedtrack
 let d = pseudorandom.val.p
 let c = encode.seedtrack(key.p + 1, d)
 d mod size

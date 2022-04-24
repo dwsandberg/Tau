@@ -182,4 +182,3 @@ type cmdpara is fn:filename,parts:seq.filename,data:seq.word
 function ?(a:cmdpara,b:cmdpara) ordering  fn.a ? fn.b 
 
 
-
