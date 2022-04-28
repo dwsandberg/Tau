@@ -146,6 +146,7 @@ else
  " /br  /< literal FAILED  /> test" + toword.no + "in optest  /br" + code
  + " /p"
  + codelist_no
+ 
  + " /p diffs:"
  + sameto(code, codelist_no, 1, "")
  + " /p"

@@ -34,7 +34,11 @@ Export symdef(symbol, seq.symbol, int)symdef
 
 Export type:symbol
 
-Export symconst(i:int)symbol
+Export internalmod modref
+
+Export name(modref)word
+
+Export typeboolean mytype
 
 Export value(symbol)int
 
@@ -44,15 +48,27 @@ Export paratypes(symbol)seq.mytype
 
 Export name(symbol)word
 
-Export nametype(sym:symbol)seq.mytype
+Export nametype(symbol)seq.mytype
 
-Export internalmod modref
+Export module(symbol)modref
 
-Export typeboolean mytype
+Export resulttype(symbol)mytype
 
-Export symbol(modref, seq.word, mytype, mytype, mytype)symbol
+Export wordname(symbol)word
 
-Export Lit(int)symbol
+Export worddata(symbol)seq.word
+
+Export fullname(symbol)seq.word
+
+Export types(symbol)seq.mytype
+
+Export firstvar(symbol)int
+
+Export brt(symbol)int
+
+Export brf(symbol)int
+
+Export hash(symbol)int
 
 Export isstart(symbol)boolean
 
@@ -60,15 +76,9 @@ Export isexit(symbol)boolean
 
 Export isbr(symbol)boolean
 
-Export module(symbol)modref
-
-Export name(modref)word
-
 Export isdefine(symbol)boolean
 
 Export iswords(symbol)boolean
-
-Export worddata(symbol)seq.word
 
 Export isblock(symbol)boolean
 
@@ -88,15 +98,9 @@ Export iscontinue(symbol)boolean
 
 Export islocal(symbol)boolean
 
-Export types(symbol)seq.mytype
-
-Export firstvar(symbol)int
-
 Export isword(symbol)boolean
 
 Export isspecial(symbol)boolean
-
-Export fullname(symbol)seq.word
 
 Export isSequence(symbol)boolean
 
@@ -104,23 +108,15 @@ Export isBuiltin(symbol)boolean
 
 Export isunbound(symbol)boolean
 
-Export Litfalse symbol
+Export isrecordconstant(symbol)boolean
 
-Export Littrue symbol
+Export iswordseq(symbol)boolean
 
-Export PlusOp symbol
+Export isstartorloop(symbol)boolean
 
-Export Br2(int, int)symbol
+Export issimplename(symbol)boolean
 
 Export typebits mytype
-
-Export symbol(modref, seq.word, mytype, mytype)symbol
-
-Export symbol(modref, seq.word, seq.mytype, mytype)symbol
-
-Export symbol(modref, seq.word, mytype, mytype, mytype, mytype)symbol
-
-Export symbol(modref, seq.word, mytype)symbol
 
 Export typeword mytype
 
@@ -132,23 +128,67 @@ Export typebit mytype
 
 Export builtinmod(mytype)modref
 
-Export abortsymbol(mytype)symbol
-
-Export Start(mytype)symbol
-
-Export Exit symbol
-
-Export EndBlock symbol
-
 Export type:mytype
 
 Export parameter(mytype)mytype
 
-Export NotOp symbol
+Export abortsymbol(mytype)symbol
+
+Export Br2(int, int)symbol
+
+Export continue(i:int)symbol
+
+Export Define(name:word, i:int) symbol
+
+Export EndBlock symbol
+
+Export Exit symbol
+
+Export Fref(s:symbol)symbol
 
 Export GetSeqType symbol
 
 Export GetSeqLength symbol
+
+Export Lit(int)symbol
+
+Export Litfalse symbol
+
+Export Littrue symbol
+
+Export Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype)symbol
+
+Export Local(name:word, type:mytype, parano:int)symbol
+
+Export NotOp symbol
+
+Export PlusOp symbol
+
+Export Reallit(i:int)symbol
+
+Export Record(seq.mytype)symbol
+
+Export Sequence(mytype, int)symbol
+
+Export Start(mytype)symbol
+
+Export symbol(modref, seq.word, mytype, mytype, mytype)symbol
+
+Export symbol(modref, seq.word, mytype, mytype)symbol
+
+Export symbol(modref, seq.word, seq.mytype, mytype)symbol
+
+Export symbol(modref, seq.word, mytype, mytype, mytype, mytype)symbol
+
+Export symbol(modref, seq.word, mytype)symbol
+
+Export symbol4(modref, word, mytype, seq.mytype, mytype)symbol
+
+Export symconst(i:int)symbol
+
+Export Word(word) symbol
+
+Export Words(seq.word) symbol
 
 Export=(symbol, symbol)boolean
 
@@ -165,8 +205,6 @@ Export print(symbol)seq.word
 Export print(seq.symbol)seq.word
 
 Export removeoptions(seq.symbol)seq.symbol
-
-Export resulttype(symbol)mytype
 
 Export=(modref, modref)boolean
 
@@ -222,31 +260,11 @@ Export name(modref)word
 
 Export moduleref(seq.word)modref
 
-Export wordname(symbol)word
-
-Export symbol4(modref, word, mytype, seq.mytype, mytype)symbol
-
 Export typeT mytype
 
 Export addabstract(mytype, mytype)mytype
 
 Export moduleref(seq.word, mytype)modref
-
-Export isrecordconstant(symbol)boolean
-
-Export iswordseq(symbol)boolean
-
-Export brt(symbol)int
-
-Export brf(symbol)int
-
-Export isstartorloop(symbol)boolean
-
-Export Sequence(mytype, int)symbol
-
-Export hash(symbol)int
-
-Export Record(seq.mytype)symbol
 
 Export getCode(set.symdef, symbol)seq.symbol
 

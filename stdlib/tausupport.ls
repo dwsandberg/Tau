@@ -153,9 +153,9 @@ Export decode(encoding.seq.char)seq.char
 
 Export encode(seq.char)encoding.seq.char
 
-Function deepcopy(a:int)int{OPTION COMPILETIME}a
+Function deepcopy(a:int)int a
 
-Function deepcopy(a:real)real{OPTION COMPILETIME}a
+Function deepcopy(a:real)real a
 
 type typename is name:seq.word
 

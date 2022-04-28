@@ -12,12 +12,47 @@ use encoding.symbolconstant
 
 use set.symdef
 
+use stack.int
+
+use bitcast:seq.int
+
+use bitcast:int
+
+use seq.int
+
+use tausupport
+
+Function buildargs2(codein:seq.symbol) seq.int
+  { resulting stack will have too many elements if error is encountered }
+  let error=1
+  for stk = empty:stack.int, sym ∈ removeconstantcode.codein  do
+  let nopara = nopara.sym
+  if not.isconst.sym /or isFref.sym then push(push(stk,error),error)
+  else if isword.sym then 
+     push(stk, hash.wordname.sym)
+  else if iswordseq.sym then
+   let a = for acc = empty:seq.int, @e ∈ worddata.sym do acc + hash.@e /for(acc)
+  push(stk, bitcast:int(toptr.a))
+  else if isIntLit.sym ∨ isRealLit.sym then push(stk, value.sym)
+  else if sym = Littrue then push(stk, 1)
+  else if sym = Litfalse then push(stk, 0)
+  else if isSequence.sym then push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara)))
+  else if isrecordconstant.sym then 
+     let t=buildargs2(fullconstantcode.sym)
+     if  length.t =1  then push(stk,first.t) else push(push(stk,error),error)  
+  else if isRecord.sym then
+   push(pop(stk, nopara), bitcast:int(set(set(toptr.packed.top(stk, nopara), 0), nopara)))
+  else push(push(stk,error),error)
+ /for( toseq.stk)
+ 
+
 Function constantcode(s:symbol)seq.symbol
+assert isrecordconstant.s report"constant code error" + print.s  
 let code1 = fullconstantcode.s
-if isSequence.last.code1 then[Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
+if isSequence.last.code1 then[Lit.0, Lit.nopara.last.code1] + code1 >> 1 
+else code1 >> 1
 
 function fullconstantcode(s:symbol)seq.symbol
-assert isrecordconstant.s report"constant code error" + print.s  
 toseq.decode.to:encoding.symbolconstant(toint.name.s)
 
 Function Constant2(p:set.symdef, args:seq.symbol)symbol

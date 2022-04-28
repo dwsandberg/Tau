@@ -26,7 +26,7 @@ orglibsrc compilerfront.libsrc +stdlib compilerfrontT.ls compilerfront libdesc l
  
 orgmakelib stdlib.lib  core.libsrc compilerfront
   +stdlib COMPILETIME.ls bitstream codegennew codetemplates fileIO inputoutput hashset internalbc compileTimeT llvm llvmconstants main2 mergeblocks pass2 pass2T persistant pretty symbol2 tausupport textio timestamp codetemplates2 symbolconstant ptr taublockseq IO2 bitcast
-exports=UTF8 barycenter bits bitstream ptr encoding file fileIO format graph hashset internalbc ioseq layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast IO2
+exports=mytype UTF8 barycenter bits bitstream ptr encoding file fileIO format graph hashset internalbc ioseq layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast 
  
 makelib tools.lib  common.lib +tools tools.ls baseTypeCheck doc genLR1 prettycompilerfront profile taulextable frontcmd wordgraph
 uses=common stdlib
@@ -70,7 +70,7 @@ uses=common stdlib
 exports=redo solardataall test3d data4
  
 
-makelib webassembly.lib +webassembly webassembly.ls funcidx wasmconstant knownWfunc printfunc wasm wasm2 wasmcompile
+makelib webassembly.lib +webassembly webassembly.ls wasmconstant funcidx knownWfunc printfunc wasm wasm2 wasmcompile
 +common LEBencoding 
 uses=stdlib
 exports=wasm wasm1 wasm2 wasmcompile webassembly
@@ -78,7 +78,7 @@ exports=wasm wasm1 wasm2 wasmcompile webassembly
 libsrc webcore.libsrc core.libsrc  webassembly.lib
   +webcore inputoutput.ls webIO 
   +common barycenter  layergraph  makeDAG  bandeskopf 
-  +stdlib tausupport textio  bitstream  IO2  bitcast  taublockseq  ptr 
+  +stdlib tausupport textio  bitstream    bitcast  taublockseq  ptr IO2
  
 wasm webtools.wasm webcore.libsrc  compilerfront  
   +webtools webtools.ls  webtools.html
@@ -110,10 +110,9 @@ LR1 taugrammer.html  +stdlib parse.ls
  
 lextable taulex.html  +tools install.txt
 
-testall testall.html 
+testall testall.html +tests opttests.ls
  
 heating heating.html +mytest heating3.csv
- 
 
 gcodetest10 gcode.html 
  
@@ -121,7 +120,7 @@ printbitcodes printbitcodes.html   +printbitcodes bug9.bc
 
 solardataall solardataall.html +built  +solardataall solardata1.LEB solardata2.LEB solardata3.LEB solardata4.LEB
  
- makelib simple.lib  +simple simple.ls  + common LEBencoding
+ makelib simple.lib  +simple simple.ls newstuff XXX + common LEBencoding 
 uses=stdlib
 exports=simple object4  
 

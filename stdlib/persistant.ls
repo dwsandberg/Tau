@@ -115,10 +115,10 @@ Function addliblib(libname:seq.word
 let symbolrefdecode2 = addsymbolseq.decodesymref
 let code = addsymbolrefseqseq.code2
 let libmods = addlibmodseq.libmods2
-let name = addwordseq2.libname
+let name = addwordseq.libname
 let have = 
  for acc0 = empty:set.word3, ll ∈ loadedLibs do
-  if first.libname ∈ dependlibs then
+  if first.libname.ll ∈ dependlibs then
    for acc = acc0, @e ∈ words.ll do acc + word3(data.@e) /for(acc)
   else acc0
  /for(acc0)
@@ -173,7 +173,7 @@ let k =
  do acc + toint.@e /for(acc)
 [slot.w3, k, toint.C64.0]
 
-Function addwordseq2(a:seq.word)int
+Function addwordseq(a:seq.word)int
 addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + wordref.@e /for(acc)
 
 Function addtype(a:mytype)int
@@ -205,7 +205,7 @@ function addlibmodseq(a:seq.libraryModule)int
 addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + addlibmod.@e /for(acc)
 
 Function addsymbol(a:symbol)int
-addobject.[addwordseq2.worddata.a
+addobject.[addwordseq.worddata.a
 , wordref.library.module.a
 , wordref.name.module.a
 , addtype.para.module.a

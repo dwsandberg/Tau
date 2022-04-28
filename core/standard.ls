@@ -299,7 +299,7 @@ Export toint(char)int
 Export char(int)char
 
 Function char1(s:seq.word)char
-{OPTION COMPILETIME}{* First character of first word of s}first.decodeword.s_1
+{* First character of first word of s}first.decodeword.s_1
 
 Export encodeword(a:seq.char)word
 

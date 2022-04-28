@@ -80,19 +80,6 @@ Function Hasmerge bits bits.16
 
 Function ∈(a:bits, b:bits)boolean(a ∧ b) = a
 
-Function prepareargs(prg:set.symdef, args:seq.symbol, func:symbol)seq.symbol
-{returns empty sequence if args are not all constants. Removes record constants in args.returns empty if Fref appears 
-in args}
-for acc = true, newargs = empty:seq.symbol, @e ∈ args
-while acc
-do if not.isconst.@e ∨ isFref.@e then next(false, newargs)
-else if not.isrecordconstant.@e then next(true, newargs + @e)
-else
- let t = removeconstantcode.[@e]
- let noFref = for noFref = true, sub ∈ t while noFref do not.isFref.sub /for(noFref)
- next(noFref, newargs + t)
-/for(if acc then args + func else empty:seq.symbol /if)
-
 Function ismember(s:symbol)boolean
 name.module.s = "seq"_1 ∧ name.s = "∈"_1 ∧ (paratypes.s)_1 ∈ [typeint, typeword]
 

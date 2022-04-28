@@ -200,22 +200,16 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
   let nopara = nopara.sym
   let dd = getCode(p, sym)
   let options = getoption.dd
-  let ct = 
-   if first."COMPILETIME" ∈ options then
-    prepareargs(p, subseq(result, len - nopara + 1, len), sym)
-   else empty:seq.symbol
-  if{COMPILE TIME}not.isempty.ct then
-   if isdecodeword.sym then
-    let arg1 = result_len
-    let a1 = 
-     for acc = empty:seq.symbol, @e ∈ tointseq.decodeword.wordname.arg1 do acc + Lit.@e /for(acc)
-    let d = Constant2(p, a1 + Sequence(typeint, length.a1))
-    next(flags, result >> 1 + d, nextvar, map)
-   else
-    let newcode = interpretCompileTime:T(removeconstantcode.ct, typedict)
-    if isempty.newcode then next(flags, result + sym, nextvar, map)
-    else
-     let newconst = if length.newcode > 1 then Constant2(p, newcode)else first.newcode
+  let compiletime = if  first."COMPILETIME" /nin options /and  ( name.sym /nin "_" /or nopara /ne 2)  then
+    empty:seq.symbol 
+    else 
+   for acc = true, @e ∈ subseq(result, len - nopara + 1, len)
+    while acc
+    do     isconst.@e /and not.isFref.@e   /and  length.buildargs2([@e]) = 1    
+    /for(if not.acc then  empty:seq.symbol else 
+      interpretCompileTime:T(subseq(result, len - nopara + 1, len),sym, typedict))
+  if not.isempty.compiletime then
+     let newconst = if length.compiletime > 1 then Constant2(p, compiletime)else first.compiletime
      next(flags, result >> nopara + newconst, nextvar, map)
   else if first."VERYSIMPLE" ∈ options then
    next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)
