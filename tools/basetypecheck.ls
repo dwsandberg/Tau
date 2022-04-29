@@ -47,7 +47,7 @@ for acc = empty:seq.word, count = 0, s ∈ prg.r2 do
   else result.p
  next(acc + b, if isempty.b then count else count + 1)
 /for(if count = 0 then"Passed Base Type Check"
-else"Base Type Check Failed" + print.count + "Times" + acc /if)
+else"Base Type Check Failed $(%.count) Times" + acc /if)
 
 function addlocals(localtypes:set.typemap, para:seq.mytype, localno:int, i:int)set.typemap
 if i > 0 then addlocals(typemap(localno, para_i) ∪ localtypes, para, localno - 1, i - 1)

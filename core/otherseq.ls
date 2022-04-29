@@ -196,3 +196,9 @@ Export isempty(a:seq.T)boolean
 Export <<(s:seq.T, i:int)seq.T{* removes i elements from beginning of s}
 
 Export >>(s:seq.T, i:int)seq.T{* removes i elements from end of s} 
+
+________________________
+
+unbound %(T) seq.word
+
+Function %(z:seq.T) seq.word for acc="",i /in z do acc+%.i /for(acc)

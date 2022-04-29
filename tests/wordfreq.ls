@@ -373,7 +373,7 @@ count < 4 report"
 + dq
 + "SIZE"
 + dq
-+ "+print.length.toseq.toprocess+print.length.bigin+print.length.toseq.corein+print.count}for big=bigin, 
++ "+%.length.toseq.toprocess+%.length.bigin+%.length.toseq.corein+print.count}for big=bigin, 
 small=empty:set.symdef, core=corein, pele ∈ toseq.toprocess do let s=sym.pele let fullcode=code.pele let options 
 =getoption.fullcode let code=removeoptions.fullcode if isempty.code ∨"
 + dq

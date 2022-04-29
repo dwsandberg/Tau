@@ -220,6 +220,8 @@ Export isseq(mytype)boolean
 
 Export print(mytype)seq.word
 
+Function %(t:mytype) seq.word print.t
+
 Export isabstract(modref)boolean
 
 Export ?(mytype, mytype)ordering

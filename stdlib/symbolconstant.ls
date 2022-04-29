@@ -22,35 +22,42 @@ use seq.int
 
 use tausupport
 
-Function buildargs2(codein:seq.symbol) seq.int
-  { resulting stack will have too many elements if error is encountered }
-  let error=1
-  for stk = empty:stack.int, sym ∈ removeconstantcode.codein  do
-  let nopara = nopara.sym
-  if not.isconst.sym /or isFref.sym then push(push(stk,error),error)
-  else if isword.sym then 
-     push(stk, hash.wordname.sym)
-  else if iswordseq.sym then
-   let a = for acc = empty:seq.int, @e ∈ worddata.sym do acc + hash.@e /for(acc)
-  push(stk, bitcast:int(toptr.a))
-  else if isIntLit.sym ∨ isRealLit.sym then push(stk, value.sym)
-  else if sym = Littrue then push(stk, 1)
-  else if sym = Litfalse then push(stk, 0)
-  else if isSequence.sym then push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara)))
-  else if isrecordconstant.sym then 
-     let t=buildargs2(fullconstantcode.sym)
-     if  length.t =1  then push(stk,first.t) else push(push(stk,error),error)  
-  else if isRecord.sym then
-   push(pop(stk, nopara), bitcast:int(set(set(toptr.packed.top(stk, nopara), 0), nopara)))
-  else push(push(stk,error),error)
- /for( toseq.stk)
- 
 
-Function constantcode(s:symbol)seq.symbol
+ 
+Function buildargs(codein:seq.symbol) seq.int
+ if  not.for ok=true,sym /in subseq(codein,1,20) do isconst.sym  
+  /or isSequence.sym /or isRecord.sym
+  /for(ok) then empty:seq.int
+  else 
+  for  ok=true,stk = empty:stack.int, sym ∈ codein while ok do
+    if iswordseq.sym then
+   let a = for acc = empty:seq.int, @e ∈ worddata.sym  do acc + hash.@e /for(acc)
+  next(ok,push(stk, bitcast:int(toptr.a)))
+  else if isword.sym then 
+     next(ok,push(stk, hash.wordname.sym))
+   else if isIntLit.sym ∨ isRealLit.sym then next(ok,push(stk, value.sym))
+  else if sym = Littrue then next(ok,push(stk, 1))
+  else if sym = Litfalse then next(ok,push(stk, 0))
+  else if isrecordconstant.sym then 
+     let t=buildargs(fullconstantcode.sym)
+    next(not.isempty.t,if isempty.t then push(stk,0) else push(stk,first.t))   
+  else if isSequence.sym then 
+  let nopara = nopara.sym
+   if length.toseq.stk < nopara.sym then next(false,stk) else
+   next(ok,push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara))))
+  else { if isRecord.sym then
+   let nopara = nopara.sym
+    if length.toseq.stk < nopara.sym then next(false,stk) else
+     next(ok,push(pop(stk, nopara), 
+     bitcast:int(set(set(toptr.packed.top(stk, nopara), 0), nopara))))
+  else }next(false,stk)
+ /for( if ok then toseq.stk else empty:seq.int)
+ 
+Function seqelements(s:symbol)seq.symbol
 assert isrecordconstant.s report"constant code error" + print.s  
 let code1 = fullconstantcode.s
-if isSequence.last.code1 then[Lit.0, Lit.nopara.last.code1] + code1 >> 1 
-else code1 >> 1
+assert isSequence.last.code1 report "constant code error 21" + print.code1  
+ code1 >> 1 
 
 function fullconstantcode(s:symbol)seq.symbol
 toseq.decode.to:encoding.symbolconstant(toint.name.s)
@@ -75,12 +82,6 @@ type symbolconstant is toseq:seq.symbol
 function =(a:symbolconstant, b:symbolconstant)boolean toseq.a = toseq.b
 
 function hash(a:symbolconstant)int hash.toseq.a
-
-Function removeconstantcode(s:seq.symbol)seq.symbol
-for acc = empty:seq.symbol, @e ∈ s do
- acc
- + if isrecordconstant.@e then removeconstantcode.fullconstantcode.@e else[@e]
-/for(acc)
 
 Function constantsymbols set.symdef
 for acc = empty:set.symdef, i=1,p ∈ encodingdata:symbolconstant do 

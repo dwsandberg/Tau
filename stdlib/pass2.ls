@@ -68,8 +68,6 @@ else
  )
  /for(isverysimple)
 
-function print(s:seq.int)seq.word for acc = "", @e ∈ s do acc + toword.@e /for(acc)
-
 Function Callself bits bits.1
 
 Function State bits bits.4
@@ -134,7 +132,7 @@ if nopara.forsym = 7 ∧ first.paratypes.forsym = resulttype.forsym ∧ code_(-2
 ∧ code_(-7) = code_(-5)then
  let t2 = backparse2(code, length.code - 8, 2, empty:seq.int)
  let initacc = subseq(code, t2_1, t2_2 - 1)
- if length.initacc = 1 ∧ isrecordconstant.initacc_1 ∧ constantcode.initacc_1 = [Lit.0, Lit.0]then
+ if length.initacc = 1 ∧ isrecordconstant.initacc_1 ∧ isempty.seqelements.initacc_1 then
   subseq(code, 1, t2_1 - 1) + subseq(code, t2_2, length.code - 8)
  else empty:seq.symbol
 else empty:seq.symbol

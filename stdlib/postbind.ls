@@ -316,7 +316,7 @@ if issimple.module.sym2 then symdef(sym2, empty:seq.symbol)
 else
  let gx = findabstract(templates, sym2)
  assert length.gx = 1
- report"Cannot find template for X" + print.length.gx + print.sym2
+ report"Cannot find template for X" + %.length.gx + print.sym2
  + if isempty.gx then""
  else
   for txt = "", k ∈ gx do txt + EOL + print.sym.sd.k + print.modpara.k /for(txt)

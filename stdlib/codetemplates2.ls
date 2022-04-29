@@ -305,7 +305,6 @@ Function mangledname(extname:set.symdef, s:symbol, ref:symbolref, library:word)w
 if name.module.s ∈ "internal"then
  if externalcall.s then name.s
  else let m=
- merge.[library, "$"_1, "$"_1, toword.toint.ref]
-   assert   m /nin "common$$552  " report "XXXX"+print.s  
+ merge.[library, "$"_1, "$"_1, toword.toint.ref] 
  m
 else name.first.getCode(extname, s) 

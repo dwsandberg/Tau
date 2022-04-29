@@ -43,12 +43,9 @@ function  ?(a:tableentry,b:tableentry) ordering
 
  
  
-  Function %(i:int) seq.word [toword.i]
-     
- function  %(i:byte) seq.word [toword.toint.i]
+      
+ function %(i:byte) seq.word [toword.toint.i]
  
-Function %(a:mytype) seq.word print.a
-
 use set.mytype
 
 

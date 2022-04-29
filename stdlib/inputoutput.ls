@@ -95,7 +95,7 @@ let t =
  /for(sort.acc)
 for txt = " /p", r ∈ callstack.30 << 2 do
  let i = binarysearch(t, addrsym(r, Lit.1))
- txt + print.r
+ txt + %.r
  + if between(-i - 1, 1, length.t)then print.sym.t_(-i - 1)else""/if
  + " /br"
 /for(txt)

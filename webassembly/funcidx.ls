@@ -99,7 +99,7 @@ else
  for acc = "func(", e ∈ subseq(val.w, 3, nopara + 2)do acc + print.wtype.e /for(acc + ")"
  + if(val.w)_(nopara + 3) = tobyte.1 then print.wtype.last.val.w else"void"/if)
 
-Function printtypeidx(i:int)seq.word print.decode.to:encoding.wtype(i + 1) + "(idx:" + print.i + ")"
+Function printtypeidx(i:int)seq.word print.decode.to:encoding.wtype(i + 1) + "(idx:$(%.i) )"
 
 Function typeindex(paras:seq.wtype, rt:wtype)int
 addorder.wtype([tobyte.0x60] + LEBu.length.paras

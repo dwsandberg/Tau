@@ -46,16 +46,20 @@ use bitcast:int
 
 use real
 
+
 Function interpretCompileTime:T(args:seq.symbol,ctsym:symbol, typedict:typedict)seq.symbol
-let stk=  buildargs2(args )
-if  isempty.stk /and nopara.ctsym /ne length.stk  then empty:seq.symbol
+let stk= if nopara.ctsym=0 then empty:seq.int else  buildargs(args )
+if nopara.ctsym > 0 /and isempty.stk  then empty:seq.symbol
 else if name.ctsym /in "_" then
   let ptypes=paratypes.ctsym
-  {assert false report "here"+print.ctsym+print.ptypes_1}
-   if  isseq.ptypes_1 /and ptypes_2=typeint /and parameter.ptypes_1 /in [typeint,typeword,typechar] then
-     let s=bitcast:seq.int(toptr.stk_1)
-     if  between(stk_2,1,length.s) then
-        tocode:T(s_(stk_2), resulttype.ctsym, typedict)
+ if  isseq.ptypes_1  /and parameter.ptypes_1 /in [typeint,typeword,typechar] then
+     let s=bitcast:seq.int(stk_1)
+     let idx=if  ptypes_2=typeint then 
+       stk_2 
+     else  if ptypes_2 = typeref."index standard"then stk_2+1 
+     else   0
+     if  between(idx,1,length.s) then
+        tocode:T(s_(idx), resulttype.ctsym, typedict)
      else empty:seq.symbol
    else empty:seq.symbol
 else if module.ctsym=moduleref("words") /and name.ctsym /in "merge encodeword decodeword" then 

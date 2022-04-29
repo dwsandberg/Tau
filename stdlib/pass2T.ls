@@ -65,7 +65,7 @@ if option = "addpass"then additionalpass:T(toseq.knownsymbols, knownsymbols, t)
 else subpass2:T(empty:seq.symdef, empty:set.symdef, knownsymbols, 0, t) ∪ constantsymbols
 
 function subpass2:T(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int, typedict:typedict)set.symdef
-{assert count < 4 report"SIZE"+print.length.toseq.toprocess+print.length.bigin+print.length.toseq.corein+
+{assert count < 4 report"SIZE"+%.length.toseq.toprocess+%.length.bigin+%.length.toseq.corein+
 print.count}
 for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toprocess do
  let s = sym.pele
@@ -203,11 +203,8 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
   let compiletime = if  first."COMPILETIME" /nin options /and  ( name.sym /nin "_" /or nopara /ne 2)  then
     empty:seq.symbol 
     else 
-   for acc = true, @e ∈ subseq(result, len - nopara + 1, len)
-    while acc
-    do     isconst.@e /and not.isFref.@e   /and  length.buildargs2([@e]) = 1    
-    /for(if not.acc then  empty:seq.symbol else 
-      interpretCompileTime:T(subseq(result, len - nopara + 1, len),sym, typedict))
+     let args=subseq(result, len - nopara + 1, len)
+     interpretCompileTime:T(subseq(result, len - nopara + 1, len),sym, typedict)
   if not.isempty.compiletime then
      let newconst = if length.compiletime > 1 then Constant2(p, compiletime)else first.compiletime
      next(flags, result >> nopara + newconst, nextvar, map)

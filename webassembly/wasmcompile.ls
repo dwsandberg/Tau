@@ -248,7 +248,7 @@ let t = lookup(a, localmap(w, localinfo(f64, empty:seq.byte, 0)))
 assert not.isempty.t report"unknown local" + w + stacktrace2
 localinfo.t_1
 
-function print(l:localinfo)seq.word print.asbytes.type.l + print.leb.l + print.no.l
+function print(l:localinfo)seq.word print.asbytes.type.l + print.leb.l + %.no.l
 
 function ?(a:localinfo, b:localinfo)ordering no.a ? no.b
 
@@ -325,7 +325,7 @@ do
    next(push(typestk, f64), blkstk, curblk + this, localtypes)
   else if isFref.sym then
    let newcode = const64.tableindex.basesym.sym
-   {assert not.isFref.sym report"FR2"+print.sym+"X"+print.length.elementdata}
+   {assert not.isFref.sym report"FR2"+print.sym+"X"+%.length.elementdata}
    next(push(typestk, i64), blkstk, curblk + newcode, localtypes)
   else if sym = Littrue then next(push(typestk, i32), blkstk, curblk + const32.1, localtypes)
   else if sym = Litfalse then next(push(typestk, i32), blkstk, curblk + const32.0, localtypes)
@@ -638,7 +638,7 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
    if value.sym = 0 then next(blkstk, curblk + Icode(i64const, 0), localtypes)
    else
     assert casttoreal.value.sym ∈ [1.0, 8.0, 0.125, 64.0]
-    report"REAL" + print(3, casttoreal.value.sym) + print.value.sym
+    report"REAL" + print(3, casttoreal.value.sym) + %.value.sym
     next(blkstk, curblk + Icode(f64const, intpart(casttoreal.value.sym * 1000.0)), localtypes)
   else if isFref.sym then next(blkstk, curblk + Icode(i64const, tableindex.basesym.sym), localtypes)
   else if sym = Littrue then next(blkstk, curblk + Icode(i64const, 1), localtypes)

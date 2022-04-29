@@ -170,7 +170,7 @@ else
     /for(l2)
   /for(l)
  {nodes_node.first.cases}
- assert true
+ {assert true
  report"cases" + for l = EOL, c ∈ cases do l + print.nodeno.c /for(l)
  + print.newcode
  + EOL
@@ -183,7 +183,7 @@ else
  + EOL
  + print.nonewnodes
  + EOL
- + print.removedead(newcode, newnodes, newunreached)
+ + print.removedead(newcode, newnodes, newunreached)}
  removedead(newcode, newnodes, newunreached)/if)
 
 function unreached(code:seq.symbol, nodes:seq.int, nextvar:int, reorgwhen:int)seq.symbol
@@ -213,7 +213,7 @@ do
    else if c = 1 then multpred + t
    else if c = 2 then multpred + f else multpred + t + f
   next(unreached, newmultpred, newcases, newtargets, count + 1)
-/for(assert true
+/for({assert true
 report"casenodes" + for l = "", c ∈ cases do l + print.c /for(l)
 + "unreached"
 + for l = "", c ∈ unreached do l + print.c /for(l)
@@ -222,7 +222,7 @@ report"casenodes" + for l = "", c ∈ cases do l + print.c /for(l)
 + "multpred"
 + for l = "", c ∈ multpred do l + print.c /for(l)
 + EOL
-+ print.code
++ print.code}
 if length.nodes - 3 = length.unreached ∧ isstart.code_(-first.nodes)then
  {just two active nodes which must be a branch follow by an exit.so remove block}
  let blkstart = -first.nodes
@@ -264,7 +264,7 @@ for acc = empty:seq.symbol, stk = empty:stack.int, nextvar = length.s, lastsymbo
    let code0 = unreached(acc, nodes, nextvar, reorgwhen)
    next(code0 + sym, newstk(sym, stk1, code0), nextvar + 1, sym)
   else if isbr.sym then
-   {assert noblocks ≠ 4 report"X"+print.noblocks+print.length.s}
+   {assert noblocks ≠ 4 report"X"+print.noblocks+%.length.s}
    {adjust br in enclosing block}
    let code0 = adjustbr(acc, top(stk1, countnodes.stk1 - 1), noblocks - 2)
    {remove start of block}
@@ -334,7 +334,7 @@ for acc = code, blockcount = length.nodestoadjust, i ∈ nodestoadjust do
  if isbr.sym ∧ (brt.sym > blockcount ∨ brf.sym > blockcount)then
   let newt = if brt.sym > blockcount then brt.sym + adjust else brt.sym
   let newf = if brf.sym > blockcount then brf.sym + adjust else brf.sym
-  assert between(i, 1, length.acc)report"problem adjust" + print.i + print.code
+  assert between(i, 1, length.acc)report"problem adjust" + %.i + print.code
   next(replace(acc, i, Br2(newt, newf)), blockcount - 1)
  else next(acc, blockcount - 1)
 /for(acc)
@@ -351,7 +351,7 @@ if iswordseq.c then
   else
    for acc = [Start.typeboolean], idx = 2, w ∈ words >> 1 do next(acc + [var, Word.w, EqOp] + Br2(t - idx, 1), idx + 1)/for(acc + [var, Word.last.words, EqOp, Exit, Littrue, Exit, EndBlock])
 else
- let z = constantcode.c << 2
+ let z =seqelements.c
  if isempty.z then[Litfalse]
  else if length.z = 1 then[var, first.z, EqOp]
  else

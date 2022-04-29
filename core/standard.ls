@@ -141,16 +141,7 @@ for acc = [seed], @e ∈ constantseq(length - 1, 1)do acc + pseudorandom.last.ac
 
 Builtin randomint(i:int)seq.int
 
-Function print(n:int)seq.word
-let s = decodeUTF8.toUTF8.n
-let sign = if n < 0 then"-"else""
-let t = if n < 0 then s << 1 else s
-sign
-+ encodeword.if length.s < 5 then s
-else
- for acc = empty:seq.char, i = 1, e ∈ s do
-  next(acc + if(length.s - i) mod 3 = 2 ∧ i ≠ 1 then[char.160, e]else[e], i + 1)
- /for(acc)
+Function %(n:int) seq.word [toword.n]
 
 Function EOL seq.word" /br"
 
