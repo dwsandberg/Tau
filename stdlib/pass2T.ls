@@ -62,7 +62,7 @@ use seq.seq.seq.symbol
 
 Function pass2:T(knownsymbols:set.symdef, t:typedict, option:seq.word)set.symdef
 if option = "addpass"then additionalpass:T(toseq.knownsymbols, knownsymbols, t)
-else subpass2:T(empty:seq.symdef, empty:set.symdef, knownsymbols, 0, t) ∪ constantsymbols
+else subpass2:T(empty:seq.symdef, empty:set.symdef, asset.renumberconstants.toseq.knownsymbols, 0, t) ∪ constantsymbols
 
 function subpass2:T(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int, typedict:typedict)set.symdef
 {assert count < 4 report"SIZE"+%.length.toseq.toprocess+%.length.bigin+%.length.toseq.corein+
@@ -176,7 +176,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    let args = subseq(result, len + 1 - nopara, len)
    let constargs = for acc = true, @e ∈ args while acc do isconst.@e /for(acc)
    if constargs then
-    next(flags, subseq(result, 1, len - nopara) + Constant2(p, args + sym), nextvar, map)
+    next(flags, subseq(result, 1, len - nopara) + Constant2( args + sym), nextvar, map)
    else next(flags, result + sym, nextvar, map)
   else if islocal.sym then
    let t = lookup(map, value.sym)
@@ -185,10 +185,23 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
  else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
  else if length.result > 2 ∧ isconst.last.result ∧ ismember.sym then
   let arg = result_(-2)
-  if islocal.arg ∨ isconst.arg then
-   next(flags, result >> 2 + removeismember(last.result, arg), nextvar, map)
+     let  nonew  =  islocal.arg ∨ isconst.arg  
+      let z =seqelements.last.result
+      let var=if nonew then arg else Local.nextvar
+ let newcode=if isempty.z then[Litfalse]
+ else if length.z = 1 then[var, first.z, EqOp]
+ else
+  let t = length.z + 2
+  for acc = [Start.typeboolean], idx = 2, w ∈ z >> 1 do 
+    next(acc + [var, w, EqOp] + Br2(t - idx, 1), idx + 1)
+    /for(acc + [var, last.z, EqOp, Exit, Littrue, Exit, EndBlock]) 
+    {
+      let newcode=removeismember(last.result,  if nonew then arg else Local.nextvar)     
+   }if nonew then
+    next(flags,result >> 2 + newcode , nextvar, map)
   else
-   next(flags, result >> 1 + Define.nextvar + removeismember(last.result, Local.nextvar), nextvar, map)
+      next(flags,result >> 1 + Define.nextvar + newcode
+   , nextvar, map)
  else if wordname.sym ∈ "forexp" ∧ isBuiltin.sym then
   let noop = forexpisnoop(sym, result)
   if not.isempty.noop then next(flags, noop, nextvar, map)
@@ -206,7 +219,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
      let args=subseq(result, len - nopara + 1, len)
      interpretCompileTime:T(subseq(result, len - nopara + 1, len),sym, typedict)
   if not.isempty.compiletime then
-     let newconst = if length.compiletime > 1 then Constant2(p, compiletime)else first.compiletime
+     let newconst = if length.compiletime > 1 then Constant2( compiletime)else first.compiletime
      next(flags, result >> nopara + newconst, nextvar, map)
   else if first."VERYSIMPLE" ∈ options then
    next(flags, result + removeoptions.dd << nopara.sym, nextvar, map)

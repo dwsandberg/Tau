@@ -202,3 +202,7 @@ ________________________
 unbound %(T) seq.word
 
 Function %(z:seq.T) seq.word for acc="",i /in z do acc+%.i /for(acc)
+
+Function %n(z:seq.T) seq.word for acc="",idx=1,i /in z do 
+next(acc+ "/br"+toword.idx+":"+%.i ,idx+1)  /for(acc  )
+

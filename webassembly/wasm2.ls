@@ -12,8 +12,6 @@ use symbol2
 
 use wasm
 
-use wasmconstant
-
 use words
 
 use seq.byte

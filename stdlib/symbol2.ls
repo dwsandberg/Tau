@@ -18,6 +18,18 @@ use seq.symbol
 
 use set.symdef
 
+use seq.symdef
+
+use symbolconstant
+
+Export renumberconstants(prg:seq.symdef) seq.symdef
+
+Export fullconstantcode(s:symbol)seq.symbol
+
+Export Constant2(args:seq.symbol) symbol
+  
+Export type:symbolconstant
+
 Function rehash(c:compileinfo)compileinfo
 compileinfo(typedict.c
 , code.c
@@ -25,6 +37,8 @@ compileinfo(typedict.c
 , for acc = empty:seq.symbol, sym ∈ symbolrefdecode.c do acc + rehash.sym /for(acc)
 , mods.c
 )
+
+Export paragraphno(symdef)int
 
 Export basesym(s:symbol)symbol
 
@@ -138,7 +152,7 @@ Export Br2(int, int)symbol
 
 Export continue(i:int)symbol
 
-Export Define(name:word, i:int) symbol
+Export Define(word,int) symbol
 
 Export EndBlock symbol
 

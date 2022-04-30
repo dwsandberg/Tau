@@ -12,8 +12,6 @@ use tausupport
 
 use wasm
 
-use wasmconstant
-
 use words
 
 use seq.byte
@@ -369,6 +367,11 @@ Function constbyteseq(a:seq.byte)int
 let elements = 
  for elements = empty:seq.int, b ∈ packedbyteseqasbits.a do elements + toint.b /for(elements)
 allocateconstspace("."_1, elements)
+
+Function constantcode(s:symbol)seq.symbol
+let code1 = fullconstantcode.s
+if isSequence.last.code1 then[Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
+
 
 Function getoffset(const:symbol)int
 let elements = 

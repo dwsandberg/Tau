@@ -22,8 +22,6 @@ use wasm
 
 use wasm2
 
-use wasmconstant
-
 use seq.Icode
 
 use seq.blkele

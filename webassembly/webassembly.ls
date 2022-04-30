@@ -22,8 +22,6 @@ use textio
 
 use wasmcompile
 
-use wasmconstant
-
 use seq.byte
 
 use otherseq.char
@@ -124,18 +122,18 @@ let input2 = cat(input, "", exports, Library)
 let info2 = breakparagraph.data.first.input2
 let libname = Library
 let libexports = exports
-let r = 
+let rcinfo = 
  compilerfront:libllvm("wasm"
  , ["uses=$(extractValue(first.info2, "uses"))exports=tausupport inputoutput $(libexports)Library=$(libname)"
  ]
  + info2 << 1
  )
-let check = checkweb(r, libexports)
+let check = checkweb(rcinfo, libexports)
 assert isempty.check report check
 let syms2 = 
- for syms2 = empty:seq.symbol, m ∈ mods.r do
+ for syms2 = empty:seq.symbol, m ∈ mods.rcinfo do
   if name.modname.m ∈ libexports then
-   for txt3 = syms2, e ∈ exports.m do txt3 + (symbolrefdecode.r)_(toint.e)/for(txt3)
+   for txt3 = syms2, e ∈ exports.m do txt3 + (symbolrefdecode.rcinfo)_(toint.e)/for(txt3)
   else syms2
  /for({should check for dup names on syms}syms2)
 let scriptstart = 
@@ -152,9 +150,7 @@ it is safe to reclaim space.}
   + f
   + "; if(inprogress==0)exports.reclaimspace();} /br"
  /for(txt)
-let prg = asset.prg.r
-let discard99 = oldconstants.prg
-let wasmfile = wasmcompile(typedict.r, prg, syms2, libname)
+let wasmfile = wasmcompile(typedict.rcinfo, asset.renumberconstants.prg.rcinfo, syms2, libname)
 let script = 
  {if includetemplate then toseqbyte.toUTF8."<script>"+getfile:byte("/webassembly/template.js")+toseqbyte.
 toUTF8."</script>"else}

@@ -340,20 +340,3 @@ for acc = code, blockcount = length.nodestoadjust, i ∈ nodestoadjust do
 /for(acc)
 
 function countnodes(s:stack.int)int if top.s < 0 then 1 else 1 + countnodes.pop.s
-
-Function removeismember(c:symbol, var:symbol)seq.symbol
-if iswordseq.c then
- let words = worddata.c
- if isempty.words then[Litfalse]
- else
-  let t = length.words + 2
-  if length.words = 1 then[var, Word.words_1, EqOp]
-  else
-   for acc = [Start.typeboolean], idx = 2, w ∈ words >> 1 do next(acc + [var, Word.w, EqOp] + Br2(t - idx, 1), idx + 1)/for(acc + [var, Word.last.words, EqOp, Exit, Littrue, Exit, EndBlock])
-else
- let z =seqelements.c
- if isempty.z then[Litfalse]
- else if length.z = 1 then[var, first.z, EqOp]
- else
-  let t = length.z + 2
-  for acc = [Start.typeboolean], idx = 2, w ∈ z >> 1 do next(acc + [var, w, EqOp] + Br2(t - idx, 1), idx + 1)/for(acc + [var, last.z, EqOp, Exit, Littrue, Exit, EndBlock]) 

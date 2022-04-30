@@ -54,21 +54,19 @@ Function buildargs(codein:seq.symbol) seq.int
  /for( if ok then toseq.stk else empty:seq.int)
  
 Function seqelements(s:symbol)seq.symbol
+if iswords.s then for acc=empty:seq.symbol , w /in worddata.s  do acc+Word.w /for(acc)
+else 
 assert isrecordconstant.s report"constant code error" + print.s  
 let code1 = fullconstantcode.s
 assert isSequence.last.code1 report "constant code error 21" + print.code1  
  code1 >> 1 
 
-function fullconstantcode(s:symbol)seq.symbol
+Function fullconstantcode(s:symbol)seq.symbol
 toseq.decode.to:encoding.symbolconstant(toint.name.s)
 
-Function Constant2(p:set.symdef, args:seq.symbol)symbol
-let testsym = symconst.nextencoding.symbolconstant.empty:seq.symbol
-let a = lookup(p, symdef(testsym, args))
-if not.isempty.a then
- let discard = encode.symbolconstant.code.a_1
- Constant2(p, args)
-else symconst.addorder.symbolconstant.args
+Function Constant2( args:seq.symbol)symbol
+ symconst.addorder.symbolconstant.args
+
 
 Function hash(s:seq.symbol)int
 hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /for(acc)
@@ -86,3 +84,44 @@ function hash(a:symbolconstant)int hash.toseq.a
 Function constantsymbols set.symdef
 for acc = empty:set.symdef, i=1,p ∈ encodingdata:symbolconstant do 
 next(acc + symdef(symconst.i, toseq.p),i+1)/for(acc) 
+
+
+use sparseseq.symbol
+
+ function map(map0:seq.symbol,prg:seq.symdef) seq.symbol
+  for  map=map0, todo=empty:seq.symdef , sd /in prg do
+     if isrecordconstant.sym.sd then
+      let i=toint.name.sym.sd
+      let newmap=for  acc=empty:seq.symbol, ok=true,  sym /in code.sd while ok do
+          if isrecordconstant.sym then 
+             let mapvalue=map_toint.name.sym
+              next(acc+mapvalue,isrecordconstant.mapvalue)
+          else 
+         next(acc+sym ,ok)
+      /for( if ok then replaceS(map, i, [Constant2(acc)]) else  empty:seq.symbol)
+     if isempty.newmap then 
+       next(map,todo+sd)
+    else next(newmap,todo)
+    else next(map,todo)
+  /for( if isempty.todo then map else 
+    assert length.todo < length.prg  report 
+"ill formed program"
+     +for txt="",sd2 /in todo do txt+"/p"+print.sym.sd2+print.code.sd2 
+     /for(txt)
+    map(map,todo)
+  )
+  
+
+use seq.symdef
+
+Function renumberconstants(prg:seq.symdef) seq.symdef
+let map=map(sparseseq.Lit.0,prg)
+for  newprg=empty:seq.symdef,  sd /in prg do
+   if isrecordconstant.sym.sd then newprg else
+   let newcode= for acc=empty:seq.symbol,changed=false,sym /in code.sd do
+     if isrecordconstant.sym then 
+             next( acc+map_toint.name.sym ,true)
+     else next(acc+sym,changed)
+     /for(if changed then acc else code.sd)
+       newprg+symdef(sym.sd,newcode, paragraphno.sd )
+    /for( newprg)

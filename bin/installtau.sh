@@ -108,7 +108,6 @@ checksrc stdlib/updatestate.ls
 checksrc webassembly/wasm.ls
 checksrc webassembly/wasm2.ls
 checksrc webassembly/wasmcompile.ls
-checksrc webassembly/wasmconstant.ls
 checksrc wbeizer/wbeizer.ls
 checksrc webcore/webIO.ls
 checksrc webassembly/webassembly.ls
@@ -146,10 +145,10 @@ outofdate ||(libexe stdlib libsrc tests/bug7.ls tests/checking.ls tests/myseq.ls
 parts="built/installtau.sh built/stdlib.lib simple/all.decs"
 outofdate ||(libexe stdlib updatestate simple/all.decs cmd=updatestate roots=installtau allweb o=installtau.sh)
 
-parts="built/webassembly.lib built/stdlib.lib webassembly/webassembly.ls webassembly/wasmconstant.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls common/LEBencoding.ls"
+parts="built/webassembly.lib built/stdlib.lib webassembly/webassembly.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls common/LEBencoding.ls"
 dependlibs="built/stdlib.$libtype"
 ccode="void init_stdlib(); void init_libs(){init_stdlib();"
-outofdate ||(libexe stdlib libsrc webassembly/webassembly.ls webassembly/wasmconstant.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls common/LEBencoding.ls uses=stdlib exports=wasm wasm1 wasm2 wasmcompile webassembly o=webassembly.libsrc
+outofdate ||(libexe stdlib libsrc webassembly/webassembly.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls common/LEBencoding.ls uses=stdlib exports=wasm wasm1 wasm2 wasmcompile webassembly o=webassembly.libsrc
 libexe stdlib stdlib built/webassembly.libsrc ;runlib webassembly)
 #________________
 
