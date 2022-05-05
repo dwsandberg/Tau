@@ -36,9 +36,8 @@ Function ?(a:typemap, b:typemap)ordering key.a ? key.b
 
 function print(s:seq.mytype)seq.word for a = "", e ∈ s do a + print.e /for(a)
 
-Function baseTypeCheck(r2:compileinfo)seq.word
-let typedict = typedict.r2
-for acc = empty:seq.word, count = 0, s ∈ prg.r2 do
+Function baseTypeCheck(prg:seq.symdef,typedict:typedict)seq.word
+for acc = empty:seq.word, count = 0, s ∈ prg  do
  let p = process.checkkind(s, typedict)
  let b = 
   if aborted.p then

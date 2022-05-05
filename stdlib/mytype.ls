@@ -123,7 +123,7 @@ Function typeseqdec mytype typeref."sequence internal internallib"
 Function typeref(s:seq.word)mytype
 if length.s = 2 then mytype.[typedef(first.s, s_2, "stdlib"_1)]
 else
- assert length.s = 3 report"typereferror" + s  
+ assert length.s = 3 report"typereferror" + s
  mytype.[typedef(first.s, s_2, s_3)]
 
 Function internalmod modref moduleref."internallib internal"

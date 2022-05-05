@@ -179,7 +179,7 @@ if ( baselib ){
     addlibrarywords  = ( BT (* )(processinfo PD,BT   )) baselib; 
 }
 
-addlibrarywords(&sharedspace,libdesc);
+ addlibrarywords(&sharedspace,libdesc);
 
  // register library 
      { int i =loaded[1]++;

@@ -6,8 +6,6 @@ use bits
 
 use format
 
-use libraryModule
-
 use pretty
 
 use standard
@@ -54,7 +52,8 @@ function rename(renames:seq.word, name:word)word
 let i = findindex(name, renames)
 if i > length.renames then name else renames_(i + 2)
 
-Function transform(cinfo:compileinfo, library:seq.word, modrename:seq.word)seq.seq.word
+
+Function transform(cinfo:midpoint, library:seq.word, modrename:seq.word)seq.seq.word
 let result1 = totext.cinfo
 for txt = empty:seq.seq.word, modlist = "", libloc = 1, idx = 1, c ∈ result1 do
  if subseq(c, 1, 1) = "use"then
@@ -67,6 +66,7 @@ for txt = empty:seq.seq.word, modlist = "", libloc = 1, idx = 1, c ∈ result1 d
  else next(txt + c, modlist, libloc, idx + 1)
 /for(replace(txt, libloc, fixlibclause(txt_libloc, modlist, modrename)))
 
+use set.symdef
 
 function fixlibclause(p:seq.word, modlist:seq.word, modrename:seq.word)seq.word
 p
@@ -79,21 +79,19 @@ do
  txt + rename(modrename, e)
 /for(txt)
 
-Function totext(result1:compileinfo)seq.seq.word
+Function totext(result1:midpoint)seq.seq.word
 let renames = empty:seq.rename
-let symdecode = symbolrefdecode.result1
 let src = src.result1
 let acc4 = 
- for acc4 = src, c ∈ code.result1 do
-  let paragraphno = value.symdecode_(toint.c_2)
-  if paragraphno = 0 then acc4
+ for acc4 = src, sd ∈ toseq.prg.result1 do
+  if paragraphno.sd = 0 then acc4
   else
-   let tmp = if Optionsym = symdecode_(toint.last.c)then c >> 2 else c
+    let c=code.sd
+   let tmp = if Optionsym = last.c then c >> 2 else c
    let newtext = 
-    getheader.src_paragraphno >> 1
-    + for acc = "", stk = empty:stack.seq.word, last = symdecode_(toint.c_3), r ∈ tmp << 3 do
-     let sym = symdecode_(toint.r)
-     if sym = NotOp ∧ nopara.last = 2 then
+    getheader.src_(paragraphno.sd) >> 1
+    + for acc = "", stk = empty:stack.seq.word, last = c_1, sym ∈ tmp << 1 do
+      if sym = NotOp ∧ nopara.last = 2 then
       let paratypes = paratypes.last
       let newname = 
        if name.last = "="_1 then"≠"
@@ -105,7 +103,7 @@ let acc4 =
       else next(acc, newstk(last, stk, renames), sym)
      else next(acc, newstk(last, stk, renames), sym)
     /for(top.newstk(last, stk, renames))
-   replace(acc4, paragraphno, pretty.newtext)
+   replace(acc4, paragraphno.sd, pretty.newtext)
  /for(acc4)
 for acc = empty:seq.seq.word
 , modtext = empty:seq.seq.word
@@ -125,7 +123,6 @@ do
   next(acc, modtext + t, beforeModule)
 /for(acc)
 
-Function Optionsym symbol symbol(internalmod, "option", typeint, seqof.typeword, typeint)
 
 function newstk(sym:symbol, stk:stack.seq.word, renames:seq.rename)stack.seq.word
 if isstart.sym ∨ isexit.sym ∨ isbr.sym then stk

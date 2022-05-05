@@ -17,13 +17,11 @@ Function _(s:cseq.T, i:int)T element.s
 
 Function constantseq(len:int, element:T)seq.T toseq.cseq(len, element)
 
-type cseq2 is sequence, patternlen:int,elements:seq.T
+type cseq2 is sequence, patternlen:int, elements:seq.T
 
-Function _(s:cseq2.T,i:int)T   (elements.s)_((i mod patternlen.s)+1)
+Function _(s:cseq2.T, i:int)T(elements.s)_(i mod patternlen.s + 1)
 
-Function constantseq(len:int, element:seq.T)seq.T toseq.cseq2(len,length.element, element)
-
-
+Function constantseq(len:int, element:seq.T)seq.T toseq.cseq2(len, length.element, element)
 
 --------------------
 
@@ -195,14 +193,13 @@ Export isempty(a:seq.T)boolean
 
 Export <<(s:seq.T, i:int)seq.T{* removes i elements from beginning of s}
 
-Export >>(s:seq.T, i:int)seq.T{* removes i elements from end of s} 
+Export >>(s:seq.T, i:int)seq.T{* removes i elements from end of s}
 
 ________________________
 
-unbound %(T) seq.word
+unbound %(T)seq.word
 
-Function %(z:seq.T) seq.word for acc="",i /in z do acc+%.i /for(acc)
+Function %(z:seq.T)seq.word for acc = "", i ∈ z do acc + %.i /for(acc)
 
-Function %n(z:seq.T) seq.word for acc="",idx=1,i /in z do 
-next(acc+ "/br"+toword.idx+":"+%.i ,idx+1)  /for(acc  )
-
+Function %n(z:seq.T)seq.word
+for acc = "", idx = 1, i ∈ z do next(acc + " /br" + toword.idx + ":" + %.i, idx + 1)/for(acc) 

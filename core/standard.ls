@@ -1,7 +1,5 @@
 Module standard
 
-use IO2
-
 use UTF8
 
 use textio
@@ -20,7 +18,7 @@ use seq.seq.int
 
 use seq.seq.word
 
-Builtin stacktrace2 seq.word
+Builtin stacktrace seq.word
 
 Export type:UTF8
 
@@ -31,9 +29,6 @@ Function $(a:seq.word, b:seq.word)seq.word a + b
 Function dq seq.word{doublequote}[encodeword.[char.34]]
 
 Function dq(s:seq.word)seq.word dq + s + dq
-
-Function stacktrace5 seq.word stacktrace
-
 
 type ordering is toint:int
 
@@ -141,7 +136,7 @@ for acc = [seed], @e ∈ constantseq(length - 1, 1)do acc + pseudorandom.last.ac
 
 Builtin randomint(i:int)seq.int
 
-Function %(n:int) seq.word [toword.n]
+Function %(n:int)seq.word[toword.n]
 
 Function EOL seq.word" /br"
 
@@ -156,14 +151,14 @@ for acc = empty:seq.seq.word, i = 1, ele ∈ l + (length.s + 1)do
 /for(acc)
 
 Function extractValue(s:seq.word, name:seq.word)seq.word
- for value = ""
- , last = "="_1
- , p ∈ break(s + "?=", "=", false)
- do
-  next(if last ∈ name then value + p >> 1 else value
-  , if isempty.p then"="_1 else last.p
-  )
- /for(value)
+for value = ""
+, last = "="_1
+, p ∈ break(s + "?=", "=", false)
+do
+ next(if last ∈ name then value + p >> 1 else value
+ , if isempty.p then"="_1 else last.p
+ )
+/for(value)
 
 Export hash(a:word)int
 
@@ -289,8 +284,7 @@ Export toint(char)int
 
 Export char(int)char
 
-Function char1(s:seq.word)char
-{* First character of first word of s}first.decodeword.s_1
+Function char1(s:seq.word)char{* First character of first word of s}first.decodeword.s_1
 
 Export encodeword(a:seq.char)word
 
@@ -311,7 +305,7 @@ Export index(int)index
 Function +(i:index, b:int)index index(rep.i + b)
 
 Function toindex(i:int)index
-assert i > 0 report"not an index" + stacktrace2
+assert i > 0 report"not an index" + stacktrace
 index(i - 1)
 
 Function toint(i:index)int rep.i + 1 

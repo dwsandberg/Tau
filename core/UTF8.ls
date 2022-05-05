@@ -131,7 +131,7 @@ else
    let i = binarysearch(validdigits, c)
    if i > 0 then val * 10 - (i - 1)
    else
-    assert c ∈ [char1."-", nbspchar]report"invalid digit" + encodeword.s 
+    assert c ∈ [char1."-", nbspchar]report"invalid digit" + encodeword.s
     val
   /for(val)
  {Since there are more negative numbers in twos-complement we calculate using negative values. }

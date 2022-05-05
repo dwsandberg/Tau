@@ -97,6 +97,8 @@ Function isempty(a:set.T)boolean length.toseq.a = 0
 
 Function ∈(val:T, a:set.T)boolean binarysearch(toseq.a, val) > 0
 
+Function findindex(val:T, a:set.T)int binarysearch(toseq.a, val)
+
 Function cardinality(a:set.T)int length.toseq.a
 
 Function =(a:set.T, b:set.T)boolean cardinality.a = cardinality.b ∧ toseq.a = toseq.b

@@ -87,7 +87,7 @@ do
   else if byte ∈ [f64const]then next(text, byte, 0x0, 0, "inf64const", stk, blkstk, lastop)
   else
    assert byte ∈ [i32const, i64const, localset, localget, localtee, call, callindirect, brif, br, tobyte.255]
-   report"OPCODE" + decodeop.byte + ":" + text + stacktrace2
+   report"OPCODE" + decodeop.byte + ":" + text + stacktrace
    next(text, byte, 0x0, shift, "startLEBarg", stk, blkstk, lastop)
  else if state = "inf64const"then
   if shift = 7 then
@@ -99,7 +99,7 @@ do
  else if state = "alignmentbyte"then
   next(text, op, 0x0, 0, "startLEBarg", stk, blkstk, lastop)
  else if state = "zerobyte"then
-  assert byte = tobyte.0 report"expected 0 byte" + stacktrace2
+  assert byte = tobyte.0 report"expected 0 byte" + stacktrace
   next(text, op, 0x0, 0, "startop", stk, blkstk, lastop)
  else
   assert state ∈ ["startLEBarg", "inLEB"]report"state problem" + state
@@ -124,8 +124,6 @@ do
     else if op = call then
      assert top(stk, length.xx - 4) = subseq(xx, 3, length.xx - 2)
      report"types nomatch call stk:" + top(stk, length.xx - 4) + "xx" + xx + EOL + text
-     {assert not.isempty.xx ∧ last.xx ∈"i32 i64 f64"report"zzz ?? call"+toword.arg+xx+"/"+toseq.stk+place+text+stacktrace 
-}
      push(pop(stk, length.xx - 4), last.xx)
     else if op = callindirect then
      assert length.xx > 0 report"call indirect" + printtypeidx.arg
@@ -199,4 +197,4 @@ let d =
   ["", ""]
 assert length.toseq.stk ≥ length.d_1 ∧ top(stk, length.d_1) = d_1
 report"type problem" + decodeop.op + toseq.stk + EOL + text
-if isempty.d_2 then pop(stk, length.d_1)else push(pop(stk, length.d_1), d_2_1)
+if isempty.d_2 then pop(stk, length.d_1)else push(pop(stk, length.d_1), d_2_1) 

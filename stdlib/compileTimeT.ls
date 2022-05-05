@@ -6,7 +6,6 @@ use standard
 
 use symbol
 
-use tausupport
 
 use typedict
 
@@ -30,9 +29,7 @@ use seq.seq.int
 
 use bitcast:seq.int
 
-unbound funcaddress:T(sym:symbol)int
-
-unbound buildargcode:T(sym:symbol, typedict:typedict)int
+unbound callfunc:T(ctsym:symbol,typedict:typedict,stk:seq.int) seq.int
 
 use symbolconstant
 
@@ -48,7 +45,7 @@ use real
 
 
 Function interpretCompileTime:T(args:seq.symbol,ctsym:symbol, typedict:typedict)seq.symbol
-let stk= if nopara.ctsym=0 then empty:seq.int else  buildargs(args )
+let stk= if nopara.ctsym=0 then empty:seq.int else  buildargs:T(args )
 if nopara.ctsym > 0 /and isempty.stk  then empty:seq.symbol
 else if name.ctsym /in "_" then
   let ptypes=paratypes.ctsym
@@ -75,14 +72,10 @@ else  if name.ctsym /in "makereal" /and paratypes.ctsym=[seqof.typeword] then
 else  if module.ctsym=moduleref("UTF8") /and name.ctsym /in "toword" then
           [Word.toword.first.stk ]
 else 
-let t = funcaddress:T(ctsym)
-if t = 0 then empty:seq.symbol
-else
- let adcret = funcaddress:T(deepcopySym.resulttype.ctsym)
- let adc = funcaddress:T(deepcopySym.seqof.typeword)
- let p = createthread(adcret, adc, t, stk, buildargcode:T(ctsym, typedict))
- assert not.aborted.p report message.p
- tocode:T(result.p, resulttype.ctsym, typedict)
+ let t=callfunc:T(ctsym,typedict,stk)
+ if isempty.t then  empty:seq.symbol
+ else tocode:T(first.t, resulttype.ctsym, typedict)
+ 
 
 function tocode:T(r:int, typ:mytype, typedict:typedict)seq.symbol
 if typ = typeword then[Word.wordencodingtoword.r]
@@ -96,3 +89,35 @@ else
  let s = bitcast:seq.int(toptr.r)
  for acc = empty:seq.symbol, @e ∈ s do acc + tocode:T(@e, parameter.typ, typedict)/for(acc
  +Sequence(parameter.typ,length.s) )
+ 
+ 
+ 
+ Function buildargs:T(codein:seq.symbol) seq.int
+ if  not.for ok=true,sym /in subseq(codein,1,20) do isconst.sym  
+  /or isSequence.sym /or isRecord.sym
+  /for(ok) then empty:seq.int
+  else 
+  for  ok=true,stk = empty:stack.int, sym ∈ codein while ok do
+    if iswordseq.sym then
+   let a = for acc = empty:seq.int, @e ∈ worddata.sym  do acc + hash.@e /for(acc)
+  next(ok,push(stk, bitcast:int(toptr.a)))
+  else if isword.sym then 
+     next(ok,push(stk, hash.wordname.sym))
+   else if isIntLit.sym ∨ isRealLit.sym then next(ok,push(stk, value.sym))
+  else if sym = Littrue then next(ok,push(stk, 1))
+  else if sym = Litfalse then next(ok,push(stk, 0))
+  else if isrecordconstant.sym then 
+     let t=buildargs:T(fullconstantcode.sym)
+    next(not.isempty.t,if isempty.t then push(stk,0) else push(stk,first.t))   
+  else if isSequence.sym then 
+  let nopara = nopara.sym
+   if length.toseq.stk < nopara.sym then next(false,stk) else
+   next(ok,push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara))))
+  else { if isRecord.sym then
+   let nopara = nopara.sym
+    if length.toseq.stk < nopara.sym then next(false,stk) else
+     next(ok,push(pop(stk, nopara), 
+     bitcast:int(set(set(toptr.packed.top(stk, nopara), 0), nopara))))
+  else }next(false,stk)
+ /for( if ok then toseq.stk else empty:seq.int)
+ 

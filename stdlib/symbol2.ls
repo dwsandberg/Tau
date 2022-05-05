@@ -1,9 +1,5 @@
 Module symbol2
 
-use compilerfront
-
-use libraryModule
-
 use mytype
 
 use standard
@@ -22,6 +18,19 @@ use seq.symdef
 
 use symbolconstant
 
+Export  decode(symbolref) symbol
+
+Export  symbolref(symbol) symbolref
+
+Export ?(a:symbolref, b:symbolref)ordering toint.a ? toint.b
+
+Export =(a:symbolref, b:symbolref)boolean toint.a = toint.b
+
+Export toint(symbolref)int
+
+Export symbolref(int)symbolref
+
+
 Export renumberconstants(prg:seq.symdef) seq.symdef
 
 Export fullconstantcode(s:symbol)seq.symbol
@@ -30,13 +39,7 @@ Export Constant2(args:seq.symbol) symbol
   
 Export type:symbolconstant
 
-Function rehash(c:compileinfo)compileinfo
-compileinfo(typedict.c
-, code.c
-, src.c
-, for acc = empty:seq.symbol, sym ∈ symbolrefdecode.c do acc + rehash.sym /for(acc)
-, mods.c
-)
+ 
 
 Export paragraphno(symdef)int
 
@@ -84,6 +87,8 @@ Export brf(symbol)int
 
 Export hash(symbol)int
 
+Export inModFor(sym:symbol)boolean
+
 Export isstart(symbol)boolean
 
 Export isexit(symbol)boolean
@@ -98,9 +103,15 @@ Export isblock(symbol)boolean
 
 Export isconst(symbol)boolean
 
+Export isconstantorspecial(symbol) boolean
+
+Export  isGlobal(symbol) boolean
+
 Export isRealLit(symbol)boolean
 
 Export isIntLit(symbol)boolean
+
+Export isInternal(sym:symbol)boolean
 
 Export isFref(symbol)boolean
 
@@ -176,7 +187,11 @@ Export Local(name:word, type:mytype, parano:int)symbol
 
 Export NotOp symbol
 
+Export Optionsym symbol
+
 Export PlusOp symbol
+
+Export PreFref symbol
 
 Export Reallit(i:int)symbol
 
@@ -198,7 +213,7 @@ Export symbol(modref, seq.word, mytype)symbol
 
 Export symbol4(modref, word, mytype, seq.mytype, mytype)symbol
 
-Export symconst(i:int)symbol
+Export symconst(i:int,hashfref:boolean)symbol
 
 Export Word(word) symbol
 
@@ -219,6 +234,10 @@ Export print(symbol)seq.word
 Export print(seq.symbol)seq.word
 
 Export removeoptions(seq.symbol)seq.symbol
+
+Export addoption(seq.symbol, seq.word) seq.symbol
+
+Export getoption(seq.symbol) seq.word
 
 Export=(modref, modref)boolean
 
@@ -244,8 +263,6 @@ Export typeref(seq.word)mytype
 
 Export seqof(mytype)mytype
 
-Export symbolrefdecode(compileinfo)seq.symbol
-
 Export toint(symbolref)int
 
 Export type:symbolref
@@ -254,17 +271,9 @@ Export type:typedict
 
 Export type:typeentry
 
-Export prg(compileinfo)seq.symdef
 
-Export type:compileinfo
+Export ?(a:symdef, b:symdef)ordering  
 
-Export typedict(compileinfo)typedict
-
-Export roots(compileinfo)set.symbol
-
-Export code(compileinfo)seq.seq.symbolref
-
-Export src(compileinfo)seq.seq.word
 
 Export ?(symdef, symdef)ordering
 
@@ -287,3 +296,55 @@ Export getCode(set.symdef, symbol)seq.symbol
 Export basetype(mytype, typedict)mytype
 
 Export type:typedef 
+
+
+type   modExports is modname:modref, exports:seq.symbol, types:seq.seq.mytype
+
+Export exports(modExports)seq.symbol
+
+Export modname(modExports)modref
+
+Export types(modExports)seq.seq.mytype
+
+Export  modExports (modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
+
+Export type:modExports
+
+Export emptytypedict typedict
+
+Function empty:midpoint midpoint 
+midpoint("",empty:set.symdef, empty:set.symdef, emptytypedict,empty:seq.modExports,empty:seq.seq.word)
+
+use seq.modExports
+
+Function midpoint(option:seq.word
+, prg:set.symdef
+, typedict:typedict
+, libmods:seq.modExports
+, src:seq.seq.word
+)midpoint
+midpoint(option, prg, empty:set.symdef, typedict,  libmods, src)
+
+type midpoint is option:seq.word
+, prg:set.symdef
+, templates:set.symdef
+, typedict:typedict
+, libmods:seq.modExports
+, src:seq.seq.word
+
+Export midpoint(seq.word, set.symdef, set.symdef, typedict, seq.modExports, seq.seq.word)
+midpoint
+
+Export prg(midpoint)set.symdef
+
+Export option(midpoint)seq.word
+
+Export templates(midpoint)set.symdef
+
+Export typedict(midpoint)typedict
+
+Export type:midpoint
+
+Export src(midpoint)seq.seq.word
+
+Export libmods(m:midpoint) seq.modExports

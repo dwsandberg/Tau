@@ -12,6 +12,7 @@ use set.word
 
 use otherseq.seq.word
 
+
 use textio
 
 Function multitarget(value1:int, a:boolean, b:boolean)int
@@ -25,8 +26,10 @@ use file
 
 use seq.file
 
+use set.symdef
+
 Function testopt(f:file) seq.word
-let p2 = prg.compilerfront:libllvm("pass2",
+let p2 = toseq.prg.compilerFront:libllvm("pass2",
 breakparagraph.data.f)
 let cl = 
  ["7"

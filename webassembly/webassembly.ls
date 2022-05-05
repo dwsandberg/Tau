@@ -10,8 +10,6 @@ use file
 
 use format
 
-use libraryModule
-
 use main2
 
 use standard
@@ -21,6 +19,8 @@ use symbol2
 use textio
 
 use wasmcompile
+
+use compilerfront
 
 use seq.byte
 
@@ -44,11 +44,11 @@ use seq.symbol
 
 use set.symbol
 
-use graph.symbolref
+/use graph.symbolref
 
-use seq.symbolref
+/use seq.symbolref
 
-use set.symbolref
+/use set.symbolref
 
 use set.symdef
 
@@ -56,13 +56,13 @@ use seq.seq.char
 
 use process.seq.file
 
-use seq.arc.symbolref
+/use seq.arc.symbolref
 
 use process.seq.word
 
 use seq.seq.word
 
-function checkweb(cf:compileinfo, libexports:seq.word)seq.word
+/function checkweb(cf:compile?info, libexports:seq.word)seq.word
 let idx2 = 
  findindex(symbol(internalmod, "jsHTTP", constantseq(8, typereal), typereal)
  , symbolrefdecode.cf
@@ -123,17 +123,16 @@ let info2 = breakparagraph.data.first.input2
 let libname = Library
 let libexports = exports
 let rcinfo = 
- compilerfront:libllvm("wasm"
+ compilerFront:libllvm("wasm"
  , ["uses=$(extractValue(first.info2, "uses"))exports=tausupport inputoutput $(libexports)Library=$(libname)"
  ]
  + info2 << 1
  )
-let check = checkweb(rcinfo, libexports)
-assert isempty.check report check
+{let check = checkweb(rcinfo, libexports)
+assert isempty.check report check}
 let syms2 = 
- for syms2 = empty:seq.symbol, m ∈ mods.rcinfo do
-  if name.modname.m ∈ libexports then
-   for txt3 = syms2, e ∈ exports.m do txt3 + (symbolrefdecode.rcinfo)_(toint.e)/for(txt3)
+ for syms2 = empty:seq.symbol, m ∈ modsE.rcinfo do
+  if name.modname.m ∈ libexports then syms2+exports.m
   else syms2
  /for({should check for dup names on syms}syms2)
 let scriptstart = 
@@ -150,7 +149,7 @@ it is safe to reclaim space.}
   + f
   + "; if(inprogress==0)exports.reclaimspace();} /br"
  /for(txt)
-let wasmfile = wasmcompile(typedict.rcinfo, asset.renumberconstants.prg.rcinfo, syms2, libname)
+let wasmfile = wasmcompile(typedict.rcinfo, asset.renumberconstants.toseq.prg.rcinfo, syms2, libname)
 let script = 
  {if includetemplate then toseqbyte.toUTF8."<script>"+getfile:byte("/webassembly/template.js")+toseqbyte.
 toUTF8."</script>"else}

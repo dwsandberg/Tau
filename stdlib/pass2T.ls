@@ -20,7 +20,7 @@ use symbolconstant
 
 use typedict
 
-use compileTimeT.T
+/use compileTimeT.T
 
 use seq.char
 
@@ -59,6 +59,8 @@ use seq.seq.word
 use set.seq.word
 
 use seq.seq.seq.symbol
+
+unbound interpretCompileTime:T(args:seq.symbol,ctsym:symbol, typedict:typedict)seq.symbol
 
 Function pass2:T(knownsymbols:set.symdef, t:typedict, option:seq.word)set.symdef
 if option = "addpass"then additionalpass:T(toseq.knownsymbols, knownsymbols, t)

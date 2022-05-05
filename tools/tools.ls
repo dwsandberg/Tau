@@ -8,7 +8,6 @@ Module tools
 
 use UTF8
 
-use compilerfront
 
 use doc
 
@@ -18,7 +17,7 @@ use frontcmd
 
 use genLR1
 
-use libraryModule
+use compilerfront
 
 use main2
 
@@ -82,13 +81,15 @@ Function LR1(input:seq.file,o:seq.word,codeonly:boolean,parameterized:boolean ) 
 Function front(input:seq.file,o:seq.word
 , pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
 , ~mods:seq.word, within:boolean, rn:seq.word, out:seq.word) seq.file
-let output=front(compilerfront(if isempty.pass then"pass2"else pass, breakparagraph.data.first.input)
+let output=front2(compilerFront:libllvm(if isempty.pass then"pass2"
+else pass, breakparagraph.data.first.input)
 ,pass,n,~n,mods,~mods,within ,rn,out)
 [file(o,output)]
 
 Function transform(input:seq.file,o:seq.word,target:seq.word,rename:seq.word) seq.file
 {Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
-as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname} let cinfo = compilerfront("text", breakparagraph.data.first.input)
+as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname} 
+let cinfo = compilerFront:libllvm("text", breakparagraph.data.first.input)
  let library = [libname.cinfo]
  let newlib = if isempty.target then"tmp"else target
  writeModule2(transform(cinfo
@@ -98,27 +99,11 @@ as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=
  , newlib
  )
 
-/Function Xentrypoint(argin2:UTF8)UTF8
-let args = towords.argin2
-let cmd = [first.args]
-let input=getfiles.args
-let file = data.first.input
- let out=HTMLformat.if cmd = "testprofile"then
- {let discard = compile.breakparagraph.file
- profileresults."time"}
- "needs work"
-else if cmd = "front"then
- let pass = extractValue(args, "pass")
- front(compilerfront(if isempty.pass then"pass2"else pass, breakparagraph.file)
- , pass
- , extractValue(args, "n")
- , extractValue(args, "n!")
- , extractValue(args, "mods")
- , extractValue(args, "mods!")
- , first."within" ∈ extractValue(args, "flags")
- , extractValue(args, "rn")
- , extractValue(args, "out")
- )
-else 
-else"unknown new cmd" + cmd
+use profile
+
+Function testprofile(input:seq.file,o:seq.word) seq.file
+  let discard = stdlib(input)
+ [file(o,profileresults."time")]
+ 
+
 

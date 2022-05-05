@@ -64,14 +64,15 @@ use set.seq.symbol
 
 use seq.seq.symbolref
 
-Function codegen(thename:word, dependentlibs:seq.word, info0:compileinfo)seq.bits
- let info= changestacktrace.info0
+
+Function codegen(thename:word, dependentlibs:seq.word, info:compileinfo
+,profilearcs:set.seq.symbol
+)seq.bits
 let isbase = isempty.dependentlibs
-let profilearcs = profilearcs.info
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(info, dependentlibs, thename)
+let stepone = stepone(symbolrefdecode.info,typedict.info,prgcode.info,dependentlibs, thename)
 let match5map = match5map.stepone
 let defines = defines.stepone
 let symboladdress = symboladdress(info, extnames.stepone, thename, defines)
@@ -93,7 +94,7 @@ let f3 =
 let liblib = 
  slot.addliblib([thename]
  , subseq(symbolrefdecode.info, 1, newmaplength.info)
- , mods.info
+ , modsM.info
  , libcode.info
  , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
  , dependentlibs

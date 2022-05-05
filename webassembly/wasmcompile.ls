@@ -78,7 +78,6 @@ use process.seq.Icode
 
 use seq.seq.byte
 
-
 use set.seq.word
 
 use seq.seq.seq.byte
@@ -178,7 +177,8 @@ let forlater =
  for txt = "", p ∈ encodingdata:wfunc do txt + toword.funcidx.p + print.sym.p + EOL /for(txt)
  + for txt = " /br+table+ /br", i = 2, idx ∈ elementdata do next(txt + toword.i + toword.idx + EOL, i + 1)/for(txt)
 {create the wasm file}
-assert startfuncidx < length.encodingdata:wfunc  report "internal error: startfuncidx exceeds number of functions"
+assert startfuncidx < length.encodingdata:wfunc
+report"internal error:startfuncidx exceeds number of functions"
 for bodies = empty:seq.seq.byte
 , funcs2 = empty:seq.seq.byte
 , p ∈ sort.encodingdata:wfunc << length.imports
@@ -225,7 +225,7 @@ for notused = to:encoding.wfunc(1), sym ∈ k do
    assert not.aborted.p1
    report"ccc fail3:" + print.sym + "libX:" + library.module.sym + EOL + print.code + EOL
    + message.p1
-   + stacktrace2
+   + stacktrace
    encode.wfunc(alltypes
    , sym
    , funcbody(localtypes.result.p1 << nopara.sym, code.result.p1 + return)
@@ -243,7 +243,7 @@ function ?(a:localmap, b:localmap)ordering name.a ? name.b
 
 function getlocalinfo(a:set.localmap, w:word)localinfo
 let t = lookup(a, localmap(w, localinfo(f64, empty:seq.byte, 0)))
-assert not.isempty.t report"unknown local" + w + stacktrace2
+assert not.isempty.t report"unknown local" + w + stacktrace
 localinfo.t_1
 
 function print(l:localinfo)seq.word print.asbytes.type.l + print.leb.l + %.no.l
@@ -268,7 +268,7 @@ let p1 = process.createcode2interpert(alltypes, knownfuncs, removeoptions.symcod
 assert not.aborted.p1
 report"ccc fail:" + print.sym + "lib:" + library.module.sym + EOL + print.symcode + EOL
 + message.p1
-+ stacktrace2
++ stacktrace
 {assert name.sym /nin"test5"report print.sym+print.symcode+EOL+EOL+for txt="", pc=1, ele /in result.p1 do next(
 txt+toword.pc+decodeop.tobyte.(toint.ele mod 256)+toword.(toint.ele / 256)+EOL, pc+1)/for(txt)}
 let tmp = for acc = empty:seq.int, ele ∈ result.p1 do acc + toint.ele /for(acc)

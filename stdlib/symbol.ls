@@ -84,7 +84,7 @@ Export types(symbol)seq.mytype
 
 Export raw(symbol)bits
 
-Function rehash(s:symbol)symbol
+/Function rehash(s:symbol)symbol
 symbol(worddata.s, module.s, types.s, raw.s, extrabits(types.s, worddata.s, hashbits.s))
 
 Function =(a:symbol, b:symbol)boolean
@@ -113,6 +113,11 @@ symbol(s
 , extrabits(empty:seq.mytype, s, constbit)
 )
 
+function hasfrefbit bits bits.16
+
+Function hasfref(sym:symbol)  boolean  (hashbits.sym /and (hasfrefbit /or frefbit))  ≠ 0x0
+
+
 function frefbit bits bits.8
 
 function specialbit bits bits.4
@@ -137,7 +142,7 @@ function requiresbit bits 0x1 << 42
 
 Function hasrequires(sym:symbol)boolean(raw.sym ∧ requiresbit) ≠ 0x0
 
-Function hash(sym:symbol)int toint(hashbits.sym >> 4)
+Function hash(sym:symbol)int toint(hashbits.sym >> 5)
 
 Function setunbound(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym ∨ unboundbit, hashbits.sym)
 
@@ -667,15 +672,17 @@ symbol(builtinmod.kind2, "fld", typeptr, typeint, kind2)
 
 Export type:symdef
 
-type symdef is sym:symbol, code:seq.symbol, paragraphno:int
+type symdef is  symlist:seq.symbol,paragraphno:int
 
-Function symdef(sym:symbol, code:seq.symbol)symdef symdef(sym, code, 0)
 
-Export symdef(symbol, seq.symbol, int)symdef
 
-Export sym(symdef)symbol
+Function symdef(sym:symbol, code:seq.symbol)symdef symdef([sym]+code, 0)
 
-Export code(symdef)seq.symbol
+Function symdef(sym:symbol, code:seq.symbol, p:int)symdef symdef([sym]+code, p)
+
+Function sym(sd:symdef)symbol first.symlist.sd
+
+Function code(sd:symdef)seq.symbol symlist.sd << 1
 
 Export paragraphno(symdef)int
 
@@ -685,10 +692,32 @@ Function getCode(a:set.symdef, sym:symbol)seq.symbol
 let b = lookup(a, symdef(sym, empty:seq.symbol))
 if isempty.b then empty:seq.symbol else code.b_1
 
-Function removerecordconstant(p:set.symdef, s:seq.symbol)seq.symbol
-for code = empty:seq.symbol, sym ∈ s do
- if not.isrecordconstant.sym then code + sym else code + removerecordconstant(p, getCode(p, sym))
-/for(code)
 
-Function symconst(i:int)symbol
-symbol(moduleref."internallib $constant", [toword.i], empty:seq.mytype, typeptr, constbit) 
+
+Function symconst(i:int,hasfref:boolean)symbol
+symbol(moduleref."internallib $constant", [toword.i], empty:seq.mytype, typeptr, 
+if hasfref then constbit /or hasfrefbit else constbit) 
+
+___________________________
+
+
+use encoding.symbol
+
+
+type symbolref is toint:int
+
+Export toint(symbolref)int
+
+Export symbolref(int)symbolref
+
+Export type:symbolref
+
+Function ?(a:symbolref, b:symbolref)ordering toint.a ? toint.b
+
+Function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
+
+Function symbolref(sym:symbol)symbolref symbolref.addorder.sym
+
+Function assignencoding(a:symbol)int nextencoding.a
+
+Function decode(s:symbolref)symbol decode.to:encoding.symbol(toint.s)

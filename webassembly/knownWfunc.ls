@@ -234,9 +234,10 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , const64.getoffset.wordsconst.""
 )
 , wfunc(alltypes
-, symbol(internalmod, "stacktrace2", seqof.typeword)
+, symbol(internalmod, "stacktrace", seqof.typeword)
 , const64.getoffset.wordsconst.""
-)]
+)
+]
 
 function typestack mytype addabstract(typeref."stack stack stdlib", typeint)
 

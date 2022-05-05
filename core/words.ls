@@ -35,7 +35,7 @@ Function decodeword(w:word)seq.char{OPTION NOINLINE COMPILETIME}decode.asencodin
 
 Function hash(a:word)int hash.asencoding.a
 
-Export asencoding(w:word) encoding.seq.char
+Export asencoding(w:word)encoding.seq.char
 
 Function assignencoding(a:seq.char)int toint(bits.assignrandom.a ∧ bits(toint(bits.1 << 31) - 1))
 

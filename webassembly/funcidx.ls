@@ -28,8 +28,7 @@ use seq.symbol
 
 use encoding.wfunc
 
- use seq.encodingpair.datax
-
+use seq.encodingpair.datax
 
 use seq.wfunc
 
@@ -56,7 +55,6 @@ use seq.word5
 use seq.datax
 
 use seq.frefindex
-
 
 Function funcidx2sym(i:int)symbol sym.decode.to:encoding.efuncidx(i + 1)
 
@@ -97,7 +95,7 @@ else
  for acc = "func(", e ∈ subseq(val.w, 3, nopara + 2)do acc + print.wtype.e /for(acc + ")"
  + if(val.w)_(nopara + 3) = tobyte.1 then print.wtype.last.val.w else"void"/if)
 
-Function printtypeidx(i:int)seq.word print.decode.to:encoding.wtype(i + 1) + "(idx:$(%.i) )"
+Function printtypeidx(i:int)seq.word print.decode.to:encoding.wtype(i + 1) + "(idx:$(%.i))"
 
 Function typeindex(paras:seq.wtype, rt:wtype)int
 addorder.wtype([tobyte.0x60] + LEBu.length.paras
@@ -210,7 +208,6 @@ Function assignencoding(a:wfunc)int nextencoding.a
 
 Function ?(a:wfunc, b:wfunc)ordering funcidx.a ? funcidx.b
 
-
 Function lookup2(s:seq.wfunc, a:wfunc)seq.wfunc
 let t = 
  for found = empty:seq.wfunc, e ∈ s while isempty.found do if a = e then found + e else found /for(found)
@@ -262,8 +259,7 @@ do if funcidx.p = arg then
  assert not.isempty.xx report"KLJ" + printtypeidx.typeidx.p
  xx
 else acc
-/for(
-acc)
+/for(acc)
 
 Function startencodings0 int length.encodingdata:efuncidx + length.encodingdata:wfunc
 
@@ -302,11 +298,7 @@ for acc2 = empty:seq.int, p ∈ encodingdata:word5 do
  let k = 
   for acc = empty:seq.symbol, c ∈ decodeword.toword.p do acc + Lit.toint.c /for(Constant2(acc + Sequence(seqof.typeint, length.acc)))
  acc2
- + getoffset.Constant2.[Lit.hash.toword.p
- , k
- , Lit.hash.decodeword.toword.p
- , Record.[typeint, typeint, typeint]
- ]
+ + getoffset.Constant2.[Lit.hash.toword.p, k, Lit.hash.decodeword.toword.p, Record.[typeint, typeint, typeint]]
 /for(acc2)
 
 ________________
@@ -319,8 +311,7 @@ Function =(a:frefindex, b:frefindex)boolean toint.a = toint.b
 
 Function assignencoding(a:frefindex)int nextencoding.a
 
-Function elementdata seq.int
-for acc = empty:seq.int, p ∈ encodingdata:frefindex do acc + toint.p /for(acc)
+Function elementdata seq.int for acc = empty:seq.int, p ∈ encodingdata:frefindex do acc + toint.p /for(acc)
 
 Export type:frefindex
 
@@ -340,28 +331,27 @@ Function startencodings int
 + length.encodingdata:datax
 + length.encodingdata:frefindex
 
-type datax is globalname:word, elements:seq.int 
+type datax is globalname:word, elements:seq.int
 
 Export type:datax
 
-Function hash(a:datax)int if globalname.a /nin "." then hash.globalname.a else hash.elements.a
+Function hash(a:datax)int
+if globalname.a ∉ "."then hash.globalname.a else hash.elements.a
 
-Function =(a:datax, b:datax)boolean  if globalname.a /nin "." /or globalname.b  /nin "." then globalname.a = globalname.b 
- else elements.a=elements.b
+Function =(a:datax, b:datax)boolean
+if globalname.a ∉ "." ∨ globalname.b ∉ "."then globalname.a = globalname.b
+else elements.a = elements.b
 
 Function assignencoding(a:datax)int nextencoding.a
 
 Function dataseg seq.int
 for acc = constantseq(globalspace / 8, 0), p ∈ encodingdata:datax do acc + elements.p /for(acc)
 
-Function allocateconstspace(globalname:word, elements:seq.int)int 
-let d=encode.datax(globalname, elements)
-for offset=globalspace, p /in encoding:seq.encodingpair.datax while code.p /ne d do
-         offset+  8 * length.elements.data.p
-           /for(offset)
+Function allocateconstspace(globalname:word, elements:seq.int)int
+let d = encode.datax(globalname, elements)
+for offset = globalspace, p ∈ encoding:seq.encodingpair.datax while code.p ≠ d do offset + 8 * length.elements.data.p /for(offset)
 
-Function constintseq(elements:seq.int)int
-allocateconstspace("."_1, [0, length.elements] + elements)
+Function constintseq(elements:seq.int)int allocateconstspace("."_1, [0, length.elements] + elements)
 
 Function constbyteseq(a:seq.byte)int
 let elements = 
@@ -371,7 +361,6 @@ allocateconstspace("."_1, elements)
 Function constantcode(s:symbol)seq.symbol
 let code1 = fullconstantcode.s
 if isSequence.last.code1 then[Lit.0, Lit.nopara.last.code1] + code1 >> 1 else code1 >> 1
-
 
 Function getoffset(const:symbol)int
 let elements = 

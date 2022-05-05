@@ -18,7 +18,7 @@ use standard
 
 use symbol
 
-use symbol2
+/use symbol2
 
 use words
 
@@ -63,6 +63,8 @@ use otherseq.char
 use set.word3
 
 Export loadedLibs seq.liblib
+
+Export externnames(seq.word) set.symdef
 
 type word3 is chars:seq.char,code:encoding.seq.char ,slot:int
 

@@ -14,7 +14,7 @@ use otherseq.int
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
 
-Function breaklines(a:seq.byte) seq.UTF8 breaklines(a, 2, 1, empty:seq.UTF8)
+Function breaklines(a:seq.byte)seq.UTF8 breaklines(a, 2, 1, empty:seq.UTF8)
 
 function breaklines(a:seq.byte, i:int, last:int, result:seq.UTF8)seq.UTF8
 if i > length.a then result
@@ -35,7 +35,7 @@ do acc + UTF8.@e /for(acc)
 
 handle files of paragraphs
 
-Function breakparagraph(a:seq.byte) seq.seq.word  breakparagraph(UTF8.a, 1, 1, empty:seq.seq.word)
+Function breakparagraph(a:seq.byte)seq.seq.word breakparagraph(UTF8.a, 1, 1, empty:seq.seq.word)
 
 /Function breakparagraph(a:UTF8)seq.seq.word breakparagraph(a, 1, 1, empty:seq.seq.word)
 
@@ -94,6 +94,4 @@ for acc = "", last = 1, i = 1, pending = empty:seq.char, ch ∈ chars + spacecha
    else if ch = char1."." ∧ i + 1 ≤ length.chars ∧ chars_(i + 1) = spacechar then
     next(newacc + encodeword.[char1.".", spacechar], i + 1, i + 1, empty:seq.char)
    else next(newacc + class, i + 1, i + 1, empty:seq.char)
-/for(acc)
-
-
+/for(acc) 

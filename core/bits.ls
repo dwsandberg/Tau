@@ -2,8 +2,6 @@ Module bits
 
 use standard
 
-use bitcast.byte
-
 Export type:byte
 
 Export type:bits
@@ -77,4 +75,4 @@ Function tobits(a:byte)bits tobits.toint.a
 Builtin toint(b:byte)int{use builtin rather than rep.b so abyteseq @+(empty:seq.int, toint.@e)does not become an noop 
 since a bytseq may contain packed sequences of bytes}
 
-Function tobyte(a:int)byte bitcast:byte(a) 
+Function tobyte(a:int)byte byte.a 

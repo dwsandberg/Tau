@@ -44,7 +44,7 @@ vector.toseqbyte(emptyUTF8 + decodeword.modname) + vector.toseqbyte(emptyUTF8 + 
 + LEBu.idx
 
 Function vector(a:seq.byte)seq.byte
-assert length.a < 2^32 report"vector problem" + stacktrace2
+assert length.a < 2^32 report"vector problem" + stacktrace
 LEBu.length.a + a
 
 Function vector(a:seq.seq.byte)seq.byte
@@ -619,4 +619,4 @@ Function i64extend8s byte tobyte.0xC2
 
 Function i64extend16s byte tobyte.0xC3
 
-Function i64extend32s byte tobyte.0xC4
+Function i64extend32s byte tobyte.0xC4 

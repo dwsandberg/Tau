@@ -1,7 +1,5 @@
 module postbind
 
-use libraryModule
-
 use localmap2
 
 use mytype
@@ -45,7 +43,6 @@ use otherseq.word
 use set.word
 
 use seq.seq.mytype
-
 
 use seq.seq.symbol
 
@@ -112,7 +109,7 @@ if length.aa = last then
  postbindresult(typedict1, result, inline)
 else
  for accZ = postbindresult(typedict1, result, inline), symz ∈ subseq(aa, last + 1, length.aa)do
-   if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then accZ
+  if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then accZ
   else
    let newdict2 = addtype(typedict.accZ, resulttype.symz)
    let lr1 = getCode(source, symz)

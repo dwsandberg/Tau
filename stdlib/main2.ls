@@ -5,41 +5,27 @@ use UTF8
 
 use bits
 
-use codegennew
-
 use compilerfront
 
 use format
 
 use inputoutput
 
-use libraryModule
-
 use standard
 
-use symbol
+use symbol2
 
 use textio
 
-use timestamp
-
-use typedict
-
 use words
-
-use bitcast:UTF8
 
 use seq.byte
 
 use otherseq.char
 
-use process.compileinfo
-
 use process.int
 
-use bitcast:int
 
-use seq.liblib
 
 use compilerfrontT.libllvm
 
@@ -82,6 +68,9 @@ use set.seq.word
 use process.seq.seq.word
 
 use seq.seq.seq.word
+
+
+Function libname(info:midpoint)word extractValue(first.src.info, "Library")_1
 
 function makeentry(input:seq.byte) seq.byte
 let entryheader="use standard /p use file /p use fileIO /p use seq.file
@@ -139,22 +128,14 @@ Function libsrc(input:seq.file,uses:seq.word,exports:seq.word ,o:seq.word) seq.f
    [file(filename(Library+".libsrc"),firstpart+acc)])
    
 
-Function subcompilelib(info:seq.seq.word)seq.bits
+Function subcompilelib(allsrc:seq.seq.word)seq.bits
 {OPTION PROFILE}
-let p = compileinfo:libllvm("all", info)
-assert not.aborted.p report message.p
-let cinfo = result.p
-codegen(last.extractValue(first.info, "Library")
-, extractValue(first.src.cinfo, "uses")
-, cinfo
-)
+let uses=extractValue(first.allsrc, "uses")
+let dependentlibs = dependentinfo:libllvm( uses )
+let m=compilerfront2:libllvm("all",allsrc,dependentlibs)
+compilerback2(prg.m, libmods.m, typedict.m, [first.src.m],uses)
 
-Function compileinfo:libllvm(option:seq.word, info:seq.seq.word)process.compileinfo
-{OPTION INLINE}
-let dependentlibs = dependentinfo:libllvm(extractValue(first.info, "uses"))
-process.compilerfront4:libllvm(option, info, dependentlibs) 
-
-
+use libdesc
    
   
 use file
@@ -171,37 +152,41 @@ use seq.file
  else
  file(  filename(libname + ".bc"),result.p )] 
 
+Function astext(info:midpoint)seq.seq.word
+for acc = empty:seq.seq.word, p ∈ toseq.prg.info do acc + [print.sym.p + print.code.p]/for(acc)
 
 
-Function astext(info:compileinfo)seq.seq.word
-for acc = empty:seq.seq.word, p ∈ prg.info do acc + [print.sym.p + print.code.p]/for(acc)
 
-Function compilerfront(option:seq.word, info:seq.seq.word)compileinfo
-let p = compileinfo:libllvm(option, info)
-assert not.aborted.p report message.p
-result.p
+ 
+Function compilerFront:libllvm(option:seq.word, allsrc:seq.seq.word)midpoint
+let libinfo=dependentinfo:libllvm(extractValue(first.allsrc, "uses"))
+let m=compilerfront2:libllvm(option,allsrc,libinfo)
+m
 
-Function compilerfront:libllvm(option:seq.word, allsrc:seq.seq.word)compileinfo
-compilerfront4:libllvm(option, allsrc, dependentinfo:libllvm(extractValue(first.allsrc, "uses")))
 
-function funcaddress:libllvm(sym:symbol)int funcaddress.sym
 
-function buildargcode:libllvm(sym:symbol, typedict:typedict)int
-{needed because the call interface implementation for reals is different than other types is some implementations}
-for acc = 1, typ ∈ paratypes.sym + resulttype.sym do acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0 /for(acc)
+Function modsE(ci:midpoint) seq.modExports libmods.ci
+
+Export prg(ci:midpoint) set.symdef
+ 
+
+function callfunc:libllvm(ctsym:symbol,typedict:typedict,stk:seq.int) seq.int
+callfunc(ctsym,typedict,stk)  
+
+use compileTimeT.libllvm
 
 _______________
 
-Function addlibrarywords(l:liblib)int
-let discard = addencodingpairs.words.l
-1
 
 Export type:libllvm
 
 type libllvm is a:int
 
-function dependentinfo:libllvm(dependentlibs:seq.word)loadedresult
-for org = empty:loadedresult, ll ∈ loadedLibs do
- let libname = (libname.ll)_1
- if libname ∈ dependentlibs then toloadedresult(org, libinfo.ll, libname)else org
-/for(org) 
+use seq.modExports
+
+
+function dependentinfo:libllvm(dependentlibs:seq.word)midpoint
+   dependentinfo(dependentlibs)
+
+
+
