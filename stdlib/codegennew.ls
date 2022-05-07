@@ -8,6 +8,8 @@ use codetemplates2
 
 use internalbc
 
+use liblib
+
 use libraryModule
 
 use llvm
@@ -19,6 +21,8 @@ use persistant
 use standard
 
 use symbol
+
+use symbol2
 
 use textio
 
@@ -56,6 +60,8 @@ use set.symdef
 
 use seq.seq.bits
 
+use seq.seq.char
+
 use seq.seq.int
 
 use otherseq.seq.symbol
@@ -64,24 +70,35 @@ use set.seq.symbol
 
 use seq.seq.symbolref
 
-
-Function codegen(thename:word, dependentlibs:seq.word, info:compileinfo
-,profilearcs:set.seq.symbol
+Function codegen(thename:word
+, typedict:typedict
+, libmods:seq.libraryModule
+, dependentlibs:midpoint
+, dependentwords:seq.seq.char
+, symbolrefD:seq.symbol
+, profilearcs:set.seq.symbol
+, profiledata:seq.int
+, prgcode:seq.seq.symbolref
+, libcode:seq.seq.symbolref
+, libsymbolrefdecode:seq.symbol
+, addresssymbolrefdecode:seq.symbol
 )seq.bits
-let isbase = isempty.dependentlibs
+{OPTION PROFILE}
+let isbase = isempty.prg.dependentlibs
+let libextnames = 
+ for acc = empty:seq.symdef, sd ∈ toseq.prg.dependentlibs do if paragraphno.sd = 0 then acc else acc + sd /for(asset.acc)
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(symbolrefdecode.info,typedict.info,prgcode.info,dependentlibs, thename)
+let stepone = stepone(symbolrefD, typedict, prgcode, libextnames, thename)
 let match5map = match5map.stepone
 let defines = defines.stepone
-let symboladdress = symboladdress(info, extnames.stepone, thename, defines)
+let symboladdress = symboladdress(addresssymbolrefdecode, typedict, extnames.stepone, thename, defines)
 let discard3 = modulerecord("spacecount", [toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
 let geninfo = geninfo(match5map, profilearcs, extnames.stepone, false, thename)
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(geninfo, @e)/for(acc)
-let xxx = 
- for acc = empty:seq.slot, x ∈ profiledata.info do acc + C64.x /for(AGGREGATE.acc)
+let xxx = for acc = empty:seq.slot, x ∈ profiledata do acc + C64.x /for(AGGREGATE.acc)
 let f2 = 
  modulerecord([merge("init_" + thename)]
  , [toint.FUNCTIONDEC, typ.function.[VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -93,13 +110,14 @@ let f3 =
  )
 let liblib = 
  slot.addliblib([thename]
- , subseq(symbolrefdecode.info, 1, newmaplength.info)
- , modsM.info
- , libcode.info
- , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
- , dependentlibs
+ , dependentwords
  , ptrtoint(ptr.entryfunctyp, symboltableentry("entrypoint" + thename, ptr.entryfunctyp))
+ , morefields(toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
+ , libsymbolrefdecode
+ , libmods
+ , libcode
  , symboladdress
+ )
  )
 let libnametype = array(length.decodeword.thename + 1, i8)
 let libslot = 
@@ -122,22 +140,13 @@ let bodytxts =
  , function.[i64, ptr.i8, ptr.i64, i64]
  , symboltableentry("initlib5", function.[i64, ptr.i8, ptr.i64, i64])
  , CGEPi8(libslot, 0)
- , [liblib
- , if isbase then addlibwords(extnames.stepone, typedict.info)else C64.0
- ]
+ , [liblib, if isbase then addlibwords(extnames.stepone, typedict)else C64.0]
  )
  + RETURN
  ]
- +   [BLOCKCOUNT(2, 1)+
-   CALL(r.3
- , 0
- , 32768
- ,entryfunctyp 
- ,entrypoint.stepone
- ,r.1
- ,r.2
- )
- +RET(r.4,r.3)]
+ + [BLOCKCOUNT(2, 1) + CALL(r.3, 0, 32768, entryfunctyp, entrypoint.stepone, r.1, r.2)
+ + RET(r.4, r.3)
+ ]
 let data = constdata
 let patchlist = 
  [[toint.GLOBALVAR, typ.conststype, 2, toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0]
@@ -149,19 +158,14 @@ let adjust =
  + subseq(trec, 4, length.trec)
 llvm(patchlist, bodytxts, adjust)
 
-function symboladdress(info:compileinfo, extnames:set.symdef, libname:word, defines:seq.symdef)int
-let addresslength = addresslength.info
-{assert libname /nin"tests"report for txt="", i /in arithseq(addresslength, 1, 1)do txt+" /br"+toword.i+print.info 
-_symbolref.i /for(txt)}
+function symboladdress(addressmap:seq.symbol, typedict:typedict, extnames:set.symdef, libname:word, defines:seq.symdef)int
 let known = 
  for acc = empty:set.symbol, d ∈ toseq.extnames + defines do acc + sym.d /for(acc)
-let t = asset.subseq(symbolrefdecode.info, 1, addresslength) \ known
+let t = asset.addressmap \ known
 assert isempty.t report"JKL" + print.toseq.t
-for slots = [toint.C64.0, toint.C64.addresslength], i ∈ arithseq(addresslength, 1, 1)do
- let f1 = info_(symbolref.i)
- let functyp = ptr.tollvmtype(typedict.info, f1)
- let frefslot = 
-  ptrtoint(functyp, symboltableentry([mangledname(extnames, f1, symbolref.i, libname)], functyp))
+for slots = [toint.C64.0, toint.C64.length.addressmap], f1 ∈ addressmap do
+ let functyp = ptr.tollvmtype(typedict, f1)
+ let frefslot = ptrtoint(functyp, symboltableentry([mangledname(extnames, f1, libname)], functyp))
  slots + toint.frefslot
 /for(addobject.slots)
 
@@ -226,8 +230,7 @@ if action = "CALL"_1 then
   , push(pop(args.l, noargs), -(regno.l + 1))
   , blocks.l
   )
- else
-  profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m, symbolref.0, libname.geninfo))
+ else profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m, libname.geninfo))
 else
  {if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq.
 int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs), -(

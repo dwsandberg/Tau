@@ -14,8 +14,6 @@ use seq.byte
 
 use taublockseq.byte
 
-use bitcast.dummyrec2
-
 use seq.index
 
 use bitcast.int
@@ -47,6 +45,8 @@ use seq.word
 use bitcast.seq.bits
 
 use bitcast.seq.byte
+
+use seq.seq.byte
 
 use encoding.seq.char
 
@@ -181,7 +181,7 @@ Export type:encodingpair.typename
 
 -----------
 
-Function outofbounds seq.word"out of bounds" +stacktrace
+Function outofbounds seq.word"out of bounds" + stacktrace
 
 function packedbytes(a:seq.byte)seq.byte
 let b = packedbyteseqasbits.a
@@ -205,29 +205,16 @@ else
    set(acc, bitcast:int(toptr.packedbytes.subseq(s, @e, @e + blksz - 1)))
   /for(acc)
  bitcast:seq.byte(blkseq)
- 
- Function    toseqseqbyte(t:bitstream)  seq.seq.byte 
-      let blksz=8128
-      let b=bits.t
-       let noblks = (length.b + blksz - 1) / blksz
-      let  bytestowrite= (length.t+7) / 8
-        for acc=empty:seq.seq.byte, byteswritten /in arithseq(noblks,blksz * 8,0) do
-          let new=  packed(subseq(b,byteswritten / 8 +1 , byteswritten / 8 +blksz  )+bits.0)
-         { assert false report for txt="",i /in new do txt+print.i /for(txt)}
-          let z=set(set(toptr.new, 1), min(bytestowrite-byteswritten ,blksz * 8))
-          let x=bitcast:seq.byte( toptr.new )
-         acc+x
-        /for(acc)
-        
-use seq.seq.byte
 
-___________
-
-Function createthread(adcret:int, adc:int, funcaddress:int, args:seq.int, argcode:int)process.int
-createthread(adcret, adc, funcaddress, c.bitcast:dummyrec2(toptr.packed.args), argcode)
-
-type dummyparameterrecord is a:int, b:int
-
-type dummyrec2 is a:int, b:int, c:dummyparameterrecord
-
-builtin createthread(int, int, int, dummyparameterrecord, int)process.int 
+Function toseqseqbyte(t:bitstream)seq.seq.byte
+let blksz = 8128
+let b = bits.t
+let noblks = (length.b + blksz - 1) / blksz
+let bytestowrite = (length.t + 7) / 8
+for acc = empty:seq.seq.byte, byteswritten ∈ arithseq(noblks, blksz * 8, 0)do
+ let new = packed(subseq(b, byteswritten / 8 + 1, byteswritten / 8 + blksz) + bits.0)
+ {assert false report for txt="", i /in new do txt+print.i /for(txt)}
+ let z = set(set(toptr.new, 1), min(bytestowrite - byteswritten, blksz * 8))
+ let x = bitcast:seq.byte(toptr.new)
+ acc + x
+/for(acc) 

@@ -2,6 +2,10 @@ Module libdesc
 
 use bits
 
+use codegennew
+
+use inputoutput
+
 use libraryModule
 
 use standard
@@ -56,17 +60,24 @@ use seq.seq.symbolref
 
 use seq.seq.word
 
-
 function print(l:seq.mytype)seq.word
 for acc = "(", t ∈ l do acc + print.t /for(acc + ")")
 
 Export ?(a:symbolref, b:symbolref)ordering
 
+Export callfunc(ctsym:symbol, typedict:typedict, stk:seq.int)seq.int
 
-Export type:compileinfo
+Export dependentinfo(dependentlibs:seq.word)midpoint
 
-Function compilerback2(prg10:set.symdef, oldmods:seq.modExports, typedict:typedict, src:seq.seq.word,uses:seq.word)seq.bits
-{/OPTION PROFILE}
+Function compilerback2(prg10a:set.symdef
+, oldmods:seq.modExports
+, typedict:typedict
+, src:seq.seq.word
+, uses:seq.word
+, dependentlibs:midpoint
+)seq.bits
+{OPTION PROFILE}
+let prg10 = changestacktrace.prg10a
 let libname = extractValue(first.src, "Library")_1
 let discardresult = 
  for acc = 0, sd ∈ toseq.prg10 do
@@ -87,21 +98,17 @@ let newmods =
  for acc = empty:seq.libraryModule, @e ∈ oldmods do
   for newexports = empty:seq.symbolref, sym ∈ exports.@e do newexports + symbolrefnew.sym /for(acc + libraryModule(modname.@e, newexports, types.@e))
  /for(acc)
-{assert false report"LLL"+for acc="", a /in symbolrefdecodenew do if isabstract.module.a then acc else let options=
-getoption.getCode(prg10, a)if options /in["INLINE", "INLINE VERYSIMPLE"]/or module.a=internalmod /and isempty 
-.options then acc else acc+options+print.a+EOL /for(acc)}
-let code2 = libcode(prg10, oldmods, symbolrefdecode)
+let code2 = libcode(prg10a, oldmods, symbolrefdecode)
 let gensym = gencode(convert.oldmods, prg10, symbolrefdecode)
 let profilearcs = 
- for acc = empty:set.seq.symbol, sd ∈ toseq.prg10 do
+ for acc = empty:seq.symbolref, sd ∈ toseq.prg10 do
   if isabstract.module.sym.sd ∨ symbolref.sym.sd ∉ gensym then acc
   else
    let options = getoption.code.sd
    if"PROFILE"_1 ∈ options then
     for txt = acc, sym ∈ toseq.asset.code.sd do
      if isconstantorspecial.sym ∨ isInternal.sym ∨ sym = sym.sd then txt
-     else let discard=[symbolrefnew.sym.sd, symbolrefnew.sym]
-       txt + [ sym.sd,  sym]
+     else txt + [symbolrefnew.sym.sd, symbolrefnew.sym]
     /for(txt)
    else if"COMPILETIME"_1 ∈ options then
     let discard = symbolrefnew.sym.sd
@@ -117,23 +124,58 @@ for code3 = empty:seq.seq.symbolref, sd ∈ toseq.prg10 do
   for acc = [symbolrefnew.sym.sd], sym ∈ code.sd do
    if isFref.sym then acc + symbolref.-toint.symbolrefnew.basesym.sym else acc + symbolrefnew.sym
   /for(code3 + acc)
-/for(let cinfo=changestacktrace.compileinfo(symbolrefdecodenew
-, newmods
-, [[symbolref.0, symbolref.length.newmap2, symbolref.length.code2, symbolref.addresses] 
-]
-+ code2
-+ code3
-, src
-, typedict
-)
+/for(let finaldecode = symbolrefdecodenew
+let traceimpsym = symbol(moduleref."inputoutput", "stacktraceimp", seqof.typeword)
+let tracesym = symbol(internalmod, "stacktrace", seqof.typeword)
+let impidx = symbolref.findindex(traceimpsym, finaldecode)
+let traceidx = symbolref.findindex(tracesym, finaldecode)
+let parcs2 = first.changestacktrace([profilearcs], traceidx, impidx)
 codegen(libname
-, uses
-, cinfo
-,profilearcs
+, typedict
+, newmods
+, dependentlibs
+, dependentwords.uses
+, finaldecode
+, profilearcs(finaldecode, parcs2)
+, profiledata.parcs2
+, changestacktrace(code3, traceidx, impidx)
+, changestacktrace(code2, traceidx, impidx)
+, subseq(finaldecode, 1, length.newmap2)
+, subseq(finaldecode, 1, addresses)
 ))
 
-use codegennew
+Function profiledata(profilearcs:seq.symbolref)seq.int
+for acc = [1, length.profilearcs / 2], first = true, r ∈ profilearcs do
+ if first then next(acc + toint.r, false)else next(acc + toint.r + [0, 0, 0, 0], true)
+/for(acc)
 
+Function profilearcs(decode:seq.symbol, profilearcs:seq.symbolref)set.seq.symbol
+for acc = empty:set.seq.symbol, first = true, last = Lit.0, r ∈ profilearcs do
+ let sym = decode_(toint.r)
+ if first then next(acc, false, sym)else next(acc + [last, sym], true, sym)
+/for(acc)
+
+function changestacktrace(code:seq.seq.symbolref, traceidx:symbolref, impidx:symbolref)seq.seq.symbolref
+for acc = empty:seq.seq.symbolref, def ∈ code do
+ let b = break(traceidx, def << 2)
+ acc
+ + if length.b = 1 then def
+ else for acc1 = subseq(def, 1, 2), p ∈ b do acc1 + p + impidx /for(acc1 >> 1)
+/for(acc)
+
+Function changestacktrace(prg:set.symdef)set.symdef
+let traceimpsym = symbol(moduleref."inputoutput", "stacktraceimp", seqof.typeword)
+let tracesym = symbol(internalmod, "stacktrace", seqof.typeword)
+for newprg = empty:seq.symdef, sd ∈ toseq.prg do
+ let t = replace(code.sd, tracesym, traceimpsym)
+ newprg + if isempty.t then sd else symdef(sym.sd, t, paragraphno.sd)
+/for(asset.newprg)
+
+function replace(s:seq.symbol, old:symbol, new:symbol)seq.symbol
+for acc = empty:seq.symbol, changed = false, sym ∈ s do
+ if isFref.sym ∧ basesym.sym = old then next(acc + Fref.new, true)
+ else if sym = old then next(acc + new, true)else next(acc + sym, false)
+/for(if changed then acc else empty:seq.symbol /if)
 
 function gencode(mods:seq.libraryModule, prg:set.symdef, refdecode:seq.symbol)set.symbolref
 {/OPTION PROFILE}
@@ -152,8 +194,7 @@ let newtoprocess = asset.acc \ newsymlist
 if isempty.newtoprocess then newsymlist else close(prg, newtoprocess, newsymlist, symbolrefdecode)/if)
 
 function libcode(prg:set.symdef, mods:seq.modExports, refdecode:seq.symbol)seq.seq.symbolref
-let symstoexport2 = 
- for acc = empty:seq.symbol, m ∈ mods do acc + exports.m /for(asset.acc)
+let symstoexport2 = for acc = empty:seq.symbol, m ∈ mods do acc + exports.m /for(asset.acc)
 for acc = empty:seq.seq.symbolref, sym ∈ toseq.symstoexport2 do
  let libsymcode = 
   if isabstract.module.sym then getCode(prg, sym)

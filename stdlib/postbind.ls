@@ -112,9 +112,9 @@ else
   if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then accZ
   else
    let newdict2 = addtype(typedict.accZ, resulttype.symz)
-   let lr1 = getCode(source, symz)
+   let b = lookup(source, symdef(symz, empty:seq.symbol))
    let sd = 
-    if not.isempty.lr1 ∨ "COMPILED"_1 ∈ getoption.lr1 then symdef(symz, lr1)
+    if not.isempty.b then b_1
     else if istype.symz then symdef(symz, deepcopybody(resulttype.symz, newdict2))
     else if not.isunbound.symz then instantiateTemplate(symz, templates)
     else
@@ -123,7 +123,8 @@ else
      else
       assert cardinality.k2 = 1 report"unbound problem" + print.symz
       let sym2 = k2_1
-      if issimple.module.sym2 ∨ "COMPILED"_1 ∈ getoption.getCode(source, sym2)then
+      let b2 = lookup(source, symdef(sym2, empty:seq.symbol))
+      if not.isempty.b2 then
        for paras = empty:seq.symbol, i ∈ arithseq(nopara.sym2, 1, 1)do paras + Local.i /for(symdef(sym2, paras + sym2))
       else instantiateTemplate(sym2, templates)
    let newdict3 = addtypes(newdict2, asset(code.sd + sym.sd))

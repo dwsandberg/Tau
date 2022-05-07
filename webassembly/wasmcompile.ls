@@ -362,7 +362,7 @@ do
  else if wordname.sym = "allocatespace"_1 then
   {assert false report"here2"}
   next(typestk, blkstk, curblk + Wcall.allocatesym + i64extendi32u, localtypes)
- else if wordname.sym = "callidx"_1 ∧ inmodule(sym, "internal")then
+ else if wordname.sym = "callidx"_1 ∧ isInternal.sym then
   let l1 = addlocal(localtypes, "tmp1"_1, i64)
   let tidx = getlocalinfo(l1, "tmp1"_1)
   let l2 = addlocal(l1, "i64tmp"_1, i64)

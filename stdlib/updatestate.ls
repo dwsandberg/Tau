@@ -56,7 +56,7 @@ for acc = "", a ∈ breakparagraph.data.first.input do
 /for([file("try2.txt", acc)])
 
 Function updatestate(input:seq.file, roots:seq.word, o:seq.word)seq.file
-let allfile=for acc=empty:seq.seq.word, f /in input do  acc+breakparagraph.data.f /for(acc)
+let allfile = for acc = empty:seq.seq.word, f ∈ input do acc + breakparagraph.data.f /for(acc)
 for acc = empty:seq.arc.filename
 , defs2 = empty:set.cmdpara
 , cmds = ""

@@ -22,6 +22,8 @@ use otherseq.symbol
 
 use seq.symbol
 
+use encoding.seq.char
+
 type ggg is code:seq.symbol, stk:stack.int
 
 function countnodes2(s:stack.int)int if top.s = 2 then 1 else 1 + countnodes2.pop.s
@@ -56,8 +58,6 @@ else
  ghj(newcode, pop.stk, label + 1, replace + 1)
 
 type casenode is key:symbol, nodeno:int, brt:int
-
-use encoding.seq.char
 
 function keyvalue(n:casenode)int
 let s = key.n
@@ -170,20 +170,10 @@ else
     /for(l2)
   /for(l)
  {nodes_node.first.cases}
- {assert true
- report"cases" + for l = EOL, c ∈ cases do l + print.nodeno.c /for(l)
- + print.newcode
- + EOL
- + {for l=EOL, c=newnodes do l+print.newcode_abs.c end(l)+}EOL
- + for l = "dead" + EOL, c ∈ newunreached do l + print.c /for(l)
- + EOL
- + for l = "deadin" + EOL, c ∈ dead do l + print.c /for(l)
- + EOL
- + for l = "olddead" + EOL, c ∈ cases do l + print.nodeno.c /for(l)
- + EOL
- + print.nonewnodes
- + EOL
- + print.removedead(newcode, newnodes, newunreached)}
+ {assert true report"cases"+for l=EOL, c ∈ cases do l+print.nodeno.c /for(l)+print.newcode+EOL+{for l=EOL, c=newnodes 
+do l+print.newcode_abs.c end(l)+}EOL+for l="dead"+EOL, c ∈ newunreached do l+print.c /for(l)+EOL+for l="deadin"
++EOL, c ∈ dead do l+print.c /for(l)+EOL+for l="olddead"+EOL, c ∈ cases do l+print.nodeno.c /for(l)+EOL+print.nonewnodes 
++EOL+print.removedead(newcode, newnodes, newunreached)}
  removedead(newcode, newnodes, newunreached)/if)
 
 function unreached(code:seq.symbol, nodes:seq.int, nextvar:int, reorgwhen:int)seq.symbol
@@ -213,16 +203,9 @@ do
    else if c = 1 then multpred + t
    else if c = 2 then multpred + f else multpred + t + f
   next(unreached, newmultpred, newcases, newtargets, count + 1)
-/for({assert true
-report"casenodes" + for l = "", c ∈ cases do l + print.c /for(l)
-+ "unreached"
-+ for l = "", c ∈ unreached do l + print.c /for(l)
-+ "targets"
-+ for l = "", c ∈ toseq.targets do l + print.c /for(l)
-+ "multpred"
-+ for l = "", c ∈ multpred do l + print.c /for(l)
-+ EOL
-+ print.code}
+/for({assert true report"casenodes"+for l="", c ∈ cases do l+print.c /for(l)+"unreached"+for l="", c ∈ unreached do l+print 
+.c /for(l)+"targets"+for l="", c ∈ toseq.targets do l+print.c /for(l)+"multpred"+for l="", c ∈ multpred do l+print.
+c /for(l)+EOL+print.code}
 if length.nodes - 3 = length.unreached ∧ isstart.code_(-first.nodes)then
  {just two active nodes which must be a branch follow by an exit.so remove block}
  let blkstart = -first.nodes
@@ -339,4 +322,4 @@ for acc = code, blockcount = length.nodestoadjust, i ∈ nodestoadjust do
  else next(acc, blockcount - 1)
 /for(acc)
 
-function countnodes(s:stack.int)int if top.s < 0 then 1 else 1 + countnodes.pop.s
+function countnodes(s:stack.int)int if top.s < 0 then 1 else 1 + countnodes.pop.s 

@@ -1,9 +1,4 @@
-
-
-
 Module compilerfront
-
-use symbol2
 
 use mytype
 
@@ -17,11 +12,17 @@ use standard
 
 use symbol
 
+use symbol2
+
 use typedict
+
+use seq.modExports
 
 use seq.modref
 
 use set.modref
+
+use otherseq.mytype
 
 use seq.mytype
 
@@ -49,6 +50,8 @@ use set.word
 
 use seq.seq.mytype
 
+use set.seq.mytype
+
 use seq.set.symdef
 
 use seq.seq.word
@@ -56,7 +59,6 @@ use seq.seq.word
 Export type:typedict
 
 -----
-
 
 Export exports(modExports)seq.symbol
 
@@ -85,12 +87,6 @@ passsymbols(modname.a
 /for(types)
 , empty:seq.symtextpair
 )
-
-use set.seq.mytype
-
-use otherseq.mytype
-
-use passsymbol
 
 Function compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
 let lib = first.extractValue(first.allsrc, "Library library")
@@ -186,8 +182,6 @@ Export src(midpoint)seq.seq.word
 
 Export libmods(m:midpoint)seq.modExports
 
-use seq.modExports
-
 Function addoption(p:set.symdef, s:symbol, option:seq.word)set.symdef
 {must maintain library of symbol in p}
 let f = lookup(p, symdef(s, empty:seq.symbol))
@@ -225,43 +219,35 @@ for acc = empty:seq.modExports, m2 ∈ t5 do
     else acc5
    /for(acc5)
   acc + modExports(module.m2, exps, types)
-/for(acc) 
+/for(acc)
 
-
-function uses(toprocess:seq.symbol,org:set.symdef, new:set.symdef) set.symdef
-for    newsym=empty:seq.symbol,newsd=new,   sym /in toprocess do
-let t=lookup(new,symdef(sym,empty:seq.symbol,0))
- if not.isempty.t then   next(newsym,newsd)
+function uses(toprocess:seq.symbol, org:set.symdef, new:set.symdef)set.symdef
+for newsym = empty:seq.symbol, newsd = new, sym ∈ toprocess do
+ let t = lookup(new, symdef(sym, empty:seq.symbol, 0))
+ if not.isempty.t then next(newsym, newsd)
  else
-  let t2=lookup(org,symdef(sym,empty:seq.symbol,0))
-  if isempty.t2 then 
-      next(newsym,newsd+symdef(sym,empty:seq.symbol,cardinality.newsd))
-  else  
-   next( for acc=newsym, sym2 /in code.t2_1 do
-     if isspecial.sym2 then acc
-     else if isconst.sym2  then
-        if not.hasfref.sym2 then acc
-         else if isFref.sym2 then  acc+basesym.sym2 
-         else  let r=findfref(sym2,empty:set.symbol,org)
-           for acc2=acc,sym3 /in toseq.r do 
-            if isrecordconstant.sym3 then acc2 else acc2+sym3
-           /for(acc2)
-     else  acc+sym2 /for(acc), newsd+symdef(sym,code.t2_1,cardinality.newsd))
- /for( if isempty.new then newsd else uses(toseq.asset.newsym,org,newsd))
- 
-          
-          
-function      findfref(  sym:symbol, result:set.symbol,org:set.symdef) set.symbol  
-            for  new=empty:set.symbol,out=result
-            ,  e /in   code.lookup(org,symdef(sym,empty:seq.symbol,0))_1 do
-            if hasfref.e then 
-              if isFref.e then  next(new, out+basesym.e) 
-                else  next(new+e ,result)
-              else  next(new,result)
-            /for( let t=new \ out
-                for acc=result,sym3 /in toseq.t do 
-                   findfref(sym3 ,acc,org) /for(acc))
-                
-              if isempty.t then result else findfref(t,result))
- 
- 
+  let t2 = lookup(org, symdef(sym, empty:seq.symbol, 0))
+  if isempty.t2 then next(newsym, newsd + symdef(sym, empty:seq.symbol, cardinality.newsd))
+  else
+   next(for acc = newsym, sym2 ∈ code.t2_1 do
+    if isspecial.sym2 then acc
+    else if isconst.sym2 then
+     if not.hasfref.sym2 then acc
+     else if isFref.sym2 then acc + basesym.sym2
+     else
+      let r = findfref(sym2, empty:set.symbol, org)
+      for acc2 = acc, sym3 ∈ toseq.r do if isrecordconstant.sym3 then acc2 else acc2 + sym3 /for(acc2)
+    else acc + sym2
+   /for(acc)
+   , newsd + symdef(sym, code.t2_1, cardinality.newsd)
+   )
+/for(if isempty.new then newsd else uses(toseq.asset.newsym, org, newsd)/if)
+
+function findfref(sym:symbol, result:set.symbol, org:set.symdef)set.symbol
+for new = empty:set.symbol, out = result, e ∈ code.lookup(org, symdef(sym, empty:seq.symbol, 0))_1 do
+ if hasfref.e then if isFref.e then next(new, out + basesym.e)else next(new + e, result)
+ else next(new, result)
+/for(let t = new \ out
+for acc = result, sym3 ∈ toseq.t do findfref(sym3, acc, org)/for(acc))
+
+if isempty.t then result else findfref(t, result)) 

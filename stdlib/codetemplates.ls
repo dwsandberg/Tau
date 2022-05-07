@@ -113,7 +113,7 @@ Export type:symbol
 
 Function _(m:seq.match5, d:symbol)match5
 let e = findtemplate.d
-assert not.isempty.e report"LL codetemplates" + print.d  
+assert not.isempty.e report"LL codetemplates" + print.d
 e_1
 
 function =(a:match5, b:match5)boolean sym.a = sym.b

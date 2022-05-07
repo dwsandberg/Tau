@@ -39,18 +39,16 @@ Export type:llvmconst
 type llvmtypeele is toseq:seq.int
 
 type llvmtype is typ:int
-  
-Export typ(llvmtype) int 
 
-function asseq(t:llvmtype)  seq.int    toseq.decode.to:encoding.llvmtypeele(typ.t+1)
+Export typ(llvmtype)int
 
-Function returntype(func:llvmtype)llvmtype llvmtype.(asseq.func)_3 
+function asseq(t:llvmtype)seq.int toseq.decode.to:encoding.llvmtypeele(typ.t + 1)
 
-Function llvmtype(s:seq.int)llvmtype llvmtype(addorder.llvmtypeele.s - 1 )
+Function returntype(func:llvmtype)llvmtype llvmtype.(asseq.func)_3
+
+Function llvmtype(s:seq.int)llvmtype llvmtype(addorder.llvmtypeele.s - 1)
 
 function inttollvmtype(i:int)llvmtype llvmtype.i
-
-
 
 function hash(a:llvmtypeele)int hash.toseq.a
 
@@ -58,9 +56,8 @@ function assignencoding(a:llvmtypeele)int nextencoding.a
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
-
 Function print(t:llvmtype)seq.word
-let a = asseq.t  
+let a = asseq.t
 let tp = typeop.a_1
 let b = for acc = empty:seq.llvmtype, @e ∈ a do acc + inttollvmtype.@e /for(acc)
 if tp = INTEGER then[merge("i" + toword.a_2)]
@@ -153,8 +150,7 @@ let l = decode.to:encoding.llvmconst(toint.s + 1)
 if typ.l = typ.i64 then s
 else if typ.l = typ.ptr.i64 then constantrecord(i64, [toint.CCAST, toint.ptrtoint, typ.ptr.i64, toint.s])
 else
- assert subseq(toseq.l, 1, 3) = [toint.CCAST, toint.bitcast, typ.i64]
- report"asi64 problem" + %.typ.l
+ assert subseq(toseq.l, 1, 3) = [toint.CCAST, toint.bitcast, typ.i64]report"asi64 problem" + %.typ.l
  slot.(toseq.l)_4
 
 Function constvalue(i:slot)int(toseq.decode.to:encoding.llvmconst(toint.i + 1))_2
@@ -182,10 +178,8 @@ Function typ(s:slotrecord)int typ.tollvmconst.s
 Function consttype(s:slot)llvmtype
 {pretty print get prec wrong comment?}
 let l = decode.to:encoding.llvmconst(toint.s + 1)
-inttollvmtype
-  (if typ.l = -1 then({must skip name to find record}toseq.l)_(3 + (toseq.l)_1)
-else if typ.l = -3 then(toseq.l)_2 else typ.l) 
- 
+inttollvmtype.if typ.l = -1 then({must skip name to find record}toseq.l)_(3 + (toseq.l)_1)
+else if typ.l = -3 then(toseq.l)_2 else typ.l
 
 type slot is toint:int
 
