@@ -103,7 +103,7 @@ Function ?(a:symbol, b:symbol)ordering
 Function ?2(a:symbol, b:symbol)ordering
 worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1 ∧ issimplename.a ? issimplename.b
 
-function extrabits(types:seq.mytype, other:seq.word, flags:bits)bits bits.hash(types, other) << 4 ∨ flags ∧ 0x0F
+function extrabits(types:seq.mytype, other:seq.word, flags:bits)bits bits.hash(types, other) << 5 ∨ flags ∧ 0x1F
 
 Function extrabits(s:symbol)int toint.hashbits.s
 

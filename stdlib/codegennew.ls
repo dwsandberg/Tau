@@ -162,7 +162,7 @@ function symboladdress(addressmap:seq.symbol, typedict:typedict, extnames:set.sy
 let known = 
  for acc = empty:set.symbol, d ∈ toseq.extnames + defines do acc + sym.d /for(acc)
 let t = asset.addressmap \ known
-assert isempty.t report"JKL" + print.toseq.t
+assert isempty.t report"symboladdress error" + print.toseq.t
 for slots = [toint.C64.0, toint.C64.length.addressmap], f1 ∈ addressmap do
  let functyp = ptr.tollvmtype(typedict, f1)
  let frefslot = ptrtoint(functyp, symboltableentry([mangledname(extnames, f1, libname)], functyp))
@@ -183,13 +183,8 @@ function addfuncdef(geninfo:geninfo, sd:symdef)internalbc
 .hh use process.internalbc function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc}
 let m = (match5map.geninfo)_(sym.sd)
 let options = getoption.code.sd
-let codet = removeoptions.code.sd
-let code = 
- if isempty.codet then
-  for acc = empty:seq.symbol, e9 ∈ arithseq(nopara.sym.sd, 1, 1)do acc + Local.e9 /for(acc)
-  + sym.sd
- else codet
-{assert not.isempty.code.m report"xxxx"+print.i}
+let code = removeoptions.code.sd
+assert not.isempty.code report "JKLKK"+print.sym.sd
 let nopara = arg.m
 let linit = 
  Lcode2(emptyinternalbc

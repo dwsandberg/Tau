@@ -69,7 +69,50 @@ Export callfunc(ctsym:symbol, typedict:typedict, stk:seq.int)seq.int
 
 Export dependentinfo(dependentlibs:seq.word)midpoint
 
-Function compilerback2(prg10a:set.symdef
+use symbol
+
+/Function gatherfref(s:seq.symbol) set.symbol {OPTION PROFILE}
+ for acc=empty:set.symbol,  sym /in s do    
+    if hasfref.sym then 
+      if isFref.sym then acc+basesym.sym
+      else acc /cup   gatherfref(fullconstantcode.sym )  
+    else acc 
+/for(acc)
+
+
+
+function gatherfref(p:set.symdef, s:seq.symbol)set.symbol
+for code = empty:set.symbol, sym ∈ s do
+  if isFref.sym then code+basesym.sym
+  else 
+ if not.hasfref.sym then code  
+ else code  /cup  gatherfref(p, getCode(p, sym))
+/for(code)
+
+
+function bbb(prg:set.symdef,   toexport:set.symbol)seq.symbol 
+for  new=empty:seq.symbol,     sym /in toseq.toexport do 
+let code1= getCode(prg,sym)
+let code = removeoptions.code1
+let optionsx = getoption.code1
+if length.code > 14 then new
+else 
+   let z=if"VERYSIMPLE"_1 ∈ optionsx then code
+  else   
+   for acc = true, @e ∈ code do
+   acc ∧ (isconstantorspecial.@e ∨ isBuiltin.@e  ∨ @e ∈ toexport
+   ∨ isInternal.@e)
+  /for( if acc then  code else empty:seq.symbol)
+  for acc=new,   sym2 /in z   do 
+   if isFref.sym2 /or hasfref.sym2 then  acc+ toseq.gatherfref(prg,[sym2  ] )
+   else if isconst.sym2 ∨ isBuiltin.sym2  ∨ isspecial.sym2 ∨ sym2 ∈ toexport
+   ∨ isInternal.sym2  then acc
+   else  acc+sym2  
+   /for(acc)
+/for(toseq.asset.new)  
+         
+
+Function compilerback2(prg10:set.symdef
 , oldmods:seq.modExports
 , typedict:typedict
 , src:seq.seq.word
@@ -77,44 +120,43 @@ Function compilerback2(prg10a:set.symdef
 , dependentlibs:midpoint
 )seq.bits
 {OPTION PROFILE}
-let prg10 = changestacktrace.prg10a
 let libname = extractValue(first.src, "Library")_1
-let discardresult = 
- for acc = 0, sd ∈ toseq.prg10 do
-  if"COMPILETIME"_1 ∈ getoption.code.sd then
-   let discard = symbolrefnew.sym.sd
-   acc
-  else acc
- /for(0)
-let symdecode = symbolrefdecode
-let discard2 = 
- for acc = symbolref.0, @e ∈ oldmods do
-  for acc2 = symbolref.0, sym ∈ exports.@e do
-   if isabstract.module.sym ∨ library.module.sym ≠ libname then acc2 else symbolrefnew.sym
-  /for(acc2)
- /for(0)
-let addresses = length.symbolrefdecodenew
-let newmods = 
- for acc = empty:seq.libraryModule, @e ∈ oldmods do
-  for newexports = empty:seq.symbolref, sym ∈ exports.@e do newexports + symbolrefnew.sym /for(acc + libraryModule(modname.@e, newexports, types.@e))
+let maybereferenced0 = 
+ for acc = empty:seq.symbol, @e ∈ oldmods do
+  for acc2 = acc, sym ∈ exports.@e do
+   if isabstract.module.sym ∨ library.module.sym ≠ libname then acc2 else 
+     acc2+sym
+  /for(acc2 )
  /for(acc)
-let code2 = libcode(prg10a, oldmods, symbolrefdecode)
-let gensym = gencode(convert.oldmods, prg10, symbolrefdecode)
+let maybereferenced1 = 
+ for acc = maybereferenced0+bbb(prg10,   asset.maybereferenced0), sd ∈ toseq.prg10 do
+  if"COMPILETIME"_1 ∈ getoption.code.sd then
+   acc+sym.sd
+  else acc
+ /for(acc)
 let profilearcs = 
- for acc = empty:seq.symbolref, sd ∈ toseq.prg10 do
-  if isabstract.module.sym.sd ∨ symbolref.sym.sd ∉ gensym then acc
+ for acc = empty:set.seq.symbol, sd ∈ toseq.prg10 do
+  if isabstract.module.sym.sd  then acc
   else
    let options = getoption.code.sd
    if"PROFILE"_1 ∈ options then
     for txt = acc, sym ∈ toseq.asset.code.sd do
-     if isconstantorspecial.sym ∨ isInternal.sym ∨ sym = sym.sd then txt
-     else txt + [symbolrefnew.sym.sd, symbolrefnew.sym]
+     if isconstantorspecial.sym ∨ isInternal.sym ∨ sym = sym.sd /or isBuiltin.sym then txt
+     else 
+     txt + [ sym.sd,  sym]
     /for(txt)
-   else if"COMPILETIME"_1 ∈ options then
-    let discard = symbolrefnew.sym.sd
-    acc
    else acc
  /for(acc)
+ let maybereferenced2=for acc=empty:seq.symbol , a /in toseq.profilearcs do acc+a 
+ /for(maybereferenced1+acc)
+let discard22= for acc=symbolref.0,   sym /in maybereferenced2 do symbolrefnew.sym /for(acc)
+ let addresses = length.symbolrefdecodenew
+ let newmods = 
+ for acc = empty:seq.libraryModule, @e ∈ oldmods do
+  for newexports = empty:seq.symbolref, sym ∈ exports.@e do newexports + symbolrefnew.sym /for(acc + libraryModule(modname.@e, newexports, types.@e))
+ /for(acc)
+let code2 = libcode(prg10, oldmods, symbolrefdecode)
+let gensym = gencode(convert.oldmods, prg10, symbolrefdecode)
 let newmap2 = symbolrefdecodenew
 for code3 = empty:seq.seq.symbolref, sd ∈ toseq.prg10 do
  if isabstract.module.sym.sd ∨ isempty.code.sd ∨ not.isrecordconstant.sym.sd ∧ isconstantorspecial.sym.sd
@@ -125,53 +167,39 @@ for code3 = empty:seq.seq.symbolref, sd ∈ toseq.prg10 do
    if isFref.sym then acc + symbolref.-toint.symbolrefnew.basesym.sym else acc + symbolrefnew.sym
   /for(code3 + acc)
 /for(let finaldecode = symbolrefdecodenew
-let traceimpsym = symbol(moduleref."inputoutput", "stacktraceimp", seqof.typeword)
-let tracesym = symbol(internalmod, "stacktrace", seqof.typeword)
-let impidx = symbolref.findindex(traceimpsym, finaldecode)
-let traceidx = symbolref.findindex(tracesym, finaldecode)
-let parcs2 = first.changestacktrace([profilearcs], traceidx, impidx)
+assert cardinality.asset.symbolrefdecodenew = length.symbolrefdecodenew report "KLJDSF"+%.cardinality.asset.symbolrefdecodenew
+ +%.length.symbolrefdecodenew
+ +for acc=empty:set.symbol,txt="", sym /in symbolrefdecodenew do
+    if sym /in acc then next(acc,txt+print.sym) else next( acc+sym,txt) /for(txt)
 codegen(libname
 , typedict
 , newmods
 , dependentlibs
 , dependentwords.uses
 , finaldecode
-, profilearcs(finaldecode, parcs2)
-, profiledata.parcs2
-, changestacktrace(code3, traceidx, impidx)
-, changestacktrace(code2, traceidx, impidx)
+, profilearcs 
+,  profiledata(finaldecode,  profilearcs)
+,  code3 
+, code2
 , subseq(finaldecode, 1, length.newmap2)
 , subseq(finaldecode, 1, addresses)
 ))
 
-Function profiledata(profilearcs:seq.symbolref)seq.int
-for acc = [1, length.profilearcs / 2], first = true, r ∈ profilearcs do
- if first then next(acc + toint.r, false)else next(acc + toint.r + [0, 0, 0, 0], true)
-/for(acc)
+use otherseq.int
 
-Function profilearcs(decode:seq.symbol, profilearcs:seq.symbolref)set.seq.symbol
-for acc = empty:set.seq.symbol, first = true, last = Lit.0, r ∈ profilearcs do
- let sym = decode_(toint.r)
- if first then next(acc, false, sym)else next(acc + [last, sym], true, sym)
-/for(acc)
 
-function changestacktrace(code:seq.seq.symbolref, traceidx:symbolref, impidx:symbolref)seq.seq.symbolref
-for acc = empty:seq.seq.symbolref, def ∈ code do
- let b = break(traceidx, def << 2)
- acc
- + if length.b = 1 then def
- else for acc1 = subseq(def, 1, 2), p ∈ b do acc1 + p + impidx /for(acc1 >> 1)
-/for(acc)
+Function profiledata(decode:seq.symbol,profilearcs:set.seq.symbol) seq.int
+   for  acc= [1, cardinality.profilearcs ],        a /in toseq.profilearcs do
+    let tail=findindex( a_1,decode)
+    let head=findindex( a_2,decode)
+    assert tail > 0 /and head > 0 /and head /le length.decode /and tail /le length.decode
+    report "CCC"+print.a
+    acc+[tail,head,0,0,0,0]
+    /for(acc)
 
-Function changestacktrace(prg:set.symdef)set.symdef
-let traceimpsym = symbol(moduleref."inputoutput", "stacktraceimp", seqof.typeword)
-let tracesym = symbol(internalmod, "stacktrace", seqof.typeword)
-for newprg = empty:seq.symdef, sd ∈ toseq.prg do
- let t = replace(code.sd, tracesym, traceimpsym)
- newprg + if isempty.t then sd else symdef(sym.sd, t, paragraphno.sd)
-/for(asset.newprg)
+use seq.symbol
 
-function replace(s:seq.symbol, old:symbol, new:symbol)seq.symbol
+/function replace(s:seq.symbol, old:symbol, new:symbol)seq.symbol
 for acc = empty:seq.symbol, changed = false, sym ∈ s do
  if isFref.sym ∧ basesym.sym = old then next(acc + Fref.new, true)
  else if sym = old then next(acc + new, true)else next(acc + sym, false)
@@ -213,11 +241,9 @@ let z =
  if length.code < 15 then
   let x = removerecordconstant(prg, code)
   if"VERYSIMPLE"_1 ∈ optionsx then x
-  else if for acc = true, @e ∈ x do
-   acc ∧ (isconst.@e ∨ isBuiltin.@e ∧ para.module.@e ∈ [typereal, typeint] ∨ isspecial.@e ∨ @e ∈ toexport)
-  /for(acc)then
-   x
-  else empty:seq.symbol
+  else for acc = true, @e ∈ x do
+   acc ∧ (isconstantorspecial.@e ∨ isBuiltin.@e   ∨ @e ∈ toexport)
+  /for(if acc then x else empty:seq.symbol) 
  else empty:seq.symbol
 if"COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then z + Words.optionsx + Optionsym else z
 

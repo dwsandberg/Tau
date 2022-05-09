@@ -91,6 +91,9 @@ Export llvmtypelist(match5)seq.llvmtype
 
 type match5 is sym:symbol, length:int, parts:internalbc, action:word, arg:int, llvmtypelist:seq.llvmtype
 
+Function empty:match5 match5 match5(Lit.0,0,emptyinternalbc,"?"_1,0,empty:seq.llvmtype)
+
+
 Function functype(m:match5)llvmtype function.llvmtypelist.m
 
 Function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:int, llvmtypelist:seq.llvmtype)match5
@@ -460,8 +463,8 @@ modulerecord(name, [toint.FUNCTIONDEC, typ.type, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0
 function =(a:llvmtype, b:llvmtype)boolean typ.a = typ.b
 
 Function buildconst(xx:symbol, alltypes:typedict)match5
-if isRealLit.xx then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, Creal.value.xx)
-else if isIntLit.xx then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.value.xx)
+if isIntLit.xx then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.value.xx)
+else if isRealLit.xx then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, Creal.value.xx)
 else if iswordseq.xx then
  addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, slot.addwordseq.worddata.xx)
 else if xx = Littrue then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.1)
