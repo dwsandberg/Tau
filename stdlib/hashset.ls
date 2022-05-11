@@ -45,7 +45,7 @@ for acc = empty:seq.T, idx ∈ arithseq(tablesize, 1, 1)do
  /for(acc2)
 /for(acc)
 
-function notsamehash(ele:T, a:int, b:int, mask:bits)boolean(bits.a ∧ mask) ≠ (bits.b ∧ mask)
+function notsamehash2(ele:T, a:int, b:int, mask:bits)boolean(bits.a ∧ mask) ≠ (bits.b ∧ mask)
 
 Function +(h:hashset.T, ele:T)hashset.T
 let tablesize = length.table.h
@@ -54,7 +54,7 @@ let hash = hash.ele
 let dataindex = toint(tobits.hash ∧ mask) + 1
 for acc = empty:seq.hashelement.T, found = false, e ∈(table.h)_dataindex do
  if data.e = ele then next(acc + e, true)
- else if notsamehash(ele, hash, hash.e, mask)then next(acc, found)else next(acc + e, found)
+ else if notsamehash2(ele, hash, hash.e, mask)then next(acc, found)else next(acc + e, found)
 /for(let t = 
  replace(table.h, dataindex, if found then acc else[hashelement(ele, hash)] + acc)
 hashset(if found then cardinality.h else cardinality.h + 1
@@ -70,7 +70,7 @@ let hash = hash.ele
 let dataindex = toint(tobits.hash ∧ mask) + 1
 for acc = [ele], found = false, e ∈(table.h)_dataindex do
  if data.e = data.ele then next(acc, true)
- else if notsamehash(data.ele, hash, hash.e, mask)then next(acc, found)else next(acc + e, found)
+ else if notsamehash2(data.ele, hash, hash.e, mask)then next(acc, found)else next(acc + e, found)
 /for(let t = replace(table.h, dataindex, acc)
 hashset(if found then cardinality.h else cardinality.h + 1
 , if 3 * cardinality.h > 2 * tablesize then t + t + t + t else t

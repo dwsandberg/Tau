@@ -87,23 +87,29 @@ Export types(symbol)seq.mytype
 Export raw(symbol)bits
 
 Function rehash(s:symbol)symbol
-symbol(worddata.s, module.s, types.s, raw.s, extrabits(types.s, worddata.s, hashbits.s))
+symbol(worddata.s, module.s, types.s, raw.s, 
+extrabits(types.s >> 1, worddata.s, hashbits.s))
 
 Function =(a:symbol, b:symbol)boolean
-hashbits.a = hashbits.b ∧ worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1
-∧ issimplename.a = issimplename.b
-∧ module.a = module.b
+  worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1
+∧  module.a = module.b
+∧  (xor(hashbits.a,hashbits.b) /and (simplenamebit /or frefbit))=0x0
 
 Function ?(a:symbol, b:symbol)ordering
-{checking hash first does not improve performance}worddata.a ? worddata.b
-∧ types.a >> 1 ? types.b >> 1
-∧ issimplename.a ? issimplename.b
-∧ module.a ? module.b
+ ?2(a,b)
+∧  module.a ? module.b
 
 Function ?2(a:symbol, b:symbol)ordering
-worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1 ∧ issimplename.a ? issimplename.b
+worddata.a ? worddata.b 
+∧ types.a >> 1 ? types.b >> 1 
+∧  toint(xor(hashbits.a,hashbits.b) /and   (simplenamebit /or frefbit)) ? 0
 
-function extrabits(types:seq.mytype, other:seq.word, flags:bits)bits bits.hash(types, other) << 5 ∨ flags ∧ 0x1F
+
+function hashshift int 5 
+
+function hashmask bits 0x1F
+
+function extrabits(types:seq.mytype, other:seq.word, flags:bits)bits bits.hash(types, other) << hashshift ∨ flags ∧ hashmask
 
 Function extrabits(s:symbol)int toint.hashbits.s
 
@@ -127,6 +133,10 @@ function simplenamebit bits bits.2
 
 function constbit bits bits.1
 
+function unboundbit bits 0x1 << 41
+
+function requiresbit bits 0x1 << 42
+
 Function issimplename(sym:symbol)boolean(hashbits.sym ∧ simplenamebit) ≠ 0x0
 
 Function isspecial(s:symbol)boolean(hashbits.s ∧ specialbit) = specialbit
@@ -137,13 +147,11 @@ Function isconst(s:symbol)boolean(hashbits.s ∧ constbit) = constbit
 
 Function isunbound(sym:symbol)boolean(raw.sym ∧ unboundbit) ≠ 0x0
 
-function unboundbit bits 0x1 << 41
 
-function requiresbit bits 0x1 << 42
 
 Function hasrequires(sym:symbol)boolean(raw.sym ∧ requiresbit) ≠ 0x0
 
-Function hash(sym:symbol)int toint(hashbits.sym >> 5)
+Function hash(sym:symbol)int toint(hashbits.sym >> hashshift)
 
 Function setunbound(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym ∨ unboundbit, hashbits.sym)
 
@@ -278,7 +286,6 @@ Export nopara(sym:symbol)int
 
 ---end internal
 
-Export extrabits(s:symbol)int
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype)seq.word
 let fullname = 
@@ -524,16 +531,17 @@ symbolZ(moduleref."internallib $define"
 )
 
 Function Fref(s:symbol)symbol
+assert not.isconst.s /and first.worddata.s /nin "FREF" report "FREF problem"+print.s
 let z = 
- extrabits(paratypes.s + resulttype.s
- , [merge("FREF" + print.s)]
- , constbit ∨ frefbit ∨ hashbits.s ∧ 0x0F
+ extrabits(types.s
+ , worddata.s
+ , constbit ∨ frefbit ∨ hashbits.s ∧ hashmask
  )
 symbol(worddata.s, module.s, types.s, raw.s, z)
 
 Function basesym(s:symbol)symbol
 if isFref.s then
- let flags = hashbits.s ∧ xor(constbit ∨ frefbit, tobits.-1)
+ let flags = hashbits.s ∧ xor(constbit ∨ frefbit ∨ hasfrefbit, tobits.-1)
  let newbits = extrabits(types.s, worddata.s, flags)
  symbol(worddata.s, module.s, types.s, raw.s, newbits)
 else s

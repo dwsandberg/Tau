@@ -142,7 +142,7 @@ function =(symaddresses, symaddresses)boolean true
 
 function hash(symaddresses)int 1
 
-function assignencoding(symaddresses)int 1
+function assignencoding(a:symaddresses)int nextencoding.a
 
 
 Function dependentwords(dependentlibs:seq.word)seq.seq.char

@@ -92,24 +92,22 @@ for code = empty:set.symbol, sym ∈ s do
 
 function bbb(prg:set.symdef,   toexport:set.symbol)seq.symbol 
 for  new=empty:seq.symbol,     sym /in toseq.toexport do 
-let code1= getCode(prg,sym)
-let code = removeoptions.code1
-let optionsx = getoption.code1
+let code = removeoptions.getCode(prg,sym)
 if length.code > 14 then new
 else 
-   let z=if"VERYSIMPLE"_1 ∈ optionsx then code
-  else   
-   for acc = true, @e ∈ code do
-   acc ∧ (isconstantorspecial.@e ∨ isBuiltin.@e  ∨ @e ∈ toexport
-   ∨ isInternal.@e)
-  /for( if acc then  code else empty:seq.symbol)
-  for acc=new,   sym2 /in z   do 
+   for acc=new,   sym2 /in code   do 
    if isFref.sym2 /or hasfref.sym2 then  acc+ toseq.gatherfref(prg,[sym2  ] )
-   else if isconst.sym2 ∨ isBuiltin.sym2  ∨ isspecial.sym2 ∨ sym2 ∈ toexport
-   ∨ isInternal.sym2  then acc
+   else if isconstantorspecial.sym2 ∨
+    name.module.sym2 /in " builtin internal $for $base $global"  then acc
    else  acc+sym2  
    /for(acc)
 /for(toseq.asset.new)  
+
+function close(prg:set.symdef,toprocess:set.symbol,processed:set.symbol)set.symbol
+   let new= toprocess \ processed 
+   let a=asset.bbb(prg,new)
+   if isempty.new then processed else 
+     close(prg,a,processed /cup toprocess)
          
 
 Function compilerback2(prg10:set.symdef
@@ -124,16 +122,19 @@ let libname = extractValue(first.src, "Library")_1
 let maybereferenced0 = 
  for acc = empty:seq.symbol, @e ∈ oldmods do
   for acc2 = acc, sym ∈ exports.@e do
-   if isabstract.module.sym ∨ library.module.sym ≠ libname then acc2 else 
-     acc2+sym
+   if   {isInternal.sym /or } library.module.sym = libname then
+   acc2+sym
+   else acc2 
   /for(acc2 )
- /for(acc)
+ /for(close(prg10,asset.acc,empty:set.symbol))
 let maybereferenced1 = 
- for acc = maybereferenced0+bbb(prg10,   asset.maybereferenced0), sd ∈ toseq.prg10 do
+ for acc = empty:set.symbol, sd ∈ toseq.prg10 do
   if"COMPILETIME"_1 ∈ getoption.code.sd then
    acc+sym.sd
   else acc
- /for(acc)
+ /for( let t=acc \ maybereferenced0  
+  {assert isempty.t report "CCCCC"+print.toseq.t}
+   toseq(t /cup maybereferenced0 ))
 let profilearcs = 
  for acc = empty:set.seq.symbol, sd ∈ toseq.prg10 do
   if isabstract.module.sym.sd  then acc
@@ -141,7 +142,8 @@ let profilearcs =
    let options = getoption.code.sd
    if"PROFILE"_1 ∈ options then
     for txt = acc, sym ∈ toseq.asset.code.sd do
-     if isconstantorspecial.sym ∨ isInternal.sym ∨ sym = sym.sd /or isBuiltin.sym then txt
+     if isconstantorspecial.sym  ∨ sym = sym.sd 
+      /or name.module.sym /in "$base $for builtin internal" then txt
      else 
      txt + [ sym.sd,  sym]
     /for(txt)
@@ -149,12 +151,15 @@ let profilearcs =
  /for(acc)
  let maybereferenced2=for acc=empty:seq.symbol , a /in toseq.profilearcs do acc+a 
  /for(maybereferenced1+acc)
-let discard22= for acc=symbolref.0,   sym /in maybereferenced2 do symbolrefnew.sym /for(acc)
+let discard22= for acc=symbolref.0,   sym /in maybereferenced2 do 
+ if isabstract.module.sym then acc else symbolrefnew.sym /for(acc)
  let addresses = length.symbolrefdecodenew
  let newmods = 
  for acc = empty:seq.libraryModule, @e ∈ oldmods do
   for newexports = empty:seq.symbolref, sym ∈ exports.@e do newexports + symbolrefnew.sym /for(acc + libraryModule(modname.@e, newexports, types.@e))
  /for(acc)
+ {assert addresses =length.symbolrefdecodenew report 
+ "PP"+print( symbolrefdecodenew << addresses)}
 let code2 = libcode(prg10, oldmods, symbolrefdecode)
 let gensym = gencode(convert.oldmods, prg10, symbolrefdecode)
 let newmap2 = symbolrefdecodenew
@@ -167,10 +172,10 @@ for code3 = empty:seq.seq.symbolref, sd ∈ toseq.prg10 do
    if isFref.sym then acc + symbolref.-toint.symbolrefnew.basesym.sym else acc + symbolrefnew.sym
   /for(code3 + acc)
 /for(let finaldecode = symbolrefdecodenew
-assert cardinality.asset.symbolrefdecodenew = length.symbolrefdecodenew report "KLJDSF"+%.cardinality.asset.symbolrefdecodenew
+{assert cardinality.asset.symbolrefdecodenew = length.symbolrefdecodenew report "KLJDSF"+%.cardinality.asset.symbolrefdecodenew
  +%.length.symbolrefdecodenew
  +for acc=empty:set.symbol,txt="", sym /in symbolrefdecodenew do
-    if sym /in acc then next(acc,txt+print.sym) else next( acc+sym,txt) /for(txt)
+    if sym /in acc then next(acc,txt+print.sym) else next( acc+sym,txt) /for(txt)}
 codegen(libname
 , typedict
 , newmods

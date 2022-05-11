@@ -90,7 +90,9 @@ let libextnames =
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(symbolrefD, typedict, prgcode, libextnames, thename)
+let prgcode2=for acc=prgcode,i=1,   x /in addresssymbolrefdecode do next(if isInternal.x 
+ then  acc+[symbolref.i,symbolref.i]else acc,i+1) /for(acc)
+let stepone = stepone(symbolrefD, typedict, prgcode2, libextnames, thename)
 let match5map = match5map.stepone
 let defines = defines.stepone
 let symboladdress = symboladdress(addresssymbolrefdecode, typedict, extnames.stepone, thename, defines)

@@ -132,9 +132,7 @@ word3(a, b, toint.C64.valueofencoding.b)
 
 function ?(a:word3, b:word3)ordering chars.a ? chars.b
 
-function assignencoding(a:word3)int valueofencoding.encode.chars.a
-
-nextencoding.a
+function assignencoding(a:word3)int nextencoding.a
 
 function =(a:word3, b:word3)boolean chars.a = chars.b
 

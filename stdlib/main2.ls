@@ -85,7 +85,7 @@ Function entrypoint(args:UTF8)UTF8
 /br if aborted.p then
 /br   finishentry.[file($(dq."error.html"),message.p)] 
 /br else  result.p 
-/p Function entrypoint2(args0:UTF8)UTF8
+/p function entrypoint2(args0:UTF8)UTF8
 /br let args = towords.args0 
 /br let input=getfiles.args
 /br let cmd= first.args  /br finishentry."

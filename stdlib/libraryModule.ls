@@ -130,7 +130,10 @@ Export symbolrefdecode(liblib)seq.symbol
 
 Function _(info:seq.symbol, r:symbolref)symbol
 let i = toint.r
-if i > 0 then info_i else Fref.info_(-i)
+if i > 0 then info_i else 
+  let sym= info_(-i)
+  if isFref.sym then 
+   sym else Fref.sym
 
 Function tomidpoint(org:midpoint, libinfo:liblib, libname:word)midpoint
 let symdecode = 
