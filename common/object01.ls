@@ -24,6 +24,10 @@ use bitcast.int
 
 use bitcast.ptr
 
+Export type:finished/this
+
+Export type:tableentry
+
 
 type   tableentry  is  key:seq.int,new:int
   

@@ -82,7 +82,8 @@ do
    else
     let newdict3 = addtypes(typedict3, asset(code.sd + sym.sd))
     next(acc + test(symx, newdict3, para.module.sym.sd, empty:set.symdef), newdict3)
-  /for(postbindresult(typedict3, symdef(sym.sd, acc) ∪ prg.inline, inline.inline + symdef(sym.sd, acc)))
+  /for(postbindresult(typedict3, symdef(sym.sd, acc,paragraphno.sd) ∪ prg.inline
+  , inline.inline + symdef(sym.sd, acc,paragraphno.sd)))
  else inline
  , allsyms + sym.sd
  )
@@ -112,20 +113,30 @@ else
   if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then accZ
   else
    let newdict2 = addtype(typedict.accZ, resulttype.symz)
-   let b = lookup(source, symdef(symz, empty:seq.symbol))
-   let sd = 
+   let b = getSymdef(source,  symz )
+    let sd = 
     if not.isempty.b then b_1
-    else if istype.symz then symdef(symz, deepcopybody(resulttype.symz, newdict2))
-    else if not.isunbound.symz then instantiateTemplate(symz, templates)
-    else
-     let k2 = lookupbysig(allsyms, symz)
+    else if istype.symz then symdef(symz, deepcopybody(resulttype.symz, newdict2),0)
+    else 
+         { assert name.symz /nin "hash" report "ZZ"+print.symz
+          +print.lookupbysig(allsyms, symz)_1}
+    {if not.isunbound.symz then instantiateTemplate(symz, templates)
+    else}
+     let k21 = lookupbysig(allsyms, symz)
+     let k2=if cardinality.k21 < 2 then k21 else
+       for acc=empty:set.symbol, sy /in toseq.k21 do if isunbound.sy then acc else acc+sy 
+       /for(if isempty.acc then k21 else acc)
      if isempty.k2 then instantiateTemplate(symz, templates)
      else
-      assert cardinality.k2 = 1 report"unbound problem" + print.symz
+      assert cardinality.k2 = 1 report"unbound problem" +  print.symz
+      +if cardinality.k2 > 1 then  for txt="",symt /in toseq.k2 do txt+
+      if isunbound.symt then "T" else "F" /if +library.module.symt+print.symt /for(txt)
+      else ""
       let sym2 = k2_1
-      let b2 = lookup(source, symdef(sym2, empty:seq.symbol))
+      let b2 = getSymdef(source,sym2)
       if not.isempty.b2 then
-       for paras = empty:seq.symbol, i ∈ arithseq(nopara.sym2, 1, 1)do paras + Local.i /for(symdef(sym2, paras + sym2))
+       for paras = empty:seq.symbol, i ∈ arithseq(nopara.sym2, 1, 1)do paras + Local.i 
+       /for(symdef(sym2, paras + sym2,paragraphno.b2_1))
       else instantiateTemplate(sym2, templates)
    let newdict3 = addtypes(newdict2, asset(code.sd + sym.sd))
    {------------}
@@ -199,14 +210,14 @@ else
     else if not.isempty.result2 ∧ last.result2 = PreFref then
      next(cache, nextvar, map, result2 + test(symx, newdict3, modpara, empty:set.symdef))
     else
-     let cacheValue = lookup(cache, symdef(symx, empty:seq.symbol))
+     let cacheValue = getSymdef(cache,symx)
      if not.isempty.cacheValue then next(cache, nextvar, map, result2 + code.cacheValue_1)
      else
       let newValue = test(symx, newdict3, modpara, inline.accZ)
-      next(cache + symdef(symx, newValue), nextvar, map, result2 + newValue)
+      next(cache + symdef(symx, newValue,0), nextvar, map, result2 + newValue)
    /for(postbindresult(newdict3
-   , symdef(symz, result2) ∪ prg.accZ
-   , if verysimpleinline(symz, result2)then inline.accZ + symdef(symz, result2)else inline.accZ
+   , symdef(symz, result2,0) ∪ prg.accZ
+   , if verysimpleinline(symz, result2)then inline.accZ + symdef(symz, result2,0)else inline.accZ
    ))
  /for(usedsyms(allsyms, source, length.aa, prg.accZ, templates, typedict.accZ, inline.accZ))
 
@@ -310,7 +321,7 @@ else
  ]
 
 function instantiateTemplate(sym2:symbol, templates:set.symdef)symdef
-if issimple.module.sym2 then symdef(sym2, empty:seq.symbol)
+if issimple.module.sym2 then symdef(sym2, empty:seq.symbol,0)
 else
  let gx = findabstract(templates, sym2)
  assert length.gx = 1
@@ -318,7 +329,8 @@ else
  + if isempty.gx then""
  else
   for txt = "", k ∈ gx do txt + EOL + print.sym.sd.k + print.modpara.k /for(txt)
- for newcode = empty:seq.symbol, sym4 ∈ code.sd.gx_1 do newcode + replaceTsymbol(modpara.gx_1, sym4)/for(symdef(sym2, newcode))
+ for newcode = empty:seq.symbol, sym4 ∈ code.sd.gx_1 do newcode + replaceTsymbol(modpara.gx_1, sym4)/for(
+ symdef(sym2, newcode,0))
 
 function deepcopybody(type:mytype, typedict:typedict)seq.symbol
 if type = typeint ∨ type = typeword ∨ isencoding.type then[Local.1]

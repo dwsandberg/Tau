@@ -157,9 +157,9 @@ let jsHTTP =
 let zzzzz = 
  for txt = "", sym ∈ roots do
   let code = getCode(prg4, sym)
-  if jsHTTP ∈ getCode(prg4, sym)then
+  if jsHTTP ∈ code then
    {assert name.sym /nin"testpretty22"report print.code}
-   interpret(alltypes, knownfuncs, sym, getCode(prg4, sym))
+   interpret(alltypes, knownfuncs, sym, code)
   else txt
  /for(txt)
 {define depended functions}

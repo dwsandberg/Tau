@@ -121,7 +121,7 @@ for result = empty:seq.symbol, nextvar = nextvarin, sym ∈ code do
 /for(result)
 
 Function forexpisnoop(forsym:symbol, code:seq.symbol)seq.symbol
-if nopara.forsym = 7 ∧ first.paratypes.forsym = resulttype.forsym ∧ code_(-2) = Littrue
+if nopara.forsym = 7 ∧ length.code > 4 ∧ first.paratypes.forsym = resulttype.forsym ∧ code_(-2) = Littrue
 ∧ isseq.resulttype.last.code
 ∧ wordname.code_(-3) = "+"_1
 ∧ name.module.code_(-3) ∈ "seq"
@@ -271,10 +271,10 @@ else matchblock(s, i - 1, nest)
 function addDefine(s:seq.symbol, i:int)int
 if i > 1 ∧ isdefine.s_(i - 1)then addDefine(s, backparse2(s, i - 2, 1, empty:seq.int)_1)else i
 
-Function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
+Function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int  
 if no = 0 then result
 else
- assert i > 0 report"back parse 1a:" + toword.no + print.s
+ assert i > 0 report"back parse 1a:" + toword.no + print.s+stacktrace
  if isdefine.s_i then
   let args = backparse2(s, i - 1, 1, empty:seq.int)
   backparse2(s, args_1, no, result)

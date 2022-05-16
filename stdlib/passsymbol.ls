@@ -186,7 +186,7 @@ Export code(prg6)set.symdef
 
 Export modules(prg6)set.passsymbols
 
-Export symdef(symbol, seq.symbol)symdef
+Export symdef(symbol, seq.symbol,int)symdef
 
 Export sym(symdef)symbol
 
@@ -203,8 +203,8 @@ if not.isseq ∧ length.typs = 2 then
  if iscore4.typ then empty:seq.symdef
  else
   let fldtype = last.typs
-  [symdef(symbol(modname, [name], fldtype, typ), [Local.1])
-  , symdef(symbol(modname, binfotext, typ, fldtype), [Local.1])
+  [symdef(symbol(modname, [name], fldtype, typ), [Local.1],0)
+  , symdef(symbol(modname, binfotext, typ, fldtype), [Local.1],0)
   ]
   + setSymdef(recordtype, [fldtype])
 else
@@ -239,24 +239,24 @@ else
  flds
  + symdef(constructor
  , constructflds + symbol(builtinmod.recordtype, "buildrecord", recordtype, typeptr)
- )
+ ,0)
  + if isseq then
   let seqtype = seqof.para.modname
   setSymdef(recordtype, [typeint, typeint] + typs << 2)
-  + [symdef(symbol(modname, "toseq", recordtype, seqtype), [Local.1])
+  + [symdef(symbol(modname, "toseq", recordtype, seqtype), [Local.1],0)
   , symdef(symbol4(modname, "to"_1, recordtype, [seqtype], recordtype)
   , ifthenelse([Local.1, GetSeqType, PreFref, indexfunc, EqOp]
   , [Local.1]
   , [Sequence(typeint, 0)]
   , typeptr
   )
-  )
+  ,0)
   ]
   + if name = "seq"_1 then
-   [symdef(symbol(builtinmod.typeint, "length", recordtype, typeint), [Local.1, GetSeqLength])
+   [symdef(symbol(builtinmod.typeint, "length", recordtype, typeint), [Local.1, GetSeqLength],0)
    , symdef(symbol(builtinmod.typeint, "getseqtype", recordtype, typeint)
    , [Local.1, GetSeqType]
-   )
+   ,0)
    ]
   else empty:seq.symdef
  else setSymdef(recordtype, typs << 1)/if)
@@ -272,7 +272,7 @@ let fldsym = symbol(modname, [name], objecttype, fldtype)
 symdef(fldsym
 , [Local.1, Lit.knownsize] + unknownsize
 + Getfld.if isseq.fldtype then typeptr else fldtype
-)
+,0)
 
 function knownsize(fldtype:mytype)int
 if fldtype ∈ [typeint, typeword, typereal, typeboolean, typeseqdec] ∨ isseq.fldtype ∨ isencoding.fldtype then
@@ -280,12 +280,12 @@ if fldtype ∈ [typeint, typeword, typereal, typeboolean, typeseqdec] ∨ isseq.
 else 0
 
 function setSymdef(recordtype:mytype, t:seq.mytype)seq.symdef
-if false then
+{if false then
  [symdef(setSym.recordtype
  , for acc = [Local.1], idx = 0, fldtype ∈ t do next(acc + [Local.2, Lit.idx, Getfld.fldtype, setSym.fldtype], idx + 1)/for(acc)
  )
  ]
-else empty:seq.symdef
+else} empty:seq.symdef
 
 type resultz is acc:seq.symdef, alluses:seq.symbol
 
@@ -374,13 +374,13 @@ let dict =
      let sym2 = replaceTsymbol(para.u, e)
      if isempty.requireUnbound then next(acc + sym2, req)
      else
-      let require = lookup(requireUnbound, symdef(e, empty:seq.symbol))
+      let require = getSymdef(requireUnbound,e)
       if isempty.require then next(acc + sym2, req)
       else
        let list = 
         for acc2 = empty:seq.symbol, sym4 ∈ code.require_1 do acc2 + replaceTsymbol(para.u, sym4)/for(acc2)
        {assert name.e /nin"arithseq"report"GHJ"+print.list}
-       next(acc + setrequires.sym2, req + symdef(sym2, list))
+       next(acc + setrequires.sym2, req + symdef(sym2, list,0))
     /for(partdict(acc, req))
    next(syms.r, req.r, 0)
  /for(partdict(syms, requires))
@@ -398,9 +398,20 @@ for acc = empty:seq.findabstractresult, sd ∈ toseq.templates do
    for Tis = type?, idx = 1, t ∈ types.e do
     let S = solveT(t, (types.sym)_idx)
     if S = type? then
-     {assert t=(types.s)_idx report"XXXXX"+print.t+print.(types.s)_idx}next(Tis, idx + 1)
+     next(Tis, idx + 1)
     else next(S, idx + 1)
    /for(Tis)
+      {assert    print.sym /ne "encoding.idrange:hash(idrange)int"
+       /or print.e /in ["encoding.T:hash(encodingpair.T)int "
+       ,"encoding.T:hash(encoding.T)int"
+       ,"hashset.T:hash(hashelement.T)intX"]
+      report "P"+
+       print.sym+print.e+
+       for txt = "", sd2 ∈ toseq.templates do
+ let e2 = sym.sd2
+ if name.e2 = name.sym ∧ length.types.e2 = length.types.sym then
+    txt+print.e2 else txt
+    /for(txt)}
   if ?2(sym, replaceTsymbol(z, e)) = EQ then
    if(sym ? e) = EQ ∨ isunbound.e then acc else acc + findabstractresult(sd, z)
   else acc

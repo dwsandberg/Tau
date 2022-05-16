@@ -41,7 +41,7 @@ libsrc commontests.libsrc +tests  bug7.ls checking myseq   point randomphrase te
 testencoding  testmodules  testprocess testseq tree  wordfreq  
 
 makelib tests.lib commontests.libsrc 
- +tests  testopt.ls test11a  testall tests  
+ +tests  testopt.ls test11a  testall   
 uses=stdlib
 exports=tests
  

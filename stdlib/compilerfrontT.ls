@@ -19,6 +19,7 @@ use seq.seq.word
 unbound pass2:T(set.symdef, typedict, option:seq.word)set.symdef
 
 Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
+{OPTION PROFILE}
 let m = compilerfront3(option, allsrc, libinfo)
 if first.option.m ∈ "library text hhh pass1"then m
 else

@@ -114,10 +114,7 @@ Function findtemplate(d:symbol)seq.match5 findencode.match5(d, 0, emptyinternalb
 
 Export type:symbol
 
-Function _(m:seq.match5, d:symbol)match5
-let e = findtemplate.d
-assert not.isempty.e report"LL codetemplates" + print.d
-e_1
+
 
 function =(a:match5, b:match5)boolean sym.a = sym.b
 
@@ -131,7 +128,9 @@ toint.modulerecord([symname]
 )
 
 Function initmap5 seq.match5
-[addtemplate(symbol(internalmod, "packedindex", seqof.typebit, typeint, typeint)
+[addtemplate(Littrue, 0, emptyinternalbc, "ACTARG"_1, C64.1)
+,addtemplate(Litfalse, 0, emptyinternalbc, "ACTARG"_1, C64.0)
+,addtemplate(symbol(internalmod, "packedindex", seqof.typebit, typeint, typeint)
 , 8
 , BINOP(r.1, ibcsub.2, C64.1, sub) + BINOP(r.2, r.1, C64.6, lshr) + BINOP(r.3, r.2, C64.2, add)
 + GEP(r.4, i64, ibcsub.1, r.3)

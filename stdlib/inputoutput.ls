@@ -133,7 +133,7 @@ let symdefs =
    for acc1 = acc, idx = 1, a ∈ symboladdress.ll do next(acc1 + symdef(rehash.(symbolrefdecode.ll)_idx, empty:seq.symbol, a), idx + 1)/for(acc1)
   /for(decode.encode.symaddresses.acc)
  else b_1
-let c = lookup(symdefs, symdef(sym, empty:seq.symbol, 0))
+let c = getSymdef(symdefs,sym)
 if isempty.c then 0 else paragraphno.c_1
 
 type symaddresses is tosymdefs:set.symdef
@@ -189,3 +189,11 @@ type dummyparameterrecord is a:int, b:int
 type dummyrec2 is a:int, b:int, c:dummyparameterrecord
 
 builtin createthread(int, int, int, dummyparameterrecord, int)process.int 
+
+Function checkload seq.word
+   for yy="",  ll /in loadedLibs do
+     for acc=yy,   p /in words.ll do 
+      if  code.p =asencoding.encodeword.data.p then acc else acc+encodeword.data.p
+     /for(acc)
+    /for(yy)
+    

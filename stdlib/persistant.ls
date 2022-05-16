@@ -122,13 +122,11 @@ use seq.encoding.seq.char
 
 use set.encoding.seq.char
 
-type word3 is chars:seq.char, code:encoding.seq.char, slot:int
+type word3 is chars:seq.char 
 
 function word3(a:word)word3 word3.decodeword.a
 
-function word3(a:seq.char)word3
-let b = encode.a
-word3(a, b, toint.C64.valueofencoding.b)
+function slotX(a:word3) int toint.C64.valueofencoding.encode.chars.a
 
 function ?(a:word3, b:word3)ordering chars.a ? chars.b
 
@@ -154,7 +152,7 @@ Function wordref(w:word)int
 {identity, y}
 let w3 = word3.w
 let discard = encode.w3
-slot.word3.w
+slotX.word3.w
 
 Function addint(i:int)int toint.C64.i
 
@@ -195,7 +193,7 @@ let k =
  addobject.for acc = empty:seq.int
  , @e ∈ for acc = [C64.0, C64.length.s], @e ∈ s do acc + C64.@e /for(acc)
  do acc + toint.@e /for(acc)
-[slot.w3, k, toint.C64.0]
+[slotX.w3, k, toint.C64.0]
 
 Function addwordseq(a:seq.word)int
 addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + wordref.@e /for(acc) 

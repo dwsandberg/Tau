@@ -94,7 +94,7 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
  let partdict = formsymboldict(allmods, m, requireUnbound, mode)
  for acc = empty:seq.symdef, p ∈ text.m do
   if first.text.p ∈ "Builtin builtin"then
-   if issimple.module.sym.p then acc + symdef(sym.p, addcommentoptions(text.p, empty:seq.symbol))
+   if issimple.module.sym.p then acc + symdef(sym.p, addcommentoptions(text.p, empty:seq.symbol),0)
    else
     let sym = sym.p
     acc
@@ -102,7 +102,7 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
     , for code = empty:seq.symbol, @e ∈ arithseq(nopara.sym.p, 1, 1)do code + Local.@e /for(code)
     + [if issimplename.sym then symbol(builtinmod.typeT, [wordname.sym], paratypes.sym, resulttype.sym)
     else symbol4(builtinmod.typeT, wordname.sym, (nametype.sym)_1, paratypes.sym, resulttype.sym)
-    ]
+    ],0
     )
   else
    assert first.text.p ∈ "Function function"report text.p
@@ -134,10 +134,10 @@ else
   let list0 = if last ≠ tail.a then empty:seq.symbol else list
   let newlist = if isunbound.head.a then list0 + head.a else list0
   let newacc = 
-   if last ≠ tail.a then if isempty.list then acc else acc + symdef(last, list)
+   if last ≠ tail.a then if isempty.list then acc else acc + symdef(last, list,0)
    else acc
   next(newacc, tail.a, newlist)
- /for(if isempty.list then acc else acc + symdef(last, list)/if)
+ /for(if isempty.list then acc else acc + symdef(last, list,0)/if)
 
 Function prescan2(s:seq.symdef)seq.symdef
 {removes name from locals and change length and getseqtype to GetSeqLength and GetSeqType}
@@ -151,5 +151,5 @@ for acc = empty:seq.symdef, p ∈ s do
     if name.sym ∈ "length"then GetSeqLength
     else if name.sym ∈ "getseqtype"then GetSeqType else sym
    else sym
- /for(acc + symdef(sym.p, result))
+ /for(acc + symdef(sym.p, result,0))
 /for(acc) 

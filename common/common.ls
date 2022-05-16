@@ -21,6 +21,5 @@ Export <<(bits, int)bits
 Function common(input:seq.file) seq.file
   stdlib.input
 
-Export -(real) real
 
 

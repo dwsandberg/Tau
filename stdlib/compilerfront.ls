@@ -183,14 +183,21 @@ Export src(midpoint)seq.seq.word
 Export libmods(m:midpoint)seq.modExports
 
 Function addoption(p:set.symdef, s:symbol, option:seq.word)set.symdef
+if isempty.option then p else
 {must maintain library of symbol in p}
-let f = lookup(p, symdef(s, empty:seq.symbol))
-let code = if isempty.f then empty:seq.symbol else code.f_1
+let f = getSymdef(p,s)
+if isempty.f then 
+   symdef(s,[Words.toseq(asset.option),Optionsym],0)  ∪ p
+else 
+let code =  code.f_1
 let current = asset.getoption.code
-if current = asset.option then p
+let newoptions=current ∪ asset.option
+if current = newoptions then p
 else
- let newcode = removeoptions.code + Words.toseq(current ∪ asset.option) + Optionsym
- symdef(if isempty.f then s else sym.f_1, newcode) ∪ p
+ let newcode = removeoptions.code + Words.toseq(newoptions) + Optionsym
+  symdef(sym.f_1,newcode,paragraphno.f_1)
+ ∪ p
+
 
 Function processOptions(prg:set.symdef, mods:seq.passsymbols, option:seq.word)set.symdef
 for acc = prg, m ∈ mods do
@@ -205,7 +212,8 @@ for acc = empty:seq.modExports, m2 ∈ t5 do
  else
   let d2 = if isabstract.module.m2 then defines.m2 else exports.m2
   let exps = 
-   for acc3 = empty:seq.symbol, e ∈ toseq.d2 do if isunbound.e then acc3 else acc3 + e /for(acc3)
+   for acc3 = empty:seq.symbol, e ∈ toseq.d2 do if isunbound.e then 
+    acc3 else acc3 + e /for(acc3)
   let types = 
    for acc5 = empty:seq.seq.mytype, s ∈ toseq.d2 do
     if istype.s then
@@ -223,10 +231,10 @@ for acc = empty:seq.modExports, m2 ∈ t5 do
 
 function uses(toprocess:seq.symbol, org:set.symdef, new:set.symdef)set.symdef
 for newsym = empty:seq.symbol, newsd = new, sym ∈ toprocess do
- let t = lookup(new, symdef(sym, empty:seq.symbol, 0))
+ let t = getSymdef(new,sym)
  if not.isempty.t then next(newsym, newsd)
  else
-  let t2 = lookup(org, symdef(sym, empty:seq.symbol, 0))
+  let t2 = getSymdef(org,sym)
   if isempty.t2 then next(newsym, newsd + symdef(sym, empty:seq.symbol, cardinality.newsd))
   else
    next(for acc = newsym, sym2 ∈ code.t2_1 do
@@ -244,7 +252,7 @@ for newsym = empty:seq.symbol, newsd = new, sym ∈ toprocess do
 /for(if isempty.new then newsd else uses(toseq.asset.newsym, org, newsd)/if)
 
 function findfref(sym:symbol, result:set.symbol, org:set.symdef)set.symbol
-for new = empty:set.symbol, out = result, e ∈ code.lookup(org, symdef(sym, empty:seq.symbol, 0))_1 do
+for new = empty:set.symbol, out = result, e ∈ code.getSymdef(org,sym)_1 do
  if hasfref.e then if isFref.e then next(new, out + basesym.e)else next(new + e, result)
  else next(new, result)
 /for(let t = new \ out

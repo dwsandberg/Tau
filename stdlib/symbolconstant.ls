@@ -45,7 +45,8 @@ function =(a:symbolconstant, b:symbolconstant)boolean toseq.a = toseq.b
 function hash(a:symbolconstant)int hash.toseq.a
 
 Function constantsymbols set.symdef
-for acc = empty:set.symdef, i = 1, p ∈ encodingdata:symbolconstant do next(acc + symdef(symconst(i, hasfref.toseq.p), toseq.p), i + 1)/for(acc)
+for acc = empty:set.symdef, i = 1, p ∈ encodingdata:symbolconstant do 
+next(acc + symdef(symconst(i, hasfref.toseq.p), toseq.p,0), i + 1)/for(acc)
 
 function map(map0:seq.symbol, prg:seq.symdef)seq.symbol
 for map = map0, todo = empty:seq.symdef, sd ∈ prg do

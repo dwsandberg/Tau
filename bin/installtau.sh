@@ -95,7 +95,6 @@ checksrc tests/testencoding.ls
 checksrc tests/testmodules.ls
 checksrc tests/testopt.ls
 checksrc tests/testprocess.ls
-checksrc tests/tests.ls
 checksrc tests/testseq.ls
 checksrc stdlib/textio.ls
 checksrc stdlib/timestamp.ls
@@ -151,10 +150,10 @@ outofdate ||(libexe stdlib libsrc webassembly/webassembly.ls webassembly/funcidx
 libexe stdlib stdlib built/webassembly.libsrc ;runlib webassembly)
 #________________
 
-parts="built/tests.lib built/stdlib.lib built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls tests/tests.ls"
+parts="built/tests.lib built/stdlib.lib built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls"
 dependlibs="built/stdlib.$libtype"
 ccode="void init_stdlib(); void init_libs(){init_stdlib();"
-outofdate ||(libexe stdlib libsrc built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls tests/tests.ls uses=stdlib exports=tests o=tests.libsrc
+outofdate ||(libexe stdlib libsrc built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls uses=stdlib exports=tests o=tests.libsrc
 libexe stdlib stdlib built/tests.libsrc ;runlib tests)
 
 parts="built/tools.lib built/stdlib.lib built/common.lib tools/tools.ls tools/baseTypeCheck.ls tools/doc.ls tools/genLR1.ls tools/prettycompilerfront.ls tools/profile.ls tools/taulextable.ls tools/frontcmd.ls tools/wordgraph.ls"

@@ -73,7 +73,7 @@ use seq.seq.symbolref
 Function codegen(thename:word
 , typedict:typedict
 , libmods:seq.libraryModule
-, dependentlibs:midpoint
+, libextnames: set.symdef
 , dependentwords:seq.seq.char
 , symbolrefD:seq.symbol
 , profilearcs:set.seq.symbol
@@ -84,20 +84,17 @@ Function codegen(thename:word
 , addresssymbolrefdecode:seq.symbol
 )seq.bits
 {OPTION PROFILE}
-let isbase = isempty.prg.dependentlibs
-let libextnames = 
- for acc = empty:seq.symdef, sd ∈ toseq.prg.dependentlibs do if paragraphno.sd = 0 then acc else acc + sd /for(asset.acc)
+let isbase = isempty.libextnames
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
 let prgcode2=for acc=prgcode,i=1,   x /in addresssymbolrefdecode do next(if isInternal.x 
  then  acc+[symbolref.i,symbolref.i]else acc,i+1) /for(acc)
 let stepone = stepone(symbolrefD, typedict, prgcode2, libextnames, thename)
-let match5map = match5map.stepone
 let defines = defines.stepone
 let symboladdress = symboladdress(addresssymbolrefdecode, typedict, extnames.stepone, thename, defines)
 let discard3 = modulerecord("spacecount", [toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
-let geninfo = geninfo(match5map, profilearcs, extnames.stepone, false, thename)
+let geninfo = geninfo( profilearcs, extnames.stepone, false, thename)
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(geninfo, @e)/for(acc)
 let xxx = for acc = empty:seq.slot, x ∈ profiledata do acc + C64.x /for(AGGREGATE.acc)
@@ -163,27 +160,27 @@ llvm(patchlist, bodytxts, adjust)
 function symboladdress(addressmap:seq.symbol, typedict:typedict, extnames:set.symdef, libname:word, defines:seq.symdef)int
 let known = 
  for acc = empty:set.symbol, d ∈ toseq.extnames + defines do acc + sym.d /for(acc)
-let t = asset.addressmap \ known
-assert isempty.t report"symboladdress error" + print.toseq.t
+{let t = asset.addressmap \ known
+assert isempty.t report"symboladdress error" + print.toseq.t}
 for slots = [toint.C64.0, toint.C64.length.addressmap], f1 ∈ addressmap do
+  if f1 /nin known  then  slots+toint.C64.0 else 
  let functyp = ptr.tollvmtype(typedict, f1)
  let frefslot = ptrtoint(functyp, symboltableentry([mangledname(extnames, f1, libname)], functyp))
  slots + toint.frefslot
 /for(addobject.slots)
 
-type geninfo is match5map:seq.match5
-, profilearcs:set.seq.symbol
+type geninfo is profilearcs:set.seq.symbol
 , extnames:set.symdef
 , profile:boolean
 , libname:word
 
 
-function enableprofile(g:geninfo)geninfo geninfo(match5map.g, profilearcs.g, extnames.g, true, libname.g)
+function enableprofile(g:geninfo)geninfo geninfo( profilearcs.g, extnames.g, true, libname.g)
 
 function addfuncdef(geninfo:geninfo, sd:symdef)internalbc
-{let hh=process.subaddfuncdef(match5map, i)assert not.aborted.hh report"fail get"+print.i+message.hh result 
-.hh use process.internalbc function subaddfuncdef(match5map:seq.match5, i:symbol)internalbc}
-let m = (match5map.geninfo)_(sym.sd)
+let e = findtemplate.sym.sd
+assert not.isempty.e report"LL codetemplates" + print.sym.sd
+let m=e_1
 let options = getoption.code.sd
 let code = removeoptions.code.sd
 assert not.isempty.code report "JKLKK"+print.sym.sd
@@ -210,7 +207,9 @@ if i = 0 then result else paramap(i - 1, result + localmap(i, -i - 1))
 function length(s:stack.int)int length.toseq.s
 
 function processnext(l:Lcode2, caller:symbol, geninfo:geninfo, s:symbol)Lcode2
-let m = (match5map.geninfo)_s
+let ee = findtemplate.s
+assert not.isempty.ee report"LL codetemplates" + print.s
+let m=ee_1
 let action = action.m
 if action = "CALL"_1 then
  let noargs = arg.m
