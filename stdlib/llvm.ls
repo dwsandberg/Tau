@@ -150,9 +150,10 @@ let l = decode.to:encoding.llvmconst(toint.s + 1)
 if typ.l = typ.i64 then s
 else if typ.l = typ.ptr.i64 then constantrecord(i64, [toint.CCAST, toint.ptrtoint, typ.ptr.i64, toint.s])
 else
- assert subseq(toseq.l, 1, 3) = [toint.CCAST, toint.bitcast, typ.i64]report"asi64 problem" + %.typ.l+stacktrace
+ assert subseq(toseq.l, 1, 3) = [toint.CCAST, toint.bitcast, typ.i64]
+ report"asi64 problem" + %.typ.l + stacktrace
  slot.(toseq.l)_4
- 
+
 Function constvalue(i:slot)int(toseq.decode.to:encoding.llvmconst(toint.i + 1))_2
 
 Function constantrecords seq.slotrecord

@@ -4,8 +4,6 @@ use bits
 
 use standard
 
-use symbol
-
 use symbol2
 
 use seq.bits
@@ -104,7 +102,7 @@ type liblib is libname:seq.word
 , entrypointaddress:int
 , unused0:int
 , profiledata:seq.parc
-, symbolrefdecode:seq.symbol
+, symbolrefdecodeX:seq.symbol
 , mods:seq.libraryModule
 , code:seq.seq.symbolref
 , unused1:int
@@ -116,8 +114,6 @@ Export symboladdress(liblib)seq.int
 
 Export entrypointaddress(liblib)int
 
-Function decoderef(l:liblib)seq.symbol symbolrefdecode.l
-
 Export libname(liblib)seq.word
 
 Export words(liblib)seq.encodingpair.seq.char
@@ -126,19 +122,20 @@ Export profiledata(liblib)seq.parc
 
 _________________
 
-
-Export symbolrefdecode(liblib)seq.symbol
+Function decode(w:symbolref, l:liblib)symbol
+if between(toint.w, 1, length.symbolrefdecodeX.l)then clearrequiresbit.(symbolrefdecodeX.l)_(toint.w)
+else Lit.toint.w
 
 Function _(info:seq.symbol, r:symbolref)symbol
 let i = toint.r
-if i > 0 then info_i else 
-  let sym= info_(-i)
-  if isFref.sym then 
-   sym else Fref.sym
+if i > 0 then info_i
+else
+ let sym = info_(-i)
+ if isFref.sym then sym else Fref.sym
 
 Function tomidpoint(org:midpoint, libinfo:liblib, libname:word)midpoint
 let symdecode = 
- for acc = empty:seq.symbol, sym ∈ symbolrefdecode.libinfo do acc + rehash.sym /for(acc)
+ for acc = empty:seq.symbol, sym ∈ symbolrefdecodeX.libinfo do acc + clearrequiresbit.sym /for(acc)
 let new = 
  for acc = empty:set.symdef, c ∈ code.libinfo do
   if toint.first.c = 0 then acc
@@ -154,6 +151,4 @@ for acc = new, idx = 1, sym ∈ symdecode do
  , for acc2 = empty:seq.symbol, r ∈ exports.m do acc2 + symdecode_r /for(acc2)
  , types.m
  )
-/for(midpoint("", acc ∪ prg.org, emptytypedict, libmods.org + mods, empty:seq.seq.word)))
-
-Function symbolrefdecode seq.symbol for acc = empty:seq.symbol, p ∈ encodingdata:symbol do acc + p /for(acc) 
+/for(midpoint("", prg.org ∪ acc, emptytypedict, libmods.org + mods, empty:seq.seq.word))) 

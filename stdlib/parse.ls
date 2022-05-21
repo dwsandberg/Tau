@@ -97,14 +97,15 @@ bindinfo(flds
 , ""
 )
 
-use bits
-
 function lookupbysig(dict:symboldict, name:seq.word, paratypes:seq.mytype, common:commoninfo, place:int)symbol
 let sym3 = 
  if length.name = 1 then symbol(internalmod, name, paratypes, typeint)
  else symbol4(internalmod, name_1, resolvetype(name << 1, common, place), paratypes, typeint)
 let f0 = lookupbysig(dict, sym3)
-let f=if cardinality.f0 < 2 then f0 else for acc=empty:set.symbol,    sy /in toseq.f0 do if isunbound.sy then acc else acc+sy /for(acc)
+let f = 
+ if cardinality.f0 < 2 then f0
+ else
+  for acc = empty:set.symbol, sy ∈ toseq.f0 do if isunbound.sy then acc else acc + sy /for(acc)
 assert not.isempty.f
 report errormessage("cannot find 1" + fixNM.name + "("
 + for acc = "", @e ∈ paratypes do acc + print.@e + ", "/for(acc >> 1)
@@ -115,7 +116,7 @@ report errormessage("cannot find 1" + fixNM.name + "("
 {+print.toseq.asset.dict}
 assert cardinality.f = 1
 report errormessage("found more than one"
-+ for acc = "", @e ∈ toseq.f do acc +library.module.@e+"."+print.@e /for(acc)
++ for acc = "", @e ∈ toseq.f do acc + library.module.@e + "." + print.@e /for(acc)
 , common
 , place
 )

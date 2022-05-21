@@ -20,7 +20,7 @@ orglibsrc compilerfront.libsrc +stdlib pretty.ls symbol2 symbolconstant compiler
  
 
 orgmakelib stdlib.lib  core.libsrc compilerfront
-  +stdlib updatestate.ls libdesc libraryModule COMPILETIME  bitstream 
+  +stdlib updatestate.ls   libraryModule COMPILETIME  bitstream 
   codegennew codetemplates file fileIO inputoutput hashset internalbc  llvm
    llvmconstants main2  persistant  symbol2 tausupport compileTimeT
    timestamp codetemplates2  ptr taublockseq  bitcast

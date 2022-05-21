@@ -10,8 +10,6 @@ use libraryModule
 
 use standard
 
-use symbol
-
 use symbol2
 
 use tausupport
@@ -112,7 +110,7 @@ function ?(a:addrsym, b:addrsym)ordering addr.a ? addr.b
 Function stacktraceimp seq.word
 let t = 
  for acc = empty:seq.addrsym, ll ∈ loadedLibs do
-  for t = acc, idx = 1, i ∈ symboladdress.ll do next(t + addrsym(i, rehash.(symbolrefdecode.ll)_(symbolref.idx)), idx + 1)/for(t)
+  for t = acc, idx = 1, i ∈ symboladdress.ll do next(t + addrsym(i, decode(symbolref.idx, ll)), idx + 1)/for(t)
  /for(sort.acc)
 for txt = " /p", r ∈ callstack.30 << 2 do
  let i = binarysearch(t, addrsym(r, Lit.1))
@@ -130,10 +128,10 @@ let b = encodingdata:symaddresses
 let symdefs = 
  tosymdefs.if length.b = 0 then
   for acc = empty:set.symdef, ll ∈ loadedLibs do
-   for acc1 = acc, idx = 1, a ∈ symboladdress.ll do next(acc1 + symdef(rehash.(symbolrefdecode.ll)_idx, empty:seq.symbol, a), idx + 1)/for(acc1)
+   for acc1 = acc, idx = 1, a ∈ symboladdress.ll do next(acc1 + symdef(decode(symbolref.idx, ll), empty:seq.symbol, a), idx + 1)/for(acc1)
   /for(decode.encode.symaddresses.acc)
  else b_1
-let c = getSymdef(symdefs,sym)
+let c = getSymdef(symdefs, sym)
 if isempty.c then 0 else paragraphno.c_1
 
 type symaddresses is tosymdefs:set.symdef
@@ -143,7 +141,6 @@ function =(symaddresses, symaddresses)boolean true
 function hash(symaddresses)int 1
 
 function assignencoding(a:symaddresses)int nextencoding.a
-
 
 Function dependentwords(dependentlibs:seq.word)seq.seq.char
 for acc0 = empty:seq.seq.char, ll ∈ loadedLibs do
@@ -188,12 +185,11 @@ type dummyparameterrecord is a:int, b:int
 
 type dummyrec2 is a:int, b:int, c:dummyparameterrecord
 
-builtin createthread(int, int, int, dummyparameterrecord, int)process.int 
+builtin createthread(int, int, int, dummyparameterrecord, int)process.int
 
 Function checkload seq.word
-   for yy="",  ll /in loadedLibs do
-     for acc=yy,   p /in words.ll do 
-      if  code.p =asencoding.encodeword.data.p then acc else acc+encodeword.data.p
-     /for(acc)
-    /for(yy)
-    
+for yy = "", ll ∈ loadedLibs do
+ for acc = yy, p ∈ words.ll do
+  if code.p = asencoding.encodeword.data.p then acc else acc + encodeword.data.p
+ /for(acc)
+/for(yy) 

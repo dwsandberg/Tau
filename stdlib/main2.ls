@@ -4,13 +4,15 @@ use UTF8
 
 use bits
 
+use codegennew
+
 use compilerfront
 
 use file
 
 use format
 
-use libdesc
+use inputoutput
 
 use standard
 
@@ -142,8 +144,8 @@ Function subcompilelib(allsrc:seq.seq.word)seq.bits
 {OPTION PROFILE}
 let uses = extractValue(first.allsrc, "uses")
 let dependentlibs = dependentinfo:libllvm(uses)
-let m = compilerfront2:libllvm("all", allsrc, dependentlibs)
-compilerback2(prg.m, libmods.m, typedict.m,  extractValue(first.allsrc, "Library")_1, uses, dependentlibs)
+let m = compilerfront2:libllvm("all2", allsrc, dependentlibs)
+compilerback(m, libcode.m, dependentwords.uses)
 
 Function stdlib(input:seq.file)seq.file
 let info = breakparagraph.data.first.input
@@ -158,7 +160,7 @@ Function astext(info:midpoint)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ toseq.prg.info do acc + [print.sym.p + print.code.p]/for(acc)
 
 Function compilerFront:libllvm(option:seq.word, allsrc:seq.seq.word)midpoint
-{OPTION PROFILE }
+{OPTION PROFILE}
 let libinfo = dependentinfo:libllvm(extractValue(first.allsrc, "uses"))
 let m = compilerfront2:libllvm(option, allsrc, libinfo)
 m

@@ -10,8 +10,6 @@ use internalbc
 
 use liblib
 
-use libraryModule
-
 use llvm
 
 use llvmconstants
@@ -19,8 +17,6 @@ use llvmconstants
 use persistant
 
 use standard
-
-use symbol
 
 use symbol2
 
@@ -70,33 +66,54 @@ use set.seq.symbol
 
 use seq.seq.symbolref
 
-Function codegen(thename:word
-, typedict:typedict
-, libmods:seq.libraryModule
-, libextnames: set.symdef
+use seq.seq.word
+
+Function compilerback(m:midpoint, libcode:seq.symdef, dependentwords:seq.seq.char)seq.bits
+{OPTION PROFILE}
+for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ toseq.prg.m do
+ if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
+  next(profilearcs, addresses)
+ else
+  let options = getoption.code.sd
+  next(if"PROFILE"_1 ∈ options then
+   for txt = profilearcs, sym2 ∈ toseq.asset.code.sd do
+    if isconstantorspecial.sym2 ∨ sym2 = sym.sd ∨ name.module.sym2 ∈ "$base $for builtin internal"then
+     txt
+    else txt + [sym.sd, sym2]
+   /for(txt)
+  else profilearcs
+  , addresses + sym.sd
+  )
+/for(let uses2 = extractValue(first.src.m, "uses")
+codegen(m, dependentwords, profilearcs, addresses, libcode))
+
+Function codegen(m:midpoint
 , dependentwords:seq.seq.char
-, symbolrefD:seq.symbol
 , profilearcs:set.seq.symbol
-, profiledata:seq.int
-, prgcode:seq.seq.symbolref
-, libcode:seq.seq.symbolref
-, libsymbolrefdecode:seq.symbol
 , addresssymbolrefdecode:seq.symbol
+, libcode2:seq.symdef
 )seq.bits
 {OPTION PROFILE}
-let isbase = isempty.libextnames
+let uses = extractValue(first.src.m, "uses")
+let thename = first.extractValue(first.src.m, "Library")
+let typedict = typedict.m
+let isbase = isempty.uses
+let prgX = prg.m
+let profiledata = profiledata(addresssymbolrefdecode, profilearcs)
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let prgcode2=for acc=prgcode,i=1,   x /in addresssymbolrefdecode do next(if isInternal.x 
- then  acc+[symbolref.i,symbolref.i]else acc,i+1) /for(acc)
-let stepone = stepone(symbolrefD, typedict, prgcode2, libextnames, thename)
+let stepone = stepone(typedict, prgX, thename)
 let defines = defines.stepone
-let symboladdress = symboladdress(addresssymbolrefdecode, typedict, extnames.stepone, thename, defines)
+let symboladdress = symboladdress(addresssymbolrefdecode, typedict, prgX, thename, defines)
 let discard3 = modulerecord("spacecount", [toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
-let geninfo = geninfo( profilearcs, extnames.stepone, false, thename)
+let geninfo = geninfo(profilearcs, prgX, false, thename)
 let bodies = 
- for acc = empty:seq.internalbc, @e ∈ defines do acc + addfuncdef(geninfo, @e)/for(acc)
+ for acc = empty:seq.internalbc, @e ∈ defines do
+  let ele = 
+   if isInternal.sym.@e then symdef(sym.@e, internalbody.sym.@e, paragraphno.@e)else @e
+  acc + addfuncdef(geninfo, ele)
+ /for(acc)
 let xxx = for acc = empty:seq.slot, x ∈ profiledata do acc + C64.x /for(AGGREGATE.acc)
 let f2 = 
  modulerecord([merge("init_" + thename)]
@@ -112,9 +129,9 @@ let liblib =
  , dependentwords
  , ptrtoint(ptr.entryfunctyp, symboltableentry("entrypoint" + thename, ptr.entryfunctyp))
  , morefields(toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
- , libsymbolrefdecode
- , libmods
- , libcode
+ , {libsymbolrefdecode, libmods, libcode, }libcode2
+ , m
+ , addresssymbolrefdecode
  , symboladdress
  )
  )
@@ -139,7 +156,7 @@ let bodytxts =
  , function.[i64, ptr.i8, ptr.i64, i64]
  , symboltableentry("initlib5", function.[i64, ptr.i8, ptr.i64, i64])
  , CGEPi8(libslot, 0)
- , [liblib, if isbase then addlibwords(extnames.stepone, typedict)else C64.0]
+ , [liblib, if isbase then addlibwords(prgX, typedict)else C64.0]
  )
  + RETURN
  ]
@@ -158,32 +175,23 @@ let adjust =
 llvm(patchlist, bodytxts, adjust)
 
 function symboladdress(addressmap:seq.symbol, typedict:typedict, extnames:set.symdef, libname:word, defines:seq.symdef)int
-let known = 
- for acc = empty:set.symbol, d ∈ toseq.extnames + defines do acc + sym.d /for(acc)
-{let t = asset.addressmap \ known
-assert isempty.t report"symboladdress error" + print.toseq.t}
 for slots = [toint.C64.0, toint.C64.length.addressmap], f1 ∈ addressmap do
-  if f1 /nin known  then  slots+toint.C64.0 else 
  let functyp = ptr.tollvmtype(typedict, f1)
  let frefslot = ptrtoint(functyp, symboltableentry([mangledname(extnames, f1, libname)], functyp))
  slots + toint.frefslot
 /for(addobject.slots)
 
-type geninfo is profilearcs:set.seq.symbol
-, extnames:set.symdef
-, profile:boolean
-, libname:word
+type geninfo is profilearcs:set.seq.symbol, extnames:set.symdef, profile:boolean, libname:word
 
-
-function enableprofile(g:geninfo)geninfo geninfo( profilearcs.g, extnames.g, true, libname.g)
+function enableprofile(g:geninfo)geninfo geninfo(profilearcs.g, extnames.g, true, libname.g)
 
 function addfuncdef(geninfo:geninfo, sd:symdef)internalbc
 let e = findtemplate.sym.sd
-assert not.isempty.e report"LL codetemplates" + print.sym.sd
-let m=e_1
+assert not.isempty.e report"LL addfuncdef" + print.sym.sd
+let m = e_1
 let options = getoption.code.sd
 let code = removeoptions.code.sd
-assert not.isempty.code report "JKLKK"+print.sym.sd
+assert not.isempty.code report"codegen with no definition" + print.sym.sd
 let nopara = arg.m
 let linit = 
  Lcode2(emptyinternalbc
@@ -208,8 +216,8 @@ function length(s:stack.int)int length.toseq.s
 
 function processnext(l:Lcode2, caller:symbol, geninfo:geninfo, s:symbol)Lcode2
 let ee = findtemplate.s
-assert not.isempty.ee report"LL codetemplates" + print.s
-let m=ee_1
+assert not.isempty.ee report"LL processnext" + print.s
+let m = ee_1
 let action = action.m
 if action = "CALL"_1 then
  let noargs = arg.m
@@ -352,6 +360,14 @@ regno.l+1)), blocks.l)else}
   , push(pop(args.l, arg.m), -(regno.l + 1))
   , blocks.l
   )
+
+function profiledata(decode:seq.symbol, profilearcs:set.seq.symbol)seq.int
+for acc = [1, cardinality.profilearcs], a ∈ toseq.profilearcs do
+ let tail = findindex(a_1, decode)
+ let head = findindex(a_2, decode)
+ assert tail > 0 ∧ head > 0 ∧ head ≤ length.decode ∧ tail ≤ length.decode report"CCC" + print.a
+ acc + [tail, head, 0, 0, 0, 0]
+/for(acc)
 
 function buildargcode(l:seq.llvmtype)int
 {needed because the call interface implementation for reals is different than other types is some implementations}

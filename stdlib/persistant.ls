@@ -25,15 +25,28 @@ use seq.seq.symbolref
 
 use seq.libraryModule
 
-use symbol
+/use symbol
 
 use bits
 
-Function morefields(profiledata:int,symbolrefdecode2:seq.symbol,libmods:seq.libraryModule,code:seq.seq.symbolref
-,symboladdresses:int) seq.int
+
+Function morefields(profiledata:int,libcode:seq.symdef,m:midpoint,addresses:seq.symbol,symboladdresses:int) seq.int
+ let discard23 = for acc2 = symbolref.0, sym2 ∈ addresses do symbolrefnew.sym2 /for(acc2)
+let newmods = 
+ for acc = empty:seq.libraryModule, @e ∈  libmods.m do
+  for newexports = empty:seq.symbolref, sym2 ∈ exports.@e do newexports + symbolrefnew.sym2 /for(acc + libraryModule(modname.@e, newexports, types.@e))
+ /for(acc)
+let code = 
+for acc = empty:seq.seq.symbolref,sd2 /in libcode  do 
+ acc
+ + for acc2 = [symbolrefnew.sym.sd2], sym2 ∈ code.sd2 do
+  if isFref.sym2 then acc2 + symbolrefnew.PreFref + symbolrefnew.basesym.sym2
+  else acc2 + symbolrefnew.sym2
+ /for(acc2)
+/for(acc)
 [profiledata
-, addsymbolseq.symbolrefdecode2
-, addlibmodseq.libmods
+, addsymbolseq.symbolrefdecodenew
+, addlibmodseq.newmods
 , addsymbolrefseqseq.code
 ,  addint.0
 ,  addint.0
@@ -68,13 +81,14 @@ Function addlibmodseq(a:seq.libraryModule)int
 addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addlibmod.@e /for(acc)
 
 Function addsymbol(a:symbol)int
+let t=privatefields.a
 addobject.[addwordseq.worddata.a
 , wordref.library.module.a
 , wordref.name.module.a
 , addtype.para.module.a
 , addtypeseq.types.a
-, addint.toint.raw.a
-, addint.extrabits.a
+, addint.t_1
+, addint.t_2
 ]
 
 Function addsymbolseq(a:seq.symbol)int
@@ -85,6 +99,22 @@ addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addsymbol.@e 
 /type libraryModule is modname:modref, exports:seq.symbolref, types:seq.seq.mytype
 
 /type symbol is worddata:seq.word, module:modref, types:seq.mytype, raw:bits, hashbits:bits 
+
+type symbolnew is tosymbol:symbol
+
+Function symbolrefnew(sym:symbol)symbolref symbolref.addorder.symbolnew.clearrequiresbit.sym
+
+Function symbolrefdecodenew seq.symbol
+for acc = empty:seq.symbol, p ∈ encodingdata:symbolnew do acc + tosymbol.p /for(acc)
+
+function hash(a:symbolnew)int hash.tosymbol.a
+
+function =(a:symbolnew, b:symbolnew)boolean tosymbol.a = tosymbol.b
+
+function assignencoding(a:symbolnew)int nextencoding.a 
+
+use encoding.symbolnew
+
 
 Module persistant
 

@@ -24,4 +24,5 @@ let m = compilerfront3(option, allsrc, libinfo)
 if first.option.m ∈ "library text hhh pass1"then m
 else
  let prg5 = pass2:T(prg.m, typedict.m, "") ∪ templates.m
- midpoint(option, prg5, typedict.m, libmods.m, src.m) 
+ if option = "all2"then prepareback(prg5, m, libinfo)
+ else midpoint(option, prg5, typedict.m, libmods.m, src.m) 

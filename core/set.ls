@@ -58,7 +58,7 @@ function union(a:seq.T, b:seq.T, i:int, j:int, result:seq.T)seq.T
 if i > length.a then result + subseq(b, j, length.b)
 else if j > length.b then result + subseq(a, i, length.a)
 else if(a_i ? b_j) = GT then union(a, b, i, j + 1, result + b_j)
-else if(a_i ? b_j) = EQ then union(a, b, i + 1, j + 1, result + b_j)
+else if(a_i ? b_j) = EQ then union(a, b, i + 1, j + 1, result + a_i)
 else
  let p = binarysearch(a, i + 1, length.a, b_j)
  if p > 0 then union(a, b, p + 1, j + 1, result + subseq(a, i, p))

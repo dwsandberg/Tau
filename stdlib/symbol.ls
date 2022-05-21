@@ -68,13 +68,9 @@ Export replaceT(with:mytype, m:mytype)mytype
 
 Export iscomplex(a:mytype)boolean
 
-Export worddata(s:symbol)seq.word
-
 Export=(a:modref, b:modref)boolean
 
----internal
-
-type symbol is worddata:seq.word, module:modref, types:seq.mytype, raw:bits, hashbits:bits
+type symbol is worddata:seq.word, module:modref, types:seq.mytype, raw:bits, flags:bits
 
 Export type:symbol
 
@@ -84,44 +80,24 @@ Export module(symbol)modref
 
 Export types(symbol)seq.mytype
 
-Export raw(symbol)bits
-
-Function rehash(s:symbol)symbol
-symbol(worddata.s, module.s, types.s, raw.s, 
-extrabits(types.s >> 1, worddata.s, hashbits.s))
+Function clearrequiresbit(s:symbol)symbol
+{will clear requires bit}
+let flags = flags.s ∧ xor(bits.-1, requiresbit)
+if flags = flags.s then s else symbol(worddata.s, module.s, types.s, raw.s, flags)
 
 Function =(a:symbol, b:symbol)boolean
-  worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1
-∧  module.a = module.b
-∧  (xor(hashbits.a,hashbits.b) /and (simplenamebit /or frefbit /or unboundbit ))=0x0
+worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1 ∧ module.a = module.b
+∧ (xor(flags.a, flags.b) ∧ (simplenamebit ∨ frefbit ∨ unboundbit)) = 0x0
 
 Function ?(a:symbol, b:symbol)ordering
- ?2(a,b)
-∧  module.a ? module.b
-∧  toint(xor(hashbits.a,hashbits.b) /and   (  frefbit /or unboundbit )) ? 0
-
+?2(a, b) ∧ module.a ? module.b ∧ toint(xor(flags.a, flags.b) ∧ (frefbit ∨ unboundbit)) ? 0
 
 Function ?2(a:symbol, b:symbol)ordering
-worddata.a ? worddata.b 
-∧ types.a >> 1 ? types.b >> 1 
-∧ issimplename.a ? issimplename.b
+worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1 ∧ issimplename.a ? issimplename.b
 
+Function privatefields(s:symbol)seq.int[toint.raw.s, toint.flags.s]
 
-function hashshift int 7 
-
-function hashmask bits 0x7F
-
-function extrabits(types:seq.mytype, other:seq.word, flags:bits)bits bits.hash(types, other) << hashshift ∨ flags ∧ hashmask
-
-Function extrabits(s:symbol)int toint.hashbits.s
-
-Function Words(s:seq.word)symbol
-symbol(s
-, moduleref."internallib $words"
-, [typeptr]
-, 0x0
-, extrabits(empty:seq.mytype, s, constbit)
-)
+Function Words(s:seq.word)symbol symbol(s, moduleref."internallib $words", [typeptr], 0x0, constbit)
 
 function constbit bits bits.1
 
@@ -135,44 +111,38 @@ function hasfrefbit bits bits.16
 
 function unboundbit bits 0x20
 
-function requiresbit bits 0x1 << 42
+function requiresbit bits 0x40
 
-Function hasfref(sym:symbol)boolean(hashbits.sym ∧ (hasfrefbit ∨ frefbit)) ≠ 0x0
+Function hasfref(sym:symbol)boolean(flags.sym ∧ (hasfrefbit ∨ frefbit)) ≠ 0x0
 
-Function issimplename(sym:symbol)boolean(hashbits.sym ∧ simplenamebit) ≠ 0x0
+Function issimplename(sym:symbol)boolean(flags.sym ∧ simplenamebit) ≠ 0x0
 
-Function isspecial(s:symbol)boolean(hashbits.s ∧ specialbit) ≠ 0x0
+Function isspecial(s:symbol)boolean(flags.s ∧ specialbit) ≠ 0x0
 
-Function isFref(s:symbol)boolean(hashbits.s ∧ frefbit) ≠ 0x0
+Function isFref(s:symbol)boolean(flags.s ∧ frefbit) ≠ 0x0
 
-Function isconst(s:symbol)boolean(hashbits.s ∧ constbit) ≠ 0x0
+Function isconst(s:symbol)boolean(flags.s ∧ constbit) ≠ 0x0
 
-Function isunbound(sym:symbol)boolean(hashbits.sym ∧ unboundbit) ≠ 0x0
+Function isunbound(sym:symbol)boolean(flags.sym ∧ unboundbit) ≠ 0x0
 
-Function hasrequires(sym:symbol)boolean(raw.sym ∧ requiresbit) ≠ 0x0
+Function hasrequires(sym:symbol)boolean(flags.sym ∧ requiresbit) ≠ 0x0
 
-Function hash(sym:symbol)int toint(hashbits.sym >> hashshift)
+Function hash(sym:symbol)int hash(types.sym, worddata.sym)
 
-Function setunbound(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym, hashbits.sym /or unboundbit)
+Function setunbound(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym, flags.sym ∨ unboundbit)
 
-Function setrequires(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym ∨ requiresbit, hashbits.sym )
+Function setrequires(sym:symbol)symbol symbol(worddata.sym, module.sym, types.sym, raw.sym, flags.sym ∨ requiresbit)
 
 Function replaceTsymbol(with:mytype, sym:symbol)symbol
 if with = typeT ∨ isconst.sym then sym
 else
  let newtypes = 
   for newtypes = empty:seq.mytype, t ∈ types.sym do newtypes + replaceT(with, t)/for(newtypes)
- let newmodule=replaceT(with, module.sym)
-  let newhash=if true /or not.isunbound.sym /or isabstract.newmodule then hashbits.sym else   
-    xor(unboundbit , bits(-1)) /and hashbits.sym 
-   symbol(worddata.sym
- , newmodule
- , newtypes
- ,raw.sym
- , extrabits(newtypes, worddata.sym,  newhash)
- )
- 
-  
+ let newmodule = replaceT(with, module.sym)
+ let newhash = 
+  if true ∨ not.isunbound.sym ∨ isabstract.newmodule then flags.sym
+  else xor(unboundbit, bits.-1) ∧ flags.sym
+ symbol(worddata.sym, newmodule, newtypes, raw.sym, newhash)
 
 function symbolZ(module:modref, name:word, namePara:seq.mytype, paras:seq.mytype, rt:mytype, flags:bits, raw:bits)symbol
 let types = namePara + paras + rt
@@ -180,7 +150,7 @@ symbol([name]
 , module
 , types
 , raw
-, extrabits(types, [name], if isempty.namePara then simplenamebit ∨ flags else flags)
+, if isempty.namePara then simplenamebit ∨ flags else flags
 )
 
 Function Br2(t:int, f:int)symbol
@@ -228,65 +198,6 @@ else if isspecial.s ∧ name.module.s ∉ "$record $loopblock"then
  if isdefine.s ∨ isbr.s ∨ isexit.s then 1
  else{assert name.module.s /in"$continue $sequence"report"CHeKC"+print.s}toint.name.s
 else length.types.s - if issimplename.s then 1 else 2
-
-Export raw(symbol)bits
-
-Export type:symbol
-
-Export worddata(symbol)seq.word
-
-Export module(symbol)modref
-
-Export types(symbol)seq.mytype
-
-Export=(a:symbol, b:symbol)boolean
-
-Export ?(a:symbol, b:symbol)ordering
-
-Export ?2(a:symbol, b:symbol)ordering
-
-Export Words(s:seq.word)symbol
-
-Export issimplename(sym:symbol)boolean
-
-Export isspecial(s:symbol)boolean
-
-Export isconst(s:symbol)boolean
-
-Export isunbound(sym:symbol)boolean
-
-Export hash(sym:symbol)int
-
-Export setunbound(sym:symbol)symbol
-
-Export setrequires(sym:symbol)symbol
-
-Export replaceTsymbol(with:mytype, sym:symbol)symbol
-
-Export Br2(l1:int, l2:int)symbol
-
-Export brt(s:symbol)int
-
-Export brf(s:symbol)int
-
-Export name(sym:symbol)word
-
-Export iswords(s:symbol)boolean
-
-Export islocal(s:symbol)boolean
-
-Export isdefine(s:symbol)boolean
-
-Export isbr(symbol)boolean
-
-Export isexit(s:symbol)boolean
-
-Export value(sym:symbol)int
-
-Export nopara(sym:symbol)int
-
----end internal
-
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype)seq.word
 let fullname = 
@@ -395,8 +306,8 @@ symbol(module, name, [para], returntype)
 Function symbol(module:modref, name:seq.word, returntype:mytype)symbol
 symbol(module, name, empty:seq.mytype, returntype)
 
-Function symbol(module:modref, name:seq.word, paras:seq.mytype, rt:mytype, hashbits:bits)symbol
-symbolZ(module, name_1, empty:seq.mytype, paras, rt, hashbits, 0x0)
+Function symbol(module:modref, name:seq.word, paras:seq.mytype, rt:mytype, flags:bits)symbol
+symbolZ(module, name_1, empty:seq.mytype, paras, rt, flags, 0x0)
 
 Function symbol4(module:modref, name:word, namePara:mytype, paras:seq.mytype, rt:mytype)symbol
 symbolZ(module
@@ -532,19 +443,14 @@ symbolZ(moduleref."internallib $define"
 )
 
 Function Fref(s:symbol)symbol
-assert not.isconst.s /and first.worddata.s /nin "FREF" report "FREF problem"+print.s+stacktrace
-let z = 
- extrabits(types.s
- , worddata.s
- , constbit ∨ frefbit ∨ hashbits.s ∧ hashmask
- )
+assert not.isconst.s ∧ first.worddata.s ∉ "FREF"report"FREF problem" + print.s + stacktrace
+let z = constbit ∨ frefbit ∨ flags.s
 symbol(worddata.s, module.s, types.s, raw.s, z)
 
 Function basesym(s:symbol)symbol
 if isFref.s then
- let flags = hashbits.s ∧ xor(constbit ∨ frefbit ∨ hasfrefbit, tobits.-1)
- let newbits = extrabits(types.s, worddata.s, flags)
- symbol(worddata.s, module.s, types.s, raw.s, newbits)
+ let flags = flags.s ∧ xor(constbit ∨ frefbit ∨ hasfrefbit, tobits.-1)
+ symbol(worddata.s, module.s, types.s, raw.s, flags)
 else s
 
 Function GetSeqLength symbol symbol(internalmod, "getseqlength", typeptr, typeint)
@@ -556,7 +462,7 @@ let a = if isseq.typ then typeptr else typ
 symbol(builtinmod.a, "assert", seqof.typeword, a)
 
 Function getoption(code:seq.symbol)seq.word
-if length.code < 2 /or last.code ≠ Optionsym then empty:seq.word else worddata.code_(length.code - 1)
+if length.code < 2 ∨ last.code ≠ Optionsym then empty:seq.word else worddata.code_(length.code - 1)
 
 Function removeoptions(code:seq.symbol)seq.symbol
 if length.code > 0 ∧ last.code = Optionsym then subseq(code, 1, length.code - 2)else code
@@ -694,11 +600,10 @@ Export paragraphno(symdef)int
 
 Function ?(a:symdef, b:symdef)ordering sym.a ? sym.b
 
-Function  getSymdef (a:set.symdef,sym:symbol)   set.symdef
- lookup(a, symdef(sym, empty:seq.symbol,0))
+Function getSymdef(a:set.symdef, sym:symbol)set.symdef lookup(a, symdef(sym, empty:seq.symbol, 0))
 
 Function getCode(a:set.symdef, sym:symbol)seq.symbol
-let b = lookup(a, symdef(sym, empty:seq.symbol,0))
+let b = lookup(a, symdef(sym, empty:seq.symbol, 0))
 if isempty.b then empty:seq.symbol else code.b_1
 
 Function symconst(i:int, hasfref:boolean)symbol

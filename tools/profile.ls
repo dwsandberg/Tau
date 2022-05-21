@@ -26,8 +26,6 @@ use set.labeledarc.symbol
 
 Builtin loadedLibs seq.liblib
 
-function decode(w:symbolref, l:liblib)symbol
-if between(toint.w, 1, length.decoderef.l)then(decoderef.l)_(toint.w)else Lit.toint.w
 
 function measure(arc:parc, measure:seq.word)int
 if measure = "time"then clocks.arc

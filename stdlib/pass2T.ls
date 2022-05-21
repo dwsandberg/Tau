@@ -62,13 +62,15 @@ unbound interpretCompileTime:T(args:seq.symbol, ctsym:symbol, typedict:typedict)
 
 Function pass2:T(knownsymbols0:set.symdef, t:typedict, option:seq.word)set.symdef
 {OPTION PROFILE}
-let knownsymbols=for acc2=empty:set.symdef, pele0 ∈ toseq.knownsymbols0 do
-    acc2+if isempty.code.pele0 then pele0 else
-      for acc=[first.code.pele0 ] ,  last=first.code.pele0 , c /in code.pele0 << 1 do  
-        next( if last=PreFref then acc >> 1 +
-         Fref.c else acc+c ,c) 
-        /for(symdef(sym.pele0,acc,paragraphno.pele0) ) 
-    /for (acc2) 
+let knownsymbols = 
+ for acc2 = empty:set.symdef, pele0 ∈ toseq.knownsymbols0 do
+  acc2
+  + if isempty.code.pele0 then pele0
+  else
+   for acc = [first.code.pele0], last = first.code.pele0, c ∈ code.pele0 << 1 do
+    next(if last = PreFref then acc >> 1 + Fref.c else acc + c, c)
+   /for(symdef(sym.pele0, acc, paragraphno.pele0))
+ /for(acc2)
 if option = "addpass"then additionalpass:T(toseq.knownsymbols, knownsymbols, t)
 else
  subpass2:T(empty:seq.symdef, empty:set.symdef, asset.renumberconstants.toseq.knownsymbols, 0, t)
@@ -78,10 +80,10 @@ function subpass2:T(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, c
 {OPTION PROFILE}
 {assert count < 4 report"SIZE"+%.length.toseq.toprocess+%.length.bigin+%.length.toseq.corein+print.count}
 for big = bigin, small = empty:set.symdef, core = corein, pele0 ∈ toseq.toprocess do
-  let pele={if count > 0 /or isempty.code.pele0 then pele0 else
-      for acc=empty:seq.symbol ,  last=first. code.pele0 , c /in code.pele0 << 1 do  
-        next(acc+if last=PreFref then Fref.c else last ,c) 
-        /for(symdef(sym.pele0,acc+c,paragraphno.pele0)) } pele0
+ let pele = 
+  {if count > 0 /or isempty.code.pele0 then pele0 else for acc=empty:seq.symbol, last=first. code.pele0, c /in code.pele0 
+<< 1 do next(acc+if last=PreFref then Fref.c else last, c)/for(symdef(sym.pele0, acc+c, paragraphno.pele0))}
+  pele0
  let s = sym.pele
  let fullcode = code.pele
  let options = getoption.fullcode
@@ -90,14 +92,14 @@ for big = bigin, small = empty:set.symdef, core = corein, pele0 ∈ toseq.toproc
   next(big, small, pele ∪ core)
  else if"COMPILETIME"_1 ∈ options then
   let code4 = firstopt:T(core, s, fullcode, options, true, typedict)
-  next(big, small, symdef(s, code4,paragraphno.pele) ∪ core)
+  next(big, small, symdef(s, code4, paragraphno.pele) ∪ core)
  else if length.code < 30 then
   let t = firstopt:T(core, s, fullcode, options, true, typedict)
-  if"INLINE"_1 ∈ getoption.t then next(big, small, symdef(s, t,paragraphno.pele) ∪ core)
-  else next(big, symdef(s, t,paragraphno.pele) ∪ small, core)
+  if"INLINE"_1 ∈ getoption.t then next(big, small, symdef(s, t, paragraphno.pele) ∪ core)
+  else next(big, symdef(s, t, paragraphno.pele) ∪ small, core)
  else next(big + pele, small, core)
 /for(if length.toseq.corein = length.toseq.core then
-  additionalpass:T(toseq.core + toseq.small + big, core, typedict)
+ additionalpass:T(toseq.core + toseq.small + big, core, typedict)
 else subpass2:T(big, core, small, count + 1, typedict)/if)
 
 Function additionalpass:T(p:seq.symdef, start:set.symdef, typedict:typedict)set.symdef
@@ -106,7 +108,9 @@ for acc = start, prgele ∈ p do
  let code3 = code.prgele
  let sym3 = sym.prgele
  if isempty.code3 then prgele ∪ acc
- else symdef(sym3, firstopt:T(acc, sym3, code3, getoption.code3, false, typedict),paragraphno.prgele) ∪ acc
+ else
+  symdef(sym3, firstopt:T(acc, sym3, code3, getoption.code3, false, typedict), paragraphno.prgele)
+  ∪ acc
 /for(acc)
 
 Function firstopt:T(p:set.symdef, s:symbol, code:seq.symbol, options:seq.word, first:boolean, typedict:typedict)seq.symbol
@@ -235,7 +239,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    else if length.code = 1 ∧ code = [Local.1] ∧ nopara = 1 then
     {function just returns result}next(flags, result, nextvar, map)
    else
-     let t = backparse2(result, len, nopara, empty:seq.int) + [len + 1]
+    let t = backparse2(result, len, nopara, empty:seq.int) + [len + 1]
     {assert length.t=nopara+1 report"INLINE PARA PROBLEM"}
     let new = expandinline:T(result, t, nextvar, code, p, self, typedict)
     next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)

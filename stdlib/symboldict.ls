@@ -43,11 +43,12 @@ Function symboldict(d:set.symbol, common:seq.commoninfo)symboldict symboldict(d,
 Function common(d:symboldict)commoninfo first.commonX.d
 
 Function requires(d:symboldict, sym:symbol)seq.symbol
-if hasrequires.sym then 
-let t=getSymdef(requires.d,sym)
-if isempty.t then empty:seq.symbol else 
-assert not.isempty.t report "requires"+print.sym
-code.t_1
+if hasrequires.sym then
+ let t = getSymdef(requires.d, sym)
+ if isempty.t then empty:seq.symbol
+ else
+  assert not.isempty.t report"requires" + print.sym
+  code.t_1
 else empty:seq.symbol
 
 Function empty:symboldict symboldict symboldict(empty:set.symbol, empty:set.symdef, empty:seq.commoninfo)
