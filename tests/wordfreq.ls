@@ -19,8 +19,6 @@ use seq.seq.word
 
 type indexedword is w:word
 
-function assignencoding(a:indexedword)int nextencoding.a
-
 function hash(a:indexedword)int hash.w.a
 
 function =(a:indexedword, b:indexedword)boolean w.a = w.b

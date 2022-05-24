@@ -62,8 +62,6 @@ Export type:match5
 
 Export constdata seq.slot
 
-Export wordref(w:word)int
-
 Function conststype llvmtype array(-2, i64)
 
 Function profiletype llvmtype array(-3, i64)
@@ -116,7 +114,8 @@ list of external calls"arcsin arccos sin tan cos sqrt createfile3 loadedLibs pri
 getbitfile2 callstack createthread getmachineinfo currenttime allocatespace processisaborted addencoding getinstance 
 "
 
-Function stepone(alltypes:typedict, prgX:set.symdef, libname:word)steponeresult
+Function stepone(dependentwords:seq.seq.char, alltypes:typedict, prgX:set.symdef, libname:word)steponeresult
+let discard0 = initwordref.dependentwords
 let discard1 = initmap5
 for used = empty:seq.symbol, crecord = empty:seq.symdef, cc ∈ toseq.prgX do
  let firstsym = sym.cc
@@ -236,7 +235,7 @@ ptrtoint(functyp, symboltableentry([mangledname(extnames, f1, "stdlib"_1)], func
 Export tollvmtype(typedict, symbol)llvmtype
 
 Function processconst(toprocess:seq.symdef, alltypes:typedict)int
-let initvalue = nextencoding.empty:match5
+let initvalue = length.encodingdata:match5
 for notprocessed = empty:seq.symdef, xx ∈ toprocess do
  for args = empty:seq.int, defined = true, ele1 ∈ code.xx
  while defined
@@ -247,7 +246,7 @@ for notprocessed = empty:seq.symdef, xx ∈ toprocess do
   let discard = addtemplate(sym.xx, 0, emptyinternalbc, "ACTARG"_1, slot.addobject.args)
   notprocessed
  else notprocessed + xx /if)
-/for(if nextencoding.empty:match5 = initvalue then
+/for(if length.encodingdata:match5 = initvalue then
  assert isempty.notprocessed report"processconst problem"
  0
 else processconst(notprocessed, alltypes)/if)

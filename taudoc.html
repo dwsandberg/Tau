@@ -217,10 +217,10 @@
 <h2> Encodings </h2> 
 <p> A type can be mapped to positive integers in an encoding. As an example consider implementing a cache that stores the factors of an integer.
 <p> The parameterized module <em> encoding </em>.T defines the following functions for working with encodings. 
-<p> <span class=keyword> Export </span> encode(T)encoding.T // will return the encoding // ;
-<p> <span class=keyword> Export </span> decode(encoding.T)T // will return the value that was encoded // ;
-<p> <span class=keyword> Export </span> Function findencode(t:T, erecord.T)seq.T // will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.// ;
-<p> <span class=keyword> Export </span> Function encoding:seq.encodingpair.T seq.T // list of values that have been encoded.// ;
+<p> <span class=keyword> Export </span> encode(T)encoding.T{will return the encoding}
+<p> <span class=keyword> Export </span> decode(encoding.T)T{will return the value that was encoded}
+<p> <span class=keyword> Export </span> Function findencode(t:T, erecord.T)seq.T{will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.}
+<p> <span class=keyword> Export </span> Function encodingdata:T seq.T{list of values that have been encoded.}
 <p> <span class=keyword> Module </span> encodingExample
 <p> <span class=keyword> use </span> standard
 <p> <span class=keyword> use </span> encoding.factors
@@ -231,8 +231,6 @@
 <p> <span class=keyword> function </span> hash(a:factors)int key.a
 <p> <span class=keyword> function </span> =(a:factors, b:factors)boolean key.a = key.b
 <p> Note that for a and b of the type factor ; a=b implies hash(a)=hash(b). This must be true for the hash to work correctly.
-<p> We also need to specify how integers are to be assigned to the values of the type. 
-<p> <span class=keyword> function </span> assignencoding(b:factors)int key.b
 <p> To use factors as an encoding we must include:
 <p> The following two function are used to calculate the factors of an integer
 <p> <span class=keyword> function </span> factors(n:int)seq.int

@@ -111,7 +111,6 @@ function hash(a:symbolnew)int hash.tosymbol.a
 
 function =(a:symbolnew, b:symbolnew)boolean tosymbol.a = tosymbol.b
 
-function assignencoding(a:symbolnew)int nextencoding.a 
 
 use encoding.symbolnew
 
@@ -156,11 +155,10 @@ type word3 is chars:seq.char
 
 function word3(a:word)word3 word3.decodeword.a
 
-function slotX(a:word3) int toint.C64.valueofencoding.encode.chars.a
+function slotX(a:word3) int toint.C64.valueofencoding.encode.a
 
 function ?(a:word3, b:word3)ordering chars.a ? chars.b
 
-function assignencoding(a:word3)int nextencoding.a
 
 function =(a:word3, b:word3)boolean chars.a = chars.b
 
@@ -176,24 +174,42 @@ function =(a:slot, b:slot)boolean toint.a = toint.b
 
 function hash(a:const3)int hash.for acc = empty:seq.int, @e ∈ flds.a do acc + toint.@e /for(acc)
 
-function assignencoding(a:const3)int nextencoding.a
+use seq.seq.char
+
+use set.encoding.word3
 
 Function wordref(w:word)int
 {identity, y}
 let w3 = word3.w
 let discard = encode.w3
-slotX.word3.w
+slotX.w3
 
 Function addint(i:int)int toint.C64.i
 
+Function initwordref(dependentwords:seq.seq.char) int
+ { assert length.dependentwords=0 report
+   for txt="",max=0, p /in subseq(encodingdata:seq.char,1,length.dependentwords) do
+     let w=encodeword.p
+     next(txt+"/br"+%.valueofencoding.asencoding.w+w 
+     , max(max,valueofencoding.asencoding.w))
+     /for(%.max+%.length.dependentwords+txt)
+0
+}
+  for acc = 0, @e ∈ dependentwords do 
+max(acc,valueofencoding.asencoding.encodeword(@e))
+ /for(for  acc2=0, k /in subseq(encodingdata:seq.char,1,acc) do
+            valueofencoding.encode.word3.k /for(acc))
+ 
+ use seq.encoding.word3
+
 Function addliblib(libname:seq.word, dependentwords:seq.seq.char, entrypoint:slot, more:seq.int)int
 let name = addwordseq.libname
-let have = for acc = empty:set.word3, @e ∈ dependentwords do acc + word3.@e /for(acc)
-let used = for acc = empty:set.word3, @e ∈ encodingdata:word3 do acc + @e /for(acc)
+let have = for acc = empty:set.encoding.word3, @e ∈ dependentwords do acc + encode.word3.@e /for(acc)
+let used = for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3 do acc + encode.@e /for(acc)
 {build packed seq of word encodings}
 let wordstoadd = toseq(used \ have)
 let data = 
- for acc = [toint.C64.0, toint.C64.length.wordstoadd], @e ∈ wordstoadd do acc + addobject.fldsofwordencoding.@e /for(acc)
+ for acc = [toint.C64.0, toint.C64.length.wordstoadd], @e ∈ wordstoadd do acc + addobject.fldsofwordencoding.decode.@e /for(acc)
 let wordreps = addobject.data
 addobject2("liblib" + libname, [name, wordreps, toint.entrypoint, addint.0] + more)
 

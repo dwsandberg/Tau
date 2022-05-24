@@ -162,14 +162,35 @@ else
      next(cache, nextvar, map, result2 + t)
     else if isconst.sym then next(cache, nextvar, map, result2 + sym)
     else if name.sym ∈ "primitiveadd" ∧ isBuiltin.sym then
-     let encodingpairtype = typeref."encodingpair encoding"
-     let addefunc = addencodingsymbol.para.module.sym
-     let add2 = symbol(internalmod, "addencoding", [typeint, typeptr, typeint, typeint], typeint)
-     let dc = deepcopySym.addabstract(encodingpairtype, para.module.sym)
-     let discard = symbolref.addefunc
-     let discard2 = symbolref.dc
-     let discard3 = symbolref.add2
-     next(cache, nextvar + 1, map, result2 + [PreFref, addefunc, PreFref, dc, add2])
+     let T = para.module.sym
+     let encodingstatetype = typeref."encodingstate encoding"
+     if true then
+      let encodingpairtype = typeref."encodingpair encoding"
+      let addefunc = 
+       symbol(moduleref("encoding", T)
+       , "add"
+       , [addabstract(encodingstatetype, T), addabstract(encodingpairtype, T)]
+       , addabstract(encodingstatetype, T)
+       )
+      let add2 = symbol(internalmod, "addencoding", [typeint, typeptr, typeint, typeint], typeint)
+      let dc = deepcopySym.addabstract(encodingpairtype, T)
+      let discard = symbolref.addefunc
+      let discard2 = symbolref.dc
+      let discard3 = symbolref.add2
+      next(cache, nextvar + 1, map, result2 + [PreFref, addefunc, PreFref, dc, add2])
+     else
+      let addefunc = 
+       symbol(moduleref("encoding", T)
+       , "add"
+       , [addabstract(encodingstatetype, T), T]
+       , addabstract(encodingstatetype, T)
+       )
+      let add2 = symbol(internalmod, "addencoding", [typeint, typeptr, typeint, typeint], typeint)
+      let dc = deepcopySym.T
+      let discard = symbolref.addefunc
+      let discard2 = symbolref.dc
+      let discard3 = symbolref.add2
+      next(cache, nextvar + 1, map, result2 + [PreFref, addefunc, PreFref, dc, add2])
     else if name.sym ∈ "getinstance" ∧ isBuiltin.sym then
      let get = symbol(internalmod, "getinstance", typeint, typeptr)
      let typ = para.module.sym

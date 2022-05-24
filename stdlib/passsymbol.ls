@@ -403,10 +403,6 @@ for acc = empty:seq.findabstractresult, sd ∈ toseq.templates do
     let S = solveT(t, (types.sym)_idx)
     if S = type? then next(Tis, idx + 1)else next(S, idx + 1)
    /for(Tis)
-  {assert print.sym /ne"encoding.idrange:hash(idrange)int"/or print.e /in["encoding.T:hash(encodingpair.T)int 
-", "encoding.T:hash(encoding.T)int", "hashset.T:hash(hashelement.T)intX"]report"P"+print.sym+print.e+for 
-txt="", sd2 ∈ toseq.templates do let e2=sym.sd2 if name.e2=name.sym ∧ length.types.e2=length.types.sym then txt+print 
-.e2 else txt /for(txt)}
   if ?2(sym, replaceTsymbol(z, e)) = EQ then
    if(sym ? e) = EQ ∨ isunbound.e then acc else acc + findabstractresult(sd, z)
   else acc

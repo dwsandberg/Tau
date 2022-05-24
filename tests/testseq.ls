@@ -41,8 +41,6 @@ use testpackedseq.seq.word
 
 type seedtrack is key:int, val:int
 
-function assignencoding(a:seedtrack)int nextencoding.a
-
 function =(a:seedtrack, b:seedtrack)boolean key.a = key.b
 
 function hash(a:seedtrack)int key.a

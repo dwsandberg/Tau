@@ -18,8 +18,6 @@ function =(a:slot2, b:slot2)boolean rec.a = rec.b ∧ type.a = type.b ∧ name.a
 
 function hash(a:slot2)int hash.rec.a
 
-Function assignencoding(a:slot2)int nextencoding.a
-
 Function c32(i:int)encoding.slot2 encode.slot2(i32, [45, i], "")
 
 Function testbug7 seq.word
@@ -33,8 +31,6 @@ else"FAIL bug7"
 type llvmtypeele2 is toseq:seq.int
 
 function hash(a:llvmtypeele2)int hash.toseq.a
-
-Function assignencoding(a:llvmtypeele2)int nextencoding.a
 
 function =(a:llvmtypeele2, b:llvmtypeele2)boolean toseq.a = toseq.b
 

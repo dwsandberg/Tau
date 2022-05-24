@@ -165,8 +165,6 @@ function hash(a:typename)int hash.name.a
 
 Function encodingno(name:seq.word)int addorder.typename.name + 2
 
-function assignencoding(a:typename)int nextencoding.a
-
 Builtin abort:ptr(seq.word)ptr
 
 Builtin abort:int(seq.word)int

@@ -103,7 +103,7 @@ let profiledata = profiledata(addresssymbolrefdecode, profilearcs)
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(typedict, prgX, thename)
+let stepone = stepone(dependentwords, typedict, prgX, thename)
 let defines = defines.stepone
 let symboladdress = symboladdress(addresssymbolrefdecode, typedict, prgX, thename, defines)
 let discard3 = modulerecord("spacecount", [toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])

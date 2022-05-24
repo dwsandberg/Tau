@@ -402,15 +402,6 @@ Function makerealSymbol symbol symbol(moduleref."real", "makereal", seqof.typewo
 
 Function indexsymbol(T:mytype)symbol symbol(moduleref("seq", T), "_", seqof.T, typeint, T)
 
-Function addencodingsymbol(T:mytype)symbol
-let encodingstatetype = typeref."encodingstate encoding"
-let encodingpairtype = typeref."encodingpair encoding"
-symbol(moduleref("encoding", T)
-, "add"
-, [addabstract(encodingstatetype, T), addabstract(encodingpairtype, T)]
-, addabstract(encodingstatetype, T)
-)
-
 Function outofboundssymbol symbol symbol(moduleref."tausupport", "outofbounds", seqof.typeword)
 
 Function encodenosym symbol symbol(moduleref."tausupport", "encodingno", seqof.typeword, typeint)
@@ -629,7 +620,5 @@ Function ?(a:symbolref, b:symbolref)ordering toint.a ? toint.b
 Function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
 
 Function symbolref(sym:symbol)symbolref symbolref.addorder.sym
-
-Function assignencoding(a:symbol)int nextencoding.a
 
 Function decode(s:symbolref)symbol decode.to:encoding.symbol(toint.s) 

@@ -52,8 +52,6 @@ function inttollvmtype(i:int)llvmtype llvmtype.i
 
 function hash(a:llvmtypeele)int hash.toseq.a
 
-function assignencoding(a:llvmtypeele)int nextencoding.a
-
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
 Function print(t:llvmtype)seq.word
@@ -97,8 +95,6 @@ llvmtype.for acc = [toint.FUNCTION, 0], @e ∈ para do acc + typ.@e /for(acc)
 type llvmconst is typ:int, toseq:seq.int
 
 function hash(a:llvmconst)int hash.symtabname.a
-
-function assignencoding(a:llvmconst)int nextencoding.a
 
 Function =(a:llvmconst, b:llvmconst)boolean symtabname.a = symtabname.b ∧ typ.a = typ.b
 

@@ -12,10 +12,10 @@ function =(a:idrange, b:idrange)boolean next.a = next.b
 
 function hash(a:idrange)int next.a
 
-function assignencoding(a:idrange)int nextencoding.a
+use seq.idrange
 
 Function requestids(no:int)int
-let j = nextencoding.idrange.0
-let firstno = if j = 1 then 1 else next.decode.to:encoding.idrange(j - 1)
+let d=encodingdata:idrange
+let firstno = if isempty.d then 1 else next.last.d
 let discard = encode.idrange(firstno + no)
 firstno

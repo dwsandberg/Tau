@@ -1,6 +1,39 @@
 uses=stdlib exports=opttests 
 Library=opttests
 
+Module COMPILETIME
+
+use standard
+
+use bits
+
+use real
+
+Export  /or(bits,bits)bits
+
+Export  /and(bits,bits)bits
+
+Export  >>(bits,int)bits
+
+Export  <<(bits,int)bits
+
+Export  +(int,int)int
+
+Export  >(int,int)boolean
+
+Export  =(int,int)boolean
+
+Export  -(int,int)int
+
+Export  -(real,real) real
+
+Export  =(boolean,boolean) boolean
+
+Export  *(int,int)int
+
+Export  /(int,int)int
+
+
 Module opttests 
 
 use standard

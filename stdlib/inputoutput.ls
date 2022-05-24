@@ -140,8 +140,6 @@ function =(symaddresses, symaddresses)boolean true
 
 function hash(symaddresses)int 1
 
-function assignencoding(a:symaddresses)int nextencoding.a
-
 Function dependentwords(dependentlibs:seq.word)seq.seq.char
 for acc0 = empty:seq.seq.char, ll ∈ loadedLibs do
  if first.libname.ll ∈ dependentlibs then

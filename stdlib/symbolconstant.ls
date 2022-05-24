@@ -34,8 +34,6 @@ for hasfref = false, sym ∈ args while not.hasfref do hasfref.sym /for(hasfref)
 Function hash(s:seq.symbol)int
 hash.for acc = "", e ∈ s do acc + worddata.e + name.module.e /for(acc)
 
-function assignencoding(a:symbolconstant)int nextencoding.a
-
 Export type:symbolconstant
 
 type symbolconstant is toseq:seq.symbol

@@ -414,13 +414,13 @@ A type can be mapped to positive integers in an encoding. As an example consider
 
 The parameterized module /em encoding.T  defines the following functions for working with encodings. 
 
-   Export encode(T)encoding.T // will return the encoding // ;
+   Export encode(T)encoding.T { will return the encoding } 
 
-  Export   decode(encoding.T)T // will return the value that was encoded // ;
+  Export   decode(encoding.T)T { will return the value that was encoded } 
 
-  Export Function findencode(t:T, erecord.T)seq.T // will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.// ;
+  Export Function findencode(t:T, erecord.T)seq.T { will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.}
 
-  Export  Function encoding:seq.encodingpair.T seq.T // list of values that have been encoded.// ; 
+  Export  Function encodingdata:T seq.T { list of values that have been encoded.} 
 
  Module encodingExample 
 
@@ -437,10 +437,6 @@ We must define a hash function and = function of the type.
  function =(a:factors, b:factors)boolean key.a = key.b
 
 Note that for a and b of the type factor ; a = b implies hash(a)= hash(b). This must be true for the hash to work correctly.
-
-We also need to specify how integers are to be assigned to the values of the type.  
-
-  function assignencoding(  b:factors ) int key.b
   
 To use factors as an  encoding we must include:
 

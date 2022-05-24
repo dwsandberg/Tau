@@ -14,7 +14,11 @@ use symbol
 
 use symbol2
 
+use symboldict
+
 use typedict
+
+use seq.commoninfo
 
 use seq.modExports
 
@@ -289,12 +293,24 @@ let tmp =
   if not.isabstract.module.sym ∧ not.isInternal.sym then acc + Fref.sym else acc
  /for(Constant2(acc + Sequence(typeint, length.acc)))
 let maybereferenced0 = close(prg10, roots.oldmods + tmp, empty:set.symbol, 0)
+let symdict = symboldict(maybereferenced0, empty:seq.commoninfo)
 let divide = 
- for addresses = empty:seq.symbol, other = empty:seq.symbol, sym1 ∈ toseq.maybereferenced0 do
+ for addresses = empty:seq.symbol
+ , other = empty:seq.symbol
+ , dupsyms = empty:seq.symbol
+ , sym1 ∈ toseq.maybereferenced0
+ do
   let sym = clearrequiresbit.sym1
-  if isabstract.module.sym ∨ isconst.sym ∨ isBuiltin.sym ∨ isGlobal.sym then next(addresses, other + sym)
-  else next(addresses + sym, other)
- /for([addresses, other])
+  let dup = 
+   if not.isunbound.sym ∨ isabstract.module.sym then false
+   else
+    for acc = true, x ∈ toseq.lookupbysig(symdict, sym)while acc do isunbound.x /for(not.acc)
+  if dup then next(addresses, other, dupsyms + sym)
+  else if isabstract.module.sym ∨ isconst.sym ∨ isBuiltin.sym ∨ isGlobal.sym then
+   next(addresses, other + sym, dupsyms)
+  else next(addresses + sym, other, dupsyms)
+ /for([addresses, other, dupsyms])
+let dupsyms = divide_3
 let other = divide_2
 let impsym = 
  clearrequiresbit.symbol(moduleref."inputoutput", "stacktraceimp", seqof.typeword)
@@ -319,17 +335,33 @@ do
     if isGlobal.sym ∨ isInternal.sym then sd_1
     else
      let code = 
-      for acc = empty:seq.symbol, sy ∈ code.sd_1 do acc + clearrequiresbit.sy /for(acc)
+      for acc = empty:seq.symbol, sy ∈ code.sd_1 do
+       acc
+       + clearrequiresbit.if sy ∈ dupsyms then
+        let x = lookupbysig(symdict, sy)
+        if x_1 = sy then x_2 else x_1
+       else sy
+      /for(acc)
      if isrecordconstant.sym ∨ libname = library.module.sym ∨ abstract then symdef(sym, code, idx)
      else
       let b = getSymdef(libextnames, sym)
       if not.isempty.b then symdef(sym, empty:seq.symbol, paragraphno.b_1)else symdef(sym, code, -idx)
    if abstract then next(prgX, prgA + new, idx)else next(prgX + new, prgA, idx + 1)
-/for(midpoint(""
+/for(let oldmods1 = 
+ for acc = empty:seq.modExports, m1 ∈ oldmods do
+  for exps = empty:seq.symbol, sy ∈ exports.m1 do
+   exps
+   + if sy ∈ dupsyms then
+    let x = lookupbysig(symdict, sy)
+    if x_1 = sy then x_2 else x_1
+   else sy
+  /for(acc + modExports(modname.m1, exps, types.m1))
+ /for(acc)
+midpoint(""
 , prgX
 , prgA
 , typedict
-, oldmods
+, oldmods1
 , ["Library=" + libname + "uses=" + uses]
 ))
 

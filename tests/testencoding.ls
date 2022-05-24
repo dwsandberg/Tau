@@ -60,8 +60,6 @@ function hash(a:testrecord)int key.a
 
 Export type:testrecord
 
-function assignencoding(a:testrecord)int nextencoding.a
-
 function add(b:seq.word)int
 let x = encode.testrecord(length.encodingdata:testrecord + 1, b)
 1

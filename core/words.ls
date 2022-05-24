@@ -37,8 +37,6 @@ Function hash(a:word)int hash.asencoding.a
 
 Export asencoding(w:word)encoding.seq.char
 
-Function assignencoding(a:seq.char)int toint(bits.assignrandom.a ∧ bits(toint(bits.1 << 31) - 1))
-
 Function =(a:word, b:word)boolean{OPTION COMPILETIME}asencoding.a = asencoding.b
 
 Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
