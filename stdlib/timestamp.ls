@@ -60,7 +60,7 @@ timestamp(((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second
 
 Function decompose(ts:timestamp)seq.int
 {returns sequence of year, month, day, hour, minute, second}
-let t = toint.ts
+let t = asseconds.ts
 let a = t mod (24 * 60 * 60)
 let seconds = a mod 60
 let minutes = a / 60 mod 60

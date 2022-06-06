@@ -6,7 +6,7 @@ use bits
 
 use bitstream
 
-use libraryModule
+use debuginfo
 
 use standard
 
@@ -35,8 +35,6 @@ use bitcast.dummyrec2
 use process.int
 
 use seq.int
-
-use seq.liblib
 
 use seq.mytype
 
@@ -108,10 +106,9 @@ type addrsym is addr:int, sym:symbol
 function ?(a:addrsym, b:addrsym)ordering addr.a ? addr.b
 
 Function stacktraceimp seq.word
+let decode = symbolrefdecodeX
 let t = 
- for acc = empty:seq.addrsym, ll ∈ loadedLibs do
-  for t = acc, idx = 1, i ∈ symboladdress.ll do next(t + addrsym(i, decode(symbolref.idx, ll)), idx + 1)/for(t)
- /for(sort.acc)
+ for t = empty:seq.addrsym, idx = 1, i ∈ symboladdress do next(t + addrsym(i, decode_idx), idx + 1)/for(sort.t)
 for txt = " /p", r ∈ callstack.30 << 2 do
  let i = binarysearch(t, addrsym(r, Lit.1))
  txt + %.r
@@ -121,15 +118,12 @@ for txt = " /p", r ∈ callstack.30 << 2 do
 
 builtin callstack(n:int)seq.int
 
-Builtin loadedLibs seq.liblib
-
 function funcaddress(sym:symbol)int
 let b = encodingdata:symaddresses
 let symdefs = 
  tosymdefs.if length.b = 0 then
-  for acc = empty:set.symdef, ll ∈ loadedLibs do
-   for acc1 = acc, idx = 1, a ∈ symboladdress.ll do next(acc1 + symdef(decode(symbolref.idx, ll), empty:seq.symbol, a), idx + 1)/for(acc1)
-  /for(decode.encode.symaddresses.acc)
+  let decode = symbolrefdecodeX
+  for acc = empty:set.symdef, idx = 1, a ∈ symboladdress do next(acc + symdef(decode_idx, empty:seq.symbol, a), idx + 1)/for(decode.encode.symaddresses.acc)
  else b_1
 let c = getSymdef(symdefs, sym)
 if isempty.c then 0 else paragraphno.c_1
@@ -140,21 +134,8 @@ function =(symaddresses, symaddresses)boolean true
 
 function hash(symaddresses)int 1
 
-Function dependentwords(dependentlibs:seq.word)seq.seq.char
-for acc0 = empty:seq.seq.char, ll ∈ loadedLibs do
- if first.libname.ll ∈ dependentlibs then
-  for acc = acc0, p ∈ words.ll do acc + data.p /for(acc)
- else acc0
-/for(acc0)
-
-Function dependentinfo(dependentlibs:seq.word)midpoint
-for org = empty:midpoint, ll ∈ loadedLibs do
- let libname = (libname.ll)_1
- if libname ∈ dependentlibs then tomidpoint(org, ll, libname)else org
-/for(org)
-
-Function addlibwords(l:liblib)int
-let discard = addencodingpairs.words.l
+Function addlibwords(l:debuginfo)int
+let discard = addencodings.words.l
 1
 
 ___________
@@ -183,11 +164,4 @@ type dummyparameterrecord is a:int, b:int
 
 type dummyrec2 is a:int, b:int, c:dummyparameterrecord
 
-builtin createthread(int, int, int, dummyparameterrecord, int)process.int
-
-Function checkload seq.word
-for yy = "", ll ∈ loadedLibs do
- for acc = yy, p ∈ words.ll do
-  if code.p = asencoding.encodeword.data.p then acc else acc + encodeword.data.p
- /for(acc)
-/for(yy) 
+builtin createthread(int, int, int, dummyparameterrecord, int)process.int 

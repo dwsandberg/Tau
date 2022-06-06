@@ -30,18 +30,6 @@ Export getSymdef(set.symdef, symbol)set.symdef
 
 Export deepcopySym(mytype)symbol
 
-Export decode(symbolref)symbol
-
-Export symbolref(symbol)symbolref
-
-Export ?(a:symbolref, b:symbolref)ordering toint.a ? toint.b
-
-Export=(a:symbolref, b:symbolref)boolean toint.a=toint.b
-
-Export toint(symbolref)int
-
-Export symbolref(int)symbolref
-
 Export renumberconstants(prg:seq.symdef)seq.symdef
 
 Export fullconstantcode(s:symbol)seq.symbol
@@ -271,10 +259,6 @@ Export ?(mytype, mytype)ordering
 Export typeref(seq.word)mytype
 
 Export seqof(mytype)mytype
-
-Export toint(symbolref)int
-
-Export type:symbolref
 
 Export type:typedict
 

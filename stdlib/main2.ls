@@ -8,6 +8,8 @@ use codegennew
 
 use compilerfront
 
+use debuginfo
+
 use file
 
 use format
@@ -36,7 +38,13 @@ use compilerfrontT.libllvm
 
 use pass2T.libllvm
 
+use objectio.midpoint
+
+use seq.midpoint
+
 use seq.modExports
+
+use set.modExports
 
 use set.modref
 
@@ -47,8 +55,6 @@ use set.mytype
 use seq.symbol
 
 use set.symbol
-
-use seq.symbolref
 
 use seq.symdef
 
@@ -63,6 +69,8 @@ use process.seq.bits
 use encoding.seq.char
 
 use seq.seq.char
+
+use process.seq.file
 
 use seq.seq.mytype
 
@@ -140,30 +148,60 @@ for acc = empty:seq.byte, names = "parts=", f ∈ input do
   + makeentry.acc
 [file(filename(Library + ".libsrc"), firstpart + acc)])
 
-Function subcompilelib(allsrc:seq.seq.word)seq.bits
+function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint)seq.file
 {OPTION PROFILE}
 let uses = extractValue(first.allsrc, "uses")
-let dependentlibs = dependentinfo:libllvm(uses)
 let m = compilerfront2:libllvm("all2", allsrc, dependentlibs)
-compilerback(m, libcode.m, dependentwords.uses)
+let libcode = libcode.m
+let m2 = outlib(libcode, prg.m, libmods.m)
+let bc = compilerback(m, {toseq.prg.m2}libcode, dependentwords.uses)
+let libname = extractValue(first.allsrc, "Library")
+[file(filename(libname + ".bc"), bc)
+, file(filename(libname + ".libinfo"), outbytes:midpoint([m2]))
+]
 
 Function stdlib(input:seq.file)seq.file
 let info = breakparagraph.data.first.input
 let libname = extractValue(first.info, "Library")
-let p = process.subcompilelib.info
-[if aborted.p then
- file("error.html", "COMPILATION ERROR in libray:" + libname + EOL + message.p)
-else file(filename(libname + ".bc"), result.p)
-]
+let uses = extractValue(first.info, "uses")
+let dep = 
+ for mp = empty:midpoint, i ∈ input << 1 do
+  let new = first.inbytes:midpoint(data.i)
+  midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
+ /for(mp)
+let p = process.subcompilelib(info, dep)
+if aborted.p then
+ [file("error.html", "COMPILATION ERROR in libray:" + libname + EOL + message.p)
+ ]
+else result.p
+
+function outlib(libcode0:seq.symdef, prg:set.symdef, libmods:seq.modExports)midpoint
+let libcode = asset.libcode0
+for acc = empty:seq.symdef, sd ∈ toseq.prg do
+ if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then acc
+ else acc + symdef(sym.sd, removeFref.getCode(libcode, sym.sd), length.acc + 1)
+/for(for acc2 = acc, sd2 ∈ toseq(libcode \ asset.acc)do acc2 + symdef(sym.sd2, removeFref.code.sd2, 0)/for(midpoint("X", asset.acc2, empty:set.symdef, emptytypedict, libmods, empty:seq.seq.word)))
+
+function removeFref(code:seq.symbol)seq.symbol
+for codeNoFref = empty:seq.symbol, sy ∈ code do
+ if isFref.sy then codeNoFref + PreFref + basesym.sy else codeNoFref + sy
+/for(codeNoFref)
 
 Function astext(info:midpoint)seq.seq.word
 for acc = empty:seq.seq.word, p ∈ toseq.prg.info do acc + [print.sym.p + print.code.p]/for(acc)
 
 Function compilerFront:libllvm(option:seq.word, allsrc:seq.seq.word)midpoint
+{OPTION PROFILE}compilerfront2:libllvm(option, allsrc, empty:midpoint)
+
+Function compilerFront:libllvm(option:seq.word, input:seq.file)midpoint
 {OPTION PROFILE}
-let libinfo = dependentinfo:libllvm(extractValue(first.allsrc, "uses"))
-let m = compilerfront2:libllvm(option, allsrc, libinfo)
-m
+let allsrc = breakparagraph.data.input_1
+let dep = 
+ for mp = empty:midpoint, i ∈ input << 1 do
+  let new = first.inbytes:midpoint(data.i)
+  midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
+ /for(mp)
+compilerfront2:libllvm(option, allsrc, dep)
 
 Function modsE(ci:midpoint)seq.modExports libmods.ci
 
@@ -175,6 +213,4 @@ _______________
 
 Export type:libllvm
 
-type libllvm is a:int
-
-function dependentinfo:libllvm(dependentlibs:seq.word)midpoint dependentinfo.dependentlibs 
+type libllvm is a:int 

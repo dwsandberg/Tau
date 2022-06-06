@@ -20,34 +20,36 @@ orglibsrc compilerfront.libsrc +stdlib pretty.ls symbol2 symbolconstant compiler
  
 
 orgmakelib stdlib.lib  core.libsrc compilerfront
-  +stdlib updatestate.ls   libraryModule COMPILETIME  bitstream 
+  +stdlib updatestate.ls    debuginfo COMPILETIME  bitstream 
   codegennew codetemplates file fileIO inputoutput hashset internalbc  llvm
    llvmconstants main2  persistant  symbol2 tausupport compileTimeT
    timestamp codetemplates2  ptr taublockseq  bitcast
-exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file fileIO format graph hashset internalbc ioseq layergraph libraryModule llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast 
+   object01 objectio LEBencoding 
+exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file fileIO 
+format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants 
+main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack 
+standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words 
+xxhash compilerfront bitcast objectio object01 LEBencoding
  
-makelib tools.lib  common.lib +tools tools.ls baseTypeCheck doc genLR1 prettycompilerfront profile taulextable frontcmd wordgraph
+makelib tools.lib  common.lib   +tools tools.ls baseTypeCheck doc genLR1 prettycompilerfront profile taulextable frontcmd wordgraph
 uses=common stdlib
 exports=baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
 
- makelib common.lib +common common.ls matrix point  packedindex bandeskopf uniqueids svg2graph makeDAG layergraph barycenter
-object01
-LEBencoding
+ makelib common.lib  +common common.ls matrix point    bandeskopf uniqueids svg2graph makeDAG layergraph barycenter
 uses=stdlib
-exports= matrix point  packedindex bandeskopf uniqueids svg2graph makeDAG layergraph barycenter  
-objectio object01 common
+exports= matrix point    bandeskopf uniqueids svg2graph makeDAG layergraph barycenter  
+ common
 
 libsrc commontests.libsrc +tests  bug7.ls checking myseq   point randomphrase test11  test20 
 testencoding  testmodules  testprocess testseq tree  wordfreq  
 
-makelib tests.lib commontests.libsrc 
+makelib tests.lib  commontests.libsrc 
  +tests  testopt.ls test11a  testall   
 uses=stdlib
 exports=tests
  
  
-makelib webassembly.lib +webassembly webassembly.ls  funcidx knownWfunc printfunc wasm wasm2 wasmcompile
-+common LEBencoding 
+makelib webassembly.lib  +webassembly webassembly.ls  funcidx knownWfunc printfunc wasm wasm2 wasmcompile 
 uses=stdlib
 exports=wasm wasm1 wasm2 wasmcompile webassembly
 
@@ -70,7 +72,7 @@ LR1 taugrammer.html  +stdlib parse.ls
  
 lextable taulex.html  +tools install.txt
 
-testall testall.html +tests opttests.ls
+testall testall.html +tests opttests.ls +built stdlib.libinfo
  
 
 
@@ -83,7 +85,7 @@ roots=installtau allweb
 front baseTypeCheck.html  stdlib.libsrc
 out=baseTypeCheck
 
-front callgraphwithin.html  tools.libsrc
+front callgraphwithin.html  tools.libsrc stdlib.libinfo common.libinfo
 mods=taulextable
 
 wasm wbeizer.wasm webcore.libsrc  +wbeizer Bcubic.html Bquadratic 

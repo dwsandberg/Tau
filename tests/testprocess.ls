@@ -2,6 +2,8 @@ Module testprocess
 
 use UTF8
 
+use bits
+
 use checking
 
 use real
@@ -9,6 +11,8 @@ use real
 use standard
 
 use process.boolean
+
+use otherseq.int
 
 use process.int
 
@@ -120,28 +124,26 @@ else
  let a = i / 2
  {intpart.sqrt.toreal.i}
  let b = (a + i / a) / 2
- for acc = true, f ∈ arithseq(a, 2, 3)while acc ∧ f ≤ b do i mod f ≠ 0 /for(acc) 
- 
- _________________
- 
- use bits
- 
- use otherseq.int
- 
- Function randomtest(samplesize:int) seq.word
-    let r= sort.for acc=empty:seq.int,i  /in  randomint(samplesize) do
-     for acc2=acc,j /in arithseq(16,4,0) do
-       acc2+   (toint((tobits.i >> j /and 0xF))+4 * j)
-       /for(acc2)
- /for(acc)   
-for acc=empty:seq.int,last=-1,count=-1,sum=0,t /in r do
-    if last /ne t /and count > 0 then
-      next( acc+count * 256 ,t,1,sum+count)
-    else next(acc ,t, count+1 ,sum )
-    /for(let mean=toreal.sum / 256.0
-        for  sqs=0.0,   x /in acc do  
-            let cnt =toreal( x / 256)
-                sqs+(cnt-mean)^2 
-        /for( let stddev=sqrt(sqs / 256.0)
-         if  mean / stddev > 5.4 then "PASS" else "FAIL" /if+
-        print(3,toreal.samplesize * 16.0 / 256.0)+"mean"+print(3,mean) +  "std dev"+  print(3,stddev)))
+ for acc = true, f ∈ arithseq(a, 2, 3)while acc ∧ f ≤ b do i mod f ≠ 0 /for(acc)
+
+_________________
+
+Function randomtest(samplesize:int)seq.word
+let r = 
+ sort.for acc = empty:seq.int, i ∈ randomint.samplesize do
+  for acc2 = acc, j ∈ arithseq(16, 4, 0)do acc2 + (toint(tobits.i >> j ∧ 0xF) + 4 * j)/for(acc2)
+ /for(acc)
+for acc = empty:seq.int, last = -1, count = -1, sum = 0, t ∈ r do
+ if last ≠ t ∧ count > 0 then next(acc + count * 256, t, 1, sum + count)
+ else next(acc, t, count + 1, sum)
+/for(let mean = toreal.sum / 256.0
+for sqs = 0.0, x ∈ acc do
+ let cnt = toreal(x / 256)
+ sqs + (cnt - mean)^2
+/for(let stddev = sqrt(sqs / 256.0)
+if mean / stddev > 5.4 then"PASS"else"FAIL"/if
++ print(3, toreal.samplesize * 16.0 / 256.0)
++ "mean"
++ print(3, mean)
++ "std dev"
++ print(3, stddev))) 

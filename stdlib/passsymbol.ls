@@ -103,7 +103,8 @@ do
    )
   let modname = 
    if first.input ∈ "Builtin builtin"then
-    if issimple.modname.common then internalmod else modname.common
+    if issimple.modname.common then{moduleref("$([lib.common])internal")}internalmod
+    else modname.common
    else modname.common
   let sym = 
    if length.text.b = 1 then

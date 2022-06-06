@@ -30,13 +30,13 @@ use process.set.int
 
 use seq.set.int
 
+use process.seq.testrecord
+
 use seq.seq.testrecord
 
 use seq.seq.word
 
 use tree.seq.word
-
-use process.seq.testrecord
 
 use seq.tree.seq.word
 
@@ -65,7 +65,6 @@ let x = encode.testrecord(length.encodingdata:testrecord + 1, b)
 1
 
 type testrecord is key:int, body:seq.word
-
 
 function list(a:seq.testrecord)seq.seq.word
 for acc = empty:seq.seq.word, @e ∈ a do acc + body.@e /for(acc)

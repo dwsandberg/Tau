@@ -35,21 +35,9 @@ use set.symbol
 
 use svg2graph.symbol
 
-use graph.symbolref
-
-use seq.symbolref
-
-use set.symbolref
-
 use graph.word
 
 use set.word
-
-use seq.arc.symbol
-
-use seq.arc.symbolref
-
-use set.arc.symbolref
 
 use seq.arc.word
 
@@ -85,35 +73,8 @@ let modules =
 )
 ]
 
-Function callgraphbetween(prg:seq.symdef, modulelist:seq.word)seq.word
-{Calls between modules in list of modules. }
-let z = formcallarcs.prg
-let arcs = 
- for acc = empty:seq.arc.symbol, a ∈ z do
-  let t1 = tail.a
-  let h1 = head.a
-  if module.t1 = module.h1 then acc
-  else if name.module.t1 ∈ modulelist ∧ name.module.h1 ∈ modulelist then acc + arc(t1, h1)else acc
- /for(acc)
-drawgraph.newgraph.arcs
-
-function formcallarcs(prg:seq.symdef)seq.arc.symbol
-for arcs2 = empty:seq.arc.symbol, p ∈ prg do
- let tail = decode.symbolref.sym.p
- for arcs = arcs2, sym ∈ code.p do
-  if isconst.sym ∨ isspecial.sym ∨ sym = sym.p then arcs else arcs + arc(tail, decode.symbolref.sym)
- /for(arcs)
-/for(arcs2)
-
-Function callgraphwithin(prg:seq.symdef, modulelist:seq.word)seq.word
-{Calls within modules in list of modules. }
-let g = newgraph.formcallarcs.prg
-let nodesnottoinclude = 
- for acc = empty:set.symbol, @e ∈ toseq.nodes.g do if name.module.@e ∈ modulelist then acc else acc + @e /for(acc)
-let g2 = for acc = g, @e ∈ toseq.nodesnottoinclude do deletenode(acc, @e)/for(acc)
-drawgraph.g2
-
 Function doclibrary(input:seq.file,o:seq.word)seq.file
+{OPTION PROFILE}
 let libsrc=breakparagraph.data.first.input
 {create summary documentation for libraray. }
 let exports = extractValue(first.libsrc, "exports")
@@ -140,7 +101,7 @@ named will be documented.
 will be construction including and excluding the modules listed. Both the exclude and include are optional, but for a large 
 library should be used to restrict the size of the graph. An example of a use graph is included at the end of this module.
 
-Function uncalledfunctions(prg:seq.symdef)seq.word
+/Function uncalledfunctions(prg:seq.symdef)seq.word
 {List of functions may include indirectly called functions. }
 let g = newgraph.formcallarcs.prg
 let sources = 

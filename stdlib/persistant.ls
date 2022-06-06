@@ -3,8 +3,6 @@ Module liblib
 
 use standard
 
-use libraryModule
-
 use persistant
 
 use symbol2
@@ -17,40 +15,9 @@ use mytype
 
 use seq.typedef
 
-use seq.seq.mytype
-
-use seq.symbolref
-
-use seq.seq.symbolref
-
-use seq.libraryModule
-
-/use symbol
 
 use bits
 
-
-Function morefields(profiledata:int,libcode:seq.symdef,m:midpoint,addresses:seq.symbol,symboladdresses:int) seq.int
- let discard23 = for acc2 = symbolref.0, sym2 ∈ addresses do symbolrefnew.sym2 /for(acc2)
-let newmods = 
- for acc = empty:seq.libraryModule, @e ∈  libmods.m do
-  for newexports = empty:seq.symbolref, sym2 ∈ exports.@e do newexports + symbolrefnew.sym2 /for(acc + libraryModule(modname.@e, newexports, types.@e))
- /for(acc)
-let code = 
-for acc = empty:seq.seq.symbolref,sd2 /in libcode  do 
- acc
- + for acc2 = [symbolrefnew.sym.sd2], sym2 ∈ code.sd2 do
-  if isFref.sym2 then acc2 + symbolrefnew.PreFref + symbolrefnew.basesym.sym2
-  else acc2 + symbolrefnew.sym2
- /for(acc2)
-/for(acc)
-[profiledata
-, addsymbolseq.symbolrefdecodenew
-, addlibmodseq.newmods
-, addsymbolrefseqseq.code
-,  addint.0
-,  addint.0
-, symboladdresses]
 
 Function addtype(a:mytype)int
 addobject.for acc = [addint.1, addint.length.typerep.a], e ∈ typerep.a do
@@ -60,25 +27,6 @@ addobject.for acc = [addint.1, addint.length.typerep.a], e ∈ typerep.a do
 Function addtypeseq(a:seq.mytype)int
 addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addtype.@e /for(acc)
 
-Function addtypeseqseq(a:seq.seq.mytype)int
-addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addtypeseq.@e /for(acc)
-
-Function addsymbolrefseq(a:seq.symbolref)int
-addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addint.toint.@e /for(acc)
-
-Function addsymbolrefseqseq(a:seq.seq.symbolref)int
-addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addsymbolrefseq.@e /for(acc)
-
-Function addlibmod(a:libraryModule)int
-addobject.[wordref.library.modname.a
-, wordref.name.modname.a
-, addtype.para.modname.a
-, addsymbolrefseq.exports.a
-, addtypeseqseq.types.a
-]
-
-Function addlibmodseq(a:seq.libraryModule)int
-addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addlibmod.@e /for(acc)
 
 Function addsymbol(a:symbol)int
 let t=privatefields.a
@@ -93,26 +41,6 @@ addobject.[addwordseq.worddata.a
 
 Function addsymbolseq(a:seq.symbol)int
 addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addsymbol.@e /for(acc)
-
-/type modref is library:word, name:word, para:mytype
-
-/type libraryModule is modname:modref, exports:seq.symbolref, types:seq.seq.mytype
-
-/type symbol is worddata:seq.word, module:modref, types:seq.mytype, raw:bits, hashbits:bits 
-
-type symbolnew is tosymbol:symbol
-
-Function symbolrefnew(sym:symbol)symbolref symbolref.addorder.symbolnew.clearrequiresbit.sym
-
-Function symbolrefdecodenew seq.symbol
-for acc = empty:seq.symbol, p ∈ encodingdata:symbolnew do acc + tosymbol.p /for(acc)
-
-function hash(a:symbolnew)int hash.tosymbol.a
-
-function =(a:symbolnew, b:symbolnew)boolean tosymbol.a = tosymbol.b
-
-
-use encoding.symbolnew
 
 
 Module persistant
@@ -208,10 +136,12 @@ let have = for acc = empty:set.encoding.word3, @e ∈ dependentwords do acc + en
 let used = for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3 do acc + encode.@e /for(acc)
 {build packed seq of word encodings}
 let wordstoadd = toseq(used \ have)
-let data = 
- for acc = [toint.C64.0, toint.C64.length.wordstoadd], @e ∈ wordstoadd do acc + addobject.fldsofwordencoding.decode.@e /for(acc)
-let wordreps = addobject.data
-addobject2("liblib" + libname, [name, wordreps, toint.entrypoint, addint.0] + more)
+let wordreps2= for acc = [toint.C64.0, toint.C64.length.wordstoadd], w ∈ wordstoadd do
+  let s=tointseq.chars.decode.w
+   for acc2 = [toint.C64.0, toint.C64.length.s], ch ∈ s do acc2 + toint.C64.ch /for(
+   acc+addobject.acc2)
+  /for(addobject.acc)
+addobject2("liblib" + libname, [name, wordreps2, toint.entrypoint] + more)
 
 function addobject2(name:seq.word, data:seq.int)int
 let objtype = array(length.data, i64)
@@ -233,13 +163,10 @@ let x = decode.encode.const3(place, flds)
 let idx = if place.x ≠ place then place.x else place
 toint.CGEP(modulerecord("list", [0]), idx)
 
-function fldsofwordencoding(w3:word3)seq.int
-let s = tointseq.chars.w3
-let k = 
- addobject.for acc = empty:seq.int
- , @e ∈ for acc = [C64.0, C64.length.s], @e ∈ s do acc + C64.@e /for(acc)
- do acc + toint.@e /for(acc)
-[slotX.w3, k, toint.C64.0]
+
+
+
+
 
 Function addwordseq(a:seq.word)int
 addobject.for acc = [toint.C64.0, toint.C64.length.a], @e ∈ a do acc + wordref.@e /for(acc) 

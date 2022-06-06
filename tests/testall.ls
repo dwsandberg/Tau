@@ -37,10 +37,10 @@ let out=test11
 + randomtest(500)
 + testreal
 + testseq
-+ test11a 
++ test11a(input) 
 + testwordfreq
 + testprocess
-+ if isempty.input then "no opt test file specified" else testopt(first.input)   
++ if isempty.input then "no opt test file specified" else testopt(input)   
 [file(filename.o,out)]
 
   

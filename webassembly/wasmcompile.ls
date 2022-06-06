@@ -88,8 +88,6 @@ function =(a:coverage, b:coverage)boolean towfunc.a = towfunc.b
 
 function hash(a:coverage)int hash.towfunc.a
 
-function assignencoding(a:coverage)int nextencoding.a
-
 function reportcoverage(knownfuncs:seq.wfunc)seq.word
 let a = for acc = empty:set.seq.word, f ∈ knownfuncs do acc + print.sym.f /for(acc)
 let b = 
@@ -158,8 +156,7 @@ let zzzzz =
  for txt = "", sym ∈ roots do
   let code = getCode(prg4, sym)
   if jsHTTP ∈ code then
-   {assert name.sym /nin"testpretty22"report print.code}
-   interpret(alltypes, knownfuncs, sym, code)
+   {assert name.sym /nin"testpretty22"report print.code}interpret(alltypes, knownfuncs, sym, code)
   else txt
  /for(txt)
 {define depended functions}

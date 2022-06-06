@@ -603,22 +603,4 @@ symbol(moduleref."internallib $constant"
 , empty:seq.mytype
 , typeptr
 , if hasfref then constbit ∨ hasfrefbit else constbit
-)
-
-___________________________
-
-type symbolref is toint:int
-
-Export toint(symbolref)int
-
-Export symbolref(int)symbolref
-
-Export type:symbolref
-
-Function ?(a:symbolref, b:symbolref)ordering toint.a ? toint.b
-
-Function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
-
-Function symbolref(sym:symbol)symbolref symbolref.addorder.sym
-
-Function decode(s:symbolref)symbol decode.to:encoding.symbol(toint.s) 
+) 

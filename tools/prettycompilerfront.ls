@@ -24,11 +24,7 @@ use seq.rename
 
 use seq.symbol
 
-use seq.symbolref
-
 use otherseq.word
-
-use seq.seq.symbolref
 
 use otherseq.seq.word
 

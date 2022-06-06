@@ -82,14 +82,14 @@ Function front(input:seq.file,o:seq.word
 , pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
 , ~mods:seq.word, within:boolean, rn:seq.word, out:seq.word) seq.file
 let output=front2(compilerFront:libllvm(if isempty.pass then"pass2"
-else pass, breakparagraph.data.first.input)
-,pass,n,~n,mods,~mods,within ,rn,out)
+else pass, input)
+,n,~n,mods,~mods,within ,rn,out)
 [file(o,output)]
 
 Function transform(input:seq.file,o:seq.word,target:seq.word,rename:seq.word) seq.file
 {Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
 as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname} 
-let cinfo = compilerFront:libllvm("text", breakparagraph.data.first.input)
+let cinfo = compilerFront:libllvm("text", input)
  let library = [libname.cinfo]
  let newlib = if isempty.target then"tmp"else target
  writeModule2(transform(cinfo
@@ -103,6 +103,10 @@ use profile
 
 Function testprofile(input:seq.file,o:seq.word) seq.file
   let discard = stdlib(input)
+ [file(o,profileresults."time")]
+ 
+ Function testprofile2(input:seq.file,o:seq.word) seq.file
+  let discard = doclibrary(input,o)
  [file(o,profileresults."time")]
  
 

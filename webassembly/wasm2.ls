@@ -59,13 +59,11 @@ assert encodingbase + noencodings * 4 < globalspace report"globalspace not big e
 let charseq = seqof.typeref."char standard stdlib"
 let symboladdword = 
  symbol(moduleref("stdlib encoding", charseq)
- , "add"
- , [addabstract(typeref."encodingstate encoding stdlib", charseq)
- , addabstract(typeref."encodingpair encoding stdlib", charseq)
- ]
+ , "addencoding"
+ , [addabstract(typeref."encodingstate encoding stdlib", charseq), charseq]
  , addabstract(typeref."encodingstate encoding stdlib", charseq)
  )
-for l = Wlocal.1, loc ∈ initialwordpairlocations do l + const64.loc + Wcall.symboladdword /for(funcbody([i32, i64]
+for l = Wlocal.1, loc ∈ initialwordlocations do l + const64.loc + Wcall.symboladdword /for(funcbody([i32, i64]
 , switchcontext.newcontext2.0 + const64.1
 + Wcall.symbol(internalmod, "getinstance", typeint, typeint)
 + Wdefine.1

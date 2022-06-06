@@ -64,7 +64,7 @@ echo "finish tar"
 fi 
 }
 
-
+checksrc bin/stdlib.libinfo
 checksrc bin/stdlib.bc
 checksrc bin/tauconfig.sh
 checksrc stdlib/tau.c

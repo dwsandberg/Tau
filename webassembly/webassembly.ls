@@ -6,6 +6,8 @@ use UTF8
 
 use bits
 
+use compilerfront
+
 use file
 
 use format
@@ -19,8 +21,6 @@ use symbol2
 use textio
 
 use wasmcompile
-
-use compilerfront
 
 use seq.byte
 
@@ -44,11 +44,6 @@ use seq.symbol
 
 use set.symbol
 
-/use graph.symbolref
-
-/use seq.symbolref
-
-/use set.symbolref
 
 use set.symdef
 
@@ -56,7 +51,7 @@ use seq.seq.char
 
 use process.seq.file
 
-/use seq.arc.symbolref
+
 
 use process.seq.word
 
@@ -83,37 +78,17 @@ for txt = "", t ∈ toseq.r do
         /for(txt2 )
           else txt
     /for(txt)
-     
-  
-  use graph.symbolref
-  
-  use set.symbolref
-  
-  use seq.arc.symbolref
- 
- use otherseq.mytype
- 
- use otherseq.symbol
- 
- use seq.symbolref
- 
- use otherseq.char
- 
- use seq.seq.char
- 
- function = (a:symbolref,b:symbolref) boolean toint.a=toint.b
- 
- 
-  
-Function cat(files:seq.file,uses:seq.word,exports:seq.word,Library:seq.word) seq.file
-   for acc=empty:seq.byte,names="parts=",f /in files do 
-     if ext.fn.f /in "ls libsrc" then 
-      next(acc+tobyte(10)+tobyte(10)+data.f  ,names+fullname.fn.f) 
-     else next(acc,names)
-   /for([file(filename(Library+".libsrc")
-   ,toseqbyte.toUTF8(names+"uses=$(uses)exports=$(exports)Library=$(Library)")+acc)])
 
+/function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
 
+Function cat(files:seq.file, uses:seq.word, exports:seq.word, Library:seq.word)seq.file
+for acc = empty:seq.byte, names = "parts=", f ∈ files do
+ if ext.fn.f ∈ "ls libsrc"then next(acc + tobyte.10 + tobyte.10 + data.f, names + fullname.fn.f)
+ else next(acc, names)
+/for([file(filename(Library + ".libsrc")
+, toseqbyte.toUTF8(names + "uses=$(uses)exports=$(exports)Library=$(Library)") + acc
+)
+])
 
 Function wasm(input:seq.file, Library:seq.word, exports:seq.word)seq.file
 {problem is same symbol is used in different onclicks}
@@ -124,16 +99,14 @@ let libname = Library
 let libexports = exports
 let rcinfo = 
  compilerFront:libllvm("wasm"
- , ["uses=$(extractValue(first.info2, "uses"))exports=tausupport inputoutput $(libexports)Library=$(libname)"
+ , [" exports=tausupport inputoutput $(libexports)Library=$(libname)"
  ]
- + info2 << 1
+ + breakparagraph.data.first.input2 << 1
  )
-{let check = checkweb(rcinfo, libexports)
-assert isempty.check report check}
+{let check=checkweb(rcinfo, libexports)assert isempty.check report check}
 let syms2 = 
  for syms2 = empty:seq.symbol, m ∈ modsE.rcinfo do
-  if name.modname.m ∈ libexports then syms2+exports.m
-  else syms2
+  if name.modname.m ∈ libexports then syms2 + exports.m else syms2
  /for({should check for dup names on syms}syms2)
 let scriptstart = 
  for txt = "<script>  /br", sym ∈ syms2 do

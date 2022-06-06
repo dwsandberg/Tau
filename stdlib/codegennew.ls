@@ -50,8 +50,6 @@ use seq.symbol
 
 use set.symbol
 
-use seq.symbolref
-
 use set.symdef
 
 use seq.seq.bits
@@ -64,9 +62,9 @@ use otherseq.seq.symbol
 
 use set.seq.symbol
 
-use seq.seq.symbolref
-
 use seq.seq.word
+
+Export=(a:symdef, b:symdef)boolean
 
 Function compilerback(m:midpoint, libcode:seq.symdef, dependentwords:seq.seq.char)seq.bits
 {OPTION PROFILE}
@@ -84,8 +82,12 @@ for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ tos
   else profilearcs
   , addresses + sym.sd
   )
-/for(let uses2 = extractValue(first.src.m, "uses")
+/for(let s2 = 
+ for acc = empty:seq.symbol, p ∈ toseq.profilearcs do acc + p /for(asset.acc \ asset.addresses)
+assert isempty.s2 report"profile arcs problem"
 codegen(m, dependentwords, profilearcs, addresses, libcode))
+
+function parcsize int 6
 
 Function codegen(m:midpoint
 , dependentwords:seq.seq.char
@@ -99,7 +101,6 @@ let thename = first.extractValue(first.src.m, "Library")
 let typedict = typedict.m
 let isbase = isempty.uses
 let prgX = prg.m
-let profiledata = profiledata(addresssymbolrefdecode, profilearcs)
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
@@ -114,7 +115,6 @@ let bodies =
    if isInternal.sym.@e then symdef(sym.@e, internalbody.sym.@e, paragraphno.@e)else @e
   acc + addfuncdef(geninfo, ele)
  /for(acc)
-let xxx = for acc = empty:seq.slot, x ∈ profiledata do acc + C64.x /for(AGGREGATE.acc)
 let f2 = 
  modulerecord([merge("init_" + thename)]
  , [toint.FUNCTIONDEC, typ.function.[VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -124,16 +124,18 @@ let f3 =
  modulerecord("entrypoint" + thename
  , [toint.FUNCTIONDEC, typ.entryfunctyp, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
  )
+let symlist = 
+ for acc = empty:seq.int, @e ∈ addresssymbolrefdecode do acc + addsymbol.@e /for(acc)
+let symlist1 = addobject([addint.0, addint.length.addresssymbolrefdecode] + symlist)
+let profiledata = profiledata(addresssymbolrefdecode, profilearcs, symlist)
 let liblib = 
  slot.addliblib([thename]
  , dependentwords
  , ptrtoint(ptr.entryfunctyp, symboltableentry("entrypoint" + thename, ptr.entryfunctyp))
- , morefields(toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
- , {libsymbolrefdecode, libmods, libcode, }libcode2
- , m
- , addresssymbolrefdecode
- , symboladdress
- )
+ , [symboladdress
+ , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
+ , symlist1
+ ]
  )
 let libnametype = array(length.decodeword.thename + 1, i8)
 let libslot = 
@@ -166,11 +168,14 @@ let bodytxts =
 let data = constdata
 let patchlist = 
  [[toint.GLOBALVAR, typ.conststype, 2, toint.AGGREGATE.data + 1, 3, toint.align8 + 1, 0]
- , [toint.GLOBALVAR, typ.profiletype, 2, toint.xxx + 1, 3, toint.align8 + 1, 0]
+ , [toint.GLOBALVAR, typ.profiletype, 2, toint.AGGREGATE.profiledata + 1, 3, toint.align8 + 1, 0]
  ]
 let trec = typerecords
 let adjust = 
- [trec_1, [toint.ARRAY, length.data, 0], [toint.ARRAY, 2 + 6 * cardinality.profilearcs, 0]]
+ [trec_1
+ , [toint.ARRAY, length.data, 0]
+ , [toint.ARRAY, 2 + parcsize * cardinality.profilearcs, 0]
+ ]
  + subseq(trec, 4, length.trec)
 llvm(patchlist, bodytxts, adjust)
 
@@ -361,12 +366,13 @@ regno.l+1)), blocks.l)else}
   , blocks.l
   )
 
-function profiledata(decode:seq.symbol, profilearcs:set.seq.symbol)seq.int
-for acc = [1, cardinality.profilearcs], a ∈ toseq.profilearcs do
+
+function profiledata(decode:seq.symbol, profilearcs:set.seq.symbol, symlist:seq.int)seq.slot
+for acc = [C64.1, C64.cardinality.profilearcs], a ∈ toseq.profilearcs do
  let tail = findindex(a_1, decode)
  let head = findindex(a_2, decode)
  assert tail > 0 ∧ head > 0 ∧ head ≤ length.decode ∧ tail ≤ length.decode report"CCC" + print.a
- acc + [tail, head, 0, 0, 0, 0]
+ acc + [C64.tail, C64.head, C64.0, C64.0, C64.0, C64.0]
 /for(acc)
 
 function buildargcode(l:seq.llvmtype)int
@@ -444,17 +450,15 @@ let functype = functype.m
 let callee = {slot}symboltableentry([mangledname], functype.m)
 let base = regno.l
 let block = noblocks.l
-let pcount = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 2)
-let p1 = 
- {pclocks}
- toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 3)
-let pspace = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 4)
-let prefs = toint.CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + 6 * (idx - 1) + 5)
+let pcount = CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + parcsize * idx - 3)
+let pclocks = CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + parcsize * idx - 3)
+let pspace = CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + parcsize * idx - 2)
+let prefs = CGEP(symboltableentry("profiledata", ptr.profiletype), 2 + parcsize * idx - 1)
 let c = 
  GEP(r(base + 1), profiletype, symboltableentry("profiledata", ptr.profiletype))
- + LOAD(r(base + 2), slot.prefs, i64)
+ + LOAD(r(base + 2), prefs, i64)
  + BINOP(r(base + 3), r(base + 2), C64.1, add)
- + STORE(r(base + 4), slot.prefs, r(base + 3))
+ + STORE(r(base + 4), prefs, r(base + 3))
  + CMP2(r(base + 4), r(base + 2), C64.0, 32)
  + BR(r(base + 5), block, block + 1, r(base + 4))
  + CALL(r(base + 5), 0, 32768, function.[i64], symboltableentry("clock", function.[i64]))
@@ -471,15 +475,15 @@ let c =
  + LOAD(r(base + 9), symboltableentry("spacecount", i64), i64)
  + BINOP(r(base + 10), r(base + 8), r(base + 5), sub)
  + BINOP(r(base + 11), r(base + 9), r(base + 6), sub)
- + LOAD(r(base + 12), slot.p1, i64)
+ + LOAD(r(base + 12), pclocks, i64)
  + BINOP(r(base + 13), r(base + 12), r(base + 10), add)
- + STORE(r(base + 14), slot.p1, r(base + 13))
- + LOAD(r(base + 14), slot.pspace, i64)
+ + STORE(r(base + 14), pclocks, r(base + 13))
+ + LOAD(r(base + 14), pspace, i64)
  + BINOP(r(base + 15), r(base + 14), r(base + 11), add)
- + STORE(r(base + 16), slot.pspace, r(base + 15))
- + LOAD(r(base + 16), slot.pcount, i64)
+ + STORE(r(base + 16), pspace, r(base + 15))
+ + LOAD(r(base + 16), pcount, i64)
  + BINOP(r(base + 17), r(base + 16), C64.1, add)
- + STORE(r(base + 18), slot.pcount, r(base + 17))
+ + STORE(r(base + 18), pcount, r(base + 17))
  + BR(block + 2)
  + CALL(r(base + 18)
  , 0
@@ -491,9 +495,9 @@ let c =
  )
  + BR(block + 2)
  + PHI(r(base + 19), returntype.functype, r(base + 7), block, r(base + 18), block + 1)
- + LOAD(r(base + 20), slot.prefs, i64)
+ + LOAD(r(base + 20), prefs, i64)
  + BINOP(r(base + 21), r(base + 20), C64.1, sub)
- + STORE(r(base + 22), slot.prefs, r(base + 21))
+ + STORE(r(base + 22), prefs, r(base + 21))
 Lcode2(code.l + c
 , lmap.l
 , noblocks.l + 3

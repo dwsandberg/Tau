@@ -125,8 +125,6 @@ else
   let prg = compile(allmods, asset.simple, lib, allsrc, option = "text", requireUnbound)
   asset(prga + toseq.code.t5 + toseq.prg.libinfo + prg))
  if option = "text"then
-  {let zz1=toseq.prg10 let discard=for acc=symbolref.sym.zz1_1, d ∈ zz1 do if paragraphno.d > 0 then symbolref.sym.d else 
-acc /for(acc)}
   midpoint(option, asset.toseq.prg10, emptytypedict, empty:seq.modExports, allsrc)
  else
   let roots = 

@@ -12,18 +12,7 @@ use set.symbol
 
 use svg2graph.symbol
 
-use graph.symbolref
-
-use seq.symbolref
-
-use set.symbolref
-
 use seq.arc.symbol
-
-use seq.arc.symbolref
-
-use set.arc.symbolref
-
 
 use seq.symbol
 
@@ -37,7 +26,7 @@ Function roots(s:midpoint)set.symbol
   for exports = empty:seq.symbol, m ∈ libmods.s do exports + exports.m /for(asset.exports)
 
 
-function uses(toprocess:seq.symbol,org:set.symdef, new:set.symdef) set.symdef
+/function uses(toprocess:seq.symbol,org:set.symdef, new:set.symdef) set.symdef
 for    newsym=empty:seq.symbol,newsd=new,   sym /in toprocess do
 let t=lookup(new,symdef(sym,empty:seq.symbol,0))
  if not.isempty.t then   next(newsym,newsd)
@@ -53,9 +42,9 @@ let t=lookup(new,symdef(sym,empty:seq.symbol,0))
      else  acc+sym2 /for(acc), newsd+t2_1)
  /for( if isempty.new then newsd else uses(toseq.asset.newsym,org,newsd))
 
-Function front2(cf:midpoint, pass:seq.word, names:seq.word, ~n:seq.word, mods:seq.word
+Function front2(cf:midpoint, names:seq.word, ~n:seq.word, mods:seq.word
 , ~mods:seq.word, samemodule:boolean, rootnames:seq.word, out:seq.word)seq.word
-let prg=uses(toseq.roots.cf,prg.cf,empty:set.symdef)
+let prg=prg.cf 
 for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
 let ss=sym.sd
   if(isempty.mods ∨ name.module.ss ∈ mods) ∧ (isempty.names ∨ name.ss ∈ names) ∧ name.ss ∉ ~n

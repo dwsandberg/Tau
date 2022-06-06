@@ -371,9 +371,9 @@ count < 4 report"
 + dq
 + "SIZE"
 + dq
-+ "+%.length.toseq.toprocess+%.length.bigin+%.length.toseq.corein+print.count}for big=bigin, 
-small=empty:set.symdef, core=corein, pele ∈ toseq.toprocess do let s=sym.pele let fullcode=code.pele let options 
-=getoption.fullcode let code=removeoptions.fullcode if isempty.code ∨"
++ "+%.length.toseq.toprocess+%.length.bigin+%.length.toseq.corein+print.count}for big=bigin, small=empty:
+set.symdef, core=corein, pele ∈ toseq.toprocess do let s=sym.pele let fullcode=code.pele let options=getoption.fullcode 
+let code=removeoptions.fullcode if isempty.code ∨"
 + dq
 + "VERYSIMPLE"
 + dq

@@ -32,7 +32,6 @@ use testpackedseq.word
 
 use seq.seq.int
 
-
 use otherseq.seq.word
 
 use seq.seq.word

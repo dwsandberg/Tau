@@ -38,11 +38,6 @@ else
  assert not.isempty.r report"NOT A DAG"
  [r] + sublayer.for acc = g, @e ∈ r do deletenode(acc, @e)/for(acc)
 
-/Function issource(g:graph.T, n:T)seq.T if cardinality.predecessors(g, n) = 0 then[n]else empty:seq.T
-
-/Function sources(g:graph.T)seq.T
-for acc = empty:seq.T, @e ∈ toseq.nodes.g do acc + issource(g, @e)/for(acc)
-
 ----adddummy nodes---
 
 add nodes so that arcs never cross layers.

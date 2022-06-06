@@ -18,17 +18,21 @@ use seq.byte
 
 use encoding.datax
 
+use seq.datax
+
 use encoding.efuncidx
 
+use seq.efuncidx
+
 use encoding.frefindex
+
+use seq.frefindex
 
 use set.int
 
 use seq.symbol
 
 use encoding.wfunc
-
-use seq.encodingpair.datax
 
 use seq.wfunc
 
@@ -40,6 +44,8 @@ use stack.word
 
 use encoding.word5
 
+use seq.word5
+
 use encoding.wtype
 
 use seq.wtype
@@ -48,19 +54,11 @@ use seq.seq.byte
 
 use encoding.seq.char
 
-use seq.efuncidx
-
-use seq.word5
-
-use seq.datax
-
-use seq.frefindex
+use seq.encodingpair.datax
 
 Function funcidx2sym(i:int)symbol sym.decode.to:encoding.efuncidx(i + 1)
 
 Function =(a:wtype, b:wtype)boolean val.a = val.b
-
-function assignencoding(a:wtype)int nextencoding.a
 
 function hash(a:wtype)int hash.for acc = empty:seq.int, @e ∈ val.a do acc + toint.@e /for(acc)
 
@@ -173,8 +171,6 @@ Function =(a:efuncidx, b:efuncidx)boolean sym.a = sym.b
 
 Function hash(a:efuncidx)int hash.sym.a
 
-Function assignencoding(a:efuncidx)int nextencoding.a
-
 Function nobodies(i:int)seq.symbol
 let x = encodingdata:efuncidx
 for acc = empty:seq.symbol, j ∈ arithseq(length.x - i + 1, 1, i)do
@@ -203,8 +199,6 @@ Function wfunc(alltypes:typedict, sym:symbol, code:seq.byte)wfunc wfunc(alltypes
 Function =(a:wfunc, b:wfunc)boolean sym.a = sym.b
 
 Function hash(a:wfunc)int hash.sym.a
-
-Function assignencoding(a:wfunc)int nextencoding.a
 
 Function ?(a:wfunc, b:wfunc)ordering funcidx.a ? funcidx.b
 
@@ -272,33 +266,20 @@ t
 
 ____________________
 
-type word5 is toword:word
+type word5 is chars:seq.char
 
-function assignencoding(a:word5)int nextencoding.a
+Function =(a:word5, b:word5)boolean chars.a = chars.b
 
-Function =(a:word5, b:word5)boolean toword.a = toword.b
+Function hash(a:word5)int hash.chars.a
 
-Function hash(a:word5)int hash.toword.a
-
-/Export toword(word5)word
-
-/Export word5(word)word5
-
-/Export type:word5
-
-Function wordconst(w:word)symbol
-let discard = encode.word5.w
-Lit.hash.w
+Function wordconst(w:word)symbol Lit.valueofencoding.encode.word5.decodeword.w
 
 Function wordsconst(s:seq.word)symbol
 for acc = empty:seq.symbol, w ∈ s do acc + wordconst.w /for(Constant2(acc + Sequence(seqof.typeint, length.acc)))
 
-Function initialwordpairlocations seq.int
+Function initialwordlocations seq.int
 for acc2 = empty:seq.int, p ∈ encodingdata:word5 do
- let k = 
-  for acc = empty:seq.symbol, c ∈ decodeword.toword.p do acc + Lit.toint.c /for(Constant2(acc + Sequence(seqof.typeint, length.acc)))
- acc2
- + getoffset.Constant2.[Lit.hash.toword.p, k, Lit.hash.decodeword.toword.p, Record.[typeint, typeint, typeint]]
+ for acc = empty:seq.symbol, c ∈ chars.p do acc + Lit.toint.c /for(acc2 + getoffset.Constant2(acc + Sequence(seqof.typeint, length.acc)))
 /for(acc2)
 
 ________________
@@ -308,8 +289,6 @@ type frefindex is toint:int
 Function hash(a:frefindex)int toint.a + 1
 
 Function =(a:frefindex, b:frefindex)boolean toint.a = toint.b
-
-Function assignencoding(a:frefindex)int nextencoding.a
 
 Function elementdata seq.int for acc = empty:seq.int, p ∈ encodingdata:frefindex do acc + toint.p /for(acc)
 
@@ -341,8 +320,6 @@ if globalname.a ∉ "."then hash.globalname.a else hash.elements.a
 Function =(a:datax, b:datax)boolean
 if globalname.a ∉ "." ∨ globalname.b ∉ "."then globalname.a = globalname.b
 else elements.a = elements.b
-
-Function assignencoding(a:datax)int nextencoding.a
 
 Function dataseg seq.int
 for acc = constantseq(globalspace / 8, 0), p ∈ encodingdata:datax do acc + elements.p /for(acc)

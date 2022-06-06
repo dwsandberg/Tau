@@ -30,6 +30,8 @@ use encoding.match5
 
 use seq.match5
 
+use otherseq.mytype
+
 use seq.mytype
 
 use set.mytype
@@ -39,10 +41,6 @@ use otherseq.symbol
 use seq.symbol
 
 use set.symbol
-
-use otherseq.symbolref
-
-use set.symbolref
 
 use seq.symdef
 
@@ -54,7 +52,7 @@ use seq.seq.int
 
 use seq.seq.symbol
 
-use seq.seq.symbolref
+use otherseq.seq.word
 
 use seq.seq.word
 
@@ -104,7 +102,7 @@ Export recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolea
 
 Export functype(m:match5)llvmtype
 
-Function externalcall(sym:symbol)boolean
+function externalcall(sym:symbol)boolean
 isInternal.sym
 ∧ name.sym
 ∉ "packedindex idxseq true false option callidx GEP abort stacktrace not getseqtype getseqlength casttoreal intpart bitcast 
@@ -135,6 +133,9 @@ for used = empty:seq.symbol, crecord = empty:seq.symdef, cc ∈ toseq.prgX do
   if externalcall.firstsym then
    let discard5 = call(alltypes, firstsym, "CALL"_1, name.firstsym)
    next(used, crecord)
+  else if libname ∉ "stdlib"then
+   let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname))
+   next(used, crecord)
   else next(used + toseq.asset.code + firstsym, crecord)
  else if isGlobal.firstsym then
   let discard5 = 
@@ -151,7 +152,8 @@ for used = empty:seq.symbol, crecord = empty:seq.symdef, cc ∈ toseq.prgX do
   next(used, crecord)
 /for(let indefines = 
  for acc = empty:set.symdef, sd ∈ toseq.prgX do
-  if paragraphno.sd < 0 ∧ not.externalcall.sym.sd ∨ library.module.sym.sd = libname then
+  if libname ∉ "stdlib" ∧ isInternal.sym.sd then acc
+  else if paragraphno.sd < 0 ∧ not.externalcall.sym.sd ∨ library.module.sym.sd = libname then
    let ele2 = sym.sd
    assert libname ∉ "tools" ∨ print.ele2 ≠ "standard:-(int)int"
    report"?>?" + print.sym.sd + print.code.sd + %.paragraphno.sd
@@ -176,7 +178,7 @@ let entrypoint =
  /for(entrypoint)
 steponeresult(toseq.indefines, entrypoint))
 
-function =(a:symdef, b:symdef)boolean sym.a = sym.b
+Function =(a:symdef, b:symdef)boolean sym.a = sym.b
 
 Function internalbody(ele:symbol)seq.symbol
 for acc = empty:seq.symbol, e9 ∈ arithseq(nopara.ele, 1, 1)do acc + Local.e9 /for(acc
@@ -224,9 +226,9 @@ Export type:steponeresult
 
 Function addlibwords(extnames:set.symdef, typedict:typedict)slot
 let f1 = 
- symbol(moduleref."inputoutput"
+ symbol(moduleref."debuginfo"
  , "addlibwords"
- , typeref."liblib libraryModule"
+ , typeref."debuginfo debuginfo"
  , typeint
  )
 let functyp = ptr.tollvmtype(typedict, f1)
@@ -253,6 +255,48 @@ else processconst(notprocessed, alltypes)/if)
 
 Function mangledname(extname:set.symdef, s:symbol, library:word)word
 if externalcall.s then name.s
+else if isInternal.s then
+ let l = 
+  ["stacktrace"
+  , "not boolean"
+  , "intpart real"
+  , "getseqtype ptr"
+  , "getseqlength ptr"
+  , "casttoreal int"
+  , "toreal int"
+  , "toint byte"
+  , "toint bit"
+  , "representation real"
+  , "* real real"
+  , "/ real real"
+  , "+real real"
+  , "-real real"
+  , "? real real"
+  , "* int int"
+  , "/ int int"
+  , "+int int"
+  , "-int int"
+  , "? int int"
+  , "> int int"
+  , "=boolean boolean"
+  , "=int int"
+  , "=real real"
+  , "<< bits int"
+  , ">> bits int"
+  , "xor bits bits"
+  , "∨ bits bits"
+  , "∧ bits bits"
+  , "abort real seq.word"
+  , "abort int seq.word"
+  , "abort boolean seq.word"
+  , "abort ptr seq.word"
+  , "set ptr int"
+  , "set ptr real"
+  , "set ptr ptr"
+  ]
+ let idx = findindex([name.s] + %(types.s >> 1), l)
+ assert idx ≤ length.l report">>?"
+ merge.["internal"_1, "$"_1, "$"_1, toword.idx]
 else
  let b = getSymdef(extname, s)
  assert not.isempty.b

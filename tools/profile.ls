@@ -2,13 +2,13 @@ Module profile
 
 use frontcmd
 
-use libraryModule
+use debuginfo
 
 use standard
 
 use symbol2
 
-use seq.liblib
+use seq.debuginfo
 
 use graph.symbol
 
@@ -24,7 +24,6 @@ use seq.labeledarc.symbol
 
 use set.labeledarc.symbol
 
-Builtin loadedLibs seq.liblib
 
 
 function measure(arc:parc, measure:seq.word)int
@@ -43,7 +42,8 @@ let a =
    let m = measure(arc, measure)
    if m = 0 ∨ m < max / 100 then next(acc0, max)
    else
-    next(acc0 + arc(decode(caller.arc, lib), decode(callee.arc, lib), [toword.m]), max(max, m))
+    next(acc0 + arc((symbolrefdecodeX.lib)_caller.arc, 
+     ( symbolrefdecodeX.lib)_callee.arc , [toword.m]), max(max, m))
   /for(arcs/max(acc0, max))
  /for(acc)
 let b = 

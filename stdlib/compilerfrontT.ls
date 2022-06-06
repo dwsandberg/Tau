@@ -8,6 +8,8 @@ use symbol
 
 use typedict
 
+use pass2T.T
+
 use otherseq.mytype
 
 use seq.symbol
@@ -15,8 +17,6 @@ use seq.symbol
 use set.symdef
 
 use seq.seq.word
-
-unbound pass2:T(set.symdef, typedict, option:seq.word)set.symdef
 
 Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
 {OPTION PROFILE}

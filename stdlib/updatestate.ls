@@ -103,7 +103,7 @@ let scriptstart =
  for acc2 = "set $(sp)-e  /br if $(sp)[[$(sp)$1 $(sp)==$(sp + dq."-n" + sp)]]; $(sp)then  /br norun=true  /br fi  /br source bin/tauconfig.sh"
  , n ∈ toseq(nodes.g \ defined \ asset.[filename."orgstdlib.lib"])
  do
-  acc2 + " /br checksrc" + fullname.n
+  if dirpath.n = "built"then acc2 else acc2 + " /br checksrc" + fullname.n
  /for(acc2)
 let g2 = for g2 = g, n ∈ sources.g do g2 + arc(filename."#.#", n)/for(g2)
 {let out=outgraph.deletenode(g2, filename("orgstdlib.lib"))[file(filename(o), out)])}
@@ -143,18 +143,23 @@ else
  let cmd = extractValue(data.cmdpara_1, "cmd")
  if cmd = "noop"then""
  else
-  let xxx = [name.first.parts.cmdpara_1]
+  let lib = [name.first.parts.cmdpara_1]
   if cmd ∈ ["makelib", "orgmakelib"]then
    let A = finddependentlibs(defs2, name.fn)
-   for depends = "", ccode = "void init_libs(){", u ∈ reverse.A >> 1 do
+   for depends = ""
+   , libinfo = ""
+   , ccode = "void init_libs(){"
+   , u ∈ reverse.A >> 1
+   do
     next(depends + fullname.filename([u] + ".$libtype")
+    , libinfo + fullname.filename([u] + ".libinfo")
     , "void init_$([u])(); $(ccode)init_$([u])();"
     )
    /for(let baselib = subseq(A + "stdlib", 2, 2)
    let out = [name.fn, "."_1, "libsrc"_1]
-   " /p parts=$(dq([node] + parts)) /br dependlibs=$(dq.depends) /br ccode=$(dq.ccode) /br outofdate ||(libexe $(xxx)libsrc $(parts << 1)$(data.cmdpara_1 << 3)o=$(out) /br libexe $(baselib)$(baselib)$([fullname.filename.out]);runlib $([name.fn]))")
+   " /p parts=$(dq([node] + parts)) /br dependlibs=$(dq.depends) /br ccode=$(dq.ccode) /br outofdate ||(libexe $(lib)libsrc $(parts << 1)$(data.cmdpara_1 << 3)o=$(out) /br libexe $(baselib)$(baselib)$([fullname.filename.out])$(libinfo);runlib $([name.fn]))")
   else
-   " /p parts=$(dq([node] + parts)) /br outofdate ||(libexe $(xxx)$(cmd)$(parts << 1)$(data.cmdpara_1 + "o=$([name.fn, "."_1, ext.fn])"))"
+   " /p parts=$(dq([node] + parts)) /br outofdate ||(libexe $(lib)$(cmd)$(parts << 1)$(data.cmdpara_1 + "o=$([name.fn, "."_1, ext.fn])"))"
 
 function finddependentlibs(defs:set.cmdpara, lib:word)seq.word
 if lib ∈ "stdlib orgstdlib"then[lib]

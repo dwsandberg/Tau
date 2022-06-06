@@ -183,12 +183,12 @@ if ( baselib ){
 
  // register library 
      { int i =loaded[1]++;
-      char name[100];
-     struct stat sbuf;
-    sprintf(name,"%s.dylib",libname);
-     stat(name, &sbuf);
+    //  char name[100];
+    // struct stat sbuf;
+   // sprintf(name,"%s.dylib",libname);
+   //  stat(name, &sbuf);
     loaded[i+2]= libdesc; 
-    ((BT*)loaded[i+2])[3]=0;
+   // ((BT*)loaded[i+2])[3]=0;
     strcpy(libnames[i+2],libname);
     }
 

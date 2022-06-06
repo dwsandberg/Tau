@@ -1,36 +1,34 @@
 Module testopt
 
+use bits
+
+use file
+
 use main2
 
 use standard
 
 use symbol2
 
+use textio
+
+use seq.file
+
 use seq.symdef
+
+use set.symdef
 
 use set.word
 
 use otherseq.seq.word
-
-
-use textio
 
 Function multitarget(value1:int, a:boolean, b:boolean)int
 {check to see optimization handles this case correctly}
 if if value1 = 4 then a else false then 40
 else if if value1 = 3 then b else false then 30 else 20
 
-use bits
-
-use file
-
-use seq.file
-
-use set.symdef
-
-Function testopt(f:file) seq.word
-let p2 = toseq.prg.compilerFront:libllvm("pass2",
-breakparagraph.data.f)
+Function testopt(in :seq.file)seq.word
+let p2 = toseq.prg.compilerFront:libllvm("pass2", in )
 let cl = 
  ["7"
  , "12"
@@ -149,11 +147,8 @@ else
  " /br  /< literal FAILED  /> test" + toword.no + "in optest  /br" + code
  + " /p"
  + codelist_no
- 
- + " /p diffs:"
- + sameto(code, codelist_no, 1, "")
- + " /p"
- + toseq.asset."a b c d xxx"
+
++" /p diffs:"+sameto(code, codelist_no, 1, "")+" /p"+toseq.asset."a b c d xxx"
 
 function shuffletest(s:seq.word)boolean
 s

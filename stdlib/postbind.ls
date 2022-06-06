@@ -402,4 +402,10 @@ else
   for fldno = 1, fldkinds = empty:seq.mytype, result = empty:seq.symbol, fldtype ∈ subflds do
    let kind = basetype(fldtype, typedict)
    next(fldno + 1, fldkinds + kind, result + [Local.1, Lit(fldno - 1), Getfld.kind, deepcopySym.fldtype])
-  /for(result + [Record.fldkinds]) 
+  /for(result + [Record.fldkinds])
+
+__________________________
+
+type symbolref is toint:int
+
+function symbolref(sym:symbol)symbolref symbolref.addorder.sym
