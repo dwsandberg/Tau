@@ -44,14 +44,11 @@ use seq.symbol
 
 use set.symbol
 
-
 use set.symdef
 
 use seq.seq.char
 
 use process.seq.file
-
-
 
 use process.seq.word
 
@@ -79,8 +76,6 @@ for txt = "", t ∈ toseq.r do
           else txt
     /for(txt)
 
-/function =(a:symbolref, b:symbolref)boolean toint.a = toint.b
-
 Function cat(files:seq.file, uses:seq.word, exports:seq.word, Library:seq.word)seq.file
 for acc = empty:seq.byte, names = "parts=", f ∈ files do
  if ext.fn.f ∈ "ls libsrc"then next(acc + tobyte.10 + tobyte.10 + data.f, names + fullname.fn.f)
@@ -98,9 +93,8 @@ let info2 = breakparagraph.data.first.input2
 let libname = Library
 let libexports = exports
 let rcinfo = 
- compilerFront:libllvm("wasm"
- , [" exports=tausupport inputoutput $(libexports)Library=$(libname)"
- ]
+ compilerFront("wasm"
+ , ["exports=tausupport inputoutput $(libexports)Library=$(libname)"]
  + breakparagraph.data.first.input2 << 1
  )
 {let check=checkweb(rcinfo, libexports)assert isempty.check report check}

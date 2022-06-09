@@ -21,7 +21,6 @@ static void cgi_fail (const char * message)
 int 
 main ()
 {   
-    printf ("Content-Type: text/html\n\n" );
      int content_length=atoi(getenv("CONTENT_LENGTH"));
      char *Root=getenv("DOCUMENT_ROOT");
      char *query=getenv("QUERY_STRING");
@@ -37,16 +36,19 @@ main ()
        else if (*p=='~' || (*p==':' )  ) cgi_fail("illegal file name"); 
      // open the file
      FILE   *fp = fopen(filename, "w"); 
-     if ( fp < 0) cgi_fail("fail open");
-     printf("filename:%s <br>",filename);
+     if ( fp <= 0) cgi_fail("fail open");
+         printf ("Content-Type: text/html\n\n here" );
+     printf("filename:%s <br> content_length:%d",filename,content_length);
+  
   char buffer[BUFFER_SIZE];         
      int size=content_length;
      while (size > 0)   {
        int sz= size > BUFFER_SIZE ? BUFFER_SIZE:size;
-       printf("%lu",   fread(buffer, 1,sz,   stdin));      
-       printf("%lu",     fwrite(buffer,1,sz,   fp));
-       size-=BUFFER_SIZE;
+         printf(" %lu",   fread(buffer, 1,sz,   stdin));      
+       printf(" %lu",     fwrite(buffer,1,sz,   fp));
+      size-=BUFFER_SIZE;
        }
+       
      printf("%d",    fclose(fp));
        int f =open(  filename,O_RDWR);
         

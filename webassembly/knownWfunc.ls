@@ -234,7 +234,7 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , const64.getoffset.wordsconst.""
 )
 , wfunc(alltypes
-, symbol(internalmod, "stacktrace", seqof.typeword)
+, symbol(internalmod, "loadedLibs", seqof.typeword)
 , const64.getoffset.wordsconst.""
 )
 ]

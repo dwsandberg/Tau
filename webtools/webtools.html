@@ -1,0 +1,73 @@
+ <!DOCTYPE HTML>
+  <p id=demo> </p>
+      <script>
+    function shiftstart(arcs) {
+        let bb = document.getElementById(arcs[0]).getBBox();
+        arcs.forEach(function(idval, index) {
+            if (index > 0) {
+                let element = document.getElementById(idval);
+                let d = "M" + (bb.x + bb.width) + ", " + (bb.y + bb.height) + element.getAttribute("d").substring(5);
+                element.setAttribute("d", d);
+            }
+        });
+    }
+    </script>
+
+  <p > lextable
+  <p >  LR1 built/parse.ls 
+  <p >   htmlcode built/core.libsrc
+  <p >   doclibrary built/core.libsrc
+  <p >   usegraph   built/core.libsrc   exclude=standard seq
+  <p >   formatdoc built/tools/doc.txt 
+  <p >  front built/core.libsrc   mods= standard words seq
+  <p > mmpretty built/core.libsrc
+  <p >  transform built/core.libsrc 
+cmd:
+<select name="cmd"  id="cmd">
+  <option value="lextable">lextable</option>
+  <option value="LR1">LR1</option>
+  <option value="htmlcode">htmlcode</option>
+  <option value="doclibrary">doclibrary</option>
+  <option value="usegraph">usegraph</option>
+  <option value="formatdoc">formatdoc</option>
+  <option value="front">front</option>
+  <option value="pretty">pretty</option>
+  <option value="transform">transform</option>
+   <option value="testall">testall</option>
+</select>
+ <input id="input"/>  
+ <button onclick=myruncmd()>run cmd </button>
+ 
+  <p id="fileout">   </p>
+  
+ <p id="pageready"> Loading </p>
+      <button onclick= mirror() >Copy the value from right to left</button>  
+     <p>
+    <textarea id=hhh rows= 4 >
+one
+two
+three
+</textarea>
+<textarea id=mhhh rows= 4 >
+</textarea> <br>
+<label>checkbox
+  <input type="checkbox" id="peas">
+</label>  
+ <input type="checkbox" id="mpeas">
+<br>
+<select name="cars"  id="cars">
+  <option value="volvo">Volvo</option>
+  <option value="saab">Saab</option>
+  <option value="mercedes">Mercedes</option>
+  <option value="audi">Audi</option>
+</select>
+<select name="cars" id="mcars" value=audi >
+  <option value="volvo">Volvo</option>
+  <option value="saab">Saab</option>
+  <option value="mercedes">Mercedes</option>
+  <option value="audi">Audi</option>
+</select>
+<br>
+<input type="text" id="text" value="this is a test"> <input type="text" id="mtext"> 
+  
+ 

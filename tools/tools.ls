@@ -8,16 +8,19 @@ Module tools
 
 use UTF8
 
+use bits
+
+use compilerfront
 
 use doc
+
+use file
 
 use format
 
 use frontcmd
 
 use genLR1
-
-use compilerfront
 
 use main2
 
@@ -35,79 +38,70 @@ use textio
 
 use seq.char
 
+use seq.file
+
 use otherseq.word
 
 use seq.word
 
-use set.word
-
-use process.seq.word
-
 use seq.seq.word
-
-use bits
 
 Function writeModule2(modtexts:seq.seq.word, directory:seq.word)seq.file
 {OPTION INLINE}
-for acc = empty:seq.file, modtext = "", p ∈ modtexts << 1 + "Module" do
+for acc = empty:seq.file, modtext = "", p ∈ modtexts + "Module ?"do
  if length.p > 1 ∧ first.p ∈ "Module module"then
-   next(if isempty.modtext then acc
-   else
-    acc+file(filename("+"+directory+modtext_2+".ls"),modtext)
-    , p)
+  next(if isempty.modtext then acc
+  else acc + file(filename("+" + directory + modtext_2 + ".ls"), modtext)
+  , p
+  )
  else next(acc, modtext + " /p" + p)
 /for(acc)
 
-
-use file
-
-use seq.file
-
-
-Function pretty(input:seq.file,o:seq.word,target:seq.word) seq.file
+Function pretty(input:seq.file, o:seq.word, target:seq.word)seq.file
 writeModule2(prettyfile2(true, "", breakparagraph.data.first.input)
- , if isempty.target then"tmp"else target
+, if isempty.target then"tmp"else target
+)
+
+Function formatdoc(input:seq.file, o:seq.word)seq.file
+[file(filename.o, prettyfile(false, "", breakparagraph.data.first.input))]
+
+Function lextable(input:seq.file, o:seq.word)seq.file[file(o, getlextable)]
+
+Function LR1(input:seq.file, o:seq.word, codeonly:boolean, parameterized:boolean)seq.file
+[file(o, LR1gen(breakparagraph.data.first.input, codeonly, parameterized))]
+
+Function front(input:seq.file, o:seq.word, pass:seq.word, n:seq.word, ~n:seq.word
+, mods:seq.word, ~mods:seq.word, within:boolean, rn:seq.word, out:seq.word
+)seq.file
+let output = 
+ front2(compilerFront(if isempty.pass then"pass2"else pass, input)
+ , n
+ , ~n
+ , mods
+ , ~mods
+ , within
+ , rn
+ , out
  )
+[file(o, output)]
 
-Function formatdoc(input:seq.file,o:seq.word ) seq.file
-[file( filename.o,prettyfile(false, "", breakparagraph.data.first.input))]
-
-Function lextable(input:seq.file,o:seq.word ) seq.file
-[file( o,getlextable)]
-
-Function LR1(input:seq.file,o:seq.word,codeonly:boolean,parameterized:boolean ) seq.file
-[file( o,LR1gen(breakparagraph.data.first.input,codeonly,parameterized) )]
-
-Function front(input:seq.file,o:seq.word
-, pass:seq.word, n:seq.word, ~n:seq.word, mods:seq.word
-, ~mods:seq.word, within:boolean, rn:seq.word, out:seq.word) seq.file
-let output=front2(compilerFront:libllvm(if isempty.pass then"pass2"
-else pass, input)
-,n,~n,mods,~mods,within ,rn,out)
-[file(o,output)]
-
-Function transform(input:seq.file,o:seq.word,target:seq.word,rename:seq.word) seq.file
+Function transform(input:seq.file, o:seq.word, target:seq.word, rename:seq.word)seq.file
 {Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
-as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname} 
-let cinfo = compilerFront:libllvm("text", input)
- let library = [libname.cinfo]
- let newlib = if isempty.target then"tmp"else target
- writeModule2(transform(cinfo
- , newlib
- , if isempty.rename then library + ">" + newlib else rename
- )
- , newlib
- )
+as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname}
+let cinfo = compilerFront("text", input)
+let library = [libname.cinfo]
+let newlib = if isempty.target then"tmp"else target
+writeModule2(transform(cinfo
+, newlib
+, if isempty.rename then library + ">" + newlib else rename
+)
+, newlib
+)
 
-use profile
+Function testprofile(input:seq.file, o:seq.word)seq.file
+let discard = stdlib.input
+[file(o, profileresults."time")]
 
-Function testprofile(input:seq.file,o:seq.word) seq.file
-  let discard = stdlib(input)
- [file(o,profileresults."time")]
- 
- Function testprofile2(input:seq.file,o:seq.word) seq.file
-  let discard = doclibrary(input,o)
- [file(o,profileresults."time")]
- 
-
-
+Function testprofile2(input:seq.file, o:seq.word)seq.file
+let discard = doclibrary(input, o)
+[file(o, profileresults."time")] 

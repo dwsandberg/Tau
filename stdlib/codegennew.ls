@@ -8,8 +8,6 @@ use codetemplates2
 
 use internalbc
 
-use liblib
-
 use llvm
 
 use llvmconstants
@@ -365,7 +363,6 @@ regno.l+1)), blocks.l)else}
   , push(pop(args.l, arg.m), -(regno.l + 1))
   , blocks.l
   )
-
 
 function profiledata(decode:seq.symbol, profilearcs:set.seq.symbol, symlist:seq.int)seq.slot
 for acc = [C64.1, C64.cardinality.profilearcs], a ∈ toseq.profilearcs do

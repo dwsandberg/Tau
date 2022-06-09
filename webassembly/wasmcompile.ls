@@ -142,7 +142,6 @@ let exp =
  do
   acc + exportfunc(funcidx.@e, last.jsname.@e)
  /for(acc)
-{assert false report for txt="", x /in roots do txt+print.x+EOL /for(txt)}
 {define some support functions}
 let descard100 = [allocatefunc.alltypes, getinstancefunc.alltypes, addencodingfunc.alltypes]
 {look for exports that must be interpreted}
@@ -707,7 +706,9 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
   let this = 
    if not.isempty.ele then
     if length.code.first.ele = 0 then empty:seq.Icode
-    else
+    else if name.sym /in "GEP" then 
+     [ Icode(i64const,8) ,  Icode.i64mul ,  Icode.i64add]
+    else 
      assert length.code.first.ele = 1
      report" /br------not length one------- /br" + print.sym + printcode.code.first.ele
      [Icode.first.code.first.ele]

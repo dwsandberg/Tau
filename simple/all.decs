@@ -16,16 +16,16 @@ orglibsrc core.libsrc +core bits.ls encoding  format  graph process real seq set
 sparseseq stack standard UTF8 words xxhash otherseq
 +stdlib textio 
  
-orglibsrc compilerfront.libsrc +stdlib pretty.ls symbol2 symbolconstant compilerfrontT.ls compilerfront  mergeblocks pass2 pass2T localmap2 mytype parse parsersupport passparse passsymbol postbind symbol symboldict typedict
+orglibsrc compilerfront.libsrc +stdlib pretty.ls symbol2 symbolconstant compilerfrontT.ls compilerfront  mergeblocks pass2  localmap2 mytype parse parsersupport passparse passsymbol postbind symbol symboldict typedict
  
 
 orgmakelib stdlib.lib  core.libsrc compilerfront
   +stdlib updatestate.ls    debuginfo COMPILETIME  bitstream 
-  codegennew codetemplates file fileIO inputoutput hashset internalbc  llvm
+  codegennew codetemplates file   inputoutput hashset internalbc  llvm
    llvmconstants main2  persistant  symbol2 tausupport compileTimeT
    timestamp codetemplates2  ptr taublockseq  bitcast
    object01 objectio LEBencoding 
-exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file fileIO 
+exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file  
 format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants 
 main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack 
 standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words 
@@ -92,11 +92,15 @@ wasm wbeizer.wasm webcore.libsrc  +wbeizer Bcubic.html Bquadratic
 wbeizer.ls
 exports=wbeizer Library=wbeizer
 
-wasm wtests.wasm  webcore.libsrc commontests.libsrc +wtests wtests.html wtests.ls   
- exports=wtests Library=wtests
+wasm webtools.wasm webcore.libsrc  compilerfront  tools tests
+  +webtools webtools.ls  main2 webtools.html
+  +common  svg2graph.ls uniqueids
+  +stdlib hashset symbol2 pretty symbolconstant  compileTimeT debuginfo objectio object01  LEBencoding
+ exports=webtools
+Library=webtools
  
 
-libsrc allweb.libsrc    wbeizer.wasm wtests.wasm
+libsrc allweb.libsrc    wbeizer.wasm  webtools.wasm 
  testall.html  baseTypeCheck  callgraphwithin 
 commondoc 
 installdoc 

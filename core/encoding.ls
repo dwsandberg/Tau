@@ -112,9 +112,7 @@ for acc = 0, @e ∈ l do
 
 Function addencodings(l:seq.T)int
 let inst = getinstance:encodingstate.T
-for acc = 0, @e ∈ l do
- acc + primitiveadd(encodingno.inst, encodingpair(to:encoding.T(0),@e, hash.@e))
-/for(acc)
+for acc = 0, @e ∈ l do acc + primitiveadd(encodingno.inst, encodingpair(to:encoding.T(0), @e, hash.@e))/for(acc)
 
 Function lookupencodingpair(t:encoding.T)seq.encodingpair.T
 let inst = getinstance:encodingstate.T

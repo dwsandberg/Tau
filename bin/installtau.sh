@@ -29,7 +29,6 @@ checksrc tools/doc.ls
 checksrc tools/doc.txt
 checksrc core/encoding.ls
 checksrc stdlib/file.ls
-checksrc stdlib/fileIO.ls
 checksrc core/format.ls
 checksrc tools/frontcmd.ls
 checksrc webassembly/funcidx.ls
@@ -46,6 +45,7 @@ checksrc stdlib/llvm.ls
 checksrc stdlib/llvmconstants.ls
 checksrc stdlib/localmap2.ls
 checksrc stdlib/main2.ls
+checksrc webtools/main2.ls
 checksrc common/makeDAG.ls
 checksrc common/matrix.ls
 checksrc stdlib/mergeblocks.ls
@@ -58,7 +58,6 @@ checksrc core/otherseq.ls
 checksrc stdlib/parse.ls
 checksrc stdlib/parsersupport.ls
 checksrc stdlib/pass2.ls
-checksrc stdlib/pass2T.ls
 checksrc stdlib/passparse.ls
 checksrc stdlib/passsymbol.ls
 checksrc stdlib/persistant.ls
@@ -108,25 +107,25 @@ checksrc webassembly/wasmcompile.ls
 checksrc wbeizer/wbeizer.ls
 checksrc webcore/webIO.ls
 checksrc webassembly/webassembly.ls
+checksrc webtools/webtools.html
+checksrc webtools/webtools.ls
 checksrc tests/wordfreq.ls
 checksrc tools/wordgraph.ls
 checksrc core/words.ls
-checksrc wtests/wtests.html
-checksrc wtests/wtests.ls
 checksrc core/xxhash.ls
 #________________
 
-parts="built/compilerfront.libsrc built/orgstdlib.lib stdlib/pretty.ls stdlib/symbol2.ls stdlib/symbolconstant.ls stdlib/compilerfrontT.ls stdlib/compilerfront.ls stdlib/mergeblocks.ls stdlib/pass2.ls stdlib/pass2T.ls stdlib/localmap2.ls stdlib/mytype.ls stdlib/parse.ls stdlib/parsersupport.ls stdlib/passparse.ls stdlib/passsymbol.ls stdlib/postbind.ls stdlib/symbol.ls stdlib/symboldict.ls stdlib/typedict.ls"
-outofdate ||(libexe orgstdlib libsrc stdlib/pretty.ls stdlib/symbol2.ls stdlib/symbolconstant.ls stdlib/compilerfrontT.ls stdlib/compilerfront.ls stdlib/mergeblocks.ls stdlib/pass2.ls stdlib/pass2T.ls stdlib/localmap2.ls stdlib/mytype.ls stdlib/parse.ls stdlib/parsersupport.ls stdlib/passparse.ls stdlib/passsymbol.ls stdlib/postbind.ls stdlib/symbol.ls stdlib/symboldict.ls stdlib/typedict.ls cmd=libsrc o=compilerfront.libsrc)
+parts="built/compilerfront.libsrc built/orgstdlib.lib stdlib/pretty.ls stdlib/symbol2.ls stdlib/symbolconstant.ls stdlib/compilerfrontT.ls stdlib/compilerfront.ls stdlib/mergeblocks.ls stdlib/pass2.ls stdlib/localmap2.ls stdlib/mytype.ls stdlib/parse.ls stdlib/parsersupport.ls stdlib/passparse.ls stdlib/passsymbol.ls stdlib/postbind.ls stdlib/symbol.ls stdlib/symboldict.ls stdlib/typedict.ls"
+outofdate ||(libexe orgstdlib libsrc stdlib/pretty.ls stdlib/symbol2.ls stdlib/symbolconstant.ls stdlib/compilerfrontT.ls stdlib/compilerfront.ls stdlib/mergeblocks.ls stdlib/pass2.ls stdlib/localmap2.ls stdlib/mytype.ls stdlib/parse.ls stdlib/parsersupport.ls stdlib/passparse.ls stdlib/passsymbol.ls stdlib/postbind.ls stdlib/symbol.ls stdlib/symboldict.ls stdlib/typedict.ls cmd=libsrc o=compilerfront.libsrc)
 
 parts="built/core.libsrc built/orgstdlib.lib core/bits.ls core/encoding.ls core/format.ls core/graph.ls core/process.ls core/real.ls core/seq.ls core/set.ls core/sparseseq.ls core/stack.ls core/standard.ls core/UTF8.ls core/words.ls core/xxhash.ls core/otherseq.ls stdlib/textio.ls"
 outofdate ||(libexe orgstdlib libsrc core/bits.ls core/encoding.ls core/format.ls core/graph.ls core/process.ls core/real.ls core/seq.ls core/set.ls core/sparseseq.ls core/stack.ls core/standard.ls core/UTF8.ls core/words.ls core/xxhash.ls core/otherseq.ls stdlib/textio.ls cmd=libsrc o=core.libsrc)
 #________________
 
-parts="built/stdlib.lib built/orgstdlib.lib built/core.libsrc built/compilerfront.libsrc stdlib/updatestate.ls stdlib/debuginfo.ls stdlib/COMPILETIME.ls stdlib/bitstream.ls stdlib/codegennew.ls stdlib/codetemplates.ls stdlib/file.ls stdlib/fileIO.ls stdlib/inputoutput.ls stdlib/hashset.ls stdlib/internalbc.ls stdlib/llvm.ls stdlib/llvmconstants.ls stdlib/main2.ls stdlib/persistant.ls stdlib/symbol2.ls stdlib/tausupport.ls stdlib/compileTimeT.ls stdlib/timestamp.ls stdlib/codetemplates2.ls stdlib/ptr.ls stdlib/taublockseq.ls stdlib/bitcast.ls stdlib/object01.ls stdlib/objectio.ls stdlib/LEBencoding.ls"
+parts="built/stdlib.lib built/orgstdlib.lib built/core.libsrc built/compilerfront.libsrc stdlib/updatestate.ls stdlib/debuginfo.ls stdlib/COMPILETIME.ls stdlib/bitstream.ls stdlib/codegennew.ls stdlib/codetemplates.ls stdlib/file.ls stdlib/inputoutput.ls stdlib/hashset.ls stdlib/internalbc.ls stdlib/llvm.ls stdlib/llvmconstants.ls stdlib/main2.ls stdlib/persistant.ls stdlib/symbol2.ls stdlib/tausupport.ls stdlib/compileTimeT.ls stdlib/timestamp.ls stdlib/codetemplates2.ls stdlib/ptr.ls stdlib/taublockseq.ls stdlib/bitcast.ls stdlib/object01.ls stdlib/objectio.ls stdlib/LEBencoding.ls"
 dependlibs=""
 ccode="void init_libs(){"
-outofdate ||(libexe orgstdlib libsrc built/core.libsrc built/compilerfront.libsrc stdlib/updatestate.ls stdlib/debuginfo.ls stdlib/COMPILETIME.ls stdlib/bitstream.ls stdlib/codegennew.ls stdlib/codetemplates.ls stdlib/file.ls stdlib/fileIO.ls stdlib/inputoutput.ls stdlib/hashset.ls stdlib/internalbc.ls stdlib/llvm.ls stdlib/llvmconstants.ls stdlib/main2.ls stdlib/persistant.ls stdlib/symbol2.ls stdlib/tausupport.ls stdlib/compileTimeT.ls stdlib/timestamp.ls stdlib/codetemplates2.ls stdlib/ptr.ls stdlib/taublockseq.ls stdlib/bitcast.ls stdlib/object01.ls stdlib/objectio.ls stdlib/LEBencoding.ls exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file fileIO format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding o=stdlib.libsrc
+outofdate ||(libexe orgstdlib libsrc built/core.libsrc built/compilerfront.libsrc stdlib/updatestate.ls stdlib/debuginfo.ls stdlib/COMPILETIME.ls stdlib/bitstream.ls stdlib/codegennew.ls stdlib/codetemplates.ls stdlib/file.ls stdlib/inputoutput.ls stdlib/hashset.ls stdlib/internalbc.ls stdlib/llvm.ls stdlib/llvmconstants.ls stdlib/main2.ls stdlib/persistant.ls stdlib/symbol2.ls stdlib/tausupport.ls stdlib/compileTimeT.ls stdlib/timestamp.ls stdlib/codetemplates2.ls stdlib/ptr.ls stdlib/taublockseq.ls stdlib/bitcast.ls stdlib/object01.ls stdlib/objectio.ls stdlib/LEBencoding.ls exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding o=stdlib.libsrc
 libexe stdlib stdlib built/stdlib.libsrc ;runlib stdlib)
 #________________
 
@@ -195,11 +194,11 @@ outofdate ||(libexe tests testall tests/opttests.ls built/stdlib.libinfo cmd=tes
 parts="built/wbeizer.wasm built/webassembly.lib built/webcore.libsrc wbeizer/Bcubic.html wbeizer/Bquadratic.html wbeizer/wbeizer.ls"
 outofdate ||(libexe webassembly wasm built/webcore.libsrc wbeizer/Bcubic.html wbeizer/Bquadratic.html wbeizer/wbeizer.ls cmd=wasm exports=wbeizer Library=wbeizer o=wbeizer.wasm)
 
-parts="built/wtests.wasm built/webassembly.lib built/webcore.libsrc built/commontests.libsrc wtests/wtests.html wtests/wtests.ls"
-outofdate ||(libexe webassembly wasm built/webcore.libsrc built/commontests.libsrc wtests/wtests.html wtests/wtests.ls cmd=wasm exports=wtests Library=wtests o=wtests.wasm)
+parts="built/webtools.wasm built/webassembly.lib built/webcore.libsrc built/compilerfront.libsrc built/tools.libsrc built/tests.libsrc webtools/webtools.ls webtools/main2.ls webtools/webtools.html common/svg2graph.ls common/uniqueids.ls stdlib/hashset.ls stdlib/symbol2.ls stdlib/pretty.ls stdlib/symbolconstant.ls stdlib/compileTimeT.ls stdlib/debuginfo.ls stdlib/objectio.ls stdlib/object01.ls stdlib/LEBencoding.ls"
+outofdate ||(libexe webassembly wasm built/webcore.libsrc built/compilerfront.libsrc built/tools.libsrc built/tests.libsrc webtools/webtools.ls webtools/main2.ls webtools/webtools.html common/svg2graph.ls common/uniqueids.ls stdlib/hashset.ls stdlib/symbol2.ls stdlib/pretty.ls stdlib/symbolconstant.ls stdlib/compileTimeT.ls stdlib/debuginfo.ls stdlib/objectio.ls stdlib/object01.ls stdlib/LEBencoding.ls cmd=wasm exports=webtools Library=webtools o=webtools.wasm)
 #________________
 
-parts="built/allweb.libsrc built/stdlib.lib built/wbeizer.wasm built/wtests.wasm built/testall.html built/baseTypeCheck.html built/callgraphwithin.html built/commondoc.html built/installdoc.html built/stdlibdoc.html built/taudoc.html built/taugrammer.html built/taulex.html built/testall.html"
-outofdate ||(libexe stdlib libsrc built/wbeizer.wasm built/wtests.wasm built/testall.html built/baseTypeCheck.html built/callgraphwithin.html built/commondoc.html built/installdoc.html built/stdlibdoc.html built/taudoc.html built/taugrammer.html built/taulex.html built/testall.html cmd=libsrc o=allweb.libsrc)
+parts="built/allweb.libsrc built/stdlib.lib built/wbeizer.wasm built/webtools.wasm built/testall.html built/baseTypeCheck.html built/callgraphwithin.html built/commondoc.html built/installdoc.html built/stdlibdoc.html built/taudoc.html built/taugrammer.html built/taulex.html built/testall.html"
+outofdate ||(libexe stdlib libsrc built/wbeizer.wasm built/webtools.wasm built/testall.html built/baseTypeCheck.html built/callgraphwithin.html built/commondoc.html built/installdoc.html built/stdlibdoc.html built/taudoc.html built/taugrammer.html built/taulex.html built/testall.html cmd=libsrc o=allweb.libsrc)
 #________________
 mkbuild 

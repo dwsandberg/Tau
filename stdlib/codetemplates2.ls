@@ -10,6 +10,8 @@ use llvm
 
 use llvmconstants
 
+use mytype
+
 use persistant
 
 use standard
@@ -45,6 +47,8 @@ use set.symbol
 use seq.symdef
 
 use set.symdef
+
+use seq.typedef
 
 use set.word
 
@@ -303,4 +307,28 @@ else
  report"Mangled Name problem" + print.s + library
  + for txt = "", sd ∈ toseq.extname do txt + print.sym.sd /for(txt)
  merge.if paragraphno.b_1 < 0 then[library, "$"_1, "$"_1, toword.-paragraphno.b_1]
- else[library.module.s, "$"_1, "$"_1, toword.paragraphno.b_1] 
+ else[library.module.s, "$"_1, "$"_1, toword.paragraphno.b_1]
+
+________________
+
+Function addtype(a:mytype)int
+addobject.for acc = [addint.1, addint.length.typerep.a], e ∈ typerep.a do
+ acc + wordref.name.e + wordref.modname.e + wordref.library.e
+/for(acc)
+
+Function addtypeseq(a:seq.mytype)int
+addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addtype.@e /for(acc)
+
+Function addsymbol(a:symbol)int
+let t = privatefields.a
+addobject.[addwordseq.worddata.a
+, wordref.library.module.a
+, wordref.name.module.a
+, addtype.para.module.a
+, addtypeseq.types.a
+, addint.t_1
+, addint.t_2
+]
+
+Function addsymbolseq(a:seq.symbol)int
+addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addsymbol.@e /for(acc) 

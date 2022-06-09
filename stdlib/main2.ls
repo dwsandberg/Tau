@@ -36,8 +36,6 @@ use compileTimeT.libllvm
 
 use compilerfrontT.libllvm
 
-use pass2T.libllvm
-
 use objectio.midpoint
 
 use seq.midpoint
@@ -87,7 +85,7 @@ use seq.seq.seq.word
 Function libname(info:midpoint)word extractValue(first.src.info, "Library")_1
 
 function makeentry(input:seq.byte) seq.byte
-let entryheader="use standard /p use file /p use fileIO /p use seq.file
+let entryheader="use standard /p use file /p use inputoutput /p use seq.file
 /p use process.UTF8
 /p
 Function entrypoint(args:UTF8)UTF8
@@ -95,10 +93,12 @@ Function entrypoint(args:UTF8)UTF8
 /br if aborted.p then
 /br   finishentry.[file($(dq."error.html"),message.p)] 
 /br else  result.p 
-/p function entrypoint2(args0:UTF8)UTF8
+/p Function entrypoint2(args0:UTF8)UTF8
 /br let args = towords.args0 
-/br let input=getfiles.args
-/br let cmd= first.args  /br finishentry."
+/br finishentry.entrypoint1(args,getfiles.args)
+/p Function entrypoint1(args:seq.word,input:seq.file) seq.file
+/br let cmd=first.args
+/br"
 for acc = "", modname = "?"_1, mods = "", p ∈ breakparagraph.input do
  if subseq(p, 1, 1) = "Function" ∧ subseq(p, 3, 8) = "(input:seq.file"then
   let idx = findindex(")"_1, p)
@@ -187,13 +187,10 @@ for codeNoFref = empty:seq.symbol, sy ∈ code do
  if isFref.sy then codeNoFref + PreFref + basesym.sy else codeNoFref + sy
 /for(codeNoFref)
 
-Function astext(info:midpoint)seq.seq.word
-for acc = empty:seq.seq.word, p ∈ toseq.prg.info do acc + [print.sym.p + print.code.p]/for(acc)
-
-Function compilerFront:libllvm(option:seq.word, allsrc:seq.seq.word)midpoint
+Function compilerFront(option:seq.word, allsrc:seq.seq.word)midpoint
 {OPTION PROFILE}compilerfront2:libllvm(option, allsrc, empty:midpoint)
 
-Function compilerFront:libllvm(option:seq.word, input:seq.file)midpoint
+Function compilerFront(option:seq.word, input:seq.file)midpoint
 {OPTION PROFILE}
 let allsrc = breakparagraph.data.input_1
 let dep = 

@@ -24,17 +24,31 @@ use seq.int
 
 use taublockseq.int
 
+use seq.packed2
+
 use taublockseq.packed2
+
+use seq.packed3
 
 use taublockseq.packed3
 
+use seq.packed4
+
 use taublockseq.packed4
+
+use seq.packed5
 
 use taublockseq.packed5
 
+use seq.packed6
+
 use taublockseq.packed6
 
+use seq.ptr
+
 use taublockseq.ptr
+
+use seq.real
 
 use taublockseq.real
 
@@ -53,6 +67,20 @@ use encoding.seq.char
 use bitcast.seq.int
 
 use seq.seq.int
+
+use bitcast:seq.packed2
+
+use bitcast:seq.packed3
+
+use bitcast:seq.packed4
+
+use bitcast:seq.packed5
+
+use bitcast:seq.packed6
+
+use bitcast:seq.ptr
+
+use bitcast:seq.real
 
 Export empty:seq.index seq.index
 
@@ -215,69 +243,30 @@ for acc = empty:seq.seq.byte, byteswritten ∈ arithseq(noblks, blksz * 8, 0)do
  let z = set(set(toptr.new, 1), min(bytestowrite - byteswritten, blksz * 8))
  let x = bitcast:seq.byte(toptr.new)
  acc + x
-/for(acc) 
+/for(acc)
 
 ____________
 
-Function cat(obj1:ptr,obj2:ptr,typ:word) ptr
-   if typ /in "int" then toptr(bitcast:seq.int(obj1)+bitcast:seq.int(obj2))
- else if typ /in "real" then toptr(bitcast:seq.real(obj1)+bitcast:seq.real(obj2))
- else if typ /in "ptr" then 
-  toptr(bitcast:seq.ptr(obj1)+bitcast:seq.ptr(obj2))
- else if typ /in "packed2"  then
-  toptr(bitcast:seq.packed2(obj1)+bitcast:seq.packed2(obj2))
- else if typ /in "packed3"  then
-  toptr(bitcast:seq.packed3(obj1)+bitcast:seq.packed3(obj2))
- else if typ /in "packed4"  then
-  toptr(bitcast:seq.packed4(obj1)+bitcast:seq.packed4(obj2))
- else if typ /in "packed5"  then
-  toptr(bitcast:seq.packed5(obj1)+bitcast:seq.packed5(obj2))
- else assert typ /in "packed6" report "packing cat not found"+typ
-  toptr(bitcast:seq.packed6(obj1)+bitcast:seq.packed6(obj2))
+Function cat(obj1:ptr, obj2:ptr, typ:word)ptr
+if typ ∈ "int"then toptr(bitcast:seq.int(obj1) + bitcast:seq.int(obj2))
+else if typ ∈ "real"then toptr(bitcast:seq.real(obj1) + bitcast:seq.real(obj2))
+else if typ ∈ "ptr"then toptr(bitcast:seq.ptr(obj1) + bitcast:seq.ptr(obj2))
+else if typ ∈ "packed2"then toptr(bitcast:seq.packed2(obj1) + bitcast:seq.packed2(obj2))
+else if typ ∈ "packed3"then toptr(bitcast:seq.packed3(obj1) + bitcast:seq.packed3(obj2))
+else if typ ∈ "packed4"then toptr(bitcast:seq.packed4(obj1) + bitcast:seq.packed4(obj2))
+else if typ ∈ "packed5"then toptr(bitcast:seq.packed5(obj1) + bitcast:seq.packed5(obj2))
+else
+ assert typ ∈ "packed6"report"packing cat not found" + typ
+ toptr(bitcast:seq.packed6(obj1) + bitcast:seq.packed6(obj2))
 
-
-Function packobject(typ:word,obj:ptr) ptr
-  if typ /in "int" then toptr.blockIt.bitcast:seq.int(obj)
- else if typ /in "real" then toptr.blockIt.bitcast:seq.real(obj)
- else if typ /in "ptr" then toptr.blockIt.bitcast:seq.ptr(obj)
- else if typ /in "packed2" then 
-   toptr.blockIt.bitcast:seq.packed2(obj)
-  else if typ /in "packed3" then 
-  toptr.blockIt.bitcast:seq.packed3(obj)
- else if typ /in "packed4" then 
-  toptr.blockIt.bitcast:seq.packed4(obj)
- else if typ /in "packed5" then 
-    toptr.blockIt.bitcast:seq.packed5(obj)
- else 
- assert typ /in "packed6" report "packing not found"+typ
-  toptr.blockIt.bitcast:seq.packed6(obj)
-  
-  use bitcast:seq.real
-  
-  use bitcast:seq.ptr
-  
-  use bitcast:seq.packed2
- 
-  use bitcast:seq.packed3
- 
-  use bitcast:seq.packed4
- 
-  use bitcast:seq.packed5
-  
-  use bitcast:seq.packed6
- 
-  use seq.real
-  
-  use seq.ptr
-  
-   use  seq.packed2
- 
-  use  seq.packed3
- 
-  use  seq.packed4
- 
-  use  seq.packed5
-  
-  use  seq.packed6
-  
-
+Function packobject(typ:word, obj:ptr)ptr
+if typ ∈ "int"then toptr.blockIt.bitcast:seq.int(obj)
+else if typ ∈ "real"then toptr.blockIt.bitcast:seq.real(obj)
+else if typ ∈ "ptr"then toptr.blockIt.bitcast:seq.ptr(obj)
+else if typ ∈ "packed2"then toptr.blockIt.bitcast:seq.packed2(obj)
+else if typ ∈ "packed3"then toptr.blockIt.bitcast:seq.packed3(obj)
+else if typ ∈ "packed4"then toptr.blockIt.bitcast:seq.packed4(obj)
+else if typ ∈ "packed5"then toptr.blockIt.bitcast:seq.packed5(obj)
+else
+ assert typ ∈ "packed6"report"packing not found" + typ
+ toptr.blockIt.bitcast:seq.packed6(obj) 

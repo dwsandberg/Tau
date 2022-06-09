@@ -75,13 +75,17 @@ use file
 
 use textio
 
+
+use set.symdef
+
 Function testcomp2(in:seq.file,s:seq.word)seq.word
 let txt= "Library=testcomp uses=stdlib exports=testit /p module testit /p use standard /p" +s  
 let p = 
- process.compilerFront:libllvm("pass1", [file("a.ls",txt)]+in << 1)
+ process.compilerFront("pass1", [file("a.ls",txt)]+in << 1)
 if aborted.p then message.p
 else
- for acc = "", @e ∈ astext.result.p do acc + " /br  /br" + @e /for(acc)
+ for acc = "", sd ∈ toseq.prg.result.p do acc + " /br  /br"+print.sym.sd + print.code.sd /for(acc)
+
 
 
 Function compare(in:seq.file,exp1:seq.word, exp2:seq.word)boolean

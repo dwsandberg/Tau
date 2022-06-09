@@ -125,7 +125,9 @@ else
   let prg = compile(allmods, asset.simple, lib, allsrc, option = "text", requireUnbound)
   asset(prga + toseq.code.t5 + toseq.prg.libinfo + prg))
  if option = "text"then
-  midpoint(option, asset.toseq.prg10, emptytypedict, empty:seq.modExports, allsrc)
+   for acc=empty:set.symdef,  sd /in toseq.prg10 do
+    if  library.module.sym.sd=lib then acc+sd else acc
+   /for (midpoint(option, acc, emptytypedict, empty:seq.modExports, allsrc))
  else
   let roots = 
    for acc = [outofboundssymbol], f ∈ toseq.modules.t5 do
@@ -140,26 +142,6 @@ else
      /for(acc3))
    /for(acc)
   let typedict = buildtypedict(empty:set.symbol, types.t5 + types.libinfo)
-  if option = "hhh"then
-   let hmods = 
-    for acc = empty:seq.passsymbols, m ∈ toseq.modules.t5 do
-     acc
-     + passsymbols(modname.m
-     , empty:set.modref
-     , if isabstract.module.m then defines.m else empty:set.symbol
-     , exports.m
-     , empty:set.symbol
-     , typedict.m
-     , empty:seq.symtextpair
-     )
-    /for(acc)
-   midpoint(option
-   , for acc = empty:set.symdef, d ∈ toseq.prg10 do if issimple.module.sym.d then acc else acc + d /for(acc)
-   , typedict
-   , toModules(typedict, toseq.modules.t5, exports)
-   , empty:seq.seq.word
-   )
-  else
    let templates = 
     for acc = empty:seq.symdef, p ∈ toseq.prg10 do if para.module.sym.p = typeT then acc + p else acc /for(asset.acc)
    let prg10a = processOptions(prg10, toseq.modules.t5, "NOINLINE")

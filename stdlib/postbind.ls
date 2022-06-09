@@ -408,4 +408,4 @@ __________________________
 
 type symbolref is toint:int
 
-function symbolref(sym:symbol)symbolref symbolref.addorder.sym
+function symbolref(sym:symbol)symbolref symbolref.addorder.sym 
