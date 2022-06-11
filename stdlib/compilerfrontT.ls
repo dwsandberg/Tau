@@ -65,7 +65,7 @@ use seq.seq.seq.symbol
 Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
 {OPTION PROFILE}
 let m = compilerfront3(option, allsrc, libinfo)
-if first.option.m ∈ "library text  pass1"then m
+if first.option.m ∈ "library text pass1"then m
 else
  let prg5 = pass2:T(prg.m, typedict.m, "") ∪ templates.m
  if option = "all2"then prepareback(prg5, m, libinfo)

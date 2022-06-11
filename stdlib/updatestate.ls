@@ -74,18 +74,17 @@ do
    cmds_if subseq(cmds, cidx + 3, cidx + 3) = ":"then cidx + 2 else cidx
   let cmdlib = subseq(cmds, cidx + 1, cidx + 1) + ".lib"
   let idx = findindex("="_1, aa + "?=")
-  let rest = 
-   "cmd=" + cmd
-   + if idx > length.aa then""else aa << (idx - 2)
+  let rest = if idx > length.aa then""else aa << (idx - 2)
   let filenames = 
    getfilenames("built", subseq(aa, 2, 4) + cmdlib + subseq(aa, 5, length.aa - length.rest + 3))
   let tail = first.filenames
   next(for arcs = acc, fn ∈ filenames << 1 do arcs + arc(tail, fn)/for(if cmd ∈ "makelib orgmakelib"then arcs + arc(tail, changeext(tail, "libsrc"))
   else arcs /if)
   , if cmd ∈ "makelib orgmakelib"then
-   defs2 + cmdpara(changeext(tail, "libsrc"), [tail], "cmd=noop")
+   defs2
+   + cmdpara(changeext(tail, "libsrc"), [tail], "cmd=noop", first."noop")
   else defs2 /if
-  + cmdpara(tail, filenames << 1, rest)
+  + cmdpara(tail, filenames << 1, rest, cmd)
   , cmds
   , if cmd ∈ "makelib orgmakelib"then defined + tail + changeext(tail, "libsrc")
   else defined + tail
@@ -136,39 +135,40 @@ for f2 = "", n ∈ filenames do f2 + fullname.n /for(f2)
 
 function tosetvars(defs2:set.cmdpara, fn:filename)seq.word
 let node = fullname.fn
-let cmdpara = lookup(defs2, cmdpara(fn, empty:seq.filename, empty:seq.word))
+let cmdpara = lookup(defs2, cmdpara(fn, empty:seq.filename, empty:seq.word, first."noop"))
 if isempty.cmdpara then""
 else
  let parts = print.parts.cmdpara_1
- let cmd = extractValue(data.cmdpara_1, "cmd")
- if cmd = "noop"then""
+ let lib = [name.first.parts.cmdpara_1]
+ let cmd = cmd.cmdpara_1
+ if cmd ∈ "noop"then""
+ else if cmd ∈ "makelib orgmakelib"then
+  let A = finddependentlibs(defs2, name.fn)
+  for depends = ""
+  , libinfo = ""
+  , ccode = "void init_libs(){"
+  , u ∈ reverse.A >> 1
+  do
+   next(depends + fullname.filename([u] + ".$libtype")
+   , libinfo + fullname.filename([u] + ".libinfo")
+   , "void init_$([u])(); $(ccode)init_$([u])();"
+   )
+  /for(let baselib = subseq(A + "stdlib", 2, 2)
+  let out = [name.fn, "."_1, "libsrc"_1]
+  " /p parts3=$(dq(parts << 1)) /br part1=$(dq.[first.parts]) /br libsrcargs=$(dq."$(lib)libsrc $parts3 $(data.cmdpara_1)o=$(out)") /br compileargs=$(dq(baselib + baselib + fullname.filename.out + libinfo)) /br dependlibs=$(dq.depends) /br ccode=$(dq.ccode) /br makelibrary $([name.fn])")
  else
-  let lib = [name.first.parts.cmdpara_1]
-  if cmd ∈ ["makelib", "orgmakelib"]then
-   let A = finddependentlibs(defs2, name.fn)
-   for depends = ""
-   , libinfo = ""
-   , ccode = "void init_libs(){"
-   , u ∈ reverse.A >> 1
-   do
-    next(depends + fullname.filename([u] + ".$libtype")
-    , libinfo + fullname.filename([u] + ".libinfo")
-    , "void init_$([u])(); $(ccode)init_$([u])();"
-    )
-   /for(let baselib = subseq(A + "stdlib", 2, 2)
-   let out = [name.fn, "."_1, "libsrc"_1]
-   " /p parts=$(dq([node] + parts)) /br dependlibs=$(dq.depends) /br ccode=$(dq.ccode) /br outofdate ||(libexe $(lib)libsrc $(parts << 1)$(data.cmdpara_1 << 3)o=$(out) /br libexe $(baselib)$(baselib)$([fullname.filename.out])$(libinfo);runlib $([name.fn]))")
-  else
-   " /p parts=$(dq([node] + parts)) /br outofdate ||(libexe $(lib)$(cmd)$(parts << 1)$(data.cmdpara_1 + "o=$([name.fn, "."_1, ext.fn])"))"
+  " /p parts3=$(dq(parts << 1)) /br node=$(dq.[node]) /br part1=$(dq.[first.parts]) /br(libexeAll $(lib + cmd)$parts3 $(data.cmdpara_1 + "o=$([name.fn, "."_1, ext.fn])"))"
 
 function finddependentlibs(defs:set.cmdpara, lib:word)seq.word
 if lib ∈ "stdlib orgstdlib"then[lib]
 else
- {let cmdpara=for cmdpara=empty:set.cmdpara, ext /in"libsrc lib"while isempty.cmdpara do lookup(defs, cmdpara(filename 
-("$([lib])."+ext), empty:seq.filename, empty:seq.word))/for(cmdpara)}
  let cmdpara = 
   lookup(defs
-  , cmdpara(filename("$([lib])." + "lib"), empty:seq.filename, empty:seq.word)
+  , cmdpara(filename("$([lib])." + "lib")
+  , empty:seq.filename
+  , empty:seq.word
+  , first."noop"
+  )
   )
  assert not.isempty.cmdpara report"dep" + lib
  let libs = 
@@ -177,6 +177,6 @@ else
 
 function sp seq.word[space]
 
-type cmdpara is fn:filename, parts:seq.filename, data:seq.word
+type cmdpara is fn:filename, parts:seq.filename, data:seq.word, cmd:word
 
 function ?(a:cmdpara, b:cmdpara)ordering fn.a ? fn.b 

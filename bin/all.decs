@@ -40,11 +40,10 @@ uses=stdlib
 exports= matrix point    bandeskopf uniqueids svg2graph makeDAG layergraph barycenter  
  common
 
-libsrc commontests.libsrc +tests  bug7.ls checking myseq   point randomphrase test11  test20 
-testencoding  testmodules  testprocess testseq tree  wordfreq  
 
-makelib tests.lib  commontests.libsrc 
- +tests  testopt.ls test11a  testall   
+makelib tests.lib   
+ +tests bug7.ls checking myseq   point randomphrase test11  test20 
+testencoding  testmodules  testprocess testseq tree  wordfreq   testopt.ls test11a  testall   
 uses=stdlib
 exports=tests
  
@@ -74,13 +73,7 @@ lextable taulex.html  +tools install.txt
 
 testall testall.html +tests opttests.ls +built stdlib.libinfo
  
-
-
-
-updatestate update.sh +simple all.decs mystuff.decs
-
-updatestate installtau.sh +simple all.decs
-roots=installtau allweb
+updatestate installtau.sh +bin all.decs
 
 front baseTypeCheck.html  stdlib.libsrc
 out=baseTypeCheck
@@ -100,15 +93,7 @@ wasm webtools.wasm webcore.libsrc  compilerfront  tools tests
 Library=webtools
  
 
-libsrc allweb.libsrc    wbeizer.wasm  webtools.wasm 
- testall.html  baseTypeCheck  callgraphwithin 
-commondoc 
-installdoc 
-stdlibdoc 
-taudoc 
-taugrammer 
-taulex 
-testall 
+
 
 
 

@@ -8,6 +8,10 @@ use bitstream
 
 use debuginfo
 
+use file
+
+use format
+
 use standard
 
 use symbol2
@@ -32,6 +36,8 @@ use otherseq.char
 
 use bitcast.dummyrec2
 
+use seq.file
+
 use process.int
 
 use seq.int
@@ -52,6 +58,8 @@ use set.symdef
 
 use process.seq.bit
 
+use seq.seq.bit
+
 use bitcast.seq.bits
 
 use bitcast.seq.byte
@@ -67,10 +75,6 @@ use seq.seq.char
 use bitcast.seq.int
 
 use process.seq.int
-
-use file
-
-use seq.file
 
 Export type:cstr
 
@@ -168,16 +172,12 @@ type dummyparameterrecord is a:int, b:int
 
 type dummyrec2 is a:int, b:int, c:dummyparameterrecord
 
-builtin createthread(int, int, int, dummyparameterrecord, int)process.int 
-
-use format
-
-use seq.seq.bit
-
+builtin createthread(int, int, int, dummyparameterrecord, int)process.int
 
 Function finishentry(result:seq.file)UTF8
 for acc = "files created:", f ∈ result do
-let check=for check = getseqtype.xdata.f = 0, p ∈ xdata.f while check do getseqtype.p = 1 /for(check)
+ let check = 
+  for check = getseqtype.xdata.f = 0, p ∈ xdata.f while check do getseqtype.p = 1 /for(check)
  let discard2 = 
   if check then createfile3(packed.xdata.f, tocstr.[fullname.fn.f])
   else createfile([fullname.fn.f], data.f)

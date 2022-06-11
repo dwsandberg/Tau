@@ -125,9 +125,7 @@ else
   let prg = compile(allmods, asset.simple, lib, allsrc, option = "text", requireUnbound)
   asset(prga + toseq.code.t5 + toseq.prg.libinfo + prg))
  if option = "text"then
-   for acc=empty:set.symdef,  sd /in toseq.prg10 do
-    if  library.module.sym.sd=lib then acc+sd else acc
-   /for (midpoint(option, acc, emptytypedict, empty:seq.modExports, allsrc))
+  for acc = empty:set.symdef, sd ∈ toseq.prg10 do if library.module.sym.sd = lib then acc + sd else acc /for(midpoint(option, acc, emptytypedict, empty:seq.modExports, allsrc))
  else
   let roots = 
    for acc = [outofboundssymbol], f ∈ toseq.modules.t5 do
@@ -142,15 +140,15 @@ else
      /for(acc3))
    /for(acc)
   let typedict = buildtypedict(empty:set.symbol, types.t5 + types.libinfo)
-   let templates = 
-    for acc = empty:seq.symdef, p ∈ toseq.prg10 do if para.module.sym.p = typeT then acc + p else acc /for(asset.acc)
-   let prg10a = processOptions(prg10, toseq.modules.t5, "NOINLINE")
-   let pb = postbind(roots, prg10a, templates, typedict)
-   let afteroption = processOptions(prg.pb, toseq.modules.t5, "COMPILETIME NOINLINE INLINE PROFILE STATE")
-   let libmods = toModules(typedict, toseq.modules.t5, exports)
-   if option = "pass1"then
-    midpoint(option, afteroption, typedict.pb, libmods, empty:seq.seq.word)
-   else midpoint(option, afteroption, templates, typedict, libmods, [first.allsrc])
+  let templates = 
+   for acc = empty:seq.symdef, p ∈ toseq.prg10 do if para.module.sym.p = typeT then acc + p else acc /for(asset.acc)
+  let prg10a = processOptions(prg10, toseq.modules.t5, "NOINLINE")
+  let pb = postbind(roots, prg10a, templates, typedict)
+  let afteroption = processOptions(prg.pb, toseq.modules.t5, "COMPILETIME NOINLINE INLINE PROFILE STATE")
+  let libmods = toModules(typedict, toseq.modules.t5, exports)
+  if option = "pass1"then
+   midpoint(option, afteroption, typedict.pb, libmods, empty:seq.seq.word)
+  else midpoint(option, afteroption, templates, typedict, libmods, [first.allsrc])
 
 Export midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.word)midpoint
 

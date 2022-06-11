@@ -8,7 +8,7 @@ checksrc wbeizer/Bquadratic.html
 checksrc stdlib/COMPILETIME.ls
 checksrc stdlib/LEBencoding.ls
 checksrc core/UTF8.ls
-checksrc simple/all.decs
+checksrc bin/all.decs
 checksrc common/bandeskopf.ls
 checksrc common/barycenter.ls
 checksrc tools/baseTypeCheck.ls
@@ -115,90 +115,123 @@ checksrc core/words.ls
 checksrc core/xxhash.ls
 #________________
 
-parts="built/compilerfront.libsrc built/orgstdlib.lib stdlib/pretty.ls stdlib/symbol2.ls stdlib/symbolconstant.ls stdlib/compilerfrontT.ls stdlib/compilerfront.ls stdlib/mergeblocks.ls stdlib/pass2.ls stdlib/localmap2.ls stdlib/mytype.ls stdlib/parse.ls stdlib/parsersupport.ls stdlib/passparse.ls stdlib/passsymbol.ls stdlib/postbind.ls stdlib/symbol.ls stdlib/symboldict.ls stdlib/typedict.ls"
-outofdate ||(libexe orgstdlib libsrc stdlib/pretty.ls stdlib/symbol2.ls stdlib/symbolconstant.ls stdlib/compilerfrontT.ls stdlib/compilerfront.ls stdlib/mergeblocks.ls stdlib/pass2.ls stdlib/localmap2.ls stdlib/mytype.ls stdlib/parse.ls stdlib/parsersupport.ls stdlib/passparse.ls stdlib/passsymbol.ls stdlib/postbind.ls stdlib/symbol.ls stdlib/symboldict.ls stdlib/typedict.ls cmd=libsrc o=compilerfront.libsrc)
+parts3="stdlib/pretty.ls stdlib/symbol2.ls stdlib/symbolconstant.ls stdlib/compilerfrontT.ls stdlib/compilerfront.ls stdlib/mergeblocks.ls stdlib/pass2.ls stdlib/localmap2.ls stdlib/mytype.ls stdlib/parse.ls stdlib/parsersupport.ls stdlib/passparse.ls stdlib/passsymbol.ls stdlib/postbind.ls stdlib/symbol.ls stdlib/symboldict.ls stdlib/typedict.ls"
+node="built/compilerfront.libsrc"
+part1="built/orgstdlib.lib"
+(libexeAll orgstdlib libsrc $parts3 o=compilerfront.libsrc)
 
-parts="built/core.libsrc built/orgstdlib.lib core/bits.ls core/encoding.ls core/format.ls core/graph.ls core/process.ls core/real.ls core/seq.ls core/set.ls core/sparseseq.ls core/stack.ls core/standard.ls core/UTF8.ls core/words.ls core/xxhash.ls core/otherseq.ls stdlib/textio.ls"
-outofdate ||(libexe orgstdlib libsrc core/bits.ls core/encoding.ls core/format.ls core/graph.ls core/process.ls core/real.ls core/seq.ls core/set.ls core/sparseseq.ls core/stack.ls core/standard.ls core/UTF8.ls core/words.ls core/xxhash.ls core/otherseq.ls stdlib/textio.ls cmd=libsrc o=core.libsrc)
+parts3="core/bits.ls core/encoding.ls core/format.ls core/graph.ls core/process.ls core/real.ls core/seq.ls core/set.ls core/sparseseq.ls core/stack.ls core/standard.ls core/UTF8.ls core/words.ls core/xxhash.ls core/otherseq.ls stdlib/textio.ls"
+node="built/core.libsrc"
+part1="built/orgstdlib.lib"
+(libexeAll orgstdlib libsrc $parts3 o=core.libsrc)
 #________________
 
-parts="built/stdlib.lib built/orgstdlib.lib built/core.libsrc built/compilerfront.libsrc stdlib/updatestate.ls stdlib/debuginfo.ls stdlib/COMPILETIME.ls stdlib/bitstream.ls stdlib/codegennew.ls stdlib/codetemplates.ls stdlib/file.ls stdlib/inputoutput.ls stdlib/hashset.ls stdlib/internalbc.ls stdlib/llvm.ls stdlib/llvmconstants.ls stdlib/main2.ls stdlib/persistant.ls stdlib/symbol2.ls stdlib/tausupport.ls stdlib/compileTimeT.ls stdlib/timestamp.ls stdlib/codetemplates2.ls stdlib/ptr.ls stdlib/taublockseq.ls stdlib/bitcast.ls stdlib/object01.ls stdlib/objectio.ls stdlib/LEBencoding.ls"
+parts3="built/core.libsrc built/compilerfront.libsrc stdlib/updatestate.ls stdlib/debuginfo.ls stdlib/COMPILETIME.ls stdlib/bitstream.ls stdlib/codegennew.ls stdlib/codetemplates.ls stdlib/file.ls stdlib/inputoutput.ls stdlib/hashset.ls stdlib/internalbc.ls stdlib/llvm.ls stdlib/llvmconstants.ls stdlib/main2.ls stdlib/persistant.ls stdlib/symbol2.ls stdlib/tausupport.ls stdlib/compileTimeT.ls stdlib/timestamp.ls stdlib/codetemplates2.ls stdlib/ptr.ls stdlib/taublockseq.ls stdlib/bitcast.ls stdlib/object01.ls stdlib/objectio.ls stdlib/LEBencoding.ls"
+part1="built/orgstdlib.lib"
+libsrcargs="orgstdlib libsrc $parts3 exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding o=stdlib.libsrc"
+compileargs="stdlib stdlib built/stdlib.libsrc"
 dependlibs=""
 ccode="void init_libs(){"
-outofdate ||(libexe orgstdlib libsrc built/core.libsrc built/compilerfront.libsrc stdlib/updatestate.ls stdlib/debuginfo.ls stdlib/COMPILETIME.ls stdlib/bitstream.ls stdlib/codegennew.ls stdlib/codetemplates.ls stdlib/file.ls stdlib/inputoutput.ls stdlib/hashset.ls stdlib/internalbc.ls stdlib/llvm.ls stdlib/llvmconstants.ls stdlib/main2.ls stdlib/persistant.ls stdlib/symbol2.ls stdlib/tausupport.ls stdlib/compileTimeT.ls stdlib/timestamp.ls stdlib/codetemplates2.ls stdlib/ptr.ls stdlib/taublockseq.ls stdlib/bitcast.ls stdlib/object01.ls stdlib/objectio.ls stdlib/LEBencoding.ls exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding o=stdlib.libsrc
-libexe stdlib stdlib built/stdlib.libsrc ;runlib stdlib)
+makelibrary stdlib
 #________________
 
-parts="built/common.lib built/stdlib.lib common/common.ls common/matrix.ls common/point.ls common/bandeskopf.ls common/uniqueids.ls common/svg2graph.ls common/makeDAG.ls common/layergraph.ls common/barycenter.ls"
+parts3="common/common.ls common/matrix.ls common/point.ls common/bandeskopf.ls common/uniqueids.ls common/svg2graph.ls common/makeDAG.ls common/layergraph.ls common/barycenter.ls"
+part1="built/stdlib.lib"
+libsrcargs="stdlib libsrc $parts3 uses=stdlib exports=matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter common o=common.libsrc"
+compileargs="stdlib stdlib built/common.libsrc built/stdlib.libinfo"
 dependlibs="built/stdlib.$libtype"
 ccode="void init_stdlib(); void init_libs(){init_stdlib();"
-outofdate ||(libexe stdlib libsrc common/common.ls common/matrix.ls common/point.ls common/bandeskopf.ls common/uniqueids.ls common/svg2graph.ls common/makeDAG.ls common/layergraph.ls common/barycenter.ls uses=stdlib exports=matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter common o=common.libsrc
-libexe stdlib stdlib built/common.libsrc built/stdlib.libinfo ;runlib common)
+makelibrary common
 
-parts="built/commontests.libsrc built/stdlib.lib tests/bug7.ls tests/checking.ls tests/myseq.ls tests/point.ls tests/randomphrase.ls tests/test11.ls tests/test20.ls tests/testencoding.ls tests/testmodules.ls tests/testprocess.ls tests/testseq.ls tests/tree.ls tests/wordfreq.ls"
-outofdate ||(libexe stdlib libsrc tests/bug7.ls tests/checking.ls tests/myseq.ls tests/point.ls tests/randomphrase.ls tests/test11.ls tests/test20.ls tests/testencoding.ls tests/testmodules.ls tests/testprocess.ls tests/testseq.ls tests/tree.ls tests/wordfreq.ls cmd=libsrc o=commontests.libsrc)
+parts3="bin/all.decs"
+node="built/installtau.sh"
+part1="built/stdlib.lib"
+(libexeAll stdlib updatestate $parts3 o=installtau.sh)
 
-parts="built/installtau.sh built/stdlib.lib simple/all.decs"
-outofdate ||(libexe stdlib updatestate simple/all.decs cmd=updatestate roots=installtau allweb o=installtau.sh)
-
-parts="built/webassembly.lib built/stdlib.lib webassembly/webassembly.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls"
+parts3="tests/bug7.ls tests/checking.ls tests/myseq.ls tests/point.ls tests/randomphrase.ls tests/test11.ls tests/test20.ls tests/testencoding.ls tests/testmodules.ls tests/testprocess.ls tests/testseq.ls tests/tree.ls tests/wordfreq.ls tests/testopt.ls tests/test11a.ls tests/testall.ls"
+part1="built/stdlib.lib"
+libsrcargs="stdlib libsrc $parts3 uses=stdlib exports=tests o=tests.libsrc"
+compileargs="stdlib stdlib built/tests.libsrc built/stdlib.libinfo"
 dependlibs="built/stdlib.$libtype"
 ccode="void init_stdlib(); void init_libs(){init_stdlib();"
-outofdate ||(libexe stdlib libsrc webassembly/webassembly.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls uses=stdlib exports=wasm wasm1 wasm2 wasmcompile webassembly o=webassembly.libsrc
-libexe stdlib stdlib built/webassembly.libsrc built/stdlib.libinfo ;runlib webassembly)
+makelibrary tests
+
+parts3="webassembly/webassembly.ls webassembly/funcidx.ls webassembly/knownWfunc.ls webassembly/printfunc.ls webassembly/wasm.ls webassembly/wasm2.ls webassembly/wasmcompile.ls"
+part1="built/stdlib.lib"
+libsrcargs="stdlib libsrc $parts3 uses=stdlib exports=wasm wasm1 wasm2 wasmcompile webassembly o=webassembly.libsrc"
+compileargs="stdlib stdlib built/webassembly.libsrc built/stdlib.libinfo"
+dependlibs="built/stdlib.$libtype"
+ccode="void init_stdlib(); void init_libs(){init_stdlib();"
+makelibrary webassembly
 #________________
 
-parts="built/tests.lib built/stdlib.lib built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls"
-dependlibs="built/stdlib.$libtype"
-ccode="void init_stdlib(); void init_libs(){init_stdlib();"
-outofdate ||(libexe stdlib libsrc built/commontests.libsrc tests/testopt.ls tests/test11a.ls tests/testall.ls uses=stdlib exports=tests o=tests.libsrc
-libexe stdlib stdlib built/tests.libsrc built/stdlib.libinfo ;runlib tests)
+parts3="tests/opttests.ls built/stdlib.libinfo"
+node="built/testall.html"
+part1="built/tests.lib"
+(libexeAll tests testall $parts3 o=testall.html)
 
-parts="built/tools.lib built/stdlib.lib built/common.lib tools/tools.ls tools/baseTypeCheck.ls tools/doc.ls tools/genLR1.ls tools/prettycompilerfront.ls tools/profile.ls tools/taulextable.ls tools/frontcmd.ls tools/wordgraph.ls"
+parts3="built/common.lib tools/tools.ls tools/baseTypeCheck.ls tools/doc.ls tools/genLR1.ls tools/prettycompilerfront.ls tools/profile.ls tools/taulextable.ls tools/frontcmd.ls tools/wordgraph.ls"
+part1="built/stdlib.lib"
+libsrcargs="stdlib libsrc $parts3 uses=common stdlib exports=baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph o=tools.libsrc"
+compileargs="common common built/tools.libsrc built/stdlib.libinfo built/common.libinfo"
 dependlibs="built/stdlib.$libtype built/common.$libtype"
 ccode="void init_common(); void init_stdlib(); void init_libs(){init_stdlib(); init_common();"
-outofdate ||(libexe stdlib libsrc built/common.lib tools/tools.ls tools/baseTypeCheck.ls tools/doc.ls tools/genLR1.ls tools/prettycompilerfront.ls tools/profile.ls tools/taulextable.ls tools/frontcmd.ls tools/wordgraph.ls uses=common stdlib exports=baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph o=tools.libsrc
-libexe common common built/tools.libsrc built/stdlib.libinfo built/common.libinfo ;runlib tools)
+makelibrary tools
 
-parts="built/webcore.libsrc built/stdlib.lib built/core.libsrc built/webassembly.lib webcore/inputoutput.ls webcore/webIO.ls common/barycenter.ls common/layergraph.ls common/makeDAG.ls common/bandeskopf.ls stdlib/tausupport.ls stdlib/bitstream.ls stdlib/bitcast.ls stdlib/taublockseq.ls stdlib/ptr.ls stdlib/file.ls"
-outofdate ||(libexe stdlib libsrc built/core.libsrc built/webassembly.lib webcore/inputoutput.ls webcore/webIO.ls common/barycenter.ls common/layergraph.ls common/makeDAG.ls common/bandeskopf.ls stdlib/tausupport.ls stdlib/bitstream.ls stdlib/bitcast.ls stdlib/taublockseq.ls stdlib/ptr.ls stdlib/file.ls cmd=libsrc o=webcore.libsrc)
+parts3="built/core.libsrc built/webassembly.lib webcore/inputoutput.ls webcore/webIO.ls common/barycenter.ls common/layergraph.ls common/makeDAG.ls common/bandeskopf.ls stdlib/tausupport.ls stdlib/bitstream.ls stdlib/bitcast.ls stdlib/taublockseq.ls stdlib/ptr.ls stdlib/file.ls"
+node="built/webcore.libsrc"
+part1="built/stdlib.lib"
+(libexeAll stdlib libsrc $parts3 o=webcore.libsrc)
 #________________
 
-parts="built/baseTypeCheck.html built/tools.lib built/stdlib.libsrc"
-outofdate ||(libexe tools front built/stdlib.libsrc cmd=front out=baseTypeCheck o=baseTypeCheck.html)
+parts3="built/stdlib.libsrc"
+node="built/baseTypeCheck.html"
+part1="built/tools.lib"
+(libexeAll tools front $parts3 out=baseTypeCheck o=baseTypeCheck.html)
 
-parts="built/callgraphwithin.html built/tools.lib built/tools.libsrc built/stdlib.libinfo built/common.libinfo"
-outofdate ||(libexe tools front built/tools.libsrc built/stdlib.libinfo built/common.libinfo cmd=front mods=taulextable o=callgraphwithin.html)
+parts3="built/tools.libsrc built/stdlib.libinfo built/common.libinfo"
+node="built/callgraphwithin.html"
+part1="built/tools.lib"
+(libexeAll tools front $parts3 mods=taulextable o=callgraphwithin.html)
 
-parts="built/commondoc.html built/tools.lib built/common.libsrc"
-outofdate ||(libexe tools doclibrary built/common.libsrc cmd=doclibrary o=commondoc.html)
+parts3="built/common.libsrc"
+node="built/commondoc.html"
+part1="built/tools.lib"
+(libexeAll tools doclibrary $parts3 o=commondoc.html)
 
-parts="built/installdoc.html built/tools.lib tools/install.txt"
-outofdate ||(libexe tools formatdoc tools/install.txt cmd=formatdoc o=installdoc.html)
+parts3="tools/install.txt"
+node="built/installdoc.html"
+part1="built/tools.lib"
+(libexeAll tools formatdoc $parts3 o=installdoc.html)
 
-parts="built/stdlibdoc.html built/tools.lib built/stdlib.libsrc"
-outofdate ||(libexe tools doclibrary built/stdlib.libsrc cmd=doclibrary o=stdlibdoc.html)
+parts3="built/stdlib.libsrc"
+node="built/stdlibdoc.html"
+part1="built/tools.lib"
+(libexeAll tools doclibrary $parts3 o=stdlibdoc.html)
 
-parts="built/taudoc.html built/tools.lib tools/doc.txt"
-outofdate ||(libexe tools formatdoc tools/doc.txt cmd=formatdoc o=taudoc.html)
+parts3="tools/doc.txt"
+node="built/taudoc.html"
+part1="built/tools.lib"
+(libexeAll tools formatdoc $parts3 o=taudoc.html)
 
-parts="built/taugrammer.html built/tools.lib stdlib/parse.ls"
-outofdate ||(libexe tools LR1 stdlib/parse.ls cmd=LR1 o=taugrammer.html)
+parts3="stdlib/parse.ls"
+node="built/taugrammer.html"
+part1="built/tools.lib"
+(libexeAll tools LR1 $parts3 o=taugrammer.html)
 
-parts="built/taulex.html built/tools.lib tools/install.txt"
-outofdate ||(libexe tools lextable tools/install.txt cmd=lextable o=taulex.html)
+parts3="tools/install.txt"
+node="built/taulex.html"
+part1="built/tools.lib"
+(libexeAll tools lextable $parts3 o=taulex.html)
 
-parts="built/testall.html built/tests.lib tests/opttests.ls built/stdlib.libinfo"
-outofdate ||(libexe tests testall tests/opttests.ls built/stdlib.libinfo cmd=testall o=testall.html)
+parts3="built/webcore.libsrc wbeizer/Bcubic.html wbeizer/Bquadratic.html wbeizer/wbeizer.ls"
+node="built/wbeizer.wasm"
+part1="built/webassembly.lib"
+(libexeAll webassembly wasm $parts3 exports=wbeizer Library=wbeizer o=wbeizer.wasm)
 
-parts="built/wbeizer.wasm built/webassembly.lib built/webcore.libsrc wbeizer/Bcubic.html wbeizer/Bquadratic.html wbeizer/wbeizer.ls"
-outofdate ||(libexe webassembly wasm built/webcore.libsrc wbeizer/Bcubic.html wbeizer/Bquadratic.html wbeizer/wbeizer.ls cmd=wasm exports=wbeizer Library=wbeizer o=wbeizer.wasm)
-
-parts="built/webtools.wasm built/webassembly.lib built/webcore.libsrc built/compilerfront.libsrc built/tools.libsrc built/tests.libsrc webtools/webtools.ls webtools/main2.ls webtools/webtools.html common/svg2graph.ls common/uniqueids.ls stdlib/hashset.ls stdlib/symbol2.ls stdlib/pretty.ls stdlib/symbolconstant.ls stdlib/compileTimeT.ls stdlib/debuginfo.ls stdlib/objectio.ls stdlib/object01.ls stdlib/LEBencoding.ls"
-outofdate ||(libexe webassembly wasm built/webcore.libsrc built/compilerfront.libsrc built/tools.libsrc built/tests.libsrc webtools/webtools.ls webtools/main2.ls webtools/webtools.html common/svg2graph.ls common/uniqueids.ls stdlib/hashset.ls stdlib/symbol2.ls stdlib/pretty.ls stdlib/symbolconstant.ls stdlib/compileTimeT.ls stdlib/debuginfo.ls stdlib/objectio.ls stdlib/object01.ls stdlib/LEBencoding.ls cmd=wasm exports=webtools Library=webtools o=webtools.wasm)
-#________________
-
-parts="built/allweb.libsrc built/stdlib.lib built/wbeizer.wasm built/webtools.wasm built/testall.html built/baseTypeCheck.html built/callgraphwithin.html built/commondoc.html built/installdoc.html built/stdlibdoc.html built/taudoc.html built/taugrammer.html built/taulex.html built/testall.html"
-outofdate ||(libexe stdlib libsrc built/wbeizer.wasm built/webtools.wasm built/testall.html built/baseTypeCheck.html built/callgraphwithin.html built/commondoc.html built/installdoc.html built/stdlibdoc.html built/taudoc.html built/taugrammer.html built/taulex.html built/testall.html cmd=libsrc o=allweb.libsrc)
+parts3="built/webcore.libsrc built/compilerfront.libsrc built/tools.libsrc built/tests.libsrc webtools/webtools.ls webtools/main2.ls webtools/webtools.html common/svg2graph.ls common/uniqueids.ls stdlib/hashset.ls stdlib/symbol2.ls stdlib/pretty.ls stdlib/symbolconstant.ls stdlib/compileTimeT.ls stdlib/debuginfo.ls stdlib/objectio.ls stdlib/object01.ls stdlib/LEBencoding.ls"
+node="built/webtools.wasm"
+part1="built/webassembly.lib"
+(libexeAll webassembly wasm $parts3 exports=webtools Library=webtools o=webtools.wasm)
 #________________
 mkbuild 
