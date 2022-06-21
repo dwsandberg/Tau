@@ -4,11 +4,9 @@ use bits
 
 use standard
 
-use otherseq.byte
+use seq.byte
 
 use otherseq.char
-
-use otherseq.int
 
 use seq.seq.char
 

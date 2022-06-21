@@ -14,8 +14,6 @@ use stack.stkele.T
 
 use otherseq.token.T
 
-use seq.token.T
-
 type token is w:word, tokenno:int, attribute:T
 
 type stkele is stateno:int, attribute:T
@@ -50,16 +48,23 @@ Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
 let stringtoken = findindex("$wordlist"_1, tokenlist:T)
 let commenttoken = findindex("comment"_1, tokenlist:T)
 let codeinstringtoken = findindex("wl"_1, tokenlist:T)
+let codein = {code in string literal}4
+let codeout = {code outside of string literal}1
+let instring = 2
+let incomment = 3
 for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial))
-, state = 1
+, state = codeout
 , last = 0
 , nestlevel = 0
 , idx = 1
 , stk = empty:stack.int
 , this ∈ input + "#"
 while stateno.top.lrpart ≠ finalstate:T
-do assert not(this ∈ "}" ∧ state = 1)report errormessage:T("stray}", input, idx)
-if state = 1 ∧ this ∉ (dq + "{") ∨ state = 4 ∧ this ∉ dq ∧ (this ∉ ")" ∨ nestlevel > 1)then
+do{let debug=debug0+" /br $(["codeout instring incomment codein"_state])this=$([this])nestlevel=$(%.nestlevel 
+)std=$(%.toseq.stk)"assert input_2 /nin"xxx45"/or idx < 21 report"XXX"+input+"debug"+debug}
+assert not(this ∈ "}" ∧ state = 1)report errormessage:T("stray}", input, idx)
+if state = codeout ∧ this ∉ (dq + "{")
+∨ state = codein ∧ this ∉ dq ∧ not(this ∈ ")" ∧ nestlevel - 1 = 0)then
  let lexindex = binarysearch(lextable, token(this, 0, attribute:T("")))
  let newlrpart = 
   if lexindex < 0 then
@@ -79,17 +84,17 @@ if state = 1 ∧ this ∉ (dq + "{") ∨ state = 4 ∧ this ∉ dq ∧ (this ∉
   if this ∈ "("then nestlevel + 1
   else if this ∈ ")"then nestlevel - 1 else nestlevel
  next(newlrpart, state, idx, newnest, idx + 1, stk)
-else if state = 1 then
- if this ∈ "{"then next(lrpart, 3, idx, 1, idx + 1, stk)
- else{dq}next(lrpart, 2, idx, nestlevel, idx + 1, stk)
-else if{code inside of string}state = 4 then
- if this ∈ ")"then next(lrpart, 2, idx, nestlevel, idx + 1, pop.stk)
- else{dq}next(lrpart, 2, idx, nestlevel, idx + 1, stk)
+else if state = codeout then
+ if this ∈ "{"then next(lrpart, incomment, idx, 1, idx + 1, stk)
+ else{dq}next(lrpart, instring, idx, nestlevel, idx + 1, stk)
+else if state = codein then
+ if this ∈ ")"then next(lrpart, instring, idx, top.stk, idx + 1, pop.stk)
+ else{dq}next(lrpart, instring, idx, nestlevel, idx + 1, stk)
 else
  let kind = 
-  if state = 2 ∧ this ∈ "(" ∧ input_(idx - 1) = "$"_1 then codeinstringtoken
-  else if state = 2 ∧ this ∈ dq then stringtoken
-  else if state = 3 ∧ this ∈ "}" ∧ nestlevel = 1 then commenttoken else 0
+  if state = instring ∧ this ∈ "(" ∧ input_(idx - 1) = "$"_1 then codeinstringtoken
+  else if state = instring ∧ this ∈ dq then stringtoken
+  else if state = incomment ∧ this ∈ "}" ∧ nestlevel = 1 then commenttoken else 0
  let newlrpart = 
   if kind = 0 then lrpart
   else
@@ -99,14 +104,21 @@ else
    , {tokenno}kind
    , idx
    )
- if kind = commenttoken then next(newlrpart, 1, idx, nestlevel - 1, idx + 1, stk)
- else if kind = codeinstringtoken then next(newlrpart, 4, idx, 1, idx + 1, push(stk, nestlevel))
+ if kind = commenttoken then next(newlrpart, codeout, idx, nestlevel - 1, idx + 1, stk)
+ else if kind = codeinstringtoken then next(newlrpart, codein, idx, 1, idx + 1, push(stk, nestlevel))
  else if kind = stringtoken then
-  next(newlrpart, if isempty.stk then 1 else 4, idx, nestlevel, idx + 1, stk)
+  next(newlrpart
+  , if isempty.stk then codeout else codein
+  , idx
+  , nestlevel
+  , idx + 1
+  , stk
+  )
  else
-  {in string or comment. Counts{}in strings for no good reason.}
+  {in string or comment. }
   let nest = 
-   if this ∈ "{"then nestlevel + 1
+   if state = instring then nestlevel
+   else if this ∈ "{"then nestlevel + 1
    else if this ∈ "}"then nestlevel - 1 else nestlevel
   next(lrpart, state, last, nest, idx + 1, stk)
 /for(assert state = 1 report errormessage:T("missing string terminator", input, last)

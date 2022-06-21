@@ -18,10 +18,6 @@ use seq.byte
 
 use otherseq.char
 
-use seq.char
-
-use seq.file
-
 use seq.filename
 
 use seq.seq.bit
@@ -134,8 +130,5 @@ else
  , encodeword.last.yy
  , suffix
  )
-
-assert dirpath.try1=dirpath.try2 /and name.try1=name.try2 report"HJKDSF"+dirpath.try1+name.try1+dirpath.try2 
-+name.try2
 
 Function changeext(f:filename, ext:seq.word)filename filename(dirpath.f, name.f, first.ext) 

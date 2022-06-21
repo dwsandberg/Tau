@@ -1,22 +1,16 @@
-module objectio.T
+Module objectio.T
 
 use bits
 
 use object01
 
-use standard
-
 use symbol2
 
 use bitcast.T
 
-use seq.byte
-
 use seq.mytype
 
 use bitcast.seq.T
-
-use seq.seq.int
 
 Builtin typestructure:T seq.seq.mytype
 

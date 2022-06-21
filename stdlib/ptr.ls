@@ -1,4 +1,4 @@
-module ptr
+Module ptr
 
 use tausupport
 

@@ -22,11 +22,7 @@ use seq.commoninfo
 
 use seq.modExports
 
-use seq.modref
-
 use set.modref
-
-use otherseq.mytype
 
 use seq.mytype
 
@@ -37,8 +33,6 @@ use seq.passsymbols
 use set.passsymbols
 
 use set.passtypes
-
-use encoding.symbol
 
 use seq.symbol
 
@@ -54,11 +48,7 @@ use set.word
 
 use seq.seq.mytype
 
-use set.seq.mytype
-
 use seq.seq.symbol
-
-use seq.set.symdef
 
 use seq.seq.word
 
@@ -115,17 +105,16 @@ else
  {figure out how to interpret text form of symbol}
  let t5 = resolvesymbols(allsrc, lib, modsx, asset.mods.libinfo)
  {parse the function bodies}
- let prg10 = 
-  for abstract = empty:seq.passsymbols, simple = empty:seq.passsymbols, m ∈ toseq.modules.t5 do
-   if isabstract.modname.m then next(abstract + m, simple)else next(abstract, simple + m)
-  /for(let allmods = asset(abstract + simple)
-  let prga = 
-   prescan2.compile(allmods, asset.abstract, lib, allsrc, option = "text", empty:set.symdef)
-  let requireUnbound = buildrequires(prga + toseq.code.t5 + toseq.prg.libinfo)
-  let prg = compile(allmods, asset.simple, lib, allsrc, option = "text", requireUnbound)
-  asset(prga + toseq.code.t5 + toseq.prg.libinfo + prg))
+ let allmods = asset(abstract.t5 + simple.t5)
+ let prga = 
+  prescan2.compile(allmods, asset.abstract.t5, lib, allsrc, option = "text", empty:set.symdef)
+ let requireUnbound = buildrequires(prga + toseq.code.t5 + toseq.prg.libinfo)
+ let prg = compile(allmods, asset.simple.t5, lib, allsrc, option = "text", requireUnbound)
+ let prg10 = asset(prga + toseq.code.t5 + toseq.prg.libinfo + prg)
  if option = "text"then
-  for acc = empty:set.symdef, sd ∈ toseq.prg10 do if library.module.sym.sd = lib then acc + sd else acc /for(midpoint(option, acc, emptytypedict, empty:seq.modExports, allsrc))
+  for acc = empty:set.symdef, sd ∈ toseq.prg10 do if library.module.sym.sd = lib then acc + sd else acc /for(let libmods = 
+   for acc5 = empty:seq.modExports, m2 ∈ toseq.modules.t5 do acc5 + modExports(module.m2, toseq.exports.m2, empty:seq.seq.mytype)/for(acc5)
+  midpoint(option, acc, requireUnbound, emptytypedict, {empty:seq.modExports}libmods, allsrc))
  else
   let roots = 
    for acc = [outofboundssymbol], f ∈ toseq.modules.t5 do

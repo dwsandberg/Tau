@@ -12,31 +12,13 @@ use llvmconstants
 
 use standard
 
-use seq.bit
-
-use seq.bits
-
-use seq.bitstream
-
-use seq.internalbc
-
 use seq.slot
 
 use seq.slotrecord
 
 use seq.templatepart
 
-use seq.trackconst
-
-use seq.seq.bit
-
-use seq.seq.bits
-
 use seq.seq.int
-
-use seq.seq.internalbc
-
-use seq.seq.seq.int
 
 type templatepart is val:bits
 
@@ -193,9 +175,6 @@ addstartbits(toint.LOAD
 
 Function CMP2(slot:slot, a1:slot, a2:slot, a3:int)internalbc
 addstartbits(toint.CMP2, 3, addaddress(slot, a1, addaddress(slot, a2, add(a3, emptyinternalbc))))
-
-/Function BINOP(slot:int, a1:int, a2:int, a3:int)internalbc addstartbits(toint.BINOP, 3, addaddress(slot, a1, 
-addaddress(slot, a2, add(a3, emptyinternalbc))))
 
 Function BINOP(slot:slot, a1:slot, a2:slot, a3:binaryop)internalbc
 addstartbits(toint.BINOP, 3, addaddress(slot, a1, addaddress(slot, a2, add(toint.a3, emptyinternalbc))))

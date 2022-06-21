@@ -1,4 +1,4 @@
-module compileTimeT.T
+Module compileTimeT.T
 
 use real
 
@@ -6,35 +6,27 @@ use standard
 
 use symbol
 
-use symbolconstant
-
-use typedict
+use symbol2
 
 use words
 
-use process.int
+use bitcast.int
 
 use seq.int
 
 use stack.int
 
-use bitcast:int
-
 use seq.mytype
-
-use otherseq.symbol
 
 use seq.symbol
 
-use bitcast:word
+use bitcast.word
 
-use bitcast:seq.char
+use bitcast.seq.char
 
-use seq.seq.int
+use bitcast.seq.int
 
-use bitcast:seq.int
-
-use bitcast:seq.word
+use bitcast.seq.word
 
 unbound callfunc:T(ctsym:symbol, typedict:typedict, stk:seq.int)seq.int
 

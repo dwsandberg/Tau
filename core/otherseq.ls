@@ -4,8 +4,6 @@ use standard
 
 use seq.T
 
-use seq.index
-
 use seq.seq.T
 
 Function reverse(s:seq.T)seq.T

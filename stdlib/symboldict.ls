@@ -6,6 +6,8 @@ use symbol
 
 use seq.commoninfo
 
+use set.mytype
+
 use seq.symbol
 
 use set.symbol

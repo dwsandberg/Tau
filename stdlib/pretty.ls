@@ -1,32 +1,14 @@
 Module pretty
 
-use UTF8
-
-use bits
-
-use format
-
 use standard
 
 use parsersupport.attribute2
-
-use seq.attribute2
-
-use seq.byte
 
 use seq.prettyresult
 
 use otherseq.word
 
-use seq.token.attribute2
-
-use seq.seq.prettyresult
-
-use seq.seq.word
-
 use set.seq.word
-
-use process.seq.seq.word
 
 Function pretty(s:seq.word)seq.word
 let tmp0 = text.(toseq.parse.s)_1
@@ -35,40 +17,38 @@ removeclose(tmp0, length.tmp0)
 Function prettyfile(escape:boolean, modhead:seq.word, text:seq.seq.word)seq.word
 for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.seq.word, s ∈ text do
  if length.s = 0 then next(uses, libbody, result)
- else if s_1 ∈ "use"then next(uses + reverse.s, libbody, result)
+ else if s_1 ∈ "use"then next(uses + s, libbody, result)
  else if s_1 ∈ "Export unbound"then next(uses, libbody + (" /keyword" + s), result)
  else if s_1 ∈ "Function function type"then next(uses, libbody + pretty.s, result)
  else if s_1 ∈ "module Module"then
   let target = 
    if length.modhead > 1 then subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
    else" /keyword"
-  let newresult = result + sortuse.uses + libbody + (target + s)
+  let newresult = result + sortuse(uses, " /keyword") + libbody + (target + s)
   next(empty:seq.seq.word, empty:seq.seq.word, newresult)
  else
   let temp = if escape then escapeformat.s else s
   if length.uses = 0 then next(uses, libbody, result + temp)
   else next(uses, libbody + temp, result)
-/for(for txt = "", p ∈ result + sortuse.uses + libbody do txt + " /p" + p /for(txt))
+/for(for txt = "", p ∈ result + sortuse(uses, " /keyword") + libbody do txt + " /p" + p /for(txt))
 
 Function prettyfile2(escape:boolean, modhead:seq.word, text:seq.seq.word)seq.seq.word
 for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.seq.word, s ∈ text do
  if length.s = 0 then next(uses, libbody, result)
- else if s_1 ∈ "use"then next(uses + reverse.s, libbody, result)
+ else if s_1 ∈ "use"then next(uses + s, libbody, result)
  else if s_1 ∈ "Export unbound"then next(uses, libbody + (" /keyword" + s), result)
  else if s_1 ∈ "Function function type"then next(uses, libbody + pretty.s, result)
  else if s_1 ∈ "module Module"then
   let target = 
    if length.modhead > 1 then subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
    else{" /keyword"}""
-  let newresult = result + sortuse.uses + libbody + (target + s)
+  let newresult = result + sortuse(uses, " /keyword") + libbody + (target + s)
   next(empty:seq.seq.word, empty:seq.seq.word, newresult)
  else
   let temp = if escape then escapeformat.s else s
   if length.uses = 0 then next(uses, libbody, result + temp)
   else next(uses, libbody + temp, result)
-/for(result + sortuse.uses + libbody)
-
-function formatuse(a:seq.word)seq.word" /keyword" + reverse.a
+/for(result + sortuse(uses, " /keyword") + libbody)
 
 Function escapeformat(s:seq.word)seq.word
 for acc = "", linelength = 0, c ∈ s do
@@ -80,8 +60,9 @@ for acc = "", linelength = 0, c ∈ s do
  else next(acc + c, linelength + length.decodeword.c)
 /for(acc)
 
-function sortuse(a:seq.seq.word)seq.seq.word
-for acc = empty:seq.seq.word, @e ∈ alphasort.toseq.asset.a do acc + formatuse.@e /for(acc)
+Function sortuse(b:seq.seq.word, prefix:seq.word)seq.seq.word
+let a = for a = empty:seq.seq.word, u ∈ b do a + reverse.u /for(a)
+for acc = empty:seq.seq.word, @e ∈ alphasort.toseq.asset.a do acc + (prefix + reverse.@e)/for(acc)
 
 function pretty(b:seq.attribute2)attribute2
 let a = for acc = empty:seq.prettyresult, @e ∈ b do acc + toseq.@e /for(acc)

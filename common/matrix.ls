@@ -6,8 +6,6 @@ use real
 
 use standard
 
-use seq.real
-
 type matrix is row1:point, row2:point, row3:point, row4:point
 
 Export type:matrix

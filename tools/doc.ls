@@ -1,15 +1,8 @@
-
-
 Module doc
-
-use UTF8
 
 use file
 
 use format
-
-use frontcmd
-
 
 use pretty
 
@@ -21,19 +14,7 @@ use textio
 
 use wordgraph
 
-use seq.char
-
 use seq.file
-
-use seq.mytype
-
-use graph.symbol
-
-use seq.symbol
-
-use set.symbol
-
-use svg2graph.symbol
 
 use graph.word
 
@@ -45,14 +26,12 @@ use set.arc.word
 
 use seq.seq.word
 
-use svg2graph.seq.word
-
 Export drawgraph(seq.arc.word, set.word, set.word)seq.word
 
 Export extractValue(seq.word, seq.word)seq.word
 
-Function htmlcode(input:seq.file,o:seq.word)seq.file
-let libsrc=breakparagraph.data.first.input
+Function htmlcode(input:seq.file, o:seq.word)seq.file
+let libsrc = breakparagraph.data.first.input
 let libname = extractValue(first.libsrc, "Library")
 let p = 
  prettyfile(true, " /< noformat <hr id=" + dq."T" + ">  />  /keyword", libsrc)
@@ -73,9 +52,9 @@ let modules =
 )
 ]
 
-Function doclibrary(input:seq.file,o:seq.word)seq.file
+Function doclibrary(input:seq.file, o:seq.word)seq.file
 {OPTION PROFILE}
-let libsrc=breakparagraph.data.first.input
+let libsrc = breakparagraph.data.first.input
 {create summary documentation for libraray. }
 let exports = extractValue(first.libsrc, "exports")
 let todoc = 
@@ -101,19 +80,16 @@ named will be documented.
 will be construction including and excluding the modules listed. Both the exclude and include are optional, but for a large 
 library should be used to restrict the size of the graph. An example of a use graph is included at the end of this module.
 
-/Function uncalledfunctions(prg:seq.symdef)seq.word
-{List of functions may include indirectly called functions. }
-let g = newgraph.formcallarcs.prg
-let sources = 
- for acc = empty:seq.symbol, @e ∈ toseq.nodes.g do acc + sources(g, empty:set.symbol, @e)/for(acc)
-for acc = "", @e ∈ sources do acc + print.@e + " /br"/for(acc)
+/Function uncalledfunctions(prg:seq.symdef)seq.word{List of functions may include indirectly called functions 
+. }let g=newgraph.formcallarcs.prg let sources=for acc=empty:seq.symbol, @e ∈ toseq.nodes.g do acc+sources(g, empty 
+:set.symbol, @e)/for(acc)for acc="", @e ∈ sources do acc+print.@e+" /br"/for(acc)
 
 * usegraph exclude standard seq set UTF8 stack graph otherseq
 
-Function usegraph(input:seq.file,o:seq.word,include:seq.word,exclude:seq.word) seq.file
+Function usegraph(input:seq.file, o:seq.word, include:seq.word, exclude:seq.word)seq.file
 let out = 
  drawgraph(usegraph(breakparagraph.data.first.input, "mod"_1), asset.include, asset.exclude)
-[file(filename.o,out)]
+[file(filename.o, out)]
 
 Function usegraph(lib:seq.seq.word, kind:word)seq.arc.word
 for currentmod = "?"_1, result = empty:seq.arc.word, p ∈ lib do

@@ -1,8 +1,10 @@
-module tausupport
+Module tausupport
 
 use bits
 
 use bitstream
+
+use ptr
 
 use real
 
@@ -14,13 +16,7 @@ use seq.byte
 
 use taublockseq.byte
 
-use seq.index
-
 use bitcast.int
-
-use process.int
-
-use seq.int
 
 use taublockseq.int
 
@@ -66,21 +62,19 @@ use encoding.seq.char
 
 use bitcast.seq.int
 
-use seq.seq.int
+use bitcast.seq.packed2
 
-use bitcast:seq.packed2
+use bitcast.seq.packed3
 
-use bitcast:seq.packed3
+use bitcast.seq.packed4
 
-use bitcast:seq.packed4
+use bitcast.seq.packed5
 
-use bitcast:seq.packed5
+use bitcast.seq.packed6
 
-use bitcast:seq.packed6
+use bitcast.seq.ptr
 
-use bitcast:seq.ptr
-
-use bitcast:seq.real
+use bitcast.seq.real
 
 Export empty:seq.index seq.index
 

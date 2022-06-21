@@ -1,5 +1,3 @@
-#!/bin/sh  wtau  wtests wtests  .
-
 module COMPILETIME
 
 use UTF8
@@ -28,7 +26,7 @@ use UTF8
 
 use bits
 
-use bitstream
+use file
 
 use format
 
@@ -38,19 +36,9 @@ use standard
 
 use tausupport
 
-use textio
-
-use seq.UTF8
-
-use seq.bit
-
-use seq.bits
-
-use process.seq.byte
-
 use seq.byte
 
-use process.seq.int
+use seq.file
 
 use bitcast.int
 
@@ -62,49 +50,27 @@ use stack.int
 
 use bitcast.intpair
 
-use bitcast.ptr
-
-use seq.real
-
-use bitcast.seq.UTF8
-
-use bitcast.seq.bits
-
-use seq.seq.bits
-
-use bitcast.process.seq.byte
+use seq.seq.bit
 
 use bitcast.seq.byte
 
-use seq.seq.byte
+use process.seq.byte
 
-use bitcast.process.seq.int
+use seq.seq.byte
 
 use bitcast.seq.int
 
-use seq.seq.int
+use process.seq.int
 
 use bitcast.stack.int
 
-use seq.seq.word
+use bitcast.process.seq.byte
 
-use bitcast.seq.seq.bits
-
-use bitcast.seq.seq.byte
-
-use bitcast.seq.seq.int
+use bitcast.process.seq.int
 
 type cstr is dummy:seq.bits
 
 Export type:cstr
-
-use file
-
-use seq.file
-
-use seq.filename
-
-use seq.seq.bit
 
 Function getfiles(args:seq.word)seq.file
 {OPTION INLINE}
@@ -114,15 +80,14 @@ for acc = empty:seq.file, fn ∈ getfilenames(".", args << 1)do
  else file(fn, [getfile:byte([fullname.fn])], empty:seq.seq.bit)
 /for(acc)
 
-
-Function finishentry(out:seq.file) UTF8   {OPTION INLINE}
- if ext.fn.first.out ∈ "ls"then
+Function finishentry(out:seq.file)UTF8
+{OPTION INLINE}
+if ext.fn.first.out ∈ "ls"then
  for acc = 0, names = "", f ∈ out do
   let name = [fullname.fn.f]
   next(createfile(name, data.f), names + name)
- /for( toUTF8("Files Created:" + names))
-else
-   UTF8.data.first.out
+ /for(toUTF8("Files Created:" + names))
+else UTF8.data.first.out
 
 Function getfile:bit(name:seq.word)seq.bit
 assert false report"not implemented"
@@ -130,15 +95,17 @@ assert false report"not implemented"
 
 builtin randomfunc real
 
-Function randomintimp(i:int) seq.int  
-  for acc = empty:seq.int, e ∈ constantseq(i, 0)do 
-    acc + toint.xor(tobits.representation.randomfunc << 16 ,
-      xor(tobits.representation.randomfunc ,
-      xor(tobits.representation.randomfunc >> 16,
-      tobits.representation.randomfunc >> 32)) )
-  /for(acc)
- 
-Builtin stacktrace seq.word 
+Function randomintimp(i:int)seq.int
+for acc = empty:seq.int, e ∈ constantseq(i, 0)do
+ acc
+ + toint.xor(tobits.representation.randomfunc << 16
+ , xor(tobits.representation.randomfunc
+ , xor(tobits.representation.randomfunc >> 16, tobits.representation.randomfunc >> 32)
+ )
+ )
+/for(acc)
+
+Builtin stacktrace seq.word
 
 type jsbytes is toreal:real
 
@@ -245,7 +212,6 @@ Function getfile:byte(name:seq.word)seq.byte
 let t = HTTP("/" + name, toUTF8."GET", empty:seq.byte)
 if aborted.t then empty:seq.byte else result.t
 
-
 Function createfile(name:seq.word, data:seq.byte)int
 {OPTION INLINE}
 let t = 
@@ -254,7 +220,6 @@ let t =
  , packed.data
  )
 if aborted.t then 0 else 1
-
 
 Export undertop(s:stack.int, i:int)int
 

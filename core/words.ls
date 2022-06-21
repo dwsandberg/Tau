@@ -1,8 +1,6 @@
-module words
+Module words
 
 use UTF8
-
-use bits
 
 use standard
 
@@ -11,10 +9,6 @@ use xxhash
 use otherseq.alphaword
 
 use otherseq.char
-
-use seq.char
-
-use otherseq.int
 
 use otherseq.seq.alphaword
 

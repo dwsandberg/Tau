@@ -1,14 +1,10 @@
 Module codetemplates2
 
-use bits
-
 use codetemplates
 
 use internalbc
 
 use llvm
-
-use llvmconstants
 
 use mytype
 
@@ -18,14 +14,6 @@ use standard
 
 use symbol2
 
-use textio
-
-use seq.bit
-
-use set.int
-
-use otherseq.llvmtype
-
 use seq.llvmtype
 
 use encoding.match5
@@ -33,12 +21,6 @@ use encoding.match5
 use seq.match5
 
 use otherseq.mytype
-
-use seq.mytype
-
-use set.mytype
-
-use otherseq.symbol
 
 use seq.symbol
 
@@ -50,15 +32,7 @@ use set.symdef
 
 use seq.typedef
 
-use set.word
-
-use seq.seq.int
-
-use seq.seq.symbol
-
 use otherseq.seq.word
-
-use seq.seq.word
 
 Export type:match5
 

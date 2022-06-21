@@ -28,10 +28,11 @@ orgmakelib stdlib.lib  core.libsrc compilerfront
 exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file  
 format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants 
 main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack 
-standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words 
+standard svg svggraph symbol symbol2 taublockseq tausupport testall textio timestamp words 
 xxhash compilerfront bitcast objectio object01 LEBencoding
  
-makelib tools.lib  common.lib   +tools tools.ls baseTypeCheck doc genLR1 prettycompilerfront profile taulextable frontcmd wordgraph
+makelib tools.lib  common.lib   +tools tools.ls baseTypeCheck doc genLR1 
+prettycompilerfront reconstructUses profile taulextable frontcmd wordgraph
 uses=common stdlib
 exports=baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
 
@@ -79,7 +80,7 @@ front baseTypeCheck.html  stdlib.libsrc
 out=baseTypeCheck
 
 front callgraphwithin.html  tools.libsrc stdlib.libinfo common.libinfo
-mods=taulextable
+mods=taulextable flags=within
 
 wasm wbeizer.wasm webcore.libsrc  +wbeizer Bcubic.html Bquadratic 
 wbeizer.ls

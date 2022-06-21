@@ -8,8 +8,6 @@ use seq.T
 
 use otherseq.sparseele.T
 
-use seq.sparseele.T
-
 type sparseele is start:int, edata:seq.T
 
 type sparse is sequence, sdata:seq.sparseele.T, default:T

@@ -6,15 +6,7 @@ use mytype
 
 use standard
 
-use words
-
-use seq.char
-
 use otherseq.mytype
-
-use seq.mytype
-
-use encoding.symbol
 
 use seq.symbol
 
@@ -22,17 +14,9 @@ use set.symbol
 
 use set.symdef
 
-use seq.typedef
-
 use otherseq.word
 
 use set.word
-
-use seq.seq.char
-
-use otherseq.seq.word
-
-use seq.seq.word
 
 Export type:passtypes
 

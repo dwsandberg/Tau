@@ -1,12 +1,6 @@
 Module updatestate
 
-use UTF8
-
-use bits
-
 use file
-
-use format
 
 use standard
 
@@ -14,17 +8,11 @@ use textio
 
 use words
 
-use seq.byte
-
-use seq.char
-
 use set.cmdpara
 
 use seq.file
 
 use graph.filename
-
-use otherseq.filename
 
 use seq.filename
 
@@ -32,17 +20,7 @@ use set.filename
 
 use otherseq.word
 
-use set.word
-
 use seq.arc.filename
-
-use set.arc.filename
-
-use seq.seq.filename
-
-use otherseq.seq.word
-
-use seq.seq.word
 
 Function prettystate(input:seq.file)seq.file
 for acc = "", a ∈ breakparagraph.data.first.input do

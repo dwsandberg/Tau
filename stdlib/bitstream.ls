@@ -6,10 +6,6 @@ use standard
 
 use otherseq.bits
 
-use seq.byte
-
-use seq.char
-
 Export type:bitstream
 
 type bitstream is length:int, endpart:bits, fullwords:seq.bits

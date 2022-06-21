@@ -1,14 +1,6 @@
 Module pass2
 
-use UTF8
-
 use bits
-
-use localmap2
-
-use mergeblocks
-
-use real
 
 use standard
 
@@ -16,45 +8,11 @@ use symbol
 
 use symbolconstant
 
-use words
-
-use seq.char
-
-use otherseq.int
-
 use seq.int
-
-use set.int
-
-use otherseq.mytype
 
 use seq.mytype
 
 use otherseq.symbol
-
-use seq.symbol
-
-use set.symbol
-
-use seq.symdef
-
-use set.symdef
-
-use otherseq.word
-
-use set.word
-
-use otherseq.seq.int
-
-use seq.seq.int
-
-use seq.seq.symbol
-
-use seq.seq.word
-
-use set.seq.word
-
-use seq.seq.seq.symbol
 
 Function reorgwhen int 6000
 

@@ -1,40 +1,12 @@
 Module wbeizer
 
-use UTF8
-
-use bits
-
-use format
-
 use real
 
 use standard
 
 use webIO
 
-use words
 
-use xxhash
-
-use seq.bits
-
-use otherseq.byte
-
-use seq.byte
-
-use seq.char
-
-use otherseq.int
-
-use seq.int
-
-use seq.real
-
-use otherseq.word
-
-use seq.word
-
-use seq.seq.word
 
 /em grp1  is a group that contains circles that represent the control points.
 /br /em grp1 also has a attribute data-segments that contains the number of biezer curves in path.
@@ -42,7 +14,7 @@ use seq.seq.word
 /br /em curve is a path that draw the biezer curves.
 
 
-Function draw4(id:jsbytes)real
+Function draw4 real
 {This keeps then paths in sync with the location of the control points}
 let c1 = getattributes("c1", "cx cy")
 let no = toint.first.getattributes("grp1", "data-segments")
@@ -55,8 +27,6 @@ for lines = "M" + c1, curve = "M" + c1, i ∈ arithseq(no, 2, 2)do
 
 function split(c:seq.word)seq.seq.word
 if c_2 = first."."then[subseq(c, 1, 3), c << 3]else[[c_1], c << 1]
-
-function dq(a:word) seq.word dq+a+dq
 
 function addsegment(thisid:word)real
 let no = toint.first.getattributes("grp1", "data-segments")
@@ -73,12 +43,9 @@ let new =
 let svg = 
  for svg = "", i = 1, c ∈ new do
   let d = split.c
-  next(svg + " <circle id=" + dq.merge("c" + toword.i)
-  + "class="+dq."draggable"+"fill="+dq."blue"+"cx="
-  + dq.d_1
-  +  "cy=" 
-  + dq.d_2
-  + "r="+dq.".3" +"  />  "
+  next(svg + " <circle id=" + dq.[merge("c" + toword.i)]
+  + "class=$(dq."draggable")fill=$(dq."blue") cx=$(dq.d_1)
+   cy=$(dq.d_2)+ r=$(dq.".3")   />  "
   , i + 1
   )
  /for(svg)
@@ -92,7 +59,7 @@ Function showsvg int setElementValue("selected", getElementValue:jsbytes("svg10"
 
 Function Bquadratic int 0
 
-Function drawcubic(id:jsbytes)real
+Function drawcubic real
 let c1 = getattributes("c1", "cx cy")
 let c2 = getattributes("c2", "cx cy")
 let c3 = getattributes("c3", "cx cy")
@@ -102,4 +69,4 @@ let d2 = "M" + c1 + "C" + c2 + c3 + c4
 setAttribute("lines", "d", lines2)
 + setAttribute("curve", "d", d2)
 
-Function Bcubic int intpart.drawcubic.jsUTF8.empty:seq.byte 
+Function Bcubic int intpart.drawcubic  

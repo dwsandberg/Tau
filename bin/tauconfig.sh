@@ -18,7 +18,8 @@ function libexe {
  rm -f $build/error.html
  allargs="$@"
  [[ "${allargs#*o=}" != $allargs ]] && rm  -f built/${allargs#*o=}
- echo "running ${allargs::40}"
+ #echo "running ${allargs::40}"
+ echo running $node
  restargs="${allargs#*\ }"
 $build/${tauDylib}$1.lib $restargs > /dev/null
  if  [ -e $build/error.html ] ; then

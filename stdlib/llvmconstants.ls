@@ -1,4 +1,4 @@
-module llvmconstants
+Module llvmconstants
 
 use standard
 

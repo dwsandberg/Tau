@@ -1,7 +1,5 @@
 Module codetemplates
 
-use bits
-
 use internalbc
 
 use llvm
@@ -14,35 +12,15 @@ use standard
 
 use symbol
 
-use textio
-
 use typedict
 
-use seq.bit
-
-use set.int
-
 use otherseq.llvmtype
-
-use seq.llvmtype
 
 use encoding.match5
 
 use seq.match5
 
 use seq.mytype
-
-use set.mytype
-
-use seq.symbol
-
-use set.symbol
-
-use set.word
-
-use seq.seq.int
-
-use seq.seq.symbol
 
 Export constdata seq.slot
 

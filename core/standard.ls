@@ -10,11 +10,11 @@ use xxhash
 
 use seq.char
 
+use seq.index
+
 use otherseq.int
 
 use otherseq.word
-
-use seq.seq.int
 
 use seq.seq.word
 
@@ -301,6 +301,10 @@ type index is rep:int
 Export type:index
 
 Export index(int)index
+
+Export empty:seq.index seq.index
+
+Export+(seq.index, index)seq.index
 
 Function +(i:index, b:int)index index(rep.i + b)
 

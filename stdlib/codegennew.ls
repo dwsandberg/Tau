@@ -18,15 +18,9 @@ use standard
 
 use symbol2
 
-use textio
-
-use typedict
-
 use seq.Lcode2
 
 use stack.Lcode2
-
-use seq.bits
 
 use stack.int
 
@@ -38,21 +32,13 @@ use seq.localmap
 
 use seq.match5
 
-use seq.mytype
-
 use seq.slot
 
 use otherseq.symbol
 
-use seq.symbol
-
 use set.symbol
 
 use set.symdef
-
-use seq.seq.bits
-
-use seq.seq.char
 
 use seq.seq.int
 

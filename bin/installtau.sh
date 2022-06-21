@@ -72,6 +72,7 @@ checksrc tools/profile.ls
 checksrc stdlib/ptr.ls
 checksrc tests/randomphrase.ls
 checksrc core/real.ls
+checksrc tools/reconstructUses.ls
 checksrc core/seq.ls
 checksrc core/set.ls
 checksrc core/sparseseq.ls
@@ -128,7 +129,7 @@ part1="built/orgstdlib.lib"
 
 parts3="built/core.libsrc built/compilerfront.libsrc stdlib/updatestate.ls stdlib/debuginfo.ls stdlib/COMPILETIME.ls stdlib/bitstream.ls stdlib/codegennew.ls stdlib/codetemplates.ls stdlib/file.ls stdlib/inputoutput.ls stdlib/hashset.ls stdlib/internalbc.ls stdlib/llvm.ls stdlib/llvmconstants.ls stdlib/main2.ls stdlib/persistant.ls stdlib/symbol2.ls stdlib/tausupport.ls stdlib/compileTimeT.ls stdlib/timestamp.ls stdlib/codetemplates2.ls stdlib/ptr.ls stdlib/taublockseq.ls stdlib/bitcast.ls stdlib/object01.ls stdlib/objectio.ls stdlib/LEBencoding.ls"
 part1="built/orgstdlib.lib"
-libsrcargs="orgstdlib libsrc $parts3 exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding o=stdlib.libsrc"
+libsrcargs="orgstdlib libsrc $parts3 exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack standard svg svggraph symbol symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding o=stdlib.libsrc"
 compileargs="stdlib stdlib built/stdlib.libsrc"
 dependlibs=""
 ccode="void init_libs(){"
@@ -170,7 +171,7 @@ node="built/testall.html"
 part1="built/tests.lib"
 (libexeAll tests testall $parts3 o=testall.html)
 
-parts3="built/common.lib tools/tools.ls tools/baseTypeCheck.ls tools/doc.ls tools/genLR1.ls tools/prettycompilerfront.ls tools/profile.ls tools/taulextable.ls tools/frontcmd.ls tools/wordgraph.ls"
+parts3="built/common.lib tools/tools.ls tools/baseTypeCheck.ls tools/doc.ls tools/genLR1.ls tools/prettycompilerfront.ls tools/reconstructUses.ls tools/profile.ls tools/taulextable.ls tools/frontcmd.ls tools/wordgraph.ls"
 part1="built/stdlib.lib"
 libsrcargs="stdlib libsrc $parts3 uses=common stdlib exports=baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph o=tools.libsrc"
 compileargs="common common built/tools.libsrc built/stdlib.libinfo built/common.libinfo"
@@ -192,7 +193,7 @@ part1="built/tools.lib"
 parts3="built/tools.libsrc built/stdlib.libinfo built/common.libinfo"
 node="built/callgraphwithin.html"
 part1="built/tools.lib"
-(libexeAll tools front $parts3 mods=taulextable o=callgraphwithin.html)
+(libexeAll tools front $parts3 mods=taulextable flags=within o=callgraphwithin.html)
 
 parts3="built/common.libsrc"
 node="built/commondoc.html"

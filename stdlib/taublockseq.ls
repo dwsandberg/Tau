@@ -1,4 +1,4 @@
-module taublockseq.T
+Module taublockseq.T
 
 use ptr
 

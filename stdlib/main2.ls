@@ -22,17 +22,9 @@ use symbol2
 
 use textio
 
-use words
-
 use seq.byte
 
-use otherseq.char
-
 use seq.file
-
-use process.int
-
-use compileTimeT.libllvm
 
 use compilerfrontT.libllvm
 
@@ -42,45 +34,17 @@ use seq.midpoint
 
 use seq.modExports
 
-use set.modExports
-
-use set.modref
-
-use seq.mytype
-
-use set.mytype
-
 use seq.symbol
-
-use set.symbol
 
 use seq.symdef
 
 use set.symdef
 
-use otherseq.word
-
 use set.word
-
-use process.seq.bits
-
-use encoding.seq.char
-
-use seq.seq.char
 
 use process.seq.file
 
-use seq.seq.mytype
-
-use process.seq.word
-
 use seq.seq.word
-
-use set.seq.word
-
-use process.seq.seq.word
-
-use seq.seq.seq.word
 
 Function libname(info:midpoint)word extractValue(first.src.info, "Library")_1
 
@@ -112,7 +76,7 @@ for acc = "", modname = "?"_1, mods = "", p ∈ breakparagraph.input do
     next(para
     + if type = "seq.word"then", extractValue(args, $(dq.[name]))"
     else if type = "boolean"then
-     ", first.$(dq.[name])∈ extractValue(args, $(dq."b="))"
+     ", first.$(dq.[name])∈ extractValue(args, $(dq."flags"))"
     else", ?"
     , name
     , w
@@ -192,13 +156,14 @@ Function compilerFront(option:seq.word, allsrc:seq.seq.word)midpoint
 
 Function compilerFront(option:seq.word, input:seq.file)midpoint
 {OPTION PROFILE}
-let allsrc = breakparagraph.data.input_1
-let dep = 
- for mp = empty:midpoint, i ∈ input << 1 do
+for mp = empty:midpoint, data = empty:seq.byte, i ∈ input do
+ if ext.fn.i ∈ "libinfo"then
   let new = first.inbytes:midpoint(data.i)
-  midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
- /for(mp)
-compilerfront2:libllvm(option, allsrc, dep)
+  next(midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
+  , data
+  )
+ else next(mp, data + [tobyte.10, tobyte.10] + data.i)
+/for(compilerfront2:libllvm(option, breakparagraph.data, mp))
 
 Function modsE(ci:midpoint)seq.modExports libmods.ci
 

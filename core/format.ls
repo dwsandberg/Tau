@@ -6,17 +6,11 @@ use bits
 
 use standard
 
-use textio
-
 use seq.byte
-
-use set.int
 
 use stack.word
 
 use seq.seq.char
-
-use seq.seq.word
 
 use stack.seq.word
 

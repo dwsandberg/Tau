@@ -1,4 +1,4 @@
-module postbind
+Module postbind
 
 use localmap2
 
@@ -18,15 +18,7 @@ use seq.commoninfo
 
 use seq.findabstractresult
 
-use seq.modref
-
-use set.modref
-
-use otherseq.mytype
-
 use seq.mytype
-
-use set.passsymbols
 
 use encoding.symbol
 
@@ -34,19 +26,9 @@ use seq.symbol
 
 use set.symbol
 
-use seq.symdef
-
 use set.symdef
 
-use otherseq.word
-
-use set.word
-
 use seq.seq.mytype
-
-use seq.seq.symbol
-
-use seq.set.symdef
 
 function verysimpleinline(sym1:symbol, code:seq.symbol)boolean
 if isempty.code ∨ last.code = Optionsym ∨ length.code > 10 then false

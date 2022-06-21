@@ -10,8 +10,6 @@ use seq.hashelement.T
 
 use otherseq.seq.hashelement.T
 
-use seq.seq.hashelement.T
-
 type hashelement is data:T, hash:int
 
 type hashset is cardinality:int, table:seq.seq.hashelement.T

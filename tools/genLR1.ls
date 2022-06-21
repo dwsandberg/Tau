@@ -394,7 +394,6 @@ let terminals2 =
  for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /for(acc)
 lr1parser(rules, ruleprec, terminals2, "attribute", codeonly, parameterized))
 
-
  /<  command LR1gen LR1 />  A parser generator for a subset of LR1 grammars. 
 
  /<  option * -args  />  path to location of the code file from which the grammar will be extracted

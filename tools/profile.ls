@@ -1,20 +1,16 @@
 Module profile
 
-use frontcmd
-
 use debuginfo
+
+use frontcmd
 
 use standard
 
 use symbol2
 
-use seq.debuginfo
-
 use graph.symbol
 
 use seq.symbol
-
-use set.symbol
 
 use svg2graph.symbol
 
@@ -23,8 +19,6 @@ use seq.arc.symbol
 use seq.labeledarc.symbol
 
 use set.labeledarc.symbol
-
-
 
 function measure(arc:parc, measure:seq.word)int
 if measure = "time"then clocks.arc
@@ -42,8 +36,9 @@ let a =
    let m = measure(arc, measure)
    if m = 0 ∨ m < max / 100 then next(acc0, max)
    else
-    next(acc0 + arc((symbolrefdecodeX.lib)_caller.arc, 
-     ( symbolrefdecodeX.lib)_callee.arc , [toword.m]), max(max, m))
+    next(acc0 + arc((symbolrefdecodeX.lib)_(caller.arc), (symbolrefdecodeX.lib)_(callee.arc), [toword.m])
+    , max(max, m)
+    )
   /for(arcs/max(acc0, max))
  /for(acc)
 let b = 

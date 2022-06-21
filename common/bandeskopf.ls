@@ -14,8 +14,6 @@ use seq.T
 
 use set.T
 
-use seq.int
-
 use seq.arc.T
 
 use set.arc.T
@@ -29,8 +27,6 @@ use set.nodeinfo.T
 use seq.seq.T
 
 use seq.arc.nodeinfo.T
-
-use otherseq.seq.seq.T
 
 unbound=(T, T)boolean
 

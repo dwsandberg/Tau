@@ -1,4 +1,4 @@
-module wasmcompile
+Module wasmcompile
 
 use UTF8
 
@@ -706,9 +706,8 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
   let this = 
    if not.isempty.ele then
     if length.code.first.ele = 0 then empty:seq.Icode
-    else if name.sym /in "GEP" then 
-     [ Icode(i64const,8) ,  Icode.i64mul ,  Icode.i64add]
-    else 
+    else if name.sym ∈ "GEP"then[Icode(i64const, 8), Icode.i64mul, Icode.i64add]
+    else
      assert length.code.first.ele = 1
      report" /br------not length one------- /br" + print.sym + printcode.code.first.ele
      [Icode.first.code.first.ele]

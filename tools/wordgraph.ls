@@ -1,4 +1,4 @@
-module wordgraph
+Module wordgraph
 
 use standard
 

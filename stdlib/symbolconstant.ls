@@ -4,8 +4,6 @@ use standard
 
 use symbol
 
-use seq.mytype
-
 use seq.symbol
 
 use sparseseq.symbol

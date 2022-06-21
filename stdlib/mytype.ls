@@ -6,27 +6,17 @@ use standard
 
 use xxhash
 
-use otherseq.modref
+use seq.modref
 
 use set.modref
-
-use otherseq.mytype
 
 use seq.mytype
 
 use set.mytype
 
-use seq.passtypes
-
 use set.passtypes
 
 use otherseq.typedef
-
-use seq.typedef
-
-use set.typedef
-
-use set.seq.typedef
 
 use seq.seq.word
 

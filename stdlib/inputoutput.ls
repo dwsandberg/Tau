@@ -18,21 +18,15 @@ use symbol2
 
 use tausupport
 
-use typedict
-
 use words
 
 use otherseq.addrsym
-
-use seq.addrsym
 
 use seq.bit
 
 use seq.bits
 
 use seq.byte
-
-use otherseq.char
 
 use bitcast.dummyrec2
 
@@ -48,11 +42,7 @@ use encoding.symaddresses
 
 use seq.symaddresses
 
-use otherseq.symbol
-
 use seq.symbol
-
-use seq.symdef
 
 use set.symdef
 
@@ -60,17 +50,11 @@ use process.seq.bit
 
 use seq.seq.bit
 
-use bitcast.seq.bits
-
-use bitcast.seq.byte
-
 use process.seq.byte
 
 use seq.seq.byte
 
 use encoding.seq.char
-
-use seq.seq.char
 
 use bitcast.seq.int
 

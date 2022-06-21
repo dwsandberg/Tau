@@ -1,30 +1,16 @@
 Module debuginfo
 
-use bits
-
 use standard
 
-use symbol2
+use symbol
 
 use words
 
-use seq.parc
-
 use seq.symbol
-
-use seq.symdef
-
-use set.symdef
 
 use encoding.seq.char
 
 use seq.seq.char
-
-use seq.seq.mytype
-
-use seq.seq.word
-
-______________________
 
 type parc is caller:int, callee:int, counts:int, clocks:int, space:int, unused:int
 

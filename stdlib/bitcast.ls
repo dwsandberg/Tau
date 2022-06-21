@@ -1,4 +1,4 @@
-module bitcast.T
+Module bitcast.T
 
 use ptr
 

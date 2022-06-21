@@ -10,8 +10,6 @@ use otherseq.byte
 
 use otherseq.char
 
-use seq.real
-
 Function -(r:real)real 0.0 - r
 
 Function abs(x:real)real if x < 0.0 then 0.0 - x else x

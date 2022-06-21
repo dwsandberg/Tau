@@ -10,8 +10,6 @@ use seq.UTF8
 
 use otherseq.byte
 
-use otherseq.int
-
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
 
 Function breaklines(a:seq.byte)seq.UTF8 breaklines(a, 2, 1, empty:seq.UTF8)

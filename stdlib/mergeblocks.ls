@@ -4,8 +4,6 @@ use standard
 
 use symbol
 
-use symbolconstant
-
 use words
 
 use otherseq.casenode
@@ -16,11 +14,7 @@ use set.int
 
 use stack.int
 
-use seq.repos
-
 use otherseq.symbol
-
-use seq.symbol
 
 use encoding.seq.char
 

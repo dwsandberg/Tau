@@ -18,15 +18,9 @@ use seq.char
 
 use seq.mytype
 
-use set.mytype
-
 use seq.symbol
 
 use set.symbol
-
-use seq.symdef
-
-use set.symdef
 
 Export getheader(s:seq.word)seq.word
 
@@ -435,13 +429,12 @@ function binary2(R:reduction.bindinfo, common:commoninfo, place:int, arg1:bindin
 let code = 
  if switch then
   let s1 = tokentext.arg2
-  code.arg1 + Words.subseq(s1, 2, length.s1 - 1)
+  let s2 = subseq(s1, 2, length.s1 - 1)
+  code.arg1 + Words.if mode.common ∈ "text"then dq.s2 else s2
  else
   let s1 = tokentext.arg1
-  [Words.subseq(s1, 2, length.s1 - 1)] + code.arg2
-let types = 
- if switch then
-  let s1 = tokentext.arg2
-  types.arg1 + seqof.typeword
- else[seqof.typeword] + types.arg2
+  let s2 = subseq(s1, 2, length.s1 - 1)
+  [Words.if mode.common ∈ "text"then dq.s2 else s2] + code.arg2
+{assert mode.common /nin"text"/or length.code /in[2, 4]report print.code+%.length.code}
+let types = if switch then types.arg1 + seqof.typeword else[seqof.typeword] + types.arg2
 unaryop(R, common, place, "$", bindinfo(dict.R, code, types, "")) 

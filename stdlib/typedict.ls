@@ -10,8 +10,6 @@ use seq.mytype
 
 use set.mytype
 
-use seq.symbol
-
 use set.symbol
 
 use set.symdef

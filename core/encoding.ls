@@ -8,8 +8,6 @@ use seq.T
 
 use seq.encodingpair.T
 
-use seq.encodingstate.T
-
 use otherseq.seq.encodingpair.T
 
 Export type:encodingpair.T
@@ -56,10 +54,6 @@ hash.a = hash.b ∧ valueofencoding.code.a = valueofencoding.code.b ∧ data.a =
 unbound hash(T)int
 
 unbound=(T, T)boolean
-
-Export type:seq.encodingpair.T
-
-Export length(seq.encodingpair.T)int
 
 /Function empty:encodingstate.T encodingstate.T let x=constantseq(4, empty:seq.encodingpair.T)encodingstate 
 (0, 0, x, x, empty:seq.encodingpair.T, 0)

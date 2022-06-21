@@ -2,8 +2,6 @@ Module persistant
 
 use UTF8
 
-use bits
-
 use llvm
 
 use llvmconstants
@@ -22,23 +20,13 @@ use seq.slot
 
 use encoding.word3
 
-use seq.word3
-
-use set.word3
-
 use encoding.seq.char
 
 use seq.seq.char
 
-use seq.seq.slot
-
 use seq.encoding.word3
 
 use set.encoding.word3
-
-use seq.encoding.seq.char
-
-use set.encoding.seq.char
 
 type word3 is chars:seq.char
 

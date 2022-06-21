@@ -1,4 +1,4 @@
-module printfunc
+Module printfunc
 
 use bits
 

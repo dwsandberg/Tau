@@ -1,7 +1,5 @@
 Module compilerfrontT.T
 
-use UTF8
-
 use bits
 
 use compilerfront
@@ -12,55 +10,25 @@ use mergeblocks
 
 use pass2
 
-use real
-
 use standard
 
 use symbol
 
 use symbolconstant
 
-use typedict
-
-use seq.char
-
-use otherseq.int
+use compileTimeT.T
 
 use seq.int
 
-use set.int
-
 use set.localmap2
 
-use otherseq.mytype
-
-use seq.mytype
-
-use otherseq.symbol
-
 use seq.symbol
-
-use set.symbol
 
 use seq.symdef
 
 use set.symdef
 
-use otherseq.word
-
 use set.word
-
-use otherseq.seq.int
-
-use seq.seq.int
-
-use seq.seq.symbol
-
-use seq.seq.word
-
-use set.seq.word
-
-use seq.seq.seq.symbol
 
 Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
 {OPTION PROFILE}

@@ -10,25 +10,15 @@ use standard
 
 use encoding.llvmconst
 
-use seq.llvmconst
-
-use otherseq.llvmtype
+use seq.llvmtype
 
 use encoding.llvmtypeele
-
-use seq.llvmtypeele
 
 use seq.slot
 
 use seq.slotrecord
 
 use seq.seq.int
-
-use seq.encoding.llvmconst
-
-use seq.seq.llvmtypeele
-
-use seq.seq.seq.int
 
 Export type:llvmtypeele
 

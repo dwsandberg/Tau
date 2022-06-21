@@ -12,12 +12,6 @@ use typedict
 
 use seq.modExports
 
-use seq.mytype
-
-use seq.symbol
-
-use seq.symdef
-
 use set.symdef
 
 Export clearrequiresbit(symbol)symbol

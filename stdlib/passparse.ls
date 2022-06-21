@@ -1,8 +1,6 @@
-module passparse
+Module passparse
 
-use mytype
-
-use parse
+use format
 
 use passsymbol
 
@@ -12,25 +10,9 @@ use symbol
 
 use symboldict
 
-use typedict
-
-use words
-
-use seq.findabstractresult
-
-use set.modref
-
-use otherseq.mytype
-
 use seq.mytype
 
-use set.mytype
-
 use set.passsymbols
-
-use set.passtypes
-
-use encoding.symbol
 
 use graph.symbol
 
@@ -42,17 +24,9 @@ use seq.symdef
 
 use set.symdef
 
-use seq.symtextpair
-
-use set.word
-
-use seq.seq.mytype
-
 use seq.arc.symbol
 
 use set.arc.symbol
-
-use graph.seq.word
 
 function abstractarcs(s:seq.symdef)seq.arc.symbol
 for outer = empty:seq.arc.symbol, p ∈ s do

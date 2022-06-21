@@ -6,8 +6,6 @@ use UTF8
 
 use bits
 
-use ptr
-
 use standard
 
 use symbol2
@@ -19,8 +17,6 @@ use seq.byte
 use bitcast.int
 
 use otherseq.int
-
-use seq.int
 
 use seq.mytype
 
@@ -34,21 +30,15 @@ use stack.ptr
 
 use encoding.tableentry
 
-use otherseq.tableentry
-
 use seq.tableentry
 
 use bitcast.word
-
-use seq.seq.byte
 
 use bitcast.seq.int
 
 use seq.seq.int
 
 use seq.seq.mytype
-
-use bitcast.seq.word
 
 Export type:tableentry
 

@@ -1,4 +1,4 @@
-module COMPILETIME
+Module COMPILETIME
 
 use bits
 

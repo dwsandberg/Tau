@@ -10,8 +10,6 @@ use symbol
 
 use symboldict
 
-use seq.commoninfo
-
 use seq.findabstractresult
 
 use set.modref
@@ -24,13 +22,7 @@ use seq.passsymbols
 
 use set.passsymbols
 
-use seq.passtypes
-
 use set.passtypes
-
-use encoding.symbol
-
-use graph.symbol
 
 use seq.symbol
 
@@ -42,21 +34,7 @@ use set.symdef
 
 use seq.symtextpair
 
-use set.word
-
 use seq.seq.mytype
-
-use seq.arc.symbol
-
-use set.arc.symbol
-
-use seq.seq.symbol
-
-use seq.seq.symdef
-
-use seq.set.symdef
-
-use set.arc.seq.word
 
 Function resolvesymbols(t:seq.seq.word, lib:word, mods:set.passtypes, libmods:set.passsymbols)prg6
 let passtypes = mods
@@ -177,13 +155,20 @@ do
  resolve(empty:set.passsymbols
  , passsymbols(modname.common, uses, asset.defines, exports, unresolvedexports, types.common, text)
  )
-prg6(asset.typearcs, resolveexports(modlist + lastpass, 100000), typeflds))
+let allmods = resolveexports(modlist + lastpass, 100000)
+for abstract = empty:seq.passsymbols, simple = empty:seq.passsymbols, m2 ∈ toseq.allmods do
+ if isabstract.modname.m2 then next(abstract + m2, simple)else next(abstract, simple + m2)
+/for(prg6(asset.typearcs, allmods, typeflds, simple, abstract)))
 
 Export type:symdef
 
 Export type:prg6
 
 Export code(prg6)set.symdef
+
+Export simple(prg6)seq.passsymbols
+
+Export abstract(prg6)seq.passsymbols
 
 Export modules(prg6)set.passsymbols
 
@@ -193,7 +178,12 @@ Export sym(symdef)symbol
 
 Export code(symdef)seq.symbol
 
-type prg6 is code:set.symdef, modules:set.passsymbols, types:seq.seq.mytype
+type prg6 is code:set.symdef
+, modules:set.passsymbols
+, types:seq.seq.mytype
+, simple:seq.passsymbols
+, abstract:seq.passsymbols
+
 
 Export types(prg6)seq.seq.mytype
 

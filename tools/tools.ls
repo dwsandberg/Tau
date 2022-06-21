@@ -6,17 +6,9 @@ Module tools
 
 * usegraph exclude standard seq set otherseq UTF8 real graph
 
-use UTF8
-
-use bits
-
-use compilerfront
-
 use doc
 
 use file
-
-use format
 
 use frontcmd
 
@@ -26,8 +18,6 @@ use main2
 
 use pretty
 
-use prettycompilerfront
-
 use profile
 
 use standard
@@ -36,31 +26,7 @@ use taulextable
 
 use textio
 
-use seq.char
-
 use seq.file
-
-use otherseq.word
-
-use seq.word
-
-use seq.seq.word
-
-Function writeModule2(modtexts:seq.seq.word, directory:seq.word)seq.file
-{OPTION INLINE}
-for acc = empty:seq.file, modtext = "", p ∈ modtexts + "Module ?"do
- if length.p > 1 ∧ first.p ∈ "Module module"then
-  next(if isempty.modtext then acc
-  else acc + file(filename("+" + directory + modtext_2 + ".ls"), modtext)
-  , p
-  )
- else next(acc, modtext + " /p" + p)
-/for(acc)
-
-Function pretty(input:seq.file, o:seq.word, target:seq.word)seq.file
-writeModule2(prettyfile2(true, "", breakparagraph.data.first.input)
-, if isempty.target then"tmp"else target
-)
 
 Function formatdoc(input:seq.file, o:seq.word)seq.file
 [file(filename.o, prettyfile(false, "", breakparagraph.data.first.input))]
@@ -84,19 +50,6 @@ let output =
  , out
  )
 [file(o, output)]
-
-Function transform(input:seq.file, o:seq.word, target:seq.word, rename:seq.word)seq.file
-{Will parse and check the sematics of a library and place one file for each module in the target directory. Expressions such 
-as not(a=b)will be rewritten as a /ne b. Modules can be renamed. Example rename=oldname > newname}
-let cinfo = compilerFront("text", input)
-let library = [libname.cinfo]
-let newlib = if isempty.target then"tmp"else target
-writeModule2(transform(cinfo
-, newlib
-, if isempty.rename then library + ">" + newlib else rename
-)
-, newlib
-)
 
 Function testprofile(input:seq.file, o:seq.word)seq.file
 let discard = stdlib.input

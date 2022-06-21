@@ -4,8 +4,6 @@ use standard
 
 use otherseq.T
 
-use seq.T
-
 type set is toseq:seq.T
 
 Export type:set.T

@@ -4,15 +4,11 @@ use UTF8
 
 use standard
 
-use seq.char
-
 use seq.lexaction1
 
 use otherseq.word
 
 use set.word
-
-use seq.seq.word
 
 type lexaction1 is w:word, tokenno:int, label:word
 
