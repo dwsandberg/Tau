@@ -4,11 +4,11 @@ In addition to the llvm bitcode format documentation, an useful file for referen
 
 use UTF8
 
-use llvmconstants
-
-use standard
+use seq.seq.int
 
 use encoding.llvmconst
+
+use llvmconstants
 
 use seq.llvmtype
 
@@ -18,7 +18,7 @@ use seq.slot
 
 use seq.slotrecord
 
-use seq.seq.int
+use standard
 
 Export type:llvmtypeele
 

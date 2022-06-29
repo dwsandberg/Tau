@@ -2,9 +2,9 @@ Module bitstream
 
 use bits
 
-use standard
-
 use otherseq.bits
+
+use standard
 
 Export type:bitstream
 

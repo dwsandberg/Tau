@@ -2,53 +2,73 @@ Module doc
 
 use file
 
+use seq.file
+
 use format
 
 use pretty
 
 use standard
 
-use symbol2
-
 use textio
-
-use wordgraph
-
-use seq.file
-
-use graph.word
-
-use set.word
 
 use seq.arc.word
 
 use set.arc.word
 
-use seq.seq.word
+use graph.word
+
+use otherseq.seq.word
+
+use set.word
+
+use wordgraph
 
 Export drawgraph(seq.arc.word, set.word, set.word)seq.word
 
 Export extractValue(seq.word, seq.word)seq.word
 
+function prettyfile3(escape:boolean, modhead:seq.word, text:seq.seq.word)seq.word
+for uses = empty:seq.seq.word
+, libbody = empty:seq.seq.word
+, result = ""
+, modules = ""
+, s ∈ text + "Module ?"
+do
+ if length.s = 0 then next(uses, libbody, result, modules)
+ else if s_1 ∈ "use"then next(uses + s, libbody, result, modules)
+ else if s_1 ∈ "Export unbound"then next(uses, libbody + (" /keyword" + s), result, modules)
+ else if s_1 ∈ "Function function type"then next(uses, libbody + pretty.s, result, modules)
+ else if s_1 ∈ "module Module"then
+  let target = 
+   if length.modhead > 1 then subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
+   else" /keyword"
+  let newresult = 
+   result + " /p"
+   + %(" /p", sortuse(uses, " /keyword") + libbody) >> 1
+   + if s_2 ∈ "?"then""else" /p" + target + s
+  next(empty:seq.seq.word, empty:seq.seq.word, newresult, modules + s_2)
+ else
+  let temp = if escape then escapeformat.s else s
+  if length.uses = 0 then next(uses, libbody, result + temp, modules)
+  else next(uses, libbody + temp, result, modules)
+/for(if isempty.modhead then result
+else
+ let libname = extractValue(first.text, "Library")
+ " /< noformat <h1> Source code for Library" + libname + "</h1>  />"
+ + for acc = "", modname ∈ modules >> 1 do
+  acc + " /< noformat <a href=" + dq.[merge.["#"_1, modname]] + ">"
+  + modname
+  + "</a>  />"
+ /for(acc + result)/if)
+
+Function formatdoc(input:seq.file, o:seq.word)seq.file
+[file(filename.o, prettyfile3(false, "", breakparagraph.data.first.input))]
+
 Function htmlcode(input:seq.file, o:seq.word)seq.file
 let libsrc = breakparagraph.data.first.input
-let libname = extractValue(first.libsrc, "Library")
-let p = 
- prettyfile(true, " /< noformat <hr id=" + dq."T" + ">  />  /keyword", libsrc)
-let modules = 
- for txt = "", state = 0, name = "1"_1, idx = 1, d ∈ p do
-  if d ∈ " /keyword"then next(txt, 1, name, idx + 1)
-  else if state = 1 ∧ d ∈ "Module"then next(txt, 2, name, idx + 1)
-  else if state = 2 then next(txt, 3, d, idx + 1)
-  else if state = 3 then next(txt + name, 0, name, idx + 1)else next(txt, 0, name, idx + 1)
- /for(txt)
 [file(filename.o
-, " /< noformat <h1> Source code for Library" + libname + "</h1>  />"
-+ for acc = "", modname ∈ modules do
- acc + " /< noformat <a href=" + dq.[merge.["#"_1, modname]] + ">"
- + modname
- + "</a>  />"
-/for(acc + p)
+, prettyfile3(true, " /< noformat <hr id=" + dq."T" + ">  />  /keyword", libsrc)
 )
 ]
 

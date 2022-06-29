@@ -1,16 +1,12 @@
 Module objectio.T
 
+use bitcast.seq.T
+
 use bits
 
 use object01
 
 use symbol2
-
-use bitcast.T
-
-use seq.mytype
-
-use bitcast.seq.T
 
 Builtin typestructure:T seq.seq.mytype
 

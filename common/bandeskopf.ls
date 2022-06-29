@@ -1,6 +1,8 @@
 Module bandeskopf.T
 
-use standard
+use seq.arc.T
+
+use set.arc.T
 
 use graph.T
 
@@ -8,25 +10,21 @@ use layergraph.T
 
 use makeDAG.T
 
-use otherseq.T
-
-use seq.T
-
-use set.T
-
-use seq.arc.T
-
-use set.arc.T
-
-use graph.nodeinfo.T
-
 use seq.nodeinfo.T
 
 use set.nodeinfo.T
 
+use otherseq.T
+
 use seq.seq.T
 
-use seq.arc.nodeinfo.T
+use set.T
+
+use standard
+
+Function ?(a:nodeinfo.T, b:nodeinfo.T)ordering n.a ? n.b
+
+unbound ?(T, T)ordering
 
 unbound=(T, T)boolean
 
@@ -38,7 +36,7 @@ function contains(a:set.T, w:T)set.T lookup(a, w)
 
 function iis(g:graph.T, dummy:set.T, node:T)seq.T
 {returns upper nieghbor of inner segment ending at node}
-if not(node ∈ dummy)then empty:seq.T
+if node ∉ dummy then empty:seq.T
 else
  let p = 
   for acc = empty:set.T, @e ∈ toseq.predecessors(g, node)do acc ∪ contains(dummy, @e)/for(acc)
@@ -88,10 +86,10 @@ else
   let upperidx = for acc = empty:seq.int, @e ∈ preds do acc + findindex(@e, lastlayer)/for(acc)
   let medianleft = upperidx_((length.upperidx + 1) / 2)
   let medianright = upperidx_((length.upperidx + 1) / 2)
-  if r < medianleft ∧ not(lastlayer_medianleft ∈ assigned)then
+  if r < medianleft ∧ lastlayer_medianleft ∉ assigned then
    findvertarcsUL(g, currentlayer, lastlayer, medianleft, x + 1, assigned + lastlayer_medianleft)
    + arc(lastlayer_medianleft, node)
-  else if r < medianright ∧ not(lastlayer_medianright ∈ assigned)then
+  else if r < medianright ∧ lastlayer_medianright ∉ assigned then
    findvertarcsUL(g, currentlayer, lastlayer, medianright, x + 1, assigned + lastlayer_medianright)
    + arc(lastlayer_medianright, node)
   else findvertarcsUL(g, currentlayer, lastlayer, r, x + 1, assigned)
@@ -117,10 +115,10 @@ else
   let upperidx = for acc = empty:seq.int, @e ∈ preds do acc + findindex(@e, lastlayer)/for(acc)
   let medianleft = upperidx_((length.upperidx + 1) / 2)
   let medianright = upperidx_((length.upperidx + 1) / 2)
-  if r > medianright ∧ not(lastlayer_medianright ∈ assigned)then
+  if r > medianright ∧ lastlayer_medianright ∉ assigned then
    findvertarcsUR(g, currentlayer, lastlayer, medianright, x - 1, assigned + lastlayer_medianright)
    + arc(lastlayer_medianright, node)
-  else if r > medianleft ∧ not(lastlayer_medianleft ∈ assigned)then
+  else if r > medianleft ∧ lastlayer_medianleft ∉ assigned then
    findvertarcsUR(g, currentlayer, lastlayer, medianleft, x - 1, assigned + lastlayer_medianleft)
    + arc(lastlayer_medianleft, node)
   else findvertarcsUR(g, currentlayer, lastlayer, r, x - 1, assigned)
@@ -306,26 +304,12 @@ Function nodeinfo(n:T, x:int, y:int)nodeinfo.T nodeinfo(n, x, y, 1)
 
 unbound=(T, T)boolean
 
-function =(a:nodeinfo.T, b:nodeinfo.T)boolean n.a = n.b
-
-/Function maxx(a:seq.nodeinfo.T)int for acc=0, @e ∈ a do max(acc, rightedge.@e)/for(acc)
-
-/Function maxy(a:seq.nodeinfo.T)int for acc=0, @e ∈ a do max(acc, y.@e)/for(acc)
-
 function posindegree(g:graph.T, layers:seq.seq.T, layer:int, node:T)nodeinfo.T
 let x = findindex(node, layers_layer)
 if x > length.layers_layer then posindegree(g, layers, layer + 1, node)
 else
  let d = length.toseq.predecessors(g, node)
  nodeinfo(node, x, layer, if d > 2 then d else 1)
-
-function pos(layers:seq.seq.T, layer:int, node:T)nodeinfo.T
-let x = findindex(node, layers_layer)
-if x > length.layers_layer then pos(layers, layer + 1, node)else nodeinfo(node, x, layer)
-
-function defaultpos(g:graph.T, layers:seq.seq.T)set.nodeinfo.T
-let a = for acc = empty:seq.T, @e ∈ layers do acc + @e /for(acc)
-for acc = empty:set.nodeinfo.T, @e ∈ a do acc + pos(layers, 1, @e)/for(acc)
 
 function posindegree(g:graph.T, layers:seq.seq.T)set.nodeinfo.T
 let a = for acc = empty:seq.T, @e ∈ layers do acc + @e /for(acc)

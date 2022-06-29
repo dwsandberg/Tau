@@ -4,9 +4,9 @@ use UTF8
 
 use bits
 
-use standard
-
 use seq.byte
+
+use standard
 
 Export type:timestamp
 

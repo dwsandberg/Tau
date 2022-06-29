@@ -1,32 +1,22 @@
 Module compilerfront
 
-use mytype
-
-use passparse
-
-use passsymbol
-
-use postbind
-
-use standard
-
-use symbol
-
-use symbol2
-
-use symboldict
-
-use typedict
-
 use seq.commoninfo
 
 use seq.modExports
 
 use set.modref
 
+use mytype
+
 use seq.mytype
 
+use seq.seq.mytype
+
 use set.mytype
+
+use passparse
+
+use passsymbol
 
 use seq.passsymbols
 
@@ -34,9 +24,21 @@ use set.passsymbols
 
 use set.passtypes
 
+use postbind
+
+use standard
+
+use symbol
+
 use seq.symbol
 
+use seq.seq.symbol
+
 use set.symbol
+
+use symbol2
+
+use symboldict
 
 use seq.symdef
 
@@ -44,13 +46,11 @@ use set.symdef
 
 use seq.symtextpair
 
-use set.word
-
-use seq.seq.mytype
-
-use seq.seq.symbol
+use typedict
 
 use seq.seq.word
+
+use set.word
 
 Export type:typedict
 
@@ -106,11 +106,11 @@ else
  let t5 = resolvesymbols(allsrc, lib, modsx, asset.mods.libinfo)
  {parse the function bodies}
  let allmods = asset(abstract.t5 + simple.t5)
- let prga = 
-  prescan2.compile(allmods, asset.abstract.t5, lib, allsrc, option = "text", empty:set.symdef)
- let requireUnbound = buildrequires(prga + toseq.code.t5 + toseq.prg.libinfo)
+ let prga = compile(allmods, asset.abstract.t5, lib, allsrc, option = "text", empty:set.symdef)
+ let prgb = if option = "text"then prga else prescan2.prga
+ let requireUnbound = buildrequires(prgb + toseq.code.t5 + toseq.prg.libinfo)
  let prg = compile(allmods, asset.simple.t5, lib, allsrc, option = "text", requireUnbound)
- let prg10 = asset(prga + toseq.code.t5 + toseq.prg.libinfo + prg)
+ let prg10 = asset(prgb + toseq.code.t5 + toseq.prg.libinfo + prg)
  if option = "text"then
   for acc = empty:set.symdef, sd ∈ toseq.prg10 do if library.module.sym.sd = lib then acc + sd else acc /for(let libmods = 
    for acc5 = empty:seq.modExports, m2 ∈ toseq.modules.t5 do acc5 + modExports(module.m2, toseq.exports.m2, empty:seq.seq.mytype)/for(acc5)
@@ -181,7 +181,7 @@ Function toModules(alltypes:typedict, t5:seq.passsymbols, exports:seq.word)seq.m
 for acc = empty:seq.modExports, m2 ∈ t5 do
  if name.module.m2 ∉ exports then acc
  else
-  let d2 = if isabstract.module.m2 then defines.m2 else exports.m2
+  let d2 = if isabstract.module.m2 then defines.m2 ∪ exports.m2 else exports.m2
   let exps = 
    for acc3 = empty:seq.symbol, e ∈ toseq.d2 do if isunbound.e then acc3 else acc3 + e /for(acc3)
   let types = 
@@ -198,35 +198,6 @@ for acc = empty:seq.modExports, m2 ∈ t5 do
    /for(acc5)
   acc + modExports(module.m2, exps, types)
 /for(acc)
-
-function uses(toprocess:seq.symbol, org:set.symdef, new:set.symdef)set.symdef
-for newsym = empty:seq.symbol, newsd = new, sym ∈ toprocess do
- let t = getSymdef(new, sym)
- if not.isempty.t then next(newsym, newsd)
- else
-  let t2 = getSymdef(org, sym)
-  if isempty.t2 then next(newsym, newsd + symdef(sym, empty:seq.symbol, cardinality.newsd))
-  else
-   next(for acc = newsym, sym2 ∈ code.t2_1 do
-    if isspecial.sym2 then acc
-    else if isconst.sym2 then
-     if not.hasfref.sym2 then acc
-     else if isFref.sym2 then acc + basesym.sym2
-     else
-      let r = findfref(sym2, empty:set.symbol, org)
-      for acc2 = acc, sym3 ∈ toseq.r do if isrecordconstant.sym3 then acc2 else acc2 + sym3 /for(acc2)
-    else acc + sym2
-   /for(acc)
-   , newsd + symdef(sym, code.t2_1, cardinality.newsd)
-   )
-/for(if isempty.new then newsd else uses(toseq.asset.newsym, org, newsd)/if)
-
-function findfref(sym:symbol, result:set.symbol, org:set.symdef)set.symbol
-for new = empty:set.symbol, out = result, e ∈ code.getSymdef(org, sym)_1 do
- if hasfref.e then if isFref.e then next(new, out + basesym.e)else next(new + e, result)
- else next(new, result)
-/for(let t = new \ out
-for acc = result, sym3 ∈ toseq.t do findfref(sym3, acc, org)/for(acc))
 
 function roots(s1:seq.modExports)set.symbol
 for exports = empty:seq.symbol, m ∈ s1 do exports + exports.m /for(asset.exports)

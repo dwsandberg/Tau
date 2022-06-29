@@ -1,16 +1,16 @@
 Module debuginfo
 
+use encoding.seq.char
+
+use seq.seq.char
+
 use standard
 
 use symbol
 
-use words
-
 use seq.symbol
 
-use encoding.seq.char
-
-use seq.seq.char
+use words
 
 type parc is caller:int, callee:int, counts:int, clocks:int, space:int, unused:int
 

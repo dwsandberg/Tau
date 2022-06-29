@@ -2,21 +2,21 @@ Module standard
 
 use UTF8
 
-use textio
-
-use words
-
-use xxhash
-
 use seq.char
 
 use seq.index
 
 use otherseq.int
 
+use textio
+
 use otherseq.word
 
 use seq.seq.word
+
+use words
+
+use xxhash
 
 Builtin stacktrace seq.word
 
@@ -312,4 +312,6 @@ Function toindex(i:int)index
 assert i > 0 report"not an index" + stacktrace
 index(i - 1)
 
-Function toint(i:index)int rep.i + 1 
+Function toint(i:index)int rep.i + 1
+
+Function %(a:seq.word)seq.word a 

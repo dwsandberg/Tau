@@ -2,17 +2,19 @@ Module passparse
 
 use format
 
+use seq.mytype
+
 use passsymbol
+
+use set.passsymbols
 
 use standard
 
 use symbol
 
-use symboldict
+use seq.arc.symbol
 
-use seq.mytype
-
-use set.passsymbols
+use set.arc.symbol
 
 use graph.symbol
 
@@ -20,13 +22,11 @@ use seq.symbol
 
 use set.symbol
 
+use symboldict
+
 use seq.symdef
 
 use set.symdef
-
-use seq.arc.symbol
-
-use set.arc.symbol
 
 function abstractarcs(s:seq.symdef)seq.arc.symbol
 for outer = empty:seq.arc.symbol, p ∈ s do
@@ -39,8 +39,6 @@ for outer = empty:seq.arc.symbol, p ∈ s do
   else arcs + arc(sym, codesym)
  /for(arcs)
 /for(outer)
-
-function print(a:arc.symbol)seq.word print.tail.a + print.head.a
 
 function removesinks(sinkstokeep:set.symbol, g:graph.symbol, toprocess:seq.symbol)seq.arc.symbol
 {removes sinks that are not unbound and parameter of module is typeT}

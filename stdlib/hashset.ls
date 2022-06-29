@@ -1,14 +1,14 @@
 Module hashset.T
 
-use bits
-
-use standard
-
-use seq.T
-
 use seq.hashelement.T
 
 use otherseq.seq.hashelement.T
+
+use seq.T
+
+use bits
+
+use standard
 
 type hashelement is data:T, hash:int
 

@@ -1,22 +1,18 @@
 Module barycenter.T
 
-use real
-
-use standard
+use otherseq.baryinfo.T
 
 use graph.T
 
 use otherseq.T
 
-use seq.T
+use seq.seq.T
 
 use set.T
 
-use otherseq.baryinfo.T
+use real
 
-use seq.baryinfo.T
-
-use seq.seq.T
+use standard
 
 unbound=(T, T)boolean
 

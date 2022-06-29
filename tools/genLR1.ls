@@ -1,34 +1,22 @@
 Module genLR1
 
-use format
-
-use pretty
-
-use standard
-
 use otherseq.action
 
-use seq.action
+use seq.seq.action
 
 use otherseq.action2
-
-use seq.action2
 
 use seq.dottedrule
 
 use set.dottedrule
 
-use otherseq.int
-
-use seq.int
-
-use set.int
+use format
 
 use sparseseq.int
 
-use otherseq.ruleprec
+use pretty
 
-use seq.ruleprec
+use standard
 
 use encoding.state
 
@@ -38,31 +26,17 @@ use seq.stkele
 
 use stack.stkele
 
+use seq.arc.word
+
 use graph.word
 
 use otherseq.word
 
-use seq.word
-
-use set.word
-
-use stack.word
-
-use seq.seq.action
-
-use seq.set.dottedrule
-
-use seq.arc.word
-
-use set.arc.word
-
 use otherseq.seq.word
 
-use seq.seq.word
-
-use stack.seq.word
-
 use seq.seq.seq.word
+
+use set.word
 
 type state is toset:set.dottedrule
 
@@ -394,13 +368,13 @@ let terminals2 =
  for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /for(acc)
 lr1parser(rules, ruleprec, terminals2, "attribute", codeonly, parameterized))
 
- /<  command LR1gen LR1 />  A parser generator for a subset of LR1 grammars. 
+ /< command LR1gen LR1  /> A parser generator for a subset of LR1 grammars. 
 
- /<  option * -args  />  path to location of the code file from which the grammar will be extracted
+ /< option *-args  /> path to location of the code file from which the grammar will be extracted
 
- /<  option f -c  />  Only produces the generated code
+ /< option f-c  /> Only produces the generated code
 
- /<  option f -p />  adds :T to function name  to allowing them to be put into a parameterized module
+ /< option f-p  /> adds:T to function name to allowing them to be put into a parameterized module
 
 To get started building a new parser the following function will work to produce tables for a new parser
 
@@ -424,12 +398,12 @@ for lrpart = push(empty:stack.stkele, stkele(startstate, ATTR.0))
 , this ∈ input + "#"
 while stateno.top.lrpart ≠ finalstate
 do{lexical analysis is down here}
-  {Assume the input is only integers}
+{Assume the input is only integers}
 let tokenno = 
  if findindex(this, tokenlist) > length.tokenlist then findindex("I"_1, tokenlist)
  else findindex("#"_1, tokenlist)
 let attribute = ATTR.if this ∈ {end marked}"#"then 0 else toint.this
- next(step(lrpart, input, attribute , tokenno, idx), idx + 1)
+next(step(lrpart, input, attribute, tokenno, idx), idx + 1)
 /for(val.attribute.undertop(lrpart, 1))
 
 function step(stk:stack.stkele, input:seq.word, attrib:ATTR, tokenno:int, place:int)stack.stkele
@@ -441,18 +415,18 @@ if actioncode > 0 then
  else push(stk, stkele(actioncode, forward(attribute.top.stk, attrib)))
 else
  assert actioncode < 0 report"ERROR"
-   let ruleno = -actioncode
+ let ruleno = -actioncode
  let rulelen = rulelength_ruleno
  let newstk = pop(stk, rulelen)
  let newstateno = actiontable_(leftside_ruleno + length.tokenlist * stateno.top.newstk)
-  let newstkele = stkele(newstateno, action(ruleno, input, place, reduction.top(stk, rulelen)))
- step(push(newstk, newstkele), input, attrib, tokenno, place) 
+ let newstkele = stkele(newstateno, action(ruleno, input, place, reduction.top(stk, rulelen)))
+ step(push(newstk, newstkele), input, attrib, tokenno, place)
 
 -----
 
-This part is generated with LR1 command (with the exception of the action header.)
+This part is generated with LR1 command(with the exception of the action header.)
 
-Function action(ruleno:int, input:seq.word , place:int, R:reduction)ATTR
+Function action(ruleno:int, input:seq.word, place:int, R:reduction)ATTR
 {Alphabet I # F G}
 if ruleno = {G F #}1 then R_1
 else if ruleno = {F F I}2 then
@@ -475,4 +449,4 @@ function finalstate int 4
 
 function actiontable seq.int[0, 0, 0, 0, 3, 0, 2, 0, 5, 4, 0, 0, -3, -3, 0, 0, 0, 0, 0, 0, -2, -2]
 
- ----
+---- 

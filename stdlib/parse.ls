@@ -2,25 +2,25 @@ Module parse
 
 use UTF8
 
+use parsersupport.bindinfo
+
+use seq.char
+
 use format
 
 use mytype
+
+use seq.mytype
 
 use standard
 
 use symbol
 
-use symboldict
-
-use parsersupport.bindinfo
-
-use seq.char
-
-use seq.mytype
-
 use seq.symbol
 
 use set.symbol
+
+use symboldict
 
 Export getheader(s:seq.word)seq.word
 
@@ -122,9 +122,6 @@ let discard =
   0
  /for(0)
 f_1
-
-function print(s:seq.symdef)seq.word
-for txt = "", sd ∈ s do txt + print.sym.sd + print.code.sd + EOL /for(txt)
 
 function bindlit(R:reduction.bindinfo)bindinfo
 let chars = decodeword.first.text.R_1

@@ -1,19 +1,8 @@
 <!doctype html> <meta charset="UTF-8"> <style > <!--span.avoidwrap{display:inline-block ;}span.keyword{color:blue ;}span.keywords{color:blue ;}span.literal{color:red ;}span.comment{color:green ;}span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style>
-
-<p> #!/bin/sh tau stdlib common tools formatdoc tools/install #
+#!/bin/sh tau stdlib common tools formatdoc tools/install #
+<h2> Installing Tau </h2> Make sure clang is installed. For Mac OS Clang is available if the command line tools are installed.Down load zip file from GitHub(Repository is dwsandberg/Tau Unzip to directory a which we will call &lt;Tau>. This directory will become the working directory for tau. You are free to choose another name. Modify PATH environment variable to include absolute path to &lt;Tau>/bin. Open terminal and change direcotry to &lt;Tau>.Run"bash bin/installtau". This is likely to generate a warning message about the llvm spec. 
+<h2> HelloWorld </h2> 1. Create a new directory &lt;Tau>/HelloWorld 2. Create a file txt file &lt;Tau>/HelloWorld/HelloWorld.ls that contains:<span class=keyword> Library </span> HelloWorld uses stdlib exports HelloWorld
 <p>
-<h2> Installing Tau </h2> 
-<p> Make sure clang is installed. For Mac OS Clang is available if the command line tools are installed.
-<p> Down load zip file from GitHub(Repository is dwsandberg/Tau
-<p> Unzip to directory a which we will call &lt;Tau>. This directory will become the working directory for tau. You are free to choose another name. 
-<p> Modify PATH environment variable to include absolute path to &lt;Tau>/bin. 
-<p> Open terminal and change direcotry to &lt;Tau>.
-<p> Run"bash bin/installtau". This is likely to generate a warning message about the llvm spec. 
-<p>
-<h2> HelloWorld </h2> 
-<p> 1. Create a new directory &lt;Tau>/HelloWorld
-<p> 2. Create a file txt file &lt;Tau>/HelloWorld/HelloWorld.ls that contains:
-<p> <span class=keyword> Library </span> HelloWorld uses stdlib exports HelloWorld
 <p> <span class=keyword> Module </span> HelloWorld
 <p> <span class=keyword> use </span> format
 <p> <span class=keyword> use </span> standard

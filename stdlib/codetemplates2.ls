@@ -6,25 +6,25 @@ use internalbc
 
 use llvm
 
-use mytype
-
-use persistant
-
-use standard
-
-use symbol2
-
 use seq.llvmtype
 
 use encoding.match5
 
 use seq.match5
 
+use mytype
+
 use otherseq.mytype
+
+use persistant
+
+use standard
 
 use seq.symbol
 
 use set.symbol
+
+use symbol2
 
 use seq.symdef
 
@@ -155,8 +155,6 @@ let entrypoint =
  else entrypoint
  /for(entrypoint)
 steponeresult(toseq.indefines, entrypoint))
-
-Function =(a:symdef, b:symdef)boolean sym.a = sym.b
 
 Function internalbody(ele:symbol)seq.symbol
 for acc = empty:seq.symbol, e9 ∈ arithseq(nopara.ele, 1, 1)do acc + Local.e9 /for(acc
@@ -302,7 +300,4 @@ addobject.[addwordseq.worddata.a
 , addtypeseq.types.a
 , addint.t_1
 , addint.t_2
-]
-
-Function addsymbolseq(a:seq.symbol)int
-addobject.for acc = [addint.0, addint.length.a], @e ∈ a do acc + addsymbol.@e /for(acc) 
+] 

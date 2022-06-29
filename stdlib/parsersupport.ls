@@ -1,18 +1,18 @@
 Module parsersupport.T
 
-use format
-
-use standard
-
-use stack.int
-
-use set.word
-
 use seq.stkele.T
 
 use stack.stkele.T
 
 use otherseq.token.T
+
+use format
+
+use stack.int
+
+use standard
+
+use set.word
 
 type token is w:word, tokenno:int, attribute:T
 
@@ -155,8 +155,6 @@ let l =
 function kk:T(stateno:int, token:int)seq.word
 if 0 ≠ actiontable:T_(length.tokenlist:T * stateno + token)then[tokenlist:T_token]
 else empty:seq.word
-
-function tokenx(tokenno:int, attribute:T)token.T token("??"_1, tokenno, attribute)
 
 Function parse:T(input:seq.word)T
 {if parse is called many times caching lextable improves performance}

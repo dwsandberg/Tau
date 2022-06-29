@@ -4,11 +4,11 @@ use UTF8
 
 use bits
 
-use standard
-
 use otherseq.byte
 
 use otherseq.char
+
+use standard
 
 Function -(r:real)real 0.0 - r
 

@@ -1,52 +1,40 @@
 Module prettycompilerfront
 
-use UTF8
-
-use bits
-
-use format
-
-use pretty
-
-use standard
-
-use symbol2
-
-use seq.byte
-
-use otherseq.char
-
-use seq.char
-
-use seq.mytype
-
-use seq.rename
-
-use seq.symbol
-
-use otherseq.word
-
-use otherseq.seq.word
-
-use seq.seq.word
-
-use stack.seq.word
-
 use file
 
 use seq.file
 
+use format
+
 use main2
-
-use textio
-
-use reconstructUses
-
-use set.symbol
 
 use set.modref
 
 use mytype
+
+use seq.mytype
+
+use pretty
+
+use reconstructUses
+
+use seq.rename
+
+use standard
+
+use otherseq.symbol
+
+use set.symbol
+
+use symbol2
+
+use set.symdef
+
+use textio
+
+use otherseq.seq.word
+
+use stack.seq.word
 
 type rename is symtext:seq.word, newname:seq.word, paraorder:seq.int, sym:symbol
 
@@ -63,9 +51,6 @@ function lookup(a:seq.rename, sym:symbol)seq.rename lookup(a, rename("", "", emp
 function rename(renames:seq.word, name:word)word
 let i = findindex(name, renames)
 if i > length.renames then name else renames_(i + 2)
-
-
-use set.symdef
 
 Function totext(result1:midpoint)seq.seq.word
 let renames = empty:seq.rename
@@ -110,7 +95,7 @@ do
    ∈ [" /keyword", "use", "builtin", "Export"]then
     p
    else if subseq(p, 1, 1) ∈ ["type", "Function", "function"]then pretty.p
-   else {escapeformat.}p
+   else{escapeformat.}p
   next(acc, modtext + t, beforeModule)
 /for(acc)
 
@@ -195,9 +180,13 @@ Function transform(input:seq.file, o:seq.word, target:seq.word, modrename:seq.wo
 , reorguse:boolean)seq.file
 let modrenames = modrename
 let m = if parseit then compilerFront("text", input)else empty:midpoint
-let srctext = if parseit then totext.m else 
-   for acc=empty:seq.seq.word ,i /in input do  if ext.fn.i /in "libinfo"
-   then acc else acc+breakparagraph.data.i /for(acc)
+let srctext = 
+ if parseit then totext.m
+ else
+  for acc = empty:seq.seq.word, i ∈ input do
+   if ext.fn.i ∈ "libinfo"then acc
+   else acc + breakparagraph.data.i + [encodeword.[char.28]]
+  /for(acc)
 let exported = exportedmodref.m
 let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for(uses)
 let directory = if isempty.target then"tmp"else target
@@ -212,7 +201,7 @@ do
   if key ∉ "Module module" ∧ isempty.modtext then
    {skip part before first Module}next(acc, modtext, uses)
   else if first.p ∈ "use"then
-   next(acc, if reorguse then modtext else modtext + " /p" + p, uses+p)
+   next(acc, if reorguse then modtext else modtext + " /p" + p, uses + p << 1)
   else if key ∈ "Function function type"then
    next(acc, modtext + " /p" + if parseit then p else pretty.p, uses)
   else if key ∈ "Module module"then
@@ -223,19 +212,17 @@ do
      let idx = includecomment.modtext
      {assert false report modtext}
      let uselist0 = 
-      if reorguse then 
-       if parseit  then
-       for uselist = empty:seq.seq.word, 
-       ref4 ∈ toseq.reconstruceUses(m, modname, dict, exported, uses)do 
-         uselist + ("use" + print.ref4)/for(uselist)
+      if reorguse then
+       if parseit then
+        for uselist = empty:seq.seq.word, ref4 ∈ toseq.reconstruceUses(m, modname, dict, exported, uses)do uselist + print.ref4 /for(uselist)
        else uses
       else empty:seq.seq.word
      let uselist = 
       if isempty.modrenames then uselist0
       else
-       for uselist = empty:seq.seq.word, u ∈ uselist0 do uselist + ("use" + rename(modrenames, u_2) + u << 2)/for(uselist)
+       for uselist = empty:seq.seq.word, u ∈ uselist0 do uselist + ([rename(modrenames, u_2)] + u << 2)/for(uselist)
      let newuses = 
-      for txt = "", ref ∈ sortuse(uselist, "")do txt + " /p" + ref /for(txt)
+      for txt = "", ref ∈ sortuse(uselist, "")do txt + " /p use" + ref /for(txt)
      acc
      + file(filename("+" + directory + modname + ".ls")
      , "Module" + rename(modrenames, modname) + subseq(modtext, 3, idx - 1) + newuses
@@ -250,8 +237,47 @@ do
    else""
    , uses
    )
-/for( let para=if reorguse then "reorguse" else "" /if
-   +if parseit then "parseit" else "" /if
-   + for txt="",x /in input do  txt+"/br"+fullname.fn.x /for(txt)
-acc + [file(o, for txt="inputs"
-+para+"/p files created", x /in acc do  txt+"/br"+fullname.fn.x /for(txt))]) 
+/for(let para = 
+ if reorguse then"reorguse"else""/if
+ + if parseit then"parseit"else""/if
+ + for txt = "", x ∈ input do txt + " /br" + fullname.fn.x /for(txt)
+acc
++ [file(o
+, for txt = "inputs" + para + " /p files created", x ∈ acc do
+ txt + " /br" + fullname.fn.x
+/for(txt)
+)
+])
+
+Function closeuse(done:set.symbol, toprocess:set.symbol, prg:set.symdef, templates:set.symdef, dict:set.symbol)set.symbol
+let new0 = 
+ for acc = empty:seq.symbol, sym ∈ toseq.toprocess do acc + getCode(prg, sym)/for(acc)
+let new1 = 
+ for acc = empty:seq.symbol, sym ∈ toseq.asset.new0 do
+  if isspecial.sym ∨ iswords.sym ∨ isInternal.sym ∨ islocal.sym ∨ name.module.sym ∈ "$for"
+  ∨ isBuiltin.sym
+  ∨ isIntLit.sym
+  ∨ isRealLit.sym then
+   acc
+  else acc + sym
+ /for(asset.acc \ done)
+let new2 = requires(new1, templates, dict, true) \ done ∪ new1
+if isempty.new2 then done else closeuse(done ∪ toprocess, new2, prg, templates, dict)
+
+Function unusedsymbols(input:seq.file, o:seq.word)seq.file
+let m = compilerFront("text", input)
+let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for(uses)
+let templates = 
+ for acc = templates.m, sym ∈ toseq.dict do
+  if isabstract.module.sym ∧ isempty.getCode(templates.m, sym)then acc + symdef(sym, empty:seq.symbol, 0)
+  else acc
+ /for(acc)
+let roots = 
+ for acc = empty:set.symbol, sd ∈ toseq.prg.m do
+  if name.sym.sd ∈ "entrypoint" ∧ %.resulttype.sym.sd = "UTF8"then acc + sym.sd
+  else acc
+ /for(acc)
+let a2 = closeuse(empty:set.symbol, roots, prg.m, templates, dict)
+let out = 
+ for acc = empty:seq.seq.word, sym ∈ toseq(dict \ a2)do acc + %.sym /for("Unused symbols for roots" + %.toseq.roots + " /p" + %n.alphasort.acc)
+[file(o, out)] 

@@ -1,12 +1,12 @@
 Module symboldict
 
-use standard
-
-use symbol
-
 use seq.commoninfo
 
 use set.mytype
+
+use standard
+
+use symbol
 
 use seq.symbol
 

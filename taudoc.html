@@ -1,55 +1,25 @@
 <!doctype html> <meta charset="UTF-8"> <style > <!--span.avoidwrap{display:inline-block ;}span.keyword{color:blue ;}span.keywords{color:blue ;}span.literal{color:red ;}span.comment{color:green ;}span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style>
 
-<p>
-<h2> The Tau Programming Language </h2> 
-<p> Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.
-<p> This new language is different because there is:<span class=block> —No assignment operator. 
+<h2> The Tau Programming Language </h2> Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.This new language is different because there is:<span class=block> —No assignment operator. 
 <br> —No loop/while statement
 <br> —No function type.
 <br> —Only uses program state in a very controlled way. 
 <br> —Words are the basic text element instead of characters. 
 <br> —Heavy use of sequences. 
-<br> —Introduces a new control structure for iterating through loops.</span> 
-<p> Functional program languages have no assignment operator or loop statements, but tend to be based on the lamada calculus which makes use of higher order functions. We only include the basic operations on function of declaring and calling of them and the binding of unbound function to an actual function in an instantiation of a function from a parameterized module.
-<p> Functional languages tend to use recursion to replace the control structures of loops. The full power of recursion is seldom needed. We introduce a new control structure to cover many of the simple uses of recursion.
-<p> Instruction for downloading and install Tau in <a href="install.html"> here </a> if you would like to try out the examples below for yourself.
-<p>
-<h2> Lexical level </h2> 
-<p> A program is represented as a sequence of characters. The character encoding is assume to be unicode represented in UTF8 format. The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.
-<p> Paragraphs that do NOT start with <span class=keyword> type </span>, <span class=keyword> use </span>, <span class=keyword> Library </span>, <span class=keyword> module </span>, <span class=keyword> Function </span> <span class=keyword> function </span>, <span class=keyword> unbound </span>, or <span class=keyword> Export </span> are always treated as comments.
-<p> Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. The characters ()+, -.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a+b" is equivalent to  "a+b"; but  "a * b"is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
-<p> A word sequence literal is double quoted like"This is a string Literal."
-<p> To include a double quote within a use"$(dq)". Inculding"$(...)"in a syntactical short hand.<span class=block> "hello world without quotes $(dq)hello world $(dq)with quotes"</span> is the sames as writing <span class=block> $($($($("hello world without quotes", dq), "hello world"), dq), "with quotes")</span> which is equivalent to writing <span class=block> "hello world without quotes"+dq+"hello world"+dq+"with quotes"</span> Since $(...)can receive any expression we could also write <span class=block> "hello world without quotes $(dq."hello world")with quotes"</span> Since $(functions as an escape in strings, it can be include within a string as"$("$")("Note that just the"$"is escaped as"$("$(")"will raise an error because the escape in the inner qoute not properly formed.
-<p> An integer literal is represented by a sequence of words where each word only contains digits or the no break space. A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 00 and 1001 are integers.
-<p> For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ ∈ ∉ ∩ ∪ are  /le  /ge  /ne  /and  /or /in /nin /cap /cup respectively.
-<p> Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.
-<p> Occasionally some unexpected lexical issues arise. The syntax for a let statement is <span class=keyword> let </span> &lt;name>=&lt;expresion> &lt;expresion>.The follow function looks good but will cause a syntax error:
-<p> <span class=keyword> function </span> f1 int
+<br> —Introduces a new control structure for iterating through loops.</span> Functional program languages have no assignment operator or loop statements, but tend to be based on the lamada calculus which makes use of higher order functions. We only include the basic operations on function of declaring and calling of them and the binding of unbound function to an actual function in an instantiation of a function from a parameterized module.Functional languages tend to use recursion to replace the control structures of loops. The full power of recursion is seldom needed. We introduce a new control structure to cover many of the simple uses of recursion.Instruction for downloading and install Tau in <a href="install.html"> here </a> if you would like to try out the examples below for yourself.
+<h2> Lexical level </h2> A program is represented as a sequence of characters. The character encoding is assume to be unicode represented in UTF8 format. The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.Paragraphs that do NOT start with <span class=keyword> type </span>, <span class=keyword> use </span>, <span class=keyword> Library </span>, <span class=keyword> module </span>, <span class=keyword> Function </span> <span class=keyword> function </span>, <span class=keyword> unbound </span>, or <span class=keyword> Export </span> are always treated as comments.Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. The characters ()+, -.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a+b" is equivalent to  "a+b"; but  "a * b"is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. A word sequence literal is double quoted like"This is a string Literal."To include a double quote within a use"$(dq)". Inculding"$(...)"in a syntactical short hand.<span class=block> "hello world without quotes $(dq)hello world $(dq)with quotes"</span> is the sames as writing <span class=block> $($($($("hello world without quotes", dq), "hello world"), dq), "with quotes")</span> which is equivalent to writing <span class=block> "hello world without quotes"+dq+"hello world"+dq+"with quotes"</span> Since $(...)can receive any expression we could also write <span class=block> "hello world without quotes $(dq."hello world")with quotes"</span> Since $(functions as an escape in strings, it can be include within a string as"$("$")("Note that just the"$"is escaped as"$("$(")"will raise an error because the escape in the inner qoute not properly formed.An integer literal is represented by a sequence of words where each word only contains digits or the no break space. A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 00 and 1001 are integers.For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ ∈ ∉ ∩ ∪ are  /le  /ge  /ne  /and  /or /in /nin /cap /cup respectively.Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.Occasionally some unexpected lexical issues arise. The syntax for a let statement is <span class=keyword> let </span> &lt;name>=&lt;expresion> &lt;expresion>.The follow function looks good but will cause a syntax error:<span class=keyword> function </span> f1 int
 <br> <span class=keyword> let </span> x=56
-<br> -4+x
-<p> Written on a single line, the problem becomes clear as there is no second expression:<span class=keyword> function </span> f1 int <span class=keyword> let </span> x=56-4+x
-<p> The fix is to add parenthesizes
-<p> <span class=keyword> function </span> f1 int <span class=keyword> let </span> x=56(-4+x)
-<p> When converting a sequence of words to characters for output, an space is usually added after each word with the exceptions:
+<br> -4+x Written on a single line, the problem becomes clear as there is no second expression:<span class=keyword> function </span> f1 int <span class=keyword> let </span> x=56-4+x The fix is to add parenthesizes <span class=keyword> function </span> f1 int <span class=keyword> let </span> x=56(-4+x)When converting a sequence of words to characters for output, an space is usually added after each word with the exceptions:
 <br> 1. If the word is  "()+-[]{}_.. :^  then the space before and after the word is not added. 
-<br> 2. If the word is a comma then the space before the comma is suppressed.
-<p> These rules sometimes do not produce the desired result. To improve the result, no-break spaces can be added. On the Mac keyboard pressing the option key and then space bar will insert a no-break space. 
-<p>
-<h2> Expressions </h2> 
-<p> Here is a list of infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.
+<br> 2. If the word is a comma then the space before the comma is suppressed.These rules sometimes do not produce the desired result. To improve the result, no-break spaces can be added. On the Mac keyboard pressing the option key and then space bar will insert a no-break space. 
+<h2> Expressions </h2> Here is a list of infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.
 <br> _^
 <br> unary minus
 <br> * / mod ∪ ∩ \
 <br> +-∈ ∉
 <br> =&lt; > ? ≤ ≥ ≠ >> &lt;&lt;
 <br> ∧
-<br> ∨
-<p> Parentheses are used to override the default precedence. Note that the operators ∪ ∩ \ which are commonly used for set union, intersection and differences all have that same precedence.
-<p> Procedure calls are of the form f1(p1, p2, …, pn). f1()is illegal and should be written f1. To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1. The precedence of. is between the_and the *.
-<p> The operators ≤ ≥ ≠ are abbreviations for not(a > b), not(a &lt; b), not(a=b)respectively. 
-<p> The compilation unit in tau is a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word <span class=keyword> module </span>.
-<p> A paragraph is a sequence of words. Paragraphs that do NOT start with <span class=keyword> type </span>, <span class=keyword> use </span>, <span class=keyword> Library </span>, <span class=keyword> module </span>, <span class=keyword> Function </span> <span class=keyword> function </span>, <span class=keyword> unbound </span>, or <span class=keyword> Export </span> are always treated as comments.
-<p> The syntax for non-comment paragraphs is <span class=block> &lt;paragraph>→ <span class=keyword> module </span> &lt;word>.T | <span class=keyword> module </span> &lt;word> | &lt;definition>
+<br> ∨ Parentheses are used to override the default precedence. Note that the operators ∪ ∩ \ which are commonly used for set union, intersection and differences all have that same precedence.Procedure calls are of the form f1(p1, p2, …, pn). f1()is illegal and should be written f1. To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1. The precedence of. is between the_and the *.The operators ≤ ≥ ≠ are abbreviations for not(a > b), not(a &lt; b), not(a=b)respectively. The compilation unit in tau is a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word <span class=keyword> module </span>.A paragraph is a sequence of words. Paragraphs that do NOT start with <span class=keyword> type </span>, <span class=keyword> use </span>, <span class=keyword> Library </span>, <span class=keyword> module </span>, <span class=keyword> Function </span> <span class=keyword> function </span>, <span class=keyword> unbound </span>, or <span class=keyword> Export </span> are always treated as comments.The syntax for non-comment paragraphs is <span class=block> &lt;paragraph>→ <span class=keyword> module </span> &lt;word>.T | <span class=keyword> module </span> &lt;word> | &lt;definition>
 <br> &lt;paragraph>→ <span class=keyword> use </span> &lt;type>
 <br> &lt;paragraph>→ <span class=keyword> type </span> &lt;word> <span class=keyword> is </span> &lt;name list>
 <br> &lt;paragraph>→ <span class=keyword> Export </span> &lt;function>
@@ -80,27 +50,11 @@
 <br> <em> E </em> → <span class=keyword> let </span> &lt;let name>=<em> E </em> <em> E </em>
 <br> <em> E </em> → <span class=keyword> assert </span> <em> E </em> <span class=keyword> report </span> <em> E </em> <em> E </em>
 <br> <em> E </em> →{&lt; words forming a comment with the brackets outside of double quotes balanced >}<em> E </em>
-<br> <em> E </em> → process.&lt;function call> | process(&lt;function call>)</span> 
-<p> Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
+<br> <em> E </em> → process.&lt;function call> | process(&lt;function call>)</span> Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
+<h2> Sequences </h2> A sequence is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as[2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define <span class=keyword> function </span> test1 seq.int[2, 4, 8, 16, 32]The type for a sequence of integers is seq.int. The length of the sequence can be obtained by calling the function length. In this case the length(test1)is 5. There is a subscript operator_that can obtain the elements of the list:test1_1 is 2 and test1_5 is 32.Negative values for the sequence count the elements from the end of the sequence:test1_-1 is the last element in the sequence, 32.A sequence of characters in double quotes does not represent a sequence of characters but a sequence of words.“Hello World!” represent two words.The code[“Hello”_1, ”World!”_1]is equivalent to “Hello World!”""represents an empty sequence of words. An empty sequences has a length of zero. Since the type of a empty sequence can not be inferred from the type of its elements the empty sequence of int is coded as empty:seq.int.The elements of a sequence can themselves be sequences[[3, 4], [3, 6, 7], [8, 9]]. The type of this sequence is seq.seq.int. The empty sequence of this type is represented by empty:seq.seq.int.The concatenation operator for sequences is+, for example the expression test1+[2, 3]evaluates to[2, 4, 8, 16, 32, 2, 3]Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T is any type. For example, the expression subseq(test1, 3, 4)evaluates to[8, 16]
+<h2> Types </h2> The type of an expression can always be inferred from the sub-expression. For example, 1.0+5.0 is of type real, 1 * 8 is of type int, and 1.0=8.0 is of type boolean.User defined types can be either a record, a sequence, or a parameterized record. Below a user defined record type is defined as an example.The following paragraph starts a new module. A module is a collection of functions and types.
 <p>
-<h2> Sequences </h2> 
-<p> A sequence is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as[2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define
-<p> <span class=keyword> function </span> test1 seq.int[2, 4, 8, 16, 32]
-<p> The type for a sequence of integers is seq.int. The length of the sequence can be obtained by calling the function length. In this case the length(test1)is 5. There is a subscript operator_that can obtain the elements of the list:test1_1 is 2 and test1_5 is 32.
-<p> Negative values for the sequence count the elements from the end of the sequence:test1_-1 is the last element in the sequence, 32.
-<p> A sequence of characters in double quotes does not represent a sequence of characters but a sequence of words.“Hello World!” represent two words.
-<p> The code[“Hello”_1, ”World!”_1]is equivalent to “Hello World!”
-<p>""represents an empty sequence of words. An empty sequences has a length of zero. Since the type of a empty sequence can not be inferred from the type of its elements the empty sequence of int is coded as empty:seq.int.
-<p> The elements of a sequence can themselves be sequences[[3, 4], [3, 6, 7], [8, 9]]. The type of this sequence is seq.seq.int. The empty sequence of this type is represented by empty:seq.seq.int.
-<p> The concatenation operator for sequences is+, for example the expression test1+[2, 3]evaluates to[2, 4, 8, 16, 32, 2, 3]
-<p> Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T is any type. For example, the expression subseq(test1, 3, 4)evaluates to[8, 16]
-<p>
-<h2> Types </h2> 
-<p> The type of an expression can always be inferred from the sub-expression. For example, 1.0+5.0 is of type real, 1 * 8 is of type int, and 1.0=8.0 is of type boolean.
-<p> User defined types can be either a record, a sequence, or a parameterized record. Below a user defined record type is defined as an example.
-<p> The following paragraph starts a new module. A module is a collection of functions and types.
-<p> <span class=keyword> module </span> point2d
-<p> The follow paragraph that begins with <span class=keyword> use </span> allows reference to functions defined in another module. In this case, the standard library functions. Documentation of the standard module is <a href='stdlib.html#standard'> here </a>
+<p> <span class=keyword> module </span> point2d The follow paragraph that begins with <span class=keyword> use </span> allows reference to functions defined in another module. In this case, the standard library functions. Documentation of the standard module is <a href='stdlib.html#standard'> here </a>
 <p> <span class=keyword> use </span> standard
 <p> Here is a simple type definition that introduces a new type with two components.
 <p> <span class=keyword> type </span> point2d is x:int, y:int
@@ -142,8 +96,8 @@
 <p> Generic unbound functions on the type T may be included by using the word unbound as the defining expression. When the parameterized type is used, there must exist a function with the same signature as the unbound one where T is replaced with the actual type for T.
 <p> As an example the follow defines a parameterized set implemented as a sequence
 <p> <span class=keyword> module </span> listset.T
-<p> <span class=keyword> use </span> standard
 <p> <span class=keyword> use </span> seq.T
+<p> <span class=keyword> use </span> standard
 <p> <span class=keyword> unbound </span>=(T, T)boolean
 <p> <span class=keyword> type </span> listset is toseq:seq.T
 <p> <span class=keyword> Export </span> type:listset.T
@@ -172,9 +126,9 @@
 <p> Now a set of entries will be a dictionary. From the mathematical view of the set each entry is an representation of an entry. The integer 3 could be represented by myentry(3, "X"), myentry(3, "A B C")or and infinite number of other possibilities. But only one representation will be used in any listset.myentry.
 <p> Looking up an entry in the dictionary is just looking up the representation used in the set. The last function in the <em> listset </em> module does just that. The A ∪ B function in the listset mmodule is carefully crafted so that if and element is in both A and B the representation of used in A is used in the result. Thus listset.[myentry(3, "X")]∪ B will redefine the entry in B if it exists. The expression B+myentry(3, "X")or B /cup[myentry(3, "X")]will not redefine the entry in B. The general rule is that for a binary operation on sets the representation of on the left is used in the result--not the one on the right.
 <p> <span class=keyword> Module </span> testdict
-<p> <span class=keyword> use </span> standard
 <p> <span class=keyword> use </span> listset.myentry
 <p> <span class=keyword> use </span> seq.myentry
+<p> <span class=keyword> use </span> standard
 <p> <span class=keyword> type </span> myentry is key:int, data:seq.word
 <p> <span class=keyword> function </span> =(a:myentry, b:myentry)boolean key.a = key.b
 <p> <span class=keyword> function </span> lookup(a:listset.myentry, i:int)seq.myentry lookup(a, myentry(i, <span class=literal >""</span> ))
@@ -222,9 +176,9 @@
 <p> <span class=keyword> Export </span> Function findencode(t:T, erecord.T)seq.T{will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.}
 <p> <span class=keyword> Export </span> Function encodingdata:T seq.T{list of values that have been encoded.}
 <p> <span class=keyword> Module </span> encodingExample
-<p> <span class=keyword> use </span> standard
 <p> <span class=keyword> use </span> encoding.factors
 <p> <span class=keyword> use </span> seq.factors
+<p> <span class=keyword> use </span> standard
 <p> We need a type to encode:
 <p> <span class=keyword> type </span> factors is key:int, factors:seq.int
 <p> We must define a hash function and=function of the type.
@@ -273,11 +227,10 @@
 <p>
 <h2> Sequences </h2> 
 <p> We use the example of myseq which is a start on a user defined sequence to decode UTF8 sequnece of bytes. The length of the sequence is the number of characters. The i'th element of the sequence with be the i'th character in the encoding.
-<p> <span class=keyword> Module </span> myseq.T
-<p> All sequences must be in a parameterized Module.
-<p> <span class=keyword> use </span> standard
-<p> <span class=keyword> use </span> seq.int
+<p> <span class=keyword> Module </span> myseq.T All sequences must be in a parameterized Module.
 <p> <span class=keyword> use </span> seq(T)
+<p> <span class=keyword> use </span> seq.int
+<p> <span class=keyword> use </span> standard
 <p> <span class=keyword> type </span> myseq is sequence, data:seq.T
 <p> Mytype is recognized as a sequence as the first element of the sequence is sequence.
 <p> A function <em> length </em>(myseq)is implicitly defined to access the length of myseq

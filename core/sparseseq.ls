@@ -2,11 +2,11 @@ Module sparseseq.T
 
 * lets a sequence have a default value even beyond the length of the seq.
 
-use standard
-
 use seq.T
 
 use otherseq.sparseele.T
+
+use standard
 
 type sparseele is start:int, edata:seq.T
 

@@ -4,6 +4,8 @@ use UTF8
 
 use bits
 
+use seq.byte
+
 use codegennew
 
 use compilerfront
@@ -12,19 +14,13 @@ use debuginfo
 
 use file
 
+use seq.file
+
+use process.seq.file
+
 use format
 
 use inputoutput
-
-use standard
-
-use symbol2
-
-use textio
-
-use seq.byte
-
-use seq.file
 
 use compilerfrontT.libllvm
 
@@ -34,22 +30,27 @@ use seq.midpoint
 
 use seq.modExports
 
+use standard
+
 use seq.symbol
+
+use symbol2
 
 use seq.symdef
 
 use set.symdef
 
-use set.word
-
-use process.seq.file
+use textio
 
 use seq.seq.word
 
+use set.word
+
 Function libname(info:midpoint)word extractValue(first.src.info, "Library")_1
 
-function makeentry(input:seq.byte) seq.byte
-let entryheader="use standard /p use file /p use inputoutput /p use seq.file
+function makeentry(input:seq.byte)seq.byte
+let entryheader = 
+ "use standard /p use file /p use inputoutput /p use seq.file
 /p use process.UTF8
 /p
 Function entrypoint(args:UTF8)UTF8

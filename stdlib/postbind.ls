@@ -1,8 +1,16 @@
 Module postbind
 
+use seq.commoninfo
+
+use seq.findabstractresult
+
 use localmap2
 
 use mytype
+
+use seq.mytype
+
+use seq.seq.mytype
 
 use passsymbol
 
@@ -10,25 +18,17 @@ use standard
 
 use symbol
 
-use symboldict
-
-use typedict
-
-use seq.commoninfo
-
-use seq.findabstractresult
-
-use seq.mytype
-
 use encoding.symbol
 
 use seq.symbol
 
 use set.symbol
 
+use symboldict
+
 use set.symdef
 
-use seq.seq.mytype
+use typedict
 
 function verysimpleinline(sym1:symbol, code:seq.symbol)boolean
 if isempty.code ∨ last.code = Optionsym ∨ length.code > 10 then false

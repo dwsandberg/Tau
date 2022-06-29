@@ -1,10 +1,10 @@
 Module otherseq.T
 
-use standard
-
 use seq.T
 
 use seq.seq.T
+
+use standard
 
 Function reverse(s:seq.T)seq.T
 for acc = empty:seq.T, @e ∈ arithseq(length.s, 0 - 1, length.s)do acc + s_@e /for(acc)
@@ -71,11 +71,10 @@ Function ?alpha(a:seq.T, b:seq.T)ordering subcmpalpha(a, b, 1)
 function subcmpalpha(a:seq.T, b:seq.T, i:int)ordering
 let lengtha = length.a
 let lengthb = length.b
-if i = lengtha + 1 then lengtha ? lengthb
-else if i > lengthb then GT
-else
+if i ≤ lengtha ∧ i ≤ lengthb then
  let c = ?alpha(a_i, b_i)
  if c = EQ then subcmpalpha(a, b, i + 1)else c
+else if length.a = length.b then EQ else if length.a > length.b then GT else LT
 
 Function sort(a:seq.T)seq.T
 if length.a < 2 then a
@@ -196,6 +195,9 @@ Export >>(s:seq.T, i:int)seq.T{* removes i elements from end of s}
 ________________________
 
 unbound %(T)seq.word
+
+Function %(term:seq.word, z:seq.T)seq.word
+for acc = "", i ∈ z do acc + %.i + term /for(acc)
 
 Function %(z:seq.T)seq.word for acc = "", i ∈ z do acc + %.i /for(acc)
 

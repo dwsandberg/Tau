@@ -2,23 +2,21 @@ Module typedict
 
 use mytype
 
+use seq.mytype
+
+use seq.seq.mytype
+
+use set.mytype
+
 use standard
 
 use symbol
 
-use seq.mytype
-
-use set.mytype
-
 use set.symbol
-
-use set.symdef
 
 use seq.typeentry
 
 use set.typeentry
-
-use seq.seq.mytype
 
 Export type:typeentry
 
@@ -38,9 +36,6 @@ function flatflds(a:typeentry)seq.mytype totypeseq.a << 1
 
 function typeentry(t:mytype, flat:seq.mytype)typeentry typeentry([t] + flat)
 
-Function buildtypedict(zz1:set.symdef, types:seq.seq.mytype)typedict
-for acc = empty:set.symbol, p ∈ toseq.zz1 do acc + sym.p /for(buildtypedict(acc, types))
-
 Function addtypes(alltypes:typedict, syms:set.symbol)typedict
 let typesused = 
  for acc = empty:seq.mytype, sym ∈ toseq.syms do
@@ -51,8 +46,6 @@ let typesused =
 for acc = alltypes, d ∈ toseq.asset.typesused do
  if d = type? ∨ abstracttypename.d ∈ "$base"then acc else addtype(acc, d)
 /for(acc)
-
-function print(t:seq.mytype)seq.word for txt = "", a ∈ t do txt + print.a /for(txt)
 
 Function addtype(alltypes:typedict, type:mytype)typedict
 if iscore4.type ∨ type = typeT then alltypes
@@ -79,18 +72,6 @@ else
    + print.acc
    addtype(acc, type))
 
-Function check(smalldict:typedict, bigdict:typedict)typedict
-for small = smalldict, atyprep ∈ toseq.totypedict.bigdict do
- let t = type.atyprep
- let new = addtype(smalldict, t)
- assert isseq.t ∨ flatwithtype(new, t) = flatwithtype(bigdict, t)
- report"check" + print.t + "flat:"
- + for txt = "", g ∈ flatwithtype(bigdict, t)do txt + print.g /for(txt + EOL)
- + "flat:"
- + for txt = "", g ∈ flatwithtype(new, t)do txt + print.g /for(txt + EOL)
- new
-/for(small)
-
 Function buildtypedict(syms:set.symbol, types:seq.seq.mytype)typedict
 let typesused = for acc = empty:seq.mytype, sym ∈ toseq.syms do acc + typesused.sym /for(acc)
 let typesyms = 
@@ -114,10 +95,6 @@ report"recursive type problem: /br"
 + for acc10 = "", h ∈ unknown.bx5 do acc10 + print2.h + EOL /for(acc10)
 {+" /p  /p known types  /p"+for acc10="", h=toseq.known.bx5 do acc10+print.h+EOL /for(acc10)}
 for acc = emptytypedict, d ∈ toseq.known.bx5 do add(acc, type.d, flatflds.d)/for(acc)
-
-function print(s:symdef)seq.word print.sym.s + print.code.s
-
-function print(h:typeentry)seq.word for acc = print.type.h, z ∈ flatflds.h do acc + print.z /for(acc)
 
 function print2(h:typeentry)seq.word
 for acc = "type" + print.type.h + "is", z ∈ flatflds.h do acc + print.z + ", "/for(acc >> 1)
@@ -197,10 +174,6 @@ for new = empty:set.typeentry, t ∈ toseq.need do
  let x = lookup(totypedict.all, typeentry(t, empty:seq.mytype))
  if isempty.x ∧ isseq.t then new + typeentry(t, [t])else new ∪ x
 /for(if isempty.new then subdict else closedict(all, typedict(totypedict.subdict ∪ new))/if)
-
-Function flatwithtype(alltypes:typedict, type:mytype)seq.mytype
-let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
-if isempty.t then empty:seq.mytype else[type.t_1] + flatflds.t_1
 
 Function basetype(typ:mytype, alltypes:typedict)mytype
 if isseq.typ then

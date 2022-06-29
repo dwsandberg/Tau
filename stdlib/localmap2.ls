@@ -1,14 +1,14 @@
 Module localmap2
 
-use standard
-
-use symbol
-
 use hashset.localmap2
 
 use seq.localmap2
 
 use set.localmap2
+
+use standard
+
+use symbol
 
 use seq.symbol
 

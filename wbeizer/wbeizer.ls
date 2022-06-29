@@ -43,15 +43,21 @@ let new =
 let svg = 
  for svg = "", i = 1, c ∈ new do
   let d = split.c
-  next(svg + " <circle id=" + dq.[merge("c" + toword.i)]
-  + "class=$(dq."draggable")fill=$(dq."blue") cx=$(dq.d_1)
-   cy=$(dq.d_2)+ r=$(dq.".3")   />  "
+  next(svg + " <circle id=$( dq.[merge("c" + toword.i)]
+  ) $(sp)class=$(dq."draggable") $(sp) fill=$(dq."blue")$(sp) cx=$(dq.d_1)
+   $(sp)cy=$(dq.d_2)$(sp) r=$(dq.".3")   />  "
   , i + 1
   )
  /for(svg)
 let k = replaceSVG("grp1", svg)
 let t = setAttribute("grp1", "data-segments", [toword(no + 1)])
 0.0
+
+function sp seq.word [space]
+
+use otherseq.seq.word
+
+/function %(a:seq.word)seq.word a
 
 Function myselect(id:jsbytes)real addsegment.first.towords.id
 

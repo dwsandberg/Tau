@@ -1,10 +1,10 @@
 Module pretty
 
-use standard
-
 use parsersupport.attribute2
 
 use seq.prettyresult
+
+use standard
 
 use otherseq.word
 
@@ -13,42 +13,6 @@ use set.seq.word
 Function pretty(s:seq.word)seq.word
 let tmp0 = text.(toseq.parse.s)_1
 removeclose(tmp0, length.tmp0)
-
-Function prettyfile(escape:boolean, modhead:seq.word, text:seq.seq.word)seq.word
-for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.seq.word, s ∈ text do
- if length.s = 0 then next(uses, libbody, result)
- else if s_1 ∈ "use"then next(uses + s, libbody, result)
- else if s_1 ∈ "Export unbound"then next(uses, libbody + (" /keyword" + s), result)
- else if s_1 ∈ "Function function type"then next(uses, libbody + pretty.s, result)
- else if s_1 ∈ "module Module"then
-  let target = 
-   if length.modhead > 1 then subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
-   else" /keyword"
-  let newresult = result + sortuse(uses, " /keyword") + libbody + (target + s)
-  next(empty:seq.seq.word, empty:seq.seq.word, newresult)
- else
-  let temp = if escape then escapeformat.s else s
-  if length.uses = 0 then next(uses, libbody, result + temp)
-  else next(uses, libbody + temp, result)
-/for(for txt = "", p ∈ result + sortuse(uses, " /keyword") + libbody do txt + " /p" + p /for(txt))
-
-Function prettyfile2(escape:boolean, modhead:seq.word, text:seq.seq.word)seq.seq.word
-for uses = empty:seq.seq.word, libbody = empty:seq.seq.word, result = empty:seq.seq.word, s ∈ text do
- if length.s = 0 then next(uses, libbody, result)
- else if s_1 ∈ "use"then next(uses + s, libbody, result)
- else if s_1 ∈ "Export unbound"then next(uses, libbody + (" /keyword" + s), result)
- else if s_1 ∈ "Function function type"then next(uses, libbody + pretty.s, result)
- else if s_1 ∈ "module Module"then
-  let target = 
-   if length.modhead > 1 then subseq(modhead, 1, 6) + s_2 + subseq(modhead, 8, length.modhead)
-   else{" /keyword"}""
-  let newresult = result + sortuse(uses, " /keyword") + libbody + (target + s)
-  next(empty:seq.seq.word, empty:seq.seq.word, newresult)
- else
-  let temp = if escape then escapeformat.s else s
-  if length.uses = 0 then next(uses, libbody, result + temp)
-  else next(uses, libbody + temp, result)
-/for(result + sortuse(uses, " /keyword") + libbody)
 
 Function escapeformat(s:seq.word)seq.word
 for acc = "", linelength = 0, c ∈ s do
@@ -102,15 +66,15 @@ Export type:attribute2
 
 Export type:prettyresult
 
-Function attribute(text:seq.word)attribute2 attribute2.[prettyresult(0, width.text, text)]
+function attribute(text:seq.word)attribute2 attribute2.[prettyresult(0, width.text, text)]
 
-Function precAttribute(p:int, text:seq.word)attribute2 attribute2.[prettyresult(p, width.text, text)]
+function precAttribute(p:int, text:seq.word)attribute2 attribute2.[prettyresult(p, width.text, text)]
 
 function attribute:attribute2(text:seq.word)attribute2 attribute2.[prettyresult(0, width.text, text)]
 
 function forward(stk:attribute2, token:attribute2)attribute2 token
 
-Function text(a:attribute2)seq.word text.(toseq.a)_1
+function text(a:attribute2)seq.word text.(toseq.a)_1
 
 function width(a:attribute2)int width.(toseq.a)_1
 

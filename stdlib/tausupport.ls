@@ -2,79 +2,81 @@ Module tausupport
 
 use bits
 
-use bitstream
-
-use ptr
-
-use real
-
-use standard
-
 use seq.bits
 
-use seq.byte
-
-use taublockseq.byte
-
-use bitcast.int
-
-use taublockseq.int
-
-use seq.packed2
-
-use taublockseq.packed2
-
-use seq.packed3
-
-use taublockseq.packed3
-
-use seq.packed4
-
-use taublockseq.packed4
-
-use seq.packed5
-
-use taublockseq.packed5
-
-use seq.packed6
-
-use taublockseq.packed6
-
-use seq.ptr
-
-use taublockseq.ptr
-
-use seq.real
-
-use taublockseq.real
-
-use encoding.typename
-
-use seq.word
-
 use bitcast.seq.bits
+
+use bitstream
+
+use seq.byte
 
 use bitcast.seq.byte
 
 use seq.seq.byte
 
+use taublockseq.byte
+
 use encoding.seq.char
+
+use bitcast.int
 
 use bitcast.seq.int
 
+use taublockseq.int
+
+use seq.packed2
+
 use bitcast.seq.packed2
+
+use taublockseq.packed2
+
+use seq.packed3
 
 use bitcast.seq.packed3
 
+use taublockseq.packed3
+
+use seq.packed4
+
 use bitcast.seq.packed4
+
+use taublockseq.packed4
+
+use seq.packed5
 
 use bitcast.seq.packed5
 
+use taublockseq.packed5
+
+use seq.packed6
+
 use bitcast.seq.packed6
+
+use taublockseq.packed6
+
+use ptr
+
+use seq.ptr
 
 use bitcast.seq.ptr
 
+use taublockseq.ptr
+
+use real
+
+use seq.real
+
 use bitcast.seq.real
+
+use taublockseq.real
+
+use standard
+
+use encoding.typename
+
+use seq.word
+
+use words
 
 Export empty:seq.index seq.index
 
@@ -134,13 +136,7 @@ Builtin set(ptr, ptr)ptr
 
 Builtin allocatespace(int)ptr
 
-Builtin getseqtype(ptr)int
-
 Builtin getseqlength(ptr)int{OPTION COMPILETIME}
-
-/Export_(pseq.byte, int)byte
-
-/Export_(pseq.byte, int)byte
 
 function set(i:ptr, b:real)ptr set(i, representation.b)
 

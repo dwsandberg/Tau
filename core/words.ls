@@ -2,17 +2,17 @@ Module words
 
 use UTF8
 
-use standard
-
-use xxhash
-
 use otherseq.alphaword
+
+use otherseq.alphawords
 
 use otherseq.char
 
-use otherseq.seq.alphaword
-
 use encoding.seq.char
+
+use standard
+
+use xxhash
 
 Export type:word
 
@@ -67,9 +67,14 @@ Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
 
 Export ?(a:seq.alphaword, b:seq.alphaword)ordering
 
+type alphawords is toseq:seq.alphaword
+
+function ?alpha(a:alphaword, b:alphaword)ordering a ? b
+
+function ?(a:alphawords, b:alphawords)ordering ?alpha(toseq.a, toseq.b)
+
 Function alphasort(a:seq.seq.word)seq.seq.word
-let b = for acc = empty:seq.seq.alphaword, @e ∈ a do acc + toalphaseq.@e /for(acc)
-for acc = empty:seq.seq.word, @e ∈ sort.b do acc + towordseq.@e /for(acc)
+for acc = empty:seq.alphawords, s ∈ a do acc + alphawords.toalphaseq.s /for(for acc2 = empty:seq.seq.word, s2 ∈ sort.acc do acc2 + towordseq.toseq.s2 /for(acc2))
 
 Function checkinteger(w:word)word
 let l = decodeword.w

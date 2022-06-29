@@ -1,5 +1,7 @@
 Module symbol2
 
+use seq.modExports
+
 use mytype
 
 use standard
@@ -8,11 +10,9 @@ use symbol
 
 use symbolconstant
 
-use typedict
-
-use seq.modExports
-
 use set.symdef
+
+use typedict
 
 Export clearrequiresbit(symbol)symbol
 

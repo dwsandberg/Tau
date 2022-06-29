@@ -1,14 +1,14 @@
 Module graph.T
 
-use standard
+use seq.arc.T
+
+use set.arc.T
 
 use seq.T
 
 use set.T
 
-use seq.arc.T
-
-use set.arc.T
+use standard
 
 type arc is tail:T, head:T
 

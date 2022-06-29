@@ -1,6 +1,8 @@
 Module layergraph.T
 
-use standard
+use seq.arc.T
+
+use set.arc.T
 
 use barycenter.T
 
@@ -8,13 +10,11 @@ use graph.T
 
 use seq.T
 
+use seq.seq.T
+
 use set.T
 
-use seq.arc.T
-
-use set.arc.T
-
-use seq.seq.T
+use standard
 
 type layeredgraph is g:graph.T, layers:seq.seq.T
 

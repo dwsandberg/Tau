@@ -284,8 +284,6 @@ type cccreturn is code:seq.byte, localtypes:seq.wtype
 
 type blkele is code:seq.byte, sym:symbol
 
-type r10 is map:set.localmap, code:seq.byte
-
 Function ccc(alltypes:typedict, knownfuncs:seq.wfunc, code:seq.symbol, localmap:set.localmap)cccreturn
 for typestk = empty:stack.wtype
 , blkstk = empty:stack.blkele

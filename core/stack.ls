@@ -1,8 +1,8 @@
 Module stack.T
 
-use standard
-
 use seq.T
+
+use standard
 
 type stack is toseq:seq.T
 

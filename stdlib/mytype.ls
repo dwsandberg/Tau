@@ -2,10 +2,6 @@ Module mytype
 
 use bits
 
-use standard
-
-use xxhash
-
 use seq.modref
 
 use set.modref
@@ -16,9 +12,11 @@ use set.mytype
 
 use set.passtypes
 
+use standard
+
 use otherseq.typedef
 
-use seq.seq.word
+use xxhash
 
 Export type:mytype
 
@@ -127,11 +125,7 @@ function hash2(b:bits, w:word)bits hash(b, hash.w)
 
 ------------------
 
-Function iscomplex(a:mytype)boolean length.typerep.a > 1
-
 Function addabstract(a:mytype, t:mytype)mytype mytype([first.typerep.a] + typerep.t)
-
-Function oldTypeRep(m:mytype)seq.word for acc = "", e ∈ typerep.m do[name.e] + acc /for(acc)
 
 Function moduleref(modname:seq.word, para:mytype)modref
 if length.modname = 1 then modref("stdlib"_1, modname_1, para)
@@ -163,7 +157,7 @@ Function ?(a:modref, b:modref)ordering name.a ? name.b ∧ para.a ? para.b
 
 Function ?2(a:modref, b:modref)ordering name.a ? name.b
 
-Function ?2(a:seq.typedef, b:seq.typedef)ordering ?2(mytype.a, mytype.b)
+/Function ?2(a:seq.typedef, b:seq.typedef)ordering ?2(mytype.a, mytype.b)
 
 Function ?2(a1:mytype, b1:mytype)ordering
 let a = typerep.a1
@@ -186,16 +180,11 @@ mytype.[typedef("$base"_1, "internal"_1, "internallib"_1)
 
 Function internalmod(s:seq.word)modref modref("internallib"_1, "."_1, noparameter)
 
-Function printrep(s:mytype)seq.word
-for acc = [toword.length.typerep.s], t ∈ typerep.s do acc + [name.t, modname.t, library.t]/for(acc)
-
 Function seqof(base:mytype)mytype mytype(typerep.typeref."seq seq" + typerep.base)
 
 Function isseq(t:mytype)boolean first.typerep.t = first.typerep.typeref."seq seq"
 
 Function isencoding(t:mytype)boolean first.typerep.t = first.typerep.typeref."encoding encoding"
-
-Function encodingof(base:mytype)mytype mytype(typerep.typeref."encoding encoding" + typerep.base)
 
 Function processof(base:mytype)mytype mytype(typerep.typeref."process process" + typerep.base)
 
@@ -279,22 +268,11 @@ for uses = uses.p, x = empty:seq.seq.word, t2 ∈ unresolveduses.p do
 
 Function ?(a:passtypes, b:passtypes)ordering name.modname.a ? name.modname.b
 
-Function print(p:passtypes)seq.word
-" /keyword module" + print.modname.p + EOL + " /keyword defines"
-+ for acc = "", t ∈ toseq.defines.p do acc + print.t /for(acc)
-+ if not.isempty.unresolveduses.p then
- for acc = " /br  /keyword unresolveduses", s ∈ unresolveduses.p do acc + s /for(acc)
-else""/if
-+ for acc = " /br  /keyword uses", s ∈ toseq.uses.p do acc + print.s /for(acc)
-+ if not.isempty.unresolvedexports.p then
- " /br  /keyword unresolvedexports"
- + for acc = "", s ∈ unresolvedexports.p do acc + s /for(acc)
-else""/if
-+ " /br  /keyword exports"
-+ for acc = "", t ∈ toseq.exports.p do acc + print.t /for(acc)
-
 Function resolvetype(knowntypes:set.mytype, ref:seq.word)seq.mytype
-if ref = "int"then[typeint]
+if subseq(ref, 1, 2) = "seq."then
+ let t = resolvetype(knowntypes, ref << 2)
+ if length.t ≠ 1 then t else[seqof.first.t]
+else if ref = "int"then[typeint]
 else if ref = "boolean"then[typeboolean]
 else if ref = "T"then[typeT]
 else if ref = "real"then[typereal]

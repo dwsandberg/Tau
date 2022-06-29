@@ -1,8 +1,8 @@
 Module set.T
 
-use standard
-
 use otherseq.T
+
+use standard
 
 type set is toseq:seq.T
 

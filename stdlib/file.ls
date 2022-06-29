@@ -2,27 +2,27 @@ Module file
 
 use UTF8
 
+use seq.bit
+
+use seq.seq.bit
+
 use bits
 
 use bitstream
+
+use seq.byte
+
+use otherseq.char
+
+use seq.seq.char
+
+use seq.filename
 
 use format
 
 use standard
 
 use tausupport
-
-use seq.bit
-
-use seq.byte
-
-use otherseq.char
-
-use seq.filename
-
-use seq.seq.bit
-
-use seq.seq.char
 
 Export type:file
 
@@ -107,16 +107,6 @@ else if last ∈ "+"then
 else if filename = nofile then next(acc, w, last, prefix, suffix)
 else next(acc + fixfilename(prefix, filename, suffix), w, last, prefix, suffix)
 /for(if filename ≠ nofile ∧ w ∉ "="then acc + fixfilename(prefix, filename, suffix)else acc /if)
-
-function break(s:seq.char, seperators:seq.char, includeseperator:boolean)seq.seq.char
-let nosep = if includeseperator then 0 else 1
-let l = 
- for acc = empty:seq.int, i = 1, e ∈ s do
-  next(acc + if e ∈ seperators then[i]else empty:seq.int, i + 1)
- /for(acc)
-for acc = empty:seq.seq.char, i = 1, ele ∈ l + (length.s + 1)do
- next(acc + subseq(s, if i = 1 then 1 else l_(i - 1) + nosep, ele - 1), i + 1)
-/for(acc)
 
 function fixfilename(prefix:seq.word, name:word, suffix:word)filename
 {for acc=empty:seq.char, s /in(prefix+name)do acc+decodeword.name+char1."sp"/for(let t=acc >> 1 let yy=break(t 

@@ -8,8 +8,6 @@ use set.word
 
 use svg2graph.word
 
-use seq.arc.word
-
 function nodeTitle(word)seq.word""
 
 function node2text(a:word)seq.word[a]

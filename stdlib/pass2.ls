@@ -2,17 +2,17 @@ Module pass2
 
 use bits
 
-use standard
-
-use symbol
-
-use symbolconstant
-
 use seq.int
 
 use seq.mytype
 
+use standard
+
+use symbol
+
 use otherseq.symbol
+
+use symbolconstant
 
 Function reorgwhen int 6000
 

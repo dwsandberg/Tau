@@ -1,5 +1,7 @@
 Module seq.T
 
+use seq.T
+
 use standard
 
 unbound=(T, T)boolean
@@ -61,10 +63,6 @@ if length.a = 0 then b
 else
  let lb = length.b
  if lb = 0 then a else catnonzero(a, b)
-
-/Function largeseq(s:seq.T)seq.T let length=length.s if length < 64 then if length > 16 then s else if length > 8 then if length 
-=16 then[s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_10, s_11, s_12, s_13, s_14, s_15, s_16]else s else if length=8 then 
-[s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8]else if length=4 then[s_1, s_2, s_3, s_4]else s else s
 
 Function +(l:seq.T, a:T)seq.T l + [a]
 

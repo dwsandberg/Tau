@@ -1,32 +1,32 @@
 Module compileTimeT.T
 
+use bitcast.seq.char
+
+use bitcast.int
+
+use seq.int
+
+use bitcast.seq.int
+
+use stack.int
+
+use seq.mytype
+
 use real
 
 use standard
 
 use symbol
 
-use symbol2
-
-use words
-
-use bitcast.int
-
-use seq.int
-
-use stack.int
-
-use seq.mytype
-
 use seq.symbol
+
+use symbol2
 
 use bitcast.word
 
-use bitcast.seq.char
-
-use bitcast.seq.int
-
 use bitcast.seq.word
+
+use words
 
 unbound callfunc:T(ctsym:symbol, typedict:typedict, stk:seq.int)seq.int
 

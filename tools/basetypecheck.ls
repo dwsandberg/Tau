@@ -1,18 +1,18 @@
 Module baseTypeCheck
 
-use standard
-
-use symbol2
-
 use seq.mytype
 
 use set.mytype
 
 use stack.mytype
 
+use standard
+
 use seq.symbol
 
 use set.symbol
+
+use symbol2
 
 use set.typemap
 

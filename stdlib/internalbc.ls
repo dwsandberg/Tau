@@ -6,19 +6,19 @@ use bits
 
 use bitstream
 
+use seq.seq.int
+
 use llvm
 
 use llvmconstants
-
-use standard
 
 use seq.slot
 
 use seq.slotrecord
 
-use seq.templatepart
+use standard
 
-use seq.seq.int
+use seq.templatepart
 
 type templatepart is val:bits
 

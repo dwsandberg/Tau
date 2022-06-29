@@ -4,9 +4,9 @@ use bits
 
 use mytype
 
-use standard
-
 use otherseq.mytype
+
+use standard
 
 use seq.symbol
 
@@ -50,7 +50,7 @@ Export=(t:mytype, b:mytype)boolean
 
 Export replaceT(with:mytype, m:mytype)mytype
 
-Export iscomplex(a:mytype)boolean
+/Export iscomplex(a:mytype)boolean
 
 Export=(a:modref, b:modref)boolean
 
@@ -153,14 +153,6 @@ Function brt(s:symbol)int toint(raw.s >> 20 ∧ 0xFFFFF)
 Function brf(s:symbol)int toint(raw.s ∧ 0xFFFFF)
 
 Function type? mytype typeref."? internal internallib"
-
-Function printrep(s:symbol)seq.word
-if name.module.s = "$int"_1 then[name.s]
-else if iswords.s then dq.worddata.s
-else
- "(" + [library.module.s, name.module.s] + printrep.para.module.s + name.s
- + toword.toint.raw.s
- + for acc = "", t ∈ types.s do acc + printrep.t /for(acc + ")")
 
 Function name(sym:symbol)word first.worddata.sym
 
@@ -372,8 +364,6 @@ Function packedtypes seq.mytype
 , typeref."packed6 tausupport"
 ]
 
-Function isdecodeword(sym:symbol)boolean sym = symbol(moduleref."words", "decodeword", typeword, typeint)
-
 Function deepcopyseqword symbol
 symbol4(moduleref("seq", typeword)
 , "type"_1
@@ -512,7 +502,7 @@ symbolZ(moduleref."internallib $local"
 , tobits.parano
 )
 
-Function modFor(para:mytype)modref moduleref("internallib $for", para)
+/Function modFor(para:mytype)modref moduleref("internallib $for", para)
 
 Function inModFor(sym:symbol)boolean name.module.sym = "$for"_1
 

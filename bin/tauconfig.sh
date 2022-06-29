@@ -30,8 +30,12 @@ $build/${tauDylib}$1.lib $restargs > /dev/null
 
 function libexeAll {
    h1=$(shasum $part1 $parts3 | shasum)
-   hashline="$node ${h1::40}"
- if   grep "${hashline}" built/oldsums.txt > /dev/null ; then
+   if [[ -e $node ]] ;then
+      hashline="$node ${h1::40}"
+   else 
+     hashline="?"
+   fi 
+ if    grep "${hashline}" built/oldsums.txt > /dev/null ; then
   echo $hashline >> sums.txt
   else 
   if [ -z "$norun" ];then

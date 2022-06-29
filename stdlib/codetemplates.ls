@@ -6,14 +6,6 @@ use llvm
 
 use llvmconstants
 
-use persistant
-
-use standard
-
-use symbol
-
-use typedict
-
 use otherseq.llvmtype
 
 use encoding.match5
@@ -21,6 +13,14 @@ use encoding.match5
 use seq.match5
 
 use seq.mytype
+
+use persistant
+
+use standard
+
+use symbol
+
+use typedict
 
 Export constdata seq.slot
 
@@ -45,9 +45,9 @@ else
  if kind = typeint ∨ kind = typeboolean then i64
  else if kind = typereal then double else ptr.i64
 
-Function conststype llvmtype array(-2, i64)
+/Function conststype llvmtype array(-2, i64)
 
-Function profiletype llvmtype array(-3, i64)
+/Function profiletype llvmtype array(-3, i64)
 
 Export type:match5
 

@@ -1,14 +1,14 @@
 Module encoding.T
 
-use bits
-
-use standard
-
-use seq.T
-
 use seq.encodingpair.T
 
 use otherseq.seq.encodingpair.T
+
+use seq.T
+
+use bits
+
+use standard
 
 Export type:encodingpair.T
 

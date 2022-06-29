@@ -1,10 +1,16 @@
 Module compilerfrontT.T
 
+use compileTimeT.T
+
 use bits
 
 use compilerfront
 
+use seq.int
+
 use localmap2
+
+use set.localmap2
 
 use mergeblocks
 
@@ -14,15 +20,9 @@ use standard
 
 use symbol
 
-use symbolconstant
-
-use compileTimeT.T
-
-use seq.int
-
-use set.localmap2
-
 use seq.symbol
+
+use symbolconstant
 
 use seq.symdef
 

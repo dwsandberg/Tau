@@ -6,19 +6,19 @@ use UTF8
 
 use bits
 
-use standard
-
-use symbol2
-
-use tausupport
-
 use seq.byte
 
 use bitcast.int
 
 use otherseq.int
 
+use bitcast.seq.int
+
+use seq.seq.int
+
 use seq.mytype
+
+use seq.seq.mytype
 
 use set.mytype
 
@@ -28,17 +28,17 @@ use seq.ptr
 
 use stack.ptr
 
+use standard
+
+use symbol2
+
 use encoding.tableentry
 
 use seq.tableentry
 
+use tausupport
+
 use bitcast.word
-
-use bitcast.seq.int
-
-use seq.seq.int
-
-use seq.seq.mytype
 
 Export type:tableentry
 

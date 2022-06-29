@@ -2,53 +2,21 @@ Module inputoutput
 
 use UTF8
 
-use bits
-
-use bitstream
-
-use debuginfo
-
-use file
-
-use format
-
-use standard
-
-use symbol2
-
-use tausupport
-
-use words
-
 use otherseq.addrsym
 
 use seq.bit
 
-use seq.bits
-
-use seq.byte
-
-use bitcast.dummyrec2
-
-use seq.file
-
-use process.int
-
-use seq.int
-
-use seq.mytype
-
-use encoding.symaddresses
-
-use seq.symaddresses
-
-use seq.symbol
-
-use set.symdef
-
 use process.seq.bit
 
 use seq.seq.bit
+
+use bits
+
+use seq.bits
+
+use bitstream
+
+use seq.byte
 
 use process.seq.byte
 
@@ -56,9 +24,41 @@ use seq.seq.byte
 
 use encoding.seq.char
 
+use debuginfo
+
+use bitcast.dummyrec2
+
+use file
+
+use seq.file
+
+use format
+
+use process.int
+
+use seq.int
+
 use bitcast.seq.int
 
 use process.seq.int
+
+use seq.mytype
+
+use standard
+
+use encoding.symaddresses
+
+use seq.symaddresses
+
+use seq.symbol
+
+use symbol2
+
+use set.symdef
+
+use tausupport
+
+use words
 
 Export type:cstr
 

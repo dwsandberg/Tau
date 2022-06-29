@@ -4,15 +4,15 @@ use UTF8
 
 use bits
 
-use standard
-
 use seq.byte
-
-use stack.word
 
 use seq.seq.char
 
+use standard
+
 use stack.seq.word
+
+use stack.word
 
 Function getheader(s:seq.word)seq.word
 let istype = subseq(s, 1, 3) = "Export type:"

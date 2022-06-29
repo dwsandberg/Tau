@@ -1,12 +1,12 @@
 Module taublockseq.T
 
-use ptr
-
-use standard
-
 use seq.T
 
 use bitcast.seq.T
+
+use ptr
+
+use standard
 
 Export type:seq.T
 

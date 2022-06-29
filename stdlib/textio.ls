@@ -2,13 +2,13 @@ Module textio
 
 use UTF8
 
-use bits
-
-use standard
-
 use seq.UTF8
 
+use bits
+
 use otherseq.byte
+
+use standard
 
 Function breaklines(a:UTF8)seq.UTF8 breaklines(toseqbyte.a, 2, 1, empty:seq.UTF8)
 

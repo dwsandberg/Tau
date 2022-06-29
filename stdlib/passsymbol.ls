@@ -1,22 +1,18 @@
 Module passsymbol
 
-use mytype
-
-use parse
-
-use standard
-
-use symbol
-
-use symboldict
-
 use seq.findabstractresult
 
 use set.modref
 
+use mytype
+
 use seq.mytype
 
+use seq.seq.mytype
+
 use set.mytype
+
+use parse
 
 use seq.passsymbols
 
@@ -24,17 +20,21 @@ use set.passsymbols
 
 use set.passtypes
 
+use standard
+
+use symbol
+
 use seq.symbol
 
 use set.symbol
+
+use symboldict
 
 use seq.symdef
 
 use set.symdef
 
 use seq.symtextpair
-
-use seq.seq.mytype
 
 Function resolvesymbols(t:seq.seq.word, lib:word, mods:set.passtypes, libmods:set.passsymbols)prg6
 let passtypes = mods
@@ -282,8 +282,6 @@ function setSymdef(recordtype:mytype, t:seq.mytype)seq.symdef
 .fldtype, setSym.fldtype], idx+1)/for(acc))]else}
 empty:seq.symdef
 
-type resultz is acc:seq.symdef, alluses:seq.symbol
-
 function resolve(all:set.passsymbols, p:passsymbols)passsymbols
 if isempty.unresolvedexports.p then p
 else
@@ -321,8 +319,6 @@ let txt =
 if isempty.txt then""
 else"module" + print.modname.p + "contains unresolved exports:" + txt + EOL
 
-Function print(s:seq.mytype)seq.word for acc = "", t ∈ s do acc + print.t /for(acc)
-
 Export text(symtextpair)seq.word
 
 Export type:symtextpair
@@ -330,8 +326,6 @@ Export type:symtextpair
 Export paragraphno(symtextpair)int
 
 Export sym(symtextpair)symbol
-
-Export print(passsymbols)seq.word
 
 Export type:passsymbols
 
@@ -343,45 +337,33 @@ Export typedict(passsymbols)set.mytype
 
 Export exports(passsymbols)set.symbol
 
-function print(s:passsymbols)seq.word
-EOL + "Module" + print.modname.s + EOL + "Defines" + EOL
-+ for acc = "", t ∈ toseq.defines.s do acc + print.t + EOL /for(acc)
-+ if isempty.unresolvedexports.s then""
-else
- EOL + "Unresolved Export" + EOL
- + for acc = "", t ∈ toseq.unresolvedexports.s do acc + print.t + EOL /for(acc)
-
 Function parse(input:seq.word, p:partdict, c:commoninfo)bindinfo
 parse.symboldict(syms.p, req.p, [commoninfo(input, modname.c, lib.c, types.c, mode.c)])
 
 Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound:set.symdef, mode:word)partdict
 {bug here should not need i=0 in forloop}
-let dict = 
- for syms = defines.this, requires = empty:set.symdef, i = 0, u ∈ toseq.uses.this do
-  let a = lookup(modset, passsymbols.abstractmod.u)
-  if isempty.a then
-   assert mode ∉ "body"report"Cannot find module" + name.u
-   {needed for when modset passsymbols are not yet created}next(syms, requires, 0)
-  else if not.isabstract.modname.a_1 then next(syms ∪ exports.a_1, requires, 0)
-  else
-   let r = 
-    for acc = syms, req = requires, e ∈ toseq.exports.a_1 do
-     let sym2 = replaceTsymbol(para.u, e)
-     if isempty.requireUnbound then next(acc + sym2, req)
+for syms = defines.this, requires = empty:set.symdef, i = 0, u ∈ toseq.uses.this do
+ let a = lookup(modset, passsymbols.abstractmod.u)
+ if isempty.a then
+  assert mode ∉ "body"report"Cannot find module" + name.u
+  {needed for when modset passsymbols are not yet created}next(syms, requires, 0)
+ else if not.isabstract.modname.a_1 then next(syms ∪ exports.a_1, requires, 0)
+ else
+  let r = 
+   for acc = syms, req = requires, e ∈ toseq.exports.a_1 do
+    let sym2 = replaceTsymbol(para.u, e)
+    if isempty.requireUnbound then next(acc + sym2, req)
+    else
+     let require = getSymdef(requireUnbound, e)
+     if isempty.require then next(acc + sym2, req)
      else
-      let require = getSymdef(requireUnbound, e)
-      if isempty.require then next(acc + sym2, req)
-      else
-       let list = 
-        for acc2 = empty:seq.symbol, sym4 ∈ code.require_1 do acc2 + replaceTsymbol(para.u, sym4)/for(acc2)
-       {assert name.e /nin"arithseq"report"GHJ"+print.list}
-       next(acc + setrequires.sym2, req + symdef(sym2, list, 0))
-    /for(partdict(acc, req))
-   next(syms.r, req.r, 0)
- /for(partdict(syms, requires))
-partdict(for acc = empty:set.symbol, sd ∈ toseq.req.dict do acc + setrequires.sym.sd /for(for acc2 = acc, sym ∈ toseq.syms.dict do acc2 + sym /for(acc2))
-, req.dict
-)
+      let list = 
+       for acc2 = empty:seq.symbol, sym4 ∈ code.require_1 do acc2 + replaceTsymbol(para.u, sym4)/for(acc2)
+      {assert name.e /nin"arithseq"report"GHJ"+print.list}
+      next(acc + setrequires.sym2, req + symdef(sym2, list, 0))
+   /for(partdict(acc, req))
+  next(syms.r, req.r, 0)
+/for(partdict(syms, requires))
 
 type partdict is syms:set.symbol, req:set.symdef
 
@@ -401,8 +383,6 @@ for acc = empty:seq.findabstractresult, sd ∈ toseq.templates do
 /for(acc)
 
 type findabstractresult is sd:symdef, modpara:mytype
-
-Function sym(a:findabstractresult)symbol sym.sd.a
 
 Export type:findabstractresult
 
@@ -455,16 +435,6 @@ type passsymbols is modname:modref
 
 
 Export passsymbols(modname:modref, uses:set.modref, defines:set.symbol, exports:set.symbol, unresolvedexports:set.symbol, typedict:set.mytype, text:seq.symtextpair)passsymbols
-
-Function passsymbols(modname:modref, uses:set.modref)passsymbols
-passsymbols(modname
-, uses
-, empty:set.symbol
-, empty:set.symbol
-, empty:set.symbol
-, empty:set.mytype
-, empty:seq.symtextpair
-)
 
 Function passsymbols(modname:modref)passsymbols
 passsymbols(modname

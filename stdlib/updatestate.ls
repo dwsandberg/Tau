@@ -1,16 +1,12 @@
 Module updatestate
 
-use file
-
-use standard
-
-use textio
-
-use words
-
 use set.cmdpara
 
+use file
+
 use seq.file
+
+use seq.arc.filename
 
 use graph.filename
 
@@ -18,9 +14,13 @@ use seq.filename
 
 use set.filename
 
+use standard
+
+use textio
+
 use otherseq.word
 
-use seq.arc.filename
+use words
 
 Function prettystate(input:seq.file)seq.file
 for acc = "", a ∈ breakparagraph.data.first.input do

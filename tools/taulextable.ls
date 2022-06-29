@@ -2,9 +2,9 @@ Module taulextable
 
 use UTF8
 
-use standard
-
 use seq.lexaction1
+
+use standard
 
 use otherseq.word
 

@@ -1,30 +1,26 @@
 Module codegennew
 
+use seq.Lcode2
+
+use stack.Lcode2
+
 use UTF8
 
 use bits
 
 use codetemplates2
 
+use seq.seq.int
+
+use stack.int
+
 use internalbc
+
+use seq.internalbc
 
 use llvm
 
 use llvmconstants
-
-use persistant
-
-use standard
-
-use symbol2
-
-use seq.Lcode2
-
-use stack.Lcode2
-
-use stack.int
-
-use seq.internalbc
 
 use seq.llvmtype
 
@@ -32,23 +28,25 @@ use seq.localmap
 
 use seq.match5
 
+use persistant
+
 use seq.slot
 
+use standard
+
 use otherseq.symbol
-
-use set.symbol
-
-use set.symdef
-
-use seq.seq.int
 
 use otherseq.seq.symbol
 
 use set.seq.symbol
 
-use seq.seq.word
+use set.symbol
 
-Export=(a:symdef, b:symdef)boolean
+use symbol2
+
+use set.symdef
+
+use seq.seq.word
 
 Function compilerback(m:midpoint, libcode:seq.symdef, dependentwords:seq.seq.char)seq.bits
 {OPTION PROFILE}

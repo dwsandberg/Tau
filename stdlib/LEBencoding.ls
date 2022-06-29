@@ -2,9 +2,9 @@ Module LEBencoding
 
 use bits
 
-use standard
-
 use seq.byte
+
+use standard
 
 Function testLEB seq.word
 let r = 

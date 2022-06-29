@@ -1,20 +1,4 @@
-module svg2graph.T
-
-use UTF8
-
-use real
-
-use standard
-
-use uniqueids
-
-use bandeskopf.T
-
-use graph.T
-
-use seq.T
-
-use set.T
+Module svg2graph.T
 
 use seq.arc.T
 
@@ -24,13 +8,25 @@ use seq.arcpath.T
 
 use set.arcpath.T
 
-use otherseq.hovertext.T
+use bandeskopf.T
 
-use seq.hovertext.T
+use graph.T
+
+use otherseq.hovertext.T
 
 use set.labeledarc.T
 
 use set.nodeinfo.T
+
+use seq.T
+
+use set.T
+
+use real
+
+use standard
+
+use uniqueids
 
 Export type:arcpath.T
 
@@ -64,8 +60,6 @@ Function ?(a:labeledarc.T, b:labeledarc.T)ordering tail.a ? tail.b ∧ head.a ? 
 
 Function ?(a:arcpath.T, b:arcpath.T)ordering
 head.arc.a ? head.arc.b ∧ {from.a ? from.b /and}tail.arc.a ? tail.arc.b
-
-Function ?(a:nodeinfo.T, b:nodeinfo.T)ordering n.a ? n.b
 
 Function addgroup(grp:seq.arcpath.T)seq.arcpath.T
 if length.grp = 1 then grp

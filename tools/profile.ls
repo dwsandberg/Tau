@@ -6,19 +6,19 @@ use frontcmd
 
 use standard
 
-use symbol2
+use seq.arc.symbol
 
 use graph.symbol
+
+use seq.labeledarc.symbol
+
+use set.labeledarc.symbol
 
 use seq.symbol
 
 use svg2graph.symbol
 
-use seq.arc.symbol
-
-use seq.labeledarc.symbol
-
-use set.labeledarc.symbol
+use symbol2
 
 function measure(arc:parc, measure:seq.word)int
 if measure = "time"then clocks.arc

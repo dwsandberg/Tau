@@ -2,39 +2,35 @@ Module persistant
 
 use UTF8
 
-use llvm
+use encoding.seq.char
 
-use llvmconstants
-
-use standard
-
-use words
-
-use otherseq.char
+use seq.seq.char
 
 use encoding.const3
 
 use seq.const3
 
+use llvm
+
+use llvmconstants
+
 use seq.slot
 
+use standard
+
 use encoding.word3
-
-use encoding.seq.char
-
-use seq.seq.char
 
 use seq.encoding.word3
 
 use set.encoding.word3
+
+use words
 
 type word3 is chars:seq.char
 
 function word3(a:word)word3 word3.decodeword.a
 
 function slotX(a:word3)int toint.C64.valueofencoding.encode.a
-
-function ?(a:word3, b:word3)ordering chars.a ? chars.b
 
 function =(a:word3, b:word3)boolean chars.a = chars.b
 

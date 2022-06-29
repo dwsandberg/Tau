@@ -4,7 +4,9 @@ use baseTypeCheck
 
 use standard
 
-use symbol2
+use seq.arc.symbol
+
+use set.arc.symbol
 
 use graph.symbol
 
@@ -14,36 +16,15 @@ use set.symbol
 
 use svg2graph.symbol
 
+use symbol2
+
 use seq.symdef
 
 use set.symdef
 
-use seq.arc.symbol
-
-use set.arc.symbol
-
-Function roots(s:midpoint)set.symbol
-for exports = empty:seq.symbol, m ∈ libmods.s do exports + exports.m /for(asset.exports)
-
-/function uses(toprocess:seq.symbol,org:set.symdef, new:set.symdef) set.symdef
-for    newsym=empty:seq.symbol,newsd=new,   sym /in toprocess do
-let t=lookup(new,symdef(sym,empty:seq.symbol,0))
- if not.isempty.t then   next(newsym,newsd)
- else
-  let t2=lookup(org,symdef(sym,empty:seq.symbol,0))
-  if isempty.t2 then 
-      next(newsym,newsd+symdef(sym,empty:seq.symbol,0))
-  else  
-   next( for acc=newsym, sym2 /in code.t2_1 do
-     if isspecial.sym2 then acc
-     else if isconst.sym2 /and not.isrecordconstant.sym2 then
-       if isFref.sym2 then  acc+basesym.sym2 else acc
-     else  acc+sym2 /for(acc), newsd+t2_1)
- /for( if isempty.new then newsd else uses(toseq.asset.newsym,org,newsd))
-
-Function front2(cf:midpoint, names:seq.word, ~n:seq.word, mods:seq.word
-, ~mods:seq.word, within:boolean, rootnames:seq.word, out:seq.word)seq.word
-let prg=prg.cf 
+Function front2(cf:midpoint, names:seq.word, ~n:seq.word, mods:seq.word, ~mods:seq.word
+, within:boolean, rootnames:seq.word, out:seq.word)seq.word
+let prg = prg.cf
 for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
  let ss = sym.sd
  if(isempty.mods ∨ name.module.ss ∈ mods) ∧ (isempty.names ∨ name.ss ∈ names) ∧ name.ss ∉ ~n
@@ -74,8 +55,6 @@ else
  if out = "text"then
   for txt = "txt", a ∈ toseq.arcs.g do txt + " /br" + print.tail.a + print.head.a /for(txt)
  else drawgraph.newgraph.toseq.arcs.g2 /if /if /if /if /if)
-
-function =(a:symdef, b:symdef)boolean sym.a = sym.b
 
 Export drawgraph(graph.symbol)seq.word
 
@@ -115,4 +94,4 @@ Function nodeTitle(a:symbol)seq.word print.a
 
 -out resultCheck
 
--out txt will print the arcs in the resulting graph rather than display the graph. 
+-out txt will print the arcs in the resulting graph rather than display the graph.  

@@ -10,13 +10,13 @@ use doc
 
 use file
 
+use seq.file
+
 use frontcmd
 
 use genLR1
 
 use main2
-
-use pretty
 
 use profile
 
@@ -25,11 +25,6 @@ use standard
 use taulextable
 
 use textio
-
-use seq.file
-
-Function formatdoc(input:seq.file, o:seq.word)seq.file
-[file(filename.o, prettyfile(false, "", breakparagraph.data.first.input))]
 
 Function lextable(input:seq.file, o:seq.word)seq.file[file(o, getlextable)]
 

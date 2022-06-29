@@ -1,10 +1,10 @@
-module uniqueids
-
-use standard
+Module uniqueids
 
 use encoding.idrange
 
 use seq.idrange
+
+use standard
 
 Function xml(val:seq.word)seq.word dq.val + space
 

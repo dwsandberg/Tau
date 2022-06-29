@@ -1,6 +1,8 @@
 Module makeDAG.T
 
-use standard
+use seq.arc.T
+
+use set.arc.T
 
 use graph.T
 
@@ -8,9 +10,7 @@ use seq.T
 
 use set.T
 
-use seq.arc.T
-
-use set.arc.T
+use standard
 
 Function makeDAG(g:graph.T)graph.T
 {Turn directed graph into DAG by reversing arcs}
@@ -31,9 +31,6 @@ else
  )
 
 function filter(n:set.T, a:arc.T)seq.arc.T if head.a ∈ n then[a]else empty:seq.arc.T
-
-Function expandback(org:graph.T, modified:graph.T, n:T)T
-if n ∈ nodes.org then n else expandback(org, modified, (toseq.predecessors(modified, n))_1)
 
 Function sinks2(g:graph.T, b:set.T, n:T)set.T
 if cardinality(successors(g, n) \ b) = 0 then asset.[n]else empty:set.T

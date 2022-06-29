@@ -1,12 +1,8 @@
 Module mergeblocks
 
-use standard
-
-use symbol
-
-use words
-
 use otherseq.casenode
+
+use encoding.seq.char
 
 use seq.int
 
@@ -14,9 +10,13 @@ use set.int
 
 use stack.int
 
+use standard
+
+use symbol
+
 use otherseq.symbol
 
-use encoding.seq.char
+use words
 
 type ggg is code:seq.symbol, stk:stack.int
 

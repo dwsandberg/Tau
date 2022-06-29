@@ -2,13 +2,13 @@ Module UTF8
 
 use bits
 
-use standard
-
 use seq.byte
 
 use otherseq.char
 
 use seq.seq.char
+
+use standard
 
 type UTF8 is toseqbyte:seq.byte
 
@@ -37,8 +37,6 @@ Function commachar char char.44
 Function hyphenchar char char.45
 
 Function periodchar char char.46
-
-Function doublequotechar char char.34
 
 Function nbspchar char{no break space character}char.160
 

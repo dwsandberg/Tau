@@ -1,14 +1,14 @@
 Module process.T
 
+use seq.T
+
 use UTF8
 
 use bits
 
-use standard
-
-use seq.T
-
 use otherseq.byte
+
+use standard
 
 type process is abortedx:boolean, msg:seq.word, header:UTF8, body1:seq.T, body2:T
 
