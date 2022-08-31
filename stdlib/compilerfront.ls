@@ -44,8 +44,6 @@ use seq.symdef
 
 use set.symdef
 
-use seq.symtextpair
-
 use typedict
 
 use seq.seq.word
@@ -81,10 +79,13 @@ passsymbols(modname.a
 , for types = empty:set.mytype, sym ∈ exports.a do
  if name.sym = "type"_1 then types + resulttype.sym else types
 /for(types)
-, empty:seq.symtextpair
+, empty:seq.symdef
 )
 
 Function compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
+assert not.isempty.allsrc report"empty source"
+let lib0 = extractValue(first.allsrc, "Library library")
+assert not.isempty.lib0 report"no library specified"
 let lib = first.extractValue(first.allsrc, "Library library")
 let exports = extractValue(first.allsrc, "exports")
 if option = "library"then
@@ -131,9 +132,8 @@ else
   let typedict = buildtypedict(empty:set.symbol, types.t5 + types.libinfo)
   let templates = 
    for acc = empty:seq.symdef, p ∈ toseq.prg10 do if para.module.sym.p = typeT then acc + p else acc /for(asset.acc)
-  let prg10a = processOptions(prg10, toseq.modules.t5, "NOINLINE")
-  let pb = postbind(roots, prg10a, templates, typedict)
-  let afteroption = processOptions(prg.pb, toseq.modules.t5, "COMPILETIME NOINLINE INLINE PROFILE STATE")
+  let pb = postbind(roots, prg10, templates, typedict)
+  let afteroption = addExportOptions(asset.simple.t5, prg.pb, allsrc)
   let libmods = toModules(typedict, toseq.modules.t5, exports)
   if option = "pass1"then
    midpoint(option, afteroption, typedict.pb, libmods, empty:seq.seq.word)
@@ -169,13 +169,6 @@ else
   else
    let newcode = removeoptions.code + Words.toseq.newoptions + Optionsym
    symdef(sym.f_1, newcode, paragraphno.f_1) ∪ p
-
-Function processOptions(prg:set.symdef, mods:seq.passsymbols, option:seq.word)set.symdef
-for acc = prg, m ∈ mods do
- if name.module.m ∈ option then
-  for acc2 = acc, sym ∈ toseq.exports.m do addoption(acc2, sym, [name.module.m])/for(acc2)
- else acc
-/for(acc)
 
 Function toModules(alltypes:typedict, t5:seq.passsymbols, exports:seq.word)seq.modExports
 for acc = empty:seq.modExports, m2 ∈ t5 do
@@ -251,7 +244,7 @@ let divide =
 let dupsyms = divide_3
 let other = divide_2
 let impsym = 
- clearrequiresbit.symbol(moduleref."inputoutput", "stacktraceimp", seqof.typeword)
+ clearrequiresbit.symbol(moduleref."* inputoutput", "stacktraceimp", seqof.typeword)
 let bb = getSymdef(libextnames, impsym)
 let addresses = toseq.asset.if isempty.bb then divide_1 else[impsym] + divide_1
 for prgX = if isempty.bb then empty:set.symdef

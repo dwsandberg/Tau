@@ -174,9 +174,6 @@ checkprec("(" + toseq.a + "_" + toseq.b + ")")
 function *(a:checkprec, b:checkprec)checkprec
 checkprec("(" + toseq.a + "*" + toseq.b + ")")
 
-Function bi(a:checkprec, b:checkprec)checkprec
-checkprec("(" + toseq.a + "!" + toseq.b + ")")
-
 function +(a:checkprec, b:checkprec)checkprec
 checkprec("(" + toseq.a + "+" + toseq.b + ")")
 

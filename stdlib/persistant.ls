@@ -55,9 +55,6 @@ slotX.w3
 Function addint(i:int)int toint.C64.i
 
 Function initwordref(dependentwords:seq.seq.char)int
-{assert length.dependentwords=0 report for txt="", max=0, p /in subseq(encodingdata:seq.char, 1, length.dependentwords 
-)do let w=encodeword.p next(txt+" /br"+%.valueofencoding.asencoding.w+w, max(max, valueofencoding.asencoding 
-.w))/for(%.max+%.length.dependentwords+txt)0}
 for acc = 0, @e ∈ dependentwords do max(acc, valueofencoding.asencoding.encodeword.@e)/for(for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc)do valueofencoding.encode.word3.k /for(acc))
 
 Function addliblib(libname:seq.word, dependentwords:seq.seq.char, entrypoint:slot, more:seq.int)int

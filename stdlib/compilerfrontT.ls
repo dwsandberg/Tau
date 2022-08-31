@@ -28,6 +28,8 @@ use seq.symdef
 
 use set.symdef
 
+use seq.seq.word
+
 use set.word
 
 Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
@@ -35,13 +37,15 @@ Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint
 let m = compilerfront3(option, allsrc, libinfo)
 if first.option.m ∈ "library text pass1"then m
 else
- let prg5 = pass2:T(prg.m, typedict.m, "") ∪ templates.m
+ let libname = extractValue(first.allsrc, "Library")_1
+ let librarymap = [libname, first."*"]
+ let prg5 = pass2:T(librarymap, prg.m, typedict.m, option) ∪ templates.m
  if option = "all2"then prepareback(prg5, m, libinfo)
  else midpoint(option, prg5, typedict.m, libmods.m, src.m)
 
-unbound interpretCompileTime:T(args:seq.symbol, ctsym:symbol, typedict:typedict)seq.symbol
+unbound interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict)seq.symbol
 
-Function pass2:T(knownsymbols0:set.symdef, t:typedict, option:seq.word)set.symdef
+Function pass2:T(librarymap:seq.word, knownsymbols0:set.symdef, t:typedict, option:seq.word)set.symdef
 {OPTION PROFILE}
 let knownsymbols = 
  for acc2 = empty:set.symdef, pele0 ∈ toseq.knownsymbols0 do
@@ -52,19 +56,31 @@ let knownsymbols =
     next(if last = PreFref then acc >> 1 + Fref.c else acc + c, c)
    /for(symdef(sym.pele0, acc, paragraphno.pele0))
  /for(acc2)
-if option = "addpass"then additionalpass:T(toseq.knownsymbols, knownsymbols, t)
+if option = "addpass"then additionalpass:T(librarymap, toseq.knownsymbols, knownsymbols, t)
 else
- subpass2:T(empty:seq.symdef, empty:set.symdef, asset.renumberconstants.toseq.knownsymbols, 0, t)
- ∪ constantsymbols
+ let k = 
+  subpass2:T(option
+  , librarymap
+  , empty:seq.symdef
+  , empty:set.symdef
+  , asset.renumberconstants.toseq.knownsymbols
+  , 0
+  , t
+  )
+  ∪ constantsymbols
+ k
 
-function subpass2:T(bigin:seq.symdef, corein:set.symdef, toprocess:set.symdef, count:int, typedict:typedict)set.symdef
+function subpass2:T(option:seq.word
+, librarymap:seq.word
+, bigin:seq.symdef
+, corein:set.symdef
+, toprocess:set.symdef
+, count:int
+, typedict:typedict
+)set.symdef
 {OPTION PROFILE}
 {assert count < 4 report"SIZE"+%.length.toseq.toprocess+%.length.bigin+%.length.toseq.corein+print.count}
-for big = bigin, small = empty:set.symdef, core = corein, pele0 ∈ toseq.toprocess do
- let pele = 
-  {if count > 0 /or isempty.code.pele0 then pele0 else for acc=empty:seq.symbol, last=first. code.pele0, c /in code.pele0 
-<< 1 do next(acc+if last=PreFref then Fref.c else last, c)/for(symdef(sym.pele0, acc+c, paragraphno.pele0))}
-  pele0
+for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toprocess do
  let s = sym.pele
  let fullcode = code.pele
  let options = getoption.fullcode
@@ -72,32 +88,42 @@ for big = bigin, small = empty:set.symdef, core = corein, pele0 ∈ toseq.toproc
  if isempty.code ∨ "VERYSIMPLE"_1 ∈ options ∨ "INLINE"_1 ∈ options then
   next(big, small, pele ∪ core)
  else if"COMPILETIME"_1 ∈ options then
-  let code4 = firstopt:T(core, s, fullcode, options, true, typedict)
+  let code4 = firstopt:T(librarymap, core, s, fullcode, options, true, typedict)
   next(big, small, symdef(s, code4, paragraphno.pele) ∪ core)
  else if length.code < 30 then
-  let t = firstopt:T(core, s, fullcode, options, true, typedict)
+  let t = firstopt:T(librarymap, core, s, fullcode, options, true, typedict)
   if"INLINE"_1 ∈ getoption.t then next(big, small, symdef(s, t, paragraphno.pele) ∪ core)
   else next(big, symdef(s, t, paragraphno.pele) ∪ small, core)
  else next(big + pele, small, core)
 /for(if length.toseq.corein = length.toseq.core then
- additionalpass:T(toseq.core + toseq.small + big, core, typedict)
-else subpass2:T(big, core, small, count + 1, typedict)/if)
+ additionalpass:T(librarymap, toseq.core + toseq.small + big, core, typedict)
+else subpass2:T(option, librarymap, big, core, small, count + 1, typedict)/if)
 
-Function additionalpass:T(p:seq.symdef, start:set.symdef, typedict:typedict)set.symdef
+Function additionalpass:T(librarymap:seq.word, p:seq.symdef, start:set.symdef, typedict:typedict)set.symdef
 {OPTION PROFILE}
 for acc = start, prgele ∈ p do
  let code3 = code.prgele
  let sym3 = sym.prgele
  if isempty.code3 then prgele ∪ acc
  else
-  symdef(sym3, firstopt:T(acc, sym3, code3, getoption.code3, false, typedict), paragraphno.prgele)
+  symdef(sym3
+  , firstopt:T(librarymap, acc, sym3, code3, getoption.code3, false, typedict)
+  , paragraphno.prgele
+  )
   ∪ acc
 /for(acc)
 
-Function firstopt:T(p:set.symdef, s:symbol, code:seq.symbol, options:seq.word, first:boolean, typedict:typedict)seq.symbol
+Function firstopt:T(librarymap:seq.word
+, p:set.symdef
+, s:symbol
+, code:seq.symbol
+, options:seq.word
+, first:boolean
+, typedict:typedict
+)seq.symbol
 let pdict = 
  for pmap = empty:set.localmap2, parano ∈ arithseq(nopara.s, 1, 1)do pmap + localmap2(parano, [Local.parano])/for(pmap)
-let a = xxx:T(p, removeoptions.code, s, pdict, typedict)
+let a = xxx:T(librarymap, p, removeoptions.code, s, pdict, typedict)
 let t = 
  if first then a
  else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
@@ -118,13 +144,26 @@ let newoptions =
  else toseq(asset.options \ asset."VERYSIMPLE" ∪ asset.newoptions1)
 if newoptions = ""then code.t else code.t + Words.newoptions + Optionsym
 
-function xxx:T(p:set.symdef, code:seq.symbol, s:symbol, pdict:set.localmap2, typedict:typedict)expandresult
-let a = scancode:T(p, code, nopara.s + 1, pdict, s, typedict)
+function xxx:T(librarymap:seq.word
+, p:set.symdef
+, code:seq.symbol
+, s:symbol
+, pdict:set.localmap2
+, typedict:typedict
+)expandresult
+let a = scancode:T(librarymap, p, code, nopara.s + 1, pdict, s, typedict)
 let new = if Hasmerge ∈ flags.a then optB(code.a, Lit.1, reorgwhen)else code.a
 if length.code = length.new ∧ length.code > 20 ∨ new = code then expandresult(nextvar.a, new, flags.a)
-else xxx:T(p, new, s, pdict, typedict)
+else xxx:T(librarymap, p, new, s, pdict, typedict)
 
-Function scancode:T(p:set.symdef, org:seq.symbol, nextvarX:int, mapX:set.localmap2, self:symbol, typedict:typedict)expandresult
+Function scancode:T(librarymap:seq.word
+, p:set.symdef
+, org:seq.symbol
+, nextvarX:int
+, mapX:set.localmap2
+, self:symbol
+, typedict:typedict
+)expandresult
 for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, sym ∈ org do
  let len = length.result
  if isconst.sym then next(flags, result + sym, nextvar, map)
@@ -195,6 +234,12 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
  else if wordname.sym ∈ "indexseq45" ∧ isInternal.sym then
   next(flags ∨ Hasfor, result + sym, nextvar, map)
  else if sym = self then next(flags ∨ Callself, result + sym, nextvar, map)
+ else if isInternal.sym ∧ name.sym ∈ "getseqlength" ∧ isconst.last.result then
+  if iswords.last.result then next(flags, result >> 1 + Lit.length.worddata.last.result, nextvar, map)
+  else
+   let x = last.fullconstantcode.last.result
+   if isSequence.x then next(flags, result >> 1 + Lit.nopara.x, nextvar, map)
+   else next(flags, result + sym, nextvar, map)
  else
   let nopara = nopara.sym
   let dd = getCode(p, sym)
@@ -203,7 +248,7 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    if first."COMPILETIME" ∉ options ∧ (name.sym ∉ "_" ∨ nopara ≠ 2)then empty:seq.symbol
    else
     let args = subseq(result, len - nopara + 1, len)
-    interpretCompileTime:T(subseq(result, len - nopara + 1, len), sym, typedict)
+    interpretCompileTime:T(librarymap, subseq(result, len - nopara + 1, len), sym, typedict)
   if not.isempty.compiletime then
    let newconst = if length.compiletime > 1 then Constant2.compiletime else first.compiletime
    next(flags, result >> nopara + newconst, nextvar, map)
@@ -222,12 +267,19 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    else
     let t = backparse2(result, len, nopara, empty:seq.int) + [len + 1]
     {assert length.t=nopara+1 report"INLINE PARA PROBLEM"}
-    let new = expandinline:T(result, t, nextvar, code, p, self, typedict)
+    let new = expandinline:T(librarymap, result, t, nextvar, code, p, self, typedict)
     next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
 /for(expandresult(nextvar, result, flags))
 
-function expandinline:T(result:seq.symbol, t:seq.int, nextvarin:int, code:seq.symbol, p:set.symdef
-, self:symbol, typedict:typedict)expandresult
+function expandinline:T(librarymap:seq.word
+, result:seq.symbol
+, t:seq.int
+, nextvarin:int
+, code:seq.symbol
+, p:set.symdef
+, self:symbol
+, typedict:typedict
+)expandresult
 for pmap = empty:set.localmap2
 , paracode = empty:seq.symbol
 , nextvar = nextvarin
@@ -241,5 +293,5 @@ do
  , parano + 1
  , idx
  )
-/for(let r = scancode:T(p, code, nextvar, pmap, self, typedict)
+/for(let r = scancode:T(librarymap, p, code, nextvar, pmap, self, typedict)
 expandresult(nextvar.r, paracode + code.r, flags.r)) 

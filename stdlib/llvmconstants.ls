@@ -17,8 +17,7 @@ enumerate("align", "unspecified ? ? ? align8 align16 align32 align64")
 )
 + enumerate("moduleop", "? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC")
 + enumerate("constop"
-, "? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA 
-"
+, "? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"
 )
 + enumerate("castop"
 , "trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast"
@@ -234,8 +233,7 @@ Function decode(code:constop)seq.word
 let i = toint.code
 if between(i + 1, 1, 23)then
  let r = 
-  ["? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA 
-"
+  ["? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA"
   _(i + 1)
   ]
  if r ≠ "?"then r else"constop" + toword.i

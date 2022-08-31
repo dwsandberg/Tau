@@ -1,27 +1,40 @@
+
+-comment -> - <words> is comment
+
+-<command>   -> : <alias> <exe> is shorthand for ": <alias>  <exe>  <alias>"
+ 
+-<command>   -> : <alias> <exe> <cmd> becomes "[exe].lib <cmd>" in shell script
+
+-<build> -> <command> <target file > {<file> | <modifier> }
+
+- <modifier> -> .<word> sets file extension for previous file and following files 
+
+- +<word>  ->  sets file directory for following files
+
 : doclibrary tools
 : formatdoc tools
 : front tools
 : LR1 tools
 : lextable tools
 : testall tests
-: updatestate stdlib
 : wasm webassembly
 : libsrc stdlib
-: orglibsrc orgstdlib libsrc
-: stdlib stdlib
-: makelib stdlib
-: orgmakelib orgstdlib makelib
+: libsrc0 orgstdlib libsrc
+: makelib stdlib makelib
+: makelib1 stdlib1 makelib
+: makelib2 stdlib2 makelib
+: makelib0 orgstdlib makelib
 
-orglibsrc core.libsrc +core bits.ls encoding  format  graph process real seq set 
+libsrc0 core.libsrc +core bits.ls encoding  format  graph process real seq set 
 sparseseq stack standard UTF8 words xxhash otherseq
-+stdlib textio 
++stdlib textio file bitstream
  
-orglibsrc compilerfront.libsrc +stdlib pretty.ls symbol2 symbolconstant compilerfrontT.ls compilerfront  mergeblocks pass2  localmap2 mytype parse parsersupport passparse passsymbol postbind symbol symboldict typedict
+libsrc0 compilerfront.libsrc +stdlib pretty.ls symbol2 symbolconstant compilerfrontT.ls compilerfront  mergeblocks pass2  localmap2 mytype parse parsersupport passparse passsymbol postbind symbol symboldict typedict
  
 
-orgmakelib stdlib.lib  core.libsrc compilerfront
-  +stdlib updatestate.ls    debuginfo COMPILETIME  bitstream 
-  codegennew codetemplates file   inputoutput hashset internalbc  llvm
+makelib0 stdlib1.lib  core.libsrc compilerfront
+  +stdlib updatestate.ls    debuginfo  
+  codegennew codetemplates     inputoutput hashset internalbc  llvm
    llvmconstants main2  persistant  symbol2 tausupport compileTimeT
    timestamp codetemplates2  ptr taublockseq  bitcast
    object01 objectio LEBencoding 
@@ -30,6 +43,31 @@ format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants
 main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack 
 standard svg svggraph symbol symbol2 taublockseq tausupport testall textio timestamp words 
 xxhash compilerfront bitcast objectio object01 LEBencoding
+ 
+makelib2 stdlib.lib  core.libsrc compilerfront
+  +stdlib updatestate.ls    debuginfo  
+  codegennew codetemplates     inputoutput hashset internalbc  llvm
+   llvmconstants main2  persistant  symbol2 tausupport compileTimeT
+   timestamp codetemplates2  ptr taublockseq  bitcast
+   object01 objectio LEBencoding 
+exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file  
+format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants 
+main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack 
+standard svg svggraph symbol symbol2 taublockseq tausupport testall textio timestamp words 
+xxhash compilerfront bitcast objectio object01 LEBencoding
+
+makelib1 stdlib2.lib  core.libsrc compilerfront
+  +stdlib updatestate.ls    debuginfo  
+  codegennew codetemplates     inputoutput hashset internalbc  llvm
+   llvmconstants main2  persistant  symbol2 tausupport compileTimeT
+   timestamp codetemplates2  ptr taublockseq  bitcast
+   object01 objectio LEBencoding 
+exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file  
+format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants 
+main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack 
+standard svg svggraph symbol symbol2 taublockseq tausupport testall textio timestamp words 
+xxhash compilerfront bitcast objectio object01 LEBencoding
+  
  
 makelib tools.lib  common.lib   +tools tools.ls baseTypeCheck doc genLR1 
 prettycompilerfront reconstructUses profile taulextable frontcmd wordgraph
@@ -53,10 +91,10 @@ makelib webassembly.lib  +webassembly webassembly.ls  funcidx knownWfunc printfu
 uses=stdlib
 exports=wasm wasm1 wasm2 wasmcompile webassembly
 
-libsrc webcore.libsrc core.libsrc  webassembly.lib
+libsrc webcore.libsrc core.libsrc   
   +webcore inputoutput.ls webIO 
   +common barycenter  layergraph  makeDAG  bandeskopf 
-  +stdlib tausupport    bitstream    bitcast  taublockseq  ptr file 
+  +stdlib tausupport         bitcast  taublockseq  ptr  
  
 
 doclibrary stdlibdoc.html  stdlib.libsrc
@@ -74,8 +112,6 @@ lextable taulex.html  +tools install.txt
 
 testall testall.html +tests opttests.ls +built stdlib.libinfo
  
-updatestate installtau.sh +bin all.decs
-
 front baseTypeCheck.html  stdlib.libsrc
 out=baseTypeCheck
 

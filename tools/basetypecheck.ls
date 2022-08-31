@@ -152,12 +152,9 @@ let typeindex = typeref."index index."
 , PlusOp
 , NotOp
 , Br2(1, 2)
-, symbol(internalmod, "tocstr", seqof.typebits, typecstr)
 , symbol(internalmod, "callstack", typeint, seqof.typeint)
-, {symbol(internalmod, "dlsymbol", typecstr, typeint), }
-symbol(internalmod, "outofbounds", seqof.typeword)
+, symbol(internalmod, "outofbounds", seqof.typeword)
 , symbol(internalmod, "addresstosymbol2", typeint, seqof.typeref."char standard.")
-, symbol(internalmod, "getfile", typecstr, typeptr)
 , symbol(internalmod, "getbitfile", typecstr, typeptr)
 , symbol(internalmod, "getbytefile", typecstr, typeptr)
 , symbol(internalmod, "createfile", typeint, seqof.typebits, typecstr, typeint)

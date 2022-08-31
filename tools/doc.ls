@@ -50,8 +50,8 @@ do
   next(empty:seq.seq.word, empty:seq.seq.word, newresult, modules + s_2)
  else
   let temp = if escape then escapeformat.s else s
-  if length.uses = 0 then next(uses, libbody, result + temp, modules)
-  else next(uses, libbody + temp, result, modules)
+  if length.uses = 0 then next(uses, libbody, result + (" /p" + temp), modules)
+  else next(uses, libbody + (" /p" + temp), result, modules)
 /for(if isempty.modhead then result
 else
  let libname = extractValue(first.text, "Library")

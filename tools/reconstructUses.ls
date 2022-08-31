@@ -63,7 +63,7 @@ for acc = empty:seq.symbol, t ∈ toseq.usestypes do
 
 Function builtintoseq(sym:symbol)symbol
 if isBuiltin.sym ∧ name.sym = first."length"then
- symbol(moduleref("seq", parameter.first.paratypes.sym)
+ symbol(moduleref("* seq", parameter.first.paratypes.sym)
  , "length"
  , paratypes.sym
  , typeint
@@ -118,7 +118,7 @@ let hh =
 let xxx2 = if length.hh = 1 ∧ length.hh_1 = 1 then xxx + hh_1_1 else xxx
 {assert name.modname.md /nin"common"report"YYYY"+%.modname.md+%n.toseq.xxx}
 for acc3 = xxx2, ref2 ∈ toseq.xxx2 do
- if name.ref2 ∈ "otherseq"then acc3 - moduleref("seq", para.ref2)else acc3
+ if name.ref2 ∈ "otherseq"then acc3 - moduleref("* seq", para.ref2)else acc3
 /for(acc3))
 
 Function requires(uses5:set.symbol, templates:set.symdef, dict:set.symbol, addtemplate:boolean)set.symbol
@@ -142,10 +142,7 @@ for finaluses = newuses, f ∈ ff do
  if length.f = 1 then finaluses + first.f
  else
   let x = 
-   for acc = empty:seq.modref, x ∈ f
-   while isempty.acc
-   do if"use" + %.x ∈ olduses then[x]else acc
-   /for(acc)
+   for acc = empty:seq.modref, x ∈ f while isempty.acc do if %.x ∈ olduses then[x]else acc /for(acc)
   assert not.isempty.x report"JKLS" + %.modname.md + %n.ff + " /p" + %.olduses
   finaluses + first.x
 /for(finaluses)

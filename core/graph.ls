@@ -40,10 +40,9 @@ Export arcs(graph.T)set.arc.T
 Export nodes(graph.T)set.T
 
 Function subgraph(g:graph.T, nodes:set.T)graph.T
-for acc = newgraph.empty:seq.arc.T, @e ∈ toseq.nodes do acc + subgraph1(g, nodes, @e)/for(acc)
-
-function subgraph1(g:graph.T, nodes:set.T, n:T)seq.arc.T
-for acc = empty:seq.arc.T, @e ∈ toseq(successors(g, n) ∩ nodes)do acc + arc(n, @e)/for(acc)
+for acc = graph(empty:set.arc.T, empty:set.arc.T, nodes), @e ∈ toseq.arcs.g do
+ if head.@e ∉ nodes then acc else if tail.@e ∉ nodes then acc else acc + @e
+/for(acc)
 
 Export arc(a:T, b:T)arc.T
 

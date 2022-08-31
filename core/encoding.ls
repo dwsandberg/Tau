@@ -55,8 +55,8 @@ unbound hash(T)int
 
 unbound=(T, T)boolean
 
-/Function empty:encodingstate.T encodingstate.T let x=constantseq(4, empty:seq.encodingpair.T)encodingstate 
-(0, 0, x, x, empty:seq.encodingpair.T, 0)
+/Function empty:encodingstate.T encodingstate.T let x=constantseq(4, empty:seq.encodingpair.T)encodingstate(0, 0, x, x 
+, empty:seq.encodingpair.T, 0)
 
 Function lastadded(h:encodingstate.T)encoding.T code.last.all.h
 
@@ -100,13 +100,11 @@ else
 
 Function addencodingpairs(l:seq.encodingpair.T)int
 let inst = getinstance:encodingstate.T
-for acc = 0, @e ∈ l do
- acc + primitiveadd(encodingno.inst, encodingpair(to:encoding.T(0), data.@e, hash.data.@e))
-/for(acc)
+for acc = 0, @e ∈ l do acc + primitive2add(encodingno.inst, data.@e)/for(acc)
 
 Function addencodings(l:seq.T)int
 let inst = getinstance:encodingstate.T
-for acc = 0, @e ∈ l do acc + primitiveadd(encodingno.inst, encodingpair(to:encoding.T(0), @e, hash.@e))/for(acc)
+for acc = 0, @e ∈ l do acc + primitive2add(encodingno.inst, @e)/for(acc)
 
 Function lookupencodingpair(t:encoding.T)seq.encodingpair.T
 let inst = getinstance:encodingstate.T
@@ -123,6 +121,8 @@ builtin getinstance:encodingstate.T encodingstate.T
 
 builtin primitiveadd(encodingnumber:int, s:encodingpair.T)int
 
+builtin primitive2add(encodingnumber:int, s:T)int
+
 Function encoding:seq.encodingpair.T seq.encodingpair.T all.getinstance:encodingstate.T
 
 type e3 is sequence, data:seq.encodingpair.T
@@ -137,7 +137,9 @@ Function encode(t:T)encoding.T
 let instance = getinstance:encodingstate.T
 let r = lookuprep(t, instance)
 if isempty.r then
- to:encoding.T(primitiveadd(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t)))
+ to:encoding.T(if true then primitiveadd(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t))
+ else primitive2add(encodingno.instance, t)
+ )
 else code.r_1
 
 function decode(h:encodingstate.T, t:encoding.T)seq.encodingpair.T

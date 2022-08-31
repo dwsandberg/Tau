@@ -163,12 +163,7 @@ else
      next(if between(n2, n3, lastx)then l2 + n2 + n3 else l2 + n3, n3)
     /for(l2)
   /for(l)
- {nodes_node.first.cases}
- {assert true report"cases"+for l=EOL, c ∈ cases do l+print.nodeno.c /for(l)+print.newcode+EOL+{for l=EOL, c=newnodes 
-do l+print.newcode_abs.c end(l)+}EOL+for l="dead"+EOL, c ∈ newunreached do l+print.c /for(l)+EOL+for l="deadin"
-+EOL, c ∈ dead do l+print.c /for(l)+EOL+for l="olddead"+EOL, c ∈ cases do l+print.nodeno.c /for(l)+EOL+print.nonewnodes 
-+EOL+print.removedead(newcode, newnodes, newunreached)}
- removedead(newcode, newnodes, newunreached)/if)
+ {nodes_node.first.cases}removedead(newcode, newnodes, newunreached)/if)
 
 function unreached(code:seq.symbol, nodes:seq.int, nextvar:int, reorgwhen:int)seq.symbol
 for unreached = empty:seq.int
@@ -197,10 +192,7 @@ do
    else if c = 1 then multpred + t
    else if c = 2 then multpred + f else multpred + t + f
   next(unreached, newmultpred, newcases, newtargets, count + 1)
-/for({assert true report"casenodes"+for l="", c ∈ cases do l+print.c /for(l)+"unreached"+for l="", c ∈ unreached do l+print 
-.c /for(l)+"targets"+for l="", c ∈ toseq.targets do l+print.c /for(l)+"multpred"+for l="", c ∈ multpred do l+print.
-c /for(l)+EOL+print.code}
-if length.nodes - 3 = length.unreached ∧ isstart.code_(-first.nodes)then
+/for(if length.nodes - 3 = length.unreached ∧ isstart.code_(-first.nodes)then
  {just two active nodes which must be a branch follow by an exit.so remove block}
  let blkstart = -first.nodes
  let secondnode = code_(nodes_2)

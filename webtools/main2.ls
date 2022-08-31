@@ -35,7 +35,7 @@ Export type:wasm
 Function libname(info:midpoint)word extractValue(first.src.info, "Library")_1
 
 
-Function stdlib(a:seq.file) seq.file 
+Function makebitcode(a:seq.file) seq.file 
 assert false report "not implemented"
 a
 

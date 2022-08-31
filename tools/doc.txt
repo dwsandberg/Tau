@@ -21,8 +21,8 @@ like to try out the examples below for yourself.
 
 A program is represented as a sequence of characters. The character encoding is assume to be unicode represented in UTF8 format. The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.
 
-Paragraphs that do NOT start with /keyword type, /keyword use, /keyword Library,
- /keyword module, /keyword Function /keyword function, /keyword unbound,  or /keyword Export are always treated as comments.
+Paragraphs that do NOT start with /keyword type, /keyword use, /keyword Module,
+ /keyword module, /keyword Function, /keyword function, /keyword unbound,  or /keyword Export are always treated as comments.
 
 Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. 
 The characters ()+,-.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
@@ -152,7 +152,7 @@ User defined types can be either a record, a sequence, or a parameterized record
 
 The following paragraph starts a new module. A module is a collection of functions and types.
 
-module point2d
+Module point2d
 
 
 The follow paragraph that begins with /keyword use allows reference to functions defined in another module. In this case, the standard library functions. 
@@ -176,7 +176,7 @@ Access to the fields outside the module is granted with:
 
  Export x( int )point2d  
 
- Export y( point2d)int  
+ Export y( int) point2d   
 
 
 The following two paragraphs defines an addition and subtraction function on the type point2d. 
@@ -308,7 +308,7 @@ Now a set of entries will be a dictionary.   From the mathematical view of the s
  myentry(3,"X") , myentry (3,"A B C") or and infinite number of other possibilities.  But only one representation will be used in any listset.myentry.
 
 Looking up an entry in the dictionary is just looking up the representation used in the set.  The last
-function in the /em listset module does just that.  The A ∪ B function in the listset mmodule is carefully crafted
+function in the /em listset module does just that.  The A ∪ B function in the listset module is carefully crafted
 so that if and element is in both A and B  the representation of used in A is used in the result.  Thus 
  listset.[myentry(3,"X")] ∪ B will redefine the entry in B if it exists.    The expression  B + myentry(3,"X") or  B /cup [myentry(3,"X")] will not redefine the entry in B.  
  The general rule is that for a binary operation on sets  the representation of on the left is used in the result -- not the one on the right.

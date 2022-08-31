@@ -48,23 +48,32 @@ use set.word
 
 Function libname(info:midpoint)word extractValue(first.src.info, "Library")_1
 
-function makeentry(input:seq.byte)seq.byte
+function makeentry(libraryuses:seq.word, entrypointname:word, input:seq.byte)seq.byte
 let entryheader = 
- "use standard /p use file /p use inputoutput /p use seq.file
-/p use process.UTF8
-/p
-Function entrypoint(args:UTF8)UTF8
-/br let p=process.entrypoint2(args)
-/br if aborted.p then
-/br   finishentry.[file($(dq."error.html"),message.p)] 
-/br else  result.p 
-/p Function entrypoint2(args0:UTF8)UTF8
-/br let args = towords.args0 
-/br finishentry.entrypoint1(args,getfiles.args)
-/p Function entrypoint1(args:seq.word,input:seq.file) seq.file
-/br let cmd=first.args
-/br"
-for acc = "", modname = "?"_1, mods = "", p ∈ breakparagraph.input do
+ "use standard 
+ /p use file 
+ /p use inputoutput 
+ /p use seq.file 
+ /p use process.UTF8 
+ /p Function entrypoint(args:UTF8)UTF8 
+ /br let p=process.entrypoint2(args)
+ /br if aborted.p then 
+ /br finishentry.[file($(dq."error.html"), message.p)]
+ /br else result.p 
+ /p function entrypoint2(args0:UTF8)UTF8 
+ /br let args=towords.args0 
+ /br finishentry.$([entrypointname])(args, getfiles.args)
+ /p Function $([entrypointname])(args:seq.word, input:seq.file)seq.file 
+ /br let cmd=first.args 
+ /br"
+let finalclause = 
+ if isempty.libraryuses then"empty:seq.file"
+ else"$([merge(subseq(libraryuses, 1, 1) + "$EP")])(args, input)"
+for acc = ""
+, modname = "?"_1
+, mods = if finalclause = "empty:seq.file"then""else[first.finalclause]
+, p ∈ breakparagraph.input
+do
  if subseq(p, 1, 1) = "Function" ∧ subseq(p, 3, 8) = "(input:seq.file"then
   let idx = findindex(")"_1, p)
   next(for para = ""
@@ -76,8 +85,7 @@ for acc = "", modname = "?"_1, mods = "", p ∈ breakparagraph.input do
    if w ∈ ", )"then
     next(para
     + if type = "seq.word"then", extractValue(args, $(dq.[name]))"
-    else if type = "boolean"then
-     ", first.$(dq.[name])∈ extractValue(args, $(dq."flags"))"
+    else if type = "boolean"then", first.$(dq.[name])∈ extractValue(args, $(dq."flags"))"
     else", ?"
     , name
     , w
@@ -94,7 +102,7 @@ for acc = "", modname = "?"_1, mods = "", p ∈ breakparagraph.input do
 /for(let uses = 
  for uses = "", u ∈ toseq.asset.mods do uses + "use" + u + " /p"/for(uses)
 [tobyte.10, tobyte.10]
-+ toseqbyte.textformat(uses + entryheader + acc << 2 + " /br else empty:seq.file"))
++ toseqbyte.textformat(uses + entryheader + acc << 2 + " /br else" + finalclause))
 
 Function libsrc(input:seq.file, uses:seq.word, exports:seq.word, o:seq.word)seq.file
 let Library = subseq(o, 1, 1)
@@ -110,7 +118,7 @@ for acc = empty:seq.byte, names = "parts=", f ∈ input do
   + tobyte.10
   + tobyte.10
   + toseqbyte.toUTF8("Module" + entrypointname)
-  + makeentry.acc
+  + makeentry(uses, entrypointname, acc)
 [file(filename(Library + ".libsrc"), firstpart + acc)])
 
 function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint)seq.file
@@ -125,7 +133,7 @@ let libname = extractValue(first.allsrc, "Library")
 , file(filename(libname + ".libinfo"), outbytes:midpoint([m2]))
 ]
 
-Function stdlib(input:seq.file)seq.file
+Function makebitcode(input:seq.file)seq.file
 let info = breakparagraph.data.first.input
 let libname = extractValue(first.info, "Library")
 let uses = extractValue(first.info, "uses")

@@ -114,13 +114,12 @@ function t033 boolean 6 = toint.if true then"3"_1 else"5"_1 /if + 3
 function t034 boolean 3464 = 3456 + if true then 3 else 1 /if + 5
 
 function print(a:seq.int)seq.word
-"["
-+ for acc = "", e ∈ a do seperator(acc, ", ") + toword.e /for(acc)
+"["+%(",",a) >> 1
 + "]"
 
-function seperator(acc:seq.word, sep:seq.word)seq.word if isempty.acc then acc else acc + sep
 
-function t035 boolean"[2, 3, 4, 5]" = print.[2, 3, 4, 5]
+function t035 boolean
+"[2, 3, 4, 5]" = print.[2, 3, 4, 5]
 
 function t036 boolean 10 = for acc = 0, e ∈[1, 2, 3, 4]do acc + e /for(acc)
 
@@ -159,8 +158,6 @@ Function t045 boolean
 function testset set.int asset.[2, 5, 6, 9, 12, 15, 35, 36]
 
 function ?2(a:int, b:int)ordering a / 10 ? b / 10
-
-function print(a:set.int)seq.word for acc = "", e ∈ toseq.a do acc + toword.e /for(acc)
 
 function t046 boolean toseq.findelement2(testset, 36) = [35, 36] ∧ toseq.findelement2(testset, 15) = [12, 15]
 
@@ -217,8 +214,9 @@ let list =
  , "this is a test"_(-1) = "test"_1
  , b.[Tpair(3, "three"), Tpair(4, "four"), Tpair(5, "five")]_(-2)
  = "four"
+ , a.Tpair(3, "three")=3
  , [1, 2, 4]_(-3) = 1
- , {50}"this is a test" << 2 = "a test"
+ , {51}"this is a test" << 2 = "a test"
  , "this is a test" >> 3 = "this"
  ]
 check(list, "test11") 

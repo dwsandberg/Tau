@@ -60,9 +60,7 @@ for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial))
 , stk = empty:stack.int
 , this ∈ input + "#"
 while stateno.top.lrpart ≠ finalstate:T
-do{let debug=debug0+" /br $(["codeout instring incomment codein"_state])this=$([this])nestlevel=$(%.nestlevel 
-)std=$(%.toseq.stk)"assert input_2 /nin"xxx45"/or idx < 21 report"XXX"+input+"debug"+debug}
-assert not(this ∈ "}" ∧ state = 1)report errormessage:T("stray}", input, idx)
+do assert not(this ∈ "}" ∧ state = 1)report errormessage:T("stray}", input, idx)
 if state = codeout ∧ this ∉ (dq + "{")
 ∨ state = codein ∧ this ∉ dq ∧ not(this ∈ ")" ∧ nestlevel - 1 = 0)then
  let lexindex = binarysearch(lextable, token(this, 0, attribute:T("")))

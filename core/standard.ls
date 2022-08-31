@@ -240,7 +240,7 @@ Export+(seq.seq.word, seq.word)seq.seq.word
 
 Export+(seq.seq.word, seq.seq.word)seq.seq.word
 
-Export+(a:seq.word, b:seq.word)seq.word
+Export+(a:seq.word, b:seq.word)seq.word{OPTION COMPILETIME}
 
 Export nbspchar char
 

@@ -52,16 +52,16 @@ Function recordsym(alltypes:typedict, sym:symbol)symbol
 for acc = empty:seq.mytype, typ ∈ paratypes.sym do
  let kind = basetype(typ, alltypes)
  acc + if kind = typeboolean ∨ kind = typereal then kind else typeint
-/for(symbol(moduleref."$$record", "$$record", acc, typeint))
+/for(symbol(moduleref."* $$record", "$$record", acc, typeint))
 
 Function initwordsbody seq.byte
 assert encodingbase + noencodings * 4 < globalspace report"globalspace not big enough"
-let charseq = seqof.typeref."char standard stdlib"
+let charseq = seqof.typeref."char standard *"
 let symboladdword = 
- symbol(moduleref("stdlib encoding", charseq)
+ symbol(moduleref("* encoding", charseq)
  , "addencoding"
- , [addabstract(typeref."encodingstate encoding stdlib", charseq), charseq]
- , addabstract(typeref."encodingstate encoding stdlib", charseq)
+ , [addabstract(typeref."encodingstate encoding *", charseq), charseq]
+ , addabstract(typeref."encodingstate encoding *", charseq)
  )
 for l = Wlocal.1, loc ∈ initialwordlocations do l + const64.loc + Wcall.symboladdword /for(funcbody([i32, i64]
 , switchcontext.newcontext2.0 + const64.1
@@ -178,7 +178,7 @@ let discard =
  + Wif(void, const64.getoffset.wordsconst."other error" + Wdefine.2)
  + switchcontext.load(Gcurrentprocess, parentprocess)
  + Wlocal.2
- + Wcall.symbol4(moduleref("webassembly seq", typeword)
+ + Wcall.symbol4(moduleref("* seq", typeword)
  , "type"_1
  , seqof.typeword
  , [seqof.typeword]
@@ -290,7 +290,7 @@ Gfreeblocks + const32.0 + i32eq
 , setGlobal(nextfree, Gfreeblocks) + setGlobal(freeblocks, load(Gfreeblocks, 0)) + Gnextfree
 + i64extendi32u
 + const64.8192
-+ Wcall.symbol(moduleref."webassembly inputoutput", "set2zero", typeptr, typeint, typeptr)
++ Wcall.symbol(moduleref."* inputoutput", "set2zero", typeptr, typeint, typeptr)
 + drop
 )
 + if link then
@@ -317,8 +317,8 @@ addf(alltypes
 + setGlobal(nextfree, Wlocal.2)
 , setGlobal(nextfree, Wlocal.2)
 )
-+ {Wlocal.1+i64extendi32u+Wlocal.0+Wcall.symbol(moduleref."webassembly inputoutput", "set2zero", typeptr, typeint 
-, typeptr)+drop+}
++ {Wlocal.1+i64extendi32u+Wlocal.0+Wcall.symbol(moduleref."* inputoutput", "set2zero", typeptr, typeint, typeptr 
+)+drop+}
 Wlocal.1
 + return
 )

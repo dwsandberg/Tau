@@ -269,8 +269,8 @@ Function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int)internalbc
 for acc = emptyinternalbc, @e ∈ arithseq(nopara, 1, 1)do acc + phiinst(slot, typ, tailphi, nopara, @e)/for(acc)
 
 function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int, p:int)internalbc
-{let t=@(addpair(tailphi, slot+p, p), identity, emptyinternalbc, arithseq(length.tailphi /(nopara+1), -nopara 
--1, length.tailphi-nopara))}
+{let t=@(addpair(tailphi, slot+p, p), identity, emptyinternalbc, arithseq(length.tailphi /(nopara+1), -nopara-
+1, length.tailphi-nopara))}
 let t = 
  for acc = emptyinternalbc
  , @e ∈ arithseq(length.tailphi / (nopara + 1), -nopara - 1, length.tailphi - nopara)

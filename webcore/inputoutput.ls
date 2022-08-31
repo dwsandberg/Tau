@@ -68,16 +68,12 @@ use bitcast.process.seq.byte
 
 use bitcast.process.seq.int
 
-type cstr is dummy:seq.bits
-
-Export type:cstr
-
 Function getfiles(args:seq.word)seq.file
 {OPTION INLINE}
 for acc = empty:seq.file, fn ∈ getfilenames(".", args << 1)do
  acc
- + if ext.fn ∈ "bc"then file(fn, empty:seq.seq.byte, [getfile:bit([fullname.fn])])
- else file(fn, [getfile:byte([fullname.fn])], empty:seq.seq.bit)
+ + if ext.fn ∈ "bc"then file(fn,  getfile:bit([fullname.fn]))
+ else file(fn, getfile:byte([fullname.fn]) )
 /for(acc)
 
 Function finishentry(out:seq.file)UTF8

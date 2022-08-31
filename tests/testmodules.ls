@@ -44,8 +44,13 @@ use set.arc.word
 
 use seq.tree.word
 
+use otherseq.tree.int
+
 Function testmodules seq.word
-let y = [t501, t502, t503, t504, t505, t506, t507, t508, test20, t044]
+assert true report randomphrase
+ let y = [t501, t502, t503, t504, t505, t506, testrandomphrase, t508, test20, t044
+ ,"200:1:4:5.4:56(200, 1, 5.4):"=%(":",postorder.tr1)
+]
 check(y, "testmodules") + checkbits
 
 function print(a:seq.int)seq.word
@@ -68,21 +73,13 @@ function ?(a:tree.int, b:tree.int)ordering subx(a, b, 1, label.a ? label.b ∧ n
 function subx(a:tree.int, b:tree.int, i:int, o:ordering)ordering
 if o = EQ ∧ i ≤ nosons.a then subx(a, b, i + 1, a_i ? b_i)else o
 
-function print(t:tree.word)seq.word
-if nosons.t = 0 then[label.t]
-else
- [label.t]
- + if nosons.t = 1 then"." + print.t_1
- else
-  "("
-  + for acc = "", @e ∈ sons.t do acc + ", " + print.@e /for(acc >> 1)
-  + ")"
+function %(a:word) seq.word [a]
 
 function t502 boolean[GT, EQ, EQ] = [tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree.1]
 
-function t503 boolean"a" = print.tree."a"_1
+function t503 boolean"a" = %.tree."a"_1
 
-function t504 boolean"a.b" = print.tree("a"_1, [tree."b"_1])
+function t504 boolean"a.b" = %.tree("a"_1, [tree."b"_1])
 
 function n1 int 1
 
@@ -134,7 +131,7 @@ _____________
 
 Randomphrase
 
-Function t507 boolean"The umber ant ambles the opal nurse" = getphrase.20
+function testrandomphrase boolean"The umber ant ambles the opal nurse" = getphrase.20
 
 function t044 boolean
 let s = UTF8.[tobyte.40, tobyte.50] + encodeUTF8.char.335 + encodeUTF8.char.50 + encodeUTF8.char.336

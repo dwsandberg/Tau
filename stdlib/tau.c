@@ -324,9 +324,6 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
 void init_libs();
 
 
-//  cc stdlib/*.c  tmp/stdlib.bc tmp/common.bc tmp/tools.bc
-
-
 #endif
 
 

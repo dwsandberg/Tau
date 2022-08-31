@@ -54,8 +54,6 @@ Export+(i:int, b:int)int
 
 function =(a:testrecord, b:testrecord)boolean key.a = key.b
 
-Function print(a:testrecord)seq.word[toword.key.a] + body.a
-
 function hash(a:testrecord)int key.a
 
 Export type:testrecord
@@ -95,9 +93,6 @@ let discard =
  , @e ∈["A1", "B2", "C3", "D4", "E5"]
  do acc + add.@e /for(acc)
 encodingdata:testrecord
-
-Function nextpower(i:int, base:int, start:int)int
-if i > start then nextpower(i, base, start * base)else start
 
 type testdeep is fld1:seq.word, fld2:tree.seq.word, fld3:seq.char
 

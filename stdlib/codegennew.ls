@@ -71,10 +71,12 @@ codegen(m, dependentwords, profilearcs, addresses, libcode))
 
 function parcsize int 6
 
+use symbol
+
 Function codegen(m:midpoint
 , dependentwords:seq.seq.char
 , profilearcs:set.seq.symbol
-, addresssymbolrefdecode:seq.symbol
+, addresssymbolrefdecode0:seq.symbol
 , libcode2:seq.symdef
 )seq.bits
 {OPTION PROFILE}
@@ -82,12 +84,22 @@ let uses = extractValue(first.src.m, "uses")
 let thename = first.extractValue(first.src.m, "Library")
 let typedict = typedict.m
 let isbase = isempty.uses
-let prgX = prg.m
+let starmap = "*" + last([thename] + uses)
+let prgX = 
+ for acc = empty:set.symdef, sd ∈ toseq.prg.m do
+  for acc2 = empty:seq.symbol, sy ∈ code.sd do acc2 + clearrequiresbit.changelibrary(sy, starmap)/for(acc
+  + symdef(clearrequiresbit.changelibrary(sym.sd, starmap)
+  , acc2
+  , if isInternal.sym.sd then-internalidx.sym.sd else paragraphno.sd
+  ))
+ /for(acc)
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(dependentwords, typedict, prgX, thename)
+let stepone = stepone(dependentwords, typedict, prgX, thename, isbase)
 let defines = defines.stepone
+let addresssymbolrefdecode = 
+ for acc = empty:seq.symbol, sy ∈ addresssymbolrefdecode0 do acc + clearrequiresbit.changelibrary(sy, starmap)/for(acc)
 let symboladdress = symboladdress(addresssymbolrefdecode, typedict, prgX, thename, defines)
 let discard3 = modulerecord("spacecount", [toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
 let geninfo = geninfo(profilearcs, prgX, false, thename)
@@ -140,7 +152,18 @@ let bodytxts =
  , function.[i64, ptr.i8, ptr.i64, i64]
  , symboltableentry("initlib5", function.[i64, ptr.i8, ptr.i64, i64])
  , CGEPi8(libslot, 0)
- , [liblib, if isbase then addlibwords(prgX, typedict)else C64.0]
+ , [liblib
+ , if isbase then
+  let f1 = 
+   symbol(moduleref([thename] + "debuginfo")
+   , "addlibwords"
+   , typeref("debuginfo debuginfo" + thename)
+   , typeint
+   )
+  let functyp = ptr.tollvmtype(typedict, f1)
+  ptrtoint(functyp, symboltableentry([mangledname(prgX, f1, thename)], functyp))
+ else C64.0
+ ]
  )
  + RETURN
  ]
@@ -223,9 +246,9 @@ if action = "CALL"_1 then
   )
  else profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m, libname.geninfo))
 else
- {if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq.
-int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs), -(
-regno.l+1)), blocks.l)else}
+ {if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq.int 
+)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs), -(regno 
+.l+1)), blocks.l)else}
  if action = "ACTARG"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
  else if action = "LOCAL"_1 then

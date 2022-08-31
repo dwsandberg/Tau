@@ -50,6 +50,20 @@ for acc = "", t ∈ typerep.s do acc + "." + name.t /for(acc << 1)
 Function fullprint(s:mytype)seq.word
 for acc = "", t ∈ typerep.s do acc + name.t + modname.t + library.t /for(acc)
 
+Function changelibrary(s:mytype, map:seq.word)mytype
+for acc = empty:seq.typedef, t ∈ typerep.s do
+ let match = 1
+ let nomatch = 2
+ let done = 3
+ acc
+ + for state = 0, result = t, x ∈ map
+ while state ≠ done
+ do if state = nomatch then next(0, result)
+ else if state = match then next(done, typedef(name.t, modname.t, x))
+ else next(if x = library.t then match else nomatch, result)
+ /for(result)
+/for(mytype.acc)
+
 Function =(a:mytype, b:mytype)boolean typerep.a = typerep.b
 
 Function abstracttypename(m:mytype)word name.first.typerep.m
@@ -79,15 +93,13 @@ Function isabstract(a:mytype)boolean last.typerep.a = first.typerep.typeT
 Function replaceT(with:mytype, m:mytype)mytype
 if isabstract.m then mytype(typerep.m >> 1 + typerep.with)else m
 
-Function =(a:typedef, b:typedef)boolean name.a = name.b ∧ modname.a = modname.b
+Function =(a:typedef, b:typedef)boolean name.a = name.b ∧ modname.a = modname.b ∧ wild(library.a, library.b) = EQ
 
-∧ library.a=library.b
+function wild(a:word, b:word)ordering if a ∈ "*" ∨ b ∈ "*"then EQ else a ? b
 
 Function ?(a:mytype, b:mytype)ordering typerep.a ? typerep.b
 
-Function ?(a:typedef, b:typedef)ordering name.a ? name.b ∧ modname.a ? modname.b
-
-∧ library.a ? library.b
+Function ?(a:typedef, b:typedef)ordering name.a ? name.b ∧ modname.a ? modname.b ∧ wild(library.a, library.b)
 
 Function print(s:modref)seq.word
 if issimple.s then[name.s]else[name.s, "."_1] + print.para.s
@@ -98,9 +110,9 @@ else modref(library.m, name.m, mytype(typerep.para.m >> 1 + typerep.with))
 
 Function typeint mytype typeref."int internal internallib"
 
-Function typeptr mytype typeref."ptr tausupport"
+Function typeptr mytype typeref."ptr tausupport *"
 
-Function typeboolean mytype typeref."boolean standard"
+Function typeboolean mytype typeref."boolean standard *"
 
 Function typereal mytype typeref."real internal internallib"
 
@@ -109,10 +121,8 @@ Function typeT mytype typeref."T internal internallib"
 Function typeseqdec mytype typeref."sequence internal internallib"
 
 Function typeref(s:seq.word)mytype
-if length.s = 2 then mytype.[typedef(first.s, s_2, "stdlib"_1)]
-else
- assert length.s = 3 report"typereferror" + s
- mytype.[typedef(first.s, s_2, s_3)]
+assert length.s = 3 report"typereferror" + s
+mytype.[typedef(first.s, s_2, s_3)]
 
 Function internalmod modref moduleref."internallib internal"
 
@@ -128,10 +138,8 @@ function hash2(b:bits, w:word)bits hash(b, hash.w)
 Function addabstract(a:mytype, t:mytype)mytype mytype([first.typerep.a] + typerep.t)
 
 Function moduleref(modname:seq.word, para:mytype)modref
-if length.modname = 1 then modref("stdlib"_1, modname_1, para)
-else
- assert length.modname = 2 report"modname must be of length 2" + modname
- modref(modname_1, modname_2, para)
+assert length.modname = 2 report"modname must be of length 2" + modname + stacktrace
+modref(modname_1, modname_2, para)
 
 Function moduleref(modname:seq.word)modref moduleref(modname, noparameter)
 
@@ -147,17 +155,11 @@ Export uses(passtypes)set.modref
 
 function noparameter mytype mytype.empty:seq.typedef
 
-Function =(a:modref, b:modref)boolean name.a = name.b ∧ para.a = para.b
+Function =(a:modref, b:modref)boolean name.a = name.b ∧ para.a = para.b ∧ wild(library.a, library.b) = EQ
 
-∧ library.a=library.b
-
-Function ?(a:modref, b:modref)ordering name.a ? name.b ∧ para.a ? para.b
-
-∧ library.a ? library.b
+Function ?(a:modref, b:modref)ordering name.a ? name.b ∧ para.a ? para.b ∧ wild(library.a, library.b)
 
 Function ?2(a:modref, b:modref)ordering name.a ? name.b
-
-/Function ?2(a:seq.typedef, b:seq.typedef)ordering ?2(mytype.a, mytype.b)
 
 Function ?2(a1:mytype, b1:mytype)ordering
 let a = typerep.a1
@@ -180,13 +182,9 @@ mytype.[typedef("$base"_1, "internal"_1, "internallib"_1)
 
 Function internalmod(s:seq.word)modref modref("internallib"_1, "."_1, noparameter)
 
-Function seqof(base:mytype)mytype mytype(typerep.typeref."seq seq" + typerep.base)
+Function seqof(base:mytype)mytype mytype(typerep.typeref."seq seq *" + typerep.base)
 
-Function isseq(t:mytype)boolean first.typerep.t = first.typerep.typeref."seq seq"
-
-Function isencoding(t:mytype)boolean first.typerep.t = first.typerep.typeref."encoding encoding"
-
-Function processof(base:mytype)mytype mytype(typerep.typeref."process process" + typerep.base)
+Function processof(base:mytype)mytype mytype(typerep.typeref."process process *" + typerep.base)
 
 type passtypes is modname:modref
 , defines:set.mytype
@@ -301,8 +299,6 @@ if cardinality.a ≠ 1 then empty:seq.modref
 else if length.ref = 1 then toseq.a
 else
  let b = resolvetype(knowntypes, ref << 2)
- {assert cardinality.knownmodules < 30 /or ref /ne"seq.word"report"ref"+ref+toword.length.b+ref << 2+for acc=""
-, t=toseq.knowntypes do acc+EOL+print.t /for(acc)}
  if isempty.b then empty:seq.modref else[modref(library.a_1, name.a_1, b_1)]
 
 Function findpasstypes(all:set.passtypes, lib:word, m:seq.word)set.passtypes

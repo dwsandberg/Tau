@@ -30,7 +30,7 @@ use words
 
 unbound callfunc:T(ctsym:symbol, typedict:typedict, stk:seq.int)seq.int
 
-Function interpretCompileTime:T(args:seq.symbol, ctsym:symbol, typedict:typedict)seq.symbol
+Function interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict)seq.symbol
 let stk = if nopara.ctsym = 0 then empty:seq.int else buildargs:T(args)
 if nopara.ctsym ≠ length.stk then empty:seq.symbol
 else if name.ctsym ∈ "_"then
@@ -39,11 +39,11 @@ else if name.ctsym ∈ "_"then
   let s = bitcast:seq.int(stk_1)
   let idx = 
    if ptypes_2 = typeint then stk_2
-   else if ptypes_2 = typeref."index standard"then stk_2 + 1 else 0
+   else if ptypes_2 = typeref."index standard *"then stk_2 + 1 else 0
   if between(idx, 1, length.s)then tocode:T(s_idx, resulttype.ctsym, typedict)
   else empty:seq.symbol
  else empty:seq.symbol
-else if module.ctsym = moduleref."words" ∧ name.ctsym ∈ "merge encodeword decodeword"then
+else if module.ctsym = moduleref."* words" ∧ name.ctsym ∈ "merge encodeword decodeword"then
  if name.ctsym ∈ "merge"then[Word.merge.bitcast:seq.word(first.stk)]
  else if name.ctsym ∈ "encodeword"then[Word.encodeword.bitcast:seq.char(first.stk)]
  else
@@ -52,11 +52,12 @@ else if module.ctsym = moduleref."words" ∧ name.ctsym ∈ "merge encodeword de
   tocode:T(bitcast:int(toptr.charseq), resulttype.ctsym, typedict)
 else if name.ctsym ∈ "makereal" ∧ paratypes.ctsym = [seqof.typeword]then
  [Reallit.representation.makereal.bitcast:seq.word(first.stk)]
-else if module.ctsym = moduleref."UTF8" ∧ name.ctsym ∈ "toword"then
+else if module.ctsym = moduleref."* UTF8" ∧ name.ctsym ∈ "toword"then
  [Word.toword.first.stk]
 else
- let t = callfunc:T(ctsym, typedict, stk)
- if isempty.t then empty:seq.symbol else tocode:T(first.t, resulttype.ctsym, typedict)
+ let ctsym2 = changelibrary(ctsym, librarymap)
+ let t = callfunc:T(ctsym2, typedict, stk)
+ if isempty.t then empty:seq.symbol else tocode:T(first.t, resulttype.ctsym2, typedict)
 
 function tocode:T(r:int, typ:mytype, typedict:typedict)seq.symbol
 if typ = typeword then[Word.wordencodingtoword.r]

@@ -16,7 +16,7 @@ use seq.byte
 
 use seq.wfunc
 
-Function abortfunc symbol symbol(moduleref."webassembly core", "abortfunc", typereal, typereal)
+Function abortfunc symbol symbol(moduleref."* core", "abortfunc", typereal, typereal)
 
 Function callprocessfunc symbol symbol(internalmod, "callprocess", typereal, typereal, typereal)
 
@@ -33,19 +33,19 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , wfunc(alltypes
 , symbol(internalmod
 , "stackcall"
-, addabstract(typeref."stack stack stdlib", typeint)
+, addabstract(typeref."stack stack *", typeint)
 , typeint
-, addabstract(typeref."stack stack stdlib", typeint)
+, addabstract(typeref."stack stack *", typeint)
 )
 , [i32wrapi64] + Wcallindirect.typeindex([i64], i64)
 )
 , wfunc(alltypes
 , symbol(internalmod
 , "stackcall2"
-, addabstract(typeref."stack stack stdlib", typeint)
+, addabstract(typeref."stack stack *", typeint)
 , typeint
 , typeint
-, addabstract(typeref."stack stack stdlib", typeint)
+, addabstract(typeref."stack stack *", typeint)
 )
 , [i32wrapi64] + Wcallindirect.typeindex([i64, i64], i64)
 )
@@ -132,15 +132,15 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , wfunc(alltypes, abortsymbol.typebyte, [f64converti64s] + Wcall.abortfunc + drop + const64.0)
 , wfunc(alltypes, abortsymbol.typeptr, [f64converti64s] + Wcall.abortfunc + drop + const64.0)
 , wfunc(alltypes
-, abortsymbol.typeref."packed2 tausupport"
+, abortsymbol.typeref."packed2 tausupport *"
 , [f64converti64s] + Wcall.abortfunc + drop + const64.0
 )
 , wfunc(alltypes
-, abortsymbol.typeref."packed3 tausupport"
+, abortsymbol.typeref."packed3 tausupport *"
 , [f64converti64s] + Wcall.abortfunc + drop + const64.0
 )
 , wfunc(alltypes
-, abortsymbol.typeref."packed4 tausupport"
+, abortsymbol.typeref."packed4 tausupport *"
 , [f64converti64s] + Wcall.abortfunc + drop + const64.0
 )
 , wfunc(alltypes, abortsymbol.typeboolean, [f64converti64s] + Wcall.abortfunc + drop + const32.0)
@@ -174,18 +174,18 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , const64.8 + i64mul + i64add + i32wrapi64 + [i32load] + tobyte.2 + LEBu.0
 )
 , wfunc(alltypes
-, symbol(builtinmod.typeref."packed3 tausupport"
+, symbol(builtinmod.typeref."packed3 tausupport *"
 , "fld"
 , [typeptr, typeint]
-, typeref."packed3 tausupport"
+, typeref."packed3 tausupport *"
 )
 , const64.24 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEBu.0
 )
 , wfunc(alltypes
-, symbol(builtinmod.typeref."packed4 tausupport"
+, symbol(builtinmod.typeref."packed4 tausupport *"
 , "fld"
 , [typeptr, typeint]
-, typeref."packed4 tausupport"
+, typeref."packed4 tausupport *"
 )
 , const64.32 + i64mul + i64add + i32wrapi64 + [f64load] + tobyte.3 + LEBu.0
 )
@@ -239,14 +239,14 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 )
 ]
 
-function typestack mytype addabstract(typeref."stack stack stdlib", typeint)
+function typestack mytype addabstract(typeref."stack stack *", typeint)
 
-function typepackedseq2 mytype seqof.typeref."packed2 tausupport webassembly"
+function typepackedseq2 mytype seqof.typeref."packed2 tausupport *"
 
-function typepackedseq3 mytype seqof.typeref."packed3 tausupport webassembly"
+function typepackedseq3 mytype seqof.typeref."packed3 tausupport *"
 
-function typepackedseq4 mytype seqof.typeref."packed4 tausupport webassembly"
+function typepackedseq4 mytype seqof.typeref."packed4 tausupport *"
 
-function typepackedseq5 mytype seqof.typeref."packed5 tausupport webassembly"
+function typepackedseq5 mytype seqof.typeref."packed5 tausupport *"
 
-function typepackedseq6 mytype seqof.typeref."packed6 tausupport webassembly" 
+function typepackedseq6 mytype seqof.typeref."packed6 tausupport *" 

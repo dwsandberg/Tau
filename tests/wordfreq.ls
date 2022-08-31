@@ -25,8 +25,6 @@ function =(a:indexedword, b:indexedword)boolean w.a = w.b
 
 type wordfreq is count:int, w:word
 
-function =(a:wordfreq, b:wordfreq)boolean false
-
 function ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b
 
 function count(s:seq.wordfreq, w:word)seq.wordfreq
@@ -44,9 +42,6 @@ function wordfreq(mincount:int, a:seq.seq.word)seq.wordfreq
 for acc = empty:seq.wordfreq
 , @e ∈ sort.for acc = sparseseq.wordfreq(0, "A"_1), @e ∈ a do count(acc, @e)/for(acc)
 do acc + removelowcount(mincount, @e)/for(acc)
-
-Function testwordfreq(count:int, text:seq.seq.word)seq.word
-for acc = empty:seq.word, @e ∈ wordfreq(count, text)do acc + print.@e /for(acc)
 
 function count(s:seq.wordfreq, w:seq.word)seq.wordfreq for acc = s, @e ∈ w do count(acc, @e)/for(acc)
 
@@ -182,7 +177,7 @@ constargs then next(flags, subseq(result, 1, len-nopara)+Constant2(args+sym), ne
 ]else value.t_1, nextvar, map)else next(flags, result+sym, nextvar, map)else if sym=NotOp ∧ last.result=NotOp then 
 next(flags, result >> 1, nextvar, map)else if length.result > 2 ∧ isconst.last.result ∧(sym=symbol(moduleref("
 + dq
-+ "stdlib seq"
++ "stdxlib seq"
 + dq
 + ", typeint), "
 + dq
@@ -190,7 +185,7 @@ next(flags, result >> 1, nextvar, map)else if length.result > 2 ∧ isconst.last
 + dq
 + ", [typeint, seqof.typeint], typeboolean)∨ sym=symbol(moduleref("
 + dq
-+ "stdlib seq"
++ "stdxlib seq"
 + dq
 + ", typeword), "
 + dq
@@ -215,7 +210,7 @@ else next(flags ∨ Hasfor, result+sym, nextvar, map)else if wordname.sym ∈"
 + "∈ options then prepareargs(subseq(result, len-nopara+1, len), sym)else empty:seq.symbol if{COMPILE TIME}not.isempty 
 .ct then if sym=symbol(moduleref."
 + dq
-+ "stdlib words"
++ "stdxlib words"
 + dq
 + ", "
 + dq

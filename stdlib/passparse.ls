@@ -64,9 +64,11 @@ let mode = if textmode then"text"_1 else"body"_1
 for prg = empty:seq.symdef, m ∈ toseq.modlist do
  let z = commoninfo("", modname.m, lib, typedict.m, mode)
  let partdict = formsymboldict(allmods, m, requireUnbound, mode)
- for acc = empty:seq.symdef, p ∈ text.m do
-  if first.text.p ∈ "Builtin builtin"then
-   if issimple.module.sym.p then acc + symdef(sym.p, addcommentoptions(text.p, empty:seq.symbol), 0)
+ for acc = empty:seq.symdef, p ∈ srclink.m do
+  let symsrc = src_(paragraphno.p)
+  if first.symsrc ∈ "Builtin builtin"then
+   if issimple.module.sym.p then
+    acc + symdef(sym.p, addcommentoptions(symsrc, empty:seq.symbol), paragraphno.p)
    else
     let sym = sym.p
     acc
@@ -77,11 +79,22 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
     ]
     , 0
     )
+  else if first.symsrc ∈ "Export"then acc
   else
-   assert first.text.p ∈ "Function function"report text.p
-   let b = parse(src_(paragraphno.p), partdict, z)
-   acc + symdef(sym.p, addcommentoptions(text.p, code.b), paragraphno.p)
+   assert first.symsrc ∈ "Function function"report symsrc
+   let b = parse(symsrc, partdict, z)
+   acc + symdef(sym.p, addcommentoptions(symsrc, code.b), paragraphno.p)
  /for(prg + acc)
+/for(prg)
+
+Function addExportOptions(modlist:set.passsymbols, prgin:set.symdef, src:seq.seq.word)set.symdef
+for prg = prgin, m ∈ toseq.modlist do
+ for acc = prg, p ∈ srclink.m do
+  let symsrc = src_(paragraphno.p)
+  if first.symsrc ∈ "Export"then
+   symdef(sym.p, addcommentoptions(symsrc, getCode(acc, sym.p)), paragraphno.p) ∪ acc
+  else acc
+ /for(acc)
 /for(prg)
 
 function addcommentoptions(s:seq.word, code:seq.symbol)seq.symbol
@@ -96,8 +109,8 @@ else code
 Function buildrequires(prg:seq.symdef)set.symdef
 let g3 = newgraph.abstractarcs.prg
 {graph g3 has three kinds of sinks.1:is unbound and module parameter is T 2:is not unbound and module parameter is T 3:module 
-parameter is not T examples:otherseq.T:=(T, T)boolean ; otherseq.T:step(arithmeticseq.T)T ; otherseq.sparseele 
-.T:binarysearch(seq.sparseele.T)}
+parameter is not T examples:otherseq.T:=(T, T)boolean ; otherseq.T:step(arithmeticseq.T)T ; otherseq.sparseele.T:binarysearch 
+(seq.sparseele.T)}
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)
 {change many-to-one relation defined by arcs in g4 into format of set.symdef}

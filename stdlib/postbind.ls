@@ -143,36 +143,33 @@ else
      let t = value.lookup(map, value.sym)_1
      next(cache, nextvar, map, result2 + t)
     else if isconst.sym then next(cache, nextvar, map, result2 + sym)
-    else if name.sym ∈ "primitiveadd" ∧ isBuiltin.sym then
+    else if name.sym ∈ "primitiveadd primitive2add" ∧ isBuiltin.sym then
      let T = para.module.sym
-     let encodingstatetype = typeref."encodingstate encoding"
-     if true then
-      let encodingpairtype = typeref."encodingpair encoding"
-      let addefunc = 
-       symbol(moduleref("encoding", T)
-       , "add"
-       , [addabstract(encodingstatetype, T), addabstract(encodingpairtype, T)]
-       , addabstract(encodingstatetype, T)
-       )
-      let add2 = symbol(internalmod, "addencoding", [typeint, typeptr, typeint, typeint], typeint)
-      let dc = deepcopySym.addabstract(encodingpairtype, T)
-      let discard = symbolref.addefunc
-      let discard2 = symbolref.dc
-      let discard3 = symbolref.add2
-      next(cache, nextvar + 1, map, result2 + [PreFref, addefunc, PreFref, dc, add2])
-     else
-      let addefunc = 
-       symbol(moduleref("encoding", T)
-       , "add"
-       , [addabstract(encodingstatetype, T), T]
-       , addabstract(encodingstatetype, T)
-       )
-      let add2 = symbol(internalmod, "addencoding", [typeint, typeptr, typeint, typeint], typeint)
-      let dc = deepcopySym.T
-      let discard = symbolref.addefunc
-      let discard2 = symbolref.dc
-      let discard3 = symbolref.add2
-      next(cache, nextvar + 1, map, result2 + [PreFref, addefunc, PreFref, dc, add2])
+     let encodingstatetype = addabstract(typeref."encodingstate encoding *", T)
+     let encodingpairtype = addabstract(typeref."encodingpair encoding *", T)
+     let addefunc = 
+      symbol(moduleref("* encoding", T)
+      , "add"
+      , [encodingstatetype, encodingpairtype]
+      , encodingstatetype
+      )
+     let add2 = symbol(internalmod, "addencoding", [typeint, typeptr, typeint, typeint], typeint)
+     let dc = deepcopySym.encodingpairtype
+     let discard = symbolref.addefunc
+     let discard2 = symbolref.dc
+     let discard3 = symbolref.add2
+     let addefuncx = 
+      symbol(moduleref("* encoding", T)
+      , "addencoding"
+      , [encodingstatetype, T]
+      , encodingstatetype
+      )
+     let dcx = deepcopySym.T
+     let discard4 = symbolref.addefuncx
+     let discard5 = symbolref.dcx
+     if name.sym ∈ "primitive2add"then
+      next(cache, nextvar + 1, map, result2 + [PreFref, addefuncx, PreFref, dcx, add2])
+     else next(cache, nextvar + 1, map, result2 + [PreFref, addefunc, PreFref, dc, add2])
     else if name.sym ∈ "getinstance" ∧ isBuiltin.sym then
      let get = symbol(internalmod, "getinstance", typeint, typeptr)
      let typ = para.module.sym
@@ -184,7 +181,7 @@ else
       , seqof.typeint
       )
      let encodenocode = 
-      if typ = typeref."typename tausupport"then[Lit.2]
+      if typ = typeref."typename tausupport *"then[Lit.2]
       else if typ = seqof.typechar then[Lit.1]
       else
        let discard = symbolref.encodenosym

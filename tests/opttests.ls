@@ -1,38 +1,6 @@
 uses=stdlib exports=opttests 
 Library=opttests
 
-Module COMPILETIME
-
-use standard
-
-use bits
-
-use real
-
-Export  /or(bits,bits)bits
-
-Export  /and(bits,bits)bits
-
-Export  >>(bits,int)bits
-
-Export  <<(bits,int)bits
-
-Export  +(int,int)int
-
-Export  >(int,int)boolean
-
-Export  =(int,int)boolean
-
-Export  -(int,int)int
-
-Export  -(real,real) real
-
-Export  =(boolean,boolean) boolean
-
-Export  *(int,int)int
-
-Export  /(int,int)int
-
 
 Module opttests 
 
@@ -41,6 +9,32 @@ use standard
 use bits
 
 use real
+
+Export  /or(bits,bits)bits {OPTION COMPILETIME}
+
+Export  /and(bits,bits)bits {OPTION COMPILETIME}
+
+Export  >>(bits,int)bits {OPTION COMPILETIME}
+
+Export  <<(bits,int)bits {OPTION COMPILETIME}
+
+Export  +(int,int)int {OPTION COMPILETIME}
+
+Export  >(int,int)boolean {OPTION COMPILETIME}
+
+Export  =(int,int)boolean {OPTION COMPILETIME}
+
+Export  -(int,int)int {OPTION COMPILETIME}
+
+Export  -(real,real) real {OPTION COMPILETIME}
+
+Export  =(boolean,boolean) boolean {OPTION COMPILETIME}
+
+Export  *(int,int)int {OPTION COMPILETIME}
+
+Export  /(int,int)int {OPTION COMPILETIME}
+
+
 
 
 Function optest1 int 3 + 4

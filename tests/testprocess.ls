@@ -95,6 +95,7 @@ let y =
  , {20}message.process.result.process.testout.4 = "no result of aborted process"
  , isprefix("unexpected character in real literal", message.process.makereal."45t6.3")
  , a.result.process.testprocess3 = 4 ∧ b.result.process.testprocess3 = 40
+ ∧ c.result.process.testprocess3 = "a test"
  , t513
  , t514
  ]

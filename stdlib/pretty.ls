@@ -10,19 +10,68 @@ use otherseq.word
 
 use set.seq.word
 
+use stack.word
+
 Function pretty(s:seq.word)seq.word
 let tmp0 = text.(toseq.parse.s)_1
 removeclose(tmp0, length.tmp0)
 
 Function escapeformat(s:seq.word)seq.word
-for acc = "", linelength = 0, c ∈ s do
- if c ∈ " /<  /br  /p  /row"then
-  if length.s > maxwidth then next(acc + merge.[encodeword.[char.10], c], 0)
-  else next(acc + merge.[space, c], linelength + length.decodeword.c)
- else if c ∈ " /keyword  />  /em  /strong  /cell"then next(acc + merge.[space, c], linelength)
- else if linelength > maxwidth then next(acc + encodeword.[char.10] + c, length.decodeword.c)
- else next(acc + c, linelength + length.decodeword.c)
-/for(acc)
+for acc = "", linelength = 0, d = 0, c0 ∈ s
+while linelength < maxwidth
+do next(acc
++ if c0 ∈ " /<  /br  /p  /row  /keyword  />  /em  /strong  /cell"then merge.[space, c0]else c0
+, linelength
++ if"literal"_1 ∈ s then maxwidth else length.decodeword.c0
+, 0
+)
+/for(if length.acc = length.s then acc
+else
+ for oldhistory = ""
+ , acc2 = [first.s]
+ , linelength2 = 0
+ , last = first.s
+ , nest = push(empty:stack.word, first.if first.s ∈ dq then dq else"(")
+ , c ∈ s << 1
+ do
+  let history = 
+   oldhistory + " /br" + space + "last/this:" + merge.[last, c]
+   + "stk:"
+   + toseq.nest
+  assert not.isempty.nest
+  report"EMPTY STack"
+  + merge([last, c] + toseq.nest + " /br" + acc2 + " /br KL" + s
+  + "history  /br"
+  + oldhistory)
+  let inexpression = top.nest ∈ "("
+  let group1 = not.inexpression ∧ c ∈ " /<  /br  /p  /row"
+  let group2 = not.inexpression ∧ not.group1 ∧ c ∈ " /keyword  />  /em  /strong  /cell"
+  let newc = if group1 ∨ group2 then merge.[space, c]else c
+  let newline = length.acc2 > 1 ∧ group1 ∨ linelength2 > maxwidth
+  let newnest = 
+   if c ∈ "("then
+    if inexpression ∨ last ∈ "$"then push(nest, c)else nest
+   else if c ∈ dq then
+    if inexpression then push(nest, c)
+    else if length.toseq.nest > 1 then pop.nest else nest
+   else if inexpression ∧ c ∈ ")" ∧ length.toseq.nest > 1 then pop.nest else nest
+  let newacc2 = 
+   if inexpression ∧ c ∈ "literal" ∧ last ∈ (" /<" + merge([space] + " /<"))then
+    acc2 >> 1
+   else if inexpression ∧ c ∈ (" />" + merge([space] + " />")) ∧ last ∈ dq then acc2
+   else if newline then acc2 + encodeword.[char.10] + newc else acc2 + newc
+  next(history
+  , newacc2
+  , {linelength2}
+  if newline then 0
+  else
+   let tmp = length.newacc2 ? length.acc2
+   linelength2
+   + if tmp = GT then length.decodeword.c else if tmp = EQ then 0 else-2
+  , c
+  , newnest
+  )
+ /for(acc2)/if)
 
 Function sortuse(b:seq.seq.word, prefix:seq.word)seq.seq.word
 let a = for a = empty:seq.seq.word, u ∈ b do a + reverse.u /for(a)
@@ -30,9 +79,7 @@ for acc = empty:seq.seq.word, @e ∈ alphasort.toseq.asset.a do acc + (prefix + 
 
 function pretty(b:seq.attribute2)attribute2
 let a = for acc = empty:seq.prettyresult, @e ∈ b do acc + toseq.@e /for(acc)
-let text = for acc = "", @e ∈ a do acc + text.@e /for(acc)
-attribute2.[prettyresult(prec.first.a, for acc = 0, @e ∈ a do acc + width.@e /for(acc), text)
-]
+for text = "", width = 0, @e ∈ a do next(text + text.@e, width + width.@e)/for(attribute2.[prettyresult(prec.first.a, width, text)])
 
 function protect(a:seq.word, b:seq.word)seq.word
 let a1 = lastsymbol(a, length.a)
@@ -177,8 +224,8 @@ function bracket(s:seq.word)seq.word" /<" + s + " />"
 Below is generated from parser generator.
 
 function action(ruleno:int, input:seq.word, place:int, R:reduction.attribute2)attribute2
-{Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 P T L D E FP A F F1 
-G NM X}
+{Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 P T L D E FP A F F1 G 
+NM X}
 {RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E then 
 E else E /if | /if | E if E then E else E | E assert E report D E | A W=E | E let A E | D E |}
 if ruleno = {G F #}1 then R_1
@@ -295,20 +342,13 @@ else if ruleno = {E for F2 while E do E /for(E)}51 then
   ]
 else if ruleno = {D E}52 then R_1
 else if ruleno = {X wl E}53 then
- {assert false report"AJKLDF"+text.R_1}
- pretty.[attribute.escapeformat(subseq(text.R_1, 2, length.text.R_1 - 1) + ("$" + "("))
- , R_2
- , attribute.")"
- ]
+ attribute(subseq(text.R_1, 2, length.text.R_1 - 1) + ("$" + "(") + text.R_2
+ + ")")
 else if ruleno = {X X wl E}54 then
- pretty.[R_1
- , attribute.escapeformat(subseq(text.R_2, 2, length.text.R_2 - 1) + ("$" + "("))
- , R_3
- , attribute.")"
- ]
+ attribute(text.R_1 + subseq(text.R_2, 2, length.text.R_2 - 1) + ("$" + "(") + text.R_3
+ + ")")
 else if ruleno = {E X $wordlist}55 then
- attribute.bracket("literal"
- + dq.text.pretty.[R_1, attribute.escapeformat.subseq(text.R_2, 2, length.text.R_2 - 1)])
+ attribute.bracket("literal" + escapeformat.dq(text.R_1 + subseq(text.R_2, 2, length.text.R_2 - 1)))
 else
  {ruleno}
  assert false report"invalid rule number" + toword.ruleno

@@ -47,7 +47,7 @@ let output =
 [file(o, output)]
 
 Function testprofile(input:seq.file, o:seq.word)seq.file
-let discard = stdlib.input
+let discard = makebitcode.input
 [file(o, profileresults."time")]
 
 Function testprofile2(input:seq.file, o:seq.word)seq.file

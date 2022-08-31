@@ -4,8 +4,6 @@ use UTF8
 
 use seq.bit
 
-use seq.seq.bit
-
 use bits
 
 use bitstream
@@ -21,8 +19,6 @@ use seq.filename
 use format
 
 use standard
-
-use tausupport
 
 Export type:file
 
@@ -51,21 +47,15 @@ Function fullname(fn:filename)word
 merge.if dir.fn ∈ "."then[name.fn, "."_1, ext.fn]
 else[dir.fn, "/"_1, name.fn, "."_1, ext.fn]
 
-type file is fn:filename, xdata:seq.seq.byte, ydata:seq.seq.bit
+Export bs(file)bitstream
 
-Function data(f:file)seq.byte
-{assert ext.fn.f /nin"bc"report"bc files contain bits"+fullname.fn.f}
-for acc = empty:seq.byte, p ∈ xdata.f do acc + p /for(acc)
+type file is fn:filename, data:seq.byte, bitdata:seq.bit, bs:bitstream
 
-Function bitdata(f:file)seq.bit
-{assert ext.fn.f /nin"bc"report"only bc files contain bits"}
-for acc = empty:seq.bit, p ∈ ydata.f do acc + p /for(acc)
+Export data(f:file)seq.byte
 
-Export xdata(f:file)seq.seq.byte
+Export bitdata(f:file)seq.bit
 
-Export ydata(f:file)seq.seq.bit
-
-Export file(fn:filename, a:seq.seq.byte, seq.seq.bit)file
+Function file(fn:filename, a:seq.bit)file file(fn, empty:seq.byte, a, empty:bitstream)
 
 Function file(name:seq.word, out:seq.word)file file(filename.name, out)
 
@@ -76,13 +66,11 @@ file(fn
 else toseqbyte.textformat.out
 )
 
-Function file(fn:filename, a:seq.byte)file
-file(fn
-, toseqseqbyte.for acc = empty:bitstream, @e ∈ a do add(acc, bits.toint.@e, 8)/for(acc)
-, empty:seq.seq.bit
-)
+Function file(fn:filename, a:seq.byte)file file(fn, a, empty:seq.bit, empty:bitstream)
 
-Function file(fn:filename, a:seq.bits)file file(fn, toseqseqbyte.tobitstream.a, empty:seq.seq.bit)
+Function file(fn:filename, a:seq.bits)file
+let bs = tobitstream.a
+file(fn, empty:seq.byte, empty:seq.bit, bs)
 
 Function filename(s:seq.word)filename
 let t = getfilenames("built", s)
@@ -109,9 +97,6 @@ else next(acc + fixfilename(prefix, filename, suffix), w, last, prefix, suffix)
 /for(if filename ≠ nofile ∧ w ∉ "="then acc + fixfilename(prefix, filename, suffix)else acc /if)
 
 function fixfilename(prefix:seq.word, name:word, suffix:word)filename
-{for acc=empty:seq.char, s /in(prefix+name)do acc+decodeword.name+char1."sp"/for(let t=acc >> 1 let yy=break(t 
-, [char1."/"], false)for aswords="", ss /in yy do aswords+encodeword(ss)/for(filename(aswords >> 1, last.aswords 
-, suffix)))}
 let t = decodeword.name
 let yy = break(char1."/", t)
 if length.yy = 1 then filename(prefix, name, suffix)

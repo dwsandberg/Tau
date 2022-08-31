@@ -2,10 +2,6 @@ Module randomphrase
 
 use standard
 
-Function testrandomphrase seq.word
-if"The umber ant ambles the opal nurse" = getphrase.20 then"PASS"
-else"FAIL randomphrase"
-
 Function randomphrase seq.word
 let a = randomint.1
 let seed = if a_1 < 0 then-a_1 + 1 else a_1

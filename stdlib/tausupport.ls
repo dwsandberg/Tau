@@ -195,6 +195,10 @@ Export type:encodingpair.seq.char
 
 Export type:encodingpair.typename
 
+Export type:seq.char
+
+Export type:typename
+
 -----------
 
 Function outofbounds seq.word"out of bounds" + stacktrace

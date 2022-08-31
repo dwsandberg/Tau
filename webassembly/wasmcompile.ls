@@ -115,20 +115,15 @@ let knownfuncs = knownWfunc.alltypes
 let imports = [abortfunc, callprocessfunc] + toseq.importsare(knownfuncs, prg4)
 let roots = 
  toseq.asset(rootsin
- + symbol(moduleref."webassembly inputoutput", "allocatespace3", typereal, typereal)
- + symbol(moduleref."webassembly inputoutput"
+ + symbol(moduleref."* inputoutput", "allocatespace3", typereal, typereal)
+ + symbol(moduleref."* inputoutput"
  , "resume"
  , [typereal, typereal, typereal, typereal, typereal, typereal]
  , typereal
  )
- + symbol(moduleref."webassembly inputoutput", "blockseqtype", typereal)
- + symbol(moduleref."webassembly inputoutput"
- , "jsmakepair"
- , typereal
- , typereal
- , typereal
- )
- + symbol(moduleref."webassembly inputoutput", "randomintimp", typeint, seqof.typeint))
+ + symbol(moduleref."* inputoutput", "blockseqtype", typereal)
+ + symbol(moduleref."* inputoutput", "jsmakepair", typereal, typereal, typereal)
+ + symbol(moduleref."* inputoutput", "randomintimp", typeint, seqof.typeint))
 let imp = 
  for acc = empty:seq.seq.byte, @e ∈ imports do
   let discard0 = funcidx.@e
@@ -161,12 +156,9 @@ let zzzzz =
 {define depended functions}
 let discardt = dependedfunc(alltypes, knownfuncs, prg4, length.imports + 1)
 {define function to initialize words}
-let startfuncidx = funcidx.symbol(moduleref."webassembly core", "initwords3", typeint)
+let startfuncidx = funcidx.symbol(moduleref."* core", "initwords3", typeint)
 let mustbedonelast = 
- addf(alltypes
- , symbol(moduleref."webassembly core", "initwords3", typeint)
- , initwordsbody
- )
+ addf(alltypes, symbol(moduleref."* core", "initwords3", typeint), initwordsbody)
 let forlater = 
  "Successful compile  /p"
  + {reportcoverage.knownfuncs+zzzzz++}
@@ -198,7 +190,7 @@ for notused = to:encoding.wfunc(1), sym ∈ k do
     if name.sym ∈ "randomint"then
      let bodycode = 
       Wlocal.0
-      + Wcall.symbol(moduleref."webassembly inputoutput", "randomintimp", typeint, seqof.typeint)
+      + Wcall.symbol(moduleref."* inputoutput", "randomintimp", typeint, seqof.typeint)
      encode.wfunc(alltypes, sym, funcbody(empty:seq.wtype, bodycode + return), funcidx.sym)
     else
      let c = decodeword.name.sym
@@ -257,7 +249,7 @@ function Wdefine(l:localinfo)seq.byte[localset] + leb.l
 function Wtee(l:localinfo)seq.byte[localtee] + leb.l
 
 function interpret(alltypes:typedict, knownfuncs:seq.wfunc, sym:symbol, symcode:seq.symbol)seq.word
-let stacktype = addabstract(typeref."stack stack stdlib", typeint)
+let stacktype = addabstract(typeref."stack stack *", typeint)
 let map = 
  for acc = empty:set.localmap, @e ∈ paratypes.sym do addlocal(acc, toword(cardinality.acc + 1), wtype64(alltypes, @e))/for(acc)
 let p1 = process.createcode2interpert(alltypes, knownfuncs, removeoptions.symcode, map, nopara.sym)
@@ -271,7 +263,7 @@ let tmp = for acc = empty:seq.int, ele ∈ result.p1 do acc + toint.ele /for(acc
 let Emptystack = const64.getoffset.Constant2.[Lit.0, Lit.0, Record.[typeint, typeint]]
 let code = 
  const64.constintseq.tmp + const64.1 + Emptystack + Emptystack
- + Wcall.symbol(moduleref."webassembly inputoutput"
+ + Wcall.symbol(moduleref."* inputoutput"
  , "interpert"
  , [seqof.typeint, typeint, stacktype, seqof.typeint]
  , stacktype
@@ -528,7 +520,7 @@ for acc = cc, idx = 0, typ ∈ paratypes.sym do next(acc + Wlocal.t1 + Wlocal.id
 
 function seqsym(nopara:int, typ:wtype)symbol
 assert typ ∈ [i64, i32, f64]report"KL" + print.typ
-symbol(moduleref."$$sequence"
+symbol(moduleref."* $$sequence"
 , "$$sequence"
 , constantseq(nopara
 , if typ = i64 then typeint else if typ = f64 then typereal else typeboolean
@@ -578,15 +570,11 @@ let rt = wtype64(alltypes, resulttype.sym)
 typeindex(paratypes, rt)
 
 function $$Icallbody(alltypes:typedict, functypeidx:int)seq.byte
-let stacktype = addabstract(typeref."stack stack stdlib", typeint)
+let stacktype = addabstract(typeref."stack stack *", typeint)
 let undertop = 
- symbol(moduleref("stdlib stack", typeint)
- , "undertop"
- , [stacktype, typeint]
- , typeint
- )
+ symbol(moduleref("* stack", typeint), "undertop", [stacktype, typeint], typeint)
 let poppush = 
- symbol(moduleref."stdlib inputoutput"
+ symbol(moduleref."* inputoutput"
  , "poppush"
  , [stacktype, typeint, typeint]
  , stacktype
@@ -684,7 +672,7 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
  else if sym = symbol(internalmod, "callidx", seqof.typeint, typeint, typeint)
  ∨ sym = symbol(internalmod, "callidx", seqof.typeptr, typeint, typeint)then
   let typ = 
-   symbol(moduleref."$$Icall"
+   symbol(moduleref."* $$Icall"
    , [toword.typeindex([i64, i64], i64)]
    , typeint
    , typeint
@@ -692,9 +680,9 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
    )
   next(blkstk, curblk + Icode(tobyte.254, tableindex.funcidx.typ), localtypes)
  else if sym
- = symbol(moduleref("builtin", typeint), "assert", seqof.typeword, typeint)
+ = symbol(moduleref("* builtin", typeint), "assert", seqof.typeword, typeint)
  ∨ sym
- = symbol(moduleref("builtin", typeptr), "assert", seqof.typeword, typeptr)
+ = symbol(moduleref("* builtin", typeptr), "assert", seqof.typeword, typeptr)
  ∨ {module.sym=internalmod /and}name.sym
  ∈ "idxseq fld packedindex processisaborted getseqlength getseqtype"
  ∨ module.sym = internalmod ∧ name.sym ∈ "not"then
@@ -715,7 +703,7 @@ for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, s
 
 function Icall(alltypes:typedict, sym:symbol)seq.Icode
 let typ = 
- tableindex.funcidx.symbol(moduleref."$$Icall", [toword.typeindex(alltypes, sym)], typeint, typeint, typeint)
+ tableindex.funcidx.symbol(moduleref."* $$Icall", [toword.typeindex(alltypes, sym)], typeint, typeint, typeint)
 [Icode(if name.sym ∈ "jsHTTP"then tobyte.255 else call
 , tableindex.funcidx.sym
 )

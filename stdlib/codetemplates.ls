@@ -75,11 +75,7 @@ Function functype(m:match5)llvmtype function.llvmtypelist.m
 
 Function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:int, llvmtypelist:seq.llvmtype)match5
 let m = match5(sym, length, parts, action, arg, llvmtypelist)
-let discard = 
- if hasrequires.sym then
-  let discard2 = encode.match5(clearrequiresbit.sym, length, parts, action, arg, llvmtypelist)
-  encode.m
- else encode.m
+let discard = encode.m
 m
 
 Function addtemplate(sym:symbol, length:int, parts:internalbc, action:word, arg:slot)match5
@@ -155,8 +151,8 @@ Function initmap5 seq.match5
 , addtemplate(symbol(internalmod, "toint", typebit, typeint), 0, emptyinternalbc)
 , addtemplate(symbol(internalmod, "toptr", seqof.typeword, typeptr), 0, emptyinternalbc)
 , {addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(r.1, ptr.ptr 
-.i64, i64, C64.2, 0)+STORE(r.2, r.1, ibcsub.1)+GEP(r.2, ptr.i64, r.1, C64.1)+STORE(r.3, r.2, ibcsub.2)+GEP(r.3, 
-ptr.i64, r.1, C64.0)), }
+.i64, i64, C64.2, 0)+STORE(r.2, r.1, ibcsub.1)+GEP(r.2, ptr.i64, r.1, C64.1)+STORE(r.3, r.2, ibcsub.2)+GEP(r.3, ptr 
+.i64, r.1, C64.0)), }
 addtemplate(symbol(internalmod, "bitcast", typeptr, typeint)
 , 1
 , CAST(r.1, ibcsub.1, i64, ptrtoint)
@@ -207,13 +203,13 @@ addtemplate(symbol(internalmod, "bitcast", typeptr, typeint)
 , 1
 , CAST(r.1, ibcsub.1, i64, bitcast)
 )
-, addtemplate(symbol(internalmod, "?", typereal, typereal, typeref."ordering standard")
+, addtemplate(symbol(internalmod, "?", typereal, typereal, typeref."ordering standard *")
 , 5
 , CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext) + CMP2(r.3, ibcsub.1, ibcsub.2, 2)
 + CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add)
 )
-, addtemplate(symbol(internalmod, "?", typeint, typeint, typeref."ordering standard")
+, addtemplate(symbol(internalmod, "?", typeint, typeint, typeref."ordering standard *")
 , 5
 , CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext) + CMP2(r.3, ibcsub.1, ibcsub.2, 38)
 + CAST(r.4, r.3, i64, zext)

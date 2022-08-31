@@ -4,4 +4,10 @@ use file
 
 use main2
 
-Function common(input:seq.file)seq.file stdlib.input 
+use matrix
+
+use standard
+
+Function test(input:seq.file,o:seq.word)seq.file
+[file(filename.o, test)]
+ 

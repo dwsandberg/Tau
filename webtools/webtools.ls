@@ -27,7 +27,7 @@ let out = finishentry.if first.cmd /in "testall" then
       testall(getfiles.args,"x.html",true)
 else 
 let args = cmd + getElementValue."input" + "o=x.html"
-  entrypoint1(args,  getfiles.args  )
+  tools$EP(args,  getfiles.args  )
 let dd = setElementValue("pageready", jsUTF8.toseqbyte.out)
 callevent("svg10", "load") 
 
@@ -40,7 +40,26 @@ setElementValue("mhhh", x) + setElementValue("mpeas", x2)
 + setElementValue("mcars", x3)
 + setElementValue("mtext", x4)
 
+Module stdlib$EP
 
+use standard
+
+use seq.file
+
+use file
+
+Function stdlib$EP(seq.word, seq.file) seq.file  empty:seq.file
+
+
+Module common$EP
+
+use standard
+
+use seq.file
+
+use file
+
+Function common$EP(seq.word, seq.file) seq.file  empty:seq.file
 
 
 

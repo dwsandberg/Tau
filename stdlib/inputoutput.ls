@@ -8,8 +8,6 @@ use seq.bit
 
 use process.seq.bit
 
-use seq.seq.bit
-
 use bits
 
 use seq.bits
@@ -40,8 +38,6 @@ use seq.int
 
 use bitcast.seq.int
 
-use process.seq.int
-
 use seq.mytype
 
 use standard
@@ -68,30 +64,28 @@ cstr.packed.bits.for acc = empty:bitstream, @e ∈ t + tobyte.0 do add(acc, bits
 
 type cstr is dummy:seq.bits
 
-Builtin getfile2(cstr)process.seq.int{OPTION STATE}
-
 Builtin getbytefile2(cstr)process.seq.byte{OPTION STATE}
 
 Builtin getbitfile2(cstr)process.seq.bit{OPTION STATE}
 
-Function getfile:byte(name:seq.word)seq.byte
+function getfile:byte(name:seq.word)seq.byte
 let a = getbytefile2.tocstr.name
 assert not.aborted.a report"Error opening file:" + name
 result.merge(a, result.a + body2.a, empty:seq.byte)
 
-Function getfile:bit(name:seq.word)seq.bit
+function getfile:bit(name:seq.word)seq.bit
 let a = getbitfile2.tocstr.name
 assert not.aborted.a report"Error opening file:" + name
 result.merge(a, result.a + body2.a, empty:seq.bit)
 
+Function getfiles(args:seq.word)seq.file
+for acc = empty:seq.file, fn ∈ getfilenames(".", args << 1)do
+ acc
+ + if ext.fn ∈ "bc"then file(fn, getfile:bit([fullname.fn]))
+ else file(fn, getfile:byte([fullname.fn]))
+/for(acc)
+
 Builtin createfile3(a:seq.seq.byte, name:cstr)int
-
-Function createfile(name:seq.word, a:seq.byte)int
-createfile3(packed.toseqseqbyte.for acc = empty:bitstream, @e ∈ a do add(acc, bits.toint.@e, 8)/for(acc)
-, tocstr.name
-)
-
-Function createfile(name:seq.word, a:seq.bits)int createfile3(packed.toseqseqbyte.tobitstream.a, tocstr.name)
 
 type addrsym is addr:int, sym:symbol
 
@@ -160,19 +154,11 @@ builtin createthread(int, int, int, dummyparameterrecord, int)process.int
 
 Function finishentry(result:seq.file)UTF8
 for acc = "files created:", f ∈ result do
- let check = 
-  for check = getseqtype.xdata.f = 0, p ∈ xdata.f while check do getseqtype.p = 1 /for(check)
  let discard2 = 
-  if check then createfile3(packed.xdata.f, tocstr.[fullname.fn.f])
-  else createfile([fullname.fn.f], data.f)
+  createfile3(packed.toseqseqbyte.if length.bs.f = 0 then
+   for acc2 = empty:bitstream, @e ∈ data.f do add(acc2, bits.toint.@e, 8)/for(acc2)
+  else bs.f
+  , tocstr.[fullname.fn.f]
+  )
  acc + fullname.fn.f
-/for(HTMLformat.acc)
-
-Function getfiles(args:seq.word)seq.file
-for acc = empty:seq.file, fn ∈ getfilenames(".", args << 1)do
- acc
- + if ext.fn ∈ "bc"then file(fn, empty:seq.seq.byte, [getfile:bit([fullname.fn])])
- else file(fn, [getfile:byte([fullname.fn])], empty:seq.seq.bit)
-/for(acc)
-
-function getfile(fn:filename)file file(fn, [getfile:byte([fullname.fn])], empty:seq.seq.bit) 
+/for(HTMLformat.acc) 

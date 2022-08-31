@@ -16,11 +16,6 @@ Export length(bitstream)int
 
 Function bits(a:bitstream)seq.bits fullwords.a + endpart.a
 
-/ function singlebit(a:bitstream, i:int)int // does format checking and gets bit i // assert between(i, 1, length.a)report 
-"out bound singlebit"assert(length.a+63)/ 64=length.fullwords.a+1 report"rep problem"let j=((i-1)/ 64+1)let b 
-=if j > length.fullwords.a then let partbits=(length.a mod 64)assert partbits=0 ∨ bits.0=endpart.a >>(partbits)report 
-"stray bits"endpart.a else(fullwords.a)_j toint(b >>((i-1)mod 64)∧ 0x1)
-
 Function empty:bitstream bitstream bitstream(0, 0x0, empty:seq.bits)
 
 function =(a:bitstream, b:bitstream)boolean length.a = length.b ∧ endpart.a = endpart.b ∧ fullwords.a = fullwords.b
@@ -83,8 +78,8 @@ else
   )
  bitstream(len, endpart, shiftleft(2, startpart, firstpart, startshift, empty:seq.bits))
 
-/function cmp(a:bitstream, b:bitstream, i:int, offseta:int)boolean if i > length.b then true else if singlebit(a, i 
-+offseta)=singlebit(b, i)then cmp(a, b, i+1, offseta)else false
+/function cmp(a:bitstream, b:bitstream, i:int, offseta:int)boolean if i > length.b then true else if singlebit(a, i+offseta)
+=singlebit(b, i)then cmp(a, b, i+1, offseta)else false
 
 Function +(a:bitstream, b:bitstream)bitstream
 {steal bits from b to make full words in a}

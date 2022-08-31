@@ -14,6 +14,8 @@ use set.symbol
 
 use set.symdef
 
+use seq.typedef
+
 use otherseq.word
 
 use set.word
@@ -63,6 +65,26 @@ Export worddata(symbol)seq.word
 Export module(symbol)modref
 
 Export types(symbol)seq.mytype
+
+function maplibrary(libname:word, map:seq.word)word
+let match = 1
+let nomatch = 2
+let done = 3
+for state = 0, result = libname, x ∈ map
+while state ≠ done
+do if state = nomatch then next(0, result)
+else if state = match then next(done, x)
+else next(if x = libname then match else nomatch, result)
+/for(result)
+
+Function changelibrary(s:symbol, map:seq.word)symbol
+let newtypes = for acc = empty:seq.mytype, t ∈ types.s do acc + changelibrary(t, map)/for(acc)
+symbol(worddata.s
+, moduleref([maplibrary(library.module.s, map), name.module.s], para.module.s)
+, newtypes
+, raw.s
+, flags.s
+)
 
 Function clearrequiresbit(s:symbol)symbol
 {will clear requires bit}
@@ -346,44 +368,43 @@ Function isrecordconstant(s:symbol)boolean name.module.s = first."$constant"
 
 Function wordname(s:symbol)word first.worddata.s
 
-Function typebit mytype typeref."bit bits"
+Function typebit mytype typeref."bit bits *"
 
-Function typebits mytype typeref."bits bits"
+Function typebits mytype typeref."bits bits *"
 
-Function typebyte mytype typeref."byte bits"
+Function typebyte mytype typeref."byte bits *"
 
-Function typeword mytype typeref."word words"
+Function typeword mytype typeref."word words *"
 
-Function typechar mytype typeref."char standard"
+Function typechar mytype typeref."char standard *"
+
+Function isseq(t:mytype)boolean first.typerep.t = first.typerep.typeref."seq seq *"
 
 Function packedtypes seq.mytype
-[typeref."packed2 tausupport"
-, typeref."packed3 tausupport"
-, typeref."packed4 tausupport"
-, typeref."packed5 tausupport"
-, typeref."packed6 tausupport"
+[typeref."packed2 tausupport *"
+, typeref."packed3 tausupport *"
+, typeref."packed4 tausupport *"
+, typeref."packed5 tausupport *"
+, typeref."packed6 tausupport *"
 ]
 
 Function deepcopyseqword symbol
-symbol4(moduleref("seq", typeword)
+symbol4(moduleref("* seq", typeword)
 , "type"_1
 , seqof.typeword
 , [seqof.typeword]
 , seqof.typeword
 )
 
-Function makerealSymbol symbol symbol(moduleref."real", "makereal", seqof.typeword, typereal)
+Function makerealSymbol symbol symbol(moduleref."* real", "makereal", seqof.typeword, typereal)
 
-Function indexsymbol(T:mytype)symbol symbol(moduleref("seq", T), "_", seqof.T, typeint, T)
+Function indexsymbol(T:mytype)symbol symbol(moduleref("* seq", T), "_", seqof.T, typeint, T)
 
-Function outofboundssymbol symbol symbol(moduleref."tausupport", "outofbounds", seqof.typeword)
+Function outofboundssymbol symbol symbol(moduleref."* tausupport", "outofbounds", seqof.typeword)
 
-Function encodenosym symbol symbol(moduleref."tausupport", "encodingno", seqof.typeword, typeint)
+Function encodenosym symbol symbol(moduleref."* tausupport", "encodingno", seqof.typeword, typeint)
 
-Function blockitsymbol(T:mytype)symbol
-{assert isseq.T /and print.parameter.T /in["int", "real", "ptr", "packed2", "packed3", "packed4", "packed5", "packed6 
-", "byte"]report"HJK"+print.T}
-symbol(moduleref."tausupport", "blockIt", T, T)
+Function blockitsymbol(T:mytype)symbol symbol(moduleref."* tausupport", "blockIt", T, T)
 
 _________________
 
@@ -490,7 +511,7 @@ Export ?(typedef, typedef)ordering
 
 Export ?(modref, modref)ordering
 
-Function PreFref symbol symbol(internalmod, "PreFref", typeint)
+Function PreFref symbol symbol(internalmod, "PreFref", typeptr)
 
 Function Local(name:word, type:mytype, parano:int)symbol
 symbolZ(moduleref."internallib $local"
@@ -501,8 +522,6 @@ symbolZ(moduleref."internallib $local"
 , specialbit
 , tobits.parano
 )
-
-/Function modFor(para:mytype)modref moduleref("internallib $for", para)
 
 Function inModFor(sym:symbol)boolean name.module.sym = "$for"_1
 
@@ -526,9 +545,12 @@ Export=(mytype, mytype)boolean
 
 Export isseq(mytype)boolean
 
+Function isencoding(t:mytype)boolean first.typerep.t = first.typerep.typeref."encoding encoding *"
+
 Function deepcopySym(rt:mytype)symbol
-if rt = typereal then symbol(moduleref."tausupport", "deepcopy", typereal, typereal)
-else if rt = typeint then symbol(moduleref."tausupport", "deepcopy", typeint, typeint)
+if rt = typereal then
+ symbol(moduleref."* tausupport", "deepcopy", typereal, typereal)
+else if rt = typeint then symbol(moduleref."* tausupport", "deepcopy", typeint, typeint)
 else symbol4(replaceT(parameter.rt, abstractModref.rt), "type"_1, rt, [rt], rt)
 
 Function iscore4(typ:mytype)boolean typ = typeint ∨ typ = typereal ∨ typ = typeptr ∨ typ = typeboolean

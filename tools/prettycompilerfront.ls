@@ -185,7 +185,7 @@ let srctext =
  else
   for acc = empty:seq.seq.word, i ∈ input do
    if ext.fn.i ∈ "libinfo"then acc
-   else acc + breakparagraph.data.i + [encodeword.[char.28]]
+   else acc + breakparagraph.data.i 
   /for(acc)
 let exported = exportedmodref.m
 let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for(uses)
@@ -200,8 +200,12 @@ do
   let key = if first.p ∈ " /keyword"then p_2 else first.p
   if key ∉ "Module module" ∧ isempty.modtext then
    {skip part before first Module}next(acc, modtext, uses)
-  else if first.p ∈ "use"then
-   next(acc, if reorguse then modtext else modtext + " /p" + p, uses + p << 1)
+  else if subseq(p,1,2)="parts="  then next(acc, modtext, uses)
+else if first.p ∈ "use"then
+   next(acc
+   , if reorguse then modtext else modtext + " /p" + p
+   , uses + p << 1
+   )
   else if key ∈ "Function function type"then
    next(acc, modtext + " /p" + if parseit then p else pretty.p, uses)
   else if key ∈ "Module module"then

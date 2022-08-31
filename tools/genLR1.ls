@@ -22,10 +22,6 @@ use encoding.state
 
 use seq.state
 
-use seq.stkele
-
-use stack.stkele
-
 use seq.arc.word
 
 use graph.word
@@ -44,7 +40,7 @@ type dottedrule is place:int, rule:seq.word
 
 type action is stateno:int, lookahead:word, codedaction:int
 
-type grammarinfo is grammar:seq.seq.word, follow:graph.word, ruleprec:seq.seq.word
+type grammarinfo is grammar:seq.seq.word, follow:graph.word
 
 function =(a:state, b:state)boolean toset.a = toset.b
 
@@ -64,11 +60,6 @@ function ?(a1:action2, b1:action2)ordering
 let a = toaction.a1
 let b = toaction.b1
 stateno.a ? stateno.b ∧ codedaction.a ? codedaction.b ∧ lookahead.a ? lookahead.b
-
-function print(a:action)seq.word
-" /br state:" + toword.stateno.a + "lookahead:" + lookahead.a
-+ if codedaction.a < 0 then"reduce" + toword.-codedaction.a
-else"shift" + toword.codedaction.a
 
 function print(grammar:seq.seq.word, actions:seq.action)seq.word
 let d = sort.for b = empty:seq.action2, a ∈ actions do b + action2.a /for(b)
@@ -93,8 +84,6 @@ else
  print(grammar, a, i + 1, stateno.this, codedaction.this, result + p1 + p2 + lookahead.this)
 
 function hash(s:state)int hash.(toseq.toset.s)_1
-
-/function print(a:seq.arc.word)seq.word for arc ∈ a, b="", , , b+tail.arc+head.arc
 
 function follow(grammar:seq.seq.word)graph.word
 let allarcs = 
@@ -121,23 +110,9 @@ let ruleno = if rule = ""then 0 else findindex(rule, grammar)
 assert ruleno ≤ length.grammar report"rule not found" + rule
 ruleno
 
-function state(stateno:int)state
-if stateno = 0 then state.empty:set.dottedrule else encodingdata:state_stateno
-
 function shift(stateno:int, lookahead:word, newstateno:int)action action(stateno, lookahead, newstateno)
 
 function reduce(stateno:int, lookahead:word, ruleno:int)action action(stateno, lookahead, -ruleno)
-
-type ruleprec is lookahead:word, rules:seq.int
-
-function print(grammar:seq.seq.word, p:ruleprec)seq.word
-"lookahead:" + lookahead.p
-+ for acc = "", @e ∈ rules.p do acc + grammar_@e + " /br |"/for(acc >> 2)
-
-function =(a:ruleprec, b:ruleprec)boolean lookahead.a = lookahead.b
-
-function print(a:seq.seq.word)seq.word
-for acc = "", @e ∈ a do acc + @e + " /br"/for(acc >> 1)
 
 function print(p:dottedrule)seq.word
 subseq(rule.p, 1, place.p - 1) + "'" + subseq(rule.p, place.p, length.rule.p)
@@ -147,7 +122,7 @@ for acc = " /br", dotrule ∈ toseq.toset.s do acc + print.dotrule + " /br |"/fo
 
 function initialstate(grammar:seq.seq.word)set.dottedrule close2(grammar, asset.[dottedrule(2, "G F #")])
 
-function finalstate(grammar:seq.seq.word)set.dottedrule close2(grammar, asset.[dottedrule(3, "G F #")])
+/function finalstate(grammar:seq.seq.word)set.dottedrule close2(grammar, asset.[dottedrule(3, "G F #")])
 
 function close2(g:seq.seq.word, s:set.dottedrule)set.dottedrule
 let newset = for acc = s, dotrule ∈ toseq.s do acc ∪ close(g, dotrule)/for(acc)
@@ -238,9 +213,9 @@ let k =
   else if length.item > 1 ∧ item ∉ grammar2 then"rule is not in grammar:" + item else""
  /for(problems)
 assert isempty.k report"ruleprec problem" + k
-let graminfo = grammarinfo(grammar2, follow.grammar2, ruleprec)
+let graminfo = grammarinfo(grammar2, follow.grammar2)
 let actions = closestate(graminfo, 1, empty:seq.action, asset.terminals)
-{assert false report print(grammar2, actions)}
+assert true report print(grammar2, actions)
 let dups = dups.actions
 let actions2 = 
  for acc = empty:seq.seq.action, @e ∈ dups.actions do acc + resolveamb(ruleprec, grammar2, @e)/for(acc)
@@ -339,7 +314,9 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attri
 + "+toword.ruleno R_1")
 
 Function LR1gen(location:seq.seq.word, codeonly:boolean, parameterized:boolean)seq.word
-{Assumption:Word ruleno is not used in any action.First use of ruleprec in comment that defines the precedence}
+{* A parser generator for a subset of LR1 grammars.  /br Codeonly:Only produces generated code  /br Parameterized:adds 
+T to function name to allowing them to be put into a parameterized module  /br Assumption:Word ruleno is not used in any action 
+.First use of ruleprec in comment that defines the precedence}
 for rules = empty:seq.seq.seq.word
 , terminals = ""
 , attribute = first."ATTR"
@@ -368,13 +345,10 @@ let terminals2 =
  for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /for(acc)
 lr1parser(rules, ruleprec, terminals2, "attribute", codeonly, parameterized))
 
- /< command LR1gen LR1  /> A parser generator for a subset of LR1 grammars. 
 
- /< option *-args  /> path to location of the code file from which the grammar will be extracted
+Module ParserExample
 
- /< option f-c  /> Only produces the generated code
-
- /< option f-p  /> adds:T to function name to allowing them to be put into a parameterized module
+use standard
 
 To get started building a new parser the following function will work to produce tables for a new parser
 
@@ -430,7 +404,7 @@ Function action(ruleno:int, input:seq.word, place:int, R:reduction)ATTR
 {Alphabet I # F G}
 if ruleno = {G F #}1 then R_1
 else if ruleno = {F F I}2 then
- {The left side of the grammar is F and the right side is F I}ATTR(val.R_1 + val.R_2)
+ {The left side of the grammar rule is F and the right side is F I}ATTR(val.R_1 + val.R_2)
 else if ruleno = {F I}3 then R_1
 else
  {ruleno}
@@ -448,5 +422,3 @@ function startstate int 1
 function finalstate int 4
 
 function actiontable seq.int[0, 0, 0, 0, 3, 0, 2, 0, 5, 4, 0, 0, -3, -3, 0, 0, 0, 0, 0, 0, -2, -2]
-
----- 
