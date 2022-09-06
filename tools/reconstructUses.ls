@@ -98,8 +98,6 @@ for acc2 = empty:set.modref, multiple = empty:seq.seq.modref, symx ∈ toseq.use
   assert first."internal" ∉ %.inmod
   report"internal" + %.sym + %.inmod + " /p"
   + %.toseq.findelement2(exported, sym/modref(sym, modname.md))
-  {assert name.modname.md /nin"ptr"/or %.sym /ne"tausupport:type:ptr(ptr)ptr"report"sym"+%.sym+"name="+name 
-.modname.md+"inmod="+%.toseq.asset.inmod}
   if isempty.inmod then next(acc2, multiple)
   else if length.inmod = 1 then next(acc2 + first.inmod, multiple)else next(acc2, multiple + inmod)
 /for(let xxx = check(acc2, md, asset.multiple, olduses)
@@ -116,7 +114,6 @@ let hh =
     if isempty(asset.inmod ∩ xxx) ∧ not.isempty.inmod then txt + inmod else txt
  /for(txt)
 let xxx2 = if length.hh = 1 ∧ length.hh_1 = 1 then xxx + hh_1_1 else xxx
-{assert name.modname.md /nin"common"report"YYYY"+%.modname.md+%n.toseq.xxx}
 for acc3 = xxx2, ref2 ∈ toseq.xxx2 do
  if name.ref2 ∈ "otherseq"then acc3 - moduleref("* seq", para.ref2)else acc3
 /for(acc3))

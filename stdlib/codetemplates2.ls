@@ -80,8 +80,7 @@ Export recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolea
 
 Export functype(m:match5)llvmtype
 
-Function stepone(dependentwords:seq.seq.char, alltypes:typedict, prgX:set.symdef, libname:word, isbase:boolean)steponeresult
-let discard0 = initwordref.dependentwords
+Function stepone(alltypes:typedict, prgX:set.symdef, libname:word, isbase:boolean)steponeresult
 let discard1 = initmap5
 for used = empty:seq.symbol, crecord = empty:seq.symdef, indefines = empty:seq.symdef, cc ∈ toseq.prgX do
  let firstsym = sym.cc
@@ -134,12 +133,6 @@ let discard = funcdec(alltypes, ele2, name)
 let discard5 = call(alltypes, ele2, "CALL"_1, name)
 0
 
-Function internalbody(ele:symbol)seq.symbol
-for acc = empty:seq.symbol, e9 ∈ arithseq(nopara.ele, 1, 1)do acc + Local.e9 /for(acc
-+ if name.ele ∈ "stacktrace"then
- symbol(moduleref."* inputoutput", "stacktraceimp", seqof.typeword)
-else ele /if)
-
 Function uses(alltypes:typedict
 , used1:set.symbol
 , isrecordconstant:seq.symdef
@@ -147,6 +140,10 @@ Function uses(alltypes:typedict
 , typedict:typedict
 , libname:word
 )int
+{let discard=if libname /in"webassembly"then for txt="?Gfx", sym /in toseq.used1 do if isconst.sym /or name.sym /nin 
+"_"/or print.module.sym /ne"seq.localmap"then txt else let discard5=call(typedict, sym, "CALL"_1, mangledname(extnames 
+, sym, libname))txt+"
+ /br"+print.sym+fullprint.para.module.sym /for(0)else 0}
 for acc = empty:match5, ele ∈ toseq.used1 do
  if isconst.ele then
   if isFref.ele then
@@ -246,7 +243,7 @@ Function mangledname(extname:set.symdef, s:symbol, library:word)word
 let b = getSymdef(extname, s)
 assert not.isempty.b
 report"Mangled Name problem" + print.s + library
-+ for txt = "", sd ∈ toseq.extname do txt + print.sym.sd /for(txt)
++ for txt = "", sd ∈ toseq.extname do txt + " /br" + print.sym.sd + library.module.sym.sd /for(txt + stacktrace)
 if paragraphno.b_1 = -1 then name.s
 else
  merge.[if paragraphno.b_1 ≥ 0 ∨ isInternal.s then library.module.s else library

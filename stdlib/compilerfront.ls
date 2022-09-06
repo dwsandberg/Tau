@@ -103,6 +103,8 @@ else
   /for(acc)
  {figure out how to interpret text form of type}
  let modsx = resolvetypes(libpasstypes, allsrc, lib)
+ {assert lib /nin"webassembly"report"H"+for txt="", p /in toseq.modsx do txt+"
+ /p"+print.modname.p+for txt2="", tt /in toseq.defines.p do txt2+fullprint.tt+"/"/for(txt2)/for(txt)}
  {figure out how to interpret text form of symbol}
  let t5 = resolvesymbols(allsrc, lib, modsx, asset.mods.libinfo)
  {parse the function bodies}
@@ -211,7 +213,7 @@ for new = empty:seq.symbol, sym ∈ toseq.toexport do
   /for(acc)
 /for(if isempty.toexport then processed else close(prg, asset.new, processed ∪ toprocess, len)/if)
 
-Function prepareback(prg10:set.symdef, midin:midpoint, dependentlibs:midpoint)midpoint
+Function prepareback(prg10:set.symdef, midin:midpoint, dependentlibs:midpoint, stacktracesym:symbol)midpoint
 {OPTION PROFILE}
 let uses = extractValue(first.src.midin, "uses")
 let libname = first.extractValue(first.src.midin, "Library")
@@ -225,8 +227,10 @@ let tmp =
  /for(Constant2(acc + Sequence(typeint, length.acc)))
 let maybereferenced0 = close(prg10, roots.oldmods + tmp, empty:set.symbol, 0)
 let symdict = symboldict(maybereferenced0, empty:seq.commoninfo)
+let bb = getSymdef(libextnames, stacktracesym)
+let startaddresses = if isempty.bb then empty:seq.symbol else[stacktracesym]
 let divide = 
- for addresses = empty:seq.symbol
+ for addresses = startaddresses
  , other = empty:seq.symbol
  , dupsyms = empty:seq.symbol
  , sym1 ∈ toseq.maybereferenced0
@@ -243,12 +247,9 @@ let divide =
  /for([addresses, other, dupsyms])
 let dupsyms = divide_3
 let other = divide_2
-let impsym = 
- clearrequiresbit.symbol(moduleref."* inputoutput", "stacktraceimp", seqof.typeword)
-let bb = getSymdef(libextnames, impsym)
-let addresses = toseq.asset.if isempty.bb then divide_1 else[impsym] + divide_1
+let addresses = divide_1
 for prgX = if isempty.bb then empty:set.symdef
-else asset.[symdef(impsym, empty:seq.symbol, paragraphno.bb_1)]
+else asset.[symdef(stacktracesym, empty:seq.symbol, paragraphno.bb_1)]
 , prgA = empty:set.symdef
 , idx = 1
 , sym ∈ addresses + other
@@ -267,16 +268,25 @@ do
     else
      let code = 
       for acc = empty:seq.symbol, sy ∈ code.sd_1 do
+       let sym2 = 
+        clearrequiresbit.if sy ∈ dupsyms then
+         let x = lookupbysig(symdict, sy)
+         if x_1 = sy then x_2 else x_1
+        else sy
        acc
-       + clearrequiresbit.if sy ∈ dupsyms then
-        let x = lookupbysig(symdict, sy)
-        if x_1 = sy then x_2 else x_1
-       else sy
+       + if library.module.sym2 ∈ "*"then
+        let basesym = basesym.sym2
+        let b = getSymdef(libextnames, basesym)
+        if not.isempty.b then if isFref.sym2 then Fref.sym.b_1 else sym.b_1 else sym2
+       else sym2
       /for(acc)
      if isrecordconstant.sym ∨ libname = library.module.sym ∨ abstract then symdef(sym, code, idx)
      else
       let b = getSymdef(libextnames, sym)
-      if not.isempty.b then symdef(sym, empty:seq.symbol, paragraphno.b_1)else symdef(sym, code, -idx)
+      if not.isempty.b then
+       {assert library.module.sym /nin"*"report"KL"+library.module.sym.b_1+print.sym.b_1+print.sym}
+       symdef(sym.b_1, empty:seq.symbol, paragraphno.b_1)
+      else symdef(sym, code, -idx)
    if abstract then next(prgX, prgA + new, idx)else next(prgX + new, prgA, idx + 1)
 /for(let oldmods1 = 
  for acc = empty:seq.modExports, m1 ∈ oldmods do

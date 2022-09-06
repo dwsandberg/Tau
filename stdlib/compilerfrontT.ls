@@ -32,7 +32,7 @@ use seq.seq.word
 
 use set.word
 
-Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
+Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint, stacktracesym:symbol)midpoint
 {OPTION PROFILE}
 let m = compilerfront3(option, allsrc, libinfo)
 if first.option.m ∈ "library text pass1"then m
@@ -40,7 +40,7 @@ else
  let libname = extractValue(first.allsrc, "Library")_1
  let librarymap = [libname, first."*"]
  let prg5 = pass2:T(librarymap, prg.m, typedict.m, option) ∪ templates.m
- if option = "all2"then prepareback(prg5, m, libinfo)
+ if option = "all2"then prepareback(prg5, m, libinfo, stacktracesym)
  else midpoint(option, prg5, typedict.m, libmods.m, src.m)
 
 unbound interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict)seq.symbol

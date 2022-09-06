@@ -1,11 +1,11 @@
 Module ptr
 
-use tausupport
+Builtin set(ptr, int)ptr
+
+Builtin set(ptr, ptr)ptr
+
+Builtin allocatespace(int)ptr
 
 Export type:ptr
 
-Export allocatespace(int)ptr
-
-Export set(ptr, int)ptr
-
-Export set(ptr, ptr)ptr 
+type ptr is xx:int 

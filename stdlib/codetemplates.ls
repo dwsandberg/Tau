@@ -20,6 +20,8 @@ use standard
 
 use symbol
 
+use seq.symbol
+
 use typedict
 
 Export constdata seq.slot
@@ -94,6 +96,8 @@ Export type:symbol
 function =(a:match5, b:match5)boolean sym.a = sym.b
 
 function hash(a:match5)int hash.sym.a
+
+Function templatesyms seq.symbol for acc = empty:seq.symbol, m ∈ encodingdata:match5 do acc + sym.m /for(acc)
 
 Function funcdec(alltypes:typedict, i:symbol, symname:word)int
 toint.modulerecord([symname]

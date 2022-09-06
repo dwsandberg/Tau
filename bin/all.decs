@@ -29,45 +29,39 @@ libsrc0 core.libsrc +core bits.ls encoding  format  graph process real seq set
 sparseseq stack standard UTF8 words xxhash otherseq
 +stdlib textio file bitstream
  
-libsrc0 compilerfront.libsrc +stdlib pretty.ls symbol2 symbolconstant compilerfrontT.ls compilerfront  mergeblocks pass2  localmap2 mytype parse parsersupport passparse passsymbol postbind symbol symboldict typedict
- 
+libsrc0 symbols.libsrc +stdlib symbol2.ls typedict mytype symbolconstant symbol
 
-makelib0 stdlib1.lib  core.libsrc compilerfront
-  +stdlib updatestate.ls    debuginfo  
-  codegennew codetemplates     inputoutput hashset internalbc  llvm
-   llvmconstants main2  persistant  symbol2 tausupport compileTimeT
-   timestamp codetemplates2  ptr taublockseq  bitcast
-   object01 objectio LEBencoding 
+libsrc0 compilerfront.libsrc +stdlib pretty.ls  compilerfrontT.ls compilerfront  mergeblocks pass2 hashset localmap2  parse parsersupport passparse passsymbol postbind symboldict
+ 
+libsrc0 codegen.libsrc +stdlib persistant.ls codetemplates2 codegennew codetemplates internalbc
+ llvm llvmconstants
+ 
+libsrc0 bcsupportdebug.libsrc +stdlib inputoutput.ls ptr taublockseq  bitcast  tausupport debuginfo
+
+
+makelib0 stdlib1.lib  core.libsrc symbols compilerfront codegen bcsupportdebug
+  +stdlib updatestate.ls main2 compileTimeT  object01 objectio LEBencoding 
 exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file  
-format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants 
-main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack 
-standard svg svggraph symbol symbol2 taublockseq tausupport testall textio timestamp words 
+format graph hashset internalbc   debuginfo llvm llvmconstants 
+main2 maindict mangle otherseq pretty process real seq set sparseseq stack 
+standard     symbol symbol2 taublockseq tausupport testall textio timestamp words 
 xxhash compilerfront bitcast objectio object01 LEBencoding
  
-makelib2 stdlib.lib  core.libsrc compilerfront
-  +stdlib updatestate.ls    debuginfo  
-  codegennew codetemplates     inputoutput hashset internalbc  llvm
-   llvmconstants main2  persistant  symbol2 tausupport compileTimeT
-   timestamp codetemplates2  ptr taublockseq  bitcast
-   object01 objectio LEBencoding 
+makelib1 stdlib2.lib  core.libsrc symbols compilerfront codegen bcsupportdebug
+  +stdlib updatestate.ls main2 compileTimeT   object01 objectio LEBencoding 
 exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file  
-format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants 
-main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack 
-standard svg svggraph symbol symbol2 taublockseq tausupport testall textio timestamp words 
+format graph hashset internalbc   debuginfo llvm llvmconstants 
+main2 maindict mangle otherseq pretty process real seq set sparseseq stack 
+standard     symbol symbol2 taublockseq tausupport testall textio timestamp words 
 xxhash compilerfront bitcast objectio object01 LEBencoding
 
-makelib1 stdlib2.lib  core.libsrc compilerfront
-  +stdlib updatestate.ls    debuginfo  
-  codegennew codetemplates     inputoutput hashset internalbc  llvm
-   llvmconstants main2  persistant  symbol2 tausupport compileTimeT
-   timestamp codetemplates2  ptr taublockseq  bitcast
-   object01 objectio LEBencoding 
+makelib2 stdlib.lib  core.libsrc symbols compilerfront codegen bcsupportdebug
+  +stdlib updatestate.ls main2 compileTimeT   object01 objectio LEBencoding 
 exports=midpoint inputoutput mytype UTF8 barycenter bits bitstream ptr encoding file  
-format graph hashset internalbc ioseq layergraph debuginfo llvm llvmconstants 
-main2 maindict makeDAG mangle otherseq pretty process real seq set sparseseq stack 
-standard svg svggraph symbol symbol2 taublockseq tausupport testall textio timestamp words 
+format graph hashset internalbc   debuginfo llvm llvmconstants 
+main2 maindict mangle otherseq pretty process real seq set sparseseq stack 
+standard     symbol symbol2 taublockseq tausupport testall textio  words 
 xxhash compilerfront bitcast objectio object01 LEBencoding
-  
  
 makelib tools.lib  common.lib   +tools tools.ls baseTypeCheck doc genLR1 
 prettycompilerfront reconstructUses profile taulextable frontcmd wordgraph
@@ -85,8 +79,7 @@ makelib tests.lib
 testencoding  testmodules  testprocess testseq tree  wordfreq   testopt.ls test11a  testall   
 uses=stdlib
 exports=tests
- 
- 
+
 makelib webassembly.lib  +webassembly webassembly.ls  funcidx knownWfunc printfunc wasm wasm2 wasmcompile 
 uses=stdlib
 exports=wasm wasm1 wasm2 wasmcompile webassembly
@@ -122,7 +115,7 @@ wasm wbeizer.wasm webcore.libsrc  +wbeizer Bcubic.html Bquadratic
 wbeizer.ls
 exports=wbeizer Library=wbeizer
 
-wasm webtools.wasm webcore.libsrc  compilerfront  tools tests
+wasm webtools.wasm webcore.libsrc  symbols compilerfront  tools tests
   +webtools webtools.ls  main2 webtools.html
   +common  svg2graph.ls uniqueids
   +stdlib hashset symbol2 pretty symbolconstant  compileTimeT debuginfo objectio object01  LEBencoding

@@ -8,7 +8,13 @@ use UTF8
 
 use bits
 
+use seq.byte
+
+use codetemplates
+
 use codetemplates2
+
+use file
 
 use seq.seq.int
 
@@ -28,11 +34,17 @@ use seq.localmap
 
 use seq.match5
 
+use mytype
+
+use seq.mytype
+
 use persistant
 
 use seq.slot
 
 use standard
+
+use symbol
 
 use otherseq.symbol
 
@@ -48,7 +60,11 @@ use set.symdef
 
 use seq.seq.word
 
-Function compilerback(m:midpoint, libcode:seq.symdef, dependentwords:seq.seq.char)seq.bits
+use seq.encoding.word3
+
+use encoding.word3
+
+Function compilerback(m:midpoint, baselibwords:seq.seq.char, stacktracesymbol:symbol)seq.file
 {OPTION PROFILE}
 for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ toseq.prg.m do
  if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
@@ -67,77 +83,100 @@ for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ tos
 /for(let s2 = 
  for acc = empty:seq.symbol, p ∈ toseq.profilearcs do acc + p /for(asset.acc \ asset.addresses)
 assert isempty.s2 report"profile arcs problem"
-codegen(m, dependentwords, profilearcs, addresses, libcode))
+codegen(m, baselibwords, profilearcs, addresses, stacktracesymbol))
 
 function parcsize int 6
 
-use symbol
+if symbol with * match symbol in uses then use that one else match current library
 
-Function codegen(m:midpoint
-, dependentwords:seq.seq.char
-, profilearcs:set.seq.symbol
-, addresssymbolrefdecode0:seq.symbol
-, libcode2:seq.symdef
-)seq.bits
-{OPTION PROFILE}
+Function starmap(m:midpoint)midpoint
 let uses = extractValue(first.src.m, "uses")
-let thename = first.extractValue(first.src.m, "Library")
+let libname = first.extractValue(first.src.m, "Library")
+let baselib = if isempty.uses then libname else last.uses
 let typedict = typedict.m
 let isbase = isempty.uses
-let starmap = "*" + last([thename] + uses)
-let prgX = 
- for acc = empty:set.symdef, sd ∈ toseq.prg.m do
-  for acc2 = empty:seq.symbol, sy ∈ code.sd do acc2 + clearrequiresbit.changelibrary(sy, starmap)/for(acc
-  + symdef(clearrequiresbit.changelibrary(sym.sd, starmap)
-  , acc2
-  , if isInternal.sym.sd then-internalidx.sym.sd else paragraphno.sd
-  ))
- /for(acc)
+for acc = empty:set.symdef, sd ∈ toseq.prg.m do
+ for acc2 = empty:seq.symbol, sy ∈ code.sd do acc2 + clearrequiresbit.replacestar(sy, baselib, libname)/for(acc
+ + symdef(clearrequiresbit.replacestar(sym.sd, baselib, libname)
+ , acc2
+ , if isInternal.sym.sd then-internalidx.sym.sd
+ else if library.module.sym.sd ∈ "*"then abs.paragraphno.sd else paragraphno.sd
+ ))
+/for(midpoint("X", acc, templates.m, typedict.m, libmods.m, src.m))
+
+/function check(prg:seq.symdef)seq.word for acc=empty:seq.symbol, sd /in prg do if isFref.sym.sd then acc+basesym.sym.sd else 
+acc+sym.sd+code.sd /for(for txt="", sym0 /in toseq.asset.acc do let sym=basesym.sym0 if not.isconst.sym /and name.sym 
+/in"type finishentry"then txt+"
+ /br"+library.module.sym+print.sym else txt /for(txt))
+
+Function codegen(m:midpoint
+, baselibwords:seq.seq.char
+, profilearcs:set.seq.symbol
+, addresssymbolrefdecode0:seq.symbol
+, stacktracesymbol:symbol
+)seq.file
+{OPTION PROFILE}
+let uses = extractValue(first.src.m, "uses")
+let libname = first.extractValue(first.src.m, "Library")
+let baselib = if isempty.uses then libname else last.uses
+let typedict = typedict.m
+let isbase = isempty.uses
+let starmap = "*" + last([libname] + uses)
+let prgX = prg.m
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
  + toint.symboltableentry("profiledata", profiletype)
-let stepone = stepone(dependentwords, typedict, prgX, thename, isbase)
+let discard0 = initwordref.baselibwords
+let stepone = stepone(typedict, prgX, libname, isbase)
 let defines = defines.stepone
 let addresssymbolrefdecode = 
- for acc = empty:seq.symbol, sy ∈ addresssymbolrefdecode0 do acc + clearrequiresbit.changelibrary(sy, starmap)/for(acc)
-let symboladdress = symboladdress(addresssymbolrefdecode, typedict, prgX, thename, defines)
+ for acc = empty:seq.symbol, sy ∈ addresssymbolrefdecode0 do acc + clearrequiresbit.replacestar(sy, baselib, libname)/for(acc)
+let symboladdress = symboladdress(addresssymbolrefdecode, typedict, prgX, libname, defines)
 let discard3 = modulerecord("spacecount", [toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
-let geninfo = geninfo(profilearcs, prgX, false, thename)
+let geninfo = geninfo(profilearcs, prgX, false, libname)
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do
-  let ele = 
-   if isInternal.sym.@e then symdef(sym.@e, internalbody.sym.@e, paragraphno.@e)else @e
-  acc + addfuncdef(geninfo, ele)
+  let internalbody = 
+   for acc2 = empty:seq.symbol, e9 ∈ arithseq(nopara.sym.@e, 1, 1)do acc2 + Local.e9 /for(acc2 + if name.sym.@e ∈ "stacktrace"then stacktracesymbol else sym.@e /if)
+  acc
+  + addfuncdef(geninfo
+  , if isInternal.sym.@e then symdef(sym.@e, internalbody, paragraphno.@e)else @e
+  )
  /for(acc)
 let f2 = 
- modulerecord([merge("init_" + thename)]
+ modulerecord([merge("init_" + libname)]
  , [toint.FUNCTIONDEC, typ.function.[VOID], 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
  )
 let entryfunctyp = function.[ptr.i64, i64, ptr.i64]
 let f3 = 
- modulerecord("entrypoint" + thename
+ modulerecord("entrypoint" + libname
  , [toint.FUNCTIONDEC, typ.entryfunctyp, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
  )
 let symlist = 
  for acc = empty:seq.int, @e ∈ addresssymbolrefdecode do acc + addsymbol.@e /for(acc)
 let symlist1 = addobject([addint.0, addint.length.addresssymbolrefdecode] + symlist)
 let profiledata = profiledata(addresssymbolrefdecode, profilearcs, symlist)
-let liblib = 
- slot.addliblib([thename]
- , dependentwords
- , ptrtoint(ptr.entryfunctyp, symboltableentry("entrypoint" + thename, ptr.entryfunctyp))
- , [symboladdress
+let tmpname = addwordseq.[libname]
+let moreargs = 
+ [toint.ptrtoint(ptr.entryfunctyp, symboltableentry("entrypoint" + libname, ptr.entryfunctyp))
+ , symboladdress
  , toint.ptrtoint(ptr.i64, CGEP(symboltableentry("profiledata", profiletype), 0))
  , symlist1
  ]
+let xxxx = {all other args to addliblib must be evaluated before this one}wordstoadd.baselibwords
+let liblib = 
+ slot.addliblib(libname
+ , tmpname
+ , if isbase then xxxx else empty:seq.encoding.word3
+ , moreargs
  )
-let libnametype = array(length.decodeword.thename + 1, i8)
+let libnametype = array(length.decodeword.libname + 1, i8)
 let libslot = 
  modulerecord(""
  , [toint.GLOBALVAR
  , typ.libnametype
  , 2
- , toint.DATA(libnametype, tointseq.decodeword.thename + 0) + 1
+ , toint.DATA(libnametype, tointseq.decodeword.libname + 0) + 1
  , 3
  , toint.align8
  , 0
@@ -155,13 +194,13 @@ let bodytxts =
  , [liblib
  , if isbase then
   let f1 = 
-   symbol(moduleref([thename] + "debuginfo")
+   symbol(moduleref([libname] + "debuginfo")
    , "addlibwords"
-   , typeref("debuginfo debuginfo" + thename)
+   , typeref("debuginfo debuginfo" + libname)
    , typeint
    )
   let functyp = ptr.tollvmtype(typedict, f1)
-  ptrtoint(functyp, symboltableentry([mangledname(prgX, f1, thename)], functyp))
+  ptrtoint(functyp, symboltableentry([mangledname(prgX, f1, libname)], functyp))
  else C64.0
  ]
  )
@@ -182,7 +221,12 @@ let adjust =
  , [toint.ARRAY, 2 + parcsize * cardinality.profilearcs, 0]
  ]
  + subseq(trec, 4, length.trec)
-llvm(patchlist, bodytxts, adjust)
+let bcfile = file(filename([libname] + ".bc"), llvm(patchlist, bodytxts, adjust))
+let cw = commonwords.xxxx
+[bcfile
+, if isempty.uses then file(filename([libname] + ".bcword"), bytes.0 + bytes.0)
+else file(filename([last.uses] + ".bcword"), bytes.1 + bytes.length.cw + cw)
+]
 
 function symboladdress(addressmap:seq.symbol, typedict:typedict, extnames:set.symdef, libname:word, defines:seq.symdef)int
 for slots = [toint.C64.0, toint.C64.length.addressmap], f1 ∈ addressmap do
@@ -201,7 +245,8 @@ assert not.isempty.e report"LL addfuncdef" + print.sym.sd
 let m = e_1
 let options = getoption.code.sd
 let code = removeoptions.code.sd
-assert not.isempty.code report"codegen with no definition" + print.sym.sd
+assert not.isempty.code
+report"codegen with no definition" + print.sym.sd + "in" + library.module.sym.sd
 let nopara = arg.m
 let linit = 
  Lcode2(emptyinternalbc
@@ -226,7 +271,21 @@ function length(s:stack.int)int length.toseq.s
 
 function processnext(l:Lcode2, caller:symbol, geninfo:geninfo, s:symbol)Lcode2
 let ee = findtemplate.s
-assert not.isempty.ee report"LL processnext" + print.s
+assert not.isempty.ee
+report"codegen error:no code template for" + print.s + "in library" + library.module.s
++ "from"
++ print.caller
++ for txt = "", s5 ∈ templatesyms do
+ if not.isconst.s5 ∧ name.s5 = name.s then
+  txt + " /br" + library.module.s5 + print.s5 + "/" + fullprint.para.module.s5
+  + "/"
+  + fullprint.para.module.s
+  + if module.s = module.s5 ∧ name.s5 = name.s
+  ∧ abstracttype.first.paratypes.s5 = abstracttype.first.paratypes.s then
+   "match"
+  else""
+ else txt
+/for(txt)
 let m = ee_1
 let action = action.m
 if action = "CALL"_1 then
@@ -279,7 +338,6 @@ else
   let blks = top(blocks.l, no)
   assert length.blks = no report"XXXXXX arg"
   let rblk = processblk(blks, 1, empty:seq.localmap, BR(noblocks.l - 1))
-  {assert length.phi.rblk > 3 report"phi"+@(+, toword, "", phi.rblk)}
   let firstblkargs = args.blks_1
   let kind = top.firstblkargs
   let popno = 
@@ -416,9 +474,7 @@ else
   processblk(blks, i + 1, exitbr, code + code.l + exitbr, varcount, phi + [noblocks.l - 1] + t2, tailphi)
  else if kind = 2 then
   {LOOPBLOCK}
-  {assert false report"L"+@(+, toword, "", args.l)}
   let noargs = top.pop.args.l
-  {let firstvar=top.pop.args.l}
   let newtailphi = [noblocks.l - 1] + top(pop(args.l, 3 + noargs), noargs)
   processblk(blks, i + 1, exitbr, code, varcount, phi, newtailphi)
  else if kind = 3 then
@@ -426,7 +482,6 @@ else
   assert kind.blks_1 = "2"_1 report"incorrect format on block"
   {+for e10 ∈ blks, oldacc="", , , oldacc+kind.e10}
   let noargs = top.pop.args.blks_1
-  {assert false report"C"+@(+, toword, "", args.blks_1)+"noargs:"+toword.noargs}
   let newtailphi = tailphi + [noblocks.l - 1] + top(pop.args.l, noargs)
   let newcode = BR.noblocks.blks_1
   processblk(blks, i + 1, exitbr, code + code.l + newcode, varcount, phi, newtailphi)

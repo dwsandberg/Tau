@@ -2,6 +2,10 @@ Module persistant
 
 use UTF8
 
+use bits
+
+use seq.byte
+
 use encoding.seq.char
 
 use seq.seq.char
@@ -9,6 +13,8 @@ use seq.seq.char
 use encoding.const3
 
 use seq.const3
+
+use debuginfo
 
 use llvm
 
@@ -25,6 +31,8 @@ use seq.encoding.word3
 use set.encoding.word3
 
 use words
+
+Export type:word3
 
 type word3 is chars:seq.char
 
@@ -54,23 +62,41 @@ slotX.w3
 
 Function addint(i:int)int toint.C64.i
 
-Function initwordref(dependentwords:seq.seq.char)int
-for acc = 0, @e ∈ dependentwords do max(acc, valueofencoding.asencoding.encodeword.@e)/for(for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc)do valueofencoding.encode.word3.k /for(acc))
+Function initwordref(baselibwords:seq.seq.char)int
+for acc = 0, @e ∈ baselibwords do max(acc, valueofencoding.asencoding.encodeword.@e)/for(for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc)do valueofencoding.encode.word3.k /for(loadbcwords))
 
-Function addliblib(libname:seq.word, dependentwords:seq.seq.char, entrypoint:slot, more:seq.int)int
-let name = addwordseq.libname
+Function wordstoadd(baselibwords:seq.seq.char)seq.encoding.word3
 let have = 
- for acc = empty:set.encoding.word3, @e ∈ dependentwords do acc + encode.word3.@e /for(acc)
+ for acc = empty:set.encoding.word3, @e ∈ baselibwords do acc + encode.word3.@e /for(acc)
 let used = 
  for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3 do acc + encode.@e /for(acc)
+toseq(used \ have)
+
+Function commonwords(wordstoadd:seq.encoding.word3)seq.byte
+for out = emptyUTF8, w ∈ wordstoadd do out + chars.decode.w + bcwordsep /for(toseqbyte.out)
+
+Function bytes(i:int)seq.byte
+for acc = empty:seq.byte, shift ∈ arithseq(8, 8, 0)do acc + tobyte.toint(tobits.i >> shift ∧ 0xFF)/for(acc)
+
+Function loadbcwords int
+let b = getbcwords
+{assert length.b /in[0, {tools}4564]report"DSJFKL"+%.length.b}
+for acc = empty:seq.char, c ∈ decodeUTF8.UTF8.b do
+ if c = bcwordsep then
+  let discard0 = encodeword.acc
+  let discard = encode.word3.acc
+  empty:seq.char
+ else acc + c
+/for(0)
+
+Function addliblib(libname:word, name:int, wordstoadd:seq.encoding.word3, more:seq.int)int
 {build packed seq of word encodings}
-let wordstoadd = toseq(used \ have)
 let wordreps2 = 
  for acc = [toint.C64.0, toint.C64.length.wordstoadd], w ∈ wordstoadd do
   let s = tointseq.chars.decode.w
   for acc2 = [toint.C64.0, toint.C64.length.s], ch ∈ s do acc2 + toint.C64.ch /for(acc + addobject.acc2)
  /for(addobject.acc)
-addobject2("liblib" + libname, [name, wordreps2, toint.entrypoint] + more)
+addobject2("liblib" + libname, [name, wordreps2] + more)
 
 function addobject2(name:seq.word, data:seq.int)int
 let objtype = array(length.data, i64)

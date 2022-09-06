@@ -65,8 +65,8 @@ let acc4 =
    let newtext = 
     getheader.src_(paragraphno.sd) >> 1
     + for acc = "", stk = empty:stack.seq.word, last = c_1, sym ∈ tmp << 1 do
-     {assert name.sym.sd /nin"xxx"/or print.sym /in["Define fff", dq."this is a", "%fff", "standard:"+"$"+"(seq.word 
-, seq.word)seq.word", dq.""]report print.sym}
+     {assert name.sym.sd /nin"xxx"/or print.sym /in["Define fff", dq."this is a", "%fff", "standard:"+"$"+"(seq.word, 
+seq.word)seq.word", dq.""]report print.sym}
      if sym = NotOp ∧ nopara.last = 2 then
       let paratypes = paratypes.last
       let newname = 
@@ -184,8 +184,7 @@ let srctext =
  if parseit then totext.m
  else
   for acc = empty:seq.seq.word, i ∈ input do
-   if ext.fn.i ∈ "libinfo"then acc
-   else acc + breakparagraph.data.i 
+   if ext.fn.i ∈ "libinfo"then acc else acc + breakparagraph.data.i
   /for(acc)
 let exported = exportedmodref.m
 let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for(uses)
@@ -200,8 +199,8 @@ do
   let key = if first.p ∈ " /keyword"then p_2 else first.p
   if key ∉ "Module module" ∧ isempty.modtext then
    {skip part before first Module}next(acc, modtext, uses)
-  else if subseq(p,1,2)="parts="  then next(acc, modtext, uses)
-else if first.p ∈ "use"then
+  else if subseq(p, 1, 2) = "parts="then next(acc, modtext, uses)
+  else if first.p ∈ "use"then
    next(acc
    , if reorguse then modtext else modtext + " /p" + p
    , uses + p << 1

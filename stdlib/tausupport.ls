@@ -98,8 +98,6 @@ type packed5 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int
 
 type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
 
-type ptr is xx:int
-
 Export type:ptr
 
 Export type:packed2
@@ -130,11 +128,11 @@ Export_(blockseq.ptr, int)ptr
 
 Export_(blockseq.real, int)real
 
-Builtin set(ptr, int)ptr
+Export allocatespace(int)ptr
 
-Builtin set(ptr, ptr)ptr
+Export set(ptr, int)ptr
 
-Builtin allocatespace(int)ptr
+Export set(ptr, ptr)ptr
 
 Builtin getseqlength(ptr)int{OPTION COMPILETIME}
 

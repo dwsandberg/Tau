@@ -60,8 +60,8 @@ else
   + marklayer(g, dummy, upperlayer, currentlayer, k1, l1, l1 + 1)
 
 function crossings(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l:int, l1:int)seq.arc.T
-{(k0, l)and(k1, l1)both inner.crossings of(k0, l)have been found for(?, j)for j< k0.find arcs(?, n)where n > l and n < l1 
-that cross(k0, l)or(k1, l1)}
+{(k0, l)and(k1, l1)both inner.crossings of(k0, l)have been found for(?, j)for j< k0.find arcs(?, n)where n > l and n < l1 that 
+cross(k0, l)or(k1, l1)}
 for acc = empty:seq.arc.T, @e ∈ arithseq(l1 - 1 - (l + 1) + 1, 1, l + 1)do acc + w1(g, upperlayer, k0, k1, currentlayer, @e)/for(acc)
 
 function w1(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l0:int)seq.arc.T
@@ -74,8 +74,8 @@ if k < k0 ∨ k > k1 then[arc(start, finish)]else empty:seq.arc.T
 
 ______________
 
-Step 2 is to find vertical alignments.This will return arcs that will have the two nodes with the same x value.Inner arcs are 
-are prim canidates for this vertial alignment.
+Step 2 is to find vertical alignments.This will return arcs that will have the two nodes with the same x value.Inner arcs are are 
+prime canidates for this vertial alignment.
 
 Function findvertarcsUL(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x:int, assigned:seq.T)seq.arc.T
 if x > length.currentlayer then empty:seq.arc.T
@@ -277,9 +277,6 @@ let paths =
    if arc(last.path, first.path) ∈ arcs.g then acc1 + reverse.path else acc1
  /for(acc)
 graphlayout(g.lg, assignx(g.lg, nodes.g.lg \ nodes.g, layers.lg), paths)
-
-for acc=empty:seq.arc.nodeinfo.T, a /in toseq.arcs.g.lg do acc+arc(lookup(t, nodeinfo(tail.a, 0, 0))_1, lookup(
-t, nodeinfo(head.a, 0, 0))_1)/for(newgraph.acc)
 
 function followpath(a:T, lg:graph.T, nodes:set.T)seq.T
 if a ∈ nodes then[a]else[a] + followpath(successors(lg, a)_1, lg, nodes)

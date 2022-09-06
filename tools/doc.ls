@@ -100,15 +100,15 @@ named will be documented.
 will be construction including and excluding the modules listed. Both the exclude and include are optional, but for a large 
 library should be used to restrict the size of the graph. An example of a use graph is included at the end of this module.
 
-/Function uncalledfunctions(prg:seq.symdef)seq.word{List of functions may include indirectly called functions 
-. }let g=newgraph.formcallarcs.prg let sources=for acc=empty:seq.symbol, @e ∈ toseq.nodes.g do acc+sources(g, empty 
-:set.symbol, @e)/for(acc)for acc="", @e ∈ sources do acc+print.@e+" /br"/for(acc)
+/Function uncalledfunctions(prg:seq.symdef)seq.word{List of functions may include indirectly called functions. }let g=newgraph 
+.formcallarcs.prg let sources=for acc=empty:seq.symbol, @e ∈ toseq.nodes.g do acc+sources(g, empty:set.symbol, @e 
+)/for(acc)for acc="", @e ∈ sources do acc+print.@e+"
+ /br"/for(acc)
 
 * usegraph exclude standard seq set UTF8 stack graph otherseq
 
 Function usegraph(input:seq.file, o:seq.word, include:seq.word, exclude:seq.word)seq.file
-let out = 
- drawgraph(usegraph(breakparagraph.data.first.input, "mod"_1), asset.include, asset.exclude)
+let out = drawgraph(usegraph(breakparagraph.input, "mod"_1), asset.include, asset.exclude)
 [file(filename.o, out)]
 
 Function usegraph(lib:seq.seq.word, kind:word)seq.arc.word

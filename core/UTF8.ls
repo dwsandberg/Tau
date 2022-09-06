@@ -58,44 +58,18 @@ if c < 2^(7 - n)then[tobyte(256 - 2^(8 - n) + c)]
 else subUTF8(n + 1, c / 64) + tobyte(128 + c mod 64)
 
 Function decodeUTF8(b:UTF8)seq.char
-{converts UTF8 encoded sequence into a sequence of integers(chars)}decodeUTF8(b, 1, length.b)
-
-Function decodeUTF8(a:UTF8, start:int, finish:int)seq.char
-tocharseq.xx(toseqbyte.a, max(1, start), min(finish, length.toseqbyte.a), empty:seq.int)
-
-function xx(b:seq.byte, i:int, finish:int, result:seq.int)seq.int
-if i > finish then result
-else
- let x = toint.b_i
- if x < 128 then xx(b, i + 1, finish, result + x)
- else if x < 224 then xx(b, i + 2, finish, result + ((x - 194) * 64 + toint.b_(i + 1)))
- else if x < 240 then
-  xx(b, i + 3, finish, result + ((x - 224) * 64^2 + (toint.b_(i + 1) - 128) * 64 + toint.b_(i + 2) - 128))
- else if x < 248 then
-  xx(b
-  , i + 4
-  , finish
-  , result + ((x - 240) * 64^3 + (toint.b_(i + 1) - 128) * 64^2 + (toint.b_(i + 2) - 128) * 64 + toint.b_(i + 3) - 128)
-  )
- else if x < 252 then
-  xx(b
-  , i + 5
-  , finish
-  , result
-  + ((x - 248) * 64^4 + (toint.b_(i + 1) - 128) * 64^3 + (toint.b_(i + 2) - 128) * 64^2 + (toint.b_(i + 3) - 128) * 64
-  + toint.b_(i + 4)
-  - 128)
-  )
- else
-  xx(b
-  , i + 6
-  , finish
-  , result
-  + ((x - 252) * 64^5 + (toint.b_(i + 1) - 128) * 64^4 + (toint.b_(i + 2) - 128) * 64^3 + (toint.b_(i + 3) - 128) * 64^2
-  + (toint.b_(i + 4) - 128) * 64
-  + toint.b_(i + 5)
-  - 128)
-  )
+{converts UTF-8 encoded sequence into a sequence of chars}
+for state = 0, val = 0, result = empty:seq.int, x0 ∈ toseqbyte.b do
+ let x = toint.x0
+ if state = 0 then
+  if x < 128 then next(0, 0, result + x)
+  else if x < 224 then next(1, (x - 192) * 64, result)
+  else if x < 240 then next(2, (x - 224) * 64, result)
+  else if x < 248 then next(3, (x - 240) * 64, result)
+  else if x < 252 then next(4, (x - 248) * 64, result)else next(5, (x - 252) * 64, result)
+ else if state = 1 then next(0, 0, result + (x + val - 128))
+ else next(state - 1, (val + (x - 128)) * 64, result)
+/for(tocharseq.result)
 
 ---------
 

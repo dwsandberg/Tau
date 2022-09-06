@@ -91,11 +91,12 @@ let c =
  point(42.000, 63.000, 88.000)
  = scale.point(6.0, 7.0, 8.0) * translate.point(6.0, 7.0, 8.0) * point(1.0, 2.0, 3.0)
 let d = 
- "[(0.708, -0.540, -0.455, -3.171) /br, (0.540, 0.000, 0.841, 9.974) /br, (-0.455, 0.841, 0.292, 5.498)(0.000, 0.000 
-, 0.000)]"
+ "[(0.708, -0.540, -0.455, -3.171)
+ /br, (0.540, 0.000, 0.841, 9.974)
+ /br, (-0.455, 0.841, 0.292, 5.498)(0.000, 0.000, 0.000)]"
  = print(transpose.transpose.identity * rotatez.deg.90.0 * rotatex.1.0 * rotatey.1.0
  * translate.point(6.0, 7.0, 8.0))
-let p1 = cross(point(6.0, 7.0, 8.0), point(1.0, 0.0, 0.0))
+let p1 = cross(point(6.0, 7.0, 8.0), point(1.0, 0.0, 0.0)+point(0.0,0.0,0.0))
 assert a ∧ b ∧ c ∧ d ∧ print(3, length.unit.-(p1 - 3.0 * p1 + p1)) = "1.000" ∧ (p1 ? p1) = EQ
 report"problem with matrix"
 "test matrix ok"

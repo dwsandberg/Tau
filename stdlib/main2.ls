@@ -20,8 +20,6 @@ use process.seq.file
 
 use format
 
-use inputoutput
-
 use compilerfrontT.libllvm
 
 use objectio.midpoint
@@ -121,17 +119,24 @@ for acc = empty:seq.byte, names = "parts=", f ∈ input do
   + makeentry(uses, entrypointname, acc)
 [file(filename(Library + ".libsrc"), firstpart + acc)])
 
+function stacktracesymbol2 symbol symbol(moduleref."* debuginfo", "stacktraceimp", seqof.typeword)
+
+function stacktracesymbol(allsrc:seq.seq.word)symbol
+let libname = first.extractValue(first.allsrc, "Library")
+let uses = extractValue(first.allsrc, "uses")
+let baselib = if isempty.uses then libname else last.uses
+symbol(moduleref([baselib] + "debuginfo"), "stacktraceimp", seqof.typeword)
+
 function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint)seq.file
 {OPTION PROFILE}
-let uses = extractValue(first.allsrc, "uses")
-let m = compilerfront2:libllvm("all2", allsrc, dependentlibs)
-let libcode = libcode.m
-let m2 = outlib(libcode, prg.m, libmods.m)
-let bc = compilerback(m, {toseq.prg.m2}libcode, dependentwords.uses)
 let libname = extractValue(first.allsrc, "Library")
-[file(filename(libname + ".bc"), bc)
-, file(filename(libname + ".libinfo"), outbytes:midpoint([m2]))
-]
+let uses = extractValue(first.allsrc, "uses")
+let stacktracesymbol = stacktracesymbol.allsrc
+let m = starmap.compilerfront2:libllvm("all2", allsrc, dependentlibs, stacktracesymbol)
+let m2 = outlib.m
+let dp = if isempty.uses then uses else[last.uses]
+let files = compilerback(m, dependentwords.dp, stacktracesymbol)
+files + file(filename(libname + ".libinfo"), outbytes:midpoint([m2]))
 
 Function makebitcode(input:seq.file)seq.file
 let info = breakparagraph.data.first.input
@@ -148,12 +153,13 @@ if aborted.p then
  ]
 else result.p
 
-function outlib(libcode0:seq.symdef, prg:set.symdef, libmods:seq.modExports)midpoint
-let libcode = asset.libcode0
-for acc = empty:seq.symdef, sd ∈ toseq.prg do
+function outlib(m:midpoint)midpoint
+let libname = extractValue(first.src.m, "Library")
+let libcode = asset.libcode.m
+for acc = empty:seq.symdef, sd ∈ toseq.prg.m do
  if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then acc
- else acc + symdef(sym.sd, removeFref.getCode(libcode, sym.sd), length.acc + 1)
-/for(for acc2 = acc, sd2 ∈ toseq(libcode \ asset.acc)do acc2 + symdef(sym.sd2, removeFref.code.sd2, 0)/for(midpoint("X", asset.acc2, empty:set.symdef, emptytypedict, libmods, empty:seq.seq.word)))
+ else acc + symdef(sym.sd, removeFref.getCode(libcode, sym.sd), paragraphno.sd)
+/for(for acc2 = acc, sd2 ∈ toseq(libcode \ asset.acc)do acc2 + symdef(sym.sd2, removeFref.code.sd2, 0)/for(midpoint("X", asset.acc2, empty:set.symdef, emptytypedict, libmods.m, empty:seq.seq.word)))
 
 function removeFref(code:seq.symbol)seq.symbol
 for codeNoFref = empty:seq.symbol, sy ∈ code do
@@ -161,7 +167,7 @@ for codeNoFref = empty:seq.symbol, sy ∈ code do
 /for(codeNoFref)
 
 Function compilerFront(option:seq.word, allsrc:seq.seq.word)midpoint
-{OPTION PROFILE}compilerfront2:libllvm(option, allsrc, empty:midpoint)
+{OPTION PROFILE}compilerfront2:libllvm(option, allsrc, empty:midpoint, stacktracesymbol.allsrc)
 
 Function compilerFront(option:seq.word, input:seq.file)midpoint
 {OPTION PROFILE}
@@ -172,7 +178,8 @@ for mp = empty:midpoint, data = empty:seq.byte, i ∈ input do
   , data
   )
  else next(mp, data + [tobyte.10, tobyte.10] + data.i)
-/for(compilerfront2:libllvm(option, breakparagraph.data, mp))
+/for(let allsrc = breakparagraph.data
+compilerfront2:libllvm(option, breakparagraph.data, mp, stacktracesymbol.allsrc))
 
 Function modsE(ci:midpoint)seq.modExports libmods.ci
 

@@ -64,6 +64,12 @@ for acc = empty:seq.typedef, t ∈ typerep.s do
  /for(result)
 /for(mytype.acc)
 
+Function replacestar(s:mytype, replacement:word)mytype
+for acc = empty:seq.typedef, t ∈ typerep.s do
+ acc
+ + if library.t ∈ "*"then typedef(name.t, modname.t, replacement)else t
+/for(mytype.acc)
+
 Function =(a:mytype, b:mytype)boolean typerep.a = typerep.b
 
 Function abstracttypename(m:mytype)word name.first.typerep.m
@@ -110,7 +116,7 @@ else modref(library.m, name.m, mytype(typerep.para.m >> 1 + typerep.with))
 
 Function typeint mytype typeref."int internal internallib"
 
-Function typeptr mytype typeref."ptr tausupport *"
+Function typeptr mytype typeref."ptr ptr *"
 
 Function typeboolean mytype typeref."boolean standard *"
 

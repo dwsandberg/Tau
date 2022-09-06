@@ -20,6 +20,8 @@ use format
 
 use standard
 
+use textio
+
 Export type:file
 
 Export fn(file)filename
@@ -106,4 +108,7 @@ else
  , suffix
  )
 
-Function changeext(f:filename, ext:seq.word)filename filename(dirpath.f, name.f, first.ext) 
+Function changeext(f:filename, ext:seq.word)filename filename(dirpath.f, name.f, first.ext)
+
+Function breakparagraph(fileseq:seq.file)seq.seq.word
+for acc = empty:seq.seq.word, f ∈ fileseq do acc + breakparagraph.data.f /for(acc) 

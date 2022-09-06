@@ -48,12 +48,14 @@ else
 
 Function breakparagraph(u:UTF8, i:int, last:int, result:seq.seq.word)seq.seq.word
 if i ≥ length.u then
- if last < length.u then result + towords.decodeUTF8(u, last, length.u)else result
+ if last < length.u then result + towords.decodeUTF8.UTF8.subseq(toseqbyte.u, last, length.u)
+ else result
 else if toint.u_i = 10 then
  let j = blankline(u, i + 1)
  if j > 0 then
   if i - 1 < last then breakparagraph(u, j + 1, j + 1, result)
-  else breakparagraph(u, j + 1, j + 1, result + towords.decodeUTF8(u, last, i - 1))
+  else
+   breakparagraph(u, j + 1, j + 1, result + towords.decodeUTF8.UTF8.subseq(toseqbyte.u, last, i - 1))
  else breakparagraph(u, i + 1, last, result)
 else breakparagraph(u, i + 1, last, result)
 

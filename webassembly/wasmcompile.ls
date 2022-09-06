@@ -44,7 +44,7 @@ use otherseq.localinfo
 
 use seq.localinfo
 
-use set.localmap
+use set.local5map
 
 use otherseq.mytype
 
@@ -208,7 +208,7 @@ for notused = to:encoding.wfunc(1), sym ∈ k do
     encode.wfunc(alltypes, sym, funcbody(empty:seq.wtype, bodycode + return), funcidx.sym)
   else
    let map = 
-    for acc = empty:set.localmap, @e ∈ paratypes.sym do addlocal(acc, toword(cardinality.acc + 1), wtype64(alltypes, @e))/for(acc)
+    for acc = empty:set.local5map, @e ∈ paratypes.sym do addlocal(acc, toword(cardinality.acc + 1), wtype64(alltypes, @e))/for(acc)
    let p1 = process.ccc(alltypes, knownfuncs, code, map)
    assert not.aborted.p1
    report"ccc fail3:" + print.sym + "libX:" + library.module.sym + EOL + print.code + EOL
@@ -223,14 +223,16 @@ for notused = to:encoding.wfunc(1), sym ∈ k do
 
 type localinfo is type:wtype, leb:seq.byte, no:int
 
-type localmap is name:word, localinfo:localinfo
+{local5map should be changed to localmap but problem occurs with conflict of localmap in codegen}
 
-Export type:localmap
+type local5map is name:word, localinfo:localinfo
 
-function ?(a:localmap, b:localmap)ordering name.a ? name.b
+Export type:local5map
 
-function getlocalinfo(a:set.localmap, w:word)localinfo
-let t = lookup(a, localmap(w, localinfo(f64, empty:seq.byte, 0)))
+function ?(a:local5map, b:local5map)ordering name.a ? name.b
+
+function getlocalinfo(a:set.local5map, w:word)localinfo
+let t = lookup(a, local5map(w, localinfo(f64, empty:seq.byte, 0)))
 assert not.isempty.t report"unknown local" + w + stacktrace
 localinfo.t_1
 
@@ -238,9 +240,9 @@ function print(l:localinfo)seq.word print.asbytes.type.l + print.leb.l + %.no.l
 
 function ?(a:localinfo, b:localinfo)ordering no.a ? no.b
 
-Function addlocal(map:set.localmap, name:word, type:wtype)set.localmap
+Function addlocal(map:set.local5map, name:word, type:wtype)set.local5map
 let no = cardinality.map
-map + localmap(name, localinfo(type, LEBu.no, no))
+map + local5map(name, localinfo(type, LEBu.no, no))
 
 function Wlocal(l:localinfo)seq.byte[localget] + leb.l
 
@@ -251,7 +253,7 @@ function Wtee(l:localinfo)seq.byte[localtee] + leb.l
 function interpret(alltypes:typedict, knownfuncs:seq.wfunc, sym:symbol, symcode:seq.symbol)seq.word
 let stacktype = addabstract(typeref."stack stack *", typeint)
 let map = 
- for acc = empty:set.localmap, @e ∈ paratypes.sym do addlocal(acc, toword(cardinality.acc + 1), wtype64(alltypes, @e))/for(acc)
+ for acc = empty:set.local5map, @e ∈ paratypes.sym do addlocal(acc, toword(cardinality.acc + 1), wtype64(alltypes, @e))/for(acc)
 let p1 = process.createcode2interpert(alltypes, knownfuncs, removeoptions.symcode, map, nopara.sym)
 assert not.aborted.p1
 report"ccc fail:" + print.sym + "lib:" + library.module.sym + EOL + print.symcode + EOL
@@ -276,11 +278,11 @@ type cccreturn is code:seq.byte, localtypes:seq.wtype
 
 type blkele is code:seq.byte, sym:symbol
 
-Function ccc(alltypes:typedict, knownfuncs:seq.wfunc, code:seq.symbol, localmap:set.localmap)cccreturn
+Function ccc(alltypes:typedict, knownfuncs:seq.wfunc, code:seq.symbol, local5map:set.local5map)cccreturn
 for typestk = empty:stack.wtype
 , blkstk = empty:stack.blkele
 , curblk = empty:seq.byte
-, localtypes = localmap
+, localtypes = local5map
 , sym ∈ code
 do
  if islocal.sym then
@@ -497,8 +499,8 @@ function brX(i:int)seq.byte if i = 0 then empty:seq.byte else[br] + LEBu.i
 function getblock(s:seq.blkele, i:int)seq.blkele
 if isstartorloop.sym.s_i then subseq(s, i, length.s)else getblock(s, i - 1)
 
-function print(localmap:set.localmap)seq.word
-for l = "", e ∈ toseq.localmap do l + name.e + toword.no.localinfo.e + EOL /for(l)
+function print(local5map:set.local5map)seq.word
+for l = "", e ∈ toseq.local5map do l + name.e + toword.no.localinfo.e + EOL /for(l)
 
 function Wstore(typ:mytype, offset:int)seq.byte
 let t = 
@@ -609,7 +611,7 @@ function Icode(inst:byte)Icode Icode.toint.inst
 
 type blkele2 is pc:int, sym:symbol
 
-Function createcode2interpert(alltypes:typedict, knownfuncs:seq.wfunc, code:seq.symbol, localmap:set.localmap, nopara:int)seq.Icode
+Function createcode2interpert(alltypes:typedict, knownfuncs:seq.wfunc, code:seq.symbol, local5map:set.local5map, nopara:int)seq.Icode
 for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, sym ∈ code do
  if islocal.sym then next(blkstk, curblk + Icode(localget, value.sym - 1), localtypes)
  else if isrecordconstant.sym then next(blkstk, curblk + Icode(i64const, getoffset.sym), localtypes)

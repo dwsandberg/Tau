@@ -57,7 +57,9 @@ function makelibrary {
  if   grep "${hashline}" built/oldsums.txt > /dev/null ; then
   echo $hashline >> sums.txt
   else 
+      node=$1.libsrc
       libexe $libsrcargs
+      node=$1.$libtype
      libexe $compileargs
  if [ -z "$norun" ];then
  	 if [ -z"$tauDylib" ];then 
@@ -90,23 +92,21 @@ fi
 if ! [ -e $build ] ; then 
 mkdir $build
 echo "" >> $build/oldsums.txt
-echo "void init_stdlib(); void init_libs(){init_stdlib(); }">$build/stdlib.c
-clang -lm -pthread  stdlib/*.c $build/stdlib.c bin/stdlib.bc  -o $build/stdlib.lib
-ln $build/stdlib.lib $build/orgstdlib.lib
+echo "void init_stdlib(); void init_libs(){init_stdlib(); }">$build/orgstdlib.c
+clang -lm -pthread  stdlib/*.c $build/orgstdlib.c bin/stdlib.bc  -o $build/orgstdlib.lib
 cc bin/putfile.c -o bin/putfile.cgi
 fi
 
 
 
 
-checksrc bin/stdlib.libinfo
 checksrc bin/stdlib.bc
 checksrc bin/taubuild.sh
 checksrc stdlib/tau.c
 checksrc stdlib/tauthreads.c
 checksrc stdlib/tau.h
 checksrc bin/putfile.c
-checksrc bin/all.decs
+#checksrc bin/all.decs
 
 echo "$0 $@" > $build/src/bin/buildcommand.sh
 
@@ -120,7 +120,7 @@ fi
 if ! [ -z "$@" ];then
 cp $@ built/src
 fi
-libexe stdlib updatestate  bin/all.decs  $@  o=update.sh 
+libexe orgstdlib updatestate   $@  o=update.sh 
 norun=$tmpnorun
 export norun
 source  built/update.sh

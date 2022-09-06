@@ -50,7 +50,7 @@ let dep =
   let new = first.inbytes:midpoint(data.i)
   midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
  /for(mp)
-compilerfront2:wasm(option, allsrc, dep)
+compilerfront2:wasm(option, allsrc, dep,Lit.0)
 
 type wasm is a:int
 

@@ -157,7 +157,9 @@ BT empty[2]={0,0};
  BT loadedLibs(processinfo PD)  // returns list of loaded libraries
  {return (BT)loaded;}   
   
+BT * bcwords=empty;
 
+BT * getbcwords() {return bcwords;}
 
 int looklibraryname(char* name) { int i;
   for(  i=0;i<loaded[1];i++){
@@ -166,21 +168,37 @@ int looklibraryname(char* name) { int i;
     }
    return -1;}
 
-BT initlib5(char * libname,BT  libdesc,BT baselib) {
-  // fprintf(stderr,"starting initlib4\n");
-  //fprintf(stderr,"initlib5 %s %lld \n",libname,baselib); 
+BT initlib5(char * libname,BT  libdesc,BT initwordsfunc) {
+//  fprintf(stderr,"initlib5 %s %lld \n",libname,baselib); 
   static BT (* addlibrarywords)(processinfo PD,BT   );
-if ( baselib ){
+if ( loaded[1]==0 ){
   /* only needed when initializing base lib */
-      
-    staticencodings[1]=neweinfo(&sharedspace,1);  // word encodings //
+     
+    staticencodings[1]=neweinfo(&sharedspace,1);  // word encodings 
     staticencodings[2]=neweinfo(&sharedspace,2); // encoding map for assigning encoding to an integer number
 
-    addlibrarywords  = ( BT (* )(processinfo PD,BT   )) baselib; 
-}
+    addlibrarywords  = ( BT (* )(processinfo PD,BT   )) initwordsfunc; 
+addlibrarywords(&sharedspace,libdesc);
+} 
+if (loaded[1] == 1) {
+     BT arg[1]={(BT) empty};
+    int fd;
+  char name[100]="built/stdlib.bcword",*filedata; struct stat sbuf;
+   sprintf(name,"built/%s.bcword",libnames[2]);
+       bcwords=empty; BT * data2;
+     if ( ((fd = open(name, O_RDONLY)) == -1)||(stat(name, &sbuf) == -1)) {
+       fprintf(stderr, "failed to load %s \n",name); exit(1);}
+    else   if((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) != (caddr_t)(-1))
+     {
+    bcwords=(long long *) filedata; 
+    fprintf(stderr, "loading2 %s %lld   \n ",name,bcwords[1]  );
+     addlibrarywords(&sharedspace,(BT)arg);
+} }
 
- addlibrarywords(&sharedspace,libdesc);
 
+// addlibrarywords(&sharedspace,libdesc);
+ 
+ 
  // register library 
      { int i =loaded[1]++;
     //  char name[100];
@@ -260,22 +278,20 @@ char *p;
 
  
 BT createfile3(processinfo PD, struct bitsseq *data, char * filename )  {
-int file=1;
-                    char * name=tocstr(filename);
-                       if (!( strcmp("stdout",name)==0 ))  { 
-                      file=myopen(name);
-                       fprintf(stderr,"createfile %s %lld  \n",name,data->length );
-                     }
-                     int i;
-                 for (i=0; i < data->length;i++){ 
-                  BT len= ( data->data[i])[1] ;
-          //        fprintf(stderr,"seqlen %lld  \n",len);
-                     write(file, (char *)(data->data[i])+16, len);
-                     }
-                 if (file!=1) close(file);
-         //         fprintf(stderr,"finish createfile %s %d\n",name,file);
-                 return 0;
-                 }
+int file=1,i;
+char * name=tocstr(filename);
+if (!( strcmp("stdout",name)==0 )) file=myopen(name);
+for (i=0; i < data->length;i++){ 
+   BT len= ( data->data[i])[1] ;
+   //  fprintf(stderr,"seqlen %lld  \n",len);
+   write(file, (char *)(data->data[i])+16, len);
+}
+if (file!=1) {              
+	fprintf(stderr,"createfile %s %lld %lld \n",name,data->length ,lseek(file, 0, SEEK_CUR));
+	close(file);
+}
+return 0;
+}
 
 
  void prepare(char *otherlib,char *str,char *replace){
@@ -443,6 +459,28 @@ int main(int argc, char **argv)    {   int i=0,count;
   int startarg=1;
   init_libs();
 #endif
+
+if (argc > 3 && strcmp(argv[1],"makebitcode")==0) 
+{  
+    int fd;
+  char name[100],*filedata; struct stat sbuf;
+   int t=strlen(argv[3])-strlen("libinfo");
+   strncpy(name,argv[3], t);
+   strcpy(name+t,"bcword");
+      bcwords=empty; BT * data2;
+     if ( ((fd = open(name, O_RDONLY)) == -1)||(stat(name, &sbuf) == -1)) {
+       fprintf(stderr, "failed to load %s \n",name); exit(1);}
+    else   if((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) != (caddr_t)(-1))
+     {
+    bcwords=(long long *) filedata; 
+    fprintf(stderr, "loading %s %lld  \n ",name,bcwords[1]  );
+
+} }
+
+
+
+
+ 
   
       BT   entrypoint=((BT*)loaded[loaded[1]+1])[2];
 

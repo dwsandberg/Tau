@@ -103,12 +103,11 @@ else
    , libinfo + fullname.filename([u] + ".libinfo")
    , "void init_$([u])(); $(ccode)init_$([u])();"
    )
-  /for(let baselib = subseq(B + lib, 1, 1)
-  let out = [name.fn, "."_1, "libsrc"_1]
+  /for(let out = [name.fn, "."_1, "libsrc"_1]
   " /p parts3=$(dq(parts << 1))
  /br dependsOn=$(dq("$parts3" + first.parts))
  /br libsrcargs=$(dq."$(lib)libsrc $parts3 $(data.cmdpara_1)o=$(out)")
- /br compileargs=$(dq(baselib + "makebitcode" + fullname.filename.out + libinfo))
+ /br compileargs=$(dq(lib + "makebitcode" + fullname.filename.out + libinfo))
  /br dependlibs=$(dq.depends)
  /br ccode=$(dq.ccode)
  /br makelibrary $([name.fn])")
