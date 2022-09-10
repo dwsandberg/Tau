@@ -79,7 +79,6 @@ function subpass2:T(option:seq.word
 , typedict:typedict
 )set.symdef
 {OPTION PROFILE}
-{assert count < 4 report"SIZE"+%.length.toseq.toprocess+%.length.bigin+%.length.toseq.corein+print.count}
 for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toprocess do
  let s = sym.pele
  let fullcode = code.pele
@@ -128,9 +127,7 @@ let t =
  if first then a
  else if Hasfor ∈ flags.a ∨ Callself ∈ flags.a then
   let ty = if Hasfor ∈ flags.a then expandforexp(code.a, nextvar.a)else code.a
-  let t2 = 
-   if Callself ∈ flags.a ∧ {????}wordname.s ≠ "subpass2"_1 then optB(ty, s, reorgwhen)
-   else ty
+  let t2 = if Callself ∈ flags.a then optB(ty, s, reorgwhen)else ty
   expandresult(nextvar.a, t2, flags.a)
  else a
 let newoptions1 = 
@@ -224,7 +221,6 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    else
     let t = length.z + 2
     for acc = [Start.typeboolean], idx = 2, w ∈ z >> 1 do next(acc + [var, w, EqOp] + Br2(t - idx, 1), idx + 1)/for(acc + [var, last.z, EqOp, Exit, Littrue, Exit, EndBlock])
-  {let newcode=removeismember(last.result, if nonew then arg else Local.nextvar)}
   if nonew then next(flags, result >> 2 + newcode, nextvar, map)
   else next(flags, result >> 1 + Define.nextvar + newcode, nextvar, map)
  else if wordname.sym ∈ "forexp" ∧ isBuiltin.sym then
@@ -266,7 +262,6 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
     {function just returns result}next(flags, result, nextvar, map)
    else
     let t = backparse2(result, len, nopara, empty:seq.int) + [len + 1]
-    {assert length.t=nopara+1 report"INLINE PARA PROBLEM"}
     let new = expandinline:T(librarymap, result, t, nextvar, code, p, self, typedict)
     next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
 /for(expandresult(nextvar, result, flags))

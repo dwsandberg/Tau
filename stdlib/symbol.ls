@@ -88,13 +88,11 @@ symbol(worddata.s
 
 Function replacestar(s:symbol, typelib:word, modulelib:word)symbol
 {???? remove temp local b caused failure!}
-let newtypes = 
- for acc = empty:seq.mytype, t ∈ types.s do acc + replacestar(t, typelib)/for(acc)
 let b = 
  [if library.module.s ∈ "*"then modulelib else library.module.s
  , name.module.s
  ]
-symbol(worddata.s, moduleref(b, para.module.s), newtypes, raw.s, flags.s)
+symbol(worddata.s, moduleref(b, para.module.s), types.s, raw.s, flags.s)
 
 Function clearrequiresbit(s:symbol)symbol
 {will clear requires bit}

@@ -20,7 +20,7 @@ Function abortfunc symbol symbol(moduleref."* core", "abortfunc", typereal, type
 
 Function callprocessfunc symbol symbol(internalmod, "callprocess", typereal, typereal, typereal)
 
-Function knownWfunc(alltypes:typedict)seq.wfunc
+Function knownWfunc(alltypes:typedict,typestack:mytype)seq.wfunc
 [wfunc(alltypes, symbol(internalmod, "not", typeboolean, typeboolean), const32.1 + i32xor)
 , wfunc(alltypes
 , symbol(internalmod, "getseqlength", typeptr, typeint)
@@ -33,19 +33,19 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , wfunc(alltypes
 , symbol(internalmod
 , "stackcall"
-, addabstract(typeref."stack stack *", typeint)
+, typestack
 , typeint
-, addabstract(typeref."stack stack *", typeint)
+, typestack
 )
 , [i32wrapi64] + Wcallindirect.typeindex([i64], i64)
 )
 , wfunc(alltypes
 , symbol(internalmod
 , "stackcall2"
-, addabstract(typeref."stack stack *", typeint)
+, typestack
 , typeint
 , typeint
-, addabstract(typeref."stack stack *", typeint)
+, typestack
 )
 , [i32wrapi64] + Wcallindirect.typeindex([i64, i64], i64)
 )
@@ -238,8 +238,6 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , const64.getoffset.wordsconst.""
 )
 ]
-
-function typestack mytype addabstract(typeref."stack stack *", typeint)
 
 function typepackedseq2 mytype seqof.typeref."packed2 tausupport *"
 

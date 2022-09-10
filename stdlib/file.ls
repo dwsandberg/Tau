@@ -75,22 +75,32 @@ let bs = tobitstream.a
 file(fn, empty:seq.byte, empty:seq.bit, bs)
 
 Function filename(s:seq.word)filename
-let t = getfilenames("built", s)
-assert length.t = 1 ∧ ext.first.t ∉ "?"report"illegal file name" + s
+let t = getfilenames.s
+assert length.t = 1 ∧ ext.first.t ∉ "?"report"illegal file name" + s + stacktrace
 first.t
 
-Function getfilenames(prefix0:seq.word, s:seq.word)seq.filename
+function =(a:filename, b:filename)boolean dirpath.b = dirpath.a ∧ name.a = name.b ∧ ext.a = ext.b
+
+function %(a:filename)seq.word dirpath.a + name.a + "." + ext.a
+
+Function getfilenames(s:seq.word)seq.filename
 let nofile = "."_1
 for acc = empty:seq.filename
 , filename = nofile
 , last = "?"_1
-, prefix = prefix0
+, prefix = "."
 , suffix = "?"_1
 , w ∈ s
 while w ∉ "="
-do if w ∈ ".+"then next(acc, filename, w, prefix, suffix)
+do if last ∈ "+" ∧ w ∈ "."then next(acc, filename, w, ".", suffix)
+else if w ∈ ".+"then next(acc, filename, w, prefix, suffix)
 else if last ∈ "."then
- next(acc + fixfilename(prefix, filename, w), nofile, "?"_1, prefix, w)
+ next(if filename = nofile then acc else acc + fixfilename(prefix, filename, w)
+ , nofile
+ , "?"_1
+ , prefix
+ , w
+ )
 else if last ∈ "+"then
  if filename = nofile then next(acc, nofile, "?"_1, [w], suffix)
  else next(acc + fixfilename(prefix, filename, suffix), nofile, "?"_1, [w], suffix)

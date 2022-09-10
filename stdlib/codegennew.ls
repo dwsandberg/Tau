@@ -64,7 +64,7 @@ use seq.encoding.word3
 
 use encoding.word3
 
-Function compilerback(m:midpoint, baselibwords:seq.seq.char, stacktracesymbol:symbol)seq.file
+Function compilerback(m:midpoint, baselibwords:seq.seq.char, stacktracesymbol:symbol, outname:filename)seq.file
 {OPTION PROFILE}
 for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ toseq.prg.m do
  if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
@@ -83,7 +83,7 @@ for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ tos
 /for(let s2 = 
  for acc = empty:seq.symbol, p ∈ toseq.profilearcs do acc + p /for(asset.acc \ asset.addresses)
 assert isempty.s2 report"profile arcs problem"
-codegen(m, baselibwords, profilearcs, addresses, stacktracesymbol))
+codegen(m, baselibwords, profilearcs, addresses, stacktracesymbol, outname))
 
 function parcsize int 6
 
@@ -97,23 +97,58 @@ let typedict = typedict.m
 let isbase = isempty.uses
 for acc = empty:set.symdef, sd ∈ toseq.prg.m do
  for acc2 = empty:seq.symbol, sy ∈ code.sd do acc2 + clearrequiresbit.replacestar(sy, baselib, libname)/for(acc
- + symdef(clearrequiresbit.replacestar(sym.sd, baselib, libname)
+ + symdef({clearrequiresbit.}replacestar(sym.sd, baselib, libname)
  , acc2
  , if isInternal.sym.sd then-internalidx.sym.sd
  else if library.module.sym.sd ∈ "*"then abs.paragraphno.sd else paragraphno.sd
  ))
 /for(midpoint("X", acc, templates.m, typedict.m, libmods.m, src.m))
 
-/function check(prg:seq.symdef)seq.word for acc=empty:seq.symbol, sd /in prg do if isFref.sym.sd then acc+basesym.sym.sd else 
-acc+sym.sd+code.sd /for(for txt="", sym0 /in toseq.asset.acc do let sym=basesym.sym0 if not.isconst.sym /and name.sym 
-/in"type finishentry"then txt+"
- /br"+library.module.sym+print.sym else txt /for(txt))
+/function check(prg:seq.symdef)seq.word 
+for acc=empty:seq.symbol, sd /in prg do 
+if isFref.sym.sd then acc+basesym.sym.sd else 
+acc+sym.sd + code.sd /for(
+for acc2=empty:seq.modref, sym0 /in {toseq.asset.}acc do let sym=basesym.sym0 
+if not.isconst.sym /and name.sym 
+/in"setinsert"then acc2+module.sym else acc2
+/for(
+ for txt="",sym /in acc2 do txt+"
+ /br"+library.sym+name.sym +fullprint.para.sym  
+ + if not.isempty.acc2 then 
+  [toword.??(typerep.para.first.acc2, typerep.para.sym   )   ,
+  toword(first.typerep.para.first.acc2 ? first.typerep.para.sym   ) ]
+ else "" /if
+  /for(txt)))
+  
+/Function ??(a:seq.typedef, b:seq.typedef)ordering
+let lengtha = length.a
+let lengthb = length.b
+if lengtha > lengthb then GT
+else if lengtha < lengthb then LT else
+{a @ ?(EQ, @e ? b_@i)((@e ? b_@i)≠ EQ)}subcmp3(a, b, 1)
+
+/function subcmp3(a:seq.typedef, b:seq.typedef, i:int)ordering
+if i > length.a then EQ
+else
+ let c = a_i ? b_i
+ if c = EQ then subcmp3(a, b, i + 1)else c
+
+
+ 
+ use seq.modref
+ 
+ use set.modref
+ 
+ use mytype
+ 
+ use otherseq.typedef
 
 Function codegen(m:midpoint
 , baselibwords:seq.seq.char
 , profilearcs:set.seq.symbol
 , addresssymbolrefdecode0:seq.symbol
 , stacktracesymbol:symbol
+, outname:filename
 )seq.file
 {OPTION PROFILE}
 let uses = extractValue(first.src.m, "uses")
@@ -121,7 +156,6 @@ let libname = first.extractValue(first.src.m, "Library")
 let baselib = if isempty.uses then libname else last.uses
 let typedict = typedict.m
 let isbase = isempty.uses
-let starmap = "*" + last([libname] + uses)
 let prgX = prg.m
 let tobepatched = 
  typ.conststype + typ.profiletype + toint.symboltableentry("list", conststype)
@@ -221,11 +255,14 @@ let adjust =
  , [toint.ARRAY, 2 + parcsize * cardinality.profilearcs, 0]
  ]
  + subseq(trec, 4, length.trec)
-let bcfile = file(filename([libname] + ".bc"), llvm(patchlist, bodytxts, adjust))
+let bcdata = llvm(patchlist, bodytxts, adjust)
 let cw = commonwords.xxxx
-[bcfile
-, if isempty.uses then file(filename([libname] + ".bcword"), bytes.0 + bytes.0)
-else file(filename([last.uses] + ".bcword"), bytes.1 + bytes.length.cw + cw)
+[file(outname, bcdata)
+, if isempty.uses then file(changeext(outname, "bcword"), bytes.0 + bytes.0)
+else
+ file(filename("+" + dirpath.outname + [last.uses] + ".bcword")
+ , bytes.1 + bytes.length.cw + cw
+ )
 ]
 
 function symboladdress(addressmap:seq.symbol, typedict:typedict, extnames:set.symdef, libname:word, defines:seq.symdef)int

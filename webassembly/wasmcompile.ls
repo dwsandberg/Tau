@@ -108,10 +108,11 @@ for used = empty:seq.symbol, d ∈ toseq.prg do
 
 Function jsname(sym:symbol)seq.word"exports." + name.sym
 
-Function wasmcompile(alltypes:typedict, prg4:set.symdef, rootsin:seq.symbol, libname:seq.word)seq.file
+Function wasmcompile(alltypes:typedict, prg4:set.symdef, rootsin:seq.symbol, libname:seq.word)seq.byte
 let discard68 = encode.coverage."???"
 let discard67 = startencodings
-let knownfuncs = knownWfunc.alltypes
+let typestack=addabstract( typeref("stack stack "+libname), typeint)
+let knownfuncs = knownWfunc(alltypes,typestack)
 let imports = [abortfunc, callprocessfunc] + toseq.importsare(knownfuncs, prg4)
 let roots = 
  toseq.asset(rootsin
@@ -154,7 +155,7 @@ let zzzzz =
   else txt
  /for(txt)
 {define depended functions}
-let discardt = dependedfunc(alltypes, knownfuncs, prg4, length.imports + 1)
+let discardt = dependedfunc(alltypes, knownfuncs, prg4, length.imports + 1,typestack)
 {define function to initialize words}
 let startfuncidx = funcidx.symbol(moduleref."* core", "initwords3", typeint)
 let mustbedonelast = 
@@ -170,18 +171,17 @@ report"internal error:startfuncidx exceeds number of functions"
 for bodies = empty:seq.seq.byte
 , funcs2 = empty:seq.seq.byte
 , p ∈ sort.encodingdata:wfunc << length.imports
-do next(bodies + code.p, funcs2 + LEBu.typeidx.p)/for([file(filename(libname + ".wasm")
-, createwasm(imp, funcs2, exp + exportmemory."memory"_1, bodies, dataseg, elementdata, startfuncidx)
-)
-])
+do next(bodies + code.p, funcs2 + LEBu.typeidx.p)/for(
+  createwasm(imp, funcs2, exp + exportmemory."memory"_1, bodies, dataseg, elementdata, startfuncidx)
+ )
 
-Function dependedfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, i:int)int
+Function dependedfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, i:int,typestack:mytype)int
 let k = nobodies.i
 for notused = to:encoding.wfunc(1), sym ∈ k do
  if name.module.sym ∈ "$$sequence"then seqsymdef(alltypes, sym)
  else if name.module.sym ∈ "$$record"then recordsymdef(alltypes, sym)
  else if name.module.sym ∈ "$$Icall"then
-  encode.wfunc(alltypes, sym, $$Icallbody(alltypes, toint.name.sym), funcidx.sym)
+  encode.wfunc(alltypes, sym, $$Icallbody(alltypes, toint.name.sym,typestack), funcidx.sym)
  else
   let code = removeoptions.getCode(prg, sym)
   if isempty.code then
@@ -219,7 +219,7 @@ for notused = to:encoding.wfunc(1), sym ∈ k do
    , funcbody(localtypes.result.p1 << nopara.sym, code.result.p1 + return)
    , funcidx.sym
    )
-/for(if length.k = 0 then 0 else dependedfunc(alltypes, knownfuncs, prg, i + length.k)/if)
+/for(if length.k = 0 then 0 else dependedfunc(alltypes, knownfuncs, prg, i + length.k,typestack)/if)
 
 type localinfo is type:wtype, leb:seq.byte, no:int
 
@@ -251,7 +251,7 @@ function Wdefine(l:localinfo)seq.byte[localset] + leb.l
 function Wtee(l:localinfo)seq.byte[localtee] + leb.l
 
 function interpret(alltypes:typedict, knownfuncs:seq.wfunc, sym:symbol, symcode:seq.symbol)seq.word
-let stacktype = addabstract(typeref."stack stack *", typeint)
+let stacktype = addabstract(typeref("stack stack "+library.module.sym), typeint)
 let map = 
  for acc = empty:set.local5map, @e ∈ paratypes.sym do addlocal(acc, toword(cardinality.acc + 1), wtype64(alltypes, @e))/for(acc)
 let p1 = process.createcode2interpert(alltypes, knownfuncs, removeoptions.symcode, map, nopara.sym)
@@ -571,8 +571,7 @@ let paratypes =
 let rt = wtype64(alltypes, resulttype.sym)
 typeindex(paratypes, rt)
 
-function $$Icallbody(alltypes:typedict, functypeidx:int)seq.byte
-let stacktype = addabstract(typeref."stack stack *", typeint)
+function $$Icallbody(alltypes:typedict, functypeidx:int,stacktype:mytype)seq.byte
 let undertop = 
  symbol(moduleref("* stack", typeint), "undertop", [stacktype, typeint], typeint)
 let poppush = 

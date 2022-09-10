@@ -432,6 +432,5 @@ let code =
   let s1 = tokentext.arg1
   let s2 = subseq(s1, 2, length.s1 - 1)
   [Words.if mode.common ∈ "text"then dq.s2 else s2] + code.arg2
-{assert mode.common /nin"text"/or length.code /in[2, 4]report print.code+%.length.code}
 let types = if switch then types.arg1 + seqof.typeword else[seqof.typeword] + types.arg2
 unaryop(R, common, place, "$", bindinfo(dict.R, code, types, "")) 

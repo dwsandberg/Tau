@@ -85,7 +85,7 @@ for acc = empty:seq.byte, names = "parts=", f ∈ files do
 )
 ])
 
-Function wasm(input:seq.file, Library:seq.word, exports:seq.word)seq.file
+Function wasm(input:seq.file, Library:seq.word, exports:seq.word,o:seq.word)seq.file
 {problem is same symbol is used in different onclicks}
 let includetemplate = false
 let input2 = cat(input, "", exports, Library)
@@ -116,17 +116,18 @@ it is safe to reclaim space.}
   + f
   + "; if(inprogress==0)exports.reclaimspace();} /br"
  /for(txt)
-let wasmfile = wasmcompile(typedict.rcinfo, asset.renumberconstants.toseq.prg.rcinfo, syms2, libname)
+let wasmfile = file(filename(o)
+,wasmcompile(typedict.rcinfo, asset.renumberconstants.toseq.prg.rcinfo, syms2, libname))
 let script = 
  {if includetemplate then toseqbyte.toUTF8."<script>"+getfile:byte("/webassembly/template.js")+toseqbyte.
 toUTF8."</script>"else}
  toseqbyte.toUTF8("<script src=" + dq + "/webassembly/template.js" + dq + "> </script>")
-for acc = wasmfile, page ∈ input do
+for acc = [wasmfile], page ∈ input do
  if ext.fn.page ∉ "html"then acc
  else
   let pagehtml = data.page
   acc
-  + file(filename([name.fn.page] + ".html")
+  + file(filename("+"+dirpath.fn.wasmfile+[name.fn.page] + ".html")
   , pagehtml + script
   + toseqbyte.toUTF8(scriptstart + " /br pageinit($(dq.libname), $([name.fn.page])); </script>")
   )

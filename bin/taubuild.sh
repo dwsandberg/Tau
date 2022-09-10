@@ -1,4 +1,3 @@
-#rm -r built
 build=built
 set -e
 
@@ -8,6 +7,7 @@ function checksrc {
 }
 
 #export tauDylib="tauexe "
+
 export tauopen=open 
 
 
@@ -15,7 +15,7 @@ libtype="bc"
 
 
 function libexe {
- rm -f $build/error.html
+ rm -f error.html
  allargs="$@"
  [[ "${allargs#*o=}" != $allargs ]] && rm  -f built/${allargs#*o=}
  #echo "running ${allargs::40}"
@@ -26,8 +26,8 @@ $build/${tauDylib}$1.lib $restargs > /dev/null
  else
    echo "make built/${allargs#*o=}"
 fi
- if  [ -e $build/error.html ] ; then
-  $tauopen $build/error.html  
+ if  [ -e  error.html ] ; then
+  $tauopen  error.html  
   mv sums.txt built/oldsums.txt
   exit 1
  fi
@@ -53,7 +53,11 @@ fi
 
 function makelibrary {
    h1=$(cat $dependsOn 2> /dev/null | shasum)
+   if [[ -e $build/$1.lib ]] ; then 
    hashline="$1 ${h1::40}"
+   else
+    hashline="?"
+   fi
  if   grep "${hashline}" built/oldsums.txt > /dev/null ; then
   echo $hashline >> sums.txt
   else 
@@ -78,17 +82,6 @@ fi
   fi
 }
 
-
-function  mkbuild {
-if  [ -z "$norun" ];then
-mv sums.txt built/oldsums.txt
-cd $build
-tar -zcf ~/backup2/save$(date +%Y%m%d%H%M.bak).tar.gz src
-echo "finish tar"
-fi 
-}
-
-
 if ! [ -e $build ] ; then 
 mkdir $build
 echo "" >> $build/oldsums.txt
@@ -98,15 +91,12 @@ cc bin/putfile.c -o bin/putfile.cgi
 fi
 
 
-
-
 checksrc bin/stdlib.bc
 checksrc bin/taubuild.sh
 checksrc stdlib/tau.c
 checksrc stdlib/tauthreads.c
 checksrc stdlib/tau.h
 checksrc bin/putfile.c
-#checksrc bin/all.decs
 
 echo "$0 $@" > $build/src/bin/buildcommand.sh
 
@@ -117,17 +107,20 @@ if [[ $1 == "-n" ]]; then
 tmpnorun=true
 shift 1
 fi
-if ! [ -z "$@" ];then
-cp $@ built/src
-fi
-libexe orgstdlib updatestate   $@  o=update.sh 
+ cd $build/src
+rm -f $@  
+cd ..
+cd ..
+cp $@ $build/src
+ 
+libexe orgstdlib updatestate   $@  o=+$build update.sh 
 norun=$tmpnorun
 export norun
-source  built/update.sh
+source  $build/update.sh
 
 if  [ -z "$norun" ];then
-mv sums.txt built/oldsums.txt
+mv sums.txt $build/oldsums.txt
 cd $build
-tar -zcf ~/backup2/save$(date +%Y%m%d%H%M.bak).tar.gz src
+tar -zcf ~/backup2/$(date +%Y%m%d%H%M).tar.gz src
 echo "finish tar"
 fi 

@@ -135,7 +135,6 @@ else
     if t2 = t then next(acc + t, unchanged)
     else
      let f3 = lookup(types, typeentry(t2, empty:seq.mytype))
-     {assert{print.t /ne"set.arc.T"}isempty.f3 report"K"+print.t+"K"+print.t2}
      if isempty.f3 then next(acc + t, unchanged)
      else next(acc + replaceT(parameter.t, flatflds.f3_1), false)
    else next(acc + flatflds.f_1, false)

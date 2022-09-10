@@ -103,8 +103,6 @@ else
   /for(acc)
  {figure out how to interpret text form of type}
  let modsx = resolvetypes(libpasstypes, allsrc, lib)
- {assert lib /nin"webassembly"report"H"+for txt="", p /in toseq.modsx do txt+"
- /p"+print.modname.p+for txt2="", tt /in toseq.defines.p do txt2+fullprint.tt+"/"/for(txt2)/for(txt)}
  {figure out how to interpret text form of symbol}
  let t5 = resolvesymbols(allsrc, lib, modsx, asset.mods.libinfo)
  {parse the function bodies}
@@ -185,9 +183,7 @@ for acc = empty:seq.modExports, m2 ∈ t5 do
      if isseq.resulttype.s then acc5 + [resulttype.s, typeint]
      else
       let c = 
-       for c = empty:seq.mytype, t ∈ flatflds(alltypes, resulttype.s)do
-        c + if isencoding.t ∨ {t=typeword ∨}t = typechar then typeint else t
-       /for(c)
+       for c = empty:seq.mytype, t ∈ flatflds(alltypes, resulttype.s)do c + if isencoding.t ∨ t = typechar then typeint else t /for(c)
       acc5 + ([resulttype.s] + c)
     else acc5
    /for(acc5)
@@ -284,7 +280,6 @@ do
      else
       let b = getSymdef(libextnames, sym)
       if not.isempty.b then
-       {assert library.module.sym /nin"*"report"KL"+library.module.sym.b_1+print.sym.b_1+print.sym}
        symdef(sym.b_1, empty:seq.symbol, paragraphno.b_1)
       else symdef(sym, code, -idx)
    if abstract then next(prgX, prgA + new, idx)else next(prgX + new, prgA, idx + 1)

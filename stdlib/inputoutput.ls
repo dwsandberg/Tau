@@ -51,7 +51,7 @@ assert not.aborted.a report"Error opening file:" + name
 result.merge(a, result.a + body2.a, empty:seq.bit)
 
 Function getfiles(args:seq.word)seq.file
-for acc = empty:seq.file, fn ∈ getfilenames(".", args << 1)do
+for acc = empty:seq.file, fn ∈ getfilenames(args << 1)do
  acc
  + if ext.fn ∈ "bc"then file(fn, getfile:bit([fullname.fn]))
  else file(fn, getfile:byte([fullname.fn]))

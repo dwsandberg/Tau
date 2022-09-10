@@ -140,10 +140,6 @@ Function uses(alltypes:typedict
 , typedict:typedict
 , libname:word
 )int
-{let discard=if libname /in"webassembly"then for txt="?Gfx", sym /in toseq.used1 do if isconst.sym /or name.sym /nin 
-"_"/or print.module.sym /ne"seq.localmap"then txt else let discard5=call(typedict, sym, "CALL"_1, mangledname(extnames 
-, sym, libname))txt+"
- /br"+print.sym+fullprint.para.module.sym /for(0)else 0}
 for acc = empty:match5, ele ∈ toseq.used1 do
  if isconst.ele then
   if isFref.ele then

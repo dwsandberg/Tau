@@ -175,7 +175,6 @@ let none = merge."+NONE"
 let match = merge."+MaTcH"
 let pendingbreak = merge."+pendingBreak"
 for needsLF = false, result = emptyUTF8, stk = empty:stack.word, last = none, this ∈ a + space do
- {assert this /ne first.", "report"x"+last+if needsLF then"LF"else""}
  if last = match then
   if this = " /<"_1 then next(needsLF, result + [this], push(stk, this), match)
   else if this = " />"_1 then

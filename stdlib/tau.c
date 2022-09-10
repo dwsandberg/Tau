@@ -27,6 +27,7 @@
 
 typedef  struct pinfo *processinfo;
 
+char basedir[100];
 
                
 void assertexit(int b,char *message);
@@ -169,7 +170,7 @@ int looklibraryname(char* name) { int i;
    return -1;}
 
 BT initlib5(char * libname,BT  libdesc,BT initwordsfunc) {
-//  fprintf(stderr,"initlib5 %s %lld \n",libname,baselib); 
+  //fprintf(stderr,"initlib5 %s %lld \n",libname,loaded[1]); 
   static BT (* addlibrarywords)(processinfo PD,BT   );
 if ( loaded[1]==0 ){
   /* only needed when initializing base lib */
@@ -183,17 +184,19 @@ addlibrarywords(&sharedspace,libdesc);
 if (loaded[1] == 1) {
      BT arg[1]={(BT) empty};
     int fd;
-  char name[100]="built/stdlib.bcword",*filedata; struct stat sbuf;
-   sprintf(name,"built/%s.bcword",libnames[2]);
+  char name[100],*filedata; struct stat sbuf;
+   sprintf(name,"%s/%s.bcword",basedir,libnames[2]);
        bcwords=empty; BT * data2;
      if ( ((fd = open(name, O_RDONLY)) == -1)||(stat(name, &sbuf) == -1)) {
        fprintf(stderr, "failed to load %s \n",name); exit(1);}
-    else   if((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) != (caddr_t)(-1))
+    if((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) != (caddr_t)(-1))
      {
     bcwords=(long long *) filedata; 
     fprintf(stderr, "loading2 %s %lld   \n ",name,bcwords[1]  );
      addlibrarywords(&sharedspace,(BT)arg);
-} }
+   } else  {fprintf(stderr, "failed to load2 %s \n",name); exit(1);}
+
+}
 
 
 // addlibrarywords(&sharedspace,libdesc);
@@ -308,7 +311,7 @@ return 0;
 #include <dlfcn.h>
 
 BT loadlibrary(struct pinfo *PD,char *lib_name_root){
-   char lib_name[200],name[100];
+   char lib_name[200];
    struct stat sbuf;
    BT liblib;
     int i = looklibraryname(lib_name_root) ;
@@ -316,7 +319,7 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
    {   // fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
      return ((BT*)loaded[i+2])[3];}
   //  fprintf(stderr,"check %s,%d\n",lib_name_root,strlen(lib_name_root));
-   sprintf(lib_name,"built/%s.dylib",lib_name_root);
+   sprintf(lib_name,"%s/%s.dylib",basedir,lib_name_root);
  // sprintf(lib_name,"%s.dylib",lib_name_root);
    // fprintf(stderr,"Loading %s\n",lib_name);
    void *lib_handle = dlopen(lib_name, RTLD_NOW);
@@ -440,7 +443,12 @@ BT  tobyteseq ( processinfo PD,char *str) {
 }
 
 
+
 int main(int argc, char **argv)    {   int i=0,count; 
+
+strcpy(basedir,argv[0]);
+for(i=strlen(basedir)-1 ;i >=0 ;i--) if (basedir[i]=='/') {basedir[i]=0; break;}
+
 #ifdef LIBRARY 
      fprintf(stderr,"DYLIB VERSION\n");
     if (argc==0)  fprintf(stderr,"must have compiled library as first argument"); 
@@ -459,14 +467,15 @@ int main(int argc, char **argv)    {   int i=0,count;
   int startarg=1;
   init_libs();
 #endif
-
-if (argc > 3 && strcmp(argv[1],"makebitcode")==0) 
-{  
-    int fd;
-  char name[100],*filedata; struct stat sbuf;
-   int t=strlen(argv[3])-strlen("libinfo");
-   strncpy(name,argv[3], t);
-   strcpy(name+t,"bcword");
+  
+if (argc > 3 && strncmp(argv[1],"makebitcode",11)==0) 
+{ // example arg format "stdlib makebitcode+$build webassembly.libsrc stdlib.libinfo"
+  int fd;
+  char name[100],tmp[100],*filedata;
+  struct stat sbuf;
+  int t=strlen(argv[3])-strlen("libinfo");
+   strncpy(tmp,argv[3], t);
+   sprintf(name,"%s/%sbcword",argv[1]+12,tmp);
       bcwords=empty; BT * data2;
      if ( ((fd = open(name, O_RDONLY)) == -1)||(stat(name, &sbuf) == -1)) {
        fprintf(stderr, "failed to load %s \n",name); exit(1);}

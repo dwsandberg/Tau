@@ -89,9 +89,7 @@ function usedsyms(allsyms:symboldict
 , inline:set.symdef
 )postbindresult
 let aa = encodingdata:symbol
-if length.aa = last then
- {assert false report"INLINE"+for txt="", sd=toseq.inline do txt+print.sym.sd+print.code.sd+EOL /for(txt)}
- postbindresult(typedict1, result, inline)
+if length.aa = last then postbindresult(typedict1, result, inline)
 else
  for accZ = postbindresult(typedict1, result, inline), symz ∈ subseq(aa, last + 1, length.aa)do
   if isspecial.symz ∨ isconst.symz ∨ isBuiltin.symz ∨ isGlobal.symz ∨ inModFor.symz then accZ
@@ -102,8 +100,6 @@ else
     if not.isempty.b then b_1
     else if istype.symz then symdef(symz, deepcopybody(resulttype.symz, newdict2), 0)
     else
-     {assert name.symz /nin"hash"report"ZZ"+print.symz+print.lookupbysig(allsyms, symz)_1}
-     {if not.isunbound.symz then instantiateTemplate(symz, templates)else}
      let k21 = lookupbysig(allsyms, symz)
      let k2 = 
       if cardinality.k21 < 2 then k21
@@ -114,11 +110,7 @@ else
       assert cardinality.k2 = 1
       report"unbound problem" + print.symz
       + if cardinality.k2 > 1 then
-       for txt = "", symt ∈ toseq.k2 do
-        txt + if isunbound.symt then"T"else"F"/if
-        + library.module.symt
-        + print.symt
-       /for(txt)
+       for txt = "", symt ∈ toseq.k2 do txt + " /br" + library.module.symt + print.symt /for(txt)
       else""
       let sym2 = k2_1
       let b2 = getSymdef(source, sym2)

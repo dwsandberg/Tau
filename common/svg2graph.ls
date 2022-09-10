@@ -123,9 +123,6 @@ do
  {assumes nodes in g uses same sortorder as nodinfo}
  let nodex = toreal.y.n * scalex
  let nodey = toreal.x.n * scaley
- {assert i /le cardinality.nodes.xxx report"XXX"+for out="", nn /in toseq.nodeinfo.layout do out+node2text.n.nn /for 
-(out)+for out="
- /p", nn /in toseq.nodes.xxx do out+node2text.nn /for(out)}
  if i ≤ cardinality.nodes.xxx ∧ (nodes.xxx)_i = n.n then
   let succ = toseq.successors(xxx, n.n)
   let hovertext = nodeTitle.n.n

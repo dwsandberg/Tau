@@ -167,9 +167,7 @@ let a =
   + text.post
   + ")"
   )
- else
-  {assert binary ≠"+"report"wrap"+print.prec.pre+print.prec.post+print.prec}
-  prettyresult(prec, width.pre + width.x + width.post, pre1 + x + text.post)
+ else prettyresult(prec, width.pre + width.x + width.post, pre1 + x + text.post)
 attribute2.[a]
 
 function unaryminus(exp:attribute2)attribute2

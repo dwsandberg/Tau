@@ -64,12 +64,6 @@ for acc = empty:seq.typedef, t ∈ typerep.s do
  /for(result)
 /for(mytype.acc)
 
-Function replacestar(s:mytype, replacement:word)mytype
-for acc = empty:seq.typedef, t ∈ typerep.s do
- acc
- + if library.t ∈ "*"then typedef(name.t, modname.t, replacement)else t
-/for(mytype.acc)
-
 Function =(a:mytype, b:mytype)boolean typerep.a = typerep.b
 
 Function abstracttypename(m:mytype)word name.first.typerep.m
@@ -99,13 +93,17 @@ Function isabstract(a:mytype)boolean last.typerep.a = first.typerep.typeT
 Function replaceT(with:mytype, m:mytype)mytype
 if isabstract.m then mytype(typerep.m >> 1 + typerep.with)else m
 
-Function =(a:typedef, b:typedef)boolean name.a = name.b ∧ modname.a = modname.b ∧ wild(library.a, library.b) = EQ
+Function =(a:typedef, b:typedef)boolean name.a = name.b ∧ modname.a = modname.b ∧ library.a = library.b
+
+Function ?(a:typedef, b:typedef)ordering name.a ? name.b ∧ modname.a ? modname.b ∧ library.a ? library.b
+
+Function ?2(a:typedef, b:typedef)ordering name.a ? name.b
 
 function wild(a:word, b:word)ordering if a ∈ "*" ∨ b ∈ "*"then EQ else a ? b
 
 Function ?(a:mytype, b:mytype)ordering typerep.a ? typerep.b
 
-Function ?(a:typedef, b:typedef)ordering name.a ? name.b ∧ modname.a ? modname.b ∧ wild(library.a, library.b)
+Function ?2(a:mytype, b:mytype)ordering ?2(typerep.a, typerep.b)
 
 Function print(s:modref)seq.word
 if issimple.s then[name.s]else[name.s, "."_1] + print.para.s
@@ -167,20 +165,6 @@ Function ?(a:modref, b:modref)ordering name.a ? name.b ∧ para.a ? para.b ∧ w
 
 Function ?2(a:modref, b:modref)ordering name.a ? name.b
 
-Function ?2(a1:mytype, b1:mytype)ordering
-let a = typerep.a1
-let b = typerep.b1
-let lengtha = length.a
-let lengthb = length.b
-if lengtha > lengthb then GT
-else if lengtha < lengthb then LT else subcmp(a, b, 1)
-
-function subcmp(a:seq.typedef, b:seq.typedef, i:int)ordering
-if i > length.a then EQ
-else
- let c = name.a_i ? name.b_i
- if c = EQ then subcmp(a, b, i + 1)else c
-
 Function typebase(i:int)mytype
 mytype.[typedef("$base"_1, "internal"_1, "internallib"_1)
 , typedef(toword.i, "internal"_1, "internallib"_1)
@@ -228,7 +212,20 @@ do
  else if first.m ∈ "use"then
   next(knownmods, s, defines, unresolveduses + m << 1, unresolvedexports, mref)
  else if first.m ∈ "type"then
-  next(knownmods, s, defines + newtype(mref, m_2), unresolveduses, unresolvedexports, mref)
+  next(knownmods
+  , s
+  , defines
+  + newtype(if m_2
+  ∈ "process boolean ptr seq encoding word bit bits byte char packed2 packed3 packed4 packed5 packed6 encodingpair encodingstate 
+typename index"then
+   modref("*"_1, name.mref, para.mref)
+  else mref
+  , m_2
+  )
+  , unresolveduses
+  , unresolvedexports
+  , mref
+  )
  else if subseq(m, 1, 3) = "Export type:"then
   next(knownmods, s, defines, unresolveduses, unresolvedexports + m << 3, mref)
  else next(knownmods, s, defines, unresolveduses, unresolvedexports, mref)
@@ -244,7 +241,6 @@ Function newtype(mref:modref, name:word)mytype mytype([typedef(name, name.mref, 
 function R(s1:set.passtypes, knownmods:set.modref, countin:int)set.passtypes
 if countin = 0 then s1
 else
- {assert countin /in[100000, 134, 45, 22, 1]report"C"+print.countin}
  for cnt = 0, acc = empty:set.passtypes, p ∈ toseq.s1 do
   next(cnt + length.unresolvedexports.p + length.unresolveduses.p, acc + resolve(s1, knownmods, p))
  /for(assert countin ≠ cnt

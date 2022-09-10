@@ -335,7 +335,7 @@ if headerplace = 0 then current
 else
  let bb = align32.addvbr(current, ENDBLOCK, blockabbrevlength)
  let len = (length.bb - headerplace) / 32
- {assert false report"X"+toword(length.header-32)+toword.len}patch(bb, headerplace - 31, len)
+ patch(bb, headerplace - 31, len)
 
 Function addbody(m:bitstream, offset:int, bodytxt:internalbc)bitstream
 let header = addblockheader(m, MODABBREVLEN, toint.FUNCTIONBLK, FUNCABBRVLEN)

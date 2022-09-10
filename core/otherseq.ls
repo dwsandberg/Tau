@@ -56,13 +56,27 @@ Function ?(a:seq.T, b:seq.T)ordering
 let lengtha = length.a
 let lengthb = length.b
 if lengtha > lengthb then GT
-else if lengtha < lengthb then LT else{a @ ?(EQ, @e ? b_@i)((@e ? b_@i)≠ EQ)}subcmp(a, b, 1)
+else if lengtha < lengthb then LT else subcmp(a, b, 1)
 
 function subcmp(a:seq.T, b:seq.T, i:int)ordering
 if i > length.a then EQ
 else
  let c = a_i ? b_i
  if c = EQ then subcmp(a, b, i + 1)else c
+
+unbound ?2(T, T)ordering
+
+Function ?2(a:seq.T, b:seq.T)ordering
+let lengtha = length.a
+let lengthb = length.b
+if lengtha > lengthb then GT
+else if lengtha < lengthb then LT else subcmp2(a, b, 1)
+
+function subcmp2(a:seq.T, b:seq.T, i:int)ordering
+if i > length.a then EQ
+else
+ let c = ?2( a_i, b_i)
+ if c = EQ then subcmp2(a, b, i + 1)else c
 
 unbound ?alpha(T, T)ordering
 

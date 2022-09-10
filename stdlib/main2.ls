@@ -103,7 +103,8 @@ do
 + toseqbyte.textformat(uses + entryheader + acc << 2 + " /br else" + finalclause))
 
 Function libsrc(input:seq.file, uses:seq.word, exports:seq.word, o:seq.word)seq.file
-let Library = subseq(o, 1, 1)
+let outname = filename.o
+let Library = {subseq(o, 1, 1)}[name.outname]
 for acc = empty:seq.byte, names = "parts=", f ∈ input do
  if ext.fn.f ∈ "ls libsrc"then next(acc + tobyte.10 + tobyte.10 + data.f, names + fullname.fn.f)
  else next(acc, names)
@@ -117,7 +118,7 @@ for acc = empty:seq.byte, names = "parts=", f ∈ input do
   + tobyte.10
   + toseqbyte.toUTF8("Module" + entrypointname)
   + makeentry(uses, entrypointname, acc)
-[file(filename(Library + ".libsrc"), firstpart + acc)])
+[file(outname, firstpart + acc)])
 
 function stacktracesymbol2 symbol symbol(moduleref."* debuginfo", "stacktraceimp", seqof.typeword)
 
@@ -127,7 +128,7 @@ let uses = extractValue(first.allsrc, "uses")
 let baselib = if isempty.uses then libname else last.uses
 symbol(moduleref([baselib] + "debuginfo"), "stacktraceimp", seqof.typeword)
 
-function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint)seq.file
+function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint, outname:filename)seq.file
 {OPTION PROFILE}
 let libname = extractValue(first.allsrc, "Library")
 let uses = extractValue(first.allsrc, "uses")
@@ -135,19 +136,20 @@ let stacktracesymbol = stacktracesymbol.allsrc
 let m = starmap.compilerfront2:libllvm("all2", allsrc, dependentlibs, stacktracesymbol)
 let m2 = outlib.m
 let dp = if isempty.uses then uses else[last.uses]
-let files = compilerback(m, dependentwords.dp, stacktracesymbol)
-files + file(filename(libname + ".libinfo"), outbytes:midpoint([m2]))
+let files = compilerback(m, dependentwords.dp, stacktracesymbol, outname)
+files + file(changeext(outname, "libinfo"), outbytes:midpoint([m2]))
 
 Function makebitcode(input:seq.file)seq.file
 let info = breakparagraph.data.first.input
 let libname = extractValue(first.info, "Library")
+let outname = filename("+" + dirpath.fn.first.input + libname + ".bc")
 let uses = extractValue(first.info, "uses")
 let dep = 
  for mp = empty:midpoint, i ∈ input << 1 do
   let new = first.inbytes:midpoint(data.i)
   midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
  /for(mp)
-let p = process.subcompilelib(info, dep)
+let p = process.subcompilelib(info, dep, outname)
 if aborted.p then
  [file("error.html", "COMPILATION ERROR in libray:" + libname + EOL + message.p)
  ]
