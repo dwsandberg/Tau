@@ -79,7 +79,6 @@ Function knownWfunc(alltypes:typedict,typestack:mytype)seq.wfunc
 )
 , wfunc(alltypes, symbol(internalmod, "bitcast", typeint, typeptr), empty:seq.byte)
 , wfunc(alltypes, symbol(internalmod, "toint", typebyte, typeint), empty:seq.byte)
-, wfunc(alltypes, symbol(internalmod, "toint", typebit, typeint), empty:seq.byte)
 , wfunc(alltypes, symbol(internalmod, "bitcast", typeptr, typeptr), empty:seq.byte)
 , wfunc(alltypes, symbol(internalmod, "bitcast", seqof.typeint, typeptr), empty:seq.byte)
 , wfunc(alltypes, symbol(internalmod, "toreal", typeint, typereal), [f64converti64s])

@@ -269,8 +269,8 @@ Function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int)internalbc
 for acc = emptyinternalbc, @e ∈ arithseq(nopara, 1, 1)do acc + phiinst(slot, typ, tailphi, nopara, @e)/for(acc)
 
 function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int, p:int)internalbc
-{let t=@(addpair(tailphi, slot+p, p), identity, emptyinternalbc, arithseq(length.tailphi /(nopara+1), -nopara-
-1, length.tailphi-nopara))}
+{let t=@(addpair(tailphi, slot+p, p), identity, emptyinternalbc, arithseq(length.tailphi /(nopara+1), -
+  nopara-1, length.tailphi-nopara))}
 let t = 
  for acc = emptyinternalbc
  , @e ∈ arithseq(length.tailphi / (nopara + 1), -nopara - 1, length.tailphi - nopara)
@@ -365,23 +365,23 @@ function TYPEABBREVLEN int 4
 
 function FUNCABBRVLEN int 4
 
-Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.bits
+Function llvm(deflist:seq.seq.int, bodytxts:seq.internalbc, trecords:seq.seq.int)seq.seq.byte
 let p = llvmpartial(deflist, trecords)
 let offset = length.constantrecords
 let a7 = for acc = a6.p, @e ∈ bodytxts do addbody(acc, offset, @e)/for(acc)
 {sym table}
 let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
 let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
-{finish module block}bits.finishblock(a8, length.h.p, MODABBREVLEN)
+{finish module block}toseqseqbyte.finishblock(a8, length.h.p, MODABBREVLEN)
 
-Function llvm(trecords:seq.seq.int, bodies:seq.seq.seq.int)seq.bits
+Function llvm(trecords:seq.seq.int, bodies:seq.seq.seq.int)seq.seq.byte
 let p = llvmpartial(empty:seq.seq.int, trecords)
 let offset = length.constantrecords
 let a7 = for acc = a6.p, @e ∈ bodies do addbody(acc, @e)/for(acc)
 {sym table}
 let symtabheader = addblockheader(a7, MODABBREVLEN, toint.VALUESYMTABLE, TYPEABBREVLEN)
 let a8 = finishblock(symentries(symtabheader, constantrecords, 1), length.symtabheader, TYPEABBREVLEN)
-{finish module block}bits.finishblock(a8, length.h.p, MODABBREVLEN)
+{finish module block}toseqseqbyte.finishblock(a8, length.h.p, MODABBREVLEN)
 
 type llvmpartial is a6:bitstream, h:bitstream
 

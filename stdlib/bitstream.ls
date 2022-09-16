@@ -6,6 +6,8 @@ use otherseq.bits
 
 use standard
 
+use tausupport
+
 Export type:bitstream
 
 type bitstream is length:int, endpart:bits, fullwords:seq.bits
@@ -14,7 +16,9 @@ Function tobitstream(s:seq.bits)bitstream bitstream(length.s * 64, 0x0, s)
 
 Export length(bitstream)int
 
-Function bits(a:bitstream)seq.bits fullwords.a + endpart.a
+function bits(a:bitstream)seq.bits fullwords.a + endpart.a
+
+Function toseqseqbyte(bs:bitstream)seq.seq.byte toseqseqbyte(bits.bs, (length.bs + 7) / 8)
 
 Function empty:bitstream bitstream bitstream(0, 0x0, empty:seq.bits)
 
@@ -78,8 +82,8 @@ else
   )
  bitstream(len, endpart, shiftleft(2, startpart, firstpart, startshift, empty:seq.bits))
 
-/function cmp(a:bitstream, b:bitstream, i:int, offseta:int)boolean if i > length.b then true else if singlebit(a, i+offseta)
-=singlebit(b, i)then cmp(a, b, i+1, offseta)else false
+/function cmp(a:bitstream, b:bitstream, i:int, offseta:int)boolean if i > length.b then true else if singlebit(a, 
+ i+offseta)=singlebit(b, i)then cmp(a, b, i+1, offseta)else false
 
 Function +(a:bitstream, b:bitstream)bitstream
 {steal bits from b to make full words in a}

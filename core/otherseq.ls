@@ -75,7 +75,7 @@ else if lengtha < lengthb then LT else subcmp2(a, b, 1)
 function subcmp2(a:seq.T, b:seq.T, i:int)ordering
 if i > length.a then EQ
 else
- let c = ?2( a_i, b_i)
+ let c = ?2(a_i, b_i)
  if c = EQ then subcmp2(a, b, i + 1)else c
 
 unbound ?alpha(T, T)ordering

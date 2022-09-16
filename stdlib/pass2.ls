@@ -100,9 +100,8 @@ function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqty
 let seqparameter = parameter.xtheseqtype
 let theseqtype = seqof.seqparameter
 let elementtype = 
- if seqparameter ∈ [typeint, typereal, typeboolean, typebyte]then seqparameter
- else if seqparameter ∈ [typebit]then typeint else typeptr
-let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte ∨ seqparameter = typebit
+ if seqparameter ∈ [typeint, typereal, typeboolean, typebyte]then seqparameter else typeptr
+let maybepacked = seqparameter ∈ packedtypes ∨ seqparameter = typebyte
 let callidx = symbol(internalmod, "callidx", [seqof.elementtype, typeint], elementtype)
 [Start.elementtype, seqtype, Lit.1, GtOp, Br2(1, 2)] + [theseq, masteridx, callidx, Exit]
 + if boundscheck then

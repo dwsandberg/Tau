@@ -41,7 +41,7 @@ let cl =
  , "11"
  , "2"
  , "1"
- , "internal:false boolean"
+ , "false boolean"
  , "4607182418800017408"
  , "44"
  , "2"
@@ -51,73 +51,73 @@ let cl =
  , "2"
  , "128"
  , "65"
- , "internal:true boolean"
+ , "true boolean"
  , "4"
  , {optest24}
- "Start(int) /br %1 5 internal:=(int, int)boolean Br2(1, 2) /br 24 Exit  /br 0 Exit  /br EndBlock  /br"
+ "Start(int) /br %1 5 =(int, int)boolean Br2(1, 2) /br 24 Exit  /br 0 Exit  /br EndBlock  /br"
  , "25"
  , {optest26}
- "Start(int) /br %1 WORD a internal:=(int, int)boolean Br2(3, 1) /br %1 WORD b internal:=(int, int)boolean Br2(2, 1) /br 
-%1 WORD c internal:=(int, int)boolean Br2(1, 2) /br 26 Exit  /br 0 Exit  /br EndBlock  /br"
- , "%1 %2 $loopblock.int:LOOPBLOCK:3(int, int) /br %3 1 internal:=(int, int)boolean Br2(1, 2) /br %4 Exit  /br %3 1 internal 
-:-(int, int)int %3 %4 internal:*(int, int)int CONTINUE 2  /br EndBlock  /br"
+ "Start(int) /br %1 WORD a =(int, int)boolean Br2(3, 1) /br %1 WORD b =(int, int)boolean Br2(2, 1) /br 
+%1 WORD c =(int, int)boolean Br2(1, 2) /br 26 Exit  /br 0 Exit  /br EndBlock  /br"
+ , "%1 %2 Loop:3(int, int)int /br %3 1 =(int, int)boolean Br2(1, 2) /br %4 Exit  /br %3 1   
+-(int, int)int %3 %4 *(int, int)int Continue 2  /br EndBlock  /br"
  , {optest28}
- "Start(boolean) /br %1 0 internal:>(int, int)boolean Br2(1, 2) /br 10 %2 internal:>(int, int)boolean Exit  /br internal 
-:false boolean Exit  /br EndBlock  /br"
+ "Start(boolean) /br %1 0 >(int, int)boolean Br2(1, 2) /br 10 %2 >(int, int)boolean Exit  
+ /br false boolean Exit  /br EndBlock  /br"
  , {optest29}
- "Start(boolean) /br %1 0 internal:>(int, int)boolean Br2(1, 2) /br internal:true boolean Exit  /br 10 %2 internal:>(int 
+ "Start(boolean) /br %1 0 >(int, int)boolean Br2(1, 2) /br true boolean Exit  /br 10 %2 >(int 
 , int)boolean Exit  /br EndBlock  /br"
  , {optest30}
- "Start(int) /br %1 WORD test internal:=(int, int)boolean Br2(1, 2) /br %2 Exit  /br %3 Exit  /br EndBlock  /br"
+ "Start(int) /br %1 WORD test =(int, int)boolean Br2(1, 2) /br %2 Exit  /br %3 Exit  /br EndBlock  /br"
  , "31"
  , "%1"
  , {test 33}"33"
  , "Start(int)
-/br %1 %2 seq.int:_(seq.int, int)int Define 3 %3 1 internal:=(int, int)boolean Br2(7, 1)
-/br %3 9 internal:=(int, int)boolean Br2(6, 1)
-/br %3 5 internal:=(int, int)boolean Br2(5, 1)
-/br %3 2 internal:=(int, int)boolean Br2(4, 1)
-/br %3 12 internal:=(int, int)boolean Br2(3, 1)
-/br %3 3 internal:=(int, int)boolean Br2(2, 1)
-/br %1 %2 seq.int:_(seq.int, int)int 4 internal:=(int, int)boolean Br2(1, 2)
+/br %1 %2 seq.int:_(seq.int, int)int Define 3 %3 1 =(int, int)boolean Br2(7, 1)
+/br %3 9 =(int, int)boolean Br2(6, 1)
+/br %3 5 =(int, int)boolean Br2(5, 1)
+/br %3 2 =(int, int)boolean Br2(4, 1)
+/br %3 12 =(int, int)boolean Br2(3, 1)
+/br %3 3 =(int, int)boolean Br2(2, 1)
+/br %1 %2 seq.int:_(seq.int, int)int 4 =(int, int)boolean Br2(1, 2)
 /br 10 Exit 
 /br 11 Exit 
 /br EndBlock 
 /br"
  , {test 35}
  "Start(int)
-/br %1 %2 seq.word:_(seq.word, int)word Define 3 %3 WORD e internal:=(int, int)boolean Br2(6, 1)
-/br %3 WORD d internal:=(int, int)boolean Br2(5, 1)
-/br %3 WORD c internal:=(int, int)boolean Br2(4, 1)
-/br %3 WORD b internal:=(int, int)boolean Br2(3, 1)
-/br %3 WORD a internal:=(int, int)boolean Br2(2, 1)
-/br %1 %2 seq.word:_(seq.word, int)word WORD x internal:=(int, int)boolean Br2(1, 2)
+/br %1 %2 seq.word:_(seq.word, int)word Define 3 %3 WORD e =(int, int)boolean Br2(6, 1)
+/br %3 WORD d =(int, int)boolean Br2(5, 1)
+/br %3 WORD c =(int, int)boolean Br2(4, 1)
+/br %3 WORD b =(int, int)boolean Br2(3, 1)
+/br %3 WORD a =(int, int)boolean Br2(2, 1)
+/br %1 %2 seq.word:_(seq.word, int)word WORD x =(int, int)boolean Br2(1, 2)
 /br 10 Exit 
 /br 11 Exit 
 /br EndBlock 
 /br"
  , {test 36}
  "Start(int)
-/br %1 3 seq.int:_(seq.int, int)int 3333 internal:=(int, int)boolean Br2(6, 1)
-/br %1 3 seq.int:_(seq.int, int)int Define 2 %2 5 internal:=(int, int)boolean Br2(5, 1)
-/br %2 7 internal:=(int, int)boolean Br2(4, 1)
-/br %2 8 internal:=(int, int)boolean Br2(3, 1)
-/br %2 9 internal:=(int, int)boolean Br2(2, 1)
-/br %1 3 seq.int:_(seq.int, int)int 10 internal:=(int, int)boolean Br2(1, 2)
+/br %1 3 seq.int:_(seq.int, int)int 3333 =(int, int)boolean Br2(6, 1)
+/br %1 3 seq.int:_(seq.int, int)int Define 2 %2 5 =(int, int)boolean Br2(5, 1)
+/br %2 7 =(int, int)boolean Br2(4, 1)
+/br %2 8 =(int, int)boolean Br2(3, 1)
+/br %2 9 =(int, int)boolean Br2(2, 1)
+/br %1 3 seq.int:_(seq.int, int)int 10 =(int, int)boolean Br2(1, 2)
 /br 25 Exit 
 /br 2 Exit 
 /br EndBlock 
 /br"
  , {test 37}
  "Start(int)
-/br %1 %2 seq.word:_(seq.word, int)word WORD xxx internal:=(int, int)boolean Br2(1, 2)
+/br %1 %2 seq.word:_(seq.word, int)word WORD xxx =(int, int)boolean Br2(1, 2)
 /br 3 Exit 
-/br %1 %2 seq.word:_(seq.word, int)word Define 3 %3 WORD a internal:=(int, int)boolean Br2(2, 1)
-/br %3 WORD b internal:=(int, int)boolean Br2(1, 2)
+/br %1 %2 seq.word:_(seq.word, int)word Define 3 %3 WORD a =(int, int)boolean Br2(2, 1)
+/br %3 WORD b =(int, int)boolean Br2(1, 2)
 /br 4 Exit 
-/br %1 %2 seq.word:_(seq.word, int)word Define 4 %4 WORD c internal:=(int, int)boolean Br2(3, 1)
-/br %4 WORD d internal:=(int, int)boolean Br2(2, 1)
-/br %4 WORD z internal:=(int, int)boolean Br2(1, 2)
+/br %1 %2 seq.word:_(seq.word, int)word Define 4 %4 WORD c =(int, int)boolean Br2(3, 1)
+/br %4 WORD d =(int, int)boolean Br2(2, 1)
+/br %4 WORD z =(int, int)boolean Br2(1, 2)
 /br 4 Exit 
 /br 5 Exit 
 /br EndBlock 

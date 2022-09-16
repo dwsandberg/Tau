@@ -216,8 +216,8 @@ do
   , s
   , defines
   + newtype(if m_2
-  ∈ "process boolean ptr seq encoding word bit bits byte char packed2 packed3 packed4 packed5 packed6 encodingpair encodingstate 
-typename index"then
+  ∈ "process boolean ptr seq encoding word bits byte char packed2 packed3 packed4 packed5 packed6 encodingpair
+    encodingstate typename index"then
    modref("*"_1, name.mref, para.mref)
   else mref
   , m_2

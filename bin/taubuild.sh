@@ -53,11 +53,11 @@ fi
 
 function makelibrary {
    h1=$(cat $dependsOn 2> /dev/null | shasum)
-   if [[ -e $build/$1.lib ]] ; then 
+#   if [[ -e $build/$1.lib ]] ; then 
    hashline="$1 ${h1::40}"
-   else
-    hashline="?"
-   fi
+#   else
+#    hashline="?"
+#   fi
  if   grep "${hashline}" built/oldsums.txt > /dev/null ; then
   echo $hashline >> sums.txt
   else 
@@ -66,15 +66,16 @@ function makelibrary {
       node=$1.$libtype
      libexe $compileargs
  if [ -z "$norun" ];then
- 	 if [ -z"$tauDylib" ];then 
+ 	 if [ -z $tauDylib ];then 
 		echo "void init_$1(); $ccode init_$1();}"> $build/$1.c 
 		cmd="clang -lm -pthread stdlib/*.c $build/$1.c $dependlibs $build/$1.bc -o $build/$1.lib  "
 		echo $cmd
 		$cmd
 	 else 
-		libtype="dylib" 
-		clang -lm -pthread -dynamiclib $build/$1.bc $dependlibs -o $build/$1.dylib -init_init_$1 -undefined dynamic_lookup 
-	 fi 
+	   cmd=" clang -dynamiclib $build/$1.bc  -o $build/$1.lib  -init _init_$1 -undefined dynamic_lookup"
+	   echo $cmd
+	   $cmd
+    fi 
 	 echo $hashline >> sums.txt
 else 
   echo makelibrary "$build/$1.lib"
@@ -88,6 +89,9 @@ echo "" >> $build/oldsums.txt
 echo "void init_stdlib(); void init_libs(){init_stdlib(); }">$build/orgstdlib.c
 clang -lm -pthread  stdlib/*.c $build/orgstdlib.c bin/stdlib.bc  -o $build/orgstdlib.lib
 cc bin/putfile.c -o bin/putfile.cgi
+#clang -dynamiclib bin/stdlib.bc  -o $build/orgstdlib.lib  -init _init_stdlib -undefined dynamic_lookup
+#cc  stdlib/*.c -DLIBRARY -o built/tauexe
+
 fi
 
 

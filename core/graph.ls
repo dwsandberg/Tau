@@ -104,7 +104,7 @@ for acc = empty:seq.T, n ∈ toseq(nodes.g \ b)do
 /for(acc)
 
 Function sources(g:graph.T, b:set.T)seq.T
-{returns list of sinks in graph with arcs to nodes in set b removed}
+{returns list of sources in graph with arcs to nodes in set b removed}
 for acc = empty:seq.T, n ∈ toseq(nodes.g \ b)do
  if cardinality(predecessors(g, n) \ b) = 0 then acc + n else acc
 /for(acc)
@@ -118,9 +118,6 @@ Function sinksfirst(g:graph.T)seq.T{will not return nodes involved in a cycle}si
 function sinksfirst(g:graph.T, b:set.T, result:seq.T)seq.T
 let new = sinks(g, b)
 if isempty.new then result else sinksfirst(g, b ∪ asset.new, result + new)
-
-Function sources(g:graph.T, b:set.T, n:T)seq.T
-if cardinality(predecessors(g, n) \ b) = 0 then[n]else empty:seq.T
 
 function breathfirst(g:graph.T, b:set.T, result:seq.T)seq.T
 let new = sources(g, b)

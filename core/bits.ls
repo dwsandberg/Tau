@@ -1,12 +1,12 @@
 Module bits
 
+use seq.bits
+
 use standard
 
 Export type:byte
 
 Export type:bits
-
-Export type:bit
 
 type bits is toint:int
 
@@ -52,18 +52,6 @@ let t4 = if b4 = 0x0 then 0 else 4
 let d4 = if b4 = 0x0 then 0xF ∧ d8 else b4
 t32 + t16 + t8 + t4 + [0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4]_(toint.d4 + 1)
 
-__________________
-
-type bit is rep:int
-
-Function =(a:bit, b:bit)boolean toint.a = toint.b
-
-Builtin toint(b:bit)int
-
-Function tobit(a:int)bit bit.a
-
-Function tobits(a:bit)bits tobits.toint.a
-
 _________________
 
 type byte is rep:int
@@ -72,7 +60,13 @@ Function =(a:byte, b:byte)boolean toint.a = toint.b
 
 Function tobits(a:byte)bits tobits.toint.a
 
-Builtin toint(b:byte)int{use builtin rather than rep.b so abyteseq @+(empty:seq.int, toint.@e)does not become an noop since 
-a bytseq may contain packed sequences of bytes}
+Builtin toint(b:byte)int{use builtin rather than rep.b so abyteseq @+(empty:seq.int, toint.@e)does not become an
+noop since a bytseq may contain packed sequences of bytes}
 
-Function tobyte(a:int)byte byte.a 
+Function tobyte(a:int)byte byte.a
+
+Function toseqbits(a:seq.byte)seq.bits
+for acc = empty:seq.bits, current = bits.0, shift = 0, b ∈ a do
+ if shift = 64 then next(acc + current, bits.toint.b ∧ 0xFF, 8)
+ else next(acc, current ∨ (bits.toint.b ∧ 0xFF) << shift, shift + 8)
+/for(acc + current) 

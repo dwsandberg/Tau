@@ -64,6 +64,7 @@ use seq.encoding.word3
 
 use encoding.word3
 
+
 Function compilerback(m:midpoint, baselibwords:seq.seq.char, stacktracesymbol:symbol, outname:filename)seq.file
 {OPTION PROFILE}
 for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ toseq.prg.m do
@@ -342,9 +343,9 @@ if action = "CALL"_1 then
   )
  else profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m, libname.geninfo))
 else
- {if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq.int 
-)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs), -(regno 
-.l+1)), blocks.l)else}
+ {if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq
+   .int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs), 
+   -(regno.l+1)), blocks.l)else}
  if action = "ACTARG"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
  else if action = "LOCAL"_1 then

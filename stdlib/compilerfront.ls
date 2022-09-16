@@ -279,8 +279,7 @@ do
      if isrecordconstant.sym ∨ libname = library.module.sym ∨ abstract then symdef(sym, code, idx)
      else
       let b = getSymdef(libextnames, sym)
-      if not.isempty.b then
-       symdef(sym.b_1, empty:seq.symbol, paragraphno.b_1)
+      if not.isempty.b then symdef(sym.b_1, empty:seq.symbol, paragraphno.b_1)
       else symdef(sym, code, -idx)
    if abstract then next(prgX, prgA + new, idx)else next(prgX + new, prgA, idx + 1)
 /for(let oldmods1 = 

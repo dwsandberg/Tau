@@ -202,7 +202,9 @@ Function nopara(s:symbol)int
 if isconst.s ∨ islocal.s ∨ isFref.s then 0
 else if isspecial.s ∧ name.module.s ∉ "$record $loopblock"then
  if isdefine.s ∨ isbr.s ∨ isexit.s then 1
- else{assert name.module.s /in"$continue $sequence"report"CHeKC"+print.s}toint.name.s
+ else
+  assert name.module.s ∈ "$continue $sequence"report"CHeKC" + print.s
+  toint.name.s
 else length.types.s - if issimplename.s then 1 else 2
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype)seq.word
@@ -261,15 +263,21 @@ else if iswords.s then
 else if isword.s then"WORD" + wordname.s
 else if isrecordconstant.s then"const" + name.s
 else if isFref.s then"FREF" + print.basesym.s
-else if not.isspecial.s ∨ isloopblock.s then
- print.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s)
- + if isloopblock.s then" /br"else print.resulttype.s
+else if isloopblock.s then
+ "Loop" + fsig2(wordname.s, nametype.s, paratypes.s) << 1 + print.para.module.s
+ + " /br"
+else if not.isspecial.s then
+ if name.module.s ∈ "internal"then""else print.module.s + ":"/if
+ + fsig2(wordname.s, nametype.s, paratypes.s)
+ + print.resulttype.s
 else if isdefine.s then"Define" + name.s
 else if isstart.s then"Start" + "(" + print.resulttype.s + ") /br"
 else if isblock.s then"EndBlock  /br"
 else if isexit.s then"Exit  /br"
 else if isbr.s then"Br2(" + toword.brt.s + ", " + toword.brf.s + ") /br"
-else if iscontinue.s then"CONTINUE" + wordname.s + " /br"
+else if iscontinue.s then"Continue" + wordname.s + " /br"
+else if isRecord.s then fsig2("Record"_1, nametype.s, paratypes.s)
+else if isSequence.s then"seq($(worddata.s))" + print.resulttype.s
 else print.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s) + print.resulttype.s
 
 Function print(s:seq.symbol)seq.word for acc = "", sym ∈ s do acc + print.sym /for(acc)
@@ -375,8 +383,6 @@ Function isRealLit(s:symbol)boolean name.module.s ∈ "$real"
 Function isrecordconstant(s:symbol)boolean name.module.s = first."$constant"
 
 Function wordname(s:symbol)word first.worddata.s
-
-Function typebit mytype typeref."bit bits *"
 
 Function typebits mytype typeref."bits bits *"
 

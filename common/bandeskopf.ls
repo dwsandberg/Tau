@@ -74,8 +74,8 @@ if k < k0 ∨ k > k1 then[arc(start, finish)]else empty:seq.arc.T
 
 ______________
 
-Step 2 is to find vertical alignments.This will return arcs that will have the two nodes with the same x value.Inner arcs are are 
-prime canidates for this vertial alignment.
+Step 2 is to find vertical alignments.This will return arcs that will have the two nodes with the same x value.Inner arcs
+are are prime canidates for this vertial alignment.
 
 Function findvertarcsUL(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x:int, assigned:seq.T)seq.arc.T
 if x > length.currentlayer then empty:seq.arc.T

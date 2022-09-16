@@ -1,6 +1,5 @@
 <!doctype html> <meta charset="UTF-8"> <style > <!--span.avoidwrap{display:inline-block ;}span.keyword{color:blue ;}span.keywords{color:blue ;}span.literal{color:red ;}span.comment{color:green ;}span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style>
 
-<p> #!/bin/sh tau stdlib common tools formatdoc tools/install #
 <p>
 <h2> Installing Tau </h2> 
 <p> Make sure clang is installed. For Mac OS Clang is available if the command line tools are installed.
@@ -8,25 +7,85 @@
 <p> Unzip to directory a which we will call &lt;Tau>. This directory will become the working directory for tau. You are free to choose another name. 
 <p> Modify PATH environment variable to include absolute path to &lt;Tau>/bin. 
 <p> Open terminal and change direcotry to &lt;Tau>.
-<p> Run"bash bin/installtau". This is likely to generate a warning message about the llvm spec. 
+<p> Run"bash bin/buildtau.sh release.bld". This is likely to generate a warning message about the llvm spec. 
 <p>
 <h2> HelloWorld </h2> 
 <p> 1. Create a new directory &lt;Tau>/HelloWorld
 <p> 2. Create a file txt file &lt;Tau>/HelloWorld/HelloWorld.ls that contains:
-<p> <span class=keyword> Library</span> HelloWorld uses stdlib exports HelloWorld
 <p>
 <p> <span class=keyword> Module</span> HelloWorld
-<p> <span class=keyword> use</span> format
+<p> <span class=keyword> use</span> seq.file
+<p> <span class=keyword> use</span> file
 <p> <span class=keyword> use</span> standard
-<p> <span class=keyword> Function</span> entrypoint(args:UTF8)UTF8 HTMLformat.<span class=literal >"Hello World!"</span> 
+<p> <span class=keyword> Function</span> hello(input:seq.file, o:seq.word)seq.file[file(filename.o, <span class=literal >"hello there!"</span> )]
 <p>
-<p> 3. From terminal run:<span class=block> tau stdlib HelloWorld x </span> 
+<p> 3. Create a file txt file &lt;Tau>/helloworld.bld that contains:
 <p>
-<p> This will create a program with the name of HelloWord from the source code in directory &lt;tau>/HelloWorld. Since another argument is present in this case"x", the program Helloworld will be ran with the remaining arguments and open a web browser with the results.
+<p> define hello HelloWorld define makelib stdlib makelib define open shell open-b
 <p>
-<p> If"x"was not present then Helloworld would not be ran and a message displayed indicating the program was successfully created. 
+<p> makelib HelloWorld.lib+HelloWorld HelloWorld.ls uses=stdlib exports=HelloWorld
 <p>
-<p> HelloWorld can now be run from the prompt:<span class=block> tau HelloWord </span> This will display"Hello World!"in the web browser. 
+<p> hello hello.html
+<p>
+<p> open xx.txt hello.html
+<p>
+<p> 4. From terminal run:<span class=block> bash bin/taubuild.bld </span> 
+<p>
+<p> This will create a program with the name of &lt;Tau>/built/HelloWorld.lib from the source code in directory &lt;tau>/HelloWorld. Then the program is executed and the output is placed in &lt;Tau>/built/hello.html.Finally a web browser with the file &lt;Tau>/built/hello.html.
+<p>
+<p> HelloWorld.lib can also be run from the prompt:<span class=block> tau HelloWord hello </span> This will display"Hello World!"in the web browser. 
+<p>
+<p>
+<h2> Some useful tools </h2> 
+<p>
+<p> alias usegraph="tau tools usegraph"
+<p>
+<p> alias transform="tau tools transform"
+<p>
+<p> The <span class=keyword> htmlcode</span> cmd create html from source files pretty prints the file and adds syntax highlighting and a module index. It is useful for examining source code. For example &lt;/ block htmlcode+built core.libsrc />
+<p>
+<p>
+<h2> Introduction to intermediate code produced by compiler </h2> 
+<p>
+<p> This section provides a brief explanation of the control structure used in the intermediate code. The follow function for calculating factorials is used as an example.
+<p> <span class=keyword> Function</span> fact2(a:int, result:int)int
+<br> <span class=keyword> if</span> a = 1 <span class=keyword> then</span> result <span class=keyword> else</span> <span class=keyword> if</span> a = 0 <span class=keyword> then</span> result <span class=keyword> else</span> fact2(a - 1, result * a)
+<p>
+<p> The intermediate code is represented by symbols. The text representation does not contain all the information in a symbol. The function fact2 is represented by the text"helloworld:test2(int, int)int". The module of the symbol is represented but not the library. Each type also has module and library but only the name of the type is given. 
+<p>
+<p> The local variables are represented by % followed by a number, for example %2. Local variables also have name assocciated with them that is not in the text representation. 
+<p>
+<p> The body of fact2 can be rewritten as a sequence of statments using explicit gotos. All the statements are wrap up in a block. Block(if a=1 then goto(+1)else goto(+2), Exit(result), if a=0 then goto(+1)else goto(+2), Exit(result), Exit(fact2(a-1, result * a)))<strong> goto </strong>(+n)means do not execute the next n-1 statements and Continue with the following statement.<strong> Exit </strong> means skip executing all the follow statements in the block. 
+<p>
+<p> A further rewrite gets closer to the intermediate code. The rewrite starst the block with <strong> Start </strong>(&lt;type of value returned by block>). Each statement is expressed in postfix notation. The"if &lt;exp> then goto(a)else goto(b)"becomes"&lt;postfix exp> Br2(a, b)". The end of the block is indicated by <strong> EndBlock </strong> The parameter names become %1 and %2 <span class=block> 
+<br> Start(int)
+<br> %1 1=Br2(1, 2)
+<br> %2 Exit
+<br> %1 0=Br2(1, 2)
+<br> %2 Exit
+<br> %1 1-%2 %1 * fact2 Exit
+<br> EndBlock </span> 
+<p>
+<p> This function is tail recursive and the recursion can be removed by using a loop. The values that change each time through the loop are capture in loop variables. The loop will use two additon symbols called Loop and Continue. 
+<p>
+<p> The first step in calling a function is to assign its arguments to parameters. If one considers the symbol"loop:3(int, int)int"to be a function declaration"loop(%3:int, %4:int)", the first step is same as calling a function. Also the"Continue 2"can be consider a function call to"loop(a-1, result * a)"which transfers control to the beginning of the loop.
+<p>
+<p> The Start(int)is replaced with <strong> Loop </strong> and the"fact2 Exit"is replaced with a <strong> CONTINE </strong> 2 to get <span class=block> 
+<br> %1 %2 Loop:3(int, int)int
+<br> %3 1=Br2(1, 2)
+<br> %4 Exit
+<br> %3 0=Br2(1, 2)
+<br> %4 Exit
+<br> %3 %3 1-%4 %3 * Continue 2
+<br> EndBlock </span> 
+<p>
+<p> Finally by replacing function names with the full symbol description, the text representation of the intermediate code is <span class=block> %1 %2 Loop:3(int, int)int
+<br> %3 1=(int, int)boolean Br2(1, 2)
+<br> %4 Exit
+<br> %3 0=(int, int)boolean Br2(1, 2)
+<br> %4 Exit
+<br> %3 1-(int, int)int %4 %3 *(int, int)int Continue 2
+<br> EndBlock </span> 
 <p>
 <p>
 <h2> HelloWorld with dynamic libraries </h2> The Mac OS X implementation also allows dynamic libraries to be created instead of programs.The command is <span class=block> ltau stdlib HelloWorld x </span> 

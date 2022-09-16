@@ -2,6 +2,8 @@ Module taulextable
 
 use UTF8
 
+use file
+
 use seq.lexaction1
 
 use standard
@@ -66,7 +68,10 @@ let label = if label.l = dq_1 then"dq"else dq.[label.l]
 "token(" + w + ", " + toword.tokenno.l + ", attribute:T(" + label
 + "))"
 
-Function getlextable seq.word
+Function lextable(input:seq.file, o:seq.word)seq.file
+{* generate the lextable for the Tau compiler. }[file(o, getlextable)]
+
+function getlextable seq.word
 {generate the lextable for the Tau compiler. }
 let mostfrequentwords = dq + "\, ().:+_seq=a int if-then else Function let word 0 i T][2 use function mytype empty inst"
 let wordstoinclude = 
@@ -84,8 +89,8 @@ let t = for acc = empty:seq.seq.word, @e ∈ actionlist do acc + totext.@e /for(
 + "]"
 
 function prepreplacements(old:seq.word, new:seq.word, pairs:seq.word, i:int)seq.word
-{the pair elements in pair are one after the other. The first element will be merged with a"&".The result is the first elements 
-sorted followed by the second elements rearranged to match the sort. }
+{the pair elements in pair are one after the other. The first element will be merged with a"&".The result is the first
+  elements sorted followed by the second elements rearranged to match the sort. }
 if i > length.pairs then old + new
 else
  let val = merge("/" + pairs_i)

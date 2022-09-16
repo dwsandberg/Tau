@@ -6,8 +6,6 @@ use seq.bits
 
 use bitcast.seq.bits
 
-use bitstream
-
 use seq.byte
 
 use bitcast.seq.byte
@@ -202,18 +200,12 @@ Export type:typename
 Function outofbounds seq.word"out of bounds" + stacktrace
 
 function packedbytes(a:seq.byte)seq.byte
-let b = packedbyteseqasbits.a
-bitcast:seq.byte(set(set(toptr.b, getseqtype.b), length.b))
-
-Function packedbyteseqasbits(a:seq.byte)seq.bits
-let b = 
- packed([bits.1, bits.length.a]
- + bits.for acc = empty:bitstream, @e ∈ a do add(acc, bits.toint.@e, 8)/for(acc))
-assert getseqtype.b = 0 report"to big byte sequence to pack"
-b
+let c = packed([bits.1, bits.length.a] + toseqbits.a)
+assert getseqtype.c = 0 report"to big byte sequence to pack"
+bitcast:seq.byte(set(set(toptr.c, getseqtype.c), length.c))
 
 Function blockIt(s:seq.byte)seq.byte
-let blksz = 64000
+let blksz = 8128 * 8
 if length.s ≤ blksz then packedbytes.s
 else
  let noblks = (length.s + blksz - 1) / blksz
@@ -224,17 +216,19 @@ else
   /for(acc)
  bitcast:seq.byte(blkseq)
 
-Function toseqseqbyte(t:bitstream)seq.seq.byte
+Function toseqseqbyte(b:seq.bits, bytestowrite:int)seq.seq.byte
 let blksz = 8128
-let b = bits.t
 let noblks = (length.b + blksz - 1) / blksz
-let bytestowrite = (length.t + 7) / 8
 for acc = empty:seq.seq.byte, byteswritten ∈ arithseq(noblks, blksz * 8, 0)do
  let new = packed(subseq(b, byteswritten / 8 + 1, byteswritten / 8 + blksz) + bits.0)
  let z = set(set(toptr.new, 1), min(bytestowrite - byteswritten, blksz * 8))
- let x = bitcast:seq.byte(toptr.new)
- acc + x
+ acc + bitcast:seq.byte(toptr.new)
 /for(acc)
+
+Function toseqseqbyte(s:seq.byte)seq.seq.byte
+let blksz = 8128 * 8
+let noblks = (length.s + blksz - 1) / blksz
+for acc = empty:seq.seq.byte, start ∈ arithseq(noblks, blksz, 1)do acc + packedbytes.subseq(s, start, start + blksz - 1)/for(acc)
 
 ____________
 

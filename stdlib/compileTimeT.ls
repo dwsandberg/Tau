@@ -92,7 +92,7 @@ else
   if length.toseq.stk < nopara.sym then next(false, stk)
   else next(ok, push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara))))
  else
-  {if isRecord.sym then let nopara=nopara.sym if length.toseq.stk < nopara.sym then next(false, stk)else next(ok, push 
-(pop(stk, nopara), bitcast:int(set(set(toptr.packed.top(stk, nopara), 0), nopara))))else}
+  {if isRecord.sym then let nopara=nopara.sym if length.toseq.stk < nopara.sym then next(false, stk)else next(ok, 
+    push(pop(stk, nopara), bitcast:int(set(set(toptr.packed.top(stk, nopara), 0), nopara))))else}
   next(false, stk)
  /for(if ok then toseq.stk else empty:seq.int /if) 

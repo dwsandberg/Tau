@@ -91,8 +91,8 @@ for acc2 = empty:set.modref, multiple = empty:seq.seq.modref, symx ∈ toseq.use
   next(acc2, multiple)
  else
   let sym = builtintoseq.symx
-  {assert name.module.sym /nin"builtin"/or name.sym /nin"length"/or(%.modname.md+%.paratypes.sym)/in["UTF8 seq 
-.byte", "format seq.word"]report"K"+print.sym+%.modname.md+%.paratypes.sym}
+  {assert name.module.sym /nin"builtin"/or name.sym /nin"length"/or(%.modname.md+%.paratypes.sym)/in["UTF8
+    seq.byte", "format seq.word"]report"K"+print.sym+%.modname.md+%.paratypes.sym}
   let inmod = 
    for acc = empty:seq.modref, e ∈ toseq.findelement2(exported, sym/modref(sym, modname.md))do if in.e = modname.md then acc else acc + in.e /for(if name.module.sym ∈ "internal builtin"then acc else acc + module.sym /if)
   assert first."internal" ∉ %.inmod

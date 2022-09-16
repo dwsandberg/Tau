@@ -319,7 +319,7 @@ BT loadlibrary(struct pinfo *PD,char *lib_name_root){
    {   // fprintf(stderr,"did not load %s as it was loaded\n",libname) ; 
      return ((BT*)loaded[i+2])[3];}
   //  fprintf(stderr,"check %s,%d\n",lib_name_root,strlen(lib_name_root));
-   sprintf(lib_name,"%s/%s.dylib",basedir,lib_name_root);
+   sprintf(lib_name,"%s/%s",basedir,lib_name_root);
  // sprintf(lib_name,"%s.dylib",lib_name_root);
    // fprintf(stderr,"Loading %s\n",lib_name);
    void *lib_handle = dlopen(lib_name, RTLD_NOW);
@@ -462,6 +462,7 @@ for(i=strlen(basedir)-1 ;i >=0 ;i--) if (basedir[i]=='/') {basedir[i]=0; break;}
  
  #ifdef LIBRARY 
    int startarg=2;
+     fprintf(stderr, "Library %s  \n ",argv[1]  );    
      loadlibrary(&sharedspace, argv[1]); 
 #else
   int startarg=1;

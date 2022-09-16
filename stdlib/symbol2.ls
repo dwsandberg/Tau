@@ -140,8 +140,6 @@ Export type? mytype
 
 Export typebyte mytype
 
-Export typebit mytype
-
 Export builtinmod(mytype)modref
 
 Export type:mytype

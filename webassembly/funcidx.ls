@@ -330,7 +330,7 @@ for offset = globalspace, p ∈ encoding:seq.encodingpair.datax while code.p ≠
 
 Function constintseq(elements:seq.int)int allocateconstspace("."_1, [0, length.elements] + elements)
 
-Function constbyteseq(a:seq.byte)int
+/Function constbyteseq(a:seq.byte)int
 let elements = 
  for elements = empty:seq.int, b ∈ packedbyteseqasbits.a do elements + toint.b /for(elements)
 allocateconstspace("."_1, elements)

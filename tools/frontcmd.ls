@@ -2,6 +2,8 @@ Module frontcmd
 
 use baseTypeCheck
 
+use graphcode
+
 use standard
 
 use seq.arc.symbol
@@ -25,16 +27,20 @@ use set.symdef
 Function front2(cf:midpoint, names:seq.word, ~n:seq.word, mods:seq.word, ~mods:seq.word
 , within:boolean, rootnames:seq.word, out:seq.word)seq.word
 let prg = prg.cf
+let ignorenames = isempty.names ∨ out ∈ ["calls", "calledby"]
 for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
  let ss = sym.sd
- if(isempty.mods ∨ name.module.ss ∈ mods) ∧ (isempty.names ∨ name.ss ∈ names) ∧ name.ss ∉ ~n
+ if(isempty.mods ∧ not.isconstantorspecial.ss ∨ name.module.ss ∈ mods) ∧ (ignorenames ∨ name.ss ∈ names)
+ ∧ name.ss ∉ ~n
  ∧ name.module.ss ∉ ~mods then
-  next(selected + sd, if name.ss ∈ rootnames then root + ss else root)
+  next(selected + sd, if name.ss ∈ names then root + ss else root)
  else next(selected, root)
 /for(if out = "sym"then
  for txt = "", i ∈ selected do txt + " /p" + print.sym.i /for(txt)
 else if out = "symdef"then
  for txt = "", sd1 ∈ selected do txt + " /p" + print.sym.sd1 + print.code.sd1 /for(txt)
+else if out = "symdefgraph"then
+ for txt = "", sd1 ∈ selected do txt + " /p" + print.sym.sd1 + {print}tograph.code.sd1 /for(txt)
 else if out = "baseTypeCheck"then baseTypeCheck(toseq.prg, typedict.cf)
 else if out = "resultCheck"then checkresults.toseq.prg
 else
@@ -46,15 +52,15 @@ else
    /for(acc2)
   /for(newgraph.acc)
  let g2 = 
-  if not.isempty.root then
-   for g2 = newgraph.empty:seq.arc.symbol, new = asset.root, i ∈[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]do
-    let g3 = for g3 = g2, r ∈ toseq.new do g3 + toseq.arcstopredecessors(g, r)/for(g3)
-    next(g3, nodes.g3 \ nodes.g2)
-   /for(g2)
+  if out ∈ ["calls", "calledby"]then
+   assert not.isempty(nodes.g ∩ asset.root)report"no intersection between symbols in option n and call graph"
+   subgraph(g
+   , reachable(if out = "calledby"then complement.g else g, root)
+   )
   else g
  if out = "text"then
   for txt = "txt", a ∈ toseq.arcs.g do txt + " /br" + print.tail.a + print.head.a /for(txt)
- else drawgraph.newgraph.toseq.arcs.g2 /if /if /if /if /if)
+ else drawgraph.newgraph.toseq.arcs.g2 /if /if /if /if /if /if)
 
 Export drawgraph(graph.symbol)seq.word
 
@@ -64,34 +70,4 @@ did not get error when result type of generatednode was seq.word!!!!!
 
 Function node2text(a:symbol)seq.word[name.a]
 
-Function nodeTitle(a:symbol)seq.word print.a
-
- /< command frontcmd front  />
-
- /< option 1-library  /> Library to compile.
-
- /< option 1-pass  /> pass of compile to run
-
- /< option *-n  /> list of symbol names to include
-
- /< option *-!n  /> list of symbol names to exclude
-
- /< option *-mods  /> list of modules to include
-
- /< option *-!mods  /> list of modules to exluded
-
- /< option f-within  /> exclude arcs within module
-
- /< option *-rn  /> root names
-
- /< option 1 pretty baseTypeCheck sym symdef resultCheck-out  /> format of output
-
--out sym will print list of symbols
-
--out symdef will print list of symbols and the code represented as a list of symbols
-
--out baseTypeCheck
-
--out resultCheck
-
--out txt will print the arcs in the resulting graph rather than display the graph.  
+Function nodeTitle(a:symbol)seq.word print.a 

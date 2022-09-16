@@ -27,50 +27,16 @@ do next(acc
 )
 /for(if length.acc = length.s then acc
 else
- for oldhistory = ""
- , acc2 = [first.s]
+ for acc2 = ""
  , linelength2 = 0
- , last = first.s
- , nest = push(empty:stack.word, first.if first.s ∈ dq then dq else"(")
- , c ∈ s << 1
+ , c ∈ s 
  do
-  let history = 
-   oldhistory + " /br" + space + "last/this:" + merge.[last, c]
-   + "stk:"
-   + toseq.nest
-  assert not.isempty.nest
-  report"EMPTY STack"
-  + merge([last, c] + toseq.nest + " /br" + acc2 + " /br KL" + s
-  + "history  /br"
-  + oldhistory)
-  let inexpression = top.nest ∈ "("
-  let group1 = not.inexpression ∧ c ∈ " /<  /br  /p  /row"
-  let group2 = not.inexpression ∧ not.group1 ∧ c ∈ " /keyword  />  /em  /strong  /cell"
-  let newc = if group1 ∨ group2 then merge.[space, c]else c
-  let newline = length.acc2 > 1 ∧ group1 ∨ linelength2 > maxwidth
-  let newnest = 
-   if c ∈ "("then
-    if inexpression ∨ last ∈ "$"then push(nest, c)else nest
-   else if c ∈ dq then
-    if inexpression then push(nest, c)
-    else if length.toseq.nest > 1 then pop.nest else nest
-   else if inexpression ∧ c ∈ ")" ∧ length.toseq.nest > 1 then pop.nest else nest
-  let newacc2 = 
-   if inexpression ∧ c ∈ "literal" ∧ last ∈ (" /<" + merge([space] + " /<"))then
-    acc2 >> 1
-   else if inexpression ∧ c ∈ (" />" + merge([space] + " />")) ∧ last ∈ dq then acc2
-   else if newline then acc2 + encodeword.[char.10] + newc else acc2 + newc
-  next(history
-  , newacc2
-  , {linelength2}
-  if newline then 0
-  else
-   let tmp = length.newacc2 ? length.acc2
-   linelength2
-   + if tmp = GT then length.decodeword.c else if tmp = EQ then 0 else-2
-  , c
-  , newnest
-  )
+    let dc=decodeword.c 
+    if c ∈ " /keyword  />  /em  /strong  /cell" then 
+     next(acc2 + encodeword(decodeword.space+dc) ,linelength2+  length.dc )
+    else if  c ∈ " /<  /br  /p  /row" /or  length.acc2 > 2 /and linelength2+length.dc > maxwidth then 
+     next( acc2+"/br"+encodeword(decodeword.space+dc), length.dc)
+   else  next(acc2 + c ,  linelength2+  length.dc)
  /for(acc2)/if)
 
 Function sortuse(b:seq.seq.word, prefix:seq.word)seq.seq.word
@@ -340,13 +306,14 @@ else if ruleno = {E for F2 while E do E /for(E)}51 then
   ]
 else if ruleno = {D E}52 then R_1
 else if ruleno = {X wl E}53 then
- attribute(subseq(text.R_1, 2, length.text.R_1 - 1) + ("$" + "(") + text.R_2
- + ")")
+ attribute.escapeformat.subseq(text.R_1, 2, length.text.R_1 - 1)
+ +attribute(  ("$" + "(/>") + text.R_2+"/< literal)")
 else if ruleno = {X X wl E}54 then
- attribute(text.R_1 + subseq(text.R_2, 2, length.text.R_2 - 1) + ("$" + "(") + text.R_3
- + ")")
+  R_1 + attribute(escapeformat.subseq(text.R_2, 2, length.text.R_2 - 1))
+ +attribute( ("$" + "(/>") + text.R_3+"/< literal)")
 else if ruleno = {E X $wordlist}55 then
- attribute.bracket("literal" + escapeformat.dq(text.R_1 + subseq(text.R_2, 2, length.text.R_2 - 1)))
+ attribute.bracket("literal" + dq(text.pretty.[R_1 
+ , attribute.escapeformat.subseq(text.R_2, 2, length.text.R_2 - 1)]))
 else
  {ruleno}
  assert false report"invalid rule number" + toword.ruleno

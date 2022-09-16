@@ -24,11 +24,11 @@ function t001 boolean 0 - 4 = 1 - 2 - 3
 
 function t002 boolean 2 = 24 / 4 / 3
 
-function fact(a:int)int if a = 1 then 1 else a * fact(a - 1)
+function fact(a:int)int if a=0 then 1 else if a = 1 then 1 else a * fact(a - 1)
 
 function t003 boolean 24 = fact.4
 
-function power(a:int, b:int)int if b = 1 then a else power(a, b / 2) * power(a, b - b / 2)
+function power(a:int, b:int)int if b=0 then 1 else if b = 1 then a else power(a, b / 2) * power(a, b - b / 2)
 
 function t004 boolean 1024 = power(2, 10)
 

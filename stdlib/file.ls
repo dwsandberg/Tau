@@ -2,11 +2,7 @@ Module file
 
 use UTF8
 
-use seq.bit
-
 use bits
-
-use bitstream
 
 use seq.byte
 
@@ -49,15 +45,13 @@ Function fullname(fn:filename)word
 merge.if dir.fn ∈ "."then[name.fn, "."_1, ext.fn]
 else[dir.fn, "/"_1, name.fn, "."_1, ext.fn]
 
-Export bs(file)bitstream
+type file is fn:filename, rawdata:seq.seq.byte, dummy:int
 
-type file is fn:filename, data:seq.byte, bitdata:seq.bit, bs:bitstream
+Export rawdata(file)seq.seq.byte
 
-Export data(f:file)seq.byte
+Function data(f:file)seq.byte for acc = empty:seq.byte, e ∈ rawdata.f do acc + e /for(acc)
 
-Export bitdata(f:file)seq.bit
-
-Function file(fn:filename, a:seq.bit)file file(fn, empty:seq.byte, a, empty:bitstream)
+function file2(fn:filename, data:seq.seq.byte)file file(fn, data, 0)
 
 Function file(name:seq.word, out:seq.word)file file(filename.name, out)
 
@@ -68,11 +62,9 @@ file(fn
 else toseqbyte.textformat.out
 )
 
-Function file(fn:filename, a:seq.byte)file file(fn, a, empty:seq.bit, empty:bitstream)
+Function file(fn:filename, a:seq.byte)file file2(fn, [a])
 
-Function file(fn:filename, a:seq.bits)file
-let bs = tobitstream.a
-file(fn, empty:seq.byte, empty:seq.bit, bs)
+Function file(fn:filename, a:seq.seq.byte)file file2(fn, a)
 
 Function filename(s:seq.word)filename
 let t = getfilenames.s

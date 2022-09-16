@@ -232,8 +232,8 @@ let l =
 let idx = findindex([name.s] + %(types.s >> 1), l)
 if idx ≤ length.l then idx + 1 else 1
 
-list of external calls"arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2 getbitfile2 callstack 
-createthread getmachineinfo currenttime allocatespace processisaborted addencoding getinstance"
+list of external calls"arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2 getbitfile2
+ callstack createthread getmachineinfo currenttime allocatespace processisaborted addencoding getinstance"
 
 Function mangledname(extname:set.symdef, s:symbol, library:word)word
 let b = getSymdef(extname, s)

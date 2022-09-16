@@ -133,7 +133,7 @@ function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint, outname:file
 let libname = extractValue(first.allsrc, "Library")
 let uses = extractValue(first.allsrc, "uses")
 let stacktracesymbol = stacktracesymbol.allsrc
-let m = starmap.compilerfront2:libllvm("all2", allsrc, dependentlibs, stacktracesymbol)
+let m = starmap.compilerfront2:libllvm("all", allsrc, dependentlibs, stacktracesymbol)
 let m2 = outlib.m
 let dp = if isempty.uses then uses else[last.uses]
 let files = compilerback(m, dependentwords.dp, stacktracesymbol, outname)

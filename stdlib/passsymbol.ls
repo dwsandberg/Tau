@@ -82,7 +82,8 @@ do
    else
     symbol4(modname, first.text.b, first.types.b, subseq(types.b, 2, length.types.b - 1), last.types.b)
   assert checkwellformed.sym
-  report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized module"
+  report"Must use type T in function name or parameters in parameterized module and T cannot be used in non-parameterized
+    module"
   + getheader.input
   if first.input = "unbound"_1 then
    next(typeflds
@@ -268,8 +269,8 @@ if fldtype ∈ [typeint, typeword, typereal, typeboolean, typeseqdec] ∨ isseq.
 else 0
 
 function setSymdef(recordtype:mytype, t:seq.mytype)seq.symdef
-{if false then[symdef(setSym.recordtype, for acc=[Local.1], idx=0, fldtype ∈ t do next(acc+[Local.2, Lit.idx, Getfld 
-.fldtype, setSym.fldtype], idx+1)/for(acc))]else}
+{if false then[symdef(setSym.recordtype, for acc=[Local.1], idx=0, fldtype ∈ t do next(acc+[Local.2, Lit.idx, 
+  Getfld.fldtype, setSym.fldtype], idx+1)/for(acc))]else}
 empty:seq.symdef
 
 function findindex(t2:symbol, s:seq.symdef, newsym:symbol, allsrc:seq.seq.word)seq.symdef

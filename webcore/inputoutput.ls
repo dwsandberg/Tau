@@ -50,7 +50,6 @@ use stack.int
 
 use bitcast.intpair
 
-use seq.seq.bit
 
 use bitcast.seq.byte
 
@@ -72,8 +71,7 @@ Function getfiles(args:seq.word)seq.file
 {OPTION INLINE}
 for acc = empty:seq.file, fn ∈ getfilenames( args << 1)do
  acc
- + if ext.fn ∈ "bc"then file(fn,  getfile:bit([fullname.fn]))
- else file(fn, getfile:byte([fullname.fn]) )
+ +  file(fn, getfile:byte([fullname.fn]) )
 /for(acc)
 
 Function finishentry(out:seq.file)UTF8
@@ -85,9 +83,7 @@ if ext.fn.first.out ∈ "ls"then
  /for(toUTF8("Files Created:" + names))
 else UTF8.data.first.out
 
-Function getfile:bit(name:seq.word)seq.bit
-assert false report"not implemented"
-[tobit.1]
+
 
 builtin randomfunc real
 

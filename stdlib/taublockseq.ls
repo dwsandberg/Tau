@@ -18,7 +18,7 @@ unbound set(ptr, T)ptr
 
 type blockseq is sequence, dummy:seq.T
 
-function blocksize:T int 8160
+Function blocksize:T int 8160
 
 Function blockseqtype:T int getseqtype.toseq.blockseq(1, empty:seq.T)
 

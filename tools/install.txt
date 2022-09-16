@@ -1,4 +1,3 @@
-#!/bin/sh  tau stdlib common tools formatdoc tools/install #
 
 /< /section Installing Tau   />
 
@@ -12,7 +11,7 @@ Modify PATH environment variable to include absolute path to <Tau>/bin.
 
 Open terminal and change direcotry to <Tau>.
 
-Run "bash bin/installtau".  This is likely to generate a warning message about the llvm spec. 
+Run "bash bin/buildtau.sh release.bld".  This is likely to generate a warning message about the llvm spec. 
 
 
 /< /section HelloWorld />
@@ -21,26 +20,130 @@ Run "bash bin/installtau".  This is likely to generate a warning message about t
 
 2. Create a file txt file <Tau>/HelloWorld/HelloWorld.ls that contains:
 
-/keyword Library HelloWorld   uses stdlib  exports HelloWorld
-
 Module HelloWorld
 
-use standard 
+use file
 
-use format
+use seq.file
 
-Function entrypoint(args:UTF8) UTF8 HTMLformat."Hello World!"
+use standard
 
-3. From terminal run: /< block  tau stdlib HelloWorld x  /> 
+Function hello(input:seq.file, o:seq.word)seq.file
+  [file(filename.o,"hello there!")] 
 
-This will create a program with the name of HelloWord from the source code in
-directory <tau>/HelloWorld.  Since another argument is present in this case "x", the program
-Helloworld will be ran with the remaining arguments and open a web browser with the results.
+3.  Create a file txt file <Tau>/helloworld.bld that contains:
 
-If "x" was not present then Helloworld would not be ran and a 
-message displayed indicating the program was successfully created.  
+define hello HelloWorld
+define makelib stdlib makelib
+define open shell open -b
 
-HelloWorld can now be run from the prompt: /< block tau HelloWord  /> This will display "Hello World!" in the web browser. 
+makelib HelloWorld.lib +HelloWorld HelloWorld.ls 
+uses=stdlib
+exports=HelloWorld
+
+hello hello.html
+
+open xx.txt hello.html 
+
+4. From terminal run: /< block  bash bin/taubuild.bld  /> 
+
+This will create a program with the name of <Tau>/built/HelloWorld.lib from the source code in
+directory <tau>/HelloWorld.  Then the program is executed and the output is placed in 
+<Tau>/built/hello.html.
+Finally a web browser with the file <Tau>/built/hello.html.
+
+
+HelloWorld.lib can also be run from the prompt: /< block tau HelloWord hello  /> This will display "Hello World!" in the web browser. 
+
+/< /section Some useful tools />
+
+
+alias usegraph="tau tools usegraph"
+
+alias transform="tau tools transform"
+
+The /keyword htmlcode cmd create html from source files pretty prints the file and adds syntax highlighting and a module index.  It is useful for examining source code.  For example 
+</ block htmlcode +built core.libsrc /> 
+
+/< /section Introduction to intermediate code produced by compiler />
+
+This section provides a brief explanation of the control structure used in the intermediate code. The follow function for calculating factorials is used as an example.
+
+Function fact2(a:int,result:int) int
+ if a =1   then result
+ else if a=0 then result else  fact2(a-1,result * a)
+
+
+The intermediate code is represented by symbols.  The text representation does
+not contain all the information in a symbol. The function fact2 is represented by the
+text  "helloworld:test2(int,int)int".  The module of the symbol is represented but not the library. 
+Each type also has module and library but only the name of the type is given. 
+
+  The local variables are represented by % followed by a number, for example   %2.  Local variables  also have name assocciated with 
+  them that is not in the text representation. 
+
+The body of fact2 can be rewritten as a sequence of statments using explicit gotos. All the statements are wrap up in a block.   
+Block(
+  if  a=1 then goto(+1) else goto(+2)
+  ,Exit(result)  
+  ,if  a=0  then goto(+1) else goto(+2) 
+  ,Exit( result)
+  ,Exit( fact2(a-1,result * a))
+  )
+/strong goto(+n) means do not execute the next n-1 statements and Continue with the following statement.
+/strong Exit means skip executing all the follow statements in the block. 
+
+
+A further rewrite  gets closer to the  intermediate code.  The rewrite starst the  block with /strong
+Start(<type of value returned by block>). Each statement is expressed in postfix notation. 
+The "if <exp> then goto(a) else goto(b)"
+becomes  "<postfix exp> Br2(a,b)".  The end of the block is indicated by /strong EndBlock
+The parameter names become %1 and %2 /< block
+ /br   Start(int) 
+ /br   %1 1 =  Br2(1,2) 
+ /br   %2 Exit 
+ /br   %1 0 = Br2(1,2)
+ /br   %2 Exit
+ /br   %1 1 - %2 %1 *  fact2 Exit 
+ /br   EndBlock />
+  
+  This function is tail recursive and the recursion 
+  can be removed by using a loop.  The values that change each time through the loop are 
+  capture in loop variables. The loop will use two additon symbols called Loop and Continue. 
+  
+
+ The first step   in calling a function is to assign its arguments to parameters. 
+  If one considers the symbol "loop:3(int,int)int" to be a function declaration
+   "loop(%3:int,%4:int)", the first step is  same as calling a function. Also the "Continue 2"  can be consider
+   a function call to "loop(a-1,result * a)" which transfers control to the beginning of the loop.
+  
+    
+   The Start(int) is replaced with   /strong Loop   and the  "fact2 Exit" is replaced with a /strong CONTINE 2 to get 
+   /< block 
+ /br  %1 %2 Loop:3(int,int)int
+ /br   %3 1 =  Br2(1,2) 
+ /br  %4 Exit 
+ /br  %3 0 = Br2(1,2)
+ /br  %4 Exit
+ /br  %3 %3 1 - %4 %3 * Continue 2
+ /br  EndBlock />
+  
+ Finally by replacing function names with the full symbol description, the text representation of the intermediate code is
+  /< block
+  %1 %2 Loop:3(int, int)int 
+/br %3 1=(int, int)boolean Br2(1, 2) 
+/br %4 Exit 
+/br %3 0=(int, int)boolean Br2(1, 2) 
+/br %4 Exit 
+/br %3 1-(int, int)int %4 %3 *(int, int)int Continue 2 
+/br EndBlock />  
+
+
+
+
+
+
+
 
 /< /section HelloWorld with dynamic libraries />
 The Mac OS X implementation also allows  dynamic libraries to be created instead of programs.

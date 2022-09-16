@@ -10,6 +10,10 @@ use seq.dottedrule
 
 use set.dottedrule
 
+use file
+
+use seq.file
+
 use format
 
 use sparseseq.int
@@ -21,6 +25,8 @@ use standard
 use encoding.state
 
 use seq.state
+
+use textio
 
 use seq.arc.word
 
@@ -193,8 +199,8 @@ Function lr1parser(grammarandact:seq.seq.seq.word
 , codeonly:boolean
 , parameterized:boolean
 )seq.word
-{ruleprec is a list of rules and lookaheads. The position of the lookahead is noted. Rule reductions after position are 
-discarded and rule the first rule listed before the position is used to reduce. }
+{ruleprec is a list of rules and lookaheads. The position of the lookahead is noted. Rule reductions after position
+  are discarded and rule the first rule listed before the position is used to reduce. }
 let grammar2 = for acc = empty:seq.seq.word, @e ∈ grammarandact do acc + first.@e /for(acc)
 let nontermials = for acc = empty:set.word, rule ∈ grammar2 do acc + first.rule /for(acc)
 assert isempty(asset.terminals ∩ nontermials)report"terminals and nontermials sets must be distinct"
@@ -313,10 +319,12 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attri
 /for(acc << 2 + "else{ruleno}assert false report" + dq."invalid rule number"
 + "+toword.ruleno R_1")
 
-Function LR1gen(location:seq.seq.word, codeonly:boolean, parameterized:boolean)seq.word
-{* A parser generator for a subset of LR1 grammars.  /br Codeonly:Only produces generated code  /br Parameterized:adds 
-T to function name to allowing them to be put into a parameterized module  /br Assumption:Word ruleno is not used in any action 
-.First use of ruleprec in comment that defines the precedence}
+Function LR1(input:seq.file, o:seq.word, codeonly:boolean, parameterized:boolean)seq.file
+{* A parser generator for a subset of LR1 grammars. 
+  /br Codeonly:Only produces generated code
+  /br Parameterized:adds T to function name to allowing them to be put into a parameterized module
+  /br Assumption:Word ruleno is not used in any action.First use of ruleprec in comment that defines the precedence}
+let location = breakparagraph.data.first.input
 for rules = empty:seq.seq.seq.word
 , terminals = ""
 , attribute = first."ATTR"
@@ -343,82 +351,5 @@ do
 /for(let nonTerminals = for acc = empty:set.word, r ∈ rules do acc + first.first.r /for(acc)
 let terminals2 = 
  for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /for(acc)
-lr1parser(rules, ruleprec, terminals2, "attribute", codeonly, parameterized))
-
-
-Module ParserExample
-
-use standard
-
-To get started building a new parser the following function will work to produce tables for a new parser
-
-type ATTR is val:int
-
-type stkele is stateno:int, attribute:ATTR
-
-type reduction is toseq:seq.stkele
-
-function forward(stk:ATTR, token:ATTR)ATTR token
-
-Function _(r:reduction, n:int)ATTR attribute.(toseq.r)_n
-
-use stack.stkele
-
-use seq.stkele
-
-Function sampleparse(input:seq.word)int
-for lrpart = push(empty:stack.stkele, stkele(startstate, ATTR.0))
-, idx = 1
-, this ∈ input + "#"
-while stateno.top.lrpart ≠ finalstate
-do{lexical analysis is down here}
-{Assume the input is only integers}
-let tokenno = 
- if findindex(this, tokenlist) > length.tokenlist then findindex("I"_1, tokenlist)
- else findindex("#"_1, tokenlist)
-let attribute = ATTR.if this ∈ {end marked}"#"then 0 else toint.this
-next(step(lrpart, input, attribute, tokenno, idx), idx + 1)
-/for(val.attribute.undertop(lrpart, 1))
-
-function step(stk:stack.stkele, input:seq.word, attrib:ATTR, tokenno:int, place:int)stack.stkele
-let stateno = stateno.top.stk
-let actioncode = actiontable_(tokenno + length.tokenlist * stateno)
-assert place ∈ [1, 2, 3, 4]report"here" + toword.place + input
-if actioncode > 0 then
- if stateno = finalstate then stk
- else push(stk, stkele(actioncode, forward(attribute.top.stk, attrib)))
-else
- assert actioncode < 0 report"ERROR"
- let ruleno = -actioncode
- let rulelen = rulelength_ruleno
- let newstk = pop(stk, rulelen)
- let newstateno = actiontable_(leftside_ruleno + length.tokenlist * stateno.top.newstk)
- let newstkele = stkele(newstateno, action(ruleno, input, place, reduction.top(stk, rulelen)))
- step(push(newstk, newstkele), input, attrib, tokenno, place)
-
------
-
-This part is generated with LR1 command(with the exception of the action header.)
-
-Function action(ruleno:int, input:seq.word, place:int, R:reduction)ATTR
-{Alphabet I # F G}
-if ruleno = {G F #}1 then R_1
-else if ruleno = {F F I}2 then
- {The left side of the grammar rule is F and the right side is F I}ATTR(val.R_1 + val.R_2)
-else if ruleno = {F I}3 then R_1
-else
- {ruleno}
- assert false report"invalid rule number" + toword.ruleno
- R_1
-
-function rulelength seq.int[2, 2, 1]
-
-function leftside seq.int[4, 3, 3]
-
-function tokenlist seq.word"I # F G"
-
-function startstate int 1
-
-function finalstate int 4
-
-function actiontable seq.int[0, 0, 0, 0, 3, 0, 2, 0, 5, 4, 0, 0, -3, -3, 0, 0, 0, 0, 0, 0, -2, -2]
+[file(o, lr1parser(rules, ruleprec, terminals2, "attribute", codeonly, parameterized))
+]) 

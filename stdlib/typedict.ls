@@ -177,7 +177,7 @@ for new = empty:set.typeentry, t ∈ toseq.need do
 Function basetype(typ:mytype, alltypes:typedict)mytype
 if isseq.typ then
  let para = parameter.typ
- if para = typebyte ∨ para = typebit ∨ iscore4.typ ∨ typ = typeT then typ
+ if para = typebyte ∨ iscore4.typ ∨ typ = typeT then typ
  else seqof.coretype(parameter.typ, alltypes, packedtypes)
 else coretype(typ, alltypes, empty:seq.mytype)
 

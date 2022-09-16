@@ -64,8 +64,8 @@ else
     if isdefine.s then
      assert not.isempty.stk report"Ill formed Define"
      let z = typemap(value.s, top.stk) ∪ localtypes
-     {assert false report"BB"+print.s+print.value.s+for acc="", i=keys.z do acc+toword.i /for(acc)+for acc="", i=data 
-.z do acc+print.i /for(acc)}
+     {assert false report"BB"+print.s+print.value.s+for acc="", i=keys.z do acc+toword.i /for(acc)+for acc="", i=
+       data.z do acc+print.i /for(acc)}
      next(pop.stk, typemap(value.s, top.stk) ∪ localtypes, false)
     else if iswords.s then next(push(stk, {seqof.typeint}typeptr), localtypes, false)
     else if isRealLit.s then next(push(stk, typereal), localtypes, false)
@@ -198,7 +198,6 @@ let typeindex = typeref."index index."
 , symbol(internalmod, "GEP", seqof.typeint, typeint, typeint)
 , symbol(internalmod, "option", typeint, seqof.typeword, type?)
 , symbol(internalmod, "toint", typebyte, typeint)
-, symbol(internalmod, "toint", typebit, typeint)
 , symbol(builtinmod.typereal, "fld", typeptr, typeint, typereal)
 , symbol(builtinmod.typeint, "fld", typeptr, typeint, typeint)
 , symbol(builtinmod.typeptr, "fld", typeptr, typeint, typeptr)
@@ -214,7 +213,6 @@ let typeindex = typeref."index index."
 , symbol(internalmod, "callidx", seqof.typeboolean, typeint, typeboolean)
 , symbol(internalmod, "callidx", seqof.typebyte, typeint, typebyte)
 , symbol(internalmod, "packedindex", seqof.typebyte, typeint, typeptr)
-, symbol(internalmod, "packedindex", seqof.typebit, typeint, typeptr)
 , symbol(internalmod
 , "packedindex"
 , seqof.typeref."packed2 tausupport."

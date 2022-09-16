@@ -267,10 +267,10 @@ let newcode =
 bindinfo(dict, newcode, [resulttype], "")
 
 function action(ruleno:int, dupinput:seq.word, place:int, R:reduction.bindinfo)bindinfo
-{Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 P T L D E FP A F F1 G 
-NM X}
-{RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E then 
-E else E /if | /if | E if E then E else E | E assert E report D E | A W=E | E let A E | D E |}
+{Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 P T L D E FP A F
+  F1 G NM X}
+{RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E
+  then E else E /if | /if | E if E then E else E | E assert E report D E | A W=E | E let A E | D E |}
 let common = common.dict.R
 if ruleno = {G F #}1 then R_1
 else if ruleno = {F W NM(FP)T E}2 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)

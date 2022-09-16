@@ -331,11 +331,11 @@ else
 function deepcopybody(type:mytype, typedict:typedict)seq.symbol
 if type = typeint ∨ type = typeword ∨ isencoding.type then[Local.1]
 else if isseq.type then
- {base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.bit seq.packed2 seq.packed3 seq 
-.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
+ {base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.packed2 seq.packed3 seq.
+   packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
  let basetype = basetype(type, typedict)
  let elementtype = parameter.basetype
- if elementtype = typebit ∨ elementtype = typeboolean then[Local.1, blockitsymbol.seqof.typeint]
+ if elementtype = typeboolean then[Local.1, blockitsymbol.seqof.typeint]
  else
   let cat = symbol(tomodref.type, "+", [type, parameter.type], type)
   let resulttype = basetype
