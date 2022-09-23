@@ -139,7 +139,8 @@ else
    midpoint(option, afteroption, typedict.pb, libmods, empty:seq.seq.word)
   else midpoint(option, afteroption, templates, typedict, libmods, [first.allsrc])
 
-Export midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.word)midpoint
+Export midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.
+ word)midpoint
 
 Export prg(midpoint)set.symdef
 
@@ -209,7 +210,7 @@ for new = empty:seq.symbol, sym ∈ toseq.toexport do
   /for(acc)
 /for(if isempty.toexport then processed else close(prg, asset.new, processed ∪ toprocess, len)/if)
 
-Function prepareback(prg10:set.symdef, midin:midpoint, dependentlibs:midpoint, stacktracesym:symbol)midpoint
+Function prepareback(prg10:set.symdef, midin:midpoint, dependentlibs:midpoint)midpoint
 {OPTION PROFILE}
 let uses = extractValue(first.src.midin, "uses")
 let libname = first.extractValue(first.src.midin, "Library")
@@ -223,6 +224,11 @@ let tmp =
  /for(Constant2(acc + Sequence(typeint, length.acc)))
 let maybereferenced0 = close(prg10, roots.oldmods + tmp, empty:set.symbol, 0)
 let symdict = symboldict(maybereferenced0, empty:seq.commoninfo)
+let stacktracesym = 
+ symbol(moduleref([if isempty.uses then libname else last.uses] + "impDependent")
+ , "stackTraceImp"
+ , seqof.typeword
+ )
 let bb = getSymdef(libextnames, stacktracesym)
 let startaddresses = if isempty.bb then empty:seq.symbol else[stacktracesym]
 let divide = 
@@ -297,7 +303,9 @@ midpoint(""
 , prgA
 , typedict
 , oldmods1
-, ["Library=" + libname + "uses=" + uses]
+, ["Library=" + libname + "uses=" + uses + "stacktrace="
++ [library.module.stacktracesym, name.module.stacktracesym, name.stacktracesym]
+]
 ))
 
 Function libcode(m:midpoint)seq.symdef

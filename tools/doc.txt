@@ -51,14 +51,13 @@ Be careful to insert necessary spaces around operators. 8*9 is incorrect and sho
 Occasionally some unexpected lexical issues arise.   The syntax for a let statement is 
  /keyword let <name> = <expresion> <expresion>.
  The follow function looks good but will cause a syntax error:
-
-/keyword function f1 int /br /keyword let x=  56  /br  -4+x  
+/< block /keyword function f1 int /br /keyword let x=  56  /br  -4+x /> 
  
 Written on a single line, the problem becomes clear as there is no second expression:  /keyword function f1 int /keyword let x=  56    -4+x 
 
 The fix is to add parenthesizes 
 
-/keyword function f1 int  /keyword let x=  56    (-4+x)
+function f1 int   let x=  56    (-4+x)
 
 
 When converting a sequence of words  to characters for output, an space is usually added after each word with the exceptions:
@@ -125,7 +124,7 @@ Comments are traditionally defined at the lexical level. In tau they are defined
 
 A sequence is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as [ 2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define
 
-/keyword function test1 seq.int [ 2, 4, 8, 16, 32]
+function test1 seq.int [ 2, 4, 8, 16, 32]
 
 The type for a sequence of integers is seq.int. The length of the sequence can be obtained by calling the function length. In this case the length(test1)is 5. There is a subscript operator_that can obtain the elements of the list:test1_1 is 2 and test1_5 is 32.
 
@@ -174,9 +173,9 @@ Export point2d(a:int, b:int)point2d
 
 Access to the fields outside the module is granted with: 
 
- Export x( int )point2d  
+ Export x( point2d  )int 
 
- Export y( int) point2d   
+ Export y( point2d ) int   
 
 
 The following two paragraphs defines an addition and subtraction function on the type point2d. 
@@ -223,7 +222,7 @@ An operation can be performed on each element of a sequence.  The following sums
 
 More than one accumulator is allowed. The following takes the average of the sequence
 
-  function sum(s:seq.int) int for   count=0,sum=0, e ∈ s   do next(count+1,sum+e)    /for( sum / count)
+  function average(s:seq.int) int for   count=0,sum=0, e ∈ s   do next(count+1,sum+e)    /for( sum / count)
 
 For each element of the sequence the  expression after the /keyword do is executed giving new values to the accumulators. 
 
@@ -359,7 +358,7 @@ The arguments of a function are evaluate from left to right before the function 
 
 Not all arguments need to be evaluated. Consider  i > 0 ∧ 300 / i < 10 where ∧ is defined as:
 
-/keyword function ∧(a:boolean, b:boolean)boolean /keyword if a /keyword then b /keyword else false
+function ∧(a:boolean, b:boolean)boolean   if a  then b  else false
 
  
 
@@ -556,39 +555,39 @@ We need some operations on T. T will be an int in this example so all these oper
 
 We need to helper functions to calculate the length and find the ith element of the seq for this example.
 
-/keyword Function clength(s:seq.T, i:int)int 
-/br /keyword  if i > length.s 
-/br /keyword  then 0 
-/br /keyword  else /keyword assert s_i > 0 /keyword report"invalid"
-/br  /keyword if s_i < 128 
- /br /keyword then 1 + clength(s, i + 1)
-/br  /keyword else /keyword assert s_i < 128 + 64 + 32 /keyword report"invalid"
+  Function clength(s:seq.T, i:int)int 
+   if i > length.s 
+  then 0 
+  else  assert s_i > 0   report"invalid"
+  if s_i < 128 
+  then 1 + clength(s, i + 1)
+ else   assert s_i < 128 + 64 + 32   report"invalid"
   1 + clength(s, i + 2)
 
-/keyword Function cindex(s:seq.T, i:int, idx:int)T 
-/br /keyword  if idx = 1 
-/br /keyword  /keyword then if s_i < 128 /keyword then s_i else s_(i + 1) - 128 +(s_i - 128 - 64)* 64 
-/br /keyword  /keyword else cindex(s, i + if s_i < 128 /keyword then 1 else 2, idx - 1)
+  Function cindex(s:seq.T, i:int, idx:int)T 
+   if idx = 1 
+  then if s_i < 128  then s_i else s_(i + 1) - 128 +(s_i - 128 - 64)* 64 
+  else cindex(s, i + if s_i < 128  then 1 else 2, idx - 1)
 
 We need a constructor of our sequence. Note the use of a toseq function. This is defined implicitly by the sequence type definition to change the type from myseq(T)to seq(T).
 
-/keyword Function myseq(d:seq.T)seq.T toseq.myseq(clength(d, 1), d)
+  Function myseq(d:seq.T)seq.T toseq.myseq(clength(d, 1), d)
 
 Every sequence must have a_function defined on it which is below for mseq.T
 
-/keyword Function_(a:myseq.T, idx:int)T cindex(data.a, 1, idx)
+  Function_(a:myseq.T, idx:int)T cindex(data.a, 1, idx)
 
-/keyword module testmyseq
+Module testmyseq
 
-/keyword use standard
+  use standard
 
-/keyword use UTF8
+  use UTF8
 
-/keyword use myseq.int
+  use myseq.int
 
-/keyword Function testmyseq seq.word 
- /br keyword  let s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
- /br @(+, toword,"", myseq(toseqbyte.s @ +(empty:seq.int,toint.@e) ))
+????  Function testmyseq seq.word 
+  let s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
+   @(+, toword,"", myseq(toseqbyte.s @ +(empty:seq.int,toint.@e) ))
 
 /< /section Tail Recursion />
 

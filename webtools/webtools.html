@@ -13,28 +13,19 @@
     }
     </script>
 
-  <p > lextable
-  <p >  LR1 built/parse.ls 
-  <p >   htmlcode built/core.libsrc
-  <p >   doclibrary built/core.libsrc
-  <p >   usegraph   built/core.libsrc   exclude=standard seq
-  <p >   formatdoc built/tools/doc.txt 
-  <p >  front built/core.libsrc   mods= standard words seq
-  <p > mmpretty built/core.libsrc
-  <p >  transform built/core.libsrc 
-cmd:
-<select name="cmd"  id="cmd">
-  <option value="lextable">lextable</option>
-  <option value="LR1">LR1</option>
-  <option value="htmlcode">htmlcode</option>
-  <option value="doclibrary">doclibrary</option>
-  <option value="usegraph">usegraph</option>
-  <option value="formatdoc">formatdoc</option>
-  <option value="front">front</option>
-  <option value="pretty">pretty</option>
-  <option value="transform">transform</option>
-   <option value="testall">testall</option>
-</select>
+ <select name="cmdx"  id="cmdx" onchange=mycopy()>
+ <option > clear </option>
+ <option value="lextable "> lextable </option>
+  <option value="LR1 +stdlib parse.ls "> LR1 </option>
+  <option value="transform built/core.libsrc flags=html"> htmlcode </option>
+  <option value="doclibrary built/core.libsrc "> doclibrary </option>
+  <option value="usegraph built/core.libsrc   exclude=standard seq "> usegraph </option>
+  <option value="transform +tools doc.txt   flags=html noindex"> formatdoc </option>
+  <option value="front built/core.libsrc   mods=standard words seq "> front </option>
+   <option value="transform built/core.libsrc "> transform </option>
+  <option value="testall+tests opttests.ls +built stdlib.libinfo  flags=noseq">
+   testall </option>
+  </select>
  <input id="input"/>  
  <button onclick=myruncmd()>run cmd </button>
  

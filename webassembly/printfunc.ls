@@ -2,6 +2,8 @@ Module printfunc
 
 use bits
 
+use seq.byte
+
 use funcidx
 
 use standard
@@ -9,8 +11,6 @@ use standard
 use symbol2
 
 use wasm
-
-use seq.byte
 
 use otherseq.word
 

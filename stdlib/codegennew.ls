@@ -65,7 +65,7 @@ use seq.encoding.word3
 use encoding.word3
 
 
-Function compilerback(m:midpoint, baselibwords:seq.seq.char, stacktracesymbol:symbol, outname:filename)seq.file
+Function compilerback(m:midpoint, baselibwords:seq.seq.char,  outname:filename)seq.file
 {OPTION PROFILE}
 for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ toseq.prg.m do
  if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
@@ -84,7 +84,7 @@ for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ tos
 /for(let s2 = 
  for acc = empty:seq.symbol, p ∈ toseq.profilearcs do acc + p /for(asset.acc \ asset.addresses)
 assert isempty.s2 report"profile arcs problem"
-codegen(m, baselibwords, profilearcs, addresses, stacktracesymbol, outname))
+codegen(m, baselibwords, profilearcs, addresses, outname))
 
 function parcsize int 6
 
@@ -148,7 +148,6 @@ Function codegen(m:midpoint
 , baselibwords:seq.seq.char
 , profilearcs:set.seq.symbol
 , addresssymbolrefdecode0:seq.symbol
-, stacktracesymbol:symbol
 , outname:filename
 )seq.file
 {OPTION PROFILE}
@@ -169,6 +168,8 @@ let addresssymbolrefdecode =
 let symboladdress = symboladdress(addresssymbolrefdecode, typedict, prgX, libname, defines)
 let discard3 = modulerecord("spacecount", [toint.GLOBALVAR, typ.i64, 2, 0, 0, toint.align8 + 1, 0])
 let geninfo = geninfo(profilearcs, prgX, false, libname)
+let stacktraceinfo = extractValue(first.src.m, "stacktrace")
+let stacktracesymbol = symbol(moduleref(stacktraceinfo >> 1), stacktraceinfo << 2, seqof.typeword)
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do
   let internalbody = 
@@ -229,11 +230,12 @@ let bodytxts =
  , [liblib
  , if isbase then
   let f1 = 
-   symbol(moduleref([libname] + "debuginfo")
+   symbol(moduleref([libname] + "impDependent")
    , "addlibwords"
-   , typeref("debuginfo debuginfo" + libname)
+   , typeref("debuginfo impDependent" + libname)
    , typeint
    )
+  assert not.isempty.getCode(prgX, f1)report"PROBLEM"
   let functyp = ptr.tollvmtype(typedict, f1)
   ptrtoint(functyp, symboltableentry([mangledname(prgX, f1, libname)], functyp))
  else C64.0

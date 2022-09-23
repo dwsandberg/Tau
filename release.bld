@@ -19,7 +19,7 @@ Each  command has a source list of the remaining files in the file list and the 
 
 define doclibrary tools
 define enumerate tools
-define formatdoc tools
+define transform tools
 define usegraph tools
 define front tools
 define LR1 tools
@@ -49,23 +49,25 @@ libsrc0 codegen.libsrc
 +stdlib persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmconstants
 
 libsrc0 bcsupportdebug.libsrc
-+stdlib inputoutput.ls ptr taublockseq bitcast tausupport debuginfo
++stdlib impdependent.ls ptr taublockseq bitcast tausupport 
 
 makelib0 stdlib1.lib core.libsrc symbols compilerfront codegen bcsupportdebug
 +stdlib updatestate.ls main2 compileTimeT object01 objectio LEBencoding
-exports=midpoint inputoutput mytype UTF8  bits   ptr encoding file format graph hashset internalbc debuginfo llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
+exports=midpoint   impDependent mytype UTF8  bits   ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
 
 makelib1 stdlib2.lib core.libsrc symbols compilerfront codegen bcsupportdebug
 +stdlib updatestate.ls main2 compileTimeT object01 objectio LEBencoding
-exports=midpoint inputoutput mytype UTF8  bits  ptr encoding file format graph hashset internalbc debuginfo llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
+exports=midpoint  impDependent mytype UTF8  bits  ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
 
 makelib2 stdlib.lib core.libsrc symbols compilerfront codegen bcsupportdebug
 +stdlib updatestate.ls main2 compileTimeT object01 objectio LEBencoding
-exports=midpoint inputoutput mytype UTF8  bits   ptr encoding file format graph hashset internalbc debuginfo llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio words xxhash compilerfront bitcast objectio object01 LEBencoding
+exports=libllvm compilerfrontT midpoint  impDependent mytype UTF8  bits    encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio words xxhash compilerfront bitcast objectio object01 LEBencoding
 
-makelib tools.lib common.lib
-+tools tools.ls baseTypeCheck doc genLR1 prettycompilerfront reconstructUses profile taulextable frontcmd wordgraph enumerate
-graphcode ParserExample
+libsrc subtools.libsrc +tools baseTypeCheck.ls doc genLR1 prettycompilerfront reconstructUses   taulextable frontcmd wordgraph enumerate
+graphcode ParserExample 
+
+makelib tools.lib common.lib subtools.libsrc
++tools  profile.ls  profileexample
 uses=common stdlib
 exports=baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
 
@@ -86,7 +88,8 @@ uses=stdlib
 exports=wasm wasm1 wasm2 wasmcompile webassembly
 
 libsrc webcore.libsrc core.libsrc
-+webcore inputoutput.ls webIO
++webcore impDependent.ls webIO SpecialExports
+SpecialImports
 +common barycenter layergraph makeDAG bandeskopf
 +stdlib tausupport bitcast taublockseq ptr
 
@@ -94,11 +97,11 @@ doclibrary stdlibdoc.html stdlib.libsrc
 
 doclibrary commondoc.html common.libsrc
 
-formatdoc taudoc.html
-+tools doc.txt
+transform taudoc.html  
++tools doc.txt flags=html noindex
 
-formatdoc installdoc.html
-+tools install.txt
+transform installdoc.html 
++tools install.txt flags=html noindex
 
  usegraph + tools install1.html +$build core.libsrc 
 
@@ -131,10 +134,10 @@ wasm wbeizer.wasm webcore.libsrc
 exports=wbeizer
 Library=wbeizer
 
-wasm webtools.wasm webcore.libsrc symbols compilerfront tools tests
-+webtools webtools.ls main2 webtools.html
+wasm webtools.wasm webcore.libsrc symbols compilerfront  tests subtools
++webtools webtools.ls  webtools.html
 +common svg2graph.ls uniqueids
-+stdlib hashset symbol2 pretty symbolconstant compileTimeT debuginfo objectio object01 LEBencoding
++stdlib hashset symbol2 pretty symbolconstant compileTimeT  objectio object01 LEBencoding
 exports=webtools
 Library=webtools
 

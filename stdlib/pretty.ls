@@ -10,8 +10,6 @@ use otherseq.word
 
 use set.seq.word
 
-use stack.word
-
 Function pretty(s:seq.word)seq.word
 let tmp0 = text.(toseq.parse.s)_1
 removeclose(tmp0, length.tmp0)
@@ -27,16 +25,13 @@ do next(acc
 )
 /for(if length.acc = length.s then acc
 else
- for acc2 = ""
- , linelength2 = 0
- , c ∈ s 
- do
-    let dc=decodeword.c 
-    if c ∈ " /keyword  />  /em  /strong  /cell" then 
-     next(acc2 + encodeword(decodeword.space+dc) ,linelength2+  length.dc )
-    else if  c ∈ " /<  /br  /p  /row" /or  length.acc2 > 2 /and linelength2+length.dc > maxwidth then 
-     next( acc2+"/br"+encodeword(decodeword.space+dc), length.dc)
-   else  next(acc2 + c ,  linelength2+  length.dc)
+ for acc2 = "", linelength2 = 0, c ∈ s do
+  let dc = decodeword.c
+  if c ∈ " /keyword  />  /em  /strong  /cell"then
+   next(acc2 + encodeword(decodeword.space + dc), linelength2 + length.dc)
+  else if c ∈ " /<  /br  /p  /row" ∨ length.acc2 > 2 ∧ linelength2 + length.dc > maxwidth then
+   next(acc2 + " /br" + encodeword(decodeword.space + dc), length.dc)
+  else next(acc2 + c, linelength2 + length.dc)
  /for(acc2)/if)
 
 Function sortuse(b:seq.seq.word, prefix:seq.word)seq.seq.word
@@ -188,10 +183,10 @@ function bracket(s:seq.word)seq.word" /<" + s + " />"
 Below is generated from parser generator.
 
 function action(ruleno:int, input:seq.word, place:int, R:reduction.attribute2)attribute2
-{Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 P T L D E FP A F F1 G 
-NM X}
-{RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E then 
-E else E /if | /if | E if E then E else E | E assert E report D E | A W=E | E let A E | D E |}
+{Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 P T L D E FP A F
+  F1 G NM X}
+{RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E
+  then E else E /if | /if | E if E then E else E | E assert E report D E | A W=E | E let A E | D E |}
 if ruleno = {G F #}1 then R_1
 else if ruleno = {F W NM(FP)T E}2 then prettyfunc.R
 else if ruleno = {F W_(FP)T E}3 then prettyfunc.R
@@ -307,13 +302,15 @@ else if ruleno = {E for F2 while E do E /for(E)}51 then
 else if ruleno = {D E}52 then R_1
 else if ruleno = {X wl E}53 then
  attribute.escapeformat.subseq(text.R_1, 2, length.text.R_1 - 1)
- +attribute(  ("$" + "(/>") + text.R_2+"/< literal)")
+ + attribute("$" + "( />" + text.R_2 + "
+   /< literal)")
 else if ruleno = {X X wl E}54 then
-  R_1 + attribute(escapeformat.subseq(text.R_2, 2, length.text.R_2 - 1))
- +attribute( ("$" + "(/>") + text.R_3+"/< literal)")
+ R_1 + attribute.escapeformat.subseq(text.R_2, 2, length.text.R_2 - 1)
+ + attribute("$" + "( />" + text.R_3 + "
+   /< literal)")
 else if ruleno = {E X $wordlist}55 then
- attribute.bracket("literal" + dq(text.pretty.[R_1 
- , attribute.escapeformat.subseq(text.R_2, 2, length.text.R_2 - 1)]))
+ attribute.bracket("literal"
+ + dq.text.pretty.[R_1, attribute.escapeformat.subseq(text.R_2, 2, length.text.R_2 - 1)])
 else
  {ruleno}
  assert false report"invalid rule number" + toword.ruleno

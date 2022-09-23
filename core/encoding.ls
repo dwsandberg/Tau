@@ -56,7 +56,7 @@ unbound hash(T)int
 unbound=(T, T)boolean
 
 /Function empty:encodingstate.T encodingstate.T let x=constantseq(4, empty:seq.encodingpair.T)
-encodingstate(0, 0, x, x, empty:seq.encodingpair.T, 0)
+ encodingstate(0, 0, x, x, empty:seq.encodingpair.T, 0)
 
 Function lastadded(h:encodingstate.T)encoding.T code.last.all.h
 

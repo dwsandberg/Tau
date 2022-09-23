@@ -14,7 +14,7 @@ use encoding.const3
 
 use seq.const3
 
-use debuginfo
+use impDependent
 
 use llvm
 

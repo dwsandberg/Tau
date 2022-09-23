@@ -415,7 +415,8 @@ type passsymbols is modname:modref
 , srclink:seq.symdef
 
 
-Export passsymbols(modname:modref, uses:set.modref, defines:set.symbol, exports:set.symbol, unresolvedexports:set.symbol, typedict:set.mytype, text:seq.symdef)passsymbols
+Export passsymbols(modname:modref, uses:set.modref, defines:set.symbol, exports:set.symbol, 
+ unresolvedexports:set.symbol, typedict:set.mytype, text:seq.symdef)passsymbols
 
 Function passsymbols(modname:modref)passsymbols
 passsymbols(modname, empty:set.modref, empty:set.symbol, empty:set.symbol, empty:set.symbol

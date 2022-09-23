@@ -10,8 +10,6 @@ use codegennew
 
 use compilerfront
 
-use debuginfo
-
 use file
 
 use seq.file
@@ -19,6 +17,10 @@ use seq.file
 use process.seq.file
 
 use format
+
+use impDependent
+
+use libllvm
 
 use compilerfrontT.libllvm
 
@@ -50,7 +52,7 @@ function makeentry(libraryuses:seq.word, entrypointname:word, input:seq.byte)seq
 let entryheader = 
  "use standard 
  /p use file 
- /p use inputoutput 
+ /p use impDependent 
  /p use seq.file 
  /p use process.UTF8 
  /p Function entrypoint(args:UTF8)UTF8 
@@ -65,7 +67,7 @@ let entryheader =
  /br let cmd=first.args 
  /br"
 let finalclause = 
- if isempty.libraryuses then"empty:seq.file"
+ if isempty.libraryuses ∨ true then"empty:seq.file"
  else"$([merge(subseq(libraryuses, 1, 1) + "$EP")])(args, input)"
 for acc = ""
 , modname = "?"_1
@@ -83,7 +85,8 @@ do
    if w ∈ ", )"then
     next(para
     + if type = "seq.word"then", extractValue(args, $(dq.[name]))"
-    else if type = "boolean"then", first.$(dq.[name])∈ extractValue(args, $(dq."flags"))"
+    else if type = "boolean"then
+     ", first.$(dq.[name])∈ extractValue(args, $(dq."flags"))"
     else", ?"
     , name
     , w
@@ -91,7 +94,8 @@ do
     )
    else if last ∈ ":"then next(para, name, last, type + w)
    else if last ∈ ", "then next(para, w, w, "")else next(para, name, w, type)
-  /for(acc + " /br else if cmd /in $(dq.subseq(p, 2, 2))then $(subseq(p, 2, 2))(input $(para))")
+  /for(acc
+  + " /br else if cmd /in $(dq.subseq(p, 2, 2))then $(subseq(p, 2, 2))(input $(para))")
   , modname
   , mods + modname
   )
@@ -113,30 +117,22 @@ for acc = empty:seq.byte, names = "parts=", f ∈ input do
   toseqbyte.toUTF8(names + "uses=$(uses)exports=$(exports)Library=$(Library)")
  else
   let entrypointname = merge(Library + "$EP")
-  toseqbyte.toUTF8(names + "uses=$(uses)exports=$(exports + entrypointname)Library=$(Library)")
+  toseqbyte.toUTF8(names
+  + "uses=$(uses)exports=$(exports + entrypointname)Library=$(Library)")
   + tobyte.10
   + tobyte.10
   + toseqbyte.toUTF8("Module" + entrypointname)
   + makeentry(uses, entrypointname, acc)
 [file(outname, firstpart + acc)])
 
-function stacktracesymbol2 symbol symbol(moduleref."* debuginfo", "stacktraceimp", seqof.typeword)
-
-function stacktracesymbol(allsrc:seq.seq.word)symbol
-let libname = first.extractValue(first.allsrc, "Library")
-let uses = extractValue(first.allsrc, "uses")
-let baselib = if isempty.uses then libname else last.uses
-symbol(moduleref([baselib] + "debuginfo"), "stacktraceimp", seqof.typeword)
-
 function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint, outname:filename)seq.file
 {OPTION PROFILE}
 let libname = extractValue(first.allsrc, "Library")
 let uses = extractValue(first.allsrc, "uses")
-let stacktracesymbol = stacktracesymbol.allsrc
-let m = starmap.compilerfront2:libllvm("all", allsrc, dependentlibs, stacktracesymbol)
+let m = starmap.compilerfront2:libllvm("all", allsrc, dependentlibs)
 let m2 = outlib.m
 let dp = if isempty.uses then uses else[last.uses]
-let files = compilerback(m, dependentwords.dp, stacktracesymbol, outname)
+let files = compilerback(m, dependentwords.dp, outname)
 files + file(changeext(outname, "libinfo"), outbytes:midpoint([m2]))
 
 Function makebitcode(input:seq.file)seq.file
@@ -168,29 +164,27 @@ for codeNoFref = empty:seq.symbol, sy ∈ code do
  if isFref.sy then codeNoFref + PreFref + basesym.sy else codeNoFref + sy
 /for(codeNoFref)
 
-Function compilerFront(option:seq.word, allsrc:seq.seq.word)midpoint
-{OPTION PROFILE}compilerfront2:libllvm(option, allsrc, empty:midpoint, stacktracesymbol.allsrc)
 
-Function compilerFront(option:seq.word, input:seq.file)midpoint
-{OPTION PROFILE}
-for mp = empty:midpoint, data = empty:seq.byte, i ∈ input do
- if ext.fn.i ∈ "libinfo"then
-  let new = first.inbytes:midpoint(data.i)
-  next(midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
-  , data
-  )
- else next(mp, data + [tobyte.10, tobyte.10] + data.i)
-/for(let allsrc = breakparagraph.data
-compilerfront2:libllvm(option, breakparagraph.data, mp, stacktracesymbol.allsrc))
 
-Function modsE(ci:midpoint)seq.modExports libmods.ci
-
-Export prg(ci:midpoint)set.symdef
-
-function callfunc:libllvm(ctsym:symbol, typedict:typedict, stk:seq.int)seq.int callfunc(ctsym, typedict, stk)
-
+ 
 _______________
+
+use libllvm
+
+
+Module libllvm
+
+use standard
+
+use symbol2
+
+use impDependent
+
+
 
 Export type:libllvm
 
 type libllvm is a:int 
+
+Function callfunc:libllvm(ctsym:symbol, typedict:typedict, stk:seq.int)seq.int callfunc(ctsym, typedict, stk)
+

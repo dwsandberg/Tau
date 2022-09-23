@@ -73,7 +73,8 @@ let newresult =
   if this = matchthis then result + this + " />"else result + this
  else if c = 0 then
   result
-  + if this ∈ dq then" /< literal"else" /br  /< comment"/if
+  + if this ∈ dq then"
+    /< literal"else" /br  /< comment"/if
   + this
  else if c = 1 then
   if lastbreak > 20 then result + " /br"else result /if

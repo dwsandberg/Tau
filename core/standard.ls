@@ -290,7 +290,8 @@ Export encodeword(a:seq.char)word
 
 Export decodeword(w:word)seq.char
 
-Export checkinteger(w:word)word{* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out like an integer but has illegal characters in it. otherwise returns WORD. }
+Export checkinteger(w:word)word{* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out
+ like an integer but has illegal characters in it. otherwise returns WORD. }
 
 Export <<(s:seq.word, i:int)seq.word{* removes i words from beginning of s}
 

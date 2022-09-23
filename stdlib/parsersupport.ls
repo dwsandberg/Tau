@@ -41,7 +41,8 @@ Function _(r:reduction.T, n:int)T attribute.(toseq.r)_n
 Function last(r:reduction.T)T attribute.(toseq.r)_(length.toseq.r)
 
 Function errormessage:T(message:seq.word, input:seq.word, place:int)seq.word
-let m = " /< literal" + message + " />"
+let m = "
+  /< literal" + message + " />"
 m + " /br  /br" + prettynoparse.subseq(input, 1, place) + " /br" + m
 
 Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T

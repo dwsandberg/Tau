@@ -104,7 +104,8 @@ function drag(evt) {
   
 function tobytearray(data,nobits)  { 
    let i32a = new Uint32Array(memory.buffer, data, 16);
-    if (i32a[0] > 3) {  
+//   console.log("tobytearray"+i32a[0]+" "+i32a[2]);
+    if (i32a[0] >= 3) {  
       let i32= new Uint32Array(memory.buffer, i32a[4], 4); 
       let total=i32a[2];
       let blksize=i32[2];
@@ -112,12 +113,12 @@ function tobytearray(data,nobits)  {
       let arr=new Array(0);
       let offset=0;
       while( total > 0) { 
-//       console.log("L"+(total > blksize ?blksize:total));
+//        console.log("L"+(total > blksize ?blksize:total));
        arr.push(...new Uint8Array(memory.buffer,i32a[j]+16, (total > blksize ?blksize:total) * nobits / 8 )) ;
        j=j+2; total=total-blksize
       }
        let t=new Uint8Array(arr);
-  //     console.log("JK"+t.length+" "+i32a[2]);
+//       console.log("JK"+t.length+" "+i32a[2]);
        return t;
        }
      else {
@@ -130,7 +131,7 @@ function asjsstring ( offset){
  }
 
 function jsstring2UTF8bytes(r){
-   console.log("js"+r);
+  // console.log("js"+r);
    const encoder = new TextEncoder();
    const i8src = encoder.encode(r);
    let sp = exports.allocatespace3( (( i8src.length+7) / 8 + 2));
@@ -202,7 +203,7 @@ function finaljsHTTP(data,nobits ){
 
 , setelementvalue:function  (id ,textin ){
   let text=asjsstring(textin); 
-  console.log("SETELEMENT"+text);   
+//  console.log("SETELEMENT"+text);   
   let  z = document.getElementById(asjsstring( id )); 
   let  kind = z.tagName; 
   if(kind=="TEXTAREA" || kind=="SELECT" )z.value =  text.trim();
@@ -275,15 +276,20 @@ function finaljsHTTP(data,nobits ){
  //      header: UTF8, body:T
    
 
- ,jsHTTP:function (nobits,url,methodx,data,code,pc,stk,locals) {
+ ,jsHTTP:function (url,methodx,data,followfunc,state) {
   // only handles one header //
+   var nobits=8;
    var responeheader="";
-  inprogress++;
   let header=asjsstring(methodx);
   method=header.split(" ")[0];
+  if ( method == "NONE" ){ console.log("jsHTTP2xx "+asjsstring(followfunc));
+  let a=jsstring2UTF8bytes( "200 OK"); 
+  let b=exports.allocatespace3((2))
+  exports[asjsstring(followfunc)](exports.jsmakepair(b,a),state)
+  .then ();}
+  inprogress++;
   let tmp=  header.slice(method.length);
   let parts=tmp.split(":");
-  console.log("jsHTTP "+  asjsstring(url));
     var headers = new Headers();
    if (parts.length==2) {  headers.append(parts[0].trim(), parts[1].trim());}
   fetch( asjsstring(url),
@@ -297,17 +303,14 @@ function finaljsHTTP(data,nobits ){
     return response.arrayBuffer();
      })
  .then(function (result) {
- //   console.log(responeheader)
+    console.log(responeheader)
       let a=jsstring2UTF8bytes( responeheader);
       let b=finaljsHTTP(result,nobits);
       let rec  = exports.jsmakepair(b,a);
-//      let rec = exports.allocatespace3(  2); 
-//      let i32blk = new Float64Array(memory.buffer, rec,2); 
-//         i32blk [ 1]=a  ;
-//      i32blk[0]=b ;
-     inprogress--; exports.resume(rec,code,pc,stk,locals,8); }) 
+      console.log("jsHTTP2"+asjsstring(followfunc))
+     inprogress--; exports[asjsstring(followfunc)](rec,state); }) 
   }
-
+  
  } } ; 
   fetch("/built/"+library+".wasm")
  .then(function(response){ return response.arrayBuffer()})

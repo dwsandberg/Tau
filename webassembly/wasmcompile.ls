@@ -1,36 +1,16 @@
 Module wasmcompile
 
-use UTF8
+use otherseq.word
 
 use bits
-
-use file
-
-use funcidx
-
-use knownWfunc
-
-use printfunc
-
-use real
-
-use standard
-
-use symbol2
-
-use wasm
-
-use wasm2
-
-use seq.Icode
 
 use seq.blkele
 
 use stack.blkele
 
-use seq.blkele2
-
 use seq.byte
+
+use seq.seq.byte
 
 use process.cccreturn
 
@@ -38,49 +18,41 @@ use seq.char
 
 use encoding.coverage
 
-use seq.file
+use funcidx
 
-use otherseq.localinfo
-
-use seq.localinfo
+use knownWfunc
 
 use set.local5map
 
+use otherseq.localinfo
+
 use otherseq.mytype
 
-use seq.mytype
+use printfunc
 
-use seq.real
+use standard
 
 use seq.symbol
 
 use set.symbol
 
+use symbol2
+
 use set.symdef
+
+use wasm
+
+use wasm2
 
 use encoding.wfunc
 
 use otherseq.wfunc
 
-use seq.wfunc
-
-use otherseq.word
-
-use stack.word
-
-use encoding.wtype
+use set.seq.word
 
 use seq.wtype
 
 use stack.wtype
-
-use process.seq.Icode
-
-use seq.seq.byte
-
-use set.seq.word
-
-use seq.seq.seq.byte
 
 type coverage is towfunc:seq.word
 
@@ -94,76 +66,46 @@ let b =
  for acc = empty:set.seq.word, p ∈ encodingdata:coverage do acc + towfunc.p /for(acc)
 for txt = "", l ∈ toseq(a \ b)do txt + l + EOL /for(txt)
 
-function importsare(knownfuncs:seq.wfunc, prg:set.symdef)set.symbol
-for used = empty:seq.symbol, d ∈ toseq.prg do
- if name.module.sym.d ∈ "inputoutput"then
-  for used2 = used, sym2 ∈ code.d do
-   if isconst.sym2 ∨ isspecial.sym2 ∨ print.resulttype.sym2 ∉ ["real", "jsbytes"]
-   ∨ module.sym2 ≠ internalmod then
-    used2
-   else used2 + sym2
-  /for(used2)
- else used
-/for(for used2 = asset.used, d2 ∈ knownfuncs do used2 - sym.d2 /for(used2))
 
 Function jsname(sym:symbol)seq.word"exports." + name.sym
 
-Function wasmcompile(alltypes:typedict, prg4:set.symdef, rootsin:seq.symbol, libname:seq.word)seq.byte
+use otherseq.symbol
+
+use file
+
+use seq.file
+
+function %(s:symbol) seq.word print.s
+
+Function wasmcompile(alltypes:typedict, prg4:set.symdef, roots:seq.symbol,
+ o:seq.word,imports:seq.symbol)seq.file
 let discard68 = encode.coverage."???"
 let discard67 = startencodings
-let typestack=addabstract( typeref("stack stack "+libname), typeint)
-let knownfuncs = knownWfunc(alltypes,typestack)
-let imports = [abortfunc, callprocessfunc] + toseq.importsare(knownfuncs, prg4)
-let roots = 
- toseq.asset(rootsin
- + symbol(moduleref."* inputoutput", "allocatespace3", typereal, typereal)
- + symbol(moduleref."* inputoutput"
- , "resume"
- , [typereal, typereal, typereal, typereal, typereal, typereal]
- , typereal
- )
- + symbol(moduleref."* inputoutput", "blockseqtype", typereal)
- + symbol(moduleref."* inputoutput", "jsmakepair", typereal, typereal, typereal)
- + symbol(moduleref."* inputoutput", "randomintimp", typeint, seqof.typeint))
 let imp = 
  for acc = empty:seq.seq.byte, @e ∈ imports do
-  let discard0 = funcidx.@e
-  let discard = addf(alltypes, @e, empty:seq.byte)
+   let discard = addf(alltypes, @e, empty:seq.byte)
   acc + importfunc(typeidx32(alltypes, @e), first."imports", wordname.@e)
  /for(acc)
+ let knownfuncs = knownWfunc(alltypes)
 {create functions that will be exported}
 let exp = 
- for acc = [exportprocessbody.alltypes, exporthandleerror.alltypes, exportreclaimspace.alltypes]
+ for acc = empty:seq.seq.byte
  , @e ∈ roots
  do
   acc + exportfunc(funcidx.@e, last.jsname.@e)
  /for(acc)
-{define some support functions}
-let descard100 = [allocatefunc.alltypes, getinstancefunc.alltypes, addencodingfunc.alltypes]
-{look for exports that must be interpreted}
-let jsHTTP = 
- symbol(internalmod
- , "jsHTTP"
- , [typereal, typereal, typereal, typereal, typereal, typereal, typereal, typereal]
- , typereal
- )
-let zzzzz = 
- for txt = "", sym ∈ roots do
-  let code = getCode(prg4, sym)
-  if jsHTTP ∈ code then
-   {assert name.sym /nin"testpretty22"report print.code}interpret(alltypes, knownfuncs, sym, code)
-  else txt
- /for(txt)
+{define  functions with hand coded webassembly definitions }
+let discard100=[processbodyfunc.alltypes,handleerrorfunc.alltypes,reclaimspacefunc.alltypes
+,allocatefunc.alltypes, getinstancefunc.alltypes, addencodingfunc.alltypes]
 {define depended functions}
-let discardt = dependedfunc(alltypes, knownfuncs, prg4, length.imports + 1,typestack)
+let discardt = dependedfunc(alltypes, knownfuncs, prg4, length.imports + 1)
 {define function to initialize words}
 let startfuncidx = funcidx.symbol(moduleref."* core", "initwords3", typeint)
 let mustbedonelast = 
  addf(alltypes, symbol(moduleref."* core", "initwords3", typeint), initwordsbody)
 let forlater = 
  "Successful compile  /p"
- + {reportcoverage.knownfuncs+zzzzz++}
- for txt = "", p ∈ encodingdata:wfunc do txt + toword.funcidx.p + print.sym.p + EOL /for(txt)
+ + for txt = "", p ∈ encodingdata:wfunc do txt + toword.funcidx.p + print.sym.p + EOL /for(txt)
  + for txt = " /br+table+ /br", i = 2, idx ∈ elementdata do next(txt + toword.i + toword.idx + EOL, i + 1)/for(txt)
 {create the wasm file}
 assert startfuncidx < length.encodingdata:wfunc
@@ -172,27 +114,28 @@ for bodies = empty:seq.seq.byte
 , funcs2 = empty:seq.seq.byte
 , p ∈ sort.encodingdata:wfunc << length.imports
 do next(bodies + code.p, funcs2 + LEBu.typeidx.p)/for(
-  createwasm(imp, funcs2, exp + exportmemory."memory"_1, bodies, dataseg, elementdata, startfuncidx)
- )
+let fn=filename.o
+[
+file(fn
+ ,createwasm(imp, funcs2, exp + exportmemory."memory"_1, bodies, dataseg, elementdata, startfuncidx))
+,file(filename("+"+ dirpath.fn +merge([name.fn]+"info" )+".html"),reportcoverage.knownfuncs+forlater)])
 
-Function dependedfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, i:int,typestack:mytype)int
-let k = nobodies.i
+
+Function dependedfunc(alltypes:typedict, knownfuncs:seq.wfunc, prg:set.symdef, idx:int)int
+{Do not consider function indices less that idx} 
+{get the symbols of functions that has been referenced but do not
+have a definition}
+let k = nobodies.idx 
+if isempty.k then { no functions  that do not have definitions  } 0
+else
 for notused = to:encoding.wfunc(1), sym ∈ k do
  if name.module.sym ∈ "$$sequence"then seqsymdef(alltypes, sym)
  else if name.module.sym ∈ "$$record"then recordsymdef(alltypes, sym)
- else if name.module.sym ∈ "$$Icall"then
-  encode.wfunc(alltypes, sym, $$Icallbody(alltypes, toint.name.sym,typestack), funcidx.sym)
- else
+ else 
   let code = removeoptions.getCode(prg, sym)
   if isempty.code then
    let ele = lookup(knownfuncs, wfunc(alltypes, sym, empty:seq.byte))
    if isempty.ele ∧ module.sym = internalmod ∧ name.sym ∉ "set"then
-    if name.sym ∈ "randomint"then
-     let bodycode = 
-      Wlocal.0
-      + Wcall.symbol(moduleref."* inputoutput", "randomintimp", typeint, seqof.typeint)
-     encode.wfunc(alltypes, sym, funcbody(empty:seq.wtype, bodycode + return), funcidx.sym)
-    else
      let c = decodeword.name.sym
      let d = decodeword.first."processX"
      assert subseq(c, 1, length.d) = d report"HHHX" + print.sym
@@ -219,11 +162,11 @@ for notused = to:encoding.wfunc(1), sym ∈ k do
    , funcbody(localtypes.result.p1 << nopara.sym, code.result.p1 + return)
    , funcidx.sym
    )
-/for(if length.k = 0 then 0 else dependedfunc(alltypes, knownfuncs, prg, i + length.k,typestack)/if)
+/for( dependedfunc(alltypes, knownfuncs, prg, idx + length.k ))
 
 type localinfo is type:wtype, leb:seq.byte, no:int
 
-{local5map should be changed to localmap but problem occurs with conflict of localmap in codegen}
+{???? local5map should be changed to localmap but problem occurs with conflict of localmap in codegen}
 
 type local5map is name:word, localinfo:localinfo
 
@@ -249,30 +192,6 @@ function Wlocal(l:localinfo)seq.byte[localget] + leb.l
 function Wdefine(l:localinfo)seq.byte[localset] + leb.l
 
 function Wtee(l:localinfo)seq.byte[localtee] + leb.l
-
-function interpret(alltypes:typedict, knownfuncs:seq.wfunc, sym:symbol, symcode:seq.symbol)seq.word
-let stacktype = addabstract(typeref("stack stack "+library.module.sym), typeint)
-let map = 
- for acc = empty:set.local5map, @e ∈ paratypes.sym do addlocal(acc, toword(cardinality.acc + 1), wtype64(alltypes, @e))/for(acc)
-let p1 = process.createcode2interpert(alltypes, knownfuncs, removeoptions.symcode, map, nopara.sym)
-assert not.aborted.p1
-report"ccc fail:" + print.sym + "lib:" + library.module.sym + EOL + print.symcode + EOL
-+ message.p1
-+ stacktrace
-{assert name.sym /nin"test5"report print.sym+print.symcode+EOL+EOL+for txt="", pc=1, ele /in result.p1 do next(
-txt+toword.pc+decodeop.tobyte.(toint.ele mod 256)+toword.(toint.ele / 256)+EOL, pc+1)/for(txt)}
-let tmp = for acc = empty:seq.int, ele ∈ result.p1 do acc + toint.ele /for(acc)
-let Emptystack = const64.getoffset.Constant2.[Lit.0, Lit.0, Record.[typeint, typeint]]
-let code = 
- const64.constintseq.tmp + const64.1 + Emptystack + Emptystack
- + Wcall.symbol(moduleref."* inputoutput"
- , "interpert"
- , [seqof.typeint, typeint, stacktype, seqof.typeint]
- , stacktype
- )
- + return
-let discard = encode.wfunc(alltypes, sym, funcbody(empty:seq.wtype, code), funcidx.sym)
-print.sym + EOL + print.symcode
 
 type cccreturn is code:seq.byte, localtypes:seq.wtype
 
@@ -440,8 +359,8 @@ do
     + unreachable
     + END
    else[block] + asbytes.top.typestk + blockcode
-  {assert subseq(keys.localtypes, 1, 2)/ne"1 2"report"XXC"+keys.localtypes+EOL+printcode.newcode+EOL+print.
-sym.blks_1+print.resulttype.sym}
+  {assert subseq(keys.localtypes, 1, 2)/ne"1 2"report"XXC"+keys.localtypes+EOL+printcode.newcode+EOL+print
+    .sym.blks_1+print.resulttype.sym}
   next(typestk, pop(blkstk, length.blks), newcode, localtypes)
  else if isdefine.sym then
   let idx = cardinality.localtypes
@@ -565,148 +484,3 @@ else
  funccall + i64extendi32u
 )
 
-function typeidx(alltypes:typedict, sym:symbol)int
-let paratypes = 
- for acc = empty:seq.wtype, @e ∈ paratypes.sym do acc + wtype64(alltypes, @e)/for(acc)
-let rt = wtype64(alltypes, resulttype.sym)
-typeindex(paratypes, rt)
-
-function $$Icallbody(alltypes:typedict, functypeidx:int,stacktype:mytype)seq.byte
-let undertop = 
- symbol(moduleref("* stack", typeint), "undertop", [stacktype, typeint], typeint)
-let poppush = 
- symbol(moduleref."* inputoutput"
- , "poppush"
- , [stacktype, typeint, typeint]
- , stacktype
- )
-let list = towtypelist.functypeidx
-let funccall = 
- for code = empty:seq.byte, idx = length.list - 2, ptyp ∈ list >> 1 do
-  let newcode = code + Wlocal.0 + const64.idx + Wcall.undertop
-  next(if ptyp = i64 then newcode
-  else if ptyp = f64 then newcode + f64reinterpreti64
-  else
-   assert ptyp = i32 report"ErrorX"
-   newcode + i32wrapi64
-  , idx - 1
-  )
- /for(code + Wlocal.1 + i32wrapi64 + Wcallindirect.functypeidx)
-let rt = last.list
-let resulttoi64 = 
- if rt = i64 then funccall
- else if rt = f64 then funccall + i64reinterpretf64
- else
-  assert rt = i32 report"unknown type processbody"
-  funccall + i64extendi32u
-assert true report printcode(Wlocal.0 + const64(length.list - 1) + resulttoi64 + Wcall.poppush)
-funcbody([i64], Wlocal.0 + const64(length.list - 1) + resulttoi64 + Wcall.poppush)
-
-type Icode is toint:int
-
-function Icode(inst:byte, op:int)Icode Icode(toint.inst + op * 256)
-
-function Icode(inst:byte)Icode Icode.toint.inst
-
-type blkele2 is pc:int, sym:symbol
-
-Function createcode2interpert(alltypes:typedict, knownfuncs:seq.wfunc, code:seq.symbol, local5map:set.local5map, nopara:int)seq.Icode
-for blkstk = empty:seq.blkele2, curblk = empty:seq.Icode, localtypes = nopara, sym ∈ code do
- if islocal.sym then next(blkstk, curblk + Icode(localget, value.sym - 1), localtypes)
- else if isrecordconstant.sym then next(blkstk, curblk + Icode(i64const, getoffset.sym), localtypes)
- else if isconst.sym then
-  if inmodule(sym, "$real")then
-   if value.sym = 0 then next(blkstk, curblk + Icode(i64const, 0), localtypes)
-   else
-    assert casttoreal.value.sym ∈ [1.0, 8.0, 0.125, 64.0]
-    report"REAL" + print(3, casttoreal.value.sym) + %.value.sym
-    next(blkstk, curblk + Icode(f64const, intpart(casttoreal.value.sym * 1000.0)), localtypes)
-  else if isFref.sym then next(blkstk, curblk + Icode(i64const, tableindex.basesym.sym), localtypes)
-  else if sym = Littrue then next(blkstk, curblk + Icode(i64const, 1), localtypes)
-  else if sym = Litfalse then next(blkstk, curblk + Icode(i64const, 0), localtypes)
-  else if isword.sym then next(blkstk, curblk + Icode(i64const, value.wordconst.wordname.sym), localtypes)
-  else if iswordseq.sym then
-   next(blkstk, curblk + Icode(i64const, getoffset.wordsconst.worddata.sym), localtypes)
-  else
-   assert inmodule(sym, "$int")report"NOt HANDLE" + print.sym
-   {assert value.sym /ge 0 report"neg constant"}
-   next(blkstk, curblk + Icode(i64const, value.sym), localtypes)
- else if isSequence.sym then
-  let seqsym = seqsym(nopara.sym, wtype64(alltypes, parameter.resulttype.sym))
-  next(blkstk, curblk + Icall(alltypes, seqsym), localtypes)
- else if isRecord.sym then next(blkstk, curblk + Icall(alltypes, recordsym(alltypes, sym)), localtypes)
- else if isstart.sym then next(blkstk + blkele2(length.curblk + 1, sym), curblk, localtypes)
- else if isloopblock.sym then
-  let newcode = 
-   for acc = curblk, localno ∈ arithseq(nopara.sym, -1, firstvar.sym + nopara.sym - 2)do acc + Icode(localset, localno)/for(acc)
-  next(blkstk + blkele2(length.newcode + 1, sym), newcode, localtypes)
- else if sym = Exit then next(blkstk + blkele2(length.curblk + 2, sym), curblk + Icode.br, localtypes)
- else if isbr.sym then
-  next(blkstk + blkele2(length.curblk + 3, sym), curblk + Icode.brif + Icode.br, localtypes)
- else if sym = EndBlock then
-  let newcode = 
-   for targets = empty:seq.int, newcode = curblk, idx ∈ arithseq(length.blkstk, -1, length.blkstk)
-   while sym.blkstk_idx = Exit ∨ isbr.sym.blkstk_idx ∨ iscontinue.sym.blkstk_idx
-   do let this = blkstk_idx
-   let newtargets = [pc.this + 1] + targets
-   next(newtargets
-   , if iscontinue.sym.this then newcode
-   else if sym.this = Exit then subseq(newcode, 1, pc.this - 2) + Icode(br, last.newtargets)
-   else
-    subseq(newcode, 1, pc.this - 3)
-    + [Icode(brif, newtargets_(brt.sym.this)), Icode(br, newtargets_(brf.sym.this))]/if
-   + subseq(newcode, pc.this, length.newcode)
-   )
-   /for(newcode + Icode(tobyte.0, idx))
-  next(subseq(blkstk, 1, toint.last.newcode / 256 - 1), newcode >> 1, localtypes)
- else if iscontinue.sym then
-  let seq = 
-   for acc = 0, idx ∈ arithseq(length.blkstk, -1, length.blkstk)while not.isloopblock.sym.blkstk_idx do acc /for(blkstk_idx)
-  let newcode = 
-   for acc = curblk, localno ∈ arithseq(nopara.sym.seq, -1, firstvar.sym.seq + nopara.sym.seq - 2)do acc + Icode(localset, localno)/for(acc + Icode(br, pc.seq + 1))
-  {assert false report"XXX"+print.sym+print.firstvar.sym.seq}
-  next(blkstk + blkele2(length.newcode + 1, sym), newcode, localtypes)
- else if isdefine.sym then
-  next(blkstk, curblk + Icode(localset, toint.wordname.sym - 1), max(toint.wordname.sym, localtypes))
- else if print.sym ∈ ["internal:bitcast(ptr)int", "internal:bitcast(int)ptr"]then
-  next(blkstk, curblk, localtypes)
- else if sym = symbol(internalmod, "callidx", seqof.typeint, typeint, typeint)
- ∨ sym = symbol(internalmod, "callidx", seqof.typeptr, typeint, typeint)then
-  let typ = 
-   symbol(moduleref."* $$Icall"
-   , [toword.typeindex([i64, i64], i64)]
-   , typeint
-   , typeint
-   , typeint
-   )
-  next(blkstk, curblk + Icode(tobyte.254, tableindex.funcidx.typ), localtypes)
- else if sym
- = symbol(moduleref("* builtin", typeint), "assert", seqof.typeword, typeint)
- ∨ sym
- = symbol(moduleref("* builtin", typeptr), "assert", seqof.typeword, typeptr)
- ∨ {module.sym=internalmod /and}name.sym
- ∈ "idxseq fld packedindex processisaborted getseqlength getseqtype"
- ∨ module.sym = internalmod ∧ name.sym ∈ "not"then
-  next(blkstk, curblk + Icall(alltypes, sym), localtypes)
- else
-  let ele = lookup2(knownfuncs, wfunc(alltypes, sym, empty:seq.byte))
-  let this = 
-   if not.isempty.ele then
-    if length.code.first.ele = 0 then empty:seq.Icode
-    else if name.sym ∈ "GEP"then[Icode(i64const, 8), Icode.i64mul, Icode.i64add]
-    else
-     assert length.code.first.ele = 1
-     report" /br------not length one------- /br" + print.sym + printcode.code.first.ele
-     [Icode.first.code.first.ele]
-   else Icall(alltypes, sym)
-  next(blkstk, curblk + this, localtypes)
-/for([Icode(tobyte.0, localtypes - nopara)] + curblk + Icode.return)
-
-function Icall(alltypes:typedict, sym:symbol)seq.Icode
-let typ = 
- tableindex.funcidx.symbol(moduleref."* $$Icall", [toword.typeindex(alltypes, sym)], typeint, typeint, typeint)
-[Icode(if name.sym ∈ "jsHTTP"then tobyte.255 else call
-, tableindex.funcidx.sym
-)
-, Icode(tobyte.0, typ)
-] 

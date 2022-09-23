@@ -2,7 +2,10 @@ Module test11a
 
 use checking
 
-use main2
+use libllvm
+
+use compilerfrontT.libllvm
+
 
 use standard
 
@@ -81,7 +84,7 @@ use set.symdef
 Function testcomp2(in:seq.file,s:seq.word)seq.word
 let txt= "Library=testcomp uses=stdlib exports=testit /p module testit /p use standard /p" +s  
 let p = 
- process.compilerFront("pass1", [file("a.ls",txt)]+in << 1)
+ process.compilerFront:libllvm("pass1", [file("a.ls",txt)]+in << 1)
 if aborted.p then message.p
 else
  for acc = "", sd ∈ toseq.prg.result.p do acc + " /br  /br"+print.sym.sd + print.code.sd /for(acc)

@@ -2,7 +2,13 @@ Module graphcode
 
 use standard
 
+use graph.symbol
+
 use seq.symbol
+
+use set.symbol
+
+use svg2graph.symbol
 
 use symbol2
 
@@ -52,4 +58,16 @@ let sy = sym.a
 if isloopblock.sy then"Loop:" + %.firstvar.sy
 else if isconst.sy ∨ islocal.sy ∨ isspecial.sy then print.sy else[name.sy]
 
-Function nodeTitle(a:symloc)seq.word print.sym.a 
+Function nodeTitle(a:symloc)seq.word print.sym.a
+
+_______________________
+
+Export drawgraph(graph.symbol)seq.word
+
+Function generatenode(a:set.symbol)symbol Lit.cardinality.a
+
+did not get error when result type of generatednode was seq.word!!!!!
+
+Function node2text(a:symbol)seq.word[name.a]
+
+Function nodeTitle(a:symbol)seq.word print.a 

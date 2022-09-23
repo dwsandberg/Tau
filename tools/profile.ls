@@ -1,8 +1,8 @@
 Module profile
 
-use debuginfo
+use graphcode
 
-use frontcmd
+use impDependent
 
 use standard
 

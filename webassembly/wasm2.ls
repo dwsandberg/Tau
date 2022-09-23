@@ -1,48 +1,18 @@
 Module wasm2
 
-use UTF8
-
 use bits
 
+use seq.byte
+
 use funcidx
+
+use seq.mytype
 
 use standard
 
 use symbol2
 
 use wasm
-
-use words
-
-use seq.byte
-
-use seq.int
-
-use set.int
-
-use seq.mytype
-
-use seq.symbol
-
-use set.symbol
-
-use seq.wfunc
-
-use otherseq.word
-
-use seq.wtype
-
-use stack.wtype
-
-use seq.seq.byte
-
-use stack.seq.byte
-
-use seq.set.symbol
-
-use seq.seq.seq.byte
-
-use process.seq.seq.word
 
 Function print(a:seq.byte)seq.word for acc = "bytes:", @e ∈ a do acc + print.@e /for(acc)
 
@@ -111,11 +81,9 @@ addf(alltypes
 )
 )
 
-Function exportreclaimspace(alltypes:typedict)seq.byte
-let sym = symbol(internalmod, "reclaimspace", typereal)
-let discard = 
- addf(alltypes
- , sym
+Function  reclaimspacefunc(alltypes:typedict)int
+  addf(alltypes
+ , symbol(internalmod, "reclaimspace", typereal)
  , funcbody([i32]
  , store(Gcurrentprocess, Gfreeblocks, 0)
  + setGlobal(freeblocks
@@ -127,15 +95,12 @@ let discard =
  + f64converti64s
  )
  )
-exportfunc(funcidx.sym, wordname.sym)
 
-Function exportprocessbody(alltypes:typedict)seq.byte
-let sym = symbol(internalmod, "processbody", typereal, typereal, typereal)
+Function  processbodyfunc(alltypes:typedict)int
 let funccall = 
  Wlocal.0 + i64truncf64s + Wlocal.1 + i32truncf64s + Wcallindirect.typeindex([i64], i64) + Wdefine.4
-let discard = 
  addf(alltypes
- , sym
+ , symbol(internalmod, "processbody", typereal, typereal, typereal)
  , funcbody([i32, i32, i64, i32]
  , switchcontext.newcontext2.2 + funccall + Gcurrentprocess + Wdefine.5
  + switchcontext.load(Gcurrentprocess, parentprocess)
@@ -166,13 +131,11 @@ let discard =
  + f64converti64s
  )
  )
-exportfunc(funcidx.sym, wordname.sym)
-
-Function exporthandleerror(alltypes:typedict)seq.byte
-let sym = symbol(internalmod, "handleerror", typereal, typereal)
-let discard = 
+ 
+ 
+Function handleerrorfunc(alltypes:typedict) int
  addf(alltypes
- , sym
+ , symbol(internalmod, "handleerror", typereal, typereal)
  , funcbody([i32, i64]
  , Wlocal.0 + i64truncf64s + Wdefine.2 + Wlocal.2 + const64.0 + i64les
  + Wif(void, const64.getoffset.wordsconst."other error" + Wdefine.2)
@@ -192,12 +155,17 @@ let discard =
  + f64converti64s
  )
  )
+
+ 
 exportfunc(funcidx.sym, wordname.sym)
 
 function newcontext2(newprocess:int)seq.byte
-{"this"is tmp to store current process.  /br Update values of nextfree and last free in current process record.  /br Get 
-new memory segment which sets global nextfree and global lastfree  /br create new process context record and place in currentprocess  /br 
-set parentprocess in new context record  /br set up encodings in new context record}
+{"this"is tmp to store current process. 
+  /br Update values of nextfree and last free in current process record. 
+  /br Get new memory segment which sets global nextfree and global lastfree
+  /br create new process context record and place in currentprocess
+  /br set parentprocess in new context record
+  /br set up encodings in new context record}
 getspace.false
 + Gnextfree
 + const32.8
@@ -290,7 +258,7 @@ Gfreeblocks + const32.0 + i32eq
 , setGlobal(nextfree, Gfreeblocks) + setGlobal(freeblocks, load(Gfreeblocks, 0)) + Gnextfree
 + i64extendi32u
 + const64.8192
-+ Wcall.symbol(moduleref."* inputoutput", "set2zero", typeptr, typeint, typeptr)
++ Wcall.symbol(moduleref."* impDependent", "set2zero", typeptr, typeint, typeptr)
 + drop
 )
 + if link then
@@ -317,8 +285,7 @@ addf(alltypes
 + setGlobal(nextfree, Wlocal.2)
 , setGlobal(nextfree, Wlocal.2)
 )
-+ {Wlocal.1+i64extendi32u+Wlocal.0+Wcall.symbol(moduleref."* inputoutput", "set2zero", typeptr, typeint, typeptr 
-)+drop+}
++ 
 Wlocal.1
 + return
 )

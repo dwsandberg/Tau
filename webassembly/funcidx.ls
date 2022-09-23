@@ -1,20 +1,10 @@
 Module funcidx
 
-use UTF8
-
 use bits
 
-use standard
-
-use symbol2
-
-use tausupport
-
-use wasm
-
-use words
-
 use seq.byte
+
+use seq.seq.byte
 
 use encoding.datax
 
@@ -30,31 +20,27 @@ use seq.frefindex
 
 use set.int
 
+use standard
+
 use seq.symbol
+
+use symbol2
+
+use wasm
 
 use encoding.wfunc
 
 use seq.wfunc
 
-use otherseq.word
-
-use sparseseq.word
-
-use stack.word
-
 use encoding.word5
 
 use seq.word5
 
+use words
+
 use encoding.wtype
 
 use seq.wtype
-
-use seq.seq.byte
-
-use encoding.seq.char
-
-use seq.encodingpair.datax
 
 Function funcidx2sym(i:int)symbol sym.decode.to:encoding.efuncidx(i + 1)
 
@@ -329,11 +315,6 @@ let d = encode.datax(globalname, elements)
 for offset = globalspace, p ∈ encoding:seq.encodingpair.datax while code.p ≠ d do offset + 8 * length.elements.data.p /for(offset)
 
 Function constintseq(elements:seq.int)int allocateconstspace("."_1, [0, length.elements] + elements)
-
-/Function constbyteseq(a:seq.byte)int
-let elements = 
- for elements = empty:seq.int, b ∈ packedbyteseqasbits.a do elements + toint.b /for(elements)
-allocateconstspace("."_1, elements)
 
 Function constantcode(s:symbol)seq.symbol
 let code1 = fullconstantcode.s

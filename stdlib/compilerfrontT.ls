@@ -4,7 +4,11 @@ use compileTimeT.T
 
 use bits
 
+use seq.byte
+
 use compilerfront
+
+use file
 
 use seq.int
 
@@ -14,6 +18,12 @@ use set.localmap2
 
 use mergeblocks
 
+use objectio.midpoint
+
+use seq.midpoint
+
+use seq.modExports
+
 use pass2
 
 use standard
@@ -22,17 +32,33 @@ use symbol
 
 use seq.symbol
 
+use symbol2
+
 use symbolconstant
 
 use seq.symdef
 
 use set.symdef
 
+use textio
+
 use seq.seq.word
 
 use set.word
 
-Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint, stacktracesym:symbol)midpoint
+Function compilerFront:T(option:seq.word, input:seq.file)midpoint
+{OPTION PROFILE}
+for mp = empty:midpoint, data = empty:seq.byte, i ∈ input do
+ if ext.fn.i ∈ "libinfo"then
+  let new = first.inbytes:midpoint(data.i)
+  next(midpoint("", prg.mp ∪ prg.new, emptytypedict, libmods.mp + libmods.new, empty:seq.seq.word)
+  , data
+  )
+ else next(mp, data + [tobyte.10, tobyte.10] + data.i)
+/for(let allsrc = breakparagraph.data
+compilerfront2:T(option, breakparagraph.data, mp))
+
+Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
 {OPTION PROFILE}
 let m = compilerfront3(option, allsrc, libinfo)
 if first.option.m ∈ "library text pass1 pass1a"then m
@@ -40,7 +66,7 @@ else
  let libname = extractValue(first.allsrc, "Library")_1
  let librarymap = [libname, first."*"]
  let prg5 = pass2:T(librarymap, prg.m, typedict.m, option) ∪ templates.m
- if option = "all"then prepareback(prg5, m, libinfo, stacktracesym)
+ if option = "all"then prepareback(prg5, m, libinfo)
  else midpoint(option, prg5, typedict.m, libmods.m, src.m)
 
 unbound interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict)seq

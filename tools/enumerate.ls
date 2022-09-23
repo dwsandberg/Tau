@@ -87,8 +87,7 @@ else
   , list + codes_i + ", "
   )
 /for(acc + " /p"
-+ pretty("Function $(if isempty.decodename then"decode"else decodename /if)(code:$(type))seq 
-.word $(list >> 1)]let i=toint.code if between(i+1, 1, "
++ pretty("Function $(if isempty.decodename then"decode"else decodename /if)(code:$(type))seq.word $(list >> 1)]let i=toint.code if between(i+1, 1, "
 + toword.length.codes
 + ")then let r=[$(dq.codes)_(i+1)]"
 + "if r ≠ $(dq."?")then r else $(dq(type + "."))+toword.i else $(dq(type + "."))+toword.i")

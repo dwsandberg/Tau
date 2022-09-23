@@ -1,14 +1,14 @@
 Module prettycompilerfront
 
-use UTF8
-
 use file
 
 use seq.file
 
 use format
 
-use main2
+use libllvm
+
+use compilerfrontT.libllvm
 
 use set.modref
 
@@ -24,10 +24,6 @@ use seq.rename
 
 use standard
 
-use symbol
-
-use otherseq.arc.symbol
-
 use set.arc.symbol
 
 use graph.symbol
@@ -38,6 +34,8 @@ use set.symbol
 
 use symbol2
 
+use seq.symdef
+
 use set.symdef
 
 use textio
@@ -46,24 +44,15 @@ use otherseq.seq.word
 
 use stack.seq.word
 
-
-let maxwidth = 100
-for acc = "", linelength = 0, c0 ∈ s do
- let linefeed = c0 ∈ " /br  /p  /<  /row"
- let nolinefeed = c0 ∈ " /keyword  />  /em  /strong  /cell"
- let c1 = 
-  if linefeed then encodeword([char.10] + decodeword.c0)
-  else if nolinefeed then merge.[space, c0]else c0
- if linefeed then next(acc + c1, 0)
- else
-  let newlength = linelength + length.decodeword.c0
-  if newlength > maxwidth then next(acc + " /br" + c1, 0)else next(acc + c1, newlength)
-/for(acc)
+function key(p:seq.word)word
+if isempty.p then first."?"
+else if first.p ∈ " /keyword"then p_2 else first.p
 
 Function transform(input:seq.file, o:seq.word, target:seq.word, modrename:seq.word, parseit:boolean
-, reorguse:boolean)seq.file
+, reorguse:boolean, html:boolean, noindex:boolean)seq.file
 let modrenames = modrename
-let m = if parseit then compilerFront("text", input)else empty:midpoint
+let m = 
+ if parseit then compilerFront:libllvm("text", input)else empty:midpoint
 let srctext = 
  if parseit then totext.m
  else
@@ -73,88 +62,104 @@ let srctext =
 let exported = exportedmodref.m
 let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for(uses)
 let directory = if isempty.target then"tmp"else target
-for acc = empty:seq.file
+for txt = empty:seq.seq.word
 , modtext = ""
 , uses = empty:seq.seq.word
 , p ∈ srctext + "Module ?"
 do
- if isempty.p then next(acc, modtext, uses)
+ if isempty.p then next(txt, modtext, uses)
  else
-  let key = if first.p ∈ " /keyword"then p_2 else first.p
-  if key ∉ "Module module" ∧ isempty.modtext then
-   {skip part before first Module}next(acc, modtext, uses)
-  else if subseq(p, 1, 2) = "parts="then next(acc, modtext, uses)
+  let key = key.p
+  if subseq(p, 1, 2) = "parts="then next(txt, modtext, uses)
   else if first.p ∈ "use"then
-   next(acc
-   , if reorguse then modtext else modtext + " /p" + p
+   next(txt
+   , if reorguse then modtext else modtext + " /p  /keyword" + p
    , uses + p << 1
    )
   else if key ∈ "Function function type"then
-   next(acc, modtext + " /p" + if parseit then p else pretty.p, uses)
+   next(txt, modtext + " /p" + if parseit then p else pretty.p, uses)
   else if key ∈ "Module module"then
-   let newacc = 
-    if isempty.modtext then acc
+   if key.modtext ∉ "Module module"then next(txt + modtext, p, empty:seq.seq.word)
+   else
+    let modname = modtext_2
+    if not.reorguse then next(txt + modtext, p, empty:seq.seq.word)
     else
-     let modname = modtext_2
      let idx = includecomment.modtext
-     {assert false report modtext}
      let uselist0 = 
-      if reorguse then
-       if parseit then
-        for uselist = empty:seq.seq.word, ref4 ∈ toseq.reconstruceUses(m, modname, dict, exported, uses)do uselist + print.ref4 /for(uselist)
-       else uses
-      else empty:seq.seq.word
+      if parseit then
+       for uselist = empty:seq.seq.word, ref4 ∈ toseq.reconstruceUses(m, modname, dict, exported, uses)do uselist + print.ref4 /for(uselist)
+      else uses
      let uselist = 
       if isempty.modrenames then uselist0
       else
        for uselist = empty:seq.seq.word, u ∈ uselist0 do uselist + ([rename(modrenames, u_2)] + u << 2)/for(uselist)
-     let newuses = 
-      for txt = "", ref ∈ sortuse(uselist, "")do txt + " /p use" + ref /for(txt)
-     acc
-     + file(filename("+" + directory + modname + ".ls")
-     , toseqbyte.textformat("Module" + rename(modrenames, modname) + subseq(modtext, 3, idx - 1) + newuses
-     + modtext << (idx - 1))
-     )
-   next(newacc, p, empty:seq.seq.word)
+     let formatedModuleText = 
+      for newuses = "", ref ∈ sortuse(uselist, "")do newuses + " /p  /keyword use" + ref /for("Module" + rename(modrenames, modname) + subseq(modtext, 3, idx - 1) + newuses
+      + modtext << (idx - 1))
+     next(txt + formatedModuleText, p, empty:seq.seq.word)
   else
-   next(acc
-   , if not.isempty.modtext then
-    modtext + " /p" + if p_1 ∈ "Export"then p else {escapeformat.}p
-   else""
+   next(txt
+   , modtext + " /p"
+   + if html then if key ∈ "Export"then" /keyword" + p else p
+   else escapeformat.p
    , uses
    )
-/for(let para = 
- if reorguse then"reorguse"else""/if
- + if parseit then"parseit"else""/if
- + for txt = "", x ∈ input do txt + " /br" + fullname.fn.x /for(txt)
-acc
-+ [file(o
-, for txt = "inputs" + para + " /p files created", x ∈ acc do
- txt + " /br" + fullname.fn.x
-/for(txt)
-)
-])
+/for(if html then
+ for maintxt = "", header = "", M ∈ txt do
+  if key.M ∉ "Module module"then next(maintxt + M + " /p", header)
+  else
+   let modname = M_2
+   let indextxt = 
+    if noindex then""else" /< noformat <hr id=$(dq.[modname])>  />"
+   next(maintxt + indextxt + " /keyword $(M) /p"
+   , header
+   + "<a href=$(dq.[merge.["#"_1, modname]])> $([modname])</a>"
+   )
+ /for([file(o
+ , if noindex then maintxt else" /< noformat $(header)+ />" + maintxt
+ )
+ ])
+else
+ let para = 
+  if reorguse then"reorguse"else""/if
+  + if parseit then"parseit"else""/if
+  + for txt2 = "", x ∈ input do txt2 + " /br" + fullname.fn.x /for(txt2)
+ for files = empty:seq.file
+ , summary = "inputs" + para + " /p files created"
+ , M ∈ txt
+ do
+  if subseq(M, 1, 1) ∉ ["Module", "module"]then next(files, summary)
+  else
+   let modname = M_2
+   let fn = filename("+" + directory + modname + ".ls")
+   next(files + file(fn, M), summary + " /br" + fullname.fn)
+ /for(files + file(o, summary))/if)
 
-* The /keyword transform cmd takes a list of input source files and for each module creates a file containing the pretty printed module in  the directory <Tau>/tmp. 
-An addition paramter allows for differe variants.   
+* The  /keyword transform cmd takes a list of input source files. The output can be for each module creates a file
+ containing the pretty printed module in the directory <Tau>/tmp or the output can be an html file.The html format is
+ specified with the  /keyword html flag.Addition parameter allows for different variants. 
 
-* transform    helloworld/helloworld.ls 
-/br transform    helloworld/helloworld.ls flags=reorguse
-/br transform     +built HelloWorld.libsrc	  stdlib.libinfo    flags=parseit
-/br transform     +built HelloWorld.libsrc	  stdlib.libinfo  flags=parseit reorguse
-
+* transform helloworld/helloworld.ls
+ /br transform helloworld/helloworld.ls flags=reorguse
+ /br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags=parseit
+ /br transform  +built HelloWorld.libsrc	 stdlib.libinfo flags=parseit reorguse
 
 * This first variant does not require the source to be sematicaly correct but the syntax must be correct. It does not
-change the order of the paragraphs.
+ change the order of the paragraphs.
 
 * The second is like the first except that it moves the use paragraphs to the beginning of the module, removes duplicates
-, and sorts them.
+ , and sorts them.
 
 * The third is like the first but requires correct semantics. This allows some additional transformations such as"
-not(a=b)"to become"a /ne b"
+ not(a=b)"to become"a /ne b"
+
+* If the option"flags=html"is used and html file is produced with an index of modules.This option is useful for
+ examining source code. For example </ block transform htmlcode+built core.libsrc flags=html/> If the option"
+ flags=html noindex"is used then no index is included. This final form is useful for producing documentation with
+ imbedded Tau code.
 
 Function unusedsymbols(input:seq.file, o:seq.word, flags:seq.word)seq.file
-let m = compilerFront("text", input)
+let m = compilerFront:libllvm("text", input)
 let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for(uses)
 let templates = 
  for acc = templates.m, sym ∈ toseq.dict do
@@ -184,12 +189,12 @@ let out =
 [file(o, out)]
 
 * The  /keyword unusedsymbols cmd analyzes code for unused functions. This can be usefull in determining unused code
-. It forms of the function call graph for the program. It then looks for any any sources in the call graph that are not the
-entry point of the program and list them. Any functions that are generated from type definitions are also removed. The
-behavior can be modified with flags. If the flag  /keyword all is included the all unused functions are listed and not just the
-roots. If the flag  /keyword generated is included only the generated from type definitions are included. Here is an
-example 
-/< block tau tools unusedsymbols+built tools.libsrc stdlib.libinfo common  />
+ . It forms of the function call graph for the program. It then looks for any any sources in the call graph that are not the
+ entry point of the program and list them. Any functions that are generated from type definitions are also removed. 
+ The behavior can be modified with flags. If the flag  /keyword all is included the all unused functions are listed and
+ not just the roots. If the flag  /keyword generated is included only the generated from type definitions are included
+ . Here is an example
+ /< block tau tools unusedsymbols+built tools.libsrc stdlib.libinfo common  />
 
 type rename is symtext:seq.word, newname:seq.word, paraorder:seq.int, sym:symbol
 
@@ -207,7 +212,7 @@ function rename(renames:seq.word, name:word)word
 let i = findindex(name, renames)
 if i > length.renames then name else renames_(i + 2)
 
-Function totext(result1:midpoint)seq.seq.word
+function totext(result1:midpoint)seq.seq.word
 let renames = empty:seq.rename
 let src = src.result1
 let acc4 = 
@@ -248,7 +253,7 @@ do
    ∈ [" /keyword", "use", "builtin", "Export"]then
     p
    else if subseq(p, 1, 1) ∈ ["type", "Function", "function"]then pretty.p
-   else escapeformat.p
+   else p
   next(acc, modtext + t, beforeModule)
 /for(acc)
 
@@ -289,8 +294,6 @@ else if nopara.sym = 2 ∧ name.sym ∈ "$"then
  let new = 
   if first.args_2 ∈ dq ∧ first.args_1 ∈ dq then args_1 >> 1 + args_2 << 1
   else args_1 >> 1 + "$" + "(" + args_2 + ")" + dq
- {assert length.args_1+length.args_2 /in[0]report"check"+args_1+":"+args_2+":"+%(length.args_1+length.args 
-_2)+":"+new}
  push(pop(stk, 2), new)
 else if name.sym = "forexp"_1 ∧ length.toseq.stk ≥ nopara.sym then
  let args = top(stk, nopara.sym)

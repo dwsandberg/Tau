@@ -75,7 +75,8 @@ if length.funcname > 1 then
 else bindinfo(dict.R, code.exp, paralist + returntype, funcname)
 
 function errormessage(message:seq.word, common:commoninfo, place:int)seq.word
-" /< literal" + message + " />" + print.modname.common
+"
+  /< literal" + message + " />" + print.modname.common
 + prettynoparse.subseq(input.common, 1, place)
 
 function addparameters(b:bindinfo, common:commoninfo, place:int)bindinfo

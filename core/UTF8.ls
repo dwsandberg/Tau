@@ -44,7 +44,8 @@ Function toUTF8(n:int)UTF8
 UTF8.if n < 0 then[tobyte.toint.hyphenchar] + toUTF8(n, 10)else toUTF8(-n, 10)
 
 function toUTF8(n:int, base:int)seq.byte
-{n should always be negative.This is to handle the smallest integer in the twos complement representation of integers}
+{n should always be negative.This is to handle the smallest integer in the twos complement representation of integers
+  }
 if base + n > 0 then[tobyte(48 - n)]
 else toUTF8(n / base, base) + tobyte(48 + n / base * base - n)
 

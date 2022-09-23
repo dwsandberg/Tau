@@ -4,7 +4,9 @@ use bits
 
 use file
 
-use main2
+use libllvm
+
+use compilerfrontT.libllvm
 
 use standard
 
@@ -28,7 +30,7 @@ if if value1 = 4 then a else false then 40
 else if if value1 = 3 then b else false then 30 else 20
 
 Function testopt(in :seq.file)seq.word
-let p2 = toseq.prg.compilerFront("pass2", in )
+let p2 = toseq.prg.compilerFront:libllvm("pass2", in )
 let cl = 
  ["7"
  , "12"
