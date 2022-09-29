@@ -38,33 +38,28 @@ for acc = empty:seq.byte, names = "parts=", f ∈ files do
 )
 ])
 
-Function wasm(input:seq.file, Library:seq.word, exports:seq.word, o:seq.word)seq.file
+Function wasm(input:seq.file, Library:seq.word, exports:seq.word, o:seq.word, info:boolean)seq.file
 {problem is same symbol is used in different onclicks}
 let includetemplate = false
 let input2 = cat(input, "", exports, Library)
 let info2 = breakparagraph.data.first.input2
 let libname = Library
-let libexports = exports+"SpecialExports"+"SpecialImports"
+let libexports = exports + "SpecialExports" + "SpecialImports"
 let rcinfo = 
  compilerFront:libllvm("wasm"
  , [file("hhh.ls"
- , "exports=tausupport impDependent $(libexports)Library=$(libname)"
+ , "exports=tausupport webIOtypes $(libexports)Library=$(libname)"
  )
  ]
  + input
  )
-{ assert false report for txt="",sd /in toseq.prg.rcinfo do
-    if not.isconst.sym.sd /and name.sym.sd /in "toRI fromRI" then
-     txt+"/p"+print.sym.sd+print.code.sd 
-    else txt
-   /for(txt)}
- for syms2 = empty:seq.symbol,imports=empty:seq.symbol, m ∈ libmods.rcinfo do
-  if name.modname.m /in "SpecialImports" then 
-      next(syms2,imports+exports.m)
-  else 
-  if name.modname.m ∈ libexports  then next(syms2 + exports.m ,imports)
-   else next(syms2,imports)
- /for({should check for dup names on syms2} 
+{assert Library /ne"webtools"report for txt="", sd /in toseq.prg.rcinfo do if not.isconst.sym.sd /and name.sym.
+  sd /in"newstk"then txt+"
+  /p"+print.sym.sd+print.subseq(code.sd, 1, 5)else txt /for(txt)}
+for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo do
+ if name.modname.m ∈ "SpecialImports"then next(syms2, imports + exports.m)
+ else if name.modname.m ∈ libexports then next(syms2 + exports.m, imports)else next(syms2, imports)
+/for({should check for dup names on syms2}
 let scriptstart = 
  for txt = "<script>  /br", sym ∈ syms2 do
   let f = 
@@ -79,8 +74,7 @@ let scriptstart =
   + f
   + "; if(inprogress==0)exports.reclaimspace();} /br"
  /for(txt)
-let wasmfiles = 
-  wasmcompile(typedict.rcinfo, asset.renumberconstants.toseq.prg.rcinfo, syms2,o,imports)
+let wasmfiles = wasmcompile(typedict.rcinfo, asset.renumberconstants.toseq.prg.rcinfo, syms2, o, imports, info)
 let script = 
  {if includetemplate then toseqbyte.toUTF8."<script>"+getfile:byte("/webassembly/template.js")+toseqbyte
    .toUTF8."</script>"else}
@@ -96,12 +90,6 @@ for acc = wasmfiles, page ∈ input do
   + " /br pageinit($(dq.libname), $([name.fn.page])); </script>")
   )
 /for(acc))
-
-/Function findsymbol(prg:set.symdef, symname:seq.word)seq.symbol
-for actionsym = empty:seq.symbol, sym ∈ toseq.prg do
- if[name.sym.sym] = symname then actionsym + sym.sym else actionsym
-/for(assert length.actionsym = 1 report"findsymbol" + symname
-actionsym)
 
 Function doc seq.word
 "Steps to call function f1 as a process.

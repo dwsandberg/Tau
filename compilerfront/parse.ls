@@ -61,8 +61,7 @@ function createfunc(R:reduction.bindinfo
 )bindinfo
 let returntype = resolvetype(text.functypebind, common, place)
 assert mode.common ∈ "symbol gather" ∨ returntype = (types.exp)_1
-report errormessage("function type of" + print.returntype + "does not match expression type"
-+ print.(types.exp)_1
+report errormessage("function type of" + %.returntype + "does not match expression type" + %.(types.exp)_1
 , common
 , place
 )
@@ -76,7 +75,7 @@ else bindinfo(dict.R, code.exp, paralist + returntype, funcname)
 
 function errormessage(message:seq.word, common:commoninfo, place:int)seq.word
 "
-  /< literal" + message + " />" + print.modname.common
+  /< literal" + message + " />" + %.modname.common
 + prettynoparse.subseq(input.common, 1, place)
 
 function addparameters(b:bindinfo, common:commoninfo, place:int)bindinfo
@@ -103,7 +102,7 @@ let f =
   for acc = empty:set.symbol, sy ∈ toseq.f0 do if isunbound.sy then acc else acc + sy /for(acc)
 assert not.isempty.f
 report errormessage("cannot find 1" + fixNM.name + "("
-+ for acc = "", @e ∈ paratypes do acc + print.@e + ", "/for(acc >> 1)
++ for acc = "", @e ∈ paratypes do acc + %.@e + ", "/for(acc >> 1)
 + ")"
 , common
 , place
@@ -111,7 +110,7 @@ report errormessage("cannot find 1" + fixNM.name + "("
 {+print.toseq.asset.dict}
 assert cardinality.f = 1
 report errormessage("found more than one"
-+ for acc = "", @e ∈ toseq.f do acc + library.module.@e + "." + print.@e /for(acc)
++ for acc = "", @e ∈ toseq.f do acc + library.module.@e + "." + %.@e /for(acc)
 , common
 , place
 )
@@ -119,7 +118,7 @@ let discard =
  for acc = 0, sym2 ∈ requires(dict, f_1)do
   let xxx = lookupbysig(dict, sym2)
   assert not.isempty.xxx ∨ isabstract.module.f_1
-  report errormessage("using symbol" + print.f_1 + "requires unbound" + print.sym2, common, place)
+  report errormessage("using symbol" + %.f_1 + "requires unbound" + %.sym2, common, place)
   0
  /for(0)
 f_1
@@ -155,7 +154,7 @@ else
 
 function unaryop(R:reduction.bindinfo, common:commoninfo, place:int, op:seq.word, exp:bindinfo)bindinfo
 if op_1 = "process"_1 ∧ length.types.exp = 1 then
- let rt = resolvetype(types.common, print.(types.exp)_1)_1
+ let rt = resolvetype(types.common, %.(types.exp)_1)_1
  let processtype = processof.rt
  let dcws = deepcopyseqword
  let newcode = 
@@ -184,7 +183,7 @@ function ifexp(R:reduction.bindinfo
 , place:int
 )bindinfo
 assert(types.ifpart)_1 = typeboolean
-report errormessage("cond of if must be boolean but is" + print.(types.ifpart)_1, input, place)
+report errormessage("cond of if must be boolean but is" + %.(types.ifpart)_1, input, place)
 assert types.thenpart = types.elsepart
 report errormessage("then and else types are different", input, place)
 bindinfo(dict.R
@@ -213,7 +212,7 @@ function forlocaldeclare(dict:symboldict
 , place:int
 )bindinfo
 assert isseq.seqtype
-report errormessage("final expression in for list must be a sequence but it is of type:" + print.seqtype, input, place)
+report errormessage("final expression in for list must be a sequence but it is of type:" + %.seqtype, input, place)
 let elesym = 
  symbol(moduleref("internallib $for", parameter.seqtype)
  , elename
@@ -246,11 +245,11 @@ let checktypes =
   {while type is OK. now check body type}
   if length.types.vars > 2 then
    if resulttype.lookupbysig(dict.vars, "for")_1 = (types.forbody)_1 then""
-   else"incorrect body type:" + print.(types.forbody)_1
+   else"incorrect body type:" + %.(types.forbody)_1
   else if first.types.vars = first.types.forbody then""
   else
-   "Type of body expression" + print.first.types.vars + "must match accumaltor type"
-   + print.first.types.forbody
+   "Type of body expression" + %.first.types.vars + "must match accumaltor type"
+   + %.first.types.forbody
  else"while expresssion type must be boolean"
 assert isempty.checktypes report errormessage(checktypes, input, place)
 let resulttype = first.types.endexp

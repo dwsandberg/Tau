@@ -17,7 +17,7 @@ use set.symdef
 Function seqelements(s:symbol)seq.symbol
 if iswords.s then for acc = empty:seq.symbol, w ∈ worddata.s do acc + Word.w /for(acc)
 else
- assert isrecordconstant.s report"constant code error" + print.s
+ assert isrecordconstant.s report"constant code error" + %.s
  let code1 = fullconstantcode.s
  assert isSequence.last.code1 report"constant code error 21" + print.code1
  code1 >> 1
@@ -61,7 +61,7 @@ for map = map0, todo = empty:seq.symdef, sd ∈ prg do
 else
  assert length.todo < length.prg
  report"ill formed program"
- + for txt = "", sd2 ∈ todo do txt + " /p" + print.sym.sd2 + print.code.sd2 /for(txt)
+ + for txt = "", sd2 ∈ todo do txt + " /p" + %.sym.sd2 + print.code.sd2 /for(txt)
  map(map, todo)/if)
 
 Function renumberconstants(prg:seq.symdef)seq.symdef

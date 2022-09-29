@@ -14,11 +14,15 @@ use encoding.efuncidx
 
 use seq.efuncidx
 
+use file
+
 use encoding.frefindex
 
 use seq.frefindex
 
 use set.int
+
+use printfunc
 
 use standard
 
@@ -30,7 +34,9 @@ use wasm
 
 use encoding.wfunc
 
-use seq.wfunc
+use otherseq.wfunc
+
+use process.seq.word
 
 use encoding.word5
 
@@ -41,8 +47,6 @@ use words
 use encoding.wtype
 
 use seq.wtype
-
-Function funcidx2sym(i:int)symbol sym.decode.to:encoding.efuncidx(i + 1)
 
 Function =(a:wtype, b:wtype)boolean val.a = val.b
 
@@ -68,7 +72,7 @@ Function i64 wtype wtype.tobyte.0x7E
 
 Function i32 wtype wtype.tobyte.0x7F
 
-Function print(w:wtype)seq.word
+Function %(w:wtype)seq.word
 if w = void then"void"
 else if w = i64 then"i64"
 else if w = f64 then"f64"
@@ -76,10 +80,10 @@ else if w = i32 then"i32"
 else if length.val.w = 1 then print.first.val.w
 else
  let nopara = toint.(val.w)_2
- for acc = "func(", e ∈ subseq(val.w, 3, nopara + 2)do acc + print.wtype.e /for(acc + ")"
- + if(val.w)_(nopara + 3) = tobyte.1 then print.wtype.last.val.w else"void"/if)
+ for acc = "func(", e ∈ subseq(val.w, 3, nopara + 2)do acc + %.wtype.e /for(acc + ")"
+ + if(val.w)_(nopara + 3) = tobyte.1 then %.wtype.last.val.w else"void"/if)
 
-Function printtypeidx(i:int)seq.word print.decode.to:encoding.wtype(i + 1) + "(idx:$(%.i))"
+Function printtypeidx(i:int)seq.word %.decode.to:encoding.wtype(i + 1) + "(idx:$(%.i))"
 
 Function typeindex(paras:seq.wtype, rt:wtype)int
 addorder.wtype([tobyte.0x60] + LEBu.length.paras
@@ -87,11 +91,6 @@ addorder.wtype([tobyte.0x60] + LEBu.length.paras
 + LEBu.1
 + val.rt)
 - 1
-
-Function typeindex(alltypes:typedict, sym:symbol)int
-typeindex(for acc = empty:seq.wtype, @e ∈ paratypes.sym do acc + wtype64(alltypes, @e)/for(acc)
-, wtype64(alltypes, resulttype.sym)
-)
 
 Function towtypelist(i:int)seq.wtype
 let val = val.decode.to:encoding.wtype(i + 1)
@@ -104,52 +103,79 @@ addorder.wtype([tobyte.0x60] + LEBu.length.paras
 + LEBu.0)
 - 1
 
+function %(f:wfunc)seq.word
+let p = process.printfunc.f
+if aborted.p then message.p else result.p
+
 Function createwasm(imports:seq.seq.byte
-, funcs:seq.seq.byte
 , exports:seq.seq.byte
-, code:seq.seq.byte
 , data:seq.int
 , funcrefs:seq.int
 , startidx:int
-)seq.byte
-let initmemorysize = (length.data + 2^13 - 1) / 2^13
+, fn:filename
+, info:boolean
+)seq.file
+let tmp1 = sort.encodingdata:wfunc
+let importfuncs = subseq(tmp1, 1, length.imports)
+let funcswithcode = tmp1 << length.imports
+for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode do next(code + code.p, funcs + LEBu.typeidx.p)/for(let initmemorysize = (length.data + 2^13 - 1) / 2^13
 {assert false report"XX"+toword.((length.data+2^16-1)/ 2^16)}
 let magic = [tobyte.0x00, tobyte.0x61, tobyte.0x73, tobyte.0x6D, tobyte.1, tobyte.0, tobyte.0, tobyte.0]
 let te = encodingdata:wtype
 let types = for acc = LEBu.length.te, @e ∈ te do acc + val.@e /for(acc)
-magic + [tobyte.1] + LEBu.length.types + types + tobyte.2 + vector.vector.imports + tobyte.3
-+ vector.vector.funcs
-+ {tables}tobyte.4
-+ vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(length.funcrefs + 2)]
-+ {memory}tobyte.5
-+ vector.vector.[[tobyte.0, tobyte.initmemorysize]]
-+ tobyte.7
-+ vector.vector.exports
-+ {start}tobyte.8
-+ vector.LEBu.startidx
-+ {elements}tobyte.9
-+ vector.vector.[[tobyte.0, i32const] + LEBs.2 + END
-+ vector.for frefs = empty:seq.seq.byte, f ∈ funcrefs do frefs + LEBu.f /for(frefs)
-]
-+ {code}tobyte.10
-+ vector.vector.code
-+ {data}tobyte.11
-+ vector.vector.[[tobyte.0, i32const] + LEBs.0 + END
-+ vector.for acc = empty:seq.byte, val ∈ data do
- for acc2 = acc, @i = 1, @e ∈ constantseq(8, 0)do next(acc2 + tobyte(bits.val >> (8 * @i - 8) ∧ bits.255), @i + 1)/for(acc2)
-/for(acc)
-]
+let beforecode = 
+ magic + tobyte.1 + vector.types + tobyte.2 + vector.vector.imports + tobyte.3 + vector.vector.funcs
+ + {tables}tobyte.4
+ + vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(length.funcrefs + 2)]
+ + {memory}tobyte.5
+ + vector.vector.[[tobyte.0, tobyte.initmemorysize]]
+ + tobyte.7
+ + vector.vector.exports
+ + {start}tobyte.8
+ + vector.LEBu.startidx
+ + {elements}tobyte.9
+ + vector.vector.[[tobyte.0, i32const] + LEBs.2 + END
+ + vector.for frefs = empty:seq.seq.byte, f ∈ funcrefs do frefs + LEBu.f /for(frefs)
+ ]
+let codevector = vector.code
+let forlater = 
+ "Successful compile  /p"
+ + for txt = "", p2 ∈ importfuncs do txt + %.p2 + "typeidx=" + printtypeidx.typeidx.p2 + " /br"/for(txt)
+ + for txt = ""
+ , offset = length.beforecode + length.LEBu.length.codevector + 1
+ , p2 ∈ funcswithcode
+ do
+  next(txt + print.tobits.offset + %.sym.p2
+  + "funcidx=$(%.funcidx.p2)typidx=$(printtypeidx.typeidx.p2) /br"
+  + %.p2
+  + " /p"
+  , offset + length.LEBu.length.code.p2 + length.code.p2
+  )
+ /for(txt)
+let total = 
+ beforecode + {code}tobyte.10 + vector.codevector + {data}tobyte.11
+ + vector.vector.[[tobyte.0, i32const] + LEBs.0 + END
+ + vector.for acc = empty:seq.byte, val ∈ data do
+  for acc2 = acc, @i = 1, @e ∈ constantseq(8, 0)do next(acc2 + tobyte(bits.val >> (8 * @i - 8) ∧ bits.255), @i + 1)/for(acc2)
+ /for(acc)
+ ]
+if info then
+ [file(fn, total)
+ , file(filename("+" + dirpath.fn + merge([name.fn] + "info") + ".html")
+ , forlater
+ )
+ ]
+else[file(fn, total)]/if)
 
 Function funcbody(localtypes:seq.wtype, code:seq.byte)seq.byte
-let locals = 
- if isempty.localtypes then empty:seq.seq.byte else localtypes(localtypes, 2, 1, empty:seq.seq.byte)
-let b = for acc = LEBu.length.locals, @e ∈ locals do acc + @e /for(acc)
+let b = 
+ if isempty.localtypes then LEBu.0
+ else
+  for result = empty:seq.byte, count = 1, segcount = 1, last = first.localtypes, t ∈ localtypes << 1 do
+   if last = t then next(result, count + 1, segcount, t)
+   else next(result + LEBu.count + val.last, 1, segcount + 1, t)
+  /for(LEBu.segcount + result + LEBu.count + val.last)
 vector(b + code + END)
-
-function localtypes(s:seq.wtype, i:int, count:int, result:seq.seq.byte)seq.seq.byte
-if i > length.s then result + [LEBu.count + val.s_(i - 1)]
-else if s_(i - 1) = s_i then localtypes(s, i + 1, count + 1, result)
-else localtypes(s, i + 1, 1, result + [LEBu.count + val.s_(i - 1)])
 
 type efuncidx is sym:symbol
 
@@ -192,8 +218,8 @@ Function lookup2(s:seq.wfunc, a:wfunc)seq.wfunc
 let t = 
  for found = empty:seq.wfunc, e ∈ s while isempty.found do if a = e then found + e else found /for(found)
 assert name.sym.a ∉ "intpart" ∨ not.isempty.t
-report"KKK" + print.sym.a
-+ for txt = ">>>", b ∈ s do txt + print.sym.b + EOL /for(txt)
+report"KKK" + %.sym.a
++ for txt = ">>>", b ∈ s do txt + %.sym.b + EOL /for(txt)
 t
 
 Function wfunc(alltypes:typedict, sym:symbol, code:seq.byte, funcidx:int)wfunc
@@ -314,7 +340,7 @@ Function allocateconstspace(globalname:word, elements:seq.int)int
 let d = encode.datax(globalname, elements)
 for offset = globalspace, p ∈ encoding:seq.encodingpair.datax while code.p ≠ d do offset + 8 * length.elements.data.p /for(offset)
 
-Function constintseq(elements:seq.int)int allocateconstspace("."_1, [0, length.elements] + elements)
+/Function constintseq(elements:seq.int)int allocateconstspace("."_1, [0, length.elements]+elements)
 
 Function constantcode(s:symbol)seq.symbol
 let code1 = fullconstantcode.s
@@ -333,7 +359,7 @@ let elements =
   else if iswordseq.sym then getoffset.wordsconst.worddata.sym
   else if isword.sym then value.wordconst.wordname.sym
   else
-   assert isrecordconstant.sym report"problem getoffset" + print.sym
+   assert isrecordconstant.sym report"problem getoffset" + %.sym
    getoffset.sym
  /for(elements)
 allocateconstspace("."_1, elements) 

@@ -1,6 +1,6 @@
 Module baseTypeCheck
 
-use seq.mytype
+use otherseq.mytype
 
 use set.mytype
 
@@ -28,14 +28,12 @@ function lookup(a:set.typemap, key:int)set.typemap lookup(a, typemap(key, typein
 
 Function ?(a:typemap, b:typemap)ordering key.a ? key.b
 
-function print(s:seq.mytype)seq.word for a = "", e ∈ s do a + print.e /for(a)
-
 Function baseTypeCheck(prg:seq.symdef, typedict:typedict)seq.word
 for acc = empty:seq.word, count = 0, s ∈ prg do
  let p = process.checkkind(s, typedict)
  let b = 
   if aborted.p then
-   " /p ERROR:" + print.sym.s + " /br" + message.p + " /br fullcode"
+   " /p ERROR:" + %.sym.s + " /br" + message.p + " /br fullcode"
    + print.code.s
   else result.p
  next(acc + b, if isempty.b then count else count + 1)
@@ -82,7 +80,7 @@ else
      next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), loc, false)
     else if isexit.s then
      assert top.stk = top.pop.stk ∨ top.stk = typeint ∧ top.pop.stk = typebyte
-     report"exit type does not match block type" + print.top.stk + print.top.pop.stk
+     report"exit type does not match block type" + %.top.stk + %.top.pop.stk
      next(pop.stk, localtypes, false)
     else if isblock.s then next(stk, localtypes, false)
     else if iscontinue.s then
@@ -97,26 +95,25 @@ else
     else if isbr.s then
      assert top.stk = typeboolean
      report"if problem"
-     + for a = "", e ∈ top(stk, 1)do a + print.e /for(a)
+     + for a = "", e ∈ top(stk, 1)do a + %.e /for(a)
      next(pop.stk, localtypes, false)
     else if islocal.s then
      {assert not.isempty.name2.s report"ill formed local"}
      let localtype = lookup(localtypes, value.s)
-     assert not.isempty.localtype report"local not defined" + print.s
+     assert not.isempty.localtype report"local not defined" + %.s
      next(push(stk, value.localtype_1), localtypes, false)
     else if name.s ∈ "packed blockit" ∧ nopara.s = 1 then next(stk, localtypes, false)
     else
      let parakinds = 
       for acc = empty:seq.mytype, @e ∈ paratypes.s do acc + coretype(@e, typedict)/for(acc)
      assert check5(top(stk, nopara.s), parakinds)
-     report" /br symbol type missmatch for" + print.s + " /br stktop"
-     + print.top(stk, nopara.s)
+     report" /br symbol type missmatch for" + %.s + " /br stktop" + %.top(stk, nopara.s)
      + " /br parabasetypes"
-     + print.parakinds
+     + %.parakinds
      next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), localtypes, false)
-  /for(assert length.toseq.stk = 1 report"Expect one element on stack:" + print.toseq.stk
+  /for(assert length.toseq.stk = 1 report"Expect one element on stack:" + %.toseq.stk
   assert check5([top.stk], [coretype(returntype, typedict)])
-  report"Expected return type of" + print.returntype + "but type on stack is" + print.top.stk
+  report"Expected return type of" + %.returntype + "but type on stack is" + %.top.stk
   "")
 
 function check5(a:seq.mytype, b:seq.mytype)boolean
@@ -140,7 +137,7 @@ for acc10 = " /p  /p checkresults  /p", h ∈ toseq.undefined do
  ∨ isunbound.h
  ∨ isRecord.h then
   acc10
- else acc10 + print.h + EOL
+ else acc10 + %.h + EOL
 /for("CheckResult:"
 + if isempty.acc10 then"OK"else acc10 + " /p end checkresults  /p"/if)
 

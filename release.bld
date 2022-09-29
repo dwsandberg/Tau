@@ -37,34 +37,36 @@ define shell backup
 
 libsrc0 core.libsrc
 +core bits.ls encoding format graph process real seq set sparseseq stack standard UTF8 words xxhash otherseq
-+stdlib textio file 
+ textio file 
 
 libsrc0 symbols.libsrc
-+stdlib symbol2.ls typedict mytype symbolconstant symbol
++symbols symbol2.ls typedict mytype symbolconstant symbol
 
 libsrc0 compilerfront.libsrc
-+stdlib pretty.ls compilerfrontT.ls compilerfront mergeblocks pass2 hashset localmap2 parse parsersupport passparse passsymbol postbind symboldict
++compilerfront pretty.ls compilerfrontT.ls compilerfront mergeblocks pass2 hashset localmap2 parse parsersupport passparse passsymbol postbind symboldict
+compileTimeT object01 objectio LEBencoding
 
 libsrc0 codegen.libsrc
-+stdlib persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmconstants
++codegen persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmconstants
 
-libsrc0 bcsupportdebug.libsrc
-+stdlib impdependent.ls ptr taublockseq bitcast tausupport 
+libsrc0 tausupport.libsrc
++tausupport  ptr.ls taublockseq bitcast tausupport 
 
-makelib0 stdlib1.lib core.libsrc symbols compilerfront codegen bcsupportdebug
-+stdlib updatestate.ls main2 compileTimeT object01 objectio LEBencoding
+makelib0 stdlib1.lib core.libsrc symbols compilerfront codegen tausupport
++stdlib updatestate.ls main2  impdependent.ls
 exports=midpoint   impDependent mytype UTF8  bits   ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
 
-makelib1 stdlib2.lib core.libsrc symbols compilerfront codegen bcsupportdebug
-+stdlib updatestate.ls main2 compileTimeT object01 objectio LEBencoding
+makelib1 stdlib2.lib core.libsrc symbols compilerfront codegen tausupport
++stdlib updatestate.ls main2 impdependent.ls
 exports=midpoint  impDependent mytype UTF8  bits  ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
 
-makelib2 stdlib.lib core.libsrc symbols compilerfront codegen bcsupportdebug
-+stdlib updatestate.ls main2 compileTimeT object01 objectio LEBencoding
+makelib2 stdlib.lib 
+core.libsrc symbols compilerfront codegen tausupport
++stdlib updatestate.ls main2 impdependent.ls
 exports=libllvm compilerfrontT midpoint  impDependent mytype UTF8  bits    encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio words xxhash compilerfront bitcast objectio object01 LEBencoding
 
 libsrc subtools.libsrc +tools baseTypeCheck.ls doc genLR1 prettycompilerfront reconstructUses   taulextable frontcmd wordgraph enumerate
-graphcode ParserExample 
+graphcode ParserExample  exports=X
 
 makelib tools.lib common.lib subtools.libsrc
 +tools  profile.ls  profileexample
@@ -72,9 +74,9 @@ uses=common stdlib
 exports=baseTypeCheck doc genLR1 profile taulextable tools uniqueids wordgraph
 
 makelib common.lib
-+common common.ls matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter
++common common.ls matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter timestamp
 uses=stdlib
-exports=matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter common
+exports=matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter common timestamp
 
 makelib tests.lib
 +tests bug7.ls checking myseq point randomphrase test11 test20 testencoding testmodules testprocess testseq tree wordfreq testopt.
@@ -87,11 +89,12 @@ makelib webassembly.lib
 uses=stdlib
 exports=wasm wasm1 wasm2 wasmcompile webassembly
 
-libsrc webcore.libsrc core.libsrc
-+webcore impDependent.ls webIO SpecialExports
+libsrc webcore.libsrc core.libsrc tausupport
++webassembly template.js
++webcore webIOtypes.ls webIO SpecialExports JS webHTTP 
 SpecialImports
 +common barycenter layergraph makeDAG bandeskopf
-+stdlib tausupport bitcast taublockseq ptr
+exports=webIO SpecialExports
 
 doclibrary stdlibdoc.html stdlib.libsrc
 
@@ -112,7 +115,7 @@ usegraph + tools install3.html +$build core.libsrc include=UTF8 words format sta
 enumerate +tools install4.html  enumexample.ls
 
 LR1 taugrammer.html
-+stdlib parse.ls
++compilerfront parse.ls
 
 lextable taulex.html
 +tools install.txt
@@ -134,12 +137,13 @@ wasm wbeizer.wasm webcore.libsrc
 exports=wbeizer
 Library=wbeizer
 
-wasm webtools.wasm webcore.libsrc symbols compilerfront  tests subtools
+ wasm webtools.wasm webcore.libsrc symbols compilerfront  tests subtools
 +webtools webtools.ls  webtools.html
 +common svg2graph.ls uniqueids
-+stdlib hashset symbol2 pretty symbolconstant compileTimeT  objectio object01 LEBencoding
 exports=webtools
 Library=webtools
+flags=info
+
 
  prettybuild newrelease.bld +.bld  release.bld
 

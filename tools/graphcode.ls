@@ -30,7 +30,7 @@ function =(a:symloc, b:symloc)boolean loc.a = loc.b
 
 function ?(a:symloc, b:symloc)ordering loc.a ? loc.b
 
-function %(a:symloc)seq.word %.loc.a + print.sym.a
+function %(a:symloc)seq.word %.loc.a + %.sym.a
 
 Function tograph(s:seq.symbol)seq.word
 for acc = empty:seq.arc.symloc, stk = empty:stack.symloc, i ∈ arithseq(length.s, 1, 1)do
@@ -56,9 +56,9 @@ Function generatenode(a:set.symloc)symloc symloc(cardinality.a, Lit.0)
 Function node2text(a:symloc)seq.word
 let sy = sym.a
 if isloopblock.sy then"Loop:" + %.firstvar.sy
-else if isconst.sy ∨ islocal.sy ∨ isspecial.sy then print.sy else[name.sy]
+else if isconst.sy ∨ islocal.sy ∨ isspecial.sy then %.sy else[name.sy]
 
-Function nodeTitle(a:symloc)seq.word print.sym.a
+Function nodeTitle(a:symloc)seq.word %.sym.a
 
 _______________________
 
@@ -70,4 +70,4 @@ did not get error when result type of generatednode was seq.word!!!!!
 
 Function node2text(a:symbol)seq.word[name.a]
 
-Function nodeTitle(a:symbol)seq.word print.a 
+Function nodeTitle(a:symbol)seq.word %.a 

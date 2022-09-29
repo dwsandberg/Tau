@@ -32,10 +32,10 @@ Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
 if s = Optionsym then function.[i64, i64, i64, i64]else function.tollvmtypelist(alltypes, s)
 
 function tollvmtypelist(alltypes:typedict, s:symbol)seq.llvmtype
-assert resulttype.s ≠ typeT report"TTT" + print.s
+assert resulttype.s ≠ typeT report"TTT" + %.s
 let starttypes = [tollvmtype(alltypes, resulttype.s), i64]
 for acc = starttypes, @e ∈ paratypes.s do
- assert @e ≠ typeT report"TTTP" + print.s
+ assert @e ≠ typeT report"TTTP" + %.s
  acc + tollvmtype(alltypes, @e)
 /for(acc)
 
@@ -431,7 +431,7 @@ else if iswordseq.xx then
 else if xx = Littrue then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.1)
 else if xx = Litfalse then addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, C64.0)
 else
- assert isword.xx report"not a constant" + print.xx
+ assert isword.xx report"not a constant" + %.xx
  addtemplate(xx, 0, emptyinternalbc, "ACTARG"_1, slot.wordref.wordname.xx)
 
 Function buildspecial(xx:symbol, alltypes:typedict)match5

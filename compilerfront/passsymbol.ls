@@ -110,8 +110,7 @@ do
    , typearcs
    )
   else
-   assert sym ∉ defines
-   report"Function" + wordname.sym + "is defined twice in module" + print.modname
+   assert sym ∉ defines report"Function" + wordname.sym + "is defined twice in module" + %.modname
    next(typeflds
    , paragraphno + 1
    , text + symdef(sym, empty:seq.symbol, paragraphno)
@@ -303,7 +302,7 @@ else
 function checkreturntype(b:set.symbol, t2:symbol)boolean
 if cardinality.b = 1 then
  let t = resulttype.b_1 = resulttype.t2
- assert t report"Export result type does not match" + print.t2
+ assert t report"Export result type does not match" + %.t2
  t
 else false
 
@@ -317,10 +316,9 @@ else
  resolveexports(acc, cnt, allsrc))
 
 function printunresolved(p:passsymbols)seq.word
-let txt = 
- for acc = "", t ∈ toseq.unresolvedexports.p do acc + print.t /for(acc)
+let txt = for acc = "", t ∈ toseq.unresolvedexports.p do acc + %.t /for(acc)
 if isempty.txt then""
-else"module" + print.modname.p + "contains unresolved exports:" + txt + EOL
+else"module" + %.modname.p + "contains unresolved exports:" + txt + EOL
 
 Export type:passsymbols
 

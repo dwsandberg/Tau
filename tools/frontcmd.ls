@@ -44,11 +44,11 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
  else next(selected, root)
 /for(let output = 
  if out = "sym"then
-  for txt = "", i ∈ selected do txt + " /p" + print.sym.i /for(txt)
+  for txt = "", i ∈ selected do txt + " /p" + %.sym.i /for(txt)
  else if out = "symdef"then
-  for txt = "", sd1 ∈ selected do txt + " /p" + print.sym.sd1 + print.code.sd1 /for(txt)
+  for txt = "", sd1 ∈ selected do txt + " /p" + %.sym.sd1 + print.code.sd1 /for(txt)
  else if out = "symdefgraph"then
-  for txt = "", sd1 ∈ selected do txt + " /p" + print.sym.sd1 + {print}tograph.code.sd1 /for(txt)
+  for txt = "", sd1 ∈ selected do txt + " /p" + %.sym.sd1 + {print}tograph.code.sd1 /for(txt)
  else if out = "baseTypeCheck"then baseTypeCheck(toseq.prg, typedict.cf)
  else if out = "resultCheck"then checkresults.toseq.prg
  else
@@ -67,7 +67,7 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
     )
    else g
   if out = "text"then
-   for txt = "txt", a ∈ toseq.arcs.g do txt + " /br" + print.tail.a + print.head.a /for(txt)
+   for txt = "txt", a ∈ toseq.arcs.g do txt + " /br" + %.tail.a + %.head.a /for(txt)
   else drawgraph.newgraph.toseq.arcs.g2
 [file(o, output)])
 

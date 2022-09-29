@@ -67,8 +67,8 @@ else
     if iscore4.subfld ∨ subfld = typeT ∨ isseq.subfld ∨ isencoding.subfld then acc
     else addtype(acc, subfld)
    /for(assert cardinality.totypedict.alltypes < cardinality.totypedict.acc
-   report"PROBLEM" + print.type + "flat:"
-   + for txt = "", g ∈ flatflds do txt + print.g /for(txt + EOL)
+   report"PROBLEM" + %.type + "flat:"
+   + for txt = "", g ∈ flatflds do txt + %.g /for(txt + EOL)
    + print.acc
    addtype(acc, type))
 
@@ -97,7 +97,7 @@ report"recursive type problem: /br"
 for acc = emptytypedict, d ∈ toseq.known.bx5 do add(acc, type.d, flatflds.d)/for(acc)
 
 function print2(h:typeentry)seq.word
-for acc = "type" + print.type.h + "is", z ∈ flatflds.h do acc + print.z + ", "/for(acc >> 1)
+for acc = "type" + %.type.h + "is", z ∈ flatflds.h do acc + %.z + ", "/for(acc >> 1)
 
 function checkflat(types:set.typeentry, unknown:seq.typeentry)checkflatresult2
 for known = types, notflat = empty:seq.typeentry, p ∈ unknown do
@@ -148,7 +148,7 @@ for acc = empty:seq.seq.mytype, tr ∈ toseq.totypedict.dict do acc + totypeseq.
 
 Function print(dict:typedict)seq.word
 for txt = "", tr ∈ toseq.totypedict.dict do
- for acc2 = txt, t ∈ totypeseq.tr do acc2 + print.t /for(acc2 + EOL)
+ for acc2 = txt, t ∈ totypeseq.tr do acc2 + %.t /for(acc2 + EOL)
 /for(txt)
 
 Function add(alltypes:typedict, t:mytype, flatflds:seq.mytype)typedict

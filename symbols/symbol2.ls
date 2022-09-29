@@ -218,7 +218,7 @@ Export sym(symdef)symbol
 
 Export code(symdef)seq.symbol
 
-Export print(symbol)seq.word
+Export %(symbol)seq.word
 
 Export print(seq.symbol)seq.word
 
@@ -240,9 +240,7 @@ Export=(mytype, mytype)boolean
 
 Export isseq(mytype)boolean
 
-Export print(mytype)seq.word
-
-Function %(t:mytype)seq.word print.t
+Export %(t:mytype)seq.word
 
 Export isabstract(modref)boolean
 

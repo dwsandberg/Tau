@@ -139,9 +139,6 @@ type dummyrec2 is a:int, b:int, c:dummyparameterrecord
 
 builtin createthread(int, int, int, dummyparameterrecord, int)process.int
 
-
-
-
 function funcaddress(sym:symbol)int
 let b = encodingdata:symaddresses
 let symdefs = 
@@ -162,17 +159,16 @@ type addrsym is addr:int, sym:symbol
 
 function ?(a:addrsym, b:addrsym)ordering addr.a ? addr.b
 
+builtin callstack(n:int)seq.int
 
-builtin callstack(n:int)seq.int 
-
-Function stackTraceImp seq.word  
+Function stackTraceImp seq.word
 let decode = symbolrefdecodeX
 let t = 
  for t = empty:seq.addrsym, idx = 1, i ∈ symboladdress do next(t + addrsym(i, decode_idx), idx + 1)/for(sort.t)
 for txt = " /p", r ∈ callstack.30 << 2 do
  let i = binarysearch(t, addrsym(r, Lit.1))
  txt + %.r
- + if between(-i - 1, 1, length.t)then print.sym.t_(-i - 1)else""/if
+ + if between(-i - 1, 1, length.t)then %.sym.t_(-i - 1)else""/if
  + " /br"
 /for(txt)
 

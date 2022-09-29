@@ -86,7 +86,7 @@ Function compilerfront3(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)m
 assert not.isempty.allsrc report"empty source"
 let lib0 = extractValue(first.allsrc, "Library library")
 assert not.isempty.lib0 report"no library specified"
-let lib = first.extractValue(first.allsrc, "Library library")
+let lib = first.lib0
 let exports = extractValue(first.allsrc, "exports")
 if option = "library"then
  midpoint(option, prg.libinfo, emptytypedict, empty:seq.modExports, empty:seq.seq.word)

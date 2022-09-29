@@ -37,8 +37,6 @@ for acc = empty:set.sym/modref, md ∈ libmods.m do
  for acc2 = acc, sym ∈ exports.md do acc2 + sym/modref(builtintoseq.sym, modname.md)/for(acc2)
 /for(acc)
 
-Function %(s:symbol)seq.word print.s
-
 Export type:sym/modref
 
 type sym/modref is sym:symbol, in:modref
@@ -47,7 +45,7 @@ function ?(a:sym/modref, b:sym/modref)ordering sym.a ? sym.b ∧ in.a ? in.b
 
 function ?2(a:sym/modref, b:sym/modref)ordering sym.a ? sym.b
 
-function %(a:sym/modref)seq.word print.sym.a + print.in.a
+function %(a:sym/modref)seq.word %.sym.a + %.in.a
 
 function addtypes(exports:seq.symbol, modname:modref, prg:set.symdef)seq.symbol
 let exporttypes = 
@@ -171,8 +169,6 @@ else
 function removeseq(s:seq.mytype)set.mytype for acc = empty:set.mytype, t ∈ s do acc + removeseq.t /for(acc)
 
 function removeseq(t:mytype)mytype if isseq.t then removeseq.parameter.t else t
-
-function %(a:modref)seq.word print.a
 
 Function includecomment(modtext:seq.word)int
 let i = findindex(first." /p", modtext)

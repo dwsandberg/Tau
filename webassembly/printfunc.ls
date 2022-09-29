@@ -16,20 +16,21 @@ use otherseq.word
 
 use stack.word
 
-Function print(f:wfunc)seq.word
-let nocheck = true
+Function printfunc(f:wfunc)seq.word
+let nocheck = false
 let a = code.f
-assert not.isempty.a report"emptycode" + print.sym.f
-let typdesc = printtypeidx.typeidx.f
-let argtypes = subseq(typdesc, 3, length.typdesc - 5)
-let d1 = decodeLEBu(a, 1)
-let d2 = decodeLEBu(a, next.d1)
-"funcidx:" + %.funcidx.f + print.sym.f
-+ for text = "", place = next.d2, e ∈ constantseq(value.d2, 1)do
- let d3 = decodeLEBu(a, place)
- next(text + constantseq(value.d3, (print.wtype.a_(next.d3))_1), next.d3 + 1)
-/for("(" + text + ")"
-+ zzz(nocheck, argtypes >> 2 + text, subseq(a, place, length.a - 1), print.sym.f))
+if isempty.a then
+ %.sym.f + "funcidx=$(%.funcidx.f)typidx=$(printtypeidx.typeidx.f)"
+else
+ let typdesc = printtypeidx.typeidx.f
+ let argtypes = subseq(typdesc, 3, length.typdesc - 5)
+ let d1 = decodeLEBu(a, 1)
+ let d2 = decodeLEBu(a, next.d1)
+ for text = "", place = next.d2, e ∈ constantseq(value.d2, 1)do
+  let d3 = decodeLEBu(a, place)
+  next(text + constantseq(value.d3, (%.wtype.a_(next.d3))_1), next.d3 + 1)
+ /for("(" + text + ")" + " /br"
+ + zzz(nocheck, argtypes >> 2 + text, subseq(a, place, length.a - 1), %.sym.f))
 
 Function printcode(a:seq.byte)seq.word zzz(true, "", a, "")
 
@@ -46,15 +47,16 @@ for text = ""
 do
  if state = "startop"then
   if byte
-  ∈ [i32divu, i32wrapi64, i32mul, i32add, i32gtu
-  , i32eq, i32and, tobyte.5, END, return
-  , unreachable, i64truncf64s, i32truncf64s, i32truncf64u, f64converti32u
-  , i64gts, i64eq, i64add, i64sub, i64mul
-  , i64divs, i64extendi32u, i64les, f64converti64s, drop
-  , i64ges, i64extendi32s, i32xor, f64converti32s, f64gt
-  , f64ge, f64div, f64mul, f64add, f64sub
-  , i64and, i64or, i64xor, i64shru, i64shl
-  , i32ne, i64reinterpretf64, memorygrow]then
+  ∈ [i32divu, i32wrapi64, i32mul, i32add, i32sub
+  , i32gtu, i32eq, i32and, tobyte.5, END
+  , return, unreachable, i64truncf64s, i32truncf64s, i32truncf64u
+  , f64converti32u, i64gts, i64eq, i64add, i64sub
+  , i64mul, i64divs, i64extendi32u, i64les, f64converti64s
+  , drop, i64ges, i64extendi32s, i32xor, f64converti32s
+  , f64gt, f64ge, f64div, f64mul, f64add
+  , f64sub, i64and, i64or, i64xor, i64shru
+  , i64shl, i32ne, i64reinterpretf64, f64reinterpreti64, memorygrow
+  ]then
    let newstack = 
     if nocheck then stk
     else if byte ∈ [tobyte.05]then
@@ -94,8 +96,8 @@ do
    next(text + decodeop.op, op, 0x0, 0, "startop", newstack(op, stk, text), blkstk, op)
   else next(text, op, 0x0, shift + 1, state, stk, blkstk, op)
  else if state = "type"then
-  let newblkstk = push(blkstk, (print.wtype.byte)_1)
-  next(text + decodeop.op + print.wtype.byte, op, 0x0, 0, "startop", stk, newblkstk, op)
+  let newblkstk = push(blkstk, (%.wtype.byte)_1)
+  next(text + decodeop.op + %.wtype.byte, op, 0x0, 0, "startop", stk, newblkstk, op)
  else if state = "alignmentbyte"then
   next(text, op, 0x0, 0, "startLEBarg", stk, blkstk, lastop)
  else if state = "zerobyte"then
@@ -118,6 +120,8 @@ do
    let newstk = 
     if nocheck then stk
     else if op = localset then
+     assert between(arg + 1, 1, length.locals)
+     report"??? localset problem  /br" + text + decodeop.op + toword.arg + xx
      assert top.stk = locals_(arg + 1)
      report"type problem localset" + toword.arg + "locals" + locals + EOL + text
      pop.stk
@@ -151,6 +155,8 @@ do
     else
      assert op ∈ [localtee]
      report"OPCODEX" + decodeop.op + ":" + text + "stk" + toseq.stk
+     assert between(arg + 1, 1, length.locals)
+     report"??? localtee problem  /br" + text + decodeop.op + toword.arg + xx
      assert top.stk = locals_(arg + 1)
      report"type problem localtee" + toword.arg + "locals" + locals + EOL + text
      stk
@@ -176,10 +182,10 @@ let d =
  else if op ∈ [i64gts, i64eq, i64les, i64ges]then["i64 i64", "i32"]
  else if op ∈ [i32wrapi64]then["i64", "i32"]
  else if op ∈ [f64converti32u, f64converti32s, f64load]then["i32", "f64"]
- else if op ∈ [f64converti64s]then["i64", "f64"]
+ else if op ∈ [f64converti64s, f64reinterpreti64]then["i64", "f64"]
  else if op ∈ [i64truncf64s, i64reinterpretf64]then["f64", "i64"]
  else if op ∈ [i32truncf64s, i32truncf64u]then["f64", "i32"]
- else if op ∈ [i32mul, i32add, i32gtu, i32eq, i32and, i32ne, i32xor, i32or]then
+ else if op ∈ [i32mul, i32add, i32sub, i32gtu, i32eq, i32and, i32ne, i32xor, i32or]then
   ["i32 i32", "i32"]
  else if op ∈ [i32store]then["i32 i32", ""]
  else if op ∈ [i64store]then["i32 i64", ""]

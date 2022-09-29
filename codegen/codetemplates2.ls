@@ -238,8 +238,8 @@ list of external calls"arcsin arccos sin tan cos sqrt createfile3 loadedLibs ran
 Function mangledname(extname:set.symdef, s:symbol, library:word)word
 let b = getSymdef(extname, s)
 assert not.isempty.b
-report"Mangled Name problem" + print.s + library
-+ for txt = "", sd ∈ toseq.extname do txt + " /br" + print.sym.sd + library.module.sym.sd /for(txt + stacktrace)
+report"Mangled Name problem" + %.s + library
++ for txt = "", sd ∈ toseq.extname do txt + " /br" + %.sym.sd + library.module.sym.sd /for(txt + stacktrace)
 if paragraphno.b_1 = -1 then name.s
 else
  merge.[if paragraphno.b_1 ≥ 0 ∨ isInternal.s then library.module.s else library

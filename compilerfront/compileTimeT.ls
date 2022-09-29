@@ -67,7 +67,7 @@ else if typ = seqof.typeword then
  for acc = "", @e ∈ bitcast:seq.int(toptr.r)do acc + wordencodingtoword.@e /for([Words.acc])
 else if typ = typereal then[Reallit.r]
 else
- assert isseq.typ report"resulttype not handled" + print.typ
+ assert isseq.typ report"resulttype not handled" + %.typ
  let s = bitcast:seq.int(toptr.r)
  for acc = empty:seq.symbol, @e ∈ s do acc + tocode:T(@e, parameter.typ, typedict)/for(acc + Sequence(parameter.typ, length.s))
 

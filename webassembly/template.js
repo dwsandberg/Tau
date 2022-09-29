@@ -255,7 +255,9 @@ function finaljsHTTP(data,nobits ){
 }
 
 ,  callevent2:function (id,  event   ){
- document.getElementById(asjsstring(id).trim()).dispatchEvent(new Event(asjsstring(event).trim()));
+let a=document.getElementById(asjsstring(id).trim())
+console.log("SDF"+a);
+ a.dispatchEvent(new Event(asjsstring(event).trim()));
   return(0);
   }
 
@@ -282,16 +284,15 @@ function finaljsHTTP(data,nobits ){
    var responeheader="";
   let header=asjsstring(methodx);
   method=header.split(" ")[0];
-  if ( method == "NONE" ){ console.log("jsHTTP2xx "+asjsstring(followfunc));
-  let a=jsstring2UTF8bytes( "200 OK"); 
-  let b=exports.allocatespace3((2))
-  exports[asjsstring(followfunc)](exports.jsmakepair(b,a),state)
-  .then ();}
+  if ( method == "NONE" ){ 
+    exports[asjsstring(followfunc)](state);
+    return 0;
+  }
   inprogress++;
   let tmp=  header.slice(method.length);
   let parts=tmp.split(":");
-    var headers = new Headers();
-   if (parts.length==2) {  headers.append(parts[0].trim(), parts[1].trim());}
+  var headers = new Headers();
+  if (parts.length==2) {  headers.append(parts[0].trim(), parts[1].trim());}
   fetch( asjsstring(url),
        { method, headers, body: (method=="GET" )? null : tobytearray(data,nobits  )  }   
        )
@@ -302,13 +303,13 @@ function finaljsHTTP(data,nobits ){
     }
     return response.arrayBuffer();
      })
- .then(function (result) {
+  .then(function (result) {
     console.log(responeheader)
       let a=jsstring2UTF8bytes( responeheader);
       let b=finaljsHTTP(result,nobits);
       let rec  = exports.jsmakepair(b,a);
       console.log("jsHTTP2"+asjsstring(followfunc))
-     inprogress--; exports[asjsstring(followfunc)](rec,state); }) 
+     inprogress--; exports[asjsstring(followfunc)](state,rec ); }) 
   }
   
  } } ; 

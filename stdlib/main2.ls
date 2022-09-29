@@ -48,88 +48,91 @@ use set.word
 
 Function libname(info:midpoint)word extractValue(first.src.info, "Library")_1
 
-function makeentry(libraryuses:seq.word, entrypointname:word, input:seq.byte)seq.byte
-let entryheader = 
- "use standard 
- /p use file 
- /p use impDependent 
- /p use seq.file 
- /p use process.UTF8 
- /p Function entrypoint(args:UTF8)UTF8 
- /br let p=process.entrypoint2(args)
- /br if aborted.p then 
- /br finishentry.[file($(dq."error.html"), message.p)]
- /br else result.p 
- /p function entrypoint2(args0:UTF8)UTF8 
- /br let args=towords.args0 
- /br finishentry.$([entrypointname])(args, getfiles.args)
- /p Function $([entrypointname])(args:seq.word, input:seq.file)seq.file 
- /br let cmd=first.args 
- /br"
-let finalclause = 
- if isempty.libraryuses ∨ true then"empty:seq.file"
- else"$([merge(subseq(libraryuses, 1, 1) + "$EP")])(args, input)"
-for acc = ""
-, modname = "?"_1
-, mods = if finalclause = "empty:seq.file"then""else[first.finalclause]
-, p ∈ breakparagraph.input
-do
- if subseq(p, 1, 1) = "Function" ∧ subseq(p, 3, 8) = "(input:seq.file"then
-  let idx = findindex(")"_1, p)
+function makeentry(libraryuses:seq.word, libname:seq.word, input:seq.byte)seq.word
+let aa = 
+ for acc = empty:seq.seq.word, modname = "?"_1, p ∈ breakparagraph.input do
+  if subseq(p, 1, 1) = "Function" ∧ subseq(p, 3, 8) = "(input:seq.file"then
+   let t = "use" + modname
+   next(if not.isempty.acc ∧ first.acc = t then acc else[t] + acc /if
+   + ["Export" + getheader.p << 1]
+   , modname
+   )
+  else if length.p > 1 ∧ p_1 ∈ "Module module"then next(acc, p_2)else next(acc, modname)
+ /for(acc)
+for txt = "", useclauses = "", p ∈ aa do
+ if first.p ∈ "use"then next(txt, useclauses + p + " /p")
+ else if first.p ∉ "Export"then next(txt, useclauses)
+ else
   next(for para = ""
   , name = ", "_1
   , last = ", "_1
   , type = ""
-  , w ∈ subseq(p, 10, idx)
-  do
-   if w ∈ ", )"then
-    next(para
-    + if type = "seq.word"then", extractValue(args, $(dq.[name]))"
-    else if type = "boolean"then
-     ", first.$(dq.[name])∈ extractValue(args, $(dq."flags"))"
-    else", ?"
-    , name
-    , w
-    , ""
-    )
-   else if last ∈ ":"then next(para, name, last, type + w)
-   else if last ∈ ", "then next(para, w, w, "")else next(para, name, w, type)
-  /for(acc
+  , w ∈ p << 9
+  while last ∉ ")"
+  do if w ∈ ", )"then
+   next(para
+   + if type = "seq.word"then", extractValue(args, $(dq.[name]))"
+   else if type = "boolean"then
+    ", first.$(dq.[name])∈ extractValue(args, $(dq."flags"))"
+   else", ?"
+   , name
+   , w
+   , ""
+   )
+  else if last ∈ ":"then next(para, name, last, type + w)
+  else if last ∈ ", "then next(para, w, w, "")else next(para, name, w, type)
+  /for(txt
   + " /br else if cmd /in $(dq.subseq(p, 2, 2))then $(subseq(p, 2, 2))(input $(para))")
-  , modname
-  , mods + modname
+  , useclauses
   )
- else if length.p > 1 ∧ p_1 ∈ "Module"then next(acc, p_2, mods)
- else next(acc, modname, mods)
-/for(let uses = 
- for uses = "", u ∈ toseq.asset.mods do uses + "use" + u + " /p"/for(uses)
-[tobyte.10, tobyte.10]
-+ toseqbyte.textformat(uses + entryheader + acc << 2 + " /br else" + finalclause))
+/for(if isempty.txt then txt
+else
+ "Module $([merge(libname + "$root")]) /p use file  /p use seq.file  /p use standard  /p $(useclauses)Function $([merge(libname + "$EP")])(args:seq.word, input:seq.file)seq.file  /br let cmd=first.args  /br $(txt << 2) /br else empty:seq.file"/if)
 
 Function libsrc(input:seq.file, uses:seq.word, exports:seq.word, o:seq.word)seq.file
 let outname = filename.o
 let Library = {subseq(o, 1, 1)}[name.outname]
-for acc = empty:seq.byte, names = "parts=", f ∈ input do
- if ext.fn.f ∈ "ls libsrc"then next(acc + tobyte.10 + tobyte.10 + data.f, names + fullname.fn.f)
- else next(acc, names)
+for acc1 = empty:seq.byte, acc2=empty:seq.byte ,f ∈ input do
+ if ext.fn.f ∈ "ls "then next(acc1 + tobyte.10 + tobyte.10 + data.f,acc2) 
+ else if ext.fn.f ∈ "libsrc"then next(acc1,acc2 + tobyte.10 + tobyte.10 + data.f) 
+ else next(acc1,acc2)
 /for(let firstpart = 
  if isempty.exports then
-  toseqbyte.toUTF8(names + "uses=$(uses)exports=$(exports)Library=$(Library)")
+  "Library=$(Library)uses=$(uses)exports=$(exports)"
  else
-  let entrypointname = merge(Library + "$EP")
-  toseqbyte.toUTF8(names
-  + "uses=$(uses)exports=$(exports + entrypointname)Library=$(Library)")
-  + tobyte.10
-  + tobyte.10
-  + toseqbyte.toUTF8("Module" + entrypointname)
-  + makeentry(uses, entrypointname, acc)
-[file(outname, firstpart + acc)])
+  let entrypointname = [merge(Library + "$EP")]
+  "Library=$(Library)uses=$(uses)exports=$(exports + entrypointname) /p"
+  + makeentry(uses, Library, acc1+acc2)
+[file(outname, toseqbyte.textformat.firstpart + acc1+acc2)])
+
+
+
+function entrypointmodule(Library:seq.word)seq.seq.word
+let entrypointname = [merge(Library + "$EP")]
+["Module $(entrypointname)"
+, "use standard"
+, "use file"
+, "use $([merge(Library + "$root")])"
+, "use impDependent"
+, "use seq.file"
+, "use process.UTF8"
+, "Function entrypoint(args:UTF8)UTF8 let p=process.entrypoint2(args)if aborted.p then finishentry.[file($(dq."error.html"), message.p)]else result.p"
+, "function entrypoint2(args0:UTF8)UTF8 let args=towords.args0 finishentry.$(entrypointname)(args, getfiles.args)"
+]
 
 function subcompilelib(allsrc:seq.seq.word, dependentlibs:midpoint, outname:filename)seq.file
 {OPTION PROFILE}
 let libname = extractValue(first.allsrc, "Library")
 let uses = extractValue(first.allsrc, "uses")
-let m = starmap.compilerfront2:libllvm("all", allsrc, dependentlibs)
+{assert libname /ne"common"report for txt="", p /in allsrc+entrypointmodule.libname do txt+" /p"+p /for(txt)}
+let entrymod=if allsrc_2 = "Module"+merge(libname+"$root") then
+entrypointmodule.libname 
+else 
+ let entrypointname = [merge(libname + "$EP")]
+["Module $(entrypointname)"
+, "use standard"
+, "Function entrypoint(args:UTF8)UTF8 args "]
+let m = starmap.compilerfront2:libllvm("all", allsrc + entrymod, dependentlibs)
 let m2 = outlib.m
 let dp = if isempty.uses then uses else[last.uses]
 let files = compilerback(m, dependentwords.dp, outname)
@@ -164,9 +167,6 @@ for codeNoFref = empty:seq.symbol, sy ∈ code do
  if isFref.sy then codeNoFref + PreFref + basesym.sy else codeNoFref + sy
 /for(codeNoFref)
 
-
-
- 
 _______________
 
 use libllvm

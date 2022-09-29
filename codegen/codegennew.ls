@@ -64,8 +64,7 @@ use seq.encoding.word3
 
 use encoding.word3
 
-
-Function compilerback(m:midpoint, baselibwords:seq.seq.char,  outname:filename)seq.file
+Function compilerback(m:midpoint, baselibwords:seq.seq.char, outname:filename)seq.file
 {OPTION PROFILE}
 for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ toseq.prg.m do
  if isabstract.module.sym.sd ∨ isconst.sym.sd ∨ isBuiltin.sym.sd ∨ isGlobal.sym.sd then
@@ -105,44 +104,13 @@ for acc = empty:set.symdef, sd ∈ toseq.prg.m do
  ))
 /for(midpoint("X", acc, templates.m, typedict.m, libmods.m, src.m))
 
-/function check(prg:seq.symdef)seq.word 
-for acc=empty:seq.symbol, sd /in prg do 
-if isFref.sym.sd then acc+basesym.sym.sd else 
-acc+sym.sd + code.sd /for(
-for acc2=empty:seq.modref, sym0 /in {toseq.asset.}acc do let sym=basesym.sym0 
-if not.isconst.sym /and name.sym 
-/in"setinsert"then acc2+module.sym else acc2
-/for(
- for txt="",sym /in acc2 do txt+"
- /br"+library.sym+name.sym +fullprint.para.sym  
- + if not.isempty.acc2 then 
-  [toword.??(typerep.para.first.acc2, typerep.para.sym   )   ,
-  toword(first.typerep.para.first.acc2 ? first.typerep.para.sym   ) ]
- else "" /if
-  /for(txt)))
-  
-/Function ??(a:seq.typedef, b:seq.typedef)ordering
-let lengtha = length.a
-let lengthb = length.b
-if lengtha > lengthb then GT
-else if lengtha < lengthb then LT else
-{a @ ?(EQ, @e ? b_@i)((@e ? b_@i)≠ EQ)}subcmp3(a, b, 1)
+use seq.modref
 
-/function subcmp3(a:seq.typedef, b:seq.typedef, i:int)ordering
-if i > length.a then EQ
-else
- let c = a_i ? b_i
- if c = EQ then subcmp3(a, b, i + 1)else c
+use set.modref
 
+use mytype
 
- 
- use seq.modref
- 
- use set.modref
- 
- use mytype
- 
- use otherseq.typedef
+use otherseq.typedef
 
 Function codegen(m:midpoint
 , baselibwords:seq.seq.char
@@ -281,12 +249,12 @@ function enableprofile(g:geninfo)geninfo geninfo(profilearcs.g, extnames.g, true
 
 function addfuncdef(geninfo:geninfo, sd:symdef)internalbc
 let e = findtemplate.sym.sd
-assert not.isempty.e report"LL addfuncdef" + print.sym.sd
+assert not.isempty.e report"LL addfuncdef" + %.sym.sd
 let m = e_1
 let options = getoption.code.sd
 let code = removeoptions.code.sd
 assert not.isempty.code
-report"codegen with no definition" + print.sym.sd + "in" + library.module.sym.sd
+report"codegen with no definition" + %.sym.sd + "in" + library.module.sym.sd
 let nopara = arg.m
 let linit = 
  Lcode2(emptyinternalbc
@@ -312,12 +280,12 @@ function length(s:stack.int)int length.toseq.s
 function processnext(l:Lcode2, caller:symbol, geninfo:geninfo, s:symbol)Lcode2
 let ee = findtemplate.s
 assert not.isempty.ee
-report"codegen error:no code template for" + print.s + "in library" + library.module.s
+report"codegen error:no code template for" + %.s + "in library" + library.module.s
 + "from"
-+ print.caller
++ %.caller
 + for txt = "", s5 ∈ templatesyms do
  if not.isconst.s5 ∧ name.s5 = name.s then
-  txt + " /br" + library.module.s5 + print.s5 + "/" + fullprint.para.module.s5
+  txt + " /br" + library.module.s5 + %.s5 + "/" + fullprint.para.module.s5
   + "/"
   + fullprint.para.module.s
   + if module.s = module.s5 ∧ name.s5 = name.s

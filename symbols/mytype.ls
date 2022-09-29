@@ -44,7 +44,7 @@ Export name(typedef)word
 
 Export library(typedef)word
 
-Function print(s:mytype)seq.word
+Function %(s:mytype)seq.word
 for acc = "", t ∈ typerep.s do acc + "." + name.t /for(acc << 1)
 
 Function fullprint(s:mytype)seq.word
@@ -105,8 +105,8 @@ Function ?(a:mytype, b:mytype)ordering typerep.a ? typerep.b
 
 Function ?2(a:mytype, b:mytype)ordering ?2(typerep.a, typerep.b)
 
-Function print(s:modref)seq.word
-if issimple.s then[name.s]else[name.s, "."_1] + print.para.s
+Function %(s:modref)seq.word
+if issimple.s then[name.s]else[name.s, "."_1] + %.para.s
 
 Function replaceT(with:mytype, m:modref)modref
 if issimple.m ∨ not.isabstract.para.m then m
@@ -252,7 +252,7 @@ let txt =
  for acc = "", t ∈ unresolveduses.p do acc + "use" + t + EOL /for(acc)
  + for acc = "", t ∈ unresolvedexports.p do acc + "Export type:" + t + EOL /for(acc)
 if isempty.txt then""
-else"module" + print.modname.p + "contains lines that cannot be resolved:" + txt
+else"module" + %.modname.p + "contains lines that cannot be resolved:" + txt
 
 function resolve(all:set.passtypes, knownmods:set.modref, p:passtypes)passtypes
 let dict = formtypedict(all, p)

@@ -48,13 +48,27 @@ function key(p:seq.word)word
 if isempty.p then first."?"
 else if first.p ∈ " /keyword"then p_2 else first.p
 
+use otherseq.int
+
 Function transform(input:seq.file, o:seq.word, target:seq.word, modrename:seq.word, parseit:boolean
 , reorguse:boolean, html:boolean, noindex:boolean)seq.file
 let modrenames = modrename
 let m = 
  if parseit then compilerFront:libllvm("text", input)else empty:midpoint
 let srctext = 
- if parseit then totext.m
+ if parseit then
+  for renames = empty:seq.rename, sd ∈ toseq.prg.m do
+   if not.isempty.code.sd ∧ subseq(worddata.first.code.sd, 1, 2) = "{rename"then
+    let x = worddata.first.code.sd >> 1 << 2
+    for paraorder = empty:seq.int, error = "", w ∈ x << 1 do
+     if w ∈ "(, )"then next(paraorder, error)
+     else
+      let no = toint.w
+      if between(no, 1, nopara.sym.sd)then next(paraorder + no, error)
+      else next(paraorder, "$([w])should be between 1 and $(%.nopara.sym.sd)")
+    /for(renames + rename(sym.sd, [first.x], paraorder))
+   else renames
+  /for(totext(m, renames))
  else
   for acc = empty:seq.seq.word, i ∈ input do
    if ext.fn.i ∈ "libinfo"then acc else acc + breakparagraph.data.i
@@ -70,7 +84,7 @@ do
  if isempty.p then next(txt, modtext, uses)
  else
   let key = key.p
-  if subseq(p, 1, 2) = "parts="then next(txt, modtext, uses)
+  if subseq(p, 1, 2) = "Library="then next(txt, modtext, uses)
   else if first.p ∈ "use"then
    next(txt
    , if reorguse then modtext else modtext + " /p  /keyword" + p
@@ -87,7 +101,7 @@ do
      let idx = includecomment.modtext
      let uselist0 = 
       if parseit then
-       for uselist = empty:seq.seq.word, ref4 ∈ toseq.reconstruceUses(m, modname, dict, exported, uses)do uselist + print.ref4 /for(uselist)
+       for uselist = empty:seq.seq.word, ref4 ∈ toseq.reconstruceUses(m, modname, dict, exported, uses)do uselist + %.ref4 /for(uselist)
       else uses
      let uselist = 
       if isempty.modrenames then uselist0
@@ -120,6 +134,12 @@ do
  )
  ])
 else
+ let modtodir = 
+  for modtodir = "", lib = "?"_1, p1 ∈ src.m do
+   if first.p1 ∈ "Module module"then next(modtodir + " /br" + p1_2 + lib, lib)
+   else if first.p1 ∈ "Library"then next(modtodir, merge(directory + "/" + p1_3))
+   else next(modtodir, lib)
+  /for(modtodir)
  let para = 
   if reorguse then"reorguse"else""/if
   + if parseit then"parseit"else""/if
@@ -128,10 +148,12 @@ else
  , summary = "inputs" + para + " /p files created"
  , M ∈ txt
  do
-  if subseq(M, 1, 1) ∉ ["Module", "module"]then next(files, summary)
+  if subseq(M, 1, 1) ∉ ["Module", "module"]
+   /or char1."$" /in decodeword.M_2 then next(files, summary)
   else
    let modname = M_2
-   let fn = filename("+" + directory + modname + ".ls")
+   let idx = findindex(modname, modtodir)
+   let fn = filename("+" + modtodir_(idx + 1) + modname + ".ls")
    next(files + file(fn, M), summary + " /br" + fullname.fn)
  /for(files + file(o, summary))/if)
 
@@ -158,6 +180,8 @@ else
  flags=html noindex"is used then no index is included. This final form is useful for producing documentation with
  imbedded Tau code.
 
+use seq.char
+
 Function unusedsymbols(input:seq.file, o:seq.word, flags:seq.word)seq.file
 let m = compilerFront:libllvm("text", input)
 let dict = for uses = empty:set.symbol, sd ∈ toseq.prg.m do uses + sym.sd /for(uses)
@@ -168,8 +192,10 @@ let templates =
  /for(acc)
 let roots = 
  for acc = empty:set.symbol, sd ∈ toseq.prg.m do
-  if name.sym.sd ∈ "entrypoint" ∧ %.resulttype.sym.sd = "UTF8"then acc + sym.sd
-  else acc
+  if nopara.sym.sd ≠ 2 then acc
+  else
+   let a = decodeword.name.sym.sd
+   if subseq(a, length.a - 2, length.a) = decodeword.first."$EP"then acc + sym.sd else acc
  /for(acc)
 let a2 = closeuse(empty:set.symbol, roots, prg.m, templates, dict)
 let flag = "generated"_1 ∈ flags
@@ -196,34 +222,32 @@ let out =
  . Here is an example
  /< block tau tools unusedsymbols+built tools.libsrc stdlib.libinfo common  />
 
-type rename is symtext:seq.word, newname:seq.word, paraorder:seq.int, sym:symbol
-
-Export type:rename
-
-Function rename(symtext:seq.word, newname:seq.word, paraorder:seq.int)rename rename(symtext, newname, paraorder, Lit.0)
+type rename is sym:symbol, newname:seq.word, paraorder:seq.int
 
 function =(a:rename, b:rename)boolean sym.a = sym.b
-
-rename("typepass:change(int, int)int", "change2", [2, 1])
-
-function lookup(a:seq.rename, sym:symbol)seq.rename lookup(a, rename("", "", empty:seq.int, sym))
 
 function rename(renames:seq.word, name:word)word
 let i = findindex(name, renames)
 if i > length.renames then name else renames_(i + 2)
 
-function totext(result1:midpoint)seq.seq.word
-let renames = empty:seq.rename
+function totext(result1:midpoint, renames:seq.rename)seq.seq.word
 let src = src.result1
 let acc4 = 
  for acc4 = src, sd ∈ toseq.prg.result1 do
   if paragraphno.sd = 0 then acc4
   else
-   let c = code.sd
-   {assert name.sym.sd /nin"xxx"report print.c}
+   let hasrename = lookup(renames, rename(sym.sd, "", empty:seq.int))
+   let c = if isempty.hasrename then code.sd else code.sd << 1
+   let oldheader = getheader.src_(paragraphno.sd) >> 1
+   let newheader = 
+    if isempty.hasrename then oldheader
+    else
+     {???? doesnot handle reordering of paramenters}[first.oldheader] + newname.first.hasrename
+     + oldheader << 2
+   {let c=code.sd}
    let tmp = if Optionsym = last.c then c >> 2 else c
    let newtext = 
-    getheader.src_(paragraphno.sd) >> 1
+    newheader
     + for acc = "", stk = empty:stack.seq.word, last = c_1, sym ∈ tmp << 1 do
      if sym = NotOp ∧ nopara.last = 2 then
       let paratypes = paratypes.last
@@ -314,7 +338,7 @@ else if length.toseq.stk ≥ nopara.sym then
  if isSequence.sym then
   push(pop(stk, nopara.sym), "[" + addcommas.top(stk, nopara.sym) + "]")
  else
-  let xx = lookup(renames, sym)
+  let xx = lookup(renames, rename(sym, "", empty:seq.int))
   if not.isempty.xx then
    push(pop(stk, nopara.sym)
    , if nopara.sym = 0 then newname.xx_1

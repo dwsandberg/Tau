@@ -87,7 +87,7 @@ let p =
  process.compilerFront:libllvm("pass1", [file("a.ls",txt)]+in << 1)
 if aborted.p then message.p
 else
- for acc = "", sd ∈ toseq.prg.result.p do acc + " /br  /br"+print.sym.sd + print.code.sd /for(acc)
+ for acc = "", sd ∈ toseq.prg.result.p do acc + " /br  /br"+%.sym.sd + print.code.sd /for(acc)
 
 
 

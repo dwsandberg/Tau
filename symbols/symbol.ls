@@ -24,7 +24,7 @@ Export type:passtypes
 
 Export abstractModref(mytype)modref
 
-Export print(modref)seq.word
+Export %(modref)seq.word
 
 Export replaceT(mytype, modref)modref
 
@@ -46,7 +46,7 @@ Export isabstract(m:mytype)boolean
 
 Export parameter(mytype)mytype
 
-Export print(p:mytype)seq.word
+Export %(p:mytype)seq.word
 
 Export=(t:mytype, b:mytype)boolean
 
@@ -203,16 +203,16 @@ if isconst.s ∨ islocal.s ∨ isFref.s then 0
 else if isspecial.s ∧ name.module.s ∉ "$record $loopblock"then
  if isdefine.s ∨ isbr.s ∨ isexit.s then 1
  else
-  assert name.module.s ∈ "$continue $sequence"report"CHeKC" + print.s
+  assert name.module.s ∈ "$continue $sequence"report"CHeKC" + %.s
   toint.name.s
 else length.types.s - if issimplename.s then 1 else 2
 
 function fsig2(name:word, nametype:seq.mytype, paratypes:seq.mytype)seq.word
 let fullname = 
- if isempty.nametype then[name]else[name] + ":" + print.first.nametype
+ if isempty.nametype then[name]else[name] + ":" + %.first.nametype
 if length.paratypes = 0 then fullname
 else
- for acc = fullname + "(", t ∈ paratypes do acc + print.t + ", "/for(acc >> 1 + ")")
+ for acc = fullname + "(", t ∈ paratypes do acc + %.t + ", "/for(acc >> 1 + ")")
 
 _______________________________
 
@@ -251,9 +251,9 @@ else if issimplename.s then types.s >> 1 else subseq(types.s, 2, length.types.s 
 Function resulttype(s:symbol)mytype if isFref.s then typeint else last.types.s
 
 Function fullname(s:symbol)seq.word
-if issimplename.s then[name.s]else[name.s] + ":" + print.first.types.s
+if issimplename.s then[name.s]else[name.s] + ":" + %.first.types.s
 
-Function print(s:symbol)seq.word
+Function %(s:symbol)seq.word
 if islocal.s then
  {let x=toword.value.s[merge("%"+if x=name.s then[x]else[x, first.".", name.s]/if)]}
  [merge(["%"_1] + wordname.s)]
@@ -262,25 +262,25 @@ else if iswords.s then
  if dq_1 ∈ worddata.s then"'" + worddata.s + "'"else dq.worddata.s
 else if isword.s then"WORD" + wordname.s
 else if isrecordconstant.s then"const" + name.s
-else if isFref.s then"FREF" + print.basesym.s
+else if isFref.s then"FREF" + %.basesym.s
 else if isloopblock.s then
- "Loop" + fsig2(wordname.s, nametype.s, paratypes.s) << 1 + print.para.module.s
+ "Loop" + fsig2(wordname.s, nametype.s, paratypes.s) << 1 + %.para.module.s
  + " /br"
 else if not.isspecial.s then
- if name.module.s ∈ "internal"then""else print.module.s + ":"/if
+ if name.module.s ∈ "internal"then""else %.module.s + ":"/if
  + fsig2(wordname.s, nametype.s, paratypes.s)
- + print.resulttype.s
+ + %.resulttype.s
 else if isdefine.s then"Define" + name.s
-else if isstart.s then"Start" + "(" + print.resulttype.s + ") /br"
+else if isstart.s then"Start" + "(" + %.resulttype.s + ") /br"
 else if isblock.s then"EndBlock  /br"
 else if isexit.s then"Exit  /br"
 else if isbr.s then"Br2(" + toword.brt.s + ", " + toword.brf.s + ") /br"
 else if iscontinue.s then"Continue" + wordname.s + " /br"
 else if isRecord.s then fsig2("Record"_1, nametype.s, paratypes.s)
-else if isSequence.s then"seq($(worddata.s))" + print.resulttype.s
-else print.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s) + print.resulttype.s
+else if isSequence.s then"seq($(worddata.s))" + %.resulttype.s
+else %.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s) + %.resulttype.s
 
-Function print(s:seq.symbol)seq.word for acc = "", sym ∈ s do acc + print.sym /for(acc)
+Function print(s:seq.symbol)seq.word for acc = "", sym ∈ s do acc + %.sym /for(acc)
 
 Function Lit(i:int)symbol
 {OPTION INLINE}
@@ -443,7 +443,7 @@ symbolZ(moduleref."internallib $define"
 )
 
 Function Fref(s:symbol)symbol
-assert not.isconst.s ∧ first.worddata.s ∉ "FREF"report"FREF problem" + print.s + stacktrace
+assert not.isconst.s ∧ first.worddata.s ∉ "FREF"report"FREF problem" + %.s + stacktrace
 let z = constbit ∨ frefbit ∨ flags.s
 symbol(worddata.s, module.s, types.s, raw.s, z)
 
@@ -548,8 +548,6 @@ Function isInternal(sym:symbol)boolean name.module.sym = "internal"_1
 Function isGlobal(sym:symbol)boolean name.module.sym = "$global"_1
 
 Export typebase(i:int)mytype
-
-Export print(mytype)seq.word
 
 Export replaceT(mytype, mytype)mytype
 

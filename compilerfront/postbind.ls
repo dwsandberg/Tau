@@ -108,9 +108,9 @@ else
      if isempty.k2 then instantiateTemplate(symz, templates)
      else
       assert cardinality.k2 = 1
-      report"unbound problem" + print.symz
+      report"unbound problem" + %.symz
       + if cardinality.k2 > 1 then
-       for txt = "", symt ∈ toseq.k2 do txt + " /br" + library.module.symt + print.symt /for(txt)
+       for txt = "", symt ∈ toseq.k2 do txt + " /br" + library.module.symt + %.symt /for(txt)
       else""
       let sym2 = k2_1
       let b2 = getSymdef(source, sym2)
@@ -287,7 +287,7 @@ else
  else if name.sym = "forexp"_1 then
   let paras = 
    for acc = empty:seq.mytype, p ∈ paratypes.sym do
-    acc + if"$base"_1 ∈ print.p then p else basetype(p, newdict3)
+    acc + if"$base"_1 ∈ %.p then p else basetype(p, newdict3)
    /for(acc)
   symbol(moduleref."internallib builtin", "forexp", paras, last.paras)
  else if name.sym = "createthreadY"_1 then
@@ -308,12 +308,12 @@ else
   else if isabstract.typ then sym
   else
    let a = flatflds(newdict3, typ)
-   assert not.isempty.a report"cannot find type getfld" + print.typ
+   assert not.isempty.a report"cannot find type getfld" + %.typ
    if length.a > 1 then symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
    else Getfld.first.a
  else if name.sym ∈ "empty"then Sequence(basetype(para.module.sym, newdict3), 0)
  else
-  assert name.sym ∈ "xoffsets xbuild"report"post bind error:" + print.sym
+  assert name.sym ∈ "xoffsets xbuild"report"post bind error:" + %.sym
   sym
  ]
 
@@ -322,10 +322,10 @@ if issimple.module.sym2 then symdef(sym2, empty:seq.symbol, 0)
 else
  let gx = findabstract(templates, sym2)
  assert length.gx = 1
- report"Cannot find template for X" + %.length.gx + print.sym2
+ report"Cannot find template for X" + %.length.gx + %.sym2
  + if isempty.gx then""
  else
-  for txt = "", k ∈ gx do txt + EOL + print.sym.sd.k + print.modpara.k /for(txt)
+  for txt = "", k ∈ gx do txt + EOL + %.sym.sd.k + %.modpara.k /for(txt)
  for newcode = empty:seq.symbol, sym4 ∈ code.sd.gx_1 do newcode + replaceTsymbol(modpara.gx_1, sym4)/for(symdef(sym2, newcode, 0))
 
 function deepcopybody(type:mytype, typedict:typedict)seq.symbol

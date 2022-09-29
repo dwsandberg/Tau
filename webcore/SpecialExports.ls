@@ -1,8 +1,31 @@
 Module SpecialExports
 
-use impDependent
+This module is contains functions that must be included in exports  of the wasm module
+because the functions are use by template.js.
 
-use RI.state
+
+use JS.HTTPresult
+
+use SpecialImports
+
+use bits
+
+use bitcast.int
+
+use real
+
+use standard
+
+use webIOtypes
+
+use JS.HTTPstate.seq.word
+
+use webHTTP.seq.word
+
+use tausupport
+
+???? reorguses drops tausupport
+
 
 Builtin handleerror(real)real
 
@@ -10,14 +33,20 @@ Builtin processbody(real, real)real
 
 Builtin reclaimspace real
 
-Export decodeZ(h:jHTTP, h2:jHTTP2)state
+Export decodeZ(h2:JS.HTTPstate.seq.word, h:JS.HTTPresult)HTTPstate.seq.word
 
-Export decodeZx(h:jHTTP, h2:RI.state)state
+Function jsmakepair(data:jsbytes, msgUTF8:jsbytes)JS.HTTPresult toJS.HTTPresult(toseqbyte.msgUTF8, toseqbyte.data)
 
-Export jsmakepair(data:jsbytes, msgUTF8:jsbytes)real
+Function allocatespace3(i:real)real{used by template.js}toreal.bitcast:int(allocatespace.intpart.i)
 
-Export allocatespace3(i:real)real
+Function randomintimp(i:int)seq.int
+for acc = empty:seq.int, e ∈ constantseq(i, 0)do
+ acc
+ + toint.xor(tobits.representation.randomfunc << 16
+ , xor(tobits.representation.randomfunc
+ , xor(tobits.representation.randomfunc >> 16, tobits.representation.randomfunc >> 32)
+ )
+ )
+/for(acc)
 
-Export randomintimp(i:int)seq.int
-
-Export blockseqtype real 
+Function blockseqtype real{used by template.js}toreal.blockseqtype:byte 

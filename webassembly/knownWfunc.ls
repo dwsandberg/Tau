@@ -19,7 +19,7 @@ Function abortfunc symbol symbol(internalmod, "abortfunc", typereal, typereal)
 Function callprocessfunc symbol symbol(internalmod, "callprocess", typereal, typereal, typereal)
 
 Function knownWfunc(alltypes:typedict)seq.wfunc
-[ wfunc(alltypes, symbol(internalmod, "not", typeboolean, typeboolean), const32.1 + i32xor)
+[wfunc(alltypes, symbol(internalmod, "not", typeboolean, typeboolean), const32.1 + i32xor)
 , wfunc(alltypes
 , symbol(internalmod, "getseqlength", typeptr, typeint)
 , [i32wrapi64, i64load, tobyte.3] + LEBu.8
@@ -28,23 +28,7 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , symbol(internalmod, "getseqtype", typeptr, typeint)
 , [i32wrapi64, i64load, tobyte.3] + LEBu.0
 )
-, {wfunc(alltypes
-, symbol(internalmod, "stackcall", typestack, typeint, typestack)
-, [i32wrapi64] + Wcallindirect.typeindex([i64], i64)
-)
 , wfunc(alltypes
-, symbol(internalmod, "stackcall2", typestack, typeint, typeint, typestack)
-, [i32wrapi64] + Wcallindirect.typeindex([i64, i64], i64)
-)
-, wfunc(alltypes
-, symbol(internalmod, "loadvalue", typeint, typeint)
-, [i32wrapi64, i64load, tobyte.3, tobyte.0]
-)
-, }{ wfunc(alltypes
-, symbol4(internalmod, "bitcast"_1, typestack, [typereal], typestack)
-, [i64reinterpretf64]
-)
-, } wfunc(alltypes
 , symbol(internalmod, "packedindex", seqof.typebyte, typeint, typeptr)
 , [i64add, i32wrapi64, i64load8u, tobyte.0] + LEBu.15
 )
@@ -68,12 +52,13 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , symbol(internalmod, "packedindex", typepackedseq6, typeint, typeptr)
 , const64(6 * 8) + i64mul + const64(8 * (6 - 2)) + i64sub + i64add
 )
-, wfunc(alltypes, symbol(internalmod, "bitcast", typereal, typeptr), [i64reinterpretf64])
-, wfunc(alltypes, symbol(internalmod, "bitcast", typeint, typeptr), empty:seq.byte)
+, {wfunc(alltypes, symbol(internalmod, "bitcast", typereal, typeptr), empty:seq.byte), }
+wfunc(alltypes, symbol(internalmod, "bitcast", typeint, typeptr), empty:seq.byte)
 , wfunc(alltypes, symbol(internalmod, "toint", typebyte, typeint), empty:seq.byte)
 , wfunc(alltypes, symbol(internalmod, "bitcast", typeptr, typeptr), empty:seq.byte)
 , wfunc(alltypes, symbol(internalmod, "bitcast", seqof.typeint, typeptr), empty:seq.byte)
 , wfunc(alltypes, symbol(internalmod, "toreal", typeint, typereal), [f64converti64s])
+, wfunc(alltypes, symbol(internalmod, "intpart", typereal, typeint), [i64truncf64s])
 , wfunc(alltypes
 , symbol(internalmod, "representation", typereal, typeint)
 , [i64reinterpretf64]
@@ -82,7 +67,6 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , symbol(internalmod, "casttoreal", typeint, typereal)
 , [f64reinterpreti64]
 )
-, wfunc(alltypes, symbol(internalmod, "intpart", typereal, typeint), [i64truncf64s])
 , wfunc(alltypes, symbol(internalmod, "+", typereal, typereal, typereal), [f64add])
 , wfunc(alltypes, symbol(internalmod, "-", typereal, typereal, typereal), [f64sub])
 , wfunc(alltypes, symbol(internalmod, "*", typereal, typereal, typereal), [f64mul])
@@ -136,7 +120,7 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , symbol4(internalmod, "bitcast"_1, seqof.typebyte, [typereal], seqof.typebyte)
 , [i64reinterpretf64]
 )
-,wfunc(alltypes
+, wfunc(alltypes
 , symbol(builtinmod.typeptr, "fld", [typeptr, typeint], typeptr)
 , const64.8 + i64mul + i64add + i32wrapi64 + [i64load] + tobyte.3 + LEBu.0
 )
@@ -212,9 +196,9 @@ Function knownWfunc(alltypes:typedict)seq.wfunc
 , symbol(internalmod, "stacktrace", seqof.typeword)
 , const64.getoffset.wordsconst.""
 )
-,wfunc(alltypes
-, symbol(internalmod,"randomint",typeint,seqof.typeint) 
- ,    Wcall.symbol(moduleref."* impDependent", "randomintimp", typeint, seqof.typeint)
+, wfunc(alltypes
+, symbol(internalmod, "randomint", typeint, seqof.typeint)
+, Wcall.symbol(moduleref."* SpecialExports", "randomintimp", typeint, seqof.typeint)
 )
 ]
 
