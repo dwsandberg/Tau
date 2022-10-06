@@ -34,51 +34,57 @@ use seq.typedef
 
 use otherseq.seq.word
 
-Export type:match5
+Export type:steponeresult
 
-Export constdata seq.slot
+Export defines(steponeresult)seq.symdef
+
+Export entrypoint(steponeresult)slot
+
+Export type:match5{From codetemplates}
+
+Export action(match5)word{From codetemplates}
+
+Export arg(match5)int{From codetemplates}
+
+Export brf(a:match5)int arg.a{From codetemplates}
+
+Export brt(a:match5)int length.a{From codetemplates}
+
+Export firstvar(a:match5)int length.a{From codetemplates}
+
+Export functype(m:match5)llvmtype{From codetemplates}
+
+Export length(match5)int{no of instruction that return results}{From codetemplates}
+
+Export llvmtypelist(match5)seq.llvmtype{From codetemplates}
+
+Export sym(match5)symbol{From codetemplates}
+
+Export type:recordcoderesult{From codetemplates}
+
+Export bc(recordcoderesult)internalbc{From codetemplates}
+
+Export regno(recordcoderesult)int{From codetemplates}
+
+Export findtemplate(d:symbol)seq.match5{From codetemplates}
+
+Export recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolean)recordcoderesult{From codetemplates
+}
+
+Export sequencecode(args:seq.int, type:llvmtype, lastreg:int, template:boolean)recordcoderesult{From codetemplates
+}
+
+Export symboltableentry(name:seq.word, type:llvmtype)slot{From codetemplates}
+
+Export tollvmtype(typedict, symbol)llvmtype{From codetemplates}
+
+Export usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc{From codetemplates}
+
+Export constdata seq.slot{From persistant}
 
 Function conststype llvmtype array(-2, i64)
 
 Function profiletype llvmtype array(-3, i64)
-
-Export symboltableentry(name:seq.word, type:llvmtype)slot
-
-Export defines(steponeresult)seq.symdef
-
-Export type:steponeresult
-
-Export findtemplate(d:symbol)seq.match5
-
-Export length(match5)int{no of instruction that return results}
-
-Export action(match5)word
-
-Export arg(match5)int
-
-Export sym(match5)symbol
-
-Export firstvar(a:match5)int length.a
-
-Export brt(a:match5)int length.a
-
-Export brf(a:match5)int arg.a
-
-Export llvmtypelist(match5)seq.llvmtype
-
-Export usetemplate(t:match5, deltaoffset:int, argstack:seq.int)internalbc
-
-Export sequencecode(args:seq.int, type:llvmtype, lastreg:int, template:boolean)recordcoderesult
-
-Export regno(recordcoderesult)int
-
-Export bc(recordcoderesult)internalbc
-
-Export type:recordcoderesult
-
-Export recordcode(args:seq.int, types:seq.llvmtype, lastreg:int, template:boolean)recordcoderesult
-
-Export functype(m:match5)llvmtype
 
 Function stepone(alltypes:typedict, prgX:set.symdef, libname:word, isbase:boolean)steponeresult
 let discard1 = initmap5
@@ -91,7 +97,7 @@ for used = empty:seq.symbol, crecord = empty:seq.symdef, indefines = empty:seq.s
    symdef(firstsym
    , if isSequence.lastsym then[Lit.0, Lit.nopara.lastsym] + code >> 1
    else
-    assert isRecord.lastsym report"nnn" + print.code
+    assert isRecord.lastsym report"nnn" + %.code
     code >> 1
    , 0
    )
@@ -117,15 +123,16 @@ for used = empty:seq.symbol, crecord = empty:seq.symdef, indefines = empty:seq.s
   {not define in this library}
   let discard5 = call(alltypes, firstsym, "CALL"_1, mangledname(prgX, firstsym, libname))
   next(used, crecord, indefines)
-/for(let entrypointsym = 
- for entrypointsym = Lit.0, sd ∈ indefines do
-  let discard = declare(alltypes, prgX, sym.sd, libname)
-  if name.sym.sd ∈ "entrypoint"then sym.sd else entrypointsym
- /for(entrypointsym)
-let discard100 = uses(alltypes, asset.used, crecord, prgX, alltypes, libname)
-steponeresult(indefines
-, symboltableentry([mangledname(prgX, entrypointsym, libname)], function.[ptr.i64, i64, ptr.i64])
-))
+/for(
+ let entrypointsym = 
+  for entrypointsym = Lit.0, sd ∈ indefines do
+   let discard = declare(alltypes, prgX, sym.sd, libname)
+   if name.sym.sd ∈ "entrypoint"then sym.sd else entrypointsym
+  /for(entrypointsym)
+ let discard100 = uses(alltypes, asset.used, crecord, prgX, alltypes, libname)
+ steponeresult(indefines
+ , symboltableentry([mangledname(prgX, entrypointsym, libname)], function.[ptr.i64, i64, ptr.i64])
+ ))
 
 function declare(alltypes:typedict, prgX:set.symdef, ele2:symbol, libname:word)int
 let name = mangledname(prgX, ele2, libname)
@@ -166,29 +173,24 @@ for acc = empty:match5, ele ∈ toseq.used1 do
 
 type steponeresult is defines:seq.symdef, entrypoint:slot
 
-Export defines(steponeresult)seq.symdef
-
-Export entrypoint(steponeresult)slot
-
-Export type:steponeresult
-
-Export tollvmtype(typedict, symbol)llvmtype
-
 Function processconst(toprocess:seq.symdef, alltypes:typedict)int
 let initvalue = length.encodingdata:match5
 for notprocessed = empty:seq.symdef, xx ∈ toprocess do
  for args = empty:seq.int, defined = true, ele ∈ code.xx
  while defined
- do let tp = findtemplate.ele
- if isempty.tp then next(args, false)else next(args + arg.tp_1, true)
- /for(if defined then
-  let discard = addtemplate(sym.xx, 0, emptyinternalbc, "ACTARG"_1, slot.addobject.args)
-  notprocessed
- else notprocessed + xx /if)
-/for(if length.encodingdata:match5 = initvalue then
- assert isempty.notprocessed report"processconst problem"
- 0
-else processconst(notprocessed, alltypes)/if)
+ do
+  let tp = findtemplate.ele
+  if isempty.tp then next(args, false)else next(args + arg.tp_1, true)
+ /for(
+  if defined then
+   let discard = addtemplate(sym.xx, 0, emptyinternalbc, "ACTARG"_1, slot.addobject.args)
+   notprocessed
+  else notprocessed + xx)
+/for(
+ if length.encodingdata:match5 = initvalue then
+  assert isempty.notprocessed report"processconst problem"
+  0
+ else processconst(notprocessed, alltypes))
 
 Function internalidx(s:symbol)int
 let l = 
@@ -206,12 +208,12 @@ let l =
  , "/ real real"
  , "+real real"
  , "-real real"
- , "? real real"
+ , ">1 real real"
  , "* int int"
  , "/ int int"
  , "+int int"
  , "-int int"
- , "? int int"
+ , ">1 int int"
  , "> int int"
  , "=boolean boolean"
  , "=int int"
@@ -229,11 +231,11 @@ let l =
  , "set ptr real"
  , "set ptr ptr"
  ]
-let idx = findindex([name.s] + %(types.s >> 1), l)
+let idx = findindex(l, [name.s] + %(types.s >> 1))
 if idx ≤ length.l then idx + 1 else 1
 
-list of external calls"arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2 getbitfile2
- callstack createthread getmachineinfo currenttime allocatespace processisaborted addencoding getinstance"
+list of external calls"arcsin arccos sin tan cos sqrt createfile3 loadedLibs randomint getbytefile2 getbitfile2 callstack
+createthread getmachineinfo currenttime allocatespace processisaborted addencoding getinstance"
 
 Function mangledname(extname:set.symdef, s:symbol, library:word)word
 let b = getSymdef(extname, s)

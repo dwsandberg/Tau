@@ -4,17 +4,27 @@ use seq.T
 
 use standard
 
-unbound=(T, T)boolean
+Export type:pseq.T
 
-type seq is sequence, x:T
+Export a(pseq.T)seq.T
+
+Export b(pseq.T)seq.T
+
+Export start(a:pseq.T)int
 
 Export type:seq.T
 
-Builtin packed(s:seq.T)seq.T
+Export to:pseq.T(s:seq.T)pseq.T
 
 Export getseqtype(a:seq.T)int
 
 Export length(a:seq.T)int
+
+unbound=(T, T)boolean
+
+type seq is sequence, x:T
+
+Builtin packed(s:seq.T)seq.T
 
 Builtin empty:seq.T seq.T{empty seq}
 
@@ -32,16 +42,6 @@ Function lookup(s:seq.T, a:T)seq.T
 for found = empty:seq.T, e ∈ s while isempty.found do if a = e then found + e else found /for(found)
 
 ---------------------
-
-Export a(pseq.T)seq.T
-
-Export b(pseq.T)seq.T
-
-Export start(a:pseq.T)int
-
-Export to:pseq.T(s:seq.T)pseq.T
-
-Export type:pseq.T
 
 type pseq is sequence, a:seq.T, b:seq.T, start:int
 

@@ -14,6 +14,10 @@ use stack.seq.word
 
 use stack.word
 
+Export type:UTF8{From UTF8}
+
+Export towords(UTF8)seq.word{From textio}
+
 Function getheader(s:seq.word)seq.word
 let istype = subseq(s, 1, 3) = "Export type:"
 let start = 0
@@ -27,23 +31,24 @@ let unknown = -7
 let theend = 
  for state = 0, idx = 1, ele ∈ s
  while state ≤ 0
- do next(if state > 0 then state
- else if state = start then startname
- else if state = startname then extendname
- else if state = extendname then
-  if ele ∈ ":."then startname
-  else if istype then idx - 1
-  else if ele ∈ "("then findend else extendtype
- else if state = findend then if ele ∈ ")"then extendtype2 else findend
- else if state = extendtype then
-  if ele ∈ "."then extendtype2
-  else if ele ∈ "//"then incomment else{done}idx - 1
- else if state = extendtype2 then extendtype
- else if state = incomment then if ele ∈ "//"then extendtype else incomment
- else unknown
- , idx + 1
- )
- /for(if state < 1 then length.s else state /if)
+ do
+  next(if state > 0 then state
+  else if state = start then startname
+  else if state = startname then extendname
+  else if state = extendname then
+   if ele ∈ ":."then startname
+   else if istype then idx - 1
+   else if ele ∈ "("then findend else extendtype
+  else if state = findend then if ele ∈ ")"then extendtype2 else findend
+  else if state = extendtype then
+   if ele ∈ "."then extendtype2
+   else if ele ∈ "//"then incomment else{done}idx - 1
+  else if state = extendtype2 then extendtype
+  else if state = incomment then if ele ∈ "//"then extendtype else incomment
+  else unknown
+  , idx + 1
+  )
+ /for(if state < 1 then length.s else state)
 if istype then
  let tt = subseq(s, 4, theend)
  subseq(s, 1, theend) + "(" + tt + ")" + tt + "stub"
@@ -73,8 +78,7 @@ let newresult =
   if this = matchthis then result + this + " />"else result + this
  else if c = 0 then
   result
-  + if this ∈ dq then"
-    /< literal"else" /br  /< comment"/if
+  + if this ∈ dq then" /< literal"else" /br  /< comment"/if
   + this
  else if c = 1 then
   if lastbreak > 20 then result + " /br"else result /if
@@ -169,7 +173,7 @@ for result = x, stk = empty:stack.seq.word, last = none, this ∈ a + space do
    isempty.toseqbyte.result
    ∨ toint.last.toseqbyte.result ∈ [10, 32, 34, 40, 41, 43, 45, 46, 58, 61, 91, 93, 94, 95, 123, 125]
   next(result + toUTF8([last], HTMLformat, nospace), stk, this)
-/for(if last = none then result else result + [last]/if)
+/for(if last = none then result else result + [last])
 
 Function textformat(a:seq.word)UTF8
 let none = merge."+NONE"
@@ -197,11 +201,7 @@ for needsLF = false, result = emptyUTF8, stk = empty:stack.word, last = none, th
  else if last = " /p"_1 then next(true, result + char.10 + char.10, stk, this)
  else if last = space then next(needsLF, result + [space], stk, this)
  else next(true, result + [last], stk, this)
-/for(if last = none then result else result + [last]/if)
-
-Export type:UTF8
-
-Export towords(UTF8)seq.word
+/for(if last = none then result else result + [last])
 
 function chrs(s:seq.word)seq.char decodeword.s_1
 

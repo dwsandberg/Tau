@@ -14,31 +14,43 @@ use set.symbol
 
 use set.symdef
 
+Export type:bindinfo
+
+Export code(bindinfo)seq.symbol
+
+Export dict(bindinfo)symboldict
+
+Export tokentext(bindinfo)seq.word
+
+Export types(bindinfo)seq.mytype
+
+Export bindinfo(dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word)bindinfo
+
 Export type:commoninfo
 
-Export types(commoninfo)set.mytype
-
-Export modname(commoninfo)modref
+Export input(commoninfo)seq.word
 
 Export lib(commoninfo)word
 
 Export mode(commoninfo)word
 
-Export input(commoninfo)seq.word
+Export modname(commoninfo)modref
+
+Export types(commoninfo)set.mytype
 
 Export commoninfo(input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word)commoninfo
+
+Export type:symboldict
+
+Export asset(symboldict)set.symbol
+
+Export symboldict(asset:set.symbol, requires:set.symdef, commonX:seq.commoninfo)symboldict
 
 type commoninfo is input:seq.word, modname:modref, lib:word, types:set.mytype, mode:word
 
 Function lookupbysig(dict:symboldict, sym:symbol)set.symbol findelement2(asset.dict, sym)
 
 type symboldict is asset:set.symbol, requires:set.symdef, commonX:seq.commoninfo
-
-Export symboldict(asset:set.symbol, requires:set.symdef, commonX:seq.commoninfo)symboldict
-
-Export type:symboldict
-
-Export asset(symboldict)set.symbol
 
 Function symboldict(d:set.symbol, common:seq.commoninfo)symboldict symboldict(d, empty:set.symdef, common)
 
@@ -63,16 +75,4 @@ Function ∪(d:symboldict, s:set.symbol)symboldict symboldict(asset.d ∪ s, req
 
 Function cardinality(d:symboldict)int cardinality.asset.d
 
-Export type:bindinfo
-
-type bindinfo is dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word
-
-Export dict(bindinfo)symboldict
-
-Export code(bindinfo)seq.symbol
-
-Export types(bindinfo)seq.mytype
-
-Export tokentext(bindinfo)seq.word
-
-Export bindinfo(dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word)bindinfo 
+type bindinfo is dict:symboldict, code:seq.symbol, types:seq.mytype, tokentext:seq.word 

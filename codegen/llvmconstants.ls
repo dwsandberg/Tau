@@ -2,8 +2,8 @@ Module llvmconstants
 
 enumerationtype=align data=unspecified ? ? ? align8 align16 align32 align64
 
-enumerationtype=instop data=? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ?
- ? ? ? ? ? GEP STORE
+enumerationtype=instop data=? BLOCK BINOP CAST ? SELECT ? ? ? ? RET BR ? ? ? ? PHI ? ? ALLOCA LOAD ? ? ? ? ? ? ? CMP2 ? ? ? ? ? CALL ? ? ? ?
+? ? ? ? GEP STORE
 
 enumerationtype=typeop data=? NumEle TVOID ? DOUBLE ? OPAQUE INTEGER POINTER ? ? ARRAY ? ? ? ? ? ? ? ? ? FUNCTION
 
@@ -11,8 +11,8 @@ enumerationtype=blockop data=INFOBLOCK ? ? ? ? ? ? ? MODULE PARA PARAGRP CONSTAN
 
 enumerationtype=moduleop data=? Version TRIPLE LAYOUT ? ? ? GLOBALVAR FUNCTIONDEC
 
-enumerationtype=constop data=? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0
- CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA
+enumerationtype=constop data=? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP
+CCAST ? ? ? ? ? ? ? ? CGEP ? CDATA
 
 enumerationtype=castop data=trunc zext sext fptoui fptosi uitofp sitofp fptrunc fpext ptrtoint inttoptr bitcast
 
@@ -241,8 +241,8 @@ let discard =
 let i = toint.code
 if between(i + 1, 1, 23)then
  let r = 
-  ["? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP ?
-    CDATA"
+  ["? SETTYPE CNULL CUNDEF CINTEGER CWIDEINTEGER CFLOAT CAGGREGATE CSTRING2 CSTRING0 CBINOP CCAST ? ? ? ? ? ? ? ? CGEP
+   ? CDATA"
   _(i + 1)
   ]
  if r ≠ "?"then r else"constop." + toword.i

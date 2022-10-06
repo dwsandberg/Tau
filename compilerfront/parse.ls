@@ -22,11 +22,11 @@ use set.symbol
 
 use symboldict
 
-Export getheader(s:seq.word)seq.word
+Export getheader(s:seq.word)seq.word{From format}
+
+Export type:bindinfo{From symboldict}
 
 function fixNM(t:seq.word)seq.word if length.t = 1 then t else[t_1, ":"_1] + t << 1
-
-Export type:bindinfo
 
 function forward(stk:bindinfo, token:bindinfo)bindinfo
 bindinfo(dict.stk, empty:seq.symbol, empty:seq.mytype, tokentext.token)
@@ -74,9 +74,7 @@ if length.funcname > 1 then
 else bindinfo(dict.R, code.exp, paralist + returntype, funcname)
 
 function errormessage(message:seq.word, common:commoninfo, place:int)seq.word
-"
-  /< literal" + message + " />" + %.modname.common
-+ prettynoparse.subseq(input.common, 1, place)
+errormessage:bindinfo(message, {+%.modname.common, }input.common, place)
 
 function addparameters(b:bindinfo, common:commoninfo, place:int)bindinfo
 let flds = 
@@ -267,10 +265,10 @@ let newcode =
 bindinfo(dict, newcode, [resulttype], "")
 
 function action(ruleno:int, dupinput:seq.word, place:int, R:reduction.bindinfo)bindinfo
-{Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 P T L D E FP A F
-  F1 G NM X}
-{RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for | E if E
-  then E else E /if | /if | E if E then E else E | E assert E report D E | A W=E | E let A E | D E |}
+{Alphabet.=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 P T
+ L D E FP A F F1 G NM X}
+{RulePrecedence |(| E NM | E comment E | E E_E |_| E W.E | E E * E | E-E | * | E E-E |-| E E > E | E E=E |=| > | E E ∧ E | ∧ | E E ∨ E | ∨ | /for
+ | E if E then E else E /if | /if | E if E then E else E | E assert E report D E | A W=E | E let A E | D E |}
 let common = common.dict.R
 if ruleno = {G F #}1 then R_1
 else if ruleno = {F W NM(FP)T E}2 then createfunc(R, common, place, tokentext.R_2, types.R_4, R_6, R_7)

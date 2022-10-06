@@ -8,11 +8,11 @@ use ptr
 
 use standard
 
-Export type:seq.T
+builtin getfld(address:blockseq.T, offset:int)seq.T{load value of type T at address}
 
 Export type:blockseq.T
 
-builtin getfld(address:blockseq.T, offset:int)seq.T{load value of type T at address}
+Export type:seq.T{From seq.T}
 
 unbound set(ptr, T)ptr
 

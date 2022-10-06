@@ -6,6 +6,12 @@ use seq.byte
 
 use standard
 
+Export type:decoderesult
+
+Export next(decoderesult)int
+
+Export value(decoderesult)int
+
 Function testLEB seq.word
 let r = 
  [tobyte.127, tobyte.128, tobyte.1, tobyte.128, tobyte.128
@@ -21,14 +27,15 @@ let ok =
  for acc = empty:seq.byte, i ∈[0, 1, 2, 3, 4, 5, 6, 7]do
   let val = toint(tobits.i << 61)
   acc + LEBs.val + LEBu.val
- /for(for ok = "", next = 1, j ∈[0, 1, 2, 3, 4, 5, 6, 7]do
-  let t = decodeLEBs(acc, next)
-  let tu = decodeLEBu(acc, next.t)
-  next(if value.t = toint(tobits.j << 61) ∧ value.tu = toint(tobits.j << 61)then ok
-  else ok + " /br" + toword.j + print.tobits.value.t + print(tobits.j << 61)
-  , next.tu
-  )
- /for(ok))
+ /for(
+  for ok = "", next = 1, j ∈[0, 1, 2, 3, 4, 5, 6, 7]do
+   let t = decodeLEBs(acc, next)
+   let tu = decodeLEBu(acc, next.t)
+   next(if value.t = toint(tobits.j << 61) ∧ value.tu = toint(tobits.j << 61)then ok
+   else ok + " /br" + toword.j + %.tobits.value.t + %(tobits.j << 61)
+   , next.tu
+   )
+  /for(ok))
 let val1 = -4618090677529464034
 if LEBu.127 + LEBu.128 + LEBu.2^16 + LEBu.624485 + LEBs.127 + LEBs.-123456 = r
 ∧ for acc = empty:seq.int, @e ∈[d1, d2, d3, d4, d5, d6]do acc + value.@e /for(acc)
@@ -57,19 +64,15 @@ Function decodeLEBs(a:seq.byte, i:int)decoderesult decodeLEB2(a, i, tobits.64)
 function decodeLEB2(a:seq.byte, i:int, signbit:bits)decoderesult
 for acc = 0x0, lastbyte = 0x80, j ∈[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 while(lastbyte ∧ 0x80) ≠ 0x0
-do let byte = tobits.a_(i + j)
-next(acc ∨ (byte ∧ 0x7F) << (j * 7), byte)
-/for(let value = 
- if(lastbyte ∧ signbit) = 0x0 ∨ j = 10 then acc else acc ∨ tobits.-1 << (j * 7)
-decoderesult(toint.value, i + j))
+do
+ let byte = tobits.a_(i + j)
+ next(acc ∨ (byte ∧ 0x7F) << (j * 7), byte)
+/for(
+ let value = 
+  if(lastbyte ∧ signbit) = 0x0 ∨ j = 10 then acc else acc ∨ tobits.-1 << (j * 7)
+ decoderesult(toint.value, i + j))
 
 type decoderesult is value:int, next:int
-
-Export type:decoderesult
-
-Export value(decoderesult)int
-
-Export next(decoderesult)int
 
 function decodeLEB(a:seq.byte, i:int, result:bits, shift:int)decoderesult
 let byte = tobits.a_i

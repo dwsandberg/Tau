@@ -43,15 +43,17 @@ for outer = empty:seq.arc.symbol, p ∈ s do
 function removesinks(sinkstokeep:set.symbol, g:graph.symbol, toprocess:seq.symbol)seq.arc.symbol
 {removes sinks that are not unbound and parameter of module is typeT}
 {do a transitiveClosure and only keep arcs whose head is a sink}
-{looking for relation of function to the unbound functions it can call.This are not quite yet that relation. }
+{looking for relation of function to the unbound functions it can call.This are not quite yet that relation. 
+ }
 for keep = sinkstokeep, pred = empty:set.symbol, g2 = g, n ∈ toprocess do
  if isunbound.n ∨ para.module.n ≠ typeT then next(keep + n, pred, g2)
  else next(keep, pred ∪ predecessors(g2, n), deletenode(g2, n))
-/for(let newsinks = 
- for acc = empty:seq.symbol, p ∈ toseq.pred do if outdegree(g, p) = 0 then acc + p else acc /for(acc)
-if isempty.newsinks then
- for acc = empty:seq.arc.symbol, a ∈ toseq.arcs.transitiveClosure.g2 do if head.a ∈ keep then acc + a else acc /for(acc)
-else removesinks(keep, g2, newsinks)/if)
+/for(
+ let newsinks = 
+  for acc = empty:seq.symbol, p ∈ toseq.pred do if outdegree(g, p) = 0 then acc + p else acc /for(acc)
+ if isempty.newsinks then
+  for acc = empty:seq.arc.symbol, a ∈ toseq.arcs.transitiveClosure.g2 do if head.a ∈ keep then acc + a else acc /for(acc)
+ else removesinks(keep, g2, newsinks))
 
 Function compile(allmods:set.passsymbols
 , modlist:set.passsymbols
@@ -102,15 +104,18 @@ let a = getheader.s
 if subseq(s, length.a, length.a + 1) = "{OPTION"then
  for acc = "", w ∈ subseq(s, length.a + 2, length.s)
  while w ∉ "{}"
- do if w ∈ "PROFILE STATE COMPILETIME NOINLINE INLINE"then acc + w else acc
- /for(if isempty.s then code else addoption(code, acc)/if)
+ do
+  if w ∈ "PROFILE STATE COMPILETIME NOINLINE INLINE"then acc + w else acc
+ /for(if isempty.s then code else addoption(code, acc))
 else code
 
 Function buildrequires(prg:seq.symdef)set.symdef
 let g3 = newgraph.abstractarcs.prg
-{graph g3 has three kinds of sinks.1:is unbound and module parameter is T 2:is not unbound and module parameter is T 3:
-  module parameter is not T examples:otherseq.T:=(T, T)boolean ; otherseq.T:step(arithmeticseq.T)T ; otherseq.
-  sparseele.T:binarysearch(seq.sparseele.T)}
+{graph g3 has three kinds of sinks.
+  /br 1:is unbound and module parameter is T
+  /br 2:is not unbound and module parameter is T
+  /br 3:module parameter is not T examples:otherseq.T:=(T, T)boolean ; otherseq.T:step(arithmeticseq.T)T ; otherseq
+ .sparseele.T:binarysearch(seq.sparseele.T)}
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)
 {change many-to-one relation defined by arcs in g4 into format of set.symdef}
@@ -123,7 +128,7 @@ else
    if last ≠ tail.a then if isempty.list then acc else acc + symdef(last, list, 0)
    else acc
   next(newacc, tail.a, newlist)
- /for(if isempty.list then acc else acc + symdef(last, list, 0)/if)
+ /for(if isempty.list then acc else acc + symdef(last, list, 0))
 
 Function prescan2(s:seq.symdef)seq.symdef
 {removes name from locals and change length and getseqtype to GetSeqLength and GetSeqType}

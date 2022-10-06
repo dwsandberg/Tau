@@ -10,8 +10,9 @@ type myseq is sequence, data:seq.T
 
 Export type:myseq.T
 
-All sequences must have the first element representing the length of the seqence.As with any parameterized scope any type 
-must contain a element that use the parameter so that mutiple instances of the scope do not produce duplicate symbols.
+All sequences must have the first element representing the length of the seqence.As with any parameterized scope any
+ type must contain a element that use the parameter so that mutiple instances of the scope do not produce duplicate
+ symbols.
 
 We need some operations on T.T will be an int in this example so all these operations are define on int in Module standard.
 

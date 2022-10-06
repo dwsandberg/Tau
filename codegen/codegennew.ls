@@ -34,6 +34,10 @@ use seq.localmap
 
 use seq.match5
 
+use seq.modref
+
+use set.modref
+
 use mytype
 
 use seq.mytype
@@ -58,11 +62,13 @@ use symbol2
 
 use set.symdef
 
+use otherseq.typedef
+
 use seq.seq.word
 
-use seq.encoding.word3
-
 use encoding.word3
+
+use seq.encoding.word3
 
 Function compilerback(m:midpoint, baselibwords:seq.seq.char, outname:filename)seq.file
 {OPTION PROFILE}
@@ -80,10 +86,11 @@ for profilearcs = empty:set.seq.symbol, addresses = empty:seq.symbol, sd ∈ tos
   else profilearcs
   , addresses + sym.sd
   )
-/for(let s2 = 
- for acc = empty:seq.symbol, p ∈ toseq.profilearcs do acc + p /for(asset.acc \ asset.addresses)
-assert isempty.s2 report"profile arcs problem"
-codegen(m, baselibwords, profilearcs, addresses, outname))
+/for(
+ let s2 = 
+  for acc = empty:seq.symbol, p ∈ toseq.profilearcs do acc + p /for(asset.acc \ asset.addresses)
+ assert isempty.s2 report"profile arcs problem"
+ codegen(m, baselibwords, profilearcs, addresses, outname))
 
 function parcsize int 6
 
@@ -96,21 +103,16 @@ let baselib = if isempty.uses then libname else last.uses
 let typedict = typedict.m
 let isbase = isempty.uses
 for acc = empty:set.symdef, sd ∈ toseq.prg.m do
- for acc2 = empty:seq.symbol, sy ∈ code.sd do acc2 + clearrequiresbit.replacestar(sy, baselib, libname)/for(acc
- + symdef({clearrequiresbit.}replacestar(sym.sd, baselib, libname)
- , acc2
- , if isInternal.sym.sd then-internalidx.sym.sd
- else if library.module.sym.sd ∈ "*"then abs.paragraphno.sd else paragraphno.sd
- ))
+ for acc2 = empty:seq.symbol, sy ∈ code.sd do
+  acc2 + clearrequiresbit.replacestar(sy, baselib, libname)
+ /for(
+  acc
+  + symdef({clearrequiresbit.}replacestar(sym.sd, baselib, libname)
+  , acc2
+  , if isInternal.sym.sd then-internalidx.sym.sd
+  else if library.module.sym.sd ∈ "*"then abs.paragraphno.sd else paragraphno.sd
+  ))
 /for(midpoint("X", acc, templates.m, typedict.m, libmods.m, src.m))
-
-use seq.modref
-
-use set.modref
-
-use mytype
-
-use otherseq.typedef
 
 Function codegen(m:midpoint
 , baselibwords:seq.seq.char
@@ -141,7 +143,10 @@ let stacktracesymbol = symbol(moduleref(stacktraceinfo >> 1), stacktraceinfo << 
 let bodies = 
  for acc = empty:seq.internalbc, @e ∈ defines do
   let internalbody = 
-   for acc2 = empty:seq.symbol, e9 ∈ arithseq(nopara.sym.@e, 1, 1)do acc2 + Local.e9 /for(acc2 + if name.sym.@e ∈ "stacktrace"then stacktracesymbol else sym.@e /if)
+   for acc2 = empty:seq.symbol, e9 ∈ arithseq(nopara.sym.@e, 1, 1)do
+    acc2 + Local.e9
+   /for(
+    acc2 + if name.sym.@e ∈ "stacktrace"then stacktracesymbol else sym.@e)
   acc
   + addfuncdef(geninfo
   , if isInternal.sym.@e then symdef(sym.@e, internalbody, paragraphno.@e)else @e
@@ -301,7 +306,7 @@ if action = "CALL"_1 then
  let args = top(args.l, noargs)
  let idx = 
   if not.profile.geninfo then 1 + cardinality.profilearcs.geninfo
-  else findindex([caller, s], toseq.profilearcs.geninfo)
+  else findindex(toseq.profilearcs.geninfo, [caller, s])
  if idx > cardinality.profilearcs.geninfo then
   let c = usetemplate(m, regno.l, empty:seq.int) + CALLFINISH(regno.l + 1, [-1] + args)
   Lcode2(code.l + c
@@ -313,9 +318,9 @@ if action = "CALL"_1 then
   )
  else profilecall(l, args, m, idx, mangledname(extnames.geninfo, sym.m, libname.geninfo))
 else
- {if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty:seq
-   .int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs), 
-   -(regno.l+1)), blocks.l)else}
+ {if action="CALLE"_1 then let noargs=arg.m let args=top(args.l, noargs)let c=usetemplate(m, regno.l, empty
+  :seq.int)+CALLFINISH(regno.l+1, args)Lcode2(code.l+c, lmap.l, noblocks.l, regno.l+1, push(pop(args.l, noargs
+  ), -(regno.l+1)), blocks.l)else}
  if action = "ACTARG"_1 then
   Lcode2(code.l, lmap.l, noblocks.l, regno.l, push(args.l, arg.m), blocks.l)
  else if action = "LOCAL"_1 then
@@ -439,14 +444,15 @@ else
 
 function profiledata(decode:seq.symbol, profilearcs:set.seq.symbol, symlist:seq.int)seq.slot
 for acc = [C64.1, C64.cardinality.profilearcs], a ∈ toseq.profilearcs do
- let tail = findindex(a_1, decode)
- let head = findindex(a_2, decode)
- assert tail > 0 ∧ head > 0 ∧ head ≤ length.decode ∧ tail ≤ length.decode report"CCC" + print.a
+ let tail = findindex(decode, a_1)
+ let head = findindex(decode, a_2)
+ assert tail > 0 ∧ head > 0 ∧ head ≤ length.decode ∧ tail ≤ length.decode report"CCC" + %.a
  acc + [C64.tail, C64.head, C64.0, C64.0, C64.0, C64.0]
 /for(acc)
 
 function buildargcode(l:seq.llvmtype)int
-{needed because the call interface implementation for reals is different than other types is some implementations}
+{needed because the call interface implementation for reals is different than other types is some implementations
+ }
 for acc = 1, typ ∈ l do acc * 2 + if typ.typ = typ.double then 1 else 0 /for(acc)
 
 function countnodes(s:stack.Lcode2)int if top.args.top.s ∈ [55, 2]then 1 else 1 + countnodes.pop.s

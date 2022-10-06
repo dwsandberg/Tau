@@ -14,15 +14,15 @@ use standard
 
 use set.word
 
+Export type:reduction.T
+
+Export type:token.T
+
 type token is w:word, tokenno:int, attribute:T
 
 type stkele is stateno:int, attribute:T
 
 type reduction is toseq:seq.stkele.T
-
-Export type:reduction.T
-
-Export type:token.T
 
 unbound attribute:T(seq.word)T
 
@@ -32,7 +32,7 @@ unbound text(T)seq.word
 
 unbound forward(stk:T, T)T
 
-Function ?(a:token.T, b:token.T)ordering w.a ? w.b
+Function >1(a:token.T, b:token.T)ordering w.a >1 w.b
 
 Function =(a:token.T, b:token.T)boolean w.a = w.b
 
@@ -41,14 +41,13 @@ Function _(r:reduction.T, n:int)T attribute.(toseq.r)_n
 Function last(r:reduction.T)T attribute.(toseq.r)_(length.toseq.r)
 
 Function errormessage:T(message:seq.word, input:seq.word, place:int)seq.word
-let m = "
-  /< literal" + message + " />"
+let m = " /< literal" + message + " />"
 m + " /br  /br" + prettynoparse.subseq(input, 1, place) + " /br" + m
 
 Function parse:T(initial:T, lextable:seq.token.T, input:seq.word)T
-let stringtoken = findindex("$wordlist"_1, tokenlist:T)
-let commenttoken = findindex("comment"_1, tokenlist:T)
-let codeinstringtoken = findindex("wl"_1, tokenlist:T)
+let stringtoken = findindex(tokenlist:T, "$wordlist"_1)
+let commenttoken = findindex(tokenlist:T, "comment"_1)
+let codeinstringtoken = findindex(tokenlist:T, "wl"_1)
 let codein = {code in string literal}4
 let codeout = {code outside of string literal}1
 let instring = 2
@@ -61,67 +60,69 @@ for lrpart = push(empty:stack.stkele.T, stkele(startstate:T, initial))
 , stk = empty:stack.int
 , this ∈ input + "#"
 while stateno.top.lrpart ≠ finalstate:T
-do assert not(this ∈ "}" ∧ state = 1)report errormessage:T("stray}", input, idx)
-if state = codeout ∧ this ∉ (dq + "{")
-∨ state = codein ∧ this ∉ dq ∧ not(this ∈ ")" ∧ nestlevel - 1 = 0)then
- let lexindex = binarysearch(lextable, token(this, 0, attribute:T("")))
- let newlrpart = 
-  if lexindex < 0 then
-   {next is not in lex table}
-   let kind = checkinteger.this
-   assert kind ≠ "ILLEGAL"_1 report"Illegal character in Integer" + this
-   step(lrpart
-   , input
-   , attribute:T([this])
-   , if kind = "WORD"_1 then Wtoken:T else Itoken:T
-   , idx
-   )
-  else
-   let tok = lextable_lexindex
-   step(lrpart, input, attribute.tok, tokenno.tok, idx)
- let newnest = 
-  if this ∈ "("then nestlevel + 1
-  else if this ∈ ")"then nestlevel - 1 else nestlevel
- next(newlrpart, state, idx, newnest, idx + 1, stk)
-else if state = codeout then
- if this ∈ "{"then next(lrpart, incomment, idx, 1, idx + 1, stk)
- else{dq}next(lrpart, instring, idx, nestlevel, idx + 1, stk)
-else if state = codein then
- if this ∈ ")"then next(lrpart, instring, idx, top.stk, idx + 1, pop.stk)
- else{dq}next(lrpart, instring, idx, nestlevel, idx + 1, stk)
-else
- let kind = 
-  if state = instring ∧ this ∈ "(" ∧ input_(idx - 1) = "$"_1 then codeinstringtoken
-  else if state = instring ∧ this ∈ dq then stringtoken
-  else if state = incomment ∧ this ∈ "}" ∧ nestlevel = 1 then commenttoken else 0
- let newlrpart = 
-  if kind = 0 then lrpart
-  else
-   step(lrpart
-   , input
-   , attribute:T(subseq(input, last, if kind = codeinstringtoken then idx - 1 else idx))
-   , {tokenno}kind
-   , idx
-   )
- if kind = commenttoken then next(newlrpart, codeout, idx, nestlevel - 1, idx + 1, stk)
- else if kind = codeinstringtoken then next(newlrpart, codein, idx, 1, idx + 1, push(stk, nestlevel))
- else if kind = stringtoken then
-  next(newlrpart
-  , if isempty.stk then codeout else codein
-  , idx
-  , nestlevel
-  , idx + 1
-  , stk
-  )
+do
+ assert not(this ∈ "}" ∧ state = 1)report errormessage:T("stray}", input, idx)
+ if state = codeout ∧ this ∉ (dq + "{")
+ ∨ state = codein ∧ this ∉ dq ∧ not(this ∈ ")" ∧ nestlevel - 1 = 0)then
+  let lexindex = binarysearch(lextable, token(this, 0, attribute:T("")))
+  let newlrpart = 
+   if lexindex < 0 then
+    {next is not in lex table}
+    let kind = checkinteger.this
+    assert kind ≠ "ILLEGAL"_1 report"Illegal character in Integer" + this
+    step(lrpart
+    , input
+    , attribute:T([this])
+    , if kind = "WORD"_1 then Wtoken:T else Itoken:T
+    , idx
+    )
+   else
+    let tok = lextable_lexindex
+    step(lrpart, input, attribute.tok, tokenno.tok, idx)
+  let newnest = 
+   if this ∈ "("then nestlevel + 1
+   else if this ∈ ")"then nestlevel - 1 else nestlevel
+  next(newlrpart, state, idx, newnest, idx + 1, stk)
+ else if state = codeout then
+  if this ∈ "{"then next(lrpart, incomment, idx, 1, idx + 1, stk)
+  else{dq}next(lrpart, instring, idx, nestlevel, idx + 1, stk)
+ else if state = codein then
+  if this ∈ ")"then next(lrpart, instring, idx, top.stk, idx + 1, pop.stk)
+  else{dq}next(lrpart, instring, idx, nestlevel, idx + 1, stk)
  else
-  {in string or comment. }
-  let nest = 
-   if state = instring then nestlevel
-   else if this ∈ "{"then nestlevel + 1
-   else if this ∈ "}"then nestlevel - 1 else nestlevel
-  next(lrpart, state, last, nest, idx + 1, stk)
-/for(assert state = 1 report errormessage:T("missing string terminator", input, last)
-attribute.undertop(lrpart, 1))
+  let kind = 
+   if state = instring ∧ this ∈ "(" ∧ input_(idx - 1) = "$"_1 then codeinstringtoken
+   else if state = instring ∧ this ∈ dq then stringtoken
+   else if state = incomment ∧ this ∈ "}" ∧ nestlevel = 1 then commenttoken else 0
+  let newlrpart = 
+   if kind = 0 then lrpart
+   else
+    step(lrpart
+    , input
+    , attribute:T(subseq(input, last, if kind = codeinstringtoken then idx - 1 else idx))
+    , {tokenno}kind
+    , idx
+    )
+  if kind = commenttoken then next(newlrpart, codeout, idx, nestlevel - 1, idx + 1, stk)
+  else if kind = codeinstringtoken then next(newlrpart, codein, idx, 1, idx + 1, push(stk, nestlevel))
+  else if kind = stringtoken then
+   next(newlrpart
+   , if isempty.stk then codeout else codein
+   , idx
+   , nestlevel
+   , idx + 1
+   , stk
+   )
+  else
+   {in string or comment. }
+   let nest = 
+    if state = instring then nestlevel
+    else if this ∈ "{"then nestlevel + 1
+    else if this ∈ "}"then nestlevel - 1 else nestlevel
+   next(lrpart, state, last, nest, idx + 1, stk)
+/for(
+ assert state = 1 report errormessage:T("missing string terminator", input, last)
+ attribute.undertop(lrpart, 1))
 
 function step(stk:stack.stkele.T, input:seq.word, attrib:T, tokenno:int, place:int)stack.stkele.T
 let stateno = stateno.top.stk
@@ -142,7 +143,7 @@ else
  let rulelen = rulelength:T_ruleno
  let newstk = pop(stk, rulelen)
  let newstateno = actiontable:T_(leftside:T_ruleno + length.tokenlist:T * stateno.top.newstk)
- assert newstateno > 0 report"????"
+ assert newstateno > 0 report"???"
  let newstkele = stkele(newstateno, action(ruleno, input, place, reduction.top(stk, rulelen)))
  step(push(newstk, newstkele), input, attrib, tokenno, place)
 
@@ -176,7 +177,6 @@ function lextable:T seq.token.T
 , token(", "_1, 12, attribute:T(", "))
 , token("-"_1, 8, attribute:T("-"))
 , token("."_1, 1, attribute:T("."))
-, token(". "_1, 1, attribute:T("."))
 , token("/"_1, 10, attribute:T("/"))
 , token("/for"_1, 29, attribute:T("/for"))
 , token("/if"_1, 15, attribute:T("/if"))
@@ -187,6 +187,8 @@ function lextable:T seq.token.T
 , token("<<"_1, 10, attribute:T("<<"))
 , token("="_1, 2, attribute:T("="))
 , token(">"_1, 6, attribute:T(">"))
+, token(">1"_1, 6, attribute:T(">1"))
+, token(">2"_1, 6, attribute:T(">2"))
 , token(">>"_1, 10, attribute:T(">>"))
 , token("?"_1, 6, attribute:T("?"))
 , token("Function"_1, 30, attribute:T("Function"))
@@ -253,7 +255,8 @@ function leftside:T seq.int
 , 39, 38, 34, 34, 39]
 
 function tokenlist:T seq.word
-".=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 X P T L D E FP A F F1 G NM"
+".=():>]-for * comment, [_/if is I if # then else let assert report ∧ ∨ $wordlist while /for W do wl F2 X P T L D E FP A F
+ F1 G NM"
 
 function startstate:T int 1
 

@@ -20,17 +20,25 @@ use seq.slotrecord
 
 use standard
 
-Export type:llvmtypeele
+Export slot(int)slot
+
+Export type:llvmconst
 
 Export type:llvmtype
 
-Export type:llvmconst
+Export typ(llvmtype)int
+
+Export type:llvmtypeele
+
+Export type:slot
+
+Export toint(slot)int
+
+Export type:slotrecord
 
 type llvmtypeele is toseq:seq.int
 
 type llvmtype is typ:int
-
-Export typ(llvmtype)int
 
 function asseq(t:llvmtype)seq.int toseq.decode.to:encoding.llvmtypeele(typ.t + 1)
 
@@ -44,16 +52,16 @@ function hash(a:llvmtypeele)int hash.toseq.a
 
 function =(a:llvmtypeele, b:llvmtypeele)boolean toseq.a = toseq.b
 
-Function print(t:llvmtype)seq.word
+Function %(t:llvmtype)seq.word
 let a = asseq.t
 let tp = typeop.a_1
 let b = for acc = empty:seq.llvmtype, @e ∈ a do acc + inttollvmtype.@e /for(acc)
 if tp = INTEGER then[merge("i" + toword.a_2)]
-else if tp = ARRAY then"array(" + toword.a_2 + ", " + print.b_3 + ")"
-else if tp = POINTER then"ptr." + print.b_2
+else if tp = ARRAY then"array(" + toword.a_2 + ", " + %.b_3 + ")"
+else if tp = POINTER then"ptr." + %.b_2
 else if tp = FUNCTION then
  "function("
- + for acc = "", @e ∈ subseq(b, 3, length.a)do acc + print.@e + ", "/for(acc >> 1)
+ + for acc = "", @e ∈ subseq(b, 3, length.a)do acc + %.@e + ", "/for(acc >> 1)
  + ")"
 else if tp = TVOID then"VOID"
 else if tp = DOUBLE then"double"else"?"
@@ -147,8 +155,6 @@ for acc = empty:seq.slotrecord, @e ∈ encodingdata:llvmconst do acc + slotrecor
 
 type slotrecord is tollvmconst:llvmconst
 
-Export type:slotrecord
-
 Function record(b:slotrecord)seq.int
 let a = tollvmconst.b
 if typ.a = -1 then{name comes before record}subseq(toseq.a, 2 + (toseq.a)_1, length.toseq.a)
@@ -169,11 +175,5 @@ inttollvmtype.if typ.l = -1 then({must skip name to find record}toseq.l)_(3 + (t
 else if typ.l = -3 then(toseq.l)_2 else typ.l
 
 type slot is toint:int
-
-Export toint(slot)int
-
-Export slot(int)slot
-
-Export type:slot
 
 Function r(a:int)slot slot.-a 

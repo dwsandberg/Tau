@@ -52,20 +52,20 @@ function =(a:state, b:state)boolean toset.a = toset.b
 
 function =(a:dottedrule, b:dottedrule)boolean rule.a = rule.b ∧ place.a = place.b
 
-function ?(a:dottedrule, b:dottedrule)ordering rule.a ? rule.b ∧ place.a ? place.b
+function >1(a:dottedrule, b:dottedrule)ordering rule.a >1 rule.b ∧ place.a >1 place.b
 
 function hash(p:dottedrule)int hash.rule.p + place.p
 
 function =(a:action, b:action)boolean lookahead.a = lookahead.b ∧ stateno.a = stateno.b
 
-function ?(a:action, b:action)ordering lookahead.a ? lookahead.b ∧ stateno.a ? stateno.b
+function >1(a:action, b:action)ordering lookahead.a >1 lookahead.b ∧ stateno.a >1 stateno.b
 
 type action2 is toaction:action
 
-function ?(a1:action2, b1:action2)ordering
+function >1(a1:action2, b1:action2)ordering
 let a = toaction.a1
 let b = toaction.b1
-stateno.a ? stateno.b ∧ codedaction.a ? codedaction.b ∧ lookahead.a ? lookahead.b
+stateno.a >1 stateno.b ∧ codedaction.a >1 codedaction.b ∧ lookahead.a >1 lookahead.b
 
 function print(grammar:seq.seq.word, actions:seq.action)seq.word
 let d = sort.for b = empty:seq.action2, a ∈ actions do b + action2.a /for(b)
@@ -112,7 +112,7 @@ let g2 =
 if g = g2 then g else follow(g2, grammar)
 
 function ruleno(grammar:seq.seq.word, rule:seq.word)int
-let ruleno = if rule = ""then 0 else findindex(rule, grammar)
+let ruleno = if rule = ""then 0 else findindex(grammar, rule)
 assert ruleno ≤ length.grammar report"rule not found" + rule
 ruleno
 
@@ -181,7 +181,8 @@ else if length.dup = 2 ∧ codedaction.dup_1 < 0 ∧ codedaction.dup_2 > 0 then
  let shiftpos = 
   for r = 0, i = 1, p ∈ ruleprec
   while r = 0
-  do next(if length.p = 1 ∧ p_1 = lookahead.dup_2 then i else 0, i + 1)
+  do
+   next(if length.p = 1 ∧ p_1 = lookahead.dup_2 then i else 0, i + 1)
   /for(r)
  let reducepos = 
   for r = 0, i = 1, p ∈ ruleprec while r = 0 do next(if length.p > 1 ∧ p = rule1 then i else 0, i + 1)/for(r)
@@ -200,7 +201,7 @@ Function lr1parser(grammarandact:seq.seq.seq.word
 , parameterized:boolean
 )seq.word
 {ruleprec is a list of rules and lookaheads. The position of the lookahead is noted. Rule reductions after position
-  are discarded and rule the first rule listed before the position is used to reduce. }
+ are discarded and rule the first rule listed before the position is used to reduce. }
 let grammar2 = for acc = empty:seq.seq.word, @e ∈ grammarandact do acc + first.@e /for(acc)
 let nontermials = for acc = empty:set.word, rule ∈ grammar2 do acc + first.rule /for(acc)
 assert isempty(asset.terminals ∩ nontermials)report"terminals and nontermials sets must be distinct"
@@ -241,7 +242,9 @@ let result =
  , "function rulelength" + para + "seq.int"
  + for acc = "[", @e ∈ grammarandact do acc + toword(length.@e_1 - 1) + ", "/for(acc >> 1 + "]")
  , "function leftside" + para + "seq.int"
- + for acc = "[", @e ∈ grammarandact do acc + toword.findindex(@e_1_1, alphabet) + ", "/for(acc >> 1 + "]")
+ + for acc = "[", @e ∈ grammarandact do
+  acc + toword.findindex(alphabet, @e_1_1) + ", "
+ /for(acc >> 1 + "]")
  , "function tokenlist" + para + "seq.word" + dq.alphabet
  , "function startstate" + para + "int" + toword.initialstateno
  , "function finalstate" + para + "int" + finalstatebody
@@ -249,7 +252,7 @@ let result =
  + if length.amb = 0 then
   let x = 
    for table = sparseseq.0, @e ∈ actions3 do
-    replaceS(table, findindex(lookahead.@e, alphabet) + length.alphabet * stateno.@e, [codedaction.@e])
+    replaceS(table, findindex(alphabet, lookahead.@e) + length.alphabet * stateno.@e, [codedaction.@e])
    /for(table)
   for acc = "[", @e ∈ x do acc + toword.@e + ", "/for(acc >> 1 + "]")
  else"{action table omitted}[0]"
@@ -266,7 +269,7 @@ let header =
  + if codeonly then""else print(grammar2, actions3)
 for txt = header, p ∈ result do
  txt + " /p" + if codeonly then pretty.towords.textformat.p else p
-/for(if codeonly then txt else txt + " /p follow" + print.follow.graminfo /if)
+/for(if codeonly then txt else txt + " /p follow" + print.follow.graminfo)
 
 function print(a:graph.word)seq.word
 for acc = "nodes", node ∈ toseq.nodes.a do
@@ -316,8 +319,9 @@ Function generatereduce(grammarandact:seq.seq.seq.word, alphabet:seq.word, attri
    acc2 + if w ∈ "let assert"then" /br" + w else[w]
   /for(acc2)
  next(acc + reduceline, i + 1)
-/for(acc << 2 + "else{ruleno}assert false report" + dq."invalid rule number"
-+ "+toword.ruleno R_1")
+/for(
+ acc << 2 + "else{ruleno}assert false report" + dq."invalid rule number"
+ + "+toword.ruleno R_1")
 
 Function LR1(input:seq.file, o:seq.word, codeonly:boolean, parameterized:boolean)seq.file
 {* A parser generator for a subset of LR1 grammars. 
@@ -332,24 +336,25 @@ for rules = empty:seq.seq.seq.word
 , p ∈ location
 do
  if subseq(p, 1, 2) ∈ ["Function action", "function action"]then
-  let x = findindex("Alphabet"_1, p)
-  let newterminals = subseq(p, x + 1, x + findindex("}"_1, p << x) - 1)
-  let a = findindex("RulePrecedence"_1, p)
-  let c = break(subseq(p, a, a + findindex("}"_1, p << a)), "|", false) << 1
+  let x = findindex(p, "Alphabet"_1)
+  let newterminals = subseq(p, x + 1, x + findindex(p << x, "}"_1) - 1)
+  let a = findindex(p, "RulePrecedence"_1)
+  let c = break(subseq(p, a, a + findindex(p << a, "}"_1)), "|", false) << 1
   let newruleprec = c >> 1
   next(for acc = empty:seq.seq.seq.word, b ∈ break(p, "ruleno", false)do
    if subseq(b, 1, 2) = "={"then
-    let k = findindex(first."}", b)
+    let k = findindex(b, first."}")
     acc + [subseq(b, 3, k - 1), subseq(b, k + 3, length.b - 2)]
    else acc
   /for(acc)
   , newterminals
-  , p_(findindex(first.")", p) + 1)
+  , p_(findindex(p, first.")") + 1)
   , newruleprec
   )
  else next(rules, terminals, attribute, ruleprec)
-/for(let nonTerminals = for acc = empty:set.word, r ∈ rules do acc + first.first.r /for(acc)
-let terminals2 = 
- for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /for(acc)
-[file(o, lr1parser(rules, ruleprec, terminals2, "attribute", codeonly, parameterized))
-]) 
+/for(
+ let nonTerminals = for acc = empty:set.word, r ∈ rules do acc + first.first.r /for(acc)
+ let terminals2 = 
+  for acc = "", t ∈ terminals do if t ∈ nonTerminals then acc else acc + t /for(acc)
+ [file(o, lr1parser(rules, ruleprec, terminals2, "attribute", codeonly, parameterized))
+ ]) 

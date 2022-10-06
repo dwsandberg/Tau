@@ -50,19 +50,34 @@ use seq.seq.word
 
 use set.word
 
-Export type:typedict
+Export type:midpoint{From symbol2}
 
------
+Export libmods(m:midpoint)seq.modExports{From symbol2}
 
-Export exports(modExports)seq.symbol
+Export option(midpoint)seq.word{From symbol2}
 
-Export modname(modExports)modref
+Export prg(midpoint)set.symdef{From symbol2}
 
-Export types(modExports)seq.seq.mytype
+Export src(midpoint)seq.seq.word{From symbol2}
 
-Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype)modExports
+Export templates(midpoint)set.symdef{From symbol2}
 
-Export type:modExports
+Export typedict(midpoint)typedict{From symbol2}
+
+Export midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.word
+)midpoint{From symbol2}
+
+Export type:modExports{From symbol2}
+
+Export exports(modExports)seq.symbol{From symbol2}
+
+Export modname(modExports)modref{From symbol2}
+
+Export types(modExports)seq.seq.mytype{From symbol2}
+
+Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype)modExports{From symbol2}
+
+Export type:typedict{From typedict}
 
 function types(libinfo:midpoint)seq.seq.mytype
 for acc = empty:seq.seq.mytype, m ∈ libmods.libinfo do acc + types.m /for(acc)
@@ -113,48 +128,41 @@ else
  let prg = compile(allmods, asset.simple.t5, lib, allsrc, option = "text", requireUnbound)
  let prg10 = asset(prgb + toseq.code.t5 + toseq.prg.libinfo + prg)
  if option = "text"then
-  for acc = empty:set.symdef, sd ∈ toseq.prg10 do if library.module.sym.sd = lib then acc + sd else acc /for(let libmods = 
-   for acc5 = empty:seq.modExports, m2 ∈ toseq.modules.t5 do acc5 + modExports(module.m2, toseq.exports.m2, empty:seq.seq.mytype)/for(acc5)
-  midpoint(option, acc, requireUnbound, emptytypedict, {empty:seq.modExports}libmods, allsrc))
+  for acc = empty:set.symdef, sd ∈ toseq.prg10 do
+   if library.module.sym.sd = lib then acc + sd else acc
+  /for(
+   let libmods = 
+    for acc5 = empty:seq.modExports, m2 ∈ toseq.modules.t5 do
+     acc5 + modExports(module.m2, toseq.exports.m2, empty:seq.seq.mytype)
+    /for(acc5)
+   midpoint(option, acc, requireUnbound, emptytypedict, {empty:seq.modExports}libmods, allsrc))
  else
   let roots = 
    for acc = [outofboundssymbol], f ∈ toseq.modules.t5 do
     if name.module.f ∉ exports then acc
     else if issimple.module.f then acc + toseq.exports.f
     else
-     for acc2 = empty:seq.symbol, sym ∈ toseq.defines.f do acc2 + getCode(prg10, sym)/for(for acc3 = acc, sym2 ∈ toseq.asset.acc2 do
-      if isabstract.module.sym2 ∨ isconstantorspecial.sym2 ∨ isBuiltin.sym2
-      ∨ name.module.sym2 ∈ "$for"then
-       acc3
-      else acc3 + sym2
-     /for(acc3))
+     for acc2 = empty:seq.symbol, sym ∈ toseq.defines.f do
+      acc2 + getCode(prg10, sym)
+     /for(
+      for acc3 = acc, sym2 ∈ toseq.asset.acc2 do
+       if isabstract.module.sym2 ∨ isconstantorspecial.sym2 ∨ isBuiltin.sym2
+       ∨ name.module.sym2 ∈ "$for"then
+        acc3
+       else acc3 + sym2
+      /for(acc3))
    /for(acc)
   let typedict = buildtypedict(empty:set.symbol, types.t5 + types.libinfo)
   let templates = 
-   for acc = empty:seq.symdef, p ∈ toseq.prg10 do if para.module.sym.p = typeT then acc + p else acc /for(asset.acc)
+   for acc = empty:seq.symdef, p ∈ toseq.prg10 do
+    if para.module.sym.p = typeT then acc + p else acc
+   /for(asset.acc)
   let pb = postbind(roots, prg10, templates, typedict)
   let afteroption = addExportOptions(asset.simple.t5, prg.pb, allsrc)
   let libmods = toModules(typedict, toseq.modules.t5, exports)
   if option = "pass1"then
    midpoint(option, afteroption, typedict.pb, libmods, empty:seq.seq.word)
   else midpoint(option, afteroption, templates, typedict, libmods, [first.allsrc])
-
-Export midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.
- word)midpoint
-
-Export prg(midpoint)set.symdef
-
-Export option(midpoint)seq.word
-
-Export templates(midpoint)set.symdef
-
-Export typedict(midpoint)typedict
-
-Export type:midpoint
-
-Export src(midpoint)seq.seq.word
-
-Export libmods(m:midpoint)seq.modExports
 
 Function addoption(p:set.symdef, s:symbol, option:seq.word)set.symdef
 if isempty.option then p
@@ -208,7 +216,8 @@ for new = empty:seq.symbol, sym ∈ toseq.toexport do
     if name.sym2 ∈ "stacktrace"then acc + sym2 else acc
    else if name.module.sym2 ∈ "builtin $for $base"then acc else acc + sym2
   /for(acc)
-/for(if isempty.toexport then processed else close(prg, asset.new, processed ∪ toprocess, len)/if)
+/for(
+ if isempty.toexport then processed else close(prg, asset.new, processed ∪ toprocess, len))
 
 Function prepareback(prg10:set.symdef, midin:midpoint, dependentlibs:midpoint)midpoint
 {OPTION PROFILE}
@@ -288,25 +297,26 @@ do
       if not.isempty.b then symdef(sym.b_1, empty:seq.symbol, paragraphno.b_1)
       else symdef(sym, code, -idx)
    if abstract then next(prgX, prgA + new, idx)else next(prgX + new, prgA, idx + 1)
-/for(let oldmods1 = 
- for acc = empty:seq.modExports, m1 ∈ oldmods do
-  for exps = empty:seq.symbol, sy ∈ exports.m1 do
-   exps
-   + if sy ∈ dupsyms then
-    let x = lookupbysig(symdict, sy)
-    if x_1 = sy then x_2 else x_1
-   else sy
-  /for(acc + modExports(modname.m1, exps, types.m1))
- /for(acc)
-midpoint(""
-, prgX
-, prgA
-, typedict
-, oldmods1
-, ["Library=" + libname + "uses=" + uses + "stacktrace="
-+ [library.module.stacktracesym, name.module.stacktracesym, name.stacktracesym]
-]
-))
+/for(
+ let oldmods1 = 
+  for acc = empty:seq.modExports, m1 ∈ oldmods do
+   for exps = empty:seq.symbol, sy ∈ exports.m1 do
+    exps
+    + if sy ∈ dupsyms then
+     let x = lookupbysig(symdict, sy)
+     if x_1 = sy then x_2 else x_1
+    else sy
+   /for(acc + modExports(modname.m1, exps, types.m1))
+  /for(acc)
+ midpoint(""
+ , prgX
+ , prgA
+ , typedict
+ , oldmods1
+ , ["Library=" + libname + "uses=" + uses + "stacktrace="
+ + [library.module.stacktracesym, name.module.stacktracesym, name.stacktracesym]
+ ]
+ ))
 
 Function libcode(m:midpoint)seq.symdef
 let prg = prg.m ∪ templates.m
@@ -326,7 +336,9 @@ for acc = empty:seq.symdef, sym ∈ toseq.toexport do
       let x = removerecordconstant(prg, code)
       if"VERYSIMPLE"_1 ∈ optionsx then x
       else
-       for acc2 = true, @e ∈ x do acc2 ∧ (isconstantorspecial.@e ∨ isBuiltin.@e ∨ @e ∈ toexport)/for(if acc2 then x else empty:seq.symbol /if)
+       for acc2 = true, @e ∈ x do
+        acc2 ∧ (isconstantorspecial.@e ∨ isBuiltin.@e ∨ @e ∈ toexport)
+       /for(if acc2 then x else empty:seq.symbol)
      else empty:seq.symbol
     if"COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then z + Words.optionsx + Optionsym else z
   acc + symdef(sym, libcode, if isempty.sd then 0 else paragraphno.sd_1)

@@ -26,19 +26,19 @@ type typemap is key:int, value:mytype
 
 function lookup(a:set.typemap, key:int)set.typemap lookup(a, typemap(key, typeint))
 
-Function ?(a:typemap, b:typemap)ordering key.a ? key.b
+Function >1(a:typemap, b:typemap)ordering key.a >1 key.b
 
 Function baseTypeCheck(prg:seq.symdef, typedict:typedict)seq.word
 for acc = empty:seq.word, count = 0, s ∈ prg do
  let p = process.checkkind(s, typedict)
  let b = 
   if aborted.p then
-   " /p ERROR:" + %.sym.s + " /br" + message.p + " /br fullcode"
-   + print.code.s
+   " /p ERROR:$(%.sym.s) /br $(message.p) /br fullcode" + %.code.s
   else result.p
  next(acc + b, if isempty.b then count else count + 1)
-/for(if count = 0 then"Passed Base Type Check"
-else"Base Type Check Failed $(%.count)Times" + acc /if)
+/for(
+ if count = 0 then"Passed Base Type Check"
+ else"Base Type Check Failed $(%.count)Times" + acc)
 
 function addlocals(localtypes:set.typemap, para:seq.mytype, localno:int, i:int)set.typemap
 if i > 0 then addlocals(typemap(localno, para_i) ∪ localtypes, para, localno - 1, i - 1)
@@ -62,8 +62,8 @@ else
     if isdefine.s then
      assert not.isempty.stk report"Ill formed Define"
      let z = typemap(value.s, top.stk) ∪ localtypes
-     {assert false report"BB"+print.s+print.value.s+for acc="", i=keys.z do acc+toword.i /for(acc)+for acc="", i=
-       data.z do acc+print.i /for(acc)}
+     {assert false report"BB"+print.s+print.value.s+for acc="", i=keys.z do acc+toword.i /for(acc)+for acc
+      ="", i=data.z do acc+print.i /for(acc)}
      next(pop.stk, typemap(value.s, top.stk) ∪ localtypes, false)
     else if iswords.s then next(push(stk, {seqof.typeint}typeptr), localtypes, false)
     else if isRealLit.s then next(push(stk, typereal), localtypes, false)
@@ -111,21 +111,25 @@ else
      + " /br parabasetypes"
      + %.parakinds
      next(push(pop(stk, nopara.s), coretype(resulttype.s, typedict)), localtypes, false)
-  /for(assert length.toseq.stk = 1 report"Expect one element on stack:" + %.toseq.stk
-  assert check5([top.stk], [coretype(returntype, typedict)])
-  report"Expected return type of" + %.returntype + "but type on stack is" + %.top.stk
-  "")
+  /for(
+   assert length.toseq.stk = 1 report"Expect one element on stack:" + %.toseq.stk
+   assert check5([top.stk], [coretype(returntype, typedict)])
+   report"Expected return type of" + %.returntype + "but type on stack is" + %.top.stk
+   "")
 
 function check5(a:seq.mytype, b:seq.mytype)boolean
 for acc = length.a = length.b, idx = 1, t ∈ a
 while acc
-do let t2 = b_idx
-next(t2 = t ∨ t = typebyte ∧ t2 = typeint ∨ t2 = typebyte ∧ t = typeint, idx + 1)
+do
+ let t2 = b_idx
+ next(t2 = t ∨ t = typebyte ∧ t2 = typeint ∨ t2 = typebyte ∧ t = typeint, idx + 1)
 /for(acc)
 
 Function checkresults(prg:seq.symdef)seq.word
 let undefined = 
- for defines = empty:set.symbol, uses = empty:set.symbol, h ∈ prg do next(defines + sym.h, uses ∪ asset.code.h)/for(uses \ defines \ asset.knownsym)
+ for defines = empty:set.symbol, uses = empty:set.symbol, h ∈ prg do
+  next(defines + sym.h, uses ∪ asset.code.h)
+ /for(uses \ defines \ asset.knownsym)
 for acc10 = " /p  /p checkresults  /p", h ∈ toseq.undefined do
  if isconst.h
  ∨ name.h = "createthreadY"_1 ∧ isempty(asset.types.h \ asset.[typeint, typereal, typeptr])then
@@ -138,8 +142,9 @@ for acc10 = " /p  /p checkresults  /p", h ∈ toseq.undefined do
  ∨ isRecord.h then
   acc10
  else acc10 + %.h + EOL
-/for("CheckResult:"
-+ if isempty.acc10 then"OK"else acc10 + " /p end checkresults  /p"/if)
+/for(
+ "CheckResult:"
+ + if isempty.acc10 then"OK"else acc10 + " /p end checkresults  /p")
 
 function knownsym seq.symbol
 let typecstr = typeref."cstr fileio."

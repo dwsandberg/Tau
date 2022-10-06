@@ -65,19 +65,19 @@ setElementValue("mhhh", x) + setElementValue("mpeas", x2)
 + setElementValue("mcars", x3)
 + setElementValue("mtext", x4)
 
-use libllvm
+use callconfig
 
-Module libllvm
+Module callconfig
 
 use standard
 
 use symbol2
 
-Export type:libllvm
+Export type:callconfig
 
-type libllvm is a:int 
+type callconfig is a:int 
 
-Function callfunc:libllvm(ctsym:symbol, typedict:typedict, stk:seq.int)seq.int 
+Function callfunc:callconfig(ctsym:symbol, typedict:typedict, stk:seq.int)seq.int 
 if ctsym=symbol(internalmod,"+",typeint,typeint,typeint) then
  [stk_1+stk_2]
 else if ctsym=symbol(internalmod,"*",typeint,typeint,typeint) then

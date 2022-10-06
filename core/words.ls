@@ -14,7 +14,17 @@ use standard
 
 use xxhash
 
+Export type:alphaword
+
+Export toword(alphaword)word
+
 Export type:word
+
+Export alphaword(word)alphaword
+
+Export asencoding(w:word)encoding.seq.char
+
+Export >1(a:seq.alphaword, b:seq.alphaword)ordering{From otherseq.alphaword}
 
 type word is asencoding:encoding.seq.char
 
@@ -29,11 +39,9 @@ Function decodeword(w:word)seq.char{OPTION NOINLINE COMPILETIME}decode.asencodin
 
 Function hash(a:word)int hash.asencoding.a
 
-Export asencoding(w:word)encoding.seq.char
-
 Function =(a:word, b:word)boolean{OPTION COMPILETIME}asencoding.a = asencoding.b
 
-Function ?(a:word, b:word)ordering asencoding.a ? asencoding.b
+Function >1(a:word, b:word)ordering asencoding.a >1 asencoding.b
 
 ----
 
@@ -44,37 +52,32 @@ encodeword.for acc = empty:seq.char, @e ∈ a do acc + decodeword.@e /for(acc)
 
 * Functions to perform alphabetical sorting
 
-Export type:alphaword
-
 type alphaword is toword:word
-
-Export alphaword(word)alphaword
-
-Export toword(alphaword)word
 
 Function toalphaseq(a:seq.word)seq.alphaword
 {This is just a type change and the compiler recognizes this and does not generate code}
 for acc = empty:seq.alphaword, @e ∈ a do acc + alphaword.@e /for(acc)
 
-Function ?alpha(a:char, b:char)ordering a ? b
+Function ?alpha(a:char, b:char)ordering a >1 b
 
-Function ?(a:alphaword, b:alphaword)ordering
+Function >1(a:alphaword, b:alphaword)ordering
 if toword.a = toword.b then EQ else ?alpha(decodeword.toword.a, decodeword.toword.b)
 
 Function towordseq(a:seq.alphaword)seq.word for acc = empty:seq.word, @e ∈ a do acc + toword.@e /for(acc)
 
 Function alphasort(a:seq.word)seq.word towordseq.sort.toalphaseq.a
 
-Export ?(a:seq.alphaword, b:seq.alphaword)ordering
-
 type alphawords is toseq:seq.alphaword
 
-function ?alpha(a:alphaword, b:alphaword)ordering a ? b
+function ?alpha(a:alphaword, b:alphaword)ordering a >1 b
 
-function ?(a:alphawords, b:alphawords)ordering ?alpha(toseq.a, toseq.b)
+function >1(a:alphawords, b:alphawords)ordering ?alpha(toseq.a, toseq.b)
 
 Function alphasort(a:seq.seq.word)seq.seq.word
-for acc = empty:seq.alphawords, s ∈ a do acc + alphawords.toalphaseq.s /for(for acc2 = empty:seq.seq.word, s2 ∈ sort.acc do acc2 + towordseq.toseq.s2 /for(acc2))
+for acc = empty:seq.alphawords, s ∈ a do
+ acc + alphawords.toalphaseq.s
+/for(
+ for acc2 = empty:seq.seq.word, s2 ∈ sort.acc do acc2 + towordseq.toseq.s2 /for(acc2))
 
 Function checkinteger(w:word)word
 let l = decodeword.w

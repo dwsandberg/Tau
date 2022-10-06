@@ -25,7 +25,7 @@ function =(a:indexedword, b:indexedword)boolean w.a = w.b
 
 type wordfreq is count:int, w:word
 
-function ?(a:wordfreq, b:wordfreq)ordering count.a ? count.b
+function >1(a:wordfreq, b:wordfreq)ordering count.a >1 count.b
 
 function count(s:seq.wordfreq, w:word)seq.wordfreq
 let index = addorder.indexedword.w

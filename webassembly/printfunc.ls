@@ -29,8 +29,9 @@ else
  for text = "", place = next.d2, e ∈ constantseq(value.d2, 1)do
   let d3 = decodeLEBu(a, place)
   next(text + constantseq(value.d3, (%.wtype.a_(next.d3))_1), next.d3 + 1)
- /for("(" + text + ")" + " /br"
- + zzz(nocheck, argtypes >> 2 + text, subseq(a, place, length.a - 1), %.sym.f))
+ /for(
+  "(" + text + ")" + " /br"
+  + zzz(nocheck, argtypes >> 2 + text, subseq(a, place, length.a - 1), %.sym.f))
 
 Function printcode(a:seq.byte)seq.word zzz(true, "", a, "")
 

@@ -6,6 +6,42 @@ use seq.seq.T
 
 use standard
 
+Export type:arithmeticseq.T
+
+Export length(a:seq.T)int
+
+Export type:seq.T{From seq.T}
+
+Export first(a:seq.T)T{From seq.T}
+
+Export isempty(a:seq.T)boolean{From seq.T}
+
+Export ispseq(s:seq.T)boolean{From seq.T}
+
+Export last(a:seq.T)T{From seq.T}
+
+Export+(a:seq.T, b:seq.T)seq.T{From seq.T}
+
+Export+(l:seq.T, a:T)seq.T{From seq.T}
+
+Export <<(s:seq.T, i:int)seq.T{* removes i elements from beginning of s}{From seq.T}
+
+Export=(a:seq.T, b:seq.T)boolean{From seq.T}
+
+Export >>(s:seq.T, i:int)seq.T{* removes i elements from end of s}{From seq.T}
+
+Export_(a:seq.T, c:int)T{From seq.T}
+
+Export_(s:pseq.T, ii:int)T{From seq.T}
+
+Export empty:seq.T seq.T{From seq.T}
+
+Export lookup(s:seq.T, T)seq.T{From seq.T}
+
+Export subseq(s:seq.T, start:int, finish:int)seq.T{From seq.T}
+
+Export ∈(a:T, s:seq.T)boolean{From seq.T}
+
 Function reverse(s:seq.T)seq.T
 for acc = empty:seq.T, @e ∈ arithseq(length.s, 0 - 1, length.s)do acc + s_@e /for(acc)
 
@@ -36,8 +72,6 @@ else
 
 _____________
 
-Export type:arithmeticseq.T
-
 type arithmeticseq is sequence, step:T, start:T
 
 unbound+(T, T)T
@@ -50,9 +84,9 @@ Function _(s:arithmeticseq.T, i:int)T start.s + (i - 1) * step.s
 
 Function arithseq(length:int, step:T, start:T)seq.T toseq.arithmeticseq(length, step, start)
 
-unbound ?(T, T)ordering
+unbound >1(T, T)ordering
 
-Function ?(a:seq.T, b:seq.T)ordering
+Function >1(a:seq.T, b:seq.T)ordering
 let lengtha = length.a
 let lengthb = length.b
 if lengtha > lengthb then GT
@@ -61,12 +95,12 @@ else if lengtha < lengthb then LT else subcmp(a, b, 1)
 function subcmp(a:seq.T, b:seq.T, i:int)ordering
 if i > length.a then EQ
 else
- let c = a_i ? b_i
+ let c = a_i >1 b_i
  if c = EQ then subcmp(a, b, i + 1)else c
 
-unbound ?2(T, T)ordering
+unbound >2(T, T)ordering
 
-Function ?2(a:seq.T, b:seq.T)ordering
+Function >2(a:seq.T, b:seq.T)ordering
 let lengtha = length.a
 let lengthb = length.b
 if lengtha > lengthb then GT
@@ -75,7 +109,7 @@ else if lengtha < lengthb then LT else subcmp2(a, b, 1)
 function subcmp2(a:seq.T, b:seq.T, i:int)ordering
 if i > length.a then EQ
 else
- let c = ?2(a_i, b_i)
+ let c = a_i >2 b_i
  if c = EQ then subcmp2(a, b, i + 1)else c
 
 unbound ?alpha(T, T)ordering
@@ -98,13 +132,14 @@ Function merge(a:seq.T, b:seq.T)seq.T
 {* combines sorted seq}
 if length.a = 0 then b
 else if length.b = 0 then a
-else if(b_1 ? a_(length.a)) = GT then a + b
-else if(a_1 ? b_(length.b)) = GT then b + a else submerge(a, b, 1, 1)
+else if(b_1 >1 a_(length.a)) = GT then a + b
+else if(a_1 >1 b_(length.b)) = GT then b + a else submerge(a, b, 1, 1)
 
 function submerge(a:seq.T, b:seq.T, i:int, j:int)seq.T
 if i > length.a then subseq(b, j, length.b)
 else if j > length.b then subseq(a, i, length.a)
-else if(b_j ? a_i) = LT then[b_j] + submerge(a, b, i, j + 1)else[a_i] + submerge(a, b, i + 1, j)
+else if(b_j >1 a_i) = LT then[b_j] + submerge(a, b, i, j + 1)
+else[a_i] + submerge(a, b, i + 1, j)
 
 Function binarysearch(s:seq.T, val:T)int
 {* binarysearch returns position in seq if found and the negation of the posistion if not found}
@@ -114,7 +149,7 @@ Function binarysearch(s:seq.T, b:int, a:int, val:T)int
 if a < b then-(a + 1)
 else
  let p = (a + b) / 2
- let c = s_(toindex.p) ? val
+ let c = s_(toindex.p) >1 val
  if c = EQ then p
  else if c = GT then binarysearch(s, b, p - 1, val)else binarysearch(s, p + 1, a, val)
 
@@ -168,43 +203,9 @@ else
 
 Function suffix(s:seq.T, len:int)seq.T subseq(s, length.s - len - 1, length.s)
 
-Function findindex(w:T, s:seq.T)int
+Function findindex(s:seq.T, w:T)int
 {result > length.s when element is not found.Otherwise results is location in sequence}
 for i = 1, e ∈ s while e ≠ w do i + 1 /for(i)
-
-Export type:seq.T
-
-Export length(a:seq.T)int
-
-Export empty:seq.T seq.T
-
-Export_(a:seq.T, c:int)T
-
-Export=(a:seq.T, b:seq.T)boolean
-
-Export ∈(a:T, s:seq.T)boolean
-
-Export lookup(s:seq.T, T)seq.T
-
-Export_(s:pseq.T, ii:int)T
-
-Export ispseq(s:seq.T)boolean
-
-Export+(a:seq.T, b:seq.T)seq.T
-
-Export+(l:seq.T, a:T)seq.T
-
-Export subseq(s:seq.T, start:int, finish:int)seq.T
-
-Export last(a:seq.T)T
-
-Export first(a:seq.T)T
-
-Export isempty(a:seq.T)boolean
-
-Export <<(s:seq.T, i:int)seq.T{* removes i elements from beginning of s}
-
-Export >>(s:seq.T, i:int)seq.T{* removes i elements from end of s}
 
 ________________________
 

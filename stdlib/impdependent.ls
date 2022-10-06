@@ -50,6 +50,24 @@ use tausupport
 
 Export type:debuginfo
 
+Export profiledata(debuginfo)seq.parc
+
+Export symbolrefdecodeX(debuginfo)seq.symbol
+
+Export words(debuginfo)seq.seq.char
+
+Export type:parc
+
+Export callee(parc)int
+
+Export caller(parc)int
+
+Export clocks(parc)int
+
+Export counts(parc)int
+
+Export space(parc)int
+
 type debuginfo is libname:seq.word
 , words:seq.seq.char
 , entrypointaddress:int
@@ -62,27 +80,9 @@ type parc is caller:int, callee:int, counts:int, clocks:int, space:int, unused:i
 
 Function =(a:parc, b:parc)boolean callee.a = callee.b ∧ caller.a = caller.b
 
-Export type:parc
-
-Export caller(parc)int
-
-Export callee(parc)int
-
-Export counts(parc)int
-
-Export clocks(parc)int
-
-Export space(parc)int
-
 Builtin loadedLibs seq.debuginfo
 
 Function symboladdress seq.int for acc = empty:seq.int, ll ∈ loadedLibs do acc + symboladdress.ll /for(acc)
-
-Export symbolrefdecodeX(debuginfo)seq.symbol
-
-Export words(debuginfo)seq.seq.char
-
-Export profiledata(debuginfo)seq.parc
 
 Function symbolrefdecodeX seq.symbol
 for acc = empty:seq.symbol, ll ∈ loadedLibs do acc + symbolrefdecodeX.ll /for(acc)
@@ -130,7 +130,8 @@ else
  [result.p]
 
 function buildargcode(sym:symbol, typedict:typedict)int
-{needed because the call interface implementation for reals is different than other types is some implementations}
+{needed because the call interface implementation for reals is different than other types is some implementations
+ }
 for acc = 1, typ ∈ paratypes.sym + resulttype.sym do acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0 /for(acc)
 
 type dummyparameterrecord is a:int, b:int
@@ -144,7 +145,9 @@ let b = encodingdata:symaddresses
 let symdefs = 
  tosymdefs.if length.b = 0 then
   let decode = symbolrefdecodeX
-  for acc = empty:set.symdef, idx = 1, a ∈ symboladdress do next(acc + symdef(decode_idx, empty:seq.symbol, a), idx + 1)/for(decode.encode.symaddresses.acc)
+  for acc = empty:set.symdef, idx = 1, a ∈ symboladdress do
+   next(acc + symdef(decode_idx, empty:seq.symbol, a), idx + 1)
+  /for(decode.encode.symaddresses.acc)
  else b_1
 let c = getSymdef(symdefs, sym)
 if isempty.c then 0 else paragraphno.c_1
@@ -157,7 +160,7 @@ function hash(symaddresses)int 1
 
 type addrsym is addr:int, sym:symbol
 
-function ?(a:addrsym, b:addrsym)ordering addr.a ? addr.b
+function >1(a:addrsym, b:addrsym)ordering addr.a >1 addr.b
 
 builtin callstack(n:int)seq.int
 

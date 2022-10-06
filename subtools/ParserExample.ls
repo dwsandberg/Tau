@@ -24,21 +24,22 @@ Function sampleparser(input:seq.file, data:seq.word, o:seq.word)seq.file
 [file(o, "Value of the sum of $(data)is $(%.sampleparse.data)")]
 
 * The  /keyword sampleparser command is a very simple example of a parser generated using the  /keyword genLR1 parser. 
- It will add up a sequence of integers. For exmple"sampleparser data=3 4 5"will give the result of"Value of the sum of 3 4
- 5 is 12".The grammar was produced with"LR1+tools ParserExample.ls flags=codeonly"
+It will add up a sequence of integers. For exmple"sampleparser data=3 4 5"will give the result of"Value of the sum of 3 4 5
+is 12".The grammar was produced with"LR1+tools ParserExample.ls flags=codeonly"
 
 Function sampleparse(input:seq.word)int
 for lrpart = push(empty:stack.stkele, stkele(startstate, ATTR.0))
 , idx = 1
 , this ∈ input + "#"
 while stateno.top.lrpart ≠ finalstate
-do{lexical analysis is done here}
-{Assume the input is only integers}
-let tokenno = 
- if findindex(this, tokenlist) > length.tokenlist then findindex("I"_1, tokenlist)
- else findindex("#"_1, tokenlist)
-let attribute = ATTR.if this ∈ {end marked}"#"then 0 else toint.this
-next(step(lrpart, input, attribute, tokenno, idx), idx + 1)
+do
+ {lexical analysis is done here}
+ {Assume the input is only integers}
+ let tokenno = 
+  if findindex(tokenlist, this) > length.tokenlist then findindex(tokenlist, "I"_1)
+  else findindex(tokenlist, "#"_1)
+ let attribute = ATTR.if this ∈ {end marked}"#"then 0 else toint.this
+ next(step(lrpart, input, attribute, tokenno, idx), idx + 1)
 /for(val.attribute.undertop(lrpart, 1))
 
 function step(stk:stack.stkele, input:seq.word, attrib:ATTR, tokenno:int, place:int)stack.stkele

@@ -30,27 +30,28 @@ use set.symdef
 
 use typedict
 
+Export prg(postbindresult)set.symdef
+
+Export typedict(postbindresult)typedict
+
 function verysimpleinline(sym1:symbol, code:seq.symbol)boolean
 if isempty.code ∨ last.code = Optionsym ∨ length.code > 10 then false
 else
  let nopara = nopara.sym1
  for isverysimple = length.code ≥ nopara, idx = 1, sym ∈ code
  while isverysimple
- do if idx ≤ nopara then next(sym = Local.idx, idx + 1)
- else
-  next(if isconst.sym then true
-  else if isBuiltin.sym then name.sym ∈ "fld getfld length getseqlength"
-  else if isInternal.sym then name.sym ∉ "indexseq45"
-  else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
-  , idx + 1
-  )
+ do
+  if idx ≤ nopara then next(sym = Local.idx, idx + 1)
+  else
+   next(if isconst.sym then true
+   else if isBuiltin.sym then name.sym ∈ "fld getfld length getseqlength"
+   else if isInternal.sym then name.sym ∉ "indexseq45"
+   else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
+   , idx + 1
+   )
  /for(isverysimple ∧ name.sym1 ∉ "decodeword encodeword")
 
 type postbindresult is typedict:typedict, prg:set.symdef, inline:set.symdef
-
-Export typedict(postbindresult)typedict
-
-Export prg(postbindresult)set.symdef
 
 Function postbind(roots:seq.symbol, theprg:set.symdef, templates:set.symdef, typedict1:typedict)postbindresult
 let discard = for acc = symbolref.Lit.0, r ∈ roots do symbolref.r /for(0)
@@ -64,21 +65,23 @@ do
    else
     let newdict3 = addtypes(typedict3, asset(code.sd + sym.sd))
     next(acc + test(symx, newdict3, para.module.sym.sd, empty:set.symdef), newdict3)
-  /for(postbindresult(typedict3
-  , symdef(sym.sd, acc, paragraphno.sd) ∪ prg.inline
-  , inline.inline + symdef(sym.sd, acc, paragraphno.sd)
-  ))
+  /for(
+   postbindresult(typedict3
+   , symdef(sym.sd, acc, paragraphno.sd) ∪ prg.inline
+   , inline.inline + symdef(sym.sd, acc, paragraphno.sd)
+   ))
  else inline
  , allsyms + sym.sd
  )
-/for(usedsyms(symboldict(allsyms, empty:seq.commoninfo)
-, prg.inline
-, 0
-, empty:set.symdef
-, templates
-, typedict.inline
-, inline.inline
-))
+/for(
+ usedsyms(symboldict(allsyms, empty:seq.commoninfo)
+ , prg.inline
+ , 0
+ , empty:set.symdef
+ , templates
+ , typedict.inline
+ , inline.inline
+ ))
 
 function usedsyms(allsyms:symboldict
 , source:set.symdef
@@ -104,7 +107,9 @@ else
      let k2 = 
       if cardinality.k21 < 2 then k21
       else
-       for acc = empty:set.symbol, sy ∈ toseq.k21 do if isunbound.sy then acc else acc + sy /for(if isempty.acc then k21 else acc /if)
+       for acc = empty:set.symbol, sy ∈ toseq.k21 do
+        if isunbound.sy then acc else acc + sy
+       /for(if isempty.acc then k21 else acc)
      if isempty.k2 then instantiateTemplate(symz, templates)
      else
       assert cardinality.k2 = 1
@@ -212,10 +217,11 @@ else
      else
       let newValue = test(symx, newdict3, modpara, inline.accZ)
       next(cache + symdef(symx, newValue, 0), nextvar, map, result2 + newValue)
-   /for(postbindresult(newdict3
-   , symdef(symz, result2, 0) ∪ prg.accZ
-   , if verysimpleinline(symz, result2)then inline.accZ + symdef(symz, result2, 0)else inline.accZ
-   ))
+   /for(
+    postbindresult(newdict3
+    , symdef(symz, result2, 0) ∪ prg.accZ
+    , if verysimpleinline(symz, result2)then inline.accZ + symdef(symz, result2, 0)else inline.accZ
+    ))
  /for(usedsyms(allsyms, source, length.aa, prg.accZ, templates, typedict.accZ, inline.accZ))
 
 function test(symx:symbol, newdict3:typedict, modpara:mytype, inline:set.symdef)seq.symbol
@@ -331,8 +337,8 @@ else
 function deepcopybody(type:mytype, typedict:typedict)seq.symbol
 if type = typeint ∨ type = typeword ∨ isencoding.type then[Local.1]
 else if isseq.type then
- {base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.packed2 seq.packed3 seq.
-   packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
+ {base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.packed2 seq.packed3
+  seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
  let basetype = basetype(type, typedict)
  let elementtype = parameter.basetype
  if elementtype = typeboolean then[Local.1, blockitsymbol.seqof.typeint]

@@ -20,11 +20,11 @@ type baryinfo is avg:real, node:T
 
 function =(a:baryinfo.T, b:baryinfo.T)boolean node.a = node.b
 
-Function ?(a:baryinfo.T, b:baryinfo.T)ordering avg.a ? avg.b
+Function >1(a:baryinfo.T, b:baryinfo.T)ordering avg.a >1 avg.b
 
 function averagepred(g:graph.T, layer1:seq.T, node:T)baryinfo.T
 let pred = toseq.predecessors(g, node)
-let a = for acc = 0, @e ∈ pred do acc + findindex(@e, layer1)/for(acc)
+let a = for acc = 0, @e ∈ pred do acc + findindex(layer1, @e)/for(acc)
 baryinfo(toreal.a / toreal.length.pred, node)
 
 function baryinfo(g:graph.T, layer1:seq.T, layer2:seq.T)seq.T

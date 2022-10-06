@@ -14,20 +14,13 @@ libtype="bc"
 
 
 function libexe {
- rm -f $build/error.html
+ rm -f error.html
  allargs="$@"
  [[ "${allargs#*o=}" != $allargs ]] && rm  -f built/${allargs#*o=}
- #echo "running ${allargs::40}"
- if [ -z "$norun" ];then
- echo building $node
  restargs="${allargs#*\ }"
 $build/${tauDylib}$1.lib $restargs > /dev/null
- else
-   echo "make built/${allargs#*o=}"
-fi
- if  [ -e $build/error.html ] ; then
-  $tauopen $build/error.html  
-  mv sums.txt built/oldsums.txt
+ if  [ -e error.html ] ; then
+  $tauopen error.html  
   exit 1
  fi
 }

@@ -69,7 +69,9 @@ else if typ = typereal then[Reallit.r]
 else
  assert isseq.typ report"resulttype not handled" + %.typ
  let s = bitcast:seq.int(toptr.r)
- for acc = empty:seq.symbol, @e ∈ s do acc + tocode:T(@e, parameter.typ, typedict)/for(acc + Sequence(parameter.typ, length.s))
+ for acc = empty:seq.symbol, @e ∈ s do
+  acc + tocode:T(@e, parameter.typ, typedict)
+ /for(acc + Sequence(parameter.typ, length.s))
 
 Function buildargs:T(codein:seq.symbol)seq.int
 if not.for ok = true, sym ∈ subseq(codein, 1, 20)do isconst.sym ∨ isSequence.sym ∨ isRecord.sym /for(ok)then
@@ -77,22 +79,23 @@ if not.for ok = true, sym ∈ subseq(codein, 1, 20)do isconst.sym ∨ isSequence
 else
  for ok = true, stk = empty:stack.int, sym ∈ codein
  while ok
- do if iswordseq.sym then
-  let a = for acc = empty:seq.int, @e ∈ worddata.sym do acc + hash.@e /for(acc)
-  next(ok, push(stk, bitcast:int(toptr.a)))
- else if isword.sym then next(ok, push(stk, hash.wordname.sym))
- else if isIntLit.sym ∨ isRealLit.sym then next(ok, push(stk, value.sym))
- else if sym = Littrue then next(ok, push(stk, 1))
- else if sym = Litfalse then next(ok, push(stk, 0))
- else if isrecordconstant.sym then
-  let t = buildargs:T(fullconstantcode.sym)
-  next(not.isempty.t, if isempty.t then push(stk, 0)else push(stk, first.t))
- else if isSequence.sym then
-  let nopara = nopara.sym
-  if length.toseq.stk < nopara.sym then next(false, stk)
-  else next(ok, push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara))))
- else
-  {if isRecord.sym then let nopara=nopara.sym if length.toseq.stk < nopara.sym then next(false, stk)else next(ok, 
-    push(pop(stk, nopara), bitcast:int(set(set(toptr.packed.top(stk, nopara), 0), nopara))))else}
-  next(false, stk)
- /for(if ok then toseq.stk else empty:seq.int /if) 
+ do
+  if iswordseq.sym then
+   let a = for acc = empty:seq.int, @e ∈ worddata.sym do acc + hash.@e /for(acc)
+   next(ok, push(stk, bitcast:int(toptr.a)))
+  else if isword.sym then next(ok, push(stk, hash.wordname.sym))
+  else if isIntLit.sym ∨ isRealLit.sym then next(ok, push(stk, value.sym))
+  else if sym = Littrue then next(ok, push(stk, 1))
+  else if sym = Litfalse then next(ok, push(stk, 0))
+  else if isrecordconstant.sym then
+   let t = buildargs:T(fullconstantcode.sym)
+   next(not.isempty.t, if isempty.t then push(stk, 0)else push(stk, first.t))
+  else if isSequence.sym then
+   let nopara = nopara.sym
+   if length.toseq.stk < nopara.sym then next(false, stk)
+   else next(ok, push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara))))
+  else
+   {if isRecord.sym then let nopara=nopara.sym if length.toseq.stk < nopara.sym then next(false, stk)else next
+    (ok, push(pop(stk, nopara), bitcast:int(set(set(toptr.packed.top(stk, nopara), 0), nopara))))else}
+   next(false, stk)
+ /for(if ok then toseq.stk else empty:seq.int) 

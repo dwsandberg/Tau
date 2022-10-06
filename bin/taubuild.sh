@@ -1,26 +1,22 @@
 build=built
 set -e
 
+libtype="bc" 
+
+export tauopen=open 
+
+#export tauDylib="tauexe "
+ 
 function checksrc {
      mkdir -p "$build/src/$(dirname $1)"
     ln  -f $1 "$build/src/$1" 
 }
 
-#export tauDylib="tauexe "
-
-export tauopen=open 
-
-
-libtype="bc" 
-
-
 function libexe {
  rm -f error.html
  allargs="$@"
- [[ "${allargs#*o=}" != $allargs ]] && rm  -f built/${allargs#*o=}
- #echo "running ${allargs::40}"
  if [ -z "$norun" ];then
- echo building $node
+ echo "building ${allargs#*o=}"
  restargs="${allargs#*\ }"
 $build/${tauDylib}$1.lib $restargs > /dev/null
  else
@@ -28,45 +24,14 @@ $build/${tauDylib}$1.lib $restargs > /dev/null
 fi
  if  [ -e  error.html ] ; then
   $tauopen  error.html  
-  mv sums.txt built/oldsums.txt
+#  mv sums.txt built/oldsums.txt
   exit 1
  fi
 }
 
-function libexeAll {
-h1=$(cat $dependsOn 2> /dev/null | shasum)
-if [[ -e $node ]] ;then
-      hashline="$node ${h1::40}"
-else 
-     hashline="?"
-fi 
-if    grep "${hashline}" built/oldsums.txt > /dev/null ; then
-  echo $hashline >> sums.txt
-  else 
-  libexe $@ 
-  if [ -z "$norun" ];then
-    echo "$node ${h1::40}" >> sums.txt
-  fi
-fi
-}
-
-
-function makelibrary {
-   h1=$(cat $dependsOn 2> /dev/null | shasum)
-#   if [[ -e $build/$1.lib ]] ; then 
-   hashline="$1 ${h1::40}"
-#   else
-#    hashline="?"
-#   fi
- if   grep "${hashline}" built/oldsums.txt > /dev/null ; then
-  echo $hashline >> sums.txt
-  else 
-      node=$1.libsrc
-      libexe $libsrcargs
-      node=$1.$libtype
-     libexe $compileargs
+function linklibrary { 	 
  if [ -z "$norun" ];then
- 	 if [ -z $tauDylib ];then 
+   if [ -z $tauDylib ];then 
 		echo "void init_$1(); $ccode init_$1();}"> $build/$1.c 
 		cmd="clang -lm -pthread stdlib/*.c $build/$1.c $dependlibs $build/$1.bc -o $build/$1.lib  "
 		echo $cmd
@@ -76,25 +41,23 @@ function makelibrary {
 	   echo $cmd
 	   $cmd
     fi 
-	 echo $hashline >> sums.txt
-else 
-  echo makelibrary "$build/$1.lib"
 fi
-  fi
 }
+
+function startfresh {
+ccode="void init_libs(){"
+ dependlibs=
+ cp bin/stdlib.bc $build
+ linklibrary stdlib
+mv $build/stdlib.lib $build/orgstdlib.lib
+cc bin/putfile.c -o bin/putfile.cgi
+echo " " > $build/start.ls
+} 
+
 
 if ! [ -e $build ] ; then 
 mkdir $build
-echo "" >> $build/oldsums.txt
-echo "void init_stdlib(); void init_libs(){init_stdlib(); }">$build/orgstdlib.c
-clang -lm -pthread  stdlib/*.c $build/orgstdlib.c bin/stdlib.bc  -o $build/orgstdlib.lib
-cc bin/putfile.c -o bin/putfile.cgi
-#clang -dynamiclib bin/stdlib.bc  -o $build/orgstdlib.lib  -init _init_stdlib -undefined dynamic_lookup
-#cc  stdlib/*.c -DLIBRARY -o built/tauexe
-
-fi
-
-
+ startfresh 
 checksrc bin/stdlib.bc
 checksrc bin/taubuild.sh
 checksrc stdlib/tau.c
@@ -102,29 +65,42 @@ checksrc stdlib/tauthreads.c
 checksrc stdlib/tau.h
 checksrc bin/putfile.c
 
-echo "$0 $@" > $build/src/bin/buildcommand.sh
+fi
 
-export -f libexe 
+h11=$(echo $@ | shasum )
+sharoot=${h11::10}.txt
 
 
-if [[ $1 == "-n" ]]; then
+cd ~/work/built/src
+list=$(find  . -type f -print)
+cd ../..
+rm -f $build/$sharoot; touch $build/$sharoot
+for x in $list
+do
+ shasum $x >> $build/$sharoot
+done
+
+if [[ ! -f $build/old$sharoot ]] ; then
+    echo "X" >  $build/old$sharoot 
+ fi
+
+if [[   $1 == "-n" ]]; then
 tmpnorun=true
 shift 1
 fi
- cd $build/src
-rm -f $@  
-cd ..
-cd ..
-cp $@ $build/src
- 
-libexe orgstdlib updatestate   $@  o=+$build update.sh 
+cd ~/work
+
+checksrc $1
+
+libexe orgstdlib updatestate2 +$build old$sharoot  $sharoot +.bld $@ builddir=+built o=+$build update2.sh 
+
 norun=$tmpnorun
-export norun
-source  $build/update.sh
+
+source built/update2.sh
 
 if  [ -z "$norun" ];then
-mv sums.txt $build/oldsums.txt
+mv  $build/$sharoot $build/old$sharoot
 cd $build
-tar -zcf ~/backup2/$(date +%Y%m%d%H%M).tar.gz src
+tar -zcf  ~/backup2/$(date +%Y%m%d%H%M).tar.gz --exclude='./built/*' src
 echo "finish tar"
 fi 

@@ -10,11 +10,11 @@ use tausupport
 
 Export type:bitstream
 
+Export length(bitstream)int
+
 type bitstream is length:int, endpart:bits, fullwords:seq.bits
 
 Function tobitstream(s:seq.bits)bitstream bitstream(length.s * 64, 0x0, s)
-
-Export length(bitstream)int
 
 function bits(a:bitstream)seq.bits fullwords.a + endpart.a
 
@@ -27,16 +27,15 @@ function =(a:bitstream, b:bitstream)boolean length.a = length.b ∧ endpart.a = 
 Function patch(a:bitstream, i:int, val:int)bitstream
 subseq(a, 1, i - 1) + bitstream(32, bits.val) + subseq(a, i + 32, length.a)
 
-function print(x:bitstream)seq.word
+function %(x:bitstream)seq.word
 if length.x = 0 then"empty"
 else
  let i = (length.x - 1) mod 64
  let j = i / 16
- let start = print.endpart.x << (3 - j)
+ let start = %.endpart.x << (3 - j)
  let k = i mod 16 + 1
  let part = if k = 16 then start else[toword.k] + "bits of" + start
- part
- + for acc = "", @e ∈ reverse.fullwords.x do acc + print.@e /for(acc)
+ part + for acc = "", @e ∈ reverse.fullwords.x do acc + %.@e /for(acc)
 
 function firstword(x:bitstream)bits if isempty.fullwords.x then endpart.x else first.fullwords.x
 
@@ -82,8 +81,8 @@ else
   )
  bitstream(len, endpart, shiftleft(2, startpart, firstpart, startshift, empty:seq.bits))
 
-/function cmp(a:bitstream, b:bitstream, i:int, offseta:int)boolean if i > length.b then true else if singlebit(a, 
- i+offseta)=singlebit(b, i)then cmp(a, b, i+1, offseta)else false
+/function cmp(a:bitstream, b:bitstream, i:int, offseta:int)boolean if i > length.b then true else if singlebit(a, i
++offseta)=singlebit(b, i)then cmp(a, b, i+1, offseta)else false
 
 Function +(a:bitstream, b:bitstream)bitstream
 {steal bits from b to make full words in a}

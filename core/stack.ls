@@ -4,9 +4,11 @@ use seq.T
 
 use standard
 
-type stack is toseq:seq.T
-
 Export type:stack.T
+
+Export toseq(stack.T)seq.T
+
+type stack is toseq:seq.T
 
 Function top(f:stack.T, n:int)seq.T subseq(toseq.f, length.toseq.f - n + 1, length.toseq.f)
 
@@ -26,8 +28,4 @@ Function empty:stack.T stack.T stack.empty:seq.T
 
 Function isempty(f:stack.T)boolean length.toseq.f = 0
 
-Function undertop(f:stack.T, n:int)T(toseq.f)_(length.toseq.f - n)
-
-Export toseq(stack.T)seq.T
-
-___________________ 
+Function undertop(f:stack.T, n:int)T(toseq.f)_(length.toseq.f - n) 

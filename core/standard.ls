@@ -18,11 +18,156 @@ use words
 
 use xxhash
 
+Export type:boolean
+
+Export type:char
+
+Export toint(char)int
+
+Export type:index
+
+Export char(int)char
+
+Export index(int)index
+
+Export type:ordering
+
+Export type:UTF8{From UTF8}
+
+Export toword(n:int)word{Covert integer to a single word. }{From UTF8}
+
+Export toint(w:word)int{Convert an integer represented as a word to an int}{From UTF8}
+
+Export nbspchar char{From UTF8}
+
+Export length(seq.char)int
+
+Export length(seq.int)int
+
+Export length(seq.seq.word)int
+
+Export length(seq.word)int
+
+Export not(a:boolean)boolean{From internal}
+
+Export=(a:boolean, b:boolean)boolean{From internal}
+
+Export false boolean{From internal}
+
+Export true boolean{From internal}
+
+Export_(arithmeticseq.int, int)int{From otherseq.int}
+
+Export arithseq(int, int, int)seq.int{From otherseq.int}
+
+Export constantseq(len:int, element:int)seq.int{From otherseq.int}
+
+Export findindex(seq.word, word)int{From otherseq.word}
+
+Export type:seq.char{From seq.char}
+
+Export isempty(seq.char)boolean{From seq.char}
+
+Export+(seq.char, char)seq.char{From seq.char}
+
+Export+(seq.char, seq.char)seq.char{From seq.char}
+
+Export=(seq.char, seq.char)boolean{From seq.char}
+
+Export_(seq.char, int)char{From seq.char}
+
+Export empty:seq.char seq.char{From seq.char}
+
+Export subseq(seq.char, int, int)seq.char{From seq.char}
+
+Export+(seq.index, index)seq.index{From seq.index}
+
+Export empty:seq.index seq.index{From seq.index}
+
+Export type:seq.int{From seq.int}
+
+Export isempty(seq.int)boolean{From seq.int}
+
+Export last(seq.int)int{From seq.int}
+
+Export+(seq.int, int)seq.int{From seq.int}
+
+Export+(seq.int, seq.int)seq.int{From seq.int}
+
+Export=(seq.int, seq.int)boolean{From seq.int}
+
+Export_(seq.int, int)int{From seq.int}
+
+Export empty:seq.int seq.int{From seq.int}
+
+Export subseq(seq.int, int, int)seq.int{From seq.int}
+
+Export ∈(int, seq.int)boolean{From seq.int}
+
+Export type:seq.seq.word{From seq.seq.word}
+
+Export+(seq.seq.word, seq.seq.word)seq.seq.word{From seq.seq.word}
+
+Export+(seq.seq.word, seq.word)seq.seq.word{From seq.seq.word}
+
+Export_(seq.seq.word, int)seq.word{From seq.seq.word}
+
+Export empty:seq.seq.word seq.seq.word{From seq.seq.word}
+
+Export subseq(seq.seq.word, int, int)seq.seq.word{From seq.seq.word}
+
+Export ∈(seq.word, seq.seq.word)boolean{From seq.seq.word}
+
+Export type:seq.word{From seq.word}
+
+Export first(s:seq.word)word{From seq.word}
+
+Export isempty(seq.word)boolean{From seq.word}
+
+Export last(s:seq.word)word{From seq.word}
+
+Export+(a:seq.word, b:seq.word)seq.word{OPTION COMPILETIME}{From seq.word}
+
+Export+(seq.word, word)seq.word{From seq.word}
+
+Export <<(s:seq.word, i:int)seq.word{* removes i words from beginning of s}{From seq.word}
+
+Export=(seq.word, seq.word)boolean{From seq.word}
+
+Export >>(s:seq.word, i:int)seq.word{* removes i words from end of s}{From seq.word}
+
+Export_(seq.word, int)word{From seq.word}
+
+Export empty:seq.word seq.word{From seq.word}
+
+Export subseq(seq.word, int, int)seq.word{From seq.word}
+
+Export ∈(word, seq.word)boolean{From seq.word}
+
+Export towords(UTF8)seq.word{From textio}
+
+Export encodeword(a:seq.char)word{From words}
+
+Export alphasort(a:seq.seq.word)seq.seq.word{From words}
+
+Export alphasort(a:seq.word)seq.word{From words}
+
+Export merge(a:seq.word)word{make multiple words into a single word. }{From words}
+
+Export type:word{From words}
+
+Export checkinteger(w:word)word{* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out like
+an integer but has illegal characters in it. otherwise returns WORD. }{From words}
+
+Export decodeword(w:word)seq.char{From words}
+
+Export hash(a:word)int{From words}
+
+Export=(a:word, b:word)boolean{From words}
+
+Export >1(a:word, b:word)ordering{From words}
+
 Builtin stacktrace seq.word
-
-Export type:UTF8
-
-Export towords(UTF8)seq.word
 
 Function $(a:seq.word, b:seq.word)seq.word a + b
 
@@ -32,11 +177,9 @@ Function dq(s:seq.word)seq.word dq + s + dq
 
 type ordering is toint:int
 
-Export type:ordering
-
 Function space word encodeword.[char.32]
 
-* EQ GT and LT are the possible results of ? operator
+* EQ GT and LT are the possible results of >1 operator
 
 Function EQ ordering ordering.1
 
@@ -44,7 +187,7 @@ Function GT ordering ordering.2
 
 Function LT ordering ordering.0
 
-Function ?(a:ordering, b:ordering)ordering toint.a ? toint.b
+Function >1(a:ordering, b:ordering)ordering toint.a >1 toint.b
 
 Function =(a:ordering, b:ordering)boolean toint.a = toint.b
 
@@ -56,25 +199,15 @@ Function ∧(a:ordering, b:ordering)ordering if a = EQ then b else a
 
 type boolean is tointx:int
 
-Export type:boolean
-
-Export true boolean
-
 builtin true boolean
-
-Export false boolean
 
 builtin false boolean
 
 builtin not(a:boolean)boolean
 
-Export not(a:boolean)boolean
-
 builtin=(a:boolean, b:boolean)boolean{OPTION COMPILETIME}
 
-Export=(a:boolean, b:boolean)boolean
-
-Function ?(a:boolean, b:boolean)ordering
+Function >1(a:boolean, b:boolean)ordering
 if a then if b then{T T}EQ else{T F}GT
 else if b then{F T}LT else{F F}EQ
 
@@ -86,7 +219,7 @@ ______________
 
 Function -(i:int)int{OPTION COMPILETIME}0 - i
 
-Builtin ?(a:int, b:int)ordering
+Builtin >1(a:int, b:int)ordering
 
 Builtin+(a:int, b:int)int{OPTION COMPILETIME}
 
@@ -160,152 +293,15 @@ do
  )
 /for(value)
 
-Export hash(a:word)int
-
-Export ?(a:word, b:word)ordering
-
-Export=(a:word, b:word)boolean
-
-Export toword(n:int)word{Covert integer to a single word. }
-
-Export toint(w:word)int{Convert an integer represented as a word to an int}
-
-Export merge(a:seq.word)word{make multiple words into a single word. }
-
-Export type:word
-
-Export type:seq.word
-
-Export type:seq.seq.word
-
-Export type:seq.int
-
-Export type:seq.char
-
-Export empty:seq.seq.word seq.seq.word
-
-Export empty:seq.word seq.word
-
-Export empty:seq.int seq.int
-
-Export arithseq(int, int, int)seq.int
-
-Export_(arithmeticseq.int, int)int
-
-Export constantseq(len:int, element:int)seq.int
-
-Export_(seq.word, int)word
-
-Export_(seq.seq.word, int)seq.word
-
-Export_(seq.int, int)int
-
-Export length(seq.word)int
-
-Export length(seq.seq.word)int
-
-Export length(seq.int)int
-
-Export findindex(word, seq.word)int
-
-Export last(s:seq.word)word
-
-Export first(s:seq.word)word
-
-Export subseq(seq.seq.word, int, int)seq.seq.word
-
-Export subseq(seq.word, int, int)seq.word
-
-Export subseq(seq.int, int, int)seq.int
-
-Export ∈(word, seq.word)boolean
-
-Export ∈(seq.word, seq.seq.word)boolean
-
-Export ∈(int, seq.int)boolean
-
-Export=(seq.word, seq.word)boolean
-
-Export=(seq.int, seq.int)boolean
-
-Export+(seq.word, word)seq.word
-
-Export+(seq.int, seq.int)seq.int
-
-Export+(seq.int, int)seq.int
-
-Export last(seq.int)int
-
-Export+(seq.seq.word, seq.word)seq.seq.word
-
-Export+(seq.seq.word, seq.seq.word)seq.seq.word
-
-Export+(a:seq.word, b:seq.word)seq.word{OPTION COMPILETIME}
-
-Export nbspchar char
-
-Export alphasort(a:seq.word)seq.word
-
-Export alphasort(a:seq.seq.word)seq.seq.word
-
 type char is toint:int
 
 Function =(a:char, b:char)boolean toint.a = toint.b
 
-Function ?(a:char, b:char)ordering toint.a ? toint.b
+Function >1(a:char, b:char)ordering toint.a >1 toint.b
 
 Function hash(a:char)int hash.toint.a
 
-Export type:char
-
-Export type:seq.char
-
-Export length(seq.char)int
-
-Export empty:seq.char seq.char
-
-Export+(seq.char, seq.char)seq.char
-
-Export isempty(seq.char)boolean
-
-Export isempty(seq.word)boolean
-
-Export isempty(seq.int)boolean
-
-Export_(seq.char, int)char
-
-Export subseq(seq.char, int, int)seq.char
-
-Export=(seq.char, seq.char)boolean
-
-Export+(seq.char, char)seq.char
-
-Export toint(char)int
-
-Export char(int)char
-
-Function char1(s:seq.word)char{* First character of first word of s}first.decodeword.s_1
-
-Export encodeword(a:seq.char)word
-
-Export decodeword(w:word)seq.char
-
-Export checkinteger(w:word)word{* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out
- like an integer but has illegal characters in it. otherwise returns WORD. }
-
-Export <<(s:seq.word, i:int)seq.word{* removes i words from beginning of s}
-
-Export >>(s:seq.word, i:int)seq.word{* removes i words from end of s}
-
 type index is rep:int
-
-Export type:index
-
-Export index(int)index
-
-Export empty:seq.index seq.index
-
-Export+(seq.index, index)seq.index
 
 Function +(i:index, b:int)index index(rep.i + b)
 
@@ -313,6 +309,4 @@ Function toindex(i:int)index
 assert i > 0 report"not an index" + stacktrace
 index(i - 1)
 
-Function toint(i:index)int rep.i + 1
-
-Function %(a:seq.word)seq.word a 
+Function toint(i:index)int rep.i + 1 

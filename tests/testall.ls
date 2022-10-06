@@ -51,20 +51,12 @@ do l + hash.decodeword.w /for(l)
  "PASS hash"
 else"Fail hash"
 
-
-Function testall(input:seq.file,o:seq.word,noseq:boolean) seq.file 
-let out=test11
-+checkhash
-+ testencoding 
-+ testmodules
-+ testbug7
-+ randomtest(500)
-+ testreal
-+ if noseq then "" else testseq /if
-+ test11a(input) 
-+ testwordfreq
-+ testprocess
-+ if isempty.input then "no opt test file specified" else testopt(input)    
-[file(filename.o,out)]
-
-  
+Function testall(input:seq.file, o:seq.word, noseq:boolean)seq.file
+let out = 
+ test11 + checkhash + testencoding + testmodules + testbug7 + randomtest.500 + testreal
+ + if noseq then""else testseq /if
+ + test11a.input
+ + testwordfreq
+ + testprocess
+ + if isempty.input then"no opt test file specified"else testopt.input
+[file(filename.o, out)] 

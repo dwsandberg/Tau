@@ -34,17 +34,17 @@ Builtin arcsin(a:real)real
 
 Function pi real 3.1415926535898
 
-Builtin ?(a:real, b:real)ordering
+Builtin >1(a:real, b:real)ordering
 
-Function =(a:real, b:real)boolean(a ? b) = EQ
+Function =(a:real, b:real)boolean(a >1 b) = EQ
 
-Function >(a:real, b:real)boolean(a ? b) = GT
+Function >(a:real, b:real)boolean(a >1 b) = GT
 
 Function <(a:real, b:real)boolean b > a
 
-Function max(a:real, b:real)real if(a ? b) = GT then a else b
+Function max(a:real, b:real)real if(a >1 b) = GT then a else b
 
-Function min(a:real, b:real)real if(a ? b) = LT then a else b
+Function min(a:real, b:real)real if(a >1 b) = LT then a else b
 
 Builtin+(a:real, b:real)real
 
@@ -68,15 +68,7 @@ else
 
 Function *(a:int, b:real)real toreal.a * b
 
-Export print(decimals:int, rin:real)seq.word
-
 -------------
-
-Export print(decimals:int, rin1:real)seq.word
-
-Export toUTF8(rin:real, decimals:int)UTF8
-
-Export reallit(s:UTF8)real
 
 Function makereal(w:seq.word)real
 {OPTION COMPILETIME}
@@ -88,7 +80,7 @@ reallit(for acc = empty:seq.char, @e ∈ w do acc + decodeword.@e /for(acc)
 )
 
 Function print(decimals:int, rin1:real)seq.word
-let neg = (rin1 ? toreal.0) = LT
+let neg = (rin1 >1 toreal.0) = LT
 let rin = if neg then toreal.0 - rin1 else rin1
 let a = 10^decimals
 let r = rin + 1.0 / toreal(a * 2)
@@ -102,7 +94,7 @@ let r2 =
 if neg then"-" + r2 else r2
 
 Function toUTF8(rin:real, decimals:int)UTF8
-if(rin ? toreal.0) = LT then encodeUTF8.hyphenchar + toUTF8(toreal.0 - rin, decimals)
+if(rin >1 toreal.0) = LT then encodeUTF8.hyphenchar + toUTF8(toreal.0 - rin, decimals)
 else
  let a = 10^decimals
  let r = rin + 1.0 / toreal(a * 2)

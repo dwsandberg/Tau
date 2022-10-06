@@ -22,28 +22,27 @@ use set.word
 
 use wordgraph
 
-Export drawgraph(seq.arc.word, set.word, set.word)seq.word
+Export drawgraph(seq.arc.word, set.word, set.word)seq.word{From svg2graph.word}
 
 Function usegraph(input:seq.file, o:seq.word, include:seq.word, exclude:seq.word)seq.file
 let out = drawgraph(usegraph(breakparagraph.input, "mod"_1), asset.include, asset.exclude)
 [file(filename.o, out)]
 
 * The  /keyword usegraph cmd creates a graph with each node being a module and the arcs being to other module referenced by
- the module in the  /keyword use clauses. The  /keyword exclude option lists the modules to ignore in the use clauses.The  /keyword
- include option restricts the modules considered to those listed.
+the module in the  /keyword use clauses. The  /keyword exclude option lists the modules to ignore in the use clauses.The
+ /keyword include option restricts the modules considered to those listed.
 
 * Examples: /< block usegraph+built core.libsrc  /< noformat <a href="../Tools/install1.html"> Result </a>  />
 
 * > usegraph+built core.libsrc exclude=seq standard  /< noformat <a href="../Tools/install2.html"> Result </a>  />
 
-* > usegraph+built core.libsrc include=UTF8 words format standard textio stack encoding xxhash exclude=seq
- standard
+* > usegraph+built core.libsrc include=UTF8 words format standard textio stack encoding xxhash exclude=seq standard
  /< noformat <a href="../Tools/install3.html"> Result </a>  />
 
 * > usegraph +stdlib textio.ls+core UTF8.ls words format standard stack encoding xxhash  />
 
-* The last two examples give the same result. The first excludes modules from consideration and the second only
- includes source files that should be included. 
+* The last two examples give the same result. The first excludes modules from consideration and the second only includes
+source files that should be included. 
 
 Function doclibrary(input:seq.file, o:seq.word, mods:seq.word)seq.file
 {OPTION PROFILE}
@@ -68,15 +67,14 @@ let modindex =
  /for(txt)
 [file(filename.o, modindex + docmodule(g, todoc, libsrc))]
 
-* The doclibrary cmd produces summary documentation from source code. The option  /strong mods list the modules to be
- document if the option is not empty.
+* The doclibrary cmd produces summary documentation from source code. The option  /strong mods list the modules to be document
+if the option is not empty.
 
 * Paragraphs beginning with * are included in documentation.
 
-* If a paragraph in the library is of the form:* usegraph exclude <list of modules> include <list of modules> then a use
- graph will be construction including and excluding the modules listed. Both the exclude and include are optional, 
- but for a large library should be used to restrict the size of the graph. An example of a use graph is included at the end of
- this module.
+* If a paragraph in the library is of the form:* usegraph exclude <list of modules> include <list of modules> then a use graph
+will be construction including and excluding the modules listed. Both the exclude and include are optional, but for a large
+library should be used to restrict the size of the graph. An example of a use graph is included at the end of this module.
 
 * usegraph exclude standard seq set UTF8 stack graph otherseq
 
@@ -126,8 +124,8 @@ do
   let toadd = 
    " /p"
    + if p_2 = "usegraph"_1 then
-    let l = findindex("include"_1, p)
-    let k = findindex("exclude"_1, p)
+    let l = findindex(p, "include"_1)
+    let k = findindex(p, "exclude"_1)
     let include = subseq(p, l + 1, k)
     let exclude = subseq(p, k + 1, length.p)
     drawgraph(toseq.arcs.usegraph, asset.include, asset.exclude)
@@ -138,11 +136,12 @@ do
   let toadd = 
    " /p  /keyword"
    + if subseq(p, length.z, length.z + 1) = "{*"then
-    z >> 1 + "{" + subseq(p, length.z + 2, findindex("}"_1, p))
+    z >> 1 + "{" + subseq(p, length.z + 2, findindex(p, "}"_1))
    else if last.z ∈ "stub"then z >> 1 else z
   next(acc, currentmod, funcs + toadd, types)
  else if first.p ∈ "type"then next(acc, currentmod, funcs, types + p_2)
  else next(acc, currentmod, funcs, types)
-/for(acc
-+ if not.isempty.types ∨ not.isempty.funcs then" /br defines types: " + types + funcs
-else""/if) 
+/for(
+ acc
+ + if not.isempty.types ∨ not.isempty.funcs then" /br defines types: " + types + funcs
+ else"") 

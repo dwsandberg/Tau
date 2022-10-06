@@ -14,7 +14,7 @@ use symbol2
 
 use wasm
 
-Function print(a:seq.byte)seq.word for acc = "bytes:", @e ∈ a do acc + print.@e /for(acc)
+Function %(a:seq.byte)seq.word for acc = "bytes:", @e ∈ a do acc + %.@e /for(acc)
 
 Function allocatesym symbol symbol(moduleref."? core32", "allocate", typeint, typeptr)
 
@@ -33,17 +33,20 @@ let symboladdword =
  , [addabstract(typeref."encodingstate encoding *", charseq), charseq]
  , addabstract(typeref."encodingstate encoding *", charseq)
  )
-for l = Wlocal.1, loc ∈ initialwordlocations do l + const64.loc + Wcall.symboladdword /for(funcbody([i32, i64]
-, switchcontext.newcontext2.0 + const64.1
-+ Wcall.symbol(internalmod, "getinstance", typeint, typeint)
-+ Wdefine.1
-+ store(load(getencodingaddress.const64.1, 0), l + i32wrapi64, 0)
-+ store(load(getencodingaddress.const64.2, 0)
-, const64.2 + Wcall.symbol(internalmod, "getinstance", typeint, typeint) + i32wrapi64
-, 0
-)
-+ switchcontext.newcontext2.0
-))
+for l = Wlocal.1, loc ∈ initialwordlocations do
+ l + const64.loc + Wcall.symboladdword
+/for(
+ funcbody([i32, i64]
+ , switchcontext.newcontext2.0 + const64.1
+ + Wcall.symbol(internalmod, "getinstance", typeint, typeint)
+ + Wdefine.1
+ + store(load(getencodingaddress.const64.1, 0), l + i32wrapi64, 0)
+ + store(load(getencodingaddress.const64.2, 0)
+ , const64.2 + Wcall.symbol(internalmod, "getinstance", typeint, typeint) + i32wrapi64
+ , 0
+ )
+ + switchcontext.newcontext2.0
+ ))
 
 function getencodingaddress(encodingno:seq.byte)seq.byte
 {@currentprocess+encodingbase+4*encodingno}Gcurrentprocess + encodingno + const64.4 + i64mul

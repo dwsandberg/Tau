@@ -18,9 +18,9 @@ use seq.typeentry
 
 use set.typeentry
 
-Export type:typeentry
-
 Export type:typedict
+
+Export type:typeentry
 
 type typeentry is totypeseq:seq.mytype
 
@@ -28,7 +28,7 @@ type typedict is totypedict:set.typeentry
 
 Function emptytypedict typedict typedict.empty:set.typeentry
 
-function ?(a:typeentry, b:typeentry)ordering first.totypeseq.a ? first.totypeseq.b
+function >1(a:typeentry, b:typeentry)ordering first.totypeseq.a >1 first.totypeseq.b
 
 function type(a:typeentry)mytype first.totypeseq.a
 
@@ -66,11 +66,12 @@ else
    for acc = alltypes, subfld ∈ flatflds do
     if iscore4.subfld ∨ subfld = typeT ∨ isseq.subfld ∨ isencoding.subfld then acc
     else addtype(acc, subfld)
-   /for(assert cardinality.totypedict.alltypes < cardinality.totypedict.acc
-   report"PROBLEM" + %.type + "flat:"
-   + for txt = "", g ∈ flatflds do txt + %.g /for(txt + EOL)
-   + print.acc
-   addtype(acc, type))
+   /for(
+    assert cardinality.totypedict.alltypes < cardinality.totypedict.acc
+    report"PROBLEM" + %.type + "flat:"
+    + for txt = "", g ∈ flatflds do txt + %.g /for(txt + EOL)
+    + %.acc
+    addtype(acc, type))
 
 Function buildtypedict(syms:set.symbol, types:seq.seq.mytype)typedict
 let typesused = for acc = empty:seq.mytype, sym ∈ toseq.syms do acc + typesused.sym /for(acc)
@@ -106,8 +107,9 @@ for known = types, notflat = empty:seq.typeentry, p ∈ unknown do
  else
   let new = expandflat(p, types)
   if isflat.new then next(known + new, notflat)else next(known, notflat + new)
-/for(if isempty.notflat ∨ length.unknown = length.notflat then checkflatresult2(known, notflat)
-else checkflat(known, notflat)/if)
+/for(
+ if isempty.notflat ∨ length.unknown = length.notflat then checkflatresult2(known, notflat)
+ else checkflat(known, notflat))
 
 type checkflatresult2 is known:set.typeentry, unknown:seq.typeentry
 
@@ -138,7 +140,7 @@ else
      if isempty.f3 then next(acc + t, unchanged)
      else next(acc + replaceT(parameter.t, flatflds.f3_1), false)
    else next(acc + flatflds.f_1, false)
- /for(if unchanged then flatflds else expandflat(type, acc, types)/if)
+ /for(if unchanged then flatflds else expandflat(type, acc, types))
 
 function replaceT(with:mytype, typs:seq.mytype)seq.mytype
 for acc = empty:seq.mytype, t ∈ typs do acc + replaceT(with, t)/for(acc)
@@ -146,7 +148,7 @@ for acc = empty:seq.mytype, t ∈ typs do acc + replaceT(with, t)/for(acc)
 Function asseqseqmytype(dict:typedict)seq.seq.mytype
 for acc = empty:seq.seq.mytype, tr ∈ toseq.totypedict.dict do acc + totypeseq.tr /for(acc)
 
-Function print(dict:typedict)seq.word
+Function %(dict:typedict)seq.word
 for txt = "", tr ∈ toseq.totypedict.dict do
  for acc2 = txt, t ∈ totypeseq.tr do acc2 + %.t /for(acc2 + EOL)
 /for(txt)
@@ -172,7 +174,8 @@ let need =
 for new = empty:set.typeentry, t ∈ toseq.need do
  let x = lookup(totypedict.all, typeentry(t, empty:seq.mytype))
  if isempty.x ∧ isseq.t then new + typeentry(t, [t])else new ∪ x
-/for(if isempty.new then subdict else closedict(all, typedict(totypedict.subdict ∪ new))/if)
+/for(
+ if isempty.new then subdict else closedict(all, typedict(totypedict.subdict ∪ new)))
 
 Function basetype(typ:mytype, alltypes:typedict)mytype
 if isseq.typ then

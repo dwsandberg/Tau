@@ -48,9 +48,19 @@ use otherseq.tree.int
 
 Function testmodules seq.word
 assert true report randomphrase
- let y = [t501, t502, t503, t504, t505, t506, testrandomphrase, t508, test20, t044
- ,"200:1:4:5.4:56(200, 1, 5.4):"=%(":",postorder.tr1)
-]
+let y = 
+ [t501
+ , t502
+ , t503
+ , t504
+ , t505
+ , t506
+ , testrandomphrase
+ , t508
+ , test20
+ , t044
+ , "200:1:4:5.4:56(200, 1, 5.4):" = %(":", postorder.tr1)
+ ]
 check(y, "testmodules") + checkbits
 
 function print(a:seq.int)seq.word
@@ -68,14 +78,14 @@ function tr2 tree.int tree(37, [tr1, tr1])
 
 function t501 boolean[56, 200, 3] = [label.tr1, label.tr1_1, nosons.tr1]
 
-function ?(a:tree.int, b:tree.int)ordering subx(a, b, 1, label.a ? label.b ∧ nosons.a ? nosons.b)
+function >1(a:tree.int, b:tree.int)ordering subx(a, b, 1, label.a >1 label.b ∧ nosons.a >1 nosons.b)
 
 function subx(a:tree.int, b:tree.int, i:int, o:ordering)ordering
-if o = EQ ∧ i ≤ nosons.a then subx(a, b, i + 1, a_i ? b_i)else o
+if o = EQ ∧ i ≤ nosons.a then subx(a, b, i + 1, a_i >1 b_i)else o
 
-function %(a:word) seq.word [a]
+function %(a:word)seq.word[a]
 
-function t502 boolean[GT, EQ, EQ] = [tr2_1 ? tr2, tr2_1 ? tr2_2, tr1_2 ? tree.1]
+function t502 boolean[GT, EQ, EQ] = [tr2_1 >1 tr2, tr2_1 >1 tr2_2, tr1_2 >1 tree.1]
 
 function t503 boolean"a" = %.tree."a"_1
 
@@ -153,11 +163,11 @@ check([toint.toword.min64integer = min64integer
 , min64integer + 1 = -max64integer
 , 0xD = bits.13
 , 878082210 = toint.rotl32(0xA2345678, 8)
-, print(0xD687F000 ∧ 0x0FE00000) = "0000 0000 0680 0000"
-, print(0xD687F001 >> 2) = "0000 0000 35A1 FC00"
-, print(0xD687F001 << 2) = "0000 0003 5A1F C004"
-, print(0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000"
-, print.xor(0xD687F000, 0x0FE00000) = "0000 0000 D967 F000"
+, %(0xD687F000 ∧ 0x0FE00000) = "0000 0000 0680 0000"
+, %(0xD687F001 >> 2) = "0000 0000 35A1 FC00"
+, %(0xD687F001 << 2) = "0000 0003 5A1F C004"
+, %(0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000"
+, %.xor(0xD687F000, 0x0FE00000) = "0000 0000 D967 F000"
 ]
 , "bits"
 )

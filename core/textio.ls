@@ -61,7 +61,8 @@ else breakparagraph(u, i + 1, last, result)
 
 Function classifychar seq.word
 "0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0" + dq
-+ "0 0 0 0 0()0+, -.0 0 0 0 0 0 0 0 0 0 0:0 0=0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0[0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0{0}0 0"
++ "0 0 0 0 0()0+, -.0 0 0 0 0 0 0 0 0 0 0:0 0=0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0[0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0{0}
+ 0 0"
 
 Function towords(a:UTF8)seq.word towords.decodeUTF8.a
 

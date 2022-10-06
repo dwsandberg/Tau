@@ -63,7 +63,10 @@ slotX.w3
 Function addint(i:int)int toint.C64.i
 
 Function initwordref(baselibwords:seq.seq.char)int
-for acc = 0, @e ∈ baselibwords do max(acc, valueofencoding.asencoding.encodeword.@e)/for(for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc)do valueofencoding.encode.word3.k /for(loadbcwords))
+for acc = 0, @e ∈ baselibwords do
+ max(acc, valueofencoding.asencoding.encodeword.@e)
+/for(
+ for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc)do valueofencoding.encode.word3.k /for(loadbcwords))
 
 Function wordstoadd(baselibwords:seq.seq.char)seq.encoding.word3
 let have = 

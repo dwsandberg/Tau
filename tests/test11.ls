@@ -24,17 +24,19 @@ function t001 boolean 0 - 4 = 1 - 2 - 3
 
 function t002 boolean 2 = 24 / 4 / 3
 
-function fact(a:int)int if a=0 then 1 else if a = 1 then 1 else a * fact(a - 1)
+function fact(a:int)int
+if a = 0 then 1 else if a = 1 then 1 else a * fact(a - 1)
 
 function t003 boolean 24 = fact.4
 
-function power(a:int, b:int)int if b=0 then 1 else if b = 1 then a else power(a, b / 2) * power(a, b - b / 2)
+function power(a:int, b:int)int
+if b = 0 then 1 else if b = 1 then a else power(a, b / 2) * power(a, b - b / 2)
 
 function t004 boolean 1024 = power(2, 10)
 
 function t005 boolean 45 = if 2 = 2 then 45 else 23
 
-function t006 boolean 34 = if(6 ? 2) = GT then 34 else 16 + 4
+function t006 boolean 34 = if(6 >1 2) = GT then 34 else 16 + 4
 
 test cat of sequences
 
@@ -55,15 +57,15 @@ function t010 boolean[5, 5, 2, 5, 5, 2, 3, 5, 5, 2, 5, 5, 2, 3, 4] = genb.4
 
 covert integer to sequence of digits
 
-function int2seq(n:int, b:int)seq.int if(n ? b) = LT then[n]else int2seq(n / b, b) + [n - n / b * b]
+function int2seq(n:int, b:int)seq.int if(n >1 b) = LT then[n]else int2seq(n / b, b) + [n - n / b * b]
 
 function t011 boolean[2, 3, 9, 5] = int2seq(2395, 10)
 
-function t012 boolean[GT, GT, LT] = [[2, 8] ? [2, 7], [3, 8] ? [2, 8], [1, 8] ? [2, 8]]
+function t012 boolean[GT, GT, LT] = [[2, 8] >1 [2, 7], [3, 8] >1 [2, 8], [1, 8] >1 [2, 8]]
 
-function t013 boolean EQ = ([2, 8, 1] ? [2, 8, 1])
+function t013 boolean EQ = ([2, 8, 1] >1 [2, 8, 1])
 
-function t014 boolean[LT, GT] = [[2, 8] ? [2, 8, 1], [2, 8, 1] ? [2, 8]]
+function t014 boolean[LT, GT] = [[2, 8] >1 [2, 8, 1], [2, 8, 1] >1 [2, 8]]
 
 function t015 boolean[true, false, false, false] = [true ∧ true, true ∧ false, false ∧ true, false ∧ false]
 
@@ -77,9 +79,9 @@ test of+using functional notation pretty printer messes up this example this sho
 
 function t018 boolean 3 = 1 + 2
 
-function t019 boolean 1 = findindex(3, [3])
+function t019 boolean 1 = findindex([3],3)
 
-function t020 boolean 5 = findindex(1, [2, 4, 3, 8, 1, 3] + constantseq(4, 1))
+function t020 boolean 5 = findindex([2, 4, 3, 8, 1, 3] + constantseq(4, 1),1)
 
 function t021 boolean 28 = constantseq(13, 5)_7 + length.constantseq(23, 3)
 
@@ -113,13 +115,9 @@ function t033 boolean 6 = toint.if true then"3"_1 else"5"_1 /if + 3
 
 function t034 boolean 3464 = 3456 + if true then 3 else 1 /if + 5
 
-function print(a:seq.int)seq.word
-"["+%(",",a) >> 1
-+ "]"
+function print(a:seq.int)seq.word"[" + %(", ", a) >> 1 + "]"
 
-
-function t035 boolean
-"[2, 3, 4, 5]" = print.[2, 3, 4, 5]
+function t035 boolean"[2, 3, 4, 5]" = print.[2, 3, 4, 5]
 
 function t036 boolean 10 = for acc = 0, e ∈[1, 2, 3, 4]do acc + e /for(acc)
 
@@ -139,8 +137,8 @@ function t041 boolean"1 2 k 4 5" = replace("1 2 3 4 5", 3, "k"_1)
 function t042 boolean 97 = for acc = 100, e ∈[1, 2]do acc - e /for(acc)
 
 Function t043 boolean
-"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61=62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M 78 
-N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
+"code glyph 48 0 49 1 50 2 51 3 52 4 53 5 54 6 55 7 56 8 57 9 58:59 ; 60 < 61=62 > 63 ? 64 @ 65 A 66 B 67 C 68 D 69 E 70 F 71 G 72 H 73 I 74 J 75 K 76 L 77 M
+  78 N 79 O 80 P 81 Q 82 R 83 S 84 T 85 U 86 V 87 W 88 X 89 Y 90 Z"
 = for acc = "code glyph", e ∈ arithseq(43, 1, 48)do acc + [toword.e, encodeword.[char.e]]/for(acc)
 
 function t044 boolean"" + dq + "()+, -.:=[]^_{}" = standalonechars
@@ -157,7 +155,7 @@ Function t045 boolean
 
 function testset set.int asset.[2, 5, 6, 9, 12, 15, 35, 36]
 
-function ?2(a:int, b:int)ordering a / 10 ? b / 10
+function >2(a:int, b:int)ordering a / 10 >1 b / 10
 
 function t046 boolean toseq.findelement2(testset, 36) = [35, 36] ∧ toseq.findelement2(testset, 15) = [12, 15]
 
@@ -214,7 +212,7 @@ let list =
  , "this is a test"_(-1) = "test"_1
  , b.[Tpair(3, "three"), Tpair(4, "four"), Tpair(5, "five")]_(-2)
  = "four"
- , a.Tpair(3, "three")=3
+ , a.Tpair(3, "three") = 3
  , [1, 2, 4]_(-3) = 1
  , {51}"this is a test" << 2 = "a test"
  , "this is a test" >> 3 = "this"

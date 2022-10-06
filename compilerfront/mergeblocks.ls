@@ -25,14 +25,15 @@ function countnodes2(s:stack.int)int if top.s = 2 then 1 else 1 + countnodes2.po
 Function valid(s:seq.symbol)boolean
 for valid = true, stk = empty:stack.int, sym ∈ s
 while valid
-do if isblock.sym then
- let noblocks = countnodes2.stk
- next(top.stk ≤ noblocks, pop(stk, noblocks))
-else if isbr.sym then
- let blkno = countnodes2.stk + 1
- next(brt.sym > 0 ∧ brf.sym > 0, push(stk, max(blkno + max(brt.sym, brf.sym), top.stk)))
-else if isexit.sym ∨ iscontinue.sym then next(valid, push(stk, top.stk))
-else if isstartorloop.sym then next(valid, push(stk, 2))else next(valid, stk)
+do
+ if isblock.sym then
+  let noblocks = countnodes2.stk
+  next(top.stk ≤ noblocks, pop(stk, noblocks))
+ else if isbr.sym then
+  let blkno = countnodes2.stk + 1
+  next(brt.sym > 0 ∧ brf.sym > 0, push(stk, max(blkno + max(brt.sym, brf.sym), top.stk)))
+ else if isexit.sym ∨ iscontinue.sym then next(valid, push(stk, top.stk))
+ else if isstartorloop.sym then next(valid, push(stk, 2))else next(valid, stk)
 /for(valid)
 
 function ghj(code:seq.symbol, stk:stack.int, label:int, replace:int)seq.symbol
@@ -57,7 +58,7 @@ function keyvalue(n:casenode)int
 let s = key.n
 if isword.s then valueofencoding.asencoding.wordname.s else value.s
 
-function ?(a:casenode, b:casenode)ordering keyvalue.a ? keyvalue.b
+function >1(a:casenode, b:casenode)ordering keyvalue.a >1 keyvalue.b
 
 type repos is case:casenode, kind:word, branch:int
 
@@ -68,9 +69,12 @@ function reorg(sorted:seq.casenode, brf:int, var:symbol, nodes:seq.int, nodeno:i
 if length.sorted < 4 then
  {rechain}
  let new = 
-  for acc = empty:seq.symbol, off = nodeno - (length.sorted - 1), c ∈ sorted >> 1 do next(acc + [var, key.c, EqOp, Br2(brt.c - off, 1)], off + 1)/for(let last = last.sorted
-  let brt = brt.last - nodeno
-  acc + [var, key.last, EqOp, Br2(brt, brf - nodeno)])
+  for acc = empty:seq.symbol, off = nodeno - (length.sorted - 1), c ∈ sorted >> 1 do
+   next(acc + [var, key.c, EqOp, Br2(brt.c - off, 1)], off + 1)
+  /for(
+   let last = last.sorted
+   let brt = brt.last - nodeno
+   acc + [var, key.last, EqOp, Br2(brt, brf - nodeno)])
  reorgresult(new, nodeno - length.sorted)
 else
  {split in two}
@@ -123,47 +127,48 @@ do
    , empty:seq.symbol
    )
   else next(cases, e, nodeno + 1, nextcase - 1, first, eqivs)
-/for(if length.cases < reorgwhen then removedead(code, nodes, dead)
-else
- let testvar = 
-  if length.first = 1 then first_1
-  else if isempty.eqivs then Local.nextvar else eqivs_1
- let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.value.testvar
- let t = 
-  reorg(sort.cases
-  , nodeno.last.cases + brf.code_(nodes_(nodeno.last.cases))
-  , testvar
-  , nodes
-  , nodeno.first.cases - 1
-  )
- let nonewnodes = length.code.t / 4
- let locnode = nodeno.first.cases - 1
- let nodesBeforeStartOfCase = subseq(nodes, 1, locnode)
- let newcasecode = settestvar + code.t
- let loc = abs.nodes_locnode
- let newcode = 
-  subseq(adjustbr(code, subseq(nodes, 1, locnode + 1), nonewnodes), 1, loc) + newcasecode
-  + subseq(code, loc + 1, length.code)
- let newnodes = 
-  for l = nodesBeforeStartOfCase + arithseq(nonewnodes, 4, loc + length.settestvar + 4)
-  , n ∈ nodes << locnode
-  do
-   l + [length.newcasecode + n]
-  /for(l)
- let newunreached = 
-  for l = for x = empty:seq.int, y ∈ dead do x + if y < locnode then y else nonewnodes + y /for(x)
-  , n ∈ cases
-  do
-   let n2 = nodeno.n + nonewnodes
-   if isempty.l then[n2]
-   else if last.l > n2 then l + n2
-   else if n2 > first.l then[n2] + l
-   else
-    for l2 = [first.l], lastx = first.l, n3 ∈ l << 1 do
-     next(if between(n2, n3, lastx)then l2 + n2 + n3 else l2 + n3, n3)
-    /for(l2)
-  /for(l)
- {nodes_node.first.cases}removedead(newcode, newnodes, newunreached)/if)
+/for(
+ if length.cases < reorgwhen then removedead(code, nodes, dead)
+ else
+  let testvar = 
+   if length.first = 1 then first_1
+   else if isempty.eqivs then Local.nextvar else eqivs_1
+  let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.value.testvar
+  let t = 
+   reorg(sort.cases
+   , nodeno.last.cases + brf.code_(nodes_(nodeno.last.cases))
+   , testvar
+   , nodes
+   , nodeno.first.cases - 1
+   )
+  let nonewnodes = length.code.t / 4
+  let locnode = nodeno.first.cases - 1
+  let nodesBeforeStartOfCase = subseq(nodes, 1, locnode)
+  let newcasecode = settestvar + code.t
+  let loc = abs.nodes_locnode
+  let newcode = 
+   subseq(adjustbr(code, subseq(nodes, 1, locnode + 1), nonewnodes), 1, loc) + newcasecode
+   + subseq(code, loc + 1, length.code)
+  let newnodes = 
+   for l = nodesBeforeStartOfCase + arithseq(nonewnodes, 4, loc + length.settestvar + 4)
+   , n ∈ nodes << locnode
+   do
+    l + [length.newcasecode + n]
+   /for(l)
+  let newunreached = 
+   for l = for x = empty:seq.int, y ∈ dead do x + if y < locnode then y else nonewnodes + y /for(x)
+   , n ∈ cases
+   do
+    let n2 = nodeno.n + nonewnodes
+    if isempty.l then[n2]
+    else if last.l > n2 then l + n2
+    else if n2 > first.l then[n2] + l
+    else
+     for l2 = [first.l], lastx = first.l, n3 ∈ l << 1 do
+      next(if between(n2, n3, lastx)then l2 + n2 + n3 else l2 + n3, n3)
+     /for(l2)
+   /for(l)
+  {nodes_node.first.cases}removedead(newcode, newnodes, newunreached))
 
 function unreached(code:seq.symbol, nodes:seq.int, nextvar:int, reorgwhen:int)seq.symbol
 for unreached = empty:seq.int
@@ -192,18 +197,19 @@ do
    else if c = 1 then multpred + t
    else if c = 2 then multpred + f else multpred + t + f
   next(unreached, newmultpred, newcases, newtargets, count + 1)
-/for(if length.nodes - 3 = length.unreached ∧ isstart.code_(-first.nodes)then
- {just two active nodes which must be a branch follow by an exit.so remove block}
- let blkstart = -first.nodes
- let secondnode = code_(nodes_2)
- let firstpart = subseq(code, blkstart + 1, nodes_2 - 1)
- let firstpart1 = 
-  if length.firstpart = 1 ∧ (isconst.firstpart_1 ∨ islocal.firstpart_1)then empty:seq.symbol
-  else firstpart + Define.100000
- subseq(code, 1, blkstart - 1) + firstpart1
- + subseq(code, nodes_(1 + brt.secondnode) + 1, nodes_(2 + brt.secondnode) - 1)
-else if length.cases < reorgwhen then removedead(code, nodes, unreached)
-else findcases(code, nodes, cases, unreached, nextvar, reorgwhen)/if /if)
+/for(
+ if length.nodes - 3 = length.unreached ∧ isstart.code_(-first.nodes)then
+  {just two active nodes which must be a branch follow by an exit.so remove block}
+  let blkstart = -first.nodes
+  let secondnode = code_(nodes_2)
+  let firstpart = subseq(code, blkstart + 1, nodes_2 - 1)
+  let firstpart1 = 
+   if length.firstpart = 1 ∧ (isconst.firstpart_1 ∨ islocal.firstpart_1)then empty:seq.symbol
+   else firstpart + Define.100000
+  subseq(code, 1, blkstart - 1) + firstpart1
+  + subseq(code, nodes_(1 + brt.secondnode) + 1, nodes_(2 + brt.secondnode) - 1)
+ else if length.cases < reorgwhen then removedead(code, nodes, unreached)
+ else findcases(code, nodes, cases, unreached, nextvar, reorgwhen))
 
 function removedead(code:seq.symbol, nodes:seq.int, dead:seq.int)seq.symbol
 {nodes in dead are in descending order}
@@ -265,10 +271,11 @@ for acc = empty:seq.symbol, stk = empty:stack.int, nextvar = length.s, lastsymbo
    {build new stk}
    let stk2 = for stk2 = stk1, n ∈ nodes << 1 do push(stk2, n - 1)/for(stk2)
    next(code1, stk2, nextvar, sym)
-/for(if isblock.lastsymbol then
- if not.isconst.self ∧ first.toseq.stk = -1 then tailR(acc + lastsymbol, self, stk)
- else unreached(acc, toseq.stk, nextvar, reorgwhen)
-else acc /if)
+/for(
+ if isblock.lastsymbol then
+  if not.isconst.self ∧ first.toseq.stk = -1 then tailR(acc + lastsymbol, self, stk)
+  else unreached(acc, toseq.stk, nextvar, reorgwhen)
+ else acc)
 
 function newstk(sym:symbol, stk:stack.int, acc:seq.symbol)stack.int
 if isstartorloop.sym then push(stk, -length.acc - 1)
@@ -303,7 +310,7 @@ for acc = code, blockcount = length.nodestoadjust, i ∈ nodestoadjust do
  if isbr.sym ∧ (brt.sym > blockcount ∨ brf.sym > blockcount)then
   let newt = if brt.sym > blockcount then brt.sym + adjust else brt.sym
   let newf = if brf.sym > blockcount then brf.sym + adjust else brf.sym
-  assert between(i, 1, length.acc)report"problem adjust" + %.i + print.code
+  assert between(i, 1, length.acc)report"problem adjust" + %.i + %.code
   next(replace(acc, i, Br2(newt, newf)), blockcount - 1)
  else next(acc, blockcount - 1)
 /for(acc)

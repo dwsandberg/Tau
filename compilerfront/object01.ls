@@ -62,8 +62,8 @@ for acc = empty:seq.seq.int, def ∈ defs do
  else
   for coded = empty:seq.int, t0 ∈ def << 1 do
    let t = if isseq.t0 then parameter.t0 else t0
-   for idx = 1, d ∈ defs while first.d ≠ t do idx + 1 /for(coded + if isseq.t0 then-idx else idx /if)
-  /for(acc + if isempty.coded then[length.acc + 1]else coded /if)
+   for idx = 1, d ∈ defs while first.d ≠ t do idx + 1 /for(coded + if isseq.t0 then-idx else idx)
+  /for(acc + if isempty.coded then[length.acc + 1]else coded)
 /for(acc)
 
 function word0 int 3
@@ -86,9 +86,10 @@ else
  for result = empty:seq.seq.mytype, row2 ∈ a do
   result
   + for acc = [first.row2], t ∈ row2 << 1 do acc + sub(t, singlerow)/for(acc)
- /for(for acc = empty:seq.seq.mytype, row ∈ result do
-  if length.row = 2 ∧ not.isseq.row_1 then acc else acc + row
- /for(acc))
+ /for(
+  for acc = empty:seq.seq.mytype, row ∈ result do
+   if length.row = 2 ∧ not.isseq.row_1 then acc else acc + row
+  /for(acc))
 
 function close(x:seq.seq.mytype)seq.seq.mytype
 {add types used but not defined}
@@ -102,9 +103,10 @@ for defs = empty:seq.mytype, used = empty:seq.mytype, def ∈ x do
    else if not.isseq.parameter.d then acc else acc + parameter.d
   /for(acc)
  )
-/for(let newdefs = toseq(asset.used \ asset.defs)
-if isempty.newdefs then x
-else close.for acc = x, new ∈ toseq(asset.used \ asset.defs)do acc + [new]/for(acc)/if)
+/for(
+ let newdefs = toseq(asset.used \ asset.defs)
+ if isempty.newdefs then x
+ else close.for acc = x, new ∈ toseq(asset.used \ asset.defs)do acc + [new]/for(acc))
 
 function sub(t:mytype, singlerow:seq.seq.mytype)mytype
 if t ∈ [typeint, typeword, typereal]then t
@@ -158,11 +160,12 @@ do
    let w = addorder.tableentry.last.t
    next(acc + w, idx + 1, stkcount, if w > maxencoding then t else t >> 1)
   else next(acc + -(stkcount + 1), idx + 1, stkcount + 1, t)
-/for(finished
-+ if stkcount > 0 then adjuststkcounts(acc, fldtypes, stkcount)
-else if length.acc < 10 ∨ subseq(acc, 1, 2) = [buildseq, word0]then
- [if first.acc = buildrecord then buildtblrecord else buildtblseq] + acc << 1
-else acc /if /if)
+/for(
+ finished
+ + if stkcount > 0 then adjuststkcounts(acc, fldtypes, stkcount)
+ else if length.acc < 10 ∨ subseq(acc, 1, 2) = [buildseq, word0]then
+  [if first.acc = buildrecord then buildtblrecord else buildtblseq] + acc << 1
+ else acc)
 
 function dumptable seq.word
 for txt = " /br tableentry", r ∈ encodingdata:tableentry do txt + %.r /for(txt)
@@ -231,10 +234,14 @@ for stk = empty:stack.ptr, map = empty:seq.int, rec ∈ inrecs << (length.allpat
       , if val < m then val else m
       , newobjs
       )
-    /for(let resulttype = resulttype(packedsize, eletypeidx)
-    for acc = obj, o ∈ objs do cat(acc, o, resulttype)/for(let fx = push(pop(stk, -m), acc)
-    assert not.isempty.fx report"??"
-    fx))
+    /for(
+     let resulttype = resulttype(packedsize, eletypeidx)
+     for acc = obj, o ∈ objs do
+      cat(acc, o, resulttype)
+     /for(
+      let fx = push(pop(stk, -m), acc)
+      assert not.isempty.fx report"??"
+      fx))
    else
     {buildrecord}
     let pattern = allpatterns_(rec_2)
@@ -248,7 +255,7 @@ for stk = empty:stack.ptr, map = empty:seq.int, rec ∈ inrecs << (length.allpat
     /for(push(pop(stk, -m), obj))
   if first.rec ∈ [buildtblseq, buildtblrecord]then next(pop.newstk, map + bitcast:int(top.newstk))
   else next(newstk, map)
-/for(if isempty.stk then bitcast:ptr(last.map)else top.stk /if)
+/for(if isempty.stk then bitcast:ptr(last.map)else top.stk)
 
 function adjuststkcounts(rec:seq.int, fldtypes:seq.int, stkcount:int)seq.int
 let k = length.rec - length.fldtypes
@@ -262,10 +269,15 @@ for acc = subseq(rec, 1, k), i = k + 1, typ ∈ fldtypes do
 Function encode2(data:seq.seq.int)seq.byte
 for all = empty:seq.byte, rec ∈ data do
  all
- + for pos = true, j ∈ rec while pos do j ≥ 0 /for(if pos then
-  for acc = empty:seq.byte, i ∈ rec do acc + LEBu.i /for(LEBu(length.acc * 2) + acc)
- else
-  for acc = empty:seq.byte, i ∈ rec do acc + LEBs.i /for(LEBu(length.acc * 2 + 1) + acc)/if)
+ + for pos = true, j ∈ rec
+ while pos
+ do
+  j ≥ 0
+ /for(
+  if pos then
+   for acc = empty:seq.byte, i ∈ rec do acc + LEBu.i /for(LEBu(length.acc * 2) + acc)
+  else
+   for acc = empty:seq.byte, i ∈ rec do acc + LEBs.i /for(LEBu(length.acc * 2 + 1) + acc))
 /for(LEBu.length.all + all)
 
 Function decode2(b:seq.byte)seq.seq.int
@@ -273,17 +285,19 @@ let len = decodeLEBu(b, 1)
 let end = next.len + value.len
 for all = empty:seq.seq.int, next = next.len, t ∈ constantseq(value.len, 0)
 while next < end
-do let r = decodeLEBu(b, next)
-let val = value.r
-let endplace = next.r + val / 2
-let pos = val mod 2 = 0
-next(for acc = empty:seq.int, place = next.r, t2 ∈ constantseq(val, 0)
-while place < endplace
-do let x = if pos then decodeLEBu(b, place)else decodeLEBs(b, place)
-next(acc + value.x, next.x)
-/for(all + acc)
-, endplace
-)
+do
+ let r = decodeLEBu(b, next)
+ let val = value.r
+ let endplace = next.r + val / 2
+ let pos = val mod 2 = 0
+ next(for acc = empty:seq.int, place = next.r, t2 ∈ constantseq(val, 0)
+ while place < endplace
+ do
+  let x = if pos then decodeLEBu(b, place)else decodeLEBs(b, place)
+  next(acc + value.x, next.x)
+ /for(all + acc)
+ , endplace
+ )
 /for(all)
 
 ____________________________________

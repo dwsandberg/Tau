@@ -33,40 +33,43 @@ define makelib1 stdlib1 makelib
 define makelib2 stdlib2 makelib
 define makelib0 orgstdlib makelib
 define prettybuild stdlib prettystate
-define shell backup
+define start shell  startfresh 
 
-libsrc0 core.libsrc
+start  start.ls  +bin taubuild.sh  stdlib.bc putfile.c
++ stdlib tau.c tauthreads.c tau.h
+
+libsrc0 core.libsrc start.ls
 +core bits.ls encoding format graph process real seq set sparseseq stack standard UTF8 words xxhash otherseq
  textio file 
 
-libsrc0 symbols.libsrc
+libsrc0 symbols.libsrc start.ls
 +symbols symbol2.ls typedict mytype symbolconstant symbol
 
-libsrc0 compilerfront.libsrc
+libsrc0 compilerfront.libsrc start.ls
 +compilerfront pretty.ls compilerfrontT.ls compilerfront mergeblocks pass2 hashset localmap2 parse parsersupport passparse passsymbol postbind symboldict
 compileTimeT object01 objectio LEBencoding
 
-libsrc0 codegen.libsrc
+libsrc0 codegen.libsrc start.ls
 +codegen persistant.ls bitstream codetemplates2 codegennew codetemplates internalbc llvm llvmconstants
 
-libsrc0 tausupport.libsrc
+libsrc0 tausupport.libsrc start.ls
 +tausupport  ptr.ls taublockseq bitcast tausupport 
 
 makelib0 stdlib1.lib core.libsrc symbols compilerfront codegen tausupport
-+stdlib updatestate.ls main2  impdependent.ls
++stdlib updatestate.ls main2 callconfig impdependent.ls
 exports=midpoint   impDependent mytype UTF8  bits   ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
 
 makelib1 stdlib2.lib core.libsrc symbols compilerfront codegen tausupport
-+stdlib updatestate.ls main2 impdependent.ls
++stdlib updatestate.ls main2 callconfig impdependent.ls
 exports=midpoint  impDependent mytype UTF8  bits  ptr encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio timestamp words xxhash compilerfront bitcast objectio object01 LEBencoding
 
 makelib2 stdlib.lib 
 core.libsrc symbols compilerfront codegen tausupport
-+stdlib updatestate.ls main2 impdependent.ls
-exports=libllvm compilerfrontT midpoint  impDependent mytype UTF8  bits    encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio words xxhash compilerfront bitcast objectio object01 LEBencoding
++stdlib updatestate.ls main2 callconfig impdependent.ls
+exports=updatestate callconfig compilerfrontT midpoint  impDependent mytype UTF8  bits    encoding file format graph hashset internalbc  llvm llvmconstants main2 maindict mangle otherseq pretty process real seq set sparseseq stack standard symbol symbol2 taublockseq tausupport testall textio words xxhash compilerfront bitcast objectio object01 LEBencoding
 
-libsrc subtools.libsrc +tools baseTypeCheck.ls doc genLR1 prettycompilerfront reconstructUses   taulextable frontcmd wordgraph enumerate
-graphcode ParserExample  exports=X
+libsrc subtools.libsrc +subtools baseTypeCheck.ls doc genLR1 prettycompilerfront reconstructUses   taulextable frontcmd wordgraph enumerate
+graphcode ParserExample cleanExports exports=X
 
 makelib tools.lib common.lib subtools.libsrc
 +tools  profile.ls  profileexample
@@ -106,7 +109,7 @@ transform taudoc.html
 transform installdoc.html 
 +tools install.txt flags=html noindex
 
- usegraph + tools install1.html +$build core.libsrc 
+usegraph + tools install1.html +$build core.libsrc 
 
 usegraph + tools install2.html +$build core.libsrc exclude=seq standard    
 
@@ -145,8 +148,5 @@ Library=webtools
 flags=info
 
 
- prettybuild newrelease.bld +.bld  release.bld
+prettybuild newrelease.bld +.bld  release.bld
 
-define updatestate stdlib updatestate
-
- updatestate newupdate.sh +.bld release.bld

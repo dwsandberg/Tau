@@ -1,7 +1,5 @@
 Module webIOtypes
 
-???? does not dectect two types of same name but different structure
-
 use JS.HTTPresult
 
 use UTF8

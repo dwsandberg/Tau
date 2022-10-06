@@ -16,13 +16,13 @@ use set.T
 
 use standard
 
-type layeredgraph is g:graph.T, layers:seq.seq.T
-
 Export g(layeredgraph.T)graph.T
 
 Export layers(layeredgraph.T)seq.seq.T
 
 Export layeredgraph(g:graph.T, layers:seq.seq.T)layeredgraph.T
+
+type layeredgraph is g:graph.T, layers:seq.seq.T
 
 Function layer(g:graph.T)layeredgraph.T
 {expect DAG as input}

@@ -10,17 +10,17 @@ use seq.seq.char
 
 use standard
 
+Export type:UTF8
+
+Export toseqbyte(UTF8)seq.byte
+
+Export UTF8(seq.byte)UTF8
+
 type UTF8 is toseqbyte:seq.byte
 
 Function length(a:UTF8)int length.toseqbyte.a
 
 Function _(a:UTF8, i:int)byte(toseqbyte.a)_i
-
-Export type:UTF8
-
-Export UTF8(seq.byte)UTF8
-
-Export toseqbyte(UTF8)seq.byte
 
 Function emptyUTF8 UTF8 UTF8.empty:seq.byte
 
@@ -40,12 +40,14 @@ Function periodchar char char.46
 
 Function nbspchar char{no break space character}char.160
 
+Function char1(s:seq.word)char{* First character of first word of s}first.decodeword.s_1
+
 Function toUTF8(n:int)UTF8
 UTF8.if n < 0 then[tobyte.toint.hyphenchar] + toUTF8(n, 10)else toUTF8(-n, 10)
 
 function toUTF8(n:int, base:int)seq.byte
-{n should always be negative.This is to handle the smallest integer in the twos complement representation of integers
-  }
+{n should always be negative.This is to handle the smallest integer in the twos complement representation of
+ integers}
 if base + n > 0 then[tobyte(48 - n)]
 else toUTF8(n / base, base) + tobyte(48 + n / base * base - n)
 

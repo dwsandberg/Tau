@@ -10,6 +10,8 @@ use bits
 
 use real
 
+use UTF8
+
 Export  /or(bits,bits)bits {OPTION COMPILETIME}
 
 Export  /and(bits,bits)bits {OPTION COMPILETIME}
@@ -133,7 +135,7 @@ Function optest37(s:seq.word, i:int)int
  else if s_i ∈ "c d z"then 4 else 5
 
 
-Function optest38(a:int, b:int, c:int, d:int)ordering optest38a(a ? b, c ? d)
+Function optest38(a:int, b:int, c:int, d:int)ordering optest38a(a >1 b, c >1 d)
 
 Function optest38a(a:ordering, b:ordering)ordering let x = a
  if x = EQ then b else x

@@ -55,8 +55,9 @@ for mp = empty:midpoint, data = empty:seq.byte, i ∈ input do
   , data
   )
  else next(mp, data + [tobyte.10, tobyte.10] + data.i)
-/for(let allsrc = breakparagraph.data
-compilerfront2:T(option, breakparagraph.data, mp))
+/for(
+ let allsrc = breakparagraph.data
+ compilerfront2:T(option, breakparagraph.data, mp))
 
 Function compilerfront2:T(option:seq.word, allsrc:seq.seq.word, libinfo:midpoint)midpoint
 {OPTION PROFILE}
@@ -69,8 +70,8 @@ else
  if option = "all"then prepareback(prg5, m, libinfo)
  else midpoint(option, prg5, typedict.m, libmods.m, src.m)
 
-unbound interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict)seq
- .symbol
+unbound interpretCompileTime:T(librarymap:seq.word, args:seq.symbol, ctsym:symbol, typedict:typedict)seq.
+symbol
 
 Function pass2:T(librarymap:seq.word, knownsymbols0:set.symdef, t:typedict, option:seq.word)set.symdef
 {OPTION PROFILE}
@@ -121,9 +122,10 @@ for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toproce
   if"INLINE"_1 ∈ getoption.t then next(big, small, symdef(s, t, paragraphno.pele) ∪ core)
   else next(big, symdef(s, t, paragraphno.pele) ∪ small, core)
  else next(big + pele, small, core)
-/for(if length.toseq.corein = length.toseq.core then
- additionalpass:T(librarymap, toseq.core + toseq.small + big, core, typedict)
-else subpass2:T(option, librarymap, big, core, small, count + 1, typedict)/if)
+/for(
+ if length.toseq.corein = length.toseq.core then
+  additionalpass:T(librarymap, toseq.core + toseq.small + big, core, typedict)
+ else subpass2:T(option, librarymap, big, core, small, count + 1, typedict))
 
 Function additionalpass:T(librarymap:seq.word, p:seq.symdef, start:set.symdef, typedict:typedict)set.symdef
 {OPTION PROFILE}
@@ -219,7 +221,8 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    let addlooplocals = 
     for pmap = map, parano = 1, e ∈ constantseq(10000, 1)
     while parano ≤ nopara
-    do next(localmap2(firstvar.sym + parano - 1, [Local(nextvar + parano - 1)]) ∪ pmap, parano + 1)
+    do
+     next(localmap2(firstvar.sym + parano - 1, [Local(nextvar + parano - 1)]) ∪ pmap, parano + 1)
     /for(pmap)
    next(flags
    , result + Loopblock(paratypes.sym, nextvar, resulttype.sym)
@@ -247,9 +250,11 @@ for flags = bits.0, result = empty:seq.symbol, nextvar = nextvarX, map = mapX, s
    else if length.z = 1 then[var, first.z, EqOp]
    else
     let t = length.z + 2
-    for acc = [Start.typeboolean], idx = 2, w ∈ z >> 1 do next(acc + [var, w, EqOp] + Br2(t - idx, 1), idx + 1)/for(acc + [var, last.z, EqOp, Exit, Littrue, Exit, EndBlock])
+    for acc = [Start.typeboolean], idx = 2, w ∈ z >> 1 do
+     next(acc + [var, w, EqOp] + Br2(t - idx, 1), idx + 1)
+    /for(acc + [var, last.z, EqOp, Exit, Littrue, Exit, EndBlock])
   if nonew then next(flags, result >> 2 + newcode, nextvar, map)
-  else next(flags, result >> 1 + Define.nextvar + newcode, nextvar, map)
+  else next(flags, result >> 1 + Define.nextvar + newcode, nextvar + 1, map)
  else if wordname.sym ∈ "forexp" ∧ isBuiltin.sym then
   let noop = forexpisnoop(sym, result)
   if not.isempty.noop then next(flags, noop, nextvar, map)
@@ -315,5 +320,6 @@ do
  , parano + 1
  , idx
  )
-/for(let r = scancode:T(librarymap, p, code, nextvar, pmap, self, typedict)
-expandresult(nextvar.r, paracode + code.r, flags.r)) 
+/for(
+ let r = scancode:T(librarymap, p, code, nextvar, pmap, self, typedict)
+ expandresult(nextvar.r, paracode + code.r, flags.r)) 

@@ -76,28 +76,6 @@ use seq.word
 
 use words
 
-Export empty:seq.index seq.index
-
-Export+(seq.index, index)seq.index
-
-Export blockseqtype:int int
-
-Export blockseqtype:byte int
-
-Export_(seq.word, index)word
-
-type packed2 is fld1:int, fld2:int
-
-type packed3 is fld1:int, fld2:int, fld3:int
-
-type packed4 is fld1:int, fld2:int, fld3:int, fld4:int
-
-type packed5 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int
-
-type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
-
-Export type:ptr
-
 Export type:packed2
 
 Export type:packed3
@@ -110,27 +88,59 @@ Export type:packed6
 
 Export type:typename
 
-Export_(blockseq.packed2, int)packed2
+Export decode(encoding.seq.char)seq.char{From encoding.seq.char}
 
-Export_(blockseq.packed3, int)packed3
+Export type:encodingpair.seq.char{From encoding.seq.char}
 
-Export_(blockseq.packed4, int)packed4
+Export encode(seq.char)encoding.seq.char{From encoding.seq.char}
 
-Export_(blockseq.packed5, int)packed5
+Export type:encodingpair.typename{From encoding.typename}
 
-Export_(blockseq.packed6, int)packed6
+Export allocatespace(int)ptr{From internal}
 
-Export_(blockseq.int, int)int
+Export set(ptr, int)ptr{From internal}
 
-Export_(blockseq.ptr, int)ptr
+Export set(ptr, ptr)ptr{From internal}
 
-Export_(blockseq.real, int)real
+Export type:ptr{From ptr}
 
-Export allocatespace(int)ptr
+Export type:seq.char{From seq.char}
 
-Export set(ptr, int)ptr
+Export+(seq.index, index)seq.index{From seq.index}
 
-Export set(ptr, ptr)ptr
+Export empty:seq.index seq.index{From seq.index}
+
+Export_(seq.word, index)word{From seq.word}
+
+Export blockseqtype:byte int{From taublockseq.byte}
+
+Export_(blockseq.int, int)int{From taublockseq.int}
+
+Export blockseqtype:int int{From taublockseq.int}
+
+Export_(blockseq.packed2, int)packed2{From taublockseq.packed2}
+
+Export_(blockseq.packed3, int)packed3{From taublockseq.packed3}
+
+Export_(blockseq.packed4, int)packed4{From taublockseq.packed4}
+
+Export_(blockseq.packed5, int)packed5{From taublockseq.packed5}
+
+Export_(blockseq.packed6, int)packed6{From taublockseq.packed6}
+
+Export_(blockseq.ptr, int)ptr{From taublockseq.ptr}
+
+Export_(blockseq.real, int)real{From taublockseq.real}
+
+type packed2 is fld1:int, fld2:int
+
+type packed3 is fld1:int, fld2:int, fld3:int
+
+type packed4 is fld1:int, fld2:int, fld3:int, fld4:int
+
+type packed5 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int
+
+type packed6 is fld1:int, fld2:int, fld3:int, fld4:int, fld5:int, fld6:int
 
 Builtin getseqlength(ptr)int{OPTION COMPILETIME}
 
@@ -163,10 +173,6 @@ Function blockIt(s:seq.packed5)seq.packed5 blockit2(s, 5)
 
 Function blockIt(s:seq.packed6)seq.packed6 blockit2(s, 6)
 
-Export decode(encoding.seq.char)seq.char
-
-Export encode(seq.char)encoding.seq.char
-
 Function deepcopy(a:int)int a
 
 Function deepcopy(a:real)real a
@@ -186,14 +192,6 @@ Builtin abort:int(seq.word)int
 Builtin abort:real(seq.word)real
 
 Builtin abort:boolean(seq.word)boolean
-
-Export type:encodingpair.seq.char
-
-Export type:encodingpair.typename
-
-Export type:seq.char
-
-Export type:typename
 
 -----------
 

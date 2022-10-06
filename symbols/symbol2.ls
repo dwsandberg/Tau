@@ -8,277 +8,31 @@ use standard
 
 use symbol
 
+use otherseq.symbol
+
 use symbolconstant
 
 use set.symdef
 
 use typedict
 
-Export clearrequiresbit(symbol)symbol
+Export type:midpoint
 
-Export privatefields(s:symbol)seq.int
+Export libmods(m:midpoint)seq.modExports
 
-Export Local(int)symbol
+Export option(midpoint)seq.word
 
-Export getSymdef(set.symdef, symbol)set.symdef
+Export prg(midpoint)set.symdef
 
-Export deepcopySym(mytype)symbol
+Export src(midpoint)seq.seq.word
 
-Export renumberconstants(prg:seq.symdef)seq.symdef
+Export templates(midpoint)set.symdef
 
-Export fullconstantcode(s:symbol)seq.symbol
+Export typedict(midpoint)typedict
 
-Export Constant2(args:seq.symbol)symbol
+Export midpoint(seq.word, set.symdef, set.symdef, typedict, seq.modExports, seq.seq.word)midpoint
 
-Export type:symbolconstant
-
-Export paragraphno(symdef)int
-
-Export basesym(s:symbol)symbol
-
-Export library(modref)word
-
-Export symdef(symbol, seq.symbol, int)symdef
-
-Export type:symbol
-
-Export internalmod modref
-
-Export name(modref)word
-
-Export typeboolean mytype
-
-Export value(symbol)int
-
-Export nopara(symbol)int
-
-Export paratypes(symbol)seq.mytype
-
-Export name(symbol)word
-
-Export nametype(symbol)seq.mytype
-
-Export module(symbol)modref
-
-Export resulttype(symbol)mytype
-
-Export wordname(symbol)word
-
-Export worddata(symbol)seq.word
-
-Export fullname(symbol)seq.word
-
-Export types(symbol)seq.mytype
-
-Export firstvar(symbol)int
-
-Export brt(symbol)int
-
-Export brf(symbol)int
-
-Export hash(symbol)int
-
-Export inModFor(sym:symbol)boolean
-
-Export isstart(symbol)boolean
-
-Export isexit(symbol)boolean
-
-Export isbr(symbol)boolean
-
-Export isdefine(symbol)boolean
-
-Export iswords(symbol)boolean
-
-Export isblock(symbol)boolean
-
-Export isconst(symbol)boolean
-
-Export isconstantorspecial(symbol)boolean
-
-Export isGlobal(symbol)boolean
-
-Export isRealLit(symbol)boolean
-
-Export isIntLit(symbol)boolean
-
-Export isInternal(sym:symbol)boolean
-
-Export isFref(symbol)boolean
-
-Export isRecord(symbol)boolean
-
-Export isloopblock(symbol)boolean
-
-Export iscontinue(symbol)boolean
-
-Export islocal(symbol)boolean
-
-Export isword(symbol)boolean
-
-Export isspecial(symbol)boolean
-
-Export isSequence(symbol)boolean
-
-Export isBuiltin(symbol)boolean
-
-Export isunbound(symbol)boolean
-
-Export isrecordconstant(symbol)boolean
-
-Export iswordseq(symbol)boolean
-
-Export isstartorloop(symbol)boolean
-
-Export issimplename(symbol)boolean
-
-Export typebits mytype
-
-Export typeword mytype
-
-Export type? mytype
-
-Export typebyte mytype
-
-Export builtinmod(mytype)modref
-
-Export type:mytype
-
-Export parameter(mytype)mytype
-
-Export abortsymbol(mytype)symbol
-
-Export Br2(int, int)symbol
-
-Export continue(i:int)symbol
-
-Export Define(word, int)symbol
-
-Export EndBlock symbol
-
-Export Exit symbol
-
-Export Fref(s:symbol)symbol
-
-Export GetSeqType symbol
-
-Export GetSeqLength symbol
-
-Export Lit(int)symbol
-
-Export Litfalse symbol
-
-Export Littrue symbol
-
-Export Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype)symbol
-
-Export Local(name:word, type:mytype, parano:int)symbol
-
-Export NotOp symbol
-
-Export Optionsym symbol
-
-Export PlusOp symbol
-
-Export PreFref symbol
-
-Export Reallit(i:int)symbol
-
-Export Record(seq.mytype)symbol
-
-Export Sequence(mytype, int)symbol
-
-Export Start(mytype)symbol
-
-Export symbol(modref, seq.word, mytype, mytype, mytype)symbol
-
-Export symbol(modref, seq.word, mytype, mytype)symbol
-
-Export symbol(modref, seq.word, seq.mytype, mytype)symbol
-
-Export symbol(modref, seq.word, mytype, mytype, mytype, mytype)symbol
-
-Export symbol(modref, seq.word, mytype)symbol
-
-Export symbol4(modref, word, mytype, seq.mytype, mytype)symbol
-
-Export symconst(i:int, hashfref:boolean)symbol
-
-Export Word(word)symbol
-
-Export Words(seq.word)symbol
-
-Export=(symbol, symbol)boolean
-
-Export ?(symbol, symbol)ordering
-
-Export type:symdef
-
-Export sym(symdef)symbol
-
-Export code(symdef)seq.symbol
-
-Export %(symbol)seq.word
-
-Export print(seq.symbol)seq.word
-
-Export removeoptions(seq.symbol)seq.symbol
-
-Export addoption(seq.symbol, seq.word)seq.symbol
-
-Export getoption(seq.symbol)seq.word
-
-Export=(modref, modref)boolean
-
-Export typeint mytype
-
-Export typeptr mytype
-
-Export typereal mytype
-
-Export=(mytype, mytype)boolean
-
-Export isseq(mytype)boolean
-
-Export %(t:mytype)seq.word
-
-Export isabstract(modref)boolean
-
-Export ?(mytype, mytype)ordering
-
-Export typeref(seq.word)mytype
-
-Export seqof(mytype)mytype
-
-Export type:typedict
-
-Export type:typeentry
-
-Export ?(a:symdef, b:symdef)ordering
-
-Export ?(symdef, symdef)ordering
-
-Export type:modref
-
-Export para(modref)mytype
-
-Export name(modref)word
-
-Export moduleref(seq.word)modref
-
-Export typeT mytype
-
-Export addabstract(mytype, mytype)mytype
-
-Export moduleref(seq.word, mytype)modref
-
-Export getCode(set.symdef, symbol)seq.symbol
-
-Export basetype(mytype, typedict)mytype
-
-Export type:typedef
-
-type modExports is modname:modref, exports:seq.symbol, types:seq.seq.mytype
+Export type:modExports
 
 Export exports(modExports)seq.symbol
 
@@ -288,9 +42,269 @@ Export types(modExports)seq.seq.mytype
 
 Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype)modExports
 
-Export type:modExports
+Export type:modref{From mytype}
 
-Export emptytypedict typedict
+Export isabstract(modref)boolean{From mytype}
+
+Export library(modref)word{From mytype}
+
+Export name(modref)word{From mytype}
+
+Export para(modref)mytype{From mytype}
+
+Export type:mytype{From mytype}
+
+Export %(t:mytype)seq.word{From mytype}
+
+Export parameter(mytype)mytype{From mytype}
+
+Export seqof(mytype)mytype{From mytype}
+
+Export moduleref(seq.word)modref{From mytype}
+
+Export typeref(seq.word)mytype{From mytype}
+
+Export type:typedef{From mytype}
+
+Export=(modref, modref)boolean{From mytype}
+
+Export=(mytype, mytype)boolean{From mytype}
+
+Export >1(mytype, mytype)ordering{From mytype}
+
+Export addabstract(mytype, mytype)mytype{From mytype}
+
+Export internalmod modref{From mytype}
+
+Export moduleref(seq.word, mytype)modref{From mytype}
+
+Export typeT mytype{From mytype}
+
+Export typeboolean mytype{From mytype}
+
+Export typeint mytype{From mytype}
+
+Export typeptr mytype{From mytype}
+
+Export typereal mytype{From mytype}
+
+Export %(seq.symbol)seq.word{From otherseq.symbol}
+
+Export Lit(int)symbol{From symbol}
+
+Export Local(int)symbol{From symbol}
+
+Export Reallit(i:int)symbol{From symbol}
+
+Export continue(i:int)symbol{From symbol}
+
+Export Start(mytype)symbol{From symbol}
+
+Export abortsymbol(mytype)symbol{From symbol}
+
+Export builtinmod(mytype)modref{From symbol}
+
+Export deepcopySym(mytype)symbol{From symbol}
+
+Export isseq(mytype)boolean{From symbol}
+
+Export Record(seq.mytype)symbol{From symbol}
+
+Export getoption(seq.symbol)seq.word{From symbol}
+
+Export removeoptions(seq.symbol)seq.symbol{From symbol}
+
+Export Words(seq.word)symbol{From symbol}
+
+Export type:symbol{From symbol}
+
+Export %(symbol)seq.word{From symbol}
+
+Export Fref(s:symbol)symbol{From symbol}
+
+Export basesym(s:symbol)symbol{From symbol}
+
+Export brf(symbol)int{From symbol}
+
+Export brt(symbol)int{From symbol}
+
+Export clearrequiresbit(symbol)symbol{From symbol}
+
+Export firstvar(symbol)int{From symbol}
+
+Export fullname(symbol)seq.word{From symbol}
+
+Export hash(symbol)int{From symbol}
+
+Export inModFor(sym:symbol)boolean{From symbol}
+
+Export isBuiltin(symbol)boolean{From symbol}
+
+Export isFref(symbol)boolean{From symbol}
+
+Export isGlobal(symbol)boolean{From symbol}
+
+Export isIntLit(symbol)boolean{From symbol}
+
+Export isInternal(sym:symbol)boolean{From symbol}
+
+Export isRealLit(symbol)boolean{From symbol}
+
+Export isRecord(symbol)boolean{From symbol}
+
+Export isSequence(symbol)boolean{From symbol}
+
+Export isblock(symbol)boolean{From symbol}
+
+Export isbr(symbol)boolean{From symbol}
+
+Export isconst(symbol)boolean{From symbol}
+
+Export isconstantorspecial(symbol)boolean{From symbol}
+
+Export iscontinue(symbol)boolean{From symbol}
+
+Export isdefine(symbol)boolean{From symbol}
+
+Export isexit(symbol)boolean{From symbol}
+
+Export islocal(symbol)boolean{From symbol}
+
+Export isloopblock(symbol)boolean{From symbol}
+
+Export isrecordconstant(symbol)boolean{From symbol}
+
+Export issimplename(symbol)boolean{From symbol}
+
+Export isspecial(symbol)boolean{From symbol}
+
+Export isstart(symbol)boolean{From symbol}
+
+Export isstartorloop(symbol)boolean{From symbol}
+
+Export isunbound(symbol)boolean{From symbol}
+
+Export isword(symbol)boolean{From symbol}
+
+Export iswords(symbol)boolean{From symbol}
+
+Export iswordseq(symbol)boolean{From symbol}
+
+Export module(symbol)modref{From symbol}
+
+Export name(symbol)word{From symbol}
+
+Export nametype(symbol)seq.mytype{From symbol}
+
+Export nopara(symbol)int{From symbol}
+
+Export paratypes(symbol)seq.mytype{From symbol}
+
+Export privatefields(s:symbol)seq.int{From symbol}
+
+Export resulttype(symbol)mytype{From symbol}
+
+Export types(symbol)seq.mytype{From symbol}
+
+Export value(symbol)int{From symbol}
+
+Export worddata(symbol)seq.word{From symbol}
+
+Export wordname(symbol)word{From symbol}
+
+Export symbol(modref, seq.word, mytype)symbol{From symbol}
+
+Export symbol(modref, seq.word, mytype, mytype)symbol{From symbol}
+
+Export symbol(modref, seq.word, mytype, mytype, mytype)symbol{From symbol}
+
+Export symbol(modref, seq.word, mytype, mytype, mytype, mytype)symbol{From symbol}
+
+Export symbol(modref, seq.word, seq.mytype, mytype)symbol{From symbol}
+
+Export type:symdef{From symbol}
+
+Export code(symdef)seq.symbol{From symbol}
+
+Export paragraphno(symdef)int{From symbol}
+
+Export sym(symdef)symbol{From symbol}
+
+Export symdef(symbol, seq.symbol, int)symdef{From symbol}
+
+Export Word(word)symbol{From symbol}
+
+Export=(symbol, symbol)boolean{From symbol}
+
+Export >1(a:symdef, b:symdef)ordering{From symbol}
+
+Export >1(symbol, symbol)ordering{From symbol}
+
+Export Br2(int, int)symbol{From symbol}
+
+Export Define(word, int)symbol{From symbol}
+
+Export EndBlock symbol{From symbol}
+
+Export Exit symbol{From symbol}
+
+Export GetSeqLength symbol{From symbol}
+
+Export GetSeqType symbol{From symbol}
+
+Export Litfalse symbol{From symbol}
+
+Export Littrue symbol{From symbol}
+
+Export Local(name:word, type:mytype, parano:int)symbol{From symbol}
+
+Export Loopblock(types:seq.mytype, firstvar:int, resulttype:mytype)symbol{From symbol}
+
+Export NotOp symbol{From symbol}
+
+Export Optionsym symbol{From symbol}
+
+Export PlusOp symbol{From symbol}
+
+Export PreFref symbol{From symbol}
+
+Export Sequence(mytype, int)symbol{From symbol}
+
+Export addoption(seq.symbol, seq.word)seq.symbol{From symbol}
+
+Export getCode(set.symdef, symbol)seq.symbol{From symbol}
+
+Export getSymdef(set.symdef, symbol)set.symdef{From symbol}
+
+Export symbol4(modref, word, mytype, seq.mytype, mytype)symbol{From symbol}
+
+Export symconst(i:int, hashfref:boolean)symbol{From symbol}
+
+Export type? mytype{From symbol}
+
+Export typebits mytype{From symbol}
+
+Export typebyte mytype{From symbol}
+
+Export typeword mytype{From symbol}
+
+Export Constant2(args:seq.symbol)symbol{From symbolconstant}
+
+Export renumberconstants(prg:seq.symdef)seq.symdef{From symbolconstant}
+
+Export fullconstantcode(s:symbol)seq.symbol{From symbolconstant}
+
+Export type:symbolconstant{From symbolconstant}
+
+Export type:typedict{From typedict}
+
+Export type:typeentry{From typedict}
+
+Export basetype(mytype, typedict)mytype{From typedict}
+
+Export emptytypedict typedict{From typedict}
+
+type modExports is modname:modref, exports:seq.symbol, types:seq.seq.mytype
 
 Function empty:midpoint midpoint
 midpoint(""
@@ -310,20 +324,4 @@ type midpoint is option:seq.word
 , typedict:typedict
 , libmods:seq.modExports
 , src:seq.seq.word
-
-
-Export midpoint(seq.word, set.symdef, set.symdef, typedict, seq.modExports, seq.seq.word)midpoint
-
-Export prg(midpoint)set.symdef
-
-Export option(midpoint)seq.word
-
-Export templates(midpoint)set.symdef
-
-Export typedict(midpoint)typedict
-
-Export type:midpoint
-
-Export src(midpoint)seq.seq.word
-
-Export libmods(m:midpoint)seq.modExports 
+ 

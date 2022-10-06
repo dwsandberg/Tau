@@ -142,8 +142,7 @@ else
    else
     let p1 = process.generatefuncbody(alltypes, knownfuncs, code, sym)
     assert not.aborted.p1
-    report"generatefuncbody error for:$([library.module.sym]):" + %.sym + EOL + print.code
-    + EOL
+    report"generatefuncbody error for:$([library.module.sym]):" + %.sym + EOL + %.code + EOL
     + message.p1
     + stacktrace
     encode.wfunc(alltypes
@@ -159,14 +158,14 @@ type localmap is name:word, localinfo:localinfo
 
 Export type:localmap
 
-function ?(a:localmap, b:localmap)ordering name.a ? name.b
+function >1(a:localmap, b:localmap)ordering name.a >1 name.b
 
 function getlocalinfo(a:set.localmap, w:word)localinfo
 let t = lookup(a, localmap(w, localinfo(f64, empty:seq.byte, 0)))
 assert not.isempty.t report"unknown local" + w + stacktrace
 localinfo.t_1
 
-function ?(a:localinfo, b:localinfo)ordering no.a ? no.b
+function >1(a:localinfo, b:localinfo)ordering no.a >1 no.b
 
 Function addlocal(map:set.localmap, name:word, type:wtype)set.localmap
 let no = cardinality.map
@@ -234,7 +233,7 @@ do
   , curblk + const64.allocateconstspace(merge.fullname.sym, [0])
   , localtypes
   )
- else if sym = symbol(internalmod, "?", typeint, typeint, typeref."ordering standard.")then
+ else if sym = symbol(internalmod, ">1", typeint, typeint, typeref."ordering standard.")then
   let l1 = addlocal(localtypes, "tmp1"_1, i64)
   let t1 = getlocalinfo(l1, "tmp1"_1)
   let l2 = addlocal(l1, "i64tmp"_1, i64)
@@ -243,7 +242,8 @@ do
    Wdefine.t2 + Wdefine.t1 + Wlocal.t1 + Wlocal.t2 + i64gts + Wlocal.t1 + Wlocal.t2 + i64ges + i32add
    + i64extendi32s
   next(pop.typestk, blkstk, curblk + cc, l2)
- else if sym = symbol(internalmod, "?", typereal, typereal, typeref."ordering standard.")then
+ else if sym
+ = symbol(internalmod, ">1", typereal, typereal, typeref."ordering standard.")then
   let l1 = addlocal(localtypes, "tmp1f"_1, f64)
   let t1 = getlocalinfo(l1, "tmp1f"_1)
   let l2 = addlocal(l1, "f64tmp"_1, f64)
@@ -304,7 +304,7 @@ do
   next(pop(typestk, nopara.sym), push(blkstk, blkele(curblk, sym)), empty:seq.byte, localtypes)
  else if isbr.sym then
   {BlockBr}
-  assert top.typestk = i32 report"BR type check fail" + printcode.curblk + EOL + print.code
+  assert top.typestk = i32 report"BR type check fail" + printcode.curblk + EOL + %.code
   next(pop.typestk, push(blkstk, blkele(curblk, sym)), empty:seq.byte, localtypes)
  else if sym = Exit then
   assert top.typestk = top.pop.typestk
@@ -313,7 +313,7 @@ do
   + EOL
   + printcode.curblk
   + EOL
-  + print.code
+  + %.code
   next(pop.typestk, push(blkstk, blkele(curblk, sym)), empty:seq.byte, localtypes)
  else if sym = EndBlock then
   let blks = getblock(toseq.blkstk, length.toseq.blkstk)
@@ -345,8 +345,8 @@ do
     + unreachable
     + END
    else[block] + asbytes.top.typestk + blockcode
-  {assert subseq(keys.localtypes, 1, 2)/ne"1 2"report"XXC"+keys.localtypes+EOL+printcode.newcode+EOL+print
-    .sym.blks_1+print.resulttype.sym}
+  {assert subseq(keys.localtypes, 1, 2)/ne"1 2"report"XXC"+keys.localtypes+EOL+printcode.newcode+EOL
+   +print.sym.blks_1+print.resulttype.sym}
   next(typestk, pop(blkstk, length.blks), newcode, localtypes)
  else if isdefine.sym then
   let t = addlocal(localtypes, wordname.sym, top.typestk)
@@ -390,12 +390,12 @@ do
   , curblk + this
   , localtypes
   )
-/for(assert not.isempty.typestk
-report"generatefuncbody:did not expect empty stack" + print.code + %.toseq.typestk
-let zk1 = 
- for acc = empty:seq.localinfo, e ∈ toseq.localtypes do acc + localinfo.e /for(acc)
-let zk = for acc = empty:seq.wtype, e ∈ sort.zk1 do acc + type.e /for(acc)
-funcbody(zk << nopara.forsym, curblk + return))
+/for(
+ assert not.isempty.typestk report"generatefuncbody:did not expect empty stack" + %.code + %.toseq.typestk
+ let zk1 = 
+  for acc = empty:seq.localinfo, e ∈ toseq.localtypes do acc + localinfo.e /for(acc)
+ let zk = for acc = empty:seq.wtype, e ∈ sort.zk1 do acc + type.e /for(acc)
+ funcbody(zk << nopara.forsym, curblk + return))
 
 use otherseq.wtype
 
@@ -416,11 +416,14 @@ t + LEBu.offset
 function recordsymdef(alltypes:typedict, sym:symbol)encoding.wfunc
 let t1 = nopara.sym
 let cc = const64.nopara.sym + Wcall.allocatesym + Wdefine.t1
-for acc = cc, idx = 0, typ ∈ paratypes.sym do next(acc + Wlocal.t1 + Wlocal.idx + Wstore(typ, idx * 8), idx + 1)/for(encode.wfunc(alltypes
-, sym
-, funcbody([i32, i64, f64, i32], acc + Wlocal.t1 + [i64extendi32u, return])
-, funcidx.sym
-))
+for acc = cc, idx = 0, typ ∈ paratypes.sym do
+ next(acc + Wlocal.t1 + Wlocal.idx + Wstore(typ, idx * 8), idx + 1)
+/for(
+ encode.wfunc(alltypes
+ , sym
+ , funcbody([i32, i64, f64, i32], acc + Wlocal.t1 + [i64extendi32u, return])
+ , funcidx.sym
+ ))
 
 function seqsym(nopara:int, typ:wtype)symbol
 assert typ ∈ [i64, i32, f64]report"KL" + %.typ
@@ -441,9 +444,12 @@ let cc =
  + Wlocal.s
  + const64.nopara
  + Wstore(typeint, 8)
-for acc = cc, idx ∈ arithseq(nopara, 1, 0)do acc + Wlocal.s + Wlocal.idx + Wstore(typ, 8 * idx + 16)/for(assert typ ∈ [typeint, typereal, typeboolean]report"seqsymdef" + %.typ + printcode.acc
-let t = wfunc(alltypes, sym, funcbody([i32], acc + Wlocal.s + i64extendi32u + return), funcidx.sym)
-encode.t)
+for acc = cc, idx ∈ arithseq(nopara, 1, 0)do
+ acc + Wlocal.s + Wlocal.idx + Wstore(typ, 8 * idx + 16)
+/for(
+ assert typ ∈ [typeint, typereal, typeboolean]report"seqsymdef" + %.typ + printcode.acc
+ let t = wfunc(alltypes, sym, funcbody([i32], acc + Wlocal.s + i64extendi32u + return), funcidx.sym)
+ encode.t)
 
 function processXbody(functypeidx:int)seq.byte
 let list = towtypelist.functypeidx

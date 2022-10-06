@@ -31,12 +31,13 @@ for acc = empty:seq.tree.T, @e ∈ sons.a do acc + postorder.@e /for(acc) + a
 
 use otherseq.tree.T
 
-unbound %(T) seq.word
+unbound %(T)seq.word
 
 Function %(t:tree.T)seq.word
 if nosons.t = 0 then %.label.t
 else
-  %.label.t 
+ %.label.t
  + if nosons.t = 1 then"." + %.t_1
- else 
-  "("+ for acc="",  e /in sons.t   do acc+%.e+"," /for(acc >> 1   + ")")
+ else
+  "("
+  + for acc = "", e ∈ sons.t do acc + %.e + ", "/for(acc >> 1 + ")") 

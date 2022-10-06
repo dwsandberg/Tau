@@ -4,17 +4,17 @@ use seq.bits
 
 use standard
 
-Export type:byte
-
 Export type:bits
-
-type bits is toint:int
 
 Export toint(bits)int
 
-Function tobits(a:int)bits bits.a
+Export type:byte
 
 Export bits(int)bits
+
+type bits is toint:int
+
+Function tobits(a:int)bits bits.a
 
 Builtin ∨(a:bits, bits)bits{OPTION COMPILETIME}
 
@@ -24,7 +24,7 @@ Builtin >>(a:bits, i:int)bits{OPTION COMPILETIME}
 
 Builtin <<(a:bits, i:int)bits{OPTION COMPILETIME}
 
-Builtin xor(a:bits, b:bits)bits{OPTION COMPILETIME}
+Builtin xor(a:bits, b:bits)bits{OPTION COMPILETIME}{change xor to ⊻}
 
 Function =(a:bits, b:bits)boolean toint.a = toint.b
 
@@ -32,9 +32,9 @@ function hexdigit(b:bits)char(decodeword."0123456789ABCDEF"_1)_(1 + toint(b ∧ 
 
 function hexword(b:bits)word encodeword.[hexdigit(b >> 12), hexdigit(b >> 8), hexdigit(b >> 4), hexdigit.b]
 
-Function print(b:bits)seq.word[hexword(b >> 48), hexword(b >> 32), hexword(b >> 16), hexword.b]
+Function %(b:bits)seq.word[hexword(b >> 48), hexword(b >> 32), hexword(b >> 16), hexword.b]
 
-Function print(b:byte)seq.word[encodeword.[hexdigit(tobits.b >> 4), hexdigit.tobits.b]]
+Function %(b:byte)seq.word[encodeword.[hexdigit(tobits.b >> 4), hexdigit.tobits.b]]
 
 Function floorlog2(a:int)int
 let d64 = tobits.a
@@ -60,8 +60,8 @@ Function =(a:byte, b:byte)boolean toint.a = toint.b
 
 Function tobits(a:byte)bits tobits.toint.a
 
-Builtin toint(b:byte)int{use builtin rather than rep.b so abyteseq @+(empty:seq.int, toint.@e)does not become an
- noop since a bytseq may contain packed sequences of bytes}
+Builtin toint(b:byte)int{use builtin rather than rep.b so abyteseq @+(empty:seq.int, toint.@e)does not become an noop
+since a bytseq may contain packed sequences of bytes}
 
 Function tobyte(a:int)byte byte.a
 

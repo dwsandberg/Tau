@@ -20,6 +20,10 @@ use standard
 
 use seq.templatepart
 
+Export type:internalbc
+
+Export type:templatepart
+
 type templatepart is val:bits
 
 function bits(b:templatepart)bits val.b >> 6
@@ -51,8 +55,7 @@ Function ibcsub(i:int)slot slot(ibcfirstpara2 + i)
 
 type internalbc is parts:seq.templatepart
 
-Function print(bc:internalbc)seq.word
-for acc = "", e ∈ parts.bc do acc + print.val.e /for(acc)
+Function %(bc:internalbc)seq.word for acc = "", e ∈ parts.bc do acc + %.val.e /for(acc)
 
 function tail(b:internalbc)seq.templatepart parts.b << 1
 
@@ -128,10 +131,6 @@ if a ≤ 0 then
  let c = if v ≥ 0 then 2 * v else 2 * -v + 1
  add(c, b)
 else addplaceholder(templatepart(a - slot + 1, Relocsigned), b)
-
-Export type:internalbc
-
-Export type:templatepart
 
 _____________________________
 
@@ -269,8 +268,8 @@ Function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int)internalbc
 for acc = emptyinternalbc, @e ∈ arithseq(nopara, 1, 1)do acc + phiinst(slot, typ, tailphi, nopara, @e)/for(acc)
 
 function phiinst(slot:int, typ:seq.int, tailphi:seq.int, nopara:int, p:int)internalbc
-{let t=@(addpair(tailphi, slot+p, p), identity, emptyinternalbc, arithseq(length.tailphi /(nopara+1), -
-  nopara-1, length.tailphi-nopara))}
+{let t=@(addpair(tailphi, slot+p, p), identity, emptyinternalbc, arithseq(length.tailphi /(nopara+1
+ ), -nopara-1, length.tailphi-nopara))}
 let t = 
  for acc = emptyinternalbc
  , @e ∈ arithseq(length.tailphi / (nopara + 1), -nopara - 1, length.tailphi - nopara)

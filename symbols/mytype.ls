@@ -18,31 +18,39 @@ use otherseq.typedef
 
 use xxhash
 
+Export type:modref
+
+Export library(modref)word
+
+Export name(modref)word
+
+Export para(modref)mytype
+
 Export type:mytype
 
 Export typerep(mytype)seq.typedef
+
+Export type:passtypes
+
+Export defines(passtypes)set.mytype
+
+Export modname(passtypes)modref
+
+Export uses(passtypes)set.modref
+
+Export type:typedef
+
+Export library(typedef)word
+
+Export modname(a:typedef)word
+
+Export name(typedef)word
 
 type mytype is typerep:seq.typedef
 
 type modref is library:word, name:word, para:mytype
 
-Export type:modref
-
-Export para(modref)mytype
-
-Export name(modref)word
-
-Export library(modref)word
-
 type typedef is name:word, modname:word, library:word
-
-Export modname(a:typedef)word
-
-Export type:typedef
-
-Export name(typedef)word
-
-Export library(typedef)word
 
 Function %(s:mytype)seq.word
 for acc = "", t ∈ typerep.s do acc + "." + name.t /for(acc << 1)
@@ -58,9 +66,10 @@ for acc = empty:seq.typedef, t ∈ typerep.s do
  acc
  + for state = 0, result = t, x ∈ map
  while state ≠ done
- do if state = nomatch then next(0, result)
- else if state = match then next(done, typedef(name.t, modname.t, x))
- else next(if x = library.t then match else nomatch, result)
+ do
+  if state = nomatch then next(0, result)
+  else if state = match then next(done, typedef(name.t, modname.t, x))
+  else next(if x = library.t then match else nomatch, result)
  /for(result)
 /for(mytype.acc)
 
@@ -95,15 +104,15 @@ if isabstract.m then mytype(typerep.m >> 1 + typerep.with)else m
 
 Function =(a:typedef, b:typedef)boolean name.a = name.b ∧ modname.a = modname.b ∧ library.a = library.b
 
-Function ?(a:typedef, b:typedef)ordering name.a ? name.b ∧ modname.a ? modname.b ∧ library.a ? library.b
+Function >1(a:typedef, b:typedef)ordering name.a >1 name.b ∧ modname.a >1 modname.b ∧ library.a >1 library.b
 
-Function ?2(a:typedef, b:typedef)ordering name.a ? name.b
+Function >2(a:typedef, b:typedef)ordering name.a >1 name.b
 
-function wild(a:word, b:word)ordering if a ∈ "*" ∨ b ∈ "*"then EQ else a ? b
+function wild(a:word, b:word)ordering if a ∈ "*" ∨ b ∈ "*"then EQ else a >1 b
 
-Function ?(a:mytype, b:mytype)ordering typerep.a ? typerep.b
+Function >1(a:mytype, b:mytype)ordering typerep.a >1 typerep.b
 
-Function ?2(a:mytype, b:mytype)ordering ?2(typerep.a, typerep.b)
+Function >2(a:mytype, b:mytype)ordering typerep.a >2 typerep.b
 
 Function %(s:modref)seq.word
 if issimple.s then[name.s]else[name.s, "."_1] + %.para.s
@@ -149,21 +158,13 @@ Function moduleref(modname:seq.word)modref moduleref(modname, noparameter)
 
 ------------
 
-Export type:passtypes
-
-Export modname(passtypes)modref
-
-Export defines(passtypes)set.mytype
-
-Export uses(passtypes)set.modref
-
 function noparameter mytype mytype.empty:seq.typedef
 
 Function =(a:modref, b:modref)boolean name.a = name.b ∧ para.a = para.b ∧ wild(library.a, library.b) = EQ
 
-Function ?(a:modref, b:modref)ordering name.a ? name.b ∧ para.a ? para.b ∧ wild(library.a, library.b)
+Function >1(a:modref, b:modref)ordering name.a >1 name.b ∧ para.a >1 para.b ∧ wild(library.a, library.b)
 
-Function ?2(a:modref, b:modref)ordering name.a ? name.b
+Function >2(a:modref, b:modref)ordering name.a >1 name.b
 
 Function typebase(i:int)mytype
 mytype.[typedef("$base"_1, "internal"_1, "internallib"_1)
@@ -200,6 +201,7 @@ do
  if isempty.m then next(knownmods, s, defines, unresolveduses, unresolvedexports, mref)
  else if first.m ∈ "Module module"then
   let newmod = modref(lib, m_2, if length.m > 2 then typeT else noparameter)
+  assert cardinality(knownmods + newmod) = cardinality.knownmods + 1 report"Duplicate module name:" + m
   if mref = internalmod then
    next(knownmods + newmod, s, empty:set.mytype, empty:seq.seq.word, empty:seq.seq.word, newmod)
   else
@@ -212,29 +214,33 @@ do
  else if first.m ∈ "use"then
   next(knownmods, s, defines, unresolveduses + m << 1, unresolvedexports, mref)
  else if first.m ∈ "type"then
+  let newdefines = 
+   defines
+   + newtype(if m_2
+   ∈ "process boolean ptr seq encoding word bits byte char packed2 packed3 packed4 packed5 packed6 encodingpair
+    encodingstate typename index"then
+    modref("*"_1, name.mref, para.mref)
+   else mref
+   , m_2
+   )
+  assert cardinality.newdefines = cardinality.defines + 1 report"Duplicate type definition in Module:" + m
+  next(knownmods, s, newdefines, unresolveduses, unresolvedexports, mref)
+ else if subseq(m, 1, 3) = "Export type:"then
   next(knownmods
   , s
   , defines
-  + newtype(if m_2
-  ∈ "process boolean ptr seq encoding word bits byte char packed2 packed3 packed4 packed5 packed6 encodingpair
-    encodingstate typename index"then
-   modref("*"_1, name.mref, para.mref)
-  else mref
-  , m_2
-  )
   , unresolveduses
-  , unresolvedexports
+  , unresolvedexports + subseq(m, 4, findindex(m, "{"_1) - 1)
   , mref
   )
- else if subseq(m, 1, 3) = "Export type:"then
-  next(knownmods, s, defines, unresolveduses, unresolvedexports + m << 3, mref)
  else next(knownmods, s, defines, unresolveduses, unresolvedexports, mref)
-/for(let p2 = 
- resolve(s
- , knownmods
- , passtypes(mref, defines, unresolveduses, unresolvedexports, empty:set.mytype, empty:set.modref)
- )
-R(s + p2, knownmods, 100000))
+/for(
+ let p2 = 
+  resolve(s
+  , knownmods
+  , passtypes(mref, defines, unresolveduses, unresolvedexports, empty:set.mytype, empty:set.modref)
+  )
+ R(s + p2, knownmods, 100000))
 
 Function newtype(mref:modref, name:word)mytype mytype([typedef(name, name.mref, library.mref)] + typerep.para.mref)
 
@@ -243,9 +249,10 @@ if countin = 0 then s1
 else
  for cnt = 0, acc = empty:set.passtypes, p ∈ toseq.s1 do
   next(cnt + length.unresolvedexports.p + length.unresolveduses.p, acc + resolve(s1, knownmods, p))
- /for(assert countin ≠ cnt
- report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for(acc2)
- R(acc, knownmods, cnt))
+ /for(
+  assert countin ≠ cnt
+  report for acc2 = "", p2 ∈ toseq.s1 do acc2 + printunresolved.p2 /for(acc2)
+  R(acc, knownmods, cnt))
 
 function printunresolved(p:passtypes)seq.word
 let txt = 
@@ -266,7 +273,7 @@ for uses = uses.p, x = empty:seq.seq.word, t2 ∈ unresolveduses.p do
  if isempty.b then next(uses, x + t2)else next(uses + b_1, x)
 /for(passtypes(modname.p, defines.p, x, unresolvedexports.p1, exports.p1, uses))
 
-Function ?(a:passtypes, b:passtypes)ordering name.modname.a ? name.modname.b
+Function >1(a:passtypes, b:passtypes)ordering name.modname.a >1 name.modname.b
 
 Function resolvetype(knowntypes:set.mytype, ref:seq.word)seq.mytype
 if subseq(ref, 1, 2) = "seq."then

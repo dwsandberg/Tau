@@ -24,9 +24,29 @@ use seq.symbol
 
 use typedict
 
-Export constdata seq.slot
+Export type:match5
 
-Export wordref(w:word)int
+Export action(match5)word
+
+Export arg(match5)int
+
+Export length(match5)int{no of instruction that return results}
+
+Export llvmtypelist(match5)seq.llvmtype
+
+Export sym(match5)symbol
+
+Export type:recordcoderesult
+
+Export bc(recordcoderesult)internalbc
+
+Export regno(recordcoderesult)int
+
+Export wordref(w:word)int{From persistant}
+
+Export constdata seq.slot{From persistant}
+
+Export type:symbol{From symbol}
 
 Function tollvmtype(alltypes:typedict, s:symbol)llvmtype
 if s = Optionsym then function.[i64, i64, i64, i64]else function.tollvmtypelist(alltypes, s)
@@ -51,23 +71,11 @@ else
 
 /Function profiletype llvmtype array(-3, i64)
 
-Export type:match5
-
-Export length(match5)int{no of instruction that return results}
-
-Export action(match5)word
-
-Export arg(match5)int
-
-Export sym(match5)symbol
-
 Function firstvar(a:match5)int length.a
 
 Function brt(a:match5)int length.a
 
 Function brf(a:match5)int arg.a
-
-Export llvmtypelist(match5)seq.llvmtype
 
 type match5 is sym:symbol, length:int, parts:internalbc, action:word, arg:int, llvmtypelist:seq.llvmtype
 
@@ -90,8 +98,6 @@ function addtemplates(t:seq.mytype, sym:symbol, length:int, b:internalbc)match5
 first.for acc = empty:seq.match5, e ∈ t do[addtemplate(replaceTsymbol(e, sym), length, b)]/for(acc)
 
 Function findtemplate(d:symbol)seq.match5 findencode.match5(d, 0, emptyinternalbc, "NOTFOUND"_1, 0, [i64])
-
-Export type:symbol
 
 function =(a:match5, b:match5)boolean sym.a = sym.b
 
@@ -144,9 +150,9 @@ Function initmap5 seq.match5
 )
 , addtemplate(symbol(internalmod, "toint", typebyte, typeint), 0, emptyinternalbc)
 , addtemplate(symbol(internalmod, "toptr", seqof.typeword, typeptr), 0, emptyinternalbc)
-, {addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(r.1, ptr.
-  ptr.i64, i64, C64.2, 0)+STORE(r.2, r.1, ibcsub.1)+GEP(r.2, ptr.i64, r.1, C64.1)+STORE(r.3, r.2, ibcsub.2)+GEP(
-  r.3, ptr.i64, r.1, C64.0)), }
+, {addtemplate(NullptrOp, 1, CAST(r.1, C64.0, ptr.i64, inttoptr)), addtemplate(STKRECORDOp, 3, ALLOCA(
+ r.1, ptr.ptr.i64, i64, C64.2, 0)+STORE(r.2, r.1, ibcsub.1)+GEP(r.2, ptr.i64, r.1, C64.1)+STORE(r.3, r.2, ibcsub.
+ 2)+GEP(r.3, ptr.i64, r.1, C64.0)), }
 addtemplate(symbol(internalmod, "bitcast", typeptr, typeint)
 , 1
 , CAST(r.1, ibcsub.1, i64, ptrtoint)
@@ -192,13 +198,13 @@ addtemplate(symbol(internalmod, "bitcast", typeptr, typeint)
 , 1
 , CAST(r.1, ibcsub.1, i64, bitcast)
 )
-, addtemplate(symbol(internalmod, "?", typereal, typereal, typeref."ordering standard *")
+, addtemplate(symbol(internalmod, ">1", typereal, typereal, typeref."ordering standard *")
 , 5
 , CMP2(r.1, ibcsub.1, ibcsub.2, 3) + CAST(r.2, r.1, i64, zext) + CMP2(r.3, ibcsub.1, ibcsub.2, 2)
 + CAST(r.4, r.3, i64, zext)
 + BINOP(r.5, r.2, r.4, add)
 )
-, addtemplate(symbol(internalmod, "?", typeint, typeint, typeref."ordering standard *")
+, addtemplate(symbol(internalmod, ">1", typeint, typeint, typeref."ordering standard *")
 , 5
 , CMP2(r.1, ibcsub.1, ibcsub.2, 39) + CAST(r.2, r.1, i64, zext) + CMP2(r.3, ibcsub.1, ibcsub.2, 38)
 + CAST(r.4, r.3, i64, zext)
@@ -492,12 +498,6 @@ let args =
 processtemplate(parts.t, deltaoffset, args)
 
 type recordcoderesult is regno:int, bc:internalbc
-
-Export regno(recordcoderesult)int
-
-Export bc(recordcoderesult)internalbc
-
-Export type:recordcoderesult
 
 function setnextfld(bc:internalbc, args:seq.int, i:int, types:seq.llvmtype, regno:int, pint:int, preal:int, pptr:int)recordcoderesult
 if i > length.args then recordcoderesult(regno, bc)

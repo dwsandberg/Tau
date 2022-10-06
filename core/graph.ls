@@ -10,11 +10,21 @@ use set.T
 
 use standard
 
-type arc is tail:T, head:T
-
 Export type:arc.T
 
+Export head(arc.T)T
+
+Export tail(arc.T)T
+
+Export arc(a:T, b:T)arc.T
+
 Export type:graph.T
+
+Export arcs(graph.T)set.arc.T
+
+Export nodes(graph.T)set.T
+
+type arc is tail:T, head:T
 
 type graph is arcs:set.arc.T, backarcs:set.arc.T, nodes:set.T
 
@@ -23,28 +33,18 @@ for acc = graph(empty:set.arc.T, empty:set.arc.T, empty:set.T), @e ∈ a do acc 
 
 Function =(c:arc.T, d:arc.T)boolean tail.c = tail.d ∧ head.c = head.d
 
-Function ?(a:arc.T, b:arc.T)ordering tail.a ? tail.b ∧ head.a ? head.b
+Function >1(a:arc.T, b:arc.T)ordering tail.a >1 tail.b ∧ head.a >1 head.b
 
-Function ?2(a:arc.T, b:arc.T)ordering tail.a ? tail.b
+Function >2(a:arc.T, b:arc.T)ordering tail.a >1 tail.b
 
 unbound=(a:T, b:T)boolean
 
-unbound ?(a:T, b:T)ordering
-
-Export head(arc.T)T
-
-Export tail(arc.T)T
-
-Export arcs(graph.T)set.arc.T
-
-Export nodes(graph.T)set.T
+unbound >1(T, T)ordering
 
 Function subgraph(g:graph.T, nodes:set.T)graph.T
 for acc = graph(empty:set.arc.T, empty:set.arc.T, nodes), @e ∈ toseq.arcs.g do
  if head.@e ∉ nodes then acc else if tail.@e ∉ nodes then acc else acc + @e
 /for(acc)
-
-Export arc(a:T, b:T)arc.T
 
 Function successors(g:graph.T, n:T)set.T
 for acc = empty:set.T, @e ∈ toseq.findelement2(arcs.g, arc(n, n))do acc + head.@e /for(acc)

@@ -14,6 +14,16 @@ use otherseq.symbol
 
 use symbolconstant
 
+Export type:expandresult
+
+Export code(expandresult)seq.symbol
+
+Export flags(expandresult)bits
+
+Export nextvar(expandresult)int
+
+Export expandresult(int, seq.symbol, bits)expandresult
+
 Function reorgwhen int 6000
 
 Function isverysimple(nopara:int, code:seq.symbol)boolean
@@ -21,9 +31,10 @@ if code = [Local.1] ∧ nopara = 1 then true
 else
  for isverysimple = length.code ≥ nopara, idx = 1, sym ∈ code
  while isverysimple
- do next(if idx ≤ nopara then sym = Local.idx else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
- , idx + 1
- )
+ do
+  next(if idx ≤ nopara then sym = Local.idx else not.isbr.sym ∧ not.isdefine.sym ∧ not.islocal.sym
+  , idx + 1
+  )
  /for(isverysimple)
 
 Function Callself bits bits.1
@@ -43,16 +54,6 @@ function replace(s:seq.symbol, start:int, length:int, value:seq.symbol)seq.symbo
 subseq(s, 1, start - 1) + value + subseq(s, start + length, length.s)
 
 type expandresult is nextvar:int, code:seq.symbol, flags:bits
-
-Export type:expandresult
-
-Export flags(expandresult)bits
-
-Export nextvar(expandresult)int
-
-Export code(expandresult)seq.symbol
-
-Export expandresult(int, seq.symbol, bits)expandresult
 
 function isconstorlocal(p:seq.symbol)boolean length.p = 1 ∧ (isconst.first.p ∨ islocal.first.p)
 
@@ -208,7 +209,7 @@ function replace$for(code:seq.symbol, new:seq.symbol, old:seq.symbol)seq.symbol
 for acc = empty:seq.symbol, s ∈ code do
  acc
  + if inModFor.s then
-  let i = findindex(s, old)
+  let i = findindex(old, s)
   if i ≤ length.new then[new_i]
   else{this is for one of two cases 1:a nested for and $for variable is from outer loop 2:the next expresion}[s]
  else[s]
@@ -231,7 +232,7 @@ if i > 1 ∧ isdefine.s_(i - 1)then addDefine(s, backparse2(s, i - 2, 1, empty:s
 Function backparse2(s:seq.symbol, i:int, no:int, result:seq.int)seq.int
 if no = 0 then result
 else
- assert i > 0 report"back parse 1a:" + toword.no + print.s + stacktrace
+ assert i > 0 report"back parse 1a:" + toword.no + %.s + stacktrace
  if isdefine.s_i then
   let args = backparse2(s, i - 1, 1, empty:seq.int)
   backparse2(s, args_1, no, result)
@@ -245,7 +246,7 @@ else
    else
     let args = backparse2(s, i - 1, nopara, empty:seq.int)
     assert length.args = nopara
-    report"back parse 3" + print.[s_i] + toword.nopara + "//"
+    report"back parse 3" + %.s_i + toword.nopara + "//"
     + for acc = "", @e ∈ args do acc + toword.@e /for(acc)
     args_1
   let b = 

@@ -77,11 +77,14 @@ if w = void then"void"
 else if w = i64 then"i64"
 else if w = f64 then"f64"
 else if w = i32 then"i32"
-else if length.val.w = 1 then print.first.val.w
+else if length.val.w = 1 then %.first.val.w
 else
  let nopara = toint.(val.w)_2
- for acc = "func(", e ∈ subseq(val.w, 3, nopara + 2)do acc + %.wtype.e /for(acc + ")"
- + if(val.w)_(nopara + 3) = tobyte.1 then %.wtype.last.val.w else"void"/if)
+ for acc = "func(", e ∈ subseq(val.w, 3, nopara + 2)do
+  acc + %.wtype.e
+ /for(
+  acc + ")"
+  + if(val.w)_(nopara + 3) = tobyte.1 then %.wtype.last.val.w else"void")
 
 Function printtypeidx(i:int)seq.word %.decode.to:encoding.wtype(i + 1) + "(idx:$(%.i))"
 
@@ -118,54 +121,59 @@ Function createwasm(imports:seq.seq.byte
 let tmp1 = sort.encodingdata:wfunc
 let importfuncs = subseq(tmp1, 1, length.imports)
 let funcswithcode = tmp1 << length.imports
-for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode do next(code + code.p, funcs + LEBu.typeidx.p)/for(let initmemorysize = (length.data + 2^13 - 1) / 2^13
-{assert false report"XX"+toword.((length.data+2^16-1)/ 2^16)}
-let magic = [tobyte.0x00, tobyte.0x61, tobyte.0x73, tobyte.0x6D, tobyte.1, tobyte.0, tobyte.0, tobyte.0]
-let te = encodingdata:wtype
-let types = for acc = LEBu.length.te, @e ∈ te do acc + val.@e /for(acc)
-let beforecode = 
- magic + tobyte.1 + vector.types + tobyte.2 + vector.vector.imports + tobyte.3 + vector.vector.funcs
- + {tables}tobyte.4
- + vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(length.funcrefs + 2)]
- + {memory}tobyte.5
- + vector.vector.[[tobyte.0, tobyte.initmemorysize]]
- + tobyte.7
- + vector.vector.exports
- + {start}tobyte.8
- + vector.LEBu.startidx
- + {elements}tobyte.9
- + vector.vector.[[tobyte.0, i32const] + LEBs.2 + END
- + vector.for frefs = empty:seq.seq.byte, f ∈ funcrefs do frefs + LEBu.f /for(frefs)
- ]
-let codevector = vector.code
-let forlater = 
- "Successful compile  /p"
- + for txt = "", p2 ∈ importfuncs do txt + %.p2 + "typeidx=" + printtypeidx.typeidx.p2 + " /br"/for(txt)
- + for txt = ""
- , offset = length.beforecode + length.LEBu.length.codevector + 1
- , p2 ∈ funcswithcode
- do
-  next(txt + print.tobits.offset + %.sym.p2
-  + "funcidx=$(%.funcidx.p2)typidx=$(printtypeidx.typeidx.p2) /br"
-  + %.p2
-  + " /p"
-  , offset + length.LEBu.length.code.p2 + length.code.p2
+for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode do
+ next(code + code.p, funcs + LEBu.typeidx.p)
+/for(
+ let initmemorysize = (length.data + 2^13 - 1) / 2^13
+ {assert false report"XX"+toword.((length.data+2^16-1)/ 2^16)}
+ let magic = [tobyte.0x00, tobyte.0x61, tobyte.0x73, tobyte.0x6D, tobyte.1, tobyte.0, tobyte.0, tobyte.0]
+ let te = encodingdata:wtype
+ let types = for acc = LEBu.length.te, @e ∈ te do acc + val.@e /for(acc)
+ let beforecode = 
+  magic + tobyte.1 + vector.types + tobyte.2 + vector.vector.imports + tobyte.3 + vector.vector.funcs
+  + {tables}tobyte.4
+  + vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(length.funcrefs + 2)]
+  + {memory}tobyte.5
+  + vector.vector.[[tobyte.0, tobyte.initmemorysize]]
+  + tobyte.7
+  + vector.vector.exports
+  + {start}tobyte.8
+  + vector.LEBu.startidx
+  + {elements}tobyte.9
+  + vector.vector.[[tobyte.0, i32const] + LEBs.2 + END
+  + vector.for frefs = empty:seq.seq.byte, f ∈ funcrefs do frefs + LEBu.f /for(frefs)
+  ]
+ let codevector = vector.code
+ let forlater = 
+  "Successful compile  /p"
+  + for txt = "", p2 ∈ importfuncs do
+   txt + %.p2 + "typeidx=" + printtypeidx.typeidx.p2 + " /br"
+  /for(txt)
+  + for txt = ""
+  , offset = length.beforecode + length.LEBu.length.codevector + 1
+  , p2 ∈ funcswithcode
+  do
+   next(txt + %.tobits.offset + %.sym.p2
+   + "funcidx=$(%.funcidx.p2)typidx=$(printtypeidx.typeidx.p2) /br"
+   + %.p2
+   + " /p"
+   , offset + length.LEBu.length.code.p2 + length.code.p2
+   )
+  /for(txt)
+ let total = 
+  beforecode + {code}tobyte.10 + vector.codevector + {data}tobyte.11
+  + vector.vector.[[tobyte.0, i32const] + LEBs.0 + END
+  + vector.for acc = empty:seq.byte, val ∈ data do
+   for acc2 = acc, @i = 1, @e ∈ constantseq(8, 0)do next(acc2 + tobyte(bits.val >> (8 * @i - 8) ∧ bits.255), @i + 1)/for(acc2)
+  /for(acc)
+  ]
+ if info then
+  [file(fn, total)
+  , file(filename("+" + dirpath.fn + merge([name.fn] + "info") + ".html")
+  , forlater
   )
- /for(txt)
-let total = 
- beforecode + {code}tobyte.10 + vector.codevector + {data}tobyte.11
- + vector.vector.[[tobyte.0, i32const] + LEBs.0 + END
- + vector.for acc = empty:seq.byte, val ∈ data do
-  for acc2 = acc, @i = 1, @e ∈ constantseq(8, 0)do next(acc2 + tobyte(bits.val >> (8 * @i - 8) ∧ bits.255), @i + 1)/for(acc2)
- /for(acc)
- ]
-if info then
- [file(fn, total)
- , file(filename("+" + dirpath.fn + merge([name.fn] + "info") + ".html")
- , forlater
- )
- ]
-else[file(fn, total)]/if)
+  ]
+ else[file(fn, total)])
 
 Function funcbody(localtypes:seq.wtype, code:seq.byte)seq.byte
 let b = 
@@ -212,7 +220,7 @@ Function =(a:wfunc, b:wfunc)boolean sym.a = sym.b
 
 Function hash(a:wfunc)int hash.sym.a
 
-Function ?(a:wfunc, b:wfunc)ordering funcidx.a ? funcidx.b
+Function >1(a:wfunc, b:wfunc)ordering funcidx.a >1 funcidx.b
 
 Function lookup2(s:seq.wfunc, a:wfunc)seq.wfunc
 let t = 
@@ -260,11 +268,12 @@ Function addf(alltypes:typedict, sym:symbol, b:seq.byte)int addorder.wfunc(allty
 Function funcidx2typedesc(arg:int)seq.word
 for acc = "", p ∈ encodingdata:wfunc
 while acc = ""
-do if funcidx.p = arg then
- let xx = printtypeidx.typeidx.p >> 5
- assert not.isempty.xx report"KLJ" + printtypeidx.typeidx.p
- xx
-else acc
+do
+ if funcidx.p = arg then
+  let xx = printtypeidx.typeidx.p >> 5
+  assert not.isempty.xx report"KLJ" + printtypeidx.typeidx.p
+  xx
+ else acc
 /for(acc)
 
 Function startencodings0 int length.encodingdata:efuncidx + length.encodingdata:wfunc
@@ -291,7 +300,9 @@ for acc = empty:seq.symbol, w ∈ s do acc + wordconst.w /for(Constant2(acc + Se
 
 Function initialwordlocations seq.int
 for acc2 = empty:seq.int, p ∈ encodingdata:word5 do
- for acc = empty:seq.symbol, c ∈ chars.p do acc + Lit.toint.c /for(acc2 + getoffset.Constant2(acc + Sequence(seqof.typeint, length.acc)))
+ for acc = empty:seq.symbol, c ∈ chars.p do
+  acc + Lit.toint.c
+ /for(acc2 + getoffset.Constant2(acc + Sequence(seqof.typeint, length.acc)))
 /for(acc2)
 
 ________________

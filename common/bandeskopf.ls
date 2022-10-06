@@ -22,9 +22,25 @@ use set.T
 
 use standard
 
-Function ?(a:nodeinfo.T, b:nodeinfo.T)ordering n.a ? n.b
+Export g(graphlayout.T)graph.T
 
-unbound ?(T, T)ordering
+Export nodeinfo(graphlayout.T)set.nodeinfo.T
+
+Export paths(graphlayout.T)seq.seq.T
+
+Export type:nodeinfo.T
+
+Export n(nodeinfo.T)T
+
+Export seperation(nodeinfo.T)int
+
+Export x(nodeinfo.T)int
+
+Export y(nodeinfo.T)int
+
+Function >1(a:nodeinfo.T, b:nodeinfo.T)ordering n.a >1 n.b
+
+unbound >1(T, T)ordering
 
 unbound=(T, T)boolean
 
@@ -55,13 +71,13 @@ else
  let x = iis(g, dummy, currentlayer_l1)
  if isempty.x then marklayer(g, dummy, upperlayer, currentlayer, k0, l, l1 + 1)
  else
-  let k1 = findindex(x_1, upperlayer)
+  let k1 = findindex(upperlayer, x_1)
   crossings(g, upperlayer, k0, k1, currentlayer, l, l1)
   + marklayer(g, dummy, upperlayer, currentlayer, k1, l1, l1 + 1)
 
 function crossings(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l:int, l1:int)seq.arc.T
-{(k0, l)and(k1, l1)both inner.crossings of(k0, l)have been found for(?, j)for j< k0.find arcs(?, n)where n > l and n <
-  l1 that cross(k0, l)or(k1, l1)}
+{(k0, l)and(k1, l1)both inner.crossings of(k0, l)have been found for(?, j)for j< k0.find arcs(?, n)where n
+ > l and n < l1 that cross(k0, l)or(k1, l1)}
 for acc = empty:seq.arc.T, @e ∈ arithseq(l1 - 1 - (l + 1) + 1, 1, l + 1)do acc + w1(g, upperlayer, k0, k1, currentlayer, @e)/for(acc)
 
 function w1(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l0:int)seq.arc.T
@@ -69,13 +85,13 @@ function w1(g:graph.T, upperlayer:seq.T, k0:int, k1:int, currentlayer:seq.T, l0:
 for acc = empty:seq.arc.T, @e ∈ toseq.predecessors(g, currentlayer_l0)do acc + w1(upperlayer, k0, k1, currentlayer_l0, @e)/for(acc)
 
 function w1(upperlayer:seq.T, k0:int, k1:int, finish:T, start:T)seq.arc.T
-let k = findindex(start, upperlayer)
+let k = findindex(upperlayer, start)
 if k < k0 ∨ k > k1 then[arc(start, finish)]else empty:seq.arc.T
 
 ______________
 
-Step 2 is to find vertical alignments.This will return arcs that will have the two nodes with the same x value.Inner arcs
- are are prime canidates for this vertial alignment.
+Step 2 is to find vertical alignments.This will return arcs that will have the two nodes with the same x value.Inner arcs are
+are prime canidates for this vertial alignment.
 
 Function findvertarcsUL(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x:int, assigned:seq.T)seq.arc.T
 if x > length.currentlayer then empty:seq.arc.T
@@ -83,7 +99,7 @@ else
  let node = currentlayer_x
  let preds = toseq.predecessors(g, node)
  if length.preds > 0 then
-  let upperidx = for acc = empty:seq.int, @e ∈ preds do acc + findindex(@e, lastlayer)/for(acc)
+  let upperidx = for acc = empty:seq.int, @e ∈ preds do acc + findindex(lastlayer, @e)/for(acc)
   let medianleft = upperidx_((length.upperidx + 1) / 2)
   let medianright = upperidx_((length.upperidx + 1) / 2)
   if r < medianleft ∧ lastlayer_medianleft ∉ assigned then
@@ -112,7 +128,7 @@ else
  let node = currentlayer_x
  let preds = toseq.predecessors(g, node)
  if length.preds > 0 then
-  let upperidx = for acc = empty:seq.int, @e ∈ preds do acc + findindex(@e, lastlayer)/for(acc)
+  let upperidx = for acc = empty:seq.int, @e ∈ preds do acc + findindex(lastlayer, @e)/for(acc)
   let medianleft = upperidx_((length.upperidx + 1) / 2)
   let medianright = upperidx_((length.upperidx + 1) / 2)
   if r > medianright ∧ lastlayer_medianright ∉ assigned then
@@ -135,8 +151,8 @@ Function assignvert(RtoL:boolean
 , result:seq.nodeinfo.T
 )set.nodeinfo.T
 {look for other nodes in vertical assignment.Do this recursively to assign all nodes in vertical assignmentnodes
-  collecting the max value of x in each layer Vertarcs always increate level by 1.The final value of x is assigned to all
-  nodes in the vertical assignment}
+ collecting the max value of x in each layer Vertarcs always increate level by 1.The final value of x is assigned to all nodes
+ in the vertical assignment}
 let lastassignedx = 
  if RtoL then for acc = x, @e ∈ toseq.assigned do min(acc, findx(RtoL, q, @e))/for(acc)
  else for acc = x, @e ∈ toseq.assigned do max(acc, findx(RtoL, q, @e))/for(acc)
@@ -260,12 +276,6 @@ ________________
 
 type graphlayout is g:graph.T, nodeinfo:set.nodeinfo.T, paths:seq.seq.T
 
-Export nodeinfo(graphlayout.T)set.nodeinfo.T
-
-Export paths(graphlayout.T)seq.seq.T
-
-Export g(graphlayout.T)graph.T
-
 Function layout(g:graph.T, allpaths:boolean)graphlayout.T
 let lg = layer.makeDAG.g
 let paths = 
@@ -283,26 +293,16 @@ if a ∈ nodes then[a]else[a] + followpath(successors(lg, a)_1, lg, nodes)
 
 ________________
 
-Export type:nodeinfo.T
-
 type nodeinfo is n:T, x:int, y:int, seperation:int
 
 seperation is"width"of node in layer.y is the layer value, x is the posistion within the layer.
-
-Export n(nodeinfo.T)T
-
-Export x(nodeinfo.T)int
-
-Export y(nodeinfo.T)int
-
-Export seperation(nodeinfo.T)int
 
 Function nodeinfo(n:T, x:int, y:int)nodeinfo.T nodeinfo(n, x, y, 1)
 
 unbound=(T, T)boolean
 
 function posindegree(g:graph.T, layers:seq.seq.T, layer:int, node:T)nodeinfo.T
-let x = findindex(node, layers_layer)
+let x = findindex(layers_layer, node)
 if x > length.layers_layer then posindegree(g, layers, layer + 1, node)
 else
  let d = length.toseq.predecessors(g, node)

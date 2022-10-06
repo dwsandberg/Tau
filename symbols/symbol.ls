@@ -20,51 +20,97 @@ use otherseq.word
 
 use set.word
 
-Export type:passtypes
-
-Export abstractModref(mytype)modref
-
-Export %(modref)seq.word
-
-Export replaceT(mytype, modref)modref
-
 Export type:symbol
-
-Export typeint mytype
-
-Export typeptr mytype
-
-Export typeboolean mytype
-
-Export typereal mytype
-
-Export type:set.symbol
-
-Export type:mytype
-
-Export isabstract(m:mytype)boolean
-
-Export parameter(mytype)mytype
-
-Export %(p:mytype)seq.word
-
-Export=(t:mytype, b:mytype)boolean
-
-Export replaceT(with:mytype, m:mytype)mytype
-
-/Export iscomplex(a:mytype)boolean
-
-Export=(a:modref, b:modref)boolean
-
-type symbol is worddata:seq.word, module:modref, types:seq.mytype, raw:bits, flags:bits
-
-Export type:symbol
-
-Export worddata(symbol)seq.word
 
 Export module(symbol)modref
 
 Export types(symbol)seq.mytype
+
+Export worddata(symbol)seq.word
+
+Export type:symdef
+
+Export code(sd:symdef)seq.symbol
+
+Export paragraphno(symdef)int
+
+Export sym(sd:symdef)symbol
+
+Export symdef(sym:symbol, code:seq.symbol, p:int)symdef
+
+Export typebase(i:int)mytype{From mytype}
+
+Export type:modref{From mytype}
+
+Export %(modref)seq.word{From mytype}
+
+Export isabstract(modref)boolean{From mytype}
+
+Export issimple(modref)boolean{From mytype}
+
+Export library(modref)word{From mytype}
+
+Export name(modref)word{From mytype}
+
+Export para(modref)mytype{From mytype}
+
+Export type:mytype{From mytype}
+
+Export %(p:mytype)seq.word{From mytype}
+
+Export abstractModref(mytype)modref{From mytype}
+
+Export abstracttype(mytype)mytype{From mytype}
+
+Export abstracttypename(mytype)word{From mytype}
+
+Export isabstract(m:mytype)boolean{From mytype}
+
+Export parameter(mytype)mytype{From mytype}
+
+Export processof(mytype)mytype{From mytype}
+
+Export seqof(mytype)mytype{From mytype}
+
+Export tomodref(mytype)modref{From mytype}
+
+Export type:passtypes{From mytype}
+
+Export moduleref(seq.word)modref{From mytype}
+
+Export typeref(seq.word)mytype{From mytype}
+
+Export=(a:modref, b:modref)boolean{From mytype}
+
+Export=(t:mytype, b:mytype)boolean{From mytype}
+
+Export >1(modref, modref)ordering{From mytype}
+
+Export >1(typedef, typedef)ordering{From mytype}
+
+Export addabstract(a:mytype, t:mytype)mytype{From mytype}
+
+Export internalmod modref{From mytype}
+
+Export moduleref(seq.word, para:mytype)modref{From mytype}
+
+Export replaceT(mytype, modref)modref{From mytype}
+
+Export replaceT(with:mytype, m:mytype)mytype{From mytype}
+
+Export typeT mytype{From mytype}
+
+Export typeboolean mytype{From mytype}
+
+Export typeint mytype{From mytype}
+
+Export typeptr mytype{From mytype}
+
+Export typereal mytype{From mytype}
+
+Export type:set.symbol{From set.symbol}
+
+type symbol is worddata:seq.word, module:modref, types:seq.mytype, raw:bits, flags:bits
 
 function maplibrary(libname:word, map:seq.word)word
 let match = 1
@@ -72,9 +118,10 @@ let nomatch = 2
 let done = 3
 for state = 0, result = libname, x ∈ map
 while state ≠ done
-do if state = nomatch then next(0, result)
-else if state = match then next(done, x)
-else next(if x = libname then match else nomatch, result)
+do
+ if state = nomatch then next(0, result)
+ else if state = match then next(done, x)
+ else next(if x = libname then match else nomatch, result)
 /for(result)
 
 Function changelibrary(s:symbol, map:seq.word)symbol
@@ -87,12 +134,16 @@ symbol(worddata.s
 )
 
 Function replacestar(s:symbol, typelib:word, modulelib:word)symbol
-{???? remove temp local b caused failure!}
-let b = 
- [if library.module.s ∈ "*"then modulelib else library.module.s
- , name.module.s
- ]
-symbol(worddata.s, moduleref(b, para.module.s), types.s, raw.s, flags.s)
+symbol(worddata.s
+, moduleref([if library.module.s ∈ "*"then modulelib else library.module.s
+, name.module.s
+]
+, para.module.s
+)
+, types.s
+, raw.s
+, flags.s
+)
 
 Function clearrequiresbit(s:symbol)symbol
 {will clear requires bit}
@@ -103,11 +154,11 @@ Function =(a:symbol, b:symbol)boolean
 worddata.a = worddata.b ∧ types.a >> 1 = types.b >> 1 ∧ module.a = module.b
 ∧ (xor(flags.a, flags.b) ∧ (simplenamebit ∨ frefbit ∨ unboundbit)) = 0x0
 
-Function ?(a:symbol, b:symbol)ordering
-?2(a, b) ∧ module.a ? module.b ∧ toint(xor(flags.a, flags.b) ∧ (frefbit ∨ unboundbit)) ? 0
+Function >1(a:symbol, b:symbol)ordering
+a >2 b ∧ module.a >1 module.b ∧ toint(xor(flags.a, flags.b) ∧ (frefbit ∨ unboundbit)) >1 0
 
-Function ?2(a:symbol, b:symbol)ordering
-worddata.a ? worddata.b ∧ types.a >> 1 ? types.b >> 1 ∧ issimplename.a ? issimplename.b
+Function >2(a:symbol, b:symbol)ordering
+worddata.a >1 worddata.b ∧ types.a >> 1 >1 types.b >> 1 ∧ issimplename.a >1 issimplename.b
 
 Function privatefields(s:symbol)seq.int[toint.raw.s, toint.flags.s]
 
@@ -279,8 +330,6 @@ else if iscontinue.s then"Continue" + wordname.s + " /br"
 else if isRecord.s then fsig2("Record"_1, nametype.s, paratypes.s)
 else if isSequence.s then"seq($(worddata.s))" + %.resulttype.s
 else %.module.s + ":" + fsig2(wordname.s, nametype.s, paratypes.s) + %.resulttype.s
-
-Function print(s:seq.symbol)seq.word for acc = "", sym ∈ s do acc + %.sym /for(acc)
 
 Function Lit(i:int)symbol
 {OPTION INLINE}
@@ -473,57 +522,11 @@ let new = current ∪ asset.option
 if cardinality.new = cardinality.current then code
 else removeoptions.code + Words.toseq.new + Optionsym
 
-Export typeref(seq.word)mytype
-
-Export moduleref(seq.word, para:mytype)modref
-
-Export moduleref(seq.word)modref
-
-Export addabstract(a:mytype, t:mytype)mytype
-
-Export typeT mytype
-
-Export seqof(mytype)mytype
-
 ------
-
-Export type:symbol
 
 Function nametype(sym:symbol)seq.mytype if issimplename.sym then empty:seq.mytype else[first.types.sym]
 
 _______________________________________________
-
-Export type:modref
-
-Export issimple(modref)boolean
-
-Export para(modref)mytype
-
-Export tomodref(mytype)modref
-
-Export name(modref)word
-
-Export library(modref)word
-
-Export isseq(mytype)boolean
-
-Export isencoding(mytype)boolean
-
-Export processof(mytype)mytype
-
-Export abstracttype(mytype)mytype
-
-Export abstracttypename(mytype)word
-
-Export internalmod modref
-
-Export isabstract(modref)boolean
-
-Export types(symbol)seq.mytype
-
-Export ?(typedef, typedef)ordering
-
-Export ?(modref, modref)ordering
 
 Function PreFref symbol symbol(internalmod, "PreFref", typeptr)
 
@@ -546,16 +549,6 @@ Function isBuiltin(sym:symbol)boolean name.module.sym = "builtin"_1
 Function isInternal(sym:symbol)boolean name.module.sym = "internal"_1
 
 Function isGlobal(sym:symbol)boolean name.module.sym = "$global"_1
-
-Export typebase(i:int)mytype
-
-Export replaceT(mytype, mytype)mytype
-
-Export replaceT(mytype, modref)modref
-
-Export=(mytype, mytype)boolean
-
-Export isseq(mytype)boolean
 
 Function isencoding(t:mytype)boolean first.typerep.t = first.typerep.typeref."encoding encoding *"
 
@@ -585,19 +578,9 @@ let kind2 =
  else if isencoding.fldtype ∨ fldtype = typeword then typeint else fldtype
 symbol(builtinmod.kind2, "fld", typeptr, typeint, kind2)
 
-Export type:symdef
+type symdef is sym:symbol, code:seq.symbol, paragraphno:int
 
-type symdef is symlist:seq.symbol, paragraphno:int
-
-Function symdef(sym:symbol, code:seq.symbol, p:int)symdef symdef([sym] + code, p)
-
-Function sym(sd:symdef)symbol first.symlist.sd
-
-Function code(sd:symdef)seq.symbol symlist.sd << 1
-
-Export paragraphno(symdef)int
-
-Function ?(a:symdef, b:symdef)ordering sym.a ? sym.b
+Function >1(a:symdef, b:symdef)ordering sym.a >1 sym.b
 
 Function getSymdef(a:set.symdef, sym:symbol)set.symdef lookup(a, symdef(sym, empty:seq.symbol, 0))
 
