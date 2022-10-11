@@ -14,59 +14,65 @@ use standard
 
 Export type:byte
 
-Export LEBu(i:int)seq.byte LEB(bits.0, bits.i, empty:seq.byte)
+Export LEBu(i:int) seq.byte
 
-Export LEBs(i:int)seq.byte LEB(bits.64, bits.i, empty:seq.byte)
+Export LEBs(i:int) seq.byte
 
-Export decodeLEBu(a:seq.byte, i:int)decoderesult decodeLEB2(a, i, 0x0)
+Export decodeLEBu(a:seq.byte, i:int) decoderesult
 
-Export decodeLEBs(a:seq.byte, i:int)decoderesult decodeLEB2(a, i, tobits.64)
+Export decodeLEBs(a:seq.byte, i:int) decoderesult
 
 Export type:decoderesult
 
-Export value(decoderesult)int
+Export value(decoderesult) int
 
-Export next(decoderesult)int
+Export next(decoderesult) int
 
-Function exportfunc(idx:int, name:word)seq.byte vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x0] + LEBu.idx
+Function exportfunc(idx:int, name:word) seq.byte
+vector.toseqbyte (emptyUTF8 + decodeword.name) + [tobyte.0x0] + LEBu.idx
 
-Function exportmemory(name:word)seq.byte vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x2, tobyte.0]
+Function exportmemory(name:word) seq.byte
+vector.toseqbyte (emptyUTF8 + decodeword.name) + [tobyte.0x2, tobyte.0]
 
-Function importfunc(idx:int, modname:word, name:word)seq.byte
-vector.toseqbyte(emptyUTF8 + decodeword.modname) + vector.toseqbyte(emptyUTF8 + decodeword.name)
+Function importfunc(idx:int, modname:word, name:word) seq.byte
+vector.toseqbyte (emptyUTF8 + decodeword.modname)
++ vector.toseqbyte (emptyUTF8 + decodeword.name)
 + [tobyte.0]
 + LEBu.idx
 
-Function vector(a:seq.byte)seq.byte
-assert length.a < 2^32 report"vector problem" + stacktrace
+Function vector(a:seq.byte) seq.byte
+assert length.a < 2^32 report "vector problem $(stacktrace)"
 LEBu.length.a + a
 
-Function vector(a:seq.seq.byte)seq.byte
-assert length.a < 2^32 report"vector problem"
-for acc = LEBu.length.a, @e ∈ a do acc + @e /for(acc)
+Function vector(a:seq.seq.byte) seq.byte
+assert length.a < 2^32 report "vector problem"
+for acc = LEBu.length.a, @e ∈ a do acc + @e /for (acc)
 
-Export tobyte(b:bits)byte tobyte.toint.b
+Export tobyte(b:bits) byte
 
-Function byte(i:int)byte tobyte.i
+Function byte(i:int) byte tobyte.i
 
-enumerationtype=byte decodename=decodeop flags=nodecs withvalues data=00 unreachable 02 block 03 loop 0B END 0C br
-0D brif 0F return 10 call 11 callindirect 1A drop 1B select 20 localget 21 localset 22 localtee 23 globalget 24 globalset 28
-i32load 29 i64load 2A f32load 2B f64load 2C i32load8s 2D i32load8u 2E i32load16s 2F i32load16u 30 i64load8s 31 i64load8u
-32 i64load16s 33 i64load16u 34 i64load32s 35 i64load32u 36 i32store 37 i64store 38 f32store 39 f64store 3A i32store8 3B
-i32store16 3C i64store8 3D i64store16 3E i64store32 3F memorysize 40 memorygrow 41 i32const 42 i64const 43 f32const 44
-f64const 45 i32eqz 46 i32eq 47 i32ne 48 i32lts 49 i32ltu 4A i32gts 4B i32gtu 4C i32les 4D i32leu 4E i32ges 4F i32geu 50 i64eqz
-51 i64eq 52 i64ne 53 i64lts 54 i64ltu 55 i64gts 56 i64gtu 57 i64les 58 i64leu 59 i64ges 5A i64geu 5B f32eq 5C f32ne 5D f32lt 5E
-f32gt 5F f32le 60 f32ge 61 f64eq 62 f64ne 63 f64lt 64 f64gt 65 f64le 66 f64ge 67 i32clz 68 i32ctz 69 i32popcnt 6A i32add 6B i32sub
-6C i32mul 6D i32divs 6E i32divu 6F i32rems 70 i32remu 71 i32and 72 i32or 73 i32xor 74 i32shl 75 i32shrs 76 i32shru 77 i32rotl
-78 i32rotr 79 i64clz 7A i64ctz 7B i64popcnt 7C i64add 7D i64sub 7E i64mul 7F i64divs 80 i64divu 81 i64rems 82 i64remu 83 i64and
-84 i64or 85 i64xor 86 i64shl 87 i64shrs 88 i64shru 89 i64rotl 8A i64rotr 8B f32abs 8C f32neg 8D f32ceil 8E f32floor 8F f32trunc
-90 f32nearest 91 f32sqrt 92 f32add 93 f32sub 94 f32mul 95 f32div 96 f32min 97 f32max 98 f32copysign 99 f64abs 9A f64neg 9B f64ceil
-9C f64floor 9D f64trunc 9E f64nearest 9F f64sqrt A0 f64add A1 f64sub A2 f64mul A3 f64div A4 f64min A5 f64max A6 f64copysign
-A7 i32wrapi64 A8 i32truncf32s A9 i32truncf32u AA i32truncf64s AB i32truncf64u AC i64extendi32s AD i64extendi32u AE i64truncf32s
-AF i64truncf32u B0 i64truncf64s B1 i64truncf64u B2 f32converti32s B3 f32converti32u B4 f32converti64s B5 f32converti64u
-B6 f32demotef64 B7 f64converti32s B8 f64converti32u B9 f64converti64s BA f64converti64u BB f64promotef32 BC i32reinterpretf32
-BD i64reinterpretf64 BE f32reinterpreti32 BF f64reinterpreti64 C0 i32extend8s C1 i32extend16s C2 i64extend8s C3 i64extend16s
-C4 i64extend32s
+enumerationtype = byte decodename = decodeop flags = nodecs withvalues data = 00 unreachable 02 block
+03 loop 0B END 0C br 0D brif 0F return 10 call 11 callindirect 1A drop 1B select 20 localget 21 localset
+22 localtee 23 globalget 24 globalset 28 i32load 29 i64load 2A f32load 2B f64load 2C i32load8s 2D i32load8u
+2E i32load16s 2F i32load16u 30 i64load8s 31 i64load8u 32 i64load16s 33 i64load16u 34 i64load32s 35 i64load32u
+36 i32store 37 i64store 38 f32store 39 f64store 3A i32store8 3B i32store16 3C i64store8 3D i64store16
+3E i64store32 3F memorysize 40 memorygrow 41 i32const 42 i64const 43 f32const 44 f64const 45 i32eqz 46
+i32eq 47 i32ne 48 i32lts 49 i32ltu 4A i32gts 4B i32gtu 4C i32les 4D i32leu 4E i32ges 4F i32geu 50 i64eqz
+51 i64eq 52 i64ne 53 i64lts 54 i64ltu 55 i64gts 56 i64gtu 57 i64les 58 i64leu 59 i64ges 5A i64geu 5B
+f32eq 5C f32ne 5D f32lt 5E f32gt 5F f32le 60 f32ge 61 f64eq 62 f64ne 63 f64lt 64 f64gt 65 f64le 66 f64ge
+67 i32clz 68 i32ctz 69 i32popcnt 6A i32add 6B i32sub 6C i32mul 6D i32divs 6E i32divu 6F i32rems 70 i32remu
+71 i32and 72 i32or 73 i32xor 74 i32shl 75 i32shrs 76 i32shru 77 i32rotl 78 i32rotr 79 i64clz 7A i64ctz
+7B i64popcnt 7C i64add 7D i64sub 7E i64mul 7F i64divs 80 i64divu 81 i64rems 82 i64remu 83 i64and 84 i64or
+85 i64xor 86 i64shl 87 i64shrs 88 i64shru 89 i64rotl 8A i64rotr 8B f32abs 8C f32neg 8D f32ceil 8E f32floor
+8F f32trunc 90 f32nearest 91 f32sqrt 92 f32add 93 f32sub 94 f32mul 95 f32div 96 f32min 97 f32max 98 f32copysign
+99 f64abs 9A f64neg 9B f64ceil 9C f64floor 9D f64trunc 9E f64nearest 9F f64sqrt A0 f64add A1 f64sub A2
+f64mul A3 f64div A4 f64min A5 f64max A6 f64copysign A7 i32wrapi64 A8 i32truncf32s A9 i32truncf32u AA
+i32truncf64s AB i32truncf64u AC i64extendi32s AD i64extendi32u AE i64truncf32s AF i64truncf32u B0 i64truncf64s
+B1 i64truncf64u B2 f32converti32s B3 f32converti32u B4 f32converti64s B5 f32converti64u B6 f32demotef64
+B7 f64converti32s B8 f64converti32u B9 f64converti64s BA f64converti64u BB f64promotef32 BC i32reinterpretf32
+BD i64reinterpretf64 BE f32reinterpreti32 BF f64reinterpreti64 C0 i32extend8s C1 i32extend16s C2 i64extend8s
+C3 i64extend16s C4 i64extend32s
 
 The data below this line was auto generated.
 
@@ -418,7 +424,7 @@ Function i64extend16s byte byte.195
 
 Function i64extend32s byte byte.196
 
-Function decodeop(code:byte)seq.word
+Function decodeop(code:byte) seq.word
 let discard = 
  [unreachable, block, loop, END, br
  , brif, return, call, callindirect, drop
@@ -456,23 +462,25 @@ let discard =
  , i64reinterpretf64, f32reinterpreti32, f64reinterpreti64, i32extend8s, i32extend16s
  , i64extend8s, i64extend16s, i64extend32s]
 let i = toint.code
-if between(i + 1, 1, 197)then
+if between(i + 1, 1, 197) then
  let r = 
-  ["unreachable ? block loop ? ? ? ? ? ? ? END br brif ? return call callindirect ? ? ? ? ? ? ? ? drop select ? ? ? ? localget localset
-   localtee globalget globalset ? ? ? i32load i64load f32load f64load i32load8s i32load8u i32load16s i32load16u i64load8s
-   i64load8u i64load16s i64load16u i64load32s i64load32u i32store i64store f32store f64store i32store8 i32store16 i64store8
-   i64store16 i64store32 memorysize memorygrow i32const i64const f32const f64const i32eqz i32eq i32ne i32lts i32ltu i32gts
-   i32gtu i32les i32leu i32ges i32geu i64eqz i64eq i64ne i64lts i64ltu i64gts i64gtu i64les i64leu i64ges i64geu f32eq f32ne
-   f32lt f32gt f32le f32ge f64eq f64ne f64lt f64gt f64le f64ge i32clz i32ctz i32popcnt i32add i32sub i32mul i32divs i32divu
-   i32rems i32remu i32and i32or i32xor i32shl i32shrs i32shru i32rotl i32rotr i64clz i64ctz i64popcnt i64add i64sub i64mul
-   i64divs i64divu i64rems i64remu i64and i64or i64xor i64shl i64shrs i64shru i64rotl i64rotr f32abs f32neg f32ceil f32floor
-   f32trunc f32nearest f32sqrt f32add f32sub f32mul f32div f32min f32max f32copysign f64abs f64neg f64ceil f64floor f64trunc
-   f64nearest f64sqrt f64add f64sub f64mul f64div f64min f64max f64copysign i32wrapi64 i32truncf32s i32truncf32u i32truncf64s
-   i32truncf64u i64extendi32s i64extendi32u i64truncf32s i64truncf32u i64truncf64s i64truncf64u f32converti32s f32converti32u
-   f32converti64s f32converti64u f32demotef64 f64converti32s f64converti32u f64converti64s f64converti64u f64promotef32
+  ["unreachable ? block loop ? ? ? ? ? ? ? END br brif ? return call callindirect ? ? ? ? ? ? ? ? drop
+   select ? ? ? ? localget localset localtee globalget globalset ? ? ? i32load i64load f32load f64load i32load8s
+   i32load8u i32load16s i32load16u i64load8s i64load8u i64load16s i64load16u i64load32s i64load32u i32store
+   i64store f32store f64store i32store8 i32store16 i64store8 i64store16 i64store32 memorysize memorygrow
+   i32const i64const f32const f64const i32eqz i32eq i32ne i32lts i32ltu i32gts i32gtu i32les i32leu i32ges
+   i32geu i64eqz i64eq i64ne i64lts i64ltu i64gts i64gtu i64les i64leu i64ges i64geu f32eq f32ne f32lt f32gt
+   f32le f32ge f64eq f64ne f64lt f64gt f64le f64ge i32clz i32ctz i32popcnt i32add i32sub i32mul i32divs
+   i32divu i32rems i32remu i32and i32or i32xor i32shl i32shrs i32shru i32rotl i32rotr i64clz i64ctz i64popcnt
+   i64add i64sub i64mul i64divs i64divu i64rems i64remu i64and i64or i64xor i64shl i64shrs i64shru i64rotl
+   i64rotr f32abs f32neg f32ceil f32floor f32trunc f32nearest f32sqrt f32add f32sub f32mul f32div f32min
+   f32max f32copysign f64abs f64neg f64ceil f64floor f64trunc f64nearest f64sqrt f64add f64sub f64mul f64div
+   f64min f64max f64copysign i32wrapi64 i32truncf32s i32truncf32u i32truncf64s i32truncf64u i64extendi32s
+   i64extendi32u i64truncf32s i64truncf32u i64truncf64s i64truncf64u f32converti32s f32converti32u f32converti64s
+   f32converti64u f32demotef64 f64converti32s f64converti32u f64converti64s f64converti64u f64promotef32
    i32reinterpretf32 i64reinterpretf64 f32reinterpreti32 f64reinterpreti64 i32extend8s i32extend16s i64extend8s
    i64extend16s i64extend32s"
   _(i + 1)
   ]
- if r ≠ "?"then r else"byte." + toword.i
-else"byte." + toword.i 
+ if r ≠ "?" then r else "byte." + toword.i
+else "byte." + toword.i 

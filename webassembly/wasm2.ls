@@ -14,18 +14,18 @@ use symbol2
 
 use wasm
 
-Function %(a:seq.byte)seq.word for acc = "bytes:", @e ∈ a do acc + %.@e /for(acc)
+Function %(a:seq.byte) seq.word for acc = "bytes:", @e ∈ a do acc + %.@e /for (acc)
 
 Function allocatesym symbol symbol(moduleref."? core32", "allocate", typeint, typeptr)
 
-Function recordsym(alltypes:typedict, sym:symbol)symbol
+Function recordsym(alltypes:typedict, sym:symbol) symbol
 for acc = empty:seq.mytype, typ ∈ paratypes.sym do
  let kind = basetype(typ, alltypes)
  acc + if kind = typeboolean ∨ kind = typereal then kind else typeint
-/for(symbol(moduleref."* $$record", "$$record", acc, typeint))
+/for (symbol(moduleref."* $$record", "$$record", acc, typeint))
 
 Function initwordsbody seq.byte
-assert encodingbase + noencodings * 4 < globalspace report"globalspace not big enough"
+assert encodingbase + noencodings * 4 < globalspace report "globalspace not big enough"
 let charseq = seqof.typeref."char standard *"
 let symboladdword = 
  symbol(moduleref("* encoding", charseq)
@@ -35,31 +35,33 @@ let symboladdword =
  )
 for l = Wlocal.1, loc ∈ initialwordlocations do
  l + const64.loc + Wcall.symboladdword
-/for(
+/for (
  funcbody([i32, i64]
  , switchcontext.newcontext2.0 + const64.1
  + Wcall.symbol(internalmod, "getinstance", typeint, typeint)
  + Wdefine.1
  + store(load(getencodingaddress.const64.1, 0), l + i32wrapi64, 0)
  + store(load(getencodingaddress.const64.2, 0)
- , const64.2 + Wcall.symbol(internalmod, "getinstance", typeint, typeint) + i32wrapi64
+ , const64.2 + Wcall.symbol(internalmod, "getinstance", typeint, typeint)
+ + i32wrapi64
  , 0
  )
  + switchcontext.newcontext2.0
  ))
 
-function getencodingaddress(encodingno:seq.byte)seq.byte
-{@currentprocess+encodingbase+4*encodingno}Gcurrentprocess + encodingno + const64.4 + i64mul
-+ i32wrapi64
+function getencodingaddress(encodingno:seq.byte) seq.byte
+Gcurrentprocess + encodingno + const64.4 + i64mul + i32wrapi64
 + const32.encodingbase
 + i32add
 + i32add
 
-Function getinstancefunc(alltypes:typedict)int
+Function getinstancefunc(alltypes:typedict) int
 let Emptyseq = Constant2.[Lit.0, Lit.0, Record.[typeint, typeint]]
-let empty4 = const64.getoffset.Constant2.[Emptyseq, Emptyseq, Emptyseq, Emptyseq, Sequence(seqof.typeint, 4)]
+let empty4 = 
+ const64.getoffset.Constant2.[Emptyseq, Emptyseq, Emptyseq, Emptyseq, Sequence(seqof.typeint, 4)]
 let emptyinstance = 
- Wlocal.0 + const64.0 + empty4 + empty4 + const64.getoffset.Emptyseq + Wlocal.0
+ Wlocal.0 + const64.0 + empty4 + empty4 + const64.getoffset.Emptyseq
+ + Wlocal.0
  + Wcall.recordsym(alltypes
  , symbol(internalmod
  , "record"
@@ -76,7 +78,7 @@ addf(alltypes
 + Wif(i32
 , store(addr, const64.1 + Wcall.allocatesym, 0) + emptyinstance + Wdefine.3
 + store(load(addr, 0), Wlocal.3, 0)
-+ {store currentprocess in encodinginfo}store(load(addr, 0), Gcurrentprocess, 4)
++ {store currentprocess in encodinginfo} store(load(addr, 0), Gcurrentprocess, 4)
 + Wlocal.3
 , load(load(addr, 0), 0)
 )
@@ -84,13 +86,14 @@ addf(alltypes
 )
 )
 
-Function reclaimspacefunc(alltypes:typedict)int
+Function reclaimspacefunc(alltypes:typedict) int
 addf(alltypes
 , symbol(internalmod, "reclaimspace", typereal)
 , funcbody([i32]
 , store(Gcurrentprocess, Gfreeblocks, 0)
 + setGlobal(freeblocks
-, Glastfree + const32.toint.{will produce 32bit constant 0xFFFF0000}0xFFFFFFFFFFFF0000 + i32and
+, Glastfree + const32.toint.{will produce 32bit constant 0xFFFF0000} 0xFFFFFFFFFFFF0000
++ i32and
 )
 + switchcontext.load(Gcurrentprocess, parentprocess)
 + switchcontext.newcontext2.0
@@ -99,9 +102,11 @@ addf(alltypes
 )
 )
 
-Function processbodyfunc(alltypes:typedict)int
+Function processbodyfunc(alltypes:typedict) int
 let funccall = 
- Wlocal.0 + i64truncf64s + Wlocal.1 + i32truncf64s + Wcallindirect.typeindex([i64], i64) + Wdefine.4
+ Wlocal.0 + i64truncf64s + Wlocal.1 + i32truncf64s
+ + Wcallindirect.typeindex([i64], i64)
+ + Wdefine.4
 addf(alltypes
 , symbol(internalmod, "processbody", typereal, typereal, typereal)
 , funcbody([i32, i32, i64, i32]
@@ -116,18 +121,22 @@ addf(alltypes
 + LEBu.2
 + const32.0
 + i32gtu
-+ Wif(void, Wlocal.4 + Wlocal.2 + Wcallindirect.typeindex([i64], i64) + Wdefine.4)
-+ {reclaim space}store(Wlocal.5, Gfreeblocks, 0)
++ Wif(void
+, Wlocal.4 + Wlocal.2 + Wcallindirect.typeindex([i64], i64) + Wdefine.4
+)
++ {reclaim space} store(Wlocal.5, Gfreeblocks, 0)
 + setGlobal(freeblocks
 , load(Wlocal.5, lastfree)
-+ const32.toint.{will produce 32bit constant 0xFFFF0000}0xFFFFFFFFFFFF0000
++ const32.toint.{will produce 32bit constant 0xFFFF0000} 0xFFFFFFFFFFFF0000
 + i32and
 )
-+ {create process record}const64.0
++ {create process record} const64.0
 + const64.0
 + Wlocal.4
 + (const64.0 + const64.1 + Wlocal.4
-+ Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr)))
++ Wcall.recordsym(alltypes
+, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr)
+))
 + Wcall.recordsym(alltypes
 , symbol(internalmod, "record", [typeint, typeint, typeint, typeptr], typeptr)
 )
@@ -135,7 +144,7 @@ addf(alltypes
 )
 )
 
-Function handleerrorfunc(alltypes:typedict)int
+Function handleerrorfunc(alltypes:typedict) int
 addf(alltypes
 , symbol(internalmod, "handleerror", typereal, typereal)
 , funcbody([i32, i64]
@@ -150,44 +159,48 @@ addf(alltypes
 , seqof.typeword
 )
 + Wdefine.2
-+ {create process record}const64.1
++ {create process record} const64.1
 + Wlocal.2
 + const64.0
-+ Wcall.recordsym(alltypes, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr))
++ Wcall.recordsym(alltypes
+, symbol(internalmod, "record", [typeint, typeint, typeint], typeptr)
+)
 + f64converti64s
 )
 )
 
-exportfunc(funcidx.sym, wordname.sym)
+exportfunc (funcidx.sym, wordname.sym)
 
-function newcontext2(newprocess:int)seq.byte
-{"this"is tmp to store current process. 
-  /br Update values of nextfree and last free in current process record. 
-  /br Get new memory segment which sets global nextfree and global lastfree
-  /br create new process context record and place in currentprocess
-  /br set parentprocess in new context record
-  /br set up encodings in new context record}
+function newcontext2(newprocess:int) seq.byte
+{" this" is tmp to store current process. 
+ /br Update values of nextfree and last free in current process record. 
+ /br Get new memory segment which sets global nextfree and global lastfree
+ /br create new process context record and place in currentprocess
+ /br set parentprocess in new context record
+ /br set up encodings in new context record}
 getspace.false
 + Gnextfree
 + const32.8
 + i32sub
 + Wdefine.newprocess
 + store(Wlocal.newprocess, Gcurrentprocess, parentprocess)
-+ for acc = empty:seq.byte, i ∈ arithseq(noencodings, 4, 0)do
- acc + store(Wlocal.newprocess, load(Gcurrentprocess, encodingbase + i), encodingbase + i)
-/for(acc)
++ for acc = empty:seq.byte, i ∈ arithseq(noencodings, 4, 0) do
+ acc
+ + store(Wlocal.newprocess, load(Gcurrentprocess, encodingbase + i), encodingbase + i)
+/for (acc)
 + store(Wlocal.newprocess, Wlocal.newprocess + const32.contextsize + i32add, nextfree)
 + store(Wlocal.newprocess, Glastfree, lastfree)
 + store(Wlocal.newprocess, const32.0, 0)
 + Wlocal.newprocess
 
-function switchcontext(p:seq.byte)seq.byte
-store(Gcurrentprocess, Gnextfree, nextfree) + store(Gcurrentprocess, Glastfree, lastfree)
+function switchcontext(p:seq.byte) seq.byte
+store(Gcurrentprocess, Gnextfree, nextfree)
++ store(Gcurrentprocess, Glastfree, lastfree)
 + setGlobal(currentprocess, p)
 + setGlobal(nextfree, load(Gcurrentprocess, nextfree))
 + setGlobal(lastfree, load(Gcurrentprocess, lastfree))
 
-Function addencodingfunc(alltypes:typedict)int
+Function addencodingfunc(alltypes:typedict) int
 let encodingpair = 1
 let addfunc = 2
 let deepcopyfunc = 3
@@ -199,7 +212,8 @@ addf(alltypes
 , symbol(internalmod, "addencoding", [typeint, typeptr, typeint, typeint], typeint)
 , {parameters encodingnumber, encodingpair, add2, deepcopy}
 funcbody([i32, i64, i32, i32]
-, Wlocal.0 + Wcall.symbol(internalmod, "getinstance", typeint, typeint) + Wdefine.instance
+, Wlocal.0 + Wcall.symbol(internalmod, "getinstance", typeint, typeint)
++ Wdefine.instance
 + Gcurrentprocess
 + Wdefine.callingprocess
 + load(getencodingaddress.Wlocal.0, 0)
@@ -211,23 +225,26 @@ funcbody([i32, i64, i32, i32]
 + i32eq
 + Wif(i64
 , Wlocal.instance + Wlocal.encodingpair
-+ ({why does encodingpair need deepcopy ? when owningprocess=currentprocess?}Wlocal.deepcopyfunc
++ ({why does encodingpair need deepcopy ? when owningprocess = currentprocess?}
+Wlocal.deepcopyfunc
 + i32wrapi64
 + Wcallindirect.typeindex([i64], i64))
 + Wlocal.addfunc
 + i32wrapi64
 + Wcallindirect.typeindex([i64, i64], i64)
-, {change so space is allocate from owningprocess}switchcontext.Wlocal.owningprocess
-+ {call code to add encoding}Wlocal.instance
-+ (Wlocal.encodingpair + Wlocal.deepcopyfunc + i32wrapi64 + Wcallindirect.typeindex([i64], i64))
+, {change so space is allocate from owningprocess} switchcontext.Wlocal.owningprocess
++ {call code to add encoding} Wlocal.instance
++ (Wlocal.encodingpair + Wlocal.deepcopyfunc + i32wrapi64
++ Wcallindirect.typeindex([i64], i64))
 + Wlocal.addfunc
 + i32wrapi64
 + Wcallindirect.typeindex([i64, i64], i64)
-+ {change back so space in allocated in orignal process}switchcontext.Wlocal.callingprocess
++ {change back so space in allocated in orignal process} switchcontext.Wlocal.callingprocess
 )
 + Wdefine.instance
-+ {store modified instance}store(Wlocal.pairaddress, Wlocal.instance + i32wrapi64, 0)
-+ {get last added}Wlocal.instance
++ {store modified instance}
+store(Wlocal.pairaddress, Wlocal.instance + i32wrapi64, 0)
++ {get last added} Wlocal.instance
 + i32wrapi64
 + i64load
 + tobyte.3
@@ -236,9 +253,9 @@ funcbody([i32, i64, i32, i32]
 )
 )
 
-Function nextfree int 4
+function nextfree int 4
 
-Function lastfree int 8
+function lastfree int 8
 
 function currentprocess int 12
 
@@ -252,11 +269,13 @@ function noencodings int 40
 
 function contextsize int noencodings * 2 + encodingbase / 2
 
-function getspace(link:boolean)seq.byte
+function getspace(link:boolean) seq.byte
 Gfreeblocks + const32.0 + i32eq
 + Wif(void
 , setGlobal(nextfree, const32.1 + [memorygrow, tobyte.0] + const32.2^16 + i32mul)
-, setGlobal(nextfree, Gfreeblocks) + setGlobal(freeblocks, load(Gfreeblocks, 0)) + Gnextfree
+, setGlobal(nextfree, Gfreeblocks)
++ setGlobal(freeblocks, load(Gfreeblocks, 0))
++ Gnextfree
 + i64extendi32u
 + const64.8192
 + Wcall.symbol(moduleref."* webIOtypes", "set2zero", typeptr, typeint, typeptr)
@@ -265,23 +284,30 @@ Gfreeblocks + const32.0 + i32eq
 + if link then
  {link up allocated blocks}
  store(Gnextfree
- , Glastfree + const32.toint.{will produce 32bit constant 0xFFFF0000}0xFFFFFFFFFFFF0000 + i32and
+ , Glastfree + const32.toint.{will produce 32bit constant 0xFFFF0000} 0xFFFFFFFFFFFF0000
+ + i32and
  , 0
  )
 else empty:seq.byte /if
 + setGlobal(nextfree, Gnextfree + const32.8 + i32add)
-+ setGlobal(lastfree, Gnextfree + const32(8180 * 8) + i32add)
++ setGlobal(lastfree, Gnextfree + const32 (8180 * 8) + i32add)
 
-Function allocatefunc(alltypes:typedict)int
+Function allocatefunc(alltypes:typedict) int
 addf(alltypes
 , allocatesym
 , funcbody([i32, i32]
-, Gnextfree + Wdefine.1 + Wlocal.1 + Wlocal.0 + i32wrapi64 + const32.8 + i32mul + i32add + Wdefine.2
+, Gnextfree + Wdefine.1 + Wlocal.1 + Wlocal.0 + i32wrapi64 + const32.8
++ i32mul
++ i32add
++ Wdefine.2
 + Wlocal.2
 + Glastfree
 + i32gtu
 + Wif(void
-, getspace.true + Gnextfree + Wdefine.1 + Wlocal.1 + Wlocal.0 + i32wrapi64 + const32.8 + i32mul + i32add
+, getspace.true + Gnextfree + Wdefine.1 + Wlocal.1 + Wlocal.0 + i32wrapi64
++ const32.8
++ i32mul
++ i32add
 + Wdefine.2
 + setGlobal(nextfree, Wlocal.2)
 , setGlobal(nextfree, Wlocal.2)
@@ -291,7 +317,7 @@ addf(alltypes
 )
 )
 
-function setGlobal(offset:int, val:seq.byte)seq.byte store(const32.0, val, offset)
+function setGlobal(offset:int, val:seq.byte) seq.byte store(const32.0, val, offset)
 
 function Gfreeblocks seq.byte load(const32.0, freeblocks)
 
@@ -301,23 +327,24 @@ function Glastfree seq.byte load(const32.0, lastfree)
 
 function Gcurrentprocess seq.byte load(const32.0, currentprocess)
 
-function load(base:seq.byte, offset:int)seq.byte base + i32load + tobyte.2 + LEBu.offset
+function load(base:seq.byte, offset:int) seq.byte base + i32load + tobyte.2 + LEBu.offset
 
-function store(base:seq.byte, arg:seq.byte, i:int)seq.byte base + arg + i32store + tobyte.2 + LEBu.i
+function store(base:seq.byte, arg:seq.byte, i:int) seq.byte
+base + arg + i32store + tobyte.2 + LEBu.i
 
-Function Wif(type:wtype, thenclause:seq.byte)seq.byte Wif(type, thenclause, empty:seq.byte)
+function Wif(type:wtype, thenclause:seq.byte) seq.byte Wif(type, thenclause, empty:seq.byte)
 
-Function Wif(type:wtype, thenclause:seq.byte, elseclause:seq.byte)seq.byte
+function Wif(type:wtype, thenclause:seq.byte, elseclause:seq.byte) seq.byte
 [tobyte.0x04] + first.asbytes.type + thenclause
-+ if isempty.elseclause then empty:seq.byte else[tobyte.0x05] + elseclause /if
++ if isempty.elseclause then empty:seq.byte else [tobyte.0x05] + elseclause /if
 + END
 
-Function const64(i:int)seq.byte[i64const] + LEBs.i
+Function const64(i:int) seq.byte [i64const] + LEBs.i
 
-Function const32(i:int)seq.byte[i32const] + LEBs.i
+Function const32(i:int) seq.byte [i32const] + LEBs.i
 
-Function Wlocal(i:int)seq.byte[localget] + LEBu.i
+Function Wlocal(i:int) seq.byte [localget] + LEBu.i
 
-Function Wdefine(local:int)seq.byte[localset] + LEBu.local
+Function Wdefine(local:int) seq.byte [localset] + LEBu.local
 
-Function Wcallindirect(typeindex:int)seq.byte[callindirect] + LEBu.typeindex + tobyte.0 
+Function Wcallindirect(typeindex:int) seq.byte [callindirect] + LEBu.typeindex + tobyte.0 

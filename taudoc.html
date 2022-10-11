@@ -1,384 +1,382 @@
-<!doctype html> <meta charset="UTF-8"> <style > <!--span.avoidwrap{display:inline-block ;}span.keyword{color:blue ;}span.keywords{color:blue ;}span.literal{color:red ;}span.comment{color:green ;}span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style>
+<!doctype html> <meta charset =" UTF-8" >
+<style > <!--span.avoidwrap {display:inline-block ;} span.keyword {color:blue ;}
+span.keywords {color:blue ;} span.literal {color:red ;} span.comment {color:green ;}
+span.block {padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}
+--> </style>
 
-<p>
-<h2> The Tau Programming Language </h2> 
+<p> /< /section The Tau Programming Language /end
 <p> Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.
-<p> This new language is different because there is:<span class=block> —No assignment operator. 
+<p> This new language is different because there is:/< block —No assignment operator. 
 <br> —No loop/while statement
 <br> —No function type.
 <br> —Only uses program state in a very controlled way. 
 <br> —Words are the basic text element instead of characters. 
 <br> —Heavy use of sequences. 
-<br> —Introduces a new control structure for iterating through loops.</span> 
+<br> —Introduces a new control structure for iterating through loops./end
 <p> Functional program languages have no assignment operator or loop statements, but tend to be based on the lamada calculus which makes use of higher order functions. We only include the basic operations on function of declaring and calling of them and the binding of unbound function to an actual function in an instantiation of a function from a parameterized module.
 <p> Functional languages tend to use recursion to replace the control structures of loops. The full power of recursion is seldom needed. We introduce a new control structure to cover many of the simple uses of recursion.
-<p> Instruction for downloading and install Tau in <a href="install.html"> here </a> if you would like to try out the examples below for yourself.
-<p>
-<h2> Lexical level </h2> 
+<p> Instruction for downloading and install Tau in /< noformat <a href =" install.html" > here </a> /end if you would like to try out the examples below for yourself.
+<p> /< /section Lexical level /end
 <p> A program is represented as a sequence of characters. The character encoding is assume to be unicode represented in UTF8 format. The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.
-<p> Paragraphs that do NOT start with <span class=keyword> type</span>, <span class=keyword> use</span>, <span class=keyword> Module</span>, <span class=keyword> module</span>, <span class=keyword> Function</span>, <span class=keyword> function</span>, <span class=keyword> unbound</span>, or <span class=keyword> Export</span> are always treated as comments.
-<p> Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. The characters ()+, -.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a+b" is equivalent to  "a+b"; but  "a * b"is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
-<p> A word sequence literal is double quoted like"This is a string Literal."
-<p> To include a double quote within a use"$(dq)". Inculding"$(...)"in a syntactical short hand.<span class=block> "hello world without quotes $(dq)hello world $(dq)with quotes"</span> is the sames as writing <span class=block> $($($($("hello world without quotes", dq), "hello world"), dq), "with quotes")</span> which is equivalent to writing <span class=block> "hello world without quotes"+dq+"hello world"+dq+"with quotes"</span> Since $(...)can receive any expression we could also write <span class=block> "hello world without quotes $(dq."hello world")with quotes"</span> Since $(functions as an escape in strings, it can be include within a string as"$("$")("Note that just the"$"is escaped as"$("$(")"will raise an error because the escape in the inner qoute not properly formed.
+<p> Paragraphs that do NOT start with <span class = keyword> type</span>, <span class = keyword> use</span>, <span class = keyword> Module</span>, <span class = keyword> module</span>, <span class = keyword> Function</span>, <span class = keyword> function</span>, <span class = keyword> unbound</span>, or <span class = keyword> Export</span> are always treated as comments.
+<p> Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. The characters  ()+,-.:= [] {}^_"  are all treated as if they have an implied space before and after them so they are words formed from a single character. For example," a+b"  is equivalent to  " a+b" ; but  " a * b" is not equivalent to " a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
+<p> A word sequence literal is double quoted like" This is a string Literal."
+<p> To include a double quote within a use" $(dq)". Inculding" $(...)" in a syntactical short hand./< block" hello world without quotes $(dq) hello world $(dq) with quotes" /end is the sames as writing /< block $($($($(" hello world without quotes", dq)," hello world"), dq)," with quotes") /end which is equivalent to writing /< block" hello world without quotes"+dq+" hello world"+dq+" with quotes" /end Since $(...) can receive any expression we could also write /< block" hello world without quotes $(dq." hello world") with quotes" /end Since $(functions as an escape in strings, it can be include within a string as" $(" $") (" Note that just the" $" is escaped as" $(" $(")" will raise an error because the escape in the inner qoute not properly formed.
 <p> An integer literal is represented by a sequence of words where each word only contains digits or the no break space. A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 00 and 1001 are integers.
 <p> For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ ∈ ∉ ∩ ∪ are  /le  /ge  /ne  /and  /or /in /nin /cap /cup respectively.
-<p> Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.
-<p> Occasionally some unexpected lexical issues arise. The syntax for a let statement is <span class=keyword> let</span> &lt;name>=&lt;expresion> &lt;expresion>.The follow function looks good but will cause a syntax error:<span class=block> <span class=keyword> function</span> f1 int
-<br> <span class=keyword> let</span> x=56
-<br> -4+x </span> 
-<p> Written on a single line, the problem becomes clear as there is no second expression:<span class=keyword> function</span> f1 int <span class=keyword> let</span> x=56-4+x
+<p> Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but  (8) * (9)  is ok.
+<p> Occasionally some unexpected lexical issues arise. The syntax for a let statement is <span class = keyword> let</span> <name> = <expresion> <expresion>.The follow function looks good but will cause a syntax error:/< block <span class = keyword> function</span> f1 int
+<br> <span class = keyword> let</span> x = 56
+<br> -4+x /end
+<p> Written on a single line, the problem becomes clear as there is no second expression:<span class = keyword> function</span> f1 int <span class = keyword> let</span> x = 56-4+x
 <p> The fix is to add parenthesizes
-<p> <span class=keyword> function</span> f1 int
-<br> <span class=keyword> let</span> x = (56)
+<p> <span class = keyword> function</span> f1 int
+<br> <span class = keyword> let</span> x = (56)
 <br> (-4 + x)
 <p> When converting a sequence of words to characters for output, an space is usually added after each word with the exceptions:
-<br> 1. If the word is  "()+-[]{}_.. :^  then the space before and after the word is not added. 
+<br> 1. If the word is  " ()+-[] {}_.. :^  then the space before and after the word is not added. 
 <br> 2. If the word is a comma then the space before the comma is suppressed.
 <p> These rules sometimes do not produce the desired result. To improve the result, no-break spaces can be added. On the Mac keyboard pressing the option key and then space bar will insert a no-break space. 
-<p>
-<h2> Expressions </h2> 
+<p> /< /section Expressions /end
 <p> Here is a list of infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.
 <br> _^
 <br> unary minus
 <br> * / mod ∪ ∩ \
 <br> +-∈ ∉
-<br> =&lt; > ? ≤ ≥ ≠ >> &lt;&lt;
+<br> = < > ? ≤ ≥ ≠ >> <<
 <br> ∧
 <br> ∨
 <p> Parentheses are used to override the default precedence. Note that the operators ∪ ∩ \ which are commonly used for set union, intersection and differences all have that same precedence.
-<p> Procedure calls are of the form f1(p1, p2, …, pn). f1()is illegal and should be written f1. To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1. The precedence of. is between the_and the *.
-<p> The operators ≤ ≥ ≠ are abbreviations for not(a > b), not(a &lt; b), not(a=b)respectively. 
-<p> The compilation unit in tau is a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word <span class=keyword> module</span>.
-<p> A paragraph is a sequence of words. Paragraphs that do NOT start with <span class=keyword> type</span>, <span class=keyword> use</span>, <span class=keyword> Library</span>, <span class=keyword> module</span>, <span class=keyword> Function</span> <span class=keyword> function</span>, <span class=keyword> unbound</span>, or <span class=keyword> Export</span> are always treated as comments.
-<p> The syntax for non-comment paragraphs is <span class=block> &lt;paragraph>→ <span class=keyword> module</span> &lt;word>.T | <span class=keyword> module</span> &lt;word> | &lt;definition>
-<br> &lt;paragraph>→ <span class=keyword> use</span> &lt;type>
-<br> &lt;paragraph>→ <span class=keyword> type</span> &lt;word> <span class=keyword> is</span> &lt;name list>
-<br> &lt;paragraph>→ <span class=keyword> Export</span> &lt;function>
-<br> &lt;paragraph>→ <span class=keyword> unbound</span> &lt;function>
-<br> &lt;paragraph>→ <span class=keyword> Function</span> &lt;function> <em> E </em>
-<br> &lt;paragraph>→ <span class=keyword> function</span> &lt;function> <em> E </em>
-<br> &lt;name list>→ &lt;word>:&lt;type> | &lt;name list>, &lt;word>:&lt;type>
-<br> &lt;function > → &lt;function name>(&lt;name list>)&lt;type>
-<br> &lt;function > → &lt;function name> &lt;type>
-<br> &lt;let name>→ &lt;word>
-<br> &lt;parameter name>→ &lt;word>
-<br> &lt;type>→ &lt;word>
-<br> &lt;type>→ &lt;word>.&lt;type>
-<br> &lt;function call>→ &lt;function name> | &lt;function name>(<em> EList </em>)
-<br> <em> E </em> → &lt;function call> |&lt;parameter name> |&lt;let name>
-<br> <em> E </em> → <span class=keyword> if</span> <em> E </em> <span class=keyword> then</span> <em> E </em> <span class=keyword> else</span> <em> E </em>
-<br> <em> E </em> → <span class=keyword> if</span> <em> E </em> <span class=keyword> then</span> <em> E </em> <span class=keyword> else</span> <em> E </em> <span class=keyword> /if</span>
-<br> <em> E </em> → (<em> E </em>)
-<br> <em> E </em> → <em> E </em> &lt;binary op> <em> E </em>
+<p> Procedure calls are of the form f1 (p1, p2, …, pn). f1 () is illegal and should be written f1. To avoid excessive parentheses in expressions f1 (p1) is equivalent to f1.p1. The precedence of. is between the_and the *.
+<p> The operators ≤ ≥ ≠ are abbreviations for not (a > b), not (a < b), not (a = b) respectively. 
+<p> The compilation unit in tau is a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word <span class = keyword> module</span>.
+<p> A paragraph is a sequence of words. Paragraphs that do NOT start with <span class = keyword> type</span>, <span class = keyword> use</span>, <span class = keyword> Library</span>, <span class = keyword> module</span>, <span class = keyword> Function</span> <span class = keyword> function</span>, <span class = keyword> unbound</span>, or <span class = keyword> Export</span> are always treated as comments.
+<p> The syntax for non-comment paragraphs is /< block <paragraph>→ <span class = keyword> module</span> <word>.T | <span class = keyword> module</span> <word> | <definition>
+<br> <paragraph>→ <span class = keyword> use</span> <type>
+<br> <paragraph>→ <span class = keyword> type</span> <word> <span class = keyword> is</span> <name list>
+<br> <paragraph>→ <span class = keyword> Export</span> <function>
+<br> <paragraph>→ <span class = keyword> unbound</span> <function>
+<br> <paragraph>→ <span class = keyword> Function</span> <function> <em> E </em>
+<br> <paragraph>→ <span class = keyword> function</span> <function> <em> E </em>
+<br> <name list>→ <word>:<type> | <name list>, <word>:<type>
+<br> <function > → <function name> (<name list>) <type>
+<br> <function > → <function name> <type>
+<br> <let name>→ <word>
+<br> <parameter name>→ <word>
+<br> <type>→ <word>
+<br> <type>→ <word>.<type>
+<br> <function call>→ <function name> | <function name> (<em> EList </em>)
+<br> <em> E </em> → <function call> |<parameter name> |<let name>
+<br> <em> E </em> → <span class = keyword> if</span> <em> E </em> <span class = keyword> then</span> <em> E </em> <span class = keyword> else</span> <em> E </em>
+<br> <em> E </em> → <span class = keyword> if</span> <em> E </em> <span class = keyword> then</span> <em> E </em> <span class = keyword> else</span> <em> E </em> <span class = keyword> /if</span>
+<br> <em> E </em> →  (<em> E </em>)
+<br> <em> E </em> → <em> E </em> <binary op> <em> E </em>
 <br> <em> E </em> → -<em> E </em>
-<br> <em> E </em> → &lt;word>.<em> E </em>
+<br> <em> E </em> → <word>.<em> E </em>
 <br> <em> E→ </em> <em> sequenceConstructor </em>
-<br> <em> sequenceConstructor </em> →[<em> EList </em>]
+<br> <em> sequenceConstructor </em> → [<em> EList </em>]
 <br> <em> EList→ </em> <em> E </em> | <em> EList </em>, <em> E </em>
-<br> <em> forItems </em> → &lt;word>=<em> E </em>, <em> forItems </em> | &lt;word> ∈ <em> E </em>
-<br> <em> E </em> → <span class=keyword> for</span> <em> forItems </em> <span class=keyword> do</span> <em> E </em> <span class=keyword> /for</span>(<em> E </em>)
-<br> <em> E </em> → <span class=keyword> for</span> <em> forItems </em> <span class=keyword> while</span> <em> E </em> <span class=keyword> do</span> <em> E </em> <span class=keyword> /for</span>(<em> E </em>)
-<br> <em> E </em> → <span class=keyword> let</span> &lt;let name>=<em> E </em> <em> E </em>
-<br> <em> E </em> → <span class=keyword> assert</span> <em> E </em> <span class=keyword> report</span> <em> E </em> <em> E </em>
-<br> <em> E </em> →{&lt; words forming a comment with the brackets outside of double quotes balanced >}<em> E </em>
-<br> <em> E </em> → process.&lt;function call> | process(&lt;function call>)</span> 
+<br> <em> forItems </em> → <word> = <em> E </em>, <em> forItems </em> | <word> ∈ <em> E </em>
+<br> <em> E </em> → <span class = keyword> for</span> <em> forItems </em> <span class = keyword> do</span> <em> E </em> <span class = keyword> /for</span> (<em> E </em>)
+<br> <em> E </em> → <span class = keyword> for</span> <em> forItems </em> <span class = keyword> while</span> <em> E </em> <span class = keyword> do</span> <em> E </em> <span class = keyword> /for</span> (<em> E </em>)
+<br> <em> E </em> → <span class = keyword> let</span> <let name> = <em> E </em> <em> E </em>
+<br> <em> E </em> → <span class = keyword> assert</span> <em> E </em> <span class = keyword> report</span> <em> E </em> <em> E </em>
+<br> <em> E </em> → {< words forming a comment with the brackets outside of double quotes balanced >} <em> E </em>
+<br> <em> E </em> → process.<function call> | process (<function call>) /end
 <p> Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
-<p>
-<h2> Sequences </h2> 
-<p> A sequence is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as[2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define
-<p> <span class=keyword> function</span> test1 seq.int[2, 4, 8, 16, 32]
-<p> The type for a sequence of integers is seq.int. The length of the sequence can be obtained by calling the function length. In this case the length(test1)is 5. There is a subscript operator_that can obtain the elements of the list:test1_1 is 2 and test1_5 is 32.
+<p> /< /section Sequences /end
+<p> A sequence is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as [2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define
+<p> <span class = keyword> function</span> test1 seq.int [2, 4, 8, 16, 32]
+<p> The type for a sequence of integers is seq.int. The length of the sequence can be obtained by calling the function length. In this case the length (test1) is 5. There is a subscript operator_that can obtain the elements of the list:test1_1 is 2 and test1_5 is 32.
 <p> Negative values for the sequence count the elements from the end of the sequence:test1_-1 is the last element in the sequence, 32.
-<p> A sequence of characters in double quotes does not represent a sequence of characters but a sequence of words.“Hello World!” represent two words.
-<p> The code[“Hello”_1, ”World!”_1]is equivalent to “Hello World!”
-<p>""represents an empty sequence of words. An empty sequences has a length of zero. Since the type of a empty sequence can not be inferred from the type of its elements the empty sequence of int is coded as empty:seq.int.
-<p> The elements of a sequence can themselves be sequences[[3, 4], [3, 6, 7], [8, 9]]. The type of this sequence is seq.seq.int. The empty sequence of this type is represented by empty:seq.seq.int.
-<p> The concatenation operator for sequences is+, for example the expression test1+[2, 3]evaluates to[2, 4, 8, 16, 32, 2, 3]
-<p> Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T is any type. For example, the expression subseq(test1, 3, 4)evaluates to[8, 16]
-<p>
-<h2> Types </h2> 
-<p> The type of an expression can always be inferred from the sub-expression. For example, 1.0+5.0 is of type real, 1 * 8 is of type int, and 1.0=8.0 is of type boolean.
+<p> A sequence of characters in double quotes does not represent a sequence of characters but a sequence of words.“ Hello World! ” represent two words.
+<p> The code [“ Hello ”_1, ” World! ”_1] is equivalent to “ Hello World! ”
+<p>"" represents an empty sequence of words. An empty sequences has a length of zero. Since the type of a empty sequence can not be inferred from the type of its elements the empty sequence of int is coded as empty:seq.int.
+<p> The elements of a sequence can themselves be sequences [[3, 4], [3, 6, 7], [8, 9]]. The type of this sequence is seq.seq.int. The empty sequence of this type is represented by empty:seq.seq.int.
+<p> The concatenation operator for sequences is+, for example the expression test1+[2, 3] evaluates to [2, 4, 8, 16, 32, 2, 3]
+<p> Sub-sequences are obtain with subseq (s:seq.T, start:int, stop:int) seq.T where T is any type. For example, the expression subseq (test1, 3, 4) evaluates to [8, 16]
+<p> /< /section Types /end
+<p> The type of an expression can always be inferred from the sub-expression. For example, 1.0+5.0 is of type real, 1 * 8 is of type int, and 1.0 = 8.0 is of type boolean.
 <p> User defined types can be either a record, a sequence, or a parameterized record. Below a user defined record type is defined as an example.
 <p> The following paragraph starts a new module. A module is a collection of functions and types.
-<p> <span class=keyword> Module</span> point2d
-<p> The follow paragraph that begins with <span class=keyword> use</span> allows reference to functions defined in another module. In this case, the standard library functions. Documentation of the standard module is <a href='stdlib.html#standard'> here </a>
-<p> <span class=keyword> use</span> standard
+<p> <span class = keyword> Module</span> point2d
+<p> The follow paragraph that begins with <span class = keyword> use</span> allows reference to functions defined in another module. In this case, the standard library functions. Documentation of the standard module is /< noformat <a href = 'stdlib.html#standard'> here </a> /end
+<p> <span class = keyword> use</span> standard
 <p> Here is a simple type definition that introduces a new type with two components.
-<p> <span class=keyword> type</span> point2d is x:int, y:int
+<p> <span class = keyword> type</span> point2d is x:int, y:int
 <p> To allow the type name to be used outside this module we export the type using a special syntax that omits the return type of the Export:
-<p> <span class=keyword> Export</span> type:point2d
+<p> <span class = keyword> Export</span> type:point2d
 <p> To allow the constructor for points to be used outside the module we export it:
-<p> <span class=keyword> Export</span> point2d(a:int, b:int)point2d
+<p> <span class = keyword> Export</span> point2d(a:int, b:int) point2d
 <p> Access to the fields outside the module is granted with:
-<p> <span class=keyword> Export</span> x(point2d)int
-<p> <span class=keyword> Export</span> y(point2d)int
-<p> The following two paragraphs defines an addition and subtraction function on the type point2d. If a function starts with <span class=keyword> function</span> instead of <span class=keyword> Function</span> the function is also not available outside the module.
-<p> <span class=keyword> Function</span> +(a:point2d, b:point2d)point2d point2d(x.a + x.b, y.a + y.b)
-<p> <span class=keyword> Function</span> -(a:point2d, b:point2d)point2d point2d(x.a - x.b, y.a - y.b)
-<p> <span class=keyword> Function</span> print(p:point2d)seq.word <span class=literal >"("</span>  + toword.x.p + <span class=literal >", "</span>  + toword.y.p + <span class=literal >")"</span> 
-<p> <span class=keyword> Function</span> testpoint seq.word print(point2d(2, 3) + point2d(4, 5))
+<p> <span class = keyword> Export</span> x(point2d) int
+<p> <span class = keyword> Export</span> y(point2d) int
+<p> The following two paragraphs defines an addition and subtraction function on the type point2d. If a function starts with <span class = keyword> function</span> instead of <span class = keyword> Function</span> the function is also not available outside the module.
+<p> <span class = keyword> Function</span> +(a:point2d, b:point2d) point2d point2d(x.a + x.b, y.a + y.b)
+<p> <span class = keyword> Function</span> -(a:point2d, b:point2d) point2d point2d(x.a - x.b, y.a - y.b)
+<p> <span class = keyword> Function</span> print(p:point2d) seq.word <span class = literal > "(" </span>  + toword.x.p + <span class = literal > "," </span>  + toword.y.p + <span class = literal > ")" </span> 
+<p> <span class = keyword> Function</span> testpoint seq.word print (point2d(2, 3) + point2d(4, 5))
 <p> Since a program is sequence of paragraphs.The above text can be placed in a file and turned into a running program. A module lives with in the context of a library. So a file name point2d.ls is required with the first paragraphs being:
 <p> Library point2d uses stdlib exports point2d
-<p> The remainder of the file is the above text. This file can then be place in a subdirectory named point2d. Then the program can be compile and executed with <span class=block> ./taumain “point2d point2d testpoint” </span> 
+<p> The remainder of the file is the above text. This file can then be place in a subdirectory named point2d. Then the program can be compile and executed with /< block./taumain “ point2d point2d testpoint ” /end
 <p> /section standard
 <p> The module standard defines several commonly used types.
 <p> The types <em> int </em> and <em> real </em> are implement by the underlying hardware and have the usual operations. A more complete definition of will be supplied in a future release.
 <p> The type boolean has operators:∧ ∨ <em> not </em> <em> true </em> and <em> false </em>. The second operator of ∧ and ∨ is evaluated if and only if the first operator does not determine the result.
 <p> For working with total orderings a type <em> ordering </em> with the values <em> LT </em> <em> EQ </em> and <em> GT </em> is defined. The binary operator ? on integers returns these values. An ∧ operator on orderings is defined as
-<p> <span class=keyword> Function</span> ∧(a:ordering, b:ordering)ordering <span class=keyword> if</span> a = EQ <span class=keyword> then</span> b <span class=keyword> else</span> a
-<p>
-<h2> Iteration </h2> 
+<p> <span class = keyword> Function</span> ∧(a:ordering, b:ordering) ordering <span class = keyword> if</span> a = EQ <span class = keyword> then</span> b <span class = keyword> else</span> a
+<p> /< /section Iteration /end
 <p> An operation can be performed on each element of a sequence. The following sums a sequence:
-<p> <span class=keyword> function</span> sum(s:seq.int)int <span class=keyword> for</span> accumulator = 0, e ∈ s <span class=keyword> do</span> accumalator + e <span class=keyword> /for</span>(accumulator)
+<p> <span class = keyword> function</span> sum(s:seq.int) int <span class = keyword> for</span> accumulator = 0, e ∈ s <span class = keyword> do</span> accumalator + e <span class = keyword> /for</span> (accumulator)
 <p> More than one accumulator is allowed. The following takes the average of the sequence
-<p> <span class=keyword> function</span> average(s:seq.int)int
-<br> <span class=keyword> for</span> count = 0, sum = 0, e ∈ s <span class=keyword> do</span> next(count + 1, sum + e)<span class=keyword> /for</span>(sum / count)
-<p> For each element of the sequence the expression after the <span class=keyword> do</span> is executed giving new values to the accumulators. 
+<p> <span class = keyword> function</span> average(s:seq.int) int
+<br> <span class = keyword> for</span> count = 0, sum = 0, e ∈ s <span class = keyword> do</span> next(count + 1, sum + e) <span class = keyword> /for</span> (sum / count)
+<p> For each element of the sequence the expression after the <span class = keyword> do</span> is executed giving new values to the accumulators. 
 <p> It is possible to not examine all elements of the sequence. The following stops examining elements when <em> ele </em> is found
-<p> <span class=keyword> function</span> ∈(s:seq.int, ele:int)boolean
-<br> <span class=keyword> for</span> found = false, i ∈ s <span class=keyword> while</span> not.found <span class=keyword> do</span> ele = i <span class=keyword> /for</span>(found)
-<p>
-<h2> Parameterized Module </h2> 
+<p> <span class = keyword> function</span> ∈(s:seq.int, ele:int) boolean
+<br> <span class = keyword> for</span> found = false, i ∈ s <span class = keyword> while</span> not.found <span class = keyword> do</span> ele = i <span class = keyword> /for</span> (found)
+<p> /< /section Parameterized Module /end
 <p> A type can have a single type parameter of named T. The T can be used anywhere a type can be used.
 <p> Generic unbound functions on the type T may be included by using the word unbound as the defining expression. When the parameterized type is used, there must exist a function with the same signature as the unbound one where T is replaced with the actual type for T.
 <p> As an example the follow defines a parameterized set implemented as a sequence
-<p> <span class=keyword> module</span> listset.T
-<p> <span class=keyword> use</span> standard
-<p> <span class=keyword> use</span> seq.T
-<p> unbound=(T, T)boolean
-<p> <span class=keyword> type</span> listset is toseq:seq.T
-<p> <span class=keyword> Export</span> type:listset.T
-<p> <span class=keyword> Export</span> toseq(s:listset.T)seq.T
-<p> <span class=keyword> Function</span> empty:listset.T listset.T listset.empty:seq.T
-<p> <span class=keyword> Function</span> ∈(ele:T, s:listset.T)boolean ele ∈ toseq.s
-<p> <span class=keyword> Function</span> +(s:listset.T, ele:T)listset.T <span class=keyword> if</span> ele ∈ s <span class=keyword> then</span> s <span class=keyword> else</span> listset([ele] + toseq.s)
-<p> <span class=keyword> Function</span> tolistset(s:seq.T)listset.T
-<br> <span class=comment >{construct a listset from a sequence}</span> <span class=keyword> for</span> acc = empty:listset.T, ele ∈ s <span class=keyword> do</span> acc + ele <span class=keyword> /for</span>(acc)
-<p> <span class=keyword> Function</span> ∪(a:listset.T, b:listset.T)listset.T
-<br> <span class=comment >{This union is constructed so if a element is in both a and b the representation in a is use in the result}</span> <span class=keyword> for</span> acc = a, ele ∈ toseq.b <span class=keyword> do</span> acc + ele <span class=keyword> /for</span>(acc)
-<p> <span class=keyword> Export</span> isempty(seq.T)boolean
-<p> <span class=keyword> Export</span>_(seq.T, int)T
-<p> <span class=keyword> Function</span> lookup(s:listset.T, ele:T)seq.T lookup(toseq.s, ele)
+<p> <span class = keyword> module</span> listset.T
+<p> <span class = keyword> use</span> standard
+<p> <span class = keyword> use</span> seq.T
+<p> <span class = keyword> unbound</span> =(T, T) boolean
+<p> <span class = keyword> type</span> listset is toseq:seq.T
+<p> <span class = keyword> Export</span> type:listset.T
+<p> <span class = keyword> Export</span> toseq(s:listset.T) seq.T
+<p> <span class = keyword> Function</span> empty:listset.T listset.T listset.empty:seq.T
+<p> <span class = keyword> Function</span> ∈(ele:T, s:listset.T) boolean ele ∈ toseq.s
+<p> <span class = keyword> Function</span> +(s:listset.T, ele:T) listset.T <span class = keyword> if</span> ele ∈ s <span class = keyword> then</span> s <span class = keyword> else</span> listset ([ele] + toseq.s)
+<p> <span class = keyword> Function</span> tolistset(s:seq.T) listset.T
+<br> <span class = comment > {construct a listset from a sequence} </span> <span class = keyword> for</span> acc = empty:listset.T, ele ∈ s <span class = keyword> do</span> acc + ele <span class = keyword> /for</span> (acc)
+<p> <span class = keyword> Function</span> ∪(a:listset.T, b:listset.T) listset.T
+<br> <span class = comment > {This union is constructed so if a element is in both a and b the representation in a is use in the result
+<br> } </span> <span class = keyword> for</span> acc = a, ele ∈ toseq.b <span class = keyword> do</span> acc + ele <span class = keyword> /for</span> (acc)
+<p> <span class = keyword> Export</span> isempty(seq.T) boolean
+<p> <span class = keyword> Export</span> _(seq.T, int) T
+<p> <span class = keyword> Function</span> lookup(s:listset.T, ele:T) seq.T lookup(toseq.s, ele)
 <p> The purpose of the last three function of the above module will become clear below.
-<p> <span class=keyword> Module</span> testlistset
-<p> <span class=keyword> use</span> standard
-<p> <span class=keyword> use</span> listset.word
+<p> <span class = keyword> Module</span> testlistset
+<p> <span class = keyword> use</span> standard
+<p> <span class = keyword> use</span> listset.word
 <p> The following function uses a let statement. A let statement in a function allows an name to be given to an expression so the name can be used in the expression that follows.A let statement DOES NOT define a variable that can change values.
-<p> <span class=keyword> Function</span> test7 seq.word
-<br> <span class=keyword> let</span> set1 = tolistset.<span class=literal >"A A B C A C B"</span> <span class=keyword> let</span> set2 = tolistset.<span class=literal >"D B E"</span> <span class=keyword> if</span> toseq.set1 = <span class=literal >"C B A"</span>  ∧ first.<span class=literal >"C"</span>  ∈ set1 ∧ first.<span class=literal >"D"</span>  ∉ set1
-<br> ∧ toseq(set1 ∪ set2) = <span class=literal >"D E C B A"</span> <span class=keyword> then</span> <span class=block> <span class=literal >"PASS"</span> </span> <span class=keyword> else</span> <span class=literal >"FAIL"</span> 
+<p> <span class = keyword> Function</span> test7 seq.word
+<br> <span class = keyword> let</span> set1 = tolistset.<span class = literal > "A A B C A C B" </span> <span class = keyword> let</span> set2 = tolistset.<span class = literal > "D B E" </span> <span class = keyword> if</span> toseq.set1 = <span class = literal > "C B A" </span>  ∧ first.<span class = literal > "C" </span>  ∈ set1 ∧ first.<span class = literal > "D" </span>  ∉ set1
+<br> ∧ toseq (set1 ∪ set2) = <span class = literal > "D E C B A" </span> <span class = keyword> then</span> <span class = block> <span class = literal > "PASS" </span> </span> <span class = keyword> else</span> <span class = literal > "FAIL" </span> 
 <p> Sets can be used to implement dictionaries. A dictionary contains entries. Each entry contains a key and a data component. A type is declared to represent an entry. In this example the key will be an integer and the key a string. Entries will be equal if and only if the keys are equal.
-<p> <span class=keyword> type</span> myentry is key:int, data:seq.word
-<p> <span class=keyword> function</span> =(a:myentry, b:myentry)boolean key.a = key.b
-<p> Now a set of entries will be a dictionary. From the mathematical view of the set each entry is an representation of an entry. The integer 3 could be represented by myentry(3, "X"), myentry(3, "A B C")or and infinite number of other possibilities. But only one representation will be used in any listset.myentry.
-<p> Looking up an entry in the dictionary is just looking up the representation used in the set. The last function in the <em> listset </em> module does just that. The A ∪ B function in the listset module is carefully crafted so that if and element is in both A and B the representation of used in A is used in the result. Thus listset.[myentry(3, "X")]∪ B will redefine the entry in B if it exists. The expression B+myentry(3, "X")or B /cup[myentry(3, "X")]will not redefine the entry in B. The general rule is that for a binary operation on sets the representation of on the left is used in the result--not the one on the right.
-<p> <span class=keyword> Module</span> testdict
-<p> <span class=keyword> use</span> standard
-<p> <span class=keyword> use</span> seq.myentry
-<p> <span class=keyword> use</span> listset.myentry
-<p> <span class=keyword> type</span> myentry is key:int, data:seq.word
-<p> <span class=keyword> function</span> =(a:myentry, b:myentry)boolean key.a = key.b
-<p> <span class=keyword> function</span> lookup(a:listset.myentry, i:int)seq.myentry lookup(a, myentry(i, <span class=literal >""</span> ))
-<p> <span class=keyword> function</span> print(a:listset.myentry)seq.word
-<br> <span class=keyword> for</span> txt = <span class=literal >""</span> , ele ∈ toseq.a <span class=keyword> do</span> <span class=block> txt + <span class=literal >"("</span>  + toword.key.ele + <span class=literal >", "</span>  + data.ele + <span class=literal >"), "</span> </span> <span class=keyword> /for</span>(txt >> 1)
-<p> <span class=keyword> Function</span> test8 seq.word
-<br> <span class=keyword> let</span> dict = <span class=block> tolistset.[myentry(1, <span class=literal >"add"</span> ), myentry(2, <span class=literal >"sub"</span> ), myentry(3, <span class=literal >"mult"</span> )]</span> <span class=keyword> let</span> dict2 = tolistset.[myentry(2, <span class=literal >"subtract"</span> ), myentry(4, <span class=literal >"divide"</span> )]
-<br> <span class=keyword> let</span> l1 = lookup(dict, 4)
-<br> <span class=keyword> if</span> print.dict = <span class=literal >"(3, mult), (2, sub), (1, add)"</span>  ∧ print.dict2 = <span class=literal >"(4, divide), (2, subtract)"</span> ∧ isempty.lookup(dict, 4)
-<br> ∧ data.lookup(dict, 2)_1 = <span class=literal >"sub"</span> ∧ print(dict2 ∪ dict) = <span class=literal >"(1, add), (3, mult), (4, divide), (2, subtract)"</span> <span class=keyword> then</span> <span class=block> <span class=literal >"PASS testdict"</span> </span> <span class=keyword> else</span> <span class=literal >"FAIL testdict"</span> 
-<p> For the type listset.word, the unbound function=in the listset module is bound to the function=(word, word)in the standard module For the type listset.mytype, then unbound=is bound to=(a:myentry, b:myentry)boolean
-<p>
-<h2> Order of evaluation </h2> 
+<p> <span class = keyword> type</span> myentry is key:int, data:seq.word
+<p> <span class = keyword> function</span> =(a:myentry, b:myentry) boolean key.a = key.b
+<p> Now a set of entries will be a dictionary. From the mathematical view of the set each entry is an representation of an entry. The integer 3 could be represented by myentry (3," X"), myentry (3," A B C") or and infinite number of other possibilities. But only one representation will be used in any listset.myentry.
+<p> Looking up an entry in the dictionary is just looking up the representation used in the set. The last function in the <em> listset </em> module does just that. The A ∪ B function in the listset module is carefully crafted so that if and element is in both A and B the representation of used in A is used in the result. Thus listset.[myentry (3," X")] ∪ B will redefine the entry in B if it exists. The expression B+myentry (3," X") or B /cup [myentry (3," X")] will not redefine the entry in B. The general rule is that for a binary operation on sets the representation of on the left is used in the result--not the one on the right.
+<p> <span class = keyword> Module</span> testdict
+<p> <span class = keyword> use</span> standard
+<p> <span class = keyword> use</span> seq.myentry
+<p> <span class = keyword> use</span> listset.myentry
+<p> <span class = keyword> type</span> myentry is key:int, data:seq.word
+<p> <span class = keyword> function</span> =(a:myentry, b:myentry) boolean key.a = key.b
+<p> <span class = keyword> function</span> lookup(a:listset.myentry, i:int) seq.myentry lookup(a, myentry(i, <span class = literal > "" </span> ))
+<p> <span class = keyword> function</span> print(a:listset.myentry) seq.word
+<br> <span class = keyword> for</span> txt = <span class = literal > "" </span> , ele ∈ toseq.a <span class = keyword> do</span> <span class = block> txt + <span class = literal > "(" </span>  + toword.key.ele + <span class = literal > "," </span>  + data.ele + <span class = literal > ")," </span> </span> <span class = keyword> /for</span> (txt >> 1)
+<p> <span class = keyword> Function</span> test8 seq.word
+<br> <span class = keyword> let</span> dict = <span class = block> tolistset.[myentry(1, <span class = literal > "add" </span> )
+<br> , myentry(2, <span class = literal > "sub" </span> )
+<br> , myentry(3, <span class = literal > "mult" </span> )
+<br> ] </span> <span class = keyword> let</span> dict2 = tolistset.[myentry(2, <span class = literal > "subtract" </span> ), myentry(4, <span class = literal > "divide" </span> )]
+<br> <span class = keyword> let</span> l1 = lookup(dict, 4)
+<br> <span class = keyword> if</span> print.dict = <span class = literal > "(3, mult), (2, sub), (1, add)" </span> ∧ print.dict2 = <span class = literal > "(4, divide), (2, subtract)" </span> ∧ isempty.lookup(dict, 4)
+<br> ∧ data.lookup(dict, 2)_1 = <span class = literal > "sub" </span> ∧ print (dict2 ∪ dict) = <span class = literal > "(1, add), (3, mult), (4, divide), (2, subtract)" </span> <span class = keyword> then</span> <span class = block> <span class = literal > "PASS testdict" </span> </span> <span class = keyword> else</span> <span class = literal > "FAIL testdict" </span> 
+<p> For the type listset.word, the unbound function = in the listset module is bound to the function = (word, word) in the standard module For the type listset.mytype, then unbound = is bound to = (a:myentry, b:myentry) boolean
+<p> /< /section Order of evaluation /end
 <p> The arguments of a function are evaluate from left to right before the function is called.
-<p> Not all arguments need to be evaluated. Consider i > 0 ∧ 300 / i &lt; 10 where ∧ is defined as:
-<p> <span class=keyword> function</span> ∧(a:boolean, b:boolean)boolean <span class=keyword> if</span> a <span class=keyword> then</span> b <span class=keyword> else</span> false
-<p> The compiler will do inline expansion and the above expression becomes <span class=block> if i > 0 then 300 / i &lt; 10 else false </span> If i=0 then the expression 300 / i &lt; 10 is never evaluated.
+<p> Not all arguments need to be evaluated. Consider i > 0 ∧ 300 / i < 10 where ∧ is defined as:
+<p> <span class = keyword> function</span> ∧(a:boolean, b:boolean) boolean <span class = keyword> if</span> a <span class = keyword> then</span> b <span class = keyword> else</span> false
+<p> The compiler will do inline expansion and the above expression becomes /< block if i > 0 then 300 / i < 10 else false /end If i = 0 then the expression 300 / i < 10 is never evaluated.
 <p> This behavior is required for the ∧ operator on booleans.
-<p>
-<h2> Bindings </h2> 
+<p> /< /section Bindings /end
 <p> Consider the following example code:
-<p> <span class=keyword> Module</span> B
-<p> <span class=keyword> Function</span> TWO int 2
-<p> <span class=keyword> Module</span> A
-<p> <span class=keyword> use</span> B
-<p> <span class=keyword> use</span> standard
-<p> <span class=keyword> Function</span> f1(p1:int)int
-<br> <span class=keyword> let</span> l1 = p1 * TWO
+<p> <span class = keyword> Module</span> B
+<p> <span class = keyword> Function</span> TWO int 2
+<p> <span class = keyword> Module</span> A
+<p> <span class = keyword> use</span> B
+<p> <span class = keyword> use</span> standard
+<p> <span class = keyword> Function</span> f1(p1:int) int
+<br> <span class = keyword> let</span> l1 = p1 * TWO
 <br> p1 * l1 - THREE
-<p> <span class=keyword> function</span> THREE int 3
-<p> Parameters implicitly declare an access function. Example:<span class=keyword> function</span> p1 int
+<p> <span class = keyword> function</span> THREE int 3
+<p> Parameters implicitly declare an access function. Example:<span class = keyword> function</span> p1 int
 <p> Parameters are only visible in the expression that defines the body. Example:p1 is only visible in the body of f1.
 <p> Names of functions are visible within the module. Example:THREE is visible in f1
-<p> Functions from another module B are visible in module A, if they are declared using <span class=keyword> Function</span> rather than <span class=keyword> function</span> or they are exported and the module A includes a paragraph <span class=keyword> use</span> B. Example:the function TWO is visible in module A and B.
-<p> An word of all digits implicitly declares an access function:<span class=keyword> function</span> 3 int
-<p> Let definitions are only visible within the second expression in the let statement. Let definitions declare an access function:<span class=keyword> function</span> l1 &lt;the type of the first expression of the let>. The definition itself returns the type of the second expression.
-<p> A function call f1(&lt;exp1>, &lt;exp2>, ...)must match exactly one visible function defintion in name, number of parameters and types of the expressions of the arguments.
+<p> Functions from another module B are visible in module A, if they are declared using <span class = keyword> Function</span> rather than <span class = keyword> function</span> or they are exported and the module A includes a paragraph <span class = keyword> use</span> B. Example:the function TWO is visible in module A and B.
+<p> An word of all digits implicitly declares an access function:<span class = keyword> function</span> 3 int
+<p> Let definitions are only visible within the second expression in the let statement. Let definitions declare an access function:<span class = keyword> function</span> l1 <the type of the first expression of the let>. The definition itself returns the type of the second expression.
+<p> A function call f1 (<exp1>, <exp2>,...) must match exactly one visible function defintion in name, number of parameters and types of the expressions of the arguments.
 <p> The type of the expression that defines a function much match the return type of the function.
-<p>
-<h2> Encodings </h2> 
+<p> /< /section Encodings /end
 <p> A type can be mapped to positive integers in an encoding. As an example consider implementing a cache that stores the factors of an integer.
 <p> The parameterized module <em> encoding </em>.T defines the following functions for working with encodings. 
-<p> <span class=keyword> Export</span> encode(T)encoding.T{will return the encoding}
-<p> <span class=keyword> Export</span> decode(encoding.T)T{will return the value that was encoded}
-<p> <span class=keyword> Export</span> Function findencode(t:T, erecord.T)seq.T{will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.}
-<p> <span class=keyword> Export</span> Function encodingdata:T seq.T{list of values that have been encoded.}
-<p> <span class=keyword> Module</span> encodingExample
-<p> <span class=keyword> use</span> standard
+<p> <span class = keyword> Export</span> encode(T) encoding.T <span class = comment > {will return the encoding} </span> 
+<p> <span class = keyword> Export</span> decode(encoding.T) T <span class = comment > {will return the value that was encoded} </span> 
+<p> <span class = keyword> Export</span> Function findencode
+<p> <span class = keyword> Export</span> Function encodingdata
+<p> <span class = keyword> Module</span> encodingExample
+<p> <span class = keyword> use</span> standard
 <p> We need a type to encode:
-<p> <span class=keyword> type</span> factors is key:int, factors:seq.int
-<p> We must define a hash function and=function of the type.
-<p> <span class=keyword> function</span> hash(a:factors)int key.a
-<p> <span class=keyword> function</span> =(a:factors, b:factors)boolean key.a = key.b
-<p> Note that for a and b of the type factor ; a=b implies hash(a)=hash(b). This must be true for the hash to work correctly.
+<p> <span class = keyword> type</span> factors is key:int, factors:seq.int
+<p> We must define a hash function and = function of the type.
+<p> <span class = keyword> function</span> hash(a:factors) int key.a
+<p> <span class = keyword> function</span> =(a:factors, b:factors) boolean key.a = key.b
+<p> Note that for a and b of the type factor ; a = b implies hash (a) = hash (b). This must be true for the hash to work correctly.
 <p> To use factors as an encoding we must include:
-<p> <span class=keyword> use</span> encoding.factors
+<p> <span class = keyword> use</span> encoding.factors
 <p> The following two function are used to calculate the factors of an integer
-<p> <span class=keyword> function</span> factors(n:int)seq.int
-<br> <span class=keyword> let</span> a = findencode.factors(n, empty:seq.int)
-<br> <span class=keyword> if</span> isempty.a <span class=keyword> then</span> <span class=block> <span class=keyword> let</span> result = factors(n, 2)
-<br> <span class=keyword> let</span> discard = encode.factors(n, result)
-<br> result </span> <span class=keyword> else</span> factors.a_1
-<p> <span class=keyword> function</span> factors(n:int, i:int)seq.int
-<br> <span class=keyword> if</span> 2 * i > n <span class=keyword> then</span>[n]
-<br> <span class=keyword> else</span> <span class=keyword> if</span> n mod i = 0 <span class=keyword> then</span>[i] + factors(n / i, i)<span class=keyword> else</span> factors(n, i + 1)
-<p> <span class=keyword> use</span> seq.factors
-<p> <span class=keyword> Function</span> print(s:seq.int)seq.word <span class=keyword> for</span> txt = <span class=literal >""</span> , i ∈ s <span class=keyword> do</span> txt + toword.i <span class=keyword> /for</span>(txt)
-<p> <span class=keyword> Function</span> test seq.word
-<br> <span class=comment >{the next statment gets the factors of 120 and will create an encoding}</span> <span class=keyword> let</span> firstresult = factors.120
-<br> <span class=comment >{calling factors(120)again will use the cached value rather than recalculating the factors.}</span> <span class=keyword> let</span> secondresult = factors.120
-<br> <span class=comment >{convert interger 120 into encoding.factors}</span> <span class=keyword> let</span> encoding120 = to:encoding.factors(120)
-<br> <span class=comment >{now decode and access the factors.}</span> <span class=keyword> let</span> thirdresult = factors.decode.encoding120
-<br> <span class=keyword> if</span> print.firstresult = <span class=literal >"2 2 2 3 5"</span>  ∧ firstresult = secondresult ∧ secondresult = thirdresult <span class=keyword> then</span> <span class=block> <span class=literal >"PASS"</span> </span> <span class=keyword> else</span> <span class=literal >"FAIL"</span> 
-<p> Consider the sequence of calls, C, in the execution of the program to the function encode. Let S be the sequence of T where S_i is the value passed as parameter in call C_i Let E be the sequence of results where E_i=the result of call C_i.
-<p> Then <span class=block> S_i=S_j if and only if encoding(E_i)=encoding(E_j)</span> and <span class=block> decode(E_i)is identical to S_j where j=min t where S_t=E_i </span> and <span class=encoding >(E_i)> 0 </span> 
+<p> <span class = keyword> function</span> factors(n:int) seq.int
+<br> <span class = keyword> let</span> a = findencode.factors(n, empty:seq.int)
+<br> <span class = keyword> if</span> isempty.a <span class = keyword> then</span> <span class = block> <span class = keyword> let</span> result = factors(n, 2)
+<br> <span class = keyword> let</span> discard = encode.factors(n, result)
+<br> result </span> <span class = keyword> else</span> factors.a_1
+<p> <span class = keyword> function</span> factors(n:int, i:int) seq.int
+<br> <span class = keyword> if</span> 2 * i > n <span class = keyword> then</span> [n]
+<br> <span class = keyword> else</span> <span class = keyword> if</span> n mod i = 0 <span class = keyword> then</span> [i] + factors(n / i, i)
+<br> <span class = keyword> else</span> factors(n, i + 1)
+<p> <span class = keyword> use</span> seq.factors
+<p> <span class = keyword> Function</span> print(s:seq.int) seq.word <span class = keyword> for</span> txt = <span class = literal > "" </span> , i ∈ s <span class = keyword> do</span> txt + toword.i <span class = keyword> /for</span> (txt)
+<p> <span class = keyword> Function</span> test seq.word
+<br> <span class = comment > {the next statment gets the factors of 120 and will create an encoding} </span> <span class = keyword> let</span> firstresult = factors.120
+<br> <span class = comment > {calling factors (120) again will use the cached value rather than recalculating the factors.} </span> <span class = keyword> let</span> secondresult = factors.120
+<br> <span class = comment > {convert interger 120 into encoding.factors} </span> <span class = keyword> let</span> encoding120 = to:encoding.factors(120)
+<br> <span class = comment > {now decode and access the factors.} </span> <span class = keyword> let</span> thirdresult = factors.decode.encoding120
+<br> <span class = keyword> if</span> print.firstresult = <span class = literal > "2 2 2 3 5" </span>  ∧ firstresult = secondresult
+<br> ∧ secondresult = thirdresult <span class = keyword> then</span> <span class = block> <span class = literal > "PASS" </span> </span> <span class = keyword> else</span> <span class = literal > "FAIL" </span> 
+<p> Consider the sequence of calls, C, in the execution of the program to the function encode. Let S be the sequence of T where S_i is the value passed as parameter in call C_i Let E be the sequence of results where E_i = the result of call C_i.
+<p> Then /< block S_i = S_j if and only if encoding (E_i) = encoding (E_j) /end and /< block decode (E_i) is identical to S_j where j = min t where S_t = E_i /end and /< encoding (E_i) > 0 /end
 <p> Since the mapping can be shared by multiple process, modification of the mapping is a critical section. Also the mapping may contain values not assigned by the current process.
-<p>
-<h2> Process statement </h2> 
+<p> /< /section Process statement /end
 <p> Process are included in Tau for three reasons.
 <p> Using multiple processes on multi-core processors can be used to obtain results faster.
 <p> Process allow temporary space used to calculate the result to be reclaimed. This is the only way for heap space to be reclaimed in Tau.
 <p> Process allow abnormal events to be captured and reported. The following code snippet show how to capture an abnormal event.
-<p> <span class=keyword> Module</span> testprocess
-<p> <span class=keyword> use</span> process.int
-<p> <span class=keyword> function</span> myprocess(a:int)int
-<br> <span class=keyword> assert</span> a > 0 <span class=keyword> report</span> <span class=literal >"invalid"</span> 3^a
-<p> <span class=keyword> function</span> useprocess(i:int)int
-<br> <span class=keyword> let</span> a = process.myprocess.i
-<br> <span class=keyword> if</span> aborted.a <span class=keyword> then</span> <span class=block> <span class=keyword> assert</span> message.a = <span class=literal >"invalid"</span> <span class=keyword> report</span> <span class=literal >"new message"</span> 0 </span> <span class=keyword> else</span> result.a
-<p> In the use clause, the type int matches the return type of myprocess. The process function takes a expressing of the form &lt;funcname>(&lt;arg list>)evaluates the arguments and then spawns a process to execute the function returning a result of type process that refers to the spawned process.
+<p> <span class = keyword> Module</span> testprocess
+<p> <span class = keyword> use</span> process.int
+<p> <span class = keyword> function</span> myprocess(a:int) int
+<br> <span class = keyword> assert</span> a > 0 <span class = keyword> report</span> <span class = literal > "invalid" </span> 3^a
+<p> <span class = keyword> function</span> useprocess(i:int) int
+<br> <span class = keyword> let</span> a = process.myprocess.i
+<br> <span class = keyword> if</span> aborted.a <span class = keyword> then</span> <span class = block> <span class = keyword> assert</span> message.a = <span class = literal > "invalid" </span> <span class = keyword> report</span> <span class = literal > "new message" </span> 0 </span> <span class = keyword> else</span> result.a
+<p> In the use clause, the type int matches the return type of myprocess. The process function takes a expressing of the form <funcname> (<arg list>) evaluates the arguments and then spawns a process to execute the function returning a result of type process that refers to the spawned process.
 <p> The follow function interact with the spawned process and blocks to wait for the spawned process to finish.
-<p> <span class=keyword> function</span> aborted(process.T)boolean <span class=comment >{true if the process was aborted as with an assert statement}</span> stub
-<p> <span class=keyword> function</span> message(process.T)seq.word <span class=comment >{message return when process was aborted}</span> stub
-<p> <span class=keyword> function</span> result(process.T)T <span class=comment >{result return upon successful completion. }</span> stub
+<p> <span class = keyword> function</span> aborted(process.T) boolean <span class = comment > {true if the process was aborted as with an assert statement} </span> stub
+<p> <span class = keyword> function</span> message(process.T) seq.word <span class = comment > {message return when process was aborted} </span> stub
+<p> <span class = keyword> function</span> result(process.T) T <span class = comment > {result return upon successful completion. } </span> stub
 <p> The spawning process cannot terminate until all of it child process complete, because it may have allocated space and passed it to a child process as a parameter. 
-<p>
-<h2> Sequences </h2> 
+<p> /< /section Sequences /end
 <p> We use the example of myseq which is a start on a user defined sequence to decode UTF8 sequnece of bytes. The length of the sequence is the number of characters. The i'th element of the sequence with be the i'th character in the encoding.
-<p> <span class=keyword> Module</span> myseq.T
+<p> <span class = keyword> Module</span> myseq.T
 <p> All sequences must be in a parameterized Module.
-<p> <span class=keyword> use</span> standard
-<p> <span class=keyword> use</span> seq(T)
-<p> <span class=keyword> type</span> myseq is sequence, data:seq.T
+<p> <span class = keyword> use</span> standard
+<p> <span class = keyword> use</span> seq (T)
+<p> <span class = keyword> type</span> myseq is sequence, data:seq.T
 <p> Mytype is recognized as a sequence as the first element of the sequence is sequence.
-<p> A function <em> length </em>(myseq)is implicitly defined to access the length of myseq
+<p> A function <em> length </em> (myseq) is implicitly defined to access the length of myseq
 <p> As with any parameterized module a type definition must contain an element that uses T so that multiple instances of the module does not produce duplicate symbols.
 <p> We need some operations on T. T will be an int in this example so all these operations are define on int in the stdlib.
-<p> unbound >(T, int)boolean
-<p> unbound &lt;(T, int)boolean
-<p> unbound-(T, int)T
-<p> unbound *(T, int)T
-<p> unbound+(T, T)T
+<p> <span class = keyword> unbound</span> >(T, int) boolean
+<p> <span class = keyword> unbound</span> <(T, int) boolean
+<p> <span class = keyword> unbound</span> -(T, int) T
+<p> <span class = keyword> unbound</span> *(T, int) T
+<p> <span class = keyword> unbound</span> +(T, T) T
 <p> We need to helper functions to calculate the length and find the ith element of the seq for this example.
-<p> <span class=keyword> Function</span> clength(s:seq.T, i:int)int
-<br> <span class=keyword> if</span> i > length.s <span class=keyword> then</span> 0
-<br> <span class=keyword> else</span> <span class=block> <span class=keyword> assert</span> s_i > 0 <span class=keyword> report</span> <span class=literal >"invalid"</span> <span class=keyword> if</span> s_i &lt; 128 <span class=keyword> then</span> 1 + clength(s, i + 1)
-<br> <span class=keyword> else</span> <span class=block> <span class=keyword> assert</span> s_i &lt; 128 + 64 + 32 <span class=keyword> report</span> <span class=literal >"invalid"</span> 1 + clength(s, i + 2)</span> </span> 
-<p> <span class=keyword> Function</span> cindex(s:seq.T, i:int, idx:int)T
-<br> <span class=keyword> if</span> idx = 1 <span class=keyword> then</span> <span class=keyword> if</span> s_i &lt; 128 <span class=keyword> then</span> s_i <span class=keyword> else</span> s_(i + 1) - 128 + (s_i - 128 - 64) * 64
-<br> <span class=keyword> else</span> cindex(s, i + <span class=keyword> if</span> s_i &lt; 128 <span class=keyword> then</span> 1 <span class=keyword> else</span> 2, idx - 1)
-<p> We need a constructor of our sequence. Note the use of a toseq function. This is defined implicitly by the sequence type definition to change the type from myseq(T)to seq(T).
-<p> <span class=keyword> Function</span> myseq(d:seq.T)seq.T toseq.myseq(clength(d, 1), d)
+<p> <span class = keyword> Function</span> clength(s:seq.T, i:int) int
+<br> <span class = keyword> if</span> i > length.s <span class = keyword> then</span> 0
+<br> <span class = keyword> else</span> <span class = block> <span class = keyword> assert</span> s_i > 0 <span class = keyword> report</span> <span class = literal > "invalid" </span> <span class = keyword> if</span> s_i < 128 <span class = keyword> then</span> 1 + clength(s, i + 1)
+<br> <span class = keyword> else</span> <span class = block> <span class = keyword> assert</span> s_i < 128 + 64 + 32 <span class = keyword> report</span> <span class = literal > "invalid" </span> 1 + clength(s, i + 2) </span> </span> 
+<p> <span class = keyword> Function</span> cindex(s:seq.T, i:int, idx:int) T
+<br> <span class = keyword> if</span> idx = 1 <span class = keyword> then</span> <span class = block> <span class = keyword> if</span> s_i < 128 <span class = keyword> then</span> s_i <span class = keyword> else</span> s_(i + 1) - 128 + (s_i - 128 - 64) * 64 </span> <span class = keyword> else</span> cindex(s, i + <span class = keyword> if</span> s_i < 128 <span class = keyword> then</span> 1 <span class = keyword> else</span> 2, idx - 1)
+<p> We need a constructor of our sequence. Note the use of a toseq function. This is defined implicitly by the sequence type definition to change the type from myseq (T) to seq (T).
+<p> <span class = keyword> Function</span> myseq(d:seq.T) seq.T toseq.myseq(clength(d, 1), d)
 <p> Every sequence must have a_function defined on it which is below for mseq.T
-<p> <span class=keyword> Function</span> _(a:myseq.T, idx:int)T cindex(data.a, 1, idx)
-<p> <span class=keyword> Module</span> testmyseq
-<p> <span class=keyword> use</span> standard
-<p> <span class=keyword> use</span> UTF8
-<p> <span class=keyword> use</span> myseq.int
-<p> ???? Function testmyseq seq.word let s=UTF8.[40, 50]+UTF8.335+UTF8.50+UTF8.336 @(+, toword, "", myseq(toseqbyte.s @+(empty:seq.int, toint.@e)))
-<p>
-<h2> Tail Recursion </h2> 
+<p> <span class = keyword> Function</span> _(a:myseq.T, idx:int) T cindex(data.a, 1, idx)
+<p> <span class = keyword> Module</span> testmyseq
+<p> <span class = keyword> use</span> standard
+<p> <span class = keyword> use</span> UTF8
+<p> <span class = keyword> use</span> myseq.int
+<p> ???? Function testmyseq seq.word let s = UTF8.[40, 50]+UTF8.335+UTF8.50+UTF8.336 @ (+, toword,"", myseq (toseqbyte.s @+(empty:seq.int, toint.@e)))
+<p> /< /section Tail Recursion /end
 <p> A function is tail recursive if the last function called is itself. A compiler can take advantage of this and reuse the activation record on the call stack resulting in less space taken up by the stack during execution.
 <p> Sometimes a recursive function can be rewritten to make it tail recursive. Consider the following function:
-<p> <span class=keyword> use</span> seq.int
-<p> <span class=keyword> function</span> reverse2(l:seq.int)seq.int <span class=keyword> if</span> isempty.l <span class=keyword> then</span> l <span class=keyword> else</span> reverse2.subseq(l, 2, length.l) + l_1
+<p> <span class = keyword> use</span> seq.int
+<p> <span class = keyword> function</span> reverse2(l:seq.int) seq.int
+<br> <span class = keyword> if</span> isempty.l <span class = keyword> then</span> l <span class = keyword> else</span> reverse2.subseq(l, 2, length.l) + l_1
 <p> The last call in this function is to+. Here is a rewritten version that is tail recursive:
-<p> <span class=keyword> function</span> reverse3(l:seq.int, accumalator:seq.int)seq.int
-<br> <span class=keyword> if</span> isempty.l <span class=keyword> then</span> accumalator <span class=keyword> else</span> reverse3(subseq(l, 2, length.l), accumalator + l_1)
-<p> <span class=keyword> function</span> reverse3(l:seq.int)seq.int reverse3(l, empty:seq.int)
+<p> <span class = keyword> function</span> reverse3(l:seq.int, accumalator:seq.int) seq.int
+<br> <span class = keyword> if</span> isempty.l <span class = keyword> then</span> accumalator
+<br> <span class = keyword> else</span> reverse3(subseq(l, 2, length.l), accumalator + l_1)
+<p> <span class = keyword> function</span> reverse3(l:seq.int) seq.int reverse3(l, empty:seq.int)
 <p> Now reverse3 is the last function called.
-<p> Making the function tail recursive is not the only way to reduce the stack size. The follow version uses O(ln n) instead of O(n) where n is the length of the sequence.
-<p> <span class=keyword> function</span> reverse4(l:seq.int)seq.int
-<br> <span class=keyword> if</span> length.l &lt; 2 <span class=keyword> then</span> l
-<br> <span class=keyword> else</span> reverse4.subseq(l, length.l / 2 + 1, length.l) + reverse4.subseq(l, 1, length.l / 2)
+<p> Making the function tail recursive is not the only way to reduce the stack size. The follow version uses O (ln n)  instead of O (n)  where n is the length of the sequence.
+<p> <span class = keyword> function</span> reverse4(l:seq.int) seq.int
+<br> <span class = keyword> if</span> length.l < 2 <span class = keyword> then</span> l
+<br> <span class = keyword> else</span> <span class = block> reverse4.subseq(l, length.l / 2 + 1, length.l)
+<br> + reverse4.subseq(l, 1, length.l / 2) </span> 
 <p> Perhaps the best way to reverse a sequence is to use
-<p> <span class=keyword> Function</span> reverse5(s:seq.T)seq.T <span class=keyword> for</span> acc = empty:seq.T, e ∈ s <span class=keyword> do</span>[s] + acc <span class=keyword> /for</span>(acc)
+<p> <span class = keyword> Function</span> reverse5(s:seq.T) seq.T <span class = keyword> for</span> acc = empty:seq.T, e ∈ s <span class = keyword> do</span> [s] + acc <span class = keyword> /for</span> (acc)
 <p> In this case the tau compiler will remove the recursion and the bounds checking when indexing the sequence. If the sequence was built up out of smaller sequences, it may also break the sequence into the smaller parts and process them separately. 
-<p>
-<h2> markup </h2> 
-<p> <table> <caption>
-</caption> <tr><td> Example
+<p> /< /section markup /end
+<p> /< table
+<tr><td> Example
 <td> with format
 <td> note
-<tr><td> first <span class=keyword> /p</span> second
+<tr><td> first <span class = keyword> /p</span> second
 <td> first
 <p> second
 <td> paragraph break
-<tr><td> first <span class=keyword>  /br</span> second
+<tr><td> first <span class = keyword>  /br</span> second
 <td> first
 <br> second
 <td> line break
-<tr><td> <span class=keyword> /em</span> example
+<tr><td> <span class = keyword> /em</span> example
 <td> <em> example </em>
 <td>
-<tr><td> <span class=keyword> /strong</span> example
+<tr><td> <span class = keyword> /strong</span> example
 <td> <strong> example </strong>
 <td>
-<tr><td> <span class=keyword> /keyword</span> example
-<td> <span class=keyword> example</span>
+<tr><td> <span class = keyword> /keyword</span> example
+<td> <span class = keyword> example</span>
 <td>
-<tr><td> <span class=keyword> /&lt;</span> <span class=keyword> literal</span> this is an example <span class=keyword> /></span>
-<td> <span class=literal > this is an example </span> 
+<tr><td> <span class = keyword> /&lt;</span> <span class = keyword> literal</span> this is an example <span class = keyword> /end</span>
+<td> /< literal this is an example /end
 <td>
-<tr><td> <span class=keyword> /&lt;</span> <span class=keyword> keyword</span> this is an example <span class=keyword> /></span>
-<td> <span class=keyword > this is an example </span> 
+<tr><td> <span class = keyword> /&lt;</span> <span class = keyword> keyword</span> this is an example <span class = keyword> /end</span>
+<td> /< keyword this is an example /end
 <td>
-<tr><td> <span class=keyword> /&lt;</span> <span class=keyword> comment</span> this is an example <span class=keyword> />;</span>
-<td> <span class=comment > this is an example </span> 
+<tr><td> <span class = keyword> /&lt;</span> <span class = keyword> comment</span> this is an example <span class = keyword> /end;</span>
+<td> /< comment this is an example /end
 <td>
-<tr><td> parent block <span class=keyword> /&lt;</span> <span class=keyword> block</span> Indented block. <span class=keyword>  /br</span> second line <span class=keyword> /></span>
-<td> parent block <span class=block> Indented block. 
-<br> second line </span> 
+<tr><td> parent block <span class = keyword> /&lt;</span> <span class = keyword> block</span> Indented block. <span class = keyword>  /br</span> second line <span class = keyword> /end</span>
+<td> parent block /< block Indented block. 
+<br> second line /end
 <td> Indented block
-<tr><td> <span class=keyword> /&lt;</span> <span class=keyword> noformat</span> &lt;hr/> <span class=keyword> /&lt;</span>
-<td> <hr/>
+<tr><td> <span class = keyword> /&lt;</span> <span class = keyword> noformat</span> <hr/end <span class = keyword> /&lt;</span>
+<td> /< noformat <hr/end /end
 <td>
-<tr><td> <span class=keyword> /&lt;</span> <span class=keyword> table</span> &lt;caption> &lt;rows of table> <span class=keyword> /&lt;</span>
+<tr><td> <span class = keyword> /&lt;</span> <span class = keyword> table</span> <caption> <rows of table> <span class = keyword> /&lt;</span>
 <td>
 <td> Defines a table
-<tr><td> <span class=keyword> /row</span>..<span class=keyword> /cell</span>..<span class=keyword> /cell</span>.. 
+<tr><td> <span class = keyword> /row</span>..<span class = keyword> /cell</span>..<span class = keyword> /cell</span>.. 
 <td>
 <td> Defines a row of with three columns. 
 <br> Must be placed within table. 
-<tr><td> <span class=keyword> /&lt;</span> <span class=keyword> table</span> Sample Table
-<br> <span class=keyword> /row</span> 1 <span class=keyword> /cell</span> 2 <span class=keyword> /cell</span> 3
-<br> <span class=keyword> /row</span> 3 <span class=keyword> /cell</span> 4 <span class=keyword> /cell</span> 5 <span class=keyword> /&lt;</span>
-<td> <table> <caption> Sample Table
-</caption> <tr><td> 1
+<tr><td> <span class = keyword> /&lt;</span> <span class = keyword> table</span> Sample Table
+<br> <span class = keyword> /row</span> 1 <span class = keyword> /cell</span> 2 <span class = keyword> /cell</span> 3
+<br> <span class = keyword> /row</span> 3 <span class = keyword> /cell</span> 4 <span class = keyword> /cell</span> 5 <span class = keyword> /&lt;</span>
+<td> /< table Sample Table
+<tr><td> 1
 <td> 2
 <td> 3
 <tr><td> 3
 <td> 4
-<td> 5 </table> 
-<td> </table> 
+<td> 5 /end
+<td> /end
 <p> END
 <p> 

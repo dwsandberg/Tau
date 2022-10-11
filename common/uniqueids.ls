@@ -6,16 +6,14 @@ use seq.idrange
 
 use standard
 
-Function xml(val:seq.word)seq.word dq.val + space
-
 type idrange is next:int
 
-function =(a:idrange, b:idrange)boolean next.a = next.b
+function =(a:idrange, b:idrange) boolean next.a = next.b
 
-function hash(a:idrange)int next.a
+function hash(a:idrange) int next.a
 
-Function requestids(no:int)int
+Function requestids(no:int) int
 let d = encodingdata:idrange
 let firstno = if isempty.d then 1 else next.last.d
-let discard = encode.idrange(firstno + no)
+let discard = encode.idrange (firstno + no)
 firstno 

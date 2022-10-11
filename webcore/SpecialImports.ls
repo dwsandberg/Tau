@@ -2,6 +2,8 @@ Module SpecialImports
 
 This module is used to built the imports of the wasm module.
 
+???? reorguses drops standard and webHTTP.seq.word
+
 use standard
 
 use real
@@ -11,9 +13,6 @@ use webIOtypes
 use webHTTP.seq.word
 
 use JS.HTTPstate.seq.word
-
-???? reorguses drops standard and webHTTP.seq.word
-
 
 Builtin randomfunc real
 
@@ -29,8 +28,8 @@ Builtin callevent2(name:jsbytes, text:jsbytes)real
 
 Builtin replacesvg(id:jsbytes, xml:jsbytes)real
 
-Builtin jsHTTP(url:jsbytes, method:jsbytes, bodydata:jsbytes, followfunc:jsbytes, state:JS.HTTPstate.seq.
- word)real
+Builtin jsHTTP(url:jsbytes, method:jsbytes, bodydata:jsbytes, followfunc:jsbytes, state:JS.HTTPstate.seq.word
+)real
 
 Builtin arcsin(real)real
 

@@ -55,8 +55,8 @@ Function replaceSVG(name:seq.word, xml0:seq.word)real
 let none = "N"_1
 let xml = 
  for xml = "", hasquote = none, w ∈ xml0 do
-  if w ∈ dq then if hasquote = none then next(xml + w, w)else next(xml + w + space, none)
-  else if w ∈ " />"then next(xml + merge(" />" + space), hasquote)
-  else next(xml + w, hasquote)
- /for(xml)
-replacesvg(token.name, jsUTF8.toseqbyte.textformat.xml) 
+   if w ∈ dq then 
+   if hasquote = none then next(xml + w+encodeword.[char.8], w)else next(xml + w , none)
+  else   next(xml + w, hasquote)
+ /for( xml)
+replacesvg(token.name, jsUTF8.toseqbyte.toUTF8.xml) 

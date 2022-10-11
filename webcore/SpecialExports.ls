@@ -1,8 +1,7 @@
 Module SpecialExports
 
-This module is contains functions that must be included in exports  of the wasm module
-because the functions are use by template.js.
-
+This module is contains functions that must be included in exports of the wasm module because the functions are use by template
+.js.
 
 use JS.HTTPresult
 
@@ -16,16 +15,13 @@ use real
 
 use standard
 
+use tausupport
+
 use webIOtypes
 
 use JS.HTTPstate.seq.word
 
 use webHTTP.seq.word
-
-use tausupport
-
-???? reorguses drops tausupport
-
 
 Builtin handleerror(real)real
 
@@ -42,11 +38,9 @@ Function allocatespace3(i:real)real{used by template.js}toreal.bitcast:int(alloc
 Function randomintimp(i:int)seq.int
 for acc = empty:seq.int, e ∈ constantseq(i, 0)do
  acc
- + toint.xor(tobits.representation.randomfunc << 16
- , xor(tobits.representation.randomfunc
- , xor(tobits.representation.randomfunc >> 16, tobits.representation.randomfunc >> 32)
- )
- )
+ + toint(tobits.representation.randomfunc << 16
+ ⊻ (tobits.representation.randomfunc
+ ⊻ (tobits.representation.randomfunc >> 16 ⊻ tobits.representation.randomfunc >> 32)))
 /for(acc)
 
 Function blockseqtype real{used by template.js}toreal.blockseqtype:byte 

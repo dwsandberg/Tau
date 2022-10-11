@@ -58,12 +58,12 @@ echo " " > $build/start.ls
 if ! [ -e $build ] ; then 
 mkdir $build
  startfresh 
-checksrc bin/stdlib.bc
-checksrc bin/taubuild.sh
-checksrc stdlib/tau.c
-checksrc stdlib/tauthreads.c
-checksrc stdlib/tau.h
-checksrc bin/putfile.c
+ checksrc bin/stdlib.bc
+ checksrc bin/taubuild.sh
+ checksrc stdlib/tau.c
+ checksrc stdlib/tauthreads.c
+ checksrc stdlib/tau.h
+ checksrc bin/putfile.c
 
 fi
 
@@ -77,7 +77,9 @@ cd ../..
 rm -f $build/$sharoot; touch $build/$sharoot
 for x in $list
 do
+ if [[  -f $x ]] ;then
  shasum $x >> $build/$sharoot
+ fi
 done
 
 if [[ ! -f $build/old$sharoot ]] ; then

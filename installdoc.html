@@ -1,95 +1,93 @@
-<!doctype html> <meta charset="UTF-8"> <style > <!--span.avoidwrap{display:inline-block ;}span.keyword{color:blue ;}span.keywords{color:blue ;}span.literal{color:red ;}span.comment{color:green ;}span.block{padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}--> </style>
+<!doctype html> <meta charset =" UTF-8" >
+<style > <!--span.avoidwrap {display:inline-block ;} span.keyword {color:blue ;}
+span.keywords {color:blue ;} span.literal {color:red ;} span.comment {color:green ;}
+span.block {padding:0px 0px 0px 0px ; margin:0px 0px 0px 20px ; display:block ;}
+--> </style>
 
-<p>
-<h2> Installing Tau </h2> 
+<p> /< /section Installing Tau /end
 <p> Make sure clang is installed. For Mac OS Clang is available if the command line tools are installed.
-<p> Down load zip file from GitHub(Repository is dwsandberg/Tau
-<p> Unzip to directory a which we will call &lt;Tau>. This directory will become the working directory for tau. You are free to choose another name. 
-<p> Modify PATH environment variable to include absolute path to &lt;Tau>/bin. 
-<p> Open terminal and change direcotry to &lt;Tau>.
-<p> Run"bash bin/buildtau.sh release.bld". This is likely to generate a warning message about the llvm spec. 
-<p>
-<h2> HelloWorld </h2> 
-<p> 1. Create a new directory &lt;Tau>/HelloWorld
-<p> 2. Create a file txt file &lt;Tau>/HelloWorld/HelloWorld.ls that contains:
-<p> <span class=keyword> Module</span> HelloWorld
-<p> <span class=keyword> use</span> file
-<p> <span class=keyword> use</span> seq.file
-<p> <span class=keyword> use</span> standard
-<p> <span class=keyword> Function</span> hello(input:seq.file, o:seq.word)seq.file[file(filename.o, <span class=literal >"hello there!"</span> )]
-<p> 3. Create a file txt file &lt;Tau>/helloworld.bld that contains:
+<p> Down load zip file from GitHub (Repository is dwsandberg/Tau
+<p> Unzip to directory a which we will call <Tau>. This directory will become the working directory for tau. You are free to choose another name. 
+<p> Modify PATH environment variable to include absolute path to <Tau>/bin. 
+<p> Open terminal and change direcotry to <Tau>.
+<p> Run" bash bin/buildtau.sh release.bld". This is likely to generate a warning message about the llvm spec. 
+<p> /< /section HelloWorld /end
+<p> 1. Create a new directory <Tau>/HelloWorld
+<p> 2. Create a file txt file <Tau>/HelloWorld/HelloWorld.ls that contains:
+<p> <span class = keyword> Module</span> HelloWorld
+<p> <span class = keyword> use</span> file
+<p> <span class = keyword> use</span> seq.file
+<p> <span class = keyword> use</span> standard
+<p> <span class = keyword> Function</span> hello(input:seq.file, o:seq.word) seq.file [file(filename.o, <span class = literal > "hello there!" </span> )]
+<p> 3. Create a file txt file <Tau>/helloworld.bld that contains:
 <p> define hello HelloWorld define makelib stdlib makelib define open shell open-b
-<p> makelib HelloWorld.lib+HelloWorld HelloWorld.ls uses=stdlib exports=HelloWorld
+<p> makelib HelloWorld.lib+HelloWorld HelloWorld.ls uses = stdlib exports = HelloWorld
 <p> hello hello.html
 <p> open xx.txt hello.html
-<p> 4. From terminal run:<span class=block> bash bin/taubuild.bld </span> 
-<p> This will create a program with the name of &lt;Tau>/built/HelloWorld.lib from the source code in directory &lt;tau>/HelloWorld. Then the program is executed and the output is placed in &lt;Tau>/built/hello.html.Finally a web browser with the file &lt;Tau>/built/hello.html.
-<p> HelloWorld.lib can also be run from the prompt:<span class=block> tau HelloWord hello </span> This will display"Hello World!"in the web browser. 
-<p>
-<h2> Some useful tools </h2> 
-<p> alias usegraph="tau tools usegraph"
-<p> alias transform="tau tools transform"
-<p> The <span class=keyword> htmlcode</span> cmd create html from source files pretty prints the file and adds syntax highlighting and a module index. It is useful for examining source code. For example &lt;/ block htmlcode+built core.libsrc />
-<p>
-<h2> Introduction to intermediate code produced by compiler </h2> 
+<p> 4. From terminal run:/< block bash bin/taubuild.bld /end
+<p> This will create a program with the name of <Tau>/built/HelloWorld.lib from the source code in directory <tau>/HelloWorld. Then the program is executed and the output is placed in <Tau>/built/hello.html.Finally a web browser with the file <Tau>/built/hello.html.
+<p> HelloWorld.lib can also be run from the prompt:/< block tau HelloWord hello /end This will display" Hello World!" in the web browser. 
+<p> /< /section Some useful tools /end
+<p> alias usegraph =" tau tools usegraph"
+<p> alias transform =" tau tools transform"
+<p> The <span class = keyword> htmlcode</span> cmd create html from source files pretty prints the file and adds syntax highlighting and a module index. It is useful for examining source code. For example </ block htmlcode+built core.libsrc /end
+<p> /< /section Introduction to intermediate code produced by compiler /end
 <p> This section provides a brief explanation of the control structure used in the intermediate code. The follow function for calculating factorials is used as an example.
-<p> <span class=keyword> Function</span> fact2(a:int, result:int)int
-<br> <span class=keyword> if</span> a = 1 <span class=keyword> then</span> result <span class=keyword> else</span> <span class=keyword> if</span> a = 0 <span class=keyword> then</span> result <span class=keyword> else</span> fact2(a - 1, result * a)
-<p> The intermediate code is represented by symbols. The text representation does not contain all the information in a symbol. The function fact2 is represented by the text"helloworld:test2(int, int)int". The module of the symbol is represented but not the library. Each type also has module and library but only the name of the type is given. 
+<p> <span class = keyword> Function</span> fact2(a:int, result:int) int
+<br> <span class = keyword> if</span> a = 1 <span class = keyword> then</span> result
+<br> <span class = keyword> else</span> <span class = keyword> if</span> a = 0 <span class = keyword> then</span> result <span class = keyword> else</span> fact2(a - 1, result * a)
+<p> The intermediate code is represented by symbols. The text representation does not contain all the information in a symbol. The function fact2 is represented by the text" helloworld:test2 (int, int) int". The module of the symbol is represented but not the library. Each type also has module and library but only the name of the type is given. 
 <p> The local variables are represented by % followed by a number, for example %2. Local variables also have name assocciated with them that is not in the text representation. 
-<p> The body of fact2 can be rewritten as a sequence of statments using explicit gotos. All the statements are wrap up in a block. Block(if a=1 then goto(+1)else goto(+2), Exit(result), if a=0 then goto(+1)else goto(+2), Exit(result), Exit(fact2(a-1, result * a)))<strong> goto </strong>(+n)means do not execute the next n-1 statements and Continue with the following statement.<strong> Exit </strong> means skip executing all the follow statements in the block. 
-<p> A further rewrite gets closer to the intermediate code. The rewrite starst the block with <strong> Start </strong>(&lt;type of value returned by block>). Each statement is expressed in postfix notation. The"if &lt;exp> then goto(a)else goto(b)"becomes"&lt;postfix exp> Br2(a, b)". The end of the block is indicated by <strong> EndBlock </strong> The parameter names become %1 and %2 <span class=block> 
-<br> Start(int)
-<br> %1 1=Br2(1, 2)
+<p> The body of fact2 can be rewritten as a sequence of statments using explicit gotos. All the statements are wrap up in a block. Block (if a = 1 then goto (+1) else goto (+2), Exit (result), if a = 0 then goto (+1) else goto (+2), Exit (result), Exit (fact2 (a-1, result * a))) <strong> goto </strong> (+n) means do not execute the next n-1 statements and Continue with the following statement.<strong> Exit </strong> means skip executing all the follow statements in the block. 
+<p> A further rewrite gets closer to the intermediate code. The rewrite starst the block with <strong> Start </strong> (<type of value returned by block>). Each statement is expressed in postfix notation. The" if <exp> then goto (a) else goto (b)" becomes" <postfix exp> Br2 (a, b)". The end of the block is indicated by <strong> EndBlock </strong> The parameter names become %1 and %2 /< block
+<br> Start (int)
+<br> %1 1 = Br2 (1, 2)
 <br> %2 Exit
-<br> %1 0=Br2(1, 2)
+<br> %1 0 = Br2 (1, 2)
 <br> %2 Exit
 <br> %1 1-%2 %1 * fact2 Exit
-<br> EndBlock </span> 
+<br> EndBlock /end
 <p> This function is tail recursive and the recursion can be removed by using a loop. The values that change each time through the loop are capture in loop variables. The loop will use two additon symbols called Loop and Continue. 
-<p> The first step in calling a function is to assign its arguments to parameters. If one considers the symbol"loop:3(int, int)int"to be a function declaration"loop(%3:int, %4:int)", the first step is same as calling a function. Also the"Continue 2"can be consider a function call to"loop(a-1, result * a)"which transfers control to the beginning of the loop.
-<p> The Start(int)is replaced with <strong> Loop </strong> and the"fact2 Exit"is replaced with a <strong> CONTINE </strong> 2 to get <span class=block> 
-<br> %1 %2 Loop:3(int, int)int
-<br> %3 1=Br2(1, 2)
+<p> The first step in calling a function is to assign its arguments to parameters. If one considers the symbol" loop:3 (int, int) int" to be a function declaration" loop (%3:int, %4:int)", the first step is same as calling a function. Also the" Continue 2" can be consider a function call to" loop (a-1, result * a)" which transfers control to the beginning of the loop.
+<p> The Start (int) is replaced with <strong> Loop </strong> and the" fact2 Exit" is replaced with a <strong> CONTINE </strong> 2 to get /< block
+<br> %1 %2 Loop:3 (int, int) int
+<br> %3 1 = Br2 (1, 2)
 <br> %4 Exit
-<br> %3 0=Br2(1, 2)
+<br> %3 0 = Br2 (1, 2)
 <br> %4 Exit
 <br> %3 %3 1-%4 %3 * Continue 2
-<br> EndBlock </span> 
-<p> Finally by replacing function names with the full symbol description, the text representation of the intermediate code is <span class=block> %1 %2 Loop:3(int, int)int
-<br> %3 1=(int, int)boolean Br2(1, 2)
+<br> EndBlock /end
+<p> Finally by replacing function names with the full symbol description, the text representation of the intermediate code is /< block %1 %2 Loop:3 (int, int) int
+<br> %3 1 = (int, int) boolean Br2 (1, 2)
 <br> %4 Exit
-<br> %3 0=(int, int)boolean Br2(1, 2)
+<br> %3 0 = (int, int) boolean Br2 (1, 2)
 <br> %4 Exit
-<br> %3 1-(int, int)int %4 %3 *(int, int)int Continue 2
-<br> EndBlock </span> 
-<p>
-<h2> HelloWorld with dynamic libraries </h2> The Mac OS X implementation also allows dynamic libraries to be created instead of programs.The command is <span class=block> ltau stdlib HelloWorld x </span> 
-<p> In this command <em> ltau </em> refers to a script in &lt;tau>/bin. The next word, <em> stdlib </em>, refers to a dynamic library &lt;tau>/stdlib.dylib which tau will load and pass the rest of the command line as an argument to stdlib. 
-<p> The library stdlib takes <em>"</em> HelloWorld"and creates another dynamic library &lt;tau>/Helloworld.dylib from the src in &lt;tau>/HelloWorld. Helloworld.dylib is then loaded and the entrypoint function is call with any remaining arguments, which in this case is"x"If no args are present, then execute stops with the creation of HelloWorld.dylib.
-<p> Once HelloWorld.dylib is created, the program can be run with <span class=block> ltau HelloWorld arg </span> without any compiling taking place.
-<p> 4. Many text editors allow scripts to be run. To change HelloWorld into a script add as the first line of the HelloWorld.ls, the line <span class=block> #!/bin/sh tau stdlib HelloWorld </span> followed by a blank line. Your text editor may run HelloWorld as a script without setting the execute bit. To set the execute bit, use <span class=block> chmod+x HelloWorld/HelloWorld.ls </span> 
-<p>
-<h2> Installing Web Assembly Cross Compiler </h2> 
+<br> %3 1-(int, int) int %4 %3 * (int, int) int Continue 2
+<br> EndBlock /end
+<p> /< /section HelloWorld with dynamic libraries /end The Mac OS X implementation also allows dynamic libraries to be created instead of programs.The command is /< block ltau stdlib HelloWorld x /end
+<p> In this command <em> ltau </em> refers to a script in <tau>/bin. The next word, <em> stdlib </em>, refers to a dynamic library <tau>/stdlib.dylib which tau will load and pass the rest of the command line as an argument to stdlib. 
+<p> The library stdlib takes <em>" </em> HelloWorld" and creates another dynamic library <tau>/Helloworld.dylib from the src in <tau>/HelloWorld. Helloworld.dylib is then loaded and the entrypoint function is call with any remaining arguments, which in this case is" x" If no args are present, then execute stops with the creation of HelloWorld.dylib.
+<p> Once HelloWorld.dylib is created, the program can be run with /< block ltau HelloWorld arg /end without any compiling taking place.
+<p> 4. Many text editors allow scripts to be run. To change HelloWorld into a script add as the first line of the HelloWorld.ls, the line /< block #!/bin/sh tau stdlib HelloWorld /end followed by a blank line. Your text editor may run HelloWorld as a script without setting the execute bit. To set the execute bit, use /< block chmod+x HelloWorld/HelloWorld.ls /end
+<p> /< /section Installing Web Assembly Cross Compiler /end
 <p> Since wasm files cannot be served from filesystem a web server is required. OSX has an Apache web server pre-installed. The details of how to configure the Apache web server is not hard but the details vary with OS so only the gist of what needs to be done is given here.
-<p> Set up a virtual host Below is an example configuretion. The quotes strings will need to be updated with absolute path of you &lt;Tau> directory.<span class=block> &lt;VirtualHost *:80> ServerName myhost.local
-<br> DocumentRoot"/Users/david/Tau"
-<br> &lt;Directory"/Users/david/Tau"> <span class=block> Options FollowSymLinks Multiviews
+<p> Set up a virtual host Below is an example configuretion. The quotes strings will need to be updated with absolute path of you <Tau> directory./< block <VirtualHost *:80> ServerName myhost.local
+<br> DocumentRoot" /Users/david/Tau"
+<br> <Directory" /Users/david/Tau" > /< block Options FollowSymLinks Multiviews
 <br> MultiviewsMatch Any
 <br> AllowOverride None
-<br> Require all granted </span> &lt;/Directory>
-<br> ScriptAliasMatch^/cgi-bin/((?!(?i:webobjects)).*$)"/Users/david/Tau/bin/$1"
-<br> ErrorLog"/private/var/log/apache2/myhost-error_log"
-<br> CustomLog"/private/var/log/apache2/myhost-access_log"common
-<br> &lt;/VirtualHost> </span> 
+<br> Require all granted /end </Directory>
+<br> ScriptAliasMatch^/cgi-bin/ ((?! (?i:webobjects)).*$)" /Users/david/Tau/bin/$1"
+<br> ErrorLog" /private/var/log/apache2/myhost-error_log"
+<br> CustomLog" /private/var/log/apache2/myhost-access_log" common
+<br> </VirtualHost> /end
 <p> The <em> wtau </em> command defaults the <em> tauwebserver </em> environment variable to https://myhost.local. The environ variable tauwebserver must be set if the virtual host name is different or it does not use SSL. 
 <p> To avoid file permission problems add the group of the web server as one of your groups. Make that your default group.Change the user to your user name to avoid permission problems.An alternative is to run the web server under you user.
-<p> Since files are cached by browse change cache control to retrieve new copy when file is changed on server. To do this add the directive <span class=block> set Cache-Control no-cache </span> to the &lt;IfModule headers_module> section of the configuration file.
-<p> The &lt;Tau>/bin/putfile.cgi is needed to write files back to the server.
+<p> Since files are cached by browse change cache control to retrieve new copy when file is changed on server. To do this add the directive /< block set Cache-Control no-cache /end to the <IfModule headers_module> section of the configuration file.
+<p> The <Tau>/bin/putfile.cgi is needed to write files back to the server.
 <p> Restart the Apache web server. 
-<p> To see if all is working properly run the command <span class=block> wtau wtests wtests </span> This should open a web browser with page with a button. Push the button to run the test. All the test should pass.
-<p> <hr>
-<h2> Documentation below is not complete. </h2> 
+<p> To see if all is working properly run the command /< block wtau wtests wtests /end This should open a web browser with page with a button. Push the button to run the test. All the test should pass.
+<p> /< noformat <hr> /end /< /section Documentation below is not complete. /end
 <p> /section vhost
 <p> edit vhost and dulicate the localhost line and change localhost to myhost.test
 <p> uncomment vhost line in httpd.conf
@@ -101,14 +99,14 @@
 <p> Is the user authorized for action provided ?
 <p> Token createdate user action signature
 <p> hour*60+10*second of time of creation--gives 4 digit decimal number
-<p> Authenticator table of user(key)password(hashed)email phone
+<p> Authenticator table of user (key) password (hashed) email phone
 <p> table of user tempkey
 <p> table of user action
 <p> Login
 <p> user presents user password tempkey Authenticator
-<p> Authenticator:if password matches sends email with random code(saving randome code user tempkey and time send)
+<p> Authenticator:if password matches sends email with random code (saving randome code user tempkey and time send)
 <p> Users:presents user password tempkey code
-<p> Authenticator sends token to user with action"create token"
+<p> Authenticator sends token to user with action" create token"
 <p> User request for token sends temp key and code
 <p> Request for signature verification just send token
 <p> 

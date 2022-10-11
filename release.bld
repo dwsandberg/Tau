@@ -83,7 +83,7 @@ exports=matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycente
 
 makelib tests.lib
 +tests bug7.ls checking myseq point randomphrase test11 test20 testencoding testmodules testprocess testseq tree wordfreq testopt.
- ls test11a testall
+ ls test11a testall seq8  testpackedseq
 uses=stdlib
 exports=tests
 
