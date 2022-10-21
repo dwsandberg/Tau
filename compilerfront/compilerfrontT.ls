@@ -84,10 +84,7 @@ let knownsymbols =
   acc2
   + if isempty.code.pele0 then pele0
   else
-   for acc = [first.code.pele0]
-   , last = first.code.pele0
-   , c ∈ code.pele0 << 1
-   do
+   for acc = [first.code.pele0], last = first.code.pele0, c ∈ code.pele0 << 1 do
     next(if last = PreFref then acc >> 1 + Fref.c else acc + c, c)
    /for (symdef(sym.pele0, acc, paragraphno.pele0))
  /for (acc2)
@@ -115,11 +112,7 @@ function subpass2:T(option:seq.word
 , typedict:typedict
 ) set.symdef
 {OPTION PROFILE}
-for big = bigin
-, small = empty:set.symdef
-, core = corein
-, pele ∈ toseq.toprocess
-do
+for big = bigin, small = empty:set.symdef, core = corein, pele ∈ toseq.toprocess do
  let s = sym.pele
  let fullcode = code.pele
  let options = getoption.fullcode
@@ -180,7 +173,7 @@ let newoptions1 =
 let newoptions = 
  if isempty.options then newoptions1
  else if options = newoptions1 then options
- else toseq (asset.options \ asset."VERYSIMPLE" ∪ asset.newoptions1)
+ else toseq(asset.options \ asset."VERYSIMPLE" ∪ asset.newoptions1)
 if newoptions = "" then code.t else code.t + Words.newoptions + Optionsym
 
 function xxx:T(librarymap:seq.word
@@ -234,8 +227,7 @@ do
    let newsym = 
     if last.result1 = Litfalse then Br2(brf.sym1, brf.sym1)
     else if last.result1 = Littrue then Br2(brt.sym1, brt.sym1) else sym1
-   next(if brt.newsym = brf.newsym ∨ isblock.last.result1 then Hasmerge ∨ flags
-   else flags
+   next(if brt.newsym = brf.newsym ∨ isblock.last.result1 then Hasmerge ∨ flags else flags
    , result1 + newsym
    , nextvar
    , map
@@ -248,8 +240,7 @@ do
     for pmap = map, parano = 1, e ∈ constantseq(10000, 1)
     while parano ≤ nopara
     do
-     next(localmap2(firstvar.sym + parano - 1, [Local (nextvar + parano - 1)])
-     ∪ pmap
+     next(localmap2(firstvar.sym + parano - 1, [Local(nextvar + parano - 1)]) ∪ pmap
      , parano + 1
      )
     /for (pmap)
@@ -263,18 +254,13 @@ do
    let args = subseq(result, len + 1 - nopara, len)
    let constargs = for acc = true, @e ∈ args while acc do isconst.@e /for (acc)
    if constargs then
-    next(flags
-    , subseq(result, 1, len - nopara) + Constant2 (args + sym)
-    , nextvar
-    , map
-    )
+    next(flags, subseq(result, 1, len - nopara) + Constant2(args + sym), nextvar, map)
    else next(flags, result + sym, nextvar, map)
   else if islocal.sym then
    let t = lookup(map, value.sym)
    next(flags, result + if isempty.t then [sym] else value.t_1, nextvar, map)
   else next(flags, result + sym, nextvar, map)
- else if sym = NotOp ∧ last.result = NotOp then
-  next(flags, result >> 1, nextvar, map)
+ else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
  else if length.result > 2 ∧ isconst.last.result ∧ ismember.sym then
   let arg = result_(-2)
   let nonew = islocal.arg ∨ isconst.arg
@@ -333,11 +319,7 @@ do
     else
      let t = backparse2(result, len, nopara, empty:seq.int) + [len + 1]
      let new = expandinline:T(librarymap, result, t, nextvar, code, p, self, typedict)
-     next(flags ∨ flags.new
-     , subseq(result, 1, t_1 - 1) + code.new
-     , nextvar.new
-     , map
-     )
+     next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
 /for (expandresult(nextvar, result, flags))
 
 use seq.mytype

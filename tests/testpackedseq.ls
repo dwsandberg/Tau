@@ -22,17 +22,14 @@ let blksize = 8160 * 8
 if pack ≠ unpack then "FAIL seq not equal"
 else if length.pack ≤ blksize ∧ typ = 0 ∧ size = 8 then
  "PASS std" + toword.length.pack
-else if length.pack ≤ blksize / size ∧ typ = 1 then
- "PASS packed" + toword.length.pack
+else if length.pack ≤ blksize / size ∧ typ = 1 then "PASS packed" + toword.length.pack
 else if length.pack > blksize / size ∧ typ ∉ [0, 1] then
  "PASS block" + toword.length.pack
 else "FAIL" + toword.length.pack + toword.typ
 
 Function random:seq.T(depth:int) seq.T
 if depth ≤ 0 then base:seq.T
-else
- random:seq.T(depth - 1 - getint.2)
- + random:seq.T(depth - 1 - getint.2)
+else random:seq.T(depth - 1 - getint.2) + random:seq.T(depth - 1 - getint.2)
 
 Function base:seq.T seq.T
 let i = getint.6

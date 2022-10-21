@@ -16,7 +16,7 @@ Export type:hashset.T
 
 Export cardinality(hashset.T) int
 
-Export type:seq.seq.hashelement.T{From seq.seq.hashelement.T}
+Export type:seq.seq.hashelement.T {From seq.seq.hashelement.T}
 
 type hashelement is data:T, hash:int
 
@@ -39,24 +39,24 @@ let tablesize = length.table.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
 for acc = empty:seq.T, idx ∈ arithseq(tablesize, 1, 1) do
  for acc2 = acc, e ∈ (table.h)_idx do
-  if (bits.hash.e ∧ mask) = bits (idx - 1) then acc2 + data.e else acc2
+  if (bits.hash.e ∧ mask) = bits(idx - 1) then acc2 + data.e else acc2
  /for (acc2)
 /for (acc)
 
-function notsamehash2(ele:T, a:int, b:int, mask:bits) boolean (bits.a ∧ mask) ≠ (bits.b ∧ mask)
+function notsamehash2(ele:T, a:int, b:int, mask:bits) boolean
+(bits.a ∧ mask) ≠ (bits.b ∧ mask)
 
 Function +(h:hashset.T, ele:T) hashset.T
 let tablesize = length.table.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
 let hash = hash.ele
-let dataindex = toint (tobits.hash ∧ mask) + 1
+let dataindex = toint(tobits.hash ∧ mask) + 1
 for acc = empty:seq.hashelement.T, found = false, e ∈ (table.h)_dataindex do
  if data.e = ele then next(acc + e, true)
  else if notsamehash2(ele, hash, hash.e, mask) then next(acc, found)
  else next(acc + e, found)
 /for (
- let t = 
-  replace(table.h, dataindex, if found then acc else [hashelement(ele, hash)] + acc)
+ let t = replace(table.h, dataindex, if found then acc else [hashelement(ele, hash)] + acc)
  hashset(if found then cardinality.h else cardinality.h + 1
  , if 3 * cardinality.h > 2 * tablesize then t + t + t + t else t
  ))
@@ -67,7 +67,7 @@ function replace(h:hashset.T, ele:hashelement.T) hashset.T
 let tablesize = length.table.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
 let hash = hash.ele
-let dataindex = toint (tobits.hash ∧ mask) + 1
+let dataindex = toint(tobits.hash ∧ mask) + 1
 for acc = [ele], found = false, e ∈ (table.h)_dataindex do
  if data.e = data.ele then next(acc, true)
  else if notsamehash2(data.ele, hash, hash.e, mask) then next(acc, found)

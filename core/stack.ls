@@ -15,7 +15,7 @@ subseq(toseq.f, length.toseq.f - n + 1, length.toseq.f)
 
 Function top(f:stack.T) T (toseq.f)_(length.toseq.f)
 
-Function push(f:stack.T, t:T) stack.T stack (toseq.f + t)
+Function push(f:stack.T, t:T) stack.T stack(toseq.f + t)
 
 Function pop(f:stack.T, n:int) stack.T
 assert length.toseq.f ≥ n report "stack underflow $(stacktrace)"

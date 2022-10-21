@@ -29,14 +29,14 @@ Export value(decoderesult) int
 Export next(decoderesult) int
 
 Function exportfunc(idx:int, name:word) seq.byte
-vector.toseqbyte (emptyUTF8 + decodeword.name) + [tobyte.0x0] + LEBu.idx
+vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x0] + LEBu.idx
 
 Function exportmemory(name:word) seq.byte
-vector.toseqbyte (emptyUTF8 + decodeword.name) + [tobyte.0x2, tobyte.0]
+vector.toseqbyte(emptyUTF8 + decodeword.name) + [tobyte.0x2, tobyte.0]
 
 Function importfunc(idx:int, modname:word, name:word) seq.byte
-vector.toseqbyte (emptyUTF8 + decodeword.modname)
-+ vector.toseqbyte (emptyUTF8 + decodeword.name)
+vector.toseqbyte(emptyUTF8 + decodeword.modname)
++ vector.toseqbyte(emptyUTF8 + decodeword.name)
 + [tobyte.0]
 + LEBu.idx
 

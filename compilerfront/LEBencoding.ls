@@ -25,21 +25,19 @@ let d5 = decodeLEBs(r, next.d4)
 let d6 = decodeLEBs(r, next.d5)
 let ok = 
  for acc = empty:seq.byte, i ∈ [0, 1, 2, 3, 4, 5, 6, 7] do
-  let val = toint (tobits.i << 61)
+  let val = toint(tobits.i << 61)
   acc + LEBs.val + LEBu.val
  /for (
   for ok = "", next = 1, j ∈ [0, 1, 2, 3, 4, 5, 6, 7] do
    let t = decodeLEBs(acc, next)
    let tu = decodeLEBu(acc, next.t)
-   next(if value.t = toint (tobits.j << 61) ∧ value.tu = toint (tobits.j << 61) then
-    ok
-   else ok + "/br" + toword.j + %.tobits.value.t + % (tobits.j << 61)
+   next(if value.t = toint(tobits.j << 61) ∧ value.tu = toint(tobits.j << 61) then ok
+   else ok + "/br" + toword.j + %.tobits.value.t + %(tobits.j << 61)
    , next.tu
    )
   /for (ok))
 let val1 = -4618090677529464034
-if LEBu.127 + LEBu.128 + LEBu.2^16 + LEBu.624485 + LEBs.127 + LEBs.-123456
-= r
+if LEBu.127 + LEBu.128 + LEBu.2^16 + LEBu.624485 + LEBs.127 + LEBs.-123456 = r
 ∧ for acc = empty:seq.int, @e ∈ [d1, d2, d3, d4, d5, d6] do acc + value.@e /for (acc)
 = [127, 128, 65536, 624485, 127,-123456]
 ∧ val1 = value.decodeLEBs(LEBs.val1, 1)
@@ -54,12 +52,11 @@ Function LEBs(i:int) seq.byte LEB(bits.64, bits.i, empty:seq.byte)
 function LEB(signbit:bits, value:bits, result:seq.byte) seq.byte
 let byte = value ∧ bits.127
 let value1 = 
- if toint.value < 0 ∧ toint.signbit ≠ 0 then
-  bits.-1 << (64 - 7) ∨ value >> 7
+ if toint.value < 0 ∧ toint.signbit ≠ 0 then bits.-1 << (64 - 7) ∨ value >> 7
  else value >> 7
-if toint.value1 = 0 ∧ toint (byte ∧ signbit) = 0 then result + tobyte.byte
+if toint.value1 = 0 ∧ toint(byte ∧ signbit) = 0 then result + tobyte.byte
 else if toint.value1 = -1 ∧ toint.byte ≥ toint.signbit then result + tobyte.byte
-else LEB(signbit, value1, result + tobyte (byte ∨ bits.128))
+else LEB(signbit, value1, result + tobyte(byte ∨ bits.128))
 
 Function decodeLEBu(a:seq.byte, i:int) decoderesult decodeLEB2(a, i, 0x0)
 

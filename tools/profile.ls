@@ -36,8 +36,7 @@ let a =
    let m = measure(arc, measure)
    if m = 0 ∨ m < max / 100 then next(acc0, max)
    else
-    next(acc0
-    + arc((symbolrefdecodeX.lib)_(caller.arc), (symbolrefdecodeX.lib)_(callee.arc), [toword.m])
+    next(acc0 + arc((symbolrefdecodeX.lib)_(caller.arc), (symbolrefdecodeX.lib)_(callee.arc), [toword.m])
     , max(max, m)
     )
   /for (arcs/max(acc0, max))
@@ -46,9 +45,6 @@ let b =
  for acc = empty:seq.labeledarc.symbol, arc ∈ arcs.a do
   let m = toint.first.label.arc
   if m < max.a / 100 then acc
-  else
-   acc + arc(tail.arc.arc, head.arc.arc, [toword (m * 100 / max.a)])
+  else acc + arc(tail.arc.arc, head.arc.arc, [toword(m * 100 / max.a)])
  /for (acc)
-drawgraph(for acc = empty:seq.arc.symbol, arc ∈ b do acc + arc.arc /for (newgraph.acc)
-, asset.b
-) 
+drawgraph(for acc = empty:seq.arc.symbol, arc ∈ b do acc + arc.arc /for (newgraph.acc), asset.b) 

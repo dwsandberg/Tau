@@ -10,7 +10,7 @@ Export type:arithmeticseq.T
 
 Export length(a:seq.T) int
 
-Export type:seq.T{From seq.T}
+Export type:seq.T {From seq.T}
 
 Export first(a:seq.T) T {From seq.T}
 
@@ -55,12 +55,12 @@ type cseq2 is sequence, patternlen:int, elements:seq.T
 
 Function _(s:cseq2.T, i:int) T (elements.s)_((i - 1) mod patternlen.s + 1)
 
-Function constantseq(len:int, element:seq.T) seq.T toseq.cseq2(len, length.element, element)
+Function constantseq(len:int, element:seq.T) seq.T
+toseq.cseq2(len, length.element, element)
 
 Function replace(s:seq.T, index:int, value:T) seq.T
 if not.ispseq.s then
- let b = 
-  for acc = empty:seq.T, @e ∈ arithseq(index - 1, 1, 1) do acc + s_@e /for (acc)
+ let b = for acc = empty:seq.T, @e ∈ arithseq(index - 1, 1, 1) do acc + s_@e /for (acc)
  let initseq = arithseq(length.s - index, 1, index + 1)
  let initacc = b + value
  for oldacc = initacc, e30 ∈ initseq do oldacc + s_e30 /for (oldacc)
@@ -81,15 +81,15 @@ unbound =(T, T) boolean
 
 Function _(s:arithmeticseq.T, i:int) T start.s + (i - 1) * step.s
 
-Function arithseq(length:int, step:T, start:T) seq.T toseq.arithmeticseq(length, step, start)
+Function arithseq(length:int, step:T, start:T) seq.T
+toseq.arithmeticseq(length, step, start)
 
 unbound >1(T, T) ordering
 
 Function >1(a:seq.T, b:seq.T) ordering
 let lengtha = length.a
 let lengthb = length.b
-if lengtha > lengthb then GT
-else if lengtha < lengthb then LT else subcmp(a, b, 1)
+if lengtha > lengthb then GT else if lengtha < lengthb then LT else subcmp(a, b, 1)
 
 function subcmp(a:seq.T, b:seq.T, i:int) ordering
 if i > length.a then EQ
@@ -102,8 +102,7 @@ unbound >2(T, T) ordering
 Function >2(a:seq.T, b:seq.T) ordering
 let lengtha = length.a
 let lengthb = length.b
-if lengtha > lengthb then GT
-else if lengtha < lengthb then LT else subcmp2(a, b, 1)
+if lengtha > lengthb then GT else if lengtha < lengthb then LT else subcmp2(a, b, 1)
 
 function subcmp2(a:seq.T, b:seq.T, i:int) ordering
 if i > length.a then EQ
@@ -165,14 +164,12 @@ else subseq(s, 1,-i - 1) + [val] + subseq(s,-i, length.s)
 Function setdelete(s:seq.T, val:T) seq.T
 {* assumes s is sorted}
 let i = binarysearch(s, val)
-if i > 0 then subseq(s, 1, i - 1) + subseq(s, i + 1, length.s)
-else s
+if i > 0 then subseq(s, 1, i - 1) + subseq(s, i + 1, length.s) else s
 
 Function setreplaceorinsert(s:seq.T, val:T) seq.T
 {assumes s is sorted}
 let i = binarysearch(s, val)
-if i > 0 then
- subseq(s, 1, i - 1) + [val] + subseq(s, i + 1, length.s)
+if i > 0 then subseq(s, 1, i - 1) + [val] + subseq(s, i + 1, length.s)
 else subseq(s, 1,-i - 1) + [val] + subseq(s,-i, length.s)
 
 Function lpad(n:int, val:T, l:seq.T) seq.T constantseq(n - length.l, val) + l
@@ -182,22 +179,13 @@ Function break(w:T, a:seq.T) seq.seq.T break(w, empty:seq.T, a)
 Function break(seperator:T, quotes:seq.T, a:seq.T) seq.seq.T
 let b = 
  for acc = empty:seq.int, i = 1, e ∈ a do
-  next(acc + if e ∈ ([seperator] + quotes) then [i] else empty:seq.int
-  , i + 1
-  )
+  next(acc + if e ∈ ([seperator] + quotes) then [i] else empty:seq.int, i + 1)
  /for (acc)
 if isempty.b then [a]
 else break(empty:seq.T, seperator, seperator, a, b, 1, 1, empty:seq.seq.T)
 
-function break(str:seq.T
-, currentquote:T
-, seperator:T
-, a:seq.T
-, b:seq.int
-, j:int
-, start:int
-, result:seq.seq.T
-) seq.seq.T
+function break(str:seq.T, currentquote:T, seperator:T, a:seq.T, b:seq.int
+, j:int, start:int, result:seq.seq.T) seq.seq.T
 if j > length.b then result + (str + subseq(a, start, length.a))
 else
  let i = b_j
@@ -233,7 +221,7 @@ else
    , result + (str + subseq(a, start, i - 1))
    )
   else
-   assert isempty (str + subseq(a, start, i - 1)) report "format problem"
+   assert isempty(str + subseq(a, start, i - 1)) report "format problem"
    break(str, a_i, seperator, a, b, j + 1, i + 1, result)
 
 Function suffix(s:seq.T, len:int) seq.T subseq(s, length.s - len - 1, length.s)

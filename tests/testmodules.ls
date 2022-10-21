@@ -64,8 +64,7 @@ let y =
 check(y, "testmodules") + checkbits
 
 function print(a:seq.int) seq.word
-"[$(for acc = "", @e ∈ a do acc + toword.@e + "
- ," /for (acc >> 1))]"
+"[$(for acc = "", @e ∈ a do acc + toword.@e + "," /for (acc >> 1))]"
 
 ---
 
@@ -81,8 +80,7 @@ function >1(a:tree.int, b:tree.int) ordering
 subx(a, b, 1, label.a >1 label.b ∧ nosons.a >1 nosons.b)
 
 function subx(a:tree.int, b:tree.int, i:int, o:ordering) ordering
-if o = EQ ∧ i ≤ nosons.a then subx(a, b, i + 1, a_i >1 b_i)
-else o
+if o = EQ ∧ i ≤ nosons.a then subx(a, b, i + 1, a_i >1 b_i) else o
 
 function t502 boolean
 [GT, EQ, EQ] = [tr2_1 >1 tr2, tr2_1 >1 tr2_2, tr1_2 >1 tree.1]
@@ -109,34 +107,19 @@ function n8 int 8
 
 function t505 boolean
 let g = 
- newgraph.[arc(n1, n2)
- , arc(n3, n2)
- , arc(n2, n4)
- , arc(n1, n4)
- , arc(n5, n6)
- , arc(n6, n7)
- , arc(n7, n5)
- , arc(n6, n8)
- , arc(n5, n1)
- ]
+ newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4), arc(n1, n4), arc(n5, n6)
+ , arc(n6, n7), arc(n7, n5), arc(n6, n8), arc(n5, n1)]
 let r = 
  print.g + "transversal" + print.sinksfirst.g + "Suc"
  + print.toseq.successors(g, n2)
  + "sinks"
  + print.sinks(g, asset.[n5])
 r
-= "GRAPH:(1 2) (1 4) (2 4) (3 2) (5 1) (5 6) (6 7) (6 8) (7 5) transversal [4,
- 8, 2, 1, 3] Suc [4] sinks [4, 7, 8]"
+= "GRAPH:(1 2) (1 4) (2 4) (3 2) (5 1) (5 6) (6 7) (6 8) (7 5) transversal [4, 8, 2, 1, 3] Suc [4] sinks [4, 7, 8]"
 
 function t506 boolean
 let g = newgraph.[arc(n1, n2), arc(n3, n2), arc(n2, n4)]
-let closure = 
- [arc(n1, n2)
- , arc(n1, n4)
- , arc(n2, n4)
- , arc(n3, n2)
- , arc(n3, n4)
- ]
+let closure = [arc(n1, n2), arc(n1, n4), arc(n2, n4), arc(n3, n2), arc(n3, n4)]
 closure = toseq.arcs.transitiveClosure.g
 
 function print(g:graph.int) seq.word
@@ -172,18 +155,18 @@ _____________
 bits
 
 Function checkbits seq.word
-let min64integer = toint (0x1 << 63)
-let max64integer = toint (bits.-1 >> 1)
+let min64integer = toint(0x1 << 63)
+let max64integer = toint(bits.-1 >> 1)
 check([toint.toword.min64integer = min64integer
 , toint.toword.max64integer = max64integer
 , min64integer + 1 = -max64integer
 , 0xD = bits.13
 , 878082210 = toint.rotl32(0xA2345678, 8)
-, % (0xD687F000 ∧ 0x0FE00000) = "0000 0000 0680 0000"
-, % (0xD687F001 >> 2) = "0000 0000 35A1 FC00"
-, % (0xD687F001 << 2) = "0000 0003 5A1F C004"
-, % (0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000"
-, % (0xD687F000 ⊻ 0x0FE00000) = "0000 0000 D967 F000"
+, %(0xD687F000 ∧ 0x0FE00000) = "0000 0000 0680 0000"
+, %(0xD687F001 >> 2) = "0000 0000 35A1 FC00"
+, %(0xD687F001 << 2) = "0000 0003 5A1F C004"
+, %(0xD687F000 ∨ 0x0FE00000) = "0000 0000 DFE7 F000"
+, %(0xD687F000 ⊻ 0x0FE00000) = "0000 0000 D967 F000"
 ]
 , "bits"
 )

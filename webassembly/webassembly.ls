@@ -34,19 +34,14 @@ for acc = empty:seq.byte, names = "parts =", f ∈ files do
   next(acc + tobyte.10 + tobyte.10 + data.f, names + fullname.fn.f)
  else next(acc, names)
 /for (
- [file(filename (Library + ".libsrc")
- , toseqbyte.toUTF8 (names + "uses = $(uses) exports = $(exports) Library = $(Library)")
- + acc
+ [file(filename(Library + ".libsrc")
+ , toseqbyte.toUTF8(names + "uses = $(uses) exports = $(exports) Library = $(Library)") + acc
  )
  ])
 
-Function wasm(input:seq.file
-, Library:seq.word
-, exports:seq.word
-, o:seq.word
-, info:boolean
-) seq.file
+Function wasm(input:seq.file, Library:seq.word, exports:seq.word, o:seq.word, info:boolean) seq.file
 {problem is same symbol is used in different onclicks}
+let LF = [encodeword.[char.10]]
 let includetemplate = false
 let input2 = cat(input, "", exports, Library)
 let info2 = breakparagraph.data.first.input2
@@ -54,10 +49,7 @@ let libname = Library
 let libexports = exports + "SpecialExports" + "SpecialImports"
 let rcinfo = 
  compilerFront:callconfig("wasm"
- , [file("hhh.ls"
- , "exports = tausupport webIOtypes $(libexports) Library = $(libname)"
- )
- ]
+ , [file("hhh.ls", "exports = tausupport webIOtypes $(libexports) Library = $(libname)")]
  + input
  )
 for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo do
@@ -67,7 +59,7 @@ for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo d
 /for (
  {should check for dup names on syms2}
  let scriptstart = 
-  for txt = "<script> /br", sym ∈ syms2 do
+  for txt = "<script> $(LF)", sym ∈ syms2 do
    let f = 
     for args = "", i ∈ arithseq(nopara.sym, 1, 1) do
      args + "a b c d e f g h i j k l m n o p q r s t u v w x y z"_i + ","
@@ -80,19 +72,13 @@ for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo d
    + f
    + "{exports."
    + f
-   + "; if (inprogress $(merge."= =") 0) exports.reclaimspace () ;} /br"
+   + "; if (inprogress $(merge."= =") 0) exports.reclaimspace () ;} $(LF)"
   /for (txt)
  let wasmfiles = 
-  wasmcompile(typedict.rcinfo
-  , asset.renumberconstants.toseq.prg.rcinfo
-  , syms2
-  , o
-  , imports
-  , info
-  )
+  wasmcompile(typedict.rcinfo, asset.renumberconstants.toseq.prg.rcinfo, syms2, o, imports, info)
  let script = 
-  {if includetemplate then toseqbyte.toUTF8." <script>"+getfile:byte (" /webassembly/template
-   .js")+toseqbyte.toUTF8." </script>" else}
+  {if includetemplate then toseqbyte.toUTF8." <script>"+getfile:byte (" /webassembly/template.js")+toseqbyte
+   .toUTF8." </script>" else}
   toseqbyte.toUTF8."<script src = $(merge.dq."/webassembly/template.js") > </script>"
  for acc = wasmfiles, page ∈ input do
   if ext.fn.page ∉ "html" then acc
@@ -101,15 +87,14 @@ for syms2 = empty:seq.symbol, imports = empty:seq.symbol, m ∈ libmods.rcinfo d
    acc
    + file(filename."+$(dirpath.fn.first.wasmfiles) $([name.fn.page]).html"
    , pagehtml + script
-   + toseqbyte.toUTF8 (scriptstart
-   + "/br pageinit ($(merge.dq.libname), $(name.fn.page)) ; </script>")
+   + toseqbyte.toUTF8(scriptstart + "$(LF) pageinit ($(merge.dq.libname), $(name.fn.page)) ; </script>")
    )
  /for (acc))
 
 Function doc seq.word
 "Steps to call function f1 as a process.
- /br 1. Create a record, R. The first two fields are deepcopy function for the result type of f1
- and seq.word. The third field is the webassembly funcidx. The remain fields are the actual parameters
+ /br 1. Create a record, R. The first two fields are deepcopy function for the result type of f1 and
+ seq.word. The third field is the webassembly funcidx. The remain fields are the actual parameters
  of f1.
  /br 2. get typeidx for f1. Let assume the typeidx is 45.
  /br 3. create at compile time a function processX45 that takes the record R and funcidx of f1 as parameters

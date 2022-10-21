@@ -44,7 +44,8 @@ function =(a:word3, b:word3) boolean chars.a = chars.b
 
 function hash(a:word3) int hash.chars.a
 
-Function constdata seq.slot for acc = empty:seq.slot, @e ∈ encodingdata:const3 do acc + flds.@e /for (acc)
+Function constdata seq.slot
+for acc = empty:seq.slot, @e ∈ encodingdata:const3 do acc + flds.@e /for (acc)
 
 type const3 is place:int, flds:seq.slot
 
@@ -70,17 +71,15 @@ for acc = 0, @e ∈ baselibwords do
  for acc2 = 0, k ∈ subseq(encodingdata:seq.char, 1, acc) do valueofencoding.encode.word3.k /for (loadbcwords))
 
 Function wordstoadd(baselibwords:seq.seq.char) seq.encoding.word3
-let have = 
- for acc = empty:set.encoding.word3, @e ∈ baselibwords do acc + encode.word3.@e /for (acc)
-let used = 
- for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3 do acc + encode.@e /for (acc)
-toseq (used \ have)
+let have = for acc = empty:set.encoding.word3, @e ∈ baselibwords do acc + encode.word3.@e /for (acc)
+let used = for acc = empty:set.encoding.word3, @e ∈ encodingdata:word3 do acc + encode.@e /for (acc)
+toseq(used \ have)
 
 Function commonwords(wordstoadd:seq.encoding.word3) seq.byte
 for out = emptyUTF8, w ∈ wordstoadd do out + chars.decode.w + bcwordsep /for (toseqbyte.out)
 
 Function bytes(i:int) seq.byte
-for acc = empty:seq.byte, shift ∈ arithseq(8, 8, 0) do acc + tobyte.toint (tobits.i >> shift ∧ 0xFF) /for (acc)
+for acc = empty:seq.byte, shift ∈ arithseq(8, 8, 0) do acc + tobyte.toint(tobits.i >> shift ∧ 0xFF) /for (acc)
 
 Function loadbcwords int
 let b = getbcwords
@@ -97,9 +96,7 @@ Function addliblib(libname:word, name:int, wordstoadd:seq.encoding.word3, more:s
 let wordreps2 = 
  for acc = [toint.C64.0, toint.C64.length.wordstoadd], w ∈ wordstoadd do
   let s = tointseq.chars.decode.w
-  for acc2 = [toint.C64.0, toint.C64.length.s], ch ∈ s do
-   acc2 + toint.C64.ch
-  /for (acc + addobject.acc2)
+  for acc2 = [toint.C64.0, toint.C64.length.s], ch ∈ s do acc2 + toint.C64.ch /for (acc + addobject.acc2)
  /for (addobject.acc)
 addobject2("liblib" + libname, [name, wordreps2] + more)
 
@@ -113,9 +110,7 @@ let ll =
 toint.CGEP(slot.ll, 0)
 
 Function global(name:seq.word, type:llvmtype, init:slot) int
-toint.modulerecord(name
-, [toint.GLOBALVAR, typ.type, 2, 1 + toint.init, 0, toint.align8 + 1, 0]
-)
+toint.modulerecord(name, [toint.GLOBALVAR, typ.type, 2, 1 + toint.init, 0, toint.align8 + 1, 0])
 
 Function addobject(fldsin:seq.int) int
 let flds = for acc = empty:seq.slot, @e ∈ fldsin do acc + asi64.slot.@e /for (acc)

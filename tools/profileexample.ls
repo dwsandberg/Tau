@@ -4,11 +4,17 @@ use doc
 
 use file
 
+use seq.file
+
 use main2
 
 use profile
 
 use standard
+
+use UTF8
+
+use format
 
 Function testprofile(input:seq.file, o:seq.word) seq.file
 let discard = makebitcode.input
@@ -16,4 +22,15 @@ let discard = makebitcode.input
 
 Function testprofile2(input:seq.file, o:seq.word) seq.file
 let discard = doclibrary(input, o, "")
-[file(o, profileresults."time")] 
+[file(o, profileresults."time")]
+
+Function testprofile3(input:seq.file, o:seq.word) seq.file
+let discard = testx.first.input
+[file(o, profileresults."time")]
+
+Function testx(f:file) int
+{OPTION PROFILE NOINLINE}
+let a = HTMLformat.towords.UTF8.data.f
+0
+
+for acc = emptyUTF8, x /in constantseq (0, 1) do HTMLformat.towords.UTF8.data.f /for (0) 

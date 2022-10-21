@@ -57,7 +57,8 @@ subseq(s, 1, start - 1) + value + subseq(s, start + length, length.s)
 
 type expandresult is nextvar:int, code:seq.symbol, flags:bits
 
-function isconstorlocal(p:seq.symbol) boolean length.p = 1 ∧ (isconst.first.p ∨ islocal.first.p)
+function isconstorlocal(p:seq.symbol) boolean
+length.p = 1 ∧ (isconst.first.p ∨ islocal.first.p)
 
 Function expandforexp(code:seq.symbol, nextvarin:int) seq.symbol
 for result = empty:seq.symbol, nextvar = nextvarin, sym ∈ code do
@@ -69,21 +70,20 @@ for result = empty:seq.symbol, nextvar = nextvarin, sym ∈ code do
   let t = backparse2(result, length.result, 2, empty:seq.int)
   let index = subseq(result, t_2, length.code)
   let theseq = subseq(result, t_1, t_2 - 1)
-  let theseq2 = if isconstorlocal.theseq then first.theseq else Local (nextvar + 1)
+  let theseq2 = if isconstorlocal.theseq then first.theseq else Local(nextvar + 1)
   let newcode = 
    subseq(result, 1, t_1 - 1)
-   + if isconstorlocal.theseq then empty:seq.symbol else theseq + Define (nextvar + 1) /if
+   + if isconstorlocal.theseq then empty:seq.symbol else theseq + Define(nextvar + 1) /if
    + [theseq2, GetSeqType, Define.nextvar]
    + index
-   + [Lit.1, PlusOp, Define (nextvar + 2)]
-   + indexseqcode(Local.nextvar, theseq2, Local (nextvar + 2), theseqtype, true)
+   + [Lit.1, PlusOp, Define(nextvar + 2)]
+   + indexseqcode(Local.nextvar, theseq2, Local(nextvar + 2), theseqtype, true)
   next(newcode, nextvar + 3)
  else next(result + sym, nextvar)
 /for (result)
 
 Function forexpisnoop(forsym:symbol, code:seq.symbol) seq.symbol
-if nopara.forsym = 7 ∧ length.code > 4
-∧ first.paratypes.forsym = resulttype.forsym
+if nopara.forsym = 7 ∧ length.code > 4 ∧ first.paratypes.forsym = resulttype.forsym
 ∧ code_(-2) = Littrue
 ∧ isseq.resulttype.last.code
 ∧ wordname.code_(-3) = "+"_1
@@ -100,12 +100,7 @@ if nopara.forsym = 7 ∧ length.code > 4
  else empty:seq.symbol
 else empty:seq.symbol
 
-function indexseqcode(seqtype:symbol
-, theseq:symbol
-, masteridx:symbol
-, xtheseqtype:mytype
-, boundscheck:boolean
-) seq.symbol
+function indexseqcode(seqtype:symbol, theseq:symbol, masteridx:symbol, xtheseqtype:mytype, boundscheck:boolean) seq.symbol
 {seqtype will be a basetype}
 let seqparameter = parameter.xtheseqtype
 let theseqtype = seqof.seqparameter
@@ -151,11 +146,9 @@ let endofsymbols = t_(-3) - 1
 let startofsymbols = endofsymbols - (nopara.forsym - 3) / 2 + 1
 let syms = subseq(code, startofsymbols, endofsymbols)
 let tmp = 
- for acc = empty:seq.symbol, i = 1, s ∈ syms >> 1 do
-  next(acc + Local (nextvar + i - 1), i + 1)
- /for (acc)
-let masteridx = Local (value.last.tmp + 1)
-let seqelement = Local (value.masteridx + 1)
+ for acc = empty:seq.symbol, i = 1, s ∈ syms >> 1 do next(acc + Local(nextvar + i - 1), i + 1) /for (acc)
+let masteridx = Local(value.last.tmp + 1)
+let seqelement = Local(value.masteridx + 1)
 let nextvar1 = value.seqelement + 1
 let Defineseqelement = Define.value.seqelement
 let newsyms = tmp + seqelement
@@ -163,15 +156,15 @@ let theseqtype = (paratypes.forsym)_(length.newsyms)
 let elementtype = if isseq.(paratypes.forsym)_(-4) then typeptr else (paratypes.forsym)_(-4)
 {let theseqtype = seqof.elementtype}
 let theseq = Local.nextvar1
-let totallength = Local (nextvar1 + 1)
-let seqtype = Local (nextvar1 + 2)
-let Defineseqtype = Define (nextvar1 + 2)
+let totallength = Local(nextvar1 + 1)
+let seqtype = Local(nextvar1 + 2)
+let Defineseqtype = Define(nextvar1 + 2)
 let firstpart = 
  subseq(code, 1, startofsymbols - 1)
  + [Define.nextvar1
  , theseq
  , GetSeqLength
- , Define (nextvar1 + 1)
+ , Define(nextvar1 + 1)
  , theseq
  , GetSeqType
  , Defineseqtype

@@ -50,7 +50,7 @@ use seq.seq.word
 
 use set.word
 
-Export type:midpoint{From symbol2}
+Export type:midpoint {From symbol2}
 
 Export libmods(m:midpoint) seq.modExports {From symbol2}
 
@@ -64,15 +64,10 @@ Export templates(midpoint) set.symdef {From symbol2}
 
 Export typedict(midpoint) typedict {From symbol2}
 
-Export midpoint(option:seq.word
-, prg:set.symdef
-, typedict:typedict
-, libmods:seq.modExports
-, src:seq.seq.word
-) midpoint
+Export midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.word) midpoint
 {From symbol2}
 
-Export type:modExports{From symbol2}
+Export type:modExports {From symbol2}
 
 Export exports(modExports) seq.symbol {From symbol2}
 
@@ -80,9 +75,10 @@ Export modname(modExports) modref {From symbol2}
 
 Export types(modExports) seq.seq.mytype {From symbol2}
 
-Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports {From symbol2}
+Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
+{From symbol2}
 
-Export type:typedict{From typedict}
+Export type:typedict {From typedict}
 
 function types(libinfo:midpoint) seq.seq.mytype
 for acc = empty:seq.seq.mytype, m ∈ libmods.libinfo do acc + types.m /for (acc)
@@ -126,20 +122,13 @@ else
  {figure out how to interpret text form of symbol}
  let t5 = resolvesymbols(allsrc, lib, modsx, asset.mods.libinfo)
  {parse the function bodies}
- let allmods = asset (abstract.t5 + simple.t5)
+ let allmods = asset(abstract.t5 + simple.t5)
  let prga = 
-  compile(allmods
-  , asset.abstract.t5
-  , lib
-  , allsrc
-  , option = "text"
-  , empty:set.symdef
-  )
+  compile(allmods, asset.abstract.t5, lib, allsrc, option = "text", empty:set.symdef)
  let prgb = if option = "text" then prga else prescan2.prga
- let requireUnbound = buildrequires (prgb + toseq.code.t5 + toseq.prg.libinfo)
- let prg = 
-  compile(allmods, asset.simple.t5, lib, allsrc, option = "text", requireUnbound)
- let prg10 = asset (prgb + toseq.code.t5 + toseq.prg.libinfo + prg)
+ let requireUnbound = buildrequires(prgb + toseq.code.t5 + toseq.prg.libinfo)
+ let prg = compile(allmods, asset.simple.t5, lib, allsrc, option = "text", requireUnbound)
+ let prg10 = asset(prgb + toseq.code.t5 + toseq.prg.libinfo + prg)
  if option = "text" then
   for acc = empty:set.symdef, sd ∈ toseq.prg10 do
    if library.module.sym.sd = lib then acc + sd else acc
@@ -205,9 +194,7 @@ for acc = empty:seq.modExports, m2 ∈ t5 do
      if isseq.resulttype.s then acc5 + [resulttype.s, typeint]
      else
       let c = 
-       for c = empty:seq.mytype, t ∈ flatflds(alltypes, resulttype.s) do
-        c + if isencoding.t ∨ t = typechar then typeint else t
-       /for (c)
+       for c = empty:seq.mytype, t ∈ flatflds(alltypes, resulttype.s) do c + if isencoding.t ∨ t = typechar then typeint else t /for (c)
       acc5 + ([resulttype.s] + c)
     else acc5
    /for (acc5)
@@ -242,17 +229,15 @@ let libname = first.extractValue(first.src.midin, "Library")
 let typedict = typedict.midin
 let oldmods = libmods.midin
 let libextnames = 
- for acc = empty:seq.symdef, sd ∈ toseq.prg.dependentlibs do
-  if paragraphno.sd = 0 then acc else acc + sd
- /for (asset.acc)
+ for acc = empty:seq.symdef, sd ∈ toseq.prg.dependentlibs do if paragraphno.sd = 0 then acc else acc + sd /for (asset.acc)
 let tmp = 
  for acc = empty:seq.symbol, sym ∈ toseq.roots.oldmods do
   if not.isabstract.module.sym ∧ not.isInternal.sym then acc + Fref.sym else acc
- /for (Constant2 (acc + Sequence(typeint, length.acc)))
+ /for (Constant2(acc + Sequence(typeint, length.acc)))
 let maybereferenced0 = close(prg10, roots.oldmods + tmp, empty:set.symbol, 0)
 let symdict = symboldict(maybereferenced0, empty:seq.commoninfo)
 let stacktracesym = 
- symbol(moduleref ([if isempty.uses then libname else last.uses] + "impDependent")
+ symbol(moduleref([if isempty.uses then libname else last.uses] + "impDependent")
  , "stackTraceImp"
  , seqof.typeword
  )
@@ -288,8 +273,7 @@ do
   let abstract = isabstract.module.sym
   let sd0 = 
    if isGlobal.sym then [symdef(sym, empty:seq.symbol, idx)]
-   else if isInternal.sym then [symdef(sym, empty:seq.symbol,-idx)]
-   else empty:seq.symdef
+   else if isInternal.sym then [symdef(sym, empty:seq.symbol,-idx)] else empty:seq.symdef
   let sd = if isempty.sd0 then toseq.getSymdef(prg10, sym) else sd0
   if isempty.sd then next(prgX, prgA, if abstract then idx else idx + 1)
   else
@@ -361,8 +345,7 @@ for acc = empty:seq.symdef, sym ∈ toseq.toexport do
         acc2 ∧ (isconstantorspecial.@e ∨ isBuiltin.@e ∨ @e ∈ toexport)
        /for (if acc2 then x else empty:seq.symbol)
      else empty:seq.symbol
-    if "COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then
-     z + Words.optionsx + Optionsym
+    if "COMPILETIME"_1 ∈ optionsx ∨ not.isempty.z then z + Words.optionsx + Optionsym
     else z
   acc + symdef(sym, libcode, if isempty.sd then 0 else paragraphno.sd_1)
 /for (acc)

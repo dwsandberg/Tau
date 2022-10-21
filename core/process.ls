@@ -32,4 +32,5 @@ Function result(p:process.T) T
 assert not.aborted.p report "no result of aborted process"
 first.body1.p
 
-Function merge(a:process.T, b:T, c:T) process.T process(abortedx.a, msg.a, header.a, [b], c) 
+Function merge(a:process.T, b:T, c:T) process.T
+process(abortedx.a, msg.a, header.a, [b], c) 

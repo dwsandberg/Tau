@@ -82,7 +82,8 @@ Function =(a:parc, b:parc) boolean callee.a = callee.b ∧ caller.a = caller.b
 
 Builtin loadedLibs seq.debuginfo
 
-Function symboladdress seq.int for acc = empty:seq.int, ll ∈ loadedLibs do acc + symboladdress.ll /for (acc)
+Function symboladdress seq.int
+for acc = empty:seq.int, ll ∈ loadedLibs do acc + symboladdress.ll /for (acc)
 
 Function symbolrefdecodeX seq.symbol
 for acc = empty:seq.symbol, ll ∈ loadedLibs do acc + symbolrefdecodeX.ll /for (acc)
@@ -132,9 +133,7 @@ else
 function buildargcode(sym:symbol, typedict:typedict) int
 {needed because the call interface implementation for reals is different than other types is some implementations
  }
-for acc = 1, typ ∈ paratypes.sym + resulttype.sym do
- acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0
-/for (acc)
+for acc = 1, typ ∈ paratypes.sym + resulttype.sym do acc * 2 + if basetype(typ, typedict) = typereal then 1 else 0 /for (acc)
 
 type dummyparameterrecord is a:int, b:int
 
@@ -169,13 +168,10 @@ builtin callstack(n:int) seq.int
 Function stackTraceImp seq.word
 let decode = symbolrefdecodeX
 let t = 
- for t = empty:seq.addrsym, idx = 1, i ∈ symboladdress do
-  next(t + addrsym(i, decode_idx), idx + 1)
- /for (sort.t)
+ for t = empty:seq.addrsym, idx = 1, i ∈ symboladdress do next(t + addrsym(i, decode_idx), idx + 1) /for (sort.t)
 for txt = "/p", r ∈ callstack.30 << 2 do
  let i = binarysearch(t, addrsym(r, Lit.1))
- txt + %.r
- + if between(-i - 1, 1, length.t) then %.sym.t_(-i - 1) else "" /if
+ txt + %.r + if between(-i - 1, 1, length.t) then %.sym.t_(-i - 1) else "" /if
  + "/br"
 /for (txt)
 
@@ -183,12 +179,12 @@ ________________
 
 function tocstr(w:word) seq.byte
 {returns 16 bytes of header followed by UTF8 bytes endding with 0 byte. }
-packed (toseqbyte (emptyUTF8 + decodeword.w) + tobyte.0)
+packed(toseqbyte(emptyUTF8 + decodeword.w) + tobyte.0)
 
 builtin getbytefile2(seq.byte) process.seq.byte {OPTION STATE}
 
 Function getfiles(args:seq.word) seq.file
-for acc = empty:seq.file, fn ∈ getfilenames (args << 1) do
+for acc = empty:seq.file, fn ∈ getfilenames(args << 1) do
  let a = getbytefile2.tocstr.fullname.fn
  assert not.aborted.a report "Error openning file:" + fullname.fn
  acc + file(fn, result.merge(a, result.a + body2.a, empty:seq.byte))

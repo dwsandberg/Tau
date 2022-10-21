@@ -20,8 +20,7 @@ else if toint.a_i = 10 then
  breaklines(a
  , i + 1
  , i + 1
- , result
- + UTF8.subseq(a, last, i - if toint.a_(i - 1) = 13 then 2 else 1)
+ , result + UTF8.subseq(a, last, i - if toint.a_(i - 1) = 13 then 2 else 1)
  )
 else breaklines(a, i + 1, last, result)
 
@@ -45,8 +44,7 @@ else
 
 Function breakparagraph(u:UTF8, i:int, last:int, result:seq.seq.word) seq.seq.word
 if i ≥ length.u then
- if last < length.u then
-  result + towords.decodeUTF8.UTF8.subseq(toseqbyte.u, last, length.u)
+ if last < length.u then result + towords.decodeUTF8.UTF8.subseq(toseqbyte.u, last, length.u)
  else result
 else if toint.u_i = 10 then
  let j = blankline(u, i + 1)
@@ -63,58 +61,23 @@ else breakparagraph(u, i + 1, last, result)
 
 Function classifychar seq.word
 "0 0 0 0 0 0 0 0 0 SPACE 0 0 SPACE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 SPACE 0
- $(dq) 0 0 0 0 0 () 0+,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
- 0 0 0 0 0 [0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 {0} 0 0"
+ $(dq) 0 0 0 0 0 () 0+,-.0 0 0 0 0 0 0 0 0 0 0:0 0 = 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [
+ 0]^_0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 {0} 0 0"
 
 Function towords(a:UTF8) seq.word towords.decodeUTF8.a
 
-function checkescape(s:seq.char) int
-if isempty.s then 0
-else if s_1 = char1."n" then 2 * 128 + 10
-else if length.s ≥ 3 ∧ between(toint.s_1, 48, 51)
-∧ between(toint.s_2, 48, 55)
-∧ between(toint.s_3, 48, 55) then
- ((toint.s_1 - 48) * 64 + (toint.s_2 - 48)) * 8 + toint.s_3 - 48
- + 4 * 128
-else 0
-
-function classify(ch:char) word
-if between(toint.ch, 1, length.classifychar) then classifychar_(toint.ch)
-else if ch = char1."”" then "”"_1
-else if ch = char1."“" then "“"_1 else "0"_1
-
 Function towords(chars:seq.char) seq.word
 let spacechar = char.32
-for acc = ""
-, last = 1
-, i = 1
-, pending = empty:seq.char
-, ch ∈ chars + spacechar
-do
- if last > i then next(acc, last, i + 1, pending)
- else if ch = char1."\" then
-  let k = checkescape.subseq(chars, i + 1, i + 3)
-  if k = 0 then next(acc, last, i + 1, pending)
-  else
-   let nexti = i + k / 128
-   next(acc
-   , nexti
-   , i + 1
-   , pending + subseq(chars, last, i - 1) + char (k mod 128)
-   )
+for acc = "", last = 1, i = 1, ch ∈ chars + spacechar do
+ if not.between(toint.ch, 1, length.classifychar) then next(acc, last, i + 1)
  else
-  let class = classify.ch
-  if class = "0"_1 then next(acc, last, i + 1, pending)
+  let class = classifychar_(toint.ch)
+  if class = "0"_1 then next(acc, last, i + 1)
   else
-   let newacc = 
-    if last = i ∧ isempty.pending then acc
-    else acc + encodeword (pending + subseq(chars, last, i - 1))
-   if class ∈ "SPACE" then next(newacc, i + 1, i + 1, empty:seq.char)
-   else if ch = char1."." ∧ i + 1 ≤ length.chars ∧ chars_(i + 1) = spacechar then
-    next(newacc + encodeword.[char1.".", spacechar]
-    , i + 1
-    , i + 1
-    , empty:seq.char
-    )
-   else next(newacc + class, i + 1, i + 1, empty:seq.char)
+   let newacc = if last = i then acc else acc + encodeword.subseq(chars, last, i - 1)
+   if class ∈ "SPACE" then next(newacc, i + 1, i + 1)
+   else if (ch = char1."." ∨ ch = char1.":") ∧ i + 1 ≤ length.chars
+   ∧ chars_(i + 1) = spacechar then
+    next(newacc + encodeword.[ch, spacechar], i + 1, i + 1)
+   else next(newacc + class, i + 1, i + 1)
 /for (acc) 

@@ -46,22 +46,23 @@ encodingstate(0, length, encodetable, encodetable, all, lastadd)
 
 type encodingpair is code:encoding.T, data:T, hash:int
 
-Function encodingpair(code:encoding.T, data:T) encodingpair.T encodingpair(code, data, hash.data)
+Function encodingpair(code:encoding.T, data:T) encodingpair.T
+encodingpair(code, data, hash.data)
 
 Function =(a:encodingpair.T, b:encodingpair.T) boolean
-hash.a = hash.b ∧ valueofencoding.code.a = valueofencoding.code.b
-∧ data.a = data.b
+hash.a = hash.b ∧ valueofencoding.code.a = valueofencoding.code.b ∧ data.a = data.b
 
 unbound hash(T) int
 
 unbound =(T, T) boolean
 
-/Function empty:encodingstate.T encodingstate.T let x = constantseq (4, empty:seq.encodingpair
-.T) encodingstate (0, 0, x, x, empty:seq.encodingpair.T, 0)
+/Function empty:encodingstate.T encodingstate.T let x = constantseq (4, empty:seq.encodingpair.T) encodingstate
+(0, 0, x, x, empty:seq.encodingpair.T, 0)
 
 Function lastadded(h:encodingstate.T) encoding.T code.last.all.h
 
-function notsamehash:T(a:int, b:int, mask:bits) boolean (bits.a ∧ mask) ≠ (bits.b ∧ mask)
+function notsamehash:T(a:int, b:int, mask:bits) boolean
+(bits.a ∧ mask) ≠ (bits.b ∧ mask)
 
 /Function add (h:encodingstate.T, datav:T)
 
@@ -72,22 +73,20 @@ Function addencoding(h:encodingstate.T, datav:T) encodingstate.T
 let hashv = hash.datav
 let tablesize = length.encodetable.h
 let mask = bits.-1 >> (65 - floorlog2.tablesize)
-let dataindex = toint (tobits.hashv ∧ mask) + 1
+let dataindex = toint(tobits.hashv ∧ mask) + 1
 let existingcode = lookuprep(datav, (encodetable.h)_dataindex)
 if not.isempty.existingcode then
  {already present}
  let c = valueofencoding.code.existingcode_1
  if lastadd.h = c then h
- else
-  encodingstate(encodingno.h, length.h, encodetable.h, decodetable.h, all.h, c)
+ else encodingstate(encodingno.h, length.h, encodetable.h, decodetable.h, all.h, c)
 else
  let code = to:encoding.T(length.all.h + 1)
  let p = encodingpair(code, datav, hashv)
- let codeindex = toint (tobits.valueofencoding.code ∧ mask) + 1
+ let codeindex = toint(tobits.valueofencoding.code ∧ mask) + 1
  let listencode = 
   for acc = [p], e ∈ (encodetable.h)_dataindex do
-   if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask) then acc
-   else acc + e
+   if data.e = data.p ∨ notsamehash:T(hash.p, hash.e, mask) then acc else acc + e
   /for (acc)
  let newencode = replace(encodetable.h, dataindex, listencode)
  if 3 * length.h > 2 * tablesize then
@@ -146,8 +145,7 @@ Function encode(t:T) encoding.T
 let instance = getinstance:encodingstate.T
 let r = lookuprep(t, instance)
 if isempty.r then
- to:encoding.T(if true then
-  primitiveadd(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t))
+ to:encoding.T(if true then primitiveadd(encodingno.instance, encodingpair(to:encoding.T(0), t, hash.t))
  else primitive2add(encodingno.instance, t)
  )
 else code.r_1

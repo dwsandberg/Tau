@@ -40,5 +40,4 @@ else
  %.label.t
  + if nosons.t = 1 then ".$(t_1)"
  else
-  "($(for acc = "", e ∈ sons.t do acc + %.e + "
-   ," /for (acc >> 1 + ")"))" 
+  "($(for acc = "", e ∈ sons.t do acc + %.e + "," /for (acc >> 1 + ")"))" 

@@ -33,8 +33,7 @@ do
   , true
   )
  else
-  next(data
-  + if subseq(p, 1, 1) ∈ ["Function", "function"] then pretty.p else p /if
+  next(data + if subseq(p, 1, 1) ∈ ["Function", "function"] then pretty.p else p /if
   + "/p"
   , auto
   , true
@@ -73,21 +72,12 @@ mark is a place holder for numbers that with not be include in the type.
 supplied which indicates the declaration of the type will not be generated. The flag /keyword withvalues
 indicates the data list contains the hex value of the constant follow by the name.
 
-function enumerate(type:seq.word
-, codes0:seq.word
-, withvalues:boolean
-, nodefs:boolean
-, decodename:seq.word
-) seq.word
+function enumerate(type:seq.word, codes0:seq.word, withvalues:boolean, nodefs:boolean, decodename:seq.word) seq.word
 let codes = 
  if withvalues then
-  for acc = sparseseq."?"_1
-  , state = 1
-  , code = first.codes0
-  , w ∈ codes0 << 1
-  do
+  for acc = sparseseq."?"_1, state = 1, code = first.codes0, w ∈ codes0 << 1 do
    if state = 1 then
-    next(replaceS(acc, toint.merge ("0x" + code) + 1, [w]), 0, code)
+    next(replaceS(acc, toint.merge("0x" + code) + 1, [w]), 0, code)
    else next(acc, 1, w)
   /for (for txt = "", e ∈ acc do txt + e /for (txt))
  else codes0
@@ -99,22 +89,18 @@ else
   /p Export $(type) (i:int) $(type)
   /p Export type:$(type)
   /p $(pretty."Function = (a:$(type), b:$(type)) boolean toint.a = toint.b")" /if
-+ for acc = ""
-, list = "let discard = ["
-, i ∈ arithseq(length.codes, 1, 1)
-do
++ for acc = "", list = "let discard = [", i ∈ arithseq(length.codes, 1, 1) do
  if codes_i = "?"_1 then next(acc, list)
  else
-  next(acc + "/p Function" + codes_i + type + type + "."
-  + toword (i - 1)
+  next(acc + "/p Function" + codes_i + type + type + "." + toword(i - 1)
   , list + codes_i + ","
   )
 /for (
  acc + "/p"
- + pretty ("Function $(if isempty.decodename then "decode" else decodename) (code:
-  $(type)) seq.word $(list >> 1)] let i = toint.code if between (i+1, 1,"
+ + pretty("Function $(if isempty.decodename then "decode" else decodename) (code:$(type)) seq.word
+  $(list >> 1)] let i = toint.code if between (i+1, 1,"
  + toword.length.codes
  + ") then let r = [$(dq.codes)_(i+1)]"
- + "if r ≠ $(dq."?") then r else $(dq (type + "."))+toword.i else
-  $(dq (type + "."))+toword.i")
+ + "if r ≠ $(dq."?") then r else $(dq(type + "."))+toword.i else $(dq(type + "
+  ."))+toword.i")
  + "/p") 

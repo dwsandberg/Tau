@@ -26,7 +26,8 @@ type returntype is a:int, b:int, c:seq.word
 
 function testprocess3 returntype returntype(4, 40, "a test")
 
-function isprefix(prefix:seq.word, s:seq.word) boolean subseq(s, 1, length.prefix) = prefix
+function isprefix(prefix:seq.word, s:seq.word) boolean
+subseq(s, 1, length.prefix) = prefix
 
 function testout(i:int) seq.word ["one two three"_i]
 
@@ -53,13 +54,12 @@ check([print(3, sqrt.2.0) = "1.414"
 , (1.0 >1 2.0) = LT
 , (-1.9 >1 -3.0) = GT
 , (3.00 >1 3.000) = EQ
-, print(5, tan (pi / 4.0)) = "1.00000"
+, print(5, tan(pi / 4.0)) = "1.00000"
 , print(5, arcsin.sin.0.5) = "0.50000"
 , print(5, arccos.cos.0.5) = "0.50000"
 , print(3, for acc = 0.0, @e ∈ [8, 9, 10, 11] do acc + toreal.@e /for (acc))
 = "38.000"
-, "23.45000-18.45000"
-= print(5, 23.45) + print(5, 5.0 - 23.45)
+, "23.45000-18.45000" = print(5, 23.45) + print(5, 5.0 - 23.45)
 ,-2^4 = -16
 , alphasort."function segment s seq int i seq word addcomma toword merge C 1 toword"
 = "1 C addcomma function i int merge s segment seq seq toword toword word"
@@ -87,8 +87,8 @@ let y =
  , result.process.intpart.3.1 = 3
  , result.process.square.4 = 16.0
  , result.process.print(3, 3.0) = "3.000"
- , result.process (3 * 4.0) = 12.0
- , result.process (12.0 / 3) = 4.0
+ , result.process(3 * 4.0) = 12.0
+ , result.process(12.0 / 3) = 4.0
  , result.process.testout.3 = "three"
  , result.process.isprefix("red", z)
  , result.process.redgreen = redgreen
@@ -133,7 +133,7 @@ _________________
 Function randomtest(samplesize:int) seq.word
 let r = 
  sort.for acc = empty:seq.int, i ∈ randomint.samplesize do
-  for acc2 = acc, j ∈ arithseq(16, 4, 0) do acc2 + (toint (tobits.i >> j ∧ 0xF) + 4 * j) /for (acc2)
+  for acc2 = acc, j ∈ arithseq(16, 4, 0) do acc2 + (toint(tobits.i >> j ∧ 0xF) + 4 * j) /for (acc2)
  /for (acc)
 for acc = empty:seq.int, last = -1, count = -1, sum = 0, t ∈ r do
  if last ≠ t ∧ count > 0 then next(acc + count * 256, t, 1, sum + count)
@@ -141,10 +141,10 @@ for acc = empty:seq.int, last = -1, count = -1, sum = 0, t ∈ r do
 /for (
  let mean = toreal.sum / 256.0
  for sqs = 0.0, x ∈ acc do
-  let cnt = toreal (x / 256)
+  let cnt = toreal(x / 256)
   sqs + (cnt - mean)^2
  /for (
-  let stddev = sqrt (sqs / 256.0)
+  let stddev = sqrt(sqs / 256.0)
   if mean / stddev > 5.4 then "PASS" else "FAIL" /if
   + print(3, toreal.samplesize * 16.0 / 256.0)
   + "mean"

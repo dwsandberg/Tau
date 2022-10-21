@@ -32,8 +32,7 @@ function abstractarcs(s:seq.symdef) seq.arc.symbol
 for outer = empty:seq.arc.symbol, p ∈ s do
  let sym = sym.p
  for arcs = outer, codesym ∈ code.p do
-  if isspecial.codesym ∨ not.isabstract.module.codesym ∨ sym = codesym
-  ∨ isBuiltin.codesym then
+  if isspecial.codesym ∨ not.isabstract.module.codesym ∨ sym = codesym ∨ isBuiltin.codesym then
    arcs
   else if inModFor.codesym then
    if name.codesym ∈ "name for" then arcs
@@ -73,16 +72,14 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
   if first.symsrc ∈ "Builtin builtin" then
    if issimple.module.sym.p then
     acc
-    + symdef(sym.p, addcommentoptions(symsrc, empty:seq.symbol), paragraphno.p)
+    + symdef(sym.p, addcommentoptions(symsrc, nopara.sym.p, empty:seq.symbol), paragraphno.p)
    else
     let sym = sym.p
     acc
     + symdef(sym.p
     , for code = empty:seq.symbol, @e ∈ arithseq(nopara.sym.p, 1, 1) do code + Local.@e /for (code)
-    + [if issimplename.sym then
-     symbol(builtinmod.typeT, [wordname.sym], paratypes.sym, resulttype.sym)
-    else
-     symbol4(builtinmod.typeT, wordname.sym, (nametype.sym)_1, paratypes.sym, resulttype.sym)
+    + [if issimplename.sym then symbol(builtinmod.typeT, [wordname.sym], paratypes.sym, resulttype.sym)
+    else symbol4(builtinmod.typeT, wordname.sym, (nametype.sym)_1, paratypes.sym, resulttype.sym)
     ]
     , 0
     )
@@ -90,7 +87,7 @@ for prg = empty:seq.symdef, m ∈ toseq.modlist do
   else
    assert first.symsrc ∈ "Function function" report symsrc
    let b = parse(symsrc, partdict, z)
-   acc + symdef(sym.p, addcommentoptions(symsrc, code.b), paragraphno.p)
+   acc + symdef(sym.p, addcommentoptions(symsrc, nopara.sym.p, code.b), paragraphno.p)
  /for (prg + acc)
 /for (prg)
 
@@ -99,39 +96,36 @@ for prg = prgin, m ∈ toseq.modlist do
  for acc = prg, p ∈ srclink.m do
   let symsrc = src_(paragraphno.p)
   if first.symsrc ∈ "Export" then
-   symdef(sym.p, addcommentoptions(symsrc, getCode(acc, sym.p)), paragraphno.p)
+   symdef(sym.p, addcommentoptions(symsrc, nopara.sym.p, getCode(acc, sym.p)), paragraphno.p)
    ∪ acc
   else acc
  /for (acc)
 /for (prg)
 
-function addcommentoptions(s:seq.word, code:seq.symbol) seq.symbol
-let a = getheader.s
-if subseq(s, length.a, length.a + 1) = "{OPTION" then
- for acc = "", w ∈ subseq(s, length.a + 2, length.s)
+function addcommentoptions(s:seq.word, nopara:int, code:seq.symbol) seq.symbol
+let s0 = s << if nopara = 0 then 0 else findindex(s, ")"_1)
+let s1 = s0 << findindex(s0, "{"_1)
+if isempty.s1 ∨ first.s1 ∉ "OPTION" then code
+else
+ for acc = "", w ∈ s1
  while w ∉ "{}"
  do
   if w ∈ "PROFILE STATE COMPILETIME NOINLINE INLINE" then acc + w else acc
- /for (if isempty.s then code else addoption(code, acc))
-else code
+ /for (if isempty.acc then code else addoption(code, acc))
 
 Function buildrequires(prg:seq.symdef) set.symdef
 let g3 = newgraph.abstractarcs.prg
 {graph g3 has three kinds of sinks.
  /br 1:is unbound and module parameter is T
  /br 2:is not unbound and module parameter is T
- /br 3:module parameter is not T examples:otherseq.T:= (T, T) boolean ; otherseq.T:step
- (arithmeticseq.T) T ; otherseq.sparseele.T:binarysearch (seq.sparseele.T)}
+ /br 3:module parameter is not T examples:otherseq.T:= (T, T) boolean ; otherseq.T:step (arithmeticseq.T
+ ) T ; otherseq.sparseele.T:binarysearch (seq.sparseele.T)}
 let sinks = asset.sinks.g3
 let g4 = newgraph.removesinks(empty:set.symbol, g3, toseq.sinks)
 {change many-to-one relation defined by arcs in g4 into format of set.symdef}
 if isempty.arcs.g4 then empty:set.symdef
 else
- for acc = empty:set.symdef
- , last = Lit.0
- , list = empty:seq.symbol
- , a ∈ toseq.arcs.g4
- do
+ for acc = empty:set.symdef, last = Lit.0, list = empty:seq.symbol, a ∈ toseq.arcs.g4 do
   let list0 = if last ≠ tail.a then empty:seq.symbol else list
   let newlist = if isunbound.head.a then list0 + head.a else list0
   let newacc = 

@@ -16,8 +16,8 @@ let a = randomseq(seed, 6)
 + nouns_(a_5 mod 140 + 1)
 
 Function verbs seq.word
-"adds binds calls destroys eats fences golfs hates illustrates jumps kisses odorizes mangles nets
- owes plays quits registers sails takes undresses votes walks xeroxes yanks zeros ambles blows bends bombs
+"adds binds calls destroys eats fences golfs hates illustrates jumps kisses odorizes mangles nets owes
+ plays quits registers sails takes undresses votes walks xeroxes yanks zeros ambles blows bends bombs
  battles brushes bubbles empties agitates aids censors circles chews dangles combs climbs dumps cycles
  dwindles cracks eclipses edges cuts effaces enriches zones ejects elects dips drinks dyes fights frees
  foils flies grows heats hobbles fails ignores aligns infects idles guards fuels imagines gains generates

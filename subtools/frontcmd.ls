@@ -28,16 +28,8 @@ use seq.symdef
 
 use set.symdef
 
-Function front(input:seq.file
-, o:seq.word
-, pass:seq.word
-, n:seq.word
-, ~n:seq.word
-, mods:seq.word
-, ~mods:seq.word
-, within:boolean
-, out:seq.word
-) seq.file
+Function front(input:seq.file, o:seq.word, pass:seq.word, n:seq.word, ~n:seq.word
+, mods:seq.word, ~mods:seq.word, within:boolean, out:seq.word) seq.file
 let names = n
 let cf = compilerFront:callconfig(if isempty.pass then "pass2" else pass, input)
 let prg = prg.cf
@@ -57,23 +49,21 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
   else if out = "symdef" then
    for txt = "", sd1 ∈ selected do txt + "/p" + %.sym.sd1 + %.code.sd1 /for (txt)
   else if out = "symdefgraph" then
-   for txt = "", sd1 ∈ selected do
-    txt + "/p" + %.sym.sd1 + {print} tograph.code.sd1
-   /for (txt)
+   for txt = "", sd1 ∈ selected do txt + "/p" + %.sym.sd1 + {print} tograph.code.sd1 /for (txt)
   else if out = "baseTypeCheck" then baseTypeCheck(toseq.prg, typedict.cf)
   else if out = "resultCheck" then checkresults.toseq.prg
   else
    let syms = for acc = empty:set.symbol, sd5 ∈ selected do acc + sym.sd5 /for (acc)
    let g = 
     for acc = empty:seq.arc.symbol, sd1 ∈ selected do
-     for acc2 = acc, h ∈ toseq (asset.code.sd1 ∩ syms) do
+     for acc2 = acc, h ∈ toseq(asset.code.sd1 ∩ syms) do
       if sym.sd1 = h ∨ not.within ∧ module.sym.sd1 = module.h then acc2
       else acc2 + arc(sym.sd1, h)
      /for (acc2)
     /for (newgraph.acc)
    let g2 = 
     if out ∈ ["calls", "calledby"] then
-     assert not.isempty (nodes.g ∩ asset.root)
+     assert not.isempty(nodes.g ∩ asset.root)
      report "no intersection between symbols in option n and call graph"
      subgraph(g, reachable(if out = "calledby" then complement.g else g, root))
     else g
@@ -86,11 +76,11 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
 the compiler.
 
 * One use is to figure out what functions are used between modules. The usegraph of the core functions
-indicates there are dependences between the modules texio, file and bits.To see the dependences use
-/fmt block front+built stdlib.libsrc mods = textio file bits format /end A graph will be display
-with the dependences between the modules. The nodes in the graph are the procedure names. Since a
-name does not uniquely identify a function hovering over the beginning of the name will pop up a more
-complete discription beginning with the name of the function. 
+indicates there are dependences between the modules texio, file and bits.To see the dependences use /fmt
+block front+built stdlib.libsrc mods = textio file bits format /end A graph will be display with the
+dependences between the modules. The nodes in the graph are the procedure names. Since a name does
+not uniquely identify a function hovering over the beginning of the name will pop up a more complete
+discription beginning with the name of the function. 
 
 * The dependence on the module bits will not be displayed. If an earilier pass of the compiler is specified
 like this /fmt block front  +built stdlib.libsrc mods = textio file bits format pass = text /end

@@ -63,7 +63,6 @@ Export passsymbols(modname:modref
 , text:seq.symdef
 ) passsymbols
 
-
 Export type:prg6
 
 Export abstract(prg6) seq.passsymbols
@@ -76,7 +75,7 @@ Export simple(prg6) seq.passsymbols
 
 Export types(prg6) seq.seq.mytype
 
-Export type:symdef{From symbol}
+Export type:symdef {From symbol}
 
 Export code(symdef) seq.symbol {From symbol}
 
@@ -113,8 +112,7 @@ do
   )
  else if first.input ∈ "Module module" then
   let x = findpasstypes(passtypes, lib, input)
-  let z = 
-   commoninfo(input, modname.x_1, lib, formtypedict(passtypes, x_1), "symbol"_1)
+  let z = commoninfo(input, modname.x_1, lib, formtypedict(passtypes, x_1), "symbol"_1)
   assert not.isempty.x report "did not find $(input)"
   let lastpass = 
    resolve(empty:set.passsymbols
@@ -133,10 +131,17 @@ do
   , typearcs
   )
  else if first.input ∈ "Function function Builtin builtin Export unbound" then
+  let input0 = 
+   if subseq(input, 1, 3) = "Export type:" then
+    let x1 = findindex(input, "{"_1)
+    let xtype = if x1 > length.input then input << 3 else subseq(input, 4, x1 - 1)
+    "Export type:$(xtype) ($(xtype)) $(xtype)"
+   else input
   let b = 
-   parse.symboldict(empty:set.symbol
-   , [commoninfo(getheader.input, modname.common, lib.common, types.common, "symbol"_1)
-   ]
+   parse(symboldict(empty:set.symbol
+   , [commoninfo(input0, modname.common, lib.common, types.common, "symbol"_1)]
+   )
+   , true
    )
   let modname = 
    if first.input ∈ "Builtin builtin" then
@@ -157,7 +162,7 @@ do
     )
   assert checkwellformed.sym
   report "Must use type T in function name or parameters in parameterized module and T cannot be used in non
-   -parameterized module $(getheader.input)"
+   -parameterized module $(input)"
   if first.input = "unbound"_1 then
    next(typeflds
    , paragraphno + 1
@@ -199,9 +204,11 @@ do
    )
  else if first.input ∈ "type" then
   let b = 
-   parse.symboldict(empty:set.symbol
+   parse(symboldict(empty:set.symbol
    , [commoninfo(input, modname.common, lib.common, types.common + typeseqdec, "symbol"_1)
    ]
+   )
+   , false
    )
   let typs = types.b
   let typesym = {deepcopy is used to represent type} deepcopySym.first.typs
@@ -239,10 +246,7 @@ do
   , allsrc
   )
  let allmods = resolveexports(modlist + lastpass, 100000, allsrc)
- for abstract = empty:seq.passsymbols
- , simple = empty:seq.passsymbols
- , m2 ∈ toseq.allmods
- do
+ for abstract = empty:seq.passsymbols, simple = empty:seq.passsymbols, m2 ∈ toseq.allmods do
   if isabstract.modname.m2 then next(abstract + m2, simple)
   else next(abstract, simple + m2)
  /for (prg6(asset.typearcs, allmods, typeflds, simple, abstract)))
@@ -362,8 +366,7 @@ else
 function resolve(all:set.passsymbols, p:passsymbols, allsrc:seq.seq.word) passsymbols
 if isempty.unresolvedexports.p then p
 else
- let z = 
-  commoninfo("", internalmod, "?"_1, empty:set.mytype, "symbol"_1)
+ let z = commoninfo("", internalmod, "?"_1, empty:set.mytype, "symbol"_1)
  let r = formsymboldict(all, p, empty:set.symdef, "symbol"_1)
  let dict = symboldict(syms.r, req.r, [z])
  for exports = exports.p
@@ -375,8 +378,7 @@ else
   if checkreturntype(b, t2) then
    next(exports + b_1, unresolved, findindex(t2, newtext, b_1, allsrc))
   else next(exports, unresolved + t2, newtext)
- /for (
-  passsymbols(modname.p, uses.p, defines.p, exports, unresolved, typedict.p, newtext))
+ /for (passsymbols(modname.p, uses.p, defines.p, exports, unresolved, typedict.p, newtext))
 
 function checkreturntype(b:set.symbol, t2:symbol) boolean
 if cardinality.b = 1 then
@@ -397,22 +399,16 @@ else
 
 function printunresolved(p:passsymbols) seq.word
 let txt = for acc = "", t ∈ toseq.unresolvedexports.p do acc + %.t /for (acc)
-if isempty.txt then ""
-else "module $(modname.p) contains unresolved exports:$(txt) /br"
+if isempty.txt then "" else "module $(modname.p) contains unresolved exports:$(txt) /br"
 
 Function parse(input:seq.word, p:partdict, c:commoninfo) bindinfo
-parse.symboldict(syms.p
-, req.p
-, [commoninfo(input, modname.c, lib.c, types.c, mode.c)]
+parse(symboldict(syms.p, req.p, [commoninfo(input, modname.c, lib.c, types.c, mode.c)])
+, false
 )
 
 Function formsymboldict(modset:set.passsymbols, this:passsymbols, requireUnbound:set.symdef, mode:word) partdict
 {bug here should not need i = 0 in forloop}
-for syms = defines.this
-, requires = empty:set.symdef
-, i = 0
-, u ∈ toseq.uses.this
-do
+for syms = defines.this, requires = empty:set.symdef, i = 0, u ∈ toseq.uses.this do
  let a = lookup(modset, passsymbols.abstractmod.u)
  if isempty.a then
   assert mode ∉ "body" report "Cannot find module" + name.u
@@ -439,16 +435,14 @@ type partdict is syms:set.symbol, req:set.symdef
 Function findabstract(templates:set.symdef, sym:symbol) seq.findabstractresult
 for acc = empty:seq.findabstractresult, sd ∈ toseq.templates do
  let e = sym.sd
- if name.e = name.sym ∧ length.types.e = length.types.sym
- ∧ para.module.e = typeT then
+ if name.e = name.sym ∧ length.types.e = length.types.sym ∧ para.module.e = typeT then
   let z = 
    for Tis = type?, idx = 1, t ∈ types.e do
     let S = solveT(t, (types.sym)_idx)
     if S = type? then next(Tis, idx + 1) else next(S, idx + 1)
    /for (Tis)
   if (sym >2 replaceTsymbol(z, e)) = EQ then
-   if (sym >1 e) = EQ ∨ isunbound.e then acc
-   else acc + findabstractresult(sd, z)
+   if (sym >1 e) = EQ ∨ isunbound.e then acc else acc + findabstractresult(sd, z)
   else acc
  else acc
 /for (acc)
@@ -473,14 +467,8 @@ type passsymbols is modname:modref
 
 
 Function passsymbols(modname:modref) passsymbols
-passsymbols(modname
-, empty:set.modref
-, empty:set.symbol
-, empty:set.symbol
-, empty:set.symbol
-, empty:set.mytype
-, empty:seq.symdef
-)
+passsymbols(modname, empty:set.modref, empty:set.symbol, empty:set.symbol, empty:set.symbol
+, empty:set.mytype, empty:seq.symdef)
 
 Function >1(a:passsymbols, b:passsymbols) ordering module.a >1 module.b
 

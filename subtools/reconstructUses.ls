@@ -54,8 +54,7 @@ let exporttypes =
  for acc = empty:seq.mytype, sym ∈ exports do acc + types.sym + resulttype.sym /for (acc)
 let usestypes = 
  for acc = exporttypes, sd ∈ toseq.prg do
-  if module.sym.sd = modname then acc + types.sym.sd + resulttype.sym.sd
-  else acc
+  if module.sym.sd = modname then acc + types.sym.sd + resulttype.sym.sd else acc
  /for (removeseq.acc \ asset.[typereal, typeint, typeT])
 for acc = empty:seq.symbol, t ∈ toseq.usestypes do
  let m2 = tomodref.t
@@ -74,12 +73,7 @@ else sym
 Function builtintoseq(syms:seq.symbol) seq.symbol
 for acc = empty:seq.symbol, sym ∈ syms do acc + builtintoseq.sym /for (acc)
 
-Function reconstruceUses(m:midpoint
-, modname:word
-, dict:set.symbol
-, exported:set.sym/modref
-, olduses:seq.seq.word
-) set.modref
+Function reconstruceUses(m:midpoint, modname:word, dict:set.symbol, exported:set.sym/modref, olduses:seq.seq.word) set.modref
 let md = 
  for acc = first.libmods.m, md ∈ libmods.m do if name.modname.md = modname then md else acc /for (acc)
 let exports = builtintoseq.exports.md
@@ -88,15 +82,11 @@ let uses5 =
  for uses = exports, symlist = exports, sd ∈ toseq.prg.m do
   if module.sym.sd = modname.md then next(uses + code.sd, symlist + sym.sd)
   else next(uses, symlist)
- /for (asset (uses + addtypes(symlist, modname.md, prg.m)))
+ /for (asset(uses + addtypes(symlist, modname.md, prg.m)))
 {find symbols referenced in expanding templates}
 let uses6 = uses5 ∪ requires(uses5, templates.m, dict, false)
-for acc2 = empty:set.modref
-, multiple = empty:seq.seq.modref
-, symx ∈ toseq.uses6
-do
- if isconstantorspecial.symx ∨ name.module.symx ∈ "$for"
- ∨ module.symx = modname.md
+for acc2 = empty:set.modref, multiple = empty:seq.seq.modref, symx ∈ toseq.uses6 do
+ if isconstantorspecial.symx ∨ name.module.symx ∈ "$for" ∨ module.symx = modname.md
  ∨ isunbound.symx then
   next(acc2, multiple)
  else
@@ -108,8 +98,7 @@ do
     if in.e = modname.md then acc else acc + in.e
    /for (if name.module.sym ∈ "internal builtin" then acc else acc + module.sym)
   assert first."internal" ∉ %.inmod
-  report "internal $(sym) $(inmod)
-   /p $(toseq.findelement2(exported, sym/modref(sym, modname.md)))"
+  report "internal $(sym) $(inmod) /p $(toseq.findelement2(exported, sym/modref(sym, modname.md)))"
   if isempty.inmod then next(acc2, multiple)
   else if length.inmod = 1 then next(acc2 + first.inmod, multiple)
   else next(acc2, multiple + inmod)
@@ -124,10 +113,8 @@ do
     if d ∈ uses5 ∨ tomodref.t = modname.md ∨ t ∈ [typeint, typeT] then txt
     else
      let inmod = 
-      for acc = empty:seq.modref
-      , e ∈ toseq.findelement2(exported, sym/modref(d, modname.md))
-      do acc + in.e /for (acc)
-     if isempty (asset.inmod ∩ xxx) ∧ not.isempty.inmod then txt + inmod else txt
+      for acc = empty:seq.modref, e ∈ toseq.findelement2(exported, sym/modref(d, modname.md)) do acc + in.e /for (acc)
+     if isempty(asset.inmod ∩ xxx) ∧ not.isempty.inmod then txt + inmod else txt
   /for (txt)
  let xxx2 = if length.hh = 1 ∧ length.hh_1 = 1 then xxx + hh_1_1 else xxx
  for acc3 = xxx2, ref2 ∈ toseq.xxx2 do
@@ -137,23 +124,17 @@ do
 
 Function requires(uses5:set.symbol, templates:set.symdef, dict:set.symbol, addtemplate:boolean) set.symbol
 for acc = empty:seq.symbol, sym ∈ toseq.uses5 do
- if isconstantorspecial.sym ∨ name.module.sym ∈ "$for internal"
- ∨ issimple.module.sym then
+ if isconstantorspecial.sym ∨ name.module.sym ∈ "$for internal" ∨ issimple.module.sym then
   acc
  else
   for acc2 = empty:seq.symbol, sd ∈ toseq.templates do
    if replaceTsymbol(para.module.sym, sym.sd) = sym then
-    if addtemplate then acc2 + sym.sd else acc2 /if
-    + replaceT(para.module.sym, code.sd, dict)
+    if addtemplate then acc2 + sym.sd else acc2 /if + replaceT(para.module.sym, code.sd, dict)
    else acc2
   /for (acc + acc2)
 /for (asset.acc)
 
-function check(uses:set.modref
-, md:modExports
-, multiple:set.seq.modref
-, olduses:seq.seq.word
-) set.modref
+function check(uses:set.modref, md:modExports, multiple:set.seq.modref, olduses:seq.seq.word) set.modref
 let newuses = 
  for newuses = uses, e ∈ toseq.multiple do
   if cardinality.asset.e = 1 then newuses + first.e else newuses
@@ -172,15 +153,14 @@ function filter2(s:set.modref, a:set.seq.modref) set.seq.modref
 for acc = empty:set.seq.modref, uses = s, e ∈ toseq.a do
  let e2 = asset.e
  if cardinality.e2 = 1 then next(acc, uses + e2_1)
- else if isempty (uses ∩ e2) then next(acc + toseq.e2, uses)
- else next(acc, uses)
+ else if isempty(uses ∩ e2) then next(acc + toseq.e2, uses) else next(acc, uses)
 /for (
  for acc2 = empty:seq.modref, x ∈ toseq.acc do
   let t = uses ∩ asset.x
   if not.isempty.t then acc2 + t_1
   else for acc3 = acc2, m ∈ x do acc3 + m /for (acc3)
  /for (
-  for acc4 = acc, mr ∈ toseq (uses ∪ asset.maxcover.acc2 \ s) do acc + [mr] /for (acc4)))
+  for acc4 = acc, mr ∈ toseq(uses ∪ asset.maxcover.acc2 \ s) do acc + [mr] /for (acc4)))
 
 function maxcover(x:seq.modref) seq.modref
 if isempty.x then empty:seq.modref
@@ -206,13 +186,13 @@ Function includecomment(modtext:seq.word) int
 let i = findindex(modtext, first."/p")
 if subseq(modtext, i + 1, i + 1) = "*"
 ∨ subseq(modtext, i + 1, i + 2) ∈ ["/keyword uses"] then
- i + includecomment (modtext << i)
+ i + includecomment(modtext << i)
 else if subseq(modtext, i + 1, i + 2)
 ∈ ["/keyword Function", "/keyword type", "/keyword function"]
 ∨ subseq(modtext, i + 1, i + 1)
 ∈ ["Export", "unbound", "Builtin", "builtin"] then
  i
-else i + includecomment (modtext << i)
+else i + includecomment(modtext << i)
 
 function replaceT(with:mytype, a:seq.symbol, dict:set.symbol) seq.symbol
 for acc = empty:seq.symbol, sym ∈ a do

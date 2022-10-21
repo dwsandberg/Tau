@@ -18,7 +18,7 @@ Function -(a:point.T, b:point.T)point.T point(x.a - x.b, y.a - y.b, z.a - z.b)
 
 Function =(a:point.T, b:point.T)boolean x.a = x.b ∧ y.a = y.b ∧ z.a = z.b
 
-Export y(a:point.T)T export
+Export y(a:point.T)T
 
 Export x(a:point.T)T
 

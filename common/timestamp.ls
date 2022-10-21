@@ -36,7 +36,7 @@ let amonth = if month > 2 then month else month + 12 /if
 
 Function dayofyear(t:timestamp) int
 toint.t / (24 * 60 * 60)
-- tojulian((fromJuliantointseq (toint.t / (24 * 60 * 60)))_1, 1, 1)
+- tojulian((fromJuliantointseq(toint.t / (24 * 60 * 60)))_1, 1, 1)
 + 1
 
 Function fromJuliantointseq(dt:int) seq.int
@@ -57,10 +57,10 @@ let hour = intlit.subseq(t, 12, 13)
 let minutes = intlit.subseq(t, 15, 16)
 let second = intlit.subseq(t, 18, 19)
 let date = tojulian(year, month, day)
-timestamp (((date * 24 + hour) * 60 + minutes) * 60 + second)
+timestamp(((date * 24 + hour) * 60 + minutes) * 60 + second)
 
 Function totimestamp(year:int, month:int, day:int, hour:int, minute:int, second:int) timestamp
-timestamp (((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second)
+timestamp(((tojulian(year, month, day) * 24 + hour) * 60 + minute) * 60 + second)
 
 Function decompose(ts:timestamp) seq.int
 {returns sequence of year, month, day, hour, minute, second}
@@ -69,7 +69,7 @@ let a = t mod (24 * 60 * 60)
 let seconds = a mod 60
 let minutes = a / 60 mod 60
 let hours = a / 3600
-fromJuliantointseq (t / (24 * 60 * 60)) + [hours, minutes, seconds]
+fromJuliantointseq(t / (24 * 60 * 60)) + [hours, minutes, seconds]
 
 Function print(ts:timestamp) seq.word
 let d = decompose.ts

@@ -56,8 +56,7 @@ Function formatTypeDef(defs0:seq.seq.mytype) seq.seq.int
 let defs = fix5.defs0
 for acc = empty:seq.seq.int, def ∈ defs do
  if isseq.first.def then
-  let idx = 
-   for idx = 1, d ∈ defs while first.d ≠ parameter.first.def do idx + 1 /for (idx)
+  let idx = for idx = 1, d ∈ defs while first.d ≠ parameter.first.def do idx + 1 /for (idx)
   acc + [-idx]
  else
   for coded = empty:seq.int, t0 ∈ def << 1 do
@@ -84,8 +83,7 @@ close.if isempty.singlerow then a
 else
  {remove types not represented by a record}
  for result = empty:seq.seq.mytype, row2 ∈ a do
-  result
-  + for acc = [first.row2], t ∈ row2 << 1 do acc + sub(t, singlerow) /for (acc)
+  result + for acc = [first.row2], t ∈ row2 << 1 do acc + sub(t, singlerow) /for (acc)
  /for (
   for acc = empty:seq.seq.mytype, row ∈ result do
    if length.row = 2 ∧ not.isseq.row_1 then acc else acc + row
@@ -104,16 +102,14 @@ for defs = empty:seq.mytype, used = empty:seq.mytype, def ∈ x do
   /for (acc)
  )
 /for (
- let newdefs = toseq (asset.used \ asset.defs)
+ let newdefs = toseq(asset.used \ asset.defs)
  if isempty.newdefs then x
- else
-  close.for acc = x, new ∈ toseq (asset.used \ asset.defs) do acc + [new] /for (acc))
+ else close.for acc = x, new ∈ toseq(asset.used \ asset.defs) do acc + [new] /for (acc))
 
 function sub(t:mytype, singlerow:seq.seq.mytype) mytype
 if t ∈ [typeint, typeword, typereal] then t
 else if isseq.t then seqof.sub(parameter.t, singlerow)
-else
- for acc = t, row ∈ singlerow do if t = first.row then last.row else acc /for (acc)
+else for acc = t, row ∈ singlerow do if t = first.row then last.row else acc /for (acc)
 
 Function outrec(inobj:ptr, allpatterns:seq.seq.int) seq.seq.int
 allpatterns + [-1] + outrec(empty:seq.seq.int, inobj, allpatterns,-1)
@@ -142,12 +138,7 @@ if patternidx < 0 ∨ length.pattern = 1 ∧ first.pattern < 0 then
  t
 else hjk(pattern, [buildrecord, patternidx], finished0, inobj, allpatterns)
 
-function hjk(fldtypes:seq.int
-, start:seq.int
-, finished0:seq.seq.int
-, obj:ptr
-, allpatterns:seq.seq.int
-) seq.seq.int
+function hjk(fldtypes:seq.int, start:seq.int, finished0:seq.seq.int, obj:ptr, allpatterns:seq.seq.int) seq.seq.int
 for acc = start
 , idx = if first.start = buildseq then 2 else 0
 , stkcount = 0
@@ -205,8 +196,7 @@ do
  if first.rec = buildword then
   {add word entry to map}
   next(stk
-  , map
-  + hash.encodeword.for acc = empty:seq.char, i ∈ rec << 1 do acc + char.i /for (acc)
+  , map + hash.encodeword.for acc = empty:seq.char, i ∈ rec << 1 do acc + char.i /for (acc)
   )
  else
   let newstk = 
@@ -221,7 +211,7 @@ do
     let myblksz = 
      if length.fldtypes + 3 ≤ blksize then blksize
      else blksize / packedsize * packedsize
-    let obj = allocatespace (min(length.fldtypes, myblksz) + 2)
+    let obj = allocatespace(min(length.fldtypes, myblksz) + 2)
     for p = set(set(obj, if packedsize = 1 then 0 else 1)
     , min(seqlen, myblksz / packedsize)
     )
@@ -234,13 +224,11 @@ do
       if i - 4 = myblksz * (length.objs + 1) then
        min(length.fldtypes - myblksz * (length.objs + 1), myblksz)
       else 0
-     let newobjs = if newblksize = 0 then objs else objs + allocatespace (newblksize + 2)
+     let newobjs = if newblksize = 0 then objs else objs + allocatespace(newblksize + 2)
      let newp = 
       if newblksize = 0 then p
       else
-       set(set(last.newobjs, if packedsize = 1 then 0 else 1)
-       , newblksize / packedsize
-       )
+       set(set(last.newobjs, if packedsize = 1 then 0 else 1), newblksize / packedsize)
      let val = rec_i
      if typ ∈ [int0, real0] then next(set(newp, val), i + 1, m, newobjs)
      else if val > 0 then next(set(newp, map_val), i + 1, m, newobjs)
@@ -267,10 +255,7 @@ do
      if typ ∈ [int0, real0] then next(set(p, val), i + 1, m)
      else if val > 0 then next(set(p, map_val), i + 1, m)
      else
-      next(set(p, undertop(stk,-val - 1))
-      , i + 1
-      , if val < m then val else m
-      )
+      next(set(p, undertop(stk,-val - 1)), i + 1, if val < m then val else m)
     /for (push(pop(stk,-m), obj))
   if first.rec ∈ [buildtblseq, buildtblrecord] then
    next(pop.newstk, map + bitcast:int(top.newstk))
@@ -296,17 +281,15 @@ for all = empty:seq.byte, rec ∈ data do
   j ≥ 0
  /for (
   if pos then
-   for acc = empty:seq.byte, i ∈ rec do acc + LEBu.i /for (LEBu (length.acc * 2) + acc)
+   for acc = empty:seq.byte, i ∈ rec do acc + LEBu.i /for (LEBu(length.acc * 2) + acc)
   else
-   for acc = empty:seq.byte, i ∈ rec do acc + LEBs.i /for (LEBu (length.acc * 2 + 1) + acc))
+   for acc = empty:seq.byte, i ∈ rec do acc + LEBs.i /for (LEBu(length.acc * 2 + 1) + acc))
 /for (LEBu.length.all + all)
 
 Function decode2(b:seq.byte) seq.seq.int
 let len = decodeLEBu(b, 1)
 let end = next.len + value.len
-for all = empty:seq.seq.int
-, next = next.len
-, t ∈ constantseq(value.len, 0)
+for all = empty:seq.seq.int, next = next.len, t ∈ constantseq(value.len, 0)
 while next < end
 do
  let r = decodeLEBu(b, next)

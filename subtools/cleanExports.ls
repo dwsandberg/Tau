@@ -22,11 +22,9 @@ type myExport is modname:word, sym:symbol, key:seq.word, org:seq.word, paragraph
 
 function %(e:myExport) seq.word
 [modname.e] + key.e + keyx.sym.e
-+ if name.module.sym.e ≠ modname.e
-∧ first.%.module.sym.e ∉ "builtin internal" then
++ if name.module.sym.e ≠ modname.e ∧ first.%.module.sym.e ∉ "builtin internal" then
  let b = "{From $(module.sym.e)}"
- if subseq(org.e, length.org.e - length.b + 1, length.org.e) = b then
-  org.e
+ if subseq(org.e, length.org.e - length.b + 1, length.org.e) = b then org.e
  else org.e + b
 else org.e
 
@@ -48,8 +46,7 @@ modname.a >1 modname.b ∧ key.a >1 key.b ∧ keyx.sym.a >1 keyx.sym.a
 
 function keyx(s:symbol) seq.word
 if nopara.s = 1 then
- [merge.%.first.paratypes.s]
- + if name.s ∈ "type" then "a" else "b"
+ [merge.%.first.paratypes.s] + if name.s ∈ "type" then "a" else "b"
 else if name.s = first.%.resulttype.s then [merge.%.resulttype.s] + "c"
 else "zzzz d"
 
@@ -59,11 +56,9 @@ Function newtext(a:set.myExport, pno:int, modname:word) seq.word
 let t = findelement2(a, myExport(modname, Lit.0, "", "", 0))
 for acc = "", e ∈ toseq.t do
  if paragraphno.e = pno then
-  if name.module.sym.e ≠ modname.e
-  ∧ first.%.module.sym.e ∉ "builtin internal" then
+  if name.module.sym.e ≠ modname.e ∧ first.%.module.sym.e ∉ "builtin internal" then
    let b = "{From $(module.sym.e)}"
-   if subseq(org.e, length.org.e - length.b + 1, length.org.e) = b then
-    acc + org.e
+   if subseq(org.e, length.org.e - length.b + 1, length.org.e) = b then acc + org.e
    else acc + org.e + b
   else acc + org.e
  else acc
@@ -94,8 +89,7 @@ do
     else
      for acc2 = acc, sym ∈ exports.m1 do
       let t = getSymdef(prg.m, sym)
-      if isempty.t ∨ paragraphno.t_1 = 0 ∨ name.module.sym ≠ newname then
-       acc2 + sym
+      if isempty.t ∨ paragraphno.t_1 = 0 ∨ name.module.sym ≠ newname then acc2 + sym
       else acc2
      /for (acc2)
    /for (acc)

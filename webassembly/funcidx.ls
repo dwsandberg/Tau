@@ -87,10 +87,11 @@ else
   acc + ")"
   + if (val.w)_(nopara + 3) = tobyte.1 then %.wtype.last.val.w else "void")
 
-Function printtypeidx(i:int) seq.word %.decode.to:encoding.wtype(i + 1) + "(idx:$(i))"
+Function printtypeidx(i:int) seq.word
+%.decode.to:encoding.wtype(i + 1) + "(idx:$(i))"
 
 Function typeindex(paras:seq.wtype, rt:wtype) int
-addorder.wtype ([tobyte.0x60] + LEBu.length.paras
+addorder.wtype([tobyte.0x60] + LEBu.length.paras
 + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e /for (acc)
 + LEBu.1
 + val.rt)
@@ -99,12 +100,10 @@ addorder.wtype ([tobyte.0x60] + LEBu.length.paras
 Function towtypelist(i:int) seq.wtype
 let val = val.decode.to:encoding.wtype(i + 1)
 assert val_1 = tobyte.0x60 report "type problem"
-for acc = empty:seq.wtype
-, b ∈ subseq(val, 3, length.val - 2) + last.val
-do acc + wtype.b /for (acc)
+for acc = empty:seq.wtype, b ∈ subseq(val, 3, length.val - 2) + last.val do acc + wtype.b /for (acc)
 
 Function typeindex(paras:seq.wtype) int
-addorder.wtype ([tobyte.0x60] + LEBu.length.paras
+addorder.wtype([tobyte.0x60] + LEBu.length.paras
 + for acc = empty:seq.byte, @e ∈ paras do acc + val.@e /for (acc)
 + LEBu.0)
 - 1
@@ -135,11 +134,10 @@ for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode d
  let te = encodingdata:wtype
  let types = for acc = LEBu.length.te, @e ∈ te do acc + val.@e /for (acc)
  let beforecode = 
-  magic + tobyte.1 + vector.types + tobyte.2 + vector.vector.imports
-  + tobyte.3
+  magic + tobyte.1 + vector.types + tobyte.2 + vector.vector.imports + tobyte.3
   + vector.vector.funcs
   + {tables} tobyte.4
-  + vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu (length.funcrefs + 2)]
+  + vector.vector.[[tobyte.0x70, tobyte.0x00] + LEBu(length.funcrefs + 2)]
   + {memory} tobyte.5
   + vector.vector.[[tobyte.0, tobyte.initmemorysize]]
   + tobyte.7
@@ -171,13 +169,13 @@ for code = empty:seq.seq.byte, funcs = empty:seq.seq.byte, p ∈ funcswithcode d
   + vector.vector.[[tobyte.0, i32const] + LEBs.0 + END
   + vector.for acc = empty:seq.byte, val ∈ data do
    for acc2 = acc, @i = 1, @e ∈ constantseq(8, 0) do
-    next(acc2 + tobyte (bits.val >> (8 * @i - 8) ∧ bits.255), @i + 1)
+    next(acc2 + tobyte(bits.val >> (8 * @i - 8) ∧ bits.255), @i + 1)
    /for (acc2)
   /for (acc)
   ]
  if info then
   [file(fn, total)
-  , file(filename ("+$(dirpath.fn)" + merge ([name.fn] + "info") + ".html")
+  , file(filename("+$(dirpath.fn)" + merge([name.fn] + "info") + ".html")
   , forlater
   )
   ]
@@ -196,7 +194,7 @@ let b =
    if last = t then next(result, count + 1, segcount, t)
    else next(result + LEBu.count + val.last, 1, segcount + 1, t)
   /for (LEBu.segcount + result + LEBu.count + val.last)
-vector (b + code + END)
+vector(b + code + END)
 
 type efuncidx is sym:symbol
 
@@ -208,11 +206,10 @@ Function nobodies(i:int) seq.symbol
 let x = encodingdata:efuncidx
 for acc = empty:seq.symbol, j ∈ arithseq(length.x - i + 1, 1, i) do
  let sym = sym.decode.to:encoding.efuncidx(j)
- if isempty.findencode.wfunc(sym, empty:seq.byte, 0, 0) then acc + sym
- else acc
+ if isempty.findencode.wfunc(sym, empty:seq.byte, 0, 0) then acc + sym else acc
 /for (acc)
 
-Function funcidx(sym:symbol) int value.funcidx (addorder.efuncidx.sym - 1)
+Function funcidx(sym:symbol) int value.funcidx(addorder.efuncidx.sym - 1)
 
 type funcidx is value:int
 
@@ -228,7 +225,8 @@ Export funcidx(wfunc) int
 
 Export typeidx(wfunc) int
 
-Function wfunc(alltypes:typedict, sym:symbol, code:seq.byte) wfunc wfunc(alltypes, sym, code,-1)
+Function wfunc(alltypes:typedict, sym:symbol, code:seq.byte) wfunc
+wfunc(alltypes, sym, code,-1)
 
 Function =(a:wfunc, b:wfunc) boolean sym.a = sym.b
 
@@ -238,11 +236,7 @@ Function >1(a:wfunc, b:wfunc) ordering funcidx.a >1 funcidx.b
 
 Function lookup2(s:seq.wfunc, a:wfunc) seq.wfunc
 let t = 
- for found = empty:seq.wfunc, e ∈ s
- while isempty.found
- do
-  if a = e then found + e else found
- /for (found)
+ for found = empty:seq.wfunc, e ∈ s while isempty.found do if a = e then found + e else found /for (found)
 assert name.sym.a ∉ "intpart" ∨ not.isempty.t
 report "KKK $(sym.a) $(for txt = ">>>", b ∈ s do txt + %.sym.b + "
  /br" /for (txt))"
@@ -315,13 +309,13 @@ Function wordconst(w:word) symbol Lit.valueofencoding.encode.word5.decodeword.w
 Function wordsconst(s:seq.word) symbol
 for acc = empty:seq.symbol, w ∈ s do
  acc + wordconst.w
-/for (Constant2 (acc + Sequence(seqof.typeint, length.acc)))
+/for (Constant2(acc + Sequence(seqof.typeint, length.acc)))
 
 Function initialwordlocations seq.int
 for acc2 = empty:seq.int, p ∈ encodingdata:word5 do
  for acc = empty:seq.symbol, c ∈ chars.p do
   acc + Lit.toint.c
- /for (acc2 + getoffset.Constant2 (acc + Sequence(seqof.typeint, length.acc)))
+ /for (acc2 + getoffset.Constant2(acc + Sequence(seqof.typeint, length.acc)))
 /for (acc2)
 
 ________________
@@ -354,8 +348,7 @@ Function hash(a:datax) int
 if globalname.a ∉ "." then hash.globalname.a else hash.elements.a
 
 Function =(a:datax, b:datax) boolean
-if globalname.a ∉ "." ∨ globalname.b ∉ "." then
- globalname.a = globalname.b
+if globalname.a ∉ "." ∨ globalname.b ∉ "." then globalname.a = globalname.b
 else elements.a = elements.b
 
 Function dataseg seq.int
@@ -365,8 +358,8 @@ Function allocateconstspace(globalname:word, elements:seq.int) int
 let d = encode.datax(globalname, elements)
 for offset = globalspace, p ∈ encoding:seq.encodingpair.datax while code.p ≠ d do offset + 8 * length.elements.data.p /for (offset)
 
-/Function constintseq (elements:seq.int) int allocateconstspace ("."_1, [0, length.elements
-]+elements)
+/Function constintseq (elements:seq.int) int allocateconstspace ("."_1, [0, length.elements]+elements
+)
 
 function constantcode(s:symbol) seq.symbol
 let code1 = fullconstantcode.s

@@ -1,4 +1,4 @@
-/fmt /section The Tau Programming Language /end
+/fmt section The Tau Programming Language /end
 
 Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.
 
@@ -14,10 +14,10 @@ Functional languages tend to use recursion to replace the control structures of 
 The full power of recursion is seldom needed. 
 We introduce a  new control structure  to cover many of the simple uses of recursion.
 
-Instruction for downloading and install Tau in /fmt /fmt <a href="install.html"> here </a> /end if you would
+Instruction for downloading and install Tau in  /fmt none <a href="install.html"> here </a> /end if you would
 like to try out the examples below for yourself.
 
-/fmt /section Lexical level /end
+/fmt section Lexical level /end
 
 A program is represented as a sequence of characters. The character encoding is assume to be unicode represented in UTF8 format. The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.
 
@@ -25,65 +25,86 @@ Paragraphs that do NOT start with /keyword type, /keyword use, /keyword Module,
  /keyword module, /keyword Function, /keyword function, /keyword unbound,  or /keyword Export are always treated as comments.
 
 Each paragraph is broken into words. One or more spaces separate the words. A single line break is treated the same as a space. 
-The characters ()+,-.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example, "a + b" is equivalent to  "a+b"; but  "a * b" is not equivalent to "a*b". A period followed by a space is treat as a separate word from a period followed by no space. This allows a period at the end of a sentence to be distinguished from a period in google.com. 
+The characters ()+,-.:=[]{}^_" are all treated as if they have an implied space before and after them so they are words formed from a single character. For example,/so" a /sw + b" is equivalent to /so" a+b"; but /so" a * b" is not equivalent to /so" a*b". 
+  
+  A period followed by a space is treated as a separate word from a period not ollowed by a space. 
+  This allows a period at the end of a sentence to be distinguished from a period in google.com. 
+  
+  The colon is treated the same as a peroid since a space normal follows a colon but not in  3:30PM.
 
-A word sequence literal is double quoted like "This is a string Literal."  
+A word sequence literal is double-quoted. For Example: /so" This is a string Literal."  
 
-To include a double quote within a use "$(dq)".  Inculding "$(...)" in a syntactical short  hand.
-  /fmt block " hello world without quotes $(dq) hello world $(dq) with quotes" /end is the sames as 
+To include a double quote within a string use  a syntactical short  hand.  For example:
+  /fmt block /so" hello world without quotes; $(dq) hello world $(dq) with quotes"   /end 
+  is the sames as 
   writing 
-  /fmt block $($($($(" hello world without quotes",dq),"hello world"),dq), "with quotes") /end 
-  which is equivalent to writing
-  /fmt block  " hello world without quotes"+dq+"hello world " +dq+ "with quotes" /end
+  /fmt block  /so" hello world without quotes"/sw+ dq /sw+/so"hello world" /sw +dq /ws+/so"  with quotes"   /end
   Since $(...) can receive any expression we could also write
-  /fmt block "hello world without quotes $(dq."hello world") with quotes" /end
-  Since $( functions as an escape in strings, it can be include within a string
-  as " $("$")( " Note that just the "$" is escaped as "$("$(")" will raise an error because the escape in the inner qoute not properly formed.
+  /fmt block /so"hello world without quotes $(dq./so"hello world") with quotes" /end
+  Since /so"$(" functions as an escape in strings, it can be include within a string
+  as /so" $(/so" $")( " Note that just the /so" $" is escaped as /so" /so $(/so"$(")" will raise an error 
+  because the escape in the inner qoute is not properly formed.
   
 
 An integer literal is represented by a sequence of words where each word only contains digits or the no break space. 
 A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 00 and 1001 are integers.
 
-For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨  ∈ ∉ ∩ ∪ are  /le  /ge  /ne  /and  /or /in /nin /cap /cup respectively.
+For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ ⊻ ∈ ∉ ∩ ∪ are /le /ge /ne /and /or /xor /in /nin /cap /cup respectively.
 
-Be careful to insert necessary spaces around operators. 8*9 is incorrect and should be written as 8 * 9, but (8)*(9) is ok.
+Be careful to insert necessary spaces around operators. For example, 8*9 is incorrect and should be written as 8 * 9, or (8) /so *(9)is ok.
 
 Occasionally some unexpected lexical issues arise.   The syntax for a let statement is 
  /keyword let <name> = <expresion> <expresion>.
- The follow function looks good but will cause a syntax error:
+ The follow function looks good but will cause a syntax error: /br /br
 /fmt block /keyword function f1 int /br /keyword let x=  56  /br  -4+x /end 
  
-Written on a single line, the problem becomes clear as there is no second expression:  /keyword function f1 int /keyword let x=  56    -4+x 
+Written on a single line, the problem becomes clear as there is no second expression: /keyword function f1 int /keyword let x=  56    -4+x 
 
 The fix is to add parenthesizes 
 
 function f1 int   let x=  56    (-4+x)
 
+/fmt section Coverting words to UTF8 /end
 
-When converting a sequence of words  to characters for output, an space is usually added after each word with the exceptions:
-/br 1. If the word is  "()+-[]{}_.. :^   
-then the space before and after the word is not added. 
-/br 2. If the word is a comma then the space before the comma is suppressed.
+A sequence of tau words must be transformed back to UTF8 format to communicate with the outside world. 
+ When a file is read the white space is striped out and must be added back in. 
 
-These rules  sometimes do not produce the desired result.  To improve the result, no-break spaces can be added. 
- On the Mac keyboard pressing the option key and then space bar will insert a no-break space. 
+The basic rules  for   adding  spaces is to  add a space 
+after each word except when :
+/br 1. If the word is +-_.. :/w^ then the space before and after the word is suppressed. 
+/br 2. If the word is /w)]}," then the space before the word is suppressed.
+/br 3. If the word is ([{ then the space after the word is suppressed.
 
-/fmt /section Expressions /end
+Line breaks are handled by inserting formating words.  The simplest formating rules are
+/sw /br for a line break and /sw /p for a paragraph break. 
+
+Since an opening quote mark should be treated differently than a closing quote mark and the ASCII character set
+does not distinguish between opening and closing quote marks additional formating words /sw /sw /sw /sn /sw /sc /sw /so  will space the following word using one of the four cases above.  
+The letter in these commands can be read as
+(w)/sc ord, (s)/sc pace, (n)/sc one, (c)/sc lose bracket or (c)/sc omma, and (o)/sc pen bracket 
+Thus /fmt block /w /so" this is a quote " /end with produce:/so" this is a quote "
+
+The format words are interpreted differently when producing plain text or HTML.  For example, /keyword /p produces LF LF for plain text and 
+/fmt LF <p> /end.  Different functions are provide to do this.   When creating files from seq.word  for output, if file extension is html then the output is HTML 
+otherwise plain text.
+
+/fmt section Expressions /end
 
 Here is a list of infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.
 /br _^
 /br unary minus
 /br * / mod ∪ ∩ \
 /br  +-∈ ∉
-/br = < > ? ≤ ≥ ≠ >> <<
+/br = < > >1 >2 ≤ ≥ ≠ >> <<
 /br ∧
-/br ∨
+/br ∨ ⊻
 
 Parentheses are used to override the default precedence.  Note that the operators ∪ ∩ \ which are commonly used for set union, intersection and differences all have that same precedence.
 
-Procedure calls are of the form f1(p1, p2, …, pn). f1()is illegal and should be written f1. To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1. The precedence of. is between the_and the *.
+Procedure calls are of the form \so f1(p1, p2, …, pn). \so f1()is illegal and should be written f1. To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1. 
+The precedence of/sw. is between the /sw_ and the *.
 
-The operators ≤ ≥ ≠ are abbreviations for   not(a > b) , not ( a < b ), not(a = b) respectively. 
+The operators ≤ ≥ ≠ are abbreviations for   \so not(a > b) , \so not ( a < b ), \so not(a = b) respectively. 
 
 
 The compilation unit in tau is  a library. A library contains modules. A module is a sequence of paragraphs with this first paragraph starting with the word /keyword module.
@@ -107,8 +128,8 @@ The syntax for non-comment paragraphs is /fmt block <paragraph>→ /keyword modu
 /br /em E → <function call> |<parameter name> |<let name> 
 /br /em E → /keyword if /em E /keyword then /em E /keyword else /em E 
 /br /em E → /keyword if /em E /keyword then /em E /keyword else /em E /keyword /if
-/br /em E → (/em E )/br /em E → /em E  <binary op> /em E  
-/br /em E → -/em E /br /em E → <word>./em E  
+/br /em E →(/em E )/br /em E → /em E  <binary op> /em E  
+/br /em E → /sw-/em E /br /em E → <word>./em E  
 /br /em E→  /em sequenceConstructor  /br  /em sequenceConstructor → [ /em EList]/br /em EList→ /em E  | /em EList, /em E  
 /br /em forItems →   <word> = /em E , /em forItems | <word> ∈ /em E
 /br /em E →  /keyword  for  /em forItems /keyword do /em E   /keyword /for ( /em E ) 
@@ -120,7 +141,7 @@ The syntax for non-comment paragraphs is /fmt block <paragraph>→ /keyword modu
 
 Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
 
-/fmt /section Sequences /end
+/fmt section Sequences /end
 
 A sequence is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as [ 2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define
 
@@ -143,7 +164,7 @@ The concatenation operator for sequences is +, for example the expression test1 
 
 Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T is any type. For example, the expression subseq(test1, 3, 4)evaluates to [ 8, 16]
 
-/fmt /section Types /end
+/fmt section Types /end
 
 The type of an expression can always be inferred from the sub-expression. For example, 1.0 + 5.0 is of type real, 1 * 8 is of type int, and 1.0 = 8.0 is of type boolean.
 
@@ -201,7 +222,7 @@ Library point2d uses stdlib exports point2d
 The remainder  of the file is the above text.    This file can then be place in a subdirectory named point2d.  Then the program can be compile and executed with  /fmt block ./taumain “point2d point2d testpoint” /end
 
 
-/section standard
+section standard
 
 The module standard defines several commonly used types.
 
@@ -209,12 +230,12 @@ The types /em int and /em real are implement by the underlying hardware and have
 
 The type boolean has operators:∧ ∨ /em not /em true and /em false. The second operator of ∧  and ∨ is evaluated if and only if the first operator does not determine the result.
 
-For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT is defined. The binary operator ? on integers returns these values. An ∧ operator on orderings is defined as
+For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT is defined. The binary operator >1 and >2  on integers returns these values. An ∧ operator on orderings is defined as
 
   Function ∧(a:ordering, b:ordering)ordering 
   if a = EQ   then b   else a
 
-/fmt /section Iteration /end
+/fmt section Iteration /end
 
 An operation can be performed on each element of a sequence.  The following sums a sequence:
 
@@ -235,7 +256,7 @@ function /in(s:seq.int,ele:int) boolean
 
 
 
-/fmt /section Parameterized Module /end
+/fmt section Parameterized Module /end
 
 A type can have a single type parameter of named T. The T can be used anywhere a type can be used.
 
@@ -352,7 +373,7 @@ For the type listset.word, the unbound function = in the listset module is bound
 For the type listset.mytype, then unbound = is bound to =(a:myentry, b:myentry)boolean
 
 
-/fmt /section Order of evaluation /end
+/fmt section Order of evaluation /end
 
 The arguments of a function are evaluate from left to right before the function is called.
 
@@ -366,7 +387,7 @@ The compiler will do inline expansion and the above expression becomes /fmt bloc
 
 This behavior is required for the ∧ operator on booleans.
 
-/fmt /section Bindings /end
+/fmt section Bindings /end
 
 Consider the following example code:
 
@@ -407,7 +428,7 @@ The type of the expression that defines a function much match the return type of
 
 
 
-/fmt /section Encodings /end
+/fmt section Encodings /end
 
 A type can be mapped to positive integers in an encoding. As an example consider implementing a cache that stores the factors of an integer.
 
@@ -417,9 +438,9 @@ The parameterized module /em encoding.T  defines the following functions for wor
 
   Export   decode(encoding.T)T { will return the value that was encoded } 
 
-  Export Function findencode(t:T, erecord.T)seq.T { will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.}
+  Function findencode(t:T, erecord.T)seq.T { will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.} stub
 
-  Export  Function encodingdata:T seq.T { list of values that have been encoded.} 
+   Function encodingdata:T seq.T { list of values that have been encoded.} stub
 
  Module encodingExample 
 
@@ -483,7 +504,7 @@ Then /fmt block S_i = S_j if and only if encoding(E_i)= encoding(E_j)/end and /f
 
 Since the mapping  can be shared by multiple process, modification of  the mapping is a critical section. Also the mapping may contain values not assigned by the current process.
 
-/fmt /section Process statement /end
+/fmt section Process statement /end
 
 Process are included in Tau for three reasons.
 
@@ -521,7 +542,7 @@ The follow function interact with the spawned process and blocks to wait for the
 The spawning process cannot terminate until all of it child process complete, because it may have allocated space and passed it to a child process as a parameter. 
 
 
-/fmt /section Sequences /end
+/fmt section Sequences /end
 
 We use the example of myseq which is a start on a user defined sequence to decode UTF8 sequnece of bytes. The length of the sequence is the number of characters. The i'th element of the sequence with be the i'th character in the encoding.
 
@@ -585,11 +606,12 @@ Module testmyseq
 
   use myseq.int
 
-????  Function testmyseq seq.word 
+Function testmyseq seq.word 
   let s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
-   @(+, toword,"", myseq(toseqbyte.s @ +(empty:seq.int,toint.@e) ))
+  let z = for acc = empty:seq.int, @e ∈ toseqbyte.s do acc + toint.@e /for (myseq.acc)
+  for acc = "", @e ∈ z do acc + toword.@e /for (acc)
 
-/fmt /section Tail Recursion /end
+/fmt section Tail Recursion /end
 
 A function is tail recursive if the last function called is itself. A compiler can take advantage of this and reuse the activation record on the call stack resulting in less space taken up by the stack during execution.
 
@@ -609,7 +631,7 @@ The last call in this function is to +. Here is a rewritten version that is tail
 
 Now reverse3 is the last function called.
 
-Making the function tail recursive is not the only way to reduce the stack size. The follow version uses O(ln n) instead of O(n) where n is the length of the sequence.
+Making the function tail recursive is not the only way to reduce the stack size. The follow version uses O(ln n) instead of O(n)where n is the length of the sequence.
 
   function reverse4(l:seq.int)seq.int 
  if length.l < 2  then l   else reverse4.subseq(l, length.l / 2 + 1, length.l)+ reverse4.subseq(l, 1, length.l / 2)
@@ -619,33 +641,38 @@ Perhaps the best way to reverse a sequence is to use
   Function reverse5(s:seq.T)seq.T    for acc=empty:seq.T,e ∈ s   do [s]+acc /for(acc)
 
 
-In this case the tau compiler will remove the recursion and the bounds checking when indexing the sequence.  
+In this case the tau compiler will remove  the bounds checking when indexing the sequence.  
 If the sequence was built up out of smaller sequences, it may also  break the sequence into the smaller parts and process them separately. 
 
+/fmt table    Sample  Table 
+ /row   1 /cell 2 /cell  3 
+ /row   3 /cell 4 /cell 5  
+  /end
 
-/fmt /section markup /end
+/fmt section markup /end
 
 /fmt table 
 /row Example /cell with format /cell note
-/row first /keyword /p second  /cell    first /p second  /cell paragraph break
-/row first /keyword  /br second  /cell  first /br second /cell line break
+/row first /keyword /p second   /cell /   first /p second  /cell paragraph break
+/row first /keyword /br second  /cell  first /br second /cell line break
 /row /keyword /em example /cell /em example  /cell
 /row /keyword /strong example /cell /strong example  /cell
 /row /keyword /keyword example /cell /keyword example  /cell
-/row /keyword /&lt; /keyword literal this is an example  /keyword /end /cell /fmt literal  this is an example /end  /cell
-/row /keyword /&lt; /keyword keyword this is an example  /keyword /end  /cell /fmt keyword this is an example  /end  /cell
-/row /keyword /&lt; /keyword comment this is an example  /keyword /end; /cell /fmt comment this is an example  /end  /cell
-/row parent block /keyword /&lt; /keyword block Indented block. /keyword  /br second line /keyword /end 
+/row /keyword /fmt /keyword literal this is an example  /keyword /end /cell /fmt literal  this is an example /end  /cell
+/row /keyword /fmt /keyword keyword this is an example  /keyword /end  /cell /fmt keyword this is an example  /end  /cell
+/row /keyword /fmt /keyword comment this is an example  /keyword /end; /cell /fmt comment this is an example  /end  /cell
+/row parent block /keyword /fmt /keyword block Indented block. /keyword /br second line /keyword /end 
 /cell parent block /fmt block Indented block. /br second line /end 
 /cell   Indented block 
-/row /keyword /&lt; /keyword noformat <hr/end /keyword /&lt; /cell  /fmt /fmt <hr/end /end  /cell 
-/row /keyword /&lt; /keyword table <caption> <rows of table> /keyword /&lt; /cell /cell Defines a table 
+/row /keyword /fmt /keyword none <hr/> /keyword /end 
+/cell  /fmt none <hr> /end  /cell 
+/row /keyword /fmt /keyword table <caption> <rows of table> /keyword /fmt /cell /cell Defines a table 
 /row  /keyword /row../keyword /cell../keyword /cell..  /cell /cell Defines a row of with three columns. 
 /br Must be placed within table. 
-/row /keyword /&lt; /keyword table    Sample   Table 
+/row /keyword /fmt /keyword table    Sample   Table 
 /br /keyword /row   1 /keyword /cell 2 /keyword /cell 3
 /br /keyword /row   3 /keyword /cell 4 /keyword /cell 5
-/keyword /&lt;
+/keyword /fmt
 /cell
 /fmt table    Sample  Table 
  /row   1 /cell 2 /cell  3 

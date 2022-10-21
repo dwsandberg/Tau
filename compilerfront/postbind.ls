@@ -63,10 +63,8 @@ do
   for acc = empty:seq.symbol, typedict3 = typedict.inline, symx ∈ code.sd do
    if islocal.symx ∨ isconst.symx then next(acc + symx, typedict3)
    else
-    let newdict3 = addtypes(typedict3, asset (code.sd + sym.sd))
-    next(acc + test(symx, newdict3, para.module.sym.sd, empty:set.symdef)
-    , newdict3
-    )
+    let newdict3 = addtypes(typedict3, asset(code.sd + sym.sd))
+    next(acc + test(symx, newdict3, para.module.sym.sd, empty:set.symdef), newdict3)
   /for (
    postbindresult(typedict3
    , symdef(sym.sd, acc, paragraphno.sd) ∪ prg.inline
@@ -130,7 +128,7 @@ else
         paras + Local.i
        /for (symdef(sym2, paras + sym2, paragraphno.b2_1))
       else instantiateTemplate(sym2, templates)
-   let newdict3 = addtypes(newdict2, asset (code.sd + sym.sd))
+   let newdict3 = addtypes(newdict2, asset(code.sd + sym.sd))
    {------------}
    let modpara = para.module.sym.sd
    let pdict = 
@@ -162,8 +160,7 @@ else
       , [encodingstatetype, encodingpairtype]
       , encodingstatetype
       )
-     let add2 = 
-      symbol(internalmod, "addencoding", [typeint, typeptr, typeint, typeint], typeint)
+     let add2 = symbol(internalmod, "addencoding", [typeint, typeptr, typeint, typeint], typeint)
      let dc = deepcopySym.encodingpairtype
      let discard = symbolref.addefunc
      let discard2 = symbolref.dc
@@ -201,7 +198,7 @@ else
        , Words.fullprint.typ
        , encodenosym
        , setSym.typeint
-       , Define (nextvar + 1)
+       , Define(nextvar + 1)
        , gl
        , Lit.0
        , Getfld.typeint
@@ -226,15 +223,10 @@ else
        /for (newresult)
      )
     else if not.isempty.result2 ∧ last.result2 = PreFref then
-     next(cache
-     , nextvar
-     , map
-     , result2 + test(symx, newdict3, modpara, empty:set.symdef)
-     )
+     next(cache, nextvar, map, result2 + test(symx, newdict3, modpara, empty:set.symdef))
     else
      let cacheValue = getSymdef(cache, symx)
-     if not.isempty.cacheValue then
-      next(cache, nextvar, map, result2 + code.cacheValue_1)
+     if not.isempty.cacheValue then next(cache, nextvar, map, result2 + code.cacheValue_1)
      else
       let newValue = test(symx, newdict3, modpara, inline.accZ)
       next(cache + symdef(symx, newValue, 0), nextvar, map, result2 + newValue)
@@ -244,14 +236,12 @@ else
     , if verysimpleinline(symz, result2) then inline.accZ + symdef(symz, result2, 0)
     else inline.accZ
     ))
- /for (
-  usedsyms(allsyms, source, length.aa, prg.accZ, templates, typedict.accZ, inline.accZ))
+ /for (usedsyms(allsyms, source, length.aa, prg.accZ, templates, typedict.accZ, inline.accZ))
 
 function test(symx:symbol, newdict3:typedict, modpara:mytype, inline:set.symdef) seq.symbol
 let sym = replaceTsymbol(modpara, symx)
 if isspecial.sym then
- if isSequence.sym then
-  [Sequence(parameter.basetype(resulttype.sym, newdict3), nopara.sym)]
+ if isSequence.sym then [Sequence(parameter.basetype(resulttype.sym, newdict3), nopara.sym)]
  else if isstart.sym then [Start.basetype(resulttype.sym, newdict3)] else [sym]
 else if isInternal.sym then
  let discard = symbolref.sym
@@ -265,17 +255,13 @@ else if not.isBuiltin.sym then
 else if name.sym ∈ "bitcast toptr" then
  let a = basetype(first.paratypes.sym, newdict3)
  let b = basetype(resulttype.sym, newdict3)
- if if isseq.a then typeptr else a /if = if isseq.b then typeptr else b then
-  empty:seq.symbol
+ if if isseq.a then typeptr else a /if = if isseq.b then typeptr else b then empty:seq.symbol
  else [symbol(internalmod, "bitcast", a, b)]
-else if name.sym ∈ "processresult" then
- [Lit.2, Getfld.basetype(para.module.sym, newdict3)]
+else if name.sym ∈ "processresult" then [Lit.2, Getfld.basetype(para.module.sym, newdict3)]
 else if name.sym ∈ "typestructure" then
  let roottype = para.module.sym
  let tmp = 
-  for acc = empty:seq.seq.mytype
-  , row ∈ asseqseqmytype.subdict(newdict3, roottype)
-  do
+  for acc = empty:seq.seq.mytype, row ∈ asseqseqmytype.subdict(newdict3, roottype) do
    if first.row = roottype then [row] + acc else acc + row
   /for (acc)
  {root type is now first row in tmp}
@@ -285,9 +271,7 @@ else if name.sym ∈ "typestructure" then
    let fp = fullprint.t
    accrow
    + for acctype = empty:seq.symbol, idx = 1, w ∈ fp do
-    next(acctype
-    + if idx < 3 then [Word.w]
-    else [Word.w, Record.[typeword, typeword, typeword]]
+    next(acctype + if idx < 3 then [Word.w] else [Word.w, Record.[typeword, typeword, typeword]]
     , if idx = 3 then 1 else idx + 1
     )
    /for (acctype + Sequence(typeword, length.fp / 3))
@@ -344,8 +328,7 @@ else
    assert not.isempty.a report "cannot find type getfld $(typ)"
    if length.a > 1 then symbol(internalmod, "GEP", seqof.typeptr, typeint, typeptr)
    else Getfld.first.a
- else if name.sym ∈ "empty" then
-  Sequence(basetype(para.module.sym, newdict3), 0)
+ else if name.sym ∈ "empty" then Sequence(basetype(para.module.sym, newdict3), 0)
  else
   assert name.sym ∈ "xoffsets xbuild" report "post bind error:$(sym)"
   sym
@@ -367,8 +350,8 @@ else
 function deepcopybody(type:mytype, typedict:typedict) seq.symbol
 if type = typeint ∨ type = typeword ∨ isencoding.type then [Local.1]
 else if isseq.type then
- {base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.packed2
-  seq.packed3 seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
+ {base types are int real boolean ptr seq.int seq.real seq.boolean seq.ptr seq.byte seq.packed2 seq.packed3
+  seq.packed4 seq.packed5 seq.packed6 or $base.x where x is a integer}
  let basetype = basetype(type, typedict)
  let elementtype = parameter.basetype
  if elementtype = typeboolean then [Local.1, blockitsymbol.seqof.typeint]
@@ -382,11 +365,7 @@ else if isseq.type then
    , elementtype
    )
   let acc = 
-   symbol(moduleref("internallib $for", typeptr)
-   , "acc"
-   , empty:seq.mytype
-   , typeptr
-   )
+   symbol(moduleref("internallib $for", typeptr), "acc", empty:seq.mytype, typeptr)
   [Sequence(elementtype, 0)]
   + [Local.1
   , acc
@@ -418,7 +397,7 @@ else
    let kind = basetype(fldtype, typedict)
    next(fldno + 1
    , fldkinds + kind
-   , result + [Local.1, Lit (fldno - 1), Getfld.kind, deepcopySym.fldtype]
+   , result + [Local.1, Lit(fldno - 1), Getfld.kind, deepcopySym.fldtype]
    )
   /for (result + [Record.fldkinds])
 

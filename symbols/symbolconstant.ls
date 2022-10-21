@@ -17,17 +17,18 @@ use set.symdef
 Export type:symbolconstant
 
 Function seqelements(s:symbol) seq.symbol
-if iswords.s then
- for acc = empty:seq.symbol, w ∈ worddata.s do acc + Word.w /for (acc)
+if iswords.s then for acc = empty:seq.symbol, w ∈ worddata.s do acc + Word.w /for (acc)
 else
  assert isrecordconstant.s report "constant code error $(s)"
  let code1 = fullconstantcode.s
  assert isSequence.last.code1 report "constant code error 21 $(code1)"
  code1 >> 1
 
-Function fullconstantcode(s:symbol) seq.symbol toseq.decode.to:encoding.symbolconstant(toint.name.s)
+Function fullconstantcode(s:symbol) seq.symbol
+toseq.decode.to:encoding.symbolconstant(toint.name.s)
 
-Function Constant2(args:seq.symbol) symbol symconst(addorder.symbolconstant.args, hasfref.args)
+Function Constant2(args:seq.symbol) symbol
+symconst(addorder.symbolconstant.args, hasfref.args)
 
 function hasfref(args:seq.symbol) boolean
 for hasfref = false, sym ∈ args while not.hasfref do hasfref.sym /for (hasfref)

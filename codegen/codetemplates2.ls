@@ -40,7 +40,7 @@ Export defines(steponeresult) seq.symdef
 
 Export entrypoint(steponeresult) slot
 
-Export type:match5{From codetemplates}
+Export type:match5 {From codetemplates}
 
 Export action(match5) word {From codetemplates}
 
@@ -60,7 +60,7 @@ Export llvmtypelist(match5) seq.llvmtype {From codetemplates}
 
 Export sym(match5) symbol {From codetemplates}
 
-Export type:recordcoderesult{From codetemplates}
+Export type:recordcoderesult {From codetemplates}
 
 Export bc(recordcoderesult) internalbc {From codetemplates}
 
@@ -118,10 +118,7 @@ do
   let discard5 = 
    addtemplate(firstsym
    , 1
-   , GEP(r.1
-   , i64
-   , slot.global([merge ("$$" + toword.paragraphno.cc)], i64, C64.0)
-   )
+   , GEP(r.1, i64, slot.global([merge("$$" + toword.paragraphno.cc)], i64, C64.0))
    )
   next(used, crecord, indefines)
  else if libname = library.module.firstsym ∨ paragraphno.cc ≤ 0 then
@@ -138,9 +135,7 @@ do
   /for (entrypointsym)
  let discard100 = uses(alltypes, asset.used, crecord, prgX, alltypes, libname)
  steponeresult(indefines
- , symboltableentry([mangledname(prgX, entrypointsym, libname)]
- , function.[ptr.i64, i64, ptr.i64]
- )
+ , symboltableentry([mangledname(prgX, entrypointsym, libname)], function.[ptr.i64, i64, ptr.i64])
  ))
 
 function declare(alltypes:typedict, prgX:set.symdef, ele2:symbol, libname:word) int
@@ -165,9 +160,7 @@ for acc = empty:match5, ele ∈ toseq.used1 do
    , 0
    , emptyinternalbc
    , "ACTARG"_1
-   , ptrtoint(functyp
-   , symboltableentry([mangledname(extnames, basesym, libname)], functyp)
-   )
+   , ptrtoint(functyp, symboltableentry([mangledname(extnames, basesym, libname)], functyp))
    )
   else if isrecordconstant.ele then acc else buildconst(ele, alltypes)
  else if isspecial.ele then buildspecial(ele, alltypes)
@@ -180,8 +173,7 @@ for acc = empty:match5, ele ∈ toseq.used1 do
     /for (l + tollvmtype(alltypes, rt))
    addtemplate(ele, 0, emptyinternalbc, wordname.ele, nopara.ele, l)
   else acc
- else if isInternal.ele ∧ internalidx.ele = 1 then
-  call(alltypes, ele, "CALL"_1, name.ele)
+ else if isInternal.ele ∧ internalidx.ele = 1 then call(alltypes, ele, "CALL"_1, name.ele)
  else acc
 /for (processconst(isrecordconstant, alltypes))
 
@@ -248,7 +240,7 @@ let l =
  , "set ptr real"
  , "set ptr ptr"
  ]
-let idx = findindex(l, [name.s] + % (types.s >> 1))
+let idx = findindex(l, [name.s] + %(types.s >> 1))
 if idx ≤ length.l then idx + 1 else 1
 
 Function mangledname(extname:set.symdef, s:symbol, library:word) word

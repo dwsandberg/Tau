@@ -34,7 +34,7 @@ function type(a:typeentry) mytype first.totypeseq.a
 
 function flatflds(a:typeentry) seq.mytype totypeseq.a << 1
 
-function typeentry(t:mytype, flat:seq.mytype) typeentry typeentry ([t] + flat)
+function typeentry(t:mytype, flat:seq.mytype) typeentry typeentry([t] + flat)
 
 Function addtypes(alltypes:typedict, syms:set.symbol) typedict
 let typesused = 
@@ -46,8 +46,7 @@ let typesused =
   else if issimple.module.sym then acc else acc + para.module.sym /if + typesused.sym
  /for (acc)
 for acc = alltypes, d ∈ toseq.asset.typesused do
- if d = type? ∨ abstracttypename.d ∈ "$base" then acc
- else addtype(acc, d)
+ if d = type? ∨ abstracttypename.d ∈ "$base" then acc else addtype(acc, d)
 /for (acc)
 
 Function addtype(alltypes:typedict, type:mytype) typedict
@@ -61,7 +60,7 @@ else
   let newtr = typeentry(type, flatflds)
   if isflat.newtr then
    {add to typedict and then check to make sure parameters are in typedict}
-   for acc = typedict (totypedict.alltypes + newtr), subfld ∈ flatflds do
+   for acc = typedict(totypedict.alltypes + newtr), subfld ∈ flatflds do
     if isseq.subfld ∨ isencoding.subfld then addtype(acc, subfld) else acc
    /for (acc)
   else
@@ -71,8 +70,7 @@ else
     else addtype(acc, subfld)
    /for (
     assert cardinality.totypedict.alltypes < cardinality.totypedict.acc
-    report "PROBLEM $(type) flat:$(for txt = "
-     ", g ∈ flatflds do txt + %.g /for (txt + "
+    report "PROBLEM $(type) flat:$(for txt = "", g ∈ flatflds do txt + %.g /for (txt + "
      /br")) $(acc)"
     addtype(acc, type))
 
@@ -109,11 +107,9 @@ for known = types, notflat = empty:seq.typeentry, p ∈ unknown do
   next(known + p, notflat)
  else
   let new = expandflat(p, types)
-  if isflat.new then next(known + new, notflat)
-  else next(known, notflat + new)
+  if isflat.new then next(known + new, notflat) else next(known, notflat + new)
 /for (
- if isempty.notflat ∨ length.unknown = length.notflat then
-  checkflatresult2(known, notflat)
+ if isempty.notflat ∨ length.unknown = length.notflat then checkflatresult2(known, notflat)
  else checkflat(known, notflat))
 
 type checkflatresult2 is known:set.typeentry, unknown:seq.typeentry
@@ -165,7 +161,7 @@ for txt = "", tr ∈ toseq.totypedict.dict do
 /for (txt)
 
 Function add(alltypes:typedict, t:mytype, flatflds:seq.mytype) typedict
-typedict (totypedict.alltypes + typeentry(t, flatflds))
+typedict(totypedict.alltypes + typeentry(t, flatflds))
 
 Function flatflds(alltypes:typedict, type:mytype) seq.mytype
 let t = lookup(totypedict.alltypes, typeentry(type, empty:seq.mytype))
@@ -177,10 +173,7 @@ closedict(all, sub)
 
 function closedict(all:typedict, subdict:typedict) typedict
 let need = 
- for acc = empty:set.mytype
- , have = empty:set.mytype
- , te ∈ toseq.totypedict.subdict
- do
+ for acc = empty:set.mytype, have = empty:set.mytype, te ∈ toseq.totypedict.subdict do
   next(for acc2 = acc, t ∈ flatflds.te do if isseq.t then acc2 + parameter.t else acc2 + t /for (acc2)
   , have + type.te
   )
@@ -188,9 +181,7 @@ let need =
 for new = empty:set.typeentry, t ∈ toseq.need do
  let x = lookup(totypedict.all, typeentry(t, empty:seq.mytype))
  if isempty.x ∧ isseq.t then new + typeentry(t, [t]) else new ∪ x
-/for (
- if isempty.new then subdict
- else closedict(all, typedict (totypedict.subdict ∪ new)))
+/for (if isempty.new then subdict else closedict(all, typedict(totypedict.subdict ∪ new)))
 
 Function basetype(typ:mytype, alltypes:typedict) mytype
 if isseq.typ then

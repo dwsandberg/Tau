@@ -46,7 +46,8 @@ libsrc0 symbols.libsrc start.ls
 +symbols symbol2.ls typedict mytype symbolconstant symbol
 
 libsrc0 compilerfront.libsrc start.ls
-+compilerfront pretty.ls compilerfrontT.ls compilerfront mergeblocks pass2 hashset localmap2 parse parsersupport passparse passsymbol postbind symboldict
++compilerfront pretty.ls parse parsersupport 
++compilerfront compilerfrontT.ls compilerfront mergeblocks pass2 hashset localmap2  passparse passsymbol postbind symboldict
 compileTimeT object01 objectio LEBencoding
 
 libsrc0 codegen.libsrc start.ls
@@ -118,7 +119,7 @@ usegraph + tools install3.html +$build core.libsrc include=UTF8 words format sta
 enumerate +tools install4.html  enumexample.ls
 
 LR1 taugrammer.html
-+compilerfront parse.ls
++compilerfront parse.ls parsersupport flags=parameterized
 
 lextable taulex.html
 +tools install.txt

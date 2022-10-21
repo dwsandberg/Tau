@@ -59,8 +59,7 @@ for acc = empty:seq.alphaword, @e ∈ a do acc + alphaword.@e /for (acc)
 Function ?alpha(a:char, b:char) ordering a >1 b
 
 Function >1(a:alphaword, b:alphaword) ordering
-if toword.a = toword.b then EQ
-else ?alpha(decodeword.toword.a, decodeword.toword.b)
+if toword.a = toword.b then EQ else ?alpha(decodeword.toword.a, decodeword.toword.b)
 
 Function towordseq(a:seq.alphaword) seq.word
 for acc = empty:seq.word, @e ∈ a do acc + toword.@e /for (acc)
@@ -76,8 +75,7 @@ function >1(a:alphawords, b:alphawords) ordering ?alpha(toseq.a, toseq.b)
 Function alphasort(a:seq.seq.word) seq.seq.word
 for acc = empty:seq.alphawords, s ∈ a do
  acc + alphawords.toalphaseq.s
-/for (
- for acc2 = empty:seq.seq.word, s2 ∈ sort.acc do acc2 + towordseq.toseq.s2 /for (acc2))
+/for (for acc2 = empty:seq.seq.word, s2 ∈ sort.acc do acc2 + towordseq.toseq.s2 /for (acc2))
 
 Function checkinteger(w:word) word
 let l = decodeword.w

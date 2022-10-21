@@ -43,11 +43,9 @@ else if name.ctsym ∈ "_" then
   if between(idx, 1, length.s) then tocode:T(s_idx, resulttype.ctsym, typedict)
   else empty:seq.symbol
  else empty:seq.symbol
-else if module.ctsym = moduleref."* words"
-∧ name.ctsym ∈ "merge encodeword decodeword" then
+else if module.ctsym = moduleref."* words" ∧ name.ctsym ∈ "merge encodeword decodeword" then
  if name.ctsym ∈ "merge" then [Word.merge.bitcast:seq.word(first.stk)]
- else if name.ctsym ∈ "encodeword" then
-  [Word.encodeword.bitcast:seq.char(first.stk)]
+ else if name.ctsym ∈ "encodeword" then [Word.encodeword.bitcast:seq.char(first.stk)]
  else
   {decodeword}
   let charseq = decodeword.bitcast:word(first.stk)
@@ -59,8 +57,7 @@ else if module.ctsym = moduleref."* UTF8" ∧ name.ctsym ∈ "toword" then
 else
  let ctsym2 = changelibrary(ctsym, librarymap)
  let t = callfunc:T(ctsym2, typedict, stk)
- if isempty.t then empty:seq.symbol
- else tocode:T(first.t, resulttype.ctsym2, typedict)
+ if isempty.t then empty:seq.symbol else tocode:T(first.t, resulttype.ctsym2, typedict)
 
 function tocode:T(r:int, typ:mytype, typedict:typedict) seq.symbol
 if typ = typeword then [Word.wordencodingtoword.r]
@@ -96,9 +93,6 @@ else
   else if isSequence.sym then
    let nopara = nopara.sym
    if length.toseq.stk < nopara.sym then next(false, stk)
-   else
-    next(ok
-    , push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara)))
-    )
+   else next(ok, push(pop(stk, nopara), bitcast:int(toptr.packed.top(stk, nopara))))
   else next(false, stk)
  /for (if ok then toseq.stk else empty:seq.int) 

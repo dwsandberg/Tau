@@ -19,8 +19,7 @@ use stack.word
 Function printfunc(f:wfunc) seq.word
 let nocheck = false
 let a = code.f
-if isempty.a then
- %.sym.f + "funcidx = $(funcidx.f) typidx = $(printtypeidx.typeidx.f)"
+if isempty.a then %.sym.f + "funcidx = $(funcidx.f) typidx = $(printtypeidx.typeidx.f)"
 else
  let typdesc = printtypeidx.typeidx.f
  let argtypes = subseq(typdesc, 3, length.typdesc - 5)
@@ -31,11 +30,7 @@ else
   next(text + constantseq(value.d3, (%.wtype.a_(next.d3))_1), next.d3 + 1)
  /for (
   "($(text))
-   /br $(zzz(nocheck
-  , argtypes >> 2 + text
-  , subseq(a, place, length.a - 1)
-  , %.sym.f
-  ))")
+   /br $(zzz(nocheck, argtypes >> 2 + text, subseq(a, place, length.a - 1), %.sym.f))")
 
 Function printcode(a:seq.byte) seq.word zzz(true, "", a, "")
 
@@ -113,15 +108,7 @@ do
   else next(text, op, 0x0, shift + 1, state, stk, blkstk, op)
  else if state = "type" then
   let newblkstk = push(blkstk, (%.wtype.byte)_1)
-  next(text + decodeop.op + %.wtype.byte
-  , op
-  , 0x0
-  , 0
-  , "startop"
-  , stk
-  , newblkstk
-  , op
-  )
+  next(text + decodeop.op + %.wtype.byte, op, 0x0, 0, "startop", stk, newblkstk, op)
  else if state = "alignmentbyte" then
   next(text, op, 0x0, 0, "startLEBarg", stk, blkstk, lastop)
  else if state = "zerobyte" then
@@ -136,9 +123,9 @@ do
      toint.if (tobits.byte ∧ 0x40) = 0x0 ∨ op ∉ [i32const, i64const] then tobits.byte
      else c ∨ tobits.-1 << 7
     else if op ∈ [i32const, i64const] then
-     if (tobits.byte ∧ 0x40) = 0x0 then toint (result ∨ c << shift)
-     else toint (result ∨ c << shift ∨ tobits.-1 << (shift + 7))
-    else toint (result ∨ c << shift)
+     if (tobits.byte ∧ 0x40) = 0x0 then toint(result ∨ c << shift)
+     else toint(result ∨ c << shift ∨ tobits.-1 << (shift + 7))
+    else toint(result ∨ c << shift)
    let xx = 
     if op = call then funcidx2typedesc.arg
     else if op = callindirect then printtypeidx.arg >> 5 else ""
@@ -153,8 +140,7 @@ do
      pop.stk
     else if op = call then
      assert top(stk, length.xx - 4) = subseq(xx, 3, length.xx - 2)
-     report "types nomatch call stk:$(top(stk, length.xx - 4)) xx $(xx)
-      /br $(text)"
+     report "types nomatch call stk:$(top(stk, length.xx - 4)) xx $(xx) /br $(text)"
      push(pop(stk, length.xx - 4), last.xx)
     else if op = callindirect then
      assert length.xx > 0 report "call indirect $(printtypeidx.arg)"
@@ -200,8 +186,7 @@ do
    , blkstk
    , op
    )
-  else if state = "startLEBarg" then
-   next(text, op, c, 7, "inLEB", stk, blkstk, lastop)
+  else if state = "startLEBarg" then next(text, op, c, 7, "inLEB", stk, blkstk, lastop)
   else
    let newresult = result ∨ c << shift
    next(text, op, newresult, shift + 7, state, stk, blkstk, lastop)

@@ -57,6 +57,7 @@ let xml =
  for xml = "", hasquote = none, w ∈ xml0 do
    if w ∈ dq then 
    if hasquote = none then next(xml + w+encodeword.[char.8], w)else next(xml + w , none)
-  else   next(xml + w, hasquote)
+  else if w="/br"_1 then next(xml + encodeword.[char.10], hasquote)
+  else  next(xml + w, hasquote)
  /for( xml)
 replacesvg(token.name, jsUTF8.toseqbyte.toUTF8.xml) 

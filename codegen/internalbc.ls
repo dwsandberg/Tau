@@ -28,19 +28,20 @@ type templatepart is val:bits
 
 function bits(b:templatepart) bits val.b >> 6
 
-function bitcount(b:templatepart) int toint (val.b ∧ 0x3F)
+function bitcount(b:templatepart) int toint(val.b ∧ 0x3F)
 
-function templatepart(bits:int, bitcount:int) templatepart templatepart (tobits.bits << 6 ∨ bits.bitcount)
+function templatepart(bits:int, bitcount:int) templatepart
+templatepart(tobits.bits << 6 ∨ bits.bitcount)
 
 function templatepart(para:int, slot:int, bitcount:int) templatepart
-templatepart (tobits.para << 6 ∨ bits.bitcount ∨ bits.slot << 10)
+templatepart(tobits.para << 6 ∨ bits.bitcount ∨ bits.slot << 10)
 
 function signedvalue(valx:templatepart) int
 toint.if toint.val.valx < 0 then bits.valx ∨ 0xFC00000000000000 else bits.valx
 
-function ibcsubpara(a:templatepart) int toint (val.a >> 6 ∧ 0xF)
+function ibcsubpara(a:templatepart) int toint(val.a >> 6 ∧ 0xF)
 
-function ibcsubslot(a:templatepart) int toint (val.a >> 10)
+function ibcsubslot(a:templatepart) int toint(val.a >> 10)
 
 function Reloc int 60
 
@@ -50,13 +51,14 @@ function Firstpara int 62
 
 function Relocsigned int 63
 
-Function ibcfirstpara2 int toint (0x1 << 40)
+Function ibcfirstpara2 int toint(0x1 << 40)
 
-Function ibcsub(i:int) slot slot (ibcfirstpara2 + i)
+Function ibcsub(i:int) slot slot(ibcfirstpara2 + i)
 
 type internalbc is parts:seq.templatepart
 
-Function %(bc:internalbc) seq.word for acc = "", e ∈ parts.bc do acc + %.val.e /for (acc)
+Function %(bc:internalbc) seq.word
+for acc = "", e ∈ parts.bc do acc + %.val.e /for (acc)
 
 function tail(b:internalbc) seq.templatepart parts.b << 1
 
@@ -69,18 +71,18 @@ function bits(b:internalbc) bits if isempty.parts.b then 0x0 else bits.val.b
 function bitcount(b:internalbc) int if isempty.parts.b then 0 else bitcount.val.b
 
 function internalbc(bits:int, bitcount:int, tail:seq.templatepart) internalbc
-internalbc ([templatepart(bits, bitcount)] + tail)
+internalbc([templatepart(bits, bitcount)] + tail)
 
 function internalbc(bits:bits, bitcount:int, tail:seq.templatepart) internalbc
-internalbc ([templatepart(toint.bits, bitcount)] + tail)
+internalbc([templatepart(toint.bits, bitcount)] + tail)
 
 Function +(a:internalbc, b:internalbc) internalbc
 if length.parts.a > 1 ∨ bitcount.a + bitcount.b > 56 then
  internalbc(bits.a, bitcount.a, tail.a + parts.b)
-else
- internalbc(bits.b << bitcount.a ∨ bits.a, bitcount.a + bitcount.b, tail.b)
+else internalbc(bits.b << bitcount.a ∨ bits.a, bitcount.a + bitcount.b, tail.b)
 
-function addplaceholder(t:templatepart, b:internalbc) internalbc internalbc ([t] + parts.b)
+function addplaceholder(t:templatepart, b:internalbc) internalbc
+internalbc([t] + parts.b)
 
 function add6bits(val:int, b:internalbc) internalbc
 if bitcount.b > 56 - 6 then internalbc(val, 6, parts.b)
@@ -103,7 +105,7 @@ else result
 
 function add(val:int, b:internalbc) internalbc
 if val < 32 then add6bits(val, b)
-else add6bits(toint (bits.val ∧ bits.31 ∨ bits.32), add(val / 32, b))
+else add6bits(toint(bits.val ∧ bits.31 ∨ bits.32), add(val / 32, b))
 
 function addstartbits(inst:int, noargs:int, b:internalbc) internalbc
 add4bits(3, add(inst, add(noargs, b)))
@@ -115,15 +117,13 @@ else if bits = Substitue then
  let arg = args_(ibcsubpara.t)
  if arg < 0 then parts.add(deltaoffset + ibcsubslot.t + arg, emptyinternalbc)
  else [templatepart(arg - ibcsubslot.t - deltaoffset + 1, Reloc)]
-else if bits = Reloc then [templatepart.tobits (toint.val.t - 64 * deltaoffset)]
+else if bits = Reloc then [templatepart.tobits(toint.val.t - 64 * deltaoffset)]
 else
  assert bits = Firstpara report "Problem with code templates"
- [templatepart.tobits (toint.val.t + 64 * deltaoffset)]
+ [templatepart.tobits(toint.val.t + 64 * deltaoffset)]
 
 Function processtemplate(s:internalbc, deltaoffset:int, args:seq.int) internalbc
-internalbc.for acc = empty:seq.templatepart, @e ∈ parts.s do
- acc + processtemplatepart(deltaoffset, args, @e)
-/for (acc)
+internalbc.for acc = empty:seq.templatepart, @e ∈ parts.s do acc + processtemplatepart(deltaoffset, args, @e) /for (acc)
 
 function addaddress(slot:int, a:int, b:internalbc) internalbc
 if a < 0 then add(slot + a, b)
@@ -142,7 +142,8 @@ else addplaceholder(templatepart(a - slot + 1, Relocsigned), b)
 
 _____________________________
 
-Function BLOCKCOUNT(slot:int, a1:int) internalbc addstartbits(1, 1, add(a1, emptyinternalbc))
+Function BLOCKCOUNT(slot:int, a1:int) internalbc
+addstartbits(1, 1, add(a1, emptyinternalbc))
 
 Function RETURN internalbc addstartbits(toint.RET, 0, emptyinternalbc)
 
@@ -150,16 +151,10 @@ Function RET(slot:slot, a1:slot) internalbc
 addstartbits(toint.RET, 1, addaddress(slot, a1, emptyinternalbc))
 
 Function CAST(slot:slot, a1:slot, a2:llvmtype, a3:castop) internalbc
-addstartbits(toint.CAST
-, 3
-, addaddress(slot, a1, add(typ.a2, add(toint.a3, emptyinternalbc)))
-)
+addstartbits(toint.CAST, 3, addaddress(slot, a1, add(typ.a2, add(toint.a3, emptyinternalbc))))
 
 Function BR(slot:slot, a1:int, a2:int, a3:slot) internalbc
-addstartbits(toint.BR
-, 3
-, add(a1, add(a2, addaddress(slot, a3, emptyinternalbc)))
-)
+addstartbits(toint.BR, 3, add(a1, add(a2, addaddress(slot, a3, emptyinternalbc))))
 
 Function ALLOCA(slot:slot, a1:llvmtype, a2:llvmtype, a3:slot, a4:int) internalbc
 addstartbits(toint.ALLOCA
@@ -170,26 +165,18 @@ addstartbits(toint.ALLOCA
 Function BR(a1:int) internalbc addstartbits(toint.BR, 1, add(a1, emptyinternalbc))
 
 Function GEP(slot:slot, a2:llvmtype, a3:slot) internalbc
-addstartbits(toint.GEP
-, 3
-, add(1, add(typ.a2, addaddress(slot, a3, emptyinternalbc)))
-)
+addstartbits(toint.GEP, 3, add(1, add(typ.a2, addaddress(slot, a3, emptyinternalbc))))
 
 Function GEP(slot:slot, a2:llvmtype, a3:slot, a4:slot) internalbc
 addstartbits(toint.GEP
 , 4
-, add(1
-, add(typ.a2, addaddress(slot, a3, addaddress(slot, a4, emptyinternalbc)))
-)
+, add(1, add(typ.a2, addaddress(slot, a3, addaddress(slot, a4, emptyinternalbc))))
 )
 
 Function STORE(slot:slot, a1:slot, a2:slot) internalbc
 addstartbits(toint.STORE
 , 4
-, addaddress(slot
-, a1
-, addaddress(slot, a2, add(toint.align8, add(0, emptyinternalbc)))
-)
+, addaddress(slot, a1, addaddress(slot, a2, add(toint.align8, add(0, emptyinternalbc))))
 )
 
 Function LOAD(slot:slot, a1:slot, a2:llvmtype) internalbc
@@ -220,9 +207,7 @@ Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot) internal
 addstartbits(toint.CALL
 , 5
 , add(a1
-, add(a2
-, add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, emptyinternalbc)))
-)
+, add(a2, add(typ.a3, addaddress(slot, a4, addaddress(slot, a5, emptyinternalbc))))
 )
 )
 
@@ -238,8 +223,7 @@ addstartbits(toint.CALL
 )
 )
 
-Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot
-, a5:slot, a6:slot, a7:slot) internalbc
+Function CALL(slot:slot, a1:int, a2:int, a3:llvmtype, a4:slot, a5:slot, a6:slot, a7:slot) internalbc
 addstartbits(toint.CALL
 , 7
 , add(a1
@@ -260,10 +244,7 @@ addstartbits(toint.CALL
 , add(a1
 , add(a2
 , add(typ.a3
-, addaddress(slot
-, a4
-, addaddress(slot, a5, args(slot, emptyinternalbc, rest, length.rest))
-)
+, addaddress(slot, a4, addaddress(slot, a5, args(slot, emptyinternalbc, rest, length.rest)))
 )
 )
 )
@@ -275,15 +256,14 @@ addstartbits(toint.CALL
 , add(a1, add(a2, add(a3, addaddress(slot, a4, emptyinternalbc))))
 )
 
-Function CALLFINISH(slot:int, rest:seq.int) internalbc args(slot, emptyinternalbc, rest, length.rest)
+Function CALLFINISH(slot:int, rest:seq.int) internalbc
+args(slot, emptyinternalbc, rest, length.rest)
 
 function args(slot:int, t:internalbc, rest:seq.int, i:int) internalbc
-if i = 0 then t
-else args(slot, addaddress(slot, rest_i, t), rest, i - 1)
+if i = 0 then t else args(slot, addaddress(slot, rest_i, t), rest, i - 1)
 
 function args(slot:slot, t:internalbc, rest:seq.slot, i:int) internalbc
-if i = 0 then t
-else args(slot, addaddress(slot, rest_i, t), rest, i - 1)
+if i = 0 then t else args(slot, addaddress(slot, rest_i, t), rest, i - 1)
 
 Function PHI(slot:slot, a1:llvmtype, a2:slot, a3:int, a4:slot, a5:int, a6:slot, a7:int) internalbc
 addstartbits(toint.PHI
@@ -292,10 +272,7 @@ addstartbits(toint.PHI
 , addsignedaddress(slot
 , a2
 , add(a3
-, addsignedaddress(slot
-, a4
-, add(a5, addsignedaddress(slot, a6, add(a7, emptyinternalbc)))
-)
+, addsignedaddress(slot, a4, add(a5, addsignedaddress(slot, a6, add(a7, emptyinternalbc))))
 )
 )
 )
@@ -305,18 +282,12 @@ Function PHI(slot:slot, a1:llvmtype, a2:slot, a3:int, a4:slot, a5:int) internalb
 addstartbits(toint.PHI
 , 5
 , add(typ.a1
-, addsignedaddress(slot
-, a2
-, add(a3, addsignedaddress(slot, a4, add(a5, emptyinternalbc)))
-)
+, addsignedaddress(slot, a2, add(a3, addsignedaddress(slot, a4, add(a5, emptyinternalbc))))
 )
 )
 
 Function PHI(slot:int, a1:int, s:seq.int) internalbc
-addstartbits(toint.PHI
-, length.s + 1
-, add(a1, subphi(slot, emptyinternalbc, s, length.s))
-)
+addstartbits(toint.PHI, length.s + 1, add(a1, subphi(slot, emptyinternalbc, s, length.s)))
 
 function subphi(slot:int, b:internalbc, s:seq.int, i:int) internalbc
 if i > 1 then
@@ -336,17 +307,18 @@ let t =
  do addpair(acc, tailphi, slot + p, p, @e) /for (acc)
 addstartbits(toint.PHI, length.tailphi / (nopara + 1) * 2 + 1, add(typ_p, t))
 
-function addsignedaddress(loc:slot, a:slot, bc:internalbc) internalbc addsignedaddress(-toint.loc, toint.a, bc)
+function addsignedaddress(loc:slot, a:slot, bc:internalbc) internalbc
+addsignedaddress(-toint.loc, toint.a, bc)
 
 function addaddress(locin:slot, a:slot, bc:internalbc) internalbc
 let slot = -toint.locin
 addaddress(slot, toint.a, bc)
 
 Function addvbr(b:bitstream, newbits:int, bitcount:int) bitstream
-let limit = toint (bits.1 << (bitcount - 1))
+let limit = toint(bits.1 << (bitcount - 1))
 if newbits < limit then add(b, bits.newbits, bitcount)
 else
- let firstchunk = bits (limit - 1) ∧ bits.newbits ∨ bits.limit
+ let firstchunk = bits(limit - 1) ∧ bits.newbits ∨ bits.limit
  let secondchunk = bits.newbits >> (bitcount - 1)
  assert toint.secondchunk < limit
  report "vbr encoding for value is not handled" + toword.newbits + toword.limit
@@ -381,13 +353,14 @@ else
 
 function addvbr6(b:bitstream, s:seq.int) bitstream addvbr6(bits.0, 0, bits.0, s, b, 1)
 
-Function addvbr6(b:bitstream, v:int) bitstream addvbr6(bits.0, 0, bits.0, [v], b, 1)
+Function addvbr6(b:bitstream, v:int) bitstream
+addvbr6(bits.0, 0, bits.0, [v], b, 1)
 
 Function addvbrsigned6(b:bitstream, val:int) bitstream
 if val < 0 then
  if val > -16 then addvbr6(b, 2 * -val + 1)
  else
-  let tmp = toint (bits.val ∨ 0xFFFF << 48)
+  let tmp = toint(bits.val ∨ 0xFFFF << 48)
   let first6bits = bits.-tmp << 1 ∧ 0x1F ∨ 0x21
   addvbr6(first6bits, 6, bits.-(val / 16), empty:seq.int, b, 1)
 else if val < 16 then addvbr6(b, 2 * val)
@@ -400,10 +373,7 @@ let k = length.a mod 32
 if k = 0 then a else add(a, bits.0, 32 - k)
 
 Function addblockheader(b:bitstream, currentabbrelength:int, blockid:int, abbrevlength:int) bitstream
-addvbr(align32.addvbr(addvbr(addvbr(b, ENTERBLOCK, currentabbrelength), blockid, 8)
-, abbrevlength
-, 4
-)
+addvbr(align32.addvbr(addvbr(addvbr(b, ENTERBLOCK, currentabbrelength), blockid, 8), abbrevlength, 4)
 , 0
 , 32
 )
@@ -481,8 +451,7 @@ let a =
  addrecords(h
  , MODABBREVLEN
  , [[1, 1]
- , [toint.TRIPLE]
- + for acc = empty:seq.int, @e ∈ triple.info do acc + toint.@e /for (acc)
+ , [toint.TRIPLE] + for acc = empty:seq.int, @e ∈ triple.info do acc + toint.@e /for (acc)
  , [toint.LAYOUT]
  + for acc = empty:seq.int, @e ∈ datalayout.info do acc + toint.@e /for (acc)
  ]
@@ -525,9 +494,7 @@ llvmpartial(a6, h)
 function constrecords(z:trackconst, l:slotrecord) trackconst
 {keep track of type of last const processed and add record when type changes}
 if ismoduleblock.l then
- let bits = 
-  if not.islastmodule.z then finishblock(bits.z, blockstart.z, TYPEABBREVLEN)
-  else bits.z
+ let bits = if not.islastmodule.z then finishblock(bits.z, blockstart.z, TYPEABBREVLEN) else bits.z
  trackconst(addrecord(bits, MODABBREVLEN, record.l), typ.l, 0)
 else
  let newblock = islastmodule.z ∧ not.ismoduleblock.l
@@ -536,18 +503,17 @@ else
   else bits.z
  let bits2 = 
   if lasttype.z = typ.l then bits
-  else addvbr6(add(bits, bits ((1 * 64 + 1) * 16 + 3), 16), typ.l)
+  else addvbr6(add(bits, bits((1 * 64 + 1) * 16 + 3), 16), typ.l)
  let rec = record.l
  let tp = rec_1
  let bs = 
   if tp = toint.CINTEGER then
-   addvbrsigned6(add(bits2, bits ((1 * 64 + toint.CINTEGER) * 16 + 3), 16), rec_2)
+   addvbrsigned6(add(bits2, bits((1 * 64 + toint.CINTEGER) * 16 + 3), 16), rec_2)
   else
    let a1 = 
     if length.rec < 32 then
-     add(bits2, bits (((length.rec - 1) * 64 + tp) * 16 + 3), 16)
-    else
-     addvbr6(addvbr6(addvbr(bits2, 3, TYPEABBREVLEN), tp), length.rec - 1)
+     add(bits2, bits(((length.rec - 1) * 64 + tp) * 16 + 3), 16)
+    else addvbr6(addvbr6(addvbr(bits2, 3, TYPEABBREVLEN), tp), length.rec - 1)
    addvbr6(a1, subseq(rec, 2, length.rec))
  trackconst(bs, typ.l, if newblock then length.bits else blockstart.z)
 
@@ -562,9 +528,7 @@ else
    if isempty.name then bits
    else
     let a1 = 
-     addvbr6(addvbr6(addvbr6(addvbr(bits, 3, abbrevlength), {rec type entry} 1)
-     , length.name + 1
-     )
+     addvbr6(addvbr6(addvbr6(addvbr(bits, 3, abbrevlength), {rec type entry} 1), length.name + 1)
      , i - 1
      )
     addvbr6(a1, name)

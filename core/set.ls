@@ -45,8 +45,7 @@ else if j > length.b then empty:seq.T
 else
  let c = a_i >1 b_j
  if c = EQ then [a_i] + intersect(a, b, i + 1, j + 1)
- else if c = GT then intersect(a, b, i, j + 1)
- else intersect(a, b, i + 1, j)
+ else if c = GT then intersect(a, b, i, j + 1) else intersect(a, b, i + 1, j)
 
 function union(a:set.T, b:set.T) set.T
 if cardinality.b = 0 then a
@@ -66,11 +65,11 @@ else if (a_i >1 b_j) = EQ then union(a, b, i + 1, j + 1, result + a_i)
 else
  let p = binarysearch(a, i + 1, length.a, b_j)
  if p > 0 then union(a, b, p + 1, j + 1, result + subseq(a, i, p))
- else
-  union(a, b,-p, j + 1, result + subseq(a, i,-p - 1) + [b_j])
+ else union(a, b,-p, j + 1, result + subseq(a, i,-p - 1) + [b_j])
 
 Function \(a:set.T, b:set.T) set.T
-{elements in a but not in b} set.diff(toseq.a, toseq.b, 1, 1)
+{elements in a but not in b}
+set.diff(toseq.a, toseq.b, 1, 1)
 
 Function -(a:set.T, b:T) set.T set.setdelete(toseq.a, b)
 
@@ -81,7 +80,8 @@ else if (a_i >1 b_j) = EQ then diff(a, b, i + 1, j + 1)
 else if (a_i >1 b_j) = LT then [a_i] + diff(a, b, i + 1, j)
 else diff(a, b, i, j + 1)
 
-Function replace(a:set.T, b:set.T) set.T set.replace(toseq.a, toseq.b, 1, 1, empty:seq.T)
+Function replace(a:set.T, b:set.T) set.T
+set.replace(toseq.a, toseq.b, 1, 1, empty:seq.T)
 
 function replace(a:seq.T, b:seq.T, i:int, j:int, result:seq.T) seq.T
 {if in a and b then b else a}
@@ -107,7 +107,8 @@ Function findindex(a:set.T, val:T) int binarysearch(toseq.a, val)
 
 Function cardinality(a:set.T) int length.toseq.a
 
-Function =(a:set.T, b:set.T) boolean cardinality.a = cardinality.b ∧ toseq.a = toseq.b
+Function =(a:set.T, b:set.T) boolean
+cardinality.a = cardinality.b ∧ toseq.a = toseq.b
 
 _________________
 
@@ -126,13 +127,11 @@ else
  do acc + @e /for (acc)
 
 function expandrangedown(a:seq.T, n:T, l:int) int
-if l > 1 then
- if (a_(l - 1) >2 n) = EQ then expandrangedown(a, n, l - 1) else l
+if l > 1 then if (a_(l - 1) >2 n) = EQ then expandrangedown(a, n, l - 1) else l
 else l
 
 function expandrangeup(a:seq.T, n:T, u:int) int
-if u < length.a then
- if (a_(u + 1) >2 n) = EQ then expandrangeup(a, n, u + 1) else u
+if u < length.a then if (a_(u + 1) >2 n) = EQ then expandrangeup(a, n, u + 1) else u
 else u
 
 function binarysearch2(s:seq.T, b:int, a:int, val:T) int

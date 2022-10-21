@@ -32,8 +32,7 @@ use words
 
 function checkhash seq.word
 if for l = empty:seq.int
-, w ∈ "Xx 0123456789ABCDEFabcdef x X invalid hex digit 0123456789-MMMM out of bounds FAIL >>, ()].
- :
+, w ∈ "Xx 0123456789ABCDEFabcdef x X invalid hex digit 0123456789-MMMM out of bounds FAIL >>, ()].:
  $(dq)_^.384 52 3 [2 4 5 a b c d e 1 k+= {} 1 2∪ this is test three four five test11 0 SPACE 2∪ code glyph
  48 49 50 51 53 54 6"
 do l + hash.decodeword.w /for (l)

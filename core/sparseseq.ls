@@ -49,8 +49,7 @@ else
  let this = s_i
  let thisfinish = start.this + length.edata.this - 1
  if finish ≥ thisfinish then removeoverlap(finish, s, i + 1)
- else
-  [sparseele(finish + 1, edata.this << (finish - start.this))] + s << i
+ else [sparseele(finish + 1, edata.this << (finish - start.this))] + s << i
 
 function *(a:seq.sparseele.T, e:sparseele.T) seq.sparseele.T
 if isempty.a then [e]

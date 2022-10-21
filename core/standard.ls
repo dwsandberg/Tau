@@ -32,7 +32,7 @@ Export index(int) index
 
 Export type:ordering
 
-Export type:UTF8{From UTF8}
+Export type:UTF8 {From UTF8}
 
 Export toword(n:int) word {Covert integer to a single word. } {From UTF8}
 
@@ -64,7 +64,7 @@ Export constantseq(len:int, element:int) seq.int {From otherseq.int}
 
 Export findindex(seq.word, word) int {From otherseq.word}
 
-Export type:seq.char{From seq.char}
+Export type:seq.char {From seq.char}
 
 Export isempty(seq.char) boolean {From seq.char}
 
@@ -84,7 +84,7 @@ Export +(seq.index, index) seq.index {From seq.index}
 
 Export empty:seq.index seq.index {From seq.index}
 
-Export type:seq.int{From seq.int}
+Export type:seq.int {From seq.int}
 
 Export isempty(seq.int) boolean {From seq.int}
 
@@ -104,7 +104,7 @@ Export subseq(seq.int, int, int) seq.int {From seq.int}
 
 Export ∈(int, seq.int) boolean {From seq.int}
 
-Export type:seq.seq.word{From seq.seq.word}
+Export type:seq.seq.word {From seq.seq.word}
 
 Export +(seq.seq.word, seq.seq.word) seq.seq.word {From seq.seq.word}
 
@@ -118,7 +118,7 @@ Export subseq(seq.seq.word, int, int) seq.seq.word {From seq.seq.word}
 
 Export ∈(seq.word, seq.seq.word) boolean {From seq.seq.word}
 
-Export type:seq.word{From seq.word}
+Export type:seq.word {From seq.word}
 
 Export first(s:seq.word) word {From seq.word}
 
@@ -154,7 +154,7 @@ Export alphasort(a:seq.word) seq.word {From words}
 
 Export merge(a:seq.word) word {make multiple words into a single word. } {From words}
 
-Export type:word{From words}
+Export type:word {From words}
 
 Export checkinteger(w:word) word
 {* returns INTEGER if w can be evaluated as a integer; returns ILLEGAL if w starts out like an integer
@@ -253,7 +253,8 @@ for acc = 1, @e ∈ constantseq(n, i) do acc * @e /for (acc)
 
 _______________
 
-Function hash(a:seq.int) int finalmix.for acc = hashstart, @e ∈ a do hash(acc, @e) /for (acc)
+Function hash(a:seq.int) int
+finalmix.for acc = hashstart, @e ∈ a do hash(acc, @e) /for (acc)
 
 Function hash(a:seq.word) int
 finalmix.for acc = hashstart, @e ∈ a do hash(acc, hash.@e) /for (acc)
@@ -305,10 +306,10 @@ Function hash(a:char) int hash.toint.a
 
 type index is rep:int
 
-Function +(i:index, b:int) index index (rep.i + b)
+Function +(i:index, b:int) index index(rep.i + b)
 
 Function toindex(i:int) index
 assert i > 0 report "not an index $(stacktrace)"
-index (i - 1)
+index(i - 1)
 
 Function toint(i:index) int rep.i + 1 

@@ -58,7 +58,8 @@ if i < length.layers.org then
  d2(org, gnew, i + 1, x, newout)
 else layeredgraph(gnew, newout)
 
-function splitarcs(g:graph.T, ok:set.T, n:T) seq.arc.T toarcs(n, toseq (successors(g, n) \ ok))
+function splitarcs(g:graph.T, ok:set.T, n:T) seq.arc.T
+toarcs(n, toseq(successors(g, n) \ ok))
 
 function splitarc(g:graph.T, a:arc.T) graph.T
 let new = generatenode.nodes.g

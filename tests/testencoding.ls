@@ -73,8 +73,7 @@ let p = process.process1
 if aborted.p then "Failed encoding $(message.p)"
 else
  let s1 = list.result.p
- let z = 
-  for acc = 0, @e ∈ ["firstadd", "secondadd"] do acc + add.@e /for (acc)
+ let z = for acc = 0, @e ∈ ["firstadd", "secondadd"] do acc + add.@e /for (acc)
  let s2 = list.result.process.process1
  let s3 = list.encodingdata:testrecord
  check([3 = deepcopytest.3
@@ -95,10 +94,7 @@ encodingdata:testrecord
 type testdeep is fld1:seq.word, fld2:tree.seq.word, fld3:seq.char
 
 function testdeep1 testdeep
-testdeep("A BC DEF"
-, tree("LIT 1", [tree."PARAM 1"])
-, decodeword."TEST"_1
-)
+testdeep("A BC DEF", tree("LIT 1", [tree."PARAM 1"]), decodeword."TEST"_1)
 
 function =(a:testdeep, b:testdeep) boolean
 fld1.a = fld1.b ∧ fld2.a = fld2.b ∧ fld3.a = fld3.b 

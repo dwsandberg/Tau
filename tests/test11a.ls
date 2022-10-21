@@ -114,8 +114,7 @@ function isprefix(p:seq.word, s:seq.word) boolean subseq(s, 1, length.p) = p
 function testerror(in:seq.file, m:seq.word, code:seq.word) boolean
 let r = testcomp2(in, code)
 let a = isprefix(m, r)
-assert isprefix(m, r)
-report "Fail test11a expected:$(m) /br got:$(subseq(r, 1, length.m))"
+assert isprefix(m, r) report "Fail test11a expected:$(m) /br got:$(subseq(r, 1, length.m))"
 a
 
 type checkprec is toseq:seq.word

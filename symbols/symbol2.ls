@@ -42,7 +42,7 @@ Export types(modExports) seq.seq.mytype
 
 Export modExports(modname:modref, exports:seq.symbol, types:seq.seq.mytype) modExports
 
-Export type:modref{From mytype}
+Export type:modref {From mytype}
 
 Export isabstract(modref) boolean {From mytype}
 
@@ -52,7 +52,7 @@ Export name(modref) word {From mytype}
 
 Export para(modref) mytype {From mytype}
 
-Export type:mytype{From mytype}
+Export type:mytype {From mytype}
 
 Export %(t:mytype) seq.word {From mytype}
 
@@ -64,7 +64,7 @@ Export moduleref(seq.word) modref {From mytype}
 
 Export typeref(seq.word) mytype {From mytype}
 
-Export type:typedef{From mytype}
+Export type:typedef {From mytype}
 
 Export =(modref, modref) boolean {From mytype}
 
@@ -116,7 +116,7 @@ Export removeoptions(seq.symbol) seq.symbol {From symbol}
 
 Export Words(seq.word) symbol {From symbol}
 
-Export type:symbol{From symbol}
+Export type:symbol {From symbol}
 
 Export %(symbol) seq.word {From symbol}
 
@@ -222,7 +222,7 @@ Export symbol(modref, seq.word, mytype, mytype, mytype, mytype) symbol {From sym
 
 Export symbol(modref, seq.word, seq.mytype, mytype) symbol {From symbol}
 
-Export type:symdef{From symbol}
+Export type:symdef {From symbol}
 
 Export code(symdef) seq.symbol {From symbol}
 
@@ -294,11 +294,11 @@ Export renumberconstants(prg:seq.symdef) seq.symdef {From symbolconstant}
 
 Export fullconstantcode(s:symbol) seq.symbol {From symbolconstant}
 
-Export type:symbolconstant{From symbolconstant}
+Export type:symbolconstant {From symbolconstant}
 
-Export type:typedict{From typedict}
+Export type:typedict {From typedict}
 
-Export type:typeentry{From typedict}
+Export type:typeentry {From typedict}
 
 Export basetype(mytype, typedict) mytype {From typedict}
 
@@ -315,12 +315,7 @@ midpoint(""
 , empty:seq.seq.word
 )
 
-Function midpoint(option:seq.word
-, prg:set.symdef
-, typedict:typedict
-, libmods:seq.modExports
-, src:seq.seq.word
-) midpoint
+Function midpoint(option:seq.word, prg:set.symdef, typedict:typedict, libmods:seq.modExports, src:seq.seq.word) midpoint
 midpoint(option, prg, empty:set.symdef, typedict, libmods, src)
 
 type midpoint is option:seq.word

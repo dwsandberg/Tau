@@ -22,26 +22,27 @@ use set.word
 
 use wordgraph
 
+use pretty
+
 Export drawgraph(seq.arc.word, set.word, set.word) seq.word {From svg2graph.word}
 
 Function usegraph(input:seq.file, o:seq.word, include:seq.word, exclude:seq.word) seq.file
-let out = 
- drawgraph(usegraph(breakparagraph.input, "mod"_1), asset.include, asset.exclude)
+let out = drawgraph(usegraph(breakparagraph.input, "mod"_1), asset.include, asset.exclude)
 [file(filename.o, out)]
 
 * The /keyword usegraph cmd creates a graph with each node being a module and the arcs being to other
 module referenced by the module in the /keyword use clauses. The /keyword exclude option lists the
-modules to ignore in the use clauses.The /keyword include option restricts the modules considered
-to those listed.
+modules to ignore in the use clauses.The /keyword include option restricts the modules considered to
+those listed.
 
-* Examples:/fmt block usegraph+built core.libsrc /fmt none <a href ="../Tools/install1.
-html" > Result </a> /end
+* Examples:/fmt block usegraph+built core.libsrc /fmt none <a href ="../Tools/install1.html" > Result
+</a> /end
 
-* > usegraph+built core.libsrc exclude = seq standard /fmt none <a href ="../Tools/install2
-.html" > Result </a> /end
+* > usegraph+built core.libsrc exclude = seq standard /fmt none <a href ="../Tools/install2.html"
+> Result </a> /end
 
-* > usegraph+built core.libsrc include = UTF8 words format standard textio stack encoding xxhash
-exclude = seq standard /fmt none <a href ="../Tools/install3.html" > Result </a> /end
+* > usegraph+built core.libsrc include = UTF8 words format standard textio stack encoding xxhash exclude
+= seq standard /fmt none <a href ="../Tools/install3.html" > Result </a> /end
 
 * > usegraph +stdlib textio.ls+core UTF8.ls words format standard stack encoding xxhash /end
 
@@ -53,25 +54,21 @@ Function doclibrary(input:seq.file, o:seq.word, mods:seq.word) seq.file
 {create summary documentation for library. }
 let libsrc = 
  for acc = empty:seq.byte, f ∈ input do
-  if ext.fn.f ∈ "ls libsrc" then acc + tobyte.10 + tobyte.10 + data.f
-  else acc
+  if ext.fn.f ∈ "ls libsrc" then acc + tobyte.10 + tobyte.10 + data.f else acc
  /for (breakparagraph.acc)
 let todoc = 
  if isempty.mods then
   for acc = "", s ∈ libsrc do
-   if subseq(s, 1, 1) ∈ ["module", "Module"] then
-    acc + subseq(s, 2, 2)
+   if subseq(s, 1, 1) ∈ ["module", "Module"] then acc + subseq(s, 2, 2)
    else acc
   /for (acc)
  else mods
 let g = newgraph.usegraph(libsrc, "mod"_1)
 let modindex = 
- for txt = "", modname ∈ todoc do
-  txt + "/fmt none <a href =" + dq.[merge.["#"_1, modname]]
-  + ">"
-  + modname
-  + "</a> /end"
- /for (txt)
+ for txt = "/fmt none", modname ∈ todoc do
+  txt + "<a href =" + dq.[merge.["#"_1, modname]]
+  + "> $(modname) </a>"
+ /for (txt + "/end")
 [file(filename.o, modindex + docmodule(g, todoc, libsrc))]
 
 * The doclibrary cmd produces summary documentation from source code. The option /strong mods list
@@ -81,8 +78,8 @@ the modules to be document if the option is not empty.
 
 * If a paragraph in the library is of the form:* usegraph exclude <list of modules> include <list of
 modules> then a use graph will be construction including and excluding the modules listed. Both the
-exclude and include are optional, but for a large library should be used to restrict the size of the
-graph. An example of a use graph is included at the end of this module.
+exclude and include are optional, but for a large library should be used to restrict the size of the graph
+. An example of a use graph is included at the end of this module.
 
 * usegraph exclude standard seq set UTF8 stack graph otherseq
 
@@ -93,7 +90,7 @@ for currentmod = "?"_1, result = empty:seq.arc.word, p ∈ lib do
  else if first.p ∈ "use" then
   let m = 
    if length.p = 2 then p_2
-   else if kind = "mod"_1 then p_2 else merge (p << 1)
+   else if kind = "mod"_1 then p_2 else merge(p << 1)
   next(currentmod
   , if currentmod = m ∨ currentmod ∈ "?" then result
   else result + arc(currentmod, m)
@@ -102,25 +99,19 @@ for currentmod = "?"_1, result = empty:seq.arc.word, p ∈ lib do
 /for (result)
 
 function docmodule(usegraph:graph.word, todoc:seq.word, lib:seq.seq.word) seq.word
-for acc = ""
-, currentmod = "?"
-, funcs = ""
-, types = ""
-, p ∈ lib
-do
+for acc = "", currentmod = "?", funcs = "", types = "", p ∈ lib do
  if isempty.p then next(acc, currentmod, funcs, types)
  else if first.p ∈ "module Module" then
   let modname = p_2
   if modname ∉ todoc then next(acc, subseq(p, 2, length.p), funcs, types)
   else
    let leftover = 
-    if length.types > 0 ∨ length.funcs > 0 then
-     "/br defines types:  $(types) $(funcs)"
+    if length.types > 0 ∨ length.funcs > 0 then "/br defines types:  $(types) $(funcs)"
     else ""
    let name = [modname] + if length.p > 2 then ".T" else ""
    let usedin = toseq.arcstopredecessors(usegraph, merge.name)
    next(acc + leftover + "/fmt none <hr id =" + dq.[modname] + "> /end"
-   + "/fmt /section /keyword module $(name) /end"
+   + "/fmt section /keyword module $(name) /end"
    + if isempty.usedin then ""
    else
     "
@@ -144,19 +135,10 @@ do
    else subseq(p, 2, length.p))"
   next(acc, currentmod, funcs + toadd, types)
  else if first.p ∈ "Function Export" then
-  let z = getheader.p
-  let toadd = 
-   "
-    /p /keyword $(if subseq(p, length.z, length.z + 1) = "{
-    *" then
-    z >> 1 + "{"
-    + subseq(p, length.z + 2, findindex(p, "}"_1))
-   else if last.z ∈ "stub" then z >> 1 else z)"
-  next(acc, currentmod, funcs + toadd, types)
+  next(acc, currentmod, funcs + "/p" + pretty(p, true), types)
  else if first.p ∈ "type" then next(acc, currentmod, funcs, types + p_2)
  else next(acc, currentmod, funcs, types)
 /for (
  acc
- + if not.isempty.types ∨ not.isempty.funcs then
-  "/br defines types:  $(types) $(funcs)"
+ + if not.isempty.types ∨ not.isempty.funcs then "/br defines types:  $(types) $(funcs)"
  else "") 

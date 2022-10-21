@@ -56,12 +56,7 @@ let cl =
  , "true boolean"
  , "4"
  , {optest24}
- "Start (int)
-  /br %1 5 = (int, int) boolean Br2 (1, 2)
-  /br 24 Exit
-  /br 0 Exit
-  /br EndBlock
-  /br"
+ "Start (int) /br %1 5 = (int, int) boolean Br2 (1, 2) /br 24 Exit /br 0 Exit /br EndBlock /br"
  , "25"
  , {optest26}
  "Start (int)
@@ -116,8 +111,7 @@ let cl =
   /br"
  , {test 35}
  "Start (int)
-  /br %1 %2 seq.word:_(seq.word, int) word Define 3 %3 WORD e = (int, int) boolean Br2 (
-  6, 1)
+  /br %1 %2 seq.word:_(seq.word, int) word Define 3 %3 WORD e = (int, int) boolean Br2 (6, 1)
   /br %3 WORD d = (int, int) boolean Br2 (5, 1)
   /br %3 WORD c = (int, int) boolean Br2 (4, 1)
   /br %3 WORD b = (int, int) boolean Br2 (3, 1)
@@ -143,12 +137,10 @@ let cl =
  "Start (int)
   /br %1 %2 seq.word:_(seq.word, int) word WORD xxx = (int, int) boolean Br2 (1, 2)
   /br 3 Exit
-  /br %1 %2 seq.word:_(seq.word, int) word Define 3 %3 WORD a = (int, int) boolean Br2 (
-  2, 1)
+  /br %1 %2 seq.word:_(seq.word, int) word Define 3 %3 WORD a = (int, int) boolean Br2 (2, 1)
   /br %3 WORD b = (int, int) boolean Br2 (1, 2)
   /br 4 Exit
-  /br %1 %2 seq.word:_(seq.word, int) word Define 4 %4 WORD c = (int, int) boolean Br2 (
-  3, 1)
+  /br %1 %2 seq.word:_(seq.word, int) word Define 4 %4 WORD c = (int, int) boolean Br2 (3, 1)
   /br %4 WORD d = (int, int) boolean Br2 (2, 1)
   /br %4 WORD z = (int, int) boolean Br2 (1, 2)
   /br 4 Exit
@@ -169,24 +161,22 @@ let r =
 if isempty.r then "PASS testopt" else "testopt $(r)"
 
 Function getcode(p2:seq.symdef, codelist:seq.seq.word, no:int) seq.word
-let name = merge ("optest" + toword.no)
+let name = merge("optest" + toword.no)
 let code = 
  for acc = "", p ∈ p2 do if name = name.sym.p then %.removeoptions.code.p else acc /for (acc)
-if codelist_no = code
-∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1, "") then
+if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1, "") then
  ""
 else
  "/br /fmt literal FAILED /end test" + toword.no + "in optest /br" + code
  + "/p"
  + codelist_no
 
-+" /p diffs:"+sameto (code, codelist_no, 1,"")+" /p"+toseq.asset." a b c d xxx
-"
++" /p diffs:"+sameto (code, codelist_no, 1,"")+" /p"+toseq.asset." a b c d xxx"
 
 function shuffletest(s:seq.word) boolean
 s
-∈ ["17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 d a 85 8 9 92 xxx d 100 10 7 101 9 10 109
- 4 3 113 5 4 117 3 5"
+∈ ["17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 d a 85 8 9 92 xxx d 100 10 7 101 9 10 109 4
+ 3 113 5 4 117 3 5"
 , "17 a c 32 a c 47 b xxx 55 7 8 62 c b 70 8 9 71 9 10 77 xxx a 85 10 9 100 8 7 101 9 10 109 4 3 113
  5 4 117 3 5"
 , "47 b xxx 62 xxx b 85 8 9 109 4 3 113 3 4"

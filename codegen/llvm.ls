@@ -1,7 +1,6 @@
 Module llvm
 
-In addition to the llvm bitcode format documentation, an useful file for reference is LLVMBitCodes.
-h
+In addition to the llvm bitcode format documentation, an useful file for reference is LLVMBitCodes.h
 
 use UTF8
 
@@ -45,7 +44,7 @@ function asseq(t:llvmtype) seq.int toseq.decode.to:encoding.llvmtypeele(typ.t + 
 
 Function returntype(func:llvmtype) llvmtype llvmtype.(asseq.func)_3
 
-Function llvmtype(s:seq.int) llvmtype llvmtype (addorder.llvmtypeele.s - 1)
+Function llvmtype(s:seq.int) llvmtype llvmtype(addorder.llvmtypeele.s - 1)
 
 function inttollvmtype(i:int) llvmtype llvmtype.i
 
@@ -57,13 +56,12 @@ Function %(t:llvmtype) seq.word
 let a = asseq.t
 let tp = typeop.a_1
 let b = for acc = empty:seq.llvmtype, @e ∈ a do acc + inttollvmtype.@e /for (acc)
-if tp = INTEGER then [merge ("i" + toword.a_2)]
-else if tp = ARRAY then
- "array (" + toword.a_2 + "," + %.b_3 + ")"
+if tp = INTEGER then [merge("i" + toword.a_2)]
+else if tp = ARRAY then "array (" + toword.a_2 + "," + %.b_3 + ")"
 else if tp = POINTER then "ptr.$(b_2)"
 else if tp = FUNCTION then
- "function ($(for acc = "
-  ", @e ∈ subseq(b, 3, length.a) do acc + %.@e + "," /for (acc >> 1)))"
+ "function ($(for acc = "", @e ∈ subseq(b, 3, length.a) do acc + %.@e + "
+  ," /for (acc >> 1)))"
 else if tp = TVOID then "VOID" else if tp = DOUBLE then "double" else "?"
 
 Function typerecords seq.seq.int
@@ -92,11 +90,11 @@ type llvmconst is typ:int, toseq:seq.int
 
 function hash(a:llvmconst) int hash.symtabname.a
 
-Function =(a:llvmconst, b:llvmconst) boolean symtabname.a = symtabname.b ∧ typ.a = typ.b
+Function =(a:llvmconst, b:llvmconst) boolean
+symtabname.a = symtabname.b ∧ typ.a = typ.b
 
 function symtabname(a:llvmconst) seq.int
-if typ.a ∈ [-1,-2] then subseq(toseq.a, 2, 1 + (toseq.a)_1)
-else toseq.a
+if typ.a ∈ [-1,-2] then subseq(toseq.a, 2, 1 + (toseq.a)_1) else toseq.a
 
 Function modulerecord(name:seq.word, rec:seq.int) slot
 let c = 
@@ -104,24 +102,24 @@ let c =
  else
   let chars = tointseq.for acc = empty:seq.char, @e ∈ name do acc + decodeword.@e /for (acc)
   llvmconst(-1, [length.chars] + chars + rec)
-slot (addorder.c - 1)
+slot(addorder.c - 1)
 
-Function C64(i:int) slot slot (addorder.llvmconst(typ.i64, [toint.CINTEGER, i]) - 1)
+Function C64(i:int) slot slot(addorder.llvmconst(typ.i64, [toint.CINTEGER, i]) - 1)
 
-Function C32(i:int) slot slot (addorder.llvmconst(typ.i32, [toint.CINTEGER, i]) - 1)
+Function C32(i:int) slot slot(addorder.llvmconst(typ.i32, [toint.CINTEGER, i]) - 1)
 
 function C(t:llvmtype, s:seq.int) int addorder.llvmconst(typ.t, s) - 1
 
-Function constantrecord(t:llvmtype, s:seq.int) slot slot (addorder.llvmconst(typ.t, s) - 1)
+Function constantrecord(t:llvmtype, s:seq.int) slot
+slot(addorder.llvmconst(typ.t, s) - 1)
 
 Function DATA(t:llvmtype, data:seq.int) slot
-slot (addorder.llvmconst(typ.t, [toint.CDATA] + data) - 1)
+slot(addorder.llvmconst(typ.t, [toint.CDATA] + data) - 1)
 
 Function AGGREGATE(data:seq.slot) slot
 let t = array(length.data, i64)
-slot (addorder.llvmconst(typ.t
-, [toint.CAGGREGATE]
-+ for acc = empty:seq.int, @e ∈ data do acc + toint.@e /for (acc)
+slot(addorder.llvmconst(typ.t
+, [toint.CAGGREGATE] + for acc = empty:seq.int, @e ∈ data do acc + toint.@e /for (acc)
 )
 - 1)
 
@@ -131,15 +129,13 @@ slot.C(i64, [toint.CCAST, 9, typ.argtype, toint.p])
 Function CGEP(p:slot, b:int) slot
 let t1 = consttype.p
 slot.C(ptr.i64
-, [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32
-, toint.C32.0, typ.i64, toint.C64.b]
+, [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b]
 )
 
 Function CGEPi8(p:slot, b:int) slot
 let t1 = consttype.p
 slot.C(ptr.i8
-, [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32
-, toint.C32.0, typ.i64, toint.C64.b]
+, [toint.CGEP, typ.t1, typ.ptr.t1, toint.p, typ.i32, toint.C32.0, typ.i64, toint.C64.b]
 )
 
 /Function zeroinit (profiletype:llvmtype) int C (profiletype, [toint, CNULL])
@@ -165,8 +161,7 @@ type slotrecord is tollvmconst:llvmconst
 
 Function record(b:slotrecord) seq.int
 let a = tollvmconst.b
-if typ.a = -1 then
- {name comes before record} subseq(toseq.a, 2 + (toseq.a)_1, length.toseq.a)
+if typ.a = -1 then {name comes before record} subseq(toseq.a, 2 + (toseq.a)_1, length.toseq.a)
 else toseq.a
 
 Function symtablename(c:slotrecord) seq.char

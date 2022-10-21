@@ -35,8 +35,7 @@ do
   , push(stk, max(blkno + max(brt.sym, brf.sym), top.stk))
   )
  else if isexit.sym ∨ iscontinue.sym then next(valid, push(stk, top.stk))
- else if isstartorloop.sym then next(valid, push(stk, 2))
- else next(valid, stk)
+ else if isstartorloop.sym then next(valid, push(stk, 2)) else next(valid, stk)
 /for (valid)
 
 function ghj(code:seq.symbol, stk:stack.int, label:int, replace:int) seq.symbol
@@ -71,10 +70,7 @@ function reorg(sorted:seq.casenode, brf:int, var:symbol, nodes:seq.int, nodeno:i
 if length.sorted < 4 then
  {rechain}
  let new = 
-  for acc = empty:seq.symbol
-  , off = nodeno - (length.sorted - 1)
-  , c ∈ sorted >> 1
-  do
+  for acc = empty:seq.symbol, off = nodeno - (length.sorted - 1), c ∈ sorted >> 1 do
    next(acc + [var, key.c, EqOp, Br2(brt.c - off, 1)], off + 1)
   /for (
    let last = last.sorted
@@ -94,13 +90,7 @@ else
   + code.lastpart
  reorgresult(new, offset.firstpart - 2)
 
-function findcases(code:seq.symbol
-, nodes:seq.int
-, casenodes:seq.int
-, dead:seq.int
-, nextvar:int
-, reorgwhen:int
-) seq.symbol
+function findcases(code:seq.symbol, nodes:seq.int, casenodes:seq.int, dead:seq.int, nextvar:int, reorgwhen:int) seq.symbol
 for cases = empty:seq.casenode
 , last = -nodes_1
 , nodeno = 2
@@ -164,8 +154,7 @@ do
  if length.cases < reorgwhen then removedead(code, nodes, dead)
  else
   let testvar = 
-   if length.first = 1 then first_1
-   else if isempty.eqivs then Local.nextvar else eqivs_1
+   if length.first = 1 then first_1 else if isempty.eqivs then Local.nextvar else eqivs_1
   let settestvar = if length.first = 1 then empty:seq.symbol else first + Define.value.testvar
   let t = 
    reorg(sort.cases
@@ -240,8 +229,7 @@ do
   let secondnode = code_(nodes_2)
   let firstpart = subseq(code, blkstart + 1, nodes_2 - 1)
   let firstpart1 = 
-   if length.firstpart = 1 ∧ (isconst.firstpart_1 ∨ islocal.firstpart_1) then
-    empty:seq.symbol
+   if length.firstpart = 1 ∧ (isconst.firstpart_1 ∨ islocal.firstpart_1) then empty:seq.symbol
    else firstpart + Define.100000
   subseq(code, 1, blkstart - 1) + firstpart1
   + subseq(code, nodes_(1 + brt.secondnode) + 1, nodes_(2 + brt.secondnode) - 1)
@@ -265,15 +253,13 @@ do
  if (lastsymbol = Littrue ∨ lastsymbol = Litfalse) ∧ isbr.sym
  ∧ top.stk = length.acc - 1 then
   {patch previous br's so they skip over this block}
-  next(ghj(acc, stk, 1, 1 + if lastsymbol = Littrue then brt.sym else brf.sym)
-  + sym
+  next(ghj(acc, stk, 1, 1 + if lastsymbol = Littrue then brt.sym else brf.sym) + sym
   , push(stk, length.acc + 1)
   , nextvar
   , sym
   )
  else if isblock.sym then next(acc, stk, nextvar, sym)
- else if not.isblock.lastsymbol then
-  next(acc + sym, newstk(sym, stk, acc), nextvar, sym)
+ else if not.isblock.lastsymbol then next(acc + sym, newstk(sym, stk, acc), nextvar, sym)
  else
   {lastsymbol isblock}
   let noblocks = countnodes.stk
@@ -288,8 +274,7 @@ do
    let code0 = adjustbr(acc, top(stk1, countnodes.stk1 - 1), noblocks - 2)
    {remove start of block}
    let code1 = 
-    subseq(code0, 1,-first.nodes - 1)
-    + subseq(code0,-first.nodes + 1, length.code0)
+    subseq(code0, 1,-first.nodes - 1) + subseq(code0,-first.nodes + 1, length.code0)
    {replace exit by br sym}
    let t = 
     for code2 = code1, stk2 = stk1, adjust = noblocks - 2, n1 ∈ nodes << 1 do
@@ -314,22 +299,19 @@ do
    let code0 = adjustbr(acc, top(stk1, countnodes.stk1 - 1), noblocks - 2)
    {remove start of block}
    let code1 = 
-    subseq(code0, 1,-first.nodes - 1)
-    + subseq(code0,-first.nodes + 1, length.code0)
+    subseq(code0, 1,-first.nodes - 1) + subseq(code0,-first.nodes + 1, length.code0)
    {build new stk}
    let stk2 = for stk2 = stk1, n ∈ nodes << 1 do push(stk2, n - 1) /for (stk2)
    next(code1, stk2, nextvar, sym)
 /for (
  if isblock.lastsymbol then
-  if not.isconst.self ∧ first.toseq.stk = -1 then
-   tailR(acc + lastsymbol, self, stk)
+  if not.isconst.self ∧ first.toseq.stk = -1 then tailR(acc + lastsymbol, self, stk)
   else unreached(acc, toseq.stk, nextvar, reorgwhen)
  else acc)
 
 function newstk(sym:symbol, stk:stack.int, acc:seq.symbol) stack.int
 if isstartorloop.sym then push(stk,-length.acc - 1)
-else if isexit.sym ∨ iscontinue.sym ∨ isbr.sym then push(stk, length.acc + 1)
-else stk
+else if isexit.sym ∨ iscontinue.sym ∨ isbr.sym then push(stk, length.acc + 1) else stk
 
 function tailR(code:seq.symbol, self:symbol, stk:stack.int) seq.symbol
 let l = 
@@ -340,22 +322,19 @@ let l =
 if isempty.l then code
 else
  let nopara = nopara.self
- let plist = 
-  for acc = empty:seq.symbol, e2 ∈ arithseq(nopara, 1, 1) do acc + Local.e2 /for (acc)
+ let plist = for acc = empty:seq.symbol, e2 ∈ arithseq(nopara, 1, 1) do acc + Local.e2 /for (acc)
  let code2 = 
   for code2 = code, i ∈ l do
-   subseq(code2, 1, i - 2) + continue.nopara
-   + subseq(code2, i + 1, length.code2)
+   subseq(code2, 1, i - 2) + continue.nopara + subseq(code2, i + 1, length.code2)
   /for (code2)
  plist + Loopblock(paratypes.self, nopara + 1, resulttype.self)
  + adjustvar(code2 << 1, nopara)
 
 function adjustvar(s:seq.symbol, delta:int) seq.symbol
 for acc = empty:seq.symbol, a ∈ s do
- if islocal.a then acc + Local (value.a + delta)
- else if isdefine.a then acc + Define (value.a + delta)
- else if isloopblock.a then
-  acc + Loopblock(paratypes.a, firstvar.a + delta, resulttype.a)
+ if islocal.a then acc + Local(value.a + delta)
+ else if isdefine.a then acc + Define(value.a + delta)
+ else if isloopblock.a then acc + Loopblock(paratypes.a, firstvar.a + delta, resulttype.a)
  else acc + a
 /for (acc)
 

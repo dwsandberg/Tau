@@ -30,12 +30,14 @@ Builtin empty:seq.T seq.T {empty seq}
 
 Builtin _(a:seq.T, i:index) T
 
-Function _(a:seq.T, c:int) T a_(toindex.if c < 0 then length.a + c + 1 else c /if)
+Function _(a:seq.T, c:int) T
+a_(toindex.if c < 0 then length.a + c + 1 else c /if)
 
 Function =(a:seq.T, b:seq.T) boolean
 for isequal = length.a = length.b, i = 1, e ∈ a while isequal do next(e = b_i, i + 1) /for (isequal)
 
-Function ∈(a:T, s:seq.T) boolean for found = false, e ∈ s while not.found do a = e /for (found)
+Function ∈(a:T, s:seq.T) boolean
+for found = false, e ∈ s while not.found do a = e /for (found)
 
 Function lookup(s:seq.T, a:T) seq.T
 for found = empty:seq.T, e ∈ s while isempty.found do if a = e then found + e else found /for (found)
@@ -47,10 +49,10 @@ let i = ii + start.s
 let len = length.a.s
 if i > len then
  let x = to:pseq.T(b.s)
- if length.toseq.x = 0 then (b.s)_(index (i - len - 1)) else x_(i - len)
+ if length.toseq.x = 0 then (b.s)_(index(i - len - 1)) else x_(i - len)
 else
  let x = to:pseq.T(a.s)
- if length.toseq.x = 0 then (a.s)_(index (i - 1)) else x_i
+ if length.toseq.x = 0 then (a.s)_(index(i - 1)) else x_i
 
 Function ispseq(s:seq.T) boolean length.toseq.to:pseq.T(s) ≠ 0
 
@@ -66,8 +68,7 @@ Function +(l:seq.T, a:T) seq.T l + [a]
 function cat3(totallength:int, a:seq.T, b:seq.T, c:seq.T) seq.T
 if length.a > length.b then toseq.pseq(totallength, a, catnonzero(b, c), 0)
 else if length.b < length.c then toseq.pseq(totallength, catnonzero(a, b), c, 0)
-else
- toseq.pseq(totallength, toseq.pseq(length.a + length.b, a, b, 0), c, 0)
+else toseq.pseq(totallength, toseq.pseq(length.a + length.b, a, b, 0), c, 0)
 
 function catnonzero(a:seq.T, b:seq.T) seq.T
 let totallength = length.a + length.b
@@ -79,8 +80,7 @@ else
   if length.toseq.tb = 0 ∨ length.a.tb + length.b.tb ≠ length.toseq.tb then
    toseq.pseq(totallength, a, b, 0)
   else cat3(totallength, a, a.tb, b.tb)
- else if length.a.ta + length.b.ta ≠ length.toseq.ta then
-  toseq.pseq(totallength, a, b, 0)
+ else if length.a.ta + length.b.ta ≠ length.toseq.ta then toseq.pseq(totallength, a, b, 0)
  else cat3(totallength, a.ta, b.ta, b)
 
 Function subseq(s:seq.T, start:int, finish:int) seq.T

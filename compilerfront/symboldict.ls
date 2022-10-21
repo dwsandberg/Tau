@@ -52,7 +52,8 @@ Function lookupbysig(dict:symboldict, sym:symbol) set.symbol findelement2(asset.
 
 type symboldict is asset:set.symbol, requires:set.symdef, commonX:seq.commoninfo
 
-Function symboldict(d:set.symbol, common:seq.commoninfo) symboldict symboldict(d, empty:set.symdef, common)
+Function symboldict(d:set.symbol, common:seq.commoninfo) symboldict
+symboldict(d, empty:set.symdef, common)
 
 Function common(d:symboldict) commoninfo first.commonX.d
 
@@ -65,9 +66,11 @@ if hasrequires.sym then
   code.t_1
 else empty:seq.symbol
 
-Function empty:symboldict symboldict symboldict(empty:set.symbol, empty:set.symdef, empty:seq.commoninfo)
+Function empty:symboldict symboldict
+symboldict(empty:set.symbol, empty:set.symdef, empty:seq.commoninfo)
 
-Function +(d:symboldict, sym:symbol) symboldict symboldict(asset.d + sym, requires.d, commonX.d)
+Function +(d:symboldict, sym:symbol) symboldict
+symboldict(asset.d + sym, requires.d, commonX.d)
 
 Function -(d:symboldict, s:set.symbol) symboldict
 symboldict(asset.d \ s, requires.d, commonX.d)
