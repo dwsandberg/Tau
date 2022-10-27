@@ -1,8 +1,8 @@
 Module tree.T
 
-use standard
-
 use seq.tree.T
+
+use standard
 
 type tree is label:T, sons:seq.tree.T
 
@@ -29,8 +29,6 @@ Function nosons(t:tree.T) int length.sons.t
 
 Function postorder(a:tree.T) seq.tree.T
 for acc = empty:seq.tree.T, @e ∈ sons.a do acc + postorder.@e /for (acc) + a
-
-use otherseq.tree.T
 
 unbound %(T) seq.word
 

@@ -82,6 +82,13 @@ makelib common.lib
 uses=stdlib
 exports=matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter common timestamp
 
+makelib common2.lib
++common    point.ls 
+uses=stdlib
+exports=matrix point bandeskopf uniqueids svg2graph makeDAG layergraph barycenter common timestamp
+
+
+
 makelib tests.lib
 +tests bug7.ls checking myseq point randomphrase test11 test20 testencoding testmodules testprocess testseq tree wordfreq testopt.
  ls test11a testall seq8  testpackedseq
@@ -136,12 +143,12 @@ front callgraphwithin.html tools.libsrc stdlib.libinfo common.
 mods=taulextable
 flags=within
 
-wasm wbeizer.wasm webcore.libsrc
+ wasm wbeizer.wasm webcore.libsrc
 +wbeizer Bcubic.html Bquadratic wbeizer.ls
 exports=wbeizer
 Library=wbeizer
 
- wasm webtools.wasm webcore.libsrc symbols compilerfront  tests subtools
+  wasm webtools.wasm webcore.libsrc symbols compilerfront  tests subtools
 +webtools webtools.ls  webtools.html
 +common svg2graph.ls uniqueids
 exports=webtools

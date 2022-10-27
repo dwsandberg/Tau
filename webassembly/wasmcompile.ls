@@ -48,11 +48,13 @@ use seq.wfunc
 
 use set.seq.word
 
-use seq.wtype
+use otherseq.wtype
 
 use stack.wtype
 
 use otherseq.word
+
+
 
 type coverage is towfunc:seq.word
 
@@ -408,8 +410,6 @@ do
  let zk1 = for acc = empty:seq.localinfo, e ∈ toseq.localtypes do acc + localinfo.e /for (acc)
  let zk = for acc = empty:seq.wtype, e ∈ sort.zk1 do acc + type.e /for (acc)
  funcbody(zk << nopara.forsym, curblk + return))
-
-use otherseq.wtype
 
 function brX(i:int) seq.byte if i = 0 then empty:seq.byte else [br] + LEBu.i
 

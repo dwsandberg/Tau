@@ -1,28 +1,16 @@
 Module testopt
 
-use bits
-
-use file
-
 use callconfig
 
 use compilerfrontT.callconfig
+
+use file
 
 use standard
 
 use symbol2
 
-use textio
-
-use seq.file
-
-use seq.symdef
-
 use set.symdef
-
-use set.word
-
-use otherseq.seq.word
 
 Function multitarget(value1:int, a:boolean, b:boolean) int
 {check to see optimization handles this case correctly}
@@ -167,7 +155,7 @@ let code =
 if codelist_no = code ∨ no = 26 ∧ shuffletest.sameto(code, codelist_no, 1, "") then
  ""
 else
- "/br /fmt literal FAILED /end test" + toword.no + "in optest /br" + code
+ "/br <* literal FAILED *> test" + toword.no + "in optest /br" + code
  + "/p"
  + codelist_no
 

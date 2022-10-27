@@ -12,19 +12,13 @@ use graphcode
 
 use standard
 
-use seq.arc.symbol
-
 use set.arc.symbol
 
 use graph.symbol
 
-use seq.symbol
-
 use set.symbol
 
 use symbol2
-
-use seq.symdef
 
 use set.symdef
 
@@ -76,25 +70,25 @@ for selected = empty:seq.symdef, root = empty:seq.symbol, sd ∈ toseq.prg do
 the compiler.
 
 * One use is to figure out what functions are used between modules. The usegraph of the core functions
-indicates there are dependences between the modules texio, file and bits.To see the dependences use /fmt
-block front+built stdlib.libsrc mods = textio file bits format /end A graph will be display with the
+indicates there are dependences between the modules texio, file and bits.To see the dependences use <*
+block front+built stdlib.libsrc mods = textio file bits format *> A graph will be display with the
 dependences between the modules. The nodes in the graph are the procedure names. Since a name does
 not uniquely identify a function hovering over the beginning of the name will pop up a more complete
 discription beginning with the name of the function. 
 
 * The dependence on the module bits will not be displayed. If an earilier pass of the compiler is specified
-like this /fmt block front  +built stdlib.libsrc mods = textio file bits format pass = text /end
-then it will be displayed. 
+like this <* block front  +built stdlib.libsrc mods = textio file bits format pass = text *> then
+it will be displayed. 
 
-* The dependence with in the module textio can be seen with /fmt block front  +built stdlib.libsrc
-mods = textio pass = text flags = within /end
+* The dependence with in the module textio can be seen with <* block front  +built stdlib.libsrc mods
+= textio pass = text flags = within *>
 
-* To see all the functions that call functions named /em breakparagraph in the library use /fmt block
-front  +built stdlib.libsrc n = breakparagraph pass = text out = calledby /end
+* To see all the functions that call functions named /em breakparagraph in the library use <* block
+front  +built stdlib.libsrc n = breakparagraph pass = text out = calledby *>
 
-* This will list the function definitions in a package /fmt block front  +built stdlib.libsrc mods
-= textio out = symdef /end The format is the function followed by a post order transversal of the call
-tree. 
+* This will list the function definitions in a package <* block front  +built stdlib.libsrc mods =
+textio out = symdef *> The format is the function followed by a post order transversal of the call tree
+. 
 
 * The front command takes several parameters that control which functions are considered.
 /br ○ /strong n = a list of names of functions to include
@@ -102,14 +96,14 @@ tree.
 /br ○ /strong mod = a list of modules to include
 /br ○ /strong ~mod = a list of modules to exculde
 /br ○ /strong pass = The option pass determines how much processing is done before looking at the symbols
-. /fmt block • /strong library Only report on functions imported from libraries.
+. <* block • /strong library Only report on functions imported from libraries.
 /br • /strong text Parse the input in such a way that the source code can be reconstructed.
 /br • /strong pass1 Output from first stage of processing. All bindings of text to symbols have been
 done.
 /br • /strong pass1a Like pass1 with Compiler options on Export statements added. 
 /br • /strong pass2 After some optimization
-/br • /strong all Just before code generation. /end
-/br ○ outThe option out determines what will be output. /fmt block • sym Just the symbol names
+/br • /strong all Just before code generation. *>
+/br ○ outThe option out determines what will be output. <* block • sym Just the symbol names
 /br • symdefs The symbol definitions. The format is the symbol followed by a post order transversal
 of the call tree.
 /br • symdefsgraph The symbol definitions a graph of the call tree is provided.
@@ -119,4 +113,4 @@ symbols in n directly or indirectly are included in the graph
 (directly or indirectly) from symbols in n are included in the graph.
 /br • txt Instead of production a SVG graph print the args of the graph.
 /br • baseTypeCheck
-/br • resultCheck /end 
+/br • resultCheck *> 

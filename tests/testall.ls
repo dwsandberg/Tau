@@ -2,9 +2,9 @@ Module testall
 
 use bug7
 
-use checking
+use file
 
-use real
+use seq.file
 
 use standard
 
@@ -23,10 +23,6 @@ use testprocess
 use testseq
 
 use wordfreq
-
-use file
-
-use seq.file
 
 use words
 

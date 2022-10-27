@@ -6,15 +6,11 @@ use seq.seq.action
 
 use otherseq.action2
 
-use seq.dottedrule
-
 use set.dottedrule
 
 use file
 
 use seq.file
-
-use format
 
 use sparseseq.int
 
@@ -25,6 +21,8 @@ use standard
 use encoding.state
 
 use seq.state
+
+use taulextable
 
 use textio
 
@@ -70,8 +68,6 @@ function >1(a1:action2, b1:action2) ordering
 let a = toaction.a1
 let b = toaction.b1
 stateno.a >1 stateno.b ∧ codedaction.a >1 codedaction.b ∧ lookahead.a >1 lookahead.b
-
-use otherseq.word
 
 function recovery(alphabet:seq.word, grammar:seq.seq.word) seq.word
 {let nonTerminals = for acc = empty:set.word, r ∈ grammar do acc+first.r /for (acc) let x = alphasort.grammar
@@ -227,8 +223,6 @@ else dup
 
 function printRulePrecedence(ruleprec:seq.seq.word) seq.word
 for acc = "{RulePrecedence", @e ∈ ruleprec do acc + "|" + @e /for (acc + "|}")
-
-use taulextable
 
 function lr1parser(grammarandact:seq.seq.seq.word
 , ruleprec:seq.seq.word
@@ -424,6 +418,4 @@ for txt = first.result, action = "", otherfuncs = "", p2 ∈ result << 1 do
    let j = findindex(p, ")"_1)
    subseq(p, 1, j) + action << findindex(action, ")"_1)
   else if not.isempty.p3 ∧ first.p3 ∈ "Function function Export type" then pretty.p3 else p3
- /for ([file(o, txt), file(filename."+tmp action.ls", newfile << 1)] + file2))
-
-use otherseq.seq.word 
+ /for ([file(o, txt), file(filename."+tmp action.ls", newfile << 1)] + file2)) 

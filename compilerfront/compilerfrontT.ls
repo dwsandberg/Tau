@@ -24,6 +24,8 @@ use seq.midpoint
 
 use seq.modExports
 
+use seq.mytype
+
 use pass2
 
 use standard
@@ -262,7 +264,7 @@ do
   else next(flags, result + sym, nextvar, map)
  else if sym = NotOp ∧ last.result = NotOp then next(flags, result >> 1, nextvar, map)
  else if length.result > 2 ∧ isconst.last.result ∧ ismember.sym then
-  let arg = result_(-2)
+  let arg = result_(length.result - 1)
   let nonew = islocal.arg ∨ isconst.arg
   let z = seqelements.last.result
   let var = if nonew then arg else Local.nextvar
@@ -321,8 +323,6 @@ do
      let new = expandinline:T(librarymap, result, t, nextvar, code, p, self, typedict)
      next(flags ∨ flags.new, subseq(result, 1, t_1 - 1) + code.new, nextvar.new, map)
 /for (expandresult(nextvar, result, flags))
-
-use seq.mytype
 
 function checkemptycat:T(sym:symbol, result:seq.symbol) seq.symbol
 if name.sym ∈ "+" ∧ paratypes.sym = [seqof.typeword, seqof.typeword] then

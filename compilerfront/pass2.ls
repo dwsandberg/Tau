@@ -12,6 +12,8 @@ use symbol
 
 use otherseq.symbol
 
+use symbol2
+
 use symbolconstant
 
 Export type:expandresult
@@ -83,16 +85,17 @@ for result = empty:seq.symbol, nextvar = nextvarin, sym ∈ code do
 /for (result)
 
 Function forexpisnoop(forsym:symbol, code:seq.symbol) seq.symbol
+let len = length.code + 1
 if nopara.forsym = 7 ∧ length.code > 4 ∧ first.paratypes.forsym = resulttype.forsym
-∧ code_(-2) = Littrue
+∧ code_(len - 2) = Littrue
 ∧ isseq.resulttype.last.code
-∧ wordname.code_(-3) = "+"_1
-∧ name.module.code_(-3) ∈ "seq"
-∧ isSequence.code_(-4)
-∧ nopara.code_(-4) = 1
-∧ last.code = code_(-8)
-∧ last.code = code_(-6)
-∧ code_(-7) = code_(-5) then
+∧ wordname.code_(len - 3) = "+"_1
+∧ name.module.code_(len - 3) ∈ "seq"
+∧ isSequence.code_(len - 4)
+∧ nopara.code_(len - 4) = 1
+∧ last.code = code_(len - 8)
+∧ last.code = code_(len - 6)
+∧ code_(len - 7) = code_(len - 5) then
  let t2 = backparse2(code, length.code - 8, 2, empty:seq.int)
  let initacc = subseq(code, t2_1, t2_2 - 1)
  if length.initacc = 1 ∧ isrecordconstant.initacc_1 ∧ isempty.seqelements.initacc_1 then
@@ -139,10 +142,10 @@ else empty:seq.symbol /if
 
 function forexpcode(forsym:symbol, code:seq.symbol, nextvar:int) expandresult
 let t = backparse2(code, length.code, 5, empty:seq.int) << 1
-let endexp = subseq(code, t_(-1), length.code)
-let exitexp = subseq(code, t_(-2), t_(-1) - 1)
-let bodyexp = subseq(code, t_(-3), t_(-2) - 1)
-let endofsymbols = t_(-3) - 1
+let endexp = subseq(code, last.t, length.code)
+let exitexp = subseq(code, t_(length.t - 1), last.t - 1)
+let bodyexp = subseq(code, t_(length.t - 2), t_(length.t - 1) - 1)
+let endofsymbols = t_(length.t - 2) - 1
 let startofsymbols = endofsymbols - (nopara.forsym - 3) / 2 + 1
 let syms = subseq(code, startofsymbols, endofsymbols)
 let tmp = 
@@ -153,7 +156,8 @@ let nextvar1 = value.seqelement + 1
 let Defineseqelement = Define.value.seqelement
 let newsyms = tmp + seqelement
 let theseqtype = (paratypes.forsym)_(length.newsyms)
-let elementtype = if isseq.(paratypes.forsym)_(-4) then typeptr else (paratypes.forsym)_(-4)
+let t1 = (paratypes.forsym)_(length.paratypes.forsym - 3)
+let elementtype = if isseq.t1 then typeptr else t1
 {let theseqtype = seqof.elementtype}
 let theseq = Local.nextvar1
 let totallength = Local(nextvar1 + 1)
@@ -207,7 +211,7 @@ expandresult(nextvar1 + 3, firstpart + lastpart, bits.0)
 
 function iscompound(bodyexp:seq.symbol) boolean
 {detects compound accumulator}
-let sym = bodyexp_(-3)
+let sym = bodyexp_(length.bodyexp - 2)
 isblock.last.bodyexp
 ∧ (wordname.sym = "next"_1 ∧ nopara.sym > 3 ∧ inModFor.sym
 ∨ {assert case} abstracttype.resulttype.sym

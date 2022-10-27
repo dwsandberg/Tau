@@ -38,8 +38,6 @@ use encoding.symaddresses
 
 use seq.symaddresses
 
-use symbol
-
 use seq.symbol
 
 use symbol2

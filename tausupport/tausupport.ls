@@ -72,8 +72,6 @@ use standard
 
 use encoding.typename
 
-use seq.word
-
 use words
 
 Export type:packed2
@@ -96,21 +94,7 @@ Export encode(seq.char) encoding.seq.char {From encoding.seq.char}
 
 Export type:encodingpair.typename {From encoding.typename}
 
-Export allocatespace(int) ptr {From internal}
-
-Export set(ptr, int) ptr {From internal}
-
-Export set(ptr, ptr) ptr {From internal}
-
 Export type:ptr {From ptr}
-
-Export type:seq.char {From seq.char}
-
-Export +(seq.index, index) seq.index {From seq.index}
-
-Export empty:seq.index seq.index {From seq.index}
-
-Export _(seq.word, index) word {From seq.word}
 
 Export blockseqtype:byte int {From taublockseq.byte}
 

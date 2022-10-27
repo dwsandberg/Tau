@@ -4,9 +4,9 @@ use UTF8
 
 use parsersupport.bindinfo
 
-use seq.char
+use stack.stkele.bindinfo
 
-use format
+use seq.char
 
 use mytype
 
@@ -16,13 +16,11 @@ use standard
 
 use symbol
 
-use seq.symbol
+use otherseq.symbol
 
 use set.symbol
 
 use symboldict
-
-use stack.stkele.bindinfo
 
 Export type:bindinfo {From symboldict}
 
@@ -64,8 +62,6 @@ let codewithcomments =
  code.R_1 + code.exp
  + constantseq(length.code.R_1, symbol(internalmod, "{", seqof.typeword, returntype, returntype))
 bindinfo(dict.R, codewithcomments, types.R_1, text.R_1)
-
-use otherseq.symbol
 
 function createfunc(R:reduction.bindinfo
 , common:commoninfo

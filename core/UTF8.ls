@@ -6,8 +6,6 @@ use seq.byte
 
 use otherseq.char
 
-use seq.seq.char
-
 use standard
 
 Export type:UTF8

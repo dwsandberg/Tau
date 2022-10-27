@@ -2,10 +2,6 @@ Module test20
 
 use standard
 
-use seq.int
-
-use seq.q
-
 type p is a:int, b:int, c:int
 
 type q is d:int, e:p, f:int

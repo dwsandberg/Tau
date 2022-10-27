@@ -4,19 +4,13 @@ Count word frequence in text file. An indexed encoding is used to assign indexes
 in the file. Uses a dseq to provide a 0 count for words that have not yet been encountered and assigned
 an index. 
 
-use standard
-
-use textio
-
 use encoding.indexedword
+
+use standard
 
 use otherseq.wordfreq
 
-use seq.wordfreq
-
 use sparseseq.wordfreq
-
-use seq.seq.word
 
 type indexedword is w:word
 
@@ -74,7 +68,7 @@ let result1 =
   /br the word.occurs 408 times.
   /br the word, occurs 460 times."
 if subseq(result, 1, 8) = subseq(result1, 1, 8) then "PASS wordfreq"
-else "/fmt literal FAIL wordfreq /end"
+else "<* literal FAIL wordfreq *>"
 
 function testdata seq.seq.word
 ["Module pass2"

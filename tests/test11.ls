@@ -1,14 +1,10 @@
 Module test11
 
-use checking
-
-use standard
-
-use textio
-
 use seq.Tpair
 
 use seq.boolean
+
+use checking
 
 use otherseq.int
 
@@ -17,6 +13,10 @@ use set.int
 use testPoint.int
 
 use seq.ordering
+
+use standard
+
+use textio
 
 use otherseq.word
 
@@ -230,12 +230,8 @@ let list =
  , t044
  , t045
  , t046
- , "this is a test"_(-1) = "test"_1
- , b.[Tpair(3, "three"), Tpair(4, "four"), Tpair(5, "five")]_(-2)
- = "four"
  , a.Tpair(3, "three") = 3
- , [1, 2, 4]_(-3) = 1
- , {51} "this is a test" << 2 = "a test"
+ , "this is a test" << 2 = "a test"
  , "this is a test" >> 3 = "this"
  ]
 check(list, "test11") 

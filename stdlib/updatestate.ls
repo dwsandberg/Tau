@@ -201,12 +201,10 @@ else if cmds.cmd = "makelib" then
   )
  /for (
   let out = changeext(fn, "libsrc")
-  {???? if para is placed inline an error is created when transformed
-   /br libsrcargs = $(dq." $(% (lib.cmd)) libsrc $parts3 $(data.cmdpara) o = $(para)"}
-  let para = "+$(dirpath.out)" + name.out + ".libsrc"
   "
    /p #makelibrary $(name.fn)
-   /br libexe $(lib.cmd) libsrc $(parts << 1) $(data.cmdpara) o = $(para)
+   /br libexe $(lib.cmd) libsrc $(parts << 1) $(data.cmdpara) o = $("+$(dirpath.out
+   )" + name.out + ".libsrc")
    /br libexe $(lib.cmd) makebitcode+$build $([name.out] + "." + ext.out + libinfo)
    /br dependlibs $(eq + dq.depends)
    /br ccode $(eq + dq.ccode)

@@ -1,24 +1,22 @@
 Module test11a
 
-use checking
-
 use callconfig
 
 use compilerfrontT.callconfig
+
+use checking
+
+use file
+
+use seq.file
+
+use process.midpoint
 
 use standard
 
 use symbol2
 
-use seq.boolean
-
-use seq.checkprec
-
-use process.midpoint
-
-use process.seq.seq.word
-
-use seq.file
+use set.symdef
 
 Function test11a(in:seq.file) seq.word
 let z = 
@@ -33,41 +31,32 @@ let z =
  , "if true then 1 else if true then 3 else 4 /if+5"
  , "if true then 1 else (if true then 3 else 4 /if+5)"
  )
- , testerror(in
- , "/fmt literal parse error:unexpected end of paragraph /end"
- , "function f1 (a:int) boolean (a"
- )
- , testerror(in
- , "/fmt literal parse error:unexpected end of paragraph /end"
- , "function f1 (a:int) boolean [a"
- )
- , testerror(in
- , "/fmt literal parse error:unexpected end of paragraph /end"
- , "function f1 (a:int) boolean [a+"
- )
- , testerror(in, "/fmt literal stray} /end", "function f1 (a:int) boolean a+} a")
+ , testerror(in, "<* literal syntax error *>", "function f1 (a:int) boolean (a")
+ , testerror(in, "<* literal syntax error *>", "function f1 (a:int) boolean [a")
+ , testerror(in, "<* literal syntax error *>", "function f1 (a:int) boolean [a+")
+ , testerror(in, "<* literal stray} *>", "function f1 (a:int) boolean a+} a")
  , testerror(in
  , "Function f1 is defined twice in module testit"
  , "function f1 (a:int) int 3 /p function f1 (a:int) int 3"
  )
  , testerror(in
- , "/fmt literal then and else types are different /end"
+ , "<* literal then and else types are different *>"
  , "function f1 (a:int) int if true then true else 0"
  )
  , testerror(in
- , "/fmt literal cond of if must be boolean but is int /end"
+ , "<* literal cond of if must be boolean but is int *>"
  , "function f1 (a:int) int if 1 then 2 else 3"
  )
  , testerror(in
- , "/fmt literal condition in assert must be boolean"
+ , "<* literal condition in assert must be boolean"
  , "function f1 (a:int) int assert 1 report 2 3"
  )
  , testerror(in
- , "/fmt literal report in assert must be seq of word in:"
+ , "<* literal report in assert must be seq of word in:"
  , "function f1 (a:int) int assert true report 2 3"
  )
- , testerror(in, "/fmt literal cannot resolve type hhh", "function f1 (z:hhh) int 3")
- , testerror(in, "/fmt literal cannot resolve type xxx", "function f1 (z:int) xxx 3")
+ , testerror(in, "<* literal cannot resolve type hhh", "function f1 (z:hhh) int 3")
+ , testerror(in, "<* literal cannot resolve type xxx", "function f1 (z:int) xxx 3")
  , testerror(in, "recursive type problem:", "type testtype is fld1:testtype")
  , testerror(in
  , "module testit contains unresolved exports:testit:f1 (int, int) int"
@@ -86,12 +75,6 @@ let z =
  , testerror(in, "Duplicate module name", "Module testit")
  ]
 check(z, "test11a") + checkprec
-
-use file
-
-use textio
-
-use set.symdef
 
 function testcomp2(in:seq.file, s:seq.word) seq.word
 let txt = 
@@ -172,7 +155,7 @@ function check(y:seq.seq.word, b:seq.seq.word, testname:seq.word) seq.word
 let x = 
  for acc = "", i ∈ arithseq(length.y, 1, 1) do if y_i = b_i then acc else acc + toword.i /for (acc)
 if x = "" then "PASS $(testname)"
-else "/fmt literal FAILED /end test $(x) in $(testname)"
+else "<* literal FAILED *> test $(x) in $(testname)"
 
 function x(a:int) checkprec checkprec.[toword.a]
 

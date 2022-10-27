@@ -13,6 +13,8 @@ use bitcast.int
 
 use real
 
+use ptr
+
 use standard
 
 use tausupport

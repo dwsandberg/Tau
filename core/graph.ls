@@ -1,7 +1,5 @@
 Module graph.T
 
-use seq.arc.T
-
 use set.arc.T
 
 use seq.T

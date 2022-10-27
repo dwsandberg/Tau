@@ -1,7 +1,5 @@
 Module bandeskopf.T
 
-use seq.arc.T
-
 use set.arc.T
 
 use graph.T
@@ -58,7 +56,7 @@ else
   for acc = empty:set.T, @e ∈ toseq.predecessors(g, node) do acc ∪ contains(dummy, @e) /for (acc)
  if isempty.p then empty:seq.T else [p_1]
 
-Function type1conflicts(g:graph.T, dummy:set.T, layers:seq.seq.T) seq.arc.T
+function type1conflicts(g:graph.T, dummy:set.T, layers:seq.seq.T) seq.arc.T
 {find type 1 conflicts, that is arcs that cross a inner arc}
 for acc = empty:seq.arc.T, @e ∈ arithseq(length.layers - 2, 1, 2) do acc + marklayer(g, dummy, layers, @e) /for (acc)
 
@@ -94,7 +92,7 @@ ______________
 Step 2 is to find vertical alignments.This will return arcs that will have the two nodes with the same
 x value.Inner arcs are are prime canidates for this vertial alignment.
 
-Function findvertarcsUL(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x:int, assigned:seq.T) seq.arc.T
+function findvertarcsUL(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x:int, assigned:seq.T) seq.arc.T
 if x > length.currentlayer then empty:seq.arc.T
 else
  let node = currentlayer_x
@@ -112,16 +110,16 @@ else
   else findvertarcsUL(g, currentlayer, lastlayer, r, x + 1, assigned)
  else findvertarcsUL(g, currentlayer, lastlayer, r, x + 1, assigned)
 
-Function findvertarcsUL(g:graph.T, layers:seq.seq.T, l:int) seq.arc.T
+function findvertarcsUL(g:graph.T, layers:seq.seq.T, l:int) seq.arc.T
 findvertarcsUL(g, layers_l, layers_(l - 1), 0, 1, empty:seq.T)
 
-Function findvertarcsUL(g:graph.T, layers:seq.seq.T) seq.arc.T
+function findvertarcsUL(g:graph.T, layers:seq.seq.T) seq.arc.T
 for acc = empty:seq.arc.T, @e ∈ arithseq(length.layers - 1, 1, 2) do acc + findvertarcsUL(g, layers, @e) /for (acc)
 
-Function findvertarcsUR(g:graph.T, layers:seq.seq.T) seq.arc.T
+function findvertarcsUR(g:graph.T, layers:seq.seq.T) seq.arc.T
 for acc = empty:seq.arc.T, @e ∈ arithseq(length.layers - 1, 1, 2) do acc + findvertarcsUR(g, layers, @e) /for (acc)
 
-Function findvertarcsUR(g:graph.T, layers:seq.seq.T, l:int) seq.arc.T
+function findvertarcsUR(g:graph.T, layers:seq.seq.T, l:int) seq.arc.T
 findvertarcsUR(g
 , layers_l
 , layers_(l - 1)
@@ -130,7 +128,7 @@ findvertarcsUR(g
 , empty:seq.T
 )
 
-Function findvertarcsUR(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x:int, assigned:seq.T) seq.arc.T
+function findvertarcsUR(g:graph.T, currentlayer:seq.T, lastlayer:seq.T, r:int, x:int, assigned:seq.T) seq.arc.T
 if x = 0 then empty:seq.arc.T
 else
  let node = currentlayer_x
@@ -150,7 +148,7 @@ else
 
 _________________
 
-Function assignvert(RtoL:boolean
+function assignvert(RtoL:boolean
 , layers:set.nodeinfo.T
 , vertarcs:seq.arc.T
 , assigned:set.nodeinfo.T
@@ -187,7 +185,7 @@ if y.a = y.q then if RtoL then x.a - seperation.q else x.a + seperation.q else 0
 
 ------------Helper functions for adding arcs for block graph in hrizontal alignment
 
-Function isroot(g:graph.T, n:T) seq.arc.T
+function isroot(g:graph.T, n:T) seq.arc.T
 if isempty.predecessors(g, n) then arcsfromsuccesors(n, g, n) else empty:seq.arc.T
 
 function arcsfromsuccesors(root:T, g:graph.T, n:T) seq.arc.T
@@ -195,18 +193,18 @@ let s = successors(g, n)
 if isempty.s then empty:seq.arc.T
 else [arc(s_1, root)] + arcsfromsuccesors(root, g, s_1)
 
-Function layerarcsR(arcstoroots:set.arc.T, layer:seq.T) seq.arc.T
+function layerarcsR(arcstoroots:set.arc.T, layer:seq.T) seq.arc.T
 for acc = empty:seq.arc.T, @e ∈ arithseq(length.layer - 1,-1, length.layer) do acc + layerarcsR(arcstoroots, layer, @e) /for (acc)
 
-Function layerarcsR(arcstoroot:set.arc.T, layer:seq.T, i:int) seq.arc.T
+function layerarcsR(arcstoroot:set.arc.T, layer:seq.T, i:int) seq.arc.T
 let arc1 = arc(layer_i, layer_(i - 1))
 let e = findelement2(arcstoroot, arc1)
 if isempty.e then [arc1] else [arc(head.e_1, head.arc1), arc1]
 
-Function layerarcs(arcstoroots:set.arc.T, layer:seq.T) seq.arc.T
+function layerarcs(arcstoroots:set.arc.T, layer:seq.T) seq.arc.T
 for acc = empty:seq.arc.T, @e ∈ arithseq(length.layer - 1, 1, 2) do acc + layerarcs(arcstoroots, layer, @e) /for (acc)
 
-Function layerarcs(arcstoroot:set.arc.T, layer:seq.T, i:int) seq.arc.T
+function layerarcs(arcstoroot:set.arc.T, layer:seq.T, i:int) seq.arc.T
 let arc1 = arc(layer_(i - 1), layer_i)
 let e = findelement2(arcstoroot, arc1)
 if isempty.e then [arc1] else [arc(head.e_1, head.arc1), arc1]
@@ -215,7 +213,7 @@ if isempty.e then [arc1] else [arc(head.e_1, head.arc1), arc1]
 
 For providing horizontal alignment.There is one for left and right directions.
 
-Function alignUL(g:graph.T, layers:seq.seq.T, marked:set.arc.T, layerX:set.nodeinfo.T) set.nodeinfo.T
+function alignUL(g:graph.T, layers:seq.seq.T, marked:set.arc.T, layerX:set.nodeinfo.T) set.nodeinfo.T
 let vertarcs = findvertarcsUL(deletearcs(g, marked), layers)
 let g3 = newgraph.vertarcs
 let arcstoroots = asset.for acc = empty:seq.arc.T, @e ∈ toseq.nodes.g3 do acc + isroot(g3, @e) /for (acc)
@@ -225,7 +223,7 @@ let a = newgraph.toseq.layerarcs
 let b = sinksfirst.a + singlenodelayers.layers
 assignx(false, layerX, b, empty:set.nodeinfo.T, vertarcs, 1)
 
-Function alignUR(g:graph.T, layers:seq.seq.T, marked:set.arc.T, layerX:set.nodeinfo.T) set.nodeinfo.T
+function alignUR(g:graph.T, layers:seq.seq.T, marked:set.arc.T, layerX:set.nodeinfo.T) set.nodeinfo.T
 let vertarcs = findvertarcsUR(deletearcs(g, marked), layers)
 let g3 = newgraph.vertarcs
 let arcstoroots = asset.for acc = empty:seq.arc.T, @e ∈ toseq.nodes.g3 do acc + isroot(g3, @e) /for (acc)
@@ -268,7 +266,7 @@ else
 
 Final step is to merge multiple layouts into one.
 
-Function assignx(g:graph.T, dummy:set.T, layers:seq.seq.T) set.nodeinfo.T
+function assignx(g:graph.T, dummy:set.T, layers:seq.seq.T) set.nodeinfo.T
 let marked = asset.type1conflicts(g, dummy, layers)
 let layerX = posindegree(g, layers)
 let UL = alignUL(g, layers, marked, layerX)

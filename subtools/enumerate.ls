@@ -63,7 +63,7 @@ types and operation on them.
 
 *___________________
 
-* Here is a link to the /fmt none <a href ="../Tools/install4.html" > Result </a> /end
+* Here is a link to the <* none <a href ="../Tools/install4.html" > Result </a> *>
 
 * In the first enumeration type Each word in the data list is given a value starting with 0. The ?
 mark is a place holder for numbers that with not be include in the type.

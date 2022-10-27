@@ -100,6 +100,9 @@ Function isabstract(a:mytype) boolean last.typerep.a = first.typerep.typeT
 Function replaceT(with:mytype, m:mytype) mytype
 if isabstract.m then mytype(typerep.m >> 1 + typerep.with) else m
 
+Function replaceT(m:modref, t:mytype) modref
+modref(library.m, name.m, replaceT(para.m, t))
+
 Function =(a:typedef, b:typedef) boolean
 name.a = name.b ∧ modname.a = modname.b ∧ library.a = library.b
 

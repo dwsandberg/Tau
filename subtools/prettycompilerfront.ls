@@ -14,8 +14,6 @@ use file
 
 use seq.file
 
-use format
-
 use otherseq.int
 
 use set.modref
@@ -41,8 +39,6 @@ use seq.symbol
 use set.symbol
 
 use symbol2
-
-use seq.symdef
 
 use set.symdef
 
@@ -165,11 +161,11 @@ do
    if key.M ∉ "Module module" then next(maintxt + M + "/p", header)
    else
     let modname = M_2
-    let indextxt = if noindex then "" else "/fmt none <hr id = $(merge.dq.[modname]) > /end"
+    let indextxt = if noindex then "" else "<* none <hr id = $(merge.dq.[modname]) > *>"
     next(maintxt + indextxt + "/keyword $(M) /p"
     , header + "<a href = $(merge.dq("#" + modname)) > $(modname) </a>"
     )
-  /for ([file(o, if noindex then maintxt else "/fmt none $(header)+/end $(maintxt)")])
+  /for ([file(o, if noindex then maintxt else "<* none $(header)+*> $(maintxt)")])
  else
   let modtodir = 
    for modtodir = "", lib = first.directory, p1 ∈ if parseit then src.m else srctext do
@@ -217,10 +213,16 @@ such as" not (a = b)" to become" a /ne b"
 
 * If the option" flags = html" is used and html file is produced with an index of modules.This option
 is useful for examining source code. For example </ block transform htmlcode+built core.libsrc flags
-= html/end If the option" flags = html noindex" is used then no index is included. This final form
+= html*> If the option" flags = html noindex" is used then no index is included. This final form
 is useful for producing documentation with imbedded Tau code.
 
-Function unusedsymbols(input:seq.file, o:seq.word, flags:seq.word, all:boolean, generated:boolean) seq.file
+Function unusedsymbols(input:seq.file
+, o:seq.word
+, flags:seq.word
+, all:boolean
+, generated:boolean
+, excessExports:boolean
+) seq.file
 let all0 = all
 let generated0 = generated
 let m = compilerFront:callconfig("text", input)
@@ -254,9 +256,10 @@ let a3 =
     let g = newgraph.toseq.arcs
     acc \ (nodes.g \ asset.sources.g))
   else acc)
-let exps = for acc = empty:seq.symbol, alibmod ∈ libmods.m do acc + exports.alibmod /for (acc)
 let outsyms = 
- if "ggg"_1 ∈ flags then
+ if excessExports then
+  {symbols exported from a module and only used internally to that module}
+  let exportedSymbols = for acc = empty:seq.symbol, alibmod ∈ libmods.m do acc + exports.alibmod /for (acc)
   for acc = result2(empty:set.symbol, empty:set.symbol)
   , sd ∈ toseq.prg.m + toseq.templates.m
   do
@@ -264,7 +267,7 @@ let outsyms =
     if module.sy = module.sym.sd then next(internal0 + sy, external0)
     else next(internal0, external0 + sy)
    /for (result2(internal0, external0))
-  /for (internaluse.acc ∩ asset.exps \ externaluse.acc \ a3)
+  /for (internaluse.acc ∩ asset.exportedSymbols \ externaluse.acc \ a3)
  else a3
 let out = 
  for acc = empty:seq.seq.word, sym ∈ toseq.outsyms do
@@ -275,12 +278,14 @@ let out =
 type result2 is internaluse:set.symbol, externaluse:set.symbol
 
 * The /keyword unusedsymbols cmd analyzes code for unused functions. This can be usefull in determining
-unused code. It forms of the function call graph for the program. It then looks for any any sources
-in the call graph that are not the entry point of the program and list them. Any functions that are
-generated from type definitions are also removed. The behavior can be modified with flags. If the
-flag /keyword all is included the all unused functions are listed and not just the roots. If the flag
-/keyword generated is included only the generated from type definitions are included. Here is an example
-/fmt block tau tools unusedsymbols+built tools.libsrc stdlib.libinfo common /end
+unused code. It forms the function call graph for the program. It then looks for any any sources
+in the call graph that are not the entry point of the program and lists them. Any functions that are
+generated from type definitions are also removed. 
+/p The behavior can be modified with flags. If the flag /keyword all is included the all unused functions
+are listed and not just the roots. If the flag /keyword generated is included only the symbols generated
+from type definitions are included. If the flag /keyword excessExports is included symbols exported
+from a module but only used internally to that module are listed.
+/p Here is an example <* block tau tools unusedsymbols+built tools.libsrc stdlib.libinfo common *>
 
 type rename is sym:symbol, newname:seq.word, paraorder:seq.int
 
@@ -411,12 +416,9 @@ else if name.sym = "forexp"_1 ∧ length.toseq.stk ≥ nopara.sym then
   acc6 + args_(i + k) + if i = k then "∈" else "=" /if + args_i
   + ","
  /for (
-  acc6 >> 1 + if args_(-2) = "true" then "" else "while $(args_(-2))" /if
-  + "do"
-  + args_(-3)
-  + "/for ("
-  + args_(-1)
-  + ")")
+  let whileexp = args_(length.args - 1)
+  acc6 >> 1 + if whileexp = "true" then "" else "while $(whileexp)" /if
+  + "do $(args_(length.args - 2)) /for ($(last.args))")
  )
 else if length.toseq.stk ≥ nopara.sym then
  if isSequence.sym then push(pop(stk, nopara.sym), "[$(addcommas.top(stk, nopara.sym))]")
@@ -441,7 +443,7 @@ function binaryops seq.word "=+_^∩ ∪ \-* / << >> > < ? >1 >2 ∈ mod ∧ ∨
 function addcommas(s:seq.seq.word) seq.word
 for acc2 = "", t ∈ s do acc2 + t + "," /for (acc2 >> 1)
 
-Function closeuse(done:set.symbol, toprocess:set.symbol, prg:set.symdef, templates:set.symdef, dict:set.symbol) set.symbol
+function closeuse(done:set.symbol, toprocess:set.symbol, prg:set.symdef, templates:set.symdef, dict:set.symbol) set.symbol
 let new0 = for acc = empty:seq.symbol, sym ∈ toseq.toprocess do acc + getCode(prg, sym) /for (acc)
 let new1 = 
  for acc = empty:seq.symbol, sym ∈ toseq.asset.new0 do

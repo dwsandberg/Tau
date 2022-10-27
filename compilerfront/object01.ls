@@ -22,6 +22,8 @@ use seq.seq.mytype
 
 use set.mytype
 
+use ptr
+
 use bitcast.ptr
 
 use seq.ptr

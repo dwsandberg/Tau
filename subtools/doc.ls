@@ -6,7 +6,7 @@ use seq.byte
 
 use file
 
-use format
+use pretty
 
 use standard
 
@@ -22,10 +22,6 @@ use set.word
 
 use wordgraph
 
-use pretty
-
-Export drawgraph(seq.arc.word, set.word, set.word) seq.word {From svg2graph.word}
-
 Function usegraph(input:seq.file, o:seq.word, include:seq.word, exclude:seq.word) seq.file
 let out = drawgraph(usegraph(breakparagraph.input, "mod"_1), asset.include, asset.exclude)
 [file(filename.o, out)]
@@ -35,16 +31,16 @@ module referenced by the module in the /keyword use clauses. The /keyword exclud
 modules to ignore in the use clauses.The /keyword include option restricts the modules considered to
 those listed.
 
-* Examples:/fmt block usegraph+built core.libsrc /fmt none <a href ="../Tools/install1.html" > Result
-</a> /end
+* Examples:<* block usegraph+built core.libsrc <* none <a href ="../Tools/install1.html" > Result
+</a> *>
 
-* > usegraph+built core.libsrc exclude = seq standard /fmt none <a href ="../Tools/install2.html"
-> Result </a> /end
+* > usegraph+built core.libsrc exclude = seq standard <* none <a href ="../Tools/install2.html" >
+Result </a> *>
 
 * > usegraph+built core.libsrc include = UTF8 words format standard textio stack encoding xxhash exclude
-= seq standard /fmt none <a href ="../Tools/install3.html" > Result </a> /end
+= seq standard <* none <a href ="../Tools/install3.html" > Result </a> *>
 
-* > usegraph +stdlib textio.ls+core UTF8.ls words format standard stack encoding xxhash /end
+* > usegraph +stdlib textio.ls+core UTF8.ls words format standard stack encoding xxhash *>
 
 * The last two examples give the same result. The first excludes modules from consideration and the
 second only includes source files that should be included. 
@@ -65,10 +61,10 @@ let todoc =
  else mods
 let g = newgraph.usegraph(libsrc, "mod"_1)
 let modindex = 
- for txt = "/fmt none", modname ∈ todoc do
+ for txt = "<* none", modname ∈ todoc do
   txt + "<a href =" + dq.[merge.["#"_1, modname]]
   + "> $(modname) </a>"
- /for (txt + "/end")
+ /for (txt + "*>")
 [file(filename.o, modindex + docmodule(g, todoc, libsrc))]
 
 * The doclibrary cmd produces summary documentation from source code. The option /strong mods list
@@ -110,8 +106,8 @@ for acc = "", currentmod = "?", funcs = "", types = "", p ∈ lib do
     else ""
    let name = [modname] + if length.p > 2 then ".T" else ""
    let usedin = toseq.arcstopredecessors(usegraph, merge.name)
-   next(acc + leftover + "/fmt none <hr id =" + dq.[modname] + "> /end"
-   + "/fmt section /keyword module $(name) /end"
+   next(acc + leftover + "<* none <hr id =" + dq.[modname] + "> *>"
+   + "<* section /keyword module $(name) *>"
    + if isempty.usedin then ""
    else
     "

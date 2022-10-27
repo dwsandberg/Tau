@@ -16,6 +16,8 @@ use symbol
 
 use otherseq.symbol
 
+use symbol2
+
 use words
 
 type ggg is code:seq.symbol, stk:stack.int
@@ -105,7 +107,7 @@ do
   let brt = brt.sym + nodeno
   if isempty.first then
    let b = subseq(code, last + 1, e - 3)
-   if length.b > 2 ∧ islocal.last.b ∧ b_(-2) = Define.value.last.b then
+   if length.b > 2 ∧ islocal.last.b ∧ b_(length.b - 1) = Define.value.last.b then
     next(cases + casenode(code_(e - 2), nodeno, brt)
     , e
     , nodeno + 1

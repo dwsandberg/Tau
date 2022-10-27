@@ -1,12 +1,18 @@
-/fmt section The Tau Programming Language /end
+<* none <style><!--span.code1 { border:solid; border-width: thin;} 
+ span.code { font-family:italic;}--> </style> 
+*>
+
+<* code this is a test *>
+
+<* section The Tau Programming Language *>
 
 Programming languages today look pretty much the same as they did 30 years ago. Today they may have a few more features but are not substancally better as a notation for thought. I have created another programming language in attempt to introduce a new way to think about programming.
 
 This new language is different because there is:
-/fmt block —No assignment operator. /br —No loop/while statement 
+<* block —No assignment operator. /br —No loop/while statement 
 /br —No function type./br —Only uses program state in a very controlled way. /br —Words are the basic text element instead of characters. 
 /br —Heavy use of sequences. 
-/br —Introduces a new control structure for iterating through loops./end
+/br —Introduces a new control structure for iterating through loops.*>
 
 Functional program languages have no assignment operator or loop statements, but tend to be based on the lamada calculus which makes use of higher order functions. We only include the basic operations on function of declaring and calling of them and the binding of unbound function to an actual function in an instantiation of a function from a parameterized module.
 
@@ -14,10 +20,10 @@ Functional languages tend to use recursion to replace the control structures of 
 The full power of recursion is seldom needed. 
 We introduce a  new control structure  to cover many of the simple uses of recursion.
 
-Instruction for downloading and install Tau in  /fmt none <a href="install.html"> here </a> /end if you would
+Instruction for downloading and install Tau in  <* none <a href="install.html"> here </a> *> if you would
 like to try out the examples below for yourself.
 
-/fmt section Lexical level /end
+<* section Lexical level *>
 
 A program is represented as a sequence of characters. The character encoding is assume to be unicode represented in UTF8 format. The program is broken into a sequence of paragraphs where one or more blank lines separate the paragraphs.
 
@@ -35,44 +41,39 @@ The characters ()+,-.:=[]{}^_" are all treated as if they have an implied space 
 A word sequence literal is double-quoted. For Example: /so" This is a string Literal."  
 
 To include a double quote within a string use  a syntactical short  hand.  For example:
-  /fmt block /so" hello world without quotes; $(dq) hello world $(dq) with quotes"   /end 
+  <* block /so" hello world without quotes; $(dq) hello world $(dq) with quotes"   *> 
   is the sames as 
   writing 
-  /fmt block  /so" hello world without quotes"/sw+ dq /sw+/so"hello world" /sw +dq /ws+/so"  with quotes"   /end
+  <* block  /so" hello world without quotes"/sw+ dq /sw+/so"hello world" /sw +dq /ws+/so"  with quotes"   *>
   Since $(...) can receive any expression we could also write
-  /fmt block /so"hello world without quotes $(dq./so"hello world") with quotes" /end
+  <* block /so"hello world without quotes $(dq./so"hello world") with quotes" *>
   Since /so"$(" functions as an escape in strings, it can be include within a string
   as /so" $(/so" $")( " Note that just the /so" $" is escaped as /so" /so $(/so"$(")" will raise an error 
   because the escape in the inner qoute is not properly formed.
   
 
 An integer literal is represented by a sequence of words where each word only contains digits or the no break space. 
-A real number is two integer separated by a period. For example 0.0 and 10.01 are real numbers where 00 and 1001 are integers.
+A real number is two integer separated by a period. 
+For example <* code 0.0 *> and <* code 10.01 *> are real numbers 
+where <* code 00 *> and <* code 1001 *> are integers.
 
-For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ ⊻ ∈ ∉ ∩ ∪ are /le /ge /ne /and /or /xor /in /nin /cap /cup respectively.
+For easy entry, ASCII equivalents for ≤ ≥ ≠ ∧ ∨ ⊻ ∈ ∉ ∩ ∪ are 
+<* code /le /ge /ne /and /or /xor /in /nin /cap /cup *> respectively.
 
-Be careful to insert necessary spaces around operators. For example, 8*9 is incorrect and should be written as 8 * 9, or (8) /so *(9)is ok.
+Be careful to insert necessary spaces around operators. For example, 
+<* code 8*9 *> is incorrect and should be written as <* code 8 * 9 *>, or <* code (8) /sn *(9) *>.
 
-Occasionally some unexpected lexical issues arise.   The syntax for a let statement is 
- /keyword let <name> = <expresion> <expresion>.
- The follow function looks good but will cause a syntax error: /br /br
-/fmt block /keyword function f1 int /br /keyword let x=  56  /br  -4+x /end 
- 
-Written on a single line, the problem becomes clear as there is no second expression: /keyword function f1 int /keyword let x=  56    -4+x 
 
-The fix is to add parenthesizes 
 
-function f1 int   let x=  56    (-4+x)
-
-/fmt section Coverting words to UTF8 /end
+<* section Coverting words to UTF8 *>
 
 A sequence of tau words must be transformed back to UTF8 format to communicate with the outside world. 
  When a file is read the white space is striped out and must be added back in. 
 
 The basic rules  for   adding  spaces is to  add a space 
 after each word except when :
-/br 1. If the word is +-_.. :/w^ then the space before and after the word is suppressed. 
-/br 2. If the word is /w)]}," then the space before the word is suppressed.
+/br 1. If the word is /so+-_.. :/sw^ then the space before and after the word is suppressed. 
+/br 2. If the word is /sw)]}," then the space before the word is suppressed.
 /br 3. If the word is ([{ then the space after the word is suppressed.
 
 Line breaks are handled by inserting formating words.  The simplest formating rules are
@@ -82,13 +83,13 @@ Since an opening quote mark should be treated differently than a closing quote m
 does not distinguish between opening and closing quote marks additional formating words /sw /sw /sw /sn /sw /sc /sw /so  will space the following word using one of the four cases above.  
 The letter in these commands can be read as
 (w)/sc ord, (s)/sc pace, (n)/sc one, (c)/sc lose bracket or (c)/sc omma, and (o)/sc pen bracket 
-Thus /fmt block /w /so" this is a quote " /end with produce:/so" this is a quote "
+Thus <* none /so" this is a quote " *> with produce:/so" this is a quote "
 
 The format words are interpreted differently when producing plain text or HTML.  For example, /keyword /p produces LF LF for plain text and 
-/fmt LF <p> /end.  Different functions are provide to do this.   When creating files from seq.word  for output, if file extension is html then the output is HTML 
+<* LF <p> *>.  Different functions are provide to do this.   When creating files from seq.word  for output, if file extension is html then the output is HTML 
 otherwise plain text.
 
-/fmt section Expressions /end
+<* section Expressions *>
 
 Here is a list of infix binary operators. The operators on the same line are the same precedence and higher precedence than those on the following line.
 /br _^
@@ -101,7 +102,9 @@ Here is a list of infix binary operators. The operators on the same line are the
 
 Parentheses are used to override the default precedence.  Note that the operators ∪ ∩ \ which are commonly used for set union, intersection and differences all have that same precedence.
 
-Procedure calls are of the form \so f1(p1, p2, …, pn). \so f1()is illegal and should be written f1. To avoid excessive parentheses in expressions f1(p1)is equivalent to f1.p1. 
+Procedure calls are of the form <* code /so f1(p1, p2, …, pn)*>. 
+<* code /so f1() *> is illegal and should be written f1. To avoid excessive parentheses in expressions 
+<* code f1(p1) *> is equivalent to <* code  f1.p1 *>. 
 The precedence of/sw. is between the /sw_ and the *.
 
 The operators ≤ ≥ ≠ are abbreviations for   \so not(a > b) , \so not ( a < b ), \so not(a = b) respectively. 
@@ -114,7 +117,8 @@ A paragraph is a sequence of words. Paragraphs that do NOT start with /keyword t
 
 
 
-The syntax for non-comment paragraphs is /fmt block <paragraph>→ /keyword module <word>.T | /keyword module <word>  | <definition> /br <paragraph>→ /keyword use <type> 
+The syntax for non-comment paragraphs is 
+<* block <paragraph>→ /keyword Module <word>.T | /keyword Module <word>  | <definition> /br <paragraph>→ /keyword use <type> 
 /br <paragraph>→ /keyword type <word> /keyword is  <name list> 
 /br <paragraph>→ /keyword Export <function> 
 /br <paragraph>→ /keyword unbound <function> 
@@ -137,50 +141,135 @@ The syntax for non-comment paragraphs is /fmt block <paragraph>→ /keyword modu
 /br /em E → /keyword let <let name> = /em E /em E 
 /br /em E → /keyword assert /em E /keyword report /em E /em E  
 /br /em E → { < words forming a comment with the brackets outside of double quotes balanced  > } /em E  
-/br /em E → process.<function call> | process(<function call>)/end
+/br /em E → process.<function call> | process(<function call>)*>
+
+The type of an expression can always be inferred from the sub-expression. For example, 1.0 <* code + 5.0 *> is of type real, <fmt code 1 * 8 *> is of type int, 
+and <* code 1.0 = 8.0 *> is of type boolean.
+
 
 Comments are traditionally defined at the lexical level. In tau they are defined as a prefix operator so that they can easily be included in a parse tree.
 
-/fmt section Sequences /end
+Occasionally some unexpected syntactical  issues arise.   The  /keyword let statement  
+ does not have a required seperator between the two expressions.
+ The follow function looks good but will cause a syntax error:  
+<* block /keyword function f1 int /br /keyword let x=  56  /br  -4+x *> 
+ 
+Written on a single line, the problem becomes clear as there is no second expression: 
+<* block /keyword function f1 int /keyword let x=  56    -4+x *>
 
-A sequence is a function whose domain is the integers and whose range is some type. A literal for a sequence of integers is represented as [ 2, 4, 8, 16, 32]. We can refer to this sequence as test1 if we define
+The fix is to add parenthesizes 
 
-function test1 seq.int [ 2, 4, 8, 16, 32]
+function f1 int   let x=  56    (-4+x)
 
-The type for a sequence of integers is seq.int. The length of the sequence can be obtained by calling the function length. In this case the length(test1)is 5. There is a subscript operator_that can obtain the elements of the list:test1_1 is 2 and test1_5 is 32.
+<* section Module Standard *>
 
-Negative values for the sequence count the elements from the end of the sequence: test1_-1 is the last element in the sequence, 32.
+A module is a collection of functions and types.
 
-A sequence of characters in double quotes does not represent a sequence of characters but a sequence of words.“Hello World!” represent two words.
+The module standard defines often used function and types. A full list of
+functions is  <* none <a href ='../built/stdlibdoc.html#standard'>  here </a>  *>
+Many of the functions are defined in other modules and only exported from the standard module. A few note worth types and functions are list below.
 
-The code [ “Hello”_1, ”World!”_1]is equivalent to “Hello World!”
+The types /em int and /em real are implement by the underlying hardware and have the usual operations. 
+
+The type boolean has operators:∧ ∨ /em not /em true and /em false. The second operator of ∧ and ∨ is evaluated if and only if the first operator does not determine the result.
+
+For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT is defined. The is a binary operaator >1 in the standard module that could be defined as
+
+Function >1(a:int,b:int) ordering if a > b then GT else if a=b then EQ else LT
+
+ An ∧ operator on orderings is defined as
+
+  Function ∧(a:ordering, b:ordering)ordering 
+  if a = EQ   then b   else a
+
+By convention function that begin with a %  have a return type of seq.word and supply a humman readable representation.  Think of it as a /em print statement. Two such functions are defined in the standard module:
+
+Export %(n:int) seq.word  
+
+Export %(w:word) seq.word  
 
 
-""represents an empty sequence of words. An empty sequences has a length of zero. Since the type of a empty sequence can not be inferred from the type of its elements the empty sequence of int is coded as empty:seq.int.
+<* section Sequences *>
 
-The elements of a sequence can themselves be sequences [ [ 3, 4], [ 3, 6, 7], [ 8, 9]]. The type of this sequence is seq.seq.int. The empty sequence of this type is represented by empty:seq.seq.int.
+A sequence is a function whose domain is the integers and whose range is some type. 
+A literal for a sequence of integers is coded as <* core [ 2, 4, 8, 16, 32]
+*>  and has a type of <* code seq.type *>.  
 
-The concatenation operator for sequences is +, for example the expression test1 + [ 2, 3] evaluates to [ 2, 4, 8, 16, 32, 2, 3]
+A sequence of characters in double quotes does not represent a sequence of characters but a sequence of words. 
+ <* code “Hello World!” *> represent two words.
 
-Sub-sequences are obtain with subseq(s:seq.T, start:int, stop:int)seq.T where T is any type. For example, the expression subseq(test1, 3, 4)evaluates to [ 8, 16]
+The code <* code [ “Hello”_1, ”World!”_1] *> is equivalent to 
+<* code  “Hello World!” *>
 
-/fmt section Types /end
+Sequences have the following functions defined in a parameteized module named
+<* code  seq.T *> where T can be any type. 
 
-The type of an expression can always be inferred from the sub-expression. For example, 1.0 + 5.0 is of type real, 1 * 8 is of type int, and 1.0 = 8.0 is of type boolean.
+Module seq?.T 
 
-User defined types can be either a record, a sequence, or a parameterized record. Below a user defined record type is defined as an example.
+use seq.T
 
-The following paragraph starts a new module. A module is a collection of functions and types.
+Export _(a:seq.T,i:int) T { Return ith element of sequence.  a_1 is the first element}
 
-Module point2d
+Export empty:seq.T seq.T  { Returns the sequence of type seq.T with zero elements}
 
+Export +(a:seq.T, b:seq.T) seq.T {Concatenation operator} 
+  
+Export subseq(s:seq.T, start:int, stop:int)seq.T  {Obtain sub-sequence}
 
-The follow paragraph that begins with /keyword use allows reference to functions defined in another module. In this case, the standard library functions. 
-Documentation of the standard module is   /fmt /fmt <a href ='stdlib.html#standard'>  here </a>  /end
+Export =(a:seq.T, b:seq.T) boolean {Test to see if a and b represent the same sequence.
+This function requires a function =(T,T)boolean}
+
+The module <* code standard *> exports the above  functions with T replace by the type <* code word *>
+
+The function below is an example of using these functions.
+
+Module testseq
 
 use standard
 
-Here is a simple type definition that introduces a new type with two components.
+Function testseq seq.word
+let s1 = "This is a test sequence with 9 words."
+if length.s1 = 9 ∧ s1_3 = "a"_1 ∧ subseq(s1, 4, 5) = "test sequence"
+∧ subseq(s1, 4, 3) = empty:seq.word
+∧ subseq(s1, 1, 5) + subseq(s1, 6, length.s1) = s1 
+∧ [ "Hello"_1, "World!"_1] = "Hello World!" 
+∧  empty:seq.word="" 
+∧ subseq([11,12,13,14],1,2)=[11,12] then
+ "PASS"
+else "FAIL"
+
+
+<* section Iteration *>
+
+An operation can be performed on each element of a sequence.  The following sums a sequence:
+
+ function sum(s:seq.int) int  for   accumulator=0 ,e ∈ s    do accumulator+e    /for(accumulator)
+
+More than one accumulator is allowed. The following takes the average of the sequence
+
+  function average(s:seq.int) int for   count=0,sum=0, e ∈ s   do next(count+1,sum+e)    /for( sum / count)
+
+For each element of the sequence the  expression after the /keyword do is executed giving new values to the accumulators. 
+
+It is possible to not examine all elements of the sequence.  The following stops examining elements when /em ele is found
+
+ 
+function /in(s:seq.int,ele:int) boolean   
+  for found = false, i ∈ s   while not.found   do ele = i  /for(found)
+  
+
+<* section User Types *>
+
+
+The module below defines a user defined type.
+
+Module point2d
+
+The follow paragraph that begins with /keyword use allows reference to functions defined in another module. In this case, the standard library functions. 
+
+use standard
+
+Here is a simple type definition that introduces a new type with two components and supplies functions to create a <* code point2d *> and access its components.
 
 type point2d is x:int, y:int
 
@@ -207,56 +296,20 @@ Function +(a:point2d, b:point2d)point2d point2d(x.a + x.b, y.a + y.b)
 
 Function-(a:point2d, b:point2d)point2d point2d(x.a - x.b, y.a - y.b)
 
-Function print(p:point2d)seq.word 
- "("+ toword.x.p +","+ toword.y.p +")"
+Function %(p:point2d)seq.word  "( $(x.p) , $(y.p) )"
 
+Function testpoint seq.word %(point2d(2, 3)+ point2d(4, 5))
 
- Function testpoint seq.word print(point2d(2, 3)+ point2d(4, 5))
-
-Since a program is sequence of paragraphs.The above text can be placed in a file and 
+???? rest of sectoin out of date Since a program is sequence of paragraphs.The above text can be placed in a file and 
 turned into a running program.  A module lives with in the context of a library.  
 So a file name point2d.ls  is required with the first   paragraphs  being:
 
 Library point2d uses stdlib exports point2d 
 
-The remainder  of the file is the above text.    This file can then be place in a subdirectory named point2d.  Then the program can be compile and executed with  /fmt block ./taumain “point2d point2d testpoint” /end
+The remainder  of the file is the above text.    This file can then be place in a subdirectory named point2d.  Then the program can be compile and executed with  <* block ./taumain “point2d point2d testpoint” *>
 
 
-section standard
-
-The module standard defines several commonly used types.
-
-The types /em int and /em real are implement by the underlying hardware and have the usual operations. A more complete definition of will be supplied in a future release.
-
-The type boolean has operators:∧ ∨ /em not /em true and /em false. The second operator of ∧  and ∨ is evaluated if and only if the first operator does not determine the result.
-
-For working with total orderings a type /em ordering with the values /em LT /em EQ and /em GT is defined. The binary operator >1 and >2  on integers returns these values. An ∧ operator on orderings is defined as
-
-  Function ∧(a:ordering, b:ordering)ordering 
-  if a = EQ   then b   else a
-
-/fmt section Iteration /end
-
-An operation can be performed on each element of a sequence.  The following sums a sequence:
-
- function sum(s:seq.int) int  for   accumulator=0 ,e ∈ s    do accumalator+e    /for(accumulator)
-
-More than one accumulator is allowed. The following takes the average of the sequence
-
-  function average(s:seq.int) int for   count=0,sum=0, e ∈ s   do next(count+1,sum+e)    /for( sum / count)
-
-For each element of the sequence the  expression after the /keyword do is executed giving new values to the accumulators. 
-
-It is possible to not examine all elements of the sequence.  The following stops examining elements when /em ele is found
-
- 
-function /in(s:seq.int,ele:int) boolean   
-  for found = false, i ∈ s   while not.found   do ele = i  /for(found)
-
-
-
-
-/fmt section Parameterized Module /end
+<* section Parameterized Module *>
 
 A type can have a single type parameter of named T. The T can be used anywhere a type can be used.
 
@@ -317,7 +370,7 @@ if toseq.set1 = "C B A" ∧ first."C" ∈ set1
  else"FAIL"
 
 Sets can be used to implement dictionaries.   A dictionary contains entries.  
-Each entry contains a key and a data component.  A type is declared to represent an entry.  In this example the key will be an integer and the key a string. 
+Each entry contains a key and a data component.  A type is declared to represent an entry.  In this example the key will be an integer and the data a sequence of words. 
 Entries will be equal if and only if the keys are equal.
 
  type myentry is key:int, data:seq.word
@@ -329,9 +382,9 @@ Now a set of entries will be a dictionary.   From the mathematical view of the s
 
 Looking up an entry in the dictionary is just looking up the representation used in the set.  The last
 function in the /em listset module does just that.  The A ∪ B function in the listset module is carefully crafted
-so that if and element is in both A and B  the representation of used in A is used in the result.  Thus 
+so that if an element is in both A and B  the representation of used in A is used in the result.  Thus 
  listset.[myentry(3,"X")] ∪ B will redefine the entry in B if it exists.    The expression  B + myentry(3,"X") or  B /cup [myentry(3,"X")] will not redefine the entry in B.  
- The general rule is that for a binary operation on sets  the representation of on the left is used in the result -- not the one on the right.
+ By convention, the result  of a binary operation on sets   uses the representation of in the left operand -- not the one on the right.
    
 Module testdict
 
@@ -373,7 +426,7 @@ For the type listset.word, the unbound function = in the listset module is bound
 For the type listset.mytype, then unbound = is bound to =(a:myentry, b:myentry)boolean
 
 
-/fmt section Order of evaluation /end
+<* section Order of evaluation *>
 
 The arguments of a function are evaluate from left to right before the function is called.
 
@@ -383,11 +436,11 @@ function ∧(a:boolean, b:boolean)boolean   if a  then b  else false
 
  
 
-The compiler will do inline expansion and the above expression becomes /fmt block if i > 0 then 300 / i < 10 else false /end  If i=0 then the expression   300 / i < 10 is never evaluated.
+The compiler will do inline expansion and the above expression becomes <* block if i > 0 then 300 / i < 10 else false *>  If i=0 then the expression   300 / i < 10 is never evaluated.
 
 This behavior is required for the ∧ operator on booleans.
 
-/fmt section Bindings /end
+<* section Bindings *>
 
 Consider the following example code:
 
@@ -428,83 +481,97 @@ The type of the expression that defines a function much match the return type of
 
 
 
-/fmt section Encodings /end
+<* section Encodings *>
 
-A type can be mapped to positive integers in an encoding. As an example consider implementing a cache that stores the factors of an integer.
+A type can be mapped to positive integers in an encoding. 
 
 The parameterized module /em encoding.T  defines the following functions for working with encodings. 
+
+Module encode?.T
+
+  use encoding.T
 
    Export encode(T)encoding.T { will return the encoding } 
 
   Export   decode(encoding.T)T { will return the value that was encoded } 
 
-  Function findencode(t:T, erecord.T)seq.T { will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.} stub
+ ???? Function findencode(t:T, erecord.T)seq.T { will return the empty sequence if the value has not been mapped or a sequence of containing the value that was mapped.} 
 
-   Function encodingdata:T seq.T { list of values that have been encoded.} stub
+   Function encodingdata:T seq.T { list of values that have been encoded.}  
+   
+  Function valueofencoding(encoding.T) int { the integer value of the encoding}
+  
+Since the mapping  can be shared by multiple process, modification of  the mapping is a critical section. Also the mapping may contain values not assigned by the current process.
 
- Module encodingExample 
+???? need explanation of how encodings are shared among processes  
+
+Module exampleEncoding
+
+This is an example use of an encoding which  encodes sub-expression of a postfix expression 
+and then produces code that evaluates any common sub-expressions only once.
 
 use standard
 
+use seq.encoding.myencoding
+
+use encoding.myencoding
+
+use stack.encoding.myencoding
+
 We need a type to encode:
 
-type factors is key:int, factors:seq.int
+type myencoding is  op:word,operands:seq.encoding.myencoding 
 
 We must define a hash function and = function of the type.
 
-  function hash(a:factors)int key.a
+function hash(m:myencoding) int 
+ hash(op.m)
+ 
+function =(a:myencoding, b:myencoding) boolean  op.a=op.b /and operands.a=operands.b
 
- function =(a:factors, b:factors)boolean key.a = key.b
+Note that for a and b of the type myencoding, a = b implies hash (a) = hash (b). 
+This must be true for the hash to work correctly. 
+The hash function in this example could be improved by including operands in the argument.
 
-Note that for a and b of the type factor ; a = b implies hash(a)= hash(b). This must be true for the hash to work correctly.
-  
-To use factors as an  encoding we must include:
-
-use encoding.factors
-
-
-
-The following two function are used to calculate the factors of an integer
-
- function factors(n:int)seq.int 
- let a = findencode(factors(n, empty:seq.int) )
- if isempty.a then 
-   let result=factors(n, 2)
-   let discard=encode.factors(n,result)
-   result
- else factors.a_1
-
-  function factors(n:int, i:int)seq.int 
-  if 2 * i > n 
-  then [ n]
-  else  if n mod i = 0   then [ i]+ factors(n / i, i)else factors(n, i + 1)
-
-
-use seq.factors
-
-Function print(s:seq.int) seq.word 
- for  txt="",i /in  s do txt+toword.i /for(txt)
-
-Function test  seq.word
-  { the next statment gets the factors of 120 and will create an encoding}
-   let firstresult=factors(120)
-   { calling factors(120) again will use the cached value rather than recalculating  the factors.}
-   let secondresult=factors(120)
-   { convert interger 120 into encoding.factors }
-   let encoding120=to:encoding.factors(120)
-   {now decode and access the factors.}
-   let  thirdresult= factors.decode(encoding120)
-   if   print.firstresult=" 2 2 2 3 5"
-   /and firstresult=secondresult /and secondresult=thirdresult
-   then "PASS" else "FAIL"
-
+ 
+Function testexample seq.word
+  let  R="R1 R2 R3 R4 R5 R6 R7 R8 R9 R11 R12 R13"
+  let postfix="5   3 4 + *  3 4 + *  6   3 4 + * +  7 +"
+  {encode every subexpression of the postfix expression.  If a sub-expression is used
+   more that once it will have the same encoding every time it is used. }
+   { Below a stack is used.  The definition is in core.}
+  let encodingofpostfix= for  stk=empty:stack.encoding.myencoding,w /in postfix do 
+    if w /in "+*" then  
+    push(pop.pop.stk ,encode.myencoding(w, top(stk, 2)))
+    else push(stk,encode.myencoding(w,empty:seq.encoding.myencoding))
+    /for(top.stk)
+  { all the encodings are now in encodingdata:myencoding. It is now easy to print out 
+  instruction that will evaluate common subexpressions only once}
+       for acc="" ,idx=1,   e /in encodingdata:myencoding do 
+       let newacc=acc+"/br"+R_idx+ "=" +if op.e /in"+,*" then 
+                [R_(valueofencoding.(operands.e)_1) ,op.e ,R_(valueofencoding.(operands.e)_2)]
+      else  [op.e]
+      next(newacc,idx+1)
+      /for(acc)
+      
+The testexample output is: <* block R1 = 5 
+/br R2 = 3 
+/br R3 = 4 
+/br R4 = R2+R3 
+/br R5 = R1 * R4 
+/br R6 = R5 * R4 
+/br R7 = 6 
+/br R8 = R7 * R4 
+/br R9 = R6+R8 
+/br R11 = 7 
+/br R12 = R9+R11 <* /br
+      
 Consider the sequence of calls, C, in the execution of the program to the function encode. Let S be the sequence of T where S_i is the value passed as parameter in call C_i Let E be the sequence of results where E_i = the result of call C_i.
 
-Then /fmt block S_i = S_j if and only if encoding(E_i)= encoding(E_j)/end and /fmt block decode(E_i)is identical to S_j where j = min t where S_t = E_i /end and /fmt encoding(E_i)> 0 /end
+Then <* block S_i = S_j if and only if encoding(E_i)= encoding(E_j)*> and <* block decode(E_i)is identical to S_j where j = min t where S_t = E_i *> and <* encoding(E_i)> 0 *>
 
-Since the mapping  can be shared by multiple process, modification of  the mapping is a critical section. Also the mapping may contain values not assigned by the current process.
 
-/fmt section Process statement /end
+<* section Process statement *>
 
 Process are included in Tau for three reasons.
 
@@ -518,100 +585,108 @@ Module testprocess
 
 use process.int
 
-  function myprocess(a:int)int 
+use standard
+
+ function myprocess(a:int)int 
    assert a > 0   report "invalid"
    3^a
 
   function useprocess(i:int)int 
+{ Note that the result type of this function matches the parameter 
+  in the use clause above. This provides access to 
+  the  psuedo-function   process below and allows a spawned process 
+  of type process.in to be created
+  from the function   myprocess }
   let a = process.myprocess.i 
   if aborted.a 
     then  assert message.a ="invalid"   report "new message"
    0 
   else result.a
 
-In the use clause, the type int matches the return type of myprocess. The process function takes a expressing of the form <funcname>(<arg list>)evaluates the arguments and then spawns a process to execute the function returning a result of type process that refers to the spawned process.
 
 The follow function interact with the spawned process and blocks to wait for the spawned process to finish.
 
-  function aborted(process.T ) boolean { true if the process was aborted as with an assert statement } stub
+Module process?.T
 
-  function message(process.T ) seq.word  { message return when process was aborted } stub
+use process.T
 
-  function result(process.T) T { result return upon successful completion. }  stub
+use standard
+
+Export aborted(process.T ) boolean { true if the process was aborted as with an assert statement }  
+
+Export message(process.T ) seq.word  { message return when process was aborted } 
+
+Export result(process.T) T { result return upon successful completion. }  
 
 The spawning process cannot terminate until all of it child process complete, because it may have allocated space and passed it to a child process as a parameter. 
 
 
-/fmt section Sequences /end
+<* section Defining Sequences *>
 
-We use the example of myseq which is a start on a user defined sequence to decode UTF8 sequnece of bytes. The length of the sequence is the number of characters. The i'th element of the sequence with be the i'th character in the encoding.
+Some times it is usefully to define a new type of sequence.  Here we defined a geometric sequence moduled after the arithmetic seq
+define in otherseq.T
 
-  Module myseq.T 
+
+Module geometricseq.T
 
 All sequences must be in a parameterized Module.
 
-  use standard
+use standard
 
-  use seq(T)
+We need some operations on T. 
 
- type myseq is sequence , data:seq.T
+unbound *(T,T) T
 
-Mytype is recognized as a sequence as the first element of the sequence is sequence.
+unbound ^(T,int) T
 
-A function /em length (myseq) is implicitly defined to access the length of myseq
+type geometricseq is   sequence,step:T, start:T
 
-As with any parameterized module  a type definition   must contain an element that uses T so that multiple instances of the module does not produce duplicate symbols.
+The above type is recognized as a sequence as the first element of the type is sequence.
 
-We need some operations on T. T will be an int in this example so all these operations are define on int in the stdlib.
+A function /em length (myseq) is implicitly defined to access the length of geometricseq
 
-  unbound >(T, int)boolean  
+As with any parameterized module  a type definition   
+must contain an element that uses T so that multiple 
+instances of the module does not produce duplicate symbols.
 
-  unbound <(T, int)boolean  
+Every sequence must have a_function defined on it:
 
-  unbound-(T, int)T  
+Function _(s:geometricseq.T, i:int) T start.s *  (step.s) ^ (i-1)
 
- unbound *(T, int)T  
+We need a constructor of our sequence. Note the use of a toseq function. 
+This is defined implicitly by the sequence type definition to change the type 
+from geometricseq.T to seq.T
 
-  unbound +(T, T)T 
+Function geoseq(length:int, step:T, start:T) seq.T
+toseq.geometricseq(length, step, start)
 
-We need to helper functions to calculate the length and find the ith element of the seq for this example.
+Module geotest 
 
-  Function clength(s:seq.T, i:int)int 
-   if i > length.s 
-  then 0 
-  else  assert s_i > 0   report"invalid"
-  if s_i < 128 
-  then 1 + clength(s, i + 1)
- else   assert s_i < 128 + 64 + 32   report"invalid"
-  1 + clength(s, i + 2)
+use standard
 
-  Function cindex(s:seq.T, i:int, idx:int)T 
-   if idx = 1 
-  then if s_i < 128  then s_i else s_(i + 1) - 128 +(s_i - 128 - 64)* 64 
-  else cindex(s, i + if s_i < 128  then 1 else 2, idx - 1)
+use geometricseq.real
 
-We need a constructor of our sequence. Note the use of a toseq function. This is defined implicitly by the sequence type definition to change the type from myseq(T)to seq(T).
+use geometricseq.int
 
-  Function myseq(d:seq.T)seq.T toseq.myseq(clength(d, 1), d)
+use real
 
-Every sequence must have a_function defined on it which is below for mseq.T
 
-  Function_(a:myseq.T, idx:int)T cindex(data.a, 1, idx)
+Function geotest seq.word
+  "first 10 powers of 2="+%.geoseq(10,2,2)
+  +"/br first 10 powers of 0.5="+%.geoseq(10,0.5,0.5)
+  
+The following are needed to define %(seq.int) and  %(seq.real).
 
-Module testmyseq
+use otherseq.int
 
-  use standard
+use otherseq.real
 
-  use UTF8
+Function  %(a:real) seq.word print(10,a)
 
-  use myseq.int
+End of module geotest.
 
-Function testmyseq seq.word 
-  let s = UTF8.[ 40, 50]+ UTF8.335 + UTF8.50 + UTF8.336 
-  let z = for acc = empty:seq.int, @e ∈ toseqbyte.s do acc + toint.@e /for (myseq.acc)
-  for acc = "", @e ∈ z do acc + toword.@e /for (acc)
 
-/fmt section Tail Recursion /end
+<* section Tail Recursion *>
 
 A function is tail recursive if the last function called is itself. A compiler can take advantage of this and reuse the activation record on the call stack resulting in less space taken up by the stack during execution.
 
@@ -638,48 +713,49 @@ Making the function tail recursive is not the only way to reduce the stack size.
 
 Perhaps the best way to reverse a sequence is to use
 
-  Function reverse5(s:seq.T)seq.T    for acc=empty:seq.T,e ∈ s   do [s]+acc /for(acc)
+  Function reverse5(s:seq.int)seq.int    
+  for acc=empty:seq.int,e ∈ s   do [e]+acc /for(acc)
 
 
 In this case the tau compiler will remove  the bounds checking when indexing the sequence.  
 If the sequence was built up out of smaller sequences, it may also  break the sequence into the smaller parts and process them separately. 
 
-/fmt table    Sample  Table 
+<* table    Sample  Table 
  /row   1 /cell 2 /cell  3 
  /row   3 /cell 4 /cell 5  
-  /end
+  *>
 
-/fmt section markup /end
+<* section markup *>
 
-/fmt table 
+<* table 
 /row Example /cell with format /cell note
 /row first /keyword /p second   /cell /   first /p second  /cell paragraph break
 /row first /keyword /br second  /cell  first /br second /cell line break
 /row /keyword /em example /cell /em example  /cell
 /row /keyword /strong example /cell /strong example  /cell
 /row /keyword /keyword example /cell /keyword example  /cell
-/row /keyword /fmt /keyword literal this is an example  /keyword /end /cell /fmt literal  this is an example /end  /cell
-/row /keyword /fmt /keyword keyword this is an example  /keyword /end  /cell /fmt keyword this is an example  /end  /cell
-/row /keyword /fmt /keyword comment this is an example  /keyword /end; /cell /fmt comment this is an example  /end  /cell
-/row parent block /keyword /fmt /keyword block Indented block. /keyword /br second line /keyword /end 
-/cell parent block /fmt block Indented block. /br second line /end 
+/row /keyword <* /keyword literal this is an example  /keyword *> /cell <* literal  this is an example *>  /cell
+/row /keyword <* /keyword keyword this is an example  /keyword *>  /cell <* keyword this is an example  *>  /cell
+/row /keyword <* /keyword comment this is an example  /keyword *>; /cell <* comment this is an example  *>  /cell
+/row parent block /keyword <* /keyword block Indented block. /keyword /br second line /keyword *> 
+/cell parent block <* block Indented block. /br second line *> 
 /cell   Indented block 
-/row /keyword /fmt /keyword none <hr/> /keyword /end 
-/cell  /fmt none <hr> /end  /cell 
-/row /keyword /fmt /keyword table <caption> <rows of table> /keyword /fmt /cell /cell Defines a table 
+/row /keyword <* /keyword none <hr/> /keyword *> 
+/cell  <* none <hr> *>  /cell 
+/row /keyword <* /keyword table <caption> <rows of table> /keyword <* /cell /cell Defines a table 
 /row  /keyword /row../keyword /cell../keyword /cell..  /cell /cell Defines a row of with three columns. 
 /br Must be placed within table. 
-/row /keyword /fmt /keyword table    Sample   Table 
+/row /keyword <* /keyword table    Sample   Table 
 /br /keyword /row   1 /keyword /cell 2 /keyword /cell 3
 /br /keyword /row   3 /keyword /cell 4 /keyword /cell 5
-/keyword /fmt
+/keyword <*
 /cell
-/fmt table    Sample  Table 
+<* table    Sample  Table 
  /row   1 /cell 2 /cell  3 
  /row   3 /cell 4 /cell 5  
-  /end
+  *>
 /cell
-/end 
+*> 
 
 END
 

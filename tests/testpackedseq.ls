@@ -1,14 +1,12 @@
-module testpackedseq.T
+Module testpackedseq.T
+
+use otherseq.T
+
+use seq.T
 
 use standard
 
 use testseq
-
-use otherseq.T
-
-use process.T
-
-use seq.T
 
 unbound get:T T
 

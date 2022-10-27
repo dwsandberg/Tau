@@ -1,42 +1,30 @@
-module testseq
+Module testseq
 
 use bits
 
-use real
-
-use standard
-
 use testpackedseq.byte
 
-use seq.int
-
-use set.int
+use seq.seq.int
 
 use sparseseq.int
+
+use real
 
 use encoding.seedtrack
 
 use seq.seedtrack
 
-use seq.typereal
+use standard
 
 use testpackedseq.typereal
-
-use seq.typerec2
 
 use testpackedseq.typerec2
 
 use otherseq.word
 
-use testpackedseq.word
-
-use seq.seq.int
-
-use otherseq.seq.word
-
-use seq.seq.word
-
 use testpackedseq.seq.word
+
+use testpackedseq.word
 
 type seedtrack is key:int, val:int
 

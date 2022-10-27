@@ -2,8 +2,6 @@ Module SpecialImports
 
 This module is used to built the imports of the wasm module.
 
-???? reorguses drops standard and webHTTP.seq.word
-
 use standard
 
 use real

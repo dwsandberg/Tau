@@ -4,9 +4,11 @@ use standard
 
 use symbol
 
-use otherseq.symbol
+use seq.symbol
 
 use sparseseq.symbol
+
+use symbol2
 
 use encoding.symbolconstant
 

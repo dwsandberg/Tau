@@ -8,13 +8,13 @@ use bits
 
 use seq.byte
 
-use file
-
-use seq.file
-
 use callconfig
 
 use compilerfrontT.callconfig
+
+use file
+
+use seq.file
 
 use standard
 

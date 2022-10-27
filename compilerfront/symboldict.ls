@@ -8,8 +8,6 @@ use standard
 
 use symbol
 
-use seq.symbol
-
 use set.symbol
 
 use set.symdef

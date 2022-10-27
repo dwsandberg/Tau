@@ -14,8 +14,6 @@ use set.mytype
 
 use parse
 
-use seq.passsymbols
-
 use set.passsymbols
 
 use set.passtypes

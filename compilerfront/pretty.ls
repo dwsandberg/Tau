@@ -1,6 +1,10 @@
 Module pretty
 
+use UTF8
+
 use parsersupport.attribute2
+
+use stack.stkele.attribute2
 
 use seq.prettyresult
 
@@ -9,8 +13,6 @@ use standard
 use otherseq.word
 
 use set.seq.word
-
-use stack.stkele.attribute2
 
 Export type:attribute2
 
@@ -36,14 +38,13 @@ else
  let tmp0 = text.(toseq.parse:attribute2(attribute."", sortedlextable:attribute2, s, headeronly))_1
  removeclose(tmp0, length.tmp0)
 
-use format
-
 function escape(w:word) word encodeword([char.0] + decodeword.w)
 
 Function escape2format(s:seq.word) seq.word
 for acc = "", w ∈ s do
  acc
- + if w ∈ "/fmt /br /p /row /keyword /end /em /strong /cell" then escape.w else w
+ + if w ∈ "<* /br /p /row /keyword *> /em /strong /cell /so /sc /sw /sn" then escape.w
+ else w
 /for (acc)
 
 Function breakup(a:attribute2) attribute2
@@ -56,8 +57,8 @@ else
  , lenincode = 0
  , w ∈ text.a
  do
-  if last ∈ "/fmt" then next(acc + w, linelength - 2, w, incode, lenincode)
-  else if w ∈ "/end" then next(acc + w, linelength, w, length.acc, linelength)
+  if last ∈ "<*" then next(acc + w, linelength - 2, w, incode, lenincode)
+  else if w ∈ "*>" then next(acc + w, linelength, w, length.acc, linelength)
   else if w ∈ "/br" then next(acc + w, 0, w, 0, 0)
   else if w ∈ [escape."/br"_1, escape."/p"_1, escape."/row"_1]
   ∧ last.acc ∉ dq
@@ -88,8 +89,8 @@ for text = "", width = 0, @e ∈ a do
 function protect(a:seq.word, b:seq.word) seq.word
 let a1 = lastsymbol(a, length.a)
 let b1 = 
- if subseq(b, 1, 3) = "/fmt block /keyword" then b_4
- else if subseq(b, 1, 2) = "/fmt block" then b_3
+ if subseq(b, 1, 3) = "<* block /keyword" then b_4
+ else if subseq(b, 1, 2) = "<* block" then b_3
  else if first.b = "/keyword"_1 then b_2 else b_1
 if a1 = "/if"_1 ∧ b1 ∉ "-+(" then
  removeclose(a, length.a) + "/br" + b
@@ -98,13 +99,13 @@ else if b1 ∈ "(" ∧ a1 ∉ "/if)] ' $(dq)" then "($(a)) /br $(b)"
 else a + "/br" + b
 
 function removeclose(a:seq.word, i:int) seq.word
-if a_i = "/end"_1 then removeclose(a, i - 1) + "/end"_1
+if a_i = "*>"_1 then removeclose(a, i - 1) + "*>"_1
 else if a_i = "/if"_1 then removeclose(a, i - 1) else subseq(a, 1, i)
 
 function removeclose(a:seq.word) seq.word if isempty.a then a else removeclose(a, length.a)
 
 function lastsymbol(a:seq.word, i:int) word
-if a_i = "/end"_1 then lastsymbol(a, i - 1) else a_i
+if a_i = "*>"_1 then lastsymbol(a, i - 1) else a_i
 
 type prettyresult is prec:int, width:int, text:seq.word
 
@@ -178,10 +179,10 @@ else prettyresult(prec, 1 + width.post, "-$(text.post)")
 
 function block(b:attribute2) attribute2
 let a = (toseq.b)_1
-attribute2.[prettyresult(prec.a, 10000, "/fmt block $(text.a) /end")]
+attribute2.[prettyresult(prec.a, 10000, "<* block $(text.a) *>")]
 
 function block(a:seq.word, b:attribute2) seq.word
-removeclose.if isempty.a then text.b else "/fmt block $(text.b) /end"
+removeclose.if isempty.a then text.b else "<* block $(text.b) *>"
 
 function width(s:seq.word) int
 for acc = 0, last = "?"_1, w ∈ s
@@ -192,7 +193,7 @@ do
 /for (acc)
 
 function wordwidth(last:word, w:word) int
-if w ∈ "/fmt /end /keyword (,):)." ∨ last ∈ "/fmt" then 0
+if w ∈ "<* *> /keyword (,):)." ∨ last ∈ "<*" then 0
 else length.decodeword.w + 1
 
 function ifthenelse(R:reduction.attribute2) attribute2
@@ -206,7 +207,7 @@ else
  , x1 + removeclose.text.if width.R_2 + width.R_4 < maxwidth then R_4 else block.R_4 /if
  + "/br /keyword else"
  + if width.R_6 < maxwidth ∨ iselseif then text.R_6
- else "/fmt block $(text.R_6) /end" /if
+ else "<* block $(text.R_6) *>" /if
  + "/if"
  )
  ]
@@ -225,8 +226,6 @@ pretty.[attribute."/keyword $(text.a) $(if first.text.name ∈ "+=_-
 , returnType
 ]
 
-use UTF8
-
 Function leftdq seq.word [encodeword.[char.0, char1.dq], encodeword.[char.8]]
 
 Below is generated from parser generator.
@@ -241,17 +240,17 @@ function action(ruleno:int, input:seq.word, place:int, R:reduction.attribute2, s
 if ruleno = {F HH E} 1 then
  attribute.if width.R_1 + width.R_2 > maxwidth then
   for acc = "", w ∈ text.R_1 do
-   if w ∈ "/fmt" then acc + "/br" + w else acc + w
+   if w ∈ "<*" then acc + "/br" + w else acc + w
   /for (acc + "/br $(text.R_2)")
  else text.R_1 + text.R_2
 else if ruleno = {F HH} 2 then
  if width.R_1 > maxwidth then
   for acc = "", w ∈ text.R_1 do
-   if w ∈ "/fmt" then acc + "/br" + w else acc + w
+   if w ∈ "<*" then acc + "/br" + w else acc + w
   /for (attribute.acc)
  else R_1
 else if ruleno = {HH HH comment} 3 then
- let R2 = breakup.attribute."/fmt comment $(escape2format.text.R_2) /end"
+ let R2 = breakup.attribute."<* comment $(escape2format.text.R_2) *>"
  attribute(text.R_1 + text.R2)
 else if ruleno = {HH W NM (FP) T} 4 then prettyfunc(R_1, R_2, R_4, R_6)
 else if ruleno = {HH W_(FP) T} 5 then prettyfunc(R_1, R_2, R_4, R_6)
@@ -313,10 +312,10 @@ else if ruleno = {E assert E report D E} 43 then
 else if ruleno = {E I} 44 then R_1
 else if ruleno = {E I.I} 45 then pretty.[R_1, R_2, R_3]
 else if ruleno = {E $wordlist} 46 then
- breakup.attribute."/fmt literal $(escape2format(leftdq + text.R_1 << 1)) /end"
+ breakup.attribute."<* literal $(escape2format(leftdq + text.R_1 << 1)) *>"
 else if ruleno = {E comment E} 47 then
  precAttribute(prec.(toseq.R_2)_1
- , text.breakup.attribute."/fmt comment $(escape2format.text.R_1) /end"
+ , text.breakup.attribute."<* comment $(escape2format.text.R_1) *>"
  + if width.R_1 + width.R_2 > maxwidth then "/br $(text.R_2)" else text.R_2
  )
 else if ruleno = {F1 W = E} 48 then
@@ -338,21 +337,23 @@ else if ruleno = {E for F2 while E do E /for (E)} 52 then
   if width.R_2 + width.R_4 + width.R_6 + width9 < maxwidth then ""
   else "/br"
  let finalexp = if width9 > maxwidth then block("/br", R_9) else removeclose.text.R_9
+ let accexp = list.R_2
  pretty.[attribute."/keyword for"
- , list.R_2
- , attribute."$(B) /keyword while $(text.R_4) $(B) /keyword do $(block(B, R_6)) $(B) /keyword /for ($(finalexp))"
+ , accexp
+ , attribute."$(if width.accexp > maxwidth then "" else B) /keyword while $(text.R_4) $(B) /keyword do
+  $(block(B, R_6)) $(B) /keyword /for ($(finalexp))"
  ]
 else if ruleno = {D E} 53 then R_1
 else if ruleno = {X wl E} 54 then
  attribute.escape2format.subseq(text.R_1, 2, length.text.R_1 - 1)
- + attribute("$" + "(/end $(removeclose.text.R_2) /fmt literal)")
+ + attribute("$" + "(*> $(removeclose.text.R_2) <* literal)")
 else if ruleno = {X X wl E} 55 then
  R_1 + attribute.escape2format.subseq(text.R_2, 2, length.text.R_2 - 1)
- + attribute("$" + "(/end $(removeclose.text.R_3) /fmt literal)")
+ + attribute("$" + "(*> $(removeclose.text.R_3) <* literal)")
 else if ruleno = {E X $wordlist} 56 then
- breakup.attribute."/fmt literal $(leftdq
+ breakup.attribute."<* literal $(leftdq
  + text.pretty.[R_1, attribute.escape2format.subseq(text.R_2, 2, length.text.R_2 - 1)]
- + dq) /end"
+ + dq) *>"
 else if ruleno = {G F #} 57 then R_1
 else
  {ruleno}

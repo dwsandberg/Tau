@@ -1,7 +1,5 @@
 Module svg2graph.T
 
-use seq.arc.T
-
 use set.arc.T
 
 use seq.arcpath.T
@@ -73,8 +71,6 @@ else
  for acc = empty:seq.arcpath.T, new = base, q ∈ grp do
   next(acc + arcpath(arc.q, d.q >> 3 + print(3, new), 0), new + inc)
  /for (acc)
-
-use uniqueids
 
 Function drawscript:T seq.word
 "<script> function shiftstart (arcs) {let bb = document.getElementById (arcs [0]).getBBox () ;
@@ -176,10 +172,10 @@ do
 /for (
  let hovertxt = for svg2 = "", e ∈ sort.hover do svg2 + assvg.e /for (svg2)
  "
-  /br /fmt none $(drawscript:T) <svg id = $(dq."svg10") dqns = $(dq."http://www.w3.
+  /br <* none $(drawscript:T) <svg id = $(dq."svg10") dqns = $(dq."http://www.w3.
   org/2000/svg") width = $(dq."100%") viewBox = $(dq("5.0" + space + "-1" + print(2, maxx + 5.0)
  + print(2, maxy + 1.3))) onload = $(dq."[$(draw >> 1)].forEach (shiftstart)") >
-  $(txt + hovertxt)+</svg> /end")
+  $(txt + hovertxt)+</svg> *>")
 
 type hovertext is n:T, nodex:real, nodey:real, text:seq.word
 

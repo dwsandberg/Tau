@@ -1,7 +1,5 @@
 Module seq.T
 
-use seq.T
-
 use standard
 
 Export type:pseq.T
@@ -30,8 +28,7 @@ Builtin empty:seq.T seq.T {empty seq}
 
 Builtin _(a:seq.T, i:index) T
 
-Function _(a:seq.T, c:int) T
-a_(toindex.if c < 0 then length.a + c + 1 else c /if)
+Function _(a:seq.T, c:int) T a_(toindex.c)
 
 Function =(a:seq.T, b:seq.T) boolean
 for isequal = length.a = length.b, i = 1, e ∈ a while isequal do next(e = b_i, i + 1) /for (isequal)

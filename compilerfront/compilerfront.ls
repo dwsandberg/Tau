@@ -18,8 +18,6 @@ use passparse
 
 use passsymbol
 
-use seq.passsymbols
-
 use set.passsymbols
 
 use set.passtypes

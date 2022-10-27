@@ -1,5 +1,7 @@
 Module objectio.T
 
+use seq.T
+
 use bitcast.seq.T
 
 use bits

@@ -1,7 +1,5 @@
 Module makeDAG.T
 
-use seq.arc.T
-
 use set.arc.T
 
 use graph.T

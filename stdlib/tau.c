@@ -355,7 +355,7 @@ BT subgetfile(processinfo PD,  char *filename,BT seqtype){
     static const BT empty[]={0,0};
     BT *data2,org;
 //  fprintf(stderr,"openning %s\n",name);  
-        org=myalloc(PD,4);
+        org=myalloc(PD,12);
      IDXUC(org,0)=1;
      IDXUC(org,1)=0;
      IDXUC(org,2)=0;
@@ -364,10 +364,12 @@ BT subgetfile(processinfo PD,  char *filename,BT seqtype){
     
     if (stat(name, &sbuf) == -1) return org;
     
-    if ((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) == (caddr_t)(-1)) return org;
-    data2=(long long *) filedata;
-    org=myalloc(PD,12);
-     BT  filesize=sbuf.st_size,noelements; 
+    BT  filesize=sbuf.st_size,noelements; 
+    if (filesize == 0) { data2=(BT *)empty;} 
+    else {
+     if ((filedata = mmap((caddr_t)0, sbuf.st_size, PROT_READ+PROT_WRITE, MAP_PRIVATE, fd, 0)) == (caddr_t)(-1)) return org;
+     data2=(long long *) filedata;
+    }
      int elementsin128bits;
      if (seqtype==0)  { noelements= (filesize+7)/8 ;   elementsin128bits= 2;  }
      else if (seqtype==-8)   {  noelements=filesize   ; elementsin128bits= 16; }
@@ -388,8 +390,10 @@ BT subgetfile(processinfo PD,  char *filename,BT seqtype){
      IDXUC(org,10)=1;
      IDXUC(org,11)=(BT)((BT * )org+5);
      
-     data2[0]=seqtype==0?0:1;
-     data2[1]= noelements-elementsin128bits ;
+     if (filesize > 0 ){
+       data2[0]=seqtype==0?0:1;
+       data2[1]= noelements-elementsin128bits ;
+     }
      close(fd);
   //  fprintf(stderr,"filename %s address %lld\n",name,(long long ) filedata);
     return org;

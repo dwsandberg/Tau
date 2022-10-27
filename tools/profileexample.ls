@@ -1,20 +1,20 @@
 Module profileexample
 
+use UTF8
+
 use doc
 
 use file
 
 use seq.file
 
+use format
+
 use main2
 
 use profile
 
 use standard
-
-use UTF8
-
-use format
 
 Function testprofile(input:seq.file, o:seq.word) seq.file
 let discard = makebitcode.input

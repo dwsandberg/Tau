@@ -1,7 +1,5 @@
 Module layergraph.T
 
-use seq.arc.T
-
 use set.arc.T
 
 use barycenter.T

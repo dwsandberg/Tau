@@ -1,7 +1,5 @@
 Module ptr
 
-{???? reorg uses adds use tausupport}
-
 Export type:ptr
 
 Builtin set(ptr, int) ptr

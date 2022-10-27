@@ -6,15 +6,9 @@ use bits
 
 use checking
 
-use randomphrase
+use seq.arc.int
 
-use standard
-
-use test20
-
-use otherseq.char
-
-use seq.char
+use set.arc.int
 
 use graph.int
 
@@ -26,25 +20,17 @@ use set.int
 
 use tree.int
 
+use otherseq.tree.int
+
 use seq.ordering
 
-use graph.word
+use randomphrase
 
-use set.word
+use standard
+
+use test20
 
 use tree.word
-
-use seq.arc.int
-
-use set.arc.int
-
-use seq.arc.word
-
-use set.arc.word
-
-use seq.tree.word
-
-use otherseq.tree.int
 
 Function testmodules seq.word
 assert true report randomphrase

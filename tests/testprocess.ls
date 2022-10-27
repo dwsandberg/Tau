@@ -1,24 +1,24 @@
 Module testprocess
 
-use UTF8
-
 use bits
 
-use checking
-
-use real
-
-use standard
-
 use process.boolean
+
+use checking
 
 use otherseq.int
 
 use process.int
 
+use real
+
 use process.real
 
 use process.returntype
+
+use standard
+
+use tausupport
 
 use process.seq.word
 

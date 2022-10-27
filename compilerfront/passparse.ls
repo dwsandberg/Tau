@@ -1,7 +1,5 @@
 Module passparse
 
-use format
-
 use seq.mytype
 
 use passsymbol
@@ -12,8 +10,6 @@ use standard
 
 use symbol
 
-use seq.arc.symbol
-
 use set.arc.symbol
 
 use graph.symbol
@@ -23,8 +19,6 @@ use seq.symbol
 use set.symbol
 
 use symboldict
-
-use seq.symdef
 
 use set.symdef
 

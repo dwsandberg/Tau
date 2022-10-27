@@ -1,16 +1,12 @@
-module bug7
-
-use standard
+Module bug7
 
 use seq8.int
 
 use encoding.llvmtypeele2
 
-use seq.llvmtypeele2
-
 use encoding.slot2
 
-use seq.slot2
+use standard
 
 type slot2 is type:int, rec:seq.int, name:seq.word
 

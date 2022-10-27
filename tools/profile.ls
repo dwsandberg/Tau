@@ -10,8 +10,6 @@ use seq.arc.symbol
 
 use graph.symbol
 
-use seq.labeledarc.symbol
-
 use set.labeledarc.symbol
 
 use seq.symbol

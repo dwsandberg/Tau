@@ -2,43 +2,25 @@ Module testencoding
 
 Testing encodings
 
-use UTF8
-
 use checking
-
-use standard
-
-use seq.boolean
-
-use seq.char
-
-use process.int
 
 use set.int
 
-use process.testdeep
+use process.set.int
 
-use seq.testdeep
+use standard
+
+use process.testdeep
 
 use encoding.testrecord
 
 use seq.testrecord
 
-use seq.seq.char
-
-use process.set.int
-
-use seq.set.int
-
 use process.seq.testrecord
-
-use seq.seq.testrecord
 
 use seq.seq.word
 
 use tree.seq.word
-
-use seq.tree.seq.word
 
 function deepcopytest(a:testdeep) testdeep result.process.identity.a
 

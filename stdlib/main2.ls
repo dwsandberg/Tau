@@ -36,8 +36,6 @@ use seq.symbol
 
 use symbol2
 
-use seq.symdef
-
 use set.symdef
 
 use textio
